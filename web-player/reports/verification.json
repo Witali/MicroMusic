@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-20",
+  "automatedTests": {"command": "node --test web-player/tests/*.test.mjs", "passed": 30, "failed": 0},
+  "catalog": {"images": 7, "releaseArchives": 6, "coverage": "Every retained synth.hex, synth.bin, new.bin and embedded player.html image; deduplicated by Flash + EEPROM SHA-256", "archiveModified": false},
+  "equivalence": {"secondsPerImage": 14, "images": 7, "pwm": "exact", "cycles": "exact", "registers": "exact", "interrupts": "exact", "stack": "exact", "originalHtmlCoresAlsoCompared": true},
+  "tempo": {"emulatedSecondsPerImage": 60, "images": 7, "clockHz": 9600000, "maximumBoundaryToleranceCycles": 4096, "lostInterrupts": 0},
+  "browser": {
+    "environment": "Codex in-app browser on Windows; local HTTP server",
+    "imagesStarted": ["four-voice", "spectral", "acoustic", "bipolar", "measured", "smoke", "final"],
+    "pauseKeepsPosition": true,
+    "resetClearsCPUAndTime": true,
+    "searchFiltersAndRestoresAllEntries": true,
+    "consoleErrors": [],
+    "renamedOriginalPlayerHttpStatus": 200,
+    "renamedWavHttpStatus": 200,
+    "sustainedPlayback": {
+      "image": "final",
+      "displayTime": "00:49.4",
+      "tempoPercent": 100.0,
+      "accumulatedAudioLagMs": 0,
+      "wallClockIntervalMs": 49359.300,
+      "audioClockIntervalMs": 49365.333,
+      "wallMinusAudioMs": -6.033,
+      "lostInterrupts": 0,
+      "note": "Audio device frame clock versus performance.now after startup. UI message delivery jitter is distinct from tempo drift. Fixed device/output latency is not measured. Playback was paused after this run."
+    }
+  },
+  "limitations": ["Specialized AVR subset inherited from archived HTML players", "No physical ATtiny13A or analog output measurement", "Mobile layout uses responsive CSS; physical phone performance not measured"]
+}
