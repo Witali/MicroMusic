@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-20",
+  "image": "fluid-violin",
+  "automatedTests": {"passed": 38, "failed": 0, "images": 8, "secondsPerImage": 60},
+  "envelopes": {
+    "attack": "0..15 on three of four ticks; 19..20 ticks from silence",
+    "legato": "Current level and full DDS phase retained, tested at ten initial envelope states",
+    "releaseLevels": [15, 13, 11, 9, 7, 6, 5, 4, 3, 2, 1, 0],
+    "accompaniment": "Exact PWM match with archived firmware when lead muted",
+    "score": "All fifteen playlist entries and note-off masks exercised without IRQ loss"
+  },
+  "browser": {
+    "displayTime": "01:01.1",
+    "tempoPercent": 100,
+    "accumulatedAudioLagMs": 0,
+    "audioClockIntervalMs": 61098.667,
+    "wallClockIntervalMs": 61099.500,
+    "maximumIsrCycles": 418,
+    "lostInterrupts": 0,
+    "visibleError": ""
+  },
+  "limitations": ["4-bit, 16-sample spectral and envelope approximation", "No physical ATtiny13A test"]
+}

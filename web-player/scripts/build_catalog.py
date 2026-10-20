@@ -15,7 +15,8 @@ SPECS = [
     ('acoustic', '03', 'Акустические тембры', 'Гармоники настроены по инструментальным сэмплам.', 'snapshots/attiny13-acoustic', 'release'),
     ('bipolar', '04', 'Биполярный синтез', 'Общий генератор гармоник и смешивание вокруг PWM 128.', 'snapshots/attiny13-refined', 'release'),
     ('measured', '05', 'Измеренные спектры', 'Компактные таблицы волн и приближения измеренных огибающих.', 'snapshots/attiny13-real-instruments/firmware', 'release'),
-    ('final', '06', 'Финальный синтезатор', 'EEPROM-волны, независимый note-off и переходы attack / sustain.', 'final/attiny13a_synth_release', 'release'),
+    ('final', '06', 'EEPROM-волны и note-off', 'Табличные тембры, независимый note-off и переходы attack / sustain.', 'final/attiny13a_synth_release', 'release'),
+    ('fluid-violin', '07', 'Скрипка FluidR3', 'Спектр FluidR3 GM, плавная атака, связные ноты и мягкое затухание.', 'variants/fluid-violin', 'release'),
     ('smoke', 'T1', 'Тестовая мелодия', 'Короткая проверочная партитура C4–D4–E4; три повтора секции.', 'snapshots/attiny13-final/alternate-test', 'experimental'),
 ]
 
@@ -103,16 +104,17 @@ def build():
                         target = name.rsplit('/', 1)[0] + '/' + n
                         return z.read(target) if target in z.namelist() else None
                     inspect(path.relative_to(ROOT).as_posix() + '!/' + name, z.read(name), sibling)
-    return dict(schema=1, defaultId='final', entries=entries,
+    return dict(schema=1, defaultId='fluid-violin', entries=entries,
                 sourceOnly=[dict(title='Исходный C-прототип · 2016',
                                  source='../ATtiny13A/Music/00_original/attiny13a_initial_2016.c',
                                  reason='Сохранён исходник C; готового HEX / BIN в архиве нет.')])
 
 
 if __name__ == '__main__':
-    text = json.dumps(build(), ensure_ascii=False, indent=2) + '\n'
+    catalog = build()
+    text = json.dumps(catalog, ensure_ascii=False, indent=2) + '\n'
     if '--check' in sys.argv:
         assert OUTPUT.read_text(encoding='utf-8') == text, 'Run build_catalog.py to update catalog'
     else:
         OUTPUT.write_text(text, encoding='utf-8', newline='\n')
-    print('Catalog verified: 7 unique images, all archived HEX/BIN/HTML and 6 ZIP releases covered.')
+    print(f"Catalog verified: {len(catalog['entries'])} unique images, all retained HEX/BIN/HTML and 6 ZIP releases covered.")
