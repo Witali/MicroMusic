@@ -31,6 +31,7 @@ for (const entry of catalog.entries) {
     assert.equal(fast.lost, 0);
     assert.equal(fast.workLost, 0);
     if (entry.referenceCore) assert.equal(fast.t, ref.t);
+    if (ref.ram) { const end=fast.minSP-0x60+1; assert.deepEqual(fast.ram.subarray(0,end),ref.ram.subarray(0,end)); } // Archive keeps stack separately.
   });
 }
 
