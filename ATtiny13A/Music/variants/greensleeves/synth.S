@@ -1,55 +1,44 @@
-/* Smoothed PWM: two future points and their midpoint are prepared in foreground.
- * SRAM[0x60]=noise high, [0x61]=midpoint, [0x62]=next point, [0x63]=music divider, [0x64]=high grid phase; R25=low grid phase.
- * R18 belongs to ISR; R23 swaps 0x01/0x10 without changing arithmetic flags.
- * Sound generation 18.75 kHz; distinct interpolated output values 37.5 kHz.
- * Build-time assignments specialize oscillators and instrument envelopes.
- * Per-sample attack/sustain spectral crossfade omitted to fit 1 KB Flash.
- */
 .section .text,"ax",@progbits
 .global vectors
 .include "config.inc"
-
 vectors:
   rjmp reset
 envelope_return:
-  clr r0
+  asr r17
   ret
   rjmp pwm_irq
 reset:
-  /* Initialize the stack and switch the internal RC from the factory /8 divider to 9.6 MHz. */
-  ldi r16, 159
-  out 61, r16
-  ldi r16, 128
-  out 38, r16
-  clr r16
-  out 38, r16
-  clr r0
-  clr r1
-  ldi r30, 2
+  /* Requiredfuses7A/FF: CLKPRreset0; SPLresetRAMEND(9F). */
+  clr r29
+  clr r27
+  clr r2
+  clr r15
+  clr r24
+  ldi r30, 96
   clr r31
-  clr r16
-clear_registers:
-  /* Clear oscillator and envelope registers without allocating SRAM. R18/R23 are subsequently reserved for the ISR. */
-  st Z+, r16
-  cpi r30, 26
-  brne clear_registers
+clear_ram:
+  st Z+, r29
+  cpi r30, 144
+  brne clear_ram
   ldi r18, 128
-  ldi r30, 97
+  ldi r30, 128
+fill_ring:
   st Z+, r18
-  st Z+, r18
-  st Z+, r0
-  /* Initialize four sound channels, score cursor, and deterministic percussion noise. */
+  cpi r30, 144
+  brne fill_ring
+  mov r23, r18
+  ldi r28, 128
+  ldi r22, 142
   ldi r16, 1
-  mov r22, r16
-  ldi r28, FIRST_PLAYLIST_INDEX
+  mov r1, r16
+  ldi r16, FIRST_PLAYLIST_INDEX
+  mov r4, r16
   ldi r16, GRID_INITIAL_HIGH
-  sts 100, r16
+  mov r3, r16
   ldi r30, lo8(first_section)
   ldi r31, hi8(first_section)
-  /* Configure hardware Fast PWM on OC0B/PB1, fixed TOP=255 at 37.5 kHz. */
   sbi 23, 1
   out 41, r18
-  ldi r23, 1
   ldi r16, 35
   out 47, r16
   ldi r16, 1
@@ -58,101 +47,109 @@ clear_registers:
   out 57, r16
   sei
 idle:
-  brtc idle
-  clt
-  rcall audio_step
+  mov r16, r22
+  sub r16, r28
+  andi r16, 15
+check_space:
+  cpi r16, 13
+  brcc idle
+audio_step:
+  inc r15
+  brne render_sample
+  rcall music_tick
+render_sample:
+  ldi r26, 96
+  clr r21
+voice_loop:
+  ld r25, X+
+  ld r16, X+
+  ld r17, X+
+  ld r6, X+
+  ld r7, X+
+  add r16, r6
+  adc r17, r7
+  subi r26, 4
+  st X+, r16
+  st X+, r17
+  subi r26, 254
+  mov r16, r7
+  rcall render_tone
+  sbrc r26, 4
+  asr r17
+primary_gain:
+  add r21, r17
+  cpi r26, 121
+  brne voice_loop
+write_pwm:
+  subi r21, 128
+  mov r16, r23
+  add r16, r21
+  ror r16
+  mov r26, r22
+  st X+, r16
+  st X+, r21
+  mov r22, r26
+  andi r22, 143
+ring_published:
+  mov r23, r21
   rjmp idle
 pwm_irq:
-  /* No arithmetic or temporary-register writes: foreground C/Z flags survive. */
   out 41, r18
-  sbrc r23, 0
-  lds r18, 97
-  sbrs r23, 0
-  lds r18, 98
-  swap r23
-  set
+ring_read:
+  ld r18, Y+
+  sbrc r28, 4
+  ldi r28, 128
+irq_restore:
   reti
-audio_step:
-  /* Foreground tick. Odd ticks produce new four-voice points; envelopes tick every 512 overflows, score uses the fractional sixteenth grid. */
-  inc r15
-  breq .L064
-  sbrs r15, 0
-  rjmp hold_sample
-  rjmp render_sample
-.L064:
-  lds r16, 99
-  com r16
-  sts 99, r16
-  breq music_tick
-  rjmp hold_sample
 music_tick:
-  /* Advance envelopes at ~73.24 Hz. Flags in envelope bytes encode attack, sustain and release. */
   inc r24
-  sbrs r1, 7
-  rjmp lead_env_release
-  mov r16, r1
+  ldi r26, 96
+envelope_loop:
+  ld r16, X+
+  mov r17, r16
+  andi r17, 15
+  sbrs r16, 7
+  rjmp state_release
+  ldi r25, 143
+  sbrc r16, 4
+  ldi r25, 156
+  sbrc r16, 5
+  ldi r25, 170
   subi r16, 252
-  cpi r16, 144
-  brcs lead_env_attack
-  ldi r16, 143
-lead_env_attack:
-  mov r1, r16
-  rjmp lead_env_done
-lead_env_release:
-  tst r1
-  breq lead_env_done
-  dec r1
-lead_env_done:
-  /* END LEAD ENVELOPE */
-.L08e:
-  /* Piano and guitar use one shared envelope function with different decay masks. */
-  sbrs r19, 7
-  rjmp keys_env_release
-  mov r16, r19
-  subi r16, 252
-  cpi r16, 141
-  brcs keys_env_attack
-  ldi r16, 140
-keys_env_attack:
-  mov r19, r16
-  rjmp keys_env_done
-keys_env_release:
-  tst r19
-  breq keys_env_done
-  dec r19
-keys_env_done:
-  /* END KEYS ENVELOPE */
-  sbrs r20, 7
-  rjmp pluck_env_release
-  mov r16, r20
-  subi r16, 252
-  cpi r16, 139
-  brcs pluck_env_attack
-  ldi r16, 138
-pluck_env_attack:
-  mov r20, r16
-  rjmp pluck_env_done
-pluck_env_release:
-  tst r20
-  breq pluck_env_done
-  dec r20
-pluck_env_done:
-  /* END PLUCK ENVELOPE */
+  mov r0, r16
+  sub r0, r25
+  brcs envelope_store
+  mov r16, r25
+  rjmp envelope_store
+state_release:
+  tst r17
+  breq envelope_store
+  dec r16
+  cpi r17, 1
+  breq envelope_store
+  sbrc r16, 6
+  dec r16
+envelope_store:
+
+  subi r26, 1
+  st X+, r16
+  subi r26, 252
+  cpi r26, 121
+  brne envelope_loop
 .L0a8:
-  /* R25: low grid phase, SRAM[0x64]: high. One overflow = one sixteenth. */
-  lds r16, 100
+  mov r16, r3
   ldi r17, GRID_STEP_LOW
-  add r25, r17
+  add r2, r17
   ldi r17, GRID_STEP_HIGH
   adc r16, r17
-  sts 100, r16
+  mov r3, r16
   brcs grid_step
   ret
 grid_step:
 .L0ba:
-  dec r22
+  dec r1
   breq read_event
-  rjmp hold_sample
+  ret
 read_event:
   /* Read packed score tokens. F0..FF are control events; E0..EF update accompaniment harmony. */
   lpm r16, Z+
@@ -165,58 +162,47 @@ read_event:
   cpi r16, 240
   brcs chord_event
 note_off:
-  /* NOTE-OFF bitmask: bit0 violin, bit1 piano, bit2 guitar, bit3 percussion. No oscillator resets. */
+  ldi r26, 96
+note_off_loop:
+  ld r17, X+
   sbrc r16, 0
-  rcall release_lead
-  sbrc r16, 1
-  andi r19, 15
-  sbrc r16, 2
-  andi r20, 15
+  andi r17, 127
+  subi r26, 1
+  st X+, r17
+  subi r26, 252
+  lsr r16
+  cpi r26, 111
+  brne note_off_loop
   rjmp read_event
-release_lead:
-  /* Change lead from attack/sustain into release without resetting DDS phase. */
-  mov r17, r1
-  andi r17, 15
-  mov r1, r17
-  ret
 chord_event:
-  /* Decode chord index; load two independent DDS frequencies and restart their envelopes. */
-  movw r26, r30
+
+  movw r12, r30
   andi r16, 15
   lsl r16
   lsl r16
   ldi r30, lo8(chord_steps)
   ldi r31, hi8(chord_steps)
   add r30, r16
-  adc r31, r0
-  lpm r8, Z+
-  lpm r9, Z+
-  lpm r12, Z+
-  lpm r13, Z+
-  mov r16, r19
-  andi r16, 15
-  lsr r16
-  ori r16, 128
-  mov r19, r16
-  mov r16, r20
-  andi r16, 15
-  lsr r16
-  ori r16, 128
-  mov r20, r16
-  /* END COMPANION TRIGGERS */
-  movw r30, r26
+  adc r31, r29
+  ldi r26, 101
+  ldi r25, 144
+  rcall initialize_voice
+  ldi r26, 106
+  ldi r25, 160
+  rcall initialize_voice
+  movw r30, r12
   rjmp read_event
 melodic_event:
   /* Decode compact note/duration; load 16-bit DDS increment or signal lead release. */
-  movw r26, r30
+  movw r12, r30
   mov r17, r16
   andi r17, 7
   ldi r30, lo8(durations)
   ldi r31, hi8(durations)
   add r30, r17
-  adc r31, r0
-  lpm r22, Z
-  movw r30, r26
+  adc r31, r29
+  lpm r1, Z
+  movw r30, r12
   /* BEGIN LEAD FREQUENCY */
   lsr r16
   lsr r16
@@ -225,40 +211,41 @@ melodic_event:
   breq note_rest
   cpi r16, HOLD_INDEX
   breq hold_sample
-  movw r26, r30
+  movw r12, r30
   lsl r16
   ldi r30, lo8(note_steps)
   ldi r31, hi8(note_steps)
   add r30, r16
-  adc r31, r0
-  lpm r4, Z+
-  lpm r5, Z+
-  movw r30, r26
-  mov r16, r1
-  andi r16, 15
-  lsr r16
-  ori r16, 128
+  adc r31, r29
+  ldi r26, 96
+  ldi r25, 128
+  rcall initialize_voice
 lead_commit:
-  mov r1, r16
+  movw r30, r12
   rjmp hold_sample
 note_rest:
-  rjmp release_lead
+release_lead:
+  lds r17, 96
+  andi r17, 127
+  sts 96, r17
+  ret
 next_section:
   /* Playlist contains direct section offsets: no second lookup table. */
   ldi r30, lo8(playlist)
   ldi r31, hi8(playlist)
-  add r30, r28
-  adc r31, r0
+  add r30, r4
+  adc r31, r29
   lpm r16, Z
-  inc r28
-  cpi r28, PLAYLIST_LEN
+  inc r4
+  mov r17, r4
+  cpi r17, PLAYLIST_LEN
   brne .L15c
-  clr r28
+  clr r4
 .L15c:
   ldi r30, lo8(melody_data)
   ldi r31, hi8(melody_data)
   add r30, r16
-  adc r31, r0
+  adc r31, r29
   rjmp read_event
 hold_sample:
   ret
@@ -268,96 +255,82 @@ render_tone:
   andi r25, 15
   breq voice_silent
   cpi r16, 4
-  ldi r16, 0
+  mov r16, r0
+  andi r16, 48
   brcs .L216
-  ldi r16, 8
+  ori r16, 8
 .L216:
-  sbrc r0, 4
-  subi r16, 240
-  sbrc r0, 5
-  subi r16, 224
-  mov r0, r17
   swap r17
   andi r17, 15
   lsr r17
-  add r16, r17
+  or r16, r17
   out 30, r16
   sbi 28, 0
   in r17, 29
-  sbrc r0, 4
+  brcc eeprom_low_nibble
   swap r17
+eeprom_low_nibble:
   andi r17, 15
   subi r17, 8
 .L25c:
-  mov r16, r25
   mov r0, r17
   clr r17
-  sbrc r16, 0
+  sbrc r25, 0
   add r17, r0
   lsl r0
-  sbrc r16, 1
+  sbrc r25, 1
   add r17, r0
   lsl r0
-  sbrc r16, 2
+  sbrc r25, 2
   add r17, r0
   lsl r0
-  sbrc r16, 3
+  sbrc r25, 3
   add r17, r0
   asr r17
-  asr r17
-  clr r0
-  ret
+  rjmp envelope_return
 voice_silent:
-  clr r0
   clr r17
+  rjmp envelope_return
+initialize_voice:
+  rcall capture_ram_tail
+  andi r16, 15
+  lsr r16
+  or r16, r25
+  subi r26, 1
+  st X+, r16
+  subi r26, 254
+  lpm r16, Z+
+  st X+, r16
+  lpm r16, Z+
+  st X+, r16
+voice_initialized:
   ret
-render_sample:
-  /* Accumulate three pitch oscillators with independent phases and envelopes. */
-  push r25
-  clr r26
-  /* BEGIN LEAD RENDER */
-  add r2, r4
-  adc r3, r5
-  mov r25, r1
-  mov r16, r5
-  mov r17, r3
-  rcall render_tone
-  add r26, r17
-  /* END LEAD RENDER */
-  /* BEGIN KEYS RENDER */
-  add r6, r8
-  adc r7, r9
-  mov r25, r19
-  ori r25, 16
-  mov r16, r9
-  mov r17, r7
-  rcall render_tone
-  add r26, r17
-  /* END KEYS RENDER */
-  /* BEGIN PLUCK RENDER */
-  add r10, r12
-  adc r11, r13
-  mov r25, r20
-  ori r25, 32
-  mov r16, r13
-  mov r17, r11
-  rcall render_tone
-  add r26, r17
-  /* END PLUCK RENDER */
-write_pwm:
-  /* Convert the bipolar mix to unsigned PWM; publish the next pair after a safe handoff. */
-  subi r26, 128
-  lds r16, 98
-  add r16, r26
-  ror r16
-publish_wait:
-  /* The midpoint IRQ must first copy the old next point into R18. */
-  sbrs r23, 0
-  rjmp publish_wait
-  sts 97, r16
-  sts 98, r26
-  pop r25
-  ret
-
-  /* The duration table, 16-bit DDS increments, chords, playlist and score. */
+capture_ram_tail:
+  movw r10, r30
+  lds r16, 111
+  andi r16, 15
+  lds r17, 116
+  andi r17, 15
+  sub r16, r17
+  ldi r30, 111
+  brcs ram_tail_destination
+  ldi r30, 116
+ram_tail_destination:
+  ld r16, X+
+  andi r16, 127
+  mov r17, r16
+  andi r17, 15
+  breq no_ram_tail
+  clr r31
+  st Z+, r16
+  ldi r17, 4
+ram_tail_copy:
+  ld r0, X+
+  st Z+, r0
+  dec r17
+  brne ram_tail_copy
+  subi r26, 4
+no_ram_tail:
+  movw r30, r10
+  rjmp envelope_return
 .include "score.inc"
