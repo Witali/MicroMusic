@@ -15,7 +15,7 @@ import struct
 import wave
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / 'ATtiny13A/Music/reference/children/source.mid'
+SOURCE = ROOT / 'ATtiny13A/Music/reference/children/source-events.json'
 OUT = ROOT / 'ATtiny13A/Music/variants/children'
 BASE = ROOT / 'ATtiny13A/Music/variants/rhythmic'
 
@@ -89,59 +89,28 @@ instrument_bank = module('children_instrument_bank', ROOT / 'tools/instrument-ba
 
 def source_metadata(notes, ppqn):
     raw = SOURCE.read_bytes()
-    fmt, count, division = struct.unpack_from('>HHH', raw, 8)
-    position = 8 + int.from_bytes(raw[4:8], 'big')
+    document = json.loads(raw)
     tracks, tempos, signatures = [], [], []
-    for track in range(count):
-        assert raw[position:position + 4] == b'MTrk'
-        length = int.from_bytes(raw[position + 4:position + 8], 'big')
-        chunk = raw[position + 8:position + 8 + length]
-        position += 8 + length
-        tick = cursor = 0
-        running = None
+    for track in document['tracks']:
         texts, programs = [], []
-        while cursor < len(chunk):
-            delta, cursor = reader.vlq(chunk, cursor)
-            tick += delta
-            status = chunk[cursor]
-            if status >= 128:
-                cursor += 1
-            else:
-                if running is None:
-                    raise ValueError('Missing running status')
-                status = running
-            if status == 255:
-                kind = chunk[cursor]
-                cursor += 1
-                size, cursor = reader.vlq(chunk, cursor)
-                payload = chunk[cursor:cursor + size]
-                cursor += size
-                running = None
-                if kind in (1, 2, 3, 4, 6):
-                    texts.append(dict(tick=tick, type=kind, text=payload.decode('cp1252')))
-                elif kind == 81:
-                    micros = int.from_bytes(payload, 'big')
-                    tempos.append(dict(tick=tick, quarterBeat=tick / ppqn,
-                                       microsecondsPerQuarter=micros, bpm=60000000 / micros))
-                elif kind == 88:
-                    signatures.append(dict(tick=tick, numerator=payload[0], denominator=2 ** payload[1]))
-            elif status in (240, 247):
-                size, cursor = reader.vlq(chunk, cursor)
-                cursor += size
-                running = None
-            else:
-                running = status
-                op = status & 240
-                size = 1 if op in (192, 208) else 2
-                if op == 192:
-                    programs.append(dict(tick=tick, channel=status & 15, zeroBasedProgram=chunk[cursor]))
-                cursor += size
-        selected = [n for n in notes if n[0] == track]
-        tracks.append(dict(index=track, text=texts, programs=programs,
+        for event in track['events']:
+            tick, kind = event['tick'], event['type']
+            if kind == 'text':
+                texts.append(dict(tick=tick, type=event['metaType'], text=event['text']))
+            elif kind == 'programChange':
+                programs.append(dict(tick=tick, channel=event['channel'], zeroBasedProgram=event['program']))
+            elif kind == 'tempo':
+                micros = event['microsecondsPerQuarter']
+                tempos.append(dict(tick=tick, quarterBeat=tick / ppqn, microsecondsPerQuarter=micros, bpm=60000000 / micros))
+            elif kind == 'timeSignature':
+                signatures.append(dict(tick=tick, numerator=event['numerator'], denominator=event['denominator']))
+        selected = [n for n in notes if n[0] == track['index']]
+        tracks.append(dict(index=track['index'], text=texts, programs=programs,
                            notes=len(selected), channels=sorted(set(n[1] for n in selected)),
                            pitchRange=[min(n[2] for n in selected), max(n[2] for n in selected)] if selected else None))
-    return dict(file='source.mid', bytes=len(raw), sha256=hashlib.sha256(raw).hexdigest(),
-                format=fmt, tracks=count, ppqn=division, sourceNotes=len(notes),
+    return dict(file=SOURCE.name, bytes=len(raw), sha256=hashlib.sha256(raw).hexdigest(),
+                originalMidiSha256=document['source']['sha256'],
+                format=document['format'], tracks=len(tracks), ppqn=document['ppqn'], sourceNotes=len(notes),
                 lastQuarterBeat=max(n[4] for n in notes) / ppqn,
                 tempoMap=tempos, timeSignatures=signatures, trackMetadata=tracks,
                 license='No permission or license is inferred from embedded MIDI metadata.')
@@ -162,6 +131,30 @@ def arrangement(notes, ppqn, bpm, bars, candidates):
     score['packing_candidates'] = candidates
     score['instruments'] = dict(lead='acoustic-grand-piano', keys='fretless-bass', pluck='off', percussion='off')
     score['engine'] = 'instrument-bank'
+    score['release_tail_slots'] = 2
+    # Preserve the selected bass track's own note identities and end times;
+    # the old half-bar harmony sampler retriggered long notes and held short
+    # notes too long. Controls are interleaved offline with tied lead tokens.
+    controls = []
+    stop = bars * 16
+    bass_notes = sorted((n for n in notes if n[0] == 4 and n[3] < bars * 4 * ppqn), key=lambda n:n[3])
+    for note in bass_notes:
+        start = math.ceil(note[3] * 4 / ppqn)
+        end = min(stop, math.floor(note[4] * 4 / ppqn))
+        if start < end:
+            controls.append(dict(unit=start, chord=reader.note_name(note[2])))
+            # A final control belongs to the cadence's first unit instead.
+            if end < stop:controls.append(dict(unit=end, offMask=2))
+    controls.sort(key=lambda c:(c['unit'], 'chord' in c))
+    # Replacing the monophonic bass at the same instant closes the old gate
+    # and starts the new note atomically. Only genuine gaps need a separate
+    # off byte; identities are retained even for repeated pitches.
+    starts = {c['unit'] for c in controls if 'chord' in c}
+    controls = [c for c in controls if 'chord' in c or c['unit'] not in starts]
+    score['replace_harmony_sections'] = ['intro', 'ending']
+    score['timed_controls'] = dict(intro=controls, ending=[dict(unit=0,offMask=2),dict(unit=0,chord='F1'),dict(unit=4,offMask=14)])
+    score['packing_max_entry_offset'] = 255
+    score['bass_source_note_ons'] = len(bass_notes)
     return score
 
 
@@ -186,18 +179,18 @@ def main():
     _, meta = builder.compiler.to_inc(score, validate_size=False)
     # The specialization removes inactive voices. The final assembler validates
     # the real code plus data size; no guessed code size is used for this check.
-    if meta['event_bytes'] > 256 or meta['playlist_bytes'] > 255:
+    if meta['maximum_entry_offset'] > 255 or meta['playlist_bytes'] > 255:
         raise ValueError(f'Arrangement offsets do not fit: events {meta["event_bytes"]}/256')
     score['title'] = 'Robert Miles — Children'
     score['composer'] = 'Robert Miles'
-    score['source_midi'] = dict(file='../../reference/children/source.mid',
-        sha256=hashlib.sha256(SOURCE.read_bytes()).hexdigest(), ppqn=ppqn,
+    score['source_midi'] = dict(file='../../reference/children/source-events.json',
+        sha256=hashlib.sha256(SOURCE.read_bytes()).hexdigest(), originalMidiSha256=json.loads(SOURCE.read_text(encoding='utf-8'))['source']['sha256'], ppqn=ppqn,
         credit='MIDI metadata: Copyright © 1996 by Marcel Gonzalez; bka "DREAMS"',
         timeSignature='4/4', sourcePitchedNotes=len([n for n in notes if n[1] != 9]))
     score['arrangement'] = dict(sourceQuarterBeats=args.bars * 4, sourceBars4_4=args.bars,
         cadenceQuarterBeats=4, firstSourceQuarterBeat=0,
         lead='Main piano melody, MIDI track 1; one highest active note on a sixteenth grid',
-        accompaniment='Quiet FluidR3 program35 fretless-bass approximation at exact source pitches C#2/A#1/F1; synthetic guitar and percussion omitted',
+        accompaniment='Quiet decaying FluidR3 program35 fretless bass at exact C#2/A#1/F1 pitches; every selected source track4 NoteOn and NoteOff retained; guitar and percussion omitted',
         tempo='Steady 140 BPM; original MIDI changes from approximately 140 to 137 BPM at beat 160',
         scope='The complete main piano track followed by an F cadence; later MIDI-only layers and multichannel polyphony are omitted'
             if args.bars == maximum else 'Opening excerpt of the main piano track followed by an F cadence',
@@ -220,7 +213,7 @@ def main():
     report['instrumentAssignments'] = roles
     report['instrumentBank'] = dict(file='../../instruments/bank.json',
                                     sha256=hashlib.sha256(instrument_bank.BANK_PATH.read_bytes()).hexdigest(),
-                                    firmwareSpecialization='Shared instrument engine; full-level piano attack and two-level release; fretless bass soft attack step2, cap6, linear release step1; phase-continuous inactive-voice removal')
+                                    firmwareSpecialization='Shared compact piano attack/sustain banks, register-dependent decay and two-level release; fretless bass peak6, decay mask3, linear release1; explicit source bass NoteOff, phase-continuous inactive-voice removal')
     (OUT / 'build-report.json').write_text(json.dumps(report, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
     print(f'Children: {args.bars} source bars + cadence, {report["flashBytes"]} Flash bytes, {(args.bars + 1) * 4 * 60 / bpm:.6f} seconds')
 
