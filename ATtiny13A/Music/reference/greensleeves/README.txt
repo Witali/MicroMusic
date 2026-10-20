@@ -1,3 +1,5 @@
+MIDI binaries are not retained. greensleeves-events.json and greensleeves-4voices-events.json preserve all source events, tracks, instruments and original SMF SHA-256. External source paths below identify provenance.
+
 Greensleeves — unchanged source score from the Z80 web player
 ==========================================================
 

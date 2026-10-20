@@ -1,5 +1,7 @@
+MIDI binaries are not retained. source-events.json preserves all SMF events, tracks and original file SHA-256; read with tools/midi-events.py.
+
 Входной файл пользователя: mozart - Turkish March in Eb.mid.
-source.mid сохранён без изменений; атрибуция из MIDI:
+source-events.json сохраняет события оригинала в структурированном виде; атрибуция из MIDI:
   Mozart: Sonate KV 331, 3. Satz
   MIDI Copyright © 2005 Bernd Krüger, http://www.piano-midi.de
   Edition: 2013-07-15

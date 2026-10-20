@@ -8,7 +8,7 @@ midi=importlib.util.module_from_spec(spec);spec.loader.exec_module(midi)
 
 class MidiTests(unittest.TestCase):
     def test_turkish_march_recognizable_opening_is_retained_from_source_start(self):
-        source=Path(__file__).resolve().parents[1]/'ATtiny13A/Music/reference/turkish-march/source.mid'
+        source=Path(__file__).resolve().parents[1]/'ATtiny13A/Music/reference/turkish-march/source-events.json'
         notes,ppqn,bpm=midi.read_midi(source)
         s=midi.create_score(notes,ppqn,bpm,1,1,1,2)
         self.assertEqual(s['patterns']['intro'][0],

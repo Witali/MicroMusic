@@ -30,17 +30,28 @@ def vlq(buf,i):
 
 
 def read_midi(path):
+    if Path(path).suffix.lower()=='.json':
+        import importlib.util
+        spec=importlib.util.spec_from_file_location('retained_midi_events',Path(__file__).with_name('midi-events.py'))
+        events=importlib.util.module_from_spec(spec);spec.loader.exec_module(events)
+        return events.notes(events.load(path))
     b=Path(path).read_bytes()
+    if len(b)<14:raise ValueError('Truncated MIDI header')
     if b[:4]!=b'MThd':raise ValueError('Not an SMF MIDI file')
     header_size=struct.unpack_from('>I',b,4)[0]
+    if header_size<6 or 8+header_size>len(b):raise ValueError('Invalid MIDI header length')
     fmt,tracks,division=struct.unpack_from('>HHH',b,8)
     if fmt not in (0,1):raise ValueError('Only MIDI format 0 and 1 are supported')
     if division&0x8000:raise ValueError('SMPTE time division is unsupported')
+    if division==0 or tracks==0:raise ValueError('MIDI needs nonzero PPQN and at least one track')
     i=8+header_size
     all_notes=[];tempos=[]
     for track in range(tracks):
+        if i+8>len(b):raise ValueError('Truncated MIDI track header')
         if b[i:i+4]!=b'MTrk':raise ValueError('MTrk chunk missing')
-        length=struct.unpack_from('>I',b,i+4)[0];chunk=b[i+8:i+8+length];i+=8+length
+        length=struct.unpack_from('>I',b,i+4)[0]
+        if i+8+length>len(b):raise ValueError('Truncated MIDI track data')
+        chunk=b[i+8:i+8+length];i+=8+length
         tick=0;j=0;running=None;active=defaultdict(list)
         while j<len(chunk):
             d,j=vlq(chunk,j);tick+=d
@@ -51,11 +62,14 @@ def read_midi(path):
                 if running is None:raise ValueError('MIDI running status without preceding event')
                 status=running
             if status==255:
+                if j>=len(chunk):raise ValueError('Truncated MIDI meta event')
                 typ=chunk[j];j+=1;n,j=vlq(chunk,j);payload=chunk[j:j+n];j+=n
+                if j>len(chunk):raise ValueError('Truncated MIDI meta payload')
                 if typ==0x51 and len(payload)==3:tempos.append((tick,int.from_bytes(payload,'big')))
                 running=None
             elif status in (0xf0,0xf7):
                 n,j=vlq(chunk,j);j+=n;running=None
+                if j>len(chunk):raise ValueError('Truncated MIDI system-exclusive payload')
             elif 0x80<=status<=0xef:
                 running=status;op=status&0xf0;chan=status&15
                 size=1 if op in (0xc0,0xd0) else 2
@@ -76,7 +90,7 @@ def read_midi(path):
     return all_notes,division,bpm
 
 
-def create_score(notes,ppqn,bpm,max_bars,section_bars,melody_track,bass_track):
+def create_score(notes,ppqn,bpm,max_bars,section_bars,melody_track,bass_track,extent_ticks=None):
     melodic=[n for n in notes if n[1]!=9]
     by_track=defaultdict(list)
     for n in melodic:by_track[n[0]].append(n)
@@ -89,7 +103,7 @@ def create_score(notes,ppqn,bpm,max_bars,section_bars,melody_track,bass_track):
     melody=by_track[melody_track]
     other=[n for n in melodic if n[0]!=melody_track]
     if bass_track is not None:other=by_track[bass_track]
-    length=max(n[4] for n in melody)
+    length=max(n[4] for n in melody) if extent_ticks is None else extent_ticks
     bars=min(max_bars,max(1,(length+(ppqn*4)-1)//(ppqn*4)))
     samples=bars*16
     def active_at(events,position):return [n[2] for n in events if n[3]<=position<n[4]]

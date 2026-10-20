@@ -1,7 +1,9 @@
+MIDI binaries are not retained. source-events.json preserves all SMF events, tracks and original file SHA-256; read with tools/midi-events.py.
+
 Источник адаптации Children
 ==========================
 
-source.mid — копия предоставленного пользователем файла
+source-events.json — структурированное представление предоставленного пользователем файла
 C:/Users/rudol/Downloads/Robert Miles - Children.mid.
 
 SMF format 1, PPQN 120, 23 дорожки, 4/4. В MIDI 6872 события нот;
