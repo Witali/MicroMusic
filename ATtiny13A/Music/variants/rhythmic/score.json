@@ -1,6 +1,9 @@
 {
   "title": "Lumière — four-voice instrumental arrangement",
-  "composers": ["Lorien Testard", "Alice Duport-Percier"],
+  "composers": [
+    "Lorien Testard",
+    "Alice Duport-Percier"
+  ],
   "melody_transcription": "Nicholas Pinelli / VGLeadSheets",
   "score_url": "https://vgleadsheets.com/view/clair-obscur-expedition-33/lumire",
   "reference_recording_url": "https://www.youtube.com/watch?v=LpNVf8sczqU",
@@ -8,8 +11,41 @@
   "tempo_bpm": 80,
   "beats_per_bar": 4,
   "note_format": "Scientific pitch notation, duration in quarter-note beats; R is a rest. A tied note extends across the following bar when marked with ~. Slash-only improvisation sections receive new instrumental accompaniment.",
-  "playlist": ["intro", "A", "B", "C", "C", "D", "C", "C", "F", "F", "D", "C", "C", "F", "F"],
-  "chord_pairs": [["Bm", "Gmaj7"], ["Em", "F#m"], ["Bm", "Gmaj7"], ["Em", "F#"]],
+  "playlist": [
+    "intro",
+    "A",
+    "B",
+    "C",
+    "C",
+    "D",
+    "C",
+    "C",
+    "F",
+    "F",
+    "D",
+    "C",
+    "C",
+    "F",
+    "F"
+  ],
+  "chord_pairs": [
+    [
+      "Bm",
+      "Gmaj7"
+    ],
+    [
+      "Em",
+      "F#m"
+    ],
+    [
+      "Bm",
+      "Gmaj7"
+    ],
+    [
+      "Em",
+      "F#"
+    ]
+  ],
   "patterns": {
     "intro": [
       "B3:0.5 F#4:0.5 D5:0.5 G4:0.25 B4:0.25 G3:0.5 F#4:0.5 C#5:1",
@@ -51,10 +87,58 @@
       "E4:1 F#4:1 F#4:1 G4:1",
       "A4:1 G4:0.5 F#4:0.5 G4:2"
     ],
-    "F": ["R:4", "R:4", "R:4", "R:4"]
+    "F": [
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4"
+    ]
   },
   "chord_overrides": {
-    "intro": [["Bm", "Gmaj7"], ["Em", "F#m"]],
-    "D": [["Bm", "Gmaj7"], ["Em", "F#m"], ["Gmaj7", "Em"], ["C#m7b5", "F#"], ["Bm", "Gmaj7"], ["Em", "F#m"], ["Bm", "Gmaj7"], ["Em", "F#"]]
-  }
+    "intro": [
+      [
+        "Bm",
+        "Gmaj7"
+      ],
+      [
+        "Em",
+        "F#m"
+      ]
+    ],
+    "D": [
+      [
+        "Bm",
+        "Gmaj7"
+      ],
+      [
+        "Em",
+        "F#m"
+      ],
+      [
+        "Gmaj7",
+        "Em"
+      ],
+      [
+        "C#m7b5",
+        "F#"
+      ],
+      [
+        "Bm",
+        "Gmaj7"
+      ],
+      [
+        "Em",
+        "F#m"
+      ],
+      [
+        "Bm",
+        "Gmaj7"
+      ],
+      [
+        "Em",
+        "F#"
+      ]
+    ]
+  },
+  "packing_candidates": 4096
 }

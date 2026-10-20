@@ -1,9 +1,9 @@
 {
   "image": "rhythmic",
-  "flashSha256": "60c516658676aea787543b337e28d9042a3eb30cb72404fc281643be30eb9678",
-  "flashBytes": 1024,
+  "flashSha256": "a37899e3917285aabb41ac1c8e28534f88668950b37d53fce6b48a3f417cdd80",
+  "flashBytes": 996,
   "fullPlaylist": {
-    "commands": 522,
+    "commands": 530,
     "beats": 296,
     "idealSeconds": 222,
     "actualSeconds": 222.01685343749998,
@@ -11,6 +11,24 @@
     "finalTimingErrorMs": 16.853437499987194,
     "maximumExecutionErrorAgainstGridUs": 8.645833333333334,
     "missingEvents": 0
+  },
+  "compression": {
+    "method": "Repeated command phrases; dynamic-programming parsing; suffix sharing; deterministic dictionary search",
+    "globallyMinimal": false,
+    "candidateLimit": 4096,
+    "candidateCount": 3960,
+    "dictionaryTrials": 122833,
+    "originalCommandBytes": 507,
+    "originalStreamSha256": "2f1020858c8a85efbae2591b435f885eb13ec9e9c91580ba0ea2b4be8880730e",
+    "sourceLayoutBytes": 261,
+    "packedEventBytes": 210,
+    "playlistBytes": 23,
+    "packedBytes": 233,
+    "savedAgainstSourceLayoutBytes": 28,
+    "storedSections": 7,
+    "referencedSections": 10,
+    "verifiedLossless": true,
+    "runtimeStreamSha256": "2f1020858c8a85efbae2591b435f885eb13ec9e9c91580ba0ea2b4be8880730e"
   },
   "grid": {
     "phaseStep": 4772,
@@ -34,15 +52,5 @@
   },
   "isrCycles": 19,
   "lostTimerEvents": 0,
-  "lostWorkEvents": 0,
-  "browser": {
-    "elapsedSeconds": 62.3,
-    "tempoPercent": 100,
-    "accumulatedLagMs": 0,
-    "lostEvents": 0,
-    "audioClockMs": 61909.333,
-    "wallClockMs": 61899.0,
-    "filterHz": 4000,
-    "note": "Clocks observed in page DOM before pausing; UI delivery jitter is not accumulating audio lag."
-  }
+  "lostWorkEvents": 0
 }

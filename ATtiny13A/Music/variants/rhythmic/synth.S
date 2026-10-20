@@ -71,12 +71,12 @@ clear_registers:
   mov r21, r16
   ldi r16, 1
   mov r22, r16
-  mov r28, r16
+  ldi r28, FIRST_PLAYLIST_INDEX
   ldi r16, GRID_INITIAL_HIGH
   sts 100, r16
   ldi r29, 7
-  ldi r30, lo8(melody_data)
-  ldi r31, hi8(melody_data)
+  ldi r30, lo8(first_section)
+  ldi r31, hi8(first_section)
   ldi r16, 167
   mov r14, r16
   /* Configure hardware Fast PWM on OC0B/PB1, fixed TOP=255 at 37.5 kHz. */
@@ -360,8 +360,8 @@ render_drum:
   /* Add bass drum or band-limited pseudo-random percussion; center the mix on PWM duty 128. */
   cpi r21, 4
   brcc write_pwm
-  tst r29
-  breq .L280
+  cpi r29, 2
+  brcs .L280
   rjmp .L298
 .L280:
   ldi r17, 1

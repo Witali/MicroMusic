@@ -28,7 +28,8 @@ def build(folder):
     step=round(data['tempo_bpm']*4/60/(37500/512)*65536)
     assert 0<step<65536
     initial=math.ceil((65536-step)/256)
-    settings=dict(REST_INDEX=meta['rest_index'],HOLD_INDEX=meta['hold_index'],PLAYLIST_LEN=len(meta['playlist']),
+    assert len(meta['playlist'])<=255,'Playlist index is one byte'
+    settings=dict(REST_INDEX=meta['rest_index'],HOLD_INDEX=meta['hold_index'],PLAYLIST_LEN=len(meta['playlist']),FIRST_PLAYLIST_INDEX=int(len(meta['playlist'])>1),
                   GRID_STEP_LOW=step&255,GRID_STEP_HIGH=step>>8,GRID_INITIAL_HIGH=initial)
     (folder/'score.inc').write_text(score,encoding='utf-8',newline='\n')
     (folder/'config.inc').write_text(''.join(f'.set {k}, {v}\n' for k,v in settings.items()),encoding='utf-8',newline='\n')

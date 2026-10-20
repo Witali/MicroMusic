@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[2]
 MUSIC = ROOT / 'ATtiny13A' / 'Music'
 OUTPUT = ROOT / 'web-player' / 'firmware.json'
 SPECS = [
-    ('rhythmic', '01', 'Единый ритм и штрихи', 'Общая сетка нот и ударных, повторная атака и явные лиги; мягкие тембры FluidR3 и плавный PWM.', 'variants/rhythmic', 'release'),
+    ('rhythmic', '01', 'Люмьер · единый ритм', 'Полная аранжировка из Expedition 33, 3:42. Автоупаковка повторов, общая сетка нот и ударных, мягкие тембры FluidR3.', 'variants/rhythmic', 'release'),
 ]
 
 

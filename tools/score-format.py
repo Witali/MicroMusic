@@ -11,6 +11,7 @@ import argparse
 import json
 import math
 import re
+import importlib.util
 from pathlib import Path
 
 BEATS = (0.25, 0.5, 0.75, 1., 1.5, 2., 4.)
@@ -75,11 +76,10 @@ def pack_bar(bar,chords,note_index,chord_index,hold_index,previous_tie=None,note
         out.append((0xF0 | note_off) if note_off is not None else (0xE0 | chord_index[chords[1]]))
     return out,previous_tie,holds
 
-def to_inc(data):
+def to_inc(data,validate_size=True):
     tempo=data['tempo_bpm']
     ticks=[round(d*4) for d in BEATS]
     sections=list(data['patterns'])
-    if len(sections)>16: raise ValueError('Too many unique sections')
     if any(s not in sections for s in data['playlist']):raise ValueError('Unknown section')
     pitches=sorted({n.split(':')[0] for bars in data['patterns'].values() for bar in bars for n in bar.split()}-{'R'},key=midi)+['R']
     if len(pitches)>27:raise ValueError('Need space for both rest and hold codes below 0xE0')
@@ -118,11 +118,13 @@ def to_inc(data):
             bars_count+=1
         events.append(255)
         song_sections[section]=events
-    offsets={};pos=0
-    for section,events in song_sections.items():
-        offsets[section]=pos
-        pos+=len(events)
-    if pos>256:raise ValueError(f'Event section offsets need more than one byte: {pos}')
+    packing_spec=importlib.util.spec_from_file_location('pack_score',Path(__file__).with_name('pack-score.py'))
+    packing=importlib.util.module_from_spec(packing_spec);packing_spec.loader.exec_module(packing)
+    chunks=[bytes(song_sections[s][:-1]) for s in data['playlist']]
+    packed=packing.pack(b''.join(chunks),chunks,candidate_limit=data.get('packing_candidates',96))
+    song_sections=packed['sections'];offsets=packed['offsets'];storage=packed['storage']
+    output_playlist=packed['playlist'];pos=len(storage)
+    if validate_size and pos>256:raise ValueError(f'Packed event data exceeds one-byte offsets: {pos}')
     def delta(n):
         if n is None:return 0
         freq=440.0*2**((n-69)/12)
@@ -132,7 +134,7 @@ def to_inc(data):
     def table_row(bytes_,comment=''):
         return '  .byte ' + ', '.join(f'0x{x:02x}' for x in bytes_) + (f'   /* {comment} */' if comment else '')
     lines=['/* GENERATED FROM score.json BY tools/score-format.py. */', 'playlist:']
-    playlist=[offsets[s] for s in data['playlist']]
+    playlist=[offsets[s] for s in output_playlist]
     lines.append(table_row(playlist,'direct section byte offsets (no sentinel)'))
     lines.append('durations:')
     lines.append(table_row(ticks,'sixteenth-note grid units'))
@@ -147,16 +149,18 @@ def to_inc(data):
         a=delta(x+KEY_VOICE_OFFSETS['piano']);b=delta(x+BASS_VOICE_OFFSETS['guitar'])
         lines.append(table_row([a&255,a>>8,b&255,b>>8],f'{ch}: piano {pname(x)}, guitar {pname(x+BASS_VOICE_OFFSETS['guitar'])}'))
     lines.append('melody_data:')
-    for section,events in song_sections.items():
-        lines.append(f'section_{section}:')
-        for i in range(0,len(events),16):
-            lines.append(table_row(events[i:i+16]))
+    labels_by_offset={}
+    for name,offset in offsets.items():labels_by_offset.setdefault(offset,[]).append('section_'+name)
+    labels_by_offset.setdefault(playlist[0],[]).append('first_section')
+    for i,token in enumerate(storage):
+        for label in labels_by_offset.get(i,[]):lines.append(label+':')
+        lines.append(table_row([token]))
     meta={"note_count":sum(sum(1 for n in sec if n!=255 and n<0xe0) for sec in song_sections.values()),
           "event_bytes":pos,"playlist_bytes":len(playlist),"note_table_bytes":sum(p!="R" for p in pitches)*2,
           "chord_table_bytes":len(chords)*4,"durations":ticks,"pitches":pitches,"chords":chords,
           "total_data_bytes":pos+len(playlist)+len(ticks)+sum(p!="R" for p in pitches)*2+len(chords)*4,
           "section_bars":{k:len(v) for k,v in data['patterns'].items()},
-          "playlist":data['playlist'],"section_offsets":offsets,"source":data['title'],"rest_index":rest_index,"hold_index":hold_index,"holds":holds,
+          "playlist":output_playlist,"source_playlist":data['playlist'],"section_offsets":offsets,"compression":packed['report'],"source":data['title'],"rest_index":rest_index,"hold_index":hold_index,"holds":holds,
           "instruments":{"lead":"violin","keys":"piano","pluck":"guitar","drums":"kick/snare/hat"}}
     return '\n'.join(lines)+'\n',meta
 

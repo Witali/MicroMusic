@@ -8,9 +8,10 @@ const rom=fs.readFileSync(`${folder}/synth.bin`),ep=fs.readFileSync(`${folder}/e
 const meta=JSON.parse(fs.readFileSync(`${folder}/build-report.json`)),{labels,timing}=meta;
 const {rest_index:rest,hold_index:hold}=meta.score;
 const score=JSON.parse(fs.readFileSync(`${folder}/score.json`));
+const drumGridUnits=score.percussion_grid_units??2,drumFirstUnit=score.percussion_first_unit??0;
 const units=[1,2,3,4,6,8,16],ticks=[],expected=[];let totalUnits=0;
-for(let p=0;p<score.playlist.length;p++){
-  const section=score.playlist[p];let address=labels[`section_${section}`];
+for(let p=0;p<meta.score.playlist.length;p++){
+  const section=meta.score.playlist[p];let address=labels[`section_${section}`];
   for(;;){const token=rom[address++];expected.push({playlist:p,section,token,unit:totalUnits});if(token===255)break;if(token<224)totalUnits+=units[token&7];}
 }
 let phase=timing.initialHighPhase<<8;
@@ -31,7 +32,7 @@ c.step=()=>{
       envelopeChecks++;prior=null;
       if(firstAttack!==null&&fullAttack===null){if((c.r[1]&15)>=8&&halfAttack===null)halfAttack=c.cyc;if((c.r[1]&15)===15)fullAttack=c.cyc;}
     }
-    if(c.pc===labels.drum_trigger/2)drums.push({unit:(drums.length)*2,cycles:c.cyc,type:c.r[29]>>1,tick:envTick});
+    if(c.pc===labels.drum_trigger/2)drums.push({unit:drumFirstUnit+drums.length*drumGridUnits,cycles:c.cyc,type:c.r[29]>>1,tick:envTick});
     if(c.pc===labels.read_event/2&&index<expected.length){
       const e=expected[index++],token=rom[c.r[30]|c.r[31]<<8];assert.equal(token,e.token);
       assert.equal(envTick,ticks[e.unit],`Grid position ${e.unit}`);
@@ -62,6 +63,8 @@ c.step=()=>{
 };
 while(index<expected.length&&c.cyc<(ticks.at(-1)+10)*131072)c.nextDuty();
 assert.equal(index,expected.length);assert.equal(c.lost+c.workLost,0);assert.equal(repeated,repeatedArticulated);
+const semanticHash=createHash('sha256').update(Uint8Array.from(events.filter(e=>e.token!==255).map(e=>e.token))).digest('hex');
+assert.equal(semanticHash,meta.score.compression.originalStreamSha256,'Runtime commands equal the unpacked source score');
 for(const drum of drums)assert.equal(drum.tick,ticks[drum.unit],'Drums on the identical sixteenth grid');
 const maxTimingErrorMs=Math.max(...events.map(e=>Math.abs(e.errorMs)));
 assert.ok(maxTimingErrorMs<25,`${maxTimingErrorMs} ms whole-song deviation`);
@@ -69,6 +72,7 @@ assert.ok(maxStepErrorUs<50);assert.ok((fullAttack-firstAttack)/9600<60);
 const report={image:id,flashSha256:createHash('sha256').update(rom).digest('hex'),flashBytes:rom.length,
   fullPlaylist:{commands:index,beats:totalUnits/4,idealSeconds:totalUnits/4*60/score.tempo_bpm,actualSeconds:events.at(-1).timeMs/1000,
     maximumTimingErrorMs:maxTimingErrorMs,finalTimingErrorMs:events.at(-1).errorMs,maximumExecutionErrorAgainstGridUs:maxStepErrorUs,missingEvents:0},
+  compression:{...meta.score.compression,runtimeStreamSha256:semanticHash},
   grid:{phaseStep:timing.phaseStep,targetBpm:score.tempo_bpm,actualBpm:timing.actualTempoBpm,drumHitsIncludingBothEndpoints:drums.length,drumGridMismatches:0},
   articulation:{realNoteOns,holdNotes,repeatedNotes:repeated,repeatedNotesArticulated:repeatedArticulated,phaseResets:0,
     firstAttack50PercentMs:(halfAttack-firstAttack)/9600,firstAttack100PercentMs:(fullAttack-firstAttack)/9600},

@@ -4,7 +4,16 @@ import {readFileSync} from 'node:fs';
 import {AVRCore} from '../lib/avr-core.js';
 const base=new URL('../../ATtiny13A/Music/variants/rhythmic/',import.meta.url);
 const read=n=>readFileSync(new URL(n,base));
-const {labels}=JSON.parse(read('build-report.json'));
+const {labels,score}=JSON.parse(read('build-report.json'));
+
+test('packed Lumiere preserves its original opening and first-section entry point',()=>{
+  const c=new AVRCore(read('synth.bin'),read('eeprom.bin')),notes=[];
+  const step=c.step.bind(c);
+  c.step=()=>{if(c.pc===labels.lead_commit/2&&!c.inIRQ)notes.push(c.r[4]|c.r[5]<<8);step();};
+  while(notes.length<8&&c.cyc<4*9600000)c.nextDuty();
+  assert.deepEqual(notes.slice(0,8),[59,66,74,67,71,55,66,73].map(n=>Math.round(440*2**((n-69)/12)*65536/18750)));
+  assert.equal(labels.first_section,labels.melody_data+score.section_offsets[score.playlist[0]]);
+});
 
 test('PWM outputs every prepared point with its exact unsigned midpoint, without torn pairs',t=>{
   const c=new AVRCore(read('synth.bin'),read('eeprom.bin')),points=[],output=[];
@@ -74,6 +83,19 @@ test('actual percussion noise visits all 65535 nonzero states before repeating',
   assert.equal(expected,167);assert.equal(seen.size,65535);
 });
 
+test('bass drum keeps its waveform on both sixteenths of the same eighth-note hit',()=>{
+  for(let age=0;age<4;age++){
+    const outputs=[];
+    for(const gridPhase of [0,1]){
+      const c=new AVRCore(read('synth.bin'),read('eeprom.bin'));
+      c.pc=labels.render_drum/2;c.r[29]=gridPhase;c.r[21]=age;c.r[14]=167;
+      while(c.pc!==labels.write_pwm/2)c.step();
+      outputs.push([c.r[14],c.r[17],c.r[26]]);
+    }
+    assert.deepEqual(outputs[0],outputs[1]);
+  }
+});
+
 test('all playlist boundaries and note-off paths fit the CPU and SRAM budgets',t=>{
   const c=new AVRCore(read('synth.bin'),read('eeprom.bin')),sections=new Set(),tokens=new Set();
   const entry=labels.audio_step/2,done=(labels.idle+6)/2;let maximum=0;
@@ -88,7 +110,7 @@ test('all playlist boundaries and note-off paths fit the CPU and SRAM budgets',t
     }while(c.pc!==done||c.inIRQ);
     maximum=Math.max(maximum,c.cyc-before);sections.add(c.r[28]);
   }
-  for(let n=0;n<15;n++)assert.ok(sections.has(n));
+  for(let n=0;n<score.playlist.length;n++)assert.ok(sections.has(n));
   for(const token of [0xf2,0xf4,0xf6,0xf8,0xff])assert.ok(tokens.has(token));
   assert.ok(maximum<480,`${maximum} foreground cycles including IRQ`);
   assert.ok(c.minSP>=101,'Five state bytes do not overlap the hardware stack');
