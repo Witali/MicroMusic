@@ -75,6 +75,7 @@ function load(entry) {
   delete $('tempo').dataset.wallMs; delete $('tempo').dataset.audioMs;
   $('selected-order').textContent=entry.order; $('selected-title').textContent=entry.title; $('selected-description').textContent=entry.description;
   $('rom-name').textContent=`attiny13a-${entry.id}.hex`; $('rom-details').textContent=`${entry.flashBytes} / 1024 Б Flash · ${entry.eepromBytes} / 64 Б EEPROM · ${(entry.sampleHz/1000).toLocaleString('ru')} кГц отсчёты`;
+  $('rom-name').href=entry.source; $('rom-name').download=`attiny13a-${entry.id}.hex`;
   $('rom-hash').textContent=entry.flashSha256.slice(0,16)+'…'; $('rom-hash').title='SHA-256 Flash: '+entry.flashSha256;
   $('rom-size').textContent=entry.flashBytes+' байт';
   $('original-player').href=entry.originalPlayer; $('wav-link').hidden=!entry.preview; if (entry.preview) $('wav-link').href=entry.preview;
