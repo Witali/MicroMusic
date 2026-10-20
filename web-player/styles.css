@@ -20,3 +20,6 @@ main{max-width:1320px;margin:auto;padding:0 40px}.intro{display:flex;align-items
 @media(max-width:460px){.fuses{gap:18px}.fuse-clock{width:100%;margin-left:0}.fuse-clock a{display:inline-block}.fuse-byte strong{font-size:20px}}
 @media(max-width:460px){.scope-metrics{grid-template-columns:repeat(2,1fr)}}
 @media(prefers-reduced-motion:reduce){button{transition:none}}
+
+.signal-outputs{flex:1;min-width:0;display:grid;gap:20px}.signal-outputs .signal-path{min-width:0}.signal-outputs .signal-line{margin:8px 0}.panorama{font-size:11px;color:var(--muted);line-height:1.7;margin:0 0 22px}.scope-channel{position:absolute;top:9px;left:9px;color:var(--accent);font:9px var(--mono);background:#0e140e;padding:2px 4px}.right-scope{margin-top:10px}.right-scope .scope-channel{color:#86d9ef}body[data-stereo=true] .scope-wrap canvas{height:126px}body[data-playing=true] .right-output .signal-line i{background:#86d9ef;box-shadow:0 0 10px #86d9ef55}.right-output .signal-line b{background:#456b75}.right-output .signal-line svg{stroke:#86d9ef}.scope-metrics #average{font-size:15px;white-space:nowrap}[hidden]{display:none!important}
+@media(max-width:460px){.board{gap:20px}.signal-path>span{font-size:8px;line-height:1.6;display:block}.signal-outputs{min-width:100px}.chip{width:135px;padding:16px 9px}.chip strong{font-size:17px}}

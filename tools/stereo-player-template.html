@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Люмьер · ATtiny13A стерео</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui;background:#101411;color:#e8eddf}body{max-width:850px;margin:40px auto;padding:0 20px}p{color:#a6b69b;line-height:1.7}button{padding:12px 20px;cursor:pointer}canvas{width:100%;height:130px;background:#0b110b;border:1px solid #30392f;margin:10px 0}label{margin-left:20px}output{display:block;margin:20px 0;font:13px monospace}
+</style>
+<h1>Люмьер · стерео на ATtiny13A</h1>
+<p>L: PB0 / OC0A, вывод 5 · R: PB1 / OC0B, вывод 6.<br>Скрипка левее, гитара правее, пианино и ударные по центру. Два PWM-канала по 37,5 кГц.</p>
+<button id="play">Слушать</button><button id="stop" disabled>Стоп</button><label>Громкость <input id="volume" type="range" min="0" max="1" step="0.01" value="0.65"></label>
+<output id="status">Исполняется тот же AVR HEX, который можно прошить в микроконтроллер.</output>
+<span>L · OCR0A</span><canvas id="left" aria-label="Левый канал PWM"></canvas><span>R · OCR0B</span><canvas id="right" aria-label="Правый канал PWM"></canvas>
+<script>
+/*AVR_CORE*/
+</script>
+<script>
+/*HEX_PARSER*/
+/*RENDERER*/
+const FIRMWARE_HEX = `/*FIRMWARE_HEX*/`;
+const EEPROM_HEX = `/*EEPROM_HEX*/`;
+const entry={audioChannels:2,pwmHz:37500,flashHex:FIRMWARE_HEX,eepromHex:EEPROM_HEX};
+let audio,processor,gain,renderer;
+const $=id=>document.getElementById(id);
+function draw(block){for(let ch=0;ch<2;ch++){
+  const canvas=$(ch?'right':'left'),ctx=canvas.getContext('2d');canvas.width=canvas.clientWidth*devicePixelRatio;canvas.height=130*devicePixelRatio;
+  ctx.fillStyle='#0b110b';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.strokeStyle=ch?'#86d9ef':'#c9ef86';ctx.beginPath();
+  for(let i=0;i<512;i++){const x=i/511*canvas.width,y=canvas.height*(.5-block[Math.floor(i*block.length/1024)*2+ch]*.43);if(i)ctx.lineTo(x,y);else ctx.moveTo(x,y)}ctx.stroke();
+}}
+async function stop(){processor?.disconnect();if(processor)processor.onaudioprocess=null;if(audio)await audio.close();audio=processor=null;$('play').disabled=false;$('stop').disabled=true}
+$('play').onclick=async()=>{try{
+  audio=new AudioContext();renderer=new Renderer(entry,audio.sampleRate);processor=audio.createScriptProcessor(4096,0,2);
+  const high=audio.createBiquadFilter();high.type='highpass';high.frequency.value=35;high.Q.value=20*Math.log10(.5);
+  const low=audio.createBiquadFilter();low.type='lowpass';low.frequency.value=4000;low.Q.value=20*Math.log10(.5);
+  gain=audio.createGain();gain.gain.value=+$('volume').value;processor.connect(high);high.connect(low);low.connect(gain);gain.connect(audio.destination);
+  processor.onaudioprocess=event=>{try{
+    const count=event.outputBuffer.length,block=renderer.render(count);
+    for(let ch=0;ch<2;ch++){const out=event.outputBuffer.getChannelData(ch);for(let i=0;i<count;i++)out[i]=block[2*i+ch]}
+    draw(block);$('status').textContent=`${(renderer.frames/audio.sampleRate).toFixed(1)} с · ISR ${renderer.core.maxIRQ} тактов · потери ${renderer.core.lost+renderer.core.workLost}`;
+  }catch(error){$('status').textContent=error.message;stop()}};
+  await audio.resume();$('play').disabled=true;$('stop').disabled=false;
+}catch(error){$('status').textContent=error.message;await stop()}};
+$('stop').onclick=stop;$('volume').oninput=()=>{if(gain)gain.gain.value=+$('volume').value};
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&audio)stop()});
+</script></html>

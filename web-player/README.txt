@@ -138,3 +138,26 @@ ISR 19 тактов, расчёт микса до 232 активных такт�
 История Git сохраняет все этапы. Отчёт score-timing-audit.txt фиксирует
 исходную причину; актуальная проверка находится в rhythmic-verification.json.
 Бенчмарк обновляет измерительный JSON. План: IMPROVEMENT_PLAN_RU.txt.
+
+СТЕРЕО ЛЮМЬЕР
+По умолчанию открывается ?firmware=lumiere-stereo. Главная страница
+показывает L / PB0 / OC0A и R / PB1 / OC0B, две осциллограммы до RC
+и средний PWM отдельно для каждого канала. Mono-образ rhythmic сохранён.
+
+Один AVRCore исполняет HEX: запись OCR0A задаёт L, следующая запись
+OCR0B в том же ISR завершает стереокадр. Два канала ресэмплируются
+на общей фазе и передаются как L,R,L,R. Очередь, запросы, стартовый запас
+и часы считают кадры, поэтому темп и задержка не удваиваются.
+AudioWorklet имеет outputChannelCount:[2]; моно-образы копируются в L и R.
+Обычные Web Audio фильтры обрабатывают оба канала независимо.
+
+Стереопрошивка: 1022 Б Flash, семь байтов состояния SRAM и пять байтов
+стека; ISR 26 тактов. Полная композиция проверяется audit-stereo.mjs
+по командам и общей сетке исходной моно-партитуры. Полный отчёт:
+reports/lumiere-stereo-verification.json. Это модель скважности двух PWM;
+физические фронты и момент фиксации двойных буферов OCR не моделируются.
+
+  python tools/build-stereo.py
+  node tools/audit-stereo.mjs
+  node tools/render-firmware-preview.mjs ATtiny13A/Music/variants/lumiere-stereo 14
+  python web-player/scripts/build_catalog.py

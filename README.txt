@@ -3,8 +3,17 @@ MicroMusic
 Музыкальная прошивка ATtiny13A и веб-плеер, исполняющий её AVR-код.
 Онлайн: https://witali.github.io/MicroMusic/web-player/
 
+СТЕРЕО (ОТДЕЛЬНАЯ ВЕТКА)
+Люмьер · стерео: ATtiny13A/Music/variants/lumiere-stereo/
+L = PB0/OC0A (вывод 5), R = PB1/OC0B (вывод 6). Скрипка левее,
+гитара правее, пианино и ударные по центру. Flash 1022 Б, два PWM
+по 37,5 кГц. Главная страница выводит две осциллограммы и два канала
+звука. Полная музыка и сглаживание сохранены.
+Сборка: python tools/build-stereo.py
+Проверка всей композиции: node tools/audit-stereo.mjs
+
 Локально: node web-player/scripts/serve.mjs 8134
-Открыть: http://127.0.0.1:8134/web-player/?firmware=rhythmic
+Открыть: http://127.0.0.1:8134/web-player/?firmware=lumiere-stereo
 
 ПРОШИВКА
 Единый ритм и штрихи: ATtiny13A/Music/variants/rhythmic/

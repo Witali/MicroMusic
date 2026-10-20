@@ -2,9 +2,9 @@ import { parseHex } from './lib/hex.js';
 import { RealtimeMonitor } from './lib/realtime.js';
 const $ = id => document.getElementById(id);
 const formatHex = (value, length=2) => value.toString(16).toUpperCase().padStart(length,'0');
-const canvas = $('wave'), ctx = canvas.getContext('2d');
+const canvas = $('wave');
 let catalog, selected, runtime, runtimeReady=false, connectedRuntime, playing=false, busy=false;
-let audio, output, gain, lowpass, scope=new Float32Array(512), headroom=0;
+let audio, output, gain, lowpass, scopes=[new Float32Array(512)], headroom=0;
 let session=0, hasPlayed=false, realtime;
 
 function showError(message) { $('error').textContent = message; $('error').hidden = !message; }
@@ -16,6 +16,11 @@ function transport() {
   $('run-status').textContent = busy ? 'Подключение звука…' : playing ? 'Воспроизведение' : runtimeReady ? (hasPlayed ? 'Пауза' : 'Готов к запуску') : 'Загрузка образа…';
 }
 function draw() {
+  drawWave(canvas, scopes[0], '#c9ef86');
+  if (scopes[1]) drawWave($('wave-right'), scopes[1], '#86d9ef');
+}
+function drawWave(canvas, scope, color) {
+  const ctx = canvas.getContext('2d');
   const ratio = window.devicePixelRatio || 1, width=canvas.clientWidth, height=canvas.clientHeight;
   if (!width || !height) return;
   if (canvas.width !== Math.round(width*ratio) || canvas.height !== Math.round(height*ratio)) { canvas.width=Math.round(width*ratio); canvas.height=Math.round(height*ratio); }
@@ -24,10 +29,11 @@ function draw() {
   for (let x=0;x<width;x+=width/12) { ctx.moveTo(x,0); ctx.lineTo(x,height); }
   for (let y=0;y<=height;y+=height/4) { ctx.moveTo(0,y); ctx.lineTo(width,y); } ctx.stroke();
   ctx.strokeStyle='#647b45'; ctx.setLineDash([4,5]); ctx.beginPath(); ctx.moveTo(0,height/2); ctx.lineTo(width,height/2); ctx.stroke(); ctx.setLineDash([]);
-  ctx.strokeStyle='#c9ef86'; ctx.lineWidth=1.5; ctx.beginPath();
+  ctx.strokeStyle=color; ctx.lineWidth=1.5; ctx.beginPath();
   for (let i=0;i<scope.length;i++) { const x=i/(scope.length-1)*width,y=height/2-scope[i]*height*.43; if (!i) ctx.moveTo(x,y); else ctx.lineTo(x,y); } ctx.stroke();
 }
 new ResizeObserver(draw).observe(canvas);
+new ResizeObserver(draw).observe($('wave-right'));
 const registerNodes=Array.from({length:32},(_,i) => {
   const box=document.createElement('div'); box.className='register';
   const label=document.createElement('span'); label.textContent='R'+i;
@@ -50,7 +56,7 @@ function renderCatalog() {
     const number=document.createElement('span'); number.className='card-number'; number.textContent=entry.order;
     const body=document.createElement('span'); body.className='card-body';
     const name=document.createElement('strong'); name.textContent=entry.title;
-    const meta=document.createElement('span'); meta.className='card-meta'; meta.textContent=`${entry.flashBytes} Б Flash${entry.eepromBytes ? ' + 64 Б EEPROM' : ''} · ${entry.status==='experimental' ? 'ТЕСТ' : '4 ГОЛОСА'}`;
+    const meta=document.createElement('span'); meta.className='card-meta'; meta.textContent=`${entry.flashBytes} Б Flash${entry.eepromBytes ? ' + 64 Б EEPROM' : ''} · ${entry.audioChannels===2 ? 'СТЕРЕО L / R' : 'МОНО'}`;
     const arrow=document.createElement('span'); arrow.className='card-arrow'; arrow.textContent=selected?.id===entry.id ? '●' : '↗'; arrow.setAttribute('aria-hidden','true');
     body.append(name,meta); button.append(number,body,arrow); button.onclick=()=>load(entry); item.append(button); $('catalog').append(item);
   }
@@ -59,7 +65,7 @@ function renderCatalog() {
 function connectAudio() {
   if (!output || !runtimeReady || connectedRuntime===runtime) return;
   const channel=new MessageChannel();
-  output.port.postMessage({type:'connect',session,port:channel.port1},[channel.port1]);
+  output.port.postMessage({type:'connect',session,channels:selected.audioChannels || 1,port:channel.port1},[channel.port1]);
   runtime.postMessage({type:'audio-port',port:channel.port2,sampleRate:audio.sampleRate},[channel.port2]);
   connectedRuntime=runtime;
   document.querySelector('.scope-scale').textContent=(4096/audio.sampleRate*1000).toFixed(0)+' мс';
@@ -69,7 +75,19 @@ function load(entry) {
   pause(); showError(''); busy=false; runtimeReady=false; runtime?.terminate(); connectedRuntime=null;
   session++; hasPlayed=false;
   output?.port.postMessage({type:'disconnect'});
-  selected=entry; headroom=0; scope.fill(0); draw();
+  selected=entry; headroom=0;
+  const stereo=entry.audioChannels===2;
+  document.body.dataset.stereo=String(stereo);
+  scopes=Array.from({length:stereo ? 2 : 1},()=>new Float32Array(512));
+  $('stereo-output').hidden=!stereo; $('scope-right').hidden=!stereo;
+  $('left-output').textContent=stereo ? 'L · PB0 / OC0A · вывод 5' : 'PB1 / OC0B · вывод 6';
+  $('left-output').title=stereo ? 'Левый выход, вывод 5 в 8-выводном корпусе' : 'Моно, вывод 6 в 8-выводном корпусе';
+  $('audio-mode').textContent=stereo ? 'СТЕРЕО · 2 PWM-ВЫХОДА' : 'МОНО · 1 PWM-ВЫХОД';
+  $('scope-left-label').textContent=stereo ? 'L · OCR0A' : 'МОНО · OCR0B';
+  $('average-label').textContent=stereo ? 'СРЕДНИЙ PWM · L / R' : 'СРЕДНИЙ PWM';
+  $('panorama').hidden=!stereo;
+  $('wave').setAttribute('aria-label',stereo ? 'Левый канал PWM до фильтра' : 'Осциллограмма PWM до фильтра');
+  draw();
   $('elapsed').textContent='00:00.0'; $('average').textContent='128.0'; $('headroom').textContent='—';
   $('tempo').textContent='100.0%'; $('lag').textContent='0.0 мс'; realtime?.resetAnchor();
   delete $('tempo').dataset.wallMs; delete $('tempo').dataset.audioMs;
@@ -88,7 +106,7 @@ function load(entry) {
     if (runtime!==worker) return;
     if (data.type==='ready') { runtimeReady=true; stateUI(data.state); connectAudio(); transport(); }
     if (data.type==='state') {
-      stateUI(data.state); scope=data.scope; draw(); $('average').textContent=data.averagePWM.toFixed(1);
+      stateUI(data.state); scopes=data.scopes; draw(); $('average').textContent=data.averages.map(x=>x.toFixed(1)).join(' / ');
       headroom=headroom ? headroom*.8+data.headroom*.2 : data.headroom; $('headroom').textContent=headroom.toFixed(1)+'×';
     }
     if (data.type==='error') { pause(); showError('Ошибка эмуляции: '+data.message); }
@@ -104,7 +122,7 @@ async function ensureAudio() {
   try {
     if (!context.audioWorklet) throw new Error('AudioWorklet недоступен. Откройте страницу через localhost или HTTPS.');
     await context.audioWorklet.addModule(new URL('./audio-worklet.js',import.meta.url));
-    audio=context; realtime=new RealtimeMonitor(audio.sampleRate); output=new AudioWorkletNode(audio,'firmware-output',{numberOfInputs:0,numberOfOutputs:1,outputChannelCount:[1]});
+    audio=context; realtime=new RealtimeMonitor(audio.sampleRate); output=new AudioWorkletNode(audio,'firmware-output',{numberOfInputs:0,numberOfOutputs:1,outputChannelCount:[2]});
     const highpass=audio.createBiquadFilter(); highpass.type='highpass'; highpass.frequency.value=35; highpass.Q.value=20*Math.log10(.5);
     lowpass=audio.createBiquadFilter(); lowpass.type='lowpass'; lowpass.Q.value=20*Math.log10(.5); lowpass.frequency.value=Math.min(+$('cutoff').value,audio.sampleRate*.45);
     gain=audio.createGain(); gain.gain.value=+$('volume').value;

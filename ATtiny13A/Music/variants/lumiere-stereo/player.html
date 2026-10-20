@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Люмьер · ATtiny13A стерео</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui;background:#101411;color:#e8eddf}body{max-width:850px;margin:40px auto;padding:0 20px}p{color:#a6b69b;line-height:1.7}button{padding:12px 20px;cursor:pointer}canvas{width:100%;height:130px;background:#0b110b;border:1px solid #30392f;margin:10px 0}label{margin-left:20px}output{display:block;margin:20px 0;font:13px monospace}
+</style>
+<h1>Люмьер · стерео на ATtiny13A</h1>
+<p>L: PB0 / OC0A, вывод 5 · R: PB1 / OC0B, вывод 6.<br>Скрипка левее, гитара правее, пианино и ударные по центру. Два PWM-канала по 37,5 кГц.</p>
+<button id="play">Слушать</button><button id="stop" disabled>Стоп</button><label>Громкость <input id="volume" type="range" min="0" max="1" step="0.01" value="0.65"></label>
+<output id="status">Исполняется тот же AVR HEX, который можно прошить в микроконтроллер.</output>
+<span>L · OCR0A</span><canvas id="left" aria-label="Левый канал PWM"></canvas><span>R · OCR0B</span><canvas id="right" aria-label="Правый канал PWM"></canvas>
+<script>
+// Specialized interpreter for the archived synth firmware, derived from its
+// HTML players. ROM bytes are immutable; decode once, execute integer op IDs.
+// ATtiny13A, AVRe timings. See reports/attiny13a-audit.txt for instruction coverage
+// and peripheral limitations; this remains a firmware-oriented AVR subset.
+const OP = { NOP:1, CLI:2, SEI:3, RETI:4, RET:5, CALL:6, JUMP:7, BRANCH:8,
+  SKIP:9, LDI:10, CPI:11, SUBI:12, ORI:13, ANDI:14, MOVW:15, ADD:16,
+  ADC:17, SUB:18, AND:19, EOR:20, MOV:21, INC:22, DEC:23, COM:24,
+  LSR:25, ASR:26, SWAP:27, IN:28, OUT:29, SBI:30, PUSH:31, POP:32, ST:33, LPM:34, FLAG:35,
+  ROR:36, LDS:37, STS:38 };
+const sign = (v, bit) => v & bit ? v - bit * 2 : v;
+
+class AVRCore {
+  constructor(binary, eeprom, { fastIdle = true } = {}) {
+    if (!binary.length || binary.length > 1024) throw new Error('Flash must contain 1–1024 bytes');
+    if (eeprom && eeprom.length !== 64) throw new Error('EEPROM must contain 64 bytes');
+    this.rom = new Uint8Array(1024).fill(255); this.rom.set(binary);
+    this.eeprom = new Uint8Array(64).fill(255); if (eeprom) this.eeprom.set(eeprom);
+    this.data = new Uint8Array(160);
+    this.r = this.data.subarray(0, 32); this.io = this.data.subarray(32, 96);
+    this.sram = this.data.subarray(96);
+    this.ram = this.sram; // Preserve the SRAM inspection alias used by firmware tools.
+    this.op = new Uint8Array(512); this.d = new Uint8Array(512);
+    this.s = new Uint8Array(512); this.k = new Int16Array(512);
+    this.sp = 0x9f; // SPL resets to RAMEND; return addresses occupy TWO bytes.
+    this.minSP = this.sp;
+    this.pc = this.cyc = this.z = this.c = this.i = 0;
+    this.irqDelay = 0;
+    this.timer = this.pending = this.inIRQ = false; this.overflowAt = Infinity;
+    this.timerDivisor = 0; this.prescalerAt = 0;
+    this.irqStart = this.irqCount = this.lost = this.maxIRQ = this.writes = 0;
+    this.irqFrames = [];
+    this.workLost = 0;
+    this.duty = this.dutyLeft = 128; this.leftWrites = 0;
+    this.fastIdle = fastIdle; this.idleCycles = 0;
+    for (let p = 0; p < 512; p++) this.decode(p);
+  }
+  get sreg() { return this.io[0x3f]; }
+  set sreg(value) { this.io[0x3f] = value; }
+  get c() { return this.sreg & 1; }
+  set c(value) { this.sreg = (this.sreg & ~1) | (value & 1); }
+  get z() { return (this.sreg >> 1) & 1; }
+  set z(value) { this.sreg = (this.sreg & ~2) | ((value & 1) << 1); }
+  get i() { return this.sreg >> 7; }
+  set i(value) { this.sreg = (this.sreg & 127) | ((value & 1) << 7); }
+  get t() { return (this.sreg >> 6) & 1; }
+  set t(value) { this.sreg = (this.sreg & ~64) | ((value & 1) << 6); }
+  get sp() { return this.io[0x3d]; }
+  set sp(value) { this.io[0x3d] = value; }
+  get pending() { return !!(this.io[0x38] & 2); }
+  set pending(value) { this.io[0x38] = (this.io[0x38] & ~2) | (value ? 2 : 0); }
+  nzvs(value, overflow = 0) {
+    const negative = value >> 7;
+    this.sreg = (this.sreg & 0xe1) | (Number(value === 0) << 1) |
+      (negative << 2) | (overflow << 3) | ((negative ^ overflow) << 4);
+  }
+  arithmetic(x, y, carry = 0, subtract = false) {
+    const total = subtract ? x - y - carry : x + y + carry, value = total & 255;
+    const overflow = Number(!!((subtract ? (x ^ y) : ~(x ^ y)) & (x ^ value) & 128));
+    this.nzvs(value, overflow);
+    this.sreg = (this.sreg & 0xde) | Number(subtract ? total < 0 : total > 255) |
+      (Number(subtract ? (x & 15) < (y & 15) + carry : (x & 15) + (y & 15) + carry > 15) << 5);
+    return value;
+  }
+  decode(p) {
+    const w = this.rom[p * 2] | this.rom[p * 2 + 1] << 8;
+    let o = 0, d = (w >> 4) & 31, s = (w & 15) | ((w >> 5) & 16), k = 0;
+    if (w === 0) o = OP.NOP;
+    else if (w === 0x94f8) o = OP.CLI;
+    else if (w === 0x9478) o = OP.SEI;
+    else if (w === 0x9518) o = OP.RETI;
+    else if (w === 0x9508) o = OP.RET;
+    else if ((w & 0xff0f) === 0x9408) { o = OP.FLAG; d = (w >> 4) & 7; k = Number(!(w & 0x80)); }
+    else if ((w & 0xf000) === 0xd000) { o = OP.CALL; k = sign(w & 4095, 2048); }
+    else if ((w & 0xf000) === 0xc000) { o = OP.JUMP; k = sign(w & 4095, 2048); }
+    else if ((w & 0xfc00) === 0xf000 || (w & 0xfc00) === 0xf400) {
+      o = OP.BRANCH; d = w & 7; s = Number((w & 0xfc00) === 0xf000); k = sign((w >> 3) & 127, 64);
+    } else if ((w & 0xfe08) === 0xfc00 || (w & 0xfe08) === 0xfe00) {
+      o = OP.SKIP; s = w & 7; k = Number((w & 0xfe08) === 0xfe00);
+    } else if ((w & 0xf000) === 0xe000) { o = OP.LDI; d = 16 + ((w >> 4) & 15); k = (w & 15) | ((w >> 4) & 240); }
+    else if ([0x3000,0x5000,0x6000,0x7000].includes(w & 0xf000)) {
+      o = ({12288:OP.CPI,20480:OP.SUBI,24576:OP.ORI,28672:OP.ANDI})[w & 0xf000];
+      d = 16 + ((w >> 4) & 15); k = (w & 15) | ((w >> 4) & 240);
+    } else if ((w & 0xff00) === 0x0100) { o = OP.MOVW; d = 2 * ((w >> 4) & 15); s = 2 * (w & 15); }
+    else if ([0x0c00,0x1c00,0x1800,0x2000,0x2400,0x2c00].includes(w & 0xfc00))
+      o = ({3072:OP.ADD,7168:OP.ADC,6144:OP.SUB,8192:OP.AND,9216:OP.EOR,11264:OP.MOV})[w & 0xfc00];
+    else if ([0x9403,0x940a,0x9400,0x9406,0x9405,0x9407,0x9402].includes(w & 0xfe0f))
+      o = ({37891:OP.INC,37898:OP.DEC,37888:OP.COM,37894:OP.LSR,37893:OP.ASR,37895:OP.ROR,37890:OP.SWAP})[w & 0xfe0f];
+    else if ((w & 0xfe0f) === 0x9000 || (w & 0xfe0f) === 0x9200) {
+      o = (w & 0xfe0f) === 0x9000 ? OP.LDS : OP.STS;
+      const next = ((p + 1) & 511) * 2;
+      k = this.rom[next] | this.rom[next + 1] << 8;
+    }
+    else if ((w & 0xf800) === 0xb000) { o = OP.IN; k = ((w >> 5) & 48) | (w & 15); }
+    else if ((w & 0xf800) === 0xb800) { o = OP.OUT; k = ((w >> 5) & 48) | (w & 15); }
+    else if ((w & 0xff00) === 0x9a00) { o = OP.SBI; d = (w >> 3) & 31; k = w & 7; }
+    else if ((w & 0xfe0f) === 0x920f) o = OP.PUSH;
+    else if ((w & 0xfe0f) === 0x900f) o = OP.POP;
+    else if ((w & 0xfe0f) === 0x9201) o = OP.ST;
+    else if ((w & 0xfe0f) === 0x9004 || (w & 0xfe0f) === 0x9005) { o = OP.LPM; k = w & 1; }
+    this.op[p] = o; this.d[p] = d; this.s[p] = s; this.k[p] = k;
+  }
+  push(value) {
+    if (this.sp < 0x60 || this.sp > 0x9f) throw new Error('Stack overflow or invalid SPL');
+    this.data[this.sp--] = value;
+    this.minSP = Math.min(this.minSP, this.sp);
+  }
+  pop() {
+    if (this.sp < 0x5f || this.sp >= 0x9f) throw new Error('Stack underflow or invalid SPL');
+    return this.data[++this.sp];
+  }
+  pushPC(value) { this.push(value & 255); this.push(value >> 8); }
+  popPC() { const high = this.pop(); return ((high << 8) | this.pop()) & 511; }
+  timerMode() { return (this.io[0x2f] & 3) | ((this.io[0x33] & 8) >> 1); }
+  updateTimer() {
+    const source = this.io[0x33] & 7, mode = this.timerMode();
+    if (source >= 6) throw new Error('External Timer0 clock is not implemented');
+    if (source && mode !== 0 && mode !== 3) throw new Error('Timer0 WGM mode ' + mode + ' is not implemented');
+    this.timerDivisor = [0,1,8,64,256,1024][source];
+    this.timer = !!this.timerDivisor && !(this.io[0x25] & 2) && (this.io[0x28] & 0x81) !== 0x81;
+    if (!this.timer) { this.overflowAt = Infinity; return; }
+    // Normal: TOV on FF -> 00. Fast PWM mode 3: TOV when reaching TOP.
+    const target = mode === 3 ? 255 : 0;
+    const ticks = ((target - this.io[0x32]) & 255) || 256;
+    this.overflowAt = this.prescalerAt +
+      (Math.floor((this.cyc - this.prescalerAt) / this.timerDivisor) + ticks) * this.timerDivisor;
+  }
+  writeIO(address, value) {
+    value &= 255;
+    if (address === 0x37 && (value & 31)) throw new Error('Flash programming/fuse access is not implemented');
+    if (address === 0x21 && (value & 0x58)) throw new Error('Watchdog operation is not implemented');
+    if (address === 0x06 && (value & 0x80)) throw new Error('ADC operation is not implemented');
+    if (address === 0x08 && (value & 8)) throw new Error('Analog comparator interrupts are not implemented');
+    if (address === 0x3b && (value & 0x60)) throw new Error('External/pin-change interrupts are not implemented');
+    if (address === 0x26) {
+      if (value & 128) {
+        if (value === 128 && !(this.clkprUntil > this.cyc)) {
+          this.io[address] = 128; this.clkprUntil = this.cyc + 4;
+        }
+      } else if (this.clkprUntil > this.cyc) {
+        if (value & 15) throw new Error('Runtime CPU clock division is not implemented');
+        this.io[address] = 0; this.clkprUntil = 0;
+      }
+      return 0;
+    }
+    if (address === 0x38) { this.io[address] &= ~(value & 14); return 0; } // W1C
+    if (address === 0x39 && (value & 12)) throw new Error('Timer0 compare interrupts are not implemented');
+    if (address === 0x1c) {
+      if (value & 10) throw new Error('EEPROM programming/ready interrupt is not implemented');
+      this.io[address] = value & 0x3c;
+      if (value & 4) this.eempeUntil = this.cyc + 4;
+      if (value & 1) { this.io[0x1d] = this.eeprom[this.io[0x1e] & 63]; return 4; }
+      return 0;
+    }
+    if (address === 0x1e) value &= 63;
+    if (address === 0x39) value &= 14;
+    if (address === 0x33) {
+      if (value & 0xc0) throw new Error('Timer0 forced compare output is not implemented');
+      value &= 15;
+    }
+    if (address === 0x28) {
+      value &= 0x81;
+      if ((value & 1) || (this.io[address] & 1)) this.prescalerAt = this.cyc;
+      if (!(value & 128)) value &= ~1;
+    }
+    this.io[address] = value;
+    if ([0x25,0x28,0x2f,0x32,0x33].includes(address)) this.updateTimer();
+    if (address === 0x29 && this.timer) { this.duty = value; this.writes++; }
+    if (address === 0x2a && this.timer) { this.dutyLeft = value; this.leftWrites++; }
+    return 0;
+  }
+  clock(n) {
+    const before = this.cyc;
+    this.cyc += n;
+    if (this.eempeUntil <= this.cyc) this.io[0x1c] &= ~4;
+    if (this.clkprUntil <= this.cyc) this.io[0x26] &= ~128;
+    if (this.timer && this.overflowAt <= this.cyc) {
+      const events = 1 + Math.floor((this.cyc - this.overflowAt) / (256 * this.timerDivisor));
+      this.lost += events - Number(!this.pending); this.pending = true;
+      this.overflowAt += events * 256 * this.timerDivisor;
+    }
+    if (this.timer) {
+      const ticks = Math.floor((this.cyc - this.prescalerAt) / this.timerDivisor) -
+        Math.floor((before - this.prescalerAt) / this.timerDivisor);
+      this.io[0x32] = (this.io[0x32] + ticks) & 255;
+    }
+  }
+  interrupt() {
+    if (this.irqDelay) { this.irqDelay--; return; }
+    if (!this.i || !(this.io[0x39] & 2) || !this.pending) return;
+    this.pending = false; this.pushPC(this.pc); this.pc = 3; this.i = 0;
+    this.irqStart = this.cyc; this.irqFrames.push(this.irqStart);
+    this.clock(4); this.inIRQ = true; this.irqCount++;
+  }
+  step() {
+    const p = this.pc;
+    if (p < 0 || p >= 512) throw new Error('PC out of Flash');
+    const d = this.d[p], s = this.s[p], k = this.k[p], r = this.r;
+    let n = 1, v, z;
+    this.pc = (this.pc + 1) & 511;
+    switch (this.op[p]) {
+      case OP.NOP: break;
+      case OP.CLI: this.i = 0; break;
+      case OP.SEI: this.i = 1; this.irqDelay = 1; break;
+      case OP.FLAG:
+        if (d === 6 && k && this.t && this.inIRQ) this.workLost++;
+        this.sreg = (this.sreg & ~(1 << d)) | (k << d); break;
+      case OP.RETI:
+        this.pc = this.popPC(); this.i = 1; this.irqDelay = 1; n = 4;
+        v = this.irqFrames.pop();
+        if (v !== undefined) this.maxIRQ = Math.max(this.maxIRQ, this.cyc + n - v);
+        this.inIRQ = this.irqFrames.length > 0;
+        this.irqStart = this.inIRQ ? this.irqFrames[this.irqFrames.length - 1] : 0;
+        break;
+      case OP.RET: this.pc = this.popPC(); n = 4; break;
+      case OP.CALL: this.pushPC(this.pc); this.pc += k; n = 3; break;
+      case OP.JUMP: this.pc += k; n = 2; break;
+      case OP.BRANCH:
+        if (((this.sreg >> d) & 1) === s) { this.pc += k; n = 2; } break;
+      case OP.SKIP:
+        if (((r[d] >> s) & 1) === k) {
+          const w = this.rom[this.pc * 2] | this.rom[this.pc * 2 + 1] << 8;
+          const words = (w & 0xfe0f) === 0x9000 || (w & 0xfe0f) === 0x9200 ||
+            (w & 0xfe0e) === 0x940c || (w & 0xfe0e) === 0x940e ? 2 : 1;
+          this.pc += words; n = 1 + words;
+        } break;
+      case OP.LDI: r[d] = k; break;
+      case OP.CPI: this.arithmetic(r[d], k, 0, true); break;
+      case OP.SUBI: r[d] = this.arithmetic(r[d], k, 0, true); break;
+      case OP.ORI: r[d] |= k; this.nzvs(r[d]); break;
+      case OP.ANDI: r[d] &= k; this.nzvs(r[d]); break;
+      case OP.MOVW: r[d] = r[s]; r[d + 1] = r[s + 1]; break;
+      case OP.ADD: r[d] = this.arithmetic(r[d], r[s]); break;
+      case OP.ADC: r[d] = this.arithmetic(r[d], r[s], this.c); break;
+      case OP.SUB: r[d] = this.arithmetic(r[d], r[s], 0, true); break;
+      case OP.AND: r[d] &= r[s]; this.nzvs(r[d]); break;
+      case OP.EOR: r[d] ^= r[s]; this.nzvs(r[d]); break;
+      case OP.MOV: r[d] = r[s]; break;
+      case OP.INC: r[d]++; this.nzvs(r[d], Number(r[d] === 128)); break;
+      case OP.DEC: r[d]--; this.nzvs(r[d], Number(r[d] === 127)); break;
+      case OP.COM: r[d] ^= 255; this.nzvs(r[d]); this.c = 1; break;
+      case OP.LSR: this.c = r[d] & 1; r[d] >>= 1; this.nzvs(r[d], this.c); break;
+      case OP.ROR:
+        v = r[d]; r[d] = (v >> 1) | (this.c << 7); this.c = v & 1;
+        this.nzvs(r[d], (r[d] >> 7) ^ this.c); break;
+      case OP.ASR: this.c = r[d] & 1; r[d] = (r[d] >> 1) | (r[d] & 128); this.nzvs(r[d], (r[d] >> 7) ^ this.c); break;
+      case OP.SWAP: r[d] = ((r[d] & 15) << 4) | (r[d] >> 4); break;
+      case OP.LDS:
+      case OP.STS:
+        if (k < 0 || k >= this.data.length) throw new Error('Data address out of range');
+        v = r[d]; this.pc = (this.pc + 1) & 511; this.clock(2); n = 0;
+        if (this.op[p] === OP.LDS) r[d] = this.data[k];
+        else if (k >= 32 && k < 96) n = this.writeIO(k - 32, v);
+        else this.data[k] = v;
+        break;
+      case OP.IN: this.clock(1); n = 0; r[d] = this.io[k]; break;
+      case OP.OUT:
+        this.clock(1); n = this.writeIO(k, r[d]); break;
+      case OP.SBI:
+        this.clock(2); n = this.writeIO(d, this.io[d] | (1 << k)); break;
+      case OP.PUSH: this.push(r[d]); n = 2; break;
+      case OP.POP: r[d] = this.pop(); n = 2; break;
+      case OP.ST:
+        z = r[30] | r[31] << 8;
+        if (d >= 30) throw new Error('Undefined ST Z+ with source in Z');
+        if (z >= this.data.length) throw new Error('Data write out of range');
+        v = r[d]; this.clock(2); n = 0;
+        if (z >= 32 && z < 96) n = this.writeIO(z - 32, v); else this.data[z] = v;
+        z = (z + 1) & 65535; r[30] = z & 255; r[31] = z >> 8; break;
+      case OP.LPM:
+        if (k && d >= 30) throw new Error('Undefined LPM Z+ with destination in Z');
+        z = r[30] | r[31] << 8;
+        if (z >= 1024) throw new Error('LPM out of Flash');
+        r[d] = this.rom[z]; if (k) { z++; r[30] = z & 255; r[31] = z >> 8; } n = 3; break;
+      default: throw new Error('Unsupported opcode at 0x' + (p * 2).toString(16));
+    }
+    this.pc &= 511;
+    this.clock(n);
+    this.interrupt();
+  }
+  nextDuty() {
+    const before = this.writes, deadline = this.cyc + 9600000;
+    while (this.writes === before) {
+      // Two-cycle RJMP-to-self and taken BRTC-to-self have no side effects.
+      // Jump to the same instruction boundary as repeated RJMPs, then service
+      // the exact pending overflow. Never skip an ISR or disabled-IRQ loop.
+      if (this.fastIdle && this.k[this.pc] === -1 &&
+          (this.op[this.pc] === OP.JUMP || (this.op[this.pc] === OP.BRANCH && this.d[this.pc] === 6 && this.s[this.pc] === 0 && !this.t)) &&
+          this.timer && this.i && !this.irqDelay && !this.pending && (this.io[0x39] & 2)) {
+        const n = Math.max(2, Math.ceil((this.overflowAt - this.cyc) / 2) * 2);
+        this.idleCycles += n; this.clock(n); this.interrupt();
+      } else this.step();
+      if (this.cyc > deadline) throw new Error('Firmware produced no PWM for one emulated second');
+    }
+    return this.duty;
+  }
+  state() {
+    return { pc:this.pc * 2, cycles:this.cyc, irqs:this.irqCount, maxISR:this.maxIRQ,
+      lost:this.lost + this.workLost, timerLost:this.lost, workLost:this.workLost,
+      duty:this.duty, dutyLeft:this.dutyLeft, registers:Array.from(this.r), idleCycles:this.idleCycles };
+  }
+  nextStereoDuty() {
+    // Stereo firmware writes OC0A/L then OC0B/R in the same overflow ISR.
+    // Use the R write as the frame boundary, never advance the CPU per channel.
+    const leftBefore = this.leftWrites;
+    this.nextDuty();
+    if (this.leftWrites !== leftBefore + 1) throw new Error('Stereo frame requires one OC0A write before OC0B');
+    return this.dutyLeft | (this.duty << 8);
+  }
+}
+
+if(typeof module!=='undefined' && module.exports)module.exports={AVRCore};
+
+</script>
+<script>
+// Strict Intel HEX parser shared by the player, tests, and catalog checks.
+function parseHex(text, limit = 1024) {
+  const memory = new Uint8Array(limit).fill(255);
+  const present = new Uint8Array(limit);
+  let end = 0, eof = false;
+  for (const line of text.trim().split(/\s+/)) {
+    if (eof) throw new Error('Data after HEX end record');
+    if (!/^:(?:[\da-f]{2})+$/i.test(line)) throw new Error('Invalid HEX record');
+    const bytes = Uint8Array.from(line.slice(1).match(/../g), x => parseInt(x, 16));
+    const count = bytes[0], address = (bytes[1] << 8) | bytes[2], type = bytes[3];
+    if (bytes.length !== count + 5 || bytes.reduce((a, b) => a + b, 0) % 256) throw new Error('HEX length or checksum mismatch');
+    if (type === 1) {
+      if (count || address) throw new Error('Invalid HEX end record');
+      eof = true;
+    } else if (type === 0) {
+      if (address + count > limit) throw new Error('HEX exceeds device memory');
+      for (let i = 0; i < count; i++) {
+        if (present[address + i]) throw new Error('Overlapping HEX records');
+        memory[address + i] = bytes[4 + i]; present[address + i] = 1;
+      }
+      end = Math.max(end, address + count);
+    } else throw new Error('Unsupported HEX record type');
+  }
+  if (!eof || !end || present.subarray(0, end).some(x => !x)) throw new Error('Incomplete HEX image');
+  return memory.slice(0, end);
+}
+
+
+class Renderer {
+  constructor(entry, sampleRate) {
+    if (!Number.isFinite(sampleRate) || sampleRate < 8000 || sampleRate > 192000) throw new Error('Invalid audio sample rate');
+    this.core = new AVRCore(parseHex(entry.flashHex), entry.eepromHex ? parseHex(entry.eepromHex, 64) : null);
+    this.channels = entry.audioChannels || 1;
+    if (![1, 2].includes(this.channels)) throw new Error('Unsupported audio channel count');
+    this.nextValue = this.channels === 2 ? () => this.core.nextStereoDuty() : () => this.core.nextDuty();
+    this.ratio = entry.pwmHz / sampleRate;
+    this.sampleRate = sampleRate;
+    this.phase = 0; this.first = true; this.frames = 0;
+  }
+  render(count) {
+    if (!Number.isInteger(count) || count < 1 || count > 16384) throw new Error('Invalid audio block size');
+    // Interleaved frames: L,R,L,R for stereo; one scalar per frame for mono.
+    const output = new Float32Array(count * this.channels);
+    if (this.first) { this.v0 = this.nextValue(); this.v1 = this.nextValue(); this.first = false; }
+    for (let i = 0; i < count; i++) {
+      if (this.channels === 2) {
+        const l0 = this.v0 & 255, l1 = this.v1 & 255, r0 = this.v0 >> 8, r1 = this.v1 >> 8;
+        output[i * 2] = (l0 + (l1 - l0) * this.phase - 128) / 128;
+        output[i * 2 + 1] = (r0 + (r1 - r0) * this.phase - 128) / 128;
+      } else output[i] = (this.v0 + (this.v1 - this.v0) * this.phase - 128) / 128;
+      this.phase += this.ratio;
+      while (this.phase >= 1) { this.phase--; this.v0 = this.v1; this.v1 = this.nextValue(); }
+    }
+    this.frames += count;
+    return output;
+  }
+}
+const FIRMWARE_HEX = `:100000001BC00024089549C0012E102F1F70C9F392
+:1000100007FF0DC01A3030F4000C0394173010F4B1
+:10002000000C0394182F102161F70A95EACF0A9566
+:1000300041F301FC0A95E5CF00E806BD002706BDA7
+:10004000002400926000E1E0FF270193EE31E9F720
+:1000500020E82093650020936600E1E62193219338
+:10006000019204E0502F6395C3950EEE0093640057
+:10007000D7E0ECE2F3E007EAE02EB89AB99A2ABD9D
+:1000800029BD71E003EA0FBD01E003BF02E009BF33
+:100090007894FEF7E89412D0FCCF70FD20916500B3
+:1000A00070FF209166002ABD70FD2091610070FFF5
+:1000B0002091620029BD729568941895F39419F007
+:1000C000F0FE7EC0B1C00091630000950093630014
+:1000D00009F076C0839517FE07C0012D0C5F00392B
+:1000E00008F00FE8102E05C0112019F01A9413FC27
+:1000F0001A94032F13E088DF302F042F11E084DFE0
+:10010000402F80FD03C0543008F4539500916400E3
+:1001100014EA910F12E1011F0093640008F00895A2
+:10012000D395D770D0FD03C0552707EAE02E6A9516
+:1001300009F046C005910F3F09F443C0003E10F19D
+:10014000003F68F000FD07D001FD3F7002FD4F70D9
+:1001500003FD53E0EFCF112D1F70112E0895DF0125
+:100160000F70000F000FE8E1F3E0E00FF01D859045
+:100170009590C590D5907724BB240FE8302F402F61
+:10018000FD01D8CFDF01102F1770E7EFF2E0E10F8C
+:10019000F01D6491FD010695069506950D30D9F286
+:1001A0000E3071F0DF01000FEEEFF2E0E00FF01D16
+:1001B00045905590FD01012D0F7006950068102E99
+:1001C0000895E0EEF2E0EC0FF01D0491C395C73105
+:1001D00009F4CC27ECE2F3E0E00FF01DABCF092EE1
+:1001E0009F70F9F0043000E008F008E004FC005FC4
+:1001F00005FC005E012E12951F701695010F0EBBB7
+:10020000E09A1DB304FC12951F701850012E11279F
+:1002100090FD100D000C9695D9F7159515950024B5
+:1002200008950024112708959F93AA27240C351CB4
+:10023000912D052D132DD3DFA10FB12FB595680C8E
+:10024000791C932F9061092D172DC9DFA10FB10FD4
+:10025000AC0CBD1C942F90620D2D1B2DC0DFB10F77
+:100260001595A10F543030F5DD2309F008C0E39453
+:100270001E2D17FD10951D531595159515C0009150
+:100280006000EE0C001F10F41DE2E12600936000F8
+:100290001E2D16951F730E2D0F73D1FD101BD1FF50
+:1002A00010521595D1FD159550FD159551FD1595DB
+:1002B000A10FB10FA058B058009166000A0F079522
+:1002C000109162001B0F179570FFFECF0093650021
+:1002D000A093660010936100B09362009F9108950F
+:1002E000007C26B44B6F50B46CB46C836CB46CC19E
+:1002F000C1836CB46CC1C101020304060810400242
+:100300008702AD025F03C903020480040D055A058C
+:100310000206BE06920705085F038702AD020102CE
+:100320004002B0018702E401E4016B01E019396188
+:100330004050E111395BE20131514050E309315B3A
+:10034000E02DE11B2A20E23429E33DE02B33E13BA1
+:1003500033FFE02B1941E17139394038E23329315B
+:10036000E331413931E02918202939E1312931417E
+:10037000E2733931E33DFFE23B4238FFE0534A404C
+:10038000E13C31E22C19E33429E019212931E13C27
+:100390003028E24439E335FFE24439E335E03939C6
+:1003A000393028E13B394038E2332A30E325FFE099
+:1003B0003B6BE1336BE22B6BE3236BE12B6BE233A3
+:1003C0006BE4436BE33B6BE03C49E14441E2494170
+:1003D0004139E335E0333BE13B43E24B4139E3450F
+:1003E000E03939393028E13939393028FFE06DF604
+:0E03F0006DE26DF46DE06DF26DE26DF86DFF83
+:00000001FF
+`;
+const EEPROM_HEX = `:10000000A5DC8D6566B88C2386BAEBDE4843547652
+:10001000A8DC8B8899693464B9CBED9B7856235260
+:10002000B8DCAB9988873641DC8B87CB8A35438532
+:10003000A9CB9B88AA573474AAAB88CB9B25419740
+:00000001FF
+`;
+const entry={audioChannels:2,pwmHz:37500,flashHex:FIRMWARE_HEX,eepromHex:EEPROM_HEX};
+let audio,processor,gain,renderer;
+const $=id=>document.getElementById(id);
+function draw(block){for(let ch=0;ch<2;ch++){
+  const canvas=$(ch?'right':'left'),ctx=canvas.getContext('2d');canvas.width=canvas.clientWidth*devicePixelRatio;canvas.height=130*devicePixelRatio;
+  ctx.fillStyle='#0b110b';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.strokeStyle=ch?'#86d9ef':'#c9ef86';ctx.beginPath();
+  for(let i=0;i<512;i++){const x=i/511*canvas.width,y=canvas.height*(.5-block[Math.floor(i*block.length/1024)*2+ch]*.43);if(i)ctx.lineTo(x,y);else ctx.moveTo(x,y)}ctx.stroke();
+}}
+async function stop(){processor?.disconnect();if(processor)processor.onaudioprocess=null;if(audio)await audio.close();audio=processor=null;$('play').disabled=false;$('stop').disabled=true}
+$('play').onclick=async()=>{try{
+  audio=new AudioContext();renderer=new Renderer(entry,audio.sampleRate);processor=audio.createScriptProcessor(4096,0,2);
+  const high=audio.createBiquadFilter();high.type='highpass';high.frequency.value=35;high.Q.value=20*Math.log10(.5);
+  const low=audio.createBiquadFilter();low.type='lowpass';low.frequency.value=4000;low.Q.value=20*Math.log10(.5);
+  gain=audio.createGain();gain.gain.value=+$('volume').value;processor.connect(high);high.connect(low);low.connect(gain);gain.connect(audio.destination);
+  processor.onaudioprocess=event=>{try{
+    const count=event.outputBuffer.length,block=renderer.render(count);
+    for(let ch=0;ch<2;ch++){const out=event.outputBuffer.getChannelData(ch);for(let i=0;i<count;i++)out[i]=block[2*i+ch]}
+    draw(block);$('status').textContent=`${(renderer.frames/audio.sampleRate).toFixed(1)} с · ISR ${renderer.core.maxIRQ} тактов · потери ${renderer.core.lost+renderer.core.workLost}`;
+  }catch(error){$('status').textContent=error.message;stop()}};
+  await audio.resume();$('play').disabled=true;$('stop').disabled=false;
+}catch(error){$('status').textContent=error.message;await stop()}};
+$('stop').onclick=stop;$('volume').oninput=()=>{if(gain)gain.gain.value=+$('volume').value};
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&audio)stop()});
+</script></html>

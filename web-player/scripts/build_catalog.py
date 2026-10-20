@@ -10,7 +10,8 @@ ROOT = Path(__file__).resolve().parents[2]
 MUSIC = ROOT / 'ATtiny13A' / 'Music'
 OUTPUT = ROOT / 'web-player' / 'firmware.json'
 SPECS = [
-    ('rhythmic', '01', 'Единый ритм и штрихи', 'Общая сетка нот и ударных, повторная атака и явные лиги; мягкие тембры FluidR3 и плавный PWM.', 'variants/rhythmic', 'release'),
+    ('lumiere-stereo', '01', 'Люмьер · стерео', 'Полная композиция 3:42. Скрипка левее, гитара правее, пианино и ударные по центру. Два выхода PWM и два звуковых канала.', 'variants/lumiere-stereo', 'release'),
+    ('rhythmic', '02', 'Люмьер · моно', 'Общая сетка нот и ударных, повторная атака и явные лиги; мягкие тембры FluidR3 и плавный PWM.', 'variants/rhythmic', 'release'),
 ]
 
 
@@ -58,6 +59,11 @@ def build():
                      source=f'../ATtiny13A/Music/{folder}/synth.hex',
                      eepromSource=f'../ATtiny13A/Music/{folder}/eeprom.hex' if eeprom else None,
                      preview=f'../ATtiny13A/Music/{folder}/preview.wav' if (directory / 'preview.wav').exists() else None)
+        entry['audioChannels'] = 2 if id_ == 'lumiere-stereo' else 1
+        if entry['audioChannels'] == 2:
+            report = json.loads((directory / 'build-report.json').read_text(encoding='utf-8'))
+            entry['outputs'] = report['outputs']
+            entry['panorama'] = report['panorama']
         key = (entry['flashSha256'], entry['eepromSha256'])
         entry['referenceCore'] = f'../ATtiny13A/Music/{folder}/avr_core.js'
         assert key not in by_key
@@ -98,7 +104,7 @@ def build():
                         target = name.rsplit('/', 1)[0] + '/' + n
                         return z.read(target) if target in z.namelist() else None
                     inspect(path.relative_to(ROOT).as_posix() + '!/' + name, z.read(name), sibling)
-    return dict(schema=1, defaultId='rhythmic', entries=entries,
+    return dict(schema=1, defaultId='lumiere-stereo', entries=entries,
                 sourceOnly=[dict(title='Исходный C-прототип · 2016',
                                  source='../ATtiny13A/Music/00_original/attiny13a_initial_2016.c',
                                  reason='Сохранён исходник C; готового HEX / BIN в архиве нет.')])

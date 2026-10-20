@@ -2,13 +2,15 @@ import { Renderer } from './lib/renderer.js';
 let renderer, entry, port;
 
 function publish(samples, milliseconds) {
-  const scope = new Float32Array(512);
-  let sum = 0;
-  for (let i = 0; i < samples.length; i++) sum += samples[i];
-  for (let i = 0; i < scope.length; i++) scope[i] = samples[Math.floor(i * samples.length / scope.length)];
-  self.postMessage({type:'state',state:renderer.core.state(),scope,
-    averagePWM:128 + 128 * sum / samples.length,
-    headroom:samples.length * 1000 / renderer.sampleRate / Math.max(milliseconds, 0.01)}, [scope.buffer]);
+  const frames = samples.length / renderer.channels, scopes = [], averages = [];
+  for (let ch = 0; ch < renderer.channels; ch++) {
+    const scope = new Float32Array(512); let sum = 0;
+    for (let i = ch; i < samples.length; i += renderer.channels) sum += samples[i];
+    for (let i = 0; i < scope.length; i++) scope[i] = samples[Math.floor(i * frames / scope.length) * renderer.channels + ch];
+    scopes.push(scope); averages.push(128 + 128 * sum / frames);
+  }
+  self.postMessage({type:'state',state:renderer.core.state(),scopes,averages,
+    headroom:frames * 1000 / renderer.sampleRate / Math.max(milliseconds, 0.01)}, scopes.map(s => s.buffer));
 }
 function fail(error) {
   port?.postMessage({type:'error'});

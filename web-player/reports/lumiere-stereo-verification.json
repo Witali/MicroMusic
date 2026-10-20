@@ -1,0 +1,83 @@
+{
+  "image": "lumiere-stereo",
+  "flashSha256": "48f78fb54fd778ffab06958aa50aca0c9a3acb90308dce40328d2181788033a2",
+  "flashBytes": 1022,
+  "channels": 2,
+  "completeSong": {
+    "commands": 507,
+    "beats": 296,
+    "idealSeconds": 222,
+    "elapsedSeconds": 222.016869375,
+    "maximumTimingErrorMs": 21.17666666666628,
+    "missingCommands": 0
+  },
+  "outputs": [
+    {
+      "channel": "L",
+      "pin": "PB0",
+      "compare": "OC0A",
+      "register": "OCR0A",
+      "packagePin": 5
+    },
+    {
+      "channel": "R",
+      "pin": "PB1",
+      "compare": "OC0B",
+      "register": "OCR0B",
+      "packagePin": 6
+    }
+  ],
+  "panorama": {
+    "source": "New stereo placement for this adaptation; the retained lead sheet contains no pan instructions.",
+    "law": "Linear levels, quantized halves; negative odd samples round toward minus infinity.",
+    "lead": {
+      "instrument": "violin",
+      "left": 1,
+      "right": 0.5
+    },
+    "keys": {
+      "instrument": "piano",
+      "left": 1,
+      "right": 1
+    },
+    "pluck": {
+      "instrument": "guitar",
+      "left": 0.5,
+      "right": 1
+    },
+    "drums": {
+      "instrument": "percussion",
+      "left": 1,
+      "right": 1
+    }
+  },
+  "pwm": {
+    "frames": 8326145,
+    "min": [
+      70,
+      65
+    ],
+    "max": [
+      184,
+      184
+    ],
+    "mean": [
+      127.27515002441106,
+      127.28688126377814
+    ],
+    "correlation": 0.9098998017841468,
+    "channelWriteCountMismatch": 0
+  },
+  "timing": {
+    "isrCycles": 26,
+    "maxForegroundCyclesIncludingWaitAndIrq": 302,
+    "minimumBufferPublishMarginCycles": 192,
+    "lostTimerEvents": 0,
+    "lostWorkEvents": 0
+  },
+  "memory": {
+    "stateBytes": 7,
+    "maxStackBytes": 5
+  },
+  "model": "Paired OCR0A/OCR0B duty writes, one AVR execution. Physical PWM edges and double-buffer latch timing are not synthesized."
+}

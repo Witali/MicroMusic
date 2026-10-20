@@ -30,7 +30,8 @@ export class AVRCore {
     this.irqStart = this.irqCount = this.lost = this.maxIRQ = this.writes = 0;
     this.irqFrames = [];
     this.workLost = 0;
-    this.duty = 128; this.fastIdle = fastIdle; this.idleCycles = 0;
+    this.duty = this.dutyLeft = 128; this.leftWrites = 0;
+    this.fastIdle = fastIdle; this.idleCycles = 0;
     for (let p = 0; p < 512; p++) this.decode(p);
   }
   get sreg() { return this.io[0x3f]; }
@@ -164,6 +165,7 @@ export class AVRCore {
     this.io[address] = value;
     if ([0x25,0x28,0x2f,0x32,0x33].includes(address)) this.updateTimer();
     if (address === 0x29 && this.timer) { this.duty = value; this.writes++; }
+    if (address === 0x2a && this.timer) { this.dutyLeft = value; this.leftWrites++; }
     return 0;
   }
   clock(n) {
@@ -294,6 +296,14 @@ export class AVRCore {
   state() {
     return { pc:this.pc * 2, cycles:this.cyc, irqs:this.irqCount, maxISR:this.maxIRQ,
       lost:this.lost + this.workLost, timerLost:this.lost, workLost:this.workLost,
-      duty:this.duty, registers:Array.from(this.r), idleCycles:this.idleCycles };
+      duty:this.duty, dutyLeft:this.dutyLeft, registers:Array.from(this.r), idleCycles:this.idleCycles };
+  }
+  nextStereoDuty() {
+    // Stereo firmware writes OC0A/L then OC0B/R in the same overflow ISR.
+    // Use the R write as the frame boundary, never advance the CPU per channel.
+    const leftBefore = this.leftWrites;
+    this.nextDuty();
+    if (this.leftWrites !== leftBefore + 1) throw new Error('Stereo frame requires one OC0A write before OC0B');
+    return this.dutyLeft | (this.duty << 8);
   }
 }

@@ -10,10 +10,10 @@ const { AVRCore: Reference } = require('../../ATtiny13A/Music/variants/rhythmic/
 const catalog = JSON.parse(readFileSync(new URL('../firmware.json', import.meta.url)));
 
 for (const entry of catalog.entries) {
-  test(`${entry.id}: 14 seconds preserve archived PWM and register state`, () => {
+  test(`${entry.id}: 14 seconds preserve ${entry.audioChannels===2 ? 'bundled single-step' : 'archived'} PWM and register state`, () => {
     const flash = parseHex(entry.flashHex), ep = entry.eepromHex ? parseHex(entry.eepromHex, 64) : null;
     const ReferenceCore = entry.referenceCore ? require(fileURLToPath(new URL(entry.referenceCore,new URL('../',import.meta.url)))).AVRCore : Reference;
-    const fast = new AVRCore(flash, ep), ref = new ReferenceCore(flash, ep);
+    const fast = new AVRCore(flash, ep), ref = new ReferenceCore(flash, ep, {fastIdle:entry.audioChannels!==2});
     let changes = 0, last = -1;
     for (let i = 0; i < 14 * 37500; i++) {
       const sample = fast.nextDuty();
