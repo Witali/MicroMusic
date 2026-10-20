@@ -12,6 +12,42 @@
   "percussion_first_unit": 2,
   "percussion_meter_units": 12,
   "percussion_initial_counter": 9,
+  "percussion_enabled": false,
+  "lead_envelope_model": "bowed",
+  "lead_max_level": 15,
+  "accompaniment_envelope_model": "bowed",
+  "keys_max_level": 12,
+  "pluck_envelope_model": "bowed",
+  "pluck_max_level": 10,
+  "instruments": {
+    "lead": {
+      "instrument": "flute",
+      "level": 15
+    },
+    "keys": {
+      "instrument": "violin",
+      "level": 12
+    },
+    "pluck": {
+      "instrument": "cello",
+      "level": 10
+    },
+    "percussion": "off"
+  },
+  "instrument_bank": {
+    "lead": {
+      "instrument": "flute",
+      "level": 15
+    },
+    "keys": {
+      "instrument": "violin",
+      "level": 12
+    },
+    "pluck": {
+      "instrument": "cello",
+      "level": 10
+    }
+  },
   "playlist": [
     "pickup",
     "bar_01",
@@ -86,132 +122,175 @@
   },
   "chord_pairs": [
     [
-      "E3",
-      "E3"
+      "B3/E3",
+      "B3/E3"
     ]
   ],
   "chord_overrides": {
     "pickup": [
       [
-        "E3",
-        "E3"
+        "B3/E3",
+        "B3/E3"
       ]
     ],
     "bar_01": [
       [
-        "E3",
-        "G3"
+        "E4/E3",
+        "D4/G3"
       ]
     ],
     "bar_02": [
       [
-        "D3",
-        "D3"
+        "F#4/D3",
+        "D4/D3"
       ]
     ],
     "bar_03": [
       [
-        "E3",
-        "C3"
+        "B3/E3",
+        "A3/C3"
       ]
     ],
     "bar_04": [
       [
-        "B2",
-        "B2"
+        "D#4/B2",
+        "B3/B2"
       ]
     ],
     "bar_05": [
       [
-        "E3",
-        "G3"
+        "E4/E3",
+        "D4/G3"
       ]
     ],
     "bar_06": [
       [
-        "D3",
-        "D3"
+        "F#4/D3",
+        "D4/D3"
       ]
     ],
     "bar_07": [
       [
-        "E3",
-        "B2"
+        "B3/E3",
+        "B3/B2"
       ]
     ],
     "bar_08": [
       [
-        "E3",
-        "E3"
+        "B3/E3",
+        "B3/E3"
       ]
     ],
     "bar_09": [
       [
-        "B3",
-        "G3"
+        "F#4/B3",
+        "B4/G3"
       ]
     ],
     "bar_10": [
       [
-        "D3",
-        "D3"
+        "F#4/D3",
+        "D4/D3"
       ]
     ],
     "bar_11": [
       [
-        "E3",
-        "C3"
+        "B3/E3",
+        "A3/C3"
       ]
     ],
     "bar_12": [
       [
-        "B2",
-        "B2"
+        "D#4/B2",
+        "B3/B2"
       ]
     ],
     "bar_13": [
       [
-        "B3",
-        "G3"
+        "F#4/B3",
+        "B4/G3"
       ]
     ],
     "bar_14": [
       [
-        "D3",
-        "D3"
+        "F#4/D3",
+        "D4/D3"
       ]
     ],
     "bar_15": [
       [
-        "E3",
-        "B2"
+        "B3/E3",
+        "B3/B2"
       ]
     ],
     "bar_16": [
       [
-        "E3",
-        "E3"
+        "B3/E3",
+        "B3/E3"
       ]
     ]
   },
-  "chord_roots": {
-    "E3": 52,
-    "G3": 55,
-    "D3": 50,
-    "C3": 48,
-    "B2": 47,
-    "B3": 59
+  "chord_notes": {
+    "B3/E3": [
+      59,
+      52
+    ],
+    "E4/E3": [
+      64,
+      52
+    ],
+    "D4/G3": [
+      62,
+      55
+    ],
+    "F#4/D3": [
+      66,
+      50
+    ],
+    "D4/D3": [
+      62,
+      50
+    ],
+    "A3/C3": [
+      57,
+      48
+    ],
+    "D#4/B2": [
+      63,
+      47
+    ],
+    "B3/B2": [
+      59,
+      47
+    ],
+    "F#4/B3": [
+      66,
+      59
+    ],
+    "B4/G3": [
+      71,
+      55
+    ]
   },
   "packing_candidates": 4096,
   "provenance": {
     "source": "Z80 player MIDI example",
     "source_repository": "C:/Work/z80-tester",
     "midi": "ATtiny13A/Music/reference/greensleeves/greensleeves.mid",
+    "z80_example": "ATtiny13A/Music/reference/greensleeves/greensleeves-4voices.mid",
+    "z80_programs_zero_based": {
+      "soprano_flute": 73,
+      "alto_violin": 40,
+      "tenor_clarinet": 71,
+      "bass_cello": 42
+    },
+    "original_midi_program_changes": 0,
     "lilypond": "ATtiny13A/Music/reference/greensleeves/greensleeves.ly",
     "license": "Public Domain",
     "edition": "Mutopia-2014/03/30-1247",
     "credit": "Traditional; typeset by Steve Dunlop",
     "sha256": {
+      "greensleeves-4voices.mid": "5b932ed6f108146089c98448e472fbee977f0b90193cf37fb1ea21bf8af82a72",
       "greensleeves.ly": "e580b31e882580d7f96d52e8aafd79b8e2f4e89ad9b32c360af9f5814a2d7a37",
       "greensleeves.mid": "04a6e03dd6128aa291aa75e4df757bbba40567ef885eca18d14d51d9365cb8e8",
       "greensleeves.rdf": "4e8da27cbf1523d7a821be030e84b4ab3a1ea8f1e1ea377aaba99dd4a7ce635e"
@@ -232,7 +311,7 @@
     "final_layout_spacer_omitted_beats": 0.5,
     "total_quarter_beats": 48.0,
     "source_midi_tempo_bpm": 60,
-    "description": "Complete played soprano, written pitches/onsets/durations and eighth-note pickup. Bass-derived piano/guitar accompaniment at dotted-quarter boundaries; generated sparse kick/hat pulse every dotted quarter. This is a three-tonal-voice and percussion reduction, not all four original SATB parts. Final LilyPond s8 layout spacer is omitted so the 2.5-beat closing bar and 0.5-beat pickup loop in 6/8."
+    "description": "Complete played soprano, written pitches/onsets/durations and eighth-note pickup. Flute73 matches the actual Z80 player example; violin40 and cello42 follow the written Alto/Bass pitches sampled at dotted-quarter boundaries. Clarinet71 Tenor is omitted to fit three tonal oscillators. No invented guitar or percussion. The original two-staff MIDI has no ProgramChange; the actual Z80 four-channel example explicitly sets flute/violin/clarinet/cello. Final LilyPond s8 layout spacer is omitted so the 2.5-beat closing bar and 0.5-beat pickup loop in 6/8."
   },
   "note_format": "Quarter-note beats on a sixteenth grid. Three beats = one 6/8 bar; pickup = 0.5 beat. ~ continues a note across a bar boundary."
 }

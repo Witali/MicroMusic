@@ -1,25 +1,25 @@
 {
   "image": "greensleeves",
-  "flashSha256": "cd03896535b9b2ca3cd7e6088ee6efcfbd8a0329f0443345ecd458a3242f8912",
-  "flashBytes": 846,
+  "flashSha256": "c78e99b924de661f5b2ac8394e6aef976644ae568bf749bc19b3bae8b7aa9cdd",
+  "flashBytes": 718,
   "fullPlaylist": {
     "commands": 120,
     "beats": 48,
     "idealSeconds": 48,
-    "actualSeconds": 48.00512166666667,
-    "maximumTimingErrorMs": 13.761666666665406,
-    "finalTimingErrorMs": 5.121666666665988,
-    "maximumExecutionErrorAgainstGridUs": 9.895833333333334,
+    "actualSeconds": 48.00512104166666,
+    "maximumTimingErrorMs": 13.761041666664823,
+    "finalTimingErrorMs": 5.1210416666654055,
+    "maximumExecutionErrorAgainstGridUs": 8.125,
     "missingEvents": 0
   },
   "compression": {
     "method": "Repeated command phrases; dynamic-programming parsing; suffix sharing; deterministic dictionary search",
     "globallyMinimal": false,
     "candidateLimit": 4096,
-    "candidateCount": 158,
-    "dictionaryTrials": 2730,
+    "candidateCount": 157,
+    "dictionaryTrials": 2713,
     "originalCommandBytes": 106,
-    "originalStreamSha256": "716192ba260dca8a8ccef4199fe5c295bd290e6e779cd2147c72ba82ef9dd25a",
+    "originalStreamSha256": "dbd360daecea7ceee3fe04085c3f2b3e433f73eb85c22f4fc72032d60ab7d1fb",
     "sourceLayoutBytes": 91,
     "packedEventBytes": 59,
     "playlistBytes": 14,
@@ -28,13 +28,13 @@
     "storedSections": 8,
     "referencedSections": 10,
     "verifiedLossless": true,
-    "runtimeStreamSha256": "716192ba260dca8a8ccef4199fe5c295bd290e6e779cd2147c72ba82ef9dd25a"
+    "runtimeStreamSha256": "dbd360daecea7ceee3fe04085c3f2b3e433f73eb85c22f4fc72032d60ab7d1fb"
   },
   "grid": {
     "phaseStep": 3579,
     "targetBpm": 60,
     "actualBpm": 59.99766290187836,
-    "drumHitsIncludingBothEndpoints": 32,
+    "drumHitsIncludingBothEndpoints": 0,
     "drumGridMismatches": 0
   },
   "articulation": {
@@ -43,10 +43,15 @@
     "repeatedNotes": 6,
     "repeatedNotesArticulated": 6,
     "phaseResets": 0,
-    "firstAttack50PercentMs": 27.297708333333333,
-    "firstAttack100PercentMs": 54.604375
+    "firstAttack50PercentMs": 27.296666666666667,
+    "firstAttack100PercentMs": 54.60375
   },
   "envelopes": {
+    "models": [
+      "bowed",
+      "bowed",
+      "bowed"
+    ],
     "ticksChecked": 3517,
     "mismatches": 0
   },

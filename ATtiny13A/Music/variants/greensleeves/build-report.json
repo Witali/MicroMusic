@@ -1,10 +1,10 @@
 {
-  "flashBytes": 846,
-  "codeBytes": 718,
-  "tableBytes": 128,
+  "flashBytes": 718,
+  "codeBytes": 574,
+  "tableBytes": 144,
   "eepromBytes": 64,
-  "flashSha256": "cd03896535b9b2ca3cd7e6088ee6efcfbd8a0329f0443345ecd458a3242f8912",
-  "eepromSha256": "ac29eb2ba4b6718b3b490b9b74be52d5a1ea819149df9edac4d4aecf80443f81",
+  "flashSha256": "c78e99b924de661f5b2ac8394e6aef976644ae568bf749bc19b3bae8b7aa9cdd",
+  "eepromSha256": "f81755e5b88d7041208ce5e59da3edf864d4c2162dfdaee1ba4f306f64cff60e",
   "labels": {
     "REST_INDEX": 12,
     "HOLD_INDEX": 13,
@@ -16,70 +16,62 @@
     "vectors": 0,
     "envelope_return": 2,
     "update_envelope": 8,
-    "envelope_gate": 36,
-    "envelope_release": 46,
-    "reset": 56,
-    "clear_registers": 82,
-    "idle": 144,
-    "pwm_irq": 152,
-    "audio_step": 172,
-    ".L064": 182,
-    "music_tick": 196,
-    "lead_attack_ready": 212,
-    ".L084": 216,
-    ".L08e": 226,
-    ".L0a8": 252,
-    "grid_step": 272,
-    "meter_position_ready": 280,
-    "drum_trigger": 288,
-    ".L0ba": 294,
-    "read_event": 300,
-    ".L0c8": 308,
-    "note_off": 316,
-    "release_lead": 334,
-    "chord_event": 342,
-    "melodic_event": 380,
-    "lead_commit": 438,
-    "note_rest": 442,
-    "next_section": 444,
-    ".L15c": 462,
-    "hold_sample": 472,
-    "render_tone": 474,
-    ".L216": 488,
-    ".L25c": 520,
-    "voice_silent": 556,
-    "render_sample": 562,
-    "render_drum": 612,
-    ".L280": 622,
-    ".L28a": 626,
-    ".L298": 640,
-    ".L2a0": 654,
-    ".L2ae": 682,
-    "write_pwm": 692,
-    "publish_wait": 702,
-    "playlist": 718,
-    "durations": 732,
-    "note_steps": 739,
-    "chord_steps": 763,
-    "melody_data": 787,
-    "section_packed_000": 787,
-    "first_section": 787,
-    "section_packed_001": 790,
-    "section_packed_009": 795,
-    "section_packed_007": 796,
-    "section_packed_002": 805,
-    "section_packed_003": 813,
-    "section_packed_004": 819,
-    "section_packed_005": 832,
-    "section_packed_006": 838,
-    "section_packed_008": 840
+    "envelope_release": 24,
+    "reset": 32,
+    "clear_registers": 54,
+    "idle": 106,
+    "pwm_irq": 114,
+    "audio_step": 134,
+    ".L064": 144,
+    "music_tick": 158,
+    "lead_attack_ready": 174,
+    "lead_release": 178,
+    "lead_updated": 188,
+    ".L0a8": 204,
+    "grid_step": 224,
+    ".L0ba": 224,
+    "read_event": 230,
+    ".L0c8": 238,
+    "note_off": 246,
+    "release_lead": 260,
+    "chord_event": 268,
+    "melodic_event": 316,
+    "lead_commit": 374,
+    "note_rest": 378,
+    "next_section": 380,
+    ".L15c": 398,
+    "hold_sample": 408,
+    "render_tone": 410,
+    ".L216": 424,
+    ".L25c": 456,
+    "voice_silent": 492,
+    "render_sample": 498,
+    "write_pwm": 548,
+    "publish_wait": 558,
+    "playlist": 574,
+    "durations": 588,
+    "note_steps": 595,
+    "chord_steps": 619,
+    "melody_data": 659,
+    "section_packed_000": 659,
+    "first_section": 659,
+    "section_packed_001": 662,
+    "section_packed_009": 667,
+    "section_packed_007": 668,
+    "section_packed_002": 677,
+    "section_packed_003": 685,
+    "section_packed_004": 691,
+    "section_packed_005": 704,
+    "section_packed_006": 710,
+    "section_packed_008": 712
   },
   "score": {
     "note_count": 47,
     "event_bytes": 59,
+    "maximum_entry_offset": 53,
     "playlist_bytes": 14,
     "note_table_bytes": 24,
-    "chord_table_bytes": 24,
+    "chord_table_bytes": 40,
     "durations": [
       1,
       2,
@@ -105,14 +97,60 @@
       "R"
     ],
     "chords": [
-      "E3",
-      "G3",
-      "D3",
-      "C3",
-      "B2",
-      "B3"
+      "B3/E3",
+      "E4/E3",
+      "D4/G3",
+      "F#4/D3",
+      "D4/D3",
+      "A3/C3",
+      "D#4/B2",
+      "B3/B2",
+      "F#4/B3",
+      "B4/G3"
     ],
-    "total_data_bytes": 128,
+    "chord_notes": {
+      "B3/E3": [
+        59,
+        52
+      ],
+      "E4/E3": [
+        64,
+        52
+      ],
+      "D4/G3": [
+        62,
+        55
+      ],
+      "F#4/D3": [
+        66,
+        50
+      ],
+      "D4/D3": [
+        62,
+        50
+      ],
+      "A3/C3": [
+        57,
+        48
+      ],
+      "D#4/B2": [
+        63,
+        47
+      ],
+      "B3/B2": [
+        59,
+        47
+      ],
+      "F#4/B3": [
+        66,
+        59
+      ],
+      "B4/G3": [
+        71,
+        55
+      ]
+    },
+    "total_data_bytes": 144,
     "section_bars": {
       "pickup": 1,
       "bar_01": 1,
@@ -183,10 +221,10 @@
       "method": "Repeated command phrases; dynamic-programming parsing; suffix sharing; deterministic dictionary search",
       "globallyMinimal": false,
       "candidateLimit": 4096,
-      "candidateCount": 158,
-      "dictionaryTrials": 2730,
+      "candidateCount": 157,
+      "dictionaryTrials": 2713,
       "originalCommandBytes": 106,
-      "originalStreamSha256": "716192ba260dca8a8ccef4199fe5c295bd290e6e779cd2147c72ba82ef9dd25a",
+      "originalStreamSha256": "dbd360daecea7ceee3fe04085c3f2b3e433f73eb85c22f4fc72032d60ab7d1fb",
       "sourceLayoutBytes": 91,
       "packedEventBytes": 59,
       "playlistBytes": 14,
@@ -201,10 +239,19 @@
     "hold_index": 13,
     "holds": [],
     "instruments": {
-      "lead": "violin",
-      "keys": "piano",
-      "pluck": "guitar",
-      "drums": "kick/snare/hat"
+      "lead": {
+        "instrument": "flute",
+        "level": 15
+      },
+      "keys": {
+        "instrument": "violin",
+        "level": 12
+      },
+      "pluck": {
+        "instrument": "cello",
+        "level": 10
+      },
+      "percussion": "off"
     }
   },
   "timing": {
@@ -213,16 +260,127 @@
     "envelopeTickCycles": 131072,
     "tempoBpm": 60,
     "actualTempoBpm": 59.99766290187836,
-    "sharedGrid": "One sixteenth grid; 6/8 bars and dotted-quarter percussion after an eighth-note pickup",
+    "sharedGrid": "One sixteenth grid; 6/8 bars and dotted-quarter accompaniment after an eighth-note pickup",
     "initialHighPhase": 243,
-    "percussionGridUnits": 6,
-    "percussionFirstUnit": 2,
+    "percussionEnabled": false,
     "meter": "6/8"
   },
   "articulation": {
     "holdIndex": 13,
     "holds": [],
-    "attack": "Four envelope levels per tick, saturated at 15",
-    "retrigger": "Half current amplitude, same oscillator phase; explicit holds skip retrigger"
+    "attack": "bowed",
+    "retrigger": "half",
+    "phaseContinuous": true
+  },
+  "instrumentAssignments": {
+    "lead": {
+      "instrument": "flute",
+      "label": "Ð¤Ð»ÐµÐ¹Ñ‚Ð°",
+      "gmProgram": 73,
+      "eepromOffset": 0,
+      "level": 15,
+      "envelope": {
+        "model": "sustain",
+        "defaultLevel": 15,
+        "attackStep": 4,
+        "retrigger": "half-current-level",
+        "releaseStep": 1
+      }
+    },
+    "keys": {
+      "instrument": "violin",
+      "label": "Ð¡ÐºÑ€Ð¸Ð¿ÐºÐ°",
+      "gmProgram": 40,
+      "eepromOffset": 16,
+      "level": 12,
+      "envelope": {
+        "model": "bowed",
+        "defaultLevel": 15,
+        "attackStep": 4,
+        "retrigger": "half-current-level",
+        "releaseStep": 1
+      }
+    },
+    "pluck": {
+      "instrument": "cello",
+      "label": "Ð’Ð¸Ð¾Ð»Ð¾Ð½Ñ‡ÐµÐ»ÑŒ",
+      "gmProgram": 42,
+      "eepromOffset": 32,
+      "level": 10,
+      "envelope": {
+        "model": "bowed",
+        "defaultLevel": 10,
+        "attackStep": 4,
+        "retrigger": "half-current-level",
+        "releaseStep": 1
+      }
+    },
+    "percussion": {
+      "instrument": "off",
+      "label": "Ð’Ñ‹ÐºÐ»ÑŽÑ‡ÐµÐ½Ñ‹",
+      "level": 0,
+      "enabled": false,
+      "notes": []
+    }
+  },
+  "instrumentBankSha256": "14d2fa2cfa3c2fbbe67410298ca9f2b5ec9071af5a397f94a66edf110fda9594",
+  "instruments": {
+    "lead": {
+      "instrument": "flute",
+      "level": 15
+    },
+    "keys": {
+      "instrument": "violin",
+      "level": 12
+    },
+    "pluck": {
+      "instrument": "cello",
+      "level": 10
+    },
+    "percussion": "off"
+  },
+  "instrumentBank": {
+    "lead": {
+      "instrument": "flute",
+      "label": "Флейта",
+      "gmProgram": 73,
+      "eepromOffset": 0,
+      "level": 15,
+      "envelope": {
+        "model": "sustain",
+        "defaultLevel": 15,
+        "attackStep": 4,
+        "retrigger": "half-current-level",
+        "releaseStep": 1
+      }
+    },
+    "keys": {
+      "instrument": "violin",
+      "label": "Скрипка",
+      "gmProgram": 40,
+      "eepromOffset": 16,
+      "level": 12,
+      "envelope": {
+        "model": "bowed",
+        "defaultLevel": 15,
+        "attackStep": 4,
+        "retrigger": "half-current-level",
+        "releaseStep": 1
+      }
+    },
+    "pluck": {
+      "instrument": "cello",
+      "label": "Виолончель",
+      "gmProgram": 42,
+      "eepromOffset": 32,
+      "level": 10,
+      "envelope": {
+        "model": "bowed",
+        "defaultLevel": 10,
+        "attackStep": 4,
+        "retrigger": "half-current-level",
+        "releaseStep": 1
+      }
+    }
   }
 }

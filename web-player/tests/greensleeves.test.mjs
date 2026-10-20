@@ -44,21 +44,57 @@ test('Greensleeves retains the complete written melody and familiar opening from
   assert.equal(position,192);assert.equal(position%12,0,'Closing bar plus pickup loop in 6/8');
   assert.equal(actual.filter(n=>n.pitch!==null).length,71);
   assert.equal(score.meter,'6/8');assert.equal(score.pickup_beats,.5);
-  assert.equal(rom.length,846);assert.ok(rom.length<=1024);
+  assert.equal(rom.length,report.flashBytes);assert.ok(rom.length<=1024);
 });
 
-test('6/8 percussion keeps both dotted-quarter beats and the pickup phase across repeated loops',()=>{
-  const c=new AVRCore(rom,ep);
-  while(c.pc!==labels.idle/2)c.step();
-  c.sreg&=127;
-  const hits=[];
-  for(let unit=0;unit<192*3;unit++){
-    c.pc=labels.grid_step/2;
-    while(c.pc!==labels['.L0ba']/2){
-      if(c.pc===labels.drum_trigger/2)hits.push({unit,phase:c.r[29]});
-      c.step();
+test('the actual Z80 example assigns flute, violin, clarinet and cello, with no percussion',()=>{
+  const midi=readFileSync(new URL('greensleeves-4voices.mid',reference)),programs=[];
+  const vlq=(bytes,offset)=>{let value=0,b;do{b=bytes[offset++];value=value*128+(b&127);}while(b&128);return[value,offset];};
+  let offset=14;
+  for(let track=0;track<midi.readUInt16BE(10);track++){
+    const length=midi.readUInt32BE(offset+4),bytes=midi.subarray(offset+8,offset+8+length);offset+=8+length;
+    let p=0,running;
+    while(p<bytes.length){
+      [,p]=vlq(bytes,p);let status=bytes[p];if(status>=128)p++;else status=running;
+      if(status===255){p++;let length;[length,p]=vlq(bytes,p);p+=length;}
+      else if(status===240||status===247){let length;[length,p]=vlq(bytes,p);p+=length;}
+      else{running=status;const op=status&240;if(op===192)programs.push([status&15,bytes[p]]);p+=(op===192||op===208)?1:2;}
     }
   }
-  assert.deepEqual(hits.map(h=>h.unit),Array.from({length:96},(_,i)=>2+i*6));
-  assert.deepEqual(hits.map(h=>h.phase),Array.from({length:96},(_,i)=>i%2?6:0));
+  assert.deepEqual(programs,[[0,73],[1,40],[2,71],[3,42]]);
+  assert.deepEqual(score.instruments,{lead:{instrument:'flute',level:15},keys:{instrument:'violin',level:12},pluck:{instrument:'cello',level:10},percussion:'off'});
+  assert.equal(score.percussion_enabled,false);
+  assert.equal(labels.drum_trigger,undefined);assert.equal(labels.render_drum,undefined);
+});
+
+test('three instrument banks and independent Alto/Bass frequencies match the build-time assignments',()=>{
+  const bank=JSON.parse(readFileSync(new URL('../../ATtiny13A/Music/instruments/bank.json',import.meta.url)));
+  for(const [role,offset] of [['lead',0],['keys',16],['pluck',32]]){
+    const instrument=bank.instruments[score.instruments[role].instrument];
+    for(const [register,extra] of [['low',0],['high',8]])for(let i=0;i<16;i++)
+      assert.equal(((ep[offset+extra+(i>>1)]>>(i%2?4:0))&15)-8,instrument.waves[register][i]);
+  }
+  assert.ok(ep.subarray(48).every(v=>v===0x88));
+  const delta=n=>Math.round(440*2**((n-69)/12)*65536/18750);
+  for(let chord=0;chord<report.score.chords.length;chord++){
+    const pitches=score.chord_notes[report.score.chords[chord]],address=labels.chord_steps+chord*4;
+    assert.equal(rom[address]|rom[address+1]<<8,delta(pitches[0]));
+    assert.equal(rom[address+2]|rom[address+3]<<8,delta(pitches[1]));
+  }
+});
+
+test('sustained accompaniment retains oscillator phases and attacks softly to its configured levels',()=>{
+  const c=new AVRCore(rom,ep);c.pc=labels.chord_event/2;c.r[16]=224;
+  c.r[19]=140;c.r[20]=138;c.r[6]=57;c.r[7]=48;c.r[10]=160;c.r[11]=91;
+  while(c.pc!==labels.read_event/2)c.step();
+  assert.equal(c.r[6]|c.r[7]<<8,12345);assert.equal(c.r[10]|c.r[11]<<8,23456);
+  assert.equal(c.r[19],134);assert.equal(c.r[20],133);
+  for(const cap of [score.keys_max_level,score.pluck_max_level]){
+    let level=128;
+    for(let tick=0;tick<8;tick++){
+      c.pc=labels.update_envelope/2;c.r[16]=level;c.r[17]=128+cap;c.pushPC(0);
+      do{c.step();}while(c.pc!==0);
+      level=c.r[16];assert.equal(level,128+Math.min(cap,(tick+1)*4));assert.equal(c.r[0],0);
+    }
+  }
 });
