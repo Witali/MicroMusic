@@ -1,6 +1,6 @@
 // Specialized interpreter for the archived synth firmware, derived from its
 // HTML players. ROM bytes are immutable; decode once, execute integer op IDs.
-// ATtiny13(A), AVRe timings. See reports/avr-audit.txt for instruction coverage
+// ATtiny13A, AVRe timings. See reports/attiny13a-audit.txt for instruction coverage
 // and peripheral limitations; this remains a firmware-oriented AVR subset.
 const OP = { NOP:1, CLI:2, SEI:3, RETI:4, RET:5, CALL:6, JUMP:7, BRANCH:8,
   SKIP:9, LDI:10, CPI:11, SUBI:12, ORI:13, ANDI:14, MOVW:15, ADD:16,
@@ -9,9 +9,7 @@ const OP = { NOP:1, CLI:2, SEI:3, RETI:4, RET:5, CALL:6, JUMP:7, BRANCH:8,
 const sign = (v, bit) => v & bit ? v - bit * 2 : v;
 
 export class AVRCore {
-  constructor(binary, eeprom, { fastIdle = true, device = 'attiny13a' } = {}) {
-    if (!['attiny13','attiny13a'].includes(device)) throw new Error('Unsupported device: ' + device);
-    this.device = device;
+  constructor(binary, eeprom, { fastIdle = true } = {}) {
     if (!binary.length || binary.length > 1024) throw new Error('Flash must contain 1–1024 bytes');
     if (eeprom && eeprom.length !== 64) throw new Error('EEPROM must contain 64 bytes');
     this.rom = new Uint8Array(1024).fill(255); this.rom.set(binary);
@@ -114,7 +112,22 @@ export class AVRCore {
   }
   writeIO(address, value) {
     value &= 255;
-    if (address === 0x25 && this.device === 'attiny13') return 0; // Reserved; PRR exists only on 13A.
+    if (address === 0x37 && (value & 31)) throw new Error('Flash programming/fuse access is not implemented');
+    if (address === 0x21 && (value & 0x58)) throw new Error('Watchdog operation is not implemented');
+    if (address === 0x06 && (value & 0x80)) throw new Error('ADC operation is not implemented');
+    if (address === 0x08 && (value & 8)) throw new Error('Analog comparator interrupts are not implemented');
+    if (address === 0x3b && (value & 0x60)) throw new Error('External/pin-change interrupts are not implemented');
+    if (address === 0x26) {
+      if (value & 128) {
+        if (value === 128 && !(this.clkprUntil > this.cyc)) {
+          this.io[address] = 128; this.clkprUntil = this.cyc + 4;
+        }
+      } else if (this.clkprUntil > this.cyc) {
+        if (value & 15) throw new Error('Runtime CPU clock division is not implemented');
+        this.io[address] = 0; this.clkprUntil = 0;
+      }
+      return 0;
+    }
     if (address === 0x38) { this.io[address] &= ~(value & 14); return 0; } // W1C
     if (address === 0x39 && (value & 12)) throw new Error('Timer0 compare interrupts are not implemented');
     if (address === 0x1c) {
@@ -144,6 +157,7 @@ export class AVRCore {
     const before = this.cyc;
     this.cyc += n;
     if (this.eempeUntil <= this.cyc) this.io[0x1c] &= ~4;
+    if (this.clkprUntil <= this.cyc) this.io[0x26] &= ~128;
     if (this.timer && this.overflowAt <= this.cyc) {
       const events = 1 + Math.floor((this.cyc - this.overflowAt) / (256 * this.timerDivisor));
       this.lost += events - Number(!this.pending); this.pending = true;

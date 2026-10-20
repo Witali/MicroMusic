@@ -47,13 +47,6 @@ test('GTCCR resets or holds the prescaler; PRR stops Timer0 counting',()=>{
   c.writeIO(0x25,0); c.clock(8); assert.equal(c.io[TCNT0],3);
 });
 
-test('original ATtiny13 has no PRR at the ATtiny13A address',()=>{
-  const c=new AVRCore(Uint8Array.of(0,0),null,{device:'attiny13'});
-  c.writeIO(TCCR0B,1); c.writeIO(0x25,2); c.clock(10);
-  assert.equal(c.io[0x25],0); assert.equal(c.io[TCNT0],10);
-  assert.throws(()=>new AVRCore(Uint8Array.of(0,0),null,{device:'atmega328p'}),/Unsupported device/);
-});
-
 test('pending overflow is serviced even after timer stops or TIMSK is enabled later',()=>{
   const c=make(out(TIMSK0)); c.writeIO(TCCR0B,1); c.clock(256); c.writeIO(TCCR0B,0);
   c.i=1; c.r[17]=2; c.step(); assert.equal(c.pc,3); assert.equal(c.irqCount,1); assert.equal(c.cyc,261);
@@ -95,4 +88,16 @@ test('unimplemented timer modes, external clock, compare IRQs and EEPROM writes 
   for (const source of [6,7]) assert.throws(()=>make(0).writeIO(TCCR0B,source),/External/);
   assert.throws(()=>make(0).writeIO(TIMSK0,4),/compare interrupts/);
   assert.throws(()=>make(0).writeIO(0x1c,2),/EEPROM programming/);
+});
+
+test('clock prescaler unlock lasts four cycles; unsupported peripherals cannot silently start',()=>{
+  const c=make(0); c.writeIO(0x26,3); assert.equal(c.io[0x26],0);
+  c.writeIO(0x26,128); c.clock(3); c.writeIO(0x26,128); // repeated unlock must not extend the window
+  c.clock(1); assert.equal(c.io[0x26],0);
+  c.writeIO(0x26,3); assert.equal(c.io[0x26],0);
+  c.writeIO(0x26,128); c.clock(1); c.writeIO(0x26,0); assert.equal(c.io[0x26],0);
+  c.writeIO(0x26,128); assert.throws(()=>c.writeIO(0x26,3),/CPU clock division/);
+  for (const [address,value] of [[0x37,9],[0x21,8],[0x06,128],[0x08,8],[0x3b,32]]) {
+    assert.throws(()=>make(0).writeIO(address,value),/not implemented/);
+  }
 });
