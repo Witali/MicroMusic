@@ -73,7 +73,7 @@ for (const [name, op, fn] of [
   });
 }
 
-for (const [name, op] of [['INC',0x9403],['DEC',0x940a],['COM',0x9400],['LSR',0x9406],['ASR',0x9405],['SWAP',0x9402]]) {
+for (const [name, op] of [['INC',0x9403],['DEC',0x940a],['COM',0x9400],['LSR',0x9406],['ASR',0x9405],['ROR',0x9407],['SWAP',0x9402]]) {
   test(`${name}: every input byte and preserved flags`, () => {
     const c = cpu(op | (17 << 4));
     for (let x = 0; x < 256; x++) for (const previous of [0,255]) {
@@ -84,7 +84,7 @@ for (const [name, op] of [['INC',0x9403],['DEC',0x940a],['COM',0x9400],['LSR',0x
         flags = nzvs(value, Number(x === (name === 'INC' ? 127 : 128)), previous);
       } else if (name === 'COM') { value = x ^ 255; flags = nzvs(value, 0, previous) | 1; }
       else if (name === 'SWAP') { value = ((x << 4) | (x >> 4)) & 255; flags = previous; }
-      else { value = (x >> 1) | (name === 'ASR' ? x & 128 : 0); flags = nzvs(value, (value >> 7) ^ (x & 1), previous & 254) | (x & 1); }
+      else { value = (x >> 1) | (name === 'ASR' ? x & 128 : name === 'ROR' ? (previous & 1) << 7 : 0); flags = nzvs(value, (value >> 7) ^ (x & 1), previous & 254) | (x & 1); }
       c.step(); assert.equal(c.r[17], value); assert.equal(c.sreg, flags); assert.equal(c.cyc, 1);
     }
   });
@@ -138,7 +138,7 @@ test('RCALL/RET use two bytes of SRAM and SPL, interoperate with PUSH/POP', () =
   assert.equal(c.data[159],1); assert.equal(c.data[158],0);
   c.step(); assert.equal(c.sp,156); assert.equal(c.data[157],0xa5);
   c.step(); assert.equal(c.r[18],0xa5); assert.equal(c.sp,157);
-  c.step(); assert.equal(c.pc,1); assert.equal(c.sp,159); assert.equal(c.cyc,11); assert.equal(c.sreg,0x73);
+  c.step(); assert.equal(c.pc,1); assert.equal(c.sp,159); assert.equal(c.minSP,156); assert.equal(c.cyc,11); assert.equal(c.sreg,0x73);
   const high=cpu(0xd000); high.pc=511; high.rom[1022]=0; high.rom[1023]=0xd0; high.decode(511);
   high.step(); assert.equal(high.data[159],0); assert.equal(high.data[158],0); // wrapped return PC
   assert.throws(()=>cpu(0x9508).step(),/Stack underflow/);
@@ -171,8 +171,22 @@ test('SEI and RETI execute one following instruction; CLI disables immediately',
   e.step(); assert.equal(e.r[17],0x21); assert.equal(e.pc,3); assert.equal(e.cyc,9);
 });
 
+test('LDS/STS access the shared data space and consume two words and two cycles',()=>{
+  for (const address of [0,31,96,159]) {
+    const c=cpu(0x9200|(17<<4),address,0x9000|(18<<4),address); c.r[17]=0xa5; c.sreg=0x73;
+    c.step(); assert.equal(c.data[address],0xa5); assert.equal(c.pc,2); assert.equal(c.cyc,2);
+    c.step(); assert.equal(c.r[18],0xa5); assert.equal(c.pc,4); assert.equal(c.cyc,4); assert.equal(c.sreg,0x73);
+    if (address>=96) assert.equal(c.ram[address-96],0xa5);
+  }
+  const io=cpu(0x9200|(17<<4),0x5f,0x9000|(18<<4),0x5f); io.r[17]=0x73;
+  io.step(); io.step(); assert.equal(io.sreg,0x73); assert.equal(io.r[18],0x73); assert.equal(io.cyc,4);
+  const wrap=cpu(96); wrap.rom[1022]=0x10; wrap.rom[1023]=0x91; wrap.decode(511);
+  wrap.pc=511; wrap.ram[0]=0x42; wrap.step(); assert.equal(wrap.pc,1); assert.equal(wrap.r[17],0x42); assert.equal(wrap.cyc,2);
+  assert.throws(()=>cpu(0x9000,160).step(),/Data address/);
+});
+
 test('unsupported instructions fail explicitly instead of acquiring accidental timing', () => {
-  for (const word of [0xffff,0x940c,0x940e,0x95e8,0x9588,0x95a8,0x9c00,0x9000,0x9200]) {
+  for (const word of [0xffff,0x940c,0x940e,0x95e8,0x9588,0x95a8,0x9c00]) {
     assert.throws(()=>cpu(word).step(),/Unsupported opcode/);
   }
 });

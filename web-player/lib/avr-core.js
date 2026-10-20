@@ -5,7 +5,8 @@
 const OP = { NOP:1, CLI:2, SEI:3, RETI:4, RET:5, CALL:6, JUMP:7, BRANCH:8,
   SKIP:9, LDI:10, CPI:11, SUBI:12, ORI:13, ANDI:14, MOVW:15, ADD:16,
   ADC:17, SUB:18, AND:19, EOR:20, MOV:21, INC:22, DEC:23, COM:24,
-  LSR:25, ASR:26, SWAP:27, IN:28, OUT:29, SBI:30, PUSH:31, POP:32, ST:33, LPM:34, FLAG:35 };
+  LSR:25, ASR:26, SWAP:27, IN:28, OUT:29, SBI:30, PUSH:31, POP:32, ST:33, LPM:34, FLAG:35,
+  ROR:36, LDS:37, STS:38 };
 const sign = (v, bit) => v & bit ? v - bit * 2 : v;
 
 export class AVRCore {
@@ -17,15 +18,18 @@ export class AVRCore {
     this.data = new Uint8Array(160);
     this.r = this.data.subarray(0, 32); this.io = this.data.subarray(32, 96);
     this.sram = this.data.subarray(96);
+    this.ram = this.sram; // Preserve the SRAM inspection alias used by firmware tools.
     this.op = new Uint8Array(512); this.d = new Uint8Array(512);
     this.s = new Uint8Array(512); this.k = new Int16Array(512);
     this.sp = 0x9f; // SPL resets to RAMEND; return addresses occupy TWO bytes.
+    this.minSP = this.sp;
     this.pc = this.cyc = this.z = this.c = this.i = 0;
     this.irqDelay = 0;
     this.timer = this.pending = this.inIRQ = false; this.overflowAt = Infinity;
     this.timerDivisor = 0; this.prescalerAt = 0;
     this.irqStart = this.irqCount = this.lost = this.maxIRQ = this.writes = 0;
     this.irqFrames = [];
+    this.workLost = 0;
     this.duty = 128; this.fastIdle = fastIdle; this.idleCycles = 0;
     for (let p = 0; p < 512; p++) this.decode(p);
   }
@@ -37,6 +41,8 @@ export class AVRCore {
   set z(value) { this.sreg = (this.sreg & ~2) | ((value & 1) << 1); }
   get i() { return this.sreg >> 7; }
   set i(value) { this.sreg = (this.sreg & 127) | ((value & 1) << 7); }
+  get t() { return (this.sreg >> 6) & 1; }
+  set t(value) { this.sreg = (this.sreg & ~64) | ((value & 1) << 6); }
   get sp() { return this.io[0x3d]; }
   set sp(value) { this.io[0x3d] = value; }
   get pending() { return !!(this.io[0x38] & 2); }
@@ -76,8 +82,13 @@ export class AVRCore {
     } else if ((w & 0xff00) === 0x0100) { o = OP.MOVW; d = 2 * ((w >> 4) & 15); s = 2 * (w & 15); }
     else if ([0x0c00,0x1c00,0x1800,0x2000,0x2400,0x2c00].includes(w & 0xfc00))
       o = ({3072:OP.ADD,7168:OP.ADC,6144:OP.SUB,8192:OP.AND,9216:OP.EOR,11264:OP.MOV})[w & 0xfc00];
-    else if ([0x9403,0x940a,0x9400,0x9406,0x9405,0x9402].includes(w & 0xfe0f))
-      o = ({37891:OP.INC,37898:OP.DEC,37888:OP.COM,37894:OP.LSR,37893:OP.ASR,37890:OP.SWAP})[w & 0xfe0f];
+    else if ([0x9403,0x940a,0x9400,0x9406,0x9405,0x9407,0x9402].includes(w & 0xfe0f))
+      o = ({37891:OP.INC,37898:OP.DEC,37888:OP.COM,37894:OP.LSR,37893:OP.ASR,37895:OP.ROR,37890:OP.SWAP})[w & 0xfe0f];
+    else if ((w & 0xfe0f) === 0x9000 || (w & 0xfe0f) === 0x9200) {
+      o = (w & 0xfe0f) === 0x9000 ? OP.LDS : OP.STS;
+      const next = ((p + 1) & 511) * 2;
+      k = this.rom[next] | this.rom[next + 1] << 8;
+    }
     else if ((w & 0xf800) === 0xb000) { o = OP.IN; k = ((w >> 5) & 48) | (w & 15); }
     else if ((w & 0xf800) === 0xb800) { o = OP.OUT; k = ((w >> 5) & 48) | (w & 15); }
     else if ((w & 0xff00) === 0x9a00) { o = OP.SBI; d = (w >> 3) & 31; k = w & 7; }
@@ -90,6 +101,7 @@ export class AVRCore {
   push(value) {
     if (this.sp < 0x60 || this.sp > 0x9f) throw new Error('Stack overflow or invalid SPL');
     this.data[this.sp--] = value;
+    this.minSP = Math.min(this.minSP, this.sp);
   }
   pop() {
     if (this.sp < 0x5f || this.sp >= 0x9f) throw new Error('Stack underflow or invalid SPL');
@@ -187,7 +199,9 @@ export class AVRCore {
       case OP.NOP: break;
       case OP.CLI: this.i = 0; break;
       case OP.SEI: this.i = 1; this.irqDelay = 1; break;
-      case OP.FLAG: this.sreg = (this.sreg & ~(1 << d)) | (k << d); break;
+      case OP.FLAG:
+        if (d === 6 && k && this.t && this.inIRQ) this.workLost++;
+        this.sreg = (this.sreg & ~(1 << d)) | (k << d); break;
       case OP.RETI:
         this.pc = this.popPC(); this.i = 1; this.irqDelay = 1; n = 4;
         v = this.irqFrames.pop();
@@ -223,8 +237,19 @@ export class AVRCore {
       case OP.DEC: r[d]--; this.nzvs(r[d], Number(r[d] === 127)); break;
       case OP.COM: r[d] ^= 255; this.nzvs(r[d]); this.c = 1; break;
       case OP.LSR: this.c = r[d] & 1; r[d] >>= 1; this.nzvs(r[d], this.c); break;
+      case OP.ROR:
+        v = r[d]; r[d] = (v >> 1) | (this.c << 7); this.c = v & 1;
+        this.nzvs(r[d], (r[d] >> 7) ^ this.c); break;
       case OP.ASR: this.c = r[d] & 1; r[d] = (r[d] >> 1) | (r[d] & 128); this.nzvs(r[d], (r[d] >> 7) ^ this.c); break;
       case OP.SWAP: r[d] = ((r[d] & 15) << 4) | (r[d] >> 4); break;
+      case OP.LDS:
+      case OP.STS:
+        if (k < 0 || k >= this.data.length) throw new Error('Data address out of range');
+        v = r[d]; this.pc = (this.pc + 1) & 511; this.clock(2); n = 0;
+        if (this.op[p] === OP.LDS) r[d] = this.data[k];
+        else if (k >= 32 && k < 96) n = this.writeIO(k - 32, v);
+        else this.data[k] = v;
+        break;
       case OP.IN: this.clock(1); n = 0; r[d] = this.io[k]; break;
       case OP.OUT:
         this.clock(1); n = this.writeIO(k, r[d]); break;
@@ -253,10 +278,11 @@ export class AVRCore {
   nextDuty() {
     const before = this.writes, deadline = this.cyc + 9600000;
     while (this.writes === before) {
-      // The firmware's two-cycle RJMP-to-self has no observable side effects.
+      // Two-cycle RJMP-to-self and taken BRTC-to-self have no side effects.
       // Jump to the same instruction boundary as repeated RJMPs, then service
       // the exact pending overflow. Never skip an ISR or disabled-IRQ loop.
-      if (this.fastIdle && this.op[this.pc] === OP.JUMP && this.k[this.pc] === -1 &&
+      if (this.fastIdle && this.k[this.pc] === -1 &&
+          (this.op[this.pc] === OP.JUMP || (this.op[this.pc] === OP.BRANCH && this.d[this.pc] === 6 && this.s[this.pc] === 0 && !this.t)) &&
           this.timer && this.i && !this.irqDelay && !this.pending && (this.io[0x39] & 2)) {
         const n = Math.max(2, Math.ceil((this.overflowAt - this.cyc) / 2) * 2);
         this.idleCycles += n; this.clock(n); this.interrupt();
@@ -267,6 +293,7 @@ export class AVRCore {
   }
   state() {
     return { pc:this.pc * 2, cycles:this.cyc, irqs:this.irqCount, maxISR:this.maxIRQ,
-      lost:this.lost, duty:this.duty, registers:Array.from(this.r), idleCycles:this.idleCycles };
+      lost:this.lost + this.workLost, timerLost:this.lost, workLost:this.workLost,
+      duty:this.duty, registers:Array.from(this.r), idleCycles:this.idleCycles };
   }
 }

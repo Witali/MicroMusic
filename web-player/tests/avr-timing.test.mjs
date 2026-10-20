@@ -75,8 +75,8 @@ test('nested interrupt return preserves the outer ISR and includes nested time i
 });
 
 test('EEPROM read stalls apply through OUT and ST to EECR and Timer0 runs during the stall',()=>{
-  for (const word of [out(0x1c),0x9201|(17<<4)]) {
-    const c=make(word); c.eeprom[63]=0xa5; c.writeIO(0x1e,255); c.r[17]=1; c.r[30]=0x1c+32;
+  for (const word of [out(0x1c),0x9201|(17<<4),0x9200|(17<<4)]) {
+    const c=make(word,0x1c+32); c.eeprom[63]=0xa5; c.writeIO(0x1e,255); c.r[17]=1; c.r[30]=0x1c+32;
     c.writeIO(TCCR0B,1); c.writeIO(TCNT0,252); c.step();
     assert.equal(c.cyc,word===out(0x1c)?5:6); assert.equal(c.io[TCNT0],(252+c.cyc)&255);
     assert.equal(c.pending,true); assert.equal(c.io[0x1d],0xa5); assert.equal(c.io[0x1c]&1,0); assert.equal(c.io[0x1e],63);

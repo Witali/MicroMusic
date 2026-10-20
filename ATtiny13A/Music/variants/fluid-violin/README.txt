@@ -57,7 +57,7 @@ build/audio/midi-banks/fluidr3-gm/FluidR3_GM.sf2
   node tools/render-fluid-violin.mjs --soundfont C:/Work/z80-tester/build/audio/midi-banks/fluidr3-gm/FluidR3_GM.sf2 --engine C:/Work/z80-tester/audio/lib/soundfont-player/vendor/spessasynth.js --output build/fluid-violin/reference
   python tools/analyze-fluid-violin.py build/fluid-violin/reference ATtiny13A/Music/variants/fluid-violin/measurements.json
   python tools/build-fluid-violin.py
-  node tools/render-firmware-preview.mjs ATtiny13A/Music/variants/fluid-violin 14
+  node tools/render-firmware-preview.mjs ATtiny13A/Music/variants/fluid-violin 14 9000 1.1220184543019633
   python web-player/scripts/build_catalog.py
   node --test web-player/tests/*.test.mjs
 

@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-20",
+  "image": "foreground-pwm",
+  "automatedTests": {"passed": 51, "failed": 0, "catalogImages": 10, "exactReferenceSecondsPerImage": 14, "tempoSecondsPerImage": 60},
+  "assembly": {"flashBytes": 1022, "eepromBytes": 64, "originalSourceBinariesCompared": 4, "scoreAndEepromUnchangedFrom": "fluid-instruments"},
+  "foreground": {
+    "committedSamplesCompared": 75000,
+    "parentSampleComparison": "exact",
+    "atomicCommit": "MOV R18,R26; ISR reads only R18",
+    "maximumCalculationCyclesIncludingPreemption": 422,
+    "maximumStackBytes": 9,
+    "lostTimerOverflows": 0,
+    "lostWorkRequests": 0
+  },
+  "interrupt": {"periodCycles": 256, "cyclesIncludingHardwareEntryAndVector": 12, "instructions": ["OUT OCR0B,R18", "SET", "RETI"], "sampleCalculationPeriodCycles": 512},
+  "browser": {
+    "displayTime": "01:26.7",
+    "tempoPercent": 100,
+    "accumulatedAudioLagMs": 0,
+    "audioClockIntervalMs": 86698.667,
+    "wallClockIntervalMs": 86698.700,
+    "maximumIsrCycles": 12,
+    "lostEvents": 0,
+    "visibleError": ""
+  },
+  "softSpectra": {
+    "tonalReferenceNotes": 80,
+    "stringPresetsCompared": 5,
+    "percussionReferences": [35, 38, 42],
+    "bank": "FluidR3 GM 3.1",
+    "adaptation": "Voiced softer targets derived from bank measurements, not an exact sample-bank reproduction",
+    "outputFilter": {"highPassHz": 35, "lowPassHz": 4000, "qLinear": 0.5}
+  },
+  "limitations": ["Specialized AVR subset and averaged PWM", "No physical ATtiny13A or analog output measurement", "Fixed audio-device startup latency is distinct from measured accumulating lag"],
+  "hardwareReference": "https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf"
+}

@@ -12,6 +12,7 @@ for (const entry of catalog.entries) {
     const expectedCycles=frames/rate*entry.cpuHz;
     assert.ok(Math.abs(renderer.core.cyc-expectedCycles)<4096,`${renderer.core.cyc-expectedCycles} cycle drift`);
     assert.equal(renderer.core.lost,0);
+    assert.equal(renderer.core.workLost,0);
     assert.equal(renderer.frames,frames);
   });
 }

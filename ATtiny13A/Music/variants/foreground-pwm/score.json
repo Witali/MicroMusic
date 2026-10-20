@@ -1,0 +1,60 @@
+{
+  "title": "Lumière — four-voice instrumental arrangement",
+  "composers": ["Lorien Testard", "Alice Duport-Percier"],
+  "melody_transcription": "Nicholas Pinelli / VGLeadSheets",
+  "score_url": "https://vgleadsheets.com/view/clair-obscur-expedition-33/lumire",
+  "reference_recording_url": "https://www.youtube.com/watch?v=LpNVf8sczqU",
+  "rights": "The composition and source transcription are not CC0. CC0 applies only to the instrument recordings. This is a simplified instrumental adaptation, not the original orchestral score or recording.",
+  "tempo_bpm": 80,
+  "beats_per_bar": 4,
+  "note_format": "Scientific pitch notation, duration in quarter-note beats; R is a rest. A tied note extends across the following bar when marked with ~. Slash-only improvisation sections receive new instrumental accompaniment.",
+  "playlist": ["intro", "A", "B", "C", "C", "D", "C", "C", "F", "F", "D", "C", "C", "F", "F"],
+  "chord_pairs": [["Bm", "Gmaj7"], ["Em", "F#m"], ["Bm", "Gmaj7"], ["Em", "F#"]],
+  "patterns": {
+    "intro": [
+      "B3:0.5 F#4:0.5 D5:0.5 G4:0.25 B4:0.25 G3:0.5 F#4:0.5 C#5:1",
+      "E3:0.5 E4:0.5 B4:0.5 G4:0.25 B4:0.25 F#3:0.5 E4:0.5 C#5:1"
+    ],
+    "A": [
+      "D4:2 B3:1 D4:0.75 C#4:0.25",
+      "E4:1.5 D4:0.5 F#4:2",
+      "D4:1 E4:1 F#4:1 E4:1",
+      "E4:1 D4:0.75 E4:0.25 C#4:2",
+      "D4:1 B3:0.5 G4:1 F#4:0.5 F#4:0.5 G4:0.25 F#4:0.25",
+      "E4:1 D4:0.5 E4:0.5 E4:0.5 G4:0.5 F#4:0.5 E4:0.5",
+      "D4:0.5 B3:0.25 C#4:0.25 D4:0.5 F#4:0.5 E4:0.5 D4:0.5 E4:0.5 G4:0.5~",
+      "G4:1 F#4:0.5 E4:0.5 F#4:2"
+    ],
+    "B": [
+      "F#4:0.5 F#4:0.5 F#4:0.5 E4:0.25 D4:0.25 F#4:0.5 F#4:0.5 F#4:0.5 E4:0.25 D4:0.25",
+      "F#4:1 G4:0.75 F#4:0.25 E4:2",
+      "F#4:0.5 F#4:0.5 F#4:0.5 E4:0.25 D4:0.25 F#4:1 F#4:0.5 G4:0.25 F#4:0.25",
+      "E4:1 D4:0.75 E4:0.25 C#4:2",
+      "B4:1 A4:0.75 G4:0.25 F#4:1.5 E4:0.5",
+      "D4:1.5 B3:0.5 E4:1.5 D4:0.5",
+      "B3:0.5 C#4:0.5 D4:0.5 E4:0.5 F#4:1.5 E4:0.25 D4:0.25",
+      "G4:1.5 F#4:0.5 E4:2"
+    ],
+    "C": [
+      "F#4:0.5 F#4:0.5 F#4:0.5 E4:0.25 D4:0.25 F#4:0.5 F#4:0.5 F#4:0.5 E4:0.25 D4:0.25",
+      "G4:1.5 F#4:0.5 E4:2",
+      "F#4:0.5 F#4:0.5 F#4:0.5 E4:0.25 D4:0.25 F#4:1 F#4:0.5 G4:0.25 F#4:0.25",
+      "E4:1 D4:0.75 E4:0.25 C#4:2"
+    ],
+    "D": [
+      "F#4:1 R:1 E4:1 R:1",
+      "D4:1 R:1 C#4:1 R:1",
+      "D4:1 R:1 E4:1 R:1",
+      "G4:1 R:1 F#4:1 R:1",
+      "F#4:1.5 A4:0.5 G4:1.5 G4:0.5",
+      "A4:0.5 G4:0.5 G4:0.5 F#4:0.5 E4:2",
+      "E4:1 F#4:1 F#4:1 G4:1",
+      "A4:1 G4:0.5 F#4:0.5 G4:2"
+    ],
+    "F": ["R:4", "R:4", "R:4", "R:4"]
+  },
+  "chord_overrides": {
+    "intro": [["Bm", "Gmaj7"], ["Em", "F#m"]],
+    "D": [["Bm", "Gmaj7"], ["Em", "F#m"], ["Gmaj7", "Em"], ["C#m7b5", "F#"], ["Bm", "Gmaj7"], ["Em", "F#m"], ["Bm", "Gmaj7"], ["Em", "F#"]]
+  }
+}
