@@ -20,3 +20,6 @@ main{max-width:1320px;margin:auto;padding:0 40px}.intro{display:flex;align-items
 @media(max-width:460px){.fuses{gap:18px}.fuse-clock{width:100%;margin-left:0}.fuse-clock a{display:inline-block}.fuse-byte strong{font-size:20px}}
 @media(max-width:460px){.scope-metrics{grid-template-columns:repeat(2,1fr)}}
 @media(prefers-reduced-motion:reduce){button{transition:none}}
+.transport-links button{background:#8cc8ff;border-color:#8cc8ff;color:#10243a;font-weight:650}
+.transport-links button:hover:not(:disabled){background:#b2dbff;border-color:#b2dbff}
+.transport-links button:focus-visible{outline-color:#8cc8ff}
