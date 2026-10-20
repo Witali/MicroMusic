@@ -2,7 +2,7 @@
  * SRAM[0x60]=noise high, [0x61]=midpoint, [0x62]=next point, [0x63]=music divider, [0x64]=high grid phase; R25=low grid phase.
  * R18 belongs to ISR; R23 swaps 0x01/0x10 without changing arithmetic flags.
  * Sound generation 18.75 kHz; distinct interpolated output values 37.5 kHz.
- * Piano/guitar use soft sustain spectra with their measured envelopes.
+ * Build-time assignments specialize oscillators and instrument envelopes.
  * Per-sample attack/sustain spectral crossfade omitted to fit 1 KB Flash.
  */
 .section .text,"ax",@progbits
@@ -52,7 +52,6 @@ reset:
   out 38, r16
   clr r0
   clr r1
-  sts 96, r0
   ldi r30, 2
   clr r31
   clr r16
@@ -67,18 +66,13 @@ clear_registers:
   st Z+, r18
   st Z+, r0
   /* Initialize four sound channels, score cursor, and deterministic percussion noise. */
-  ldi r16, 4
-  mov r21, r16
   ldi r16, 1
   mov r22, r16
   ldi r28, FIRST_PLAYLIST_INDEX
   ldi r16, GRID_INITIAL_HIGH
   sts 100, r16
-  ldi r29, 7
   ldi r30, lo8(first_section)
   ldi r31, hi8(first_section)
-  ldi r16, 167
-  mov r14, r16
   /* Configure hardware Fast PWM on OC0B/PB1, fixed TOP=255 at 37.5 kHz. */
   sbi 23, 1
   out 41, r18
@@ -121,38 +115,19 @@ audio_step:
 music_tick:
   /* Advance envelopes at ~73.24 Hz. Flags in envelope bytes encode attack, sustain and release. */
   inc r24
-  sbrs r1, 7
-  rjmp .L084
   mov r16, r1
-  subi r16, 252
-  cpi r16, 144
-  brcs lead_attack_ready
-  ldi r16, 143
-lead_attack_ready:
+  ldi r17, 3
+  rcall update_envelope
   mov r1, r16
-  rjmp .L08e
-.L084:
-  tst r1
-  breq .L08e
-  dec r1
-  sbrc r1, 3
-  dec r1
+  /* END LEAD ENVELOPE */
 .L08e:
   /* Piano and guitar use one shared envelope function with different decay masks. */
   mov r16, r19
   ldi r17, 3
   rcall update_envelope
   mov r19, r16
-  mov r16, r20
-  ldi r17, 1
-  rcall update_envelope
-  mov r20, r16
-  /* Percussion decays on alternate ticks, retriggering in a four-beat rhythm. */
-  sbrc r24, 0
-  rjmp .L0a8
-  cpi r21, 4
-  brcc .L0a8
-  inc r21
+  /* END KEYS ENVELOPE */
+  /* END PLUCK ENVELOPE */
 .L0a8:
   /* R25: low grid phase, SRAM[0x64]: high. One overflow = one sixteenth. */
   lds r16, 100
@@ -164,14 +139,6 @@ lead_attack_ready:
   brcs grid_step
   ret
 grid_step:
-  inc r29
-  andi r29, 7
-  sbrc r29, 0
-  rjmp .L0ba
-drum_trigger:
-  clr r21
-  ldi r16, 167
-  mov r14, r16
 .L0ba:
   dec r22
   breq read_event
@@ -193,10 +160,6 @@ note_off:
   rcall release_lead
   sbrc r16, 1
   andi r19, 15
-  sbrc r16, 2
-  andi r20, 15
-  sbrc r16, 3
-  ldi r21, 3
   rjmp read_event
 release_lead:
   /* Change lead from attack/sustain into release without resetting DDS phase. */
@@ -216,13 +179,14 @@ chord_event:
   adc r31, r0
   lpm r8, Z+
   lpm r9, Z+
-  lpm r12, Z+
-  lpm r13, Z+
-  clr r7
-  clr r11
-  ldi r16, 143
+  ldi r16, 138
   mov r19, r16
-  mov r20, r16
+  mov r16, r8
+  or r16, r9
+  brne keys_sounding
+  clr r19
+keys_sounding:
+  /* END COMPANION TRIGGERS */
   movw r30, r26
   rjmp read_event
 melodic_event:
@@ -236,6 +200,7 @@ melodic_event:
   adc r31, r0
   lpm r22, Z
   movw r30, r26
+  /* BEGIN LEAD FREQUENCY */
   lsr r16
   lsr r16
   lsr r16
@@ -252,10 +217,7 @@ melodic_event:
   lpm r4, Z+
   lpm r5, Z+
   movw r30, r26
-  mov r16, r1
-  andi r16, 15
-  lsr r16
-  ori r16, 128
+  ldi r16, 143
 lead_commit:
   mov r1, r16
   rjmp hold_sample
@@ -333,6 +295,7 @@ render_sample:
   /* Accumulate three pitch oscillators with independent phases and envelopes. */
   push r25
   clr r26
+  /* BEGIN LEAD RENDER */
   add r2, r4
   adc r3, r5
   mov r25, r1
@@ -340,6 +303,8 @@ render_sample:
   mov r17, r3
   rcall render_tone
   add r26, r17
+  /* END LEAD RENDER */
+  /* BEGIN KEYS RENDER */
   add r6, r8
   adc r7, r9
   mov r25, r19
@@ -348,59 +313,8 @@ render_sample:
   mov r17, r7
   rcall render_tone
   add r26, r17
-  add r10, r12
-  adc r11, r13
-  mov r25, r20
-  ori r25, 32
-  mov r16, r13
-  mov r17, r11
-  rcall render_tone
-  add r26, r17
-render_drum:
-  /* Add bass drum or band-limited pseudo-random percussion; center the mix on PWM duty 128. */
-  cpi r21, 4
-  brcc write_pwm
-  cpi r29, 2
-  brcs .L280
-  rjmp .L298
-.L280:
-  ldi r17, 1
-  add r14, r17
-.L28a:
-  mov r17, r14
-  sbrc r17, 7
-  com r17
-  subi r17, 61
-  asr r17
-  asr r17
-  rjmp .L2ae
-.L298:
-  lds r27, 96
-  lsl r14
-  adc r27, r27
-  brcc .L2a0
-  ldi r17, 45
-  eor r14, r17
-.L2a0:
-  sts 96, r27
-  mov r17, r14
-  lsr r17
-  andi r17, 63
-  mov r27, r14
-  andi r27, 63
-  sbrc r29, 1
-  sub r17, r27
-  sbrs r29, 1
-  subi r17, 32
-  asr r17
-  sbrc r29, 1
-  asr r17
-.L2ae:
-  sbrc r21, 0
-  asr r17
-  sbrc r21, 1
-  asr r17
-  add r26, r17
+  /* END KEYS RENDER */
+  /* END PLUCK RENDER */
 write_pwm:
   /* Convert the bipolar mix to unsigned PWM; publish the next pair after a safe handoff. */
   subi r26, 128

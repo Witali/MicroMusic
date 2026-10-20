@@ -1,14 +1,14 @@
 {
-  "flashBytes": 1022,
-  "codeBytes": 710,
-  "tableBytes": 312,
+  "flashBytes": 948,
+  "codeBytes": 532,
+  "tableBytes": 416,
   "eepromBytes": 64,
-  "flashSha256": "34e3e359dfe7b856bbd2621d11a5b5860987bbf8b661842755633fc796484492",
-  "eepromSha256": "ac29eb2ba4b6718b3b490b9b74be52d5a1ea819149df9edac4d4aecf80443f81",
+  "flashSha256": "66553afcadc2d0e6a8c70464cb604835017584023cae97ff4b582faa29ebe4da",
+  "eepromSha256": "55db8e414b66c13c63d4593496c05e1218dea0404a2809c0beedd6cd46f1765e",
   "labels": {
-    "REST_INDEX": 15,
-    "HOLD_INDEX": 16,
-    "PLAYLIST_LEN": 13,
+    "REST_INDEX": 17,
+    "HOLD_INDEX": 18,
+    "PLAYLIST_LEN": 17,
     "FIRST_PLAYLIST_INDEX": 1,
     "GRID_STEP_LOW": 48,
     "GRID_STEP_HIGH": 35,
@@ -19,64 +19,60 @@
     "envelope_gate": 36,
     "envelope_release": 46,
     "reset": 56,
-    "clear_registers": 82,
-    "idle": 144,
-    "pwm_irq": 152,
-    "audio_step": 172,
-    ".L064": 182,
-    "music_tick": 196,
-    "lead_attack_ready": 212,
-    ".L084": 216,
-    ".L08e": 226,
-    ".L0a8": 252,
-    "grid_step": 272,
-    "drum_trigger": 280,
-    ".L0ba": 286,
-    "read_event": 292,
-    ".L0c8": 300,
-    "note_off": 308,
-    "release_lead": 326,
-    "chord_event": 334,
-    "melodic_event": 372,
-    "lead_commit": 430,
-    "note_rest": 434,
-    "next_section": 436,
-    ".L15c": 454,
-    "hold_sample": 464,
-    "render_tone": 466,
-    ".L216": 480,
-    ".L25c": 512,
-    "voice_silent": 548,
-    "render_sample": 554,
-    "render_drum": 604,
-    ".L280": 614,
-    ".L28a": 618,
-    ".L298": 632,
-    ".L2a0": 646,
-    ".L2ae": 674,
-    "write_pwm": 684,
-    "publish_wait": 694,
-    "playlist": 710,
-    "durations": 723,
-    "note_steps": 730,
-    "chord_steps": 760,
-    "melody_data": 784,
-    "section_packed_000": 784,
-    "first_section": 784,
-    "section_packed_001": 787,
-    "section_packed_004": 793,
-    "section_packed_002": 815,
-    "section_packed_003": 851,
-    "section_packed_005": 918,
-    "section_packed_006": 949,
-    "section_packed_007": 953
+    "clear_registers": 78,
+    "idle": 130,
+    "pwm_irq": 138,
+    "audio_step": 158,
+    ".L064": 168,
+    "music_tick": 182,
+    ".L08e": 192,
+    ".L0a8": 200,
+    "grid_step": 220,
+    ".L0ba": 220,
+    "read_event": 226,
+    ".L0c8": 234,
+    "note_off": 242,
+    "release_lead": 252,
+    "chord_event": 260,
+    "keys_sounding": 292,
+    "melodic_event": 296,
+    "lead_commit": 348,
+    "note_rest": 352,
+    "next_section": 354,
+    ".L15c": 372,
+    "hold_sample": 382,
+    "render_tone": 384,
+    ".L216": 398,
+    ".L25c": 430,
+    "voice_silent": 466,
+    "render_sample": 472,
+    "write_pwm": 506,
+    "publish_wait": 516,
+    "playlist": 532,
+    "durations": 549,
+    "note_steps": 556,
+    "chord_steps": 590,
+    "melody_data": 626,
+    "section_packed_000": 626,
+    "first_section": 626,
+    "section_packed_001": 629,
+    "section_packed_004": 635,
+    "section_packed_002": 657,
+    "section_packed_005": 693,
+    "section_packed_006": 724,
+    "section_packed_007": 728,
+    "section_packed_008": 760,
+    "section_packed_009": 793,
+    "section_packed_010": 824,
+    "section_packed_003": 881
   },
   "score": {
-    "note_count": 217,
-    "event_bytes": 238,
-    "playlist_bytes": 13,
-    "note_table_bytes": 30,
-    "chord_table_bytes": 24,
+    "note_count": 288,
+    "event_bytes": 322,
+    "maximum_entry_offset": 255,
+    "playlist_bytes": 17,
+    "note_table_bytes": 34,
+    "chord_table_bytes": 36,
     "durations": [
       1,
       2,
@@ -91,6 +87,7 @@
       "D#4",
       "F4",
       "F#4",
+      "G4",
       "G#4",
       "A4",
       "A#4",
@@ -102,19 +99,61 @@
       "F5",
       "F#5",
       "G5",
+      "G#5",
       "R"
     ],
     "chords": [
-      "D#3",
-      "F#3",
-      "F3",
-      "A#3",
-      "C#3",
-      "G#3"
+      "left_None",
+      "left_54",
+      "left_53",
+      "left_46",
+      "left_49",
+      "left_51",
+      "left_39",
+      "left_44",
+      "left_50"
     ],
-    "total_data_bytes": 312,
+    "chord_notes": {
+      "left_None": [
+        null,
+        null
+      ],
+      "left_54": [
+        54,
+        null
+      ],
+      "left_53": [
+        53,
+        null
+      ],
+      "left_46": [
+        46,
+        null
+      ],
+      "left_49": [
+        49,
+        null
+      ],
+      "left_51": [
+        51,
+        null
+      ],
+      "left_39": [
+        39,
+        null
+      ],
+      "left_44": [
+        44,
+        null
+      ],
+      "left_50": [
+        50,
+        null
+      ]
+    },
+    "total_data_bytes": 416,
     "section_bars": {
-      "intro": 28,
+      "intro": 35,
       "ending": 1
     },
     "playlist": [
@@ -130,7 +169,11 @@
       "packed_003",
       "packed_004",
       "packed_005",
-      "packed_007"
+      "packed_007",
+      "packed_008",
+      "packed_009",
+      "packed_008",
+      "packed_010"
     ],
     "source_playlist": [
       "intro",
@@ -141,37 +184,43 @@
       "packed_001": 3,
       "packed_004": 9,
       "packed_002": 31,
-      "packed_003": 67,
-      "packed_005": 134,
-      "packed_006": 165,
-      "packed_007": 169
+      "packed_005": 67,
+      "packed_006": 98,
+      "packed_007": 102,
+      "packed_008": 134,
+      "packed_009": 167,
+      "packed_010": 198,
+      "packed_003": 255
     },
     "compression": {
       "method": "Repeated command phrases; dynamic-programming parsing; suffix sharing; deterministic dictionary search",
       "globallyMinimal": false,
       "candidateLimit": 384,
       "candidateCount": 384,
-      "dictionaryTrials": 7789,
-      "originalCommandBytes": 431,
-      "originalStreamSha256": "c657cbb1504ca59c38ce94ae23a56869a2dd4a32de7a20f7385abd4a51ce565e",
-      "sourceLayoutBytes": 435,
-      "packedEventBytes": 238,
-      "playlistBytes": 13,
-      "packedBytes": 251,
-      "savedAgainstSourceLayoutBytes": 184,
-      "storedSections": 7,
-      "referencedSections": 8,
+      "dictionaryTrials": 7816,
+      "originalCommandBytes": 544,
+      "originalStreamSha256": "ce2d1b66d65d892a592bc9471ba17e832442c4f2a60baa8a674a32ae14a470ab",
+      "sourceLayoutBytes": 548,
+      "packedEventBytes": 322,
+      "playlistBytes": 17,
+      "packedBytes": 339,
+      "savedAgainstSourceLayoutBytes": 209,
+      "storedSections": 10,
+      "referencedSections": 11,
       "verifiedLossless": true
     },
     "source": "Моцарт — Турецкий марш (начальный фрагмент)",
-    "rest_index": 15,
-    "hold_index": 16,
+    "rest_index": 17,
+    "hold_index": 18,
     "holds": [],
     "instruments": {
-      "lead": "violin",
-      "keys": "piano",
-      "pluck": "guitar",
-      "drums": "kick/snare/hat"
+      "lead": "acoustic-grand-piano",
+      "keys": {
+        "instrument": "acoustic-grand-piano",
+        "level": 10
+      },
+      "pluck": "off",
+      "percussion": "off"
     }
   },
   "timing": {
@@ -184,9 +233,59 @@
     "initialHighPhase": 221
   },
   "articulation": {
-    "holdIndex": 16,
+    "holdIndex": 18,
     "holds": [],
-    "attack": "Four envelope levels per tick, saturated at 15",
-    "retrigger": "Half current amplitude, same oscillator phase; explicit holds skip retrigger"
-  }
+    "attack": "piano",
+    "retrigger": "full",
+    "phaseContinuous": true
+  },
+  "instrumentAssignments": {
+    "lead": {
+      "instrument": "acoustic-grand-piano",
+      "label": "Акустический рояль",
+      "gmProgram": 0,
+      "eepromOffset": 0,
+      "level": 15,
+      "envelope": {
+        "model": "piano",
+        "defaultLevel": 15,
+        "decayMask": 3,
+        "retrigger": "peak",
+        "releaseStep": 2
+      }
+    },
+    "keys": {
+      "instrument": "acoustic-grand-piano",
+      "label": "Акустический рояль",
+      "gmProgram": 0,
+      "eepromOffset": 16,
+      "level": 10,
+      "envelope": {
+        "model": "piano",
+        "defaultLevel": 15,
+        "decayMask": 3,
+        "retrigger": "peak",
+        "releaseStep": 2
+      }
+    },
+    "pluck": {
+      "instrument": "off",
+      "label": "Выключен",
+      "gmProgram": null,
+      "eepromOffset": 32,
+      "level": 0,
+      "envelope": {
+        "model": "off",
+        "defaultLevel": 0
+      }
+    },
+    "percussion": {
+      "instrument": "off",
+      "label": "Выключены",
+      "level": 0,
+      "enabled": false,
+      "notes": []
+    }
+  },
+  "instrumentBankSha256": "aef1a0f012034b24d90526c8cba6645c45948fa07b010f6600587a383d30bb87"
 }
