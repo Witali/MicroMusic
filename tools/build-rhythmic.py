@@ -17,6 +17,13 @@ compiler=module('score_format',ROOT/'tools/score-format.py')
 bank=module('instrument_bank',ROOT/'tools/instrument-bank.py')
 engine=module('instrument_engine',ROOT/'tools/build-instrument-engine.py')
 percussion=module('percussion_bank',ROOT/'tools/percussion-bank.py')
+release_engine=module('release_engine',ROOT/'tools/build-release-engine.py')
+
+def save_text(path,text):
+    # Avoid rewriting identical generated sources while previews/editors read
+    # them; a metadata-only rebuild need not touch every firmware artifact.
+    if not path.exists() or path.read_text(encoding='utf-8')!=text:
+        path.write_text(text,encoding='utf-8',newline='\n')
 
 def ihex(raw):
     rows=[]
@@ -41,8 +48,11 @@ def build(folder):
                 percussion_profile=dict(kit=kit,attenuationShift=shift,hits=percussion.select_kit(kit,shift),
                     bankSha256=hashlib.sha256(percussion.BANK_PATH.read_bytes()).hexdigest())
             data.update(metadata)
-            (folder/'synth.S').write_text(source,encoding='utf-8',newline='\n')
-            (folder/'score.json').write_text(json.dumps(data,indent=2,ensure_ascii=False)+'\n',encoding='utf-8',newline='\n')
+            slots=data.get('release_tail_slots',0)
+            if slots not in (0,2):raise ValueError('release_tail_slots must be 0 or 2')
+            if slots==2:source=release_engine.specialize(data,source)
+            save_text(folder/'synth.S',source)
+            save_text(folder/'score.json',json.dumps(data,indent=2,ensure_ascii=False)+'\n')
         (folder/'eeprom.bin').write_bytes(bank.build_eeprom(data['instruments']))
     # The bytecode is meter-independent; Greensleeves uses dotted-quarter
     # companion boundaries and its written pickup/closing bars.
@@ -58,18 +68,18 @@ def build(folder):
     assert len(meta['playlist'])<=255,'Playlist index is one byte'
     settings=dict(REST_INDEX=meta['rest_index'],HOLD_INDEX=meta['hold_index'],PLAYLIST_LEN=len(meta['playlist']),FIRST_PLAYLIST_INDEX=int(len(meta['playlist'])>1),
                   GRID_STEP_LOW=step&255,GRID_STEP_HIGH=step>>8,GRID_INITIAL_HIGH=initial)
-    (folder/'score.inc').write_text(score,encoding='utf-8',newline='\n')
-    (folder/'config.inc').write_text(''.join(f'.set {k}, {v}\n' for k,v in settings.items()),encoding='utf-8',newline='\n')
-    rom,labels=assembler.assemble(folder/'synth.S');assert len(rom)<=1024,len(rom)
+    save_text(folder/'score.inc',score)
+    save_text(folder/'config.inc',''.join(f'.set {k}, {v}\n' for k,v in settings.items()))
+    rom,labels=(release_engine.assemble_relaxed(folder/'synth.S') if data.get('release_tail_slots')==2 else assembler.assemble(folder/'synth.S'));assert len(rom)<=1024,len(rom)
     ep=(folder/'eeprom.bin').read_bytes();assert len(ep)==64
     (folder/'synth.bin').write_bytes(rom)
-    (folder/'synth.hex').write_text(ihex(rom),encoding='utf-8',newline='\n')
-    (folder/'eeprom.hex').write_text(ihex(ep),encoding='utf-8',newline='\n')
+    save_text(folder/'synth.hex',ihex(rom))
+    save_text(folder/'eeprom.hex',ihex(ep))
     html=(ROOT/'tools/player-template.html').read_text(encoding='utf-8')
     for key,value in [('AVR_CORE',(folder/'avr_core.js').read_text(encoding='utf-8')),('FIRMWARE_HEX',ihex(rom)),('EEPROM_HEX',ihex(ep))]:
         html=html.replace('/*'+key+'*/',value)
     html=html.replace('ATtiny13A — проигрыватель AVR-прошивки','ATtiny13A — '+data['title'])
-    (folder/'player.html').write_text(html,encoding='utf-8',newline='\n')
+    save_text(folder/'player.html',html)
     report=dict(flashBytes=len(rom),codeBytes=labels['playlist'],tableBytes=len(rom)-labels['playlist'],eepromBytes=64,
                 flashSha256=hashlib.sha256(rom).hexdigest(),eepromSha256=hashlib.sha256(ep).hexdigest(),labels=labels,score=meta,
                 timing=dict(phaseStep=step,phaseBits=16,envelopeTickCycles=131072,tempoBpm=data['tempo_bpm'],actualTempoBpm=step/65536*(37500/512)*60/4,
@@ -81,7 +91,11 @@ def build(folder):
         report['instrumentAssignments']=assignments
         report['instrumentBankSha256']=hashlib.sha256(bank.BANK_PATH.read_bytes()).hexdigest()
     if percussion_profile is not None:report['percussionProfile']=percussion_profile
-    (folder/'build-report.json').write_text(json.dumps(report,indent=2,ensure_ascii=False)+'\n',encoding='utf-8',newline='\n')
+    if data.get('release_tail_slots')==2:
+        report['releaseChannels']=dict(primaryVoices=3,tailSlots=2,voiceAddresses=[96,101,106,111,116],
+            voiceStateBytes=25,pwmRingBytes=16,tailGain=.5,stealing='Quietest of two release levels',
+            phaseContinuous=True,isrCycles=15,requiredFuses=dict(low='0x7A',high='0xFF'))
+    save_text(folder/'build-report.json',json.dumps(report,indent=2,ensure_ascii=False)+'\n')
     print(folder.name+':',len(rom),'Flash;',labels['playlist'],'code;',len(meta['holds']),'unique hold commands; phase step',step)
 
 if __name__=='__main__':

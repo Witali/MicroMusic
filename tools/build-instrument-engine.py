@@ -24,12 +24,15 @@ def between(text, start, end, replacement):
     return text[:a] + replacement + text[b:]
 
 
-def envelope(register, model, cap, name, attack_step=4, release_step=1, fast_lead_release=False):
+def envelope(register, model, cap, name, attack_step=4, release_step=1, fast_lead_release=False, decay_mask=None, fast_mask=None):
     """Generate saturated attack, held/decaying sustain and safe release."""
     if model == 'off':
         return ''
     if model in ('piano', 'pluck'):
-        return (f'  mov r16, r{register}\n  ldi r17, {3 if model == "piano" else 1}\n'
+        mask = (3 if model == 'piano' else 1) if decay_mask is None else decay_mask
+        flag = 64 if release_step == 2 else 0
+        select = '' if fast_mask is None else f'  sbrc r{register}, 6\n  ldi r17, {fast_mask | flag}\n'
+        return (f'  mov r16, r{register}\n  ldi r17, {mask | flag}\n' + select +
                 f'  rcall update_envelope\n  mov r{register}, r16\n')
     if model not in ('bowed', 'sustain'):
         raise ValueError(f'Unknown envelope {model}')
@@ -77,6 +80,13 @@ def _settings(roles):
         elif requested is not None:
             raise ValueError(f'{role}: unsupported retrigger {requested!r}')
         result[role] = dict(model=model, cap=cap, attack=attack, release=release, retrigger=retrigger)
+        if model in ('piano', 'pluck'):
+            mask = entry['envelope'].get('decayMask', 3 if model == 'piano' else 1)
+            if type(mask) is not int or mask not in (0, 1, 3, 7, 15):
+                raise ValueError(f'{role}: decayMask must be 2**n-1, at most 15')
+            result[role]['mask'] = mask
+            result[role]['register_decay'] = entry['envelope'].get('decayMaskByRegister')
+            result[role]['transient'] = entry.get('transient')
     return result
 
 
@@ -141,8 +151,46 @@ def needs_rest_check(score, voice):
         return True
 
 
+def role_pitches(score, role):
+    """Prove a register is wholly below/above a decay boundary at build time."""
+    compiler = _score_format()
+    try:
+        if role == 'lead':
+            return {compiler.midi(token.split(':')[0]) for bars in score['patterns'].values()
+                    for bar in bars for token in bar.split() if token.split(':')[0] != 'R'}
+        pairs = list(score['chord_pairs'])
+        pairs += [pair for bars in score.get('chord_overrides', {}).values() for pair in bars]
+        names = {name for pair in pairs for name in pair}
+        names |= {control['chord'] for controls in score.get('timed_controls', {}).values()
+                  for control in controls if 'chord' in control}
+        result = set()
+        for name in names:
+            if name in score.get('chord_notes', {}):
+                pitch = score['chord_notes'][name][0 if role == 'keys' else 1]
+                if isinstance(pitch, str):pitch = compiler.midi(pitch)
+            else:
+                root = score.get('chord_roots', {}).get(name, compiler.ROOTS.get(name))
+                pitch = root + (0 if role == 'keys' else -5)
+            if pitch is not None:result.add(pitch)
+        return result
+    except (KeyError, TypeError, ValueError, AttributeError):
+        return None
+
+
 def specialize(score, roles):
     settings = _settings(roles)
+    fast_roles = {}
+    for role in ROLES:
+        s = settings[role]
+        config = s.get('register_decay')
+        if config:
+            pitches = role_pitches(score, role)
+            threshold = config['thresholdMidi']
+            if pitches and all(p >= threshold for p in pitches):
+                s['mask'] = config['highMask']
+            elif pitches is None or any(p >= threshold for p in pitches):
+                s['fast_mask'] = config['highMask']
+                fast_roles[role] = threshold
     models = {role: settings[role]['model'] for role in ROLES}
     percussion = roles.get('percussion', {}).get('enabled', False)
     if type(percussion) is not bool:
@@ -153,7 +201,8 @@ def specialize(score, roles):
     for role, register in (('lead', 1), ('keys', 19), ('pluck', 20)):
         s = settings[role]
         generated = envelope(register, s['model'], s['cap'], role + '_env',
-                             s['attack'], s['release'], role == 'lead' and s['model'] == 'bowed')
+                             s['attack'], s['release'], False,
+                             s.get('mask'), s.get('fast_mask'))
         text = between(text, f'  /* BEGIN {role.upper()} ENVELOPE */\n',
                        f'  /* END {role.upper()} ENVELOPE */\n', generated)
 
@@ -165,9 +214,21 @@ def specialize(score, roles):
         text = text.replace('  ldi r16, 4\n  mov r21, r16\n', '')
         text = text.replace('  ldi r16, 167\n  mov r14, r16\n', '')
         text = text.replace('  sbrc r16, 3\n  ldi r21, 3\n', '')
+    else:
+        # Explicit percussion NoteOff latches until the next musical chord;
+        # the clock continues, but rest bars cannot restart the kit.
+        text = text.replace('  andi r29, 7\n', '  andi r29, 135\n')
+        text = text.replace('drum_trigger:\n', 'drum_trigger:\n  sbrc r29, 7\n  rjmp .L0ba\n')
+        text = text.replace('  sbrc r16, 3\n  ldi r21, 3\n', '  sbrc r16, 3\n  ldi r21, 3\n  sbrc r16, 3\n  ori r29, 128\n')
+        text = text.replace('chord_event:\n', 'chord_event:\n  andi r29, 7\n')
 
+    def trigger(register, high, role):
+        result = _trigger(register, settings[role])
+        if role in fast_roles:
+            result += f'  sbrc r{high}, 7\n  ori r16, 64\n  ldi r17, 127\n  and r{high}, r17\n'
+        return result
     text = between(text, '  /* BEGIN LEAD TRIGGER */\n', 'lead_commit:',
-                   _trigger(1, settings['lead']) if models['lead'] != 'off' else '  clr r16\n')
+                   trigger(1, 5, 'lead') if models['lead'] != 'off' else '  clr r16\n')
     # A zero frequency is an immediate companion rest; freezing a nonzero
     # wavetable value would introduce DC. Note-off commands retain frequency
     # and run the normal release instead.
@@ -176,7 +237,7 @@ def specialize(score, roles):
     for role, register, lo, hi in (('keys', 19, 8, 9), ('pluck', 20, 12, 13)):
         if models[role] == 'off':
             continue
-        triggers += _trigger(register, settings[role]) + f'  mov r{register}, r16\n'
+        triggers += trigger(register, hi, role) + f'  mov r{register}, r16\n'
         if rest_checks[role]:
             triggers += (f'  mov r16, r{lo}\n  or r16, r{hi}\n  brne {role}_sounding\n'
                          f'  clr r{register}\n{role}_sounding:\n')
@@ -199,6 +260,14 @@ def specialize(score, roles):
         if models[role] == 'off':
             text = between(text, f'  /* BEGIN {role.upper()} RENDER */\n',
                            f'  /* END {role.upper()} RENDER */\n', '')
+        elif settings[role].get('transient'):
+            if role == 'lead':
+                text = text.replace('  mov r25, r1\n', '  mov r25, r1\n  ori r25, 64\n')
+            else:
+                value = 16 if role == 'keys' else 32
+                text = text.replace(f'  ori r25, {value}\n', f'  ori r25, {value | 64}\n')
+    if any(s.get('transient') for s in settings.values()):
+        text = text.replace('.L216:\n', '.L216:\n  sbrs r0, 6\n  rjmp piano_attack_done\n  cpi r25, 14\n  brcs piano_attack_done\n  ori r16, 48\npiano_attack_done:\n')
     if all(model == 'off' for model in models.values()):
         text = between(text, 'render_tone:\n', 'render_sample:\n', '')
     if not any(model in ('piano', 'pluck') for model in models.values()):
@@ -208,12 +277,15 @@ def specialize(score, roles):
                     pluck_envelope_model=models['pluck'], percussion_enabled=percussion,
                     keys_rest_check=models['keys'] != 'off' and rest_checks['keys'],
                     pluck_rest_check=models['pluck'] != 'off' and rest_checks['pluck'])
+    metadata['dds_fast_decay_roles'] = fast_roles
     for role in ROLES:
         s = settings[role]
         metadata[role + '_max_level'] = s['cap']
         metadata[role + '_attack_step'] = s['attack']
         metadata[role + '_release_step'] = s['release']
         metadata[role + '_retrigger'] = s['retrigger']
-        metadata[role + '_release_model'] = ('fast-above-8' if role == 'lead' and s['model'] == 'bowed' else
-                                            'shared-decay' if s['model'] in ('piano', 'pluck') else 'linear')
+        if 'mask' in s:
+            metadata[role + '_decay_mask'] = s['mask']
+            metadata[role + '_fast_decay_mask'] = s.get('fast_mask')
+        metadata[role + '_release_model'] = ('shared-decay' if s['model'] in ('piano', 'pluck') else 'linear')
     return text, metadata

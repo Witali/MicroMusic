@@ -86,7 +86,7 @@ class InstrumentEngineTests(unittest.TestCase):
         self.assertEqual((len(binary), labels['playlist']), independent_size(source, CONFIG, SCORE))
         return source, metadata, binary, labels
 
-    def test_all_1024_bank_and_noise_combinations_assemble_within_flash(self):
+    def test_every_bank_and_noise_combination_assembles_within_flash(self):
         sizes = []
         for ids in itertools.product(self.bank['instruments'], repeat=3):
             for kit in ('off', 'natural-kit'):
@@ -95,7 +95,7 @@ class InstrumentEngineTests(unittest.TestCase):
                     self.assertLessEqual(len(binary), 1024)
                     self.assertEqual(meta['percussion_enabled'], kit == 'natural-kit')
                     sizes.append(len(binary))
-        self.assertEqual(len(sizes), 1024)
+        self.assertEqual(len(sizes), len(self.bank['instruments']) ** 3 * 2)
         self.assertGreater(max(sizes), min(sizes))
 
     def test_unused_renderers_envelopes_and_noise_are_removed(self):
@@ -216,13 +216,13 @@ function oracle(value,tick,role,meta){
   if(model==='off')return 0;
   if(model==='piano'||model==='pluck'){
     const level=value&15;if(!level)return value;
-    if(!(value&128))return Math.max(0,value-(model==='piano'?2:1));
-    let period=model==='piano'?4:2;
+    if(!(value&128))return Math.max(0,value-meta[name+'_release_step']);
+    let period=meta[name+'_decay_mask']+1;
     if(level<10)period*=2;if(level<7)period*=2;
     return value-Number(tick%period===0);
   }
   if(value&128)return Math.min(128+cap,value+meta[name+'_attack_step']);
-  if(model==='bowed'&&role===0){let released=Math.max(0,value-1);if(released&8)released--;return released;}
+  if(model==='bowed'&&role===0&&meta[name+'_release_model']==='fast-above-8'){let released=Math.max(0,value-1);if(released&8)released--;return released;}
   return Math.max(0,value-meta[name+'_release_step']);
 }
 function run(c,target){let steps=0;while(c.pc!==target){c.step();assert.ok(++steps<300,'Control flow reaches boundary');}}

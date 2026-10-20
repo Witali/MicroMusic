@@ -6,6 +6,7 @@ import {AVRCore} from '../web-player/lib/avr-core.js';
 const id=process.argv[2]||'rhythmic',folder=`ATtiny13A/Music/variants/${id}`;
 const rom=fs.readFileSync(`${folder}/synth.bin`),ep=fs.readFileSync(`${folder}/eeprom.bin`);
 const meta=JSON.parse(fs.readFileSync(`${folder}/build-report.json`)),{labels,timing}=meta;
+if(meta.releaseChannels){await import('./audit-release-engine.mjs');process.exit(0);}
 const {rest_index:rest,hold_index:hold}=meta.score;
 const score=JSON.parse(fs.readFileSync(`${folder}/score.json`));
 const drumGridUnits=score.percussion_grid_units??2,drumFirstUnit=score.percussion_first_unit??0;
@@ -26,18 +27,17 @@ for(let tick=1;ticks.length<=totalUnits;tick++){
 }
 const c=new AVRCore(rom,ep),events=[],drums=[];let index=0,envTick=0,prior=null,anchor=null,oldLead=null;
 let envelopeChecks=0,realNoteOns=0,holdNotes=0,repeated=0,repeatedArticulated=0,prevPitch=null,pending=null;
-let firstAttack=null,halfAttack=null,fullAttack=null,maxStepErrorUs=0;
-const env=(v,t,mask)=>{let level=v&15;if(!level)return v;if(v&128){if(level<10)mask=mask*2+1;if(level<7)mask=mask*2+1;return v-Number((t&mask)===0);}return Math.max(0,v-(mask===3?2:1));};
+let firstAttack=null,halfAttack=null,fullAttack=null,maxStepErrorUs=0,endState=null;
+const env=(v,t,voice)=>{let level=v&15;if(!level)return v;const role=['lead','keys','pluck'][voice];let mask=(v&64)?score[role+'_fast_decay_mask']:score[role+'_decay_mask'];mask??=models[voice]==='piano'?3:1;if(v&128){if(level<10)mask=mask*2+1;if(level<7)mask=mask*2+1;return v-Number((t&mask)===0);}return Math.max(0,v-releases[voice]);};
 const lead=v=>{if(v&128)return Math.min(143,v+4);if(!v)return 0;v--;if(v&8)v--;return v;};
 const envelope=(v,voice,t)=>{
   const model=models[voice];
   if(model==='constant')return v;
   if(model==='off')return 0;
-  if(model==='piano')return env(v,t,3);
-  if(model==='pluck')return env(v,t,1);
+  if(model==='piano'||model==='pluck')return env(v,t,voice);
   assert.ok(model==='bowed'||model==='sustain');
   if(v&128)return Math.min(128+caps[voice],v+attacks[voice]);
-  return voice===0&&model==='bowed'?lead(v):Math.max(0,v-releases[voice]);
+  return voice===0&&model==='bowed'&&score.lead_release_model==='fast-above-8'?lead(v):Math.max(0,v-releases[voice]);
 };
 const originalStep=c.step.bind(c);
 c.step=()=>{
@@ -48,7 +48,7 @@ c.step=()=>{
       envelopeChecks++;prior=null;
       if(firstAttack!==null&&fullAttack===null){if((c.r[1]&15)>=Math.ceil(caps[0]/2)&&halfAttack===null)halfAttack=c.cyc;if((c.r[1]&15)===caps[0])fullAttack=c.cyc;}
     }
-    if(c.pc===labels.drum_trigger/2)drums.push({unit:drumFirstUnit+drums.length*drumGridUnits,cycles:c.cyc,type:c.r[29]>>1,tick:envTick});
+    if(c.pc===labels.drum_trigger/2&&!(c.r[29]&128))drums.push({unit:Math.max(0,ticks.findIndex(t=>t===envTick)),cycles:c.cyc,type:c.r[29]>>1,tick:envTick});
     if(c.pc===labels.read_event/2&&index<expected.length){
       const e=expected[index++],token=rom[c.r[30]|c.r[31]<<8];assert.equal(token,e.token);
       assert.equal(envTick,ticks[e.unit],`Grid position ${e.unit}`);
@@ -56,7 +56,7 @@ c.step=()=>{
       const timeMs=(c.cyc-anchor)/9600,idealMs=e.unit/4*60000/score.tempo_bpm;
       const errorUs=((c.cyc-anchor)-(ticks[e.unit]-ticks[0])*131072)/9.6;maxStepErrorUs=Math.max(maxStepErrorUs,Math.abs(errorUs));
       events.push({...e,timeMs,idealMs,errorMs:timeMs-idealMs,tick:envTick});
-      if(index===expected.length)pending=null;
+      if(index===expected.length){pending=null;endState={levels:[c.r[1],c.r[19],c.r[20]],drumAge:c.r[21]};assert.deepEqual(endState.levels,[0,0,0],'Every tonal part finishes before the loop restarts');if(percussionEnabled)assert.ok(endState.drumAge>=4,'Percussion has finished before restart');}
       if(token<224){
         const pitch=token>>3;pending={pitch,level:c.r[1],phase:c.r[2]|c.r[3]<<8,step:c.r[4]|c.r[5]<<8};
         if(pitch===hold)holdNotes++;
@@ -65,7 +65,9 @@ c.step=()=>{
       }
     }
     if(c.pc===labels.lead_commit/2&&pending){
-      assert.equal(c.r[16],128|(fullRetrigger?caps[0]:(pending.level&15)>>1),'Instrument retrigger level');
+      const rawStep=rom[labels.note_steps+2*pending.pitch]|rom[labels.note_steps+2*pending.pitch+1]<<8;
+      const flag=score.dds_fast_decay_roles?.lead!==undefined&&(rawStep&32768)?64:0;
+      assert.equal(c.r[16],128|flag|(fullRetrigger?caps[0]:(pending.level&15)>>1),'Instrument retrigger level');
       assert.equal(c.r[2]|c.r[3]<<8,pending.phase,'No DDS phase reset');
       if(pending.repeated){assert.notEqual(c.r[16],pending.level,'Repeated note articulated');repeatedArticulated++;}
       if(firstAttack===null)firstAttack=c.cyc;
@@ -82,7 +84,7 @@ while(index<expected.length&&c.cyc<(ticks.at(-1)+10)*131072)c.nextDuty();
 assert.equal(index,expected.length);assert.equal(c.lost+c.workLost,0);assert.equal(repeated,repeatedArticulated);
 const semanticHash=createHash('sha256').update(Uint8Array.from(events.filter(e=>e.token!==255).map(e=>e.token))).digest('hex');
 assert.equal(semanticHash,meta.score.compression.originalStreamSha256,'Runtime commands equal the unpacked source score');
-for(const drum of drums)assert.equal(drum.tick,ticks[drum.unit],'Drums on the identical sixteenth grid');
+for(const drum of drums){assert.equal(drum.tick,ticks[drum.unit],'Drums on the identical sixteenth grid');assert.equal((drum.unit-drumFirstUnit)%drumGridUnits,0,'Drum on the selected subdivision');assert.equal(drum.type,(drum.unit%8)>>1,'Drum pattern remains in phase');}
 if(!percussionEnabled)assert.equal(drums.length,0,'Disabled percussion remains silent');
 const maxTimingErrorMs=Math.max(...events.map(e=>Math.abs(e.errorMs)));
 assert.ok(maxTimingErrorMs<25,`${maxTimingErrorMs} ms whole-song deviation`);
@@ -94,7 +96,7 @@ const report={image:id,flashSha256:createHash('sha256').update(rom).digest('hex'
   grid:{phaseStep:timing.phaseStep,targetBpm:score.tempo_bpm,actualBpm:timing.actualTempoBpm,drumHitsIncludingBothEndpoints:drums.length,drumGridMismatches:0},
   articulation:{realNoteOns,holdNotes,repeatedNotes:repeated,repeatedNotesArticulated:repeatedArticulated,phaseResets:0,
     firstAttack50PercentMs:(halfAttack-firstAttack)/9600,firstAttack100PercentMs:(fullAttack-firstAttack)/9600},
-  envelopes:{models,ticksChecked:envelopeChecks,mismatches:0},isrCycles:c.maxIRQ,lostTimerEvents:c.lost,lostWorkEvents:c.workLost};
+  envelopes:{models,ticksChecked:envelopeChecks,mismatches:0},loop:{endState,allPartsSilentBeforeRestart:true},isrCycles:c.maxIRQ,lostTimerEvents:c.lost,lostWorkEvents:c.workLost};
 const reportPath=`web-player/reports/${id}-verification.json`;
 if(fs.existsSync(reportPath)){
   const previous=JSON.parse(fs.readFileSync(reportPath));

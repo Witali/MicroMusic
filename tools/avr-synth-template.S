@@ -31,15 +31,16 @@ update_envelope:
   lsl r0
   inc r0
 envelope_gate:
-  mov r17, r24
-  and r17, r0
+  mov r17, r0
+  andi r17, 63
+  and r17, r24
   brne envelope_return
   dec r16
   rjmp envelope_return
 envelope_release:
   dec r16
   breq envelope_return
-  sbrc r0, 1
+  sbrc r0, 6
   dec r16
   rjmp envelope_return
 reset:
@@ -296,14 +297,11 @@ render_tone:
   andi r25, 15
   breq voice_silent
   cpi r16, 4
-  ldi r16, 0
+  mov r16, r0
+  andi r16, 48
   brcs .L216
-  ldi r16, 8
+  ori r16, 8
 .L216:
-  sbrc r0, 4
-  subi r16, 240
-  sbrc r0, 5
-  subi r16, 224
   mov r0, r17
   swap r17
   andi r17, 15
@@ -317,19 +315,18 @@ render_tone:
   andi r17, 15
   subi r17, 8
 .L25c:
-  mov r16, r25
   mov r0, r17
   clr r17
-  sbrc r16, 0
+  sbrc r25, 0
   add r17, r0
   lsl r0
-  sbrc r16, 1
+  sbrc r25, 1
   add r17, r0
   lsl r0
-  sbrc r16, 2
+  sbrc r25, 2
   add r17, r0
   lsl r0
-  sbrc r16, 3
+  sbrc r25, 3
   add r17, r0
   asr r17
   asr r17
