@@ -1,0 +1,59 @@
+{
+  "runtime": "v22.22.3",
+  "platform": "win32",
+  "arch": "x64",
+  "cpu": "AMD Ryzen 5 5600X 6-Core Processor             ",
+  "baseline": {
+    "revision": "7eca722be4b9473ce35e127e7f9d3a5706d09329",
+    "coreSha256": "a005eac3911057edab79b46d0df0df031b1c47902a87f08d448d188ad0746770"
+  },
+  "coreSha256": "f33ec0a17fbc4c519995f62be53644643e8a02a5140563df206c1c8205d070d9",
+  "method": "Median of seven alternating runs after warm-up; 112500 OCR0B writes (three nominal seconds for these images) per run, times normalized to one nominal second. Construction excluded. Corrected fast/slow cores match state, checksum and cycles; baseline matches checksum, with up to 2 cycles of RETI latency difference. This is not a physical PWM accuracy measurement.",
+  "results": [
+    {
+      "id": "rhythmic",
+      "flashSha256": "2bce891050e6c8ae392d348a20fa25cb304e88fba9f896d818fbae65b4552109",
+      "eepromSha256": "45ba4c476cf214ef25d91494c6fa70b2567722b44403bcd25b09326e190fee37",
+      "referenceMs": 87.4427333333333,
+      "optimizedMs": 47.58963333333334,
+      "speedup": 1.8374323819823495,
+      "realtimeHeadroom": 21.012979717571543
+    },
+    {
+      "id": "alicia",
+      "flashSha256": "658f09e24dba8917b72f687c067a7518503f80c885416401190fe6e7bf02e2c3",
+      "eepromSha256": "7f6c5fe2c7712dd7013997477cd6b8a97987a041d57a23e6e968467ca51ee64d",
+      "referenceMs": 65.60593333333357,
+      "optimizedMs": 36.333366666666734,
+      "speedup": 1.8056662333337339,
+      "realtimeHeadroom": 27.52291052943983
+    },
+    {
+      "id": "turkish-march",
+      "flashSha256": "108a010a0d984d8c9048ba92e3700c076bdc74ae2edbf207b4596be994ea8a39",
+      "eepromSha256": "896736a3ec3dd8b64facf639507349cb4aa26a9161b3f26adec3fbdd25985173",
+      "referenceMs": 70.05163333333348,
+      "optimizedMs": 38.3758666666666,
+      "speedup": 1.8254085032607368,
+      "realtimeHeadroom": 26.058043423123603
+    },
+    {
+      "id": "children",
+      "flashSha256": "cf014a542055f2dcfd5330b49b5c03c756383469a890c3ec64a00869d9b5783b",
+      "eepromSha256": "cc3b11dafc7e1492523fa77225175bce78a06aec2ea80364fca9b5382bb82a9d",
+      "referenceMs": 64.53006666666685,
+      "optimizedMs": 36.41750000000017,
+      "speedup": 1.7719521292418907,
+      "realtimeHeadroom": 27.459325873549677
+    },
+    {
+      "id": "greensleeves",
+      "flashSha256": "6ca860bf6ebf47af3b67ef844697f7abc4dc699581cfbd57eac0f76716d410ed",
+      "eepromSha256": "f81755e5b88d7041208ce5e59da3edf864d4c2162dfdaee1ba4f306f64cff60e",
+      "referenceMs": 78.80176666666678,
+      "optimizedMs": 44.59619999999995,
+      "speedup": 1.767006306964873,
+      "realtimeHeadroom": 22.423435180575947
+    }
+  ]
+}
