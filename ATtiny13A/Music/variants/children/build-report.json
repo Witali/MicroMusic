@@ -1,10 +1,10 @@
 {
-  "flashBytes": 992,
-  "codeBytes": 710,
+  "flashBytes": 824,
+  "codeBytes": 542,
   "tableBytes": 282,
   "eepromBytes": 64,
-  "flashSha256": "6b79bb250a36c6f2103e3fc711d2479b49b688e01cd0068e0a809c486423759f",
-  "eepromSha256": "ac29eb2ba4b6718b3b490b9b74be52d5a1ea819149df9edac4d4aecf80443f81",
+  "flashSha256": "278e25c48847842bbe4987b3fd3f11ff17a55d0398515e939b87708c7155266a",
+  "eepromSha256": "b4f2cbb9e539756f478c7f21692369d426cddaa4ecac6e8bcfbadb8caa6599d4",
   "labels": {
     "REST_INDEX": 17,
     "HOLD_INDEX": 18,
@@ -25,64 +25,56 @@
     "audio_step": 172,
     ".L064": 182,
     "music_tick": 196,
-    "lead_attack_ready": 212,
-    ".L084": 216,
-    ".L08e": 226,
-    ".L0a8": 252,
-    "grid_step": 272,
-    "drum_trigger": 280,
-    ".L0ba": 286,
-    "read_event": 292,
-    ".L0c8": 300,
-    "note_off": 308,
-    "release_lead": 326,
-    "chord_event": 334,
-    "melodic_event": 372,
-    "lead_commit": 430,
-    "note_rest": 434,
-    "next_section": 436,
-    ".L15c": 454,
-    "hold_sample": 464,
-    "render_tone": 466,
-    ".L216": 480,
-    ".L25c": 512,
-    "voice_silent": 548,
-    "render_sample": 554,
-    "render_drum": 604,
-    ".L280": 614,
-    ".L28a": 618,
-    ".L298": 632,
-    ".L2a0": 646,
-    ".L2ae": 674,
-    "write_pwm": 684,
-    "publish_wait": 694,
-    "playlist": 710,
-    "durations": 748,
-    "note_steps": 755,
-    "chord_steps": 789,
-    "melody_data": 801,
-    "section_packed_001": 801,
-    "section_packed_009": 821,
-    "section_packed_015": 823,
-    "section_packed_008": 825,
-    "section_packed_000": 829,
-    "first_section": 829,
-    "section_packed_003": 841,
-    "section_packed_002": 844,
-    "section_packed_005": 868,
-    "section_packed_006": 900,
-    "section_packed_007": 914,
-    "section_packed_010": 925,
-    "section_packed_013": 927,
-    "section_packed_004": 929,
-    "section_packed_011": 932,
-    "section_packed_012": 951,
-    "section_packed_014": 958,
-    "section_packed_016": 987
+    ".L08e": 206,
+    ".L0a8": 206,
+    "grid_step": 226,
+    ".L0ba": 226,
+    "read_event": 232,
+    ".L0c8": 240,
+    "note_off": 248,
+    "release_lead": 266,
+    "chord_event": 274,
+    "melodic_event": 306,
+    "lead_commit": 358,
+    "note_rest": 362,
+    "next_section": 364,
+    ".L15c": 382,
+    "hold_sample": 392,
+    "render_tone": 394,
+    ".L216": 408,
+    ".L25c": 440,
+    "voice_silent": 476,
+    "render_sample": 482,
+    "write_pwm": 516,
+    "publish_wait": 526,
+    "playlist": 542,
+    "durations": 580,
+    "note_steps": 587,
+    "chord_steps": 621,
+    "melody_data": 633,
+    "section_packed_001": 633,
+    "section_packed_009": 653,
+    "section_packed_015": 655,
+    "section_packed_008": 657,
+    "section_packed_000": 661,
+    "first_section": 661,
+    "section_packed_003": 673,
+    "section_packed_002": 676,
+    "section_packed_005": 700,
+    "section_packed_006": 732,
+    "section_packed_007": 746,
+    "section_packed_010": 757,
+    "section_packed_013": 759,
+    "section_packed_004": 761,
+    "section_packed_011": 764,
+    "section_packed_012": 783,
+    "section_packed_014": 790,
+    "section_packed_016": 819
   },
   "score": {
     "note_count": 183,
     "event_bytes": 190,
+    "maximum_entry_offset": 186,
     "playlist_bytes": 38,
     "note_table_bytes": 34,
     "chord_table_bytes": 12,
@@ -116,10 +108,24 @@
       "R"
     ],
     "chords": [
-      "C#3",
-      "A#3",
-      "F3"
+      "C#2",
+      "A#1",
+      "F1"
     ],
+    "chord_notes": {
+      "C#2": [
+        37,
+        32
+      ],
+      "A#1": [
+        34,
+        29
+      ],
+      "F1": [
+        29,
+        24
+      ]
+    },
     "total_data_bytes": 281,
     "section_bars": {
       "intro": 107,
@@ -799,10 +805,10 @@
       }
     ],
     "instruments": {
-      "lead": "violin",
-      "keys": "piano",
-      "pluck": "guitar",
-      "drums": "kick/snare/hat"
+      "lead": "acoustic-grand-piano",
+      "keys": "fretless-bass",
+      "pluck": "off",
+      "percussion": "off"
     }
   },
   "timing": {
@@ -1406,7 +1412,68 @@
         "beat": 2.0
       }
     ],
-    "attack": "Four envelope levels per tick, saturated at 15",
-    "retrigger": "Half current amplitude, same oscillator phase; explicit holds skip retrigger"
+    "attack": "Program0 piano: immediate full-level attack followed by the measured three-rate decay",
+    "retrigger": "Full level143, same oscillator phase; explicit holds skip retrigger",
+    "phaseContinuous": true
+  },
+  "instrumentAssignments": {
+    "lead": {
+      "instrument": "acoustic-grand-piano",
+      "label": "Акустический рояль",
+      "gmProgram": 0,
+      "eepromOffset": 0,
+      "level": 15,
+      "envelope": {
+        "model": "piano",
+        "defaultLevel": 15,
+        "decayMask": 3,
+        "retrigger": "peak",
+        "releaseStep": 2
+      }
+    },
+    "keys": {
+      "instrument": "fretless-bass",
+      "label": "Безладовый бас",
+      "gmProgram": 35,
+      "eepromOffset": 16,
+      "level": 6,
+      "envelope": {
+        "model": "sustain",
+        "defaultLevel": 6,
+        "attackStep": 2,
+        "retrigger": "half-current-level",
+        "releaseStep": 1
+      }
+    },
+    "pluck": {
+      "instrument": "off",
+      "label": "Выключен",
+      "gmProgram": null,
+      "eepromOffset": 32,
+      "level": 0,
+      "envelope": {
+        "model": "off",
+        "defaultLevel": 0
+      }
+    },
+    "percussion": {
+      "instrument": "off",
+      "label": "Выключены",
+      "level": 0,
+      "enabled": false,
+      "notes": []
+    }
+  },
+  "instrumentBankSha256": "14d2fa2cfa3c2fbbe67410298ca9f2b5ec9071af5a397f94a66edf110fda9594",
+  "instruments": {
+    "lead": "acoustic-grand-piano",
+    "keys": "fretless-bass",
+    "pluck": "off",
+    "percussion": "off"
+  },
+  "instrumentBank": {
+    "file": "../../instruments/bank.json",
+    "sha256": "14d2fa2cfa3c2fbbe67410298ca9f2b5ec9071af5a397f94a66edf110fda9594",
+    "firmwareSpecialization": "Two active voices; quiet held bass level from the bank; canonical piano helper release is two levels per tick"
   }
 }

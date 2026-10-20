@@ -2,7 +2,7 @@
  * SRAM[0x60]=noise high, [0x61]=midpoint, [0x62]=next point, [0x63]=music divider, [0x64]=high grid phase; R25=low grid phase.
  * R18 belongs to ISR; R23 swaps 0x01/0x10 without changing arithmetic flags.
  * Sound generation 18.75 kHz; distinct interpolated output values 37.5 kHz.
- * Piano/guitar use soft sustain spectra with their measured envelopes.
+ * Build-time assignments specialize oscillators and instrument envelopes.
  * Per-sample attack/sustain spectral crossfade omitted to fit 1 KB Flash.
  */
 .section .text,"ax",@progbits
@@ -106,7 +106,7 @@ pwm_irq:
   set
   reti
 audio_step:
-  /* Foreground tick. Odd ticks produce new four-voice points; envelopes tick every 512 overflows, score uses the fractional sixteenth grid. */
+  /* Foreground tick. Odd ticks produce new piano/bass points; envelopes tick every 512 overflows, score uses the fractional sixteenth grid. */
   inc r15
   breq .L064
   sbrs r15, 0
@@ -121,38 +121,14 @@ audio_step:
 music_tick:
   /* Advance envelopes at ~73.24 Hz. Flags in envelope bytes encode attack, sustain and release. */
   inc r24
-  sbrs r1, 7
-  rjmp .L084
+  /* Program 0 piano: immediate attack, measured three-rate decay. */
   mov r16, r1
-  subi r16, 252
-  cpi r16, 144
-  brcs lead_attack_ready
-  ldi r16, 143
-lead_attack_ready:
-  mov r1, r16
-  rjmp .L08e
-.L084:
-  tst r1
-  breq .L08e
-  dec r1
-  sbrc r1, 3
-  dec r1
-.L08e:
-  /* Piano and guitar use one shared envelope function with different decay masks. */
-  mov r16, r19
   ldi r17, 3
   rcall update_envelope
-  mov r19, r16
-  mov r16, r20
-  ldi r17, 1
-  rcall update_envelope
-  mov r20, r16
-  /* Percussion decays on alternate ticks, retriggering in a four-beat rhythm. */
-  sbrc r24, 0
-  rjmp .L0a8
-  cpi r21, 4
-  brcc .L0a8
-  inc r21
+  mov r1, r16
+.L08e:
+  /* Quiet fretless-bass bed is held between harmony changes.
+   * No substitute guitar and no generated percussion are mixed. */
 .L0a8:
   /* R25: low grid phase, SRAM[0x64]: high. One overflow = one sixteenth. */
   lds r16, 100
@@ -164,14 +140,6 @@ lead_attack_ready:
   brcs grid_step
   ret
 grid_step:
-  inc r29
-  andi r29, 7
-  sbrc r29, 0
-  rjmp .L0ba
-drum_trigger:
-  clr r21
-  ldi r16, 167
-  mov r14, r16
 .L0ba:
   dec r22
   breq read_event
@@ -188,7 +156,7 @@ read_event:
   cpi r16, 240
   brcs chord_event
 note_off:
-  /* NOTE-OFF bitmask: bit0 violin, bit1 piano, bit2 guitar, bit3 percussion. No oscillator resets. */
+  /* NOTE-OFF bitmask: bit0 lead piano, bit1 bass; bits2/3 are inactive. No oscillator resets. */
   sbrc r16, 0
   rcall release_lead
   sbrc r16, 1
@@ -218,11 +186,9 @@ chord_event:
   lpm r9, Z+
   lpm r12, Z+
   lpm r13, Z+
-  clr r7
-  clr r11
-  ldi r16, 143
-  mov r19, r16
-  mov r20, r16
+  /* Keep the bass phase continuous; quiet level from the shared bank. */
+  ldi r19, 6
+  clr r20
   movw r30, r26
   rjmp read_event
 melodic_event:
@@ -252,10 +218,7 @@ melodic_event:
   lpm r4, Z+
   lpm r5, Z+
   movw r30, r26
-  mov r16, r1
-  andi r16, 15
-  lsr r16
-  ori r16, 128
+  ldi r16, 143
 lead_commit:
   mov r1, r16
   rjmp hold_sample
@@ -330,7 +293,7 @@ voice_silent:
   clr r17
   ret
 render_sample:
-  /* Accumulate three pitch oscillators with independent phases and envelopes. */
+  /* Accumulate piano and exact source-octave bass with continuous phases. */
   push r25
   clr r26
   add r2, r4
@@ -348,59 +311,8 @@ render_sample:
   mov r17, r7
   rcall render_tone
   add r26, r17
-  add r10, r12
-  adc r11, r13
-  mov r25, r20
-  ori r25, 32
-  mov r16, r13
-  mov r17, r11
-  rcall render_tone
-  add r26, r17
-render_drum:
-  /* Add bass drum or band-limited pseudo-random percussion; center the mix on PWM duty 128. */
-  cpi r21, 4
-  brcc write_pwm
-  cpi r29, 2
-  brcs .L280
-  rjmp .L298
-.L280:
-  ldi r17, 1
-  add r14, r17
-.L28a:
-  mov r17, r14
-  sbrc r17, 7
-  com r17
-  subi r17, 61
-  asr r17
-  asr r17
-  rjmp .L2ae
-.L298:
-  lds r27, 96
-  lsl r14
-  adc r27, r27
-  brcc .L2a0
-  ldi r17, 45
-  eor r14, r17
-.L2a0:
-  sts 96, r27
-  mov r17, r14
-  lsr r17
-  andi r17, 63
-  mov r27, r14
-  andi r27, 63
-  sbrc r29, 1
-  sub r17, r27
-  sbrs r29, 1
-  subi r17, 32
-  asr r17
-  sbrc r29, 1
-  asr r17
-.L2ae:
-  sbrc r21, 0
-  asr r17
-  sbrc r21, 1
-  asr r17
-  add r26, r17
+  /* The MIDI's main roles are piano and fretless bass.
+   * Omit unrelated synthetic guitar, snare and hi-hat. */
 write_pwm:
   /* Convert the bipolar mix to unsigned PWM; publish the next pair after a safe handoff. */
   subi r26, 128

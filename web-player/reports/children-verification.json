@@ -1,15 +1,15 @@
 {
   "image": "children",
-  "flashSha256": "6b79bb250a36c6f2103e3fc711d2479b49b688e01cd0068e0a809c486423759f",
-  "flashBytes": 992,
+  "flashSha256": "278e25c48847842bbe4987b3fd3f11ff17a55d0398515e939b87708c7155266a",
+  "flashBytes": 824,
   "fullPlaylist": {
     "commands": 671,
     "beats": 432,
     "idealSeconds": 185.14285714285714,
-    "actualSeconds": 185.15285614583334,
-    "maximumTimingErrorMs": 20.071696428582072,
-    "finalTimingErrorMs": 9.999002976197517,
-    "maximumExecutionErrorAgainstGridUs": 10.208333333333334,
+    "actualSeconds": 185.15285333333333,
+    "maximumTimingErrorMs": 20.069821428565774,
+    "finalTimingErrorMs": 9.996190476202173,
+    "maximumExecutionErrorAgainstGridUs": 7.916666666666667,
     "missingEvents": 0
   },
   "compression": {
@@ -34,7 +34,7 @@
     "phaseStep": 8351,
     "targetBpm": 140,
     "actualBpm": 139.9945467710495,
-    "drumHitsIncludingBothEndpoints": 865,
+    "drumHitsIncludingBothEndpoints": 0,
     "drumGridMismatches": 0
   },
   "articulation": {
@@ -43,10 +43,15 @@
     "repeatedNotes": 1,
     "repeatedNotesArticulated": 1,
     "phaseResets": 0,
-    "firstAttack50PercentMs": 27.297916666666666,
-    "firstAttack100PercentMs": 54.60458333333333
+    "firstAttack50PercentMs": 0,
+    "firstAttack100PercentMs": 0
   },
   "envelopes": {
+    "models": [
+      "piano",
+      "constant",
+      "pluck"
+    ],
     "ticksChecked": 13562,
     "mismatches": 0
   },

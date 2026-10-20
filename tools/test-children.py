@@ -59,6 +59,38 @@ assert report['flashBytes'] <= 1024
 assert report['flashSha256'] == hashlib.sha256((FOLDER / 'synth.bin').read_bytes()).hexdigest()
 assert report['score']['compression']['verifiedLossless']
 assert report['score']['compression']['packedBytes'] < report['score']['compression']['sourceLayoutBytes']
+assert score['instruments'] == dict(lead='acoustic-grand-piano', keys='fretless-bass', pluck='off', percussion='off')
+assert score['lead_envelope_model'] == 'piano' and score['lead_retrigger'] == 'full'
+assert score['percussion_enabled'] is False and score['accompaniment_envelope_model'] == 'constant'
+assert 'render_drum' not in report['labels'] and 'drum_trigger' not in report['labels']
+original_programs = json.loads((SOURCE.parent / 'metadata.json').read_text(encoding='utf-8'))['trackMetadata']
+assert original_programs[1]['programs'][0]['zeroBasedProgram'] == 0
+assert original_programs[4]['programs'][0]['zeroBasedProgram'] == 35
+source_bass = {n[2] for n in notes if n[0] == 4 and n[3] < 428 * ppqn}
+assert source_bass == set(score['chord_roots'].values()) == {29, 34, 37}
+rom = (FOLDER / 'synth.bin').read_bytes()
+chord_address = report['labels']['chord_steps']
+for i, chord in enumerate(report['score']['chords']):
+    step = rom[chord_address + i * 4] | rom[chord_address + i * 4 + 1] << 8
+    midi = score['chord_roots'][chord]
+    assert step == round(440 * 2 ** ((midi - 69) / 12) * 65536 / 18750)
+eeprom = (FOLDER / 'eeprom.bin').read_bytes()
+bank_spec = importlib.util.spec_from_file_location('children_instrument_bank', ROOT / 'tools/instrument-bank.py')
+instrument_bank = importlib.util.module_from_spec(bank_spec)
+bank_spec.loader.exec_module(instrument_bank)
+bank = instrument_bank.load_bank()
+assert instrument_bank.verify_sources(bank)
+assert eeprom == instrument_bank.build_eeprom(score['instruments'], bank), 'All tables come from the assigned shared profiles'
+roles = instrument_bank.describe_assignments(score['instruments'], bank)
+assert report['instrumentAssignments'] == roles
+assert roles['lead']['gmProgram'] == 0 and roles['lead']['envelope']['model'] == 'piano'
+assert roles['keys']['gmProgram'] == 35 and roles['keys']['level'] == 6
+waves = json.loads((FOLDER / 'waveforms.json').read_text(encoding='utf-8'))
+bass = waves['fretless_bass']
+assert len(bass) == 16 and max(abs(n) for n in bass) <= 4 and sum(bass) == 0
+assert eeprom[16:24] == bytes((bass[i] + 8) | (bass[i + 1] + 8) << 4 for i in range(0, 16, 2))
+assert eeprom[32:] == bytes([0x88] * 32), 'Inactive instrument banks are silent'
 print(f'Children: all {len(source)} source main-piano Note On events retained; '
       f'{len(actual)} sixteenth cells checked; recognizable opening kept; '
-      f'{report["flashBytes"]}/1024 Flash bytes; lossless packed score verified.')
+      f'{report["flashBytes"]}/1024 Flash bytes; lossless packed score verified; '
+      'correct program0 piano and program35 bass, exact source bass register, no guitar or added percussion.')
