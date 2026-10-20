@@ -1,8 +1,8 @@
 /* Smoothed PWM: two future points and their midpoint are prepared in foreground.
- * SRAM [0x61]=midpoint, [0x62]=next point, [0x63]=music divider, [0x64]=high grid phase; R25=low grid phase.
+ * SRAM[0x60]=noise high, [0x61]=midpoint, [0x62]=next point, [0x63]=music divider, [0x64]=high grid phase; R25=low grid phase.
  * R18 belongs to ISR; R23 swaps 0x01/0x10 without changing arithmetic flags.
  * Sound generation 18.75 kHz; distinct interpolated output values 37.5 kHz.
- * Flute/violin/cello use the shared build-time FluidR3 instrument bank.
+ * Build-time assignments specialize oscillators and instrument envelopes.
  * Per-sample attack/sustain spectral crossfade omitted to fit 1 KB Flash.
  */
 .section .text,"ax",@progbits
@@ -15,21 +15,6 @@ envelope_return:
   clr r0
   ret
   rjmp pwm_irq
-update_envelope:
-  /* R17 is the selected instrument's full envelope level plus the sustain flag. */
-  sbrs r16, 7
-  rjmp envelope_release
-  subi r16, 252
-  mov r0, r16
-  sub r0, r17
-  brcs envelope_return
-  mov r16, r17
-  rjmp envelope_return
-envelope_release:
-  andi r16, 15
-  breq envelope_return
-  dec r16
-  rjmp envelope_return
 reset:
   /* Initialize the stack and switch the internal RC from the factory /8 divider to 9.6 MHz. */
   ldi r16, 159
@@ -53,7 +38,7 @@ clear_registers:
   st Z+, r18
   st Z+, r18
   st Z+, r0
-  /* Initialize three sustained instrument channels and the score cursor. */
+  /* Initialize four sound channels, score cursor, and deterministic percussion noise. */
   ldi r16, 1
   mov r22, r16
   ldi r28, FIRST_PLAYLIST_INDEX
@@ -101,33 +86,58 @@ audio_step:
   breq music_tick
   rjmp hold_sample
 music_tick:
-  /* Flute, violin and cello sustain with a soft attack; no plucked decay. */
+  /* Advance envelopes at ~73.24 Hz. Flags in envelope bytes encode attack, sustain and release. */
   inc r24
   sbrs r1, 7
-  rjmp lead_release
+  rjmp lead_env_release
   mov r16, r1
   subi r16, 252
   cpi r16, 144
-  brcs lead_attack_ready
+  brcs lead_env_attack
   ldi r16, 143
-lead_attack_ready:
+lead_env_attack:
   mov r1, r16
-  rjmp lead_updated
-lead_release:
+  rjmp lead_env_done
+lead_env_release:
   tst r1
-  breq lead_updated
+  breq lead_env_done
   dec r1
-  sbrc r1, 3
-  dec r1
-lead_updated:
+lead_env_done:
+  /* END LEAD ENVELOPE */
+.L08e:
+  /* Piano and guitar use one shared envelope function with different decay masks. */
+  sbrs r19, 7
+  rjmp keys_env_release
   mov r16, r19
-  ldi r17, 140
-  rcall update_envelope
+  subi r16, 252
+  cpi r16, 141
+  brcs keys_env_attack
+  ldi r16, 140
+keys_env_attack:
   mov r19, r16
+  rjmp keys_env_done
+keys_env_release:
+  tst r19
+  breq keys_env_done
+  dec r19
+keys_env_done:
+  /* END KEYS ENVELOPE */
+  sbrs r20, 7
+  rjmp pluck_env_release
   mov r16, r20
-  ldi r17, 138
-  rcall update_envelope
+  subi r16, 252
+  cpi r16, 139
+  brcs pluck_env_attack
+  ldi r16, 138
+pluck_env_attack:
   mov r20, r16
+  rjmp pluck_env_done
+pluck_env_release:
+  tst r20
+  breq pluck_env_done
+  dec r20
+pluck_env_done:
+  /* END PLUCK ENVELOPE */
 .L0a8:
   /* R25: low grid phase, SRAM[0x64]: high. One overflow = one sixteenth. */
   lds r16, 100
@@ -139,7 +149,6 @@ lead_updated:
   brcs grid_step
   ret
 grid_step:
-  /* The original ensemble has no percussion; only score durations advance. */
 .L0ba:
   dec r22
   breq read_event
@@ -156,7 +165,7 @@ read_event:
   cpi r16, 240
   brcs chord_event
 note_off:
-  /* NOTE-OFF bitmask: bit0 flute, bit1 violin, bit2 cello, bit3 unused. No oscillator resets. */
+  /* NOTE-OFF bitmask: bit0 violin, bit1 piano, bit2 guitar, bit3 percussion. No oscillator resets. */
   sbrc r16, 0
   rcall release_lead
   sbrc r16, 1
@@ -184,7 +193,6 @@ chord_event:
   lpm r9, Z+
   lpm r12, Z+
   lpm r13, Z+
-  /* Rearticulate softly without resetting either sustained oscillator phase. */
   mov r16, r19
   andi r16, 15
   lsr r16
@@ -195,6 +203,7 @@ chord_event:
   lsr r16
   ori r16, 128
   mov r20, r16
+  /* END COMPANION TRIGGERS */
   movw r30, r26
   rjmp read_event
 melodic_event:
@@ -208,6 +217,7 @@ melodic_event:
   adc r31, r0
   lpm r22, Z
   movw r30, r26
+  /* BEGIN LEAD FREQUENCY */
   lsr r16
   lsr r16
   lsr r16
@@ -305,6 +315,7 @@ render_sample:
   /* Accumulate three pitch oscillators with independent phases and envelopes. */
   push r25
   clr r26
+  /* BEGIN LEAD RENDER */
   add r2, r4
   adc r3, r5
   mov r25, r1
@@ -312,6 +323,8 @@ render_sample:
   mov r17, r3
   rcall render_tone
   add r26, r17
+  /* END LEAD RENDER */
+  /* BEGIN KEYS RENDER */
   add r6, r8
   adc r7, r9
   mov r25, r19
@@ -320,6 +333,8 @@ render_sample:
   mov r17, r7
   rcall render_tone
   add r26, r17
+  /* END KEYS RENDER */
+  /* BEGIN PLUCK RENDER */
   add r10, r12
   adc r11, r13
   mov r25, r20
@@ -328,6 +343,7 @@ render_sample:
   mov r17, r11
   rcall render_tone
   add r26, r17
+  /* END PLUCK RENDER */
 write_pwm:
   /* Convert the bipolar mix to unsigned PWM; publish the next pair after a safe handoff. */
   subi r26, 128

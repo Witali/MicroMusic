@@ -577,10 +577,7 @@
     "pluck": "off",
     "percussion": "off"
   },
-  "lead_envelope_model": "piano",
-  "lead_retrigger": "full",
-  "percussion_enabled": false,
-  "accompaniment_envelope_model": "constant",
+  "engine": "instrument-bank",
   "composer": "Robert Miles",
   "source_midi": {
     "file": "../../reference/children/source.mid",
@@ -600,5 +597,26 @@
     "tempo": "Steady 140 BPM; original MIDI changes from approximately 140 to 137 BPM at beat 160",
     "scope": "The complete main piano track followed by an F cadence; later MIDI-only layers and multichannel polyphony are omitted",
     "compression": "Lossless automatic repeated byte phrases after the documented musical reduction; heuristic dictionary search"
-  }
+  },
+  "lead_envelope_model": "piano",
+  "accompaniment_envelope_model": "sustain",
+  "pluck_envelope_model": "off",
+  "percussion_enabled": false,
+  "keys_rest_check": false,
+  "pluck_rest_check": false,
+  "lead_max_level": 15,
+  "lead_attack_step": 0,
+  "lead_release_step": 2,
+  "lead_retrigger": "full",
+  "lead_release_model": "shared-decay",
+  "keys_max_level": 6,
+  "keys_attack_step": 2,
+  "keys_release_step": 1,
+  "keys_retrigger": "half",
+  "keys_release_model": "linear",
+  "pluck_max_level": 0,
+  "pluck_attack_step": 0,
+  "pluck_release_step": 0,
+  "pluck_retrigger": "off",
+  "pluck_release_model": "linear"
 }

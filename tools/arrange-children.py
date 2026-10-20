@@ -20,56 +20,6 @@ OUT = ROOT / 'ATtiny13A/Music/variants/children'
 BASE = ROOT / 'ATtiny13A/Music/variants/rhythmic'
 
 
-def replace_once(source, before, after):
-    assert source.count(before) == 1, before[:100]
-    return source.replace(before, after)
-
-
-def clean_engine(roles):
-    """Specialize the shared engine for the MIDI's piano and fretless bass."""
-    assert roles['lead']['envelope']['model'] == 'piano'
-    assert roles['keys']['envelope']['model'] == 'sustain'
-    assert roles['pluck']['instrument'] == roles['percussion']['instrument'] == 'off'
-    decay_mask = roles['lead']['envelope']['decayMask']
-    lead_peak = 128 | roles['lead']['level']
-    bass_level = roles['keys']['level']
-    source = (ROOT / 'tools/avr-synth-template.S').read_text(encoding='utf-8')
-    source = '\n'.join(line for line in source.splitlines() if '/* BEGIN ' not in line and '/* END ' not in line)+'\n'
-    start = source.index('  sbrs r1, 7', source.index('music_tick:'))
-    end = source.index('.L08e:', start)
-    source = source[:start] + f'''  /* Program 0 piano: immediate attack, measured three-rate decay. */
-  mov r16, r1
-  ldi r17, {decay_mask}
-  rcall update_envelope
-  mov r1, r16
-''' + source[end:]
-    start = source.index('  /* Piano and guitar use', source.index('.L08e:'))
-    end = source.index('.L0a8:', start)
-    source = source[:start] + '''  /* Quiet fretless-bass bed is held between harmony changes.
-   * No substitute guitar and no generated percussion are mixed. */
-''' + source[end:]
-    start = source.index('  inc r29', source.index('grid_step:'))
-    end = source.index('.L0ba:', start)
-    source = source[:start] + source[end:]
-    source = replace_once(source, '  clr r7\n  clr r11\n  ldi r16, 143\n  mov r19, r16\n  mov r20, r16',
-                         f'  /* Keep the bass phase continuous; quiet level from the shared bank. */\n  ldi r19, {bass_level}\n  clr r20')
-    source = replace_once(source, '  mov r16, r1\n  andi r16, 15\n  lsr r16\n  ori r16, 128\nlead_commit:',
-                         f'  ldi r16, {lead_peak}\nlead_commit:')
-    start = source.index('  add r10, r12', source.index('render_sample:'))
-    end = source.index('write_pwm:', start)
-    source = source[:start] + '''  /* The MIDI's main roles are piano and fretless bass.
-   * Omit unrelated synthetic guitar, snare and hi-hat. */
-''' + source[end:]
-    source = source.replace('Piano/guitar use soft sustain spectra with their measured envelopes.',
-                            'Program 0 piano lead and quiet program 35 fretless-bass approximation.')
-    source = source.replace('Odd ticks produce new four-voice points;', 'Odd ticks produce new piano/bass points;')
-    source = source.replace('bit0 violin, bit1 piano, bit2 guitar, bit3 percussion',
-                            'bit0 lead piano, bit1 bass; bits2/3 are inactive')
-    source = source.replace('Accumulate three pitch oscillators with independent phases and envelopes.',
-                            'Accumulate piano and exact source-octave bass with continuous phases.')
-    return source
-
-
 def fit_bass(capture_folder):
     """Measure external FluidR3 program 35 captures and keep a small audit trail."""
     import numpy as np
@@ -211,11 +161,7 @@ def arrangement(notes, ppqn, bpm, bars, candidates):
     score['chord_overrides']['ending'] = [['F1', 'F1']]
     score['packing_candidates'] = candidates
     score['instruments'] = dict(lead='acoustic-grand-piano', keys='fretless-bass', pluck='off', percussion='off')
-    roles = instrument_bank.describe_assignments(score['instruments'])
-    score['lead_envelope_model'] = roles['lead']['envelope']['model']
-    score['lead_retrigger'] = 'full' if roles['lead']['envelope']['retrigger'] == 'peak' else 'half'
-    score['percussion_enabled'] = roles['percussion']['instrument'] != 'off'
-    score['accompaniment_envelope_model'] = 'constant'  # Minimal held-root specialization of the bank sustain model.
+    score['engine'] = 'instrument-bank'
     return score
 
 
@@ -259,7 +205,6 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     for name in ['avr_core.js', 'FluidR3-MIT.txt']:
         shutil.copyfile(BASE / name, OUT / name)
-    (OUT / 'synth.S').write_text(clean_engine(roles), encoding='utf-8', newline='\n')
     eeprom, waves = clean_tables(score['instruments'], bank)
     (OUT / 'eeprom.bin').write_bytes(eeprom)
     (OUT / 'waveforms.json').write_text(json.dumps(waves, indent=2) + '\n', encoding='utf-8', newline='\n')
@@ -275,7 +220,7 @@ def main():
     report['instrumentAssignments'] = roles
     report['instrumentBank'] = dict(file='../../instruments/bank.json',
                                     sha256=hashlib.sha256(instrument_bank.BANK_PATH.read_bytes()).hexdigest(),
-                                    firmwareSpecialization='Two active voices; quiet held bass level from the bank; canonical piano helper release is two levels per tick')
+                                    firmwareSpecialization='Shared instrument engine; full-level piano attack and two-level release; fretless bass soft attack step2, cap6, linear release step1; phase-continuous inactive-voice removal')
     (OUT / 'build-report.json').write_text(json.dumps(report, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
     print(f'Children: {args.bars} source bars + cadence, {report["flashBytes"]} Flash bytes, {(args.bars + 1) * 4 * 60 / bpm:.6f} seconds')
 

@@ -68,12 +68,22 @@ test('the actual Z80 example assigns flute, violin, clarinet and cello, with no 
 });
 
 test('three instrument banks and independent Alto/Bass frequencies match the build-time assignments',()=>{
-  const bank=JSON.parse(readFileSync(new URL('../../ATtiny13A/Music/instruments/bank.json',import.meta.url)));
+  const bankBytes=readFileSync(new URL('../../ATtiny13A/Music/instruments/bank.json',import.meta.url)),bank=JSON.parse(bankBytes);
+  assert.equal(report.instrumentBankSha256,createHash('sha256').update(bankBytes).digest('hex'));
+  assert.equal(score.engine,'instrument-bank');
   for(const [role,offset] of [['lead',0],['keys',16],['pluck',32]]){
     const instrument=bank.instruments[score.instruments[role].instrument];
+    const model=role==='lead'?'lead_envelope_model':role==='keys'?'accompaniment_envelope_model':'pluck_envelope_model';
+    assert.equal(score[model],instrument.envelope.model);
+    assert.equal(score[`${role}_attack_step`],instrument.envelope.attackStep);
+    assert.equal(score[`${role}_release_step`],instrument.envelope.releaseStep);
+    assert.equal(score[`${role}_max_level`],score.instruments[role].level);
     for(const [register,extra] of [['low',0],['high',8]])for(let i=0;i<16;i++)
       assert.equal(((ep[offset+extra+(i>>1)]>>(i%2?4:0))&15)-8,instrument.waves[register][i]);
   }
+  assert.equal(score.lead_envelope_model,'sustain');
+  assert.equal(score.lead_release_model,'linear');
+  assert.equal(report.articulation.attack,'sustain');
   assert.ok(ep.subarray(48).every(v=>v===0x88));
   const delta=n=>Math.round(440*2**((n-69)/12)*65536/18750);
   for(let chord=0;chord<report.score.chords.length;chord++){
@@ -89,12 +99,20 @@ test('sustained accompaniment retains oscillator phases and attacks softly to it
   while(c.pc!==labels.read_event/2)c.step();
   assert.equal(c.r[6]|c.r[7]<<8,12345);assert.equal(c.r[10]|c.r[11]<<8,23456);
   assert.equal(c.r[19],134);assert.equal(c.r[20],133);
-  for(const cap of [score.keys_max_level,score.pluck_max_level]){
-    let level=128;
-    for(let tick=0;tick<8;tick++){
-      c.pc=labels.update_envelope/2;c.r[16]=level;c.r[17]=128+cap;c.pushPC(0);
-      do{c.step();}while(c.pc!==0);
-      level=c.r[16];assert.equal(level,128+Math.min(cap,(tick+1)*4));assert.equal(c.r[0],0);
-    }
+  const registers=[1,19,20],caps=[score.lead_max_level,score.keys_max_level,score.pluck_max_level];
+  for(const register of registers)c.r[register]=128;
+  for(let tick=0;tick<8;tick++){
+    c.pc=labels.music_tick/2;
+    while(c.pc!==labels['.L0a8']/2)c.step();
+    for(let voice=0;voice<3;voice++)assert.equal(c.r[registers[voice]],128+Math.min(caps[voice],(tick+1)*4));
+    assert.equal(c.r[0],0);
+  }
+  // In particular, flute must use the bank's linear sustain release rather
+  // than the historical violin-lead release that skipped levels above8.
+  for(let voice=0;voice<3;voice++)c.r[registers[voice]]=caps[voice];
+  for(let tick=1;tick<=16;tick++){
+    c.pc=labels.music_tick/2;
+    while(c.pc!==labels['.L0a8']/2)c.step();
+    for(let voice=0;voice<3;voice++)assert.equal(c.r[registers[voice]],Math.max(0,caps[voice]-tick));
   }
 });

@@ -4,6 +4,7 @@
     "Traditional"
   ],
   "tempo_bpm": 60,
+  "engine": "instrument-bank",
   "beats_per_bar": 3,
   "meter": "6/8",
   "pickup_beats": 0.5,
@@ -13,12 +14,6 @@
   "percussion_meter_units": 12,
   "percussion_initial_counter": 9,
   "percussion_enabled": false,
-  "lead_envelope_model": "bowed",
-  "lead_max_level": 15,
-  "accompaniment_envelope_model": "bowed",
-  "keys_max_level": 12,
-  "pluck_envelope_model": "bowed",
-  "pluck_max_level": 10,
   "instruments": {
     "lead": {
       "instrument": "flute",
@@ -33,20 +28,6 @@
       "level": 10
     },
     "percussion": "off"
-  },
-  "instrument_bank": {
-    "lead": {
-      "instrument": "flute",
-      "level": 15
-    },
-    "keys": {
-      "instrument": "violin",
-      "level": 12
-    },
-    "pluck": {
-      "instrument": "cello",
-      "level": 10
-    }
   },
   "playlist": [
     "pickup",
@@ -313,5 +294,25 @@
     "source_midi_tempo_bpm": 60,
     "description": "Complete played soprano, written pitches/onsets/durations and eighth-note pickup. Flute73 matches the actual Z80 player example; violin40 and cello42 follow the written Alto/Bass pitches sampled at dotted-quarter boundaries. Clarinet71 Tenor is omitted to fit three tonal oscillators. No invented guitar or percussion. The original two-staff MIDI has no ProgramChange; the actual Z80 four-channel example explicitly sets flute/violin/clarinet/cello. Final LilyPond s8 layout spacer is omitted so the 2.5-beat closing bar and 0.5-beat pickup loop in 6/8."
   },
-  "note_format": "Quarter-note beats on a sixteenth grid. Three beats = one 6/8 bar; pickup = 0.5 beat. ~ continues a note across a bar boundary."
+  "note_format": "Quarter-note beats on a sixteenth grid. Three beats = one 6/8 bar; pickup = 0.5 beat. ~ continues a note across a bar boundary.",
+  "lead_envelope_model": "sustain",
+  "accompaniment_envelope_model": "bowed",
+  "pluck_envelope_model": "bowed",
+  "keys_rest_check": false,
+  "pluck_rest_check": false,
+  "lead_max_level": 15,
+  "lead_attack_step": 4,
+  "lead_release_step": 1,
+  "lead_retrigger": "half",
+  "lead_release_model": "linear",
+  "keys_max_level": 12,
+  "keys_attack_step": 4,
+  "keys_release_step": 1,
+  "keys_retrigger": "half",
+  "keys_release_model": "linear",
+  "pluck_max_level": 10,
+  "pluck_attack_step": 4,
+  "pluck_release_step": 1,
+  "pluck_retrigger": "half",
+  "pluck_release_model": "linear"
 }

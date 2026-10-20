@@ -52,7 +52,6 @@ reset:
   out 38, r16
   clr r0
   clr r1
-  sts 96, r0
   ldi r30, 2
   clr r31
   clr r16
@@ -67,18 +66,13 @@ clear_registers:
   st Z+, r18
   st Z+, r0
   /* Initialize four sound channels, score cursor, and deterministic percussion noise. */
-  ldi r16, 4
-  mov r21, r16
   ldi r16, 1
   mov r22, r16
   ldi r28, FIRST_PLAYLIST_INDEX
   ldi r16, GRID_INITIAL_HIGH
   sts 100, r16
-  ldi r29, 7
   ldi r30, lo8(first_section)
   ldi r31, hi8(first_section)
-  ldi r16, 167
-  mov r14, r16
   /* Configure hardware Fast PWM on OC0B/PB1, fixed TOP=255 at 37.5 kHz. */
   sbi 23, 1
   out 41, r18
@@ -106,7 +100,7 @@ pwm_irq:
   set
   reti
 audio_step:
-  /* Foreground tick. Odd ticks produce new piano/bass points; envelopes tick every 512 overflows, score uses the fractional sixteenth grid. */
+  /* Foreground tick. Odd ticks produce new four-voice points; envelopes tick every 512 overflows, score uses the fractional sixteenth grid. */
   inc r15
   breq .L064
   sbrs r15, 0
@@ -121,14 +115,30 @@ audio_step:
 music_tick:
   /* Advance envelopes at ~73.24 Hz. Flags in envelope bytes encode attack, sustain and release. */
   inc r24
-  /* Program 0 piano: immediate attack, measured three-rate decay. */
   mov r16, r1
   ldi r17, 3
   rcall update_envelope
   mov r1, r16
+  /* END LEAD ENVELOPE */
 .L08e:
-  /* Quiet fretless-bass bed is held between harmony changes.
-   * No substitute guitar and no generated percussion are mixed. */
+  /* Piano and guitar use one shared envelope function with different decay masks. */
+  sbrs r19, 7
+  rjmp keys_env_release
+  mov r16, r19
+  subi r16, 254
+  cpi r16, 135
+  brcs keys_env_attack
+  ldi r16, 134
+keys_env_attack:
+  mov r19, r16
+  rjmp keys_env_done
+keys_env_release:
+  tst r19
+  breq keys_env_done
+  dec r19
+keys_env_done:
+  /* END KEYS ENVELOPE */
+  /* END PLUCK ENVELOPE */
 .L0a8:
   /* R25: low grid phase, SRAM[0x64]: high. One overflow = one sixteenth. */
   lds r16, 100
@@ -156,15 +166,11 @@ read_event:
   cpi r16, 240
   brcs chord_event
 note_off:
-  /* NOTE-OFF bitmask: bit0 lead piano, bit1 bass; bits2/3 are inactive. No oscillator resets. */
+  /* NOTE-OFF bitmask: bit0 violin, bit1 piano, bit2 guitar, bit3 percussion. No oscillator resets. */
   sbrc r16, 0
   rcall release_lead
   sbrc r16, 1
   andi r19, 15
-  sbrc r16, 2
-  andi r20, 15
-  sbrc r16, 3
-  ldi r21, 3
   rjmp read_event
 release_lead:
   /* Change lead from attack/sustain into release without resetting DDS phase. */
@@ -184,11 +190,12 @@ chord_event:
   adc r31, r0
   lpm r8, Z+
   lpm r9, Z+
-  lpm r12, Z+
-  lpm r13, Z+
-  /* Keep the bass phase continuous; quiet level from the shared bank. */
-  ldi r19, 6
-  clr r20
+  mov r16, r19
+  andi r16, 15
+  lsr r16
+  ori r16, 128
+  mov r19, r16
+  /* END COMPANION TRIGGERS */
   movw r30, r26
   rjmp read_event
 melodic_event:
@@ -202,6 +209,7 @@ melodic_event:
   adc r31, r0
   lpm r22, Z
   movw r30, r26
+  /* BEGIN LEAD FREQUENCY */
   lsr r16
   lsr r16
   lsr r16
@@ -293,9 +301,10 @@ voice_silent:
   clr r17
   ret
 render_sample:
-  /* Accumulate piano and exact source-octave bass with continuous phases. */
+  /* Accumulate three pitch oscillators with independent phases and envelopes. */
   push r25
   clr r26
+  /* BEGIN LEAD RENDER */
   add r2, r4
   adc r3, r5
   mov r25, r1
@@ -303,6 +312,8 @@ render_sample:
   mov r17, r3
   rcall render_tone
   add r26, r17
+  /* END LEAD RENDER */
+  /* BEGIN KEYS RENDER */
   add r6, r8
   adc r7, r9
   mov r25, r19
@@ -311,8 +322,8 @@ render_sample:
   mov r17, r7
   rcall render_tone
   add r26, r17
-  /* The MIDI's main roles are piano and fretless bass.
-   * Omit unrelated synthetic guitar, snare and hi-hat. */
+  /* END KEYS RENDER */
+  /* END PLUCK RENDER */
 write_pwm:
   /* Convert the bipolar mix to unsigned PWM; publish the next pair after a safe handoff. */
   subi r26, 128
