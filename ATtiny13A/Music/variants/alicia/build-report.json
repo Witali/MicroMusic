@@ -1,0 +1,4928 @@
+{
+  "flashBytes": 1020,
+  "codeBytes": 524,
+  "tableBytes": 496,
+  "eepromBytes": 64,
+  "flashSha256": "658f09e24dba8917b72f687c067a7518503f80c885416401190fe6e7bf02e2c3",
+  "eepromSha256": "7f6c5fe2c7712dd7013997477cd6b8a97987a041d57a23e6e968467ca51ee64d",
+  "labels": {
+    "REST_INDEX": 15,
+    "HOLD_INDEX": 16,
+    "PLAYLIST_LEN": 36,
+    "FIRST_PLAYLIST_INDEX": 1,
+    "GRID_STEP_LOW": 23,
+    "GRID_STEP_HIGH": 81,
+    "GRID_INITIAL_HIGH": 175,
+    "vectors": 0,
+    "envelope_return": 2,
+    "reset": 8,
+    "clear_ram": 22,
+    "fill_ring": 32,
+    "idle": 78,
+    "check_space": 84,
+    "audio_step": 88,
+    "render_sample": 94,
+    "voice_loop": 98,
+    "primary_gain": 132,
+    "write_pwm": 138,
+    "ring_published": 156,
+    "pwm_irq": 160,
+    "ring_read": 162,
+    "irq_restore": 168,
+    "music_tick": 170,
+    "envelope_loop": 174,
+    "state_plucked": 184,
+    "state_mask": 202,
+    "state_gate": 216,
+    "state_release": 224,
+    "envelope_store": 238,
+    ".L0a8": 248,
+    "grid_step": 264,
+    ".L0ba": 264,
+    "read_event": 270,
+    "melodic_event": 276,
+    "lead_commit": 326,
+    "note_rest": 330,
+    "release_lead": 330,
+    "next_section": 342,
+    ".L15c": 362,
+    "hold_sample": 372,
+    "render_tone": 374,
+    ".L216": 390,
+    "piano_attack_done": 400,
+    "eeprom_low_nibble": 418,
+    ".L25c": 422,
+    "voice_silent": 452,
+    "initialize_voice": 456,
+    "voice_initialized": 474,
+    "capture_ram_tail": 476,
+    "ram_tail_destination": 494,
+    "ram_tail_copy": 510,
+    "no_ram_tail": 520,
+    "playlist": 524,
+    "durations": 560,
+    "note_steps": 567,
+    "chord_steps": 597,
+    "melody_data": 597,
+    "section_packed_002": 597,
+    "section_packed_004": 624,
+    "section_packed_006": 626,
+    "section_packed_007": 652,
+    "section_packed_005": 655,
+    "section_packed_001": 657,
+    "section_packed_012": 658,
+    "section_packed_008": 663,
+    "section_packed_009": 676,
+    "section_packed_018": 686,
+    "section_packed_010": 689,
+    "section_packed_011": 698,
+    "section_packed_013": 717,
+    "section_packed_014": 729,
+    "section_packed_015": 777,
+    "section_packed_016": 804,
+    "section_packed_017": 813,
+    "section_packed_003": 836,
+    "section_packed_019": 839,
+    "section_packed_000": 851,
+    "first_section": 851
+  },
+  "score": {
+    "note_count": 439,
+    "event_bytes": 423,
+    "maximum_entry_offset": 254,
+    "playlist_bytes": 36,
+    "note_table_bytes": 30,
+    "chord_table_bytes": 0,
+    "durations": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      8,
+      16
+    ],
+    "pitches": [
+      "G3",
+      "G#3",
+      "A#3",
+      "C4",
+      "D4",
+      "D#4",
+      "F4",
+      "G4",
+      "G#4",
+      "A4",
+      "A#4",
+      "B4",
+      "C5",
+      "D5",
+      "D#5",
+      "R"
+    ],
+    "chords": [],
+    "chord_notes": {},
+    "total_data_bytes": 496,
+    "section_bars": {
+      "complete_melody": 229
+    },
+    "playlist": [
+      "packed_000",
+      "packed_001",
+      "packed_002",
+      "packed_003",
+      "packed_004",
+      "packed_005",
+      "packed_006",
+      "packed_002",
+      "packed_007",
+      "packed_008",
+      "packed_009",
+      "packed_010",
+      "packed_005",
+      "packed_011",
+      "packed_012",
+      "packed_013",
+      "packed_005",
+      "packed_014",
+      "packed_005",
+      "packed_015",
+      "packed_012",
+      "packed_016",
+      "packed_012",
+      "packed_002",
+      "packed_003",
+      "packed_004",
+      "packed_005",
+      "packed_006",
+      "packed_002",
+      "packed_007",
+      "packed_008",
+      "packed_009",
+      "packed_017",
+      "packed_018",
+      "packed_017",
+      "packed_019"
+    ],
+    "source_playlist": [
+      "complete_melody"
+    ],
+    "section_offsets": {
+      "packed_002": 0,
+      "packed_004": 27,
+      "packed_001": 60,
+      "packed_005": 58,
+      "packed_006": 29,
+      "packed_007": 55,
+      "packed_012": 61,
+      "packed_008": 66,
+      "packed_009": 79,
+      "packed_018": 89,
+      "packed_010": 92,
+      "packed_011": 101,
+      "packed_013": 120,
+      "packed_014": 132,
+      "packed_015": 180,
+      "packed_016": 207,
+      "packed_003": 239,
+      "packed_017": 216,
+      "packed_019": 242,
+      "packed_000": 254
+    },
+    "compression": {
+      "method": "Repeated command phrases; dynamic-programming parsing; suffix sharing; deterministic dictionary search",
+      "globallyMinimal": false,
+      "candidateLimit": 4096,
+      "candidateCount": 4096,
+      "dictionaryTrials": 221832,
+      "originalCommandBytes": 651,
+      "originalStreamSha256": "3a52dd5d7bd10693afc5a7f7cdc9a7bc6529ac1abb7014641278adb78d640b2c",
+      "sourceLayoutBytes": 653,
+      "packedEventBytes": 423,
+      "playlistBytes": 36,
+      "packedBytes": 459,
+      "savedAgainstSourceLayoutBytes": 194,
+      "storedSections": 14,
+      "referencedSections": 20,
+      "verifiedLossless": true
+    },
+    "source": "Алисия · Экспедиция 33 — фортепианная мелодия",
+    "rest_index": 15,
+    "hold_index": 16,
+    "holds": [
+      {
+        "section": "complete_melody",
+        "bar": 0,
+        "pitch": "C5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 0,
+        "pitch": "G4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 1,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 1,
+        "pitch": "F4",
+        "beat": 2.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 2,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 3,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 4,
+        "pitch": "A#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 4,
+        "pitch": "A#4",
+        "beat": 1.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 4,
+        "pitch": "D#4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 5,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 6,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 6,
+        "pitch": "D#4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 6,
+        "pitch": "G4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 7,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 7,
+        "pitch": "F4",
+        "beat": 3.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 8,
+        "pitch": "G#3",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 9,
+        "pitch": "G#3",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 10,
+        "pitch": "G#3",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 10,
+        "pitch": "D#4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 11,
+        "pitch": "D4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 11,
+        "pitch": "G3",
+        "beat": 2.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 12,
+        "pitch": "G3",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 13,
+        "pitch": "G3",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 13,
+        "pitch": "G4",
+        "beat": 3.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 14,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 15,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 15,
+        "pitch": "F4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 15,
+        "pitch": "F4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 16,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 16,
+        "pitch": "F4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 17,
+        "pitch": "G#4",
+        "beat": 3.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 18,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 18,
+        "pitch": "F4",
+        "beat": 3.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 19,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 20,
+        "pitch": "D4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 20,
+        "pitch": "A#3",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 20,
+        "pitch": "A#3",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 21,
+        "pitch": "A#3",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 22,
+        "pitch": "A#3",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 23,
+        "pitch": "A#3",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 23,
+        "pitch": "A#3",
+        "beat": 1.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 27,
+        "pitch": "G#3",
+        "beat": 3.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 28,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 28,
+        "pitch": "C4",
+        "beat": 1.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 28,
+        "pitch": "F4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 29,
+        "pitch": "G#4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 29,
+        "pitch": "C5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 30,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 30,
+        "pitch": "D5",
+        "beat": 2.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 31,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 32,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 33,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 33,
+        "pitch": "B4",
+        "beat": 1.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 33,
+        "pitch": "C5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 34,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 35,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 36,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 36,
+        "pitch": "G4",
+        "beat": 3.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 37,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 38,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 39,
+        "pitch": "D5",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 40,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 40,
+        "pitch": "D#4",
+        "beat": 2.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 41,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 41,
+        "pitch": "D#4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 41,
+        "pitch": "D#4",
+        "beat": 3.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 42,
+        "pitch": "A#4",
+        "beat": 3.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 43,
+        "pitch": "G#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 44,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 45,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 46,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 46,
+        "pitch": "C4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 47,
+        "pitch": "C4",
+        "beat": 3.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 48,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 49,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 49,
+        "pitch": "C5",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 50,
+        "pitch": "D#5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 50,
+        "pitch": "D5",
+        "beat": 2.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 50,
+        "pitch": "D5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 51,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 52,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 53,
+        "pitch": "D#5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 53,
+        "pitch": "D5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 54,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 55,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 56,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 56,
+        "pitch": "D5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 57,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 57,
+        "pitch": "G4",
+        "beat": 1.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 57,
+        "pitch": "A4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 58,
+        "pitch": "G4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 58,
+        "pitch": "F4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 59,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 60,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 61,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 61,
+        "pitch": "D#4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 62,
+        "pitch": "D4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 63,
+        "pitch": "D4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 63,
+        "pitch": "D4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 64,
+        "pitch": "G4",
+        "beat": 3.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 65,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 65,
+        "pitch": "C5",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 66,
+        "pitch": "D#5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 66,
+        "pitch": "D#5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 66,
+        "pitch": "D5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 67,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 68,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 68,
+        "pitch": "D5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 68,
+        "pitch": "D#5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 69,
+        "pitch": "D#5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 69,
+        "pitch": "G4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 70,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 71,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 71,
+        "pitch": "G4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 71,
+        "pitch": "G4",
+        "beat": 3.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 72,
+        "pitch": "A#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 72,
+        "pitch": "A#4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 72,
+        "pitch": "C5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 73,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 74,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 75,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 75,
+        "pitch": "C5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 76,
+        "pitch": "F4",
+        "beat": 3.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 77,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 77,
+        "pitch": "G#4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 78,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 78,
+        "pitch": "C5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 78,
+        "pitch": "C5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 79,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 80,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 80,
+        "pitch": "C5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 80,
+        "pitch": "B4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 81,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 81,
+        "pitch": "D5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 82,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 83,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 83,
+        "pitch": "D5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 83,
+        "pitch": "D5",
+        "beat": 3.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 84,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 84,
+        "pitch": "C5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 84,
+        "pitch": "B4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 85,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 86,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 87,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 87,
+        "pitch": "B4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 88,
+        "pitch": "G4",
+        "beat": 3.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 89,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 89,
+        "pitch": "C5",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 90,
+        "pitch": "D#5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 90,
+        "pitch": "D#5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 90,
+        "pitch": "D5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 91,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 92,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 92,
+        "pitch": "D5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 92,
+        "pitch": "D#5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 93,
+        "pitch": "D#5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 93,
+        "pitch": "G4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 94,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 95,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 95,
+        "pitch": "G4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 95,
+        "pitch": "G4",
+        "beat": 3.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 96,
+        "pitch": "A#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 96,
+        "pitch": "A#4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 96,
+        "pitch": "B4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 97,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 98,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 99,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 99,
+        "pitch": "B4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 100,
+        "pitch": "C5",
+        "beat": 3.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 101,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 101,
+        "pitch": "G4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 102,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 102,
+        "pitch": "D#4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 102,
+        "pitch": "F4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 103,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 103,
+        "pitch": "F4",
+        "beat": 1.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 103,
+        "pitch": "C5",
+        "beat": 3.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 104,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 104,
+        "pitch": "C5",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 104,
+        "pitch": "C5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 105,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 105,
+        "pitch": "C5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 105,
+        "pitch": "D#4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 106,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 107,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 107,
+        "pitch": "F4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 108,
+        "pitch": "D4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 108,
+        "pitch": "D4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 108,
+        "pitch": "C4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 109,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 110,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 111,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 111,
+        "pitch": "C4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 114,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 114,
+        "pitch": "G4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 115,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 115,
+        "pitch": "G4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 115,
+        "pitch": "G4",
+        "beat": 3.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 116,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 116,
+        "pitch": "F4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 116,
+        "pitch": "F4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 117,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 117,
+        "pitch": "F4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 118,
+        "pitch": "G4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 119,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 119,
+        "pitch": "D#4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 120,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 120,
+        "pitch": "A#3",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 121,
+        "pitch": "A#3",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 122,
+        "pitch": "A#3",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 123,
+        "pitch": "A#3",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 123,
+        "pitch": "A#3",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 126,
+        "pitch": "G4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 127,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 128,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 128,
+        "pitch": "G#4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 128,
+        "pitch": "G#4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 129,
+        "pitch": "G#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 129,
+        "pitch": "D5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 130,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 131,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 131,
+        "pitch": "D5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 131,
+        "pitch": "C5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 132,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 132,
+        "pitch": "C5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 133,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 134,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 135,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 135,
+        "pitch": "F4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 136,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 137,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 137,
+        "pitch": "F4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 137,
+        "pitch": "D5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 138,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 138,
+        "pitch": "D#4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 139,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 140,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 140,
+        "pitch": "A#4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 141,
+        "pitch": "A#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 141,
+        "pitch": "C4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 142,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 143,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 144,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 144,
+        "pitch": "C4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 145,
+        "pitch": "D#4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 146,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 146,
+        "pitch": "C5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 147,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 147,
+        "pitch": "D5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 148,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 149,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 150,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 151,
+        "pitch": "F4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 152,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 152,
+        "pitch": "D#4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 152,
+        "pitch": "D#4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 153,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 153,
+        "pitch": "D#4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 154,
+        "pitch": "D#4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 154,
+        "pitch": "D#4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 155,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 155,
+        "pitch": "D4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 155,
+        "pitch": "D4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 156,
+        "pitch": "D4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 156,
+        "pitch": "D4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 157,
+        "pitch": "G4",
+        "beat": 3.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 158,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 158,
+        "pitch": "C5",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 159,
+        "pitch": "D#5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 159,
+        "pitch": "D#5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 159,
+        "pitch": "D5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 160,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 161,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 161,
+        "pitch": "D5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 161,
+        "pitch": "D#5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 162,
+        "pitch": "D#5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 162,
+        "pitch": "G4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 163,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 164,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 164,
+        "pitch": "G4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 164,
+        "pitch": "G4",
+        "beat": 3.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 165,
+        "pitch": "A#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 165,
+        "pitch": "A#4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 165,
+        "pitch": "C5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 166,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 167,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 168,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 168,
+        "pitch": "C5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 169,
+        "pitch": "F4",
+        "beat": 3.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 170,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 170,
+        "pitch": "G#4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 171,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 171,
+        "pitch": "C5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 171,
+        "pitch": "C5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 172,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 173,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 173,
+        "pitch": "C5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 173,
+        "pitch": "B4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 174,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 174,
+        "pitch": "D5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 175,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 176,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 176,
+        "pitch": "D5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 176,
+        "pitch": "D5",
+        "beat": 3.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 177,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 177,
+        "pitch": "C5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 177,
+        "pitch": "B4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 178,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 179,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 180,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 180,
+        "pitch": "B4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 181,
+        "pitch": "G4",
+        "beat": 3.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 182,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 182,
+        "pitch": "C5",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 183,
+        "pitch": "D#5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 183,
+        "pitch": "D#5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 183,
+        "pitch": "D5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 184,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 185,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 185,
+        "pitch": "D5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 185,
+        "pitch": "D#5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 186,
+        "pitch": "D#5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 186,
+        "pitch": "G4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 187,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 188,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 188,
+        "pitch": "G4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 188,
+        "pitch": "G4",
+        "beat": 3.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 189,
+        "pitch": "A#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 189,
+        "pitch": "A#4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 189,
+        "pitch": "B4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 190,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 191,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 192,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 192,
+        "pitch": "B4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 193,
+        "pitch": "C5",
+        "beat": 3.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 194,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 194,
+        "pitch": "G4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 195,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 195,
+        "pitch": "D#4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 195,
+        "pitch": "F4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 196,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 196,
+        "pitch": "F4",
+        "beat": 1.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 196,
+        "pitch": "C5",
+        "beat": 3.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 197,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 197,
+        "pitch": "C5",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 197,
+        "pitch": "C5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 198,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 198,
+        "pitch": "C5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 198,
+        "pitch": "D#4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 199,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 200,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 201,
+        "pitch": "F4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 202,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 203,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 203,
+        "pitch": "D4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 203,
+        "pitch": "D4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 204,
+        "pitch": "D4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 204,
+        "pitch": "D4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 204,
+        "pitch": "C4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 205,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 206,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 207,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 208,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 209,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 210,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 210,
+        "pitch": "C4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 210,
+        "pitch": "D#4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 211,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 212,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 213,
+        "pitch": "F4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 214,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 215,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 215,
+        "pitch": "D4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 215,
+        "pitch": "D4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 216,
+        "pitch": "D4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 216,
+        "pitch": "D4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 216,
+        "pitch": "C4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 217,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 218,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 219,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 220,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 221,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 222,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 222,
+        "pitch": "C4",
+        "beat": 2.0
+      }
+    ],
+    "instruments": {
+      "lead": "acoustic-grand-piano-soft",
+      "keys": "off",
+      "pluck": "off",
+      "percussion": "off"
+    }
+  },
+  "timing": {
+    "phaseStep": 20759,
+    "phaseBits": 16,
+    "envelopeTickCycles": 131072,
+    "tempoBpm": 348,
+    "actualTempoBpm": 347.99985587596893,
+    "sharedGrid": "One sixteenth grid drives score and half-beat percussion",
+    "initialHighPhase": 175
+  },
+  "articulation": {
+    "holdIndex": 16,
+    "holds": [
+      {
+        "section": "complete_melody",
+        "bar": 0,
+        "pitch": "C5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 0,
+        "pitch": "G4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 1,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 1,
+        "pitch": "F4",
+        "beat": 2.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 2,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 3,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 4,
+        "pitch": "A#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 4,
+        "pitch": "A#4",
+        "beat": 1.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 4,
+        "pitch": "D#4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 5,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 6,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 6,
+        "pitch": "D#4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 6,
+        "pitch": "G4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 7,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 7,
+        "pitch": "F4",
+        "beat": 3.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 8,
+        "pitch": "G#3",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 9,
+        "pitch": "G#3",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 10,
+        "pitch": "G#3",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 10,
+        "pitch": "D#4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 11,
+        "pitch": "D4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 11,
+        "pitch": "G3",
+        "beat": 2.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 12,
+        "pitch": "G3",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 13,
+        "pitch": "G3",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 13,
+        "pitch": "G4",
+        "beat": 3.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 14,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 15,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 15,
+        "pitch": "F4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 15,
+        "pitch": "F4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 16,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 16,
+        "pitch": "F4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 17,
+        "pitch": "G#4",
+        "beat": 3.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 18,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 18,
+        "pitch": "F4",
+        "beat": 3.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 19,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 20,
+        "pitch": "D4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 20,
+        "pitch": "A#3",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 20,
+        "pitch": "A#3",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 21,
+        "pitch": "A#3",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 22,
+        "pitch": "A#3",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 23,
+        "pitch": "A#3",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 23,
+        "pitch": "A#3",
+        "beat": 1.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 27,
+        "pitch": "G#3",
+        "beat": 3.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 28,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 28,
+        "pitch": "C4",
+        "beat": 1.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 28,
+        "pitch": "F4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 29,
+        "pitch": "G#4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 29,
+        "pitch": "C5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 30,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 30,
+        "pitch": "D5",
+        "beat": 2.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 31,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 32,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 33,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 33,
+        "pitch": "B4",
+        "beat": 1.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 33,
+        "pitch": "C5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 34,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 35,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 36,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 36,
+        "pitch": "G4",
+        "beat": 3.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 37,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 38,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 39,
+        "pitch": "D5",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 40,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 40,
+        "pitch": "D#4",
+        "beat": 2.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 41,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 41,
+        "pitch": "D#4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 41,
+        "pitch": "D#4",
+        "beat": 3.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 42,
+        "pitch": "A#4",
+        "beat": 3.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 43,
+        "pitch": "G#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 44,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 45,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 46,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 46,
+        "pitch": "C4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 47,
+        "pitch": "C4",
+        "beat": 3.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 48,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 49,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 49,
+        "pitch": "C5",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 50,
+        "pitch": "D#5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 50,
+        "pitch": "D5",
+        "beat": 2.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 50,
+        "pitch": "D5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 51,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 52,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 53,
+        "pitch": "D#5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 53,
+        "pitch": "D5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 54,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 55,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 56,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 56,
+        "pitch": "D5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 57,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 57,
+        "pitch": "G4",
+        "beat": 1.5
+      },
+      {
+        "section": "complete_melody",
+        "bar": 57,
+        "pitch": "A4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 58,
+        "pitch": "G4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 58,
+        "pitch": "F4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 59,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 60,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 61,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 61,
+        "pitch": "D#4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 62,
+        "pitch": "D4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 63,
+        "pitch": "D4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 63,
+        "pitch": "D4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 64,
+        "pitch": "G4",
+        "beat": 3.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 65,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 65,
+        "pitch": "C5",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 66,
+        "pitch": "D#5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 66,
+        "pitch": "D#5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 66,
+        "pitch": "D5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 67,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 68,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 68,
+        "pitch": "D5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 68,
+        "pitch": "D#5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 69,
+        "pitch": "D#5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 69,
+        "pitch": "G4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 70,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 71,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 71,
+        "pitch": "G4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 71,
+        "pitch": "G4",
+        "beat": 3.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 72,
+        "pitch": "A#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 72,
+        "pitch": "A#4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 72,
+        "pitch": "C5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 73,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 74,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 75,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 75,
+        "pitch": "C5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 76,
+        "pitch": "F4",
+        "beat": 3.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 77,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 77,
+        "pitch": "G#4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 78,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 78,
+        "pitch": "C5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 78,
+        "pitch": "C5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 79,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 80,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 80,
+        "pitch": "C5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 80,
+        "pitch": "B4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 81,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 81,
+        "pitch": "D5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 82,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 83,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 83,
+        "pitch": "D5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 83,
+        "pitch": "D5",
+        "beat": 3.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 84,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 84,
+        "pitch": "C5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 84,
+        "pitch": "B4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 85,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 86,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 87,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 87,
+        "pitch": "B4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 88,
+        "pitch": "G4",
+        "beat": 3.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 89,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 89,
+        "pitch": "C5",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 90,
+        "pitch": "D#5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 90,
+        "pitch": "D#5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 90,
+        "pitch": "D5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 91,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 92,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 92,
+        "pitch": "D5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 92,
+        "pitch": "D#5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 93,
+        "pitch": "D#5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 93,
+        "pitch": "G4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 94,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 95,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 95,
+        "pitch": "G4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 95,
+        "pitch": "G4",
+        "beat": 3.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 96,
+        "pitch": "A#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 96,
+        "pitch": "A#4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 96,
+        "pitch": "B4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 97,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 98,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 99,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 99,
+        "pitch": "B4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 100,
+        "pitch": "C5",
+        "beat": 3.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 101,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 101,
+        "pitch": "G4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 102,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 102,
+        "pitch": "D#4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 102,
+        "pitch": "F4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 103,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 103,
+        "pitch": "F4",
+        "beat": 1.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 103,
+        "pitch": "C5",
+        "beat": 3.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 104,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 104,
+        "pitch": "C5",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 104,
+        "pitch": "C5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 105,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 105,
+        "pitch": "C5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 105,
+        "pitch": "D#4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 106,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 107,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 107,
+        "pitch": "F4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 108,
+        "pitch": "D4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 108,
+        "pitch": "D4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 108,
+        "pitch": "C4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 109,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 110,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 111,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 111,
+        "pitch": "C4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 114,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 114,
+        "pitch": "G4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 115,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 115,
+        "pitch": "G4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 115,
+        "pitch": "G4",
+        "beat": 3.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 116,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 116,
+        "pitch": "F4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 116,
+        "pitch": "F4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 117,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 117,
+        "pitch": "F4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 118,
+        "pitch": "G4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 119,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 119,
+        "pitch": "D#4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 120,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 120,
+        "pitch": "A#3",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 121,
+        "pitch": "A#3",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 122,
+        "pitch": "A#3",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 123,
+        "pitch": "A#3",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 123,
+        "pitch": "A#3",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 126,
+        "pitch": "G4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 127,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 128,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 128,
+        "pitch": "G#4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 128,
+        "pitch": "G#4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 129,
+        "pitch": "G#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 129,
+        "pitch": "D5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 130,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 131,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 131,
+        "pitch": "D5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 131,
+        "pitch": "C5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 132,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 132,
+        "pitch": "C5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 133,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 134,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 135,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 135,
+        "pitch": "F4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 136,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 137,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 137,
+        "pitch": "F4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 137,
+        "pitch": "D5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 138,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 138,
+        "pitch": "D#4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 139,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 140,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 140,
+        "pitch": "A#4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 141,
+        "pitch": "A#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 141,
+        "pitch": "C4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 142,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 143,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 144,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 144,
+        "pitch": "C4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 145,
+        "pitch": "D#4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 146,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 146,
+        "pitch": "C5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 147,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 147,
+        "pitch": "D5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 148,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 149,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 150,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 151,
+        "pitch": "F4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 152,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 152,
+        "pitch": "D#4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 152,
+        "pitch": "D#4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 153,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 153,
+        "pitch": "D#4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 154,
+        "pitch": "D#4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 154,
+        "pitch": "D#4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 155,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 155,
+        "pitch": "D4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 155,
+        "pitch": "D4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 156,
+        "pitch": "D4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 156,
+        "pitch": "D4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 157,
+        "pitch": "G4",
+        "beat": 3.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 158,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 158,
+        "pitch": "C5",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 159,
+        "pitch": "D#5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 159,
+        "pitch": "D#5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 159,
+        "pitch": "D5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 160,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 161,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 161,
+        "pitch": "D5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 161,
+        "pitch": "D#5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 162,
+        "pitch": "D#5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 162,
+        "pitch": "G4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 163,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 164,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 164,
+        "pitch": "G4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 164,
+        "pitch": "G4",
+        "beat": 3.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 165,
+        "pitch": "A#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 165,
+        "pitch": "A#4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 165,
+        "pitch": "C5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 166,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 167,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 168,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 168,
+        "pitch": "C5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 169,
+        "pitch": "F4",
+        "beat": 3.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 170,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 170,
+        "pitch": "G#4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 171,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 171,
+        "pitch": "C5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 171,
+        "pitch": "C5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 172,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 173,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 173,
+        "pitch": "C5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 173,
+        "pitch": "B4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 174,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 174,
+        "pitch": "D5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 175,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 176,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 176,
+        "pitch": "D5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 176,
+        "pitch": "D5",
+        "beat": 3.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 177,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 177,
+        "pitch": "C5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 177,
+        "pitch": "B4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 178,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 179,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 180,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 180,
+        "pitch": "B4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 181,
+        "pitch": "G4",
+        "beat": 3.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 182,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 182,
+        "pitch": "C5",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 183,
+        "pitch": "D#5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 183,
+        "pitch": "D#5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 183,
+        "pitch": "D5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 184,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 185,
+        "pitch": "D5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 185,
+        "pitch": "D5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 185,
+        "pitch": "D#5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 186,
+        "pitch": "D#5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 186,
+        "pitch": "G4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 187,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 188,
+        "pitch": "G4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 188,
+        "pitch": "G4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 188,
+        "pitch": "G4",
+        "beat": 3.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 189,
+        "pitch": "A#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 189,
+        "pitch": "A#4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 189,
+        "pitch": "B4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 190,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 191,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 192,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 192,
+        "pitch": "B4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 193,
+        "pitch": "C5",
+        "beat": 3.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 194,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 194,
+        "pitch": "G4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 195,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 195,
+        "pitch": "D#4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 195,
+        "pitch": "F4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 196,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 196,
+        "pitch": "F4",
+        "beat": 1.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 196,
+        "pitch": "C5",
+        "beat": 3.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 197,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 197,
+        "pitch": "C5",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 197,
+        "pitch": "C5",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 198,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 198,
+        "pitch": "C5",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 198,
+        "pitch": "D#4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 199,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 200,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 201,
+        "pitch": "F4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 202,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 203,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 203,
+        "pitch": "D4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 203,
+        "pitch": "D4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 204,
+        "pitch": "D4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 204,
+        "pitch": "D4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 204,
+        "pitch": "C4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 205,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 206,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 207,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 208,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 209,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 210,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 210,
+        "pitch": "C4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 210,
+        "pitch": "D#4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 211,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 212,
+        "pitch": "D#4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 213,
+        "pitch": "F4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 214,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 215,
+        "pitch": "F4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 215,
+        "pitch": "D4",
+        "beat": 2.25
+      },
+      {
+        "section": "complete_melody",
+        "bar": 215,
+        "pitch": "D4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 216,
+        "pitch": "D4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 216,
+        "pitch": "D4",
+        "beat": 2.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 216,
+        "pitch": "C4",
+        "beat": 3.75
+      },
+      {
+        "section": "complete_melody",
+        "bar": 217,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 218,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 219,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 220,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 221,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 222,
+        "pitch": "C4",
+        "beat": 0.0
+      },
+      {
+        "section": "complete_melody",
+        "bar": 222,
+        "pitch": "C4",
+        "beat": 2.0
+      }
+    ],
+    "attack": "piano",
+    "retrigger": "full",
+    "phaseContinuous": true
+  },
+  "instrumentAssignments": {
+    "lead": {
+      "instrument": "acoustic-grand-piano-soft",
+      "label": "Мягкий акустический рояль",
+      "gmProgram": 0,
+      "eepromOffset": 0,
+      "level": 14,
+      "envelope": {
+        "model": "piano",
+        "defaultLevel": 14,
+        "decayMask": 3,
+        "retrigger": "peak",
+        "releaseStep": 2,
+        "decayMaskByRegister": {
+          "thresholdMidi": 75,
+          "thresholdDdsStep": 2175,
+          "lowMask": 3,
+          "highMask": 0
+        }
+      },
+      "transient": {
+        "kind": "piano-attack",
+        "minEnvelopeLevel": 14,
+        "eepromOffsets": {
+          "low": 48,
+          "high": 56
+        },
+        "maximumSwitchSampleDelta": 1
+      }
+    },
+    "keys": {
+      "instrument": "off",
+      "label": "Выключен",
+      "gmProgram": null,
+      "eepromOffset": 16,
+      "level": 0,
+      "envelope": {
+        "model": "off",
+        "defaultLevel": 0
+      }
+    },
+    "pluck": {
+      "instrument": "off",
+      "label": "Выключен",
+      "gmProgram": null,
+      "eepromOffset": 32,
+      "level": 0,
+      "envelope": {
+        "model": "off",
+        "defaultLevel": 0
+      }
+    },
+    "percussion": {
+      "instrument": "off",
+      "label": "Выключены",
+      "level": 0,
+      "enabled": false,
+      "notes": []
+    }
+  },
+  "instrumentBankSha256": "28f8c9356b57874b877a081f5165c50cc0d50d3fdc88435f110a8f8161dda0d4",
+  "releaseChannels": {
+    "primaryVoices": 3,
+    "tailSlots": 2,
+    "voiceAddresses": [
+      96,
+      101,
+      106,
+      111,
+      116
+    ],
+    "voiceStateBytes": 25,
+    "pwmRingBytes": 16,
+    "tailGain": 0.5,
+    "stealing": "Quietest of two release levels",
+    "phaseContinuous": true,
+    "isrCycles": 15,
+    "requiredFuses": {
+      "low": "0x7A",
+      "high": "0xFF"
+    }
+  }
+}
