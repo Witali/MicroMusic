@@ -1,0 +1,54 @@
+ИМПОРТ ИСТОРИИ ATtiny13A В GIT
+Дата импорта: 20 октября 2026 года.
+Репозиторий: C:\Work\MicroMusic
+Ветка: main
+Каталог материалов: AtTiny13A/Music/
+
+ИСТОЧНИКИ
+1. C:\Users\rudol\Downloads\ATtiny13A_complete_development_handoff_2026-10-20.zip
+   SHA-256: be2fc6cdbcc3c742790260a3cf3224a0bf585566572034ee1a2b708c87c482e4
+   Все 184 файла распакованы с сохранением имён, структуры и содержимого.
+   Шесть оригинальных ZIP-релизов сохранены без изменений в releases/.
+2. Сохранённая HTML-страница «Четырехголосый синтезатор» и её каталог
+   ресурсов скопированы без изменений в conversation/ (38 файлов).
+
+ПОРЯДОК ИМПОРТА
+Порядок этапов взят из DEVELOPMENT_HISTORY_RU.txt и PACKAGE_INDEX.json:
+исходник 2016 года; первый четырёхголосный релиз; спектральная версия;
+сравнение акустических тембров; компактная биполярная версия;
+измеренные спектры и огибающие; прошивка с измеренными таблицами;
+промежуточная версия с note-off; финальный рабочий снимок;
+финальный релиз; итоговые документы; сохранённая переписка.
+
+Каждый завершённый этап добавлен отдельным коммитом. Даты коммитов
+соответствуют времени импорта. Исторические даты не подменялись:
+основной ZIP содержит время упаковки, а не время разработки этапов.
+Структура исходного архива сохранена; актуальный комплект находится
+в final/attiny13a_synth_release/.
+
+Коммиты до сохранения этой описи:
+d1db3a4 Initialize repository with lossless archive imports
+4bae7e2 Import original 2016 ATtiny13A C prototype
+f572e75 Import first four-voice synth release and snapshot
+a4fb400 Import pitch-dependent spectral synth stage
+dd5456a Import acoustic timbre comparison stage
+e5f6174 Import compact bipolar synth stage
+25365ab Import measured instrument spectra and envelopes
+415c0db Import sample-derived instrument firmware release
+109c67e Import smooth envelopes and independent note-off prototype
+c20135e Import final firmware development snapshot
+a46f17f Import final synth release with EEPROM and emulator
+d2533ec Import development history and archive manifests
+
+ПРОВЕРКИ
+- CRC основного ZIP: успешно.
+- CRC шести вложенных релизов: успешно.
+- SHA-256-манифест: совпали все 183 перечисленных файла.
+- Все 184 файла архива совпадают побайтно с рабочим деревом и Git-объектами.
+- HTML и все ресурсы совпадают побайтно с файлами в Downloads.
+- .gitattributes отключает преобразование переводов строк импортированных файлов.
+
+Указания внутри переписки, README и AGENT_HANDOFF_RU.txt сохранены
+как исторические документы. Они не выполнялись как инструкции текущей задачи.
+При импорте не изменялись исходники, образы, тесты и звуковые примеры.
+Сборка и аппаратные проверки прошивки в рамках импорта не запускались.
