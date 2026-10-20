@@ -30,6 +30,11 @@
             <div class="chip"><span>ATMEL</span><strong>ATtiny13A</strong><small>9.6 MHz · AVR</small><b class="chip-dot"></b></div>
             <div class="signal-path"><span>PB1 / OC0B</span><div class="signal-line"><i id="signal-dot"></i><b></b><span>RC</span><b></b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h4l5-4v14l-5-4H3zM16 8q6 4 0 8m3-11q10 7 0 14"/></svg></div><small>37,5 кГц PWM</small></div>
           </div>
+          <div class="fuses" aria-label="Рекомендуемые фьюзы ATtiny13A">
+            <div class="fuse-byte"><span>LOW FUSE</span><strong>0x7A</strong></div>
+            <div class="fuse-byte"><span>HIGH FUSE</span><strong>0xFF</strong><small>сохранить заводской</small></div>
+            <div class="fuse-clock"><strong>Внутренний RC · 9,6 МГц</strong><span>CKDIV8 отключён · делитель /1</span><a href="https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf" target="_blank" rel="noopener">Фьюзы в datasheet, §17.2 ↗</a></div>
+          </div>
           <div class="now-playing"><span id="selected-order" class="version-number">06</span><div><span class="eyebrow">ВЫБРАННАЯ ВЕРСИЯ</span><h2 id="selected-title">Финальный синтезатор</h2><p id="selected-description">Загрузка…</p></div></div>
           <div class="elapsed-line"><span>ВРЕМЯ ВОСПРОИЗВЕДЕНИЯ</span><output id="elapsed">00:00.0</output></div>
           <div class="transport"><button id="play" class="primary" disabled><span id="play-icon" aria-hidden="true">▶</span><span id="play-label">Слушать</span><kbd>Space</kbd></button><button id="reset" disabled>↺ Сначала</button><div class="transport-links"><button id="download" disabled>↓ Flash HEX</button><button id="download-eeprom" hidden>↓ EEPROM</button></div></div>

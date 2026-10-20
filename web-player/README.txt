@@ -24,6 +24,14 @@ MICROMUSIC / ATtiny13A WEB PLAYER
   и сохранившиеся WAV. Прошивка выбирается ссылкой ?firmware=final.
 - При скрытии вкладки воспроизведение ставится на паузу.
 
+ФЬЮЗЫ В ГЛАВНОМ БЛОКЕ
+Low 0x7A: внутренний RC 9,6 МГц, CKDIV8 отключён (бит 4 равен 1),
+делитель /1. High 0xFF — заводской High Fuse; как указано в документах
+архива, менять его для этих прошивок не требуется.
+Сверено с Microchip ATtiny13A Data Sheet DS40002307A, §17.2,
+таблицы 17-3 и 17-4 (стр. 110):
+https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf
+
 ПРОШИВКИ
 firmware.json генерируется из сохранённых файлов ATtiny13A/Music/.
 Flash и EEPROM включены в каталог. В каждой записи есть точные SHA-256

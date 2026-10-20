@@ -14,5 +14,9 @@ main{max-width:1320px;margin:auto;padding:0 40px}.intro{display:flex;align-items
 .scope-metrics{grid-template-columns:repeat(3,1fr);row-gap:20px}
 .loaded-rom #rom-name{display:block;font-size:12px;font-weight:550;color:var(--accent)}
 .loaded-rom #rom-name:hover{color:#dbffa0}
+.fuses{display:flex;flex-wrap:wrap;align-items:center;gap:24px;padding:15px 0 20px;border-top:1px solid var(--border)}
+.fuse-byte{min-width:74px;align-self:flex-start}.fuse-byte>span{display:block;color:var(--muted);font:9px var(--mono);letter-spacing:.7px}.fuse-byte strong{display:block;margin-top:7px;font:22px var(--mono);color:var(--accent)}.fuse-byte small{display:block;color:var(--muted);font-size:9px;margin-top:5px}
+.fuse-clock{margin-left:auto}.fuse-clock strong{display:block;font-size:11px;font-weight:500}.fuse-clock>span{display:block;color:var(--muted);font-size:10px;margin-top:6px}.fuse-clock a{display:block;font-size:9px;color:#91a47c;margin-top:7px}
+@media(max-width:460px){.fuses{gap:18px}.fuse-clock{width:100%;margin-left:0}.fuse-clock a{display:inline-block}.fuse-byte strong{font-size:20px}}
 @media(max-width:460px){.scope-metrics{grid-template-columns:repeat(2,1fr)}}
 @media(prefers-reduced-motion:reduce){button{transition:none}}
