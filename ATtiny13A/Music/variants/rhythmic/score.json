@@ -158,7 +158,7 @@
   "lead_attack_step": 4,
   "lead_release_step": 1,
   "lead_retrigger": "half",
-  "lead_release_model": "fast-above-8",
+  "lead_release_model": "linear",
   "keys_max_level": 15,
   "keys_attack_step": 0,
   "keys_release_step": 2,
@@ -168,5 +168,11 @@
   "pluck_attack_step": 0,
   "pluck_release_step": 1,
   "pluck_retrigger": "full",
-  "pluck_release_model": "shared-decay"
+  "pluck_release_model": "shared-decay",
+  "dds_fast_decay_roles": {},
+  "keys_decay_mask": 3,
+  "keys_fast_decay_mask": null,
+  "pluck_decay_mask": 1,
+  "pluck_fast_decay_mask": null,
+  "release_tail_slots": 2
 }

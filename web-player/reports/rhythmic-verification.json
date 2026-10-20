@@ -1,40 +1,40 @@
 {
   "image": "rhythmic",
-  "flashSha256": "b6ed2c785eeff6bd3b9df88639d53ea9240bbf9cd5e29079ce537c4326efdfb8",
-  "flashBytes": 1016,
+  "flashSha256": "3e2b5b5babe1a8da5e6994f30a099b10c3093449ac7e4f92b0f5a448e0135eae",
+  "flashBytes": 1024,
   "fullPlaylist": {
-    "commands": 530,
+    "commands": 506,
     "beats": 296,
     "idealSeconds": 222,
-    "actualSeconds": 222.01685343749998,
-    "maximumTimingErrorMs": 21.176770833320916,
-    "finalTimingErrorMs": 16.853437499987194,
-    "maximumExecutionErrorAgainstGridUs": 8.541666666666668,
+    "actualSeconds": 222.01685333333333,
+    "maximumTimingErrorMs": 21.175312500010477,
+    "finalTimingErrorMs": 16.853333333332557,
+    "maximumExecutionErrorAgainstGridUs": 8.75,
     "missingEvents": 0
   },
   "compression": {
     "method": "Repeated command phrases; dynamic-programming parsing; suffix sharing; deterministic dictionary search",
     "globallyMinimal": false,
     "candidateLimit": 4096,
-    "candidateCount": 3960,
-    "dictionaryTrials": 122833,
-    "originalCommandBytes": 507,
-    "originalStreamSha256": "2f1020858c8a85efbae2591b435f885eb13ec9e9c91580ba0ea2b4be8880730e",
-    "sourceLayoutBytes": 261,
-    "packedEventBytes": 210,
-    "playlistBytes": 23,
-    "packedBytes": 233,
-    "savedAgainstSourceLayoutBytes": 28,
-    "storedSections": 7,
-    "referencedSections": 10,
+    "candidateCount": 3958,
+    "dictionaryTrials": 118789,
+    "originalCommandBytes": 491,
+    "originalStreamSha256": "3ab96fdc2a91946e2e6ee4f20f8737b04e2ff9d846bd9b6c373bee910d0c3043",
+    "sourceLayoutBytes": 257,
+    "packedEventBytes": 216,
+    "playlistBytes": 15,
+    "packedBytes": 231,
+    "savedAgainstSourceLayoutBytes": 26,
+    "storedSections": 5,
+    "referencedSections": 8,
     "verifiedLossless": true,
-    "runtimeStreamSha256": "2f1020858c8a85efbae2591b435f885eb13ec9e9c91580ba0ea2b4be8880730e"
+    "runtimeStreamSha256": "3ab96fdc2a91946e2e6ee4f20f8737b04e2ff9d846bd9b6c373bee910d0c3043"
   },
   "grid": {
     "phaseStep": 4772,
     "targetBpm": 80,
     "actualBpm": 79.99688386917114,
-    "drumHitsIncludingBothEndpoints": 593,
+    "drumHitsIncludingBothEndpoints": 521,
     "drumGridMismatches": 0
   },
   "articulation": {
@@ -43,8 +43,8 @@
     "repeatedNotes": 61,
     "repeatedNotesArticulated": 61,
     "phaseResets": 0,
-    "firstAttack50PercentMs": 27.298020833333332,
-    "firstAttack100PercentMs": 54.6046875
+    "firstAttack50PercentMs": 27.298125,
+    "firstAttack100PercentMs": 54.604791666666664
   },
   "envelopes": {
     "models": [
@@ -54,6 +54,17 @@
     ],
     "ticksChecked": 16262,
     "mismatches": 0
+  },
+  "loop": {
+    "endState": {
+      "levels": [
+        0,
+        0,
+        0
+      ],
+      "drumAge": 4
+    },
+    "allPartsSilentBeforeRestart": true
   },
   "isrCycles": 19,
   "lostTimerEvents": 0,
