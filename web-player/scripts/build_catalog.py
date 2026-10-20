@@ -10,10 +10,11 @@ ROOT = Path(__file__).resolve().parents[2]
 MUSIC = ROOT / 'ATtiny13A' / 'Music'
 OUTPUT = ROOT / 'web-player' / 'firmware.json'
 SPECS = [
-    ('rhythmic', '01', 'Люмьер · единый ритм', 'Полная аранжировка из Expedition 33, 3:42. Автоупаковка повторов, общая сетка нот и ударных, мягкие тембры FluidR3.', 'variants/rhythmic', 'release'),
-    ('turkish-march', '02', 'Турецкий марш · фрагмент', 'Моцарт: начальные 56 тактов 2/4 и каденция; 46 секунд, 151 BPM. Узнаваемое вступление сохранено.', 'variants/turkish-march', 'release'),
-    ('children', '03', 'Children · Robert Miles', 'Полная основная мелодия с исходного начала, 3:05 при 140 BPM; компактная аранжировка для четырёх голосов.', 'variants/children', 'release'),
-    ('greensleeves', '04', 'Greensleeves', 'Полная мелодия из Z80-плеера, размер 6/8 и исходный затакт; 48 секунд, мягкий аккомпанемент.', 'variants/greensleeves', 'release'),
+    ('rhythmic', '01', 'Люмьер · Экспедиция 33', 'Полная аранжировка из Expedition 33, 3:42. Автоупаковка повторов, общая сетка нот и ударных, мягкие тембры FluidR3.', 'variants/rhythmic', 'release'),
+    ('alicia', '02', 'Алисия · Экспедиция 33', 'Полная мелодия Alicia, 55 исходных тактов, около 2:38. Фортепианная адаптация с исходными сменами темпа и размера.', 'variants/alicia', 'release'),
+    ('turkish-march', '03', 'Турецкий марш · фортепиано', 'Моцарт: фортепиано правой и левой руки, 151 BPM. Фрагмент с каденцией; узнаваемое вступление и выключения нот сохранены.', 'variants/turkish-march', 'release'),
+    ('children', '04', 'Children · Robert Miles', 'Полная основная мелодия с исходного начала, 3:05 при 140 BPM. Фортепиано и затухающий fretless-бас из FluidR3 с исходными Note Off.', 'variants/children', 'release'),
+    ('greensleeves', '05', 'Greensleeves', 'Полная мелодия: флейта, скрипка и виолончель. Размер 6/8 с исходным затактом; 48 секунд и пауза перед повтором.', 'variants/greensleeves', 'release'),
 ]
 
 
@@ -52,7 +53,11 @@ def build():
         ep = directory / 'eeprom.hex'
         eeprom = ep.read_text(encoding='utf-8') if ep.exists() else None
         binary = decode(flash)
+        report=json.loads((directory/'build-report.json').read_text(encoding='utf-8'))
+        assignments=report.get('instrumentAssignments',{})
+        voices=sum(p.get('instrument')!='off' and p.get('level',0)>0 for p in assignments.values())
         entry = dict(id=id_, order=order, title=title, description=description, status=status,
+                     voices=voices or 4,instruments=assignments,releaseTailSlots=report.get('releaseChannels',{}).get('tailSlots',0),
                      flashBytes=len(binary), eepromBytes=64 if eeprom else 0,
                      cpuHz=9600000, pwmHz=37500, sampleHz=37500, synthesisHz=18750,
                      flashSha256=digest(binary), eepromSha256=digest(decode(eeprom, 64)) if eeprom else None,

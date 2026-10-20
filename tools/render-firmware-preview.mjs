@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { Renderer } from '../web-player/lib/renderer.js';
 const folder = process.argv[2], seconds = Number(process.argv[3] || 14);
-const cutoff=Number(process.argv[4]||4000),q=Number(process.argv[5]||.5);
+const cutoff=Number(process.argv[4]||9000),q=Number(process.argv[5]||.5);
 if (!folder || !Number.isFinite(seconds) || seconds <= 0 || seconds > 300)
   throw new Error('Usage: node tools/render-firmware-preview.mjs firmware-folder [seconds]');
 const rate = 48000, renderer = new Renderer({pwmHz: 37500,

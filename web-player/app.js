@@ -50,7 +50,8 @@ function renderCatalog() {
     const number=document.createElement('span'); number.className='card-number'; number.textContent=entry.order;
     const body=document.createElement('span'); body.className='card-body';
     const name=document.createElement('strong'); name.textContent=entry.title;
-    const meta=document.createElement('span'); meta.className='card-meta'; meta.textContent=`${entry.flashBytes} Б Flash${entry.eepromBytes ? ' + 64 Б EEPROM' : ''} · ${entry.status==='experimental' ? 'ТЕСТ' : '4 ГОЛОСА'}`;
+    const voices=entry.voices??4;
+    const meta=document.createElement('span'); meta.className='card-meta'; meta.textContent=`${entry.flashBytes} Б Flash${entry.eepromBytes ? ' + 64 Б EEPROM' : ''} · ${entry.status==='experimental' ? 'ТЕСТ' : `${voices} ${voices===1?'ГОЛОС':'ГОЛОСА'}`}${entry.releaseTailSlots ? ` · ${entry.releaseTailSlots} ХВОСТА` : ''}`;
     const arrow=document.createElement('span'); arrow.className='card-arrow'; arrow.textContent=selected?.id===entry.id ? '●' : '↗'; arrow.setAttribute('aria-hidden','true');
     body.append(name,meta); button.append(number,body,arrow); button.onclick=()=>load(entry); item.append(button); $('catalog').append(item);
   }
@@ -79,7 +80,10 @@ function load(entry) {
   $('rom-hash').textContent=entry.flashSha256.slice(0,16)+'…'; $('rom-hash').title='SHA-256 Flash: '+entry.flashSha256;
   $('rom-size').textContent=entry.flashBytes+' байт';
   $('original-player').href=entry.originalPlayer; $('wav-link').hidden=!entry.preview; if (entry.preview) $('wav-link').href=entry.preview;
-  $('download-eeprom').hidden=!entry.eepromHex; $('download').disabled=$('reset').disabled=false;
+  $('download-eeprom').hidden=!entry.eepromHex; $('reset').disabled=false;
+  for(const [id,source,suffix] of [['download',entry.source,''],['download-eeprom',entry.eepromSource,'-eeprom']]){
+    const link=$(id);if(source){link.href=source;link.download=`attiny13a-${entry.id}${suffix}.hex`;link.removeAttribute('aria-disabled');}
+  }
   const bytes=parseHex(entry.flashHex); $('memory').textContent=Array.from({length:8},(_,line)=>formatHex(line*16,4)+'  '+Array.from(bytes.subarray(line*16,line*16+16),x=>formatHex(x)).join(' ')).join('\n');
   const url=new URL(location.href); url.searchParams.set('firmware',entry.id); history.replaceState(null,'',url);
   renderCatalog(); transport();
@@ -132,12 +136,7 @@ async function toggle() {
   } catch (error) { showError('Не удалось включить звук: '+error.message); }
   finally { busy=false; transport(); }
 }
-function download(eeprom=false) {
-  const blob=new Blob([eeprom ? selected.eepromHex : selected.flashHex],{type:'text/plain'}),url=URL.createObjectURL(blob);
-  const link=document.createElement('a'); link.href=url; link.download=`attiny13a-${selected.id}${eeprom ? '-eeprom' : ''}.hex`; link.click(); setTimeout(()=>URL.revokeObjectURL(url),1000);
-}
 $('play').onclick=toggle; $('reset').onclick=()=>load(selected); $('search').oninput=renderCatalog;
-$('download').onclick=()=>download(); $('download-eeprom').onclick=()=>download(true);
 $('volume').oninput=()=>{ if (gain) gain.gain.setTargetAtTime(+$('volume').value,audio.currentTime,.015); };
 $('cutoff').onchange=()=>{ if (lowpass) lowpass.frequency.setTargetAtTime(Math.min(+$('cutoff').value,audio.sampleRate*.45),audio.currentTime,.015); };
 document.addEventListener('keydown',event=>{ if (event.code==='Space' && !event.repeat && !/INPUT|SELECT|TEXTAREA|BUTTON|A/.test(event.target.tagName)) { event.preventDefault(); toggle(); } });
