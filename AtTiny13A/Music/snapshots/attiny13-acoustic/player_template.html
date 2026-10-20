@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ATtiny13A: четырёхголосный плеер — эмулятор HEX</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,sans-serif;background:#10151f;color:#e5edf9}
+body{max-width:880px;margin:auto;padding:22px 16px 56px;line-height:1.55}
+h1{font-size:clamp(22px,5vw,32px);line-height:1.2;margin-bottom:10px}
+p{color:#acbacd}
+.card{background:#1b2535;border:1px solid #324157;border-radius:16px;padding:20px;margin:16px 0}
+.stats{display:flex;gap:24px;flex-wrap:wrap;color:#a9b8cb}.stats strong{display:block;color:#fff;font-size:23px}
+button{font:inherit;border:0;border-radius:12px;background:#65afff;color:#10151f;padding:12px 20px;font-weight:750;cursor:pointer}
+button:disabled{opacity:.5;cursor:default}button.secondary{background:#34435b;color:#e5edf9}
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+canvas{width:100%;height:180px;display:block;background:#0b1524;border-radius:10px}
+code{background:#0a1729;padding:3px 6px;border-radius:4px}
+small{color:#a9b8cb}
+</style>
+</head>
+<body>
+<h1>ATtiny13A — проигрыватель AVR-прошивки</h1>
+<p>Никакого отдельного JS-синтезатора: браузер исполняет инструкции из <code>synth.hex</code> с длительностями в тактах AVR, обрабатывает переполнения Timer0 и читает записи в PWM-регистр <code>OCR0B</code>.</p>
+<div class="card">
+ <div class="controls"><button id="start">▶ Слушать</button><button id="stop" class="secondary" disabled>■ Стоп</button><label for="volume">Громкость</label><input id="volume" type="range" min="0" max="1" step="0.01" value="0.65" /></div>
+ <div class="stats" style="margin:18px 0"><div>Время <strong id="time">0.0 с</strong></div><div>Выполнено <strong id="cycles">0 M тактов</strong></div><div>Прерывания <strong id="irqs">0</strong></div><div>Макс. ISR <strong id="maxisr">—</strong></div></div>
+ <canvas id="wave" width="900" height="180" role="img" aria-label="Осциллограмма звукового сигнала"></canvas>
+ <small id="status">Ожидает нажатия «Слушать».</small>
+</div>
+<div class="card"><strong>Воспроизводимая конфигурация</strong><p>ATtiny13A · CPU 9,6 МГц · 37,5 кГц Fast PWM · выход PB1/OC0B · мелодия, пианино, гитара и ударные. Ноты и секции воспроизводятся из прошитого кода. Браузер имитирует только инструкции, используемые этой конкретной прошивкой.</p><small>Это цифровая модель усреднённого PWM-сигнала. Реальная АЧХ зависит от RC-фильтра, усилителя и частоты RC-генератора микроконтроллера.</small></div>
+<script>
+/*AVR_CORE*/
+</script>
+<script>
+const FIRMWARE_HEX = `/*FIRMWARE_HEX*/`;
+let audio=null, processor=null, gainNode=null, core=null, scope=[], phase=0, v0=0, v1=0, sampleNumber=0;
+const $=id=>document.getElementById(id), canvas=$('wave'), g=canvas.getContext('2d');
+function draw(){
+ g.fillStyle='#0b1524';g.fillRect(0,0,canvas.width,canvas.height);
+ g.strokeStyle='#263b59';g.lineWidth=1;
+ for(let y=30;y<canvas.height;y+=30){g.beginPath();g.moveTo(0,y);g.lineTo(canvas.width,y);g.stroke()}
+ if(scope.length){g.strokeStyle='#65afff';g.lineWidth=2;g.beginPath();
+  for(let i=0;i<scope.length;i++){let x=i/(scope.length-1)*canvas.width,y=canvas.height/2-scope[i]*canvas.height*.42;
+   if(i===0)g.moveTo(x,y);else g.lineTo(x,y)}g.stroke()}
+}
+function ui(){
+ if(!core)return;
+ $('time').textContent=(sampleNumber/(audio?.sampleRate||48000)).toFixed(1)+' с';
+ $('cycles').textContent=(core.cyc/1e6).toFixed(2)+' M';
+ $('irqs').textContent=core.irqCount.toLocaleString('ru');
+ $('maxisr').textContent=core.maxIRQ+' из 256 тактов';
+ draw();
+}
+let interval=null;
+async function start(){
+ try{
+  if(audio)await stop();
+  core=AVRCore.fromHex(FIRMWARE_HEX);
+  audio=new (window.AudioContext||window.webkitAudioContext)();
+  processor=audio.createScriptProcessor(4096,0,1);
+  const hp=audio.createBiquadFilter();hp.type='highpass';hp.frequency.value=35;
+  const lp=audio.createBiquadFilter();lp.type='lowpass';lp.frequency.value=9000;
+  gainNode=audio.createGain();gainNode.gain.value=+$('volume').value;
+  processor.connect(hp);hp.connect(lp);lp.connect(gainNode);gainNode.connect(audio.destination);
+  // One new duty for each Timer0 overflow; 37.5kHz -> AudioContext rate.
+  phase=0;v0=core.nextDuty();v1=core.nextDuty();sampleNumber=0;
+  processor.onaudioprocess=e=>{
+   const out=e.outputBuffer.getChannelData(0),ratio=37500/audio.sampleRate;
+   try{
+    for(let j=0;j<out.length;j++){
+     let value=(v0+(v1-v0)*phase-127.5)/127.5;
+     out[j]=value;sampleNumber++;
+     phase+=ratio;
+     if(phase>=1){phase-=1;v0=v1;v1=core.nextDuty()}
+    }
+    // Draw only ~500 points from the latest output buffer.
+    scope=[];for(let j=0;j<500;j++)scope.push(out[Math.floor(j*out.length/500)]);
+   }catch(err){console.error(err);$('status').textContent='Ошибка эмуляции: '+err.message;stop()}
+  };
+  await audio.resume();
+  $('start').disabled=true;$('stop').disabled=false;
+  $('status').textContent='Воспроизводится настоящий HEX; отключите другие тяжёлые вкладки, если на телефоне появятся щелчки.';
+  interval=setInterval(ui,250);
+ }catch(err){console.error(err);$('status').textContent='Не удалось начать: '+err.message;await stop()}
+}
+async function stop(){
+ if(interval){clearInterval(interval);interval=null}
+ if(processor){processor.disconnect();processor.onaudioprocess=null;processor=null}
+ if(audio){let a=audio;audio=null;await a.close()}
+ $('start').disabled=false;$('stop').disabled=true;
+ ui();
+}
+$('start').onclick=start;$('stop').onclick=stop;
+$('volume').oninput=()=>{if(gainNode)gainNode.gain.value=+$('volume').value};
+draw();
+</script>
+</body></html>
