@@ -6,7 +6,7 @@ const OP = { NOP:1, CLI:2, SEI:3, RETI:4, RET:5, CALL:6, JUMP:7, BRANCH:8,
   SKIP:9, LDI:10, CPI:11, SUBI:12, ORI:13, ANDI:14, MOVW:15, ADD:16,
   ADC:17, SUB:18, AND:19, EOR:20, MOV:21, INC:22, DEC:23, COM:24,
   LSR:25, ASR:26, SWAP:27, IN:28, OUT:29, SBI:30, PUSH:31, POP:32, ST:33, LPM:34, FLAG:35,
-  ROR:36, LDS:37, STS:38 };
+  ROR:36, LDS:37, STS:38, OR:39 };
 const sign = (v, bit) => v & bit ? v - bit * 2 : v;
 
 export class AVRCore {
@@ -80,8 +80,8 @@ export class AVRCore {
       o = ({12288:OP.CPI,20480:OP.SUBI,24576:OP.ORI,28672:OP.ANDI})[w & 0xf000];
       d = 16 + ((w >> 4) & 15); k = (w & 15) | ((w >> 4) & 240);
     } else if ((w & 0xff00) === 0x0100) { o = OP.MOVW; d = 2 * ((w >> 4) & 15); s = 2 * (w & 15); }
-    else if ([0x0c00,0x1c00,0x1800,0x2000,0x2400,0x2c00].includes(w & 0xfc00))
-      o = ({3072:OP.ADD,7168:OP.ADC,6144:OP.SUB,8192:OP.AND,9216:OP.EOR,11264:OP.MOV})[w & 0xfc00];
+    else if ([0x0c00,0x1c00,0x1800,0x2000,0x2400,0x2800,0x2c00].includes(w & 0xfc00))
+      o = ({3072:OP.ADD,7168:OP.ADC,6144:OP.SUB,8192:OP.AND,9216:OP.EOR,10240:OP.OR,11264:OP.MOV})[w & 0xfc00];
     else if ([0x9403,0x940a,0x9400,0x9406,0x9405,0x9407,0x9402].includes(w & 0xfe0f))
       o = ({37891:OP.INC,37898:OP.DEC,37888:OP.COM,37894:OP.LSR,37893:OP.ASR,37895:OP.ROR,37890:OP.SWAP})[w & 0xfe0f];
     else if ((w & 0xfe0f) === 0x9000 || (w & 0xfe0f) === 0x9200) {
@@ -232,6 +232,7 @@ export class AVRCore {
       case OP.SUB: r[d] = this.arithmetic(r[d], r[s], 0, true); break;
       case OP.AND: r[d] &= r[s]; this.nzvs(r[d]); break;
       case OP.EOR: r[d] ^= r[s]; this.nzvs(r[d]); break;
+      case OP.OR: r[d] |= r[s]; this.nzvs(r[d]); break;
       case OP.MOV: r[d] = r[s]; break;
       case OP.INC: r[d]++; this.nzvs(r[d], Number(r[d] === 128)); break;
       case OP.DEC: r[d]--; this.nzvs(r[d], Number(r[d] === 127)); break;

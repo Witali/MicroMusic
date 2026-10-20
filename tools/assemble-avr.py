@@ -44,8 +44,8 @@ def assemble(path):
         if op in {'nop','cli','sei','ret','reti','set','clt'}:return {'nop':0,'cli':0x94f8,'sei':0x9478,'ret':0x9508,'reti':0x9518,'set':0x9468,'clt':0x94e8}[op]
         if op in {'clr','tst','lsl'}:
             d=register(a[0]);return rr({'clr':0x2400,'tst':0x2000,'lsl':0x0c00}[op],d,d)
-        if op in {'mov','add','adc','sub','and','eor'}:
-            return rr({'mov':0x2c00,'add':0x0c00,'adc':0x1c00,'sub':0x1800,'and':0x2000,'eor':0x2400}[op],register(a[0]),register(a[1]))
+        if op in {'mov','add','adc','sub','and','or','eor'}:
+            return rr({'mov':0x2c00,'add':0x0c00,'adc':0x1c00,'sub':0x1800,'and':0x2000,'or':0x2800,'eor':0x2400}[op],register(a[0]),register(a[1]))
         if op=='movw':
             d,r=map(register,a);assert d%2==r%2==0
             return 0x0100|(d//2<<4)|r//2

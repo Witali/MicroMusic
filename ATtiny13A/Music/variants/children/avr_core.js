@@ -68,7 +68,7 @@ class AVRCore {
     else if((w&0xff00)===0x0100){ // MOVW
       let d=2*((w>>4)&15),r=2*(w&15);rr[d]=rr[r];rr[d+1]=rr[r+1];
     }
-    else if([0x0c00,0x1c00,0x1800,0x2000,0x2400,0x2c00].includes(w&0xfc00)){
+    else if([0x0c00,0x1c00,0x1800,0x2000,0x2400,0x2800,0x2c00].includes(w&0xfc00)){
       let d=(w>>4)&31,r=(w&15)|((w>>5)&16),x=rr[d],y=rr[r],mode=w&0xfc00;
       if(mode===0x0c00 || mode===0x1c00){
         let val=x+y+(mode===0x1c00?this.c:0);
@@ -77,6 +77,7 @@ class AVRCore {
       } else if(mode===0x1800){rr[d]=(x-y)&255;this.c=Number(x<y);this.z=Number(rr[d]===0)}
       else if(mode===0x2000){rr[d]=x&y;this.z=Number(rr[d]===0)}
       else if(mode===0x2400){rr[d]=x^y;this.z=Number(rr[d]===0)}
+      else if(mode===0x2800){rr[d]=x|y;this.z=Number(rr[d]===0)}
       else rr[d]=y;
     }
     else if([0x9403,0x940a,0x9400,0x9406,0x9405,0x9407,0x9402].includes(w&0xfe0f)){

@@ -2,6 +2,7 @@
 // DS40002307A sections 4, 5 and 21. No archived interpreter is used as an oracle.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
 import { AVRCore } from '../lib/avr-core.js';
 
 const rr = (op, d = 17, r = 18) => op | (d << 4) | (r & 15) | ((r & 16) << 5);
@@ -69,6 +70,56 @@ for (const [name, op, fn] of [
         c.pc = c.cyc = 0; c.r[17] = x; c.r[18] = y; c.sreg = 255; c.step();
         assert.equal(c.r[17], fn(x,y)); assert.equal(c.sreg, nzvs(fn(x,y), 0, 255)); assert.equal(c.cyc, 1);
       }
+    }
+  });
+}
+
+test('OR: every byte pair sets Z/N/S, clears V, preserves C/H/T/I and costs one cycle', () => {
+  const c = cpu(rr(0x2800));
+  for (let x = 0; x < 256; x++) for (let y = 0; y < 256; y++) {
+    for (const previous of [0, 255]) {
+      c.pc = c.cyc = 0; c.r[17] = x; c.r[18] = y; c.sreg = previous;
+      c.step();
+      const result = x | y;
+      const flags = (previous & 0xe1) | (result === 0 ? 2 : 0) | (result & 128 ? 0x14 : 0);
+      assert.equal(c.r[17], result); assert.equal(c.r[18], y);
+      assert.equal(c.sreg, flags, `OR ${x},${y}, SREG=${previous}`);
+      assert.equal(c.cyc, 1); assert.equal(c.pc, 1);
+    }
+  }
+  // Mixed preserved flags must survive too, rather than becoming all-zero/all-one.
+  for (let previous = 0; previous < 256; previous++) {
+    for (const [x, y] of [[0,0],[0x11,0x42],[0x80,1]]) {
+      c.pc = c.cyc = 0; c.r[17] = x; c.r[18] = y; c.sreg = previous; c.step();
+      const result = x | y;
+      assert.equal(c.sreg, (previous & 0xe1) | (result === 0 ? 2 : 0) | (result & 128 ? 0x14 : 0));
+    }
+  }
+});
+
+test('OR: all register encodings, including Rd=Rr, preserve the other registers', () => {
+  const c = cpu(0);
+  for (let d = 0; d < 32; d++) for (let s = 0; s < 32; s++) {
+    const word = rr(0x2800, d, s); c.rom[0] = word; c.rom[1] = word >> 8; c.decode(0);
+    c.pc = c.cyc = 0;
+    c.r.set(Uint8Array.from({length:32}, (_, i) => (i * 37) & 255));
+    const expected = c.r.slice(); expected[d] |= expected[s]; c.sreg = 0xe1; c.step();
+    assert.deepEqual(c.r, expected); assert.equal(c.cyc, 1); assert.equal(c.pc, 1);
+  }
+});
+
+const require = createRequire(import.meta.url);
+for (const variant of ['rhythmic','turkish-march','children','greensleeves']) {
+  test(`${variant} reference subset: OR result/Z and preserved C/T/I`, () => {
+    const { AVRCore: Reference } = require(`../../ATtiny13A/Music/variants/${variant}/avr_core.js`);
+    const word = rr(0x2800), c = new Reference(Uint8Array.of(word & 255, word >> 8));
+    for (let x = 0; x < 256; x++) for (let y = 0; y < 256; y++) {
+      c.pc = c.cyc = 0; c.r[17] = x; c.r[18] = y;
+      c.z = Number((x + y) & 1); c.c = x & 1; c.t = y & 1; c.i = (x >> 1) & 1;
+      c.step(); assert.equal(c.r[17], x | y); assert.equal(c.r[18], y);
+      assert.equal(c.z, Number((x | y) === 0));
+      assert.equal(c.c, x & 1); assert.equal(c.t, y & 1); assert.equal(c.i, (x >> 1) & 1);
+      assert.equal(c.cyc, 1); assert.equal(c.pc, 1);
     }
   });
 }
