@@ -218,12 +218,10 @@ envelope_store:
   brcc .L0a8
   inc r20
 .L0a8:
-  mov r16, r3
   ldi r17, GRID_STEP_LOW
   add r2, r17
   ldi r17, GRID_STEP_HIGH
-  adc r16, r17
-  mov r3, r16
+  adc r3, r17
   brcs grid_step
   ret
 grid_step:
@@ -296,7 +294,6 @@ melodic_event:
   add r30, r17
   adc r31, r29
   lpm r1, Z
-  movw r30, r12
   /* BEGIN LEAD FREQUENCY */
   lsr r16
   lsr r16
@@ -305,7 +302,6 @@ melodic_event:
   breq note_rest
   cpi r16, HOLD_INDEX
   breq hold_sample
-  movw r12, r30
   lsl r16
   ldi r30, lo8(note_steps)
   ldi r31, hi8(note_steps)
@@ -315,13 +311,14 @@ melodic_event:
   ldi r25, 128
   rcall initialize_voice
 lead_commit:
-  movw r30, r12
   rjmp hold_sample
 note_rest:
 release_lead:
   lds r17, 96
   andi r17, 127
   sts 96, r17
+hold_sample:
+  movw r30, r12
   ret
 next_section:
   /* Playlist contains direct section offsets: no second lookup table. */
@@ -341,8 +338,6 @@ next_section:
   add r30, r16
   adc r31, r29
   rjmp read_event
-hold_sample:
-  ret
 render_tone:
   /* Choose a register-dependent 16-step sustain wavetable and apply its amplitude envelope. */
   mov r0, r25
@@ -374,17 +369,16 @@ eeprom_low_nibble:
   subi r17, 8
 .L25c:
   mov r0, r17
+  sbrs r25, 3
   clr r17
-  sbrc r25, 0
-  add r17, r0
-  lsl r0
-  sbrc r25, 1
-  add r17, r0
-  lsl r0
+  lsl r17
   sbrc r25, 2
   add r17, r0
-  lsl r0
-  sbrc r25, 3
+  lsl r17
+  sbrc r25, 1
+  add r17, r0
+  lsl r17
+  sbrc r25, 0
   add r17, r0
   asr r17
   rjmp envelope_return
