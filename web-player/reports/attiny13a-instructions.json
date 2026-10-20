@@ -1,0 +1,1398 @@
+{
+  "device": "ATtiny13A",
+  "core": "AVRe",
+  "scope": "All rows in device section 21, including aliases and separate addressing forms; the row count is not the number of distinct instructions. SREG masks follow the instruction descriptions, including S and H omitted in some summary rows. SPM programming and BREAK debugging have no universal execution time.",
+  "sources": [
+    {
+      "url": "https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf",
+      "document": "DS40002307A, section 21",
+      "sha256": "7c363e5deb94b5527a3ebfe9ac98338ce38e7d4499fe481100b7ede44bf37445"
+    },
+    {
+      "url": "https://ww1.microchip.com/downloads/en/DeviceDoc/AVR-Instruction-Set-Manual-DS40002198A.pdf",
+      "document": "DS40002198A, sections 5 and 6.2.2",
+      "sha256": "d8e75ad7cc92de2b86c718495ed9392096e0192a08269a4dba8da16075be1e00"
+    }
+  ],
+  "instructions": [
+    {
+      "form": "ADD",
+      "manualSection": "5.2",
+      "opcodePattern": "0000 11rd dddd rrrr",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 63,
+      "status": "implemented"
+    },
+    {
+      "form": "ADC",
+      "manualSection": "5.1",
+      "opcodePattern": "0001 11rd dddd rrrr",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 63,
+      "status": "implemented"
+    },
+    {
+      "form": "ADIW",
+      "manualSection": "5.3",
+      "opcodePattern": "1001 0110 KKdd KKKK",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 31,
+      "status": "unimplemented"
+    },
+    {
+      "form": "SUB",
+      "manualSection": "5.119",
+      "opcodePattern": "0001 10rd dddd rrrr",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 63,
+      "status": "implemented"
+    },
+    {
+      "form": "SUBI",
+      "manualSection": "5.120",
+      "opcodePattern": "0101 KKKK dddd KKKK",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 63,
+      "status": "implemented"
+    },
+    {
+      "form": "SBC",
+      "manualSection": "5.93",
+      "opcodePattern": "0000 10rd dddd rrrr",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 63,
+      "status": "unimplemented"
+    },
+    {
+      "form": "SBCI",
+      "manualSection": "5.94",
+      "opcodePattern": "0100 KKKK dddd KKKK",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 63,
+      "status": "unimplemented"
+    },
+    {
+      "form": "SBIW",
+      "manualSection": "5.98",
+      "opcodePattern": "1001 0111 KKdd KKKK",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 31,
+      "status": "unimplemented"
+    },
+    {
+      "form": "AND",
+      "manualSection": "5.4",
+      "opcodePattern": "0010 00rd dddd rrrr",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 30,
+      "status": "implemented"
+    },
+    {
+      "form": "ANDI",
+      "manualSection": "5.5",
+      "opcodePattern": "0111 KKKK dddd KKKK",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 30,
+      "status": "implemented"
+    },
+    {
+      "form": "OR",
+      "manualSection": "5.82",
+      "opcodePattern": "0010 10rd dddd rrrr",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 30,
+      "status": "unimplemented"
+    },
+    {
+      "form": "ORI",
+      "manualSection": "5.83",
+      "opcodePattern": "0110 KKKK dddd KKKK",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 30,
+      "status": "implemented"
+    },
+    {
+      "form": "EOR",
+      "manualSection": "5.54",
+      "opcodePattern": "0010 01rd dddd rrrr",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 30,
+      "status": "implemented"
+    },
+    {
+      "form": "COM",
+      "manualSection": "5.44",
+      "opcodePattern": "1001 010d dddd 0000",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 31,
+      "status": "implemented"
+    },
+    {
+      "form": "NEG",
+      "manualSection": "5.80",
+      "opcodePattern": "1001 010d dddd 0001",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 63,
+      "status": "unimplemented"
+    },
+    {
+      "form": "SBR",
+      "manualSection": "5.99",
+      "opcodePattern": "0110 KKKK dddd KKKK",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 30,
+      "status": "implemented"
+    },
+    {
+      "form": "CBR",
+      "manualSection": "5.34",
+      "opcodePattern": "0111 KKKK dddd KKKK",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 30,
+      "status": "implemented"
+    },
+    {
+      "form": "INC",
+      "manualSection": "5.61",
+      "opcodePattern": "1001 010d dddd 0011",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 30,
+      "status": "implemented"
+    },
+    {
+      "form": "DEC",
+      "manualSection": "5.49",
+      "opcodePattern": "1001 010d dddd 1010",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 30,
+      "status": "implemented"
+    },
+    {
+      "form": "TST",
+      "manualSection": "5.122",
+      "opcodePattern": "0010 00dd dddd dddd",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 30,
+      "status": "implemented"
+    },
+    {
+      "form": "CLR",
+      "manualSection": "5.39",
+      "opcodePattern": "0010 01dd dddd dddd",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 30,
+      "status": "implemented"
+    },
+    {
+      "form": "SER",
+      "manualSection": "5.106",
+      "opcodePattern": "1110 1111 dddd 1111",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "RJMP",
+      "manualSection": "5.90",
+      "opcodePattern": "1100 kkkk kkkk kkkk",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "IJMP",
+      "manualSection": "5.59",
+      "opcodePattern": "1001 0100 0000 1001",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "RCALL",
+      "manualSection": "5.87",
+      "opcodePattern": "1101 kkkk kkkk kkkk",
+      "words": 1,
+      "cycles": [
+        3
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "ICALL",
+      "manualSection": "5.58",
+      "opcodePattern": "1001 0101 0000 1001",
+      "words": 1,
+      "cycles": [
+        3
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "RET",
+      "manualSection": "5.88",
+      "opcodePattern": "1001 0101 0000 1000",
+      "words": 1,
+      "cycles": [
+        4
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "RETI",
+      "manualSection": "5.89",
+      "opcodePattern": "1001 0101 0001 1000",
+      "words": 1,
+      "cycles": [
+        4
+      ],
+      "sregMask": 128,
+      "status": "implemented"
+    },
+    {
+      "form": "CPSE",
+      "manualSection": "5.48",
+      "opcodePattern": "0001 00rd dddd rrrr",
+      "words": 1,
+      "cycles": [
+        1,
+        2,
+        3
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "CP",
+      "manualSection": "5.45",
+      "opcodePattern": "0001 01rd dddd rrrr",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 63,
+      "status": "unimplemented"
+    },
+    {
+      "form": "CPC",
+      "manualSection": "5.46",
+      "opcodePattern": "0000 01rd dddd rrrr",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 63,
+      "status": "unimplemented"
+    },
+    {
+      "form": "CPI",
+      "manualSection": "5.47",
+      "opcodePattern": "0011 KKKK dddd KKKK",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 63,
+      "status": "implemented"
+    },
+    {
+      "form": "SBRC",
+      "manualSection": "5.100",
+      "opcodePattern": "1111 110r rrrr 0bbb",
+      "words": 1,
+      "cycles": [
+        1,
+        2,
+        3
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "SBRS",
+      "manualSection": "5.101",
+      "opcodePattern": "1111 111r rrrr 0bbb",
+      "words": 1,
+      "cycles": [
+        1,
+        2,
+        3
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "SBIC",
+      "manualSection": "5.96",
+      "opcodePattern": "1001 1001 AAAA Abbb",
+      "words": 1,
+      "cycles": [
+        1,
+        2,
+        3
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "SBIS",
+      "manualSection": "5.97",
+      "opcodePattern": "1001 1011 AAAA Abbb",
+      "words": 1,
+      "cycles": [
+        1,
+        2,
+        3
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "BRBS",
+      "manualSection": "5.10",
+      "opcodePattern": "1111 00kk kkkk ksss",
+      "words": 1,
+      "cycles": [
+        1,
+        2
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "BRBC",
+      "manualSection": "5.9",
+      "opcodePattern": "1111 01kk kkkk ksss",
+      "words": 1,
+      "cycles": [
+        1,
+        2
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "BREQ",
+      "manualSection": "5.14",
+      "opcodePattern": "1111 00kk kkkk k001",
+      "words": 1,
+      "cycles": [
+        1,
+        2
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "BRNE",
+      "manualSection": "5.23",
+      "opcodePattern": "1111 01kk kkkk k001",
+      "words": 1,
+      "cycles": [
+        1,
+        2
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "BRCS",
+      "manualSection": "5.12",
+      "opcodePattern": "1111 00kk kkkk k000",
+      "words": 1,
+      "cycles": [
+        1,
+        2
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "BRCC",
+      "manualSection": "5.11",
+      "opcodePattern": "1111 01kk kkkk k000",
+      "words": 1,
+      "cycles": [
+        1,
+        2
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "BRSH",
+      "manualSection": "5.25",
+      "opcodePattern": "1111 01kk kkkk k000",
+      "words": 1,
+      "cycles": [
+        1,
+        2
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "BRLO",
+      "manualSection": "5.20",
+      "opcodePattern": "1111 00kk kkkk k000",
+      "words": 1,
+      "cycles": [
+        1,
+        2
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "BRMI",
+      "manualSection": "5.22",
+      "opcodePattern": "1111 00kk kkkk k010",
+      "words": 1,
+      "cycles": [
+        1,
+        2
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "BRPL",
+      "manualSection": "5.24",
+      "opcodePattern": "1111 01kk kkkk k010",
+      "words": 1,
+      "cycles": [
+        1,
+        2
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "BRGE",
+      "manualSection": "5.15",
+      "opcodePattern": "1111 01kk kkkk k100",
+      "words": 1,
+      "cycles": [
+        1,
+        2
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "BRLT",
+      "manualSection": "5.21",
+      "opcodePattern": "1111 00kk kkkk k100",
+      "words": 1,
+      "cycles": [
+        1,
+        2
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "BRHS",
+      "manualSection": "5.17",
+      "opcodePattern": "1111 00kk kkkk k101",
+      "words": 1,
+      "cycles": [
+        1,
+        2
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "BRHC",
+      "manualSection": "5.16",
+      "opcodePattern": "1111 01kk kkkk k101",
+      "words": 1,
+      "cycles": [
+        1,
+        2
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "BRTS",
+      "manualSection": "5.27",
+      "opcodePattern": "1111 00kk kkkk k110",
+      "words": 1,
+      "cycles": [
+        1,
+        2
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "BRTC",
+      "manualSection": "5.26",
+      "opcodePattern": "1111 01kk kkkk k110",
+      "words": 1,
+      "cycles": [
+        1,
+        2
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "BRVS",
+      "manualSection": "5.29",
+      "opcodePattern": "1111 00kk kkkk k011",
+      "words": 1,
+      "cycles": [
+        1,
+        2
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "BRVC",
+      "manualSection": "5.28",
+      "opcodePattern": "1111 01kk kkkk k011",
+      "words": 1,
+      "cycles": [
+        1,
+        2
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "BRIE",
+      "manualSection": "5.19",
+      "opcodePattern": "1111 00kk kkkk k111",
+      "words": 1,
+      "cycles": [
+        1,
+        2
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "BRID",
+      "manualSection": "5.18",
+      "opcodePattern": "1111 01kk kkkk k111",
+      "words": 1,
+      "cycles": [
+        1,
+        2
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "SBI",
+      "manualSection": "5.95",
+      "opcodePattern": "1001 1010 AAAA Abbb",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "CBI",
+      "manualSection": "5.33",
+      "opcodePattern": "1001 1000 AAAA Abbb",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "LSL",
+      "manualSection": "5.73",
+      "opcodePattern": "0000 11dd dddd dddd",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 63,
+      "status": "implemented"
+    },
+    {
+      "form": "LSR",
+      "manualSection": "5.74",
+      "opcodePattern": "1001 010d dddd 0110",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 31,
+      "status": "implemented"
+    },
+    {
+      "form": "ROL",
+      "manualSection": "5.91",
+      "opcodePattern": "0001 11dd dddd dddd",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 63,
+      "status": "implemented"
+    },
+    {
+      "form": "ROR",
+      "manualSection": "5.92",
+      "opcodePattern": "1001 010d dddd 0111",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 31,
+      "status": "unimplemented"
+    },
+    {
+      "form": "ASR",
+      "manualSection": "5.6",
+      "opcodePattern": "1001 010d dddd 0101",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 31,
+      "status": "implemented"
+    },
+    {
+      "form": "SWAP",
+      "manualSection": "5.121",
+      "opcodePattern": "1001 010d dddd 0010",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "BSET",
+      "manualSection": "5.30",
+      "opcodePattern": "1001 0100 0sss 1000",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 255,
+      "status": "implemented"
+    },
+    {
+      "form": "BCLR",
+      "manualSection": "5.7",
+      "opcodePattern": "1001 0100 1sss 1000",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 255,
+      "status": "implemented"
+    },
+    {
+      "form": "BST",
+      "manualSection": "5.31",
+      "opcodePattern": "1111 101d dddd 0bbb",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 64,
+      "status": "unimplemented"
+    },
+    {
+      "form": "BLD",
+      "manualSection": "5.8",
+      "opcodePattern": "1111 100d dddd 0bbb",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "SEC",
+      "manualSection": "5.102",
+      "opcodePattern": "1001 0100 0000 1000",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 1,
+      "status": "implemented"
+    },
+    {
+      "form": "CLC",
+      "manualSection": "5.35",
+      "opcodePattern": "1001 0100 1000 1000",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 1,
+      "status": "implemented"
+    },
+    {
+      "form": "SEN",
+      "manualSection": "5.105",
+      "opcodePattern": "1001 0100 0010 1000",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 4,
+      "status": "implemented"
+    },
+    {
+      "form": "CLN",
+      "manualSection": "5.38",
+      "opcodePattern": "1001 0100 1010 1000",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 4,
+      "status": "implemented"
+    },
+    {
+      "form": "SEZ",
+      "manualSection": "5.110",
+      "opcodePattern": "1001 0100 0001 1000",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 2,
+      "status": "implemented"
+    },
+    {
+      "form": "CLZ",
+      "manualSection": "5.43",
+      "opcodePattern": "1001 0100 1001 1000",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 2,
+      "status": "implemented"
+    },
+    {
+      "form": "SEI",
+      "manualSection": "5.104",
+      "opcodePattern": "1001 0100 0111 1000",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 128,
+      "status": "implemented"
+    },
+    {
+      "form": "CLI",
+      "manualSection": "5.37",
+      "opcodePattern": "1001 0100 1111 1000",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 128,
+      "status": "implemented"
+    },
+    {
+      "form": "SES",
+      "manualSection": "5.107",
+      "opcodePattern": "1001 0100 0100 1000",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 16,
+      "status": "implemented"
+    },
+    {
+      "form": "CLS",
+      "manualSection": "5.40",
+      "opcodePattern": "1001 0100 1100 1000",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 16,
+      "status": "implemented"
+    },
+    {
+      "form": "SEV",
+      "manualSection": "5.109",
+      "opcodePattern": "1001 0100 0011 1000",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 8,
+      "status": "implemented"
+    },
+    {
+      "form": "CLV",
+      "manualSection": "5.42",
+      "opcodePattern": "1001 0100 1011 1000",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 8,
+      "status": "implemented"
+    },
+    {
+      "form": "SET",
+      "manualSection": "5.108",
+      "opcodePattern": "1001 0100 0110 1000",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 64,
+      "status": "implemented"
+    },
+    {
+      "form": "CLT",
+      "manualSection": "5.41",
+      "opcodePattern": "1001 0100 1110 1000",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 64,
+      "status": "implemented"
+    },
+    {
+      "form": "SEH",
+      "manualSection": "5.103",
+      "opcodePattern": "1001 0100 0101 1000",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 32,
+      "status": "implemented"
+    },
+    {
+      "form": "CLH",
+      "manualSection": "5.36",
+      "opcodePattern": "1001 0100 1101 1000",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 32,
+      "status": "implemented"
+    },
+    {
+      "form": "MOV",
+      "manualSection": "5.75",
+      "opcodePattern": "0010 11rd dddd rrrr",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "MOVW",
+      "manualSection": "5.76",
+      "opcodePattern": "0000 0001 dddd rrrr",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "LDI",
+      "manualSection": "5.69",
+      "opcodePattern": "1110 KKKK dddd KKKK",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "LD Rd,X",
+      "manualSection": "5.66",
+      "opcodePattern": "1001 000d dddd 1100",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "LD Rd,X+",
+      "manualSection": "5.66",
+      "opcodePattern": "1001 000d dddd 1101",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "LD Rd,-X",
+      "manualSection": "5.66",
+      "opcodePattern": "1001 000d dddd 1110",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "LD Rd,Y",
+      "manualSection": "5.67",
+      "opcodePattern": "1000 000d dddd 1000",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "LD Rd,Y+",
+      "manualSection": "5.67",
+      "opcodePattern": "1001 000d dddd 1001",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "LD Rd,-Y",
+      "manualSection": "5.67",
+      "opcodePattern": "1001 000d dddd 1010",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "LDD Rd,Y+q",
+      "manualSection": "5.67",
+      "opcodePattern": "10q0 qq0d dddd 1qqq",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "LD Rd,Z",
+      "manualSection": "5.68",
+      "opcodePattern": "1000 000d dddd 0000",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "LD Rd,Z+",
+      "manualSection": "5.68",
+      "opcodePattern": "1001 000d dddd 0001",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "LD Rd,-Z",
+      "manualSection": "5.68",
+      "opcodePattern": "1001 000d dddd 0010",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "LDD Rd,Z+q",
+      "manualSection": "5.68",
+      "opcodePattern": "10q0 qq0d dddd 0qqq",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "LDS",
+      "manualSection": "5.70",
+      "opcodePattern": "1001 000d dddd 0000",
+      "words": 2,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "ST X,Rr",
+      "manualSection": "5.114",
+      "opcodePattern": "1001 001r rrrr 1100",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "ST X+,Rr",
+      "manualSection": "5.114",
+      "opcodePattern": "1001 001r rrrr 1101",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "ST -X,Rr",
+      "manualSection": "5.114",
+      "opcodePattern": "1001 001r rrrr 1110",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "ST Y,Rr",
+      "manualSection": "5.115",
+      "opcodePattern": "1000 001r rrrr 1000",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "ST Y+,Rr",
+      "manualSection": "5.115",
+      "opcodePattern": "1001 001r rrrr 1001",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "ST -Y,Rr",
+      "manualSection": "5.115",
+      "opcodePattern": "1001 001r rrrr 1010",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "STD Y+q,Rr",
+      "manualSection": "5.115",
+      "opcodePattern": "10q0 qq1r rrrr 1qqq",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "ST Z,Rr",
+      "manualSection": "5.116",
+      "opcodePattern": "1000 001r rrrr 0000",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "ST Z+,Rr",
+      "manualSection": "5.116",
+      "opcodePattern": "1001 001r rrrr 0001",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "ST -Z,Rr",
+      "manualSection": "5.116",
+      "opcodePattern": "1001 001r rrrr 0010",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "STD Z+q,Rr",
+      "manualSection": "5.116",
+      "opcodePattern": "10q0 qq1r rrrr 0qqq",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "STS",
+      "manualSection": "5.117",
+      "opcodePattern": "1001 001d dddd 0000",
+      "words": 2,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "LPM",
+      "manualSection": "5.72",
+      "opcodePattern": "1001 0101 1100 1000",
+      "words": 1,
+      "cycles": [
+        3
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "LPM Rd,Z",
+      "manualSection": "5.72",
+      "opcodePattern": "1001 000d dddd 0100",
+      "words": 1,
+      "cycles": [
+        3
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "LPM Rd,Z+",
+      "manualSection": "5.72",
+      "opcodePattern": "1001 000d dddd 0101",
+      "words": 1,
+      "cycles": [
+        3
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "SPM",
+      "manualSection": "5.112",
+      "opcodePattern": "1001 0101 1110 1000",
+      "words": 1,
+      "cycles": "device-dependent",
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "IN",
+      "manualSection": "5.60",
+      "opcodePattern": "1011 0AAd dddd AAAA",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "OUT",
+      "manualSection": "5.84",
+      "opcodePattern": "1011 1AAr rrrr AAAA",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "PUSH",
+      "manualSection": "5.86",
+      "opcodePattern": "1001 001d dddd 1111",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "POP",
+      "manualSection": "5.85",
+      "opcodePattern": "1001 000d dddd 1111",
+      "words": 1,
+      "cycles": [
+        2
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "NOP",
+      "manualSection": "5.81",
+      "opcodePattern": "0000 0000 0000 0000",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 0,
+      "status": "implemented"
+    },
+    {
+      "form": "SLEEP",
+      "manualSection": "5.111",
+      "opcodePattern": "1001 0101 1000 1000",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "WDR",
+      "manualSection": "5.123",
+      "opcodePattern": "1001 0101 1010 1000",
+      "words": 1,
+      "cycles": [
+        1
+      ],
+      "sregMask": 0,
+      "status": "unimplemented"
+    },
+    {
+      "form": "BREAK",
+      "manualSection": "5.13",
+      "opcodePattern": "1001 0101 1001 1000",
+      "words": 1,
+      "cycles": "debug-dependent",
+      "sregMask": 0,
+      "status": "unimplemented"
+    }
+  ]
+}

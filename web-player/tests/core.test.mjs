@@ -21,7 +21,7 @@ for (const entry of catalog.entries) {
       last = sample;
     }
     // Archive compatibility is a musical regression, not a hardware oracle.
-    // Its SREG and SRAM stack are known to be incomplete (see avr-audit.txt).
+    // Its SREG and SRAM stack are known to be incomplete (see attiny13a-audit.txt).
     for (const key of ['pc','cyc','c','i','overflowAt','pending','inIRQ','irqCount','lost','maxIRQ','writes'])
       assert.equal(fast[key], ref[key], key);
     assert.deepEqual(fast.r, ref.r);
