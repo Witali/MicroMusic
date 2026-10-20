@@ -25,11 +25,35 @@ def layout(pieces):
     # A reference may start inside a longer section and reuse its terminator.
     roots=[s for s in unique if not any(len(t)>len(s) and t.endswith(s) for t in unique)]
     roots.sort(key=lambda s:unique.index(s))
-    offsets={};storage=bytearray()
-    for root in roots:
-        start=len(storage);storage.extend(root);storage.append(255)
-        for s in unique:
-            if s not in offsets and root.endswith(s):offsets[s]=start+len(root)-len(s)
+    def place(order):
+        offsets={};storage=bytearray()
+        for root in order:
+            start=len(storage);storage.extend(root);storage.append(255)
+            for s in unique:
+                if s not in offsets and root.endswith(s):offsets[s]=start+len(root)-len(s)
+        return offsets,storage
+    offsets,storage=place(roots)
+    if max(offsets.values(),default=0)>255:
+        # Only playlist entry addresses are eight bits; Z/LPM may continue
+        # beyond byte255. All starts in earlier roots precede the last root's
+        # own start, so the largest entry belongs to that last root. A suffix
+        # shared with another root is already assigned before we reach it.
+        # Thus only exclusive suffixes constrain a root's final tail budget.
+        exclusive_delta={root:0 for root in roots}
+        for word in unique:
+            owner=None
+            for root in roots:
+                if root.endswith(word):
+                    if owner is not None:
+                        owner=None;break
+                    owner=root
+            if owner is not None:
+                exclusive_delta[owner]=max(exclusive_delta[owner],len(owner)-len(word))
+        # For total storage T, max entry = T - (len(last)+1-max_delta).
+        # Choose its minimum over all root orders. Preserve the current last
+        # root on ties; valid existing layouts never enter this branch.
+        last=max(roots,key=lambda root:(len(root)+1-exclusive_delta[root],root==roots[-1]))
+        if last!=roots[-1]:offsets,storage=place([root for root in roots if root!=last]+[last])
     return dict(storage=bytes(storage),offsets=offsets,playlist=[offsets[s] for s in pieces],
                 unique=unique,cost=len(storage)+len(pieces))
 

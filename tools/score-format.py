@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Compile a score onto the firmware's shared sixteenth-note grid.
 
-The firmware has fixed 4-voice violin/piano/guitar/percussion synthesis.
+The firmware has three assigned tonal parts and optional noise percussion.
 Repeat sections are stored once; all section offsets must fit in one byte.
 
 The ATtiny13A cannot process arbitrary General MIDI in 1 KB. For .mid inputs,
@@ -91,16 +91,22 @@ def to_inc(data,validate_size=True):
     for p in data['chord_pairs']:
         for c in p:
             if c not in chords:chords.append(c)
-    # Chord suffixes (e.g. F# and F#m) need not duplicate oscillator steps
-    # when both reduce to the same root pitch in this deliberately simple
-    # root-note accompaniment. Keep their symbols mapped to one sound.
-    roots={c:data.get('chord_roots',{}).get(c, ROOTS.get(c)) for c in chords}
-    unique_by_root={}
+    # Explicit pairs preserve independent instrument parts. Legacy root-only
+    # arrangements keep their established octave/fifth mapping.
+    note_pairs={}
     for c in chords:
-        if roots[c] is None:raise ValueError(f'Unknown root for {c}')
-        unique_by_root.setdefault(roots[c],c)
-    chord_index={c:list(unique_by_root).index(roots[c]) for c in chords}
-    chords=list(unique_by_root.values())
+        if c in data.get('chord_notes',{}):
+            pair=data['chord_notes'][c]
+            if len(pair)!=2:raise ValueError(f'{c}: chord_notes needs keys and pluck notes')
+            note_pairs[c]=tuple(midi(n) if isinstance(n,str) else n for n in pair)
+        else:
+            root=data.get('chord_roots',{}).get(c, ROOTS.get(c))
+            if root is None:raise ValueError(f'Unknown root for {c}')
+            note_pairs[c]=(root+KEY_VOICE_OFFSETS['piano'],root+BASS_VOICE_OFFSETS['guitar'])
+    unique_by_pair={}
+    for c in chords:unique_by_pair.setdefault(note_pairs[c],c)
+    chord_index={c:list(unique_by_pair).index(note_pairs[c]) for c in chords}
+    chords=list(unique_by_pair.values())
     if len(chords)>16:raise ValueError('Too many chord types')
     song_sections={};bars_count=0;holds=[]
     for section,bars in data['patterns'].items():
@@ -124,7 +130,10 @@ def to_inc(data,validate_size=True):
     packed=packing.pack(b''.join(chunks),chunks,candidate_limit=data.get('packing_candidates',96))
     song_sections=packed['sections'];offsets=packed['offsets'];storage=packed['storage']
     output_playlist=packed['playlist'];pos=len(storage)
-    if validate_size and pos>256:raise ValueError(f'Packed event data exceeds one-byte offsets: {pos}')
+    # Only playlist ENTRY offsets are bytes. LPM Z+ advances a full 16-bit
+    # pointer, so the last phrase may legitimately continue beyond byte 255.
+    max_offset=max(offsets.values(),default=0)
+    if validate_size and max_offset>255:raise ValueError(f'Packed phrase entry exceeds one-byte offsets: {max_offset}')
     def delta(n):
         if n is None:return 0
         freq=440.0*2**((n-69)/12)
@@ -144,10 +153,9 @@ def to_inc(data,validate_size=True):
         d=delta(midi(p));lines.append(table_row([d&255,d>>8],f'{p}, {round(d*SYNTHESIS_HZ/65536,1)} Hz'))
     lines.append('chord_steps:')
     for ch in chords:
-        x=data.get('chord_roots',{}).get(ch, ROOTS.get(ch))
-        if x is None: raise ValueError(f'Unknown chord {ch}: supply chord_roots')
-        a=delta(x+KEY_VOICE_OFFSETS['piano']);b=delta(x+BASS_VOICE_OFFSETS['guitar'])
-        lines.append(table_row([a&255,a>>8,b&255,b>>8],f'{ch}: piano {pname(x)}, guitar {pname(x+BASS_VOICE_OFFSETS['guitar'])}'))
+        keys_note,pluck_note=note_pairs[ch]
+        a=delta(keys_note);b=delta(pluck_note)
+        lines.append(table_row([a&255,a>>8,b&255,b>>8],f'{ch}: keys {pname(keys_note)}, pluck {pname(pluck_note)}'))
     lines.append('melody_data:')
     labels_by_offset={}
     for name,offset in offsets.items():labels_by_offset.setdefault(offset,[]).append('section_'+name)
@@ -156,12 +164,12 @@ def to_inc(data,validate_size=True):
         for label in labels_by_offset.get(i,[]):lines.append(label+':')
         lines.append(table_row([token]))
     meta={"note_count":sum(sum(1 for n in sec if n!=255 and n<0xe0) for sec in song_sections.values()),
-          "event_bytes":pos,"playlist_bytes":len(playlist),"note_table_bytes":sum(p!="R" for p in pitches)*2,
-          "chord_table_bytes":len(chords)*4,"durations":ticks,"pitches":pitches,"chords":chords,
+          "event_bytes":pos,"maximum_entry_offset":max_offset,"playlist_bytes":len(playlist),"note_table_bytes":sum(p!="R" for p in pitches)*2,
+          "chord_table_bytes":len(chords)*4,"durations":ticks,"pitches":pitches,"chords":chords,"chord_notes":{c:note_pairs[c] for c in chords},
           "total_data_bytes":pos+len(playlist)+len(ticks)+sum(p!="R" for p in pitches)*2+len(chords)*4,
           "section_bars":{k:len(v) for k,v in data['patterns'].items()},
           "playlist":output_playlist,"source_playlist":data['playlist'],"section_offsets":offsets,"compression":packed['report'],"source":data['title'],"rest_index":rest_index,"hold_index":hold_index,"holds":holds,
-          "instruments":{"lead":"violin","keys":"piano","pluck":"guitar","drums":"kick/snare/hat"}}
+          "instruments":data.get('instruments',{"lead":"violin","keys":"acoustic-grand-piano","pluck":"acoustic-guitar-nylon"})}
     return '\n'.join(lines)+'\n',meta
 
 def main():
