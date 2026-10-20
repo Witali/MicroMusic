@@ -1,313 +1,282 @@
-/* GENERATED FROM score.json BY tools/score-format.py. */
+code_end:
 playlist:
-  .byte 0x00, 0x0d, 0x08, 0x19, 0x00, 0x1f, 0x08, 0xfe, 0x2e, 0x57, 0x4a, 0x4b, 0x4b, 0x55, 0x2e, 0x4e, 0x75, 0x59, 0x88, 0x70, 0x95, 0x88, 0x70, 0x59, 0x88, 0x70, 0x95, 0x8c, 0xaf, 0xfe, 0xb4, 0xb2, 0xb2, 0xb2, 0xb2, 0xb2, 0xb2, 0xb2, 0xb2, 0xb2, 0xb2, 0xb2, 0xbb, 0xb4, 0xc4, 0xcd, 0xb4, 0xb4, 0xbb, 0xb4, 0xc4, 0xd5, 0x77, 0x59, 0x88, 0x70, 0x95, 0x8c, 0xb6, 0x70, 0x59, 0x88, 0x70, 0x95, 0x8c, 0xf9   /* direct section byte offsets (no sentinel) */
+  .byte 0,12,7,231,23,0,28,48,77,48,90,101,10,100,160,166,166,166,166,166,189,169,181,169,195,107,224,100,227
 durations:
-  .byte 0x01, 0x02, 0x03, 0x04, 0x06, 0x08, 0x10   /* sixteenth-note grid units */
+  .byte 1,2,3,4,6,8,16
 note_steps:
-  .byte 0x62, 0x02   /* F3, 174.5 Hz */
-  .byte 0xad, 0x02   /* G3, 196.0 Hz */
-  .byte 0xd6, 0x02   /* G#3, 207.7 Hz */
-  .byte 0x2f, 0x03   /* A#3, 233.2 Hz */
-  .byte 0x92, 0x03   /* C4, 261.5 Hz */
-  .byte 0xc9, 0x03   /* C#4, 277.2 Hz */
-  .byte 0x3f, 0x04   /* D#4, 311.0 Hz */
-  .byte 0xc5, 0x04   /* F4, 349.3 Hz */
-  .byte 0x5a, 0x05   /* G4, 392.0 Hz */
-  .byte 0xac, 0x05   /* G#4, 415.4 Hz */
-  .byte 0x5d, 0x06   /* A#4, 466.1 Hz */
-  .byte 0x25, 0x07   /* C5, 523.3 Hz */
-  .byte 0x92, 0x07   /* C#5, 554.5 Hz */
-  .byte 0x7f, 0x88   /* D#5, 622.3 Hz */
-  .byte 0x89, 0x89   /* F5, 698.4 Hz */
-  .byte 0xb4, 0x8a   /* G5, 783.9 Hz */
-  .byte 0x57, 0x8b   /* G#5, 830.6 Hz */
-chord_steps:
-  .byte 0xf2, 0x00, 0xb5, 0x00   /* C#2: keys C#2, pluck G#1 */
-  .byte 0xcc, 0x00, 0x99, 0x00   /* A#1: keys A#1, pluck F1 */
-  .byte 0x99, 0x00, 0x72, 0x00   /* F1: keys F1, pluck C1 */
+  .byte 197,4
+  .byte 63,4
+  .byte 146,3
+  .byte 98,2
+  .byte 47,3
+  .byte 90,5
+  .byte 172,5
+  .byte 93,6
+  .byte 37,7
+  .byte 146,7
+  .byte 137,137
+  .byte 180,138
+  .byte 173,2
+  .byte 214,2
+  .byte 201,3
+  .byte 127,136
+  .byte 87,139
+  .byte 242,0
+  .byte 204,0
+  .byte 153,0
 melody_data:
 section_packed_000:
 first_section:
-  .byte 0xe0
-  .byte 0x75
-  .byte 0x95
-  .byte 0xe1
-  .byte 0x95
-  .byte 0x83
-  .byte 0x79
-  .byte 0x69
+  .byte 152
+  .byte 86
+  .byte 168
+  .byte 149
+  .byte 131
+  .byte 89
+  .byte 121
 section_packed_002:
-  .byte 0xe2
-  .byte 0x95
-  .byte 0x95
-  .byte 0x95
-  .byte 0xff
-section_packed_001:
-  .byte 0x83
-  .byte 0x79
-  .byte 0x59
-  .byte 0xe0
-  .byte 0x95
-  .byte 0x95
-  .byte 0xe1
-  .byte 0x95
-  .byte 0x83
-  .byte 0x79
-  .byte 0x49
-  .byte 0xff
-section_packed_003:
-  .byte 0x8b
-  .byte 0x38
-  .byte 0x40
-  .byte 0x48
-  .byte 0x58
-  .byte 0xff
-section_packed_004:
-  .byte 0x8c
-  .byte 0x60
-  .byte 0x58
-  .byte 0xe0
-  .byte 0x63
-  .byte 0x59
-  .byte 0x49
-  .byte 0x95
-  .byte 0xe1
-  .byte 0x89
-  .byte 0x44
-  .byte 0x4b
-  .byte 0x59
-  .byte 0x39
-  .byte 0xff
-section_packed_006:
-  .byte 0xe2
-  .byte 0x49
-  .byte 0x39
-  .byte 0x49
-  .byte 0x39
-  .byte 0x49
-  .byte 0x39
-  .byte 0x49
-  .byte 0x40
-  .byte 0x48
-  .byte 0x51
-  .byte 0x41
-  .byte 0x51
-  .byte 0x41
-  .byte 0x51
-  .byte 0x41
-  .byte 0x51
-  .byte 0x40
-  .byte 0x48
-  .byte 0xe2
-  .byte 0x59
-  .byte 0x49
-  .byte 0x59
-  .byte 0x49
-  .byte 0x59
-  .byte 0x49
-  .byte 0x59
-  .byte 0xff
-section_packed_008:
-  .byte 0x48
-section_packed_009:
-  .byte 0x51
-  .byte 0x41
-  .byte 0xff
-section_packed_011:
-  .byte 0x50
-  .byte 0x58
-  .byte 0x69
-  .byte 0x51
-  .byte 0x69
-  .byte 0x51
-  .byte 0x69
+  .byte 185
+  .byte 150
+  .byte 201
 section_packed_010:
-  .byte 0x51
-  .byte 0x38
-section_packed_007:
-  .byte 0x40
-  .byte 0xff
-section_packed_013:
-  .byte 0xe2
-  .byte 0x83
-  .byte 0xe2
-  .byte 0x79
-  .byte 0x59
-  .byte 0xe0
-  .byte 0x93
-  .byte 0xe0
-  .byte 0x93
-  .byte 0xe0
-  .byte 0x93
-  .byte 0xe0
-  .byte 0x93
-  .byte 0xe1
-  .byte 0x93
-  .byte 0xe1
-  .byte 0x93
-  .byte 0xe1
-  .byte 0x83
-  .byte 0xe1
-  .byte 0x79
-  .byte 0x49
-  .byte 0xff
-section_packed_015:
-  .byte 0xe2
-  .byte 0x8b
-  .byte 0xe2
-  .byte 0x38
-  .byte 0x40
-section_packed_012:
-  .byte 0x48
-  .byte 0x58
-section_packed_025:
-  .byte 0xe0
-  .byte 0x73
-  .byte 0xe0
-  .byte 0x93
-  .byte 0xe0
-  .byte 0x93
-  .byte 0xe0
-  .byte 0x93
-  .byte 0xe1
-  .byte 0x93
-  .byte 0xe1
-  .byte 0x93
-  .byte 0xe1
-  .byte 0x83
-  .byte 0xe1
-  .byte 0x79
-  .byte 0x69
-section_packed_014:
-  .byte 0xe2
-  .byte 0x93
-  .byte 0xe2
-  .byte 0x93
-section_packed_017:
-  .byte 0xe2
-  .byte 0x93
-  .byte 0xe2
-  .byte 0x93
-  .byte 0xe2
-  .byte 0x93
-  .byte 0xe2
-  .byte 0x93
-  .byte 0xff
-section_packed_016:
-  .byte 0xe2
-  .byte 0x8b
-  .byte 0xe2
-  .byte 0x89
-  .byte 0x60
-  .byte 0x58
-  .byte 0xe0
-  .byte 0x63
-  .byte 0xe0
-  .byte 0x59
-  .byte 0x49
-  .byte 0xe0
-  .byte 0x93
-  .byte 0xe0
-  .byte 0x93
-  .byte 0xe1
-  .byte 0x89
-  .byte 0x41
-  .byte 0xe1
-  .byte 0x93
-  .byte 0xe1
-  .byte 0x4b
-  .byte 0xe1
-  .byte 0x59
-  .byte 0x39
-  .byte 0xff
-section_packed_018:
-  .byte 0xe2
-  .byte 0x95
-  .byte 0xff
-section_packed_020:
-  .byte 0xe2
-  .byte 0x8b
-section_packed_019:
-  .byte 0xe2
-  .byte 0x8b
-section_packed_026:
-  .byte 0xe2
-  .byte 0x8b
-  .byte 0xe2
-  .byte 0x8b
-  .byte 0xff
-section_packed_021:
-  .byte 0xe2
-  .byte 0x00
-  .byte 0x08
-  .byte 0x10
-  .byte 0x20
-  .byte 0xe2
-  .byte 0x39
-  .byte 0x89
-  .byte 0xff
-section_packed_022:
-  .byte 0xe2
-  .byte 0x31
-  .byte 0x19
-  .byte 0xe2
-  .byte 0x89
-  .byte 0x29
-  .byte 0xe2
-  .byte 0x89
-  .byte 0xff
-section_packed_023:
-  .byte 0x11
-  .byte 0xe2
-  .byte 0x89
-  .byte 0x29
-  .byte 0xe2
-  .byte 0x21
-  .byte 0x89
-  .byte 0xff
-section_packed_024:
-  .byte 0x21
-  .byte 0xe2
-  .byte 0x89
-  .byte 0x11
-  .byte 0xe2
-  .byte 0x01
-  .byte 0x89
-  .byte 0xe2
-  .byte 0x89
-  .byte 0x08
-  .byte 0x10
-  .byte 0xe2
-  .byte 0x19
-  .byte 0x89
-  .byte 0xe2
-  .byte 0x89
-  .byte 0x10
-  .byte 0x18
-  .byte 0xe2
-  .byte 0x21
-  .byte 0x18
-  .byte 0x20
-  .byte 0xe2
-  .byte 0x31
-  .byte 0x20
-  .byte 0x30
-  .byte 0xe2
-  .byte 0x39
-  .byte 0x30
-  .byte 0x38
-  .byte 0xe2
-  .byte 0x48
-  .byte 0x50
-  .byte 0x58
-  .byte 0x68
-  .byte 0xff
-section_packed_027:
-  .byte 0xf2
-  .byte 0xe2
-  .byte 0x3b
-  .byte 0xfe
-  .byte 0x8b
+  .byte 149
+  .byte 255
+section_packed_001:
+  .byte 131
+  .byte 89
+  .byte 65
+  .byte 153
+  .byte 150
+  .byte 169
+  .byte 149
+  .byte 131
+  .byte 89
+  .byte 49
+  .byte 255
+section_packed_004:
+  .byte 0
+  .byte 40
+  .byte 48
+  .byte 64
+  .byte 255
 section_packed_005:
-  .byte 0x8d
-  .byte 0xff
+  .byte 140
+  .byte 72
+  .byte 64
+  .byte 151
+  .byte 75
+  .byte 65
+  .byte 53
+  .byte 145
+  .byte 166
+  .byte 137
+  .byte 44
+  .byte 51
+  .byte 65
+  .byte 1
+  .byte 182
+  .byte 150
+  .byte 198
+  .byte 149
+  .byte 141
+  .byte 255
+section_packed_006:
+  .byte 174
+  .byte 49
+  .byte 1
+  .byte 49
+  .byte 1
+  .byte 49
+  .byte 1
+  .byte 49
+  .byte 40
+  .byte 48
+  .byte 195
+  .byte 57
+  .byte 41
+  .byte 57
+  .byte 41
+  .byte 57
+  .byte 41
+  .byte 57
+  .byte 40
+  .byte 48
+  .byte 180
+  .byte 65
+  .byte 49
+  .byte 65
+  .byte 49
+  .byte 65
+  .byte 49
+  .byte 65
+  .byte 255
+section_packed_007:
+  .byte 40
+  .byte 48
+  .byte 195
+  .byte 57
+  .byte 41
+  .byte 57
+  .byte 41
+  .byte 57
+  .byte 41
+  .byte 57
+  .byte 0
+  .byte 40
+  .byte 255
+section_packed_008:
+  .byte 56
+  .byte 64
+  .byte 197
+  .byte 121
+  .byte 57
+  .byte 121
+  .byte 57
+  .byte 121
+  .byte 57
+  .byte 255
+section_packed_011:
+  .byte 139
+section_packed_009:
+  .byte 0
+  .byte 40
+  .byte 48
+  .byte 64
+  .byte 206
+  .byte 86
+section_packed_018:
+  .byte 232
+  .byte 149
+  .byte 131
+  .byte 89
+  .byte 121
+  .byte 249
+  .byte 150
+  .byte 149
+  .byte 131
+  .byte 89
+  .byte 65
+  .byte 217
+  .byte 150
+  .byte 233
+  .byte 149
+  .byte 131
+  .byte 89
+  .byte 49
+  .byte 249
+  .byte 150
+  .byte 149
+  .byte 139
+  .byte 0
+  .byte 40
+  .byte 48
+  .byte 64
+  .byte 216
+  .byte 86
+  .byte 232
+  .byte 149
+  .byte 131
+  .byte 89
+  .byte 121
+  .byte 249
+  .byte 150
+  .byte 149
+  .byte 140
+  .byte 72
+  .byte 64
+  .byte 215
+  .byte 75
+  .byte 65
+  .byte 53
+  .byte 145
+  .byte 230
+  .byte 137
+  .byte 44
+  .byte 51
+  .byte 65
+  .byte 1
+  .byte 246
+  .byte 150
+  .byte 255
+section_packed_012:
+  .byte 189
+  .byte 149
+  .byte 141
+  .byte 253
+  .byte 142
+  .byte 255
+section_packed_013:
+  .byte 142
+  .byte 142
+  .byte 255
+section_packed_015:
+  .byte 16
+  .byte 241
+  .byte 1
+  .byte 141
+  .byte 140
+  .byte 238
+  .byte 9
+  .byte 33
+  .byte 137
+  .byte 113
+  .byte 137
+  .byte 255
+section_packed_016:
+  .byte 105
+  .byte 137
+  .byte 113
+  .byte 253
+  .byte 17
+  .byte 141
+  .byte 140
+  .byte 240
+section_packed_014:
+  .byte 141
+  .byte 139
+  .byte 24
+  .byte 96
+  .byte 104
+  .byte 255
+section_packed_017:
+  .byte 17
+  .byte 137
+  .byte 105
+  .byte 253
+  .byte 25
+  .byte 139
+  .byte 96
+  .byte 104
+  .byte 33
+  .byte 139
+  .byte 104
+  .byte 32
+  .byte 242
+  .byte 17
+  .byte 32
+  .byte 16
+  .byte 9
+  .byte 16
+  .byte 8
+  .byte 1
+  .byte 8
+  .byte 0
+  .byte 48
+  .byte 56
+  .byte 64
+  .byte 120
+  .byte 212
+  .byte 86
+  .byte 255
+section_packed_019:
+  .byte 253
+  .byte 141
+  .byte 255
+section_packed_020:
+  .byte 174
+  .byte 3
+  .byte 254
+  .byte 141
+section_packed_003:
+  .byte 139
+  .byte 255

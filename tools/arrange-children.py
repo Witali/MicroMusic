@@ -116,106 +116,17 @@ def source_metadata(notes, ppqn):
                 license='No permission or license is inferred from embedded MIDI metadata.')
 
 
-def arrangement(notes, ppqn, bpm, bars, candidates):
-    score = reader.create_score(notes, ppqn, bpm, bars, bars, 1, 4)
-    # The generic reader folds roots into octave three. Restore the exact
-    # source bass register, rather than sounding an unrelated fifth below it.
-    root_names = {'C#3': 'C#2', 'A#3': 'A#1', 'F3': 'F1'}
-    score['chord_pairs'] = [[root_names[n] for n in pair] for pair in score['chord_pairs']]
-    score['chord_overrides'] = {name: [[root_names[n] for n in pair] for pair in pairs]
-                                for name, pairs in score['chord_overrides'].items()}
-    score['chord_roots'] = {'C#2': 37, 'A#1': 34, 'F1': 29}
-    score['patterns']['ending'] = ['F4:1 R:3']
-    score['playlist'].append('ending')
-    score['chord_overrides']['ending'] = [['F1', 'F1']]
-    score['packing_candidates'] = candidates
-    score['instruments'] = dict(lead='acoustic-grand-piano', keys='fretless-bass', pluck='off', percussion='off')
-    score['engine'] = 'instrument-bank'
-    score['release_tail_slots'] = 2
-    # Preserve the selected bass track's own note identities and end times;
-    # the old half-bar harmony sampler retriggered long notes and held short
-    # notes too long. Controls are interleaved offline with tied lead tokens.
-    controls = []
-    stop = bars * 16
-    bass_notes = sorted((n for n in notes if n[0] == 4 and n[3] < bars * 4 * ppqn), key=lambda n:n[3])
-    for note in bass_notes:
-        start = math.ceil(note[3] * 4 / ppqn)
-        end = min(stop, math.floor(note[4] * 4 / ppqn))
-        if start < end:
-            controls.append(dict(unit=start, chord=reader.note_name(note[2])))
-            # A final control belongs to the cadence's first unit instead.
-            if end < stop:controls.append(dict(unit=end, offMask=2))
-    controls.sort(key=lambda c:(c['unit'], 'chord' in c))
-    # Replacing the monophonic bass at the same instant closes the old gate
-    # and starts the new note atomically. Only genuine gaps need a separate
-    # off byte; identities are retained even for repeated pitches.
-    starts = {c['unit'] for c in controls if 'chord' in c}
-    controls = [c for c in controls if 'chord' in c or c['unit'] not in starts]
-    score['replace_harmony_sections'] = ['intro', 'ending']
-    score['timed_controls'] = dict(intro=controls, ending=[dict(unit=0,offMask=2),dict(unit=0,chord='F1'),dict(unit=4,offMask=14)])
-    score['packing_max_entry_offset'] = 255
-    score['bass_source_note_ons'] = len(bass_notes)
-    return score
-
-
 def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--bars', type=int, default=107, help='Source 4/4 bars, beginning at beat zero')
-    parser.add_argument('--candidates', type=int, default=4096, help='Phrase candidates for lossless packing')
-    parser.add_argument('--bass-capture', type=Path, help='Regenerate the bass table from FluidR3 program35 capture.json and WAV files')
-    args = parser.parse_args()
-    notes, ppqn, bpm = reader.read_midi(SOURCE)
-    maximum = math.ceil(max(n[4] for n in notes if n[0] == 1) / (4 * ppqn))
-    if not 1 <= args.bars <= maximum:
-        parser.error(f'--bars must be between 1 and {maximum}')
-    if args.candidates < 1:
-        parser.error('--candidates must be positive')
-    if args.bass_capture:
-        fit_bass(args.bass_capture)
-    score = arrangement(notes, ppqn, bpm, args.bars, args.candidates)
-    bank = instrument_bank.load_bank()
-    instrument_bank.verify_sources(bank)
-    roles = instrument_bank.describe_assignments(score['instruments'], bank)
-    _, meta = builder.compiler.to_inc(score, validate_size=False)
-    # The specialization removes inactive voices. The final assembler validates
-    # the real code plus data size; no guessed code size is used for this check.
-    if meta['maximum_entry_offset'] > 255 or meta['playlist_bytes'] > 255:
-        raise ValueError(f'Arrangement offsets do not fit: events {meta["event_bytes"]}/256')
-    score['title'] = 'Robert Miles — Children'
-    score['composer'] = 'Robert Miles'
-    score['source_midi'] = dict(file='../../reference/children/source-events.json',
-        sha256=hashlib.sha256(SOURCE.read_bytes()).hexdigest(), originalMidiSha256=json.loads(SOURCE.read_text(encoding='utf-8'))['source']['sha256'], ppqn=ppqn,
-        credit='MIDI metadata: Copyright © 1996 by Marcel Gonzalez; bka "DREAMS"',
-        timeSignature='4/4', sourcePitchedNotes=len([n for n in notes if n[1] != 9]))
-    score['arrangement'] = dict(sourceQuarterBeats=args.bars * 4, sourceBars4_4=args.bars,
-        cadenceQuarterBeats=4, firstSourceQuarterBeat=0,
-        lead='Main piano melody, MIDI track 1; one highest active note on a sixteenth grid',
-        accompaniment='Quiet decaying FluidR3 program35 fretless bass at exact C#2/A#1/F1 pitches; every selected source track4 NoteOn and NoteOff retained; guitar and percussion omitted',
-        tempo='Steady 140 BPM; original MIDI changes from approximately 140 to 137 BPM at beat 160',
-        scope='The complete main piano track followed by an F cadence; later MIDI-only layers and multichannel polyphony are omitted'
-            if args.bars == maximum else 'Opening excerpt of the main piano track followed by an F cadence',
-        compression='Lossless automatic repeated byte phrases after the documented musical reduction; heuristic dictionary search')
-    OUT.mkdir(parents=True, exist_ok=True)
-    for name in ['avr_core.js', 'FluidR3-MIT.txt']:
-        shutil.copyfile(BASE / name, OUT / name)
-    eeprom, waves = clean_tables(score['instruments'], bank)
-    (OUT / 'eeprom.bin').write_bytes(eeprom)
-    (OUT / 'waveforms.json').write_text(json.dumps(waves, indent=2) + '\n', encoding='utf-8', newline='\n')
-    (OUT / 'score.json').write_text(json.dumps(score, ensure_ascii=False, indent=2) + '\n', encoding='utf-8', newline='\n')
-    metadata = source_metadata(notes, ppqn)
-    (SOURCE.parent / 'metadata.json').write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + '\n', encoding='utf-8', newline='\n')
-    builder.build(OUT)
-    report = json.loads((OUT / 'build-report.json').read_text(encoding='utf-8'))
-    report['articulation']['attack'] = 'Program0 piano: immediate full-level attack followed by the measured three-rate decay'
-    report['articulation']['retrigger'] = 'Full level143, same oscillator phase; explicit holds skip retrigger'
-    report['instruments'] = score['instruments']
-    report['score']['instruments'] = score['instruments']
-    report['instrumentAssignments'] = roles
-    report['instrumentBank'] = dict(file='../../instruments/bank.json',
-                                    sha256=hashlib.sha256(instrument_bank.BANK_PATH.read_bytes()).hexdigest(),
-                                    firmwareSpecialization='Shared compact piano attack/sustain banks, register-dependent decay and two-level release; fretless bass peak6, decay mask3, linear release1; explicit source bass NoteOff, phase-continuous inactive-voice removal')
-    (OUT / 'build-report.json').write_text(json.dumps(report, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
-    print(f'Children: {args.bars} source bars + cadence, {report["flashBytes"]} Flash bytes, {(args.bars + 1) * 4 * 60 / bpm:.6f} seconds')
+    # Retain source_metadata/fit_bass for existing authoring tools; the native
+    # generator is the single production arrangement and build entry point.
+    native=module('children_native_arranger',ROOT/'tools/arrange-children-four.py')
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--candidates',type=int,default=4096)
+    parser.add_argument('--bars',type=int,choices=[107],default=107)
+    parser.add_argument('--bass-capture',type=Path)
+    args=parser.parse_args()
+    if args.bass_capture:fit_bass(args.bass_capture)
+    native.build(OUT,candidates=args.candidates,production=True)
 
 
 if __name__ == '__main__':
