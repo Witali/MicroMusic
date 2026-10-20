@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { AVRCore } from '../lib/avr-core.js';
 import { parseHex } from '../lib/hex.js';
 const require = createRequire(import.meta.url);
-const { AVRCore: Reference } = require('../../ATtiny13A/Music/final/attiny13a_synth_release/avr_core.js');
+const { AVRCore: Reference } = require('../../ATtiny13A/Music/variants/rhythmic/avr_core.js');
 const catalog = JSON.parse(readFileSync(new URL('../firmware.json', import.meta.url)));
 
 for (const entry of catalog.entries) {
@@ -36,7 +36,7 @@ for (const entry of catalog.entries) {
 }
 
 test('fast idle matches single stepping at every output boundary', () => {
-  const entry = catalog.entries.find(x => x.id === 'final');
+  const entry = catalog.entries.find(x => x.id === catalog.defaultId);
   const flash = parseHex(entry.flashHex), ep = parseHex(entry.eepromHex, 64);
   const fast = new AVRCore(flash, ep), ref = new AVRCore(flash, ep, {fastIdle:false});
   for (let i = 0; i < 20000; i++) {

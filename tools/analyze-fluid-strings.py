@@ -22,5 +22,5 @@ for name in ['violin','fiddle','viola','strings','slow-strings']:
         medianPowerH3toH15=float(np.median(third)),medianAttack85Ms=float(np.median([n['attack85PercentMs'] for n in data['notes']])))
     presets[name]=dict(summary=summary,measurement=data)
     print(name,json.dumps(summary))
-out=ROOT/'ATtiny13A/Music/variants/fluid-instruments/strings-comparison.json'
+out=ROOT/'ATtiny13A/Music/reference/fluidr3/strings-comparison.json'
 out.write_text(json.dumps(dict(method='Same MIDI 52/55/59/62/66/69/74, velocity 100; stereo power, measured first 15 harmonics. Lower spectral centroid alone does not determine perceived realism.',presets=presets),separators=(',',':'))+'\n',encoding='utf-8',newline='\n')

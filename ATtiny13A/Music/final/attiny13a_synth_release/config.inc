@@ -1,2 +1,0 @@
-.set REST_INDEX, 13
-.set PLAYLIST_LEN, 15

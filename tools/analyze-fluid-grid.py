@@ -6,7 +6,7 @@ import wave
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / 'ATtiny13A/Music/variants/fluid-instruments'
+OUT = ROOT / 'ATtiny13A/Music/reference/fluidr3'
 
 
 def analyze(profile):

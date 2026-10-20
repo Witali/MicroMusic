@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import { AVRCore } from '../lib/avr-core.js';
 import { parseHex } from '../lib/hex.js';
 const require = createRequire(import.meta.url);
-const { AVRCore: DefaultReference } = require('../../ATtiny13A/Music/final/attiny13a_synth_release/avr_core.js');
+const { AVRCore: DefaultReference } = require('../../ATtiny13A/Music/variants/rhythmic/avr_core.js');
 const catalog = JSON.parse(readFileSync(new URL('../firmware.json', import.meta.url)));
 const median = list => list.sort((a,b) => a-b)[Math.floor(list.length / 2)];
 const results = [];

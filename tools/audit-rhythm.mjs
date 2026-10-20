@@ -73,6 +73,11 @@ const report={image:id,flashSha256:createHash('sha256').update(rom).digest('hex'
   articulation:{realNoteOns,holdNotes,repeatedNotes:repeated,repeatedNotesArticulated:repeatedArticulated,phaseResets:0,
     firstAttack50PercentMs:(halfAttack-firstAttack)/9600,firstAttack100PercentMs:(fullAttack-firstAttack)/9600},
   envelopes:{ticksChecked:envelopeChecks,mismatches:0},isrCycles:c.maxIRQ,lostTimerEvents:c.lost,lostWorkEvents:c.workLost};
-fs.writeFileSync(`web-player/reports/${id}-verification.json`,JSON.stringify(report,null,2)+'\n');
+const reportPath=`web-player/reports/${id}-verification.json`;
+if(fs.existsSync(reportPath)){
+  const previous=JSON.parse(fs.readFileSync(reportPath));
+  if(previous.flashSha256===report.flashSha256&&previous.browser)report.browser=previous.browser;
+}
+fs.writeFileSync(reportPath,JSON.stringify(report,null,2)+'\n');
 fs.mkdirSync('build/rhythm',{recursive:true});fs.writeFileSync(`build/rhythm/${id}-trace.json`,JSON.stringify({events,drums}));
 console.log(JSON.stringify(report,null,2));
