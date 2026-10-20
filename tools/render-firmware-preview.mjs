@@ -1,23 +1,24 @@
 // Render the actual AVR image through the player's default filters at 48 kHz.
-// Web Audio's default BiquadFilter Q is 1 dB; use the same RBJ coefficients.
+// Use the same non-resonant Q=0.5 as the player's cascaded RC approximation.
 import fs from 'node:fs';
 import path from 'node:path';
 import { Renderer } from '../web-player/lib/renderer.js';
 const folder = process.argv[2], seconds = Number(process.argv[3] || 14);
+const cutoff=Number(process.argv[4]||4000),q=Number(process.argv[5]||.5);
 if (!folder || !Number.isFinite(seconds) || seconds <= 0 || seconds > 300)
   throw new Error('Usage: node tools/render-firmware-preview.mjs firmware-folder [seconds]');
 const rate = 48000, renderer = new Renderer({pwmHz: 37500,
   flashHex: fs.readFileSync(path.join(folder, 'synth.hex'), 'utf8'),
   eepromHex: fs.readFileSync(path.join(folder, 'eeprom.hex'), 'utf8')}, rate);
 function biquad(type, frequency) {
-  const w = 2 * Math.PI * frequency / rate, cos = Math.cos(w), alpha = Math.sin(w) / (2 * 10 ** (1 / 20));
+  const w = 2 * Math.PI * frequency / rate, cos = Math.cos(w), alpha = Math.sin(w) / (2 * q);
   const a0 = 1 + alpha, b0 = (type === 'highpass' ? 1 + cos : 1 - cos) / 2;
   const b1 = type === 'highpass' ? -(1 + cos) : 1 - cos;
   const a1 = -2 * cos / a0, a2 = (1 - alpha) / a0;
   let z1 = 0, z2 = 0;
   return x => { const y = b0 / a0 * x + z1; z1 = b1 / a0 * x - a1 * y + z2; z2 = b0 / a0 * x - a2 * y; return y; };
 }
-const high = biquad('highpass', 35), low = biquad('lowpass', 9000);
+const high = biquad('highpass', 35), low = biquad('lowpass', cutoff);
 const count = Math.round(seconds * rate), pcm = Buffer.alloc(count * 2);
 let min = 0, max = 0;
 for (let start = 0; start < count; start += 4096) {

@@ -36,7 +36,7 @@ def quantize(values):
     return q
 
 
-def fit(measurements, midi_notes, baseline):
+def fit(measurements, midi_notes, baseline, smoothness=.002):
     frames = [frame for note in measurements['notes'] if note['midi'] in midi_notes for frame in note['frames']]
     features = np.array([f['amplitudes'][:7] for f in frames])
     features /= np.linalg.norm(features, axis=1)[:, None]
@@ -51,7 +51,7 @@ def fit(measurements, midi_notes, baseline):
         if rms < 1: return 100.
         spectral = np.sum((spectrum(q) - target) ** 2)
         roughness = np.mean(np.diff(np.r_[q, q[0]]) ** 2) / rms ** 2
-        return float(5 * spectral + .25 * (rms / goal_rms - 1) ** 2 + .002 * roughness + .0005 * q[0] ** 2)
+        return float(5 * spectral + .25 * (rms / goal_rms - 1) ** 2 + smoothness * roughness + .0005 * q[0] ** 2)
 
     best, minimum = None, float('inf')
     for shift in np.linspace(0, 2 * np.pi, 64, endpoint=False):
@@ -91,25 +91,29 @@ def encode(instruction, pc, labels):
     op, *args = instruction.replace(',', ' ').split()
     reg = lambda s: int(s[1:])
     if op == 'nop': return 0
-    if op in ('mov', 'add'):
+    if op in ('mov', 'add', 'and', 'eor', 'sub'):
         d, r = map(reg, args)
-        return (0x2c00 if op == 'mov' else 0x0c00) | d << 4 | (r & 15) | (r & 16) << 5
-    if op in ('ldi', 'andi', 'cpi', 'ori'):
+        return {'mov':0x2c00,'add':0x0c00,'and':0x2000,'eor':0x2400,'sub':0x1800}[op] | d << 4 | (r & 15) | (r & 16) << 5
+    if op == 'lsl': return encode(f'add {args[0]}, {args[0]}', pc, labels)
+    if op in ('ldi', 'andi', 'cpi', 'ori', 'subi'):
         d, k = reg(args[0]), int(args[1])
-        return {'ldi': 0xe000, 'andi': 0x7000, 'cpi': 0x3000, 'ori': 0x6000}[op] | (d - 16) << 4 | (k & 15) | (k & 240) << 4
+        return {'ldi': 0xe000, 'andi': 0x7000, 'cpi': 0x3000, 'ori': 0x6000, 'subi':0x5000}[op] | (d - 16) << 4 | (k & 15) | (k & 240) << 4
     if op == 'clr':
         d = reg(args[0]); return 0x2400 | d << 4 | (d & 15) | (d & 16) << 5
-    if op == 'sbrc': return 0xfc00 | reg(args[0]) << 4 | int(args[1])
+    if op in ('sbrc','sbrs'): return (0xfc00 if op=='sbrc' else 0xfe00) | reg(args[0]) << 4 | int(args[1])
     if op == 'inc': return 0x9403 | reg(args[0]) << 4
-    if op in ('rjmp', 'breq', 'brcc'):
+    if op == 'dec': return 0x940a | reg(args[0]) << 4
+    if op == 'lsr': return 0x9406 | reg(args[0]) << 4
+    if op == 'ret': return 0x9508
+    if op in ('rjmp', 'rcall', 'breq', 'brcc', 'brcs', 'brne'):
         k = (labels[args[0]] - pc - 2) // 2
-        if op == 'rjmp': return 0xc000 | (k & 4095)
+        if op in ('rjmp','rcall'): return (0xc000 if op=='rjmp' else 0xd000) | (k & 4095)
         assert -64 <= k <= 63
-        return (0xf001 if op == 'breq' else 0xf400) | (k & 127) << 3
+        return {'breq':0xf001,'brne':0xf401,'brcc':0xf400,'brcs':0xf000}[op] | (k & 127) << 3
     raise ValueError(instruction)
 
 
-def assemble_changed_words(original, updated, original_rom):
+def assemble_changed_words(original, updated, original_rom, relocatable_labels=()):
     # All code in the preserved source consists of one-word instructions.
     # No relocation or data address moves. Verify changed original words and
     # encode only the reviewed one-word subset above.
@@ -130,10 +134,14 @@ def assemble_changed_words(original, updated, original_rom):
         return rows, labels
     old, old_labels = instructions(original)
     new, new_labels = instructions(updated)
-    assert len(old) == len(new) and old_labels == new_labels, 'Instruction or label addresses changed'
+    assert len(old) == len(new), 'Instruction count changed'
+    assert all(name in new_labels and (new_labels[name] == address or name in relocatable_labels)
+               for name,address in old_labels.items()), 'Unexpected label address change'
     rom, patches = bytearray(original_rom), []
     for pc, instruction in new.items():
-        if instruction == old[pc]: continue
+        target = instruction.split()[-1]
+        relocated = target in old_labels and old_labels[target] != new_labels[target]
+        if instruction == old[pc] and not relocated: continue
         previous = encode(old[pc], pc, old_labels)
         assert int.from_bytes(rom[pc:pc + 2], 'little') == previous, (pc, old[pc])
         value = encode(instruction, pc, new_labels)

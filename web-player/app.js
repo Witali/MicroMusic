@@ -105,8 +105,8 @@ async function ensureAudio() {
     if (!context.audioWorklet) throw new Error('AudioWorklet недоступен. Откройте страницу через localhost или HTTPS.');
     await context.audioWorklet.addModule(new URL('./audio-worklet.js',import.meta.url));
     audio=context; realtime=new RealtimeMonitor(audio.sampleRate); output=new AudioWorkletNode(audio,'firmware-output',{numberOfInputs:0,numberOfOutputs:1,outputChannelCount:[1]});
-    const highpass=audio.createBiquadFilter(); highpass.type='highpass'; highpass.frequency.value=35;
-    lowpass=audio.createBiquadFilter(); lowpass.type='lowpass'; lowpass.frequency.value=Math.min(+$('cutoff').value,audio.sampleRate*.45);
+    const highpass=audio.createBiquadFilter(); highpass.type='highpass'; highpass.frequency.value=35; highpass.Q.value=20*Math.log10(.5);
+    lowpass=audio.createBiquadFilter(); lowpass.type='lowpass'; lowpass.Q.value=20*Math.log10(.5); lowpass.frequency.value=Math.min(+$('cutoff').value,audio.sampleRate*.45);
     gain=audio.createGain(); gain.gain.value=+$('volume').value;
     output.connect(highpass); highpass.connect(lowpass); lowpass.connect(gain); gain.connect(audio.destination);
     output.port.onmessage=({data})=>{
