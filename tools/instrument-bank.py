@@ -255,7 +255,7 @@ def fit_measurements(path, cutoff=3.2, peak=5, split_midi=63):
                        f'offset-binary four-bit samples, peak <= {peak}; quiet-start phase rotation', registers=result)
 
 
-def measure_piano_transients(capture_folders):
+def measure_piano_transients(capture_folders, expected_velocity=100):
     """Measure existing no-effects GM0 PCM captures, without redistributing PCM.
 
     Reproduce the input with render-fluid-violin.mjs --profile piano --program 0
@@ -269,7 +269,7 @@ def measure_piano_transients(capture_folders):
         capture = json.loads((folder / 'capture.json').read_text(encoding='utf-8'))
         if capture['program'] != 0 or capture['renderer']['effectsEnabled']:
             raise ValueError('Expected original GM0 piano with effects disabled')
-        if capture['velocity'] != 100 or capture['gateSeconds'] != 4 or capture['tailSeconds'] != 1.2:
+        if capture['velocity'] != expected_velocity or capture['gateSeconds'] != 4 or capture['tailSeconds'] != 1.2:
             raise ValueError('Expected velocity 100, four-second gate and 1.2-second tail')
         if capture['soundfont']['sha256'] != '74594e8f4250680adf590507a306655a299935343583256f3b722c48a1bc1cb0':
             raise ValueError('Unexpected SoundFont version')
@@ -317,12 +317,14 @@ def measure_piano_transients(capture_folders):
     if sorted(n['midi'] for n in rows) != list(range(49, 83)):
         raise ValueError('Expected each MIDI note 49..82 exactly once')
     return dict(schema=1, soundfont=captures[0]['soundfont'], renderer=captures[0]['renderer'],
-                program=0, preset=captures[0]['preset'], velocity=100, sampleRate=48000, effectsEnabled=False,
+                program=0, preset=captures[0]['preset'], velocity=expected_velocity, sampleRate=48000, effectsEnabled=False,
                 method='40-ms Hann centered at20/40/60/90ms,80-ms at120/200/300/500ms; seven stereo-power partials. F0 searched ±1.5% on80ms sustain. 10-ms RMS. No effects or per-note normalization before analysis.',
                 envelopeTimesSeconds=envelope_times.round(4).tolist(), notes=rows)
 
 
-def fit_piano_transients(path, attempts=400, maximum_switch_delta=1):
+def fit_piano_transients(path, attempts=400, maximum_switch_delta=1,
+                         attack_ages=(.02,.04,.06), sustain_ages=(.12,.2,.3,.5),
+                         attack_rolloff=5., sustain_rolloff=4.):
     """Jointly fit measured piano attack/sustain with matching fundamental.
 
     Optional offline authoring only. Seeded integer search keeps zero DC and
@@ -346,10 +348,10 @@ def fit_piano_transients(path, attempts=400, maximum_switch_delta=1):
     result = {}
     for register in ('low', 'high'):
         notes = [n for n in data['notes'] if (n['midi'] < 62) == (register == 'low')]
-        attack = np.median([f['ratiosToFundamental'] for n in notes for f in n['frames'] if f['ageSeconds'] in (.02,.04,.06)], axis=0)
-        sustain = np.median([f['ratiosToFundamental'] for n in notes for f in n['frames'] if f['ageSeconds'] in (.12,.2,.3,.5)], axis=0)
-        attack *= 1 / np.sqrt(1 + (h / 5.) ** 6)
-        sustain *= 1 / np.sqrt(1 + (h / 4.) ** 6)
+        attack = np.median([f['ratiosToFundamental'] for n in notes for f in n['frames'] if f['ageSeconds'] in attack_ages], axis=0)
+        sustain = np.median([f['ratiosToFundamental'] for n in notes for f in n['frames'] if f['ageSeconds'] in sustain_ages], axis=0)
+        attack *= 1 / np.sqrt(1 + (h / attack_rolloff) ** 6)
+        sustain *= 1 / np.sqrt(1 + (h / sustain_rolloff) ** 6)
         attack /= attack[0]
         sustain /= sustain[0]
         targets = np.array([attack / np.linalg.norm(attack), sustain / np.linalg.norm(sustain)])
@@ -439,7 +441,7 @@ def fit_piano_transients(path, attempts=400, maximum_switch_delta=1):
         dynamics[label] = dict(referenceMidi=[bottom, top], timesSeconds=comparison_times,
             measuredMedianNormalizedRms=measured.tolist(), selectedMask=mask,
             selectedEnvelopeMedian=synthesis_levels(mask).tolist(), oldMask3EnvelopeMedian=synthesis_levels(3).tolist())
-    return dict(method=f'Joint zero-DC four-bit 16-point attack/sustain spectral magnitude fit; coherent fundamental; sample delta <= 1; attack H5/sustain H4 soft rolloff; seed 83120, {attempts} starts, 32 pairwise integer iterations.',
+    return dict(method=f'Joint zero-DC four-bit 16-point attack/sustain spectral magnitude fit; coherent fundamental; sample delta <= 1; attack H{attack_rolloff:g}/sustain H{sustain_rolloff:g} soft rolloff; seed 83120, {attempts} starts, 32 pairwise integer iterations.',
                 measurement=path.relative_to(ROOT).as_posix() if path.is_relative_to(ROOT) else str(path),
                 measurementSha256=hashlib.sha256(raw).hexdigest(), attackMinEnvelopeLevel=14,
                 decayMaskByRegister=dict(thresholdMidi=75, thresholdDdsStep=2175, lowMask=3, highMask=0),
@@ -463,13 +465,15 @@ def main():
     parser.add_argument('--verify-sources', action='store_true')
     parser.add_argument('--fit-measurement', type=Path, help='Print an optional NumPy spectral fit as JSON')
     parser.add_argument('--fit-piano-transients', type=Path, help='Print an optional jointly aligned piano attack/sustain fit')
+    parser.add_argument('--piano-voicing', choices=('standard','soft'), default='standard', help='Soft fits post-hammer60..120ms attack and200..500ms sustain with H3.5/H3 rolloff')
     parser.add_argument('--measure-piano-captures', nargs='+', type=Path, help='Measure pinned GM0 stereo capture folders (NumPy authoring only)')
     args = parser.parse_args()
     if args.measure_piano_captures:
         print(json.dumps(measure_piano_transients(args.measure_piano_captures), indent=2))
         return
     if args.fit_piano_transients:
-        print(json.dumps(fit_piano_transients(args.fit_piano_transients), indent=2))
+        options = dict(attack_ages=(.06,.09,.12),sustain_ages=(.2,.3,.5),attack_rolloff=3.5,sustain_rolloff=3.) if args.piano_voicing=='soft' else {}
+        print(json.dumps(fit_piano_transients(args.fit_piano_transients, **options), indent=2))
         return
     if args.fit_measurement:
         print(json.dumps(fit_measurements(args.fit_measurement), indent=2))

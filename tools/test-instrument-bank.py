@@ -24,6 +24,21 @@ class InstrumentBankTests(unittest.TestCase):
         self.assertEqual(len(bank_module.build_eeprom({'lead': 'flute'}, self.bank)), 64)
         self.assertNotIn('numpy', sys.modules)
 
+    def test_soft_piano_has_measured_origin_and_less_upper_harmonic_energy(self):
+        import cmath
+        import math
+        base = self.bank['instruments']['acoustic-grand-piano']
+        soft = self.bank['instruments']['acoustic-grand-piano-soft']
+        self.assertEqual(soft['gmProgram'], 0)
+        self.assertEqual(soft['envelope']['defaultLevel'], 14)
+        for register in ('low', 'high'):
+            def upper_energy(wave):
+                coefficient = lambda h: sum(v * cmath.exp(-2j*math.pi*h*i/16) for i,v in enumerate(wave))
+                return sum(abs(coefficient(h))**2 for h in range(4,8))/abs(coefficient(1))**2
+            self.assertLess(upper_energy(soft['waves'][register]), upper_energy(base['waves'][register]))
+            self.assertEqual(sum(soft['waves'][register]),0)
+            self.assertLessEqual(max(abs(a-b) for a,b in zip(soft['waves'][register],soft['transient']['waves'][register])),1)
+
     def test_physical_nibble_order_and_offset_binary(self):
         # A full signed ramp decodes as nibble values 0..15, low nibble first.
         self.assertEqual(bank_module.pack_wave(list(range(-8, 8))), bytes.fromhex('1032547698badcfe'))
@@ -187,7 +202,8 @@ class InstrumentBankTests(unittest.TestCase):
 
     def test_measured_provenance_and_gm_programs(self):
         self.assertTrue(bank_module.verify_sources(self.bank))
-        programs = {'acoustic-grand-piano': 0, 'acoustic-guitar-nylon': 24, 'fretless-bass': 35,
+        programs = {'acoustic-grand-piano': 0, 'acoustic-grand-piano-soft': 0,
+                    'acoustic-guitar-nylon': 24, 'fretless-bass': 35,
                     'violin': 40, 'cello': 42, 'clarinet': 71, 'flute': 73}
         self.assertEqual({n: p['gmProgram'] for n, p in self.bank['instruments'].items() if n != 'off'}, programs)
         changed = copy.deepcopy(self.bank)

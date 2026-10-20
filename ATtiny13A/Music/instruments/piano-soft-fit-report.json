@@ -1,0 +1,347 @@
+{
+  "method": "Joint zero-DC four-bit 16-point attack/sustain spectral magnitude fit; coherent fundamental; sample delta <= 1; attack H3.5/sustain H3 soft rolloff; seed 83120, 400 starts, 32 pairwise integer iterations.",
+  "measurement": "ATtiny13A/Music/reference/fluidr3/piano-soft-measurements.json",
+  "measurementSha256": "f8a3033ef4510610df5aad8b02a3513164e1131548cd63d1b24d486d4be1a335",
+  "attackMinEnvelopeLevel": 14,
+  "decayMaskByRegister": {
+    "thresholdMidi": 75,
+    "thresholdDdsStep": 2175,
+    "lowMask": 3,
+    "highMask": 0
+  },
+  "envelopeComparison": {
+    "low": {
+      "referenceMidi": [
+        49,
+        61
+      ],
+      "timesSeconds": [
+        0.1,
+        0.2,
+        0.3,
+        0.5
+      ],
+      "measuredMedianNormalizedRms": [
+        0.9147055000000001,
+        0.7908829999999999,
+        0.6984275,
+        0.5458860000000001
+      ],
+      "selectedMask": 3,
+      "selectedEnvelopeMedian": [
+        0.8666666666666667,
+        0.7666666666666666,
+        0.6666666666666666,
+        0.5
+      ],
+      "oldMask3EnvelopeMedian": [
+        0.8666666666666667,
+        0.7666666666666666,
+        0.6666666666666666,
+        0.5
+      ]
+    },
+    "middle": {
+      "referenceMidi": [
+        62,
+        74
+      ],
+      "timesSeconds": [
+        0.1,
+        0.2,
+        0.3,
+        0.5
+      ],
+      "measuredMedianNormalizedRms": [
+        0.8117575,
+        0.6419334999999999,
+        0.5332515,
+        0.37807250000000003
+      ],
+      "selectedMask": 3,
+      "selectedEnvelopeMedian": [
+        0.8666666666666667,
+        0.7666666666666666,
+        0.6666666666666666,
+        0.5
+      ],
+      "oldMask3EnvelopeMedian": [
+        0.8666666666666667,
+        0.7666666666666666,
+        0.6666666666666666,
+        0.5
+      ]
+    },
+    "high": {
+      "referenceMidi": [
+        75,
+        82
+      ],
+      "timesSeconds": [
+        0.1,
+        0.2,
+        0.3,
+        0.5
+      ],
+      "measuredMedianNormalizedRms": [
+        0.5594954999999999,
+        0.2925405,
+        0.154251,
+        0.083468
+      ],
+      "selectedMask": 0,
+      "selectedEnvelopeMedian": [
+        0.5666666666666667,
+        0.3666666666666667,
+        0.26666666666666666,
+        0.0
+      ],
+      "oldMask3EnvelopeMedian": [
+        0.8666666666666667,
+        0.7666666666666666,
+        0.6666666666666666,
+        0.5
+      ]
+    }
+  },
+  "attackDurationRangeSeconds": {
+    "mask3": [
+      0.05461333333333333,
+      0.10922666666666667
+    ],
+    "mask0": [
+      0.013653333333333333,
+      0.027306666666666667
+    ]
+  },
+  "limitations": [
+    "Two pitch-register waves and two temporal stages approximate 34 sampled notes.",
+    "Four-bit 16-point periodic tables preserve only seven harmonics; no hammer noise, inharmonic partials, stereo image or velocity layers.",
+    "Spectral fit uses magnitudes and a coherent attack/sustain fundamental, not the phase of every source partial.",
+    "The upper-note attack switches earlier because its decay clock is faster; no sample-by-sample crossfade.",
+    "Maximum one-unit table change bounds only the waveform-selection discontinuity; envelope quantization remains separate."
+  ],
+  "registers": {
+    "low": {
+      "referenceMidi": [
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61
+      ],
+      "attackWave": [
+        0,
+        -1,
+        1,
+        3,
+        4,
+        4,
+        3,
+        1,
+        -2,
+        -4,
+        -5,
+        -4,
+        -2,
+        0,
+        1,
+        1
+      ],
+      "sustainWave": [
+        0,
+        -1,
+        1,
+        3,
+        4,
+        4,
+        3,
+        1,
+        -2,
+        -4,
+        -5,
+        -4,
+        -2,
+        0,
+        1,
+        1
+      ],
+      "attackTarget": [
+        0.7974208180254532,
+        0.5764402078716232,
+        0.14307966911753323,
+        0.08929734977349074,
+        0.05218118975144376,
+        0.010280491235662957,
+        0.023713967893680354
+      ],
+      "sustainTarget": [
+        0.792780159950656,
+        0.5986319861650773,
+        0.10100006285515319,
+        0.046577790651855064,
+        0.023993120835159667,
+        0.007093333044771032,
+        0.011953017561256388
+      ],
+      "attackDistance": 0.05658757265059083,
+      "sustainDistance": 0.03494065869423602,
+      "fundamentalMagnitude": [
+        24.577209719112247,
+        24.577209719112247
+      ],
+      "fundamentalLevelRatio": 1.0,
+      "fundamentalPhaseDifferenceDegrees": -0.0,
+      "maximumWaveSwitchStep": 0,
+      "oldSustainDistances": [
+        0.043127504747329834,
+        0.09176597562296226
+      ]
+    },
+    "high": {
+      "referenceMidi": [
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82
+      ],
+      "attackWave": [
+        0,
+        0,
+        2,
+        4,
+        5,
+        4,
+        5,
+        4,
+        2,
+        -3,
+        -6,
+        -7,
+        -6,
+        -3,
+        -1,
+        0
+      ],
+      "sustainWave": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        5,
+        4,
+        3,
+        1,
+        -2,
+        -5,
+        -6,
+        -6,
+        -4,
+        -2,
+        0
+      ],
+      "attackTarget": [
+        0.9085539761334005,
+        0.3745549830632072,
+        0.17024018807398034,
+        0.07118811770637143,
+        0.013530366151891819,
+        0.0023705047790755713,
+        0.0002779848137700814
+      ],
+      "sustainTarget": [
+        0.9562996333608578,
+        0.27112635789031214,
+        0.10686811274231423,
+        0.023603542838369344,
+        0.0018257761109887775,
+        0.0005011178043858559,
+        6.291212528721207e-05
+      ],
+      "attackDistance": 0.04881334399862559,
+      "sustainDistance": 0.030211008205641363,
+      "fundamentalMagnitude": [
+        40.20811606778491,
+        40.0423005395252
+      ],
+      "fundamentalLevelRatio": 1.0041410090335852,
+      "fundamentalPhaseDifferenceDegrees": -0.09845809957203606,
+      "maximumWaveSwitchStep": 1,
+      "oldSustainDistances": [
+        0.21148228083168014,
+        0.15912020767440788
+      ]
+    }
+  },
+  "comparison": {
+    "velocity100": {
+      "upperToFundamental": 0.10372568773253316,
+      "harmonicsMedian": [
+        1.0,
+        0.508979055,
+        0.28017661000000005,
+        0.20211085,
+        0.11736439500000001,
+        0.06703347,
+        0.031218645000000003
+      ]
+    },
+    "velocity64": {
+      "upperToFundamental": 0.10373736390433866,
+      "harmonicsMedian": [
+        1.0,
+        0.50900714,
+        0.28021816,
+        0.2020986,
+        0.11736155000000001,
+        0.06702145000000001,
+        0.031187785
+      ]
+    },
+    "selected": "FluidR3 GM0 Yamaha Grand Piano, softer post-hammer60..120ms attack and200..500ms sustain; H3.5/H3 rolloff; velocity64 itself mostly changes volume, not spectral shape"
+  },
+  "alternativeSample": {
+    "library": "VSCO2 CE Upright Piano",
+    "file": "audio/assets/samples/lumiere-hifi/piano.wav",
+    "sha256": "81b5546726d4f60c7529a6d696af23ce44bee556bee0d47579b668d750a7d7d4",
+    "license": "CC0-1.0",
+    "midiRoot": 53,
+    "f0Hz": 174.33473313135553,
+    "sustainRatios": [
+      1.0,
+      0.9764714117086636,
+      0.400227792178806,
+      0.18822079712075065,
+      0.023495644055682437,
+      0.08167336931705048,
+      0.07774501327726173
+    ],
+    "scope": "One recorded pitch; not a multiregister measurement"
+  }
+}

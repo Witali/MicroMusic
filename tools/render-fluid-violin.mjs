@@ -17,7 +17,8 @@ if (!(profile in programs)) throw new Error('Profile must be violin, piano, guit
 const channel=profile==='drums'?9:0;
 const program=args.program===undefined?programs[profile]:Number(args.program);
 if(!Number.isInteger(program)||program<0||program>127)throw Error('Program must be 0..127');
-const sampleRate=48000,gate=Number(args.gate || .85),tail=Number(args.tail || .45),velocity=100;
+const sampleRate=48000,gate=Number(args.gate || .85),tail=Number(args.tail || .45),velocity=Number(args.velocity || 100);
+if(!Number.isInteger(velocity)||velocity<1||velocity>127)throw Error('Velocity must be 1..127');
 const notes=args.notes ? args.notes.split(',').map(Number) : [52,55,62,69,74];
 if (![gate,tail].every(v=>Number.isFinite(v)&&v>0&&v<=10) || !notes.every(n=>Number.isInteger(n)&&n>=0&&n<=127)) throw new Error('Invalid capture range');
 const synth=new SpessaSynthProcessor(sampleRate,{effectsEnabled:false,eventsEnabled:false,maxBufferSize:128});
