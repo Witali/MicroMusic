@@ -140,5 +140,33 @@
       ]
     ]
   },
-  "packing_candidates": 4096
+  "packing_candidates": 4096,
+  "instruments": {
+    "lead": "violin",
+    "keys": "acoustic-grand-piano",
+    "pluck": "acoustic-guitar-nylon",
+    "percussion": "natural-kit"
+  },
+  "engine": "instrument-bank",
+  "lead_envelope_model": "bowed",
+  "accompaniment_envelope_model": "piano",
+  "pluck_envelope_model": "pluck",
+  "percussion_enabled": true,
+  "keys_rest_check": false,
+  "pluck_rest_check": false,
+  "lead_max_level": 15,
+  "lead_attack_step": 4,
+  "lead_release_step": 1,
+  "lead_retrigger": "half",
+  "lead_release_model": "fast-above-8",
+  "keys_max_level": 15,
+  "keys_attack_step": 0,
+  "keys_release_step": 2,
+  "keys_retrigger": "full",
+  "keys_release_model": "shared-decay",
+  "pluck_max_level": 15,
+  "pluck_attack_step": 0,
+  "pluck_release_step": 1,
+  "pluck_retrigger": "full",
+  "pluck_release_model": "shared-decay"
 }

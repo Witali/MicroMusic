@@ -2,7 +2,7 @@
  * SRAM[0x60]=noise high, [0x61]=midpoint, [0x62]=next point, [0x63]=music divider, [0x64]=high grid phase; R25=low grid phase.
  * R18 belongs to ISR; R23 swaps 0x01/0x10 without changing arithmetic flags.
  * Sound generation 18.75 kHz; distinct interpolated output values 37.5 kHz.
- * Piano/guitar use soft sustain spectra with their measured envelopes.
+ * Build-time assignments specialize oscillators and instrument envelopes.
  * Per-sample attack/sustain spectral crossfade omitted to fit 1 KB Flash.
  */
 .section .text,"ax",@progbits
@@ -122,31 +122,35 @@ music_tick:
   /* Advance envelopes at ~73.24 Hz. Flags in envelope bytes encode attack, sustain and release. */
   inc r24
   sbrs r1, 7
-  rjmp .L084
+  rjmp lead_env_release
   mov r16, r1
   subi r16, 252
   cpi r16, 144
-  brcs lead_attack_ready
+  brcs lead_env_attack
   ldi r16, 143
-lead_attack_ready:
+lead_env_attack:
   mov r1, r16
-  rjmp .L08e
-.L084:
+  rjmp lead_env_done
+lead_env_release:
   tst r1
-  breq .L08e
+  breq lead_env_done
   dec r1
   sbrc r1, 3
   dec r1
+lead_env_done:
+  /* END LEAD ENVELOPE */
 .L08e:
   /* Piano and guitar use one shared envelope function with different decay masks. */
   mov r16, r19
   ldi r17, 3
   rcall update_envelope
   mov r19, r16
+  /* END KEYS ENVELOPE */
   mov r16, r20
   ldi r17, 1
   rcall update_envelope
   mov r20, r16
+  /* END PLUCK ENVELOPE */
   /* Percussion decays on alternate ticks, retriggering in a four-beat rhythm. */
   sbrc r24, 0
   rjmp .L0a8
@@ -218,11 +222,11 @@ chord_event:
   lpm r9, Z+
   lpm r12, Z+
   lpm r13, Z+
-  clr r7
-  clr r11
   ldi r16, 143
   mov r19, r16
+  ldi r16, 143
   mov r20, r16
+  /* END COMPANION TRIGGERS */
   movw r30, r26
   rjmp read_event
 melodic_event:
@@ -236,6 +240,7 @@ melodic_event:
   adc r31, r0
   lpm r22, Z
   movw r30, r26
+  /* BEGIN LEAD FREQUENCY */
   lsr r16
   lsr r16
   lsr r16
@@ -333,6 +338,7 @@ render_sample:
   /* Accumulate three pitch oscillators with independent phases and envelopes. */
   push r25
   clr r26
+  /* BEGIN LEAD RENDER */
   add r2, r4
   adc r3, r5
   mov r25, r1
@@ -340,6 +346,8 @@ render_sample:
   mov r17, r3
   rcall render_tone
   add r26, r17
+  /* END LEAD RENDER */
+  /* BEGIN KEYS RENDER */
   add r6, r8
   adc r7, r9
   mov r25, r19
@@ -348,6 +356,8 @@ render_sample:
   mov r17, r7
   rcall render_tone
   add r26, r17
+  /* END KEYS RENDER */
+  /* BEGIN PLUCK RENDER */
   add r10, r12
   adc r11, r13
   mov r25, r20
@@ -356,8 +366,9 @@ render_sample:
   mov r17, r11
   rcall render_tone
   add r26, r17
+  /* END PLUCK RENDER */
 render_drum:
-  /* Add bass drum or band-limited pseudo-random percussion; center the mix on PWM duty 128. */
+  /* Compact measured kit; parameters from percussion-bank.py. */
   cpi r21, 4
   brcc write_pwm
   cpi r29, 2
@@ -395,6 +406,17 @@ render_drum:
   asr r17
   sbrc r29, 1
   asr r17
+  sbrc r29, 1
+  rjmp .L2ae
+  asr r17
+  mov r27, r15
+  subi r27, 64
+  sbrc r27, 7
+  com r27
+  subi r27, 61
+  asr r27
+  asr r27
+  add r17, r27
 .L2ae:
   sbrc r21, 0
   asr r17
