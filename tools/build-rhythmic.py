@@ -14,6 +14,8 @@ def module(name,path):
 
 assembler=module('assembler',ROOT/'tools/assemble-avr.py')
 compiler=module('score_format',ROOT/'tools/score-format.py')
+bank=module('instrument_bank',ROOT/'tools/instrument-bank.py')
+engine=module('instrument_engine',ROOT/'tools/build-instrument-engine.py')
 
 def ihex(raw):
     rows=[]
@@ -24,7 +26,23 @@ def ihex(raw):
 
 def build(folder):
     data=json.loads((folder/'score.json').read_text(encoding='utf-8'))
-    score,meta=compiler.to_inc(data)
+    assignments=None
+    if 'instruments' in data:
+        assignments=bank.describe_assignments(data['instruments'])
+        if data.get('engine')=='instrument-bank':
+            source,metadata=engine.specialize(data,assignments)
+            data.update(metadata)
+            (folder/'synth.S').write_text(source,encoding='utf-8',newline='\n')
+            (folder/'score.json').write_text(json.dumps(data,indent=2,ensure_ascii=False)+'\n',encoding='utf-8',newline='\n')
+        (folder/'eeprom.bin').write_bytes(bank.build_eeprom(data['instruments']))
+    # The bytecode is meter-independent; Greensleeves uses dotted-quarter
+    # companion boundaries and its written pickup/closing bars.
+    original_pack_bar=compiler.pack_bar
+    if data.get('meter')=='6/8':
+        meter=module('meter_6_8',ROOT/'tools/arrange-greensleeves.py')
+        compiler.pack_bar=lambda *args,**kwargs:meter.pack_bar_6_8(compiler,*args,**kwargs)
+    try:score,meta=compiler.to_inc(data)
+    finally:compiler.pack_bar=original_pack_bar
     step=round(data['tempo_bpm']*4/60/(37500/512)*65536)
     assert 0<step<65536
     initial=math.ceil((65536-step)/256)
@@ -47,8 +65,12 @@ def build(folder):
                 flashSha256=hashlib.sha256(rom).hexdigest(),eepromSha256=hashlib.sha256(ep).hexdigest(),labels=labels,score=meta,
                 timing=dict(phaseStep=step,phaseBits=16,envelopeTickCycles=131072,tempoBpm=data['tempo_bpm'],actualTempoBpm=step/65536*(37500/512)*60/4,
                             sharedGrid='One sixteenth grid drives score and half-beat percussion',initialHighPhase=initial),
-                articulation=dict(holdIndex=meta['hold_index'],holds=meta['holds'],attack='Four envelope levels per tick, saturated at 15',
-                                  retrigger='Half current amplitude, same oscillator phase; explicit holds skip retrigger'))
+                articulation=dict(holdIndex=meta['hold_index'],holds=meta['holds'],
+                                  attack=data.get('lead_envelope_model','bowed'),
+                                  retrigger=data.get('lead_retrigger','half'),phaseContinuous=True))
+    if assignments is not None:
+        report['instrumentAssignments']=assignments
+        report['instrumentBankSha256']=hashlib.sha256(bank.BANK_PATH.read_bytes()).hexdigest()
     (folder/'build-report.json').write_text(json.dumps(report,indent=2,ensure_ascii=False)+'\n',encoding='utf-8',newline='\n')
     print(folder.name+':',len(rom),'Flash;',labels['playlist'],'code;',len(meta['holds']),'unique hold commands; phase step',step)
 
