@@ -9,7 +9,9 @@ const OP = { NOP:1, CLI:2, SEI:3, RETI:4, RET:5, CALL:6, JUMP:7, BRANCH:8,
 const sign = (v, bit) => v & bit ? v - bit * 2 : v;
 
 export class AVRCore {
-  constructor(binary, eeprom, { fastIdle = true } = {}) {
+  constructor(binary, eeprom, { fastIdle = true, device = 'attiny13a' } = {}) {
+    if (!['attiny13','attiny13a'].includes(device)) throw new Error('Unsupported device: ' + device);
+    this.device = device;
     if (!binary.length || binary.length > 1024) throw new Error('Flash must contain 1–1024 bytes');
     if (eeprom && eeprom.length !== 64) throw new Error('EEPROM must contain 64 bytes');
     this.rom = new Uint8Array(1024).fill(255); this.rom.set(binary);
@@ -112,6 +114,7 @@ export class AVRCore {
   }
   writeIO(address, value) {
     value &= 255;
+    if (address === 0x25 && this.device === 'attiny13') return 0; // Reserved; PRR exists only on 13A.
     if (address === 0x38) { this.io[address] &= ~(value & 14); return 0; } // W1C
     if (address === 0x39 && (value & 12)) throw new Error('Timer0 compare interrupts are not implemented');
     if (address === 0x1c) {

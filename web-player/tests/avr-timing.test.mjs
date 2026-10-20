@@ -47,6 +47,13 @@ test('GTCCR resets or holds the prescaler; PRR stops Timer0 counting',()=>{
   c.writeIO(0x25,0); c.clock(8); assert.equal(c.io[TCNT0],3);
 });
 
+test('original ATtiny13 has no PRR at the ATtiny13A address',()=>{
+  const c=new AVRCore(Uint8Array.of(0,0),null,{device:'attiny13'});
+  c.writeIO(TCCR0B,1); c.writeIO(0x25,2); c.clock(10);
+  assert.equal(c.io[0x25],0); assert.equal(c.io[TCNT0],10);
+  assert.throws(()=>new AVRCore(Uint8Array.of(0,0),null,{device:'atmega328p'}),/Unsupported device/);
+});
+
 test('pending overflow is serviced even after timer stops or TIMSK is enabled later',()=>{
   const c=make(out(TIMSK0)); c.writeIO(TCCR0B,1); c.clock(256); c.writeIO(TCCR0B,0);
   c.i=1; c.r[17]=2; c.step(); assert.equal(c.pc,3); assert.equal(c.irqCount,1); assert.equal(c.cyc,261);
