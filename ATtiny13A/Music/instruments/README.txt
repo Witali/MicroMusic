@@ -14,6 +14,7 @@ bank.json хранит измеренные тембры для назначен
   fretless-bass        35   безладовый бас
   violin               40   скрипка
   cello                42   виолончель
+  synth-strings-1      50   мягкие синтезаторные струнные Children
   clarinet             71   кларнет
   flute                73   флейта
   off                   —   выключенная партия
@@ -111,3 +112,7 @@ acoustic-grand-piano-soft использует измеренные спектр
 результат и сравнение с VSCO2 CE Upright: piano-soft-fit-report.json.
   python tools/instrument-bank.py --fit-piano-transients ATtiny13A/Music/reference/fluidr3/piano-soft-measurements.json --piano-voicing soft
 Уточняйте имя параметра через --help; обычная сборка уже использует готовый профиль.
+
+Для bowed/sustain доступны независимые attackMask/releaseMask:0,1,3,7,15.
+Огибающая обновляется при (R24 & mask)==0. У GM50 attackMask1,releaseMask7;
+нативное ядро Children использует отдельные описанные уровни/усиление.

@@ -24,8 +24,17 @@ def between(text, start, end, replacement):
     return text[:a] + replacement + text[b:]
 
 
-def envelope(register, model, cap, name, attack_step=4, release_step=1, fast_lead_release=False, decay_mask=None, fast_mask=None):
+def _validate_envelope_masks(model, attack_mask, release_mask, context):
+    for field, mask in (('attackMask', attack_mask), ('releaseMask', release_mask)):
+        if type(mask) is not int or mask not in (0, 1, 3, 7, 15):
+            raise ValueError(f'{context}: {field} must be 0, 1, 3, 7 or 15')
+    if model not in ('bowed', 'sustain') and (attack_mask or release_mask):
+        raise ValueError(f'{context}: attackMask/releaseMask require bowed or sustain envelopes')
+
+
+def envelope(register, model, cap, name, attack_step=4, release_step=1, fast_lead_release=False, decay_mask=None, fast_mask=None, attack_mask=0, release_mask=0):
     """Generate saturated attack, held/decaying sustain and safe release."""
+    _validate_envelope_masks(model, attack_mask, release_mask, name)
     if model == 'off':
         return ''
     if model in ('piano', 'pluck'):
@@ -36,10 +45,14 @@ def envelope(register, model, cap, name, attack_step=4, release_step=1, fast_lea
                 f'  rcall update_envelope\n  mov r{register}, r16\n')
     if model not in ('bowed', 'sustain'):
         raise ValueError(f'Unknown envelope {model}')
-    result = (f'  sbrs r{register}, 7\n  rjmp {name}_release\n  mov r16, r{register}\n'
+    # music_tick increments R24 once before all three envelopes. Each mask
+    # independently selects every (mask + 1)th attack or release tick.
+    attack_gate = '' if not attack_mask else f'  mov r16, r24\n  andi r16, {attack_mask}\n  brne {name}_done\n'
+    release_gate = '' if not release_mask else f'  mov r16, r24\n  andi r16, {release_mask}\n  brne {name}_done\n'
+    result = (f'  sbrs r{register}, 7\n  rjmp {name}_release\n' + attack_gate + f'  mov r16, r{register}\n'
               f'  subi r16, {256 - attack_step}\n  cpi r16, {129 + cap}\n  brcs {name}_attack\n'
               f'  ldi r16, {128 + cap}\n{name}_attack:\n  mov r{register}, r16\n'
-              f'  rjmp {name}_done\n{name}_release:\n')
+              f'  rjmp {name}_done\n{name}_release:\n' + release_gate)
     if fast_lead_release:
         # Keep the historical bowed lead release; companions release linearly.
         result += (f'  tst r{register}\n  breq {name}_done\n  dec r{register}\n'
@@ -62,6 +75,9 @@ def _settings(roles):
         model, cap = entry['envelope']['model'], entry['level']
         if model not in MODELS or type(cap) is not int or not 0 <= cap <= 15:
             raise ValueError(f'{role}: unsupported envelope or level')
+        attack_mask = entry['envelope'].get('attackMask', 0)
+        release_mask = entry['envelope'].get('releaseMask', 0)
+        _validate_envelope_masks(model, attack_mask, release_mask, role)
         if model == 'off' or cap == 0:
             result[role] = dict(model='off', cap=0, attack=0, release=0, retrigger='off')
             continue
@@ -80,6 +96,8 @@ def _settings(roles):
         elif requested is not None:
             raise ValueError(f'{role}: unsupported retrigger {requested!r}')
         result[role] = dict(model=model, cap=cap, attack=attack, release=release, retrigger=retrigger)
+        if model in ('bowed', 'sustain'):
+            result[role].update(attack_mask=attack_mask, release_mask=release_mask)
         if model in ('piano', 'pluck'):
             mask = entry['envelope'].get('decayMask', 3 if model == 'piano' else 1)
             if type(mask) is not int or mask not in (0, 1, 3, 7, 15):
@@ -202,7 +220,8 @@ def specialize(score, roles):
         s = settings[role]
         generated = envelope(register, s['model'], s['cap'], role + '_env',
                              s['attack'], s['release'], False,
-                             s.get('mask'), s.get('fast_mask'))
+                             s.get('mask'), s.get('fast_mask'),
+                             s.get('attack_mask', 0), s.get('release_mask', 0))
         text = between(text, f'  /* BEGIN {role.upper()} ENVELOPE */\n',
                        f'  /* END {role.upper()} ENVELOPE */\n', generated)
 
@@ -284,6 +303,9 @@ def specialize(score, roles):
         metadata[role + '_attack_step'] = s['attack']
         metadata[role + '_release_step'] = s['release']
         metadata[role + '_retrigger'] = s['retrigger']
+        for phase in ('attack', 'release'):
+            if s.get(phase + '_mask', 0):
+                metadata[role + '_' + phase + '_mask'] = s[phase + '_mask']
         if 'mask' in s:
             metadata[role + '_decay_mask'] = s['mask']
             metadata[role + '_fast_decay_mask'] = s.get('fast_mask')
