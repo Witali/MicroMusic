@@ -1,7 +1,8 @@
 """Small fail-closed assembler for the AVR subset used by this project.
 
-Implements the retained GNU AVR source, not arbitrary AVR assembly. Before
-building a new layout, verify it against the archived GNU/LLVM-produced image.
+Implements the project's GNU AVR source, not arbitrary AVR assembly. The
+encoder was validated against the original GNU/LLVM-produced images before
+those obsolete firmware versions were removed from the working tree.
 """
 from pathlib import Path
 import re
@@ -94,16 +95,19 @@ def assemble(path):
     return bytes(rom),symbols
 
 
-def verify_originals(root):
-    for folder in ['final/attiny13a_synth_release','snapshots/attiny13-final/alternate-test','variants/fluid-violin','variants/fluid-instruments']:
-        path=Path(root)/'ATtiny13A/Music'/folder
+def verify_sources(root):
+    paths=sorted((Path(root)/'ATtiny13A/Music/variants').glob('*/synth.S'))
+    assert paths,'No firmware sources'
+    for source in paths:
+        path=source.parent
         rom,_=assemble(path/'synth.S')
         expected=(path/'synth.bin').read_bytes()
-        assert rom==expected,f'Assembler mismatch: {folder}'
+        assert rom==expected,f'Assembler mismatch: {path}'
+    return len(paths)
 
 
 if __name__=='__main__':
-    if sys.argv[1:] == ['--verify-originals']:
-        verify_originals(Path(__file__).resolve().parents[1]);print('Four retained AVR sources assemble byte-for-byte, including original toolchain output.')
+    if sys.argv[1:] == ['--verify']:
+        print(verify_sources(Path(__file__).resolve().parents[1]),'AVR sources assemble byte-for-byte.')
     else:
         rom,symbols=assemble(sys.argv[1]);Path(sys.argv[2]).write_bytes(rom);print(len(rom),'bytes')

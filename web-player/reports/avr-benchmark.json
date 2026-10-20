@@ -7,112 +7,13 @@
   "method": "Median of five alternating runs after warm-up; 37500 OCR0B writes (one nominal second for these images) per run. Construction excluded. Corrected fast/slow cores match state, checksum and cycles; archive matches checksum, with up to 2 cycles of RETI latency difference. This is not a physical PWM accuracy measurement.",
   "results": [
     {
-      "id": "four-voice",
-      "flashSha256": "3cc24fb3485fda452390c0069f838b96a8dace0caf1e18dc3e7a853a2323b8ac",
-      "eepromSha256": null,
-      "referenceMs": 61.90919999999994,
-      "optimizedMs": 34.3211,
-      "speedup": 1.803823304031629,
-      "realtimeHeadroom": 29.13659527229605
-    },
-    {
-      "id": "spectral",
-      "flashSha256": "897c5899ed61372632d8bfdb28683f81f10fe8ff6c029f1b3de7dae3039439d0",
-      "eepromSha256": null,
-      "referenceMs": 65.65300000000002,
-      "optimizedMs": 42.06619999999998,
-      "speedup": 1.5607066956368782,
-      "realtimeHeadroom": 23.772054523584266
-    },
-    {
-      "id": "acoustic",
-      "flashSha256": "691001cfb0efee84af14c90292181f02067bd37a5923e011cbe950e87c19f4e7",
-      "eepromSha256": null,
-      "referenceMs": 75.6914999999999,
-      "optimizedMs": 57.066699999999855,
-      "speedup": 1.326368968242427,
-      "realtimeHeadroom": 17.523354250377235
-    },
-    {
-      "id": "bipolar",
-      "flashSha256": "6879efb12b4915ba6f1e1389f62085b8d981608017060331c6c51a4554cda26f",
-      "eepromSha256": null,
-      "referenceMs": 78.50839999999971,
-      "optimizedMs": 71.41720000000032,
-      "speedup": 1.0992926073830864,
-      "realtimeHeadroom": 14.002229154881395
-    },
-    {
-      "id": "measured",
-      "flashSha256": "635cfa874c6e6429561da0b3968f484624597e30673ea4a205dc4a7a9c99837c",
-      "eepromSha256": null,
-      "referenceMs": 84.44180000000051,
-      "optimizedMs": 82.64039999999977,
-      "speedup": 1.0217980551885124,
-      "realtimeHeadroom": 12.100619067671536
-    },
-    {
-      "id": "final",
-      "flashSha256": "bee41b7813f355341628a161192563eae157bf0517718377e9863aa6d986f5d6",
-      "eepromSha256": "4c9e10f68a00bf9b8a0236a4203c1fab81c692c831e607204956d024c9b25a50",
-      "referenceMs": 74.8784999999998,
-      "optimizedMs": 69.2496000000001,
-      "speedup": 1.0812842240243943,
-      "realtimeHeadroom": 14.440516623922717
-    },
-    {
-      "id": "fluid-violin",
-      "flashSha256": "fa2d2dbe81d260a1e2185fcd8fff08f60e326e079cc719a7bbcb7de58a7bcd4a",
-      "eepromSha256": "2ddabf4e139623d3fad63d7d51ac113d74ac3311c9ef822aae081c0fc0ffdc1a",
-      "referenceMs": 74.98400000000038,
-      "optimizedMs": 69.32840000000033,
-      "speedup": 1.081576958360499,
-      "realtimeHeadroom": 14.424103253500661
-    },
-    {
-      "id": "fluid-instruments",
-      "flashSha256": "487863b7b14987bebdf4dd77418dee5a77d686cf292348c7bc034b826080e28d",
+      "id": "rhythmic",
+      "flashSha256": "60c516658676aea787543b337e28d9042a3eb30cb72404fc281643be30eb9678",
       "eepromSha256": "ac29eb2ba4b6718b3b490b9b74be52d5a1ea819149df9edac4d4aecf80443f81",
-      "referenceMs": 82.73039999999946,
-      "optimizedMs": 79.2506999999996,
-      "speedup": 1.0439074986088437,
-      "realtimeHeadroom": 12.618185075967848
-    },
-    {
-      "id": "foreground-pwm",
-      "flashSha256": "0116bffd9bc97a7e0ab8029bbedc0158a60dce8da3bb753fdf5993ebe3b663c9",
-      "eepromSha256": "ac29eb2ba4b6718b3b490b9b74be52d5a1ea819149df9edac4d4aecf80443f81",
-      "referenceMs": 90.78620000000046,
-      "optimizedMs": 90.39099999999962,
-      "speedup": 1.0043721166930428,
-      "realtimeHeadroom": 11.063048312332027
-    },
-    {
-      "id": "natural-hat",
-      "flashSha256": "90ab14c842b0b49c56a6da33e1243aa88c8bbe4984c04051579c18ffae9e2420",
-      "eepromSha256": "ac29eb2ba4b6718b3b490b9b74be52d5a1ea819149df9edac4d4aecf80443f81",
-      "referenceMs": 89.03009999999995,
-      "optimizedMs": 88.26460000000043,
-      "speedup": 1.0086727861452895,
-      "realtimeHeadroom": 11.329570405349315
-    },
-    {
-      "id": "smooth-pwm",
-      "flashSha256": "f9d707f2fb71938d5267fb45919aaab28e60142363a17bb95899059d41bcb216",
-      "eepromSha256": "ac29eb2ba4b6718b3b490b9b74be52d5a1ea819149df9edac4d4aecf80443f81",
-      "referenceMs": 85.93139999999948,
-      "optimizedMs": 77.09709999999905,
-      "speedup": 1.114586670575165,
-      "realtimeHeadroom": 12.970656483836777
-    },
-    {
-      "id": "smoke",
-      "flashSha256": "42f4ef50892e7ae92adc0f25102a6624022bd04e0790055d7935932ff48243bc",
-      "eepromSha256": "4c9e10f68a00bf9b8a0236a4203c1fab81c692c831e607204956d024c9b25a50",
-      "referenceMs": 75.45249999999942,
-      "optimizedMs": 72.79399999999987,
-      "speedup": 1.0365208671044255,
-      "realtimeHeadroom": 13.737395939225785
+      "referenceMs": 84.02570000000003,
+      "optimizedMs": 87.20600000000002,
+      "speedup": 0.9635311790473134,
+      "realtimeHeadroom": 11.467100887553606
     }
   ]
 }

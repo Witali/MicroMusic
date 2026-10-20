@@ -8,7 +8,7 @@ import numpy as np
 ROOT=Path(__file__).resolve().parents[1]
 FOLDER=ROOT/'build/fluid-grid/drums'
 AVR=ROOT/'build/fluid-grid/avr-drums'
-OUT=ROOT/'ATtiny13A/Music/variants/fluid-instruments'
+OUT=ROOT/'ATtiny13A/Music/reference/fluidr3'
 EDGES=np.array([35,120,250,500,1000,2000,4000,6500,9000])
 
 

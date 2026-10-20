@@ -1,4 +1,4 @@
-"""Discover firmware in the retained archive without executing archive code."""
+"""Verify every retained firmware image without executing embedded code."""
 from pathlib import Path
 from zipfile import ZipFile
 import hashlib
@@ -10,18 +10,7 @@ ROOT = Path(__file__).resolve().parents[2]
 MUSIC = ROOT / 'ATtiny13A' / 'Music'
 OUTPUT = ROOT / 'web-player' / 'firmware.json'
 SPECS = [
-    ('four-voice', '01', 'Четыре голоса', 'Первый полный синтезатор: скрипка, пианино, гитара и ударные.', 'snapshots/attiny13-synth', 'release'),
-    ('spectral', '02', 'Спектр по регистрам', 'Тембр и затухание зависят от высоты ноты.', 'snapshots/attiny13-spectral', 'release'),
-    ('acoustic', '03', 'Акустические тембры', 'Гармоники настроены по инструментальным сэмплам.', 'snapshots/attiny13-acoustic', 'release'),
-    ('bipolar', '04', 'Биполярный синтез', 'Общий генератор гармоник и смешивание вокруг PWM 128.', 'snapshots/attiny13-refined', 'release'),
-    ('measured', '05', 'Измеренные спектры', 'Компактные таблицы волн и приближения измеренных огибающих.', 'snapshots/attiny13-real-instruments/firmware', 'release'),
-    ('final', '06', 'EEPROM-волны и note-off', 'Табличные тембры, независимый note-off и переходы attack / sustain.', 'final/attiny13a_synth_release', 'release'),
-    ('fluid-violin', '07', 'Скрипка FluidR3', 'Спектр FluidR3 GM, плавная атака, связные ноты и мягкое затухание.', 'variants/fluid-violin', 'release'),
-    ('fluid-instruments', '08', 'Мягкие тембры FluidR3', 'Мягкие спектры скрипки, пианино и гитары; огибающие и ударные по FluidR3 GM.', 'variants/fluid-instruments', 'release'),
-    ('foreground-pwm', '09', 'Синтез в основном цикле', 'Мягкие тембры FluidR3; прерывание выводит готовый PWM за 12 тактов.', 'variants/foreground-pwm', 'release'),
-    ('natural-hat', '10', 'Длинный шум тарелок', 'Хэт с длинной шумовой последовательностью и фильтрацией по FluidR3; ISR 12 тактов.', 'variants/natural-hat', 'release'),
-    ('smooth-pwm', '11', 'Плавный PWM', 'Синтез 18,75 кГц, промежуточные средние на выходе 37,5 кГц; ISR 19 тактов.', 'variants/smooth-pwm', 'release'),
-    ('smoke', 'T1', 'Тестовая мелодия', 'Короткая проверочная партитура C4–D4–E4; три повтора секции.', 'snapshots/attiny13-final/alternate-test', 'experimental'),
+    ('rhythmic', '01', 'Единый ритм и штрихи', 'Общая сетка нот и ударных, повторная атака и явные лиги; мягкие тембры FluidR3 и плавный PWM.', 'variants/rhythmic', 'release'),
 ]
 
 
@@ -62,7 +51,7 @@ def build():
         binary = decode(flash)
         entry = dict(id=id_, order=order, title=title, description=description, status=status,
                      flashBytes=len(binary), eepromBytes=64 if eeprom else 0,
-                     cpuHz=9600000, pwmHz=37500, sampleHz=37500 if id_=='smooth-pwm' else (18750 if eeprom else 37500),
+                     cpuHz=9600000, pwmHz=37500, sampleHz=37500, synthesisHz=18750,
                      flashSha256=digest(binary), eepromSha256=digest(decode(eeprom, 64)) if eeprom else None,
                      flashHex=flash, eepromHex=eeprom, sources=[],
                      originalPlayer=f'../ATtiny13A/Music/{folder}/player.html',
@@ -70,9 +59,7 @@ def build():
                      eepromSource=f'../ATtiny13A/Music/{folder}/eeprom.hex' if eeprom else None,
                      preview=f'../ATtiny13A/Music/{folder}/preview.wav' if (directory / 'preview.wav').exists() else None)
         key = (entry['flashSha256'], entry['eepromSha256'])
-        if id_ in {'foreground-pwm','natural-hat','smooth-pwm'}:
-            entry['referenceCore'] = f'../ATtiny13A/Music/{folder}/avr_core.js'
-        if id_=='smooth-pwm': entry['synthesisHz']=18750
+        entry['referenceCore'] = f'../ATtiny13A/Music/{folder}/avr_core.js'
         assert key not in by_key
         by_key[key] = entry
         entries.append(entry)
@@ -111,7 +98,7 @@ def build():
                         target = name.rsplit('/', 1)[0] + '/' + n
                         return z.read(target) if target in z.namelist() else None
                     inspect(path.relative_to(ROOT).as_posix() + '!/' + name, z.read(name), sibling)
-    return dict(schema=1, defaultId='smooth-pwm', entries=entries,
+    return dict(schema=1, defaultId='rhythmic', entries=entries,
                 sourceOnly=[dict(title='Исходный C-прототип · 2016',
                                  source='../ATtiny13A/Music/00_original/attiny13a_initial_2016.c',
                                  reason='Сохранён исходник C; готового HEX / BIN в архиве нет.')])
@@ -124,4 +111,4 @@ if __name__ == '__main__':
         assert OUTPUT.read_text(encoding='utf-8') == text, 'Run build_catalog.py to update catalog'
     else:
         OUTPUT.write_text(text, encoding='utf-8', newline='\n')
-    print(f"Catalog verified: {len(catalog['entries'])} unique images, all retained HEX/BIN/HTML and 6 ZIP releases covered.")
+    print(f"Catalog verified: {len(catalog['entries'])} unique images; every retained HEX/BIN/HTML image covered.")

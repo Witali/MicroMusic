@@ -60,3 +60,39 @@ test('the compact tone routine exactly scales all sustain wave samples at every 
     assert.equal(c.r[0],0);assert.equal(c.sp,159);
   }
 });
+
+test('actual percussion noise visits all 65535 nonzero states before repeating',()=>{
+  const c=new AVRCore(read('synth.bin'),read('eeprom.bin')),seen=new Set();c.r[14]=167;
+  const start=labels['.L298']/2,end=labels['.L2a0']/2+2;
+  let expected=167;
+  for(let i=0;i<65535;i++){
+    c.pc=start;while(c.pc!==end)c.step();
+    expected=((expected<<1)&65535)^((expected&32768)?45:0);
+    const state=c.r[14]|c.ram[0]<<8;
+    assert.equal(state,expected);assert.ok(state!==0&&!seen.has(state));seen.add(state);
+  }
+  assert.equal(expected,167);assert.equal(seen.size,65535);
+});
+
+test('all playlist boundaries and note-off paths fit the CPU and SRAM budgets',t=>{
+  const c=new AVRCore(read('synth.bin'),read('eeprom.bin')),sections=new Set(),tokens=new Set();
+  const entry=labels.audio_step/2,done=(labels.idle+6)/2;let maximum=0;
+  for(let n=0;n<950;n++){
+    while(c.pc!==entry||c.inIRQ)c.step();
+    // Force one grid overflow and one score command on this envelope tick.
+    c.r[15]=255;c.ram[3]=255;c.r[25]=255;c.ram[4]=255;c.r[22]=1;
+    const before=c.cyc;
+    do{
+      if(c.pc===labels.read_event/2&&!c.inIRQ)tokens.add(c.rom[c.r[30]|c.r[31]<<8]);
+      c.step();
+    }while(c.pc!==done||c.inIRQ);
+    maximum=Math.max(maximum,c.cyc-before);sections.add(c.r[28]);
+  }
+  for(let n=0;n<15;n++)assert.ok(sections.has(n));
+  for(const token of [0xf2,0xf4,0xf6,0xf8,0xff])assert.ok(tokens.has(token));
+  assert.ok(maximum<480,`${maximum} foreground cycles including IRQ`);
+  assert.ok(c.minSP>=101,'Five state bytes do not overlap the hardware stack');
+  assert.equal(c.ram.subarray(5,c.minSP-96+1).some(x=>x!==0),false);
+  assert.equal(c.maxIRQ,19);assert.equal(c.lost+c.workLost,0);
+  t.diagnostic(JSON.stringify({maximumForegroundCyclesIncludingIrq:maximum,maxStackBytes:159-c.minSP}));
+});
