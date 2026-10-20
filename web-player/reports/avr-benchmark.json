@@ -3,80 +3,98 @@
   "platform": "win32",
   "arch": "x64",
   "cpu": "AMD Ryzen 5 5600X 6-Core Processor             ",
-  "coreSha256": "bdf1aecb64ff691305715bff00eff40a868d1c843477bfc1e88398eb8f1c4d30",
+  "coreSha256": "75f51ace478b163a5c0332bd6bf6f65e8c54fb934a8a85b3c8cdc504a8ba3e18",
   "method": "Median of five alternating runs after warm-up; 37500 PWM samples (one emulated second) per run. Construction excluded. Same Flash/EEPROM, checksum and cycle count.",
   "results": [
     {
       "id": "four-voice",
       "flashSha256": "3cc24fb3485fda452390c0069f838b96a8dace0caf1e18dc3e7a853a2323b8ac",
       "eepromSha256": null,
-      "referenceMs": 72.15020000000004,
-      "optimizedMs": 18.209100000000035,
-      "speedup": 3.962315545523936,
-      "realtimeHeadroom": 54.917596146981346
+      "referenceMs": 103.61689999999999,
+      "optimizedMs": 22.781099999999924,
+      "speedup": 4.548371237560975,
+      "realtimeHeadroom": 43.89603662685311
     },
     {
       "id": "spectral",
       "flashSha256": "897c5899ed61372632d8bfdb28683f81f10fe8ff6c029f1b3de7dae3039439d0",
       "eepromSha256": null,
-      "referenceMs": 89.38279999999986,
-      "optimizedMs": 23.006400000000212,
-      "speedup": 3.8851276166631474,
-      "realtimeHeadroom": 43.46616593643468
+      "referenceMs": 104.16740000000004,
+      "optimizedMs": 35.35940000000005,
+      "speedup": 2.9459606215037555,
+      "realtimeHeadroom": 28.281022868035052
     },
     {
       "id": "acoustic",
       "flashSha256": "691001cfb0efee84af14c90292181f02067bd37a5923e011cbe950e87c19f4e7",
       "eepromSha256": null,
-      "referenceMs": 84.58379999999988,
-      "optimizedMs": 36.254900000000134,
-      "speedup": 2.333030845485702,
-      "realtimeHeadroom": 27.58247850635352
+      "referenceMs": 105.0592999999999,
+      "optimizedMs": 37.04329999999982,
+      "speedup": 2.836121511852357,
+      "realtimeHeadroom": 26.99543507192947
     },
     {
       "id": "bipolar",
       "flashSha256": "6879efb12b4915ba6f1e1389f62085b8d981608017060331c6c51a4554cda26f",
       "eepromSha256": null,
-      "referenceMs": 94.10939999999982,
-      "optimizedMs": 42.93949999999995,
-      "speedup": 2.1916743324910613,
-      "realtimeHeadroom": 23.288580444579026
+      "referenceMs": 100.35539999999992,
+      "optimizedMs": 40.65279999999984,
+      "speedup": 2.4685974889798565,
+      "realtimeHeadroom": 24.59855163727969
     },
     {
       "id": "measured",
       "flashSha256": "635cfa874c6e6429561da0b3968f484624597e30673ea4a205dc4a7a9c99837c",
       "eepromSha256": null,
-      "referenceMs": 112.7482,
-      "optimizedMs": 52.509599999999864,
-      "speedup": 2.1471921324862557,
-      "realtimeHeadroom": 19.044136691195565
+      "referenceMs": 106.47800000000007,
+      "optimizedMs": 55.22640000000001,
+      "speedup": 1.9280271754088631,
+      "realtimeHeadroom": 18.107282024538986
     },
     {
       "id": "final",
       "flashSha256": "bee41b7813f355341628a161192563eae157bf0517718377e9863aa6d986f5d6",
       "eepromSha256": "4c9e10f68a00bf9b8a0236a4203c1fab81c692c831e607204956d024c9b25a50",
-      "referenceMs": 90.79050000000007,
-      "optimizedMs": 45.28510000000006,
-      "speedup": 2.0048647347582307,
-      "realtimeHeadroom": 22.082318466780436
+      "referenceMs": 81.3756999999996,
+      "optimizedMs": 40.318199999999706,
+      "speedup": 2.018336632091715,
+      "realtimeHeadroom": 24.802694564737696
     },
     {
       "id": "fluid-violin",
       "flashSha256": "fa2d2dbe81d260a1e2185fcd8fff08f60e326e079cc719a7bbcb7de58a7bcd4a",
       "eepromSha256": "2ddabf4e139623d3fad63d7d51ac113d74ac3311c9ef822aae081c0fc0ffdc1a",
-      "referenceMs": 80.30000000000018,
-      "optimizedMs": 37.35919999999987,
-      "speedup": 2.149403627486682,
-      "realtimeHeadroom": 26.767168461851522
+      "referenceMs": 88.1247000000003,
+      "optimizedMs": 37.94660000000022,
+      "speedup": 2.322334543806291,
+      "realtimeHeadroom": 26.35282212372108
+    },
+    {
+      "id": "fluid-instruments",
+      "flashSha256": "487863b7b14987bebdf4dd77418dee5a77d686cf292348c7bc034b826080e28d",
+      "eepromSha256": "ac29eb2ba4b6718b3b490b9b74be52d5a1ea819149df9edac4d4aecf80443f81",
+      "referenceMs": 95.05280000000039,
+      "optimizedMs": 47.0639000000001,
+      "speedup": 2.0196541298107507,
+      "realtimeHeadroom": 21.247707903509863
+    },
+    {
+      "id": "foreground-pwm",
+      "flashSha256": "0116bffd9bc97a7e0ab8029bbedc0158a60dce8da3bb753fdf5993ebe3b663c9",
+      "eepromSha256": "ac29eb2ba4b6718b3b490b9b74be52d5a1ea819149df9edac4d4aecf80443f81",
+      "referenceMs": 110.36110000000008,
+      "optimizedMs": 53.2432000000008,
+      "speedup": 2.072773612404935,
+      "realtimeHeadroom": 18.781741142530596
     },
     {
       "id": "smoke",
       "flashSha256": "42f4ef50892e7ae92adc0f25102a6624022bd04e0790055d7935932ff48243bc",
       "eepromSha256": "4c9e10f68a00bf9b8a0236a4203c1fab81c692c831e607204956d024c9b25a50",
-      "referenceMs": 77.32189999999991,
-      "optimizedMs": 39.53729999999996,
-      "speedup": 1.955669709363057,
-      "realtimeHeadroom": 25.292571824580865
+      "referenceMs": 97.02269999999953,
+      "optimizedMs": 40.35949999999866,
+      "speedup": 2.4039618924913033,
+      "realtimeHeadroom": 24.777313891401857
     }
   ]
 }

@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
+import { fileURLToPath } from 'node:url';
 import { AVRCore } from '../lib/avr-core.js';
 import { parseHex } from '../lib/hex.js';
 const require = createRequire(import.meta.url);
@@ -11,7 +12,8 @@ const catalog = JSON.parse(readFileSync(new URL('../firmware.json', import.meta.
 for (const entry of catalog.entries) {
   test(`${entry.id}: 14 seconds match archived interpreter, PWM and exact CPU state`, () => {
     const flash = parseHex(entry.flashHex), ep = entry.eepromHex ? parseHex(entry.eepromHex, 64) : null;
-    const fast = new AVRCore(flash, ep), ref = new Reference(flash, ep);
+    const ReferenceCore = entry.referenceCore ? require(fileURLToPath(new URL(entry.referenceCore,new URL('../',import.meta.url)))).AVRCore : Reference;
+    const fast = new AVRCore(flash, ep), ref = new ReferenceCore(flash, ep);
     let changes = 0, last = -1;
     for (let i = 0; i < 14 * 37500; i++) {
       const sample = fast.nextDuty();
@@ -26,6 +28,8 @@ for (const entry of catalog.entries) {
     assert.deepEqual(Array.from(fast.stack.subarray(0, fast.sp)), ref.stack);
     assert.ok(changes > 1000, 'No useful sound');
     assert.equal(fast.lost, 0);
+    assert.equal(fast.workLost, 0);
+    if (entry.referenceCore) assert.equal(fast.t, ref.t);
   });
 }
 

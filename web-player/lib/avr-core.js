@@ -4,7 +4,7 @@
 const OP = { NOP:1, CLI:2, SEI:3, RETI:4, RET:5, CALL:6, JUMP:7, BRANCH:8,
   SKIP:9, LDI:10, CPI:11, SUBI:12, ORI:13, ANDI:14, MOVW:15, ADD:16,
   ADC:17, SUB:18, AND:19, EOR:20, MOV:21, INC:22, DEC:23, COM:24,
-  LSR:25, ASR:26, SWAP:27, IN:28, OUT:29, SBI:30, PUSH:31, POP:32, ST:33, LPM:34 };
+  LSR:25, ASR:26, SWAP:27, IN:28, OUT:29, SBI:30, PUSH:31, POP:32, ST:33, LPM:34, SET:35, CLT:36 };
 const sign = (v, bit) => v & bit ? v - bit * 2 : v;
 
 export class AVRCore {
@@ -17,16 +17,19 @@ export class AVRCore {
     this.op = new Uint8Array(512); this.d = new Uint8Array(512);
     this.s = new Uint8Array(512); this.k = new Int16Array(512);
     this.stack = new Uint16Array(64); this.sp = 0;
-    this.pc = this.cyc = this.z = this.c = this.i = 0;
+    this.pc = this.cyc = this.z = this.c = this.i = this.t = 0;
     this.timer = this.pending = this.inIRQ = false; this.overflowAt = Infinity;
     this.irqStart = this.irqCount = this.lost = this.maxIRQ = this.writes = 0;
     this.duty = 128; this.fastIdle = fastIdle; this.idleCycles = 0;
+    this.workLost = 0;
     for (let p = 0; p < 512; p++) this.decode(p);
   }
   decode(p) {
     const w = this.rom[p * 2] | this.rom[p * 2 + 1] << 8;
     let o = 0, d = (w >> 4) & 31, s = (w & 15) | ((w >> 5) & 16), k = 0;
     if (w === 0) o = OP.NOP;
+    else if (w === 0x9468) o = OP.SET;
+    else if (w === 0x94e8) o = OP.CLT;
     else if (w === 0x94f8) o = OP.CLI;
     else if (w === 0x9478) o = OP.SEI;
     else if (w === 0x9518) o = OP.RETI;
@@ -78,6 +81,8 @@ export class AVRCore {
     this.pc++;
     switch (this.op[p]) {
       case OP.NOP: break;
+      case OP.SET: if (this.t && this.inIRQ) this.workLost++; this.t = 1; break;
+      case OP.CLT: this.t = 0; break;
       case OP.CLI: this.i = 0; break;
       case OP.SEI: this.i = 1; break;
       case OP.RETI:
@@ -87,8 +92,8 @@ export class AVRCore {
       case OP.CALL: this.push(this.pc); this.pc += k; n = 3; break;
       case OP.JUMP: this.pc += k; n = 2; break;
       case OP.BRANCH:
-        if (d > 1) throw new Error('Unsupported branch flag');
-        if ((d === 0 ? this.c : this.z) === s) { this.pc += k; n = 2; } break;
+        if (d > 1 && d !== 6) throw new Error('Unsupported branch flag');
+        if ((d === 0 ? this.c : d === 6 ? this.t : this.z) === s) { this.pc += k; n = 2; } break;
       case OP.SKIP:
         if (((r[d] >> s) & 1) === k) {
           const w = this.rom[this.pc * 2] | this.rom[this.pc * 2 + 1] << 8;
@@ -138,10 +143,11 @@ export class AVRCore {
   nextDuty() {
     const before = this.writes, deadline = this.cyc + 9600000;
     while (this.writes === before) {
-      // The firmware's two-cycle RJMP-to-self has no observable side effects.
+      // Empty two-cycle RJMP-to-self / BRTC-to-self loops have no side effects.
       // Jump to the same instruction boundary as repeated RJMPs, then service
       // the exact pending overflow. Never skip an ISR or disabled-IRQ loop.
-      if (this.fastIdle && this.op[this.pc] === OP.JUMP && this.k[this.pc] === -1 &&
+      if (this.fastIdle && this.k[this.pc] === -1 &&
+          (this.op[this.pc] === OP.JUMP || (this.op[this.pc] === OP.BRANCH && this.d[this.pc] === 6 && this.s[this.pc] === 0 && !this.t)) &&
           this.timer && this.i && !this.pending && (this.io[0x39] & 2)) {
         const n = Math.max(2, Math.ceil((this.overflowAt - this.cyc) / 2) * 2);
         this.idleCycles += n; this.clock(n);
@@ -152,6 +158,6 @@ export class AVRCore {
   }
   state() {
     return { pc:this.pc * 2, cycles:this.cyc, irqs:this.irqCount, maxISR:this.maxIRQ,
-      lost:this.lost, duty:this.duty, registers:Array.from(this.r), idleCycles:this.idleCycles };
+      lost:this.lost + this.workLost, timerLost:this.lost, workLost:this.workLost, duty:this.duty, registers:Array.from(this.r), idleCycles:this.idleCycles };
   }
 }

@@ -1,15 +1,17 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
+import { fileURLToPath } from 'node:url';
 import { cpus, platform, arch } from 'node:os';
 import { createHash } from 'node:crypto';
 import { AVRCore } from '../lib/avr-core.js';
 import { parseHex } from '../lib/hex.js';
 const require = createRequire(import.meta.url);
-const { AVRCore: Reference } = require('../../ATtiny13A/Music/final/attiny13a_synth_release/avr_core.js');
+const { AVRCore: DefaultReference } = require('../../ATtiny13A/Music/final/attiny13a_synth_release/avr_core.js');
 const catalog = JSON.parse(readFileSync(new URL('../firmware.json', import.meta.url)));
 const median = list => list.sort((a,b) => a-b)[Math.floor(list.length / 2)];
 const results = [];
 for (const entry of catalog.entries) {
+  const Reference=entry.referenceCore?require(fileURLToPath(new URL(entry.referenceCore,new URL('../',import.meta.url)))).AVRCore:DefaultReference;
   const flash = parseHex(entry.flashHex), ep = entry.eepromHex ? parseHex(entry.eepromHex, 64) : null;
   function run(Core, count) {
     const core = new Core(flash, ep), started = performance.now();
