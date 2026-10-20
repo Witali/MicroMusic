@@ -1,10 +1,19 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
 import {AVRCore} from '../web-player/lib/avr-core.js';
 
 const name=process.argv[2]??'rhythmic';
 const folder=`ATtiny13A/Music/variants/${name}`;
 const meta=JSON.parse(fs.readFileSync(folder+'/build-report.json')),{labels}=meta;
+if(meta.engine==='alicia-native'){
+ const {audit}=await import('./audit-alicia-native.mjs');
+ audit(folder);process.exit(0);
+}
+if(meta.engine==='children-native'){
+ const {audit}=await import('./audit-children-native.mjs');
+ audit(folder);process.exit(0);
+}
 const voices=meta.releaseChannels.voiceAddresses;
 const score=JSON.parse(fs.readFileSync(folder+'/score.json'));
 const rom=fs.readFileSync(folder+'/synth.bin'),ep=fs.readFileSync(folder+'/eeprom.bin');
@@ -108,6 +117,7 @@ const maximumTimingErrorMs=Math.max(...expected.map((e,i)=>Math.abs((commands[i]
 assert.ok(maximumTimingErrorMs<25,`${maximumTimingErrorMs}ms whole-song timing error`);
 const semanticComparison={exactCommandBytes:expected.length,maximumTimingErrorMs,allFiveVoicesSilentBeforeRestart:endState.every(x=>x===0)};
 const report={image:name,flashBytes:rom.length,emulatedSeconds:c.cyc/9600000,mixes,tailCopies,bothActiveRenderedPoints:bothActive,
+ flashSha256:createHash('sha256').update(rom).digest('hex'),eepromSha256:createHash('sha256').update(ep).digest('hex'),
  maxElapsedCycles:maxElapsed,maxActiveCycles:maxActive,maxBurst,maxStackBytes:maxStack,voiceRamBytes:25,pwmRingBytes:16,
  maxRenderElapsedCycles:maxRenderCycles,maxRenderActiveCycles:maxRenderActive,
  globalRamBytes:0,sramUsedWorstCase:41+maxStack,sramHighWaterReservedBytes:48+maxStack,isrCycles:c.maxIRQ,lostTimerEvents:c.lost,lostWorkEvents:c.workLost,
