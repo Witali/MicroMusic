@@ -20,6 +20,7 @@ SPECS = [
     ('fluid-instruments', '08', 'Мягкие тембры FluidR3', 'Мягкие спектры скрипки, пианино и гитары; огибающие и ударные по FluidR3 GM.', 'variants/fluid-instruments', 'release'),
     ('foreground-pwm', '09', 'Синтез в основном цикле', 'Мягкие тембры FluidR3; прерывание выводит готовый PWM за 12 тактов.', 'variants/foreground-pwm', 'release'),
     ('natural-hat', '10', 'Длинный шум тарелок', 'Хэт с длинной шумовой последовательностью и фильтрацией по FluidR3; ISR 12 тактов.', 'variants/natural-hat', 'release'),
+    ('smooth-pwm', '11', 'Плавный PWM', 'Синтез 18,75 кГц, промежуточные средние на выходе 37,5 кГц; ISR 19 тактов.', 'variants/smooth-pwm', 'release'),
     ('smoke', 'T1', 'Тестовая мелодия', 'Короткая проверочная партитура C4–D4–E4; три повтора секции.', 'snapshots/attiny13-final/alternate-test', 'experimental'),
 ]
 
@@ -61,7 +62,7 @@ def build():
         binary = decode(flash)
         entry = dict(id=id_, order=order, title=title, description=description, status=status,
                      flashBytes=len(binary), eepromBytes=64 if eeprom else 0,
-                     cpuHz=9600000, pwmHz=37500, sampleHz=18750 if eeprom else 37500,
+                     cpuHz=9600000, pwmHz=37500, sampleHz=37500 if id_=='smooth-pwm' else (18750 if eeprom else 37500),
                      flashSha256=digest(binary), eepromSha256=digest(decode(eeprom, 64)) if eeprom else None,
                      flashHex=flash, eepromHex=eeprom, sources=[],
                      originalPlayer=f'../ATtiny13A/Music/{folder}/player.html',
@@ -69,8 +70,9 @@ def build():
                      eepromSource=f'../ATtiny13A/Music/{folder}/eeprom.hex' if eeprom else None,
                      preview=f'../ATtiny13A/Music/{folder}/preview.wav' if (directory / 'preview.wav').exists() else None)
         key = (entry['flashSha256'], entry['eepromSha256'])
-        if id_ in {'foreground-pwm','natural-hat'}:
+        if id_ in {'foreground-pwm','natural-hat','smooth-pwm'}:
             entry['referenceCore'] = f'../ATtiny13A/Music/{folder}/avr_core.js'
+        if id_=='smooth-pwm': entry['synthesisHz']=18750
         assert key not in by_key
         by_key[key] = entry
         entries.append(entry)
@@ -109,7 +111,7 @@ def build():
                         target = name.rsplit('/', 1)[0] + '/' + n
                         return z.read(target) if target in z.namelist() else None
                     inspect(path.relative_to(ROOT).as_posix() + '!/' + name, z.read(name), sibling)
-    return dict(schema=1, defaultId='natural-hat', entries=entries,
+    return dict(schema=1, defaultId='smooth-pwm', entries=entries,
                 sourceOnly=[dict(title='Исходный C-прототип · 2016',
                                  source='../ATtiny13A/Music/00_original/attiny13a_initial_2016.c',
                                  reason='Сохранён исходник C; готового HEX / BIN в архиве нет.')])

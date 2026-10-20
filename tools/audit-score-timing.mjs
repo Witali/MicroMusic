@@ -1,6 +1,7 @@
 // Trace a complete playlist through real AVR code, independently decode its score.
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
 import {AVRCore} from '../web-player/lib/avr-core.js';
 const id=process.argv[2]||'natural-hat',folder=`ATtiny13A/Music/variants/${id}`;
 const rom=fs.readFileSync(`${folder}/synth.bin`),ep=fs.readFileSync(`${folder}/eeprom.bin`);
@@ -74,7 +75,7 @@ assert.ok(finished,'Playlist did not complete');assert.equal(c.lost+c.workLost,0
 const notes=events.filter(e=>e.token<224),chords=events.filter(e=>e.token>=224&&e.token<240);
 const durationMs=durations.map(t=>t*tickCycles/hz*1000);
 const drumRows=drums.map((d,i)=>({...d,timeMs:(d.cycles-firstCycle)/hz*1000,idealTimeMs:(i+1)*.5*60/score.tempo_bpm*1000}));
-const report={image:id,cpuHz:hz,tempoBpm:score.tempo_bpm,tickCycles,tickMs:tickCycles/hz*1000,
+const report={image:id,flashSha256:createHash('sha256').update(rom).digest('hex'),coreSha256:createHash('sha256').update(fs.readFileSync('web-player/lib/avr-core.js')).digest('hex'),cpuHz:hz,tempoBpm:score.tempo_bpm,tickCycles,tickMs:tickCycles/hz*1000,
   fullPlaylist:{beats:totalBeats,idealSeconds:totalBeats*60/score.tempo_bpm,quantizedSeconds:totalTicks*tickCycles/hz,
     events:events.length,noteOrRestEvents:notes.length,noteEvents:notes.filter(e=>e.pitch!==13).length,restEvents:notes.filter(e=>e.pitch===13).length,chords:chords.length,drumHits:drums.length,missingEvents:0,
     finalDriftMs:events.at(-1).driftFromScoreMs,maxQuantizedScheduleErrorUs:Math.max(...events.map(e=>Math.abs(e.quantizedScheduleErrorUs)))},
@@ -87,7 +88,8 @@ const report={image:id,cpuHz:hz,tempoBpm:score.tempo_bpm,tickCycles,tickMs:tickC
     leadAttack50PercentMs:(firstHalfCycle-firstAttackCycle)/hz*1000,leadAttack100PercentMs:(firstPeakCycle-firstAttackCycle)/hz*1000,
     repeatedNotes,repeatedNotesWithoutLevelChange,drumLevels:[1,.5,.5,.25],drumAgeStepMs:2*tickCycles/hz*1000,
     note:'Matches existing envelope code; this is not proof that every articulation matches the musical score or FluidR3.'},
-  output:{readySampleBytes:1,readySamples:1,register:'R18',pwmWritePeriodCycles:256,newMixPeriodCycles:512},
+  output:id==='smooth-pwm'?{readySampleBytes:3,readyPoints:2,midpointValues:1,register:'R18',sramOutputAddresses:[97,98],pwmWritePeriodCycles:256,newMixPeriodCycles:512}:
+    {readySampleBytes:1,readySamples:1,register:'R18',pwmWritePeriodCycles:256,newMixPeriodCycles:512},
   lostTimerEvents:c.lost,lostWorkEvents:c.workLost,maxIsrCycles:c.maxIRQ,events,drums:drumRows,firstLeadAttack:leadAttack};
 fs.mkdirSync('web-player/reports',{recursive:true});
 fs.writeFileSync(`web-player/reports/${id}-score-audit.json`,JSON.stringify(report,null,2)+'\n');

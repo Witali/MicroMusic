@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-20",
+  "image": "smooth-pwm",
+  "automatedTests": {"fullSuitePassed": 236, "fullSuiteFailed": 0, "subsequentFocusedSuitePassed": 3, "exhaustiveToneCases": 1536, "catalogImages": 12, "referenceOutputSecondsPerImage": 14, "tempoSecondsPerImage": 60},
+  "firmware": {"flashBytes": 1010, "codeBytes": 690, "tableBytes": 320, "eepromBytes": 64, "constantSramBytes": 4, "maximumStackBytes": 5},
+  "output": {"pwmHz": 37500, "synthesisHz": 18750, "sequence": "A, floor((A+B)/2), B", "readyAudioStorageBytes": 3, "verifiedPwmWrites": 75000, "computedPoints": 37499, "tornPairs": 0},
+  "timing": {"maximumActiveMixCyclesExcludingIrqAndPublicationWait": 232, "maximumObservedEventCyclesExcludingIrq": 160, "maximumElapsedForegroundCyclesIncludingIrqAndPublicationWait": 265, "isrCyclesIncludingEntryAndVector": 19, "lostTimerEvents": 0, "lostWorkEvents": 0},
+  "fullScoreTrace": {"commands": 522, "musicalTicks": 16224, "missingEvents": 0, "envelopeModelMismatches": 0, "report": "smooth-pwm-score-audit.json"},
+  "browser": {"displayTime": "01:24.9", "audioClockIntervalMs": 84821.333, "wallClockIntervalMs": 84818.900, "tempoPercent": 100, "accumulatedLagMs": 0, "lostEvents": 0, "isrCycles": 19, "filterHz": 12000, "visibleError": "", "stateAtFinalObservation": "paused by user"},
+  "tradeoffs": ["Piano/guitar use soft sustain spectra and original amplitude envelopes; their per-sample attack spectral crossfade is omitted to fit 1 KB", "Interpolation does not double the generated bandwidth", "Musical timing and repeated-note articulation issues remain as documented in score-timing-audit.txt", "No physical chip or analog output measurement"]
+}

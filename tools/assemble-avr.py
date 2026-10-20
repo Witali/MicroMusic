@@ -51,8 +51,8 @@ def assemble(path):
         if op in {'ldi','cpi','subi','ori','andi'}:
             d,k=register(a[0]),value(a[1]);assert 16<=d<=31 and 0<=k<=255
             return {'ldi':0xe000,'cpi':0x3000,'subi':0x5000,'ori':0x6000,'andi':0x7000}[op]|((d-16)<<4)|(k&15)|((k&240)<<4)
-        if op in {'inc','dec','com','lsr','asr','swap','push','pop'}:
-            return {'inc':0x9403,'dec':0x940a,'com':0x9400,'lsr':0x9406,'asr':0x9405,'swap':0x9402,'push':0x920f,'pop':0x900f}[op]|register(a[0])<<4
+        if op in {'inc','dec','com','lsr','asr','ror','swap','push','pop'}:
+            return {'inc':0x9403,'dec':0x940a,'com':0x9400,'lsr':0x9406,'asr':0x9405,'ror':0x9407,'swap':0x9402,'push':0x920f,'pop':0x900f}[op]|register(a[0])<<4
         if op in {'lds','sts'}:
             d,address=(register(a[0]),value(a[1])) if op=='lds' else (register(a[1]),value(a[0]))
             assert 96<=address<160, 'Only ATtiny13A SRAM addresses are supported'
