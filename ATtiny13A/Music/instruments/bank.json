@@ -1,0 +1,851 @@
+{
+  "schema": 1,
+  "soundfont": {
+    "name": "FluidR3 GM",
+    "version": "3.1",
+    "sha256": "74594e8f4250680adf590507a306655a299935343583256f3b722c48a1bc1cb0",
+    "license": "MIT",
+    "notice": "FluidR3-MIT.txt"
+  },
+  "encoding": {
+    "samplesPerWave": 16,
+    "bitsPerSample": 4,
+    "representation": "offset binary; decoded signed sample = nibble - 8",
+    "packing": "low nibble first",
+    "bytesPerWave": 8,
+    "registers": [
+      "low",
+      "high"
+    ],
+    "eepromSlots": {
+      "lead": [
+        0,
+        8
+      ],
+      "keys": [
+        16,
+        24
+      ],
+      "pluck": [
+        32,
+        40
+      ]
+    },
+    "reservedBytes": [
+      48,
+      63
+    ]
+  },
+  "instruments": {
+    "violin": {
+      "label": "Скрипка",
+      "gmProgram": 40,
+      "waves": {
+        "low": [
+          -3,
+          2,
+          4,
+          5,
+          5,
+          0,
+          -3,
+          -2,
+          -2,
+          -2,
+          0,
+          3,
+          4,
+          0,
+          -5,
+          -6
+        ],
+        "high": [
+          -2,
+          0,
+          2,
+          3,
+          3,
+          6,
+          6,
+          5,
+          0,
+          -4,
+          -5,
+          -4,
+          -4,
+          -3,
+          -2,
+          -1
+        ]
+      },
+      "envelope": {
+        "model": "bowed",
+        "defaultLevel": 15,
+        "attackStep": 4,
+        "retrigger": "half-current-level",
+        "releaseStep": 1
+      },
+      "source": {
+        "soundfontSha256": "74594e8f4250680adf590507a306655a299935343583256f3b722c48a1bc1cb0",
+        "measurement": "ATtiny13A/Music/reference/fluidr3/measurements.json",
+        "measurementSha256": "95c7d6b91fefcc00e8f0438f1d459ea01c2302e2bce16a571d79742cd0a49a33",
+        "note": "Existing softened sustain waves retained byte-for-byte from the rhythmic EEPROM. Violin uses the documented 60% solo violin / 40% string-ensemble voicing; piano/guitar use their own GM presets."
+      },
+      "fit": {
+        "originalFitNormalizedSpectralDistance": {
+          "low": 0.022779512032975194,
+          "high": 0.008673584914304148
+        }
+      }
+    },
+    "acoustic-grand-piano": {
+      "label": "Акустический рояль",
+      "gmProgram": 0,
+      "waves": {
+        "low": [
+          0,
+          2,
+          4,
+          5,
+          3,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          -2,
+          -4,
+          -5,
+          -4,
+          -2
+        ],
+        "high": [
+          1,
+          3,
+          3,
+          4,
+          5,
+          6,
+          3,
+          1,
+          0,
+          -1,
+          -2,
+          -3,
+          -5,
+          -6,
+          -6,
+          -3
+        ]
+      },
+      "envelope": {
+        "model": "piano",
+        "defaultLevel": 15,
+        "decayMask": 3,
+        "retrigger": "peak",
+        "releaseStep": 2
+      },
+      "source": {
+        "soundfontSha256": "74594e8f4250680adf590507a306655a299935343583256f3b722c48a1bc1cb0",
+        "measurement": "ATtiny13A/Music/reference/fluidr3/measurements.json",
+        "measurementSha256": "95c7d6b91fefcc00e8f0438f1d459ea01c2302e2bce16a571d79742cd0a49a33",
+        "note": "Existing softened sustain waves retained byte-for-byte from the rhythmic EEPROM. Violin uses the documented 60% solo violin / 40% string-ensemble voicing; piano/guitar use their own GM presets."
+      },
+      "fit": {
+        "originalFitNormalizedSpectralDistance": {
+          "low": 0.031786189500802024,
+          "high": 0.03169937595618037
+        }
+      }
+    },
+    "acoustic-guitar-nylon": {
+      "label": "Акустическая гитара с нейлоновыми струнами",
+      "gmProgram": 24,
+      "waves": {
+        "low": [
+          0,
+          3,
+          4,
+          5,
+          3,
+          2,
+          1,
+          1,
+          0,
+          0,
+          -1,
+          0,
+          -2,
+          -5,
+          -7,
+          -4
+        ],
+        "high": [
+          4,
+          5,
+          3,
+          0,
+          -1,
+          0,
+          3,
+          4,
+          2,
+          0,
+          -3,
+          -5,
+          -5,
+          -4,
+          -3,
+          0
+        ]
+      },
+      "envelope": {
+        "model": "pluck",
+        "defaultLevel": 15,
+        "decayMask": 1,
+        "retrigger": "peak",
+        "releaseStep": 1
+      },
+      "source": {
+        "soundfontSha256": "74594e8f4250680adf590507a306655a299935343583256f3b722c48a1bc1cb0",
+        "measurement": "ATtiny13A/Music/reference/fluidr3/measurements.json",
+        "measurementSha256": "95c7d6b91fefcc00e8f0438f1d459ea01c2302e2bce16a571d79742cd0a49a33",
+        "note": "Existing softened sustain waves retained byte-for-byte from the rhythmic EEPROM. Violin uses the documented 60% solo violin / 40% string-ensemble voicing; piano/guitar use their own GM presets."
+      },
+      "fit": {
+        "originalFitNormalizedSpectralDistance": {
+          "low": 0.017427710086296306,
+          "high": 0.024372089045807222
+        }
+      }
+    },
+    "fretless-bass": {
+      "label": "Безладовый бас",
+      "gmProgram": 35,
+      "waves": {
+        "low": [
+          0,
+          -2,
+          -4,
+          -4,
+          -4,
+          -3,
+          0,
+          2,
+          4,
+          4,
+          4,
+          4,
+          3,
+          0,
+          -3,
+          -1
+        ],
+        "high": [
+          0,
+          -2,
+          -4,
+          -4,
+          -4,
+          -3,
+          0,
+          2,
+          4,
+          4,
+          4,
+          4,
+          3,
+          0,
+          -3,
+          -1
+        ]
+      },
+      "envelope": {
+        "model": "sustain",
+        "defaultLevel": 6,
+        "attackStep": 2,
+        "retrigger": "half-current-level",
+        "releaseStep": 1
+      },
+      "source": {
+        "soundfontSha256": "74594e8f4250680adf590507a306655a299935343583256f3b722c48a1bc1cb0",
+        "measurement": "ATtiny13A/Music/reference/children/fretless-measurements.json",
+        "measurementSha256": "d9af3fe34b842f94bbd9ae9a75724ad98870ecc2e363fa979d5830774816ac88",
+        "note": "Original GM35; measured low-register profile retained byte-for-byte. Same compact wave is used in both registers; high-register realism was not measured."
+      }
+    },
+    "flute": {
+      "label": "Флейта",
+      "gmProgram": 73,
+      "waves": {
+        "low": [
+          0,
+          1,
+          2,
+          2,
+          4,
+          5,
+          3,
+          -2,
+          -4,
+          -5,
+          -4,
+          -2,
+          -1,
+          0,
+          1,
+          0
+        ],
+        "high": [
+          0,
+          1,
+          -1,
+          -2,
+          -1,
+          1,
+          2,
+          3,
+          4,
+          3,
+          2,
+          1,
+          -1,
+          -4,
+          -5,
+          -3
+        ]
+      },
+      "envelope": {
+        "model": "sustain",
+        "defaultLevel": 15,
+        "attackStep": 4,
+        "retrigger": "half-current-level",
+        "releaseStep": 1
+      },
+      "source": {
+        "soundfontSha256": "74594e8f4250680adf590507a306655a299935343583256f3b722c48a1bc1cb0",
+        "measurement": "ATtiny13A/Music/reference/greensleeves/flute-measurements.json",
+        "measurementSha256": "5aa893e9e3e918a62a5e21249770fef4a3c5960e91dc8f6ea81df4eeeec56906",
+        "note": "Direct original FluidR3 preset capture. Low register MIDI <63, high >=63; no sample audio is embedded into firmware."
+      },
+      "fit": {
+        "method": "Median stereo-power partials; circular-mean phases; seven harmonics; H3.2 soft low-pass; deterministic integer spectral fit; zero-DC 16-point offset-binary four-bit samples, peak <= 5; quiet-start phase rotation",
+        "registers": {
+          "low": {
+            "waveform": [
+              0,
+              1,
+              2,
+              2,
+              4,
+              5,
+              3,
+              -2,
+              -4,
+              -5,
+              -4,
+              -2,
+              -1,
+              0,
+              1,
+              0
+            ],
+            "referenceNotes": [
+              59
+            ],
+            "targetAmplitudes": [
+              0.67710067,
+              0.52638549,
+              0.20054025,
+              0.24815886,
+              0.28737538,
+              0.23210098,
+              0.16185892
+            ],
+            "softenedTargetAmplitudes": [
+              0.77477968,
+              0.58540861,
+              0.17717883,
+              0.12947097,
+              0.08342279,
+              0.03985286,
+              0.01762166
+            ],
+            "quantizedAmplitudes": [
+              0.77984625,
+              0.57989117,
+              0.16509136,
+              0.13376339,
+              0.08963004,
+              0.0412116,
+              0.02619749
+            ],
+            "normalizedSpectralDistance": 0.01829112
+          },
+          "high": {
+            "waveform": [
+              0,
+              1,
+              -1,
+              -2,
+              -1,
+              1,
+              2,
+              3,
+              4,
+              3,
+              2,
+              1,
+              -1,
+              -4,
+              -5,
+              -3
+            ],
+            "referenceNotes": [
+              64,
+              69,
+              74
+            ],
+            "targetAmplitudes": [
+              0.71883486,
+              0.48044767,
+              0.38294838,
+              0.29204667,
+              0.13526108,
+              0.04008637,
+              0.02456193
+            ],
+            "softenedTargetAmplitudes": [
+              0.78377664,
+              0.50914267,
+              0.32239532,
+              0.14518879,
+              0.03741504,
+              0.00655869,
+              0.00254807
+            ],
+            "quantizedAmplitudes": [
+              0.78418028,
+              0.4997835,
+              0.32826536,
+              0.15655607,
+              0.04420003,
+              0.01471225,
+              0.02897755
+            ],
+            "normalizedSpectralDistance": 0.03259545
+          }
+        }
+      }
+    },
+    "cello": {
+      "label": "Виолончель",
+      "gmProgram": 42,
+      "waves": {
+        "low": [
+          0,
+          1,
+          -2,
+          -3,
+          -2,
+          -1,
+          -1,
+          1,
+          2,
+          3,
+          4,
+          5,
+          3,
+          -1,
+          -5,
+          -4
+        ],
+        "high": [
+          0,
+          2,
+          1,
+          -3,
+          -5,
+          -3,
+          -1,
+          0,
+          1,
+          2,
+          2,
+          2,
+          2,
+          1,
+          0,
+          -1
+        ]
+      },
+      "envelope": {
+        "model": "bowed",
+        "defaultLevel": 10,
+        "attackStep": 4,
+        "retrigger": "half-current-level",
+        "releaseStep": 1
+      },
+      "source": {
+        "soundfontSha256": "74594e8f4250680adf590507a306655a299935343583256f3b722c48a1bc1cb0",
+        "measurement": "ATtiny13A/Music/reference/greensleeves/cello-measurements.json",
+        "measurementSha256": "83392e6920bada52a4f2c3c93a017cf0b1b4c9c8e2113d79d15064f938c63c2f",
+        "note": "Direct original FluidR3 preset capture. Low register MIDI <63, high >=63; no sample audio is embedded into firmware."
+      },
+      "fit": {
+        "method": "Median stereo-power partials; circular-mean phases; seven harmonics; H3.2 soft low-pass; deterministic integer spectral fit; zero-DC 16-point offset-binary four-bit samples, peak <= 5; quiet-start phase rotation",
+        "registers": {
+          "low": {
+            "waveform": [
+              0,
+              1,
+              -2,
+              -3,
+              -2,
+              -1,
+              -1,
+              1,
+              2,
+              3,
+              4,
+              5,
+              3,
+              -1,
+              -5,
+              -4
+            ],
+            "referenceNotes": [
+              47,
+              50,
+              52,
+              55
+            ],
+            "targetAmplitudes": [
+              0.57825863,
+              0.4361431,
+              0.45146923,
+              0.44176898,
+              0.24596049,
+              0.09720446,
+              0.08041499
+            ],
+            "softenedTargetAmplitudes": [
+              0.70107573,
+              0.51392771,
+              0.42262606,
+              0.24420563,
+              0.07565164,
+              0.01768425,
+              0.00927609
+            ],
+            "quantizedAmplitudes": [
+              0.7093197,
+              0.5003627,
+              0.42816926,
+              0.24011263,
+              0.07175168,
+              0.01158395,
+              0.01540303
+            ],
+            "normalizedSpectralDistance": 0.01973359
+          },
+          "high": {
+            "waveform": [
+              0,
+              2,
+              1,
+              -3,
+              -5,
+              -3,
+              -1,
+              0,
+              1,
+              2,
+              2,
+              2,
+              2,
+              1,
+              0,
+              -1
+            ],
+            "referenceNotes": [
+              47,
+              50,
+              52,
+              55
+            ],
+            "targetAmplitudes": [
+              0.57825863,
+              0.4361431,
+              0.45146923,
+              0.44176898,
+              0.24596049,
+              0.09720446,
+              0.08041499
+            ],
+            "softenedTargetAmplitudes": [
+              0.70107573,
+              0.51392771,
+              0.42262606,
+              0.24420563,
+              0.07565164,
+              0.01768425,
+              0.00927609
+            ],
+            "quantizedAmplitudes": [
+              0.70779085,
+              0.4997835,
+              0.42721949,
+              0.24253563,
+              0.08421584,
+              0.01471225,
+              0.02449065
+            ],
+            "normalizedSpectralDistance": 0.02413919
+          }
+        }
+      }
+    },
+    "clarinet": {
+      "label": "Кларнет",
+      "gmProgram": 71,
+      "waves": {
+        "low": [
+          -2,
+          3,
+          5,
+          3,
+          3,
+          3,
+          3,
+          2,
+          2,
+          -3,
+          -5,
+          -3,
+          -3,
+          -3,
+          -3,
+          -2
+        ],
+        "high": [
+          0,
+          1,
+          -5,
+          -5,
+          2,
+          5,
+          3,
+          2,
+          1,
+          -1,
+          4,
+          5,
+          -1,
+          -3,
+          -4,
+          -4
+        ]
+      },
+      "envelope": {
+        "model": "sustain",
+        "defaultLevel": 12,
+        "attackStep": 4,
+        "retrigger": "half-current-level",
+        "releaseStep": 1
+      },
+      "source": {
+        "soundfontSha256": "74594e8f4250680adf590507a306655a299935343583256f3b722c48a1bc1cb0",
+        "measurement": "ATtiny13A/Music/instruments/clarinet-measurements.json",
+        "measurementSha256": "67b6461a20a69715c7995dafee5dcc99da5a270e52ae468b32b89c1235225bb3",
+        "note": "Direct original FluidR3 preset capture. Low register MIDI <63, high >=63; no sample audio is embedded into firmware."
+      },
+      "fit": {
+        "method": "Median stereo-power partials; circular-mean phases; seven harmonics; H3.2 soft low-pass; deterministic integer spectral fit; zero-DC 16-point offset-binary four-bit samples, peak <= 5; quiet-start phase rotation",
+        "registers": {
+          "low": {
+            "waveform": [
+              -2,
+              3,
+              5,
+              3,
+              3,
+              3,
+              3,
+              2,
+              2,
+              -3,
+              -5,
+              -3,
+              -3,
+              -3,
+              -3,
+              -2
+            ],
+            "referenceNotes": [
+              55,
+              60
+            ],
+            "targetAmplitudes": [
+              0.51821522,
+              0.00653652,
+              0.23350385,
+              0.00831375,
+              0.48964896,
+              0.035312,
+              0.66016214
+            ],
+            "softenedTargetAmplitudes": [
+              0.91535241,
+              0.0112216,
+              0.31846192,
+              0.00669565,
+              0.21941848,
+              0.00935962,
+              0.11094658
+            ],
+            "quantizedAmplitudes": [
+              0.91245083,
+              0.0,
+              0.33007421,
+              0.0,
+              0.21578485,
+              0.0,
+              0.10918514
+            ],
+            "normalizedSpectralDistance": 0.0204433
+          },
+          "high": {
+            "waveform": [
+              0,
+              1,
+              -5,
+              -5,
+              2,
+              5,
+              3,
+              2,
+              1,
+              -1,
+              4,
+              5,
+              -1,
+              -3,
+              -4,
+              -4
+            ],
+            "referenceNotes": [
+              67,
+              74
+            ],
+            "targetAmplitudes": [
+              0.32516732,
+              0.0367545,
+              0.46634883,
+              0.167809,
+              0.74255564,
+              0.25522413,
+              0.17534535
+            ],
+            "softenedTargetAmplitudes": [
+              0.61477989,
+              0.06753883,
+              0.68078341,
+              0.14465907,
+              0.35616559,
+              0.07240891,
+              0.03154221
+            ],
+            "quantizedAmplitudes": [
+              0.61130156,
+              0.07495317,
+              0.68070039,
+              0.14990634,
+              0.35644188,
+              0.07495317,
+              0.04689036
+            ],
+            "normalizedSpectralDistance": 0.01835013
+          }
+        }
+      }
+    },
+    "off": {
+      "label": "Выключен",
+      "gmProgram": null,
+      "waves": {
+        "low": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "high": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "envelope": {
+        "model": "off",
+        "defaultLevel": 0
+      },
+      "source": {
+        "note": "Silence, no instrument source."
+      }
+    }
+  },
+  "percussion": {
+    "natural-kit": {
+      "label": "Естественная ударная установка",
+      "generator": "existing AVR kick and band-limited pseudorandom noise",
+      "notes": [
+        {
+          "gmNote": 35,
+          "label": "Басовый барабан"
+        },
+        {
+          "gmNote": 38,
+          "label": "Малый барабан"
+        },
+        {
+          "gmNote": 42,
+          "label": "Закрытый хай-хэт"
+        }
+      ],
+      "eepromBytes": 0,
+      "source": {
+        "soundfontSha256": "74594e8f4250680adf590507a306655a299935343583256f3b722c48a1bc1cb0",
+        "measurement": "ATtiny13A/Music/reference/fluidr3/percussion-measurements.json",
+        "measurementSha256": "2c351bbd55887e932b6f0aecd4a92a533acffe1da3303d2f83739d45016085bf",
+        "note": "Measured FluidR3 Standard kit; compact existing kernel generator, not PCM samples."
+      }
+    }
+  }
+}
