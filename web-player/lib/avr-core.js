@@ -1,6 +1,6 @@
 // Specialized interpreter for the archived synth firmware, derived from its
 // HTML players. ROM bytes are immutable; decode once, execute integer op IDs.
-// ATtiny13(A), AVRe timings. See reports/avr-audit.md for instruction coverage
+// ATtiny13(A), AVRe timings. See reports/avr-audit.txt for instruction coverage
 // and peripheral limitations; this remains a firmware-oriented AVR subset.
 const OP = { NOP:1, CLI:2, SEI:3, RETI:4, RET:5, CALL:6, JUMP:7, BRANCH:8,
   SKIP:9, LDI:10, CPI:11, SUBI:12, ORI:13, ANDI:14, MOVW:15, ADD:16,
@@ -23,6 +23,7 @@ export class AVRCore {
     this.pc = this.cyc = this.z = this.c = this.i = 0;
     this.irqDelay = 0;
     this.timer = this.pending = this.inIRQ = false; this.overflowAt = Infinity;
+    this.timerDivisor = 0; this.prescalerAt = 0;
     this.irqStart = this.irqCount = this.lost = this.maxIRQ = this.writes = 0;
     this.duty = 128; this.fastIdle = fastIdle; this.idleCycles = 0;
     for (let p = 0; p < 512; p++) this.decode(p);
@@ -37,6 +38,8 @@ export class AVRCore {
   set i(value) { this.sreg = (this.sreg & 127) | ((value & 1) << 7); }
   get sp() { return this.io[0x3d]; }
   set sp(value) { this.io[0x3d] = value; }
+  get pending() { return !!(this.io[0x38] & 2); }
+  set pending(value) { this.io[0x38] = (this.io[0x38] & ~2) | (value ? 2 : 0); }
   nzvs(value, overflow = 0) {
     const negative = value >> 7;
     this.sreg = (this.sreg & 0xe1) | (Number(value === 0) << 1) |
@@ -93,12 +96,60 @@ export class AVRCore {
   }
   pushPC(value) { this.push(value & 255); this.push(value >> 8); }
   popPC() { const high = this.pop(); return ((high << 8) | this.pop()) & 511; }
+  timerMode() { return (this.io[0x2f] & 3) | ((this.io[0x33] & 8) >> 1); }
+  updateTimer() {
+    const source = this.io[0x33] & 7, mode = this.timerMode();
+    if (source >= 6) throw new Error('External Timer0 clock is not implemented');
+    if (source && mode !== 0 && mode !== 3) throw new Error('Timer0 WGM mode ' + mode + ' is not implemented');
+    this.timerDivisor = [0,1,8,64,256,1024][source];
+    this.timer = !!this.timerDivisor && !(this.io[0x25] & 2) && (this.io[0x28] & 0x81) !== 0x81;
+    if (!this.timer) { this.overflowAt = Infinity; return; }
+    // Normal: TOV on FF -> 00. Fast PWM mode 3: TOV when reaching TOP.
+    const target = mode === 3 ? 255 : 0;
+    const ticks = ((target - this.io[0x32]) & 255) || 256;
+    this.overflowAt = this.prescalerAt +
+      (Math.floor((this.cyc - this.prescalerAt) / this.timerDivisor) + ticks) * this.timerDivisor;
+  }
+  writeIO(address, value) {
+    value &= 255;
+    if (address === 0x38) { this.io[address] &= ~(value & 14); return 0; } // W1C
+    if (address === 0x39 && (value & 12)) throw new Error('Timer0 compare interrupts are not implemented');
+    if (address === 0x1c) {
+      if (value & 10) throw new Error('EEPROM programming/ready interrupt is not implemented');
+      this.io[address] = value & 0x3c;
+      if (value & 4) this.eempeUntil = this.cyc + 4;
+      if (value & 1) { this.io[0x1d] = this.eeprom[this.io[0x1e] & 63]; return 4; }
+      return 0;
+    }
+    if (address === 0x1e) value &= 63;
+    if (address === 0x39) value &= 14;
+    if (address === 0x33) {
+      if (value & 0xc0) throw new Error('Timer0 forced compare output is not implemented');
+      value &= 15;
+    }
+    if (address === 0x28) {
+      value &= 0x81;
+      if ((value & 1) || (this.io[address] & 1)) this.prescalerAt = this.cyc;
+      if (!(value & 128)) value &= ~1;
+    }
+    this.io[address] = value;
+    if ([0x25,0x28,0x2f,0x32,0x33].includes(address)) this.updateTimer();
+    if (address === 0x29 && this.timer) { this.duty = value; this.writes++; }
+    return 0;
+  }
   clock(n) {
+    const before = this.cyc;
     this.cyc += n;
+    if (this.eempeUntil <= this.cyc) this.io[0x1c] &= ~4;
     if (this.timer && this.overflowAt <= this.cyc) {
-      if (this.pending) this.lost++;
-      this.pending = true; this.overflowAt += 256;
-      while (this.overflowAt <= this.cyc) { this.lost++; this.overflowAt += 256; }
+      const events = 1 + Math.floor((this.cyc - this.overflowAt) / (256 * this.timerDivisor));
+      this.lost += events - Number(!this.pending); this.pending = true;
+      this.overflowAt += events * 256 * this.timerDivisor;
+    }
+    if (this.timer) {
+      const ticks = Math.floor((this.cyc - this.prescalerAt) / this.timerDivisor) -
+        Math.floor((before - this.prescalerAt) / this.timerDivisor);
+      this.io[0x32] = (this.io[0x32] + ticks) & 255;
     }
   }
   interrupt() {
@@ -151,22 +202,20 @@ export class AVRCore {
       case OP.LSR: this.c = r[d] & 1; r[d] >>= 1; this.nzvs(r[d], this.c); break;
       case OP.ASR: this.c = r[d] & 1; r[d] = (r[d] >> 1) | (r[d] & 128); this.nzvs(r[d], (r[d] >> 7) ^ this.c); break;
       case OP.SWAP: r[d] = ((r[d] & 15) << 4) | (r[d] >> 4); break;
-      case OP.IN: r[d] = this.io[k]; break;
+      case OP.IN: this.clock(1); n = 0; r[d] = this.io[k]; break;
       case OP.OUT:
-        this.io[k] = r[d];
-        if (k === 0x33 && r[d] === 1 && !this.timer) { this.timer = true; this.overflowAt = this.cyc + 256; }
-        if (k === 0x29 && this.timer) { this.duty = r[d]; this.writes++; } break;
+        this.clock(1); n = this.writeIO(k, r[d]); break;
       case OP.SBI:
-        this.io[d] |= 1 << k; n = 2;
-        if (d === 0x1c && k === 0) { this.io[0x1d] = this.eeprom[this.io[0x1e] & 63]; this.io[0x1c] &= 254; n += 4; } break;
+        this.clock(2); n = this.writeIO(d, this.io[d] | (1 << k)); break;
       case OP.PUSH: this.push(r[d]); n = 2; break;
       case OP.POP: r[d] = this.pop(); n = 2; break;
       case OP.ST:
         z = r[30] | r[31] << 8;
         if (d >= 30) throw new Error('Undefined ST Z+ with source in Z');
         if (z >= this.data.length) throw new Error('Data write out of range');
-        if (z >= 32 && z < 96) throw new Error('ST Z+ to I/O is not implemented');
-        this.data[z] = r[d]; z = (z + 1) & 65535; r[30] = z & 255; r[31] = z >> 8; n = 2; break;
+        v = r[d]; this.clock(2); n = 0;
+        if (z >= 32 && z < 96) n = this.writeIO(z - 32, v); else this.data[z] = v;
+        z = (z + 1) & 65535; r[30] = z & 255; r[31] = z >> 8; break;
       case OP.LPM:
         if (k && d >= 30) throw new Error('Undefined LPM Z+ with destination in Z');
         z = r[30] | r[31] << 8;
