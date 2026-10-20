@@ -1,0 +1,75 @@
+{
+  "name": "ATtiny13A complete development handoff",
+  "archive_date": "2026-10-20",
+  "language": "ru",
+  "starting_points": [
+    "README_FIRST.txt",
+    "AGENT_HANDOFF_RU.txt",
+    "DEVELOPMENT_HISTORY_RU.txt",
+    "final/attiny13a_synth_release/README.md"
+  ],
+  "source_milestone_releases": [
+    {
+      "order": "01",
+      "file": "releases/01_attiny13a_four_voice_synth.zip",
+      "summary": "First 4-voice synth, 823B Flash; AVR GNU assembler, MIDI / score, HTML emulator."
+    },
+    {
+      "order": "02",
+      "file": "releases/02_attiny13a_spectral_synth.zip",
+      "summary": "Pitch-range spectral rules, 917B Flash."
+    },
+    {
+      "order": "03",
+      "file": "releases/03_attiny13a_acoustic_timbre_v2.zip",
+      "summary": "Acoustic spectrum comparison (TimGM6mb), 1023B Flash."
+    },
+    {
+      "order": "04",
+      "file": "releases/04_attiny13a_compact_bipolar_synth.zip",
+      "summary": "Common harmonic generator, centered/bipolar PWM, 1009B Flash."
+    },
+    {
+      "order": "05",
+      "file": "releases/05_attiny13a_acoustic_spectra_envelopes.zip",
+      "summary": "Sample-derived spectra and envelopes, 1023B experimental firmware."
+    },
+    {
+      "order": "06",
+      "file": "releases/06_attiny13a_synth_final_v1.zip",
+      "summary": "Complete release: 1024B Flash + 64B EEPROM, independent note-off, smoother attack/release, HTML."
+    }
+  ],
+  "snapshots": [
+    "attiny13-synth",
+    "attiny13-spectral",
+    "attiny13-acoustic",
+    "attiny13-refined",
+    "attiny13-real-tables",
+    "attiny13-real-instruments",
+    "attiny13-smooth-release",
+    "attiny13-final"
+  ],
+  "final": {
+    "directory": "final/attiny13a_synth_release",
+    "flash_bytes": 1024,
+    "eeprom_bytes": 64,
+    "cpu_hz": 9600000,
+    "pwm_hz": 37500,
+    "sample_hz": 18750,
+    "low_fuse": "0x7A",
+    "flash_sha256": "bee41b7813f355341628a161192563eae157bf0517718377e9863aa6d986f5d6",
+    "eeprom_sha256": "4c9e10f68a00bf9b8a0236a4203c1fab81c692c831e607204956d024c9b25a50",
+    "checked": {
+      "build_reproducible": true,
+      "14s_avr_simulation": true,
+      "irq": 525000,
+      "lost_overflows": 0,
+      "js_python_pwm_samples_equal": 5000,
+      "hardware_tested": false
+    }
+  },
+  "source_score_url": "https://bitbucket.org/rudolff/z80-tester/raw/67cb56dd7f0f58daa72276dd84cef3c663276df5/audio/assets/scores/expedition-33/score.json",
+  "reference_dataset": "TimGM6mb.sf2 / FluidSynth (soundfont not included)",
+  "file_count_excluding_manifest_and_index": 182
+}
