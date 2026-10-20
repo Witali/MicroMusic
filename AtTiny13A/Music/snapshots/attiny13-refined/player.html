@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ATtiny13A: четырёхголосный плеер — эмулятор HEX</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,sans-serif;background:#10151f;color:#e5edf9}
+body{max-width:880px;margin:auto;padding:22px 16px 56px;line-height:1.55}
+h1{font-size:clamp(22px,5vw,32px);line-height:1.2;margin-bottom:10px}
+p{color:#acbacd}
+.card{background:#1b2535;border:1px solid #324157;border-radius:16px;padding:20px;margin:16px 0}
+.stats{display:flex;gap:24px;flex-wrap:wrap;color:#a9b8cb}.stats strong{display:block;color:#fff;font-size:23px}
+button{font:inherit;border:0;border-radius:12px;background:#65afff;color:#10151f;padding:12px 20px;font-weight:750;cursor:pointer}
+button:disabled{opacity:.5;cursor:default}button.secondary{background:#34435b;color:#e5edf9}
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+canvas{width:100%;height:180px;display:block;background:#0b1524;border-radius:10px}
+code{background:#0a1729;padding:3px 6px;border-radius:4px}
+small{color:#a9b8cb}
+</style>
+</head>
+<body>
+<h1>ATtiny13A — проигрыватель AVR-прошивки</h1>
+<p>Никакого отдельного JS-синтезатора: браузер исполняет инструкции из <code>synth.hex</code> с длительностями в тактах AVR, обрабатывает переполнения Timer0 и читает записи в PWM-регистр <code>OCR0B</code>.</p>
+<div class="card">
+ <div class="controls"><button id="start">▶ Слушать</button><button id="stop" class="secondary" disabled>■ Стоп</button><label for="volume">Громкость</label><input id="volume" type="range" min="0" max="1" step="0.01" value="0.65" /></div>
+ <div class="stats" style="margin:18px 0"><div>Время <strong id="time">0.0 с</strong></div><div>Выполнено <strong id="cycles">0 M тактов</strong></div><div>Прерывания <strong id="irqs">0</strong></div><div>Макс. ISR <strong id="maxisr">—</strong></div><div>Средний PWM <strong id="avgpwm">128</strong></div></div>
+ <canvas id="wave" width="900" height="180" role="img" aria-label="Осциллограмма звукового сигнала"></canvas>
+ <small>Жёлтая горизонтальная линия обозначает PWM=128; измеряемое среднее показано над графиком до фильтра.</small><div style="height:8px"></div><small id="status">Ожидает нажатия «Слушать».</small>
+</div>
+<div class="card"><strong>Воспроизводимая конфигурация</strong><p>ATtiny13A · CPU 9,6 МГц · 37,5 кГц Fast PWM · выход PB1/OC0B · мелодия, пианино, гитара и ударные. Ноты и секции воспроизводятся из прошитого кода. Браузер имитирует только инструкции, используемые этой конкретной прошивкой.</p><small>Это цифровая модель усреднённого PWM-сигнала. Реальная АЧХ зависит от RC-фильтра, усилителя и частоты RC-генератора микроконтроллера.</small></div>
+<script>
+/* Minimal, cycle-counting AVR interpreter for the actual ATtiny13A firmware.
+ * Supported opcodes cover synth.S (NOT a general ATtiny13A emulator).
+ * PWM compare writes are read as 37,500 duty-cycle averages; actual
+ * 9.6 MHz PB1 carrier edges are analog-filtered in hardware.
+ */
+class AVRCore {
+  constructor(binary) {
+    this.rom = new Uint8Array(1024);
+    this.rom.set(binary);
+    this.r = new Uint8Array(32);
+    this.io = new Uint8Array(64);
+    this.pc = 0; this.cyc = 0; this.z=0; this.c=0; this.i=0;
+    this.stack=[]; this.timer=false; this.overflowAt=Infinity; this.pending=false;
+    this.inIRQ=false; this.irqStart=0; this.irqCount=0; this.lost=0; this.maxIRQ=0;
+    this.samples=[]; this.writes=0;
+  }
+  step() {
+    let rr=this.r, p=this.pc<<1;
+    if(p+1>=this.rom.length)throw new Error('PC out of Flash at 0x'+p.toString(16));
+    let w=this.rom[p] | this.rom[p+1]<<8, n=1;
+    this.pc++;
+    if(w===0){}
+    else if(w===0x94f8) this.i=0;
+    else if(w===0x9478) this.i=1;
+    else if(w===0x9518){
+      if(!this.stack.length)throw new Error('RETI without interrupt');
+      this.pc=this.stack.pop();this.i=1;n=4;this.inIRQ=false;
+      if(this.cyc+n-this.irqStart>this.maxIRQ){
+        this.maxIRQ=this.cyc+n-this.irqStart;
+        this.peakInfo={sec:this.cyc/9600000,cycles:this.maxIRQ,env:[rr[19],rr[20],rr[21]],beat:rr[29],tick:rr[24],step:[rr[5],rr[9],rr[13]],cursor:(rr[31]<<8)|rr[30]};
+      }
+    }
+    else if(w===0x9508){ if(!this.stack.length)throw new Error('RET without RCALL');this.pc=this.stack.pop();n=4; }
+    else if((w&0xf000)===0xd000){let k=w&4095;if(k&2048)k-=4096;this.stack.push(this.pc);this.pc+=k;n=3;}
+    else if((w&0xf000)===0xc000){ // RJMP
+      let k=w&4095;if(k&2048)k-=4096;this.pc+=k;n=2;
+    }
+    else if((w&0xfc00)===0xf000 || (w&0xfc00)===0xf400){ // BRBS/BRBC
+      let f=w&7;if(f>1)throw new Error('Unsupported branch flag');
+      let bit=f===0?this.c:this.z;
+      if(bit===Number((w&0xfc00)===0xf000)){
+        let k=(w>>3)&127;if(k&64)k-=128;this.pc+=k;n=2;
+      }
+    }
+    else if((w&0xfe08)===0xfc00 || (w&0xfe08)===0xfe00){ // SBRC/SBRS
+      let r=(w>>4)&31,bit=w&7;
+      if(((rr[r]>>bit)&1)===Number((w&0xfe08)===0xfe00)){
+        let next=this.rom[this.pc<<1]|this.rom[(this.pc<<1)+1]<<8;
+        if([0x940c,0x940e,0x9000,0x9200].includes(next&0xfe0e))throw new Error('Skipped 2-word opcode');
+        this.pc++;n=2;
+      }
+    }
+    else if((w&0xf000)===0xe000){ // LDI
+      rr[16+((w>>4)&15)]=(w&15)|((w>>4)&240);
+    }
+    else if([0x3000,0x5000,0x7000].includes(w&0xf000)){
+      let d=16+((w>>4)&15),k=(w&15)|((w>>4)&240),x=rr[d];
+      if((w&0xf000)===0x7000){rr[d]=x&k;this.z=Number(rr[d]===0)}
+      else {let v=(x-k)&255;if((w&0xf000)===0x5000)rr[d]=v;
+        this.c=Number(x<k);this.z=Number(v===0)}
+    }
+    else if((w&0xff00)===0x0100){ // MOVW
+      let d=2*((w>>4)&15),r=2*(w&15);rr[d]=rr[r];rr[d+1]=rr[r+1];
+    }
+    else if([0x0c00,0x1c00,0x1800,0x2000,0x2400,0x2c00].includes(w&0xfc00)){
+      let d=(w>>4)&31,r=(w&15)|((w>>5)&16),x=rr[d],y=rr[r],mode=w&0xfc00;
+      if(mode===0x0c00 || mode===0x1c00){
+        let val=x+y+(mode===0x1c00?this.c:0);
+        rr[d]=val&255;this.c=Number(val>255);
+        this.z=Number(rr[d]===0 && (mode!==0x1c00 || this.z));
+      } else if(mode===0x1800){rr[d]=(x-y)&255;this.c=Number(x<y);this.z=Number(rr[d]===0)}
+      else if(mode===0x2000){rr[d]=x&y;this.z=Number(rr[d]===0)}
+      else if(mode===0x2400){rr[d]=x^y;this.z=Number(rr[d]===0)}
+      else rr[d]=y;
+    }
+    else if([0x9403,0x940a,0x9400,0x9406,0x9405,0x9402].includes(w&0xfe0f)){
+      let d=(w>>4)&31,x=rr[d],op=w&0xfe0f;
+      if(op===0x9403){rr[d]=(x+1)&255;this.z=Number(rr[d]===0)}
+      else if(op===0x940a){rr[d]=(x-1)&255;this.z=Number(rr[d]===0)}
+      else if(op===0x9400){rr[d]=x^255;this.z=Number(rr[d]===0);this.c=1}
+      else if(op===0x9402){rr[d]=((x&15)<<4)|(x>>4)} // SWAP leaves SREG unchanged
+      else if(op===0x9405){rr[d]=((x>>1)|(x&128))&255;this.z=Number(rr[d]===0);this.c=x&1}
+      else{rr[d]=x>>1;this.z=Number(rr[d]===0);this.c=x&1}
+    }
+    else if((w&0xf800)===0xb800){ // OUT
+      let r=(w>>4)&31,a=((w>>5)&48)|(w&15),v=rr[r];
+      this.io[a]=v;
+      if(a===0x33 && v===1 && !this.timer){this.timer=true;this.overflowAt=this.cyc+256}
+      if(a===0x29 && this.timer){this.samples.push(v);this.writes++}
+    }
+    else if((w&0xff00)===0x9a00){ // SBI
+      this.io[(w>>3)&31]|=1<<(w&7);n=2;
+    }
+    else if((w&0xfe0f)===0x9201){ // ST Z+,Rr
+      let r=(w>>4)&31,z=rr[30]|rr[31]<<8;
+      if(z>=32)throw new Error('Register file write out of range');
+      rr[z]=rr[r];z=(z+1)&65535;rr[30]=z&255;rr[31]=z>>8;n=2;
+    }
+    else if((w&0xfe0f)===0x9004 || (w&0xfe0f)===0x9005){ // LPM Rd,Z[+]
+      let r=(w>>4)&31,z=rr[30]|rr[31]<<8;
+      if(z>=this.rom.length)throw new Error('LPM out of Flash');
+      rr[r]=this.rom[z];
+      if(w&1){z++;rr[30]=z&255;rr[31]=z>>8}
+      n=3;
+    }
+    else throw new Error('Unknown opcode 0x'+w.toString(16)+' at 0x'+p.toString(16));
+    this.cyc+=n;
+    if(this.timer){
+      if(this.overflowAt<=this.cyc){
+        // No assumption about overflow latency: pending TOV0 is a 1-bit flag.
+        if(this.pending)this.lost++;
+        this.pending=true;
+        this.overflowAt+=256;
+        while(this.overflowAt<=this.cyc){this.lost++;this.overflowAt+=256}
+      }
+      if(this.i && (this.io[0x39]&2) && this.pending){
+        this.pending=false;this.stack.push(this.pc);this.pc=3;this.i=0;
+        this.irqStart=this.cyc;this.cyc+=4;this.inIRQ=true;this.irqCount++;
+      }
+    }
+  }
+  nextDuty(){
+    while(this.samples.length===0)this.step();
+    return this.samples.shift();
+  }
+  static fromHex(hex){
+    let rows=hex.trim().split(/\s+/),data=[];
+    for(let row of rows){
+      if(!row.startsWith(':'))continue;
+      let b=[];
+      for(let j=1;j+1<row.length;j+=2)b.push(parseInt(row.slice(j,j+2),16));
+      if(b.reduce((a,x)=>a+x,0)%256!==0)throw new Error('HEX checksum mismatch');
+      if(b[3]===1)break;
+      if(b[3]!==0)throw new Error('Only flat 1KB HEX supported');
+      let addr=b[1]*256+b[2];
+      for(let j=0;j<b[0];j++)data[addr+j]=b[4+j];
+    }
+    if(data.some(x=>x===undefined) || data.length>1024)throw new Error('Bad HEX range');
+    return new AVRCore(Uint8Array.from(data));
+  }
+}
+if(typeof module!=='undefined' && module.exports)module.exports={AVRCore};
+
+</script>
+<script>
+const FIRMWARE_HEX = `:1000000009C0000000002CC000000000000000003B
+:1000100000000000F8940FE90DBF00E806BD0027BE
+:1000200006BD00241124E2E0FF2700270193EA31F6
+:10003000E9F704E0502F03E0302F402F01E0602F5C
+:10004000C02FEBEFF2E007EAE02EB99A20E829BDD5
+:1000500003E20FBD01E003BF02E009BF7894FFCFC8
+:10006000F39409F07FC001E0702709F07BC083950D
+:10007000112009F01A94082F077059F4443008F43D
+:100080004395092D023010F483FD03C0343008F489
+:100090003395082F017019F4543008F45395939553
+:1000A0009B3130F09927D395D370552707EAE02E7E
+:1000B0006A9509F04FC005910F3FC1F1003EA0F0D5
+:1000C000DF010F70000F000FE1EEF2E0E00FF01D16
+:1000D00085909590C590D59066247724AA24BB245A
+:1000E00033274427FD01E7CFDF01102F1770E0EC25
+:1000F000F2E0E10FF01D6491FD010695069506956D
+:100100000D3071F0DF01000FE7ECF2E0E00FF01DC1
+:1001100045905590FD012224332403E0102E1AC08F
+:100120002224332444245524112414C0E0EBF2E0AB
+:10013000EC0FF01D0491C3950F3F11F4CC27F6CFBF
+:10014000E5EFF2E0E00FF01D0491EBEFF2E0E00FDD
+:10015000F01DB1CF29BD189517FD10951D531595AC
+:10016000159508952227552011F44420D1F0240C30
+:10017000351C232D22952F702750132DEDDF15955B
+:1001800015951595210FA52DA23030F0132D110FC7
+:10019000E3DF15951595210F10FC259511FC25958C
+:1001A000220F680C791C3430B0F5172DD5DF012FE4
+:1001B000323028F5172D110FCFDFA92DA23008F40A
+:1001C0001595A43018F015951595159530FD1595D4
+:1001D000010F5430A0F0A43090F4172D110F170D1B
+:1001E000BBDF1595A23008F0159530FD1595010F70
+:1001F000172D110F110FB0DF15951595010F332332
+:1002000029F4172D129517701350010F30FD059525
+:1002100031FD0595200FAC0CBD1C443020F51B2D85
+:100220009BDF15951595012F4230C0F41B2D110F42
+:1002300093DF1595AD2DA23020F01595A33008F071
+:10024000159540FD1595010F442341F41B2D1058C1
+:1002500015951595159515951595010F40FD059565
+:1002600041FD0595200F543000F51D2F137029F026
+:10027000123059F05230C8F408C0F0FC03C014E04A
+:10028000151BE10E1E2D68DF0BC0EE0C10F41DE1F6
+:10029000E1261E2D110F110F1E251F7310521595EB
+:1002A00050FD159551FD1595210F205829BD189524
+:1002B000000102030304030305050403030505FF0E
+:1002C0000E1B2937526EDC200143015701B001E4B7
+:1002D00001010240028702AD0201035F03C903026C
+:1002E00004B0014301570101012001D8004301F28C
+:1002F00000F200B50000155190B3E5E019396140F6
+:1003000050E111395BE20131514050E309315BFFAB
+:10031000E02DE11B2A20E23429E33DE02B33E13BD1
+:1003200033E2332A30E325E02B1941E141393940EA
+:1003300038E2332931E331413931E02918202939B4
+:10034000E131293141E2433931E33DFFE0393939C7
+:100350003028E13939393028E23B4238E335E03999
+:1003600039393028E13B394038E2332A30E325E09F
+:10037000534A40E13C31E22C19E33429E0192129A8
+:1003800031E13C3028E24439E335FFE03939393096
+:1003900028E13939393028E24439E335E03939394F
+:1003A0003028E13B394038E2332A30E325FFE03B97
+:1003B0006BE1336BE22B6BE3236BE12B6BE2336B73
+:1003C000E4436BE33B6BE03C49E14441E24941419A
+:1003D00039E335E0333BE13B43E24B4139E345FF51
+:1003E000E06DE16DE26DE36DE06DE16DE26DE36D99
+:0103F000FF0D
+:00000001FF
+`;
+let audio=null, processor=null, gainNode=null, core=null, scope=[], phase=0, v0=0, v1=0, sampleNumber=0, avgPWM=128;
+const $=id=>document.getElementById(id), canvas=$('wave'), g=canvas.getContext('2d');
+function draw(){
+ g.fillStyle='#0b1524';g.fillRect(0,0,canvas.width,canvas.height);
+ g.strokeStyle='#263b59';g.lineWidth=1;
+ for(let y=30;y<canvas.height;y+=30){g.beginPath();g.moveTo(0,y);g.lineTo(canvas.width,y);g.stroke()}
+ g.strokeStyle='#d0bb77';g.lineWidth=1;g.beginPath();g.moveTo(0,canvas.height/2);g.lineTo(canvas.width,canvas.height/2);g.stroke();
+ if(scope.length){g.strokeStyle='#65afff';g.lineWidth=2;g.beginPath();
+  for(let i=0;i<scope.length;i++){let x=i/(scope.length-1)*canvas.width,y=canvas.height/2-scope[i]*canvas.height*.42;
+   if(i===0)g.moveTo(x,y);else g.lineTo(x,y)}g.stroke()}
+}
+function ui(){
+ if(!core)return;
+ $('time').textContent=(sampleNumber/(audio?.sampleRate||48000)).toFixed(1)+' с';
+ $('cycles').textContent=(core.cyc/1e6).toFixed(2)+' M';
+ $('irqs').textContent=core.irqCount.toLocaleString('ru');
+ $('maxisr').textContent=core.maxIRQ+' из 256 тактов';
+ $('avgpwm').textContent=avgPWM.toFixed(1)+' / 128';
+ draw();
+}
+let interval=null;
+async function start(){
+ try{
+  if(audio)await stop();
+  core=AVRCore.fromHex(FIRMWARE_HEX);
+  audio=new (window.AudioContext||window.webkitAudioContext)();
+  processor=audio.createScriptProcessor(4096,0,1);
+  const hp=audio.createBiquadFilter();hp.type='highpass';hp.frequency.value=35;
+  const lp=audio.createBiquadFilter();lp.type='lowpass';lp.frequency.value=9000;
+  gainNode=audio.createGain();gainNode.gain.value=+$('volume').value;
+  processor.connect(hp);hp.connect(lp);lp.connect(gainNode);gainNode.connect(audio.destination);
+  // One new duty for each Timer0 overflow; 37.5kHz -> AudioContext rate.
+  phase=0;v0=core.nextDuty();v1=core.nextDuty();sampleNumber=0;avgPWM=128;
+  processor.onaudioprocess=e=>{
+   const out=e.outputBuffer.getChannelData(0),ratio=37500/audio.sampleRate;
+   try{
+    let dutySum=0;
+    for(let j=0;j<out.length;j++){
+     const duty=v0+(v1-v0)*phase;
+     dutySum+=duty;
+     out[j]=(duty-128)/128;sampleNumber++;
+     phase+=ratio;
+     if(phase>=1){phase-=1;v0=v1;v1=core.nextDuty()}
+    }
+    // Slow moving mean of the unfiltered PWM duty, before the high-pass.
+    avgPWM=0.85*avgPWM+0.15*dutySum/out.length;
+    // Draw only ~500 points from the latest output buffer.
+    scope=[];for(let j=0;j<500;j++)scope.push(out[Math.floor(j*out.length/500)]);
+   }catch(err){console.error(err);$('status').textContent='Ошибка эмуляции: '+err.message;stop()}
+  };
+  await audio.resume();
+  $('start').disabled=true;$('stop').disabled=false;
+  $('status').textContent='Воспроизводится настоящий HEX; отключите другие тяжёлые вкладки, если на телефоне появятся щелчки.';
+  interval=setInterval(ui,250);
+ }catch(err){console.error(err);$('status').textContent='Не удалось начать: '+err.message;await stop()}
+}
+async function stop(){
+ if(interval){clearInterval(interval);interval=null}
+ if(processor){processor.disconnect();processor.onaudioprocess=null;processor=null}
+ if(audio){let a=audio;audio=null;await a.close()}
+ $('start').disabled=false;$('stop').disabled=true;
+ ui();
+}
+$('start').onclick=start;$('stop').onclick=stop;
+$('volume').oninput=()=>{if(gainNode)gainNode.gain.value=+$('volume').value};
+draw();
+</script>
+</body></html>
