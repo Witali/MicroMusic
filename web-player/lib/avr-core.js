@@ -32,6 +32,8 @@ export class AVRCore {
     this.workLost = 0;
     this.duty = 128; this.fastIdle = fastIdle; this.idleCycles = 0;
     for (let p = 0; p < 512; p++) this.decode(p);
+    this.idle = new Uint8Array(512);
+    for (let p = 0; p < 512; p++) this.decodeIdle(p);
   }
   get sreg() { return this.io[0x3f]; }
   set sreg(value) { this.io[0x3f] = value; }
@@ -54,9 +56,11 @@ export class AVRCore {
   }
   arithmetic(x, y, carry = 0, subtract = false) {
     const total = subtract ? x - y - carry : x + y + carry, value = total & 255;
-    const overflow = Number(!!((subtract ? (x ^ y) : ~(x ^ y)) & (x ^ value) & 128));
-    this.nzvs(value, overflow);
-    this.sreg = (this.sreg & 0xde) | Number(subtract ? total < 0 : total > 255) |
+    const overflow = ((subtract ? (x ^ y) : ~(x ^ y)) & (x ^ value) & 128) >> 7;
+    const negative = value >> 7;
+    this.sreg = (this.sreg & 0xc0) | (Number(value === 0) << 1) |
+      (negative << 2) | (overflow << 3) | ((negative ^ overflow) << 4) |
+      Number(subtract ? total < 0 : total > 255) |
       (Number(subtract ? (x & 15) < (y & 15) + carry : (x & 15) + (y & 15) + carry > 15) << 5);
     return value;
   }
@@ -98,6 +102,47 @@ export class AVRCore {
     else if ([0x9201,0x920d].includes(w & 0xfe0f)) { o = OP.ST; s = (w & 15) === 13 ? 26 : 30; }
     else if ((w & 0xfe0f) === 0x9004 || (w & 0xfe0f) === 0x9005) { o = OP.LPM; k = w & 1; }
     this.op[p] = o; this.d[p] = d; this.s[p] = s; this.k[p] = k;
+    // A re-decoded word can change any polling loop containing it.
+    if (this.idle) for (let offset = 0; offset < 5; offset++) this.decodeIdle((p - offset) & 511);
+  }
+  decodeIdle(p) {
+    const op = this.op, d = this.d, s = this.s, k = this.k;
+    this.idle[p] = 0;
+    if (k[p] === -1) {
+      if (op[p] === OP.JUMP) this.idle[p] = 1;
+      if (op[p] === OP.BRANCH && d[p] === 6 && s[p] === 0) this.idle[p] = 2;
+    }
+    const sub = (p + 1) & 511, mask = (p + 2) & 511;
+    const cmp = (p + 3) & 511, branch = (p + 4) & 511, target = d[p];
+    // MOV tmp, producer; SUB tmp, consumer; ANDI tmp, mask; CPI tmp, limit;
+    // BRCC start. Only tmp and arithmetic flags change, identically each lap.
+    if (op[p] === OP.MOV && op[sub] === OP.SUB && op[mask] === OP.ANDI &&
+        op[cmp] === OP.CPI && op[branch] === OP.BRANCH &&
+        d[sub] === target && d[mask] === target && d[cmp] === target &&
+        s[p] !== target && s[sub] !== target &&
+        d[branch] === 0 && s[branch] === 0 && k[branch] === -5) this.idle[p] = 3;
+  }
+  skipIdle() {
+    if (!this.timer || !this.i || this.irqDelay || this.pending || !(this.io[0x39] & 2)) return false;
+    const p = this.pc, kind = this.idle[p];
+    if (!kind) return false;
+    let n;
+    if (kind === 3) {
+      const value = (this.r[this.s[p]] - this.r[this.s[(p + 1) & 511]]) & this.k[(p + 2) & 511];
+      const limit = this.k[(p + 3) & 511];
+      if (value < limit) return false;
+      // Keep the final, possibly interrupted lap in the single-step executor.
+      // The IRQ must see even a partially calculated tmp/SREG at its real cycle.
+      n = Math.floor((this.overflowAt - this.cyc - 1) / 6) * 6;
+      if (n <= 0) return false;
+      this.r[this.d[p]] = value;
+      this.arithmetic(value, limit, 0, true);
+    } else {
+      if (kind === 2 && this.t) return false;
+      n = Math.max(2, Math.ceil((this.overflowAt - this.cyc) / 2) * 2);
+    }
+    this.idleCycles += n; this.clock(n); this.interrupt();
+    return true;
   }
   push(value) {
     if (this.sp < 0x60 || this.sp > 0x9f) throw new Error('Stack overflow or invalid SPL');
@@ -178,7 +223,7 @@ export class AVRCore {
       this.overflowAt += events * 256 * this.timerDivisor;
     }
     if (this.timer) {
-      const ticks = Math.floor((this.cyc - this.prescalerAt) / this.timerDivisor) -
+      const ticks = this.timerDivisor === 1 ? n : Math.floor((this.cyc - this.prescalerAt) / this.timerDivisor) -
         Math.floor((before - this.prescalerAt) / this.timerDivisor);
       this.io[0x32] = (this.io[0x32] + ticks) & 255;
     }
@@ -286,15 +331,7 @@ export class AVRCore {
   nextDuty() {
     const before = this.writes, deadline = this.cyc + 9600000;
     while (this.writes === before) {
-      // Two-cycle RJMP-to-self and taken BRTC-to-self have no side effects.
-      // Jump to the same instruction boundary as repeated RJMPs, then service
-      // the exact pending overflow. Never skip an ISR or disabled-IRQ loop.
-      if (this.fastIdle && this.k[this.pc] === -1 &&
-          (this.op[this.pc] === OP.JUMP || (this.op[this.pc] === OP.BRANCH && this.d[this.pc] === 6 && this.s[this.pc] === 0 && !this.t)) &&
-          this.timer && this.i && !this.irqDelay && !this.pending && (this.io[0x39] & 2)) {
-        const n = Math.max(2, Math.ceil((this.overflowAt - this.cyc) / 2) * 2);
-        this.idleCycles += n; this.clock(n); this.interrupt();
-      } else this.step();
+      if (!(this.fastIdle && this.idle[this.pc] && this.skipIdle())) this.step();
       if (this.cyc > deadline) throw new Error('Firmware produced no PWM for one emulated second');
     }
     return this.duty;
