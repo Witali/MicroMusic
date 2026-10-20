@@ -1,34 +1,34 @@
 {
   "image": "turkish-march",
-  "flashSha256": "66553afcadc2d0e6a8c70464cb604835017584023cae97ff4b582faa29ebe4da",
-  "flashBytes": 948,
+  "flashSha256": "2e0a4df0fe01d063c32c046562abf8961009c768c205e47a34346c8062529fd3",
+  "flashBytes": 932,
   "fullPlaylist": {
-    "commands": 561,
+    "commands": 681,
     "beats": 144,
     "idealSeconds": 57.21854304635762,
-    "actualSeconds": 57.221121562499995,
-    "maximumTimingErrorMs": 13.268295391832453,
-    "finalTimingErrorMs": 2.578516142377339,
-    "maximumExecutionErrorAgainstGridUs": 8.541666666666668,
+    "actualSeconds": 57.22112,
+    "maximumTimingErrorMs": 13.263399558499259,
+    "finalTimingErrorMs": 2.5769536423831596,
+    "maximumExecutionErrorAgainstGridUs": 7.1875,
     "missingEvents": 0
   },
   "compression": {
     "method": "Repeated command phrases; dynamic-programming parsing; suffix sharing; deterministic dictionary search",
     "globallyMinimal": false,
-    "candidateLimit": 384,
-    "candidateCount": 384,
-    "dictionaryTrials": 7816,
-    "originalCommandBytes": 544,
-    "originalStreamSha256": "ce2d1b66d65d892a592bc9471ba17e832442c4f2a60baa8a674a32ae14a470ab",
-    "sourceLayoutBytes": 548,
-    "packedEventBytes": 322,
-    "playlistBytes": 17,
-    "packedBytes": 339,
-    "savedAgainstSourceLayoutBytes": 209,
-    "storedSections": 10,
-    "referencedSections": 11,
+    "candidateLimit": 4096,
+    "candidateCount": 4096,
+    "dictionaryTrials": 213132,
+    "originalCommandBytes": 653,
+    "originalStreamSha256": "0b1d2600830b0872144855effd8f1a3690d3d4c0bb5792fb1637b18f91e87134",
+    "sourceLayoutBytes": 657,
+    "packedEventBytes": 289,
+    "playlistBytes": 28,
+    "packedBytes": 317,
+    "savedAgainstSourceLayoutBytes": 340,
+    "storedSections": 11,
+    "referencedSections": 15,
     "verifiedLossless": true,
-    "runtimeStreamSha256": "ce2d1b66d65d892a592bc9471ba17e832442c4f2a60baa8a674a32ae14a470ab"
+    "runtimeStreamSha256": "0b1d2600830b0872144855effd8f1a3690d3d4c0bb5792fb1637b18f91e87134"
   },
   "grid": {
     "phaseStep": 9008,
@@ -39,7 +39,7 @@
   },
   "articulation": {
     "realNoteOns": 331,
-    "holdNotes": 0,
+    "holdNotes": 24,
     "repeatedNotes": 8,
     "repeatedNotesArticulated": 8,
     "phaseResets": 0,
@@ -54,6 +54,17 @@
     ],
     "ticksChecked": 4192,
     "mismatches": 0
+  },
+  "loop": {
+    "endState": {
+      "levels": [
+        0,
+        0,
+        0
+      ],
+      "drumAge": 0
+    },
+    "allPartsSilentBeforeRestart": true
   },
   "isrCycles": 19,
   "lostTimerEvents": 0,
