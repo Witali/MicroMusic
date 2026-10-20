@@ -1,4 +1,4 @@
-"""Small fail-closed assembler for the one-word AVR subset used by this project.
+"""Small fail-closed assembler for the AVR subset used by this project.
 
 Implements the retained GNU AVR source, not arbitrary AVR assembly. Before
 building a new layout, verify it against the archived GNU/LLVM-produced image.
@@ -26,7 +26,8 @@ def assemble(path):
         elif line.startswith('.byte '):
             values=line[6:].split(',');rows.append((pc,'bytes',values));pc+=len(values)
         elif line.startswith('.'): raise ValueError(f'Unsupported directive: {line}')
-        else: rows.append((pc,'instruction',line));pc+=2
+        else:
+            rows.append((pc,'instruction',line));pc+=4 if line.split()[0] in {'lds','sts'} else 2
     def value(s):
         s=s.strip()
         if s in symbols:return symbols[s]
@@ -52,6 +53,10 @@ def assemble(path):
             return {'ldi':0xe000,'cpi':0x3000,'subi':0x5000,'ori':0x6000,'andi':0x7000}[op]|((d-16)<<4)|(k&15)|((k&240)<<4)
         if op in {'inc','dec','com','lsr','asr','swap','push','pop'}:
             return {'inc':0x9403,'dec':0x940a,'com':0x9400,'lsr':0x9406,'asr':0x9405,'swap':0x9402,'push':0x920f,'pop':0x900f}[op]|register(a[0])<<4
+        if op in {'lds','sts'}:
+            d,address=(register(a[0]),value(a[1])) if op=='lds' else (register(a[1]),value(a[0]))
+            assert 96<=address<160, 'Only ATtiny13A SRAM addresses are supported'
+            return ((0x9000 if op=='lds' else 0x9200)|(d<<4))|(address<<16)
         if op in {'rjmp','rcall','breq','brne','brcs','brcc','brtc','brts'}:
             offset=symbols[a[0]]-at-2;assert offset%2==0
             k=offset//2
@@ -82,7 +87,9 @@ def assemble(path):
         if kind=='bytes':
             values=[value(v) for v in row];assert all(0<=v<=255 for v in values)
             rom[at:at+len(values)]=bytes(values)
-        else:rom[at:at+2]=encode(row,at).to_bytes(2,'little')
+        else:
+            size=4 if row.split()[0] in {'lds','sts'} else 2
+            rom[at:at+size]=encode(row,at).to_bytes(size,'little')
     if len(rom)%2:rom.append(255)
     return bytes(rom),symbols
 

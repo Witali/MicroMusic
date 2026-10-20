@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-20",
+  "image": "natural-hat",
+  "automatedTests": {"passed": 59, "failed": 0, "catalogImages": 11, "exactReferenceSecondsPerImage": 14, "tempoSecondsPerImage": 60},
+  "recheckAfterAuditedCoreMerge": {"passed": 231, "failed": 0, "coreUsesUnifiedSramAndHardwareStack": true},
+  "assembly": {"flashBytes": 1024, "eepromBytes": 64, "unchangedScoreAndWavesFrom": "foreground-pwm"},
+  "noise": {"oldStates": 255, "newStates": 65535, "exhaustivelyVerifiedInActualAvrRoutine": true, "sramBytes": 1},
+  "audio": {"hihatBandDistanceBefore": 0.33681776016950044, "hihatBandDistanceAfter": 0.2013, "bassDrumPcmUnchanged": true, "tonalCommittedSamplesCompared": 37500},
+  "timing": {"maximumForegroundCyclesIncludingPreemption": 422, "isrCyclesIncludingEntryAndVector": 12, "maximumStackBytes": 7, "lostTimerEvents": 0, "lostWorkEvents": 0},
+  "browser": {"displayTime": "00:58.0", "tempoPercent": 100, "accumulatedLagMs": 0, "lostEvents": 0, "isrCycles": 12, "audioClockIntervalMs": 57941.333, "wallClockIntervalMs": 57939.300, "filterHz": 12000, "visibleError": ""},
+  "limitations": ["Compact noise approximation of FluidR3, not sample playback", "Original four-step drum envelope retained", "No physical chip or analog output measurement"]
+}

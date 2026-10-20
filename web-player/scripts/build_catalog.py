@@ -19,6 +19,7 @@ SPECS = [
     ('fluid-violin', '07', 'Скрипка FluidR3', 'Спектр FluidR3 GM, плавная атака, связные ноты и мягкое затухание.', 'variants/fluid-violin', 'release'),
     ('fluid-instruments', '08', 'Мягкие тембры FluidR3', 'Мягкие спектры скрипки, пианино и гитары; огибающие и ударные по FluidR3 GM.', 'variants/fluid-instruments', 'release'),
     ('foreground-pwm', '09', 'Синтез в основном цикле', 'Мягкие тембры FluidR3; прерывание выводит готовый PWM за 12 тактов.', 'variants/foreground-pwm', 'release'),
+    ('natural-hat', '10', 'Длинный шум тарелок', 'Хэт с длинной шумовой последовательностью и фильтрацией по FluidR3; ISR 12 тактов.', 'variants/natural-hat', 'release'),
     ('smoke', 'T1', 'Тестовая мелодия', 'Короткая проверочная партитура C4–D4–E4; три повтора секции.', 'snapshots/attiny13-final/alternate-test', 'experimental'),
 ]
 
@@ -68,7 +69,7 @@ def build():
                      eepromSource=f'../ATtiny13A/Music/{folder}/eeprom.hex' if eeprom else None,
                      preview=f'../ATtiny13A/Music/{folder}/preview.wav' if (directory / 'preview.wav').exists() else None)
         key = (entry['flashSha256'], entry['eepromSha256'])
-        if id_ == 'foreground-pwm':
+        if id_ in {'foreground-pwm','natural-hat'}:
             entry['referenceCore'] = f'../ATtiny13A/Music/{folder}/avr_core.js'
         assert key not in by_key
         by_key[key] = entry
@@ -108,7 +109,7 @@ def build():
                         target = name.rsplit('/', 1)[0] + '/' + n
                         return z.read(target) if target in z.namelist() else None
                     inspect(path.relative_to(ROOT).as_posix() + '!/' + name, z.read(name), sibling)
-    return dict(schema=1, defaultId='foreground-pwm', entries=entries,
+    return dict(schema=1, defaultId='natural-hat', entries=entries,
                 sourceOnly=[dict(title='Исходный C-прототип · 2016',
                                  source='../ATtiny13A/Music/00_original/attiny13a_initial_2016.c',
                                  reason='Сохранён исходник C; готового HEX / BIN в архиве нет.')])
