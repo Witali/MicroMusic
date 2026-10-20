@@ -3,6 +3,7 @@ from pathlib import Path
 import cmath
 import copy
 import importlib.util
+import hashlib
 import json
 import math
 import sys
@@ -34,17 +35,117 @@ class InstrumentBankTests(unittest.TestCase):
                 self.assertEqual(decoded, self.bank['instruments'][name]['waves'][register])
         self.assertEqual(eeprom[48:], b'\x88' * 16)
 
-    def test_existing_three_profiles_remain_byte_identical(self):
+    def test_existing_violin_and_guitar_profiles_remain_byte_identical(self):
         eeprom = bank_module.build_eeprom({'lead': 'violin', 'keys': 'acoustic-grand-piano',
                                           'pluck': 'acoustic-guitar-nylon'}, self.bank)
-        self.assertEqual(eeprom[:48].hex(),
-                         'a5dc8d6566b88c2386baebde48435476a8dc8b8899693464b9cbed9b78562352b8dcab9988873641dc8b87cb8a354385')
+        self.assertEqual(eeprom[:16].hex(), 'a5dc8d6566b88c2386baebde48435476')
+        self.assertEqual(eeprom[32:48].hex(), 'b8dcab9988873641dc8b87cb8a354385')
 
-    def test_swapping_an_instrument_changes_only_its_physical_slot(self):
+    def test_swapping_to_piano_also_selects_the_shared_attack_pair(self):
         a = bank_module.build_eeprom({'lead': 'violin', 'keys': 'clarinet', 'pluck': 'cello'}, self.bank)
         b = bank_module.build_eeprom({'lead': 'acoustic-grand-piano', 'keys': 'clarinet', 'pluck': 'cello'}, self.bank)
         self.assertNotEqual(a[:16], b[:16])
-        self.assertEqual(a[16:], b[16:])
+        self.assertEqual(a[16:48], b[16:48])
+        self.assertEqual(a[48:], b'\x88' * 16)
+        self.assertNotEqual(a[48:], b[48:])
+
+    def test_piano_attack_tables_are_shared_for_any_role(self):
+        piano = self.bank['instruments']['acoustic-grand-piano']
+        expected = b''.join(bank_module.pack_wave(piano['transient']['waves'][r]) for r in ('low', 'high'))
+        saved = copy.deepcopy(self.bank)
+        for role in ('lead', 'keys', 'pluck'):
+            with self.subTest(role=role):
+                assignment = {role: 'acoustic-grand-piano'}
+                self.assertEqual(bank_module.build_eeprom(assignment, self.bank)[48:], expected)
+                resolved = bank_module.describe_assignments(assignment, self.bank)[role]
+                self.assertEqual(resolved['transient'], dict(kind='piano-attack', minEnvelopeLevel=14,
+                    eepromOffsets={'low': 48, 'high': 56}, maximumSwitchSampleDelta=1))
+                self.assertEqual(resolved['envelope']['releaseStep'], 2)
+                self.assertEqual(resolved['envelope']['decayMaskByRegister'],
+                    dict(thresholdMidi=75, thresholdDdsStep=2175, lowMask=3, highMask=0))
+                resolved['transient']['minEnvelopeLevel'] = 0
+                resolved['envelope']['decayMaskByRegister']['thresholdMidi'] = 0
+        self.assertEqual(bank_module.build_eeprom(dict.fromkeys(('lead', 'keys', 'pluck'), 'acoustic-grand-piano'), self.bank)[48:], expected)
+        self.assertEqual(self.bank, saved)
+
+    def test_unsupported_attack_configurations_fail_closed(self):
+        for field, value in (('kind', 'guitar'), ('minEnvelopeLevel', 13),
+                             ('eepromOffsets', {'low': 40, 'high': 48}),
+                             ('maximumSwitchSampleDelta', 2)):
+            changed = copy.deepcopy(self.bank)
+            changed['instruments']['acoustic-grand-piano']['transient'][field] = value
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                bank_module.build_eeprom({'lead': 'acoustic-grand-piano'}, changed)
+        for wave in ([0] * 15, [8] * 16, [1] * 16, [-7, 7] * 8):
+            changed = copy.deepcopy(self.bank)
+            changed['instruments']['acoustic-grand-piano']['transient']['waves']['low'] = wave
+            with self.subTest(wave=wave), self.assertRaises(ValueError):
+                bank_module.build_eeprom({'lead': 'acoustic-grand-piano'}, changed)
+        changed = copy.deepcopy(self.bank)
+        changed['instruments']['acoustic-grand-piano']['gmProgram'] = 24
+        with self.assertRaises(ValueError):
+            bank_module.build_eeprom({'lead': 'acoustic-grand-piano'}, changed)
+
+    def test_measured_piano_attack_and_sustain_quality_independent_dft(self):
+        # These assertions validate the actual four-bit values, not a second
+        # execution of the same fitter. No NumPy is needed by build or tests.
+        profile = self.bank['instruments']['acoustic-grand-piano']
+        report_path = ROOT / profile['fit']['report']
+        self.assertEqual(hashlib.sha256(report_path.read_bytes()).hexdigest(), profile['fit']['reportSha256'])
+        report = json.loads(report_path.read_text(encoding='utf-8'))
+        self.assertEqual(report['measurementSha256'], profile['source']['measurementSha256'])
+        for register in ('low', 'high'):
+            measured = report['registers'][register]
+            waves = [profile['transient']['waves'][register], profile['waves'][register]]
+            self.assertEqual(waves, [measured['attackWave'], measured['sustainWave']])
+            fundamental = []
+            for stage, wave in zip(('attack', 'sustain'), waves):
+                self.assertEqual(sum(wave), 0)
+                self.assertLessEqual(max(abs(v) for v in wave), 7)
+                coefficients = [sum(v * cmath.exp(-2j * math.pi * h * i / 16)
+                                    for i, v in enumerate(wave)) for h in range(1, 8)]
+                fundamental.append(coefficients[0])
+                norm = math.sqrt(sum(abs(x) ** 2 for x in coefficients))
+                distance = math.sqrt(sum((abs(x) / norm - target) ** 2 for x, target in zip(coefficients, measured[stage + 'Target'])))
+                self.assertLess(distance, .05)
+                self.assertAlmostEqual(distance, measured[stage + 'Distance'], places=12)
+                self.assertLess(distance, measured['oldSustainDistances'][stage == 'sustain'])
+            self.assertLess(abs(abs(fundamental[0] / fundamental[1]) - 1), .005)
+            self.assertLess(abs(cmath.phase(fundamental[0] / fundamental[1])) * 180 / math.pi, 1)
+            self.assertEqual(max(abs(a - b) for a, b in zip(*waves)), 1)
+
+    def test_piano_capture_contains_fast_decaying_upper_register(self):
+        profile = self.bank['instruments']['acoustic-grand-piano']
+        data = json.loads((ROOT / profile['source']['measurement']).read_text(encoding='utf-8'))
+        self.assertEqual([n['midi'] for n in data['notes']], list(range(49, 83)))
+        self.assertEqual(data['program'], 0)
+        self.assertEqual(data['velocity'], 100)
+        self.assertFalse(data['effectsEnabled'])
+        # Upper notes lose much more energy in 500ms than low notes. That is
+        # why the synthesis envelope now has an explicit MIDI75 decay split.
+        index = min(range(len(data['envelopeTimesSeconds'])), key=lambda i: abs(data['envelopeTimesSeconds'][i] - .5))
+        def median(values):
+            values = sorted(values)
+            return (values[(len(values) - 1) // 2] + values[len(values) // 2]) / 2
+        high = median([n['rms'][index] for n in data['notes'] if n['midi'] >= 75])
+        low = median([n['rms'][index] for n in data['notes'] if n['midi'] < 62])
+        self.assertLess(high, .12)
+        self.assertGreater(low, .4)
+
+    def test_selected_high_piano_decay_matches_measured_dynamics_better(self):
+        profile = self.bank['instruments']['acoustic-grand-piano']
+        report = json.loads((ROOT / profile['fit']['report']).read_text(encoding='utf-8'))
+        high = report['envelopeComparison']['high']
+        selected_error = sum((a - b) ** 2 for a, b in zip(high['measuredMedianNormalizedRms'], high['selectedEnvelopeMedian']))
+        old_error = sum((a - b) ** 2 for a, b in zip(high['measuredMedianNormalizedRms'], high['oldMask3EnvelopeMedian']))
+        self.assertLess(selected_error, old_error / 10)
+        self.assertEqual(report['decayMaskByRegister'], profile['envelope']['decayMaskByRegister'])
+
+    def test_fretless_has_finite_low_level_plucked_decay(self):
+        resolved = bank_module.describe_assignments({'keys': 'fretless-bass'}, self.bank)['keys']
+        self.assertEqual(resolved['level'], 6)
+        self.assertEqual(resolved['envelope'], dict(model='pluck', defaultLevel=6, decayMask=3,
+                                                  retrigger='peak', releaseStep=1))
 
     def test_off_and_missing_parts_are_physical_silence(self):
         self.assertEqual(bank_module.build_eeprom({}, self.bank), b'\x88' * 64)
