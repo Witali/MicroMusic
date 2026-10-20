@@ -25,6 +25,7 @@ export class AVRCore {
     this.timer = this.pending = this.inIRQ = false; this.overflowAt = Infinity;
     this.timerDivisor = 0; this.prescalerAt = 0;
     this.irqStart = this.irqCount = this.lost = this.maxIRQ = this.writes = 0;
+    this.irqFrames = [];
     this.duty = 128; this.fastIdle = fastIdle; this.idleCycles = 0;
     for (let p = 0; p < 512; p++) this.decode(p);
   }
@@ -173,7 +174,8 @@ export class AVRCore {
     if (this.irqDelay) { this.irqDelay--; return; }
     if (!this.i || !(this.io[0x39] & 2) || !this.pending) return;
     this.pending = false; this.pushPC(this.pc); this.pc = 3; this.i = 0;
-    this.irqStart = this.cyc; this.clock(4); this.inIRQ = true; this.irqCount++;
+    this.irqStart = this.cyc; this.irqFrames.push(this.irqStart);
+    this.clock(4); this.inIRQ = true; this.irqCount++;
   }
   step() {
     const p = this.pc;
@@ -187,8 +189,12 @@ export class AVRCore {
       case OP.SEI: this.i = 1; this.irqDelay = 1; break;
       case OP.FLAG: this.sreg = (this.sreg & ~(1 << d)) | (k << d); break;
       case OP.RETI:
-        this.pc = this.popPC(); this.i = 1; this.irqDelay = 1; n = 4; this.inIRQ = false;
-        this.maxIRQ = Math.max(this.maxIRQ, this.cyc + n - this.irqStart); break;
+        this.pc = this.popPC(); this.i = 1; this.irqDelay = 1; n = 4;
+        v = this.irqFrames.pop();
+        if (v !== undefined) this.maxIRQ = Math.max(this.maxIRQ, this.cyc + n - v);
+        this.inIRQ = this.irqFrames.length > 0;
+        this.irqStart = this.inIRQ ? this.irqFrames[this.irqFrames.length - 1] : 0;
+        break;
       case OP.RET: this.pc = this.popPC(); n = 4; break;
       case OP.CALL: this.pushPC(this.pc); this.pc += k; n = 3; break;
       case OP.JUMP: this.pc += k; n = 2; break;
