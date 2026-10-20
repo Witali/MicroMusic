@@ -13,6 +13,15 @@ def expand(result):
     return b''.join(storage[result['offsets'][name]:storage.index(255,result['offsets'][name])] for name in result['playlist'])
 
 class PackTests(unittest.TestCase):
+    def test_optional_address_constraint_preserves_stream_and_uses_valid_entries(self):
+        rng=random.Random(33)
+        phrase=bytes(rng.choice([0,1,2,3,4,5,6,8,9]) for _ in range(45))
+        stream=phrase+bytes([13,14])*20+phrase+bytes([21,22])*20
+        result=p.pack(stream,[stream],candidate_limit=32,max_entry_offset=30)
+        self.assertEqual(expand(result),stream)
+        self.assertLessEqual(max(result['offsets'].values()),30)
+        with self.assertRaises(ValueError):p.pack(stream,max_entry_offset=-1)
+
     def test_small_example_matches_exhaustive_minimum_over_all_partitions(self):
         stream=bytes([0,1])*4
         exhaustive=[]

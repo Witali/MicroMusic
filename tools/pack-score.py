@@ -58,7 +58,9 @@ def layout(pieces):
                 unique=unique,cost=len(storage)+len(pieces))
 
 
-def pack(stream,source_chunks=(),candidate_limit=96):
+def pack(stream,source_chunks=(),candidate_limit=96,max_entry_offset=None):
+    if max_entry_offset is not None and (type(max_entry_offset) is not int or max_entry_offset<0):
+        raise ValueError('Entry offset limit must be a nonnegative integer')
     stream=bytes(stream);aa=atoms(stream)
     vocabulary={a:i for i,a in enumerate(dict.fromkeys(aa))}
     seq=tuple(vocabulary[a] for a in aa);n=len(seq)
@@ -127,6 +129,10 @@ def pack(stream,source_chunks=(),candidate_limit=96):
         assert b''.join(pieces)==stream
         return result
 
+    def fitness(result):
+        base=(result['cost'],len(result['storage']),result['storage'])
+        if max_entry_offset is None:return base
+        return (max(0,max(result['offsets'].values(),default=0)-max_entry_offset),)+base
     trials=0
     def improve(seed):
         nonlocal trials
@@ -137,18 +143,18 @@ def pack(stream,source_chunks=(),candidate_limit=96):
             removals.append({key for key in chosen if current['counts'][key]>1})
             for reduced in removals:
                 trial=parse(reduced);trials+=1
-                if (trial['cost'],len(trial['storage']),trial['storage'])<(best['cost'],len(best['storage']),best['storage']):best=trial
+                if fitness(trial)<fitness(best):best=trial
             for key in candidates:
                 if key in chosen:continue
                 trial=parse(chosen|{key});trials+=1
-                if (trial['cost'],len(trial['storage']),trial['storage'])<(best['cost'],len(best['storage']),best['storage']):best=trial
-            if best['cost']>=current['cost']:break
+                if fitness(trial)<fitness(best):best=trial
+            if fitness(best)>=fitness(current):break
             current=best
         return current
 
     baseline=layout([bytes(c) for c in source_chunks]) if source_chunks else layout([stream])
     best=min([baseline,*[layout(chunks) for chunks in seed_chunks],improve(set()),*[improve(seed) for seed in manual]],
-             key=lambda r:(r['cost'],len(r['storage']),r['storage']))
+             key=fitness)
     names={word:f'packed_{i:03d}' for i,word in enumerate(best['unique'])}
     # Recover words for each emitted reference, including shared suffixes.
     by_offset={best['offsets'][word]:names[word] for word in best['unique']}

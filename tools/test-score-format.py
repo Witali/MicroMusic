@@ -8,6 +8,28 @@ spec=importlib.util.spec_from_file_location('score',Path(__file__).with_name('sc
 score=importlib.util.module_from_spec(spec);spec.loader.exec_module(score)
 
 class ScoreFormatTests(unittest.TestCase):
+    def test_timed_note_off_splits_a_held_note_without_new_attack(self):
+        events=score.insert_timed_controls([6],[{'unit':4,'offMask':2},{'unit':16,'offMask':2}],{},2,1)
+        self.assertEqual(events,[3,0xf2,21,19,0xf2])
+        self.assertEqual(sum(round(score.BEATS[t&7]*4) for t in events if t<0xe0),16)
+        with self.assertRaises(ValueError):score.insert_timed_controls([3],[{'unit':5,'offMask':2}],{},2,1)
+
+    def test_disabled_companions_emit_neither_chord_commands_nor_frequency_table(self):
+        data=dict(title='Piano solo',tempo_bpm=80,playlist=['A'],patterns={'A':['C4:4']},
+                  chord_pairs=[['C','C']],chord_roots={'C':60},
+                  instruments={'lead':'acoustic-grand-piano','keys':'off','pluck':{'instrument':'violin','level':0}})
+        text,meta=score.to_inc(data)
+        self.assertEqual(meta['chords'],[])
+        self.assertEqual(meta['chord_table_bytes'],0)
+        self.assertEqual(meta['compression']['originalCommandBytes'],1)
+        self.assertEqual(meta['compression']['originalStreamSha256'],__import__('hashlib').sha256(bytes([6])).hexdigest())
+
+    def test_solo_notes_keep_ties_and_repeated_attacks_without_half_bar_holds(self):
+        first,tie,holds=score.pack_solo_bar('C4:4~',{'C4':0,'R':1},2)
+        self.assertEqual(first,[6]);self.assertEqual(tie,'C4');self.assertEqual(holds,[])
+        following,_,holds=score.pack_solo_bar('C4:1 C4:1 R:2',{'C4':0,'R':1},2,tie)
+        self.assertEqual(following,[19,3,13]);self.assertEqual(holds,[dict(pitch='C4',beat=0.)])
+
     def pack(self,bar,previous=None):
         return score.pack_bar(bar,['C','C'],{'C4':0,'R':1},{'C':0},2,previous)
 
