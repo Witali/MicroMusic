@@ -1,0 +1,5 @@
+.set REST_INDEX, 13
+.set INSTR_LEAD, 1
+.set INSTR_KEYS, 1
+.set INSTR_PLUCK, 1
+.set INSTR_DRUMS, 2
