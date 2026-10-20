@@ -109,5 +109,5 @@ acoustic-grand-piano-soft использует измеренные спектр
 у измеренных нот спектры почти одинаковы; отличие создано выбором временных
 окон и гармоническим сглаживанием. Измерения: reference/fluidr3/piano-soft-measurements.json,
 результат и сравнение с VSCO2 CE Upright: piano-soft-fit-report.json.
-  python tools/instrument-bank.py --fit-piano-transients reference/fluidr3/piano-soft-measurements.json --piano-voicing soft
+  python tools/instrument-bank.py --fit-piano-transients ATtiny13A/Music/reference/fluidr3/piano-soft-measurements.json --piano-voicing soft
 Уточняйте имя параметра через --help; обычная сборка уже использует готовый профиль.
