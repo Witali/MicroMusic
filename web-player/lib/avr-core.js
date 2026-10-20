@@ -6,7 +6,7 @@ const OP = { NOP:1, CLI:2, SEI:3, RETI:4, RET:5, CALL:6, JUMP:7, BRANCH:8,
   SKIP:9, LDI:10, CPI:11, SUBI:12, ORI:13, ANDI:14, MOVW:15, ADD:16,
   ADC:17, SUB:18, AND:19, EOR:20, MOV:21, INC:22, DEC:23, COM:24,
   LSR:25, ASR:26, SWAP:27, IN:28, OUT:29, SBI:30, PUSH:31, POP:32, ST:33, LPM:34, FLAG:35,
-  ROR:36, LDS:37, STS:38, OR:39 };
+  ROR:36, LDS:37, STS:38, OR:39, LD:40 };
 const sign = (v, bit) => v & bit ? v - bit * 2 : v;
 
 export class AVRCore {
@@ -94,7 +94,8 @@ export class AVRCore {
     else if ((w & 0xff00) === 0x9a00) { o = OP.SBI; d = (w >> 3) & 31; k = w & 7; }
     else if ((w & 0xfe0f) === 0x920f) o = OP.PUSH;
     else if ((w & 0xfe0f) === 0x900f) o = OP.POP;
-    else if ((w & 0xfe0f) === 0x9201) o = OP.ST;
+    else if ([0x900d,0x9009].includes(w & 0xfe0f)) { o = OP.LD; s = (w & 15) === 13 ? 26 : 28; }
+    else if ([0x9201,0x920d].includes(w & 0xfe0f)) { o = OP.ST; s = (w & 15) === 13 ? 26 : 30; }
     else if ((w & 0xfe0f) === 0x9004 || (w & 0xfe0f) === 0x9005) { o = OP.LPM; k = w & 1; }
     this.op[p] = o; this.d[p] = d; this.s[p] = s; this.k[p] = k;
   }
@@ -259,12 +260,18 @@ export class AVRCore {
       case OP.PUSH: this.push(r[d]); n = 2; break;
       case OP.POP: r[d] = this.pop(); n = 2; break;
       case OP.ST:
-        z = r[30] | r[31] << 8;
-        if (d >= 30) throw new Error('Undefined ST Z+ with source in Z');
+        z = r[s] | r[s+1] << 8;
+        if (d === s || d === s+1) throw new Error('Undefined ST with source in post-increment pointer');
         if (z >= this.data.length) throw new Error('Data write out of range');
         v = r[d]; this.clock(2); n = 0;
         if (z >= 32 && z < 96) n = this.writeIO(z - 32, v); else this.data[z] = v;
-        z = (z + 1) & 65535; r[30] = z & 255; r[31] = z >> 8; break;
+        z = (z + 1) & 65535; r[s] = z & 255; r[s+1] = z >> 8; break;
+      case OP.LD:
+        z = r[s] | r[s+1] << 8;
+        if (d === s || d === s+1) throw new Error('Undefined LD with destination in post-increment pointer');
+        if (z >= this.data.length) throw new Error('Data read out of range');
+        r[d] = this.data[z]; z = (z + 1) & 65535;
+        r[s] = z & 255; r[s+1] = z >> 8; n = 2; break;
       case OP.LPM:
         if (k && d >= 30) throw new Error('Undefined LPM Z+ with destination in Z');
         z = r[30] | r[31] << 8;

@@ -120,9 +120,18 @@ class AVRCore {
     else if((w&0xfe0f)===0x900f){ // POP r
       rr[(w>>4)&31]=this.stack.pop();n=2;
     }
-    else if((w&0xfe0f)===0x9201){ // ST Z+,Rr
-      let r=(w>>4)&31,z=rr[30]|rr[31]<<8;
-      if(z>=96&&z<160)this.ram[z-96]=rr[r];else if(z<32)rr[z]=rr[r];else throw new Error('Data write out of range');z=(z+1)&65535;rr[30]=z&255;rr[31]=z>>8;n=2;
+    else if([0x900d,0x9009].includes(w&0xfe0f)){ // LD Rd,X+/Y+
+      let d=(w>>4)&31,pointer=(w&15)===13?26:28,z=rr[pointer]|rr[pointer+1]<<8;
+      if(d===pointer||d===pointer+1)throw new Error('Undefined LD post-increment');
+      if(z>=160)throw new Error('Data read out of range');
+      rr[d]=z<32?rr[z]:z<96?this.io[z-32]:this.ram[z-96];
+      z=(z+1)&65535;rr[pointer]=z&255;rr[pointer+1]=z>>8;n=2;
+    }
+    else if([0x9201,0x920d].includes(w&0xfe0f)){ // ST Z+/X+,Rr
+      let d=(w>>4)&31,pointer=(w&15)===13?26:30,z=rr[pointer]|rr[pointer+1]<<8;
+      if(d===pointer||d===pointer+1)throw new Error('Undefined ST post-increment');
+      if(z>=96&&z<160)this.ram[z-96]=rr[d];else if(z<32)rr[z]=rr[d];else throw new Error('Data write out of range');
+      z=(z+1)&65535;rr[pointer]=z&255;rr[pointer+1]=z>>8;n=2;
     }
     else if((w&0xfe0f)===0x9004 || (w&0xfe0f)===0x9005){ // LPM Rd,Z[+]
       let r=(w>>4)&31,z=rr[30]|rr[31]<<8;
