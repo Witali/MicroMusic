@@ -16,6 +16,7 @@ assembler=module('assembler',ROOT/'tools/assemble-avr.py')
 compiler=module('score_format',ROOT/'tools/score-format.py')
 bank=module('instrument_bank',ROOT/'tools/instrument-bank.py')
 engine=module('instrument_engine',ROOT/'tools/build-instrument-engine.py')
+percussion=module('percussion_bank',ROOT/'tools/percussion-bank.py')
 
 def ihex(raw):
     rows=[]
@@ -26,11 +27,19 @@ def ihex(raw):
 
 def build(folder):
     data=json.loads((folder/'score.json').read_text(encoding='utf-8'))
-    assignments=None
+    assignments=None;percussion_profile=None
     if 'instruments' in data:
         assignments=bank.describe_assignments(data['instruments'])
         if data.get('engine')=='instrument-bank':
             source,metadata=engine.specialize(data,assignments)
+            if assignments.get('percussion',{}).get('enabled',False):
+                kit=data.get('percussion_kit','natural-kit')
+                # Noise gain is shift-only; level is quantized to 1, 1/2,
+                # 1/4 or 1/8. Level zero removes the whole generator above.
+                shift=min(3,max(0,round(math.log2(15/assignments['percussion']['level']))))
+                source=percussion.compile_source(source,kit,attenuation_shift=shift)
+                percussion_profile=dict(kit=kit,attenuationShift=shift,hits=percussion.select_kit(kit,shift),
+                    bankSha256=hashlib.sha256(percussion.BANK_PATH.read_bytes()).hexdigest())
             data.update(metadata)
             (folder/'synth.S').write_text(source,encoding='utf-8',newline='\n')
             (folder/'score.json').write_text(json.dumps(data,indent=2,ensure_ascii=False)+'\n',encoding='utf-8',newline='\n')
@@ -71,6 +80,7 @@ def build(folder):
     if assignments is not None:
         report['instrumentAssignments']=assignments
         report['instrumentBankSha256']=hashlib.sha256(bank.BANK_PATH.read_bytes()).hexdigest()
+    if percussion_profile is not None:report['percussionProfile']=percussion_profile
     (folder/'build-report.json').write_text(json.dumps(report,indent=2,ensure_ascii=False)+'\n',encoding='utf-8',newline='\n')
     print(folder.name+':',len(rom),'Flash;',labels['playlist'],'code;',len(meta['holds']),'unique hold commands; phase step',step)
 

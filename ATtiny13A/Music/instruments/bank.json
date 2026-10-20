@@ -824,7 +824,8 @@
   "percussion": {
     "natural-kit": {
       "label": "Естественная ударная установка",
-      "generator": "existing AVR kick and band-limited pseudorandom noise",
+      "generator": "AVR triangle kick, soft noise plus low snare body, existing long-period hi-hat",
+      "profiles": "ATtiny13A/Music/instruments/percussion-profiles.json",
       "notes": [
         {
           "gmNote": 35,

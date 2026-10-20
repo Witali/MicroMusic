@@ -100,7 +100,7 @@ def describe_assignments(assignments, bank=None):
             result['percussion'] = dict(instrument=kit_name, label=kit['label'],
                                         level=kit_level, enabled=kit_level > 0,
                                         notes=copy.deepcopy(kit['notes']),
-                                        generator=kit['generator'], eepromBytes=0)
+                                        generator=kit['generator'], profiles=kit.get('profiles'), eepromBytes=0)
     return result
 
 

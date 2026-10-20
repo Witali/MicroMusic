@@ -1,0 +1,248 @@
+{
+  "schema": 1,
+  "scope": "Active compile-time percussion bank for firmware01 Lumiere; zero tonal EEPROM bytes. Existing hi-hat preserved. tools/build-rhythmic.py calls compile_source after instrument specialization.",
+  "source": {
+    "measurement": "ATtiny13A/Music/reference/fluidr3/percussion-measurements.json",
+    "measurementSha256": "2c351bbd55887e932b6f0aecd4a92a533acffe1da3303d2f83739d45016085bf",
+    "soundfont": {
+      "name": "FluidR3 GM",
+      "version": "3.1",
+      "bytes": 148398306,
+      "sha256": "74594e8f4250680adf590507a306655a299935343583256f3b722c48a1bc1cb0",
+      "license": "MIT"
+    },
+    "renderer": {
+      "name": "SpessaSynth",
+      "sourceSha256": "d7d74edf4056b1be835cfd717c8cfb579440ee5c741d087d684b84041d861035",
+      "sampleRate": 48000,
+      "effectsEnabled": false
+    },
+    "midiBank": 128,
+    "channel": 9,
+    "program": 0,
+    "preset": "Standard"
+  },
+  "timing": {
+    "cpuHz": 9600000,
+    "synthesisHz": 18750,
+    "pwmHz": 37500,
+    "envelopeTickCycles": 131072
+  },
+  "noise": {
+    "bits": 16,
+    "feedbackXor": 45,
+    "nonzeroSeed": 167,
+    "period": 65535
+  },
+  "profiles": {
+    "acoustic-bass-drum": {
+      "gmBank": 128,
+      "gmNote": 35,
+      "label": "FluidR3 GM35 acoustic bass drum, compact triangle",
+      "generator": {
+        "kind": "triangle",
+        "phaseSource": "per-hit R14",
+        "phaseStep": 1,
+        "phaseStart": 168,
+        "phaseOffset": 0,
+        "triangleBias": 61,
+        "triangleShift": 2
+      },
+      "gainShift": 0,
+      "envelope": {
+        "decayShifts": [
+          0,
+          1,
+          1,
+          2
+        ],
+        "ticksPerStep": 2,
+        "firstStageTicks": [
+          1,
+          2
+        ],
+        "attackRampSamples": 0,
+        "schedule": "Existing R21 bit shifts, popcount(stage): levels1,1/2,1/2,1/4; one/two global ticks until first transition."
+      },
+      "limitations": [
+        "Fixed73.242Hz triangle; source body/impact/pitch trajectory and long sample tail are approximated."
+      ]
+    },
+    "noise-snare-legacy": {
+      "gmBank": 128,
+      "gmNote": 38,
+      "label": "Previous noise-only snare",
+      "generator": {
+        "kind": "noise",
+        "noiseMode": "centered",
+        "noiseShift": 1
+      },
+      "gainShift": 0,
+      "envelope": {
+        "decayShifts": [
+          0,
+          1,
+          1,
+          2
+        ],
+        "ticksPerStep": 2,
+        "firstStageTicks": [
+          1,
+          2
+        ],
+        "attackRampSamples": 0,
+        "schedule": "Existing R21 bit shifts, popcount(stage): levels1,1/2,1/2,1/4; one/two global ticks until first transition."
+      },
+      "limitations": [
+        "Reference for regression; lacks the low-frequency snare body prominent in FluidR3 GM38."
+      ]
+    },
+    "body-snare-full-noise": {
+      "gmBank": 128,
+      "gmNote": 38,
+      "label": "Measured comparison: full noise plus triangle body",
+      "generator": {
+        "kind": "noise+triangle",
+        "noiseMode": "centered",
+        "noiseShift": 1,
+        "phaseSource": "existing PWM counter R15",
+        "phaseStep": 2,
+        "phaseStart": 1,
+        "phaseOffset": -64,
+        "triangleBias": 61,
+        "triangleShift": 2
+      },
+      "gainShift": 0,
+      "envelope": {
+        "decayShifts": [
+          0,
+          1,
+          1,
+          2
+        ],
+        "ticksPerStep": 2,
+        "firstStageTicks": [
+          1,
+          2
+        ],
+        "attackRampSamples": 0,
+        "schedule": "Existing R21 bit shifts, popcount(stage): levels1,1/2,1/2,1/4; one/two global ticks until first transition."
+      },
+      "limitations": [
+        "Body is146.484Hz, not exact source~180Hz; same short legacy decay for tone and noise."
+      ]
+    },
+    "acoustic-snare-soft-body": {
+      "gmBank": 128,
+      "gmNote": 38,
+      "label": "Selected soft acoustic snare: half noise plus triangle body",
+      "generator": {
+        "kind": "noise+triangle",
+        "noiseMode": "centered",
+        "noiseShift": 2,
+        "phaseSource": "existing PWM counter R15",
+        "phaseStep": 2,
+        "phaseStart": 1,
+        "phaseOffset": -64,
+        "triangleBias": 61,
+        "triangleShift": 2
+      },
+      "gainShift": 0,
+      "envelope": {
+        "decayShifts": [
+          0,
+          1,
+          1,
+          2
+        ],
+        "ticksPerStep": 2,
+        "firstStageTicks": [
+          1,
+          2
+        ],
+        "attackRampSamples": 0,
+        "schedule": "Existing R21 bit shifts, popcount(stage): levels1,1/2,1/2,1/4; one/two global ticks until first transition."
+      },
+      "limitations": [
+        "Measured approximation; body146.484Hz, source body~180Hz. Higher partials and original sample tail are not exact."
+      ]
+    },
+    "closed-hi-hat": {
+      "gmBank": 128,
+      "gmNote": 42,
+      "label": "Existing Lumiere natural closed hi-hat",
+      "generator": {
+        "kind": "noise",
+        "noiseMode": "difference",
+        "noiseShift": 2
+      },
+      "gainShift": 0,
+      "envelope": {
+        "decayShifts": [
+          0,
+          1,
+          1,
+          2
+        ],
+        "ticksPerStep": 2,
+        "firstStageTicks": [
+          1,
+          2
+        ],
+        "attackRampSamples": 0,
+        "schedule": "Existing R21 bit shifts, popcount(stage): levels1,1/2,1/2,1/4; one/two global ticks until first transition."
+      },
+      "limitations": [
+        "Preserved unchanged; compact high-pass-like noise, not metallic sample playback; four-step decay remains coarse."
+      ]
+    }
+  },
+  "kits": {
+    "natural-kit": {
+      "kick": "acoustic-bass-drum",
+      "snare": "acoustic-snare-soft-body",
+      "hat": "closed-hi-hat"
+    },
+    "legacy-kit": {
+      "kick": "acoustic-bass-drum",
+      "snare": "noise-snare-legacy",
+      "hat": "closed-hi-hat"
+    },
+    "full-body-comparison": {
+      "kick": "acoustic-bass-drum",
+      "snare": "body-snare-full-noise",
+      "hat": "closed-hi-hat"
+    }
+  },
+  "selection": {
+    "hiHat": "Existing working Lumiere generator retained with identical LFSR, bit extraction and shifts.",
+    "snare": "Half noise plus R15 triangle body selected after comparison with retained GM38 band power; phase offset-64 starts body nearzero without another state byte.",
+    "kick": "Existing slower kick retained; earlier measured distance0.222 against GM35 versus1.164 for the original high kick.",
+    "implementation": "Active firmware01:1016 Flash bytes,730 code bytes. Selected snare adds22bytes versus legacy using existing R15/R27; zeroadditionalSRAM/EEPROM. Builder records selected kit, attenuation, resolved hits and profile SHA256.",
+    "scoreConfiguration": {
+      "instruments.percussion": "natural-kit",
+      "percussion_kit": "natural-kit",
+      "defaultKit": "natural-kit"
+    }
+  },
+  "midiSources": {
+    "lumiere": "Hand-arranged score, generated natural-kit pattern; no retained sourceMIDI drum channel.",
+    "children": {
+      "firstQuarterBeat": 64,
+      "gmNotes": {
+        "35": 118,
+        "36": 509,
+        "38": 178,
+        "43": 2,
+        "44": 379,
+        "49": 11,
+        "55": 50,
+        "57": 6,
+        "82": 344
+      },
+      "adaptation": "Current piano/bass arrangement intentionally omits percussion; GM36/44 are not silently relabelled35/42."
+    },
+    "turkishMarch": "No source channel9 percussion; leave off.",
+    "greensleeves": "No source channel9 percussion; leave off."
+  }
+}
