@@ -11,6 +11,7 @@ MUSIC = ROOT / 'ATtiny13A' / 'Music'
 OUTPUT = ROOT / 'web-player' / 'firmware.json'
 SPECS = [
     ('rhythmic', '01', 'Люмьер · единый ритм', 'Полная аранжировка из Expedition 33, 3:42. Автоупаковка повторов, общая сетка нот и ударных, мягкие тембры FluidR3.', 'variants/rhythmic', 'release'),
+    ('turkish-march', '02', 'Турецкий марш · фрагмент', 'Моцарт: начальные 56 тактов 2/4 и каденция; 46 секунд, 151 BPM. Узнаваемое вступление сохранено.', 'variants/turkish-march', 'release'),
 ]
 
 
