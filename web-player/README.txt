@@ -246,6 +246,8 @@ reports/score-timing-audit.txt. Производительность: reports/av
 План: IMPROVEMENT_PLAN_RU.txt.
 
 СБОРКА C/WASM
+Локальная установка инструментов Windows: ../tools/setup.ps1;
+инструкция ../tools/SETUP_RU.txt. После неё dot-source build/toolchains/env.ps1.
 Нужен Clang и готовый Emscripten sysroot. Сборщик вызывает clang напрямую,
 не меняет SDK и не требует emcc, npm-пакетов или глобальной установки:
   node web-player/scripts/build-wasm.mjs --emsdk C:/path/to/emsdk

@@ -5,6 +5,15 @@ MicroMusic
 Локально: node web-player/scripts/serve.mjs 8134
 Открыть: http://127.0.0.1:8134/web-player/
 
+УСТАНОВКА ИНСТРУМЕНТОВ WINDOWS x64
+Из корня репозитория:
+  powershell -NoProfile -ExecutionPolicy Bypass -File tools/setup.ps1
+  . ./build/toolchains/env.ps1
+Скачиваются Node, Python, C-компилятор Clang/WASM и AVR GCC с GNU-ассемблером.
+Версии и SHA-256 закреплены; установка локальная в build/toolchains.
+Проверяются компиляция C → WASM и сборка всех пяти AVR-прошивок.
+Повторный запуск использует установленный набор. Подробности: tools/SETUP_RU.txt.
+
 ПРОШИВКИ
 Все варианты: ATtiny13A/Music/variants/<имя>/.
 Внутри — score.json, synth.S, synth.hex, eeprom.hex, player.html,
