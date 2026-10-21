@@ -40,6 +40,8 @@ def specialize(data, original):
         raise ValueError('Release-slot profile requires nonzero companion DDS tables')
     if any(data[role+'_attack_step'] != 4 for role, model in zip(roles,models) if model in ('bowed','sustain')):
         raise ValueError('Release-slot sustained attack must be four levels per envelope tick')
+    if any(data.get(role+'_'+phase+'_mask',0) for role in roles for phase in ('attack','release')):
+        raise ValueError('This release-slot engine does not support gated attack/release masks; use a compatible native engine')
     addresses=(101,106,111)
     models=(data['lead_envelope_model'],data['accompaniment_envelope_model'],data['pluck_envelope_model'])
     caps=[data[role+'_max_level'] for role in roles]
@@ -182,12 +184,10 @@ envelope_store:
 '''
     if percussion:header+='  sbrc r24, 0\n  rjmp .L0a8\n  cpi r20, 4\n  brcc .L0a8\n  inc r20\n'
     header+='''.L0a8:
-  mov r16, r3
   ldi r17, GRID_STEP_LOW
   add r2, r17
   ldi r17, GRID_STEP_HIGH
-  adc r16, r17
-  mov r3, r16
+  adc r3, r17
   brcs grid_step
   ret
 grid_step:
@@ -419,5 +419,43 @@ no_ram_tail:
 '''+source[b:]
         source=source.replace('  lds r16, 111\n  andi r16, 15\n  lds r17, 116\n  andi r17, 15\n',
             '  lds r16, 111\n  lds r17, 116\n')
-    return source
+    # Share one authoritative Flash cursor through duration/DDS lookups.
+    source=source.replace('  lpm r1, Z\n  movw r30, r12\n','  lpm r1, Z\n',1)
+    source=source.replace('  movw r12, r30\n  lsl r16\n  ldi r30, lo8(note_steps)',
+                          '  lsl r16\n  ldi r30, lo8(note_steps)',1)
+    source=source.replace('lead_commit:\n  movw r30, r12\n','lead_commit:\n',1)
+    source=source.replace('hold_sample:\n  ret\n','',1)
+    source=source.replace('  sts 96, r17\n  ret\n',
+                          '  sts 96, r17\nhold_sample:\n  movw r30, r12\n  ret\n',1)
+    # Horner form gives the same signed sample times four-bit envelope level.
+    old='''  mov r0, r17
+  clr r17
+  sbrc r25, 0
+  add r17, r0
+  lsl r0
+  sbrc r25, 1
+  add r17, r0
+  lsl r0
+  sbrc r25, 2
+  add r17, r0
+  lsl r0
+  sbrc r25, 3
+  add r17, r0
+'''
+    new='''  mov r0, r17
+  sbrs r25, 3
+  clr r17
+  lsl r17
+  sbrc r25, 2
+  add r17, r0
+  lsl r17
+  sbrc r25, 1
+  add r17, r0
+  lsl r17
+  sbrc r25, 0
+  add r17, r0
+'''
+    if source.count(old)!=1:
+        raise ValueError('Expected one amplitude multiplier in the release-slot kernel')
+    return source.replace(old,new,1)
 

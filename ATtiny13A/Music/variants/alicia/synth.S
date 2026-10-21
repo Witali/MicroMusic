@@ -1,3 +1,4 @@
+/* Stable native Alicia kernel. Page-carry ADCs are removed only after assembled-address proof. */
 .section .text,"ax",@progbits
 .global vectors
 .include "config.inc"
@@ -14,7 +15,7 @@ reset:
   clr r2
   clr r15
   clr r24
-  ldi r30, 96
+  ldi r30, 97
   clr r31
 clear_ram:
   st Z+, r29
@@ -29,14 +30,12 @@ fill_ring:
   mov r23, r18
   ldi r28, 128
   ldi r22, 142
-  ldi r16, 1
-  mov r1, r16
   ldi r16, FIRST_PLAYLIST_INDEX
   mov r4, r16
-  ldi r16, GRID_INITIAL_HIGH
-  mov r3, r16
+  clr r3
   ldi r30, lo8(first_section)
   ldi r31, hi8(first_section)
+  rcall read_event
   sbi 23, 1
   out 41, r18
   ldi r16, 35
@@ -58,29 +57,27 @@ audio_step:
   brne render_sample
   rcall music_tick
 render_sample:
-  ldi r26, 96
+  ldi r26, 97
   clr r21
 voice_loop:
   ld r25, X+
   ld r16, X+
-  ld r7, X+
-  ld r6, X+
   ld r17, X+
-  andi r17, 127
-  add r16, r6
-  adc r7, r17
+  ld r0, X+
+  ld r6, X+
+  add r16, r0
+  adc r17, r6
   subi r26, 4
   st X+, r16
-  st X+, r7
+  st X+, r17
   subi r26, 254
-  mov r16, r17
-  mov r17, r7
+  mov r16, r6
   rcall render_tone
   sbrc r26, 4
   asr r17
 primary_gain:
   add r21, r17
-  cpi r26, 121
+  cpi r26, 127
   brne voice_loop
 write_pwm:
   subi r21, 128
@@ -105,13 +102,19 @@ irq_restore:
   reti
 music_tick:
   inc r24
-  ldi r26, 96
+  ldi r26, 97
 envelope_loop:
   ld r16, X+
   mov r17, r16
   andi r17, 15
   sbrs r16, 7
   rjmp state_release
+  sbrc r16, 6
+  rjmp state_plucked
+  cpi r17, 9
+  brcc envelope_store
+  subi r16, 252
+  rjmp envelope_store
 state_plucked:
   tst r17
   breq envelope_store
@@ -123,14 +126,6 @@ state_plucked:
   brcs state_mask
   ldi r25, 3
 state_mask:
-  subi r26, 253
-  ld r0, X+
-  subi r26, 4
-  sbrc r0, 7
-  lsr r25
-  sbrc r0, 7
-  lsr r25
-state_gate:
   and r25, r24
   brne envelope_store
   dec r16
@@ -148,26 +143,88 @@ envelope_store:
   subi r26, 1
   st X+, r16
   subi r26, 252
-  cpi r26, 121
+  cpi r26, 127
   brne envelope_loop
 .L0a8:
-  mov r16, r3
-  ldi r17, GRID_STEP_LOW
-  add r2, r17
-  ldi r17, GRID_STEP_HIGH
-  adc r16, r17
-  mov r3, r16
+  add r2, r8
+  adc r3, r9
   brcs grid_step
   ret
 grid_step:
+  rcall accompaniment_tick
 .L0ba:
   dec r1
   breq read_event
   ret
 read_event:
   lpm r16, Z+
+  cpi r16, 192
+  brcs melodic_event
+  cpi r16, 248
+  brcs chord_event
+  cpi r16, 251
+  brcs tempo_event
+  cpi r16, 253
+  brcs instrument_event
   cpi r16, 255
-  breq next_section
+  brne release_long_branch_0
+  rjmp next_section
+release_long_branch_0:
+  rcall stop_accompaniment
+  rjmp read_event
+tempo_event:
+  subi r16, 248
+  lsl r16
+  movw r12, r30
+  ldi r30, lo8(tempo_steps)
+  ldi r31, hi8(tempo_steps)
+  add r30, r16
+  lpm r8, Z+
+  lpm r9, Z
+  movw r30, r12
+  rjmp read_event
+instrument_event:
+  ldi r17, 206
+  sbrc r16, 2
+  ldi r17, 144
+  mov r7, r17
+  rjmp read_event
+chord_event:
+  subi r16, 192
+  lsl r16
+  movw r12, r30
+  ldi r30, lo8(chord_descriptors)
+  ldi r31, hi8(chord_descriptors)
+  add r30, r16
+  adc r31, r29
+  lpm r5, Z+
+  lpm r14, Z
+  mov r19, r14
+  swap r19
+  andi r19, 15
+  mov r17, r19
+  lsl r19
+  add r19, r17
+  lsl r19
+  mov r16, r14
+  andi r16, 15
+  subi r16, BASS_BASE_NEGATIVE
+  ldi r26, 107
+  ldi r25, 160
+  rcall indexed_note
+  mov r16, r5
+  swap r16
+  andi r16, 15
+  ldi r26, 112
+  ldi r25, 144
+  rcall indexed_note
+  mov r16, r5
+  andi r16, 15
+  ldi r26, 102
+  ldi r25, 197
+  rcall indexed_note
+  movw r30, r12
+  rjmp read_event
 melodic_event:
   /* Decode compact note/duration; load 16-bit DDS increment or signal lead release. */
   movw r12, r30
@@ -176,7 +233,6 @@ melodic_event:
   ldi r30, lo8(durations)
   ldi r31, hi8(durations)
   add r30, r17
-  adc r31, r29
   lpm r1, Z
   movw r30, r12
   /* BEGIN LEAD FREQUENCY */
@@ -188,29 +244,24 @@ melodic_event:
   cpi r16, HOLD_INDEX
   breq hold_sample
   movw r12, r30
-  lsl r16
-  ldi r30, lo8(note_steps)
-  ldi r31, hi8(note_steps)
-  add r30, r16
-  adc r31, r29
-  ldi r26, 96
-  ldi r25, 206
-  rcall initialize_voice
+  ldi r26, 97
+  mov r25, r7
+  rcall indexed_note
 lead_commit:
   movw r30, r12
   rjmp hold_sample
 note_rest:
 release_lead:
-  lds r17, 96
+  lds r17, 97
   andi r17, 127
-  sts 96, r17
+  sts 97, r17
+hold_sample:
   ret
 next_section:
   /* Playlist contains direct section offsets: no second lookup table. */
   ldi r30, lo8(playlist)
   ldi r31, hi8(playlist)
   add r30, r4
-  adc r31, r29
   lpm r16, Z
   inc r4
   mov r17, r4
@@ -223,8 +274,6 @@ next_section:
   add r30, r16
   adc r31, r29
   rjmp read_event
-hold_sample:
-  ret
 render_tone:
   /* Choose a register-dependent 16-step sustain wavetable and apply its amplitude envelope. */
   mov r0, r25
@@ -236,7 +285,7 @@ render_tone:
   brcs .L216
   ori r16, 8
 .L216:
-  cpi r26, 101
+  cpi r26, 102
   brne piano_attack_done
   cpi r25, 14
   brcs piano_attack_done
@@ -256,20 +305,20 @@ eeprom_low_nibble:
   subi r17, 8
 .L25c:
   mov r0, r17
+  sbrs r25, 3
   clr r17
-  sbrc r25, 0
-  add r17, r0
-  lsl r0
-  sbrc r25, 1
-  add r17, r0
-  lsl r0
+  lsl r17
   sbrc r25, 2
   add r17, r0
-  lsl r0
-  sbrc r25, 3
+  lsl r17
+  sbrc r25, 1
+  add r17, r0
+  lsl r17
+  sbrc r25, 0
   add r17, r0
   asr r17
-  rjmp envelope_return
+  asr r17
+  ret
 voice_silent:
   clr r17
   rjmp envelope_return
@@ -287,12 +336,14 @@ voice_initialized:
   ret
 capture_ram_tail:
   movw r10, r30
-  lds r16, 111
-  lds r17, 116
+  lds r16, 117
+  andi r16, 15
+  lds r17, 122
+  andi r17, 15
   sub r16, r17
-  ldi r30, 111
+  ldi r30, 117
   brcs ram_tail_destination
-  ldi r30, 116
+  ldi r30, 122
 ram_tail_destination:
   ld r16, X+
   andi r16, 127
@@ -311,4 +362,30 @@ ram_tail_copy:
 no_ram_tail:
   movw r30, r10
   rjmp envelope_return
+indexed_note:
+  lsl r16
+  ldi r30, lo8(note_steps)
+  ldi r31, hi8(note_steps)
+  add r30, r16
+  rjmp initialize_voice
+accompaniment_tick:
+  tst r19
+  breq accompaniment_return
+  dec r19
+  cpi r19, 1
+  breq stop_accompaniment
+accompaniment_return:
+  ret
+stop_accompaniment:
+  clr r19
+  ldi r26, 102
+stop_companion_loop:
+  ld r16, X+
+  andi r16, 127
+  subi r26, 1
+  st X+, r16
+  subi r26, 252
+  cpi r26, 117
+  brne stop_companion_loop
+  ret
 .include "score.inc"

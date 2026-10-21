@@ -14,7 +14,11 @@ reset:
   clr r2
   clr r15
   clr r24
-  ldi r30, 96
+  ldi r16, 255
+  mov r8, r16
+  ldi r16, 128
+  mov r14, r16
+  ldi r30, 97
   clr r31
 clear_ram:
   st Z+, r29
@@ -58,7 +62,7 @@ audio_step:
   brne render_sample
   rcall music_tick
 render_sample:
-  ldi r26, 96
+  ldi r26, 97
   clr r21
 voice_loop:
   ld r25, X+
@@ -80,7 +84,7 @@ voice_loop:
   asr r17
 primary_gain:
   add r21, r17
-  cpi r26, 121
+  cpi r26, 127
   brne voice_loop
 write_pwm:
   subi r21, 128
@@ -105,13 +109,21 @@ irq_restore:
   reti
 music_tick:
   inc r24
-  ldi r26, 96
+  ldi r26, 97
 envelope_loop:
   ld r16, X+
   mov r17, r16
   andi r17, 15
   sbrs r16, 7
   rjmp state_release
+  sbrs r16, 5
+  rjmp state_plucked
+  sbrc r24, 0
+  rjmp envelope_store
+  cpi r17, 7
+  breq envelope_store
+  inc r16
+  rjmp envelope_store
 state_plucked:
   tst r17
   breq envelope_store
@@ -136,6 +148,12 @@ state_gate:
   dec r16
   rjmp envelope_store
 state_release:
+  sbrs r16, 5
+  rjmp ordinary_release
+  mov r25, r24
+  andi r25, 7
+  brne envelope_store
+ordinary_release:
   tst r17
   breq envelope_store
   dec r16
@@ -148,22 +166,21 @@ envelope_store:
   subi r26, 1
   st X+, r16
   subi r26, 252
-  cpi r26, 121
+  cpi r26, 127
   brne envelope_loop
 .L0a8:
-  mov r16, r3
   ldi r17, GRID_STEP_LOW
   add r2, r17
   ldi r17, GRID_STEP_HIGH
-  adc r16, r17
-  mov r3, r16
+  adc r3, r17
   brcs grid_step
   ret
 grid_step:
+  inc r8
 .L0ba:
   dec r1
   breq read_event
-  ret
+  rjmp companion_grid
 read_event:
   /* Read packed score tokens. F0..FF are control events; E0..EF update accompaniment harmony. */
   lpm r16, Z+
@@ -171,37 +188,31 @@ read_event:
   brne .L0c8
   rjmp next_section
 .L0c8:
-  cpi r16, 224
+  cpi r16, 151
   brcs melodic_event
-  cpi r16, 240
-  brcs chord_event
-note_off:
-  ldi r26, 96
-note_off_loop:
-  ld r17, X+
-  sbrc r16, 0
-  andi r17, 127
-  subi r26, 1
-  st X+, r17
-  subi r26, 252
-  lsr r16
-  cpi r26, 111
-  brne note_off_loop
-  rjmp read_event
+  cpi r16, 254
+  breq all_parts_off
 chord_event:
-
-  movw r12, r30
-  andi r16, 15
-  lsl r16
-  lsl r16
-  ldi r30, lo8(chord_steps)
-  ldi r31, hi8(chord_steps)
-  add r30, r16
-  adc r31, r29
-  ldi r26, 101
-  ldi r25, 150
-  rcall initialize_voice
-  movw r30, r12
+  sbrs r14, 7
+  rjmp macro_already_running
+  ldi r17, 255
+  mov r9, r17
+macro_already_running:
+  subi r16, 142
+  mov r14, r16
+  rjmp read_event
+all_parts_off:
+  ldi r26, 97
+all_parts_off_loop:
+  ld r16, X+
+  andi r16, 127
+  subi r26, 1
+  st X+, r16
+  subi r26, 252
+  cpi r26, 117
+  brne all_parts_off_loop
+  ldi r16, 128
+  mov r14, r16
   rjmp read_event
 melodic_event:
   /* Decode compact note/duration; load 16-bit DDS increment or signal lead release. */
@@ -211,9 +222,7 @@ melodic_event:
   ldi r30, lo8(durations)
   ldi r31, hi8(durations)
   add r30, r17
-  adc r31, r29
   lpm r1, Z
-  movw r30, r12
   /* BEGIN LEAD FREQUENCY */
   lsr r16
   lsr r16
@@ -222,30 +231,22 @@ melodic_event:
   breq note_rest
   cpi r16, HOLD_INDEX
   breq hold_sample
-  movw r12, r30
-  lsl r16
-  ldi r30, lo8(note_steps)
-  ldi r31, hi8(note_steps)
-  add r30, r16
-  adc r31, r29
-  ldi r26, 96
+  ldi r26, 97
   ldi r25, 207
-  rcall initialize_voice
+  rcall macro_note
 lead_commit:
-  movw r30, r12
   rjmp hold_sample
 note_rest:
 release_lead:
-  lds r17, 96
+  lds r17, 97
   andi r17, 127
-  sts 96, r17
-  ret
+  sts 97, r17
+  rjmp companion_grid
 next_section:
   /* Playlist contains direct section offsets: no second lookup table. */
   ldi r30, lo8(playlist)
   ldi r31, hi8(playlist)
   add r30, r4
-  adc r31, r29
   lpm r16, Z
   inc r4
   mov r17, r4
@@ -256,10 +257,74 @@ next_section:
   ldi r30, lo8(melody_data)
   ldi r31, hi8(melody_data)
   add r30, r16
-  adc r31, r29
   rjmp read_event
 hold_sample:
+  rjmp companion_grid
+companion_grid:
+  movw r30, r12
+  sbrc r14, 7
   ret
+  mov r16, r8
+  andi r16, 3
+  breq companion_quarter
+  cpi r16, 2
+  brne companion_done
+  lds r16, 102
+  andi r16, 127
+  sts 102, r16
+  rjmp companion_done
+companion_quarter:
+  mov r16, r14
+  andi r16, 15
+  cpi r16, 15
+  breq companion_bass
+  ldi r26, 102
+  ldi r25, 199
+  rcall macro_note
+companion_bass:
+  sbrc r14, 6
+  rjmp companion_bass_on
+  mov r16, r8
+  andi r16, 15
+  brne companion_done
+companion_bass_on:
+  mov r16, r14
+  swap r16
+  andi r16, 3
+  cpi r16, 3
+  breq companion_strings
+  subi r16, 239
+  ldi r26, 107
+  ldi r25, 151
+  rcall macro_note
+companion_strings:
+  mov r16, r8
+  andi r16, 15
+  brne companion_done
+  inc r9
+  mov r16, r9
+  cpi r16, 8
+  brcs companion_done
+  mov r16, r14
+  swap r16
+  andi r16, 3
+  cpi r16, 3
+  brne companion_pad_pitch
+  ldi r16, 2
+companion_pad_pitch:
+  ldi r26, 112
+  ldi r25, 160
+  rcall macro_note
+companion_done:
+  movw r30, r12
+  ret
+macro_note:
+  lsl r16
+  ldi r30, lo8(note_steps)
+  ldi r31, hi8(note_steps)
+  add r30, r16
+  adc r31, r29
+  rjmp initialize_voice
 render_tone:
   /* Choose a register-dependent 16-step sustain wavetable and apply its amplitude envelope. */
   mov r0, r25
@@ -271,8 +336,8 @@ render_tone:
   brcs .L216
   ori r16, 8
 .L216:
-  cpi r26, 101
-  brne piano_attack_done
+  cpi r26, 108
+  brcc piano_attack_done
   cpi r25, 14
   brcs piano_attack_done
   ori r16, 48
@@ -291,26 +356,28 @@ eeprom_low_nibble:
   subi r17, 8
 .L25c:
   mov r0, r17
+  sbrs r25, 3
   clr r17
-  sbrc r25, 0
-  add r17, r0
-  lsl r0
-  sbrc r25, 1
-  add r17, r0
-  lsl r0
+  lsl r17
   sbrc r25, 2
   add r17, r0
-  lsl r0
-  sbrc r25, 3
+  lsl r17
+  sbrc r25, 1
+  add r17, r0
+  lsl r17
+  sbrc r25, 0
   add r17, r0
   asr r17
-  rjmp envelope_return
+  asr r17
+  ret
 voice_silent:
   clr r17
   rjmp envelope_return
 initialize_voice:
   rcall capture_ram_tail
-  mov r16, r25
+  andi r16, 15
+  lsr r16
+  or r16, r25
   subi r26, 1
   st X+, r16
   subi r26, 254
@@ -322,14 +389,14 @@ voice_initialized:
   ret
 capture_ram_tail:
   movw r10, r30
-  lds r16, 111
+  lds r16, 117
   andi r16, 15
-  lds r17, 116
+  lds r17, 122
   andi r17, 15
   sub r16, r17
-  ldi r30, 111
+  ldi r30, 117
   brcs ram_tail_destination
-  ldi r30, 116
+  ldi r30, 122
 ram_tail_destination:
   ld r16, X+
   andi r16, 127

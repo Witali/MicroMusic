@@ -12,7 +12,10 @@ function image(name){
 
 for(const name of variants)test(`${name}: PWM ring preserves every midpoint/full point and meets real-time deadlines`,t=>{
   const {rom,ep,report}=image(name),{labels,releaseChannels}=report,c=new AVRCore(rom,ep);
-  assert.deepEqual(releaseChannels.voiceAddresses,[96,101,106,111,116]);
+  const states=releaseChannels.voiceAddresses;
+  assert.equal(states.length,releaseChannels.primaryVoices+releaseChannels.tailSlots);
+  assert.ok(states[0]>=96&&states.at(-1)+5<=128,'Voice states fit below the independent PWM ring');
+  assert.deepEqual(states.map(a=>a-states[0]),Array.from({length:states.length},(_,i)=>i*5));
   assert.equal(releaseChannels.tailSlots,2);assert.equal(releaseChannels.pwmRingBytes,16);
   const queue=Array(14).fill(128);let previous=128,latched=128,points=0,reads=0,minQueued=16;
   let renderStart=null,renderIrqs=0,maxRender=0;

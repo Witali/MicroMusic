@@ -204,7 +204,7 @@ class InstrumentBankTests(unittest.TestCase):
         self.assertTrue(bank_module.verify_sources(self.bank))
         programs = {'acoustic-grand-piano': 0, 'acoustic-grand-piano-soft': 0,
                     'acoustic-guitar-nylon': 24, 'fretless-bass': 35,
-                    'violin': 40, 'cello': 42, 'clarinet': 71, 'flute': 73}
+                    'violin': 40, 'cello': 42, 'clarinet': 71, 'flute': 73, 'synth-strings-1': 50}
         self.assertEqual({n: p['gmProgram'] for n, p in self.bank['instruments'].items() if n != 'off'}, programs)
         changed = copy.deepcopy(self.bank)
         changed['instruments']['flute']['source']['measurementSha256'] = '0' * 64

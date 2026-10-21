@@ -992,6 +992,176 @@
           ]
         }
       }
+    },
+    "synth-strings-1": {
+      "label": "Синтезированные струнные 1",
+      "gmProgram": 50,
+      "waves": {
+        "low": [
+          0,
+          -1,
+          -2,
+          -3,
+          -4,
+          -4,
+          -3,
+          0,
+          3,
+          4,
+          3,
+          2,
+          2,
+          2,
+          1,
+          0
+        ],
+        "high": [
+          0,
+          1,
+          2,
+          2,
+          2,
+          2,
+          3,
+          4,
+          3,
+          0,
+          -2,
+          -4,
+          -4,
+          -4,
+          -3,
+          -2
+        ]
+      },
+      "envelope": {
+        "model": "sustain",
+        "defaultLevel": 4,
+        "retrigger": "half",
+        "attackStep": 1,
+        "attackMask": 1,
+        "releaseStep": 1,
+        "releaseMask": 7
+      },
+      "fit": {
+        "method": "Median stereo-power partials; circular-mean phases; seven harmonics; H3.2 soft low-pass; deterministic integer spectral fit; zero-DC 16-point offset-binary four-bit samples, peak <= 4; quiet-start phase rotation",
+        "registers": {
+          "low": {
+            "waveform": [
+              0,
+              -1,
+              -2,
+              -3,
+              -4,
+              -4,
+              -3,
+              0,
+              3,
+              4,
+              3,
+              2,
+              2,
+              2,
+              1,
+              0
+            ],
+            "referenceNotes": [
+              53,
+              60
+            ],
+            "targetAmplitudes": [
+              0.87525174,
+              0.38021654,
+              0.23483317,
+              0.13811552,
+              0.09743551,
+              0.05932858,
+              0.04619195
+            ],
+            "softenedTargetAmplitudes": [
+              0.90266809,
+              0.38111524,
+              0.18699924,
+              0.06494642,
+              0.0254931,
+              0.00918156,
+              0.00453259
+            ],
+            "quantizedAmplitudes": [
+              0.89963261,
+              0.38251773,
+              0.1816242,
+              0.09901475,
+              0.01912561,
+              0.0271847,
+              0.02110178
+            ],
+            "normalizedSpectralDistance": 0.04289428
+          },
+          "high": {
+            "waveform": [
+              0,
+              1,
+              2,
+              2,
+              2,
+              2,
+              3,
+              4,
+              3,
+              0,
+              -2,
+              -4,
+              -4,
+              -4,
+              -3,
+              -2
+            ],
+            "referenceNotes": [
+              65,
+              72,
+              75,
+              79,
+              84,
+              87
+            ],
+            "targetAmplitudes": [
+              0.91245984,
+              0.33399717,
+              0.18546971,
+              0.11152959,
+              0.07287196,
+              0.05113853,
+              0.03316039
+            ],
+            "softenedTargetAmplitudes": [
+              0.93056603,
+              0.33105979,
+              0.14604669,
+              0.05186103,
+              0.01885403,
+              0.00782599,
+              0.00321765
+            ],
+            "quantizedAmplitudes": [
+              0.93052322,
+              0.32779365,
+              0.15031816,
+              0.04647394,
+              0.02852715,
+              0.02329558,
+              0.02379067
+            ],
+            "normalizedSpectralDistance": 0.02853178
+          }
+        }
+      },
+      "note": "GM50 matches the original Children track5. The native arrangement uses a source-inspired one-note harmonic pad, not its literal chord notes. Generic cap4 attack every2 ticks is ~109ms, release every8ticks ~437ms; native Children uses cap7 at half output gain (~191ms/~765ms). Low MIDI53/60 source attacks are slower and cannot be modeled exactly by one compact envelope.",
+      "source": {
+        "measurement": "ATtiny13A/Music/instruments/children-synth-strings-profile.json",
+        "measurementSha256": "8fbaee4a933810db3b6a5e13dcae9ea09ed14561cacd7229b71a6ea8987c29d3",
+        "soundfontSha256": "74594e8f4250680adf590507a306655a299935343583256f3b722c48a1bc1cb0"
+      }
     }
   },
   "percussion": {

@@ -51,7 +51,7 @@ function renderCatalog() {
     const body=document.createElement('span'); body.className='card-body';
     const name=document.createElement('strong'); name.textContent=entry.title;
     const voices=entry.voices??4;
-    const meta=document.createElement('span'); meta.className='card-meta'; meta.textContent=`${entry.flashBytes} Б Flash${entry.eepromBytes ? ' + 64 Б EEPROM' : ''} · ${entry.status==='experimental' ? 'ТЕСТ' : `${voices} ${voices===1?'ГОЛОС':'ГОЛОСА'}`}${entry.releaseTailSlots ? ` · ${entry.releaseTailSlots} ХВОСТА` : ''}`;
+    const meta=document.createElement('span'); meta.className='card-meta'; meta.textContent=`${entry.flashBytes} Б Flash${entry.eepromBytes ? ' + 64 Б EEPROM' : ''} · ${entry.status==='experimental' ? 'ТЕСТ' : `${voices} ${voices===1?'ОСНОВНОЙ':'ОСНОВНЫХ'}`}${entry.releaseTailSlots ? ` · ${entry.releaseTailSlots} РЕЗЕРВНЫХ` : ''}`;
     const arrow=document.createElement('span'); arrow.className='card-arrow'; arrow.textContent=selected?.id===entry.id ? '●' : '↗'; arrow.setAttribute('aria-hidden','true');
     body.append(name,meta); button.append(number,body,arrow); button.onclick=()=>load(entry); item.append(button); $('catalog').append(item);
   }

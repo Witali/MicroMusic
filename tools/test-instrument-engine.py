@@ -185,6 +185,44 @@ class InstrumentEngineTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             engine.specialize({'beats_per_bar': 3}, kit)
 
+    def test_attack_release_masks_are_validated_and_require_supported_models(self):
+        for instrument in ('violin', 'flute', 'off'):
+            for field in ('attackMask', 'releaseMask'):
+                for value in (-1, 2, 4, 16, 31, True, 1.0, '1', None):
+                    roles = bank_module.describe_assignments({'lead': instrument}, self.bank)
+                    roles['lead']['envelope'][field] = value
+                    with self.subTest(instrument=instrument, field=field, value=value), self.assertRaisesRegex(ValueError, field):
+                        engine.specialize({}, roles)
+        for instrument in ('acoustic-grand-piano', 'acoustic-guitar-nylon', 'off'):
+            for field in ('attackMask', 'releaseMask'):
+                roles = bank_module.describe_assignments({'lead': instrument}, self.bank)
+                roles['lead']['envelope'][field] = 1
+                with self.subTest(instrument=instrument, field=field), self.assertRaisesRegex(ValueError, 'require bowed or sustain'):
+                    engine.specialize({}, roles)
+        for field in ('attack_mask', 'release_mask'):
+            with self.subTest(direct=field), self.assertRaisesRegex(ValueError, 'must be'):
+                engine.envelope(1, 'bowed', 15, 'test', **{field: 2})
+
+    def test_default_and_explicit_zero_masks_generate_identical_rom(self):
+        # Zero adds no instruction to any existing bank profile, including
+        # inactive voices and the unrelated shared piano/pluck decay helper.
+        for instrument, profile in self.bank['instruments'].items():
+            if any(profile['envelope'].get(phase + 'Mask', 0) for phase in ('attack', 'release')):
+                continue
+            roles = bank_module.describe_assignments(dict.fromkeys(engine.ROLES, instrument), self.bank)
+            source, metadata = engine.specialize({}, roles)
+            for role in engine.ROLES:
+                roles[role]['envelope'].update(attackMask=0, releaseMask=0)
+            explicit_source, explicit_meta = engine.specialize({}, roles)
+            with self.subTest(instrument=instrument):
+                self.assertEqual(explicit_source, source)
+                self.assertEqual(explicit_meta, metadata)
+                binaries = []
+                for text in (source, explicit_source):
+                    (self.folder / 'synth.S').write_text(text, encoding='utf-8', newline='\n')
+                    binaries.append(assembler.assemble(self.folder / 'synth.S')[0])
+                self.assertEqual(*binaries)
+
     def test_runtime_envelope_retrigger_rest_and_phase_oracles(self):
         cases = []
         for instrument in ('violin', 'acoustic-grand-piano', 'acoustic-guitar-nylon', 'fretless-bass', 'flute', 'cello', 'clarinet', 'off'):
@@ -201,6 +239,25 @@ class InstrumentEngineTests(unittest.TestCase):
         (self.folder / 'synth.S').write_text(source, encoding='utf-8', newline='\n')
         binary, labels = assembler.assemble(self.folder / 'synth.S')
         cases.append(dict(instrument='custom-sustained-full', roles=roles, meta=metadata, binary=list(binary), labels=labels))
+        # The GM50 pad needs attack every other tick and release every eighth
+        # tick. Exercise all supported nonzero periods, independent per phase
+        # and voice, for both bowed and sustain models. Low caps/steps also
+        # expose saturation and release underflow on the selected clock ticks.
+        masks = (1, 3, 7, 15)
+        for index, mask in enumerate(masks):
+            roles = bank_module.describe_assignments(dict(zip(engine.ROLES, ('violin', 'flute', 'cello'))), self.bank)
+            for role_index, role in enumerate(engine.ROLES):
+                roles[role]['level'] = 3
+                roles[role]['envelope'].update(attackStep=1, releaseStep=1 if index == 0 else 2,
+                                              attackMask=masks[(index + role_index) % len(masks)],
+                                              releaseMask=masks[(index + role_index + 2) % len(masks)])
+            source, metadata = engine.specialize({}, roles)
+            (self.folder / 'synth.S').write_text(source, encoding='utf-8', newline='\n')
+            binary, labels = assembler.assemble(self.folder / 'synth.S')
+            for role in engine.ROLES:
+                self.assertEqual(metadata[role + '_attack_mask'], roles[role]['envelope']['attackMask'])
+                self.assertEqual(metadata[role + '_release_mask'], roles[role]['envelope']['releaseMask'])
+            cases.append(dict(instrument=f'masked-{mask}', roles=roles, meta=metadata, binary=list(binary), labels=labels))
         path = self.folder / 'runtime-cases.json'
         path.write_text(json.dumps(cases), encoding='utf-8', newline='\n')
         program = r'''
@@ -211,7 +268,7 @@ const cases=JSON.parse(fs.readFileSync(process.argv[1]));
 const registers=[1,19,20],roles=['lead','keys','pluck'];
 const modelNames=['lead_envelope_model','accompaniment_envelope_model','pluck_envelope_model'];
 let envelopeChecks=0,retriggerChecks=0,restChecks=0;
-function oracle(value,tick,role,meta){
+function oracle(value,tick,role,meta,profiles){
   const model=meta[modelNames[role]],name=roles[role],cap=meta[name+'_max_level'];
   if(model==='off')return 0;
   if(model==='piano'||model==='pluck'){
@@ -221,6 +278,8 @@ function oracle(value,tick,role,meta){
     if(level<10)period*=2;if(level<7)period*=2;
     return value-Number(tick%period===0);
   }
+  const phase=value&128?'attackMask':'releaseMask',period=(profiles[name].envelope[phase]??0)+1;
+  if(tick%period!==0)return value;
   if(value&128)return Math.min(128+cap,value+meta[name+'_attack_step']);
   if(model==='bowed'&&role===0&&meta[name+'_release_model']==='fast-above-8'){let released=Math.max(0,value-1);if(released&8)released--;return released;}
   return Math.max(0,value-meta[name+'_release_step']);
@@ -229,11 +288,12 @@ function run(c,target){let steps=0;while(c.pc!==target){c.step();assert.ok(++ste
 for(const fixture of cases){
   const {meta,labels}=fixture,ep=new Uint8Array(64).fill(0x88);
   const c=new AVRCore(Uint8Array.from(fixture.binary),ep,{fastIdle:false});
-  for(let tick=0;tick<32;tick++)for(let level=0;level<16;level++)for(const held of [false,true]){
+  for(const tick of [...Array(32).keys(),254,255])for(let level=0;level<16;level++)for(const held of [false,true]){
     c.pc=labels.music_tick/2;c.r[24]=tick;c.sp=159;c.r[0]=0;
     const prior=registers.map((reg,role)=>{const v=meta[modelNames[role]]==='off'?0:level+(held?128:0);c.r[reg]=v;return v;});
     run(c,labels['.L0a8']/2);
-    assert.deepEqual(registers.map(r=>c.r[r]),prior.map((v,role)=>oracle(v,tick+1,role,meta)),fixture.instrument+' envelope');
+    assert.deepEqual(registers.map(r=>c.r[r]),prior.map((v,role)=>oracle(v,tick+1,role,meta,fixture.roles)),fixture.instrument+' envelope');
+    assert.equal(c.r[24],(tick+1)&255,'One shared envelope clock tick, including wrap');
     assert.equal(c.sp,159,'Envelope helper balances stack');envelopeChecks++;
   }
   for(let level=0;level<16;level++){
@@ -264,7 +324,8 @@ console.log(JSON.stringify({envelopeChecks,retriggerChecks,restChecks}));
                                    capture_output=True, text=True, check=False)
         self.assertEqual(completed.returncode, 0, completed.stdout + completed.stderr)
         checks = json.loads(completed.stdout)
-        self.assertEqual(checks, dict(envelopeChecks=9216, retriggerChecks=144, restChecks=54))
+        self.assertEqual(checks, dict(envelopeChecks=len(cases) * 34 * 16 * 2,
+                                     retriggerChecks=len(cases) * 16, restChecks=len(cases) * 6))
 
 
 if __name__ == '__main__':

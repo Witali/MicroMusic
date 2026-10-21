@@ -1,64 +1,176 @@
 {
-  "piano_low": [
-    1,
-    2,
-    3,
-    3,
-    2,
-    1,
-    -2,
-    -5,
-    -6,
-    -4,
-    -1,
-    1,
-    2,
-    1,
-    1,
-    1
-  ],
-  "piano_high": [
-    1,
-    3,
-    4,
-    4,
-    3,
-    3,
-    4,
-    4,
-    2,
-    -2,
-    -5,
-    -6,
-    -6,
-    -5,
-    -3,
-    -1
-  ],
-  "fretless_bass": [
-    0,
-    -2,
-    -4,
-    -4,
-    -4,
-    -3,
-    0,
-    2,
-    4,
-    4,
-    4,
-    4,
-    3,
-    0,
-    -3,
-    -1
-  ],
-  "assignments": {
-    "lead": "acoustic-grand-piano",
-    "keys": "fretless-bass",
-    "pluck": "off",
-    "percussion": "off"
+  "source": "Shared measured FluidR3 build-time bank",
+  "bankSha256": "ddf64e6c18950407c002d3c1a3dba9356e566bccba099c08918e7c5d0aa52221",
+  "slots": {
+    "lead": {
+      "instrument": "acoustic-grand-piano",
+      "waves": {
+        "low": [
+          1,
+          2,
+          3,
+          3,
+          2,
+          1,
+          -2,
+          -5,
+          -6,
+          -4,
+          -1,
+          1,
+          2,
+          1,
+          1,
+          1
+        ],
+        "high": [
+          1,
+          3,
+          4,
+          4,
+          3,
+          3,
+          4,
+          4,
+          2,
+          -2,
+          -5,
+          -6,
+          -6,
+          -5,
+          -3,
+          -1
+        ]
+      }
+    },
+    "keys": {
+      "instrument": "fretless-bass",
+      "waves": {
+        "low": [
+          0,
+          -2,
+          -4,
+          -4,
+          -4,
+          -3,
+          0,
+          2,
+          4,
+          4,
+          4,
+          4,
+          3,
+          0,
+          -3,
+          -1
+        ],
+        "high": [
+          0,
+          -2,
+          -4,
+          -4,
+          -4,
+          -3,
+          0,
+          2,
+          4,
+          4,
+          4,
+          4,
+          3,
+          0,
+          -3,
+          -1
+        ]
+      }
+    },
+    "pluck": {
+      "instrument": "synth-strings-1",
+      "waves": {
+        "low": [
+          0,
+          -1,
+          -2,
+          -3,
+          -4,
+          -4,
+          -3,
+          0,
+          3,
+          4,
+          3,
+          2,
+          2,
+          2,
+          1,
+          0
+        ],
+        "high": [
+          0,
+          1,
+          2,
+          2,
+          2,
+          2,
+          3,
+          4,
+          3,
+          0,
+          -2,
+          -4,
+          -4,
+          -4,
+          -3,
+          -2
+        ]
+      }
+    }
   },
-  "instrumentBank": "../../instruments/bank.json",
-  "note": "Tables resolved by tools/instrument-bank.py from score.instruments. Unused EEPROM banks are silent."
+  "pianoTransient": {
+    "kind": "piano-attack",
+    "minEnvelopeLevel": 14,
+    "eepromOffsets": {
+      "low": 48,
+      "high": 56
+    },
+    "maximumSwitchSampleDelta": 1,
+    "waves": {
+      "low": [
+        1,
+        2,
+        4,
+        2,
+        2,
+        1,
+        -2,
+        -5,
+        -6,
+        -4,
+        -1,
+        2,
+        1,
+        1,
+        1,
+        1
+      ],
+      "high": [
+        0,
+        3,
+        5,
+        4,
+        2,
+        2,
+        4,
+        5,
+        3,
+        -2,
+        -5,
+        -7,
+        -7,
+        -5,
+        -2,
+        0
+      ]
+    }
+  }
 }

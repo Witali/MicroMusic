@@ -34,6 +34,12 @@ def ihex(raw):
 
 def build(folder):
     data=json.loads((folder/'score.json').read_text(encoding='utf-8'))
+    if data.get('engine')=='alicia-native':
+        native=module('alicia_native',ROOT/'tools/arrange-alicia-multi.py')
+        return native.build(folder,candidates=data.get('packing_candidates',4096),production=True)
+    if data.get('engine')=='children-native':
+        native=module('children_native',ROOT/'tools/arrange-children-four.py')
+        return native.build(folder,candidates=data.get('packing_candidates',4096),production=True)
     assignments=None;percussion_profile=None
     if 'instruments' in data:
         assignments=bank.describe_assignments(data['instruments'])
