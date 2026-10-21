@@ -8,9 +8,19 @@ const OP = { NOP:1, CLI:2, SEI:3, RETI:4, RET:5, CALL:6, JUMP:7, BRANCH:8,
   LSR:25, ASR:26, SWAP:27, IN:28, OUT:29, SBI:30, PUSH:31, POP:32, ST:33, LPM:34, FLAG:35,
   ROR:36, LDS:37, STS:38, OR:39, LD:40 };
 const sign = (v, bit) => v & bit ? v - bit * 2 : v;
+// Maximum cycles for instructions that can execute without observing I/O.
+// Everything else remains in step(), including all peripheral and stack access.
+const BATCH_CYCLES = new Uint8Array(41);
+for (const op of [OP.NOP, OP.LDI, OP.CPI, OP.SUBI, OP.ORI, OP.ANDI, OP.MOVW,
+  OP.ADD, OP.ADC, OP.SUB, OP.AND, OP.EOR, OP.OR, OP.MOV, OP.INC, OP.DEC,
+  OP.COM, OP.LSR, OP.ASR, OP.ROR, OP.SWAP]) BATCH_CYCLES[op] = 1;
+for (const op of [OP.JUMP, OP.BRANCH, OP.LD, OP.ST]) BATCH_CYCLES[op] = 2;
+BATCH_CYCLES[OP.SKIP] = BATCH_CYCLES[OP.LPM] = 3;
+const NZ = Uint8Array.from({length:256}, (_, v) => (v === 0 ? 2 : 0) | (v & 128 ? 0x14 : 0));
+// NZ assumes V=0 (S=N). XOR 0x18 sets V and flips S when overflow is set.
 
 export class AVRCore {
-  constructor(binary, eeprom, { fastIdle = true } = {}) {
+  constructor(binary, eeprom, { fastIdle = true, fastBlocks = fastIdle } = {}) {
     if (!binary.length || binary.length > 1024) throw new Error('Flash must contain 1–1024 bytes');
     if (eeprom && eeprom.length !== 64) throw new Error('EEPROM must contain 64 bytes');
     this.rom = new Uint8Array(1024).fill(255); this.rom.set(binary);
@@ -21,6 +31,7 @@ export class AVRCore {
     this.ram = this.sram; // Preserve the SRAM inspection alias used by firmware tools.
     this.op = new Uint8Array(512); this.d = new Uint8Array(512);
     this.s = new Uint8Array(512); this.k = new Int16Array(512);
+    this.batch = new Uint8Array(512);
     this.sp = 0x9f; // SPL resets to RAMEND; return addresses occupy TWO bytes.
     this.minSP = this.sp;
     this.pc = this.cyc = this.z = this.c = this.i = 0;
@@ -31,6 +42,7 @@ export class AVRCore {
     this.irqFrames = [];
     this.workLost = 0;
     this.duty = 128; this.fastIdle = fastIdle; this.idleCycles = 0;
+    this.fastBlocks = fastBlocks; this.blockInstructions = 0;
     for (let p = 0; p < 512; p++) this.decode(p);
     this.idle = new Uint8Array(512);
     for (let p = 0; p < 512; p++) this.decodeIdle(p);
@@ -102,6 +114,7 @@ export class AVRCore {
     else if ([0x9201,0x920d].includes(w & 0xfe0f)) { o = OP.ST; s = (w & 15) === 13 ? 26 : 30; }
     else if ((w & 0xfe0f) === 0x9004 || (w & 0xfe0f) === 0x9005) { o = OP.LPM; k = w & 1; }
     this.op[p] = o; this.d[p] = d; this.s[p] = s; this.k[p] = k;
+    this.batch[p] = BATCH_CYCLES[o];
     // A re-decoded word can change any polling loop containing it.
     if (this.idle) for (let offset = 0; offset < 5; offset++) this.decodeIdle((p - offset) & 511);
   }
@@ -328,10 +341,97 @@ export class AVRCore {
     this.clock(n);
     this.interrupt();
   }
+  runBlock(deadline = Infinity) {
+    // IRQ latency (SEI/RETI) and already-pending interrupts need one real step.
+    if (this.irqDelay || this.pending) return false;
+    const budget = Math.min(64, this.overflowAt - this.cyc - 1, deadline - this.cyc);
+    const r = this.r, data = this.data, rom = this.rom;
+    const op = this.op, dst = this.d, src = this.s, imm = this.k, batch = this.batch;
+    let p = this.pc, flags = this.sreg, elapsed = 0, count = 0;
+    execution: while (batch[p] && elapsed + batch[p] <= budget) {
+      const o = op[p], d = dst[p], s = src[p], k = imm[p];
+      let next = (p + 1) & 511, cycles = batch[p], x, y, v, total, address;
+      switch (o) {
+        case OP.NOP: break;
+        case OP.LDI: r[d] = k; break;
+        case OP.MOV: r[d] = r[s]; break;
+        case OP.MOVW: r[d] = r[s]; r[d + 1] = r[s + 1]; break;
+        case OP.ADD:
+        case OP.ADC:
+          x = r[d]; y = r[s]; total = x + y + (o === OP.ADC ? flags & 1 : 0); v = total & 255;
+          flags = (flags & 0xc0) | (NZ[v] ^ ((~(x ^ y) & (x ^ v) & 128) ? 0x18 : 0)) |
+            ((total >> 8) & 1) | (((x ^ y ^ v) & 16) << 1);
+          r[d] = v; break;
+        case OP.CPI:
+        case OP.SUBI:
+        case OP.SUB:
+          x = r[d]; y = o === OP.SUB ? r[s] : k; total = x - y; v = total & 255;
+          flags = (flags & 0xc0) | (NZ[v] ^ (((x ^ y) & (x ^ v) & 128) ? 0x18 : 0)) |
+            ((total >> 8) & 1) | (((x ^ y ^ v) & 16) << 1);
+          if (o !== OP.CPI) r[d] = v;
+          break;
+        case OP.AND: v = r[d] &= r[s]; flags = (flags & 0xe1) | NZ[v]; break;
+        case OP.EOR: v = r[d] ^= r[s]; flags = (flags & 0xe1) | NZ[v]; break;
+        case OP.OR: v = r[d] |= r[s]; flags = (flags & 0xe1) | NZ[v]; break;
+        case OP.ANDI: v = r[d] &= k; flags = (flags & 0xe1) | NZ[v]; break;
+        case OP.ORI: v = r[d] |= k; flags = (flags & 0xe1) | NZ[v]; break;
+        case OP.INC:
+          r[d]++; v = r[d]; flags = (flags & 0xe1) | (NZ[v] ^ (v === 128 ? 0x18 : 0)); break;
+        case OP.DEC:
+          r[d]--; v = r[d]; flags = (flags & 0xe1) | (NZ[v] ^ (v === 127 ? 0x18 : 0)); break;
+        case OP.COM: v = r[d] ^= 255; flags = (flags & 0xe0) | NZ[v] | 1; break;
+        case OP.LSR:
+        case OP.ASR:
+        case OP.ROR:
+          x = r[d]; v = (x >> 1) | (o === OP.ASR ? x & 128 : o === OP.ROR ? (flags & 1) << 7 : 0);
+          r[d] = v; flags = (flags & 0xe0) | (NZ[v] ^ (((v >> 7) ^ (x & 1)) ? 0x18 : 0)) | (x & 1);
+          break;
+        case OP.SWAP: r[d] = ((r[d] & 15) << 4) | (r[d] >> 4); break;
+        case OP.JUMP: next = (next + k) & 511; break;
+        case OP.BRANCH:
+          cycles = 1;
+          if (((flags >> d) & 1) === s) { next = (next + k) & 511; cycles = 2; }
+          break;
+        case OP.SKIP:
+          cycles = 1;
+          if (((r[d] >> s) & 1) === k) {
+            const w = rom[next * 2] | rom[next * 2 + 1] << 8;
+            const words = (w & 0xfe0f) === 0x9000 || (w & 0xfe0f) === 0x9200 ||
+              (w & 0xfe0e) === 0x940c || (w & 0xfe0e) === 0x940e ? 2 : 1;
+            next = (next + words) & 511; cycles = 1 + words;
+          }
+          break;
+        case OP.LD:
+        case OP.ST:
+          address = r[s] | r[s + 1] << 8;
+          // I/O needs its real access cycle. Invalid/undefined accesses retain
+          // the single-step error path and the state preceding that instruction.
+          if (address < 96 || address >= 160 || d === s || d === s + 1) break execution;
+          if (o === OP.LD) r[d] = data[address]; else data[address] = r[d];
+          address++; r[s] = address & 255; r[s + 1] = address >> 8;
+          break;
+        case OP.LPM:
+          address = r[30] | r[31] << 8;
+          if (address >= 1024 || (k && d >= 30)) break execution;
+          r[d] = rom[address];
+          if (k) { address++; r[30] = address & 255; r[31] = address >> 8; }
+          break;
+      }
+      p = next; elapsed += cycles; count++;
+      // Give the existing wait-loop accelerator the next opportunity to run.
+      if (this.idle[p]) break;
+    }
+    if (!count) return false;
+    this.pc = p; this.sreg = flags; this.clock(elapsed); this.blockInstructions += count;
+    return true;
+  }
   nextDuty() {
     const before = this.writes, deadline = this.cyc + 9600000;
+    // Instruction hooks used by firmware audits must still observe every step.
+    const blocks = this.fastBlocks && this.step === AVRCore.prototype.step;
     while (this.writes === before) {
-      if (!(this.fastIdle && this.idle[this.pc] && this.skipIdle())) this.step();
+      if (!(this.fastIdle && this.idle[this.pc] && this.skipIdle()) &&
+          !(blocks && this.batch[this.pc] && this.runBlock(deadline))) this.step();
       if (this.cyc > deadline) throw new Error('Firmware produced no PWM for one emulated second');
     }
     return this.duty;
