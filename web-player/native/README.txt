@@ -3,7 +3,9 @@ AVR C/WASM
 avr.c is the production firmware-oriented ATtiny13A subset. It preserves the
 existing instruction, timer, EEPROM, stack and diagnostic behavior. Unsupported
 instructions/peripherals still fail explicitly; this is not a complete MCU.
-The former JS core is retained only as a differential oracle and speed baseline.
+The JS core is also available for playback and is the default UI engine.
+lib/engines.js loads only the selected renderer; WASM is loaded on selection.
+Differential CPU tests and benchmarks continue to use lib/avr-reference.js.
 
 Build from the repository root:
   node web-player/scripts/build-wasm.mjs --emsdk C:/path/to/emsdk
@@ -21,7 +23,8 @@ avr_layout and avr_field_name expose memory offsets and double state fields.
 lib/avr-wasm.js maintains typed views and the existing debugging API, including
 instruction hooks and SRAM aliases. An overridden JS step hook disables blocks
 for audits. Production rendering enters WASM once per block, not per instruction.
-The Worker installs its message handler before asynchronously importing WASM.
+The Worker installs its handler before dynamically loading the selected engine
+and serializes init, audio-port and controls while that import completes.
 
 avr_render executes CPU/timer/IRQ, linear resampling, high-pass (35 Hz),
 low-pass (UI cutoff, clamped below Nyquist), then gain. Both biquads use Q=0.5

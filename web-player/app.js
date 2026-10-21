@@ -10,6 +10,7 @@ let lastScopeDraw=-Infinity, scopeDrawTimer;
 
 function showError(message) { $('error').textContent = message; $('error').hidden = !message; }
 function audioControls() { return {cutoff:+$('cutoff').value,volume:+$('volume').value}; }
+function selectedEngine() { return document.querySelector('input[name="engine"]:checked').value; }
 function transport() {
   document.body.dataset.playing = String(playing);
   $('play-icon').textContent = playing ? 'Ⅱ' : '▶';
@@ -104,10 +105,10 @@ function load(entry) {
       stateUI(data.state); scope=data.scope; draw(); $('average').textContent=data.averagePWM.toFixed(1);
       headroom=headroom ? headroom*.8+data.headroom*.2 : data.headroom; $('headroom').textContent=headroom.toFixed(1)+'×';
     }
-    if (data.type==='error') { pause(); showError('Ошибка эмуляции: '+data.message); }
+    if (data.type==='error') { runtimeReady=false; pause(); showError('Ошибка эмуляции: '+data.message); }
   };
   worker.onerror=event=>{ if (runtime===worker) { runtimeReady=false; pause(); showError('Не удалось запустить AVR-эмулятор: '+event.message); } };
-  worker.postMessage({type:'init',entry,sampleRate:audio?.sampleRate||48000,controls:audioControls()});
+  worker.postMessage({type:'init',entry,engine:selectedEngine(),sampleRate:audio?.sampleRate||48000,controls:audioControls()});
 }
 async function ensureAudio() {
   if (audio) { await audio.resume(); return; }
@@ -145,6 +146,7 @@ async function toggle() {
 $('play').onclick=toggle; $('reset').onclick=()=>load(selected); $('search').oninput=renderCatalog;
 $('volume').oninput=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
 $('cutoff').onchange=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
+for (const choice of document.querySelectorAll('input[name="engine"]')) choice.onchange=()=>{ if (selected) load(selected); };
 document.addEventListener('keydown',event=>{ if (event.code==='Space' && !event.repeat && !/INPUT|SELECT|TEXTAREA|BUTTON|A/.test(event.target.tagName)) { event.preventDefault(); toggle(); } });
 document.addEventListener('visibilitychange',()=>{ if (document.hidden) pause(); });
 window.addEventListener('pagehide',()=>{ runtime?.terminate(); audio?.close(); });

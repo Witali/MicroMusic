@@ -1,8 +1,6 @@
-// Register the message handler before the asynchronous WASM import finishes.
-// Otherwise the initial init message can arrive while the module graph awaits
-// fetch/compilation and be discarded by the Worker's event loop.
-const rendererModule = import('./lib/renderer.js');
-let renderer, entry, port, controls = {cutoff:4000,volume:1};
+import { createRenderer, DEFAULT_ENGINE } from './lib/engines.js';
+let renderer, entry, port, engine = DEFAULT_ENGINE, controls = {cutoff:4000,volume:1};
+let messages = Promise.resolve();
 
 function publish(samples, milliseconds) {
   const scope = new Float32Array(512);
@@ -16,17 +14,18 @@ function fail(error) {
   port?.postMessage({type:'error'});
   self.postMessage({type:'error',message:error.message});
 }
-self.onmessage = async ({data}) => {
-  try {
-    const { Renderer } = await rendererModule;
+self.onmessage = ({data}) => {
+  // Preserve init/audio-port/controls order while the chosen engine imports.
+  messages = messages.then(async () => {
     if (data.type === 'init') {
-      entry = data.entry; controls = data.controls ?? controls;
-      renderer = new Renderer(entry, data.sampleRate, controls);
-      self.postMessage({type:'ready',state:renderer.core.state()});
+      entry = data.entry; engine = data.engine ?? DEFAULT_ENGINE; controls = data.controls ?? controls;
+      renderer = await createRenderer(entry, data.sampleRate, controls, engine);
+      self.postMessage({type:'ready',engine,state:renderer.core.state()});
     } else if (data.type === 'audio-port') {
       controls = data.controls ?? controls;
-      renderer = new Renderer(entry, data.sampleRate, controls);
-      port?.close(); port = data.port;
+      port?.close();
+      renderer = await createRenderer(entry, data.sampleRate, controls, engine);
+      port = data.port;
       port.onmessage = ({data}) => {
         try {
           if (data.type !== 'need') return;
@@ -39,5 +38,5 @@ self.onmessage = async ({data}) => {
     } else if (data.type === 'controls') {
       controls = {...controls,...data.controls}; renderer?.setAudioControls(controls);
     }
-  } catch (error) { fail(error); }
+  }).catch(fail);
 };
