@@ -3,6 +3,11 @@
 Из корня репозитория:
   node --test web-player/tests/*.test.mjs
 Это обычный набор для сохранённого WASM; компилятор не требуется.
+engines.test.mjs также проверяет выбор JS/WASM, работу JS без WebAssembly,
+все пять прошивок на четырёх частотах, PCM/счётчики/IRQ, плавные изменения
+звука и настоящий worker.js через Node-адаптер MessageChannel.
+В браузере открыть tests/browser-smoke.html для проверки обоих движков
+с настоящими Worker/MessageChannel и независимой цепочкой Web Audio.
 
 Расширенный прогон:
   node --test web-player/tests/extended/*.test.mjs
