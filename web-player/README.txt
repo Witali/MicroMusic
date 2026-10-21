@@ -133,7 +133,7 @@ Ryzen 5 5600X. Медиана семи чередующихся прогреты
 на телефоне или в другом браузере.
 Сравнение fastBlocks с предыдущим ядром, уже имеющим fastIdle:
 reports/block-benchmark.json. Повторить из корня репозитория:
-  node web-player/scripts/benchmark.mjs --baseline-ref 7eca722 --report web-player/reports/block-benchmark.json
+  node web-player/scripts/benchmark.mjs --baseline-ref 8a3ba15 --report web-player/reports/block-benchmark.json
 
 ПРОВЕРКИ
   node --test web-player/tests/*.test.mjs
