@@ -6,6 +6,7 @@ const canvas = $('wave'), ctx = canvas.getContext('2d');
 let catalog, selected, runtime, runtimeReady=false, connectedRuntime, playing=false, busy=false;
 let audio, output, gain, lowpass, scope=new Float32Array(512), headroom=0;
 let session=0, hasPlayed=false, realtime;
+let lastScopeDraw=-Infinity, scopeDrawTimer;
 
 function showError(message) { $('error').textContent = message; $('error').hidden = !message; }
 function transport() {
@@ -16,6 +17,13 @@ function transport() {
   $('run-status').textContent = busy ? 'Подключение звука…' : playing ? 'Воспроизведение' : runtimeReady ? (hasPlayed ? 'Пауза' : 'Готов к запуску') : 'Загрузка образа…';
 }
 function draw() {
+  const now=performance.now(), wait=1000/30-(now-lastScopeDraw);
+  if(wait>0){
+    if(scopeDrawTimer===undefined)scopeDrawTimer=setTimeout(()=>{scopeDrawTimer=undefined;draw();},wait);
+    return;
+  }
+  if(scopeDrawTimer!==undefined){clearTimeout(scopeDrawTimer);scopeDrawTimer=undefined;}
+  lastScopeDraw=now;
   const ratio = window.devicePixelRatio || 1, width=canvas.clientWidth, height=canvas.clientHeight;
   if (!width || !height) return;
   if (canvas.width !== Math.round(width*ratio) || canvas.height !== Math.round(height*ratio)) { canvas.width=Math.round(width*ratio); canvas.height=Math.round(height*ratio); }
