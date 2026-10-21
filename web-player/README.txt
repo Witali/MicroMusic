@@ -158,6 +158,7 @@ reports/block-benchmark.json. Повторить из корня репозит�
   node web-player/scripts/benchmark.mjs --baseline-ref 8a3ba15 --report web-player/reports/block-benchmark.json
 
 ПРОВЕРКИ
+Наборы, кандидаты оптимизаций и длительные прогоны описаны в TESTING_RU.txt.
   node --test web-player/tests/*.test.mjs
   node web-player/scripts/benchmark-wasm.mjs
   node web-player/scripts/benchmark.mjs

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { AVRCore } from '../lib/avr-core.js';
 import { parseHex } from '../lib/hex.js';
+import { arithmeticFlags } from './helpers/avr-expectations.mjs';
 
 const rr = (op, d = 17, s = 18) => op | (d << 4) | (s & 15) | ((s & 16) << 5);
 const imm = (op, d, k) => op | ((d - 16) << 4) | (k & 15) | ((k & 240) << 4);
@@ -34,16 +35,24 @@ for (const [name, opcode, immediate] of [
   ['ANDI', 0x7000, true], ['ORI', 0x6000, true],
 ]) test(`block ${name}: all byte operands and flag carry/preservation inputs`, () => {
   const fast = cpu([rr(opcode), out(0x29)]), slow = cpu([rr(opcode), out(0x29)]);
+  const arithmetic=['ADD','ADC','SUB','CPI','SUBI'].includes(name);
+  // Cover every preserved I/T combination with both incoming carry values.
+  const flagInputs=arithmetic?[0,0x40,0x80,0xc0,0x3f,0x7f,0xbf,0xff]:[0,0xff];
   for (let y = 0; y < 256; y++) {
     if (immediate) for (const c of [fast, slow]) {
       const w = imm(opcode, 17, y); c.rom[32] = w; c.rom[33] = w >> 8; c.decode(16);
     }
-    for (let x = 0; x < 256; x++) for (const flags of [0, 0xff]) {
+    for (let x = 0; x < 256; x++) for (const flags of flagInputs) {
       for (const c of [fast, slow]) { c.pc = 16; c.cyc = 0; c.r[17] = x; c.r[18] = y; c.sreg = flags; }
       assert.equal(fast.runBlock(), true); slow.step();
       assert.equal(fast.r[17], slow.r[17], `${name} ${x},${y}`);
       assert.equal(fast.sreg, slow.sreg, `${name} SREG ${x},${y},${flags}`);
       assert.equal(fast.pc, slow.pc); assert.equal(fast.cyc, slow.cyc);
+      if(arithmetic){
+        const carry=name==='ADC'?flags&1:0,subtract=name!=='ADD'&&name!=='ADC';
+        assert.equal(fast.sreg,arithmeticFlags(x,y,carry,subtract,flags),'Independent SREG oracle');
+        assert.equal(fast.r[17],name==='CPI'?x:(subtract?x-y-carry:x+y+carry)&255);
+      }
     }
   }
 });

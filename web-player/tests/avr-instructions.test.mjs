@@ -4,6 +4,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { AVRCore } from '../lib/avr-core.js';
+import { arithmeticFlags as aluFlags, nzvs } from './helpers/avr-expectations.mjs';
 
 const rr = (op, d = 17, r = 18) => op | (d << 4) | (r & 15) | ((r & 16) << 5);
 const imm = (op, d, k) => op | ((d - 16) << 4) | (k & 15) | ((k & 240) << 4);
@@ -11,21 +12,6 @@ const io = (op, d, a) => op | (d << 4) | (a & 15) | ((a & 48) << 5);
 function cpu(...words) {
   return new AVRCore(Uint8Array.from(words.flatMap(w => [w & 255, w >> 8])), null, {fastIdle:false});
 }
-const signed = x => x < 128 ? x : x - 256;
-function aluFlags(x, y, carry, sub, previous) {
-  const result = sub ? x - y - carry : x + y + carry;
-  const value = result & 255;
-  const signedResult = sub ? signed(x) - signed(y) - carry : signed(x) + signed(y) + carry;
-  const v = Number(signedResult < -128 || signedResult > 127), n = value >> 7;
-  const h = Number(sub ? (x & 15) - (y & 15) - carry < 0 : (x & 15) + (y & 15) + carry > 15);
-  return (previous & 0xc0) | (h << 5) | ((n ^ v) << 4) | (v << 3) | (n << 2) |
-    (Number(value === 0) << 1) | Number(sub ? result < 0 : result > 255);
-}
-function nzvs(value, v, previous) {
-  const n = value >> 7;
-  return (previous & 0xe1) | ((n ^ v) << 4) | (v << 3) | (n << 2) | (Number(value === 0) << 1);
-}
-
 for (const [name, op, sub, withCarry] of [
   ['ADD', 0x0c00, false, false], ['ADC', 0x1c00, false, true], ['SUB', 0x1800, true, false],
 ]) {
