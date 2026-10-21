@@ -1,0 +1,59 @@
+{
+  "schema": "micromusic-avr-wasm-verification-v1",
+  "date": "2026-10-21",
+  "nativeSourceSha256": "b55bdbfd00bc2331ef045ff0ffaa64245dfdc93b368729070768ef6cd0cd2b8f",
+  "wasmSha256": "217557a30b0e667d363964bd142f9c15e6dd0e4c2c4476e8b57ecafa867d289a",
+  "node": {
+    "version": "v22.22.3",
+    "command": "node --test web-player/tests/*.test.mjs",
+    "passed": 310,
+    "failed": 0,
+    "durationMs": 203052.2468
+  },
+  "coverage": [
+    "Existing independent instruction/ALU/flags/stack/Timer0/EEPROM/IRQ and firmware checks now execute C/WASM.",
+    "All 65536 decoder words/operands/cached classes agree with retained JS.",
+    "48 deterministic mixed programs compare complete states across step/block paths and large clocks.",
+    "Every PWM and full CPU/memory/IRQ state agrees for the first three seconds of all five firmware images.",
+    "Raw PCM, independent Direct Form I DSP, control smoothing and variable block boundaries."
+  ],
+  "browser": {
+    "environment": "Codex in-app browser on Windows",
+    "command": "Open /web-player/tests/browser-smoke.html on the local server",
+    "passed": true,
+    "immediateWorkerInit": true,
+    "messageChannelBlocks": 3,
+    "messageChannelPCM": "exact",
+    "synchronizedCountersAndState": true,
+    "formerWebAudioGraph": {
+      "sampleRates": [
+        44100,
+        48000,
+        96000
+      ],
+      "cutoffs": [
+        4000,
+        6000,
+        9000,
+        12000
+      ],
+      "gain": 0.65,
+      "q": 0.5,
+      "framesPerCase": 16384,
+      "passedCases": 12,
+      "maximumAbsoluteErrorDisplayed": "2.90e-5",
+      "maximumAllowedAbsoluteError": 0.00005
+    },
+    "manualPlayback": [
+      "Start",
+      "Volume and cutoff changes",
+      "Pause",
+      "Firmware change and restart"
+    ],
+    "observedTimerLosses": 0,
+    "observedTempo": "100.0%",
+    "observedAccumulatedLagMs": 0,
+    "consoleErrors": 0
+  },
+  "limits": "This verifies the supported subset and the C migration. The broader independent whole-core test plan remains in IMPROVEMENT_PLAN_RU.txt. Speed measurements are separate in wasm-benchmark.json; physical hardware and phone verification remain outstanding."
+}
