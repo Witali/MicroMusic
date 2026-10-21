@@ -54,6 +54,7 @@ for (const entry of catalog.entries) {
 }
 const report = {runtime:process.version,platform:platform(),arch:arch(),cpu:cpus()[0].model,
   ...(baseline ? {baseline} : {}),
+  wasm:JSON.parse(readFileSync(new URL('../wasm/build.json',import.meta.url))),
   coreSha256:createHash('sha256').update(readFileSync(new URL('../lib/avr-core.js',import.meta.url))).digest('hex'),
   method:'Median of seven alternating runs after warm-up; 112500 OCR0B writes (three nominal seconds for these images) per run, times normalized to one nominal second. Construction excluded. Corrected fast/slow cores match state, checksum and cycles; baseline matches checksum, with up to 2 cycles of RETI latency difference. This is not a physical PWM accuracy measurement.',results};
 const destination = values.report ? resolve(values.report) : new URL('../reports/avr-benchmark.json', import.meta.url);

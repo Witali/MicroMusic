@@ -4,10 +4,12 @@ const $ = id => document.getElementById(id);
 const formatHex = (value, length=2) => value.toString(16).toUpperCase().padStart(length,'0');
 const canvas = $('wave'), ctx = canvas.getContext('2d');
 let catalog, selected, runtime, runtimeReady=false, connectedRuntime, playing=false, busy=false;
-let audio, output, gain, lowpass, scope=new Float32Array(512), headroom=0;
+let audio, output, scope=new Float32Array(512), headroom=0;
 let session=0, hasPlayed=false, realtime;
+let lastScopeDraw=-Infinity, scopeDrawTimer;
 
 function showError(message) { $('error').textContent = message; $('error').hidden = !message; }
+function audioControls() { return {cutoff:+$('cutoff').value,volume:+$('volume').value}; }
 function transport() {
   document.body.dataset.playing = String(playing);
   $('play-icon').textContent = playing ? 'Ⅱ' : '▶';
@@ -16,6 +18,13 @@ function transport() {
   $('run-status').textContent = busy ? 'Подключение звука…' : playing ? 'Воспроизведение' : runtimeReady ? (hasPlayed ? 'Пауза' : 'Готов к запуску') : 'Загрузка образа…';
 }
 function draw() {
+  const now=performance.now(), wait=1000/30-(now-lastScopeDraw);
+  if(wait>0){
+    if(scopeDrawTimer===undefined)scopeDrawTimer=setTimeout(()=>{scopeDrawTimer=undefined;draw();},wait);
+    return;
+  }
+  if(scopeDrawTimer!==undefined){clearTimeout(scopeDrawTimer);scopeDrawTimer=undefined;}
+  lastScopeDraw=now;
   const ratio = window.devicePixelRatio || 1, width=canvas.clientWidth, height=canvas.clientHeight;
   if (!width || !height) return;
   if (canvas.width !== Math.round(width*ratio) || canvas.height !== Math.round(height*ratio)) { canvas.width=Math.round(width*ratio); canvas.height=Math.round(height*ratio); }
@@ -61,7 +70,7 @@ function connectAudio() {
   if (!output || !runtimeReady || connectedRuntime===runtime) return;
   const channel=new MessageChannel();
   output.port.postMessage({type:'connect',session,port:channel.port1},[channel.port1]);
-  runtime.postMessage({type:'audio-port',port:channel.port2,sampleRate:audio.sampleRate},[channel.port2]);
+  runtime.postMessage({type:'audio-port',port:channel.port2,sampleRate:audio.sampleRate,controls:audioControls()},[channel.port2]);
   connectedRuntime=runtime;
   document.querySelector('.scope-scale').textContent=(4096/audio.sampleRate*1000).toFixed(0)+' мс';
 }
@@ -98,7 +107,7 @@ function load(entry) {
     if (data.type==='error') { pause(); showError('Ошибка эмуляции: '+data.message); }
   };
   worker.onerror=event=>{ if (runtime===worker) { runtimeReady=false; pause(); showError('Не удалось запустить AVR-эмулятор: '+event.message); } };
-  worker.postMessage({type:'init',entry,sampleRate:audio?.sampleRate||48000});
+  worker.postMessage({type:'init',entry,sampleRate:audio?.sampleRate||48000,controls:audioControls()});
 }
 async function ensureAudio() {
   if (audio) { await audio.resume(); return; }
@@ -109,10 +118,7 @@ async function ensureAudio() {
     if (!context.audioWorklet) throw new Error('AudioWorklet недоступен. Откройте страницу через localhost или HTTPS.');
     await context.audioWorklet.addModule(new URL('./audio-worklet.js',import.meta.url));
     audio=context; realtime=new RealtimeMonitor(audio.sampleRate); output=new AudioWorkletNode(audio,'firmware-output',{numberOfInputs:0,numberOfOutputs:1,outputChannelCount:[1]});
-    const highpass=audio.createBiquadFilter(); highpass.type='highpass'; highpass.frequency.value=35; highpass.Q.value=20*Math.log10(.5);
-    lowpass=audio.createBiquadFilter(); lowpass.type='lowpass'; lowpass.Q.value=20*Math.log10(.5); lowpass.frequency.value=Math.min(+$('cutoff').value,audio.sampleRate*.45);
-    gain=audio.createGain(); gain.gain.value=+$('volume').value;
-    output.connect(highpass); highpass.connect(lowpass); lowpass.connect(gain); gain.connect(audio.destination);
+    output.connect(audio.destination);
     output.port.onmessage=({data})=>{
       if (data.type!=='position' || data.session!==session || !playing) return;
       const timing=realtime.observe(data,performance.now()),seconds=timing.seconds;
@@ -137,8 +143,8 @@ async function toggle() {
   finally { busy=false; transport(); }
 }
 $('play').onclick=toggle; $('reset').onclick=()=>load(selected); $('search').oninput=renderCatalog;
-$('volume').oninput=()=>{ if (gain) gain.gain.setTargetAtTime(+$('volume').value,audio.currentTime,.015); };
-$('cutoff').onchange=()=>{ if (lowpass) lowpass.frequency.setTargetAtTime(Math.min(+$('cutoff').value,audio.sampleRate*.45),audio.currentTime,.015); };
+$('volume').oninput=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
+$('cutoff').onchange=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
 document.addEventListener('keydown',event=>{ if (event.code==='Space' && !event.repeat && !/INPUT|SELECT|TEXTAREA|BUTTON|A/.test(event.target.tagName)) { event.preventDefault(); toggle(); } });
 document.addEventListener('visibilitychange',()=>{ if (document.hidden) pause(); });
 window.addEventListener('pagehide',()=>{ runtime?.terminate(); audio?.close(); });

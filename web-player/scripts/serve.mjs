@@ -5,7 +5,7 @@ import { resolve, extname, sep } from 'node:path';
 const root=resolve(fileURLToPath(new URL('../../',import.meta.url)));
 const port=Number(process.argv[2]||8133);
 if (!Number.isInteger(port) || port<1024 || port>65535) throw new Error('Invalid port');
-const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.wav':'audio/wav','.txt':'text/plain; charset=utf-8','.md':'text/plain; charset=utf-8','.hex':'text/plain; charset=utf-8','.c':'text/plain; charset=utf-8'};
+const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.wav':'audio/wav','.wasm':'application/wasm','.txt':'text/plain; charset=utf-8','.md':'text/plain; charset=utf-8','.hex':'text/plain; charset=utf-8','.c':'text/plain; charset=utf-8'};
 createServer(async(req,res)=>{
   try {
     if (!['GET','HEAD'].includes(req.method)) { res.writeHead(405); res.end(); return; }
