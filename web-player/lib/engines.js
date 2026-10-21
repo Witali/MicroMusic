@@ -1,4 +1,4 @@
-export const DEFAULT_ENGINE = 'js';
+export const DEFAULT_ENGINE = 'wasm';
 
 // Load only the selected engine: JS playback also works without WebAssembly.
 export async function createRenderer(entry, sampleRate, controls, engine = DEFAULT_ENGINE) {

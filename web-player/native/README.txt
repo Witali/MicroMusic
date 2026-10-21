@@ -3,7 +3,7 @@ AVR C/WASM
 avr.c is the production firmware-oriented ATtiny13A subset. It preserves the
 existing instruction, timer, EEPROM, stack and diagnostic behavior. Unsupported
 instructions/peripherals still fail explicitly; this is not a complete MCU.
-The JS core is also available for playback and is the default UI engine.
+WASM is the default UI engine; the JS core is also available for playback.
 lib/engines.js loads only the selected renderer; WASM is loaded on selection.
 Differential CPU tests and benchmarks continue to use lib/avr-reference.js.
 

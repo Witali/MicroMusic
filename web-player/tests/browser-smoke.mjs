@@ -17,9 +17,9 @@ function message(target,type){
 let worker,ports;
 try{
   const catalog=await(await fetch('../firmware.json')).json(),entry=catalog.entries[0];
-  for(const engine of [undefined,'wasm']){
+  for(const engine of [undefined,'js']){
     // Post immediately: imports must not drop init or overtake queued controls.
-    const name=engine??'js';
+    const name=engine??'wasm';
     worker=new Worker('../worker.js',{type:'module'});
     const ready=message(worker,'ready');worker.postMessage({type:'init',entry,engine,sampleRate:48000,controls:{cutoff:9000,volume:.65}});
     assert((await ready).engine===name,'Selected Worker engine differs');

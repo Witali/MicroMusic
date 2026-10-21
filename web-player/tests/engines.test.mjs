@@ -14,13 +14,15 @@ function sameSamples(actual, expected) {
   assert.ok(max < 2e-7, 'PCM error ' + max);
 }
 
-test('default JS renderer runs with WebAssembly unavailable and rejects unknown engines', async () => {
-  assert.equal(DEFAULT_ENGINE, 'js');
+test('WASM is the default; explicit JS runs without WebAssembly and unknown engines fail', async () => {
+  assert.equal(DEFAULT_ENGINE, 'wasm');
+  const defaultRenderer = await createRenderer(catalog.entries[0], 48000);
+  assert.equal(defaultRenderer.engine, 'wasm'); assert.ok(defaultRenderer.core._exports);
   const script = `globalThis.WebAssembly=undefined;
     const {readFileSync}=await import('node:fs');
     const {createRenderer}=await import(${JSON.stringify(new URL('../lib/engines.js', import.meta.url).href)});
     const entry=JSON.parse(readFileSync(new URL(${JSON.stringify(new URL('../firmware.json', import.meta.url).href)}))).entries[0];
-    const renderer=await createRenderer(entry,48000);
+    const renderer=await createRenderer(entry,48000,{},'js');
     if(renderer.engine!=='js'||renderer.core._exports||!renderer.render(4096).some(x=>x!==0))throw Error('JS engine unavailable');`;
   const result = spawnSync(process.execPath, ['--input-type=module', '-e', script], {encoding:'utf8'});
   assert.equal(result.status, 0, result.stderr);
@@ -30,7 +32,7 @@ test('default JS renderer runs with WebAssembly unavailable and rejects unknown 
 for (const entry of catalog.entries) for (const rate of [22050, 44100, 48000, 96000])
 test(entry.id + ' / ' + rate + ': selectable JS and WASM preserve PCM, counters and independent DSP expectations', async () => {
   const controls = {cutoff:9000, volume:.65};
-  const js = await createRenderer(entry, rate, controls), wasm = await createRenderer(entry, rate, controls, 'wasm');
+  const js = await createRenderer(entry, rate, controls, 'js'), wasm = await createRenderer(entry, rate, controls, 'wasm');
   const reference = new ReferenceRenderer(entry, rate, controls);
   assert.equal(js.engine, 'js'); assert.equal(wasm.engine, 'wasm');
   for (const count of [1, 127, 4096, 17, 8193]) {
@@ -46,7 +48,7 @@ test(entry.id + ' / ' + rate + ': selectable JS and WASM preserve PCM, counters 
 
 test('JS controls smooth like WASM, remain block independent and do not advance paused clocks', async () => {
   const entry = catalog.entries[0];
-  const a = await createRenderer(entry, 48000), b = await createRenderer(entry, 48000), native = await createRenderer(entry, 48000, {}, 'wasm');
+  const a = await createRenderer(entry, 48000, {}, 'js'), b = await createRenderer(entry, 48000, {}, 'js'), native = await createRenderer(entry, 48000, {}, 'wasm');
   for (const renderer of [a, b, native]) renderer.render(4096);
   for (const controls of [{cutoff:12000, volume:.2}, {cutoff:4000, volume:0}]) {
     for (const renderer of [a, b, native]) {
@@ -66,10 +68,10 @@ test('JS controls smooth like WASM, remain block independent and do not advance 
 
 test('JS rejects invalid audio requests before advancing CPU', async () => {
   const entry = catalog.entries[0];
-  for (const rate of [0, NaN, 7999, 192001]) await assert.rejects(createRenderer(entry, rate), /sample rate/);
+  for (const rate of [0, NaN, 7999, 192001]) await assert.rejects(createRenderer(entry, rate, {}, 'js'), /sample rate/);
   for (const controls of [{volume:-1}, {volume:2}, {volume:NaN}, {cutoff:0}, {cutoff:Infinity}])
-    await assert.rejects(createRenderer(entry, 48000, controls), /audio configuration/);
-  const renderer = await createRenderer(entry, 48000), before = snapshot(renderer.core);
+    await assert.rejects(createRenderer(entry, 48000, controls, 'js'), /audio configuration/);
+  const renderer = await createRenderer(entry, 48000, {}, 'js'), before = snapshot(renderer.core);
   for (const count of [0, -1, .5, 16385, NaN]) assert.throws(() => renderer.render(count), /block size/);
   assert.deepEqual(snapshot(renderer.core), before);
 });
@@ -95,7 +97,7 @@ test('real Worker ' + (engine ?? 'default') + ': immediate init, queued controls
   worker.postMessage({type:'init', entry, engine, sampleRate:48000});
   worker.postMessage({type:'controls', controls});
   worker.postMessage({type:'audio-port', port:ports.port2, sampleRate:48000}, [ports.port2]);
-  assert.equal((await ready).engine, engine ?? 'js');
+  assert.equal((await ready).engine, engine ?? 'wasm');
   const expected = await createRenderer(entry, 48000, controls, engine);
   for (let n = 0; n < 3; n++) {
     const state = message(worker, 'state'), samples = message(ports.port1, 'samples');
