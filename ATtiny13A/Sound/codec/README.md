@@ -1,84 +1,59 @@
-# MicroMusic / ATtiny13A TinyLPC v2
+# MicroMusic / ATtiny13A / TinyLPC v3 (original speech)
 
-Speech experiment: **«Сова, открывай! Медведь пришёл!»**
+## Цель
 
-TinyLPC v2 is a runnable **981-byte AVR firmware (including 420 bytes of speech data)** for ATtiny13A (1024 bytes Flash, 64 bytes SRAM). It can be listened to in a standalone `index.html`, where a JavaScript interpreter executes the **actual AVR HEX instructions**, including Timer0 interrupts and writes to OCR0B. No audio samples from a premixed WAV substitute for the AVR code in this mode.
+Попробовать воспроизвести оригинальную реплику «Сова! Открывай! Медведь пришёл!» из предоставленного MP3-фрагмента на **ATtiny13A**, ограниченном **1024 Б Flash, 64 Б SRAM, тактовой частотой 9,6 МГц**. Никакой eSpeak/TTS в версии v3 не используется.
 
-**Reference is the eSpeak-generated Russian speech in `tts_source.wav` — not the actor's original cartoon voice.** Fidelity scores below are measured relative to this synthetic reference. To optimize for an actual cartoon excerpt, supply an audio sample of that excerpt.
+**Внимание**: оригинальная запись из мультфильма предназначена здесь для локального исследовательского сравнения. Не публикуйте исходный MP3 (или страницу с встроенным MP3) в общедоступном репозитории, если у вас нет соответствующих прав. В рабочей ветке GitHub можно сохранить исходники AVR/JS и инструменты, а медиа исключить.
 
-## What changed since v1
+## Что получилось
 
-| | v1 | v2 |
-|---|---:|---:|
-| Flash (program + speech) | 917 B | **981 B** |
-| Speech stream | 420 B | **420 B** |
-| LPC reflection coefficients | 6 | **7** |
-| Input frame / parameters | 256 samples, 34.13ms | 256 samples, 34.13ms |
-| Voiced excitation | One impulse `[2]` | **Four-position chirp `[5,3,0,-2]`** |
-| Unvoiced excitation | 8-bit LFSR | 8-bit LFSR |
-| LPC coefficient analysis | 6th-order, preemphasized | 7th-order, raw source |
-| Pitch/voicing decision | Loose threshold ~0.40 | More selective ~0.65 |
-| STOI score* | 0.507 | **0.700** |
+| Характеристика | Значение |
+|---|---:|
+| Прошивка, включая речь | **1012/1024 Б Flash**, свободно 12 Б |
+| Речевой поток | **435 Б** (87 × 5 Б), один байт 0xFF для возврата к началу |
+| Продолжительность звука | **2,9696 с** (подготовленный оригинал около 2,96 с) |
+| Частота CPU | 9 600 000 Гц, внутренний RC без делителя |
+| PWM | 37 500 Гц на PB1/OC0B, Fast PWM Timer0 |
+| Обновление отсчётов | 7500 Гц, каждый пятый Timer0 overflow |
+| Аудиобуфер | Кольцо из **16 байт SRAM** |
+| LPC | 7 ступеней, 4-битные знаковые коэффициенты, Q4 (деление на 16), импульсное и шумовое возбуждение |
+| Проверенная эмуляция | **111 360 прерываний**, самая длинная ISR — 60 из 256 тактов, **0 пропусков**, **0 опустошений кольцевого буфера** |
+| Приблизительная STOI | **0,581** относительно обработанного оригинала; показатель разборчивости, не узнаваемости конкретного голоса |
 
-*STOI is a **short-time objective intelligibility** metric, not a measure of speaker identity or pleasantness. The values are for this **single 2.85 s synthetic test phrase** at 7500 Hz, using the AVR-emulator-generated output. The scores should not be interpreted as a general speech benchmark.*
+Воспроизведение в браузере использует реальный файл `tinylpc.hex`, исполняя его инструкции с временными характеристиками AVR. **Этот код уже тестировался в программной модели, но ещё не испытывался на настоящем микроконтроллере.** Модель реализует инструкции из проекта, а не весь набор периферии ATtiny13A. PWM в WAV представлен уровнем заполнения после приближённой аналоговой фильтрации.
 
-The seventh reflection coefficient uses the previously unused high nibble of the fifth byte. Thus the amount of speech data **does not increase**. Improving the excitation shape also gives a large benefit without a chirp ROM table.
+## Источник
 
-## Memory and PWM
+`source_original.mp3` — загруженная пользователем запись, около 3,38 секунды, MP3 48 кГц, стерео. Для кодирования:
 
-- ATtiny13A, internal RC clock **9,600,000 Hz** (software selects clock divider /1).
-- Timer0 Fast PWM @ **37,500 Hz**, OC0B/PB1 (physical DIP8 pin 6).
-- Interrupt every 256 CPU cycles; one new **7500 Hz** PCM value is written on every fifth overflow.
-- Main loop decodes frames, drives a seven-stage fixed-point lattice filter, and writes 8-bit samples to a **16-byte SRAM ring**.
-- The ISR consumes buffered samples and writes `OCR0B` (saved registers and SREG).
-- Coefficients are quantized to signed `-7..7`, multiplied by repeated addition and an arithmetic shift of three (no hardware multiplier).
-- Speech: 84 frames × 5 bytes = **420 B** for 2.8672 s (including padded last frame).
+1. Пересведение в моно и до 7,5 кГц;
+2. Обрезка тишины с начала и конца: интервал приблизительно 0,16–3,12 с; **паузы внутри оставлены**;
+3. Лёгкий ВЧ-фильтр на 75 Гц для удаления низкочастотного гула;
+4. Нормировка по пику и покадровый LPC-анализ;
+5. Специальная квантовка коэффициентов для маленького **8-битного** lattice-декодера, чтобы уменьшить переполнение и звон в паузах.
 
-### Actual AVR-emulator verification
+`source_original_16k.wav` — исходный фрагмент в PCM16 при 16 кГц; `speech_trimmed_7500.wav` — именно тот эталон, по которому рассчитывались коэффициенты TinyLPC и метрика STOI. Из него же сделаны LPC1/LPC2, которые выступают браузерными сравнениями; их код **не помещается** в 1 КБ AVR.
 
-Run `node verify.js` after `python3 build_firmware.py`:
+**40 бит на кадр:** 8 бит периода, 4 бита энергии, 7 × 4 бита коэффициентов. Время кадра = 256/7500 ≈ 34,13 мс. Часть речи (согласные/звонкие переходы и личная интонация) неизбежно теряется. Чтобы сохранить исходный тембр ближе, нужны десятки раз больше памяти для более сложного декодера/данных или внешняя SPI Flash с компрессией ADPCM/CELP.
 
-- Flash image: **981 / 1024 B**.
-- Ring buffer: **16 B**.
-- Samples simulated: **21,504**.
-- Timer0 ISR: **107,520** calls.
-- Longest ISR: **60 cycles** (of 256).
-- Timer overflows missed: **0**.
-- Detected PCM buffer underruns: **0**.
-- Maximum interval between consecutive PCM writes: **1281 CPU cycles** (nominal 1280, depending on instruction completion).
+## Содержимое
 
-These checks are performed in the software model; the firmware has **not** been measured on physical hardware.
+- `index.html` — автономная страница с воспроизведением TinyLPC v3, LPC1, LPC2, WAV-эталона и полного оригинального MP3, осциллограммой и спектрограммами;
+- `tinylpc.S` — исходник GNU AVR assembly;
+- `tinylpc.hex`, `tinylpc.bin` — прошивка для ATtiny13A;
+- `voice_tinylpc.bin` — LPC-поток (435 байт);
+- `build_firmware.py` — сборка и размерный контроль;
+- `verify.js`, `avr_emulator.js` — эмуляция AVR с проверкой тактов и обработчика Timer0;
+- `make_tinylpc.py` — упаковка оптимизированных кадров из сохранённого набора коэффициентов `v3_formant_best.npz`;
+- `analyze.py`, `optimize_v3.py`, `tune.py`, `optimize_formants.py` — исходный анализ, подбор и оптимизация параметров (нужны NumPy, SciPy, Numba, pystoi);
+- `lpc_math.js`, `encode.js`, `input_8k.s16le`, `phrase_lpc1.lpc`, `phrase_lpc2.lp2` — LPC1/LPC2 из наших предыдущих опытов, переобученные на оригинальном образце;
+- `spectrogram.py`, `spectrogram_compare_v3.webp` — A/B-анализ спектра;
+- `MicroMusic_TinyLPC_v3_AVR_preview.wav` — предварительный результат прошивки из выполняемого HEX с приближённым ФНЧ.
 
-## A/B browser demonstration
+## Повторить сборку
 
-Open `index.html`. All code, speech, and embedded comparison audio are included in this single HTML file. Five buttons:
-
-1. `TinyLPC v2` — the new **981 B real AVR HEX** simulated instruction-by-instruction.
-2. `TinyLPC v1` — previous **917 B real AVR HEX** simulated the same way.
-3. `LPC2 Improved` — the more sophisticated PC JavaScript decoder from Audio Codec Lab (does *not* run on ATtiny13A).
-4. `LPC1` — older JavaScript speech decoder (does *not* run on ATtiny13A).
-5. `Исходная речь (TTS)` — uncompressed speech reference before LPC encoding, provided as an MP3 embedded in the page.
-
-Track loudness is normalized for a fair comparison. You can also download the AVR HEX, speech stream, and AVR-emulated WAV from the page.
-
-## Files
-
-- `tinylpc.S` — bare-metal AVR assembly with 7-pole lattice and glottal chirp.
-- `tinylpc.hex`, `tinylpc.bin` — firmware including speech.
-- `tinylpc_v1.hex` — original firmware for A/B comparison.
-- `voice_tinylpc.bin` — 420 bytes of new packed LPC frames.
-- `make_tinylpc.py` — source analysis and speech parameter compression.
-- `build_firmware.py` — assemble and export ROM (Clang AVR backend + LLVM objcopy required).
-- `avr_emulator.js`, `verify.js` — timing-aware subset AVR interpreter and regression test.
-- `index.html`, `page_template.html`, `create_page.py` — browser listening lab.
-- `tts_source.wav`, `tts_source.mp3` — generated test utterance (not original cartoon recording).
-- `lpc_math.js`, `phrase_lpc1.lpc`, `phrase_lpc2.lp2` — older LPC codecs/streams for comparison.
-- `MicroMusic_TinyLPC_v2_preview.wav` — audible WAV rendered from the AVR HEX (with approximate analog output filters).
-- `MicroMusic_TinyLPC_v1_preview.wav` — same for the v1 firmware.
-
-## Rebuild
-
-From this directory, with Python 3 + NumPy + SciPy, Node.js, Clang AVR backend, and llvm-objcopy:
+Необходимы Python 3, NumPy, Node.js, Clang с AVR backend и `llvm-objcopy` (или `avr-objcopy`).
 
 ```sh
 python3 make_tinylpc.py
@@ -87,12 +62,24 @@ node verify.js
 python3 create_page.py
 ```
 
-## Hardware
+Ожидаемый результат:
 
-Connect PB1/OC0B to an RC low-pass network and the **high impedance input of an audio amplifier**, not directly to a speaker. Example: two cascaded `2.2kΩ + 10nF` RC stages and a series DC-blocking capacitor into the amplifier. Low-pass behavior and exact pitch on hardware depend on the RC oscillator and analog circuit.
+```
+Flash: 1012/1024 B, free 12 B; speech: 435 B
+irqCount: 111360
+maxISR: 60
+missedTimerOverflows: 0
+possibleAudioUnderruns: 0
+```
 
-Read fuses before modifying them. With an ordinary ATtiny13A and typical clock setup, `CKSEL=10` selects the internal 9.6 MHz oscillator; disabling CKDIV8 (`LFUSE=0x7A` for the cited conventional fuse mapping) avoids /8 at reset. Check your precise chip/data sheet and keep ISP/reset enabled. The code also sets `CLKPR=/1` in software.
+Чтобы заново пересчитать параметры энкодера по аудио, запускайте `optimize_v3.py`, `tune.py`, `optimize_formants.py` (с NumPy, SciPy, Numba, pystoi). Эти оптимизаторы используют приближённую математическую модель декодера и адаптируются к конкретной фразе; **окончательно проверяйте любой результат именно `node verify.js`**.
 
-## What limits fidelity
+## Соединение с усилителем
 
-This is deliberately a very small LPC vocoder. Quantized 8-bit state, 4-bit coefficients, no inter-frame parameter interpolation, and a simplified excitation model make it sound robotized despite higher intelligibility. Short source phrases at 7.5kHz can never preserve the complete brightness/voice signature of an original studio recording. For materially closer **waveform** fidelity, the practical options are more memory (ATtiny85, ATmega, RP2040, or external SPI Flash) and a higher-bitrate residual / ADPCM / CELP stream. Those should be separate MicroMusic experiments, rather than pretending a true LPC2 decoder fits the 1KB ROM.
+`PB1/OC0B` — шестой вывод корпуса DIP-8. Сигнал 37,5 кГц PWM необходимо фильтровать RC-цепями (например, 2 каскада 2,2 кОм + 10 нФ) и подавать **на высокоомный вход усилителя**. Напрямую динамик к выводу микроконтроллера не подключать.
+
+Проверьте фьюзы перед прошивкой. Для обычного ATtiny13A настроенного на внутренний RC 9,6 МГц и без CKDIV8 используется LOW FUSE **0x7A**, но перед применением сверьтесь с даташитом вашей ревизии. Высокие фьюзы и SPIEN/RESET не изменяйте. Пример ISP-команды: `avrdude -c usbasp -p t13 -U flash:w:tinylpc.hex:i`.
+
+## Что стоит улучшать дальше
+
+Для сходства с голосом актёра лучше всего: 1) уменьшить ложные определения основной частоты на переходах, 2) перейти от чисто импульсного возбуждения к более натуральному, 3) добавлять интерполяцию между речевыми кадрами, 4) использовать внешнюю ROM/Flash, чтобы сохранить богатый спектр и разборчивость без ограничения в 435 байт речи. Помните: **STOI не измеряет узнаваемость голоса**; оценка на слух и спектральная форма обязательны.

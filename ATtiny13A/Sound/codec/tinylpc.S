@@ -1,7 +1,7 @@
 /* MicroMusic / ATtiny13A / experimental TinyLPC speech player
  * 9.6 MHz internal RC, Timer0 Fast PWM @ 37500 Hz on OC0B/PB1.
  * The ISR writes the next buffered 8-bit sample every fifth overflow:
- *   37500/5 = 7500 Hz PCM, derived from a 7-stage lattice vocoder.
+ *   37500/5 = 7500 Hz PCM, derived from a bandwidth-limited 7-stage lattice vocoder.
  * Main code synthesizes frames into a 16-byte ring in SRAM.
  * 5 bytes per 256-sample speech frame; all voice data in Flash.
  * All RAM accesses are >= 0x60. Main uses r2-r31; ISR saves own regs.
@@ -22,7 +22,7 @@
 .set WRPTR,     0x62
 .set RING_BEGIN,0x64
 .set RING_END,  0x74
-.set VOICE_ADDR,0x0230
+.set VOICE_ADDR,0x0240
 .org 0x0000
 __vectors:
  rjmp reset
@@ -134,7 +134,7 @@ noise_ready:
 /* Seven-stage all-pole synthesis lattice.
  * For m=7..1: y -= k[m] * b[m-1]; b[m] = b[m-1] + k[m] * y
  * Last: b[0] = y.
- * MAC is signed (8 x 4 bit) with an arithmetic /8 fixed-point shift.
+ * MAC is signed (8 x 4 bit) with an arithmetic /16 fixed-point shift.
  * The second multiplication uses the UPDATED forward excitation.
  */
 do_lattice:
@@ -217,7 +217,7 @@ do_lattice:
  sts WRPTR,r19
  rjmp main
 
-/* Signed (r21 * r23) >> 3. Coefficients are signed -7..7.
+/* Signed (r21 * r23) >> 4. Coefficients are signed -7..7.
  * AVR ATtiny13A has NO hardware MUL; max 7 additions per call.
  * On entry: r21 = sample, r23 = coefficient. Exit: r24 = scaled product.
  * Clobbers: r21,r23,r24,r25,r26,r27,flags. Does not alter r22.
@@ -248,6 +248,8 @@ mult_done:
  ror r24
  asr r25
  ror r24
+ asr r25
+ ror r24
  ret
 
 /* Five bytes per frame:
@@ -255,7 +257,8 @@ mult_done:
  *  1: K0 index in high nibble, energy in low nibble
  *  2: K2 index in high nibble, K1 in low nibble
  *  3: K4 high nibble, K3 low nibble.
- *  4: K6 high nibble, K5 low nibble. Each index is integer(k*8)+8.
+ *  4: K6 high nibble, K5 low nibble. Each signed index is the quantized lattice value k*16 + 8,
+ * with extra damping for robust 8-bit filter states.
  * The optional 0xff pitch byte loops back to the first frame.
  */
 read_frame:
@@ -306,6 +309,17 @@ frame_body:
  andi r16,15
  subi r16,8
  sts COEFF_K6,r16
+ /* Clear residual lattice ringing when an explicitly silent frame begins. */
+ tst r5
+ brne frame_finished
+ clr r14
+ clr r15
+ clr r11
+ clr r17
+ clr r18
+ clr r12
+ clr r13
+frame_finished:
  ret
 
 /* ISR runs 37500 times per second, but outputs 7500 PCM samples/s. */
