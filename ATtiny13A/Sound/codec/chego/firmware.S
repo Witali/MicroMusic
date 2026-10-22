@@ -18,7 +18,7 @@
 .set CTR,0x62
 .set COEFF,0x68
 .set STATE,0x70
-.set VOICE_ADDR,0x19a
+.set VOICE_ADDR,0x196
 .org 0x0000
 __vectors:
  rjmp reset
@@ -144,7 +144,7 @@ skip_state_update:
 /* signed 8-bit sample * coefficient (signed -7..7), arithmetic >>4 */
 mul_q4:
  clr r24
- clr r0
+ clr r16
  mov r25,r23
  tst r25
  breq mul_done
@@ -152,17 +152,15 @@ mul_q4:
  neg r25
  neg r21
 mul_pos:
- mov r16,r21
  clr r17
- sbrc r16,7
+ sbrc r21,7
  ser r17
 mul_loop:
- add r24,r16
- adc r0,r17
+ add r24,r21
+ adc r16,r17
  dec r25
  brne mul_loop
 mul_done:
- mov r16,r0
  swap r16
  andi r16,0xf0
  swap r24
