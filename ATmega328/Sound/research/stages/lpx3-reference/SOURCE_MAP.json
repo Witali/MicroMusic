@@ -1,0 +1,254 @@
+{
+  "slug": "lpx3-reference",
+  "target": "ATmega328/Sound/reference/lpx3",
+  "title": "Restore desktop LPX3 encoder and reference decoder",
+  "origin": {
+    "archive": "MicroMusic_LPC2_Voice_v3_private.zip",
+    "sha256": "4ffcb2d3f6568412d0ef86a4b306497ea96ac696283ae64a85d21336179a016d"
+  },
+  "previous_commit": "d67c2afdb820d6dda0330f0c81922fc913f56d45",
+  "files": [
+    {
+      "path": "ATmega328/Sound/reference/lpx3/README.md",
+      "sha256": "90004cb385a3a74a52c2f6b473ed6217fe0f17c91f9ccfd3e5edf4a2291b6eae",
+      "bytes": 10077
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/benchmark.json",
+      "sha256": "446cf2d42a571854f4ede67a0249df479dbb350e43cf66189685dd5d093d6037",
+      "bytes": 3875
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/benchmark.py",
+      "sha256": "ec6a34a7fd4bb81758c550531dbde02826e03b98e485f2bad6a3672e7c02aa43",
+      "bytes": 3248
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/generate_js_decoder.py",
+      "sha256": "42dc5943c3d46eb56bb40a60923eab726f008f41b66c71a8666de8270272fbd9",
+      "bytes": 4139
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/hybrid_codec.py",
+      "sha256": "ee874bd55367daf55b25ac6ef10dcb6781a4ca52049e43c2c573abd83b1c1130",
+      "bytes": 9649
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/index.html",
+      "sha256": "a58230346e0e53553466e266da2cb4dce463f5a4e9a59ddbff370db20ab3ef9e",
+      "bytes": 315601
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/lpc2_v2_reference.html",
+      "sha256": "a3854c2fe5630c9addf5bc3eed27063d6dd080ab0faa6282db1022c524d7a245",
+      "bytes": 106622
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/lpx3_decoder.js",
+      "sha256": "05e739e408fc69c77a11b8c29910d9c1ac523072824e7dd6f9bddf1c4a191a84",
+      "bytes": 8677
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/make_ab.py",
+      "sha256": "eb400d7eb2dbed81fdf0fedc8281a7d8f8298bfa94caf356748604980913cc56",
+      "bytes": 722
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/make_player.py",
+      "sha256": "e7129469a17ff27976849bf40f394447ad1a85f6ed1096ee4c4ff1b613787968",
+      "bytes": 11669
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/package_release.py",
+      "sha256": "cf6bd5cfd42b43f78dce9c1bd7e309ee3c16121de4224b2f9d947beb480487fc",
+      "bytes": 1371
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/requirements.txt",
+      "sha256": "9fb606c0de737d16d1aed7a24f3480749464552184673516346ae7ea959becbd",
+      "bytes": 54
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/samples/ne-otv/base_lpc2.lp2",
+      "sha256": "0299f716494feb79b7cb36aaab781c8a2b93d5d40a51946a55e1559ebce41ca1",
+      "bytes": 255
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/samples/ne-otv/metrics.json",
+      "sha256": "b281195f8c3a5c40cde48aae486295165ec4bb956c2fdcb6392045a27c10cfa3",
+      "bytes": 1171
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/samples/vinni/base_lpc2.lp2",
+      "sha256": "eefda6cc2698af87d9664244fbf08543886851f6a19a75613949b6389336bb99",
+      "bytes": 512
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/samples/vinni/metrics.json",
+      "sha256": "7946c5485f38b9c034211ec490f2a6b138c070547486f6b75a5641bdc699f79a",
+      "bytes": 1167
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/samples/xtuj-ntt/base_lpc2.lp2",
+      "sha256": "2061e4f0783bc84373e96f865b1bb93c859fc965ec0386366c63bf0bf6a0f106",
+      "bytes": 292
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/samples/xtuj-ntt/metrics.json",
+      "sha256": "88c8772fc698a7a88726e761404ef859f63ee1ef15b3fd4663fb4bff4433c5c9",
+      "bytes": 1168
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/train_encode.py",
+      "sha256": "2bbbf7a2ab05def706e3c24396749ba54463fa33488d702f0924c5f960bcfa50",
+      "bytes": 6686
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/verification.json",
+      "sha256": "1185768b5b29a784d8656700fa447fbde55d144758ed9c205b81d91307da53a1",
+      "bytes": 1664
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/verify_project.py",
+      "sha256": "41379a2da7f2df7a3d57f938c081c967632d692bdf81f9296fae13e3f8fd5a2c",
+      "bytes": 1786
+    }
+  ],
+  "omitted": [
+    {
+      "path": "samples/ne-otv/AB_original_v2_v3.wav",
+      "bytes": 81900,
+      "sha256": "bd6743bda9667085fc872bca9d9706ac45e1ed31f7e3ca1dbc0559d3ddd95cca"
+    },
+    {
+      "path": "samples/ne-otv/lpc2_voice_v2.wav",
+      "bytes": 16508,
+      "sha256": "b19441eb03685671654ebc83a7a6e4a8f1d909d20b7f4fb0cf5a26bf8c66ca15"
+    },
+    {
+      "path": "samples/ne-otv/original.wav",
+      "bytes": 16508,
+      "sha256": "9f09348dbf4ef9b5d6ffecdc7404b3f72ea852ad161aff4213841cc0dfe3acdf"
+    },
+    {
+      "path": "samples/ne-otv/voice_v3_2bit.lpx3",
+      "bytes": 2440,
+      "sha256": "f5b6ca4a1b5918baa79e0e5402d9e206833b8c57aaa152b93e7d0c91d28e958e"
+    },
+    {
+      "path": "samples/ne-otv/voice_v3_2bit.wav",
+      "bytes": 16508,
+      "sha256": "5a1895f247fa754a6c1f555f19e011af66f1c546054f895a065a7ec44ff4f16d"
+    },
+    {
+      "path": "samples/ne-otv/voice_v3_3bit.lpx3",
+      "bytes": 3469,
+      "sha256": "0010058dcdd62687b0686614be7ed62262ecbb6eff2523ac48ec77a3bb1b339f"
+    },
+    {
+      "path": "samples/ne-otv/voice_v3_3bit.wav",
+      "bytes": 16508,
+      "sha256": "e20580b6ee22a0d5edceed1c9a9ab07c38825b6d3853fed1200839c352bd2838"
+    },
+    {
+      "path": "samples/ne-otv/voice_v3_4bit.lpx3",
+      "bytes": 4498,
+      "sha256": "d45424d288a485e19d43a888e410cf84da88fa542099664f37a338c824c40470"
+    },
+    {
+      "path": "samples/ne-otv/voice_v3_4bit.wav",
+      "bytes": 16508,
+      "sha256": "acebde4c1f8efa913e1b194776229af7779d855ce290132c3b0d329dd2ca91a3"
+    },
+    {
+      "path": "samples/vinni/AB_original_v2_v3.wav",
+      "bytes": 205484,
+      "sha256": "f95b44e6322cc56bb14505eab832c82962ee652b7a8001c540f9d81b90a0f844"
+    },
+    {
+      "path": "samples/vinni/lpc2_voice_v2.wav",
+      "bytes": 47404,
+      "sha256": "d7ed699267d18801f3794a9d52f975ffefcca2d3264305e5a223693b2db65875"
+    },
+    {
+      "path": "samples/vinni/original.wav",
+      "bytes": 47404,
+      "sha256": "0051bf48581a1d4dcd01ad74635b3c0363ee7b96b4dbacfec30407cf3c90fd7f"
+    },
+    {
+      "path": "samples/vinni/voice_v3_2bit.lpx3",
+      "bytes": 6752,
+      "sha256": "d4e74de031104ef3d14966f5b04d0ab20ced37da115577ea454186ae184f14a6"
+    },
+    {
+      "path": "samples/vinni/voice_v3_2bit.wav",
+      "bytes": 47404,
+      "sha256": "3851442215e3a1c577c1064a34be0434513ef7f1566fe81873330ba54122b7a9"
+    },
+    {
+      "path": "samples/vinni/voice_v3_3bit.lpx3",
+      "bytes": 9712,
+      "sha256": "932a20588ab95c7fb59a64359534cd959ea5a86503a7d94d035799f2564ec803"
+    },
+    {
+      "path": "samples/vinni/voice_v3_3bit.wav",
+      "bytes": 47404,
+      "sha256": "6857b282356cea5c60167e88393987eb7be3f6dd4d1949e98c7ffd75a048dd20"
+    },
+    {
+      "path": "samples/vinni/voice_v3_4bit.lpx3",
+      "bytes": 12672,
+      "sha256": "786bfefb19659dc65208e168582445fb60e4c4c1a2e491f056f811863ef4ca5a"
+    },
+    {
+      "path": "samples/vinni/voice_v3_4bit.wav",
+      "bytes": 47404,
+      "sha256": "446404b303e256f833109855df84536bb270549a2e9806896e061ef8013bd1dd"
+    },
+    {
+      "path": "samples/xtuj-ntt/AB_original_v2_v3.wav",
+      "bytes": 94188,
+      "sha256": "0dc40737d29ff8bdfabfffefc5ba661d7836134a46089073a6bcc1c794ba0484"
+    },
+    {
+      "path": "samples/xtuj-ntt/lpc2_voice_v2.wav",
+      "bytes": 19580,
+      "sha256": "89f64c7afe88bc166cdb62e92e327a1dface51880a82865a186e600a39d70f94"
+    },
+    {
+      "path": "samples/xtuj-ntt/original.wav",
+      "bytes": 19580,
+      "sha256": "77fe4ee57e52649c0bab5228594069dae58108487125baf74281a51dfaaf77bd"
+    },
+    {
+      "path": "samples/xtuj-ntt/voice_v3_2bit.lpx3",
+      "bytes": 2881,
+      "sha256": "76c2c536498860820f158f6cd321688de43c54297312a80aacd6a136352e00e5"
+    },
+    {
+      "path": "samples/xtuj-ntt/voice_v3_2bit.wav",
+      "bytes": 19580,
+      "sha256": "1f2a7aaa269d73a2587fd19288d361abf8a1c399d31a71543e7527e9270f764a"
+    },
+    {
+      "path": "samples/xtuj-ntt/voice_v3_3bit.lpx3",
+      "bytes": 4102,
+      "sha256": "c9a90fbf67efed2d27fcc8d50c167e7a6b631eca94d3168b4a8bf856e698e02a"
+    },
+    {
+      "path": "samples/xtuj-ntt/voice_v3_3bit.wav",
+      "bytes": 19580,
+      "sha256": "c35d8b16107e2e1fcc4f9e94610251ce3c35664293601658db8d2a8f80b6fbca"
+    },
+    {
+      "path": "samples/xtuj-ntt/voice_v3_4bit.lpx3",
+      "bytes": 5323,
+      "sha256": "f7077d883c3f4b1230e7a9a63e0ef38977247f15a319bfda2d6494f5305364bc"
+    },
+    {
+      "path": "samples/xtuj-ntt/voice_v3_4bit.wav",
+      "bytes": 19580,
+      "sha256": "495c81e3372ae2bb91e30747234ef327daea75c984f9d350942a8d6aac271536"
+    }
+  ]
+}
