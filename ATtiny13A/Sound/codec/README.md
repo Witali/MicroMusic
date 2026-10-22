@@ -1,52 +1,31 @@
-# MicroMusic: MiniLPC-HQ3 DecoderOpt (ATtiny13A)
+# MicroMusic · MiniLPC-HQ4 · ATtiny13A
 
-This experiment optimizes **only the AVR decoder**. The LPC speech data and integer output are unchanged.
+Three independent speech firmware examples for the ATtiny13A (1 KiB Flash, 64 B SRAM, 9.6 MHz clock, Fast PWM OC0B/PB1 37.5 kHz, PCM 7.5 kHz). A single shared **406-byte** AVR decoder with an eight-stage integer LPC lattice; no compatibility code for older bitstreams.
 
-## Target
+| Phrase | STOI, HQ3 | STOI, HQ4 | Flash bytes | Speech bytes |
+|---|---:|---:|---:|---:|
+| Чего тебе нужно? | 0.894838 | 0.894923 | 949 | 542 |
+| Что ж ты не отвечаешь? | 0.816194 | 0.816292 | 878 | 471 |
+| Сова! Открывай! Медведь пришёл! | 0.855178 | 0.855543 | 1023 | 616 |
 
-- ATtiny13A: 1024 B Flash, 64 B SRAM, 64 B EEPROM (EEPROM is not used here)
-- Internal 9.6 MHz clock, divide-by-8 disabled
-- Fast PWM 37.5 kHz on PB1/OC0B; audio duty-cycle updates at 7500 Hz
-- 8-stage signed LPC filter and four excitation profiles; one VBR speech format
+The quality improvements in this conservative release are **small**. They are verified against the **exact reference WAV files** stored under `MicroMusic_HQ3_Verified_Release` rather than inferred from listening. Subjective voice similarity has not been established to have improved. STOI is an intelligibility metric, not a timbre metric.
 
-## Verified results
+## How to verify
 
-| Phrase | Baseline Flash | Optimized Flash | PCM values checked |
-|---|---:|---:|---:|
-| chego | 947 B | 929 B | 9216 |
-| otvechaesh | 878 B | 860 B | 7936 |
-| vinni | 1007 B | 989 B | 22272 |
-
-- **Machine code area: 406 -> 388 B**, including vectors, reset, filter, frame parser, multiply and ISR.
-- **Max modeled ISR: 28 -> 19 CPU cycles** (interrupt entry accounting is part of the cycle-counting emulator's `maxISR` metric).
-- **0 output PCM mismatches** across all 39,424 samples compared with the unmodified HQ3 AVR implementation.
-- All three streams: matching Timer0 IRQ counts, 0 missed overflows, and 2 vs 4 bytes of modeled stack use.
-- No change to learned LPC parameters; quality metrics (e.g. STOI and timbre) are exactly unchanged.
-
-## Source changes
-
-1. Reserve register `r11` for the constant PWM countdown reload `5` and `r12` for SREG backup inside the ISR. This avoids PUSH/POP of the temporary registers; **do not use r11/r12 in the foreground** without updating the ISR.
-2. Initialize XH (`r27`) and YH (`r29`) once; neither pointer can cross page `0x00xx` in this program. Remove redundant high-register clears from the hot loops.
-3. Decode two packed signed 4-bit coefficients via `r16` and `r17` without an extra register copy.
-4. Share the pointer/counter setup across the four variable-length frame types.
-5. Retain the original signed 8-bit multiply behavior and all VBR bitstream values.
-
-The shorter Flash binaries require changing `VOICE_ADDR` from `0x196` (406) to **`0x184` (388)**. This is already done in each firmware.S. Voice data is stored immediately after the code rather than leaving padding bytes.
-
-## Rebuild & verify
-
-Requires `clang` with AVR target, `llvm-objcopy`, `readelf`, `node`, and Python 3:
-
-```
-python3 build_and_verify.py
-python3 make_player.py
-python3 browser_test.py     # optional: requires Playwright and system Chromium
+```bash
+python3 rebuild_frozen.py
 ```
 
-All three voice subfolders include `firmware.S`, `speech.hq`, `firmware.bin`, `firmware.hex`, `firmware.sha256`, and `reference.bin`. `verify.js` executes the true instruction stream and produces `report.json` and `emulated.pcm`.
+Requires Python + NumPy, Numba, SciPy, PySTOI, SoundFile; AVR-capable Clang/LLVM, Node.js. This recompiles the stored AVR assembly and checks the **entire Flash binary** against the release. Node's cycle-counting AVR interpreter checks every outgoing audio sample and Timer0 overflows.
 
-`index.html` is fully offline. The Play button uses the **precomputed output of the AVR emulator** for immediate sound; the “Исполнить HEX” button separately executes the actual embedded firmware in the browser and independently checks every sample. This is a digital emulation, not a physical ATtiny13A verification.
+## How to continue optimizing
 
-## Copyright / sharing
+```bash
+python3 refine_and_build.py --seconds 30
+```
 
-The private ZIP includes encoded speech derived from user-provided excerpts of commercial cartoons; do not redistribute those assets without appropriate rights. A separate code-only ZIP supplies an original synthetic test stream.
+This is an automated closed-loop randomized coordinate search over 8 LPC coefficients, pitch, gain and 4 excitation modes. It builds three new ROMs and writes results to `HQ4/`. Run `node verify_hq4.js` after each experiment. The number of trials is limited by wall time, so replaying the search is not guaranteed to rediscover exactly the same result; **rebuild_frozen.py** instead reproduces the released result exactly using the frozen `.npz` snapshots.
+
+Source conversion script: `MicroMusic_MiniLPC_HQ2/convert_audio.py`, which takes arbitrary WAV/MP3 to fixed-rate canonical mono WAV with optional explicit alignment. The three immutable test reference WAVs are bundled for private A/B comparison. The source-only package excludes commercial cartoon audio and voice-dependent firmware.
+
+**Hardware:** PB1/OC0B feeds an RC low-pass filter and high-impedance amplifier input; do **not** connect a speaker directly to the MCU pin. For 9.6 MHz operation CKDIV8 must be disabled or CLKPR configured for divide-by-1. Tests above were performed by emulation, not physical hardware.

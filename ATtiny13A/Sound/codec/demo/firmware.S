@@ -1,6 +1,3 @@
-/* AVR r11 = constant 5, r12 = ISR-only SREG scratch.
- * XH and YH are set once at reset and remain zero.
- */
 /* Experimental MicroMusic MiniLPC-8 ATtiny13A speech synthesizer.
  * Genuine 8-stage signed lattice, 7.5k PCM, 37.5kHz PWM.
  * Compact source for a family of excitation modes.
@@ -21,7 +18,7 @@
 .set CTR,0x62
 .set COEFF,0x68
 .set STATE,0x70
-.set VOICE_ADDR,0x184
+.set VOICE_ADDR,0x196
 .org 0x0000
 __vectors:
  rjmp reset
@@ -39,8 +36,6 @@ reset:
  clr r8
  ldi r16,5
  mov r9,r16
- mov r11,r16
- clr r27
  ldi r28,STATE
  clr r29
  ldi r19,8
@@ -122,6 +117,7 @@ noise_ready:
  neg r18
 filter:
  ldi r26,COEFF+8
+ clr r27
  ldi r28,STATE+8
  ldi r19,8
 filter_loop:
@@ -156,9 +152,9 @@ mul_q4:
  neg r25
  neg r21
 mul_pos:
- mov r17,r21
- lsl r17
- sbc r17,r17
+ clr r17
+ sbrc r21,7
+ ser r17
 mul_loop:
  add r24,r21
  adc r16,r17
@@ -190,10 +186,10 @@ vbr_pitch:
  rjmp vbr_setpitch
 vbr_extended:
  mov r16,r17
+ andi r16,3
  swap r16
  lsl r16
  lsl r16
- andi r16,0xc0
  mov r10,r16
  lpm r16,Z+
 vbr_setpitch:
@@ -204,44 +200,55 @@ vbr_setpitch:
  andi r16,15
  mov r3,r16
  /* [7:6] 00=full, 01=repeat, 10=low four K, 11=high four K. */
- ldi r19,2
- ldi r28,COEFF
  sbrc r22,6
- rjmp vbr_upper_or_repeat
+ rjmp vbr_bit6
  sbrc r22,7
- rjmp vbr_read_coeffs
+ rjmp vbr_low
+ ldi r28,COEFF
  ldi r19,4
  rjmp vbr_read_coeffs
-vbr_upper_or_repeat:
+vbr_bit6:
  sbrs r22,7
  ret
  ldi r28,COEFF+4
+ ldi r19,2
+ rjmp vbr_read_coeffs
+vbr_low:
+ ldi r28,COEFF
+ ldi r19,2
 vbr_read_coeffs:
+ clr r29
 vbr_read_pair:
- lpm r16,Z+
- mov r17,r16
+ lpm r17,Z+
+ mov r16,r17
  andi r16,15
  subi r16,8
  st Y+,r16
- swap r17
- andi r17,15
- subi r17,8
- st Y+,r17
+ mov r16,r17
+ swap r16
+ andi r16,15
+ subi r16,8
+ st Y+,r16
  dec r19
  brne vbr_read_pair
  ret
 
 irq:
- in r12,SREG
+ push r16
+ in r16,SREG
+ push r16
  dec r9
  brne irq_end
- mov r9,r11
+ ldi r16,5
+ mov r9,r16
  tst r8
  breq irq_end
  out OCR0B,r7
  clr r8
 irq_end:
- out SREG,r12
+ pop r16
+ out SREG,r16
+ pop r16
  reti
 code_end:
 .org VOICE_ADDR
