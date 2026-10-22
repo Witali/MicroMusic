@@ -1,7 +1,7 @@
 /* MicroMusic / ATtiny13A / experimental TinyLPC speech player
  * 9.6 MHz internal RC, Timer0 Fast PWM @ 37500 Hz on OC0B/PB1.
  * The ISR writes the next buffered 8-bit sample every fifth overflow:
- *   37500/5 = 7500 Hz PCM, derived from a 6-stage lattice vocoder.
+ *   37500/5 = 7500 Hz PCM, derived from a 7-stage lattice vocoder.
  * Main code synthesizes frames into a 16-byte ring in SRAM.
  * 5 bytes per 256-sample speech frame; all voice data in Flash.
  * All RAM accesses are >= 0x60. Main uses r2-r31; ISR saves own regs.
@@ -18,10 +18,11 @@
 .set IO_TIMSK0, 0x39
 .set PWM_CTR,   0x60
 .set RDPTR,     0x61
+.set COEFF_K6,  0x63
 .set WRPTR,     0x62
 .set RING_BEGIN,0x64
 .set RING_END,  0x74
-.set VOICE_ADDR,0x01f0
+.set VOICE_ADDR,0x0230
 .org 0x0000
 __vectors:
  rjmp reset
@@ -43,7 +44,7 @@ reset:
  sts RDPTR, r16
  sts WRPTR, r16
  mov r19, r16
- /* State b0,b1,b2,b3,b4. 6 signed 8-bit reflection coefficients. */
+ /* State b0...b6; the 7th reflection coefficient lives in SRAM. */
  clr r14
  clr r15
  clr r11
@@ -87,17 +88,38 @@ next_slot_ok:
  brne active_frame
  rcall read_frame
 active_frame:
- /* Generate pitched impulse excitation, or balanced pseudo-random noise. */
+ /* Excitation: four-tap glottal chirp [5,3,0,-2] for voiced frames.
+  * The pitch phase is measured by comparing r4 (period) with r2 (countdown).
+  * For unvoiced consonants, drive the filter using LFSR noise.
+  */
  tst r4
  breq noise_sample
  dec r2
- brne quiet_sample
+ breq pitch_pulse_start
+ mov r22,r4
+ sub r22,r2                  /* number of samples after the pulse */
+ cpi r22,1
+ breq pitch_pulse_second
+ cpi r22,3
+ breq pitch_pulse_fourth
+ clr r22
+ rjmp do_lattice
+pitch_pulse_start:
  mov r2,r4
  mov r22,r5
- lsl r22
+ lsl r22                      /* 2*gain */
+ lsl r22                      /* 4*gain */
+ add r22,r5                   /* 5*gain */
  rjmp do_lattice
-quiet_sample:
- clr r22
+pitch_pulse_second:
+ mov r22,r5
+ lsl r22                      /* 2*gain */
+ add r22,r5                   /* 3*gain */
+ rjmp do_lattice
+pitch_pulse_fourth:
+ mov r22,r5
+ lsl r22
+ neg r22                      /* -2*gain */
  rjmp do_lattice
 noise_sample:
  lsr r3
@@ -109,13 +131,19 @@ noise_ready:
  sbrc r3,0
  neg r22
 
-/* Six-stage all-pole synthesis lattice.
- * For m=6..1: y -= k[m] * b[m-1]; b[m] = b[m-1] + k[m] * y
+/* Seven-stage all-pole synthesis lattice.
+ * For m=7..1: y -= k[m] * b[m-1]; b[m] = b[m-1] + k[m] * y
  * Last: b[0] = y.
  * MAC is signed (8 x 4 bit) with an arithmetic /8 fixed-point shift.
  * The second multiplication uses the UPDATED forward excitation.
  */
 do_lattice:
+ /* m=7, state6. State7 is never used, so skip its update. */
+ mov r21,r13
+ lds r23,COEFF_K6
+ rcall mul_q3
+ sub r22,r24
+
  /* m=6, state5 -> state6. */
  mov r21,r12
  mov r23,r1
@@ -227,7 +255,7 @@ mult_done:
  *  1: K0 index in high nibble, energy in low nibble
  *  2: K2 index in high nibble, K1 in low nibble
  *  3: K4 high nibble, K3 low nibble.
- *  4: K5 low nibble. Each K index is integer(k*8)+8.
+ *  4: K6 high nibble, K5 low nibble. Each index is integer(k*8)+8.
  * The optional 0xff pitch byte loops back to the first frame.
  */
 read_frame:
@@ -269,9 +297,15 @@ frame_body:
  subi r16,8
  mov r0,r16
  lpm r16,Z+
+ mov r24,r16
  andi r16,15
  subi r16,8
  mov r1,r16
+ mov r16,r24
+ swap r16
+ andi r16,15
+ subi r16,8
+ sts COEFF_K6,r16
  ret
 
 /* ISR runs 37500 times per second, but outputs 7500 PCM samples/s. */
