@@ -1,0 +1,60 @@
+{
+  "date": "2026-10-22",
+  "publisher": "https://altairclone.com/downloads/cpu_tests/",
+  "reference_notes": "https://altairclone.com/downloads/cpu_tests/8080_8085%20CPU%20Exerciser.pdf",
+  "cpu": "Intel 8080, documented instructions",
+  "tests": [
+    {
+      "name": "8080PRE.COM",
+      "sha256": "18eb3c79cba42c0718f160be6a1853cb64cdce7aa47d65780189a57bdd98c4e0",
+      "bytes": 1024,
+      "output": "8080 Preliminary tests complete",
+      "instructions": 1059,
+      "t_states": 7797,
+      "pc": 0,
+      "bdos_calls": 1,
+      "reached_exit": true,
+      "halted": false,
+      "instruction_limit": false
+    },
+    {
+      "name": "TST8080.COM",
+      "sha256": "9561c6fb6c99efe3de00eb77e4044fd102151058b39ac2d7bce10483838a08e7",
+      "bytes": 1536,
+      "output": "MICROCOSM ASSOCIATES 8080/8085 CPU DIAGNOSTIC\r\n VERSION 1.0  (C) 1980\r\n\r\n CPU IS OPERATIONAL",
+      "instructions": 648,
+      "t_states": 4894,
+      "pc": 0,
+      "bdos_calls": 2,
+      "reached_exit": true,
+      "halted": false,
+      "instruction_limit": false
+    },
+    {
+      "name": "CPUTEST.COM",
+      "sha256": "e61a9a75348c774486c2207080ea4effbf6c2367fdace31b0731081a4144030b",
+      "bytes": 19200,
+      "output": "\u0000\u0000\u0000\u0000\u0000\u0000\r\nDIAGNOSTICS II V1.2 - CPU TEST\r\nCOPYRIGHT (C) 1981 - SUPERSOFT ASSOCIATES\r\n\nABCDEFGHIJKLMNOPQRSTUVWXYZ\r\nCPU IS 8080/8085\r\nBEGIN TIMING TEST\r\n\u0007\u0007END TIMING TEST\r\nCPU TESTS OK\r\n",
+      "instructions": 33971128,
+      "t_states": 255651553,
+      "pc": 0,
+      "bdos_calls": 182,
+      "reached_exit": true,
+      "halted": false,
+      "instruction_limit": false
+    },
+    {
+      "name": "8080EXM.COM",
+      "sha256": "6e3286e11bb1a8f47b8ee1280b4a067be813193363e3223c99b0d21912f44aeb",
+      "bytes": 4608,
+      "output": "8080 instruction exerciser\n\rdad <b,d,h,sp>................  PASS! crc is:14474ba6\n\raluop nn......................  PASS! crc is:9e922f9e\n\raluop <b,c,d,e,h,l,m,a>.......  PASS! crc is:cf762c86\n\r<daa,cma,stc,cmc>.............  PASS! crc is:bb3f030c\n\r<inr,dcr> a...................  PASS! crc is:adb6460e\n\r<inr,dcr> b...................  PASS! crc is:83ed1345\n\r<inx,dcx> b...................  PASS! crc is:f79287cd\n\r<inr,dcr> c...................  PASS! crc is:e5f6721b\n\r<inr,dcr> d...................  PASS! crc is:15b5579a\n\r<inx,dcx> d...................  PASS! crc is:7f4e2501\n\r<inr,dcr> e...................  PASS! crc is:cf2ab396\n\r<inr,dcr> h...................  PASS! crc is:12b2952c\n\r<inx,dcx> h...................  PASS! crc is:9f2b23c0\n\r<inr,dcr> l...................  PASS! crc is:ff57d356\n\r<inr,dcr> m...................  PASS! crc is:92e963bd\n\r<inx,dcx> sp..................  PASS! crc is:d5702fab\n\rlhld nnnn.....................  PASS! crc is:a9c3d5cb\n\rshld nnnn.....................  PASS! crc is:e8864f26\n\rlxi <b,d,h,sp>,nnnn...........  PASS! crc is:fcf46e12\n\rldax <b,d>....................  PASS! crc is:2b821d5f\n\rmvi <b,c,d,e,h,l,m,a>,nn......  PASS! crc is:eaa72044\n\rmov <bcdehla>,<bcdehla>.......  PASS! crc is:10b58cee\n\rsta nnnn / lda nnnn...........  PASS! crc is:ed57af72\n\r<rlc,rrc,ral,rar>.............  PASS! crc is:e0d89235\n\rstax <b,d>....................  PASS! crc is:2b0471e9\n\rTests complete",
+      "instructions": 2919050420,
+      "t_states": 23803378391,
+      "pc": 0,
+      "bdos_calls": 277,
+      "reached_exit": true,
+      "halted": false,
+      "instruction_limit": false
+    }
+  ]
+}
