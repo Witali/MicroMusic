@@ -1,0 +1,59 @@
+--- HQ3-422/firmware.S
++++ HQ3-410/firmware.S
+@@ -18,7 +18,7 @@
+ .set CTR,0x62
+ .set COEFF,0x68
+ .set STATE,0x70
+-.set VOICE_ADDR,0x1a6
++.set VOICE_ADDR,0x19a
+ .org 0x0000
+ __vectors:
+  rjmp reset
+@@ -45,8 +45,6 @@
+  dec r19
+  brne zero_states
+  clr r5
+- ldi r16,1
+- mov r2,r16
+  ldi r16,0xa7
+  mov r6,r16
+  ldi r30,lo8(VOICE_ADDR)
+@@ -121,7 +119,6 @@
+  ldi r26,COEFF+8
+  clr r27
+  ldi r28,STATE+8
+- clr r29
+  ldi r19,8
+ filter_loop:
+  ld r21,-Y
+@@ -142,8 +139,7 @@
+  mov r16,r18
+  subi r16,128
+  mov r7,r16
+- ldi r16,1
+- mov r8,r16
++ inc r8
+  rjmp wait_slot
+ /* signed 8-bit sample * coefficient (signed -7..7), arithmetic >>4 */
+ mul_q4:
+@@ -166,14 +162,12 @@
+  dec r25
+  brne mul_loop
+ mul_done:
+- asr r0
+- ror r24
+- asr r0
+- ror r24
+- asr r0
+- ror r24
+- asr r0
+- ror r24
++ mov r16,r0
++ swap r16
++ andi r16,0xf0
++ swap r24
++ andi r24,0x0f
++ or r24,r16
+  ret
+ /* MiniLPC8-VBR, the ONLY supported format; updates subsets of coefficients. */
+ read_frame:

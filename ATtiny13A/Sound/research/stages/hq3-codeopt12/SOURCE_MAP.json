@@ -1,0 +1,129 @@
+{
+  "slug": "hq3-codeopt12",
+  "target": "ATtiny13A/Sound/codec",
+  "title": "Reduce HQ3 decoder from 422 to 410 bytes",
+  "origin": {
+    "archive": "MicroMusic_HQ3_CodeOpt12_Verified.zip",
+    "sha256": "7e9588dd27e73499bb3aa2758a22f718466b3a74da1bfe37d878df1a4f6c0168"
+  },
+  "previous_commit": "fdcac86e2280454b2053f4f97ae0b61cf65fd6bf",
+  "files": [
+    {
+      "path": "ATtiny13A/Sound/codec/README.md",
+      "sha256": "1f3f765078c53b7b6cd8823363142ccf043fb01dfff3ac3571b66f587da52848",
+      "bytes": 2059
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/avr_emulator.js",
+      "sha256": "dae6393748cc70178a6a6924a2c73f79b6ed67b7517c688ec3657fa9a87a3ffe",
+      "bytes": 9806
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/build_and_verify.py",
+      "sha256": "50aa942ec8f4eafb8bb2f5b5df34f0a0a39bc3f606641da38dd52d2327ad9593",
+      "bytes": 617
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/chego/firmware.S",
+      "sha256": "937333a5cfd586b50f1cb4b894cdca189ccb33097fb00ce5d580b9df1f8f150e",
+      "bytes": 3626
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/chego/speech.hq",
+      "sha256": "2794d45c10e19139b877b5c3f9750966037e281cbcef3f144afd303dc29dc663",
+      "bytes": 540
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/optimization.diff",
+      "sha256": "8ba9552dbfe4138e6a92f25ce5bb7bb3bdfab9182025f171da5fafa5e21ea4c2",
+      "bytes": 955
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/otvechaesh/firmware.S",
+      "sha256": "937333a5cfd586b50f1cb4b894cdca189ccb33097fb00ce5d580b9df1f8f150e",
+      "bytes": 3626
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/otvechaesh/speech.hq",
+      "sha256": "6e203928d96d728464be4ed6436fa387f16bf189c070c9f175b798a4e531ae5d",
+      "bytes": 471
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/verify_samples.js",
+      "sha256": "15eb0ca68a19bef59bcd42d783a714f26bbf379ec8e3c6e57c4e8eaf7878d44f",
+      "bytes": 920
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/vinni/firmware.S",
+      "sha256": "937333a5cfd586b50f1cb4b894cdca189ccb33097fb00ce5d580b9df1f8f150e",
+      "bytes": 3626
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/vinni/speech.hq",
+      "sha256": "395a0fb048dc2d0dd695e4814ece038f88ceecfbab27af2a543b7f6301d165b2",
+      "bytes": 600
+    }
+  ],
+  "omitted": [
+    {
+      "path": "baseline/chego/firmware.bin",
+      "bytes": 963,
+      "sha256": "6f00e0bc21121500e8c7f455751c667bdc79d1e9c68c77a199ae7bd3ceb7b523"
+    },
+    {
+      "path": "baseline/otvechaesh/firmware.bin",
+      "bytes": 894,
+      "sha256": "db0418925d6cc1e1c573ddca3d30f8a102dee56b0ae284a0ac61f2267172a11e"
+    },
+    {
+      "path": "baseline/vinni/firmware.bin",
+      "bytes": 1023,
+      "sha256": "11caa3060b63f51708a7ef202905761e76f1604aedcf51a3e8e25820bb48e6e5"
+    },
+    {
+      "path": "chego/firmware.bin",
+      "bytes": 951,
+      "sha256": "374d06e1b905c43f052eb2935734ffe7b5869906baa6343f1b3e1c15cdcc26dd"
+    },
+    {
+      "path": "chego/firmware.hex",
+      "bytes": 2695,
+      "sha256": "3548d804fdcb4e46ba54c26e23de432dbe86bbbd34368e96e912f599e084a6cd"
+    },
+    {
+      "path": "chego/firmware.sha256",
+      "bytes": 65,
+      "sha256": "0a6ea2d1a63267cf79b89a9e7a117c90f945e685ab5845a7db5c67f7d40999d6"
+    },
+    {
+      "path": "otvechaesh/firmware.bin",
+      "bytes": 882,
+      "sha256": "1c72f1e9694d4d8ae71241632a5e075a978a7737e256c142fe0a8c9f420bdc02"
+    },
+    {
+      "path": "otvechaesh/firmware.hex",
+      "bytes": 2505,
+      "sha256": "b894827e2b050376dd63955ffeb8a7f1eeb5bbb21031b17ef3e11b0ddd411c65"
+    },
+    {
+      "path": "otvechaesh/firmware.sha256",
+      "bytes": 65,
+      "sha256": "694aa43c6fc3f121376652915835877eac3e1160d8446ddad8cb93445231ad91"
+    },
+    {
+      "path": "vinni/firmware.bin",
+      "bytes": 1011,
+      "sha256": "08c408ff59f1fb6a768e625654ca75404eda3f379eb6e096281e82f1ee7a4f4a"
+    },
+    {
+      "path": "vinni/firmware.hex",
+      "bytes": 2867,
+      "sha256": "fe238dc14ad70338ea7917ac7d8539179c7392ef91424cf6d2f8f2fd4bba5da4"
+    },
+    {
+      "path": "vinni/firmware.sha256",
+      "bytes": 65,
+      "sha256": "39c7cf66ca427bb5592714643e890a937065eff67d95598b193c0930ae26ebff"
+    }
+  ]
+}
