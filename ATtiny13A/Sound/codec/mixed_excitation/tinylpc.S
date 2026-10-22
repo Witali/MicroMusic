@@ -19,10 +19,13 @@
 .set PWM_CTR,   0x60
 .set RDPTR,     0x61
 .set COEFF_K6,  0x63
+.set RLE_LEFT,  0x75
+.set EXMODE,    0x76
+.set GAIN_TARGET,0x77
 .set WRPTR,     0x62
 .set RING_BEGIN,0x64
 .set RING_END,  0x74
-.set VOICE_ADDR,0x0240
+.set VOICE_ADDR,0x02A4
 .org 0x0000
 __vectors:
  rjmp reset
@@ -55,6 +58,9 @@ reset:
  clr r0
  clr r1
  clr r10                  /* Frame sample count modulo 256. */
+ clr r5
+ sts RLE_LEFT,r5
+ sts EXMODE,r5
  ldi r16, 1
  mov r2,r16              /* Pitch pulse countdown. */
  ldi r16,0xa7
@@ -88,7 +94,8 @@ next_slot_ok:
  brne active_frame
  rcall read_frame
 active_frame:
- /* Excitation: four-tap glottal chirp [5,3,0,-2] for voiced frames.
+ /* Default gain is already loaded by read_frame. */
+ /* Excitation: four-tap glottal chirp [2,3,2,-1] for voiced frames.
   * The pitch phase is measured by comparing r4 (period) with r2 (countdown).
   * For unvoiced consonants, drive the filter using LFSR noise.
   */
@@ -100,16 +107,17 @@ active_frame:
  sub r22,r2                  /* number of samples after the pulse */
  cpi r22,1
  breq pitch_pulse_second
+ cpi r22,2
+ breq pitch_pulse_third
  cpi r22,3
  breq pitch_pulse_fourth
  clr r22
  rjmp do_lattice
 pitch_pulse_start:
  mov r2,r4
+pitch_pulse_third:
  mov r22,r5
  lsl r22                      /* 2*gain */
- lsl r22                      /* 4*gain */
- add r22,r5                   /* 5*gain */
  rjmp do_lattice
 pitch_pulse_second:
  mov r22,r5
@@ -118,8 +126,7 @@ pitch_pulse_second:
  rjmp do_lattice
 pitch_pulse_fourth:
  mov r22,r5
- lsl r22
- neg r22                      /* -2*gain */
+ neg r22                      /* -1*gain */
  rjmp do_lattice
 noise_sample:
  lsr r3
@@ -138,6 +145,24 @@ noise_ready:
  * The second multiplication uses the UPDATED forward excitation.
  */
 do_lattice:
+ /* Mixed-excitation LPC2 mode: add low-amplitude pseudorandom
+  * aspiration alongside voiced chirp. Mode selected per frame.
+  */
+ lds r16,EXMODE
+ tst r16
+ breq pure_lattice
+ lsr r3
+ brcc mixed_noise_ready
+ ldi r16,0xb8
+ eor r3,r16
+mixed_noise_ready:
+ mov r16,r5
+ lsr r16
+ lsr r16
+ sbrc r3,0
+ neg r16
+ add r22,r16
+pure_lattice:
  /* m=7, state6. State7 is never used, so skip its update. */
  mov r21,r13
  lds r23,COEFF_K6
@@ -262,18 +287,44 @@ mult_done:
  * The optional 0xff pitch byte loops back to the first frame.
  */
 read_frame:
+ /* Run-length encoded silence. 0xE1..0xFE means N silent frames;
+  * 0xFF loops back. Voiced pitch <96 may set bit7 for mixed noise.
+  */
+ lds r16,RLE_LEFT
+ tst r16
+ breq fetch_frame
+ dec r16
+ sts RLE_LEFT,r16
+ rjmp silent_frame
+fetch_frame:
  lpm r4,Z+
  mov r16,r4
  cpi r16,0xff
- brne frame_body
+ brne check_silence
  ldi r30,lo8(VOICE_ADDR)
  ldi r31,hi8(VOICE_ADDR)
  lpm r4,Z+
-frame_body:
+check_silence:
+ mov r16,r4
+ cpi r16,0xe0
+ brlo normal_frame
+ mov r16,r4
+ subi r16,0xe1
+ sts RLE_LEFT,r16
+ rjmp silent_frame
+normal_frame:
+ clr r16
+ sbrc r4,7
+ ldi r16,1
+ sts EXMODE,r16
+ mov r16,r4
+ andi r16,0x7f
+ mov r4,r16
  lpm r16,Z+
  mov r24,r16
  andi r16,15
  mov r5,r16
+ sts GAIN_TARGET,r16
  mov r16,r24
  swap r16
  andi r16,15
@@ -309,9 +360,15 @@ frame_body:
  andi r16,15
  subi r16,8
  sts COEFF_K6,r16
- /* Clear residual lattice ringing when an explicitly silent frame begins. */
  tst r5
- brne frame_finished
+ breq clear_lattice_states
+ ret
+silent_frame:
+ clr r4
+ clr r5
+ sts GAIN_TARGET,r4
+ sts EXMODE,r4
+clear_lattice_states:
  clr r14
  clr r15
  clr r11
@@ -319,7 +376,6 @@ frame_body:
  clr r18
  clr r12
  clr r13
-frame_finished:
  ret
 
 /* ISR runs 37500 times per second, but outputs 7500 PCM samples/s. */
