@@ -1,0 +1,2990 @@
+{
+  "schema": 1,
+  "import_date": "2026-10-22",
+  "chronology": "Reconstructed order within development branches; commits are dated at import time.",
+  "archives": [
+    {
+      "name": "MicroMusic_ATtiny13_TinyLPC_v5_Harmonics_project.zip",
+      "bytes": 2483031,
+      "sha256": "ef14f4b8a93cc8953534be8535ea2ed2550382e6b847384d53eb476462e24265"
+    },
+    {
+      "name": "MicroMusic_COMPLETE_RESEARCH_HANDOFF_2026-10-22(2).zip",
+      "bytes": 111447660,
+      "sha256": "6c1c6db9f05e06cfbe99b9f6ab83f2448f70cb499d46adafe58a9f4baef8deb3"
+    },
+    {
+      "name": "MicroMusic_HQ4_Full_Private.zip",
+      "bytes": 839099,
+      "sha256": "13249f7cd65dba19980a54f3d726d2702a94f04868e1b8cdd0d2f6eb2aca25a4"
+    },
+    {
+      "name": "MicroMusic_LPC2_Lite_Project.zip",
+      "bytes": 349207,
+      "sha256": "68b2b19d5c5bf2e06e2c84663f8a58d49edfee552dedeb0cfc7f9c9870c2e860"
+    },
+    {
+      "name": "MicroMusic_LPX3_ATmega328P_Fast2_Source_2026-10-22.zip",
+      "bytes": 85262,
+      "sha256": "fae0aeadff48afba8c4f0cc6b642b75e34d6f8fcd2c84a159a71467102ae4b33"
+    },
+    {
+      "name": "MicroMusic_LPX3_ATmega328P_Source_2026-10-22.zip",
+      "bytes": 46097,
+      "sha256": "27ad9c128abf5f5ed7aaae6e668797d51ff0c2d6e1dc7b31fb37c6e024f843c0"
+    },
+    {
+      "name": "MicroMusic_LPX3_Fast2_VBR_Source_2026-10-22.zip",
+      "bytes": 42323,
+      "sha256": "2f76e96a370dbade9889f89e6278d82389462b9e041636698b58db841f3a6771"
+    },
+    {
+      "name": "MicroMusic_LPX3_RiceV3_Fast_ATmega328P_SOURCE_2026-10-22.zip",
+      "bytes": 71806,
+      "sha256": "30e6768813c31b2e6a98a6937cea3eb54c28a93911fe89735ca8f2458c996751"
+    },
+    {
+      "name": "MicroMusic_LPX3_RiceV4_Fast_Source_2026-10-22.zip",
+      "bytes": 79364,
+      "sha256": "f9c7a174bf0865785b1541ec0a414d82a880afcfaaf8f6d843c73f427dd22ffe"
+    },
+    {
+      "name": "MicroMusic_LPX3_Rice_Dictionary_Source_2026-10-22.zip",
+      "bytes": 68008,
+      "sha256": "ecaf6713a4eb9eb44740f3a5c6d03b4c020cf7e2f24b727ca4379e5dd5880479"
+    },
+    {
+      "name": "MicroMusic_PIC16F1503_COMPLETE_AGENT_HANDOFF_2026-10-21.zip",
+      "bytes": 27891823,
+      "sha256": "3ed47fd4594a36b232d957555278f631415d955c2045cd19dc8e96705d3a34f8"
+    }
+  ],
+  "stages": [
+    {
+      "slug": "lab-06",
+      "title": "Restore audio codec lab v06",
+      "target": "ATmega328/Sound/reference/lab",
+      "commit": "d24067406f35ecd65ba3c48105384cba3df4c841",
+      "origin": {
+        "archive": "MicroMusic_COMPLETE_RESEARCH_HANDOFF_2026-10-22(2).zip",
+        "member": "11_OLDER_LPC_CODEC_LABS/logarithmic_frequency_audio_codec_v6_talkie_compare.html"
+      },
+      "source_map": "ATmega328/Sound/research/stages/lab-06/SOURCE_MAP.json"
+    },
+    {
+      "slug": "lab-07",
+      "title": "Restore audio codec lab v07",
+      "target": "ATmega328/Sound/reference/lab",
+      "commit": "081049615c60e4a603e8761f7ef1384d2c95cc14",
+      "origin": {
+        "archive": "MicroMusic_COMPLETE_RESEARCH_HANDOFF_2026-10-22(2).zip",
+        "member": "11_OLDER_LPC_CODEC_LABS/logarithmic_frequency_audio_codec_v7_normalized.html"
+      },
+      "source_map": "ATmega328/Sound/research/stages/lab-07/SOURCE_MAP.json"
+    },
+    {
+      "slug": "lab-08",
+      "title": "Restore audio codec lab v08",
+      "target": "ATmega328/Sound/reference/lab",
+      "commit": "d3f730f509121cc40a503682963649d78cc4a3ba",
+      "origin": {
+        "archive": "MicroMusic_COMPLETE_RESEARCH_HANDOFF_2026-10-22(2).zip",
+        "member": "11_OLDER_LPC_CODEC_LABS/logarithmic_frequency_audio_codec_v8_balanced_waveform.html"
+      },
+      "source_map": "ATmega328/Sound/research/stages/lab-08/SOURCE_MAP.json"
+    },
+    {
+      "slug": "lab-09",
+      "title": "Restore audio codec lab v09",
+      "target": "ATmega328/Sound/reference/lab",
+      "commit": "43b413efba6067ba6dce8cfbeed903d0f5be4f9f",
+      "origin": {
+        "archive": "MicroMusic_COMPLETE_RESEARCH_HANDOFF_2026-10-22(2).zip",
+        "member": "11_OLDER_LPC_CODEC_LABS/logarithmic_frequency_audio_codec_v9_clear_lpc.html"
+      },
+      "source_map": "ATmega328/Sound/research/stages/lab-09/SOURCE_MAP.json"
+    },
+    {
+      "slug": "lab-10",
+      "title": "Restore audio codec lab v10",
+      "target": "ATmega328/Sound/reference/lab",
+      "commit": "0d728f384c5a1d2da529391571e3d8bf7dc563f0",
+      "origin": {
+        "archive": "MicroMusic_COMPLETE_RESEARCH_HANDOFF_2026-10-22(2).zip",
+        "member": "11_OLDER_LPC_CODEC_LABS/logarithmic_frequency_audio_codec_v10_grid_shift.html"
+      },
+      "source_map": "ATmega328/Sound/research/stages/lab-10/SOURCE_MAP.json"
+    },
+    {
+      "slug": "lab-11",
+      "title": "Restore audio codec lab v11",
+      "target": "ATmega328/Sound/reference/lab",
+      "commit": "e5a53694406d167d0d86d416466e1927f348aae1",
+      "origin": {
+        "archive": "MicroMusic_COMPLETE_RESEARCH_HANDOFF_2026-10-22(2).zip",
+        "member": "08_REFERENCE_SOURCES/audio_codec_lab_v11_lpc2_improved.html"
+      },
+      "source_map": "ATmega328/Sound/research/stages/lab-11/SOURCE_MAP.json"
+    },
+    {
+      "slug": "lab-12",
+      "title": "Restore audio codec lab v12",
+      "target": "ATmega328/Sound/reference/lab",
+      "commit": "8d1dc89e98bf5d2c939cb584ec4baeb9706ebe65",
+      "origin": {
+        "archive": "MicroMusic_COMPLETE_RESEARCH_HANDOFF_2026-10-22(2).zip",
+        "member": "08_REFERENCE_SOURCES/audio_codec_lab_v12_vorbis_opus.html"
+      },
+      "source_map": "ATmega328/Sound/research/stages/lab-12/SOURCE_MAP.json"
+    },
+    {
+      "slug": "lpc2-arduino",
+      "title": "Restore LPC2 Arduino decoder and players",
+      "target": "ATmega328/Sound/lpc2",
+      "commit": "d6aa12be2efd35dc7861708126e63c92e367a787",
+      "origin": {
+        "archive": "Lpc2AvrDecoder_ATmega328_UNMODIFIED.zip",
+        "sha256": "aff2606a9a55d30d67a4821d8c22e7f6990891cc8084bbae3d342998efadcff8"
+      },
+      "source_map": "ATmega328/Sound/research/stages/lpc2-arduino/SOURCE_MAP.json"
+    },
+    {
+      "slug": "tinylpc-v1",
+      "title": "Restore initial ATtiny13A TinyLPC codec",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "fca29d125ef25fd51c89a33dbcba05d311b8be24",
+      "origin": {
+        "archive": "MicroMusic_ATtiny13_LPC.zip",
+        "sha256": "e6f6b4198cd44b0dc56d823521ecf5f9d70bfc2eec5a44e4c2d74fcb364b52a2"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/tinylpc-v1/SOURCE_MAP.json"
+    },
+    {
+      "slug": "tinylpc-v2",
+      "title": "Refine TinyLPC excitation and smoothing",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "1e1b07a515a47af7ab5a1d4826b5c3b1315a45c7",
+      "origin": {
+        "archive": "MicroMusic_ATtiny13_TinyLPC_v2_project.zip",
+        "sha256": "20e6457cb8a1b4e8c1996627019cb24687aa2a1f9fb8059d96c2dba259713f34"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/tinylpc-v2/SOURCE_MAP.json"
+    },
+    {
+      "slug": "tinylpc-v3",
+      "title": "Fit TinyLPC to original speech",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "1f051be8620376383d29bd7345764eccdca507ab",
+      "origin": {
+        "archive": "MicroMusic_TinyLPC_v3_Original_project.zip",
+        "sha256": "58bd67d3640f38266e21ec92251290e0a39398b35771b5d430155f2c90261a70"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/tinylpc-v3/SOURCE_MAP.json"
+    },
+    {
+      "slug": "tinylpc-v4",
+      "title": "Correct TinyLPC model and pitch fitting",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "388dac55ec95b91865dbf799e56a80e2743f5517",
+      "origin": {
+        "archive": "MicroMusic_ATtiny13_TinyLPC_v4_project.zip",
+        "sha256": "0d994c761d339556e55dc43aec3b976b4627a53882bf98586e817253ed54da7e"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/tinylpc-v4/SOURCE_MAP.json"
+    },
+    {
+      "slug": "tinylpc-v5",
+      "title": "Soften TinyLPC excitation and compare harmonics",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "e3872b030ee20452dc584a9a8bbda25cdd07103b",
+      "origin": {
+        "archive": "MicroMusic_ATtiny13_TinyLPC_v5_Harmonics_project.zip",
+        "sha256": "ef14f4b8a93cc8953534be8535ea2ed2550382e6b847384d53eb476462e24265"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/tinylpc-v5/SOURCE_MAP.json"
+    },
+    {
+      "slug": "lpc2-lite",
+      "title": "Adapt LPC2 excitation and pitch to TinyLPC",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "28373b9205572f76f5648b28140d040de16ccfed",
+      "origin": {
+        "archive": "MicroMusic_LPC2_Lite_Project.zip",
+        "sha256": "68b2b19d5c5bf2e06e2c84663f8a58d49edfee552dedeb0cfc7f9c9870c2e860"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/lpc2-lite/SOURCE_MAP.json"
+    },
+    {
+      "slug": "auto-lpc2",
+      "title": "Automate LPC2 fitting and firmware generation",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "26e5e0d933acf63fb7c75bbed44fb154b9a1cdec",
+      "origin": {
+        "archive": "MicroMusic_AutoLPC2_private_full.zip",
+        "sha256": "3692bf7214efaf1e6b03fb39d66b99711edd123d0c27b7aa25c602d51df01801"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/auto-lpc2/SOURCE_MAP.json"
+    },
+    {
+      "slug": "three-phrases",
+      "title": "Train TinyLPC on three speech phrases",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "74ee130fa6696791404f1deb2d166fd514560b8b",
+      "origin": {
+        "archive": "MicroMusic_ATtiny13_Voice_v2_private.zip",
+        "sha256": "f9fa5804880b4a83fa4cd51a3e066b76abeeb1dddc7ada9eb53cdc1256b4b11e"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/three-phrases/SOURCE_MAP.json"
+    },
+    {
+      "slug": "multi-phrase-pipeline",
+      "title": "Extend automated fitting to multiple phrases",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "5cb7356dc93351dc694b6f6735d5a1c5b57563ca",
+      "origin": {
+        "archive": "MicroMusic_MultiPhrase_private.zip",
+        "sha256": "c3c71faea9f5fbcc1df22a114f1f62d0d6fa5811e5a07b15c639a6c3f27167dc"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/multi-phrase-pipeline/SOURCE_MAP.json"
+    },
+    {
+      "slug": "lpc2-voice-v2",
+      "title": "Restore LPC2 voice range and timbre experiments",
+      "target": "ATmega328/Sound/reference/lpc2-voice",
+      "commit": "d67c2afdb820d6dda0330f0c81922fc913f56d45",
+      "origin": {
+        "archive": "MicroMusic_LPC2_Voice_v2_private.zip",
+        "sha256": "70b1aca7f00e7126a65bd82aa7a21f13b71d2bf2222f7b6e85b2a3b39ac68054"
+      },
+      "source_map": "ATmega328/Sound/research/stages/lpc2-voice-v2/SOURCE_MAP.json"
+    },
+    {
+      "slug": "lpx3-reference",
+      "title": "Restore desktop LPX3 encoder and reference decoder",
+      "target": "ATmega328/Sound/reference/lpx3",
+      "commit": "18165298b14de0eca0ad204c97a8b32cadc2311e",
+      "origin": {
+        "archive": "MicroMusic_LPC2_Voice_v3_private.zip",
+        "sha256": "4ffcb2d3f6568412d0ef86a4b306497ea96ac696283ae64a85d21336179a016d"
+      },
+      "source_map": "ATmega328/Sound/research/stages/lpx3-reference/SOURCE_MAP.json"
+    },
+    {
+      "slug": "lpx3-three-voices",
+      "title": "Compare desktop LPX3 modes on three voices",
+      "target": "ATmega328/Sound/reference/lpx3",
+      "commit": "77d03df0aa79398ad570b436b4088e3e00c1dd9c",
+      "origin": {
+        "archive": "MicroMusic_Three_Voices_LPX3_Project.zip",
+        "sha256": "0c55627b9e19d269fd013d3e8923b932db59e57d34f675b3b6b09d618b6d0581"
+      },
+      "source_map": "ATmega328/Sound/research/stages/lpx3-three-voices/SOURCE_MAP.json"
+    },
+    {
+      "slug": "codec-lab",
+      "title": "Compare LPC profiles in an offline codec lab",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "6414fef98cee94781fa6051e932455cdd877fd95",
+      "origin": {
+        "archive": "MicroMusic_Codec_Lab_Offline.zip",
+        "sha256": "472edd1f34d8e7ee41674c4f9e9cbbb7021df917d34442bbfb552ee172660f05"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/codec-lab/SOURCE_MAP.json"
+    },
+    {
+      "slug": "keyframe-lpc8",
+      "title": "Introduce keyframe LPC coefficient updates",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "ec9b5805662c64b1cfe300040bb705b25ab5e92d",
+      "origin": {
+        "archive": "MicroMusic_KeyframeLPC8_private_project.zip",
+        "sha256": "7299625f0fc8a1bce9b86c64107b5c77f3520e198099da364ae1069c337047d6"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/keyframe-lpc8/SOURCE_MAP.json"
+    },
+    {
+      "slug": "adaptive-lpc8",
+      "title": "Adapt LPC interpolation rate by frame",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "0d7d0c49fa4d35dc9d6dd431a150f57249d9ebfe",
+      "origin": {
+        "archive": "MicroMusic_AdaptiveLPC8_private.zip",
+        "sha256": "1a8a2ce8a27a4757775c4a05ee50333dbdbee5b1540e32f1a9cbf2fdead7ad84"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/adaptive-lpc8/SOURCE_MAP.json"
+    },
+    {
+      "slug": "codec-comparison",
+      "title": "Compare Keyframe Adaptive and MiniLPC on three voices",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "6e862962dd93f79ed26fa867d3814ec741e4011e",
+      "origin": {
+        "archive": "MicroMusic_LPC_3x3_full.zip",
+        "sha256": "44303744cc9bd336e88597b612796b2b1419f5c8e1789d9a2a5c4f12192cf1b6"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/codec-comparison/SOURCE_MAP.json"
+    },
+    {
+      "slug": "minilpc-328-350",
+      "title": "Verify compact MiniLPC decoder alternatives",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "47c183684a7ebe616add2188a806cde7688319c6",
+      "origin": {
+        "archive": "MicroMusic_MiniLPC_328_350_verified.zip",
+        "sha256": "e0cf8166b616893d752b6c0c23bf66ebf6d4fe0fa63c9b339ad1ab791d48c751"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/minilpc-328-350/SOURCE_MAP.json"
+    },
+    {
+      "slug": "minilpc-packed",
+      "title": "Pack MiniLPC parameters without changing PCM",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "491c81b1406b79c2a534774618bad64b5a980a5c",
+      "origin": {
+        "archive": "MicroMusic_MiniLPC_Packed_v1_private.zip",
+        "sha256": "e0259cefe45b5948f7f8ceb348fb22900da321f862be98ec9844fb572b4d70c7"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/minilpc-packed/SOURCE_MAP.json"
+    },
+    {
+      "slug": "minilpc-vbr",
+      "title": "Use variable length MiniLPC frames",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "8e87ff3ad092e92bfcce2142d3c1d6cde99c39f5",
+      "origin": {
+        "archive": "MicroMusic_MiniLPC_VBR_private.zip",
+        "sha256": "889b9b9dbaec9596bbf0e8c9f302aa0d033ececd28882558e0c4ce8425c528f7"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/minilpc-vbr/SOURCE_MAP.json"
+    },
+    {
+      "slug": "native-profiles",
+      "title": "Specialize MiniLPC for native excitation profiles",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "f15bcf14f36356ef6089ed77fa645ba4df1537ea",
+      "origin": {
+        "archive": "MicroMusic_NativeProfiles_NewOnly_Private.zip",
+        "sha256": "8cae7a678e3dcf814e852aa1e14d70180dcbce27d6a7571780f7c2d4ff500217"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/native-profiles/SOURCE_MAP.json"
+    },
+    {
+      "slug": "minilpc-hq",
+      "title": "Fit shorter MiniLPC frames for speech quality",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "17ec03e5b1ceec30b4e60859f94c1e2d8fd5cafd",
+      "origin": {
+        "archive": "MicroMusic_MiniLPC_HQ_Private.zip",
+        "sha256": "68a1923e9ec720ee90b8f84d60c56037d4983aedde9b2fcca1fdbaa33b612c1c"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/minilpc-hq/SOURCE_MAP.json"
+    },
+    {
+      "slug": "minilpc-hq2",
+      "title": "Add reproducible HQ2 training pipeline",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "9d5369b90498ef958d2fd99722d82f8f99a4f572",
+      "origin": {
+        "archive": "MicroMusic_MiniLPC_HQ2_Private.zip",
+        "sha256": "b4c715eea1ba03aa1fca94faf20645797e05a1624d8c7a73b4c719056632444a"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/minilpc-hq2/SOURCE_MAP.json"
+    },
+    {
+      "slug": "minilpc-hq3",
+      "title": "Improve MiniLPC speech fitting with HQ3",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "fdcac86e2280454b2053f4f97ae0b61cf65fd6bf",
+      "origin": {
+        "archive": "MicroMusic_HQ3_Verified_Release.zip",
+        "sha256": "6b0bc027d14a85374c045ac6d0b4c20c510e1e129c5f43e1821ab8ad9d572185"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/minilpc-hq3/SOURCE_MAP.json"
+    },
+    {
+      "slug": "hq3-codeopt12",
+      "title": "Reduce HQ3 decoder from 422 to 410 bytes",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "61fd9e4acf58527eb69e77d5434ece7c80fdbe90",
+      "origin": {
+        "archive": "MicroMusic_HQ3_CodeOpt12_Verified.zip",
+        "sha256": "7e9588dd27e73499bb3aa2758a22f718466b3a74da1bfe37d878df1a4f6c0168"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/hq3-codeopt12/SOURCE_MAP.json"
+    },
+    {
+      "slug": "hq3-mulq4",
+      "title": "Optimize shared Q4 multiplication to 38 bytes",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "861a78ab8aa7afe34fb543ac4099b2bf1377d443",
+      "origin": {
+        "archive": "MicroMusic_MulQ4_Optimized_Verified.zip",
+        "sha256": "7907bb97085b0338e5180d248c67295eadfeac0c14496dfe4a13f7dacb9861a8"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/hq3-mulq4/SOURCE_MAP.json"
+    },
+    {
+      "slug": "hq3-fixed-tests",
+      "title": "Repair HQ3 rebuild and multiplication checks",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "57bf67e64c262e48f7b4f78da887985df5544017",
+      "origin": {
+        "archive": "MicroMusic_HQ3_Rechecked_FixedTests.zip",
+        "sha256": "7fb9f833df63b9e898ecfc594e3b9b675459dab32f67ec6d31c16af8f2ddb41a"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/hq3-fixed-tests/SOURCE_MAP.json"
+    },
+    {
+      "slug": "hq3-decoder-opt",
+      "title": "Preserve further HQ3 decoder optimization experiment",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "befae1b9aff03500ffa34a1feebc20b54e6cdcac",
+      "origin": {
+        "archive": "MicroMusic_HQ3_DecoderOpt_Private.zip",
+        "sha256": "3a3ef97d96e5cc8fff47c3ccaa74a287e34c185994d7031e46ac99330090a35e"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/hq3-decoder-opt/SOURCE_MAP.json"
+    },
+    {
+      "slug": "hq4-conservative",
+      "title": "Refine HQ4 speech parameters conservatively",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "03698ddea2ad7d1bfe9a22009382621c058f0dc2",
+      "origin": {
+        "archive": "MicroMusic_HQ4_Full_Private.zip",
+        "sha256": "13249f7cd65dba19980a54f3d726d2702a94f04868e1b8cdd0d2f6eb2aca25a4"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/hq4-conservative/SOURCE_MAP.json"
+    },
+    {
+      "slug": "hq4-exploratory",
+      "title": "Explore HQ4 excitation and precision tradeoffs",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "d4ae4cc1a8100085ea0ed5b46d2a07e579acef5a",
+      "origin": {
+        "archive": "MicroMusic_MiniLPC_HQ4_Private.zip",
+        "sha256": "9e81ab4177ed20fd09fcc2208a672e51d6e66326d3c541072fa47105bd7a5ea4"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/hq4-exploratory/SOURCE_MAP.json"
+    },
+    {
+      "slug": "hq4-balanced",
+      "title": "Preserve HQ4 balanced and maximum STOI sources",
+      "target": "ATtiny13A/Sound/codec",
+      "commit": "4c471943445845d08680dfc3e5adfea9d6053238",
+      "origin": {
+        "archive": "MicroMusic_HQ4_Private_Project.zip",
+        "sha256": "1bc5823cdf7e1e6127da4e7bfd61307706a0e5c1cfe1f1f78c62257961e6636e"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/hq4-balanced/SOURCE_MAP.json"
+    },
+    {
+      "slug": "fast-encoder-c",
+      "title": "Accelerate host MiniLPC training with C",
+      "target": "ATtiny13A/Sound/fast-encoder",
+      "commit": "35380b5a52b3ca9eb7e2b1fcd174efeb43e25dfa",
+      "origin": {
+        "archive": "MicroMusic_FastEncoder_C_Private.zip",
+        "sha256": "f77edff8a718cd925b8c0db60c912d46d5f23b97c6449a2439bf2918856d8ff8"
+      },
+      "source_map": "ATtiny13A/Sound/research/stages/fast-encoder-c/SOURCE_MAP.json"
+    },
+    {
+      "slug": "pic-c-port",
+      "title": "Restore PIC16F1503 C port and emulator",
+      "target": "PIC16F1503/Music",
+      "commit": "3eade6b8b68d4e377a66196f5cba0edc4dcab102",
+      "origin": {
+        "archive": "MicroMusic_PIC16F1503_port_emulator.zip",
+        "sha256": "25f66606659592b77c1c7803f7603407c863026c0b9f80aff79a54358e741f9c"
+      },
+      "source_map": "PIC16F1503/research/stages/pic-c-port/SOURCE_MAP.json"
+    },
+    {
+      "slug": "pic-assembly",
+      "title": "Implement complete PIC16F1503 assembly synthesizer",
+      "target": "PIC16F1503/Music",
+      "commit": "46d0fbb33bc33fdb3b13cea18fe3cca8394cae61",
+      "origin": {
+        "archive": "MicroMusic_PIC16F1503_assembly_complete.zip",
+        "sha256": "0dbb0e616e5fbd9192043f2ad31a28bc254f3fa1f04319231d74e74d48885072"
+      },
+      "source_map": "PIC16F1503/research/stages/pic-assembly/SOURCE_MAP.json"
+    },
+    {
+      "slug": "pic-datasheet",
+      "title": "Correct PIC emulator against Microchip datasheet",
+      "target": "PIC16F1503/Music",
+      "commit": "d68ad5bdba05bdbb7a47ba58b70b351d64d0bccf",
+      "origin": {
+        "archive": "MicroMusic_PIC16F1503_emulator_datasheet_audited.zip",
+        "sha256": "6020ad6cf570df0c74c39644fc2d6ef97ca94989c6541da903322dbeaa53c8bf"
+      },
+      "source_map": "PIC16F1503/research/stages/pic-datasheet/SOURCE_MAP.json"
+    },
+    {
+      "slug": "pic-timing",
+      "title": "Refine PIC instruction timer and PWM timing",
+      "target": "PIC16F1503/Music",
+      "commit": "43682a3862ab30aa7adfc1171d1f06cd2f8fa4d8",
+      "origin": {
+        "archive": "MicroMusic_PIC16F1503_timing_corrected.zip",
+        "sha256": "beea223d4dc1da6f0b231a9471df4fc148ea772bb7a28275cc76000dac31dd3b"
+      },
+      "source_map": "PIC16F1503/research/stages/pic-timing/SOURCE_MAP.json"
+    },
+    {
+      "slug": "pic-mplab",
+      "title": "Prepare independent MPLAB comparison",
+      "target": "PIC16F1503/validation/mplab",
+      "commit": "117d5f29b53cc5820d99b803859fbbe2bc67394a",
+      "origin": {
+        "archive": "PIC16F1503_MPLAB_SIM_comparison_kit.zip",
+        "sha256": "dbb5602cae3a8a9af773e1e2f4831412fc8bc4e0c43cbebaec2f20d1456f2aad"
+      },
+      "source_map": "PIC16F1503/research/stages/pic-mplab/SOURCE_MAP.json"
+    },
+    {
+      "slug": "pic-mirror",
+      "title": "Record MPLAB retrieval limits and local checks",
+      "target": "PIC16F1503/validation/mirror",
+      "commit": "edbe11404f051c5366b517127c0332401cc3d793",
+      "origin": {
+        "archive": "MPLAB_mirror_attempt_and_PIC16F1503_tests.zip",
+        "sha256": "ea838829c3a0b7251312f3f2dfcced4a2fa5b62953904f9daa71c45585bd4abc"
+      },
+      "source_map": "PIC16F1503/research/stages/pic-mirror/SOURCE_MAP.json"
+    },
+    {
+      "slug": "pic-docker",
+      "title": "Prepare MPLAB simulator container workflow",
+      "target": "PIC16F1503/validation/docker",
+      "commit": "8e54f31893b3f419ac5a11252eccaee87b261069",
+      "origin": {
+        "archive": "PIC16F1503_MPLAB_DOCKER_KIT_20261021.zip",
+        "sha256": "b11dadd0308bbac39277098a40bc6ca8c0f3e3a299e69d0c50f2b423ad7c78a5"
+      },
+      "source_map": "PIC16F1503/research/stages/pic-docker/SOURCE_MAP.json"
+    },
+    {
+      "slug": "pic-gpsim",
+      "title": "Cross-check PIC SFR masks against gpsim sources",
+      "target": "PIC16F1503/Music",
+      "commit": "d7914e3462febf03d09571625fc6ef2e099f0865",
+      "origin": {
+        "archive": "MicroMusic_PIC16F1503_gpsim_crosscheck_2026-10-21.zip",
+        "sha256": "0984fd52e74ddfaaa712b518c6f3e4075e479ffe3dd3d09a6dd2789fd42a7a0e"
+      },
+      "source_map": "PIC16F1503/research/stages/pic-gpsim/SOURCE_MAP.json"
+    },
+    {
+      "slug": "lpx3-avr",
+      "title": "Port LPX3 synthesis and buffering to ATmega328P",
+      "target": "ATmega328/Sound/lpx3",
+      "commit": "84bd7ac724b714fa38f26fd59d0b762019786af7",
+      "origin": {
+        "archive": "MicroMusic_LPX3_ATmega328P_Source_2026-10-22.zip",
+        "sha256": "27ad9c128abf5f5ed7aaae6e668797d51ff0c2d6e1dc7b31fb37c6e024f843c0"
+      },
+      "source_map": "ATmega328/Sound/research/stages/lpx3-avr/SOURCE_MAP.json"
+    },
+    {
+      "slug": "lpx3-fast2",
+      "title": "Reduce LPX3 LSF conversion frequency",
+      "target": "ATmega328/Sound/lpx3",
+      "commit": "4a3183b136e7a0b667ed6c605173718674f442cb",
+      "origin": {
+        "archive": "MicroMusic_LPX3_ATmega328P_Fast2_Source_2026-10-22.zip",
+        "sha256": "fae0aeadff48afba8c4f0cc6b642b75e34d6f8fcd2c84a159a71467102ae4b33"
+      },
+      "source_map": "ATmega328/Sound/research/stages/lpx3-fast2/SOURCE_MAP.json"
+    },
+    {
+      "slug": "lpx3-vbr",
+      "title": "Improve LPX3 speech using variable excitation depth",
+      "target": "ATmega328/Sound/lpx3",
+      "commit": "08e45fb3f6336e0e685f11f7da3128fcaacb2214",
+      "origin": {
+        "archive": "MicroMusic_LPX3_Fast2_VBR_Source_2026-10-22.zip",
+        "sha256": "2f76e96a370dbade9889f89e6278d82389462b9e041636698b58db841f3a6771"
+      },
+      "source_map": "ATmega328/Sound/research/stages/lpx3-vbr/SOURCE_MAP.json"
+    },
+    {
+      "slug": "lpx3-rice-v2",
+      "title": "Compare offline dictionaries with Rice packing",
+      "target": "ATmega328/Sound/lpx3",
+      "commit": "9a1f036ede566693fa9ed23498f52b9c248668d8",
+      "origin": {
+        "archive": "MicroMusic_LPX3_Rice_Dictionary_Source_2026-10-22.zip",
+        "sha256": "ecaf6713a4eb9eb44740f3a5c6d03b4c020cf7e2f24b727ca4379e5dd5880479"
+      },
+      "source_map": "ATmega328/Sound/research/stages/lpx3-rice-v2/SOURCE_MAP.json"
+    },
+    {
+      "slug": "lpx3-rice-v3",
+      "title": "Pack LPX3 Rice blocks and LPC deltas continuously",
+      "target": "ATmega328/Sound/lpx3",
+      "commit": "5d3cf0893d044cb7f4571f5f2dde13e340e13362",
+      "origin": {
+        "archive": "MicroMusic_LPX3_RiceV3_Fast_ATmega328P_SOURCE_2026-10-22.zip",
+        "sha256": "30e6768813c31b2e6a98a6937cea3eb54c28a93911fe89735ca8f2458c996751"
+      },
+      "source_map": "ATmega328/Sound/research/stages/lpx3-rice-v3/SOURCE_MAP.json"
+    },
+    {
+      "slug": "lpx3-rice-v4",
+      "title": "Add LPX3 prefix modes and compact scale updates",
+      "target": "ATmega328/Sound/lpx3",
+      "commit": "e434ed64936c46d59dac6adb357e1a184efa7950",
+      "origin": {
+        "archive": "MicroMusic_LPX3_RiceV4_Fast_Source_2026-10-22.zip",
+        "sha256": "f9c7a174bf0865785b1541ec0a414d82a880afcfaaf8f6d843c73f427dd22ffe"
+      },
+      "source_map": "ATmega328/Sound/research/stages/lpx3-rice-v4/SOURCE_MAP.json"
+    }
+  ],
+  "cleanup": [
+    {
+      "path": "ATtiny13A/Sound/codec/MicroMusic_MiniLPC_HQ4.html",
+      "bytes": 495638,
+      "sha256": "cee1ba2c4465235a88a6fad638cdb5b9308a18f353e8466ed1f6c794d0d8f7e9",
+      "replacement_or_generator": "ATtiny13A/Sound/codec/make_player_hq4.py"
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/release/index.html",
+      "bytes": 495638,
+      "sha256": "cee1ba2c4465235a88a6fad638cdb5b9308a18f353e8466ed1f6c794d0d8f7e9",
+      "replacement_or_generator": "ATtiny13A/Sound/codec/make_player_hq4.py"
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/MicroMusic_C_Encoder_Player.html",
+      "bytes": 583208,
+      "sha256": "7eea01d7c652fa33ff7ba76ad1cb5254b3178cad7fd32d36490e652899751f82",
+      "replacement_or_generator": "ATtiny13A/Sound/fast-encoder/make_player.py"
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpc2-voice/LPC2_Voice_v2.html",
+      "bytes": 106622,
+      "sha256": "a3854c2fe5630c9addf5bc3eed27063d6dd080ab0faa6282db1022c524d7a245",
+      "replacement_or_generator": "ATmega328/Sound/reference/lpc2-voice/build_encoder.py"
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpc2-voice/release/LPC2_Voice_v2.html",
+      "bytes": 106622,
+      "sha256": "a3854c2fe5630c9addf5bc3eed27063d6dd080ab0faa6282db1022c524d7a245",
+      "replacement_or_generator": "ATmega328/Sound/reference/lpc2-voice/build_encoder.py"
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpc2-voice/release/index.html",
+      "bytes": 357514,
+      "sha256": "7bce73410e45b18c1cb633a42582220df3db56315b16cd88e36db354c6c5cf66",
+      "replacement_or_generator": "ATmega328/Sound/reference/lpc2-voice/make_player.py"
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/index.html",
+      "bytes": 315601,
+      "sha256": "a58230346e0e53553466e266da2cb4dce463f5a4e9a59ddbff370db20ab3ef9e",
+      "replacement_or_generator": "ATmega328/Sound/reference/lpx3/make_player.py"
+    },
+    {
+      "path": "PIC16F1503/Music/web/player.html",
+      "bytes": 274570,
+      "sha256": "39ccd9a759468f67b9d12197ce8b7aa09f93340019147053f6bb7ae6597913a2",
+      "replacement_or_generator": "PIC16F1503/Music/tools/build_player.py"
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V3_PLAYER.ino",
+      "bytes": 4533,
+      "sha256": "5eee42bb82900319724656fbc3271713ef274e25f6445fa337e0deb2a9d91f81",
+      "replacement_or_generator": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V4_SYNTHETIC/LPX3_RICE_V4_SYNTHETIC.ino"
+    }
+  ],
+  "current_files": [
+    {
+      "path": "ATtiny13A/Sound/.gitignore",
+      "sha256": "1acf6d1c7aac1492b02df7a6a439633c6b38ef4a4315e650b4d62f34e5152c2a",
+      "bytes": 200
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/build_hq4.py",
+      "sha256": "8628a7ab4bdb707978db848ef375c50ff4c4ac8f310eb6608e3e5b495cc4c335",
+      "bytes": 4080
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/convert_audio.py",
+      "sha256": "885d4a1f2eaff1cb06f2f6494cc525208efe0079b252334e208778a037af12a4",
+      "bytes": 4467
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/hq4_core.py",
+      "sha256": "936c21384042c24be9525ff7cb73b6e1421c852b4a63ea393e318cc60e9bd466",
+      "bytes": 2645
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/make_player_hq4.py",
+      "sha256": "3c18925927a37ada648340b1a59f562ab24f2f7a04550ba312f3b5fd212bedc9",
+      "bytes": 13007
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/MicroMusic_MulQ4_Opt_release/avr_emulator.js",
+      "sha256": "dae6393748cc70178a6a6924a2c73f79b6ed67b7517c688ec3657fa9a87a3ffe",
+      "bytes": 9806
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/MicroMusic_MulQ4_Opt_release/chego/firmware.S",
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0",
+      "bytes": 3603
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/MicroMusic_MulQ4_Opt_release/chego/speech.hq",
+      "sha256": "2794d45c10e19139b877b5c3f9750966037e281cbcef3f144afd303dc29dc663",
+      "bytes": 540
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/MicroMusic_MulQ4_Opt_release/otvechaesh/firmware.S",
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0",
+      "bytes": 3603
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/MicroMusic_MulQ4_Opt_release/otvechaesh/speech.hq",
+      "sha256": "6e203928d96d728464be4ed6436fa387f16bf189c070c9f175b798a4e531ae5d",
+      "bytes": 471
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/MicroMusic_MulQ4_Opt_release/vinni/firmware.S",
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0",
+      "bytes": 3603
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/MicroMusic_MulQ4_Opt_release/vinni/speech.hq",
+      "sha256": "395a0fb048dc2d0dd695e4814ece038f88ceecfbab27af2a543b7f6301d165b2",
+      "bytes": 600
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/model.py",
+      "sha256": "d9c3449ddd2da1929e71da99ef3b040d46d95988d2f5ea704f9416e30c1ba71e",
+      "bytes": 1610
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/optimize_hq4.py",
+      "sha256": "cab9837da397a5f8c5876c9e359d9d8e2e5ed25a1aed4cec662de23a098e77ae",
+      "bytes": 7461
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/package_hq4.py",
+      "sha256": "7819ea07b5085166579a9e5bac0773b1176c47a16a4912fd0a2d507fad7a7150",
+      "bytes": 7537
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/README.md",
+      "sha256": "85c6b3f31a002ef5cd1aa04113c352f9086917dcca7e9f944bae5d03b1825bb3",
+      "bytes": 3682
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/refine_boundaries.py",
+      "sha256": "30f07f42a482679b4bc87aa15b9af230320630e0ec883e00e7f896b2e5cebd67",
+      "bytes": 2320
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/refine_timbre.py",
+      "sha256": "602249724ab2ca010dbe2c854edb141193a0a5859749b291db6af48bff8816a4",
+      "bytes": 3498
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/release/avr_emulator.js",
+      "sha256": "dae6393748cc70178a6a6924a2c73f79b6ed67b7517c688ec3657fa9a87a3ffe",
+      "bytes": 9806
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/release/chego/firmware.S",
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0",
+      "bytes": 3603
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/release/chego/speech.hq",
+      "sha256": "5033738490e0ae0ba30c8ea62d9d53404b04b592eb53a7a0750329e641b29e6e",
+      "bytes": 552
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/release/chego_stoi_max/firmware.S",
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0",
+      "bytes": 3603
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/release/chego_stoi_max/speech.hq",
+      "sha256": "d0316a4bc81df1cbec452bb4c57a0f51fa9c5fc94876303c032fc408c8d067f1",
+      "bytes": 550
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/release/otvechaesh/firmware.S",
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0",
+      "bytes": 3603
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/release/otvechaesh/speech.hq",
+      "sha256": "6e44fbc2b548627cd71c7329ed5683ec9ce40ee51a1fa61f8f24039d55810d2d",
+      "bytes": 478
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/release/report.csv",
+      "sha256": "73b8ee124b3d5582969fe50e256c60ca3863063b24f661e3f9f00b910418b1cd",
+      "bytes": 559
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/release/report.json",
+      "sha256": "e48bc6e4c5d76f25623aabba536ffab85930f36269208259268a1a3f1e0234f2",
+      "bytes": 1205
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/release/verify_hq4.js",
+      "sha256": "02d106ff48dcfcb29bafc3f5aab77273180c8d7b9f69187bdc71320070bf471d",
+      "bytes": 954
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/release/vinni/firmware.S",
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0",
+      "bytes": 3603
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/release/vinni/speech.hq",
+      "sha256": "fe24fbdaf5260266d7b29b04f7e4d3926c48ce13c5697b214e0728b431433d03",
+      "bytes": 617
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/requirements.txt",
+      "sha256": "cb2350f6a566fb3de3b664a29573a8c6a4259340daefcd86b66f1d7d7636bfaf",
+      "bytes": 35
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/trained/chego/backup_09018.npz",
+      "sha256": "e2ab060a6618d937ea5aa5d14a556729de01fdaccb748102c0d8ed55292dd9ab",
+      "bytes": 1260
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/trained/chego/best.npz",
+      "sha256": "4fc57ee213224c097e79edeb06c85294ad098abd7fc017f34a25ad95cc75a248",
+      "bytes": 1260
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/trained/chego/boundary_refinement.json",
+      "sha256": "2931c38609531ae5aa6786399b40004cd739f3ccf16920b798a924d0c642357b",
+      "bytes": 221
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/trained/chego/speech.hq",
+      "sha256": "5033738490e0ae0ba30c8ea62d9d53404b04b592eb53a7a0750329e641b29e6e",
+      "bytes": 552
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/trained/chego/timbre_refine.json",
+      "sha256": "b59e0baa55fcd4b81ef8459c51a2c5bd697b1f4292ae968be8253b549f0f1195",
+      "bytes": 243
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/trained/chego/training.json",
+      "sha256": "1c25fca2dd01befdb3939257a51d6159d7617178a0c3be12740895873f0521f8",
+      "bytes": 934
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/trained/otvechaesh/best.npz",
+      "sha256": "825244dd62ed7fa7bb93b17e00c79ce3971b1ec41641c689302945b415ca9cbc",
+      "bytes": 1180
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/trained/otvechaesh/boundary_refinement.json",
+      "sha256": "c8f33615d913f0ea19964585508739d38122a1dae4cb859994170661779652d0",
+      "bytes": 226
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/trained/otvechaesh/speech.hq",
+      "sha256": "6e44fbc2b548627cd71c7329ed5683ec9ce40ee51a1fa61f8f24039d55810d2d",
+      "bytes": 478
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/trained/otvechaesh/training.json",
+      "sha256": "df8f0df5654c590634d97aa3c97146dad0137352c215fb58c19010af4fd53c50",
+      "bytes": 1133
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/trained/vinni/best.npz",
+      "sha256": "89cf58ff3b74d9c119b68861fed5adcf96c73b11e837b7b6f0c160a36155f3aa",
+      "bytes": 1636
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/trained/vinni/boundary_refinement.json",
+      "sha256": "e64e8b062bd8f25a81264b964917d0aff18b5d9cb41050f744fbd6db3d00a70d",
+      "bytes": 222
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/trained/vinni/speech.hq",
+      "sha256": "fe24fbdaf5260266d7b29b04f7e4d3926c48ce13c5697b214e0728b431433d03",
+      "bytes": 617
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/trained/vinni/training.json",
+      "sha256": "a42b16ca712e7a7a08fdf3f1994b6791db05c650cd1c43cbbd42a599605c25c8",
+      "bytes": 739
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/verify_hq4.js",
+      "sha256": "02d106ff48dcfcb29bafc3f5aab77273180c8d7b9f69187bdc71320070bf471d",
+      "bytes": 954
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/avr_emulator.js",
+      "sha256": "dae6393748cc70178a6a6924a2c73f79b6ed67b7517c688ec3657fa9a87a3ffe",
+      "bytes": 9806
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/benchmark.py",
+      "sha256": "2ba48026921bac6f4d450e2f872ccf6a3d2f7769cae92a31e2cfc41c12752ce9",
+      "bytes": 1333
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/build_native.sh",
+      "sha256": "6da1ca125384a33cb668e3fd9eda721ad26b8fcee890989ea6b2bb993c596887",
+      "bytes": 155
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/convert_audio.py",
+      "sha256": "885d4a1f2eaff1cb06f2f6494cc525208efe0079b252334e208778a037af12a4",
+      "bytes": 4467
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/decoder_template.S",
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0",
+      "bytes": 3603
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/examples/chego/firmware.S",
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0",
+      "bytes": 3603
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/examples/chego/speech.hq",
+      "sha256": "2794d45c10e19139b877b5c3f9750966037e281cbcef3f144afd303dc29dc663",
+      "bytes": 540
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/examples/demo/firmware.S",
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0",
+      "bytes": 3603
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/examples/demo/speech.hq",
+      "sha256": "3fed55a52d21e978ea312de0f6f51ba1066f150c6e684d3a3eecc0b03a34ed4f",
+      "bytes": 84
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/examples/otvechaesh/firmware.S",
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0",
+      "bytes": 3603
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/examples/otvechaesh/speech.hq",
+      "sha256": "6e203928d96d728464be4ed6436fa387f16bf189c070c9f175b798a4e531ae5d",
+      "bytes": 471
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/examples/vinni/firmware.S",
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0",
+      "bytes": 3603
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/examples/vinni/speech.hq",
+      "sha256": "395a0fb048dc2d0dd695e4814ece038f88ceecfbab27af2a543b7f6301d165b2",
+      "bytes": 600
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/fast_core.c",
+      "sha256": "7b2fd2fd3bb02e5b02a557cab735974af243531cff5eea0803b840f34fc12290",
+      "bytes": 17224
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/fast_train.py",
+      "sha256": "3f0cc1bbfa511b5ec12ab5230329113ca5885f51fee63f1c198b7f8a28c1bd16",
+      "bytes": 12229
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/final/chego/firmware.S",
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0",
+      "bytes": 3603
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/final/chego/result.json",
+      "sha256": "8c8d31ba04714f94e457327efdf382f8e2846c0f2b30c19cda499638ea20d06a",
+      "bytes": 574
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/final/chego/speech.hq",
+      "sha256": "3d0b9b442ad20a3c2c49044a6f4e7d15837063e396b80b946c8b068101d4f5f6",
+      "bytes": 550
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/final/chego_balanced/firmware.S",
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0",
+      "bytes": 3603
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/final/chego_balanced/result.json",
+      "sha256": "8089b930a43dbfeb1a05bf33dfa095c3767b6d904e9976a63d7b678d3c5f4b87",
+      "bytes": 574
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/final/chego_balanced/speech.hq",
+      "sha256": "430ec12f575137124cc78c3f9e5e2f802a799dd1d39dea704441821e14e427cf",
+      "bytes": 546
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/final/otvechaesh/firmware.S",
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0",
+      "bytes": 3603
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/final/otvechaesh/result.json",
+      "sha256": "fb11696d7e56541f5d286e98dc63d6396de83e1bc0e8dd3d4224d74531b19ce2",
+      "bytes": 576
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/final/otvechaesh/speech.hq",
+      "sha256": "0c7dfb8632dba9155763bb9a1bd63255273d0fc1fd8c61bf76420d3c4b31db32",
+      "bytes": 471
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/final/vinni/firmware.S",
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0",
+      "bytes": 3603
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/final/vinni/result.json",
+      "sha256": "fa7f6f0e5793bd5eca84eb2f0085981d0f186ccedd38f74e0efbfd97c1833eb1",
+      "bytes": 576
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/final/vinni/speech.hq",
+      "sha256": "c931840bebe1dd67a43cc4fb8f79cf2405f3e744d4a1bef72148247d61469c1b",
+      "bytes": 616
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/make_demo.py",
+      "sha256": "25f2fb9b285d7bbc1dcb1caaf38b160957439ba0bcd8de6f055320c92d9c2725",
+      "bytes": 1683
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/make_player.py",
+      "sha256": "46616feba33bfd22251da4c851cdccc047bf8ae93fd0b5150147b9169906f678",
+      "bytes": 7955
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/package.py",
+      "sha256": "96df65f3d8e3004b5a011716c60d62ee36a075d0cb286d49f4a2200f6b413a7c",
+      "bytes": 2634
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/quality_reference.py",
+      "sha256": "da70e6a91330e4b175b829f68df3db54bb251766e6e83d4f0dd7bbd3af6a7ce7",
+      "bytes": 979
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/README.md",
+      "sha256": "a0c1d115279b6d4ea77bd71b9693800766891bc9c73115b6a6d5a1a52e1778ed",
+      "bytes": 4601
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/release_report.csv",
+      "sha256": "2a38fe65bac85fcd6cde38453433304cc587591e4f2d6170cce9a183a01cc350",
+      "bytes": 489
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/release_report.json",
+      "sha256": "be99e02e87aa921203c17dfe2146009f4fbd86f5e52f35d371bef3fef65e10d1",
+      "bytes": 2560
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/requirements.txt",
+      "sha256": "b80ee5cf1c5df33013bfbe1e7e3e23a9857334100feb11520407ce226f612c64",
+      "bytes": 51
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/test_regression.py",
+      "sha256": "1a116c91362dd0c8798ec27329e3891c583f207c268354fb016ae6861b0fba6b",
+      "bytes": 1149
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/verify_avr.js",
+      "sha256": "f1a64b69b6981d3f99b0fe9e16a6fafc82a79cb9506e4ed186a3890ea6d3908e",
+      "bytes": 1149
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/verify_release.py",
+      "sha256": "98809c1184d6399e7c6363820050a7cb544f934d9ece182b1f6536d5e4b65507",
+      "bytes": 1133
+    },
+    {
+      "path": "ATtiny13A/Sound/README.md",
+      "sha256": "8c954174de006574ebe432e90e2549cc8f7980b2eb9b7549a26c4578a0c42427",
+      "bytes": 2022
+    },
+    {
+      "path": "ATtiny13A/Sound/research/HISTORY_ORIGINAL_RU.md",
+      "sha256": "7c965cd6a0d4eeac98008a8f546c246d0102d72f4a16850b23a180038e3b60e9",
+      "bytes": 30085
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/adaptive-lpc8/results/adaptive_results/ne-otv/report.json",
+      "sha256": "a0904cf1a72af89a5c10568bc92d899bb8c045058d3680d0c723aa8a418e3ebd",
+      "bytes": 3233
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/adaptive-lpc8/results/adaptive_results/xtuj-ntt/report.json",
+      "sha256": "7d751376b5ecb5a53316ea00bb18ac8303c98ebd4f2914f41e2952b6f3c977f6",
+      "bytes": 4028
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/adaptive-lpc8/results/ne-otv/history.json",
+      "sha256": "ea2a522c0a762f875119fa8ebcf7347d74ce08bc79020d2394776d222fa98bd3",
+      "bytes": 8207
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/adaptive-lpc8/results/ne-otv/report.json",
+      "sha256": "384842388d8b7d5d42c05ba296cae57f4513edb05f68e6343a26add571d4e5e9",
+      "bytes": 1651
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/adaptive-lpc8/results/rebuild.log",
+      "sha256": "a90a40bea2189fdafd08ab714ad553603b265431594b8c4b0c71ebe6f3d81f0c",
+      "bytes": 3535
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/adaptive-lpc8/results/xtuj-ntt/history.json",
+      "sha256": "c83a835ff22a1b911db99fa175eca26b4dea98b998e35f06727352e46404b3a6",
+      "bytes": 6287
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/adaptive-lpc8/results/xtuj-ntt/report.json",
+      "sha256": "4fe4dd5c67b40d66679df60fd85f3487124e16036bd72cb05583844a7d36e31a",
+      "bytes": 1652
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/adaptive-lpc8/SOURCE_MAP.json",
+      "sha256": "40c698ed82b993b1a88a140902a3a5bb9de5e325c67bbe2b1e10b5699348e0b1",
+      "bytes": 18643
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/auto-lpc2/results/results/release/report.json",
+      "sha256": "2baf4cf37e00c76b473bc16fb12edd62bed75b4189f6c14dc6bfea75c28baef9",
+      "bytes": 824
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/auto-lpc2/SOURCE_MAP.json",
+      "sha256": "7b2099f51eeeed5db048326d6cf305e0f90057c55b3add33376f05e0f1616497",
+      "bytes": 6271
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/codec-comparison/results/verification.json",
+      "sha256": "46bd55d187d223b89352a694d460eb1281da9c7f1f0ad267ff9a6853308fcf5f",
+      "bytes": 2840
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/codec-comparison/SOURCE_MAP.json",
+      "sha256": "b40a760b9954d5585126f25c56fcabda3e4e8949ff9011d69c3283086ae89696",
+      "bytes": 9771
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/codec-lab/SOURCE_MAP.json",
+      "sha256": "75463ead6c3401aea5a1a5585f6af9da6d558aaf02e968bb6bbdf54974047d83",
+      "bytes": 5017
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/fast-encoder-c/results/final/chego/result.json",
+      "sha256": "8c8d31ba04714f94e457327efdf382f8e2846c0f2b30c19cda499638ea20d06a",
+      "bytes": 574
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/fast-encoder-c/results/final/chego_balanced/result.json",
+      "sha256": "8089b930a43dbfeb1a05bf33dfa095c3767b6d904e9976a63d7b678d3c5f4b87",
+      "bytes": 574
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/fast-encoder-c/results/final/otvechaesh/result.json",
+      "sha256": "fb11696d7e56541f5d286e98dc63d6396de83e1bc0e8dd3d4224d74531b19ce2",
+      "bytes": 576
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/fast-encoder-c/results/final/vinni/result.json",
+      "sha256": "fa7f6f0e5793bd5eca84eb2f0085981d0f186ccedd38f74e0efbfd97c1833eb1",
+      "bytes": 576
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/fast-encoder-c/results/release_report.csv",
+      "sha256": "2a38fe65bac85fcd6cde38453433304cc587591e4f2d6170cce9a183a01cc350",
+      "bytes": 489
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/fast-encoder-c/results/release_report.json",
+      "sha256": "be99e02e87aa921203c17dfe2146009f4fbd86f5e52f35d371bef3fef65e10d1",
+      "bytes": 2560
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/fast-encoder-c/SOURCE_MAP.json",
+      "sha256": "452331f1493e68d86819147525eadd190ba2393cef401a051ee60c03808e730e",
+      "bytes": 10995
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq3-codeopt12/SOURCE_MAP.json",
+      "sha256": "be9d6eba9d7ae681e22c2aa24c5ef3cf147c2c84b288ea6d2f62ed85c240fa29",
+      "bytes": 4162
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq3-decoder-opt/results/report.csv",
+      "sha256": "07e07c19ce5d888cee6382a90a47fb3c9377135a7762e6561abcf1bfa12b7bc5",
+      "bytes": 223
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq3-decoder-opt/results/report.json",
+      "sha256": "8d5ba2cba71d5619f106ac7174374be18ce550e0219f4c6f9cedd3fb28a87144",
+      "bytes": 1317
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq3-decoder-opt/SOURCE_MAP.json",
+      "sha256": "051b46b820a21a18fb7d03cd9a68e5782360a6324bc7253c970b0d9299c34d30",
+      "bytes": 5913
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq3-fixed-tests/results/benchmark.json",
+      "sha256": "f50e223c7960800bc0bbcbad4dc1bdc054c7949c4336897c34d988921c40d3e6",
+      "bytes": 3502
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq3-fixed-tests/SOURCE_MAP.json",
+      "sha256": "0e0d84ef6152d8e8831bf0a0a50ae6890c9fea70b84f1ebcb151927e70f14d42",
+      "bytes": 5190
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq3-mulq4/results/benchmark.json",
+      "sha256": "f50e223c7960800bc0bbcbad4dc1bdc054c7949c4336897c34d988921c40d3e6",
+      "bytes": 3502
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq3-mulq4/SOURCE_MAP.json",
+      "sha256": "c2e014076681296cd422ea9276fd9fe3161fbada3331c5649f3950aebe649558",
+      "bytes": 5184
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq4-balanced/results/release/report.csv",
+      "sha256": "73b8ee124b3d5582969fe50e256c60ca3863063b24f661e3f9f00b910418b1cd",
+      "bytes": 559
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq4-balanced/results/release/report.json",
+      "sha256": "e48bc6e4c5d76f25623aabba536ffab85930f36269208259268a1a3f1e0234f2",
+      "bytes": 1205
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq4-balanced/results/trained/chego/boundary_refinement.json",
+      "sha256": "2931c38609531ae5aa6786399b40004cd739f3ccf16920b798a924d0c642357b",
+      "bytes": 221
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq4-balanced/results/trained/chego/timbre_refine.json",
+      "sha256": "b59e0baa55fcd4b81ef8459c51a2c5bd697b1f4292ae968be8253b549f0f1195",
+      "bytes": 243
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq4-balanced/results/trained/chego/training.json",
+      "sha256": "1c25fca2dd01befdb3939257a51d6159d7617178a0c3be12740895873f0521f8",
+      "bytes": 934
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq4-balanced/results/trained/otvechaesh/boundary_refinement.json",
+      "sha256": "c8f33615d913f0ea19964585508739d38122a1dae4cb859994170661779652d0",
+      "bytes": 226
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq4-balanced/results/trained/otvechaesh/training.json",
+      "sha256": "df8f0df5654c590634d97aa3c97146dad0137352c215fb58c19010af4fd53c50",
+      "bytes": 1133
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq4-balanced/results/trained/vinni/boundary_refinement.json",
+      "sha256": "e64e8b062bd8f25a81264b964917d0aff18b5d9cb41050f744fbd6db3d00a70d",
+      "bytes": 222
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq4-balanced/results/trained/vinni/training.json",
+      "sha256": "a42b16ca712e7a7a08fdf3f1994b6791db05c650cd1c43cbbd42a599605c25c8",
+      "bytes": 739
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq4-balanced/SOURCE_MAP.json",
+      "sha256": "702fbe3654fdcfab20b5cab6093ed99cc4adacafc7f4ab8c17d31ab75094d58b",
+      "bytes": 16347
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq4-conservative/results/HQ4/report.csv",
+      "sha256": "e2285ba390180dc264de3f1d5499278705ecc3108a8a69894830a103099a8d9a",
+      "bytes": 190
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq4-conservative/results/HQ4/results.json",
+      "sha256": "c231faf7a378d858337c7cb027aa97ea4f3141cf004c9971ab20d0d3b870d75a",
+      "bytes": 506
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq4-conservative/SOURCE_MAP.json",
+      "sha256": "1959bfd82f8ad17a832c1f5c2ac4c7c465cc7b47c98bc8e18fe122980fc758f6",
+      "bytes": 11088
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq4-exploratory/results/chego/anneal_report.json",
+      "sha256": "ec971bec68b492897788912237d005057f09db15a11a0c6a3f712f3e6a6fa1e8",
+      "bytes": 311
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq4-exploratory/results/chego/optimization.json",
+      "sha256": "039165618532e75612721b05b1aaf2b02838de4b3e4a23539f2545cfcbe970fa",
+      "bytes": 482
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq4-exploratory/results/chego/timbre_report.json",
+      "sha256": "d55c6c60aaffe17a0d3ef76426d633df1cbab741656a9e3ef20b08ead07f39b8",
+      "bytes": 3189
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq4-exploratory/results/demo_synthetic/result.json",
+      "sha256": "4eae8692c22289170709003a54a0f3f7009d87b14c7bd6102ad8982722713ca0",
+      "bytes": 65
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq4-exploratory/results/otvechaesh/optimization.json",
+      "sha256": "2577439c3201dd422e4c4d2ff3c9b1d0cedb94cfd073234849b1d00aa8846c62",
+      "bytes": 688
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq4-exploratory/results/otvechaesh/timbre_report.json",
+      "sha256": "d068ac1bac78c7aa01fe7c49021af1c8a5af31002e150798bae1ae66b5225a44",
+      "bytes": 1972
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq4-exploratory/results/release/report.csv",
+      "sha256": "b0a71d094f86cc02de2e827fb656d788b486aa306f2e8a78161ab8a7dcf52e42",
+      "bytes": 1147
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq4-exploratory/results/release/report.json",
+      "sha256": "15513e5804936c05aca5b6eb465aeca8ac5b3e62114392f93e32d13e646b48bd",
+      "bytes": 2753
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq4-exploratory/results/release/verification.json",
+      "sha256": "e8a56a46069c3bdae6664cbcda9dd56711a05461653392ca41b5be9baf9180da",
+      "bytes": 2303
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq4-exploratory/results/vinni/timbre_report.json",
+      "sha256": "8467a176a79c14968a5fbe76cdd0dda4495ec1a07a2e91243493d85e67725aa8",
+      "bytes": 1669
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/hq4-exploratory/SOURCE_MAP.json",
+      "sha256": "b1e015b34f3a06e62a5d9d1244b1e06176321dc59e8a09afe771cadc4f44eadd",
+      "bytes": 24126
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/keyframe-lpc8/results/ne-otv/history.json",
+      "sha256": "ea2a522c0a762f875119fa8ebcf7347d74ce08bc79020d2394776d222fa98bd3",
+      "bytes": 8207
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/keyframe-lpc8/results/ne-otv/report.json",
+      "sha256": "384842388d8b7d5d42c05ba296cae57f4513edb05f68e6343a26add571d4e5e9",
+      "bytes": 1651
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/keyframe-lpc8/results/xtuj-ntt/history.json",
+      "sha256": "c83a835ff22a1b911db99fa175eca26b4dea98b998e35f06727352e46404b3a6",
+      "bytes": 6287
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/keyframe-lpc8/results/xtuj-ntt/report.json",
+      "sha256": "4fe4dd5c67b40d66679df60fd85f3487124e16036bd72cb05583844a7d36e31a",
+      "bytes": 1652
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/keyframe-lpc8/SOURCE_MAP.json",
+      "sha256": "b24993c624313654cc9185022a7a6348d1c0de8d3aaad3e2e0a7b244d854021e",
+      "bytes": 10324
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/lpc2-lite/results/verified_metrics.json",
+      "sha256": "3dee0cfdecbd8dfbe1cee66362d1891ecad97927eff5e07db296b526ef834eb3",
+      "bytes": 598
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/lpc2-lite/SOURCE_MAP.json",
+      "sha256": "63f657a20c75470fefcf3113a1e6b309aeb920cff8bcee5c35ae5febb70a822f",
+      "bytes": 7277
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-328-350/SOURCE_MAP.json",
+      "sha256": "b716135140ec0def1c68fe7300b56817dbd42e620bc1ff0c1462d40410142147",
+      "bytes": 6525
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq/results/samples/chego/refinement.json",
+      "sha256": "401b412d8b31a7715cadc2331a5fb569ee164bda6dc644e0a2de3cc661431ba6",
+      "bytes": 229
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq/results/samples/chego/training.json",
+      "sha256": "6be0e2e461b7f33eeb2ccf45d61425a109c698e9e359291aa574db31a9fb8e90",
+      "bytes": 2865
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq/results/samples/otvechaesh/refinement.json",
+      "sha256": "d2fbaaa802e8236502c1902fbfa9ca68a3a3b8561899688cdfc6d0f1fc7be253",
+      "bytes": 230
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq/results/samples/otvechaesh/training.json",
+      "sha256": "51a0baac0c76f2dcf80fec5da2ed6976a695e00accd2068eb34839ebb51aeed1",
+      "bytes": 3058
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq/results/samples/vinni/refinement.json",
+      "sha256": "cd2f4eea2630dd24092a2f5ed429b702a75ccc40e90f923c9e6eb50dde1cc88f",
+      "bytes": 230
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq/results/samples/vinni/training.json",
+      "sha256": "cf547b9133390b8160b95c3a293e55c26d2ad8d85061d96f1a5cc80d078e5034",
+      "bytes": 1196
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq/results/verification.json",
+      "sha256": "35f57b6ebaa2fce063b2f1ce8c5ea0b38004cb3c6c1af48dd48c073c0cdd2c0a",
+      "bytes": 423
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq/SOURCE_MAP.json",
+      "sha256": "92969550337e44889f2bb697804667b03be11867cb0eae3ed79662a22aff9568",
+      "bytes": 13211
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq2/results/prepared/chego.json",
+      "sha256": "9ca21f2c7ff6efadfaabc6e5f41418866f2a98aa2b0a8df251189e3950ee8ba9",
+      "bytes": 228
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq2/results/prepared/otvechaesh.json",
+      "sha256": "d489dc2859eca28d48bf985e321fa4075eb25e24937f695c530354b9035571eb",
+      "bytes": 258
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq2/results/prepared/vinni.json",
+      "sha256": "e8e860c01875c9088e6cc55df95b1a139b3f7acdc05e155ad9b88d6fb0fae745",
+      "bytes": 240
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq2/results/pulse_report.json",
+      "sha256": "36bac59be1087b490a6639cbf7f68a84dd899ea1cbd9cb9c116f08caec072df4",
+      "bytes": 10564
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq2/results/report.csv",
+      "sha256": "5105d9181ee9623756b0e98a70428842c16b276d8ff3ad245e56cbfdd957fda4",
+      "bytes": 491
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq2/results/report.json",
+      "sha256": "45d58bedb8e2fc74228a72fd36b36de4c013b444d1bd6708034a474dbe9b148c",
+      "bytes": 1089
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq2/results/samples/chego/joint_search.json",
+      "sha256": "7dbd49702b82da11f43e7976c5da5489c7739a5f58766447b1d5a04fcf442da9",
+      "bytes": 395
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq2/results/samples/chego/noise_search.json",
+      "sha256": "bbcf154d3ed5de97864eb4048dcd4ae6fe263a60205e070f94bc2e697c67a4ff",
+      "bytes": 897
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq2/results/samples/chego/refinement.json",
+      "sha256": "cb26af145b13c1bf3413e27aeb8d437d0e86e66c1daadace8d2dcbc18872de83",
+      "bytes": 229
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq2/results/samples/chego/training.json",
+      "sha256": "a8ec28a628e933680bf2d60c0ea50133ebaf0f5379da5daf5ab71a9ffcbc239e",
+      "bytes": 1006
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq2/results/samples/otvechaesh/joint_search.json",
+      "sha256": "587f81e4fa38dbb9a5d8bbf5a044bf599d66cf3700760b98955b01c3b4feb3e4",
+      "bytes": 397
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq2/results/samples/otvechaesh/noise_search.json",
+      "sha256": "4b0b1798d37b96cd1a34de0625125ec45128793a9142a87bc73665e2e9ef174a",
+      "bytes": 898
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq2/results/samples/otvechaesh/refinement.json",
+      "sha256": "f86390e5cac47465a8608cb5eee79134e5616df971593407528fb0b9c765affd",
+      "bytes": 232
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq2/results/samples/otvechaesh/training.json",
+      "sha256": "7db1db4bc266896556875eb6b1c694861bf0f3687656b71652238ea8574077f6",
+      "bytes": 1008
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq2/results/samples/vinni/joint_search.json",
+      "sha256": "19cba594e7b1bf7331cb92e1da822539c9f4d9c8f51d87b9e4639f62ed462601",
+      "bytes": 368
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq2/results/samples/vinni/noise_search.json",
+      "sha256": "2cf63634fca2e548474bac2489acf219d54d1ac8bc13941dc4af4cab8a7e7259",
+      "bytes": 891
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq2/results/samples/vinni/refinement.json",
+      "sha256": "6e6052bfe97b74692f00cba4d6d9cd554af7fe69fed8b001fa5a92db9b18d778",
+      "bytes": 231
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq2/results/samples/vinni/training.json",
+      "sha256": "cf547b9133390b8160b95c3a293e55c26d2ad8d85061d96f1a5cc80d078e5034",
+      "bytes": 1196
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq2/results/verification.json",
+      "sha256": "3f6ba97f1c514265b8b553a47aae4685c13c7ca5eb0af681397433fba09a2268",
+      "bytes": 423
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq2/SOURCE_MAP.json",
+      "sha256": "db85526809050777fd18a0baa4a07f70d013091931053133aee7fb0a95dca489",
+      "bytes": 19989
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq3/results/report.csv",
+      "sha256": "d6acde3e65ac1338c025cbe871620f44a55dc44ea40b813a853b0c73a72fe487",
+      "bytes": 491
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-hq3/SOURCE_MAP.json",
+      "sha256": "84e45bca2c6e863dc1daf51f949d550d0c02b0a200656e8dc948f9bca73d104b",
+      "bytes": 5010
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-packed/SOURCE_MAP.json",
+      "sha256": "245cab4d4013e2f85a1c467f2ddfeab296ac46e163899c7de5c0b3dcbd7f42f7",
+      "bytes": 6035
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-vbr/results/samples/chego/metrics.json",
+      "sha256": "ff83a69b92be9c58a79f1d441da02ebed7e5427a430e607664f42857f4e1b75e",
+      "bytes": 540
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-vbr/results/samples/otvechaesh/metrics.json",
+      "sha256": "a407253e58e6f1d84e1e79f77d6e7e0f10d718ee1b677e18d0985ce31420f881",
+      "bytes": 539
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-vbr/results/samples/vinni/metrics.json",
+      "sha256": "0936f8412dc9e6007d752c6e2be5c2a899d2ff394ced2fd2c71b1fe40c6f42db",
+      "bytes": 542
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-vbr/results/training_report.json",
+      "sha256": "8f2c3f2026c37b1a8498ed12185050884339c6a6142f3f5769edfe1e6859ede2",
+      "bytes": 1823
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-vbr/results/verification.json",
+      "sha256": "d1409974e1a40d3b57c4d274f9ec717428371e7be6075b68012ee6403811783f",
+      "bytes": 672
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/minilpc-vbr/SOURCE_MAP.json",
+      "sha256": "215a2ce624df60353e57b2f91b1ae88e836d638c00fc740a57ed051a6f26873f",
+      "bytes": 10524
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/multi-phrase-pipeline/results/codebook_trial_report.json",
+      "sha256": "9c2be8ce8215b10851f7aee42eb6845d9dba4e0b7c4dfb057c5a71721c208b1b",
+      "bytes": 3003
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/multi-phrase-pipeline/results/release/ne-otv/metrics.json",
+      "sha256": "0a269962b616ca5a22ee51e48c0ef4c56b71a19079c90ffbec2a2d27d02ede24",
+      "bytes": 1054
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/multi-phrase-pipeline/results/release/xtuj-ntt/metrics.json",
+      "sha256": "35be6227133c6d39060cfcac600db1fdfc432afcc264c328da99b86862afbbae",
+      "bytes": 1050
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/multi-phrase-pipeline/SOURCE_MAP.json",
+      "sha256": "2607ba3285dcf414d3213e236080730af6beaeb1ca1072c8863e21719884956d",
+      "bytes": 12687
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/native-profiles/results/verification.json",
+      "sha256": "02ac92f9c769edc2053f70d30ecfc0bdf575ced86dad07aa65d428d786bd36f5",
+      "bytes": 578
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/native-profiles/SOURCE_MAP.json",
+      "sha256": "9666a4bedf3733fe345d8bdd2f6f87ffd5a6b940eb3a665fa74b89b6bf09f7e7",
+      "bytes": 6539
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/three-phrases/results/ne-otv/pitch_report.json",
+      "sha256": "76c570d5a3b7c53129f977dcd3afb0c5d74ef5c183d61faba04bcca06dafe19f",
+      "bytes": 1606
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/three-phrases/results/ne-otv/report.json",
+      "sha256": "5bf4c6b6d935470fbdc22f5d20f1d658bc1343fd1e0143a1e1cd061234199cfb",
+      "bytes": 1824
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/three-phrases/results/report.json",
+      "sha256": "a2082762b0f89512838b5f55386e6329ad5465b83ed5873ef37b1260a0f7e504",
+      "bytes": 4208
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/three-phrases/results/vinni/report.json",
+      "sha256": "0276fdd873459d2518354dbf07f36456f706b4e39dc68369851745ac1dd88c87",
+      "bytes": 258
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/three-phrases/results/xtuj-ntt/pitch_report.json",
+      "sha256": "8ffcc05305bc06334cdb2153d56d0dab1587d71efd2ad1d85bec24876ccd50e2",
+      "bytes": 1746
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/three-phrases/results/xtuj-ntt/report.json",
+      "sha256": "2f7c28228b7dcb811dad18a3799690339b591c7817cd4995c007294b5464bbd6",
+      "bytes": 1812
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/three-phrases/SOURCE_MAP.json",
+      "sha256": "1a8deb62cdbb2f8eedce67bf62278b30fd8911619d24958f68cb0efeb9bf41ad",
+      "bytes": 10573
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/tinylpc-v1/SOURCE_MAP.json",
+      "sha256": "5c65deb0cc27edb02cc031df759cdd424c54d25618bb544c1bbc2629d5aba934",
+      "bytes": 3804
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/tinylpc-v2/SOURCE_MAP.json",
+      "sha256": "375a9346cd8d2d468032da8cc171a64051dbd0d2da6a5fd6d82ca94f9c6df4a0",
+      "bytes": 4490
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/tinylpc-v3/SOURCE_MAP.json",
+      "sha256": "6d4b143090aa4954b134657a55b3b9c077eb668fe86dac74f9b3734fbeb6c574",
+      "bytes": 5341
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/tinylpc-v4/results/metrics.json",
+      "sha256": "89437edbe8ddc65e1f182c47804c56bf3e50bd9c9e98b198c2513d178c327df4",
+      "bytes": 428
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/tinylpc-v4/results/spectrogram_compare_v4.png",
+      "sha256": "a595d1775f0204175b2bfbd709af302407ca8006b0977b642a1857c548081c67",
+      "bytes": 610084
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/tinylpc-v4/SOURCE_MAP.json",
+      "sha256": "17af94a3c9095347c0c72f5e0ca6c3020976e643bc236234353597a3d83053ea",
+      "bytes": 7936
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/tinylpc-v5/results/harmonic_experiment.log",
+      "sha256": "4e12f317b8ca47632a46494565716b054837ed548345258c6e73c86ad3956162",
+      "bytes": 2635
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/tinylpc-v5/results/harmonic_profiles.log",
+      "sha256": "0b2eef46d762baccc71abf14417bdee19716f6de9d0797a36a0323bd0f3d0935",
+      "bytes": 791
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/tinylpc-v5/results/metrics_harmonic_v5.json",
+      "sha256": "1ec8580540327fb43577d11d188c49be0e4c35415155da50cae2ab255c0a21d3",
+      "bytes": 594
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/tinylpc-v5/results/spectrogram_v5.png",
+      "sha256": "3d335c7ab78788da423997afbfab2b5b5977037f091eaf41c12518b111269cb3",
+      "bytes": 652829
+    },
+    {
+      "path": "ATtiny13A/Sound/research/stages/tinylpc-v5/SOURCE_MAP.json",
+      "sha256": "78d7ad90d790dbd5b140750c2fae8537ffd708bfba865d794838e5cd17dc0647",
+      "bytes": 7854
+    },
+    {
+      "path": "ATmega328/.gitignore",
+      "sha256": "59a8a873978a3271c181623f429c4641b3fa380aebadee1084b4631805db5744",
+      "bytes": 248
+    },
+    {
+      "path": "ATmega328/Sound/lpc2/examples/LPC2_PROGMEM_Player/LPC2_PROGMEM_Player.ino",
+      "sha256": "a8a435cf17ba4507742104f2fe1fa93b7351c1468c98f76009090f530b0e2e8a",
+      "bytes": 1213
+    },
+    {
+      "path": "ATmega328/Sound/lpc2/examples/LPC2_PROGMEM_Player/voice_lpc2.h",
+      "sha256": "4ca3d5da83b67d59bea6404742fb500ff3eadd57839fe29c3375962806b5c3f8",
+      "bytes": 330
+    },
+    {
+      "path": "ATmega328/Sound/lpc2/examples/LPC2_SD_Player/LPC2_SD_Player.ino",
+      "sha256": "6258ffdc60f6c51ada6fc181dcf9a05148c0f7db9c95e6e38fd64cee80048c2e",
+      "bytes": 1418
+    },
+    {
+      "path": "ATmega328/Sound/lpc2/library.properties",
+      "sha256": "bec0f48d565303acf5471bbc96ef0d3738c6283be08157b8977b137fd3742cf2",
+      "bytes": 335
+    },
+    {
+      "path": "ATmega328/Sound/lpc2/README_RU.md",
+      "sha256": "0ec5d7519654c06a60c40c34ee84fbc38c90f401b56a02b0dd4e6f0dd4a059e3",
+      "bytes": 4926
+    },
+    {
+      "path": "ATmega328/Sound/lpc2/src/Lpc2AvrDecoder.cpp",
+      "sha256": "ce06144dd0cc2be0f216f7eac6f514d5f87caa30b75a5fd8efe3e50999844089",
+      "bytes": 24517
+    },
+    {
+      "path": "ATmega328/Sound/lpc2/src/Lpc2AvrDecoder.h",
+      "sha256": "b11d59fb4ab880054a594e4c6811b65e6c3da2aa61fc59d49c58b2114893fae8",
+      "bytes": 5817
+    },
+    {
+      "path": "ATmega328/Sound/lpc2/tools/lp2_to_header.py",
+      "sha256": "9eed82b15ccf7bc60a1c963ab9d674b3b7a3d6e43d79ded99f9c4e3acfb53e60",
+      "bytes": 1003
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/BENCHMARKS.json",
+      "sha256": "4785d1c95f411022d33e3ff92ed53ef14b6bfa2717a9f5930fedf1ac5533b3df",
+      "bytes": 1782
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V4_PROFILE_SYNTHETIC/cos_table.inc",
+      "sha256": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+      "bytes": 1746
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V4_PROFILE_SYNTHETIC/LPX3_RICE_V4_PROFILE_SYNTHETIC.ino",
+      "sha256": "b3423149b36e121a73008755d840f568624223c8fb6732da067c62a208dc670f",
+      "bytes": 4556
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V4_PROFILE_SYNTHETIC/Lpx3AvrCore.cpp",
+      "sha256": "80aac935afdc43437c019f88aa9fe5f245fc134ce31254cdd449791be48eb9d6",
+      "bytes": 16659
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V4_PROFILE_SYNTHETIC/Lpx3AvrCore.h",
+      "sha256": "b38296d8e361adbced69bd15b5c49433163a9412937aafabd43fcdf5bc13ffe8",
+      "bytes": 3253
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V4_PROFILE_SYNTHETIC/scale_table.inc",
+      "sha256": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
+      "bytes": 1137
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V4_PROFILE_SYNTHETIC/voice_data.h",
+      "sha256": "d5d2094db29b3be173a411775250d6e1057180341f1165e6ea8b060fff85082f",
+      "bytes": 48309
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V4_SYNTHETIC/cos_table.inc",
+      "sha256": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+      "bytes": 1746
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V4_SYNTHETIC/LPX3_RICE_V4_SYNTHETIC.ino",
+      "sha256": "15a627d0a6e892d8e7e1ae33be27a42e00e541c4def9570392a16ab3c89da1d8",
+      "bytes": 4533
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V4_SYNTHETIC/Lpx3AvrCore.cpp",
+      "sha256": "80aac935afdc43437c019f88aa9fe5f245fc134ce31254cdd449791be48eb9d6",
+      "bytes": 16659
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V4_SYNTHETIC/Lpx3AvrCore.h",
+      "sha256": "b38296d8e361adbced69bd15b5c49433163a9412937aafabd43fcdf5bc13ffe8",
+      "bytes": 3253
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V4_SYNTHETIC/scale_table.inc",
+      "sha256": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
+      "bytes": 1137
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V4_SYNTHETIC/voice_data.h",
+      "sha256": "d5d2094db29b3be173a411775250d6e1057180341f1165e6ea8b060fff85082f",
+      "bytes": 48309
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/synthetic_v1.l3av",
+      "sha256": "d09a30a4d4d3fd6178766afd65a3a5cb769932e8e6cea070f40c9cae954d1494",
+      "bytes": 8033
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/synthetic_v4.json",
+      "sha256": "1c542af6c9e2784e63952dd3e8926a26af01f47b2a5cfef4c09d387c22663982",
+      "bytes": 228
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/synthetic_v4.l3av",
+      "sha256": "babd5065df1b7efda4193e6e150eb8b349ff22e47689b09922d588a5b94649fc",
+      "bytes": 7867
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/README_RU.md",
+      "sha256": "ffa03be7c06be9d8f2012b2d61b6e19adf7519aa9938df84807dce5e98da017f",
+      "bytes": 9863
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/reference_v2/cos_table.inc",
+      "sha256": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+      "bytes": 1746
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/reference_v2/decode_host.cpp",
+      "sha256": "92040c2a8eb658cdc57a3a6c9146c240338d6e87c0aa7b62a3d69263bb246ab6",
+      "bytes": 1160
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/reference_v2/Lpx3AvrCore.cpp",
+      "sha256": "fbaf7f3e444fbf02768f7b4c936bb34200d4487b29ac875a3b180287014e4fe3",
+      "bytes": 16827
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/reference_v2/Lpx3AvrCore.h",
+      "sha256": "0949065ec22450411ff7e43c553bb0ff36b7c774640589b91a2cccc8778ee7d6",
+      "bytes": 3604
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/reference_v2/scale_table.inc",
+      "sha256": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
+      "bytes": 1137
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/src/cos_table.inc",
+      "sha256": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+      "bytes": 1746
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/src/Lpx3AvrCore.cpp",
+      "sha256": "80aac935afdc43437c019f88aa9fe5f245fc134ce31254cdd449791be48eb9d6",
+      "bytes": 16659
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/src/Lpx3AvrCore.h",
+      "sha256": "b38296d8e361adbced69bd15b5c49433163a9412937aafabd43fcdf5bc13ffe8",
+      "bytes": 3253
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/src/scale_table.inc",
+      "sha256": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
+      "bytes": 1137
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/tests/avr_stub/avr/pgmspace.h",
+      "sha256": "9ae744c35811d32cee225b0978bd20e26fa9ae8a95cc2eee63d300887a5cc40a",
+      "bytes": 601
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/tests/avr_stub/stdint.h",
+      "sha256": "202c87c05e23d0599c0c968743bdd00dc13e8fe97529d101b76ff4276f9d8106",
+      "bytes": 269
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/tests/decode_host.cpp",
+      "sha256": "a3fdf4cb8db202204e470e0962b3bd755e1952253795121e819b95837b0b0f2e",
+      "bytes": 1355
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/tests/sram_size.cpp",
+      "sha256": "9dad2c1ef78098cc7241388812a7702d445b224087b82c4467631441379bc8f0",
+      "bytes": 188
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/tests/verify.py",
+      "sha256": "6610512f18b2422fb5de5a1f6abf1d46042af26a81884c06d37c7ad54c4640f1",
+      "bytes": 6531
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/tools/l3av_parse.py",
+      "sha256": "41d61c89ed0bce196eaa44cfd3dbe98bad93ce0d29a2c0cb82f39974fa0d2ab0",
+      "bytes": 2805
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/tools/make_header.py",
+      "sha256": "f5db37a1a57c99ab54616a88ca410cd74b168bdea041cb4983e064a398c1d930",
+      "bytes": 818
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/tools/rice_v3.py",
+      "sha256": "8e43bef9cedcb6b22df3b3728686b43986c2337a49243c5c746b08ac8a532bef",
+      "bytes": 7319
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/tools/rice_v4.py",
+      "sha256": "5cc2b9f0f0f6b5cfebbf4e1afe65326eb017b3564ab40163b3c25cbdc418013c",
+      "bytes": 9708
+    },
+    {
+      "path": "ATmega328/Sound/README.md",
+      "sha256": "1e98ae7b889ba59ab4169c8b5cc34f1bfcf8b8bcc3e3cd2bfb947b010a9456bb",
+      "bytes": 1979
+    },
+    {
+      "path": "ATmega328/Sound/reference/lab/index.html",
+      "sha256": "44bcdb92b57938b543a602694e77ecc38d661f32639ab4a4f55eda7b89fa845a",
+      "bytes": 128625
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpc2-voice/build_encoder.py",
+      "sha256": "4f3b01fbbbefb8f534d59fde3929747fcc10b9c826f3504254a702c7ccf0bbfe",
+      "bytes": 5910
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpc2-voice/experiment_report.json",
+      "sha256": "7772097ae99be46c0bbf9bfc9eb7cde647aa13943cc1a1da19d952131b41cb0f",
+      "bytes": 14044
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpc2-voice/lpc2_v11_original.html",
+      "sha256": "6213dfaeaef9869c2bd31d30f9f3caa100e10b99977637342ffbb7722b7efb7b",
+      "bytes": 104561
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpc2-voice/make_player.py",
+      "sha256": "9a54530fee92ab718bd90eb3bf7c1e535d41160e644a9d89a4c8dd132ffa6227",
+      "bytes": 10616
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpc2-voice/make_release.py",
+      "sha256": "966b0d9ce3509d231d7f46e5a298cb807aa79669e6076f19d1afff56c908216a",
+      "bytes": 4239
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpc2-voice/README.md",
+      "sha256": "b2b90f2eedb805a3d56997aee277e76ff82ed662f0966257d2711e7c59fcb20d",
+      "bytes": 3792
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpc2-voice/README_RU.md",
+      "sha256": "1c4798d822e9c872ae81f05239a4b839d88509de76add6341a09e317671ecf82",
+      "bytes": 3558
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpc2-voice/release/experiment_report.json",
+      "sha256": "7772097ae99be46c0bbf9bfc9eb7cde647aa13943cc1a1da19d952131b41cb0f",
+      "bytes": 14044
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpc2-voice/release/ne-otv/adaptive_source_pitch_post10.lp2",
+      "sha256": "0299f716494feb79b7cb36aaab781c8a2b93d5d40a51946a55e1559ebce41ca1",
+      "bytes": 255
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpc2-voice/release/ne-otv/adaptive_unguided_post10.lp2",
+      "sha256": "24ad33e44196a945eaa07c13403b342cf01588e3265059f55b39dbe20911ee90",
+      "bytes": 255
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpc2-voice/release/ne-otv/old_v1.lp2",
+      "sha256": "a1098ac46379b00c2761d723f2b3d512e3efeede5de240878cb053c2d0981067",
+      "bytes": 246
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpc2-voice/release/README.md",
+      "sha256": "b2b90f2eedb805a3d56997aee277e76ff82ed662f0966257d2711e7c59fcb20d",
+      "bytes": 3792
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpc2-voice/release/README_RU.md",
+      "sha256": "1c4798d822e9c872ae81f05239a4b839d88509de76add6341a09e317671ecf82",
+      "bytes": 3558
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpc2-voice/release/xtuj-ntt/adaptive_source_pitch_post10.lp2",
+      "sha256": "2061e4f0783bc84373e96f865b1bb93c859fc965ec0386366c63bf0bf6a0f106",
+      "bytes": 292
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpc2-voice/release/xtuj-ntt/adaptive_unguided_post10.lp2",
+      "sha256": "fb14718463fc94d8b7518ac9b3e46b5630e2787d62c3e7fcb27e9324ede15070",
+      "bytes": 292
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpc2-voice/release/xtuj-ntt/old_v1.lp2",
+      "sha256": "c4b45ee6f52abde570e0eae1771330ce6f7a9c07cf5e49236b214c88b98e875c",
+      "bytes": 300
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpc2-voice/requirements.txt",
+      "sha256": "1a64f77281195746c0b99f8bf0e4592c7a786ef8a73f23ed9a50db4565fcef33",
+      "bytes": 48
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpc2-voice/run_experiments.py",
+      "sha256": "53d6f77061c4d0663e405655661a46fa8f5d1f2e52f2a4518678b5e87befe100",
+      "bytes": 8344
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/benchmark.json",
+      "sha256": "446cf2d42a571854f4ede67a0249df479dbb350e43cf66189685dd5d093d6037",
+      "bytes": 3875
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/benchmark.py",
+      "sha256": "ec6a34a7fd4bb81758c550531dbde02826e03b98e485f2bad6a3672e7c02aa43",
+      "bytes": 3248
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/generate_js_decoder.py",
+      "sha256": "42dc5943c3d46eb56bb40a60923eab726f008f41b66c71a8666de8270272fbd9",
+      "bytes": 4139
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/hybrid_codec.py",
+      "sha256": "ee874bd55367daf55b25ac6ef10dcb6781a4ca52049e43c2c573abd83b1c1130",
+      "bytes": 9649
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/lpc2_v2_reference.html",
+      "sha256": "a3854c2fe5630c9addf5bc3eed27063d6dd080ab0faa6282db1022c524d7a245",
+      "bytes": 106622
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/lpx3_decoder.js",
+      "sha256": "05e739e408fc69c77a11b8c29910d9c1ac523072824e7dd6f9bddf1c4a191a84",
+      "bytes": 8677
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/make_ab.py",
+      "sha256": "eb400d7eb2dbed81fdf0fedc8281a7d8f8298bfa94caf356748604980913cc56",
+      "bytes": 722
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/make_player.py",
+      "sha256": "e7129469a17ff27976849bf40f394447ad1a85f6ed1096ee4c4ff1b613787968",
+      "bytes": 11669
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/package_release.py",
+      "sha256": "cf6bd5cfd42b43f78dce9c1bd7e309ee3c16121de4224b2f9d947beb480487fc",
+      "bytes": 1371
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/README.md",
+      "sha256": "90004cb385a3a74a52c2f6b473ed6217fe0f17c91f9ccfd3e5edf4a2291b6eae",
+      "bytes": 10077
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/requirements.txt",
+      "sha256": "9fb606c0de737d16d1aed7a24f3480749464552184673516346ae7ea959becbd",
+      "bytes": 54
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/samples/ne-otv/base_lpc2.lp2",
+      "sha256": "0299f716494feb79b7cb36aaab781c8a2b93d5d40a51946a55e1559ebce41ca1",
+      "bytes": 255
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/samples/ne-otv/metrics.json",
+      "sha256": "b281195f8c3a5c40cde48aae486295165ec4bb956c2fdcb6392045a27c10cfa3",
+      "bytes": 1171
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/samples/vinni/base_lpc2.lp2",
+      "sha256": "eefda6cc2698af87d9664244fbf08543886851f6a19a75613949b6389336bb99",
+      "bytes": 512
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/samples/vinni/metrics.json",
+      "sha256": "7946c5485f38b9c034211ec490f2a6b138c070547486f6b75a5641bdc699f79a",
+      "bytes": 1167
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/samples/xtuj-ntt/base_lpc2.lp2",
+      "sha256": "2061e4f0783bc84373e96f865b1bb93c859fc965ec0386366c63bf0bf6a0f106",
+      "bytes": 292
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/samples/xtuj-ntt/metrics.json",
+      "sha256": "88c8772fc698a7a88726e761404ef859f63ee1ef15b3fd4663fb4bff4433c5c9",
+      "bytes": 1168
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/train_encode.py",
+      "sha256": "2bbbf7a2ab05def706e3c24396749ba54463fa33488d702f0924c5f960bcfa50",
+      "bytes": 6686
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/verification.json",
+      "sha256": "1185768b5b29a784d8656700fa447fbde55d144758ed9c205b81d91307da53a1",
+      "bytes": 1664
+    },
+    {
+      "path": "ATmega328/Sound/reference/lpx3/verify_project.py",
+      "sha256": "41379a2da7f2df7a3d57f938c081c967632d692bdf81f9296fae13e3f8fd5a2c",
+      "bytes": 1786
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lab-06/SOURCE_MAP.json",
+      "sha256": "66349a472ce4918061f4e3662ff3522c5b66c148567390ebd9205e51455d7693",
+      "bytes": 574
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lab-07/SOURCE_MAP.json",
+      "sha256": "2ca55fd1895b016e7e664dde4136755572756d3cc1ba829743ea446b49d54e5d",
+      "bytes": 570
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lab-08/SOURCE_MAP.json",
+      "sha256": "64bc4070e8f38a5cf35b4d62f6358e36b7060e45c673848691321513d78910d0",
+      "bytes": 577
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lab-09/SOURCE_MAP.json",
+      "sha256": "3878d40798369b85e827459d47f9e4601d950f2975bb1911c8bbce61e4522819",
+      "bytes": 569
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lab-10/SOURCE_MAP.json",
+      "sha256": "046d860aee2b6db0bd0e104ce4827418444c143b84c29e1d5cf05081585fa4aa",
+      "bytes": 571
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lab-11/SOURCE_MAP.json",
+      "sha256": "fb42c72cf1fc61951a81c63be68866705f92b4984774c84922d9e9d380c41466",
+      "bytes": 554
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lab-12/SOURCE_MAP.json",
+      "sha256": "a186e3fd986ee6e4f8348af539e445c60b9ffb2a82bd3d2e00e3e4518af86d05",
+      "bytes": 552
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpc2-arduino/SOURCE_MAP.json",
+      "sha256": "aaa558521102b836dda1854feb23faf4e7667a6e5b8f7544d1213c9ca63cca14",
+      "bytes": 1853
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpc2-voice-v2/results/experiment_report.json",
+      "sha256": "7772097ae99be46c0bbf9bfc9eb7cde647aa13943cc1a1da19d952131b41cb0f",
+      "bytes": 14044
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpc2-voice-v2/results/release/experiment_report.json",
+      "sha256": "7772097ae99be46c0bbf9bfc9eb7cde647aa13943cc1a1da19d952131b41cb0f",
+      "bytes": 14044
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpc2-voice-v2/SOURCE_MAP.json",
+      "sha256": "64ece5b95248b2af5d5f3cba81bdc93d019f3088e9cd8632266af009848efc89",
+      "bytes": 6927
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-avr/results/reports/buffer_simulation.json",
+      "sha256": "dab5390cca5ff8abae42bdb21e9874fe410f008923596cc065dacb7682b732c8",
+      "bytes": 778
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-avr/results/reports/quality_report.json",
+      "sha256": "1ae32b235a7d21d054216d472a57638a75c0e353d5d28c3995c40414a11417ea",
+      "bytes": 2385
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-avr/results/reports/regression_streams.json",
+      "sha256": "97691cf47b913b6c006841c7f44dc5345c7314bd2513c1fab449120bc846484e",
+      "bytes": 4023
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-avr/results/reports/vbr_sweep.json",
+      "sha256": "f0e2d6251e14377d48886448d9dddf181f70ce8eb47c3bd90d67a9f99157498b",
+      "bytes": 23132
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-avr/SOURCE_MAP.json",
+      "sha256": "7211033b54f962fb5df5b2c4ef938aecb49ae5ee70b81acbd8c2e1b15b08ce5c",
+      "bytes": 6513
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-fast2/results/reports/buffer_simulation.json",
+      "sha256": "dab5390cca5ff8abae42bdb21e9874fe410f008923596cc065dacb7682b732c8",
+      "bytes": 778
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-fast2/results/reports/fast2_validation.json",
+      "sha256": "33fcdd86ca07314eb7ae85b0b5fa00b3975be3827d373911ccca481775a13a6f",
+      "bytes": 14493
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-fast2/results/reports/vbr_sweep.json",
+      "sha256": "f0e2d6251e14377d48886448d9dddf181f70ce8eb47c3bd90d67a9f99157498b",
+      "bytes": 23132
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-fast2/SOURCE_MAP.json",
+      "sha256": "ce68bce145a7ac394394335069359bccc93741f4b80d4427ceb766f3818151c1",
+      "bytes": 11259
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-reference/results/benchmark.json",
+      "sha256": "446cf2d42a571854f4ede67a0249df479dbb350e43cf66189685dd5d093d6037",
+      "bytes": 3875
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-reference/results/samples/ne-otv/metrics.json",
+      "sha256": "b281195f8c3a5c40cde48aae486295165ec4bb956c2fdcb6392045a27c10cfa3",
+      "bytes": 1171
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-reference/results/samples/vinni/metrics.json",
+      "sha256": "7946c5485f38b9c034211ec490f2a6b138c070547486f6b75a5641bdc699f79a",
+      "bytes": 1167
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-reference/results/samples/xtuj-ntt/metrics.json",
+      "sha256": "88c8772fc698a7a88726e761404ef859f63ee1ef15b3fd4663fb4bff4433c5c9",
+      "bytes": 1168
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-reference/results/verification.json",
+      "sha256": "1185768b5b29a784d8656700fa447fbde55d144758ed9c205b81d91307da53a1",
+      "bytes": 1664
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-reference/SOURCE_MAP.json",
+      "sha256": "53796a94b50dd12515a91d9ed342b280fa39e80ea43340f1b7ac0c282857b638",
+      "bytes": 8821
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-rice-v2/results/benchmark_results.json",
+      "sha256": "622e1d8fc488182ea6bb75a420edef2673c381214a2eab3960d8b6f2bf7bf273",
+      "bytes": 4429
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-rice-v2/SOURCE_MAP.json",
+      "sha256": "aafd76096dc77fc7e48f5060e5c7fb26b45de0980b4b8aa5336ee5d68d5bde6c",
+      "bytes": 6472
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-rice-v3/results/BENCHMARKS.json",
+      "sha256": "cdd78b79f20bf3eb10135e318723db89e5de954970226cf09a702ce505f07e8b",
+      "bytes": 1341
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-rice-v3/SOURCE_MAP.json",
+      "sha256": "cf0e8d8641e1397851949f3959840b1d6b923954c004e7bc471c2c9b0a056c66",
+      "bytes": 7160
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-rice-v4/results/BENCHMARKS.json",
+      "sha256": "4785d1c95f411022d33e3ff92ed53ef14b6bfa2717a9f5930fedf1ac5533b3df",
+      "bytes": 1782
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-rice-v4/SOURCE_MAP.json",
+      "sha256": "9777b1acc21366659d3d1d3665823da6d92186402f1bbc196016c1a53524ab17",
+      "bytes": 7319
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-three-voices/results/lpx3_experiment/chego/results.json",
+      "sha256": "32a30d0c3fd6f66079199d8cfcf8fcadc006bdeb92d929ae775c532733abd296",
+      "bytes": 833
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-three-voices/results/lpx3_experiment/otvechaesh/results.json",
+      "sha256": "bc6f5b128ae3fd82af716dc4501846f3bfda044acf3525258d98cf5b3ebb6727",
+      "bytes": 833
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-three-voices/results/lpx3_experiment/vinni/results.json",
+      "sha256": "1a5edefa042126ed9c1309a83433881d782c8fc43d5ce1dc3164cd39f2641516",
+      "bytes": 833
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-three-voices/results/references/chego/metrics.json",
+      "sha256": "88c8772fc698a7a88726e761404ef859f63ee1ef15b3fd4663fb4bff4433c5c9",
+      "bytes": 1168
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-three-voices/results/references/otvechaesh/metrics.json",
+      "sha256": "b281195f8c3a5c40cde48aae486295165ec4bb956c2fdcb6392045a27c10cfa3",
+      "bytes": 1171
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-three-voices/results/references/vinni/metrics.json",
+      "sha256": "7946c5485f38b9c034211ec490f2a6b138c070547486f6b75a5641bdc699f79a",
+      "bytes": 1167
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-three-voices/SOURCE_MAP.json",
+      "sha256": "014684b8bbb399d64588056ecf53c0374f429ff521d8919c0655639b2c57a4ed",
+      "bytes": 12427
+    },
+    {
+      "path": "ATmega328/Sound/research/stages/lpx3-vbr/SOURCE_MAP.json",
+      "sha256": "56e58d29f91fb3153761b6fac53836c198c255ddd02c64f0e674b17da0792f87",
+      "bytes": 5011
+    },
+    {
+      "path": "PIC16F1503/.gitignore",
+      "sha256": "583321ee51a62397b197c2406a86aef86ef1842f42d715122d914a59c4a6f3f3",
+      "bytes": 83
+    },
+    {
+      "path": "PIC16F1503/Music/AUDIT_MICROCHIP_RU.md",
+      "sha256": "51f7feb6410e789f58ef53fd2aa5089d228818c9e0f0181905a9065d1c0e9ecf",
+      "bytes": 11767
+    },
+    {
+      "path": "PIC16F1503/Music/emulator_fixes.patch",
+      "sha256": "e5f7620f84133a0e54adc67da6469341ba2f73b16c8ce967a2fba70bf28fff45",
+      "bytes": 9193
+    },
+    {
+      "path": "PIC16F1503/Music/firmware/gain_tables.inc",
+      "sha256": "37a1f4501d6ef488a861a66913acaf1d43121a13d65bc234179aa5350254a078",
+      "bytes": 1724
+    },
+    {
+      "path": "PIC16F1503/Music/firmware/micromusic.asm",
+      "sha256": "97e98e55c0223e310133b4f113b4d20d8d0b698d504cba5151adb442c3c6b837",
+      "bytes": 13952
+    },
+    {
+      "path": "PIC16F1503/Music/firmware/music_tables.inc",
+      "sha256": "4e500c4fc2b1aee97c687aa612268eb02e4bc30fd66ecaa1b70dfcd7b5cf9ee3",
+      "bytes": 2039
+    },
+    {
+      "path": "PIC16F1503/Music/firmware/wave_tables.inc",
+      "sha256": "c490c471d300d9155e2824e19cbd200db34e82e553290d75fcd9679e0df9a18c",
+      "bytes": 1092
+    },
+    {
+      "path": "PIC16F1503/Music/GPSIM_REFERENCE_CROSSCHECK_RU.md",
+      "sha256": "da73ad91361ecbfb34e69186f2e41093a12dff56b3a2987f805663965728a543",
+      "bytes": 6093
+    },
+    {
+      "path": "PIC16F1503/Music/gpsim_smoke.stc",
+      "sha256": "a68afd6e9b595fe3cd7747aed6ab23d64ee12a85c6d3d984b09b9bc6671f0aa7",
+      "bytes": 382
+    },
+    {
+      "path": "PIC16F1503/Music/README.md",
+      "sha256": "62cc47f2244851159a7626c50d46d92f54f2fdd27a082cf2fb1434e8442d127b",
+      "bytes": 13361
+    },
+    {
+      "path": "PIC16F1503/Music/README_FIRST.txt",
+      "sha256": "73d81ca12e4c917b5ed8dff4d6d269c23e955d01449d86ea2753dd03ae84df8c",
+      "bytes": 1082
+    },
+    {
+      "path": "PIC16F1503/Music/reports/assembly.json",
+      "sha256": "73c4c1cd96cc546ccb25a1feaf7b9b31e11c5602f88785eb24070121fd3808ea",
+      "bytes": 1096
+    },
+    {
+      "path": "PIC16F1503/Music/reports/audit_full.log",
+      "sha256": "85ff9d75c89ed3774058c938e871c42991245c6273ef23b5fc667065c0c91400",
+      "bytes": 1449
+    },
+    {
+      "path": "PIC16F1503/Music/reports/compare_original.json",
+      "sha256": "5c101c42224f3cd0e779d5d9cb5ee1fd154a21f230e8947a93fb9ea7bab8f519",
+      "bytes": 468
+    },
+    {
+      "path": "PIC16F1503/Music/reports/datasheet_audit_verification.json",
+      "sha256": "c80a85cbbf8262c3f3d384b03f9b205c7e94319158627fe36a5feb6cc1fe6dc2",
+      "bytes": 897
+    },
+    {
+      "path": "PIC16F1503/Music/reports/emulator_smoke.json",
+      "sha256": "19fa44589bb7dcc8c41c1eef27166d2e790580e48b533d19fa203f95e66179b5",
+      "bytes": 704
+    },
+    {
+      "path": "PIC16F1503/Music/reports/firmware_unit_tests.log",
+      "sha256": "51986c582faf11cbb4572c867d9d3946fe715959cd570d591abe74cd329a2016",
+      "bytes": 261
+    },
+    {
+      "path": "PIC16F1503/Music/reports/full_score_audit.json",
+      "sha256": "edee2bec7d13b337340aff15f8750e13124b77c6b771fb3ebdc8c9ece6dbd100",
+      "bytes": 1147
+    },
+    {
+      "path": "PIC16F1503/Music/reports/gpsim_crosscheck_all_tests.log",
+      "sha256": "dda4eec8a72a4bd78bc910b77e4ad70de406011c294e29e8e8091c219dcb23a3",
+      "bytes": 19573
+    },
+    {
+      "path": "PIC16F1503/Music/reports/gpsim_music_14s.log",
+      "sha256": "43a91eaa091ae9a6474aaa4da14855d67960fda61526f373f501454573b13554",
+      "bytes": 232
+    },
+    {
+      "path": "PIC16F1503/Music/reports/long_run.json",
+      "sha256": "9d1989cf7cad4bd532551ae0c28443a0e66d9703f5ba3e864d36db4660adb042",
+      "bytes": 774
+    },
+    {
+      "path": "PIC16F1503/Music/reports/rebuild.log",
+      "sha256": "bbf8a7300685ee9b3ded4d86ea5281675461cdd33e416477515fa9ad95eb1a1d",
+      "bytes": 564
+    },
+    {
+      "path": "PIC16F1503/Music/reports/static_tests.json",
+      "sha256": "51986c582faf11cbb4572c867d9d3946fe715959cd570d591abe74cd329a2016",
+      "bytes": 261
+    },
+    {
+      "path": "PIC16F1503/Music/reports/timing_full_230.log",
+      "sha256": "2f80fe0b1e08306e5754efd68faaa864a15bff494bc8da9983ea1922299df49d",
+      "bytes": 1491
+    },
+    {
+      "path": "PIC16F1503/Music/reports/timing_render_14.log",
+      "sha256": "b32ff7488cb3e95dad3134ff84dd75d31bfa5aa8ba6827c76a58f30e9b9af29e",
+      "bytes": 1192
+    },
+    {
+      "path": "PIC16F1503/Music/reports/timing_unit_tests.log",
+      "sha256": "b1780ac74e9e1a4181fab8ec640e5dd15c40d8bedebd79ce9562b9d3314b47af",
+      "bytes": 17288
+    },
+    {
+      "path": "PIC16F1503/Music/run_gpsim.sh",
+      "sha256": "49b224d7c1c5b7bc5005aa067103ce752b002aa1be807bdda6c4e1c356edb164",
+      "bytes": 344
+    },
+    {
+      "path": "PIC16F1503/Music/source/FluidR3-MIT.txt",
+      "sha256": "33087692c963b4e5e536f4fc4d625714e519d06d570057bb0b921923ac9141d5",
+      "bytes": 2118
+    },
+    {
+      "path": "PIC16F1503/Music/source/music-assets.json",
+      "sha256": "0e4975e069ad48d4462764bc8f4b6a0c1f0f20f246e74d844aa9c73063fe52f7",
+      "bytes": 4577
+    },
+    {
+      "path": "PIC16F1503/Music/tests/audit_full_score.mjs",
+      "sha256": "e580b0a3e92a124394ffab13a36a59c585e2e8801627b6fc1892c2881cddfd89",
+      "bytes": 1718
+    },
+    {
+      "path": "PIC16F1503/Music/tests/check_machine.mjs",
+      "sha256": "5f171d5e1eea59f52608df7b2b193d19b0405a0f2ba2b7294d7f58a184c5b892",
+      "bytes": 1226
+    },
+    {
+      "path": "PIC16F1503/Music/tests/compare_old_new.mjs",
+      "sha256": "cda12b2e355f36b6b63ed28c8f8fb69feb07a760bb7e3178353737eb37dfcdf8",
+      "bytes": 1182
+    },
+    {
+      "path": "PIC16F1503/Music/tests/gpsim_reference.test.mjs",
+      "sha256": "809efeda1d0941417e8cc85a0236d445d6b34ed2df6d55a35d2f3ec8cfd0c548",
+      "bytes": 2681
+    },
+    {
+      "path": "PIC16F1503/Music/tests/isa_timing_matrix.test.mjs",
+      "sha256": "8fc94fa7d8e223458adaed975316f63bee5223caaf42afe2e509e29e7970130e",
+      "bytes": 2105
+    },
+    {
+      "path": "PIC16F1503/Music/tests/official_datasheet_audit.test.mjs",
+      "sha256": "22f5d7253e2198c80607208b98fc32edb73b0735c9ce8d9002c72cd2d7e9f5ef",
+      "bytes": 5188
+    },
+    {
+      "path": "PIC16F1503/Music/tests/official_timing_v2.test.mjs",
+      "sha256": "26d6de7ed147cac4f0da2ca6c35ad282dad39ac6c2409f95d50597c8de2cab4a",
+      "bytes": 9458
+    },
+    {
+      "path": "PIC16F1503/Music/tests/test_firmware.py",
+      "sha256": "b940cc2257abfa4d4e1d7e409876d1b8076fc0f899002cfa0d342358af25d3ca",
+      "bytes": 2033
+    },
+    {
+      "path": "PIC16F1503/Music/TIMING_AUDIT_DS40001607D_RU.md",
+      "sha256": "d90a8760ba64dbb42b19e4b1971f39e65bbd9f587ade93313123f1fc18c1e980",
+      "bytes": 12581
+    },
+    {
+      "path": "PIC16F1503/Music/tools/assemble_pic.py",
+      "sha256": "a6c369e22174add1611f657440e24577f6fe04648d49747a24d640a1278ba09e",
+      "bytes": 7067
+    },
+    {
+      "path": "PIC16F1503/Music/tools/build_firmware.py",
+      "sha256": "aa0918d2100845b212f4d03b666a500958a6440ae46928b47e1fe150c2b86541",
+      "bytes": 1806
+    },
+    {
+      "path": "PIC16F1503/Music/tools/build_player.py",
+      "sha256": "5da1232ea7e989ee17d852783547a4e3d36a38c80018a3965fd47f4ed935461b",
+      "bytes": 8732
+    },
+    {
+      "path": "PIC16F1503/Music/tools/generate_tables.py",
+      "sha256": "2f0766c914446519a2f52fca2c497ee3e7be76ebb5e7d66886dd3df55b81e0c7",
+      "bytes": 2525
+    },
+    {
+      "path": "PIC16F1503/Music/tools/package.py",
+      "sha256": "d05153819507537a4f8634855a32c7bebd6e3dc3ffffe709c3bc73c4360e8d1e",
+      "bytes": 947
+    },
+    {
+      "path": "PIC16F1503/Music/tools/render_machine.mjs",
+      "sha256": "ddc60442803a369f5afc2fbb5e8679fd671a3787466af28751abfb51ad325544",
+      "bytes": 3071
+    },
+    {
+      "path": "PIC16F1503/Music/web/pic16-core.mjs",
+      "sha256": "21715effe5d058acdcf37ccef50111ad6457b75c18a46be7505590a0a3270b51",
+      "bytes": 22045
+    },
+    {
+      "path": "PIC16F1503/README.md",
+      "sha256": "29067423585169e302f6c332dc202762390dec9b9583d55d35b2a6e5e29a4bac",
+      "bytes": 1610
+    },
+    {
+      "path": "PIC16F1503/research/history/02_DEVELOPMENT_HISTORY_RU.md",
+      "sha256": "89755184a3f370a1c4c00ddc3f10c9898a641977bb5ae6a35b36cf2144cc363a",
+      "bytes": 12326
+    },
+    {
+      "path": "PIC16F1503/research/history/03_PIC_DIALOGUE_RECONSTRUCTION_RU.md",
+      "sha256": "61b429c175084826dfca85b5644bc6ad7675887827c524b653da593a3a75ef0c",
+      "bytes": 15627
+    },
+    {
+      "path": "PIC16F1503/research/history/04_USER_MESSAGES_VERBATIM_RU.txt",
+      "sha256": "f606b7a3a01c1d6821a488b0be4f58c15db99b83a19854fd205e879703d9e190",
+      "bytes": 2445
+    },
+    {
+      "path": "PIC16F1503/research/history/05_INDEPENDENT_VALIDATION_AND_SOURCES_RU.md",
+      "sha256": "5608aa3c6c420ddbbf1fa83f428da05e66dacef96c3fb03e4f6e0b0dda9f805c",
+      "bytes": 4254
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-assembly/results/reports/assembly.json",
+      "sha256": "73c4c1cd96cc546ccb25a1feaf7b9b31e11c5602f88785eb24070121fd3808ea",
+      "bytes": 1096
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-assembly/results/reports/audit_full.log",
+      "sha256": "85ff9d75c89ed3774058c938e871c42991245c6273ef23b5fc667065c0c91400",
+      "bytes": 1449
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-assembly/results/reports/emulator_smoke.json",
+      "sha256": "19fa44589bb7dcc8c41c1eef27166d2e790580e48b533d19fa203f95e66179b5",
+      "bytes": 704
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-assembly/results/reports/full_score_audit.json",
+      "sha256": "0e994ba82327eb57b225c5ee2db025407b6a988373a3f9b5caff3d377de413bf",
+      "bytes": 1140
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-assembly/results/reports/long_run.json",
+      "sha256": "f4cd0d98cd6f73e0f0618c30f3fe1513ae8ba1da40bd67a84670e27cdc03a109",
+      "bytes": 780
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-assembly/results/reports/static_tests.json",
+      "sha256": "51986c582faf11cbb4572c867d9d3946fe715959cd570d591abe74cd329a2016",
+      "bytes": 261
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-assembly/SOURCE_MAP.json",
+      "sha256": "08f238649e22e74a70b898e542946fe51d23bf602638dd1043b059589cca490f",
+      "bytes": 6194
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-c-port/results/firmware/port_metadata.json",
+      "sha256": "bd98b9a6725fdf819c4a249c9dc55192e36541b2bd65574ce007b1e482e98a3e",
+      "bytes": 579
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-c-port/results/reports/audio-report.json",
+      "sha256": "1c852c18128d482afdf6ca3dfaebdefa4d8dd96dba832e67b7221490b52bd624",
+      "bytes": 233
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-c-port/results/reports/test-report.json",
+      "sha256": "532c4774c20bcffbfadcb416d246f43e413ebd4d6a4b6dcaa1d15957849dc038",
+      "bytes": 1327
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-c-port/SOURCE_MAP.json",
+      "sha256": "730ca25933e6b57c8c2d84b871a7b8bc65ed116b9bc74347ec954bfeae87824c",
+      "bytes": 5531
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-datasheet/results/reports/assembly.json",
+      "sha256": "73c4c1cd96cc546ccb25a1feaf7b9b31e11c5602f88785eb24070121fd3808ea",
+      "bytes": 1096
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-datasheet/results/reports/audit_full.log",
+      "sha256": "85ff9d75c89ed3774058c938e871c42991245c6273ef23b5fc667065c0c91400",
+      "bytes": 1449
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-datasheet/results/reports/datasheet_audit_verification.json",
+      "sha256": "c80a85cbbf8262c3f3d384b03f9b205c7e94319158627fe36a5feb6cc1fe6dc2",
+      "bytes": 897
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-datasheet/results/reports/emulator_smoke.json",
+      "sha256": "be37ed1fde70ad1f485fb645061ebb77707c6563089fed010d73038c4174ed1a",
+      "bytes": 706
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-datasheet/results/reports/full_score_audit.json",
+      "sha256": "e398c7e88510f85bf0b936ecdbab80c8b3d1dddc72b6368f7a3a41481e6b6d98",
+      "bytes": 1141
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-datasheet/results/reports/long_run.json",
+      "sha256": "8d36330a615d821e2a7d6308c23022c42396563bec97c0ea7f7a77b4f11dc98f",
+      "bytes": 779
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-datasheet/results/reports/static_tests.json",
+      "sha256": "51986c582faf11cbb4572c867d9d3946fe715959cd570d591abe74cd329a2016",
+      "bytes": 261
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-datasheet/SOURCE_MAP.json",
+      "sha256": "26fe851f1492f869b36b2f5254cf2b0269a20501e4f4297e839207db3248ef80",
+      "bytes": 6931
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-docker/results/local_107_tests.log",
+      "sha256": "fea4d19debb4eaa0cff5b28729389baf83829925dd46faf175cdbe9a2364ff4c",
+      "bytes": 17277
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-docker/results/reference_our_emulator.json",
+      "sha256": "4bf54affdba312043cf01153e704546e8c1e395caf79bcd176fbe857c889be86",
+      "bytes": 7015
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-docker/SOURCE_MAP.json",
+      "sha256": "e3f43b7a9efe99851924d96d4157b50a734134556a05122d5dd416b2aa24830a",
+      "bytes": 1640
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-gpsim/results/reports/assembly.json",
+      "sha256": "73c4c1cd96cc546ccb25a1feaf7b9b31e11c5602f88785eb24070121fd3808ea",
+      "bytes": 1096
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-gpsim/results/reports/audit_full.log",
+      "sha256": "85ff9d75c89ed3774058c938e871c42991245c6273ef23b5fc667065c0c91400",
+      "bytes": 1449
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-gpsim/results/reports/compare_original.json",
+      "sha256": "5c101c42224f3cd0e779d5d9cb5ee1fd154a21f230e8947a93fb9ea7bab8f519",
+      "bytes": 468
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-gpsim/results/reports/datasheet_audit_verification.json",
+      "sha256": "c80a85cbbf8262c3f3d384b03f9b205c7e94319158627fe36a5feb6cc1fe6dc2",
+      "bytes": 897
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-gpsim/results/reports/emulator_smoke.json",
+      "sha256": "19fa44589bb7dcc8c41c1eef27166d2e790580e48b533d19fa203f95e66179b5",
+      "bytes": 704
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-gpsim/results/reports/firmware_unit_tests.log",
+      "sha256": "51986c582faf11cbb4572c867d9d3946fe715959cd570d591abe74cd329a2016",
+      "bytes": 261
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-gpsim/results/reports/full_score_audit.json",
+      "sha256": "edee2bec7d13b337340aff15f8750e13124b77c6b771fb3ebdc8c9ece6dbd100",
+      "bytes": 1147
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-gpsim/results/reports/gpsim_crosscheck_all_tests.log",
+      "sha256": "dda4eec8a72a4bd78bc910b77e4ad70de406011c294e29e8e8091c219dcb23a3",
+      "bytes": 19573
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-gpsim/results/reports/gpsim_music_14s.log",
+      "sha256": "43a91eaa091ae9a6474aaa4da14855d67960fda61526f373f501454573b13554",
+      "bytes": 232
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-gpsim/results/reports/long_run.json",
+      "sha256": "9d1989cf7cad4bd532551ae0c28443a0e66d9703f5ba3e864d36db4660adb042",
+      "bytes": 774
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-gpsim/results/reports/rebuild.log",
+      "sha256": "bbf8a7300685ee9b3ded4d86ea5281675461cdd33e416477515fa9ad95eb1a1d",
+      "bytes": 564
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-gpsim/results/reports/static_tests.json",
+      "sha256": "51986c582faf11cbb4572c867d9d3946fe715959cd570d591abe74cd329a2016",
+      "bytes": 261
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-gpsim/results/reports/timing_full_230.log",
+      "sha256": "2f80fe0b1e08306e5754efd68faaa864a15bff494bc8da9983ea1922299df49d",
+      "bytes": 1491
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-gpsim/results/reports/timing_render_14.log",
+      "sha256": "b32ff7488cb3e95dad3134ff84dd75d31bfa5aa8ba6827c76a58f30e9b9af29e",
+      "bytes": 1192
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-gpsim/results/reports/timing_unit_tests.log",
+      "sha256": "b1780ac74e9e1a4181fab8ec640e5dd15c40d8bedebd79ce9562b9d3314b47af",
+      "bytes": 17288
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-gpsim/SOURCE_MAP.json",
+      "sha256": "bf6e7d58afc7e6b5088cec4f36640c7964f865c1e9a5caac7da8f1fc53e0d1d9",
+      "bytes": 9954
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-mirror/results/MPLAB_mirror_attempt_2026-10-21/local_14s_results.json",
+      "sha256": "8b45fbbbd0455bc0c9057b1490bdd0b7d8450cf73377957ac13c737b4654d1ba",
+      "bytes": 228
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-mirror/results/MPLAB_mirror_attempt_2026-10-21/pic_internal_unit_tests.log",
+      "sha256": "a0d196d358492bec6b4d210887376ca933b4f745882ff036189423389af55433",
+      "bytes": 17278
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-mirror/SOURCE_MAP.json",
+      "sha256": "9ed84b95700efe1a0ee79ed6cfaa49c174aa4bb4eadb1bce61fba1722e791035",
+      "bytes": 1848
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-mplab/results/local_tests.log",
+      "sha256": "d26164d7039881e6e42d27abbb1d291f89f7b938a33a7e4183861e4c179b602b",
+      "bytes": 17278
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-mplab/results/reference_our_emulator.json",
+      "sha256": "4bf54affdba312043cf01153e704546e8c1e395caf79bcd176fbe857c889be86",
+      "bytes": 7015
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-mplab/SOURCE_MAP.json",
+      "sha256": "7093eba46c63d495626665f00171926fdc2061a4f52eb125ecf4d2bbd8e0136f",
+      "bytes": 2126
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-timing/results/reports/assembly.json",
+      "sha256": "73c4c1cd96cc546ccb25a1feaf7b9b31e11c5602f88785eb24070121fd3808ea",
+      "bytes": 1096
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-timing/results/reports/audit_full.log",
+      "sha256": "85ff9d75c89ed3774058c938e871c42991245c6273ef23b5fc667065c0c91400",
+      "bytes": 1449
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-timing/results/reports/datasheet_audit_verification.json",
+      "sha256": "c80a85cbbf8262c3f3d384b03f9b205c7e94319158627fe36a5feb6cc1fe6dc2",
+      "bytes": 897
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-timing/results/reports/emulator_smoke.json",
+      "sha256": "19fa44589bb7dcc8c41c1eef27166d2e790580e48b533d19fa203f95e66179b5",
+      "bytes": 704
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-timing/results/reports/firmware_unit_tests.log",
+      "sha256": "51986c582faf11cbb4572c867d9d3946fe715959cd570d591abe74cd329a2016",
+      "bytes": 261
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-timing/results/reports/full_score_audit.json",
+      "sha256": "edee2bec7d13b337340aff15f8750e13124b77c6b771fb3ebdc8c9ece6dbd100",
+      "bytes": 1147
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-timing/results/reports/long_run.json",
+      "sha256": "9d1989cf7cad4bd532551ae0c28443a0e66d9703f5ba3e864d36db4660adb042",
+      "bytes": 774
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-timing/results/reports/rebuild.log",
+      "sha256": "bbf8a7300685ee9b3ded4d86ea5281675461cdd33e416477515fa9ad95eb1a1d",
+      "bytes": 564
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-timing/results/reports/static_tests.json",
+      "sha256": "51986c582faf11cbb4572c867d9d3946fe715959cd570d591abe74cd329a2016",
+      "bytes": 261
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-timing/results/reports/timing_full_230.log",
+      "sha256": "2f80fe0b1e08306e5754efd68faaa864a15bff494bc8da9983ea1922299df49d",
+      "bytes": 1491
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-timing/results/reports/timing_render_14.log",
+      "sha256": "b32ff7488cb3e95dad3134ff84dd75d31bfa5aa8ba6827c76a58f30e9b9af29e",
+      "bytes": 1192
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-timing/results/reports/timing_unit_tests.log",
+      "sha256": "b1780ac74e9e1a4181fab8ec640e5dd15c40d8bedebd79ce9562b9d3314b47af",
+      "bytes": 17288
+    },
+    {
+      "path": "PIC16F1503/research/stages/pic-timing/SOURCE_MAP.json",
+      "sha256": "8222c23ba26ea317eeae07a038246390268d8aeb9a9eb94f419db58860d0d434",
+      "bytes": 8519
+    },
+    {
+      "path": "PIC16F1503/validation/docker/compare_logs.py",
+      "sha256": "451d8679318009396d2ffc3e5ead494f56aed2699867468c273d0d246a9a2409",
+      "bytes": 1772
+    },
+    {
+      "path": "PIC16F1503/validation/docker/local_107_tests.log",
+      "sha256": "fea4d19debb4eaa0cff5b28729389baf83829925dd46faf175cdbe9a2364ff4c",
+      "bytes": 17277
+    },
+    {
+      "path": "PIC16F1503/validation/docker/mdb_check.txt",
+      "sha256": "99c6611826a214e833d21080a1c7662514ff784a71a0520e298317bdd027e26e",
+      "bytes": 3178
+    },
+    {
+      "path": "PIC16F1503/validation/docker/README_RU.md",
+      "sha256": "801d63d19be90092e629761db3f14d19c56ca9f8dd952a54c5d228df680412b2",
+      "bytes": 3055
+    },
+    {
+      "path": "PIC16F1503/validation/docker/reference_our_emulator.json",
+      "sha256": "4bf54affdba312043cf01153e704546e8c1e395caf79bcd176fbe857c889be86",
+      "bytes": 7015
+    },
+    {
+      "path": "PIC16F1503/validation/docker/run_mplab_docker.sh",
+      "sha256": "d91db14dc7a734f1dea9c811bc428888764952b9bb759a9207cf555ee5cd8df3",
+      "bytes": 2316
+    },
+    {
+      "path": "PIC16F1503/validation/mirror/MPLAB_mirror_attempt_2026-10-21/download_verify_mplab.sh",
+      "sha256": "1ff001d55ffc7c3d6413daf2e991020752262ec10b143b851452ecd6e2d2f04f",
+      "bytes": 1287
+    },
+    {
+      "path": "PIC16F1503/validation/mirror/MPLAB_mirror_attempt_2026-10-21/local_14s_results.json",
+      "sha256": "8b45fbbbd0455bc0c9057b1490bdd0b7d8450cf73377957ac13c737b4654d1ba",
+      "bytes": 228
+    },
+    {
+      "path": "PIC16F1503/validation/mirror/MPLAB_mirror_attempt_2026-10-21/pic_internal_unit_tests.log",
+      "sha256": "a0d196d358492bec6b4d210887376ca933b4f745882ff036189423389af55433",
+      "bytes": 17278
+    },
+    {
+      "path": "PIC16F1503/validation/mirror/MPLAB_mirror_attempt_2026-10-21/REPORT_RU.md",
+      "sha256": "8a045e6afcf29aee319308c9d95aa0f8a37d32c1c2357ab1c0541e7fa9bd96b4",
+      "bytes": 4521
+    },
+    {
+      "path": "PIC16F1503/validation/mirror/MPLAB_mirror_attempt_2026-10-21/test_14_seconds.mjs",
+      "sha256": "e05866b51c5a13daedf1598a08522fe2e87310357e2748230e8639b7f9670437",
+      "bytes": 1019
+    },
+    {
+      "path": "PIC16F1503/validation/mplab/compare_logs.py",
+      "sha256": "451d8679318009396d2ffc3e5ead494f56aed2699867468c273d0d246a9a2409",
+      "bytes": 1772
+    },
+    {
+      "path": "PIC16F1503/validation/mplab/generate_reference.mjs",
+      "sha256": "630b9afaa47338ed337ed34fe49a973e5622c93d4f3bc1bcf24ae74291e37ed0",
+      "bytes": 1416
+    },
+    {
+      "path": "PIC16F1503/validation/mplab/local_tests.log",
+      "sha256": "d26164d7039881e6e42d27abbb1d291f89f7b938a33a7e4183861e4c179b602b",
+      "bytes": 17278
+    },
+    {
+      "path": "PIC16F1503/validation/mplab/mdb_check.txt",
+      "sha256": "72188d4a19d628e946deb6cfe07f705dcf3d00ad9afd18a96803ec702fe46858",
+      "bytes": 3203
+    },
+    {
+      "path": "PIC16F1503/validation/mplab/pic16-core.mjs",
+      "sha256": "f02f891f3f508306b38ed1b2ccabb08b242c0e3f80b743358032ae4a88180012",
+      "bytes": 21498
+    },
+    {
+      "path": "PIC16F1503/validation/mplab/prepare_mdb.py",
+      "sha256": "78756715bb377f308dd77352addc1c3c16feb4794cec83d9c1d3bc8ecad6c062",
+      "bytes": 1932
+    },
+    {
+      "path": "PIC16F1503/validation/mplab/README_RU.md",
+      "sha256": "8416cb5caa7d791b7667723c4cfabf3cef53f11fac81e0ddfc344359adada372",
+      "bytes": 4768
+    },
+    {
+      "path": "PIC16F1503/validation/mplab/reference_our_emulator.json",
+      "sha256": "4bf54affdba312043cf01153e704546e8c1e395caf79bcd176fbe857c889be86",
+      "bytes": 7015
+    }
+  ]
+}

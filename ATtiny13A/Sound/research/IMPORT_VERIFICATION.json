@@ -1,0 +1,54 @@
+{
+  "builds": {
+    "chego": {
+      "bytes": 959,
+      "sha256": "0cb045d961f8a3710ccfe659d454d065a5fcdfc40a78eb432a990cbd93f03dc3",
+      "gnu_text_alignment_padding_omitted": 1
+    },
+    "otvechaesh": {
+      "bytes": 885,
+      "sha256": "b9512173048fb57d9d9836d41260461f92fe30c248e1a72a53dbfb13c4be5e89",
+      "gnu_text_alignment_padding_omitted": 1
+    },
+    "vinni": {
+      "bytes": 1024,
+      "sha256": "57f573aac01ae7ec54e0a3fc412d65446c566e66df23548bf77d0affc203a7be",
+      "gnu_text_alignment_padding_omitted": 0
+    },
+    "chego_stoi_max": {
+      "bytes": 957,
+      "sha256": "ca02904b9e2869c8ff909f3e9ddb92a59aec97c8eafaeb259dd75bb5e63aa53c",
+      "gnu_text_alignment_padding_omitted": 1
+    }
+  },
+  "avr_emulation": {
+    "chego": {
+      "samples": 9216,
+      "mismatches": 0,
+      "missed_overflows": 0,
+      "irq_count": 46080
+    },
+    "otvechaesh": {
+      "samples": 7936,
+      "mismatches": 0,
+      "missed_overflows": 0,
+      "irq_count": 39680
+    },
+    "vinni": {
+      "samples": 22272,
+      "mismatches": 0,
+      "missed_overflows": 0,
+      "irq_count": 111360
+    },
+    "chego_stoi_max": {
+      "samples": 9216,
+      "mismatches": 0,
+      "missed_overflows": 0,
+      "irq_count": 46080
+    }
+  },
+  "hardware_tested": false,
+  "quality_metrics_recomputed": false,
+  "source_commit": "65d83f855a6bb1c7c4795100bef4139303383290",
+  "date": "2026-10-22"
+}
