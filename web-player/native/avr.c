@@ -29,7 +29,7 @@ static int16_t imm[512];
 #define SET_PENDING(v) (IO(0x38) = (IO(0x38) & ~2) | ((v) ? 2 : 0))
 enum { NOP=1, CLI, SEI, RETI, RET, CALL, JUMP, BRANCH, SKIP, LDI, CPI,
  SUBI, ORI, ANDI, MOVW, ADD, ADC, SUB, AND, EOR, MOV, INC, DEC, COM,
- LSR, ASR, SWAP, IN, OUT, SBI, PUSH, POP, ST, LPM, FLAG, ROR, LDS, STS, OR, LD };
+ LSR, ASR, SWAP, IN, OUT, SBI, PUSH, POP, ST, LPM, FLAG, ROR, LDS, STS, OR, LD, CP, NEG };
 enum { E_PC=1, E_OPCODE, E_PUSH, E_POP, E_EXTCLK, E_WGM, E_FLASH, E_WDT,
  E_ADC, E_COMPARATOR, E_EXTIRQ, E_CLKDIV, E_COMPAREIRQ, E_EEPROM,
  E_FORCE, E_DATA, E_ST_ALIAS, E_WRITE, E_LD_ALIAS, E_READ, E_LPM_ALIAS,
@@ -42,8 +42,8 @@ static const char *const errors[] = { "", "PC out of Flash", "Unsupported opcode
  "External/pin-change interrupts are not implemented", "Runtime CPU clock division is not implemented",
  "Timer0 compare interrupts are not implemented", "EEPROM programming/ready interrupt is not implemented",
  "Timer0 forced compare output is not implemented", "Data address out of range",
- "Undefined ST with source in post-increment pointer", "Data write out of range",
- "Undefined LD with destination in post-increment pointer", "Data read out of range",
+ "Undefined ST with source in updating pointer", "Data write out of range",
+ "Undefined LD with destination in updating pointer", "Data read out of range",
  "Undefined LPM Z+ with destination in Z", "LPM out of Flash",
  "Firmware produced no PWM for one emulated second", "Invalid audio configuration" };
 static int fail(int code) { ERROR = code; return 0; }
@@ -104,6 +104,8 @@ static void decode(int p) {
  else if ((w&0xfc00)==0x2400) o=EOR;
  else if ((w&0xfc00)==0x2800) o=OR;
  else if ((w&0xfc00)==0x2c00) o=MOV;
+ else if ((w&0xfc00)==0x1400) o=CP;
+ else if ((w&0xfe0f)==0x9401) o=NEG;
  else if ((w&0xfe0f)==0x9403) o=INC;
  else if ((w&0xfe0f)==0x940a) o=DEC;
  else if ((w&0xfe0f)==0x9400) o=COM;
@@ -117,12 +119,21 @@ static void decode(int p) {
  else if ((w&0xff00)==0x9a00) {o=SBI;d=(w>>3)&31;k=w&7;}
  else if ((w&0xfe0f)==0x920f) o=PUSH;
  else if ((w&0xfe0f)==0x900f) o=POP;
- else if ((w&0xfe0f)==0x900d || (w&0xfe0f)==0x9009) {o=LD;s=(w&15)==13?26:28;}
- else if ((w&0xfe0f)==0x9201 || (w&0xfe0f)==0x920d) {o=ST;s=(w&15)==13?26:30;}
+ else if ((w&0xfe0f)==0x900c || (w&0xfe0f)==0x900d || (w&0xfe0f)==0x900e ||
+          (w&0xfe0f)==0x9009 || (w&0xfe0f)==0x900a || (w&0xfe0f)==0x9001 || (w&0xfe0f)==0x9002 ||
+          (w&0xfe0f)==0x920c || (w&0xfe0f)==0x920d || (w&0xfe0f)==0x920e ||
+          (w&0xfe0f)==0x9209 || (w&0xfe0f)==0x920a || (w&0xfe0f)==0x9201 || (w&0xfe0f)==0x9202) {
+  int low=w&15;o=w&0x200?ST:LD;s=low>=12?26:low>=9?28:30;
+  k=low==1||low==9||low==13?1:low==2||low==10||low==14?-1:2;
+ }
+ else if ((w&0xd200)==0x8000 || (w&0xd200)==0x8200) {
+  o=w&0x200?ST:LD;s=w&8?28:30;k=2+((w&7)|((w>>7)&0x18)|((w>>8)&0x20));
+ }
  else if ((w&0xfe0f)==0x9004 || (w&0xfe0f)==0x9005) {o=LPM;k=w&1;}
  op[p]=o;dst[p]=d;src[p]=s;imm[p]=k;
  batch[p] = (o==JUMP || o==BRANCH || o==LD || o==ST)?2:(o==SKIP || o==LPM)?3:
   (o==NOP || (o>=LDI && o<=SWAP) || o==ROR || o==OR)?1:0;
+ if((o==LD||o==ST)&&k!=1)batch[p]=0;
  for (int n=0;n<5;n++) decode_idle((p-n)&511);
 }
 static void push(int v) {
@@ -220,6 +231,8 @@ static int execute(void) {
  case ADD:data[d]=arithmetic(data[d],data[s],0,0);break;
  case ADC:data[d]=arithmetic(data[d],data[s],FLAGS&1,0);break;
  case SUB:data[d]=arithmetic(data[d],data[s],0,1);break;
+ case CP:arithmetic(data[d],data[s],0,1);break;
+ case NEG:data[d]=arithmetic(0,data[d],0,1);break;
  case AND:data[d]&=data[s];nzvs(data[d],0);break;
  case EOR:data[d]^=data[s];nzvs(data[d],0);break;
  case OR:data[d]|=data[s];nzvs(data[d],0);break;
@@ -241,13 +254,18 @@ static int execute(void) {
  case PUSH:push(data[d]);n=2;break;
  case POP:v=pop();if(ERROR)return 0;data[d]=v;n=2;break;
  case ST:
-  z=data[s]|(data[s+1]<<8);if(d==s||d==s+1)return fail(E_ST_ALIAS);if(z>=160)return fail(E_WRITE);
+  z=(data[s]+(k<0?-1:k>=2?k-2:0))&255;
+  if(k<2&&(d==s||d==s+1))return fail(E_ST_ALIAS);if(z>=160)return fail(E_WRITE);
+  if(k<0)data[s]=z;
   v=data[d];clock_cycles(2);n=0;
   if(z>=32&&z<96)n=write_io(z-32,v);else data[z]=v;
-  if(ERROR)return 0;z=(z+1)&65535;data[s]=z&255;data[s+1]=z>>8;break;
+  if(ERROR)return 0;if(k==1)data[s]=(z+1)&255;break;
  case LD:
-  z=data[s]|(data[s+1]<<8);if(d==s||d==s+1)return fail(E_LD_ALIAS);if(z>=160)return fail(E_READ);
-  data[d]=data[z];z=(z+1)&65535;data[s]=z&255;data[s+1]=z>>8;n=2;break;
+  z=(data[s]+(k<0?-1:k>=2?k-2:0))&255;
+  if(k<2&&(d==s||d==s+1))return fail(E_LD_ALIAS);if(z>=160)return fail(E_READ);
+  if(k<0)data[s]=z;
+  clock_cycles(2);n=0;data[d]=data[z];
+  if(k==1)data[s]=(z+1)&255;break;
  case LPM:
   if(k&&d>=30)return fail(E_LPM_ALIAS);z=data[30]|(data[31]<<8);if(z>=1024)return fail(E_LPM);
   data[d]=rom[z];if(k){z++;data[30]=z&255;data[31]=z>>8;}n=3;break;
@@ -303,9 +321,9 @@ static int run_block(double deadline) {
     next=(next+words)&511;cycles=1+words;
    }break;
   case LD:case ST:
-   z=data[s]|(data[s+1]<<8);if(z<96||z>=160||d==s||d==s+1)goto done;
+   z=data[s];if(z<96||z>=160||d==s||d==s+1)goto done;
    if(o==LD)data[d]=data[z];else data[z]=data[d];
-   z++;data[s]=z&255;data[s+1]=z>>8;break;
+   data[s]=(z+1)&255;break;
   case LPM:
    z=data[30]|(data[31]<<8);if(z>=1024||(k&&d>=30))goto done;
    data[d]=rom[z];if(k){z++;data[30]=z&255;data[31]=z>>8;}break;

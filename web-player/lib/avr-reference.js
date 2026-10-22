@@ -6,11 +6,11 @@ const OP = { NOP:1, CLI:2, SEI:3, RETI:4, RET:5, CALL:6, JUMP:7, BRANCH:8,
   SKIP:9, LDI:10, CPI:11, SUBI:12, ORI:13, ANDI:14, MOVW:15, ADD:16,
   ADC:17, SUB:18, AND:19, EOR:20, MOV:21, INC:22, DEC:23, COM:24,
   LSR:25, ASR:26, SWAP:27, IN:28, OUT:29, SBI:30, PUSH:31, POP:32, ST:33, LPM:34, FLAG:35,
-  ROR:36, LDS:37, STS:38, OR:39, LD:40 };
+  ROR:36, LDS:37, STS:38, OR:39, LD:40, CP:41, NEG:42 };
 const sign = (v, bit) => v & bit ? v - bit * 2 : v;
 // Maximum cycles for instructions that can execute without observing I/O.
 // Everything else remains in step(), including all peripheral and stack access.
-const BATCH_CYCLES = new Uint8Array(41);
+const BATCH_CYCLES = new Uint8Array(43);
 for (const op of [OP.NOP, OP.LDI, OP.CPI, OP.SUBI, OP.ORI, OP.ANDI, OP.MOVW,
   OP.ADD, OP.ADC, OP.SUB, OP.AND, OP.EOR, OP.OR, OP.MOV, OP.INC, OP.DEC,
   OP.COM, OP.LSR, OP.ASR, OP.ROR, OP.SWAP]) BATCH_CYCLES[op] = 1;
@@ -98,6 +98,8 @@ export class AVRCore {
     } else if ((w & 0xff00) === 0x0100) { o = OP.MOVW; d = 2 * ((w >> 4) & 15); s = 2 * (w & 15); }
     else if ([0x0c00,0x1c00,0x1800,0x2000,0x2400,0x2800,0x2c00].includes(w & 0xfc00))
       o = ({3072:OP.ADD,7168:OP.ADC,6144:OP.SUB,8192:OP.AND,9216:OP.EOR,10240:OP.OR,11264:OP.MOV})[w & 0xfc00];
+    else if ((w & 0xfc00) === 0x1400) o = OP.CP;
+    else if ((w & 0xfe0f) === 0x9401) o = OP.NEG;
     else if ([0x9403,0x940a,0x9400,0x9406,0x9405,0x9407,0x9402].includes(w & 0xfe0f))
       o = ({37891:OP.INC,37898:OP.DEC,37888:OP.COM,37894:OP.LSR,37893:OP.ASR,37895:OP.ROR,37890:OP.SWAP})[w & 0xfe0f];
     else if ((w & 0xfe0f) === 0x9000 || (w & 0xfe0f) === 0x9200) {
@@ -110,11 +112,21 @@ export class AVRCore {
     else if ((w & 0xff00) === 0x9a00) { o = OP.SBI; d = (w >> 3) & 31; k = w & 7; }
     else if ((w & 0xfe0f) === 0x920f) o = OP.PUSH;
     else if ((w & 0xfe0f) === 0x900f) o = OP.POP;
-    else if ([0x900d,0x9009].includes(w & 0xfe0f)) { o = OP.LD; s = (w & 15) === 13 ? 26 : 28; }
-    else if ([0x9201,0x920d].includes(w & 0xfe0f)) { o = OP.ST; s = (w & 15) === 13 ? 26 : 30; }
+    else if ([0x900c,0x900d,0x900e,0x9009,0x900a,0x9001,0x9002,
+              0x920c,0x920d,0x920e,0x9209,0x920a,0x9201,0x9202].includes(w & 0xfe0f)) {
+      o = w & 0x200 ? OP.ST : OP.LD;
+      const low = w & 15;
+      s = low >= 12 ? 26 : low >= 9 ? 28 : 30;
+      // 1: post-increment; -1: pre-decrement; 2+q: unchanged pointer + displacement.
+      k = [1,9,13].includes(low) ? 1 : [2,10,14].includes(low) ? -1 : 2;
+    }
+    else if ((w & 0xd200) === 0x8000 || (w & 0xd200) === 0x8200) {
+      o = w & 0x200 ? OP.ST : OP.LD; s = w & 8 ? 28 : 30;
+      k = 2 + ((w & 7) | ((w >> 7) & 0x18) | ((w >> 8) & 0x20));
+    }
     else if ((w & 0xfe0f) === 0x9004 || (w & 0xfe0f) === 0x9005) { o = OP.LPM; k = w & 1; }
     this.op[p] = o; this.d[p] = d; this.s[p] = s; this.k[p] = k;
-    this.batch[p] = BATCH_CYCLES[o];
+    this.batch[p] = (o === OP.LD || o === OP.ST) && k !== 1 ? 0 : BATCH_CYCLES[o];
     // A re-decoded word can change any polling loop containing it.
     if (this.idle) for (let offset = 0; offset < 5; offset++) this.decodeIdle((p - offset) & 511);
   }
@@ -289,6 +301,8 @@ export class AVRCore {
       case OP.ADD: r[d] = this.arithmetic(r[d], r[s]); break;
       case OP.ADC: r[d] = this.arithmetic(r[d], r[s], this.c); break;
       case OP.SUB: r[d] = this.arithmetic(r[d], r[s], 0, true); break;
+      case OP.CP: this.arithmetic(r[d], r[s], 0, true); break;
+      case OP.NEG: r[d] = this.arithmetic(0, r[d], 0, true); break;
       case OP.AND: r[d] &= r[s]; this.nzvs(r[d]); break;
       case OP.EOR: r[d] ^= r[s]; this.nzvs(r[d]); break;
       case OP.OR: r[d] |= r[s]; this.nzvs(r[d]); break;
@@ -318,18 +332,20 @@ export class AVRCore {
       case OP.PUSH: this.push(r[d]); n = 2; break;
       case OP.POP: r[d] = this.pop(); n = 2; break;
       case OP.ST:
-        z = r[s] | r[s+1] << 8;
-        if (d === s || d === s+1) throw new Error('Undefined ST with source in post-increment pointer');
+        z = (r[s] + (k < 0 ? -1 : k >= 2 ? k - 2 : 0)) & 255;
+        if (k < 2 && (d === s || d === s+1)) throw new Error('Undefined ST with source in updating pointer');
         if (z >= this.data.length) throw new Error('Data write out of range');
+        if (k < 0) r[s] = z;
         v = r[d]; this.clock(2); n = 0;
         if (z >= 32 && z < 96) n = this.writeIO(z - 32, v); else this.data[z] = v;
-        z = (z + 1) & 65535; r[s] = z & 255; r[s+1] = z >> 8; break;
+        if (k === 1) r[s] = (z + 1) & 255; break;
       case OP.LD:
-        z = r[s] | r[s+1] << 8;
-        if (d === s || d === s+1) throw new Error('Undefined LD with destination in post-increment pointer');
+        z = (r[s] + (k < 0 ? -1 : k >= 2 ? k - 2 : 0)) & 255;
+        if (k < 2 && (d === s || d === s+1)) throw new Error('Undefined LD with destination in updating pointer');
         if (z >= this.data.length) throw new Error('Data read out of range');
-        r[d] = this.data[z]; z = (z + 1) & 65535;
-        r[s] = z & 255; r[s+1] = z >> 8; n = 2; break;
+        if (k < 0) r[s] = z;
+        this.clock(2); n = 0; r[d] = this.data[z];
+        if (k === 1) r[s] = (z + 1) & 255; break;
       case OP.LPM:
         if (k && d >= 30) throw new Error('Undefined LPM Z+ with destination in Z');
         z = r[30] | r[31] << 8;
@@ -403,12 +419,13 @@ export class AVRCore {
           break;
         case OP.LD:
         case OP.ST:
-          address = r[s] | r[s + 1] << 8;
+          // ATtiny13A has <256 bytes of data space: XH/YH/ZH are unused here.
+          address = r[s];
           // I/O needs its real access cycle. Invalid/undefined accesses retain
           // the single-step error path and the state preceding that instruction.
           if (address < 96 || address >= 160 || d === s || d === s + 1) break execution;
           if (o === OP.LD) r[d] = data[address]; else data[address] = r[d];
-          address++; r[s] = address & 255; r[s + 1] = address >> 8;
+          r[s] = (address + 1) & 255;
           break;
         case OP.LPM:
           address = r[30] | r[31] << 8;
