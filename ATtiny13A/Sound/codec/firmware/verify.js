@@ -4,7 +4,7 @@ const fs=require('fs');const path=require('path');const {AVRCore}=require('./avr
 const P=__dirname,rom=fs.readFileSync(path.join(P,'tinylpc.hex'),'utf8');
 const core=AVRCore.fromHex(rom);
 // 87 decoded frames, packed with variable-length silence runs.
-const frames=87,n=frames*256;let pcm=Buffer.alloc(n),last=0,maxGap=0,underruns=0;
+const frames=Number.parseInt(process.env.FRAMES||'87',10),n=frames*256;let pcm=Buffer.alloc(n),last=0,maxGap=0,underruns=0;
 for(let i=0;i<n;i++){
   pcm[i]=core.takeSample();
   if(i>0){const gap=core.cycles-last;maxGap=Math.max(maxGap,gap);if(gap>1290)underruns++}
