@@ -2,6 +2,12 @@ from pathlib import Path
 import struct, collections, statistics
 R=None
 
+# Legacy input v1 supports a tiny static 3-bit Huffman block (mode 0x83).
+# Decode it entirely OFFLINE; L3AV v4 AVR needs no Huffman table or branch.
+LEGACY_HUFF={0:'11000',1:'11001',2:'011',3:'00',4:'10',5:'111',6:'010',7:'1101'}
+LEGACY_HUFF_REVERSE={code:symbol for symbol,code in LEGACY_HUFF.items()}
+
+
 def unpack(data):
  magic,ver,fl,rate,n,pre,bright,frm,block=struct.unpack_from('<4sBBHIHHHH',data)
  assert (magic,ver,rate,frm,block)==(b'L3AV',1,8000,160,80)
@@ -16,6 +22,20 @@ def unpack(data):
    if startblock>=n:continue
    nblock=min(80,n-startblock)
    m,scale=data[o:o+2];o+=2
+   if m==0x83:
+    consumed=0;bits='';q=[]
+    while len(q)<nblock:
+     if o+consumed//8>=len(data):raise ValueError('truncated legacy Huffman block')
+     byte=data[o+consumed//8]
+     bits+=str((byte>>(7-(consumed%8)))&1);consumed+=1
+     if bits in LEGACY_HUFF_REVERSE:
+      q.append(LEGACY_HUFF_REVERSE[bits]-4);bits=''
+     elif len(bits)>5:raise ValueError('invalid legacy Huffman code')
+    bs=(consumed+7)//8
+    assert o+bs<=len(data)
+    o+=bs
+    b.append({'bits':3,'scale':scale,'q':q,'bytes':bytes(data[o-bs-2:o]),'start':startblock})
+    continue
    assert m in (2,3,4,5,6,0),m
    bs=(nblock*m+7)//8
    raw=data[o:o+bs];o+=bs

@@ -42,7 +42,7 @@ Lpx3AvrCore::Lpx3AvrCore(): reader_(0),context_(0),bytes_(0),cursor_(0),
     coeffScale_(0),coeffBits_(8),isLsf_(0),mode_(0),blockScale_(0),bitBuffer_(0),bitsLeft_(0),
     riceK_(0),error_(NONE),initializedFrame_(false) {
 #ifdef LPX3_COST_INSTRUMENT
-    lsfConverts_=0;
+    lsfConverts_=0;bitCalls_=romByteCalls_=0;
 #endif
 #ifdef LPX3_FAST_LPC_INTERP
     lsfCached_=false;
@@ -60,6 +60,9 @@ int16_t Lpx3AvrCore::q12(int16_t value,uint8_t scale){
     return clamp(n/scale,-32767,32767);
 }
 uint8_t Lpx3AvrCore::readByte(){
+#ifdef LPX3_COST_INSTRUMENT
+    ++romByteCalls_;
+#endif
     if(error_)return 0;
     if(cursor_>=bytes_){error_=END_OF_ROM;return 0;}
     return reader_(context_,cursor_++);
@@ -75,20 +78,20 @@ bool Lpx3AvrCore::begin(ReadByte read,void* ctx,uint16_t bytes){
     reader_=read;context_=ctx;bytes_=bytes;cursor_=0;error_=NONE;
     initializedFrame_=false;position_=0;framePos_=blockPos_=subPos_=subIndex_=0;
 #ifdef LPX3_COST_INSTRUMENT
-    lsfConverts_=0;
+    lsfConverts_=0;bitCalls_=romByteCalls_=0;
 #endif
 #ifdef LPX3_FAST_LPC_INTERP
     lsfCached_=false;
 #endif
     prevDeemph_=prevBright_=0;mode_=blockScale_=bitBuffer_=bitsLeft_=0;coeffScale_=0;
-    riceK_=0;
+    riceK_=0;prefixMode_=0;
     for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i]=a_[i]=hist_[i]=0,previousQuant_[i]=0;
     if(!read || bytes<20){error_=BAD_HEADER;return false;}
     if(readByte()!='L'||readByte()!='3'||readByte()!='A'||readByte()!='V'){
         error_=BAD_HEADER;return false;
     }
     const uint8_t version=readByte();
-    if(version!=3){error_=UNSUPPORTED;return false;}
+    if(version!=4){error_=UNSUPPORTED;return false;}
     const uint8_t flags=readByte();
     if(flags&~3){error_=UNSUPPORTED;return false;}
     coeffBits_=(flags&1)?10:8;isLsf_=(flags&2)?1:0;
@@ -100,7 +103,18 @@ bool Lpx3AvrCore::begin(ReadByte read,void* ctx,uint16_t bytes){
 }
 bool Lpx3AvrCore::readFrame(){
     for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
-    const uint8_t tag=readBits(3);uint8_t scale=coeffScale_;
+    uint8_t tag;
+    if(coeffBits_==10){
+        if(!readBits(1))tag=0;
+        else{
+            const uint8_t fam=readBits(2);
+            if(fam==0)tag=5;
+            else if(fam==1)tag=6;
+            else if(fam==2)tag=4;
+            else tag=readBits(1)?1:7; // 1 = new plane delta
+        }
+    }else tag=readBits(3);
+    uint8_t scale=coeffScale_;
     int16_t values[10];
     if(tag==0){
         if(!initializedFrame_){error_=CORRUPT_STREAM;return false;}
@@ -130,11 +144,21 @@ bool Lpx3AvrCore::readFrame(){
             values[2*j]=previousQuant_[2*j]+low;
             values[2*j+1]=previousQuant_[2*j+1]+high;
         }
-    }else if((tag==3 && coeffBits_==8)||(tag==6 && coeffBits_==10)||(tag==4 && coeffBits_==10)){
+    }else if((tag==3 && coeffBits_==8)||(tag==6 && coeffBits_==10)||(tag==4 && coeffBits_==10)||(tag==1 && coeffBits_==10)){
         if(!initializedFrame_){error_=CORRUPT_STREAM;return false;}
         for(uint8_t i=0;i<10;i++){
             int8_t delta=0;
-            if(tag==4){
+            if(tag==1){
+                // Split delta: zigzag-coded signed high 3 bits and sparse low 5 bits.
+                // Runs only once per 160 output samples, never in the hot path.
+                uint8_t z=0;
+                while(!readBits(1)){
+                    if(error_||++z>7){error_=CORRUPT_STREAM;return false;}
+                }
+                const int8_t hi=(z&1)?-(int8_t)((z+1)>>1):(int8_t)(z>>1);
+                const uint8_t low=readBits(1)?readBits(5):0;
+                delta=(int8_t)((int16_t)hi*32+low);
+            }else if(tag==4){
                 // Frame-only VLC, not in the 8kHz per-sample code path.
                 if(!readBits(1))delta=0;
                 else if(!readBits(1))delta=readBits(1)?32:-32;
@@ -148,7 +172,7 @@ bool Lpx3AvrCore::readFrame(){
     }else {error_=CORRUPT_STREAM;return false;}
     if(isLsf_)scale=1;
     if(error_||!scale){error_=CORRUPT_STREAM;return false;}
-    const int16_t limit=isLsf_?((1<<coeffBits_)-1):(coeffBits_==8?127:511);
+    const int16_t limit=(int16_t)(isLsf_?((1u<<coeffBits_)-1u):(coeffBits_==8?127u:511u));
     for(uint8_t i=0;i<10;i++){
         if(values[i]<(isLsf_?0:-limit)||values[i]>limit){error_=CORRUPT_STREAM;return false;}
         previousQuant_[i]=values[i];
@@ -164,27 +188,40 @@ bool Lpx3AvrCore::readBlock(){
     // At 160 samples, next() discards at most 7 padding bits before next frame.
     const uint8_t index=readBits(4);
     const uint8_t m=LP_READ_U8(&modeV3[index]);
-    mode_=m&7;riceK_=m>>3;
+    mode_=m&7;riceK_=m>>3;prefixMode_=0;
+    if(index==15){
+        const uint8_t ext=readBits(2);
+        if(ext==1){mode_=6;prefixMode_=1;riceK_=0;}
+        else if(ext==2){mode_=6;prefixMode_=2;riceK_=0;}
+        else if(ext==3){mode_=4;prefixMode_=2;riceK_=0;}
+    }
 
-    // Scales are losslessly coded relative to preceding 80-sample block.
-    if(readBits(1)){
-        if(readBits(1))blockScale_=readBits(8);
-        else{
-            const uint8_t nib=readBits(4);
-            const int8_t delta=(nib&8)?(int8_t)nib-16:(int8_t)nib;
-            const int16_t target=(int16_t)blockScale_+delta;
-            if(target<0||target>255){error_=CORRUPT_STREAM;return false;}
-            blockScale_=(uint8_t)target;
-        }
+    // Bounded Golomb-Rice k=4 for successive scale DELTAS, once per 80 samples.
+    // Escape is six zeros + absolute 8-bit scale. At most six unary reads.
+    uint8_t quotient=0;
+    while(quotient<6 && !readBits(1)){
+        if(error_){error_=CORRUPT_STREAM;return false;}
+        ++quotient;
+    }
+    if(quotient==6)blockScale_=readBits(8);
+    else{
+        const uint8_t z=(uint8_t)((quotient<<4)|readBits(4));
+        const int16_t delta=(z&1)?-(int16_t)((z+1)>>1):(int16_t)(z>>1);
+        const int16_t target=(int16_t)blockScale_+delta;
+        if(target<0||target>255){error_=CORRUPT_STREAM;return false;}
+        blockScale_=(uint8_t)target;
     }
     return !error_;
 }
 uint8_t Lpx3AvrCore::readBits(uint8_t n){
+#ifdef LPX3_COST_INSTRUMENT
+    ++bitCalls_;
+#endif
     // 0..8 bits at a time; fast path needs no per-bit function calls.
     uint16_t buffer=bitBuffer_;
     uint8_t available=bitsLeft_;
     if(available<n){
-        buffer|=(uint16_t)readByte()<<available;
+        buffer=(uint16_t)(buffer | (uint16_t)((uint16_t)readByte()<<available));
         available=(uint8_t)(available+8);
     }
     const uint8_t value=(uint8_t)(buffer&((1u<<n)-1));
@@ -194,7 +231,14 @@ uint8_t Lpx3AvrCore::readBits(uint8_t n){
 }
 bool Lpx3AvrCore::decodeCode(int8_t& q){
     if(mode_==0){q=0;return true;}
-    if(riceK_){
+    if(prefixMode_){
+        if(!readBits(1)){q=0;return !error_;}
+        if(!readBits(1)){q=readBits(1)?-1:1;return !error_;}
+        if(prefixMode_==2){
+            if(!readBits(1)){q=readBits(1)?-2:2;return !error_;}
+        }
+        q=(int8_t)((int16_t)readBits(mode_)-(int16_t)(1u<<(mode_-1)));
+    }else if(riceK_){
         uint8_t quotient=0;
         while(readBits(1)==0){
             if(error_||++quotient>8){error_=CORRUPT_STREAM;return false;}
@@ -203,7 +247,7 @@ bool Lpx3AvrCore::decodeCode(int8_t& q){
         if(error_||z>=((uint8_t)1<<mode_)){error_=CORRUPT_STREAM;return false;}
         q=(z&1)?(int8_t)(-((z+1)>>1)):(int8_t)(z>>1);
     }else{
-        q=(int8_t)readBits(mode_)-(1<<(mode_-1));
+        q=(int8_t)((int16_t)readBits(mode_)-(int16_t)(1u<<(mode_-1)));
     }
     return !error_;
 }

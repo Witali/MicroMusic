@@ -22,5 +22,9 @@ int main(int argc,char** argv){
  }
  std::ofstream o(argv[2],std::ios::binary);o.write((const char*)samples.data(),samples.size());
  if(!o)return 5;
- printf("PASS samples=%zu bytes=%zu sr=%u\n",samples.size(),data.size(),d.sampleRate());return 0;
+ printf("PASS samples=%zu bytes=%zu sr=%u\n",samples.size(),data.size(),d.sampleRate());
+#ifdef LPX3_COST_INSTRUMENT
+ printf("COUNTERS bit_calls=%lu byte_calls=%lu lsf=%lu\n",(unsigned long)d.bitCalls(),(unsigned long)d.romByteCalls(),(unsigned long)d.lsfConverts());
+#endif
+ return 0;
 }

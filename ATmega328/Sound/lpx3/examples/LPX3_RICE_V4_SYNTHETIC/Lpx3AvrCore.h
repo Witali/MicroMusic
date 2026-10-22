@@ -7,7 +7,7 @@
 #ifndef LPX3_LPC_SEGMENTS
 #define LPX3_LPC_SEGMENTS 2
 #endif
-/* LPX3-AVR L3AV v3 ONLY, foreground decoder, no malloc and no floating point.
+/* LPX3-AVR L3AV v4 ONLY, foreground decoder, no malloc and no floating point.
  * ATmega328P targeted, but portable to a desktop compiler for cross-check.
  * Decoder DOES NOT own the timer, ISR or audio buffer.
  * Data is supplied by a random-address ROM reader, e.g. pgm_read_byte_near.
@@ -28,6 +28,8 @@ public:
 #endif
 #ifdef LPX3_COST_INSTRUMENT
     uint32_t lsfConverts() const { return lsfConverts_; }
+    uint32_t bitCalls() const { return bitCalls_; }
+    uint32_t romByteCalls() const { return romByteCalls_; }
 #endif
 #ifdef LPX3_Q_DIAG
     int8_t debugLastQ() const { return lastQ_; }
@@ -74,10 +76,12 @@ private:
     uint8_t riceK_;
     Error error_;
     bool initializedFrame_;
+    uint8_t prefixMode_;
 #ifdef LPX3_Q_DIAG
     int8_t lastQ_;
 #endif
 #ifdef LPX3_COST_INSTRUMENT
     uint32_t lsfConverts_;
+    uint32_t bitCalls_, romByteCalls_;
 #endif
 };

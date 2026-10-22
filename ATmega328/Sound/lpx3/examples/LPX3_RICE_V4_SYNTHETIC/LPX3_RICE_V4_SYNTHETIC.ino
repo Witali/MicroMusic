@@ -1,5 +1,4 @@
-#define LPX3_PROFILE 1
-/* MicroMusic LPX3 Rice V3 for ATmega328P @ 16 MHz.
+/* MicroMusic LPX3 Rice V4 for ATmega328P @ 16 MHz.
  * Arduino Nano/Uno; Timer0 generates 8kHz ISR, Timer2 62.5kHz PWM (D3).
  * 512 B ring buffer, prefill 384 samples (48ms), foreground LPC decoding.
  * Real CPU timing / zero-underruns must be verified on target board.
@@ -105,7 +104,7 @@ void setup(){
 #endif
     fillAudio(384);
     noInterrupts();setupTimers();interrupts();
-    Serial.println(F("LPX3 Rice V3 playback started"));
+    Serial.println(F("LPX3 Rice V4 playback started"));
 }
 void loop(){
     if(!finished){fillAudio(480);return;}

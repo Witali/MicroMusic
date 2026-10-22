@@ -1,42 +1,62 @@
 {
-  "project": "MicroMusic LPX3 Rice v3 Fast ATmega328P",
-  "date": "2026-10-22",
-  "cpu_hz": 16000000,
-  "audio_hz": 8000,
-  "cycles_per_sample_mean_budget": 2000,
-  "hardware_cycle_test": "NOT_RUN",
-  "full_elf_hex_link": "NOT_RUN",
-  "avr_object_compilation": "PASS (clang AVR target, test-only pgmspace shim)",
-  "decoder_size_sram_avr_bytes": 277,
-  "decoder_prev_sram_bytes": 332,
-  "buffer_sram_bytes": 512,
-  "avr_object_text_bytes": 8056,
-  "avr_object_progmem_data_bytes": 1042,
-  "avr_prev_object_text_bytes": 8564,
-  "avr_prev_progmem_data_bytes": 1026,
-  "tests": "PASS 103 corpora including private samples and 100 reproducible generated fuzz samples; 2 invalid streams rejected",
-  "measurements": [
-    {
-      "name": "xtuj-ntt",
+  "name": "MicroMusic L3AV Rice v4 Fast",
+  "cpu_target": "ATmega328P 16MHz, 8kHz audio",
+  "real_16MHz_cycle_measured": false,
+  "full_avr_link_test": false,
+  "avr_object_cross_compile": true,
+  "byte_identical_pcm": true,
+  "tested_324_streams": true,
+  "malformed_streams_rejected": 4,
+  "method_next_avr_object_same_sha256_as_v3": "4fedd80dd8234c956ff427bc09f96092db714e3ec7c2c14a9a926472961b7462",
+  "avr_text_object_bytes": {
+    "v3": 8056,
+    "v4": 8604
+  },
+  "avr_core_sram_bytes": {
+    "v3": 277,
+    "v4": 278
+  },
+  "audio_ring_buffer_bytes": 512,
+  "avr_progmem_data_bytes": 1042,
+  "samples": {
+    "xtuj-ntt": {
       "v1_bytes": 5809,
-      "v2_rice_bytes": 5477,
       "v3_bytes": 5274,
-      "saved_vs_v1": 535,
-      "saved_vs_v2": 203,
-      "percentage_vs_v1": 9.21,
-      "samples": 9768,
-      "pcm8_sha256": "926c7f3ef880d0b5f1ca8b91db582294b29b88559ae76b1d515a4eb4c1d3da92"
+      "v4_bytes": 5215,
+      "num_samples": 9768,
+      "pcm8_sha256": "926c7f3ef880d0b5f1ca8b91db582294b29b88559ae76b1d515a4eb4c1d3da92",
+      "saved_vs_v3_bytes": 59
     },
-    {
-      "name": "ne-otv",
+    "ne-otv": {
       "v1_bytes": 4869,
-      "v2_rice_bytes": 4644,
       "v3_bytes": 4477,
-      "saved_vs_v1": 392,
-      "saved_vs_v2": 167,
-      "percentage_vs_v1": 8.051,
-      "samples": 8232,
-      "pcm8_sha256": "676be17e55c6d81bc63266fa53a6e1ae50ad787411af1a9f9c997f3b6850fdd3"
+      "v4_bytes": 4421,
+      "num_samples": 8232,
+      "pcm8_sha256": "676be17e55c6d81bc63266fa53a6e1ae50ad787411af1a9f9c997f3b6850fdd3",
+      "saved_vs_v3_bytes": 56
+    },
+    "vinni": {
+      "v1_bytes": 8671,
+      "v3_bytes": 8391,
+      "v4_bytes": 8289,
+      "num_samples": 23680,
+      "pcm8_sha256": "a7a17243e8abb9149f357e8b3ec2338b87c6c17a2a9961b19648412917ed4911",
+      "saved_vs_v3_bytes": 102
     }
-  ]
+  },
+  "read_bit_call_counts": {
+    "xtuj-ntt": {
+      "v3": 25588,
+      "v4": 25811
+    },
+    "ne-otv": {
+      "v3": 21397,
+      "v4": 21568
+    },
+    "vinni": {
+      "v3": 44802,
+      "v4": 44969
+    }
+  },
+  "important": "Object code grew about 548 bytes while saving only 59,56,102 payload bytes respectively: full firmware Flash may be less efficient for short recordings. 16MHz realtime and zero underruns not yet confirmed."
 }
