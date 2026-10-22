@@ -148,7 +148,6 @@ $('volume').oninput=()=>runtime?.postMessage({type:'controls',controls:audioCont
 $('cutoff').onchange=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
 for (const choice of document.querySelectorAll('input[name="engine"]')) choice.onchange=()=>{ if (selected) load(selected); };
 document.addEventListener('keydown',event=>{ if (event.code==='Space' && !event.repeat && !/INPUT|SELECT|TEXTAREA|BUTTON|A/.test(event.target.tagName)) { event.preventDefault(); toggle(); } });
-document.addEventListener('visibilitychange',()=>{ if (document.hidden) pause(); });
 window.addEventListener('pagehide',()=>{ runtime?.terminate(); audio?.close(); });
 try {
   const response=await fetch('./firmware.json'); if (!response.ok) throw new Error('HTTP '+response.status);
