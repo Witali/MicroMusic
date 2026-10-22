@@ -7,14 +7,7 @@
 #ifndef LPX3_LPC_SEGMENTS
 #define LPX3_LPC_SEGMENTS 2
 #endif
-#ifndef LPX3_PAIR_DICT_BYTES
-#define LPX3_PAIR_DICT_BYTES 512
-#endif
-#if LPX3_PAIR_DICT_BYTES && LPX3_PAIR_DICT_BYTES!=64 && LPX3_PAIR_DICT_BYTES!=128 && LPX3_PAIR_DICT_BYTES!=256 && LPX3_PAIR_DICT_BYTES!=512
-#error LPX3_PAIR_DICT_BYTES must be 0,64,128,256,512
-#endif
-
-/* LPX3-AVR (L3AV) foreground decoder, no malloc and no floating point.
+/* LPX3-AVR L3AV v3 ONLY, foreground decoder, no malloc and no floating point.
  * ATmega328P targeted, but portable to a desktop compiler for cross-check.
  * Decoder DOES NOT own the timer, ISR or audio buffer.
  * Data is supplied by a random-address ROM reader, e.g. pgm_read_byte_near.
@@ -55,8 +48,7 @@ private:
     bool readFrame();
     bool readBlock();
     bool decodeCode(int8_t& v);
-    uint8_t rawBit();
-    uint8_t huffBit();
+    uint8_t readBits(uint8_t n);
     void interpolate(uint8_t sub);
     void interpolateLsf(uint8_t sub);
 #ifdef LPX3_FAST_LPC_INTERP
@@ -74,16 +66,12 @@ private:
     int16_t prevLpc_[10],curLpc_[10];
     bool lsfCached_;
 #endif
-    int32_t polyP_[12],polyQ_[12],polyTmp_[12];
+    int32_t polyP_[12],polyQ_[12];
     int16_t previousQuant_[10];
     int16_t prevDeemph_,prevBright_;
     uint8_t framePos_,blockPos_,subPos_,subIndex_;
     uint8_t coeffScale_, coeffBits_, isLsf_, mode_,blockScale_,bitBuffer_,bitsLeft_;
-    uint8_t containerVersion_, riceMode_, riceK_, pairMode_, pairPending_, pairSecond_;
-    uint8_t dictSlotsBits_, dictTiered_;
-#if LPX3_PAIR_DICT_BYTES
-    int8_t pairDict_[LPX3_PAIR_DICT_BYTES]; // 2 bytes per pair, first byte=127 means uninitialized
-#endif
+    uint8_t riceK_;
     Error error_;
     bool initializedFrame_;
 #ifdef LPX3_Q_DIAG

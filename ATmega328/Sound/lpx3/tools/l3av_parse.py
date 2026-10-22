@@ -19,6 +19,9 @@ def unpack(data):
    assert m in (2,3,4,5,6,0),m
    bs=(nblock*m+7)//8
    raw=data[o:o+bs];o+=bs
+   if m==0:
+    b.append({'bits':m,'scale':scale,'q':[0]*nblock,'bytes':bytes(data[o-bs-2:o]),'start':startblock})
+    continue
    q=[];val=used=0
    for by in raw:
     val|=by<<used;used+=8

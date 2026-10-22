@@ -1,0 +1,194 @@
+{
+  "slug": "lpx3-rice-v3",
+  "target": "ATmega328/Sound/lpx3",
+  "title": "Pack LPX3 Rice blocks and LPC deltas continuously",
+  "origin": {
+    "archive": "MicroMusic_LPX3_RiceV3_Fast_ATmega328P_SOURCE_2026-10-22.zip",
+    "sha256": "30e6768813c31b2e6a98a6937cea3eb54c28a93911fe89735ca8f2458c996751"
+  },
+  "previous_commit": "9a1f036ede566693fa9ed23498f52b9c248668d8",
+  "files": [
+    {
+      "path": "ATmega328/Sound/lpx3/BENCHMARKS.json",
+      "sha256": "cdd78b79f20bf3eb10135e318723db89e5de954970226cf09a702ce505f07e8b",
+      "bytes": 1341
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/README_RU.md",
+      "sha256": "a77f9d8a32d45677e85a247a1bd4240c9e361ce92fcb099eb04d287e61b84f3f",
+      "bytes": 9342
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V3_PLAYER.ino",
+      "sha256": "5eee42bb82900319724656fbc3271713ef274e25f6445fa337e0deb2a9d91f81",
+      "bytes": 4533
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V3_PROFILE_SYNTHETIC/LPX3_RICE_V3_PROFILE_SYNTHETIC.ino",
+      "sha256": "5b8d3480ff25fe9459c863fc859f801937b95c33bc0b46fe9c1164bbc3d8e463",
+      "bytes": 4556
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V3_PROFILE_SYNTHETIC/Lpx3AvrCore.cpp",
+      "sha256": "773f32f5dc4ea3c33277919f8886ca61470996da0590e01f165cfe074541d2f9",
+      "bytes": 14798
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V3_PROFILE_SYNTHETIC/Lpx3AvrCore.h",
+      "sha256": "9ef5b4ef0b7bb30e242d2ded130dd86629a3fcfc1c67c4cf22629293eac51c33",
+      "bytes": 3077
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V3_PROFILE_SYNTHETIC/cos_table.inc",
+      "sha256": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+      "bytes": 1746
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V3_PROFILE_SYNTHETIC/scale_table.inc",
+      "sha256": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
+      "bytes": 1137
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V3_PROFILE_SYNTHETIC/voice_data.h",
+      "sha256": "fcadcde6b65fe9ff7f1184f331765711f08d67c5cbcea6d7ae4debc472b558a4",
+      "bytes": 48015
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V3_SYNTHETIC/LPX3_RICE_V3_SYNTHETIC.ino",
+      "sha256": "5eee42bb82900319724656fbc3271713ef274e25f6445fa337e0deb2a9d91f81",
+      "bytes": 4533
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V3_SYNTHETIC/Lpx3AvrCore.cpp",
+      "sha256": "773f32f5dc4ea3c33277919f8886ca61470996da0590e01f165cfe074541d2f9",
+      "bytes": 14798
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V3_SYNTHETIC/Lpx3AvrCore.h",
+      "sha256": "9ef5b4ef0b7bb30e242d2ded130dd86629a3fcfc1c67c4cf22629293eac51c33",
+      "bytes": 3077
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V3_SYNTHETIC/cos_table.inc",
+      "sha256": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+      "bytes": 1746
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V3_SYNTHETIC/scale_table.inc",
+      "sha256": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
+      "bytes": 1137
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/LPX3_RICE_V3_SYNTHETIC/voice_data.h",
+      "sha256": "fcadcde6b65fe9ff7f1184f331765711f08d67c5cbcea6d7ae4debc472b558a4",
+      "bytes": 48015
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/synthetic_v1.l3av",
+      "sha256": "d09a30a4d4d3fd6178766afd65a3a5cb769932e8e6cea070f40c9cae954d1494",
+      "bytes": 8033
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/synthetic_v3.json",
+      "sha256": "61a6826e6268da90d7fd28805eeb7eba3341790b67f6c35252a4d9d8ba8039d3",
+      "bytes": 224
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/examples/synthetic_v3.l3av",
+      "sha256": "4182a803ca8e29c07f2712aed2269b4d9549d097948b35d9390419841f23705a",
+      "bytes": 7819
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/reference_v2/Lpx3AvrCore.cpp",
+      "sha256": "fbaf7f3e444fbf02768f7b4c936bb34200d4487b29ac875a3b180287014e4fe3",
+      "bytes": 16827
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/reference_v2/Lpx3AvrCore.h",
+      "sha256": "0949065ec22450411ff7e43c553bb0ff36b7c774640589b91a2cccc8778ee7d6",
+      "bytes": 3604
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/reference_v2/cos_table.inc",
+      "sha256": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+      "bytes": 1746
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/reference_v2/decode_host.cpp",
+      "sha256": "92040c2a8eb658cdc57a3a6c9146c240338d6e87c0aa7b62a3d69263bb246ab6",
+      "bytes": 1160
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/reference_v2/scale_table.inc",
+      "sha256": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
+      "bytes": 1137
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/src/Lpx3AvrCore.cpp",
+      "sha256": "773f32f5dc4ea3c33277919f8886ca61470996da0590e01f165cfe074541d2f9",
+      "bytes": 14798
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/src/Lpx3AvrCore.h",
+      "sha256": "9ef5b4ef0b7bb30e242d2ded130dd86629a3fcfc1c67c4cf22629293eac51c33",
+      "bytes": 3077
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/src/cos_table.inc",
+      "sha256": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+      "bytes": 1746
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/src/scale_table.inc",
+      "sha256": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
+      "bytes": 1137
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/tests/avr_stub/avr/pgmspace.h",
+      "sha256": "9ae744c35811d32cee225b0978bd20e26fa9ae8a95cc2eee63d300887a5cc40a",
+      "bytes": 601
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/tests/avr_stub/stdint.h",
+      "sha256": "202c87c05e23d0599c0c968743bdd00dc13e8fe97529d101b76ff4276f9d8106",
+      "bytes": 269
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/tests/decode_host.cpp",
+      "sha256": "f4f6a898581facc9347ab0b63f143f3d869ca42d2358182a4cc9b9c44c536177",
+      "bytes": 1167
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/tests/sram_size.cpp",
+      "sha256": "9dad2c1ef78098cc7241388812a7702d445b224087b82c4467631441379bc8f0",
+      "bytes": 188
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/tests/verify.py",
+      "sha256": "e091f1ffe3442a42ddd65d4cb03d3dffc5416849711fed67657a60038405a91d",
+      "bytes": 4733
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/tools/l3av_parse.py",
+      "sha256": "a12294330a18688186ac8ee2f8c4064b2a2a256e42493c9d8e56a295b4b3ced0",
+      "bytes": 1936
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/tools/make_header.py",
+      "sha256": "711f0bb73a9d0033884eb061206fa8a2ba453a006f13a79612f0a3707b7147c4",
+      "bytes": 710
+    },
+    {
+      "path": "ATmega328/Sound/lpx3/tools/rice_v3.py",
+      "sha256": "8e43bef9cedcb6b22df3b3728686b43986c2337a49243c5c746b08ac8a532bef",
+      "bytes": 7319
+    }
+  ],
+  "omitted": [
+    {
+      "path": "MANIFEST_SHA256.json",
+      "bytes": 3727,
+      "sha256": "a7f606077e7ffbb4df535497ca710f74b4599a783a5440f76539d95cf3049c16"
+    }
+  ]
+}
