@@ -12,7 +12,13 @@ for name in ['chego','otvechaesh','vinni']:
  assert b==expected,name
  print(name,'reproducible',len(b),'Flash bytes, SHA256',hashlib.sha256(b).hexdigest())
  (d/'rebuild.bin').unlink();(d/'rebuild.o').unlink()
+ # Keep the object file until bench_mul.js has read the mul_q4 symbol.
+ run('clang','-target','avr','-mmcu=attiny13','-c','firmware.S','-o','firmware.o')
 subprocess.run(['clang','-target','avr','-mmcu=attiny13','-c','firmware.S','-o','firmware.o'],cwd=root/'reference'/'chego',check=True)
 subprocess.run(['node','verify_samples.js'],cwd=root,check=True)
 subprocess.run(['node','bench_mul.js'],cwd=root,check=True,stdout=(root/'benchmark.json').open('w'))
 print('4096 exhaustive multiply input combinations checked in benchmark.json')
+# Benchmarks have finished; temporary object files can now be discarded.
+for name in ['chego','otvechaesh','vinni']:
+ (root/name/'firmware.o').unlink(missing_ok=True)
+(root/'reference'/'chego'/'firmware.o').unlink(missing_ok=True)
