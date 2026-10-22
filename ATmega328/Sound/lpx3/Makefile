@@ -1,7 +1,7 @@
 CXX ?= g++
 CXXFLAGS ?= -std=c++11 -O2 -Wall -Wextra -Werror
 
-.PHONY: test synthetic clean
+.PHONY: test fast2-test avr-object-check budget-demo synthetic clean
 
 test: build/decode_host build/test_mul16 build/test_buffer
 	./build/test_mul16
@@ -25,3 +25,13 @@ build/test_mul16: tests/test_mul16.cpp
 
 clean:
 	rm -rf build
+
+fast2-test:
+	mkdir -p profiling
+	python3 tests/test_fast2.py
+
+avr-object-check:
+	bash tests/check_avr_objects.sh
+
+budget-demo:
+	python3 tests/simulate_cpu_budget.py

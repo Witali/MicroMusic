@@ -34,6 +34,12 @@ Lpx3AvrCore::Lpx3AvrCore(): reader_(0),context_(0),bytes_(0),cursor_(0),
     prevDeemph_(0),prevBright_(0),framePos_(0),blockPos_(0),subPos_(0),subIndex_(0),
     coeffScale_(0),coeffBits_(8),isLsf_(0),mode_(0),blockScale_(0),bitBuffer_(0),bitsLeft_(0),
     error_(NONE),initializedFrame_(false) {
+#ifdef LPX3_COST_INSTRUMENT
+    lsfConverts_=0;
+#endif
+#ifdef LPX3_FAST_LPC_INTERP
+    lsfCached_=false;
+#endif
     for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i]=a_[i]=hist_[i]=0,previousQuant_[i]=0;
 }
 
@@ -61,6 +67,12 @@ bool Lpx3AvrCore::begin(ReadByte read,void* ctx,uint16_t bytes){
     // state reinitialization without assigning objects (small AVR stack)
     reader_=read;context_=ctx;bytes_=bytes;cursor_=0;error_=NONE;
     initializedFrame_=false;position_=0;framePos_=blockPos_=subPos_=subIndex_=0;
+#ifdef LPX3_COST_INSTRUMENT
+    lsfConverts_=0;
+#endif
+#ifdef LPX3_FAST_LPC_INTERP
+    lsfCached_=false;
+#endif
     prevDeemph_=prevBright_=0;mode_=blockScale_=bitBuffer_=bitsLeft_=0;coeffScale_=0;
     for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i]=a_[i]=hist_[i]=0,previousQuant_[i]=0;
     if(!read || bytes<20){error_=BAD_HEADER;return false;}
@@ -187,7 +199,71 @@ void Lpx3AvrCore::polyFactor(int32_t* coefficients,int16_t c,uint8_t n){
     }
     for(uint8_t i=0;i<n+2;i++)coefficients[i]=polyTmp_[i];
 }
+#ifdef LPX3_FAST_LPC_INTERP
+#ifndef LPX3_LPC_SEGMENTS
+#define LPX3_LPC_SEGMENTS 2
+#endif
+#if LPX3_LPC_SEGMENTS!=1 && LPX3_LPC_SEGMENTS!=2 && LPX3_LPC_SEGMENTS!=4
+#error LPX3_LPC_SEGMENTS must be 1,2,4
+#endif
+// LSF->LPC only on predicted polynomial anchors, not every subframe.
+// Anchor arithmetic is identical to the reference integer polynomial at t=0..16.
+// PCM synthesis still uses the exact same 10-pole filter and quantized residual.
+void Lpx3AvrCore::convertLsfAt(uint8_t t,int16_t* out){
+#ifdef LPX3_COST_INSTRUMENT
+    ++lsfConverts_;
+#endif
+    polyP_[0]=polyQ_[0]=4096;
+    polyP_[1]=4096;polyQ_[1]=-4096;
+    uint8_t n=2;
+    for(uint8_t i=0;i<10;i+=2){
+        int16_t cc[2];
+        for(uint8_t j=0;j<2;j++){
+            const int32_t weighted=(int32_t)prev_[i+j]*(16-t)+(int32_t)cur_[i+j]*t;
+            const uint16_t norm=(uint16_t)((weighted*(coeffBits_==8?16:4))>>4);
+            const uint8_t idx=(uint8_t)(norm>>4),frac=(uint8_t)(norm&15);
+            const int16_t lo=(int16_t)LP_READ_U16(&cosineQ13[idx]);
+            const int16_t hi=(int16_t)LP_READ_U16(&cosineQ13[(uint16_t)idx+1]);
+            const int16_t cosQ13=(int16_t)(lo+(((int32_t)(hi-lo)*frac)>>4));
+            cc[j]=(int16_t)(-cosQ13);
+        }
+        polyFactor(polyP_,cc[0],n);
+        polyFactor(polyQ_,cc[1],n);
+        n+=2;
+    }
+    for(uint8_t i=0;i<10;i++)out[i]=clamp((polyP_[i+1]+polyQ_[i+1])/2,-32767,32767);
+}
+#endif
 void Lpx3AvrCore::interpolateLsf(uint8_t sub){
+#ifdef LPX3_FAST_LPC_INTERP
+    // Segment width in t=0..16; at most one polynomial conversion per
+    // 20-sample subframe after the initial frame (two at startup).
+    const uint8_t width=(uint8_t)(16/LPX3_LPC_SEGMENTS);
+    const uint8_t subframesPerSegment=(uint8_t)(8/LPX3_LPC_SEGMENTS);
+    if(sub%subframesPerSegment==0){
+        if(sub==0){
+            if(lsfCached_){
+                // Last endpoint of prior frame was this frame's old LSF.
+                for(uint8_t i=0;i<10;i++)prevLpc_[i]=curLpc_[i];
+            }else convertLsfAt(0,prevLpc_);
+        }else{
+            for(uint8_t i=0;i<10;i++)prevLpc_[i]=curLpc_[i];
+        }
+        const uint8_t anchor=(uint8_t)(((sub/subframesPerSegment)+1)*width);
+        convertLsfAt(anchor,curLpc_);
+        lsfCached_=true;
+    }
+    const uint8_t t=(uint8_t)(sub*2+1);
+    const uint8_t localT=(uint8_t)(t%width);
+    for(uint8_t i=0;i<10;i++){
+        const int32_t d=(int32_t)curLpc_[i]-prevLpc_[i];
+        a_[i]=clamp((int32_t)prevLpc_[i]+d*localT/width,-32767,32767);
+    }
+    return;
+#else
+#ifdef LPX3_COST_INSTRUMENT
+    ++lsfConverts_;
+#endif
     // Center of 8 subframes: t=(sub+0.5)/8.
     const uint8_t t=(uint8_t)(sub*2+1);
     polyP_[0]=polyQ_[0]=4096;
@@ -212,6 +288,7 @@ void Lpx3AvrCore::interpolateLsf(uint8_t sub){
     for(uint8_t i=0;i<10;i++){
         a_[i]=clamp((polyP_[i+1]+polyQ_[i+1])/2,-32767,32767);
     }
+#endif
 }
 
 bool Lpx3AvrCore::next(uint8_t& pcm){

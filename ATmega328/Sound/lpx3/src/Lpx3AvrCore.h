@@ -15,6 +15,14 @@ public:
     Lpx3AvrCore();
     bool begin(ReadByte read, void* ctx, uint16_t bytes);
     bool next(uint8_t& sample); // true for each decoded PCM8 sample, false after EOS or error
+#ifdef LPX3_COEFF_EXPORT
+    void copyCoefficients(int16_t out[10]) const {
+        for(uint8_t i=0;i<10;i++)out[i]=a_[i];
+    }
+#endif
+#ifdef LPX3_COST_INSTRUMENT
+    uint32_t lsfConverts() const { return lsfConverts_; }
+#endif
     uint32_t samples() const { return sampleCount_; }
     uint32_t produced() const { return position_; }
     uint16_t sampleRate() const { return sampleRate_; }
@@ -31,6 +39,9 @@ private:
     uint8_t huffBit();
     void interpolate(uint8_t sub);
     void interpolateLsf(uint8_t sub);
+#ifdef LPX3_FAST_LPC_INTERP
+    void convertLsfAt(uint8_t t,int16_t* out);
+#endif
     void polyFactor(int32_t* coefficients,int16_t c,uint8_t n);
     static int16_t clamp(int32_t v, int16_t low, int16_t high);
     static int16_t q12(int16_t value, uint8_t scale);
@@ -39,6 +50,10 @@ private:
     uint32_t sampleCount_, position_;
     uint16_t sampleRate_, preQ14_, brightQ14_;
     int16_t prev_[10],cur_[10],a_[10],hist_[10];
+#ifdef LPX3_FAST_LPC_INTERP
+    int16_t prevLpc_[10],curLpc_[10];
+    bool lsfCached_;
+#endif
     int32_t polyP_[12],polyQ_[12],polyTmp_[12];
     int16_t previousQuant_[10];
     int16_t prevDeemph_,prevBright_;
@@ -46,4 +61,7 @@ private:
     uint8_t coeffScale_, coeffBits_, isLsf_, mode_,blockScale_,bitBuffer_,bitsLeft_;
     Error error_;
     bool initializedFrame_;
+#ifdef LPX3_COST_INSTRUMENT
+    uint32_t lsfConverts_;
+#endif
 };
