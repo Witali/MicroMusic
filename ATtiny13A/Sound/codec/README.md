@@ -1,57 +1,27 @@
-# MicroMusic — ATtiny13A + TinyLPC / LPC2 Voice v2
+# MicroMusic — multi-phrase TinyLPC / ATtiny13A
 
-Демонстрационный набор: три реплики, три независимые прошивки (по одной фразе на микроконтроллер), автономная HTML-страница с Web Audio и настоящим эмулятором AVR.
+Closed-loop experimental encoder; tests two distinct user-provided audio clips. **LPC2 Improved is a high-quality reference/teacher**, while the compiled AVR uses the smaller 7-stage TinyLPC model (it is not a compatible or full-quality LPC2 bitstream).
 
-**Различать названия:** `LPC2 Voice v2` — качественный компьютерный кодек с расширенным диапазоном F0, LSF, 10 полюсами фильтра, смешанным возбуждением и постфильтром. **ATtiny13A firmware** — отдельная, сильно упрощённая несовместимая реализация (`TinyLPC-8` для коротких фраз и `TinyLPC-7` для длинной). Фразы не кодируются в формат LPC2 побитово: компьютерный LPC2 используется как один из эталонов при автоматическом подборе параметров.
+## Quick start
 
-## Файлы и память
+Install Python dependencies: `numpy scipy soundfile numba pystoi playwright`, plus `ffmpeg`, `clang` supporting `-target avr`, `llvm-objcopy`, `node` and Chromium. Install Playwright's Chromium if your system has no Chromium binary.
 
-| Фраза | Файл для прошивки | Flash всего | Речевые данные | Длина | STOI против оригинала |
-| --- | --- | ---: | ---: | ---: | ---: |
-| Чего тебе нужно? | `xtuj-ntt/firmware/tinylpc.hex` | 969 / 1024 Б | 200 Б | 1,23 с | 0,718 |
-| Что ж ты не отвечаешь? | `ne-otv/firmware/tinylpc.hex` | 935 / 1024 Б | 166 Б | 1,06 с | 0,620 |
-| Сова! Открывай! Медведь пришёл! | `vinni/firmware/tinylpc.hex` | 1012 / 1024 Б | 343 Б | 2,97 с | см. прежний AutoLPC2 отчёт |
-
-- В аппаратной части: ATtiny13A (1 КБ Flash, 64 Б SRAM), внутренний RC-генератор **9,6 МГц**, аппаратный Timer0 Fast PWM 37,5 кГц на **PB1/OC0B**, выдача новых отсчётов 7500 Гц.
-- Основной цикл декодирует речь и заполняет кольцевой буфер; обработчик Timer0 каждые 5 переполнений записывает очередной сэмпл в `OCR0B`.
-- Поток содержит 8 квантованных коэффициентов отражения (либо 7 для третьей фразы), F0/период, энергию, RLE тишины. В отличии от полного LPC2 Voice v2 здесь **нет LSF-декодера и формантного постфильтра**.
-- Контрольным эталоном являются конкретные пользовательские записи. `STOI` — только инструментальная оценка разборчивости, не идентичности тембра.
-
-## Веб-проверка
-
-Откройте `index.html` в обычном браузере (например, Chrome на Android). Нажатие «Слушать» запускает Web Audio API. Встроены 9 треков: оригинал, полный LPC2 Voice v2, результат AVR для каждой фразы. Для Винни-Пуха использован предыдущий LPC2 Improved v1, поскольку Voice v2 не улучшил спектральную метрику на этой записи. Кнопка **«Проверить HEX в эмуляторе»** действительно исполняет инструкции из встроенного Intel HEX и побайтово сравнивает каждый обновлённый PWM-сэмпл с контрольной записью. Это позволяет отдельно убедиться, что прошивка проигрывается, даже если аудио заблокировано браузером.
-
-## Сборка и автоматическая подстройка
-
-Установите Clang с AVR backend, llvm-objcopy, Node.js, Python 3 с NumPy, Numba, SciPy, SoundFile и pystoi.
+Run with supplied example MP3s from the private archive:
 
 ```bash
-python rebuild_all.py
-python train_and_select.py --clip xtuj-ntt --budget 1500
-python train_and_select.py --clip ne-otv --budget 1500
+python run_multi.py --clip xtuj-ntt=inputs/xtuj-ntt.mp3 --clip ne-otv=inputs/ne-otv.mp3 --budget 1200 --refine 3000
 ```
 
-`rebuild_all.py` в каждой директории компилирует AVR ASM в объектный файл, извлекает бинарник, формирует `tinylpc.hex` и выполняет независимую JavaScript-эмуляцию. При ошибке он завершает работу с ненулевым кодом.
+Each clip is handled independently: convert to 7.5 kHz mono with VAD trimming; generate LPC2 Improved teacher with the saved real JS codec running under Chromium; estimate quantized LPC coefficients; refine using analysis-by-synthesis with STOI and spectral goals and click limits; encode silence with RLE; compile real ATtiny13 AVR firmware; execute real Intel HEX instructions with the included JavaScript AVR emulator; byte-compare all output PCM samples to the Python model; create WAV, A/B sample, metrics and self-contained player.
 
-`train_and_select.py` автоматически проверяет тысячи изменений коэффициентов, периода и энергии, сравнивает с исходной записью и LPC2 Voice v2, и **принимает новый вариант только если удовлетворены ограничения на щелчки и качество**. После принятия он сам пересобирает HEX и проверяет тайминги. Предыдущее состояние сохраняет как `parameters_previous.npz`.
+The website uses Web Audio API activated by explicit user tap instead of large `data:audio` links, and includes separate WAV files for phones where the in-app viewer doesn't enable audio. Open `release/index.html` in an actual mobile browser.
 
-Проверенные машинные прогоны:
+**Hardware:** ATtiny13A 9.6 MHz (disable CKDIV8), Fast PWM 37.5 kHz on PB1/OC0B and 7.5 kHz audio. Requires RC low-pass and amplifier; only digital emulation was tested. Current machine code is fixed for a limited seven-stage 8-bit filter; long phrases may exceed 1024 B, and the script fails rather than truncates.
 
-| Фраза | PWM samples | Timer0 IRQ | max ISR | пропуски | опустошения буфера |
-|---|---:|---:|---:|---:|---:|
-| Чего тебе нужно? | 9 216 | 46 080 | 60 тактов | 0 | 0 |
-| Что ж ты не отвечаешь? | 7 936 | 39 680 | 60 тактов | 0 | 0 |
-| Сова! Открывай! | 22 272 | 111 360 | 60 тактов | 0 | 0 |
+**Copyright:** Uploaded cartoon audio and derived speech data are included only in the **private** archive. Do not publish the private files or example firmware without clearing rights. `code_only.zip` does not include the original voice recordings or encoded speech data.
 
-## Прошивка физического чипа
+## LPC-7 versus LPC-8
 
-Вывод **PB1 (DIP-8 ножка 6)** → RC-фильтр (например, 2,2 кОм / 10 нФ, затем ещё такое же звено) → через разделительный конденсатор → **высокоомный вход усилителя**. Динамик напрямую к ноге микроконтроллера не подключайте. При 9,6 МГц питание должно соответствовать даташиту; для ATtiny13A как минимум 2,7 В при этой частоте.
+The optional **8-pole format** adds one quantized coefficient (one extra byte per voiced frame) and one extra SRAM state. The new AVR firmware and matching exact Python model (`format8/tinylpc.S`, `model8.py`, `optimize8.py`) are automatically built, trained and tested alongside the established 7-pole format. It is **not** the full 10-pole LPC2 Improved.
 
-Вся прошивка предполагает частоту процессора 9,6 МГц с делителем /1 (программно записывает `CLKPR`). Перед записью фьюзов прочитайте их исходные значения и убедитесь, что установлены внутренние 9,6 МГц, запуск и разрешён RESET/SPI. Например, ранее для этого профиля использовался `lfuse=0x7A`, но перед программированием обязательно сверьтесь с вашим экземпляром микроконтроллера/даташитом.
-
-```bash
-avrdude -c usbasp -p t13 -U lfuse:r:-:h -U hfuse:r:-:h
-avrdude -c usbasp -p t13 -U flash:w:xtuj-ntt/firmware/tinylpc.hex:i
-```
-
-**Ограничения:** Проверка выполнена в независимой математической модели и AVR-интерпретаторе; на физической плате не тестировалась. Аналоговая АЧХ RC-фильтра, внутренний RC-генератор и качество усилителя влияют на реальное звучание. Исходные аудиофрагменты и сжатые речевые данные могут быть защищены авторским правом: полный архив содержит их только для частных сравнений, публиковать в публичном репозитории без разрешения нельзя. Есть отдельный архив с одним лишь исходным кодом.
+The separately tested 4/8/12/16-entry formant codebook format saved speech-data bytes but degraded STOI substantially on these two clips, so the default release preserves per-frame coefficients. The comparison is in `codebook_trial_report.json`.
