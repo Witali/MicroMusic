@@ -1,3 +1,10 @@
+// Fast2 ABI CONFIG: must be common to sketch and decoder TU.
+#ifndef LPX3_FAST_LPC_INTERP
+#define LPX3_FAST_LPC_INTERP 1
+#endif
+#ifndef LPX3_LPC_SEGMENTS
+#define LPX3_LPC_SEGMENTS 2
+#endif
 #pragma once
 #include <stdint.h>
 
@@ -19,6 +26,16 @@ public:
     void copyCoefficients(int16_t out[10]) const {
         for(uint8_t i=0;i<10;i++)out[i]=a_[i];
     }
+#endif
+#ifdef LPX3_COST_INSTRUMENT
+    uint32_t lsfConverts() const { return lsfConverts_; }
+#endif
+#ifdef LPX3_Q_DIAG
+    int8_t debugLastQ() const { return lastQ_; }
+    uint8_t debugMode() const { return mode_; }
+    uint8_t debugScale() const { return blockScale_; }
+    int16_t debugPred() const { return hist_[0]; }
+    int16_t debugDeemph() const { return prevDeemph_; }
 #endif
     uint32_t samples() const { return sampleCount_; }
     uint32_t produced() const { return position_; }
@@ -58,4 +75,10 @@ private:
     uint8_t coeffScale_, coeffBits_, isLsf_, mode_,blockScale_,bitBuffer_,bitsLeft_;
     Error error_;
     bool initializedFrame_;
+#ifdef LPX3_Q_DIAG
+    int8_t lastQ_;
+#endif
+#ifdef LPX3_COST_INSTRUMENT
+    uint32_t lsfConverts_;
+#endif
 };

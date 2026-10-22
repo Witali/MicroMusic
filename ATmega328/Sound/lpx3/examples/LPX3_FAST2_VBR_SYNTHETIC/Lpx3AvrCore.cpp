@@ -1,5 +1,3 @@
-#define LPX3_FAST_LPC_INTERP 1
-#define LPX3_LPC_SEGMENTS 2
 #include "Lpx3AvrCore.h"
 #ifdef __AVR__
 #include <avr/pgmspace.h>
@@ -142,7 +140,7 @@ bool Lpx3AvrCore::readFrame(){
 
 bool Lpx3AvrCore::readBlock(){
     mode_=readByte();blockScale_=readByte();bitBuffer_=bitsLeft_=0;
-    if(mode_!=0 && mode_!=2 && mode_!=3 && mode_!=4 && mode_!=0x83){error_=CORRUPT_STREAM;}
+    if(mode_!=0 && mode_!=2 && mode_!=3 && mode_!=4 && mode_!=5 && mode_!=6 && mode_!=0x83){error_=CORRUPT_STREAM;}
     return !error_;
 }
 uint8_t Lpx3AvrCore::rawBit(){
@@ -297,8 +295,21 @@ bool Lpx3AvrCore::next(uint8_t& pcm){
     if(error_||position_>=sampleCount_)return false;
     if(framePos_==0&&!readFrame())return false;
     if(blockPos_==0&&!readBlock())return false;
-    if(subPos_==0)interpolate(subIndex_);
+    if(subPos_==0){
+        interpolate(subIndex_);
+#ifdef LPX3_BANDWIDTH_EXPAND_Q14
+        // Bandwidth expansion a[k] *= gamma^(k+1), once per 20 samples.
+        uint16_t weight=16384;
+        for(uint8_t k=0;k<10;k++){
+            weight=(uint16_t)(((int32_t)weight*LPX3_BANDWIDTH_EXPAND_Q14+8192)>>14);
+            a_[k]=clamp(((int32_t)a_[k]*weight+8192)>>14,-32767,32767);
+        }
+#endif
+    }
     int8_t q=0;if(!decodeCode(q))return false;
+#ifdef LPX3_Q_DIAG
+    lastQ_=q;
+#endif
     const uint16_t step=LP_READ_U16(&stepQ14[blockScale_]);
     int32_t excitation=(int32_t)q*step, acc=0;
     for(uint8_t i=0;i<10;i++)acc+=(mul16x16(a_[i],hist_[i]))>>12;

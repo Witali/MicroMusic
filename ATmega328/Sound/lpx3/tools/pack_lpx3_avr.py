@@ -35,7 +35,7 @@ def decode_source(data:bytes):
 def pack_bits_lsb(vals,bits):
  acc=used=0;result=bytearray()
  for v in vals:
-  acc|=v<<used;used+=bits
+  acc|=int(v)<<used;used+=bits
   while used>=8:result.append(acc&255);acc>>=8;used-=8
  if used:result.append(acc&255)
  return bytes(result)

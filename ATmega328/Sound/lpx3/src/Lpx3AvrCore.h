@@ -23,6 +23,13 @@ public:
 #ifdef LPX3_COST_INSTRUMENT
     uint32_t lsfConverts() const { return lsfConverts_; }
 #endif
+#ifdef LPX3_Q_DIAG
+    int8_t debugLastQ() const { return lastQ_; }
+    uint8_t debugMode() const { return mode_; }
+    uint8_t debugScale() const { return blockScale_; }
+    int16_t debugPred() const { return hist_[0]; }
+    int16_t debugDeemph() const { return prevDeemph_; }
+#endif
     uint32_t samples() const { return sampleCount_; }
     uint32_t produced() const { return position_; }
     uint16_t sampleRate() const { return sampleRate_; }
@@ -61,6 +68,9 @@ private:
     uint8_t coeffScale_, coeffBits_, isLsf_, mode_,blockScale_,bitBuffer_,bitsLeft_;
     Error error_;
     bool initializedFrame_;
+#ifdef LPX3_Q_DIAG
+    int8_t lastQ_;
+#endif
 #ifdef LPX3_COST_INSTRUMENT
     uint32_t lsfConverts_;
 #endif
