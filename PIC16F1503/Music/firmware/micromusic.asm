@@ -116,7 +116,7 @@ irq_pop:
 
 reset:
     ; Run from factory-calibrated HFINTOSC at 16 MHz and route PWM3 to RA2.
-    ; The configuration word must select INTOSC and disable WDT/LVP.
+    ; CONFIG1 selects INTOSC with WDT off; CONFIG2=0x3FFF keeps LVP enabled.
     MOVLB 1
     MOVLW 0x7A
     MOVWF OSCCON

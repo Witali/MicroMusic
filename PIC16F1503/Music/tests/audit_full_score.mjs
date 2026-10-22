@@ -12,7 +12,7 @@ while(cpu.cycle<target){
   cpu.step();
   maxStack=Math.max(maxStack,cpu.stack.length);
   const sec=cpu.mem[0x3e];
-  if(sec!==old){if(sec===0&&old===14&&wrap<0)wrap=cpu.cycle/4e6;
+  if(sec!==old){if(sec===0 && (old===14 || old===15) && wrap<0)wrap=cpu.cycle/4e6;
     unique.add(sec);edges.push([+(cpu.cycle/4e6).toFixed(2),old,sec]);old=sec;}
   if(cpu.mem[0x60]!==0){throw Error(`Queue underrun at ${cpu.cycle/4e6}s: ${cpu.mem[0x60]}`)}
   if(cpu.samples.length>2000)cpu.samples.length=0;
