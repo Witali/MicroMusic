@@ -1,0 +1,284 @@
+{
+  "slug": "codec-comparison",
+  "target": "ATtiny13A/Sound/codec",
+  "title": "Compare Keyframe Adaptive and MiniLPC on three voices",
+  "origin": {
+    "archive": "MicroMusic_LPC_3x3_full.zip",
+    "sha256": "44303744cc9bd336e88597b612796b2b1419f5c8e1789d9a2a5c4f12192cf1b6"
+  },
+  "previous_commit": "0d7d0c49fa4d35dc9d6dd431a150f57249d9ebfe",
+  "files": [
+    {
+      "path": "ATtiny13A/Sound/codec/README.md",
+      "sha256": "215fd3e1fed08585c6b6a962582ddd138af7cf29f0f40610a607269e040519cd",
+      "bytes": 1759
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/avr_emulator.js",
+      "sha256": "dae6393748cc70178a6a6924a2c73f79b6ed67b7517c688ec3657fa9a87a3ffe",
+      "bytes": 9806
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/build_matrix.py",
+      "sha256": "7f4e6196cda622bd401ef12ec90b77f6b8b37ec443b44d82b787476b5409dbb2",
+      "bytes": 5233
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/build_mini.py",
+      "sha256": "c1975130396dc82e61643b70d34d70a4a2d47a7a33d73739ed76dd282d3c3242",
+      "bytes": 3362
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/firmware/chego/adaptive/firmware.S",
+      "sha256": "704d3b1c657863964135477d2529c93c88aa12b5d20622e5713a74099c4c9867",
+      "bytes": 9788
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/firmware/chego/keyframe/firmware.S",
+      "sha256": "dae691131e57e5e71b4814716a1edc708b08b652abd323be41ea195e3723aa15",
+      "bytes": 9381
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/firmware/chego/mini/firmware.S",
+      "sha256": "7cd7e0eb5309c16487b29ee286b6e301e2bfa6423c4e3d3cd1e8fd6ace2d1d31",
+      "bytes": 3262
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/firmware/otvechaesh/adaptive/firmware.S",
+      "sha256": "704d3b1c657863964135477d2529c93c88aa12b5d20622e5713a74099c4c9867",
+      "bytes": 9788
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/firmware/otvechaesh/keyframe/firmware.S",
+      "sha256": "dae691131e57e5e71b4814716a1edc708b08b652abd323be41ea195e3723aa15",
+      "bytes": 9381
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/firmware/otvechaesh/mini/firmware.S",
+      "sha256": "7cd7e0eb5309c16487b29ee286b6e301e2bfa6423c4e3d3cd1e8fd6ace2d1d31",
+      "bytes": 3262
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/firmware/vinni/adaptive/firmware.S",
+      "sha256": "1ffbeb30e3ae0a8394334b3899fe4f091d6585ef7e7cb2e64e618cdfd9e381bb",
+      "bytes": 4054
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/firmware/vinni/keyframe/firmware.S",
+      "sha256": "853fb6e20526447a5f6bc8a7237e261e7b74ef187ebaa8f14242907ad1904533",
+      "bytes": 3482
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/firmware/vinni/mini/firmware.S",
+      "sha256": "7cd7e0eb5309c16487b29ee286b6e301e2bfa6423c4e3d3cd1e8fd6ace2d1d31",
+      "bytes": 3262
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/index.html",
+      "sha256": "169bc47c9164596b58cfa20972ceb492a034fbb5a2ed4b2749e1184ccfaa4a31",
+      "bytes": 491211
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/mini_emulator.js",
+      "sha256": "dae6393748cc70178a6a6924a2c73f79b6ed67b7517c688ec3657fa9a87a3ffe",
+      "bytes": 9806
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/mini_template.S",
+      "sha256": "7eb6538cae299d6ee770439ae30d817c98fc223cd047338e652ab2635974c024",
+      "bytes": 3019
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/test_all.js",
+      "sha256": "9f3c7e59a30cba0931ad03449c6481a9971622d5880219aca837cab94393758e",
+      "bytes": 1420
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/verification.json",
+      "sha256": "46bd55d187d223b89352a694d460eb1281da9c7f1f0ad267ff9a6853308fcf5f",
+      "bytes": 2840
+    }
+  ],
+  "omitted": [
+    {
+      "path": "firmware/chego/adaptive/avr_pcm.raw",
+      "bytes": 9216,
+      "sha256": "65614df660e885566cc0b2393f40b1b12090143b5ac97677e002bd086e5a06c1"
+    },
+    {
+      "path": "firmware/chego/adaptive/firmware.bin",
+      "bytes": 1023,
+      "sha256": "a5c76f289b555c8ca1245e05ddd2f1d5073723fc40b5b5270e373e706a1080c9"
+    },
+    {
+      "path": "firmware/chego/adaptive/firmware.hex",
+      "bytes": 2826,
+      "sha256": "56d258816902c715ac197d53670ee54b9c4708f4674eebb094a40430ba7c66ce"
+    },
+    {
+      "path": "firmware/chego/adaptive/speech.bin",
+      "bytes": 180,
+      "sha256": "284707445246c480a29858f4f60cb101f6202e3d03f1bedf6fc4e20c2257b01c"
+    },
+    {
+      "path": "firmware/chego/keyframe/avr_pcm.raw",
+      "bytes": 9216,
+      "sha256": "5476245c6501031464301cb8e730c330c49ac96df63e384fa1f266bb3b70b05a"
+    },
+    {
+      "path": "firmware/chego/keyframe/firmware.bin",
+      "bytes": 1019,
+      "sha256": "969f79749c2a0eb997ec72205f5f5bde172982703ae8247a2b47148f5f60e21f"
+    },
+    {
+      "path": "firmware/chego/keyframe/firmware.hex",
+      "bytes": 2818,
+      "sha256": "d62c34057c10d1fc6c2ad76e7682cb26d9c9b57e87a68c7e40028d801e567c66"
+    },
+    {
+      "path": "firmware/chego/keyframe/speech.bin",
+      "bytes": 184,
+      "sha256": "f51966309416d12f13b9740330804de8ad3b76c3f66ab0ec1436ee1b9c770156"
+    },
+    {
+      "path": "firmware/chego/mini/avr_pcm.raw",
+      "bytes": 9216,
+      "sha256": "4581f965af5edd3ebbbc933d81010062f78fe974290d5e9f2c9333834cc8ddf8"
+    },
+    {
+      "path": "firmware/chego/mini/firmware.bin",
+      "bytes": 601,
+      "sha256": "b4888895fc25c6cccd624b111c47af987602c36a4d6ef8a0099d7df3a0335c68"
+    },
+    {
+      "path": "firmware/chego/mini/firmware.hex",
+      "bytes": 1670,
+      "sha256": "773e7325766d7fa433cdfab4176022cdca97c63f3ce86d0abc05643ca877b6bf"
+    },
+    {
+      "path": "firmware/chego/mini/speech.bin",
+      "bytes": 216,
+      "sha256": "1681fa1337f040507d1926b0982070597d03d084f38a7a524f1d6fdcfc724ea5"
+    },
+    {
+      "path": "firmware/otvechaesh/adaptive/avr_pcm.raw",
+      "bytes": 7936,
+      "sha256": "4f36daa96a6b6e2efc03fe541c37e5000053250aaaf1fc939aa18046a0070c38"
+    },
+    {
+      "path": "firmware/otvechaesh/adaptive/firmware.bin",
+      "bytes": 997,
+      "sha256": "0ca00459328bb10b39c7d05f853fac0a2c75ba7c5b1900d837654fb345bc4f09"
+    },
+    {
+      "path": "firmware/otvechaesh/adaptive/firmware.hex",
+      "bytes": 2762,
+      "sha256": "d00743f9bffd60ff1b5006b2fdb125989fa6f3c493f051b81e993f784da99a6c"
+    },
+    {
+      "path": "firmware/otvechaesh/adaptive/speech.bin",
+      "bytes": 154,
+      "sha256": "952ed8c5500fae6406af275a0427dafb00b0009fb81f24a8d722e90f662cc4bf"
+    },
+    {
+      "path": "firmware/otvechaesh/keyframe/avr_pcm.raw",
+      "bytes": 7936,
+      "sha256": "1c3d944932e066469a1532066d605eac9b28a45441380cb5953bfef9783fea76"
+    },
+    {
+      "path": "firmware/otvechaesh/keyframe/firmware.bin",
+      "bytes": 985,
+      "sha256": "dda917a8a96da605e21a7e2fd46d986e327cf2a87671b1d968db2aae2fe47091"
+    },
+    {
+      "path": "firmware/otvechaesh/keyframe/firmware.hex",
+      "bytes": 2726,
+      "sha256": "beee48f7aa53b640c972a235fcb60ca28576a13375fdaa30aea16bb808c957f5"
+    },
+    {
+      "path": "firmware/otvechaesh/keyframe/speech.bin",
+      "bytes": 150,
+      "sha256": "6ee30f7995f3899c2ef51ed2609cb653b59c8faa3954d92ba2aa357fd7277037"
+    },
+    {
+      "path": "firmware/otvechaesh/mini/avr_pcm.raw",
+      "bytes": 7936,
+      "sha256": "de01542b7af35db6c1ecc00d40960548b15290cac2040db26f1deaa2e873e2d5"
+    },
+    {
+      "path": "firmware/otvechaesh/mini/firmware.bin",
+      "bytes": 571,
+      "sha256": "0e6ecc940a209605cd28fa4d168f6631f19d328d402dae637d640af205a20059"
+    },
+    {
+      "path": "firmware/otvechaesh/mini/firmware.hex",
+      "bytes": 1586,
+      "sha256": "4239fffd075c7d0ce0cbca8bb333fe8d8d8840c9910b1196d9978767476efa73"
+    },
+    {
+      "path": "firmware/otvechaesh/mini/speech.bin",
+      "bytes": 186,
+      "sha256": "bfeb29823b2b48a58d917fa17295cb771b3c09bcd94b7c4c01a75472c36be024"
+    },
+    {
+      "path": "firmware/vinni/adaptive/avr_pcm.raw",
+      "bytes": 22272,
+      "sha256": "1d8682c97aec89dbdb1662d6304c402c6dcd25e282a0de53d29b1ed349718efe"
+    },
+    {
+      "path": "firmware/vinni/adaptive/firmware.bin",
+      "bytes": 905,
+      "sha256": "c39a649722be0ae8757e0db9f593df0e1fb3e0ff8a505bd6b592bbaa3f963a4b"
+    },
+    {
+      "path": "firmware/vinni/adaptive/firmware.hex",
+      "bytes": 2506,
+      "sha256": "97bcb462caf8cee21f723fae8bbf3db54759ff01f650643c7317a399be109849"
+    },
+    {
+      "path": "firmware/vinni/adaptive/speech.bin",
+      "bytes": 426,
+      "sha256": "ad767942e69d493993758b59ea33065c04d1a190dd9ef2be0aa86e20921dd628"
+    },
+    {
+      "path": "firmware/vinni/keyframe/avr_pcm.raw",
+      "bytes": 22272,
+      "sha256": "c81d943c843aee8d402826b62db6a09525f0d44e652816390b1ae38e249158f1"
+    },
+    {
+      "path": "firmware/vinni/keyframe/firmware.bin",
+      "bytes": 843,
+      "sha256": "a774646000990b685ae1c527a5dd12e4db99efaad4045371c9c42952d82c350a"
+    },
+    {
+      "path": "firmware/vinni/keyframe/firmware.hex",
+      "bytes": 2334,
+      "sha256": "6ba7b33cf0119d1dbe2a994eb6ff1da60301a0248838aa9e1f1cfff3f1a112ad"
+    },
+    {
+      "path": "firmware/vinni/keyframe/speech.bin",
+      "bytes": 426,
+      "sha256": "abf3a6ea6da6afea3e8908646b555092df26f3b6ae508e4b26b33f8785539a72"
+    },
+    {
+      "path": "firmware/vinni/mini/avr_pcm.raw",
+      "bytes": 22272,
+      "sha256": "a1755cd132fb5af3f8a5ef46dca29ddcc5511e46e53c9ef59a4c793092388571"
+    },
+    {
+      "path": "firmware/vinni/mini/firmware.bin",
+      "bytes": 907,
+      "sha256": "a06be5e7d697f9afc562aedea5ec022f0925ff815ae4ab898397a36cc1cd69b5"
+    },
+    {
+      "path": "firmware/vinni/mini/firmware.hex",
+      "bytes": 2510,
+      "sha256": "24b801a999dd6470b25d33c2e61f42a57aabd0bbec771a27b0546b5bb1968b7f"
+    },
+    {
+      "path": "firmware/vinni/mini/speech.bin",
+      "bytes": 522,
+      "sha256": "02ea3edcf25ea3038a1739d2fac160f74f0d6ac2b6e084899e1a313bf9ecf08a"
+    }
+  ]
+}
