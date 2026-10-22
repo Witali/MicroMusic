@@ -1,0 +1,369 @@
+{
+  "slug": "multi-phrase-pipeline",
+  "target": "ATtiny13A/Sound/codec",
+  "title": "Extend automated fitting to multiple phrases",
+  "origin": {
+    "archive": "MicroMusic_MultiPhrase_private.zip",
+    "sha256": "c3c71faea9f5fbcc1df22a114f1f62d0d6fa5811e5a07b15c639a6c3f27167dc"
+  },
+  "previous_commit": "74ee130fa6696791404f1deb2d166fd514560b8b",
+  "files": [
+    {
+      "path": "ATtiny13A/Sound/codec/README.md",
+      "sha256": "ff6e95a8f3c96b462292147f1e0e32665e44b4fdd68b9619a8ae07e8cf72cbf2",
+      "bytes": 2744
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/codebook_trial_report.json",
+      "sha256": "9c2be8ce8215b10851f7aee42eb6845d9dba4e0b7c4dfb057c5a71721c208b1b",
+      "bytes": 3003
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/evaluate_codebooks.py",
+      "sha256": "d16c86177f73995a258b4f632f3f95551d04b2843fb4d6a4bed66551019b4c0f",
+      "bytes": 2426
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/firmware_template/avr_emulator.js",
+      "sha256": "117ec65910ccd10d2876fecc85f0581a4e6d165e27a3d56cbb5d74630a254761",
+      "bytes": 8916
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/firmware_template/build_firmware.py",
+      "sha256": "8e2d0db215bbc1fd2228a3c59d6e9ff157486dcd5392354fd788df38885de9c3",
+      "bytes": 1461
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/firmware_template/package_stream.py",
+      "sha256": "3df7d7a4c6d9aa161739c2dce3bfa249c368c2279e308d19e9419a0a82db81b5",
+      "bytes": 1383
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/firmware_template/tinylpc.S",
+      "sha256": "568d26676e66c554bd64ab67b42d8f74b30ff06a0331b0e6346d794c27baa671",
+      "bytes": 7773
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/firmware_template/verify.js",
+      "sha256": "25be7f6933f2613466c8b45e11f12a9ccd4429ee19fa23d8ae94daab2a619cb9",
+      "bytes": 1197
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/format8/avr_emulator.js",
+      "sha256": "117ec65910ccd10d2876fecc85f0581a4e6d165e27a3d56cbb5d74630a254761",
+      "bytes": 8916
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/format8/build_firmware.py",
+      "sha256": "8e2d0db215bbc1fd2228a3c59d6e9ff157486dcd5392354fd788df38885de9c3",
+      "bytes": 1461
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/format8/package_stream.py",
+      "sha256": "e1106c189427ca21dd190242f938be407e3731a9df32e9f50876a9004824ff71",
+      "bytes": 1392
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/format8/tinylpc.S",
+      "sha256": "4e4a0886e44393b695ded67fdaa9ec92de760ed7e41e9491bfbeb80bb7e7737c",
+      "bytes": 8081
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/format8/verify.js",
+      "sha256": "25be7f6933f2613466c8b45e11f12a9ccd4429ee19fa23d8ae94daab2a619cb9",
+      "bytes": 1197
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/generate_lpc2_teacher.py",
+      "sha256": "c48e718d97b932e0150c41222fbf6796c9fa1dbf28384367c881cb24563f7bc3",
+      "bytes": 2294
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/generate_seed.py",
+      "sha256": "f63089d36654567069dc988339e5a4df4bc39504ec06e3d5eb174ee3126aff05",
+      "bytes": 2607
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/lpc2_improved_encoder.html",
+      "sha256": "6213dfaeaef9869c2bd31d30f9f3caa100e10b99977637342ffbb7722b7efb7b",
+      "bytes": 104561
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/make_player.py",
+      "sha256": "91efd27d86a576bf431d3f27f1d04cfa497374d51971740e050360b9a250d10c",
+      "bytes": 10572
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/model8.py",
+      "sha256": "831c3b4af699491f4d230e4c892edf32f0132e4e7f226267ccec11c48c1aec71",
+      "bytes": 2343
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/model_lite.py",
+      "sha256": "aaaa0366b4654211e41deaceb21c7c397e2fe8ad412d77f6d42f60c97f883c2d",
+      "bytes": 2343
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/ne-otv/format8/seed8.npz",
+      "sha256": "7388860ae2b71358ba88b6daa87cbed64ec1874671788d463e624680f326d3be",
+      "bytes": 3204
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/ne-otv/format8/train/optimized_parameters.npz",
+      "sha256": "7e0e610178c178ecec70ba4c70fb9c21141bd4924002cf5b7d4f1cc3d6287f3a",
+      "bytes": 3204
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/ne-otv/refine/optimized_parameters.npz",
+      "sha256": "c0453950a41b49d4e22ab888b8966354d305dc97e63ddcdc8d8916caa3b11966",
+      "bytes": 2956
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/ne-otv/seed.npz",
+      "sha256": "599ef99c16696c20b54f96b6f782c4bbf11329e5dd63157e5c3589807cd72f11",
+      "bytes": 2956
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/ne-otv/train/optimized_parameters.npz",
+      "sha256": "62f5b665fd4f032eb2f4a4966111b17ad485269ff91f030172c1e0fa299b10c9",
+      "bytes": 2956
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/optimize.py",
+      "sha256": "1df9222a448558c8ba33aa1a6c1e0cf6649b892d6661068f9acf69f97b25e9a5",
+      "bytes": 6841
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/optimize8.py",
+      "sha256": "e4632e3172a3736cb025eacbb72c5b7c74074de33e6318259c3f4664f78fd718",
+      "bytes": 6607
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/perceptual.py",
+      "sha256": "54a7a08e13386cc89b306ea4726d73f31fd2ee7a120b228a90e486b284043f09",
+      "bytes": 4010
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/prepare_source.py",
+      "sha256": "b1530f2cb6e6d465c2882b5e7918832857330a3dd1fd21c6bdcda4977fe447ef",
+      "bytes": 1979
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/release/index.html",
+      "sha256": "dd0e6acde82ec6e44301422678fd38efe06facb2ee18f684850b5ab4acad0748",
+      "bytes": 479127
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/release/ne-otv/metrics.json",
+      "sha256": "0a269962b616ca5a22ee51e48c0ef4c56b71a19079c90ffbec2a2d27d02ede24",
+      "bytes": 1054
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/release/ne-otv/parameters.npz",
+      "sha256": "c0453950a41b49d4e22ab888b8966354d305dc97e63ddcdc8d8916caa3b11966",
+      "bytes": 2956
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/release/ne-otv/parameters8.npz",
+      "sha256": "7e0e610178c178ecec70ba4c70fb9c21141bd4924002cf5b7d4f1cc3d6287f3a",
+      "bytes": 3204
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/release/xtuj-ntt/metrics.json",
+      "sha256": "35be6227133c6d39060cfcac600db1fdfc432afcc264c328da99b86862afbbae",
+      "bytes": 1050
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/release/xtuj-ntt/parameters.npz",
+      "sha256": "4b7ba7c31373e3a5de0c1ae57624f07a06314171152f9df93f25eee3b7fd7541",
+      "bytes": 3316
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/release/xtuj-ntt/parameters8.npz",
+      "sha256": "7a13befc38e3cec506ad67dbcfbd41ed78a75db6c56681acfe45d27fda433295",
+      "bytes": 3604
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/run_multi.py",
+      "sha256": "3d25f01011765a73a43c778543545ae2d5c89f1aa907fd7f4180cf2bbd25c6a1",
+      "bytes": 12825
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/xtuj-ntt/format8/seed8.npz",
+      "sha256": "605ada905d18745a01167f26e0c91fd652cc55eeec50dbf04f25053a92ee95e5",
+      "bytes": 3604
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/xtuj-ntt/format8/train/optimized_parameters.npz",
+      "sha256": "7a13befc38e3cec506ad67dbcfbd41ed78a75db6c56681acfe45d27fda433295",
+      "bytes": 3604
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/xtuj-ntt/refine/optimized_parameters.npz",
+      "sha256": "4b7ba7c31373e3a5de0c1ae57624f07a06314171152f9df93f25eee3b7fd7541",
+      "bytes": 3316
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/xtuj-ntt/seed.npz",
+      "sha256": "2b9a0c5b378fb5668ec87de6a3efad05e6a61c93e3c08bbd8d988479de1e0585",
+      "bytes": 3316
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/xtuj-ntt/train/optimized_parameters.npz",
+      "sha256": "0eeaf20d7bb989086e31700af6af37bf4d538f43462f947aa0974631d4184fb8",
+      "bytes": 3316
+    }
+  ],
+  "omitted": [
+    {
+      "path": "inputs/ne-otv.mp3",
+      "bytes": 40261,
+      "sha256": "fb3b40dabe848fef449b04b03cf07fa41a64fa6a2f1d0661d281c969cbb456c6"
+    },
+    {
+      "path": "inputs/xtuj-ntt.mp3",
+      "bytes": 47158,
+      "sha256": "5377a40549377bc6e8b0f89a24faf412ed2b18e4e51a565888f651f7e9f89955"
+    },
+    {
+      "path": "release/ne-otv/AB.wav",
+      "bytes": 135648,
+      "sha256": "d9cba93eb4f0c1b6502082aa6b0b6cb1b8761f7e78e67e39e4e7b048a51b176f"
+    },
+    {
+      "path": "release/ne-otv/baseline.wav",
+      "bytes": 15916,
+      "sha256": "9c6ebba2ea9c37ff72b47918fbfdbeba41681d08ea9f4280f9bd47a1a7f78b1f"
+    },
+    {
+      "path": "release/ne-otv/firmware.bin",
+      "bytes": 808,
+      "sha256": "11da2ce622564b8de0a79a8bf61f0241503205bc250928384e04dda814723715"
+    },
+    {
+      "path": "release/ne-otv/firmware.hex",
+      "bytes": 2240,
+      "sha256": "3fc3b9aeb06d21012c8e0206aef930369c8180f9f963ea1bc5a023c4a76030e3"
+    },
+    {
+      "path": "release/ne-otv/firmware8.bin",
+      "bytes": 935,
+      "sha256": "7f424ab6eaa774a215acfc8ad96cc6409ca57366e29a65c794368c899275ee30"
+    },
+    {
+      "path": "release/ne-otv/firmware8.hex",
+      "bytes": 2590,
+      "sha256": "53f99b0ddf5e3cf398cd865d6d2fa91e53f6710b2d92ed11ba00f787b88f269f"
+    },
+    {
+      "path": "release/ne-otv/lpc2.wav",
+      "bytes": 16508,
+      "sha256": "0b1537fdc4a6f9c982c66513c99ef97336f40bbcc7311e35608171355934dea8"
+    },
+    {
+      "path": "release/ne-otv/optimized.wav",
+      "bytes": 15916,
+      "sha256": "62ef553e72fe4eb3779f9feadfdddaa90f0208332e8567dce08f79b1a519ded6"
+    },
+    {
+      "path": "release/ne-otv/optimized8.wav",
+      "bytes": 15916,
+      "sha256": "769390a5c4d1d9546ed5feda681d3b78e9a84ad1e1c1f878428c15a013c6549f"
+    },
+    {
+      "path": "release/ne-otv/source.wav",
+      "bytes": 15478,
+      "sha256": "8a96fe716c1fdd2a96e1571a6634f10ae3d6c721e8f2def371a5e3f6b1d6adf2"
+    },
+    {
+      "path": "release/ne-otv/voice.bin",
+      "bytes": 139,
+      "sha256": "73365295bf964a15ab132f9c4e05f091465d6beb4e26eb2b4efe064e560ef4f4"
+    },
+    {
+      "path": "release/ne-otv/voice8.bin",
+      "bytes": 166,
+      "sha256": "477165079cf6d22357efa76e4f1c7f6ce81b7bc0c50dcd0344b96d70dca37921"
+    },
+    {
+      "path": "release/vinni/baseline.wav",
+      "bytes": 44588,
+      "sha256": "e7c1b673ccb2e9a5145646558f09ca36dd975c7deb77680a78d3c2598ff82c11"
+    },
+    {
+      "path": "release/vinni/lpc2.wav",
+      "bytes": 44444,
+      "sha256": "ba3e5d706e357be64fde854517c6c1f557689a1ef5f1926a09ace8f7b9a09931"
+    },
+    {
+      "path": "release/vinni/optimized.wav",
+      "bytes": 44588,
+      "sha256": "ee18587c935a690c12334f2d8106d6e065153de3609f34f9a0043041dbc7c730"
+    },
+    {
+      "path": "release/vinni/source.wav",
+      "bytes": 44444,
+      "sha256": "aebc50db38dc287b1b1feb3cd0cf9ed04bef857525505d67f81c99c50e0e5ca9"
+    },
+    {
+      "path": "release/xtuj-ntt/AB.wav",
+      "bytes": 154848,
+      "sha256": "8463c73b83661d2124b1635c472b05aeb60570ad6aba672b181e668708b4f1cd"
+    },
+    {
+      "path": "release/xtuj-ntt/baseline.wav",
+      "bytes": 18476,
+      "sha256": "3f102aa1ae6bb5c8875f8f4f6e8d5c1236e1b944355abdafeaa98b5e5192e5ca"
+    },
+    {
+      "path": "release/xtuj-ntt/firmware.bin",
+      "bytes": 836,
+      "sha256": "23a0910c68c8a7adbcdd5df812fbfca327f6d8c398ed6c2ad26786bcf70abc32"
+    },
+    {
+      "path": "release/xtuj-ntt/firmware.hex",
+      "bytes": 2320,
+      "sha256": "35c7ee571f276f8107489095d012c146cbc05a08242111a48b0e0075d9e17c85"
+    },
+    {
+      "path": "release/xtuj-ntt/firmware8.bin",
+      "bytes": 969,
+      "sha256": "78dd5511fa33570d9b12f2fc1e881f8d93c57f3c71aaee8026633a13599155a6"
+    },
+    {
+      "path": "release/xtuj-ntt/firmware8.hex",
+      "bytes": 2682,
+      "sha256": "91dec22de0bd30649fa82c875dd554e32e85b0f15545e32d132d814d8e15b361"
+    },
+    {
+      "path": "release/xtuj-ntt/lpc2.wav",
+      "bytes": 19580,
+      "sha256": "0a7f0e55eb56bd4a1c4488685e7d5a5705906a6278c48095ac8f1ab5a05652c5"
+    },
+    {
+      "path": "release/xtuj-ntt/optimized.wav",
+      "bytes": 18476,
+      "sha256": "1619470bbaecd6ae49bf26d0b1bcf0694b61a8cf5effc75b975345d7f85dbbaa"
+    },
+    {
+      "path": "release/xtuj-ntt/optimized8.wav",
+      "bytes": 18476,
+      "sha256": "74698c6a996deed61fbbd4f087bfb194a1b5b64e71815af1c1c7ae5f59be7dd4"
+    },
+    {
+      "path": "release/xtuj-ntt/source.wav",
+      "bytes": 18358,
+      "sha256": "f395ed0e53bb7a1ef82f806d913e68ff9ec430cdc9f5e02118d1b67a7f39a7eb"
+    },
+    {
+      "path": "release/xtuj-ntt/voice.bin",
+      "bytes": 167,
+      "sha256": "fe26c37bd3d106bbfdc5bd22fd4c3a21a2786c9eacc2d51e9e6c44f9b1d23a2a"
+    },
+    {
+      "path": "release/xtuj-ntt/voice8.bin",
+      "bytes": 200,
+      "sha256": "2eb28bf268788eb2d408431ba2569713f2712aca3d0d43424114c3834933230e"
+    }
+  ]
+}

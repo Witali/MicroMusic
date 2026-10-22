@@ -1,0 +1,39 @@
+{
+  "pass": true,
+  "variants": {
+    "chego": {
+      "flash_bytes": 959,
+      "image_sha256": "0cb045d961f8a3710ccfe659d454d065a5fcdfc40a78eb432a990cbd93f03dc3",
+      "samples": 9216,
+      "sha256": "5f5bd15f17def3f67103ff008d38a00b161a0ad752f547f7816fef0615b4e87b",
+      "missed_overflows": 0
+    },
+    "otvechaesh": {
+      "flash_bytes": 885,
+      "image_sha256": "b9512173048fb57d9d9836d41260461f92fe30c248e1a72a53dbfb13c4be5e89",
+      "samples": 7936,
+      "sha256": "9ef1a8374cc8ed150d6efd2bcf80d33472399519041cb17e84d90d675324dac9",
+      "missed_overflows": 0
+    },
+    "vinni": {
+      "flash_bytes": 1024,
+      "image_sha256": "57f573aac01ae7ec54e0a3fc412d65446c566e66df23548bf77d0affc203a7be",
+      "samples": 22272,
+      "sha256": "cd951656212586119b61b6a61d90d0a9a05d14c76a908257e78c4acdf97e712c",
+      "missed_overflows": 0
+    },
+    "chego_stoi_max": {
+      "flash_bytes": 957,
+      "image_sha256": "ca02904b9e2869c8ff909f3e9ddb92a59aec97c8eafaeb259dd75bb5e63aa53c",
+      "samples": 9216,
+      "sha256": "d1e6360eb1a2efd32bcd8ef699d660d0feb46b4603ec66f4fd35a3ec8a8199d9",
+      "missed_overflows": 0
+    }
+  },
+  "total_samples": 48640,
+  "hardware_tested": false,
+  "source_commit": "8fc9f6e3fd81b2e8a64f6b16526379d802b1812e",
+  "date": "2026-10-22",
+  "verifier": "tools/verify-frozen-speech.py",
+  "verifier_sha256": "fbc6ec5e159403c5168fa4c70a710812adcbc58718f18add2e798b8093b06e13"
+}

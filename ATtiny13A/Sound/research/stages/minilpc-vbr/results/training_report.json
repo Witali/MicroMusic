@@ -1,0 +1,83 @@
+{
+  "chego": {
+    "baseline": {
+      "stoi": 0.6665841538030298,
+      "new_clicks": 0,
+      "clicks": 0,
+      "rms_changed": 0.0
+    },
+    "vbr": {
+      "stoi": 0.6705876480241877,
+      "new_clicks": 0,
+      "clicks": 0,
+      "rms_changed": 2.373148949707961,
+      "lambda": 0.0007,
+      "speech_bytes": 144,
+      "saved_bytes": 72,
+      "types": {
+        "0": 14,
+        "1": 14,
+        "2": 3,
+        "3": 5
+      }
+    },
+    "frames": 36,
+    "bytes_original": 216,
+    "bytes_vbr": 144,
+    "selection": "minimum size subject to STOI>=baseline-0.007, no additional large clicks"
+  },
+  "otvechaesh": {
+    "baseline": {
+      "stoi": 0.6215152008010432,
+      "new_clicks": 0,
+      "clicks": 0,
+      "rms_changed": 0.0
+    },
+    "vbr": {
+      "stoi": 0.6282984657994254,
+      "new_clicks": 0,
+      "clicks": 0,
+      "rms_changed": 4.599386902515623,
+      "lambda": 0.0007,
+      "speech_bytes": 116,
+      "saved_bytes": 70,
+      "types": {
+        "0": 9,
+        "1": 13,
+        "2": 6,
+        "3": 3
+      }
+    },
+    "frames": 31,
+    "bytes_original": 186,
+    "bytes_vbr": 116,
+    "selection": "minimum size subject to STOI>=baseline-0.007, no additional large clicks"
+  },
+  "vinni": {
+    "baseline": {
+      "stoi": 0.7437909795172661,
+      "new_clicks": 0,
+      "clicks": 0,
+      "rms_changed": 0.0
+    },
+    "vbr": {
+      "stoi": 0.7467384830843184,
+      "new_clicks": 0,
+      "clicks": 0,
+      "rms_changed": 2.92300471045743,
+      "lambda": 0.00014,
+      "speech_bytes": 324,
+      "saved_bytes": 198,
+      "types": {
+        "0": 27,
+        "1": 39,
+        "2": 16,
+        "3": 5
+      }
+    },
+    "frames": 87,
+    "bytes_original": 522,
+    "bytes_vbr": 324,
+    "selection": "minimum size subject to STOI>=baseline-0.007, no additional large clicks"
+  }
+}

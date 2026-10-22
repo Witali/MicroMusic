@@ -1,0 +1,214 @@
+{
+  "slug": "lpc2-lite",
+  "target": "ATtiny13A/Sound/codec",
+  "title": "Adapt LPC2 excitation and pitch to TinyLPC",
+  "origin": {
+    "archive": "MicroMusic_LPC2_Lite_Project.zip",
+    "sha256": "68b2b19d5c5bf2e06e2c84663f8a58d49edfee552dedeb0cfc7f9c9870c2e860"
+  },
+  "previous_commit": "e3872b030ee20452dc584a9a8bbda25cdd07103b",
+  "files": [
+    {
+      "path": "ATtiny13A/Sound/codec/MicroMusic_LPC2_Lite_Emulator.html",
+      "sha256": "34058733b399830029cbba62ec12a173c77fe76c6ad8a37f408eb447fc219514",
+      "bytes": 153744
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/README.md",
+      "sha256": "5091c382c31a9ac4b9019583a6d804ecfb6f958c2133818a09b76fc018f283f7",
+      "bytes": 8296
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/lpc2_improved_reference.lp2",
+      "sha256": "909c9fe9bd426e58791a4f6aabe600a11f1630c5d9f340d1a1a9eb8c60190293",
+      "bytes": 482
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/lpc2_modes.py",
+      "sha256": "2a7e6b8dfed958bd846cda9703fc54c8a390d68b265c0e444eb5e6e2047dc742",
+      "bytes": 1959
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/make_player.py",
+      "sha256": "96a99d83004526c5dfad00e614e36f7c5f8de02b89a12228f5ab4d1e2ba09b62",
+      "bytes": 12893
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/mixed_excitation/avr_emulator.js",
+      "sha256": "117ec65910ccd10d2876fecc85f0581a4e6d165e27a3d56cbb5d74630a254761",
+      "bytes": 8916
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/mixed_excitation/best_parameters.npz",
+      "sha256": "e3baeaf19723321a7c54ae11ebdb7e3d740aaafcee9f15f02e851ad28778f701",
+      "bytes": 6988
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/mixed_excitation/build_firmware.py",
+      "sha256": "8e2d0db215bbc1fd2228a3c59d6e9ff157486dcd5392354fd788df38885de9c3",
+      "bytes": 1461
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/mixed_excitation/mode_bits.npy",
+      "sha256": "f4894e61be884362b07ec9ead6d2b7d6034f991a095d87a72829e4ff6c6a29d9",
+      "bytes": 215
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/mixed_excitation/package_stream.py",
+      "sha256": "a39d7ab2b452b312268edbc81f6f420dcf6d81854f0c7accf7edd2f34672104f",
+      "bytes": 1301
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/mixed_excitation/tinylpc.S",
+      "sha256": "7f5fda3bb71d866b9abdbcb6436e2bdadf67ba3d1228f0f9c3d5c5a04a712003",
+      "bytes": 7782
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/mixed_excitation/verify.js",
+      "sha256": "4d5240ed43be73a9ce07ff0536ee351a19d85a871760221a27de5dfad8b9d370",
+      "bytes": 1155
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/mode_from_lpc2_1.npy",
+      "sha256": "f4894e61be884362b07ec9ead6d2b7d6034f991a095d87a72829e4ff6c6a29d9",
+      "bytes": 215
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/pitch_glide/avr_emulator.js",
+      "sha256": "117ec65910ccd10d2876fecc85f0581a4e6d165e27a3d56cbb5d74630a254761",
+      "bytes": 8916
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/pitch_glide/best_parameters.npz",
+      "sha256": "e3baeaf19723321a7c54ae11ebdb7e3d740aaafcee9f15f02e851ad28778f701",
+      "bytes": 6988
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/pitch_glide/build_firmware.py",
+      "sha256": "8e2d0db215bbc1fd2228a3c59d6e9ff157486dcd5392354fd788df38885de9c3",
+      "bytes": 1461
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/pitch_glide/mode_bits.npy",
+      "sha256": "837bc6a0b096eae034807108dcc1deaa2c9387cdeb0b0d11786af3503445f7d4",
+      "bytes": 215
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/pitch_glide/package_stream.py",
+      "sha256": "a39d7ab2b452b312268edbc81f6f420dcf6d81854f0c7accf7edd2f34672104f",
+      "bytes": 1301
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/pitch_glide/tinylpc.S",
+      "sha256": "568d26676e66c554bd64ab67b42d8f74b30ff06a0331b0e6346d794c27baa671",
+      "bytes": 7773
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/pitch_glide/verify.js",
+      "sha256": "4d5240ed43be73a9ce07ff0536ee351a19d85a871760221a27de5dfad8b9d370",
+      "bytes": 1155
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/prepare_audio.py",
+      "sha256": "b35ecde1424d777eb8ca3959db36aa34a3f911d90a115d47ffc36471dd828c76",
+      "bytes": 1002
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/test_player.py",
+      "sha256": "7daa6f69d22b2ebed9f5a2091b866cf07fafefe75755a5fe4583d6e8a84f4272",
+      "bytes": 1233
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/verified_metrics.json",
+      "sha256": "3dee0cfdecbd8dfbe1cee66362d1891ecad97927eff5e07db296b526ef834eb3",
+      "bytes": 598
+    }
+  ],
+  "omitted": [
+    {
+      "path": "MicroMusic_AB_LPC2_Lite.wav",
+      "bytes": 244976,
+      "sha256": "48ac48cbe499ebe240bb3e2ed7b67b935b0a9a4de6bf1707ebdcc519e7b38ce9"
+    },
+    {
+      "path": "lpc2_improved_reference.s16le",
+      "bytes": 47360,
+      "sha256": "fb74c2e3f85f7fefe3655d2dc042e57abf5775c33acc298b284e75251e919d90"
+    },
+    {
+      "path": "mixed_excitation/emu_pwm_u8.raw",
+      "bytes": 22272,
+      "sha256": "face514d9f232e1cf85e7032a2af47bc1463ee603a5893facb026e9566e858a3"
+    },
+    {
+      "path": "mixed_excitation/tinylpc.bin",
+      "bytes": 1020,
+      "sha256": "ff681ae4db9381b0e7dab2a6f28248314ec7b70ae8b51852202a319e4f7e9b34"
+    },
+    {
+      "path": "mixed_excitation/tinylpc.hex",
+      "bytes": 2820,
+      "sha256": "076a3d0dc9250c4768a8444a50f1238995272a877a925a9941c6b9c9d8484876"
+    },
+    {
+      "path": "mixed_excitation/tinylpc.o",
+      "bytes": 2508,
+      "sha256": "9c2234534268184eef5c997e5cc73e5b980a3af8c931949bd41d97f94e8bd349"
+    },
+    {
+      "path": "mixed_excitation/voice_tinylpc.bin",
+      "bytes": 343,
+      "sha256": "7653a0ba9eb5f17c3ad5c91f1816036852230fd0cd0e9348768376c768d29da6"
+    },
+    {
+      "path": "mixed_excitation_AVR.wav",
+      "bytes": 44588,
+      "sha256": "6ee5ad131a1771d22334c9406a6ef941b15afcada495ed126c58b035814210ec"
+    },
+    {
+      "path": "original_reference.wav",
+      "bytes": 44444,
+      "sha256": "158f1cf6daa3a2a94ec662c5c5c6c92347c11f38af9451fe649ec473a95bd491"
+    },
+    {
+      "path": "pitch_glide/emu_pwm_u8.raw",
+      "bytes": 22272,
+      "sha256": "05ce0db305f0e69312839bf25cf06dea802387fd9560b10ea1355b843bea2908"
+    },
+    {
+      "path": "pitch_glide/tinylpc.bin",
+      "bytes": 1012,
+      "sha256": "ef1b921963e9b2858db503cf41fafa05e022fcf35e8b26da4814c06586f38802"
+    },
+    {
+      "path": "pitch_glide/tinylpc.hex",
+      "bytes": 2804,
+      "sha256": "e9e559b0561aa535b599faa28bbbe44839c6e534599f77beb2928e9f3a9c8263"
+    },
+    {
+      "path": "pitch_glide/tinylpc.o",
+      "bytes": 2588,
+      "sha256": "67a15e0bda76ca97d4896fc7c692980d4e19d90e87d02fe9952d0b47f8f820ec"
+    },
+    {
+      "path": "pitch_glide/voice_tinylpc.bin",
+      "bytes": 343,
+      "sha256": "ad716d19132498fee042d461c2d3ddaa773bc634e011576fdd9936b174d11691"
+    },
+    {
+      "path": "pitch_glide_AVR.wav",
+      "bytes": 44588,
+      "sha256": "9ac74aa48000d4efe249d8fbba6a95f8daede5e39bb302ac22e105530fa346fc"
+    },
+    {
+      "path": "v5_reference.hex",
+      "bytes": 2804,
+      "sha256": "4f08af88ffe11ae240dcd50611ef780c924cd1d071f3014a02ea77e9764b48b5"
+    },
+    {
+      "path": "v5_reference_u8.raw",
+      "bytes": 22272,
+      "sha256": "cdcb82e8e23f2de6384d75e7b63fc0b9b704942a0eb14153e3a5de7f2ae939e1"
+    }
+  ]
+}

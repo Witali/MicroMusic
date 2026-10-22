@@ -1,0 +1,58 @@
+{
+  "origin": {
+    "archive": "MicroMusic_HQ3_DecoderOpt_Source.zip",
+    "sha256": "0839d59359b371e0ac1a0ccdbba43bfbc3a092b52698e18d64eb67fb84b85b54"
+  },
+  "related_stage": "hq3-decoder-opt",
+  "related_commit": "befae1b9aff03500ffa34a1feebc20b54e6cdcac",
+  "status": "Archived research alternative; training not rerun during import",
+  "files": [
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq3-synthetic-demo/README.md",
+      "bytes": 734,
+      "sha256": "a072d665afa0900a7611761ea33d25b494bd85393d7df5be09be62a134e8ebe8"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq3-synthetic-demo/avr_emulator.js",
+      "bytes": 9806,
+      "sha256": "dae6393748cc70178a6a6924a2c73f79b6ed67b7517c688ec3657fa9a87a3ffe"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq3-synthetic-demo/build.py",
+      "bytes": 478,
+      "sha256": "2137754670e8704b7709bd40a9795e9dbf423b989cdfada1fe3b8771a914a952"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq3-synthetic-demo/firmware.S",
+      "bytes": 3636,
+      "sha256": "d9ad86b511f193f5c7f2f44c6556a5fdfeaf32b299798bed736f3299131e076c"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq3-synthetic-demo/speech.hq",
+      "bytes": 132,
+      "sha256": "64406a0c5475b15d430b6a56fce529afea2a6132120955559c4c631e28f70f8c"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq3-synthetic-demo/verify_synthetic.js",
+      "bytes": 295,
+      "sha256": "07184056dbff1c01907220b849d2ee4739e9ac679d3bce655e16ded568ae4973"
+    }
+  ],
+  "omitted": [
+    {
+      "path": "firmware.bin",
+      "bytes": 521,
+      "sha256": "56a87b0e39e829657ab778b548113102284f4b22a008f6b23de4f2cfd6f949fa"
+    },
+    {
+      "path": "firmware.hex",
+      "bytes": 1484,
+      "sha256": "870facfd59f7f68b69605a1f27422a5ac45ae70b45557f545359b9a813d94826"
+    },
+    {
+      "path": "firmware.o",
+      "bytes": 1880,
+      "sha256": "5b414bf7f8c3241764b94bacd21472b576fc6e0dee3a7ac5966a6f8e1f8b9280"
+    }
+  ]
+}

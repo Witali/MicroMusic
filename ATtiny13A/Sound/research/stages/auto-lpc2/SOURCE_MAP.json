@@ -1,0 +1,184 @@
+{
+  "slug": "auto-lpc2",
+  "target": "ATtiny13A/Sound/codec",
+  "title": "Automate LPC2 fitting and firmware generation",
+  "origin": {
+    "archive": "MicroMusic_AutoLPC2_private_full.zip",
+    "sha256": "3692bf7214efaf1e6b03fb39d66b99711edd123d0c27b7aa25c602d51df01801"
+  },
+  "previous_commit": "28373b9205572f76f5648b28140d040de16ccfed",
+  "files": [
+    {
+      "path": "ATtiny13A/Sound/codec/README.md",
+      "sha256": "5bae207e31edb4d1d33d76de3041dae0d2787b4cebdeaca0ed7481bce463381c",
+      "bytes": 6907
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/firmware/avr_emulator.js",
+      "sha256": "117ec65910ccd10d2876fecc85f0581a4e6d165e27a3d56cbb5d74630a254761",
+      "bytes": 8916
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/firmware/build_firmware.py",
+      "sha256": "8e2d0db215bbc1fd2228a3c59d6e9ff157486dcd5392354fd788df38885de9c3",
+      "bytes": 1461
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/firmware/package_stream.py",
+      "sha256": "a39d7ab2b452b312268edbc81f6f420dcf6d81854f0c7accf7edd2f34672104f",
+      "bytes": 1301
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/firmware/tinylpc.S",
+      "sha256": "568d26676e66c554bd64ab67b42d8f74b30ff06a0331b0e6346d794c27baa671",
+      "bytes": 7773
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/firmware/verify.js",
+      "sha256": "25be7f6933f2613466c8b45e11f12a9ccd4429ee19fa23d8ae94daab2a619cb9",
+      "bytes": 1197
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/generate_lpc2_teacher.py",
+      "sha256": "c48e718d97b932e0150c41222fbf6796c9fa1dbf28384367c881cb24563f7bc3",
+      "bytes": 2294
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/generate_seed.py",
+      "sha256": "f63089d36654567069dc988339e5a4df4bc39504ec06e3d5eb174ee3126aff05",
+      "bytes": 2607
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/lpc2_improved_encoder.html",
+      "sha256": "6213dfaeaef9869c2bd31d30f9f3caa100e10b99977637342ffbb7722b7efb7b",
+      "bytes": 104561
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/model_lite.py",
+      "sha256": "aaaa0366b4654211e41deaceb21c7c397e2fe8ad412d77f6d42f60c97f883c2d",
+      "bytes": 2343
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/optimize.py",
+      "sha256": "1df9222a448558c8ba33aa1a6c1e0cf6649b892d6661068f9acf69f97b25e9a5",
+      "bytes": 6841
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/package_project.py",
+      "sha256": "d936823d13abc4c9384531dabd16dae3fe0712c637c119a7a417b3cec76282d9",
+      "bytes": 2223
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/perceptual.py",
+      "sha256": "54a7a08e13386cc89b306ea4726d73f31fd2ee7a120b228a90e486b284043f09",
+      "bytes": 4010
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/prepare_source.py",
+      "sha256": "b1530f2cb6e6d465c2882b5e7918832857330a3dd1fd21c6bdcda4977fe447ef",
+      "bytes": 1979
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/references/base_parameters.npz",
+      "sha256": "e3baeaf19723321a7c54ae11ebdb7e3d740aaafcee9f15f02e851ad28778f701",
+      "bytes": 6988
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/requirements.txt",
+      "sha256": "480e81eccf80961527ad670ca11d614e4a9543d8b3002ee52fb3d3faeb4493c1",
+      "bytes": 80
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/results/release/index.html",
+      "sha256": "85b416a77aab4d2cbcb7d6c6c2dc5f86659ce0490fe45b7ba92c80aedfa8e1a1",
+      "bytes": 240521
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/results/release/optimized_parameters.npz",
+      "sha256": "a457dfaf0734feee64e82b8950efdc8ce42895b48496fbddb8bb533a639741af",
+      "bytes": 6988
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/results/release/report.json",
+      "sha256": "2baf4cf37e00c76b473bc16fb12edd62bed75b4189f6c14dc6bfea75c28baef9",
+      "bytes": 824
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/results/release/teacher.lp2",
+      "sha256": "e18fa215bfeb4337e630bdcf2266b5e7cb0f029de19a14d42dd678780d8191b0",
+      "bytes": 526
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/run_all.py",
+      "sha256": "0ab9327d6fd55c82a13dd251c50f399d51b2dfdc05b9107092dacb88d1481c38",
+      "bytes": 11363
+    }
+  ],
+  "omitted": [
+    {
+      "path": "references/lite_baseline_u8.raw",
+      "bytes": 22272,
+      "sha256": "05ce0db305f0e69312839bf25cf06dea802387fd9560b10ea1355b843bea2908"
+    },
+    {
+      "path": "references/lpc2_improved_reference.s16le",
+      "bytes": 47360,
+      "sha256": "fb74c2e3f85f7fefe3655d2dc042e57abf5775c33acc298b284e75251e919d90"
+    },
+    {
+      "path": "references/original_reference.wav",
+      "bytes": 44444,
+      "sha256": "158f1cf6daa3a2a94ec662c5c5c6c92347c11f38af9451fe649ec473a95bd491"
+    },
+    {
+      "path": "references/v5_baseline_u8.raw",
+      "bytes": 22272,
+      "sha256": "07c3f9511d72876c5de7f21c6c09d04f4834abd81b361270c7d760e8f64a1e13"
+    },
+    {
+      "path": "results/release/AB_comparison.wav",
+      "bytes": 293876,
+      "sha256": "2b0a55b11ee44896fb85a274aed24f15d4c7ae2785024035849d24764ab5f2a7"
+    },
+    {
+      "path": "results/release/baseline.wav",
+      "bytes": 44588,
+      "sha256": "e7c1b673ccb2e9a5145646558f09ca36dd975c7deb77680a78d3c2598ff82c11"
+    },
+    {
+      "path": "results/release/lpc2.wav",
+      "bytes": 44444,
+      "sha256": "ba3e5d706e357be64fde854517c6c1f557689a1ef5f1926a09ace8f7b9a09931"
+    },
+    {
+      "path": "results/release/optimized.bin",
+      "bytes": 1012,
+      "sha256": "2867cd55cd5380edcffaf0442183fea3bf192ecbe872c80215c8b42e1b20ba2c"
+    },
+    {
+      "path": "results/release/optimized.hex",
+      "bytes": 2804,
+      "sha256": "1f26c31828747680e3c7cfe3e399226c3571c93a4ec6d7251a38c26ae4b6341d"
+    },
+    {
+      "path": "results/release/optimized_avr.wav",
+      "bytes": 44588,
+      "sha256": "ee18587c935a690c12334f2d8106d6e065153de3609f34f9a0043041dbc7c730"
+    },
+    {
+      "path": "results/release/original.wav",
+      "bytes": 44444,
+      "sha256": "aebc50db38dc287b1b1feb3cd0cf9ed04bef857525505d67f81c99c50e0e5ca9"
+    },
+    {
+      "path": "results/release/teacher_8000.wav",
+      "bytes": 47404,
+      "sha256": "025ab1ee54bc6e1758001399d49a883177b4ca407b22430f982e5c69991a89d8"
+    },
+    {
+      "path": "results/release/voice.bin",
+      "bytes": 343,
+      "sha256": "4b416f843a6d5ef478fe28c206ba21d724261e2945bee3dc1ea0c64499d0fe36"
+    }
+  ]
+}

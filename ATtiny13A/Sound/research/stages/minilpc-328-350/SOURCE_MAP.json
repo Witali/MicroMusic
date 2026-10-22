@@ -1,0 +1,194 @@
+{
+  "slug": "minilpc-328-350",
+  "target": "ATtiny13A/Sound/codec",
+  "title": "Verify compact MiniLPC decoder alternatives",
+  "origin": {
+    "archive": "MicroMusic_MiniLPC_328_350_verified.zip",
+    "sha256": "e0cf8166b616893d752b6c0c23bf66ebf6d4fe0fa63c9b339ad1ab791d48c751"
+  },
+  "previous_commit": "6e862962dd93f79ed26fa867d3814ec741e4011e",
+  "files": [
+    {
+      "path": "ATtiny13A/Sound/codec/README.md",
+      "sha256": "2aaba896d38c68ed2410680581987a46483ecc17d07735e62e20543305098c4c",
+      "bytes": 3728
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/avr_emulator.js",
+      "sha256": "dae6393748cc70178a6a6924a2c73f79b6ed67b7517c688ec3657fa9a87a3ffe",
+      "bytes": 9806
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/examples/chego/full/firmware.S",
+      "sha256": "a3367cfa47754a5af74bb98263bbb98d52e03db2aac658ba39de104d020dbe4f",
+      "bytes": 3141
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/examples/chego/nano/firmware.S",
+      "sha256": "9c9cc1da0902cce9cd43c388fc532dff31c492ec5fc5fe92bca96df7ec40d65d",
+      "bytes": 2975
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/examples/otvechaesh/full/firmware.S",
+      "sha256": "a3367cfa47754a5af74bb98263bbb98d52e03db2aac658ba39de104d020dbe4f",
+      "bytes": 3141
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/examples/otvechaesh/nano/firmware.S",
+      "sha256": "9c9cc1da0902cce9cd43c388fc532dff31c492ec5fc5fe92bca96df7ec40d65d",
+      "bytes": 2975
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/examples/vinni/full/firmware.S",
+      "sha256": "a3367cfa47754a5af74bb98263bbb98d52e03db2aac658ba39de104d020dbe4f",
+      "bytes": 3141
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/examples/vinni/nano/firmware.S",
+      "sha256": "9c9cc1da0902cce9cd43c388fc532dff31c492ec5fc5fe92bca96df7ec40d65d",
+      "bytes": 2975
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/index.html",
+      "sha256": "01d9a08408f3cc92d1045648c86d9858c3ba16230e58f338d568bd8c0ed5cc95",
+      "bytes": 154195
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/rebuild.py",
+      "sha256": "f2d24f6c0e73b33763b4d271546c622cf185ea63d0adfd81b9426bd3b12bec6b",
+      "bytes": 849
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/verify.js",
+      "sha256": "02f1c364a44ae9fb8540c3107c9af413ccb4ebdc259249422b02394b9c03c802",
+      "bytes": 1281
+    }
+  ],
+  "omitted": [
+    {
+      "path": "examples/chego/full/avr_pcm.raw",
+      "bytes": 9216,
+      "sha256": "4581f965af5edd3ebbbc933d81010062f78fe974290d5e9f2c9333834cc8ddf8"
+    },
+    {
+      "path": "examples/chego/full/firmware.bin",
+      "bytes": 567,
+      "sha256": "189f1c755451f661abef5d32d96ca8b4af0c778be5b3205e0949cff259552c12"
+    },
+    {
+      "path": "examples/chego/full/firmware.hex",
+      "bytes": 1578,
+      "sha256": "73173a981b69dd3e776454bac64f96af22301aca7596060c30a6fb48808ee61c"
+    },
+    {
+      "path": "examples/chego/full/speech.bin",
+      "bytes": 216,
+      "sha256": "1681fa1337f040507d1926b0982070597d03d084f38a7a524f1d6fdcfc724ea5"
+    },
+    {
+      "path": "examples/chego/nano/avr_pcm.raw",
+      "bytes": 9216,
+      "sha256": "73dd5d926b835492e79ee79571f7b9d73155a6c7d0b19f200ebfa8313bfb7fdc"
+    },
+    {
+      "path": "examples/chego/nano/firmware.bin",
+      "bytes": 545,
+      "sha256": "8b43da1dde31a8b8c52283cbc70cc561f713d196d839b846dcee7cd24cb63c8e"
+    },
+    {
+      "path": "examples/chego/nano/firmware.hex",
+      "bytes": 1522,
+      "sha256": "757b562cf8b50a09a46fbc3df40ff36f8bf6a038eb6dfb7ef9c4c6d3a41b04be"
+    },
+    {
+      "path": "examples/chego/nano/speech.bin",
+      "bytes": 216,
+      "sha256": "1681fa1337f040507d1926b0982070597d03d084f38a7a524f1d6fdcfc724ea5"
+    },
+    {
+      "path": "examples/otvechaesh/full/avr_pcm.raw",
+      "bytes": 7936,
+      "sha256": "de01542b7af35db6c1ecc00d40960548b15290cac2040db26f1deaa2e873e2d5"
+    },
+    {
+      "path": "examples/otvechaesh/full/firmware.bin",
+      "bytes": 537,
+      "sha256": "770a9bf8f8e92f88f5dd7581d8d838f75b609d699268c9cf4a037fa9165529e6"
+    },
+    {
+      "path": "examples/otvechaesh/full/firmware.hex",
+      "bytes": 1494,
+      "sha256": "f714fa8b709224411587ae83edba9bff5b341204b811de82ff9b2fb7d5c28b0c"
+    },
+    {
+      "path": "examples/otvechaesh/full/speech.bin",
+      "bytes": 186,
+      "sha256": "bfeb29823b2b48a58d917fa17295cb771b3c09bcd94b7c4c01a75472c36be024"
+    },
+    {
+      "path": "examples/otvechaesh/nano/avr_pcm.raw",
+      "bytes": 7936,
+      "sha256": "164ec06d0217c90b5b0d69910cede6ac30c6fd88869367857736493b36397c84"
+    },
+    {
+      "path": "examples/otvechaesh/nano/firmware.bin",
+      "bytes": 515,
+      "sha256": "bf1d1de84a033fa6781f12fc3964b81f4a017e89d7ccaee3ff371f9fb03eb12c"
+    },
+    {
+      "path": "examples/otvechaesh/nano/firmware.hex",
+      "bytes": 1438,
+      "sha256": "d8ef2bbbf04309795ad9e164c89c25f46269080a968a8ca3384400e397033c90"
+    },
+    {
+      "path": "examples/otvechaesh/nano/speech.bin",
+      "bytes": 186,
+      "sha256": "bfeb29823b2b48a58d917fa17295cb771b3c09bcd94b7c4c01a75472c36be024"
+    },
+    {
+      "path": "examples/vinni/full/avr_pcm.raw",
+      "bytes": 22272,
+      "sha256": "a1755cd132fb5af3f8a5ef46dca29ddcc5511e46e53c9ef59a4c793092388571"
+    },
+    {
+      "path": "examples/vinni/full/firmware.bin",
+      "bytes": 873,
+      "sha256": "2562de1913031f09a08083d751ba1934088cf2a56330b328413b69d7670ff9be"
+    },
+    {
+      "path": "examples/vinni/full/firmware.hex",
+      "bytes": 2418,
+      "sha256": "703e53b2eb2a754f0c01c24c7dd676d91b6766c9d24ca937fa51d7f3556a85b8"
+    },
+    {
+      "path": "examples/vinni/full/speech.bin",
+      "bytes": 522,
+      "sha256": "02ea3edcf25ea3038a1739d2fac160f74f0d6ac2b6e084899e1a313bf9ecf08a"
+    },
+    {
+      "path": "examples/vinni/nano/avr_pcm.raw",
+      "bytes": 22272,
+      "sha256": "84e496d747de34ac11f158a1fb1a566a90728c947d4f99ec65feb794b27c1145"
+    },
+    {
+      "path": "examples/vinni/nano/firmware.bin",
+      "bytes": 851,
+      "sha256": "6384f43bc69ccec43cab30fa295dae4615b8f4a49c444d38d7100b4411ea0eab"
+    },
+    {
+      "path": "examples/vinni/nano/firmware.hex",
+      "bytes": 2362,
+      "sha256": "7fc517e1d6c29355c9ff748068c4c4a317cba451d9aff64dc598981ec08ab018"
+    },
+    {
+      "path": "examples/vinni/nano/speech.bin",
+      "bytes": 522,
+      "sha256": "02ea3edcf25ea3038a1739d2fac160f74f0d6ac2b6e084899e1a313bf9ecf08a"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 2187,
+      "sha256": "ff230432f3091e55f3e2674f67a9d1c745bead960239c60ddf419e12e51fa0a6"
+    }
+  ]
+}

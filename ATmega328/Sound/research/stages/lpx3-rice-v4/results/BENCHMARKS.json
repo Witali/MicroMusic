@@ -1,0 +1,62 @@
+{
+  "name": "MicroMusic L3AV Rice v4 Fast",
+  "cpu_target": "ATmega328P 16MHz, 8kHz audio",
+  "real_16MHz_cycle_measured": false,
+  "full_avr_link_test": false,
+  "avr_object_cross_compile": true,
+  "byte_identical_pcm": true,
+  "tested_324_streams": true,
+  "malformed_streams_rejected": 4,
+  "method_next_avr_object_same_sha256_as_v3": "4fedd80dd8234c956ff427bc09f96092db714e3ec7c2c14a9a926472961b7462",
+  "avr_text_object_bytes": {
+    "v3": 8056,
+    "v4": 8604
+  },
+  "avr_core_sram_bytes": {
+    "v3": 277,
+    "v4": 278
+  },
+  "audio_ring_buffer_bytes": 512,
+  "avr_progmem_data_bytes": 1042,
+  "samples": {
+    "xtuj-ntt": {
+      "v1_bytes": 5809,
+      "v3_bytes": 5274,
+      "v4_bytes": 5215,
+      "num_samples": 9768,
+      "pcm8_sha256": "926c7f3ef880d0b5f1ca8b91db582294b29b88559ae76b1d515a4eb4c1d3da92",
+      "saved_vs_v3_bytes": 59
+    },
+    "ne-otv": {
+      "v1_bytes": 4869,
+      "v3_bytes": 4477,
+      "v4_bytes": 4421,
+      "num_samples": 8232,
+      "pcm8_sha256": "676be17e55c6d81bc63266fa53a6e1ae50ad787411af1a9f9c997f3b6850fdd3",
+      "saved_vs_v3_bytes": 56
+    },
+    "vinni": {
+      "v1_bytes": 8671,
+      "v3_bytes": 8391,
+      "v4_bytes": 8289,
+      "num_samples": 23680,
+      "pcm8_sha256": "a7a17243e8abb9149f357e8b3ec2338b87c6c17a2a9961b19648412917ed4911",
+      "saved_vs_v3_bytes": 102
+    }
+  },
+  "read_bit_call_counts": {
+    "xtuj-ntt": {
+      "v3": 25588,
+      "v4": 25811
+    },
+    "ne-otv": {
+      "v3": 21397,
+      "v4": 21568
+    },
+    "vinni": {
+      "v3": 44802,
+      "v4": 44969
+    }
+  },
+  "important": "Object code grew about 548 bytes while saving only 59,56,102 payload bytes respectively: full firmware Flash may be less efficient for short recordings. 16MHz realtime and zero underruns not yet confirmed."
+}

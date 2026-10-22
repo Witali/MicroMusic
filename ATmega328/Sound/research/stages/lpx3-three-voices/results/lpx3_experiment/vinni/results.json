@@ -1,0 +1,58 @@
+{
+  "source": "voice_v3_3bit.lpx3",
+  "LPX3_bytes": 9712,
+  "AVR_frame_count": 87,
+  "pulse_vectors": 410,
+  "codebook_bytes": 16,
+  "EEPROM_image_bytes": 64,
+  "selector_bytes": 22,
+  "frame_selector_bits": 2,
+  "patterns_signed4bit": [
+    [
+      2,
+      0,
+      7,
+      2,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      -1,
+      -1,
+      7,
+      -2,
+      -2,
+      1,
+      -1,
+      1
+    ],
+    [
+      -2,
+      -1,
+      7,
+      0,
+      -2,
+      -2,
+      4,
+      3
+    ],
+    [
+      -2,
+      -2,
+      7,
+      -1,
+      2,
+      -2,
+      0,
+      0
+    ]
+  ],
+  "heldout_shape_fit": {
+    "reference_mse": 2.108892,
+    "profile_mse": 1.286624,
+    "relative_change_percent": -38.99
+  },
+  "important_limit": "Shape-only fit on LPX3 excitation peaks, not STOI or output audio; no AVR implementation."
+}

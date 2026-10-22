@@ -1,0 +1,184 @@
+{
+  "slug": "pic-assembly",
+  "target": "PIC16F1503/Music",
+  "title": "Implement complete PIC16F1503 assembly synthesizer",
+  "origin": {
+    "archive": "MicroMusic_PIC16F1503_assembly_complete.zip",
+    "sha256": "0dbb0e616e5fbd9192043f2ad31a28bc254f3fa1f04319231d74e74d48885072"
+  },
+  "previous_commit": "3eade6b8b68d4e377a66196f5cba0edc4dcab102",
+  "files": [
+    {
+      "path": "PIC16F1503/Music/README.md",
+      "sha256": "0dea2e64f16da91e0cc21e51696ad5d7458dc459bc116fde8c557fc5aadbd042",
+      "bytes": 10256
+    },
+    {
+      "path": "PIC16F1503/Music/README_FIRST.txt",
+      "sha256": "3cfcda0aec9c7ceb8c3f21575bcc6d11eeb7f25d651f54622e3ff16e73d8c928",
+      "bytes": 912
+    },
+    {
+      "path": "PIC16F1503/Music/firmware/gain_tables.inc",
+      "sha256": "37a1f4501d6ef488a861a66913acaf1d43121a13d65bc234179aa5350254a078",
+      "bytes": 1724
+    },
+    {
+      "path": "PIC16F1503/Music/firmware/micromusic.asm",
+      "sha256": "27cf73ecfbb9673c7d953b36ba3c3c8384a16fb82f4373aa10c3a0bf828d9ffd",
+      "bytes": 13944
+    },
+    {
+      "path": "PIC16F1503/Music/firmware/music_tables.inc",
+      "sha256": "4e500c4fc2b1aee97c687aa612268eb02e4bc30fd66ecaa1b70dfcd7b5cf9ee3",
+      "bytes": 2039
+    },
+    {
+      "path": "PIC16F1503/Music/firmware/wave_tables.inc",
+      "sha256": "c490c471d300d9155e2824e19cbd200db34e82e553290d75fcd9679e0df9a18c",
+      "bytes": 1092
+    },
+    {
+      "path": "PIC16F1503/Music/reports/assembly.json",
+      "sha256": "73c4c1cd96cc546ccb25a1feaf7b9b31e11c5602f88785eb24070121fd3808ea",
+      "bytes": 1096
+    },
+    {
+      "path": "PIC16F1503/Music/reports/audit_full.log",
+      "sha256": "85ff9d75c89ed3774058c938e871c42991245c6273ef23b5fc667065c0c91400",
+      "bytes": 1449
+    },
+    {
+      "path": "PIC16F1503/Music/reports/emulator_smoke.json",
+      "sha256": "19fa44589bb7dcc8c41c1eef27166d2e790580e48b533d19fa203f95e66179b5",
+      "bytes": 704
+    },
+    {
+      "path": "PIC16F1503/Music/reports/full_score_audit.json",
+      "sha256": "0e994ba82327eb57b225c5ee2db025407b6a988373a3f9b5caff3d377de413bf",
+      "bytes": 1140
+    },
+    {
+      "path": "PIC16F1503/Music/reports/long_run.json",
+      "sha256": "f4cd0d98cd6f73e0f0618c30f3fe1513ae8ba1da40bd67a84670e27cdc03a109",
+      "bytes": 780
+    },
+    {
+      "path": "PIC16F1503/Music/reports/static_tests.json",
+      "sha256": "51986c582faf11cbb4572c867d9d3946fe715959cd570d591abe74cd329a2016",
+      "bytes": 261
+    },
+    {
+      "path": "PIC16F1503/Music/source/FluidR3-MIT.txt",
+      "sha256": "33087692c963b4e5e536f4fc4d625714e519d06d570057bb0b921923ac9141d5",
+      "bytes": 2118
+    },
+    {
+      "path": "PIC16F1503/Music/source/music-assets.json",
+      "sha256": "0e4975e069ad48d4462764bc8f4b6a0c1f0f20f246e74d844aa9c73063fe52f7",
+      "bytes": 4577
+    },
+    {
+      "path": "PIC16F1503/Music/tests/audit_full_score.mjs",
+      "sha256": "e7c20ac6017e21d1a625b3bc5eae51bc27b954dfd2b210e0d3630ef9d960c640",
+      "bytes": 1700
+    },
+    {
+      "path": "PIC16F1503/Music/tests/check_machine.mjs",
+      "sha256": "5f171d5e1eea59f52608df7b2b193d19b0405a0f2ba2b7294d7f58a184c5b892",
+      "bytes": 1226
+    },
+    {
+      "path": "PIC16F1503/Music/tests/test_firmware.py",
+      "sha256": "b940cc2257abfa4d4e1d7e409876d1b8076fc0f899002cfa0d342358af25d3ca",
+      "bytes": 2033
+    },
+    {
+      "path": "PIC16F1503/Music/tools/assemble_pic.py",
+      "sha256": "a6c369e22174add1611f657440e24577f6fe04648d49747a24d640a1278ba09e",
+      "bytes": 7067
+    },
+    {
+      "path": "PIC16F1503/Music/tools/build_firmware.py",
+      "sha256": "aa0918d2100845b212f4d03b666a500958a6440ae46928b47e1fe150c2b86541",
+      "bytes": 1806
+    },
+    {
+      "path": "PIC16F1503/Music/tools/build_player.py",
+      "sha256": "5da1232ea7e989ee17d852783547a4e3d36a38c80018a3965fd47f4ed935461b",
+      "bytes": 8732
+    },
+    {
+      "path": "PIC16F1503/Music/tools/generate_tables.py",
+      "sha256": "2f0766c914446519a2f52fca2c497ee3e7be76ebb5e7d66886dd3df55b81e0c7",
+      "bytes": 2525
+    },
+    {
+      "path": "PIC16F1503/Music/tools/package.py",
+      "sha256": "d05153819507537a4f8634855a32c7bebd6e3dc3ffffe709c3bc73c4360e8d1e",
+      "bytes": 947
+    },
+    {
+      "path": "PIC16F1503/Music/tools/render_machine.mjs",
+      "sha256": "ddc60442803a369f5afc2fbb5e8679fd671a3787466af28751abfb51ad325544",
+      "bytes": 3071
+    },
+    {
+      "path": "PIC16F1503/Music/web/pic16-core.mjs",
+      "sha256": "2a0fa65531823b10b939c5d72f8ae19339097567d84cb6822e94b1f2cec111c2",
+      "bytes": 11733
+    },
+    {
+      "path": "PIC16F1503/Music/web/player.html",
+      "sha256": "d192ec5ddcebc85b189eaf73688e90c927e91eb554b3d026a1c8e7d71978c1c7",
+      "bytes": 264258
+    }
+  ],
+  "omitted": [
+    {
+      "path": "MANIFEST_SHA256.txt",
+      "bytes": 2975,
+      "sha256": "3539239e42498c96a7e0b62f6c4952966e0fcd2e49ab7e1cee1822b85b98bd1d"
+    },
+    {
+      "path": "firmware/micromusic.bin",
+      "bytes": 4016,
+      "sha256": "00ff1896df26a55cece6cbc6c219dc8aeddf3f464841d6df4be0c1a5db1a8419"
+    },
+    {
+      "path": "firmware/micromusic.hex",
+      "bytes": 11056,
+      "sha256": "f334f78c8c8749e880c601bd27e76fabc5a83e8f46c11b8488e5836a7ff67dee"
+    },
+    {
+      "path": "firmware/micromusic.lst",
+      "bytes": 93885,
+      "sha256": "9c2748779e5a24e7c4f84fa07e1f6ebdb8ee77500456c70e69116fd746f08307"
+    },
+    {
+      "path": "firmware/micromusic_config.hex",
+      "bytes": 48,
+      "sha256": "d6995f501403cb245efd672d6d9a15202c318fa36ad164133ea1f2db4e646f53"
+    },
+    {
+      "path": "firmware/micromusic_with_config.hex",
+      "bytes": 11092,
+      "sha256": "7787e6dae4f115a36cf4f4a9054ed02c74411106efb02ba861195755854ae578"
+    },
+    {
+      "path": "reference/preview_pic16_asm.pcm8",
+      "bytes": 175000,
+      "sha256": "3c2b424af986cf4f779ae680c056ece7febf2b58d3cc599393f906d1c6a59065"
+    },
+    {
+      "path": "reference/preview_pic16_asm.wav",
+      "bytes": 350044,
+      "sha256": "c8f17c48bb9ae5627d080b99394a30aa369a90b53d3369705d32d454073f5f6e"
+    },
+    {
+      "path": "reports/pic_player.png",
+      "bytes": 152921,
+      "sha256": "24b08b12974ccbc613688319075b86cc38ad0902af4b0991c561a79eb36b5add"
+    }
+  ]
+}

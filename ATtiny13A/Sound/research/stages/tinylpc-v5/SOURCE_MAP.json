@@ -1,0 +1,229 @@
+{
+  "slug": "tinylpc-v5",
+  "target": "ATtiny13A/Sound/codec",
+  "title": "Soften TinyLPC excitation and compare harmonics",
+  "origin": {
+    "archive": "MicroMusic_ATtiny13_TinyLPC_v5_Harmonics_project.zip",
+    "sha256": "ef14f4b8a93cc8953534be8535ea2ed2550382e6b847384d53eb476462e24265"
+  },
+  "previous_commit": "388dac55ec95b91865dbf799e56a80e2743f5517",
+  "files": [
+    {
+      "path": "ATtiny13A/Sound/codec/README.md",
+      "sha256": "ddcdde2637311359ff3cb2b165f00c86f4b4d8523cf8e26ebbcb36228d9e56f1",
+      "bytes": 8597
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/best_parameters.npz",
+      "sha256": "3c346eccbbfe398738243979499488984a9b3caf20411633648af9f50e10d099",
+      "bytes": 8250
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/codebook-results.txt",
+      "sha256": "64e2a1100c86288f270de91c628260b3acf124c9d24ad1569fc9940021a75660",
+      "bytes": 1348
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/codec_pattern_experiment.py",
+      "sha256": "7ce6e7fb1580b558b33ba684f9be3512cb0a2f8a38b3d01331478abb4ddd80fd",
+      "bytes": 1722
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/compact_excitation_ep0.npz",
+      "sha256": "e3baeaf19723321a7c54ae11ebdb7e3d740aaafcee9f15f02e851ad28778f701",
+      "bytes": 6988
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/create_harmonic_report.py",
+      "sha256": "5399be28323f44aa3235775b079107afb87bd6efca499590ef1a56c627887a74",
+      "bytes": 2697
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/create_page_harmonics.py",
+      "sha256": "2105b880a6af3b220be292449c0b27a39320d7e6174bfaf3d07628e4096f5fd6",
+      "bytes": 11026
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/firmware_broadband/avr_emulator.js",
+      "sha256": "117ec65910ccd10d2876fecc85f0581a4e6d165e27a3d56cbb5d74630a254761",
+      "bytes": 8916
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/firmware_broadband/best_parameters.npz",
+      "sha256": "e3baeaf19723321a7c54ae11ebdb7e3d740aaafcee9f15f02e851ad28778f701",
+      "bytes": 6988
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/firmware_broadband/build_firmware.py",
+      "sha256": "8e2d0db215bbc1fd2228a3c59d6e9ff157486dcd5392354fd788df38885de9c3",
+      "bytes": 1461
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/firmware_broadband/package_stream.py",
+      "sha256": "3027051d1bf1e4d6a7c402d4069d1ddd12e729204ab5f0ceebd23e36b0a661dd",
+      "bytes": 719
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/firmware_broadband/tinylpc.S",
+      "sha256": "7680f7c31da0213027fb95ef2d7dbc856eaca25315027c955ddf3350590ea949",
+      "bytes": 6812
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/firmware_broadband/verify.js",
+      "sha256": "169192403a924fc29106eea4b8a307f7c2f324785004dec3fcd0d5c2062c8880",
+      "bytes": 1185
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/harmonic_bank_experiments.py",
+      "sha256": "98da44b215e9a4c3369fac5b9ae2c85fefb616646e13a827fa7f6f78bc8914b8",
+      "bytes": 5606
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/harmonic_experiment.log",
+      "sha256": "4e12f317b8ca47632a46494565716b054837ed548345258c6e73c86ad3956162",
+      "bytes": 2635
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/harmonic_profiles.log",
+      "sha256": "0b2eef46d762baccc71abf14417bdee19716f6de9d0797a36a0323bd0f3d0935",
+      "bytes": 791
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/harmonic_profiles.py",
+      "sha256": "b2e150849542c161dd020788c5b4c8d48cff547e6d6842266e1e2c9c2e54c84d",
+      "bytes": 3244
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/harmonic_profiles_2bit.npz",
+      "sha256": "b8cf561122c72fd817ab4395f53f90601e6433c9b7e32a9fab208725f7611897",
+      "bytes": 2083530
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/index.html",
+      "sha256": "d868110efe3a571e308e160fa21e79bb8d19c36e1e446131686122ec5b1167ca",
+      "bytes": 1384657
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/metrics_harmonic_v5.json",
+      "sha256": "1ec8580540327fb43577d11d188c49be0e4c35415155da50cae2ab255c0a21d3",
+      "bytes": 594
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/model_exact.py",
+      "sha256": "ea5f6e5376f150de34b96a578efc962f6b189cfa7c21df9e1d179fe1d9728f6b",
+      "bytes": 1666
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/optimize_compact_excitation.py",
+      "sha256": "f2e1e9044c5a45152694ea8291b05a7edbbbdec8cdee206aff8d52dcb5f502ec",
+      "bytes": 2257
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/optimize_v3.py",
+      "sha256": "5611c20d614c963b285ccf51b40972de0761a76cecba98efaf322e9769895119",
+      "bytes": 4252
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/spectral_objective.py",
+      "sha256": "1fb117abe9841ae3440d40377f4799cc0d5a113e74846167673811b623d8fea8",
+      "bytes": 2675
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/test_page_v5.py",
+      "sha256": "a1cd656b5a7e8dfad615557d1bf92add2a07682414cb9f2b8e12c118ae56a5ee",
+      "bytes": 970
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/test_variants.py",
+      "sha256": "976117fdd525b3cc60af927d0be271de9455609bf19c89a965bbf9cc688d065c",
+      "bytes": 2481
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/tune.py",
+      "sha256": "1b4704a8bd6ec4ce35718055e26627a9b5c3e7edde4fe9c89285cbc380644b23",
+      "bytes": 1899
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/v4_baseline/tinylpc.S",
+      "sha256": "ed3865fa5ef114b83f8902492e31f1707aa93e44df4dffec1c4df5004116a484",
+      "bytes": 6853
+    }
+  ],
+  "omitted": [
+    {
+      "path": "TinyLPC_harmonic_profiles.wav",
+      "bytes": 44588,
+      "sha256": "aa4ecd965039e255178d8c8cba5e8fd85c0f5a29b0802e972a3fb30aec3089b5"
+    },
+    {
+      "path": "TinyLPC_v5_AB_original_v4_v5_harmonics.wav",
+      "bytes": 289808,
+      "sha256": "0a2e1b0f2cdd13d354f1cf05e71dd70d5be0feff24ee19215a26a782f0a15855"
+    },
+    {
+      "path": "TinyLPC_v5_AVR.wav",
+      "bytes": 44588,
+      "sha256": "166d55fc1d2a6f06883c59665bc79f09700d9bb02478e1f9273b8fbb8d17c331"
+    },
+    {
+      "path": "firmware_broadband/tinylpc.bin",
+      "bytes": 1012,
+      "sha256": "10737817134085a4ce91322ff7a5ed2f98957bc3dee7c9bf98e4d0a22bacb580"
+    },
+    {
+      "path": "firmware_broadband/tinylpc.hex",
+      "bytes": 2804,
+      "sha256": "4f08af88ffe11ae240dcd50611ef780c924cd1d071f3014a02ea77e9764b48b5"
+    },
+    {
+      "path": "firmware_broadband/voice_tinylpc.bin",
+      "bytes": 435,
+      "sha256": "4d1e75438d4a3f2cf8629eea54622ce0d18e2c774daf6b06d968d73c64c00cdf"
+    },
+    {
+      "path": "harmonics_12_test.wav",
+      "bytes": 44588,
+      "sha256": "71d2522a72fb0aac0f9e66967da0fa4866f571f370abcbc37e749a0b26035582"
+    },
+    {
+      "path": "harmonics_4_test.wav",
+      "bytes": 44588,
+      "sha256": "88805304ff8972bb6365c0127303a00db139d4145ddb60d267f24b4c9687a177"
+    },
+    {
+      "path": "harmonics_8_test.wav",
+      "bytes": 44588,
+      "sha256": "efc8fafe6d097f9c907facf239ca1882f4d9e5722118fe8eea5e2581af678124"
+    },
+    {
+      "path": "source_original.mp3",
+      "bytes": 110101,
+      "sha256": "e0061b8416ea19fef7103bd0f2d4bc7cce2a51523ec935e544f9d5b471b0db44"
+    },
+    {
+      "path": "source_original_7500.wav",
+      "bytes": 50898,
+      "sha256": "d3384bef352668aa12dc34cfd46fdf1e8102ff244f4f5d6cd348af37c51fc0d5"
+    },
+    {
+      "path": "spectrogram_v5.png",
+      "bytes": 652829,
+      "sha256": "3d335c7ab78788da423997afbfab2b5b5977037f091eaf41c12518b111269cb3"
+    },
+    {
+      "path": "speech_trimmed_7500.wav",
+      "bytes": 44444,
+      "sha256": "158f1cf6daa3a2a94ec662c5c5c6c92347c11f38af9451fe649ec473a95bd491"
+    },
+    {
+      "path": "v4_baseline/emu_pwm_u8.raw",
+      "bytes": 22272,
+      "sha256": "07c3f9511d72876c5de7f21c6c09d04f4834abd81b361270c7d760e8f64a1e13"
+    },
+    {
+      "path": "v4_baseline/tinylpc.hex",
+      "bytes": 2804,
+      "sha256": "62c76ff0ca0b2591a481b28aa42fef3d9c596c9dc31cb1b73ffd68bfebf9eba8"
+    }
+  ]
+}

@@ -1,0 +1,309 @@
+{
+  "slug": "three-phrases",
+  "target": "ATtiny13A/Sound/codec",
+  "title": "Train TinyLPC on three speech phrases",
+  "origin": {
+    "archive": "MicroMusic_ATtiny13_Voice_v2_private.zip",
+    "sha256": "f9fa5804880b4a83fa4cd51a3e066b76abeeb1dddc7ada9eb53cdc1256b4b11e"
+  },
+  "previous_commit": "26e5e0d933acf63fb7c75bbed44fb154b9a1cdec",
+  "files": [
+    {
+      "path": "ATtiny13A/Sound/codec/README.md",
+      "sha256": "2f99a82e546892038e2ad8dd68a5c676ae31ed5a04008eb288652d45f0b1f59a",
+      "bytes": 7911
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/index.html",
+      "sha256": "51d7276662739b9205f8c515958de1748aa033643f00ca2b6eab1cec7e8f0bd0",
+      "bytes": 398607
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/make_previews.py",
+      "sha256": "3f6542c43280e9ed1f156ea6fcd78b3ad905f42091ee1d194855f2edea3f9939",
+      "bytes": 725
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/make_test_page.py",
+      "sha256": "dd2da46588ad38f091b423c2f1d55ae5a0b4df28992b97941b332569aff0c916",
+      "bytes": 14094
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/ne-otv/firmware/avr_emulator.js",
+      "sha256": "117ec65910ccd10d2876fecc85f0581a4e6d165e27a3d56cbb5d74630a254761",
+      "bytes": 8916
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/ne-otv/firmware/best_parameters.npz",
+      "sha256": "cac2ba9c64dafea71cd7f246835b6d27945c1ee26274ca7c99c876c93b29607a",
+      "bytes": 3204
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/ne-otv/firmware/build_firmware.py",
+      "sha256": "8e2d0db215bbc1fd2228a3c59d6e9ff157486dcd5392354fd788df38885de9c3",
+      "bytes": 1461
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/ne-otv/firmware/package_stream.py",
+      "sha256": "e1106c189427ca21dd190242f938be407e3731a9df32e9f50876a9004824ff71",
+      "bytes": 1392
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/ne-otv/firmware/tinylpc.S",
+      "sha256": "4e4a0886e44393b695ded67fdaa9ec92de760ed7e41e9491bfbeb80bb7e7737c",
+      "bytes": 8081
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/ne-otv/firmware/verify.js",
+      "sha256": "25be7f6933f2613466c8b45e11f12a9ccd4429ee19fa23d8ae94daab2a619cb9",
+      "bytes": 1197
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/ne-otv/pitch_report.json",
+      "sha256": "76c570d5a3b7c53129f977dcd3afb0c5d74ef5c183d61faba04bcca06dafe19f",
+      "bytes": 1606
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/ne-otv/report.json",
+      "sha256": "5bf4c6b6d935470fbdc22f5d20f1d658bc1343fd1e0143a1e1cd061234199cfb",
+      "bytes": 1824
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/rebuild_all.py",
+      "sha256": "366c30091a800f909e4b5773f1a664c6e8bafd4ecd00ec49809afdb396de8ade",
+      "bytes": 1042
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/report.json",
+      "sha256": "a2082762b0f89512838b5f55386e6329ad5465b83ed5873ef37b1260a0f7e504",
+      "bytes": 4208
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/test_browser.py",
+      "sha256": "754b94a85333f15c1e3c1ef8aaaa40ace66d96d6964aad0765f78f590978e12e",
+      "bytes": 1662
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/tools/avr_emulator.js",
+      "sha256": "117ec65910ccd10d2876fecc85f0581a4e6d165e27a3d56cbb5d74630a254761",
+      "bytes": 8916
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/tools/model8.py",
+      "sha256": "831c3b4af699491f4d230e4c892edf32f0132e4e7f226267ccec11c48c1aec71",
+      "bytes": 2343
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/tools/optimize8.py",
+      "sha256": "e4632e3172a3736cb025eacbb72c5b7c74074de33e6318259c3f4664f78fd718",
+      "bytes": 6607
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/tools/perceptual.py",
+      "sha256": "54a7a08e13386cc89b306ea4726d73f31fd2ee7a120b228a90e486b284043f09",
+      "bytes": 4010
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/train_and_select.py",
+      "sha256": "9eeb89c1235d13bf7fe303a0f9c447dd5f990e8be8831ffe06009f83bc4d34b9",
+      "bytes": 3238
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/vinni/firmware/avr_emulator.js",
+      "sha256": "117ec65910ccd10d2876fecc85f0581a4e6d165e27a3d56cbb5d74630a254761",
+      "bytes": 8916
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/vinni/firmware/best_parameters.npz",
+      "sha256": "a457dfaf0734feee64e82b8950efdc8ce42895b48496fbddb8bb533a639741af",
+      "bytes": 6988
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/vinni/firmware/build_firmware.py",
+      "sha256": "8e2d0db215bbc1fd2228a3c59d6e9ff157486dcd5392354fd788df38885de9c3",
+      "bytes": 1461
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/vinni/firmware/package_stream.py",
+      "sha256": "a39d7ab2b452b312268edbc81f6f420dcf6d81854f0c7accf7edd2f34672104f",
+      "bytes": 1301
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/vinni/firmware/tinylpc.S",
+      "sha256": "568d26676e66c554bd64ab67b42d8f74b30ff06a0331b0e6346d794c27baa671",
+      "bytes": 7773
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/vinni/firmware/verify.js",
+      "sha256": "25be7f6933f2613466c8b45e11f12a9ccd4429ee19fa23d8ae94daab2a619cb9",
+      "bytes": 1197
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/vinni/report.json",
+      "sha256": "0276fdd873459d2518354dbf07f36456f706b4e39dc68369851745ac1dd88c87",
+      "bytes": 258
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/xtuj-ntt/firmware/avr_emulator.js",
+      "sha256": "117ec65910ccd10d2876fecc85f0581a4e6d165e27a3d56cbb5d74630a254761",
+      "bytes": 8916
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/xtuj-ntt/firmware/best_parameters.npz",
+      "sha256": "cfafb8bebbebe94e9e40567633b7847c27b4971c37ae6ecd1871d4288aff9541",
+      "bytes": 3604
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/xtuj-ntt/firmware/build_firmware.py",
+      "sha256": "8e2d0db215bbc1fd2228a3c59d6e9ff157486dcd5392354fd788df38885de9c3",
+      "bytes": 1461
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/xtuj-ntt/firmware/package_stream.py",
+      "sha256": "e1106c189427ca21dd190242f938be407e3731a9df32e9f50876a9004824ff71",
+      "bytes": 1392
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/xtuj-ntt/firmware/tinylpc.S",
+      "sha256": "4e4a0886e44393b695ded67fdaa9ec92de760ed7e41e9491bfbeb80bb7e7737c",
+      "bytes": 8081
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/xtuj-ntt/firmware/verify.js",
+      "sha256": "25be7f6933f2613466c8b45e11f12a9ccd4429ee19fa23d8ae94daab2a619cb9",
+      "bytes": 1197
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/xtuj-ntt/pitch_report.json",
+      "sha256": "8ffcc05305bc06334cdb2153d56d0dab1587d71efd2ad1d85bec24876ccd50e2",
+      "bytes": 1746
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/xtuj-ntt/report.json",
+      "sha256": "2f7c28228b7dcb811dad18a3799690339b591c7817cd4995c007294b5464bbd6",
+      "bytes": 1812
+    }
+  ],
+  "omitted": [
+    {
+      "path": "ne-otv/AB_compare.wav",
+      "bytes": 73470,
+      "sha256": "e4e38a75a5255f695d3daa942bece573a1857678a34a51e161bef34891c24d60"
+    },
+    {
+      "path": "ne-otv/attiny13.wav",
+      "bytes": 15916,
+      "sha256": "47703db23ed118fb4585bda0bcd12b3637c356fdab8888911cfe436ac938c4bd"
+    },
+    {
+      "path": "ne-otv/firmware/emu_pwm_u8.raw",
+      "bytes": 7936,
+      "sha256": "cb82e2173cb2e2d3d6b95b291ff4fca9cf6c4734495bbe9014268c8758cf71cf"
+    },
+    {
+      "path": "ne-otv/firmware/tinylpc.bin",
+      "bytes": 935,
+      "sha256": "f4a7ce1a0dc86effe48a2a2b3dc26b9324b14376fcde00e88dcca31b29e9576e"
+    },
+    {
+      "path": "ne-otv/firmware/tinylpc.hex",
+      "bytes": 2590,
+      "sha256": "a45a687c04e46012ba17543ac8e337aef85abd457ca7a79bb31d6883d95fcb75"
+    },
+    {
+      "path": "ne-otv/firmware/voice_tinylpc.bin",
+      "bytes": 166,
+      "sha256": "2888d4da9b0504ac2ae60ce2a887015c3aa62092d344182c92c61610303e0c7e"
+    },
+    {
+      "path": "ne-otv/lpc2_voice_v2.wav",
+      "bytes": 16508,
+      "sha256": "b19441eb03685671654ebc83a7a6e4a8f1d909d20b7f4fb0cf5a26bf8c66ca15"
+    },
+    {
+      "path": "ne-otv/original.wav",
+      "bytes": 15478,
+      "sha256": "8a96fe716c1fdd2a96e1571a6634f10ae3d6c721e8f2def371a5e3f6b1d6adf2"
+    },
+    {
+      "path": "vinni/AB_compare.wav",
+      "bytes": 189038,
+      "sha256": "bcfe6e995b459fb5148d7928b34169b2008303bd0dec67aeb6e73ccc12f0a778"
+    },
+    {
+      "path": "vinni/attiny13.wav",
+      "bytes": 44588,
+      "sha256": "ee18587c935a690c12334f2d8106d6e065153de3609f34f9a0043041dbc7c730"
+    },
+    {
+      "path": "vinni/firmware/emu_pwm_u8.raw",
+      "bytes": 22272,
+      "sha256": "fd5e1f54cbf0ba248d27b1596af15f54dfb68873b818d3b913a1a43453cbcf6c"
+    },
+    {
+      "path": "vinni/firmware/tinylpc.bin",
+      "bytes": 1012,
+      "sha256": "2867cd55cd5380edcffaf0442183fea3bf192ecbe872c80215c8b42e1b20ba2c"
+    },
+    {
+      "path": "vinni/firmware/tinylpc.hex",
+      "bytes": 2804,
+      "sha256": "1f26c31828747680e3c7cfe3e399226c3571c93a4ec6d7251a38c26ae4b6341d"
+    },
+    {
+      "path": "vinni/firmware/voice_tinylpc.bin",
+      "bytes": 343,
+      "sha256": "4b416f843a6d5ef478fe28c206ba21d724261e2945bee3dc1ea0c64499d0fe36"
+    },
+    {
+      "path": "vinni/lpc2_voice_v2.wav",
+      "bytes": 44444,
+      "sha256": "ba3e5d706e357be64fde854517c6c1f557689a1ef5f1926a09ace8f7b9a09931"
+    },
+    {
+      "path": "vinni/original.wav",
+      "bytes": 44444,
+      "sha256": "aebc50db38dc287b1b1feb3cd0cf9ed04bef857525505d67f81c99c50e0e5ca9"
+    },
+    {
+      "path": "xtuj-ntt/AB_compare.wav",
+      "bytes": 84670,
+      "sha256": "0c83c907d802bc6934f8e56ff31d760e0be34cd24eb6acf1758916bf549c06fc"
+    },
+    {
+      "path": "xtuj-ntt/attiny13.wav",
+      "bytes": 18476,
+      "sha256": "5ac6d8a63d96e37666be846f39e16ecded6ae25a625ce5075848296b087bf6ea"
+    },
+    {
+      "path": "xtuj-ntt/firmware/emu_pwm_u8.raw",
+      "bytes": 9216,
+      "sha256": "da94ce3d8351e2a5a67fa8ae347890d466b06e742b438974cb4b608cf7712802"
+    },
+    {
+      "path": "xtuj-ntt/firmware/tinylpc.bin",
+      "bytes": 969,
+      "sha256": "12a694c9459b8c2f0bd2d379e4eeaa86910e26f086b2dc88e54295bfb3b9128c"
+    },
+    {
+      "path": "xtuj-ntt/firmware/tinylpc.hex",
+      "bytes": 2682,
+      "sha256": "de1f027f7327c92f3735c4e7254920b2ced0b34d93212e38f7a776385e8f30c0"
+    },
+    {
+      "path": "xtuj-ntt/firmware/voice_tinylpc.bin",
+      "bytes": 200,
+      "sha256": "84d8a758d92ad16096d22126425781ca47f58a7a29f8f3bea9e0e12fa5cac763"
+    },
+    {
+      "path": "xtuj-ntt/lpc2_voice_v2.wav",
+      "bytes": 19580,
+      "sha256": "89f64c7afe88bc166cdb62e92e327a1dface51880a82865a186e600a39d70f94"
+    },
+    {
+      "path": "xtuj-ntt/original.wav",
+      "bytes": 18358,
+      "sha256": "f395ed0e53bb7a1ef82f806d913e68ff9ec430cdc9f5e02118d1b67a7f39a7eb"
+    }
+  ]
+}

@@ -1,0 +1,730 @@
+TAP version 13
+# Subtest: gpsim reference PIR1: reserved bits read as zero
+ok 1 - gpsim reference PIR1: reserved bits read as zero
+  ---
+  duration_ms: 191.215633
+  type: 'test'
+  ...
+# Subtest: gpsim reference PIR2: reserved bits read as zero
+ok 2 - gpsim reference PIR2: reserved bits read as zero
+  ---
+  duration_ms: 23.822244
+  type: 'test'
+  ...
+# Subtest: gpsim reference PIE1: reserved bits read as zero
+ok 3 - gpsim reference PIE1: reserved bits read as zero
+  ---
+  duration_ms: 0.276245
+  type: 'test'
+  ...
+# Subtest: gpsim reference PIE2: reserved bits read as zero
+ok 4 - gpsim reference PIE2: reserved bits read as zero
+  ---
+  duration_ms: 3.876865
+  type: 'test'
+  ...
+# Subtest: gpsim reference TRISA: RA3 input-only regardless of writes
+ok 5 - gpsim reference TRISA: RA3 input-only regardless of writes
+  ---
+  duration_ms: 8.152547
+  type: 'test'
+  ...
+# Subtest: gpsim reference INTCON: IOCIF not software-writeable
+ok 6 - gpsim reference INTCON: IOCIF not software-writeable
+  ---
+  duration_ms: 6.758235
+  type: 'test'
+  ...
+# Subtest: PIC16F1503 official OSCSTAT: 16MHz ready nominal bits only
+ok 7 - PIC16F1503 official OSCSTAT: 16MHz ready nominal bits only
+  ---
+  duration_ms: 11.538325
+  type: 'test'
+  ...
+# Subtest: PWM3 still enabled when TRISA2 clears while RA3 remains input
+ok 8 - PWM3 still enabled when TRISA2 clears while RA3 remains input
+  ---
+  duration_ms: 0.465214
+  type: 'test'
+  ...
+# Subtest: ISR sees only the implemented PIR1 flags
+ok 9 - ISR sees only the implemented PIR1 flags
+  ---
+  duration_ms: 0.630953
+  type: 'test'
+  ...
+# Subtest: real PIC opcodes honor PIR1 implemented-bit mask
+ok 10 - real PIC opcodes honor PIR1 implemented-bit mask
+  ---
+  duration_ms: 33.759286
+  type: 'test'
+  ...
+# Subtest: real PIC opcodes honor PIE1 implemented-bit mask
+ok 11 - real PIC opcodes honor PIE1 implemented-bit mask
+  ---
+  duration_ms: 13.764801
+  type: 'test'
+  ...
+# Subtest: real PIC opcodes honor TRISA implemented-bit mask
+ok 12 - real PIC opcodes honor TRISA implemented-bit mask
+  ---
+  duration_ms: 5.05276
+  type: 'test'
+  ...
+# Subtest: real PIC opcodes honor INTCON implemented-bit mask
+ok 13 - real PIC opcodes honor INTCON implemented-bit mask
+  ---
+  duration_ms: 8.919423
+  type: 'test'
+  ...
+# Subtest: PIC instruction NOP has 1 TCY
+ok 14 - PIC instruction NOP has 1 TCY
+  ---
+  duration_ms: 9.457629
+  type: 'test'
+  ...
+# Subtest: PIC instruction RESET has 1 TCY
+ok 15 - PIC instruction RESET has 1 TCY
+  ---
+  duration_ms: 9.405286
+  type: 'test'
+  ...
+# Subtest: PIC instruction RETURN has 2 TCY
+ok 16 - PIC instruction RETURN has 2 TCY
+  ---
+  duration_ms: 0.292502
+  type: 'test'
+  ...
+# Subtest: PIC instruction RETFIE has 2 TCY
+ok 17 - PIC instruction RETFIE has 2 TCY
+  ---
+  duration_ms: 0.245252
+  type: 'test'
+  ...
+# Subtest: PIC instruction CALLW has 2 TCY
+ok 18 - PIC instruction CALLW has 2 TCY
+  ---
+  duration_ms: 0.533028
+  type: 'test'
+  ...
+# Subtest: PIC instruction BRW has 2 TCY
+ok 19 - PIC instruction BRW has 2 TCY
+  ---
+  duration_ms: 0.138327
+  type: 'test'
+  ...
+# Subtest: PIC instruction MOVLB has 1 TCY
+ok 20 - PIC instruction MOVLB has 1 TCY
+  ---
+  duration_ms: 1.496624
+  type: 'test'
+  ...
+# Subtest: PIC instruction MOVLP has 1 TCY
+ok 21 - PIC instruction MOVLP has 1 TCY
+  ---
+  duration_ms: 0.309949
+  type: 'test'
+  ...
+# Subtest: PIC instruction CLRW has 1 TCY
+ok 22 - PIC instruction CLRW has 1 TCY
+  ---
+  duration_ms: 1.774351
+  type: 'test'
+  ...
+# Subtest: PIC instruction CLRF has 1 TCY
+ok 23 - PIC instruction CLRF has 1 TCY
+  ---
+  duration_ms: 1.404364
+  type: 'test'
+  ...
+# Subtest: PIC instruction MOVWF has 1 TCY
+ok 24 - PIC instruction MOVWF has 1 TCY
+  ---
+  duration_ms: 0.303073
+  type: 'test'
+  ...
+# Subtest: PIC instruction ADDWF has 1 TCY
+ok 25 - PIC instruction ADDWF has 1 TCY
+  ---
+  duration_ms: 0.775825
+  type: 'test'
+  ...
+# Subtest: PIC instruction ANDWF has 1 TCY
+ok 26 - PIC instruction ANDWF has 1 TCY
+  ---
+  duration_ms: 0.157436
+  type: 'test'
+  ...
+# Subtest: PIC instruction IORWF has 1 TCY
+ok 27 - PIC instruction IORWF has 1 TCY
+  ---
+  duration_ms: 0.333836
+  type: 'test'
+  ...
+# Subtest: PIC instruction XORWF has 1 TCY
+ok 28 - PIC instruction XORWF has 1 TCY
+  ---
+  duration_ms: 0.107559
+  type: 'test'
+  ...
+# Subtest: PIC instruction SUBWF has 1 TCY
+ok 29 - PIC instruction SUBWF has 1 TCY
+  ---
+  duration_ms: 0.217018
+  type: 'test'
+  ...
+# Subtest: PIC instruction DECF has 1 TCY
+ok 30 - PIC instruction DECF has 1 TCY
+  ---
+  duration_ms: 0.225235
+  type: 'test'
+  ...
+# Subtest: PIC instruction MOVF has 1 TCY
+ok 31 - PIC instruction MOVF has 1 TCY
+  ---
+  duration_ms: 0.109667
+  type: 'test'
+  ...
+# Subtest: PIC instruction COMF has 1 TCY
+ok 32 - PIC instruction COMF has 1 TCY
+  ---
+  duration_ms: 0.120969
+  type: 'test'
+  ...
+# Subtest: PIC instruction INCF has 1 TCY
+ok 33 - PIC instruction INCF has 1 TCY
+  ---
+  duration_ms: 0.382555
+  type: 'test'
+  ...
+# Subtest: PIC instruction DECFSZ/not-taken has 1 TCY
+ok 34 - PIC instruction DECFSZ/not-taken has 1 TCY
+  ---
+  duration_ms: 0.187484
+  type: 'test'
+  ...
+# Subtest: PIC instruction INCFSZ/not-taken has 1 TCY
+ok 35 - PIC instruction INCFSZ/not-taken has 1 TCY
+  ---
+  duration_ms: 0.207762
+  type: 'test'
+  ...
+# Subtest: PIC instruction SWAPF has 1 TCY
+ok 36 - PIC instruction SWAPF has 1 TCY
+  ---
+  duration_ms: 0.104155
+  type: 'test'
+  ...
+# Subtest: PIC instruction RRF has 1 TCY
+ok 37 - PIC instruction RRF has 1 TCY
+  ---
+  duration_ms: 0.184527
+  type: 'test'
+  ...
+# Subtest: PIC instruction RLF has 1 TCY
+ok 38 - PIC instruction RLF has 1 TCY
+  ---
+  duration_ms: 0.059493
+  type: 'test'
+  ...
+# Subtest: PIC instruction ADDWFC has 1 TCY
+ok 39 - PIC instruction ADDWFC has 1 TCY
+  ---
+  duration_ms: 0.087695
+  type: 'test'
+  ...
+# Subtest: PIC instruction SUBWFB has 1 TCY
+ok 40 - PIC instruction SUBWFB has 1 TCY
+  ---
+  duration_ms: 0.214796
+  type: 'test'
+  ...
+# Subtest: PIC instruction ASRF has 1 TCY
+ok 41 - PIC instruction ASRF has 1 TCY
+  ---
+  duration_ms: 0.220449
+  type: 'test'
+  ...
+# Subtest: PIC instruction LSLF has 1 TCY
+ok 42 - PIC instruction LSLF has 1 TCY
+  ---
+  duration_ms: 0.258639
+  type: 'test'
+  ...
+# Subtest: PIC instruction LSRF has 1 TCY
+ok 43 - PIC instruction LSRF has 1 TCY
+  ---
+  duration_ms: 0.080525
+  type: 'test'
+  ...
+# Subtest: PIC instruction BCF has 1 TCY
+ok 44 - PIC instruction BCF has 1 TCY
+  ---
+  duration_ms: 0.562991
+  type: 'test'
+  ...
+# Subtest: PIC instruction BSF has 1 TCY
+ok 45 - PIC instruction BSF has 1 TCY
+  ---
+  duration_ms: 0.533259
+  type: 'test'
+  ...
+# Subtest: PIC instruction BTFSS/not-taken has 1 TCY
+ok 46 - PIC instruction BTFSS/not-taken has 1 TCY
+  ---
+  duration_ms: 0.115553
+  type: 'test'
+  ...
+# Subtest: PIC instruction BTFSC/taken has 2 TCY
+ok 47 - PIC instruction BTFSC/taken has 2 TCY
+  ---
+  duration_ms: 0.626657
+  type: 'test'
+  ...
+# Subtest: PIC instruction CALL has 2 TCY
+ok 48 - PIC instruction CALL has 2 TCY
+  ---
+  duration_ms: 1.058132
+  type: 'test'
+  ...
+# Subtest: PIC instruction GOTO has 2 TCY
+ok 49 - PIC instruction GOTO has 2 TCY
+  ---
+  duration_ms: 8.448271
+  type: 'test'
+  ...
+# Subtest: PIC instruction BRA has 2 TCY
+ok 50 - PIC instruction BRA has 2 TCY
+  ---
+  duration_ms: 2.205652
+  type: 'test'
+  ...
+# Subtest: PIC instruction ADDFSR has 1 TCY
+ok 51 - PIC instruction ADDFSR has 1 TCY
+  ---
+  duration_ms: 5.202127
+  type: 'test'
+  ...
+# Subtest: PIC instruction MOVIW-post has 1 TCY
+ok 52 - PIC instruction MOVIW-post has 1 TCY
+  ---
+  duration_ms: 0.289633
+  type: 'test'
+  ...
+# Subtest: PIC instruction MOVWI-post has 1 TCY
+ok 53 - PIC instruction MOVWI-post has 1 TCY
+  ---
+  duration_ms: 0.129009
+  type: 'test'
+  ...
+# Subtest: PIC instruction MOVIW-index has 1 TCY
+ok 54 - PIC instruction MOVIW-index has 1 TCY
+  ---
+  duration_ms: 0.057451
+  type: 'test'
+  ...
+# Subtest: PIC instruction MOVWI-index has 1 TCY
+ok 55 - PIC instruction MOVWI-index has 1 TCY
+  ---
+  duration_ms: 0.096246
+  type: 'test'
+  ...
+# Subtest: PIC instruction ADDLW has 1 TCY
+ok 56 - PIC instruction ADDLW has 1 TCY
+  ---
+  duration_ms: 0.056397
+  type: 'test'
+  ...
+# Subtest: PIC instruction ANDLW has 1 TCY
+ok 57 - PIC instruction ANDLW has 1 TCY
+  ---
+  duration_ms: 4.972967
+  type: 'test'
+  ...
+# Subtest: PIC instruction IORLW has 1 TCY
+ok 58 - PIC instruction IORLW has 1 TCY
+  ---
+  duration_ms: 6.083145
+  type: 'test'
+  ...
+# Subtest: PIC instruction XORLW has 1 TCY
+ok 59 - PIC instruction XORLW has 1 TCY
+  ---
+  duration_ms: 0.106645
+  type: 'test'
+  ...
+# Subtest: PIC instruction SUBLW has 1 TCY
+ok 60 - PIC instruction SUBLW has 1 TCY
+  ---
+  duration_ms: 0.064937
+  type: 'test'
+  ...
+# Subtest: PIC instruction MOVLW has 1 TCY
+ok 61 - PIC instruction MOVLW has 1 TCY
+  ---
+  duration_ms: 0.049261
+  type: 'test'
+  ...
+# Subtest: PIC instruction RETLW has 2 TCY
+ok 62 - PIC instruction RETLW has 2 TCY
+  ---
+  duration_ms: 0.069513
+  type: 'test'
+  ...
+# Subtest: PIC instruction CLRWDT has 1 TCY
+ok 63 - PIC instruction CLRWDT has 1 TCY
+  ---
+  duration_ms: 0.045487
+  type: 'test'
+  ...
+# Subtest: PIC instruction OPTION has 1 TCY
+ok 64 - PIC instruction OPTION has 1 TCY
+  ---
+  duration_ms: 0.071667
+  type: 'test'
+  ...
+# Subtest: PIC instruction SLEEP has 1 TCY
+ok 65 - PIC instruction SLEEP has 1 TCY
+  ---
+  duration_ms: 0.177834
+  type: 'test'
+  ...
+# Subtest: PIC instruction TRISA has 1 TCY
+ok 66 - PIC instruction TRISA has 1 TCY
+  ---
+  duration_ms: 0.063446
+  type: 'test'
+  ...
+# Subtest: PIC instruction TRISC has 1 TCY
+ok 67 - PIC instruction TRISC has 1 TCY
+  ---
+  duration_ms: 0.070455
+  type: 'test'
+  ...
+# Subtest: PIC conditional DECFSZ/taken
+ok 68 - PIC conditional DECFSZ/taken
+  ---
+  duration_ms: 11.766042
+  type: 'test'
+  ...
+# Subtest: PIC conditional INCFSZ/taken
+ok 69 - PIC conditional INCFSZ/taken
+  ---
+  duration_ms: 0.127468
+  type: 'test'
+  ...
+# Subtest: PIC conditional BTFSS/taken
+ok 70 - PIC conditional BTFSS/taken
+  ---
+  duration_ms: 0.105404
+  type: 'test'
+  ...
+# Subtest: PIC conditional BTFSC/not-taken
+ok 71 - PIC conditional BTFSC/not-taken
+  ---
+  duration_ms: 0.094314
+  type: 'test'
+  ...
+# Subtest: MOVIW mode 0: address modification and W
+ok 72 - MOVIW mode 0: address modification and W
+  ---
+  duration_ms: 7.07271
+  type: 'test'
+  ...
+# Subtest: MOVWI mode 0: address modification and RAM write
+ok 73 - MOVWI mode 0: address modification and RAM write
+  ---
+  duration_ms: 0.979906
+  type: 'test'
+  ...
+# Subtest: MOVIW mode 1: address modification and W
+ok 74 - MOVIW mode 1: address modification and W
+  ---
+  duration_ms: 0.556572
+  type: 'test'
+  ...
+# Subtest: MOVWI mode 1: address modification and RAM write
+ok 75 - MOVWI mode 1: address modification and RAM write
+  ---
+  duration_ms: 20.18666
+  type: 'test'
+  ...
+# Subtest: MOVIW mode 2: address modification and W
+ok 76 - MOVIW mode 2: address modification and W
+  ---
+  duration_ms: 19.664031
+  type: 'test'
+  ...
+# Subtest: MOVWI mode 2: address modification and RAM write
+ok 77 - MOVWI mode 2: address modification and RAM write
+  ---
+  duration_ms: 8.435237
+  type: 'test'
+  ...
+# Subtest: MOVIW mode 3: address modification and W
+ok 78 - MOVIW mode 3: address modification and W
+  ---
+  duration_ms: 3.347163
+  type: 'test'
+  ...
+# Subtest: MOVWI mode 3: address modification and RAM write
+ok 79 - MOVWI mode 3: address modification and RAM write
+  ---
+  duration_ms: 7.114562
+  type: 'test'
+  ...
+# Subtest: Indexed MOVIW FSR0 reads low 8 bits of 14-bit Flash word with extra cycle
+ok 80 - Indexed MOVIW FSR0 reads low 8 bits of 14-bit Flash word with extra cycle
+  ---
+  duration_ms: 10.497412
+  type: 'test'
+  ...
+# Subtest: MOVF INDF0,W program-memory access costs extra cycle
+ok 81 - MOVF INDF0,W program-memory access costs extra cycle
+  ---
+  duration_ms: 5.200731
+  type: 'test'
+  ...
+# Subtest: INDF self-reference has no recursive dereference
+ok 82 - INDF self-reference has no recursive dereference
+  ---
+  duration_ms: 8.557039
+  type: 'test'
+  ...
+# Subtest: Core SFRs and common RAM mirror in every bank
+ok 83 - Core SFRs and common RAM mirror in every bank
+  ---
+  duration_ms: 0.399231
+  type: 'test'
+  ...
+# Subtest: Only 80+32 GPR bytes exist; linear GPR address maps correctly
+ok 84 - Only 80+32 GPR bytes exist; linear GPR address maps correctly
+  ---
+  duration_ms: 16.667038
+  type: 'test'
+  ...
+# Subtest: Writing PCL branches and costs two machine cycles
+ok 85 - Writing PCL branches and costs two machine cycles
+  ---
+  duration_ms: 115.259942
+  type: 'test'
+  ...
+# Subtest: Unsupported opcode 0x007f must not become a valid instruction
+ok 86 - Unsupported opcode 0x007f must not become a valid instruction
+  ---
+  duration_ms: 13.337928
+  type: 'test'
+  ...
+# Subtest: Timer2 PR2=3, postscale /2: second PWM period sets TMR2IF
+ok 87 - Timer2 PR2=3, postscale /2: second PWM period sets TMR2IF
+  ---
+  duration_ms: 1.095415
+  type: 'test'
+  ...
+# Subtest: Writing TMR2 loads count and clears pre/postscalers
+ok 88 - Writing TMR2 loads count and clears pre/postscalers
+  ---
+  duration_ms: 0.354681
+  type: 'test'
+  ...
+# Subtest: Writing T2CON clears pre/postscale but leaves TMR2 intact
+ok 89 - Writing T2CON clears pre/postscale but leaves TMR2 intact
+  ---
+  duration_ms: 0.109685
+  type: 'test'
+  ...
+# Subtest: PWM3 8-bit duty is split DCH/DCL; latched at Timer2 period boundary
+ok 90 - PWM3 8-bit duty is split DCH/DCL; latched at Timer2 period boundary
+  ---
+  duration_ms: 0.637006
+  type: 'test'
+  ...
+# Subtest: RETFIE restores W, STATUS flags, BSR, both FSR and PCLATH
+ok 91 - RETFIE restores W, STATUS flags, BSR, both FSR and PCLATH
+  ---
+  duration_ms: 0.275261
+  type: 'test'
+  ...
+# Subtest: Official saved firmware HEX parses to 2K 14-bit words
+ok 92 - Official saved firmware HEX parses to 2K 14-bit words
+  ---
+  duration_ms: 1.035488
+  type: 'test'
+  ...
+# Subtest: CLRW decodes only 0x0100..0x0107, not reserved opcode range
+ok 93 - CLRW decodes only 0x0100..0x0107, not reserved opcode range
+  ---
+  duration_ms: 1.220357
+  type: 'test'
+  ...
+# Subtest: FSR1 post- and pre-increment work independently of FSR0
+ok 94 - FSR1 post- and pre-increment work independently of FSR0
+  ---
+  duration_ms: 0.250842
+  type: 'test'
+  ...
+# Subtest: Reset OSCCON IRCF=0111 is 500 kHz; four oscillator clocks per instruction
+ok 95 - Reset OSCCON IRCF=0111 is 500 kHz; four oscillator clocks per instruction
+  ---
+  duration_ms: 85.724571
+  type: 'test'
+  ...
+# Subtest: HFINTOSC clock switch waits approximately 2 microseconds and then TCY=250ns
+ok 96 - HFINTOSC clock switch waits approximately 2 microseconds and then TCY=250ns
+  ---
+  duration_ms: 4.781832
+  type: 'test'
+  ...
+# Subtest: OSCCON written by instruction takes effect at Q4, not at instruction fetch
+ok 97 - OSCCON written by instruction takes effect at Q4, not at instruction fetch
+  ---
+  duration_ms: 6.090497
+  type: 'test'
+  ...
+# Subtest: IRCF divider selections follow Register 5-1
+ok 98 - IRCF divider selections follow Register 5-1
+  ---
+  duration_ms: 8.851221
+  type: 'test'
+  ...
+# Subtest: Control transfers and taken skips occupy two instruction cycles
+ok 99 - Control transfers and taken skips occupy two instruction cycles
+  ---
+  duration_ms: 10.939449
+  type: 'test'
+  ...
+# Subtest: Indirect program Flash reads/writes take additional TCY
+ok 100 - Indirect program Flash reads/writes take additional TCY
+  ---
+  duration_ms: 4.55795
+  type: 'test'
+  ...
+# Subtest: Timer0 FOSC/4 overflow raises TMR0IF regardless of IRQ enable
+ok 101 - Timer0 FOSC/4 overflow raises TMR0IF regardless of IRQ enable
+  ---
+  duration_ms: 4.180097
+  type: 'test'
+  ...
+# Subtest: Timer0 write inhibits precisely next two timer ticks, prescaler resets
+ok 102 - Timer0 write inhibits precisely next two timer ticks, prescaler resets
+  ---
+  duration_ms: 0.348264
+  type: 'test'
+  ...
+# Subtest: Timer0 timer clock vs external T0CKI and divider 2/4/256
+ok 103 - Timer0 timer clock vs external T0CKI and divider 2/4/256
+  ---
+  duration_ms: 4.43076
+  type: 'test'
+  ...
+# Subtest: Timer1 FOSC/4 and FOSC sources, prescalers, wrap and flags
+ok 104 - Timer1 FOSC/4 and FOSC sources, prescalers, wrap and flags
+  ---
+  duration_ms: 17.728644
+  type: 'test'
+  ...
+# Subtest: Timer1 LFINTOSC ticks independently of FOSC and can be prescaled
+ok 105 - Timer1 LFINTOSC ticks independently of FOSC and can be prescaled
+  ---
+  duration_ms: 16937.762747
+  type: 'test'
+  ...
+# Subtest: Timer2 comparator matches PR2, then clears on following prescaled clock
+ok 106 - Timer2 comparator matches PR2, then clears on following prescaled clock
+  ---
+  duration_ms: 88.17531
+  type: 'test'
+  ...
+# Subtest: Timer2 PR2 changed below TMR2 does not spuriously reset counter
+ok 107 - Timer2 PR2 changed below TMR2 does not spuriously reset counter
+  ---
+  duration_ms: 0.320228
+  type: 'test'
+  ...
+# Subtest: Timer2 prescaler 1:4, PR2=1, postscale 1:3 triggers every 24 TCY
+ok 108 - Timer2 prescaler 1:4, PR2=1, postscale 1:3 triggers every 24 TCY
+  ---
+  duration_ms: 0.187234
+  type: 'test'
+  ...
+# Subtest: PWM3 duty is double-buffered at start of the following PWM period
+ok 109 - PWM3 duty is double-buffered at start of the following PWM period
+  ---
+  duration_ms: 62.698332
+  type: 'test'
+  ...
+# Subtest: PWM edge events represent physical 16 MHz FOSC ticks, 50% pulse 8us
+ok 110 - PWM edge events represent physical 16 MHz FOSC ticks, 50% pulse 8us
+  ---
+  duration_ms: 18.832097
+  type: 'test'
+  ...
+# Subtest: PWM3 pin gate respects TRISA/ANSELA; reverse polarity 50% falls then rises
+ok 111 - PWM3 pin gate respects TRISA/ANSELA; reverse polarity 50% falls then rises
+  ---
+  duration_ms: 0.412297
+  type: 'test'
+  ...
+# Subtest: Interrupt eligibility Timer0, Timer1, Timer2 and two bubble cycles
+ok 112 - Interrupt eligibility Timer0, Timer1, Timer2 and two bubble cycles
+  ---
+  duration_ms: 0.569352
+  type: 'test'
+  ...
+# Subtest: RETFIE is two cycles, no unwanted immediate nested IRQ
+ok 113 - RETFIE is two cycles, no unwanted immediate nested IRQ
+  ---
+  duration_ms: 32.546496
+  type: 'test'
+  ...
+# Subtest: Legacy CLRWDT/OPTION/TRISA one-cycle semantics
+ok 114 - Legacy CLRWDT/OPTION/TRISA one-cycle semantics
+  ---
+  duration_ms: 7.325164
+  type: 'test'
+  ...
+# Subtest: 10-bit PWM3 1-tick pulse lasts exactly one FOSC clock, not one instruction
+ok 115 - 10-bit PWM3 1-tick pulse lasts exactly one FOSC clock, not one instruction
+  ---
+  duration_ms: 20.476482
+  type: 'test'
+  ...
+# Subtest: TMR0 write from MOVWF is applied at Q4, with two subsequent inhibited cycles
+ok 116 - TMR0 write from MOVWF is applied at Q4, with two subsequent inhibited cycles
+  ---
+  duration_ms: 17.933825
+  type: 'test'
+  ...
+# Subtest: PWM register writes from instruction are latched one cycle later at the period boundary
+ok 117 - PWM register writes from instruction are latched one cycle later at the period boundary
+  ---
+  duration_ms: 16.577737
+  type: 'test'
+  ...
+# Subtest: OSCSTAT stable/ready tracks the nominal clock switching delay
+ok 118 - OSCSTAT stable/ready tracks the nominal clock switching delay
+  ---
+  duration_ms: 0.336711
+  type: 'test'
+  ...
+# Subtest: Timer1 external T1CKI cannot silently masquerade as internal clock
+ok 119 - Timer1 external T1CKI cannot silently masquerade as internal clock
+  ---
+  duration_ms: 175.426076
+  type: 'test'
+  ...
+# Subtest: Software RESET executes in one cycle without resetting simulated time history
+ok 120 - Software RESET executes in one cycle without resetting simulated time history
+  ---
+  duration_ms: 0.3538
+  type: 'test'
+  ...
+1..120
+# tests 120
+# suites 0
+# pass 120
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 21587.906851

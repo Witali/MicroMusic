@@ -1,0 +1,42 @@
+{
+  "project": "MicroMusic LPX3 Rice v3 Fast ATmega328P",
+  "date": "2026-10-22",
+  "cpu_hz": 16000000,
+  "audio_hz": 8000,
+  "cycles_per_sample_mean_budget": 2000,
+  "hardware_cycle_test": "NOT_RUN",
+  "full_elf_hex_link": "NOT_RUN",
+  "avr_object_compilation": "PASS (clang AVR target, test-only pgmspace shim)",
+  "decoder_size_sram_avr_bytes": 277,
+  "decoder_prev_sram_bytes": 332,
+  "buffer_sram_bytes": 512,
+  "avr_object_text_bytes": 8056,
+  "avr_object_progmem_data_bytes": 1042,
+  "avr_prev_object_text_bytes": 8564,
+  "avr_prev_progmem_data_bytes": 1026,
+  "tests": "PASS 103 corpora including private samples and 100 reproducible generated fuzz samples; 2 invalid streams rejected",
+  "measurements": [
+    {
+      "name": "xtuj-ntt",
+      "v1_bytes": 5809,
+      "v2_rice_bytes": 5477,
+      "v3_bytes": 5274,
+      "saved_vs_v1": 535,
+      "saved_vs_v2": 203,
+      "percentage_vs_v1": 9.21,
+      "samples": 9768,
+      "pcm8_sha256": "926c7f3ef880d0b5f1ca8b91db582294b29b88559ae76b1d515a4eb4c1d3da92"
+    },
+    {
+      "name": "ne-otv",
+      "v1_bytes": 4869,
+      "v2_rice_bytes": 4644,
+      "v3_bytes": 4477,
+      "saved_vs_v1": 392,
+      "saved_vs_v2": 167,
+      "percentage_vs_v1": 8.051,
+      "samples": 8232,
+      "pcm8_sha256": "676be17e55c6d81bc63266fa53a6e1ae50ad787411af1a9f9c997f3b6850fdd3"
+    }
+  ]
+}

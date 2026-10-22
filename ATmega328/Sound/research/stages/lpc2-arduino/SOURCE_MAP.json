@@ -1,0 +1,53 @@
+{
+  "slug": "lpc2-arduino",
+  "target": "ATmega328/Sound/lpc2",
+  "title": "Restore LPC2 Arduino decoder and players",
+  "origin": {
+    "archive": "Lpc2AvrDecoder_ATmega328_UNMODIFIED.zip",
+    "sha256": "aff2606a9a55d30d67a4821d8c22e7f6990891cc8084bbae3d342998efadcff8"
+  },
+  "previous_commit": "8d1dc89e98bf5d2c939cb584ec4baeb9706ebe65",
+  "files": [
+    {
+      "path": "ATmega328/Sound/lpc2/README_RU.md",
+      "sha256": "0ec5d7519654c06a60c40c34ee84fbc38c90f401b56a02b0dd4e6f0dd4a059e3",
+      "bytes": 4926
+    },
+    {
+      "path": "ATmega328/Sound/lpc2/examples/LPC2_PROGMEM_Player/LPC2_PROGMEM_Player.ino",
+      "sha256": "a8a435cf17ba4507742104f2fe1fa93b7351c1468c98f76009090f530b0e2e8a",
+      "bytes": 1213
+    },
+    {
+      "path": "ATmega328/Sound/lpc2/examples/LPC2_PROGMEM_Player/voice_lpc2.h",
+      "sha256": "4ca3d5da83b67d59bea6404742fb500ff3eadd57839fe29c3375962806b5c3f8",
+      "bytes": 330
+    },
+    {
+      "path": "ATmega328/Sound/lpc2/examples/LPC2_SD_Player/LPC2_SD_Player.ino",
+      "sha256": "6258ffdc60f6c51ada6fc181dcf9a05148c0f7db9c95e6e38fd64cee80048c2e",
+      "bytes": 1418
+    },
+    {
+      "path": "ATmega328/Sound/lpc2/library.properties",
+      "sha256": "bec0f48d565303acf5471bbc96ef0d3738c6283be08157b8977b137fd3742cf2",
+      "bytes": 335
+    },
+    {
+      "path": "ATmega328/Sound/lpc2/src/Lpc2AvrDecoder.cpp",
+      "sha256": "ce06144dd0cc2be0f216f7eac6f514d5f87caa30b75a5fd8efe3e50999844089",
+      "bytes": 24517
+    },
+    {
+      "path": "ATmega328/Sound/lpc2/src/Lpc2AvrDecoder.h",
+      "sha256": "b11d59fb4ab880054a594e4c6811b65e6c3da2aa61fc59d49c58b2114893fae8",
+      "bytes": 5817
+    },
+    {
+      "path": "ATmega328/Sound/lpc2/tools/lp2_to_header.py",
+      "sha256": "9eed82b15ccf7bc60a1c963ab9d674b3b7a3d6e43d79ded99f9c4e3acfb53e60",
+      "bytes": 1003
+    }
+  ],
+  "omitted": []
+}
