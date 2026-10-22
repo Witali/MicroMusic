@@ -1,5 +1,10 @@
 # Звуковые эталоны HQ4
 
+[Публичный HQ4-плеер](https://witali.github.io/MicroMusic/web-player/?collection=hq4)
+исполняет четыре сохранённых образа на общем JS/WASM-движке и работает без
+локального архива. Каталог `web-player/hq4-firmware.json` пересобирается из
+сохранённого ассемблера сценарием `tools/build-hq4-catalog.py`.
+
 Ссылки на исходную переписку:
 
 - [Название репозитория MicroMusic](https://chatgpt.com/c/6ad737b6-d9b8-83eb-9298-fcb1d0856e90).
@@ -30,6 +35,8 @@ node web-player/scripts/serve.mjs 8145
 
 Адрес: `http://127.0.0.1:8145/web-player/?collection=hq4`.
 Сценарий проверяет SHA-256 архива, оригинальных WAV, Flash и контрольного PCM.
+На localhost плеер подхватывает эти дополнительные материалы из `build`;
+публичный сайт загружает каталог прошивок, включённый в репозиторий.
 Доступны три balanced-образа, maximum-STOI для первой фразы, оригиналы WAV и
 ссылка на сохранённый плеер из ChatGPT. [Сверка эмуляторов](../../web-player/reports/hq4-audit-2026-10-22.md).
 

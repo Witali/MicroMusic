@@ -283,6 +283,13 @@ JSON содержит все события источника; музыкаль
 сохранены в исходном JSON, но в компактную нотную адаптацию не входят.
 
 РЕЧЬ MINILPC HQ4
+Публичный сайт: https://witali.github.io/MicroMusic/web-player/?collection=hq4
+Он работает без внешнего архива: hq4-firmware.json содержит четыре
+проверенных образа, как firmware.json для музыкальных прошивок.
+Пересборка каталога из сохранённого ассемблера:
+  python tools/build-hq4-catalog.py --avr-bin build/toolchains/avr-7.3.0/bin
+Добавьте --check для проверки, что опубликованный каталог не устарел.
+
 Для трёх речевых примеров и maximum-STOI варианта используется тот же
 плеер, Worker/AudioWorklet и общие JS/WASM-ядра. Из корня репозитория:
   python tools/prepare-hq4-preview.py --archive "<Downloads>/MicroMusic_COMPLETE_RESEARCH_HANDOFF_2026-10-22(2).zip"

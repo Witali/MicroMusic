@@ -5,6 +5,11 @@ MicroMusic
 Локально: node web-player/scripts/serve.mjs 8134
 Открыть: http://127.0.0.1:8134/web-player/
 
+РЕЧЬ ATTINY13A / MINILPC HQ4
+Онлайн: https://witali.github.io/MicroMusic/web-player/?collection=hq4
+Три фразы и maximum-STOI образ, общий JS/WASM-эмулятор, без внешнего архива.
+Эталоны и исходная переписка: ATtiny13A/Sound/AUDIO_REFERENCES.md.
+
 INTEL 8080
 Плеер собственных BIN/ROM/Intel HEX: i8080/Emulator/.
 Онлайн: https://witali.github.io/MicroMusic/i8080/Emulator/

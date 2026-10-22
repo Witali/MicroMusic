@@ -87,14 +87,16 @@ function load(entry) {
   $('tempo').textContent='100.0%'; $('lag').textContent='0.0 мс'; realtime?.resetAnchor();
   delete $('tempo').dataset.wallMs; delete $('tempo').dataset.audioMs;
   $('selected-order').textContent=entry.order; $('selected-title').textContent=entry.title; $('selected-description').textContent=entry.description;
+  const flashSource=entry.source||'data:text/plain;charset=utf-8,'+encodeURIComponent(entry.flashHex);
   $('rom-name').textContent=`attiny13a-${entry.id}.hex`; $('rom-details').textContent=`${entry.flashBytes} / 1024 Б Flash · ${entry.eepromBytes} / 64 Б EEPROM · ${(entry.sampleHz/1000).toLocaleString('ru')} кГц отсчёты`;
-  $('rom-name').href=entry.source; $('rom-name').download=`attiny13a-${entry.id}.hex`;
+  $('rom-name').href=flashSource; $('rom-name').download=`attiny13a-${entry.id}.hex`;
   $('rom-hash').textContent=entry.flashSha256.slice(0,16)+'…'; $('rom-hash').title='SHA-256 Flash: '+entry.flashSha256;
   $('rom-size').textContent=entry.flashBytes+' байт';
-  $('original-player').href=entry.originalPlayer; $('wav-link').hidden=!entry.preview; if (entry.preview) $('wav-link').href=entry.preview;
+  $('original-player').hidden=!entry.originalPlayer; if(entry.originalPlayer)$('original-player').href=entry.originalPlayer;
+  $('wav-link').hidden=!entry.preview; if (entry.preview) $('wav-link').href=entry.preview;
   $('reference-wav').hidden=!entry.reference; if(entry.reference)$('reference-wav').href=entry.reference;
   $('download-eeprom').hidden=!entry.eepromHex; $('reset').disabled=false;
-  for(const [id,source,suffix] of [['download',entry.source,''],['download-eeprom',entry.eepromSource,'-eeprom']]){
+  for(const [id,source,suffix] of [['download',flashSource,''],['download-eeprom',entry.eepromSource,'-eeprom']]){
     const link=$(id);if(source){link.href=source;link.download=`attiny13a-${entry.id}${suffix}.hex`;link.removeAttribute('aria-disabled');}
   }
   const bytes=parseHex(entry.flashHex); $('memory').textContent=Array.from({length:8},(_,line)=>formatHex(line*16,4)+'  '+Array.from(bytes.subarray(line*16,line*16+16),x=>formatHex(x)).join(' ')).join('\n');
@@ -167,9 +169,16 @@ try {
     $('speech-audit').hidden=false;
     document.querySelector('footer span:last-child').textContent='MiniLPC HQ4 · 4 образа · Worker + AudioWorklet';
   }
-  const response=await fetch(speech?'../build/hq4-preview/firmware.json':'./firmware.json'); if (!response.ok) throw new Error('HTTP '+response.status);
+  // Public speech playback needs only the source-built catalog. Local listening
+  // can additionally use restored original WAVs and the archived ChatGPT player.
+  let response;
+  if(speech&&['127.0.0.1','localhost'].includes(location.hostname)) {
+    response=await fetch('../build/hq4-preview/firmware.json');
+  }
+  if(!response?.ok)response=await fetch(speech?'./hq4-firmware.json':'./firmware.json');
+  if (!response.ok) throw new Error('HTTP '+response.status);
   catalog=await response.json();
   const id=new URL(location.href).searchParams.get('firmware')||catalog.defaultId;
   load(catalog.entries.find(e=>e.id===id)||catalog.entries.find(e=>e.id===catalog.defaultId));
-} catch (error) { showError('Не удалось загрузить каталог. Для HQ4 выполните tools/prepare-hq4-preview.py; запуск сервера описан в README.txt. '+error.message); }
+} catch (error) { showError('Не удалось загрузить каталог прошивок. Обновите страницу или проверьте подключение. '+error.message); }
 draw();
