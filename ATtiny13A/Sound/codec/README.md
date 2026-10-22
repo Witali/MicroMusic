@@ -1,33 +1,18 @@
-# MicroMusic MiniLPC — проверка заявленных 334 байт
+# MicroMusic MiniLPC Packed — Lossless-by-construction frame repacking
 
-Исходный HEX с размером **334 байта декодера** в последнем архиве проекта не обнаружен. Удалось повторно собрать семейство MiniLPC и добиться **328 байт (Nano)** и **350 байт (Full)**, включая инициализацию MCU, фильтр и обработчик Timer0.
+This is a speech-parameter bitstream optimization (not raw waveform compression and not LPX3). It retains the eight-stage LPC filter and exact bitwise PCM output.
 
-## Результаты
+| clip | Old Flash | New Flash | Flash saved | Old speech | New speech |
+|---|---:|---:|---:|---:|---:|
+| chego | 601 | 577 | 24 | 216 | 180 |
+| otvechaesh | 571 | 552 | 19 | 186 | 155 |
+| vinni | 907 | 840 | 67 | 522 | 435 |
 
-| Фраза | Nano 328 Flash | Full 350 Flash | Сэмплов |
-|---|---:|---:|---:|
-| Чего тебе нужно? | 545 Б | 567 Б | 9216 |
-| Что ж ты не отвечаешь? | 515 Б | 537 Б | 7936 |
-| Сова! Открывай! Медведь пришёл! | 851 Б | 873 Б | 22272 |
-
-Частота CPU 9,6 МГц, Fast PWM на PB1/OC0B 37,5 кГц, выходной PCM 7,5 кГц, фильтр восьмиступенчатый. Для аппаратного режима 9,6 МГц необходимо выключить CKDIV8 или корректно выполнить программную установку CLKPR. Код сбрасывает делитель CLKPR в /1 при старте; не меняйте фьюзы вслепую.
-
-В новой версии три регистра AVR выполняют функции буфера сэмпла, флага готовности и делителя частоты в IRQ. Обработчик прерывания сохраняет SREG и r16; выделенные регистры r7–r9 не используются другой логикой. Время обработчика в модельной проверке до 28 тактов против 41 ранее.
-
-Проверки для трёх фраз (выполнены на цикл-считающем JS AVR-эмуляторе):
-* Nano 328 даёт **тот же PCM**, что повторно собранный Nano 362, на всех 39424 сэмплах.
-* Full 350 даёт **тот же PCM**, что исходный Full 384, на всех 39424 сэмплах.
-* Ни один из шести HEX не превышает 1024 байта Flash; пропусков переполнения Timer0 и голодания аудио нет.
-* **Nano и Full звучат различно**, так как используют разную форму возбуждения. Nano — не беззвучная замена Full.
-* На настоящей микросхеме ATtiny13A прошивки **не проверены**. Модель интерпретирует используемые AVR-инструкции, а не заменяет аппаратные испытания.
-
-## Повторная проверка
-
-```
-node verify.js
-python3 rebuild.py
-```
-
-Сборка требует `clang` с поддержкой AVR, `llvm-objcopy` и Python 3; проверка требует Node.js. `rebuild.py` сравнивает SHA256 результатов пересборки побайтово с приложенными прошивками. `verify.js` исполняет их и сверяет весь PCM по байтам с приложенным эталоном.
-
-Страница `index.html` — автономное прослушивание уже полученных из AVR PWM-значений плюс отдельная проверка начала HEX в браузере. Проект содержит производные речевые данные из мультфильмов: используйте в личных тестах, не публикуйте их в открытом репозитории без прав.
+- `chego` and `otvechaesh`: 4-bit pitch code (0 for unvoiced, 1..15 for periods 16..30), plus 4-bit gain in the same first byte.
+- `vinni`: K8=0 in every frame; gain shares a byte with K7, and K8 is reconstructed at decode time.
+- All three byte-for-byte PCM comparisons matched (9216, 7936, 22272 audio samples).
+- 0 missed Timer0 interrupts in independently running AVR emulator.
+- `index.html` is an offline browser comparator. On Play it uses verified PCM for fast listening; Verify HEX runs the actual instructions and compares samples.
+- Each folder stores baseline and repacked assembler, HEX, BIN, speech bytes and PCM from the actual AVR emulator.
+- Actual hardware remains untested. ATtiny13A flash limit is 1024 bytes, oscillator 9.6MHz, PWM via PB1/OC0B.
+- Copyright note: sample data is derived from user-supplied cartoon recordings, retain for private evaluation unless properly licensed.

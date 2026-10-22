@@ -1,0 +1,189 @@
+{
+  "slug": "minilpc-packed",
+  "target": "ATtiny13A/Sound/codec",
+  "title": "Pack MiniLPC parameters without changing PCM",
+  "origin": {
+    "archive": "MicroMusic_MiniLPC_Packed_v1_private.zip",
+    "sha256": "e0259cefe45b5948f7f8ceb348fb22900da321f862be98ec9844fb572b4d70c7"
+  },
+  "previous_commit": "47c183684a7ebe616add2188a806cde7688319c6",
+  "files": [
+    {
+      "path": "ATtiny13A/Sound/codec/README.md",
+      "sha256": "91d217e8b2306df72b47b3fdfbee15ead7e99957402cd981c7b16fe37f611727",
+      "bytes": 1368
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/avr_emulator.js",
+      "sha256": "dae6393748cc70178a6a6924a2c73f79b6ed67b7517c688ec3657fa9a87a3ffe",
+      "bytes": 9806
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/chego/original.asm",
+      "sha256": "7cd7e0eb5309c16487b29ee286b6e301e2bfa6423c4e3d3cd1e8fd6ace2d1d31",
+      "bytes": 3262
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/chego/packed.asm",
+      "sha256": "c7fe1358f3798dc5996940e8451b03d1a4898dc6bf162b85eafb60b2af60f892",
+      "bytes": 3483
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/index.html",
+      "sha256": "917d5dabb21c75fb16b199d4a4ef20b7d433dc853f6d92324708af6e648654ed",
+      "bytes": 83955
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/otvechaesh/original.asm",
+      "sha256": "7cd7e0eb5309c16487b29ee286b6e301e2bfa6423c4e3d3cd1e8fd6ace2d1d31",
+      "bytes": 3262
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/otvechaesh/packed.asm",
+      "sha256": "c7fe1358f3798dc5996940e8451b03d1a4898dc6bf162b85eafb60b2af60f892",
+      "bytes": 3483
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/pack_speech.py",
+      "sha256": "f0c5a482e4fc28c5132b297a6f6bfbec81bb6a4ceba780f9fe6c00d5e4812140",
+      "bytes": 2805
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/research_notes.md",
+      "sha256": "0226e18fd9ba3fb05d0d57851b872555c3a644b7e6e81803fe3aa7e97e337916",
+      "bytes": 663
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/vinni/original.asm",
+      "sha256": "7cd7e0eb5309c16487b29ee286b6e301e2bfa6423c4e3d3cd1e8fd6ace2d1d31",
+      "bytes": 3262
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/vinni/packed.asm",
+      "sha256": "4c19fe83ec6b18dc75e65e917b879229555dc2ad8717aeb79f94bb65a0d41496",
+      "bytes": 3453
+    }
+  ],
+  "omitted": [
+    {
+      "path": "chego/original.bin",
+      "bytes": 601,
+      "sha256": "b4888895fc25c6cccd624b111c47af987602c36a4d6ef8a0099d7df3a0335c68"
+    },
+    {
+      "path": "chego/original.hex",
+      "bytes": 1670,
+      "sha256": "773e7325766d7fa433cdfab4176022cdca97c63f3ce86d0abc05643ca877b6bf"
+    },
+    {
+      "path": "chego/original.pcm.raw",
+      "bytes": 9216,
+      "sha256": "4581f965af5edd3ebbbc933d81010062f78fe974290d5e9f2c9333834cc8ddf8"
+    },
+    {
+      "path": "chego/original.speech.bin",
+      "bytes": 216,
+      "sha256": "1681fa1337f040507d1926b0982070597d03d084f38a7a524f1d6fdcfc724ea5"
+    },
+    {
+      "path": "chego/packed.bin",
+      "bytes": 577,
+      "sha256": "f69f014dedf56d5ba94cf9bf8d3d75998c56e8ab25ee01bc154f2e21cf6d3aa2"
+    },
+    {
+      "path": "chego/packed.hex",
+      "bytes": 1610,
+      "sha256": "15f73f103a0957edc8ab0974d0a0728bdb3de83757604ceb8ccb0d568012fa98"
+    },
+    {
+      "path": "chego/packed.pcm.raw",
+      "bytes": 9216,
+      "sha256": "4581f965af5edd3ebbbc933d81010062f78fe974290d5e9f2c9333834cc8ddf8"
+    },
+    {
+      "path": "chego/packed.speech.bin",
+      "bytes": 180,
+      "sha256": "7e312dc5931157f902959c50c83684b87955f9aeae8d28e548a9cfce7fd7ce53"
+    },
+    {
+      "path": "otvechaesh/original.bin",
+      "bytes": 571,
+      "sha256": "0e6ecc940a209605cd28fa4d168f6631f19d328d402dae637d640af205a20059"
+    },
+    {
+      "path": "otvechaesh/original.hex",
+      "bytes": 1586,
+      "sha256": "4239fffd075c7d0ce0cbca8bb333fe8d8d8840c9910b1196d9978767476efa73"
+    },
+    {
+      "path": "otvechaesh/original.pcm.raw",
+      "bytes": 7936,
+      "sha256": "de01542b7af35db6c1ecc00d40960548b15290cac2040db26f1deaa2e873e2d5"
+    },
+    {
+      "path": "otvechaesh/original.speech.bin",
+      "bytes": 186,
+      "sha256": "bfeb29823b2b48a58d917fa17295cb771b3c09bcd94b7c4c01a75472c36be024"
+    },
+    {
+      "path": "otvechaesh/packed.bin",
+      "bytes": 552,
+      "sha256": "0d03b59415d1362d8d16816f075ca298890175505bd45f6122f55ca224fc193f"
+    },
+    {
+      "path": "otvechaesh/packed.hex",
+      "bytes": 1536,
+      "sha256": "062c52310c51bcc01a983186091730214abfce55f085d4d3ef9bf5a026488814"
+    },
+    {
+      "path": "otvechaesh/packed.pcm.raw",
+      "bytes": 7936,
+      "sha256": "de01542b7af35db6c1ecc00d40960548b15290cac2040db26f1deaa2e873e2d5"
+    },
+    {
+      "path": "otvechaesh/packed.speech.bin",
+      "bytes": 155,
+      "sha256": "34e4cee6704c3ab520b520e7f188d037fe5d821dfb57ad8a464943f478a84153"
+    },
+    {
+      "path": "vinni/original.bin",
+      "bytes": 907,
+      "sha256": "a06be5e7d697f9afc562aedea5ec022f0925ff815ae4ab898397a36cc1cd69b5"
+    },
+    {
+      "path": "vinni/original.hex",
+      "bytes": 2510,
+      "sha256": "24b801a999dd6470b25d33c2e61f42a57aabd0bbec771a27b0546b5bb1968b7f"
+    },
+    {
+      "path": "vinni/original.pcm.raw",
+      "bytes": 22272,
+      "sha256": "a1755cd132fb5af3f8a5ef46dca29ddcc5511e46e53c9ef59a4c793092388571"
+    },
+    {
+      "path": "vinni/original.speech.bin",
+      "bytes": 522,
+      "sha256": "02ea3edcf25ea3038a1739d2fac160f74f0d6ac2b6e084899e1a313bf9ecf08a"
+    },
+    {
+      "path": "vinni/packed.bin",
+      "bytes": 840,
+      "sha256": "c44e00673ea0d4f282c1aedaa3908ba101fa4bb188ebdd4fff166bab19c8274e"
+    },
+    {
+      "path": "vinni/packed.hex",
+      "bytes": 2328,
+      "sha256": "0e53b71849bba09357c3c4c0ae41dc41d0fa25c036a803a094878cc7e1482838"
+    },
+    {
+      "path": "vinni/packed.pcm.raw",
+      "bytes": 22272,
+      "sha256": "a1755cd132fb5af3f8a5ef46dca29ddcc5511e46e53c9ef59a4c793092388571"
+    },
+    {
+      "path": "vinni/packed.speech.bin",
+      "bytes": 435,
+      "sha256": "0d08fc4aa4f404e95cf768ffc96d8f3675c08b14b0a91f07e5edbaefae0a53c0"
+    }
+  ]
+}
