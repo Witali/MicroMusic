@@ -18,7 +18,7 @@
 .set CTR,0x62
 .set COEFF,0x68
 .set STATE,0x70
-.set VOICE_ADDR,0x180
+.set VOICE_ADDR,0x184
 .org 0x0000
 __vectors:
  rjmp reset
@@ -33,9 +33,9 @@ reset:
  out CLKPR,r16
  clr r16
  out CLKPR,r16
- sts READY,r16
+ clr r8
  ldi r16,5
- sts CTR,r16
+ mov r9,r16
  ldi r28,STATE
  clr r29
  ldi r19,8
@@ -63,8 +63,7 @@ zero_states:
  out TIMSK0,r16
  sei
 wait_slot:
- lds r16,READY
- tst r16
+ tst r8
  brne wait_slot
  inc r5
  brne current_frame
@@ -88,10 +87,14 @@ pulse_second:
  mov r18,r3
  lsl r18
  add r18,r3
+ sbrc r22,4
+ sub r18,r3
  rjmp filter
 pulse_third:
  mov r18,r3
  lsl r18
+ sbrc r22,5
+ sub r18,r3
  rjmp filter
 pulse_fourth:
  mov r18,r3
@@ -136,9 +139,9 @@ skip_state_update:
  st Y,r18
  mov r16,r18
  subi r16,128
- sts SAMPLE,r16
+ mov r7,r16
  ldi r16,1
- sts READY,r16
+ mov r8,r16
  rjmp wait_slot
 /* signed 8-bit sample * coefficient (signed -7..7), arithmetic >>4 */
 mul_q4:
@@ -170,24 +173,41 @@ mul_done:
  asr r0
  ror r24
  ret
-/* Full frame: 1 byte pitch (0 means unvoiced), 1 byte gain, four packed coefficient bytes.
- * Each signed k = nibble - 8. Decoding loops after 256 audio samples.
- */
+/* MiniLPC8-VBR, the ONLY supported format; updates subsets of coefficients. */
 read_frame:
  lpm r16,Z+
  cpi r16,0xff
- brne read_pitch
+ brne vbr_pitch
  ldi r30,lo8(VOICE_ADDR)
  ldi r31,hi8(VOICE_ADDR)
  lpm r16,Z+
-read_pitch:
+vbr_pitch:
  mov r4,r16
  mov r2,r16
- lpm r3,Z+
+ lpm r16,Z+
+ mov r22,r16
+ andi r16,15
+ mov r3,r16
+ /* [7:6] 00=full, 01=repeat, 10=low four K, 11=high four K. */
+ sbrc r22,6
+ rjmp vbr_bit6
+ sbrc r22,7
+ rjmp vbr_low
  ldi r28,COEFF
- clr r29
  ldi r19,4
-read_k:
+ rjmp vbr_read_coeffs
+vbr_bit6:
+ sbrs r22,7
+ ret
+ ldi r28,COEFF+4
+ ldi r19,2
+ rjmp vbr_read_coeffs
+vbr_low:
+ ldi r28,COEFF
+ ldi r19,2
+vbr_read_coeffs:
+ clr r29
+vbr_read_pair:
  lpm r17,Z+
  mov r16,r17
  andi r16,15
@@ -199,27 +219,22 @@ read_k:
  subi r16,8
  st Y+,r16
  dec r19
- brne read_k
+ brne vbr_read_pair
  ret
+
 irq:
  push r16
  in r16,SREG
  push r16
- push r17
- lds r16,CTR
- dec r16
+ dec r9
  brne irq_end
  ldi r16,5
- lds r17,READY
- tst r17
+ mov r9,r16
+ tst r8
  breq irq_end
- lds r17,SAMPLE
- out OCR0B,r17
- clr r17
- sts READY,r17
+ out OCR0B,r7
+ clr r8
 irq_end:
- sts CTR,r16
- pop r17
  pop r16
  out SREG,r16
  pop r16
@@ -227,5 +242,5 @@ irq_end:
 code_end:
 .org VOICE_ADDR
 voice_data:
-.incbin "voice_tinylpc.bin"
+.incbin "speech.vbr"
 .byte 0xff

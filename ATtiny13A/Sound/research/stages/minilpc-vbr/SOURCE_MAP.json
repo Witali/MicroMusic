@@ -1,0 +1,319 @@
+{
+  "slug": "minilpc-vbr",
+  "target": "ATtiny13A/Sound/codec",
+  "title": "Use variable length MiniLPC frames",
+  "origin": {
+    "archive": "MicroMusic_MiniLPC_VBR_private.zip",
+    "sha256": "889b9b9dbaec9596bbf0e8c9f302aa0d033ececd28882558e0c4ce8425c528f7"
+  },
+  "previous_commit": "491c81b1406b79c2a534774618bad64b5a980a5c",
+  "files": [
+    {
+      "path": "ATtiny13A/Sound/codec/README.md",
+      "sha256": "1b7675d945d7298b01767e3e7ed4c09592ca90f051aaf5d461425428a9f2de07",
+      "bytes": 5082
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/avr_emulator.js",
+      "sha256": "dae6393748cc70178a6a6924a2c73f79b6ed67b7517c688ec3657fa9a87a3ffe",
+      "bytes": 9806
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/browser_test.py",
+      "sha256": "a1e3b8fe0eb21fefb967640d1b4e9da82e099044d98b755f31b45f98a4b71882",
+      "bytes": 1468
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/build.py",
+      "sha256": "517c29524a6976dbae01ad4b1d981123236ed4c783af27a1553c29ab98804533",
+      "bytes": 1536
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/build_demo.py",
+      "sha256": "60195487cf4aae195139f17d48ed117cf06cc972909782c499c4955dafd8322f",
+      "bytes": 1727
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/index.html",
+      "sha256": "75e47462c9c4438924ae8609e35241416d813a0db77ccf4f7ff29984d38d3f69",
+      "bytes": 358152
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/make_player.py",
+      "sha256": "de9a36cad192143c743a7e0702759c81aef8409af6ca31bb4f289f4898d846e1",
+      "bytes": 16265
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/make_release.py",
+      "sha256": "e110f1511a967cd6a08775bdefd9cae54529ade96a30389141d9ea8a652f62bc",
+      "bytes": 3175
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/optimize_vbr.py",
+      "sha256": "39eccf00e424bb0647d430e65468ef9debe21b0722f019ede898a8eee2fc3d53",
+      "bytes": 5397
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/reference_model.py",
+      "sha256": "6b87ed74a03b13f2de6ead69fa0cc47424fed3e2c2a7c6afc26291734a77699f",
+      "bytes": 1978
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/requirements.txt",
+      "sha256": "ed409cdf11485a3078bf1c7b16e52e61153ab9771ff9aee3898e9b3b61f218f6",
+      "bytes": 35
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/chego/firmware.S",
+      "sha256": "1bbbf018bb74dff5e3277e71929aeb5b562c85ecc8078bef36fae5f3ea189bb0",
+      "bytes": 3422
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/chego/metrics.json",
+      "sha256": "ff83a69b92be9c58a79f1d441da02ebed7e5427a430e607664f42857f4e1b75e",
+      "bytes": 540
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/otvechaesh/firmware.S",
+      "sha256": "1bbbf018bb74dff5e3277e71929aeb5b562c85ecc8078bef36fae5f3ea189bb0",
+      "bytes": 3422
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/otvechaesh/metrics.json",
+      "sha256": "a407253e58e6f1d84e1e79f77d6e7e0f10d718ee1b677e18d0985ce31420f881",
+      "bytes": 539
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/vinni/firmware.S",
+      "sha256": "1bbbf018bb74dff5e3277e71929aeb5b562c85ecc8078bef36fae5f3ea189bb0",
+      "bytes": 3422
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/vinni/metrics.json",
+      "sha256": "0936f8412dc9e6007d752c6e2be5c2a899d2ff394ced2fd2c71b1fe40c6f42db",
+      "bytes": 542
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/synthetic/firmware.S",
+      "sha256": "1bbbf018bb74dff5e3277e71929aeb5b562c85ecc8078bef36fae5f3ea189bb0",
+      "bytes": 3422
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/training_report.json",
+      "sha256": "8f2c3f2026c37b1a8498ed12185050884339c6a6142f3f5769edfe1e6859ede2",
+      "bytes": 1823
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/vbr_codec.py",
+      "sha256": "3b297a38d94aa364fad56b3ce0d4731a5ac03b7f0bec84d40364a6a0c57ac8ac",
+      "bytes": 2390
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/verification.json",
+      "sha256": "d1409974e1a40d3b57c4d274f9ec717428371e7be6075b68012ee6403811783f",
+      "bytes": 672
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/verify.js",
+      "sha256": "333cbde6eb98505a9754e9af116acebcf45122380a3d8adff38e859833fa05d4",
+      "bytes": 1586
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/verify_demo.js",
+      "sha256": "bb1841f79da88b034312beb7e9a1e8a24c071236b292a46b088cd13919cb0af4",
+      "bytes": 527
+    }
+  ],
+  "omitted": [
+    {
+      "path": "AB_chego.wav",
+      "bytes": 85022,
+      "sha256": "b00ee09860935a06b6be7c78c97723e6064b98444ef3ed921fb52d740c92ec4c"
+    },
+    {
+      "path": "AB_otvechaesh.wav",
+      "bytes": 74782,
+      "sha256": "4c7aec3990198c50a853c7b662187e9cc72b30edbad8f79af3a84b0445e3a468"
+    },
+    {
+      "path": "AB_vinni.wav",
+      "bytes": 189470,
+      "sha256": "95946c6f72c66fab3890f1119849d8aefa1ce6333207d6229191f1d948d9efa5"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 520,
+      "sha256": "eafd0622399c1dabff0aef42a66aec245c37298b9f50e0e704aebb3e0ddd1158"
+    },
+    {
+      "path": "references/chego/lpx3.wav",
+      "bytes": 18476,
+      "sha256": "d6dee82bcd81b276d6480cc25dd1550745c0d370364635abb87b0bcebfdd8e70"
+    },
+    {
+      "path": "references/chego/original.wav",
+      "bytes": 18476,
+      "sha256": "83d6fc0728f01b1d7df705ef470abac2ab6bdadfa758262bfc5b2a2e1d7f053b"
+    },
+    {
+      "path": "references/otvechaesh/lpx3.wav",
+      "bytes": 15916,
+      "sha256": "efb4dc976dda5806d7d671bdd0fecc209f6f02e034524a6f148e7ea61938581d"
+    },
+    {
+      "path": "references/otvechaesh/original.wav",
+      "bytes": 15916,
+      "sha256": "1dd26da0d563401ebb9ece617e8b1122968e6a6f924404401d179096ff6dbfd0"
+    },
+    {
+      "path": "references/vinni/lpx3.wav",
+      "bytes": 44588,
+      "sha256": "378ed2936376c353024c8733ce94283a6ddc9bd15b8a17e379dc92a21b9e61e1"
+    },
+    {
+      "path": "references/vinni/original.wav",
+      "bytes": 44588,
+      "sha256": "a7863b41cb04e6c4229b3866a856fd00e4b2386c132963176a2ea449dbfbd54a"
+    },
+    {
+      "path": "samples/chego/avr_pcm.raw",
+      "bytes": 9216,
+      "sha256": "3225cdeaeefa32bcaceed4b131e3bcf1168493d1befb894e392050571e8af100"
+    },
+    {
+      "path": "samples/chego/expected_pcm.raw",
+      "bytes": 9216,
+      "sha256": "3225cdeaeefa32bcaceed4b131e3bcf1168493d1befb894e392050571e8af100"
+    },
+    {
+      "path": "samples/chego/firmware.bin",
+      "bytes": 533,
+      "sha256": "3ec7869e7bde2773e8eb650aedca4af9f6804c5f533f77b3ae8d8fca8b693960"
+    },
+    {
+      "path": "samples/chego/firmware.hex",
+      "bytes": 1486,
+      "sha256": "23774d85207397ea96df52f1f11cc922ff50000ee4bf3332929c6d9bc25f04f4"
+    },
+    {
+      "path": "samples/chego/reference_pcm.raw",
+      "bytes": 9216,
+      "sha256": "8440745cf8c61ce83fa4b2910a7db4a1d0976711fa624ac5f763a0686edb07cf"
+    },
+    {
+      "path": "samples/chego/selected_modes.bin",
+      "bytes": 36,
+      "sha256": "aa48daaa73714e7a43f29f45f61e4fea333b3b23da78dc5b00f11f3472cbbc43"
+    },
+    {
+      "path": "samples/chego/speech.vbr",
+      "bytes": 144,
+      "sha256": "246ea215c0683e4979b5e7ae9df209b9c4eaa3441a5047073413d17a0064f2cc"
+    },
+    {
+      "path": "samples/chego/speech_full.bin",
+      "bytes": 216,
+      "sha256": "2d4a10edeffdafe3a9cdcf09b1291662885348ea7f549ed59c27a9c50813be53"
+    },
+    {
+      "path": "samples/otvechaesh/avr_pcm.raw",
+      "bytes": 7936,
+      "sha256": "0d0fa851c24aa7bcdee76589a9bfff12c0f233881244f5552155327b59ac8ca0"
+    },
+    {
+      "path": "samples/otvechaesh/expected_pcm.raw",
+      "bytes": 7936,
+      "sha256": "0d0fa851c24aa7bcdee76589a9bfff12c0f233881244f5552155327b59ac8ca0"
+    },
+    {
+      "path": "samples/otvechaesh/firmware.bin",
+      "bytes": 505,
+      "sha256": "19675fa5d0ec3a7eca4a2edd4e5da1629a6769b35f4526af03d9f9390b8abc3e"
+    },
+    {
+      "path": "samples/otvechaesh/firmware.hex",
+      "bytes": 1406,
+      "sha256": "f541e4e5e799da9e8a4443d43ab72f4efd5139c0bb7536ba15b668d122dbce13"
+    },
+    {
+      "path": "samples/otvechaesh/reference_pcm.raw",
+      "bytes": 7936,
+      "sha256": "47170c78b838ca5708c574b2b1da37993a2b0241afa5492e2a0275c6fa4ca578"
+    },
+    {
+      "path": "samples/otvechaesh/selected_modes.bin",
+      "bytes": 31,
+      "sha256": "d784b620e72c017d05032873eeb63c170d9b624d4fe0074f0d154e28f5e6af1b"
+    },
+    {
+      "path": "samples/otvechaesh/speech.vbr",
+      "bytes": 116,
+      "sha256": "a05b68ef9452e3a793cc713d6f6a53b37d318a42a0333a54220718e63ea6ded7"
+    },
+    {
+      "path": "samples/otvechaesh/speech_full.bin",
+      "bytes": 186,
+      "sha256": "7e58995e74e05d9cad79e0e605571f8e8cfd693119418ea45f271bf806bbe49f"
+    },
+    {
+      "path": "samples/vinni/avr_pcm.raw",
+      "bytes": 22272,
+      "sha256": "400dddcefd56325c96162d2651ed2ff1ddb38aeacf29e5beb195d457c92ebe9a"
+    },
+    {
+      "path": "samples/vinni/expected_pcm.raw",
+      "bytes": 22272,
+      "sha256": "400dddcefd56325c96162d2651ed2ff1ddb38aeacf29e5beb195d457c92ebe9a"
+    },
+    {
+      "path": "samples/vinni/firmware.bin",
+      "bytes": 713,
+      "sha256": "1709b163bed8ca3ee030d0c281f9019413e2a1f19e1d3d5358ffbcca79b126eb"
+    },
+    {
+      "path": "samples/vinni/firmware.hex",
+      "bytes": 1978,
+      "sha256": "6a34c166de1cf57d588f38af2b7d64ff221392790813c664e8972ac849daa45d"
+    },
+    {
+      "path": "samples/vinni/reference_pcm.raw",
+      "bytes": 22272,
+      "sha256": "04e142335fc2adce6f4ae8f38278e69348d198a357f2fc44533cf89284971d94"
+    },
+    {
+      "path": "samples/vinni/selected_modes.bin",
+      "bytes": 87,
+      "sha256": "8559677f6cb85756012b03a6fc3f0c3beb24165a9ad535d16d95ae3599c3f765"
+    },
+    {
+      "path": "samples/vinni/speech.vbr",
+      "bytes": 324,
+      "sha256": "9fc73c2d3e86cf265a860c33a0369f633b58a0757370a8abc0bcaec8253836f7"
+    },
+    {
+      "path": "samples/vinni/speech_full.bin",
+      "bytes": 522,
+      "sha256": "cd1fcd8f4b5493f607b57a3553a5828769be24f4f95fd4c8be631794476709a7"
+    },
+    {
+      "path": "synthetic/expected_pcm.raw",
+      "bytes": 4096,
+      "sha256": "9d9b4d02da4cbc4199931141a846bcabda48c7b1bc15fd944957f48ef22667db"
+    },
+    {
+      "path": "synthetic/firmware.bin",
+      "bytes": 453,
+      "sha256": "97746f0daa552d2a805750d4acbe8478bc06cfa61e0f0a03499a499de218caad"
+    },
+    {
+      "path": "synthetic/firmware.hex",
+      "bytes": 1266,
+      "sha256": "666da191793dcd59d9f135dae23d5f7115d69d4113eab4541fcdd8cae07a3544"
+    },
+    {
+      "path": "synthetic/speech.vbr",
+      "bytes": 64,
+      "sha256": "4cb9002c803d85e0ba6eb69a91d9d4a472a7564f7f442fbe23934d7ddee6cd39"
+    }
+  ]
+}
