@@ -1,0 +1,59 @@
+{
+  "device": "PIC16F1503",
+  "datasheet": "Microchip DS40001607D",
+  "tests": [
+    {
+      "name": "PIC instruction MOVLW/MOVWF/MOVF & banked RAM",
+      "pass": true
+    },
+    {
+      "name": "PIC skip and two-cycle branch timing",
+      "pass": true
+    },
+    {
+      "name": "Read low 8 bits of Flash through indirect FSR1 + extra cycle",
+      "pass": true
+    },
+    {
+      "name": "PWM3 resolution: 0, 128 and 255 in 8-bit range, double buffering",
+      "pass": true
+    },
+    {
+      "name": "Postscaler 1:4 leaves carrier 62.5k PWM at 16MHz",
+      "pass": true
+    },
+    {
+      "name": "Diagnostic Intel HEX executes real ISR and 8-bit ramp",
+      "pass": true
+    },
+    {
+      "name": "Score compression exactly preserves all unique sections/playlist",
+      "pass": true
+    },
+    {
+      "name": "Wavetables all have zero DC and range -8..7",
+      "pass": true
+    },
+    {
+      "name": "Music model stable DC average, distinct sound and note-offs",
+      "pass": true
+    }
+  ],
+  "diagnostic": {
+    "cycles": 256018,
+    "instructions": 130268,
+    "interrupts": 1000,
+    "pwmPeriods": 4000
+  },
+  "music": {
+    "previewMean": 127.7155968,
+    "range": [
+      65,
+      180
+    ],
+    "first15sEvents": 40,
+    "fullSongSeconds": 222,
+    "sectionsTraversed": 15,
+    "noteoffEvents": 64
+  }
+}

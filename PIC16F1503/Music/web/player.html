@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>MicroMusic — PIC16F1503 / PWM Emulator</title>
+<style>
+:root{color-scheme:dark;background:#08111c;color:#dae9f5;font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 60% -15%,#154057 0,#08111c 50%);min-height:100vh}
+.wrap{max-width:1100px;margin:auto;padding:27px 18px 58px}
+header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+h1{font-size:clamp(23px,3vw,35px);line-height:1.2;margin:0;font-weight:760;letter-spacing:-.6px}
+p{color:#a8bed0;margin:8px 0}.chip{border:1px solid #327583;color:#99dbdd;background:#122c38;padding:3px 9px;border-radius:50px;font-size:12px;letter-spacing:.03em}
+.panels{display:grid;grid-template-columns:1.5fr 1fr;gap:14px;align-items:start}
+.panel{border:1px solid #294155;background:#0c1c2bdf;border-radius:15px;padding:18px;box-shadow:0 16px 34px #0003;min-width:0}
+.panel h2{margin:0 0 12px;font-size:16px;color:#e1f5ff}.tabs{display:flex;gap:5px;padding:4px;background:#132c3c;border-radius:12px;flex-wrap:wrap;margin-bottom:14px}
+button,.btn{font:inherit;font-size:14px;cursor:pointer;border:1px solid #426477;color:#e3f4fe;background:#172f40;border-radius:9px;padding:9px 14px;transition:background .1s}
+button:hover{background:#28495f}button.primary{background:#2797a5;color:#041620;border-color:#5acecf;font-weight:720}
+button:disabled{opacity:.45;cursor:wait}.tabs button{flex:1;padding:8px;border:0;background:transparent}.tabs button.active{background:#1d5165}
+.line{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:10px 0}.small{font-size:12px;color:#96b1c2}
+label{color:#bbd2e0;font-size:13px}label select,input[type=number]{margin-left:5px;padding:5px;background:#10283a;color:#f0f6fb;border:1px solid #31536a;border-radius:8px}
+input[type=checkbox]{accent-color:#50d3d5}input[type=file]{display:block;max-width:100%;margin:8px 0 12px;font-size:12px}
+canvas{width:100%;display:block;border-radius:10px;border:1px solid #26435b;background:#081622}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}.stat{border:1px solid #244151;border-radius:10px;padding:9px;background:#102536}.stat strong{display:block;font-size:18px;font-variant-numeric:tabular-nums}.stat span{display:block;color:#9cbdcc;font-size:11px}
+.status{border-top:1px solid #294453;margin-top:14px;padding-top:12px;color:#accbdb;font-size:13px;min-height:28px;white-space:pre-wrap;word-break:break-word}
+.info{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:15px 0}.info div{border:1px solid #2a4b5c;background:#102737;border-radius:10px;padding:11px;text-align:center}.info strong{display:block;color:#d7f4ed;font-size:18px}.info small{font-size:11px;color:#9dbbcc}
+code{color:#b6eddf;font-size:12px}a{color:#85d9ef;text-decoration:none}a:hover{text-decoration:underline}
+hr{border:0;border-top:1px solid #274556;margin:18px 0}
+.hidden{display:none!important}footer{color:#96b0c4;font-size:12px;margin-top:20px}
+@media(max-width:750px){.panels{grid-template-columns:1fr}.info{grid-template-columns:repeat(2,minmax(0,1fr))}.wrap{padding:16px 12px 32px}}
+</style></head><body><div class="wrap">
+<header><span class="chip">MICROMUSIC</span><div><h1>PIC16F1503 · Музыкальный эмулятор</h1><p>Спектральный синтез и Timer2/PWM3 по даташиту Microchip DS40001607D</p></div></header>
+<div class="info"><div><strong>16 МГц</strong><small>HFINTOSC</small></div><div><strong>62,5 кГц</strong><small>Несущая PWM3</small></div><div><strong>15 625 Гц</strong><small>Звуковые отсчёты</small></div><div><strong>8 бит</strong><small>ЦАП через PWM</small></div></div>
+<div class="panels"><section class="panel">
+<div class="tabs"><button id="tabMusic" class="active">Музыкальный движок</button><button id="tabCPU">PIC HEX · CPU</button></div>
+<div id="musicPanel">
+<h2>Люмьер — аранжировка MicroMusic</h2>
+<p>Скрипка, рояль, нейлоновая гитара и ударные. Используются именно измеренные таблицы и упакованные секции из репозитория.</p>
+<div class="line"><button id="playMusic" class="primary">▶ Слушать</button><button id="stop">■ Остановить</button><button id="downloadWav">↓ WAV</button>
+<label>Длительность <select id="duration"><option value="14">14 с</option><option value="30">30 с</option><option value="60">60 с</option><option value="222">Вся композиция (~3:42)</option></select></label></div>
+<div class="line"><label><input type="checkbox" class="muting" data-voice="0" checked> Скрипка</label><label><input type="checkbox" class="muting" data-voice="1" checked> Пианино</label><label><input type="checkbox" class="muting" data-voice="2" checked> Гитара</label><label><input type="checkbox" class="muting" data-voice="3" checked> Ударные</label></div>
+<p class="small">Режим звуковой модели воспроизводит алгоритм C-порта. Это не исполнение машинных инструкций PIC; для этого есть отдельная вкладка HEX.</p></div>
+<div id="cpuPanel" class="hidden">
+<h2>Реальные инструкции PIC16F1503</h2>
+<p>Эмуляция 14-битных слов Enhanced Mid-Range PIC, банков SFR, Timer2, PWM3, постделителя 1:4 и прерываний. Встроенная демонстрация — <strong>диагностический HEX</strong> (ступенчатая пила PWM), а не музыка.</p>
+<div class="line"><label>Загрузить собранную прошивку <input type="file" id="hexInput" accept=".hex,.txt" /></label></div>
+<div class="line"><button id="runCpu" class="primary">▶ Выполнить HEX</button><button id="resetCpu">↻ Сброс PIC</button><label>Окно <select id="cpuDuration"><option value="0.08">80 мс</option><option value="0.25">250 мс</option><option value="0.5">500 мс</option><option value="1">1 с</option></select></label></div>
+<p class="small">При загрузке стороннего HEX ядро сообщит об неподдерживаемом opcode или периферии. Образ C-порта требуется предварительно собрать компилятором XC8.</p>
+</div>
+<hr/><h2>Осциллограмма PWM</h2><canvas id="scope" width="900" height="265"></canvas>
+<div class="line"><label>Окно графика <select id="window"><option value="256">256 отсчётов</option><option value="512" selected>512 отсчётов</option><option value="2048">2048 отсчётов</option></select></label><label>Масштаб <select id="zoom"><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option></select></label></div>
+<div class="stats"><div class="stat"><strong id="avg">128,00</strong><span>Средний уровень PWM</span></div><div class="stat"><strong id="range">128…128</strong><span>Минимум / максимум</span></div><div class="stat"><strong id="samplesCount">0</strong><span>Звуковые отсчёты / PWM-периоды</span></div><div class="stat"><strong id="time">0,00 с</strong><span>Время фрагмента</span></div></div>
+<div class="status" id="status">Готов к запуску.</div></section>
+<aside class="panel"><h2>Что эмулируется</h2><p>Модуль PWM3: <code>PWM3DCH (0x618)</code> и <code>PWM3DCL (0x617)</code>. При <code>PR2=63</code> десятибитное duty используется в диапазоне 0…255.</p><p>Оба регистра обновляются при завершении периода Timer2; постделитель 1:4 задаёт только частоту прерываний, не частоту несущей.</p>
+<hr/><h2>Инструменты</h2><p>16-точечные волны из спектров FluidR3: скрипка — два регистра; пианино и гитара — четыре кадра атаки/устойчивого звучания в двух регистрах. Огибающие, DDS и команды <code>note-off</code> обрабатываются отдельно.</p>
+<hr/><h2>Проверка HEX</h2><p>В режиме PIC CPU исполняются машинные слова из Intel HEX. Учитываются 1/2 цикла инструкций, пропуск следующей инструкции, 16-уровневый стек и автоматическое сохранение контекста прерываний.</p><p>Модель не заменяет MPLAB SIM: NCO, ADC, MSSP, компараторы и некоторые редкие инструкции пока не реализованы.</p>
+<p><a href="https://ww1.microchip.com/downloads/en/DeviceDoc/40001607D.pdf" target="_blank" rel="noopener">↗ Официальный даташит PIC16F1503</a></p>
+<p><a href="https://github.com/Witali/MicroMusic" target="_blank" rel="noopener">↗ Оригинал MicroMusic</a></p>
+</aside></div><footer>Измерения на данной странице — программная модель, не испытание на физическом PIC16F1503. Для реальной прошивки используйте исходник firmware/main.c и MPLAB XC8.</footer>
+</div>
+<script>
+/* GENERATED: tools/generate_assets.py */
+const MUSIC_ASSETS = {"violin":[-3,2,4,5,5,0,-3,-2,-2,-2,0,3,4,0,-5,-6,-2,0,2,3,3,6,6,5,0,-4,-5,-4,-4,-3,-2,-1],"piano":[1,2,3,4,3,1,0,0,2,2,-1,-3,-4,-5,-4,-1,1,2,3,4,3,1,-1,0,2,2,0,-3,-4,-5,-4,-1,1,2,4,5,3,0,0,0,1,1,0,-2,-4,-5,-4,-2,0,2,4,5,3,0,0,0,1,1,1,-2,-4,-5,-4,-2,1,2,3,4,3,1,0,0,2,2,-1,-3,-4,-5,-4,-1,1,2,3,4,4,3,1,0,1,1,-1,-3,-4,-5,-5,-2,1,3,3,4,4,4,2,1,1,0,-2,-3,-5,-6,-5,-2,1,3,3,4,5,6,3,1,0,-1,-2,-3,-5,-6,-6,-3],"guitar":[2,2,3,2,0,0,3,4,3,1,-3,-6,-7,-4,-1,1,1,2,3,3,1,1,2,3,2,1,-2,-4,-5,-4,-3,-1,1,3,4,4,2,1,2,2,1,0,-2,-2,-4,-5,-5,-2,0,3,4,5,3,2,1,1,0,0,-1,0,-2,-5,-7,-4,2,2,3,2,0,0,3,4,3,1,-3,-6,-7,-4,-1,1,3,3,3,1,-1,0,3,4,3,1,-3,-6,-6,-4,-2,1,3,4,3,1,-1,1,3,4,2,0,-3,-5,-6,-4,-2,0,4,5,3,0,-1,0,3,4,2,0,-3,-5,-5,-4,-3,0],"playlist":[0,196,38,183,91,168,168,119,168,203,203,119,168,203,203],"score":[224,25,57,97,64,80,225,17,57,91,226,1,49,81,64,80,227,9,49,91,224,45,225,27,42,32,226,52,41,227,61,224,43,51,225,59,51,255,224,43,25,65,225,113,57,57,64,56,226,51,41,49,227,49,65,57,49,224,41,24,32,41,57,225,49,41,49,65,226,115,57,49,227,61,224,57,57,57,48,40,225,57,57,57,48,40,226,59,66,56,255,224,83,74,64,225,60,49,226,44,25,227,52,41,224,25,33,41,49,225,60,48,40,226,68,57,227,53,255,224,59,107,225,51,107,226,43,107,227,35,107,225,43,107,226,51,107,228,67,107,227,59,107,224,60,73,225,68,65,226,73,65,65,57,227,53,224,51,59,225,59,67,226,75,65,57,227,69,224,57,57,57,48,40,225,57,57,57,48,40,226,68,57,227,53,224,57,57,57,48,40,225,59,57,64,56,226,51,42,48,227,37,255,246,109,109,109,244,109,109,242,109,109,248,109,255],"durations":[1,2,3,4,6,8,16],"noteSteps":[691,776,822,1036,1163,1231,1382,1552,1644,1846,2071,2326,2464],"chordsKey":[1036,822,691,776,581],"chordsPluck":[776,616,518,581,436],"gridInc":1432,"source":"https://github.com/Witali/MicroMusic"};
+
+/* Sound-model reference for the MicroMusic PIC16F1503 port.
+ * This is NOT instruction-level PIC execution. It mirrors firmware/main.c's
+ * score interpreter, envelopes, 16-bit DDS, LFSR and PWM duty production.
+ */
+const A=MUSIC_ASSETS;
+class SoundModel {
+  constructor(){this.reset();}
+  reset(){
+    this.v=Array.from({length:3},()=>({phase:0,step:0,env:0,stage:0,age:0,decay:0,frame:0}));
+    this.drumEnv=0;this.drumMode=0;this.beatIndex=0;this.drumLfsr=0xace1;this.drumPhase=0;
+    this.musicDivider=0;this.envelopeTicks=0;this.remainingGrid=0;this.sectionIndex=0;this.scoreOffset=0;this.gridPhase=0;
+    this.sectionsTraversed=0;this.noteoffs=0;this.eventCount=0;this.pwm=128;this.muted=[false,false,false,false];
+    this.advanceEvent();
+  }
+  startNote(n,step){const v=this.v[n];v.step=step;v.age=0;v.decay=0;v.frame=0;v.stage=1;v.env=n===0?1:15;}
+  noteOff(n){this.noteoffs++;if(this.v[n].env)this.v[n].stage=0;}
+  triggerDrum(mode){this.drumMode=mode;this.drumEnv=15;if(mode===0)this.drumPhase=0;}
+  envelopeTick(){
+    this.envelopeTicks=(this.envelopeTicks+1)&255;
+    for(let i=0;i<3;i++){
+      const v=this.v[i];if(!v.env)continue;
+      if(v.age<255)v.age++;
+      if(v.frame<3){let period=i===1?6:4;if(i===0)period=20;if(v.age>=(v.frame+1)*period)v.frame++;}
+      if(v.stage===0){if(++v.decay>=2){v.decay=0;v.env--;}}
+      else if(i===0){if(v.stage===1 && ((++v.decay&3)===0)){
+        if(v.env<14)v.env++; else v.stage=2;
+      }}else{
+        const high=v.step>=1500;
+        const period=i===1?(high?9:17):(high?7:12);
+        if(++v.decay>=period){v.decay=0;if(v.env)v.env--;v.stage=2;}
+      }
+    }
+    if(this.drumEnv){const rate=this.drumMode===2?3:1;if((this.envelopeTicks%rate)===0)this.drumEnv--;}
+  }
+  advanceEvent(){
+    let guard=0;
+    while(guard++<32){
+      if(this.scoreOffset>=A.score.length){this.scoreOffset=0;this.sectionIndex=0;}
+      let e=A.score[this.scoreOffset++];this.eventCount++;
+      if(e===255){this.sectionIndex++;this.sectionsTraversed++;
+        if(this.sectionIndex>=A.playlist.length)this.sectionIndex=0;
+        this.scoreOffset=A.playlist[this.sectionIndex];continue;
+      }
+      if(e>=0xf0){if(e&1)this.noteOff(0);if(e&2)this.noteOff(1);if(e&4)this.noteOff(2);if(e&8)this.drumEnv=0;continue;}
+      if(e>=0xe0){const j=e&15;if(j<5){this.startNote(1,A.chordsKey[j]);this.startNote(2,A.chordsPluck[j]);}continue;}
+      const idx=e>>3, duration=e&7;
+      this.remainingGrid=duration<7?A.durations[duration]:1;
+      if(idx===13)this.noteOff(0);else if(idx<13)this.startNote(0,A.noteSteps[idx]);
+      return;
+    }
+    this.remainingGrid=1;
+  }
+  stepGrid(){
+    if((this.beatIndex&1)===0){
+      if(this.beatIndex===0)this.triggerDrum(0);
+      else if(this.beatIndex===4)this.triggerDrum(1);
+      else this.triggerDrum(2);
+    }
+    this.beatIndex=(this.beatIndex+1)&7;
+    if(this.remainingGrid && --this.remainingGrid===0)this.advanceEvent();
+  }
+  wave(inst,v){const idx=v.phase>>>12,hi=v.step>=(inst===0?1450:1500);
+    if(inst===0)return A.violin[(hi<<4)|idx];
+    if(inst===1)return A.piano[(hi<<6)|(v.frame<<4)|idx];
+    return A.guitar[(hi<<6)|(v.frame<<4)|idx];
+  }
+  drumSample(){
+    if(!this.drumEnv)return 0;
+    const old=this.drumLfsr&255;
+    this.drumLfsr=((this.drumLfsr>>>1)^((this.drumLfsr&1)?0xb400:0))&65535;
+    const n=this.drumLfsr&255;
+    if(this.drumMode===0){this.drumPhase=(this.drumPhase+180+this.drumEnv*42)&65535;
+      const tone=((this.drumPhase>>>11)&31)-16;
+      return (tone*this.drumEnv)>>4;
+    }
+    if(this.drumMode===1){const raw=(n&31)-16,body=((this.drumPhase>>>11)&15)-8;
+      this.drumPhase=(this.drumPhase+300)&65535;
+      return ((raw+body)*this.drumEnv)>>5;
+    }
+    return ((((n^old)&31)-16)*this.drumEnv)>>5;
+  }
+  nextSample(){
+    if(++this.musicDivider===64){const prev=this.gridPhase;this.musicDivider=0;this.envelopeTick();this.gridPhase=(this.gridPhase+A.gridInc)&65535;
+      if(this.gridPhase<prev)this.stepGrid();
+    }
+    let mix=128;
+    for(let i=0;i<3;i++){const v=this.v[i];v.phase=(v.phase+v.step)&65535;
+      if(v.env && !this.muted[i])mix+=Math.trunc((this.wave(i,v)*v.env)/4);
+    }
+    const drum=this.drumSample();if(!this.muted[3])mix+=drum;
+    this.pwm=Math.max(0,Math.min(255,mix));return this.pwm;
+  }
+  /* For emulator: Timer2 postscaler generates 1 ISR every 4 PWM cycles.
+   * Preview stream reconstructs duty held over those four carrier periods. */
+  generate(count){const a=new Uint8Array(count);for(let i=0;i<count;i++)a[i]=this.nextSample();return a;}
+}
+
+/* PIC16F1503 enhanced mid-range CPU + Timer2/PWM3 emulator.
+ * DS40001607D: sections 3 (FSR mapping), 5 (oscillator), 20 (Timer2),
+ * 22 (PWM), 27 (14-bit instruction encodings and cycle counts).
+ * This is a transparent instruction-level partial PIC emulator, NOT MPLAB SIM.
+ * Unsupported peripherals and opcodes fail loudly rather than produce fake audio.
+ */
+class PIC16F1503 {
+  static FOSC = 16000000;
+  static FCY = 4000000;
+  constructor(words=null){ this.load(words??new Uint16Array(2048)); }
+  load(words){
+    this.program=new Uint16Array(2048); this.program.fill(0x3fff);
+    this.program.set(words.slice(0,2048)); this.reset();
+  }
+  reset(){
+    this.mem=new Uint8Array(4096); this.PC=0; this.W=0; this.cycle=0;
+    this.stack=[];this.halted=false;this.breakReason='';this.totalInstructions=0;
+    this.inIRQ=false; this.context=null;this.irqCount=0; this.timerCount=0;
+    this.prescale=0;this.postscale=0;this.pwmDuty=0;this.pwmPeriodCount=0;
+    this.samples=[]; this.dutyEvents=[]; this.unknownSfrWrites=[];
+    this.mem[0x03]=0x18;this.mem[0x0b]=0;this.mem[0x1b]=0xff;
+    this.mem[0x099]=0x38; // IRCF 0111: factory reset 500kHz; firmware should switch to 16MHz.
+    this.mem[0x08]=0;
+  }
+  get bsr(){return this.mem[8] & 31;} set bsr(v){this.mem[8]=v&31;}
+  get Z(){return !!(this.mem[3]&4);} get C(){return !!(this.mem[3]&1);}
+  setZ(v){this.mem[3]=(this.mem[3]&~4)|(v?4:0);}
+  setC(v){this.mem[3]=(this.mem[3]&~1)|(v?1:0);}
+  setDC(v){this.mem[3]=(this.mem[3]&~2)|(v?2:0);}
+  add8(a,b,c=0){const s=a+b+c,r=s&255;this.setC(s>255);this.setDC(((a&15)+(b&15)+c)>15);this.setZ(r===0);return r;}
+  sub8(a,b,c=0){const s=a-b-c,r=s&255;this.setC(s>=0);this.setDC(((a&15)-(b&15)-c)>=0);this.setZ(r===0);return r;}
+  addr(f){return f<12?f:(f>=0x70?f:(this.bsr*128+f));}
+  fsr(n){return this.mem[n?7:5]*256+this.mem[n?6:4];}
+  setFsr(n,a){this.mem[n?6:4]=a&255;this.mem[n?7:5]=(a>>8)&255;}
+  getMemory(a){
+    a &= 0xffff;
+    if(a>=0x8000){const off=a-0x8000;return off < this.program.length ? this.program[off]&255:0;}
+    if(a>=0x2000 && a<0x29B0){const off=a-0x2000;const bank=(off/80)|0;return this.mem[bank*128+0x20+(off%80)];}
+    if(a>0xFFF) return 0;
+    if(a<12) return this.readDirect(a);
+    if(a>=0x70 && (a&127)>=0x70) return this.mem[0x70+(a&15)];
+    return this.mem[a];
+  }
+  setMemory(a,v){
+    a &= 0xffff;v &=255;
+    if(a>=0x8000)return; // Flash is read-only through INDF.
+    if(a>=0x2000 && a<0x29B0){const off=a-0x2000;const bank=(off/80)|0;this.mem[bank*128+0x20+(off%80)]=v;return;}
+    if(a>0xFFF)return;
+    if(a<12){this.writeDirect(a,v);return;}
+    if(a>=0x70 && (a&127)>=0x70){this.mem[0x70+(a&15)]=v;return;}
+    this.mem[a]= a===0x617 ? (v&0xC0) : v;
+    if(a===0x1a){this.prescale=0;}
+  }
+  readDirect(f){
+    if(f===0)return this.getMemory(this.fsr(0));
+    if(f===1)return this.getMemory(this.fsr(1));
+    if(f===2)return this.PC&255;
+    if(f===9)return this.W;
+    return this.mem[f];
+  }
+  writeDirect(f,v){
+    v &=255;
+    if(f===0){this.setMemory(this.fsr(0),v);return;}
+    if(f===1){this.setMemory(this.fsr(1),v);return;}
+    if(f===2){ // computed goto via PCLATH and PCL, instruction takes two cycles
+      this.PC=((this.mem[10]&0x7f)<<8)|v;return;
+    }
+    if(f===9){this.W=v;return;}
+    if(f===8){this.mem[8]=v&31;return;}
+    this.mem[f]=v;
+  }
+  rf(f){return this.getMemory(this.addr(f));}
+  wf(f,v){this.setMemory(this.addr(f),v);}
+  setW(v){this.W=v&255;}
+  advanceCycles(n){
+    this.cycle+=n;
+    const tcon=this.mem[0x1c];
+    if(!(tcon&4))return;
+    const prescaler=(1 << (2*(tcon&3)));
+    for(let c=0;c<n;c++){
+      if(++this.prescale<prescaler)continue;
+      this.prescale=0;
+      if(++this.timerCount>this.mem[0x1b]){
+        this.timerCount=0;this.mem[0x1a]=0;
+        this.pwmPeriodCount++;
+        const dch=this.mem[0x618], dcl=this.mem[0x617];
+        this.pwmDuty=((dch<<2)|(dcl>>6)) & 1023; // double-buffered at Timer2 PR2 match
+        const max=4*(this.mem[0x1b]+1);
+        const out=(this.mem[0x619]&0xC0)===0xC0 ? Math.min(255,Math.round((256*this.pwmDuty)/max)) : 128;
+        this.samples.push(out);
+        if(++this.postscale>=(((tcon>>3)&15)+1)){
+          this.postscale=0;this.mem[0x11]|=2;
+        }
+      }else this.mem[0x1a]=this.timerCount;
+    }
+  }
+  push(pc){if(this.stack.length>=16)throw new Error('16-level hardware return stack overflow');this.stack.push(pc&0x7fff);}
+  pop(){if(!this.stack.length)throw new Error('PIC hardware return stack underflow');return this.stack.pop();}
+  tryIRQ(){
+    if((this.mem[0x0b]&0xC0)===0xC0 && (this.mem[0x091]&2) && (this.mem[0x011]&2)){
+      this.context={W:this.W,STATUS:this.mem[3],BSR:this.mem[8],FSR0:this.fsr(0),FSR1:this.fsr(1),PCLATH:this.mem[10]};
+      this.push(this.PC);this.PC=4;this.mem[0x0b]&=~0x80;this.inIRQ=true;this.irqCount++;
+      this.advanceCycles(2);
+    }
+  }
+  readIndirect(n,mm){
+    let addr=this.fsr(n);
+    if(mm===1){addr=(addr+1)&0xffff;this.setFsr(n,addr);} // pre-increment
+    if(mm===3){addr=(addr-1)&0xffff;this.setFsr(n,addr);} // pre-decrement
+    const val=this.getMemory(addr);
+    if(mm===2)this.setFsr(n,(addr+1)&0xffff); // post-increment
+    return {val,cycles:addr>=0x8000?2:1};
+  }
+  writeIndirect(n,mm,v){
+    let addr=this.fsr(n);
+    if(mm===1){addr=(addr+1)&0xffff;this.setFsr(n,addr);}
+    if(mm===3){addr=(addr-1)&0xffff;this.setFsr(n,addr);}
+    this.setMemory(addr,v);
+    if(mm===2)this.setFsr(n,(addr+1)&0xffff);
+    return 1;
+  }
+  step(){
+    if(this.halted)throw new Error(this.breakReason);
+    if(this.PC>=this.program.length)throw new Error(`PC outside 2K program memory: ${this.PC.toString(16)}`);
+    const op=this.program[this.PC++]&0x3fff;this.totalInstructions++;
+    let cycles=1, f=op&127, d=(op>>7)&1, v,r,top=op&0x3f00;
+    const store=(x)=>{if(d)this.wf(f,x);else this.setW(x);};
+    const shiftAndCarry=(newVal,carry)=>{store(newVal);this.setC(carry);this.setZ((newVal&255)===0);};
+    if(op===0x0000){} // NOP
+    else if(op===0x0008){this.PC=this.pop();cycles=2;}
+    else if(op===0x0009){this.PC=this.pop();cycles=2;this.mem[0x0b]|=0x80;
+      if(this.context){const s=this.context;this.W=s.W;this.mem[3]=s.STATUS;this.mem[8]=s.BSR;this.setFsr(0,s.FSR0);this.setFsr(1,s.FSR1);this.mem[10]=s.PCLATH;this.context=null;}this.inIRQ=false;}
+    else if(op===0x000b){this.PC=(this.PC+this.W)&0x7fff;cycles=2;}
+    else if(op===0x000a){this.push(this.PC);this.PC=((this.mem[10]&0x7f)<<8)|this.W;cycles=2;}
+    else if(op===0x0001){this.reset();return 1;} // RESET instruction
+    else if(op===0x0063){this.halted=true;this.breakReason='SLEEP reached';}
+    else if((op&0x3fe0)===0x0020){this.bsr=op&31;}
+    else if((op&0x3f80)===0x3180){this.mem[10]=op&127;}
+    else if((op&0x3f80)===0x0100){this.setW(0);this.setZ(true);}
+    else if((op&0x3f80)===0x0180){this.wf(f,0);this.setZ(true);}
+    else if((op&0x3f80)===0x0080){this.wf(f,this.W);}
+    else if((op&0x3f00)===0x0700){r=this.add8(this.rf(f),this.W);store(r);}
+    else if((op&0x3f00)===0x0500){r=this.rf(f)&this.W;store(r);this.setZ(r===0);}
+    else if((op&0x3f00)===0x0400){r=this.rf(f)|this.W;store(r);this.setZ(r===0);}
+    else if((op&0x3f00)===0x0600){r=this.rf(f)^this.W;store(r);this.setZ(r===0);}
+    else if((op&0x3f00)===0x0200){r=this.sub8(this.rf(f),this.W);store(r);}
+    else if((op&0x3f00)===0x0300){r=(this.rf(f)-1)&255;store(r);this.setZ(r===0);}
+    else if((op&0x3f00)===0x0800){r=this.rf(f);store(r);this.setZ(r===0);}
+    else if((op&0x3f00)===0x0900){r=(~this.rf(f))&255;store(r);this.setZ(r===0);}
+    else if((op&0x3f00)===0x0a00){r=(this.rf(f)+1)&255;store(r);this.setZ(r===0);}
+    else if((op&0x3f00)===0x0b00){r=(this.rf(f)-1)&255;store(r);if(r===0){this.PC++;cycles=2;}}
+    else if((op&0x3f00)===0x0f00){r=(this.rf(f)+1)&255;store(r);if(r===0){this.PC++;cycles=2;}}
+    else if((op&0x3f00)===0x0e00){r=this.rf(f);store(((r<<4)|(r>>4))&255);}
+    else if((op&0x3f00)===0x0c00){v=this.rf(f);r=(v>>1)|(this.C?128:0);store(r);this.setC(v&1);}
+    else if((op&0x3f00)===0x0d00){v=this.rf(f);r=((v<<1)|(this.C?1:0))&255;store(r);this.setC(v&128);}
+    else if((op&0x3f00)===0x3d00){r=this.add8(this.rf(f),this.W,this.C?1:0);store(r);}
+    else if((op&0x3f00)===0x3b00){r=this.sub8(this.rf(f),this.W,this.C?0:1);store(r);}
+    else if((op&0x3f00)===0x3700){v=this.rf(f);r=(v>>1)|(v&128);shiftAndCarry(r,v&1);}
+    else if((op&0x3f00)===0x3500){v=this.rf(f);r=(v<<1)&255;shiftAndCarry(r,v&128);}
+    else if((op&0x3f00)===0x3600){v=this.rf(f);r=v>>1;shiftAndCarry(r,v&1);}
+    else if((op&0x3c00)===0x1000){this.wf(f,this.rf(f)&~(1<<((op>>7)&7)));}
+    else if((op&0x3c00)===0x1400){this.wf(f,this.rf(f)|(1<<((op>>7)&7)));}
+    else if((op&0x3c00)===0x1800){if(!(this.rf(f)&(1<<((op>>7)&7)))){this.PC++;cycles=2;}}
+    else if((op&0x3c00)===0x1c00){if(this.rf(f)&(1<<((op>>7)&7))){this.PC++;cycles=2;}}
+    else if((op&0x3800)===0x2000){this.push(this.PC);this.PC=((this.mem[10]&0x78)<<8)|(op&0x7ff);cycles=2;}
+    else if((op&0x3800)===0x2800){this.PC=((this.mem[10]&0x78)<<8)|(op&0x7ff);cycles=2;}
+    else if((op&0x3e00)===0x3200){let off=op&511;if(off&256)off-=512;this.PC=(this.PC+off)&0x7fff;cycles=2;}
+    else if((op&0x3f80)===0x3100){let imm=op&63;if(imm&32)imm-=64;const n=(op>>6)&1;this.setFsr(n,(this.fsr(n)+imm)&0xffff);}
+    else if((op&0x3ff0)===0x0010){const x=this.readIndirect((op>>2)&1,op&3);this.W=x.val;cycles=x.cycles;this.setZ(this.W===0);}
+    else if((op&0x3ff0)===0x0018){cycles=this.writeIndirect((op>>2)&1,op&3,this.W);}
+    else if((op&0x3f80)===0x3f00){const n=(op>>6)&1, k=op&63;const off=k&32?k-64:k;const addr=(this.fsr(n)+off)&0xffff;this.W=this.getMemory(addr);this.setZ(this.W===0);cycles=addr>=0x8000?2:1;}
+    else if((op&0x3f80)===0x3f80){const n=(op>>6)&1, k=op&63;const off=k&32?k-64:k;this.setMemory((this.fsr(n)+off)&0xffff,this.W);}
+    else if((op&0x3f00)===0x3e00){this.W=this.add8(this.W,op&255);}
+    else if((op&0x3f00)===0x3900){this.W&=op&255;this.setZ(this.W===0);}
+    else if((op&0x3f00)===0x3800){this.W|=op&255;this.setZ(this.W===0);}
+    else if((op&0x3f00)===0x3a00){this.W^=op&255;this.setZ(this.W===0);}
+    else if((op&0x3f00)===0x3c00){this.W=this.sub8(op&255,this.W);}
+    else if((op&0x3800)===0x3000){this.W=op&255;}
+    else if((op&0x3c00)===0x3400){this.W=op&255;this.PC=this.pop();cycles=2;}
+    else throw new Error(`Unsupported PIC16 opcode ${op.toString(16).padStart(4,'0')} at PC ${((this.PC-1)&0x7fff).toString(16)}`);
+    this.advanceCycles(cycles);this.tryIRQ();return cycles;
+  }
+  run(maxInstructions=1000000, maxPWM=0){
+    for(let i=0;i<maxInstructions;i++){
+      this.step();
+      if(maxPWM&&this.samples.length>=maxPWM)break;
+    }
+    return {cycles:this.cycle,instructions:this.totalInstructions,pwmPeriods:this.pwmPeriodCount,irq:this.irqCount,PC:this.PC,output:this.samples};
+  }
+}
+
+function readPIC16Hex(content){
+  const bytes=new Map();let upper=0;
+  for(const line0 of content.split(/\r?\n/)){
+    const line=line0.trim();if(!line)continue;
+    if(!/^:[0-9a-fA-F]+$/.test(line))throw Error('Not an Intel HEX record: '+line.slice(0,30));
+    const data=[];for(let i=1;i<line.length;i+=2)data.push(parseInt(line.slice(i,i+2),16));
+    const count=data[0], a=(data[1]<<8)|data[2], type=data[3];
+    if(data.length!==5+count || (data.reduce((x,y)=>x+y,0)&255)!==0)throw Error('Intel HEX checksum or record length mismatch');
+    if(type===0x04){upper=((data[4]<<8)|data[5])<<16;continue;}
+    if(type===0x01)break;
+    if(type!==0)continue;
+    for(let j=0;j<count;j++)bytes.set(upper+a+j,data[4+j]);
+  }
+  const words=new Uint16Array(2048);words.fill(0x3fff);
+  for(let addr=0;addr<4096;addr+=2){if(bytes.has(addr)||bytes.has(addr+1))words[addr/2]=((bytes.get(addr)||0)|((bytes.get(addr+1)||0)<<8))&0x3fff;}
+  return words;
+}
+
+const DIAGNOSTIC_HEX=":100000000E28000000000000052891102C00403050\n:1000100097070318980A3F309805090021007A30A5\n:10002000990023000C1121000C1120003F309B008F\n:1000300000309A001C309C002C00203098000030CA\n:100040009700C03099002100911420000B178B17E6\n:02005000FF337C\n:00000001FF\n";
+
+const $=id=>document.getElementById(id);
+let activeTab='music',source=null,audioContext=null,audioNode=null,pic=null,customHex=DIAGNOSTIC_HEX;
+let generated=null, generatedRate=15625;let wavBytes=null;let abort=false;
+function setStatus(msg){$('status').textContent=msg;}
+function selectTab(tab){activeTab=tab;$('musicPanel').classList.toggle('hidden',tab!=='music');$('cpuPanel').classList.toggle('hidden',tab!=='cpu');$('tabMusic').classList.toggle('active',tab==='music');$('tabCPU').classList.toggle('active',tab==='cpu');stopPlayback();}
+$('tabMusic').onclick=()=>selectTab('music');$('tabCPU').onclick=()=>selectTab('cpu');
+function renderScope(arr,rate){
+  if(!arr||!arr.length)return;
+  const canvas=$('scope'),ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height;
+  const k=Math.min(arr.length,Number($('window').value)), zoom=Number($('zoom').value);
+  ctx.clearRect(0,0,w,h);ctx.fillStyle='#091623';ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle='#214355';ctx.lineWidth=1;ctx.setLineDash([4,5]);
+  for(let l=0;l<=4;l++){const y=(h-18)*l/4+9;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}ctx.setLineDash([]);
+  ctx.strokeStyle='#ffcf79';ctx.lineWidth=1.2;let y128=(h/2);ctx.beginPath();ctx.moveTo(0,y128);ctx.lineTo(w,y128);ctx.stroke();
+  ctx.strokeStyle='#61d5db';ctx.lineWidth=2;ctx.beginPath();
+  const start=Math.max(0,arr.length-k),end=start+k;let mi=255,ma=0,mean=0;
+  for(let i=start;i<end;i++){const v=arr[i];mi=Math.min(mi,v);ma=Math.max(ma,v);mean+=v;
+    const x=(i-start)/(k-1)*w,y=h/2-(v-128)*(h-24)/255*zoom;
+    if(i===start)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
+  ctx.stroke();mean/=k;ctx.font='12px ui-monospace,monospace';ctx.fillStyle='#f7d8a0';ctx.fillText('128 (DC)',8,Math.max(14,y128-7));
+  ctx.fillStyle='#9fbbce';ctx.fillText('Окно '+(k/rate*1000).toFixed(2)+' мс',w-180,h-12);
+  $('avg').textContent=mean.toFixed(2);$('range').textContent=mi+'…'+ma;
+  $('samplesCount').textContent=arr.length.toLocaleString('ru-RU');$('time').textContent=(arr.length/rate).toFixed(2)+' с';
+}
+function currentMuted(){return [...document.querySelectorAll('.muting')].map(el=>!el.checked);}
+function stopPlayback(){if(source){try{source.stop();}catch(e){}source.disconnect();source=null;} if(audioNode){audioNode.disconnect();audioNode=null;}}
+$('stop').onclick=()=>{abort=true;stopPlayback();setStatus('Воспроизведение остановлено.');};
+function toWav(arr,rate){
+  const length=arr.length*2,buffer=new ArrayBuffer(44+length),dv=new DataView(buffer);
+  function str(o,s){for(let i=0;i<s.length;i++)dv.setUint8(o+i,s.charCodeAt(i));}
+  str(0,'RIFF');dv.setUint32(4,36+length,true);str(8,'WAVE');str(12,'fmt ');dv.setUint32(16,16,true);
+  dv.setUint16(20,1,true);dv.setUint16(22,1,true);dv.setUint32(24,rate,true);dv.setUint32(28,rate*2,true);dv.setUint16(32,2,true);dv.setUint16(34,16,true);str(36,'data');dv.setUint32(40,length,true);
+  // Separate DC using a one-pole 35 Hz high-pass to match the analog AC coupling.
+  let prevIn=0,prevOut=0;const alpha=Math.exp(-2*Math.PI*35/rate);
+  for(let i=0;i<arr.length;i++){const v=(arr[i]-128)/128;const y=alpha*(prevOut+v-prevIn);prevIn=v;prevOut=y;dv.setInt16(44+i*2,Math.max(-32768,Math.min(32767,Math.round(y*23000))),true);}
+  return buffer;
+}
+function play(arr,rate){stopPlayback();audioContext=audioContext||new (window.AudioContext||window.webkitAudioContext)();audioContext.resume();
+  const buffer=audioContext.createBuffer(1,arr.length,rate), ch=buffer.getChannelData(0);
+  let prevIn=0,prevOut=0;const alpha=Math.exp(-2*Math.PI*35/rate);
+  for(let i=0;i<arr.length;i++){const v=(arr[i]-128)/128;const y=alpha*(prevOut+v-prevIn);prevIn=v;prevOut=y;ch[i]=y*.7;}
+  source=audioContext.createBufferSource();source.buffer=buffer;
+  const lowpass=audioContext.createBiquadFilter();lowpass.type='lowpass';lowpass.frequency.value=9000;
+  lowpass.Q.value=.5;source.connect(lowpass);lowpass.connect(audioContext.destination);
+  source.start();source.onended=()=>{source=null;};
+}
+async function runMusic(){
+  abort=false;const seconds=Number($('duration').value),rate=15625,n=Math.floor(seconds*rate),m=new SoundModel();m.muted=currentMuted();
+  setStatus('Расчёт '+seconds+' секунд звука по исходному алгоритму...');$('playMusic').disabled=true;
+  await new Promise(r=>setTimeout(r,15));
+  try{
+    const a=new Uint8Array(n);for(let i=0;i<n;i++){a[i]=m.nextSample();if((i&65535)===65535 && abort)throw Error('Остановлено');}
+    generated=a;generatedRate=rate;wavBytes=toWav(a,rate);renderScope(a,rate);
+    play(a,rate);
+    setStatus('Музыкальная модель: '+n.toLocaleString('ru-RU')+' отсчётов; пройдено секций: '+m.sectionsTraversed+'; note-off: '+m.noteoffs+'. Прошивка PIC при этом не исполнялась.');
+  }catch(e){setStatus(String(e));}finally{$('playMusic').disabled=false;}
+}
+$('playMusic').onclick=runMusic;
+$('downloadWav').onclick=()=>{
+  if(!wavBytes){setStatus('Сначала рассчитай музыкальный фрагмент или PIC HEX.');return;}
+  const a=document.createElement('a'),url=URL.createObjectURL(new Blob([wavBytes],{type:'audio/wav'}));a.href=url;a.download=activeTab==='music'?'micromusic_pic16_model.wav':'pic16_hex_pwm.wav';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);
+};
+function loadCpu(){pic=new PIC16F1503(readPIC16Hex(customHex));setStatus('PIC CPU сброшен, PC=0x0000. Готов к запуску Intel HEX.');}
+$('resetCpu').onclick=()=>{loadCpu();renderScope(new Uint8Array([128]),62500);};
+$('hexInput').onchange=async event=>{
+  const f=event.target.files?.[0];if(!f)return;
+  try{customHex=await f.text();loadCpu();setStatus('Загружено: '+f.name+'; '+pic.program.length+' слов памяти.');}catch(e){setStatus(String(e));}
+};
+async function runCpu(){
+  if(!pic)loadCpu();const target=62500*Number($('cpuDuration').value);
+  $('runCpu').disabled=true;abort=false;setStatus('PIC16 CPU работает: загрузка HEX и выполнение тактов...');
+  try{
+    let iteration=0;
+    while(pic.samples.length<target && iteration<15000000){
+      for(let i=0;i<12000&&pic.samples.length<target;i++){pic.step();iteration++;}
+      if(abort)throw Error('Остановлено');
+      if((iteration%48000)===0){setStatus('PIC CPU: '+iteration.toLocaleString('ru-RU')+' инструкций, '+pic.samples.length+' периодов PWM.');await new Promise(r=>setTimeout(r,0));}
+    }
+    if(pic.samples.length<target)throw Error('Достигнут лимит PIC-инструкций без заданной длительности сигнала');
+    generated=new Uint8Array(pic.samples.slice(0,Math.ceil(target)));generatedRate=62500;wavBytes=toWav(generated,generatedRate);
+    renderScope(generated,generatedRate);
+    play(generated,generatedRate);
+    setStatus('PIC HEX: '+pic.totalInstructions.toLocaleString('ru-RU')+' машинных инструкций, '+pic.cycle.toLocaleString('ru-RU')+' тактов, '+pic.irqCount+' IRQ, PC=0x'+pic.PC.toString(16)+'. Сигнал — duty PWM3.');
+  }catch(e){setStatus('Ошибка исполнения HEX: '+String(e));}finally{$('runCpu').disabled=false;}
+}
+$('runCpu').onclick=runCpu;
+$('window').onchange=()=>renderScope(generated||new Uint8Array([128]),generatedRate);
+$('zoom').onchange=$('window').onchange;
+loadCpu();renderScope(new Uint8Array(512).fill(128),15625);
+</script></body></html>
