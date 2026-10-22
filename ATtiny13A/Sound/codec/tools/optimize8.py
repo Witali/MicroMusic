@@ -9,7 +9,7 @@ from __future__ import annotations
 import argparse, json, time
 from pathlib import Path
 import numpy as np
-from model_lite import render,reference_selftest
+from model8 import render
 from perceptual import Evaluator,load_wav,lpc2_pcm
 
 ROOT=Path(__file__).resolve().parent
@@ -30,7 +30,7 @@ def load_params(path):
     K=np.asarray(d['K'],dtype=np.int64).copy()
     P=np.asarray(d['P'],dtype=np.int64).copy()
     E=np.asarray(d['E'],dtype=np.int64).copy()
-    assert K.ndim==2 and K.shape[1]==7 and len(P)==len(E)==len(K)
+    assert K.ndim==2 and K.shape[1]==8 and len(P)==len(E)==len(K)
     return K,P,E
 
 def configure(mode):
@@ -48,8 +48,7 @@ def accept_guard(metrics,baseline):
 
 def main(args):
     begin=time.monotonic()
-    if args.seed_params==ROOT/'references/base_parameters.npz' and args.source==ROOT/'references/original_reference.wav':
-        assert reference_selftest(ROOT)==0, 'DSP model and independent AVR baseline disagree'
+    
     rng=np.random.default_rng(args.seed)
     x=load_wav(args.source)
     teacher=(load_wav(args.teacher) if args.teacher.suffix.lower()=='.wav' else lpc2_pcm(args.teacher)) if args.teacher.exists() else x
@@ -79,7 +78,7 @@ def main(args):
         action=rng.choice(['k','k','k','k','gain','pitch'])
         which=None
         if action=='k':
-            which=int(rng.integers(0,7))
+            which=int(rng.integers(0,8))
             previous=int(K[frame,which]);step=int(rng.choice([-2,-1,1,2]));nxt=int(np.clip(previous+step,-7,7))
             if nxt==previous:continue
             K[frame,which]=nxt

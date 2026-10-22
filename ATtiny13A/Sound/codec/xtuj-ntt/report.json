@@ -1,0 +1,71 @@
+{
+  "name": "xtuj-ntt",
+  "selected": "pitch-guided",
+  "metrics": {
+    "stoi": 0.7178263887287498,
+    "mel_original": 0.8829676517026723,
+    "mel_lpc2": 0.8467908527459294,
+    "envelope": 0.23060932299566722,
+    "clicks_60": 0,
+    "clicks_48": 0,
+    "max_step": 47
+  },
+  "baseline": {
+    "stoi": 0.7177514201297817,
+    "mel_original": 0.8838818747801246,
+    "mel_lpc2": 0.844789997898531,
+    "envelope": 0.22923797584821579,
+    "clicks_60": 0,
+    "clicks_48": 0,
+    "max_step": 47
+  },
+  "flash_bytes": 969,
+  "voice_bytes": 200,
+  "pcm_samples": 9216,
+  "frames": 36,
+  "rate_hz": 7500,
+  "source_sec": 1.2209333333333334,
+  "avr_matches_model_exactly": true,
+  "firmware_file": "/mnt/data/MicroMusic_ATtiny13_Voice_v2/xtuj-ntt/firmware/tinylpc.hex",
+  "candidates": [
+    {
+      "name": "existing LPC-8",
+      "metrics": {
+        "stoi": 0.7177514201297817,
+        "mel_original": 0.8838818747801246,
+        "mel_lpc2": 0.844789997898531,
+        "envelope": 0.22923797584821579,
+        "clicks_60": 0,
+        "clicks_48": 0,
+        "max_step": 47
+      },
+      "score": 1.141802573507527
+    },
+    {
+      "name": "pitch-guided",
+      "metrics": {
+        "stoi": 0.7178263887287498,
+        "mel_original": 0.8829676517026723,
+        "mel_lpc2": 0.8467908527459294,
+        "envelope": 0.23060932299566722,
+        "clicks_60": 0,
+        "clicks_48": 0,
+        "max_step": 47
+      },
+      "score": 1.1424501091046586
+    },
+    {
+      "name": "LPC2 Voice v2 fine-tuned",
+      "metrics": {
+        "stoi": 0.717162929812782,
+        "mel_original": 0.8820635156440574,
+        "mel_lpc2": 0.8394885308313328,
+        "envelope": 0.22099019357456484,
+        "clicks_60": 0,
+        "clicks_48": 1,
+        "max_step": 50
+      },
+      "score": 1.1397339191924276
+    }
+  ]
+}

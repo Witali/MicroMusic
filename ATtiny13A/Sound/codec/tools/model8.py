@@ -9,7 +9,7 @@ from numba import njit
 def render(K, P, E, samples):
     frames=len(P)
     out=np.empty(samples,dtype=np.int16)
-    st=np.zeros(7,dtype=np.int64)
+    st=np.zeros(8,dtype=np.int64)
     lfsr=0xa7
     phase=1
     period=0
@@ -21,7 +21,7 @@ def render(K, P, E, samples):
         if t==0 or rem==0:
             newperiod=int(P[fi]);gain=int(E[fi]);target=newperiod
             if gain==0:
-                for k in range(7):st[k]=0
+                for k in range(8):st[k]=0
             # unsigned AVR if ((new - old + 4)&255)<9 -> glide
             if ((newperiod-period+4)&255)>=9:
                 period=newperiod
@@ -43,10 +43,10 @@ def render(K, P, E, samples):
             lfsr=(lfsr>>1)^(0xb8 if (lfsr&1) else 0)
             exc=-gain if (lfsr&1) else gain
         v=exc
-        for k in range(6,-1,-1):
+        for k in range(7,-1,-1):
             prod=(int(K[fi,k])*st[k])>>4
             v=((v-prod+128)&255)-128
-            if k<6:
+            if k<7:
                 v2=(int(K[fi,k])*v)>>4
                 st[k+1]=((st[k]+v2+128)&255)-128
         st[0]=v
