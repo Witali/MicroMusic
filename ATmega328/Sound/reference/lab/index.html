@@ -3,22 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Audio Codec Lab v11 — LPC2 Improved</title>
+<title>Audio Codec Lab v12 — LFA, LPC, Ogg Vorbis и Opus</title>
 <style>
 :root{color-scheme:dark;--bg:#0d1117;--p:#161b22;--p2:#0b1118;--t:#e6edf3;--m:#9da7b3;--l:#30363d;--a:#58a6ff;--g:#3fb950;--r:#f85149}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#172033,var(--bg) 45%);color:var(--t);font:15px/1.45 system-ui,sans-serif}main{max-width:1120px;margin:auto;padding:24px}h1{font-size:clamp(26px,4vw,40px);margin:0 0 6px}p{color:var(--m)}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}.card{grid-column:span 12;background:var(--p);border:1px solid var(--l);border-radius:14px;padding:18px;box-shadow:0 15px 45px #0004}@media(min-width:850px){.left{grid-column:span 5}.right{grid-column:span 7}}.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:11px;margin:14px 0}label{display:grid;gap:5px;color:var(--m);font-size:13px}input,select,button{font:inherit;color:var(--t);background:var(--p2);border:1px solid var(--l);border-radius:9px;padding:9px 10px}input[type=file]{width:100%}input[type=range]{padding:0}button{cursor:pointer;font-weight:650}button:hover:not(:disabled){border-color:var(--a)}button:disabled{opacity:.45;cursor:not-allowed}.primary{background:#1f6feb}.good{background:#238636}.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}progress{width:100%;margin-top:13px}.status{min-height:42px;white-space:pre-wrap;color:var(--m)}.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:9px;margin:12px 0}.metric{background:var(--p2);border:1px solid var(--l);border-radius:10px;padding:10px}.metric b{display:block;font-size:18px}.metric span{font-size:12px;color:var(--m)}canvas{display:block;width:100%;height:190px;background:#090d12;border:1px solid var(--l);border-radius:10px;margin-top:8px}details{border-top:1px solid var(--l);margin-top:15px;padding-top:12px}summary{cursor:pointer;font-weight:700}code{background:#090d12;border:1px solid var(--l);border-radius:5px;padding:2px 5px}.small{font-size:12px}.value{color:var(--t)}.codecHidden{display:none!important}.codecNote{font-size:12px;color:var(--m)}
 </style>
 </head>
 <body><main>
-<h1>Audio Codec Lab v11: LPC2 Improved</h1>
-<p>Страница сравнивает три независимых кодека: <b>LFA‑3</b>, исходный <b>LPC1 / Talkie‑подобный</b> и новый <b>LPC2 Improved</b>. LPC2 сохраняет прежний максимум 53 бита для обычного звонкого кадра, но использует устойчивые LSF-параметры, более длинное перекрывающееся окно анализа, глобальное отслеживание основного тона, смешанное возбуждение и формантный постфильтр. LPC1 оставлен без изменений для прямого сравнения. В LFA-декодере по-прежнему доступно дробное смещение логарифмической сетки.</p>
+<h1>Audio Codec Lab v12: Vorbis и Opus</h1>
+<p>Страница сравнивает пять независимых кодеков: экспериментальные <b>LFA‑3</b>, <b>LPC1</b> и <b>LPC2 Improved</b>, а также стандартные <b>Ogg Vorbis</b> и <b>Opus</b>. Vorbis кодируется локальным WASM-модулем, загружаемым при первом использовании. Для Opus сначала используется WebCodecs, а при отсутствии поддержки — системный MediaRecorder.</p>
 <div class="grid">
 <section class="card left">
 <h2>Исходный звук</h2>
 <label>Аудиофайл<input id="audioFile" type="file" accept="audio/*,.wav,.mp3,.ogg,.m4a,.aac"></label>
-<div class="controls"><label>Кодек<select id="codec"><option value="lfa3" selected>LFA‑3: синусоиды + шум</option><option value="lpc1">LPC1: LPC‑10 / Talkie‑подобный</option><option value="lpc2">LPC2 Improved: LSF + mixed excitation</option></select><span class="codecNote" id="codecInfo">Тональный и шумовой слои</span></label><label>Нормализация<select id="normalizeMode"><option value="peak" selected>по пиковому уровню</option><option value="off">выключена</option></select><span class="codecNote" id="normalizeInfo">Удаление DC и приведение пика</span></label><label class="normalizeOnly">Целевой пик<input id="normalizeTarget" type="range" min="-6" max="-0.5" step="0.5" value="-1"><span class="value"><span id="normalizeTargetV">−1.0</span> dBFS</span></label><label class="normalizeOnly">Максимальное усиление<input id="normalizeMaxBoost" type="range" min="0" max="30" step="1" value="18"><span class="value"><span id="normalizeMaxBoostV">18</span> дБ</span></label><label>Баланс выхода<select id="outputBalance"><option value="dcblock" selected>DC‑block 20 Гц</option><option value="mean">вычесть среднее</option><option value="off">без коррекции</option></select><span class="codecNote" id="outputBalanceInfo">Убирает локальное смещение после синтеза</span></label>
-<label>Частота<select id="sampleRate"><option>8000</option><option>12000</option><option selected>16000</option><option>22050</option></select></label>
-<label class="lfaOnly">FFT<select id="fftSize"><option>256</option><option selected>512</option><option>1024</option></select></label><label>Шаг кадров<select id="frameMs"><option value="10">10 мс</option><option value="16">16 мс</option><option value="20" selected>20 мс</option><option value="25">25 мс</option><option value="32">32 мс</option></select><span class="value" id="timingInfo">—</span></label><label class="lfaOnly">Суперкадр<select id="superFrames"><option value="4">4 кадра</option><option value="8" selected>8 кадров</option><option value="10">10 кадров</option><option value="16">16 кадров</option></select><span class="value" id="superInfo">—</span></label>
+<div class="controls"><label>Кодек<select id="codec"><option value="lfa3" selected>LFA‑3: синусоиды + шум</option><option value="lpc1">LPC1: LPC‑10 / Talkie‑подобный</option><option value="lpc2">LPC2 Improved: LSF + mixed excitation</option><option value="vorbis">Ogg Vorbis</option><option value="opus">Opus</option></select><span class="codecNote" id="codecInfo">Тональный и шумовой слои</span></label><label>Нормализация<select id="normalizeMode"><option value="peak" selected>по пиковому уровню</option><option value="off">выключена</option></select><span class="codecNote" id="normalizeInfo">Удаление DC и приведение пика</span></label><label class="normalizeOnly">Целевой пик<input id="normalizeTarget" type="range" min="-6" max="-0.5" step="0.5" value="-1"><span class="value"><span id="normalizeTargetV">−1.0</span> dBFS</span></label><label class="normalizeOnly">Максимальное усиление<input id="normalizeMaxBoost" type="range" min="0" max="30" step="1" value="18"><span class="value"><span id="normalizeMaxBoostV">18</span> дБ</span></label><label class="parametricOnly">Баланс выхода<select id="outputBalance"><option value="dcblock" selected>DC‑block 20 Гц</option><option value="mean">вычесть среднее</option><option value="off">без коррекции</option></select><span class="codecNote" id="outputBalanceInfo">Убирает локальное смещение после синтеза</span></label>
+<label>Частота<select id="sampleRate"><option>8000</option><option>12000</option><option selected>16000</option><option>22050</option><option>24000</option><option>32000</option><option>44100</option><option>48000</option></select><span class="codecNote" id="sampleRateInfo">Частота анализа и декодирования</span></label>
+<label class="lfaOnly">FFT<select id="fftSize"><option>256</option><option selected>512</option><option>1024</option></select></label><label class="modelOnly">Шаг кадров<select id="frameMs"><option value="10">10 мс</option><option value="16">16 мс</option><option value="20" selected>20 мс</option><option value="25">25 мс</option><option value="32">32 мс</option></select><span class="value" id="timingInfo">—</span></label><label class="lfaOnly">Суперкадр<select id="superFrames"><option value="4">4 кадра</option><option value="8" selected>8 кадров</option><option value="10">10 кадров</option><option value="16">16 кадров</option></select><span class="value" id="superInfo">—</span></label>
 <label class="lfaOnly">Синусоид на кадр<input id="partials" type="range" min="2" max="24" value="10"><span class="value"><span id="partialsV">10</span></span></label>
 <label class="lfaOnly">Уровней частоты<select id="levels"><option>128</option><option selected>256</option><option>512</option><option>1024</option></select></label><label class="lfaOnly">Смещение сетки декодера<input id="lfaGridShift" type="range" min="-8" max="8" step=".25" value="0"><span class="value"><span id="lfaGridShiftV">0.00</span> яч. · <span id="lfaGridCentsV">0.0</span> цента · <span id="lfaGridFactorV">1.00000×</span></span><span class="codecNote">Только тональный слой; файл не изменяется</span></label>
 <label class="lfaOnly">Минимум, Гц<input id="minFreq" type="number" value="50" min="20"></label>
@@ -29,7 +29,7 @@
 <label class="lfaOnly">Слияние амплитуды<input id="mergeATol" type="range" min="1" max="24" value="7"><span class="value"><span id="mergeATolV">7</span> кодов</span></label>
 <label class="lfaOnly">Шумовых полос<select id="noiseBands"><option value="0">выкл.</option><option value="4">4</option><option value="6" selected>6</option><option value="8">8</option><option value="12">12</option></select><span class="value" id="noiseBandInfo">—</span></label>
 <label class="lfaOnly">Защита тональных пиков<input id="noiseMask" type="range" min="1" max="6" value="3"><span class="value">±<span id="noiseMaskV">3</span> бина FFT</span></label>
-<label class="lfaOnly">Уровень шумового слоя<input id="noiseGain" type="range" min="25" max="200" value="100"><span class="value"><span id="noiseGainV">100</span>%</span></label><label class="lpcOnly codecHidden">Порядок LPC<select id="lpcOrder"><option value="10" selected>10 коэффициентов</option></select><span class="codecNote">Как у TMS52xx/Talkie</span></label><label class="lpcOnly codecHidden">Порог звонкости<input id="lpcVoicing" type="range" min="20" max="70" value="38"><span class="value"><span id="lpcVoicingV">38</span>% корреляции</span></label><label class="lpcOnly codecHidden">Предыскажение<input id="lpcPreemph" type="range" min="0" max="95" value="85"><span class="value"><span id="lpcPreemphV">0.85</span></span></label><label class="lpcOnly codecHidden">Повтор коэффициентов<input id="lpcRepeat" type="range" min="0" max="15" value="5"><span class="value">допуск <span id="lpcRepeatV">5</span>%</span></label><label class="lpcOnly codecHidden">Яркость LPC<input id="lpcBrightness" type="range" min="0" max="9" step="0.5" value="4"><span class="value">+<span id="lpcBrightnessV">4.0</span> дБ ВЧ/НЧ</span></label><label class="lpcOnly codecHidden">Срез НЧ LPC<select id="lpcHighpass"><option value="20">20 Гц</option><option value="50">50 Гц</option><option value="70" selected>70 Гц</option><option value="100">100 Гц</option><option value="130">130 Гц</option></select><span class="codecNote">Убирает гул, не затрагивая основные форманты</span></label><label class="lpc2Only codecHidden">Окно анализа LPC2<select id="lpc2WindowMs"><option value="24">24 мс</option><option value="32" selected>32 мс</option><option value="40">40 мс</option><option value="48">48 мс</option></select><span class="codecNote">Шаг кадров остаётся прежним</span></label><label class="lpc2Only codecHidden">Формантный постфильтр<input id="lpc2Postfilter" type="range" min="0" max="70" step="5" value="35"><span class="value"><span id="lpc2PostfilterV">35</span>%</span></label><label class="lpc2Only codecHidden">Плавность F0<input id="lpc2PitchSmooth" type="range" min="0" max="100" step="5" value="65"><span class="value"><span id="lpc2PitchSmoothV">65</span>%</span></label>
+<label class="lfaOnly">Уровень шумового слоя<input id="noiseGain" type="range" min="25" max="200" value="100"><span class="value"><span id="noiseGainV">100</span>%</span></label><label class="lpcOnly codecHidden">Порядок LPC<select id="lpcOrder"><option value="10" selected>10 коэффициентов</option></select><span class="codecNote">Как у TMS52xx/Talkie</span></label><label class="lpcOnly codecHidden">Порог звонкости<input id="lpcVoicing" type="range" min="20" max="70" value="38"><span class="value"><span id="lpcVoicingV">38</span>% корреляции</span></label><label class="lpcOnly codecHidden">Предыскажение<input id="lpcPreemph" type="range" min="0" max="95" value="85"><span class="value"><span id="lpcPreemphV">0.85</span></span></label><label class="lpcOnly codecHidden">Повтор коэффициентов<input id="lpcRepeat" type="range" min="0" max="15" value="5"><span class="value">допуск <span id="lpcRepeatV">5</span>%</span></label><label class="lpcOnly codecHidden">Яркость LPC<input id="lpcBrightness" type="range" min="0" max="9" step="0.5" value="4"><span class="value">+<span id="lpcBrightnessV">4.0</span> дБ ВЧ/НЧ</span></label><label class="lpcOnly codecHidden">Срез НЧ LPC<select id="lpcHighpass"><option value="20">20 Гц</option><option value="50">50 Гц</option><option value="70" selected>70 Гц</option><option value="100">100 Гц</option><option value="130">130 Гц</option></select><span class="codecNote">Убирает гул, не затрагивая основные форманты</span></label><label class="lpc2Only codecHidden">Окно анализа LPC2<select id="lpc2WindowMs"><option value="24">24 мс</option><option value="32" selected>32 мс</option><option value="40">40 мс</option><option value="48">48 мс</option></select><span class="codecNote">Шаг кадров остаётся прежним</span></label><label class="lpc2Only codecHidden">Формантный постфильтр<input id="lpc2Postfilter" type="range" min="0" max="70" step="5" value="35"><span class="value"><span id="lpc2PostfilterV">35</span>%</span></label><label class="lpc2Only codecHidden">Плавность F0<input id="lpc2PitchSmooth" type="range" min="0" max="100" step="5" value="65"><span class="value"><span id="lpc2PitchSmoothV">65</span>%</span></label><label class="vorbisOnly codecHidden">Качество Vorbis<input id="vorbisQuality" type="range" min="-1" max="10" step=".5" value="3"><span class="value">q=<span id="vorbisQualityV">3.0</span></span><span class="codecNote">VBR; −1 — минимум, 10 — максимум</span></label><label class="opusOnly codecHidden">Битрейт Opus<select id="opusBitrate"><option value="6000">6 кбит/с</option><option value="12000">12 кбит/с</option><option value="16000">16 кбит/с</option><option value="24000" selected>24 кбит/с</option><option value="32000">32 кбит/с</option><option value="48000">48 кбит/с</option><option value="64000">64 кбит/с</option><option value="96000">96 кбит/с</option><option value="128000">128 кбит/с</option></select><span class="codecNote">Целевой битрейт mono</span></label><label class="opusOnly codecHidden">Режим Opus<select id="opusSignal"><option value="auto" selected>авто</option><option value="voice">голос</option><option value="music">музыка</option></select></label><label class="opusOnly codecHidden">Применение Opus<select id="opusApplication"><option value="voip">VoIP</option><option value="audio" selected>Audio</option><option value="lowdelay">Low delay</option></select></label><label class="opusOnly codecHidden">Управление битрейтом<select id="opusBitrateMode"><option value="variable" selected>VBR</option><option value="constant">CBR</option></select></label><label class="opusOnly codecHidden">Сложность Opus<input id="opusComplexity" type="range" min="0" max="10" step="1" value="7"><span class="value"><span id="opusComplexityV">7</span>/10</span><span class="codecNote">Используется WebCodecs, если браузер поддерживает</span></label><label class="standardOnly codecHidden">Реализация<span class="value" id="standardBackendInfo">Будет определена при кодировании</span><span class="codecNote">Vorbis требует загрузки WASM; Opus имеет системный fallback</span></label>
 </div>
 <div class="row"><button id="encode" class="primary" disabled>Кодировать</button><button id="playOrig" disabled>▶ Вход кодека</button><button id="stop" disabled>■ Стоп</button></div>
 <progress id="progress" max="1" value="0"></progress><div id="status" class="status">Загрузите аудиофайл.</div>
@@ -44,15 +44,15 @@
 <h3>Форма сигнала</h3><canvas id="wave" width="1000" height="190"></canvas>
 <h3 id="tracksTitle">Частотные дорожки</h3><canvas id="tracks" width="1000" height="260"></canvas>
 <h3 id="noiseTitle">Шумовые полосы</h3><canvas id="noise" width="1000" height="190"></canvas>
-<details><summary>Открыть готовый файл кодека</summary><label style="margin-top:10px">LFA или LPC<input id="lfaFile" type="file" accept=".lfa,.lpc,.lp2,application/octet-stream"></label></details>
+<details><summary>Открыть готовый файл кодека</summary><label style="margin-top:10px">LFA, LPC, Ogg, Opus или WebM<input id="lfaFile" type="file" accept=".lfa,.lpc,.lp2,.ogg,.opus,.webm,audio/ogg,audio/webm,application/octet-stream"></label></details>
 </section>
-<section class="card"><h2>Сравнение моделей</h2><p><b>LFA‑3</b> лучше подходит для музыки, устойчивых тонов и произвольных звуков. Он хранит независимые синусоиды и спектральный шум, но обычно требует больше данных.</p><p><b>LPC1</b> — простая Talkie‑подобная контрольная версия с коэффициентами отражения K1…K10 и бинарным выбором «импульсы или шум».</p><p><b>LPC2 Improved</b> использует тот же максимальный бюджет 53 бита на обычный звонкий кадр, но заменяет K на LSF, снижает pitch до 6 бит и освобождает второй бит для четырёх режимов возбуждения. Более длинное окно, Viterbi‑подобное отслеживание F0 и постфильтр меняют вычисления, а не размер файла.</p><p class="small">Страница открывает LFA‑1/LFA‑2/LFA‑3, LPC1 и новый поток LPC2. Оба LPC-формата экспериментальные и не совместимы побитово с TMS5220.</p></section>
+<section class="card"><h2>Сравнение моделей</h2><p><b>LFA‑3</b> хранит синусоидальные дорожки и спектральный шум. <b>LPC1/LPC2</b> предназначены прежде всего для сильно сжатой речи и простого декодирования на микроконтроллере.</p><p><b>Ogg Vorbis</b> — стандартный универсальный аудиокодек с настройкой качества VBR. <b>Opus</b> позволяет задавать целевой битрейт и режим голоса/музыки; результат сохраняется в Ogg Opus, когда доступен WebCodecs, либо в контейнере, поддерживаемом MediaRecorder.</p><p class="small">Старые экспериментальные режимы полностью автономны. Для первого запуска Vorbis странице нужен доступ к интернету, чтобы загрузить модуль wasm-media-encoders. Поддержка WebCodecs и MediaRecorder определяется во время работы.</p></section>
 </div>
 <script>
 "use strict";
-const $=id=>document.getElementById(id),U={audioFile:$("audioFile"),lfaFile:$("lfaFile"),codec:$("codec"),normalizeMode:$("normalizeMode"),normalizeTarget:$("normalizeTarget"),normalizeMaxBoost:$("normalizeMaxBoost"),outputBalance:$("outputBalance"),sampleRate:$("sampleRate"),fftSize:$("fftSize"),frameMs:$("frameMs"),superFrames:$("superFrames"),partials:$("partials"),levels:$("levels"),lfaGridShift:$("lfaGridShift"),minFreq:$("minFreq"),maxFreq:$("maxFreq"),threshold:$("threshold"),trackTol:$("trackTol"),mergeFTol:$("mergeFTol"),mergeATol:$("mergeATol"),noiseBands:$("noiseBands"),noiseMask:$("noiseMask"),noiseGain:$("noiseGain"),lpcOrder:$("lpcOrder"),lpcVoicing:$("lpcVoicing"),lpcPreemph:$("lpcPreemph"),lpcRepeat:$("lpcRepeat"),lpcBrightness:$("lpcBrightness"),lpcHighpass:$("lpcHighpass"),lpc2WindowMs:$("lpc2WindowMs"),lpc2Postfilter:$("lpc2Postfilter"),lpc2PitchSmooth:$("lpc2PitchSmooth"),encode:$("encode"),playOrig:$("playOrig"),playDec:$("playDec"),stop:$("stop"),saveLfa:$("saveLfa"),saveWav:$("saveWav"),progress:$("progress"),status:$("status"),wave:$("wave"),tracks:$("tracks"),noise:$("noise")};
-for(const [a,b,f] of [["partials","partialsV",v=>v],["threshold","thresholdV",v=>String(v).replace("-","−")],["trackTol","trackTolV",v=>v],["mergeFTol","mergeFTolV",v=>v],["mergeATol","mergeATolV",v=>v],["noiseMask","noiseMaskV",v=>v],["noiseGain","noiseGainV",v=>v],["lpcVoicing","lpcVoicingV",v=>v],["lpcPreemph","lpcPreemphV",v=>(v/100).toFixed(2)],["lpcRepeat","lpcRepeatV",v=>v],["lpcBrightness","lpcBrightnessV",v=>Number(v).toFixed(1)],["lpc2Postfilter","lpc2PostfilterV",v=>v],["lpc2PitchSmooth","lpc2PitchSmoothV",v=>v],["normalizeTarget","normalizeTargetV",v=>Number(v).toFixed(1).replace("-", "−")],["normalizeMaxBoost","normalizeMaxBoostV",v=>v]]){const e=$(a),o=$(b),q=()=>o.textContent=f(e.value);e.oninput=q;q()}
-let ctx=null,source=null,src=null,srcRate=0,work=null,decoded=null,decodedRaw=null,meta=null,events=[],noiseFrames=null,lpcFrames=null,lfa=null,packInfo=null,normInfo=null,outputInfo=null,lfaGridResynthSerial=0,currentCodec="lfa3",name="audio";
+const $=id=>document.getElementById(id),U={audioFile:$("audioFile"),lfaFile:$("lfaFile"),codec:$("codec"),normalizeMode:$("normalizeMode"),normalizeTarget:$("normalizeTarget"),normalizeMaxBoost:$("normalizeMaxBoost"),outputBalance:$("outputBalance"),sampleRate:$("sampleRate"),fftSize:$("fftSize"),frameMs:$("frameMs"),superFrames:$("superFrames"),partials:$("partials"),levels:$("levels"),lfaGridShift:$("lfaGridShift"),minFreq:$("minFreq"),maxFreq:$("maxFreq"),threshold:$("threshold"),trackTol:$("trackTol"),mergeFTol:$("mergeFTol"),mergeATol:$("mergeATol"),noiseBands:$("noiseBands"),noiseMask:$("noiseMask"),noiseGain:$("noiseGain"),lpcOrder:$("lpcOrder"),lpcVoicing:$("lpcVoicing"),lpcPreemph:$("lpcPreemph"),lpcRepeat:$("lpcRepeat"),lpcBrightness:$("lpcBrightness"),lpcHighpass:$("lpcHighpass"),lpc2WindowMs:$("lpc2WindowMs"),lpc2Postfilter:$("lpc2Postfilter"),lpc2PitchSmooth:$("lpc2PitchSmooth"),vorbisQuality:$("vorbisQuality"),opusBitrate:$("opusBitrate"),opusSignal:$("opusSignal"),opusApplication:$("opusApplication"),opusBitrateMode:$("opusBitrateMode"),opusComplexity:$("opusComplexity"),encode:$("encode"),playOrig:$("playOrig"),playDec:$("playDec"),stop:$("stop"),saveLfa:$("saveLfa"),saveWav:$("saveWav"),progress:$("progress"),status:$("status"),wave:$("wave"),tracks:$("tracks"),noise:$("noise")};
+for(const [a,b,f] of [["partials","partialsV",v=>v],["threshold","thresholdV",v=>String(v).replace("-","−")],["trackTol","trackTolV",v=>v],["mergeFTol","mergeFTolV",v=>v],["mergeATol","mergeATolV",v=>v],["noiseMask","noiseMaskV",v=>v],["noiseGain","noiseGainV",v=>v],["lpcVoicing","lpcVoicingV",v=>v],["lpcPreemph","lpcPreemphV",v=>(v/100).toFixed(2)],["lpcRepeat","lpcRepeatV",v=>v],["lpcBrightness","lpcBrightnessV",v=>Number(v).toFixed(1)],["lpc2Postfilter","lpc2PostfilterV",v=>v],["lpc2PitchSmooth","lpc2PitchSmoothV",v=>v],["vorbisQuality","vorbisQualityV",v=>Number(v).toFixed(1)],["opusComplexity","opusComplexityV",v=>v],["normalizeTarget","normalizeTargetV",v=>Number(v).toFixed(1).replace("-", "−")],["normalizeMaxBoost","normalizeMaxBoostV",v=>v]]){const e=$(a),o=$(b),q=()=>o.textContent=f(e.value);e.oninput=q;q()}
+let ctx=null,source=null,src=null,srcRate=0,work=null,decoded=null,decodedRaw=null,meta=null,events=[],noiseFrames=null,lpcFrames=null,lfa=null,packInfo=null,normInfo=null,outputInfo=null,lfaGridResynthSerial=0,standardInfo=null,compressedMime="application/octet-stream",compressedExt=".lfa",vorbisModulePromise=null,currentCodec="lfa3",name="audio";
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),tick=()=>new Promise(r=>setTimeout(r,0));
 function status(s,k=""){U.status.textContent=s;U.status.style.color=k==="bad"?"var(--r)":k==="good"?"var(--g)":"var(--m)"}function progress(x){U.progress.value=clamp(x,0,1)}
 function bytes(n){return n<1024?`${n} Б`:n<1048576?`${(n/1024).toFixed(1)} КБ`:`${(n/1048576).toFixed(2)} МБ`}function time(s){return s<60?`${s.toFixed(2)} с`:`${Math.floor(s/60)}:${(s%60).toFixed(1).padStart(4,"0")}`}
@@ -172,7 +172,8 @@ function updateOutputBalanceUI(){
 function applyOutputBalance(redraw=true){
   if(!decodedRaw||!meta)return;
   const lpc=currentCodec==="lpc1"||currentCodec==="lpc2";
-  const r=processDecodedOutput(decodedRaw,meta.sr,U.outputBalance.value,
+  const standard=currentCodec==="vorbis"||currentCodec==="opus";
+  const r=processDecodedOutput(decodedRaw,meta.sr,standard?"off":U.outputBalance.value,
     lpc?+U.lpcBrightness.value:0,lpc?+U.lpcHighpass.value:20);
   decoded=r.samples;outputInfo=r.info;
   $("waveBalanceM").textContent=
@@ -235,6 +236,318 @@ async function resynthesizeLfaGridShift(){
       U.playDec.disabled=false;U.lfaGridShift.disabled=false;progress(1);
     }
   }
+}
+
+const VORBIS_MODULE_URL="https://cdn.jsdelivr.net/npm/wasm-media-encoders@0.7.0/+esm";
+
+function copyUint8(value){
+  if(value instanceof Uint8Array)return new Uint8Array(value);
+  if(value instanceof ArrayBuffer)return new Uint8Array(value.slice(0));
+  if(ArrayBuffer.isView(value))return new Uint8Array(
+    value.buffer.slice(value.byteOffset,value.byteOffset+value.byteLength));
+  return new Uint8Array(value);
+}
+function concatUint8(parts){
+  let length=0;for(const p of parts)length+=p.byteLength;
+  const out=new Uint8Array(length);let offset=0;
+  for(const p of parts){out.set(p,offset);offset+=p.byteLength}
+  return out;
+}
+async function getVorbisEncoderModule(){
+  if(!vorbisModulePromise){
+    vorbisModulePromise=import(VORBIS_MODULE_URL).catch(error=>{
+      vorbisModulePromise=null;
+      throw new Error("Не удалось загрузить WASM-энкодер Vorbis. "+
+        "Проверьте доступ к интернету: "+error.message);
+    });
+  }
+  return vorbisModulePromise;
+}
+async function encodeVorbisStandard(samples,sampleRate,quality){
+  status("Загрузка Ogg Vorbis WASM…");progress(.04);
+  const module=await getVorbisEncoderModule();
+  if(typeof module.createOggEncoder!=="function")
+    throw Error("Модуль Vorbis не экспортирует createOggEncoder()");
+  const encoder=await module.createOggEncoder();
+  encoder.configure({sampleRate,channels:1,vbrQuality:quality});
+  const chunks=[],chunkSizes=[],block=4096;
+  try{
+    for(let offset=0;offset<samples.length;offset+=block){
+      const part=samples.subarray(offset,Math.min(samples.length,offset+block));
+      const encoded=encoder.encode([part]);
+      if(encoded&&encoded.byteLength){
+        const copy=copyUint8(encoded);chunks.push(copy);chunkSizes.push(copy.byteLength);
+      }
+      if(((offset/block)|0)%16===0){
+        progress(.08+.68*offset/Math.max(1,samples.length));
+        status(`Ogg Vorbis: ${Math.min(samples.length,offset+block)} / ${samples.length} отсчётов…`);
+        await tick();
+      }
+    }
+    const tail=encoder.finalize();
+    if(tail&&tail.byteLength){
+      const copy=copyUint8(tail);chunks.push(copy);chunkSizes.push(copy.byteLength);
+    }
+  }finally{
+    if(encoder&&typeof encoder.free==="function")encoder.free();
+  }
+  const bytesOut=concatUint8(chunks);
+  return{
+    buffer:bytesOut.buffer.slice(bytesOut.byteOffset,bytesOut.byteOffset+bytesOut.byteLength),
+    mime:"audio/ogg;codecs=vorbis",extension:".ogg",
+    info:{codec:"Ogg Vorbis",backend:"wasm-media-encoders 0.7.0",
+      container:"Ogg",setting:`q=${quality.toFixed(1)}`,chunkSizes,
+      packetCount:chunkSizes.length,inputRate:sampleRate,sourceSamples:samples.length,channels:1}
+  };
+}
+
+const OGG_CRC_TABLE=(()=>{
+  const table=new Uint32Array(256);
+  for(let i=0;i<256;i++){
+    let r=i<<24;
+    for(let j=0;j<8;j++)r=(r&0x80000000)?((r<<1)^0x04C11DB7):(r<<1);
+    table[i]=r>>>0;
+  }
+  return table;
+})();
+function oggCrc(data){
+  let crc=0;
+  for(let i=0;i<data.length;i++)
+    crc=((crc<<8)^OGG_CRC_TABLE[((crc>>>24)^data[i])&255])>>>0;
+  return crc>>>0;
+}
+function writeLe64(view,offset,value){
+  let x=BigInt(Math.max(0,Math.floor(value)));
+  for(let i=0;i<8;i++){view.setUint8(offset+i,Number(x&255n));x>>=8n}
+}
+function oggLacing(packetLength){
+  const values=[];let left=packetLength;
+  while(left>=255){values.push(255);left-=255}
+  values.push(left);return values;
+}
+function makeOggPage(packets,granule,serial,sequence,flags){
+  const laces=[];let payloadLength=0;
+  for(const packet of packets){
+    laces.push(...oggLacing(packet.byteLength));payloadLength+=packet.byteLength;
+  }
+  if(laces.length>255)throw Error("Слишком много сегментов в странице Ogg");
+  const page=new Uint8Array(27+laces.length+payloadLength),view=new DataView(page.buffer);
+  page.set([79,103,103,83],0);view.setUint8(4,0);view.setUint8(5,flags);
+  writeLe64(view,6,granule);view.setUint32(14,serial>>>0,true);
+  view.setUint32(18,sequence>>>0,true);view.setUint32(22,0,true);
+  view.setUint8(26,laces.length);page.set(laces,27);
+  let offset=27+laces.length;
+  for(const packet of packets){page.set(packet,offset);offset+=packet.byteLength}
+  view.setUint32(22,oggCrc(page),true);return page;
+}
+function makeOpusHead(channels=1,preSkip=312,inputRate=48000){
+  const out=new Uint8Array(19),v=new DataView(out.buffer);
+  out.set([79,112,117,115,72,101,97,100],0);out[8]=1;out[9]=channels;
+  v.setUint16(10,preSkip,true);v.setUint32(12,inputRate,true);
+  v.setInt16(16,0,true);out[18]=0;return out;
+}
+function makeOpusTags(){
+  const vendor=new TextEncoder().encode("Audio Codec Lab v12");
+  const out=new Uint8Array(8+4+vendor.length+4),v=new DataView(out.buffer);
+  out.set([79,112,117,115,84,97,103,115],0);
+  v.setUint32(8,vendor.length,true);out.set(vendor,12);
+  v.setUint32(12+vendor.length,0,true);return out;
+}
+function validOpusHead(value){
+  if(!value||value.byteLength<19)return false;
+  const b=copyUint8(value),magic="OpusHead";
+  for(let i=0;i<8;i++)if(b[i]!==magic.charCodeAt(i))return false;
+  return true;
+}
+function muxOggOpus(head,packetRecords,actualSamples){
+  const opusHead=validOpusHead(head)?copyUint8(head):makeOpusHead();
+  const preSkip=new DataView(opusHead.buffer,opusHead.byteOffset,opusHead.byteLength)
+    .getUint16(10,true);
+  const serial=(Math.random()*0xFFFFFFFF)>>>0,pages=[];let seq=0;
+  pages.push(makeOggPage([opusHead],0,serial,seq++,2));
+  pages.push(makeOggPage([makeOpusTags()],0,serial,seq++,0));
+  let index=0,cumulative=0;
+  while(index<packetRecords.length){
+    const group=[];let segmentCount=0;
+    while(index<packetRecords.length){
+      const record=packetRecords[index],laces=oggLacing(record.data.byteLength);
+      if(group.length&&segmentCount+laces.length>255)break;
+      group.push(record.data);segmentCount+=laces.length;cumulative+=record.samples;index++;
+      if(group.length>=20)break;
+    }
+    const last=index===packetRecords.length;
+    const granule=last?Math.min(cumulative,preSkip+actualSamples):cumulative;
+    pages.push(makeOggPage(group,granule,serial,seq++,last?4:0));
+  }
+  return concatUint8(pages);
+}
+async function tryWebCodecsOpus(samples,bitrate,settings){
+  if(typeof AudioEncoder==="undefined"||typeof AudioData==="undefined")
+    throw Error("AudioEncoder недоступен");
+  const fullConfig={codec:"opus",sampleRate:48000,numberOfChannels:1,bitrate,
+    bitrateMode:settings.bitrateMode,
+    opus:{format:"opus",signal:settings.signal,application:settings.application,
+      frameDuration:20000,complexity:settings.complexity}};
+  let config=fullConfig,support;
+  try{support=await AudioEncoder.isConfigSupported(fullConfig)}catch(_){}
+  if(!support||!support.supported){
+    config={codec:"opus",sampleRate:48000,numberOfChannels:1,bitrate,
+      bitrateMode:settings.bitrateMode};
+    support=await AudioEncoder.isConfigSupported(config);
+  }
+  if(!support.supported)throw Error("Конфигурация Opus не поддерживается WebCodecs");
+  const packets=[],chunkSizes=[];let description=null,encoderError=null;
+  const encoder=new AudioEncoder({
+    output(chunk,metadata){
+      const data=new Uint8Array(chunk.byteLength);chunk.copyTo(data);
+      const duration=Number(chunk.duration)||20000;
+      packets.push({data,samples:Math.max(1,Math.round(duration*48000/1e6))});
+      chunkSizes.push(data.byteLength);
+      const candidate=metadata&&metadata.decoderConfig&&metadata.decoderConfig.description;
+      if(candidate&&validOpusHead(candidate))description=copyUint8(candidate);
+    },
+    error(error){encoderError=error}
+  });
+  encoder.configure(support.config||config);
+  const frameSamples=960,actualSamples=samples.length;
+  const frameCount=Math.ceil(actualSamples/frameSamples)+1;
+  for(let frame=0;frame<frameCount;frame++){
+    const data=new Float32Array(frameSamples),offset=frame*frameSamples;
+    if(offset<actualSamples)
+      data.set(samples.subarray(offset,Math.min(actualSamples,offset+frameSamples)));
+    const audioData=new AudioData({format:"f32-planar",sampleRate:48000,
+      numberOfFrames:frameSamples,numberOfChannels:1,timestamp:frame*20000,data});
+    encoder.encode(audioData);audioData.close();
+    if((frame&31)===0){
+      progress(.08+.68*frame/frameCount);
+      status(`Opus WebCodecs: кадр ${frame+1} из ${frameCount}…`);await tick();
+    }
+  }
+  await encoder.flush();encoder.close();
+  if(encoderError)throw encoderError;
+  if(!packets.length)throw Error("WebCodecs не вернул пакеты Opus");
+  const ogg=muxOggOpus(description,packets,actualSamples);
+  return{buffer:ogg.buffer.slice(ogg.byteOffset,ogg.byteOffset+ogg.byteLength),
+    mime:"audio/ogg;codecs=opus",extension:".opus",
+    info:{codec:"Opus",backend:"WebCodecs AudioEncoder",container:"Ogg",
+      setting:`${Math.round(bitrate/1000)} кбит/с, ${settings.bitrateMode.toUpperCase()}`,
+      chunkSizes,packetCount:packets.length,inputRate:48000,
+      sourceSamples:actualSamples,channels:1}};
+}
+async function encodeOpusMediaRecorder(samples,bitrate){
+  if(typeof MediaRecorder==="undefined")throw Error("MediaRecorder недоступен");
+  const candidates=["audio/ogg;codecs=opus","audio/webm;codecs=opus","audio/webm"];
+  const mime=candidates.find(type=>MediaRecorder.isTypeSupported(type));
+  if(!mime)throw Error("Браузер не поддерживает запись Opus через MediaRecorder");
+  const c=await audioContext(),buffer=c.createBuffer(1,samples.length,48000);
+  buffer.copyToChannel(samples,0);
+  const bufferSource=c.createBufferSource(),destination=c.createMediaStreamDestination();
+  bufferSource.buffer=buffer;bufferSource.connect(destination);
+  const chunks=[],chunkSizes=[];
+  const recorder=new MediaRecorder(destination.stream,
+    {mimeType:mime,audioBitsPerSecond:bitrate});
+  const duration=samples.length/48000,startTime=c.currentTime;
+  const finished=new Promise((resolve,reject)=>{
+    recorder.ondataavailable=event=>{
+      if(event.data&&event.data.size){chunks.push(event.data);chunkSizes.push(event.data.size)}
+    };
+    recorder.onerror=event=>reject(event.error||Error("Ошибка MediaRecorder"));
+    recorder.onstop=resolve;
+  });
+  recorder.start(250);
+  bufferSource.onended=()=>setTimeout(()=>{
+    if(recorder.state!=="inactive")recorder.stop()
+  },120);
+  bufferSource.start();
+  const timer=setInterval(()=>{
+    const elapsed=Math.min(duration,c.currentTime-startTime);
+    progress(.08+.68*elapsed/Math.max(.01,duration));
+    status(`Opus MediaRecorder: реальное время ${elapsed.toFixed(1)} / ${duration.toFixed(1)} с…`);
+  },100);
+  try{await finished}finally{
+    clearInterval(timer);destination.stream.getTracks().forEach(track=>track.stop());
+    try{bufferSource.disconnect()}catch(_){}
+  }
+  const blob=new Blob(chunks,{type:mime}),arrayBuffer=await blob.arrayBuffer();
+  const ogg=mime.startsWith("audio/ogg");
+  return{buffer:arrayBuffer,mime,extension:ogg?".opus":".webm",
+    info:{codec:"Opus",backend:"MediaRecorder (реальное время)",
+      container:ogg?"Ogg":"WebM",setting:`${Math.round(bitrate/1000)} кбит/с`,
+      chunkSizes,packetCount:chunkSizes.length,inputRate:48000,
+      sourceSamples:samples.length,channels:1}};
+}
+async function encodeOpusStandard(samples,bitrate,settings){
+  status("Проверка WebCodecs Opus…");progress(.04);
+  try{return await tryWebCodecsOpus(samples,bitrate,settings)}
+  catch(webCodecsError){
+    console.warn("WebCodecs Opus unavailable:",webCodecsError);
+    status("WebCodecs Opus недоступен; переход к MediaRecorder…");
+    return await encodeOpusMediaRecorder(samples,bitrate);
+  }
+}
+async function decodeStandardAudio(buffer){
+  const c=await audioContext(),audioBuffer=await c.decodeAudioData(buffer.slice(0));
+  return{samples:mono(audioBuffer),sampleRate:audioBuffer.sampleRate,
+    channels:audioBuffer.numberOfChannels,duration:audioBuffer.duration};
+}
+function standardFileKind(buffer,fileName){
+  const probe=new TextDecoder().decode(
+    new Uint8Array(buffer,0,Math.min(buffer.byteLength,8192)));
+  const lower=fileName.toLowerCase();
+  if(probe.includes("OpusHead")||lower.endsWith(".opus")||lower.endsWith(".webm"))
+    return"opus";
+  if(probe.includes("vorbis")||lower.endsWith(".ogg"))return"vorbis";
+  return null;
+}
+function drawStandardCodec(info){
+  const c=U.tracks,g=c.getContext("2d"),w=c.width,h=c.height;
+  g.clearRect(0,0,w,h);g.fillStyle="#090d12";g.fillRect(0,0,w,h);
+  const sizes=info&&info.chunkSizes||[];
+  if(!sizes.length){
+    g.fillStyle="#9da7b3";g.font="13px system-ui";
+    g.fillText("Размеры пакетов недоступны для импортированного файла.",12,24);
+  }else{
+    const max=Math.max(1,...sizes),barWidth=w/sizes.length;
+    g.fillStyle="rgba(88,166,255,.72)";
+    for(let i=0;i<sizes.length;i++){
+      const bh=(h-30)*sizes[i]/max;
+      g.fillRect(i*barWidth,h-18-bh,Math.max(1,barWidth),bh);
+    }
+    g.fillStyle="#9da7b3";g.font="11px system-ui";
+    g.fillText(`пакетов/порций: ${sizes.length}; максимум ${max} Б`,8,14);
+  }
+  const n=U.noise.getContext("2d"),nw=U.noise.width,nh=U.noise.height;
+  n.clearRect(0,0,nw,nh);n.fillStyle="#090d12";n.fillRect(0,0,nw,nh);
+  n.fillStyle="#e6edf3";n.font="15px system-ui";
+  const lines=info?[
+    `${info.codec} · ${info.container}`,`Энкодер: ${info.backend}`,
+    `Настройка: ${info.setting}`,`Вход: ${info.inputRate} Гц, mono`
+  ]:["Нет данных"];
+  lines.forEach((line,i)=>n.fillText(line,12,28+i*27));
+}
+function metricsStandard(m,byteLength,info){
+  const duration=info.sourceSamples/info.inputRate,pcm=info.sourceSamples*2;
+  $("durM").textContent=time(duration);
+  $("eventsM").textContent=(info.packetCount||0).toLocaleString("ru-RU");
+  $("tracksM").textContent=info.codec;$("sizeM").textContent=bytes(byteLength);
+  $("rateM").textContent=`${(byteLength*8/duration/1000).toFixed(1)} кбит/с`;
+  $("ratioM").textContent=`${(pcm/byteLength).toFixed(1)}×`;
+  $("blocksM").textContent=info.backend;$("shortFreqM").textContent=info.setting;
+  $("paletteSaveM").textContent=info.container;$("noiseSizeM").textContent=`${m.sr} Гц`;
+  $("noiseActiveM").textContent=`${info.channels||1} канал`;
+}
+function currentEncodedExtension(){
+  if(currentCodec==="lpc1")return".lpc";
+  if(currentCodec==="lpc2")return".lp2";
+  if(currentCodec==="vorbis"||currentCodec==="opus")return compressedExt;
+  return".lfa";
+}
+function currentWavSuffix(){
+  if(currentCodec==="lpc1")return"_lpc1.wav";
+  if(currentCodec==="lpc2")return"_lpc2.wav";
+  if(currentCodec==="vorbis")return"_vorbis.wav";
+  if(currentCodec==="opus")return"_opus.wav";
+  return"_lfa.wav";
 }
 function fft(re,im){const n=re.length;for(let i=1,j=0;i<n;i++){let b=n>>1;for(;j&b;b>>=1)j^=b;j^=b;if(i<j){[re[i],re[j]]=[re[j],re[i]];[im[i],im[j]]=[im[j],im[i]]}}for(let l=2;l<=n;l<<=1){const a=-2*Math.PI/l,cr=Math.cos(a),ci=Math.sin(a);for(let i=0;i<n;i+=l){let wr=1,wi=0;for(let j=0;j<l/2;j++){const k=i+j+l/2,ur=re[i+j],ui=im[i+j],vr=re[k]*wr-im[k]*wi,vi=re[k]*wi+im[k]*wr;re[i+j]=ur+vr;im[i+j]=ui+vi;re[k]=ur-vr;im[k]=ui-vi;const nr=wr*cr-wi*ci;wi=wr*ci+wi*cr;wr=nr}}}}
 function ampQ(a){const f=-72;if(a<=10**(f/20))return 0;const d=clamp(20*Math.log10(Math.min(1,a)),f,0);return 1+Math.round((d-f)/-f*254)}function qAmp(q){if(q<=0)return 0;return 10**((-72+(q-1)/254*72)/20)}function phaseQ(p){p=((p%(2*Math.PI))+2*Math.PI)%(2*Math.PI);return Math.round(p/(2*Math.PI)*255)&255}
@@ -952,8 +1265,16 @@ function metricsLFA(m,E,n,info=null){
   if(info&&info.rawComparable)$("paletteSaveM").textContent=`${(100*(1-n/info.rawComparable)).toFixed(1)}%`;else $("paletteSaveM").textContent="—";
   $("noiseSizeM").textContent=info&&info.noiseBytes?bytes(info.noiseBytes):"выкл.";$("noiseActiveM").textContent=info&&info.noiseBands?`${(100*info.noiseActive).toFixed(1)}% / ${info.noiseBands}`:"—";
 }
-function setMetricLabels(mode){const lpc=mode==="lpc1"||mode==="lpc2";$("eventsLabel").textContent=lpc?"LPC-кадров":"сегментов";$("tracksLabel").textContent=lpc?"звонких кадров":"дорожек";$("blocksLabel").textContent=lpc?"порядок модели":"суперкадров";$("shortLabel").textContent=lpc?"повторов коэффициентов":"коротких кодов частоты";$("saveLabel").textContent=lpc?"кадров тишины":"экономия против RAW";$("secondaryLabel").textContent=lpc?"полезный поток":"шумовой слой";$("activityLabel").textContent=lpc?"средняя F0":"активных шумовых полос"}
-function metricsLPC(m,F,n,info){const d=m.samples/m.sr,pcm=m.samples*2;$("durM").textContent=time(d);$("eventsM").textContent=F.length.toLocaleString("ru-RU");$("tracksM").textContent=`${(100*info.voiced/Math.max(1,F.length)).toFixed(1)}%`;$("sizeM").textContent=bytes(n);$("rateM").textContent=`${(n*8/d/1000).toFixed(2)} кбит/с`;$("ratioM").textContent=`${(pcm/n).toFixed(1)}×`;$("blocksM").textContent=`LPC-${m.order}`;$("shortFreqM").textContent=`${(100*info.repeatFrames/Math.max(1,F.length)).toFixed(1)}%`;$("paletteSaveM").textContent=`${(100*info.silence/Math.max(1,F.length)).toFixed(1)}%`;$("noiseSizeM").textContent=bytes(info.payloadBytes);$("noiseActiveM").textContent=info.avgPitch?`${info.avgPitch.toFixed(1)} Гц`:"—"}
+function setMetricLabels(mode){
+  const lpc=mode==="lpc1"||mode==="lpc2",standard=mode==="vorbis"||mode==="opus";
+  $("eventsLabel").textContent=standard?"пакетов/порций":lpc?"LPC-кадров":"сегментов";
+  $("tracksLabel").textContent=standard?"кодек":lpc?"звонких кадров":"дорожек";
+  $("blocksLabel").textContent=standard?"энкодер":lpc?"порядок модели":"суперкадров";
+  $("shortLabel").textContent=standard?"настройка":lpc?"повторов коэффициентов":"коротких кодов частоты";
+  $("saveLabel").textContent=standard?"контейнер":lpc?"кадров тишины":"экономия против RAW";
+  $("secondaryLabel").textContent=standard?"частота выхода":lpc?"полезный поток":"шумовой слой";
+  $("activityLabel").textContent=standard?"каналов":lpc?"средняя F0":"активных шумовых полос";
+}function metricsLPC(m,F,n,info){const d=m.samples/m.sr,pcm=m.samples*2;$("durM").textContent=time(d);$("eventsM").textContent=F.length.toLocaleString("ru-RU");$("tracksM").textContent=`${(100*info.voiced/Math.max(1,F.length)).toFixed(1)}%`;$("sizeM").textContent=bytes(n);$("rateM").textContent=`${(n*8/d/1000).toFixed(2)} кбит/с`;$("ratioM").textContent=`${(pcm/n).toFixed(1)}×`;$("blocksM").textContent=`LPC-${m.order}`;$("shortFreqM").textContent=`${(100*info.repeatFrames/Math.max(1,F.length)).toFixed(1)}%`;$("paletteSaveM").textContent=`${(100*info.silence/Math.max(1,F.length)).toFixed(1)}%`;$("noiseSizeM").textContent=bytes(info.payloadBytes);$("noiseActiveM").textContent=info.avgPitch?`${info.avgPitch.toFixed(1)} Гц`:"—"}
 function drawLPC(m,F){
   const c=U.tracks,g=c.getContext("2d"),w=c.width,h=c.height;g.clearRect(0,0,w,h);g.fillStyle="#090d12";g.fillRect(0,0,w,h);if(!m||!F||!F.length)return;const cw=w/F.length,log0=Math.log(LPC_PITCH_MIN),log1=Math.log(LPC_PITCH_MAX);g.strokeStyle="#243244";g.fillStyle="#7d8590";g.font="11px system-ui";
   for(const f of[60,100,200,400]){const y=12+(log1-Math.log(f))/(log1-log0)*(h*.62);g.beginPath();g.moveTo(0,y);g.lineTo(w,y);g.stroke();g.fillText(`${f} Гц`,4,y-2)}
@@ -979,15 +1300,41 @@ function drawLPC2(m,F){
   g2.strokeStyle="#30363d";g2.fillStyle="#9da7b3";for(const f of[500,1000,2000,3000,4000,6000])if(f<m.sr/2){const y=8+(f/(m.sr/2))*(h2-24);g2.beginPath();g2.moveTo(0,y);g2.lineTo(w2,y);g2.stroke();g2.fillText(`${f>=1000?f/1000+"k":f}`,4,y-2)}g2.fillText("LSF: положения резонансных границ от 0 до Nyquist",8,h2-5)
 }
 function updateCodecUI(forceDefaults=false){
-  const mode=U.codec.value,lpc=mode==="lpc1"||mode==="lpc2",lpc2=mode==="lpc2";currentCodec=mode;
-  document.querySelectorAll(".lfaOnly").forEach(e=>e.classList.toggle("codecHidden",lpc));
+  const mode=U.codec.value,lpc=mode==="lpc1"||mode==="lpc2",
+    lpc2=mode==="lpc2",standard=mode==="vorbis"||mode==="opus",
+    vorbis=mode==="vorbis",opus=mode==="opus";currentCodec=mode;
+  document.querySelectorAll(".lfaOnly").forEach(e=>e.classList.toggle("codecHidden",mode!=="lfa3"));
   document.querySelectorAll(".lpcOnly").forEach(e=>e.classList.toggle("codecHidden",!lpc));
   document.querySelectorAll(".lpc2Only").forEach(e=>e.classList.toggle("codecHidden",!lpc2));
-  if(lpc&&forceDefaults){U.sampleRate.value=lpc2?"12000":"8000";U.frameMs.value="20"}
-  $("codecInfo").textContent=mode==="lpc1"?"Контрольный Talkie-подобный LPC1":mode==="lpc2"?"LSF, плавный F0, mixed excitation, тот же 53-битный максимум":"Тональные дорожки + спектральный шум";
-  U.saveLfa.textContent=mode==="lpc1"?"Скачать LPC1":mode==="lpc2"?"Скачать LPC2":"Скачать LFA‑3";
-  $("tracksTitle").textContent=mode==="lpc1"?"LPC1: основной тон и энергия":mode==="lpc2"?"LPC2: F0, энергия и режим возбуждения":"Частотные дорожки";
-  $("noiseTitle").textContent=mode==="lpc1"?"LPC1: коэффициенты отражения K1…K10":mode==="lpc2"?"LPC2: линии спектральных частот LSF":"Шумовые полосы";
+  document.querySelectorAll(".standardOnly").forEach(e=>e.classList.toggle("codecHidden",!standard));
+  document.querySelectorAll(".vorbisOnly").forEach(e=>e.classList.toggle("codecHidden",!vorbis));
+  document.querySelectorAll(".opusOnly").forEach(e=>e.classList.toggle("codecHidden",!opus));
+  document.querySelectorAll(".modelOnly").forEach(e=>e.classList.toggle("codecHidden",standard));
+  document.querySelectorAll(".parametricOnly").forEach(e=>e.classList.toggle("codecHidden",standard));
+  if(forceDefaults){
+    if(lpc){U.sampleRate.value=lpc2?"12000":"8000";U.frameMs.value="20"}
+    else if(vorbis)U.sampleRate.value="44100";
+    else if(opus)U.sampleRate.value="48000";
+  }
+  U.sampleRate.disabled=opus;
+  $("sampleRateInfo").textContent=opus?"Opus внутри работает на 48 кГц":
+    standard?"Частота входа стандартного энкодера":"Частота анализа и декодирования";
+  $("codecInfo").textContent=mode==="lpc1"?"Контрольный Talkie-подобный LPC1":
+    mode==="lpc2"?"LSF, плавный F0, mixed excitation, тот же 53-битный максимум":
+    vorbis?"Стандартный Ogg Vorbis VBR через WASM":
+    opus?"Стандартный Opus: WebCodecs или MediaRecorder":
+    "Тональные дорожки + спектральный шум";
+  U.saveLfa.textContent=mode==="lpc1"?"Скачать LPC1":
+    mode==="lpc2"?"Скачать LPC2":vorbis?"Скачать Ogg Vorbis":
+    opus?"Скачать Opus":"Скачать LFA‑3";
+  $("tracksTitle").textContent=standard?"Размеры пакетов/порций":
+    mode==="lpc1"?"LPC1: основной тон и энергия":
+    mode==="lpc2"?"LPC2: F0, энергия и режим возбуждения":"Частотные дорожки";
+  $("noiseTitle").textContent=standard?"Параметры стандартного кодека":
+    mode==="lpc1"?"LPC1: коэффициенты отражения K1…K10":
+    mode==="lpc2"?"LPC2: линии спектральных частот LSF":"Шумовые полосы";
+  $("standardBackendInfo").textContent=vorbis?"WASM загружается при первом кодировании":
+    opus?"Сначала WebCodecs, затем MediaRecorder":"—";
   setMetricLabels(currentCodec);updateTiming();updateLfaGridShiftUI(true)
 }
 U.audioFile.onchange=async()=>{const f=U.audioFile.files[0];if(!f)return;try{status("Декодирование аудио…");progress(.03);const c=await audioContext(),b=await c.decodeAudioData((await f.arrayBuffer()).slice(0));src=mono(b);srcRate=b.sampleRate;name=f.name.replace(/\.[^.]+$/,"").replace(/[^\p{L}\p{N}_-]+/gu,"_")||"audio";U.encode.disabled=U.playOrig.disabled=false;const lim=Math.floor(+U.sampleRate.value*.48);if(+U.maxFreq.value>lim)U.maxFreq.value=lim;normInfo=null;outputInfo=null;decodedRaw=null;$("normGainM").textContent="—";$("waveBalanceM").textContent="—";drawWave(src,null);progress(0);status(`Загружено: ${f.name}\n${time(b.duration)}, ${b.sampleRate} Гц, каналов: ${b.numberOfChannels}`,"good")}catch(e){console.error(e);status(`Ошибка открытия: ${e.message}`,"bad")}};
@@ -995,34 +1342,85 @@ U.encode.onclick=async()=>{
   if(!src)return;stop();U.encode.disabled=U.playDec.disabled=U.saveLfa.disabled=U.saveWav.disabled=true;
   try{
     const sr=+U.sampleRate.value;status("Передискретизация и нормализация…");progress(.01);await tick();const resampled=resample(src,srcRate,sr);normInfo=normalizeInput(resampled,U.normalizeMode.value,+U.normalizeTarget.value,+U.normalizeMaxBoost.value);work=normInfo.samples;
-    if(U.codec.value==="lpc1"){
+    if(U.codec.value==="vorbis"){
+      const encoded=await encodeVorbisStandard(work,sr,+U.vorbisQuality.value);lfa=encoded.buffer;compressedMime=encoded.mime;compressedExt=encoded.extension;standardInfo=encoded.info;currentCodec="vorbis";events=[];noiseFrames=null;lpcFrames=null;packInfo=null;$("standardBackendInfo").textContent=standardInfo.backend;status("Декодирование полученного Ogg Vorbis…");const d=await decodeStandardAudio(lfa);meta={sr:d.sampleRate,samples:d.samples.length};decodedRaw=d.samples;applyOutputBalance(false);progress(1);setMetricLabels("vorbis");metricsStandard(meta,lfa.byteLength,standardInfo);$("normGainM").textContent=normInfo&&normInfo.enabled?`${normInfo.gainDb>=0?"+":""}${normInfo.gainDb.toFixed(1)} дБ`:"выкл.";drawWave(work,decoded);drawStandardCodec(standardInfo);U.playDec.disabled=U.saveLfa.disabled=U.saveWav.disabled=false;status(`Готово: Ogg Vorbis ${standardInfo.setting}.\n`+`Энкодер: ${standardInfo.backend}; размер ${bytes(lfa.byteLength)}; `+`битрейт ${(lfa.byteLength*8/(work.length/sr)/1000).toFixed(1)} кбит/с.\n`+`${normalizationLine(normInfo)}`,"good");
+    }else if(U.codec.value==="opus"){
+      const encoded=await encodeOpusStandard(work,+U.opusBitrate.value,{signal:U.opusSignal.value,application:U.opusApplication.value,bitrateMode:U.opusBitrateMode.value,complexity:+U.opusComplexity.value});lfa=encoded.buffer;compressedMime=encoded.mime;compressedExt=encoded.extension;standardInfo=encoded.info;currentCodec="opus";events=[];noiseFrames=null;lpcFrames=null;packInfo=null;$("standardBackendInfo").textContent=standardInfo.backend;status(`Декодирование ${standardInfo.container} Opus…`);const d=await decodeStandardAudio(lfa);meta={sr:d.sampleRate,samples:d.samples.length};decodedRaw=d.samples;applyOutputBalance(false);progress(1);setMetricLabels("opus");metricsStandard(meta,lfa.byteLength,standardInfo);$("normGainM").textContent=normInfo&&normInfo.enabled?`${normInfo.gainDb>=0?"+":""}${normInfo.gainDb.toFixed(1)} дБ`:"выкл.";drawWave(work,decoded);drawStandardCodec(standardInfo);U.playDec.disabled=U.saveLfa.disabled=U.saveWav.disabled=false;status(`Готово: ${standardInfo.container} Opus, ${standardInfo.setting}.\n`+`Энкодер: ${standardInfo.backend}; размер ${bytes(lfa.byteLength)}; `+`битрейт ${(lfa.byteLength*8/(work.length/sr)/1000).toFixed(1)} кбит/с.\n`+`${normalizationLine(normInfo)}`,"good");
+    }else if(U.codec.value==="lpc1"){
       const c={frameMs:+U.frameMs.value,pre:+U.lpcPreemph.value/100,voicing:+U.lpcVoicing.value/100,repeat:+U.lpcRepeat.value/100};
-      const analysed=await encodeLPC(work,sr,c),packed=packLPC(analysed.meta,analysed.frames,analysed.analysis);lfa=packed.buffer;const checked=unpackLPC(lfa);meta=checked.meta;lpcFrames=checked.frames;events=[];noiseFrames=null;packInfo=checked.stats;currentCodec="lpc1";
+      const analysed=await encodeLPC(work,sr,c),packed=packLPC(analysed.meta,analysed.frames,analysed.analysis);lfa=packed.buffer;const checked=unpackLPC(lfa);meta=checked.meta;lpcFrames=checked.frames;events=[];noiseFrames=null;packInfo=checked.stats;standardInfo=null;compressedMime="application/octet-stream";compressedExt=".lpc";currentCodec="lpc1";
       status("Декодирование LPC-потока…");decodedRaw=await synthLPC(meta,lpcFrames);applyOutputBalance(false);progress(1);setMetricLabels("lpc1");metricsLPC(meta,lpcFrames,lfa.byteLength,packInfo);$("normGainM").textContent=normInfo&&normInfo.enabled?`${normInfo.gainDb>=0?"+":""}${normInfo.gainDb.toFixed(1)} дБ`:"выкл.";drawWave(work,decoded);drawLPC(meta,lpcFrames);U.playDec.disabled=U.saveLfa.disabled=U.saveWav.disabled=false;
       status(`Готово: ${lpcFrames.length} LPC-кадров по ${(meta.H/meta.sr*1000).toFixed(2)} мс.\n`+`Битрейт: ${(lfa.byteLength*8/(meta.samples/meta.sr)/1000).toFixed(2)} кбит/с; звонких кадров ${(100*packInfo.voiced/Math.max(1,lpcFrames.length)).toFixed(1)}%.\n`+`${normalizationLine(normInfo)}\n`+`${outputBalanceLine(outputInfo)}\n`+`Это Talkie-подобный LPC-10, но не побитово совместимый TMS5220.`,'good');
     }else if(U.codec.value==="lpc2"){
       const c={frameMs:+U.frameMs.value,windowMs:+U.lpc2WindowMs.value,pre:+U.lpcPreemph.value/100,voicing:+U.lpcVoicing.value/100,repeat:+U.lpcRepeat.value/100,pitchSmooth:+U.lpc2PitchSmooth.value/100};
-      const analysed=await encodeLPC2(work,sr,c),packed=packLPC2(analysed.meta,analysed.frames,analysed.analysis);lfa=packed.buffer;const checked=unpackLPC2(lfa);meta=checked.meta;lpcFrames=checked.frames;events=[];noiseFrames=null;packInfo=checked.stats;currentCodec="lpc2";
+      const analysed=await encodeLPC2(work,sr,c),packed=packLPC2(analysed.meta,analysed.frames,analysed.analysis);lfa=packed.buffer;const checked=unpackLPC2(lfa);meta=checked.meta;lpcFrames=checked.frames;events=[];noiseFrames=null;packInfo=checked.stats;standardInfo=null;compressedMime="application/octet-stream";compressedExt=".lp2";currentCodec="lpc2";
       status("Декодирование LPC2-потока…");decodedRaw=await synthLPC2(meta,lpcFrames,+U.lpc2Postfilter.value/100);applyOutputBalance(false);progress(1);setMetricLabels("lpc2");metricsLPC2(meta,lpcFrames,lfa.byteLength,packInfo);$("normGainM").textContent=normInfo&&normInfo.enabled?`${normInfo.gainDb>=0?"+":""}${normInfo.gainDb.toFixed(1)} дБ`:"выкл.";drawWave(work,decoded);drawLPC2(meta,lpcFrames);U.playDec.disabled=U.saveLfa.disabled=U.saveWav.disabled=false;
       const speech=packInfo.voiced+packInfo.mixed;status(`Готово: ${lpcFrames.length} LPC2-кадров; окно ${(meta.W/meta.sr*1000).toFixed(1)} мс, шаг ${(meta.H/meta.sr*1000).toFixed(1)} мс.\n`+`Битрейт: ${(lfa.byteLength*8/(meta.samples/meta.sr)/1000).toFixed(2)} кбит/с; voiced/mixed ${(100*speech/Math.max(1,lpcFrames.length)).toFixed(1)}%; transient ${(100*packInfo.transient/Math.max(1,lpcFrames.length)).toFixed(1)}%.\n`+`Максимум обычного звонкого кадра: 53 бита, как LPC1.\n`+`${normalizationLine(normInfo)}\n${outputBalanceLine(outputInfo)}`,"good");
     }else{
       const c={N:+U.fftSize.value,frameMs:+U.frameMs.value,sf:+U.superFrames.value,parts:+U.partials.value,L:+U.levels.value,min:+U.minFreq.value,max:Math.min(+U.maxFreq.value,sr*.48),th:+U.threshold.value,track:+U.trackTol.value,mf:+U.mergeFTol.value,ma:+U.mergeATol.value,noiseBands:+U.noiseBands.value,noiseMask:+U.noiseMask.value,noiseGain:+U.noiseGain.value/100};if(c.max<=c.min)throw Error("Неверный диапазон частот");
-      const analysed=await encodeLFA(work,sr,c),packed=pack(analysed.meta,analysed.events,analysed.noise);lfa=packed.buffer;const checked=unpack(lfa);meta=checked.meta;events=checked.events;noiseFrames=checked.noise;lpcFrames=null;packInfo={...checked.stats,oldLfa1:packed.stats.oldLfa1};currentCodec="lfa3";
+      const analysed=await encodeLFA(work,sr,c),packed=pack(analysed.meta,analysed.events,analysed.noise);lfa=packed.buffer;const checked=unpack(lfa);meta=checked.meta;events=checked.events;noiseFrames=checked.noise;lpcFrames=null;packInfo={...checked.stats,oldLfa1:packed.stats.oldLfa1};standardInfo=null;compressedMime="application/octet-stream";compressedExt=".lfa";currentCodec="lfa3";
       status("Декодирование палитрового потока…");decodedRaw=await synthLFA(meta,events,noiseFrames,+U.lfaGridShift.value);applyOutputBalance(false);progress(1);setMetricLabels("lfa3");metricsLFA(meta,events,lfa.byteLength,packInfo);$("normGainM").textContent=normInfo&&normInfo.enabled?`${normInfo.gainDb>=0?"+":""}${normInfo.gainDb.toFixed(1)} дБ`:"выкл.";drawWave(work,decoded);drawTracks(meta,events);drawNoise(meta,noiseFrames);U.playDec.disabled=U.saveLfa.disabled=U.saveWav.disabled=false;const modes=`RAW ${packInfo.rawBlocks}, KEEP ${packInfo.keepBlocks}, PATCH ${packInfo.patchBlocks}, NEW ${packInfo.newBlocks}`,saving=100*(1-lfa.byteLength/packInfo.rawComparable);status(`Готово: ${meta.tracks} дорожек, ${events.length} частей сегментов.\n`+`Суперкадр: ${meta.sf} × ${(meta.H/meta.sr*1000).toFixed(3)} мс = ${(meta.sf*meta.H/meta.sr*1000).toFixed(1)} мс.\n`+`Режимы: ${modes}. Экономия против RAW LFA‑2: ${saving.toFixed(1)}%.\n`+`Шумовой слой: ${packInfo.noiseBands||0} полос, ${packInfo.noiseBytes?bytes(packInfo.noiseBytes):"выключен"}.\n`+`${normalizationLine(normInfo)}\n${outputBalanceLine(outputInfo)}\n`+`${lfaGridShiftLine(meta)}`,'good');
     }
   }catch(e){console.error(e);status(`Ошибка: ${e.message}`,'bad');progress(0)}finally{U.encode.disabled=false}
 };
 U.lfaFile.onchange=async()=>{
   const f=U.lfaFile.files[0];if(!f)return;
-  try{stop();lfa=await f.arrayBuffer();const v=new DataView(lfa),magic=lfa.byteLength>=4?String.fromCharCode(v.getUint8(0),v.getUint8(1),v.getUint8(2),v.getUint8(3)):"";
-    if(magic==="LPC1"){const r=unpackLPC(lfa);meta=r.meta;lpcFrames=r.frames;events=[];noiseFrames=null;packInfo=r.stats;currentCodec="lpc1";U.codec.value="lpc1";updateCodecUI(false);decodedRaw=await synthLPC(meta,lpcFrames);applyOutputBalance(false);setMetricLabels("lpc1");metricsLPC(meta,lpcFrames,lfa.byteLength,packInfo);drawWave(null,decoded);drawLPC(meta,lpcFrames);status(`Открыт LPC1: ${lpcFrames.length} кадров.`,'good')}
-    else if(magic==="LPC2"){const r=unpackLPC2(lfa);meta=r.meta;lpcFrames=r.frames;events=[];noiseFrames=null;packInfo=r.stats;currentCodec="lpc2";U.codec.value="lpc2";updateCodecUI(false);decodedRaw=await synthLPC2(meta,lpcFrames,+U.lpc2Postfilter.value/100);applyOutputBalance(false);setMetricLabels("lpc2");metricsLPC2(meta,lpcFrames,lfa.byteLength,packInfo);drawWave(null,decoded);drawLPC2(meta,lpcFrames);status(`Открыт LPC2: ${lpcFrames.length} кадров; ${bytes(lfa.byteLength)}.`,'good')}
-    else{const r=unpack(lfa);meta=r.meta;events=r.events;noiseFrames=r.noise;lpcFrames=null;packInfo=r.stats;currentCodec="lfa3";U.codec.value="lfa3";updateCodecUI(false);decodedRaw=await synthLFA(meta,events,noiseFrames,+U.lfaGridShift.value);applyOutputBalance(false);setMetricLabels("lfa3");metricsLFA(meta,events,lfa.byteLength,packInfo);drawWave(null,decoded);drawTracks(meta,events);drawNoise(meta,noiseFrames);status(`Открыт LFA‑${meta.ver}: ${events.length} сегментов/частей.\n`+`${lfaGridShiftLine(meta)}`,'good')}
-    work=null;normInfo=null;$("normGainM").textContent="—";name=f.name.replace(/\.(lfa|lpc|lp2)$/i,"")||"audio";U.playDec.disabled=U.saveLfa.disabled=U.saveWav.disabled=false;progress(1);
-  }catch(e){console.error(e);status(`Ошибка файла: ${e.message}`,'bad')}
+  try{
+    stop();lfa=await f.arrayBuffer();
+    const v=new DataView(lfa),magic=lfa.byteLength>=4?
+      String.fromCharCode(v.getUint8(0),v.getUint8(1),v.getUint8(2),v.getUint8(3)):"";
+    if(magic==="LPC1"){
+      const r=unpackLPC(lfa);meta=r.meta;lpcFrames=r.frames;events=[];noiseFrames=null;
+      packInfo=r.stats;standardInfo=null;compressedMime="application/octet-stream";
+      compressedExt=".lpc";currentCodec="lpc1";U.codec.value="lpc1";updateCodecUI(false);
+      decodedRaw=await synthLPC(meta,lpcFrames);applyOutputBalance(false);setMetricLabels("lpc1");
+      metricsLPC(meta,lpcFrames,lfa.byteLength,packInfo);drawWave(null,decoded);
+      drawLPC(meta,lpcFrames);status(`Открыт LPC1: ${lpcFrames.length} кадров.`,"good");
+    }else if(magic==="LPC2"){
+      const r=unpackLPC2(lfa);meta=r.meta;lpcFrames=r.frames;events=[];noiseFrames=null;
+      packInfo=r.stats;standardInfo=null;compressedMime="application/octet-stream";
+      compressedExt=".lp2";currentCodec="lpc2";U.codec.value="lpc2";updateCodecUI(false);
+      decodedRaw=await synthLPC2(meta,lpcFrames,+U.lpc2Postfilter.value/100);
+      applyOutputBalance(false);setMetricLabels("lpc2");metricsLPC2(meta,lpcFrames,lfa.byteLength,packInfo);
+      drawWave(null,decoded);drawLPC2(meta,lpcFrames);
+      status(`Открыт LPC2: ${lpcFrames.length} кадров; ${bytes(lfa.byteLength)}.`,"good");
+    }else{
+      const standard=standardFileKind(lfa,f.name);
+      if(standard){
+        const d=await decodeStandardAudio(lfa);currentCodec=standard;U.codec.value=standard;
+        compressedMime=f.type||(standard==="opus"?"audio/ogg;codecs=opus":"audio/ogg;codecs=vorbis");
+        const ext=(f.name.match(/\.[^.]+$/)||[standard==="opus"?".opus":".ogg"])[0].toLowerCase();
+        compressedExt=ext;meta={sr:d.sampleRate,samples:d.samples.length};decodedRaw=d.samples;
+        events=[];noiseFrames=null;lpcFrames=null;packInfo=null;
+        standardInfo={codec:standard==="opus"?"Opus":"Ogg Vorbis",backend:"импортированный файл",
+          container:ext===".webm"?"WebM":"Ogg",setting:"параметры неизвестны",
+          chunkSizes:[],packetCount:0,inputRate:d.sampleRate,
+          sourceSamples:d.samples.length,channels:d.channels};
+        updateCodecUI(false);applyOutputBalance(false);setMetricLabels(standard);
+        metricsStandard(meta,lfa.byteLength,standardInfo);drawWave(null,decoded);
+        drawStandardCodec(standardInfo);
+        status(`Открыт ${standardInfo.codec}: ${bytes(lfa.byteLength)}, `+
+          `${d.sampleRate} Гц, каналов ${d.channels}.`,"good");
+      }else{
+        const r=unpack(lfa);meta=r.meta;events=r.events;noiseFrames=r.noise;lpcFrames=null;
+        packInfo=r.stats;standardInfo=null;compressedMime="application/octet-stream";
+        compressedExt=".lfa";currentCodec="lfa3";U.codec.value="lfa3";updateCodecUI(false);
+        decodedRaw=await synthLFA(meta,events,noiseFrames,+U.lfaGridShift.value);
+        applyOutputBalance(false);setMetricLabels("lfa3");metricsLFA(meta,events,lfa.byteLength,packInfo);
+        drawWave(null,decoded);drawTracks(meta,events);drawNoise(meta,noiseFrames);
+        status(`Открыт LFA‑${meta.ver}: ${events.length} сегментов/частей.\n`+
+          `${lfaGridShiftLine(meta)}`,"good");
+      }
+    }
+    work=null;normInfo=null;$("normGainM").textContent="—";
+    name=f.name.replace(/\.(lfa|lpc|lp2|ogg|opus|webm)$/i,"")||"audio";
+    U.playDec.disabled=U.saveLfa.disabled=U.saveWav.disabled=false;progress(1);
+  }catch(e){console.error(e);status(`Ошибка файла: ${e.message}`,"bad")}
 };
-U.playOrig.onclick=()=>work&&meta?play(work,meta.sr):src&&play(src,srcRate);U.playDec.onclick=()=>decoded&&meta&&play(decoded,meta.sr);U.stop.onclick=stop;U.saveLfa.onclick=()=>lfa&&dl(lfa,"application/octet-stream",name+(currentCodec==="lpc1"?".lpc":currentCodec==="lpc2"?".lp2":".lfa"));U.saveWav.onclick=()=>decoded&&dl(wav(decoded,meta.sr),"audio/wav",name+(currentCodec==="lpc1"?"_lpc1.wav":currentCodec==="lpc2"?"_lpc2.wav":"_lfa.wav"));function updateTiming(){
+U.playOrig.onclick=()=>work&&meta?play(work,(currentCodec==="vorbis"||currentCodec==="opus"?standardInfo.inputRate:meta.sr)):src&&play(src,srcRate);U.playDec.onclick=()=>decoded&&meta&&play(decoded,meta.sr);U.stop.onclick=stop;U.saveLfa.onclick=()=>lfa&&dl(lfa,compressedMime,name+currentEncodedExtension());U.saveWav.onclick=()=>decoded&&dl(wav(decoded,meta.sr),"audio/wav",name+currentWavSuffix());function updateTiming(){
   const sr=+U.sampleRate.value,N=+U.fftSize.value,ms=+U.frameMs.value,H=Math.round(sr*ms/1000),sf=+U.superFrames.value,actualFrameMs=H/sr*1000;
+  if(U.codec.value==="vorbis"){$("timingInfo").textContent=`Vorbis VBR q=${(+U.vorbisQuality.value).toFixed(1)}; ${sr} Гц`;$("timingInfo").style.color="var(--t)";return}
+  if(U.codec.value==="opus"){$("timingInfo").textContent=`Opus 20 мс; ${Math.round(+U.opusBitrate.value/1000)} кбит/с; 48 кГц`;$("timingInfo").style.color="var(--t)";return}
   if(U.codec.value==="lpc1"||U.codec.value==="lpc2"){$("timingInfo").textContent=U.codec.value==="lpc2"?`${H} отсчётов; окно ${+U.lpc2WindowMs.value} мс; ${(1000/actualFrameMs).toFixed(1)} кадров/с`:`${H} отсчётов; ${(1000/actualFrameMs).toFixed(1)} кадров/с`;$("timingInfo").style.color="var(--t)";return}
   const windowMs=N/sr*1000,overlapMs=(N-H)/sr*1000;$("timingInfo").textContent=H<=N?`окно ${windowMs.toFixed(1)} мс, перекрытие ${Math.max(0,overlapMs).toFixed(1)} мс`:`ошибка: окно ${windowMs.toFixed(1)} мс короче шага`;$("timingInfo").style.color=H<=N?"var(--t)":"var(--r)";$("superInfo").textContent=`${(sf*actualFrameMs).toFixed(1)} мс; 15 частот + escape`;const B=+U.noiseBands.value;$("noiseBandInfo").textContent=B?`${B} логарифмических полос, ${(1000/actualFrameMs).toFixed(1)} обновлений/с`:"шум отключён";
 }
@@ -1031,6 +1429,9 @@ U.fftSize.onchange=updateTiming;
 U.frameMs.onchange=updateTiming;
 U.superFrames.onchange=updateTiming;
 U.noiseBands.onchange=updateTiming;
+U.vorbisQuality.oninput=()=>{$("vorbisQualityV").textContent=(+U.vorbisQuality.value).toFixed(1);updateTiming()};
+U.opusBitrate.onchange=updateTiming;
+U.opusBitrateMode.onchange=updateTiming;
 U.levels.onchange=()=>updateLfaGridShiftUI(true);
 U.minFreq.onchange=()=>updateLfaGridShiftUI(true);
 U.maxFreq.onchange=()=>updateLfaGridShiftUI(true);
