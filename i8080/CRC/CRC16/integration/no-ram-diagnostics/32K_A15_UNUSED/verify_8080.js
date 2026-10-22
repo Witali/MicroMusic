@@ -85,9 +85,10 @@ class CPU8080 {
       this.AC=((a&15)+(v&15)+c)>15?1:0;this.szp(this.A);
     }else if(group===2||group===3||group===7){ // SUB/SBB/CMP
       c=group===3?this.CY:0;n=a-v-c;
-      this.CY=n<0?1:0;this.AC=((a&15)-(v&15)-c)<0?1:0;
+      // 8080 AC is the carry of the complemented addition, not half borrow.
+      this.CY=n<0?1:0;this.AC=((a&15)+((~v)&15)+1-c)>15?1:0;
       this.szp(n&255);if(group!==7)this.A=n&255;
-    }else if(group===4){this.A=a&v;this.CY=0;this.AC=1;this.szp(this.A);}
+    }else if(group===4){this.A=a&v;this.CY=0;this.AC=((a|v)&8)?1:0;this.szp(this.A);}
     else if(group===5){this.A=a^v;this.CY=0;this.AC=0;this.szp(this.A);}
     else if(group===6){this.A=a|v;this.CY=0;this.AC=0;this.szp(this.A);}
   }
@@ -127,7 +128,7 @@ class CPU8080 {
       t=(r===6)?10:(z80?4:5);
     }else if((op&0xc7)===0x05){ // DCR r
       const r=(op>>3)&7,v=this.getReg(r),n=(v-1)&255;
-      this.AC=((v&15)===0)?1:0;this.szp(n);
+      this.AC=((v&15)!==0)?1:0;this.szp(n);
       if(r===6)this.writeMem(this.HL,n,8);else this[R[r]]=n;
       t=(r===6)?10:(z80?4:5);
     }else if((op&0xc7)===0x06){ // MVI r,imm
@@ -178,7 +179,7 @@ class CPU8080 {
       this.writeMem(this.SP,this.L,13);this.writeMem(this.SP+1,this.H,16);
       this.L=l;this.H=h;t=18;}
     else if(op===0xe9){this.PC=this.HL;t=z80?4:5;}
-    else if(op===0xeb){const x=this.HL;this.HL=this.DE;this.DE=x;t=z80?4:5;}
+    else if(op===0xeb){const x=this.HL;this.HL=this.DE;this.DE=x;t=4;}
     else if(op===0xf3){this.diInstructions++;this.setINTE(0);t=4;}
     else if(op===0xfb){this.eiInstructions++;this.setINTE(1);t=4;}
     else if(op===0xf9){this.SP=this.HL;t=z80?6:5;}

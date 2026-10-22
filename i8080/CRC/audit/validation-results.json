@@ -1,0 +1,463 @@
+{
+  "imported_files_verified": 315,
+  "c_execution": "Emscripten WASM under Node",
+  "no_table_good_roms": 10,
+  "no_table_faults": 50,
+  "checks": [
+    {
+      "check": "Dual CRC16 v6 ASM/BIN and ROM residues",
+      "exit_code": 0,
+      "log": "00.log"
+    },
+    {
+      "check": "Dual CRC16 v5 sources and polynomial math",
+      "exit_code": 0,
+      "log": "01.log"
+    },
+    {
+      "check": "Dual CRC16 pair properties",
+      "exit_code": 0,
+      "log": "02.log"
+    },
+    {
+      "check": "Independent polynomial and footer audit",
+      "exit_code": 0,
+      "log": "03.log"
+    },
+    {
+      "check": "Historical CRC32 four ASM/BIN pairs and two check vectors",
+      "exit_code": 0
+    },
+    {
+      "check": "Standard CRC32C no-table ROM generation",
+      "exit_code": 0,
+      "log": "05.log"
+    },
+    {
+      "check": "Standard CRC32C cachedB generation",
+      "exit_code": 0,
+      "log": "06.log"
+    },
+    {
+      "check": "Standard CRC32C machine-code check vector",
+      "exit_code": 0,
+      "log": "07.log"
+    },
+    {
+      "check": "CRC32C table generator: two 57-byte variants",
+      "exit_code": 0,
+      "log": "08.log"
+    },
+    {
+      "check": "CRC32C checked table: Python instruction emulator",
+      "exit_code": 0,
+      "log": "09.log"
+    },
+    {
+      "check": "Compile dual16-compact",
+      "exit_code": 0,
+      "log": "10.log"
+    },
+    {
+      "check": "Dual CRC16 v6 bitwise_shared: full ROM and faults",
+      "exit_code": 0,
+      "log": "11.log"
+    },
+    {
+      "check": "Dual CRC16 v6 bitwise_shared_parity: full ROM and faults",
+      "exit_code": 0,
+      "log": "12.log"
+    },
+    {
+      "check": "Dual CRC16 v6 bitwise_shared_parity_reset: full ROM and faults",
+      "exit_code": 0,
+      "log": "13.log"
+    },
+    {
+      "check": "Dual CRC16 v6 bitwise_shared_parity_u2: full ROM and faults",
+      "exit_code": 0,
+      "log": "14.log"
+    },
+    {
+      "check": "Dual CRC16 v6 bitwise_shared_parity_u4: full ROM and faults",
+      "exit_code": 0,
+      "log": "15.log"
+    },
+    {
+      "check": "Compile dual16-fast",
+      "exit_code": 0,
+      "log": "16.log"
+    },
+    {
+      "check": "Dual CRC16 v5 fast75/fast82: full ROM and faults",
+      "exit_code": 0,
+      "log": "17.log"
+    },
+    {
+      "check": "Compile crc32c-no-table",
+      "exit_code": 0,
+      "log": "18.log"
+    },
+    {
+      "check": "CRC32C 24 KiB u1_halt: good ROM",
+      "exit_code": 0,
+      "log": "19.log"
+    },
+    {
+      "check": "CRC32C 24 KiB u1_halt: fault at 0200",
+      "exit_code": 0,
+      "log": "20.log"
+    },
+    {
+      "check": "CRC32C 24 KiB u1_halt: fault at 0443",
+      "exit_code": 0,
+      "log": "21.log"
+    },
+    {
+      "check": "CRC32C 24 KiB u1_halt: fault at 3000",
+      "exit_code": 0,
+      "log": "22.log"
+    },
+    {
+      "check": "CRC32C 24 KiB u1_halt: fault at 5FFC",
+      "exit_code": 0,
+      "log": "23.log"
+    },
+    {
+      "check": "CRC32C 24 KiB u1_halt: fault at 5FFF",
+      "exit_code": 0,
+      "log": "24.log"
+    },
+    {
+      "check": "CRC32C 24 KiB cachedB: good ROM",
+      "exit_code": 0,
+      "log": "25.log"
+    },
+    {
+      "check": "CRC32C 24 KiB cachedB: fault at 0200",
+      "exit_code": 0,
+      "log": "26.log"
+    },
+    {
+      "check": "CRC32C 24 KiB cachedB: fault at 0443",
+      "exit_code": 0,
+      "log": "27.log"
+    },
+    {
+      "check": "CRC32C 24 KiB cachedB: fault at 3000",
+      "exit_code": 0,
+      "log": "28.log"
+    },
+    {
+      "check": "CRC32C 24 KiB cachedB: fault at 5FFC",
+      "exit_code": 0,
+      "log": "29.log"
+    },
+    {
+      "check": "CRC32C 24 KiB cachedB: fault at 5FFF",
+      "exit_code": 0,
+      "log": "30.log"
+    },
+    {
+      "check": "CRC32C 24 KiB u2_halt: good ROM",
+      "exit_code": 0,
+      "log": "31.log"
+    },
+    {
+      "check": "CRC32C 24 KiB u2_halt: fault at 0200",
+      "exit_code": 0,
+      "log": "32.log"
+    },
+    {
+      "check": "CRC32C 24 KiB u2_halt: fault at 0443",
+      "exit_code": 0,
+      "log": "33.log"
+    },
+    {
+      "check": "CRC32C 24 KiB u2_halt: fault at 3000",
+      "exit_code": 0,
+      "log": "34.log"
+    },
+    {
+      "check": "CRC32C 24 KiB u2_halt: fault at 5FFC",
+      "exit_code": 0,
+      "log": "35.log"
+    },
+    {
+      "check": "CRC32C 24 KiB u2_halt: fault at 5FFF",
+      "exit_code": 0,
+      "log": "36.log"
+    },
+    {
+      "check": "CRC32C 24 KiB u4_halt: good ROM",
+      "exit_code": 0,
+      "log": "37.log"
+    },
+    {
+      "check": "CRC32C 24 KiB u4_halt: fault at 0200",
+      "exit_code": 0,
+      "log": "38.log"
+    },
+    {
+      "check": "CRC32C 24 KiB u4_halt: fault at 0443",
+      "exit_code": 0,
+      "log": "39.log"
+    },
+    {
+      "check": "CRC32C 24 KiB u4_halt: fault at 3000",
+      "exit_code": 0,
+      "log": "40.log"
+    },
+    {
+      "check": "CRC32C 24 KiB u4_halt: fault at 5FFC",
+      "exit_code": 0,
+      "log": "41.log"
+    },
+    {
+      "check": "CRC32C 24 KiB u4_halt: fault at 5FFF",
+      "exit_code": 0,
+      "log": "42.log"
+    },
+    {
+      "check": "CRC32C 24 KiB u8_halt: good ROM",
+      "exit_code": 0,
+      "log": "43.log"
+    },
+    {
+      "check": "CRC32C 24 KiB u8_halt: fault at 0200",
+      "exit_code": 0,
+      "log": "44.log"
+    },
+    {
+      "check": "CRC32C 24 KiB u8_halt: fault at 0443",
+      "exit_code": 0,
+      "log": "45.log"
+    },
+    {
+      "check": "CRC32C 24 KiB u8_halt: fault at 3000",
+      "exit_code": 0,
+      "log": "46.log"
+    },
+    {
+      "check": "CRC32C 24 KiB u8_halt: fault at 5FFC",
+      "exit_code": 0,
+      "log": "47.log"
+    },
+    {
+      "check": "CRC32C 24 KiB u8_halt: fault at 5FFF",
+      "exit_code": 0,
+      "log": "48.log"
+    },
+    {
+      "check": "CRC32C 32 KiB u1_halt: good ROM",
+      "exit_code": 0,
+      "log": "49.log"
+    },
+    {
+      "check": "CRC32C 32 KiB u1_halt: fault at 0200",
+      "exit_code": 0,
+      "log": "50.log"
+    },
+    {
+      "check": "CRC32C 32 KiB u1_halt: fault at 0443",
+      "exit_code": 0,
+      "log": "51.log"
+    },
+    {
+      "check": "CRC32C 32 KiB u1_halt: fault at 4000",
+      "exit_code": 0,
+      "log": "52.log"
+    },
+    {
+      "check": "CRC32C 32 KiB u1_halt: fault at 7FFC",
+      "exit_code": 0,
+      "log": "53.log"
+    },
+    {
+      "check": "CRC32C 32 KiB u1_halt: fault at 7FFF",
+      "exit_code": 0,
+      "log": "54.log"
+    },
+    {
+      "check": "CRC32C 32 KiB cachedB: good ROM",
+      "exit_code": 0,
+      "log": "55.log"
+    },
+    {
+      "check": "CRC32C 32 KiB cachedB: fault at 0200",
+      "exit_code": 0,
+      "log": "56.log"
+    },
+    {
+      "check": "CRC32C 32 KiB cachedB: fault at 0443",
+      "exit_code": 0,
+      "log": "57.log"
+    },
+    {
+      "check": "CRC32C 32 KiB cachedB: fault at 4000",
+      "exit_code": 0,
+      "log": "58.log"
+    },
+    {
+      "check": "CRC32C 32 KiB cachedB: fault at 7FFC",
+      "exit_code": 0,
+      "log": "59.log"
+    },
+    {
+      "check": "CRC32C 32 KiB cachedB: fault at 7FFF",
+      "exit_code": 0,
+      "log": "60.log"
+    },
+    {
+      "check": "CRC32C 32 KiB u2_halt: good ROM",
+      "exit_code": 0,
+      "log": "61.log"
+    },
+    {
+      "check": "CRC32C 32 KiB u2_halt: fault at 0200",
+      "exit_code": 0,
+      "log": "62.log"
+    },
+    {
+      "check": "CRC32C 32 KiB u2_halt: fault at 0443",
+      "exit_code": 0,
+      "log": "63.log"
+    },
+    {
+      "check": "CRC32C 32 KiB u2_halt: fault at 4000",
+      "exit_code": 0,
+      "log": "64.log"
+    },
+    {
+      "check": "CRC32C 32 KiB u2_halt: fault at 7FFC",
+      "exit_code": 0,
+      "log": "65.log"
+    },
+    {
+      "check": "CRC32C 32 KiB u2_halt: fault at 7FFF",
+      "exit_code": 0,
+      "log": "66.log"
+    },
+    {
+      "check": "CRC32C 32 KiB u4_halt: good ROM",
+      "exit_code": 0,
+      "log": "67.log"
+    },
+    {
+      "check": "CRC32C 32 KiB u4_halt: fault at 0200",
+      "exit_code": 0,
+      "log": "68.log"
+    },
+    {
+      "check": "CRC32C 32 KiB u4_halt: fault at 0443",
+      "exit_code": 0,
+      "log": "69.log"
+    },
+    {
+      "check": "CRC32C 32 KiB u4_halt: fault at 4000",
+      "exit_code": 0,
+      "log": "70.log"
+    },
+    {
+      "check": "CRC32C 32 KiB u4_halt: fault at 7FFC",
+      "exit_code": 0,
+      "log": "71.log"
+    },
+    {
+      "check": "CRC32C 32 KiB u4_halt: fault at 7FFF",
+      "exit_code": 0,
+      "log": "72.log"
+    },
+    {
+      "check": "CRC32C 32 KiB u8_halt: good ROM",
+      "exit_code": 0,
+      "log": "73.log"
+    },
+    {
+      "check": "CRC32C 32 KiB u8_halt: fault at 0200",
+      "exit_code": 0,
+      "log": "74.log"
+    },
+    {
+      "check": "CRC32C 32 KiB u8_halt: fault at 0443",
+      "exit_code": 0,
+      "log": "75.log"
+    },
+    {
+      "check": "CRC32C 32 KiB u8_halt: fault at 4000",
+      "exit_code": 0,
+      "log": "76.log"
+    },
+    {
+      "check": "CRC32C 32 KiB u8_halt: fault at 7FFC",
+      "exit_code": 0,
+      "log": "77.log"
+    },
+    {
+      "check": "CRC32C 32 KiB u8_halt: fault at 7FFF",
+      "exit_code": 0,
+      "log": "78.log"
+    },
+    {
+      "check": "Compile crc32c-checked-table",
+      "exit_code": 0,
+      "log": "79.log"
+    },
+    {
+      "check": "CRC32C table 24 KiB: C instruction emulator",
+      "exit_code": 0,
+      "log": "80.log"
+    },
+    {
+      "check": "CRC32C table 24 KiB: all 8192 table bit flips",
+      "exit_code": 0,
+      "log": "81.log"
+    },
+    {
+      "check": "CRC32C table 32 KiB: C instruction emulator",
+      "exit_code": 0,
+      "log": "82.log"
+    },
+    {
+      "check": "CRC32C table 32 KiB: all 8192 table bit flips",
+      "exit_code": 0,
+      "log": "83.log"
+    },
+    {
+      "check": "Integrated diagnosis 32K_A15_UNUSED: rebuild",
+      "exit_code": 0,
+      "log": "84.log"
+    },
+    {
+      "check": "Integrated diagnosis 32K_A15_UNUSED: JavaScript CPU tests",
+      "exit_code": 0,
+      "log": "85.log"
+    },
+    {
+      "check": "Integrated diagnosis 64K_A15_CONNECTED: rebuild",
+      "exit_code": 0,
+      "log": "86.log"
+    },
+    {
+      "check": "Integrated diagnosis 64K_A15_CONNECTED: JavaScript CPU tests",
+      "exit_code": 0,
+      "log": "87.log"
+    },
+    {
+      "check": "Intel 8080 exhaustive flags and instruction checks",
+      "exit_code": 0,
+      "log": "88.log"
+    },
+    {
+      "check": "Intel 8080 firmware under audited flags and timings",
+      "exit_code": 0,
+      "log": "89.log"
+    },
+    {
+      "check": "Legacy emulators reject unsupported DAA",
+      "exit_code": 0,
+      "log": "90.log"
+    }
+  ],
+  "verified_on": "2026-10-22"
+}

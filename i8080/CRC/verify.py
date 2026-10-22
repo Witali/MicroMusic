@@ -11,6 +11,8 @@ import subprocess
 import sys
 import tempfile
 
+sys.dont_write_bytecode = True
+
 ROOT = Path(__file__).resolve().parent
 REPO = ROOT.parents[1]
 BUILD = (REPO / 'build' / 'crc-verification').resolve()
@@ -25,8 +27,16 @@ def main():
     for row in imported:
         path = ROOT / row['path']
         assert path.resolve().is_relative_to(ROOT), path
-        assert hashlib.sha256(path.read_bytes()).hexdigest() == row['sha256'], path
-    print(f'PASS: {len(imported)} imported files match source archive SHA-256', flush=True)
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == row.get('current_sha256', row['sha256']), path
+    print(f'PASS: {len(imported)} files match archive SHA-256 or documented Intel audit corrections', flush=True)
+    integrity = ROOT / 'SHA256SUMS.txt'
+    if integrity.exists():
+        for line in integrity.read_text(encoding='utf-8').splitlines():
+            digest, name = line.split('  ', 1)
+            path = (ROOT / name).resolve()
+            assert path.is_relative_to(ROOT)
+            assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, name
+        print('PASS: collection integrity manifest', flush=True)
 
     BUILD.mkdir(parents=True, exist_ok=True)
     assert BUILD.is_relative_to((REPO / 'build').resolve())
@@ -163,6 +173,10 @@ def main():
         py(f'Integrated diagnosis {mode}: rebuild', integration / mode / 'build.py')
         run(f'Integrated diagnosis {mode}: JavaScript CPU tests',
             [node, integration / mode / 'verify_8080.js'], integration / mode)
+
+    run('Intel 8080 exhaustive flags and instruction checks', [node, ROOT / 'audit/test-intel-flags.mjs'])
+    run('Intel 8080 firmware under audited flags and timings', [node, ROOT / 'audit/test-intel-firmware.mjs'])
+    py('Legacy emulators reject unsupported DAA', ROOT / 'audit/test-legacy-guards.py')
 
     summary = {'imported_files_verified': len(imported), 'work_directory': str(work),
                'c_execution': 'Emscripten WASM under Node' if wasm else 'native C',

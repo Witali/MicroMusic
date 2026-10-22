@@ -158,11 +158,7 @@ def emulate(rom,init=0x91,max_steps=10000000,crc_layout='HL',trace_addresses=Fal
         elif op==0xE6:
             r[7]&=rom[pc];pc=(pc+1)&65535;cy=False;z=(r[7]==0)
         elif op==0x27:
-            # For these programs DAA is only executed after SBB A with 00/CY=0 or FF/CY=1
-            if r[7]==0 and not cy:r[7]=0
-            elif r[7]==255 and cy:r[7]=0x65
-            else:raise ValueError('DAA used beyond supported special-case')
-            z=r[7]==0
+            raise NotImplementedError("DAA requires accurate AC; this legacy subset does not model AC")
         elif op==0x00:pass
         else:raise AssertionError(f'Unimplemented opcode {op:02X} at {pc-1:04X}')
     raise TimeoutError('no HLT')
