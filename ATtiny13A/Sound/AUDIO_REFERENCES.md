@@ -21,6 +21,18 @@
 Все три эталона: моно, 7 500 Гц, PCM 16 бит. Поле `training_path` указывает
 путь относительно `ATtiny13A/Sound`, который ожидают сохранённые скрипты обучения.
 
+Подготовка прослушивания в общем плеере из корня репозитория:
+
+```text
+python tools/prepare-hq4-preview.py --archive "<Downloads>/MicroMusic_COMPLETE_RESEARCH_HANDOFF_2026-10-22(2).zip"
+node web-player/scripts/serve.mjs 8145
+```
+
+Адрес: `http://127.0.0.1:8145/web-player/?collection=hq4`.
+Сценарий проверяет SHA-256 архива, оригинальных WAV, Flash и контрольного PCM.
+Доступны три balanced-образа, maximum-STOI для первой фразы, оригиналы WAV и
+ссылка на сохранённый плеер из ChatGPT. [Сверка эмуляторов](../../web-player/reports/hq4-audit-2026-10-22.md).
+
 В `MicroMusic_HQ4_Full_Private.zip` также есть эти три WAV по путям
 `MicroMusic_HQ4/MicroMusic_HQ3_Verified_Release/<ID>/original.wav`.
 Его SHA-256: `13249f7cd65dba19980a54f3d726d2702a94f04868e1b8cdd0d2f6eb2aca25a4`.
