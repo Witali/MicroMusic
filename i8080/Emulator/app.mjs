@@ -5,7 +5,8 @@ const $ = id => document.getElementById(id), rate = 96000;
 const hex = (n, width = 2) => n.toString(16).toUpperCase().padStart(width, '0');
 const number = n => n.toLocaleString('ru-RU');
 const machineInputs = [...document.querySelectorAll('[data-machine]')];
-let firmware = null, filename = '', loadTicket = 0, worker = null, audioURL = null;
+let firmware = null, filename = '', loadTicket = 0, worker = null, audioURL = null, romURL = null;
+let catalog = null, selectedExample = null;
 let raw = null, computed = null, processed = null, runOptions = null;
 let starting = false, runTicket = 0, previewDrawn = false;
 const speaker = new RealtimeSpeaker(status => {
@@ -21,6 +22,40 @@ const soundOptions = () => {
 
 // Replaced with an embedded worker by scripts/build-standalone.mjs.
 function createWorker() { return new Worker(new URL('./worker.mjs', import.meta.url), { type: 'module' }); }
+// Replaced by embedded data in the standalone build.
+async function getExampleCatalog() { const response = await fetch(new URL('./examples.json', import.meta.url)); if (!response.ok) throw Error('Не удалось загрузить список примеров'); return response.json(); }
+async function readExample(entry) { const response = await fetch(new URL(entry.rom, import.meta.url)); if (!response.ok) throw Error('Не удалось загрузить ROM примера'); return response.arrayBuffer(); }
+function exampleSourceURL(entry) { return entry.source; }
+
+function renderCatalog() {
+  if (!catalog) return;
+  const query = $('search').value.toLocaleLowerCase('ru').trim();
+  const entries = catalog.entries.filter(entry => `${entry.title} ${entry.description} ${entry.meta}`.toLocaleLowerCase('ru').includes(query));
+  $('catalog-count').textContent = query ? `${entries.length} / ${catalog.entries.length}` : catalog.entries.length;
+  $('catalog').replaceChildren(...entries.map(entry => {
+    const item = document.createElement('div'), button = document.createElement('button');
+    item.setAttribute('role', 'listitem'); button.type = 'button'; button.className = 'firmware-card';
+    button.dataset.example = entry.id; button.setAttribute('aria-pressed', String(selectedExample === entry.id));
+    const order = document.createElement('span'), body = document.createElement('span'), title = document.createElement('strong');
+    const meta = document.createElement('span'), arrow = document.createElement('span');
+    order.className = 'card-number'; order.textContent = String(catalog.entries.indexOf(entry) + 1).padStart(2, '0');
+    body.className = 'card-body'; title.textContent = entry.title; meta.className = 'card-meta'; meta.textContent = entry.meta;
+    arrow.className = 'card-arrow'; arrow.textContent = selectedExample === entry.id ? '●' : '↗'; arrow.setAttribute('aria-hidden', 'true');
+    body.append(title, meta); button.append(order, body, arrow);
+    button.addEventListener('click', () => loadExample(entry)); item.append(button); return item;
+  }));
+  if (!entries.length) { const empty = document.createElement('p'); empty.className = 'empty'; empty.textContent = 'Примеры не найдены.'; $('catalog').append(empty); }
+}
+function loadExample(entry) {
+  return loadFile({ name: entry.filename, size: entry.bytes, arrayBuffer: () => readExample(entry) }, entry);
+}
+async function initializeExamples() {
+  try {
+    catalog = await getExampleCatalog(); renderCatalog(); $('catalog-status').textContent = 'Выберите пример и нажмите «Эмулировать».';
+    // A user upload takes priority over an initial catalog request still in flight.
+    if (loadTicket === 0) await loadExample(catalog.entries.find(entry => entry.id === catalog.defaultId));
+  } catch (error) { $('catalog-status').textContent = `${error.message}. Можно загрузить собственный файл.`; }
+}
 
 function report(message, error = false) {
   $('status').textContent = message;
@@ -96,36 +131,49 @@ function rebuildAudio() {
   $('download').download = `${filename.replace(/\.[^.]+$/, '')}_8080_${runOptions.output}.wav`;
   $('download').setAttribute('aria-disabled', 'false'); drawScope(processed);
 }
-async function loadFile(file) {
+async function loadFile(file, example = null) {
   if (!file) return;
   const ticket = ++loadTicket;
   resetPlayback(); firmware = null; filename = ''; setBusy(false);
+  selectedExample = example?.id || null; renderCatalog();
+  if (romURL) { URL.revokeObjectURL(romURL); romURL = null; }
+  $('download-rom').removeAttribute('href'); $('download-rom').setAttribute('aria-disabled', 'true');
+  $('example-description').hidden = true; $('example-source').hidden = true;
   report('Загрузка образа…');
   $('file-name').textContent = 'Загрузка…'; $('file-info').textContent = ''; $('file-hash').textContent = '';
   try {
     // A BIN is at most 64 KiB. HEX ASCII is bounded separately, before reading it.
     if (file.size > 2 * 1024 * 1024) throw Error('Файл слишком большой: ожидается образ до 64 КиБ');
     const bytes = /\.(hex|ihx|ihex)$/i.test(file.name) ? parseIntelHex(await file.text()) : validateBinary(new Uint8Array(await file.arrayBuffer()));
+    let sha = '';
+    if (crypto.subtle) sha = [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map(x => x.toString(16).padStart(2, '0')).join('');
+    if (example && (bytes.length !== example.bytes || (sha && sha !== example.sha256))) throw Error('ROM примера не совпадает с проверенным образом');
     if (ticket !== loadTicket) return;
     firmware = bytes; filename = file.name;
-    $('file-name').textContent = filename;
-    $('file-info').textContent = `${number(bytes.length)} байт · ${/\.(hex|ihx|ihex)$/i.test(filename) ? 'Intel HEX' : 'бинарный образ'} · PC 0000h`;
-    report('Образ загружен. Выберите параметры и нажмите «Эмулировать».'); setBusy(false);
-    if (crypto.subtle) {
-      const hash = await crypto.subtle.digest('SHA-256', bytes);
-      if (ticket === loadTicket) $('file-hash').textContent = `SHA-256 ${[...new Uint8Array(hash)].map(x => x.toString(16).padStart(2, '0')).join('')}`;
+    if (example) {
+      $('hz').value = example.hz; $('memory').value = example.memory; $('output').value = example.output; $('seconds').value = 90;
+      updateMachineNotes();
+      $('example-description').textContent = example.description; $('example-description').hidden = false;
+      $('example-source').href = exampleSourceURL(example); $('example-source').hidden = false;
     }
+    $('file-name').textContent = example?.title || filename;
+    $('file-info').textContent = `${number(bytes.length)} байт · ${/\.(hex|ihx|ihex)$/i.test(filename) ? 'Intel HEX' : 'бинарный образ'} · PC 0000h`;
+    $('file-hash').textContent = sha ? `SHA-256 ${sha}` : '';
+    romURL = URL.createObjectURL(new Blob([bytes], { type: 'application/octet-stream' }));
+    $('download-rom').href = romURL; $('download-rom').download = filename.replace(/\.[^.]+$/, '') + '.bin'; $('download-rom').setAttribute('aria-disabled', 'false');
+    report('Образ загружен. Выберите параметры и нажмите «Эмулировать».'); setBusy(false);
   } catch (error) {
     if (ticket !== loadTicket) return;
-    firmware = null; $('file-name').textContent = 'Образ не загружен'; $('file-info').textContent = '';
+    firmware = null; selectedExample = null; renderCatalog(); $('file-name').textContent = 'Образ не загружен'; $('file-info').textContent = '';
     report(error.message, true); setBusy(false);
   }
 }
 async function run() {
   if (!firmware || starting) return;
   if (speaker.active) {
-    try { await speaker.togglePause(); worker?.postMessage({ kind: speaker.paused ? 'pause' : 'resume' }); $('playback-status').textContent = speaker.paused ? 'Пауза' : 'Звук из исполняемого ROM'; setBusy(!!worker); }
-    catch (error) { resetPlayback(); report(error.message, true); }
+    const ticket = runTicket;
+    try { await speaker.togglePause(); if (ticket !== runTicket) return; worker?.postMessage({ kind: speaker.paused ? 'pause' : 'resume' }); $('playback-status').textContent = speaker.paused ? 'Пауза' : 'Звук из исполняемого ROM'; setBusy(!!worker); }
+    catch (error) { if (ticket !== runTicket) return; resetPlayback(); report(error.message, true); }
     return;
   }
   if (worker) return;
@@ -174,16 +222,20 @@ $('cancel').addEventListener('click', () => { resetPlayback(); report('Сбро�
 for (const id of ['filter', 'normalize']) $(id).addEventListener('change', () => { speaker.configure(soundOptions()); rebuildAudio(); });
 $('volume').addEventListener('input', () => speaker.volume(Number($('volume').value)));
 $('download').addEventListener('click', event => { if (!raw) event.preventDefault(); });
-for (const input of machineInputs) input.addEventListener('change', () => {
-  resetPlayback(); report(firmware ? 'Параметры изменены. Запустите эмуляцию заново.' : 'Загрузите образ прошивки.');
+function updateMachineNotes() {
   $('signal-label').textContent = $('output').value === 'inte' ? 'INTE' : '/WR';
   $('memory-note').textContent = $('memory').value === 'rom' ? '32-КиБ образ зеркалируется по A15. Записи дают /WR, содержимое ПЗУ сохраняется.' : $('memory').value === 'ramupper' ? 'Адреса 8000–FFFF доступны для записи. A15 участвует в адресации.' : 'Все 64 КиБ доступны для чтения и записи, включая загруженный код.';
+}
+for (const input of machineInputs) input.addEventListener('change', () => {
+  resetPlayback(); report(firmware ? 'Параметры изменены. Запустите эмуляцию заново.' : 'Загрузите образ прошивки.');
+  updateMachineNotes();
 });
+$('search').addEventListener('input', renderCatalog);
 for (const name of ['dragenter', 'dragover']) $('drop-zone').addEventListener(name, event => { event.preventDefault(); $('drop-zone').classList.add('drag-over'); });
 for (const name of ['dragleave', 'drop']) $('drop-zone').addEventListener(name, event => { event.preventDefault(); $('drop-zone').classList.remove('drag-over'); });
 $('drop-zone').addEventListener('drop', event => loadFile(event.dataTransfer.files[0]));
 window.addEventListener('keydown', event => {
   if (event.code === 'Space' && !['INPUT', 'SELECT', 'TEXTAREA', 'BUTTON', 'A', 'SUMMARY'].includes(document.activeElement.tagName)) { event.preventDefault(); run(); }
 });
-window.addEventListener('beforeunload', () => { speaker.reset(); stopWorker(); if (audioURL) URL.revokeObjectURL(audioURL); });
-clearResult(); setBusy(false);
+window.addEventListener('beforeunload', () => { speaker.reset(); stopWorker(); if (audioURL) URL.revokeObjectURL(audioURL); if (romURL) URL.revokeObjectURL(romURL); });
+clearResult(); setBusy(false); initializeExamples();

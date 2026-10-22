@@ -2,8 +2,8 @@
   "date": "2026-10-22",
   "version": "2.1.0",
   "node": "22.22.3",
-  "node_test_groups": 30,
-  "node_passed": 30,
+  "node_test_groups": 31,
+  "node_passed": 31,
   "node_failed": 0,
   "source_integrity": "Original ZIP manifest and all three retained ROM hashes verified",
   "opcode_timings": {
@@ -64,7 +64,11 @@
       "Pause freezes audio clock and CPU; resume/reset work; live lookahead remains below 3 seconds in the test",
       "Undocumented opcode error",
       "No separate audio element",
-      "390 px viewport without horizontal overflow"
+      "390 px viewport without horizontal overflow",
+      "Five example ROM SHA-256 values match in both builds; 159T default executes to HLT",
+      "Search and switching examples clear CPU/audio; upload deselects catalog",
+      "Standalone examples and engines need no external resource requests",
+      "Speaker icon matches ATtiny13; specification reads 244 instructions"
     ],
     "live_music_excerpt": {
       "rom": "uniform26.bin",
@@ -75,10 +79,22 @@
       "edges": 205216,
       "stop_reason": "time_limit"
     },
-    "standalone": "Embedded Worker and AudioWorklet passed the same HTTP browser suite; direct file: testing is blocked by the browser tool policy"
+    "standalone": "Embedded Worker and AudioWorklet passed the same HTTP browser suite; direct file: testing is blocked by the browser tool policy",
+    "default_example": {
+      "id": "voice159",
+      "period_t": 159,
+      "cpu_hz": 3500000,
+      "t_states": 19814634,
+      "tempo_change_percent": 0.13,
+      "levels": 16,
+      "samples": 63085
+    }
   },
   "standalone_build_check": true,
   "hardware_tested": false,
   "independent_exercisers": "EXERCISERS.json",
-  "rotation_cases": 32768
+  "rotation_cases": 32768,
+  "pwm_test_groups": 5,
+  "total_test_groups": 36,
+  "pwm_report": "../Sound/dual-crc-voice/AUDIT.json"
 }

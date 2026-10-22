@@ -19,7 +19,7 @@
   </header>
   <main>
     <div class="intro">
-      <div><p class="eyebrow">INTEL 8080 / ЗВУК ИЗ МАШИННОГО КОДА</p><h1>Запустите свою прошивку<span>.</span></h1><p class="subtitle">Загрузите образ ПЗУ, исполните код и послушайте результат.</p></div>
+      <div><p class="eyebrow">INTEL 8080 / ЗВУК ИЗ МАШИННОГО КОДА</p><h1>Слушайте прошивку<span>.</span></h1><p class="subtitle">Выберите пример или загрузите свой образ ПЗУ.</p></div>
       <div class="machine-spec"><strong>64 <span>КиБ АДРЕСОВ</span></strong><span>8 бит <i>·</i> 244 инструкции <i>·</i> Intel 8080</span></div>
     </div>
     <div id="error" class="error" role="alert" hidden></div>
@@ -33,7 +33,7 @@
             <button id="load" class="load-button" type="button">↑ Загрузить ROM</button>
             <span>или перетащите файл сюда</span><small>BIN · ROM · Intel HEX · до 64 КиБ</small>
           </div>
-          <div class="firmware-info"><span class="eyebrow">ОБРАЗ В ПАМЯТИ</span><h2 id="file-name">Ваша прошивка</h2><p id="file-info">Встроенных прошивок нет. Выберите свой файл.</p><span id="file-hash" class="file-hash"></span></div>
+          <div class="firmware-info"><span class="eyebrow">ОБРАЗ В ПАМЯТИ</span><h2 id="file-name">Ваша прошивка</h2><p id="file-info">Выберите пример из библиотеки или загрузите свой файл.</p><p id="example-description" class="example-description" hidden></p><div class="rom-links"><a id="download-rom" aria-disabled="true">↓ ROM</a><a id="example-source" hidden>Описание и исходники ↗</a></div><span id="file-hash" class="file-hash"></span></div>
           <div class="transport"><button id="run" class="primary" disabled>▶ Эмулировать</button><button id="cancel" disabled>↺ Сначала</button><a id="download" class="wav-download" aria-disabled="true">↓ WAV</a></div>
           <progress id="progress" max="90" value="0" aria-label="Выполненное процессорное время"></progress>
           <p id="status" class="execution-status" role="status">Готов к загрузке BIN, ROM или Intel HEX.</p>
@@ -47,6 +47,14 @@
           <div class="emulator-metrics"><div><span>ФРОНТОВ ВЫХОДА</span><strong id="edges">0</strong></div><div><span>ЗАПИСЕЙ В ПАМЯТЬ</span><strong id="writes">0</strong></div><div><span>OUT / ПОРТЫ</span><strong id="io-writes">0</strong></div></div>
         </section>
       </div>
+      <div class="emulator-sidebar">
+      <aside class="panel library example-library" aria-label="Библиотека примеров">
+        <div class="panel-heading"><span class="eyebrow">БИБЛИОТЕКА ПРОШИВОК</span><span class="count" id="catalog-count">…</span></div>
+        <h2>Один 8080. Разный звук.</h2><p class="library-caption">Голос с ровным PWM, исходный вариант и музыка.</p>
+        <input id="search" type="search" placeholder="Найти пример…" aria-label="Поиск примера">
+        <div id="catalog" class="catalog" role="list"></div>
+        <p id="catalog-status" class="setting-note" role="status">Загрузка примеров…</p>
+      </aside>
       <aside class="panel settings-panel" aria-label="Настройки эмулятора">
         <div class="panel-heading"><span class="eyebrow">ПАРАМЕТРЫ МАШИНЫ</span><span class="count">8080</span></div>
         <label for="hz">Частота процессора, Гц</label><input id="hz" data-machine type="number" min="100000" max="10000000" step="1000" value="3500000">
@@ -62,6 +70,7 @@
         <p class="setting-note">Фильтр и автоуровень меняются во время прослушивания. Постоянная составляющая удаляется.</p>
         <a class="standalone-link" href="./Intel_8080_ROM_Player.html" download>↓ Автономный HTML-плеер</a>
       </aside>
+      </div>
     </div>
     <section class="panel inspector emulator-inspector" aria-label="Состояние процессора">
       <div class="panel-heading"><span class="eyebrow">03 / СОСТОЯНИЕ INTEL 8080</span><span id="cpu-status" class="technical-note">PC 0000 · SP 0000 · INTE 0</span></div>
