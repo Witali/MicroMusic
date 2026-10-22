@@ -1,34 +1,52 @@
-# MicroMusic MiniLPC-HQ3 — compact + faster mul_q4
+# MicroMusic: MiniLPC-HQ3 DecoderOpt (ATtiny13A)
 
-ATtiny13A 9.6 MHz, 1 KB Flash, 37.5 kHz PWM carrier, 7.5 kHz PCM output. Eight-stage LPC synthesis. Single new-format VBR stream; no old-format support.
+This experiment optimizes **only the AVR decoder**. The LPC speech data and integer output are unchanged.
 
-## Verified change
+## Target
 
-`mul_q4` now uses r21 directly as the multiplicand and r16 directly as the high accumulator. The intermediate copies of r21 and the high result were eliminated. This is not a new multiplication algorithm: it still repeats signed 16-bit addition |k| times, so for the small coefficients in MiniLPC-HQ3 it is faster and shorter than a 4-iteration shift-and-add tested in `benchmark.json`.
+- ATtiny13A: 1024 B Flash, 64 B SRAM, 64 B EEPROM (EEPROM is not used here)
+- Internal 9.6 MHz clock, divide-by-8 disabled
+- Fast PWM 37.5 kHz on PB1/OC0B; audio duty-cycle updates at 7500 Hz
+- 8-stage signed LPC filter and four excitation profiles; one VBR speech format
 
-* Old `mul_q4`: 42 bytes.
-* New `mul_q4`: **38 bytes**.
-* Entire decoding code region: 410 -> **406 bytes**.
-* On exhaustive 4096 (256 sample x 16 coefficient) operand pairs, all output byte values agree exactly.
-* Mean subroutine cycles across all operand pairs: 40.25 -> **38.3125 cycles**, including RET.
-* On all 3 actual voice streams: 39424/39424 PWM sample values identical, no missed Timer0 overflows, no ISR issues. STOI and timbre unchanged.
+## Verified results
 
-| Phrase | Old Flash bytes | New Flash bytes | Number samples |
-| --- | ---: | ---: | ---: |
-| Chego tebe nuzhno | 951 | **947** | 9216 |
-| Chto zh ty ne otvechaesh | 882 | **878** | 7936 |
-| Sova, otkryvay | 1011 | **1007** | 22272 |
+| Phrase | Baseline Flash | Optimized Flash | PCM values checked |
+|---|---:|---:|---:|
+| chego | 947 B | 929 B | 9216 |
+| otvechaesh | 878 B | 860 B | 7936 |
+| vinni | 1007 B | 989 B | 22272 |
 
-## How to reproduce
+- **Machine code area: 406 -> 388 B**, including vectors, reset, filter, frame parser, multiply and ISR.
+- **Max modeled ISR: 28 -> 19 CPU cycles** (interrupt entry accounting is part of the cycle-counting emulator's `maxISR` metric).
+- **0 output PCM mismatches** across all 39,424 samples compared with the unmodified HQ3 AVR implementation.
+- All three streams: matching Timer0 IRQ counts, 0 missed overflows, and 2 vs 4 bytes of modeled stack use.
+- No change to learned LPC parameters; quality metrics (e.g. STOI and timbre) are exactly unchanged.
 
-Requires `clang` with AVR target, `llvm-objcopy`, `llvm-objdump`, Node.js, Python 3.
+## Source changes
 
-```bash
+1. Reserve register `r11` for the constant PWM countdown reload `5` and `r12` for SREG backup inside the ISR. This avoids PUSH/POP of the temporary registers; **do not use r11/r12 in the foreground** without updating the ISR.
+2. Initialize XH (`r27`) and YH (`r29`) once; neither pointer can cross page `0x00xx` in this program. Remove redundant high-register clears from the hot loops.
+3. Decode two packed signed 4-bit coefficients via `r16` and `r17` without an extra register copy.
+4. Share the pointer/counter setup across the four variable-length frame types.
+5. Retain the original signed 8-bit multiply behavior and all VBR bitstream values.
+
+The shorter Flash binaries require changing `VOICE_ADDR` from `0x196` (406) to **`0x184` (388)**. This is already done in each firmware.S. Voice data is stored immediately after the code rather than leaving padding bytes.
+
+## Rebuild & verify
+
+Requires `clang` with AVR target, `llvm-objcopy`, `readelf`, `node`, and Python 3:
+
+```
 python3 build_and_verify.py
+python3 make_player.py
+python3 browser_test.py     # optional: requires Playwright and system Chromium
 ```
 
-`bench_mul.js` compares the old/new actual AVR routines for all 4096 sample/coefficient inputs and measures AVR cycles. `verify_samples.js` runs the three binaries in the cycle-counting AVR emulator and checks every PCM output byte. `index.html` is the self-contained browser A/B player; its AVR-verify button executes the new HEX from start.
+All three voice subfolders include `firmware.S`, `speech.hq`, `firmware.bin`, `firmware.hex`, `firmware.sha256`, and `reference.bin`. `verify.js` executes the true instruction stream and produces `report.json` and `emulated.pcm`.
 
-The original signed-8-bit `NEG` behavior for x=-128 is preserved exactly, including the existing corner-case semantics. A mathematically different correction should be evaluated separately; this version is bit-compatible with HQ3.
+`index.html` is fully offline. The Play button uses the **precomputed output of the AVR emulator** for immediate sound; the “Исполнить HEX” button separately executes the actual embedded firmware in the browser and independently checks every sample. This is a digital emulation, not a physical ATtiny13A verification.
 
-The comparison for music quality is only a software emulation; physical ATtiny13A hardware testing has not been performed. Original movie audio and voice parameters are included for personal experimentation only, not for redistribution without appropriate rights.
+## Copyright / sharing
+
+The private ZIP includes encoded speech derived from user-provided excerpts of commercial cartoons; do not redistribute those assets without appropriate rights. A separate code-only ZIP supplies an original synthetic test stream.
