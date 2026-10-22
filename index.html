@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101411">
+  <meta name="description" content="Все плееры MicroMusic: музыка ATtiny13A, речь MiniLPC HQ4, Intel 8080 и лаборатории звуковых кодеков.">
+  <title>MicroMusic — все плееры</title>
+  <link rel="icon" href="web-player/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="site/home.css?v=20261022">
+</head>
+<body>
+  <a class="skip" href="#players">Перейти к плеерам</a>
+  <header class="header wrap">
+    <a class="brand" href="./" aria-label="MicroMusic — главная">
+      <svg viewBox="0 0 36 36" aria-hidden="true"><rect x="7" y="7" width="22" height="22" rx="4"/><path d="M1 12h6m-6 6h6m-6 6h6m22-12h6m-6 6h6m-6 6h6M12 1v6m6-6v6m6-6v6M12 29v6m6-6v6m6-6v6M12 21l4-7 4 8 4-7"/></svg>
+      MicroMusic<span>/ LAB</span>
+    </a>
+    <nav aria-label="Основная навигация"><a href="#players">Плееры</a><a href="#labs">Лаборатории</a><a href="https://github.com/Witali/MicroMusic" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+  </header>
+  <main class="wrap">
+    <section class="intro" aria-labelledby="title">
+      <div><p class="eyebrow"><span class="dot"></span> ЗВУК ИЗ МАШИННОГО КОДА</p><h1 id="title">Музыка, речь<br>и <span>8-битные чипы.</span></h1><p class="lead">Все плееры MicroMusic в одном месте.<br>Выберите чип и послушайте, на что он способен.</p></div>
+      <div class="intro-note"><svg viewBox="0 0 136 72" aria-hidden="true"><path class="guide" d="M0 36h136"/><path d="M0 36h12l4-8 5 16 5-29 5 42 5-34 5 21 5-8h9l5-19 5 38 5-49 5 60 5-42 5 25 5-13h10l5-9 5 18 5-9h15"/></svg><span>Маленькая память.<br>Много экспериментов.</span></div>
+    </section>
+
+    <section id="players" class="section" aria-labelledby="players-title">
+      <div class="section-heading"><h2 id="players-title">Выберите плеер</h2><span>01 — 03</span></div>
+      <div class="players-grid">
+        <article class="player player-music">
+          <div class="card-top"><span class="number">01 / МУЗЫКА</span><span class="chip">ATtiny13A</span></div>
+          <div class="card-icon" aria-hidden="true"><svg viewBox="0 0 64 48"><path d="M18 34V12l28-5v22M18 18l28-5"/><ellipse cx="12" cy="35" rx="6" ry="4"/><ellipse cx="40" cy="30" rx="6" ry="4"/></svg></div>
+          <h3>Музыка в одном<br>килобайте</h3>
+          <p>Пять композиций, несколько голосов и настоящий AVR-код. Общий плеер с осциллограммой и выбором JS / WASM.</p>
+          <div class="spec"><span>1 КБ Flash</span><span>5 композиций</span></div>
+          <a class="open" href="web-player/">Открыть музыкальный плеер <span aria-hidden="true">↗</span></a>
+          <div class="examples" aria-label="Открыть композицию"><a href="web-player/?firmware=rhythmic">Люмьер</a><a href="web-player/?firmware=alicia">Алисия</a><a href="web-player/?firmware=turkish-march">Турецкий марш</a><a href="web-player/?firmware=children">Children</a><a href="web-player/?firmware=greensleeves">Greensleeves</a></div>
+        </article>
+        <article class="player player-speech">
+          <div class="card-top"><span class="number">02 / РЕЧЬ</span><span class="chip">ATtiny13A</span></div>
+          <div class="card-icon" aria-hidden="true"><svg viewBox="0 0 64 48"><path d="M5 22v4m7-12v20m8-27v34m8-23v12m8-27v42m8-32v22m8-17v12m7-8v4"/></svg></div>
+          <h3>Голоса<br>MiniLPC HQ4</h3>
+          <p>Три речевые фразы и вариант с максимальным STOI. Те же машинные инструкции, таймер и PWM — теперь для речи.</p>
+          <div class="spec"><span>7,5 кГц</span><span>4 прошивки</span></div>
+          <a class="open" href="web-player/?collection=hq4">Открыть речевой плеер <span aria-hidden="true">↗</span></a>
+          <div class="examples" aria-label="Открыть речевой пример"><a href="web-player/?collection=hq4&amp;firmware=hq4-chego">Чего тебе нужно?</a><a href="web-player/?collection=hq4&amp;firmware=hq4-otvechaesh">Что ж ты не отвечаешь?</a><a href="web-player/?collection=hq4&amp;firmware=hq4-vinni">Винни-Пух</a><a href="web-player/?collection=hq4&amp;firmware=hq4-chego_stoi_max">Максимум STOI</a></div>
+        </article>
+        <article class="player player-intel">
+          <div class="card-top"><span class="number">03 / ЭМУЛЯТОР</span><span class="chip">Intel 8080</span></div>
+          <div class="card-icon" aria-hidden="true"><svg viewBox="0 0 64 48"><rect x="17" y="8" width="30" height="32" rx="3"/><path d="M9 15h8m-8 9h8m-8 9h8m30-18h8m-8 9h8m-8 9h8M25 1v7m14-7v7M25 40v7m14-7v7M25 19l-4 5 4 5m14-10 4 5-4 5"/></svg></div>
+          <h3>Звук<br>Intel 8080</h3>
+          <p>Загрузите свой образ или выберите готовый пример. Эмуляция процессора, управление частотой и звук в реальном времени.</p>
+          <div class="spec"><span>BIN / ROM / HEX</span><span>Свои образы</span></div>
+          <a class="open" href="i8080/Emulator/">Открыть эмулятор 8080 <span aria-hidden="true">↗</span></a>
+          <div class="examples"><a href="i8080/Emulator/Intel_8080_ROM_Player.html">Автономный HTML-плеер</a><a href="https://github.com/Witali/MicroMusic/tree/main/i8080/Sound" target="_blank" rel="noopener noreferrer">Исходники звуковых примеров ↗</a></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="labs" class="section labs" aria-labelledby="labs-title">
+      <div class="section-heading"><div><h2 id="labs-title">Лаборатории кодеков</h2><p>Своё аудио, параметры сжатия и сравнение результата.</p></div><span>ИССЛЕДОВАНИЯ</span></div>
+      <div class="labs-grid">
+        <a class="lab" href="ATmega328/Sound/reference/lab/"><span class="lab-type">AUDIO CODEC LAB / V12</span><h3>LFA, LPC, Vorbis и Opus</h3><p>Сравнение пяти кодеков на загруженной записи.</p><span class="lab-link">Открыть лабораторию <span aria-hidden="true">↗</span></span></a>
+        <a class="lab" href="ATmega328/Sound/reference/lpc2-voice/lpc2_v11_original.html"><span class="lab-type">AUDIO CODEC LAB / V11</span><h3>LPC2 Improved</h3><p>Сохранённая лаборатория LPC2 с настройками анализа и синтеза.</p><span class="lab-link">Открыть лабораторию <span aria-hidden="true">↗</span></span></a>
+        <a class="lab" href="ATmega328/Sound/reference/lpx3/lpc2_v2_reference.html"><span class="lab-type">MICROMUSIC / VOICE V2</span><h3>Высота и тембр голоса</h3><p>Речевой кодек с сохранением высокой основной частоты.</p><span class="lab-link">Открыть лабораторию <span aria-hidden="true">↗</span></span></a>
+      </div>
+    </section>
+
+    <section class="section" aria-label="Автономные музыкальные плееры">
+      <details class="archive"><summary><span>Автономные музыкальные плееры<small>Отдельные HTML-версии пяти композиций</small></span><span class="expand" aria-hidden="true">+</span></summary><div class="archive-list"><a href="ATtiny13A/Music/variants/rhythmic/player.html">Люмьер <span>↗</span></a><a href="ATtiny13A/Music/variants/alicia/player.html">Алисия <span>↗</span></a><a href="ATtiny13A/Music/variants/turkish-march/player.html">Турецкий марш <span>↗</span></a><a href="ATtiny13A/Music/variants/children/player.html">Children <span>↗</span></a><a href="ATtiny13A/Music/variants/greensleeves/player.html">Greensleeves <span>↗</span></a></div></details>
+    </section>
+
+    <section class="section more-projects" aria-labelledby="more-title">
+      <div class="section-heading"><h2 id="more-title">Ещё один музыкальный проект</h2></div>
+      <a class="rudolff" href="https://rudolff.bitbucket.io/" target="_blank" rel="noopener noreferrer">
+        <div class="rudolff-icon" aria-hidden="true">Z80</div><div class="rudolff-content"><span class="lab-type">RUDOLFF</span><h3>Z80-tester Emulator Music Player</h3><p>rudolff.bitbucket.io</p></div><span class="rudolff-arrow" aria-hidden="true">↗</span>
+      </a>
+    </section>
+  </main>
+  <footer class="wrap"><span>MICROMUSIC / LAB <i>·</i> Музыка и речь на маленьких чипах</span><a href="https://github.com/Witali/MicroMusic" target="_blank" rel="noopener noreferrer">Исходники и исследования на GitHub ↗</a></footer>
+</body>
+</html>

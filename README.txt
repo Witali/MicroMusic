@@ -1,5 +1,8 @@
 MicroMusic
 
+Общая страница всех плееров: https://witali.github.io/MicroMusic/
+Локально: node web-player/scripts/serve.mjs 8134 → http://127.0.0.1:8134/
+
 Музыкальные прошивки ATtiny13A и плеер, исполняющий настоящий AVR-код.
 Онлайн: https://witali.github.io/MicroMusic/web-player/
 Локально: node web-player/scripts/serve.mjs 8134
