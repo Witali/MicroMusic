@@ -125,6 +125,14 @@ class AVRCore {
     else if((w&0xff00)===0x9a00){ // SBI
       const a=w>>3&31;this.writeIO(a,this.readIO(a)|(1<<(w&7)));n=2;
     }
+    else if((w&0xfe0f)===0x900c){ // LD Rd, X
+      const r=w>>4&31,a=rr[26]|rr[27]<<8;
+      rr[r]=this.readMemory(a);n=2;
+    }
+    else if((w&0xfe0f)===0x9209){ // ST Y+,Rr
+      const r=w>>4&31,a=rr[28]|rr[29]<<8;
+      this.writeMemory(a,rr[r]);rr[28]=(a+1)&255;rr[29]=(a+1)>>8;n=2;
+    }
     else if((w&0xfe0f)===0x9000 || (w&0xfe0f)===0x9200){ // LDS, STS (2 words)
       const r=w>>4&31,a=this.rom[this.pc*2]|(this.rom[this.pc*2+1]<<8);
       this.pc++;n=2;
@@ -178,3 +186,4 @@ class AVRCore {
   }
 }
 if(typeof module!=='undefined'&&module.exports)module.exports={AVRCore};
+

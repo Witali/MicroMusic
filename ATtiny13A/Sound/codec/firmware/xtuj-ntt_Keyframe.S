@@ -1,7 +1,7 @@
 /* MicroMusic / ATtiny13A / experimental TinyLPC speech player
  * 9.6 MHz internal RC, Timer0 Fast PWM @ 37500 Hz on OC0B/PB1.
  * The ISR writes the next buffered 8-bit sample every fifth overflow:
- *   37500/5 = 7500 Hz PCM, derived from a bandwidth-limited 7-stage lattice vocoder.
+ *   37500/5 = 7500 Hz PCM, derived from a bandwidth-limited 8-stage lattice vocoder.
  * Main code synthesizes frames into a 16-byte ring in SRAM.
  * 5 bytes per 256-sample speech frame; all voice data in Flash.
  * All RAM accesses are >= 0x60. Main uses r2-r31; ISR saves own regs.
@@ -19,6 +19,8 @@
 .set PWM_CTR,   0x60
 .set RDPTR,     0x61
 .set COEFF_K6,  0x63
+.set COEFF_K7,  0x79
+.set STATE7,    0x7a
 .set RLE_LEFT,  0x75
 .set EXMODE,    0x76
 .set GAIN_TARGET,0x77
@@ -26,7 +28,9 @@
 .set WRPTR,     0x62
 .set RING_BEGIN,0x64
 .set RING_END,  0x74
-.set VOICE_ADDR,0x029C
+.set VOICE_ADDR,0x0342
+.set K_ACTIVE, 0x80
+.set K_TARGET, 0x88
 .org 0x0000
 __vectors:
  rjmp reset
@@ -56,9 +60,17 @@ reset:
  clr r18
  clr r12
  clr r13
+ sts STATE7,r13
  clr r0
  clr r1
  clr r10                  /* Frame sample count modulo 256. */
+ ldi r28,K_ACTIVE
+ clr r29
+ ldi r25,16
+clr_coeffs:
+ st Y+,r10
+ dec r25
+ brne clr_coeffs
  clr r5
  clr r4
  sts RLE_LEFT,r5
@@ -95,6 +107,23 @@ next_slot_ok:
  brne active_frame
  rcall read_frame
 active_frame:
+ /* Linear-in-quantized-domain ramp: all eight lattice reflection
+  * coefficients and amplitude approach new keyframe targets by 1 step
+  * every 4 samples (0.53 ms). No full-frame discontinuities.
+  */
+ mov r16,r10
+ andi r16,3
+ brne skip_smoothing
+ rcall smooth_coeffs
+ lds r16,GAIN_TARGET
+ cp r5,r16
+ breq skip_smoothing
+ brlt gain_up
+ dec r5
+ rjmp skip_smoothing
+gain_up:
+ inc r5
+skip_smoothing:
  /* Small interpolated F0 glides between voiced frames. */
  mov r16,r10
  andi r16,7
@@ -152,7 +181,7 @@ noise_ready:
  sbrc r3,0
  neg r22
 
-/* Seven-stage all-pole synthesis lattice.
+/* Eight-stage all-pole synthesis lattice.
  * For m=7..1: y -= k[m] * b[m-1]; b[m] = b[m-1] + k[m] * y
  * Last: b[0] = y.
  * MAC is signed (8 x 4 bit) with an arithmetic /16 fixed-point shift.
@@ -160,70 +189,82 @@ noise_ready:
  */
 do_lattice:
 pure_lattice:
- /* m=7, state6. State7 is never used, so skip its update. */
- mov r21,r13
- lds r23,COEFF_K6
+ /* m=8, state7. State8 is never used, so skip its update. */
+ lds r21,STATE7
+ lds r23,K_ACTIVE+7
  rcall mul_q3
  sub r22,r24
 
- /* m=6, state5 -> state6. */
- mov r21,r12
- mov r23,r1
+ /* m=7, state6 -> state7. */
+ mov r21,r13
+ lds r23,K_ACTIVE+6
  rcall mul_q3
  sub r22,r24
  mov r21,r22
- mov r23,r1
+ lds r23,K_ACTIVE+6
+ rcall mul_q3
+ mov r16,r13
+ add r16,r24
+ sts STATE7,r16
+
+ /* m=6, state5 -> state6. */
+ mov r21,r12
+ lds r23,K_ACTIVE+5
+ rcall mul_q3
+ sub r22,r24
+ mov r21,r22
+ lds r23,K_ACTIVE+5
  rcall mul_q3
  mov r13,r12
  add r13,r24
 
  /* m=5, state4 -> state5. */
  mov r21,r18
- mov r23,r0
+ lds r23,K_ACTIVE+4
  rcall mul_q3
  sub r22,r24
  mov r21,r22
- mov r23,r0
+ lds r23,K_ACTIVE+4
  rcall mul_q3
  mov r12,r18
  add r12,r24
 
  mov r21,r17
- mov r23,r9
+ lds r23,K_ACTIVE+3
  rcall mul_q3
  sub r22,r24
  mov r21,r22
- mov r23,r9
+ lds r23,K_ACTIVE+3
  rcall mul_q3
  mov r18,r17
  add r18,r24
 
  mov r21,r11
- mov r23,r8
+ lds r23,K_ACTIVE+2
  rcall mul_q3
  sub r22,r24
  mov r21,r22
- mov r23,r8
+ lds r23,K_ACTIVE+2
  rcall mul_q3
  mov r17,r11
  add r17,r24
 
  mov r21,r15
- mov r23,r7
+ lds r23,K_ACTIVE+1
  rcall mul_q3
  sub r22,r24
  mov r21,r22
- mov r23,r7
+ lds r23,K_ACTIVE+1
  rcall mul_q3
  mov r11,r15
  add r11,r24
 
  mov r21,r14
- mov r23,r6
+ lds r23,K_ACTIVE+0
  rcall mul_q3
  sub r22,r24
  mov r21,r22
- mov r23,r6
+ lds r23,K_ACTIVE+0
  rcall mul_q3
  mov r15,r14
  add r15,r24
@@ -283,17 +324,44 @@ mult_done:
  * with extra damping for robust 8-bit filter states.
  * The optional 0xff pitch byte loops back to the first frame.
  */
-read_frame:
- mov r23,r4 /* Keep previous pitch until new frame has been parsed. */
- /* Run-length encoded silence. 0xE1..0xFE means N silent frames;
-  * 0xFF loops back. Voiced pitch <96 may set bit7 for mixed noise.
+smooth_coeffs:
+ /* Active coefficients at 0x80..0x87, targets at 0x88..0x8f.
+  * SRAM 0x90..0x9f stays free for the hardware stack.
+  * Difference of +/-1 per 4 samples => <=14 steps to a new formant.
   */
+ ldi r28,K_ACTIVE
+ clr r29
+ ldi r26,K_TARGET
+ clr r27
+ ldi r25,8
+smooth_loop:
+ ld r16,Y
+ ld r23,X
+ cp r16,r23
+ breq smooth_next
+ brlt smooth_up
+ dec r16
+ rjmp smooth_store
+smooth_up:
+ inc r16
+smooth_store:
+ st Y,r16
+smooth_next:
+ inc r28
+ inc r26
+ dec r25
+ brne smooth_loop
+ ret
+
+read_frame:
+ mov r23,r4  /* previous pitch for short F0 glide */
+ /* A silence run stays silent; first command already reset filter states. */
  lds r16,RLE_LEFT
  tst r16
  breq fetch_frame
  dec r16
  sts RLE_LEFT,r16
- rjmp silent_frame
+ ret
 fetch_frame:
  lpm r4,Z+
  mov r16,r4
@@ -306,11 +374,17 @@ check_silence:
  mov r16,r4
  cpi r16,0xe0
  brlo normal_frame
- mov r16,r4
  subi r16,0xe1
  sts RLE_LEFT,r16
  rjmp silent_frame
 normal_frame:
+ /* Bits 0..5: pitch, bit7: only gain/F0 update (keep spectrum).
+  * In a full frame 4 packed bytes update the eight lattice targets.
+  */
+ mov r27,r4
+ mov r16,r4
+ andi r16,0x3f
+ mov r4,r16
  sts PITCH_TARGET,r4
  mov r16,r4
  sub r16,r23
@@ -322,49 +396,56 @@ have_pitch:
  lpm r16,Z+
  mov r24,r16
  andi r16,15
- mov r5,r16
- mov r16,r24
- swap r16
- andi r16,15
- subi r16,8
- mov r6,r16
- lpm r16,Z+
- mov r24,r16
- andi r16,15
- subi r16,8
- mov r7,r16
- mov r16,r24
- swap r16
- andi r16,15
- subi r16,8
- mov r8,r16
- lpm r16,Z+
- mov r24,r16
- andi r16,15
- subi r16,8
- mov r9,r16
- mov r16,r24
- swap r16
- andi r16,15
- subi r16,8
- mov r0,r16
- lpm r16,Z+
- mov r24,r16
- andi r16,15
- subi r16,8
- mov r1,r16
- mov r16,r24
- swap r16
- andi r16,15
- subi r16,8
- sts COEFF_K6,r16
- tst r5
+ sts GAIN_TARGET,r16
+ tst r16
  breq clear_lattice_states
+ sbrc r27,7
+ ret
+ mov r16,r24
+ swap r16
+ andi r16,15
+ subi r16,8
+ sts K_TARGET+0,r16
+ lpm r16,Z+
+ mov r24,r16
+ andi r16,15
+ subi r16,8
+ sts K_TARGET+1,r16
+ mov r16,r24
+ swap r16
+ andi r16,15
+ subi r16,8
+ sts K_TARGET+2,r16
+ lpm r16,Z+
+ mov r24,r16
+ andi r16,15
+ subi r16,8
+ sts K_TARGET+3,r16
+ mov r16,r24
+ swap r16
+ andi r16,15
+ subi r16,8
+ sts K_TARGET+4,r16
+ lpm r16,Z+
+ mov r24,r16
+ andi r16,15
+ subi r16,8
+ sts K_TARGET+5,r16
+ mov r16,r24
+ swap r16
+ andi r16,15
+ subi r16,8
+ sts K_TARGET+6,r16
+ lpm r16,Z+
+ andi r16,15
+ subi r16,8
+ sts K_TARGET+7,r16
  ret
 silent_frame:
  clr r4
  sts PITCH_TARGET,r4
  clr r5
+ sts GAIN_TARGET,r5
 clear_lattice_states:
  clr r14
  clr r15
@@ -373,6 +454,7 @@ clear_lattice_states:
  clr r18
  clr r12
  clr r13
+ sts STATE7,r13
  ret
 
 /* ISR runs 37500 times per second, but outputs 7500 PCM samples/s. */
