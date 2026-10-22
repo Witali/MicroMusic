@@ -10,8 +10,8 @@ createServer(async(req,res)=>{
   try {
     if (!['GET','HEAD'].includes(req.method)) { res.writeHead(405); res.end(); return; }
     let path=decodeURIComponent(new URL(req.url,'http://localhost').pathname);
-    if (path==='/') { res.writeHead(302,{Location:'/web-player/'}); res.end(); return; }
-    if (!['/web-player/','/ATtiny13A/Music/','/ATtiny13A/Sound/','/build/hq4-preview/','/i8080/Emulator/','/i8080/CRC/','/i8080/Sound/'].some(prefix=>path.startsWith(prefix))) throw new Error('Not found');
+    if (path==='/') path='/index.html';
+    if (path!=='/index.html' && !['/site/','/web-player/','/ATtiny13A/Music/','/ATtiny13A/Sound/','/ATmega328/Sound/reference/','/build/hq4-preview/','/i8080/Emulator/','/i8080/CRC/','/i8080/Sound/'].some(prefix=>path.startsWith(prefix))) throw new Error('Not found');
     if (path.endsWith('/')) path+='index.html';
     const target=resolve(root,'.'+path);
     if (!target.startsWith(root+sep) || path.split('/').some(s=>s.startsWith('.'))) throw new Error('Not found');
@@ -20,4 +20,4 @@ createServer(async(req,res)=>{
     res.writeHead(200,{'Content-Type':mime[extname(target)]||'application/octet-stream','Content-Length':data.length,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
     res.end(req.method==='HEAD' ? undefined : data);
   } catch { res.writeHead(404,{'Content-Type':'text/plain; charset=utf-8'}); res.end('Not found'); }
-}).listen(port,'127.0.0.1',()=>console.log(`Local: http://127.0.0.1:${port}/web-player/`));
+}).listen(port,'127.0.0.1',()=>console.log(`Local: http://127.0.0.1:${port}/`));
