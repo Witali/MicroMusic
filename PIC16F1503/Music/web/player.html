@@ -120,6 +120,12 @@ class PIC16F1503 {
     if(f>=0x70){this.mem[f]=v;return;}
     if(this.unimplementedGpr(a))return;
     if(a===0x09A)return; // OSCSTAT is a read-only ready/stable register.
+    // PIC16F1503 implemented-bit masks from DS40001607D registers 7-5..7-8,
+    // 11-3. Also exercised by gpsim regression/p1xf18xx/p16f1503.asm.
+    // Do not let reserved bits latch, or accidentally generate phantom IRQs.
+    const sfrMasks={0x011:0xCB,0x012:0x6C,0x091:0xCB,0x092:0x6C};
+    if(Object.hasOwn(sfrMasks,a))v &= sfrMasks[a];
+    if(a===0x08C)v=(v&0x37)|0x08; // RA3: input-only, TRISA3 always 1.
     this.mem[a]=a===0x617?(v&0xc0):v;
     if(a===0x015){ // TMR0 write: inhibit the following two instruction clocks (§18.1.1).
       this.tmr0Prescale=0;this.tmr0WriteInhibit=2;
@@ -166,6 +172,9 @@ class PIC16F1503 {
       this.pcModified=true;return;
     }
     if(f===9){this.W=v;return;}
+    if(f===11){ // INTCON.IOCIF is read-only, derived from the IOC flags.
+      this.mem[11]=(v&0xFE)|(this.mem[11]&1);return;
+    }
     if(f===8){this.mem[8]=v&31;return;}
     if(f===3){this.mem[3]=(v&7)|(this.mem[3]&0x18);return;}
     this.mem[f]=v;

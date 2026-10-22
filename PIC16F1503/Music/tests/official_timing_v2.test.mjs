@@ -135,7 +135,7 @@ test('Legacy CLRWDT/OPTION/TRISA one-cycle semantics',()=>{
  const p=cpu(0x0064,0x0062,0x0065);
  p.mem[3]=0;p.W=0x00;p.step();assert.equal(p.mem[3]&0x18,0x18);
  p.W=0x08;p.step();assert.equal(p.mem[0x095],0x08);
- p.W=0x31;p.step();assert.equal(p.mem[0x08C],0x31);
+ p.W=0x31;p.step();assert.equal(p.mem[0x08C],0x39); // RA3 is input-only on the silicon
  assert.equal(p.cycle,3);
 });
 
