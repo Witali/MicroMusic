@@ -33,7 +33,8 @@ Lpx3AvrCore::Lpx3AvrCore(): reader_(0),context_(0),bytes_(0),cursor_(0),
     sampleCount_(0),position_(0),sampleRate_(0),preQ14_(0),brightQ14_(0),
     prevDeemph_(0),prevBright_(0),framePos_(0),blockPos_(0),subPos_(0),subIndex_(0),
     coeffScale_(0),coeffBits_(8),isLsf_(0),mode_(0),blockScale_(0),bitBuffer_(0),bitsLeft_(0),
-    error_(NONE),initializedFrame_(false) {
+    containerVersion_(0),riceMode_(0),riceK_(0),pairMode_(0),pairPending_(0),pairSecond_(0),
+    dictSlotsBits_(0),dictTiered_(0),error_(NONE),initializedFrame_(false) {
 #ifdef LPX3_COST_INSTRUMENT
     lsfConverts_=0;
 #endif
@@ -74,14 +75,23 @@ bool Lpx3AvrCore::begin(ReadByte read,void* ctx,uint16_t bytes){
     lsfCached_=false;
 #endif
     prevDeemph_=prevBright_=0;mode_=blockScale_=bitBuffer_=bitsLeft_=0;coeffScale_=0;
+    riceMode_=riceK_=pairMode_=pairPending_=pairSecond_=0;dictSlotsBits_=dictTiered_=0;
+#if LPX3_PAIR_DICT_BYTES
+    for(uint16_t i=0;i<LPX3_PAIR_DICT_BYTES;i+=2)pairDict_[i]=127;
+#endif
     for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i]=a_[i]=hist_[i]=0,previousQuant_[i]=0;
     if(!read || bytes<20){error_=BAD_HEADER;return false;}
     if(readByte()!='L'||readByte()!='3'||readByte()!='A'||readByte()!='V'){
         error_=BAD_HEADER;return false;
     }
-    if(readByte()!=1){error_=UNSUPPORTED;return false;}
+    containerVersion_=readByte();
+    if(containerVersion_!=1 && containerVersion_!=2){error_=UNSUPPORTED;return false;}
     const uint8_t flags=readByte();
-    if(flags>3){error_=UNSUPPORTED;return false;}
+    if((containerVersion_==1 && flags>3) || (containerVersion_==2 && (flags&~0x37))){error_=UNSUPPORTED;return false;}
+    if(containerVersion_==2){
+        dictSlotsBits_=(uint8_t)(((flags>>4)&3)+5); // 32,64,128,256 pairs
+        dictTiered_=(flags&4)!=0;
+    }
     coeffBits_=(flags&1)?10:8;isLsf_=(flags&2)?1:0;
     sampleRate_=read16();sampleCount_=read32();preQ14_=read16();brightQ14_=read16();
     const uint16_t frame=read16(),block=read16();
@@ -139,8 +149,23 @@ bool Lpx3AvrCore::readFrame(){
 }
 
 bool Lpx3AvrCore::readBlock(){
-    mode_=readByte();blockScale_=readByte();bitBuffer_=bitsLeft_=0;
-    if(mode_!=0 && mode_!=2 && mode_!=3 && mode_!=4 && mode_!=5 && mode_!=6 && mode_!=0x83){error_=CORRUPT_STREAM;}
+    const uint8_t packed=readByte();blockScale_=readByte();bitBuffer_=bitsLeft_=0;
+    pairMode_=riceMode_=riceK_=pairPending_=0;
+    if(containerVersion_==2 && (packed&0x80) && packed!=0x83){
+        mode_=packed&7;riceK_=(packed>>4)&7;riceMode_=1;
+        if(mode_<2||mode_>6||!riceK_||riceK_>=mode_)error_=CORRUPT_STREAM;
+    }else if(containerVersion_==2 && (packed&0x40)){
+        mode_=packed&~0x40;pairMode_=1;
+        if(mode_<2||mode_>6)error_=CORRUPT_STREAM;
+#if LPX3_PAIR_DICT_BYTES
+        if(((uint16_t)1<<dictSlotsBits_)*2>LPX3_PAIR_DICT_BYTES)error_=UNSUPPORTED;
+#else
+        error_=UNSUPPORTED;
+#endif
+    }else{
+        mode_=packed;
+        if(mode_!=0 && mode_!=2 && mode_!=3 && mode_!=4 && mode_!=5 && mode_!=6 && mode_!=0x83)error_=CORRUPT_STREAM;
+    }
     return !error_;
 }
 uint8_t Lpx3AvrCore::rawBit(){
@@ -154,6 +179,65 @@ uint8_t Lpx3AvrCore::huffBit(){
     bitBuffer_<<=1;--bitsLeft_;return bit;
 }
 bool Lpx3AvrCore::decodeCode(int8_t& q){
+    if(pairMode_){
+#if LPX3_PAIR_DICT_BYTES
+        if(pairPending_){q=(int8_t)pairSecond_;pairPending_=0;return true;}
+        // Prefix: 0 literal; 10 hot ref; 110 cold ref; 111 replace slot and output.
+        // In non-tiered mode 10 is full-index ref, 11 is replace.
+        int8_t a=0,b=0;
+        const uint8_t t=rawBit();
+        if(!t){
+            uint8_t raw=0;for(uint8_t i=0;i<mode_;i++)raw|=rawBit()<<i;
+            a=(int8_t)raw-(1<<(mode_-1));
+            if(position_+1<sampleCount_){
+                raw=0;for(uint8_t i=0;i<mode_;i++)raw|=rawBit()<<i;
+                b=(int8_t)raw-(1<<(mode_-1));
+            }
+        }else{
+            const uint8_t second=rawBit();
+            uint8_t command=0;
+            if(!second)command=1;
+            else if(dictTiered_)command=rawBit()?3:2;
+            else command=3;
+            uint8_t slot=0;
+            const uint8_t nb=(command==1 && dictTiered_)?4:dictSlotsBits_;
+            for(uint8_t i=0;i<nb;i++)slot|=rawBit()<<i;
+            if(error_)return false;
+            if((dictTiered_ && command==2 && slot<16) ||
+               ((uint16_t)slot >= ((uint16_t)1<<dictSlotsBits_))){error_=CORRUPT_STREAM;return false;}
+            if(command==3){
+                uint8_t raw=0;for(uint8_t i=0;i<mode_;i++)raw|=rawBit()<<i;
+                a=(int8_t)raw-(1<<(mode_-1));
+                raw=0;for(uint8_t i=0;i<mode_;i++)raw|=rawBit()<<i;
+                b=(int8_t)raw-(1<<(mode_-1));
+                pairDict_[(uint16_t)slot*2]=(int8_t)a;
+                pairDict_[(uint16_t)slot*2+1]=(int8_t)b;
+            }else{
+                const uint16_t ix=(uint16_t)slot*2;
+                if(pairDict_[ix]==127){error_=CORRUPT_STREAM;return false;}
+                a=pairDict_[ix];b=pairDict_[ix+1];
+            }
+        }
+        q=a;
+        if(position_+1<sampleCount_){pairSecond_=(uint8_t)b;pairPending_=1;}
+        return !error_;
+#else
+        error_=UNSUPPORTED;return false;
+#endif
+    }
+    if(riceMode_){
+        uint8_t hi=0;
+        while(!rawBit()){
+            if(++hi > (uint8_t)((1u<<mode_)>>riceK_)) {error_=CORRUPT_STREAM;return false;}
+            if(error_)return false;
+        }
+        uint8_t lo=0;
+        for(uint8_t i=0;i<riceK_;i++)lo|=(uint8_t)(rawBit()<<i);
+        const uint8_t zz=(uint8_t)((hi<<riceK_)|lo);
+        if(zz>=((uint8_t)1<<mode_)){error_=CORRUPT_STREAM;return false;}
+        q=(zz&1)?(int8_t)(-((zz+1)>>1)):(int8_t)(zz>>1);
+        return !error_;
+    }
     if(mode_==0){q=0;return true;}
     if(mode_==0x83){
         // exact tree: 00=>3, 011=>2, 010=>6, 10=>4,

@@ -1,5 +1,18 @@
 #pragma once
 #include <stdint.h>
+// Shared configuration for the Arduino sketch and the .cpp translation unit.
+#ifndef LPX3_FAST_LPC_INTERP
+#define LPX3_FAST_LPC_INTERP 1
+#endif
+#ifndef LPX3_LPC_SEGMENTS
+#define LPX3_LPC_SEGMENTS 2
+#endif
+#ifndef LPX3_PAIR_DICT_BYTES
+#define LPX3_PAIR_DICT_BYTES 0
+#endif
+#if LPX3_PAIR_DICT_BYTES && LPX3_PAIR_DICT_BYTES!=64 && LPX3_PAIR_DICT_BYTES!=128 && LPX3_PAIR_DICT_BYTES!=256 && LPX3_PAIR_DICT_BYTES!=512
+#error LPX3_PAIR_DICT_BYTES must be 0,64,128,256,512
+#endif
 
 /* LPX3-AVR (L3AV) foreground decoder, no malloc and no floating point.
  * ATmega328P targeted, but portable to a desktop compiler for cross-check.
@@ -66,6 +79,11 @@ private:
     int16_t prevDeemph_,prevBright_;
     uint8_t framePos_,blockPos_,subPos_,subIndex_;
     uint8_t coeffScale_, coeffBits_, isLsf_, mode_,blockScale_,bitBuffer_,bitsLeft_;
+    uint8_t containerVersion_, riceMode_, riceK_, pairMode_, pairPending_, pairSecond_;
+    uint8_t dictSlotsBits_, dictTiered_;
+#if LPX3_PAIR_DICT_BYTES
+    int8_t pairDict_[LPX3_PAIR_DICT_BYTES]; // 2 bytes per pair, first byte=127 means uninitialized
+#endif
     Error error_;
     bool initializedFrame_;
 #ifdef LPX3_Q_DIAG
