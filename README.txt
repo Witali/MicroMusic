@@ -5,6 +5,15 @@ MicroMusic
 Локально: node web-player/scripts/serve.mjs 8134
 Открыть: http://127.0.0.1:8134/web-player/
 
+INTEL 8080
+Плеер собственных BIN/ROM/Intel HEX: i8080/Emulator/.
+Онлайн: https://witali.github.io/MicroMusic/i8080/Emulator/
+Локально с тем же сервером: http://127.0.0.1:8134/i8080/Emulator/
+Автономная версия: i8080/Emulator/Intel_8080_ROM_Player.html.
+Проверки: node --test i8080/Emulator/tests/*.test.mjs
+Документация и исправления: i8080/Emulator/README.md.
+Исследования CRC: i8080/CRC/README.md.
+
 УСТАНОВКА ИНСТРУМЕНТОВ WINDOWS x64
 Из корня репозитория:
   powershell -NoProfile -ExecutionPolicy Bypass -File tools/setup.ps1

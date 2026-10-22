@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101411">
+  <title>MicroMusic / Intel 8080 — эмулятор прошивок</title>
+  <meta name="description" content="Плеер собственных BIN, ROM и Intel HEX: Intel 8080, звуковой выход INTE или /WR, осциллограмма и экспорт WAV.">
+  <style>:root{color-scheme:dark;--bg:#101411;--panel:#191e1a;--border:#30392f;--text:#e8eddf;--muted:#93a08f;--accent:#c9ef86;--mono:ui-monospace,"Cascadia Code",Consolas,monospace;--sans:system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px var(--sans)}button,input,select{font:inherit}button,a,input,select{outline-offset:4px}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--accent)}button{cursor:pointer;border:1px solid var(--border);background:#111611;color:var(--text);border-radius:7px;padding:10px 14px;transition:background .15s,border-color .15s}button:hover:not(:disabled){background:#2b3527;border-color:#6d825f}button:disabled{opacity:.45;cursor:not-allowed}a{color:inherit;text-underline-offset:4px}button,input,select{min-width:0}input[type=range]{accent-color:var(--accent);cursor:pointer}select,input[type=search]{border:1px solid var(--border);border-radius:7px;background:#111611;color:var(--text);padding:10px}select{cursor:pointer}[hidden]{display:none!important}
+.site-header{max-width:1320px;margin:auto;display:flex;align-items:center;gap:28px;height:88px;padding:0 40px;border-bottom:1px solid var(--border)}.brand{display:flex;gap:12px;align-items:center;font-size:20px;font-weight:700;text-decoration:none;letter-spacing:-.7px;white-space:nowrap}.brand>span{color:var(--muted);font-weight:400}.brand svg{width:32px;height:32px;fill:none;stroke:var(--accent);stroke-width:1.6;stroke-linecap:round}.header-link{font-size:12px;color:var(--muted);text-decoration:none;margin-left:auto}.header-link:hover{color:var(--accent)}.engine-badge{font:10px var(--mono);color:var(--muted);display:flex;align-items:center;gap:9px;white-space:nowrap}.engine-badge i{width:6px;height:6px;background:var(--accent);border-radius:50%}
+main{max-width:1320px;margin:auto;padding:0 40px}.intro{display:flex;align-items:center;justify-content:space-between;gap:28px;padding:44px 0 32px}.eyebrow{font:10px var(--mono);letter-spacing:1.2px;color:var(--muted);margin:0}.intro h1{font-size:clamp(30px,4.4vw,50px);font-weight:650;letter-spacing:-1.8px;margin:12px 0}.intro h1 span{color:var(--accent)}.subtitle{color:var(--muted);margin:0;font-size:14px}.machine-spec{text-align:right;flex-shrink:0}.machine-spec strong{display:block;color:var(--accent);font:48px var(--mono);letter-spacing:-2px}.machine-spec strong span{font-size:12px;letter-spacing:1.5px}.machine-spec>span{font:10px var(--mono);color:var(--muted)}.machine-spec i,footer i{font-style:normal;padding:0 5px;color:#596752}
+.workspace{display:grid;grid-template-columns:minmax(0,1.85fr) minmax(300px,1fr);gap:24px;align-items:start}.instrument{min-width:0}.panel{border:1px solid var(--border);background:var(--panel);border-radius:12px;padding:24px}.panel-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px}.run-state{color:var(--muted);font:10px var(--mono)}body[data-playing=true] .run-state{color:var(--accent)}.technical-note{color:var(--muted);font:10px var(--mono);text-align:right}
+.board{display:flex;align-items:center;gap:40px;padding:5px 12px 30px}.chip{position:relative;width:208px;background:#151714;box-shadow:inset 0 0 0 1px #363b32,0 6px 14px #0003;border-radius:5px;padding:16px 24px;flex-shrink:0}.chip:before,.chip:after{content:"";position:absolute;top:calc(50% - 36px);width:9px;height:9px;background:#64715d;box-shadow:0 21px #64715d,0 42px #64715d,0 63px #64715d}.chip:before{left:-9px}.chip:after{right:-9px}.chip>span{display:block;color:#6f7968;font:9px var(--mono);letter-spacing:1.5px}.chip strong{display:block;font:23px var(--mono);letter-spacing:-.6px;margin:8px 0;color:#c7cebd}.chip small{font:9px var(--mono);color:#6f7968}.chip-dot{position:absolute;left:10px;bottom:10px;width:5px;height:5px;border-radius:50%;background:#3c4437}.signal-path{flex:1;min-width:100px}.signal-path>span,.signal-path small{font:9px var(--mono);color:var(--muted)}.signal-line{display:flex;align-items:center;margin:12px 0}.signal-line i{width:8px;height:8px;border-radius:50%;background:#56634d;flex-shrink:0}body[data-playing=true] .signal-line i{background:var(--accent);box-shadow:0 0 10px #c9ef8655}.signal-line b{height:1px;background:#55644c;flex:1}.signal-line>span{border:1px solid #55644c;padding:4px 8px;font:10px var(--mono);color:var(--muted)}.signal-line svg{width:24px;height:24px;fill:none;stroke:#9ca78e;stroke-width:1.5;margin-left:9px}
+.now-playing{display:flex;gap:16px;border-top:1px solid var(--border);padding-top:22px;min-height:106px}.version-number{color:#647b4a;background:#222b1d;border:1px solid #39462e;border-radius:7px;font:16px var(--mono);padding:10px;align-self:flex-start}.now-playing h2{font-size:21px;letter-spacing:-.5px;font-weight:600;margin:6px 0}.now-playing p{font-size:12px;color:var(--muted);line-height:1.5;margin:0}.elapsed-line{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);margin-top:18px;padding-top:18px;gap:10px}.elapsed-line>span{font:9px var(--mono);letter-spacing:1px;color:var(--muted)}.elapsed-line output{font:27px var(--mono);color:var(--accent);font-variant-numeric:tabular-nums}.transport{display:flex;align-items:center;gap:10px;margin-top:20px}.primary{display:flex;align-items:center;gap:10px;background:var(--accent);border-color:var(--accent);color:#1c2811;font-weight:650;padding:11px 15px;min-width:155px}.primary:hover:not(:disabled){background:#dbffa0;border-color:#dbffa0}.primary>span:first-child{font-size:13px}kbd{border:1px solid #93ab6a;border-radius:3px;color:#506337;padding:2px 4px;font:9px var(--mono);margin-left:auto}.transport-links{display:flex;gap:7px;margin-left:auto}.transport-links a{font-size:11px;padding:11px 9px}.audio-controls{display:flex;gap:26px;align-items:center;border-top:1px solid var(--border);padding-top:20px;margin-top:22px}.audio-controls label{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px;white-space:nowrap}.volume-label{flex:1}.volume-label input{width:100%}.audio-controls select{font-size:11px;padding:7px 9px}
+.scope-panel{margin-top:20px}.scope-panel .panel-heading{margin-bottom:16px}.scope-wrap{position:relative;border:1px solid #2a3427;border-radius:7px;overflow:hidden;background:#0e140e}.scope-wrap canvas{width:100%;height:174px;display:block}.scope-mark{position:absolute;left:8px;top:calc(50% - 7px);font:9px var(--mono);color:#71815c;background:#0e140e}.scope-scale{position:absolute;right:9px;bottom:7px;color:#71815c;font:9px var(--mono)}.scope-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px}.scope-metrics>div>span{display:block;color:var(--muted);font:8px var(--mono);letter-spacing:.5px}.scope-metrics strong{display:block;font:18px var(--mono);margin-top:9px}.scope-metrics strong small{font-size:10px;color:var(--muted)}
+.library h2{font-size:21px;letter-spacing:-.5px;line-height:1.35;font-weight:600;margin:0 0 8px}.library-caption{color:var(--muted);font-size:12px;line-height:1.6;margin:0 0 19px}.count{font:10px var(--mono);color:var(--accent);background:#2a3522;border-radius:4px;padding:4px 7px}.library input{display:block;width:100%;font-size:12px;padding:11px 13px;margin-bottom:14px}.catalog{display:flex;flex-direction:column;gap:8px}.firmware-card{display:flex;position:relative;gap:12px;width:100%;text-align:left;padding:14px 12px;background:#141914;border-color:#2d352a}.firmware-card[aria-pressed=true]{background:#222c1b;border-color:#849c61;box-shadow:inset 3px 0 0 var(--accent)}.firmware-card .card-number{font:11px var(--mono);color:#7a8b6c;padding-top:2px;min-width:20px}.firmware-card .card-body{flex:1;min-width:0}.firmware-card strong{display:block;font-size:13px;font-weight:600}.card-meta{display:block;font:9px var(--mono);color:var(--muted);margin-top:8px}.card-meta i{font-style:normal;color:#a5b87f}.firmware-card .card-arrow{align-self:center;color:#62734f;font-size:14px}.firmware-card[aria-pressed=true] .card-arrow{color:var(--accent)}.source-only{border-top:1px solid var(--border);margin-top:22px;padding-top:20px}.source-only a{display:block;margin-top:10px;font-size:12px}.source-only p{font-size:11px;line-height:1.6;color:var(--muted);margin-bottom:0}.empty{color:var(--muted);font-size:12px;padding:16px 0}
+.inspector{margin-top:24px}.registers{display:grid;grid-template-columns:repeat(16,1fr);gap:8px}.register{background:#121812;border:1px solid #2a3427;padding:9px 4px;text-align:center;border-radius:5px}.register span{display:block;font:8px var(--mono);color:#78876b;margin-bottom:6px}.register strong{font:13px var(--mono);color:#c6d4b5}.inspector details{margin-top:20px;border-top:1px solid var(--border);padding-top:14px}.inspector summary{font-size:12px;color:var(--muted);cursor:pointer}.inspector summary span{float:right;font:10px var(--mono)}pre{font:11px/1.8 var(--mono);color:#a9bc91;overflow-x:auto;padding:15px 0 0;margin:0}.loaded-rom{display:flex;align-items:center;gap:13px;padding:22px 4px 12px}.file-icon{color:var(--accent);font-size:22px}.loaded-rom strong{display:block;font-size:12px;font-weight:550}.loaded-rom div>span{display:block;color:var(--muted);font:10px var(--mono);margin-top:5px}.rom-hash{margin-left:auto;color:#82916f;font:10px var(--mono)}.archive-links{display:flex;gap:20px;padding:6px 4px 24px;font-size:11px;color:var(--muted);flex-wrap:wrap}.archive-links span{margin-left:auto;font-size:10px}footer{display:flex;justify-content:space-between;gap:15px;border-top:1px solid var(--border);padding:22px 0 30px;color:#78836e;font:9px var(--mono);line-height:1.6}.error{border:1px solid #925345;color:#f1c2af;background:#35251f;border-radius:8px;padding:15px;margin-bottom:20px;line-height:1.5;font-size:13px}noscript{display:block;padding:30px}
+@media(min-width:1100px){.library{position:sticky;top:20px}}@media(max-width:1100px){.transport{flex-wrap:wrap}.transport-links{margin-left:0}.registers{grid-template-columns:repeat(8,1fr)}.board{gap:25px}.chip{width:180px;padding:16px}.chip strong{font-size:21px}.site-header,main{padding-left:24px;padding-right:24px}.header-link{display:none}.engine-badge{margin-left:auto}.workspace{gap:18px}}
+@media(max-width:800px){.workspace{grid-template-columns:1fr}.library{grid-row:2}.catalog{display:grid;grid-template-columns:1fr 1fr}.intro{padding-top:30px}.machine-spec{display:none}.scope-metrics>div>span{font-size:8px}.source-only{display:none}.panel{padding:20px}.intro h1{letter-spacing:-1px}.rom-hash{display:none}.archive-links span{margin-left:0}.engine-badge{font-size:9px}.brand{font-size:18px;gap:8px}.site-header{height:72px}.brand>span{display:none}.registers{grid-template-columns:repeat(8,1fr)}footer{flex-direction:column;gap:8px}.inspector .panel-heading{align-items:start;flex-direction:column;gap:10px}}
+@media(max-width:460px){main,.site-header{padding-left:16px;padding-right:16px}.panel{padding:17px}.board{gap:25px;padding-left:9px;padding-right:0}.chip{width:160px;padding:16px 13px}.chip strong{font-size:19px}.signal-path>span,.signal-path small{font-size:8px}.signal-path{min-width:70px}.signal-line>span{padding:4px}.transport-links{width:100%}.transport-links a{flex:1}.primary{flex:1}.audio-controls{gap:16px}.audio-controls label{gap:8px}.scope-metrics{gap:9px;grid-template-columns:repeat(2,1fr);row-gap:18px}.catalog{grid-template-columns:1fr}.registers{gap:5px}.register{padding:8px 2px}.register strong{font-size:12px}.elapsed-line>span{font-size:8px;letter-spacing:.4px}.now-playing h2{font-size:19px}.elapsed-line output{font-size:24px}.intro .eyebrow{font-size:9px}.subtitle{font-size:13px}.engine-badge{font-size:8px;gap:6px}.brand{font-size:17px}.brand svg{width:27px;height:27px}}
+.scope-metrics{grid-template-columns:repeat(3,1fr);row-gap:20px}
+.loaded-rom #rom-name{display:block;font-size:12px;font-weight:550;color:var(--accent)}
+.loaded-rom #rom-name:hover{color:#dbffa0}
+.fuses{display:flex;flex-wrap:wrap;align-items:center;gap:24px;padding:15px 0 20px;border-top:1px solid var(--border)}
+.fuse-byte{min-width:74px;align-self:flex-start}.fuse-byte>span{display:block;color:var(--muted);font:9px var(--mono);letter-spacing:.7px}.fuse-byte strong{display:block;margin-top:7px;font:22px var(--mono);color:var(--accent)}.fuse-byte small{display:block;color:var(--muted);font-size:9px;margin-top:5px}
+.fuse-clock{margin-left:auto}.fuse-clock strong{display:block;font-size:11px;font-weight:500}.fuse-clock>span{display:block;color:var(--muted);font-size:10px;margin-top:6px}.fuse-clock a{display:block;font-size:9px;color:#91a47c;margin-top:7px}
+@media(max-width:460px){.fuses{gap:18px}.fuse-clock{width:100%;margin-left:0}.fuse-clock a{display:inline-block}.fuse-byte strong{font-size:20px}}
+@media(max-width:460px){.scope-metrics{grid-template-columns:repeat(2,1fr)}}
+@media(prefers-reduced-motion:reduce){button{transition:none}}
+.transport-links a{background:#8cc8ff;border-color:#8cc8ff;color:#10243a;font-weight:650}
+.transport-links a:hover:not(:disabled){background:#b2dbff;border-color:#b2dbff}
+.transport-links a:focus-visible{outline-color:#8cc8ff}
+/* Top view of the DIP/SOIC pinout. PWM leaves the third right-hand pin (6). */
+.board{--board-gap:40px;gap:var(--board-gap);align-items:flex-start;padding-top:20px;padding-bottom:30px;padding-left:44px}
+.chip{height:124px;display:flex;flex-direction:column;justify-content:center;gap:12px;padding-top:16px;padding-bottom:16px}
+.chip strong{margin:0}
+.chip:before,.chip:after{content:none}
+.chip-dot{top:22px;bottom:auto;left:9px;width:6px;height:6px;background:#8d9981}
+.chip>span:not(.pin-label),.chip>strong,.chip>small{position:relative;left:5px}
+.chip .pin{position:absolute;width:11px;height:10px;background:#64715d}
+.chip .pin.left{left:-11px}.chip .pin.right{right:-11px}
+.chip .p1,.chip .p8{top:21px}.chip .p2,.chip .p7{top:47px}.chip .p3,.chip .p6{top:73px}.chip .p4,.chip .p5{top:99px}
+.chip .p6{background:#99b96b}
+.chip .p8{background:#d1ab8b}
+.chip .pin-label{position:absolute;font:10px var(--mono);letter-spacing:0;white-space:nowrap;color:#b6c6a5;transform:translateY(-50%)}
+.chip .pin-vcc{left:calc(100% + 16px);top:26px;color:#d1ab8b}
+.chip .pin-gnd{right:calc(100% + 16px);top:104px}
+.signal-path{position:relative;height:124px}
+.signal-path>span{position:absolute;top:65px;left:calc(16px - var(--board-gap));white-space:nowrap}
+.signal-path small{position:absolute;top:105px;left:0}
+.signal-line{position:absolute;left:calc(11px - var(--board-gap));right:0;top:66px;height:24px;margin:0}
+@media(max-width:1100px){.board{--board-gap:25px}}
+@media(max-width:460px){.chip .pin-label{font-size:9px}.signal-path>span{font-size:7px}}
+
+.transport-links a{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border:1px solid #8cc8ff;border-radius:7px;cursor:pointer;transition:background .15s,border-color .15s}.transport-links a[aria-disabled=true]{opacity:.45;pointer-events:none}
+.board{container-type:inline-size;container-name:chip-board}
+.engine-controls{display:flex;align-items:center;gap:18px;margin-top:20px;flex-wrap:wrap}.engine-selector{display:flex;align-items:center;gap:16px;border:0;padding:0;margin:0;min-width:0}.engine-selector legend{float:left;padding:0;margin-right:16px;font-size:12px;color:var(--muted)}.engine-options{display:flex;border:1px solid var(--border);border-radius:7px;padding:3px;background:#111611;gap:3px}.engine-options label{position:relative;cursor:pointer}.engine-options input{position:absolute;opacity:0;width:1px;height:1px}.engine-options span{display:block;padding:7px 15px;border-radius:4px;font:11px var(--mono);color:var(--muted)}.engine-options input:checked+span{background:var(--accent);color:#1c2811}.engine-options input:focus-visible+span{outline:2px solid var(--accent);outline-offset:4px}.engine-controls p{margin:0;color:var(--muted);font-size:10px}.engine-controls+.audio-controls{margin-top:20px}
+@container chip-board (max-width:380px){.signal-path>span,.signal-line>span{display:none}.signal-path{min-width:0}}
+@container chip-board (max-width:380px){.signal-line>b{display:none}.signal-line{right:auto;width:28px}.signal-line svg{margin-left:4px;flex-shrink:0}}
+
+.emulator-workspace{grid-template-columns:minmax(0,1.85fr) minmax(280px,1fr)}
+.cpu-board{display:flex;gap:38px;align-items:center;padding:8px 20px 32px}
+.cpu-package{position:relative;flex-shrink:0;display:flex;flex-direction:column;gap:10px;background:#141713;border:1px solid #394232;border-radius:5px;padding:20px 30px;box-shadow:0 6px 16px #0003}
+.cpu-package:before,.cpu-package:after{content:"";position:absolute;top:17px;width:9px;height:5px;background:#67765c;box-shadow:0 14px #67765c,0 28px #67765c,0 42px #67765c,0 56px #67765c,0 70px #67765c}
+.cpu-package:before{left:-10px}.cpu-package:after{right:-10px}.cpu-package>span{font:9px var(--mono);letter-spacing:2px;color:var(--muted)}.cpu-package strong{font:34px var(--mono);letter-spacing:3px;color:var(--text)}.cpu-package small{font:8px var(--mono);color:#85937a;letter-spacing:.4px}
+.cpu-wire{display:flex;align-items:center;gap:10px;flex:1;font:10px var(--mono);color:var(--muted)}.cpu-wire i{height:1px;background:#566749;flex:1}.cpu-wire b{font-size:28px;color:var(--accent);font-weight:400}
+.drop-zone{position:relative;display:flex;align-items:center;flex-wrap:wrap;gap:12px;border:1px dashed #536746;border-radius:8px;padding:22px;background:#141a12}.drop-zone.drag-over{border-color:var(--accent);background:#26331e}.drop-zone>span{font-size:11px;color:var(--muted)}.drop-zone small{font:9px var(--mono);color:#849278;flex-basis:100%}.load-button{background:#27351f;border-color:#5c7346;color:var(--accent);font-size:12px}
+.file-input{position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}.drop-zone:focus-within{outline:2px solid var(--accent);outline-offset:4px}
+.firmware-info{padding:23px 0 0}.firmware-info h2{font-size:21px;font-weight:600;letter-spacing:-.4px;margin:9px 0;overflow-wrap:anywhere}.firmware-info p{color:var(--muted);font-size:12px;line-height:1.6;margin:0}.file-hash{display:block;min-height:12px;margin-top:9px;color:#788a68;font:9px var(--mono);overflow-wrap:anywhere}
+.wav-download{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;padding:11px 17px;background:#8cc8ff;color:#10243a;border-radius:7px;font-size:12px;font-weight:650;text-decoration:none}.wav-download[aria-disabled=true]{opacity:.35;pointer-events:none}.wav-download:hover{background:#b2dbff}
+#progress{display:block;width:100%;height:5px;margin-top:24px;border:0;border-radius:4px;overflow:hidden;background:#30392f;accent-color:var(--accent)}#progress::-webkit-progress-bar{background:#30392f}#progress::-webkit-progress-value{background:var(--accent)}.execution-status{color:var(--muted);font-size:11px;line-height:1.7;min-height:38px;margin:13px 0 20px;overflow-wrap:anywhere}
+.emulator-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;border-top:1px solid var(--border);padding-top:18px}.emulator-metrics span{display:block;font:8px var(--mono);letter-spacing:.4px;color:var(--muted)}.emulator-metrics strong{display:block;font:clamp(12px,1.5vw,19px) var(--mono);margin-top:10px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.live-controls{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:20px}.live-controls>span{font-size:11px;color:var(--muted)}.live-controls output{font:24px var(--mono);color:var(--accent)}.live-volume{display:flex;align-items:center;gap:18px;font-size:11px;color:var(--muted);margin:20px 0}.live-volume input{width:100%}
+.settings-panel>label:not(.check-label){display:block;font-size:11px;color:var(--muted);margin:19px 0 9px}.settings-panel>select,.settings-panel>input{width:100%;font-size:12px;border:1px solid var(--border);border-radius:7px;padding:11px 12px;color:var(--text);background:#111611}.settings-panel>:disabled{opacity:.5}.setting-note{font-size:10px;color:#88967e;line-height:1.7;margin:11px 0 0}.settings-divider{border-top:1px solid var(--border);margin:24px 0}.check-label{display:flex;gap:9px;align-items:center;color:var(--muted);font-size:11px;line-height:1.5;margin:17px 0 0}.check-label input{accent-color:var(--accent);margin:0}.standalone-link{display:block;border-top:1px solid var(--border);padding-top:20px;margin-top:23px;font-size:11px;color:var(--accent);text-decoration:none}
+.emulator-inspector{margin:24px 0}.emulator-registers{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:9px}.cpu-register{border:1px solid var(--border);border-radius:6px;padding:12px;background:#121712;text-align:center}.cpu-register span{font:9px var(--mono);color:var(--muted);display:block}.cpu-register strong{font:20px var(--mono);margin-top:8px;display:block}.flag-row{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}.flag{font:10px var(--mono);color:#8c9b80;padding:6px 10px;border:1px solid var(--border);border-radius:4px}.flag[data-set=true]{color:var(--accent);background:#293421;border-color:#536743}
+.emulator-help{margin:0 0 26px;font-size:12px;color:var(--muted);line-height:1.8}.emulator-help summary{cursor:pointer;padding:8px 0;color:var(--text)}.emulator-help>div{max-width:850px}.emulator-help a{color:#b4c59f}
+@media(min-width:1100px){.settings-panel{position:sticky;top:20px}}
+@media(max-width:800px){.emulator-workspace{grid-template-columns:1fr}.settings-panel{grid-row:2}.emulator-metrics strong{font-size:16px}.emulator-registers{grid-template-columns:repeat(4,minmax(0,1fr))}.cpu-status{white-space:normal}}
+@media(max-width:460px){.cpu-board{gap:23px;padding:2px 10px 26px}.cpu-package{padding:17px 20px}.cpu-package strong{font-size:29px}.cpu-package small{font-size:7px}.cpu-wire{gap:6px;font-size:8px}.cpu-wire b{font-size:23px}.drop-zone{padding:16px;gap:10px}.drop-zone>span{font-size:10px}.emulator-metrics{gap:8px}.emulator-metrics span{font-size:7px;letter-spacing:0}.emulator-metrics strong{font-size:12px}.emulator-registers{gap:7px}.cpu-register{padding:10px}.cpu-register strong{font-size:17px}.wav-download{padding:11px 13px}.firmware-info h2{font-size:18px}.engine-badge{font-size:7px}.flag-row{gap:6px}.flag{font-size:9px;padding:6px 9px}}
+</style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="https://witali.github.io/MicroMusic/web-player/"><svg viewBox="0 0 36 36" aria-hidden="true"><rect x="7" y="7" width="22" height="22" rx="4"/><path d="M1 12h6m-6 6h6m-6 6h6m22-12h6m-6 6h6m-6 6h6M12 1v6m6-6v6m6-6v6M12 29v6m6-6v6m6-6v6M12 21l4-7 4 8 4-7"/></svg> MicroMusic<span>/ LAB</span></a>
+    <a href="https://github.com/witali/MicroMusic/tree/main/i8080/Emulator" class="header-link">Описание и проверка ↗</a>
+    <span class="engine-badge"><i></i> 8080 → INTE / WR → AUDIO</span>
+  </header>
+  <main>
+    <div class="intro">
+      <div><p class="eyebrow">INTEL 8080 / ЗВУК ИЗ МАШИННОГО КОДА</p><h1>Запустите свою прошивку<span>.</span></h1><p class="subtitle">Загрузите образ ПЗУ, исполните код и послушайте результат.</p></div>
+      <div class="machine-spec"><strong>64 <span>КиБ АДРЕСОВ</span></strong><span>8 бит <i>·</i> 244 кодировки <i>·</i> Intel 8080</span></div>
+    </div>
+    <div id="error" class="error" role="alert" hidden></div>
+    <div class="workspace emulator-workspace">
+      <div class="instrument">
+        <section class="panel" aria-label="Загрузка и исполнение прошивки">
+          <div class="panel-heading"><span class="eyebrow">01 / ПРОШИВКА</span><span id="run-state" class="run-state">Ожидание образа</span></div>
+          <div class="cpu-board" aria-hidden="true"><div class="cpu-package"><span>INTEL</span><strong>8080</strong><small>8-BIT MICROPROCESSOR</small></div><div class="cpu-wire"><span id="signal-label">INTE</span><i></i><span>RC</span><i></i><b>♪</b></div></div>
+          <div id="drop-zone" class="drop-zone">
+            <input id="file" type="file" accept=".bin,.rom,.hex,.ihx,.ihex" class="file-input" aria-label="Файл прошивки BIN, ROM или Intel HEX">
+            <button id="load" class="load-button" type="button">↑ Загрузить ROM</button>
+            <span>или перетащите файл сюда</span><small>BIN · ROM · Intel HEX · до 64 КиБ</small>
+          </div>
+          <div class="firmware-info"><span class="eyebrow">ОБРАЗ В ПАМЯТИ</span><h2 id="file-name">Ваша прошивка</h2><p id="file-info">Встроенных прошивок нет. Выберите свой файл.</p><span id="file-hash" class="file-hash"></span></div>
+          <div class="transport"><button id="run" class="primary" disabled>▶ Эмулировать</button><button id="cancel" disabled>↺ Сначала</button><a id="download" class="wav-download" aria-disabled="true">↓ WAV</a></div>
+          <progress id="progress" max="90" value="0" aria-label="Выполненное процессорное время"></progress>
+          <p id="status" class="execution-status" role="status">Готов к загрузке BIN, ROM или Intel HEX.</p>
+          <div class="emulator-metrics"><div><span>КОМАНД</span><strong id="steps">0</strong></div><div><span>T-ТАКТОВ</span><strong id="cycles">0</strong></div><div><span>ВРЕМЯ CPU</span><strong id="cpu-time">0,000 с</strong></div></div>
+        </section>
+        <section class="panel scope-panel" aria-label="Звук прошивки">
+          <div class="panel-heading"><span class="eyebrow">02 / ЗВУКОВОЙ СИГНАЛ</span><span class="technical-note">96 кГц · МОНО · PCM 16 БИТ</span></div>
+          <div class="scope-wrap"><canvas id="scope" width="1000" height="200" role="img" aria-label="Осциллограмма восстановленного звука"></canvas><span class="scope-scale">первые 50 мс</span></div>
+          <div class="live-controls"><span id="playback-status" role="status">Звук запускается кнопкой «Эмулировать»</span><output id="elapsed">00:00.0</output></div>
+          <label class="live-volume">Громкость <input id="volume" type="range" min="0" max="1" step="0.01" value="0.65"></label>
+          <div class="emulator-metrics"><div><span>ФРОНТОВ ВЫХОДА</span><strong id="edges">0</strong></div><div><span>ЗАПИСЕЙ В ПАМЯТЬ</span><strong id="writes">0</strong></div><div><span>OUT / ПОРТЫ</span><strong id="io-writes">0</strong></div></div>
+        </section>
+      </div>
+      <aside class="panel settings-panel" aria-label="Настройки эмулятора">
+        <div class="panel-heading"><span class="eyebrow">ПАРАМЕТРЫ МАШИНЫ</span><span class="count">8080</span></div>
+        <label for="hz">Частота процессора, Гц</label><input id="hz" data-machine type="number" min="100000" max="10000000" step="1000" value="3500000">
+        <label for="output">Звуковой выход</label><select id="output" data-machine><option value="inte">INTE · уровень EI / DI</option><option value="wr">/WR · импульсы записи</option></select>
+        <label for="memory">Карта памяти</label><select id="memory" data-machine><option value="rom">ПЗУ без ОЗУ</option><option value="ramupper">ПЗУ снизу · ОЗУ 8000–FFFF</option><option value="allram">ОЗУ 0000–FFFF</option></select>
+        <p id="memory-note" class="setting-note">32-КиБ образ зеркалируется по A15. Записи дают /WR, содержимое ПЗУ сохраняется.</p>
+        <label for="input-byte">Значение на входе IN</label><select id="input-byte" data-machine><option value="255">FFh</option><option value="0">00h</option></select>
+        <label for="seconds">Лимит процессорного времени, с</label><input id="seconds" data-machine type="number" min="0.1" max="120" step="0.1" value="90">
+        <p class="setting-note">Исполнение заканчивается по HLT или лимиту. Вычисление можно прервать.</p>
+        <div class="settings-divider"></div><p class="eyebrow">ВОССТАНОВЛЕНИЕ ЗВУКА</p>
+        <label for="filter">Низкочастотный фильтр</label><select id="filter"><option value="4500-4">4,5 кГц · 4 RC-звена</option><option value="4500-2">4,5 кГц · 2 RC-звена</option><option value="20000-2">20 кГц · 2 RC-звена</option><option value="0-1">Без дополнительного фильтра</option></select>
+        <label class="check-label"><input id="normalize" type="checkbox" checked> Автоуровень</label>
+        <p class="setting-note">Фильтр и автоуровень меняются во время прослушивания. Постоянная составляющая удаляется.</p>
+        <a class="standalone-link" href="https://witali.github.io/MicroMusic/i8080/Emulator/" target="_blank" rel="noopener">Открыть онлайн-версию ↗</a>
+      </aside>
+    </div>
+    <section class="panel inspector emulator-inspector" aria-label="Состояние процессора">
+      <div class="panel-heading"><span class="eyebrow">03 / СОСТОЯНИЕ INTEL 8080</span><span id="cpu-status" class="technical-note">PC 0000 · SP 0000 · INTE 0</span></div>
+      <div id="registers" class="emulator-registers"></div>
+      <div id="flags" class="flag-row" aria-label="Флаги S, Z, AC, P и CY"></div>
+      <p id="write-note" class="setting-note">Регистры показаны в шестнадцатеричном виде. Начальная точка — 0000h.</p>
+    </section>
+    <details class="emulator-help"><summary>Как устроена модель</summary><div>
+      <p>Нажмите «Эмулировать», чтобы сразу запустить код и звук. Эта же кнопка ставит воспроизведение на паузу; «Сначала» сбрасывает процессор. Отдельного аудиоплеера нет. WAV доступен после исполнения образа до HLT или лимита.</p>
+      <p>Плеер принимает собственные прошивки и выполняет документированные команды Intel 8080. Звук получается из уровня INTE или импульсов /WR, включая OUT. Отверстия в HEX и незаполненная память содержат FFh. Начальные адреса из записей HEX 03/05 не меняют вектор сброса 0000h.</p>
+      <p>В режиме «ПЗУ без ОЗУ» зеркалируется только образ ровно 32 КиБ. В режиме «ПЗУ снизу · ОЗУ сверху» верхние 32 КиБ доступны для записи; режим «ОЗУ» разрешает запись везде. Для стековых подпрограмм обычно требуется ОЗУ.</p>
+      <p>Длительности команд считаются в T-тактах без READY. Импульс /WR приближён к 1 T, INTE меняется при завершении EI/DI; активный INT и внешние контроллеры не моделируются. 3,5 МГц — настройка этой платы. Аналоговый тракт представлен усреднением сигнала и RC-фильтром.</p>
+      <p><a href="https://github.com/witali/MicroMusic/tree/main/i8080/Emulator">Проверки и исправления ↗</a> · <a href="https://github.com/witali/MicroMusic/tree/main/i8080/CRC">Исследования CRC ↗</a> · <a href="https://device.report/m/8985a7044b63dafadf8a713690af2e4d2ef632c256d27343044e212ceaa86a3c" target="_blank" rel="noopener">Руководство Intel ↗</a></p>
+    </div></details>
+    <footer><span>MICROMUSIC / LAB <i>·</i> Intel 8080</span><span>ROM → Worker → AudioWorklet <i>·</i> Все вычисления в браузере</span></footer>
+  </main>
+  <noscript>Для эмулятора необходим JavaScript.</noscript>
+<script>
+// Stateful reconstruction shared by live playback and WAV export.
+class SignalFilter {
+  constructor(rate, cutoff = 4500, poles = 4, normalize = true) {
+    this.rate = rate; this.cutoff = cutoff; this.normalize = normalize;
+    this.states = new Float64Array(poles); this.alpha = 1 - Math.exp(-2 * Math.PI * cutoff / rate);
+    this.highpass = Math.exp(-2 * Math.PI * 20 / rate);
+    this.previous = null; this.dc = 0; this.envelope = 0; this.gain = 1;
+    this.decay = Math.exp(-1 / rate); this.gainRise = 1 - Math.exp(-1 / (0.02 * rate));
+  }
+  step(raw) {
+    const input = raw * 2 - 1;
+    if (this.previous === null) this.previous = input;
+    this.dc = this.highpass * (this.dc + input - this.previous); this.previous = input;
+    let value = this.dc;
+    if (this.cutoff) for (let i = 0; i < this.states.length; i++) { this.states[i] += this.alpha * (value - this.states[i]); value = this.states[i]; }
+    if (this.normalize) {
+      this.envelope = Math.max(Math.abs(value), this.envelope * this.decay);
+      const desired = Math.min(1024, 0.85 / Math.max(this.envelope, 1e-7));
+      // Reduce gain immediately on a new peak; recover gently during quiet passages.
+      this.gain = desired < this.gain ? desired : this.gain + this.gainRise * (desired - this.gain);
+      value *= this.gain;
+    }
+    return Math.max(-1, Math.min(1, value));
+  }
+}
+
+// ROM loaders deliberately preserve holes as erased EPROM bytes (FFh).
+function parseIntelHex(text) {
+  const image = new Uint8Array(65536).fill(0xff), used = new Uint8Array(65536);
+  let base = 0, top = 0, eof = false;
+  const lines = text.replace(/^\uFEFF/, '').split(/\r?\n/);
+  for (let lineNumber = 0; lineNumber < lines.length; lineNumber++) {
+    const line = lines[lineNumber].trim();
+    if (!line) continue;
+    const fail = message => { throw Error(`HEX, строка ${lineNumber + 1}: ${message}`); };
+    if (eof) fail('данные после EOF');
+    if (!/^:(?:[0-9a-f]{2})+$/i.test(line)) fail('неверный формат записи');
+    const b = Uint8Array.from(line.slice(1).match(/../g), x => parseInt(x, 16));
+    if (b.length < 5 || b.length !== b[0] + 5) fail('неверная длина записи');
+    if (b.reduce((sum, x) => sum + x, 0) % 256) fail('ошибка контрольной суммы');
+    const size = b[0], address = b[1] * 256 + b[2], type = b[3];
+    if (type === 0) {
+      if (address + size > 65536 || base + address + size > 65536) fail('адрес вне 64 КиБ');
+      for (let i = 0; i < size; i++) {
+        const at = base + address + i, value = b[4 + i];
+        if (used[at] && image[at] !== value) fail('противоречащие записи по одному адресу');
+        used[at] = 1; image[at] = value; top = Math.max(top, at + 1);
+      }
+    } else if (type === 1) {
+      if (size !== 0 || address !== 0) fail('неверная запись EOF');
+      eof = true;
+    } else if (type === 2 || type === 4) {
+      if (size !== 2 || address !== 0) fail('неверная запись расширенного адреса');
+      base = (b[4] * 256 + b[5]) * (type === 2 ? 16 : 65536);
+    } else if (type === 3 || type === 5) {
+      if (size !== 4 || address !== 0) fail('неверная запись начального адреса');
+      // These metadata records do not override the 8080 reset vector, PC=0000h.
+    } else fail(`неподдерживаемый тип ${type.toString(16).padStart(2, '0')}`);
+  }
+  if (!eof) throw Error('HEX: отсутствует запись EOF');
+  if (!top) throw Error('HEX не содержит машинного кода');
+  return image.slice(0, top);
+}
+
+function validateBinary(bytes) {
+  if (!(bytes instanceof Uint8Array) || !bytes.length || bytes.length > 65536) {
+    throw Error('Размер образа должен быть от 1 до 65 536 байт');
+  }
+  return bytes;
+}
+
+// Cascaded RC poles are an audio reconstruction approximation, not a circuit model.
+function processAudio(raw, rate, cutoff = 4500, poles = 4, normalize = true) {
+  if (!Number.isInteger(rate) || rate < 8000 || !Number.isFinite(cutoff) || cutoff < 0 || cutoff >= rate / 2 || !Number.isInteger(poles) || poles < 1 || poles > 8) throw Error('Invalid filter');
+  const samples = new Float32Array(raw.length), filter = new SignalFilter(rate, cutoff, poles, normalize);
+  for (let i = 0; i < raw.length; i++) {
+    if (!Number.isFinite(raw[i])) throw Error('Non-finite audio sample');
+    samples[i] = filter.step(raw[i]);
+  }
+  return samples;
+}
+
+function encodeWav(samples, rate) {
+  if (!Number.isInteger(rate) || rate < 8000 || rate > 192000) throw Error('Invalid WAV sample rate');
+  const buffer = new ArrayBuffer(44 + samples.length * 2), view = new DataView(buffer);
+  const text = (offset, value) => { for (let i = 0; i < value.length; i++) view.setUint8(offset + i, value.charCodeAt(i)); };
+  text(0, 'RIFF'); view.setUint32(4, buffer.byteLength - 8, true); text(8, 'WAVE'); text(12, 'fmt ');
+  view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, 1, true);
+  view.setUint32(24, rate, true); view.setUint32(28, rate * 2, true); view.setUint16(32, 2, true); view.setUint16(34, 16, true);
+  text(36, 'data'); view.setUint32(40, samples.length * 2, true);
+  for (let i = 0; i < samples.length; i++) {
+    if (!Number.isFinite(samples[i])) throw Error('Non-finite WAV sample');
+    const sample = Math.max(-1, Math.min(1, samples[i]));
+    view.setInt16(44 + i * 2, Math.round(sample * (sample < 0 ? 32768 : 32767)), true);
+  }
+  return buffer;
+}
+
+function createWorkletURL() { return URL.createObjectURL(new Blob(["// Stateful reconstruction shared by live playback and WAV export.\nclass SignalFilter {\n  constructor(rate, cutoff = 4500, poles = 4, normalize = true) {\n    this.rate = rate; this.cutoff = cutoff; this.normalize = normalize;\n    this.states = new Float64Array(poles); this.alpha = 1 - Math.exp(-2 * Math.PI * cutoff / rate);\n    this.highpass = Math.exp(-2 * Math.PI * 20 / rate);\n    this.previous = null; this.dc = 0; this.envelope = 0; this.gain = 1;\n    this.decay = Math.exp(-1 / rate); this.gainRise = 1 - Math.exp(-1 / (0.02 * rate));\n  }\n  step(raw) {\n    const input = raw * 2 - 1;\n    if (this.previous === null) this.previous = input;\n    this.dc = this.highpass * (this.dc + input - this.previous); this.previous = input;\n    let value = this.dc;\n    if (this.cutoff) for (let i = 0; i \u003c this.states.length; i++) { this.states[i] += this.alpha * (value - this.states[i]); value = this.states[i]; }\n    if (this.normalize) {\n      this.envelope = Math.max(Math.abs(value), this.envelope * this.decay);\n      const desired = Math.min(1024, 0.85 / Math.max(this.envelope, 1e-7));\n      // Reduce gain immediately on a new peak; recover gently during quiet passages.\n      this.gain = desired \u003c this.gain ? desired : this.gain + this.gainRise * (desired - this.gain);\n      value *= this.gain;\n    }\n    return Math.max(-1, Math.min(1, value));\n  }\n}\n\n\nclass StreamingAudio {\n  constructor(deviceRate, options = {}) {\n    this.deviceRate = deviceRate; this.rate = options.rate || 96000;\n    this.chunks = []; this.offset = 0; this.phase = 0; this.previous = null; this.next = null;\n    this.sourceFrames = 0; this.finished = false; this.ended = false; this.volume = 0.65;\n    this.configure(options);\n  }\n  configure(options = {}) {\n    this.filter = new SignalFilter(this.rate, options.cutoff ?? 4500, options.poles ?? 4, options.normalize ?? true);\n    if (options.volume !== undefined) this.volume = options.volume;\n  }\n  push(samples) { if (samples.length) this.chunks.push(samples); }\n  take() {\n    if (!this.chunks.length) return null;\n    const value = this.chunks[0][this.offset++]; this.sourceFrames++;\n    if (this.offset === this.chunks[0].length) { this.chunks.shift(); this.offset = 0; }\n    return this.filter.step(value);\n  }\n  render(output) {\n    output.fill(0);\n    if (this.ended) return;\n    for (let i = 0; i \u003c output.length; i++) {\n      if (this.previous === null) this.previous = this.take();\n      if (this.previous === null) { if (this.finished) this.ended = true; break; }\n      if (this.next === null) this.next = this.take();\n      if (this.next === null && !this.finished) break;\n      while (this.phase >= 1) {\n        this.previous = this.next; this.next = this.take(); this.phase--;\n        if (this.previous === null) { this.ended = this.finished; break; }\n        if (this.next === null) break;\n      }\n      if (this.previous === null || (this.next === null && !this.finished)) break;\n      if (this.next === null && this.finished && this.phase >= 1) { this.ended = true; break; }\n      output[i] = (this.previous + ((this.next ?? this.previous) - this.previous) * this.phase) * this.volume;\n      this.phase += this.rate / this.deviceRate;\n    }\n  }\n  get seconds() { return this.ended ? this.sourceFrames / this.rate : Math.max(0, (this.sourceFrames - 2 + Math.min(this.phase, 1)) / this.rate); }\n}\n\nclass SpeakerProcessor extends AudioWorkletProcessor {\n  constructor(options) {\n    super(); this.stream = new StreamingAudio(sampleRate, options.processorOptions);\n    this.blocks = 0; this.reportedEnd = false;\n    this.port.onmessage = ({ data }) => {\n      if (data.kind === 'audio') this.stream.push(new Float32Array(data.audio));\n      else if (data.kind === 'finish') this.stream.finished = true;\n      else if (data.kind === 'config') this.stream.configure(data);\n      else if (data.kind === 'volume') this.stream.volume = data.volume;\n    };\n  }\n  process(inputs, outputs) {\n    const output = outputs[0][0]; if (!output) return true;\n    this.stream.render(output);\n    if (++this.blocks % 32 === 0 || (this.stream.ended && !this.reportedEnd)) {\n      this.port.postMessage({ seconds: this.stream.seconds, ended: this.stream.ended });\n      if (this.stream.ended) this.reportedEnd = true;\n    }\n    return true;\n  }\n}\nregisterProcessor('intel8080-speaker', SpeakerProcessor);\n"], { type: 'text/javascript' })); }
+
+class RealtimeSpeaker {
+  constructor(onStatus) { this.onStatus = onStatus; this.context = null; this.node = null; this.active = false; this.paused = false; }
+  async start(options) {
+    this.reset();
+    const Context = window.AudioContext || window.webkitAudioContext;
+    if (!Context) throw Error('Браузер не поддерживает Web Audio');
+    const context = this.context = new Context({ latencyHint: 'interactive' });
+    // Called during the user's click, before awaiting module loading.
+    const resume = context.resume();
+    if (!context.audioWorklet) { this.reset(); throw Error('Для звука нужен AudioWorklet: откройте страницу через localhost, HTTPS или автономный HTML.'); }
+    const url = createWorkletURL();
+    try { await context.audioWorklet.addModule(url); await resume; }
+    finally { if (typeof url === 'string' && url.startsWith('blob:')) URL.revokeObjectURL(url); }
+    if (this.context !== context) return false;
+    this.node = new AudioWorkletNode(context, 'intel8080-speaker', { numberOfInputs: 0, numberOfOutputs: 1, outputChannelCount: [1], processorOptions: options });
+    this.node.port.onmessage = ({ data }) => { if (this.context === context) { if (data.ended) { this.active = false; context.suspend().catch(() => {}); } this.onStatus(data); } };
+    this.node.connect(context.destination); this.active = true; this.paused = false; return true;
+  }
+  push(samples) { this.node?.port.postMessage({ kind: 'audio', audio: samples }, [samples]); }
+  finish() { this.node?.port.postMessage({ kind: 'finish' }); }
+  configure(options) { this.node?.port.postMessage({ kind: 'config', ...options }); }
+  volume(volume) { this.node?.port.postMessage({ kind: 'volume', volume }); }
+  async togglePause() {
+    if (!this.active) return;
+    this.paused = !this.paused;
+    if (this.paused) await this.context.suspend(); else await this.context.resume();
+  }
+  reset() {
+    this.active = this.paused = false;
+    if (this.node) { this.node.disconnect(); this.node.port.close(); this.node = null; }
+    if (this.context) { this.context.close().catch(() => {}); this.context = null; }
+  }
+}
+
+
+const $ = id => document.getElementById(id), rate = 96000;
+const hex = (n, width = 2) => n.toString(16).toUpperCase().padStart(width, '0');
+const number = n => n.toLocaleString('ru-RU');
+const machineInputs = [...document.querySelectorAll('[data-machine]')];
+let firmware = null, filename = '', loadTicket = 0, worker = null, audioURL = null;
+let raw = null, computed = null, processed = null, runOptions = null;
+let starting = false, runTicket = 0, previewDrawn = false;
+const speaker = new RealtimeSpeaker(status => {
+  const seconds = status.seconds, minutes = Math.floor(seconds / 60);
+  $('elapsed').textContent = `${String(minutes).padStart(2, '0')}:${(seconds % 60).toFixed(1).padStart(4, '0')}`;
+  worker?.postMessage({ kind: 'played', seconds });
+  if (status.ended) { $('playback-status').textContent = 'Воспроизведение завершено'; setBusy(false); }
+});
+const soundOptions = () => {
+  const [cutoff, poles] = $('filter').value.split('-').map(Number);
+  return { rate, cutoff, poles, normalize: $('normalize').checked, volume: Number($('volume').value) };
+};
+
+// Replaced with an embedded worker by scripts/build-standalone.mjs.
+function createWorker() { const url = URL.createObjectURL(new Blob(["'use strict';\n// Intel 8080A. Documented instruction T-states, no READY/wait states or active INT.\n// Based on the user's ChatGPT player 2.0; provenance and corrections: SOURCE.json / README.md.\n// The INTE level changes at EI/DI completion. Interrupt acceptance is a separate mechanism.\n// /WR uses approximate one-T pulses at the end of each write machine cycle.\n// 12 undocumented opcodes are deliberately rejected (not silently executed as NOPs).\nconst INVALID_8080 = new Set([0x08,0x10,0x18,0x20,0x28,0x30,0x38,0xcb,0xd9,0xdd,0xed,0xfd]);\nconst IS_EVEN_PARITY=new Uint8Array(256);\nfor(let v=0;v\u003c256;v++){let a=v,a1=0;for(let j=0;j\u003c8;j++,a>>=1)a1^=a&1;IS_EVEN_PARITY[v]=a1^1}\nfunction is8080Opcode(op){return Number.isInteger(op)&&op>=0&&op\u003c256&&!INVALID_8080.has(op)}\nclass AudioBus {\n constructor(hz,rate,mode,seconds,wrLowT=1){\n if(!Number.isFinite(hz)||hz\u003c100000||hz>10000000||!Number.isInteger(rate)||rate\u003c8000||rate>192000||!Number.isFinite(seconds)||seconds\u003c=0||seconds>120||!['inte','wr'].includes(mode)||!Number.isFinite(wrLowT)||wrLowT\u003c=0||wrLowT>1)throw Error('Invalid audio settings');\n this.hz=hz;this.rate=rate;this.mode=mode;this.lowT=wrLowT;this.max=Math.ceil(seconds*rate)+1;\n this.samples=new Float32Array(this.max);this.i=0;this.position=0;this.area=0;this.level=mode==='wr'?1:0;this.edges=0;this.transitions=[];this.trackEvents=false;}\n advance(to){if(to+1e-8\u003cthis.position)throw Error('Out-of-order audio edge '+to+' before '+this.position);\n const scale=this.hz/this.rate;\n while(this.i\u003cthis.max&&(this.i+1)*scale\u003c=to){let end=(this.i+1)*scale;this.area+=this.level*(end-this.position);this.samples[this.i++]=this.area/scale;this.position=end;this.area=0}\n this.area+=this.level*(to-this.position);this.position=to;\n }\n edge(v,at){this.advance(at);if(this.level!==v){this.edges++;this.level=v;if(this.trackEvents)this.transitions.push([at,v])}}\n finish(at){this.advance(at);if(this.i\u003cthis.max){const duration=at-this.i*this.hz/this.rate;if(duration>1e-8)this.samples[this.i++]=this.area/duration}return this.samples.slice(0,this.i)}\n}\nclass CPU8080 {\n constructor(rom,opts={}){\n  if(!(rom instanceof Uint8Array))throw Error('ROM must be a Uint8Array');\n  if(opts.memoryMode!==undefined&&!['rom','ramupper','allram'].includes(opts.memoryMode))throw Error('Invalid memory mode');\n  for(const key of ['pc','sp'])if(opts[key]!==undefined&&(!Number.isInteger(opts[key])||opts[key]\u003c0||opts[key]>65535))throw Error('Invalid '+key);\n  if(opts.inputByte!==undefined&&(!Number.isInteger(opts.inputByte)||opts.inputByte\u003c0||opts.inputByte>255))throw Error('Invalid input byte');\n  if(opts.wrLowT!==undefined&&(!Number.isFinite(opts.wrLowT)||opts.wrLowT\u003c=0||opts.wrLowT>1))throw Error('Invalid /WR pulse width');\n  this.mem=new Uint8Array(65536).fill(0xff);this.memoryMode=opts.memoryMode||'rom';this.romSize=rom.length;\n  if(rom.length>65536||rom.length\u003c1)throw Error('ROM must contain 1...65536 bytes');\n  this.mem.set(rom);if(this.memoryMode==='rom'&&rom.length===32768)this.mem.set(rom,32768);\n  this.r=new Uint8Array(8);this.pc=opts.pc||0;this.sp=opts.sp||0;\n  this.f={s:0,z:0,p:0,cy:0,ac:0};this.inte=0;this.halted=false;this.t=0;this.count=0;this.memWrites=0;this.ignoredWrites=0;this.ioWrites=0;this.lastOpcode=null;\n  this.hz=opts.hz||3500000;this.mode=opts.mode||'inte';this.inputByte=opts.inputByte===undefined?0xff:opts.inputByte;\n  this.audio=opts.audio||null;this.wrLowT=opts.wrLowT||1;\n }\n read(addr){return this.mem[addr&65535]}\n read16(addr){return this.read(addr)|(this.read(addr+1)\u003c\u003c8)}\n fetch(){let x=this.read(this.pc);this.pc=(this.pc+1)&65535;return x}\n fetch16(){let x=this.fetch();return x|(this.fetch()\u003c\u003c8)}\n hl(){return (this.r[4]\u003c\u003c8)|this.r[5]}\n pair(k){return k===0?(this.r[0]\u003c\u003c8)|this.r[1]:k===1?(this.r[2]\u003c\u003c8)|this.r[3]:k===2?this.hl():this.sp}\n setpair(k,x){x&=65535;if(k===3)this.sp=x;else{this.r[k*2]=x>>>8;this.r[k*2+1]=x&255}}\n get(k){return k===6?this.read(this.hl()):this.r[k]}\n put(k,x,off){if(k===6)this.write(this.hl(),x,off);else this.r[k]=x&255}\n pulse(off){if(this.audio&&this.mode==='wr'){let begin=this.t+off;this.audio.edge(0,begin);this.audio.edge(1,begin+this.wrLowT)}}\n write(addr,x,off=0){addr&=65535;this.memWrites++;\n  if(this.memoryMode==='allram'||(this.memoryMode==='ramupper'&&addr>=32768))this.mem[addr]=x&255;\n  else this.ignoredWrites++;\n  this.pulse(off);\n }\n setSZP(x){x&=255;this.f.s=x>>>7;this.f.z=+(x===0);this.f.p=IS_EVEN_PARITY[x];return x}\n add(v,withCarry){let a=this.r[7],c=withCarry?this.f.cy:0,sum=a+v+c;\n  this.f.ac=+(((a&15)+(v&15)+c)>15);this.f.cy=+(sum>255);this.r[7]=this.setSZP(sum)}\n sub(v,withBorrow,cmp=false){let a=this.r[7],c=withBorrow?this.f.cy:0,sum=a-v-c;\n  // 8080 AC is carry out of the complemented low-nibble addition, not half borrow.\n  this.f.ac=+(((a&15)+((~v)&15)+1-c)>15);this.f.cy=+(sum\u003c0);\n  let result=this.setSZP(sum);if(!cmp)this.r[7]=result}\n alu(k,v){let a=this.r[7];switch(k){\n  case 0:this.add(v,false);break;case 1:this.add(v,true);break;\n  case 2:this.sub(v,false);break;case 3:this.sub(v,true);break;\n  case 4:this.r[7]=this.setSZP(a&v);this.f.cy=0;this.f.ac=+!!((a|v)&8);break; // 8080 ANA differs from 8085\n  case 5:this.r[7]=this.setSZP(a^v);this.f.cy=this.f.ac=0;break;\n  case 6:this.r[7]=this.setSZP(a|v);this.f.cy=this.f.ac=0;break;\n  case 7:this.sub(v,false,true);break;\n }}\n cond(k){let f=this.f;return k===0?!f.z:k===1?!!f.z:k===2?!f.cy:k===3?!!f.cy:k===4?!f.p:k===5?!!f.p:k===6?!f.s:!!f.s}\n packFlags(){let f=this.f;return f.s*128|f.z*64|f.ac*16|f.p*4|2|f.cy}\n unpackFlags(b){this.f.s=(b>>>7)&1;this.f.z=(b>>>6)&1;this.f.ac=(b>>>4)&1;this.f.p=(b>>>2)&1;this.f.cy=b&1}\n push(x,offs=[8,11]){this.sp=(this.sp-1)&65535;this.write(this.sp,x>>8,offs[0]);this.sp=(this.sp-1)&65535;this.write(this.sp,x&255,offs[1]);}\n pop(){let v=this.read16(this.sp);this.sp=(this.sp+2)&65535;return v}\n daa(){let a=this.r[7],oldCarry=this.f.cy,oldAC=this.f.ac;let correction=0;\n  if((a&15)>9||oldAC)correction|=0x06;\n  if(a>0x99||oldCarry)correction|=0x60;\n  this.f.ac=+(((a&15)+(correction&15))>15);\n  this.f.cy=+(oldCarry||a+correction>255);\n  this.r[7]=this.setSZP(a+correction);\n }\n step(){if(this.halted)return 0;\n let startPC=this.pc,op=this.fetch(),c=4,r=this.r;this.lastOpcode=op;\n if(INVALID_8080.has(op))throw Error('Undocumented 8080 opcode '+op.toString(16).padStart(2,'0').toUpperCase()+'h at '+startPC.toString(16).padStart(4,'0').toUpperCase()+'h');\n if(op>=0x40&&op\u003c=0x7f){\n   if(op===0x76){this.halted=true;c=7}\n   else{let src=op&7,dst=(op>>>3)&7;this.put(dst,this.get(src),6);c=(src===6||dst===6)?7:5}\n }else if(op>=0x80&&op\u003c=0xbf){this.alu((op>>>3)&7,this.get(op&7));c=(op&7)===6?7:4}\n else if((op&0xc7)===0x06){let dst=(op>>>3)&7,v=this.fetch();this.put(dst,v,dst===6?9:0);c=dst===6?10:7}\n else if((op&0xc7)===0x04){let dst=(op>>>3)&7,v=this.get(dst),res=this.setSZP(v+1);\n   this.f.ac=+((v&15)===15);this.put(dst,res,9);c=dst===6?10:5}\n else if((op&0xc7)===0x05){let dst=(op>>>3)&7,v=this.get(dst),res=this.setSZP(v-1);\n   this.f.ac=+((v&15)!==0);this.put(dst,res,9);c=dst===6?10:5}\n else if((op&0xcf)===0x01){this.setpair((op>>>4)&3,this.fetch16());c=10}\n else if((op&0xcf)===0x03){let k=(op>>>4)&3;this.setpair(k,this.pair(k)+1);c=5}\n else if((op&0xcf)===0x0b){let k=(op>>>4)&3;this.setpair(k,this.pair(k)-1);c=5}\n else if((op&0xcf)===0x09){let sum=this.hl()+this.pair((op>>>4)&3);this.f.cy=+(sum>65535);this.setpair(2,sum);c=10}\n else if((op&0xc7)===0xc2){let dest=this.fetch16();if(this.cond((op>>>3)&7))this.pc=dest;c=10}\n else if((op&0xc7)===0xc0){let yes=this.cond((op>>>3)&7);if(yes)this.pc=this.pop();c=yes?11:5}\n else if((op&0xc7)===0xc4){let dest=this.fetch16(),yes=this.cond((op>>>3)&7);\n  if(yes){this.push(this.pc,[13,16]);this.pc=dest}c=yes?17:11}\n else if((op&0xcf)===0xc1){let k=(op>>>4)&3,v=this.pop();if(k===3){r[7]=v>>>8;this.unpackFlags(v&255)}else this.setpair(k,v);c=10}\n else if((op&0xcf)===0xc5){let k=(op>>>4)&3,v=k===3?(r[7]\u003c\u003c8)|this.packFlags():this.pair(k);this.push(v,[7,10]);c=11}\n else if((op&0xc7)===0xc7){this.push(this.pc,[7,10]);this.pc=op&0x38;c=11}\n else if((op&0xc7)===0xc6){this.alu((op>>>3)&7,this.fetch());c=7}\n else switch(op){\n case 0x00:break;\n case 0x02:this.write(this.pair(0),r[7],6);c=7;break;\n case 0x12:this.write(this.pair(1),r[7],6);c=7;break;\n case 0x0a:r[7]=this.read(this.pair(0));c=7;break;\n case 0x1a:r[7]=this.read(this.pair(1));c=7;break;\n case 0x07:this.f.cy=r[7]>>>7;r[7]=(r[7]\u003c\u003c1|this.f.cy)&255;break;\n case 0x0f:this.f.cy=r[7]&1;r[7]=(r[7]>>>1)|(this.f.cy\u003c\u003c7);break;\n case 0x17:{let cy=this.f.cy;this.f.cy=r[7]>>>7;r[7]=(r[7]\u003c\u003c1|cy)&255;break}\n case 0x1f:{let cy=this.f.cy;this.f.cy=r[7]&1;r[7]=(r[7]>>>1)|(cy\u003c\u003c7);break}\n case 0x22:{let addr=this.fetch16();this.write(addr,r[5],12);this.write(addr+1,r[4],15);c=16;break}\n case 0x2a:{let addr=this.fetch16();r[5]=this.read(addr);r[4]=this.read(addr+1);c=16;break}\n case 0x27:this.daa();break;\n case 0x2f:r[7]^=255;break;\n case 0x32:{let addr=this.fetch16();this.write(addr,r[7],12);c=13;break}\n case 0x3a:r[7]=this.read(this.fetch16());c=13;break;\n case 0x37:this.f.cy=1;break;\n case 0x3f:this.f.cy^=1;break;\n case 0xc3:this.pc=this.fetch16();c=10;break;\n case 0xc9:this.pc=this.pop();c=10;break;\n case 0xcd:{let dest=this.fetch16();this.push(this.pc,[13,16]);this.pc=dest;c=17;break}\n case 0xd3:{this.fetch();this.ioWrites++;this.pulse(9);c=10;break}\n case 0xdb:{this.fetch();r[7]=this.inputByte;c=10;break}\n case 0xe3:{let l=this.read(this.sp),h=this.read(this.sp+1);this.write(this.sp,r[5],14);this.write(this.sp+1,r[4],17);r[5]=l;r[4]=h;c=18;break}\n case 0xe9:this.pc=this.hl();c=5;break;\n case 0xeb:{let d=r[2],e=r[3];r[2]=r[4];r[3]=r[5];r[4]=d;r[5]=e;c=4;break}\n case 0xf3:this.inte=0;if(this.audio&&this.mode==='inte')this.audio.edge(0,this.t+4);break;\n case 0xfb:this.inte=1;if(this.audio&&this.mode==='inte')this.audio.edge(1,this.t+4);break;\n case 0xf9:this.sp=this.hl();c=5;break;\n default:throw Error('Decoder error at '+startPC.toString(16)+' opcode '+op.toString(16));\n }\n this.t+=c;this.count++;\n if(this.audio)this.audio.advance(this.t);\n return c;\n }\n}\n\n\n// Each run gets its own worker; terminate() also cancels queued chunks.\nlet paused = false, played = 0;\nself.onmessage = event => {\n  if (event.data.kind === 'pause' || event.data.kind === 'resume') { paused = event.data.kind === 'pause'; return; }\n  if (event.data.kind === 'played') { played = event.data.seconds; return; }\n  let cpu;\n  try {\n    const o = event.data;\n    const audio = new AudioBus(o.hz, o.rate, o.output, o.seconds, 1);\n    cpu = new CPU8080(new Uint8Array(o.rom), { memoryMode: o.memoryMode, mode: o.output, inputByte: o.inputByte, audio });\n    const maxT = o.seconds * o.hz, maxInstructions = 150000000;\n    let sentSamples = 0;\n    function sendAudio(samples, end) {\n      if (!o.realtime || end \u003c= sentSamples) return;\n      const chunk = samples.slice(sentSamples, end); sentSamples = end;\n      self.postMessage({ kind: 'audio', audio: chunk.buffer }, [chunk.buffer]);\n    }\n    function runChunk() {\n      try {\n        if (paused || (o.realtime && cpu.t / o.hz - played > 2)) { setTimeout(runChunk, 20); return; }\n        let steps = 0;\n        while (!cpu.halted && cpu.t \u003c maxT && cpu.count \u003c maxInstructions && steps++ \u003c 120000) cpu.step();\n        sendAudio(audio.samples, audio.i);\n        if (!cpu.halted && cpu.t \u003c maxT && cpu.count \u003c maxInstructions) {\n          self.postMessage({ kind: 'progress', steps: cpu.count, seconds: cpu.t / o.hz, t: cpu.t,\n            pc: cpu.pc, sp: cpu.sp, flags: cpu.packFlags(), registers: Array.from(cpu.r),\n            inte: cpu.inte, memWrites: cpu.memWrites, ignoredWrites: cpu.ignoredWrites,\n            ioWrites: cpu.ioWrites, edges: audio.edges });\n          setTimeout(runChunk, 0);\n          return;\n        }\n        const samples = audio.finish(cpu.t);\n        sendAudio(samples, samples.length);\n        self.postMessage({ kind: 'done', audio: samples.buffer, steps: cpu.count, t: cpu.t,\n          halted: cpu.halted, pc: cpu.pc, sp: cpu.sp, flags: cpu.packFlags(), registers: Array.from(cpu.r),\n          memWrites: cpu.memWrites, ignoredWrites: cpu.ignoredWrites, ioWrites: cpu.ioWrites,\n          inte: cpu.inte, edges: audio.edges, rate: o.rate,\n          stopReason: cpu.halted ? 'HLT' : cpu.t >= maxT ? 'time_limit' : 'instruction_limit' }, [samples.buffer]);\n      } catch (error) {\n        self.postMessage({ kind: 'error', message: error.message, pc: cpu.pc, t: cpu.t, steps: cpu.count });\n      }\n    }\n    runChunk();\n  } catch (error) { self.postMessage({ kind: 'error', message: error.message }); }\n};\n"], { type: 'text/javascript' })); const worker = new Worker(url); URL.revokeObjectURL(url); return worker; }
+
+function report(message, error = false) {
+  $('status').textContent = message;
+  $('error').hidden = !error;
+  $('error').textContent = error ? message : '';
+}
+function setBusy(busy) {
+  const active = speaker.active || busy;
+  document.body.dataset.playing = String(active && !speaker.paused);
+  $('run').disabled = starting || !firmware;
+  $('run').textContent = starting ? 'Запуск…' : speaker.active ? speaker.paused ? '▶ Продолжить' : 'Ⅱ Пауза' : '▶ Эмулировать';
+  $('cancel').disabled = !firmware;
+  for (const input of machineInputs) input.disabled = starting || active;
+  $('run-state').textContent = speaker.paused ? 'Пауза' : active ? 'Исполнение и звук' : firmware ? 'Образ загружен' : 'Ожидание образа';
+}
+function stopWorker() { if (worker) { worker.terminate(); worker = null; } setBusy(false); }
+function resetPlayback() {
+  runTicket++; starting = false; speaker.reset(); stopWorker(); clearResult(); setBusy(false);
+  $('playback-status').textContent = 'Звук запускается кнопкой «Эмулировать»'; $('elapsed').textContent = '00:00.0';
+}
+function drawScope(samples) {
+  const canvas = $('scope'), context = canvas.getContext('2d'), w = canvas.width, h = canvas.height;
+  context.clearRect(0, 0, w, h);
+  context.strokeStyle = '#263323'; context.lineWidth = 1;
+  context.beginPath();
+  for (let x = 0; x <= w; x += w / 10) { context.moveTo(x, 0); context.lineTo(x, h); }
+  for (let y = h / 4; y < h; y += h / 4) { context.moveTo(0, y); context.lineTo(w, y); }
+  context.stroke();
+  if (!samples?.length) return;
+  const limit = Math.min(samples.length, rate * 0.05);
+  context.strokeStyle = '#c9ef86'; context.lineWidth = 1.4; context.beginPath();
+  // Min/max per pixel preserves short pulses instead of skipping between samples.
+  for (let x = 0; x < w; x++) {
+    const begin = Math.floor(x * limit / w), end = Math.max(begin + 1, Math.floor((x + 1) * limit / w));
+    let low = 1, high = -1;
+    for (let i = begin; i < Math.min(end, limit); i++) { low = Math.min(low, samples[i]); high = Math.max(high, samples[i]); }
+    context.moveTo(x, h / 2 - high * h * 0.43); context.lineTo(x, h / 2 - low * h * 0.43);
+  }
+  context.stroke();
+}
+function updateRegisters(result) {
+  const regs = result?.registers || Array(8).fill(0), flags = result?.flags || 2;
+  $('registers').replaceChildren(...['B', 'C', 'D', 'E', 'H', 'L', 'A', 'F'].map((name, i) => {
+    const box = document.createElement('div'), label = document.createElement('span'), value = document.createElement('strong');
+    box.className = 'cpu-register'; label.textContent = name;
+    value.textContent = hex(i === 6 ? regs[7] : i === 7 ? flags : regs[i]);
+    box.append(label, value); return box;
+  }));
+  $('flags').replaceChildren(...[['S', 7], ['Z', 6], ['AC', 4], ['P', 2], ['CY', 0]].map(([name, bit]) => {
+    const flag = document.createElement('span'), value = (flags >> bit) & 1;
+    flag.className = 'flag'; flag.dataset.set = String(!!value); flag.textContent = `${name} ${value}`; return flag;
+  }));
+  $('cpu-status').textContent = `PC ${hex(result?.pc || 0, 4)} · SP ${hex(result?.sp || 0, 4)} · INTE ${result?.inte || 0}`;
+  $('write-note').textContent = result ? `Записей в память: ${number(result.memWrites)}; проигнорировано в ПЗУ: ${number(result.ignoredWrites)}. Начальная точка — 0000h.` : 'Регистры показаны в шестнадцатеричном виде. Начальная точка — 0000h.';
+}
+function clearResult() {
+  raw = computed = processed = runOptions = null;
+  previewDrawn = false;
+  if (audioURL) { URL.revokeObjectURL(audioURL); audioURL = null; }
+  $('download').removeAttribute('href'); $('download').removeAttribute('download'); $('download').setAttribute('aria-disabled', 'true');
+  for (const id of ['steps', 'cycles', 'edges', 'writes', 'io-writes']) $(id).textContent = '0';
+  $('cpu-time').textContent = '0,000 с'; $('progress').value = 0;
+  drawScope(null); updateRegisters(null);
+}
+function rebuildAudio() {
+  if (!raw) return;
+  const [cutoff, poles] = $('filter').value.split('-').map(Number);
+  processed = processAudio(raw, rate, cutoff, poles, $('normalize').checked);
+  const blob = new Blob([encodeWav(processed, rate)], { type: 'audio/wav' });
+  if (audioURL) URL.revokeObjectURL(audioURL);
+  audioURL = URL.createObjectURL(blob);
+  $('download').href = audioURL;
+  $('download').download = `${filename.replace(/\.[^.]+$/, '')}_8080_${runOptions.output}.wav`;
+  $('download').setAttribute('aria-disabled', 'false'); drawScope(processed);
+}
+async function loadFile(file) {
+  if (!file) return;
+  const ticket = ++loadTicket;
+  resetPlayback(); firmware = null; filename = ''; setBusy(false);
+  report('Загрузка образа…');
+  $('file-name').textContent = 'Загрузка…'; $('file-info').textContent = ''; $('file-hash').textContent = '';
+  try {
+    // A BIN is at most 64 KiB. HEX ASCII is bounded separately, before reading it.
+    if (file.size > 2 * 1024 * 1024) throw Error('Файл слишком большой: ожидается образ до 64 КиБ');
+    const bytes = /\.(hex|ihx|ihex)$/i.test(file.name) ? parseIntelHex(await file.text()) : validateBinary(new Uint8Array(await file.arrayBuffer()));
+    if (ticket !== loadTicket) return;
+    firmware = bytes; filename = file.name;
+    $('file-name').textContent = filename;
+    $('file-info').textContent = `${number(bytes.length)} байт · ${/\.(hex|ihx|ihex)$/i.test(filename) ? 'Intel HEX' : 'бинарный образ'} · PC 0000h`;
+    report('Образ загружен. Выберите параметры и нажмите «Эмулировать».'); setBusy(false);
+    if (crypto.subtle) {
+      const hash = await crypto.subtle.digest('SHA-256', bytes);
+      if (ticket === loadTicket) $('file-hash').textContent = `SHA-256 ${[...new Uint8Array(hash)].map(x => x.toString(16).padStart(2, '0')).join('')}`;
+    }
+  } catch (error) {
+    if (ticket !== loadTicket) return;
+    firmware = null; $('file-name').textContent = 'Образ не загружен'; $('file-info').textContent = '';
+    report(error.message, true); setBusy(false);
+  }
+}
+async function run() {
+  if (!firmware || starting) return;
+  if (speaker.active) {
+    try { await speaker.togglePause(); worker?.postMessage({ kind: speaker.paused ? 'pause' : 'resume' }); $('playback-status').textContent = speaker.paused ? 'Пауза' : 'Звук из исполняемого ROM'; setBusy(!!worker); }
+    catch (error) { resetPlayback(); report(error.message, true); }
+    return;
+  }
+  if (worker) return;
+  const hz = Number($('hz').value), seconds = Number($('seconds').value);
+  if (!Number.isFinite(hz) || hz < 100000 || hz > 10000000 || !Number.isFinite(seconds) || seconds < 0.1 || seconds > 120) {
+    report('Частота: 100 000–10 000 000 Гц. Лимит времени: 0,1–120 с.', true); return;
+  }
+  resetPlayback(); const ticket = ++runTicket;
+  runOptions = { hz, seconds, output: $('output').value, memoryMode: $('memory').value, inputByte: Number($('input-byte').value), realtime: true };
+  $('progress').max = seconds; starting = true; setBusy(true); report('Запуск эмуляции и звука…');
+  try {
+    if (!await speaker.start(soundOptions()) || ticket !== runTicket) return;
+    starting = false; setBusy(true); $('playback-status').textContent = 'Звук из исполняемого ROM';
+    const activeWorker = worker = createWorker();
+    worker.onmessage = event => {
+      if (worker !== activeWorker) return;
+      const message = event.data;
+      if (message.kind === 'audio') {
+        if (!previewDrawn) { const o = soundOptions(); drawScope(processAudio(new Float32Array(message.audio), rate, o.cutoff, o.poles, o.normalize)); previewDrawn = true; }
+        speaker.push(message.audio); return;
+      }
+      $('steps').textContent = number(message.steps || 0); $('cycles').textContent = number(message.t || 0);
+      $('cpu-time').textContent = `${((message.t || 0) / hz).toLocaleString('ru-RU', { minimumFractionDigits: 3, maximumFractionDigits: 3 })} с`;
+      $('progress').value = Math.min(seconds, (message.t || 0) / hz);
+      if (message.kind === 'progress') {
+        updateRegisters(message); $('edges').textContent = number(message.edges); $('writes').textContent = number(message.memWrites); $('io-writes').textContent = number(message.ioWrites);
+        report(`Выполнено ${number(message.steps)} команд. Процессорное время: ${message.seconds.toFixed(2)} с.`); return;
+      }
+      stopWorker();
+      if (message.kind === 'error') { speaker.reset(); setBusy(false); $('playback-status').textContent = 'Остановлено'; report(`Ошибка эмуляции: ${message.message}`, true); return; }
+      computed = message; raw = new Float32Array(message.audio); rebuildAudio(); updateRegisters(message);
+      speaker.finish();
+      $('edges').textContent = number(message.edges); $('writes').textContent = number(message.memWrites); $('io-writes').textContent = number(message.ioWrites);
+      const reason = message.stopReason === 'HLT' ? 'HLT' : message.stopReason === 'time_limit' ? 'лимит времени' : 'лимит команд';
+      report(`Завершение: ${reason}. ${number(message.steps)} команд · ${number(message.t)} T · ${(message.t / hz).toFixed(3)} с. WAV готов к скачиванию.`);
+    };
+    worker.onerror = event => { if (worker === activeWorker) { speaker.reset(); stopWorker(); $('playback-status').textContent = 'Остановлено'; report(`Ошибка фонового эмулятора: ${event.message}`, true); } };
+    const copy = firmware.slice(); worker.postMessage({ ...runOptions, rate, rom: copy.buffer }, [copy.buffer]);
+  } catch (error) { if (ticket === runTicket) { starting = false; speaker.reset(); stopWorker(); report(error.message, true); } }
+}
+
+$('load').addEventListener('click', () => $('file').click());
+$('file').addEventListener('change', () => loadFile($('file').files[0]));
+$('run').addEventListener('click', run);
+$('cancel').addEventListener('click', () => { resetPlayback(); report('Сброс на начало. Нажмите «Эмулировать», чтобы запустить прошивку.'); });
+for (const id of ['filter', 'normalize']) $(id).addEventListener('change', () => { speaker.configure(soundOptions()); rebuildAudio(); });
+$('volume').addEventListener('input', () => speaker.volume(Number($('volume').value)));
+$('download').addEventListener('click', event => { if (!raw) event.preventDefault(); });
+for (const input of machineInputs) input.addEventListener('change', () => {
+  resetPlayback(); report(firmware ? 'Параметры изменены. Запустите эмуляцию заново.' : 'Загрузите образ прошивки.');
+  $('signal-label').textContent = $('output').value === 'inte' ? 'INTE' : '/WR';
+  $('memory-note').textContent = $('memory').value === 'rom' ? '32-КиБ образ зеркалируется по A15. Записи дают /WR, содержимое ПЗУ сохраняется.' : $('memory').value === 'ramupper' ? 'Адреса 8000–FFFF доступны для записи. A15 участвует в адресации.' : 'Все 64 КиБ доступны для чтения и записи, включая загруженный код.';
+});
+for (const name of ['dragenter', 'dragover']) $('drop-zone').addEventListener(name, event => { event.preventDefault(); $('drop-zone').classList.add('drag-over'); });
+for (const name of ['dragleave', 'drop']) $('drop-zone').addEventListener(name, event => { event.preventDefault(); $('drop-zone').classList.remove('drag-over'); });
+$('drop-zone').addEventListener('drop', event => loadFile(event.dataTransfer.files[0]));
+window.addEventListener('keydown', event => {
+  if (event.code === 'Space' && !['INPUT', 'SELECT', 'TEXTAREA', 'BUTTON', 'A', 'SUMMARY'].includes(document.activeElement.tagName)) { event.preventDefault(); run(); }
+});
+window.addEventListener('beforeunload', () => { speaker.reset(); stopWorker(); if (audioURL) URL.revokeObjectURL(audioURL); });
+clearResult(); setBusy(false);
+
+</script>
+</body>
+</html>

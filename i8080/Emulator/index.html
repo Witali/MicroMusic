@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101411">
+  <title>MicroMusic / Intel 8080 — эмулятор прошивок</title>
+  <meta name="description" content="Плеер собственных BIN, ROM и Intel HEX: Intel 8080, звуковой выход INTE или /WR, осциллограмма и экспорт WAV.">
+  <link rel="icon" href="../../web-player/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../web-player/styles.css">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.mjs"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../../web-player/"><svg viewBox="0 0 36 36" aria-hidden="true"><rect x="7" y="7" width="22" height="22" rx="4"/><path d="M1 12h6m-6 6h6m-6 6h6m22-12h6m-6 6h6m-6 6h6M12 1v6m6-6v6m6-6v6M12 29v6m6-6v6m6-6v6M12 21l4-7 4 8 4-7"/></svg> MicroMusic<span>/ LAB</span></a>
+    <a href="./README.md" class="header-link">Описание и проверка ↗</a>
+    <span class="engine-badge"><i></i> 8080 → INTE / WR → AUDIO</span>
+  </header>
+  <main>
+    <div class="intro">
+      <div><p class="eyebrow">INTEL 8080 / ЗВУК ИЗ МАШИННОГО КОДА</p><h1>Запустите свою прошивку<span>.</span></h1><p class="subtitle">Загрузите образ ПЗУ, исполните код и послушайте результат.</p></div>
+      <div class="machine-spec"><strong>64 <span>КиБ АДРЕСОВ</span></strong><span>8 бит <i>·</i> 244 кодировки <i>·</i> Intel 8080</span></div>
+    </div>
+    <div id="error" class="error" role="alert" hidden></div>
+    <div class="workspace emulator-workspace">
+      <div class="instrument">
+        <section class="panel" aria-label="Загрузка и исполнение прошивки">
+          <div class="panel-heading"><span class="eyebrow">01 / ПРОШИВКА</span><span id="run-state" class="run-state">Ожидание образа</span></div>
+          <div class="cpu-board" aria-hidden="true"><div class="cpu-package"><span>INTEL</span><strong>8080</strong><small>8-BIT MICROPROCESSOR</small></div><div class="cpu-wire"><span id="signal-label">INTE</span><i></i><span>RC</span><i></i><b>♪</b></div></div>
+          <div id="drop-zone" class="drop-zone">
+            <input id="file" type="file" accept=".bin,.rom,.hex,.ihx,.ihex" class="file-input" aria-label="Файл прошивки BIN, ROM или Intel HEX">
+            <button id="load" class="load-button" type="button">↑ Загрузить ROM</button>
+            <span>или перетащите файл сюда</span><small>BIN · ROM · Intel HEX · до 64 КиБ</small>
+          </div>
+          <div class="firmware-info"><span class="eyebrow">ОБРАЗ В ПАМЯТИ</span><h2 id="file-name">Ваша прошивка</h2><p id="file-info">Встроенных прошивок нет. Выберите свой файл.</p><span id="file-hash" class="file-hash"></span></div>
+          <div class="transport"><button id="run" class="primary" disabled>▶ Эмулировать</button><button id="cancel" disabled>↺ Сначала</button><a id="download" class="wav-download" aria-disabled="true">↓ WAV</a></div>
+          <progress id="progress" max="90" value="0" aria-label="Выполненное процессорное время"></progress>
+          <p id="status" class="execution-status" role="status">Готов к загрузке BIN, ROM или Intel HEX.</p>
+          <div class="emulator-metrics"><div><span>КОМАНД</span><strong id="steps">0</strong></div><div><span>T-ТАКТОВ</span><strong id="cycles">0</strong></div><div><span>ВРЕМЯ CPU</span><strong id="cpu-time">0,000 с</strong></div></div>
+        </section>
+        <section class="panel scope-panel" aria-label="Звук прошивки">
+          <div class="panel-heading"><span class="eyebrow">02 / ЗВУКОВОЙ СИГНАЛ</span><span class="technical-note">96 кГц · МОНО · PCM 16 БИТ</span></div>
+          <div class="scope-wrap"><canvas id="scope" width="1000" height="200" role="img" aria-label="Осциллограмма восстановленного звука"></canvas><span class="scope-scale">первые 50 мс</span></div>
+          <div class="live-controls"><span id="playback-status" role="status">Звук запускается кнопкой «Эмулировать»</span><output id="elapsed">00:00.0</output></div>
+          <label class="live-volume">Громкость <input id="volume" type="range" min="0" max="1" step="0.01" value="0.65"></label>
+          <div class="emulator-metrics"><div><span>ФРОНТОВ ВЫХОДА</span><strong id="edges">0</strong></div><div><span>ЗАПИСЕЙ В ПАМЯТЬ</span><strong id="writes">0</strong></div><div><span>OUT / ПОРТЫ</span><strong id="io-writes">0</strong></div></div>
+        </section>
+      </div>
+      <aside class="panel settings-panel" aria-label="Настройки эмулятора">
+        <div class="panel-heading"><span class="eyebrow">ПАРАМЕТРЫ МАШИНЫ</span><span class="count">8080</span></div>
+        <label for="hz">Частота процессора, Гц</label><input id="hz" data-machine type="number" min="100000" max="10000000" step="1000" value="3500000">
+        <label for="output">Звуковой выход</label><select id="output" data-machine><option value="inte">INTE · уровень EI / DI</option><option value="wr">/WR · импульсы записи</option></select>
+        <label for="memory">Карта памяти</label><select id="memory" data-machine><option value="rom">ПЗУ без ОЗУ</option><option value="ramupper">ПЗУ снизу · ОЗУ 8000–FFFF</option><option value="allram">ОЗУ 0000–FFFF</option></select>
+        <p id="memory-note" class="setting-note">32-КиБ образ зеркалируется по A15. Записи дают /WR, содержимое ПЗУ сохраняется.</p>
+        <label for="input-byte">Значение на входе IN</label><select id="input-byte" data-machine><option value="255">FFh</option><option value="0">00h</option></select>
+        <label for="seconds">Лимит процессорного времени, с</label><input id="seconds" data-machine type="number" min="0.1" max="120" step="0.1" value="90">
+        <p class="setting-note">Исполнение заканчивается по HLT или лимиту. Вычисление можно прервать.</p>
+        <div class="settings-divider"></div><p class="eyebrow">ВОССТАНОВЛЕНИЕ ЗВУКА</p>
+        <label for="filter">Низкочастотный фильтр</label><select id="filter"><option value="4500-4">4,5 кГц · 4 RC-звена</option><option value="4500-2">4,5 кГц · 2 RC-звена</option><option value="20000-2">20 кГц · 2 RC-звена</option><option value="0-1">Без дополнительного фильтра</option></select>
+        <label class="check-label"><input id="normalize" type="checkbox" checked> Автоуровень</label>
+        <p class="setting-note">Фильтр и автоуровень меняются во время прослушивания. Постоянная составляющая удаляется.</p>
+        <a class="standalone-link" href="./Intel_8080_ROM_Player.html" download>↓ Автономный HTML-плеер</a>
+      </aside>
+    </div>
+    <section class="panel inspector emulator-inspector" aria-label="Состояние процессора">
+      <div class="panel-heading"><span class="eyebrow">03 / СОСТОЯНИЕ INTEL 8080</span><span id="cpu-status" class="technical-note">PC 0000 · SP 0000 · INTE 0</span></div>
+      <div id="registers" class="emulator-registers"></div>
+      <div id="flags" class="flag-row" aria-label="Флаги S, Z, AC, P и CY"></div>
+      <p id="write-note" class="setting-note">Регистры показаны в шестнадцатеричном виде. Начальная точка — 0000h.</p>
+    </section>
+    <details class="emulator-help"><summary>Как устроена модель</summary><div>
+      <p>Нажмите «Эмулировать», чтобы сразу запустить код и звук. Эта же кнопка ставит воспроизведение на паузу; «Сначала» сбрасывает процессор. Отдельного аудиоплеера нет. WAV доступен после исполнения образа до HLT или лимита.</p>
+      <p>Плеер принимает собственные прошивки и выполняет документированные команды Intel 8080. Звук получается из уровня INTE или импульсов /WR, включая OUT. Отверстия в HEX и незаполненная память содержат FFh. Начальные адреса из записей HEX 03/05 не меняют вектор сброса 0000h.</p>
+      <p>В режиме «ПЗУ без ОЗУ» зеркалируется только образ ровно 32 КиБ. В режиме «ПЗУ снизу · ОЗУ сверху» верхние 32 КиБ доступны для записи; режим «ОЗУ» разрешает запись везде. Для стековых подпрограмм обычно требуется ОЗУ.</p>
+      <p>Длительности команд считаются в T-тактах без READY. Импульс /WR приближён к 1 T, INTE меняется при завершении EI/DI; активный INT и внешние контроллеры не моделируются. 3,5 МГц — настройка этой платы. Аналоговый тракт представлен усреднением сигнала и RC-фильтром.</p>
+      <p><a href="./README.md">Проверки и исправления ↗</a> · <a href="../CRC/README.md">Исследования CRC ↗</a> · <a href="https://device.report/m/8985a7044b63dafadf8a713690af2e4d2ef632c256d27343044e212ceaa86a3c" target="_blank" rel="noopener">Руководство Intel ↗</a></p>
+    </div></details>
+    <footer><span>MICROMUSIC / LAB <i>·</i> Intel 8080</span><span>ROM → Worker → AudioWorklet <i>·</i> Все вычисления в браузере</span></footer>
+  </main>
+  <noscript>Для эмулятора необходим JavaScript.</noscript>
+</body>
+</html>

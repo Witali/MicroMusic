@@ -1,0 +1,82 @@
+{
+  "chat_title": "Прошивка музыки для Intel 8080",
+  "chat_url": "https://chatgpt.com/c/6ad8c85e-4660-83eb-8cda-6832c07ec567",
+  "retrieved": "2026-10-22",
+  "archive": "Intel_8080_ROM_Player_Verified_Audit.zip",
+  "archive_sha256": "69f8013e5f69fc7404ab5c54444cee44213a0f02988f0a917c1389ef79adce13",
+  "original_version": "2.0.0",
+  "files": [
+    {
+      "path": "Intel_8080_ROM_Player_Verified.html",
+      "sha256": "cf107b95cf2e5f2c2d60b7acc9fe942d80c278c28faa734a07b9eb64425be4ff",
+      "bytes": 24401
+    },
+    {
+      "path": "core8080.js",
+      "sha256": "21a3e397dd31f756061202e8f3701def0206621d6477174242884b8b722c97ed",
+      "bytes": 10284
+    },
+    {
+      "path": "test_core8080.cjs",
+      "sha256": "b1012e570a86de18f8e42ae525d3788a295bf5bb3884e3451cdcbd386672422b",
+      "bytes": 7457
+    },
+    {
+      "path": "audit_result.json",
+      "sha256": "a8bad81cd7eb6192644090ba769ff72aabb27f42ed92e9d92f9bd6d5c377395b",
+      "bytes": 687
+    },
+    {
+      "path": "README_AUDIT_RU.md",
+      "sha256": "f0255839a4ee39e297c3718bc9538e11b8636d2c12340f1c5181bfcdb9f2bd60",
+      "bytes": 8118
+    },
+    {
+      "path": "uniform26.bin",
+      "sha256": "8085bef215f1108d9009082689554ffba36985b4717fb620791906ad49a847d0",
+      "bytes": 32768
+    },
+    {
+      "path": "balanced27.bin",
+      "sha256": "33da178192bd2c464c30045b995e4e25cd4b14da3f7ff1107b50b0bf759a094a",
+      "bytes": 32768
+    },
+    {
+      "path": "diagnostic_dualcrc.bin",
+      "sha256": "90fc9de477eb9b2b9f15a2b0d9bdaff390e124df24c024e77aaf4a42555007b1",
+      "bytes": 32768
+    },
+    {
+      "path": "browser_tests.py",
+      "sha256": "d6c64b5107b8ef054b31eb4b2cc5d7323be5c19b7040cf62f3c877e0bf5697a1",
+      "bytes": 1964
+    },
+    {
+      "path": "browser_tests_extra.py",
+      "sha256": "28c66d40e9546078720de8d69180eb73529f3ded4e399da780668b692d3a37cd",
+      "bytes": 2061
+    },
+    {
+      "path": "player_desktop.png",
+      "sha256": "263be6373c5ae35f09d19e4dc8cb19215d020a5d38b29d5b6a308baf9af65b2f",
+      "bytes": 203687
+    },
+    {
+      "path": "player_mobile.png",
+      "sha256": "bbe4757337ea75a19022cb4876bc108007455f47428be3f4ece46fed9680d315",
+      "bytes": 195138
+    },
+    {
+      "path": "MANIFEST_SHA256.json",
+      "sha256": "0a189579f0fb842390da1df7c61f248061eb7541b8770819e340cf0107dc76ac",
+      "bytes": 1718
+    }
+  ],
+  "retained": {
+    "core8080.js": "core8080.mjs (modified; see README.md)",
+    "uniform26.bin": "tests/roms/uniform26.bin",
+    "balanced27.bin": "tests/roms/balanced27.bin",
+    "diagnostic_dualcrc.bin": "tests/roms/diagnostic_dualcrc.bin"
+  },
+  "notes": "The original audit repeated incorrect subtraction/DCR AC and XCHG timing rules; it is not retained as a current verification claim. The interface, loader, audio processing and tests have been updated locally."
+}

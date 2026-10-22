@@ -11,7 +11,7 @@ createServer(async(req,res)=>{
     if (!['GET','HEAD'].includes(req.method)) { res.writeHead(405); res.end(); return; }
     let path=decodeURIComponent(new URL(req.url,'http://localhost').pathname);
     if (path==='/') { res.writeHead(302,{Location:'/web-player/'}); res.end(); return; }
-    if (!path.startsWith('/web-player/') && !path.startsWith('/ATtiny13A/Music/')) throw new Error('Not found');
+    if (!['/web-player/','/ATtiny13A/Music/','/i8080/Emulator/','/i8080/CRC/'].some(prefix=>path.startsWith(prefix))) throw new Error('Not found');
     if (path.endsWith('/')) path+='index.html';
     const target=resolve(root,'.'+path);
     if (!target.startsWith(root+sep) || path.split('/').some(s=>s.startsWith('.'))) throw new Error('Not found');
