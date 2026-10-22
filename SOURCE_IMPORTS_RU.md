@@ -37,6 +37,7 @@ Arduino-копии `.cpp/.h/.inc` рядом со скетчами нужны и
 
 ```text
 python tools/verify-source-import.py --history --report build/source-import-verification.json
+python tools/verify-frozen-speech.py --avr-bin build/toolchains/avr-7.3.0/bin --report build/frozen-speech-verification.json
 ```
 
 Исходные архивы и речевые данные помечены авторами пакетов как материалы для частных экспериментов. Эта ветка сохраняется локально; публикация архивов/записей не выполнялась.
