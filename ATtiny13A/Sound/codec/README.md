@@ -1,74 +1,61 @@
-# MicroMusic · MiniLPC8 PulseProfiles New-only
+# MicroMusic · MiniLPC-HQ (ATtiny13A)
 
-**Experimental firmware for ATtiny13A, 1 KiB Flash, 64 B SRAM, 64 B EEPROM.**
+Experimental native-only eight-stage LPC speech codec for 1 KB ATtiny13A Flash. Clock **9.6 MHz** (CLKPR set to /1 by firmware), PWM PB1/OC0B at 37.5 kHz, speech sample rate 7.5 kHz. Current implementation is a proof of concept tested in a cycle-counting AVR emulator, **not tested on physical hardware**.
 
-One and only one on-chip bitstream format is supported. Legacy Full 350 and LPX3 appear **only in the private HTML comparison player**, never in firmware. This branch is the optimized version of the four-excitation-profile experiment.
+## Goal and verified results
 
-## New bitstream layout
+All metrics calculated with `pystoi.stoi(original, decoded, fs_sig=7500, extended=False)` against the three provided prepared original recordings. Training and evaluation share the same clips; the numbers do **not** indicate quality on unseen speech. STOI measures intelligibility, not timbre identity.
 
-Each frame lasts **256 audio samples** at **7,500 samples/s** (about 34.1 ms) and occupies **six bytes**:
+| Phrase | Previous VBR2 STOI | MiniLPC-HQ STOI | Flash | Decoder code | Speech data |
+|---|---:|---:|---:|---:|---:|
+| Chego tebe nuzhno? | 0.781 | **0.852** | **887 B** | 412 B | 474 B |
+| Chto zh ty ne otvechaesh? | 0.710 | **0.776** | **805 B** | 412 B | 392 B |
+| Sova, otkryvai, medved prishel! | 0.800 | **0.824** | **1023 B** | 412 B | 610 B |
 
-- Byte 0: pitch period (0 = unvoiced/noise).
-- Byte 1: bits 0–3 = gain (0–15); bits 4–5 = excitation profile (0–3). Bits 6–7 reserved (must be zero).
-- Bytes 2–5: 8 signed four-bit LPC reflection coefficients, each nibble decoded as `k = nibble - 8`.
+One final byte in each flash image terminates the speech loop; the **full Flash size** includes all code and data. EEPROM is not used. Each image fits ≤1024 B of Flash.
 
-The decoder runs an 8-stage fixed-point lattice filter and uses the high nibble **directly** to change two middle taps of the 4-sample excitation pulse. It does *not* decode historical byte layouts.
+## What changed
 
-Pulse amplitudes (in gain units) for the four profile IDs:
+* New **single format**: frames of **64 (8.53 ms), 128 (17.07 ms), or 256 (34.13 ms)** samples. `0x7F` acts as a new short-frame escape; `0xFF` marks the end of a repeating phrase. The AVR decoder supports only this native format, without legacy branches.
+* Frame header stores pitch, four-bit gain, one of four voiced excitation shapes (or noise excitation), and the coefficient-update kind. Eight signed four-bit reflection coefficients can be sent in full, only K1–K4, only K5–K8, or reused.
+* Offline **analysis by synthesis**: `train_hq.py` selects short frames, then `refine_hq.py` tunes pitch, gain, excitation profile and all eight LPC coefficients using the bit-exact model and STOI/spectral objectives.
+* Timer0 output interrupt updates OCR0B; LPC math runs in the main loop. No floating point or multiply hardware required on AVR.
 
-| ID | Voice pulse (relative amplitude) |
-|---|---|
-| 0 | [2, 3, 2, -1] |
-| 1 | [2, 2, 2, -1] |
-| 2 | [2, 3, 1, -1] |
-| 3 | [2, 2, 1, -1] |
+## Run / reproduce assembled binaries
 
-Note that the 4 sample values are the excitation *before* the LPC filter. Unvoiced sound uses a small LFSR noise generator.
+Requirements: Python 3.11+ with NumPy, SciPy, Numba, soundfile and pystoi; `clang` with AVR target, `llvm-objcopy`, `llvm-objdump`; Node.js for the cycle-counting AVR verification.
 
-## Size
+```bash
+python -m pip install -r requirements.txt
+python build_hq.py
+node verify.js
+python make_player.py
+node ui_smoke.js
+```
 
-| Example | Decoder / initialization / ISR | Speech | End marker | Full image |
-|---|---:|---:|---:|---:|
-| Chego | 364 B | 216 B | 1 B | **581 B** |
-| Otvechaesh | 364 B | 186 B | 1 B | **551 B** |
-| Vinni | 364 B | 522 B | 1 B | **887 B** |
+The private archive includes original reference WAVs, baseline formant parameters, all three trained parameter sets, HEX/ASM and result PCM. Assembling these trained parameters produces **byte-identical** HEX files. Automated further training is optional and can change the result:
 
-The previous compatible-profile prototype had 368 bytes before data, so moving to the single new format saves **4 bytes**; the old 350-byte Full had no profile feature and was smaller, but less flexible. We have not gained 18 bytes by dropping a legacy decoder: the feature itself is responsible for most overhead.
-
-## Build, run, verify
-
-Requires `clang` with AVR backend, `llvm-objcopy`, Node.js, Python 3.
-
-```sh
-python3 build.py
+```bash
+python train_hq.py --voice chego --seconds 45 --attempts 80
+python refine_hq.py --voice chego --seconds 45
+python build_hq.py
 node verify.js
 ```
 
-`verify.js` executes the **compiled AVR program** with a cycle-counting interpreter; it compares every output sample with the mathematical reference, checks Timer0 overflows and deadlines. Verified: 0 mismatches across 39,424 samples, 0 missed overflows, maximum ISR 28 cycles. This is not a real-hardware test.
+Optimization uses a time budget and may pick a different local optimum on different machines. For exact reproducibility use the included `samples/*/trained.npz` and only run `build_hq.py`.
 
-The HTML `index.html` is entirely self-contained and offers A/B comparison with original voices, LPX3 and Full 350, plus a new-only firmware verification button. The reference voices are copyrighted and are included for **private evaluation**, not publication. To rebuild the HTML within this private package:
+The code-only archive intentionally contains neither the copyrighted speech recordings nor their encoded data, but includes a fully compiled **synthetic demo** HEX and the associated source. In the code-only archive, run `python build_demo.py && node demo_verify.js`. The full `run_all.sh` command needs the private reference and trained-parameter files.
 
-```sh
-python3 make_player.py
-```
+## Web test page
 
-To experiment with automatic selection of the two profile bits (requires `numpy`, `numba`, `soundfile`, `pystoi`):
-
-```sh
-python3 train_profiles.py --voice chego --apply
-python3 build.py
-node verify.js
-python3 make_player.py
-```
+`index.html` is self-contained and works without a server. Select a phrase and a playback source: original, the prior MiniLPC VBR2, LPX3 reference WAV, or the new ATtiny13A output. "Play" uses cached PCM produced by actual AVR execution; "Verify HEX" executes the instruction stream again in-browser and checks each audio sample, Timer0 overflow, timing and firmware size. WAVs can be downloaded directly if the browser cannot produce audio.
 
 ## Hardware
 
-- Clock: 9.6 MHz internal RC, code sets CLKPR divider to /1.
-- Fast PWM: 37.5 kHz, output PB1/OC0B.
-- New audio sample every five Timer0 overflows (7.5 kHz).
-- Use a low-pass output filter and a suitable amplifier; do not drive a speaker directly from PB1.
-- Not yet verified on a physical ATtiny13A.
+* CPU internal RC 9.6 MHz (firmware sets CLKPR /1). Configure oscillator/fuses as appropriate, verify with programmer; make sure supply voltage is sufficient per the ATtiny13A datasheet.
+* Output PB1 / OC0B through a low-pass RC and an input-stage amplifier. Do **not** drive a loudspeaker directly from the pin.
+* Software emulator cannot reproduce oscillator tolerances, analog PWM filtering, supply noise or speaker output.
 
-## Publishing
+## Copyright
 
-For a public GitHub repository, remove original WAVs, LPX3 derived streams, user-provided cartoon audio, and any derivative LPC speech data or firmware embedding it unless permissions allow redistribution.
+The private archive contains user-supplied excerpted audio and is intended for individual experimentation. Do not publish these samples or derived LPC data openly without the necessary rights. The code-only archive contains no media excerpts.
