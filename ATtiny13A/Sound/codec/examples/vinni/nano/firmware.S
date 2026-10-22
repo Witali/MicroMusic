@@ -18,7 +18,7 @@
 .set CTR,0x62
 .set COEFF,0x68
 .set STATE,0x70
-.set VOICE_ADDR,0x180
+.set VOICE_ADDR,0x148
 .org 0x0000
 __vectors:
  rjmp reset
@@ -33,9 +33,9 @@ reset:
  out CLKPR,r16
  clr r16
  out CLKPR,r16
- sts READY,r16
+ clr r8
  ldi r16,5
- sts CTR,r16
+ mov r9,r16
  ldi r28,STATE
  clr r29
  ldi r19,8
@@ -63,8 +63,7 @@ zero_states:
  out TIMSK0,r16
  sei
 wait_slot:
- lds r16,READY
- tst r16
+ tst r8
  brne wait_slot
  inc r5
  brne current_frame
@@ -78,22 +77,9 @@ current_frame:
  sub r18,r2
  cpi r18,1
  breq pulse_second
- cpi r18,2
- breq pulse_third
- cpi r18,3
- breq pulse_fourth
  clr r18
  rjmp filter
 pulse_second:
- mov r18,r3
- lsl r18
- add r18,r3
- rjmp filter
-pulse_third:
- mov r18,r3
- lsl r18
- rjmp filter
-pulse_fourth:
  mov r18,r3
  neg r18
  rjmp filter
@@ -136,9 +122,9 @@ skip_state_update:
  st Y,r18
  mov r16,r18
  subi r16,128
- sts SAMPLE,r16
+ mov r7,r16
  ldi r16,1
- sts READY,r16
+ mov r8,r16
  rjmp wait_slot
 /* signed 8-bit sample * coefficient (signed -7..7), arithmetic >>4 */
 mul_q4:
@@ -205,21 +191,15 @@ irq:
  push r16
  in r16,SREG
  push r16
- push r17
- lds r16,CTR
- dec r16
+ dec r9
  brne irq_end
  ldi r16,5
- lds r17,READY
- tst r17
+ mov r9,r16
+ tst r8
  breq irq_end
- lds r17,SAMPLE
- out OCR0B,r17
- clr r17
- sts READY,r17
+ out OCR0B,r7
+ clr r8
 irq_end:
- sts CTR,r16
- pop r17
  pop r16
  out SREG,r16
  pop r16
@@ -227,5 +207,5 @@ irq_end:
 code_end:
 .org VOICE_ADDR
 voice_data:
-.incbin "voice_tinylpc.bin"
+.incbin "speech.bin"
 .byte 0xff

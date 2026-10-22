@@ -1,13 +1,33 @@
-# MicroMusic · 3 × 3 ATtiny13A Codec Lab
+# MicroMusic MiniLPC — проверка заявленных 334 байт
 
-Nine ATtiny13A firmware variants: Keyframe LPC-8, Adaptive LPC-8 and experimental MiniLPC-8 Full for three speech phrases.
+Исходный HEX с размером **334 байта декодера** в последнем архиве проекта не обнаружен. Удалось повторно собрать семейство MiniLPC и добиться **328 байт (Nano)** и **350 байт (Full)**, включая инициализацию MCU, фильтр и обработчик Timer0.
 
-All nine firmwares are checked to fit in 1024 bytes Flash and were decoded by `mini_emulator.js` with the Timer0 interrupt model, 9.6 MHz CPU and 7.5 kHz PCM output. All tests completed without missed Timer0 overflows or audio underruns. Four earlier short-phrase firmwares were independently re-emulated and matched their original stored unsigned PCM byte-for-byte.
+## Результаты
 
-Open `index.html` offline; it embeds the nine verified firmware images and their PCM output. The **Verify HEX** button re-executes the actual instruction streams in the browser and compares every sample to the stored reference result.
+| Фраза | Nano 328 Flash | Full 350 Flash | Сэмплов |
+|---|---:|---:|---:|
+| Чего тебе нужно? | 545 Б | 567 Б | 9216 |
+| Что ж ты не отвечаешь? | 515 Б | 537 Б | 7936 |
+| Сова! Открывай! Медведь пришёл! | 851 Б | 873 Б | 22272 |
 
-`firmware/<phrase>/<codec>/` contains assembly, HEX, BIN, speech data and AVR-generated PCM. `build_mini.py` and `build_matrix.py` use Clang AVR and llvm-objcopy in the same folder as source datasets; see scripts for required base paths. Other prior training scripts are not included, so the repository is a reproducible firmware/demo package, not a standalone fresh-training pipeline.
+Частота CPU 9,6 МГц, Fast PWM на PB1/OC0B 37,5 кГц, выходной PCM 7,5 кГц, фильтр восьмиступенчатый. Для аппаратного режима 9,6 МГц необходимо выключить CKDIV8 или корректно выполнить программную установку CLKPR. Код сбрасывает делитель CLKPR в /1 при старте; не меняйте фьюзы вслепую.
 
-The original speech samples are short excerpts supplied for private research, not cleared for public redistribution. The private ZIP includes these audio samples and packed speech streams for individual experimentation. For a public repository remove recordings and their encoded derivatives unless permission is obtained.
+В новой версии три регистра AVR выполняют функции буфера сэмпла, флага готовности и делителя частоты в IRQ. Обработчик прерывания сохраняет SREG и r16; выделенные регистры r7–r9 не используются другой логикой. Время обработчика в модельной проверке до 28 тактов против 41 ранее.
 
-Hardware pin PB1 / OC0B -> RC low-pass filter -> amplifier (do not drive the speaker directly). MCU must run at 9.6 MHz. Fuses: adjust CKDIV8/clock only after verifying chip and programmer settings; do not disable RESET or SPIEN. Actual hardware playback has not been tested.
+Проверки для трёх фраз (выполнены на цикл-считающем JS AVR-эмуляторе):
+* Nano 328 даёт **тот же PCM**, что повторно собранный Nano 362, на всех 39424 сэмплах.
+* Full 350 даёт **тот же PCM**, что исходный Full 384, на всех 39424 сэмплах.
+* Ни один из шести HEX не превышает 1024 байта Flash; пропусков переполнения Timer0 и голодания аудио нет.
+* **Nano и Full звучат различно**, так как используют разную форму возбуждения. Nano — не беззвучная замена Full.
+* На настоящей микросхеме ATtiny13A прошивки **не проверены**. Модель интерпретирует используемые AVR-инструкции, а не заменяет аппаратные испытания.
+
+## Повторная проверка
+
+```
+node verify.js
+python3 rebuild.py
+```
+
+Сборка требует `clang` с поддержкой AVR, `llvm-objcopy` и Python 3; проверка требует Node.js. `rebuild.py` сравнивает SHA256 результатов пересборки побайтово с приложенными прошивками. `verify.js` исполняет их и сверяет весь PCM по байтам с приложенным эталоном.
+
+Страница `index.html` — автономное прослушивание уже полученных из AVR PWM-значений плюс отдельная проверка начала HEX в браузере. Проект содержит производные речевые данные из мультфильмов: используйте в личных тестах, не публикуйте их в открытом репозитории без прав.

@@ -18,8 +18,7 @@
 .set CTR,0x62
 .set COEFF,0x68
 .set STATE,0x70
-.set TARGET,0x78
-.set VOICE_ADDR,0x1de
+.set VOICE_ADDR,0x15e
 .org 0x0000
 __vectors:
  rjmp reset
@@ -34,12 +33,12 @@ reset:
  out CLKPR,r16
  clr r16
  out CLKPR,r16
- sts READY,r16
+ clr r8
  ldi r16,5
- sts CTR,r16
- ldi r28,COEFF
+ mov r9,r16
+ ldi r28,STATE
  clr r29
- ldi r19,24
+ ldi r19,8
  clr r16
 zero_states:
  st Y+,r16
@@ -64,18 +63,12 @@ zero_states:
  out TIMSK0,r16
  sei
 wait_slot:
- lds r16,READY
- tst r16
+ tst r8
  brne wait_slot
  inc r5
  brne current_frame
  rcall read_frame
 current_frame:
- mov r16,r5
- and r16,r7
- brne smooth_done
- rcall smooth_formants
-smooth_done:
  tst r4
  breq noise_sample
  dec r2
@@ -142,9 +135,9 @@ skip_state_update:
  st Y,r18
  mov r16,r18
  subi r16,128
- sts SAMPLE,r16
+ mov r7,r16
  ldi r16,1
- sts READY,r16
+ mov r8,r16
  rjmp wait_slot
 /* signed 8-bit sample * coefficient (signed -7..7), arithmetic >>4 */
 mul_q4:
@@ -161,25 +154,11 @@ mul_pos:
  clr r17
  sbrc r16,7
  ser r17
- sbrs r25,0
- rjmp mult_skip1
+mul_loop:
  add r24,r16
  adc r0,r17
-mult_skip1:
- lsl r16
- rol r17
- sbrs r25,1
- rjmp mult_skip2
- add r24,r16
- adc r0,r17
-mult_skip2:
- lsl r16
- rol r17
- sbrs r25,2
- rjmp mult_skip3
- add r24,r16
- adc r0,r17
-mult_skip3:
+ dec r25
+ brne mul_loop
 mul_done:
  asr r0
  ror r24
@@ -193,31 +172,6 @@ mul_done:
 /* Full frame: 1 byte pitch (0 means unvoiced), 1 byte gain, four packed coefficient bytes.
  * Each signed k = nibble - 8. Decoding loops after 256 audio samples.
  */
-/* Slew eight 4-bit reflection coefficients toward target at controlled intervals. */
-smooth_formants:
- ldi r26,COEFF
- clr r27
- ldi r28,TARGET
- clr r29
- ldi r19,8
-smooth_loop:
- ld r16,X
- ld r17,Y
- cp r16,r17
- breq smooth_next
- brlt smooth_inc
- dec r16
- rjmp smooth_store
-smooth_inc:
- inc r16
-smooth_store:
- st X,r16
-smooth_next:
- inc r26
- inc r28
- dec r19
- brne smooth_loop
- ret
 read_frame:
  lpm r16,Z+
  cpi r16,0xff
@@ -226,22 +180,10 @@ read_frame:
  ldi r31,hi8(VOICE_ADDR)
  lpm r16,Z+
 read_pitch:
- mov r24,r16
- andi r16,0x7f
  mov r4,r16
  mov r2,r16
- lpm r16,Z+
- mov r3,r16
- mov r7,r16
- ldi r16,7
- sbrc r7,7
- ldi r16,3
- mov r7,r16
- ldi r16,0x7f
- and r3,r16
- sbrc r24,7
- ret
- ldi r28,TARGET
+ lpm r3,Z+
+ ldi r28,COEFF
  clr r29
  ldi r19,4
 read_k:
@@ -262,21 +204,15 @@ irq:
  push r16
  in r16,SREG
  push r16
- push r17
- lds r16,CTR
- dec r16
+ dec r9
  brne irq_end
  ldi r16,5
- lds r17,READY
- tst r17
+ mov r9,r16
+ tst r8
  breq irq_end
- lds r17,SAMPLE
- out OCR0B,r17
- clr r17
- sts READY,r17
+ out OCR0B,r7
+ clr r8
 irq_end:
- sts CTR,r16
- pop r17
  pop r16
  out SREG,r16
  pop r16
@@ -284,5 +220,5 @@ irq_end:
 code_end:
 .org VOICE_ADDR
 voice_data:
-.incbin "voice_tinylpc.bin"
+.incbin "speech.bin"
 .byte 0xff
