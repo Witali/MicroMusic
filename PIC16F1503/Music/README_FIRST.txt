@@ -1,13 +1,9 @@
-MicroMusic PIC16F1503 (ASSEMBLY) — НАЧАТЬ ЗДЕСЬ
+PIC16F1503 — MicroMusic, повторный аудит таймингов по DS40001607D (2026-10-21)
 
-1) web/player.html               автономный браузерный эмулятор настоящего PIC HEX
-2) firmware/micromusic.asm       главный исходник PIC-ассемблера
-3) firmware/micromusic_with_config.hex — программа для PICkit / MPLAB
-4) reference/preview_pic16_asm.wav — 14 с музыки, полученной из PIC-инструкций
-5) README.md                     полное руководство, ограничения и результаты
-
-Сборка: python tools/build_firmware.py
-
-Внимание: PIC16F1503 16 МГц HFINTOSC; PWM3 RA2; CONFIG1=3FC4,
-CONFIG2=3FFF. 62,5 кГц PWM и 12,5 кГц звуковые отсчёты.
-Проверено 230 секунд машинной эмуляции, 0 underrun. На железе НЕ проверялось.
+1. Откройте web/player.html — автономный веб-эмулятор PIC и проигрыватель.
+2. Прочитайте TIMING_AUDIT_DS40001607D_RU.md — исправления по таймингам, точность, ограничения.
+3. Исходный ассемблер: firmware/micromusic.asm; оригинальный музыкальный HEX: firmware/micromusic_with_config.hex.
+4. Для пересборки: python tools/build_firmware.py, затем python tools/build_player.py.
+5. Прогон тестов: node --test tests/official_datasheet_audit.test.mjs tests/official_timing_v2.test.mjs tests/isa_timing_matrix.test.mjs
+6. Полная партитура: node tests/audit_full_score.mjs (долго); последний отчёт reports/full_score_audit.json.
+7. Музыкальный HEX НЕ менялся. Для реальной платы нужна независимая проверка на PIC16F1503.

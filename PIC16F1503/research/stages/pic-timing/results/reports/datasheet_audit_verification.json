@@ -1,0 +1,24 @@
+{
+  "chip": "PIC16F1503",
+  "official_datasheet": "DS40001607D",
+  "official_errata": "DS80530C",
+  "directed_tests_passed": 23,
+  "firmware_hex_sha256": "7787e6dae4f115a36cf4f4a9054ed02c74411106efb02ba861195755854ae578",
+  "firmware_binary_unchanged": true,
+  "preview_wav_sha256": "c8f17c48bb9ae5627d080b99394a30aa369a90b53d3369705d32d454073f5f6e",
+  "preview_pcm_samples": 175000,
+  "preview_exactly_equal_to_previous": true,
+  "full_score_sections": 15,
+  "full_score_wrap_seconds": 222.02,
+  "full_score_irq_count": 2874997,
+  "full_score_note_off_commands": 16,
+  "full_score_pwm_queue_underruns": 0,
+  "max_hardware_stack_depth": 4,
+  "limitations": [
+    "fixed FOSC=16MHz",
+    "constant three-cycle interrupt entry delay; official 3-4",
+    "PWM period-average only, not RA2 pin edge simulation",
+    "incomplete SFR, analog modules and opcodes",
+    "physical silicon not tested"
+  ]
+}
