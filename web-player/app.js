@@ -61,7 +61,9 @@ function renderCatalog() {
     const body=document.createElement('span'); body.className='card-body';
     const name=document.createElement('strong'); name.textContent=entry.title;
     const voices=entry.voices??4;
-    const meta=document.createElement('span'); meta.className='card-meta'; meta.textContent=`${entry.flashBytes} Б Flash${entry.eepromBytes ? ' + 64 Б EEPROM' : ''} · ${entry.status==='experimental' ? 'ТЕСТ' : `${voices} ${voices===1?'ОСНОВНОЙ':'ОСНОВНЫХ'}`}${entry.releaseTailSlots ? ` · ${entry.releaseTailSlots} РЕЗЕРВНЫХ` : ''}`;
+    const meta=document.createElement('span'); meta.className='card-meta'; meta.textContent=entry.kind==='speech'
+      ? `${entry.flashBytes} Б Flash · речь 7,5 кГц`
+      : `${entry.flashBytes} Б Flash${entry.eepromBytes ? ' + 64 Б EEPROM' : ''} · ${entry.status==='experimental' ? 'ТЕСТ' : `${voices} ${voices===1?'ОСНОВНОЙ':'ОСНОВНЫХ'}`}${entry.releaseTailSlots ? ` · ${entry.releaseTailSlots} РЕЗЕРВНЫХ` : ''}`;
     const arrow=document.createElement('span'); arrow.className='card-arrow'; arrow.textContent=selected?.id===entry.id ? '●' : '↗'; arrow.setAttribute('aria-hidden','true');
     body.append(name,meta); button.append(number,body,arrow); button.onclick=()=>load(entry); item.append(button); $('catalog').append(item);
   }
@@ -90,6 +92,7 @@ function load(entry) {
   $('rom-hash').textContent=entry.flashSha256.slice(0,16)+'…'; $('rom-hash').title='SHA-256 Flash: '+entry.flashSha256;
   $('rom-size').textContent=entry.flashBytes+' байт';
   $('original-player').href=entry.originalPlayer; $('wav-link').hidden=!entry.preview; if (entry.preview) $('wav-link').href=entry.preview;
+  $('reference-wav').hidden=!entry.reference; if(entry.reference)$('reference-wav').href=entry.reference;
   $('download-eeprom').hidden=!entry.eepromHex; $('reset').disabled=false;
   for(const [id,source,suffix] of [['download',entry.source,''],['download-eeprom',entry.eepromSource,'-eeprom']]){
     const link=$(id);if(source){link.href=source;link.download=`attiny13a-${entry.id}${suffix}.hex`;link.removeAttribute('aria-disabled');}
@@ -150,9 +153,23 @@ for (const choice of document.querySelectorAll('input[name="engine"]')) choice.o
 document.addEventListener('keydown',event=>{ if (event.code==='Space' && !event.repeat && !/INPUT|SELECT|TEXTAREA|BUTTON|A/.test(event.target.tagName)) { event.preventDefault(); toggle(); } });
 window.addEventListener('pagehide',()=>{ runtime?.terminate(); audio?.close(); });
 try {
-  const response=await fetch('./firmware.json'); if (!response.ok) throw new Error('HTTP '+response.status);
+  const speech=new URL(location.href).searchParams.get('collection')==='hq4';
+  if(speech){
+    document.title='MicroMusic / ATtiny13A — речь HQ4';
+    document.querySelector('.intro .eyebrow').textContent='ATtiny13A / РЕЧЬ ИЗ МАШИННОГО КОДА';
+    document.querySelector('.intro h1').textContent='Речь в одном килобайте.';
+    document.querySelector('.subtitle').textContent='MiniLPC HQ4: три фразы и вариант с максимальным STOI.';
+    document.querySelector('.library h2').textContent='Как звучит HQ4?';
+    document.querySelector('.library-caption').textContent='Сохранённые прошивки. Переключайте JS и WASM для сравнения.';
+    document.querySelector('.source-only').hidden=true;
+    const history=document.querySelector('.header-link');history.href='../ATtiny13A/Sound/AUDIO_REFERENCES.md';history.textContent='Звуковые эталоны ↗';
+    $('original-player').textContent='Плеер из ChatGPT ↗';
+    $('speech-audit').hidden=false;
+    document.querySelector('footer span:last-child').textContent='MiniLPC HQ4 · 4 образа · Worker + AudioWorklet';
+  }
+  const response=await fetch(speech?'../build/hq4-preview/firmware.json':'./firmware.json'); if (!response.ok) throw new Error('HTTP '+response.status);
   catalog=await response.json();
   const id=new URL(location.href).searchParams.get('firmware')||catalog.defaultId;
   load(catalog.entries.find(e=>e.id===id)||catalog.entries.find(e=>e.id===catalog.defaultId));
-} catch (error) { showError('Не удалось загрузить каталог. Запустите локальный сервер по инструкции README.txt. '+error.message); }
+} catch (error) { showError('Не удалось загрузить каталог. Для HQ4 выполните tools/prepare-hq4-preview.py; запуск сервера описан в README.txt. '+error.message); }
 draw();

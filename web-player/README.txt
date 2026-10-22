@@ -99,7 +99,7 @@ OCR0B. Флаги SREG, стек SRAM/SPL и такты сверены с док
 тестов C-ядра и замеров скорости.
 Подробный аудит: reports/attiny13a-audit.txt. Полная таблица кодировок,
 тактов и покрытия: reports/attiny13a-instructions.json. Поддерживаются
-85 из 123 строк summary с учётом псевдонимов и форм адресации; 38 форм
+105 из 123 строк summary с учётом псевдонимов и форм адресации; 18 форм
 завершаются явной ошибкой. Полная эмуляция микроконтроллера не заявляется.
 Включённый образ не заменяется WAV или отдельным музыкальным синтезатором.
 
@@ -281,3 +281,14 @@ JSON содержит все события источника; музыкаль
 в каждом состоянии на пяти границах фазы/переноса. Итоги и частоты каждой
 ноты: reports/frequency-grid-verification.json. Басовые PitchBend Children
 сохранены в исходном JSON, но в компактную нотную адаптацию не входят.
+
+РЕЧЬ MINILPC HQ4
+Для трёх речевых примеров и maximum-STOI варианта используется тот же
+плеер, Worker/AudioWorklet и общие JS/WASM-ядра. Из корня репозитория:
+  python tools/prepare-hq4-preview.py --archive "<Downloads>/MicroMusic_COMPLETE_RESEARCH_HANDOFF_2026-10-22(2).zip"
+  node web-player/scripts/serve.mjs 8145
+Открыть http://127.0.0.1:8145/web-player/?collection=hq4
+Сценарий проверяет хеши и восстанавливает медиа в игнорируемый
+build/hq4-preview. Доступны оригинальные WAV и плеер из ChatGPT.
+Указатель эталонов: ../ATtiny13A/Sound/AUDIO_REFERENCES.md.
+Официальный аудит и сравнение: reports/hq4-audit-2026-10-22.md.

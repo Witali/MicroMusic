@@ -1,0 +1,115 @@
+{
+  "schema": "micromusic-hq4-emulator-comparison-v1",
+  "hardwareTested": false,
+  "archivedCores": {
+    "ATtiny13A/Sound/codec/release/avr_emulator.js": "dae6393748cc70178a6a6924a2c73f79b6ed67b7517c688ec3657fa9a87a3ffe",
+    "ATtiny13A/Sound/codec/MicroMusic_MulQ4_Opt_release/avr_emulator.js": "dae6393748cc70178a6a6924a2c73f79b6ed67b7517c688ec3657fa9a87a3ffe",
+    "ATtiny13A/Sound/fast-encoder/avr_emulator.js": "dae6393748cc70178a6a6924a2c73f79b6ed67b7517c688ec3657fa9a87a3ffe",
+    "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/avr_emulator.js": "dae6393748cc70178a6a6924a2c73f79b6ed67b7517c688ec3657fa9a87a3ffe"
+  },
+  "inputs": {
+    "web-player/lib/avr-reference.js": "da93381856fa293bc274459c27418c7054059a5bc1c582be065625d03a0cdf10",
+    "web-player/native/avr.c": "79c1297b12743d7496da6d2734085292d4a9a8a7ddd6e472065e87f01468bfe6",
+    "web-player/wasm/avr.wasm": "24bc946fc84695e174c430f77e7f98065ed98099cd7bbb02e6f5acd9906bdc37",
+    "tools/compare-hq4-emulators.mjs": "4115a7a56a70316e2230a603e75e97c0b534a48f3a32b5d02f43cd7fc530c27a"
+  },
+  "variants": {
+    "chego": {
+      "samples": 9216,
+      "flashBytes": 959,
+      "pcmSha256": "5f5bd15f17def3f67103ff008d38a00b161a0ad752f547f7816fef0615b4e87b",
+      "pcmMismatches": 0,
+      "jsWasmSlowStateMismatches": 0,
+      "timerLost": 0,
+      "irqs": 46080,
+      "maxISRCycles": 28,
+      "minimumSamplePeriod": 1279,
+      "maximumSamplePeriod": 1281,
+      "cycles": {
+        "repository": 11796672,
+        "archived": 11796672,
+        "minimumSampleDelta": 0,
+        "maximumSampleDelta": 0
+      }
+    },
+    "otvechaesh": {
+      "samples": 7936,
+      "flashBytes": 885,
+      "pcmSha256": "9ef1a8374cc8ed150d6efd2bcf80d33472399519041cb17e84d90d675324dac9",
+      "pcmMismatches": 0,
+      "jsWasmSlowStateMismatches": 0,
+      "timerLost": 0,
+      "irqs": 39680,
+      "maxISRCycles": 28,
+      "minimumSamplePeriod": 1279,
+      "maximumSamplePeriod": 1281,
+      "cycles": {
+        "repository": 10158272,
+        "archived": 10158272,
+        "minimumSampleDelta": 0,
+        "maximumSampleDelta": 0
+      }
+    },
+    "vinni": {
+      "samples": 22272,
+      "flashBytes": 1024,
+      "pcmSha256": "cd951656212586119b61b6a61d90d0a9a05d14c76a908257e78c4acdf97e712c",
+      "pcmMismatches": 0,
+      "jsWasmSlowStateMismatches": 0,
+      "timerLost": 0,
+      "irqs": 111360,
+      "maxISRCycles": 28,
+      "minimumSamplePeriod": 1279,
+      "maximumSamplePeriod": 1281,
+      "cycles": {
+        "repository": 28508351,
+        "archived": 28508351,
+        "minimumSampleDelta": 0,
+        "maximumSampleDelta": 0
+      }
+    },
+    "chego_stoi_max": {
+      "samples": 9216,
+      "flashBytes": 957,
+      "pcmSha256": "d1e6360eb1a2efd32bcd8ef699d660d0feb46b4603ec66f4fd35a3ec8a8199d9",
+      "pcmMismatches": 0,
+      "jsWasmSlowStateMismatches": 0,
+      "timerLost": 0,
+      "irqs": 46080,
+      "maxISRCycles": 28,
+      "minimumSamplePeriod": 1279,
+      "maximumSamplePeriod": 1281,
+      "cycles": {
+        "repository": 11796671,
+        "archived": 11796671,
+        "minimumSampleDelta": 0,
+        "maximumSampleDelta": 0
+      }
+    }
+  },
+  "pass": true,
+  "archivedSpecificationDifferences": [
+    {
+      "instruction": "ADC zero flag",
+      "mask": 2,
+      "expected": 2,
+      "archived": 0,
+      "repository": 2
+    },
+    {
+      "instruction": "NEG half-carry",
+      "mask": 32,
+      "expected": 32,
+      "archived": 0,
+      "repository": 32
+    },
+    {
+      "instruction": "LD -X with unused XH=1",
+      "expected": 165,
+      "archivedError": "SRAM address out of range: 0x160",
+      "repository": 165
+    }
+  ],
+  "archivedCopiesIdentical": true,
+  "totalSamples": 48640
+}

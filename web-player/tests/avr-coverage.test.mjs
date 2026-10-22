@@ -23,6 +23,9 @@ for (const entry of instructions) test(`${entry.form}: documented timing/flags o
   }
   if (entry.form==='RET' || entry.form==='RETI') c.pushPC(1);
   if (entry.form==='POP') c.push(0xa5);
+  if (/^(LD|LDD|ST|STD) /.test(entry.form)) {
+    for (const p of [26,28,30]) c.r[p]=97;
+  }
   c.sreg=0x73;
   c.step();
   assert.ok(entry.cycles.includes(c.cyc),`${c.cyc} CPU clocks; expected ${entry.cycles}`);
