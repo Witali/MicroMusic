@@ -8,7 +8,6 @@ for(const voice of voices){
  const dir=path.join(root,'samples',voice);
  const program=fs.readFileSync(path.join(dir,'firmware.bin'));
  const expected=fs.readFileSync(path.join(dir,'expected_pcm.raw'));
- const expectedFull=fs.readFileSync(path.join(dir,'reference_pcm.raw'));
  const core=new AVRCore(program);
  let mismatches=0, missedSamples=0, lastCycle=0, maxGap=0;
  const pcm=Buffer.alloc(expected.length);
@@ -21,8 +20,7 @@ for(const voice of voices){
    lastCycle=core.cycles;
  }
  fs.writeFileSync(path.join(dir,'avr_pcm.raw'),pcm);
- const info={bytes:program.length,decoderBytes:program.length-fs.statSync(path.join(dir,'speech.vbr')).size-1,
-  savingsVsFixedImage: (364+fs.statSync(path.join(dir,'speech_full.bin')).size+1)-program.length,
+ const info={bytes:program.length,decoderBytes:program.length-fs.statSync(path.join(dir,'speech.bin')).size-1,
   samples:expected.length,pcmDiff:mismatches,missedOverflows:core.missedOverflows,
   lateAudioSamples:missedSamples,maxISR:core.maxISR,maxGap};
  summary[voice]=info;

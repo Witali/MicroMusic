@@ -1,218 +1,97 @@
 #!/usr/bin/env python3
-"""Build a truly offline audio comparison & machine-code validation page."""
-import base64, json, html
+"""Create a self-contained page for private A/B comparison.
+The reference tracks are *not* included in the published code-only archive.
+"""
 from pathlib import Path
-import numpy as np
-import soundfile as sf
-ROOT=Path(__file__).resolve().parent
-NAMES=('chego','otvechaesh','vinni')
-DISPLAY={'chego':'Чего тебе нужно?','otvechaesh':'Что ж ты не отвечаешь?','vinni':'Сова! Открывай! Медведь пришёл!'}
-
-def b64(x):return base64.b64encode(x).decode('ascii')
-def wav_pcm16(path):
- y,sr=sf.read(path,always_2d=True,dtype='float32')
- assert sr==7500 and y.shape[1]==1
- return b64((np.clip(y[:,0],-1,1)*32767).astype('<i2').tobytes())
-
-DATA={}
-for name in NAMES:
- d=ROOT/'samples'/name
- report=json.loads((d/'metrics.json').read_text())
- DATA[name]={
-  'label':DISPLAY[name],
-  'original':wav_pcm16(ROOT/'references'/name/'original.wav'),
-  'lpx3':wav_pcm16(ROOT/'references'/name/'lpx3.wav'),
-  'old':b64((d/'reference_pcm.raw').read_bytes()),
-  'new':b64((d/'avr_pcm.raw').read_bytes()),
-  'hex':(d/'firmware.hex').read_text(),
-  'asm':(d/'firmware.S').read_text(),
-  'compressed':b64((d/'speech.vbr').read_bytes()),
-  'types':b64((d/'selected_modes.bin').read_bytes()),
-  'metrics':report,
-  'frameCount':report['frames'],
-  'flashSize':len((d/'firmware.bin').read_bytes()),
-  'oldFlashSize':364+report['bytes_original']+1,
- }
-
-css='''
-:root{font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;color-scheme:dark;color:#edf3fb;background:#101721}
-*{box-sizing:border-box}body{margin:0}main{width:min(960px,100%);margin:0 auto;padding:18px 15px 55px}
-h1{font-size:clamp(25px,5vw,36px);margin:0 0 6px}p{line-height:1.5;color:#b7c7d8}
-small,.muted{color:#a8bbce;font-size:13px}.accent{color:#96ddf4}
-.card{border:1px solid #3b516a;background:#1b2838;border-radius:14px;padding:16px;margin:14px 0}
-form{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{display:block;color:#cdd9e7;font-weight:650;margin-bottom:7px}
-select{width:100%;background:#132236;border:1px solid #536783;border-radius:10px;color:#f5f8fd;font-size:16px;padding:12px}
-button{font:inherit;color:#f3f8ff;border:1px solid #516b88;background:#2a405b;border-radius:10px;padding:11px 14px;cursor:pointer;touch-action:manipulation;font-weight:650}
-button.primary{color:#0d2430;background:#91dbff;border-color:#91dbff}button:disabled{opacity:.45;cursor:default}
-.actions{display:flex;flex-wrap:wrap;gap:9px}.actions button{flex-grow:1}h2{font-size:18px;margin:4px 0 14px}
-.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.metric{background:#122033;padding:12px 8px;border-radius:9px;min-width:0}
-.metric strong{display:block;font-size:clamp(16px,2.9vw,23px);font-variant-numeric:tabular-nums}.metric span{font-size:12px;color:#b0c1d3}
-.bar{height:11px;background:#34445a;border-radius:12px;overflow:hidden;margin-top:9px}.bar>div{background:linear-gradient(90deg,#6ba7ff,#87e3c9);height:100%;transition:width .15s}
-canvas{display:block;width:100%;height:165px;background:#0d1928;border:1px solid #3c526e;border-radius:10px}
-pre{font-family:ui-monospace,Consolas,monospace;font-size:12px;color:#cfe5f5;white-space:pre-wrap;overflow-wrap:anywhere}
-#status{min-height:26px;color:#9de4bd;margin-top:12px}#status.err{color:#ffa7a7}#verifyStatus{color:#a8cfff;white-space:pre-line;margin-top:9px}
-.tag{display:inline-block;border:1px solid #4f6883;color:#c3d2e0;border-radius:8px;font-size:12px;padding:5px 8px;margin:5px 6px 5px 0}
-.w-ctl{display:flex;align-items:center;gap:8px;font-size:14px;color:#bcd0e2;margin-top:12px}
-@media(max-width:560px){form{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.actions button{flex:1 1 100%}}
-'''
-markup='''
-<main>
-  <h1>MicroMusic <span class="accent">VBR LPC-8</span></h1>
-  <p>Эксперимент с переменной длиной речевых кадров для ATtiny13A: 8-ступенчатый LPC, четыре профиля возбуждения, 7,5 кГц PCM и 37,5 кГц PWM.</p>
-  <section class="card">
-    <form onsubmit="return false">
-      <div><label for="voice">Пример речи</label><select id="voice"><option value="chego">«Чего тебе нужно?»</option><option value="otvechaesh">«Что ж ты не отвечаешь?»</option><option value="vinni">«Сова! Открывай! Медведь пришёл!»</option></select></div>
-      <div><label for="codec">Вариант звучания</label><select id="codec"><option value="original">Оригинальная запись</option><option value="lpx3">LPX3 (качественный эталон)</option><option value="old">MiniLPC — кадры по 6 байт</option><option value="new" selected>MiniLPC VBR — настоящий ATtiny13A HEX</option></select></div>
-    </form>
-    <div class="actions" style="margin-top:14px">
-      <button class="primary" id="play">▶ Слушать</button>
-      <button id="ab">⇄ Оригинал → выбранный</button>
-      <button id="stop">■ Остановить</button>
-    </div>
-    <div class="w-ctl"><input type="checkbox" id="matchVolume" checked><label for="matchVolume" style="margin:0;font-weight:400">Выравнивать громкость для A/B</label></div>
-    <div id="status" aria-live="polite">Готово. Нажмите «Слушать».</div>
-  </section>
-  <section class="card">
-    <h2>Размер и качество</h2>
-    <div class="metrics">
-      <div class="metric"><strong id="flash"></strong><span>Flash, код + речь</span></div>
-      <div class="metric"><strong id="speech"></strong><span>Речевые данные VBR</span></div>
-      <div class="metric"><strong id="saving"></strong><span>Экономия Flash</span></div>
-      <div class="metric"><strong id="stoi"></strong><span>STOI VBR / старый</span></div>
-    </div>
-    <div class="bar"><div id="barFill"></div></div>
-    <div id="types" class="muted" style="margin-top:10px"></div>
-  </section>
-  <section class="card">
-    <h2>Осциллограмма</h2>
-    <canvas id="wave" width="940" height="165"></canvas>
-    <div class="muted" style="margin-top:9px">Воспроизведение — через Web Audio. Для AVR-прошивки используется WAV, предварительно полученный исполнением HEX. Кнопка проверки ниже повторяет машинную эмуляцию.</div>
-  </section>
-  <section class="card">
-    <h2>Эмуляция и файлы</h2>
-    <div class="actions">
-      <button class="primary" id="verify">Проверить настоящий HEX</button>
-      <button id="getHex">↓ Firmware HEX</button>
-      <button id="getSpeech">↓ VBR-данные</button>
-      <button id="getAsm">↓ Исходник ASM</button>
-      <button id="getWav">↓ Прослушиваемый WAV</button>
-    </div>
-    <div id="verifyStatus">Прошивка на 9,6 МГц, Timer0 Fast PWM, выход PB1/OC0B.</div>
-  </section>
-  <section class="card">
-    <h2>Новый формат речевых кадров</h2>
-    <pre>Байт 0: pitch (0 = шум)
-Байт 1: gain[3:0] | profile[5:4] | type[7:6]
-
-00: полный кадр         6 байт (8 LPC-коэффициентов)
-01: повтор спектра       2 байта (новые pitch/gain)
-10: изменить K1–K4      4 байта
-11: изменить K5–K8      4 байта</pre>
-    <p class="muted">Этот битовый поток — новый формат. Старый формат в AVR-декодере не поддерживается. Кодировщик автоматически выбирает тип кадров через обратное сравнение с исходным звуком и штраф за щелчки. Вариант с фиксированными кадрами показан только для сравнения.</p>
-  </section>
-  <p class="muted">Записи из мультфильмов включены для частного тестирования. Для публикации в открытом репозитории необходимо исключить защищённые аудиофрагменты и производные данные без разрешения правообладателей. Работа на физическом ATtiny13A пока не проверялась.</p>
-</main>
-'''
-js='''
-const DEMOS=__DATA__;
-const $=id=>document.getElementById(id);
-const SAMPLE_RATE=7500;
-let ac=null,active=null,activePCM=null,playing=false;
-const cache={};
-function fromB64(x){const s=atob(x),b=new Uint8Array(s.length);for(let i=0;i<b.length;i++)b[i]=s.charCodeAt(i);return b}
-function getSamples(voice,mode){
-  const key=voice+':'+mode;if(cache[key])return cache[key];
-  const b=fromB64(DEMOS[voice][mode]);let a;
-  if(mode==='original'||mode==='lpx3'){
-    const dv=new DataView(b.buffer,b.byteOffset,b.byteLength);a=new Float32Array(b.length/2);
-    for(let i=0;i<a.length;i++)a[i]=dv.getInt16(i*2,true)/32768;
-  }else{a=new Float32Array(b.length);for(let i=0;i<a.length;i++)a[i]=(b[i]-128)/128}
-  return cache[key]=a;
-}
-function getGain(x){
-  if(!$('matchVolume').checked)return 0.9;
-  let sum=0;for(let i=0;i<x.length;i++)sum+=x[i]*x[i];
-  let rms=Math.sqrt(sum/x.length)||.1;
-  return Math.min(3.0,.16/rms);
-}
-function buildArray(chunks){let len=chunks.reduce((s,x)=>s+x.length,0);let y=new Float32Array(len),p=0;for(const a of chunks){y.set(a,p);p+=a.length}return y}
-function limitedGain(a){let g=getGain(a);let peak=0;for(let x of a)peak=Math.max(peak,Math.abs(x*g));return peak>0.96?g*0.96/peak:g}
-function getTrack(){return getSamples($('voice').value,$('codec').value)}
-function currentPlayback(){const mode=$('codec').value,voice=$('voice').value;
-  if($('playingAB'))return getSamples(voice,'original');
-  return getSamples(voice,mode)}
-async function startPCM(x){
-  stop(false);
-  ac ||= new (window.AudioContext||window.webkitAudioContext)();
-  await ac.resume();
-  const b=ac.createBuffer(1,x.length,SAMPLE_RATE);b.copyToChannel(x,0);
-  const src=ac.createBufferSource();src.buffer=b;src.connect(ac.destination);active=src;playing=true;
-  src.onended=()=>{if(active===src){active=null;playing=false;$('status').textContent='Воспроизведение завершено.'}};
-  src.start();activePCM=x;draw(x);
-}
-function stop(update=true){if(active){try{active.stop()}catch(e){}try{active.disconnect()}catch(e){}active=null}playing=false;if(update)$('status').textContent='Остановлено.'}
-function draw(pcm){const c=$('wave'),g=c.getContext('2d'),w=c.width,h=c.height;g.fillStyle='#0d1928';g.fillRect(0,0,w,h);
- g.lineWidth=1;g.strokeStyle='#2a425b';g.beginPath();g.moveTo(0,h/2);g.lineTo(w,h/2);g.stroke();
- g.strokeStyle='#8fd3ff';g.lineWidth=1.2;g.beginPath();const width=Math.max(1,Math.floor(pcm.length/w));
- for(let i=0;i<w;i++){let p0=i*width,p1=Math.min(pcm.length,p0+width),mn=1,mx=-1;
-  for(let j=p0;j<p1;j++){mn=Math.min(mn,pcm[j]);mx=Math.max(mx,pcm[j])}
-  if(p0>=pcm.length)break;g.moveTo(i,h*.5-mn*h*.4);g.lineTo(i,h*.5-mx*h*.4)
- }g.stroke();
-}
-function show(){stop(false);let v=DEMOS[$('voice').value],m=v.metrics;
- $('flash').textContent=v.flashSize+' Б / 1024 Б';$('speech').textContent=m.bytes_vbr+' Б';
- $('saving').textContent=(v.oldFlashSize-v.flashSize)+' Б';
- $('stoi').textContent=m.vbr.stoi.toFixed(3)+' / '+m.baseline.stoi.toFixed(3);
- $('barFill').style.width=(v.flashSize/1024*100).toFixed(2)+'%';
- let type=m.vbr.types;$('types').textContent=`Кадров: ${m.frames}. Полных (6 Б): ${type[0]}; повтор (2 Б): ${type[1]}; половина коэффициентов (4 Б): ${Number(type[2])+Number(type[3])}. Экономия речевых данных: ${m.bytes_original-m.bytes_vbr} Б.`;
- $('status').textContent='Выбран пример и режим. Нажмите «Слушать».';
- $('verifyStatus').textContent='Для нового формата можно повторно исполнить настоящую прошивку в AVR-эмуляторе.';
- draw(getTrack());
-}
-function makeWAV(samples){let size=44+samples.length*2;let ab=new ArrayBuffer(size),dv=new DataView(ab);
- const txt=(offset,s)=>{for(let i=0;i<s.length;i++)dv.setUint8(offset+i,s.charCodeAt(i))};
- txt(0,'RIFF');dv.setUint32(4,size-8,true);txt(8,'WAVEfmt ');dv.setUint32(16,16,true);dv.setUint16(20,1,true);dv.setUint16(22,1,true);
- dv.setUint32(24,SAMPLE_RATE,true);dv.setUint32(28,SAMPLE_RATE*2,true);dv.setUint16(32,2,true);dv.setUint16(34,16,true);
- txt(36,'data');dv.setUint32(40,samples.length*2,true);
- for(let i=0;i<samples.length;i++){let y=Math.max(-1,Math.min(1,samples[i]));dv.setInt16(44+i*2,Math.round(y*32767),true)}return ab;
-}
-function saveBlob(bytes,filename,type){const url=URL.createObjectURL(new Blob([bytes],{type:type||'application/octet-stream'}));
- const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000)}
-function save(name,ext,data,type){saveBlob(data,`${$('voice').value}_minilpc_vbr.${ext}`,type)}
-$('voice').onchange=show;$('codec').onchange=show;
-$('play').onclick=async()=>{try{let a=getTrack(),g=limitedGain(a),x=Float32Array.from(a,v=>v*g);
- await startPCM(x);$('status').textContent='Воспроизводится: '+$('codec').selectedOptions[0].textContent;
- }catch(e){$('status').textContent='Ошибка аудио: '+e.message;$('status').className='err'}};
-$('ab').onclick=async()=>{try{let a=getSamples($('voice').value,'original'),b=getTrack(),gap=new Float32Array(Math.floor(.25*SAMPLE_RATE));
- let joined=buildArray([Float32Array.from(a,x=>x*limitedGain(a)),gap,Float32Array.from(b,x=>x*limitedGain(b))]);
- await startPCM(joined);$('status').textContent='Оригинал → выбранный кодек (с паузой 0,25 с)';
- }catch(e){$('status').textContent='Ошибка A/B: '+e.message;$('status').className='err'}};
-$('stop').onclick=()=>stop();
-$('getHex').onclick=()=>save('hex','hex',DEMOS[$('voice').value].hex,'text/plain');
-$('getSpeech').onclick=()=>save('vbr','bin',fromB64(DEMOS[$('voice').value].compressed));
-$('getAsm').onclick=()=>save('asm','S',DEMOS[$('voice').value].asm,'text/plain');
-$('getWav').onclick=()=>save('wav','wav',makeWAV(getTrack()),'audio/wav');
-$('verify').onclick=async()=>{
- $('verify').disabled=true;
- try{
-  const voice=$('voice').value, data=DEMOS[voice], actual=fromB64(data.new), core=AVRCore.fromHex(data.hex);
-  const count=actual.length;let mismatches=0;
-  $('verifyStatus').textContent=`Эмуляция AVR: 0 / ${count} отсчётов…`;
-  for(let i=0;i<count;i++){
-    if(core.takeSample()!==actual[i])mismatches++;
-    if(i%384===0){$('verifyStatus').textContent=`Эмуляция AVR: ${i} / ${count} отсчётов…`;await new Promise(r=>setTimeout(r,0))}
-  }
-  const ok=mismatches===0&&core.missedOverflows===0;
-  $('verifyStatus').textContent=`${ok?'✓ Проверка пройдена':'✗ Ошибка'}: ${count} отсчётов, различий ${mismatches}, пропущенных переполнений ${core.missedOverflows}, максимум ISR ${core.maxISR} тактов. Размер Flash ${data.flashSize} Б.`;
- }catch(e){$('verifyStatus').textContent='Ошибка эмуляции: '+e.stack}
- finally{$('verify').disabled=false}
-};
-show();
-'''
-# Remove tiny unused malformed helper expression from JS (not called but confusing)
-js=js.replace("function currentPlayback(){const mode=$('codec').value,voice=$('voice').value;\n  if($('playingAB'))return getSamples(voice,'original');\n  return getSamples(voice,mode)}\n",'')
-js=js.replace('__DATA__',json.dumps(DATA,ensure_ascii=False,separators=(',',':')).replace('</','<\\/'))
-script=(ROOT/'avr_emulator.js').read_text()
-page='<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MicroMusic VBR LPC-8 / ATtiny13A</title><style>'+css+'</style></head><body>'+markup+'<script>'+script+'\n'+js+'</script></body></html>'
-(ROOT/'index.html').write_text(page,encoding='utf8')
-print('HTML',len(page.encode('utf8')),'bytes')
+import base64,json,numpy as np,soundfile as sf
+BASE=Path(__file__).resolve().parent
+REFERENCE=BASE/'references'
+WAVES={};FW={};REF={}
+for k in ['chego','otvechaesh','vinni']:
+    loc=BASE/'samples'/k
+    ref=REFERENCE/k
+    WAVES[k]={}
+    for mode,f in [('original','original.wav'),('lpx3','lpx3.wav'),('full','full350.wav')]:
+        samples,rate=sf.read(ref/f,dtype='float32')
+        assert rate==7500 and len(samples)==len((loc/'expected_pcm.raw').read_bytes())
+        q=(np.maximum(-1,np.minimum(1,samples))*32767).astype('<i2')
+        WAVES[k][mode]=base64.b64encode(q.tobytes()).decode()
+    avr=np.frombuffer((loc/'avr_pcm.raw').read_bytes(),np.uint8)
+    WAVES[k]['native']=base64.b64encode(((avr.astype(np.int16)-128)*256).astype('<i2').tobytes()).decode()
+    FW[k]=base64.b64encode((loc/'firmware.bin').read_bytes()).decode()
+    REF[k]=base64.b64encode((loc/'expected_pcm.raw').read_bytes()).decode()
+core=(BASE/'avr_emulator.js').read_text()
+assert 'class AVRCore' in core
+content=r'''<!doctype html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MicroMusic – New-only MiniLPC8</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif;background:#0b1321;color:#e6eefb}
+*{box-sizing:border-box}body{margin:0;padding:18px;line-height:1.5}main{max-width:860px;margin:auto}
+h1{font-size:clamp(1.5rem,5vw,2.3rem);margin:0 0 .35em}.sub{color:#9aadc6;margin:0 0 20px}
+.card{background:#172337;border:1px solid #344764;border-radius:15px;padding:18px;margin:12px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+label{display:block;font-size:.88rem;font-weight:650;color:#c5d4eb;margin:0 0 6px}
+select,input,button{font:inherit}select{width:100%;border:1px solid #526783;border-radius:9px;padding:10px;background:#101e30;color:#eaf2fe}
+button{border:0;background:#69b6ff;color:#081522;padding:10px 13px;border-radius:9px;font-weight:700;cursor:pointer;touch-action:manipulation}
+button.secondary{background:#30425a;color:#e5f0ff}button:disabled{opacity:.5;cursor:default}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin:13px 0}
+.stat{display:flex;flex-direction:column;gap:2px;background:#0f1b2b;border-radius:8px;padding:9px 12px}
+.stat b{font-size:1.2rem}.stat small,small{color:#a9bed6}#status{white-space:pre-wrap;min-height:1.4em;color:#9ce3c7}
+#wave{display:block;background:#101b2c;width:100%;height:130px;border:1px solid #2e4663;border-radius:9px}
+code{color:#9ee5c8}a{color:#9ed5ff}table{border-collapse:collapse;width:100%;font-size:.87rem}td,th{border-bottom:1px solid #30445b;text-align:left;padding:8px 5px}td:not(:first-child),th:not(:first-child){text-align:right}
+@media(max-width:450px){body{padding:10px}.card{padding:13px}.actions button{flex:1 1 140px}}
+</style></head><body><main>
+<h1>MicroMusic · MiniLPC8</h1>
+<p class="sub">Новый формат без обратной совместимости • ATtiny13A 9,6 МГц • 8 ступеней LPC • 4 голосовых профиля • PWM PB1</p>
+<section class="card"><div class="grid"><div><label for="voice">Реплика</label><select id="voice">
+<option value="chego">Чего тебе нужно?</option><option value="otvechaesh">Что ж ты не отвечаешь?</option><option value="vinni">Сова! Открывай! Медведь пришёл!</option></select></div>
+<div><label for="codec">Алгоритм воспроизведения</label><select id="codec">
+<option value="native">New-only MiniLPC8 · AVR 364 Б</option>
+<option value="full">Full 350 · старый эталон (только в плеере)</option>
+<option value="lpx3">LPX3 · эталон качества (ПК)</option>
+<option value="original">Оригинальная запись</option></select></div></div>
+<div class="actions"><button id="play">▶ Слушать</button><button id="ab" class="secondary">⇄ Оригинал / выбранный</button><button id="stop" class="secondary">■ Стоп</button></div>
+<canvas id="wave" width="800" height="150"></canvas>
+<div class="grid" style="margin-top:12px"><div class="stat"><small>Использование Flash</small><b id="flash">—</b></div><div class="stat"><small>Код / сжатая речь</small><b id="size">—</b></div><div class="stat"><small>Частота аудио</small><b>7,5 кГц</b></div></div>
+<div class="actions"><button class="secondary" id="verify">↻ Исполнить HEX в эмуляторе</button><button class="secondary" id="getHex">↓ Скачать HEX</button></div>
+<p id="status">Выберите запись и нажмите «Слушать».</p>
+<p><small>В режиме New-only AVR-прошивка исполняет только новый формат. Full 350 и LPX3 доступны исключительно как независимые эталоны в этом браузерном плеере.</small></p>
+</section>
+<section class="card"><b>Результат сборки</b><table><thead><tr><th>Фраза</th><th>Flash</th><th>Код</th><th>Речь</th></tr></thead><tbody>
+<tr><td>Чего тебе нужно?</td><td>581 Б</td><td>364 Б</td><td>216 Б</td></tr>
+<tr><td>Что ж ты не отвечаешь?</td><td>551 Б</td><td>364 Б</td><td>186 Б</td></tr>
+<tr><td>Сова! Открывай!</td><td>887 Б</td><td>364 Б</td><td>522 Б</td></tr></tbody></table>
+<p><small>Каждая прошивка включает 1 байт маркера конца потока. Цикловая AVR-проверка дала 0 расхождений с прежними оптимизированными речевыми данными, 0 пропущенных переполнений таймера.</small></p>
+</section>
+</main><script>
+''' + core + r'''
+const TRACKS=__TRACKS__;
+const PROGRAMS=__PROGRAMS__;
+const GOLD=__EXPECTED__;
+const DATA=__MANIFEST__;
+const $=x=>document.getElementById(x);
+let ctx, node=null, second=null, current=null, liveData=[];
+function bytesFromB64(s){let bin=atob(s);let b=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)b[i]=bin.charCodeAt(i);return b}
+function pcmFromB64(s){let data=bytesFromB64(s),view=new DataView(data.buffer),out=new Float32Array(data.length/2);for(let i=0;i<out.length;i++)out[i]=view.getInt16(i*2,true)/32768;return out}
+function samples(voice,mode){return pcmFromB64(TRACKS[voice][mode])}
+function audioBuffer(pcm){let b=ctx.createBuffer(1,pcm.length,7500);b.copyToChannel(pcm,0);return b}
+function rms(pcm){let acc=0;for(let i=0;i<pcm.length;i++)acc+=pcm[i]*pcm[i];return Math.sqrt(acc/pcm.length)}
+function stop(){try{node?.stop()}catch{}try{second?.stop()}catch{}node=null;second=null;}
+function draw(pcm){let c=$('wave'),g=c.getContext('2d');g.clearRect(0,0,c.width,c.height);g.strokeStyle='#314a67';g.beginPath();g.moveTo(0,75);g.lineTo(800,75);g.stroke();if(!pcm.length)return;g.strokeStyle='#81ccff';g.lineWidth=1.3;g.beginPath();const bin=Math.max(1,Math.ceil(pcm.length/800));for(let i=0;i<800;i++){let m=0;for(let j=i*bin;j<Math.min(pcm.length,(i+1)*bin);j++)if(Math.abs(pcm[j])>Math.abs(m))m=pcm[j];let y=75-m*65;if(!i)g.moveTo(0,y);else g.lineTo(i,y)}g.stroke()}
+function details(){let v=$('voice').value,m=DATA[v];$('flash').textContent=`${m.flash_bytes} / 1024 Б`;$('size').textContent=`${m.code_bytes} / ${m.speech_bytes} Б`;draw(samples(v,$('codec').value));$('status').textContent='Готово к воспроизведению.'}
+async function start(ab){stop();if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();await ctx.resume();let v=$('voice').value,mode=$('codec').value,p=samples(v,mode);if(!ab){node=ctx.createBufferSource();node.buffer=audioBuffer(p);node.connect(ctx.destination);node.start();$('status').textContent='Воспроизведение: '+$('codec').selectedOptions[0].text;}
+else{let a=samples(v,'original');let gain=Math.min(2,Math.max(.1,rms(a)/Math.max(rms(p),.0001)));node=ctx.createBufferSource();node.buffer=audioBuffer(a);node.connect(ctx.destination);second=ctx.createBufferSource();second.buffer=audioBuffer(p);let gn=ctx.createGain();gn.gain.value=gain;second.connect(gn);gn.connect(ctx.destination);let t=ctx.currentTime+.04;node.start(t);second.start(t+a.length/7500+.25);$('status').textContent='Сначала оригинал, затем выбранный кодек. Громкость выровнена.';}}
+$('play').onclick=()=>start(false).catch(e=>{$('status').textContent='Ошибка звука: '+e.message});
+$('ab').onclick=()=>start(true).catch(e=>{$('status').textContent='Ошибка звука: '+e.message});
+$('stop').onclick=()=>{stop();$('status').textContent='Остановлено.'};
+$('codec').onchange=details;$('voice').onchange=details;
+$('getHex').onclick=()=>{let name=$('voice').value,b=bytesFromB64(PROGRAMS[name]);let lines=[];for(let at=0;at<b.length;at+=16){let data=Array.from(b.subarray(at,at+16)),v=[data.length,at>>8,at&255,0,...data];v.push((256-v.reduce((x,y)=>x+y,0)%256)&255);lines.push(':'+v.map(x=>x.toString(16).padStart(2,'0').toUpperCase()).join(''))}lines.push(':00000001FF');const a=document.createElement('a'),blob=new Blob([lines.join('\n')+'\n'],{type:'text/plain'});a.href=URL.createObjectURL(blob);a.download=`MiniLPC8_${name}_newonly.hex`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),3000)};
+$('verify').onclick=async()=>{let name=$('voice').value;let btn=$('verify');btn.disabled=true;stop();let expected=bytesFromB64(GOLD[name]),sim=new AVRCore(bytesFromB64(PROGRAMS[name]));let diffs=0,stalls=0,last=0;try{for(let i=0;i<expected.length;i++){let b=sim.takeSample();if(b!==expected[i])diffs++;if(i && sim.cycles-last>1290)stalls++;last=sim.cycles;if(i%2048===0){$('status').textContent=`AVR: ${i}/${expected.length} отсчётов...`;await new Promise(r=>setTimeout(r,0))}}$('status').textContent=`AVR: ${expected.length} отсчётов, расхождений ${diffs}, пропусков Timer0 ${sim.missedOverflows}, поздних отсчётов ${stalls}, ISR максимум ${sim.maxISR} тактов.`}catch(e){$('status').textContent='Ошибка AVR: '+e.message}finally{btn.disabled=false}}
+details();
+</script></body></html>'''
+content=content.replace('__TRACKS__',json.dumps(WAVES,separators=(',',':')))
+content=content.replace('__PROGRAMS__',json.dumps(FW,separators=(',',':')))
+content=content.replace('__EXPECTED__',json.dumps(REF,separators=(',',':')))
+content=content.replace('__MANIFEST__',(BASE/'manifest.json').read_text())
+(BASE/'index.html').write_text(content,encoding='utf8')
+print('HTML bytes',len(content.encode()))
