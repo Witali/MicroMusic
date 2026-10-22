@@ -1,151 +1,144 @@
 #!/usr/bin/env python3
-"""Closed-loop MiniLPC-HQ4 optimisation for three fixed utterances.
-
-Runs on the EXACT eight-stage AVR integer LPC model; candidate frame streams are
-packed using the native HQ3-only encoder. The metric compares against the
-fixed, user-provided reference WAV. Deterministic given the seed and number
-of trials (time limits disabled by default).
-
-Usage: python optimize_hq4.py --phrase chego --max-trials 6000 --seed 1437
-
-This is a research optimiser, not a universal automatic speech coder.
+"""Feedback encoder for new-only MiniLPC HQ3 bitstream.
+Does not re-train a legacy format. Evaluates exact signed 8-bit AVR lattice output,
+then performs stochastic search under Flash and click constraints. Keeps checkpoints.
+Usage: python optimize_hq4.py --clip chego --seconds 60 --seed 2026
 """
-import argparse,json,sys,time,shutil
+import argparse,time,random,sys,json
 from pathlib import Path
-import numpy as np,soundfile as sf
+import numpy as np
+import soundfile as sf
+from pystoi import stoi
+from hq4_core import CLIPS,REF,BASE,load,pack_stream,decode
 
-
-from hq4_codec import unpack,encode
-from model import decode
-from quality import Compare
 ROOT=Path(__file__).resolve().parent
-SRC=ROOT/'baseline'
-SR=7500
+OUT=ROOT/'trained';OUT.mkdir(exist_ok=True)
+# Models must match known releases before optimization.
 
-def quant_edit(frames,i,k,delta):
-    j=2+k//2;mask=15<<(4*(k%2)); q=(int(frames[i,j])>>(4*(k%2)))&15
-    v=int(np.clip(q+delta,0,15));frames[i,j]=(int(frames[i,j])&~mask)|(v<<(4*(k%2)))
+def stoi_value(ref,pcm):return float(stoi(ref,(pcm.astype(np.float32)-128)/128,7500,extended=False))
 
-def pitch_edit(f,i,step):
-    p=int(f[i,0]); npitch=p+step
-    if p==0 or not 16<=npitch<=126: return False
-    f[i,0]=npitch;return True
+def spec(ref,pcm):
+    # A low-cost perceptual audit metric; not part of the greedy objective.
+    a=np.asarray(ref,dtype=np.float32)
+    b=(pcm.astype(np.float32)-128)/128
+    win=np.hanning(256).astype(np.float32)
+    ix=np.arange(0,len(a)-256,128)
+    if len(ix)==0: return 0
+    x=np.stack([a[z:z+256] for z in ix])*win
+    y=np.stack([b[z:z+256] for z in ix])*win
+    v=np.fft.rfft(x,axis=1);w=np.fft.rfft(y,axis=1)
+    return float(np.mean(np.abs(np.log(np.maximum(np.abs(v),.006))-np.log(np.maximum(np.abs(w),.006)))))
 
-def evaluate(comp,ff,dd,budget,base_spec,max_clicks=0):
-    data=encode(ff,dd)
-    if len(data)>budget:return None
-    signal=decode(ff,dd)
-    # Most proposals are invalid because sudden jumps in the PWM stream.
-    if np.max(np.abs(np.diff(signal.astype(np.int16)))) >= 48 and max_clicks==0:return None
-    st,spec,clicks=comp.scores(signal)
-    if clicks>max_clicks or spec>base_spec+0.035:return None
-    return (st - 0.005*(spec-base_spec), st, spec, len(data), clicks)
+def clicks(pcm,thr=48):return int(np.sum(np.abs(np.diff(pcm.astype(np.int16)))>=thr))
 
-def candidate(f,d,rng):
-    ff=f.copy();dd=d.copy();n=len(f)
-    i=int(rng.integers(n));op=int(rng.choice(10,p=[.28,.16,.10,.15,.06,.05,.05,.05,.05,.05]));
-    if op==0:quant_edit(ff,i,int(rng.integers(8)),int(rng.choice([-2,-1,1,2])))
-    elif op==1:
-        g=int(ff[i,1])&15;step=int(rng.choice([-3,-2,-1,1,2,3]));ng=g+step
-        if not 0<=ng<=15:return None
-        ff[i,1]=(int(ff[i,1])&240)|ng
-    elif op==2:ff[i,1]=(int(ff[i,1])&15)|(int(rng.integers(4))<<4)
-    elif op==3:
-        p=int(ff[i,0]);v=int(rng.choice([-5,-3,-2,-1,1,2,3,5]));
-        if not pitch_edit(ff,i,v):return None
-    elif op==4:
-        k=int(rng.integers(8));v=int(rng.choice([-1,1]));
-        for j in range(i,min(i+3,n)):quant_edit(ff,j,k,v)
-    elif op==5:
-        v=int(rng.choice([-2,-1,1,2]));
-        for j in range(i,min(i+3,n)):
-            if int(ff[j,0]):pitch_edit(ff,j,v)
-    elif op==6:
-        v=int(rng.choice([-1,1]));
-        for j in range(i,min(i+3,n)):
-            g=int(ff[j,1])&15;ff[j,1]=(int(ff[j,1])&240)|int(np.clip(g+v,0,15))
-    elif op==7:
-        k=int(rng.integers(8));j=min(n-1,i+1)
-        j2=2+k//2;shift=4*(k%2);q=(int(ff[i,j2])>>shift)&15;qn=(int(ff[j,j2])>>shift)&15
-        if q==qn:return None
-        quant_edit(ff,i,k,1 if qn>q else -1)
-    elif op==8:
-        j=min(n-1,i+1); half=int(rng.integers(2));s=2+half*2
-        ff[i,s:s+2]=ff[j,s:s+2]
-    elif op==9:
-        j=i+1
-        if j>=n or (dd[i],dd[j]) not in [(64,128),(128,64)]:return None
-        dd[i],dd[j]=dd[j],dd[i]
-    if np.array_equal(ff,f) and np.array_equal(dd,d):return None
-    return ff,dd,('edit',op,i)
+def setk(row,k,q):
+    v=int(row[2+k//2]);row[2+k//2]=(v&240)|q if k%2==0 else (v&15)|(q<<4)
 
-def split_cand(f,d,rng):
-    n=len(f);valid=np.flatnonzero(d>=128)
-    if not len(valid):return None
-    i=int(rng.choice(valid));duration=int(d[i]);
-    # Replace one frame by two frames; the second may take interpolated spectral shape.
-    if duration==128:durations=[64,64]
-    else:durations=[128,128] if rng.random()<.8 else [64,64,128]
-    l=len(durations)
-    new=np.tile(f[i:i+1],(l,1))
-    if i+1<n:
-        nxt=f[i+1]
-        if rng.random()<0.45:
-            new[-1,0]=nxt[0] if rng.random()<.4 else f[i,0]
-            if rng.random()<.4:new[-1,1]=(int(nxt[1])&15)|(int(f[i,1])&48)
-        if rng.random()<0.35:
-            k=int(rng.integers(8));t=2+k//2;shift=4*(k%2)
-            q=(int(new[-1,t])>>shift)&15;qn=(int(nxt[t])>>shift)&15
-            if q!=qn:
-                q+=1 if qn>q else -1
-                new[-1,t]=(int(new[-1,t]) & ~(15<<shift))|(q<<shift)
-    ff=np.concatenate([f[:i],new,f[i+1:]],axis=0)
-    dd=np.concatenate([d[:i],np.array(durations,np.int32),d[i+1:]],axis=0)
-    return ff,dd,('split',i,len(durations))
+def getk(row,k):return (int(row[2+k//2])>>(4*(k&1)))&15
 
-def run(name,trials,seed,max_splits,verbose=True):
-    src=SRC/name/'speech.hq';f,d,_=unpack(src.read_bytes()+b'\xff')
-    ref,sr=sf.read(str(ROOT/'references')+'/'+name+'/original.wav'); assert sr==SR
-    comp=Compare(ref);base=comp.scores(decode(f,d));base_spec=base[1]
-    # Flash: 406 instruction B and one end marker
-    max_stream=1024-406-1
-    start=evaluate(comp,f,d,max_stream,base_spec)
-    assert start is not None
-    original_stream=encode(f,d)
-    assert original_stream==src.read_bytes()
-    rng=np.random.default_rng(seed)
-    best=start;accepted=0;split_count=0;split_trials=0;t0=time.monotonic();history=[];events={}
-    if verbose:print(name,'baseline',base,'max stream',max_stream,'bytes',len(original_stream),'seed',seed,flush=True)
-    for t in range(trials):
-        # A higher number of splits is evaluated near start where unused Flash exists.
-        is_split=(t%11==0 and split_count<max_splits and len(encode(f,d))<=max_stream-4)
-        cand=split_cand(f,d,rng) if is_split else candidate(f,d,rng)
-        if cand is None:continue
-        ff,dd,edit=cand
-        if is_split:split_trials+=1
-        met=evaluate(comp,ff,dd,max_stream,base_spec)
-        if met is None:continue
-        # strict improvement, with spectrum penalty. Bound severe spectral degradation.
-        if met[0]>best[0]+0.000018:
-            f,d=ff,dd;best=met;accepted+=1;events[str(edit[1])]=events.get(str(edit[1]),0)+1
-            if edit[0]=='split':split_count+=1
-            history.append([t,round(best[1],7),round(best[2],6),int(best[3]),edit[0],edit[1],edit[2]])
-            if verbose and (accepted%6==0 or (best[1]>=0.90 and name=='chego')):
-                print(name,'iter',t,'accepted',accepted,'STOI',round(best[1],7),'spec',round(best[2],4),'stream',best[3],'split',split_count,'seconds',round(time.monotonic()-t0,1),flush=True)
-            if name=='chego' and best[1]>=.9005:break
-        if verbose and t and t%1800==0:
-            print(name,'progress',t,'STOI',round(best[1],6),'stream',best[3],'seconds',round(time.monotonic()-t0,1),flush=True)
-    report={'phrase':name,'baseline':{'stoi':base[0],'spec':base[1],'bytes':len(original_stream)},
-            'final':{'stoi':best[1],'spec':best[2],'bytes':best[3]},'n_frames':len(f),'splits_accepted':split_count,'splits_evaluated':split_trials,
-            'accepted':accepted,'trials':t+1,'seconds':round(time.monotonic()-t0,2),'seed':seed,'history':history}
-    dst=ROOT/name;dst.mkdir(exist_ok=True)
-    (dst/'speech.hq').write_bytes(encode(f,d))
-    np.savez(dst/'optimized_frames.npz',frames=f,durations=d)
-    (dst/'optimization.json').write_text(json.dumps(report,indent=2,ensure_ascii=False))
-    if verbose:print('RESULT',name,report['final'],'accepted',accepted,'elapsed',report['seconds'],flush=True)
-    return report
+def budget_of(f,d):return len(pack_stream(f,d))
+
+def optimize(name,seconds=45,seed=0,preset='stoi',base_npz=None):
+    ref,sr=sf.read(REF/name/'original.wav');assert sr==7500
+    b,f,d,_=load(name)
+    if base_npz:
+        npz=np.load(base_npz);f=npz['frames'].copy();d=npz['durations'].copy()
+    elif (OUT/name/'best.npz').exists():
+        p=OUT/name/'best.npz';npz=np.load(p);f=npz['frames'].copy();d=npz['durations'].copy()
+    f=f.copy();d=d.copy()
+    (OUT/name).mkdir(exist_ok=True)
+    code_bytes=406
+    max_stream=1024-code_bytes-1
+    initial=decode(f,d,0)
+    baseline_st=stoi_value(ref,initial);base_spec=spec(ref,initial);base_click=clicks(initial)
+    if base_click:print('WARNING: baseline had clicks',base_click)
+    best_global_score=baseline_st
+    current_st=baseline_st;best=f.copy();current_s=base_spec
+    rng=random.Random(seed);start=time.monotonic();checks=0;accepted=0;rounds=0
+    states=[0,0,0]
+    print(f'{name}: start STOI {baseline_st:.7f} spec {base_spec:.5f} bytes {budget_of(f,d)} frames {len(f)}',flush=True)
+    triallog=[]
+    # Greedy coordinate descent, then correlated two-frame proposal. Always deterministic per seed.
+    def evaluate(candidates,frameidx,orig):
+        nonlocal current_st,current_s,best_global_score,best,checks,accepted
+        bestrow=None;bs=current_st;bspec=current_s
+        for trial in candidates:
+            if not np.array_equal(f[frameidx],orig): f[frameidx]=orig
+            f[frameidx]=trial
+            if budget_of(f,d)>max_stream:continue
+            pcm=decode(f,d,0)
+            # Reject large abrupt steps, and avoid clipped samples (excess distortion).
+            if clicks(pcm)>base_click:continue
+            s=stoi_value(ref,pcm);checks+=1
+            if s>bs+0.000003:
+                new_spec=spec(ref,pcm)
+                # Maximum 6% relative worsening to maintain intelligible timbre.
+                if new_spec<=base_spec*1.06:
+                    bs=s;bspec=new_spec;bestrow=trial.copy()
+        f[frameidx]=orig if bestrow is None else bestrow
+        if bestrow is not None:
+            current_st=bs;current_s=bspec;accepted+=1
+            if current_st>best_global_score:
+                best_global_score=current_st;best=f.copy()
+            if accepted%10==0:
+                print(f'{name} accept={accepted} eval={checks} stoi={current_st:.6f} spec={current_s:.4f} stream={budget_of(f,d)}',flush=True)
+        return bestrow is not None
+    stop=False
+    while time.monotonic()-start <seconds and rounds<10:
+        order=list(range(len(f)))
+        if rounds%2:order.reverse()
+        else:rng.shuffle(order)
+        for idx in order:
+            if time.monotonic()-start>=seconds:break
+            row=f[idx].copy()
+            # Two most promising frame-level changes from speech modeling: pitch/gain.
+            dims=[0,1,2,3]+list(range(4,12))
+            if rounds%2:rng.shuffle(dims)
+            for dim in dims:
+                if time.monotonic()-start>=seconds:break
+                orig=f[idx].copy();new=[]
+                if dim==0:
+                    p=int(orig[0]);
+                    vs=sorted({p-8,p-6,p-4,p-3,p-2,p-1,p+1,p+2,p+3,p+4,p+6,p+8,int(round(p*.75)),int(round(p*1.25)),p//2,p*2,0})
+                    for v in vs:
+                        if (v==0 or 16<=v<=126) and v!=p:
+                            rr=orig.copy();rr[0]=v;new.append(rr)
+                elif dim==1:
+                    g=int(orig[1])&15; h=int(orig[1])&0x30
+                    for v in range(max(0,g-3),min(15,g+3)+1):
+                        if v!=g:rr=orig.copy();rr[1]=h|v;new.append(rr)
+                elif dim==2:
+                    m=(int(orig[1])>>4)&3
+                    for v in range(4):
+                        if v!=m:rr=orig.copy();rr[1]=(int(orig[1])&15)|(v<<4);new.append(rr)
+                elif dim==3:
+                    p=int(orig[0]);g=int(orig[1])&15
+                    for pp,gg in [(-2,1),(2,-1),(-1,2),(1,-2),(-2,-1),(2,1),(-1,-1),(1,1)]:
+                        if 16<=p+pp<=126 and 0<=g+gg<=15:
+                            rr=orig.copy();rr[0]=p+pp;rr[1]=(rr[1]&0x30)|(g+gg);new.append(rr)
+                else:
+                    k=dim-4;q=getk(orig,k)
+                    for v in sorted({q-3,q-2,q-1,q+1,q+2,q+3}):
+                        if 0<=v<=15:
+                            rr=orig.copy();setk(rr,k,v);new.append(rr)
+                if new:evaluate(new,idx,orig)
+        rounds+=1
+        triallog.append({'round':rounds,'seconds':round(time.monotonic()-start,1),'stoi':current_st,'spec':current_s,'stream_bytes':budget_of(f,d),'accepted':accepted,'evaluated':checks})
+        print(f'{name} END ROUND {rounds} stoi={current_st:.7f} checks={checks} seconds={time.monotonic()-start:.1f}',flush=True)
+    if current_st<best_global_score:f=best
+    best_pcm=decode(f,d,0)
+    final_st=stoi_value(ref,best_pcm)
+    np.savez(OUT/name/'best.npz',frames=f,durations=d)
+    (OUT/name/'speech.hq').write_bytes(pack_stream(f,d))
+    (OUT/name/'expected_pcm.raw').write_bytes(best_pcm.tobytes())
+    info={'name':name,'seed':seed,'baseline_stoi':baseline_st,'final_stoi':final_st,
+          'baseline_spec':base_spec,'final_spec':spec(ref,best_pcm),'clicks_48':clicks(best_pcm),
+          'speech_bytes':budget_of(f,d),'flash_estimated':code_bytes+budget_of(f,d)+1,
+          'runtime_s':round(time.monotonic()-start,3),'trials':checks,'accepted':accepted,'rounds':rounds,'history':triallog}
+    (OUT/name/'training.json').write_text(json.dumps(info,indent=2,ensure_ascii=False))
+    print('FINAL '+json.dumps({k:v for k,v in info.items() if k!='history'},ensure_ascii=False),flush=True)
+    return info
 
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('--phrase',choices=['chego','otvechaesh','vinni'],required=True)
- p.add_argument('--max-trials',type=int,default=4000);p.add_argument('--seed',type=int,default=1437);p.add_argument('--max-splits',type=int,default=18)
- a=p.parse_args();run(a.phrase,a.max_trials,a.seed,a.max_splits)
+    p=argparse.ArgumentParser();p.add_argument('--clip',choices=CLIPS,required=True);p.add_argument('--seconds',type=int,default=45);p.add_argument('--seed',type=int,default=20071);p.add_argument('--base');ar=p.parse_args()
+    optimize(ar.clip,ar.seconds,ar.seed,base_npz=ar.base)

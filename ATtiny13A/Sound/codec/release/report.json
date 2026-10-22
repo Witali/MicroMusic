@@ -1,110 +1,47 @@
-[
-  {
-    "phrase": "chego",
-    "codec": "hq3",
-    "stoi": 0.8948382,
-    "spectral_error": 1.36688,
-    "clicks48": 0,
-    "flash_bytes": 947,
-    "decoder_bytes": 406,
-    "speech_bytes": 540,
-    "samples": 9216,
-    "sha256": "5c4f461fb3f5b26a7b559cc9592cc96590723fbf57d9c2c09c883f841be0d23f"
-  },
-  {
-    "phrase": "chego",
-    "codec": "stoi",
-    "stoi": 0.8949281,
-    "spectral_error": 1.36947,
-    "clicks48": 0,
-    "flash_bytes": 951,
-    "decoder_bytes": 406,
-    "speech_bytes": 544,
-    "samples": 9216,
-    "sha256": "911c7ed8d8b4ed59357155d7597f27de66cf1f05bc75fb63af9442315e5d09ee"
-  },
-  {
-    "phrase": "chego",
-    "codec": "timbre",
-    "stoi": 0.8919496,
-    "spectral_error": 1.35059,
-    "clicks48": 0,
-    "flash_bytes": 959,
-    "decoder_bytes": 406,
+{
+  "chego": {
+    "name": "chego",
+    "stoi": 0.9006005040626661,
+    "spec": 1.4071171283721924,
+    "clicks_48": 0,
+    "code_bytes": 406,
     "speech_bytes": 552,
+    "flash_bytes": 959,
+    "free_flash": 65,
     "samples": 9216,
-    "sha256": "ee638d29ca46aac79a82dd7625150516a283e3b04caea8f22e124ecfb043df58"
+    "sha256": "0cb045d961f8a3710ccfe659d454d065a5fcdfc40a78eb432a990cbd93f03dc3",
+    "avr_mismatches": 0,
+    "timer_misses": 0,
+    "avr_max_isr_cycles": 28
   },
-  {
-    "phrase": "otvechaesh",
-    "codec": "hq3",
-    "stoi": 0.8161936,
-    "spectral_error": 1.24683,
-    "clicks48": 0,
-    "flash_bytes": 878,
-    "decoder_bytes": 406,
-    "speech_bytes": 471,
+  "otvechaesh": {
+    "name": "otvechaesh",
+    "stoi": 0.8190556436552531,
+    "spec": 1.3097127676010132,
+    "clicks_48": 0,
+    "code_bytes": 406,
+    "speech_bytes": 478,
+    "flash_bytes": 885,
+    "free_flash": 139,
     "samples": 7936,
-    "sha256": "2ec86fd09a66c4220097085ff39de0508caf4e3b378c30a53852bcd733ceb70a"
+    "sha256": "b9512173048fb57d9d9836d41260461f92fe30c248e1a72a53dbfb13c4be5e89",
+    "avr_mismatches": 0,
+    "timer_misses": 0,
+    "avr_max_isr_cycles": 28
   },
-  {
-    "phrase": "otvechaesh",
-    "codec": "stoi",
-    "stoi": 0.8164307,
-    "spectral_error": 1.26585,
-    "clicks48": 0,
-    "flash_bytes": 882,
-    "decoder_bytes": 406,
-    "speech_bytes": 475,
-    "samples": 7936,
-    "sha256": "1707b2f4d2f3b41a47d3a4a2c9a08a0b6d10bfd76fe2ef66272fb40645b25b67"
-  },
-  {
-    "phrase": "otvechaesh",
-    "codec": "timbre",
-    "stoi": 0.8141964,
-    "spectral_error": 1.23088,
-    "clicks48": 0,
-    "flash_bytes": 880,
-    "decoder_bytes": 406,
-    "speech_bytes": 473,
-    "samples": 7936,
-    "sha256": "a6aeee585b2f36abe75fdcf05488dabab4a2f00cb388774fdc8c800a2349ffa5"
-  },
-  {
-    "phrase": "vinni",
-    "codec": "hq3",
-    "stoi": 0.8551776,
-    "spectral_error": 0.94783,
-    "clicks48": 0,
-    "flash_bytes": 1007,
-    "decoder_bytes": 406,
-    "speech_bytes": 600,
+  "vinni": {
+    "name": "vinni",
+    "stoi": 0.8596022716157532,
+    "spec": 0.9489787817001343,
+    "clicks_48": 0,
+    "code_bytes": 406,
+    "speech_bytes": 617,
+    "flash_bytes": 1024,
+    "free_flash": 0,
     "samples": 22272,
-    "sha256": "e2527993f420e055a886d67836111879b6d2fa4185faeefd245183153279e640"
-  },
-  {
-    "phrase": "vinni",
-    "codec": "stoi",
-    "stoi": 0.8551776,
-    "spectral_error": 0.94783,
-    "clicks48": 0,
-    "flash_bytes": 1007,
-    "decoder_bytes": 406,
-    "speech_bytes": 600,
-    "samples": 22272,
-    "sha256": "e2527993f420e055a886d67836111879b6d2fa4185faeefd245183153279e640"
-  },
-  {
-    "phrase": "vinni",
-    "codec": "timbre",
-    "stoi": 0.8550421,
-    "spectral_error": 0.93795,
-    "clicks48": 0,
-    "flash_bytes": 1023,
-    "decoder_bytes": 406,
-    "speech_bytes": 616,
-    "samples": 22272,
-    "sha256": "cef524b7276f5436ed3d42f248402cd7bc0ff3e9fef48c7e31c29acecb0d1b05"
+    "sha256": "57f573aac01ae7ec54e0a3fc412d65446c566e66df23548bf77d0affc203a7be",
+    "avr_mismatches": 0,
+    "timer_misses": 0,
+    "avr_max_isr_cycles": 28
   }
-]
+}

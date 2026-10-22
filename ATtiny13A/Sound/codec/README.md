@@ -1,76 +1,57 @@
-# MicroMusic — MiniLPC HQ4 (controlled experiments)
+# MicroMusic MiniLPC HQ4 — ATtiny13A speech experiments
 
-## Goal
+## Results (confirmed from AVR HEX)
 
-Explore closer reproduction of three supplied voice clips while keeping **the whole actual AVR firmware** (decoder + encoded voice + terminator) inside ATtiny13A's **1024 bytes of Flash**, at CPU 9.6 MHz. The code uses 8 lattice LPC stages, 7,500 PCM samples/s, a 37.5 kHz Fast PWM carrier on PB1/OC0B and no floating-point math. Only one VBR frame format is supported. All versions use **406 bytes of decoder code**; there is no legacy compatibility branch.
+| Speech | HQ3 STOI | HQ4 balanced STOI | Flash size (code + voice) |
+|---|---:|---:|---:|
+| Chego tebe nuzhno? | 0.89484 | 0.90060 | 959 bytes |
+| Chto zh ty ne otvechaesh? | 0.81619 | 0.81906 | 885 bytes |
+| Sova! Otkryvay! Medved prishel! | 0.85518 | 0.85960 | 1024 bytes |
 
-### Findings (October 21, 2026)
+There is also an **HQ4 maximum-STOI** firmware for the first phrase: **0.90182 STOI, 957 bytes Flash**. Its spectral-envelope mismatch is higher than the balanced version, so both versions are preserved. HTML lets you hear both.
 
-All numbers below are measured with the **same** canonical source WAV and `pystoi` (not subjective listening scores). Smaller logarithmic spectral distance is better. These are *training-set recordings*; the values do not predict performance on new speech.
+The ATtiny13A decoder occupies **406 bytes**, including vectors and startup, and uses a signed 8-stage LPC lattice with four excitation profiles. F_CPU = 9.6 MHz (CKDIV8 disabled by software), Fast PWM 37.5 kHz via PB1/OC0B, 7.5 kHz sample rate. EEPROM is not required.
 
-| Voice | Variant | STOI ↑ | Spectral error ↓ | Flash bytes |
-|---|---|---:|---:|---:|
-| Chego | HQ3 | 0.894838 | 1.36688 | 947 |
-| Chego | HQ4 intelligibility | 0.894928 | 1.36947 | 951 |
-| Chego | HQ4 timbre | 0.891950 | 1.35059 | 959 |
-| Otvechaesh | HQ3 | 0.816194 | 1.24683 | 878 |
-| Otvechaesh | HQ4 intelligibility | 0.816431 | 1.26585 | 882 |
-| Otvechaesh | HQ4 timbre | 0.814196 | 1.23088 | 880 |
-| Vinni | HQ3 | 0.855178 | 0.94783 | 1007 |
-| Vinni | HQ4 intelligibility | 0.855178 | 0.94783 | 1007 |
-| Vinni | HQ4 timbre | 0.855042 | 0.93795 | 1023 |
+Measured against the supplied recordings: 39,424 total output samples, 0 differences between exact numerical model and the assembled AVR interpreter, 0 missed Timer0 overflow events. Maximum ISR 28 CPU cycles. Tested digitally only, NOT on the physical microcontroller. STOI measures intelligibility, not identity/naturalness of voice.
 
-**Interpretation:** This is **not** a breakthrough. The tiny STOI gains are not meaningful on their own. The separate spectral variant reduced the chosen spectral error by approximately 1% but can slightly lower STOI. No variant reached 0.900 STOI. Do an A/B hearing test; a spectral distance is not proof of increased likeness to an actor.
+## Files
 
-The explored ideas included:
-* Joint and annealed frame parameter search, optional frame splitting and extra 64-sample frames.
-* Several alternative excitation pulse shapes using the existing two mode bits.
-* Three alternate unvoiced/noise patterns for consonants.
-* Wider coefficient scale (Q3 versus Q4) with bit-exact fixed-point experiments.
-* Constraint on abrupt changes of at least 48 unsigned-PCM levels.
+- `MicroMusic_MiniLPC_HQ4.html` or `release/index.html`: offline Web Audio player, real AVR interpreter for verification and comparison (original / HQ3 / HQ4 balanced / HQ4 max / LPX3).
+- `release/<clip>/firmware.hex`, `firmware.bin`, `firmware.S`, `speech.hq`: three actual AVR variants with compressed speech.
+- `release/chego_stoi_max/`: first phrase, highest STOI variant.
+- `release/<clip>/AB.wav`: RMS-leveled original, HQ3, original, HQ4 balanced, LPX3 comparison.
+- `trained/<clip>/best.npz`: quantized LPC frames and frame lengths, saved after optimization.
+- `optimize_hq4.py`: feedback encoder, frame parameter optimization with total Flash and click limits.
+- `refine_boundaries.py`: optimized frame boundaries (64/128/192/256 audio samples per frame).
+- `refine_timbre.py`: optimize spectral-envelope error while respecting a minimum STOI.
+- `convert_audio.py`: MP3/WAV to normalized mono WAV preprocessing (check `--help`).
+- `build_hq4.py`: assembler, PCM model verification, creates HEX/PCM/WAV/report and invokes `verify_hq4.js`.
+- `make_player_hq4.py`: produces standalone HTML player with embedded files.
+- `hq4_core.py`, `model.py`, `verify_hq4.js`: exact arithmetic model and cycle-based AVR emulator.
 
-**None of the pulse/noise/Q3 modifications improved the result on all three recordings**, so no unnecessary AVR instructions were added. Code is identical across all tested variants; only compressed voice parameters differ.
+## Rebuild, verify and train
 
-## Verification
-
-From actual assembled AVR instructions executed in `avr_emulator.js`:
-* 9 variants = 3 clips × 3 configurations.
-* **0 mismatches** versus the 8-bit PCM from the exact numerical model on every one of the 118,272 processed audio sample instances (three profiles × 39,424 samples).
-* **0 missed Timer0 overflows**, **0 irregular PWM update intervals**.
-* Max ISR duration **28 CPU cycles**, stack depth 4 in the emulator.
-* All nine actual HEX files at or below 1024 bytes Flash.
-
-This is **software emulation**, not physical AVR verification. Hardware clock, output filtering, voltage, and amplifier can alter the resulting sound.
-
-## Reproduction
-
-Install a recent Python 3, the requirements in `requirements.txt`, `clang` with AVR target, `llvm-objcopy` and Node.js. From the project directory:
+Requirements: Python 3 with `pip install -r requirements.txt`, `clang -target avr`, `llvm-objcopy`, Node.js.
 
 ```bash
 python build_hq4.py
-node verify_hq4.js
-python make_player.py
+python make_player_hq4.py
 ```
 
-Outputs live in `release/<phrase>/<variant>/`: `firmware.S`, `firmware.bin`, `firmware.hex`, `speech.hq`, `pcm.u8`, `preview.wav`. `release/report.csv`, `release/verification.json`, `release/index.html` are summary outputs.
+The scripts reproduce the **balanced** three firmware images. After copying this project anywhere, the full private archive includes all reference WAV and training parameters.
 
-### Closed-loop optimisation
-
-To rerun a saved, reproducible search starting from HQ3 streams:
+Run a new parameter search, then regenerate all binaries:
 
 ```bash
-python optimize_hq4.py --phrase chego --max-trials 4000 --seed 1437
-python refine_timbre.py --phrase chego --passes 2 --min-stoi-drop 0.001
+python optimize_hq4.py --clip chego --seconds 60 --seed 42
+python refine_boundaries.py --clip chego --passes 8
+python refine_timbre.py --clip chego --floor 0.900 --seconds 30
+python build_hq4.py
+python make_player_hq4.py
 ```
 
-Candidates are **not silently accepted**. The code enforces the Flash limit and tests the quantized 8-bit synthesizer output, with a guard against large sample-to-sample jumps. Experiment scripts save frame arrays, parameters, the RNG seed and a JSON report. `anneal_hq4.py`, `pulse_experiment.py`, `noise_experiment.py` and `coeff_scale_experiment.py` retain negative experiments too. Save their outputs separately when exploring so as not to overwrite selected releases.
+Optimization searches are explicitly best-effort. If no better values are found, the preserved `trained` snapshots remain reproducible. Keep a backup before running the optional retraining commands.
 
-**Input preprocessing**: `convert_audio.py` prepares MP3 or WAV. The canonical `references/<name>/original.wav` files are the snapshots used for the reported metrics. The archived source MP3 and canonical preprocessed references are not guaranteed to produce bit-identical output when newly processed with different ffmpeg builds or normalisation settings.
+## Intellectual property
 
-### Code-only public demo
-
-`python demo_synthetic.py` creates and builds an independent, synthetic phrase-like test using the real decoder. No movie audio or trained speech parameters are required for that demo. The code-only ZIP deliberately does **not** include cartoon recordings, any trained samples or other derivatives of third-party audio.
-
-## Distribution
-
-The **private** archive contains samples supplied for individual evaluation, including copyrighted animated-film dialogue. Do not publish those recordings or derivative voice data in a public repository without appropriate permissions. The code-only archive contains the reusable algorithms and one synthetic example.
+The original film excerpts and speech-derived firmware are included **solely for private evaluation**. Do not publish those recordings or their derived speech data to a public GitHub repository without appropriate rights. The audio-free code archive is separately provided for source review; it is not by itself a complete training dataset.
