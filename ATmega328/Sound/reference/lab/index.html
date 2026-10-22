@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Audio Codec Lab v10 — смещение частотной сетки LFA</title>
+<title>Audio Codec Lab v11 — LPC2 Improved</title>
 <style>
 :root{color-scheme:dark;--bg:#0d1117;--p:#161b22;--p2:#0b1118;--t:#e6edf3;--m:#9da7b3;--l:#30363d;--a:#58a6ff;--g:#3fb950;--r:#f85149}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#172033,var(--bg) 45%);color:var(--t);font:15px/1.45 system-ui,sans-serif}main{max-width:1120px;margin:auto;padding:24px}h1{font-size:clamp(26px,4vw,40px);margin:0 0 6px}p{color:var(--m)}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}.card{grid-column:span 12;background:var(--p);border:1px solid var(--l);border-radius:14px;padding:18px;box-shadow:0 15px 45px #0004}@media(min-width:850px){.left{grid-column:span 5}.right{grid-column:span 7}}.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:11px;margin:14px 0}label{display:grid;gap:5px;color:var(--m);font-size:13px}input,select,button{font:inherit;color:var(--t);background:var(--p2);border:1px solid var(--l);border-radius:9px;padding:9px 10px}input[type=file]{width:100%}input[type=range]{padding:0}button{cursor:pointer;font-weight:650}button:hover:not(:disabled){border-color:var(--a)}button:disabled{opacity:.45;cursor:not-allowed}.primary{background:#1f6feb}.good{background:#238636}.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}progress{width:100%;margin-top:13px}.status{min-height:42px;white-space:pre-wrap;color:var(--m)}.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:9px;margin:12px 0}.metric{background:var(--p2);border:1px solid var(--l);border-radius:10px;padding:10px}.metric b{display:block;font-size:18px}.metric span{font-size:12px;color:var(--m)}canvas{display:block;width:100%;height:190px;background:#090d12;border:1px solid var(--l);border-radius:10px;margin-top:8px}details{border-top:1px solid var(--l);margin-top:15px;padding-top:12px}summary{cursor:pointer;font-weight:700}code{background:#090d12;border:1px solid var(--l);border-radius:5px;padding:2px 5px}.small{font-size:12px}.value{color:var(--t)}.codecHidden{display:none!important}.codecNote{font-size:12px;color:var(--m)}
 </style>
 </head>
 <body><main>
-<h1>Audio Codec Lab v10: настраиваемая сетка LFA</h1>
-<p>Теперь на одной странице можно сравнить два принципиально разных кодека: <b>LFA‑3</b> с синусоидальными дорожками, локальными палитрами и шумовыми полосами, а также <b>LPC‑10 / Talkie‑подобный</b> речевой вокодер. LPC‑режим хранит энергию остатка, основной тон, признак звонкости и десять коэффициентов отражения. Это не побитово совместимый поток TMS5220, но модель синтеза и битрейт близки к семейству Talkie. Перед любым энкодером вход можно нормализовать по пиковому уровню. После декодирования доступен DC-блокиратор, а LPC использует широкополосный Talkie‑подобный chirp и регулируемую коррекцию спектрального наклона. В LFA-декодере можно дробно смещать логарифмическую частотную сетку без повторного кодирования файла.</p>
+<h1>Audio Codec Lab v11: LPC2 Improved</h1>
+<p>Страница сравнивает три независимых кодека: <b>LFA‑3</b>, исходный <b>LPC1 / Talkie‑подобный</b> и новый <b>LPC2 Improved</b>. LPC2 сохраняет прежний максимум 53 бита для обычного звонкого кадра, но использует устойчивые LSF-параметры, более длинное перекрывающееся окно анализа, глобальное отслеживание основного тона, смешанное возбуждение и формантный постфильтр. LPC1 оставлен без изменений для прямого сравнения. В LFA-декодере по-прежнему доступно дробное смещение логарифмической сетки.</p>
 <div class="grid">
 <section class="card left">
 <h2>Исходный звук</h2>
 <label>Аудиофайл<input id="audioFile" type="file" accept="audio/*,.wav,.mp3,.ogg,.m4a,.aac"></label>
-<div class="controls"><label>Кодек<select id="codec"><option value="lfa3" selected>LFA‑3: синусоиды + шум</option><option value="lpc1">LPC‑10 / Talkie‑подобный</option></select><span class="codecNote" id="codecInfo">Тональный и шумовой слои</span></label><label>Нормализация<select id="normalizeMode"><option value="peak" selected>по пиковому уровню</option><option value="off">выключена</option></select><span class="codecNote" id="normalizeInfo">Удаление DC и приведение пика</span></label><label class="normalizeOnly">Целевой пик<input id="normalizeTarget" type="range" min="-6" max="-0.5" step="0.5" value="-1"><span class="value"><span id="normalizeTargetV">−1.0</span> dBFS</span></label><label class="normalizeOnly">Максимальное усиление<input id="normalizeMaxBoost" type="range" min="0" max="30" step="1" value="18"><span class="value"><span id="normalizeMaxBoostV">18</span> дБ</span></label><label>Баланс выхода<select id="outputBalance"><option value="dcblock" selected>DC‑block 20 Гц</option><option value="mean">вычесть среднее</option><option value="off">без коррекции</option></select><span class="codecNote" id="outputBalanceInfo">Убирает локальное смещение после синтеза</span></label>
+<div class="controls"><label>Кодек<select id="codec"><option value="lfa3" selected>LFA‑3: синусоиды + шум</option><option value="lpc1">LPC1: LPC‑10 / Talkie‑подобный</option><option value="lpc2">LPC2 Improved: LSF + mixed excitation</option></select><span class="codecNote" id="codecInfo">Тональный и шумовой слои</span></label><label>Нормализация<select id="normalizeMode"><option value="peak" selected>по пиковому уровню</option><option value="off">выключена</option></select><span class="codecNote" id="normalizeInfo">Удаление DC и приведение пика</span></label><label class="normalizeOnly">Целевой пик<input id="normalizeTarget" type="range" min="-6" max="-0.5" step="0.5" value="-1"><span class="value"><span id="normalizeTargetV">−1.0</span> dBFS</span></label><label class="normalizeOnly">Максимальное усиление<input id="normalizeMaxBoost" type="range" min="0" max="30" step="1" value="18"><span class="value"><span id="normalizeMaxBoostV">18</span> дБ</span></label><label>Баланс выхода<select id="outputBalance"><option value="dcblock" selected>DC‑block 20 Гц</option><option value="mean">вычесть среднее</option><option value="off">без коррекции</option></select><span class="codecNote" id="outputBalanceInfo">Убирает локальное смещение после синтеза</span></label>
 <label>Частота<select id="sampleRate"><option>8000</option><option>12000</option><option selected>16000</option><option>22050</option></select></label>
 <label class="lfaOnly">FFT<select id="fftSize"><option>256</option><option selected>512</option><option>1024</option></select></label><label>Шаг кадров<select id="frameMs"><option value="10">10 мс</option><option value="16">16 мс</option><option value="20" selected>20 мс</option><option value="25">25 мс</option><option value="32">32 мс</option></select><span class="value" id="timingInfo">—</span></label><label class="lfaOnly">Суперкадр<select id="superFrames"><option value="4">4 кадра</option><option value="8" selected>8 кадров</option><option value="10">10 кадров</option><option value="16">16 кадров</option></select><span class="value" id="superInfo">—</span></label>
 <label class="lfaOnly">Синусоид на кадр<input id="partials" type="range" min="2" max="24" value="10"><span class="value"><span id="partialsV">10</span></span></label>
@@ -29,11 +29,11 @@
 <label class="lfaOnly">Слияние амплитуды<input id="mergeATol" type="range" min="1" max="24" value="7"><span class="value"><span id="mergeATolV">7</span> кодов</span></label>
 <label class="lfaOnly">Шумовых полос<select id="noiseBands"><option value="0">выкл.</option><option value="4">4</option><option value="6" selected>6</option><option value="8">8</option><option value="12">12</option></select><span class="value" id="noiseBandInfo">—</span></label>
 <label class="lfaOnly">Защита тональных пиков<input id="noiseMask" type="range" min="1" max="6" value="3"><span class="value">±<span id="noiseMaskV">3</span> бина FFT</span></label>
-<label class="lfaOnly">Уровень шумового слоя<input id="noiseGain" type="range" min="25" max="200" value="100"><span class="value"><span id="noiseGainV">100</span>%</span></label><label class="lpcOnly codecHidden">Порядок LPC<select id="lpcOrder"><option value="10" selected>10 коэффициентов</option></select><span class="codecNote">Как у TMS52xx/Talkie</span></label><label class="lpcOnly codecHidden">Порог звонкости<input id="lpcVoicing" type="range" min="20" max="70" value="38"><span class="value"><span id="lpcVoicingV">38</span>% корреляции</span></label><label class="lpcOnly codecHidden">Предыскажение<input id="lpcPreemph" type="range" min="0" max="95" value="85"><span class="value"><span id="lpcPreemphV">0.85</span></span></label><label class="lpcOnly codecHidden">Повтор коэффициентов<input id="lpcRepeat" type="range" min="0" max="15" value="5"><span class="value">допуск <span id="lpcRepeatV">5</span>%</span></label><label class="lpcOnly codecHidden">Яркость LPC<input id="lpcBrightness" type="range" min="0" max="9" step="0.5" value="4"><span class="value">+<span id="lpcBrightnessV">4.0</span> дБ ВЧ/НЧ</span></label><label class="lpcOnly codecHidden">Срез НЧ LPC<select id="lpcHighpass"><option value="20">20 Гц</option><option value="50">50 Гц</option><option value="70" selected>70 Гц</option><option value="100">100 Гц</option><option value="130">130 Гц</option></select><span class="codecNote">Убирает гул, не затрагивая основные форманты</span></label>
+<label class="lfaOnly">Уровень шумового слоя<input id="noiseGain" type="range" min="25" max="200" value="100"><span class="value"><span id="noiseGainV">100</span>%</span></label><label class="lpcOnly codecHidden">Порядок LPC<select id="lpcOrder"><option value="10" selected>10 коэффициентов</option></select><span class="codecNote">Как у TMS52xx/Talkie</span></label><label class="lpcOnly codecHidden">Порог звонкости<input id="lpcVoicing" type="range" min="20" max="70" value="38"><span class="value"><span id="lpcVoicingV">38</span>% корреляции</span></label><label class="lpcOnly codecHidden">Предыскажение<input id="lpcPreemph" type="range" min="0" max="95" value="85"><span class="value"><span id="lpcPreemphV">0.85</span></span></label><label class="lpcOnly codecHidden">Повтор коэффициентов<input id="lpcRepeat" type="range" min="0" max="15" value="5"><span class="value">допуск <span id="lpcRepeatV">5</span>%</span></label><label class="lpcOnly codecHidden">Яркость LPC<input id="lpcBrightness" type="range" min="0" max="9" step="0.5" value="4"><span class="value">+<span id="lpcBrightnessV">4.0</span> дБ ВЧ/НЧ</span></label><label class="lpcOnly codecHidden">Срез НЧ LPC<select id="lpcHighpass"><option value="20">20 Гц</option><option value="50">50 Гц</option><option value="70" selected>70 Гц</option><option value="100">100 Гц</option><option value="130">130 Гц</option></select><span class="codecNote">Убирает гул, не затрагивая основные форманты</span></label><label class="lpc2Only codecHidden">Окно анализа LPC2<select id="lpc2WindowMs"><option value="24">24 мс</option><option value="32" selected>32 мс</option><option value="40">40 мс</option><option value="48">48 мс</option></select><span class="codecNote">Шаг кадров остаётся прежним</span></label><label class="lpc2Only codecHidden">Формантный постфильтр<input id="lpc2Postfilter" type="range" min="0" max="70" step="5" value="35"><span class="value"><span id="lpc2PostfilterV">35</span>%</span></label><label class="lpc2Only codecHidden">Плавность F0<input id="lpc2PitchSmooth" type="range" min="0" max="100" step="5" value="65"><span class="value"><span id="lpc2PitchSmoothV">65</span>%</span></label>
 </div>
 <div class="row"><button id="encode" class="primary" disabled>Кодировать</button><button id="playOrig" disabled>▶ Вход кодека</button><button id="stop" disabled>■ Стоп</button></div>
 <progress id="progress" max="1" value="0"></progress><div id="status" class="status">Загрузите аудиофайл.</div>
-<details><summary>Как выполняется нормализация</summary><p>После перевода в mono и передискретизации из сигнала удаляется постоянная составляющая. Затем весь файл умножается на один коэффициент так, чтобы максимальный по модулю отсчёт достиг выбранного уровня. По умолчанию это −1 dBFS. Максимальное усиление ограничено, чтобы очень тихая запись или фоновый шум не усиливались чрезмерно. Нормализация выполняется до анализа LFA‑3 и LPC1 и не добавляет компрессию динамического диапазона.</p></details><details><summary>Почему LPC мог звучать глухо и бубняще</summary><p>Предыдущий биполярный импульс был целым периодом синусоиды. Он имел нулевую постоянную составляющую, но его спектр был неравномерным: слишком много энергии приходилось на нижние гармоники, а верхние гармоники возбуждались слабее. После LPC-фильтра и деэмфазиса это давало глухой, полый тембр.</p><p>В версии 9 источник заменён на короткую псевдослучайную биполярную chirp-последовательность. Её энергия распределена по спектру значительно равномернее. Регулятор яркости выполняет лёгкую однотактную коррекцию наклона спектра, пригодную для реализации на 8-битном микроконтроллере.</p></details><details><summary>Почему форма могла быть односторонней</summary><p>В прежней версии звонкая LPC-речь возбуждалась одиночным положительным импульсом. Такой источник имеет постоянную составляющую, а всеполюсный LPC-фильтр и деэмфазис могут её усилить. Теперь используется короткий биполярный гортанный импульс с нулевой средней площадью. После синтеза DC-блокиратор около 20 Гц удаляет остаточное локальное смещение. На диаграмме также показаны отдельные нулевые линии входа и выхода.</p><p>Положительные и отрицательные пики не масштабируются независимо: это исказило бы тембр и добавило чётные гармоники. Коррекция только центрирует сигнал и при необходимости одинаково ограничивает обе полуволны.</p></details><details class="lfaOnly"><summary>Как работает смещение сетки LFA</summary><p>Перед преобразованием кода частоты в герцы декодер прибавляет дробное смещение <code>Δ</code>: <code>q′ = q + Δ</code>. Поэтому одинаковый множитель применяется ко всем тональным дорожкам, а интервалы между ними сохраняются. Положительное значение повышает тон, отрицательное — понижает.</p><p>Это декодерская настройка и она не записывается в LFA-файл. Она удобна для подстройки строя, проверки разных положений логарифмической сетки и прослушивания дробных шагов. Шумовые полосы остаются на прежних частотах, чтобы не менять их спектральный баланс.</p></details><details class="lfaOnly"><summary>Как устроен шумовой слой LFA‑3</summary><p>После поиска синусоид энкодер маскирует несколько FFT-бинов около каждого выбранного пика. Оставшаяся энергия суммируется в логарифмических полосах. Это улучшает шипящие согласные, дыхание, тарелки и другие широкополосные звуки.</p></details><details class="lpcOnly codecHidden"><summary>Как устроен LPC/Talkie‑подобный режим</summary><p>Каждые 20 мс вычисляются энергия остаточного сигнала, основной тон, звонкость и десять коэффициентов отражения LPC. Звонкие кадры возбуждаются короткой широкополосной биполярной chirp-последовательностью с периодом основного тона, незвонкие — псевдослучайным шумом. Затем возбуждение проходит через десятиполюсный речевой фильтр. Поток <code>LPC1</code> не совместим побитово с TMS5220, но использует близкую структуру кадров и похожий синтез.</p></details>
+<details><summary>Как выполняется нормализация</summary><p>После перевода в mono и передискретизации из сигнала удаляется постоянная составляющая. Затем весь файл умножается на один коэффициент так, чтобы максимальный по модулю отсчёт достиг выбранного уровня. По умолчанию это −1 dBFS. Максимальное усиление ограничено, чтобы очень тихая запись или фоновый шум не усиливались чрезмерно. Нормализация выполняется до анализа LFA‑3, LPC1 и LPC2 и не добавляет компрессию динамического диапазона.</p></details><details><summary>Почему LPC мог звучать глухо и бубняще</summary><p>Предыдущий биполярный импульс был целым периодом синусоиды. Он имел нулевую постоянную составляющую, но его спектр был неравномерным: слишком много энергии приходилось на нижние гармоники, а верхние гармоники возбуждались слабее. После LPC-фильтра и деэмфазиса это давало глухой, полый тембр.</p><p>В версии 9 источник заменён на короткую псевдослучайную биполярную chirp-последовательность. Её энергия распределена по спектру значительно равномернее. Регулятор яркости выполняет лёгкую однотактную коррекцию наклона спектра, пригодную для реализации на 8-битном микроконтроллере.</p></details><details><summary>Почему форма могла быть односторонней</summary><p>В прежней версии звонкая LPC-речь возбуждалась одиночным положительным импульсом. Такой источник имеет постоянную составляющую, а всеполюсный LPC-фильтр и деэмфазис могут её усилить. Теперь используется короткий биполярный гортанный импульс с нулевой средней площадью. После синтеза DC-блокиратор около 20 Гц удаляет остаточное локальное смещение. На диаграмме также показаны отдельные нулевые линии входа и выхода.</p><p>Положительные и отрицательные пики не масштабируются независимо: это исказило бы тембр и добавило чётные гармоники. Коррекция только центрирует сигнал и при необходимости одинаково ограничивает обе полуволны.</p></details><details class="lfaOnly"><summary>Как работает смещение сетки LFA</summary><p>Перед преобразованием кода частоты в герцы декодер прибавляет дробное смещение <code>Δ</code>: <code>q′ = q + Δ</code>. Поэтому одинаковый множитель применяется ко всем тональным дорожкам, а интервалы между ними сохраняются. Положительное значение повышает тон, отрицательное — понижает.</p><p>Это декодерская настройка и она не записывается в LFA-файл. Она удобна для подстройки строя, проверки разных положений логарифмической сетки и прослушивания дробных шагов. Шумовые полосы остаются на прежних частотах, чтобы не менять их спектральный баланс.</p></details><details class="lfaOnly"><summary>Как устроен шумовой слой LFA‑3</summary><p>После поиска синусоид энкодер маскирует несколько FFT-бинов около каждого выбранного пика. Оставшаяся энергия суммируется в логарифмических полосах. Это улучшает шипящие согласные, дыхание, тарелки и другие широкополосные звуки.</p></details><details class="lpc2Only codecHidden"><summary>Что изменено в LPC2 Improved</summary><p>Спектральная форма хранится как упорядоченные <b>LSF</b>, а не как независимо квантованные коэффициенты отражения. После квантования LSF сохраняют порядок и минимальный интервал, поэтому фильтр остаётся устойчивым. Между кадрами интерполируются непосредственно положения резонансов.</p><p>Звонкий кадр занимает не больше 53 бит: энергия 5 бит, режим возбуждения 2 бита, повтор 1 бит, основной тон 6 бит и LSF 39 бит. Режимы возбуждения: шум, смешанный, звонкий и переходный. Для незвонких кадров применяется устойчивый LPC порядка 4, поэтому их размер остаётся близким к LPC1.</p><p>Энкодер рассматривает несколько кандидатов F0 в каждом кадре и выбирает плавную траекторию по всей записи. Декодер дополнительно использует адаптивные атаки и формантный постфильтр, не требующие дополнительных битов.</p></details><details class="lpcOnly codecHidden"><summary>Как устроен LPC/Talkie‑подобный режим</summary><p>Каждые 20 мс вычисляются энергия остаточного сигнала, основной тон, звонкость и десять коэффициентов отражения LPC. Звонкие кадры возбуждаются короткой широкополосной биполярной chirp-последовательностью с периодом основного тона, незвонкие — псевдослучайным шумом. Затем возбуждение проходит через десятиполюсный речевой фильтр. Поток <code>LPC1</code> не совместим побитово с TMS5220, но использует близкую структуру кадров и похожий синтез.</p></details>
 </section>
 <section class="card right">
 <h2>Результат</h2>
@@ -44,14 +44,14 @@
 <h3>Форма сигнала</h3><canvas id="wave" width="1000" height="190"></canvas>
 <h3 id="tracksTitle">Частотные дорожки</h3><canvas id="tracks" width="1000" height="260"></canvas>
 <h3 id="noiseTitle">Шумовые полосы</h3><canvas id="noise" width="1000" height="190"></canvas>
-<details><summary>Открыть готовый файл кодека</summary><label style="margin-top:10px">LFA или LPC<input id="lfaFile" type="file" accept=".lfa,.lpc,application/octet-stream"></label></details>
+<details><summary>Открыть готовый файл кодека</summary><label style="margin-top:10px">LFA или LPC<input id="lfaFile" type="file" accept=".lfa,.lpc,.lp2,application/octet-stream"></label></details>
 </section>
-<section class="card"><h2>Сравнение моделей</h2><p><b>LFA‑3</b> лучше подходит для музыки, устойчивых тонов и произвольных звуков. Он хранит независимые синусоиды и спектральный шум, но обычно требует больше данных.</p><p><b>LPC‑10 / Talkie‑подобный</b> специализирован для речи. Вместо спектральных пиков он хранит модель голосового тракта и источник возбуждения. Поток обычно получается около 1–3 кбит/с, однако голос звучит роботизированно, а музыка передаётся плохо.</p><p>В LPC‑потоке энергия занимает 5 бит, звонкость 1 бит, основной тон 7 бит, а коэффициенты имеют разную точность: <code>5,5,4,4,4,4,4,3,3,3</code> бит. Незвонкий кадр передаёт только первые четыре коэффициента, а похожие соседние кадры могут повторять предыдущий набор.</p><p class="small">Страница открывает LFA‑1/LFA‑2/LFA‑3 и собственный поток LPC1. LPC1 создан для эксперимента и сравнения; он не является форматом ROM микросхем TMS5220.</p></section>
+<section class="card"><h2>Сравнение моделей</h2><p><b>LFA‑3</b> лучше подходит для музыки, устойчивых тонов и произвольных звуков. Он хранит независимые синусоиды и спектральный шум, но обычно требует больше данных.</p><p><b>LPC1</b> — простая Talkie‑подобная контрольная версия с коэффициентами отражения K1…K10 и бинарным выбором «импульсы или шум».</p><p><b>LPC2 Improved</b> использует тот же максимальный бюджет 53 бита на обычный звонкий кадр, но заменяет K на LSF, снижает pitch до 6 бит и освобождает второй бит для четырёх режимов возбуждения. Более длинное окно, Viterbi‑подобное отслеживание F0 и постфильтр меняют вычисления, а не размер файла.</p><p class="small">Страница открывает LFA‑1/LFA‑2/LFA‑3, LPC1 и новый поток LPC2. Оба LPC-формата экспериментальные и не совместимы побитово с TMS5220.</p></section>
 </div>
 <script>
 "use strict";
-const $=id=>document.getElementById(id),U={audioFile:$("audioFile"),lfaFile:$("lfaFile"),codec:$("codec"),normalizeMode:$("normalizeMode"),normalizeTarget:$("normalizeTarget"),normalizeMaxBoost:$("normalizeMaxBoost"),outputBalance:$("outputBalance"),sampleRate:$("sampleRate"),fftSize:$("fftSize"),frameMs:$("frameMs"),superFrames:$("superFrames"),partials:$("partials"),levels:$("levels"),lfaGridShift:$("lfaGridShift"),minFreq:$("minFreq"),maxFreq:$("maxFreq"),threshold:$("threshold"),trackTol:$("trackTol"),mergeFTol:$("mergeFTol"),mergeATol:$("mergeATol"),noiseBands:$("noiseBands"),noiseMask:$("noiseMask"),noiseGain:$("noiseGain"),lpcOrder:$("lpcOrder"),lpcVoicing:$("lpcVoicing"),lpcPreemph:$("lpcPreemph"),lpcRepeat:$("lpcRepeat"),lpcBrightness:$("lpcBrightness"),lpcHighpass:$("lpcHighpass"),encode:$("encode"),playOrig:$("playOrig"),playDec:$("playDec"),stop:$("stop"),saveLfa:$("saveLfa"),saveWav:$("saveWav"),progress:$("progress"),status:$("status"),wave:$("wave"),tracks:$("tracks"),noise:$("noise")};
-for(const [a,b,f] of [["partials","partialsV",v=>v],["threshold","thresholdV",v=>String(v).replace("-","−")],["trackTol","trackTolV",v=>v],["mergeFTol","mergeFTolV",v=>v],["mergeATol","mergeATolV",v=>v],["noiseMask","noiseMaskV",v=>v],["noiseGain","noiseGainV",v=>v],["lpcVoicing","lpcVoicingV",v=>v],["lpcPreemph","lpcPreemphV",v=>(v/100).toFixed(2)],["lpcRepeat","lpcRepeatV",v=>v],["lpcBrightness","lpcBrightnessV",v=>Number(v).toFixed(1)],["normalizeTarget","normalizeTargetV",v=>Number(v).toFixed(1).replace("-", "−")],["normalizeMaxBoost","normalizeMaxBoostV",v=>v]]){const e=$(a),o=$(b),q=()=>o.textContent=f(e.value);e.oninput=q;q()}
+const $=id=>document.getElementById(id),U={audioFile:$("audioFile"),lfaFile:$("lfaFile"),codec:$("codec"),normalizeMode:$("normalizeMode"),normalizeTarget:$("normalizeTarget"),normalizeMaxBoost:$("normalizeMaxBoost"),outputBalance:$("outputBalance"),sampleRate:$("sampleRate"),fftSize:$("fftSize"),frameMs:$("frameMs"),superFrames:$("superFrames"),partials:$("partials"),levels:$("levels"),lfaGridShift:$("lfaGridShift"),minFreq:$("minFreq"),maxFreq:$("maxFreq"),threshold:$("threshold"),trackTol:$("trackTol"),mergeFTol:$("mergeFTol"),mergeATol:$("mergeATol"),noiseBands:$("noiseBands"),noiseMask:$("noiseMask"),noiseGain:$("noiseGain"),lpcOrder:$("lpcOrder"),lpcVoicing:$("lpcVoicing"),lpcPreemph:$("lpcPreemph"),lpcRepeat:$("lpcRepeat"),lpcBrightness:$("lpcBrightness"),lpcHighpass:$("lpcHighpass"),lpc2WindowMs:$("lpc2WindowMs"),lpc2Postfilter:$("lpc2Postfilter"),lpc2PitchSmooth:$("lpc2PitchSmooth"),encode:$("encode"),playOrig:$("playOrig"),playDec:$("playDec"),stop:$("stop"),saveLfa:$("saveLfa"),saveWav:$("saveWav"),progress:$("progress"),status:$("status"),wave:$("wave"),tracks:$("tracks"),noise:$("noise")};
+for(const [a,b,f] of [["partials","partialsV",v=>v],["threshold","thresholdV",v=>String(v).replace("-","−")],["trackTol","trackTolV",v=>v],["mergeFTol","mergeFTolV",v=>v],["mergeATol","mergeATolV",v=>v],["noiseMask","noiseMaskV",v=>v],["noiseGain","noiseGainV",v=>v],["lpcVoicing","lpcVoicingV",v=>v],["lpcPreemph","lpcPreemphV",v=>(v/100).toFixed(2)],["lpcRepeat","lpcRepeatV",v=>v],["lpcBrightness","lpcBrightnessV",v=>Number(v).toFixed(1)],["lpc2Postfilter","lpc2PostfilterV",v=>v],["lpc2PitchSmooth","lpc2PitchSmoothV",v=>v],["normalizeTarget","normalizeTargetV",v=>Number(v).toFixed(1).replace("-", "−")],["normalizeMaxBoost","normalizeMaxBoostV",v=>v]]){const e=$(a),o=$(b),q=()=>o.textContent=f(e.value);e.oninput=q;q()}
 let ctx=null,source=null,src=null,srcRate=0,work=null,decoded=null,decodedRaw=null,meta=null,events=[],noiseFrames=null,lpcFrames=null,lfa=null,packInfo=null,normInfo=null,outputInfo=null,lfaGridResynthSerial=0,currentCodec="lfa3",name="audio";
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),tick=()=>new Promise(r=>setTimeout(r,0));
 function status(s,k=""){U.status.textContent=s;U.status.style.color=k==="bad"?"var(--r)":k==="good"?"var(--g)":"var(--m)"}function progress(x){U.progress.value=clamp(x,0,1)}
@@ -154,7 +154,7 @@ function outputBalanceLine(info){
   if(!info)return"";
   const a=info.after;
   const mode=info.mode==="dcblock"
-    ?(currentCodec==="lpc1"
+    ?((currentCodec==="lpc1"||currentCodec==="lpc2")
       ?`ФВЧ ${info.highpassHz} Гц + яркость +${info.brightnessDb.toFixed(1)} дБ`
       :"DC-block 20 Гц")
     :info.mode==="mean"?"вычитание среднего":"без коррекции";
@@ -171,7 +171,7 @@ function updateOutputBalanceUI(){
 }
 function applyOutputBalance(redraw=true){
   if(!decodedRaw||!meta)return;
-  const lpc=currentCodec==="lpc1";
+  const lpc=currentCodec==="lpc1"||currentCodec==="lpc2";
   const r=processDecodedOutput(decodedRaw,meta.sr,U.outputBalance.value,
     lpc?+U.lpcBrightness.value:0,lpc?+U.lpcHighpass.value:20);
   decoded=r.samples;outputInfo=r.info;
@@ -355,6 +355,176 @@ async function encodeLPC(x,sr,c){
     if(!(f&31)){progress(f/F*.78);status(`LPC-анализ: ${f+1} / ${F}`);await tick()}
   }
   return{meta:{codec:"lpc1",ver:1,sr,H,order,samples:x.length,frameCount:F,pre:c.pre,voicing:c.voicing},frames,analysis:{voicedCount,repeatCount,silenceCount,avgPitch:voicedCount?pitchSum/voicedCount:0}};
+}
+
+const LPC2_LSF_BITS10=[5,5,4,4,4,4,4,3,3,3],LPC2_LSF_BITS4=[5,5,4,4],LPC2_PITCH_MIN=55,LPC2_PITCH_MAX=420;
+function lpc2PitchQ(period,sr){const f=clamp(sr/period,LPC2_PITCH_MIN,LPC2_PITCH_MAX);return clamp(Math.round(Math.log(f/LPC2_PITCH_MIN)/Math.log(LPC2_PITCH_MAX/LPC2_PITCH_MIN)*63),0,63)}
+function qLpc2Pitch(q,sr){const f=LPC2_PITCH_MIN*(LPC2_PITCH_MAX/LPC2_PITCH_MIN)**(q/63);return sr/f}
+function polyMul(a,b){const o=new Float64Array(a.length+b.length-1);for(let i=0;i<a.length;i++)for(let j=0;j<b.length;j++)o[i+j]+=a[i]*b[j];return o}
+function stabilizeLsf(input,order){
+  const x=Array.from(input).sort((a,b)=>a-b),sep=Math.PI*(order===10?.012:.025),lo=sep,hi=Math.PI-sep;
+  for(let i=0;i<order;i++)x[i]=clamp(x[i]??Math.PI*(i+1)/(order+1),lo,hi);
+  for(let i=1;i<order;i++)x[i]=Math.max(x[i],x[i-1]+sep);
+  if(x[order-1]>hi){x[order-1]=hi;for(let i=order-2;i>=0;i--)x[i]=Math.min(x[i],x[i+1]-sep)}
+  if(x[0]<lo){x[0]=lo;for(let i=1;i<order;i++)x[i]=Math.max(x[i],x[i-1]+sep)}
+  return new Float64Array(x)
+}
+function lpcToLsf(a){
+  const p=a.length-1,steps=p===10?640:320,rr=[],ri=[];
+  function bi(w){let ar=0,ai=0;for(let k=0;k<=p;k++){ar+=a[k]*Math.cos(w*k);ai-=a[k]*Math.sin(w*k)}const ph=w*(p+1)/2,c=Math.cos(ph),s=Math.sin(ph);return[ar*c-ai*s,ar*s+ai*c]}
+  function root(lo,hi,which,flo){for(let z=0;z<24;z++){const mid=(lo+hi)/2,v=bi(mid)[which];if(flo*v<=0)hi=mid;else{lo=mid;flo=v}}return(lo+hi)/2}
+  let pw=1e-6,[pr,pi]=bi(pw);
+  for(let n=1;n<=steps;n++){
+    const w=Math.PI*n/(steps+1),v=bi(w),cr=v[0],ci=v[1];
+    if(pr===0||cr===0||pr*cr<0){const q=root(pw,w,0,pr);if(q>1e-4&&q<Math.PI-1e-4&&(!rr.length||Math.abs(q-rr[rr.length-1])>1e-4))rr.push(q)}
+    if(pi===0||ci===0||pi*ci<0){const q=root(pw,w,1,pi);if(q>1e-4&&q<Math.PI-1e-4&&(!ri.length||Math.abs(q-ri[ri.length-1])>1e-4))ri.push(q)}
+    pw=w;pr=cr;pi=ci
+  }
+  const roots=[...rr.map(x=>[x,0]),...ri.map(x=>[x,1])].sort((a,b)=>a[0]-b[0]);
+  if(roots.length!==p)return null;
+  return stabilizeLsf(roots.map(x=>x[0]),p)
+}
+function lsfToLpc(lsf){
+  const x=stabilizeLsf(lsf,lsf.length),r=[],i=[];
+  for(let n=0;n<x.length;n++)(n&1?i:r).push(x[n]);
+  let P=new Float64Array([1,1]),Q=new Float64Array([1,-1]);
+  for(const w of r)P=polyMul(P,new Float64Array([1,-2*Math.cos(w),1]));
+  for(const w of i)Q=polyMul(Q,new Float64Array([1,-2*Math.cos(w),1]));
+  const a=new Float64Array(x.length+1);
+  for(let n=0;n<a.length;n++)a[n]=.5*((P[n]||0)+(Q[n]||0));
+  a[0]=1;return a
+}
+function lsfRange(index,order){const sep=order===10?.012:.025,center=(index+1)/(order+1),half=order===10?.235:.30;return[Math.max((index+1)*sep,center-half),Math.min(1-(order-index)*sep,center+half)]}
+function quantLsf(lsf,bits){const order=bits.length,x=stabilizeLsf(lsf,order),q=[];for(let i=0;i<order;i++){const [lo,hi]=lsfRange(i,order),n=(1<<bits[i])-1,u=clamp(x[i]/Math.PI,lo,hi);q.push(clamp(Math.round((u-lo)/(hi-lo)*n),0,n))}return q}
+function unquantLsf(q,bits){const order=bits.length,x=[];for(let i=0;i<order;i++){const [lo,hi]=lsfRange(i,order),n=(1<<bits[i])-1;x.push((lo+(q[i]/n)*(hi-lo))*Math.PI)}return stabilizeLsf(x,order)}
+function defaultLsf(order){return new Float64Array(Array.from({length:order},(_,i)=>Math.PI*(i+1)/(order+1)))}
+function expandLsf4(lsf4){const a4=lsfToLpc(lsf4),a10=new Float64Array(11);a10.set(a4);return lpcToLsf(a10)||defaultLsf(10)}
+function pitchCandidateSet(x,center,W,sr){
+  const len=Math.max(W,Math.round(sr*.042)),from=Math.max(0,Math.round(center-len/2)),n=Math.min(len,x.length-from);
+  if(n<Math.round(sr*.014))return{candidates:[],maxCorr:0,zcr:0};
+  let mean=0;for(let i=0;i<n;i++)mean+=x[from+i];mean/=n;
+  const y=new Float64Array(n);let peak=0,zcr=0,last=0;
+  for(let i=0;i<n;i++){const v=x[from+i]-mean;y[i]=v;peak=Math.max(peak,Math.abs(v));if(i&&((v>=0)!==(last>=0)))zcr++;last=v}
+  if(peak<1e-5)return{candidates:[],maxCorr:0,zcr:zcr/n};
+  const clip=peak*.25;for(let i=0;i<n;i++){const v=y[i];y[i]=v>clip?v-clip:v<-clip?v+clip:0}
+  const lo=Math.max(2,Math.floor(sr/LPC2_PITCH_MAX)),hi=Math.min(n-8,Math.ceil(sr/LPC2_PITCH_MIN)),corr=new Float64Array(hi+1);
+  for(let lag=lo;lag<=hi;lag++){let c=0,e0=0,e1=0;for(let i=lag;i<n;i++){const a=y[i],b=y[i-lag];c+=a*b;e0+=a*a;e1+=b*b}corr[lag]=c/Math.sqrt(Math.max(1e-12,e0*e1))}
+  const peaks=[];for(let lag=lo+1;lag<hi;lag++)if(corr[lag]>=corr[lag-1]&&corr[lag]>=corr[lag+1]){const den=corr[lag-1]-2*corr[lag]+corr[lag+1],d=den?clamp(.5*(corr[lag-1]-corr[lag+1])/den,-.5,.5):0;peaks.push({period:lag+d,corr:corr[lag]})}
+  peaks.sort((a,b)=>b.corr-a.corr);const out=[];for(const p of peaks){if(out.some(q=>Math.abs(Math.log2(p.period/q.period))<.035))continue;out.push(p);if(out.length===5)break}
+  return{candidates:out,maxCorr:out.length?out[0].corr:0,zcr:zcr/n}
+}
+function trackPitchViterbi(records,threshold,smooth){
+  const back=[],costs=[];
+  for(let f=0;f<records.length;f++){
+    const r=records[f],states=[{period:0,corr:0},...r.pitch.candidates],cur=new Float64Array(states.length),bp=new Int16Array(states.length);
+    for(let j=0;j<states.length;j++){
+      const s=states[j],em=s.period?Math.max(0,threshold-s.corr)*7-s.corr*1.2:Math.max(0,r.pitch.maxCorr-threshold)*5;
+      if(f===0){cur[j]=em;bp[j]=-1;continue}
+      const prevStates=back[f-1].states,pc=costs[f-1];let best=Infinity,bi=0;
+      for(let k=0;k<prevStates.length;k++){
+        const p=prevStates[k];let tr=0;
+        if(!p.period&&!s.period)tr=0;
+        else if(!p.period||!s.period)tr=.55+smooth*.35;
+        else{const jump=Math.abs(Math.log2((r.sr/s.period)/(r.sr/p.period)));tr=smooth*(2.4*jump+(jump>.55?3:0))}
+        const z=pc[k]+tr;if(z<best){best=z;bi=k}
+      }
+      cur[j]=best+em;bp[j]=bi
+    }
+    back.push({states,bp});costs.push(cur)
+  }
+  if(!records.length)return[];
+  let idx=0,last=costs[costs.length-1];for(let i=1;i<last.length;i++)if(last[i]<last[idx])idx=i;
+  const path=new Array(records.length);for(let f=records.length-1;f>=0;f--){path[f]=back[f].states[idx];idx=back[f].bp[idx]}
+  return path
+}
+function analyzeLpcWindow(pre,start,W,order){
+  const buf=new Float64Array(W);let mean=0;for(let i=0;i<W;i++)mean+=pre[start+i]||0;mean/=W;
+  for(let i=0;i<W;i++){const w=.54-.46*Math.cos(2*Math.PI*i/Math.max(1,W-1));buf[i]=((pre[start+i]||0)-mean)*w}
+  const r=new Float64Array(order+1);for(let lag=0;lag<=order;lag++){let z=0;for(let i=lag;i<W;i++)z+=buf[i]*buf[i-lag];r[lag]=z}
+  return levinsonDurbin(r,order)
+}
+async function encodeLPC2(x,sr,c){
+  const H=Math.max(16,Math.round(sr*c.frameMs/1000)),W=Math.max(H,Math.round(sr*c.windowMs/1000)),F=Math.ceil(x.length/H),pre=new Float32Array(x.length);
+  let pv=0;for(let i=0;i<x.length;i++){pre[i]=x[i]-c.pre*pv;pv=x[i]}
+  const rec=[];
+  for(let f=0;f<F;f++){
+    const center=f*H+H/2,start=Math.round(center-W/2),ld10=analyzeLpcWindow(pre,start,W,10),ld4=analyzeLpcWindow(pre,start,W,4),gain=Math.sqrt(ld10.error/W),energy=lpcGainQ(gain),a10=reflectionToLpc(ld10.k),a4=reflectionToLpc(ld4.k),lsf10=lpcToLsf(a10)||defaultLsf(10),lsf4=lpcToLsf(a4)||defaultLsf(4),pitch=pitchCandidateSet(x,center,W,sr);
+    rec.push({sr,energy,gain,lsf10,lsf4,pitch});
+    if(!(f&15)){progress(f/F*.55);status(`LPC2: LSF и кандидаты F0 ${f+1} / ${F}`);await tick()}
+  }
+  const path=trackPitchViterbi(rec,c.voicing,c.pitchSmooth),frames=[];let previous=null,voicedCount=0,mixedCount=0,transientCount=0,repeatCount=0,silenceCount=0,pitchSum=0,prevGain=0;
+  for(let f=0;f<F;f++){
+    const r=rec[f],sel=path[f],rise=20*Math.log10((r.gain+1e-8)/(prevGain+1e-8));let mode=0;
+    if(!r.energy){mode=0;silenceCount++}
+    else if(sel&&sel.period){mode=sel.corr>=c.voicing+.15?2:1}
+    else if(rise>6||r.pitch.zcr>.24)mode=3;
+    const voiced=mode===1||mode===2,pitch=voiced?lpc2PitchQ(sel.period,sr):0,bits=voiced?LPC2_LSF_BITS10:LPC2_LSF_BITS4,lsf=voiced?r.lsf10:r.lsf4;
+    let lsfq=quantLsf(lsf,bits),repeat=false;
+    if(previous&&r.energy&&previous.energy&&((previous.mode===1||previous.mode===2)===voiced)){
+      let d=0;for(let i=0;i<lsfq.length;i++)d+=Math.abs(lsfq[i]-previous.lsfq[i])/((1<<bits[i])-1);d/=lsfq.length;
+      if(d<=c.repeat){repeat=true;lsfq=previous.lsfq.slice();repeatCount++}
+    }
+    const frame={energy:r.energy,mode,pitch,repeat,lsfq};frames.push(frame);previous=frame;prevGain=r.gain;
+    if(mode===2)voicedCount++;if(mode===1)mixedCount++;if(mode===3)transientCount++;if(voiced)pitchSum+=sr/qLpc2Pitch(pitch,sr);
+    if(!(f&31)){progress(.56+f/F*.20);status(`LPC2: выбор режимов ${f+1} / ${F}`);await tick()}
+  }
+  return{meta:{codec:"lpc2",ver:1,sr,H,W,order:10,samples:x.length,frameCount:F,pre:c.pre,voicing:c.voicing},frames,analysis:{voicedCount,mixedCount,transientCount,repeatCount,silenceCount,avgPitch:(voicedCount+mixedCount)?pitchSum/(voicedCount+mixedCount):0}}
+}
+function packLPC2(m,F,analysis=null){
+  const bw=new BitWriter();
+  for(const f of F){
+    bw.write(f.energy,5);if(!f.energy)continue;bw.write(f.mode,2);bw.write(f.repeat?1:0,1);
+    const voiced=f.mode===1||f.mode===2;if(voiced)bw.write(f.pitch,6);
+    if(!f.repeat){const bits=voiced?LPC2_LSF_BITS10:LPC2_LSF_BITS4;for(let i=0;i<bits.length;i++)bw.write(f.lsfq[i],bits[i])}
+  }
+  const payload=bw.finish(),b=new ArrayBuffer(36+payload.length),v=new DataView(b);
+  for(let i=0;i<4;i++)v.setUint8(i,"LPC2".charCodeAt(i));v.setUint8(4,1);v.setUint8(5,m.order);v.setUint16(6,m.sr,true);v.setUint16(8,m.H,true);v.setUint16(10,m.W,true);v.setUint32(12,F.length,true);v.setUint32(16,m.samples,true);v.setUint32(20,bw.total,true);v.setFloat32(24,m.pre,true);v.setFloat32(28,m.voicing,true);v.setUint32(32,0,true);new Uint8Array(b,36).set(payload);
+  const A=analysis||{};
+  return{buffer:b,stats:{version:1,codec:"lpc2",frames:F.length,payloadBits:bw.total,payloadBytes:payload.length,voiced:A.voicedCount??F.filter(x=>x.mode===2).length,mixed:A.mixedCount??F.filter(x=>x.mode===1).length,transient:A.transientCount??F.filter(x=>x.mode===3).length,repeatFrames:A.repeatCount??F.filter(x=>x.repeat).length,silence:A.silenceCount??F.filter(x=>!x.energy).length,avgPitch:A.avgPitch||0,actualBytes:b.byteLength}}
+}
+function unpackLPC2(b){
+  const v=new DataView(b);if(b.byteLength<36||String.fromCharCode(v.getUint8(0),v.getUint8(1),v.getUint8(2),v.getUint8(3))!=="LPC2"||v.getUint8(4)!==1)throw Error("Это не поддерживаемый поток LPC2");
+  const m={codec:"lpc2",ver:1,order:v.getUint8(5),sr:v.getUint16(6,true),H:v.getUint16(8,true),W:v.getUint16(10,true),frameCount:v.getUint32(12,true),samples:v.getUint32(16,true),payloadBits:v.getUint32(20,true),pre:v.getFloat32(24,true),voicing:v.getFloat32(28,true)};
+  if(m.order!==10||36+Math.ceil(m.payloadBits/8)>b.byteLength)throw Error("Повреждён или не поддерживается LPC2");
+  const br=new BitReader(v,36,m.payloadBits),frames=[];let previous=null,voiced=0,mixed=0,transient=0,repeats=0,silence=0,pitchSum=0;
+  for(let n=0;n<m.frameCount;n++){
+    const energy=br.read(5);
+    if(!energy){const f={energy:0,mode:0,pitch:0,repeat:false,lsfq:quantLsf(defaultLsf(4),LPC2_LSF_BITS4)};frames.push(f);previous=f;silence++;continue}
+    const mode=br.read(2),repeat=!!br.read(1),isVoiced=mode===1||mode===2,pitch=isVoiced?br.read(6):0,bits=isVoiced?LPC2_LSF_BITS10:LPC2_LSF_BITS4;let lsfq;
+    if(repeat){if(!previous||((previous.mode===1||previous.mode===2)!==isVoiced))throw Error("Некорректный повтор LSF");lsfq=previous.lsfq.slice();repeats++}
+    else{lsfq=[];for(let i=0;i<bits.length;i++)lsfq.push(br.read(bits[i]))}
+    const f={energy,mode,pitch,repeat,lsfq};frames.push(f);previous=f;if(mode===2)voiced++;if(mode===1)mixed++;if(mode===3)transient++;if(isVoiced)pitchSum+=m.sr/qLpc2Pitch(pitch,m.sr)
+  }
+  return{meta:m,frames,stats:{version:1,codec:"lpc2",frames:m.frameCount,payloadBits:m.payloadBits,payloadBytes:Math.ceil(m.payloadBits/8),voiced,mixed,transient,repeatFrames:repeats,silence,avgPitch:(voiced+mixed)?pitchSum/(voiced+mixed):0,actualBytes:b.byteLength}}
+}
+function decodeLpc2FrameLsf(f){const voiced=f.mode===1||f.mode===2;if(voiced)return unquantLsf(f.lsfq,LPC2_LSF_BITS10);return expandLsf4(unquantLsf(f.lsfq,LPC2_LSF_BITS4))}
+async function synthLPC2(m,F,postStrength=.35){
+  const out=new Float32Array(m.samples),hist=new Float64Array(10),pfIn=new Float64Array(10),pfOut=new Float64Array(10),subCount=8;
+  let seed=0x51f15e3d,de=0,pitchCounter=0,chirpIndex=LPC_CHIRP.length,noisePrev=0;
+  const decoded=F.map(decodeLpc2FrameLsf),first=F[0]||{energy:0,mode:0,pitch:0};
+  let prevLsf=decoded[0]||defaultLsf(10),prevGain=qLpcGain(first.energy),prevPitch=(first.mode===1||first.mode===2)?qLpc2Pitch(first.pitch,m.sr):m.sr/120,prevMode=first.mode||0;
+  for(let fi=0;fi<F.length;fi++){
+    const cur=F[fi],curLsf=decoded[fi],curGain=qLpcGain(cur.energy),isPitch=cur.mode===1||cur.mode===2,curPitch=isPitch?qLpc2Pitch(cur.pitch,m.sr):prevPitch,frameStart=fi*m.H;
+    for(let sub=0;sub<subCount;sub++){
+      const s0=Math.floor(sub*m.H/subCount),s1=Math.floor((sub+1)*m.H/subCount),t0=(sub+.5)/subCount,t=cur.mode===3&&curGain>prevGain?Math.min(1,t0*2):t0;
+      const lsf=stabilizeLsf(curLsf.map((v,i)=>prevLsf[i]+(v-prevLsf[i])*t),10),a=lsfToLpc(lsf),lg0=Math.log(prevGain+1e-8),lg1=Math.log(curGain+1e-8),gain=Math.exp(lg0+(lg1-lg0)*t),period=Math.max(2,prevPitch+(curPitch-prevPitch)*t),mode=t<.5?prevMode:cur.mode,sf=clamp(postStrength,0,.7),gn=.96-.38*sf,gd=.985-.20*sf,bn=new Float64Array(11),bd=new Float64Array(11);
+      for(let i=1;i<=10;i++){bn[i]=a[i]*gn**i;bd[i]=a[i]*gd**i}
+      for(let s=s0;s<s1;s++){
+        const pos=frameStart+s;if(pos>=out.length)break;
+        seed^=seed<<13;seed^=seed>>>17;seed^=seed<<5;
+        const noise=(((seed>>>0)/4294967296)*2-1)*Math.sqrt(3),hpNoise=noise-.82*noisePrev;noisePrev=noise;
+        if(pitchCounter<=0){pitchCounter+=period;chirpIndex=0}pitchCounter--;
+        const pulse=chirpIndex<LPC_CHIRP.length?LPC_CHIRP[chirpIndex++]*Math.sqrt(period):0;
+        let src;if(mode===2)src=.94*pulse+.12*noise;else if(mode===1)src=.58*pulse+.62*hpNoise;else if(mode===3){const edge=1-s/Math.max(1,m.H);src=hpNoise*(1+.8*edge)}else src=noise;
+        const excitation=gain*src;let y=excitation;for(let i=1;i<=10;i++)y-=a[i]*hist[i-1];y=clamp(y,-8,8);for(let i=9;i>0;i--)hist[i]=hist[i-1];hist[0]=y;
+        let z=y;if(sf>0){for(let i=1;i<=10;i++)z+=bn[i]*pfIn[i-1]-bd[i]*pfOut[i-1];z=clamp(z,-8,8);for(let i=9;i>0;i--){pfIn[i]=pfIn[i-1];pfOut[i]=pfOut[i-1]}pfIn[0]=y;pfOut[0]=z}
+        const d=clamp(z+m.pre*de,-8,8);de=d;out[pos]=d
+      }
+    }
+    prevLsf=curLsf;prevGain=curGain;prevPitch=curPitch;prevMode=cur.mode;
+    if(!(fi&63)){progress(.78+.20*fi/Math.max(1,F.length));status(`LPC2-синтез: ${fi+1} / ${F.length}`);await tick()}
+  }
+  return out
 }
 class BitWriter{constructor(){this.a=[];this.acc=0;this.n=0;this.total=0}write(v,b){for(let i=0;i<b;i++){this.acc|=((v>>>i)&1)<<this.n;if(++this.n===8){this.a.push(this.acc);this.acc=0;this.n=0}this.total++}}finish(){if(this.n)this.a.push(this.acc);return new Uint8Array(this.a)}}
 class BitReader{constructor(v,o,bits){this.v=v;this.o=o;this.bit=0;this.left=bits}read(n){if(this.left<n)throw Error("Обрезан LPC-битовый поток");let q=0;for(let i=0;i<n;i++){q|=((this.v.getUint8(this.o+(this.bit>>3))>>(this.bit&7))&1)<<i;this.bit++;this.left--}return q}}
@@ -782,7 +952,7 @@ function metricsLFA(m,E,n,info=null){
   if(info&&info.rawComparable)$("paletteSaveM").textContent=`${(100*(1-n/info.rawComparable)).toFixed(1)}%`;else $("paletteSaveM").textContent="—";
   $("noiseSizeM").textContent=info&&info.noiseBytes?bytes(info.noiseBytes):"выкл.";$("noiseActiveM").textContent=info&&info.noiseBands?`${(100*info.noiseActive).toFixed(1)}% / ${info.noiseBands}`:"—";
 }
-function setMetricLabels(mode){const lpc=mode==="lpc1";$("eventsLabel").textContent=lpc?"LPC-кадров":"сегментов";$("tracksLabel").textContent=lpc?"звонких кадров":"дорожек";$("blocksLabel").textContent=lpc?"порядок модели":"суперкадров";$("shortLabel").textContent=lpc?"повторов коэффициентов":"коротких кодов частоты";$("saveLabel").textContent=lpc?"кадров тишины":"экономия против RAW";$("secondaryLabel").textContent=lpc?"полезный поток":"шумовой слой";$("activityLabel").textContent=lpc?"средняя F0":"активных шумовых полос"}
+function setMetricLabels(mode){const lpc=mode==="lpc1"||mode==="lpc2";$("eventsLabel").textContent=lpc?"LPC-кадров":"сегментов";$("tracksLabel").textContent=lpc?"звонких кадров":"дорожек";$("blocksLabel").textContent=lpc?"порядок модели":"суперкадров";$("shortLabel").textContent=lpc?"повторов коэффициентов":"коротких кодов частоты";$("saveLabel").textContent=lpc?"кадров тишины":"экономия против RAW";$("secondaryLabel").textContent=lpc?"полезный поток":"шумовой слой";$("activityLabel").textContent=lpc?"средняя F0":"активных шумовых полос"}
 function metricsLPC(m,F,n,info){const d=m.samples/m.sr,pcm=m.samples*2;$("durM").textContent=time(d);$("eventsM").textContent=F.length.toLocaleString("ru-RU");$("tracksM").textContent=`${(100*info.voiced/Math.max(1,F.length)).toFixed(1)}%`;$("sizeM").textContent=bytes(n);$("rateM").textContent=`${(n*8/d/1000).toFixed(2)} кбит/с`;$("ratioM").textContent=`${(pcm/n).toFixed(1)}×`;$("blocksM").textContent=`LPC-${m.order}`;$("shortFreqM").textContent=`${(100*info.repeatFrames/Math.max(1,F.length)).toFixed(1)}%`;$("paletteSaveM").textContent=`${(100*info.silence/Math.max(1,F.length)).toFixed(1)}%`;$("noiseSizeM").textContent=bytes(info.payloadBytes);$("noiseActiveM").textContent=info.avgPitch?`${info.avgPitch.toFixed(1)} Гц`:"—"}
 function drawLPC(m,F){
   const c=U.tracks,g=c.getContext("2d"),w=c.width,h=c.height;g.clearRect(0,0,w,h);g.fillStyle="#090d12";g.fillRect(0,0,w,h);if(!m||!F||!F.length)return;const cw=w/F.length,log0=Math.log(LPC_PITCH_MIN),log1=Math.log(LPC_PITCH_MAX);g.strokeStyle="#243244";g.fillStyle="#7d8590";g.font="11px system-ui";
@@ -792,8 +962,34 @@ function drawLPC(m,F){
   const c2=U.noise,g2=c2.getContext("2d"),w2=c2.width,h2=c2.height;g2.clearRect(0,0,w2,h2);g2.fillStyle="#090d12";g2.fillRect(0,0,w2,h2);const bh=(h2-18)/10,cw2=w2/F.length;
   for(let i=0;i<F.length;i++)for(let k=0;k<10;k++){const v=unquantReflection(F[i].kq[k],LPC_K_BITS[k]),a=Math.abs(v);g2.fillStyle=v>=0?`rgba(88,166,255,${(.06+.9*a).toFixed(3)})`:`rgba(210,153,34,${(.06+.9*a).toFixed(3)})`;g2.fillRect(i*cw2,k*bh,Math.max(1,cw2+1),Math.ceil(bh+1))}g2.strokeStyle="#30363d";g2.fillStyle="#9da7b3";for(let k=0;k<10;k++){g2.beginPath();g2.moveTo(0,k*bh);g2.lineTo(w2,k*bh);g2.stroke();g2.fillText(`K${k+1}`,4,k*bh+12)}
 }
-function updateCodecUI(forceDefaults=false){const lpc=U.codec.value==="lpc1";currentCodec=lpc?"lpc1":"lfa3";document.querySelectorAll(".lfaOnly").forEach(e=>e.classList.toggle("codecHidden",lpc));document.querySelectorAll(".lpcOnly").forEach(e=>e.classList.toggle("codecHidden",!lpc));if(lpc&&forceDefaults){U.sampleRate.value="8000";U.frameMs.value="20"}$("codecInfo").textContent=lpc?"Речевой LPC-вокодер; 8 кГц — Talkie, 12 кГц — более ясный звук":"Тональные дорожки + спектральный шум";U.saveLfa.textContent=lpc?"Скачать LPC1":"Скачать LFA‑3";$("tracksTitle").textContent=lpc?"LPC: основной тон и энергия":"Частотные дорожки";$("noiseTitle").textContent=lpc?"LPC: коэффициенты отражения K1…K10":"Шумовые полосы";setMetricLabels(currentCodec);updateTiming();updateLfaGridShiftUI(true)}
 
+function metricsLPC2(m,F,n,info){
+  const d=m.samples/m.sr,pcm=m.samples*2,total=Math.max(1,F.length),speech=info.voiced+info.mixed;
+  $("durM").textContent=time(d);$("eventsM").textContent=F.length.toLocaleString("ru-RU");$("tracksM").textContent=`${(100*speech/total).toFixed(1)}%`;$("sizeM").textContent=bytes(n);$("rateM").textContent=`${(n*8/d/1000).toFixed(2)} кбит/с`;$("ratioM").textContent=`${(pcm/n).toFixed(1)}×`;$("blocksM").textContent="LSF-10";$("shortFreqM").textContent=`${(100*info.repeatFrames/total).toFixed(1)}%`;$("paletteSaveM").textContent=`${(100*info.silence/total).toFixed(1)}%`;$("noiseSizeM").textContent=bytes(info.payloadBytes);$("noiseActiveM").textContent=info.avgPitch?`${info.avgPitch.toFixed(1)} Гц`:"—"
+}
+function drawLPC2(m,F){
+  const c=U.tracks,g=c.getContext("2d"),w=c.width,h=c.height;g.clearRect(0,0,w,h);g.fillStyle="#090d12";g.fillRect(0,0,w,h);if(!m||!F||!F.length)return;
+  const cw=w/F.length,log0=Math.log(LPC2_PITCH_MIN),log1=Math.log(LPC2_PITCH_MAX),modeColor=["rgba(210,153,34,.45)","rgba(188,140,255,.55)","rgba(63,185,80,.65)","rgba(248,81,73,.55)"];g.font="11px system-ui";
+  for(let i=0;i<F.length;i++){g.fillStyle=modeColor[F[i].mode]||modeColor[0];g.fillRect(i*cw,0,Math.max(1,cw+1),8)}
+  g.strokeStyle="#243244";g.fillStyle="#7d8590";for(const f of[60,100,200,400]){const y=14+(log1-Math.log(f))/(log1-log0)*(h*.60);g.beginPath();g.moveTo(0,y);g.lineTo(w,y);g.stroke();g.fillText(`${f} Гц`,4,y-2)}
+  g.strokeStyle="#3fb950";g.lineWidth=1.5;g.beginPath();let open=false;for(let i=0;i<F.length;i++){if(!(F[i].mode===1||F[i].mode===2)){open=false;continue}const freq=m.sr/qLpc2Pitch(F[i].pitch,m.sr),x=(i+.5)*cw,y=14+(log1-Math.log(freq))/(log1-log0)*(h*.60);if(!open){g.moveTo(x,y);open=true}else g.lineTo(x,y)}g.stroke();
+  g.fillStyle="rgba(88,166,255,.55)";for(let i=0;i<F.length;i++){const a=qLpcGain(F[i].energy),bar=clamp((20*Math.log10(Math.max(a,1e-5))+60)/60,0,1)*(h*.25);g.fillRect(i*cw,h-8-bar,Math.max(1,cw+1),bar)}g.fillStyle="#9da7b3";g.fillText("режимы: шум / mixed / voiced / transient; зелёный: F0",8,h-8);
+  const c2=U.noise,g2=c2.getContext("2d"),w2=c2.width,h2=c2.height;g2.clearRect(0,0,w2,h2);g2.fillStyle="#090d12";g2.fillRect(0,0,w2,h2);const cw2=w2/F.length;
+  for(let i=0;i<F.length;i++){const lsf=decodeLpc2FrameLsf(F[i]);for(let k=0;k<10;k++){const y=8+lsf[k]/Math.PI*(h2-24);g2.fillStyle=k<4?"rgba(88,166,255,.72)":"rgba(188,140,255,.60)";g2.fillRect(i*cw2,y,Math.max(1,cw2+1),2)}}
+  g2.strokeStyle="#30363d";g2.fillStyle="#9da7b3";for(const f of[500,1000,2000,3000,4000,6000])if(f<m.sr/2){const y=8+(f/(m.sr/2))*(h2-24);g2.beginPath();g2.moveTo(0,y);g2.lineTo(w2,y);g2.stroke();g2.fillText(`${f>=1000?f/1000+"k":f}`,4,y-2)}g2.fillText("LSF: положения резонансных границ от 0 до Nyquist",8,h2-5)
+}
+function updateCodecUI(forceDefaults=false){
+  const mode=U.codec.value,lpc=mode==="lpc1"||mode==="lpc2",lpc2=mode==="lpc2";currentCodec=mode;
+  document.querySelectorAll(".lfaOnly").forEach(e=>e.classList.toggle("codecHidden",lpc));
+  document.querySelectorAll(".lpcOnly").forEach(e=>e.classList.toggle("codecHidden",!lpc));
+  document.querySelectorAll(".lpc2Only").forEach(e=>e.classList.toggle("codecHidden",!lpc2));
+  if(lpc&&forceDefaults){U.sampleRate.value=lpc2?"12000":"8000";U.frameMs.value="20"}
+  $("codecInfo").textContent=mode==="lpc1"?"Контрольный Talkie-подобный LPC1":mode==="lpc2"?"LSF, плавный F0, mixed excitation, тот же 53-битный максимум":"Тональные дорожки + спектральный шум";
+  U.saveLfa.textContent=mode==="lpc1"?"Скачать LPC1":mode==="lpc2"?"Скачать LPC2":"Скачать LFA‑3";
+  $("tracksTitle").textContent=mode==="lpc1"?"LPC1: основной тон и энергия":mode==="lpc2"?"LPC2: F0, энергия и режим возбуждения":"Частотные дорожки";
+  $("noiseTitle").textContent=mode==="lpc1"?"LPC1: коэффициенты отражения K1…K10":mode==="lpc2"?"LPC2: линии спектральных частот LSF":"Шумовые полосы";
+  setMetricLabels(currentCodec);updateTiming();updateLfaGridShiftUI(true)
+}
 U.audioFile.onchange=async()=>{const f=U.audioFile.files[0];if(!f)return;try{status("Декодирование аудио…");progress(.03);const c=await audioContext(),b=await c.decodeAudioData((await f.arrayBuffer()).slice(0));src=mono(b);srcRate=b.sampleRate;name=f.name.replace(/\.[^.]+$/,"").replace(/[^\p{L}\p{N}_-]+/gu,"_")||"audio";U.encode.disabled=U.playOrig.disabled=false;const lim=Math.floor(+U.sampleRate.value*.48);if(+U.maxFreq.value>lim)U.maxFreq.value=lim;normInfo=null;outputInfo=null;decodedRaw=null;$("normGainM").textContent="—";$("waveBalanceM").textContent="—";drawWave(src,null);progress(0);status(`Загружено: ${f.name}\n${time(b.duration)}, ${b.sampleRate} Гц, каналов: ${b.numberOfChannels}`,"good")}catch(e){console.error(e);status(`Ошибка открытия: ${e.message}`,"bad")}};
 U.encode.onclick=async()=>{
   if(!src)return;stop();U.encode.disabled=U.playDec.disabled=U.saveLfa.disabled=U.saveWav.disabled=true;
@@ -804,6 +1000,11 @@ U.encode.onclick=async()=>{
       const analysed=await encodeLPC(work,sr,c),packed=packLPC(analysed.meta,analysed.frames,analysed.analysis);lfa=packed.buffer;const checked=unpackLPC(lfa);meta=checked.meta;lpcFrames=checked.frames;events=[];noiseFrames=null;packInfo=checked.stats;currentCodec="lpc1";
       status("Декодирование LPC-потока…");decodedRaw=await synthLPC(meta,lpcFrames);applyOutputBalance(false);progress(1);setMetricLabels("lpc1");metricsLPC(meta,lpcFrames,lfa.byteLength,packInfo);$("normGainM").textContent=normInfo&&normInfo.enabled?`${normInfo.gainDb>=0?"+":""}${normInfo.gainDb.toFixed(1)} дБ`:"выкл.";drawWave(work,decoded);drawLPC(meta,lpcFrames);U.playDec.disabled=U.saveLfa.disabled=U.saveWav.disabled=false;
       status(`Готово: ${lpcFrames.length} LPC-кадров по ${(meta.H/meta.sr*1000).toFixed(2)} мс.\n`+`Битрейт: ${(lfa.byteLength*8/(meta.samples/meta.sr)/1000).toFixed(2)} кбит/с; звонких кадров ${(100*packInfo.voiced/Math.max(1,lpcFrames.length)).toFixed(1)}%.\n`+`${normalizationLine(normInfo)}\n`+`${outputBalanceLine(outputInfo)}\n`+`Это Talkie-подобный LPC-10, но не побитово совместимый TMS5220.`,'good');
+    }else if(U.codec.value==="lpc2"){
+      const c={frameMs:+U.frameMs.value,windowMs:+U.lpc2WindowMs.value,pre:+U.lpcPreemph.value/100,voicing:+U.lpcVoicing.value/100,repeat:+U.lpcRepeat.value/100,pitchSmooth:+U.lpc2PitchSmooth.value/100};
+      const analysed=await encodeLPC2(work,sr,c),packed=packLPC2(analysed.meta,analysed.frames,analysed.analysis);lfa=packed.buffer;const checked=unpackLPC2(lfa);meta=checked.meta;lpcFrames=checked.frames;events=[];noiseFrames=null;packInfo=checked.stats;currentCodec="lpc2";
+      status("Декодирование LPC2-потока…");decodedRaw=await synthLPC2(meta,lpcFrames,+U.lpc2Postfilter.value/100);applyOutputBalance(false);progress(1);setMetricLabels("lpc2");metricsLPC2(meta,lpcFrames,lfa.byteLength,packInfo);$("normGainM").textContent=normInfo&&normInfo.enabled?`${normInfo.gainDb>=0?"+":""}${normInfo.gainDb.toFixed(1)} дБ`:"выкл.";drawWave(work,decoded);drawLPC2(meta,lpcFrames);U.playDec.disabled=U.saveLfa.disabled=U.saveWav.disabled=false;
+      const speech=packInfo.voiced+packInfo.mixed;status(`Готово: ${lpcFrames.length} LPC2-кадров; окно ${(meta.W/meta.sr*1000).toFixed(1)} мс, шаг ${(meta.H/meta.sr*1000).toFixed(1)} мс.\n`+`Битрейт: ${(lfa.byteLength*8/(meta.samples/meta.sr)/1000).toFixed(2)} кбит/с; voiced/mixed ${(100*speech/Math.max(1,lpcFrames.length)).toFixed(1)}%; transient ${(100*packInfo.transient/Math.max(1,lpcFrames.length)).toFixed(1)}%.\n`+`Максимум обычного звонкого кадра: 53 бита, как LPC1.\n`+`${normalizationLine(normInfo)}\n${outputBalanceLine(outputInfo)}`,"good");
     }else{
       const c={N:+U.fftSize.value,frameMs:+U.frameMs.value,sf:+U.superFrames.value,parts:+U.partials.value,L:+U.levels.value,min:+U.minFreq.value,max:Math.min(+U.maxFreq.value,sr*.48),th:+U.threshold.value,track:+U.trackTol.value,mf:+U.mergeFTol.value,ma:+U.mergeATol.value,noiseBands:+U.noiseBands.value,noiseMask:+U.noiseMask.value,noiseGain:+U.noiseGain.value/100};if(c.max<=c.min)throw Error("Неверный диапазон частот");
       const analysed=await encodeLFA(work,sr,c),packed=pack(analysed.meta,analysed.events,analysed.noise);lfa=packed.buffer;const checked=unpack(lfa);meta=checked.meta;events=checked.events;noiseFrames=checked.noise;lpcFrames=null;packInfo={...checked.stats,oldLfa1:packed.stats.oldLfa1};currentCodec="lfa3";
@@ -815,13 +1016,14 @@ U.lfaFile.onchange=async()=>{
   const f=U.lfaFile.files[0];if(!f)return;
   try{stop();lfa=await f.arrayBuffer();const v=new DataView(lfa),magic=lfa.byteLength>=4?String.fromCharCode(v.getUint8(0),v.getUint8(1),v.getUint8(2),v.getUint8(3)):"";
     if(magic==="LPC1"){const r=unpackLPC(lfa);meta=r.meta;lpcFrames=r.frames;events=[];noiseFrames=null;packInfo=r.stats;currentCodec="lpc1";U.codec.value="lpc1";updateCodecUI(false);decodedRaw=await synthLPC(meta,lpcFrames);applyOutputBalance(false);setMetricLabels("lpc1");metricsLPC(meta,lpcFrames,lfa.byteLength,packInfo);drawWave(null,decoded);drawLPC(meta,lpcFrames);status(`Открыт LPC1: ${lpcFrames.length} кадров.`,'good')}
+    else if(magic==="LPC2"){const r=unpackLPC2(lfa);meta=r.meta;lpcFrames=r.frames;events=[];noiseFrames=null;packInfo=r.stats;currentCodec="lpc2";U.codec.value="lpc2";updateCodecUI(false);decodedRaw=await synthLPC2(meta,lpcFrames,+U.lpc2Postfilter.value/100);applyOutputBalance(false);setMetricLabels("lpc2");metricsLPC2(meta,lpcFrames,lfa.byteLength,packInfo);drawWave(null,decoded);drawLPC2(meta,lpcFrames);status(`Открыт LPC2: ${lpcFrames.length} кадров; ${bytes(lfa.byteLength)}.`,'good')}
     else{const r=unpack(lfa);meta=r.meta;events=r.events;noiseFrames=r.noise;lpcFrames=null;packInfo=r.stats;currentCodec="lfa3";U.codec.value="lfa3";updateCodecUI(false);decodedRaw=await synthLFA(meta,events,noiseFrames,+U.lfaGridShift.value);applyOutputBalance(false);setMetricLabels("lfa3");metricsLFA(meta,events,lfa.byteLength,packInfo);drawWave(null,decoded);drawTracks(meta,events);drawNoise(meta,noiseFrames);status(`Открыт LFA‑${meta.ver}: ${events.length} сегментов/частей.\n`+`${lfaGridShiftLine(meta)}`,'good')}
-    work=null;normInfo=null;$("normGainM").textContent="—";name=f.name.replace(/\.(lfa|lpc)$/i,"")||"audio";U.playDec.disabled=U.saveLfa.disabled=U.saveWav.disabled=false;progress(1);
+    work=null;normInfo=null;$("normGainM").textContent="—";name=f.name.replace(/\.(lfa|lpc|lp2)$/i,"")||"audio";U.playDec.disabled=U.saveLfa.disabled=U.saveWav.disabled=false;progress(1);
   }catch(e){console.error(e);status(`Ошибка файла: ${e.message}`,'bad')}
 };
-U.playOrig.onclick=()=>work&&meta?play(work,meta.sr):src&&play(src,srcRate);U.playDec.onclick=()=>decoded&&meta&&play(decoded,meta.sr);U.stop.onclick=stop;U.saveLfa.onclick=()=>lfa&&dl(lfa,"application/octet-stream",name+(currentCodec==="lpc1"?".lpc":".lfa"));U.saveWav.onclick=()=>decoded&&dl(wav(decoded,meta.sr),"audio/wav",name+(currentCodec==="lpc1"?"_lpc.wav":"_lfa.wav"));function updateTiming(){
+U.playOrig.onclick=()=>work&&meta?play(work,meta.sr):src&&play(src,srcRate);U.playDec.onclick=()=>decoded&&meta&&play(decoded,meta.sr);U.stop.onclick=stop;U.saveLfa.onclick=()=>lfa&&dl(lfa,"application/octet-stream",name+(currentCodec==="lpc1"?".lpc":currentCodec==="lpc2"?".lp2":".lfa"));U.saveWav.onclick=()=>decoded&&dl(wav(decoded,meta.sr),"audio/wav",name+(currentCodec==="lpc1"?"_lpc1.wav":currentCodec==="lpc2"?"_lpc2.wav":"_lfa.wav"));function updateTiming(){
   const sr=+U.sampleRate.value,N=+U.fftSize.value,ms=+U.frameMs.value,H=Math.round(sr*ms/1000),sf=+U.superFrames.value,actualFrameMs=H/sr*1000;
-  if(U.codec.value==="lpc1"){$("timingInfo").textContent=`${H} отсчётов; ${(1000/actualFrameMs).toFixed(1)} кадров/с`;$("timingInfo").style.color="var(--t)";return}
+  if(U.codec.value==="lpc1"||U.codec.value==="lpc2"){$("timingInfo").textContent=U.codec.value==="lpc2"?`${H} отсчётов; окно ${+U.lpc2WindowMs.value} мс; ${(1000/actualFrameMs).toFixed(1)} кадров/с`:`${H} отсчётов; ${(1000/actualFrameMs).toFixed(1)} кадров/с`;$("timingInfo").style.color="var(--t)";return}
   const windowMs=N/sr*1000,overlapMs=(N-H)/sr*1000;$("timingInfo").textContent=H<=N?`окно ${windowMs.toFixed(1)} мс, перекрытие ${Math.max(0,overlapMs).toFixed(1)} мс`:`ошибка: окно ${windowMs.toFixed(1)} мс короче шага`;$("timingInfo").style.color=H<=N?"var(--t)":"var(--r)";$("superInfo").textContent=`${(sf*actualFrameMs).toFixed(1)} мс; 15 частот + escape`;const B=+U.noiseBands.value;$("noiseBandInfo").textContent=B?`${B} логарифмических полос, ${(1000/actualFrameMs).toFixed(1)} обновлений/с`:"шум отключён";
 }
 U.sampleRate.onchange=()=>{const lim=Math.floor(+U.sampleRate.value*.48);if(+U.maxFreq.value>lim)U.maxFreq.value=lim;updateTiming();updateLfaGridShiftUI(true)};
@@ -836,6 +1038,6 @@ U.lfaGridShift.oninput=()=>updateLfaGridShiftUI(true);
 U.lfaGridShift.onchange=resynthesizeLfaGridShift;
 U.codec.onchange=()=>updateCodecUI(true);
 U.normalizeMode.onchange=updateNormalizationUI;
-U.outputBalance.onchange=()=>{updateOutputBalanceUI();if(decodedRaw&&meta){applyOutputBalance(true);status(outputBalanceLine(outputInfo),"good")}};U.lpcBrightness.oninput=()=>{$("lpcBrightnessV").textContent=(+U.lpcBrightness.value).toFixed(1);if(decodedRaw&&meta&&currentCodec==="lpc1")applyOutputBalance(true)};U.lpcHighpass.onchange=()=>{if(decodedRaw&&meta&&currentCodec==="lpc1")applyOutputBalance(true)};
+U.outputBalance.onchange=()=>{updateOutputBalanceUI();if(decodedRaw&&meta){applyOutputBalance(true);status(outputBalanceLine(outputInfo),"good")}};U.lpcBrightness.oninput=()=>{$("lpcBrightnessV").textContent=(+U.lpcBrightness.value).toFixed(1);if(decodedRaw&&meta&&(currentCodec==="lpc1"||currentCodec==="lpc2"))applyOutputBalance(true)};U.lpcHighpass.onchange=()=>{if(decodedRaw&&meta&&(currentCodec==="lpc1"||currentCodec==="lpc2"))applyOutputBalance(true)};U.lpc2Postfilter.onchange=()=>{if(decodedRaw&&meta&&currentCodec==="lpc2"){const token=+U.lpc2Postfilter.value/100;synthLPC2(meta,lpcFrames,token).then(x=>{if(currentCodec==="lpc2"){decodedRaw=x;applyOutputBalance(true)}})}};U.lpc2WindowMs.onchange=updateTiming;
 updateNormalizationUI();updateOutputBalanceUI();updateCodecUI(false);updateLfaGridShiftUI(false);drawWave(null,null);drawNoise(null,null);
 </script></main></body></html>
