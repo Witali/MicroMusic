@@ -56,14 +56,15 @@
       "Intel_8080_ROM_Player.html"
     ],
     "results": [
-      "BIN to INTE to HLT and WAV 96000 Hz",
+      "BIN to INTE to HLT; downloaded firmware matches the loaded BIN",
       "Valid Intel HEX",
-      "Corrupt HEX clears prior ROM and WAV",
+      "Corrupt HEX clears prior ROM and disables firmware download",
       "RAM stack, registers and WR pulses",
       "Live audio clock advances",
       "Pause freezes audio clock and CPU; resume/reset work; live lookahead remains below 3 seconds in the test",
       "Undocumented opcode error",
       "No separate audio element",
+      "No WAV export control; live audio and waveform filters remain available",
       "390 px viewport without horizontal overflow",
       "Five example ROM SHA-256 values match in both builds; 159T default executes to HLT",
       "Search and switching examples clear CPU/audio; upload deselects catalog",

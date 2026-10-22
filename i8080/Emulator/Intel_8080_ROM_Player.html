@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#101411">
   <title>MicroMusic / Intel 8080 — эмулятор прошивок</title>
-  <meta name="description" content="Плеер собственных BIN, ROM и Intel HEX: Intel 8080, звуковой выход INTE или /WR, осциллограмма и экспорт WAV.">
+  <meta name="description" content="Плеер собственных BIN, ROM и Intel HEX: Intel 8080, звуковой выход INTE или /WR и осциллограмма в браузере.">
   <style>:root{color-scheme:dark;--bg:#101411;--panel:#191e1a;--border:#30392f;--text:#e8eddf;--muted:#93a08f;--accent:#c9ef86;--mono:ui-monospace,"Cascadia Code",Consolas,monospace;--sans:system-ui,-apple-system,"Segoe UI",sans-serif}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px var(--sans)}button,input,select{font:inherit}button,a,input,select{outline-offset:4px}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--accent)}button{cursor:pointer;border:1px solid var(--border);background:#111611;color:var(--text);border-radius:7px;padding:10px 14px;transition:background .15s,border-color .15s}button:hover:not(:disabled){background:#2b3527;border-color:#6d825f}button:disabled{opacity:.45;cursor:not-allowed}a{color:inherit;text-underline-offset:4px}button,input,select{min-width:0}input[type=range]{accent-color:var(--accent);cursor:pointer}select,input[type=search]{border:1px solid var(--border);border-radius:7px;background:#111611;color:var(--text);padding:10px}select{cursor:pointer}[hidden]{display:none!important}
 .site-header{max-width:1320px;margin:auto;display:flex;align-items:center;gap:28px;height:88px;padding:0 40px;border-bottom:1px solid var(--border)}.brand{display:flex;gap:12px;align-items:center;font-size:20px;font-weight:700;text-decoration:none;letter-spacing:-.7px;white-space:nowrap}.brand>span{color:var(--muted);font-weight:400}.brand svg{width:32px;height:32px;fill:none;stroke:var(--accent);stroke-width:1.6;stroke-linecap:round}.header-link{font-size:12px;color:var(--muted);text-decoration:none;margin-left:auto}.header-link:hover{color:var(--accent)}.engine-badge{font:10px var(--mono);color:var(--muted);display:flex;align-items:center;gap:9px;white-space:nowrap}.engine-badge i{width:6px;height:6px;background:var(--accent);border-radius:50%}
@@ -70,7 +70,6 @@ main{max-width:1320px;margin:auto;padding:0 40px}.intro{display:flex;align-items
 .drop-zone{position:relative;display:flex;align-items:center;flex-wrap:wrap;gap:12px;border:1px dashed #536746;border-radius:8px;padding:22px;background:#141a12}.drop-zone.drag-over{border-color:var(--accent);background:#26331e}.drop-zone>span{font-size:11px;color:var(--muted)}.drop-zone small{font:9px var(--mono);color:#849278;flex-basis:100%}.load-button{background:#27351f;border-color:#5c7346;color:var(--accent);font-size:12px}
 .file-input{position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}.drop-zone:focus-within{outline:2px solid var(--accent);outline-offset:4px}
 .firmware-info{padding:23px 0 0}.firmware-info h2{font-size:21px;font-weight:600;letter-spacing:-.4px;margin:9px 0;overflow-wrap:anywhere}.firmware-info p{color:var(--muted);font-size:12px;line-height:1.6;margin:0}.file-hash{display:block;min-height:12px;margin-top:9px;color:#788a68;font:9px var(--mono);overflow-wrap:anywhere}
-.wav-download{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;padding:11px 17px;background:#8cc8ff;color:#10243a;border-radius:7px;font-size:12px;font-weight:650;text-decoration:none}.wav-download[aria-disabled=true]{opacity:.35;pointer-events:none}.wav-download:hover{background:#b2dbff}
 #progress{display:block;width:100%;height:5px;margin-top:24px;border:0;border-radius:4px;overflow:hidden;background:#30392f;accent-color:var(--accent)}#progress::-webkit-progress-bar{background:#30392f}#progress::-webkit-progress-value{background:var(--accent)}.execution-status{color:var(--muted);font-size:11px;line-height:1.7;min-height:38px;margin:13px 0 20px;overflow-wrap:anywhere}
 .emulator-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;border-top:1px solid var(--border);padding-top:18px}.emulator-metrics span{display:block;font:8px var(--mono);letter-spacing:.4px;color:var(--muted)}.emulator-metrics strong{display:block;font:clamp(12px,1.5vw,19px) var(--mono);margin-top:10px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .live-controls{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:20px}.live-controls>span{font-size:11px;color:var(--muted)}.live-controls output{font:24px var(--mono);color:var(--accent)}.live-volume{display:flex;align-items:center;gap:18px;font-size:11px;color:var(--muted);margin:20px 0}.live-volume input{width:100%}
@@ -79,7 +78,7 @@ main{max-width:1320px;margin:auto;padding:0 40px}.intro{display:flex;align-items
 .emulator-help{margin:0 0 26px;font-size:12px;color:var(--muted);line-height:1.8}.emulator-help summary{cursor:pointer;padding:8px 0;color:var(--text)}.emulator-help>div{max-width:850px}.emulator-help a{color:#b4c59f}
 @media(min-width:1100px){.settings-panel{position:static}}
 @media(max-width:800px){.emulator-workspace{grid-template-columns:1fr}.settings-panel{grid-row:2}.emulator-metrics strong{font-size:16px}.emulator-registers{grid-template-columns:repeat(4,minmax(0,1fr))}.cpu-status{white-space:normal}}
-@media(max-width:460px){.cpu-board{gap:23px;padding:2px 10px 26px}.cpu-package{padding:17px 20px}.cpu-package strong{font-size:29px}.cpu-package small{font-size:7px}.cpu-wire{gap:6px;font-size:8px}.cpu-wire b{font-size:23px}.drop-zone{padding:16px;gap:10px}.drop-zone>span{font-size:10px}.emulator-metrics{gap:8px}.emulator-metrics span{font-size:7px;letter-spacing:0}.emulator-metrics strong{font-size:12px}.emulator-registers{gap:7px}.cpu-register{padding:10px}.cpu-register strong{font-size:17px}.wav-download{padding:11px 13px}.firmware-info h2{font-size:18px}.engine-badge{font-size:7px}.flag-row{gap:6px}.flag{font-size:9px;padding:6px 9px}}
+@media(max-width:460px){.cpu-board{gap:23px;padding:2px 10px 26px}.cpu-package{padding:17px 20px}.cpu-package strong{font-size:29px}.cpu-package small{font-size:7px}.cpu-wire{gap:6px;font-size:8px}.cpu-wire b{font-size:23px}.drop-zone{padding:16px;gap:10px}.drop-zone>span{font-size:10px}.emulator-metrics{gap:8px}.emulator-metrics span{font-size:7px;letter-spacing:0}.emulator-metrics strong{font-size:12px}.emulator-registers{gap:7px}.cpu-register{padding:10px}.cpu-register strong{font-size:17px}.firmware-info h2{font-size:18px}.engine-badge{font-size:7px}.flag-row{gap:6px}.flag{font-size:9px;padding:6px 9px}}
 </style>
 </head>
 <body>
@@ -105,13 +104,13 @@ main{max-width:1320px;margin:auto;padding:0 40px}.intro{display:flex;align-items
             <span>или перетащите файл сюда</span><small>BIN · ROM · Intel HEX · до 64 КиБ</small>
           </div>
           <div class="firmware-info"><span class="eyebrow">ОБРАЗ В ПАМЯТИ</span><h2 id="file-name">Ваша прошивка</h2><p id="file-info">Выберите пример из библиотеки или загрузите свой файл.</p><p id="example-description" class="example-description" hidden></p><div class="rom-links"><a id="example-source" hidden>Описание и исходники ↗</a></div><span id="file-hash" class="file-hash"></span></div>
-          <div class="transport"><button id="run" class="primary" disabled>▶ Эмулировать</button><button id="cancel" disabled>↺ Сначала</button><div class="transport-links"><a id="download-rom" class="download-link" title="Скачать выбранную прошивку (BIN)" aria-disabled="true">↓ Скачать прошивку</a><a id="download" class="download-link" aria-disabled="true">↓ WAV</a></div></div>
+          <div class="transport"><button id="run" class="primary" disabled>▶ Эмулировать</button><button id="cancel" disabled>↺ Сначала</button><div class="transport-links"><a id="download-rom" class="download-link" title="Скачать выбранную прошивку (BIN)" aria-disabled="true">↓ Скачать прошивку</a></div></div>
           <progress id="progress" max="90" value="0" aria-label="Выполненное процессорное время"></progress>
           <p id="status" class="execution-status" role="status">Готов к загрузке BIN, ROM или Intel HEX.</p>
           <div class="emulator-metrics"><div><span>КОМАНД</span><strong id="steps">0</strong></div><div><span>T-ТАКТОВ</span><strong id="cycles">0</strong></div><div><span>ВРЕМЯ CPU</span><strong id="cpu-time">0,000 с</strong></div></div>
         </section>
         <section class="panel scope-panel" aria-label="Звук прошивки">
-          <div class="panel-heading"><span class="eyebrow">02 / ЗВУКОВОЙ СИГНАЛ</span><span class="technical-note">96 кГц · МОНО · PCM 16 БИТ</span></div>
+          <div class="panel-heading"><span class="eyebrow">02 / ЗВУКОВОЙ СИГНАЛ</span><span class="technical-note">96 кГц · МОНО</span></div>
           <div class="scope-wrap"><canvas id="scope" width="1000" height="200" role="img" aria-label="Осциллограмма восстановленного звука"></canvas><span class="scope-scale">первые 50 мс</span></div>
           <div class="live-controls"><span id="playback-status" role="status">Звук запускается кнопкой «Эмулировать»</span><output id="elapsed">00:00.0</output></div>
           <label class="live-volume">Громкость <input id="volume" type="range" min="0" max="1" step="0.01" value="0.65"></label>
@@ -150,7 +149,7 @@ main{max-width:1320px;margin:auto;padding:0 40px}.intro{display:flex;align-items
       <p id="write-note" class="setting-note">Регистры показаны в шестнадцатеричном виде. Начальная точка — 0000h.</p>
     </section>
     <details class="emulator-help"><summary>Как устроена модель</summary><div>
-      <p>Нажмите «Эмулировать», чтобы сразу запустить код и звук. Эта же кнопка ставит воспроизведение на паузу; «Сначала» сбрасывает процессор. Отдельного аудиоплеера нет. WAV доступен после исполнения образа до HLT или лимита.</p>
+      <p>Нажмите «Эмулировать», чтобы сразу запустить код и звук. Эта же кнопка ставит воспроизведение на паузу; «Сначала» сбрасывает процессор. Отдельного аудиоплеера нет.</p>
       <p>Плеер принимает собственные прошивки и выполняет документированные команды Intel 8080. Звук получается из уровня INTE или импульсов /WR, включая OUT. Отверстия в HEX и незаполненная память содержат FFh. Начальные адреса из записей HEX 03/05 не меняют вектор сброса 0000h.</p>
       <p>В режиме «ПЗУ без ОЗУ» зеркалируется только образ ровно 32 КиБ. В режиме «ПЗУ снизу · ОЗУ сверху» верхние 32 КиБ доступны для записи; режим «ОЗУ» разрешает запись везде. Для стековых подпрограмм обычно требуется ОЗУ.</p>
       <p>Длительности команд считаются в T-тактах без READY. Импульс /WR приближён к 1 T, INTE меняется при завершении EI/DI; активный INT и внешние контроллеры не моделируются. 3,5 МГц — настройка этой платы. Аналоговый тракт представлен усреднением сигнала и RC-фильтром.</p>
@@ -301,9 +300,9 @@ const $ = id => document.getElementById(id), rate = 96000;
 const hex = (n, width = 2) => n.toString(16).toUpperCase().padStart(width, '0');
 const number = n => n.toLocaleString('ru-RU');
 const machineInputs = [...document.querySelectorAll('[data-machine]')];
-let firmware = null, filename = '', loadTicket = 0, worker = null, audioURL = null, romURL = null;
+let firmware = null, filename = '', loadTicket = 0, worker = null, romURL = null;
 let catalog = null, selectedExample = null;
-let raw = null, computed = null, processed = null, runOptions = null;
+let raw = null;
 let starting = false, runTicket = 0, previewDrawn = false;
 const speaker = new RealtimeSpeaker(status => {
   const seconds = status.seconds, minutes = Math.floor(seconds / 60);
@@ -408,24 +407,16 @@ function updateRegisters(result) {
   $('write-note').textContent = result ? `Записей в память: ${number(result.memWrites)}; проигнорировано в ПЗУ: ${number(result.ignoredWrites)}. Начальная точка — 0000h.` : 'Регистры показаны в шестнадцатеричном виде. Начальная точка — 0000h.';
 }
 function clearResult() {
-  raw = computed = processed = runOptions = null;
+  raw = null;
   previewDrawn = false;
-  if (audioURL) { URL.revokeObjectURL(audioURL); audioURL = null; }
-  $('download').removeAttribute('href'); $('download').removeAttribute('download'); $('download').setAttribute('aria-disabled', 'true');
   for (const id of ['steps', 'cycles', 'edges', 'writes', 'io-writes']) $(id).textContent = '0';
   $('cpu-time').textContent = '0,000 с'; $('progress').value = 0;
   drawScope(null); updateRegisters(null);
 }
-function rebuildAudio() {
+function redrawScope() {
   if (!raw) return;
   const [cutoff, poles] = $('filter').value.split('-').map(Number);
-  processed = processAudio(raw, rate, cutoff, poles, $('normalize').checked);
-  const blob = new Blob([encodeWav(processed, rate)], { type: 'audio/wav' });
-  if (audioURL) URL.revokeObjectURL(audioURL);
-  audioURL = URL.createObjectURL(blob);
-  $('download').href = audioURL;
-  $('download').download = `${filename.replace(/\.[^.]+$/, '')}_8080_${runOptions.output}.wav`;
-  $('download').setAttribute('aria-disabled', 'false'); drawScope(processed);
+  drawScope(processAudio(raw, rate, cutoff, poles, $('normalize').checked));
 }
 async function loadFile(file, example = null) {
   if (!file) return;
@@ -478,7 +469,7 @@ async function run() {
     report('Частота: 100 000–10 000 000 Гц. Лимит времени: 0,1–120 с.', true); return;
   }
   resetPlayback(); const ticket = ++runTicket;
-  runOptions = { hz, seconds, output: $('output').value, memoryMode: $('memory').value, inputByte: Number($('input-byte').value), realtime: true };
+  const runOptions = { hz, seconds, output: $('output').value, memoryMode: $('memory').value, inputByte: Number($('input-byte').value), realtime: true };
   $('progress').max = seconds; starting = true; setBusy(true); report('Запуск эмуляции и звука…');
   try {
     if (!await speaker.start(soundOptions()) || ticket !== runTicket) return;
@@ -500,11 +491,11 @@ async function run() {
       }
       stopWorker();
       if (message.kind === 'error') { speaker.reset(); setBusy(false); $('playback-status').textContent = 'Остановлено'; report(`Ошибка эмуляции: ${message.message}`, true); return; }
-      computed = message; raw = new Float32Array(message.audio); rebuildAudio(); updateRegisters(message);
+      raw = new Float32Array(message.audio); redrawScope(); updateRegisters(message);
       speaker.finish();
       $('edges').textContent = number(message.edges); $('writes').textContent = number(message.memWrites); $('io-writes').textContent = number(message.ioWrites);
       const reason = message.stopReason === 'HLT' ? 'HLT' : message.stopReason === 'time_limit' ? 'лимит времени' : 'лимит команд';
-      report(`Завершение: ${reason}. ${number(message.steps)} команд · ${number(message.t)} T · ${(message.t / hz).toFixed(3)} с. WAV готов к скачиванию.`);
+      report(`Завершение: ${reason}. ${number(message.steps)} команд · ${number(message.t)} T · ${(message.t / hz).toFixed(3)} с.`);
     };
     worker.onerror = event => { if (worker === activeWorker) { speaker.reset(); stopWorker(); $('playback-status').textContent = 'Остановлено'; report(`Ошибка фонового эмулятора: ${event.message}`, true); } };
     const copy = firmware.slice(); worker.postMessage({ ...runOptions, rate, rom: copy.buffer }, [copy.buffer]);
@@ -515,9 +506,8 @@ $('load').addEventListener('click', () => $('file').click());
 $('file').addEventListener('change', () => loadFile($('file').files[0]));
 $('run').addEventListener('click', run);
 $('cancel').addEventListener('click', () => { resetPlayback(); report('Сброс на начало. Нажмите «Эмулировать», чтобы запустить прошивку.'); });
-for (const id of ['filter', 'normalize']) $(id).addEventListener('change', () => { speaker.configure(soundOptions()); rebuildAudio(); });
+for (const id of ['filter', 'normalize']) $(id).addEventListener('change', () => { speaker.configure(soundOptions()); redrawScope(); });
 $('volume').addEventListener('input', () => speaker.volume(Number($('volume').value)));
-$('download').addEventListener('click', event => { if (!raw) event.preventDefault(); });
 function updateMachineNotes() {
   $('signal-label').textContent = $('output').value === 'inte' ? 'INTE' : '/WR';
   $('memory-note').textContent = $('memory').value === 'rom' ? '32-КиБ образ зеркалируется по A15. Записи дают /WR, содержимое ПЗУ сохраняется.' : $('memory').value === 'ramupper' ? 'Адреса 8000–FFFF доступны для записи. A15 участвует в адресации.' : 'Все 64 КиБ доступны для чтения и записи, включая загруженный код.';
@@ -533,7 +523,7 @@ $('drop-zone').addEventListener('drop', event => loadFile(event.dataTransfer.fil
 window.addEventListener('keydown', event => {
   if (event.code === 'Space' && !['INPUT', 'SELECT', 'TEXTAREA', 'BUTTON', 'A', 'SUMMARY'].includes(document.activeElement.tagName)) { event.preventDefault(); run(); }
 });
-window.addEventListener('beforeunload', () => { speaker.reset(); stopWorker(); if (audioURL) URL.revokeObjectURL(audioURL); if (romURL) URL.revokeObjectURL(romURL); });
+window.addEventListener('beforeunload', () => { speaker.reset(); stopWorker(); if (romURL) URL.revokeObjectURL(romURL); });
 clearResult(); setBusy(false); initializeExamples();
 
 </script>

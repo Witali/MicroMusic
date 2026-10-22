@@ -27,6 +27,7 @@ async function suite(target) {
   await wait(() => !doc.getElementById('run').disabled && doc.querySelectorAll('[data-example]').length === 5);
   check(doc.getElementById('file-name').textContent.includes('159 T'), '159T tempo-preserving default');
   check(!doc.querySelector('audio'), 'no separate audio player');
+  check(!doc.getElementById('download'), 'no WAV download control');
   check(doc.querySelector('.machine-spec').textContent.includes('244 инструкции'), 'instruction wording');
   check(doc.querySelector('.cpu-wire svg') && !doc.querySelector('.cpu-wire b'), 'speaker symbol');
   const catalog = await (await fetch('../examples.json')).json();
@@ -46,33 +47,30 @@ async function suite(target) {
   await run(doc);
   check(Number(doc.getElementById('cycles').textContent.replace(/\D/g, '')) === 19814634, '159T full firmware and diagnostics');
   check(doc.getElementById('writes').textContent === '0', 'ROM-only voice');
-  check(doc.getElementById('download').hasAttribute('href'), 'example WAV');
+  check(doc.getElementById('download-rom').hasAttribute('href'), 'example firmware download');
   doc.querySelector('[data-example="voice-original"]').click();
   await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent.includes('исходный'));
-  check(!doc.getElementById('download').hasAttribute('href') && doc.getElementById('elapsed').textContent === '00:00.0', 'example switch clears prior result/audio');
+  check(doc.getElementById('cycles').textContent === '0' && doc.getElementById('elapsed').textContent === '00:00.0', 'example switch clears prior result/audio');
   if (target.includes('ROM_Player')) {
     const resources = frame.contentWindow.performance.getEntriesByType('resource');
     check(!resources.some(resource => /\.(bin|json|mjs)(\?|$)/.test(resource.name)), 'standalone examples and engines stay embedded');
   }
-  log(`PASS ${target}: five examples and ROM hashes; 159T default → HLT/WAV; search; source switching; embedded standalone library`);
+  log(`PASS ${target}: five examples and ROM hashes; 159T default → HLT; search; source switching; embedded standalone library`);
   await load(doc, Uint8Array.of(0xfb, 0x00, 0xf3, 0x76), 'inte.bin'); await run(doc);
   check(!doc.querySelector('[data-example][aria-pressed="true"]'), 'upload deselects examples');
   check(doc.getElementById('cycles').textContent === '19', 'EI/NOP/DI/HLT must be 19 T');
   check(doc.getElementById('edges').textContent === '2', 'two INTE edges');
-  check(doc.getElementById('download').hasAttribute('href'), 'WAV download');
-  const firstWav = doc.getElementById('download').href;
+  const savedFirmware = new Uint8Array(await (await fetch(doc.getElementById('download-rom').href)).arrayBuffer());
+  check(savedFirmware.join(',') === '251,0,243,118', 'downloaded BIN matches the loaded image');
   set(doc, 'filter', '0-1');
-  check(doc.getElementById('download').href !== firstWav, 'filter rebuilds WAV');
-  const wav = new DataView(await (await fetch(doc.getElementById('download').href)).arrayBuffer());
-  check(wav.getUint32(24, true) === 96000, 'WAV sample rate');
   check(doc.getElementById('cycles').textContent === '19', 'filter preserves CPU result');
-  log(`PASS ${target}: BIN → INTE → HLT → WAV 96 kHz; filter`);
+  log(`PASS ${target}: BIN → INTE → HLT; firmware download; filter; no WAV export`);
 
   await load(doc, ':04000000FB00F37698\n:00000001FF\n', 'good.hex'); await run(doc);
   check(doc.getElementById('cycles').textContent === '19', 'HEX loads same code');
   await load(doc, ':04000000FB00F37600\n:00000001FF\n', 'bad.hex');
   check(!doc.getElementById('error').hidden && doc.getElementById('run').disabled, 'bad HEX invalidates previous ROM');
-  check(!doc.getElementById('download').hasAttribute('href'), 'bad HEX invalidates previous WAV');
+  check(!doc.getElementById('download-rom').hasAttribute('href'), 'bad HEX invalidates previous firmware download');
   log(`PASS ${target}: valid HEX; checksum rejection clears stale image/audio`);
 
   await load(doc, Uint8Array.of(0x31, 0, 0x30, 0x21, 0x34, 0x12, 0xe5, 0x21, 0xcd, 0xab, 0xe1, 0x76), 'stack.bin');

@@ -1,13 +1,13 @@
-import { parseIntelHex, validateBinary, processAudio, encodeWav } from './formats.mjs';
+import { parseIntelHex, validateBinary, processAudio } from './formats.mjs';
 import { RealtimeSpeaker } from './speaker.mjs';
 
 const $ = id => document.getElementById(id), rate = 96000;
 const hex = (n, width = 2) => n.toString(16).toUpperCase().padStart(width, '0');
 const number = n => n.toLocaleString('ru-RU');
 const machineInputs = [...document.querySelectorAll('[data-machine]')];
-let firmware = null, filename = '', loadTicket = 0, worker = null, audioURL = null, romURL = null;
+let firmware = null, filename = '', loadTicket = 0, worker = null, romURL = null;
 let catalog = null, selectedExample = null;
-let raw = null, computed = null, processed = null, runOptions = null;
+let raw = null;
 let starting = false, runTicket = 0, previewDrawn = false;
 const speaker = new RealtimeSpeaker(status => {
   const seconds = status.seconds, minutes = Math.floor(seconds / 60);
@@ -112,24 +112,16 @@ function updateRegisters(result) {
   $('write-note').textContent = result ? `Записей в память: ${number(result.memWrites)}; проигнорировано в ПЗУ: ${number(result.ignoredWrites)}. Начальная точка — 0000h.` : 'Регистры показаны в шестнадцатеричном виде. Начальная точка — 0000h.';
 }
 function clearResult() {
-  raw = computed = processed = runOptions = null;
+  raw = null;
   previewDrawn = false;
-  if (audioURL) { URL.revokeObjectURL(audioURL); audioURL = null; }
-  $('download').removeAttribute('href'); $('download').removeAttribute('download'); $('download').setAttribute('aria-disabled', 'true');
   for (const id of ['steps', 'cycles', 'edges', 'writes', 'io-writes']) $(id).textContent = '0';
   $('cpu-time').textContent = '0,000 с'; $('progress').value = 0;
   drawScope(null); updateRegisters(null);
 }
-function rebuildAudio() {
+function redrawScope() {
   if (!raw) return;
   const [cutoff, poles] = $('filter').value.split('-').map(Number);
-  processed = processAudio(raw, rate, cutoff, poles, $('normalize').checked);
-  const blob = new Blob([encodeWav(processed, rate)], { type: 'audio/wav' });
-  if (audioURL) URL.revokeObjectURL(audioURL);
-  audioURL = URL.createObjectURL(blob);
-  $('download').href = audioURL;
-  $('download').download = `${filename.replace(/\.[^.]+$/, '')}_8080_${runOptions.output}.wav`;
-  $('download').setAttribute('aria-disabled', 'false'); drawScope(processed);
+  drawScope(processAudio(raw, rate, cutoff, poles, $('normalize').checked));
 }
 async function loadFile(file, example = null) {
   if (!file) return;
@@ -182,7 +174,7 @@ async function run() {
     report('Частота: 100 000–10 000 000 Гц. Лимит времени: 0,1–120 с.', true); return;
   }
   resetPlayback(); const ticket = ++runTicket;
-  runOptions = { hz, seconds, output: $('output').value, memoryMode: $('memory').value, inputByte: Number($('input-byte').value), realtime: true };
+  const runOptions = { hz, seconds, output: $('output').value, memoryMode: $('memory').value, inputByte: Number($('input-byte').value), realtime: true };
   $('progress').max = seconds; starting = true; setBusy(true); report('Запуск эмуляции и звука…');
   try {
     if (!await speaker.start(soundOptions()) || ticket !== runTicket) return;
@@ -204,11 +196,11 @@ async function run() {
       }
       stopWorker();
       if (message.kind === 'error') { speaker.reset(); setBusy(false); $('playback-status').textContent = 'Остановлено'; report(`Ошибка эмуляции: ${message.message}`, true); return; }
-      computed = message; raw = new Float32Array(message.audio); rebuildAudio(); updateRegisters(message);
+      raw = new Float32Array(message.audio); redrawScope(); updateRegisters(message);
       speaker.finish();
       $('edges').textContent = number(message.edges); $('writes').textContent = number(message.memWrites); $('io-writes').textContent = number(message.ioWrites);
       const reason = message.stopReason === 'HLT' ? 'HLT' : message.stopReason === 'time_limit' ? 'лимит времени' : 'лимит команд';
-      report(`Завершение: ${reason}. ${number(message.steps)} команд · ${number(message.t)} T · ${(message.t / hz).toFixed(3)} с. WAV готов к скачиванию.`);
+      report(`Завершение: ${reason}. ${number(message.steps)} команд · ${number(message.t)} T · ${(message.t / hz).toFixed(3)} с.`);
     };
     worker.onerror = event => { if (worker === activeWorker) { speaker.reset(); stopWorker(); $('playback-status').textContent = 'Остановлено'; report(`Ошибка фонового эмулятора: ${event.message}`, true); } };
     const copy = firmware.slice(); worker.postMessage({ ...runOptions, rate, rom: copy.buffer }, [copy.buffer]);
@@ -219,9 +211,8 @@ $('load').addEventListener('click', () => $('file').click());
 $('file').addEventListener('change', () => loadFile($('file').files[0]));
 $('run').addEventListener('click', run);
 $('cancel').addEventListener('click', () => { resetPlayback(); report('Сброс на начало. Нажмите «Эмулировать», чтобы запустить прошивку.'); });
-for (const id of ['filter', 'normalize']) $(id).addEventListener('change', () => { speaker.configure(soundOptions()); rebuildAudio(); });
+for (const id of ['filter', 'normalize']) $(id).addEventListener('change', () => { speaker.configure(soundOptions()); redrawScope(); });
 $('volume').addEventListener('input', () => speaker.volume(Number($('volume').value)));
-$('download').addEventListener('click', event => { if (!raw) event.preventDefault(); });
 function updateMachineNotes() {
   $('signal-label').textContent = $('output').value === 'inte' ? 'INTE' : '/WR';
   $('memory-note').textContent = $('memory').value === 'rom' ? '32-КиБ образ зеркалируется по A15. Записи дают /WR, содержимое ПЗУ сохраняется.' : $('memory').value === 'ramupper' ? 'Адреса 8000–FFFF доступны для записи. A15 участвует в адресации.' : 'Все 64 КиБ доступны для чтения и записи, включая загруженный код.';
@@ -237,5 +228,5 @@ $('drop-zone').addEventListener('drop', event => loadFile(event.dataTransfer.fil
 window.addEventListener('keydown', event => {
   if (event.code === 'Space' && !['INPUT', 'SELECT', 'TEXTAREA', 'BUTTON', 'A', 'SUMMARY'].includes(document.activeElement.tagName)) { event.preventDefault(); run(); }
 });
-window.addEventListener('beforeunload', () => { speaker.reset(); stopWorker(); if (audioURL) URL.revokeObjectURL(audioURL); if (romURL) URL.revokeObjectURL(romURL); });
+window.addEventListener('beforeunload', () => { speaker.reset(); stopWorker(); if (romURL) URL.revokeObjectURL(romURL); });
 clearResult(); setBusy(false); initializeExamples();
