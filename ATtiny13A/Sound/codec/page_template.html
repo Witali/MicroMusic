@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MicroMusic — ATtiny13A LPC: «Сова, открывай!»</title>
+<style>
+:root{color-scheme:dark;--bg:#0a1220;--panel:#132037;--panel2:#172740;--border:#2c415e;--ink:#edf4ff;--dim:#aabdd4;--light:#82dcbd;--blue:#85baff;--amber:#ffd18b;font:15px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+*{box-sizing:border-box}body{margin:0;min-width:300px;background:radial-gradient(ellipse at 80% -10%,#183b45 0%,transparent 48%),var(--bg)}main{max-width:960px;margin:0 auto;padding:24px clamp(15px,4vw,38px) 64px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 24px}.brand{display:flex;align-items:center;gap:12px;font-size:12px;letter-spacing:.15em;text-transform:uppercase;font-weight:750;color:var(--light)}.chip{width:37px;height:37px;background:#193d42;border:2px solid #92efd0;border-radius:8px;display:grid;place-items:center;color:#9cf5d8;font:22px monospace}.pill{border:1px solid var(--border);border-radius:99px;padding:5px 12px;font-size:12px;color:var(--dim)}
+h1{font-size:clamp(28px,5.2vw,46px);line-height:1.15;letter-spacing:-.025em;margin:4px 0 12px}h2{font-size:19px;margin:0 0 13px}p{color:var(--dim);margin:8px 0 16px}code{font:12px ui-monospace,SFMono-Regular,Consolas,monospace;color:#9ae3d0}.eyebrow{color:var(--light);font-size:11px;text-transform:uppercase;letter-spacing:.18em;font-weight:700}.phrase{font-weight:720;color:var(--ink)}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:24px 0}.metric{border:1px solid var(--border);background:var(--panel);border-radius:13px;padding:13px 14px}.metric .value{font-size:clamp(19px,3vw,27px);font-weight:800;line-height:1.2;letter-spacing:-.03em}.metric .lbl{font-size:12px;color:var(--dim);margin-top:5px}
+.box{border:1px solid var(--border);border-radius:18px;background:var(--panel);padding:22px;margin:15px 0}.tracks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.track{background:#111e31;border:1px solid #29405a;border-radius:13px;padding:16px;min-height:160px;display:flex;flex-direction:column;gap:8px}.track.selected{border-color:var(--light);box-shadow:inset 0 0 0 1px #80e0bb20}.track-head{display:flex;justify-content:space-between;gap:8px;align-items:start}.track-title{font-weight:800;font-size:16px}.track small{color:var(--dim);font-size:12px;line-height:1.45}.tag{font-size:11px;color:var(--amber);border-radius:6px;background:#48351d80;padding:4px 7px;white-space:nowrap}.tag.mcu{color:var(--light);background:#24473c80}
+button{background:#8bddbf;border:1px solid transparent;border-radius:9px;color:#0c1a24;font:inherit;font-size:13px;font-weight:800;padding:10px 14px;cursor:pointer;touch-action:manipulation}button.secondary{border-color:var(--border);background:#233a54;color:var(--ink)}button:disabled{opacity:.5;cursor:wait}button:hover:not(:disabled){filter:brightness(1.08)}.track button{align-self:flex-start;margin-top:auto}
+.visual{position:relative;border-radius:10px;background:#091525;border:1px solid #243954;overflow:hidden;margin-top:12px}canvas{display:block;width:100%;height:190px}.playrow{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:12px}.status{font-size:13px;color:#afd9f0}.status b{color:#fff}.controls{display:flex;align-items:center;flex-wrap:wrap;gap:9px}.controls input{width:110px;accent-color:#9ce5c2}.controls label{font-size:13px;color:var(--dim)}
+.progress{background:#30415a;border-radius:8px;height:9px;overflow:hidden;margin-top:11px}.progress >div{background:linear-gradient(90deg,#83baff,#81dfc2);width:89.55%;height:100%;border-radius:8px}.memnote{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--dim);margin-top:7px}.info{display:grid;grid-template-columns:1fr 1fr;gap:19px}.info pre{background:#081626;border:1px solid #283c54;border-radius:10px;padding:16px;color:#a4ded1;overflow:auto;font:12px/1.55 ui-monospace,Consolas,monospace}.meta{display:flex;gap:8px;flex-wrap:wrap}.meta span{background:#20334d;border-radius:6px;font:12px ui-monospace,Consolas,monospace;padding:6px;color:#cadbea}footer{font-size:12px;color:#90a7bd;border-top:1px solid var(--border);margin-top:27px;padding-top:20px}.notice{border-left:3px solid #ffd48a;padding:8px 12px;background:#332a234a;border-radius:0 8px 8px 0;color:#f9d3a0;font-size:13px;margin-top:18px}
+@media(max-width:720px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.tracks{grid-template-columns:1fr}.info{grid-template-columns:1fr}.box{padding:16px}.pill{font-size:10px}.track{min-height:145px}main{padding-top:16px}}
+</style>
+</head>
+<body><main>
+<header><div class="brand"><span class="chip">µ</span><span>MicroMusic<br>Speech Lab</span></div><span class="pill">ATtiny13A · 1 KB Flash</span></header>
+<div class="eyebrow">Эксперимент № 01 / речь на крошечном AVR</div>
+<h1>«Сова, открывай!<br><span class="phrase">Медведь пришёл!»</span></h1>
+<p>Одна смешная фраза — четыре версии воспроизведения. Самая интересная — <strong style="color:var(--ink)">реальная AVR-прошивка размером 917 байт</strong>, исполняемая в браузерном эмуляторе по инструкциям и тактам. Речевая основа синтезирована отдельно, это не оригинальная запись из мультфильма.</p>
+<div class="metrics">
+ <div class="metric"><div class="value">917 <small>Б</small></div><div class="lbl">Прошивка целиком</div></div>
+ <div class="metric"><div class="value">420 <small>Б</small></div><div class="lbl">Речевые данные</div></div>
+ <div class="metric"><div class="value">7,5 <small>кГц</small></div><div class="lbl">Частота сэмплов</div></div>
+ <div class="metric"><div class="value">37,5 <small>кГц</small></div><div class="lbl">Несущая PWM</div></div>
+</div>
+<section class="box" aria-labelledby="compare"><h2 id="compare">Послушать и сравнить</h2>
+<div class="tracks">
+ <article class="track selected" id="card-firmware"><div class="track-head"><div class="track-title">ATtiny13A · TinyLPC</div><span class="tag mcu">AVR HEX</span></div><small>Шесть ступеней LPC, 5 байт на кадр. Браузер исполняет <code>tinylpc.hex</code>, обрабатывает Timer0 и читает записи в OCR0B.</small><button data-play="firmware">▶ Слушать прошивку</button></article>
+ <article class="track" id="card-lpc2"><div class="track-head"><div class="track-title">LPC2 Improved</div><span class="tag">414 Б</span></div><small>Наш браузерный LPC2: 10 коэффициентов, LSF, мягкие переходы, смешанное возбуждение. Не прошивка Tiny13.</small><button data-play="lpc2">▶ Слушать LPC2</button></article>
+ <article class="track" id="card-lpc1"><div class="track-head"><div class="track-title">LPC1 / Talkie-style</div><span class="tag">466 Б</span></div><small>Первая модель LPC из Audio Codec Lab. Десятиполюсный синтез и энергопакеты; воспроизведение средствами JavaScript.</small><button data-play="lpc1">▶ Слушать LPC1</button></article>
+ <article class="track" id="card-original"><div class="track-head"><div class="track-title">Исходная речь (TTS)</div><span class="tag">До сжатия</span></div><small>Сгенерированный русский мужской голос eSpeak. Можно оценить, что пропало при сжатии.</small><button data-play="original">▶ Слушать оригинал</button></article>
+</div>
+<div class="visual"><canvas id="osc" width="1000" height="190" aria-label="Осциллограмма и положение воспроизведения"></canvas></div>
+<div class="playrow"><div class="status" id="state" role="status">Готово. Выберите вариант выше.</div><div class="controls"><button id="stop" class="secondary" disabled>■ Стоп</button><label for="speed">Скорость</label><input id="speed" type="range" min="0.75" max="1.3" step="0.05" value="1"><span id="speedv">1,00×</span></div></div>
+<div class="meta" style="margin-top:14px"><span id="statirq">IRQ: —</span><span id="statcycles">CPU: —</span><span id="statisr">Max ISR: —</span><span id="statdrop">Пропуски: —</span></div>
+</section>
+<section class="box"><h2>Действительно помещается в ATtiny13A</h2><p>Код и данные <em>физически лежат внутри 1024-байтового Flash</em>. Никаких внешних файлов на микроконтроллере и никаких подмен JS-синтезатором в режиме AVR HEX.</p>
+<div class="progress"><div></div></div><div class="memnote"><span>917 / 1024 байта занято</span><span>107 байт свободно · 89,6%</span></div>
+<div class="info" style="margin-top:16px">
+ <div><strong>Синтез (основной цикл)</strong><p>Из Flash читаются квантизованные коэффициенты отражения, амплитуда и период основного тона. Шестиступенчатый LPC-фильтр вычисляет очередной 8-битный сэмпл и помещает его в кольцевой буфер SRAM на 16 байт.</p></div>
+ <div><strong>Вывод (Timer0 ISR)</strong><p>При частоте CPU 9,6 МГц Timer0 работает в Fast PWM без предделителя (37 500 переполнений/с). Каждое пятое прерывание переносит сэмпл из SRAM в <code>OCR0B</code>, выход PB1/OC0B.</p></div>
+</div>
+<div class="controls"><button id="getHex">↓ Прошивка .hex</button><button class="secondary" id="getWav">↓ Результат .wav</button><button class="secondary" id="getFrames">↓ Данные речи .bin</button></div>
+<div class="notice">Ограничение: в TinyLPC всего шесть ступеней фильтра, 4-битные коэффициенты и кадры по 256 отсчётов. Речь получается очень грубой. LPC1/LPC2 служат более качественными эталонами — перенести их на ATtiny13A без упрощений нельзя.</div>
+</section>
+<section class="box"><h2>Как устроен кодек TinyLPC</h2>
+<div class="info"><pre>FLASH: LPC frames (5 B / 256 samples)
+  ↓             CPU 9.6 MHz
+main loop: excitation + 6-stage LPC
+  ↓
+16-byte circular buffer in SRAM
+  ↓          every 5 PWM periods
+Timer0 overflow IRQ → OCR0B / PB1
+  ↓
+RC low-pass → amplifier / speaker</pre><div><p><strong>На каждый кадр 40 бит:</strong> 8 бит периода голоса, 4 бита амплитуды и шесть 4-битных коэффициентов. Беззвучные согласные возбуждаются LFSR-шумом, звонкие — импульсами с регулируемым периодом.</p><p>По сравнению с 10-полюсным LPC2 здесь намеренно упрощены фильтрация, интерполяция и источник возбуждения. Цель — проверить настоящий предельный 1-КБ микроконтроллер.</p></div></div>
+</section>
+<footer>MicroMusic / TinyLPC · экспериментальная демонстрация. Воспроизведение полностью локальное. Модель таймингов AVR проверяет реальные инструкции, но аналоговые характеристики RC-фильтра и точность внутреннего RC-генератора приближённые. Для сборки и схемы см. README проекта.</footer>
+</main>
+<script>
+/*__AVR_CORE__*/
+</script>
+<script>
+/*__LPC_MATH__*/
+</script>
+<script>
+const HEX_FIRMWARE = `/*__FIRMWARE_HEX__*/`;
+const BASE64_LPC1='/*__LPC1__*/';
+const BASE64_LPC2='/*__LPC2__*/';
+const BASE64_ORIG='/*__ORIG__*/';
+const BASE64_FRAMES='/*__FRAMES__*/';
+const FRAME_COUNT=84,SAMPLE_RATE=7500,SAMPLE_COUNT=84*256;
+let ctx=null,srcNode=null,current=null,playing=false,cached={},clockStarted=0,progressFrame=0,viewerData=null,currentRate=1;
+const dom=id=>document.getElementById(id),state=dom('state'),cv=dom('osc'),ctx2=cv.getContext('2d');
+function message(s){state.textContent=s}
+function base64Bytes(text){const raw=atob(text);const b=new Uint8Array(raw.length);for(let i=0;i<raw.length;i++)b[i]=raw.charCodeAt(i);return b}
+function dataBuffer(text){const b=base64Bytes(text);return b.buffer.slice(b.byteOffset,b.byteOffset+b.length)}
+function clearAudio(){if(srcNode){try{srcNode.stop()}catch{}srcNode.disconnect();srcNode=null}playing=false;dom('stop').disabled=true;document.querySelectorAll('button[data-play]').forEach(b=>b.textContent='▶ '+{firmware:'Слушать прошивку',lpc2:'Слушать LPC2',lpc1:'Слушать LPC1',original:'Слушать оригинал'}[b.dataset.play])}
+function normalize(x,peak=.81){let max=0;for(const v of x)max=Math.max(max,Math.abs(v));if(max>0){const s=peak/max;const y=new Float32Array(x.length);for(let i=0;i<x.length;i++)y[i]=x[i]*s;return y}return x}
+const E={firmware:{label:'ATtiny13A · настоящий AVR HEX',sr:7500},lpc1:{label:'LPC1 — веб-декодер',sr:8000},lpc2:{label:'LPC2 Improved — веб-декодер',sr:8000},original:{label:'TTS — исходная речь',sr:22050}};
+async function decodeMode(mode){
+ if(cached[mode])return cached[mode];
+ let data,sr=E[mode].sr,stats=null;
+ if(mode==='firmware'){
+  const c=AVRCore.fromHex(HEX_FIRMWARE),y=new Float32Array(SAMPLE_COUNT);
+  message('Исполняются инструкции ATtiny13A…');
+  for(let i=0;i<y.length;i++){
+   y[i]=(c.takeSample()-128)/128;
+   if(i&&i%3000===0){message('AVR HEX: '+Math.round(i/y.length*100)+'% · '+(c.cycles/1e6).toFixed(1)+' M тактов');await new Promise(r=>setTimeout(r,0))}
+  }
+  data=normalize(y);
+  stats={irq:c.irqCount,cycles:c.cycles,maxISR:c.maxISR,dropped:c.missedOverflows,writes:c.pwmWrites};
+ } else if(mode==='lpc1'){
+  message('Декодирование LPC1…');const result=unpackLPC(dataBuffer(BASE64_LPC1));data=normalize(await synthLPC(result.meta,result.frames));
+ } else if(mode==='lpc2'){
+  message('Декодирование LPC2…');const result=unpackLPC2(dataBuffer(BASE64_LPC2));data=normalize(await synthLPC2(result.meta,result.frames,.35));
+ } else if(mode==='original'){
+  const audio=await ctx.decodeAudioData(dataBuffer(BASE64_ORIG));sr=audio.sampleRate;data=audio.getChannelData(0).slice();
+ }
+ cached[mode]={data,sr,stats};return cached[mode];
+}
+function updateStats(stats){dom('statirq').textContent=stats?'IRQ: '+stats.irq.toLocaleString('ru'):'IRQ: —';dom('statcycles').textContent=stats?'CPU: '+(stats.cycles/1e6).toFixed(2)+' M тактов':'CPU: —';dom('statisr').textContent=stats?'Max ISR: '+stats.maxISR+' / 256 тактов':'Max ISR: —';dom('statdrop').textContent=stats?'Пропуски Timer0: '+stats.dropped:'Пропуски: —'}
+function drawWave(data,position=0){
+ const g=ctx2,w=cv.width,h=cv.height;g.fillStyle='#091525';g.fillRect(0,0,w,h);g.strokeStyle='#233c56';g.lineWidth=1;
+ for(let y=24;y<h;y+=36){g.beginPath();g.moveTo(0,y);g.lineTo(w,y);g.stroke()}
+ g.strokeStyle='#3b6682';g.beginPath();g.moveTo(0,h/2);g.lineTo(w,h/2);g.stroke();
+ if(data&&data.length){
+  g.strokeStyle='#8fe2c8';g.lineWidth=1.45;g.beginPath();
+  const n=data.length;for(let i=0;i<w;i++){
+   let a=Math.floor(i*n/w),b=Math.max(a+1,Math.floor((i+1)*n/w));let mn=1,mx=-1;
+   for(let j=a;j<b;j++){let v=data[j];if(v<mn)mn=v;if(v>mx)mx=v}
+   const y1=h/2-mx*h*.41,y2=h/2-mn*h*.41;
+   g.moveTo(i,y1);g.lineTo(i,y2);
+  }g.stroke();
+  const px=Math.min(w,Math.max(0,position*w));g.strokeStyle='#ffcf8e';g.lineWidth=2;g.beginPath();g.moveTo(px,0);g.lineTo(px,h);g.stroke();
+ }
+}
+async function play(mode){
+ clearAudio();message('Подготовка '+E[mode].label+'…');
+ document.querySelectorAll('button[data-play]').forEach(b=>b.disabled=true);
+ try{
+  if(!ctx)ctx=new (window.AudioContext||window.webkitAudioContext)();
+  await ctx.resume();
+  const ob=await decodeMode(mode),len=ob.data.length,b=ctx.createBuffer(1,len,ob.sr);b.copyToChannel(ob.data,0);
+  current=mode;viewerData=ob.data;updateStats(ob.stats);
+  const node=ctx.createBufferSource();node.buffer=b;node.playbackRate.value=currentRate;
+  const hp=ctx.createBiquadFilter();hp.type='highpass';hp.frequency.value=70;
+  const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=mode==='firmware'?3000:3900;
+  const vol=ctx.createGain();vol.gain.value=mode==='original'?.75:.78;
+  node.connect(hp);hp.connect(lp);lp.connect(vol);vol.connect(ctx.destination);
+  srcNode=node;clockStarted=ctx.currentTime;playing=true;
+  document.querySelectorAll('.track').forEach(el=>el.classList.toggle('selected',el.id==='card-'+mode));
+  document.querySelectorAll('button[data-play]').forEach(btn=>btn.textContent=btn.dataset.play===mode?'Ⅱ Повторить':'▶ '+{firmware:'Слушать прошивку',lpc2:'Слушать LPC2',lpc1:'Слушать LPC1',original:'Слушать оригинал'}[btn.dataset.play]);
+  node.onended=()=>{if(srcNode===node){srcNode=null;playing=false;dom('stop').disabled=true;message(E[mode].label+' · воспроизведение завершено.')}};
+  node.start();dom('stop').disabled=false;message(E[mode].label+' · '+(len/ob.sr).toFixed(2)+' с');requestAnimationFrame(animate);
+ }catch(err){console.error(err);message('Ошибка: '+err.message)}
+ finally{document.querySelectorAll('button[data-play]').forEach(b=>b.disabled=false)}
+}
+function animate(){if(!playing||!ctx||!srcNode)return;const rec=cached[current],at=(ctx.currentTime-clockStarted)*currentRate/(rec.data.length/rec.sr);drawWave(viewerData,at);requestAnimationFrame(animate)}
+dom('stop').onclick=()=>{clearAudio();drawWave(viewerData,0);message('Остановлено.')};
+dom('speed').oninput=e=>{currentRate=+e.target.value;dom('speedv').textContent=currentRate.toFixed(2).replace('.',',')+'×';if(srcNode)srcNode.playbackRate.value=currentRate};
+document.querySelectorAll('button[data-play]').forEach(btn=>btn.onclick=()=>play(btn.dataset.play));
+function saveFile(data,name,type='application/octet-stream'){
+ const url=URL.createObjectURL(new Blob([data],{type}));const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1200)
+}
+dom('getHex').onclick=()=>saveFile(HEX_FIRMWARE,'tinylpc.hex','text/plain');
+dom('getFrames').onclick=()=>saveFile(base64Bytes(BASE64_FRAMES),'voice_tinylpc.bin');
+dom('getWav').onclick=async()=>{
+ message('Генерация WAV из эмулируемого HEX…');
+ const ob=await decodeMode('firmware'),s=ob.data,n=s.length,buf=new ArrayBuffer(44+n*2),v=new DataView(buf);
+ function word(i,t){for(let j=0;j<t.length;j++)v.setUint8(i+j,t.charCodeAt(j))}
+ word(0,'RIFF');v.setUint32(4,36+n*2,true);word(8,'WAVE');word(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,ob.sr,true);v.setUint32(28,ob.sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);word(36,'data');v.setUint32(40,n*2,true);
+ for(let i=0;i<n;i++)v.setInt16(44+i*2,Math.round(Math.max(-1,Math.min(1,s[i]))*32767),true);
+ saveFile(buf,'tinylpc_emulator.wav','audio/wav');message('WAV создан из выполнения AVR HEX.');
+};
+drawWave(null,0);
+</script>
+</body>
+</html>

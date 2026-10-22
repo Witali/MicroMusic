@@ -1,0 +1,119 @@
+{
+  "slug": "tinylpc-v1",
+  "target": "ATtiny13A/Sound/codec",
+  "title": "Restore initial ATtiny13A TinyLPC codec",
+  "origin": {
+    "archive": "MicroMusic_ATtiny13_LPC.zip",
+    "sha256": "e6f6b4198cd44b0dc56d823521ecf5f9d70bfc2eec5a44e4c2d74fcb364b52a2"
+  },
+  "previous_commit": "d6aa12be2efd35dc7861708126e63c92e367a787",
+  "files": [
+    {
+      "path": "ATtiny13A/Sound/codec/README.md",
+      "sha256": "c5f0365795c7d668f210365e80d5d7a48204b6bf26acb0ac1c960ba22cb7076d",
+      "bytes": 10696
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/avr_emulator.js",
+      "sha256": "117ec65910ccd10d2876fecc85f0581a4e6d165e27a3d56cbb5d74630a254761",
+      "bytes": 8916
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/build_firmware.py",
+      "sha256": "8e2d0db215bbc1fd2228a3c59d6e9ff157486dcd5392354fd788df38885de9c3",
+      "bytes": 1461
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/create_page.py",
+      "sha256": "7c2bb66ad16845f3d6fad41ba169bc79cf7cfc83c966d8ed3f7ef62f409d1859",
+      "bytes": 559
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/encode.js",
+      "sha256": "b039ff64d3fb0b84bfe5941a06863d7a038cbd12d94d27aa529507639d69438c",
+      "bytes": 1968
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/index.html",
+      "sha256": "458893394ac8743d6cc069b5c6dd1656db0b52a351e0e99355e962b4511da1f1",
+      "bytes": 73797
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/lpc_math.js",
+      "sha256": "9b05df011c221caf8560bdf35724a3185ca2f845d20080fdccdd03a0fa82b45d",
+      "bytes": 24644
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/make_tinylpc.py",
+      "sha256": "d8c58fd68bd6aac5ef59563b5323d6e4a8e566a2de28dd38840bd69894bd62c7",
+      "bytes": 3795
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/page_template.html",
+      "sha256": "86df8e53f926d521480785dc901210800d6efe97bbf3a7e1ef240c84a2d45c25",
+      "bytes": 20153
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/phrase_lpc1.lpc",
+      "sha256": "8f589315ce24f44f1abf53fb007ed2e1e6da81cff64ca308a047c8d6e1ad5e74",
+      "bytes": 466
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/phrase_lpc2.lp2",
+      "sha256": "70bdd7f1c8f4e838808774c1225f6ae3f34948f6c80b98b3b5e43fb76dce244b",
+      "bytes": 414
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/prepare_source.py",
+      "sha256": "dd87dee3229cdc85a118cdc0be5b6690b583a2314305feb6e6c3f7b31c456d23",
+      "bytes": 816
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/tinylpc.S",
+      "sha256": "c5dc7b37c4e59f9dd2d0980cff28e326089362e244951178bc4408a6bd4144bc",
+      "bytes": 5652
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/verify.js",
+      "sha256": "169192403a924fc29106eea4b8a307f7c2f324785004dec3fcd0d5c2062c8880",
+      "bytes": 1185
+    }
+  ],
+  "omitted": [
+    {
+      "path": "ATtiny13_TinyLPC_preview.wav",
+      "bytes": 126488,
+      "sha256": "4f2b53f15921ff78e073ce08e6d5bfd48a845631f0315749b8568e3a71900792"
+    },
+    {
+      "path": "input_8k.s16le",
+      "bytes": 45570,
+      "sha256": "c781fdbe4bb7081b376fc7af48fa118dfba27e5ca0e6a033639d298084de5296"
+    },
+    {
+      "path": "tinylpc.bin",
+      "bytes": 917,
+      "sha256": "e8584e5ab916d91c428df776eeaef7b7a962f96f4ee978b204285d5b78cfb121"
+    },
+    {
+      "path": "tinylpc.hex",
+      "bytes": 2542,
+      "sha256": "5df3eda2c1a6b23404e902888c654bb02dd3f7f9d7282f85d3af0ddfc1c44678"
+    },
+    {
+      "path": "tts_source.mp3",
+      "bytes": 11929,
+      "sha256": "7efafb70152ce378d64fae8c7444239d81f06b7326c17b094b9e901bb646f002"
+    },
+    {
+      "path": "tts_source.wav",
+      "bytes": 125676,
+      "sha256": "3bb1451d1f32054a60a1ebf66e8cb27a88b58549f2feafbee0046fe76c1f1794"
+    },
+    {
+      "path": "voice_tinylpc.bin",
+      "bytes": 420,
+      "sha256": "df7b32d82e104eb4a5ba3756a225f1ae7e8b1fb7fd68f918990a5d40f7f2dca2"
+    }
+  ]
+}
