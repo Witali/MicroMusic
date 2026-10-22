@@ -1,0 +1,244 @@
+{
+  "slug": "tinylpc-v4",
+  "target": "ATtiny13A/Sound/codec",
+  "title": "Correct TinyLPC model and pitch fitting",
+  "origin": {
+    "archive": "MicroMusic_ATtiny13_TinyLPC_v4_project.zip",
+    "sha256": "0d994c761d339556e55dc43aec3b976b4627a53882bf98586e817253ed54da7e"
+  },
+  "previous_commit": "1f051be8620376383d29bd7345764eccdca507ab",
+  "files": [
+    {
+      "path": "ATtiny13A/Sound/codec/README.md",
+      "sha256": "292761f979ced2e94f1301d29e04a0320def3738afb8922c2fa57d4cbac4d975",
+      "bytes": 9092
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/analyze.py",
+      "sha256": "1bb147c8a1728f6ec8eb060948ee35097fadafd1d70a89670dddaa82df9d6dfe",
+      "bytes": 2049
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/avr_emulator.js",
+      "sha256": "117ec65910ccd10d2876fecc85f0581a4e6d165e27a3d56cbb5d74630a254761",
+      "bytes": 8916
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/best_parameters.npz",
+      "sha256": "3c346eccbbfe398738243979499488984a9b3caf20411633648af9f50e10d099",
+      "bytes": 8250
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/build_firmware.py",
+      "sha256": "8e2d0db215bbc1fd2228a3c59d6e9ff157486dcd5392354fd788df38885de9c3",
+      "bytes": 1461
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/create_page_v4.py",
+      "sha256": "d85a67427a995e57464be5a20e65ed52d55639d4b054cdc9456c3d17365c8b43",
+      "bytes": 6295
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/encode.js",
+      "sha256": "b039ff64d3fb0b84bfe5941a06863d7a038cbd12d94d27aa529507639d69438c",
+      "bytes": 1968
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/index.html",
+      "sha256": "861628817eee706c2c6996af616f36a6a295f8f8010388835e76f86e6eb39280",
+      "bytes": 623269
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/joint_epoch2.npz",
+      "sha256": "aae2304d9d3d53d43d9c80c5e7c104f4836169d50f45ddd1f6f7c75972a6273f",
+      "bytes": 8250
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/lpc_math.js",
+      "sha256": "9b05df011c221caf8560bdf35724a3185ca2f845d20080fdccdd03a0fa82b45d",
+      "bytes": 24644
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/measure_v4.py",
+      "sha256": "f5d9cfe0f76db353dbea8353a18afae0241e705979d3e7b8422cf851fd147c1d",
+      "bytes": 2520
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/metrics.json",
+      "sha256": "89437edbe8ddc65e1f182c47804c56bf3e50bd9c9e98b198c2513d178c327df4",
+      "bytes": 428
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/model_exact.py",
+      "sha256": "ea5f6e5376f150de34b96a578efc962f6b189cfa7c21df9e1d179fe1d9728f6b",
+      "bytes": 1666
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/optimize_exact.py",
+      "sha256": "fba1a78b1e1c517b9311c54a2f5f62132693e11ff22eecfc83c3dfe39f88ab90",
+      "bytes": 5151
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/optimize_joint.py",
+      "sha256": "36219f0b947ed7bd7d13be4444050a1c0c987acdfec9b39c6bab0d5b15e2c05a",
+      "bytes": 5122
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/optimize_v3.py",
+      "sha256": "5611c20d614c963b285ccf51b40972de0761a76cecba98efaf322e9769895119",
+      "bytes": 4252
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/package_stream.py",
+      "sha256": "3027051d1bf1e4d6a7c402d4069d1ddd12e729204ab5f0ceebd23e36b0a661dd",
+      "bytes": 719
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/phrase_lpc1.lpc",
+      "sha256": "27b8f11cb8493cfc417becb83017bb3442b76e57c2dd77582ed346b9cbd69629",
+      "bytes": 696
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/phrase_lpc2.lp2",
+      "sha256": "909c9fe9bd426e58791a4f6aabe600a11f1630c5d9f340d1a1a9eb8c60190293",
+      "bytes": 482
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/render_comparison.py",
+      "sha256": "dfd51a3d0d5dd2cca849754bc023065461516b129e848a303c2341cd95617431",
+      "bytes": 2760
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/spectral_objective.py",
+      "sha256": "1fb117abe9841ae3440d40377f4799cc0d5a113e74846167673811b623d8fea8",
+      "bytes": 2675
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/test_browser_v4.py",
+      "sha256": "ddcc3a516a7a9b748fca92afef2714dee1c9adccc028173c457916321f77544f",
+      "bytes": 1434
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/tinylpc.S",
+      "sha256": "ed3865fa5ef114b83f8902492e31f1707aa93e44df4dffec1c4df5004116a484",
+      "bytes": 6853
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/tune.py",
+      "sha256": "1b4704a8bd6ec4ce35718055e26627a9b5c3e7edde4fe9c89285cbc380644b23",
+      "bytes": 1899
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/v3_formant_best.npz",
+      "sha256": "5c4b24db1f3a266228a1b245775c22972aa29cf7ce954c4285f66447f40a76ca",
+      "bytes": 8052
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/verify.js",
+      "sha256": "169192403a924fc29106eea4b8a307f7c2f324785004dec3fcd0d5c2062c8880",
+      "bytes": 1185
+    }
+  ],
+  "omitted": [
+    {
+      "path": ".gitignore",
+      "bytes": 237,
+      "sha256": "c86fa2e5434843e3a3fa0082e3075790f25cb1b606c8e76674039293a2e1148a"
+    },
+    {
+      "path": "MicroMusic_AB_original_v3_v4.wav",
+      "bytes": 300194,
+      "sha256": "90795ccb458821440947553158e8eb8ca5a680a89418d4890eb21cb5a0ee6d7c"
+    },
+    {
+      "path": "MicroMusic_TinyLPC_v3_levelmatched.wav",
+      "bytes": 44444,
+      "sha256": "7c86866d6af3c30917390cff9eb630fe969ab2f8765c7d07f3e1a3d35ed7bf16"
+    },
+    {
+      "path": "MicroMusic_TinyLPC_v4_AVR.wav",
+      "bytes": 44444,
+      "sha256": "6b550512dac8a7a5559b9d192012c21cd58aa05323d8425b21a048cb1c03c84f"
+    },
+    {
+      "path": "emu_pwm_u8.raw",
+      "bytes": 22272,
+      "sha256": "07c3f9511d72876c5de7f21c6c09d04f4834abd81b361270c7d760e8f64a1e13"
+    },
+    {
+      "path": "emu_pwm_v3.raw",
+      "bytes": 22272,
+      "sha256": "948fd86bf5d6da14202cda26b4acfcb1b1ca77af14c1f2e2cb5c704bd3fb4313"
+    },
+    {
+      "path": "phrase_lpc1.s16le",
+      "bytes": 47360,
+      "sha256": "b3de44f6e9a6744753444671b8ebb244bc44395cd977269af27020c902b24d07"
+    },
+    {
+      "path": "phrase_lpc2.s16le",
+      "bytes": 47360,
+      "sha256": "fb74c2e3f85f7fefe3655d2dc042e57abf5775c33acc298b284e75251e919d90"
+    },
+    {
+      "path": "source_original.mp3",
+      "bytes": 110101,
+      "sha256": "e0061b8416ea19fef7103bd0f2d4bc7cce2a51523ec935e544f9d5b471b0db44"
+    },
+    {
+      "path": "source_original_16k.wav",
+      "bytes": 108358,
+      "sha256": "7323f3c42de449536f8a9944655399989a7b6b4e85b3e442f77e14b44a2fff39"
+    },
+    {
+      "path": "source_original_7500.wav",
+      "bytes": 50898,
+      "sha256": "d3384bef352668aa12dc34cfd46fdf1e8102ff244f4f5d6cd348af37c51fc0d5"
+    },
+    {
+      "path": "spectrogram_compare_v4.png",
+      "bytes": 610084,
+      "sha256": "a595d1775f0204175b2bfbd709af302407ca8006b0977b642a1857c548081c67"
+    },
+    {
+      "path": "spectrogram_compare_v4.webp",
+      "bytes": 264558,
+      "sha256": "5a37064d8a534f1b9f55c1fd00f9e217841e01a6a70b158d617177a7a813a12d"
+    },
+    {
+      "path": "speech_trimmed_7500.wav",
+      "bytes": 44444,
+      "sha256": "158f1cf6daa3a2a94ec662c5c5c6c92347c11f38af9451fe649ec473a95bd491"
+    },
+    {
+      "path": "tinylpc.bin",
+      "bytes": 1012,
+      "sha256": "523db70276720efe6631a42f92fb302e45fc32e23f408c05aa877f7154a2f234"
+    },
+    {
+      "path": "tinylpc.hex",
+      "bytes": 2804,
+      "sha256": "62c76ff0ca0b2591a481b28aa42fef3d9c596c9dc31cb1b73ffd68bfebf9eba8"
+    },
+    {
+      "path": "tinylpc.o",
+      "bytes": 2244,
+      "sha256": "081bab90270194346804304bf4e96efea3224acd22fd460c8c4a1126326649da"
+    },
+    {
+      "path": "tinylpc_v3.bin",
+      "bytes": 1012,
+      "sha256": "41ee06ef00c99554a5ecb31744572d13618ec207fec825e5978f7fe5262da429"
+    },
+    {
+      "path": "tinylpc_v3.hex",
+      "bytes": 2804,
+      "sha256": "cb6bacad20c1c522a9d79b1418017b2892d2ef535409f5d55408b3acb7c8e8b0"
+    },
+    {
+      "path": "voice_tinylpc.bin",
+      "bytes": 435,
+      "sha256": "ec3fe347c76ab4d81eba7c594a402c584ec030d343e17e6138f99201e38f63c7"
+    }
+  ]
+}
