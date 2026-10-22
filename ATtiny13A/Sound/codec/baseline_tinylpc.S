@@ -3,8 +3,7 @@
  * The ISR writes the next buffered 8-bit sample every fifth overflow:
  *   37500/5 = 7500 Hz PCM, derived from a bandwidth-limited 8-stage lattice vocoder.
  * Main code synthesizes frames into a 16-byte ring in SRAM.
- * Adaptive keyframe stream: fast/slow transition bit in pitch header,
- * spectral keyframes, short events, and RLE silence; Flash-resident data.
+ * 5 bytes per 256-sample speech frame; all voice data in Flash.
  * All RAM accesses are >= 0x60. Main uses r2-r31; ISR saves own regs.
  */
 .section .text
@@ -29,9 +28,7 @@
 .set WRPTR,     0x62
 .set RING_BEGIN,0x64
 .set RING_END,  0x74
-.set VOICE_ADDR,0x034a
-.set K_ACTIVE, 0x80
-.set K_TARGET, 0x88
+.set VOICE_ADDR,0x0300
 .org 0x0000
 __vectors:
  rjmp reset
@@ -65,13 +62,6 @@ reset:
  clr r0
  clr r1
  clr r10                  /* Frame sample count modulo 256. */
- ldi r28,K_ACTIVE
- clr r29
- ldi r25,16
-clr_coeffs:
- st Y+,r10
- dec r25
- brne clr_coeffs
  clr r5
  clr r4
  sts RLE_LEFT,r5
@@ -108,23 +98,6 @@ next_slot_ok:
  brne active_frame
  rcall read_frame
 active_frame:
- /* Per-frame adaptive quantized-domain slew: all eight lattice reflection
-  * coefficients and amplitude approach new keyframe targets by 1 step
-  * every 4 samples (0.53 ms). No full-frame discontinuities.
-  */
- mov r16,r10
- and r16,r6
- brne skip_smoothing
- rcall smooth_coeffs
- lds r16,GAIN_TARGET
- cp r5,r16
- breq skip_smoothing
- brlt gain_up
- dec r5
- rjmp skip_smoothing
-gain_up:
- inc r5
-skip_smoothing:
  /* Small interpolated F0 glides between voiced frames. */
  mov r16,r10
  andi r16,7
@@ -192,17 +165,17 @@ do_lattice:
 pure_lattice:
  /* m=8, state7. State8 is never used, so skip its update. */
  lds r21,STATE7
- lds r23,K_ACTIVE+7
+ lds r23,COEFF_K7
  rcall mul_q3
  sub r22,r24
 
  /* m=7, state6 -> state7. */
  mov r21,r13
- lds r23,K_ACTIVE+6
+ lds r23,COEFF_K6
  rcall mul_q3
  sub r22,r24
  mov r21,r22
- lds r23,K_ACTIVE+6
+ lds r23,COEFF_K6
  rcall mul_q3
  mov r16,r13
  add r16,r24
@@ -210,62 +183,62 @@ pure_lattice:
 
  /* m=6, state5 -> state6. */
  mov r21,r12
- lds r23,K_ACTIVE+5
+ mov r23,r1
  rcall mul_q3
  sub r22,r24
  mov r21,r22
- lds r23,K_ACTIVE+5
+ mov r23,r1
  rcall mul_q3
  mov r13,r12
  add r13,r24
 
  /* m=5, state4 -> state5. */
  mov r21,r18
- lds r23,K_ACTIVE+4
+ mov r23,r0
  rcall mul_q3
  sub r22,r24
  mov r21,r22
- lds r23,K_ACTIVE+4
+ mov r23,r0
  rcall mul_q3
  mov r12,r18
  add r12,r24
 
  mov r21,r17
- lds r23,K_ACTIVE+3
+ mov r23,r9
  rcall mul_q3
  sub r22,r24
  mov r21,r22
- lds r23,K_ACTIVE+3
+ mov r23,r9
  rcall mul_q3
  mov r18,r17
  add r18,r24
 
  mov r21,r11
- lds r23,K_ACTIVE+2
+ mov r23,r8
  rcall mul_q3
  sub r22,r24
  mov r21,r22
- lds r23,K_ACTIVE+2
+ mov r23,r8
  rcall mul_q3
  mov r17,r11
  add r17,r24
 
  mov r21,r15
- lds r23,K_ACTIVE+1
+ mov r23,r7
  rcall mul_q3
  sub r22,r24
  mov r21,r22
- lds r23,K_ACTIVE+1
+ mov r23,r7
  rcall mul_q3
  mov r11,r15
  add r11,r24
 
  mov r21,r14
- lds r23,K_ACTIVE+0
+ mov r23,r6
  rcall mul_q3
  sub r22,r24
  mov r21,r22
- lds r23,K_ACTIVE+0
+ mov r23,r6
  rcall mul_q3
  mov r15,r14
  add r15,r24
@@ -325,44 +298,17 @@ mult_done:
  * with extra damping for robust 8-bit filter states.
  * The optional 0xff pitch byte loops back to the first frame.
  */
-smooth_coeffs:
- /* Active coefficients at 0x80..0x87, targets at 0x88..0x8f.
-  * SRAM 0x90..0x9f stays free for the hardware stack.
-  * Difference of +/-1 per 4 samples => <=14 steps to a new formant.
-  */
- ldi r28,K_ACTIVE
- clr r29
- ldi r26,K_TARGET
- clr r27
- ldi r25,8
-smooth_loop:
- ld r16,Y
- ld r23,X
- cp r16,r23
- breq smooth_next
- brlt smooth_up
- dec r16
- rjmp smooth_store
-smooth_up:
- inc r16
-smooth_store:
- st Y,r16
-smooth_next:
- inc r28
- inc r26
- dec r25
- brne smooth_loop
- ret
-
 read_frame:
- mov r23,r4  /* previous pitch for short F0 glide */
- /* A silence run stays silent; first command already reset filter states. */
+ mov r23,r4 /* Keep previous pitch until new frame has been parsed. */
+ /* Run-length encoded silence. 0xE1..0xFE means N silent frames;
+  * 0xFF loops back. Voiced pitch <96 may set bit7 for mixed noise.
+  */
  lds r16,RLE_LEFT
  tst r16
  breq fetch_frame
  dec r16
  sts RLE_LEFT,r16
- ret
+ rjmp silent_frame
 fetch_frame:
  lpm r4,Z+
  mov r16,r4
@@ -375,26 +321,11 @@ check_silence:
  mov r16,r4
  cpi r16,0xe0
  brlo normal_frame
+ mov r16,r4
  subi r16,0xe1
  sts RLE_LEFT,r16
  rjmp silent_frame
 normal_frame:
- /* Bits 0..5: pitch, bit7: only gain/F0 update (keep spectrum).
-  * In a full frame 4 packed bytes update the eight lattice targets.
-  */
- mov r27,r4
- /* Pitch header bit6: slow 8-sample spectral/gain slew by default,
-  * fast 4-sample slew for significant phonetic transitions.
-  * Bit7 continues to mean short event (no spectral coefficient update).
-  * r6 is free from all 8-stage lattice and interrupt routines.
-  */
- ldi r16,7
- sbrc r27,6
- ldi r16,3
- mov r6,r16
- mov r16,r4
- andi r16,0x3f
- mov r4,r16
  sts PITCH_TARGET,r4
  mov r16,r4
  sub r16,r23
@@ -406,56 +337,53 @@ have_pitch:
  lpm r16,Z+
  mov r24,r16
  andi r16,15
- sts GAIN_TARGET,r16
- tst r16
+ mov r5,r16
+ mov r16,r24
+ swap r16
+ andi r16,15
+ subi r16,8
+ mov r6,r16
+ lpm r16,Z+
+ mov r24,r16
+ andi r16,15
+ subi r16,8
+ mov r7,r16
+ mov r16,r24
+ swap r16
+ andi r16,15
+ subi r16,8
+ mov r8,r16
+ lpm r16,Z+
+ mov r24,r16
+ andi r16,15
+ subi r16,8
+ mov r9,r16
+ mov r16,r24
+ swap r16
+ andi r16,15
+ subi r16,8
+ mov r0,r16
+ lpm r16,Z+
+ mov r24,r16
+ andi r16,15
+ subi r16,8
+ mov r1,r16
+ mov r16,r24
+ swap r16
+ andi r16,15
+ subi r16,8
+ sts COEFF_K6,r16
+ lpm r16,Z+
+ andi r16,15
+ subi r16,8
+ sts COEFF_K7,r16
+ tst r5
  breq clear_lattice_states
- sbrc r27,7
- ret
- mov r16,r24
- swap r16
- andi r16,15
- subi r16,8
- sts K_TARGET+0,r16
- lpm r16,Z+
- mov r24,r16
- andi r16,15
- subi r16,8
- sts K_TARGET+1,r16
- mov r16,r24
- swap r16
- andi r16,15
- subi r16,8
- sts K_TARGET+2,r16
- lpm r16,Z+
- mov r24,r16
- andi r16,15
- subi r16,8
- sts K_TARGET+3,r16
- mov r16,r24
- swap r16
- andi r16,15
- subi r16,8
- sts K_TARGET+4,r16
- lpm r16,Z+
- mov r24,r16
- andi r16,15
- subi r16,8
- sts K_TARGET+5,r16
- mov r16,r24
- swap r16
- andi r16,15
- subi r16,8
- sts K_TARGET+6,r16
- lpm r16,Z+
- andi r16,15
- subi r16,8
- sts K_TARGET+7,r16
  ret
 silent_frame:
  clr r4
  sts PITCH_TARGET,r4
  clr r5
- sts GAIN_TARGET,r5
 clear_lattice_states:
  clr r14
  clr r15

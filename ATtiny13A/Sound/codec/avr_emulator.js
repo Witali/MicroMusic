@@ -186,4 +186,3 @@ class AVRCore {
   }
 }
 if(typeof module!=='undefined'&&module.exports)module.exports={AVRCore};
-

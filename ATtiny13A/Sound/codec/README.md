@@ -1,32 +1,57 @@
-# MicroMusic — единый веб-плеер кодеков и эмулятор ATtiny13A
+# MicroMusic — Keyframe LPC-8 for ATtiny13A
 
-Откройте `index.html` в браузере. Страница полностью автономна и содержит три примера речи и два выпадающих списка: **Пример звука** и **Кодек / прошивка**.
+## What it does
 
-## Варианты кодека
+Two real 1KB ATtiny13A speech firmware builds from the user's three voice experiments:
 
-- **Оригинал:** встроенный PCM для сравнения.
-- **LPC2 Voice v2:** контрольное PCM, ранее декодированное кодеком LPC2 Voice v2 (не исполняется микроконтроллером).
-- **LPX3 2/3/4 бита:** действительно распаковывается из `.lpx3` потока кодом JS, включая LPC2/LSF фильтр. В ATtiny13A эти потоки не помещаются.
-- **Keyframe LPC-8:** исполняет машинный код AVR для двух коротких фраз (1019 / 985 байт Flash).
-- **Adaptive LPC-8:** исполняет машинный код AVR для двух коротких фраз (1023 / 997 байт Flash).
-- **TinyLPC-7:** исполняет машинный код AVR для Винни-Пуха (1012 байт Flash).
+* `xtuj-ntt` — «Чего тебе нужно?»; Flash **1019 B** (184 B voice stream), 36 × 256 samples, 7500 Hz.
+* `ne-otv` — «Что ж ты не отвечаешь?»; Flash **985 B** (150 B voice stream), 31 × 256 samples, 7500 Hz.
 
-## Как проверяется прошивка
+CPU internal 9.6 MHz (CPU divider /1), Fast PWM on PB1/OC0B at 37.5 kHz, Timer0 IRQ updates OCR0B every fifth overflow, a 16-byte ring buffer, and the main loop synthesizes eight-lattice-filtered speech. Output needs RC low-pass + audio amp; **do not attach a speaker directly to the GPIO**.
 
-При выборе AVR-кодека нажатие **Слушать** исполняет прошивку по инструкциям в JS-модели ATtiny13A с 9,6 МГц CPU. Эмулятор моделирует переполнения Timer0, прерывания и записи в OCR0B. Результат формирует WAV/аудиобуфер из реально полученных байтов PWM и сравнивается с сохранённой эталонной последовательностью. Кнопка **Проверить AVR HEX** выполняет все инструкции заново. Статистика включает число IRQ, пропуски переполнений, длительность ISR, интервалы записей PWM и точность совпадения.
+Unlike conventional frame-by-frame TinyLPC, *Keyframe LPC-8* uses two frame types:
 
-**Ограничения:** эмулятор покрывает только набор AVR-инструкций, используемый указанными сборками, и не моделирует электрические характеристики реального PWM/RC-фильтра. Совпадение PCM и отсутствие пропущенных прерываний не заменяют аппаратный тест.
+- Full keyframe (6 B): 6-bit fundamental period, gain, eight 4-bit signed reflection coefficients; pitch header `0x00..0x3f`.
+- Pitch/energy-only update (2 B): header `0x80..0xbf`, gain; keeps previously loaded spectrum.
+- Silence run (1 B): `0xe1..0xfe` = 1–30 frames; `0xff` loops the stream.
 
-## Структура
+The synthesis coefficients in SRAM are incremented/decremented at most one level every four audio samples (0.533 ms), and gain likewise; fundamental period already glides gently when the difference is small. The encoder chooses important spectral keyframes and tests synthesis against both the **source voice** and an **LPX3 teacher**, then adjusts stored parameters in an automatic greedy analysis-by-synthesis loop.
 
-- `index.html` — полностью автономный плеер, данные и все эмуляторы уже встроены.
-- `avr_core.js` — исходник JS-эмулятора AVR.
-- `lpx3_decoder.js` — алгоритмы распаковки LPC2/LSF + LPX3 (включён и в страницу).
-- `firmware/*.hex` и `firmware/*.S` — пять проверенных прошивок и их исходники.
-- `compressed/*.lpx3` — LPX3-битстримы для тестирования.
+## Automated reproduction (private archive)
 
-Кнопки плеера позволяют отдельно сохранить WAV, HEX или LPX3 для выбранного режима.
+Dependencies: Python 3, `numpy scipy numba soundfile pystoi`, `node`, `clang` with AVR backend, `llvm-objcopy`, Chromium + Python Playwright for browser check. Python installation example: `python -m pip install -r requirements.txt`; install Playwright Chromium or point the test script at your system Chromium.
 
-## Важно для публикации
+```bash
+python run_all.py
+```
 
-HTML содержит встроенную аудиозапись из мультфильма и производные файлы. Предназначен для **частного тестирования**; не публикуйте файл или ZIP с записями в открытом GitHub-репозитории без соответствующих прав. Для публичного MicroMusic стоит оставить код без тестовых записей.
+This reconstructs `tinylpc.S` from the previous 8-stage base, selects keyframes in each sample, optimizes coefficients and F0/gain, builds Intel HEX, runs the AVR instruction interpreter, verifies **every emitted sample** against the Python model, produces comparison WAV and a standalone browser test page, and runs the UI test.
+
+To optimize just one sample, e.g. with extra trials:
+
+```bash
+python train_keyframes.py --clip xtuj-ntt --skips 4 --budget 5000
+```
+
+Then build in that clip's folder and run `node verify.js` with `FRAMES=36` / `FRAMES=31`.
+
+## Measured results
+
+Calculated using `pystoi` on the supplied voice excerpts, relative to the prepared originals at 7500 Hz:
+
+| Sample | Previous LPC-8 STOI | Keyframe LPC-8 STOI | Flash | Data | AVR/Numba disagreement | Missed Timer0 |
+|---|---:|---:|---:|---:|---:|---:|
+| «Чего тебе нужно?» | 0.7178 | 0.7222 | 1019 B | 184 B | 0/9216 samples | 0 |
+| «Что ж ты не отвечаешь?» | 0.6199 | 0.6333 | 985 B | 150 B | 0/7936 samples | 0 |
+
+These are objective, short-sample evaluations, not proof of human-perceived likeness. The significantly larger LPX3 codec remains more accurate to the original voice. **This does not match LPX3 quality within 1KB**; retaining LPX3-quality residual excitation would require vastly more storage or extra memory.
+
+In emulation: 9.6 MHz, max 60 cycles per interrupt vs 256-cycle Timer0 period; no timing underruns. Unverified on a physical ATtiny13A. The chip has 64 B SRAM; the ring and filters plus stack remain inside bounds. Default factory clock divider is disabled in software and should also be checked in fuses; CPU needs suitable supply voltage.
+
+## Browser audio
+
+`release/index.html` or `MicroMusic_KeyframeLPC_ATtiny13.html` has embedded PCM, so it works offline. Playback is Web Audio started by user gesture, with explicit stop and volume buttons. The browser also runs the actual HEX in a time-aware AVR interpreter and compares each PWM update to the reference raw PCM.
+
+## Copyright / publishing
+
+`datasets/*` and `release/index.html` contain excerpts from copyrighted cartoons and/or derived voice data. The **private** archive is for personal experiments. The **code-only** archive intentionally excludes voices, LPX3 excerpts, generated speech bins, and the HTML with embedded clips. Respect the relevant rights before publishing media or ROM data in a public repo.

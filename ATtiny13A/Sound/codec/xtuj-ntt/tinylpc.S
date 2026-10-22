@@ -3,8 +3,7 @@
  * The ISR writes the next buffered 8-bit sample every fifth overflow:
  *   37500/5 = 7500 Hz PCM, derived from a bandwidth-limited 8-stage lattice vocoder.
  * Main code synthesizes frames into a 16-byte ring in SRAM.
- * Adaptive keyframe stream: fast/slow transition bit in pitch header,
- * spectral keyframes, short events, and RLE silence; Flash-resident data.
+ * 5 bytes per 256-sample speech frame; all voice data in Flash.
  * All RAM accesses are >= 0x60. Main uses r2-r31; ISR saves own regs.
  */
 .section .text
@@ -29,7 +28,7 @@
 .set WRPTR,     0x62
 .set RING_BEGIN,0x64
 .set RING_END,  0x74
-.set VOICE_ADDR,0x034a
+.set VOICE_ADDR,0x0342
 .set K_ACTIVE, 0x80
 .set K_TARGET, 0x88
 .org 0x0000
@@ -108,12 +107,12 @@ next_slot_ok:
  brne active_frame
  rcall read_frame
 active_frame:
- /* Per-frame adaptive quantized-domain slew: all eight lattice reflection
+ /* Linear-in-quantized-domain ramp: all eight lattice reflection
   * coefficients and amplitude approach new keyframe targets by 1 step
   * every 4 samples (0.53 ms). No full-frame discontinuities.
   */
  mov r16,r10
- and r16,r6
+ andi r16,3
  brne skip_smoothing
  rcall smooth_coeffs
  lds r16,GAIN_TARGET
@@ -383,15 +382,6 @@ normal_frame:
   * In a full frame 4 packed bytes update the eight lattice targets.
   */
  mov r27,r4
- /* Pitch header bit6: slow 8-sample spectral/gain slew by default,
-  * fast 4-sample slew for significant phonetic transitions.
-  * Bit7 continues to mean short event (no spectral coefficient update).
-  * r6 is free from all 8-stage lattice and interrupt routines.
-  */
- ldi r16,7
- sbrc r27,6
- ldi r16,3
- mov r6,r16
  mov r16,r4
  andi r16,0x3f
  mov r4,r16
