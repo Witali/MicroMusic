@@ -64,7 +64,7 @@ main{max-width:1320px;margin:auto;padding:0 40px}.intro{display:flex;align-items
 .cpu-package{position:relative;flex-shrink:0;display:flex;flex-direction:column;gap:10px;background:#141713;border:1px solid #394232;border-radius:5px;padding:20px 30px;box-shadow:0 6px 16px #0003}
 .cpu-package:before,.cpu-package:after{content:"";position:absolute;top:17px;width:9px;height:5px;background:#67765c;box-shadow:0 14px #67765c,0 28px #67765c,0 42px #67765c,0 56px #67765c,0 70px #67765c}
 .cpu-package:before{left:-10px}.cpu-package:after{right:-10px}.cpu-package>span{font:9px var(--mono);letter-spacing:2px;color:var(--muted)}.cpu-package strong{font:34px var(--mono);letter-spacing:3px;color:var(--text)}.cpu-package small{font:8px var(--mono);color:#85937a;letter-spacing:.4px}
-.cpu-wire{display:flex;align-items:center;gap:10px;flex:1;font:10px var(--mono);color:var(--muted)}.cpu-wire i{height:1px;background:#566749;flex:1}.cpu-wire b{font-size:28px;color:var(--accent);font-weight:400}
+.cpu-wire{display:flex;align-items:center;gap:10px;flex:1;font:10px var(--mono);color:var(--muted)}.cpu-wire i{height:1px;background:#566749;flex:1}.cpu-wire svg{width:24px;height:24px;flex-shrink:0;fill:none;stroke:#9ca78e;stroke-width:1.5}
 .drop-zone{position:relative;display:flex;align-items:center;flex-wrap:wrap;gap:12px;border:1px dashed #536746;border-radius:8px;padding:22px;background:#141a12}.drop-zone.drag-over{border-color:var(--accent);background:#26331e}.drop-zone>span{font-size:11px;color:var(--muted)}.drop-zone small{font:9px var(--mono);color:#849278;flex-basis:100%}.load-button{background:#27351f;border-color:#5c7346;color:var(--accent);font-size:12px}
 .file-input{position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}.drop-zone:focus-within{outline:2px solid var(--accent);outline-offset:4px}
 .firmware-info{padding:23px 0 0}.firmware-info h2{font-size:21px;font-weight:600;letter-spacing:-.4px;margin:9px 0;overflow-wrap:anywhere}.firmware-info p{color:var(--muted);font-size:12px;line-height:1.6;margin:0}.file-hash{display:block;min-height:12px;margin-top:9px;color:#788a68;font:9px var(--mono);overflow-wrap:anywhere}
@@ -96,7 +96,7 @@ main{max-width:1320px;margin:auto;padding:0 40px}.intro{display:flex;align-items
       <div class="instrument">
         <section class="panel" aria-label="Загрузка и исполнение прошивки">
           <div class="panel-heading"><span class="eyebrow">01 / ПРОШИВКА</span><span id="run-state" class="run-state">Ожидание образа</span></div>
-          <div class="cpu-board" aria-hidden="true"><div class="cpu-package"><span>INTEL</span><strong>8080</strong><small>8-BIT MICROPROCESSOR</small></div><div class="cpu-wire"><span id="signal-label">INTE</span><i></i><span>RC</span><i></i><b>♪</b></div></div>
+          <div class="cpu-board" aria-hidden="true"><div class="cpu-package"><span>INTEL</span><strong>8080</strong><small>8-BIT MICROPROCESSOR</small></div><div class="cpu-wire"><span id="signal-label">INTE</span><i></i><span>RC</span><i></i><svg viewBox="0 0 24 24"><path d="M3 9h4l5-4v14l-5-4H3zM16 8q6 4 0 8m3-11q10 7 0 14"/></svg></div></div>
           <div id="drop-zone" class="drop-zone">
             <input id="file" type="file" accept=".bin,.rom,.hex,.ihx,.ihex" class="file-input" aria-label="Файл прошивки BIN, ROM или Intel HEX">
             <button id="load" class="load-button" type="button">↑ Загрузить ROM</button>
