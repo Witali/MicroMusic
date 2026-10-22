@@ -1,0 +1,8 @@
+24 KiB  main=0004 STOP=006D verifier=0500  tables=58,987 clocks (0.016853 sec)  total=2,873,007 clocks (0.820859 sec), patch=7FB50C05
+32 KiB  main=0004 STOP=006D verifier=0500  tables=58,987 clocks (0.016853 sec)  total=3,810,991 clocks (1.088855 sec), patch=83D73A5C
+All instruction-level tests passed
+size=24576 CRCref=00000000 table_valid=1 INTE=1 SP=6000 CRCregs=00000000 table_cycles=58987 total_cycles=2873007 instr=495009 seconds_3.5MHz=0.820859 PC=006E
+LUT exhaustive flips: 8192 tested; failures=0; mean table failure cycles=29272.0
+size=32768 CRCref=00000000 table_valid=1 INTE=1 SP=8000 CRCregs=00000000 table_cycles=58987 total_cycles=3810991 instr=656801 seconds_3.5MHz=1.088855 PC=006E
+LUT exhaustive flips: 8192 tested; failures=0; mean table failure cycles=29272.0
+PASS: 2 architectures of CPU emulator, all 8,192 single-bit table flips for both ROM sizes

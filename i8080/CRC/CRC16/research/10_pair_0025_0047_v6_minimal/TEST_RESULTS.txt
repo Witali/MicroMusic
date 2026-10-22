@@ -1,0 +1,44 @@
+Verified (UTC): 2026-10-22 12:05:05
+Command: python3 tools/verify_and_build.py
+bitwise_shared                 44 bytes | 766.00232 T/ROM byte | footer=dffce3f7
+bitwise_shared_parity          42 bytes | 766.00211 T/ROM byte | footer=867c9082
+bitwise_shared_parity_reset    41 bytes | 766.00204 T/ROM byte | footer=90f09434
+bitwise_shared_parity_u2       47 bytes | 646.00211 T/ROM byte | footer=41a59af3
+bitwise_shared_parity_u4       57 bytes | 586.00211 T/ROM byte | footer=6b96b844
+PASS: all ASM==BIN; all ROM CRC25==CRC47==CRC32==0; HEX generated
+Command: compiled tests/test_compact.c
+--- bitwise_shared.bin ---
+machine code: 44 bytes
+mode=0: good: cycles=50200728  T/byte=766.00232
+mode=1: good: cycles=50200728  T/byte=766.00232
+mode=2: good: cycles=50200728  T/byte=766.00232
+mode=3: good: cycles=50200728  T/byte=766.00232
+PASS: 52 full-ROM simulations, independent CRC references and expected collisions
+--- bitwise_shared_parity.bin ---
+machine code: 42 bytes
+mode=0: good: cycles=50200714  T/byte=766.00211
+mode=1: good: cycles=50200714  T/byte=766.00211
+mode=2: good: cycles=50200714  T/byte=766.00211
+mode=3: good: cycles=50200714  T/byte=766.00211
+PASS: 52 full-ROM simulations, independent CRC references and expected collisions
+--- bitwise_shared_parity_reset.bin ---
+machine code: 41 bytes
+mode=0: good: cycles=50200710  T/byte=766.00204
+mode=1: good: cycles=50200710  T/byte=766.00204
+mode=2: good: cycles=50200710  T/byte=766.00204
+mode=3: good: cycles=50200710  T/byte=766.00204
+PASS: 52 full-ROM simulations, independent CRC references and expected collisions
+--- bitwise_shared_parity_u2.bin ---
+machine code: 47 bytes
+mode=0: good: cycles=42336394  T/byte=646.00211
+mode=1: good: cycles=42336394  T/byte=646.00211
+mode=2: good: cycles=42336394  T/byte=646.00211
+mode=3: good: cycles=42336394  T/byte=646.00211
+PASS: 52 full-ROM simulations, independent CRC references and expected collisions
+--- bitwise_shared_parity_u4.bin ---
+machine code: 57 bytes
+mode=0: good: cycles=38404234  T/byte=586.00211
+mode=1: good: cycles=38404234  T/byte=586.00211
+mode=2: good: cycles=38404234  T/byte=586.00211
+mode=3: good: cycles=38404234  T/byte=586.00211
+PASS: 52 full-ROM simulations, independent CRC references and expected collisions

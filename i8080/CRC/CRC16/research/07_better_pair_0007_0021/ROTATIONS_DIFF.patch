@@ -1,0 +1,34 @@
+--- reference_old_0007_0009.asm	2026-10-22 10:31:13.106372317 +0000
++++ dual_crc_0007_0021_onepass.asm	2026-10-22 10:22:51.034568215 +0000
+@@ -1,6 +1,6 @@
+ ; Intel 8080 dual CRC-16, optimized fused iteration v2.
+-; Same polynomials 0x0007 and 0x0009, all 65536 bytes, 4-byte footer.
+-; BC: CRC-16/0x0007, DE: CRC-16/0x0009, SP ROM reader, L counter.
++; Same polynomials 0x0007 and 0x0021, all 65536 bytes, 4-byte footer.
++; BC: CRC-16/0x0007, DE: CRC-16/0x0021, SP ROM reader, L counter.
+         ORG 0000H
+         DI
+         LXI SP,0FFFFH
+@@ -19,16 +19,16 @@
+         XRA D
+         MOV D,A          ; t2 = data ^ D, and A=t2
+ 
+-        ; Process CRC 0x0009 FIRST: accumulator already holds t2!
+-        RLC
+-        RLC
+-        RLC
++        ; Process CRC 0x0021 FIRST: accumulator already holds t2!
++        RRC
++        RRC
++        RRC
+         MOV B,A          ; B available (old B already consumed)
+-        ANI 007H
++        ANI 01FH
+         XRA E
+         MOV E,A          ; temporarily E=new high
+         MOV A,B
+-        ANI 0F8H
++        ANI 0E0H
+         XRA D
+         MOV D,E
+         MOV E,A

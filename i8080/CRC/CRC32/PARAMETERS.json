@@ -1,0 +1,60 @@
+{
+  "cpu": "Intel 8080",
+  "profiles": [
+    {
+      "id": "crc32_mpeg2_msb",
+      "width": 32,
+      "poly": "0x04C11DB7",
+      "init": "0xFFFFFFFF",
+      "refin": false,
+      "refout": false,
+      "xorout": "0x00000000",
+      "check_123456789": "0x0376E6E7",
+      "rom_bytes": 65536,
+      "code_bytes": [78, 103],
+      "footer_bytes": 4,
+      "footer_byte_order": "big-endian",
+      "full_rom_residue": "0x00000000"
+    },
+    {
+      "id": "crc32c_msb_experimental",
+      "width": 32,
+      "poly": "0x1EDC6F41",
+      "init": "0xFFFFFFFF",
+      "refin": false,
+      "refout": false,
+      "xorout": "0x00000000",
+      "check_123456789": "0xFABBF0EA",
+      "rom_bytes": 65536,
+      "code_bytes": [78, 103],
+      "footer_bytes": 4,
+      "footer_byte_order": "big-endian",
+      "full_rom_residue": "0x00000000"
+    },
+    {
+      "id": "crc32c_standard_reflected",
+      "width": 32,
+      "poly_normal": "0x1EDC6F41",
+      "poly_reflected": "0x82F63B78",
+      "init": "0xFFFFFFFF",
+      "refin": true,
+      "refout": true,
+      "xorout": "0xFFFFFFFF",
+      "check_123456789": "0xE3069283",
+      "rom_sizes": [24576, 32768],
+      "footer_bytes": 4,
+      "footer_byte_order": "little-endian",
+      "footer_rule": "raw CRC of preceding ROM bytes, before xorout",
+      "full_rom_raw_residue": "0x00000000",
+      "full_rom_final_crc": "0xFFFFFFFF",
+      "no_table_code_bytes": [74, 81, 104, 164, 284],
+      "checked_rom_table": {"crc_code_bytes": 110, "verifier_code_bytes": 161, "table_bytes": 1024, "table_address": "0x0100", "verifier_address": "0x0500", "table_check_cycles": 58987},
+      "ram_table_generators": [
+        {"layout": "four byte planes", "code_bytes": 57, "ram_start": "0x8000", "ram_bytes": 1024, "cycles": 258322, "modifies_sp": false},
+        {"layout": "packed little-endian uint32", "code_bytes": 57, "ram_start": "0x8000", "ram_bytes": 1024, "cycles": 255260, "modifies_sp": true}
+      ]
+    }
+  ],
+  "measurement_model": "8080 instruction emulation, no WAIT states",
+  "hardware_validation": false
+}

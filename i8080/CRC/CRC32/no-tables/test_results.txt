@@ -1,0 +1,15 @@
+8080 CPU golden CRC-32C("123456789") = E3069283: PASS
+crc32c_8080_24k_cachedB bytes 81 first skipped code at 27
+crc32c_8080_32k_cachedB bytes 81 first skipped code at 27
+GOOD + 5 BAD full-ROM tests for 18 variants: PASS
+10 full-ROM randomized contents + trailer patch + 8080 emulation: PASS
+crc32c_8080_24k_u1_halt 22772634 6.506467s
+crc32c_8080_24k_u2_halt 21303114 6.086604s
+crc32c_8080_24k_u4_halt 20530113 5.865747s
+crc32c_8080_24k_u8_halt 20176908 5.764831s
+crc32c_8080_32k_u1_halt 30380792 8.680226s
+crc32c_8080_32k_u2_halt 28393103 8.112315s
+crc32c_8080_32k_u4_halt 27418946 7.833985s
+crc32c_8080_32k_u8_halt 26929820 7.694234s
+crc32c_8080_24k_cachedB 22308564 6.373875s
+crc32c_8080_32k_cachedB 29711832 8.489095s

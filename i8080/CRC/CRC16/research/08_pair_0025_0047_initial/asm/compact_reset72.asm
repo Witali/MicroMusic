@@ -1,0 +1,71 @@
+; RESET-only: assumes interrupt enable cleared by hardware RESET.
+; Intel 8080 dual-CRC16 p=0025 + p=0047, 2 passes, no RAM or tables.
+; DE=ROM pointer; HC=CRC (high/low); B=input scratch; HL polynomial workspace.
+ORG 0000H
+    XRA A
+    MOV D,A
+    MOV E,A
+    MOV H,A
+    MOV C,A
+
+; poly 0x0025: 1+x^2+x^5 = 1 + x^2(1+x^3)
+FIRST: LDAX D
+    XRA H
+    MOV B,A
+    MOV L,A
+    MVI H,0
+    DAD H
+    DAD H
+    DAD H
+    XRA L
+    MOV L,A
+    DAD H
+    DAD H
+    MOV A,H
+    XRA C
+    MOV H,A
+    MOV A,B
+    XRA L
+    MOV C,A
+    INX D
+    MOV A,D
+    ORA E
+    JNZ FIRST
+    MOV A,H
+    ORA C
+    JNZ FAIL
+    ; Both CRC registers H,C already zero on successful check.
+
+; poly 0x0047: 1+x+x^2+x^6 = 1+x(1+x(1+x^4))
+SECOND: LDAX D
+    XRA H
+    MOV B,A
+    MOV L,A
+    MVI H,0
+    DAD H
+    DAD H
+    DAD H
+    DAD H
+    MOV A,L
+    XRA B
+    MOV L,A
+    DAD H
+    MOV A,L
+    XRA B
+    MOV L,A
+    DAD H
+    MOV A,H
+    XRA C
+    MOV H,A
+    MOV A,L
+    XRA B
+    MOV C,A
+    INX D
+    MOV A,D
+    ORA E
+    JNZ SECOND
+    MOV A,H
+    ORA C
+    JNZ FAIL
+    EI
+FAIL: HLT

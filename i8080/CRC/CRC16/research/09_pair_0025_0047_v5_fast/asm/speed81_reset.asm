@@ -1,0 +1,75 @@
+; Intel 8080 dual-CRC16 p=0025 + p=0047, 2 passes, no RAM or tables.
+; DE=ROM pointer; HC=CRC (high/low); B=input scratch; HL polynomial workspace.
+ORG 0000H
+; RESET-only: INTE already disabled after hardware RESET
+    XRA A
+    MOV D,A
+    MOV E,A
+    MOV H,A
+    MOV C,A
+
+; poly 0x0025: 1+x^2+x^5 = 1 + x^2(1+x^3)
+FIRST: LDAX D
+    XRA H
+    MOV B,A
+    MOV L,A
+    MVI H,0
+    DAD H
+    DAD H
+    DAD H
+    XRA L
+    MOV L,A
+    DAD H
+    DAD H
+    MOV A,H
+    XRA C
+    MOV H,A
+    MOV A,B
+    XRA L
+    MOV C,A
+    INR E
+    JNZ FIRST
+    INR D
+    JNZ FIRST
+    ORA H              ; A still equals C from MOV C,A
+    JNZ FAIL
+    ; Both CRC registers H,C already zero on successful check.
+
+; CRC47 rotate implementation: high = old_low ^ (t>>2) ^ (t>>6) ^ (t>>7)
+; low = t ^ (t<<1) ^ (t<<2) ^ (t<<6)
+SECOND: LDAX D
+    XRA H
+    MOV B,A
+    RRC
+    RRC
+    MOV L,A
+    ANI 03FH
+    XRA C
+    MOV H,A
+    MOV A,B
+    RLC
+    RLC
+    ANI 03H
+    MOV C,A
+    RAR
+    XRA C
+    XRA H
+    MOV H,A
+    MOV A,L
+    ANI 0C0H
+    MOV L,A
+    MOV A,B
+    ADD A
+    XRA B
+    ADD A
+    XRA B
+    XRA L
+    MOV C,A
+    INR E
+    JNZ SECOND
+    INR D
+    JNZ SECOND
+    ORA H              ; A still equals C from MOV C,A
+    JNZ FAIL
+    EI
+FAIL: HLT

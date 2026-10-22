@@ -1,0 +1,10 @@
+60,000 random byte-state transitions: PASS
+One-pass assembly + composite polynomial: PASS
+One pass: 68 B, 12,066,385 T, 184.118423 T/B, every ROM address exactly once as data: PASS
+Empty, 0xFF, and random payload ROMs: PASS
+Eight one-bit ROM faults (incl. all footer bytes): PASS
+Two-bit collisions against each single polynomial individually: PASS
+Documented 4-bit collision: test confirms limitation, PASS
+Two passes: 66 B, 13,049,432 T, 199.118530 T/B: PASS
+BEST RESULT: one-pass time saving 983,047 T, 7.533%; code delta +2 B
+ALL TESTS PASSED. Runtime 28.0 seconds.
