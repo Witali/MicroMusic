@@ -95,6 +95,9 @@ def apply(source: Path):
     text = path.read_text()
     text = replace(text, '   SpeexCallback speex_callbacks[SPEEX_MAX_CALLBACKS];', '')
     text = replace(text, '   SpeexCallback user_callback;', '')
+    text = replace(text,
+        '   spx_mem_t mem_sp[NB_ORDER];           /**< Filter memory for synthesis signal */',
+        '   spx_mem_t mem_sp[15];                 /**< NB3 direct LPC: history and coefficient ages */')
     # With no PLC/enhancer, pitch_unquant_3tap reads at most pitch+1 samples
     # backwards (pitch <= 144). Synthesis needs only the preceding 40 samples.
     text = replace(text, '(NB_FRAME_SIZE+NB_SUBFRAME_SIZE+6)', '(NB_PITCH_END+2)')
@@ -111,18 +114,10 @@ def apply(source: Path):
 
     path = lib / 'filters.c'
     text = path.read_text()
-    start = text.index('void iir_mem16(')
+    start = text.index('__attribute__((noinline)) void iir_mem16(')
     stop = text.index('\n#endif', start)
-    function = text[start:stop]
-    begin = function.index('      for (j=0;j<ord-1;j++)')
-    end = function.index('      y[i] = yi;', begin)
-    original = function[begin:end]
-    function = function[:begin] + '''#ifdef __AVR__
-      extern void speex_nb8_lpc_update_asm(spx_mem_t *, const spx_coef_t *, spx_word16_t);
-      speex_nb8_lpc_update_asm(mem, den, nyi);
-#else
-''' + original + '#endif\n' + function[end:]
-    text = text[:start] + function + text[stop:]
+    fragment = Path(__file__).resolve().parents[1] / 'src/iir_direct.c.inc'
+    text = text[:start] + fragment.read_text() + text[stop:]
     path.write_text(text)
 
     # Tables are marked at their definitions. Every decoder access uses an

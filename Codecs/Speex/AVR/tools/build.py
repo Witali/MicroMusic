@@ -95,6 +95,9 @@ def verify_primitives(compiler):
     run([compiler, *flags, '-DSPEEX_AVR_COMPACT_LSP', obj, source / 'libspeex/lsp.c',
          ROOT / 'src/bits.c', ROOT / 'tests/primitives.c', '-o', executable])
     run([executable])
+    executable = output / ('iir-direct.exe' if os.name == 'nt' else 'iir-direct')
+    run([compiler, *flags, ROOT / 'tests/iir_direct.c', '-o', executable])
+    run([executable])
 
 
 def avr(compiler, packet_file=None, frame_load_cycles=0):
@@ -130,7 +133,7 @@ def avr(compiler, packet_file=None, frame_load_cycles=0):
     executable = output / (name + '.elf')
     run([compiler, *flags,
          *[source / 'libspeex' / (s + '.c') for s in PROFILE_SOURCES],
-         ROOT / 'src/speex_avr.c', ROOT / 'src/bits.c', ROOT / 'src/lpc_update.S',
+         ROOT / 'src/speex_avr.c', ROOT / 'src/bits.c', ROOT / 'src/lpc_dot.S',
          ROOT / 'src/pitch_add.S', main,
          '-Wl,--gc-sections,-Map=' + str(output / (name + '.map')), '-o', executable], cwd=output)
     prefix = str(Path(compiler).with_name('avr-'))
