@@ -30,7 +30,8 @@ __attribute__((noinline)) int nb_decode(void *state, SpeexBits *bits, void *vout
       spx_word16_t *exc=st->exc+NB_SUBFRAME_SIZE*sub;
       int q_energy;
       spx_word32_t ener;
-      SPEEX_MEMSET(exc,0,NB_SUBFRAME_SIZE);
+      /* Every pitch source index is negative: each segment ends before its
+       * source reaches exc[0]. No clear of the current excitation is needed. */
       pitch_unquant_3tap(exc,exc32,NB_PITCH_START,NB_PITCH_END,0,&avr_ltp,
          NB_SUBFRAME_SIZE,&pitch,pitch_gain,bits,stack,0,NB_SUBFRAME_SIZE*sub,0,0);
       sanitize_values32(exc32,-QCONST32(32000,SIG_SHIFT-1),
