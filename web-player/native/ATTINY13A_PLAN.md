@@ -149,6 +149,66 @@ changed-pin propagation, same-time analog coalescing, deadline conversion and
 dirty-register publication. These are measured candidates; no speedup or exact
 exclusive subsystem time is claimed from sampling alone.
 
+### Peripheral activity and lazy state advancement
+
+Saved improvement plan, 2026-10-23. This refines stage5; it is planned work,
+not an implemented scheduler optimization or an additional completed item.
+The changed-voltage/trigger-flag optimization is already implemented separately.
+
+Goal: avoid regular calls to inactive peripheral modules while retaining exact
+register values, interrupt flags, wakeups, pin transitions and clock phases.
+External connections and observers are additional consumers, not the sole
+criterion for whether a peripheral is needed by firmware or another module.
+
+| Module | Activity and retained dependencies |
+|---|---|
+| ADC | Conversions, auto-trigger dependencies and configuration changes. Preserve the enabled prescaler's phase even between conversions. |
+| Comparator | Selected input/reference changes, bandgap startup, propagation and synchronization while enabled. Account for ADC multiplexer routing even when ADC conversions are disabled. |
+| Timer0 | Counting, compare/overflow flags, PWM and synchronized external T0 input. A stopped counter does not necessarily stop the free-running prescaler; retain its phase analytically. |
+| GPIO | Pin/DDR/PORT/pull-up changes and pending synchronization. Keep PINB reads, internal consumers, INT0/PCINT flags, sleep wakeup and alternate functions correct for externally unconnected pins too. |
+| Watchdog | Enabled reset/interrupt operation, fuse-forced enable and protected control windows. Preserve its independent time domain and reset behavior. |
+| EEPROM/Flash | Pending read/program stalls, completion events and protected command windows. Keep ready IRQ levels and Flash generation/invalidation correct even when no periodic processing is needed. |
+
+Implementation order:
+
+1. Audit each module's activation, internal dependencies and side effects using
+   the official ATtiny13A data sheet and pinned manufacturer definitions. List
+   mutations that can create a new event or make a previously idle module live.
+2. Maintain native activity masks or an active-module list and each module's
+   last-serviced time/phase. Recompute activity at relevant register writes,
+   reset, PRR/sleep/clock-domain transitions, input changes and connection or
+   observer changes. Invalidate cached board deadlines whenever required.
+3. Remove inactive modules from recurring service and deadline scans. Retain
+   asynchronous deadlines independently of CPU clocks. At the exact bus/input
+   timestamp, settle preceding events before reads, mutations or reactivation;
+   account for skipped time analytically without replaying every elapsed tick
+   or treating a clock-gated interval as running time.
+4. Advance GPIO synchronization only while its pipeline has pending work. After
+   it settles, reconstruct the correct clock phase before a later mutation and
+   resume on the actual required edge. Preserve same-timestamp ordering: new
+   zero-delay events must not be skipped merely because time was serviced once.
+5. Separate internal pin state from external observation. Consider explicit
+   per-pin trace/audio subscriptions so unobserved output history need not be
+   buffered. Preserve the existing full-trace contract by default; CPU and
+   peripheral dependencies remain active regardless of external subscriptions.
+   Retain every required CLKI transition, divider residue and bounded-input
+   horizon. Keep all hot-path dispatch and output buffering inside WASM.
+6. Implement and measure changes incrementally. Add focused boundary/parity
+   tests, run the full regression suite, then compare serial alternating old/new
+   runs on identical firmware/input/sample intervals. Retain individual paired
+   timings and variance; activity checks must justify their own hot-path cost.
+
+Acceptance: exact parity of CPU cycles/phases, registers and interrupt flags,
+SRAM/EEPROM/Flash, wake/reset behavior, subscribed pin timestamps and PCM.
+Exercise mid-instruction activation, same-time inputs and writes, disabled IRQs
+with live flags, ADC/comparator routing, stopped Timer0 prescaler phase,
+PRR/sleep/resume, protected windows, pending NVM work and internal/CLKI clocks.
+Reattachment or newly enabled observation must not invent historical trace data.
+Use source-entry counters to confirm work was removed and uninstrumented paired
+benchmarks to establish speed; small results within host variation stay
+inconclusive. No per-edge JavaScript callbacks, cross-device code mixing or
+external programmer support are introduced by this plan.
+
 ## Execution and verification
 
 Prioritize these stages while developing independent peripheral fixes in parallel.
