@@ -92,7 +92,8 @@ speex_avr_iir40:
     mov r22, r24
     mov r23, r25
     mov r24, r0
-    sbc r25, r25
+    /* Rounded signed32 >>13 lies in [-262144,262143]. Adding signed16
+     * input lies in [-294912,294910], so signed24 is sufficient. */
     /* Add sign-extended input before saturation. Read before writing y so
      * the upstream in-place x==y case is supported. */
     movw r30, r6
@@ -105,10 +106,8 @@ speex_avr_iir40:
     add r22, r18
     adc r23, r19
     adc r24, r20
-    adc r25, r20
-    tst r25
+    tst r24
     brmi .Lnegative
-    or r24, r25
     brne .Lclip_positive
     sbrs r23, 7
     rjmp .Lstore
@@ -117,8 +116,6 @@ speex_avr_iir40:
     ldi r23, 127
     rjmp .Lstore
 .Lnegative:
-    cpi r25, 255
-    brne .Lclip_negative
     cpi r24, 255
     brne .Lclip_negative
     sbrs r23, 7

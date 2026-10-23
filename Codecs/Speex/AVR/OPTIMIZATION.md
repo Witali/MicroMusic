@@ -53,13 +53,18 @@ binary measurements. Vendor and R4 files remain unmodified.
   cycles, 104 B additional Flash and 4 B additional peak stack. Each LSP
   conversion saves 78 cycles; arithmetic and selectable C path unchanged.
   All 1,058 fixtures and reset checks pass; full-series PWM gate pending.
+- Signed24 final LPC/innovation clamps: another 974 cycles off the fixture
+  maximum (146,072 -> 145,098), 18 B less Flash, stack unchanged. Independent
+  AVR tests cover 163,840 LPC samples (105,600 clipped, 68,671 wraps) and
+  163,840 innovation samples across all 64 scales and signed-byte shapes.
+  The C reference branches are unchanged; full-series PWM gate pending.
 
 ## Next candidates (unmeasured)
 
-1. **Narrow post-shift saturation.** LPC's wrapped rounded sum >>13 plus
-   signed16 input fits signed20; innovation's wrapped rounded sum >>14 fits
-   signed18. Use signed24 for the final add/clamp to avoid an unnecessary
-   fourth byte, retaining exact -32767 lower saturation.
+1. **Signed-byte pitch gain.** All three NB3 pitch gains before <<7 fit signed8
+   (table+32 is -50..97). Two hardware multiplies can form a signed24 product;
+   byte placement and one arithmetic >>1 scale it by 128. Verify the ABI,
+   accumulation/zero paths and every pitch/gain code.
 2. **Ten-sample pitch staging.** Upstream pitch sources always have negative
    offsets: the first segment stops before `j==pp`, the second before
    `j==pp+pitch`. Thus a completed innovation vector can be written before the

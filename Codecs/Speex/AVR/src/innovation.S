@@ -84,10 +84,10 @@ speex_avr_innovation10:
     mov r22, r24
     mov r23, r25
     mov r24, r0
-    sbc r25, r25
-    tst r25
+    /* Rounded wrapped signed32 >>14 fits signed18; do not materialize
+     * a fourth sign-extension byte merely to saturate the result to s16. */
+    tst r24
     brmi .Linnovation_negative
-    or r24, r25
     brne .Linnovation_clip_positive
     sbrs r23, 7
     rjmp .Linnovation_store
@@ -96,8 +96,6 @@ speex_avr_innovation10:
     ldi r23, 127
     rjmp .Linnovation_store
 .Linnovation_negative:
-    cpi r25, 255
-    brne .Linnovation_clip_negative
     cpi r24, 255
     brne .Linnovation_clip_negative
     sbrs r23, 7
