@@ -68,10 +68,12 @@ existing resolved-input state. Only changed voltages are injected, in ascending
 pin order; unchanged PB5 still settles events at the end of the board operation.
 Explicit analog overrides, GPIO levels, VCC changes and reset all use this same
 path, including PB3/ADC3 while CLKI owns the pin. No additional cache or reset
-invalidation protocol is needed. The analog scheduler processes all due events
-even at an already-serviced timestamp, then skips empty repeated module advances.
-Held trigger flags need no new ADC notification; ADTS/ADATE register writes keep
-their own edge handling. Sampling still precedes voltage mutation at equal time.
+invalidation protocol is needed. Skipped unchanged pin/flag notifications also
+avoid their repeated module advances. The analog scheduler still processes all
+due events at an already-serviced timestamp: a mutation can have scheduled new
+zero-delay propagation. Held trigger flags need no new ADC notification;
+ADTS/ADATE register writes keep their own edge handling. Sampling still precedes
+voltage mutation at equal time.
 
 Nanoseconds and watchdog pulses are rational conversions from elapsed
 `base_half` with retained remainders. They are never derived from executed

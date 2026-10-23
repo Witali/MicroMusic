@@ -30,11 +30,8 @@ int analog_advance(analog_t *a, uint64_t time) {
         analog_comparator_advance(&a->comparator, next);
         connect_sources(a, next);
     }
-    /* The event loop above must still run at an equal timestamp: an input,
-     * reference or control change can have scheduled zero-delay propagation.
-     * Once those events are settled, advancing either module again is empty. */
-    if (a->adc.half_cycle != time) analog_adc_advance(&a->adc, time);
-    if (a->comparator.half_cycle != time) analog_comparator_advance(&a->comparator, time);
+    analog_adc_advance(&a->adc, time);
+    analog_comparator_advance(&a->comparator, time);
     return 1;
 }
 
