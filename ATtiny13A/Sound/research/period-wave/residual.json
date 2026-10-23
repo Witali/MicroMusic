@@ -1,0 +1,117 @@
+{
+  "schema": "period-residual-experiment-v1",
+  "runtime": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "pystoi": "0.4.1",
+    "soundfile": "0.14.0",
+    "python": "3.12.14"
+  },
+  "sources_sha256_normalized_lf": {
+    "ATtiny13A/Sound/codec/period_residual.py": "f84b16a478e7c10631f5d271acf5fb48de9716cd6cdacd2342b25341c07efc49",
+    "ATtiny13A/Sound/codec/period_wave.py": "ad0aa3f5db96d0e6a9573c1df660ea71417fc9dc3280aa81e559a440fe7118cd",
+    "ATtiny13A/Sound/codec/auto_encoder.py": "ab97a68e00409640531c26cebc43f2fc2fdd3c4cb111e6ffb7c0a7dbcdff2202",
+    "tools/probe-period-residual.py": "d532421d10da2f50a1a60ff82ce55785d97f3c10405cfb75bc70ccf54794bd99"
+  },
+  "clips": [
+    {
+      "clip_id": "chego",
+      "reference_sha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+      "base_model_sha256": "60ea2a925ed8a2ec36c3e493088e8bf16059cfdc811799d3ab55ab95cc7c1158",
+      "payload_sha256": "aca6aa8f511b227ac7ccdfcdc21c2323d49b0b94d46e35564fc63330ec84a88c",
+      "data_bytes": 632,
+      "extra_data_bytes": 78,
+      "available_flash_after_data": 392,
+      "avr_assembled": false,
+      "hardware_verified": false,
+      "search": {
+        "seed": 23067,
+        "proposals": 3000,
+        "improvements": 22,
+        "objective": "spectral_loss + 2 * (1 - STOI)",
+        "initial_energy": 0.6230454676711785,
+        "final_energy": 0.601754499352471
+      },
+      "metrics": {
+        "Period": {
+          "loss": 0.3166727471935802,
+          "log_spectral_error": 0.3148607951785921,
+          "relative_spectral_error": 0.32392055525353247,
+          "stoi": 0.8468136397612008
+        },
+        "Residual": {
+          "loss": 0.3285119276543316,
+          "log_spectral_error": 0.32982045605509785,
+          "relative_spectral_error": 0.32327781405126643,
+          "stoi": 0.8633787141509307
+        }
+      }
+    },
+    {
+      "clip_id": "otvechaesh",
+      "reference_sha256": "96c09f80396643dd80efb9c5c8557d83359eeb829a0b855a7f8f5c32bbff0b96",
+      "base_model_sha256": "57dfe118d591c8461acc438407ef4c180d6c6ebc2aef52c12d23475742ee5082",
+      "payload_sha256": "0f763ae55c376bb2fa57c33ac679d35a77517e334c6377076afa669d8e1d1d5e",
+      "data_bytes": 582,
+      "extra_data_bytes": 68,
+      "available_flash_after_data": 442,
+      "avr_assembled": false,
+      "hardware_verified": false,
+      "search": {
+        "seed": 23067,
+        "proposals": 3000,
+        "improvements": 23,
+        "objective": "spectral_loss + 2 * (1 - STOI)",
+        "initial_energy": 0.8175598047616284,
+        "final_energy": 0.8017626876895021
+      },
+      "metrics": {
+        "Period": {
+          "loss": 0.4049903511628716,
+          "log_spectral_error": 0.434815463295628,
+          "relative_spectral_error": 0.2856899026318458,
+          "stoi": 0.7937152732006216
+        },
+        "Residual": {
+          "loss": 0.40235494380192477,
+          "log_spectral_error": 0.4319451827549619,
+          "relative_spectral_error": 0.2839939879897759,
+          "stoi": 0.8002961280562113
+        }
+      }
+    },
+    {
+      "clip_id": "vinni",
+      "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+      "base_model_sha256": "89a4797af4597202ae3ffe2352cfc8641e7a34a5a7d477ef5059e5e09306905b",
+      "payload_sha256": "5d69e4db3ff6dae6ddbc72aae08408ec644db5e3d9a03fdbe450e88342ef080c",
+      "data_bytes": 1142,
+      "extra_data_bytes": 180,
+      "available_flash_after_data": -118,
+      "avr_assembled": false,
+      "hardware_verified": false,
+      "search": {
+        "seed": 23067,
+        "proposals": 3000,
+        "improvements": 81,
+        "objective": "spectral_loss + 2 * (1 - STOI)",
+        "initial_energy": 1.0868502879645052,
+        "final_energy": 1.0500322387301113
+      },
+      "metrics": {
+        "Period": {
+          "loss": 0.5426431480068394,
+          "log_spectral_error": 0.5138894935018291,
+          "relative_spectral_error": 0.6576577660268805,
+          "stoi": 0.7278964300211671
+        },
+        "Residual": {
+          "loss": 0.550032376462484,
+          "log_spectral_error": 0.5229338217949766,
+          "relative_spectral_error": 0.6584265951325136,
+          "stoi": 0.7500000688661863
+        }
+      }
+    }
+  ]
+}

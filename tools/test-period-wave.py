@@ -10,6 +10,7 @@ sys.path.insert(0, str(ROOT / 'ATtiny13A/Sound/codec'))
 from period_wave import (track_pitch, continuous_phase, quantize_phase, encode_model,
                          decode_model, packed_bytes, unpack_bytes, render_periods,
                          FrameSynthesis, refine_frames)
+from period_residual import decode_residual, pack_residual, unpack_residual, fit_residual
 
 
 class PeriodWaveTests(unittest.TestCase):
@@ -81,6 +82,30 @@ class PeriodWaveTests(unittest.TestCase):
         refined, stats = refine_frames(model, SpectralObjective(.3*np.cos(2*np.pi*230*t)), proposals=30)
         self.assertLessEqual(stats['final_energy'], stats['initial_energy'])
         self.assertEqual(len(packed_bytes(refined)), len(packed_bytes(model)))
+
+    def test_residual_payload_roundtrip_with_odd_frame_count(self):
+        t = np.arange(3901)/7500
+        base, _ = encode_model(.2*np.cos(2*np.pi*250*t), starts=2)
+        extension = dict(schema='period-residual-v1', base=base, scale_u16=1200,
+                         gains=[i % 16 for i in range(len(base['frames']))])
+        payload = pack_residual(extension)
+        restored = unpack_residual(payload)
+        self.assertEqual(extension, restored)
+        self.assertEqual(len(payload), len(packed_bytes(base))+6+(len(base['frames'])+1)//2)
+        self.assertTrue(np.array_equal(decode_residual(extension), decode_residual(restored)))
+        with self.assertRaises(ValueError):
+            unpack_residual(payload[:-1])
+
+    def test_residual_search_recovers_high_band_envelope(self):
+        from auto_encoder import SpectralObjective
+        t = np.arange(3901)/7500
+        base, _ = encode_model(.2*np.cos(2*np.pi*250*t), starts=2)
+        extension = dict(schema='period-residual-v1', base=base, scale_u16=2400,
+                         gains=[3+(i//8) % 12 for i in range(len(base['frames']))])
+        reference = decode_residual(extension)
+        model, stats = fit_residual(base, SpectralObjective(reference), proposals=120)
+        self.assertLess(stats['final_energy'], stats['initial_energy']-.01)
+        self.assertEqual(base, model['base'])
 
 
 if __name__ == '__main__':
