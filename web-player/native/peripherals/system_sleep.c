@@ -5,6 +5,8 @@ void system_sleep_reset(system_sleep_t *s, uint64_t now) {
     s->now = now;
     s->startup_until = UINT64_MAX;
     s->ready_at = UINT64_MAX;
+    s->recovery_until = UINT64_MAX;
+    s->wake_delay_at = UINT64_MAX;
 }
 
 uint8_t system_sleep_enter(system_sleep_t *s, uint8_t mcucr, uint64_t now) {
@@ -23,6 +25,12 @@ uint8_t system_sleep_enter(system_sleep_t *s, uint8_t mcucr, uint64_t now) {
     s->wake_sources = 0;
     s->startup_until = UINT64_MAX;
     s->ready_at = UINT64_MAX;
+    s->clocked = 0;
+    s->source_ck_left = 0;
+    s->wake_cycles_left = 0;
+    s->recovery_until = UINT64_MAX;
+    s->wake_delay_at = UINT64_MAX;
+    s->source_edge_valid = s->system_edge_valid = 0;
     return SYSTEM_SLEEP_ENTERED;
 }
 
@@ -81,9 +89,54 @@ uint8_t system_sleep_wake_exact(system_sleep_t *s,uint16_t asserted,uint16_t ena
     return SYSTEM_SLEEP_WAKE_STARTED;
 }
 
+uint8_t system_sleep_wake_clocked(system_sleep_t *s,uint16_t asserted,
+                                 uint16_t enabled,int int0_level_sense,
+                                 uint64_t source_ck,uint32_t extra_cpu_cycles,
+                                 uint64_t recovery_ticks,uint64_t now) {
+    if (now < s->now) return SYSTEM_SLEEP_INVALID_TIME;
+    if (asserted & SYSTEM_WAKE_RESET) {
+        system_sleep_reset(s, now);
+        s->wake_sources = SYSTEM_WAKE_RESET;
+        return SYSTEM_SLEEP_RESET;
+    }
+    if (s->phase != SYSTEM_SLEEP_ASLEEP) {
+        s->now = now;
+        return SYSTEM_SLEEP_NO_CHANGE;
+    }
+    uint16_t sources = asserted & enabled & system_sleep_wake_mask(s->mode, int0_level_sense);
+    if (!sources) {
+        s->now = now;
+        return SYSTEM_SLEEP_NO_CHANGE;
+    }
+    if (extra_cpu_cycles != SYSTEM_SLEEP_EXTRA_WAKE_CYCLES ||
+        (s->mode != SYSTEM_SLEEP_POWER_DOWN && source_ck) ||
+        recovery_ticks >= UINT64_MAX - now)
+        return SYSTEM_SLEEP_INVALID_TIME;
+    s->now = s->wake_at = now;
+    s->wake_sources = sources;
+    s->clocked = 1;
+    s->source_ck_left = source_ck;
+    s->wake_cycles_left = extra_cpu_cycles;
+    s->recovery_until = now + recovery_ticks;
+    s->ready_at = UINT64_MAX;
+    s->source_edge_valid = s->system_edge_valid = 0;
+    s->phase = source_ck || recovery_ticks ? SYSTEM_SLEEP_STARTING : SYSTEM_SLEEP_WAKE_DELAY;
+    s->startup_until = source_ck ? UINT64_MAX : s->recovery_until;
+    s->wake_delay_at = s->phase == SYSTEM_SLEEP_WAKE_DELAY ? now : UINT64_MAX;
+    return SYSTEM_SLEEP_WAKE_STARTED;
+}
+
 uint8_t system_sleep_advance(system_sleep_t *s, uint64_t now) {
     if (now < s->now) return SYSTEM_SLEEP_INVALID_TIME;
     s->now = now;
+    if (s->clocked) {
+        if (s->phase == SYSTEM_SLEEP_STARTING && !s->source_ck_left &&
+            now >= s->recovery_until) {
+            s->phase = SYSTEM_SLEEP_WAKE_DELAY;
+            s->startup_until = s->wake_delay_at = s->recovery_until;
+        }
+        return SYSTEM_SLEEP_NO_CHANGE;
+    }
     if (s->phase == SYSTEM_SLEEP_STARTING && now >= s->startup_until)
         s->phase = SYSTEM_SLEEP_WAKE_DELAY;
     if (s->phase == SYSTEM_SLEEP_WAKE_DELAY && now >= s->ready_at) {
@@ -93,7 +146,42 @@ uint8_t system_sleep_advance(system_sleep_t *s, uint64_t now) {
     return SYSTEM_SLEEP_NO_CHANGE;
 }
 
+uint8_t system_sleep_clock_edge(system_sleep_t *s,int source_rising,
+                                int system_rising,uint64_t now) {
+    uint8_t result = system_sleep_advance(s, now);
+    if (result == SYSTEM_SLEEP_INVALID_TIME || !s->clocked || now <= s->wake_at)
+        return result;
+    if (s->phase == SYSTEM_SLEEP_STARTING && source_rising && s->source_ck_left &&
+        (!s->source_edge_valid || s->last_source_edge != now)) {
+        s->last_source_edge = now;
+        s->source_edge_valid = 1;
+        if (!--s->source_ck_left) {
+            s->startup_until = now > s->recovery_until ? now : s->recovery_until;
+            if (now >= s->recovery_until) {
+                s->phase = SYSTEM_SLEEP_WAKE_DELAY;
+                s->wake_delay_at = now;
+            }
+        }
+    }
+    if (s->phase == SYSTEM_SLEEP_WAKE_DELAY && system_rising && now > s->wake_delay_at &&
+        (!s->system_edge_valid || s->last_system_edge != now)) {
+        s->last_system_edge = now;
+        s->system_edge_valid = 1;
+        if (!--s->wake_cycles_left) {
+            s->phase = SYSTEM_SLEEP_RUNNING;
+            s->ready_at = now;
+            return SYSTEM_SLEEP_WAKE_READY;
+        }
+    }
+    return result;
+}
+
 uint64_t system_sleep_next_event(const system_sleep_t *s) {
+    if (s->clocked) {
+        if (s->phase == SYSTEM_SLEEP_STARTING && s->recovery_until > s->now)
+            return s->recovery_until;
+        return UINT64_MAX;
+    }
     if (s->phase == SYSTEM_SLEEP_STARTING) return s->startup_until;
     if (s->phase == SYSTEM_SLEEP_WAKE_DELAY) return s->ready_at;
     return UINT64_MAX;

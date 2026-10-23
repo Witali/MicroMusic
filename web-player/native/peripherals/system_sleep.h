@@ -35,8 +35,14 @@ typedef struct {
 
 typedef struct {
     uint64_t now, sleep_at, wake_at, startup_until, ready_at;
+    /* Optional edge-driven wake. Unknown edge deadlines use UINT64_MAX.
+     * Recovery and source startup run concurrently; wake cycles follow both. */
+    uint64_t source_ck_left, recovery_until, wake_delay_at;
+    uint64_t last_source_edge, last_system_edge;
+    uint32_t wake_cycles_left;
     uint16_t wake_sources;
     uint8_t mode, phase;
+    uint8_t clocked, source_edge_valid, system_edge_valid;
 } system_sleep_t;
 
 void system_sleep_reset(system_sleep_t *sleep, uint64_t now);
@@ -56,6 +62,19 @@ uint8_t system_sleep_wake(system_sleep_t *sleep, uint16_t asserted,
 uint8_t system_sleep_wake_exact(system_sleep_t *sleep,uint16_t asserted,
  uint16_t enabled,int int0_level_sense,uint64_t startup_ticks,
  uint64_t extra_wake_ticks,uint64_t now);
+/* Edge-driven alternative: source_ck is the selected power-down startup CK
+ * count (zero in Idle/ADC Noise Reduction). extra_cpu_cycles must be four.
+ * recovery_ticks is an independent wall-time hold, e.g. explicit BOD recovery.
+ * UINT64_MAX is reserved for unknown deadlines. CPU owns later IRQ entry. */
+uint8_t system_sleep_wake_clocked(system_sleep_t *sleep,uint16_t asserted,
+ uint16_t enabled,int int0_level_sense,uint64_t source_ck,
+ uint32_t extra_cpu_cycles,uint64_t recovery_ticks,uint64_t now);
+/* Report actual source/system rising edges at monotonic scheduler times.
+ * An edge at wake_at is not counted. The startup-completion timestamp cannot
+ * also count a wake cycle, even when supplied in separate calls. Duplicate
+ * same-domain rising edges at the same timestamp count once. */
+uint8_t system_sleep_clock_edge(system_sleep_t *sleep,int source_rising,
+ int system_rising,uint64_t now);
 uint8_t system_sleep_advance(system_sleep_t *sleep, uint64_t now);
 uint64_t system_sleep_next_event(const system_sleep_t *sleep);
 /* Availability of clock domains. The owning peripheral also applies its enable
