@@ -1,0 +1,313 @@
+{
+  "schema": "q3-pulsebook-mixed-search-v1",
+  "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+  "samples": 22272,
+  "targets": {
+    "stoi": 0.9,
+    "spectrogram_loss": 0.344975554
+  },
+  "target_met": false,
+  "proposals": 1500,
+  "evaluated": 1335,
+  "accepted": 176,
+  "seed": 23419,
+  "initial": [
+    {
+      "source": "model.json",
+      "source_sha256": "29dcf3b01e5885d28c20a348c8ef53b195374115c47d0cbab1e3b3ff64763410",
+      "nearest": false,
+      "original_stream_bytes": 600,
+      "coefficient_reuse": [],
+      "score": {
+        "stoi": 0.8462036475079022,
+        "spectrogram_loss": 0.49320349297779614,
+        "fine_log_error": 0.4763415295579203,
+        "envelope_error": 0.5882247536672611,
+        "unsupported_energy": 0.1905720150267478,
+        "missing_energy": 0.19788713419854437,
+        "stream_bytes": 600,
+        "peak_signed": 100,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07761917991199713,
+        "raw_rms": 0.11792094732972383,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "61c2b5b8f239349626f0c191c21b4c44d525693a3c47f321f24ed8f93364bbd0",
+      "nearest": true,
+      "original_stream_bytes": 603,
+      "coefficient_reuse": [],
+      "score": {
+        "stoi": 0.8023277482131131,
+        "spectrogram_loss": 0.468415174629851,
+        "fine_log_error": 0.4566478118883146,
+        "envelope_error": 0.5521355947191545,
+        "unsupported_energy": 0.16940111570975935,
+        "missing_energy": 0.1812462629099056,
+        "stream_bytes": 603,
+        "peak_signed": 81,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.01235821603358477,
+        "raw_rms": 0.07912347218676903,
+        "target_met": false
+      }
+    }
+  ],
+  "finalists": {
+    "balanced": {
+      "stoi": 0.8465827282093952,
+      "spectrogram_loss": 0.4930415572443234,
+      "fine_log_error": 0.4756999445207398,
+      "envelope_error": 0.5884907604901823,
+      "unsupported_energy": 0.1907395355396063,
+      "missing_energy": 0.19808211452954816,
+      "stream_bytes": 600,
+      "peak_signed": 100,
+      "steps_ge48": 0,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "raw_mean": 0.07719123226472702,
+      "raw_rms": 0.1171513644223862,
+      "target_met": false,
+      "estoi": 0.659209451994773,
+      "harmonic_metrics": {
+        "harmonic_track_loss": 0.9582773514487744,
+        "frequency_trajectory_error": 0.9766164808323989,
+        "level_error": 2.517719035955963,
+        "missing_reference_energy": 0.2056202912807111,
+        "extra_candidate_energy": 0.22625192623119889,
+        "weighted_match_rate": 0.7943797087192889,
+        "frequency_error_cents": 51.01480244987831,
+        "frequency_error_hz": 11.662383116473878,
+        "level_error_db": 7.553157107867887,
+        "frequency_error_p95_cents": 136.9816541326141,
+        "frequency_error_p95_hz": 33.93187941304677,
+        "level_error_p95_db": 18.432563444633224,
+        "continuity_break_rate": 0.34587799294697824
+      },
+      "stream_sha256": "d68f8c09f49801e61cddd2ce8f63ac4a6c5c40c1a541726be0b03e6ab6817352",
+      "pcm_sha256": "cd39ca8ea8a540eaab819d55f2626c9a6a849a1b6a4ed27881d556fd22285ead",
+      "eeprom_bytes": 64,
+      "avr_assembled": false,
+      "avr_verified": false,
+      "hardware_tested": false,
+      "size_policy": "Actual stream+64EEPROM; separate exact assembler must confirm fullFlash size and cycles"
+    },
+    "best_stoi": {
+      "stoi": 0.8465827282093952,
+      "spectrogram_loss": 0.4930415572443234,
+      "fine_log_error": 0.4756999445207398,
+      "envelope_error": 0.5884907604901823,
+      "unsupported_energy": 0.1907395355396063,
+      "missing_energy": 0.19808211452954816,
+      "stream_bytes": 600,
+      "peak_signed": 100,
+      "steps_ge48": 0,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "raw_mean": 0.07719123226472702,
+      "raw_rms": 0.1171513644223862,
+      "target_met": false,
+      "estoi": 0.659209451994773,
+      "harmonic_metrics": {
+        "harmonic_track_loss": 0.9582773514487744,
+        "frequency_trajectory_error": 0.9766164808323989,
+        "level_error": 2.517719035955963,
+        "missing_reference_energy": 0.2056202912807111,
+        "extra_candidate_energy": 0.22625192623119889,
+        "weighted_match_rate": 0.7943797087192889,
+        "frequency_error_cents": 51.01480244987831,
+        "frequency_error_hz": 11.662383116473878,
+        "level_error_db": 7.553157107867887,
+        "frequency_error_p95_cents": 136.9816541326141,
+        "frequency_error_p95_hz": 33.93187941304677,
+        "level_error_p95_db": 18.432563444633224,
+        "continuity_break_rate": 0.34587799294697824
+      },
+      "stream_sha256": "d68f8c09f49801e61cddd2ce8f63ac4a6c5c40c1a541726be0b03e6ab6817352",
+      "pcm_sha256": "cd39ca8ea8a540eaab819d55f2626c9a6a849a1b6a4ed27881d556fd22285ead",
+      "eeprom_bytes": 64,
+      "avr_assembled": false,
+      "avr_verified": false,
+      "hardware_tested": false,
+      "size_policy": "Actual stream+64EEPROM; separate exact assembler must confirm fullFlash size and cycles"
+    },
+    "best_spectrum": {
+      "stoi": 0.8023277482131131,
+      "spectrogram_loss": 0.468415174629851,
+      "fine_log_error": 0.4566478118883146,
+      "envelope_error": 0.5521355947191545,
+      "unsupported_energy": 0.16940111570975935,
+      "missing_energy": 0.1812462629099056,
+      "stream_bytes": 603,
+      "peak_signed": 81,
+      "steps_ge48": 0,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "raw_mean": 0.01235821603358477,
+      "raw_rms": 0.07912347218676903,
+      "target_met": false,
+      "estoi": 0.5977216768957977,
+      "harmonic_metrics": {
+        "harmonic_track_loss": 0.7935053190016746,
+        "frequency_trajectory_error": 0.8249090691015502,
+        "level_error": 1.9730511814855942,
+        "missing_reference_energy": 0.20283190959754957,
+        "extra_candidate_energy": 0.23378934248177796,
+        "weighted_match_rate": 0.7971680904024504,
+        "frequency_error_cents": 43.456020767959856,
+        "frequency_error_hz": 9.541978653981936,
+        "level_error_db": 5.919153544456787,
+        "frequency_error_p95_cents": 112.799095245488,
+        "frequency_error_p95_hz": 31.47319524390832,
+        "level_error_p95_db": 14.837172240472151,
+        "continuity_break_rate": 0.285178685349634
+      },
+      "stream_sha256": "3a727d765516fa18c0f0fd47eebbc48798d6f3914d560b94a1ce0cab806b2730",
+      "pcm_sha256": "847dd66d22d87b2bd784eae412a622aedcf5667ea990f35d62745259289aae67",
+      "eeprom_bytes": 64,
+      "avr_assembled": false,
+      "avr_verified": false,
+      "hardware_tested": false,
+      "size_policy": "Actual stream+64EEPROM; separate exact assembler must confirm fullFlash size and cycles"
+    }
+  },
+  "guard_rejections": {
+    "layout": 63,
+    "wrap": 4,
+    "peak": 21,
+    "steps": 77
+  },
+  "history": [
+    {
+      "proposals": 500,
+      "evaluated": 454,
+      "accepted": 70,
+      "pareto": 11,
+      "best_balanced": {
+        "stoi": 0.8462036475079022,
+        "spectrogram_loss": 0.49320349297779614,
+        "fine_log_error": 0.4763415295579203,
+        "envelope_error": 0.5882247536672611,
+        "unsupported_energy": 0.1905720150267478,
+        "missing_energy": 0.19788713419854437,
+        "stream_bytes": 600,
+        "peak_signed": 100,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07761917991199713,
+        "raw_rms": 0.11792094732972383,
+        "target_met": false
+      },
+      "best_stoi": 0.8462036475079022,
+      "best_spectrum": 0.468415174629851,
+      "elapsed_seconds": 6.905686300015077
+    },
+    {
+      "proposals": 1000,
+      "evaluated": 904,
+      "accepted": 131,
+      "pareto": 16,
+      "best_balanced": {
+        "stoi": 0.8463306779621833,
+        "spectrogram_loss": 0.4933862607008121,
+        "fine_log_error": 0.47645498603517156,
+        "envelope_error": 0.5886897613113626,
+        "unsupported_energy": 0.19066839833304777,
+        "missing_energy": 0.19782828157994276,
+        "stream_bytes": 600,
+        "peak_signed": 100,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.0771863213900862,
+        "raw_rms": 0.11711451570662451,
+        "target_met": false
+      },
+      "best_stoi": 0.8463576058320048,
+      "best_spectrum": 0.468415174629851,
+      "elapsed_seconds": 13.64103649999015
+    },
+    {
+      "proposals": 1500,
+      "evaluated": 1335,
+      "accepted": 176,
+      "pareto": 18,
+      "best_balanced": {
+        "stoi": 0.8465827282093952,
+        "spectrogram_loss": 0.4930415572443234,
+        "fine_log_error": 0.4756999445207398,
+        "envelope_error": 0.5884907604901823,
+        "unsupported_energy": 0.1907395355396063,
+        "missing_energy": 0.19808211452954816,
+        "stream_bytes": 600,
+        "peak_signed": 100,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07719123226472702,
+        "raw_rms": 0.1171513644223862,
+        "target_met": false
+      },
+      "best_stoi": 0.8465827282093952,
+      "best_spectrum": 0.468415174629851,
+      "elapsed_seconds": 20.081985800061375
+    }
+  ],
+  "elapsed_seconds": 20.5122590000974,
+  "rounded_stream_budget": 603,
+  "floor_stream_budget": 605,
+  "eeprom_bytes": 64,
+  "avr_qualified": false,
+  "public_firmware_changed": false,
+  "objective_policy": "Original STOI+wholeSpectrogramObjective; no baseline-quality ceilings, waveform/DC/gain postprocessing or manual frequency masks",
+  "source_sha256_normalized_lf": {
+    "tools/probe-q3-pulsebook.py": "58e434af0841ef95fc6e323b9739e2536765db88591fa3482bbab781e5d2c277",
+    "ATtiny13A/Sound/codec/q3_pulsebook.py": "9252905ba28151205695f2927dfe5dbcd62d92cfc629e049bc272c63c9a90ed4",
+    "ATtiny13A/Sound/codec/spectrogram_objective.py": "66fd5c3d5e3a0716d3c18269a261a70ad9165575eaf33acb5c7ee166a8d4e927",
+    "ATtiny13A/Sound/codec/hq4_speech_search.py": "3178c817fe02e9845449e2b501afe7dcc1b03a099fb59d56010e77e38640b2ab",
+    "tools/probe-q3-pulsebook-mixed.py": "e1d7a043b78da20e4c2876c525539d1cbe119808e21c723c0948d90547888b8c",
+    "ATtiny13A/Sound/codec/q3_pulsebook_mixed.py": "74728f0837f727ba1915c6d20b85bfcfdadf6348260145e6c2dbefc23932a78d"
+  },
+  "format": "hq4-q3-pulsebook-mixed-v1",
+  "eeprom_encoding": "coefficient+8 in low nibble; bit4 selects gain/2 voiced noise, uniform across each16-byte row"
+}
