@@ -7,6 +7,25 @@ function cstring(memory,address) {
 }
 const booleans=new Set(['timer','inIRQ','fastIdle','fastBlocks']);
 const optional=new Set(['eempeUntil','clkprUntil']);
+const statePrototypes=new WeakMap();
+function bindStateFields(core,names){
+  const parent=Object.getPrototypeOf(core),key=names.join('\0');
+  if(!statePrototypes.has(parent))statePrototypes.set(parent,new Map());
+  const layouts=statePrototypes.get(parent);
+  if(!layouts.has(key)){
+    const prototype=Object.create(parent),index={};
+    names.forEach((name,i)=>{
+      index[name]=i;
+      Object.defineProperty(prototype,name,{
+        get(){const v=this._state[i];return booleans.has(name)?!!v:optional.has(name)&&Number.isNaN(v)?undefined:v;},
+        set(v){this._state[i]=v===undefined?NaN:Number(v);},
+      });
+    });
+    layouts.set(key,{prototype,index:Object.freeze(index)});
+  }
+  const layout=layouts.get(key);core._fieldIndex=layout.index;
+  Object.setPrototypeOf(core,layout.prototype);
+}
 
 export class AVRCore {
   constructor(binary,eeprom,{fastIdle=true,fastBlocks=fastIdle,runtimeModule,configureRuntime}={}) {
@@ -15,15 +34,9 @@ export class AVRCore {
     this._exports=new WebAssembly.Instance(runtimeModule).exports;
     const layout=Array.from({length:15},(_,i)=>this._exports.avr_layout(i));
     configureRuntime?.(this._exports);
-    this._fieldIndex={};
-    for(let i=0;i<layout[1];i++){
-      const name=cstring(this._exports.memory,this._exports.avr_field_name(i));
-      this._fieldIndex[name]=i;
-      Object.defineProperty(this,name,{
-        get(){const v=this._state[i];return booleans.has(name)?!!v:optional.has(name)&&Number.isNaN(v)?undefined:v;},
-        set(v){this._state[i]=v===undefined?NaN:Number(v);},
-      });
-    }
+    // Share field accessors per class/layout; allocating closures on every
+    // device makes state-heavy debuggers and instruction hooks megamorphic.
+    bindStateFields(this,Array.from({length:layout[1]},(_,i)=>cstring(this._exports.memory,this._exports.avr_field_name(i))));
     const buffer=this._exports.memory.buffer;
     this._state=new Float64Array(buffer,layout[0],layout[1]);
     this.rom=new Uint8Array(buffer,layout[2],1024);this.eeprom=new Uint8Array(buffer,layout[3],64);

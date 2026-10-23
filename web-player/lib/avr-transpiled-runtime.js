@@ -39,6 +39,7 @@ export class AVRCore extends PeripheralRuntime {
   _compile(binary=this.rom) {
     const options=this._translationOptions;
     const abi=runtimeABI(this._exports);let generated;
+    if(!this._translated)options.validateRuntimeABI?.(abi);
     if(!this._translated&&options.precompiled) {
       generated=options.precompiled;
       if(abiKey(generated.manifest.abi)!==abiKey(abi))throw Error('Packaged translation runtime ABI mismatch');

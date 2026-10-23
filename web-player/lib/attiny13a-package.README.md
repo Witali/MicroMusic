@@ -56,6 +56,22 @@ memory regions and device marker against the translation. The package API
 does not instantiate the device, change default engine selection, or fetch an
 external runtime.
 
+## Execute in the player
+
+`ATtiny13A.fromPackage(json)` verifies the package, instantiates its runtime,
+checks the live ABI, then binds the supplied translation. Later self-programming
+uses the normal Flash-generation invalidation and retranslates the modified
+image. Import `ATtiny13A` from `attiny13a-runtime.js` to load a package without
+fetching either default WASM image. The usual `attiny13a.js` entry point also
+exposes this method and supports ordinary Flash construction.
+
+The player opens packages through **Открыть пакет ATtiny13A**. Imported packages
+use the full device engine and show PB0/PB1 as stereo output. The package's fuses,
+oscillator and initial memory are used as saved. Programmatic worker entries
+use `{devicePackage: pkg, audioChannels: 1|2}`; mono observes PB1, stereo observes
+PB0 then PB1. Audio observation settings are host choices, separate from the
+initial device state.
+
 ## Reproducible configuration
 
 All configuration keys are stored, including defaults. Unknown keys are

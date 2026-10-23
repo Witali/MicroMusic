@@ -7,6 +7,17 @@ const timestamp=value=>{
   return value;
 };
 export class ATtiny13A extends TranslatedCore {
+  static async fromPackage(input,{fastIdle=true}={}){
+    const {decodePackage,assertPackageRuntimeABI}=await import('./attiny13a-package.js');
+    const decoded=await decodePackage(input);
+    const core=new this(decoded.flash,decoded.eeprom,{...decoded.options,fastIdle,
+      runtimeModule:await WebAssembly.compile(decoded.runtime),
+      precompiled:{bytes:decoded.translated,manifest:decoded.manifest},
+      optimizeFlags:decoded.manifest.optimizeFlags,maxBlockInstructions:decoded.manifest.maxBlockInstructions,
+      validateRuntimeABI:abi=>assertPackageRuntimeABI(decoded,abi),
+    });
+    core.packageIntegrity={...decoded.integrity};return core;
+  }
   _call(name,...args){
     try{return super._call(name,...args);}
     catch(error){
