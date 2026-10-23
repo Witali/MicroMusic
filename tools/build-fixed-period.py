@@ -64,6 +64,7 @@ def build(model_path, output, avr_bin=None, node='node'):
     features = avr_features(model)
     data = pack_avr_data(model, specialize=True)
     fir_bytes = features['FIR_BYTES']
+    wave_bytes = features['WAVE_BYTES']
     output.mkdir(parents=True, exist_ok=True)
     # Never let an old successful image appear to belong to a failed build.
     for name in ('firmware.elf', 'firmware.bin', 'verification.json', 'build.json'):
@@ -93,7 +94,7 @@ def build(model_path, output, avr_bin=None, node='node'):
     if not match or 'wave_data' not in symbols:
         raise ValueError('Firmware must expose .text and wave_data')
     object_bytes, code_bytes = int(match[1], 16), symbols['wave_data']
-    if (symbols.get('noise_data') != code_bytes+256 or symbols.get('field_data') != code_bytes+256+fir_bytes or
+    if (symbols.get('noise_data') != code_bytes+wave_bytes or symbols.get('field_data') != code_bytes+wave_bytes+fir_bytes or
             object_bytes != code_bytes+len(data)):
         raise ValueError('Unexpected packed AVR flash-table layout')
     flash_bytes = (object_bytes+1) & ~1  # The AVR linker aligns final .text to a word.
@@ -101,7 +102,7 @@ def build(model_path, output, avr_bin=None, node='node'):
                   hardwareTested=False, cpuHz=9600000, sampleHz=7500, flashLimitBytes=1024,
                   flashBytes=flash_bytes, objectTextBytes=object_bytes,
                   linkerPaddingBytes=flash_bytes-object_bytes, codeBytes=code_bytes, dataBytes=len(data),
-                  waveformBytes=256, firBytes=fir_bytes, fieldBytes=len(data)-256-fir_bytes,
+                  waveformBytes=wave_bytes, firBytes=fir_bytes, fieldBytes=len(data)-wave_bytes-fir_bytes,
                   compileFeatures=features,
                   phraseSamples=model['samples'], verifiedLoops=0,
                   constants=constants, compiler=compiler_version, symbols=symbols,
