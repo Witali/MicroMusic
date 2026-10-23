@@ -90,7 +90,7 @@ export function runtimeABI(exports) {
     const start=exports.avr_field_name(i);let end=start;while(data[end])end++;
     state[decoder.decode(data.subarray(start,end))]=exports.avr_layout(0)+8*i;
   }
-  return {state,data:exports.avr_layout(4),rom:exports.avr_layout(2),frames:exports.avr_layout(11)};
+  return {state,data:exports.avr_layout(4),rom:exports.avr_layout(2),frames:exports.avr_layout(11),pwm:exports.avr_layout(13)};
 }
 
 const writes={ADD:63,ADC:63,SUB:63,CP:63,CPI:63,SUBI:63,NEG:63,SBC:63,SBCI:63,CPC:63,ADIW:31,SBIW:31,BST:64,AND:30,ANDI:30,OR:30,ORI:30,EOR:30,INC:30,DEC:30,COM:31,LSR:31,ASR:31,ROR:31};
@@ -308,7 +308,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     blockBodies[index]=code;
   });
 
-  const STEP=firstFunction+512+blocks.length+1, BLOCK=STEP+1, RUN=STEP+2, NEXT=STEP+3;
+  const STEP=firstFunction+512+blocks.length+1, BLOCK=STEP+1, RUN=STEP+2, NEXT=STEP+3, CAPTURE=STEP+4;
   const emptyBlock=bytes(constant(0));
   const step=bytes(condition([0x23,0],[0x0f]),put('error',constant(0)),condition(or(lt(state('pc'),constant(0)),ge(state('pc'),constant(512))),fail(1)),state('pc'),0x11,1,0);
   const block=bytes(condition([0x23,0],bytes(constant(0),0x0f)),put('error',constant(0)),condition(or(lt(state('pc'),constant(0)),ge(state('pc'),constant(512))),fail(1,true)),
@@ -326,6 +326,20 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     condition(eqz(call(BLOCK,get(1),constant(2147483647))),call(STEP)),
     condition(state('error'),bytes(constant(0),0x0f)),
     condition(binary(0x64,stateF('cyc'),get(1)),fail(23,true)),0x0c,0,0x0b,0x0b,state('duty'));
+  // Collect OCR0A/OCR0B duty frames into a dedicated byte region of WASM
+  // memory. This reuses the unused native raw-audio scratch buffer; generated
+  // execution never invokes the native renderer or writes its DSP state.
+  const capture=bytes(constant(0),0x24,3,put('error',constant(0)),
+    condition(or(or(lt(get(0),constant(1)),binary(0x4b,get(0),constant(4096))),and(binary(0x47,get(1),constant(1)),binary(0x47,get(1),constant(2)))),fail(24,true)),
+    set(2,constant(0)),0x02,0x40,0x03,0x40,
+    condition(ge(get(2),get(0)),[0x0c,2]),
+    set(5,stateF('leftWrites')),set(3,call(NEXT)),
+    condition(or(state('error'),[0x23,0]),bytes(get(2),0x0f)),
+    set(4,add(constant(abi.pwm),binary(0x6c,get(2),get(1)))),
+    condition(eq(get(1),constant(2)),bytes(
+      condition(binary(0x62,stateF('leftWrites'),binary(0xa0,get(5),float(1))),bytes(constant(1),0x24,3,get(2),0x0f)),
+      store8(get(4),state('dutyLeft')),store8(add(get(4),constant(1)),get(3))),store8(get(4),get(3))),
+    set(2,add(get(2),constant(1))),0x0c,0,0x0b,0x0b,get(2));
   const types=[
     [0x60,1,0x7c,0], // clock(f64)
     [0x60,0,0], // instruction()
@@ -338,22 +352,22 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     bytes(string('avr'),string('memory'),2,1,1,1), // one fixed 64-KiB imported memory
     ...imports.map(([name,type])=>bytes(string('avr'),string(name),0,uleb(type))),
   ]);
-  const functionTypes=[...Array(512).fill(1),...Array(blocks.length+1).fill(3),1,3,4,5];
+  const functionTypes=[...Array(512).fill(1),...Array(blocks.length+1).fill(3),1,3,4,5,2];
   const table=Array.from({length:512},(_,p)=>firstFunction+p);
   const blockIndex=new Map(blocks.map((b,n)=>[b.start,firstFunction+512+n]));
   for(let p=0;p<512;p++)table.push(blockIndex.get(p)??firstFunction+512+blocks.length);
   const body=(code,locals)=>{const content=bytes(vector(locals),code,0x0b);return bytes(uleb(content.length),content);};
   const codes=[...instructionBodies.map(code=>body(code,[[9,0x7f],[1,0x7c]])),
-    ...blockBodies.map(code=>body(code,[[9,0x7f]])),body(emptyBlock,[]),body(step,[]),body(block,[]),body(run,[[2,0x7f]]),body(next,[[2,0x7c]])];
-  const exports=vector([...['controlRequest','watchdogResetCycle','debugEnabled'].map((name,index)=>bytes(string(name),3,index)),
-    ...[['step',STEP],['block',BLOCK],['run',RUN],['nextDuty',NEXT]].map(([name,index])=>bytes(string(name),0,uleb(index)))]);
+    ...blockBodies.map(code=>body(code,[[9,0x7f]])),body(emptyBlock,[]),body(step,[]),body(block,[]),body(run,[[2,0x7f]]),body(next,[[2,0x7c]]),body(capture,[[3,0x7f],[1,0x7c]])];
+  const exports=vector([...['controlRequest','watchdogResetCycle','debugEnabled','captureFault'].map((name,index)=>bytes(string(name),3,index)),
+    ...[['step',STEP],['block',BLOCK],['run',RUN],['nextDuty',NEXT],['capturePWM',CAPTURE]].map(([name,index])=>bytes(string(name),0,uleb(index)))]);
   const mapping=decoded.map(({pc,word,name,d,s,k,words})=>({pc,byteAddress:pc*2,word,name,d,s,k,words}));
   const stats={decodableWords:decoded.filter(i=>i.name!=='unsupported').length,unsupportedWords:decoded.filter(i=>i.name==='unsupported').length,
     blocks:blocks.length,flagBitsComputed:blocks.reduce((n,b)=>n+b.computed,0),flagBitsEliminated:blocks.reduce((n,b)=>n+b.removed,0)};
   const manifest={schema:'micromusic-avr-transpiled-v1',device:'ATtiny13A',abi,optimizeFlags,maxBlockInstructions,stats,
     blocks:blocks.map(({sequence,...block})=>block),mapping};
   const output=Uint8Array.from(bytes([0,97,115,109,1,0,0,0],section(1,vector(types)),section(2,importSection),section(3,vector(functionTypes.map(uleb))),
-    section(4,[1,0x70,1,...uleb(1024),...uleb(1024)]),section(6,vector([bytes(0x7f,1,constant(0),0x0b),bytes(0x7c,1,float(-1),0x0b),bytes(0x7f,1,constant(0),0x0b)])),
+    section(4,[1,0x70,1,...uleb(1024),...uleb(1024)]),section(6,vector([bytes(0x7f,1,constant(0),0x0b),bytes(0x7c,1,float(-1),0x0b),bytes(0x7f,1,constant(0),0x0b),bytes(0x7f,1,constant(0),0x0b)])),
     section(7,exports),section(9,bytes(1,0,constant(0),0x0b,vector(table.map(uleb)))),section(10,vector(codes)),
     section(0,bytes(string('micromusic.avr'),Array.from(new TextEncoder().encode(JSON.stringify(manifest)))))));
   return {bytes:output,manifest};

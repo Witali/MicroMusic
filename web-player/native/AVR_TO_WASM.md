@@ -143,6 +143,8 @@ The emitted module imports `avr.memory`, `avr.clock`, `avr.interrupt` and
 instruction callbacks. The module exports `step()`,
 `block(f64 deadline, i32 instructionLimit) -> i32`,
 `run(i32 instructionLimit) -> i32` and `nextDuty() -> i32`.
+`capturePWM(i32 frames, i32 channels) -> i32` writes up to 4096 duty frames
+per call to the dedicated PWM scratch region named by `abi.pwm`.
 Bind the exact runtime ABI recorded in its custom section/JSON and initialize
 that runtime with the same Flash/EEPROM. The module does not initialize the
 runtime or contain a separate copy of Flash constants. Its function table
@@ -193,3 +195,25 @@ a separate agreed next stage.
 `attiny13a-transpiled-isa.test.mjs` covers every word operand and immediate for
 ADIW/SBIW, all byte pairs and C/Z combinations for SBC/SBCI/CPC, T transfers,
 indirect calls, skip lengths/timing, and these device-control boundaries.
+
+## Buffered PWM output
+
+The translated renderer captures an entire batch inside WASM, writing mono
+duty bytes or interleaved left/right duty bytes into reserved WASM memory.
+It performs no JavaScript callback for any AVR instruction or output value.
+The JS consumer copies a batch (up to 4096 PWM frames per boundary crossing)
+and resamples/filters it. The renderer forecasts exactly the number of PWM
+frames consumed by the requested audio block using the same floating-point
+phase updates as its resampler; CPU state does not run ahead at block exit.
+
+`AVRCore.capturePWM(count, channels)` returns Uint8Array mono values or
+Uint16Array packed stereo values. Large requests are split into bounded
+WASM captures. Device state, memory and output after each capture are
+checked against single-step execution, including sizes above 4096 and
+arbitrary audio boundaries at 8/22.05/44.1/48/96 kHz.
+
+This buffer currently holds the existing player's stream of OCR duty
+updates, not reconstructed physical PB0/PB1 edges. Actual compare-pin
+waveforms and double-buffered timer semantics belong to the new Timer0
+peripheral module. Resampling/filters still execute in JavaScript, outside
+WASM; this is not a callback from the CPU into JS.

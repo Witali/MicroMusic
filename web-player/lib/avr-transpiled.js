@@ -1,5 +1,6 @@
 import {AVRCore as PeripheralRuntime} from './avr-wasm.js';
 import {runtimeABI,transpileAVR} from './avr-transpiler.js';
+const littleEndian=new Uint8Array(Uint16Array.of(1).buffer)[0]===1;
 
 // CPU instructions are generated WASM. Only timers, I/O and interrupt entry
 // use the existing C/WASM peripheral runtime, sharing its linear memory.
@@ -14,6 +15,9 @@ export class AVRCore extends PeripheralRuntime {
       interrupt:this._exports.avr_interrupt,writeIO:this._exports.avr_write_io,
     }}).exports;
     this._bridges=Object.fromEntries(Object.entries(this._translated).filter(([,fn])=>typeof fn==='function').map(([name,fn])=>[name,{...this._exports,translated:fn}]));
+    const pwm=generated.manifest.abi.pwm;
+    this._pwm8=new Uint8Array(this._exports.memory.buffer,pwm,8192);
+    this._pwm16=new Uint16Array(this._exports.memory.buffer,pwm,4096);
   }
   _execute(name,...args) {
     // Reuse ABI state/diagnostic synchronization without entering the C CPU.
@@ -21,6 +25,7 @@ export class AVRCore extends PeripheralRuntime {
     try {
       this._exports=this._bridges[name];const result=this._call('translated',...args);
       if(this.controlRequest)throw new Error(['','SLEEP requires a sleep/wake peripheral model','SPM requires a Flash-controller peripheral model','WDR requires a watchdog peripheral model','CPU stopped at BREAK'][this.controlRequest]);
+      if(name==='capturePWM'&&this._translated.captureFault.value)throw new Error('Stereo frame requires one OC0A write before OC0B');
       return result;
     }
     finally {this._exports=native;}
@@ -43,6 +48,17 @@ export class AVRCore extends PeripheralRuntime {
   runBlock(deadline=Infinity){return!!this._execute('block',deadline,0x7fffffff);}
   skipIdle(){return false;}
   nextDuty(){return this._execute('nextDuty');}
+  capturePWM(count,channels=1){
+    if(!Number.isInteger(count)||count<0||count>1048576||![1,2].includes(channels))throw new Error('Invalid PWM capture size or channels');
+    const output=channels===2?new Uint16Array(count):new Uint8Array(count);
+    for(let offset=0;offset<count;offset+=4096){
+      const n=Math.min(4096,count-offset);this._execute('capturePWM',n,channels);
+      if(channels===1)output.set(this._pwm8.subarray(0,n),offset);
+      else if(littleEndian)output.set(this._pwm16.subarray(0,n),offset);
+      else for(let i=0;i<n;i++)output[offset+i]=this._pwm8[2*i]|(this._pwm8[2*i+1]<<8);
+    }
+    return output;
+  }
   // The inherited C renderer executes its own CPU. Use renderer-transpiled.js
   // for audio so every instruction goes through this module instead.
   render(){throw new Error('Use the transpiled renderer for generated AVR audio');}
