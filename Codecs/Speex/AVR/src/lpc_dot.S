@@ -3,7 +3,8 @@
  *                      int16_t *y, int32_t *state);
  * ABI arguments r25:r24, r23:r22, r21:r20, r19:r18; state is 60 zeroed bytes.
  * r6:x, r8:y, r10:den, r12:history base, r14:coef base; r16:history byte
- * cursor, r17:remaining samples. X/Z walk the dot product, Y writes state.
+ * cursor, r17:remaining samples. X/Z walk the dot product; Y retains the
+ * history write cursor, advanced by the two stores and reset each ten samples.
  * Arithmetic is modulo 2^32, then rounded >>13 and saturated to +/-32767.
  * All callee-saved registers and r1 restored; interrupts remain enabled. */
 .text
@@ -32,6 +33,7 @@ speex_avr_iir40:
     movw r10, r22
     movw r8, r20
     movw r12, r18
+    movw r28,r18
     movw r14, r18
     ldi r24, 40
     add r14, r24
@@ -44,9 +46,7 @@ speex_avr_iir40:
     ldi r17, 40
 .Lsample:
     movw r26, r14
-    movw r30, r12
-    add r30, r16
-    adc r31, r2
+    movw r30,r28
     adiw r30, 20
     clr r22
     clr r23
@@ -77,9 +77,6 @@ speex_avr_iir40:
     adc r24, r1
     adc r25, r2
     .endr
-    /* The ten predecrements leave Z at history+cursor. Reuse that address
-     * for both history copies and coefficient ageing before Z becomes I/O. */
-    movw r28, r30
     /* PSHR32(sum,13), preserving wrap when adding the rounding bias. */
     add r23,r3
     adc r24, r2
@@ -142,10 +139,12 @@ speex_avr_iir40:
     com r23
     subi r22, 255
     sbci r23, 255
-    std Y+0, r22
-    std Y+1, r23
-    std Y+20, r22
-    std Y+21, r23
+    /* Y advances to the next sample without a separate address calculation.
+     * Mirror/age offsets compensate for the two postincrements. */
+    st Y+,r22
+    st Y+,r23
+    std Y+18,r22
+    std Y+19,r23
     /* Sample 0 uses all previous coefficients; sample 1 uses new den[0],
      * etc. The transposed recurrence ages coefficients in exactly this way. */
     cpi r17, 31
@@ -154,13 +153,14 @@ speex_avr_iir40:
     ld r18, X+
     ld r19, X+
     movw r10, r26
-    std Y+40, r18
-    std Y+41, r19
+    std Y+38,r18
+    std Y+39,r19
 .Lcoeff_done:
     subi r16, -2
     cpi r16, 20
     brlo .Lcursor_done
     clr r16
+    movw r28,r12
 .Lcursor_done:
     dec r17
     breq .Ldone

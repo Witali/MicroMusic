@@ -186,6 +186,16 @@ binary measurements. Vendor and R4 files remain unmodified.
   163,840 independent LPC samples and 1,058 fixture/reset frames pass.
   The C branch is unchanged. Final combined timer/ISR gate remains pending.
 
+- Persistent LPC history cursor in Y with ST Y+: derive dot-product Z from
+  Y+20, advance Y through the two history stores, compensate mirror/age
+  offsets by -2, and reset Y at each ten-sample wrap. This removes the
+  repeated history+cursor formation and the post-dot MOVW. Saves another
+  115 cycles/block / 460 per frame, Flash 8,756 -> 8,754 B; RAM/global peak
+  stack unchanged. All 163,840 independent LPC samples and 13,196 corpus/
+  pitch plus 58 reset/envelope frames pass. Final corpus maximum 133,142,
+  coverage maximum 133,366 cycles. C image remains byte-identical to its
+  admitted 10%-reserve build. The combined final PWM gates are running.
+
 ## Next candidates (unmeasured)
 
 1. **Scratch lifetime reuse.** Quantized LSP needs 20 B throughout the frame;
