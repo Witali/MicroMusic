@@ -46,16 +46,21 @@ test('default configuration, erased EEPROM and serialization are deterministic',
 
 test('version1 preserves its original configuration contract',async()=>{
   const pkg=copy(original);pkg.version=1;
-  for(const key of ['osccalHz','nvmClockProfile','nvmCalibrationReferenceHz'])delete pkg.configuration[key];
+  for(const key of ['osccalHz','nvmClockProfile','nvmCalibrationReferenceHz','powerResetProfile'])delete pkg.configuration[key];
   const decoded=await decodePackage(seal(pkg));assert.equal(decoded.version,1);
   assert.deepEqual(decoded.configuration,pkg.configuration);assert.equal(Object.keys(decoded.options).length,17);
 });
 
-test('version2 binds a calibrated clock table and programming profile into the package',async()=>{
+test('version2 preserves its calibrated-clock configuration contract',async()=>{
+  const pkg=copy(original);pkg.version=2;delete pkg.configuration.powerResetProfile;
+  const decoded=await decodePackage(seal(pkg));assert.equal(decoded.version,2);assert.deepEqual(decoded.configuration,pkg.configuration);
+});
+
+test('package binds a calibrated clock table and programming profile',async()=>{
   const table=Array(128).fill(0);table[50]=9600000;table[51]=9696000;
   const configuration={factoryOsccal96:50,osccalHz:table,nvmClockProfile:1,nvmCalibrationReferenceHz:9600000};
   const pkg=await createPackage({...input,configuration}),decoded=await decodePackage(pkg);
-  assert.equal(pkg.version,2);assert.deepEqual(decoded.configuration.osccalHz,table);
+  assert.equal(pkg.version,3);assert.deepEqual(decoded.configuration.osccalHz,table);
   decoded.options.osccalHz[50]=1;assert.equal(decoded.configuration.osccalHz[50],9600000);
   table[50]=1;assert.equal(pkg.configuration.osccalHz[50],9600000);
   const bad=copy(pkg);bad.configuration.osccalHz[51]++;
@@ -66,6 +71,25 @@ test('version2 binds a calibrated clock table and programming profile into the p
     await assert.rejects(createPackage({...input,configuration}),/configuration/);
   const external=await decodePackage(await createPackage({...input,configuration:{...configuration,fuseLow:0x78,oscillatorHz:1000000}}));
   assert.equal(external.configuration.oscillatorHz,1000000,'external source is independent of the internal RC calibration table');
+});
+
+test('power profiles are complete, copied and validated before constructing a runtime',async()=>{
+  const osccalHz=Array(128).fill(0);osccalHz[0]=9600000;
+  const powerResetProfile={porAssertMicrovolts:1300000,porReleaseMicrovolts:1400000,
+    bod00Microvolts:4300000,bod01Microvolts:2700000,bod10Microvolts:1800000,
+    bodHysteresisMicrovolts:50000,bodFilterNs:2000,bodRecoveryNs:60000,flashProgrammingMinMicrovolts:1800000};
+  const configuration={osccalHz,powerResetProfile,vccMicrovolts:0};
+  const pkg=await createPackage({...input,configuration}),decoded=await decodePackage(pkg);
+  decoded.options.powerResetProfile.bodFilterNs=0;assert.equal(decoded.configuration.powerResetProfile.bodFilterNs,2000);
+  powerResetProfile.bodFilterNs=1;assert.equal(pkg.configuration.powerResetProfile.bodFilterNs,2000);
+  for(const bad of [{vccMicrovolts:0},
+    {powerResetProfile:{...powerResetProfile},osccalHz:null},
+    {...configuration,powerResetProfile:{...powerResetProfile,porReleaseMicrovolts:1}},
+    {...configuration,powerResetProfile:{...powerResetProfile,bodHysteresisMicrovolts:10000000}},
+    {...configuration,powerResetProfile:{...powerResetProfile,bodFilterNs:4294967296}},
+    {...configuration,powerResetProfile:{...powerResetProfile,flashProgrammingMinMicrovolts:0}},
+    {...configuration,powerResetProfile:{...powerResetProfile,unused:1}},
+    {...configuration,powerResetProfile:{}}])await assert.rejects(createPackage({...input,configuration:bad}),/configuration/);
 });
 
 test('decoding compiles and inspects WASM without constructing any instance',async()=>{

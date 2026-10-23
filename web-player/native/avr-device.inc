@@ -76,6 +76,7 @@ int avr_read_io(int a){int value=device_read(a);full_deadline();return value;}
 int avr_write_io_masked(int a,int v,int mask){return full_write_io(a,v,mask);}
 int avr_device_configure(int key,int value){return device_configure(key,value);}
 int avr_device_configure_osccal_hz(int cal,int hz){return device_configure_osccal_hz(cal,hz);}
+int avr_device_configure_power(int field,int value){return device_configure_power(field,value);}
 int avr_device_ready(void){
  if(device_reset_requested())full_interrupt();full_fault();
  return !ERROR&&!device_halted()&&full_generation==device_flash_generation();
@@ -129,6 +130,12 @@ int avr_device_inject_pins_ps(uint64_t at,int mask,int levels){
  if(device_reset_requested())full_interrupt();full_deadline();return accepted;
 }
 int avr_device_inject_analog_ps(uint64_t at,int pin,int uv){return device_inject_analog_ps(at,pin,uv);}
+int avr_device_inject_vcc_ps(uint64_t at,int uv){
+ int accepted=device_inject_vcc_ps(at,uv);
+ if(device_reset_requested())full_interrupt();full_deadline();return accepted;
+}
+int avr_device_power_enabled(void){return device_power_enabled();}
+int avr_device_vcc_microvolts(void){return device_vcc_microvolts();}
 uintptr_t avr_device_pin_buffer(void){uint32_t count;return (uintptr_t)device_pin_events(&count);}
 int avr_device_pin_count(void){uint32_t count;device_pin_events(&count);return count;}
 uintptr_t avr_device_pin_buffer_ps(void){uint32_t count;return (uintptr_t)device_pin_events_ps(&count);}

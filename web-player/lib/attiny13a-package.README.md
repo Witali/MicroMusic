@@ -1,4 +1,4 @@
-# ATtiny13A package format v2
+# ATtiny13A package format v3
 
 `attiny13a-package.js` creates and verifies a self-contained initial device image.
 It has no Node imports and uses asynchronous WebCrypto SHA-256, so the same
@@ -24,7 +24,7 @@ const decoded = await decodePackage(savedJSON);
 translation's embedded `micromusic.avr` manifest. No files or URLs are referenced
 by the saved package.
 
-The envelope identifies format `micromusic-attiny13a-package`, version `2`,
+The envelope identifies format `micromusic-attiny13a-package`, version `3`,
 device `ATtiny13A`, and ABI `micromusic-attiny13a-device-v1`. Each of the four
 binary assets records its length, canonical base64 and SHA-256. The envelope
 hash covers all fields except `integrity`, including configuration, manifests
@@ -42,9 +42,14 @@ Limits are 1024-byte Flash, 64-byte EEPROM, 4 MiB translation, 2 MiB runtime,
 512 KiB embedded manifest and 16 MiB JSON. These are format limits, not device
 performance promises.
 
-The decoder also accepts version1 with its original17 configuration fields and
-runtime contract. New packages use version2 and require the physical-clock
-bridge exports. The generated CPU instruction/import ABI is unchanged.
+The decoder also accepts versions 1 and 2 with their original configuration and
+runtime contracts. Version 2 added the physical-clock bridge and calibration
+profile. Version 3 adds the optional supply profile and its bridge exports.
+The generated CPU instruction/import ABI is unchanged.
+The original v1 runtime lacks three later configuration keys and four state
+observers. Its loader accepts only the historical defaults for unsupported keys
+(60000ns BOD recovery, factory CAL0, zero-delay startup); unsupported nondefault
+values are rejected. Missing state observers report inactive startup/BOD state.
 
 SHA-256 detects corruption and inconsistent components. An author can modify
 code and recompute its hashes. This is not a signature, a trust decision, or a
@@ -86,7 +91,7 @@ it does not assert complete silicon behavior or measured oscillator calibration.
 |---|---:|---|
 | `oscillatorHz` | 9600000 | integer 1–1000000000 |
 | `watchdogHz` | 128000 | integer 1–1000000000 |
-| `vccMicrovolts` | 5000000 | integer 1–2147483647 |
+| `vccMicrovolts` | 5000000 | integer1–2147483647;0 only with an explicit supply profile |
 | `bandgapMicrovolts` | 1100000 | integer 1–2147483647 |
 | `fuseLow`, `fuseHigh`, `lock` | 122, 255, 255 | integer 0–255 |
 | `adcFirstSample` | 27 | 27 or 29 (half ADC periods) |
@@ -101,6 +106,7 @@ it does not assert complete silicon behavior or measured oscillator calibration.
 | `osccalHz` | null | null, or128 integer frequencies0–1000000000;0 means unspecified |
 | `nvmClockProfile` | 0 | 0 unspecified,1 explicit fixed-nanosecond programming fixture |
 | `nvmCalibrationReferenceHz` | 0 | 0 unspecified, otherwise1–1000000000 |
+| `powerResetProfile` | null | null, or the complete explicit profile below |
 
 A non-null `osccalHz` table selects a physical picosecond clock domain. Its
 factory CAL entry must be supplied and, for the internal calibrated RC source,
@@ -121,6 +127,27 @@ profile. Mixing the two domains fails before advancing the device.
 Physical audio capture keeps its sample grid independent of CAL and CLKPR.
 Its native WASM execution uses relative deadlines per host batch while storing
 absolute time as integers, preserving precision beyond2^53 picoseconds.
+
+The optional power profile requires `osccalHz` and all nine fields:
+`porAssertMicrovolts`, `porReleaseMicrovolts`, `bod00Microvolts`,
+`bod01Microvolts`, `bod10Microvolts`, `bodHysteresisMicrovolts`, `bodFilterNs`,
+`bodRecoveryNs` and `flashProgrammingMinMicrovolts`. Thresholds are positive
+int32 microvolts, hysteresis is nonnegative int32, and both durations are uint32
+nanoseconds. POR release must be at least the assertion threshold; each BOD
+center plus/minus its half-hysteresis must fit the supported voltage range.
+No analog thresholds are supplied as hidden defaults. See
+[`device-power.md`](../native/peripherals/device-power.md) for the exact digital
+qualification, reset aggregation, sleep and programming contracts.
+
+With this profile, initial `vccMicrovolts` may be zero. Queue supply changes with
+`setVccPs({at: bigint, microvolts})`. They share chronological ordering with pin
+and analog inputs. `state()` adds `powerResetEnabled` and current `vccMicrovolts`.
+The observer survives CPU reset. The selected power-profile `bodRecoveryNs`
+overrides the older flat recovery setting while enabled. An EEPROM programming
+operation below 1.9V, or Flash programming below the explicit selected boundary,
+stops with an uncertainty diagnostic and preserves the last known bytes instead
+of committing an invented result. The package remains an initial image, not a
+snapshot of in-flight operations or queued external inputs.
 
 ## CLI
 

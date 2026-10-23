@@ -3,6 +3,8 @@ const configuration={oscillatorHz:1,watchdogHz:2,vccMicrovolts:3,bandgapMicrovol
   fuseLow:5,fuseHigh:6,lock:7,adcFirstSample:8,comparatorPropagationHalf:9,
   bandgapStartupHalf:10,comparatorInitial:11,wakeStartupHalf:12,spmCommandCycles:13,flashMaximum:14,bodRecoveryNs:15,factoryOsccal96:16,fuseStartupProfile:17,
   nvmClockProfile:18,nvmCalibrationReferenceHz:19};
+const powerFields=['porAssertMicrovolts','porReleaseMicrovolts','bod00Microvolts','bod01Microvolts','bod10Microvolts',
+  'bodHysteresisMicrovolts','bodFilterNs','bodRecoveryNs','flashProgrammingMinMicrovolts'];
 const timestamp=value=>{
   if(typeof value!=='bigint'||value<0n||value>BigInt(Number.MAX_SAFE_INTEGER))throw Error('Timestamp must be an exact nonnegative bigint below 2^53');
   return value;
@@ -45,6 +47,15 @@ export class ATtiny13A extends TranslatedCore {
         if(!Array.isArray(table)||table.length!==128||!table.some(Boolean))throw Error('osccalHz must contain128 CAL frequencies (zero means unspecified)');
         for(let cal=0;cal<128;cal++)if(!Number.isInteger(table[cal])||table[cal]<0||table[cal]>1000000000||
           !exports.avr_device_configure_osccal_hz?.(cal,table[cal]))throw Error('Invalid OSCCAL frequency at CAL '+cal);
+      }
+      if(options.powerResetProfile!=null){
+        const profile=options.powerResetProfile;
+        if(typeof profile!=='object'||Array.isArray(profile)||Object.keys(profile).sort().join()!==[...powerFields].sort().join())throw Error('Invalid powerResetProfile fields');
+        for(const [index,name] of powerFields.entries()){
+          const value=profile[name];
+          if(!Number.isInteger(value)||value<0||value>0xffffffff||!exports.avr_device_configure_power?.(index+1,value))throw Error('Invalid powerResetProfile: '+name);
+        }
+        if(!exports.avr_device_configure_power(0,1))throw Error('Power reset profile unavailable');
       }
     }});
     this._exports.avr_device_bind_generation();
@@ -112,6 +123,12 @@ export class ATtiny13A extends TranslatedCore {
     if(!Number.isInteger(pin)||pin<0||pin>5||!Number.isInteger(microvolts)||microvolts<0||microvolts>0x7fffffff)throw Error('Invalid analog input');
     if(!this._call(name,at,pin,microvolts))throw Error('Invalid or full timestamped input queue');
   }
+  setVccPs({at,microvolts}){
+    this._clockDomain(true);timestampPs(at);
+    if(!this._exports.avr_device_power_enabled?.())throw Error('VCC inputs require an explicit powerResetProfile');
+    if(at===0xffffffffffffffffn||!Number.isInteger(microvolts)||microvolts<0||microvolts>0x7fffffff)throw Error('Invalid supply input');
+    if(!this._call('avr_device_inject_vcc_ps',at,microvolts))throw Error('Invalid or full timestamped input queue');
+  }
   drainPins(){
     this._clockDomain(false);return this._drainPins('','baseHalf');
   }
@@ -148,7 +165,8 @@ export class ATtiny13A extends TranslatedCore {
     const exports=this._exports,view=new DataView(exports.memory.buffer,this._ps?exports.avr_device_pins_ps():exports.avr_device_pins(),16);
     const time=this._ps?{timePs:BigInt.asUintN(64,exports.avr_device_time_ps()),startupDeadlinePs:BigInt.asUintN(64,exports.avr_device_startup_deadline_ps()),oscillatorHz:exports.avr_device_oscillator_hz()}:
       {baseHalf:exports.avr_device_time64(),startupDeadline:BigInt.asUintN(64,exports.avr_device_startup_deadline?.()??exports.avr_device_time64())};
-    return {...super.state(),...time,clockDivisor:exports.avr_device_divisor(),
+    const power=exports.avr_device_power_enabled?.()?{powerResetEnabled:true,vccMicrovolts:exports.avr_device_vcc_microvolts()}:{};
+    return {...super.state(),...time,...power,clockDivisor:exports.avr_device_divisor(),
       halted:!!exports.avr_device_halted(),sleeping:!!exports.avr_device_sleep_phase(),resetHeld:!!exports.avr_device_reset_held(),
       starting:!!exports.avr_device_starting?.(),
       bodDisabled:!!exports.avr_device_bod_disabled?.(),bodRecovering:!!exports.avr_device_bod_recovering?.(),
