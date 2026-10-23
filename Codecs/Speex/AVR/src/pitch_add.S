@@ -10,7 +10,28 @@
 .type speex_avr_pitch_add, @function
 speex_avr_pitch_add:
     tst r18
-    breq .L_pitch_return
+    brne .L_pitch_nonempty
+    ret
+.L_pitch_nonempty:
+    mov r0, r20
+    or r0, r21
+    brne .L_pitch_nonzero
+    /* Zero is an identity only for accumulation. A first/write pass must
+     * initialize every output. r1 is zero on entry by the AVR-GCC ABI. */
+    tst r16
+    breq .L_pitch_clear
+    ret
+.L_pitch_clear:
+    movw r26, r24
+.L_pitch_clear_loop:
+    st X+, r1
+    st X+, r1
+    st X+, r1
+    st X+, r1
+    dec r18
+    brne .L_pitch_clear_loop
+    ret
+.L_pitch_nonzero:
     push r2
     push r16
     push r17

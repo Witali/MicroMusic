@@ -57,7 +57,8 @@ def apply(source: Path):
 ''' + first.replace('MAC16_16(exc_out[j],gain[2-i],exc[j-pp])',
                     '(i ? MAC16_16(exc_out[j],gain[2-i],exc[j-pp]) : MULT16_16(gain[2-i],exc[j-pp]))') + '\n#endif')
     text = replace(text, second, '''#ifdef __AVR__
-      speex_avr_pitch_add(exc_out+tmp1, exc+tmp1-pp-pitch, gain[2-i], tmp3-tmp1, i!=0);
+      if (tmp3!=tmp1)
+         speex_avr_pitch_add(exc_out+tmp1, exc+tmp1-pp-pitch, gain[2-i], tmp3-tmp1, i!=0);
 #else
 ''' + second.replace('MAC16_16(exc_out[j],gain[2-i],exc[j-pp-pitch])',
                      '(i ? MAC16_16(exc_out[j],gain[2-i],exc[j-pp-pitch]) : MULT16_16(gain[2-i],exc[j-pp-pitch]))') + '\n#endif')
