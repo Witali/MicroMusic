@@ -16,9 +16,13 @@ extern const signed char gain_cdbk_lbr[];
 extern void speex_avr_pitch_add24(uint8_t *,const int16_t *,int8_t,uint8_t,uint8_t);
 #define PITCH_ADD24 speex_avr_pitch_add24
 #else
-static SPEEX_NB3_NOINLINE void speex_nb3_pitch_add24_c(uint8_t *out,
+static SPEEX_NB3_HOT SPEEX_NB3_NOINLINE void speex_nb3_pitch_add24_c(uint8_t *out,
     const int16_t *in,int8_t gain,uint8_t count,uint8_t accumulate)
 {
+    if (!gain) {
+        if (!accumulate) memset(out,0,3*(unsigned)count);
+        return;
+    }
     while (count--) {
         int32_t value=(int32_t)gain * *in++;
         if (accumulate) value+=speex_nb3_read24(out);

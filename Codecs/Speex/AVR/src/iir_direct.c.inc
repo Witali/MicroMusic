@@ -17,6 +17,9 @@ static int32_t speex_avr_lpc_dot10(const int16_t *coef, const int16_t *after)
 }
 #endif
 
+#if !SPEEX_NB3_USE_AVR_ASM
+SPEEX_NB3_HOT
+#endif
 SPEEX_NB3_NOINLINE void iir_mem16(const spx_word16_t *x,
    const spx_coef_t *den, spx_word16_t *y, int N, int ord,
    spx_mem_t *mem, char *stack)

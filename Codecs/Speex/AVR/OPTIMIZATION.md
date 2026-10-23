@@ -87,13 +87,24 @@ binary measurements. Vendor and R4 files remain unmodified.
   checks cover 1,966,080 packed outputs and all counts/modes; innovation checks
   include unsanitized pitch extrema and both clamp boundaries. Full new PWM
   gate and final C hot-loop selection remain pending for this series.
+- C-only hot loops and zero gain: applying the existing AVR `-O3` function
+  attribute to packed pitch and direct IIR, with a C zero/write/add fast path,
+  reduces the packed C corpus maximum 333,531 -> 315,375 and pitch coverage
+  maximum 334,106 -> 315,950 cycles. Flash 9,510 B (272 B above compact packed
+  C, still 1,700 B below the previous C baseline), stack/static unchanged.
+  All 13,196 C frames pass. The ASM binary remains identical; C timer/ISR
+  admission is under test and is distinct from the decoder-only budget.
 
 ## Next candidates (unmeasured)
 
-1. **C-backend compiler hot spots.** The C fallback currently misses the AVR
-   20-ms budget. Measure function-specific `-O3` on C IIR/pitch loops before
-   adding architecture-specific code; prefer the smallest setting that actually
-   improves speed without exceeding Flash/SRAM. Preserve default C selection.
+1. **Portable C fixed-point narrowing.** Generic signed32 shifts dominate C
+   fallback costs. A Q14 low term (signed16*unsigned14)>>14 always fits signed16;
+   extracting its 16-bit result with unsigned left alignment may avoid AVR's
+   long arithmetic-shift loops without handwritten ASM. Preserve upstream's
+   signed16 high-word cast and all rounding, and verify independently.
+   Innovation also permits signed8*scale decomposition at bit 12, followed by
+   a byte-aligned left shift and one signed right shift for *128. Its bounds
+   must be explicit; do not replace the generic unrestricted Q14 semantics.
 3. **Special Q14 for p1.** This polynomial coefficient remains a multiple of
    64. A signed16 x signed24 core followed by a byte-aligned >>8 might use six
    hardware multiplies instead of eight. Preserve the original floor, prove
