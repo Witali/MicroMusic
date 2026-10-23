@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {pathToFileURL} from 'node:url';
-import {avr,IO,sequential,interruptFixture,sleepFixture} from './fixtures/attiny13a-system-firmware.mjs';
+import {avr,IO,flash,sequential,interruptFixture,sleepFixture} from './fixtures/attiny13a-system-firmware.mjs';
 
 // An optional candidate URL permits cross-worktree integration runs while the
 // board/CPU implementation is developed in parallel. Normal runs use the repo.
@@ -86,6 +86,21 @@ test('CLI immediately cancels a pending request after SEI',()=>{
   c.step();assert.equal(c.pc,1);assert.equal(cycles(c),1);
   c.step();assert.equal(c.pc,2);assert.equal(cycles(c),2);assert.equal(c.readIO(IO.SPL),0x9f);
   assert.equal(c.readIO(IO.SREG)&0x80,0);
+});
+
+test('an IRQ arriving inside a block observes ALU flags before a later mainline overwrite',()=>{
+  const c=make(flash(
+    {instructions:[avr.rjmp(0,16)]},{at:1,instructions:[avr.rjmp(1,64)]},
+    {at:16,instructions:[avr.ldi(16,255),avr.ldi(17,1),avr.sei(),avr.nop(),
+      avr.add(16,17),avr.eor(19,19),avr.rjmp(22,22)]},
+    {at:64,instructions:[avr.in(18,IO.SREG),avr.reti()]},
+  ));
+  c.r[19]=0x80;c.writeIO(IO.MCUCR,3);c.writeIO(IO.GIMSK,0x40);
+  // Input after falling edge9 -> PINB at12 -> INT0 flag at14, exactly when
+  // ADD completes. EOR would overwrite ADD's flags in uninterrupted mainline.
+  c.injectPins({at:9n,mask:2,levels:2});c.run(8);
+  assert.equal(c.r[16],0);assert.equal(c.r[18],0x23);assert.equal(c.r[19],0x80);
+  assert.equal(c.pc,65);assert.equal(cycles(c),14);
 });
 
 test('SEI followed by SLEEP enters sleep before an already pending interrupt',()=>{
