@@ -1,0 +1,35 @@
+{
+  "reference_sha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+  "samples": 9216,
+  "sample_rate": 7500,
+  "streams": {
+    "HQ4": "5033738490e0ae0ba30c8ea62d9d53404b04b592eb53a7a0750329e641b29e6e",
+    "HQ4-T": "330e40942ed95f25bdad33a2c4943c0fcbb9aa3b4122dc735764b6cc7ffafed0",
+    "Auto": "16d924e1586a52356a61abbac7b82d421e4eee8404bc2f6d157bcaaa81e99769"
+  },
+  "metrics": {
+    "HQ4": {
+      "loss": 1.2015368276169764,
+      "log_spectral_error": 1.276925854789502,
+      "relative_spectral_error": 0.8999807189268734,
+      "stoi": 0.9006005040626661,
+      "flash_bytes": 959
+    },
+    "HQ4-T": {
+      "loss": 0.9468236796764291,
+      "log_spectral_error": 0.9802257051476775,
+      "relative_spectral_error": 0.8132155777914352,
+      "stoi": 0.9005003163212995,
+      "flash_bytes": 979
+    },
+    "Auto": {
+      "loss": 0.9101479560514576,
+      "log_spectral_error": 0.9359480734784557,
+      "relative_spectral_error": 0.8069474863434652,
+      "stoi": 0.9005000749339589,
+      "flash_bytes": 1007
+    }
+  },
+  "log_error_reduction_vs_hq4t_percent": 4.517085344395366,
+  "objective_reduction_vs_hq4t_percent": 3.873553694549048
+}

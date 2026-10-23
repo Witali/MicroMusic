@@ -1,0 +1,29 @@
+{
+  "schema": "micromusic-hq4-timbre-verification-v1",
+  "codeBytes": 422,
+  "speechBytes": 584,
+  "sampleHz": 7500,
+  "phraseSamples": 9216,
+  "verifiedLoops": 3,
+  "firstLoopPcmSha256": "a7232d70445ee0094f517fb51aa81cfc510565301b0364cef451ffa057bb18cf",
+  "sourceInputs": {
+    "ATtiny13A/Sound/codec/timbre/chego/firmware.S": "16d13fe9da5696a7403ebe811396f076c8450565cb0f993e52e203a131b75929",
+    "ATtiny13A/Sound/codec/timbre/chego-auto/speech.hq": "16d924e1586a52356a61abbac7b82d421e4eee8404bc2f6d157bcaaa81e99769",
+    "ATtiny13A/Sound/codec/model.py": "d9c3449ddd2da1929e71da99ef3b040d46d95988d2f5ea704f9416e30c1ba71e",
+    "ATtiny13A/Sound/codec/hq4_timbre.py": "ff22427010ddb169bafbc8a35502dcd413980299fd36d292fdf99eae7ffb371b"
+  },
+  "pass": true,
+  "hardwareTested": false,
+  "samples": 27648,
+  "flashBytes": 1007,
+  "imageSha256": "142f57781462c5437d7d44b8cf7d22c24aff52227b104fddb6e8a0068b719111",
+  "pcmSha256": "4a619c1a7f817764b522886a8a17f115e0eb633fe5ebc0e3a1375848c05e4c5d",
+  "mismatches": 0,
+  "irqCount": 138240,
+  "lostOverflows": 0,
+  "missedSamples": 0,
+  "maxISRCycles": 28,
+  "minimumSamplePeriod": 1279,
+  "maximumSamplePeriod": 1281,
+  "minimumSP": 153
+}
