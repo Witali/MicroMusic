@@ -1,0 +1,19 @@
+cmake_minimum_required(VERSION 3.15)
+project(speex_nb3 LANGUAGES C)
+add_library(speex_nb3 STATIC
+    src/cb_search.c src/exc_10_32_table.c src/filters.c src/gain_table_lbr.c
+    src/lsp.c src/lsp_tables_nb.c src/ltp.c src/nb_celp.c src/quant_lsp.c
+    src/speex_avr.c src/bits.c)
+target_include_directories(speex_nb3 PUBLIC include PRIVATE src)
+set_target_properties(speex_nb3 PROPERTIES C_STANDARD 11 C_STANDARD_REQUIRED YES C_EXTENSIONS NO)
+target_compile_definitions(speex_nb3 PRIVATE
+    FIXED_POINT DISABLE_ENCODER DISABLE_WIDEBAND DISABLE_VBR DISABLE_FLOAT_API
+    DISABLE_WARNINGS DISABLE_NOTIFICATIONS RELEASE EXPORT=
+    SPEEX_AVR_COMPACT_LSP SPEEX_AVR_TIGHT_EXC SPEEX_AVR_PROFILE
+    SPEEX_NB3_ENABLE_ASM=0 SPEEX_NB3_CHECK_SCRATCH=0)
+if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(speex_nb3 PRIVATE -fwrapv -fno-strict-aliasing
+        -ffunction-sections -fdata-sections)
+else()
+    message(FATAL_ERROR "Configure equivalent wrap/aliasing semantics before using this compiler; see PORTING.md")
+endif()

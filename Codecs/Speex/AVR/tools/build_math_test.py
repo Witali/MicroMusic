@@ -13,6 +13,7 @@ def main():
     output=build.ROOT/'build/math'
     output.mkdir(parents=True,exist_ok=True)
     build.run([args.avr_gcc,'-mmcu=atmega328p','-O3','-flto','-fwrapv',
+               '-DSPEEX_NB3_ENABLE_ASM=1',
                '-I'+str(build.ROOT/'src'),build.ROOT/'tests/avr_math.c',build.ROOT/'src/q14.S',
                '-o',output/'math.elf'])
     prefix=str(Path(args.avr_gcc).with_name('avr-'))

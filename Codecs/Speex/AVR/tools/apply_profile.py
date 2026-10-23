@@ -21,6 +21,8 @@ def apply(source: Path):
     path = lib / 'arch.h'
     path.write_text(replace(path.read_text(), '#include "avr_fastmul.h"',
                            '#include "avr_fastmul.h"\n#include "avr_fixed.h"'))
+    path.write_text(replace(path.read_text(), '#include "fixed_generic.h"',
+                           '#include "fixed_generic.h"\n#include "speex_platform.h"'))
     path = lib / 'nb_celp.c'
     text = path.read_text()
     text = replace(text, '#define SUBMODE(x) st->submodes[st->submodeID]->x',
@@ -50,13 +52,13 @@ def apply(source: Path):
          exc_out[j]=MAC16_16(exc_out[j],gain[2-i],exc[j-pp]);'''
     second = '''      for (j=tmp1;j<tmp3;j++)
          exc_out[j]=MAC16_16(exc_out[j],gain[2-i],exc[j-pp-pitch]);'''
-    text = replace(text, first, '''#ifdef __AVR__
+    text = replace(text, first, '''#if SPEEX_NB3_USE_AVR_ASM
       extern void speex_avr_pitch_add(spx_word32_t *, const spx_word16_t *, spx_word16_t, uint8_t, uint8_t);
       speex_avr_pitch_add(exc_out, exc-pp, gain[2-i], tmp1, i!=0);
 #else
 ''' + first.replace('MAC16_16(exc_out[j],gain[2-i],exc[j-pp])',
                     '(i ? MAC16_16(exc_out[j],gain[2-i],exc[j-pp]) : MULT16_16(gain[2-i],exc[j-pp]))') + '\n#endif')
-    text = replace(text, second, '''#ifdef __AVR__
+    text = replace(text, second, '''#if SPEEX_NB3_USE_AVR_ASM
       if (tmp3!=tmp1)
          speex_avr_pitch_add(exc_out+tmp1, exc+tmp1-pp-pitch, gain[2-i], tmp3-tmp1, i!=0);
 #else
@@ -71,7 +73,7 @@ def apply(source: Path):
         text = path.read_text()
         for function in functions:
             text = text.replace('void ' + function + '(',
-                                '__attribute__((noinline)) void ' + function + '(')
+                                'SPEEX_NB3_NOINLINE void ' + function + '(')
         path.write_text(text)
     path = lib / 'nb_celp.h'
     text = path.read_text()
@@ -91,12 +93,12 @@ def apply(source: Path):
     stop = text.index('\n#else', start)
     fragment = Path(__file__).resolve().parents[1] / 'src/compact_lsp.c.inc'
     text = text[:start] + fragment.read_text() + text[stop:]
-    text = text.replace('void lsp_to_lpc(', '__attribute__((noinline)) void lsp_to_lpc(')
+    text = text.replace('void lsp_to_lpc(', 'SPEEX_NB3_NOINLINE void lsp_to_lpc(')
     path.write_text(text)
 
     path = lib / 'filters.c'
     text = path.read_text()
-    start = text.index('__attribute__((noinline)) void iir_mem16(')
+    start = text.index('SPEEX_NB3_NOINLINE void iir_mem16(')
     stop = text.index('\n#endif', start)
     fragment = Path(__file__).resolve().parents[1] / 'src/iir_direct.c.inc'
     text = text[:start] + fragment.read_text() + text[stop:]
@@ -138,9 +140,10 @@ def apply(source: Path):
     at = text.rfind('#endif')
     text = text[:at] + '''
 #include <stdint.h>
+#include "speex_platform.h"
 #undef ALIGN
 #define ALIGN(stack, size) ((stack) += ((size) - (uintptr_t)(stack)) & ((size) - 1))
-#ifndef __AVR__
+#if SPEEX_NB3_CHECK_SCRATCH
 #include <stddef.h>
 void *speex_avr_push(char **position, size_t bytes, size_t alignment);
 #undef PUSH

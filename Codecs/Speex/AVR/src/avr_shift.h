@@ -4,7 +4,8 @@
 #ifndef SPEEX_AVR_SHIFT_H
 #define SPEEX_AVR_SHIFT_H
 #include <stdint.h>
-#ifdef __AVR__
+#include "speex_platform.h"
+#if SPEEX_NB3_USE_AVR_ASM
 #define SPEEX_AVR_ASR(name,extra) \
 static inline __attribute__((always_inline)) int32_t name(int32_t value) \
 { \

@@ -4,7 +4,7 @@
 #include "speex/speex.h"
 #include "speex/speex_bits.h"
 #ifdef SPEEX_AVR_PROFILE
-#include "speex_avr.h"
+#include "speex_nb3.h"
 #include <string.h>
 #include <assert.h>
 #endif
@@ -24,7 +24,7 @@ int main(int argc, char **argv)
     output = fopen(argv[2], "wb");
     if (!input || !output) return 3;
 #ifdef SPEEX_AVR_PROFILE
-    speex_avr_init();
+    speex_nb3_init();
 #else
     state = speex_decoder_init(&speex_nb_mode);
     if (!state) return 4;
@@ -40,16 +40,16 @@ int main(int argc, char **argv)
             memset(pcm, 0x5a, sizeof(pcm));
             memcpy(invalid, packet, sizeof(invalid));
             invalid[0] = 0x80; /* WB header */
-            assert(speex_avr_decode(invalid, 20, pcm) == -1);
+            assert(speex_nb3_decode(invalid, 20, pcm) == -1);
             invalid[0] = 0x10; /* NB mode 2 */
-            assert(speex_avr_decode(invalid, 20, pcm) == -1);
-            assert(speex_avr_decode(packet, 19, pcm) == -1);
-            assert(speex_avr_decode(packet, 21, pcm) == -1);
-            assert(speex_avr_decode(NULL, 20, pcm) == -1);
-            assert(speex_avr_decode(packet, 20, NULL) == -1);
+            assert(speex_nb3_decode(invalid, 20, pcm) == -1);
+            assert(speex_nb3_decode(packet, 19, pcm) == -1);
+            assert(speex_nb3_decode(packet, 21, pcm) == -1);
+            assert(speex_nb3_decode(NULL, 20, pcm) == -1);
+            assert(speex_nb3_decode(packet, 20, NULL) == -1);
             for (n = 0; n < 160; ++n) assert(pcm[n] == 0x5a5a);
         }
-        if (speex_avr_decode(packet, sizeof(packet), pcm) != 0) return 6;
+        if (speex_nb3_decode(packet, sizeof(packet), pcm) != 0) return 6;
 #else
         speex_bits_set_bit_buffer(&bits, packet, sizeof(packet));
         if (speex_decode_int(state, &bits, pcm) != 0 || bits.overflow) return 6;
@@ -64,7 +64,7 @@ int main(int argc, char **argv)
     if (ferror(input) || fclose(output)) return 8;
     fclose(input);
 #ifdef SPEEX_AVR_PROFILE
-    printf("static state+scratch=%zu scratch_peak=%zu\n", speex_avr_state_bytes(), speex_avr_scratch_peak());
+    printf("static state+scratch=%zu scratch_peak=%zu\n", speex_nb3_state_bytes(), speex_nb3_scratch_peak());
 #else
     speex_bits_destroy(&bits);
     speex_decoder_destroy(state);

@@ -1,7 +1,8 @@
 #include "speex_avr.h"
+#include "speex_platform.h"
 #include "nb_celp.h"
 #include <string.h>
-#ifndef __AVR__
+#if SPEEX_NB3_CHECK_SCRATCH
 #include <stdlib.h>
 #endif
 
@@ -9,10 +10,10 @@ static DecState decoder;
 /* qlsp + ak + pitch excitation + interpolated LSP = 220 B.
  * Fused innovation writes final excitation without a 160-byte intermediate.
  * All allocations have aligned offsets (0,20,40,200); host checks every PUSH. */
-static uint32_t scratch[55] __attribute__((aligned(4)));
+_Alignas(4) static uint32_t scratch[55];
 static size_t scratch_peak;
 
-#ifndef __AVR__
+#if SPEEX_NB3_CHECK_SCRATCH
 void *speex_avr_push(char **position, size_t bytes, size_t alignment)
 {
     uintptr_t p = (uintptr_t)*position;

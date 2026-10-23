@@ -4,7 +4,8 @@
  * All four per-frame LSP interpolations/conversions are retained. Peel the
  * symmetric endpoints and p[0]==2^20 product; constant stages remove bounds
  * branches and pointer arithmetic in exchange for additional Flash. */
-#ifdef __AVR__
+#include "speex_platform.h"
+#if SPEEX_NB3_USE_AVR_ASM
 extern int32_t speex_avr_lsp_mul_q14(int16_t,int32_t);
 #define LSP_Q14(a,b) speex_avr_lsp_mul_q14(a,b)
 #else
@@ -14,7 +15,7 @@ extern int32_t speex_avr_lsp_mul_q14(int16_t,int32_t);
  * the four stages bound their largest product inputs by
  * 2097152, 6291457, 20971523, 73400331, all below 2^29.
  * Thus the fast signed30 entry exactly matches the generic high-word cast. */
-static inline __attribute__((always_inline)) void lsp_stage(spx_word32_t *p, spx_word16_t f, int stage)
+static SPEEX_NB3_ALWAYS_INLINE void lsp_stage(spx_word32_t *p, spx_word16_t f, int stage)
 {
     int j;
     p[stage+1] = SUB32(SHL32(p[stage-1],1), LSP_Q14(f,p[stage]));
@@ -22,11 +23,7 @@ static inline __attribute__((always_inline)) void lsp_stage(spx_word32_t *p, spx
         p[j] = ADD32(SUB32(p[j], LSP_Q14(f,p[j-1])),p[j-2]);
     p[1] = SUB32(p[1],SHL32(EXTEND32(f),6));
 }
-#ifdef __AVR__
-#define STAGE_ATTR __attribute__((noinline,noclone,optimize("O3")))
-#else
-#define STAGE_ATTR __attribute__((noinline))
-#endif
+#define STAGE_ATTR SPEEX_NB3_STAGE
 static STAGE_ATTR spx_word16_t lsp_angle(spx_lsp_t angle) {return ANGLE2X(angle);}
 /* The first two roots give p1=-(a+b)*64 and p2=2^21+ceil(a*b/256).
  * Fold the constant and ceil bias before the byte-aligned >>8. The sum

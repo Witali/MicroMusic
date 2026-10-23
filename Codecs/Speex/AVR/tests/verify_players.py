@@ -16,6 +16,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--avr-gcc', required=True)
     parser.add_argument('--node', default='node')
+    parser.add_argument('--backend', choices=['asm', 'c'], default='asm')
     parser.add_argument('--streams', type=Path, default=ROOT / 'reference/R4/data')
     parser.add_argument('--out', type=Path, default=ROOT / 'build/player-matrix')
     parser.add_argument('--frame-load-cycles', type=int, default=0,
@@ -29,7 +30,7 @@ def main():
     streams.sort(key=lambda p: p.name == 'speech_ru.spxraw')
     results = []
     for stream in streams:
-        build.avr(args.avr_gcc, stream, args.frame_load_cycles)
+        build.avr(args.avr_gcc, stream, args.frame_load_cycles, args.backend)
         subprocess.run([args.node, ROOT / 'tests/verify_player.mjs', stream.resolve()], check=True, capture_output=True)
         row = json.loads((ROOT / 'build/player/player-verification.json').read_text(encoding='utf-8'))
         results.append(row)

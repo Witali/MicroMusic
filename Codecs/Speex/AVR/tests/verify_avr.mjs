@@ -1,6 +1,7 @@
 // Execute the linked AVR GCC machine code on an independent AVR8js CPU.
 // No timers/ISR in this harness: frame cycles measure the decoder and mailbox.
 import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
 import {readFileSync, readdirSync, writeFileSync, mkdirSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {resolve, join} from 'node:path';
@@ -28,6 +29,16 @@ const status = address('speex_test_status'), command = address('speex_test_comma
 const packet = address('speex_test_packet'), pcm = address('speex_test_pcm');
 const result = address('speex_test_result'), end = address('__bss_end');
 const binary = readFileSync(join(build, 'speex-test.bin'));
+const backend=JSON.parse(readFileSync(join(build,'backend.json'),'utf8'));
+assert.equal(createHash('sha256').update(binary).digest('hex'),backend.binarySha256,
+  'Backend metadata must describe the executed binary');
+const backendIndex=process.argv.indexOf('--backend');
+if (backendIndex>=0) assert.equal(backend.backend,process.argv[backendIndex+1]);
+if (backend.backend==='c') {
+  for (const kernel of ['speex_avr_iir40','speex_avr_pitch_add','speex_avr_innovation10',
+                        'speex_avr_mul16_32_q14','speex_avr_lsp_mul_q14'])
+    assert.ok(!symbols.has(kernel),'C backend unexpectedly linked ASM kernel '+kernel);
+}
 assert.equal(address('scratch') & 3, 0, '220-byte scratch requires a four-byte-aligned base');
 for (const table of ['cdbk_nb', 'cdbk_nb_low1', 'cdbk_nb_high1', 'gain_cdbk_lbr', 'exc_10_32_table', 'nb3_gain_table']) {
   assert.ok(symbols.has(table) && symbols.get(table) < 32768, table + ' must reside in Flash');
@@ -43,6 +54,7 @@ assert.ok(binary.length <= 32768);
 const limitIndex = process.argv.indexOf('--frames');
 const limit = limitIndex < 0 ? Infinity : Number(process.argv[limitIndex + 1]);
 const report = {simulator: 'avr8js 0.21.1', compiler: 'AVR GCC', mcu: 'ATmega328P',
+  backend: backend.backend, binarySha256: backend.binarySha256,
   flashBytes: binary.length, staticSramBytes: end - 0x100,
   includesInterrupts: false, frames: 0, maxCycles: 0, minStackPointer: 0x8ff, streams: []};
 

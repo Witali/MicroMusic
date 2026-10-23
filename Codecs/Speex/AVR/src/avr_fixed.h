@@ -4,7 +4,7 @@
 #ifndef SPEEX_AVR_FIXED_H
 #define SPEEX_AVR_FIXED_H
 #include "avr_shift.h"
-#ifdef __AVR__
+#if SPEEX_NB3_USE_AVR_ASM
 #undef SHR32
 #define SHR32(a,s) (__builtin_constant_p(s) && (s)==13 ? speex_avr_asr13(a) : \
                    __builtin_constant_p(s) && (s)==14 ? speex_avr_asr14(a) : \

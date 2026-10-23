@@ -1,10 +1,8 @@
 /* Restricted <=7-bit fields, MSB first. API-compatible reader for NB3. */
 #include <stdint.h>
 #include "speex/speex_bits.h"
-#ifdef __AVR__
-__attribute__((optimize("O3")))
-#endif
-__attribute__((noinline))
+#include "speex_platform.h"
+SPEEX_NB3_HOT SPEEX_NB3_NOINLINE
 unsigned int speex_bits_unpack_unsigned(SpeexBits *bits, int nbBits)
 {
     uint8_t n = (uint8_t)nbBits;

@@ -19,6 +19,8 @@ execFileSync(join(root, 'build/reference', process.platform === 'win32' ? 'decod
 const oracle = readFileSync(oracleFile);
 const expected = Buffer.from(Array.from({length: oracle.length / 2}, (_,i) => oracle[i*2+1] ^ 128));
 const binary = readFileSync(join(build, 'speex-player.bin'));
+const backend=JSON.parse(readFileSync(join(build,'backend.json'),'utf8'));
+assert.equal(createHash('sha256').update(binary).digest('hex'),backend.binarySha256);
 assert.ok(binary.length <= 32768);
 const symbols = new Map(readFileSync(join(build, 'symbols.txt'), 'utf8').split(/\r?\n/)
   .map(line => line.match(/^([0-9a-f]+)\s+\w\s+(.+)$/)).filter(Boolean)
@@ -90,6 +92,7 @@ const gaps = times.slice(1).map((t,i) => t-times[i]);
 const readyGaps = readyTimes.slice(1).map((t,i) => t-readyTimes[i]);
 assert.ok(Math.min(...gaps) >= 1992 && Math.max(...gaps) <= 2008, 'Timer period / IRQ latency');
 const report = {simulator: 'avr8js 0.21.1', input: metadata, frames: metadata.frames,
+  backend: backend.backend, binarySha256: backend.binarySha256,
   samples: expected.length, cpuHz: 16000000, pcmHz: 8000, pwmHz: 62500,
   flashBytes: binary.length, staticSramBytes: end-0x100, peakStackBytes: 0x8ff-minSP,
   freeSramAtPeak: minSP-end+1, underruns: 0, timerIntervalMinCycles: Math.min(...gaps),

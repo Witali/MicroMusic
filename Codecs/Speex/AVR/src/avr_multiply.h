@@ -5,10 +5,11 @@
 #ifndef SPEEX_AVR_MULTIPLY_H
 #define SPEEX_AVR_MULTIPLY_H
 #include <stdint.h>
-static inline __attribute__((always_inline))
+#include "speex_platform.h"
+static SPEEX_NB3_ALWAYS_INLINE
 int32_t speex_avr_mul_s16_s16(int16_t lhs, int16_t rhs)
 {
-#ifdef __AVR__
+#if SPEEX_NB3_USE_AVR_ASM
     int32_t result;
     __asm__ (
         "clr r2\n\t"

@@ -3,7 +3,8 @@
  * processes exactly 40 samples, so the history cursor returns to zero.
  * Changing coefficients one tap per sample preserves the original transposed
  * filter's first ten outputs after each coefficient change. */
-#ifdef __AVR__
+#include "speex_platform.h"
+#if SPEEX_NB3_USE_AVR_ASM
 extern void speex_avr_iir40(const int16_t *, const int16_t *, int16_t *, int32_t *);
 #else
 static int32_t speex_avr_lpc_dot10(const int16_t *coef, const int16_t *after)
@@ -16,11 +17,11 @@ static int32_t speex_avr_lpc_dot10(const int16_t *coef, const int16_t *after)
 }
 #endif
 
-__attribute__((noinline)) void iir_mem16(const spx_word16_t *x,
+SPEEX_NB3_NOINLINE void iir_mem16(const spx_word16_t *x,
    const spx_coef_t *den, spx_word16_t *y, int N, int ord,
    spx_mem_t *mem, char *stack)
 {
-#ifdef __AVR__
+#if SPEEX_NB3_USE_AVR_ASM
    (void)N; (void)ord; (void)stack;
    speex_avr_iir40(x, den, y, mem);
 #else
