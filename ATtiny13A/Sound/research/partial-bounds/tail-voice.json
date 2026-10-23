@@ -1,0 +1,151 @@
+{
+  "schema": "strict-partial-bounds-report-v1",
+  "sample_rate": 7500,
+  "samples": 12800,
+  "reference_sha256": "e725be54dc17ba77051002b20c3dd825560e2554f49e70c20628c89fecea0c0c",
+  "tracker": {
+    "version": "strongest-partial-tracks-v1",
+    "max_tracks": 10,
+    "n_fft": 1024,
+    "hop": 128,
+    "max_gap": 8,
+    "frequency_tolerance_cents": 50.0,
+    "frequency_tolerance_hz": 0.0,
+    "amplitude_tolerance_db": 3.0,
+    "matching_gate_cents": 100.0,
+    "matching_gate_floor_hz": 14.6484375
+  },
+  "candidates": {
+    "Tail Q3 tracks actual": {
+      "sha256": "f5ee6915bafced99e437d7397449a170117165843fd15f9d52412b22f74f03ee",
+      "evaluation_ms": 50.8531000232324,
+      "schema": "strict-partial-bounds-v1",
+      "scope": "Every selected reference peak; extra candidate peaks reported separately, not bounded here",
+      "bounds": {
+        "max_level_error_db": 5.0,
+        "max_frequency_error_cents": null,
+        "max_frequency_error_hz": null
+      },
+      "passed": false,
+      "selected_reference_peaks": 1010,
+      "matched_reference_peaks": 408,
+      "missing_reference_peaks": 602,
+      "matched_level_violations": 114,
+      "matched_frequency_violations": 0,
+      "violating_reference_peaks": 716,
+      "violating_reference_peak_fraction": 0.7089108910891089,
+      "violating_reference_power_fraction": 0.509854028952327,
+      "missing_reference_power_fraction": 0.21222683598812028,
+      "max_matched_level_error_db": 18.670571864383597,
+      "max_matched_frequency_error_cents": 193.04029779706536,
+      "max_matched_frequency_error_hz": 145.2286038889897,
+      "extra_candidate_peaks": 563,
+      "global_track_metrics": {
+        "harmonic_track_loss": 0.7485227819963146,
+        "frequency_trajectory_error": 0.7481428307897442,
+        "level_error": 1.7937217382055144,
+        "missing_reference_energy": 0.21222683598812025,
+        "extra_candidate_energy": 0.317958845238609,
+        "weighted_match_rate": 0.7877731640118801,
+        "frequency_error_cents": 38.34413633111379,
+        "frequency_error_hz": 11.380691114375974,
+        "level_error_db": 5.3811652146165505,
+        "frequency_error_p95_cents": 66.81936428630365,
+        "frequency_error_p95_hz": 26.497593992296174,
+        "level_error_p95_db": 13.882739935854552,
+        "continuity_break_rate": 0.33133131993147324
+      },
+      "worst_intervals": [
+        {
+          "start_seconds": 0.0,
+          "end_seconds": 0.256,
+          "selected_reference_peaks": 150,
+          "violating_reference_peaks": 100,
+          "missing_reference_peaks": 83,
+          "matched_level_violations": 17,
+          "matched_frequency_violations": 0,
+          "violating_reference_power_fraction": 0.16677328897045124,
+          "max_matched_level_error_db": 17.353881052801707,
+          "max_matched_frequency_error_cents": 98.90486594415646
+        },
+        {
+          "start_seconds": 0.256,
+          "end_seconds": 0.512,
+          "selected_reference_peaks": 150,
+          "violating_reference_peaks": 119,
+          "missing_reference_peaks": 112,
+          "matched_level_violations": 7,
+          "matched_frequency_violations": 0,
+          "violating_reference_power_fraction": 0.15657340592817243,
+          "max_matched_level_error_db": 14.317587083069142,
+          "max_matched_frequency_error_cents": 80.09065295209308
+        },
+        {
+          "start_seconds": 1.024,
+          "end_seconds": 1.2799999999999998,
+          "selected_reference_peaks": 150,
+          "violating_reference_peaks": 84,
+          "missing_reference_peaks": 64,
+          "matched_level_violations": 20,
+          "matched_frequency_violations": 0,
+          "violating_reference_power_fraction": 0.08660512698171657,
+          "max_matched_level_error_db": 13.268552319526652,
+          "max_matched_frequency_error_cents": 74.20262879925801
+        },
+        {
+          "start_seconds": 0.768,
+          "end_seconds": 1.024,
+          "selected_reference_peaks": 150,
+          "violating_reference_peaks": 92,
+          "missing_reference_peaks": 79,
+          "matched_level_violations": 13,
+          "matched_frequency_violations": 0,
+          "violating_reference_power_fraction": 0.06544083866729052,
+          "max_matched_level_error_db": 8.191503276151199,
+          "max_matched_frequency_error_cents": 104.91815823386789
+        },
+        {
+          "start_seconds": 0.512,
+          "end_seconds": 0.768,
+          "selected_reference_peaks": 150,
+          "violating_reference_peaks": 109,
+          "missing_reference_peaks": 96,
+          "matched_level_violations": 13,
+          "matched_frequency_violations": 0,
+          "violating_reference_power_fraction": 0.027978821773300445,
+          "max_matched_level_error_db": 7.637785514291852,
+          "max_matched_frequency_error_cents": 103.59860008415606
+        },
+        {
+          "start_seconds": 1.28,
+          "end_seconds": 1.536,
+          "selected_reference_peaks": 150,
+          "violating_reference_peaks": 115,
+          "missing_reference_peaks": 84,
+          "matched_level_violations": 31,
+          "matched_frequency_violations": 0,
+          "violating_reference_power_fraction": 0.006053333943251261,
+          "max_matched_level_error_db": 15.870597705783098,
+          "max_matched_frequency_error_cents": 104.29867994644928
+        },
+        {
+          "start_seconds": 1.536,
+          "end_seconds": 1.7066666666666668,
+          "selected_reference_peaks": 110,
+          "violating_reference_peaks": 97,
+          "missing_reference_peaks": 84,
+          "matched_level_violations": 13,
+          "matched_frequency_violations": 0,
+          "violating_reference_power_fraction": 0.0004292126881445772,
+          "max_matched_level_error_db": 18.670571864383597,
+          "max_matched_frequency_error_cents": 193.04029779706536
+        }
+      ]
+    }
+  },
+  "source_sha256_normalized_lf": {
+    "tools/check-partial-bounds.py": "cd111005383b2b04e00bbaa06c9ccf82aac0211f99c5af6def8eb917b2deae98",
+    "ATtiny13A/Sound/codec/partial_bounds.py": "8b900ca82b137e4ec0990078dc8880ebe0927423803fd48b4655d2337f7e230c",
+    "ATtiny13A/Sound/codec/harmonic_tracks.py": "b93040a6bfe174c145152f1a9fc03d9039192b81da0b2f8ace3e2a7c70f8b5b5"
+  }
+}
