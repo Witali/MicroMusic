@@ -176,7 +176,8 @@ binary measurements. Vendor and R4 files remain unmodified.
   The current image hash equals the independently tested experimental image;
   the C fallback remains byte-identical to its admitted 10%-reserve image.
   Both freshly exported C archives still match all 9,100 native host frames.
-  Final ASM timer/ISR admission remains pending for this stage.
+  All 31 p1 ASM players pass the 40% timer/ISR gate: no underruns, minimum
+  queue 27, maximum publication gap 202,051 cycles, free SRAM 524 B.
 
 ## Next candidates (unmeasured)
 
