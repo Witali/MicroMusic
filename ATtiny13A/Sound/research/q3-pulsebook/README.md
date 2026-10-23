@@ -61,9 +61,10 @@ STOI and spectral extremes rather than concealing one in a scalar score.
 `vinni/report.json` retains the run configuration, seed fitting, progress,
 final metrics, target failure, rejection counts and exact source fingerprints.
 `vinni/{balanced,best_stoi,best_spectrum,pareto/NN}/` retain the final model,
-actual compressed speech stream,64-byte EEPROM image and measured quality.
-Audio and raw PCM remain in ignored `build/q3-pulsebook/vinni/` and can be
-regenerated from these parameters alone with `q3_pulsebook.render`.
+actual compressed speech stream,all64 EEPROM table values in the model and
+measured quality. Raw EEPROM images, audio and raw PCM remain in ignored
+`build/q3-pulsebook/vinni/` and can be regenerated from these parameters alone.
+The builder also accepts the retained model JSON directly as its table input.
 
 Source: `../../codec/q3_pulsebook.py`, `../../codec/Q3_PULSEBOOK.md` and
 `tools/probe-q3-pulsebook.py`. Five oracle tests and three search tests pass.
