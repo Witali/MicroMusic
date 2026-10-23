@@ -1,0 +1,5600 @@
+{
+  "schema": "hq4-speech-clipping-audit-v1",
+  "manifest_sha256": "4b6c7b7a039cba2794465e4b4c7412c5b7e49b60894b4132ae87615116cab982",
+  "audit_phase": "legacy; continuous=False; no decoder or model changes",
+  "plateau_definition": "At least two consecutive exactly equal samples; local peaks require both neighboring runs to be lower/higher; extrema are the observed min/max, not only DAC endpoints",
+  "interpretation": "Internal modulo wrap is overflow distortion, not saturating clipping. DAC endpoint occupancy, flat quantized peaks, and external WAV limiting are separate checks. A flat peak alone does not prove clipping.",
+  "source_sha256_normalized_lf": {
+    "tools/audit-speech-clipping.py": "f6a0fdf820a4b0b6254e4011d8f75156a000c37191964d376595e39d3f0336dd",
+    "ATtiny13A/Sound/codec/model.py": "d9c3449ddd2da1929e71da99ef3b040d46d95988d2f5ea704f9416e30c1ba71e",
+    "ATtiny13A/Sound/codec/hq4_phase.py": "fa2daf8b61390ae0bd1c4da82dddd7b3909fde28f096f7eefb7bb7cc2ed0a97d",
+    "ATtiny13A/Sound/codec/hq4_core.py": "936c21384042c24be9525ff7cb73b6e1421c852b4a63ea393e318cc60e9bd466"
+  },
+  "totals": {
+    "clips": 20,
+    "samples": 307200,
+    "subtraction_wraps": 0,
+    "state_addition_wraps": 0,
+    "negative_128_multiplications": 0,
+    "dac_endpoint_samples": 0,
+    "fractional_products": 3059729,
+    "multiplication_count": 4608000,
+    "minimum_unique_output_levels": 33,
+    "maximum_unique_output_levels": 99,
+    "float_wav_exact_clips": 20
+  },
+  "clips": [
+    {
+      "id": "ru_pushkin_a-center2048",
+      "language": "ru",
+      "voice": "male",
+      "condition": "natural",
+      "source_id": "ru_pushkin",
+      "reference_sha256": "d817aff327e860c34b556261f0d016dd1da4bd3f04e2a5a9c1c03621e938f242",
+      "model_sha256": "e0b4735a4fcd8b259937e89b288035f30b8dd3e656d840870a31cbaff8ebd009",
+      "stream_sha256": "d166831859a75ce5b6a681191db7744ff2963603bf93e1e46191afc0e38c77f4",
+      "pcm_u8_sha256": "11d6c1874a8357badcb44a6732507412f7a6834f50d2cb11cda68c410b225ab2",
+      "decoded_wav_sha256": "539cc76691ccf6bb054c8d9f49ba7e727bc9cb2d86e846b662f6e9e951ed4f26",
+      "exact_oracle_equal": true,
+      "packed_stream_equal": true,
+      "expected_raw_equal": true,
+      "float_wav_sample_exact": true,
+      "reference_subtype": "FLOAT",
+      "decoded_subtype": "FLOAT",
+      "arithmetic": {
+        "samples": 15360,
+        "subtraction_wraps": 0,
+        "state_addition_wraps": 0,
+        "negative_128_multiplication": 0,
+        "fractional_products": 149494,
+        "multiplication_count": 230400,
+        "quantization_error_mean": -0.3214306640625,
+        "minimum_intermediate": -10,
+        "maximum_intermediate": 25,
+        "frame_phase_restarts": 116,
+        "period_changes": 90,
+        "displaced_countdown_samples": 3520,
+        "positive_pulse_events": 374,
+        "pulse_interval_median": 21.0,
+        "pulse_interval_minimum": 12,
+        "pulse_interval_maximum": 307,
+        "extreme_pwm_samples": 0,
+        "peak_signed": 25
+      },
+      "reference": {
+        "samples": 15360,
+        "minimum": -0.295632541179657,
+        "maximum": 0.32457926869392395,
+        "peak": 0.32457926869392395,
+        "mean": 0.022511839891862763,
+        "rms": 0.0760698139890385,
+        "unique_levels": 15360,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 1,
+        "equal_neighbor_fraction": 0.0,
+        "local_positive_plateaus_ge2": 0,
+        "local_negative_plateaus_ge2": 0,
+        "observed_minimum": {
+          "level": -0.295632541179657,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.32457926869392395,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": -0.295632541179657,
+            "samples": 1
+          },
+          {
+            "level": -0.29055455327033997,
+            "samples": 1
+          },
+          {
+            "level": -0.28387048840522766,
+            "samples": 1
+          },
+          {
+            "level": -0.2684505581855774,
+            "samples": 1
+          },
+          {
+            "level": -0.2583760917186737,
+            "samples": 1
+          },
+          {
+            "level": -0.25202488899230957,
+            "samples": 1
+          },
+          {
+            "level": -0.24958547949790955,
+            "samples": 1
+          },
+          {
+            "level": -0.24828878045082092,
+            "samples": 1
+          }
+        ]
+      },
+      "decoded": {
+        "samples": 15360,
+        "minimum": -0.0625,
+        "maximum": 0.1953125,
+        "peak": 0.1953125,
+        "mean": 0.04311167399088542,
+        "rms": 0.05167048542717779,
+        "unique_levels": 33,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 113,
+        "equal_neighbor_fraction": 0.47984894849925125,
+        "local_positive_plateaus_ge2": 1041,
+        "local_negative_plateaus_ge2": 21,
+        "observed_minimum": {
+          "level": -0.0625,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.1953125,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.03125,
+            "samples": 2472
+          },
+          {
+            "level": 0.0390625,
+            "samples": 2208
+          },
+          {
+            "level": 0.0234375,
+            "samples": 2077
+          },
+          {
+            "level": 0.046875,
+            "samples": 1950
+          },
+          {
+            "level": 0.015625,
+            "samples": 1331
+          },
+          {
+            "level": 0.0546875,
+            "samples": 1325
+          },
+          {
+            "level": 0.0078125,
+            "samples": 778
+          },
+          {
+            "level": 0.0625,
+            "samples": 717
+          }
+        ]
+      },
+      "source": {
+        "excitation": {
+          "samples": 15360,
+          "minimum": -0.0390625,
+          "maximum": 0.1171875,
+          "peak": 0.1171875,
+          "mean": 0.003299967447916667,
+          "rms": 0.01592575538077369,
+          "unique_levels": 16,
+          "samples_outside_unit_interval": 0,
+          "samples_abs_ge_one": 0,
+          "maximum_equal_run": 119,
+          "equal_neighbor_fraction": 0.8327365062829611,
+          "local_positive_plateaus_ge2": 64,
+          "local_negative_plateaus_ge2": 65,
+          "observed_minimum": {
+            "level": -0.0390625,
+            "samples": 43,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "observed_maximum": {
+            "level": 0.1171875,
+            "samples": 43,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "most_common_levels": [
+            {
+              "level": 0.0,
+              "samples": 13016
+            },
+            {
+              "level": -0.0078125,
+              "samples": 419
+            },
+            {
+              "level": 0.015625,
+              "samples": 314
+            },
+            {
+              "level": 0.046875,
+              "samples": 259
+            },
+            {
+              "level": 0.0078125,
+              "samples": 254
+            },
+            {
+              "level": 0.03125,
+              "samples": 193
+            },
+            {
+              "level": 0.0234375,
+              "samples": 165
+            },
+            {
+              "level": 0.0625,
+              "samples": 134
+            }
+          ]
+        },
+        "pulse_events": 374,
+        "frame_boundaries": 120,
+        "unique_period_codes": 42,
+        "voiced_samples": 14848,
+        "pulse_shape_modes": [
+          {
+            "value": 0,
+            "count": 120
+          }
+        ],
+        "gain_codes": [
+          {
+            "value": 1,
+            "count": 22
+          },
+          {
+            "value": 2,
+            "count": 29
+          },
+          {
+            "value": 3,
+            "count": 30
+          },
+          {
+            "value": 4,
+            "count": 26
+          },
+          {
+            "value": 5,
+            "count": 13
+          }
+        ]
+      },
+      "output_rms_over_reference_rms": 0.6792508449491331
+    },
+    {
+      "id": "ru_pushkin_b-center2048",
+      "language": "ru",
+      "voice": "male",
+      "condition": "natural",
+      "source_id": "ru_pushkin",
+      "reference_sha256": "8e96ae489c474614eda647458e0c89ad45c0b9d9de7b8fe1e230bb0be1b5b9a7",
+      "model_sha256": "ca7c005fc10b104ff8cf6c27b3d736f05d610b708d0ab7d8bf912212ace682fe",
+      "stream_sha256": "ed17424f57a2d30b0410096463715cea24877d9802fe39b6cdea065f2f60bc0e",
+      "pcm_u8_sha256": "11b0060a0efb5390b04492db330e20cb077c8875ab329eb9236372b867a1e067",
+      "decoded_wav_sha256": "150ab10c530f67e40dc7f9dfed9a9cf80b00ef7103f147e5daac1d69b9679713",
+      "exact_oracle_equal": true,
+      "packed_stream_equal": true,
+      "expected_raw_equal": true,
+      "float_wav_sample_exact": true,
+      "reference_subtype": "FLOAT",
+      "decoded_subtype": "FLOAT",
+      "arithmetic": {
+        "samples": 15360,
+        "subtraction_wraps": 0,
+        "state_addition_wraps": 0,
+        "negative_128_multiplication": 0,
+        "fractional_products": 135479,
+        "multiplication_count": 230400,
+        "quantization_error_mean": -0.30088080512152776,
+        "minimum_intermediate": -11,
+        "maximum_intermediate": 25,
+        "frame_phase_restarts": 60,
+        "period_changes": 42,
+        "displaced_countdown_samples": 1444,
+        "positive_pulse_events": 596,
+        "pulse_interval_median": 12.0,
+        "pulse_interval_minimum": 12,
+        "pulse_interval_maximum": 144,
+        "extreme_pwm_samples": 0,
+        "peak_signed": 25
+      },
+      "reference": {
+        "samples": 15360,
+        "minimum": -0.3455745577812195,
+        "maximum": 0.3604072034358978,
+        "peak": 0.3604072034358978,
+        "mean": 0.022656879186052074,
+        "rms": 0.08476285283521448,
+        "unique_levels": 15358,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 1,
+        "equal_neighbor_fraction": 0.0,
+        "local_positive_plateaus_ge2": 0,
+        "local_negative_plateaus_ge2": 0,
+        "observed_minimum": {
+          "level": -0.3455745577812195,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.3604072034358978,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.0383833609521389,
+            "samples": 2
+          },
+          {
+            "level": 0.053186122328042984,
+            "samples": 2
+          },
+          {
+            "level": -0.3455745577812195,
+            "samples": 1
+          },
+          {
+            "level": -0.3373403251171112,
+            "samples": 1
+          },
+          {
+            "level": -0.3345704972743988,
+            "samples": 1
+          },
+          {
+            "level": -0.32592135667800903,
+            "samples": 1
+          },
+          {
+            "level": -0.3253409266471863,
+            "samples": 1
+          },
+          {
+            "level": -0.3226023018360138,
+            "samples": 1
+          }
+        ]
+      },
+      "decoded": {
+        "samples": 15360,
+        "minimum": -0.0625,
+        "maximum": 0.1953125,
+        "peak": 0.1953125,
+        "mean": 0.04372762044270833,
+        "rms": 0.05283442296169065,
+        "unique_levels": 33,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 117,
+        "equal_neighbor_fraction": 0.5749072205221694,
+        "local_positive_plateaus_ge2": 906,
+        "local_negative_plateaus_ge2": 20,
+        "observed_minimum": {
+          "level": -0.0625,
+          "samples": 6,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.1953125,
+          "samples": 7,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.046875,
+            "samples": 2182
+          },
+          {
+            "level": 0.015625,
+            "samples": 1724
+          },
+          {
+            "level": 0.0078125,
+            "samples": 1506
+          },
+          {
+            "level": 0.0390625,
+            "samples": 1458
+          },
+          {
+            "level": 0.03125,
+            "samples": 1370
+          },
+          {
+            "level": 0.0234375,
+            "samples": 1322
+          },
+          {
+            "level": 0.0625,
+            "samples": 1185
+          },
+          {
+            "level": 0.0546875,
+            "samples": 1173
+          }
+        ]
+      },
+      "source": {
+        "excitation": {
+          "samples": 15360,
+          "minimum": -0.0390625,
+          "maximum": 0.1171875,
+          "peak": 0.1171875,
+          "mean": 0.00344085693359375,
+          "rms": 0.015288350271439257,
+          "unique_levels": 15,
+          "samples_outside_unit_interval": 0,
+          "samples_abs_ge_one": 0,
+          "maximum_equal_run": 119,
+          "equal_neighbor_fraction": 0.7908066931440849,
+          "local_positive_plateaus_ge2": 0,
+          "local_negative_plateaus_ge2": 0,
+          "observed_minimum": {
+            "level": -0.0390625,
+            "samples": 75,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "observed_maximum": {
+            "level": 0.1171875,
+            "samples": 75,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "most_common_levels": [
+            {
+              "level": 0.0,
+              "samples": 12800
+            },
+            {
+              "level": 0.015625,
+              "samples": 899
+            },
+            {
+              "level": -0.0078125,
+              "samples": 461
+            },
+            {
+              "level": 0.0234375,
+              "samples": 461
+            },
+            {
+              "level": 0.078125,
+              "samples": 138
+            },
+            {
+              "level": 0.046875,
+              "samples": 124
+            },
+            {
+              "level": 0.03125,
+              "samples": 82
+            },
+            {
+              "level": -0.0390625,
+              "samples": 75
+            }
+          ]
+        },
+        "pulse_events": 596,
+        "frame_boundaries": 60,
+        "unique_period_codes": 27,
+        "voiced_samples": 15360,
+        "pulse_shape_modes": [
+          {
+            "value": 0,
+            "count": 60
+          }
+        ],
+        "gain_codes": [
+          {
+            "value": 1,
+            "count": 23
+          },
+          {
+            "value": 2,
+            "count": 12
+          },
+          {
+            "value": 3,
+            "count": 8
+          },
+          {
+            "value": 4,
+            "count": 5
+          },
+          {
+            "value": 5,
+            "count": 12
+          }
+        ]
+      },
+      "output_rms_over_reference_rms": 0.6233204899840363
+    },
+    {
+      "id": "ru_square_a-center2048",
+      "language": "ru",
+      "voice": "female",
+      "condition": "natural",
+      "source_id": "ru_square",
+      "reference_sha256": "42e954dadf77b916325f4d0ba392144487d420bb4a3a38ef9e5c95735b7e8d35",
+      "model_sha256": "09eddbec628789d684c61ba4c19d21fe496f6b57f5e47de475b5f5ef1f282318",
+      "stream_sha256": "e91352083c116bc056a75f096b87924882a551a5e59d8c54d01784f2a7329ea2",
+      "pcm_u8_sha256": "4dedea310d49733dd883145d3541630e707b894fd02bf331e081bd226d712507",
+      "decoded_wav_sha256": "5aad0d845857cac0de4aee4ddb210981ec2f91b43fc4b7472f4147a639ad4b53",
+      "exact_oracle_equal": true,
+      "packed_stream_equal": true,
+      "expected_raw_equal": true,
+      "float_wav_sample_exact": true,
+      "reference_subtype": "FLOAT",
+      "decoded_subtype": "FLOAT",
+      "arithmetic": {
+        "samples": 15360,
+        "subtraction_wraps": 0,
+        "state_addition_wraps": 0,
+        "negative_128_multiplication": 0,
+        "fractional_products": 146698,
+        "multiplication_count": 230400,
+        "quantization_error_mean": -0.3064653862847222,
+        "minimum_intermediate": -21,
+        "maximum_intermediate": 63,
+        "frame_phase_restarts": 220,
+        "period_changes": 114,
+        "displaced_countdown_samples": 3728,
+        "positive_pulse_events": 368,
+        "pulse_interval_median": 32.0,
+        "pulse_interval_minimum": 12,
+        "pulse_interval_maximum": 694,
+        "extreme_pwm_samples": 0,
+        "peak_signed": 63
+      },
+      "reference": {
+        "samples": 15360,
+        "minimum": -0.1730540543794632,
+        "maximum": 0.17736181616783142,
+        "peak": 0.17736181616783142,
+        "mean": -4.8048540583134346e-05,
+        "rms": 0.049465301459467426,
+        "unique_levels": 15358,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 1,
+        "equal_neighbor_fraction": 0.0,
+        "local_positive_plateaus_ge2": 0,
+        "local_negative_plateaus_ge2": 0,
+        "observed_minimum": {
+          "level": -0.1730540543794632,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.17736181616783142,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": -0.12226438522338867,
+            "samples": 2
+          },
+          {
+            "level": -0.036761753261089325,
+            "samples": 2
+          },
+          {
+            "level": -0.1730540543794632,
+            "samples": 1
+          },
+          {
+            "level": -0.16632749140262604,
+            "samples": 1
+          },
+          {
+            "level": -0.16468903422355652,
+            "samples": 1
+          },
+          {
+            "level": -0.16365166008472443,
+            "samples": 1
+          },
+          {
+            "level": -0.16301141679286957,
+            "samples": 1
+          },
+          {
+            "level": -0.1620643138885498,
+            "samples": 1
+          }
+        ]
+      },
+      "decoded": {
+        "samples": 15360,
+        "minimum": -0.15625,
+        "maximum": 0.4921875,
+        "peak": 0.4921875,
+        "mean": 0.034933980305989584,
+        "rms": 0.06431645246346337,
+        "unique_levels": 69,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 217,
+        "equal_neighbor_fraction": 0.4049091737743343,
+        "local_positive_plateaus_ge2": 1033,
+        "local_negative_plateaus_ge2": 23,
+        "observed_minimum": {
+          "level": -0.15625,
+          "samples": 2,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.4921875,
+          "samples": 5,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.015625,
+            "samples": 3818
+          },
+          {
+            "level": 0.0234375,
+            "samples": 3132
+          },
+          {
+            "level": 0.03125,
+            "samples": 2411
+          },
+          {
+            "level": 0.0390625,
+            "samples": 1209
+          },
+          {
+            "level": 0.0078125,
+            "samples": 1059
+          },
+          {
+            "level": 0.046875,
+            "samples": 536
+          },
+          {
+            "level": 0.0546875,
+            "samples": 341
+          },
+          {
+            "level": 0.0,
+            "samples": 317
+          }
+        ]
+      },
+      "source": {
+        "excitation": {
+          "samples": 15360,
+          "minimum": -0.078125,
+          "maximum": 0.234375,
+          "peak": 0.234375,
+          "mean": 0.007416280110677084,
+          "rms": 0.035655510313278044,
+          "unique_levels": 29,
+          "samples_outside_unit_interval": 0,
+          "samples_abs_ge_one": 0,
+          "maximum_equal_run": 790,
+          "equal_neighbor_fraction": 0.8393124552379713,
+          "local_positive_plateaus_ge2": 17,
+          "local_negative_plateaus_ge2": 15,
+          "observed_minimum": {
+            "level": -0.078125,
+            "samples": 70,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "observed_maximum": {
+            "level": 0.234375,
+            "samples": 75,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "most_common_levels": [
+            {
+              "level": 0.0,
+              "samples": 13334
+            },
+            {
+              "level": 0.015625,
+              "samples": 201
+            },
+            {
+              "level": -0.0078125,
+              "samples": 181
+            },
+            {
+              "level": 0.09375,
+              "samples": 162
+            },
+            {
+              "level": 0.15625,
+              "samples": 127
+            },
+            {
+              "level": 0.0234375,
+              "samples": 120
+            },
+            {
+              "level": 0.046875,
+              "samples": 117
+            },
+            {
+              "level": 0.140625,
+              "samples": 108
+            }
+          ]
+        },
+        "pulse_events": 368,
+        "frame_boundaries": 240,
+        "unique_period_codes": 37,
+        "voiced_samples": 14080,
+        "pulse_shape_modes": [
+          {
+            "value": 0,
+            "count": 240
+          }
+        ],
+        "gain_codes": [
+          {
+            "value": 0,
+            "count": 41
+          },
+          {
+            "value": 1,
+            "count": 42
+          },
+          {
+            "value": 2,
+            "count": 8
+          },
+          {
+            "value": 3,
+            "count": 30
+          },
+          {
+            "value": 4,
+            "count": 5
+          },
+          {
+            "value": 5,
+            "count": 15
+          },
+          {
+            "value": 6,
+            "count": 35
+          },
+          {
+            "value": 7,
+            "count": 13
+          },
+          {
+            "value": 8,
+            "count": 21
+          },
+          {
+            "value": 9,
+            "count": 4
+          },
+          {
+            "value": 10,
+            "count": 26
+          }
+        ]
+      },
+      "output_rms_over_reference_rms": 1.3002337106176376
+    },
+    {
+      "id": "ru_square_b-center2048",
+      "language": "ru",
+      "voice": "female",
+      "condition": "natural",
+      "source_id": "ru_square",
+      "reference_sha256": "01dc2ec6c0d39a3b897f721805c0bae3aa097a63805d75439ad63a10d8b44e3c",
+      "model_sha256": "6a89dbbd16c18d1fcad0831caaf05778e211ea70e73066989fbe235ce73f7e9f",
+      "stream_sha256": "876215d0ce003568f6e6f2619189cc80e236486fc7200e9863a381acf4865124",
+      "pcm_u8_sha256": "17d2307ab0430ed1a89d2ecbd62bdcca620faee2992bd1da20c82913e4845978",
+      "decoded_wav_sha256": "b693469c4692f750e7d30d0dfb828e5beab27e12c41aa5e1a739dd78c0af7dda",
+      "exact_oracle_equal": true,
+      "packed_stream_equal": true,
+      "expected_raw_equal": true,
+      "float_wav_sample_exact": true,
+      "reference_subtype": "FLOAT",
+      "decoded_subtype": "FLOAT",
+      "arithmetic": {
+        "samples": 15360,
+        "subtraction_wraps": 0,
+        "state_addition_wraps": 0,
+        "negative_128_multiplication": 0,
+        "fractional_products": 187559,
+        "multiplication_count": 230400,
+        "quantization_error_mean": -0.40495551215277775,
+        "minimum_intermediate": -22,
+        "maximum_intermediate": 48,
+        "frame_phase_restarts": 116,
+        "period_changes": 70,
+        "displaced_countdown_samples": 2553,
+        "positive_pulse_events": 362,
+        "pulse_interval_median": 36.0,
+        "pulse_interval_minimum": 17,
+        "pulse_interval_maximum": 230,
+        "extreme_pwm_samples": 0,
+        "peak_signed": 48
+      },
+      "reference": {
+        "samples": 15360,
+        "minimum": -0.10987726598978043,
+        "maximum": 0.19055034220218658,
+        "peak": 0.19055034220218658,
+        "mean": 1.0684575692217665e-05,
+        "rms": 0.04145431226738061,
+        "unique_levels": 15359,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 1,
+        "equal_neighbor_fraction": 0.0,
+        "local_positive_plateaus_ge2": 0,
+        "local_negative_plateaus_ge2": 0,
+        "observed_minimum": {
+          "level": -0.10987726598978043,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.19055034220218658,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.07274697721004486,
+            "samples": 2
+          },
+          {
+            "level": -0.10987726598978043,
+            "samples": 1
+          },
+          {
+            "level": -0.10806772112846375,
+            "samples": 1
+          },
+          {
+            "level": -0.10776858031749725,
+            "samples": 1
+          },
+          {
+            "level": -0.10539525002241135,
+            "samples": 1
+          },
+          {
+            "level": -0.1052810400724411,
+            "samples": 1
+          },
+          {
+            "level": -0.10526479780673981,
+            "samples": 1
+          },
+          {
+            "level": -0.1049501895904541,
+            "samples": 1
+          }
+        ]
+      },
+      "decoded": {
+        "samples": 15360,
+        "minimum": -0.125,
+        "maximum": 0.375,
+        "peak": 0.375,
+        "mean": 0.06840311686197917,
+        "rms": 0.09198874043933174,
+        "unique_levels": 65,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 127,
+        "equal_neighbor_fraction": 0.1583436421642034,
+        "local_positive_plateaus_ge2": 489,
+        "local_negative_plateaus_ge2": 85,
+        "observed_minimum": {
+          "level": -0.125,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.375,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.046875,
+            "samples": 1760
+          },
+          {
+            "level": 0.0546875,
+            "samples": 1491
+          },
+          {
+            "level": 0.0625,
+            "samples": 1306
+          },
+          {
+            "level": 0.0390625,
+            "samples": 1187
+          },
+          {
+            "level": 0.0703125,
+            "samples": 816
+          },
+          {
+            "level": 0.03125,
+            "samples": 742
+          },
+          {
+            "level": 0.0234375,
+            "samples": 673
+          },
+          {
+            "level": 0.078125,
+            "samples": 660
+          }
+        ]
+      },
+      "source": {
+        "excitation": {
+          "samples": 15360,
+          "minimum": -0.078125,
+          "maximum": 0.234375,
+          "peak": 0.234375,
+          "mean": 0.0068023681640625,
+          "rms": 0.03333081394847132,
+          "unique_levels": 29,
+          "samples_outside_unit_interval": 0,
+          "samples_abs_ge_one": 0,
+          "maximum_equal_run": 535,
+          "equal_neighbor_fraction": 0.862295722377759,
+          "local_positive_plateaus_ge2": 17,
+          "local_negative_plateaus_ge2": 14,
+          "observed_minimum": {
+            "level": -0.078125,
+            "samples": 16,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "observed_maximum": {
+            "level": 0.234375,
+            "samples": 16,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "most_common_levels": [
+            {
+              "level": 0.0,
+              "samples": 13608
+            },
+            {
+              "level": 0.125,
+              "samples": 174
+            },
+            {
+              "level": 0.078125,
+              "samples": 151
+            },
+            {
+              "level": 0.09375,
+              "samples": 134
+            },
+            {
+              "level": -0.0078125,
+              "samples": 121
+            },
+            {
+              "level": 0.015625,
+              "samples": 105
+            },
+            {
+              "level": -0.0625,
+              "samples": 99
+            },
+            {
+              "level": 0.1875,
+              "samples": 99
+            }
+          ]
+        },
+        "pulse_events": 362,
+        "frame_boundaries": 120,
+        "unique_period_codes": 24,
+        "voiced_samples": 14848,
+        "pulse_shape_modes": [
+          {
+            "value": 0,
+            "count": 120
+          }
+        ],
+        "gain_codes": [
+          {
+            "value": 0,
+            "count": 14
+          },
+          {
+            "value": 1,
+            "count": 14
+          },
+          {
+            "value": 2,
+            "count": 2
+          },
+          {
+            "value": 3,
+            "count": 4
+          },
+          {
+            "value": 4,
+            "count": 10
+          },
+          {
+            "value": 5,
+            "count": 21
+          },
+          {
+            "value": 6,
+            "count": 13
+          },
+          {
+            "value": 7,
+            "count": 8
+          },
+          {
+            "value": 8,
+            "count": 24
+          },
+          {
+            "value": 9,
+            "count": 6
+          },
+          {
+            "value": 10,
+            "count": 4
+          }
+        ]
+      },
+      "output_rms_over_reference_rms": 2.2190391157861624
+    },
+    {
+      "id": "ru_slutskaya_a-center2048",
+      "language": "ru",
+      "voice": "female",
+      "condition": "natural",
+      "source_id": "ru_slutskaya",
+      "reference_sha256": "f83d3b8bc480cf7881df1fffc679240fa5c5187e9441db4abaa5f6282575d0a6",
+      "model_sha256": "0a6593e3584abe8fb547b902a27c48f2b52343cb324cc57d8db307ce158939e7",
+      "stream_sha256": "bbe2974412d822c3aaa43383e4176f0ed246f694d007cf14afc13389a8ccc9dd",
+      "pcm_u8_sha256": "f81335bbd3f41a59a73a025da20a7aaaf3c06d9dfa41f94bf510ef2013a2a6b8",
+      "decoded_wav_sha256": "5231b8ab3fc551f64a184a7522ad0708bf7d71be06e5fc945936b824312f3902",
+      "exact_oracle_equal": true,
+      "packed_stream_equal": true,
+      "expected_raw_equal": true,
+      "float_wav_sample_exact": true,
+      "reference_subtype": "FLOAT",
+      "decoded_subtype": "FLOAT",
+      "arithmetic": {
+        "samples": 15360,
+        "subtraction_wraps": 0,
+        "state_addition_wraps": 0,
+        "negative_128_multiplication": 0,
+        "fractional_products": 136686,
+        "multiplication_count": 230400,
+        "quantization_error_mean": -0.25077528211805555,
+        "minimum_intermediate": -26,
+        "maximum_intermediate": 50,
+        "frame_phase_restarts": 79,
+        "period_changes": 78,
+        "displaced_countdown_samples": 2992,
+        "positive_pulse_events": 204,
+        "pulse_interval_median": 39.0,
+        "pulse_interval_minimum": 12,
+        "pulse_interval_maximum": 817,
+        "extreme_pwm_samples": 0,
+        "peak_signed": 50
+      },
+      "reference": {
+        "samples": 15360,
+        "minimum": -0.3868136703968048,
+        "maximum": 0.33868056535720825,
+        "peak": 0.3868136703968048,
+        "mean": -6.886015063982536e-05,
+        "rms": 0.06602157011324404,
+        "unique_levels": 15359,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 1,
+        "equal_neighbor_fraction": 0.0,
+        "local_positive_plateaus_ge2": 0,
+        "local_negative_plateaus_ge2": 0,
+        "observed_minimum": {
+          "level": -0.3868136703968048,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.33868056535720825,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": -0.20554694533348083,
+            "samples": 2
+          },
+          {
+            "level": -0.3868136703968048,
+            "samples": 1
+          },
+          {
+            "level": -0.36806052923202515,
+            "samples": 1
+          },
+          {
+            "level": -0.36154696345329285,
+            "samples": 1
+          },
+          {
+            "level": -0.355306476354599,
+            "samples": 1
+          },
+          {
+            "level": -0.3545593321323395,
+            "samples": 1
+          },
+          {
+            "level": -0.34696394205093384,
+            "samples": 1
+          },
+          {
+            "level": -0.34602880477905273,
+            "samples": 1
+          }
+        ]
+      },
+      "decoded": {
+        "samples": 15360,
+        "minimum": -0.203125,
+        "maximum": 0.390625,
+        "peak": 0.390625,
+        "mean": 0.02176361083984375,
+        "rms": 0.04755104835389482,
+        "unique_levels": 71,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 768,
+        "equal_neighbor_fraction": 0.4953447490070968,
+        "local_positive_plateaus_ge2": 1689,
+        "local_negative_plateaus_ge2": 25,
+        "observed_minimum": {
+          "level": -0.203125,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.390625,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.0078125,
+            "samples": 4975
+          },
+          {
+            "level": 0.0,
+            "samples": 2647
+          },
+          {
+            "level": 0.015625,
+            "samples": 2115
+          },
+          {
+            "level": 0.0234375,
+            "samples": 1116
+          },
+          {
+            "level": 0.03125,
+            "samples": 1104
+          },
+          {
+            "level": 0.046875,
+            "samples": 846
+          },
+          {
+            "level": 0.0390625,
+            "samples": 771
+          },
+          {
+            "level": 0.0546875,
+            "samples": 338
+          }
+        ]
+      },
+      "source": {
+        "excitation": {
+          "samples": 15360,
+          "minimum": -0.078125,
+          "maximum": 0.234375,
+          "peak": 0.234375,
+          "mean": 0.0033350626627604166,
+          "rms": 0.025924852957043356,
+          "unique_levels": 26,
+          "samples_outside_unit_interval": 0,
+          "samples_abs_ge_one": 0,
+          "maximum_equal_run": 6528,
+          "equal_neighbor_fraction": 0.9126245198255095,
+          "local_positive_plateaus_ge2": 94,
+          "local_negative_plateaus_ge2": 103,
+          "observed_minimum": {
+            "level": -0.078125,
+            "samples": 76,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "observed_maximum": {
+            "level": 0.234375,
+            "samples": 77,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "most_common_levels": [
+            {
+              "level": 0.0,
+              "samples": 13846
+            },
+            {
+              "level": -0.0078125,
+              "samples": 429
+            },
+            {
+              "level": 0.0078125,
+              "samples": 376
+            },
+            {
+              "level": 0.15625,
+              "samples": 135
+            },
+            {
+              "level": 0.234375,
+              "samples": 77
+            },
+            {
+              "level": -0.078125,
+              "samples": 76
+            },
+            {
+              "level": 0.015625,
+              "samples": 67
+            },
+            {
+              "level": 0.046875,
+              "samples": 44
+            }
+          ]
+        },
+        "pulse_events": 204,
+        "frame_boundaries": 120,
+        "unique_period_codes": 39,
+        "voiced_samples": 10112,
+        "pulse_shape_modes": [
+          {
+            "value": 0,
+            "count": 120
+          }
+        ],
+        "gain_codes": [
+          {
+            "value": 0,
+            "count": 60
+          },
+          {
+            "value": 1,
+            "count": 15
+          },
+          {
+            "value": 2,
+            "count": 6
+          },
+          {
+            "value": 3,
+            "count": 4
+          },
+          {
+            "value": 4,
+            "count": 2
+          },
+          {
+            "value": 5,
+            "count": 3
+          },
+          {
+            "value": 6,
+            "count": 7
+          },
+          {
+            "value": 8,
+            "count": 3
+          },
+          {
+            "value": 9,
+            "count": 1
+          },
+          {
+            "value": 10,
+            "count": 19
+          }
+        ]
+      },
+      "output_rms_over_reference_rms": 0.7202350424616151
+    },
+    {
+      "id": "ru_slutskaya_b-center2048",
+      "language": "ru",
+      "voice": "female",
+      "condition": "natural",
+      "source_id": "ru_slutskaya",
+      "reference_sha256": "92b466258dd24bc99494e7a790117c2d76fe560ae5a2eb0a6ea64d7a3cf3b286",
+      "model_sha256": "9f83c6f127b9fd6ce3c0f5d38fee2ef64267f752bea550acdcffd8df0618e3bc",
+      "stream_sha256": "925e0155c918eec24c31370c22ad30bf71f4ac65f540b82aecab30fc8d18e21c",
+      "pcm_u8_sha256": "aaa1a22353c465fa3479beac9e30e875a06af6772b8eedef5f139a5f74e96a59",
+      "decoded_wav_sha256": "6574bd269cb0d45f467fab1934dedc666a3763b9b625a1131e5904d186ecce71",
+      "exact_oracle_equal": true,
+      "packed_stream_equal": true,
+      "expected_raw_equal": true,
+      "float_wav_sample_exact": true,
+      "reference_subtype": "FLOAT",
+      "decoded_subtype": "FLOAT",
+      "arithmetic": {
+        "samples": 15360,
+        "subtraction_wraps": 0,
+        "state_addition_wraps": 0,
+        "negative_128_multiplication": 0,
+        "fractional_products": 142807,
+        "multiplication_count": 230400,
+        "quantization_error_mean": -0.2891183810763889,
+        "minimum_intermediate": -21,
+        "maximum_intermediate": 42,
+        "frame_phase_restarts": 87,
+        "period_changes": 78,
+        "displaced_countdown_samples": 1877,
+        "positive_pulse_events": 280,
+        "pulse_interval_median": 36.0,
+        "pulse_interval_minimum": 12,
+        "pulse_interval_maximum": 1243,
+        "extreme_pwm_samples": 0,
+        "peak_signed": 42
+      },
+      "reference": {
+        "samples": 15360,
+        "minimum": -0.7200590968132019,
+        "maximum": 0.6098846197128296,
+        "peak": 0.7200590968132019,
+        "mean": 0.00016980821332619097,
+        "rms": 0.11406748664543093,
+        "unique_levels": 15359,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 1,
+        "equal_neighbor_fraction": 0.0,
+        "local_positive_plateaus_ge2": 0,
+        "local_negative_plateaus_ge2": 0,
+        "observed_minimum": {
+          "level": -0.7200590968132019,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.6098846197128296,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": -0.0037481754552572966,
+            "samples": 2
+          },
+          {
+            "level": -0.7200590968132019,
+            "samples": 1
+          },
+          {
+            "level": -0.7197251319885254,
+            "samples": 1
+          },
+          {
+            "level": -0.7191697359085083,
+            "samples": 1
+          },
+          {
+            "level": -0.7167621850967407,
+            "samples": 1
+          },
+          {
+            "level": -0.7109823822975159,
+            "samples": 1
+          },
+          {
+            "level": -0.7089989185333252,
+            "samples": 1
+          },
+          {
+            "level": -0.7062092423439026,
+            "samples": 1
+          }
+        ]
+      },
+      "decoded": {
+        "samples": 15360,
+        "minimum": -0.1484375,
+        "maximum": 0.328125,
+        "peak": 0.328125,
+        "mean": 0.02573699951171875,
+        "rms": 0.04839616057402575,
+        "unique_levels": 60,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 256,
+        "equal_neighbor_fraction": 0.4311478611888795,
+        "local_positive_plateaus_ge2": 990,
+        "local_negative_plateaus_ge2": 28,
+        "observed_minimum": {
+          "level": -0.1484375,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.328125,
+          "samples": 7,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.0078125,
+            "samples": 3371
+          },
+          {
+            "level": 0.015625,
+            "samples": 2925
+          },
+          {
+            "level": 0.0234375,
+            "samples": 2568
+          },
+          {
+            "level": 0.03125,
+            "samples": 2031
+          },
+          {
+            "level": 0.0,
+            "samples": 928
+          },
+          {
+            "level": 0.0390625,
+            "samples": 782
+          },
+          {
+            "level": 0.046875,
+            "samples": 394
+          },
+          {
+            "level": 0.0546875,
+            "samples": 290
+          }
+        ]
+      },
+      "source": {
+        "excitation": {
+          "samples": 15360,
+          "minimum": -0.078125,
+          "maximum": 0.234375,
+          "peak": 0.234375,
+          "mean": 0.0053619384765625,
+          "rms": 0.03148827313317877,
+          "unique_levels": 30,
+          "samples_outside_unit_interval": 0,
+          "samples_abs_ge_one": 0,
+          "maximum_equal_run": 1191,
+          "equal_neighbor_fraction": 0.8305879289016213,
+          "local_positive_plateaus_ge2": 224,
+          "local_negative_plateaus_ge2": 221,
+          "observed_minimum": {
+            "level": -0.078125,
+            "samples": 74,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "observed_maximum": {
+            "level": 0.234375,
+            "samples": 78,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "most_common_levels": [
+            {
+              "level": 0.0,
+              "samples": 12213
+            },
+            {
+              "level": -0.0078125,
+              "samples": 837
+            },
+            {
+              "level": 0.0078125,
+              "samples": 770
+            },
+            {
+              "level": 0.046875,
+              "samples": 172
+            },
+            {
+              "level": 0.15625,
+              "samples": 139
+            },
+            {
+              "level": 0.015625,
+              "samples": 129
+            },
+            {
+              "level": -0.046875,
+              "samples": 101
+            },
+            {
+              "level": 0.234375,
+              "samples": 78
+            }
+          ]
+        },
+        "pulse_events": 280,
+        "frame_boundaries": 120,
+        "unique_period_codes": 34,
+        "voiced_samples": 11136,
+        "pulse_shape_modes": [
+          {
+            "value": 0,
+            "count": 120
+          }
+        ],
+        "gain_codes": [
+          {
+            "value": 0,
+            "count": 20
+          },
+          {
+            "value": 1,
+            "count": 31
+          },
+          {
+            "value": 2,
+            "count": 5
+          },
+          {
+            "value": 3,
+            "count": 11
+          },
+          {
+            "value": 4,
+            "count": 3
+          },
+          {
+            "value": 5,
+            "count": 11
+          },
+          {
+            "value": 6,
+            "count": 9
+          },
+          {
+            "value": 7,
+            "count": 5
+          },
+          {
+            "value": 8,
+            "count": 7
+          },
+          {
+            "value": 9,
+            "count": 2
+          },
+          {
+            "value": 10,
+            "count": 16
+          }
+        ]
+      },
+      "output_rms_over_reference_rms": 0.4242765576527613
+    },
+    {
+      "id": "ru_russia_a-center2048",
+      "language": "ru",
+      "voice": "male",
+      "condition": "natural",
+      "source_id": "ru_russia",
+      "reference_sha256": "182fe32fa28bddda8b45f9c05e143f583de1d52c7ebcab197ca66d1b9462948f",
+      "model_sha256": "549a08ac7aaf3424bd6757c992dc14cd7d95bdb9390b847613a0c2bce669ed44",
+      "stream_sha256": "9251148d90f60e8646cd1784670e6be895502c83e6fc925565aa3295cea30953",
+      "pcm_u8_sha256": "8630c76a2ef1a7e85c93f24665cf32ee6742c7d600e97ee4406f15fc8a63c213",
+      "decoded_wav_sha256": "d1a217323c187bb3910ab8bceb3f7e5446249c74553dae8da07394a7c9ae22fe",
+      "exact_oracle_equal": true,
+      "packed_stream_equal": true,
+      "expected_raw_equal": true,
+      "float_wav_sample_exact": true,
+      "reference_subtype": "FLOAT",
+      "decoded_subtype": "FLOAT",
+      "arithmetic": {
+        "samples": 15360,
+        "subtraction_wraps": 0,
+        "state_addition_wraps": 0,
+        "negative_128_multiplication": 0,
+        "fractional_products": 159978,
+        "multiplication_count": 230400,
+        "quantization_error_mean": -0.3525925021701389,
+        "minimum_intermediate": -25,
+        "maximum_intermediate": 58,
+        "frame_phase_restarts": 118,
+        "period_changes": 79,
+        "displaced_countdown_samples": 4507,
+        "positive_pulse_events": 219,
+        "pulse_interval_median": 57.5,
+        "pulse_interval_minimum": 17,
+        "pulse_interval_maximum": 256,
+        "extreme_pwm_samples": 0,
+        "peak_signed": 58
+      },
+      "reference": {
+        "samples": 15360,
+        "minimum": -0.554280161857605,
+        "maximum": 0.4415636956691742,
+        "peak": 0.554280161857605,
+        "mean": -2.984318020193092e-05,
+        "rms": 0.07217493351238398,
+        "unique_levels": 15359,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 1,
+        "equal_neighbor_fraction": 0.0,
+        "local_positive_plateaus_ge2": 0,
+        "local_negative_plateaus_ge2": 0,
+        "observed_minimum": {
+          "level": -0.554280161857605,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.4415636956691742,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": -0.010241085663437843,
+            "samples": 2
+          },
+          {
+            "level": -0.554280161857605,
+            "samples": 1
+          },
+          {
+            "level": -0.5528489947319031,
+            "samples": 1
+          },
+          {
+            "level": -0.5441853404045105,
+            "samples": 1
+          },
+          {
+            "level": -0.5384842157363892,
+            "samples": 1
+          },
+          {
+            "level": -0.5194140076637268,
+            "samples": 1
+          },
+          {
+            "level": -0.518077552318573,
+            "samples": 1
+          },
+          {
+            "level": -0.5163956880569458,
+            "samples": 1
+          }
+        ]
+      },
+      "decoded": {
+        "samples": 15360,
+        "minimum": -0.1796875,
+        "maximum": 0.453125,
+        "peak": 0.453125,
+        "mean": 0.03507232666015625,
+        "rms": 0.053380590701426485,
+        "unique_levels": 75,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 79,
+        "equal_neighbor_fraction": 0.38654860342470215,
+        "local_positive_plateaus_ge2": 1151,
+        "local_negative_plateaus_ge2": 37,
+        "observed_minimum": {
+          "level": -0.1796875,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.453125,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.0234375,
+            "samples": 3677
+          },
+          {
+            "level": 0.015625,
+            "samples": 2665
+          },
+          {
+            "level": 0.03125,
+            "samples": 2236
+          },
+          {
+            "level": 0.0390625,
+            "samples": 1428
+          },
+          {
+            "level": 0.046875,
+            "samples": 855
+          },
+          {
+            "level": 0.0078125,
+            "samples": 737
+          },
+          {
+            "level": 0.0546875,
+            "samples": 592
+          },
+          {
+            "level": 0.0625,
+            "samples": 470
+          }
+        ]
+      },
+      "source": {
+        "excitation": {
+          "samples": 15360,
+          "minimum": -0.078125,
+          "maximum": 0.234375,
+          "peak": 0.234375,
+          "mean": 0.0030893961588541667,
+          "rms": 0.02212835461029105,
+          "unique_levels": 29,
+          "samples_outside_unit_interval": 0,
+          "samples_abs_ge_one": 0,
+          "maximum_equal_run": 114,
+          "equal_neighbor_fraction": 0.8930919981769646,
+          "local_positive_plateaus_ge2": 32,
+          "local_negative_plateaus_ge2": 33,
+          "observed_minimum": {
+            "level": -0.078125,
+            "samples": 33,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "observed_maximum": {
+            "level": 0.234375,
+            "samples": 33,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "most_common_levels": [
+            {
+              "level": 0.0,
+              "samples": 13904
+            },
+            {
+              "level": 0.015625,
+              "samples": 256
+            },
+            {
+              "level": -0.0078125,
+              "samples": 203
+            },
+            {
+              "level": 0.0234375,
+              "samples": 151
+            },
+            {
+              "level": 0.03125,
+              "samples": 150
+            },
+            {
+              "level": 0.046875,
+              "samples": 80
+            },
+            {
+              "level": -0.03125,
+              "samples": 76
+            },
+            {
+              "level": 0.0078125,
+              "samples": 66
+            }
+          ]
+        },
+        "pulse_events": 219,
+        "frame_boundaries": 120,
+        "unique_period_codes": 38,
+        "voiced_samples": 15104,
+        "pulse_shape_modes": [
+          {
+            "value": 0,
+            "count": 120
+          }
+        ],
+        "gain_codes": [
+          {
+            "value": 1,
+            "count": 45
+          },
+          {
+            "value": 2,
+            "count": 13
+          },
+          {
+            "value": 3,
+            "count": 7
+          },
+          {
+            "value": 4,
+            "count": 5
+          },
+          {
+            "value": 5,
+            "count": 6
+          },
+          {
+            "value": 6,
+            "count": 10
+          },
+          {
+            "value": 7,
+            "count": 6
+          },
+          {
+            "value": 8,
+            "count": 8
+          },
+          {
+            "value": 9,
+            "count": 4
+          },
+          {
+            "value": 10,
+            "count": 16
+          }
+        ]
+      },
+      "output_rms_over_reference_rms": 0.7396001368296001
+    },
+    {
+      "id": "ru_russia_b-center2048",
+      "language": "ru",
+      "voice": "male",
+      "condition": "natural",
+      "source_id": "ru_russia",
+      "reference_sha256": "1c713c915b7600a6af228d3b6be0520439a75d5ecd058642b45197c5d1e611f4",
+      "model_sha256": "46272ed64bf039df33ff75d12f77793df65bee980e884d481fc4a0bb9fbbab21",
+      "stream_sha256": "5dfb2d7b039ef102f53cf7f980b660f6c322dcd22b75ee700c5d5c8b31e7429f",
+      "pcm_u8_sha256": "75ef8bfb40174931f03cd6ac26142048abac545a4aa882e714a86ea95fdb0131",
+      "decoded_wav_sha256": "8ddc5ed2345a23698fd7fde582003f9f21fbea4a384638bce8d47ab946a00512",
+      "exact_oracle_equal": true,
+      "packed_stream_equal": true,
+      "expected_raw_equal": true,
+      "float_wav_sample_exact": true,
+      "reference_subtype": "FLOAT",
+      "decoded_subtype": "FLOAT",
+      "arithmetic": {
+        "samples": 15360,
+        "subtraction_wraps": 0,
+        "state_addition_wraps": 0,
+        "negative_128_multiplication": 0,
+        "fractional_products": 146028,
+        "multiplication_count": 230400,
+        "quantization_error_mean": -0.31857096354166664,
+        "minimum_intermediate": -23,
+        "maximum_intermediate": 45,
+        "frame_phase_restarts": 115,
+        "period_changes": 73,
+        "displaced_countdown_samples": 3772,
+        "positive_pulse_events": 463,
+        "pulse_interval_median": 13.0,
+        "pulse_interval_minimum": 12,
+        "pulse_interval_maximum": 248,
+        "extreme_pwm_samples": 0,
+        "peak_signed": 45
+      },
+      "reference": {
+        "samples": 15360,
+        "minimum": -1.013062596321106,
+        "maximum": 0.6041603684425354,
+        "peak": 1.013062596321106,
+        "mean": -5.66849216650724e-05,
+        "rms": 0.0973472434375685,
+        "unique_levels": 15360,
+        "samples_outside_unit_interval": 1,
+        "samples_abs_ge_one": 1,
+        "maximum_equal_run": 1,
+        "equal_neighbor_fraction": 0.0,
+        "local_positive_plateaus_ge2": 0,
+        "local_negative_plateaus_ge2": 0,
+        "observed_minimum": {
+          "level": -1.013062596321106,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.6041603684425354,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": -1.013062596321106,
+            "samples": 1
+          },
+          {
+            "level": -0.7518954277038574,
+            "samples": 1
+          },
+          {
+            "level": -0.7329728603363037,
+            "samples": 1
+          },
+          {
+            "level": -0.7299940586090088,
+            "samples": 1
+          },
+          {
+            "level": -0.7257293462753296,
+            "samples": 1
+          },
+          {
+            "level": -0.7020503878593445,
+            "samples": 1
+          },
+          {
+            "level": -0.6667440533638,
+            "samples": 1
+          },
+          {
+            "level": -0.6635735034942627,
+            "samples": 1
+          }
+        ]
+      },
+      "decoded": {
+        "samples": 15360,
+        "minimum": -0.1328125,
+        "maximum": 0.3515625,
+        "peak": 0.3515625,
+        "mean": 0.037461344401041666,
+        "rms": 0.054315665307558686,
+        "unique_levels": 62,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 430,
+        "equal_neighbor_fraction": 0.5282896021876424,
+        "local_positive_plateaus_ge2": 933,
+        "local_negative_plateaus_ge2": 33,
+        "observed_minimum": {
+          "level": -0.1328125,
+          "samples": 2,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.3515625,
+          "samples": 7,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.03125,
+            "samples": 2763
+          },
+          {
+            "level": 0.015625,
+            "samples": 2305
+          },
+          {
+            "level": 0.0234375,
+            "samples": 2305
+          },
+          {
+            "level": 0.046875,
+            "samples": 1216
+          },
+          {
+            "level": 0.0078125,
+            "samples": 1025
+          },
+          {
+            "level": 0.0859375,
+            "samples": 1013
+          },
+          {
+            "level": 0.0390625,
+            "samples": 929
+          },
+          {
+            "level": 0.078125,
+            "samples": 876
+          }
+        ]
+      },
+      "source": {
+        "excitation": {
+          "samples": 15360,
+          "minimum": -0.078125,
+          "maximum": 0.234375,
+          "peak": 0.234375,
+          "mean": 0.003179931640625,
+          "rms": 0.02368390573896641,
+          "unique_levels": 29,
+          "samples_outside_unit_interval": 0,
+          "samples_abs_ge_one": 0,
+          "maximum_equal_run": 3584,
+          "equal_neighbor_fraction": 0.9211537209453741,
+          "local_positive_plateaus_ge2": 32,
+          "local_negative_plateaus_ge2": 32,
+          "observed_minimum": {
+            "level": -0.078125,
+            "samples": 41,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "observed_maximum": {
+            "level": 0.234375,
+            "samples": 42,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "most_common_levels": [
+            {
+              "level": 0.0,
+              "samples": 14251
+            },
+            {
+              "level": -0.0078125,
+              "samples": 196
+            },
+            {
+              "level": 0.0078125,
+              "samples": 127
+            },
+            {
+              "level": 0.015625,
+              "samples": 126
+            },
+            {
+              "level": 0.09375,
+              "samples": 72
+            },
+            {
+              "level": 0.15625,
+              "samples": 72
+            },
+            {
+              "level": 0.0234375,
+              "samples": 69
+            },
+            {
+              "level": 0.140625,
+              "samples": 42
+            }
+          ]
+        },
+        "pulse_events": 463,
+        "frame_boundaries": 120,
+        "unique_period_codes": 42,
+        "voiced_samples": 14720,
+        "pulse_shape_modes": [
+          {
+            "value": 0,
+            "count": 120
+          }
+        ],
+        "gain_codes": [
+          {
+            "value": 0,
+            "count": 36
+          },
+          {
+            "value": 1,
+            "count": 15
+          },
+          {
+            "value": 2,
+            "count": 2
+          },
+          {
+            "value": 3,
+            "count": 5
+          },
+          {
+            "value": 4,
+            "count": 6
+          },
+          {
+            "value": 5,
+            "count": 11
+          },
+          {
+            "value": 6,
+            "count": 19
+          },
+          {
+            "value": 7,
+            "count": 7
+          },
+          {
+            "value": 8,
+            "count": 4
+          },
+          {
+            "value": 9,
+            "count": 1
+          },
+          {
+            "value": 10,
+            "count": 14
+          }
+        ]
+      },
+      "output_rms_over_reference_rms": 0.5579579183707738
+    },
+    {
+      "id": "en_sense_a-center2048",
+      "language": "en",
+      "voice": "male",
+      "condition": "natural",
+      "source_id": "en_sense",
+      "reference_sha256": "810bdf80f939fb293cc7ca4f0e6e59872a8ea35e18fb6034ff4d045c268a2f08",
+      "model_sha256": "a06715d38693eb62c85c7e2c8837bcfdc3df27f72c4199a0a5bed4cb32481aea",
+      "stream_sha256": "ef18865bc0681507ced21352bf66bbe3abbaebe823f2e279e6b134029aeed551",
+      "pcm_u8_sha256": "683339116ee9faac1c15162f616839f3f3e1c7b957a7e5cfbbfa2ce5f09057f8",
+      "decoded_wav_sha256": "c36564c59a0326b42c1d94905054564b9894948533fa1632209a562c141aad7b",
+      "exact_oracle_equal": true,
+      "packed_stream_equal": true,
+      "expected_raw_equal": true,
+      "float_wav_sample_exact": true,
+      "reference_subtype": "FLOAT",
+      "decoded_subtype": "FLOAT",
+      "arithmetic": {
+        "samples": 15360,
+        "subtraction_wraps": 0,
+        "state_addition_wraps": 0,
+        "negative_128_multiplication": 0,
+        "fractional_products": 174738,
+        "multiplication_count": 230400,
+        "quantization_error_mean": -0.38764133029513886,
+        "minimum_intermediate": -32,
+        "maximum_intermediate": 67,
+        "frame_phase_restarts": 112,
+        "period_changes": 73,
+        "displaced_countdown_samples": 2906,
+        "positive_pulse_events": 660,
+        "pulse_interval_median": 12.0,
+        "pulse_interval_minimum": 12,
+        "pulse_interval_maximum": 529,
+        "extreme_pwm_samples": 0,
+        "peak_signed": 67
+      },
+      "reference": {
+        "samples": 15360,
+        "minimum": -0.2152242660522461,
+        "maximum": 0.2170722782611847,
+        "peak": 0.2170722782611847,
+        "mean": 0.013113602404969112,
+        "rms": 0.037832395836323876,
+        "unique_levels": 15356,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 1,
+        "equal_neighbor_fraction": 0.0,
+        "local_positive_plateaus_ge2": 0,
+        "local_negative_plateaus_ge2": 0,
+        "observed_minimum": {
+          "level": -0.2152242660522461,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.2170722782611847,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.010767037980258465,
+            "samples": 2
+          },
+          {
+            "level": 0.012200488708913326,
+            "samples": 2
+          },
+          {
+            "level": 0.017362209036946297,
+            "samples": 2
+          },
+          {
+            "level": 0.057928238064050674,
+            "samples": 2
+          },
+          {
+            "level": -0.2152242660522461,
+            "samples": 1
+          },
+          {
+            "level": -0.20719358325004578,
+            "samples": 1
+          },
+          {
+            "level": -0.2007734477519989,
+            "samples": 1
+          },
+          {
+            "level": -0.20009629428386688,
+            "samples": 1
+          }
+        ]
+      },
+      "decoded": {
+        "samples": 15360,
+        "minimum": -0.25,
+        "maximum": 0.5234375,
+        "peak": 0.5234375,
+        "mean": 0.13812917073567707,
+        "rms": 0.16639584552075015,
+        "unique_levels": 97,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 106,
+        "equal_neighbor_fraction": 0.24695618204310177,
+        "local_positive_plateaus_ge2": 758,
+        "local_negative_plateaus_ge2": 16,
+        "observed_minimum": {
+          "level": -0.25,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.5234375,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.1796875,
+            "samples": 709
+          },
+          {
+            "level": 0.1640625,
+            "samples": 645
+          },
+          {
+            "level": 0.171875,
+            "samples": 624
+          },
+          {
+            "level": 0.1875,
+            "samples": 587
+          },
+          {
+            "level": 0.203125,
+            "samples": 571
+          },
+          {
+            "level": 0.2109375,
+            "samples": 568
+          },
+          {
+            "level": 0.1953125,
+            "samples": 557
+          },
+          {
+            "level": 0.03125,
+            "samples": 547
+          }
+        ]
+      },
+      "source": {
+        "excitation": {
+          "samples": 15360,
+          "minimum": -0.078125,
+          "maximum": 0.234375,
+          "peak": 0.234375,
+          "mean": 0.00690765380859375,
+          "rms": 0.02907310647787478,
+          "unique_levels": 29,
+          "samples_outside_unit_interval": 0,
+          "samples_abs_ge_one": 0,
+          "maximum_equal_run": 119,
+          "equal_neighbor_fraction": 0.7244612279445276,
+          "local_positive_plateaus_ge2": 128,
+          "local_negative_plateaus_ge2": 129,
+          "observed_minimum": {
+            "level": -0.078125,
+            "samples": 43,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "observed_maximum": {
+            "level": 0.234375,
+            "samples": 43,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "most_common_levels": [
+            {
+              "level": 0.0,
+              "samples": 11381
+            },
+            {
+              "level": 0.046875,
+              "samples": 662
+            },
+            {
+              "level": -0.0078125,
+              "samples": 578
+            },
+            {
+              "level": 0.015625,
+              "samples": 497
+            },
+            {
+              "level": 0.0078125,
+              "samples": 382
+            },
+            {
+              "level": 0.03125,
+              "samples": 326
+            },
+            {
+              "level": -0.015625,
+              "samples": 300
+            },
+            {
+              "level": 0.0703125,
+              "samples": 259
+            }
+          ]
+        },
+        "pulse_events": 660,
+        "frame_boundaries": 120,
+        "unique_period_codes": 37,
+        "voiced_samples": 14336,
+        "pulse_shape_modes": [
+          {
+            "value": 0,
+            "count": 120
+          }
+        ],
+        "gain_codes": [
+          {
+            "value": 1,
+            "count": 26
+          },
+          {
+            "value": 2,
+            "count": 20
+          },
+          {
+            "value": 3,
+            "count": 30
+          },
+          {
+            "value": 4,
+            "count": 2
+          },
+          {
+            "value": 5,
+            "count": 4
+          },
+          {
+            "value": 6,
+            "count": 4
+          },
+          {
+            "value": 7,
+            "count": 4
+          },
+          {
+            "value": 8,
+            "count": 7
+          },
+          {
+            "value": 9,
+            "count": 5
+          },
+          {
+            "value": 10,
+            "count": 18
+          }
+        ]
+      },
+      "output_rms_over_reference_rms": 4.3982370622425435
+    },
+    {
+      "id": "en_sense_b-center2048",
+      "language": "en",
+      "voice": "male",
+      "condition": "natural",
+      "source_id": "en_sense",
+      "reference_sha256": "de580830b04edf333662ab2d84a2d938c05f1dcd26fe5c9223c08c89a3153efe",
+      "model_sha256": "94d6adb6969bd07fd8705554548a1cf24589b54a6bea237ff48ee361c83988dc",
+      "stream_sha256": "ca4e756f201baf87994b883a37212a62b1294bcb0920a95bfa6ae71f1e51b50e",
+      "pcm_u8_sha256": "9628fc50be4597de41a3097de484b50ad004a155023ffb47ccc4c6dbd1621875",
+      "decoded_wav_sha256": "5d6cfa543a00a21a05a94ac808bf31374285fe11f7e407ce81acf200f67ebdd6",
+      "exact_oracle_equal": true,
+      "packed_stream_equal": true,
+      "expected_raw_equal": true,
+      "float_wav_sample_exact": true,
+      "reference_subtype": "FLOAT",
+      "decoded_subtype": "FLOAT",
+      "arithmetic": {
+        "samples": 15360,
+        "subtraction_wraps": 0,
+        "state_addition_wraps": 0,
+        "negative_128_multiplication": 0,
+        "fractional_products": 157256,
+        "multiplication_count": 230400,
+        "quantization_error_mean": -0.34835693359375,
+        "minimum_intermediate": -12,
+        "maximum_intermediate": 36,
+        "frame_phase_restarts": 111,
+        "period_changes": 90,
+        "displaced_countdown_samples": 4292,
+        "positive_pulse_events": 232,
+        "pulse_interval_median": 27.0,
+        "pulse_interval_minimum": 14,
+        "pulse_interval_maximum": 602,
+        "extreme_pwm_samples": 0,
+        "peak_signed": 36
+      },
+      "reference": {
+        "samples": 15360,
+        "minimum": -0.7000649571418762,
+        "maximum": 0.6215400099754333,
+        "peak": 0.7000649571418762,
+        "mean": 0.01316148070880363,
+        "rms": 0.07632608951642407,
+        "unique_levels": 15359,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 1,
+        "equal_neighbor_fraction": 0.0,
+        "local_positive_plateaus_ge2": 0,
+        "local_negative_plateaus_ge2": 0,
+        "observed_minimum": {
+          "level": -0.7000649571418762,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.6215400099754333,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.020461592823266983,
+            "samples": 2
+          },
+          {
+            "level": -0.7000649571418762,
+            "samples": 1
+          },
+          {
+            "level": -0.6504900455474854,
+            "samples": 1
+          },
+          {
+            "level": -0.6464881896972656,
+            "samples": 1
+          },
+          {
+            "level": -0.6322193741798401,
+            "samples": 1
+          },
+          {
+            "level": -0.6164555549621582,
+            "samples": 1
+          },
+          {
+            "level": -0.5990192294120789,
+            "samples": 1
+          },
+          {
+            "level": -0.5919834971427917,
+            "samples": 1
+          }
+        ]
+      },
+      "decoded": {
+        "samples": 15360,
+        "minimum": -0.078125,
+        "maximum": 0.28125,
+        "peak": 0.28125,
+        "mean": 0.046758015950520836,
+        "rms": 0.05555616484413883,
+        "unique_levels": 42,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 129,
+        "equal_neighbor_fraction": 0.33654534800442737,
+        "local_positive_plateaus_ge2": 1095,
+        "local_negative_plateaus_ge2": 12,
+        "observed_minimum": {
+          "level": -0.078125,
+          "samples": 3,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.28125,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.03125,
+            "samples": 2090
+          },
+          {
+            "level": 0.0546875,
+            "samples": 1685
+          },
+          {
+            "level": 0.0234375,
+            "samples": 1666
+          },
+          {
+            "level": 0.046875,
+            "samples": 1653
+          },
+          {
+            "level": 0.0390625,
+            "samples": 1606
+          },
+          {
+            "level": 0.0625,
+            "samples": 1221
+          },
+          {
+            "level": 0.015625,
+            "samples": 1085
+          },
+          {
+            "level": 0.078125,
+            "samples": 925
+          }
+        ]
+      },
+      "source": {
+        "excitation": {
+          "samples": 15360,
+          "minimum": -0.0390625,
+          "maximum": 0.1171875,
+          "peak": 0.1171875,
+          "mean": 0.002040608723958333,
+          "rms": 0.0127456060081047,
+          "unique_levels": 16,
+          "samples_outside_unit_interval": 0,
+          "samples_abs_ge_one": 0,
+          "maximum_equal_run": 384,
+          "equal_neighbor_fraction": 0.8830001953252165,
+          "local_positive_plateaus_ge2": 81,
+          "local_negative_plateaus_ge2": 78,
+          "observed_minimum": {
+            "level": -0.0390625,
+            "samples": 36,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "observed_maximum": {
+            "level": 0.1171875,
+            "samples": 37,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "most_common_levels": [
+            {
+              "level": 0.0,
+              "samples": 13551
+            },
+            {
+              "level": -0.0078125,
+              "samples": 455
+            },
+            {
+              "level": 0.0078125,
+              "samples": 320
+            },
+            {
+              "level": 0.015625,
+              "samples": 239
+            },
+            {
+              "level": 0.0234375,
+              "samples": 139
+            },
+            {
+              "level": 0.046875,
+              "samples": 119
+            },
+            {
+              "level": 0.03125,
+              "samples": 94
+            },
+            {
+              "level": 0.0625,
+              "samples": 81
+            }
+          ]
+        },
+        "pulse_events": 232,
+        "frame_boundaries": 120,
+        "unique_period_codes": 48,
+        "voiced_samples": 14208,
+        "pulse_shape_modes": [
+          {
+            "value": 0,
+            "count": 120
+          }
+        ],
+        "gain_codes": [
+          {
+            "value": 0,
+            "count": 8
+          },
+          {
+            "value": 1,
+            "count": 43
+          },
+          {
+            "value": 2,
+            "count": 16
+          },
+          {
+            "value": 3,
+            "count": 16
+          },
+          {
+            "value": 4,
+            "count": 21
+          },
+          {
+            "value": 5,
+            "count": 16
+          }
+        ]
+      },
+      "output_rms_over_reference_rms": 0.7278790934544616
+    },
+    {
+      "id": "en_portrait_a-center2048",
+      "language": "en",
+      "voice": "female",
+      "condition": "natural",
+      "source_id": "en_portrait",
+      "reference_sha256": "65cf9f0cbe8e0d396753a49c0d3a84c30ca09bcedcaeeb18ff897e473a0a67b9",
+      "model_sha256": "66afae522c6a6cfec2f2d933615c0f100761049aca00553f254c6f0eb824972b",
+      "stream_sha256": "8622a85946f84887a3995180c16ca9cff592c713e068aa2901435c4e7ecc998c",
+      "pcm_u8_sha256": "76bc70fc7290f7056a8e9c7a05a987405471655c09199546b5a4aaa0fdadbbdc",
+      "decoded_wav_sha256": "06e19ce920143393862aec5e85e7b0e6bfc094c6f7fdee62ec5773c78fb8e4f2",
+      "exact_oracle_equal": true,
+      "packed_stream_equal": true,
+      "expected_raw_equal": true,
+      "float_wav_sample_exact": true,
+      "reference_subtype": "FLOAT",
+      "decoded_subtype": "FLOAT",
+      "arithmetic": {
+        "samples": 15360,
+        "subtraction_wraps": 0,
+        "state_addition_wraps": 0,
+        "negative_128_multiplication": 0,
+        "fractional_products": 159590,
+        "multiplication_count": 230400,
+        "quantization_error_mean": -0.35872856987847224,
+        "minimum_intermediate": -19,
+        "maximum_intermediate": 48,
+        "frame_phase_restarts": 118,
+        "period_changes": 95,
+        "displaced_countdown_samples": 4194,
+        "positive_pulse_events": 355,
+        "pulse_interval_median": 35.0,
+        "pulse_interval_minimum": 12,
+        "pulse_interval_maximum": 272,
+        "extreme_pwm_samples": 0,
+        "peak_signed": 48
+      },
+      "reference": {
+        "samples": 15360,
+        "minimum": -0.06425055861473083,
+        "maximum": 0.0726848617196083,
+        "peak": 0.0726848617196083,
+        "mean": -1.3630219544141323e-05,
+        "rms": 0.016932129544899067,
+        "unique_levels": 15359,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 1,
+        "equal_neighbor_fraction": 0.0,
+        "local_positive_plateaus_ge2": 0,
+        "local_negative_plateaus_ge2": 0,
+        "observed_minimum": {
+          "level": -0.06425055861473083,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.0726848617196083,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.009431105107069016,
+            "samples": 2
+          },
+          {
+            "level": -0.06425055861473083,
+            "samples": 1
+          },
+          {
+            "level": -0.059190455824136734,
+            "samples": 1
+          },
+          {
+            "level": -0.05844566598534584,
+            "samples": 1
+          },
+          {
+            "level": -0.057950280606746674,
+            "samples": 1
+          },
+          {
+            "level": -0.057081133127212524,
+            "samples": 1
+          },
+          {
+            "level": -0.05686524510383606,
+            "samples": 1
+          },
+          {
+            "level": -0.05588259547948837,
+            "samples": 1
+          }
+        ]
+      },
+      "decoded": {
+        "samples": 15360,
+        "minimum": -0.125,
+        "maximum": 0.375,
+        "peak": 0.375,
+        "mean": 0.046902974446614586,
+        "rms": 0.06725469378572888,
+        "unique_levels": 64,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 82,
+        "equal_neighbor_fraction": 0.388241421967576,
+        "local_positive_plateaus_ge2": 1057,
+        "local_negative_plateaus_ge2": 36,
+        "observed_minimum": {
+          "level": -0.125,
+          "samples": 2,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.375,
+          "samples": 2,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.0234375,
+            "samples": 1782
+          },
+          {
+            "level": 0.03125,
+            "samples": 1648
+          },
+          {
+            "level": 0.015625,
+            "samples": 1490
+          },
+          {
+            "level": 0.046875,
+            "samples": 1456
+          },
+          {
+            "level": 0.0625,
+            "samples": 1395
+          },
+          {
+            "level": 0.0703125,
+            "samples": 1393
+          },
+          {
+            "level": 0.0390625,
+            "samples": 1271
+          },
+          {
+            "level": 0.0546875,
+            "samples": 1218
+          }
+        ]
+      },
+      "source": {
+        "excitation": {
+          "samples": 15360,
+          "minimum": -0.078125,
+          "maximum": 0.234375,
+          "peak": 0.234375,
+          "mean": 0.0063135782877604164,
+          "rms": 0.0320607243592153,
+          "unique_levels": 29,
+          "samples_outside_unit_interval": 0,
+          "samples_abs_ge_one": 0,
+          "maximum_equal_run": 94,
+          "equal_neighbor_fraction": 0.8462139462204571,
+          "local_positive_plateaus_ge2": 32,
+          "local_negative_plateaus_ge2": 33,
+          "observed_minimum": {
+            "level": -0.078125,
+            "samples": 36,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "observed_maximum": {
+            "level": 0.234375,
+            "samples": 36,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "most_common_levels": [
+            {
+              "level": 0.0,
+              "samples": 13339
+            },
+            {
+              "level": 0.03125,
+              "samples": 168
+            },
+            {
+              "level": 0.015625,
+              "samples": 160
+            },
+            {
+              "level": -0.0078125,
+              "samples": 153
+            },
+            {
+              "level": 0.0234375,
+              "samples": 152
+            },
+            {
+              "level": 0.09375,
+              "samples": 130
+            },
+            {
+              "level": 0.046875,
+              "samples": 124
+            },
+            {
+              "level": 0.140625,
+              "samples": 103
+            }
+          ]
+        },
+        "pulse_events": 355,
+        "frame_boundaries": 120,
+        "unique_period_codes": 41,
+        "voiced_samples": 15104,
+        "pulse_shape_modes": [
+          {
+            "value": 0,
+            "count": 120
+          }
+        ],
+        "gain_codes": [
+          {
+            "value": 1,
+            "count": 13
+          },
+          {
+            "value": 2,
+            "count": 26
+          },
+          {
+            "value": 3,
+            "count": 10
+          },
+          {
+            "value": 4,
+            "count": 4
+          },
+          {
+            "value": 5,
+            "count": 9
+          },
+          {
+            "value": 6,
+            "count": 18
+          },
+          {
+            "value": 7,
+            "count": 12
+          },
+          {
+            "value": 8,
+            "count": 14
+          },
+          {
+            "value": 9,
+            "count": 5
+          },
+          {
+            "value": 10,
+            "count": 9
+          }
+        ]
+      },
+      "output_rms_over_reference_rms": 3.9720162550959137
+    },
+    {
+      "id": "en_portrait_b-center2048",
+      "language": "en",
+      "voice": "female",
+      "condition": "natural",
+      "source_id": "en_portrait",
+      "reference_sha256": "7776eb7bda2e22b0309ae98828453532eb462dab6ead92c389c28288d141c02f",
+      "model_sha256": "d7d11677f696dffb55e2df1c57981b0d11ea5354a40505a8b3adee7ad8a080af",
+      "stream_sha256": "1cce44ff81a8451c9f63ef0fd496b922bfda3023ad549561df1eca04b8bcf7b8",
+      "pcm_u8_sha256": "53588e899ccc7689df2483a2a3a30f2190a20018fcf247b2af50fe954a484fad",
+      "decoded_wav_sha256": "93888a694cb9c2245ad01eeccf87c618c6c3bbb93473922d5801db33d6a36f59",
+      "exact_oracle_equal": true,
+      "packed_stream_equal": true,
+      "expected_raw_equal": true,
+      "float_wav_sample_exact": true,
+      "reference_subtype": "FLOAT",
+      "decoded_subtype": "FLOAT",
+      "arithmetic": {
+        "samples": 15360,
+        "subtraction_wraps": 0,
+        "state_addition_wraps": 0,
+        "negative_128_multiplication": 0,
+        "fractional_products": 158719,
+        "multiplication_count": 230400,
+        "quantization_error_mean": -0.3581515842013889,
+        "minimum_intermediate": -19,
+        "maximum_intermediate": 52,
+        "frame_phase_restarts": 119,
+        "period_changes": 84,
+        "displaced_countdown_samples": 4186,
+        "positive_pulse_events": 465,
+        "pulse_interval_median": 13.5,
+        "pulse_interval_minimum": 12,
+        "pulse_interval_maximum": 228,
+        "extreme_pwm_samples": 0,
+        "peak_signed": 52
+      },
+      "reference": {
+        "samples": 15360,
+        "minimum": -0.06860846281051636,
+        "maximum": 0.08630342036485672,
+        "peak": 0.08630342036485672,
+        "mean": 3.88350031407414e-05,
+        "rms": 0.01853946566679615,
+        "unique_levels": 15359,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 1,
+        "equal_neighbor_fraction": 0.0,
+        "local_positive_plateaus_ge2": 0,
+        "local_negative_plateaus_ge2": 0,
+        "observed_minimum": {
+          "level": -0.06860846281051636,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.08630342036485672,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.006306557450443506,
+            "samples": 2
+          },
+          {
+            "level": -0.06860846281051636,
+            "samples": 1
+          },
+          {
+            "level": -0.06778883188962936,
+            "samples": 1
+          },
+          {
+            "level": -0.06655661016702652,
+            "samples": 1
+          },
+          {
+            "level": -0.06497129797935486,
+            "samples": 1
+          },
+          {
+            "level": -0.0642818808555603,
+            "samples": 1
+          },
+          {
+            "level": -0.06409675627946854,
+            "samples": 1
+          },
+          {
+            "level": -0.06366599351167679,
+            "samples": 1
+          }
+        ]
+      },
+      "decoded": {
+        "samples": 15360,
+        "minimum": -0.1328125,
+        "maximum": 0.40625,
+        "peak": 0.40625,
+        "mean": 0.048150126139322916,
+        "rms": 0.06934272840313797,
+        "unique_levels": 70,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 98,
+        "equal_neighbor_fraction": 0.35262712416172926,
+        "local_positive_plateaus_ge2": 1071,
+        "local_negative_plateaus_ge2": 31,
+        "observed_minimum": {
+          "level": -0.1328125,
+          "samples": 3,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.40625,
+          "samples": 3,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.0546875,
+            "samples": 2342
+          },
+          {
+            "level": 0.046875,
+            "samples": 2030
+          },
+          {
+            "level": 0.03125,
+            "samples": 1834
+          },
+          {
+            "level": 0.0390625,
+            "samples": 1286
+          },
+          {
+            "level": 0.015625,
+            "samples": 1276
+          },
+          {
+            "level": 0.0234375,
+            "samples": 1196
+          },
+          {
+            "level": 0.0625,
+            "samples": 734
+          },
+          {
+            "level": 0.0703125,
+            "samples": 697
+          }
+        ]
+      },
+      "source": {
+        "excitation": {
+          "samples": 15360,
+          "minimum": -0.078125,
+          "maximum": 0.234375,
+          "peak": 0.234375,
+          "mean": 0.0065643310546875,
+          "rms": 0.032074664707666276,
+          "unique_levels": 29,
+          "samples_outside_unit_interval": 0,
+          "samples_abs_ge_one": 0,
+          "maximum_equal_run": 106,
+          "equal_neighbor_fraction": 0.8144410443388241,
+          "local_positive_plateaus_ge2": 17,
+          "local_negative_plateaus_ge2": 14,
+          "observed_minimum": {
+            "level": -0.078125,
+            "samples": 48,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "observed_maximum": {
+            "level": 0.234375,
+            "samples": 48,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "most_common_levels": [
+            {
+              "level": 0.0,
+              "samples": 13021
+            },
+            {
+              "level": 0.015625,
+              "samples": 316
+            },
+            {
+              "level": 0.046875,
+              "samples": 246
+            },
+            {
+              "level": -0.0078125,
+              "samples": 231
+            },
+            {
+              "level": 0.03125,
+              "samples": 219
+            },
+            {
+              "level": 0.0234375,
+              "samples": 170
+            },
+            {
+              "level": -0.015625,
+              "samples": 122
+            },
+            {
+              "level": 0.140625,
+              "samples": 94
+            }
+          ]
+        },
+        "pulse_events": 465,
+        "frame_boundaries": 120,
+        "unique_period_codes": 41,
+        "voiced_samples": 15232,
+        "pulse_shape_modes": [
+          {
+            "value": 0,
+            "count": 120
+          }
+        ],
+        "gain_codes": [
+          {
+            "value": 1,
+            "count": 23
+          },
+          {
+            "value": 2,
+            "count": 25
+          },
+          {
+            "value": 3,
+            "count": 12
+          },
+          {
+            "value": 4,
+            "count": 4
+          },
+          {
+            "value": 5,
+            "count": 5
+          },
+          {
+            "value": 6,
+            "count": 8
+          },
+          {
+            "value": 7,
+            "count": 8
+          },
+          {
+            "value": 8,
+            "count": 13
+          },
+          {
+            "value": 9,
+            "count": 10
+          },
+          {
+            "value": 10,
+            "count": 12
+          }
+        ]
+      },
+      "output_rms_over_reference_rms": 3.74027653490195
+    },
+    {
+      "id": "en_letter_a-center2048",
+      "language": "en",
+      "voice": "male",
+      "condition": "natural",
+      "source_id": "en_letter",
+      "reference_sha256": "76ccd3493dde3907132e2bbbf08b47ba2ffd1740d78577a0d23b82bb984d3111",
+      "model_sha256": "2080a9273435eb2b99a972da400a19a2c54e27f50b3468b65cd549e87d3178a9",
+      "stream_sha256": "7990f351758e81298ddf4204ad3b41f40c41e41b87bed55f8e247bbe4d22f83f",
+      "pcm_u8_sha256": "a5108008d8151794d7471b16fd0fbc9e37c6ef7294b42baedb61528d8dafaa2d",
+      "decoded_wav_sha256": "bbf4853e84d23940fdf2feba571c1e8dbda7d14a9a7a97232da288228d44ef17",
+      "exact_oracle_equal": true,
+      "packed_stream_equal": true,
+      "expected_raw_equal": true,
+      "float_wav_sample_exact": true,
+      "reference_subtype": "FLOAT",
+      "decoded_subtype": "FLOAT",
+      "arithmetic": {
+        "samples": 15360,
+        "subtraction_wraps": 0,
+        "state_addition_wraps": 0,
+        "negative_128_multiplication": 0,
+        "fractional_products": 147612,
+        "multiplication_count": 230400,
+        "quantization_error_mean": -0.3409244791666667,
+        "minimum_intermediate": -24,
+        "maximum_intermediate": 45,
+        "frame_phase_restarts": 40,
+        "period_changes": 44,
+        "displaced_countdown_samples": 1807,
+        "positive_pulse_events": 260,
+        "pulse_interval_median": 16.0,
+        "pulse_interval_minimum": 12,
+        "pulse_interval_maximum": 2444,
+        "extreme_pwm_samples": 0,
+        "peak_signed": 45
+      },
+      "reference": {
+        "samples": 15360,
+        "minimum": -0.11076045036315918,
+        "maximum": 0.122442327439785,
+        "peak": 0.122442327439785,
+        "mean": -2.0375351339482763e-05,
+        "rms": 0.016733777481932402,
+        "unique_levels": 15358,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 1,
+        "equal_neighbor_fraction": 0.0,
+        "local_positive_plateaus_ge2": 0,
+        "local_negative_plateaus_ge2": 0,
+        "observed_minimum": {
+          "level": -0.11076045036315918,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.122442327439785,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": -0.0013961194781586528,
+            "samples": 2
+          },
+          {
+            "level": -0.0002625954512041062,
+            "samples": 2
+          },
+          {
+            "level": -0.11076045036315918,
+            "samples": 1
+          },
+          {
+            "level": -0.10953367501497269,
+            "samples": 1
+          },
+          {
+            "level": -0.10688141733407974,
+            "samples": 1
+          },
+          {
+            "level": -0.10597802698612213,
+            "samples": 1
+          },
+          {
+            "level": -0.10314017534255981,
+            "samples": 1
+          },
+          {
+            "level": -0.09941758960485458,
+            "samples": 1
+          }
+        ]
+      },
+      "decoded": {
+        "samples": 15360,
+        "minimum": -0.140625,
+        "maximum": 0.3515625,
+        "peak": 0.3515625,
+        "mean": 0.03197682698567708,
+        "rms": 0.05205343023815542,
+        "unique_levels": 60,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 3072,
+        "equal_neighbor_fraction": 0.5151377042776223,
+        "local_positive_plateaus_ge2": 816,
+        "local_negative_plateaus_ge2": 22,
+        "observed_minimum": {
+          "level": -0.140625,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.3515625,
+          "samples": 3,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.03125,
+            "samples": 5292
+          },
+          {
+            "level": 0.0234375,
+            "samples": 2777
+          },
+          {
+            "level": 0.015625,
+            "samples": 1589
+          },
+          {
+            "level": 0.0390625,
+            "samples": 1263
+          },
+          {
+            "level": 0.0078125,
+            "samples": 1111
+          },
+          {
+            "level": 0.046875,
+            "samples": 659
+          },
+          {
+            "level": 0.0546875,
+            "samples": 321
+          },
+          {
+            "level": 0.0,
+            "samples": 243
+          }
+        ]
+      },
+      "source": {
+        "excitation": {
+          "samples": 15360,
+          "minimum": -0.078125,
+          "maximum": 0.234375,
+          "peak": 0.234375,
+          "mean": 0.005044047037760417,
+          "rms": 0.029224288877826132,
+          "unique_levels": 26,
+          "samples_outside_unit_interval": 0,
+          "samples_abs_ge_one": 0,
+          "maximum_equal_run": 3072,
+          "equal_neighbor_fraction": 0.8644442997590989,
+          "local_positive_plateaus_ge2": 161,
+          "local_negative_plateaus_ge2": 162,
+          "observed_minimum": {
+            "level": -0.078125,
+            "samples": 46,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "observed_maximum": {
+            "level": 0.234375,
+            "samples": 46,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "most_common_levels": [
+            {
+              "level": 0.0,
+              "samples": 12937
+            },
+            {
+              "level": -0.0078125,
+              "samples": 534
+            },
+            {
+              "level": 0.0078125,
+              "samples": 508
+            },
+            {
+              "level": 0.078125,
+              "samples": 173
+            },
+            {
+              "level": 0.015625,
+              "samples": 160
+            },
+            {
+              "level": -0.015625,
+              "samples": 141
+            },
+            {
+              "level": 0.1171875,
+              "samples": 90
+            },
+            {
+              "level": -0.0390625,
+              "samples": 89
+            }
+          ]
+        },
+        "pulse_events": 260,
+        "frame_boundaries": 60,
+        "unique_period_codes": 29,
+        "voiced_samples": 10240,
+        "pulse_shape_modes": [
+          {
+            "value": 0,
+            "count": 60
+          }
+        ],
+        "gain_codes": [
+          {
+            "value": 0,
+            "count": 16
+          },
+          {
+            "value": 1,
+            "count": 9
+          },
+          {
+            "value": 2,
+            "count": 4
+          },
+          {
+            "value": 3,
+            "count": 4
+          },
+          {
+            "value": 4,
+            "count": 2
+          },
+          {
+            "value": 5,
+            "count": 6
+          },
+          {
+            "value": 6,
+            "count": 7
+          },
+          {
+            "value": 8,
+            "count": 5
+          },
+          {
+            "value": 9,
+            "count": 1
+          },
+          {
+            "value": 10,
+            "count": 6
+          }
+        ]
+      },
+      "output_rms_over_reference_rms": 3.1106801972452387
+    },
+    {
+      "id": "en_letter_b-center2048",
+      "language": "en",
+      "voice": "male",
+      "condition": "natural",
+      "source_id": "en_letter",
+      "reference_sha256": "dba9a739d1c4395b08d5901b8377b3444c6b33ef29c6c0bd9f670f103df19450",
+      "model_sha256": "14757bd84b48961f4c1bb365f6cb8d766a6c65d39a5036f7f46a00babd5e8c76",
+      "stream_sha256": "7830e0ecadc70cc2449f41b773b264214d29f9dd3225cd6dcc6956b8f1e18db3",
+      "pcm_u8_sha256": "62bc6425c3f950afaf926f185fb1b57d7d985f2e3d05064bfac55c068a647276",
+      "decoded_wav_sha256": "a6c4f6f58a60839d42e74923c7f2612d9c7ac5225f7daa02c2caed99daacf0de",
+      "exact_oracle_equal": true,
+      "packed_stream_equal": true,
+      "expected_raw_equal": true,
+      "float_wav_sample_exact": true,
+      "reference_subtype": "FLOAT",
+      "decoded_subtype": "FLOAT",
+      "arithmetic": {
+        "samples": 15360,
+        "subtraction_wraps": 0,
+        "state_addition_wraps": 0,
+        "negative_128_multiplication": 0,
+        "fractional_products": 114913,
+        "multiplication_count": 230400,
+        "quantization_error_mean": -0.25573025173611114,
+        "minimum_intermediate": -28,
+        "maximum_intermediate": 48,
+        "frame_phase_restarts": 84,
+        "period_changes": 81,
+        "displaced_countdown_samples": 3229,
+        "positive_pulse_events": 239,
+        "pulse_interval_median": 27.0,
+        "pulse_interval_minimum": 12,
+        "pulse_interval_maximum": 629,
+        "extreme_pwm_samples": 0,
+        "peak_signed": 48
+      },
+      "reference": {
+        "samples": 15360,
+        "minimum": -0.11877650767564774,
+        "maximum": 0.13209135830402374,
+        "peak": 0.13209135830402374,
+        "mean": -3.1846551116020604e-05,
+        "rms": 0.014037282926363094,
+        "unique_levels": 15358,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 1,
+        "equal_neighbor_fraction": 0.0,
+        "local_positive_plateaus_ge2": 0,
+        "local_negative_plateaus_ge2": 0,
+        "observed_minimum": {
+          "level": -0.11877650767564774,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.13209135830402374,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": -0.0007711892831139266,
+            "samples": 2
+          },
+          {
+            "level": 0.0002704666694626212,
+            "samples": 2
+          },
+          {
+            "level": -0.11877650767564774,
+            "samples": 1
+          },
+          {
+            "level": -0.10730777680873871,
+            "samples": 1
+          },
+          {
+            "level": -0.09834931045770645,
+            "samples": 1
+          },
+          {
+            "level": -0.09797036647796631,
+            "samples": 1
+          },
+          {
+            "level": -0.09731823205947876,
+            "samples": 1
+          },
+          {
+            "level": -0.09676490724086761,
+            "samples": 1
+          }
+        ]
+      },
+      "decoded": {
+        "samples": 15360,
+        "minimum": -0.15625,
+        "maximum": 0.375,
+        "peak": 0.375,
+        "mean": 0.028427632649739583,
+        "rms": 0.05244161083671685,
+        "unique_levels": 68,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 3967,
+        "equal_neighbor_fraction": 0.4969724591444756,
+        "local_positive_plateaus_ge2": 672,
+        "local_negative_plateaus_ge2": 33,
+        "observed_minimum": {
+          "level": -0.15625,
+          "samples": 2,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.375,
+          "samples": 2,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.0,
+            "samples": 4252
+          },
+          {
+            "level": 0.0234375,
+            "samples": 1718
+          },
+          {
+            "level": 0.015625,
+            "samples": 1610
+          },
+          {
+            "level": 0.03125,
+            "samples": 1471
+          },
+          {
+            "level": 0.0390625,
+            "samples": 901
+          },
+          {
+            "level": 0.0078125,
+            "samples": 823
+          },
+          {
+            "level": 0.046875,
+            "samples": 728
+          },
+          {
+            "level": 0.0546875,
+            "samples": 617
+          }
+        ]
+      },
+      "source": {
+        "excitation": {
+          "samples": 15360,
+          "minimum": -0.0390625,
+          "maximum": 0.1171875,
+          "peak": 0.1171875,
+          "mean": 0.00233306884765625,
+          "rms": 0.014630658698786185,
+          "unique_levels": 16,
+          "samples_outside_unit_interval": 0,
+          "samples_abs_ge_one": 0,
+          "maximum_equal_run": 3967,
+          "equal_neighbor_fraction": 0.908066931440849,
+          "local_positive_plateaus_ge2": 36,
+          "local_negative_plateaus_ge2": 24,
+          "observed_minimum": {
+            "level": -0.0390625,
+            "samples": 87,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "observed_maximum": {
+            "level": 0.1171875,
+            "samples": 87,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "most_common_levels": [
+            {
+              "level": 0.0,
+              "samples": 14081
+            },
+            {
+              "level": -0.0078125,
+              "samples": 174
+            },
+            {
+              "level": 0.078125,
+              "samples": 154
+            },
+            {
+              "level": 0.0078125,
+              "samples": 142
+            },
+            {
+              "level": 0.046875,
+              "samples": 142
+            },
+            {
+              "level": 0.03125,
+              "samples": 123
+            },
+            {
+              "level": 0.015625,
+              "samples": 102
+            },
+            {
+              "level": -0.0390625,
+              "samples": 87
+            }
+          ]
+        },
+        "pulse_events": 239,
+        "frame_boundaries": 120,
+        "unique_period_codes": 41,
+        "voiced_samples": 10752,
+        "pulse_shape_modes": [
+          {
+            "value": 0,
+            "count": 120
+          }
+        ],
+        "gain_codes": [
+          {
+            "value": 0,
+            "count": 41
+          },
+          {
+            "value": 1,
+            "count": 21
+          },
+          {
+            "value": 2,
+            "count": 25
+          },
+          {
+            "value": 3,
+            "count": 9
+          },
+          {
+            "value": 4,
+            "count": 4
+          },
+          {
+            "value": 5,
+            "count": 20
+          }
+        ]
+      },
+      "output_rms_over_reference_rms": 3.735880448646332
+    },
+    {
+      "id": "en_normcore_a-center2048",
+      "language": "en",
+      "voice": "female",
+      "condition": "natural",
+      "source_id": "en_normcore",
+      "reference_sha256": "289dd07d5b96e89530dd00d246dd4e585203fbf3c4b0788d8c329294bed7bd5b",
+      "model_sha256": "1f10044a32cfb54a925d2d3734e8c9a861533377dd028fe648483f0dbf0d9b29",
+      "stream_sha256": "cc5c54d5dd2061d96424ee904fa4a661fcd8c22e054c3480ad4ee2983c5d2793",
+      "pcm_u8_sha256": "0b20d3fa2a815bb0935dc72ec875a3cc6a0451f470bb4a78056ac45bf38d40af",
+      "decoded_wav_sha256": "23bfd091319b649cdedd8f19f4637737b801ebbdf2a99ee9edb51f1ff9769b76",
+      "exact_oracle_equal": true,
+      "packed_stream_equal": true,
+      "expected_raw_equal": true,
+      "float_wav_sample_exact": true,
+      "reference_subtype": "FLOAT",
+      "decoded_subtype": "FLOAT",
+      "arithmetic": {
+        "samples": 15360,
+        "subtraction_wraps": 0,
+        "state_addition_wraps": 0,
+        "negative_128_multiplication": 0,
+        "fractional_products": 167998,
+        "multiplication_count": 230400,
+        "quantization_error_mean": -0.3745697699652778,
+        "minimum_intermediate": -28,
+        "maximum_intermediate": 73,
+        "frame_phase_restarts": 54,
+        "period_changes": 42,
+        "displaced_countdown_samples": 1394,
+        "positive_pulse_events": 340,
+        "pulse_interval_median": 34.0,
+        "pulse_interval_minimum": 15,
+        "pulse_interval_maximum": 584,
+        "extreme_pwm_samples": 0,
+        "peak_signed": 73
+      },
+      "reference": {
+        "samples": 15360,
+        "minimum": -0.06004175916314125,
+        "maximum": 0.0460641123354435,
+        "peak": 0.06004175916314125,
+        "mean": 4.3955123464634963e-07,
+        "rms": 0.012591340666304414,
+        "unique_levels": 15359,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 1,
+        "equal_neighbor_fraction": 0.0,
+        "local_positive_plateaus_ge2": 0,
+        "local_negative_plateaus_ge2": 0,
+        "observed_minimum": {
+          "level": -0.06004175916314125,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.0460641123354435,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.0022325690370053053,
+            "samples": 2
+          },
+          {
+            "level": -0.06004175916314125,
+            "samples": 1
+          },
+          {
+            "level": -0.0573091022670269,
+            "samples": 1
+          },
+          {
+            "level": -0.05660503730177879,
+            "samples": 1
+          },
+          {
+            "level": -0.05634484067559242,
+            "samples": 1
+          },
+          {
+            "level": -0.0555526539683342,
+            "samples": 1
+          },
+          {
+            "level": -0.05488875135779381,
+            "samples": 1
+          },
+          {
+            "level": -0.05475308746099472,
+            "samples": 1
+          }
+        ]
+      },
+      "decoded": {
+        "samples": 15360,
+        "minimum": -0.21875,
+        "maximum": 0.5703125,
+        "peak": 0.5703125,
+        "mean": 0.04526570638020833,
+        "rms": 0.08274083905638077,
+        "unique_levels": 99,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 242,
+        "equal_neighbor_fraction": 0.21609479783840094,
+        "local_positive_plateaus_ge2": 856,
+        "local_negative_plateaus_ge2": 67,
+        "observed_minimum": {
+          "level": -0.21875,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.5703125,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.0234375,
+            "samples": 2207
+          },
+          {
+            "level": 0.015625,
+            "samples": 1738
+          },
+          {
+            "level": 0.03125,
+            "samples": 1610
+          },
+          {
+            "level": 0.0390625,
+            "samples": 1102
+          },
+          {
+            "level": 0.046875,
+            "samples": 1063
+          },
+          {
+            "level": 0.0078125,
+            "samples": 927
+          },
+          {
+            "level": 0.0546875,
+            "samples": 856
+          },
+          {
+            "level": 0.0703125,
+            "samples": 695
+          }
+        ]
+      },
+      "source": {
+        "excitation": {
+          "samples": 15360,
+          "minimum": -0.078125,
+          "maximum": 0.234375,
+          "peak": 0.234375,
+          "mean": 0.005762736002604167,
+          "rms": 0.03279999994417516,
+          "unique_levels": 29,
+          "samples_outside_unit_interval": 0,
+          "samples_abs_ge_one": 0,
+          "maximum_equal_run": 1280,
+          "equal_neighbor_fraction": 0.8821537860537796,
+          "local_positive_plateaus_ge2": 64,
+          "local_negative_plateaus_ge2": 65,
+          "observed_minimum": {
+            "level": -0.078125,
+            "samples": 66,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "observed_maximum": {
+            "level": 0.234375,
+            "samples": 66,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "most_common_levels": [
+            {
+              "level": 0.0,
+              "samples": 13614
+            },
+            {
+              "level": -0.0078125,
+              "samples": 319
+            },
+            {
+              "level": 0.0078125,
+              "samples": 254
+            },
+            {
+              "level": 0.140625,
+              "samples": 140
+            },
+            {
+              "level": 0.15625,
+              "samples": 125
+            },
+            {
+              "level": 0.09375,
+              "samples": 119
+            },
+            {
+              "level": 0.015625,
+              "samples": 114
+            },
+            {
+              "level": -0.078125,
+              "samples": 66
+            }
+          ]
+        },
+        "pulse_events": 340,
+        "frame_boundaries": 60,
+        "unique_period_codes": 28,
+        "voiced_samples": 13824,
+        "pulse_shape_modes": [
+          {
+            "value": 0,
+            "count": 60
+          }
+        ],
+        "gain_codes": [
+          {
+            "value": 0,
+            "count": 12
+          },
+          {
+            "value": 1,
+            "count": 11
+          },
+          {
+            "value": 2,
+            "count": 1
+          },
+          {
+            "value": 3,
+            "count": 1
+          },
+          {
+            "value": 4,
+            "count": 1
+          },
+          {
+            "value": 5,
+            "count": 5
+          },
+          {
+            "value": 6,
+            "count": 10
+          },
+          {
+            "value": 7,
+            "count": 3
+          },
+          {
+            "value": 8,
+            "count": 3
+          },
+          {
+            "value": 9,
+            "count": 5
+          },
+          {
+            "value": 10,
+            "count": 8
+          }
+        ]
+      },
+      "output_rms_over_reference_rms": 6.57124934104935
+    },
+    {
+      "id": "en_normcore_b-center2048",
+      "language": "en",
+      "voice": "female",
+      "condition": "natural",
+      "source_id": "en_normcore",
+      "reference_sha256": "5b69fe8df93ed28dce414cf2fedca34b1292cb352dc45cd1586dfab8b80af918",
+      "model_sha256": "3a988c9c9f6995cf16e0f4d7f19f146585d486407f9f2747e5637349dfeb1c2f",
+      "stream_sha256": "a3b536ef3ff6cf818cfb3d2621a21b6b9468f2d820cb59a86cd7eded59d29ffd",
+      "pcm_u8_sha256": "a78221c736846345fa4ed67311f545fc1667fa92f5b75a60950a29b9bd5816dd",
+      "decoded_wav_sha256": "c6cabe9539b3d7f027d353ea1c1284bc697c8fc2ebe70ad3f1673f677f782a88",
+      "exact_oracle_equal": true,
+      "packed_stream_equal": true,
+      "expected_raw_equal": true,
+      "float_wav_sample_exact": true,
+      "reference_subtype": "FLOAT",
+      "decoded_subtype": "FLOAT",
+      "arithmetic": {
+        "samples": 15360,
+        "subtraction_wraps": 0,
+        "state_addition_wraps": 0,
+        "negative_128_multiplication": 0,
+        "fractional_products": 145853,
+        "multiplication_count": 230400,
+        "quantization_error_mean": -0.27689643012152776,
+        "minimum_intermediate": -11,
+        "maximum_intermediate": 37,
+        "frame_phase_restarts": 118,
+        "period_changes": 75,
+        "displaced_countdown_samples": 3406,
+        "positive_pulse_events": 343,
+        "pulse_interval_median": 41.0,
+        "pulse_interval_minimum": 13,
+        "pulse_interval_maximum": 233,
+        "extreme_pwm_samples": 0,
+        "peak_signed": 37
+      },
+      "reference": {
+        "samples": 15360,
+        "minimum": -0.09711437672376633,
+        "maximum": 0.059592802077531815,
+        "peak": 0.09711437672376633,
+        "mean": 1.2125508534864086e-06,
+        "rms": 0.019768674142329135,
+        "unique_levels": 15359,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 1,
+        "equal_neighbor_fraction": 0.0,
+        "local_positive_plateaus_ge2": 0,
+        "local_negative_plateaus_ge2": 0,
+        "observed_minimum": {
+          "level": -0.09711437672376633,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.059592802077531815,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.010748195461928844,
+            "samples": 2
+          },
+          {
+            "level": -0.09711437672376633,
+            "samples": 1
+          },
+          {
+            "level": -0.09494465589523315,
+            "samples": 1
+          },
+          {
+            "level": -0.0943182110786438,
+            "samples": 1
+          },
+          {
+            "level": -0.09391816705465317,
+            "samples": 1
+          },
+          {
+            "level": -0.09391025453805923,
+            "samples": 1
+          },
+          {
+            "level": -0.09383510798215866,
+            "samples": 1
+          },
+          {
+            "level": -0.09288335591554642,
+            "samples": 1
+          }
+        ]
+      },
+      "decoded": {
+        "samples": 15360,
+        "minimum": -0.0390625,
+        "maximum": 0.2890625,
+        "peak": 0.2890625,
+        "mean": 0.046771240234375,
+        "rms": 0.057573032162543974,
+        "unique_levels": 40,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 35,
+        "equal_neighbor_fraction": 0.2040497428217983,
+        "local_positive_plateaus_ge2": 734,
+        "local_negative_plateaus_ge2": 0,
+        "observed_minimum": {
+          "level": -0.0390625,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.2890625,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.0390625,
+            "samples": 5183
+          },
+          {
+            "level": 0.03125,
+            "samples": 3312
+          },
+          {
+            "level": 0.046875,
+            "samples": 2329
+          },
+          {
+            "level": 0.0234375,
+            "samples": 1486
+          },
+          {
+            "level": 0.0546875,
+            "samples": 569
+          },
+          {
+            "level": 0.0625,
+            "samples": 431
+          },
+          {
+            "level": 0.0703125,
+            "samples": 265
+          },
+          {
+            "level": 0.015625,
+            "samples": 240
+          }
+        ]
+      },
+      "source": {
+        "excitation": {
+          "samples": 15360,
+          "minimum": -0.0390625,
+          "maximum": 0.1171875,
+          "peak": 0.1171875,
+          "mean": 0.0030049641927083334,
+          "rms": 0.016925361741377862,
+          "unique_levels": 15,
+          "samples_outside_unit_interval": 0,
+          "samples_abs_ge_one": 0,
+          "maximum_equal_run": 896,
+          "equal_neighbor_fraction": 0.9027931505957419,
+          "local_positive_plateaus_ge2": 0,
+          "local_negative_plateaus_ge2": 0,
+          "observed_minimum": {
+            "level": -0.0390625,
+            "samples": 75,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "observed_maximum": {
+            "level": 0.1171875,
+            "samples": 79,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "most_common_levels": [
+            {
+              "level": 0.0,
+              "samples": 14179
+            },
+            {
+              "level": 0.0625,
+              "samples": 185
+            },
+            {
+              "level": 0.078125,
+              "samples": 137
+            },
+            {
+              "level": -0.03125,
+              "samples": 108
+            },
+            {
+              "level": 0.09375,
+              "samples": 108
+            },
+            {
+              "level": 0.046875,
+              "samples": 107
+            },
+            {
+              "level": 0.015625,
+              "samples": 91
+            },
+            {
+              "level": 0.1171875,
+              "samples": 79
+            }
+          ]
+        },
+        "pulse_events": 343,
+        "frame_boundaries": 120,
+        "unique_period_codes": 36,
+        "voiced_samples": 15104,
+        "pulse_shape_modes": [
+          {
+            "value": 0,
+            "count": 120
+          }
+        ],
+        "gain_codes": [
+          {
+            "value": 0,
+            "count": 32
+          },
+          {
+            "value": 1,
+            "count": 13
+          },
+          {
+            "value": 2,
+            "count": 10
+          },
+          {
+            "value": 3,
+            "count": 13
+          },
+          {
+            "value": 4,
+            "count": 31
+          },
+          {
+            "value": 5,
+            "count": 21
+          }
+        ]
+      },
+      "output_rms_over_reference_rms": 2.9123365455889267
+    },
+    {
+      "id": "ru_square_a_quiet_minus24dB-center2048",
+      "language": "ru",
+      "voice": "female",
+      "condition": "quiet_minus24dB",
+      "source_id": "ru_square",
+      "reference_sha256": "dac6c1d04c863947021144930c0b16b7d14f054311742d7f1bb9d4e02617d33b",
+      "model_sha256": "d10491de361bfff15d9ec8b4306aaa4dae63a1834e5a4a3857a912d998a6e648",
+      "stream_sha256": "e0ae448c8b9d3fbc31addb47d0aed1690622a31df2d377a54e86b6d173a06c18",
+      "pcm_u8_sha256": "bc9d2901ffe312882526a612b7b2e35282c37425a9abbb607b9d09714e0277cb",
+      "decoded_wav_sha256": "99d040f2d9804af4663c502cca1ca0081d2382e4ca722ab57caca070ff275ec8",
+      "exact_oracle_equal": true,
+      "packed_stream_equal": true,
+      "expected_raw_equal": true,
+      "float_wav_sample_exact": true,
+      "reference_subtype": "FLOAT",
+      "decoded_subtype": "FLOAT",
+      "arithmetic": {
+        "samples": 15360,
+        "subtraction_wraps": 0,
+        "state_addition_wraps": 0,
+        "negative_128_multiplication": 0,
+        "fractional_products": 152709,
+        "multiplication_count": 230400,
+        "quantization_error_mean": -0.3355612521701389,
+        "minimum_intermediate": -27,
+        "maximum_intermediate": 49,
+        "frame_phase_restarts": 106,
+        "period_changes": 75,
+        "displaced_countdown_samples": 1751,
+        "positive_pulse_events": 412,
+        "pulse_interval_median": 31.0,
+        "pulse_interval_minimum": 12,
+        "pulse_interval_maximum": 628,
+        "extreme_pwm_samples": 0,
+        "peak_signed": 49
+      },
+      "reference": {
+        "samples": 15360,
+        "minimum": -0.010925322771072388,
+        "maximum": 0.011189380660653114,
+        "peak": 0.011189380660653114,
+        "mean": -3.019071024735973e-06,
+        "rms": 0.003120705785904426,
+        "unique_levels": 15358,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 1,
+        "equal_neighbor_fraction": 0.0,
+        "local_positive_plateaus_ge2": 0,
+        "local_negative_plateaus_ge2": 0,
+        "observed_minimum": {
+          "level": -0.010925322771072388,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.011189380660653114,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.0003583441430237144,
+            "samples": 2
+          },
+          {
+            "level": 0.0053777373395860195,
+            "samples": 2
+          },
+          {
+            "level": -0.010925322771072388,
+            "samples": 1
+          },
+          {
+            "level": -0.010495716705918312,
+            "samples": 1
+          },
+          {
+            "level": -0.010389522649347782,
+            "samples": 1
+          },
+          {
+            "level": -0.010324793867766857,
+            "samples": 1
+          },
+          {
+            "level": -0.010277804918587208,
+            "samples": 1
+          },
+          {
+            "level": -0.010231414809823036,
+            "samples": 1
+          }
+        ]
+      },
+      "decoded": {
+        "samples": 15360,
+        "minimum": -0.2109375,
+        "maximum": 0.3828125,
+        "peak": 0.3828125,
+        "mean": 0.033369954427083334,
+        "rms": 0.06476930074840752,
+        "unique_levels": 77,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 131,
+        "equal_neighbor_fraction": 0.3704668272674002,
+        "local_positive_plateaus_ge2": 758,
+        "local_negative_plateaus_ge2": 64,
+        "observed_minimum": {
+          "level": -0.2109375,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.3828125,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.0234375,
+            "samples": 2431
+          },
+          {
+            "level": 0.03125,
+            "samples": 2163
+          },
+          {
+            "level": 0.015625,
+            "samples": 1816
+          },
+          {
+            "level": 0.0078125,
+            "samples": 1811
+          },
+          {
+            "level": 0.0390625,
+            "samples": 1344
+          },
+          {
+            "level": 0.0,
+            "samples": 894
+          },
+          {
+            "level": 0.046875,
+            "samples": 790
+          },
+          {
+            "level": 0.0546875,
+            "samples": 493
+          }
+        ]
+      },
+      "source": {
+        "excitation": {
+          "samples": 15360,
+          "minimum": -0.078125,
+          "maximum": 0.234375,
+          "peak": 0.234375,
+          "mean": 0.00692291259765625,
+          "rms": 0.03407775210794978,
+          "unique_levels": 29,
+          "samples_outside_unit_interval": 0,
+          "samples_abs_ge_one": 0,
+          "maximum_equal_run": 773,
+          "equal_neighbor_fraction": 0.8434142847841657,
+          "local_positive_plateaus_ge2": 34,
+          "local_negative_plateaus_ge2": 28,
+          "observed_minimum": {
+            "level": -0.078125,
+            "samples": 64,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "observed_maximum": {
+            "level": 0.234375,
+            "samples": 64,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "most_common_levels": [
+            {
+              "level": 0.0,
+              "samples": 13291
+            },
+            {
+              "level": -0.0078125,
+              "samples": 235
+            },
+            {
+              "level": 0.015625,
+              "samples": 209
+            },
+            {
+              "level": 0.09375,
+              "samples": 141
+            },
+            {
+              "level": 0.0078125,
+              "samples": 133
+            },
+            {
+              "level": 0.15625,
+              "samples": 116
+            },
+            {
+              "level": 0.046875,
+              "samples": 115
+            },
+            {
+              "level": 0.0234375,
+              "samples": 114
+            }
+          ]
+        },
+        "pulse_events": 412,
+        "frame_boundaries": 120,
+        "unique_period_codes": 28,
+        "voiced_samples": 13568,
+        "pulse_shape_modes": [
+          {
+            "value": 0,
+            "count": 120
+          }
+        ],
+        "gain_codes": [
+          {
+            "value": 0,
+            "count": 20
+          },
+          {
+            "value": 1,
+            "count": 21
+          },
+          {
+            "value": 2,
+            "count": 4
+          },
+          {
+            "value": 3,
+            "count": 14
+          },
+          {
+            "value": 4,
+            "count": 4
+          },
+          {
+            "value": 5,
+            "count": 7
+          },
+          {
+            "value": 6,
+            "count": 15
+          },
+          {
+            "value": 7,
+            "count": 11
+          },
+          {
+            "value": 8,
+            "count": 9
+          },
+          {
+            "value": 9,
+            "count": 2
+          },
+          {
+            "value": 10,
+            "count": 13
+          }
+        ]
+      },
+      "output_rms_over_reference_rms": 20.754696274463576
+    },
+    {
+      "id": "ru_russia_a_white_noise_15dB-center2048",
+      "language": "ru",
+      "voice": "male",
+      "condition": "white_noise_15dB",
+      "source_id": "ru_russia",
+      "reference_sha256": "87e47b60bd993cec24788d807fc2a3eb90635e6bd1be2c88f674267ce16d7546",
+      "model_sha256": "18cfede4e39ed81b7fce3c0817f922148ec8830a8d8bcac595bb1e35c523f20b",
+      "stream_sha256": "40d937e07e3f2113c9fed16ffba03f9bf72fb71fd95ddfc0bb00943f016daa4b",
+      "pcm_u8_sha256": "4af21b33ad7520aba85454e9b0d3f38316d785522a03e6a9708f4c3979ee5cd5",
+      "decoded_wav_sha256": "cd4089fb7a7d2daa2596f357fa7300cdb356f0d542fcd6ab81a9d5fadf4ff631",
+      "exact_oracle_equal": true,
+      "packed_stream_equal": true,
+      "expected_raw_equal": true,
+      "float_wav_sample_exact": true,
+      "reference_subtype": "FLOAT",
+      "decoded_subtype": "FLOAT",
+      "arithmetic": {
+        "samples": 15360,
+        "subtraction_wraps": 0,
+        "state_addition_wraps": 0,
+        "negative_128_multiplication": 0,
+        "fractional_products": 151991,
+        "multiplication_count": 230400,
+        "quantization_error_mean": -0.31269829644097225,
+        "minimum_intermediate": -27,
+        "maximum_intermediate": 56,
+        "frame_phase_restarts": 95,
+        "period_changes": 81,
+        "displaced_countdown_samples": 3783,
+        "positive_pulse_events": 193,
+        "pulse_interval_median": 51.5,
+        "pulse_interval_minimum": 17,
+        "pulse_interval_maximum": 1440,
+        "extreme_pwm_samples": 0,
+        "peak_signed": 56
+      },
+      "reference": {
+        "samples": 15360,
+        "minimum": -0.5551902055740356,
+        "maximum": 0.44846856594085693,
+        "peak": 0.5551902055740356,
+        "mean": 8.853642323429778e-05,
+        "rms": 0.07271607450157488,
+        "unique_levels": 15357,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 1,
+        "equal_neighbor_fraction": 0.0,
+        "local_positive_plateaus_ge2": 0,
+        "local_negative_plateaus_ge2": 0,
+        "observed_minimum": {
+          "level": -0.5551902055740356,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.44846856594085693,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": -0.07731777429580688,
+            "samples": 2
+          },
+          {
+            "level": -0.04974392428994179,
+            "samples": 2
+          },
+          {
+            "level": 0.025696637108922005,
+            "samples": 2
+          },
+          {
+            "level": -0.5551902055740356,
+            "samples": 1
+          },
+          {
+            "level": -0.5545603036880493,
+            "samples": 1
+          },
+          {
+            "level": -0.5484511852264404,
+            "samples": 1
+          },
+          {
+            "level": -0.530798614025116,
+            "samples": 1
+          },
+          {
+            "level": -0.5252976417541504,
+            "samples": 1
+          }
+        ]
+      },
+      "decoded": {
+        "samples": 15360,
+        "minimum": -0.15625,
+        "maximum": 0.4375,
+        "peak": 0.4375,
+        "mean": 0.03202870686848958,
+        "rms": 0.05389664421557805,
+        "unique_levels": 73,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 92,
+        "equal_neighbor_fraction": 0.36395598671788526,
+        "local_positive_plateaus_ge2": 989,
+        "local_negative_plateaus_ge2": 35,
+        "observed_minimum": {
+          "level": -0.15625,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.4375,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.0078125,
+            "samples": 2947
+          },
+          {
+            "level": 0.015625,
+            "samples": 2393
+          },
+          {
+            "level": 0.0234375,
+            "samples": 1847
+          },
+          {
+            "level": 0.03125,
+            "samples": 1766
+          },
+          {
+            "level": 0.0,
+            "samples": 1088
+          },
+          {
+            "level": 0.0390625,
+            "samples": 1036
+          },
+          {
+            "level": 0.0625,
+            "samples": 488
+          },
+          {
+            "level": 0.046875,
+            "samples": 453
+          }
+        ]
+      },
+      "source": {
+        "excitation": {
+          "samples": 15360,
+          "minimum": -0.078125,
+          "maximum": 0.234375,
+          "peak": 0.234375,
+          "mean": 0.0031901041666666666,
+          "rms": 0.023076477005714715,
+          "unique_levels": 29,
+          "samples_outside_unit_interval": 0,
+          "samples_abs_ge_one": 0,
+          "maximum_equal_run": 115,
+          "equal_neighbor_fraction": 0.8109251904420861,
+          "local_positive_plateaus_ge2": 401,
+          "local_negative_plateaus_ge2": 399,
+          "observed_minimum": {
+            "level": -0.078125,
+            "samples": 33,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "observed_maximum": {
+            "level": 0.234375,
+            "samples": 34,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "most_common_levels": [
+            {
+              "level": 0.0,
+              "samples": 11129
+            },
+            {
+              "level": -0.0078125,
+              "samples": 1514
+            },
+            {
+              "level": 0.0078125,
+              "samples": 1480
+            },
+            {
+              "level": -0.0234375,
+              "samples": 168
+            },
+            {
+              "level": 0.0234375,
+              "samples": 168
+            },
+            {
+              "level": 0.03125,
+              "samples": 158
+            },
+            {
+              "level": 0.046875,
+              "samples": 144
+            },
+            {
+              "level": 0.015625,
+              "samples": 87
+            }
+          ]
+        },
+        "pulse_events": 193,
+        "frame_boundaries": 120,
+        "unique_period_codes": 42,
+        "voiced_samples": 12160,
+        "pulse_shape_modes": [
+          {
+            "value": 0,
+            "count": 120
+          }
+        ],
+        "gain_codes": [
+          {
+            "value": 1,
+            "count": 37
+          },
+          {
+            "value": 2,
+            "count": 20
+          },
+          {
+            "value": 3,
+            "count": 11
+          },
+          {
+            "value": 4,
+            "count": 1
+          },
+          {
+            "value": 5,
+            "count": 8
+          },
+          {
+            "value": 6,
+            "count": 8
+          },
+          {
+            "value": 7,
+            "count": 6
+          },
+          {
+            "value": 8,
+            "count": 7
+          },
+          {
+            "value": 9,
+            "count": 6
+          },
+          {
+            "value": 10,
+            "count": 16
+          }
+        ]
+      },
+      "output_rms_over_reference_rms": 0.7411929836010435
+    },
+    {
+      "id": "en_normcore_a_quiet_minus24dB-center2048",
+      "language": "en",
+      "voice": "female",
+      "condition": "quiet_minus24dB",
+      "source_id": "en_normcore",
+      "reference_sha256": "80553a2be4697ab1daeac1582ba98aa8c7f73c48d9220e537dc65c43e7e0cea1",
+      "model_sha256": "a65d85e5ac000d2894dd2d5f5cfe56975f4f784030783d42492e4365e396b144",
+      "stream_sha256": "c4cb4006f33e8f4d7abf35ff16b3c85cbee43de18fcf9cd9c7726d2ddcc20358",
+      "pcm_u8_sha256": "6d421c4527ed66c14d7b0b8d0b82706f38926c6aa36b6e0d4ae710f5f0935106",
+      "decoded_wav_sha256": "44e2b6f777ecf301109a374b89334da39321b3d02928d230dd1f5100befdfc16",
+      "exact_oracle_equal": true,
+      "packed_stream_equal": true,
+      "expected_raw_equal": true,
+      "float_wav_sample_exact": true,
+      "reference_subtype": "FLOAT",
+      "decoded_subtype": "FLOAT",
+      "arithmetic": {
+        "samples": 15360,
+        "subtraction_wraps": 0,
+        "state_addition_wraps": 0,
+        "negative_128_multiplication": 0,
+        "fractional_products": 144720,
+        "multiplication_count": 230400,
+        "quantization_error_mean": -0.32251573350694446,
+        "minimum_intermediate": -16,
+        "maximum_intermediate": 42,
+        "frame_phase_restarts": 54,
+        "period_changes": 42,
+        "displaced_countdown_samples": 1509,
+        "positive_pulse_events": 338,
+        "pulse_interval_median": 34.0,
+        "pulse_interval_minimum": 15,
+        "pulse_interval_maximum": 640,
+        "extreme_pwm_samples": 0,
+        "peak_signed": 42
+      },
+      "reference": {
+        "samples": 15360,
+        "minimum": -0.0037985898088663816,
+        "maximum": 0.0029129611793905497,
+        "peak": 0.0037985898088663816,
+        "mean": -1.85639296199984e-08,
+        "rms": 0.000794438523236919,
+        "unique_levels": 14391,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 344,
+        "equal_neighbor_fraction": 0.05866267335112963,
+        "local_positive_plateaus_ge2": 0,
+        "local_negative_plateaus_ge2": 0,
+        "observed_minimum": {
+          "level": -0.0037985898088663816,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.0029129611793905497,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.0,
+            "samples": 913
+          },
+          {
+            "level": -6.360311317621381e-07,
+            "samples": 3
+          },
+          {
+            "level": -9.585212978890922e-08,
+            "samples": 3
+          },
+          {
+            "level": -4.286832577804489e-08,
+            "samples": 3
+          },
+          {
+            "level": 3.234782397498748e-08,
+            "samples": 3
+          },
+          {
+            "level": 6.627861637298338e-08,
+            "samples": 3
+          },
+          {
+            "level": 1.340436028840486e-07,
+            "samples": 3
+          },
+          {
+            "level": 1.0050630407931749e-06,
+            "samples": 3
+          }
+        ]
+      },
+      "decoded": {
+        "samples": 15360,
+        "minimum": -0.1015625,
+        "maximum": 0.328125,
+        "peak": 0.328125,
+        "mean": 0.031039937337239584,
+        "rms": 0.05368588874954054,
+        "unique_levels": 56,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 512,
+        "equal_neighbor_fraction": 0.43258024610977275,
+        "local_positive_plateaus_ge2": 964,
+        "local_negative_plateaus_ge2": 12,
+        "observed_minimum": {
+          "level": -0.1015625,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.328125,
+          "samples": 6,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.03125,
+            "samples": 2397
+          },
+          {
+            "level": 0.015625,
+            "samples": 2239
+          },
+          {
+            "level": 0.0078125,
+            "samples": 2226
+          },
+          {
+            "level": 0.0234375,
+            "samples": 2152
+          },
+          {
+            "level": 0.0390625,
+            "samples": 1722
+          },
+          {
+            "level": 0.0,
+            "samples": 1257
+          },
+          {
+            "level": 0.046875,
+            "samples": 924
+          },
+          {
+            "level": 0.0546875,
+            "samples": 496
+          }
+        ]
+      },
+      "source": {
+        "excitation": {
+          "samples": 15360,
+          "minimum": -0.0625,
+          "maximum": 0.1875,
+          "peak": 0.1875,
+          "mean": 0.0045664469401041664,
+          "rms": 0.026057937625246747,
+          "unique_levels": 24,
+          "samples_outside_unit_interval": 0,
+          "samples_abs_ge_one": 0,
+          "maximum_equal_run": 1280,
+          "equal_neighbor_fraction": 0.8830653037307117,
+          "local_positive_plateaus_ge2": 64,
+          "local_negative_plateaus_ge2": 65,
+          "observed_minimum": {
+            "level": -0.0625,
+            "samples": 66,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "observed_maximum": {
+            "level": 0.1875,
+            "samples": 66,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "most_common_levels": [
+            {
+              "level": 0.0,
+              "samples": 13625
+            },
+            {
+              "level": -0.0078125,
+              "samples": 322
+            },
+            {
+              "level": 0.0078125,
+              "samples": 254
+            },
+            {
+              "level": 0.078125,
+              "samples": 129
+            },
+            {
+              "level": 0.125,
+              "samples": 125
+            },
+            {
+              "level": 0.015625,
+              "samples": 120
+            },
+            {
+              "level": 0.109375,
+              "samples": 93
+            },
+            {
+              "level": -0.0390625,
+              "samples": 70
+            }
+          ]
+        },
+        "pulse_events": 338,
+        "frame_boundaries": 60,
+        "unique_period_codes": 29,
+        "voiced_samples": 13824,
+        "pulse_shape_modes": [
+          {
+            "value": 0,
+            "count": 60
+          }
+        ],
+        "gain_codes": [
+          {
+            "value": 0,
+            "count": 13
+          },
+          {
+            "value": 1,
+            "count": 11
+          },
+          {
+            "value": 2,
+            "count": 1
+          },
+          {
+            "value": 3,
+            "count": 4
+          },
+          {
+            "value": 4,
+            "count": 2
+          },
+          {
+            "value": 5,
+            "count": 11
+          },
+          {
+            "value": 6,
+            "count": 4
+          },
+          {
+            "value": 7,
+            "count": 6
+          },
+          {
+            "value": 8,
+            "count": 8
+          }
+        ]
+      },
+      "output_rms_over_reference_rms": 67.57714685184045
+    },
+    {
+      "id": "en_sense_a_white_noise_15dB-center2048",
+      "language": "en",
+      "voice": "male",
+      "condition": "white_noise_15dB",
+      "source_id": "en_sense",
+      "reference_sha256": "991609adad33230674622136a9cb689f171e1fc7e795e2e4373851f956103b92",
+      "model_sha256": "8c17fb55b01bb43d3d3161d0eadfc44c797ecd51bdc3c09fedc23ff4dea6dd06",
+      "stream_sha256": "17bad05fa4b7fdb796c160516608e3cbc077da583327d95e86cb24f63426a30c",
+      "pcm_u8_sha256": "d7d9fec8621e09401d798b7ffb6979cd308794aa1181321f2cd3f881ac94c5eb",
+      "decoded_wav_sha256": "3cb53942ba872f4b340780c8a5ab487dab95a05b2e4327af36d9f5f89d32a64f",
+      "exact_oracle_equal": true,
+      "packed_stream_equal": true,
+      "expected_raw_equal": true,
+      "float_wav_sample_exact": true,
+      "reference_subtype": "FLOAT",
+      "decoded_subtype": "FLOAT",
+      "arithmetic": {
+        "samples": 15360,
+        "subtraction_wraps": 0,
+        "state_addition_wraps": 0,
+        "negative_128_multiplication": 0,
+        "fractional_products": 178901,
+        "multiplication_count": 230400,
+        "quantization_error_mean": -0.40039686414930553,
+        "minimum_intermediate": -25,
+        "maximum_intermediate": 50,
+        "frame_phase_restarts": 47,
+        "period_changes": 40,
+        "displaced_countdown_samples": 1883,
+        "positive_pulse_events": 115,
+        "pulse_interval_median": 16.0,
+        "pulse_interval_minimum": 15,
+        "pulse_interval_maximum": 3985,
+        "extreme_pwm_samples": 0,
+        "peak_signed": 50
+      },
+      "reference": {
+        "samples": 15360,
+        "minimum": -0.21083050966262817,
+        "maximum": 0.22303535044193268,
+        "peak": 0.22303535044193268,
+        "mean": 0.013210810595300574,
+        "rms": 0.03870440996275842,
+        "unique_levels": 15359,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 1,
+        "equal_neighbor_fraction": 0.0,
+        "local_positive_plateaus_ge2": 0,
+        "local_negative_plateaus_ge2": 0,
+        "observed_minimum": {
+          "level": -0.21083050966262817,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.22303535044193268,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.015887709334492683,
+            "samples": 2
+          },
+          {
+            "level": -0.21083050966262817,
+            "samples": 1
+          },
+          {
+            "level": -0.2090216726064682,
+            "samples": 1
+          },
+          {
+            "level": -0.20577162504196167,
+            "samples": 1
+          },
+          {
+            "level": -0.19807717204093933,
+            "samples": 1
+          },
+          {
+            "level": -0.19578279554843903,
+            "samples": 1
+          },
+          {
+            "level": -0.19557076692581177,
+            "samples": 1
+          },
+          {
+            "level": -0.19205810129642487,
+            "samples": 1
+          }
+        ]
+      },
+      "decoded": {
+        "samples": 15360,
+        "minimum": -0.1953125,
+        "maximum": 0.390625,
+        "peak": 0.390625,
+        "mean": 0.05969390869140625,
+        "rms": 0.07921854795371229,
+        "unique_levels": 74,
+        "samples_outside_unit_interval": 0,
+        "samples_abs_ge_one": 0,
+        "maximum_equal_run": 82,
+        "equal_neighbor_fraction": 0.19317663910410834,
+        "local_positive_plateaus_ge2": 615,
+        "local_negative_plateaus_ge2": 31,
+        "observed_minimum": {
+          "level": -0.1953125,
+          "samples": 4,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "observed_maximum": {
+          "level": 0.390625,
+          "samples": 1,
+          "maximum_equal_run": 1,
+          "equal_runs_ge2": 0,
+          "samples_in_equal_runs_ge2": 0
+        },
+        "most_common_levels": [
+          {
+            "level": 0.03125,
+            "samples": 1479
+          },
+          {
+            "level": 0.0390625,
+            "samples": 1469
+          },
+          {
+            "level": 0.046875,
+            "samples": 1465
+          },
+          {
+            "level": 0.0546875,
+            "samples": 1217
+          },
+          {
+            "level": 0.0625,
+            "samples": 1097
+          },
+          {
+            "level": 0.0703125,
+            "samples": 1040
+          },
+          {
+            "level": 0.0234375,
+            "samples": 1031
+          },
+          {
+            "level": 0.0859375,
+            "samples": 810
+          }
+        ]
+      },
+      "source": {
+        "excitation": {
+          "samples": 15360,
+          "minimum": -0.078125,
+          "maximum": 0.234375,
+          "peak": 0.234375,
+          "mean": 0.0031077067057291665,
+          "rms": 0.026102275255205917,
+          "unique_levels": 29,
+          "samples_outside_unit_interval": 0,
+          "samples_abs_ge_one": 0,
+          "maximum_equal_run": 111,
+          "equal_neighbor_fraction": 0.6458753825118823,
+          "local_positive_plateaus_ge2": 1167,
+          "local_negative_plateaus_ge2": 1168,
+          "observed_minimum": {
+            "level": -0.078125,
+            "samples": 39,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "observed_maximum": {
+            "level": 0.234375,
+            "samples": 39,
+            "maximum_equal_run": 1,
+            "equal_runs_ge2": 0,
+            "samples_in_equal_runs_ge2": 0
+          },
+          "most_common_levels": [
+            {
+              "level": 0.0,
+              "samples": 5432
+            },
+            {
+              "level": 0.0078125,
+              "samples": 3658
+            },
+            {
+              "level": -0.0078125,
+              "samples": 3640
+            },
+            {
+              "level": -0.015625,
+              "samples": 983
+            },
+            {
+              "level": 0.015625,
+              "samples": 942
+            },
+            {
+              "level": -0.0234375,
+              "samples": 85
+            },
+            {
+              "level": 0.0234375,
+              "samples": 63
+            },
+            {
+              "level": 0.15625,
+              "samples": 62
+            }
+          ]
+        },
+        "pulse_events": 115,
+        "frame_boundaries": 120,
+        "unique_period_codes": 23,
+        "voiced_samples": 6016,
+        "pulse_shape_modes": [
+          {
+            "value": 0,
+            "count": 120
+          }
+        ],
+        "gain_codes": [
+          {
+            "value": 1,
+            "count": 58
+          },
+          {
+            "value": 2,
+            "count": 16
+          },
+          {
+            "value": 3,
+            "count": 4
+          },
+          {
+            "value": 4,
+            "count": 1
+          },
+          {
+            "value": 5,
+            "count": 3
+          },
+          {
+            "value": 6,
+            "count": 4
+          },
+          {
+            "value": 7,
+            "count": 4
+          },
+          {
+            "value": 8,
+            "count": 7
+          },
+          {
+            "value": 9,
+            "count": 7
+          },
+          {
+            "value": 10,
+            "count": 16
+          }
+        ]
+      },
+      "output_rms_over_reference_rms": 2.0467576699899777
+    }
+  ]
+}
