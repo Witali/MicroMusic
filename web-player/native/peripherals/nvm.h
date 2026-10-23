@@ -32,7 +32,9 @@ enum {
  NVM_FAULT_FLASH_NOT_ERASED=8u,
  NVM_FAULT_PAGE_ALIGNMENT=16u,
  NVM_FAULT_FUSE_ADDRESS=32u,
- NVM_FAULT_TIME_REVERSED=64u
+ NVM_FAULT_TIME_REVERSED=64u,
+ NVM_FAULT_EEPROM_VOLTAGE_UNCERTAIN=128u,
+ NVM_FAULT_FLASH_VOLTAGE_UNCERTAIN=256u
 };
 enum {
  NVM_SPM_IGNORED=0, NVM_SPM_BUFFER=1, NVM_SPM_ERASE=2,
@@ -66,6 +68,12 @@ int nvm_init(attiny13a_nvm_t *n, uint8_t flash[NVM_FLASH_BYTES],
  * Use the actual I/O write/instruction-effect edge consistently. Advance may
  * cross any number of cycles in O(1), including while the CPU sleeps. */
 void nvm_advance(attiny13a_nvm_t *n, uint64_t cycle, uint64_t now_ns);
+/* The supply observer calls this when an in-flight operation leaves its
+ * voltage profile. Freeze that pending operation through ALL implicit advances,
+ * preserving bytes/metadata rather than inventing a successful or failed bit
+ * pattern. Only nvm_init clears the uncertainty. Mask uses the two VOLTAGE
+ * fault bits; a non-busy memory does not acquire a fault. */
+void nvm_voltage_uncertain(attiny13a_nvm_t *n, uint32_t mask);
 /* Reset register controls and temporary buffer; preserve arrays, generation,
  * dirty pages and any active programming operation at adequate VCC. */
 void nvm_reset(attiny13a_nvm_t *n, uint64_t cycle, uint64_t now_ns);
