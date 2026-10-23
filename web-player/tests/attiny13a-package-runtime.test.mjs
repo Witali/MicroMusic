@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {readFile,mkdtemp,writeFile,copyFile,rm} from 'node:fs/promises';
+import {readFile,mkdtemp,writeFile,copyFile,rm,mkdir} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {spawnSync} from 'node:child_process';
@@ -83,7 +83,9 @@ test('corrupt package fails before any runtime or translated instance is created
 test('package loader runs with only JavaScript loader files and no default WASM artifacts',async t=>{
   const dir=await mkdtemp(join(tmpdir(),'micromusic-package-loader-'));
   t.after(()=>rm(dir,{recursive:true,force:true}));
-  for(const name of ['avr-runtime.js','avr-transpiler.js','avr-transpiled-runtime.js','attiny13a-runtime.js','attiny13a-package.js','attiny13a-registers.js'])
+  await mkdir(join(dir,'devices'));
+  for(const name of ['avr-runtime.js','avr-transpiler.js','avr-transpiled-runtime.js','attiny13a-runtime.js','attiny13a-package.js','attiny13a-registers.js',
+    'devices/profiles.js','devices/attiny13a-profile.js'])
     await copyFile(new URL('../lib/'+name,import.meta.url),join(dir,name));
   await writeFile(join(dir,'package.json'),'{"type":"module"}');
   await writeFile(join(dir,'firmware.json'),JSON.stringify(pkg));
