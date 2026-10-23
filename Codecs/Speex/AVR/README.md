@@ -95,6 +95,54 @@ See `reports/host-pcm.json`, `reports/avr-optimized.json` and
 not exhaustive packet timing proofs or physical board measurements.
 `reports/avr-initial.json` preserves the initial 547,940-cycle port for comparison.
 
+## Human speech and PWM headroom
+
+The expanded corpus contains 20 eight-second clips: eight human speakers
+(four Russian, four English; two male and two female voices per language),
+16 natural excerpts plus two attenuated by 24 dB and two with seeded white
+noise at 15 dB SNR. Source pages, speaker/author credits, licenses, changes and
+SHA-256 hashes are retained in `tests/real-speech-sources.json` and
+`reports/real-speech-corpus.json`. Audio stays in ignored build output.
+
+All **8,042 frames / 1,286,720 samples** match unmodified upstream s16 PCM on
+the AVR ISA simulator. Every full player run, with both timers and interrupts,
+also matches the expected PWM duties, with **zero underruns**. Worst observed
+decoder frame is 295,386 cycles (18.462 ms). The ring retains at least 31
+samples before a timer output while decoding is active (3.875 ms at 8 kHz).
+The longest observed interval between published 40-sample blocks is 164,313
+cycles (10.270 ms); the prefetched ring absorbs that gap. Timer output intervals
+are 1,994–2,004 cycles. Full-player SRAM/stack remain 1,668/228 bytes, leaving
+152 bytes. These bounds describe this corpus and simulated ISA/peripherals;
+hardware playback and other interrupt workloads still need measurement.
+
+The aligned natural-speech STOI mean is 0.9016 for decoded s16 and 0.8373 for
+the 8-bit PWM duties. At -24 dB it is 0.8976 / 0.5190: quiet input exposes
+the separate 8-bit quantization limit. These are intelligibility estimates,
+not MOS, percentages of correctly recognized words or a subjective listening
+test. No gain normalization is applied. Delay is measured and removed only
+for comparison; the complete AVR timing tests include all decoded samples.
+
+To reproduce (FFmpeg with libspeex is required):
+
+```sh
+python Codecs/Speex/AVR/tools/prepare_real_speech.py
+python Codecs/Speex/AVR/tests/verify_players.py --avr-gcc avr-gcc --node node --streams Codecs/Speex/AVR/build/real-speech/streams --out Codecs/Speex/AVR/build/real-speech/player
+```
+
+Decode each raw stream with `build/reference/decode` into
+`build/real-speech/oracle/<stem>.pcm`, build the decoder test firmware, then:
+
+```sh
+node Codecs/Speex/AVR/tests/verify_avr.mjs --streams Codecs/Speex/AVR/build/real-speech/streams --oracle Codecs/Speex/AVR/build/real-speech/oracle --out Codecs/Speex/AVR/build/real-speech/avr --capture
+python -m pip install -r Codecs/Speex/AVR/tests/requirements-quality.txt
+python Codecs/Speex/AVR/tools/analyze_real_speech.py
+```
+
+`build/real-speech/index.html` provides original excerpts, 8-kHz encoder input,
+AVR-decoded s16 and captured PWM side by side. WAVs represent the simulated
+digital signal, without the board's analog output filter/noise. Full measurements
+are in `reports/real-speech-{avr,player,quality}.json`.
+
 ## Sources and provenance
 
 `vendor/speex-1.2.1` contains unmodified release source/header files, their BSD

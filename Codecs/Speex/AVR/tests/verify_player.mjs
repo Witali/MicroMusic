@@ -25,18 +25,30 @@ const symbols = new Map(readFileSync(join(build, 'symbols.txt'), 'utf8').split(/
 function address(name) { assert.ok(symbols.has(name), name); return symbols.get(name) & 0xffff; }
 const end = address('__bss_end'), started = address('speex_player_started');
 const done = address('speex_player_done'), underruns = address('speex_player_underruns');
+const head = address('head'), tail = address('tail');
 const program = new Uint16Array(16384).fill(0xffff);
 new Uint8Array(program.buffer).set(binary);
 const cpu = new CPU(program, 2048);
 new AVRTimer(cpu, timer1Config);
 new AVRTimer(cpu, timer2Config);
-const samples = [], times = [];
+const samples = [], times = [], readyTimes = [];
+let minQueued = 127;
+const previousHead = cpu.writeHooks[head];
+cpu.writeHooks[head] = (value, old, address, mask) => {
+  if (cpu.data[started] && value !== old) readyTimes.push(cpu.cycles);
+  return previousHead?.(value, old, address, mask) ?? false;
+};
 const previous = cpu.writeHooks[0x88]; // OCR1AL
 cpu.writeHooks[0x88] = (value, old, address, mask) => {
-  if (cpu.data[started]) { samples.push(value); times.push(cpu.cycles); }
+  if (cpu.data[started]) {
+    samples.push(value); times.push(cpu.cycles);
+    // Exclude the intentional final drain after input is exhausted.
+    if (!cpu.data[addressOfFinished]) minQueued = Math.min(minQueued, (cpu.data[head]-cpu.data[tail]) & 127);
+  }
   return previous?.(value, old, address, mask) ?? false;
 };
 let minSP = 0x8ff;
+const addressOfFinished = address('input_finished');
 const deadline = metadata.frames * 320000 + 2000000;
 while (!cpu.data[done]) {
   assert.ok(cpu.cycles < deadline, 'Player did not finish');
@@ -55,12 +67,15 @@ if (!output.equals(expected)) {
   throw new Error(`PWM differs from upstream at sample ${first}: ${output[first]} != ${expected[first]}`);
 }
 const gaps = times.slice(1).map((t,i) => t-times[i]);
+const readyGaps = readyTimes.slice(1).map((t,i) => t-readyTimes[i]);
 assert.ok(Math.min(...gaps) >= 1992 && Math.max(...gaps) <= 2008, 'Timer period / IRQ latency');
 const report = {simulator: 'avr8js 0.21.1', input: metadata, frames: metadata.frames,
   samples: expected.length, cpuHz: 16000000, pcmHz: 8000, pwmHz: 62500,
   flashBytes: binary.length, staticSramBytes: end-0x100, peakStackBytes: 0x8ff-minSP,
   freeSramAtPeak: minSP-end+1, underruns: 0, timerIntervalMinCycles: Math.min(...gaps),
   timerIntervalMaxCycles: Math.max(...gaps), elapsedCycles: cpu.cycles,
+  minQueuedSamplesBeforeOutput: minQueued,
+  maxBlockReadyGapCycles: Math.max(0,...readyGaps),
   pwmSha256: createHash('sha256').update(output).digest('hex'), includesInterrupts: true,
   physicalBoardTested: false};
 writeFileSync(join(build, 'player-verification.json'), JSON.stringify(report, null, 2) + '\n');

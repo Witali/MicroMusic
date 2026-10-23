@@ -1,13 +1,22 @@
 // Execute the linked AVR GCC machine code on an independent AVR8js CPU.
 // No timers/ISR in this harness: frame cycles measure the decoder and mailbox.
 import assert from 'node:assert/strict';
-import {readFileSync, readdirSync, writeFileSync} from 'node:fs';
+import {readFileSync, readdirSync, writeFileSync, mkdirSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {resolve, join} from 'node:path';
 import {CPU, avrInstruction} from 'avr8js';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const build = join(root, 'build/profile');
+function option(name, fallback) {
+  const i = process.argv.indexOf(name);
+  return i < 0 ? fallback : resolve(process.argv[i+1]);
+}
+const streamsDirectory = option('--streams', join(root, 'reference/R4/data'));
+const oracleDirectory = option('--oracle', join(root, 'build/reference'));
+const outputDirectory = option('--out', build);
+const capture = process.argv.includes('--capture');
+mkdirSync(outputDirectory, {recursive: true});
 const symbols = new Map(readFileSync(join(build, 'symbols.txt'), 'utf8').split(/\r?\n/)
   .map(line => line.match(/^([0-9a-f]+)\s+\w\s+(.+)$/)).filter(Boolean)
   .map(m => [m[2], parseInt(m[1], 16)]));
@@ -34,7 +43,7 @@ const report = {simulator: 'avr8js 0.21.1', compiler: 'AVR GCC', mcu: 'ATmega328
   flashBytes: binary.length, staticSramBytes: end - 0x100,
   includesInterrupts: false, frames: 0, maxCycles: 0, minStackPointer: 0x8ff, streams: []};
 
-for (const file of readdirSync(join(root, 'reference/R4/data')).filter(s => s.endsWith('.spxraw')).sort()) {
+for (const file of readdirSync(streamsDirectory).filter(s => s.endsWith('.spxraw')).sort()) {
   const program = new Uint16Array(16384).fill(0xffff);
   new Uint8Array(program.buffer).set(binary);
   const cpu = new CPU(program, 2048);
@@ -52,9 +61,10 @@ for (const file of readdirSync(join(root, 'reference/R4/data')).filter(s => s.en
     }
   }
   until(() => cpu.data[status] === 1);
-  const raw = readFileSync(join(root, 'reference/R4/data', file));
-  const expected = readFileSync(join(root, 'build/reference', file.replace('.spxraw', '.pcm')));
+  const raw = readFileSync(join(streamsDirectory, file));
+  const expected = readFileSync(join(oracleDirectory, file.replace('.spxraw', '.pcm')));
   const frames = Math.min(raw.length / 20, limit), cycles = [];
+  const captured = [];
   for (let frame = 0; frame < frames; frame++) {
     cpu.data.set(raw.subarray(frame * 20, frame * 20 + 20), packet);
     cpu.data[status] = 1;
@@ -70,6 +80,7 @@ for (const file of readdirSync(join(root, 'reference/R4/data')).filter(s => s.en
         `${actual.readInt16LE(first & ~1)} != ${oracle.readInt16LE(first & ~1)}`);
     }
     cycles.push(cpu.cycles - start);
+    if (capture) captured.push(actual);
   }
   const row = {stream: file, frames, minCycles: Math.min(...cycles),
     maxCycles: Math.max(...cycles), meanCycles: Math.round(cycles.reduce((a,b) => a+b, 0) / frames),
@@ -78,11 +89,12 @@ for (const file of readdirSync(join(root, 'reference/R4/data')).filter(s => s.en
   report.maxCycles = Math.max(report.maxCycles, row.maxCycles);
   report.minStackPointer = Math.min(report.minStackPointer, minSP);
   report.streams.push(row);
+  if (capture) writeFileSync(join(outputDirectory, file.replace('.spxraw', '.pcm')), Buffer.concat(captured));
   console.log(file, JSON.stringify(row));
 }
 report.freeSramAtPeak = report.minStackPointer - end + 1;
 report.fitsDecoderBudget = report.maxCycles <= 320000;
-writeFileSync(resolve(build, limit === Infinity ? 'avr-verification.json' : 'avr-smoke.json'), JSON.stringify(report, null, 2) + '\n');
+writeFileSync(resolve(outputDirectory, limit === Infinity ? 'avr-verification.json' : 'avr-smoke.json'), JSON.stringify(report, null, 2) + '\n');
 console.log('PASS: AVR PCM exact;', report.frames, 'frames; max', report.maxCycles,
   'cycles;', report.freeSramAtPeak, 'bytes spare SRAM. ISR excluded.');
 if (profile) {
