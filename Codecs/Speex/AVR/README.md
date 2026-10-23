@@ -143,6 +143,67 @@ AVR-decoded s16 and captured PWM side by side. WAVs represent the simulated
 digital signal, without the board's analog output filter/noise. Full measurements
 are in `reports/real-speech-{avr,player,quality}.json`.
 
+## Native 16/32-kHz memory experiment
+
+The ATmega328P player currently supports **8 kHz only**. Native Speex WB
+(16 kHz) and UWB (32 kHz) are experimental PC builds; no 22.05-kHz output
+profile is introduced. The separate experiment retains native high-band
+information rather than resampling the narrowband result.
+
+`tools/build_rates.py --memory` applies three changes to a disposable upstream
+copy, without changing the working NB3 player:
+
+- QMF history uses dense 32-sample rings instead of 64 slots with only odd
+  slots used: **128 bytes saved per high-band layer**.
+- An in-place perfect shuffle precedes causal QMF synthesis, eliminating
+  the two temporary arrays: **768 bytes at 16 kHz / 1,408 bytes at 32 kHz**.
+  Signed 17-bit low/high sums retain carries and exact modulo-32 arithmetic.
+- The high-band excitation scratch array is allocated once per frame and
+  reused across four subframes: **480 / 960 bytes of scratch growth avoided**.
+  Symmetric bounded LSP half-polynomials support LPC orders 8 and 10 using
+  48 bytes of local arrays, replacing upstream scratch matrices.
+
+These savings describe individual components; they are not a measured total
+SRAM footprint of a complete AVR WB/UWB player. The PC experiment still uses
+upstream allocation/API and its default scratch arena. It is not linked into
+the 2-KB production decoder.
+
+All 32 native-rate natural-speech streams match untouched upstream fixed-point
+PCM, including both QMF layers in UWB. Another 480,000 complete upstream LSP
+comparisons exercise both orders. A separate AVR GCC machine-code benchmark
+matches the original QMF on full-scale DC, opposing extrema, silence and
+random frames with persistent history. Its measured costs are:
+
+| Isolated QMF layer | Maximum cycles | Time at 16 MHz | Frame budget |
+| --- | ---: | ---: | ---: |
+| 8→16 kHz | 1,452,772 | 90.798 ms | 20 ms |
+| 16→32 kHz | 2,909,131 | 181.821 ms | 20 ms |
+
+This is a memory-focused implementation and not a speed limit for all possible
+implementations. It currently fails the real-time requirement even before
+adding CELP decoding, packet transport, output and interrupts. UWB also needs
+the inner WB synthesis layer. A larger buffer cannot compensate for a sustained
+production rate below consumption. Enabling either mode in the PWM player
+would therefore be incorrect. Further arithmetic/assembly work or a measured
+quality/speed tradeoff is required before either can become a supported profile.
+
+Reproduce after preparing real speech:
+
+```sh
+python Codecs/Speex/AVR/tools/build_rates.py --cc clang
+python Codecs/Speex/AVR/tools/build_rates.py --cc clang --memory
+python Codecs/Speex/AVR/tests/verify_rates.py
+python Codecs/Speex/AVR/tools/build_qmf_bench.py --cc clang --avr-gcc avr-gcc
+node Codecs/Speex/AVR/tests/verify_qmf.mjs
+python Codecs/Speex/AVR/tools/analyze_real_speech.py --rates
+python Codecs/Speex/AVR/tools/package_comparison.py
+```
+
+The gallery and `build/real-speech/speex-listening.zip` include original,
+decoded/PWM 8-kHz recordings and **PC-reference** native 16/32-kHz examples,
+with source credits. See `reports/wideband-pcm.json`,
+`reports/wideband-qmf-avr.json` and `reports/native-rates-quality.json`.
+
 ## Sources and provenance
 
 `vendor/speex-1.2.1` contains unmodified release source/header files, their BSD
