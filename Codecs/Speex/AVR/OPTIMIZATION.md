@@ -58,13 +58,18 @@ binary measurements. Vendor and R4 files remain unmodified.
   AVR tests cover 163,840 LPC samples (105,600 clipped, 68,671 wraps) and
   163,840 innovation samples across all 64 scales and signed-byte shapes.
   The C reference branches are unchanged; full-series PWM gate pending.
+- Two-MUL signed8 pitch gain: fixture maximum 145,098 -> 143,106 cycles,
+  Flash 8,770 -> 8,764 B, peak stack unchanged. Independent AVR mailbox checks
+  983,040 outputs, all signed8 gains, every count 0..40, write/add and zero
+  paths; all 4,096 actual pitch/gain code pairs also match upstream PCM.
+  The build validates the codebook range; full-series PWM gate pending.
 
 ## Next candidates (unmeasured)
 
-1. **Signed-byte pitch gain.** All three NB3 pitch gains before <<7 fit signed8
-   (table+32 is -50..97). Two hardware multiplies can form a signed24 product;
-   byte placement and one arithmetic >>1 scale it by 128. Verify the ABI,
-   accumulation/zero paths and every pitch/gain code.
+1. **Loop-invariant pitch mode in T.** Arithmetic leaves AVR's T bit alone;
+   moving write/add mode there could eliminate the per-sample TST, free r19
+   for input and avoid another callee-saved register. Preserve bool/nonzero
+   semantics, zero-register ABI and GCC ISR SREG restoration.
 2. **Ten-sample pitch staging.** Upstream pitch sources always have negative
    offsets: the first segment stops before `j==pp`, the second before
    `j==pp+pitch`. Thus a completed innovation vector can be written before the
@@ -75,6 +80,12 @@ binary measurements. Vendor and R4 files remain unmodified.
    64. A signed16 x signed24 core followed by a byte-aligned >>8 might use six
    hardware multiplies instead of eight. Preserve the original floor, prove
    the input truncation/range and compare added code size against speed.
+4. **Packed signed24 unscaled pitch.** The original gains are signed8*128;
+   all three unscaled products/sums fit signed24 for the pinned codebook.
+   A portable three-byte pitch buffer could save 40 B and eliminate per-product
+   scaling shifts; innovation would insert a zero low byte to form 2*pitch.
+   Compare packed-read/clamp overhead, prove the codebook L1 bound and retain
+   selectable C arithmetic before considering this profile change.
 
 No claim of a global speed optimum has been established. Do not mark the
 ongoing optimization goal complete while useful candidates remain untested.
