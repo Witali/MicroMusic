@@ -150,6 +150,16 @@ also fault. DWDR reads0 without a debugger. Sustained phase-correct TOP=0 and
 other reserved/ambiguous configurations retain the component's explicit faults.
 There is no silicon/electrical trace oracle or voltage/temperature calibration.
 
+WGM5 with OCR0A/TOP=0 is specifically **pending hardware**, not a validated
+counter/IRQ model. DS40002307A section 11.7.4 describes zero-duty polarity but
+does not resolve simultaneous TOP/BOTTOM counter and flag cadence;
+[official errata DS80000857A](https://ww1.microchip.com/downloads/aemDocuments/documents/MCU08/ProductDocuments/Errata/ATtiny13A-SilConErrataClarif-DS80000857A.pdf)
+adds no Timer0 clarification. The source-only
+[measurement probe](timer0-top-zero-probe.md) provides controlled external T0
+stepping, raw register/physical-pin capture profiles and a trace schema without
+assuming the unknown outcome. The existing explicit fault remains until that
+evidence is available.
+
 `device-test.c` exports `device_test_case(index)` with16 deterministic C fixtures:
 bus masks; physical PWM; synchronized T0; vector priority/ACK; ADC sample/result
 locks and ADIF policy; all six auto-trigger sources; Idle; Power-down/watchdog;
