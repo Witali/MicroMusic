@@ -29,7 +29,7 @@ static int16_t imm[512];
 #define SET_PENDING(v) (IO(0x38) = (IO(0x38) & ~2) | ((v) ? 2 : 0))
 enum { NOP=1, CLI, SEI, RETI, RET, CALL, JUMP, BRANCH, SKIP, LDI, CPI,
  SUBI, ORI, ANDI, MOVW, ADD, ADC, SUB, AND, EOR, MOV, INC, DEC, COM,
- LSR, ASR, SWAP, IN, OUT, SBI, PUSH, POP, ST, LPM, FLAG, ROR, LDS, STS, OR, LD, CP, NEG };
+ LSR, ASR, SWAP, IN, OUT, SBI, PUSH, POP, ST, LPM, FLAG, ROR, LDS, STS, OR, LD, CP, NEG, SBC, SBCI };
 enum { E_PC=1, E_OPCODE, E_PUSH, E_POP, E_EXTCLK, E_WGM, E_FLASH, E_WDT,
  E_ADC, E_COMPARATOR, E_EXTIRQ, E_CLKDIV, E_COMPAREIRQ, E_EEPROM,
  E_FORCE, E_DATA, E_ST_ALIAS, E_WRITE, E_LD_ALIAS, E_READ, E_LPM_ALIAS,
@@ -93,13 +93,14 @@ static void decode(int p) {
  else if ((w&0xfc00)==0xf000 || (w&0xfc00)==0xf400) {o=BRANCH;d=w&7;s=(w&0xfc00)==0xf000;k=sign_extend((w>>3)&127,64);}
  else if ((w&0xfe08)==0xfc00 || (w&0xfe08)==0xfe00) {o=SKIP;s=w&7;k=(w&0xfe08)==0xfe00;}
  else if ((w&0xf000)==0xe000) {o=LDI;d=16+((w>>4)&15);k=(w&15)|((w>>4)&240);}
- else if ((w&0xf000)==0x3000 || (w&0xf000)==0x5000 || (w&0xf000)==0x6000 || (w&0xf000)==0x7000) {
-  o=(w&0xf000)==0x3000?CPI:(w&0xf000)==0x5000?SUBI:(w&0xf000)==0x6000?ORI:ANDI;
+ else if ((w&0xf000)==0x3000 || (w&0xf000)==0x4000 || (w&0xf000)==0x5000 || (w&0xf000)==0x6000 || (w&0xf000)==0x7000) {
+  o=(w&0xf000)==0x3000?CPI:(w&0xf000)==0x4000?SBCI:(w&0xf000)==0x5000?SUBI:(w&0xf000)==0x6000?ORI:ANDI;
   d=16+((w>>4)&15);k=(w&15)|((w>>4)&240);
  } else if ((w&0xff00)==0x0100) {o=MOVW;d=2*((w>>4)&15);s=2*(w&15);}
  else if ((w&0xfc00)==0x0c00) o=ADD;
  else if ((w&0xfc00)==0x1c00) o=ADC;
  else if ((w&0xfc00)==0x1800) o=SUB;
+ else if ((w&0xfc00)==0x0800) o=SBC;
  else if ((w&0xfc00)==0x2000) o=AND;
  else if ((w&0xfc00)==0x2400) o=EOR;
  else if ((w&0xfc00)==0x2800) o=OR;
@@ -132,7 +133,7 @@ static void decode(int p) {
  else if ((w&0xfe0f)==0x9004 || (w&0xfe0f)==0x9005) {o=LPM;k=w&1;}
  op[p]=o;dst[p]=d;src[p]=s;imm[p]=k;
  batch[p] = (o==JUMP || o==BRANCH || o==LD || o==ST)?2:(o==SKIP || o==LPM)?3:
-  (o==NOP || (o>=LDI && o<=SWAP) || o==ROR || o==OR)?1:0;
+  (o==NOP || (o>=LDI && o<=SWAP) || o==ROR || o==OR || o==SBC || o==SBCI)?1:0;
  if((o==LD||o==ST)&&k!=1)batch[p]=0;
  for (int n=0;n<5;n++) decode_idle((p-n)&511);
 }
@@ -233,6 +234,7 @@ static int execute(void) {
  case ADD:data[d]=arithmetic(data[d],data[s],0,0);break;
  case ADC:data[d]=arithmetic(data[d],data[s],FLAGS&1,0);break;
  case SUB:data[d]=arithmetic(data[d],data[s],0,1);break;
+ case SBC:case SBCI:{int previous=FLAGS;data[d]=arithmetic(data[d],o==SBC?data[s]:k,previous&1,1);if(!(previous&2))FLAGS&=~2;break;}
  case CP:arithmetic(data[d],data[s],0,1);break;
  case NEG:data[d]=arithmetic(0,data[d],0,1);break;
  case AND:data[d]&=data[s];nzvs(data[d],0);break;
@@ -311,6 +313,10 @@ static int run_block(double deadline) {
   case SUB:case CPI:case SUBI:
    result=arithmetic_result(flags,data[d],o==SUB?data[s]:k,0,1);
    flags=result>>8;if(o!=CPI)data[d]=result&255;break;
+  case SBC:case SBCI:
+   result=arithmetic_result(flags,data[d],o==SBC?data[s]:k,flags&1,1);
+   if(!(flags&2))result&=~(2<<8);
+   flags=result>>8;data[d]=result&255;break;
   case AND:data[d]&=data[s];flags=nzvs_flags(flags,data[d],0);break;
   case EOR:data[d]^=data[s];flags=nzvs_flags(flags,data[d],0);break;
   case OR:data[d]|=data[s];flags=nzvs_flags(flags,data[d],0);break;
