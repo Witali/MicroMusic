@@ -1,0 +1,158 @@
+# AVR machine code to WebAssembly
+
+The experimental translator accepts ATtiny13A Flash bytes, including decoded
+Intel HEX. It emits a real WebAssembly binary directly, without AVR sources,
+Clang, Emscripten, WAT assembly or runtime opcode interpretation. The browser
+can translate a firmware image when it is loaded; the CLI can do it in advance.
+
+The current target is the same 105 of 123 instruction-summary forms supported
+by the production player. Forms include aliases and addressing variants, not
+105 distinct opcodes. Unsupported instructions fail when executed, including
+when embedded data happens to decode as an instruction. This is a prototype
+for the retained firmware, not a complete ATtiny/ATmega implementation.
+
+## Official references
+
+- [Microchip AVR Instruction Set Manual, DS40002198A](https://ww1.microchip.com/downloads/en/DeviceDoc/AVR-Instruction-Set-Manual-DS40002198A.pdf): instruction encodings, per-bit SREG equations, AVRe timings and device applicability. Section numbers below refer to this PDF, not the differently numbered online edition.
+- [Microchip ATtiny13A Data Sheet, DS40002307A](https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf): sections 4–5 (CPU/memory/interrupts), 11–12 (Timer0/prescaler), 21 (instruction summary).
+- [WebAssembly Core: binary instructions](https://webassembly.github.io/spec/core/binary/instructions.html), [integer/value encodings](https://webassembly.github.io/spec/core/binary/values.html), [module sections](https://webassembly.github.io/spec/core/binary/modules.html), [instruction semantics](https://webassembly.github.io/spec/core/exec/instructions.html).
+
+The existing reviewed `reports/attiny13a-instructions.json` retains source
+hashes, all 123 forms, opcode patterns, cycle counts and flag-write masks.
+Tests compare the new independent decoder against all 65,536 possible first
+words and that official-document fixture, rather than the interpreter decoder.
+
+## Instruction correspondence
+
+The primary operation is shown, not the entire expansion. Registers reside in
+the shared AVR data image and are loaded into WASM locals within a block.
+`i32.store8` truncates register writes to eight bits; intermediate results are
+masked to 255 when flags need the wrapped result. WASM has no AVR SREG or
+8-bit arithmetic type. Only live flag bits are calculated in optimized blocks.
+
+| AVR forms | Closest emitted WASM operations (opcode hex) | Additional AVR behavior |
+| --- | --- | --- |
+| `NOP` | no data operation | Advance PC and one CPU cycle. |
+| `LDI`, `SER` | `i32.const` (`41`), `i32.store8` (`3a`) | `SER` is `LDI Rd,255`; SREG unchanged. |
+| `MOV` | `i32.load8_u` (`2d`), `i32.store8` (`3a`) | SREG unchanged. |
+| `MOVW` | two byte loads and stores | Copy the even register pair; SREG unchanged. |
+| `ADD`, `LSL` | `i32.add` (`6a`) | Wrapped result and live `H,S,V,N,Z,C`; `LSL` is `ADD Rd,Rd`. |
+| `ADC`, `ROL` | two `i32.add` (`6a`) | Read C; `ROL` is `ADC Rd,Rd`. ADC Z depends only on the new result. |
+| `SUB`, `SUBI`, `NEG` | `i32.sub` (`6b`) | `NEG` subtracts from zero; live arithmetic flags. |
+| `CP`, `CPI` | `i32.sub` (`6b`) | Compute live flags without writing Rd. |
+| `AND`, `ANDI`, `CBR`, `TST` | `i32.and` (`71`) | Live Z/N/S, clear live V; preserve C/H/T/I. `TST` is `AND Rd,Rd`. |
+| `OR`, `ORI`, `SBR` | `i32.or` (`72`) | Same flag behavior as AND. |
+| `EOR`, `CLR` | `i32.xor` (`73`) | `CLR` is `EOR Rd,Rd`; same flag behavior as AND. |
+| `COM` | `i32.xor 255` (`73`) | Complement eight bits; C=1, V=0; live Z/N/S. |
+| `INC`, `DEC` | `i32.add 1` / `i32.sub 1` | Preserve C/H/T/I; V at 0x80 / 0x7f respectively. |
+| `LSR` | `i32.shr_u` (`76`) | Old bit 0 becomes C; update live Z/N/V/S. |
+| `ASR` | `i32.load8_s` (`2c`), `i32.shr_s` (`75`) | Sign extend first; mask the result to eight bits. |
+| `ROR` | `i32.shr_u`, `i32.shl` (`74`), `i32.or` | Insert old C at bit 7; old bit 0 becomes C. A 32-bit `rotr` would be incorrect. |
+| `SWAP` | `i32.and`, `i32.shl`, `i32.shr_u`, `i32.or` | Exchange the two nibbles; SREG unchanged. |
+| `BSET`, `BCLR`, `SEC/CLC`, `SEN/CLN`, `SEZ/CLZ`, `SES/CLS`, `SEV/CLV`, `SET/CLT`, `SEH/CLH` | `i32.or` / `i32.and` | Change exactly one SREG bit. SET also preserves the player's work-loss diagnostic. |
+| `SEI`, `CLI` | `i32.or` / `i32.and` | SEI has the documented interrupt acceptance delay. |
+| `BRBS`, `BRBC`, `BREQ/BRNE`, `BRCS/BRCC`, `BRSH/BRLO`, `BRMI/BRPL`, `BRGE/BRLT`, `BRHS/BRHC`, `BRTS/BRTC`, `BRVS/BRVC`, `BRIE/BRID` | bit test, `if` (`04`), constant PC | Read the selected SREG bit; one or two AVR cycles. |
+| `RJMP` | constant PC, generated function-table dispatch | Two AVR cycles. WASM `br` addresses structured labels, not arbitrary Flash addresses. |
+| `RCALL`, `RET` | byte stack loads/stores, PC, function-table dispatch | Preserve the observable two-byte AVR return address in SRAM; three/four cycles. Native WASM `call/return` alone would be incorrect. |
+| `RETI` | RET expansion plus I-bit/IRQ state | Four cycles, interrupt delay and nested-ISR accounting. |
+| `SBRC`, `SBRS` | bit test, `if`, constant PC | Skip one or two words; one/two/three cycles. |
+| all `LD`/`LDD` X/Y/Z forms | `i32.load8_u` (`2d`) | Plain, pre-decrement, post-increment and Y/Z displacement; two cycles. |
+| all `ST`/`STD` X/Y/Z forms | `i32.store8` (`3a`), or peripheral write helper | Same pointer modes; I/O side effects occur at the completing cycle. |
+| `LDS`, `STS` | byte load/store, constant address | Two-word instruction, two cycles; I/O addresses use the peripheral model. |
+| `LPM Rd,Z`, `LPM Rd,Z+` | Flash `i32.load8_u`, optional pointer increment | Three cycles; byte address differs from word-addressed PC. |
+| `IN`, `OUT` | byte load / peripheral write helper | Clock the one AVR cycle before observing/changing I/O. |
+| `SBI` | load, `i32.or`, peripheral write helper | Two cycles and the same I/O behavior as OUT/ST. |
+| `PUSH`, `POP` | byte store/load and SPL adjustment | Two cycles, shared SRAM stack and explicit bounds diagnostics. |
+
+For this <=256-byte data space, LD/ST use and update only the low pointer
+byte. XH/YH/ZH remain usable as general registers (manual 5.66–68 and
+5.114–116). LPM uses the program-memory Z pointer instead.
+
+These 18 device-summary forms currently fail explicitly. Their natural
+lowerings are recorded as future work, not claimed as implemented:
+
+| Unsupported AVR forms | Expected lowering / missing behavior |
+| --- | --- |
+| `ADIW`, `SBIW` | `i32.add/sub`, 16-bit result and word-operation flags. |
+| `SBC`, `SBCI`, `CPC` | `i32.sub` with carry/borrow and chained Z. |
+| `IJMP`, `ICALL` | Z-derived PC and generated function-table dispatch; ICALL pushes AVR PC. |
+| `CPSE`, `SBIC`, `SBIS` | comparison/bit test and length-aware skip; I/O timing for SBIC/SBIS. |
+| `CBI` | I/O read/AND/write at the correct cycle. |
+| `BST`, `BLD` | bit extraction/insertion involving SREG T. |
+| operandless `LPM` | Flash byte load into r0; separate encoding from `LPM Rd,Z`. |
+| `SPM` | Flash controller, busy cycles and translated-code invalidation. |
+| `SLEEP`, `WDR`, `BREAK` | Sleep/wake, watchdog and debug behavior; arithmetic lowering is insufficient. |
+
+ATmega instructions and peripherals, including devices with 16-bit data
+pointers, larger PC/Flash, additional timers and extended I/O, need a separate
+device profile. `MUL`, long `JMP/CALL`, `ELPM` and extensions of other AVR cores
+are not part of the ATtiny13A target.
+
+## Flags and cycle synchronization
+
+A backward pass computes `needed = written & live`, then
+`live = (live & ~written) | read`. For example, ADD followed by ADC needs
+ADD's C, while its other flags can be omitted if overwritten before use.
+The emitter generates equations only for needed bits. The CLI switch
+`--no-flag-dce` disables elimination for differential checks.
+
+The pass currently operates within straight-line basic blocks, with all SREG
+bits live at block exits. This deliberately preserves exact debugger, SREG
+read, branch and interrupt-handler observations. It is not whole-program
+flag elimination or a lazy-flags scheme. A future global pass must model
+interrupt entry as a possible reader of SREG.
+
+CPU time is a count of original AVR cycles, stored as f64 exact integers
+beyond 2^32 (up to 2^53). Each optimized block consists only of fixed-cycle
+instructions with no I/O, memory, stack or interrupt-control operations. It
+runs only when its end is strictly before the next Timer0 event and at or
+before the caller's deadline. Pending interrupts or SEI/RETI delay disable
+blocks. TCNT0 and prescaler phase advance by exactly the block's AVR cycles.
+An event-boundary fallback still executes **generated WASM**, one AVR
+instruction at a time, then advances timers and checks interrupt acceptance.
+It never falls back to the C opcode interpreter.
+
+I/O is clocked at the completing AVR cycle; EEPROM-read stalls add four
+cycles. Hardware IRQ entry adds its four cycles, and vector instructions
+are then executed normally. No browser wall-clock time drives MCU timers.
+This provides cycle-consistent behavior for the existing peripheral model;
+it does not add physical PWM edges, ADC, pin transitions or unsupported
+timer modes. See the existing ATtiny13A audit for those limitations.
+
+## Files and use
+
+- `lib/avr-transpiler.js`: independent decoder, liveness analysis and binary emitter.
+- `lib/avr-transpiled.js`: generated CPU plus the existing WASM peripheral runtime.
+- `scripts/transpile-avr.mjs`: HEX/BIN to WASM and a JSON report with PC mapping,
+  flag masks, optimization counts, runtime ABI and SHA-256 provenance.
+- `tests/avr-transpiler.test.mjs`: official opcode coverage, exhaustive byte ALU
+  cases, exact SREG observations, event boundaries, stack/I/O, music and speech.
+
+From the repository root:
+
+```powershell
+node web-player/scripts/transpile-avr.mjs ATtiny13A/Music/variants/lumiere-stereo/synth.hex build/avr-transpiler/lumiere.wasm
+node --test web-player/tests/avr-transpiler.test.mjs
+```
+
+The emitted module imports `avr.memory`, `avr.clock`, `avr.interrupt` and
+`avr.writeIO`; those functions are WASM exports from `wasm/avr.wasm`, not JS
+instruction callbacks. The module exports `step()`,
+`block(f64 deadline, i32 instructionLimit) -> i32`,
+`run(i32 instructionLimit) -> i32` and `nextDuty() -> i32`.
+Bind the exact runtime ABI recorded in its custom section/JSON and initialize
+that runtime with the same Flash/EEPROM. The module does not initialize the
+runtime or contain a separate copy of Flash constants. Its function table
+dispatches by AVR address to already generated code, not by opcode.
+
+In JavaScript, use `new AVRCore(flashBytes, eepromBytes)` from
+`lib/avr-transpiled.js` for automatic generation and binding. `step()` retains
+all flags; `run()` and `nextDuty()` can use optimized blocks. Flash is immutable
+for the lifetime of a translated CPU: construct a new instance to load a
+different firmware. Do not mutate the debugger's underlying Flash view.
+
+The prototype keeps registers in shared memory and compiles every Flash word
+as a possible entry, including data. Module size and load-time compilation
+are costs to measure, not evidence of a speedup. Benchmarks must distinguish
+construction/compilation from warmed execution and compare both flags-on
+and flags-eliminated runs with equal AVR timing and output.
