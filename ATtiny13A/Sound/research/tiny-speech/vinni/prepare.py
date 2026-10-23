@@ -5,6 +5,7 @@ small deterministic scale grid before exact output refinement; no frame or
 phoneme is selected manually. Bound FIR accumulators by the integer contract.
 """
 from copy import deepcopy
+import argparse
 import hashlib
 import json
 from pathlib import Path
@@ -21,13 +22,17 @@ from fixed_search import FixedSearch
 
 
 def main():
-    output = ROOT/'build/tiny-speech/vinni/prepared'
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--reference',type=Path,default=ROOT.parents[1]/'build/hq4-preview/vinni/original.wav')
+    parser.add_argument('--output',type=Path,default=ROOT/'build/tiny-speech/vinni/prepared')
+    args = parser.parse_args()
+    output = args.output
     output.mkdir(parents=True,exist_ok=True)
     path = ROOT/'ATtiny13A/Sound/research/period-balanced/vinni/model.json'
     source = json.loads(path.read_text(encoding='utf-8'))
     # Worktree layout: repository/.worktree/speech-quality, so external audio
     # belongs to the primary checkout's ignored build directory.
-    reference_path = ROOT.parents[1]/'build/hq4-preview/vinni/original.wav'
+    reference_path = args.reference
     reference,sr = sf.read(reference_path)
     reference_hash = hashlib.sha256(reference_path.read_bytes()).hexdigest()
     if reference_hash!='749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03':
