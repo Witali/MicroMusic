@@ -11,7 +11,7 @@ enum {
  DEVICE_CFG_ADC_FIRST_SAMPLE=8, DEVICE_CFG_COMPARATOR_PROPAGATION=9,
  DEVICE_CFG_BANDGAP_STARTUP=10, DEVICE_CFG_COMPARATOR_INITIAL=11,
  DEVICE_CFG_WAKE_STARTUP_BASE_HALF=12, DEVICE_CFG_SPM_COMMAND_CYCLES=13,
- DEVICE_CFG_FLASH_MAXIMUM=14
+ DEVICE_CFG_FLASH_MAXIMUM=14, DEVICE_CFG_BOD_RECOVERY_NS=15
 };
 enum { DEVICE_CONTROL_SLEEP=1, DEVICE_CONTROL_SPM=2, DEVICE_CONTROL_WDR=3 };
 enum {
@@ -30,7 +30,8 @@ typedef struct {
 /* Configure BEFORE init. Defaults: 9.6MHz oscillator, nominal128kHz watchdog,
  * 5V supply/1.1V bandgap, fuses7a/ff, lockff, ADC first sample27 half ADC
  * periods, comparator propagation0/startup0/initial0, wake startup0,
- * SPM command cycles0 (explicit fault if needed), Flash maximum bound. */
+ * SPM command cycles0 (explicit fault if needed), Flash maximum bound,
+ * BOD recovery60000ns (datasheet approximate digital profile, configurable). */
 int device_configure(uint32_t key, uint32_t value);
 int device_init(uint8_t data[160], uint8_t flash[1024], uint8_t eeprom[64]);
 void device_reset(uint8_t reset_sources);
@@ -62,6 +63,10 @@ uint32_t device_control(uint8_t command, uint16_t z, uint16_t r1r0);
 uint8_t device_lpm(uint16_t z);
 int device_halted(void);
 uint8_t device_sleep_phase(void);
+/* Logical BOD state only: BODLEVEL fuse plus the protected BODCR sequence.
+ * No supply threshold or analog brown-out/reset behavior is inferred. */
+uint8_t device_bod_disabled(void);
+uint8_t device_bod_recovering(void);
 const device_pin_event_t *device_pin_state(void);
 /* Advance halted hardware to wake/program completion or caller deadline;
  * returns elapsed complete virtual CPU periods, including clock-stopped spans.

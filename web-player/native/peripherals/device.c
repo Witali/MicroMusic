@@ -15,13 +15,15 @@ typedef struct {
 } input_t;
 typedef struct {
  uint8_t *data, *flash, *eeprom;
- uint32_t config[15];
+ uint32_t config[16];
  uint64_t base, half, phase, ns, ns_remainder, wdt_ticks, wdt_remainder;
  uint64_t clkpr_until, clkpr_switch_half, dropped;
+ uint64_t bod_arm_until, bod_sleep_until, bod_recovery_until;
  uint32_t fault, detail, divisor, pending_divisor;
  uint16_t input_head, input_count, pin_head, pin_count;
  uint8_t initialized, clkpr, prr, domains, reset_requested, reset_held, analog_mask;
  uint8_t external_mask, external_levels;
+ uint8_t bodcr, bod_armed, bod_committed, bod_disabled;
  int32_t analog_uv[6];
  timer0_t timer;
  system_gpio_t gpio;
@@ -34,8 +36,8 @@ typedef struct {
  input_t inputs[INPUT_CAPACITY];
 } device_t;
 static device_t board;
-static uint32_t configuration[15] = {
- 0,9600000,128000,5000000,1100000,0x7a,0xff,0xff,27,0,0,0,0,0,1
+static uint32_t configuration[16] = {
+ 0,9600000,128000,5000000,1100000,0x7a,0xff,0xff,27,0,0,0,0,0,1,60000
 };
 
 static uint64_t minimum(uint64_t a, uint64_t b) { return a < b ? a : b; }
@@ -52,6 +54,36 @@ static uint64_t multiply(uint64_t a, uint64_t b) {
 }
 static uint64_t cpu_cycle(void) { return board.half/2; }
 static uint64_t base_frequency(void) { return (uint64_t)board.config[1]*2; }
+static void bod_expire(void) {
+ uint64_t now=cpu_cycle();
+ if (board.bod_sleep_until && now>=board.bod_sleep_until) {
+  board.bodcr&=(uint8_t)~2; board.bod_sleep_until=0; board.bod_committed=0;
+ }
+ if (board.bod_arm_until && now>=board.bod_arm_until) {
+  board.bodcr&=(uint8_t)~1; board.bod_arm_until=0; board.bod_armed=0;
+ }
+}
+static void bod_write(uint8_t value) {
+ bod_expire();
+ uint64_t now=cpu_cycle();
+ value&=3;
+ if (value&1) {
+  /* The specified first write sets BOTH bits; BODSE alone does not arm BODS. */
+  board.bodcr=(uint8_t)((board.bodcr&value&2)|1);
+  board.bod_arm_until=add(now,4); board.bod_armed=(value&2)!=0;
+  board.bod_committed=0;
+  if (value&2) { board.bodcr|=2; board.bod_sleep_until=add(now,3); }
+  else board.bod_sleep_until=0;
+ } else {
+  if ((value&2) && board.bod_armed && (board.bodcr&1) && now<board.bod_arm_until) {
+   board.bodcr=2; board.bod_sleep_until=add(now,3); board.bod_committed=1;
+  } else {
+   board.bodcr&=value&2;
+   if (!(board.bodcr&2)) { board.bod_sleep_until=0; board.bod_committed=0; }
+  }
+  board.bod_arm_until=0; board.bod_armed=0;
+ }
+}
 static int external_reset_asserted(void) {
  return (board.config[DEVICE_CFG_FUSE_HIGH]&1) &&
   (board.external_mask&32) && !(board.external_levels&32);
@@ -167,10 +199,20 @@ static void clock_domains(void) {
 static void wake(void) {
  if (board.sleep.phase==SYSTEM_SLEEP_ASLEEP) {
   uint16_t pending=device_pending_irqs();
-  system_sleep_timing_t timing={board.config[DEVICE_CFG_WAKE_STARTUP_BASE_HALF],2u*board.divisor};
+  uint64_t recovery=board.bod_disabled ?
+   add(multiply(board.config[DEVICE_CFG_BOD_RECOVERY_NS],base_frequency()),999999999u)/1000000000u : 0;
+  uint64_t startup=board.config[DEVICE_CFG_WAKE_STARTUP_BASE_HALF];
+  /* Explicit profile: oscillator/startup and BOD recovery start concurrently.
+   * The CPU waits for both; never double-charge a caller's combined startup. */
+  if (recovery>startup) startup=recovery;
+  system_sleep_timing_t timing={startup,2u*board.divisor};
   uint8_t status=system_sleep_wake(&board.sleep,pending,pending,
    !(board.gpio.mcucr&3),timing,board.base);
   if (status&SYSTEM_SLEEP_INVALID_TIME) fail(DEVICE_FAULT_SLEEP,status);
+  if (status&SYSTEM_SLEEP_WAKE_STARTED) {
+   if (board.bod_disabled) board.bod_recovery_until=add(board.base,recovery);
+   board.bod_disabled=0;
+  }
  }
  clock_domains();
 }
@@ -193,6 +235,7 @@ static void mirror(void) {
  IO(TIMER0_TCNT0,board.timer.tcnt); IO(TIMER0_OCR0A,board.timer.ocra); IO(TIMER0_OCR0B,board.timer.ocrb);
  IO(TIMER0_TIFR0,board.timer.tifr); IO(TIMER0_TIMSK0,board.timer.timsk);
  IO(CLKPR,board.clkpr);
+ IO(BODCR,board.bodcr);
 #undef IO
 }
 static void check_faults(void) {
@@ -246,6 +289,7 @@ static void service(uint64_t previous_half) {
  uint8_t sleep=system_sleep_advance(&board.sleep,board.base);
  if (sleep&SYSTEM_SLEEP_INVALID_TIME) fail(DEVICE_FAULT_SLEEP,sleep);
  if ((board.clkpr&128) && cpu_cycle()>=board.clkpr_until) board.clkpr&=15;
+ bod_expire();
  /* Deterministic lower-bound CLKPR transition: the first active edge is one
   * old period after the write; the second is one new period after that edge.
   * Thus the new waveform is established at T1+T2, within section6.3.1's
@@ -261,6 +305,8 @@ static uint64_t next_event(void) {
  next=minimum(next,at_half(system_gpio_next_event_half(&board.gpio,board.half)));
  next=minimum(next,at_half(analog_next_event(&board.analog)));
  next=minimum(next,at_cycle(nvm_next_event_cycle(&board.nvm)));
+ if (board.bod_arm_until) next=minimum(next,at_cycle(board.bod_arm_until));
+ if (board.bod_sleep_until) next=minimum(next,at_cycle(board.bod_sleep_until));
  uint64_t ns=nvm_next_event_ns(&board.nvm);
  if (ns!=UINT64_MAX) next=minimum(next,after_units(ns>board.ns?ns-board.ns:0,1000000000,board.ns_remainder));
  if (!board.reset_requested && !board.reset_held) {
@@ -304,7 +350,7 @@ static void advance_to(uint64_t target) {
  } while (board.base<=target);
 }
 int device_configure(uint32_t key, uint32_t value) {
- if (!key || key>=15) return 0;
+ if (!key || key>=16) return 0;
  if ((key==DEVICE_CFG_OSCILLATOR_HZ || key==DEVICE_CFG_WATCHDOG_HZ) &&
      (!value || value>1000000000)) return 0;
  if ((key==DEVICE_CFG_VCC_UV || key==DEVICE_CFG_BANDGAP_UV) && (!value || value>INT32_MAX)) return 0;
@@ -315,7 +361,7 @@ int device_configure(uint32_t key, uint32_t value) {
 }
 int device_init(uint8_t *data, uint8_t *flash, uint8_t *eeprom) {
  board=(device_t){0};
- for (unsigned i=0;i<15;i++) board.config[i]=configuration[i];
+ for (unsigned i=0;i<16;i++) board.config[i]=configuration[i];
  if (!data || !flash || !eeprom) { fail(DEVICE_FAULT_CONFIG,1); return 0; }
  board.data=data; board.flash=flash; board.eeprom=eeprom;
  nvm_timing_t timing=nvm_datasheet_timing(board.config[DEVICE_CFG_FLASH_MAXIMUM]!=0);
@@ -335,6 +381,8 @@ void device_reset(uint8_t sources_mask) {
  board.clkpr=(board.config[DEVICE_CFG_FUSE_LOW]&16)?0:3;
  board.divisor=1u<<board.clkpr; board.phase=0; board.clkpr_until=0; board.prr=0;
  board.pending_divisor=0; board.clkpr_switch_half=0;
+ board.bodcr=board.bod_armed=board.bod_committed=board.bod_disabled=0;
+ board.bod_arm_until=board.bod_sleep_until=board.bod_recovery_until=0;
  timer0_init(&board.timer,NULL,0,cpu_cycle());
  system_gpio_reset(&board.gpio,board.config[DEVICE_CFG_FUSE_HIGH]&1);
  system_gpio_external(&board.gpio,board.external_mask,board.external_levels,board.half);
@@ -355,6 +403,7 @@ uint8_t device_read(uint8_t io) {
  uint8_t value=0;
  if (!board.initialized || io>=64) { fail(DEVICE_FAULT_CONFIG,3); return 0; }
  if (io==CLKPR) value=board.clkpr;
+ else if (io==BODCR) { bod_expire(); value=board.bodcr; }
  else if (io==TIMER0_PRR) value=board.prr;
  else if (system_gpio_read(&board.gpio,io,&value)) { }
  else if (nvm_owns_io(io)) value=nvm_read_io(&board.nvm,io,cpu_cycle(),board.ns);
@@ -415,7 +464,7 @@ uint32_t device_write(uint8_t io, uint8_t value, uint8_t mask) {
  else if (io==OSCCAL) {
   if ((merged&127)!=(previous&127)) fail(DEVICE_FAULT_UNIMPLEMENTED_IO,OSCCAL);
  } else if (io==BODCR) {
-  if (value&mask&3) fail(DEVICE_FAULT_UNIMPLEMENTED_IO,BODCR);
+  if (mask&3) bod_write(merged);
  } else if (io!=0x2e && value&mask) fail(DEVICE_FAULT_UNIMPLEMENTED_IO,io);
  sources(); wake(); check_faults(); mirror();
  return stalls;
@@ -466,9 +515,14 @@ void device_ack_irq(uint8_t vector) {
 uint32_t device_control(uint8_t command, uint16_t z, uint16_t word) {
  if (board.reset_held) return 0;
  if (command==DEVICE_CONTROL_SLEEP) {
+  bod_expire();
   uint8_t result=system_sleep_enter(&board.sleep,board.gpio.mcucr,board.base);
   if (result&(SYSTEM_SLEEP_RESERVED|SYSTEM_SLEEP_INVALID_TIME|SYSTEM_SLEEP_BUSY))
    fail(DEVICE_FAULT_SLEEP,result);
+  if ((result&SYSTEM_SLEEP_ENTERED) && board.sleep.mode==SYSTEM_SLEEP_POWER_DOWN &&
+      ((board.config[DEVICE_CFG_FUSE_HIGH]>>1)&3)!=3 && board.bod_committed &&
+      (board.bodcr&2) && cpu_cycle()<board.bod_sleep_until)
+   board.bod_disabled=1;
   clock_domains();
   if (system_sleep_adc_start(&board.sleep))
    analog_adc_noise_cancel_start(&board.analog.adc,board.half);
@@ -545,6 +599,8 @@ uint64_t device_base_half(void) { return board.base; }
 uint64_t device_virtual_half(void) { return board.half; }
 uint32_t device_clkpr_divisor(void) { return board.divisor; }
 uint32_t device_oscillator_hz(void) { return board.config[DEVICE_CFG_OSCILLATOR_HZ]; }
+uint8_t device_bod_disabled(void) { return board.bod_disabled; }
+uint8_t device_bod_recovering(void) { return board.base<board.bod_recovery_until; }
 uint8_t device_reset_requested(void) { return board.reset_requested; }
 uint8_t device_reset_held(void) { return board.reset_held; }
 uint64_t device_flash_generation(void) { return board.nvm.flash_generation; }

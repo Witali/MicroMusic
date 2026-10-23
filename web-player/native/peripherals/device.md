@@ -142,9 +142,10 @@ voltage injections alone do not assert this digital reset line. When RSTDISBL
 is programmed (high-fuse bit0=0), PB5 remains available as GPIO/ADC0 and these
 digital inputs do not reset the device.
 
-BODCR brownout-disable sequencing and runtime OSCCAL frequency recalibration do
-not have calibrated physical models in these modules. Writes requesting those
-behaviors fail explicitly. Reads of reserved I/O return0; nonzero reserved writes
+Runtime OSCCAL frequency recalibration does not have a calibrated physical model
+in these modules; writes changing calibration fail explicitly. BODCR's digital
+sleep-disable sequencing is implemented as described below. Reads of reserved
+I/O return0; nonzero reserved writes
 also fault. DWDR reads0 without a debugger. Sustained phase-correct TOP=0 and
 other reserved/ambiguous configurations retain the component's explicit faults.
 There is no silicon/electrical trace oracle or voltage/temperature calibration.
@@ -159,3 +160,45 @@ watchdog during held reset; and RSTDISBL GPIO/ADC0 behavior. They are compiled
 with all production component C files and `-Wall -Wextra -Werror`, targeting
 WASM with no host imports. Tests are generated only under ignored `build/`.
 All16 return0. The separate module suites continue to verify each component.
+
+## BODCR sleep disable and recovery profile
+
+The official reference is [DS40002307A sections7.2 and7.5.1](https://www.microchip.com/content/dam/mchp/documents/MCU08/ProductDocuments/DataSheets/ATtiny13A-Data-Sheet-DS40002307A.pdf#page=37).
+BODCR is I/O0x30 (data0x50): BODS is bit1, BODSE bit0, reserved bits read0.
+The board accepts the protected sequence: write both bits1, then within four
+CPU cycles write BODS1/BODSE0. The second write authorizes SLEEP for three CPU
+cycles. A lone BODS write, BODSE-only first write, late commit or expired SLEEP
+does not disable BOD. CPU cycles follow the current clock divisor, whereas the
+recovery interval below uses the independent physical timeline.
+
+Control deadlines are half-open and use the existing register/control completion
+edge contract: a second write at first_write_cycle+4 is late; SLEEP at
+commit_cycle+3 is late. The initial BODS readback also clears after three cycles;
+the initial BODSE enable expires after four. A successful commit restarts the
+three-cycle BODS interval. Writes to reserved bits alone do not rearm anything.
+Once accepted by Power-down SLEEP, disable is latched independently of subsequent
+BODS auto-clear. It is effective only when BODLEVEL[1:0] (high-fuse bits2:1) is
+not11. Idle and ADC Noise Reduction never acquire this disable state.
+
+`device_bod_disabled()` reports this latched logical state. On an accepted
+interrupt wake it clears immediately; `device_bod_recovering()` reports the
+following recovery interval. Reset clears the control windows and both states.
+No supply threshold, analog reset, hysteresis or voltage-induced behavior is
+inferred from these booleans. Supply-voltage brown-out simulation remains a
+separate analog-input feature.
+
+Section7.2 describes recovery as approximately60us, not an exact characterized
+minimum/maximum. Configuration key15, `DEVICE_CFG_BOD_RECOVERY_NS`, therefore
+defaults to an explicitly approximate60000ns digital profile and accepts a
+caller-supplied duration, including zero for an ideal fixture. Convert to the
+unchanged half-oscillator domain with ceil(ns*2*oscillatorHz/1e9), independent of
+CLKPR. The profile starts BOD recovery and caller-configured startup concurrently
+and waits for max(recovery,startup); this is an explicit scheduling assumption,
+not a silicon overlap measurement. Set caller startup to a measured combined
+duration when available. After this hold, the existing four extra CPU wake cycles
+still apply; normal interrupt entry remains owned by the CPU.
+
+`device-bodcr.test.mjs` compiles the actual board/components with strict warnings
+and checks zero WASM imports, control boundaries, invalid sequences, fuse/sleep
+gating, latched state, reset, fractional-duration rounding, CKDIV8 independence
+and startup overlap. Its generated test artifacts stay under ignored build/.
