@@ -1,0 +1,75 @@
+{
+  "schema": "micromusic-attiny13a-timer0-hardware-probe-v1",
+  "status": "pending-hardware",
+  "firmware": "timer0-top-zero-probe.S",
+  "device": "ATtiny13A",
+  "fuses": {"low": "0x7a", "high": "0xff", "lock": "0xff"},
+  "clock": {"nominalOscillatorHz": 9600000, "clkpr": 0, "timerSource": "external-T0-rising-PB4"},
+  "stimulus": {
+    "initialT0": 0,
+    "startAfter": "decoded boot frame",
+    "periodMicroseconds": 10000,
+    "highMicroseconds": 5000,
+    "minimumHighMicroseconds": 1000,
+    "minimumLowMicroseconds": 1000,
+    "logicLevels": "0 and measured VCC, common ground"
+  },
+  "pins": {"oc0a": "PB0", "oc0b": "PB1", "clock": "PB2", "data": "PB3", "t0": "PB4", "reset": "PB5/RESET"},
+  "wire": {
+    "bytes": 14,
+    "syncHex": "a55a",
+    "bitOrder": "MSB-first",
+    "sampleDataAt": "rising clock",
+    "payloadOrder": ["version", "type", "sequenceLow", "sequenceHigh", "tcnt0", "tifr0", "pinb", "ocr0a", "ocr0b", "tccr0a", "tccr0b"],
+    "checksum": "XOR of all 11 payload bytes",
+    "types": {"0": "boot", "1": "sampled external rising pulse", "2": "scheduled OCR0A write"}
+  },
+  "profiles": [
+    {"id": "control-fixed-top-255", "pulses": 1024, "defines": {"PROBE_MODE": 1, "PROBE_INITIAL_TOP": 255, "PROBE_OCR0B": 64, "PROBE_COM0A": 2, "PROBE_COM0B": 2, "PROBE_INITIAL_LEVELS": 0}},
+    {"id": "control-variable-top-3", "pulses": 1024, "defines": {"PROBE_MODE": 5, "PROBE_INITIAL_TOP": 3, "PROBE_OCR0B": 1, "PROBE_COM0A": 1, "PROBE_COM0B": 2, "PROBE_INITIAL_LEVELS": 0}},
+    {"id": "zero-top-toggle", "pulses": 1024, "defines": {"PROBE_MODE": 5, "PROBE_INITIAL_TOP": 0, "PROBE_OCR0B": 0, "PROBE_COM0A": 1, "PROBE_COM0B": 2, "PROBE_INITIAL_LEVELS": 0}},
+    {"id": "zero-top-noninverting", "pulses": 1024, "defines": {"PROBE_MODE": 5, "PROBE_INITIAL_TOP": 0, "PROBE_OCR0B": 0, "PROBE_COM0A": 2, "PROBE_COM0B": 2, "PROBE_INITIAL_LEVELS": 3}},
+    {"id": "zero-top-inverting", "pulses": 1024, "defines": {"PROBE_MODE": 5, "PROBE_INITIAL_TOP": 0, "PROBE_OCR0B": 0, "PROBE_COM0A": 3, "PROBE_COM0B": 3, "PROBE_INITIAL_LEVELS": 0}},
+    {"id": "zero-top-compare-b-one", "pulses": 1024, "defines": {"PROBE_MODE": 5, "PROBE_INITIAL_TOP": 0, "PROBE_OCR0B": 1, "PROBE_COM0A": 1, "PROBE_COM0B": 2, "PROBE_INITIAL_LEVELS": 0}},
+    {"id": "zero-top-from-counter-two", "pulses": 1024, "defines": {"PROBE_MODE": 5, "PROBE_INITIAL_TOP": 0, "PROBE_OCR0B": 1, "PROBE_COM0A": 1, "PROBE_COM0B": 2, "PROBE_INITIAL_LEVELS": 0, "PROBE_WRITE_TCNT": 1, "PROBE_INITIAL_COUNTER": 2}},
+    {"id": "buffer-top-three-to-zero", "pulses": 1024, "defines": {"PROBE_MODE": 5, "PROBE_INITIAL_TOP": 3, "PROBE_OCR0B": 1, "PROBE_COM0A": 1, "PROBE_COM0B": 2, "PROBE_INITIAL_LEVELS": 0, "PROBE_WRITE_AFTER": 8, "PROBE_NEW_TOP": 0}},
+    {"id": "buffer-top-zero-to-three", "pulses": 1024, "defines": {"PROBE_MODE": 5, "PROBE_INITIAL_TOP": 0, "PROBE_OCR0B": 1, "PROBE_COM0A": 1, "PROBE_COM0B": 2, "PROBE_INITIAL_LEVELS": 0, "PROBE_WRITE_AFTER": 8, "PROBE_NEW_TOP": 3}}
+  ],
+  "traceSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "required": ["schema", "status", "profile", "waveformCsv", "t0RisesSeconds", "records"],
+    "properties": {
+      "schema": {"const": "micromusic-attiny13a-timer0-observed-trace-v1"},
+      "status": {"enum": ["observed-hardware", "synthetic-decoder-test"]},
+      "profile": {"type": "string"},
+      "waveformCsv": {"type": "string"},
+      "measurements": {"type": "object", "description": "Manually attach chip marking/revision if known, measured VCC, clock, instrument settings and source/ELF hashes."},
+      "t0RisesSeconds": {"type": "array", "items": {"type": "number"}},
+      "records": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["frameEndSeconds", "version", "type", "sequence", "tcnt0", "tifr0", "pinb", "ocr0a", "ocr0b", "tccr0a", "tccr0b"],
+          "properties": {
+            "frameEndSeconds": {"type": "number"},
+            "version": {"const": 1},
+            "type": {"enum": [0, 1, 2]},
+            "sequence": {"type": "integer", "minimum": 0, "maximum": 65535},
+            "tcnt0": {"type": "integer", "minimum": 0, "maximum": 255},
+            "tifr0": {"type": "integer", "minimum": 0, "maximum": 255},
+            "pinb": {"type": "integer", "minimum": 0, "maximum": 255},
+            "ocr0a": {"type": "integer", "minimum": 0, "maximum": 255},
+            "ocr0b": {"type": "integer", "minimum": 0, "maximum": 255},
+            "tccr0a": {"type": "integer", "minimum": 0, "maximum": 255},
+            "tccr0b": {"type": "integer", "minimum": 0, "maximum": 255}
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "additionalProperties": false
+  },
+  "expectedSiliconTrace": null,
+  "note": "The schema constrains recording format, never the unknown TOP=0 outcome. No hardware trace has been collected."
+}

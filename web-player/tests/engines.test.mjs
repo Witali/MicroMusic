@@ -87,7 +87,7 @@ function message(target, type) {
     target.on('message', receive);
   });
 }
-for (const engine of [undefined, 'js', 'wasm', 'transpiled'])
+for (const engine of [undefined, 'js', 'wasm', 'transpiled','device'])
 test('real Worker ' + (engine ?? 'default') + ': immediate init, queued controls and audio port use the chosen engine', async t => {
   const worker = new Worker(new URL('./helpers/browser-worker-node.mjs', import.meta.url));
   t.after(() => worker.terminate());
@@ -97,7 +97,7 @@ test('real Worker ' + (engine ?? 'default') + ': immediate init, queued controls
   worker.postMessage({type:'init', entry, engine, sampleRate:48000});
   worker.postMessage({type:'controls', controls});
   worker.postMessage({type:'audio-port', port:ports.port2, sampleRate:48000}, [ports.port2]);
-  assert.equal((await ready).engine, engine ?? 'wasm');
+  assert.equal((await ready).engine, engine ?? DEFAULT_ENGINE);
   const expected = await createRenderer(entry, 48000, controls, engine);
   for (let n = 0; n < 3; n++) {
     const state = message(worker, 'state'), samples = message(ports.port1, 'samples');

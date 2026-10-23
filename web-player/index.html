@@ -8,7 +8,7 @@
   <meta name="description" content="Музыкальная прошивка ATtiny13A с исправленным ритмом: исполнение AVR-кода, звук PWM и осциллограмма в браузере.">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css?v=20261023-stereo">
-  <script type="module" src="./app.js?v=20261023-stereo-hq4-auto"></script>
+  <script type="module" src="./app.js?v=20261023-device-package"></script>
 </head>
 <body>
   <header class="site-header">
@@ -32,9 +32,9 @@
           </div>
           <p id="panorama" class="panorama" hidden>Скрипка ← · Пианино и ударные по центру · → Гитара</p>
           <div class="fuses" aria-label="Рекомендуемые фьюзы ATtiny13A">
-            <div class="fuse-byte"><span>LOW FUSE</span><strong>0x7A</strong></div>
-            <div class="fuse-byte"><span>HIGH FUSE</span><strong>0xFF</strong><small>сохранить заводской</small></div>
-            <div class="fuse-clock"><strong>Внутренний RC · 9,6 МГц</strong><span>CKDIV8 отключён · делитель /1</span><a href="https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf" target="_blank" rel="noopener">Фьюзы в datasheet, §17.2 ↗</a></div>
+            <div class="fuse-byte"><span>LOW FUSE</span><strong id="low-fuse-value">0x7A</strong></div>
+            <div class="fuse-byte"><span>HIGH FUSE</span><strong id="high-fuse-value">0xFF</strong><small id="high-fuse-note">сохранить заводской</small></div>
+            <div class="fuse-clock"><strong id="fuse-clock-value">Внутренний RC · 9,6 МГц</strong><span id="fuse-divisor">CKDIV8 отключён · делитель /1</span><a href="https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf" target="_blank" rel="noopener">Фьюзы в datasheet, §17.2 ↗</a></div>
           </div>
           <div class="now-playing"><span id="selected-order" class="version-number">06</span><div><span class="eyebrow">ВЫБРАННАЯ ВЕРСИЯ</span><h2 id="selected-title">Люмьер · стерео</h2><p id="selected-description">Загрузка…</p></div></div>
           <div class="elapsed-line"><span>ВРЕМЯ ВОСПРОИЗВЕДЕНИЯ</span><output id="elapsed">00:00.0</output></div>
@@ -46,7 +46,7 @@
         <section class="panel scope-panel" aria-label="Осциллограмма PWM">
           <div class="panel-heading"><span class="eyebrow">02 / СИГНАЛ</span><span class="technical-note" id="audio-mode">МОНО · 1 PWM-ВЫХОД</span></div>
           <div class="scope-wrap"><span class="scope-channel" id="scope-left-label">МОНО · OCR0B</span><canvas id="wave" role="img" aria-label="Осциллограмма: значение PWM до фильтра"></canvas><span class="scope-mark">128</span><span class="scope-scale">85 мс</span></div>
-          <div class="scope-wrap right-scope" id="scope-right" hidden><span class="scope-channel">R · OCR0B</span><canvas id="wave-right" role="img" aria-label="Правый канал PWM до фильтра"></canvas><span class="scope-mark">128</span></div>
+          <div class="scope-wrap right-scope" id="scope-right" hidden><span class="scope-channel" id="scope-right-label">R · OCR0B</span><canvas id="wave-right" role="img" aria-label="Правый канал PWM до фильтра"></canvas><span class="scope-mark">128</span></div>
           <div class="scope-metrics"><div><span id="average-label">СРЕДНИЙ PWM</span><strong id="average">128.0</strong></div><div><span>МАКС. ISR</span><strong id="isr">—</strong></div><div><span>ПОТЕРИ IRQ</span><strong id="lost">0</strong></div><div><span>ЗАПАС СКОРОСТИ</span><strong id="headroom">—</strong></div><div><span>ТЕМП</span><strong id="tempo" title="Доля звука прошивки в отсчётах звукового устройства">100.0%</strong></div><div><span>ОТСТАВАНИЕ</span><strong id="lag" title="Накопленное отставание из-за нехватки аудиоотсчётов">0.0 мс</strong></div></div>
         </section>
       </div>
@@ -54,6 +54,7 @@
         <div class="panel-heading"><span class="eyebrow">БИБЛИОТЕКА ПРОШИВОК</span><span class="count" id="catalog-count">6</span></div>
         <h2>Как звучит один килобайт?</h2><p class="library-caption">Мягкие тембры FluidR3 и общая музыкальная сетка.</p>
         <input id="search" type="search" placeholder="Найти версию…" aria-label="Поиск прошивки">
+        <label class="package-import" for="package-file">Открыть пакет ATtiny13A<input id="package-file" type="file" accept=".json,application/json" disabled></label>
         <div id="catalog" class="catalog" role="list"></div>
         <div class="source-only"><span class="eyebrow">С ЧЕГО ВСЁ НАЧАЛОСЬ</span><a href="../ATtiny13A/Music/00_original/attiny13a_initial_2016.c">C-прототип · 2016 ↗</a><p>В архиве сохранился исходник, без готового образа прошивки.</p></div>
       </aside>
