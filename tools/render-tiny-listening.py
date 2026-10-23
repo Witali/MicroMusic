@@ -36,7 +36,7 @@ const load=path=>JSON.parse(fs.readFileSync(root+'/'+path,'utf8'));
 const {parseHex}=await import(pathToFileURL(root+'/web-player/lib/hex.js'));
 const {AVRCore:JS}=await import(pathToFileURL(root+'/web-player/lib/avr-reference.js'));
 const {AVRCore:Wasm}=await import(pathToFileURL(root+'/web-player/lib/avr-core.js'));
-const catalog=load('web-player/hq4-firmware.json');
+const catalog=load('ATtiny13A/Sound/research/hq4-catalog-archive.json');
 const entry=catalog.entries.find(e=>e.id===(clip==='chego'?'hq4-chego-auto':'hq4-'+clip));
 assert.ok(entry,'Retained public HQ4 firmware is missing');
 const frozen=clip==='chego'?load('ATtiny13A/Sound/codec/timbre/chego-auto/verification.json'):null;
