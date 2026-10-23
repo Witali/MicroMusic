@@ -80,7 +80,7 @@ clear_registers:
   /* Configure hardware stereo Fast PWM on OC0A/PB0 and OC0B/PB1, fixed TOP=255 at 37.5 kHz. */
   sbi 23, 0
   sbi 23, 1
-  out 42, r18
+  out 54, r18 /* OCR0A I/O0x36; data0x56, DS40002307A section11.9.4. */
   out 41, r18
   ldi r23, 1
   ldi r16, 163
@@ -102,7 +102,7 @@ pwm_irq:
   lds r18, 101
   sbrs r23, 0
   lds r18, 102
-  out 42, r18
+  out 54, r18 /* OCR0A, I/O0x36. */
   sbrc r23, 0
   lds r18, 97
   sbrs r23, 0

@@ -3,7 +3,7 @@
   "codeBytes": 736,
   "tableBytes": 284,
   "eepromBytes": 64,
-  "flashSha256": "bbe2c732f1b58d28b19a5f6b8344feea6e615ecb93ad6aee1f16b20c1695edb3",
+  "flashSha256": "44c721533c44c832c159cf4618962667b807c12b00936ce82dbf9176cb93c341",
   "eepromSha256": "ac29eb2ba4b6718b3b490b9b74be52d5a1ea819149df9edac4d4aecf80443f81",
   "labels": {
     "REST_INDEX": 13,
@@ -263,6 +263,16 @@
       "instrument": "percussion",
       "left": 1,
       "right": 1
+    }
+  },
+  "hardwareRegisters": {
+    "OCR0A": {
+      "ioAddress": 54,
+      "dataAddress": 86
+    },
+    "OCR0B": {
+      "ioAddress": 41,
+      "dataAddress": 73
     }
   },
   "timing": {

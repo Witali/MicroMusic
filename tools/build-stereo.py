@@ -41,6 +41,12 @@ def build():
     (FOLDER / 'score.inc').write_text(score, encoding='utf-8', newline='\n')
     rom, labels = assembler.assemble(FOLDER / 'synth.S')
     assert len(rom) <= 1024, f'{len(rom)} bytes exceeds ATtiny13A Flash'
+    # DS40002307A section11.9.4 and register summary: OCR0A I/O0x36, not0x2a.
+    # Code operands for LDS/STS are SRAM addresses, so cannot resemble OUT words.
+    out_addresses = [((word >> 5) & 48) | (word & 15)
+                     for offset in range(0, labels['playlist'], 2)
+                     if ((word := int.from_bytes(rom[offset:offset + 2], 'little')) & 0xf800) == 0xb800]
+    assert out_addresses.count(0x36) == 2 and 0x2a not in out_addresses, 'Stereo must write actual OCR0A, not the legacy emulator alias'
     ep = (FOLDER / 'eeprom.bin').read_bytes()
     (FOLDER / 'synth.bin').write_bytes(rom)
     for name, raw in [('synth', rom), ('eeprom', ep)]:
@@ -49,6 +55,8 @@ def build():
                   eepromBytes=len(ep), flashSha256=hashlib.sha256(rom).hexdigest(),
                   eepromSha256=hashlib.sha256(ep).hexdigest(), labels=labels, score=meta,
                   audioChannels=2, outputs=data['outputs'], panorama=data['panorama'],
+                  hardwareRegisters=dict(OCR0A=dict(ioAddress=0x36, dataAddress=0x56),
+                                         OCR0B=dict(ioAddress=0x29, dataAddress=0x49)),
                   timing=dict(phaseStep=step, phaseBits=16, envelopeTickCycles=131072,
                               tempoBpm=data['tempo_bpm'], actualTempoBpm=step / 65536 * (37500 / 512) * 60 / 4,
                               synthesisHz=18750, pwmHz=37500))
