@@ -47,7 +47,8 @@ async function main(){
       // This is the repository's trusted compiler artifact, not a decoded package.
       if(build.schema!=='micromusic-attiny13a-device-wasm-v1'||build.artifacts?.['attiny13a.wasm']!==hash(runtime))throw new Error('Bundled runtime build integrity mismatch');
       const exports=new WebAssembly.Instance(await WebAssembly.compile(runtime)).exports;
-      translated=transpileAVR(flash,runtimeABI(exports),{optimizeFlags:!values['no-flag-dce']}).bytes;
+      translated=transpileAVR(flash,runtimeABI(exports,{resumable:!!configuration.resumable}),
+        {optimizeFlags:!values['no-flag-dce'],resumable:!!configuration.resumable}).bytes;
     }
     const pkg=await createPackage({flash,eeprom,configuration,translated,runtime});
     const json=JSON.stringify(pkg,null,2)+'\n';

@@ -8,6 +8,7 @@ import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 import {createPackage,decodePackage,assertPackageRuntimeABI,DEFAULT_CONFIGURATION,PACKAGE_LIMITS} from '../lib/attiny13a-package.js';
 import {runtimeABI,transpileAVR} from '../lib/avr-transpiler.js';
+import {normalizeClkiProfile,CLKI_PHASE_POLICY} from '../lib/devices/attiny13a-clki-profile.js';
 
 const runtime=new Uint8Array(await readFile(new URL('../wasm/attiny13a.wasm',import.meta.url)));
 const abi=runtimeABI(new WebAssembly.Instance(await WebAssembly.compile(runtime)).exports);
@@ -47,6 +48,23 @@ function rewriteExports(bytes,edit){
   assert.fail('runtime export section is missing');
 }
 
+function rewriteManifest(bytes,edit){
+  let at=8;const encoder=new TextEncoder(),decoder=new TextDecoder();
+  const read=()=>{let value=0,shift=0,b;do{b=bytes[at++];value+=(b&127)*2**shift;shift+=7;}while(b&128);return value;};
+  const u32=v=>{const out=[];do{const b=v%128;v=Math.floor(v/128);out.push(b|(v?128:0));}while(v);return out;};
+  while(at<bytes.length){
+    const start=at,id=bytes[at++],size=read(),end=at+size;
+    if(id!==0){at=end;continue;}
+    const length=read(),name=decoder.decode(bytes.subarray(at,at+length));at+=length;
+    if(name!=='micromusic.avr'){at=end;continue;}
+    const manifest=JSON.parse(decoder.decode(bytes.subarray(at,end)));edit(manifest);
+    const label=encoder.encode(name),json=encoder.encode(JSON.stringify(manifest));
+    const body=Uint8Array.from([...u32(label.length),...label,...json]);
+    return Uint8Array.from([...bytes.subarray(0,start),0,...u32(body.length),...body,...bytes.subarray(end)]);
+  }
+  assert.fail('translated manifest not found');
+}
+
 test('roundtrip contains complete Flash, EEPROM, runtime, translation, fuses and explicit timing options',async()=>{
   const eeprom=Uint8Array.from({length:64},(_,n)=>n);
   const pkg=await createPackage({...input,eeprom,configuration:{fuseLow:0x6a,fuseHigh:0xfe,lock:0xfc,oscillatorHz:4800000,wakeStartupHalf:1920,bodRecoveryNs:70000,factoryOsccal96:73,fuseStartupProfile:1}});
@@ -71,27 +89,130 @@ test('default configuration, erased EEPROM and serialization are deterministic',
 
 test('version1 preserves its original configuration contract',async()=>{
   const pkg=copy(original);pkg.version=1;
-  for(const key of ['osccalHz','nvmClockProfile','nvmCalibrationReferenceHz','powerResetProfile','resetInputProfile'])delete pkg.configuration[key];
+  for(const key of ['osccalHz','nvmClockProfile','nvmCalibrationReferenceHz','powerResetProfile','resetInputProfile','resumable','clkiProfile'])delete pkg.configuration[key];
   const decoded=await decodePackage(seal(pkg));assert.equal(decoded.version,1);
   assert.deepEqual(decoded.configuration,pkg.configuration);assert.equal(Object.keys(decoded.options).length,17);
 });
 
 test('version2 preserves its calibrated-clock configuration contract',async()=>{
   const pkg=copy(original);pkg.version=2;delete pkg.configuration.powerResetProfile;delete pkg.configuration.resetInputProfile;
+  delete pkg.configuration.resumable;delete pkg.configuration.clkiProfile;
   const decoded=await decodePackage(seal(pkg));assert.equal(decoded.version,2);assert.deepEqual(decoded.configuration,pkg.configuration);
 });
 
 test('version3 preserves its power-profile contract without requiring the later RESET profile',async()=>{
   const pkg=copy(original);pkg.version=3;delete pkg.configuration.resetInputProfile;
+  delete pkg.configuration.resumable;delete pkg.configuration.clkiProfile;
   const decoded=await decodePackage(seal(pkg));assert.equal(decoded.version,3);
   assert.deepEqual(decoded.configuration,pkg.configuration);
+});
+
+test('version4 retains its RESET contract and rejects later continuation/CLKI fields',async()=>{
+  const pkg=copy(original);pkg.version=4;delete pkg.configuration.resumable;delete pkg.configuration.clkiProfile;
+  const decoded=await decodePackage(seal(pkg));assert.deepEqual(decoded.configuration,pkg.configuration);
+  assert.equal(decoded.options.resumable,undefined);assert.equal(decoded.options.clkiProfile,undefined);
+  for(const [key,value] of [['resumable',false],['clkiProfile',null]]){
+    const bad=copy(pkg);bad.configuration[key]=value;
+    await assert.rejects(decodePackage(seal(bad)),/unknown configuration/);
+  }
+});
+
+const phaseAbi=runtimeABI(new WebAssembly.Instance(await WebAssembly.compile(runtime)).exports,{resumable:true});
+const phased=transpileAVR(flash,phaseAbi,{resumable:true});
+const phaseConfiguration={resumable:true,osccalHz:Array.from({length:128},(_,n)=>n===0?9600000:0)};
+const phaseInput={...input,translated:phased.bytes,manifest:phased.manifest,configuration:phaseConfiguration};
+
+test('v5 binds the resumable execution mode, phase layout and configuration',async()=>{
+  const pkg=await createPackage(phaseInput),decoded=await decodePackage(pkg);
+  assert.equal(pkg.version,5);assert.equal(decoded.options.resumable,true);
+  assert.equal(decoded.options.clkiProfile,null);assert.equal(decoded.manifest.executionMode,'resumable-v1');
+  assert.deepEqual(decoded.abi.layout.phase,phaseAbi.phase);assertPackageRuntimeABI(decoded,phaseAbi);
+  await assert.rejects(createPackage({...phaseInput,configuration:{}}),/execution mode mismatch/);
+  await assert.rejects(createPackage({...input,configuration:phaseConfiguration}),/execution mode mismatch/);
+  for(const patch of [{resumable:1},{resumable:null},{resumable:true,osccalHz:null}])
+    await assert.rejects(createPackage({...phaseInput,configuration:{...phaseConfiguration,...patch}}),/configuration/);
+});
+
+test('v5 rejects malformed/overlapping phase metadata before any instantiation',async()=>{
+  const cases=[
+    [m=>m.abi.phase.bytes=81,/context layout/],
+    [m=>m.abi.phase.stage=m.abi.phase.active,/overlapping phase/],
+    [m=>m.abi.phase.retired--,/unaligned phase/],
+    [m=>m.abi.phase.extra=0,/phase ABI fields/],
+    [m=>{const p=m.abi.phase,delta=m.abi.data-p.pointer;for(const key of ['pointer','active','execPc','nextPc','stage','remaining','locals','temp','retired'])p[key]+=delta;},/overlapping ABI/],
+    [m=>m.executionMode='resumable-v2',/execution mode/],
+  ];
+  for(const [edit,message] of cases){
+    const translated=rewriteManifest(phased.bytes,edit);assert.equal(WebAssembly.validate(translated),true);
+    await assert.rejects(createPackage({...phaseInput,manifest:undefined,translated}),message);
+  }
+});
+
+test('v5 verifies every phase import and native phase observer signature',async()=>{
+  for(const name of ['avr_device_phase_clock','avr_device_phase_deadline','avr_device_phase_retire',
+    'avr_device_phase_enable','avr_device_phase_layout','avr_device_phase_active']){
+    const missing=rewriteExports(runtime,entries=>entries.filter(e=>e.name!==name));
+    await assert.rejects(createPackage({...phaseInput,runtime:missing}),/ABI function mismatch|runtime export mismatch/,name);
+  }
+  const bad=rewriteExports(runtime,entries=>{
+    const target=entries.find(e=>e.name==='avr_device_phase_clock');
+    target.index=entries.find(e=>e.name==='avr_device_phase_deadline').index;return entries;
+  });
+  await assert.rejects(createPackage({...phaseInput,runtime:bad}),/ABI function mismatch: phaseClock/);
+});
+
+test('CLKI profile is an exact digital fixture and requires CKSEL00 plus resumable mode',async()=>{
+  const profile={phasePolicy:CLKI_PHASE_POLICY,initialLevel:0};
+  assert.deepEqual(normalizeClkiProfile(profile),{...profile,electricalValidation:'none'});assert.notEqual(normalizeClkiProfile(profile),profile);
+  for(const value of [{},{...profile,extra:0},{...profile,phasePolicy:'silicon'},
+    {...profile,initialLevel:true},{...profile,initialLevel:2},{...profile,electricalValidation:true},
+    {...profile,electricalValidation:'analog'},[],new Date()])
+    assert.throws(()=>normalizeClkiProfile(value),/clkiProfile/);
+  for(const patch of [{resumable:false},{fuseLow:0x7a},{clkiProfile:{...profile,initialLevel:-1}}])
+    await assert.rejects(createPackage({...phaseInput,configuration:{resumable:true,fuseLow:0x78,clkiProfile:profile,...patch}}),/clkiProfile/);
+  // This88-export runtime supports internal continuations, but has no CLKI
+  // stream bridge yet. A profile must not silently fall back to nominal Hz.
+  if(!new WebAssembly.Instance(new WebAssembly.Module(runtime)).exports.avr_device_configure_clki)
+    await assert.rejects(createPackage({...phaseInput,configuration:{resumable:true,fuseLow:0x78,clkiProfile:profile}}),/runtime export mismatch: avr_device_configure_clki/);
+});
+
+test('v5 checks CLKI exports only for the selected source and verifies their exact signatures',async()=>{
+  const configuration={resumable:true,fuseLow:0x78,clkiProfile:{phasePolicy:CLKI_PHASE_POLICY,initialLevel:1}};
+  const clkiInput={...phaseInput,configuration},pkg=await createPackage(clkiInput);
+  assert.deepEqual((await decodePackage(pkg)).configuration.clkiProfile,normalizeClkiProfile(configuration.clkiProfile));
+  const missingPolicy=copy(pkg);delete missingPolicy.configuration.clkiProfile.electricalValidation;
+  await assert.rejects(decodePackage(seal(missingPolicy)),/clkiProfile fields/);
+  const names=['configure_clki','clki_enabled','clki_buffer','clki_capacity','clki_commit','clki_horizon_ps',
+    'clki_count','clki_free','clki_level','clki_status','clki_aligned','clki_startup_ck'].map(n=>'avr_device_'+n);
+  for(const name of names){
+    const missing=rewriteExports(runtime,entries=>entries.filter(e=>e.name!==name));
+    await assert.rejects(createPackage({...clkiInput,runtime:missing}),/runtime export mismatch/,name);
+  }
+  const absent=rewriteExports(runtime,entries=>entries.filter(e=>!names.includes(e.name)));
+  await assert.doesNotReject(createPackage({...phaseInput,runtime:absent}),'Internal source never needs CLKI exports');
+  const wrong=rewriteExports(runtime,entries=>{
+    entries.find(e=>e.name==='avr_device_clki_status').index=entries.find(e=>e.name==='avr_device_clki_horizon_ps').index;
+    return entries;
+  });
+  await assert.rejects(createPackage({...clkiInput,runtime:wrong}),/runtime export mismatch: avr_device_clki_status/);
+});
+
+test('CLI generates a matching v5 continuation when configuration requests resumable execution',async t=>{
+  const dir=await mkdtemp(join(tmpdir(),'micromusic-phase-package-'));t.after(()=>rm(dir,{recursive:true,force:true}));
+  const source=join(dir,'firmware.bin'),config=join(dir,'config.json'),output=join(dir,'package.json');
+  await writeFile(source,flash);await writeFile(config,JSON.stringify(phaseConfiguration));
+  const result=spawnSync(process.execPath,[cli,'pack',source,output,'--configuration',config],{encoding:'utf8'});
+  assert.equal(result.status,0,result.stderr);
+  const decoded=await decodePackage(await readFile(output,'utf8'));
+  assert.equal(decoded.version,5);assert.equal(decoded.manifest.executionMode,'resumable-v1');
+  assert.equal(decoded.configuration.resumable,true);
 });
 
 test('package binds a calibrated clock table and programming profile',async()=>{
   const table=Array(128).fill(0);table[50]=9600000;table[51]=9696000;
   const configuration={factoryOsccal96:50,osccalHz:table,nvmClockProfile:1,nvmCalibrationReferenceHz:9600000};
   const pkg=await createPackage({...input,configuration}),decoded=await decodePackage(pkg);
-  assert.equal(pkg.version,4);assert.deepEqual(decoded.configuration.osccalHz,table);
+  assert.equal(pkg.version,5);assert.deepEqual(decoded.configuration.osccalHz,table);
   decoded.options.osccalHz[50]=1;assert.equal(decoded.configuration.osccalHz[50],9600000);
   table[50]=1;assert.equal(pkg.configuration.osccalHz[50],9600000);
   const bad=copy(pkg);bad.configuration.osccalHz[51]++;
@@ -128,7 +249,7 @@ test('v4 RESET profiles reject invalid fields and unsupported clocks/fuses in wr
   const resetInputProfile={assertThresholdPpm:400000,releaseThresholdPpm:600000,
     assertQualificationNs:50,releaseQualificationNs:30,assertPropagationNs:20,releasePropagationNs:10};
   const configuration={osccalHz,resetInputProfile},pkg=await createPackage({...input,configuration});
-  assert.equal(pkg.version,4);
+  assert.equal(pkg.version,5);
   const cases=[
     ['missing fields',{resetInputProfile:{}},/resetInputProfile fields/],
     ['extra field',{resetInputProfile:{...resetInputProfile,unused:1}},/resetInputProfile fields/],

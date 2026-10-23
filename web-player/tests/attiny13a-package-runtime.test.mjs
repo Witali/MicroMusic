@@ -34,6 +34,7 @@ async function historicalPackage(version,configuration={}){
     .map(([key,value])=>[key,{encoding:'base64',bytes:value.length,sha256:hash(value),data:Buffer.from(value).toString('base64')}]));
   const options={...DEFAULT_CONFIGURATION,...configuration};
   for(const name of version===1?['osccalHz','nvmClockProfile','nvmCalibrationReferenceHz','powerResetProfile','resetInputProfile']:['resetInputProfile'])delete options[name];
+  delete options.resumable;delete options.clkiProfile;
   const pkg={format:PACKAGE_FORMAT,version,device:'ATtiny13A',abi:{id:PACKAGE_ABI,layout:abi},configuration:options,manifest:generated.manifest,assets};
   const canonical=v=>v===null||typeof v!=='object'?JSON.stringify(v):Array.isArray(v)?'['+v.map(canonical).join(',')+']':'{'+Object.keys(v).sort().map(k=>JSON.stringify(k)+':'+canonical(v[k])).join(',')+'}';
   pkg.integrity={algorithm:'SHA-256',sha256:hash(canonical(pkg))};return pkg;
@@ -93,7 +94,7 @@ test('package loader runs with only JavaScript loader files and no default WASM 
   t.after(()=>rm(dir,{recursive:true,force:true}));
   await mkdir(join(dir,'devices'));
   for(const name of ['avr-runtime.js','avr-transpiler.js','avr-wasm-phases.js','avr-transpiled-runtime.js','attiny13a-runtime.js','attiny13a-package.js','attiny13a-registers.js',
-    'devices/profiles.js','devices/attiny13a-profile.js','devices/attiny13a-reset-profile.js'])
+    'devices/profiles.js','devices/attiny13a-profile.js','devices/attiny13a-reset-profile.js','devices/attiny13a-clki-profile.js'])
     await copyFile(new URL('../lib/'+name,import.meta.url),join(dir,name));
   await writeFile(join(dir,'package.json'),'{"type":"module"}');
   await writeFile(join(dir,'firmware.json'),JSON.stringify(pkg));
