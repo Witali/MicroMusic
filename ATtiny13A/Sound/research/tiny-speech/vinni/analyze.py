@@ -55,7 +55,7 @@ def main():
         float_voiced_only_stoi=float(stoi(reference,voice,sr)),
         integer_voiced_only_stoi=float(stoi(reference,integer,sr)),
         voiced_waveform_correlation=float(np.corrcoef(voice,integer)[0,1]),
-        interpretation='The voiced waveform transfer is close. The old model uses low-pass excitation in 37 of 44 active unvoiced frames; the current tiny decoder has one high-pass residual color. The new Vinni candidate is an experiment, not an established improvement over the old HQ4 firmware.',
+        interpretation='The voiced waveform transfer is close for the retained pitch trajectory; this does not establish that the trajectory estimates the voice F0 correctly. The 37 low-pass frames do not identify consonants. The user identified door knocks in the source, so transient sound effects and pitch tracking must be investigated before attributing the quality gap to speech excitation. The new Vinni candidate remains an experiment, not an established improvement over the old HQ4 firmware.',
         hardware_verified=False)
     args.output.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
     print(json.dumps(report,indent=2))

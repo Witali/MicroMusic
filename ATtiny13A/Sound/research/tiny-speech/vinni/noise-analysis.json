@@ -3,7 +3,7 @@
   "source_model_sha256": "294a76f45b5a5ec8966730fb19b9f94cd40508bb923d09fef8a174b60ce16dfa",
   "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
   "source_sha256_normalized_lf": {
-    "ATtiny13A/Sound/research/tiny-speech/vinni/analyze.py": "a21c137d20e06996a11ab15637ca432f4e29440aa4d47f532f2ad69fc2dab0c3",
+    "ATtiny13A/Sound/research/tiny-speech/vinni/analyze.py": "27837b364641f09bda5842a098a7ab2a53069fc70fe7027604db12add9c6f2ee",
     "ATtiny13A/Sound/codec/fixed_period.py": "eadfcdf132d3dfb031b78253f9b8fa159ae711e17b2caba34d2cfdf804d7e40e",
     "ATtiny13A/Sound/codec/colored_period.py": "db02620b67c3a0574b5f24c99cbaa9d0c25048cafc1a94e3ce83026e8095e27b",
     "ATtiny13A/Sound/codec/period_wave.py": "ad0aa3f5db96d0e6a9573c1df660ea71417fc9dc3280aa81e559a440fe7118cd",
@@ -40,6 +40,6 @@
   "float_voiced_only_stoi": 0.6682336756314113,
   "integer_voiced_only_stoi": 0.667078577570035,
   "voiced_waveform_correlation": 0.9996376761019335,
-  "interpretation": "The voiced waveform transfer is close. The old model uses low-pass excitation in 37 of 44 active unvoiced frames; the current tiny decoder has one high-pass residual color. The new Vinni candidate is an experiment, not an established improvement over the old HQ4 firmware.",
+  "interpretation": "The voiced waveform transfer is close for the retained pitch trajectory; this does not establish that the trajectory estimates the voice F0 correctly. The 37 low-pass frames do not identify consonants. The user identified door knocks in the source, so transient sound effects and pitch tracking must be investigated before attributing the quality gap to speech excitation. The new Vinni candidate remains an experiment, not an established improvement over the old HQ4 firmware.",
   "hardware_verified": false
 }
