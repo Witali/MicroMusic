@@ -8,7 +8,7 @@
   <meta name="description" content="Музыкальная прошивка ATtiny13A с исправленным ритмом: исполнение AVR-кода, звук PWM и осциллограмма в браузере.">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css?v=20261023-stereo">
-  <script type="module" src="./app.js?v=20261023-stereo"></script>
+  <script type="module" src="./app.js?v=20261023-stereo-hq4t"></script>
 </head>
 <body>
   <header class="site-header">
@@ -41,6 +41,7 @@
           <div class="transport"><button id="play" class="primary" disabled><span id="play-icon" aria-hidden="true">▶</span><span id="play-label">Слушать</span><kbd>Space</kbd></button><button id="reset" disabled>↺ Сначала</button><div class="transport-links"><a id="download" class="download-link" aria-disabled="true">↓ Flash HEX</a><a id="download-eeprom" class="download-link" hidden>↓ EEPROM</a></div></div>
           <div class="engine-controls"><fieldset class="engine-selector"><legend>Движок эмуляции</legend><div class="engine-options"><label><input type="radio" name="engine" value="js"><span>JS</span></label><label><input type="radio" name="engine" value="wasm" checked><span>WASM</span></label></div></fieldset><p>При смене — сброс на начало.</p></div>
           <div class="audio-controls"><label class="volume-label">Громкость <input id="volume" type="range" min="0" max="1" step="0.01" value="0.65"></label><label>RC-фильтр <select id="cutoff" aria-label="Частота среза фильтра"><option value="4000">4 кГц</option><option value="6000">6 кГц</option><option value="9000" selected>9 кГц</option><option value="12000">12 кГц</option></select></label></div>
+          <label id="speech-level-control" class="technical-note" hidden><input id="match-speech-level" type="checkbox" checked> Выровнять громкость HQ4 / HQ4-T для сравнения</label>
         </section>
         <section class="panel scope-panel" aria-label="Осциллограмма PWM">
           <div class="panel-heading"><span class="eyebrow">02 / СИГНАЛ</span><span class="technical-note" id="audio-mode">МОНО · 1 PWM-ВЫХОД</span></div>

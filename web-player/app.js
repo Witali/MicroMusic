@@ -9,7 +9,10 @@ let session=0, hasPlayed=false, realtime;
 let lastScopeDraw=-Infinity, scopeDrawTimer;
 
 function showError(message) { $('error').textContent = message; $('error').hidden = !message; }
-function audioControls() { return {cutoff:+$('cutoff').value,volume:+$('volume').value}; }
+function audioControls() {
+  const trim=$('match-speech-level').checked ? (selected?.monitorGain??1) : 1;
+  return {cutoff:+$('cutoff').value,volume:+$('volume').value*trim};
+}
 function selectedEngine() { return document.querySelector('input[name="engine"]:checked').value; }
 function transport() {
   document.body.dataset.playing = String(playing);
@@ -104,6 +107,12 @@ function load(entry) {
   $('tempo').textContent='100.0%'; $('lag').textContent='0.0 мс'; realtime?.resetAnchor();
   delete $('tempo').dataset.wallMs; delete $('tempo').dataset.audioMs;
   $('selected-order').textContent=entry.order; $('selected-title').textContent=entry.title; $('selected-description').textContent=entry.description;
+  if(entry.kind==='speech') {
+    $('speech-audit').href=entry.codec==='hq4-t'
+      ? '../ATtiny13A/Sound/codec/timbre/README.md'
+      : '../ATtiny13A/Sound/research/hq4-emulator-comparison.json';
+    $('speech-audit').textContent=entry.codec==='hq4-t' ? 'Исследование HQ4-T ↗' : 'Сверка HQ4 ↗';
+  }
   const flashSource=entry.source||'data:text/plain;charset=utf-8,'+encodeURIComponent(entry.flashHex);
   $('rom-name').textContent=`attiny13a-${entry.id}.hex`; $('rom-details').textContent=`${entry.flashBytes} / 1024 Б Flash · ${entry.eepromBytes} / 64 Б EEPROM · ${(entry.sampleHz/1000).toLocaleString('ru')} кГц отсчёты`;
   $('rom-name').href=flashSource; $('rom-name').download=`attiny13a-${entry.id}.hex`;
@@ -168,6 +177,7 @@ async function toggle() {
 $('play').onclick=toggle; $('reset').onclick=()=>load(selected); $('search').oninput=renderCatalog;
 $('volume').oninput=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
 $('cutoff').onchange=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
+$('match-speech-level').onchange=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
 for (const choice of document.querySelectorAll('input[name="engine"]')) choice.onchange=()=>{ if (selected) load(selected); };
 document.addEventListener('keydown',event=>{ if (event.code==='Space' && !event.repeat && !/INPUT|SELECT|TEXTAREA|BUTTON|A/.test(event.target.tagName)) { event.preventDefault(); toggle(); } });
 window.addEventListener('pagehide',()=>{ runtime?.terminate(); audio?.close(); });
@@ -177,24 +187,36 @@ try {
     document.title='MicroMusic / ATtiny13A — речь HQ4';
     document.querySelector('.intro .eyebrow').textContent='ATtiny13A / РЕЧЬ ИЗ МАШИННОГО КОДА';
     document.querySelector('.intro h1').textContent='Речь в одном килобайте.';
-    document.querySelector('.subtitle').textContent='MiniLPC HQ4: три фразы и вариант с максимальным STOI.';
-    document.querySelector('.library h2').textContent='Как звучит HQ4?';
-    document.querySelector('.library-caption').textContent='Сохранённые прошивки. Переключайте JS и WASM для сравнения.';
+    document.querySelector('.subtitle').textContent='Новый HQ4-T и исходный HQ4: сравните тембр на фразе «Чего тебе нужно?».';
+    document.querySelector('.library h2').textContent='HQ4-T или HQ4?';
+    document.querySelector('.library-caption').textContent='HQ4-T восстанавливает спектральный наклон голоса. Выберите версию и сравните на слух.';
+    $('speech-level-control').hidden=false;
     document.querySelector('.source-only').hidden=true;
     const history=document.querySelector('.header-link');history.href='../ATtiny13A/Sound/AUDIO_REFERENCES.md';history.textContent='Звуковые эталоны ↗';
     $('original-player').textContent='Плеер из ChatGPT ↗';
     $('speech-audit').hidden=false;
-    document.querySelector('footer span:last-child').textContent='MiniLPC HQ4 · 4 образа · Worker + AudioWorklet';
+    document.querySelector('footer span:last-child').textContent='MiniLPC HQ4 / HQ4-T · 5 образов · Worker + AudioWorklet';
   }
   // Public speech playback needs only the source-built catalog. Local listening
   // can additionally use restored original WAVs and the archived ChatGPT player.
-  let response;
-  if(speech&&['127.0.0.1','localhost'].includes(location.hostname)) {
-    response=await fetch('../build/hq4-preview/firmware.json');
-  }
-  if(!response?.ok)response=await fetch(speech?'./hq4-firmware.json':'./firmware.json');
+  const response=await fetch(speech?'./hq4-firmware.json':'./firmware.json');
   if (!response.ok) throw new Error('HTTP '+response.status);
   catalog=await response.json();
+  if(speech&&['127.0.0.1','localhost'].includes(location.hostname)) {
+    try {
+      const localResponse=await fetch('../build/hq4-preview/firmware.json');
+      if(localResponse.ok) {
+        const local=await localResponse.json();
+        for(const entry of catalog.entries) {
+          const same=local.entries.find(e=>e.id===entry.id&&e.flashSha256===entry.flashSha256);
+          const reference=same||local.entries.find(e=>e.id==='hq4-'+entry.audioReferenceId);
+          if(same?.preview)entry.preview=same.preview;
+          if(reference?.reference)entry.reference=reference.reference;
+          if(reference?.originalPlayer)entry.originalPlayer=reference.originalPlayer;
+        }
+      }
+    } catch { /* Optional private listening assets must not hide public firmware. */ }
+  }
   const id=new URL(location.href).searchParams.get('firmware')||catalog.defaultId;
   load(catalog.entries.find(e=>e.id===id)||catalog.entries.find(e=>e.id===catalog.defaultId));
 } catch (error) { showError('Не удалось загрузить каталог прошивок. Обновите страницу или проверьте подключение. '+error.message); }
