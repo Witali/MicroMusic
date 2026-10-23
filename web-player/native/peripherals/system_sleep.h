@@ -75,6 +75,16 @@ uint8_t system_sleep_wake_clocked(system_sleep_t *sleep,uint16_t asserted,
  * same-domain rising edges at the same timestamp count once. */
 uint8_t system_sleep_clock_edge(system_sleep_t *sleep,int source_rising,
  int system_rising,uint64_t now);
+/* O(1) equivalent for an analytic constant-frequency source. Counts contain
+ * actual rising edges since the prior scheduler boundary, ending at now.
+ * Caller MUST split intervals at the next sleep-stage transition: this API
+ * cannot infer when an earlier edge occurred within an unsplit interval.
+ * A startup-completing batch never reuses system rises for wake delay.
+ * Counts clamp to the current stage's remaining count; no addition overflows.
+ * Repeated nonzero same-domain batches at one timestamp count only once.
+ * NULL state/backward time return INVALID_TIME before any mutation. */
+uint8_t system_sleep_clock_counts(system_sleep_t *sleep,uint64_t source_rises,
+ uint64_t system_rises,uint64_t now);
 uint8_t system_sleep_advance(system_sleep_t *sleep, uint64_t now);
 uint64_t system_sleep_next_event(const system_sleep_t *sleep);
 /* Availability of clock domains. The owning peripheral also applies its enable

@@ -60,3 +60,27 @@ Idle, ADC Noise Reduction and Power-down. Section 7.2 (p37) describes the BOD
 re-enable hold after software sleep-disable, approximately 60 microseconds.
 The caller supplies its explicit recovery profile; that typical analog delay
 is not asserted as an exact property of every physical chip.
+
+## Analytic source without one call per edge
+
+`system_sleep_clock_counts(s, source_rises, system_rises, now)` consumes actual
+rising-edge counts in O(1). A constant-frequency mapper can calculate them with
+integer quotient/remainder arithmetic while retaining fractional source phase
+across pause/resume. `system_sleep_clock_edge` delegates to this API with zero
+or one rise per domain, so both forms share timing, duplicate and reset rules.
+
+The scheduler must split intervals at the **next sleep-stage transition** and
+report that exact endpoint. This function has counts and an endpoint, not the
+timestamps of every edge in the interval; it cannot reconstruct an earlier
+completion time from an oversized interval. Counts clamp to the current
+stage's remaining count, without addition or overflow. A source batch that
+finishes STARTING never reuses system rises from the same interval as wake
+cycles. A second batch at the same startup-completion timestamp is also
+excluded. Later nonzero batches for the same domain and timestamp are
+duplicates, rather than additional edges. Zero counts may still advance a
+known wall recovery deadline. NULL state and backward time reject atomically.
+
+The owner should schedule source-startup completion, wall recovery completion,
+or the fourth wake rising edge as an event, rather than schedule every source
+transition. If the source is stopped, only independent wall recovery can make
+progress; stored CK and wake counters remain unchanged.

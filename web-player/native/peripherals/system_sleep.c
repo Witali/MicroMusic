@@ -148,14 +148,22 @@ uint8_t system_sleep_advance(system_sleep_t *s, uint64_t now) {
 
 uint8_t system_sleep_clock_edge(system_sleep_t *s,int source_rising,
                                 int system_rising,uint64_t now) {
+    return system_sleep_clock_counts(s,source_rising ? 1 : 0,system_rising ? 1 : 0,now);
+}
+
+uint8_t system_sleep_clock_counts(system_sleep_t *s,uint64_t source_rises,
+                                  uint64_t system_rises,uint64_t now) {
+    if (!s || now < s->now) return SYSTEM_SLEEP_INVALID_TIME;
     uint8_t result = system_sleep_advance(s, now);
     if (result == SYSTEM_SLEEP_INVALID_TIME || !s->clocked || now <= s->wake_at)
         return result;
-    if (s->phase == SYSTEM_SLEEP_STARTING && source_rising && s->source_ck_left &&
+    if (s->phase == SYSTEM_SLEEP_STARTING && source_rises && s->source_ck_left &&
         (!s->source_edge_valid || s->last_source_edge != now)) {
         s->last_source_edge = now;
         s->source_edge_valid = 1;
-        if (!--s->source_ck_left) {
+        uint64_t count = source_rises < s->source_ck_left ? source_rises : s->source_ck_left;
+        s->source_ck_left -= count;
+        if (!s->source_ck_left) {
             s->startup_until = now > s->recovery_until ? now : s->recovery_until;
             if (now >= s->recovery_until) {
                 s->phase = SYSTEM_SLEEP_WAKE_DELAY;
@@ -163,11 +171,13 @@ uint8_t system_sleep_clock_edge(system_sleep_t *s,int source_rising,
             }
         }
     }
-    if (s->phase == SYSTEM_SLEEP_WAKE_DELAY && system_rising && now > s->wake_delay_at &&
+    if (s->phase == SYSTEM_SLEEP_WAKE_DELAY && system_rises && now > s->wake_delay_at &&
         (!s->system_edge_valid || s->last_system_edge != now)) {
         s->last_system_edge = now;
         s->system_edge_valid = 1;
-        if (!--s->wake_cycles_left) {
+        uint32_t count = system_rises < s->wake_cycles_left ? (uint32_t)system_rises : s->wake_cycles_left;
+        s->wake_cycles_left -= count;
+        if (!s->wake_cycles_left) {
             s->phase = SYSTEM_SLEEP_RUNNING;
             s->ready_at = now;
             return SYSTEM_SLEEP_WAKE_READY;
