@@ -1,5 +1,5 @@
 // C/WASM owns execution. Each CPU has one fixed 64-KiB memory, no host imports.
-const url = new URL('../wasm/avr.wasm?v=20261023-stereo', import.meta.url);
+const url = new URL('../wasm/avr.wasm?v=20261023-fixed-arithmetic', import.meta.url);
 const bytes = globalThis.process?.versions?.node
   ? await (await import('node:fs/promises')).readFile(url)
   : await (async () => { const r=await fetch(url); if(!r.ok)throw new Error('AVR WASM HTTP '+r.status); return r.arrayBuffer(); })();

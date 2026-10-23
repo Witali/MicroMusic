@@ -6,14 +6,14 @@ const OP = { NOP:1, CLI:2, SEI:3, RETI:4, RET:5, CALL:6, JUMP:7, BRANCH:8,
   SKIP:9, LDI:10, CPI:11, SUBI:12, ORI:13, ANDI:14, MOVW:15, ADD:16,
   ADC:17, SUB:18, AND:19, EOR:20, MOV:21, INC:22, DEC:23, COM:24,
   LSR:25, ASR:26, SWAP:27, IN:28, OUT:29, SBI:30, PUSH:31, POP:32, ST:33, LPM:34, FLAG:35,
-  ROR:36, LDS:37, STS:38, OR:39, LD:40, CP:41, NEG:42 };
+  ROR:36, LDS:37, STS:38, OR:39, LD:40, CP:41, NEG:42, SBC:43, SBCI:44 };
 const sign = (v, bit) => v & bit ? v - bit * 2 : v;
 // Maximum cycles for instructions that can execute without observing I/O.
 // Everything else remains in step(), including all peripheral and stack access.
-const BATCH_CYCLES = new Uint8Array(43);
+const BATCH_CYCLES = new Uint8Array(45);
 for (const op of [OP.NOP, OP.LDI, OP.CPI, OP.SUBI, OP.ORI, OP.ANDI, OP.MOVW,
   OP.ADD, OP.ADC, OP.SUB, OP.AND, OP.EOR, OP.OR, OP.MOV, OP.INC, OP.DEC,
-  OP.COM, OP.LSR, OP.ASR, OP.ROR, OP.SWAP]) BATCH_CYCLES[op] = 1;
+  OP.COM, OP.LSR, OP.ASR, OP.ROR, OP.SWAP, OP.SBC, OP.SBCI]) BATCH_CYCLES[op] = 1;
 for (const op of [OP.JUMP, OP.BRANCH, OP.LD, OP.ST]) BATCH_CYCLES[op] = 2;
 BATCH_CYCLES[OP.SKIP] = BATCH_CYCLES[OP.LPM] = 3;
 const NZ = Uint8Array.from({length:256}, (_, v) => (v === 0 ? 2 : 0) | (v & 128 ? 0x14 : 0));
@@ -92,12 +92,13 @@ export class AVRCore {
     } else if ((w & 0xfe08) === 0xfc00 || (w & 0xfe08) === 0xfe00) {
       o = OP.SKIP; s = w & 7; k = Number((w & 0xfe08) === 0xfe00);
     } else if ((w & 0xf000) === 0xe000) { o = OP.LDI; d = 16 + ((w >> 4) & 15); k = (w & 15) | ((w >> 4) & 240); }
-    else if ([0x3000,0x5000,0x6000,0x7000].includes(w & 0xf000)) {
-      o = ({12288:OP.CPI,20480:OP.SUBI,24576:OP.ORI,28672:OP.ANDI})[w & 0xf000];
+    else if ([0x3000,0x4000,0x5000,0x6000,0x7000].includes(w & 0xf000)) {
+      o = ({12288:OP.CPI,16384:OP.SBCI,20480:OP.SUBI,24576:OP.ORI,28672:OP.ANDI})[w & 0xf000];
       d = 16 + ((w >> 4) & 15); k = (w & 15) | ((w >> 4) & 240);
     } else if ((w & 0xff00) === 0x0100) { o = OP.MOVW; d = 2 * ((w >> 4) & 15); s = 2 * (w & 15); }
     else if ([0x0c00,0x1c00,0x1800,0x2000,0x2400,0x2800,0x2c00].includes(w & 0xfc00))
       o = ({3072:OP.ADD,7168:OP.ADC,6144:OP.SUB,8192:OP.AND,9216:OP.EOR,10240:OP.OR,11264:OP.MOV})[w & 0xfc00];
+    else if ((w & 0xfc00) === 0x0800) o = OP.SBC;
     else if ((w & 0xfc00) === 0x1400) o = OP.CP;
     else if ((w & 0xfe0f) === 0x9401) o = OP.NEG;
     else if ([0x9403,0x940a,0x9400,0x9406,0x9405,0x9407,0x9402].includes(w & 0xfe0f))
@@ -302,6 +303,13 @@ export class AVRCore {
       case OP.ADD: r[d] = this.arithmetic(r[d], r[s]); break;
       case OP.ADC: r[d] = this.arithmetic(r[d], r[s], this.c); break;
       case OP.SUB: r[d] = this.arithmetic(r[d], r[s], 0, true); break;
+      case OP.SBC:
+      case OP.SBCI: {
+        const previous = this.sreg;
+        r[d] = this.arithmetic(r[d], this.op[p] === OP.SBC ? r[s] : k, previous & 1, true);
+        if (!(previous & 2)) this.z = 0;
+        break;
+      }
       case OP.CP: this.arithmetic(r[d], r[s], 0, true); break;
       case OP.NEG: r[d] = this.arithmetic(0, r[d], 0, true); break;
       case OP.AND: r[d] &= r[s]; this.nzvs(r[d]); break;
@@ -387,6 +395,15 @@ export class AVRCore {
             ((total >> 8) & 1) | (((x ^ y ^ v) & 16) << 1);
           if (o !== OP.CPI) r[d] = v;
           break;
+        case OP.SBC:
+        case OP.SBCI: {
+          const previous = flags;
+          x = r[d]; y = o === OP.SBC ? r[s] : k; total = x-y-(flags&1); v = total&255;
+          flags = (flags&0xc0) | (NZ[v] ^ (((x^y)&(x^v)&128) ? 0x18 : 0)) |
+            ((total>>8)&1) | (((x^y^v)&16)<<1);
+          if (!(previous&2)) flags &= ~2;
+          r[d] = v; break;
+        }
         case OP.AND: v = r[d] &= r[s]; flags = (flags & 0xe1) | NZ[v]; break;
         case OP.EOR: v = r[d] ^= r[s]; flags = (flags & 0xe1) | NZ[v]; break;
         case OP.OR: v = r[d] |= r[s]; flags = (flags & 0xe1) | NZ[v]; break;
