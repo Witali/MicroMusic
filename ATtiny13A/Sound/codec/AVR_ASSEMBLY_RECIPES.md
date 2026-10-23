@@ -168,6 +168,53 @@ figures apply to the ordinary floor profile and measured streams. The eight
 full builds, expanded 655-byte stream capacity and reproducible guarded source
 transformations are retained in the [compaction study](../research/q3-core-compaction/README.md).
 
+## Recipe: shorten zero pulse tails and budget the complete reader
+
+The retained four-by-sixteen Vinni pulsebook has only four active taps per
+row. A compile-time width of four removes zero tails exactly. Reject a shorter
+width whenever any removed tap is nonzero; keep the original logical book and
+integer decoder as the oracle.
+
+| Physical table | Waveform EEPROM | Speech prefix EEPROM | Core | Full Flash |
+| --- | ---: | ---: | ---: | ---: |
+| Sixteen scaled bytes per row | 64 | 0 | 368 | 990 |
+| Four scaled bytes per row | 16 | 48 | 398 | 972 |
+| Four signed nibbles per row | 8 | 56 | 410 | 976 |
+
+Signed nibbles are exact here, but byte taps win the complete budget: the extra
+eight prefix bytes do not repay twelve extra code bytes. Byte taps retain the
+previous `tap*8` encoding. Signed two's-complement nibble taps unpack directly
+to the same scale:
+
+```asm
+/* C = original lag bit 0, preserved through address logic and the IRQ. */
+ in r21, 0x1d
+ brcs pulse_high_nibble
+ swap r21
+pulse_high_nibble:
+ andi r21, 240
+ asr r21                 /* signed tap*8 */
+```
+
+The extra source bytes are useful because a shared **26-byte stream reader**
+can consume an EEPROM prefix before switching Z to the Flash suffix. All five
+stream-read sites call it. Advance the prefix pointer after reading the byte;
+when it reaches the compiled boundary, load the Flash pointer before returning.
+This keeps splits inside headers/coefficient packets transparent. EOF remains
+in Flash, and SREG.T remains available for the original one-shot stop rule.
+
+The net saving is **18 Flash bytes**: 48 speech bytes moved to EEPROM minus
+30 added code bytes (short addressing plus reader). The 620-byte stream fits
+at **972 Flash + 64 EEPROM**, and the physical stream capacity rises **655 →
+673 bytes**. The phrase has 208 cycles of slack instead of 352, so qualify every
+new fitted stream. Firmware and its EEPROM image must be programmed together.
+
+Widths 4/8/16, byte/nibble encodings, IRQ carry preservation, zero-tail bypass,
+short prefixes and actual 1024-byte maximum images are checked. See the
+[eleven-variant study and qualification](../research/q3-short-eeprom/README.md)
+for the automatic whole-image selection and reproduction commands. The PCM,
+duration and quality metrics are unchanged.
+
 ## Changes that preserve the decoded bytes
 
 - **Round using the last discarded bit.** After a signed ASR/ROR loop, carry
