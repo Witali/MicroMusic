@@ -1,4 +1,4 @@
-# ATtiny13A package format v3
+# ATtiny13A package format v4
 
 `attiny13a-package.js` creates and verifies a self-contained initial device image.
 It has no Node imports and uses asynchronous WebCrypto SHA-256, so the same
@@ -24,7 +24,7 @@ const decoded = await decodePackage(savedJSON);
 translation's embedded `micromusic.avr` manifest. No files or URLs are referenced
 by the saved package.
 
-The envelope identifies format `micromusic-attiny13a-package`, version `3`,
+The envelope identifies format `micromusic-attiny13a-package`, version `4`,
 device `ATtiny13A`, and ABI `micromusic-attiny13a-device-v1`. Each of the four
 binary assets records its length, canonical base64 and SHA-256. The envelope
 hash covers all fields except `integrity`, including configuration, manifests
@@ -42,9 +42,12 @@ Limits are 1024-byte Flash, 64-byte EEPROM, 4 MiB translation, 2 MiB runtime,
 512 KiB embedded manifest and 16 MiB JSON. These are format limits, not device
 performance promises.
 
-The decoder also accepts versions 1 and 2 with their original configuration and
+The decoder also accepts versions 1, 2 and 3 with their original configuration and
 runtime contracts. Version 2 added the physical-clock bridge and calibration
-profile. Version 3 adds the optional supply profile and its bridge exports.
+profile. Version 3 added the optional supply profile and its bridge exports.
+Version 4 adds an optional analog RESET input profile and four receiver bridge
+exports. Historical versions do not require these new fields or exports;
+retained original v1/v3 runtimes exercise that compatibility.
 The generated CPU instruction/import ABI is unchanged.
 The original v1 runtime lacks three later configuration keys and four state
 observers. Its loader accepts only the historical defaults for unsupported keys
@@ -107,6 +110,7 @@ it does not assert complete silicon behavior or measured oscillator calibration.
 | `nvmClockProfile` | 0 | 0 unspecified,1 explicit fixed-nanosecond programming fixture |
 | `nvmCalibrationReferenceHz` | 0 | 0 unspecified, otherwise1–1000000000 |
 | `powerResetProfile` | null | null, or the complete explicit profile below |
+| `resetInputProfile` | null | null, or the complete six-field RESET receiver profile below |
 
 A non-null `osccalHz` table selects a physical picosecond clock domain. Its
 factory CAL entry must be supplied and, for the internal calibrated RC source,
@@ -138,6 +142,27 @@ center plus/minus its half-hysteresis must fit the supported voltage range.
 No analog thresholds are supplied as hidden defaults. See
 [`device-power.md`](../native/peripherals/device-power.md) for the exact digital
 qualification, reset aggregation, sleep and programming contracts.
+
+The optional `resetInputProfile` requires physical time (`osccalHz`) and DWEN
+unprogrammed. It has exactly six fields: `assertThresholdPpm`,
+`releaseThresholdPpm`, `assertQualificationNs`, `releaseQualificationNs`,
+`assertPropagationNs` and `releasePropagationNs`. Thresholds satisfy
+`200000 <= assert < release <= 900000`; durations are uint32 nanoseconds,
+including zero. There are no hidden receiver defaults.
+
+`setAnalogPs({at,pin:5,microvolts})` supplies the RESET pad voltage. Until
+selected, its receiver voltage follows VCC. Thresholds track current VCC, with
+explicit hysteresis and two inertial timing stages. `injectPinsPs` remains a
+prequalified digital RESET bypass. RSTDISBL gates the pin's reset role. A supply
+profile is only needed when changing VCC, rather than for a fixed supply.
+
+`state()` exposes `resetInputEnabled`, `resetInputAsserted` and
+`resetInputDeadlinePs` when this profile is enabled. Recognition runs in native
+WASM, contributes to the scheduler's minimum deadline and feeds shared reset
+hold/startup without per-edge JS calls. For the selected model and manufacturer
+limits see [`reset_input.md`](../native/devices/attiny13a/reset_input.md).
+The preserved original v3 runtime predates this receiver; only a v4 package
+may carry its profile.
 
 With this profile, initial `vccMicrovolts` may be zero. Queue supply changes with
 `setVccPs({at: bigint, microvolts})`. They share chronological ordering with pin

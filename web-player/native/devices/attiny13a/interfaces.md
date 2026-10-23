@@ -6,7 +6,7 @@ loading a firmware package does not implement a programming or debug transport.
 | Interface | Current boundary | Work required for physical support |
 | --- | --- | --- |
 | CLKI on PB3 | CKSEL selects a configured frequency; injected PB3 transitions do not clock the CPU | Timestamped source edges, stopped-clock state, CKDIV8/CLKPR division, startup CK counting and resumable instruction phases |
-| External RESET | Digital PB5 injection is already qualified as a logical reset | Separate voltage receiver with an explicit threshold, hysteresis and qualification profile, feeding the existing reset aggregator |
+| External RESET | Optional analog PB5 receiver feeds the reset aggregator; digital injection stays prequalified | Supply and receiver parameters are explicit profiles; silicon calibration/measurement remains open |
 | ISP | Excluded by the user's scope decision | No programmer or command transport is planned |
 | HVSP | Excluded by the user's scope decision | No programming backend, HV entry or wire receiver is planned |
 | debugWIRE | Diagnostic BREAK support is controlled by the host option; DWDR has no debugger channel | Documented DWEN pin mux/reset effects and a debugger state contract; a wire implementation requires an authoritative protocol source |
@@ -27,8 +27,14 @@ authorize inventing a DDRB3 override.
 
 The RESET pulse requirement is not a published exact assertion delay. Typical
 voltage and hysteresis plots do not provide a universal receiver transfer
-function. Keep the existing prequalified digital API distinct from a future
-analog receiver; use RESET-specific characteristics rather than PB5 GPIO plots.
+function. The optional [analog receiver](reset_input.md) has separate threshold,
+qualification and propagation choices. The prequalified digital API bypasses
+that receiver. RESET-specific characteristics are distinct from PB5 GPIO plots.
+
+The board uses the receiver's next physical deadline, preserves it through CPU
+reset acknowledgement and combines its output with POR/BOD/WDT and the digital
+bypass. The generated CPU, native audio collector and package v4 path exercise
+the same model; no host callback handles individual voltage transitions.
 
 ## Debug and programming constraints
 

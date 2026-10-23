@@ -10,6 +10,9 @@ export function compileAnalog(name, sources, fixture) {
   // disabled. Keep its linked dependency common to all standalone board tests.
   if(sources.includes('web-player/native/peripherals/device.c')&&!sources.includes('web-player/native/peripherals/power_reset.c'))
     sources=[...sources,'web-player/native/peripherals/power_reset.c'];
+  if((sources.includes('web-player/native/peripherals/device.c')||fixture.includes('#include "device.c"'))&&
+    !sources.includes('web-player/native/devices/attiny13a/reset_input.c'))
+    sources=[...sources,'web-player/native/devices/attiny13a/reset_input.c'];
   let sdk = process.env.EMSDK;
   for (let p = root; !sdk;) {
     const candidate = join(p, 'build/toolchains/emscripten-6.0.12');

@@ -88,9 +88,9 @@ Hardware-dependent checks remain open until actual measurements are available.
 Acceptance: a package reproduces the configured device without implicit host
 defaults; CLI and browser execute the same firmware and physical output.
 
-Format v3 includes per-asset and envelope SHA-256, explicit clock/supply
-configuration, embedded manifest and ABI validation. Readers retain v1/v2
-support, including a retained original v1 runtime regression. A standalone
+Format v4 includes per-asset and envelope SHA-256, explicit clock/supply/RESET
+configuration, embedded manifest and ABI validation. Readers retain v1/v2/v3
+support, including retained original v1/v3 runtime regressions. A standalone
 loader test runs with no default WASM files; Worker tests cover audio restart
 and SPM.
 The browser can open a local package and observes both PWM pins as stereo.
@@ -148,8 +148,8 @@ compared 72 runs and 3384 endpoint snapshots with byte-identical PCM and full
 CPU/peripheral state. Median paired gains were 1.14–1.19x with physical time and
 1.12–1.24x with the compatible clock contract on this host. These are coupled
 capture measurements with host variance; physical capture still misses real
-time, so the default-engine performance gate remains open. The rebuilt runtime
-matches the measured candidate SHA-256. All 871 default regression tests passed
+time, so the default-engine performance gate remains open. That checkpoint's
+runtime matched the measured candidate SHA-256. All 871 default regression tests passed
 at this integration checkpoint. A new profile of the optimized runtime should
 guide the next performance change. Measured OSCCAL curves and silicon probes
 proceed when hardware is available.
@@ -171,8 +171,18 @@ proceed when hardware is available.
   analog receiver as separate implementation boundaries.
 - [ ] Implement external CLKI source events and stopped-clock behavior while
   preserving CPU instruction phases and independent peripheral time.
-- [ ] Add a separately profiled analog RESET receiver feeding the existing
+  The audited [CLKI/CPU continuation design](devices/attiny13a/clki-design.md)
+  specifies real edge budgets, bounded waits, persistent instruction/IRQ
+  phases and exactly-once effects. A periodic-only source is insufficient;
+  implementation and its acceptance tests remain open.
+- [x] Add a separately profiled analog RESET receiver feeding the existing
   reset aggregator; keep prequalified digital inputs explicit.
+  The device-owned receiver uses VCC-relative hysteresis and separate explicit
+  qualification/propagation parameters. Physical deadlines feed generated CPU
+  barriers, shared reset hold/startup and native audio. Package v4 preserves
+  the profile; RSTDISBL gates the role and DWEN configurations are rejected.
+  Atomic VCC/EXTRF updates prevent false reset release during source handoff.
+  These are verified profile semantics; silicon calibration remains stage3.
 - [x] Record the exclusion of ISP/HVSP and external-chip programming.
   A ready firmware image initializes the virtual device directly. No external
   programming backend or programmer transport is retained.
@@ -181,6 +191,10 @@ proceed when hardware is available.
   manufacturer definitions; do not invent one.
 - [ ] Track applicable silicon errata and represent undefined outcomes explicitly
   instead of silently inventing deterministic success or memory corruption.
+  DS80000857A identifies EEPROM writes below1.9V for revisions G/H/I. Dynamic
+  supply profiles diagnose this uncertainty. A fixed1.8V configuration without
+  a supply profile still completes EEPROM writes as known success; extend the
+  guard to that path and verify the exact1.9V boundary.
 - [x] Use the manufacturer's official device definition files as the address
   source for the model, generated register maps and new firmware tooling.
   Pinned Microchip ATtiny_DFP3.4.278 originals retain source URL, version,
@@ -212,6 +226,15 @@ original v1 runtime fixture. All13 retained firmware translations remained
 byte-identical after extracting target geometry, and active stereo firmware
 remained byte-identical after adopting official assembly symbols. Hardware
 measurements and performance gating remain open.
+
+Analog RESET integration checkpoint, 2026-10-23: all 919 default regression
+tests passed with the receiver, atomic supply/source handoff and package v4.
+Coverage includes 22 receiver checks, generated instruction cancellation,
+audio integration, watchdog-preserved qualification, RSTDISBL/digital bypass,
+original v1/v3 packages, invalid profiles and missing/wrong-signature RESET
+exports. The runtime has no host imports, fixed two-page memory and 82 exports.
+External CLKI/CPU continuation is still unimplemented; its audited contract is
+retained separately. No physical programming interface has been added.
 
 ## Primary references
 

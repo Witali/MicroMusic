@@ -1,7 +1,9 @@
 // Portable package validation. No Node imports, host callbacks, or WASM instances.
 // SHA-256 protects integrity; packages are executable code, not signed artifacts.
+import {normalizeResetInputProfile} from './devices/attiny13a-reset-profile.js';
+import {AT13_FUSE_MASK as FUSE} from './attiny13a-registers.js';
 export const PACKAGE_FORMAT='micromusic-attiny13a-package';
-export const PACKAGE_VERSION=3;
+export const PACKAGE_VERSION=4;
 export const PACKAGE_ABI='micromusic-attiny13a-device-v1';
 export const PACKAGE_LIMITS=Object.freeze({json:16*1024*1024,translated:4*1024*1024,runtime:2*1024*1024,manifest:512*1024});
 export const DEFAULT_CONFIGURATION=Object.freeze({
@@ -10,6 +12,7 @@ export const DEFAULT_CONFIGURATION=Object.freeze({
   comparatorPropagationHalf:0,bandgapStartupHalf:0,comparatorInitial:0,
   wakeStartupHalf:0,spmCommandCycles:0,flashMaximum:1,bodRecoveryNs:60000,
   factoryOsccal96:0,fuseStartupProfile:0,nvmClockProfile:0,nvmCalibrationReferenceHz:0,osccalHz:null,powerResetProfile:null,
+  resetInputProfile:null,
 });
 
 const encoder=new TextEncoder(),decoder=new TextDecoder('utf-8',{fatal:true});
@@ -46,12 +49,19 @@ async function sha256(bytes){
 }
 function normalizeConfiguration(input={},complete=false,version=PACKAGE_VERSION){
   record(input,'configuration');
-  const omitted=version===1?['nvmClockProfile','nvmCalibrationReferenceHz','osccalHz','powerResetProfile']:version===2?['powerResetProfile']:[];
+  const omitted=[...(version===1?['nvmClockProfile','nvmCalibrationReferenceHz','osccalHz','powerResetProfile']:version===2?['powerResetProfile']:[]),
+    ...(version<4?['resetInputProfile']:[])];
   const defaults=Object.fromEntries(Object.entries(DEFAULT_CONFIGURATION).filter(([key])=>!omitted.includes(key)));
   for(const name of Object.keys(input))if(!Object.hasOwn(defaults,name))fail('unknown configuration '+name);
   if(complete)keys(input,Object.keys(defaults),'configuration');
   const configuration={...defaults,...input};
   for(const [name,value] of Object.entries(configuration)){
+    if(name==='resetInputProfile'){
+      try{configuration.resetInputProfile=normalizeResetInputProfile(value);}catch(error){fail(error.message);}
+      if(value!==null&&(!configuration.osccalHz||!(configuration.fuseHigh&FUSE.HIGH_DWEN)))
+        fail('configuration resetInputProfile requires physical time and DWEN unprogrammed');
+      continue;
+    }
     if(name==='powerResetProfile'){
       if(value!==null){
         const fields=['porAssertMicrovolts','porReleaseMicrovolts','bod00Microvolts','bod01Microvolts','bod10Microvolts',
@@ -243,6 +253,12 @@ async function validateCode(translated,runtime,flash,manifest,version=PACKAGE_VE
     const exported=r.exports.find(e=>e.name===name&&e.kind===0);
     if(!exported||!equal(r.signature(exported.index),type))fail('runtime export mismatch: '+name);
   }
+  if(version>=4)for(const [name,type] of Object.entries({avr_device_configure_reset_input:signature([i32,i32],[i32]),
+    avr_device_reset_input_enabled:signature([],[i32]),avr_device_reset_input_asserted:signature([],[i32]),
+    avr_device_reset_input_deadline_ps:signature([],[i64])})){
+    const exported=r.exports.find(e=>e.name===name&&e.kind===0);
+    if(!exported||!equal(r.signature(exported.index),type))fail('runtime export mismatch: '+name);
+  }
   for(const [name,type] of Object.entries({step:signature(),block:signature([f64,i32],[i32]),run:signature([i32],[i32]),
     nextDuty:signature([],[i32]),capturePWM:signature([i32,i32],[i32]),runUntil:signature([f64],[i32]),capturePhysical:signature([i32],[i32])})){
     const exported=t.exports.find(e=>e.name===name&&e.kind===0);
@@ -271,7 +287,7 @@ export async function decodePackage(json){
   if(json.length>PACKAGE_LIMITS.json||encoder.encode(json).length>PACKAGE_LIMITS.json)fail('JSON size limit');
   let pkg;try{pkg=JSON.parse(json);}catch{fail('invalid JSON');}
   keys(pkg,['format','version','device','abi','configuration','manifest','assets','integrity'],'package');
-  if(pkg.format!==PACKAGE_FORMAT||![1,2,PACKAGE_VERSION].includes(pkg.version))fail('unsupported format/version');
+  if(pkg.format!==PACKAGE_FORMAT||![1,2,3,PACKAGE_VERSION].includes(pkg.version))fail('unsupported format/version');
   if(pkg.device!=='ATtiny13A')fail('unsupported device');
   keys(pkg.abi,['id','layout'],'ABI');if(pkg.abi.id!==PACKAGE_ABI)fail('unsupported ABI identity');
   const configuration=normalizeConfiguration(pkg.configuration,true,pkg.version);

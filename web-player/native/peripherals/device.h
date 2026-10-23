@@ -25,7 +25,8 @@ enum {
  DEVICE_FAULT_OUTPUT_OVERFLOW=9, DEVICE_FAULT_SPM_TIMING=10,
  DEVICE_FAULT_CLKPR=11, DEVICE_FAULT_UNIMPLEMENTED_IO=12,
  DEVICE_FAULT_CLOCK_CONTRACT=13, DEVICE_FAULT_OSCCAL=14,
- DEVICE_FAULT_NVM_CLOCK_PROFILE=15, DEVICE_FAULT_POWER=16
+ DEVICE_FAULT_NVM_CLOCK_PROFILE=15, DEVICE_FAULT_POWER=16,
+ DEVICE_FAULT_RESET_INPUT=17
 };
 enum {
  DEVICE_POWER_ENABLE=0, DEVICE_POWER_POR_ASSERT_UV=1, DEVICE_POWER_POR_RELEASE_UV=2,
@@ -57,6 +58,21 @@ int device_configure(uint32_t key, uint32_t value);
 int device_configure_power(uint32_t field, uint32_t value);
 uint8_t device_power_enabled(void);
 int32_t device_vcc_microvolts(void);
+enum {
+ DEVICE_RESET_INPUT_ENABLE=0, DEVICE_RESET_INPUT_ASSERT_PPM=1,
+ DEVICE_RESET_INPUT_RELEASE_PPM=2, DEVICE_RESET_INPUT_ASSERT_QUALIFICATION_NS=3,
+ DEVICE_RESET_INPUT_RELEASE_QUALIFICATION_NS=4,
+ DEVICE_RESET_INPUT_ASSERT_PROPAGATION_NS=5, DEVICE_RESET_INPUT_RELEASE_PROPAGATION_NS=6
+};
+/* Optional analog PB5 RESET receiver. Configure all six explicit parameters
+ * before enabling, in physical1ps mode with DWEN unprogrammed. Analog PB5 is
+ * selected with inject_analog_ps; before that its voltage follows VCC.
+ * Prequalified digital PB5 reset remains an independent bypass input.
+ * RSTDISBL gates the RESET role; the receiver itself retains diagnostic state. */
+int device_configure_reset_input(uint32_t field,uint32_t value);
+uint8_t device_reset_input_enabled(void);
+uint8_t device_reset_input_asserted(void);
+uint64_t device_reset_input_deadline_ps(void);
 /* Pre-init, instance-specific CAL[0..127] -> internal RC Hz table. Zero means
  * unknown. Calling this opts into fixed1ps time. A factory entry is required;
  * for an internal RC source it must match configured oscillatorHz. No curve is

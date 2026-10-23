@@ -12,7 +12,7 @@ excluded by [`EMULATION_SCOPE.md`](EMULATION_SCOPE.md).
 | ATtiny13A profile | `lib/devices/attiny13a-profile.js` | Flash/data geometry, PC wrapping, register placement and legacy hardware hooks |
 | Manufacturer definitions | `vendor/microchip/ATtiny_DFP/3.4.278/` | Original register, bit, fuse, vector and memory definitions with versioned provenance |
 | Generated register views | `lib/attiny13a-registers.*`, `native/attiny13a-registers.*` | C, JS, JSON and assembly views of the same official definitions |
-| ATtiny13A hardware | `native/peripherals/`, `native/avr-device.inc` | Device bus, timers, GPIO, ADC/comparator, sleep/reset, power, NVM and physical time |
+| ATtiny13A hardware | `native/peripherals/`, `native/devices/attiny13a/`, `native/avr-device.inc` | Device bus, timers, GPIO, ADC/comparator, sleep/reset, power, NVM and physical time |
 | Shared generated-CPU loader | `lib/avr-transpiled-runtime.js` | Link emitted CPU functions to their native ABI and maintain the translation cache |
 | ATtiny13A host API | `lib/attiny13a-runtime.js` | Device configuration, queued external inputs, diagnostics and native pin capture |
 | Native runtime WASM | `wasm/attiny13a.wasm` | Compiled peripheral implementation and ABI bridges, with no host imports |
@@ -20,7 +20,9 @@ excluded by [`EMULATION_SCOPE.md`](EMULATION_SCOPE.md).
 | Portable package | `lib/attiny13a-package.js` format | Keep firmware, native runtime, initial memories, profile configuration and manifests as distinct assets |
 
 All current files under `native/peripherals/` implement the ATtiny13A hardware
-model. A second microcontroller requires its own profile, bus/peripheral
+model. New device-owned modules, including the analog RESET receiver, live in
+`native/devices/attiny13a/`; its build selects those sources explicitly.
+A second microcontroller requires its own profile, bus/peripheral
 implementation, native bridge and validation. Device-specific addresses and
 memory sizes belong in that profile and its manufacturer definitions. The
 shared emitter consumes the normalized geometry. Its current data/PC lowering

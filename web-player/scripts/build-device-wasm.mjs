@@ -38,7 +38,12 @@ const peripheralDir = 'web-player/native/peripherals';
 const isTest = name => /(?:^|[.\-_])tests?(?:[.\-_]|$)/i.test(name);
 const nativeFiles = readdirSync(join(root, peripheralDir)).sort()
   .filter(name => /\.[ch]$/.test(name) && !isTest(name)).map(name => peripheralDir + '/' + name);
-const sources = ['web-player/native/avr.c', ...nativeFiles.filter(name => name.endsWith('.c'))];
+// Select device-owned modules explicitly; adding another MCU must not silently
+// link its implementation into the ATtiny13A board.
+const deviceFiles=['web-player/native/devices/attiny13a/reset_input.c',
+  'web-player/native/devices/attiny13a/reset_input.h'];
+const sources = ['web-player/native/avr.c', ...nativeFiles.filter(name => name.endsWith('.c')),
+  ...deviceFiles.filter(name=>name.endsWith('.c'))];
 const runtimeSource = readFileSync(join(root, sources[0]), 'utf8');
 const nativeSupport = readdirSync(join(root, 'web-player/native')).sort()
   .filter(name => /\.(?:h|inc)$/.test(name)).map(name => 'web-player/native/' + name);
@@ -93,7 +98,7 @@ try {
   if (!(error instanceof RangeError)) throw error;
 }
 const hash = value => createHash('sha256').update(value).digest('hex');
-const inputs = [sources[0], ...nativeSupport, ...nativeFiles, ...vendorInputs,
+const inputs = [sources[0], ...nativeSupport, ...nativeFiles, ...deviceFiles, ...vendorInputs,
   'web-player/scripts/generate-attiny13a-registers.mjs', 'web-player/scripts/build-device-wasm.mjs'];
 const normalized = path => path.replaceAll(sdk, '<emsdk>').replaceAll(sdk.replaceAll('\\', '/'), '<emsdk>');
 const manifest = {

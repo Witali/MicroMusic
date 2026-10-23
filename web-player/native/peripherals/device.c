@@ -8,6 +8,7 @@
 #include "nvm.h"
 #include "device_clock.h"
 #include "power_reset.h"
+#include "../devices/attiny13a/reset_input.h"
 #include <stddef.h>
 
 enum { PIN_CAPACITY=1024, INPUT_CAPACITY=128,
@@ -42,6 +43,9 @@ typedef struct {
  uint64_t wdt_reset_end;
  struct { uint64_t base, at; uint8_t valid; } deadline;
  power_reset_t power;
+ attiny13a_reset_input_t reset_input;
+ uint32_t reset_input_config[7];
+ uint8_t reset_input_enabled;
  int32_t analog_uv[6];
  timer0_t timer;
  system_gpio_t gpio;
@@ -61,6 +65,8 @@ static uint32_t calibration_configuration[128];
 static uint8_t calibration_configured;
 static uint32_t power_configuration[10];
 static uint16_t power_fields;
+static uint32_t reset_input_configuration[7];
+static uint8_t reset_input_fields;
 static void reset_state(uint8_t sources_mask);
 static void clock_domains(void);
 static void mirror(void);
@@ -142,8 +148,9 @@ static void bod_write(uint8_t value) {
  }
 }
 static int external_reset_asserted(void) {
- return (board.config[DEVICE_CFG_FUSE_HIGH]&1) &&
-  (board.external_mask&32) && !(board.external_levels&32);
+ return (board.config[DEVICE_CFG_FUSE_HIGH]&AT13_FUSE_HIGH_RSTDISBL_MASK) &&
+  (((board.external_mask&32) && !(board.external_levels&32)) ||
+   (board.reset_input_enabled&&attiny13a_reset_input_asserted(&board.reset_input)));
 }
 /* Convert elapsed base ticks with retained numerator phase, without ever
  * multiplying a long absolute timestamp by a frequency. */
@@ -212,6 +219,21 @@ static void power_other_sources(void) {
   (external_reset_asserted()?POWER_RESET_EXTRF:0));
  power_reset_set_other_sources(&board.power,board.base,board.raw_other_reset);
  power_sync();
+}
+static void external_reset_sync(void) {
+ if(board.power_enabled){power_other_sources();return;}
+ uint8_t held=(uint8_t)external_reset_asserted();
+ if(held&&!board.reset_held)board.reset_requested|=SYSTEM_EXTRF;
+ uint8_t released=board.reset_held&&!held;
+ board.reset_held=held;
+ if(held)board.reset_until=0;
+ else if(released)reset_startup(SYSTEM_EXTRF);
+}
+static void reset_input_voltage(void) {
+ if(!board.reset_input_enabled)return;
+ int32_t voltage=(board.analog_mask&32)?board.analog_uv[5]:board.vcc_uv;
+ if(!attiny13a_reset_input_set_voltage(&board.reset_input,board.base,voltage,board.vcc_uv))
+  fail(DEVICE_FAULT_RESET_INPUT,board.reset_input.fault);
 }
 static uint64_t at_half(uint64_t half) {
  if (half==UINT64_MAX) return UINT64_MAX;
@@ -364,21 +386,19 @@ static void inputs_at_current_time(void) {
   if (!event->type) {
    board.external_mask=event->mask; board.external_levels=event->value;
    system_gpio_external(&board.gpio,event->mask,event->value,board.half);
-   if(board.power_enabled) power_other_sources();
-   else {
-   uint8_t held=(uint8_t)external_reset_asserted();
-   if (held && !board.reset_held) board.reset_requested|=SYSTEM_EXTRF;
-   uint8_t released=board.reset_held && !held;
-   board.reset_held=held;
-   if (held) board.reset_until=0;
-   else if (released) reset_startup(SYSTEM_EXTRF);
-   }
+   external_reset_sync();
   } else if(event->type==1) {
    board.analog_mask|=(uint8_t)(1u<<event->pin);
    board.analog_uv[event->pin]=event->voltage;
+   if(board.reset_input_enabled){reset_input_voltage();external_reset_sync();}
   } else {
    board.vcc_uv=event->voltage;supply_guard();
-   power_reset_set_vcc(&board.power,board.base,board.vcc_uv);power_sync();
+   reset_input_voltage();
+   board.raw_other_reset=(uint8_t)((board.raw_other_reset&POWER_RESET_WDRF)|
+    (external_reset_asserted()?POWER_RESET_EXTRF:0));
+   /* VCC changes the pad receiver's thresholds too. Publish both source
+    * changes atomically so POR<->EXTRF cannot briefly release reset. */
+   power_reset_set_inputs(&board.power,board.base,board.vcc_uv,board.raw_other_reset);power_sync();
    if(!analog_reference(&board.analog,(uint32_t)board.vcc_uv,board.config[DEVICE_CFG_BANDGAP_UV],board.half))
     fail(DEVICE_FAULT_ANALOG,15);
   }
@@ -400,6 +420,11 @@ static void service(uint64_t previous_half) {
   if (error) fail(DEVICE_FAULT_TIMER,(uint32_t)error);
  }
  supply_guard();nvm_advance(&board.nvm,cpu_cycle(),board.ns);
+ if(board.reset_input_enabled){
+  if(!attiny13a_reset_input_advance(&board.reset_input,board.base))
+   fail(DEVICE_FAULT_RESET_INPUT,board.reset_input.fault);
+  external_reset_sync();
+ }
  if(board.power_enabled) {
   power_reset_advance(&board.power,board.base);power_sync();
   if(board.wdt_reset_end && board.base>=board.wdt_reset_end) {
@@ -438,6 +463,8 @@ static void service(uint64_t previous_half) {
 }
 static uint64_t next_event_scan(void) {
  uint64_t next=at_cycle(timer0_next_event(&board.timer));
+ if(board.reset_input_enabled)
+  next=minimum(next,attiny13a_reset_input_next_deadline(&board.reset_input));
  if(board.power_enabled) {
   next=minimum(next,power_reset_next_deadline(&board.power));
   if(board.wdt_reset_end) next=minimum(next,board.wdt_reset_end);
@@ -527,6 +554,24 @@ int device_configure_power(uint32_t field,uint32_t value) {
  }
  power_configuration[field]=value;power_fields|=(uint16_t)(1u<<field);return 1;
 }
+int device_configure_reset_input(uint32_t field,uint32_t value) {
+ if(field>DEVICE_RESET_INPUT_RELEASE_PROPAGATION_NS)return 0;
+ if(field==DEVICE_RESET_INPUT_ENABLE){
+  if(value>1)return 0;
+  if(!value){reset_input_fields=0;for(unsigned i=0;i<7;i++)reset_input_configuration[i]=0;}
+ }else{
+  if(field<=DEVICE_RESET_INPUT_RELEASE_PPM&&(value<200000||value>900000))return 0;
+  reset_input_fields|=(uint8_t)(1u<<field);
+ }
+ reset_input_configuration[field]=value;return 1;
+}
+uint8_t device_reset_input_enabled(void){return board.reset_input_enabled;}
+uint8_t device_reset_input_asserted(void){
+ return board.reset_input_enabled&&(uint8_t)attiny13a_reset_input_asserted(&board.reset_input);
+}
+uint64_t device_reset_input_deadline_ps(void){
+ return board.reset_input_enabled?attiny13a_reset_input_next_deadline(&board.reset_input):UINT64_MAX;
+}
 int device_configure_osccal_hz(uint32_t cal,uint32_t hz) {
  if (cal>127 || hz>1000000000) return 0;
  calibration_configuration[cal]=hz; calibration_configured=1; return 1;
@@ -542,9 +587,27 @@ int device_init(uint8_t *data, uint8_t *flash, uint8_t *eeprom) {
  for (unsigned i=0;i<128;i++) board.calibration[i]=calibration_configuration[i];
  board.physical=calibration_configured;
  board.power_enabled=(uint8_t)power_configuration[DEVICE_POWER_ENABLE];
+ board.reset_input_enabled=(uint8_t)reset_input_configuration[DEVICE_RESET_INPUT_ENABLE];
+ for(unsigned i=0;i<7;i++)board.reset_input_config[i]=reset_input_configuration[i];
  for(unsigned i=0;i<10;i++)board.power_config[i]=power_configuration[i];
  board.vcc_uv=(int32_t)board.config[DEVICE_CFG_VCC_UV];
  if (!data || !flash || !eeprom) { fail(DEVICE_FAULT_CONFIG,1); return 0; }
+ if(board.reset_input_enabled){
+  if(!board.physical||reset_input_fields!=0x7e||
+     !(board.config[DEVICE_CFG_FUSE_HIGH]&AT13_FUSE_HIGH_DWEN_MASK)){
+   fail(DEVICE_FAULT_CONFIG,13);return 0;
+  }
+  attiny13a_reset_input_profile_t profile={
+   .assert_threshold_ppm=board.reset_input_config[DEVICE_RESET_INPUT_ASSERT_PPM],
+   .release_threshold_ppm=board.reset_input_config[DEVICE_RESET_INPUT_RELEASE_PPM],
+   .assert_qualification_ps=(uint64_t)board.reset_input_config[DEVICE_RESET_INPUT_ASSERT_QUALIFICATION_NS]*1000,
+   .release_qualification_ps=(uint64_t)board.reset_input_config[DEVICE_RESET_INPUT_RELEASE_QUALIFICATION_NS]*1000,
+   .assert_propagation_ps=(uint64_t)board.reset_input_config[DEVICE_RESET_INPUT_ASSERT_PROPAGATION_NS]*1000,
+   .release_propagation_ps=(uint64_t)board.reset_input_config[DEVICE_RESET_INPUT_RELEASE_PROPAGATION_NS]*1000};
+  if(!attiny13a_reset_input_init(&board.reset_input,&profile,0,board.vcc_uv,board.vcc_uv)){
+   fail(DEVICE_FAULT_RESET_INPUT,board.reset_input.fault);return 0;
+  }
+ }
  if((!board.vcc_uv&&!board.power_enabled) ||
     (board.power_enabled&&(!board.physical||power_fields!=0x3fe))) {
   fail(DEVICE_FAULT_CONFIG,12);return 0;
@@ -846,7 +909,7 @@ uint64_t device_wait_until_ps(uint64_t deadline) {
 }
 static int queue_input(input_t event) {
  deadline_invalidate(DEADLINE_INPUT);
- if (!board.initialized || event.at<board.base) { fail(DEVICE_FAULT_TIME,9); return 0; }
+ if (!board.initialized || event.at<board.base || (board.physical&&event.at==UINT64_MAX)) { fail(DEVICE_FAULT_TIME,9); return 0; }
  if (board.input_count==INPUT_CAPACITY) { fail(DEVICE_FAULT_INPUT_OVERFLOW,INPUT_CAPACITY); return 0; }
  if (board.input_count && event.at<board.inputs[(board.input_head+board.input_count-1)%INPUT_CAPACITY].at) {
   fail(DEVICE_FAULT_TIME,10); return 0;

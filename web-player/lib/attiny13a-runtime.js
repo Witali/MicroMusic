@@ -1,4 +1,6 @@
 import {AVRCore as TranslatedCore} from './avr-transpiled-runtime.js';
+import {resetInputProfileFields,normalizeResetInputProfile} from './devices/attiny13a-reset-profile.js';
+import {AT13_FUSE_MASK as FUSE} from './attiny13a-registers.js';
 const configuration={oscillatorHz:1,watchdogHz:2,vccMicrovolts:3,bandgapMicrovolts:4,
   fuseLow:5,fuseHigh:6,lock:7,adcFirstSample:8,comparatorPropagationHalf:9,
   bandgapStartupHalf:10,comparatorInitial:11,wakeStartupHalf:12,spmCommandCycles:13,flashMaximum:14,bodRecoveryNs:15,factoryOsccal96:16,fuseStartupProfile:17,
@@ -57,6 +59,14 @@ export class ATtiny13A extends TranslatedCore {
         }
         if(!exports.avr_device_configure_power(0,1))throw Error('Power reset profile unavailable');
       }
+      if(options.resetInputProfile!=null){
+        const profile=normalizeResetInputProfile(options.resetInputProfile);
+        if(!options.osccalHz)throw Error('resetInputProfile requires a physical OSCCAL table');
+        if(!((options.fuseHigh??255)&FUSE.HIGH_DWEN))throw Error('resetInputProfile requires DWEN unprogrammed');
+        for(const [index,name] of resetInputProfileFields.entries())
+          if(!exports.avr_device_configure_reset_input?.(index+1,profile[name]))throw Error('RESET input profile unavailable: '+name);
+        if(!exports.avr_device_configure_reset_input(0,1))throw Error('RESET input profile unavailable');
+      }
     }});
     this._exports.avr_device_bind_generation();
     this._generation=this._exports.avr_device_generation();
@@ -110,6 +120,7 @@ export class ATtiny13A extends TranslatedCore {
     this._clockDomain(true);this._injectPins('avr_device_inject_pins_ps',timestampPs(at),mask,levels);
   }
   _injectPins(name,at,mask,levels){
+    if(at===0xffffffffffffffffn)throw Error('Invalid pin input timestamp');
     if(![mask,levels].every(v=>Number.isInteger(v)&&v>=0&&v<64))throw Error('Pin masks must contain PB0..PB5 only');
     if(!this._call(name,at,mask,levels))throw Error('Invalid or full timestamped input queue');
   }
@@ -120,6 +131,7 @@ export class ATtiny13A extends TranslatedCore {
     this._clockDomain(true);this._setAnalog('avr_device_inject_analog_ps',timestampPs(at),pin,microvolts);
   }
   _setAnalog(name,at,pin,microvolts){
+    if(at===0xffffffffffffffffn)throw Error('Invalid analog input timestamp');
     if(!Number.isInteger(pin)||pin<0||pin>5||!Number.isInteger(microvolts)||microvolts<0||microvolts>0x7fffffff)throw Error('Invalid analog input');
     if(!this._call(name,at,pin,microvolts))throw Error('Invalid or full timestamped input queue');
   }
@@ -166,7 +178,10 @@ export class ATtiny13A extends TranslatedCore {
     const time=this._ps?{timePs:BigInt.asUintN(64,exports.avr_device_time_ps()),startupDeadlinePs:BigInt.asUintN(64,exports.avr_device_startup_deadline_ps()),oscillatorHz:exports.avr_device_oscillator_hz()}:
       {baseHalf:exports.avr_device_time64(),startupDeadline:BigInt.asUintN(64,exports.avr_device_startup_deadline?.()??exports.avr_device_time64())};
     const power=exports.avr_device_power_enabled?.()?{powerResetEnabled:true,vccMicrovolts:exports.avr_device_vcc_microvolts()}:{};
-    return {...super.state(),...time,...power,clockDivisor:exports.avr_device_divisor(),
+    const resetInput=exports.avr_device_reset_input_enabled?.()?{resetInputEnabled:true,
+      resetInputAsserted:!!exports.avr_device_reset_input_asserted(),
+      resetInputDeadlinePs:BigInt.asUintN(64,exports.avr_device_reset_input_deadline_ps())}:{};
+    return {...super.state(),...time,...power,...resetInput,clockDivisor:exports.avr_device_divisor(),
       halted:!!exports.avr_device_halted(),sleeping:!!exports.avr_device_sleep_phase(),resetHeld:!!exports.avr_device_reset_held(),
       starting:!!exports.avr_device_starting?.(),
       bodDisabled:!!exports.avr_device_bod_disabled?.(),bodRecovering:!!exports.avr_device_bod_recovering?.(),

@@ -77,6 +77,10 @@ int avr_write_io_masked(int a,int v,int mask){return full_write_io(a,v,mask);}
 int avr_device_configure(int key,int value){return device_configure(key,value);}
 int avr_device_configure_osccal_hz(int cal,int hz){return device_configure_osccal_hz(cal,hz);}
 int avr_device_configure_power(int field,int value){return device_configure_power(field,value);}
+int avr_device_configure_reset_input(int field,int value){return device_configure_reset_input(field,value);}
+int avr_device_reset_input_enabled(void){return device_reset_input_enabled();}
+int avr_device_reset_input_asserted(void){return device_reset_input_asserted();}
+uint64_t avr_device_reset_input_deadline_ps(void){return device_reset_input_deadline_ps();}
 int avr_device_ready(void){
  if(device_reset_requested())full_interrupt();full_fault();
  return !ERROR&&!device_halted()&&full_generation==device_flash_generation();
@@ -132,7 +136,8 @@ int avr_device_inject_pins_ps(uint64_t at,int mask,int levels){
  if(device_reset_requested())full_interrupt();full_deadline();return accepted;
 }
 int avr_device_inject_analog_ps(uint64_t at,int pin,int uv){
- int accepted=device_inject_analog_ps(at,pin,uv);full_deadline();return accepted;
+ int accepted=device_inject_analog_ps(at,pin,uv);
+ if(device_reset_requested())full_interrupt();full_deadline();return accepted;
 }
 int avr_device_inject_vcc_ps(uint64_t at,int uv){
  int accepted=device_inject_vcc_ps(at,uv);

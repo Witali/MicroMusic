@@ -290,3 +290,25 @@ still apply; normal interrupt entry remains owned by the CPU.
 and checks zero WASM imports, control boundaries, invalid sequences, fuse/sleep
 gating, latched state, reset, fractional-duration rounding, CKDIV8 independence
 and startup overlap. Its generated test artifacts stay under ignored build/.
+
+## Analog RESET receiver
+
+An optional device-owned [RESET input module](../devices/attiny13a/reset_input.md)
+adds voltage recognition to the same physical scheduler and reset aggregation.
+`device_configure_reset_input` fields1/2 select assertion/release thresholds in
+ppm of VCC; fields3/4 are qualification ns and5/6 are propagation ns. Supply all
+six fields before field0 enables the profile. Physical time is required and
+DWEN must be unprogrammed. RSTDISBL gates the reset role.
+
+Queued analog PB5 values select the pad voltage; before selection it follows
+VCC. RESET and VCC are passed atomically to the receiver, whose next ps deadline
+participates in the device minimum and cache invalidation. Prequalified digital
+PB5 reset remains an independent source. The receiver survives CPU reset and
+holds the aggregate until qualified release; SUT starts after the final source
+releases. With a supply observer, assertion resets peripherals before CPU
+acknowledgement. Fault17 surfaces the receiver's sticky diagnostic bits.
+
+`device_reset_input_enabled`, `device_reset_input_asserted` and
+`device_reset_input_deadline_ps` expose receiver diagnostics. It does not add an
+external programmer. Browser/CLI configuration and portable package v4 use the
+same six-field profile; older package versions retain their earlier contracts.

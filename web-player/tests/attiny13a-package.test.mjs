@@ -22,6 +22,31 @@ function seal(pkg){const {integrity,...payload}=pkg;pkg.integrity={algorithm:'SH
 function replace(pkg,name,bytes){pkg.assets[name]={encoding:'base64',bytes:bytes.length,sha256:hash(bytes),data:Buffer.from(bytes).toString('base64')};return seal(pkg);}
 const cli=fileURLToPath(new URL('../scripts/package-attiny13a.mjs',import.meta.url));
 
+// Rewrite only section7 (name, external kind, index), retaining valid WASM.
+// https://webassembly.github.io/spec/core/binary/modules.html#export-section
+function rewriteExports(bytes,edit){
+  let at=8;
+  const readU32=()=>{let value=0,shift=0,b;do{b=bytes[at++];value+=(b&127)*2**shift;shift+=7;}while(b&128);return value;};
+  const u32=value=>{const out=[];do{const b=value%128;value=Math.floor(value/128);out.push(b|(value?128:0));}while(value);return out;};
+  const encoder=new TextEncoder(),decoder=new TextDecoder();
+  while(at<bytes.length){
+    const start=at,id=bytes[at++],size=readU32(),end=at+size;
+    if(id!==7){at=end;continue;}
+    const count=readU32(),entries=[];
+    for(let i=0;i<count;i++){
+      const length=readU32(),name=decoder.decode(bytes.subarray(at,at+length));at+=length;
+      entries.push({name,kind:bytes[at++],index:readU32()});
+    }
+    assert.equal(at,end,'export section is fully decoded');
+    const changed=edit(entries),body=[...u32(changed.length)];
+    for(const entry of changed){
+      const name=encoder.encode(entry.name);body.push(...u32(name.length),...name,entry.kind,...u32(entry.index));
+    }
+    return Uint8Array.from([...bytes.subarray(0,start),7,...u32(body.length),...body,...bytes.subarray(end)]);
+  }
+  assert.fail('runtime export section is missing');
+}
+
 test('roundtrip contains complete Flash, EEPROM, runtime, translation, fuses and explicit timing options',async()=>{
   const eeprom=Uint8Array.from({length:64},(_,n)=>n);
   const pkg=await createPackage({...input,eeprom,configuration:{fuseLow:0x6a,fuseHigh:0xfe,lock:0xfc,oscillatorHz:4800000,wakeStartupHalf:1920,bodRecoveryNs:70000,factoryOsccal96:73,fuseStartupProfile:1}});
@@ -46,21 +71,27 @@ test('default configuration, erased EEPROM and serialization are deterministic',
 
 test('version1 preserves its original configuration contract',async()=>{
   const pkg=copy(original);pkg.version=1;
-  for(const key of ['osccalHz','nvmClockProfile','nvmCalibrationReferenceHz','powerResetProfile'])delete pkg.configuration[key];
+  for(const key of ['osccalHz','nvmClockProfile','nvmCalibrationReferenceHz','powerResetProfile','resetInputProfile'])delete pkg.configuration[key];
   const decoded=await decodePackage(seal(pkg));assert.equal(decoded.version,1);
   assert.deepEqual(decoded.configuration,pkg.configuration);assert.equal(Object.keys(decoded.options).length,17);
 });
 
 test('version2 preserves its calibrated-clock configuration contract',async()=>{
-  const pkg=copy(original);pkg.version=2;delete pkg.configuration.powerResetProfile;
+  const pkg=copy(original);pkg.version=2;delete pkg.configuration.powerResetProfile;delete pkg.configuration.resetInputProfile;
   const decoded=await decodePackage(seal(pkg));assert.equal(decoded.version,2);assert.deepEqual(decoded.configuration,pkg.configuration);
+});
+
+test('version3 preserves its power-profile contract without requiring the later RESET profile',async()=>{
+  const pkg=copy(original);pkg.version=3;delete pkg.configuration.resetInputProfile;
+  const decoded=await decodePackage(seal(pkg));assert.equal(decoded.version,3);
+  assert.deepEqual(decoded.configuration,pkg.configuration);
 });
 
 test('package binds a calibrated clock table and programming profile',async()=>{
   const table=Array(128).fill(0);table[50]=9600000;table[51]=9696000;
   const configuration={factoryOsccal96:50,osccalHz:table,nvmClockProfile:1,nvmCalibrationReferenceHz:9600000};
   const pkg=await createPackage({...input,configuration}),decoded=await decodePackage(pkg);
-  assert.equal(pkg.version,3);assert.deepEqual(decoded.configuration.osccalHz,table);
+  assert.equal(pkg.version,4);assert.deepEqual(decoded.configuration.osccalHz,table);
   decoded.options.osccalHz[50]=1;assert.equal(decoded.configuration.osccalHz[50],9600000);
   table[50]=1;assert.equal(pkg.configuration.osccalHz[50],9600000);
   const bad=copy(pkg);bad.configuration.osccalHz[51]++;
@@ -90,6 +121,33 @@ test('power profiles are complete, copied and validated before constructing a ru
     {...configuration,powerResetProfile:{...powerResetProfile,flashProgrammingMinMicrovolts:0}},
     {...configuration,powerResetProfile:{...powerResetProfile,unused:1}},
     {...configuration,powerResetProfile:{}}])await assert.rejects(createPackage({...input,configuration:bad}),/configuration/);
+});
+
+test('v4 RESET profiles reject invalid fields and unsupported clocks/fuses in writers and resealed packages',async()=>{
+  const osccalHz=Array(128).fill(0);osccalHz[0]=9600000;
+  const resetInputProfile={assertThresholdPpm:400000,releaseThresholdPpm:600000,
+    assertQualificationNs:50,releaseQualificationNs:30,assertPropagationNs:20,releasePropagationNs:10};
+  const configuration={osccalHz,resetInputProfile},pkg=await createPackage({...input,configuration});
+  assert.equal(pkg.version,4);
+  const cases=[
+    ['missing fields',{resetInputProfile:{}},/resetInputProfile fields/],
+    ['extra field',{resetInputProfile:{...resetInputProfile,unused:1}},/resetInputProfile fields/],
+    ['assert threshold below range',{resetInputProfile:{...resetInputProfile,assertThresholdPpm:199999}},/assertThresholdPpm/],
+    ['release threshold above range',{resetInputProfile:{...resetInputProfile,releaseThresholdPpm:900001}},/releaseThresholdPpm/],
+    ['no hysteresis',{resetInputProfile:{...resetInputProfile,releaseThresholdPpm:400000}},/threshold hysteresis/],
+    ['negative delay',{resetInputProfile:{...resetInputProfile,assertPropagationNs:-1}},/assertPropagationNs/],
+    ['fractional delay',{resetInputProfile:{...resetInputProfile,releaseQualificationNs:1.5}},/releaseQualificationNs/],
+    ['overflowing delay',{resetInputProfile:{...resetInputProfile,assertQualificationNs:0x100000000}},/assertQualificationNs/],
+    ['no physical clock',{osccalHz:null},/physical time/],
+    ['debugWIRE enabled',{fuseHigh:0xf7},/DWEN unprogrammed/],
+  ];
+  for(const [label,patch,message] of cases){
+    await assert.rejects(createPackage({...input,configuration:{...configuration,...patch}}),message,label);
+    const bad=copy(pkg);Object.assign(bad.configuration,patch);
+    await assert.rejects(decodePackage(seal(bad)),message,label);
+  }
+  const omitted=copy(pkg);delete omitted.configuration.resetInputProfile;
+  await assert.rejects(decodePackage(seal(omitted)),/configuration fields/);
 });
 
 test('decoding compiles and inspects WASM without constructing any instance',async()=>{
@@ -174,6 +232,38 @@ test('runtime imports/start sections and truncated or mismatched WASM are reject
   const altered=runtime.slice(),needle=new TextEncoder().encode('avr_clock');let changed=false;
   for(let i=0;i<altered.length-needle.length;i++)if(needle.every((b,j)=>altered[i+j]===b)){altered[i]='x'.charCodeAt(0);changed=true;break;}
   assert.ok(changed);await assert.rejects(createPackage({...input,runtime:altered}),/ABI function mismatch: clock/);
+});
+
+test('v4 requires every RESET runtime export even when the profile is disabled',async()=>{
+  assert.equal(original.configuration.resetInputProfile,null);
+  for(const name of ['avr_device_configure_reset_input','avr_device_reset_input_enabled',
+    'avr_device_reset_input_asserted','avr_device_reset_input_deadline_ps']){
+    const altered=rewriteExports(runtime,entries=>{
+      assert.ok(entries.some(entry=>entry.name===name&&entry.kind===0),name);
+      return entries.map(entry=>entry.name===name?{...entry,name:'unavailable_'+name}:entry);
+    });
+    assert.equal(WebAssembly.validate(altered),true,'renaming preserves a valid module');
+    const message=new RegExp('runtime export mismatch: '+name);
+    await assert.rejects(createPackage({...input,runtime:altered}),message);
+    await assert.rejects(decodePackage(replace(copy(original),'runtime',altered)),message);
+  }
+});
+
+test('v4 rejects a RESET observer with an i64 result behind its expected i32 export name',async()=>{
+  const name='avr_device_reset_input_enabled';
+  const altered=rewriteExports(runtime,entries=>{
+    const source=entries.find(entry=>entry.name==='avr_device_reset_input_deadline_ps'&&entry.kind===0);
+    assert.ok(source,'existing native i64 observer supplies a valid function index');
+    assert.ok(entries.some(entry=>entry.name===name&&entry.kind===0));
+    return entries.map(entry=>entry.name===name?{...entry,index:source.index}:entry);
+  });
+  assert.equal(WebAssembly.validate(altered),true,'export alias changes no function bodies/types');
+  const message=new RegExp('runtime export mismatch: '+name),saved=WebAssembly.Instance;
+  try{
+    WebAssembly.Instance=class{constructor(){assert.fail('incompatible runtime must not be instantiated');}};
+    await assert.rejects(createPackage({...input,runtime:altered}),message);
+    await assert.rejects(decodePackage(replace(copy(original),'runtime',altered)),message);
+  }finally{WebAssembly.Instance=saved;}
 });
 
 test('CLI pack/verify/unpack preserves bytes and refuses tampered packages or existing outputs',async()=>{

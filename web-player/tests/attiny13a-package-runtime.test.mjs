@@ -23,8 +23,8 @@ async function pack(image,configuration={},eeprom){
 const gpio=sequential([avr.ldi(16,2),avr.out(IO.DDRB,16),avr.out(IO.PORTB,16)]);
 const pkg=await pack(gpio,{factoryOsccal96:73});
 
-async function originalV1(configuration={}){
-  const fixture=JSON.parse(await readFile(new URL('./fixtures/attiny13a-runtime-v1.json',import.meta.url),'utf8'));
+async function historicalPackage(version,configuration={}){
+  const fixture=JSON.parse(await readFile(new URL(`./fixtures/attiny13a-runtime-v${version}.json`,import.meta.url),'utf8'));
   const runtime=gunzipSync(Buffer.from(fixture.data,'base64'));
   const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
   assert.equal(runtime.length,fixture.bytes);assert.equal(hash(runtime),fixture.sha256);
@@ -33,21 +33,29 @@ async function originalV1(configuration={}){
   const assets=Object.fromEntries(Object.entries({flash,eeprom:new Uint8Array(64).fill(255),translated:generated.bytes,runtime})
     .map(([key,value])=>[key,{encoding:'base64',bytes:value.length,sha256:hash(value),data:Buffer.from(value).toString('base64')}]));
   const options={...DEFAULT_CONFIGURATION,...configuration};
-  for(const name of ['osccalHz','nvmClockProfile','nvmCalibrationReferenceHz','powerResetProfile'])delete options[name];
-  const pkg={format:PACKAGE_FORMAT,version:1,device:'ATtiny13A',abi:{id:PACKAGE_ABI,layout:abi},configuration:options,manifest:generated.manifest,assets};
+  for(const name of version===1?['osccalHz','nvmClockProfile','nvmCalibrationReferenceHz','powerResetProfile','resetInputProfile']:['resetInputProfile'])delete options[name];
+  const pkg={format:PACKAGE_FORMAT,version,device:'ATtiny13A',abi:{id:PACKAGE_ABI,layout:abi},configuration:options,manifest:generated.manifest,assets};
   const canonical=v=>v===null||typeof v!=='object'?JSON.stringify(v):Array.isArray(v)?'['+v.map(canonical).join(',')+']':'{'+Object.keys(v).sort().map(k=>JSON.stringify(k)+':'+canonical(v[k])).join(',')+'}';
   pkg.integrity={algorithm:'SHA-256',sha256:hash(canonical(pkg))};return pkg;
 }
 
 test('original v1 runtime loads default legacy options and supplies missing state observers',async()=>{
-  const c=await ATtiny13A.fromPackage(await originalV1());c.run(3);
+  const c=await ATtiny13A.fromPackage(await historicalPackage(1));c.run(3);
   assert.equal(c.readIO(IO.PORTB),2);assert.equal(c.state().starting,false);
   assert.equal(c.state().bodDisabled,false);assert.equal(c.state().bodRecovering,false);
   assert.equal(c.state().startupDeadline,c.state().baseHalf);
   assert.deepEqual(c.capturePhysical(3,48000),Float32Array.of(1,1,1));
   assert.equal(c.state().deviceFault,0);
   for(const configuration of [{factoryOsccal96:1},{bodRecoveryNs:70000},{fuseStartupProfile:1}])
-    await assert.rejects(ATtiny13A.fromPackage(await originalV1(configuration)),/Invalid device configuration/);
+    await assert.rejects(ATtiny13A.fromPackage(await historicalPackage(1,configuration)),/Invalid device configuration/);
+});
+
+test('original v3 runtime loads without requiring later analog RESET exports',async()=>{
+  const c=await ATtiny13A.fromPackage(await historicalPackage(3));c.run(3);
+  assert.equal(c.readIO(IO.PORTB),2);assert.equal(c.state().deviceFault,0);
+  assert.equal(c._exports.avr_device_reset_input_enabled,undefined);
+  assert.equal(c.state().resetInputEnabled,undefined);
+  assert.deepEqual(c.capturePhysical(3,48000),Float32Array.of(1,1,1));
 });
 
 test('package executes the supplied translation and reproduces explicit initial EEPROM/configuration',async()=>{
@@ -85,7 +93,7 @@ test('package loader runs with only JavaScript loader files and no default WASM 
   t.after(()=>rm(dir,{recursive:true,force:true}));
   await mkdir(join(dir,'devices'));
   for(const name of ['avr-runtime.js','avr-transpiler.js','avr-transpiled-runtime.js','attiny13a-runtime.js','attiny13a-package.js','attiny13a-registers.js',
-    'devices/profiles.js','devices/attiny13a-profile.js'])
+    'devices/profiles.js','devices/attiny13a-profile.js','devices/attiny13a-reset-profile.js'])
     await copyFile(new URL('../lib/'+name,import.meta.url),join(dir,name));
   await writeFile(join(dir,'package.json'),'{"type":"module"}');
   await writeFile(join(dir,'firmware.json'),JSON.stringify(pkg));
