@@ -71,21 +71,37 @@ def host(compiler, variant):
          '-I' + str(source / 'include'), '-I' + str(source / 'libspeex'),
          '-I' + str(ROOT / 'src'),
          *[source / 'libspeex' / (s + '.c') for s in sources],
-         *([ROOT / 'src/speex_avr.c'] if variant == 'profile' else []),
+         *([ROOT / 'src/speex_avr.c', ROOT / 'src/bits.c'] if variant == 'profile' else []),
          ROOT / 'tests/decode.c', '-o', executable,
          *([] if os.name == 'nt' else ['-lm'])])
     return executable
 
 
-PROFILE_SOURCES = '''bits cb_search exc_10_32_table filters gain_table_lbr lsp
+PROFILE_SOURCES = '''cb_search exc_10_32_table filters gain_table_lbr lsp
 lsp_tables_nb ltp nb_celp quant_lsp'''.split()
+
+
+def verify_primitives(compiler):
+    output = ROOT / 'build/profile'
+    reference = ROOT / 'build/reference/source'
+    source = output / 'source'
+    flags = ['-O2', '-fwrapv', '-fno-strict-aliasing', '-Wno-pointer-to-int-cast',
+             *['-D' + d for d in DEFINES], '-I' + str(source / 'include'),
+             '-I' + str(source / 'libspeex'), '-I' + str(ROOT / 'src')]
+    obj = output / 'reference-lsp.o'
+    run([compiler, *flags, '-Dlsp_to_lpc=reference_lsp', '-Dlsp_interpolate=reference_interpolate',
+         '-c', reference / 'libspeex/lsp.c', '-o', obj])
+    executable = output / ('primitives.exe' if os.name == 'nt' else 'primitives')
+    run([compiler, *flags, '-DSPEEX_AVR_COMPACT_LSP', obj, source / 'libspeex/lsp.c',
+         ROOT / 'src/bits.c', ROOT / 'tests/primitives.c', '-o', executable])
+    run([executable])
 
 
 def avr(compiler):
     output, source = prepare('profile')
     definitions = DEFINES + ['SPEEX_AVR_COMPACT_LSP', 'SPEEX_AVR_TIGHT_EXC',
                              'SPEEX_AVR_PROFILE', 'SPEEX_AVR_FAST_MUL']
-    flags = ['-mmcu=atmega328p', '-Os', '-flto', '-fwrapv', '-fno-strict-aliasing',
+    flags = ['-mmcu=atmega328p', '-O3', '-flto', '-fwrapv', '-fno-strict-aliasing',
              '-ffunction-sections', '-fdata-sections', '-fstack-usage',
              *['-D' + d for d in definitions],
              '-I' + str(source / 'include'), '-I' + str(source / 'libspeex'),
@@ -93,7 +109,8 @@ def avr(compiler):
     executable = output / 'speex-test.elf'
     run([compiler, *flags,
          *[source / 'libspeex' / (s + '.c') for s in PROFILE_SOURCES],
-         ROOT / 'src/speex_avr.c', ROOT / 'tests/avr_decode.c',
+         ROOT / 'src/speex_avr.c', ROOT / 'src/bits.c', ROOT / 'src/lpc_update.S',
+         ROOT / 'src/pitch_add.S', ROOT / 'tests/avr_decode.c',
          '-Wl,--gc-sections,-Map=' + str(output / 'speex-test.map'), '-o', executable], cwd=output)
     prefix = str(Path(compiler).with_name('avr-'))
     extension = '.exe' if str(compiler).endswith('.exe') else ''

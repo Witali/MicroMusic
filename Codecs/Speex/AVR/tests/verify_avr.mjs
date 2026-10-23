@@ -25,7 +25,7 @@ for (const table of ['cdbk_nb', 'cdbk_nb_low1', 'cdbk_nb_high1', 'gain_cdbk_lbr'
 for (const name of ['malloc', 'calloc', 'realloc', 'free']) assert.ok(!symbols.has(name), 'Unexpected heap: ' + name);
 const profile = process.argv.includes('--profile');
 const hits = new Map();
-const functions = [...symbols].filter(([name, value]) => value < 0x800000)
+const functions = [...symbols].filter(([name, value]) => value < 0x800000 && name !== '__stack')
   .sort((a,b) => a[1]-b[1]);
 assert.ok(binary.length <= 32768);
 const limitIndex = process.argv.indexOf('--frames');

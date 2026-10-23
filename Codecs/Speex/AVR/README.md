@@ -36,7 +36,7 @@ The upstream port is under development. Successful host tests or AVR object
 compilation alone do not establish a working real-time ATmega328P player.
 
 The static `src/speex_avr.h` API adapts the original decoder for the restricted
-profile. It uses a 400-byte scratch arena, the tested 372-sample excitation
+profile. It uses a 400-byte scratch arena, a tested 312-sample excitation
 history, and explicit PROGMEM codebook reads. It rejects other packet sizes and
 mode headers before changing state. Enhancement, highpass and packet loss
 concealment are excluded; no heap allocator is linked.
@@ -56,4 +56,14 @@ oracle when executing AVR instructions. Peak C stack is 238 bytes, leaving 139
 bytes free in this harness. Maximum frame time is 547,940 cycles, exceeding the
 320,000-cycle real-time budget. These are ISA simulation results without ISR
 or peripheral I/O, not measurements from a physical board. The baseline report
-is retained in `reports/avr-initial.json`; optimization is still required.
+is retained in `reports/avr-initial.json`.
+
+The optimized decoder retains exact upstream arithmetic with symmetric 48-byte
+LSP polynomials, fused innovation scaling, a bounded field reader, and AVR
+assembly for LPC state updates and pitch MACs. AVR GCC `-O3` with controlled
+inlining gives **14,712 B Flash / 1,535 B static SRAM / 221 B peak C stack**.
+All 1,058 AVR frames remain exact, with a worst observed **295,334 cycles**
+(18.46 ms at 16 MHz) and **292 B free SRAM**. See `reports/avr-optimized.json`.
+This decoder-only timing excludes interrupts and is a corpus maximum, not a
+proof over every possible packet. Host primitive tests also compare 240,000
+complete LSP conversions to original upstream and exhaust 3,670,016 bit fields.

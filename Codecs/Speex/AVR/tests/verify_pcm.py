@@ -18,6 +18,7 @@ def main():
     args = parser.parse_args()
     variants = ['reference', 'compact', 'tight', 'profile']
     binaries = {name: build.host(args.cc, name) for name in variants}
+    build.verify_primitives(args.cc)
     results = []
     for path in sorted((ROOT / 'reference/R4/data').glob('*.spxraw')):
         data = path.read_bytes()

@@ -16,14 +16,18 @@ def replace(text, old, new, count=1):
 
 def apply(source: Path):
     lib = source / 'libspeex'
+    mul = lib / 'avr_fastmul.h'
+    mul.write_text(replace(mul.read_text(), 'static inline spx_word32_t',
+                           'static inline __attribute__((always_inline)) spx_word32_t'))
     path = lib / 'nb_celp.c'
     text = path.read_text()
     text = replace(text, '#define SUBMODE(x) st->submodes[st->submodeID]->x',
-                   '#include "profile_mode.h"\n#define SUBMODE(x) speex_avr_submode.x')
+                   '#include "profile_mode.h"\n#include "innovation.h"\n#define SUBMODE(x) speex_avr_submode.x')
     # Keep the original nb_decode body, dropping generic initialization/ctl/PLC.
     start = text.index('void *nb_decoder_init(')
     stop = text.index('int nb_decode(', start)
     text = text[:start] + text[stop:]
+    text = replace(text, 'int nb_decode(', '__attribute__((noinline)) int nb_decode(')
     start = text.index('   /* Check if we\'re in DTX mode*/')
     stop = text.index('   /* Shift all buffers by one frame */', start)
     text = text[:start] + '   if (!bits) return -2;\n\n' + text[stop:]
@@ -35,11 +39,71 @@ def apply(source: Path):
     text = text.replace('if (st->highpass_enabled)', 'if (0)')
     text = text.replace('if (st->innov_save)', 'if (0)')
     text = text.replace('st->count_lost, offset, st->last_pitch_gain, 0', '0, offset, 0, 0')
+    text = replace(text,
+        'SUBMODE(innovation_unquant)(innov, SUBMODE(innovation_params), NB_SUBFRAME_SIZE, bits, stack, &st->seed);',
+        'speex_avr_innovation(innov, bits, ener);')
+    decode_start = text.index('int nb_decode(')
+    text = text[:decode_start] + replace(text[decode_start:], 'signal_mul(innov, innov, ener, NB_SUBFRAME_SIZE);', '')
     path.write_text(text)
+
+    path = lib / 'ltp.c'
+    text = path.read_text()
+    first = '''      for (j=0;j<tmp1;j++)
+         exc_out[j]=MAC16_16(exc_out[j],gain[2-i],exc[j-pp]);'''
+    second = '''      for (j=tmp1;j<tmp3;j++)
+         exc_out[j]=MAC16_16(exc_out[j],gain[2-i],exc[j-pp-pitch]);'''
+    text = replace(text, first, '''#ifdef __AVR__
+      extern void speex_avr_pitch_add(spx_word32_t *, const spx_word16_t *, spx_word16_t, uint8_t);
+      speex_avr_pitch_add(exc_out, exc-pp, gain[2-i], tmp1);
+#else
+''' + first + '\n#endif')
+    text = replace(text, second, '''#ifdef __AVR__
+      speex_avr_pitch_add(exc_out+tmp1, exc+tmp1-pp-pitch, gain[2-i], tmp3-tmp1);
+#else
+''' + second + '\n#endif')
+    path.write_text(text)
+
+    for filename, functions in [('filters.c', ['iir_mem16', 'signal_mul']),
+                                ('ltp.c', ['pitch_unquant_3tap']),
+                                ('quant_lsp.c', ['lsp_unquant_lbr'])]:
+        path = lib / filename
+        text = path.read_text()
+        for function in functions:
+            text = text.replace('void ' + function + '(',
+                                '__attribute__((noinline)) void ' + function + '(')
+        path.write_text(text)
     path = lib / 'nb_celp.h'
     text = path.read_text()
     text = replace(text, '   SpeexCallback speex_callbacks[SPEEX_MAX_CALLBACKS];', '')
     text = replace(text, '   SpeexCallback user_callback;', '')
+    # With no PLC/enhancer, pitch_unquant_3tap reads at most pitch+1 samples
+    # backwards (pitch <= 144). Synthesis needs only the preceding 40 samples.
+    text = replace(text, '(NB_FRAME_SIZE+NB_SUBFRAME_SIZE+6)', '(NB_PITCH_END+2)')
+    path.write_text(text)
+
+    path = lib / 'lsp.c'
+    text = path.read_text()
+    start = text.index('void lsp_to_lpc(', text.index('/* SPEEX_AVR_COMPACT_LSP_BEGIN */'))
+    stop = text.index('\n#else', start)
+    fragment = Path(__file__).resolve().parents[1] / 'src/compact_lsp.c.inc'
+    text = text[:start] + fragment.read_text() + text[stop:]
+    text = text.replace('void lsp_to_lpc(', '__attribute__((noinline)) void lsp_to_lpc(')
+    path.write_text(text)
+
+    path = lib / 'filters.c'
+    text = path.read_text()
+    start = text.index('void iir_mem16(')
+    stop = text.index('\n#endif', start)
+    function = text[start:stop]
+    begin = function.index('      for (j=0;j<ord-1;j++)')
+    end = function.index('      y[i] = yi;', begin)
+    original = function[begin:end]
+    function = function[:begin] + '''#ifdef __AVR__
+      extern void speex_nb8_lpc_update_asm(spx_mem_t *, const spx_coef_t *, spx_word16_t);
+      speex_nb8_lpc_update_asm(mem, den, nyi);
+#else
+''' + original + '#endif\n' + function[end:]
+    text = text[:start] + function + text[stop:]
     path.write_text(text)
 
     # Tables are marked at their definitions. Every decoder access uses an

@@ -8,7 +8,7 @@
 static DecState decoder;
 /* qlsp + ak + innovation + pitch excitation + interpolated LSP = 380 B.
  * The innovation index/sign arrays overlap interpolated LSP in time.
- * 400 B covers host 32-bit int indices too; host builds check every PUSH. */
+ * 400 B retains alignment/headroom; host builds check every PUSH. */
 static uint32_t scratch[100];
 static size_t scratch_peak;
 
