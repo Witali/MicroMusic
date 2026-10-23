@@ -26,6 +26,7 @@ class OutputProfile:
     sample_rate: int = 7500
     flash_bytes: int | None = None
     sram_bytes: int | None = None
+    eeprom_bytes: int | None = None
     cpu_hz: int | None = None
     adapter: str | None = None
 
@@ -47,7 +48,7 @@ def resolve_profile(target='pc', arithmetic=None, mcu=None, custom_profile=None)
         raise ValueError('--mcu only applies to MCU targets')
     if target == 'avr':
         profile = OutputProfile('attiny13a-fixed', target, arithmetic, flash_bytes=1024,
-                                sram_bytes=64, cpu_hz=9600000,
+                                sram_bytes=64, eeprom_bytes=64, cpu_hz=9600000,
                                 adapter='tools/build-fixed-period.py')
     else:
         name = f'{mcu or "generic-mcu"}-fixed' if target == 'mcu' else f'pc-{arithmetic}'
@@ -58,7 +59,7 @@ def resolve_profile(target='pc', arithmetic=None, mcu=None, custom_profile=None)
         values = dict(custom_profile)
         if values.pop('schema', None) != 'speech-output-profile-v1':
             raise ValueError('Expected speech-output-profile-v1 profile')
-        allowed = {'name', 'sample_rate', 'flash_bytes', 'sram_bytes', 'cpu_hz', 'adapter'}
+        allowed = {'name', 'sample_rate', 'flash_bytes', 'sram_bytes', 'eeprom_bytes', 'cpu_hz', 'adapter'}
         if set(values)-allowed:
             raise ValueError('Unknown custom profile fields: '+', '.join(sorted(set(values)-allowed)))
         profile = replace(profile, **values)
@@ -66,7 +67,7 @@ def resolve_profile(target='pc', arithmetic=None, mcu=None, custom_profile=None)
         raise ValueError('Profile name must be nonempty')
     if profile.sample_rate != 7500:
         raise ValueError('This codec currently supports 7500 Hz only; export never resamples')
-    for field in ('flash_bytes', 'sram_bytes', 'cpu_hz'):
+    for field in ('flash_bytes', 'sram_bytes', 'eeprom_bytes', 'cpu_hz'):
         value = getattr(profile, field)
         if value is not None and (type(value) is not int or value <= 0):
             raise ValueError(field+' must be a positive integer or null')
@@ -217,12 +218,18 @@ def export_model(model, output, profile, *, build=False, adapter_options=(), sym
         if report.is_file():
             measured = json.loads(report.read_text(encoding='utf-8'))
             manifest['adapter_report'] = measured
-            if (measured.get('schema') == 'micromusic-fixed-period-build-v1' and
+            if (measured.get('schema') in ('micromusic-fixed-period-build-v1', 'micromusic-tiny-speech-build-v1') and
                     measured.get('modelSha256') == sha256((output/'model.json').read_bytes()).hexdigest()):
                 validation = manifest['validation']
                 validation['total_flash_bytes'] = measured['flashBytes']
                 validation['firmware_data_bytes'] = measured['dataBytes']
                 validation['flash_total_fits'] = None if profile.flash_bytes is None else measured['flashBytes'] <= profile.flash_bytes
+                tiny = measured['schema'] == 'micromusic-tiny-speech-build-v1'
+                if tiny:
+                    validation['eeprom_image_bytes'] = measured['eepromBytes']
+                    validation['eeprom_used_bytes'] = measured['eepromUsedBytes']
+                    validation['eeprom_total_fits'] = (None if profile.eeprom_bytes is None else
+                                                      measured['eepromBytes'] <= profile.eeprom_bytes)
                 if result.returncode == 0 and measured['status'] == 'oversized':
                     validation['firmware'] = 'oversized'
                 if result.returncode == 0 and measured['status'] == 'verified':
@@ -231,12 +238,19 @@ def export_model(model, output, profile, *, build=False, adapter_options=(), sym
                     if (not image.is_file() or measured.get('imageSha256') != sha256(image.read_bytes()).hexdigest() or
                             not verified.get('pass') or verified.get('imageSha256') != measured.get('imageSha256')):
                         raise RuntimeError('Adapter verification report does not match its image')
+                    if tiny:
+                        eeprom = output/'firmware/eeprom.bin'
+                        if (not eeprom.is_file() or len(eeprom.read_bytes()) != measured['eepromBytes'] or
+                                sha256(eeprom.read_bytes()).hexdigest() != measured.get('eepromSha256') or
+                                verified.get('eepromSha256') != measured.get('eepromSha256')):
+                            raise RuntimeError('Adapter verification report does not match its EEPROM image')
                     validation['firmware'] = 'verified'
                     validation['timing_verified'] = True
                     validation['verified_loops'] = measured['verifiedLoops']
                     validation['sample_period_cycles'] = [verified['minimumSamplePeriod'], verified['maximumSamplePeriod']]
                     validation['minimum_stack_pointer'] = verified['minimumSP']
-        for name in ('build.log', 'firmware/build.json'):
+        for name in ('build.log', 'firmware/build.json', 'firmware/firmware.bin', 'firmware/firmware.hex',
+                     'firmware/eeprom.bin', 'firmware/eeprom.hex'):
             path = output/name
             if path.is_file():
                 manifest['artifacts'][name] = dict(bytes=path.stat().st_size, sha256=sha256(path.read_bytes()).hexdigest())

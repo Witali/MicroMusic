@@ -23,6 +23,19 @@ python tools/export-speech.py --model build/fixed/chego/model.json --output buil
 python tools/export-speech.py --model build/fixed/chego/model.json --output build/export-mcu --target mcu --mcu cortex-m0 --profile build/cortex-m0.json
 ```
 
+Для компактной речи с таблицами в Flash и EEPROM есть отдельный профиль:
+
+```powershell
+python tools/export-speech.py --model ATtiny13A/Sound/research/tiny-speech/chego/model.json --output build/tiny-speech/export --target avr --mcu attiny13 --profile ATtiny13A/Sound/codec/tiny/attiny13-eeprom.json --build --avr-bin C:/Work/MicroMusic/build/toolchains/avr-7.3.0/bin --node C:/Work/MicroMusic/build/toolchains/node-22.22.3/node.exe
+```
+
+Этот вариант воспроизводит голосовую основную волну и белый шумовой остаток.
+Адаптер формирует **два образа**: `firmware/firmware.hex` для Flash и
+`firmware/eeprom.hex` для EEPROM. Прошивать нужно оба файла одной сборки.
+В EEPROM хранятся последние четыре формы волны; во время воспроизведения
+они только читаются. Экспортёр проверяет хеши обоих образов и их соответствие
+отчёту эмуляторов, отдельно показывает заполнение Flash и EEPROM.
+
 Профиль другого контроллера — JSON:
 
 ```json
@@ -42,6 +55,8 @@ python tools/export-speech.py --model build/fixed/chego/model.json --output buil
 Адаптер может создать `build.json` с измерениями. Наличие данных в C-массиве
 не означает наличия декодера для выбранного контроллера. AVR-заголовок использует
 `PROGMEM`; доступ к нему требует `pgm_read_byte`.
+Пользовательский профиль также может задать `eeprom_bytes`; для ATtiny13
+это 64 байта.
 
 В `manifest.json` записаны профиль, хеши артефактов, точность roundtrip PCM,
 размер данных и статус сборки. `flash_data_fits` учитывает только данные.

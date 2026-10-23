@@ -6,6 +6,9 @@ import sys
 import tempfile
 import unittest
 import wave
+from hashlib import sha256
+from types import SimpleNamespace
+from unittest.mock import patch
 
 import numpy as np
 
@@ -110,6 +113,43 @@ class TargetTests(unittest.TestCase):
             self.assertFalse(report['validation']['flash_total_fits'])
             self.assertFalse(report['validation']['timing_verified'])
             self.assertIsNone(report['validation']['sram_bytes'])
+
+    def test_tiny_profile_requires_matching_flash_and_eeprom_verification(self):
+        profile = resolve_profile('avr', mcu='attiny13', custom_profile=
+                                  ROOT/'ATtiny13A/Sound/codec/tiny/attiny13-eeprom.json')
+        self.assertEqual((profile.flash_bytes,profile.eeprom_bytes),(1024,64))
+        def fake_adapter(command, **kwargs):
+            # This fixture tests report ingestion only. Actual assembly/emulator
+            # correctness is covered by the separate tiny AVR integration suite.
+            model_path = Path(command[command.index('--model')+1])
+            folder = Path(command[command.index('--output')+1])
+            folder.mkdir(parents=True)
+            image,eeprom = b'\x00\x00',bytes(range(64))
+            (folder/'firmware.bin').write_bytes(image)
+            (folder/'eeprom.bin').write_bytes(eeprom)
+            measured = dict(schema='micromusic-tiny-speech-build-v1',status='verified',
+                            modelSha256=sha256(model_path.read_bytes()).hexdigest(),
+                            flashBytes=2,dataBytes=0,eepromBytes=64,eepromUsedBytes=64,
+                            imageSha256=sha256(image).hexdigest(),eepromSha256=sha256(eeprom).hexdigest(),
+                            verifiedLoops=3)
+            measured['verification'] = dict(pass_=True,imageSha256=measured['imageSha256'],
+                eepromSha256=measured['eepromSha256'],minimumSamplePeriod=1279,maximumSamplePeriod=1281,minimumSP=148)
+            measured['verification']['pass'] = measured['verification'].pop('pass_')
+            (folder/'build.json').write_text(json.dumps(measured))
+            if fake_adapter.corrupt:
+                (folder/'eeprom.bin').write_bytes(b'\xff'*64)
+            return SimpleNamespace(returncode=0,stdout='',stderr='')
+        with tempfile.TemporaryDirectory(prefix='speech-eeprom-',dir=ROOT/'build') as directory:
+            fake_adapter.corrupt = False
+            with patch('speech_targets.subprocess.run',side_effect=fake_adapter):
+                result=export_model(self.fixed,Path(directory)/'good',profile,build=True)
+            self.assertEqual(result['validation']['firmware'],'verified')
+            self.assertTrue(result['validation']['eeprom_total_fits'])
+            self.assertIn('firmware/eeprom.bin',result['artifacts'])
+            fake_adapter.corrupt = True
+            with patch('speech_targets.subprocess.run',side_effect=fake_adapter):
+                with self.assertRaisesRegex(RuntimeError,'EEPROM image'):
+                    export_model(self.fixed,Path(directory)/'bad',profile,build=True)
 
 
 if __name__ == '__main__':
