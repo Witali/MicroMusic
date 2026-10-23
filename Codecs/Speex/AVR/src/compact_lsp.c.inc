@@ -4,12 +4,22 @@
  * All four per-frame LSP interpolations/conversions are retained. Peel the
  * symmetric endpoints and p[0]==2^20 product; constant stages remove bounds
  * branches and pointer arithmetic in exchange for additional Flash. */
+#ifdef __AVR__
+extern int32_t speex_avr_lsp_mul_q14(int16_t,int32_t);
+#define LSP_Q14(a,b) speex_avr_lsp_mul_q14(a,b)
+#else
+#define LSP_Q14(a,b) MULT16_32_Q14(a,b)
+#endif
+/* |f|<=32768, so |Q14(f,x)|<=2*|x|+1. Starting at 2^20/2^21,
+ * the four stages bound their largest product inputs by
+ * 2097152, 6291457, 20971523, 73400331, all below 2^29.
+ * Thus the fast signed30 entry exactly matches the generic high-word cast. */
 static inline __attribute__((always_inline)) void lsp_stage(spx_word32_t *p, spx_word16_t f, int stage)
 {
     int j;
-    p[stage+1] = SUB32(SHL32(p[stage-1],1), MULT16_32_Q14(f,p[stage]));
+    p[stage+1] = SUB32(SHL32(p[stage-1],1), LSP_Q14(f,p[stage]));
     for (j=stage;j>=2;--j)
-        p[j] = ADD32(SUB32(p[j], MULT16_32_Q14(f,p[j-1])),p[j-2]);
+        p[j] = ADD32(SUB32(p[j], LSP_Q14(f,p[j-1])),p[j-2]);
     p[1] = SUB32(p[1],SHL32(EXTEND32(f),6));
 }
 #ifdef __AVR__

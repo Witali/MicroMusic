@@ -135,7 +135,7 @@ def avr(compiler, packet_file=None, frame_load_cycles=0):
     run([compiler, *flags,
          *[source / 'libspeex' / (s + '.c') for s in PROFILE_SOURCES],
          ROOT / 'src/speex_avr.c', ROOT / 'src/bits.c', ROOT / 'src/lpc_dot.S',
-         ROOT / 'src/pitch_add.S', ROOT / 'src/innovation.S', main,
+         ROOT / 'src/pitch_add.S', ROOT / 'src/innovation.S', ROOT / 'src/q14.S', main,
          '-Wl,--gc-sections,-Map=' + str(output / (name + '.map')), '-o', executable], cwd=output)
     prefix = str(Path(compiler).with_name('avr-'))
     extension = '.exe' if str(compiler).endswith('.exe') else ''

@@ -27,6 +27,9 @@ binary measurements. Vendor and R4 files remain unmodified.
   Mean human-speech time -1.16%, corpus mean -2.35%, silence mean -22.1%;
   corpus worst +0.19%, Flash +218 B, stack +3 B, static SRAM unchanged.
   Decoder/reset verification is complete; final PWM gate for this series is pending.
+- Shared Q14 signed48 ASM: 1,102 B Flash saved for 0.44% maximum frame cost;
+  stack -1 B, no callee-saved registers. Generic signed30 semantics and the
+  bounded LSP entry each passed 917,504 independent AVR cases.
 
 ## Next candidates (unmeasured)
 
@@ -36,12 +39,10 @@ binary measurements. Vendor and R4 files remain unmodified.
    next vector's pitch is computed. A 10-word pitch buffer could replace 40
    words, saving 120 B, but additional segment calls may cost cycles. Verify
    every short-pitch tail and compare speed before accepting.
-2. **Shared Q14 polynomial arithmetic.** Explore an ASM helper that
-   avoids the generic C decomposition/copies. Prove the polynomial-input bound
-   first, or reproduce the generic truncation explicitly: `MULT16_32_Q14`
-   treats the low 30 bits of its 32-bit operand as signed30. Thus a wide
-   multiply/shift can be exact if the top byte is sign-extended from bit 29. Count
-   call/register-save costs as well as code size.
+2. **Simplify the first LSP polynomial stage.** For cosine words a/b,
+   `p1=-(a+b)*64`, `p2=2^21+ceil(a*b/256)`. This may replace the first two
+   Q14 calls per conversion with 16x16 products and remove stage-0 stores.
+   Preserve ceil for negative products; measure register lifetimes and stack.
 
 No claim of a global speed optimum has been established. Do not mark the
 ongoing optimization goal complete while useful candidates remain untested.
