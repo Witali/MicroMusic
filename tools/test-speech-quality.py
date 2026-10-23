@@ -20,7 +20,9 @@ def main():
         'test-hq4-phase.py', 'test-hq4-precision.py',
         'test-hq4-natural-timbre.py', 'test-natural-bell-hq4.py',
         'test-spectrogram-objective.py', 'test-hq4-excitation.py',
-        'test-hq4-q3.py', 'test-q3-bell-hq4.py'))
+        'test-hq4-q3.py', 'test-q3-bell-hq4.py',
+        'test-harmonic-tracks.py', 'test-hq4-q3-tracks.py',
+        'test-q3-track-rate.py'))
     for path in sorted(paths):
         name = 'speech_'+path.stem.replace('-', '_')
         spec = importlib.util.spec_from_file_location(name, path)

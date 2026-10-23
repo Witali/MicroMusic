@@ -87,10 +87,11 @@ def main():
             tracks=serial_tracks(detail['candidate_tracks']),matches=detail['matches'])
     a.output.mkdir(parents=True,exist_ok=True)
     fig,axes = plt.subplots(len(candidates)+1,2,figsize=(16,3.3*(len(candidates)+1)),
-                            sharex=True,squeeze=False,layout='constrained')
+                            sharex=True,squeeze=False)
+    fig.subplots_adjust(left=.07,right=.98,top=.94,bottom=.11,hspace=.35,wspace=.18)
     paths(axes[0,0],reference_tracks,'frequency_hz',peak)
     paths(axes[0,1],reference_tracks,'amplitude',peak)
-    axes[0,0].set_title('Original: strongest <=10 partials at each time; colors follow track IDs')
+    axes[0,0].set_title('Original: <=10 strongest partials; stable track IDs')
     axes[0,1].set_title('Original partial levels; one shared dB reference')
     for row,(label,detail) in enumerate(candidates,1):
         tracks = detail['candidate_tracks']
@@ -129,10 +130,10 @@ def main():
             ax.grid(alpha=.15)
     for ax in axes[-1]:
         ax.set_xlabel('Time (seconds)')
-    axes[-1,0].legend(handles=[Line2D([],[],color='#aaa',label='Original track'),
+    fig.legend(handles=[Line2D([],[],color='#aaa',label='Original track'),
         Line2D([],[],color='#3268aa',label='Matched output (original ID color)'),
         Line2D([],[],color='#d32727',marker='o',linestyle='',label='Missing original partial'),
-        Line2D([],[],color='#ee8a00',marker='x',linestyle='',label='Extra output partial')],fontsize=8,loc='upper right')
+        Line2D([],[],color='#ee8a00',marker='x',linestyle='',label='Extra output partial')],fontsize=8,loc='lower center',ncol=2)
     fig.savefig(a.output/'harmonic-tracks.png',dpi=125)
     plt.close(fig)
     sources = (Path(__file__),CODEC/'harmonic_tracks.py')
