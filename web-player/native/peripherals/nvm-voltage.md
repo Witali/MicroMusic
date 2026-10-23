@@ -16,6 +16,11 @@ invented random/erased bit patterns.
 
 [DS80000857A2.2.1](https://www.microchip.com/DS80000857), p3, says EEPROM
 writes below1.9V might fail for silicon revisions G/H/I.
+The board applies that boundary to a known constant configured VCC as well as
+to an explicit dynamic supply profile. At exactly1.9V it does not introduce an
+erratum fault. Atomic, erase-only and write-only EEPROM operations share the
+guard; an EEPROM read does not acquire a write-voltage diagnostic. A constant
+low supply needs no POR/BOD profile to report uncertainty.
 [DS40002307A](https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf)
 §5.3.6 p25 and §16.7 p107 allow an in-flight write to complete through reset
 only while supply is sufficient. A normal reset therefore preserves adequate

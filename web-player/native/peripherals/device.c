@@ -188,10 +188,11 @@ static int power_recovering(void) {
  return board.power_enabled && board.power.recovery_deadline!=POWER_RESET_NEVER;
 }
 static void supply_guard(void) {
- if(!board.power_enabled) return;
  uint32_t mask=0;
+ /* The EEPROM erratum also applies to a known constant supply. A dynamic
+  * POR/BOD profile is only needed for voltage changes, not this1.9V boundary. */
  if(board.vcc_uv<1900000) mask|=NVM_FAULT_EEPROM_VOLTAGE_UNCERTAIN;
- if(board.vcc_uv<(int32_t)board.power_config[DEVICE_POWER_FLASH_PROGRAM_MIN_UV])
+ if(board.power_enabled&&board.vcc_uv<(int32_t)board.power_config[DEVICE_POWER_FLASH_PROGRAM_MIN_UV])
   mask|=NVM_FAULT_FLASH_VOLTAGE_UNCERTAIN;
  nvm_voltage_uncertain(&board.nvm,mask);
  if(board.nvm.faults) fail(DEVICE_FAULT_NVM,board.nvm.faults);

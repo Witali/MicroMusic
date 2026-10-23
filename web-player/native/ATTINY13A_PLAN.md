@@ -189,12 +189,13 @@ proceed when hardware is available.
 - [ ] Resolve documented debugWIRE pin/reset behavior and unsupported DWEN
   configurations. The audit found no authoritative wire protocol in the pinned
   manufacturer definitions; do not invent one.
-- [ ] Track applicable silicon errata and represent undefined outcomes explicitly
+- [x] Track applicable silicon errata and represent undefined outcomes explicitly
   instead of silently inventing deterministic success or memory corruption.
-  DS80000857A identifies EEPROM writes below1.9V for revisions G/H/I. Dynamic
-  supply profiles diagnose this uncertainty. A fixed1.8V configuration without
-  a supply profile still completes EEPROM writes as known success; extend the
-  guard to that path and verify the exact1.9V boundary.
+  DS80000857A identifies EEPROM writes below1.9V for revisions G/H/I, with no
+  additional published clarifications. Both dynamic supply profiles and fixed
+  configured VCC diagnose uncertain writes. Atomic/erase-only/write-only modes,
+  unchanged reads and the exact1.9V boundary have focused regressions. Last-known
+  bytes remain diagnostic data; no corruption or successful completion is invented.
 - [x] Use the manufacturer's official device definition files as the address
   source for the model, generated register maps and new firmware tooling.
   Pinned Microchip ATtiny_DFP3.4.278 originals retain source URL, version,
@@ -235,6 +236,13 @@ original v1/v3 packages, invalid profiles and missing/wrong-signature RESET
 exports. The runtime has no host imports, fixed two-page memory and 82 exports.
 External CLKI/CPU continuation is still unimplemented; its audited contract is
 retained separately. No physical programming interface has been added.
+
+Fixed-supply EEPROM erratum checkpoint: six below1.9V mode/supply cases
+reproduced the missing diagnostic before the fix. All 13 new fixed-VCC cases
+then passed, including exact1.9V/5V completion and a low-voltage read. The
+post-fix focused NVM, power, RESET, cache and package regression set passed
+111/111. This later native change retains the same import-free, fixed-memory
+runtime contract; the 919-test result above belongs to the RESET checkpoint.
 
 ## Primary references
 
