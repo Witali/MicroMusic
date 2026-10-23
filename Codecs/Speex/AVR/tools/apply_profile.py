@@ -25,44 +25,11 @@ def apply(source: Path):
     text = path.read_text()
     text = replace(text, '#define SUBMODE(x) st->submodes[st->submodeID]->x',
                    '#include "profile_mode.h"\n#include "innovation.h"\n#define SUBMODE(x) speex_avr_submode.x')
-    # Keep the original nb_decode body, dropping generic initialization/ctl/PLC.
+    # Retain the original license, includes and constants; the restricted body
+    # omits only state/control work outside the public NB3 profile.
     start = text.index('void *nb_decoder_init(')
-    stop = text.index('int nb_decode(', start)
-    text = text[:start] + text[stop:]
-    text = replace(text, 'int nb_decode(', '__attribute__((noinline)) int nb_decode(')
-    start = text.index('   /* Check if we\'re in DTX mode*/')
-    stop = text.index('   /* Shift all buffers by one frame */', start)
-    text = text[:start] + '   if (!bits) return -2;\n\n' + text[stop:]
-    # Wrapper fixes these settings; make them compile-time constants so dead
-    # code (enhancer, rescaling, highpass, lost-frame handling) is discarded.
-    text = text.replace('if (st->count_lost)', 'if (0)')
-    text = text.replace('if (st->submodes[st->submodeID] == NULL)', 'if (0)')
-    text = text.replace('st->lpc_enh_enabled &&', '0 &&')
-    text = text.replace('if (st->highpass_enabled)', 'if (0)')
-    text = text.replace('if (st->innov_save)', 'if (0)')
-    text = text.replace('st->count_lost, offset, st->last_pitch_gain, 0', '0, offset, 0, 0')
-    text = replace(text,
-        'SUBMODE(innovation_unquant)(innov, SUBMODE(innovation_params), NB_SUBFRAME_SIZE, bits, stack, &st->seed);',
-        'speex_avr_innovation(exc, exc32, bits, ener);')
-    decode_start = text.index('int nb_decode(')
-    text = text[:decode_start] + replace(text[decode_start:], 'signal_mul(innov, innov, ener, NB_SUBFRAME_SIZE);', '')
-    # The fixed NB3 path writes every final excitation sample directly.
-    # Unsupported vocoder/double-codebook/innovation-save paths are dead.
-    before, body = text[:decode_start], text[decode_start:]
-    body = replace(body, '   ALLOC(innov, NB_SUBFRAME_SIZE, spx_sig_t);', '')
-    body = replace(body, '         SPEEX_MEMSET(innov, 0, NB_SUBFRAME_SIZE);', '')
-    body = replace(body, '''            for (i=0;i<NB_SUBFRAME_SIZE;i++)
-               exc[i]=EXTRACT16(SATURATE32(PSHR32(ADD32(SHL32(exc32[i],1),innov[i]),SIG_SHIFT),32767));''', '')
-    text = before + body
-    text = replace(text,
-        '         st->interp_qlpc[i] = ak[i];',
-        '''         st->interp_qlpc[i] = ak[i];
-#ifdef SPEEX_AVR_OUTPUT_HOOK
-      {
-         extern void speex_avr_output(const spx_word16_t *, uint8_t);
-         speex_avr_output(sp, NB_SUBFRAME_SIZE);
-      }
-#endif''')
+    fragment = Path(__file__).resolve().parents[1] / 'src/nb_decode.c.inc'
+    text = text[:start] + fragment.read_text() + '\n#endif /* DISABLE_DECODER */\n'
     path.write_text(text)
 
     path = lib / 'ltp.c'
@@ -93,14 +60,14 @@ def apply(source: Path):
         path.write_text(text)
     path = lib / 'nb_celp.h'
     text = path.read_text()
-    text = replace(text, '   SpeexCallback speex_callbacks[SPEEX_MAX_CALLBACKS];', '')
-    text = replace(text, '   SpeexCallback user_callback;', '')
-    text = replace(text,
-        '   spx_mem_t mem_sp[NB_ORDER];           /**< Filter memory for synthesis signal */',
-        '   spx_mem_t mem_sp[15];                 /**< NB3 direct LPC: history and coefficient ages */')
-    # With no PLC/enhancer, pitch_unquant_3tap reads at most pitch+1 samples
-    # backwards (pitch <= 144). Synthesis needs only the preceding 40 samples.
-    text = replace(text, '(NB_FRAME_SIZE+NB_SUBFRAME_SIZE+6)', '(NB_PITCH_END+2)')
+    start = text.index('typedef struct DecState {')
+    stop = text.index('} DecState;',start)+len('} DecState;')
+    text = text[:start] + '#include "profile_state.h"' + text[stop:]
+    # Maximum backward pitch read is pitch+1 (<=145); synthesis needs 40.
+    # No PLC/enhancer/vector lookahead: exactly 145 history + 160 current.
+    text = replace(text, '(NB_FRAME_SIZE+NB_SUBFRAME_SIZE+6)', '(NB_PITCH_END+1)')
+    text = replace(text, '#define NB_DEC_SHIFT_COUNT (NB_DEC_EXC_OFFSET+6)',
+                         '#define NB_DEC_SHIFT_COUNT NB_DEC_EXC_OFFSET')
     path.write_text(text)
 
     path = lib / 'lsp.c'

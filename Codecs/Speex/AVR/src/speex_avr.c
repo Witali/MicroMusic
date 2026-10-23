@@ -8,8 +8,8 @@
 static DecState decoder;
 /* qlsp + ak + pitch excitation + interpolated LSP = 220 B.
  * Fused innovation writes final excitation without a 160-byte intermediate.
- * 240 B retains alignment/headroom; host builds check every PUSH. */
-static uint32_t scratch[60];
+ * All allocations have aligned offsets (0,20,40,200); host checks every PUSH. */
+static uint32_t scratch[55];
 static size_t scratch_peak;
 
 #ifndef __AVR__
@@ -31,7 +31,6 @@ void speex_avr_init(void)
     memset(&decoder, 0, sizeof(decoder));
     memset(scratch, 0, sizeof(scratch));
     decoder.first = 1;
-    decoder.submodeID = 3;
     decoder.stack = (char *)scratch;
     scratch_peak = 0;
 }
