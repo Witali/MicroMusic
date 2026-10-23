@@ -5,8 +5,8 @@ and Table13-2; chapter14 Table14-5 for the ADC trigger connection:
 https://www.microchip.com/content/dam/mchp/documents/MCU08/ProductDocuments/DataSheets/ATtiny13A-Data-Sheet-DS40002307A.pdf
 
 analog_comparator.c models the ideal voltage comparison, digital synchronization
-and registers. It does not execute the CPU or call the host. It is currently a
-standalone module, not linked into avr.c. Physical inputs are explicit PB0..PB5
+and registers. It does not execute the CPU or call the host. device.c connects
+it to the full translated runtime. Physical inputs are explicit PB0..PB5
 signed microvolt parameters, timestamped in HALF CPU/clkI/O periods. CPU cycle N
 maps to timestamp2*N. Its time domain agrees with analog_adc.c. All timestamped
 calls advance existing events THROUGH their timestamp, then apply the mutation.

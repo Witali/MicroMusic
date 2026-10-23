@@ -178,10 +178,11 @@ interpreter or call JavaScript. `fastIdle:false` disables it; instruction-counte
 deadline/IRQ assumptions must be replaced by the full peripheral scheduler
 before enabling additional interrupt sources in this playback path.
 
-## MCU instruction/device boundary
+## Legacy MCU instruction/device boundary
 
 No generated instruction calls JavaScript. The four MCU-control instructions
-have these semantics with the current peripheral model:
+have these semantics with the legacy playback peripheral model. The connected
+runtime below implements their device services inside C/WASM:
 
 - SLEEP with MCUCR.SE=0 completes in one cycle. With SE=1 it completes the
   instruction, publishes `controlRequest=1` and stops execution before the
@@ -204,7 +205,7 @@ can inspect the request and use `acknowledgeControl(extraCycles)` to resume;
 SPM requires a positive actual latency. This handshake establishes CPU-side
 instruction coverage. It is **not** an implementation of active sleep/wake,
 watchdog expiry, debugWIRE or Flash programming; peripheral emulation remains
-a separate agreed next stage.
+a separate service in this legacy profile.
 
 `attiny13a-transpiled-isa.test.mjs` covers every word operand and immediate for
 ADIW/SBIW, all byte pairs and C/Z combinations for SBC/SBCI/CPC, T transfers,
@@ -231,3 +232,66 @@ updates, not reconstructed physical PB0/PB1 edges. Actual compare-pin
 waveforms and double-buffered timer semantics belong to the new Timer0
 peripheral module. Resampling/filters still execute in JavaScript, outside
 WASM; this is not a callback from the CPU into JS.
+
+## Connected device runtime
+
+Select **ATtiny13A** in the player for the complete set of developed peripheral
+modules connected to the translated CPU. `wasm/attiny13a.wasm` has two fixed
+memory pages and no host imports. The generated CPU imports native WASM bus
+reads, masked writes, event clocks and device controls. Instruction execution
+and physical pin capture never call JavaScript. Build it with:
+
+```powershell
+node web-player/scripts/build-device-wasm.mjs
+```
+
+`lib/attiny13a.js` exports `ATtiny13A`. It accepts the same Flash/EEPROM byte
+arrays as the prototype and exposes its register/data views. For example:
+
+```javascript
+const cpu = new ATtiny13A(flash, eeprom, {
+  oscillatorHz: 9600000, fuseLow: 0x7a, fuseHigh: 0xff,
+});
+cpu.injectPins({at: 100n, mask: 1, levels: 1});
+cpu.setAnalog({at: 101n, pin: 2, microvolts: 2500000});
+cpu.runUntil(2000n);
+const physicalTransitions = cpu.drainPins();
+```
+
+Public input and trace timestamps are `bigint` counts of half oscillator
+periods, independent of CLKPR. The browser API limits timestamps to 2^53-1
+to preserve exact conversion into the generated WASM loop. Queue inputs in
+chronological order across both input types. Digital drivers and analog
+voltages are explicit; analog injections do not guess a digital threshold.
+`readIO` and `writeIO(address,value,mask=255)` access the live bus without
+instruction cycles; use firmware IN/OUT/LD/ST/SBI/CBI for instruction timing.
+
+`runUntil(at)` ends at an instruction boundary at or after the requested time;
+events inside instructions retain their own timestamps. Halted sleep/programming
+waits stop at the deadline or a wake/reset event. `step` and instruction-counted
+`run` stop while halted. Interrupt priority, flags, the SEI/RETI delay and entry
+latency are handled in WASM. A reset inside an instruction aborts its remaining
+bus effects at the reset timestamp. SPM halts until programming completion,
+returns for retranslation when Flash generation changes, and cannot fetch old
+generated code afterward. Commands without documented duration require an
+explicit `spmCommandCycles` board parameter rather than an invented latency.
+
+`capturePhysical(frames,sampleRate,channels)` integrates physical PB1 for mono,
+or PB0/PB1 for left/right stereo, into normalized Float32 samples. It includes
+DDRB, GPIO mux, comparator-triggering pin changes and Timer0 buffered compare
+updates. Its deadlines use rational sample periods on the oscillator timeline.
+Future transitions from the CPU's final instruction remain queued for the next
+audio interval. The generated WASM loop captures up to 4096 samples per host
+call, consuming transitions during instruction execution and halted waits.
+Even maximum-rate pin toggling need not fit a whole audio interval in the
+trace ring. The JS renderer applies the existing
+audio filters to these samples. Direct trace consumers must drain the bounded
+1024-record ring during long runs; overflow is an explicit fault.
+
+All IRQ sources and six ADC auto-trigger sources are routed by
+[`peripherals/device.c`](peripherals/device.c). The full wait accelerator uses
+that scheduler's earliest event and the caller's deadline; `fastIdle:false`
+disables it for differential checks. See [device.md](peripherals/device.md) for
+CLKPR phase choice, ADC/ADIF document conflicts, analog fixture parameters and
+remaining electrical/debug boundaries. This is a deterministic digital profile,
+not a claim of voltage/temperature calibration or silicon trace equivalence.

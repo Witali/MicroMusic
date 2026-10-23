@@ -18,10 +18,12 @@ const booleans=new Set(['timer','inIRQ','fastIdle','fastBlocks']);
 const optional=new Set(['eempeUntil','clkprUntil']);
 
 export class AVRCore {
-  constructor(binary,eeprom,{fastIdle=true,fastBlocks=fastIdle}={}) {
+  constructor(binary,eeprom,{fastIdle=true,fastBlocks=fastIdle,runtimeModule=module,configureRuntime}={}) {
     if(!binary.length||binary.length>1024)throw new Error('Flash must contain 1–1024 bytes');
     if(eeprom&&eeprom.length!==64)throw new Error('EEPROM must contain 64 bytes');
-    this._exports=new WebAssembly.Instance(module).exports;
+    this._exports=new WebAssembly.Instance(runtimeModule).exports;
+    const layout=Array.from({length:15},(_,i)=>this._exports.avr_layout(i));
+    configureRuntime?.(this._exports);
     const buffer=this._exports.memory.buffer;
     this._state=new Float64Array(buffer,layout[0],layout[1]);
     this.rom=new Uint8Array(buffer,layout[2],1024);this.eeprom=new Uint8Array(buffer,layout[3],64);
