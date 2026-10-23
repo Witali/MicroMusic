@@ -67,22 +67,33 @@ def validate(output, avr_bin=None, node='node'):
     output.mkdir(parents=True,exist_ok=True)
     hashes = source_hashes()
     report = dict(schema='micromusic-tiny-avr-tests-v1',hardwareTested=False,
-                  seed=SEED,expectedTests=len(WORDS)+2,completedTests=0,
+                  seed=SEED,expectedTests=len(WORDS)+4,completedTests=0,
                   normalizedSourceSha256=hashes,tests=[],error=None)
     report['pass'] = False
     try:
         total_clipped = 0
-        for words in WORDS:
-            folder = output/f'words-{words}'
+        cases = [(words,16,False) for words in WORDS]+[(1,348,False),(1,348,True)]
+        for words,blocks,aligned in cases:
+            name = f'words-{words}' if blocks==16 else 'long-348'+('-aligned' if aligned else '')
+            folder = output/name
             folder.mkdir(parents=True,exist_ok=True)
             model = fixture(words)
+            if blocks>16:
+                model['codebook'] = [np.rint(7*np.sin(np.arange(32)*2*np.pi/32)).astype(int).tolist()]+[[0]*32 for _ in range(15)]
+                model['frames'] = [[128,208,3] for _ in range(blocks)]
+                model['samples'] = blocks*64
+                if aligned:
+                    model['frames'][-1] = [128,144,0]
             save_json(folder/'model.json',model)
             result = builder.build(folder/'model.json',folder/'firmware',avr_bin,node)
             check(result['status']=='verified',f'{words} words: {result["status"]}: {result.get("verification")}')
             pcm = builder.expected_loops(model)
             clipped = int(np.count_nonzero((pcm==0) | (pcm==255)))
             total_clipped += clipped
-            report['tests'].append(dict(name=f'{words}-word-layout',pass_=True,
+            if blocks>16:
+                check(result['compileFeatures']['FIELD_END_MASK']==(1 if aligned else 128),
+                      'Long fixture did not exercise the intended terminal bit-reservoir sentinel')
+            report['tests'].append(dict(name=name,pass_=True,
                 words=words,flashBytes=result['flashBytes'],codeBytes=result['codeBytes'],
                 eepromUsedBytes=result['eepromUsedBytes'],verifiedSamples=result['verification']['verifiedSamples'],
                 saturatedOutputSamples=clipped,modelSha256=result['modelSha256'],
