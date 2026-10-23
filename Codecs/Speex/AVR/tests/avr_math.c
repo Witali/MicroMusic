@@ -19,6 +19,8 @@ int main(void)
         case 13: math_result=speex_avr_asr13(math_value); break;
         case 14: math_result=speex_avr_asr14(math_value); break;
         case 15: math_result=speex_avr_asr15(math_value); break;
+        case 114: math_result=speex_avr_asr14_word(math_value); break;
+        case 115: math_result=speex_avr_asr15_word(math_value); break;
         default: math_result=math_multiply(math_a,math_b); break;
         }
         __asm__ ("mov %0,r1":"=r"(math_zero));

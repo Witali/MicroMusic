@@ -28,14 +28,16 @@ for(const rhs of [0,1,-1,32767,-32768,0x1234,-5678])for(let lhs=-32768;lhs<=3276
 let shiftCases=0,seed=0x31415926;
 const edges=[-2147483648,2147483647,-1,0,1,4095,4096,-4096,-4097,8191,8192,-8192,-8193,
   16383,16384,-16384,-16385,32767,32768,-32768,-32769,65535,65536,-65536,-65537];
-for(const shift of [13,14,15])for(let i=0;i<131072+edges.length;i++){
+for(const commandValue of [13,14,15,114,115])for(let i=0;i<131072+edges.length;i++){
+  const shift=commandValue>100?commandValue-100:commandValue;
   seed^=seed<<13;seed^=seed>>>17;seed^=seed<<5;
   // Exhaust all sign-extended s16 values, plus
   // independent full-width random operands. This catches byte boundaries.
   const v=i>=131072?edges[i-131072]:i<65536?(i&0x8000?i|0xffff0000:i):seed;
-  cpu.dataView.setInt32(value,v,true);cpu.data[status]=1;cpu.data[command]=shift;
+  cpu.dataView.setInt32(value,v,true);cpu.data[status]=1;cpu.data[command]=commandValue;
   until(()=>cpu.data[status]===2);
-  assert.equal(cpu.dataView.getInt32(result,true),v>>shift,`shift ${v} >> ${shift}`);
+  const expected=commandValue>100?((v>>shift)<<16)>>16:v>>shift;
+  assert.equal(cpu.dataView.getInt32(result,true),expected,`shift ${v} >> ${shift}, output ${commandValue>100?16:32} bits`);
   assert.equal(cpu.data[zero],0,'GCC zero-register contract after shift');shiftCases++;
 }
 const report={mcu:'ATmega328P',simulator:'avr8js 0.21.1',compiler:'AVR GCC 7.3.0 -O3 -flto -fwrapv',

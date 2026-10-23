@@ -24,8 +24,8 @@
 #undef MULT16_32_Q14
 #undef MULT16_32_Q15
 #undef MULT16_32_P15
-#define MULT16_32_Q14(a,b) ADD32(MULT16_16((a),speex_avr_asr14(b)),speex_avr_asr14(MULT16_16((a),((b)&0x3fff))))
-#define MULT16_32_Q15(a,b) ADD32(MULT16_16((a),speex_avr_asr15(b)),speex_avr_asr15(MULT16_16((a),((b)&0x7fff))))
-#define MULT16_32_P15(a,b) ADD32(MULT16_16((a),speex_avr_asr15(b)),speex_avr_asr15(ADD32(16384,MULT16_16((a),((b)&0x7fff)))))
+#define MULT16_32_Q14(a,b) ADD32(MULT16_16((a),speex_avr_asr14_word(b)),speex_avr_asr14(MULT16_16((a),((b)&0x3fff))))
+#define MULT16_32_Q15(a,b) ADD32(MULT16_16((a),speex_avr_asr15_word(b)),speex_avr_asr15(MULT16_16((a),((b)&0x7fff))))
+#define MULT16_32_P15(a,b) ADD32(MULT16_16((a),speex_avr_asr15_word(b)),speex_avr_asr15(ADD32(16384,MULT16_16((a),((b)&0x7fff)))))
 #endif
 #endif
