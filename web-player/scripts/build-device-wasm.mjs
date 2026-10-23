@@ -10,6 +10,18 @@ const {values} = parseArgs({options: {
   emsdk: {type: 'string'}, clang: {type: 'string'}, 'out-dir': {type: 'string'},
 }});
 const root = fileURLToPath(new URL('../../', import.meta.url));
+const definitionsCheck = spawnSync(process.execPath,
+  [join(root, 'web-player/scripts/generate-attiny13a-registers.mjs'), '--check'],
+  {cwd: root, encoding: 'utf8'});
+if (definitionsCheck.error) throw definitionsCheck.error;
+if (definitionsCheck.status !== 0) throw new Error(definitionsCheck.stderr || 'Official register map is stale');
+const vendorRoot = 'web-player/vendor/microchip/ATtiny_DFP/3.4.278';
+function recursiveFiles(folder) {
+  return readdirSync(join(root, folder), {withFileTypes: true}).sort((a,b)=>a.name.localeCompare(b.name))
+    .flatMap(entry => entry.isDirectory() ? recursiveFiles(folder + '/' + entry.name) : [folder + '/' + entry.name]);
+}
+const vendorInputs = recursiveFiles(vendorRoot);
+const vendorProvenance = JSON.parse(readFileSync(join(root, vendorRoot, 'provenance.json'), 'utf8'));
 let sdk = values.emsdk || process.env.EMSDK;
 for (let parent = root; !sdk;) {
   const candidate = join(parent, 'build/toolchains/emscripten-6.0.12');
@@ -81,7 +93,8 @@ try {
   if (!(error instanceof RangeError)) throw error;
 }
 const hash = value => createHash('sha256').update(value).digest('hex');
-const inputs = [sources[0], ...nativeSupport, ...nativeFiles, 'web-player/scripts/build-device-wasm.mjs'];
+const inputs = [sources[0], ...nativeSupport, ...nativeFiles, ...vendorInputs,
+  'web-player/scripts/generate-attiny13a-registers.mjs', 'web-player/scripts/build-device-wasm.mjs'];
 const normalized = path => path.replaceAll(sdk, '<emsdk>').replaceAll(sdk.replaceAll('\\', '/'), '<emsdk>');
 const manifest = {
   schema: 'micromusic-attiny13a-device-wasm-v1',
@@ -90,6 +103,10 @@ const manifest = {
   inputs: Object.fromEntries(inputs.map(path => [path,
     hash(readFileSync(join(root, path), 'utf8').replaceAll('\r\n', '\n'))])),
   sources, exports,
+  vendorDefinitions: {provenance: vendorRoot + '/provenance.json',
+    package: vendorProvenance.package, version: vendorProvenance.version,
+    packageSha256: vendorProvenance.packageSha256,
+    filesSha256: Object.fromEntries(vendorInputs.map(path => [path, hash(readFileSync(join(root, path)))]))},
   artifacts: {'attiny13a.wasm': hash(binary)},
   bytes: binary.length, memoryPages: 2, maximumMemoryPages: 2, stackBytes: 8192, imports: [],
 };
