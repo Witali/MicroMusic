@@ -31,7 +31,7 @@ original sample. Unrolling removes the loop counter and backward branch.
 ```asm
 /* Input r17: signed wave -8..7; r25: unsigned gain 0..15.
  * Output r17 = floor(wave*gain/4). Clobbers r0, r17, SREG; preserves r25.
- * All intermediate products fit signed8 bits within these exact bounds. */
+ * All intermediate products fit signed 8 bits within these exact bounds. */
  mov r0, r17
  sbrs r25, 3
  clr r17
@@ -49,10 +49,10 @@ original sample. Unrolling removes the loop counter and backward branch.
  ret
 ```
 
-The actual extracted source assembles to **15 words /30 bytes including RET**.
-All **2304** in-domain cases (16 samples ×16 gains ×3 initial flag states
-×3 engines) match independent integer arithmetic. The isolated body takes
-**18 cycles including RET**, or21 cycles with one RCALL. This excludes waveform
+The actual extracted source assembles to **15 words / 30 bytes including RET**.
+All **2304** in-domain cases (16 samples × 16 gains × 3 initial flag states
+× 3 engines) match independent integer arithmetic. The isolated body takes
+**18 cycles including RET**, or 21 cycles with one RCALL. This excludes waveform
 lookup, surrounding synthesis and interrupt costs. Each skip covers exactly
 one single-word instruction, so these conditional pairs have equal timing.
 The measured [report](../research/avr-music-scale/report.json) fingerprints both
@@ -63,10 +63,10 @@ python tools/probe-avr-music-scale.py --avr-bin <AVR-bin> --node <Node-executabl
 ```
 
 The reusable idea is the bounded, unrolled shift/add structure. Copying this
-8-bit body into the speech lattice is incorrect: for sample100 and gain15 it
-wraps and returns-9 instead of375 after scaling. The probe executes this
+8-bit body into the speech lattice is incorrect: for sample 100 and gain 15 it
+wraps and returns −9 instead of 375 after scaling. The probe executes this
 counterexample in all three engines as well. Speech needs a wide intermediate,
-the existing signed-byte NEG convention (including-128), and the appropriate
+the existing signed-byte NEG convention (including −128), and the appropriate
 Q3/Q7 rounding rule. Use ADD/ADC and LSL/ROL pairs or another proven wide
 product implementation. Unrolling can also increase Flash and slow small
 coefficients compared with repeated addition; compare the complete player and
@@ -84,27 +84,27 @@ more expensive multiplier everywhere.
 In the measured floor profiles, stage selection uses **458 code bytes** versus
 **470** for unrolled Q7 throughout. On the same edge-test stream/table the
 minimum timing margins are **204** and **117 cycles**, respectively. The
-nearest variants use464/474 code bytes and186/84 cycles of margin. These are
+nearest variants use 464/474 code bytes and 186/84 cycles of margin. These are
 complete fixture measurements, not isolated multiply latencies or a universal
 upper bound for arbitrary speech parameters. Every fitted phrase still needs
-its own timing verification. The selected full quality-study phrase has135
-cycles of slack at1022 Flash +64 EEPROM bytes.
+its own timing verification. The selected full quality-study phrase has 135
+cycles of slack at 1022 Flash + 64 EEPROM bytes.
 
-A second comparison uses the same550-byte full-phrase stream and EEPROM for
-both profiles: stage-selected1010 Flash bytes /136 cycles of slack versus
-unrolled1022 /114. All66,816 phrase-and-silence samples are identical in all
-three engines. The literal three-bit,16-bit Horner adaptation also has a
-measured cost: **24 additional code bytes**. At coefficient magnitude1 the
-old loop takes26–27 cycles and Horner38–39; at magnitude7 the loop takes56–57
-and Horner38–39. Those routine timings include RET; add3 for RCALL. The
+A second comparison uses the same 550-byte full-phrase stream and EEPROM for
+both profiles: stage-selected 1010 Flash bytes / 136 cycles of slack versus
+unrolled 1022 / 114. All 66,816 phrase-and-silence samples are identical in all
+three engines. The literal three-bit, 16-bit Horner adaptation also has a
+measured cost: **24 additional code bytes**. At coefficient magnitude 1 the
+old loop takes 26–27 cycles and Horner 38–39; at magnitude 7 the loop takes 56–57
+and Horner 38–39. Those routine timings include RET; add 3 for RCALL. The
 [reproducible benchmark](../research/q3-kmap-avr-qualification/music-unroll.json)
-contains92,160 arithmetic checks for the literal adaptation. These isolated
+contains 92,160 arithmetic checks for the literal adaptation. These isolated
 checks do not establish a complete-player deadline for that larger variant.
 
 The practical rule is to measure both branches: a loop-free small product is
 useful, but preserving a cheap specialized path can save both bytes and cycles.
 The [qualification report](../research/q3-kmap-avr-qualification/report.json)
-records829,440 exhaustive product cases in three engines and the source hashes.
+records 829,440 exhaustive product cases in three engines and the source hashes.
 
 ## Changes that preserve the decoded bytes
 
