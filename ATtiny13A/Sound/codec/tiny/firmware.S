@@ -173,7 +173,7 @@ no_next_frame:
 restart:
  ldi r16,128
  sts HIST,r16
- sts HIST+1,r16
+ /* wait copies this current byte to HIST+1 before the first synthesis step. */
  ldi r16,lo8(INITIAL_PHASE)
  mov r10,r16
  ldi r16,hi8(INITIAL_PHASE)
@@ -184,8 +184,7 @@ restart:
  mov r13,r16
  ldi r26,lo8(field_data)
  ldi r27,hi8(field_data)
- ldi r16,1
- mov r23,r16
+ ldi r23,1
  clr r4
  clr r5
  clr r14
@@ -266,7 +265,7 @@ wave_pair:
  rol r22
  rcall multiply
  swap r21
- andi r21,0xf0
+ /* r21 was masked to a nibble before multiply, so its low nibble is now zero. */
  add r24,r21
  subi r24,128
 base_gain:
@@ -279,9 +278,8 @@ base_gain:
  cpi r22,6
  breq gain_three_quarters
 .endif
- ldi r16,6
- sub r16,r22
- mov r22,r16
+ neg r22
+ subi r22,-6
 gain_shift:
  asr r24
  dec r22
