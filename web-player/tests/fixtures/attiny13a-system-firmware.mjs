@@ -33,6 +33,8 @@ export const avr = Object.freeze({
     return [0x9800|(a<<3)|b];
   },
   inc:d=>[0x9403|(register(d)<<4)],
+  add:(d,r)=>[0x0c00|(register(d)<<4)|(register(r)&15)|((r&16)<<5)],
+  eor:(d,r)=>[0x2400|(register(d)<<4)|(register(r)&15)|((r&16)<<5)],
   lds:(d,a)=>[0x9000|(register(d)<<4),a],
   sts:(a,d)=>[0x9200|(register(d)<<4),a],
   ldx:d=>[0x900c|(register(d)<<4)],
