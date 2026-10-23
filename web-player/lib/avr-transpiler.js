@@ -96,7 +96,9 @@ export function runtimeABI(exports) {
 const writes={ADD:63,ADC:63,SUB:63,CP:63,CPI:63,SUBI:63,NEG:63,SBC:63,SBCI:63,CPC:63,ADIW:31,SBIW:31,BST:64,AND:30,ANDI:30,OR:30,ORI:30,EOR:30,INC:30,DEC:30,COM:31,LSR:31,ASR:31,ROR:31};
 const reads={ADC:1,ROR:1,SBC:3,SBCI:3,CPC:3,BLD:64};
 const pure=new Set(['NOP','LDI','MOV','MOVW','SWAP','BLD',...Object.keys(writes)]);
-const instructionCycles=i=>['ADIW','SBIW'].includes(i.name)?2:1;
+const guardedMemory=new Set(['LD','ST','LPM']);
+const batchable=i=>pure.has(i.name)||guardedMemory.has(i.name);
+const instructionCycles=i=>i.name==='LPM'?3:['ADIW','SBIW','LD','ST'].includes(i.name)?2:1;
 const popcount=n=>{let count=0;for(;n;n&=n-1)count++;return count;};
 
 export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructions=32}={}) {
@@ -252,24 +254,25 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   }
   const instructionBodies=decoded.map(i=>bytes(set(5,load8(flagsAddress)),set(7,constant(1)),put('errorPC',constant(i.pc)),put('pc',constant((i.pc+1)&511)),effects(i),store8(flagsAddress,flags()),finish()));
 
-  // Conservative basic blocks: no I/O, memory access, stack operation or IRQ
-  // control inside. Every possible observer sees all eight SREG bits at exit.
+  // SRAM/Flash accesses use guards before observable I/O, alias faults or
+  // invalid addresses. Every guard exit observes a complete, exact SREG.
   const leaders=new Set([0,3]);
   for(const i of decoded){
-    if(!pure.has(i.name))leaders.add((i.pc+i.words)&511);
+    if(!batchable(i))leaders.add((i.pc+i.words)&511);
     if(['RJMP','RCALL','BRANCH'].includes(i.name))leaders.add((i.pc+1+i.k)&511);
     if(['SKIP','CPSE','SBIC','SBIS'].includes(i.name))leaders.add((i.pc+1+width(word(i.pc+1)))&511);
   }
   const blocks=[];
   for(let p=0;p<512;){
-    if(!pure.has(decoded[p].name)){p++;continue;}
+    if(!batchable(decoded[p])){p++;continue;}
     const sequence=[decoded[p++]];
-    while(p<512&&pure.has(decoded[p].name)&&!leaders.has(p)&&sequence.length<maxBlockInstructions)sequence.push(decoded[p++]);
+    while(p<512&&batchable(decoded[p])&&!leaders.has(p)&&sequence.length<maxBlockInstructions)sequence.push(decoded[p++]);
     if(sequence.length<2)continue;
     let live=255,removed=0,computed=0;
     const masks=new Array(sequence.length);
     for(let n=sequence.length-1;n>=0;n--){
       const i=sequence[n],written=writes[i.name]||0,needed=optimizeFlags?written&live:written;
+      if(guardedMemory.has(i.name))live=255;
       masks[n]=needed;removed+=popcount(written&~needed);computed+=popcount(needed);
       let read=reads[i.name]||0;
       if(['SBC','SBCI','CPC'].includes(i.name))read=1|(needed&2);
@@ -287,9 +290,11 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
       const op=code[p++];out.push(op);
       if(op===0x20||op===0x21||op===0x22){out.push(code[p++]+shift);}
       else if(op===0x41){let byte;do{byte=code[p++];out.push(byte);}while(byte&128);}
+      else if(op===0x44){out.push(...code.slice(p,p+8));p+=8;}
+      else if(op===0x10){let byte;do{byte=code[p++];out.push(byte);}while(byte&128);}
       else if(op===0x2c||op===0x2d||op===0x3a||op===0x2b||op===0x39){out.push(code[p++],code[p++]);}
       else if(op===0x04)out.push(code[p++]);
-      else if(op===0x05||op===0x0b||(op>=0x45&&op<=0xc4)){}
+      else if(op===0x05||op===0x0b||op===0x0f||(op>=0x45&&op<=0xc4)){}
       else throw new Error('Unexpected opcode in remapped ALU: '+op.toString(16));
     }
     return out;
@@ -302,7 +307,25 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     const blocked=or(or(state('irqDelay'),and(reg(88),constant(2))),or(lt(get(1),constant(block.instructions)),
       or(binary(0x66,elapsed,stateF('overflowAt')),binary(0x64,elapsed,get(0)))));
     const code=bytes(condition(blocked,bytes(constant(0),0x0f)),set(7,load8(flagsAddress)));
-    block.sequence.forEach((i,n)=>code.push(...remapLocals(alu(i,block.masks[n]),2)));
+    let elapsedCycles=0;
+    block.sequence.forEach((i,n)=>{
+      let effects;
+      if(guardedMemory.has(i.name)){
+        const bailout=n?bytes(store8(flagsAddress,flags()),put('pc',constant(i.pc)),put('errorPC',constant(block.sequence[n-1].pc)),call(CLOCK,float(elapsedCycles)),constant(n),0x0f):bytes(constant(0),0x0f);
+        const {name,d,s,k}=i;
+        if(name==='LPM'){
+          effects=bytes(set(6,or(reg(30),shl(reg(31),8))),condition(k&&d>=30?constant(1):ge(Z,constant(1024)),bailout),
+            writeReg(d,load8(add(constant(abi.rom),Z))),k?bytes(set(6,add(Z,constant(1))),writeReg(30,Z),writeReg(31,shr(Z,8))):[]);
+        }else{
+          const alias=k<2&&(d===s||d===s+1);
+          effects=bytes(set(6,and(add(reg(s),constant(k<0?-1:k>=2?k-2:0)),constant(255))),
+            condition(alias?constant(1):or(lt(Z,constant(96)),ge(Z,constant(160))),bailout),
+            k<0?writeReg(s,Z):[],name==='LD'?writeReg(d,load8(dataAt(Z))):store8(dataAt(Z),reg(d)),
+            k===1?writeReg(s,and(add(Z,constant(1)),constant(255))):[]);
+        }
+      }else effects=alu(i,block.masks[n]);
+      code.push(...remapLocals(effects,2));elapsedCycles+=instructionCycles(i);
+    });
     code.push(...store8(flagsAddress,get(7)),put('pc',constant(block.end)),put('errorPC',constant((block.end-1)&511)),
       call(CLOCK,float(block.cycles)),constant(block.instructions));
     blockBodies[index]=code;

@@ -106,8 +106,12 @@ flag elimination or a lazy-flags scheme. A future global pass must model
 interrupt entry as a possible reader of SREG.
 
 CPU time is a count of original AVR cycles, stored as f64 exact integers
-beyond 2^32 (up to 2^53). Each optimized block consists only of fixed-cycle
-instructions with no I/O, memory, stack or interrupt-control operations. It
+beyond 2^32 (up to 2^53). Each optimized block consists of fixed-cycle
+instructions with no I/O, stack or interrupt-control operations. Guarded
+LD/ST accesses are restricted to SRAM and LPM to valid Flash addresses. A
+guard exits before register/I/O aliases, undefined pointer combinations or
+invalid addresses; it flushes exact flags, PC and elapsed cycles, then the
+generated single-instruction path performs the access or reports its fault. It
 runs only when its end is strictly before the next Timer0 event and at or
 before the caller's deadline. Pending interrupts or SEI/RETI delay disable
 blocks. TCNT0 and prescaler phase advance by exactly the block's AVR cycles.
