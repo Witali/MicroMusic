@@ -17,7 +17,7 @@ function message(target,type){
 let worker,ports;
 try{
   const catalog=await(await fetch('../firmware.json')).json(),entry=catalog.entries[0];
-  for(const engine of [undefined,'js']){
+  for(const engine of [undefined,'js','transpiled']){
     // Post immediately: imports must not drop init or overtake queued controls.
     const name=engine??'wasm';
     worker=new Worker('../worker.js',{type:'module'});
@@ -38,7 +38,7 @@ try{
     log('PASS: Worker/MessageChannel PCM, PWM, CPU cycles and IRQs / '+name);
     worker.terminate();ports.port1.close();
   }
-  for(const engine of ['js','wasm'])for(const rate of [44100,48000,96000])for(const cutoff of [4000,6000,9000,12000]){
+  for(const engine of ['js','wasm','transpiled'])for(const rate of [44100,48000,96000])for(const cutoff of [4000,6000,9000,12000]){
     const renderer=await createRenderer(entry,rate,{cutoff,volume:.65},engine),actual=renderer.render(16384);
     const context=new OfflineAudioContext(1,actual.length,rate),source=context.createBufferSource();
     source.buffer=context.createBuffer(1,actual.length,rate);source.buffer.copyToChannel(renderer.core.rawSamples,0);

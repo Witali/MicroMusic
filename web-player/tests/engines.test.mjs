@@ -87,7 +87,7 @@ function message(target, type) {
     target.on('message', receive);
   });
 }
-for (const engine of [undefined, 'js', 'wasm'])
+for (const engine of [undefined, 'js', 'wasm', 'transpiled'])
 test('real Worker ' + (engine ?? 'default') + ': immediate init, queued controls and audio port use the chosen engine', async t => {
   const worker = new Worker(new URL('./helpers/browser-worker-node.mjs', import.meta.url));
   t.after(() => worker.terminate());

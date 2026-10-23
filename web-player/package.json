@@ -9,6 +9,8 @@
     "test:optimizations": "node scripts/test-optimizations.mjs",
     "benchmark": "node scripts/benchmark.mjs",
     "benchmark:wasm": "node scripts/benchmark-wasm.mjs",
-    "build:wasm": "node scripts/build-wasm.mjs"
+    "build:wasm": "node scripts/build-wasm.mjs",
+    "transpile:avr": "node scripts/transpile-avr.mjs",
+    "benchmark:transpiler": "node scripts/benchmark-transpiler.mjs"
   }
 }

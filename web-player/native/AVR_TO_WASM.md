@@ -7,8 +7,8 @@ can translate a firmware image when it is loaded; the CLI can do it in advance.
 
 The current target is the same 105 of 123 instruction-summary forms supported
 by the production player. Forms include aliases and addressing variants, not
-105 distinct opcodes. Unsupported instructions fail when executed, including
-when embedded data happens to decode as an instruction. This is a prototype
+105 distinct opcodes. Unsupported words fail only when executed; embedded
+Flash data remains available unchanged to LPM. This is a prototype
 for the retained firmware, not a complete ATtiny/ATmega implementation.
 
 ## Official references
@@ -156,3 +156,5 @@ as a possible entry, including data. Module size and load-time compilation
 are costs to measure, not evidence of a speedup. Benchmarks must distinguish
 construction/compilation from warmed execution and compare both flags-on
 and flags-eliminated runs with equal AVR timing and output.
+Static optimization counts cover all potential code entries, including
+decodable data words; they are not weighted by actual execution frequency.
