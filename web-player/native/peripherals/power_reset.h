@@ -49,6 +49,13 @@ int power_reset_init(power_reset_t *power, const power_reset_profile_t *profile,
 /* Inputs are piecewise-constant and time ordered, not queued future values.
  * Scheduled deadlines at the same timestamp are processed BEFORE the input. */
 int power_reset_set_vcc(power_reset_t *power, uint64_t at, int32_t vcc_uv);
+/* Atomic supply + already-qualified EXTRF/WDRF update. Validate both inputs
+ * before advancing/mutating state, then process due deadlines, set both inputs
+ * and evaluate their aggregate once. This avoids fictitious RELEASE/ASSERT
+ * gaps when ownership transfers between POR/BOD and another reset source.
+ * Existing individual setters preserve the other input and use this API. */
+int power_reset_set_inputs(power_reset_t *power, uint64_t at, int32_t vcc_uv,
+                           uint8_t other_sources);
 int power_reset_advance(power_reset_t *power, uint64_t at);
 uint64_t power_reset_next_deadline(const power_reset_t *power);
 /* Optional aggregation: only EXTRF/WDRF are accepted, already qualified by

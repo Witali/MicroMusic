@@ -118,15 +118,17 @@ int power_reset_init(power_reset_t *p,const power_reset_profile_t *profile,
     p->profile=copied;p->now=at;p->vcc_uv=vcc_uv;p->bod_code=(fuse_high>>1)&3;
     evaluate(p);return power_reset_advance(p,at);
 }
-int power_reset_set_vcc(power_reset_t *p,uint64_t at,int32_t uv) {
-    if(uv<0) return bad(p,POWER_RESET_BAD_INPUT);
+int power_reset_set_inputs(power_reset_t *p,uint64_t at,int32_t uv,uint8_t mask) {
+    if(uv<0||(mask&~(POWER_RESET_EXTRF|POWER_RESET_WDRF))) return bad(p,POWER_RESET_BAD_INPUT);
     if(!power_reset_advance(p,at)) return 0;
-    p->vcc_uv=uv;evaluate(p);return power_reset_advance(p,at);
+    p->vcc_uv=uv;p->other_sources=mask;
+    evaluate(p);return power_reset_advance(p,at);
+}
+int power_reset_set_vcc(power_reset_t *p,uint64_t at,int32_t uv) {
+    return power_reset_set_inputs(p,at,uv,p->other_sources);
 }
 int power_reset_set_other_sources(power_reset_t *p,uint64_t at,uint8_t mask) {
-    if(mask&~(POWER_RESET_EXTRF|POWER_RESET_WDRF)) return bad(p,POWER_RESET_BAD_INPUT);
-    if(!power_reset_advance(p,at)) return 0;
-    p->other_sources=mask;evaluate(p);return power_reset_advance(p,at);
+    return power_reset_set_inputs(p,at,p->vcc_uv,mask);
 }
 int power_reset_sleep(power_reset_t *p,uint64_t at,uint8_t mode,int authorized) {
     if(mode>2) return bad(p,POWER_RESET_BAD_INPUT);

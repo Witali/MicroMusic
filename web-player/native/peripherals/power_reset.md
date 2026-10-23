@@ -96,6 +96,17 @@ and WDRF level masks. Their owners supply pulse start/end; this module does not
 invent a WDT pulse width or external RESET pin analog qualification. Aggregate
 sources allow one delay counter to begin only after all raw sources release.
 
+`power_reset_set_inputs(power, at, vcc_uv, other_sources)` applies a supply and
+already-qualified EXTRF/WDRF update atomically. Both values are validated before
+time advances or either input changes. Valid calls first process existing due
+deadlines, update both inputs, evaluate their aggregate once, then process any
+new zero-duration deadlines. Use this API when a voltage-sensitive RESET
+receiver changes alongside VCC: POR-to-EXTRF and EXTRF-to-POR handoffs remain
+held, including with zero timeout, without a fictitious release and second
+assertion. The two individual setters are wrappers preserving the other input.
+This does not merge independent, sequential input calls or erase events from
+deadlines already due at the input timestamp.
+
 `power_reset_sleep` accepts MCUCR.SM0/1/2 and an already-authorized BODS state.
 Only Power-down disables a fuse-enabled BOD. BODCR's timed write sequence and
 CPU-cycle windows stay with the register owner. `power_reset_wake` re-enables
