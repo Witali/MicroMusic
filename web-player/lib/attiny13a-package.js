@@ -1,9 +1,10 @@
 // Portable package validation. No Node imports, host callbacks, or WASM instances.
 // SHA-256 protects integrity; packages are executable code, not signed artifacts.
 import {normalizeResetInputProfile} from './devices/attiny13a-reset-profile.js';
+import {normalizeClkiProfile} from './devices/attiny13a-clki-profile.js';
 import {AT13_FUSE_MASK as FUSE} from './attiny13a-registers.js';
 export const PACKAGE_FORMAT='micromusic-attiny13a-package';
-export const PACKAGE_VERSION=4;
+export const PACKAGE_VERSION=5;
 export const PACKAGE_ABI='micromusic-attiny13a-device-v1';
 export const PACKAGE_LIMITS=Object.freeze({json:16*1024*1024,translated:4*1024*1024,runtime:2*1024*1024,manifest:512*1024});
 export const DEFAULT_CONFIGURATION=Object.freeze({
@@ -12,7 +13,7 @@ export const DEFAULT_CONFIGURATION=Object.freeze({
   comparatorPropagationHalf:0,bandgapStartupHalf:0,comparatorInitial:0,
   wakeStartupHalf:0,spmCommandCycles:0,flashMaximum:1,bodRecoveryNs:60000,
   factoryOsccal96:0,fuseStartupProfile:0,nvmClockProfile:0,nvmCalibrationReferenceHz:0,osccalHz:null,powerResetProfile:null,
-  resetInputProfile:null,
+  resetInputProfile:null,resumable:false,clkiProfile:null,
 });
 
 const encoder=new TextEncoder(),decoder=new TextDecoder('utf-8',{fatal:true});
@@ -50,15 +51,25 @@ async function sha256(bytes){
 function normalizeConfiguration(input={},complete=false,version=PACKAGE_VERSION){
   record(input,'configuration');
   const omitted=[...(version===1?['nvmClockProfile','nvmCalibrationReferenceHz','osccalHz','powerResetProfile']:version===2?['powerResetProfile']:[]),
-    ...(version<4?['resetInputProfile']:[])];
+    ...(version<4?['resetInputProfile']:[]),...(version<5?['resumable','clkiProfile']:[])];
   const defaults=Object.fromEntries(Object.entries(DEFAULT_CONFIGURATION).filter(([key])=>!omitted.includes(key)));
   for(const name of Object.keys(input))if(!Object.hasOwn(defaults,name))fail('unknown configuration '+name);
   if(complete)keys(input,Object.keys(defaults),'configuration');
   const configuration={...defaults,...input};
+  if(Object.hasOwn(configuration,'clkiProfile')){
+    if(complete&&configuration.clkiProfile!==null)
+      keys(configuration.clkiProfile,['phasePolicy','initialLevel','electricalValidation'],'configuration clkiProfile');
+    try{configuration.clkiProfile=normalizeClkiProfile(configuration.clkiProfile);}catch(error){fail(error.message);}
+  }
   for(const [name,value] of Object.entries(configuration)){
+    if(name==='clkiProfile')continue;
+    if(name==='resumable'){
+      if(typeof value!=='boolean')fail('invalid configuration resumable');
+      continue;
+    }
     if(name==='resetInputProfile'){
       try{configuration.resetInputProfile=normalizeResetInputProfile(value);}catch(error){fail(error.message);}
-      if(value!==null&&(!configuration.osccalHz||!(configuration.fuseHigh&FUSE.HIGH_DWEN)))
+      if(value!==null&&((!configuration.osccalHz&&!configuration.clkiProfile)||!(configuration.fuseHigh&FUSE.HIGH_DWEN)))
         fail('configuration resetInputProfile requires physical time and DWEN unprogrammed');
       continue;
     }
@@ -69,7 +80,7 @@ function normalizeConfiguration(input={},complete=false,version=PACKAGE_VERSION)
         keys(value,fields,'configuration powerResetProfile');
         const p=Object.fromEntries(fields.map(key=>[key,integer(value[key],key==='bodHysteresisMicrovolts'||key.endsWith('Ns')?0:1,
           key.endsWith('Ns')?0xffffffff:0x7fffffff,'configuration powerResetProfile.'+key)]));
-        if(!configuration.osccalHz||p.porReleaseMicrovolts<p.porAssertMicrovolts||
+        if((!configuration.osccalHz&&!configuration.clkiProfile)||p.porReleaseMicrovolts<p.porAssertMicrovolts||
           ['bod00Microvolts','bod01Microvolts','bod10Microvolts'].some(key=>p[key]<=Math.floor(p.bodHysteresisMicrovolts/2)||p[key]+Math.ceil(p.bodHysteresisMicrovolts/2)>0x7fffffff))fail('invalid configuration powerResetProfile thresholds/clock');
         configuration.powerResetProfile=p;
       }
@@ -93,6 +104,10 @@ function normalizeConfiguration(input={},complete=false,version=PACKAGE_VERSION)
     if(name==='adcFirstSample'&&![27,29].includes(value))fail('invalid configuration adcFirstSample');
   }
   if(configuration.nvmClockProfile===1&&!configuration.nvmCalibrationReferenceHz)fail('configuration nvmClockProfile requires a calibration reference');
+  if(configuration.clkiProfile&&(configuration.resumable!==true||(configuration.fuseLow&3)!==0))
+    fail('configuration clkiProfile requires resumable:true and CKSEL00');
+  if(configuration.resumable&&!configuration.osccalHz&&!configuration.clkiProfile)
+    fail('configuration resumable requires physical time');
   if(configuration.fuseStartupProfile&&((configuration.fuseLow>>2)&3)===3)fail('configuration fuseStartupProfile uses reserved SUT11');
   if(configuration.osccalHz){
     const factory=configuration.osccalHz[configuration.factoryOsccal96];
@@ -173,13 +188,15 @@ const bridges={clock:'avr_clock',interrupt:'avr_interrupt',writeIO:'avr_write_io
   readIO:'avr_read_io',writeMasked:'avr_write_io_masked',ready:'avr_device_ready',time:'avr_device_time',
   wait:'avr_device_wait',control:'avr_device_control',lpm:'avr_device_lpm',audioDeadline:'avr_device_audio_deadline',
   audioSample:'avr_device_audio_sample',pending:'avr_device_pending',cpuDeadline:'avr_device_cpu_deadline',idleUntil:'avr_device_idle'};
+const phaseBridges={phaseClock:'avr_device_phase_clock',phaseDeadline:'avr_device_phase_deadline',phaseRetire:'avr_device_phase_retire'};
 const i32=0x7f,i64=0x7e,f64=0x7c,signature=(params=[],results=[])=>({params,results});
 const bridgeSignatures={clock:signature([f64]),interrupt:signature(),writeIO:signature([i32,i32],[i32]),idle:signature([],[i32]),
   readIO:signature([i32],[i32]),writeMasked:signature([i32,i32,i32],[i32]),ready:signature([],[i32]),time:signature([],[f64]),
   wait:signature([f64],[i32]),control:signature([i32,i32,i32],[i32]),lpm:signature([i32],[i32]),audioDeadline:signature([],[f64]),
-  audioSample:signature([i32],[i32]),pending:signature([],[i32]),cpuDeadline:signature([f64],[f64]),idleUntil:signature([f64],[i32])};
-function validateABI(abi){
-  keys(abi,['state','data','rom','idle','frames','pwm','memoryPages','device'],'ABI layout');
+  audioSample:signature([i32],[i32]),pending:signature([],[i32]),cpuDeadline:signature([f64],[f64]),idleUntil:signature([f64],[i32]),
+  phaseClock:signature([f64],[i32]),phaseDeadline:signature([f64]),phaseRetire:signature()};
+function validateABI(abi,resumable=false){
+  keys(abi,['state','data','rom','idle','frames','pwm','memoryPages','device',...(resumable?['phase']:[])],'ABI layout');
   if(abi.device!==true)fail('ABI requires the full-device runtime');
   integer(abi.memoryPages,1,256,'ABI memoryPages');record(abi.state,'ABI state');
   const limit=abi.memoryPages*65536,offsets=Object.values(abi.state);
@@ -196,14 +213,31 @@ function validateABI(abi){
     integer(abi[name],0,limit-size,'ABI '+name);if(abi[name]%alignment)fail('unaligned ABI '+name);
     regions.push([abi[name],size]);
   }
+  if(resumable){
+    const p=abi.phase,fields={active:4,execPc:4,nextPc:4,stage:4,remaining:8,locals:36,temp:8,retired:8};
+    keys(p,['pointer','bytes',...Object.keys(fields)],'phase ABI');
+    integer(p.pointer,0,limit-80,'phase context pointer');
+    if(p.bytes!==80||p.pointer%8)fail('invalid phase context layout');
+    const parts=[];
+    for(const [name,size] of Object.entries(fields)){
+      integer(p[name],p.pointer,p.pointer+80-size,'phase '+name);
+      if(p[name]%(size===8?8:4))fail('unaligned phase '+name);
+      parts.push([p[name],size]);
+    }
+    parts.sort((a,b)=>a[0]-b[0]);
+    if(parts.some((r,i)=>i&&r[0]<parts[i-1][0]+parts[i-1][1]))fail('overlapping phase context fields');
+    regions.push([p.pointer,80]);
+  }
   regions.sort((a,b)=>a[0]-b[0]);
   if(regions.some((r,i)=>i&&r[0]<regions[i-1][0]+regions[i-1][1]))fail('overlapping ABI regions');
 }
-function validateManifest(manifest,flash){
+function validateManifest(manifest,flash,version=PACKAGE_VERSION){
   record(manifest,'manifest');
   if(encoder.encode(canonical(manifest)).length>PACKAGE_LIMITS.manifest)fail('manifest size limit');
   if(manifest.schema!=='micromusic-avr-transpiled-v1'||manifest.device!=='ATtiny13A')fail('unsupported translated manifest/device');
-  validateABI(manifest.abi);
+  const resumable=manifest.executionMode==='resumable-v1';
+  if(Object.hasOwn(manifest,'executionMode')&&(!resumable||version<5))fail('unsupported translated execution mode');
+  validateABI(manifest.abi,resumable);
   if(typeof manifest.optimizeFlags!=='boolean')fail('invalid flag optimization setting');
   integer(manifest.maxBlockInstructions,2,64,'block size');
   if(!Array.isArray(manifest.mapping)||manifest.mapping.length!==512)fail('invalid Flash mapping');
@@ -212,13 +246,15 @@ function validateManifest(manifest,flash){
     if(item?.pc!==pc||item.byteAddress!==pc*2||item.word!==(flash[pc*2]|flash[pc*2+1]<<8))fail('Flash/translation mapping mismatch at word '+pc);
   }
 }
-async function validateCode(translated,runtime,flash,manifest,version=PACKAGE_VERSION){
+async function validateCode(translated,runtime,flash,manifest,version=PACKAGE_VERSION,configuration={}){
   const t=inspectWasm(translated,'translated'),r=inspectWasm(runtime,'runtime');
   const [translatedModule]=await Promise.all([WebAssembly.compile(translated),WebAssembly.compile(runtime)]);
   const sections=WebAssembly.Module.customSections(translatedModule,'micromusic.avr');
   if(sections.length!==1||sections[0].byteLength>PACKAGE_LIMITS.manifest)fail('missing/oversized translated manifest section');
   let embedded;try{embedded=JSON.parse(decoder.decode(sections[0]));}catch{fail('invalid embedded translated manifest');}
-  validateManifest(embedded,flash);
+  validateManifest(embedded,flash,version);
+  const resumable=embedded.executionMode==='resumable-v1';
+  if(resumable!==!!configuration.resumable)fail('configuration/translation execution mode mismatch');
   if(manifest!==undefined&&!equal(manifest,embedded))fail('manifest differs from translated WASM');
   const pages=embedded.abi.memoryPages;
   if(r.imports.length)fail('runtime must not import host functions or memory');
@@ -226,13 +262,14 @@ async function validateCode(translated,runtime,flash,manifest,version=PACKAGE_VE
   if(r.memories.length!==1||t.memories.length!==1||[...r.memories,...t.memories].some(m=>m.min!==pages||m.max!==pages))fail('ABI memory size mismatch');
   if(!r.exports.some(e=>e.name==='memory'&&e.kind===2&&e.index===0))fail('runtime memory export is missing');
   const names=new Set();
+  const requiredBridges={...bridges,...(resumable?phaseBridges:{})};
   for(const item of t.imports){
     if(item.module!=='avr'||names.has(item.name))fail('invalid translated imports');names.add(item.name);
     if(item.kind===2&&item.name==='memory')continue;
-    const target=bridges[item.name],exported=r.exports.find(e=>e.name===target&&e.kind===0);
+    const target=requiredBridges[item.name],exported=r.exports.find(e=>e.name===target&&e.kind===0);
     if(item.kind!==0||!target||!exported||!equal(t.signature(t.imports.filter(i=>i.kind===0).indexOf(item)),bridgeSignatures[item.name])||!equal(bridgeSignatures[item.name],r.signature(exported.index)))fail('ABI function mismatch: '+item.name);
   }
-  if(!equal([...names].sort(),['memory',...Object.keys(bridges)].sort()))fail('incomplete full-device translated imports');
+  if(!equal([...names].sort(),['memory',...Object.keys(requiredBridges)].sort()))fail('incomplete full-device translated imports');
   for(const [name,type] of Object.entries({avr_layout:signature([i32],[i32]),avr_field_name:signature([i32],[i32]),
     avr_device_configure:signature([i32,i32],[i32]),avr_reset:signature([i32,i32])})){
     const exported=r.exports.find(e=>e.name===name&&e.kind===0);
@@ -259,6 +296,21 @@ async function validateCode(translated,runtime,flash,manifest,version=PACKAGE_VE
     const exported=r.exports.find(e=>e.name===name&&e.kind===0);
     if(!exported||!equal(r.signature(exported.index),type))fail('runtime export mismatch: '+name);
   }
+  if(resumable)for(const [name,type] of Object.entries({avr_device_phase_enable:signature([i32],[i32]),
+    avr_device_phase_layout:signature([i32],[i32]),avr_device_phase_active:signature([],[i32])})){
+    const exported=r.exports.find(e=>e.name===name&&e.kind===0);
+    if(!exported||!equal(r.signature(exported.index),type))fail('runtime export mismatch: '+name);
+  }
+  if(configuration.clkiProfile)for(const [name,type] of Object.entries({
+    avr_device_configure_clki:signature([i32,i32],[i32]),avr_device_clki_enabled:signature([],[i32]),
+    avr_device_clki_buffer:signature([],[i32]),avr_device_clki_capacity:signature([],[i32]),
+    avr_device_clki_commit:signature([i32,i64],[i32]),avr_device_clki_horizon_ps:signature([],[i64]),
+    avr_device_clki_count:signature([],[i32]),avr_device_clki_free:signature([],[i32]),avr_device_clki_level:signature([],[i32]),
+    avr_device_clki_status:signature([],[i32]),avr_device_clki_aligned:signature([],[i32]),avr_device_clki_startup_ck:signature([],[i64]),
+  })){
+    const exported=r.exports.find(e=>e.name===name&&e.kind===0);
+    if(!exported||!equal(r.signature(exported.index),type))fail('runtime export mismatch: '+name);
+  }
   for(const [name,type] of Object.entries({step:signature(),block:signature([f64,i32],[i32]),run:signature([i32],[i32]),
     nextDuty:signature([],[i32]),capturePWM:signature([i32,i32],[i32]),runUntil:signature([f64],[i32]),capturePhysical:signature([i32],[i32])})){
     const exported=t.exports.find(e=>e.name===name&&e.kind===0);
@@ -273,7 +325,7 @@ export async function createPackage({flash,eeprom,configuration={},translated,ru
   flash=image(flash,1024,'Flash');eeprom=image(eeprom,64,'EEPROM',true);
   translated=code(translated,PACKAGE_LIMITS.translated,'translated');runtime=code(runtime,PACKAGE_LIMITS.runtime,'runtime');
   configuration=normalizeConfiguration(configuration);
-  manifest=await validateCode(translated,runtime,flash,manifest);
+  manifest=await validateCode(translated,runtime,flash,manifest,PACKAGE_VERSION,configuration);
   const assets=Object.fromEntries(await Promise.all(Object.entries({flash,eeprom,translated,runtime}).map(async([name,bytes])=>[name,await asset(bytes)])));
   const pkg={format:PACKAGE_FORMAT,version:PACKAGE_VERSION,device:'ATtiny13A',
     abi:{id:PACKAGE_ABI,layout:manifest.abi},configuration,manifest,assets};
@@ -287,7 +339,7 @@ export async function decodePackage(json){
   if(json.length>PACKAGE_LIMITS.json||encoder.encode(json).length>PACKAGE_LIMITS.json)fail('JSON size limit');
   let pkg;try{pkg=JSON.parse(json);}catch{fail('invalid JSON');}
   keys(pkg,['format','version','device','abi','configuration','manifest','assets','integrity'],'package');
-  if(pkg.format!==PACKAGE_FORMAT||![1,2,3,PACKAGE_VERSION].includes(pkg.version))fail('unsupported format/version');
+  if(pkg.format!==PACKAGE_FORMAT||![1,2,3,4,PACKAGE_VERSION].includes(pkg.version))fail('unsupported format/version');
   if(pkg.device!=='ATtiny13A')fail('unsupported device');
   keys(pkg.abi,['id','layout'],'ABI');if(pkg.abi.id!==PACKAGE_ABI)fail('unsupported ABI identity');
   const configuration=normalizeConfiguration(pkg.configuration,true,pkg.version);
@@ -299,13 +351,13 @@ export async function decodePackage(json){
     readAsset(pkg.assets.flash,1024,1024,'Flash'),readAsset(pkg.assets.eeprom,64,64,'EEPROM'),
     readAsset(pkg.assets.translated,8,PACKAGE_LIMITS.translated,'translated'),readAsset(pkg.assets.runtime,8,PACKAGE_LIMITS.runtime,'runtime'),
   ]);
-  const manifest=await validateCode(translated,runtime,flash,pkg.manifest,pkg.version);
+  const manifest=await validateCode(translated,runtime,flash,pkg.manifest,pkg.version,configuration);
   if(!equal(pkg.abi.layout,manifest.abi))fail('ABI layout differs from translation');
   return {version:pkg.version,flash,eeprom,translated,runtime,configuration,options:structuredClone(configuration),manifest,abi:pkg.abi,integrity:{...integrity}};
 }
 
 /** Compare the verified descriptor with runtimeABI(instance.exports) before linking. */
 export function assertPackageRuntimeABI(decoded,actualABI){
-  validateABI(actualABI);
+  validateABI(actualABI,!!decoded.configuration?.resumable);
   if(!equal(decoded.abi?.layout,actualABI))fail('instantiated runtime ABI layout mismatch');
 }

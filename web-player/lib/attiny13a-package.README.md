@@ -1,4 +1,4 @@
-# ATtiny13A package format v4
+# ATtiny13A package format v5
 
 `attiny13a-package.js` creates and verifies a self-contained initial device image.
 It has no Node imports and uses asynchronous WebCrypto SHA-256, so the same
@@ -24,7 +24,7 @@ const decoded = await decodePackage(savedJSON);
 translation's embedded `micromusic.avr` manifest. No files or URLs are referenced
 by the saved package.
 
-The envelope identifies format `micromusic-attiny13a-package`, version `4`,
+The envelope identifies format `micromusic-attiny13a-package`, version `5`,
 device `ATtiny13A`, and ABI `micromusic-attiny13a-device-v1`. Each of the four
 binary assets records its length, canonical base64 and SHA-256. The envelope
 hash covers all fields except `integrity`, including configuration, manifests
@@ -42,13 +42,20 @@ Limits are 1024-byte Flash, 64-byte EEPROM, 4 MiB translation, 2 MiB runtime,
 512 KiB embedded manifest and 16 MiB JSON. These are format limits, not device
 performance promises.
 
-The decoder also accepts versions 1, 2 and 3 with their original configuration and
+The decoder also accepts versions 1, 2, 3 and 4 with their original configuration and
 runtime contracts. Version 2 added the physical-clock bridge and calibration
 profile. Version 3 added the optional supply profile and its bridge exports.
-Version 4 adds an optional analog RESET input profile and four receiver bridge
-exports. Historical versions do not require these new fields or exports;
+Version 4 added an optional analog RESET input profile and four receiver bridge
+exports. Version 5 adds `resumable:false` and `clkiProfile:null`; historical
+versions omit both fields and retain their earlier execution/import contracts.
+Historical versions do not require these new fields or exports;
 retained original v1/v3 runtimes exercise that compatibility.
-The generated CPU instruction/import ABI is unchanged.
+Resumable translations declare `executionMode:'resumable-v1'`, an80-byte `phase`
+context in the ABI, and three additional imports: `phaseClock(f64)->i32`,
+`phaseDeadline(f64)->void`, `phaseRetire()->void`. The loader validates context
+field alignment, bounds and nonoverlap with each other and the other ABI regions,
+matching execution mode/configuration, and native phase enable/layout/active
+signatures. Nonresumable translations retain the earlier import set.
 The original v1 runtime lacks three later configuration keys and four state
 observers. Its loader accepts only the historical defaults for unsupported keys
 (60000ns BOD recovery, factory CAL0, zero-delay startup); unsupported nondefault
@@ -62,7 +69,8 @@ unknown packages still means loading executable WASM.
 The declared C data layout cannot be inferred from arbitrary WASM function
 bodies without executing them. After verifying the package, the integrating
 loader must instantiate its runtime and call
-`assertPackageRuntimeABI(decoded, runtimeABI(runtimeInstance.exports))` before
+`assertPackageRuntimeABI(decoded, runtimeABI(runtimeInstance.exports,
+{resumable:!!decoded.options.resumable}))` before
 constructing the translated instance. This checks the live state offsets,
 memory regions and device marker against the translation. The package API
 does not instantiate the device, change default engine selection, or fetch an
@@ -111,6 +119,8 @@ it does not assert complete silicon behavior or measured oscillator calibration.
 | `nvmCalibrationReferenceHz` | 0 | 0 unspecified, otherwise1–1000000000 |
 | `powerResetProfile` | null | null, or the complete explicit profile below |
 | `resetInputProfile` | null | null, or the complete six-field RESET receiver profile below |
+| `resumable` | false | boolean; optional CPU continuation mode, requiring physical time |
+| `clkiProfile` | null | null, or the exact digital fixture described below |
 
 A non-null `osccalHz` table selects a physical picosecond clock domain. Its
 factory CAL entry must be supplied and, for the internal calibrated RC source,
@@ -132,7 +142,7 @@ Physical audio capture keeps its sample grid independent of CAL and CLKPR.
 Its native WASM execution uses relative deadlines per host batch while storing
 absolute time as integers, preserving precision beyond2^53 picoseconds.
 
-The optional power profile requires `osccalHz` and all nine fields:
+The optional power profile requires physical time (`osccalHz` or `clkiProfile`) and all nine fields:
 `porAssertMicrovolts`, `porReleaseMicrovolts`, `bod00Microvolts`,
 `bod01Microvolts`, `bod10Microvolts`, `bodHysteresisMicrovolts`, `bodFilterNs`,
 `bodRecoveryNs` and `flashProgrammingMinMicrovolts`. Thresholds are positive
@@ -143,7 +153,7 @@ No analog thresholds are supplied as hidden defaults. See
 [`device-power.md`](../native/peripherals/device-power.md) for the exact digital
 qualification, reset aggregation, sleep and programming contracts.
 
-The optional `resetInputProfile` requires physical time (`osccalHz`) and DWEN
+The optional `resetInputProfile` requires physical time (`osccalHz` or `clkiProfile`) and DWEN
 unprogrammed. It has exactly six fields: `assertThresholdPpm`,
 `releaseThresholdPpm`, `assertQualificationNs`, `releaseQualificationNs`,
 `assertPropagationNs` and `releasePropagationNs`. Thresholds satisfy
@@ -161,7 +171,7 @@ profile is only needed when changing VCC, rather than for a fixed supply.
 WASM, contributes to the scheduler's minimum deadline and feeds shared reset
 hold/startup without per-edge JS calls. For the selected model and manufacturer
 limits see [`reset_input.md`](../native/devices/attiny13a/reset_input.md).
-The preserved original v3 runtime predates this receiver; only a v4 package
+The preserved original v3 runtime predates this receiver; only a v4 or later package
 may carry its profile.
 
 With this profile, initial `vccMicrovolts` may be zero. Queue supply changes with
@@ -173,6 +183,58 @@ operation below 1.9V, or Flash programming below the explicit selected boundary,
 stops with an uncertainty diagnostic and preserves the last known bytes instead
 of committing an invented result. The package remains an initial image, not a
 snapshot of in-flight operations or queued external inputs.
+
+## Resumable CPU and digital CLKI stream
+
+`resumable:true` enables instructions to stop at a physical deadline and resume
+their latched operands/read results and stack phases on the next `runUntilPs`.
+The supplied translation must have the matching execution mode and phase ABI.
+Internal oscillator use still requires an explicit `osccalHz` table.
+
+The only accepted external fixture is
+`clkiProfile:{phasePolicy:'digital-noninverting-zero-seed-v1',initialLevel:0}`
+(or initial level1). It requires `resumable:true` and CKSEL00 (`fuseLow&3===0`).
+This profile selects physical time independently of `osccalHz`; no dummy
+calibration table or predicted clock period is needed. It is a logical input
+fixture, with no claim about electrical pulse validity or undocumented silicon
+startup phase. Packages using it must supply the complete native CLKI bridge
+with the checked signatures. A package stores the initial profile, not a saved
+edge queue or continuation.
+
+Raw constructor/writer input may additionally select
+`electricalValidation:'none'|'datasheet-ideal-v1'`. Omitting it means `none`;
+the saved v5 profile always includes this third field. The optional ideal-digital
+qualification assumes zero slew and checks the selected datasheet voltage tier's
+period/high/low minima and both period/frequency interpretations of the2% rule.
+It is not an analog receiver or measured-clock guarantee. Enabling it requires
+the native runtime to accept CLKI configuration field2; unsupported runtimes
+reject the profile during initialization rather than silently disabling checks.
+
+Submit edges with
+`injectClkiPs({edges:[{timePs:100000n,level:1}],knownUntilPs:200000n})`.
+Timestamps are uint64 picoseconds, excluding UINT64_MAX. The inclusive known
+horizon cannot move backward; new alternating edges must be strictly later
+than the previously published horizon and lie within the new horizon. An empty
+batch extends a known high/low hold. The host validates the batch, copies it into
+a bounded512-edge staging buffer, and commits once in C/WASM. `false` reports
+backpressure without accepting a partial batch or horizon; malformed input
+throws. There are no per-edge JS callbacks while executing the CPU.
+
+`runUntilPs` returns the number of retired instructions. If the known-input
+horizon is exhausted it returns normally at that earlier time; `state().clki`
+reports `WAIT_INPUT`. It also exposes `horizonPs`, `level`, `queued`, `free`,
+`status` (`COMPLETE`, `WAIT_CLOCK`, `WAIT_INPUT`), `aligned` and BigInt `startupCK`.
+Extend the horizon/edges and call again to continue. Bounded physical audio
+capture preflights the entire requested sample interval; insufficient input
+throws an explicit `CLKI WAIT_INPUT` before changing CPU/audio state.
+
+With CLKI selected, use bounded `runUntilPs`; unbounded `step`, `run`, `clock`,
+`interrupt` and `runBlock` are rejected. Host EEPROM EERE/EEPE command writes
+are rejected before execution; firmware can perform those operations with its
+normal resumable stalls. EEPROM address/data and EEMPE setup remain available.
+PB3 belongs to the CLKI stream, so separate digital/analog PB3 injection is
+rejected. Explicit power and RESET receiver profiles remain available without
+an RC table; programming still requires its explicit timing profile.
 
 ## CLI
 
