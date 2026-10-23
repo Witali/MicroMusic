@@ -90,6 +90,17 @@ upper bound for arbitrary speech parameters. Every fitted phrase still needs
 its own timing verification. The selected full quality-study phrase has135
 cycles of slack at1022 Flash +64 EEPROM bytes.
 
+A second comparison uses the same550-byte full-phrase stream and EEPROM for
+both profiles: stage-selected1010 Flash bytes /136 cycles of slack versus
+unrolled1022 /114. All66,816 phrase-and-silence samples are identical in all
+three engines. The literal three-bit,16-bit Horner adaptation also has a
+measured cost: **24 additional code bytes**. At coefficient magnitude1 the
+old loop takes26–27 cycles and Horner38–39; at magnitude7 the loop takes56–57
+and Horner38–39. Those routine timings include RET; add3 for RCALL. The
+[reproducible benchmark](../research/q3-kmap-avr-qualification/music-unroll.json)
+contains92,160 arithmetic checks for the literal adaptation. These isolated
+checks do not establish a complete-player deadline for that larger variant.
+
 The practical rule is to measure both branches: a loop-free small product is
 useful, but preserving a cheap specialized path can save both bytes and cycles.
 The [qualification report](../research/q3-kmap-avr-qualification/report.json)
