@@ -98,9 +98,8 @@ random_skip:
  clr r25
  sbrc r24,7
  ser r25
- clr r16
- sbrc r17,7
- ser r16
+ /* Rounded estimator is bounded by [-128,127]; its sign is still in C. */
+ sbc r16,r16
  sub r24,r17
  sbc r25,r16
  add r18,r24
@@ -143,10 +142,10 @@ center:
  mov r3,r5
  ldi r16,1
  cp r15,r16
- brne next_frame
- rjmp wait
+ breq no_next_frame
 next_frame:
  rcall read_frame
+no_next_frame:
  rjmp wait
 
 restart:
@@ -199,7 +198,10 @@ render:
  push r17
  mov r20,r16
  andi r16,0x70
- breq base_zero
+ brne base_wave
+ clr r24
+ rjmp residual
+base_wave:
  /* Packed 4-bit wave lookup, with wrapping inside each 32-tap word. */
  mov r30,r20
  andi r30,15
@@ -244,18 +246,16 @@ wave_pair:
  andi r21,0xf0
  add r24,r21
  subi r24,128
- rjmp base_gain
-base_zero:
- clr r24
- rjmp residual
 base_gain:
  mov r22,r20
  swap r22
  andi r22,7
  cpi r22,7
  breq residual
+.if ENABLE_GAIN6
  cpi r22,6
  breq gain_three_quarters
+.endif
  ldi r16,6
  sub r16,r22
  mov r22,r16
@@ -267,6 +267,7 @@ gain_shift:
   * DEC/BRNE preserve carry. Voiced wave amplitude is bounded by 112. */
  adc r24,r0
  rjmp residual
+.if ENABLE_GAIN6
 gain_three_quarters:
  mov r18,r24
  subi r24,-1
@@ -274,15 +275,14 @@ gain_three_quarters:
  asr r24
  sub r18,r24
  mov r24,r18
+.endif
 residual:
  pop r17
- mov r22,r17
- andi r22,15
+ tst r17
  breq render_done
  push r24
  rcall high_noise
  mov r22,r17
- andi r22,15
  mov r18,r24
  mov r19,r25
  rcall multiply
@@ -398,7 +398,6 @@ read_gain:
  mov r4,r16
 read_level:
  mov r16,r5
- andi r16,15
  ldi r22,4
  rcall changed
  mov r5,r16
