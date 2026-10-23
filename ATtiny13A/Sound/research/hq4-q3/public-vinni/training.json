@@ -1864,7 +1864,7 @@
       ]
     }
   ],
-  "avr_assembled": false,
+  "avr_assembled": true,
   "objective": "stoi - .35*spectrogram_loss",
   "initialization_trials_count": 166,
   "initialization_trials_retention": "Only selected initialization settings/metrics and accepted search history retained",
@@ -1878,5 +1878,6 @@
   "reference": "web-player/audio/originals/vinni.wav",
   "resume_model": "ATtiny13A/Sound/research/hq4-q3/public-vinni/seed-model.json",
   "actual_avr_status": "verified",
-  "initial_seed_note": "Seed frozen after a separate 6000-proposal legacy-objective Q3-T1 trial; final fitting resumes from this exact model"
+  "initial_seed_note": "Seed frozen after a separate 6000-proposal legacy-objective Q3-T1 trial; final fitting resumes from this exact model",
+  "build_report": "build.json"
 }

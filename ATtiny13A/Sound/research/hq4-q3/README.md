@@ -59,3 +59,37 @@ real speech spectrum. A separate first-stage coefficient map might extend the
 negative range further, but needs its own integer-precision, code-size, cycle,
 and quality study. This trial does not change that mapping or claim that it
 would solve the remaining rough excitation.
+
+## Tail voice under the composite decoder's 430-byte budget
+
+The final “vhodit i vyhodit” excerpt keeps its preceding bell. Only the 12800
+voice samples starting at sample 6528 are refitted here; bell level, frequencies,
+and timing belong to the separate composite experiment.
+
+The initial Q3 model comes from the latest 430-byte Q4-T1 voice: divide each
+reflection coefficient by two, quantize to the nearest Q3 coefficient, then fit
+6000 seeded joint proposals. Pitch, gain, frame boundaries, and coefficients
+remain searchable. The final 430-byte stream has zero wraps and steps, peak 57.
+
+| Measurement | Previous 430-byte Q4-T1 voice | Q3-T1 voice |
+|---|---:|---:|
+| Spectrogram loss | 0.617131 | 0.538359 |
+| Fine log error | 0.648469 | 0.602608 |
+| Mel-envelope error | 0.680350 | 0.548592 |
+| Unsupported energy | 0.270521 | 0.186957 |
+| Missing energy | 0.262232 | 0.189754 |
+| STOI | 0.825079 | 0.836672 |
+| eSTOI | 0.519951 | 0.550572 |
+
+This candidate improves both intelligibility proxies and all four spectral
+components over the previous voice at the same data budget. Its `training.json`
+distinguishes that comparison from the older plain-Q4 voice used as input. The
+full bell+voice image still needs its own actual AVR and timing report; the
+430-byte data fit alone does not certify the composite firmware.
+
+Reproduce after preparing the external source excerpt described in the retained
+`natural-timbre/tail-voice-430/input.json`:
+
+```powershell
+python tools/probe-hq4-q3.py --reference build/new-speech/bell-hybrid/voice-reference.wav --stream ATtiny13A/Sound/research/natural-timbre/baseline-voice/speech.hq --resume-model ATtiny13A/Sound/research/hq4-q3/tail-voice/seed-model.json --output build/hq4-q3/tail-reproduce --proposals 6000 --tilt-shift 1 --spectrogram --stream-budget 430
+```
