@@ -1,0 +1,35 @@
+{
+  "schema": "avr-unrolled-music-scale-v1",
+  "source": "ATtiny13A/Music/variants/alicia/synth.S",
+  "source_sha256_normalized_lf": "36c882fcbf760dda9217cee7c6fcf766efbca730943c0bb6eaa44c6c5c721121",
+  "extracted_section_sha256": "14459e0237fc5504f382e2803673eae41901576feea0459d8bd6f34a66268602",
+  "binary_sha256": "e9a93d2008acf1d8a2c7aaf1ce9514d202659c8ecc08908d81408f2d307ed89b",
+  "code_bytes_including_ret": 30,
+  "words_including_ret": 15,
+  "exact_integer_function": "floor(wave*gain/4), wave=-8..7, gain=0..15",
+  "verification": {
+    "engines": [
+      "reference",
+      "wasm",
+      "wasm-unoptimized"
+    ],
+    "in_domain_cases": 2304,
+    "outside_domain_counterexamples": 3,
+    "min_body_cycles_including_ret": 18,
+    "max_body_cycles_including_ret": 18,
+    "rcall_cycles": 3,
+    "standalone_abi": {
+      "input_wave": "r17",
+      "input_gain": "r25",
+      "output": "r17",
+      "clobbers": [
+        "r0",
+        "r17",
+        "SREG"
+      ]
+    },
+    "pass": true
+  },
+  "limits": "No complete-player/ISR timing claim; 8-bit product is unsafe for unrestricted speech samples",
+  "probe_source_sha256_normalized_lf": "d0042709926814c53d8bae5653064cc197efccf2e3e24a3c9b760b9c861dcede"
+}

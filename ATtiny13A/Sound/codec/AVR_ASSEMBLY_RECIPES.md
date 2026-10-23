@@ -19,6 +19,60 @@ No third-party source archive is copied into this repository. The routines are
 design references; exact ranges, rounding and available instructions determine
 whether an implementation can replace ours.
 
+## Recipe: unrolled small multiplication from our music firmware
+
+Source: [`Alicia render_tone, .L25c`](../../Music/variants/alicia/synth.S),
+generated from [`tools/alicia-native-template.S`](../../../tools/alicia-native-template.S).
+This is the existing music routine identified by the user, not a newly invented
+general multiplier. It evaluates the gain bits from most to least significant
+using Horner's rule: double the partial result, then conditionally add the
+original sample. Unrolling removes the loop counter and backward branch.
+
+```asm
+/* Input r17: signed wave -8..7; r25: unsigned gain 0..15.
+ * Output r17 = floor(wave*gain/4). Clobbers r0, r17, SREG; preserves r25.
+ * All intermediate products fit signed8 bits within these exact bounds. */
+ mov r0, r17
+ sbrs r25, 3
+ clr r17
+ lsl r17
+ sbrc r25, 2
+ add r17, r0
+ lsl r17
+ sbrc r25, 1
+ add r17, r0
+ lsl r17
+ sbrc r25, 0
+ add r17, r0
+ asr r17
+ asr r17
+ ret
+```
+
+The actual extracted source assembles to **15 words /30 bytes including RET**.
+All **2304** in-domain cases (16 samples ×16 gains ×3 initial flag states
+×3 engines) match independent integer arithmetic. The isolated body takes
+**18 cycles including RET**, or21 cycles with one RCALL. This excludes waveform
+lookup, surrounding synthesis and interrupt costs. Each skip covers exactly
+one single-word instruction, so these conditional pairs have equal timing.
+The measured [report](../research/avr-music-scale/report.json) fingerprints both
+the original source and extracted binary. Reproduce it with:
+
+```text
+python tools/probe-avr-music-scale.py --avr-bin <AVR-bin> --node <Node-executable>
+```
+
+The reusable idea is the bounded, unrolled shift/add structure. Copying this
+8-bit body into the speech lattice is incorrect: for sample100 and gain15 it
+wraps and returns-9 instead of375 after scaling. The probe executes this
+counterexample in all three engines as well. Speech needs a wide intermediate,
+the existing signed-byte NEG convention (including-128), and the appropriate
+Q3/Q7 rounding rule. Use ADD/ADC and LSL/ROL pairs or another proven wide
+product implementation. Unrolling can also increase Flash and slow small
+coefficients compared with repeated addition; compare the complete player and
+data budget before selecting it. Our subsequent Kmap experiment measures
+unrolled Q7 separately from the smaller stage-selected Q3/Q7 implementation.
+
 ## Changes that preserve the decoded bytes
 
 - **Round using the last discarded bit.** After a signed ASR/ROR loop, carry
