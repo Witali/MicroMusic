@@ -12,7 +12,8 @@ const catalog=JSON.parse(readFileSync(new URL('../firmware.json',import.meta.url
 const speech=JSON.parse(readFileSync(new URL('../hq4-firmware.json',import.meta.url)));
 const controls={cutoff:9000,volume:.65},rate=48000,seconds=1,trials=5;
 class AllFlags extends AVRCore{constructor(rom,eeprom){super(rom,eeprom,{optimizeFlags:false});}}
-const make=(engine,entry)=>engine==='interpreter'?new NativeRenderer(entry,rate,controls):engine==='unbuffered'?new AudioRenderer(entry,rate,controls,AVRCore):new BufferedRenderer(entry,rate,controls,engine==='translated'?AVRCore:AllFlags);
+class NoIdle extends AVRCore{constructor(rom,eeprom){super(rom,eeprom,{fastIdle:false});}}
+const make=(engine,entry)=>engine==='interpreter'?new NativeRenderer(entry,rate,controls):engine==='unbuffered'?new AudioRenderer(entry,rate,controls,AVRCore):new BufferedRenderer(entry,rate,controls,engine==='allFlags'?AllFlags:engine==='noIdle'?NoIdle:AVRCore);
 function execute(renderer){
   const start=performance.now();let checksum=0;
   for(let n=0;n<rate*seconds;n+=4096){const output=renderer.render(Math.min(4096,rate*seconds-n));checksum+=output[output.length-1];}
@@ -20,7 +21,7 @@ function execute(renderer){
 }
 const median=values=>values.sort((a,b)=>a-b)[values.length>>1],results=[];
 for(const entry of [...catalog.entries,...speech.entries]){
-  const engines=['interpreter','translated','allFlags','unbuffered'],samples=Object.fromEntries(engines.map(e=>[e,[]])),construction=[];
+  const engines=['interpreter','translated','allFlags','unbuffered','noIdle'],samples=Object.fromEntries(engines.map(e=>[e,[]])),construction=[];
   for(const engine of engines)execute(make(engine,entry));
   let generated;
   for(let trial=0;trial<trials;trial++){
@@ -36,15 +37,15 @@ for(const entry of [...catalog.entries,...speech.entries]){
       assert.deepEqual(result.renderer.core.rawSamples,measured[0].renderer.core.rawSamples);
     }
   }
-  const interpreterMs=median(samples.interpreter),translatedMs=median(samples.translated),allFlagsMs=median(samples.allFlags),unbufferedMs=median(samples.unbuffered);
+  const interpreterMs=median(samples.interpreter),translatedMs=median(samples.translated),allFlagsMs=median(samples.allFlags),unbufferedMs=median(samples.unbuffered),noIdleMs=median(samples.noIdle);
   results.push({id:entry.id,flashSha256:entry.flashSha256,eepromSha256:entry.eepromSha256,
-    interpreterMs,translatedMs,allFlagsMs,unbufferedMs,translationSpeedup:interpreterMs/translatedMs,flagEliminationSpeedup:allFlagsMs/translatedMs,bufferingSpeedup:unbufferedMs/translatedMs,
+    interpreterMs,translatedMs,allFlagsMs,unbufferedMs,noIdleMs,translationSpeedup:interpreterMs/translatedMs,flagEliminationSpeedup:allFlagsMs/translatedMs,bufferingSpeedup:unbufferedMs/translatedMs,idleAccelerationSpeedup:noIdleMs/translatedMs,
     realtimeHeadroom:1000/translatedMs,constructionMs:median(construction),moduleBytes:generated.transpiledBytes.length,...generated.transpilation.stats});
 }
 const hash=path=>createHash('sha256').update(readFileSync(new URL(path,import.meta.url),'utf8').replaceAll('\r\n','\n')).digest('hex');
 const report={runtime:process.version,platform:platform(),arch:arch(),cpu:cpus()[0].model,sampleRate:rate,seconds,trials,controls,
   sources:Object.fromEntries(['../lib/avr-transpiler.js','../lib/avr-transpiled.js','../lib/renderer-transpiled.js','../lib/renderer-js.js','../native/avr.c','./benchmark-transpiler.mjs'].map(p=>[p,hash(p)])),
   runtimeSha256:createHash('sha256').update(readFileSync(new URL('../wasm/avr.wasm',import.meta.url))).digest('hex'),
-  method:'Median of five warmed alternating runs rendering one emulated second at 48 kHz. Execution excludes construction/generation/compilation, reported separately. Interpreter uses production C/WASM CPU/DSP; translated variants use generated WASM CPU and shared C/WASM peripherals with JS DSP. Buffered variants capture exactly the PWM frames consumed by each audio block, up to 4096 per call; unbuffered returns to JS per PWM frame. All variants have equal cycles, full memory, IRQ counters and raw PCM, with filtered checksums within 2e-6. Flag and buffering ratios each compare otherwise identical translated pipelines. No idle-loop skipping in translated variants. Node measurements are not a browser speed guarantee.',results};
+  method:'Median of five warmed alternating runs rendering one emulated second at 48 kHz. Execution excludes construction/generation/compilation, reported separately. Interpreter uses production C/WASM CPU/DSP; translated variants use generated WASM CPU and shared C/WASM peripherals with JS DSP. Buffered variants capture exactly the PWM frames consumed by each audio block, up to 4096 per call; unbuffered returns to JS per PWM frame. All variants have equal cycles, full memory, IRQ counters and raw PCM, with filtered checksums within 2e-6. Flag, buffering and idle-acceleration ratios each compare otherwise identical translated pipelines. Both production pipelines use the C/WASM wait-loop accelerator; noIdle disables it only in the translated variant. Node measurements are not a browser speed guarantee.',results};
 writeFileSync(new URL('../reports/transpiler-benchmark.json',import.meta.url),JSON.stringify(report,null,2)+'\n');
-console.table(results.map(r=>({firmware:r.id,C_WASM_ms:r.interpreterMs.toFixed(2),buffered_ms:r.translatedMs.toFixed(2),unbuffered_ms:r.unbufferedMs.toFixed(2),buffer_gain:r.bufferingSpeedup.toFixed(2)+'x',flags_gain:r.flagEliminationSpeedup.toFixed(2)+'x',vs_interpreter:r.translationSpeedup.toFixed(2)+'x',realtime:r.realtimeHeadroom.toFixed(1)+'x'})));
+console.table(results.map(r=>({firmware:r.id,C_WASM_ms:r.interpreterMs.toFixed(2),buffered_ms:r.translatedMs.toFixed(2),unbuffered_ms:r.unbufferedMs.toFixed(2),buffer_gain:r.bufferingSpeedup.toFixed(2)+'x',flags_gain:r.flagEliminationSpeedup.toFixed(2)+'x',idle_gain:r.idleAccelerationSpeedup.toFixed(2)+'x',vs_interpreter:r.translationSpeedup.toFixed(2)+'x',realtime:r.realtimeHeadroom.toFixed(1)+'x'})));

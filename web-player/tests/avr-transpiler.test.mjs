@@ -43,7 +43,7 @@ test('all 123 official forms have a lowering, documented timing/flags and explic
     assert.equal(actual.sreg&~entry.sregMask,0x73&~entry.sregMask,entry.form+' preserved flags');
   }
   const imports=WebAssembly.Module.imports(new WebAssembly.Module(actual.transpiledBytes));
-  assert.deepEqual(imports.map(i=>i.name),['memory','clock','interrupt','writeIO']);
+  assert.deepEqual(imports.map(i=>i.name),['memory','clock','interrupt','writeIO','idle']);
 });
 
 test('all byte pairs for ADD/ADC/SUB/CP and all input flags for unary shifts match independent execution',()=>{
@@ -125,7 +125,7 @@ test('CLI output validates and executes with the recorded ABI, Flash and provena
     const rom=parseHex(readFileSync(input,'utf8')),runtime=new AVRCore(rom),reference=new Reference(rom,null,{fastIdle:false});
     assert.deepEqual(report.abi,runtimeABI(runtime._exports));
     const exported=new WebAssembly.Instance(new WebAssembly.Module(generated),{avr:{memory:runtime._exports.memory,
-      clock:runtime._exports.avr_clock,interrupt:runtime._exports.avr_interrupt,writeIO:runtime._exports.avr_write_io}}).exports;
+      clock:runtime._exports.avr_clock,interrupt:runtime._exports.avr_interrupt,writeIO:runtime._exports.avr_write_io,idle:runtime._exports.avr_idle}}).exports;
     exported.run(100);for(let i=0;i<100;i++)reference.step();sameCPU(runtime,reference);
   }finally{
     for(const path of [output,output+'.json'])try{unlinkSync(path);}catch(error){if(error.code!=='ENOENT')throw error;}

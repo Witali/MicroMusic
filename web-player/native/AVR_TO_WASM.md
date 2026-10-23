@@ -142,8 +142,8 @@ node web-player/scripts/transpile-avr.mjs ATtiny13A/Music/variants/lumiere-stere
 node --test web-player/tests/avr-transpiler.test.mjs
 ```
 
-The emitted module imports `avr.memory`, `avr.clock`, `avr.interrupt` and
-`avr.writeIO`; those functions are WASM exports from `wasm/avr.wasm`, not JS
+The emitted module imports `avr.memory`, `avr.clock`, `avr.interrupt`,
+`avr.writeIO` and `avr.idle`; those functions are WASM exports from `wasm/avr.wasm`, not JS
 instruction callbacks. The module exports `step()`,
 `block(f64 deadline, i32 instructionLimit) -> i32`,
 `run(i32 instructionLimit) -> i32` and `nextDuty() -> i32`.
@@ -167,6 +167,16 @@ construction/compilation from warmed execution and compare both flags-on
 and flags-eliminated runs with equal AVR timing and output.
 Static optimization counts cover all potential code entries, including
 decodable data words; they are not weighted by actual execution frequency.
+
+For the existing player's Timer0-only interrupt profile, `nextDuty` and PWM
+capture also reuse the C/WASM wait-loop accelerator. It recognizes self-jumps,
+T-bit wait branches and the player's five-instruction arithmetic wait loop,
+advancing by whole loop iterations to the Timer0 boundary with the same
+registers, flags and elapsed AVR cycles. It does not execute an opcode
+interpreter or call JavaScript. `fastIdle:false` disables it; instruction-counted
+`run` and `step` always execute the requested instructions. The accelerator's
+deadline/IRQ assumptions must be replaced by the full peripheral scheduler
+before enabling additional interrupt sources in this playback path.
 
 ## MCU instruction/device boundary
 

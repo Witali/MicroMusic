@@ -32,6 +32,7 @@ const asFloat = value => bytes(value,0xb7);
 const asInt = value => bytes(value,0xaa);
 const call = (index,...args) => bytes(args,0x10,uleb(index));
 const condition = (test,yes,no=[]) => bytes(test,0x04,0x40,yes,no.length ? bytes(0x05,no) : [],0x0b);
+const conditionValue = (test,yes,no) => bytes(test,0x04,0x7f,yes,0x05,no,0x0b);
 const sign = (v,bit) => v & bit ? v - 2*bit : v;
 const width = w => (w&0xfe0f)===0x9000 || (w&0xfe0f)===0x9200 || (w&0xfe0e)===0x940c || (w&0xfe0e)===0x940e ? 2 : 1;
 
@@ -90,7 +91,7 @@ export function runtimeABI(exports) {
     const start=exports.avr_field_name(i);let end=start;while(data[end])end++;
     state[decoder.decode(data.subarray(start,end))]=exports.avr_layout(0)+8*i;
   }
-  return {state,data:exports.avr_layout(4),rom:exports.avr_layout(2),frames:exports.avr_layout(11),pwm:exports.avr_layout(13)};
+  return {state,data:exports.avr_layout(4),rom:exports.avr_layout(2),idle:exports.avr_layout(10),frames:exports.avr_layout(11),pwm:exports.avr_layout(13)};
 }
 
 const writes={ADD:63,ADC:63,SUB:63,CP:63,CPI:63,SUBI:63,NEG:63,SBC:63,SBCI:63,CPC:63,ADIW:31,SBIW:31,BST:64,AND:30,ANDI:30,OR:30,ORI:30,EOR:30,INC:30,DEC:30,COM:31,LSR:31,ASR:31,ROR:31};
@@ -117,8 +118,8 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   const fail=(code,result=false)=>bytes(put('error',constant(code)),result?constant(0):[],0x0f);
   const guard=()=>condition(state('error'),[0x0f]);
   // Runtime imports are WASM functions, not JS callbacks. None execute opcodes.
-  const imports=[['clock',0],['interrupt',1],['writeIO',2]];
-  const CLOCK=0, IRQ=1, IO=2, firstFunction=imports.length;
+  const imports=[['clock',0],['interrupt',1],['writeIO',2],['idle',5]];
+  const CLOCK=0, IRQ=1, IO=2, IDLE=3, firstFunction=imports.length;
   const clock=value=>bytes(call(CLOCK,asFloat(value)),guard());
   const finish=()=>bytes(guard(),put('pc',and(state('pc'),constant(511))),clock(get(7)),call(IRQ));
 
@@ -342,11 +343,14 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     set(2,call(BLOCK,float(Infinity),sub(get(0),get(1)))),
     condition(state('error'),[0x0c,2]),condition(eqz(get(2)),bytes(call(STEP),set(2,constant(1)))),
     set(1,add(get(1),get(2))),condition(state('error'),[0x0c,2]),0x0c,0,0x0b,0x0b,get(1));
-  const next=bytes(put('error',constant(0)),set(0,stateF('writes')),set(1,binary(0xa0,stateF('cyc'),float(9600000))),
+  const next=bytes(put('error',constant(0)),condition(or(lt(state('pc'),constant(0)),ge(state('pc'),constant(512))),fail(1,true)),
+    set(0,stateF('writes')),set(1,binary(0xa0,stateF('cyc'),float(9600000))),
     0x02,0x40,0x03,0x40,
     condition(binary(0x62,stateF('writes'),get(0)),[0x0c,2]),
     condition([0x23,0],bytes(constant(0),0x0f)),
-    condition(eqz(call(BLOCK,get(1),constant(2147483647))),call(STEP)),
+    // Reuse only the audited WASM wait-loop accelerator, never its opcode
+    // executor. This legacy peripheral profile has one Timer0 IRQ source.
+    condition(eqz(conditionValue(and(state('fastIdle'),eqz(eqz(load8(add(constant(abi.idle),state('pc')))))),call(IDLE),constant(0))),condition(eqz(call(BLOCK,get(1),constant(2147483647))),call(STEP))),
     condition(state('error'),bytes(constant(0),0x0f)),
     condition(binary(0x64,stateF('cyc'),get(1)),fail(23,true)),0x0c,0,0x0b,0x0b,state('duty'));
   // Collect OCR0A/OCR0B duty frames into a dedicated byte region of WASM

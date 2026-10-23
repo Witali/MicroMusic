@@ -6,13 +6,13 @@ const littleEndian=new Uint8Array(Uint16Array.of(1).buffer)[0]===1;
 // use the existing C/WASM peripheral runtime, sharing its linear memory.
 export class AVRCore extends PeripheralRuntime {
   constructor(binary,eeprom,options={}) {
-    super(binary,eeprom,{fastIdle:false,fastBlocks:false});
+    super(binary,eeprom,{fastIdle:options.fastIdle??true,fastBlocks:false});
     const generated=transpileAVR(binary,runtimeABI(this._exports),options);
     this.transpilation=generated.manifest;
     this.transpiledBytes=generated.bytes;
     this._translated=new WebAssembly.Instance(new WebAssembly.Module(generated.bytes),{avr:{
       memory:this._exports.memory,clock:this._exports.avr_clock,
-      interrupt:this._exports.avr_interrupt,writeIO:this._exports.avr_write_io,
+      interrupt:this._exports.avr_interrupt,writeIO:this._exports.avr_write_io,idle:this._exports.avr_idle,
     }}).exports;
     this._bridges=Object.fromEntries(Object.entries(this._translated).filter(([,fn])=>typeof fn==='function').map(([name,fn])=>[name,{...this._exports,translated:fn}]));
     const pwm=generated.manifest.abi.pwm;
@@ -46,7 +46,7 @@ export class AVRCore extends PeripheralRuntime {
     return this._execute('run',instructions);
   }
   runBlock(deadline=Infinity){return!!this._execute('block',deadline,0x7fffffff);}
-  skipIdle(){return false;}
+  skipIdle(){return this.fastIdle&&!!this._call('avr_idle');}
   nextDuty(){return this._execute('nextDuty');}
   capturePWM(count,channels=1){
     if(!Number.isInteger(count)||count<0||count>1048576||![1,2].includes(channels))throw new Error('Invalid PWM capture size or channels');
