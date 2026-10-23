@@ -85,15 +85,16 @@ binary measurements. Vendor and R4 files remain unmodified.
   corpus maximum 333,531 cycles and pitch-coverage maximum 334,106 cycles;
   it trades a small C cycle cost for code/SRAM savings. Independent raw pitch
   checks cover 1,966,080 packed outputs and all counts/modes; innovation checks
-  include unsanitized pitch extrema and both clamp boundaries. Full new PWM
-  gate and final C hot-loop selection remain pending for this series.
+  include unsanitized pitch extrema and both clamp boundaries. All 31 packed
+  ASM players pass with 128,000 extra cycles/frame, zero underruns, minimum
+  queue 27 and 524 B free SRAM (reports/nb-round5-headroom40.json).
 - C-only hot loops and zero gain: applying the existing AVR `-O3` function
   attribute to packed pitch and direct IIR, with a C zero/write/add fast path,
   reduces the packed C corpus maximum 333,531 -> 315,375 and pitch coverage
   maximum 334,106 -> 315,950 cycles. Flash 9,510 B (272 B above compact packed
   C, still 1,700 B below the previous C baseline), stack/static unchanged.
   All 13,196 C frames pass. The ASM binary remains identical; C timer/ISR
-  admission is under test and is distinct from the decoder-only budget.
+  admission is distinct from the decoder-only budget and fails as below.
 - C PWM admission fails on the long en_letter_a stream despite passing the
   315,950-cycle decoder-only budget: at the 130,640,000-cycle deadline there
   are 1,226 underruns, an empty queue and 514 B free SRAM; decoderError=0.
