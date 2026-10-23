@@ -64,6 +64,13 @@ returns WAIT without consuming CPU work. A pending CLKPR change is a separate
 boundary, after which the remaining target time is recomputed. This preserves
 clock phase through a partial period and prevents rounding a bus effect early.
 
+A zero-clock trailing span completes even if SLEEP just started BOD wake
+recovery, so that the instruction can retire before the halted-board wait loop
+runs. It flushes current-time events and rechecks fault/reset afterward. Physical
+reset holds and reset startup still block CPU work; a reset request cancels the
+context rather than permitting the zero-clock commit. Nonzero spans remain
+blocked during BOD recovery.
+
 ## Interrupt and reset behavior
 
 IRQ acceptance saves the selected vector, return PC and start cycle privately.
