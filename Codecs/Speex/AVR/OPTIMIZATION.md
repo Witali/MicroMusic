@@ -102,6 +102,14 @@ binary measurements. Vendor and R4 files remain unmodified.
   not an arithmetic or SRAM failure; keep ASM for admitted ATmega328P PWM.
   Native manifest/CMake C archives still match all 9,100 corpus frames.
 
+- Reuse the LPC dot-product end pointer for history writes instead of forming
+  history+cursor again: exactly 2 cycles/sample, 320 cycles/frame saved;
+  fixture maximum 134,258 -> 133,938, Flash 8,572 -> 8,568 B, stack/static
+  unchanged. All 163,840 independent LPC samples and 1,058 frames/reset pass.
+  The selectable C recurrence is unchanged; final full-player gate pending.
+  AVR GCC already hoists C innovation scale high/low decomposition before
+  both vector/sample loops, so adding explicit locals offers no new hoist.
+
 ## Next candidates (unmeasured)
 
 1. **Portable C fixed-point narrowing.** Generic signed32 shifts dominate C

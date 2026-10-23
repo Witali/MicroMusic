@@ -73,6 +73,9 @@ speex_avr_iir40:
     adc r24, r1
     adc r25, r2
     .endr
+    /* The ten predecrements leave Z at history+cursor. Reuse that address
+     * for both history copies and coefficient ageing before Z becomes I/O. */
+    movw r28, r30
     /* PSHR32(sum,13), preserving wrap when adding the rounding bias. */
     ldi r18, 16
     add r23, r18
@@ -136,9 +139,6 @@ speex_avr_iir40:
     com r23
     subi r22, 255
     sbci r23, 255
-    movw r28, r12
-    add r28, r16
-    adc r29, r2
     std Y+0, r22
     std Y+1, r23
     std Y+20, r22
