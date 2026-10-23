@@ -12,7 +12,8 @@ def main():
     paths.update(root/'tools'/name for name in (
         'test-fixed-speech.py', 'test-speech-dc.py', 'test-speech-targets.py',
         'test-tiny-speech.py', 'test-tiny-speech-build.py', 'test-speech-pitch.py',
-        'test-hq4-oneshot.py', 'test-hq4-speech-search.py', 'test-speech-spectrum.py'))
+        'test-hq4-oneshot.py', 'test-hq4-speech-search.py', 'test-speech-spectrum.py',
+        'test-hq4-mixed.py'))
     for path in sorted(paths):
         name = 'speech_'+path.stem.replace('-', '_')
         spec = importlib.util.spec_from_file_location(name, path)
