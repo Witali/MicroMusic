@@ -37,8 +37,14 @@ def original_audio(clip):
                 audio.getcomptype()) != (clip['samples'], clip['sample_rate'], clip['channels'],
                                         clip['bits_per_sample'], 'NONE'):
             raise ValueError('Unexpected public original WAV format: '+clip['id'])
+    playback = json.loads((ROOT/'web-player/audio/originals/playback/manifest.json').read_text(encoding='utf-8'))
+    copy = next(row for row in playback['clips'] if row['id'] == clip['id'])
+    path = ROOT/'web-player'/copy['url']
+    if copy['sourceSha256'] != clip['sha256'] or digest(path.read_bytes()) != copy['sha256']:
+        raise ValueError('Playback WAV does not match its source manifest: '+clip['id'])
     return dict(audioReferenceId=clip['id'], originalAudioUrl='./audio/originals/'+clip['id']+'.wav',
-                originalAudioSha256=clip['sha256'])
+                originalAudioSha256=clip['sha256'], originalPlaybackUrl=copy['url'],
+                originalPlaybackSha256=copy['sha256'])
 
 
 def listening_levels(catalog, node):

@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "generator": "tools/prepare-original-audio.py",
+  "ffmpeg": "ffmpeg version 8.1.1-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+  "resampler": "aresample=44100:resampler=swr:filter_size=64:phase_shift=10:exact_rational=1:dither_method=none",
+  "clips": [
+    {
+      "id": "chego",
+      "sourceSha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+      "url": "./audio/originals/playback/chego.wav",
+      "sha256": "a232b2f9ed1440258d27e1f464a33a5e737cb13713226e18008a2cc5534dd16d",
+      "bytes": 108426,
+      "samples": 54191,
+      "sampleRate": 44100
+    },
+    {
+      "id": "otvechaesh",
+      "sourceSha256": "96c09f80396643dd80efb9c5c8557d83359eeb829a0b855a7f8f5c32bbff0b96",
+      "url": "./audio/originals/playback/otvechaesh.wav",
+      "sha256": "1716a50a0a69ce82d0a30a665ec1856b08e7b6d57bf4d26a88e22d194042676d",
+      "bytes": 93372,
+      "samples": 46664,
+      "sampleRate": 44100
+    },
+    {
+      "id": "vinni",
+      "sourceSha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+      "url": "./audio/originals/playback/vinni.wav",
+      "sha256": "86760e28dabf6d45c7a44e6dd04eb59cb1b14f55d30282758ecbf2cbc3282c0f",
+      "bytes": 261964,
+      "samples": 130960,
+      "sampleRate": 44100
+    }
+  ]
+}

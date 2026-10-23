@@ -9,6 +9,20 @@ import {Renderer} from '../lib/renderer-js.js';
 const root=new URL('../../',import.meta.url);
 const read=path=>readFileSync(new URL(path,root));
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
+function wavData(wav){
+  assert.equal(wav.toString('ascii',0,4),'RIFF');assert.equal(wav.toString('ascii',8,12),'WAVE');
+  let format,pcm;
+  for(let offset=12;offset+8<=wav.length;){
+    const id=wav.toString('ascii',offset,offset+4),size=wav.readUInt32LE(offset+4),start=offset+8;
+    assert.ok(start+size<=wav.length);
+    if(id==='fmt ')format={encoding:wav.readUInt16LE(start),channels:wav.readUInt16LE(start+2),
+      sampleRate:wav.readUInt32LE(start+4),bits:wav.readUInt16LE(start+14)};
+    if(id==='data')pcm=wav.subarray(start,start+size);
+    offset=start+size+(size&1);
+  }
+  assert.ok(format);assert.ok(pcm);
+  return {format,pcm};
+}
 const catalog=JSON.parse(read('web-player/hq4-firmware.json'));
 const archive=JSON.parse(read('ATtiny13A/Sound/research/hq4-catalog-archive.json'));
 const references=JSON.parse(read('ATtiny13A/Sound/audio-references.json')).clips;
@@ -58,23 +72,43 @@ test('speech variants share the exact public canonical WAV for their phrase',()=
     assert.equal(entry.originalAudioSha256,reference.sha256);
     const wav=read('web-player/'+entry.originalAudioUrl);
     assert.equal(wav.length,reference.bytes);assert.equal(hash(wav),reference.sha256);
-    assert.equal(wav.toString('ascii',0,4),'RIFF');assert.equal(wav.toString('ascii',8,12),'WAVE');
-    let format,dataBytes;
-    for(let offset=12;offset+8<=wav.length;){
-      const id=wav.toString('ascii',offset,offset+4),size=wav.readUInt32LE(offset+4),start=offset+8;
-      assert.ok(start+size<=wav.length);
-      if(id==='fmt ')format={encoding:wav.readUInt16LE(start),channels:wav.readUInt16LE(start+2),
-        sampleRate:wav.readUInt32LE(start+4),bits:wav.readUInt16LE(start+14)};
-      if(id==='data')dataBytes=size;
-      offset=start+size+(size&1);
-    }
+    const {format,pcm}=wavData(wav);
     assert.deepEqual(format,{encoding:1,channels:reference.channels,sampleRate:reference.sample_rate,bits:reference.bits_per_sample});
-    assert.equal(dataBytes/(format.channels*format.bits/8),reference.samples);
+    assert.equal(pcm.length/(format.channels*format.bits/8),reference.samples);
     urls.add(entry.originalAudioUrl);
   }
   assert.equal(urls.size,3,'only one public WAV per phrase');
   const music=JSON.parse(read('web-player/firmware.json'));
   assert.ok(music.entries.every(entry=>entry.originalAudioUrl===undefined));
+});
+
+test('original playback uses standard-rate PCM with the canonical timing, samples and source hashes',()=>{
+  const manifest=JSON.parse(read('web-player/audio/originals/playback/manifest.json'));
+  assert.deepEqual(manifest.clips.map(clip=>clip.id),references.map(clip=>clip.id));
+  const urls=new Set();
+  for(const entry of [...catalog.entries,...archive.entries]){
+    const reference=references.find(clip=>clip.id===entry.audioReferenceId);
+    const copy=manifest.clips.find(clip=>clip.id===reference.id);
+    assert.equal(copy.sourceSha256,reference.sha256);
+    assert.equal(entry.originalPlaybackUrl,`./audio/originals/playback/${reference.id}.wav`);
+    assert.equal(entry.originalPlaybackUrl,copy.url);
+    const bytes=read('web-player/'+copy.url),{format,pcm}=wavData(bytes);
+    assert.equal(hash(bytes),entry.originalPlaybackSha256);assert.equal(hash(bytes),copy.sha256);
+    assert.equal(bytes.length,copy.bytes);assert.equal(pcm.length/2,copy.samples);
+    assert.deepEqual(format,{encoding:1,channels:1,sampleRate:44100,bits:16});
+    assert.equal(copy.sampleRate,format.sampleRate);
+    assert.ok(Math.abs(copy.samples/copy.sampleRate-reference.samples/reference.sample_rate)<=1/copy.sampleRate);
+    // The 7500 -> 44100 ratio is 25:147. At coincident sample times,
+    // verify the original waveform, level and pitch rather than just a new header.
+    const source=wavData(read('web-player/'+entry.originalAudioUrl)).pcm;
+    let signal=0;
+    for(let i=25;i<reference.samples-25;i+=25){
+      const value=source.readInt16LE(i*2);signal+=value*value;
+      assert.ok(Math.abs(pcm.readInt16LE(i/25*147*2)-value)<=1,entry.id+' preserves source samples');
+    }
+    assert.ok(signal>0);urls.add(copy.url);
+  }
+  assert.equal(urls.size,3);
 });
 for(const entry of catalog.entries)test(`${entry.id}: selected Flash/EEPROM plays once and then holds two phrase lengths of silence`,()=>{
   const binary=parseHex(entry.flashHex),eeprom=entry.eepromHex?parseHex(entry.eepromHex,64):null;

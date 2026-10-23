@@ -122,7 +122,9 @@ function load(entry,{autoplay=false}={}) {
   selected=entry; headroom=0;
   const originalUrl=entry.kind==='speech' ? entry.originalAudioUrl : null;
   $('play-original').hidden=!originalUrl;
-  if(originalUrl)originalAudio.src=originalUrl;else originalAudio.removeAttribute('src');
+  // Mobile media decoders may reject the canonical recordings' 7500 Hz rate.
+  // Keep the reference link canonical and play a resampled PCM listening copy.
+  if(originalUrl)originalAudio.src=entry.originalPlaybackUrl||originalUrl;else originalAudio.removeAttribute('src');
   originalAudio.load(); originalAudio.volume=+$('volume').value;
   const stereo=entry.audioChannels===2;
   document.body.dataset.stereo=String(stereo);
@@ -244,7 +246,7 @@ try {
   }
   // Original recordings are shared public assets. Local listening can also use
   // restored emulator previews and the archived ChatGPT player.
-  const response=await fetch(speech?'./hq4-firmware.json?v=20261023-play-once':'./firmware.json');
+  const response=await fetch(speech?'./hq4-firmware.json?v=20261023-mobile-original':'./firmware.json');
   if (!response.ok) throw new Error('HTTP '+response.status);
   catalog=await response.json();
   if(speech)document.querySelector('footer span:last-child').textContent=`Речевые кодеки · ${catalog.entries.length} фразы · Worker + AudioWorklet`;

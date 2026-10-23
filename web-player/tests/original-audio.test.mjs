@@ -5,7 +5,8 @@ import {deferred,playerApp} from './helpers/player-app.mjs';
 test('public original plays directly, shares the Pages URL and stops on repeat or firmware playback',async()=>{
   const app=await playerApp(),{original,get}=app;
   assert.equal(get('play-original').hidden,false);
-  assert.equal(original.src,'https://example.test/MicroMusic/web-player/audio/originals/chego.wav');
+  assert.equal(original.src,'https://example.test/MicroMusic/web-player/audio/originals/playback/chego.wav');
+  assert.equal(get('reference-wav').href,'./audio/originals/chego.wav');
   await get('play-original').onclick();
   assert.equal(original.paused,false);assert.equal(app.contexts.length,0,'original does not create an AVR AudioWorklet');
   assert.equal(app.body.dataset.playing,'false');assert.equal(get('run-status').textContent,'Оригинальная запись');
@@ -36,7 +37,7 @@ test('pending original play cannot change transport after emulator start or phra
   const vinni=get('catalog').children.find(item=>item.children[0].dataset.firmware==='hq4-vinni').children[0];
   vinni.onclick();
   original.pendingPlay.reject(Object.assign(new Error('Playback interrupted'),{name:'AbortError'}));await second;
-  assert.equal(original.paused,true);assert.match(original.src,/\/originals\/vinni\.wav$/);
+  assert.equal(original.paused,true);assert.match(original.src,/\/originals\/playback\/vinni\.wav$/);
   assert.equal(get('error').hidden,true);assert.equal(get('play-original').getAttribute('aria-pressed'),'false');
 });
 
@@ -65,7 +66,7 @@ test('music entries hide original playback and root hosting resolves the same as
   assert.equal(music.get('play-original').hidden,true);assert.equal(music.original.src,'');
   await music.get('play-original').onclick();assert.equal(music.original.plays,0);
   const root=await playerApp({prefix:'/'});
-  assert.equal(root.original.src,'https://example.test/web-player/audio/originals/chego.wav');
+  assert.equal(root.original.src,'https://example.test/web-player/audio/originals/playback/chego.wav');
 });
 
 test('legacy speech URLs open the selected version of the same phrase',async()=>{
@@ -75,7 +76,7 @@ test('legacy speech URLs open the selected version of the same phrase',async()=>
     const entry=app.workers.at(-1).messages.find(message=>message.type==='init').entry;
     assert.equal(entry.id,current,previous);
     assert.equal(app.location.searchParams.get('firmware'),current);
-    assert.equal(app.original.src,`https://example.test/MicroMusic/web-player/audio/originals/${entry.audioReferenceId}.wav`);
+    assert.equal(app.original.src,`https://example.test/MicroMusic/web-player/audio/originals/playback/${entry.audioReferenceId}.wav`);
     assert.equal(app.get('catalog').children.length,3);
   }
 });
