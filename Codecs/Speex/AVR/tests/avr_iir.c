@@ -1,11 +1,11 @@
 #include <stdint.h>
 #include <avr/pgmspace.h>
 extern void speex_avr_iir40(const int16_t *,const int16_t *,int16_t *,int32_t *);
-extern void speex_avr_innovation10(int16_t *,const int32_t *,const int8_t *,int32_t);
+extern void speex_avr_innovation10(int16_t *,const uint8_t *,const int8_t *,int32_t);
 static const int8_t innovation_shapes[] PROGMEM={
 #include "test-shapes.h"
 };
-int32_t innovation_pitch[10];
+uint8_t innovation_pitch[3*10];
 volatile int32_t innovation_scale;
 volatile uint8_t innovation_index;
 int16_t iir_samples[40],iir_coef[10];

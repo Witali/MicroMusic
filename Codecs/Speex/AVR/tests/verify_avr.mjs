@@ -8,11 +8,11 @@ import {resolve, join} from 'node:path';
 import {CPU, avrInstruction} from 'avr8js';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-const build = join(root, 'build/profile');
 function option(name, fallback) {
   const i = process.argv.indexOf(name);
   return i < 0 ? fallback : resolve(process.argv[i+1]);
 }
+const build = option('--firmware', join(root, 'build/profile'));
 const streamsDirectory = option('--streams', join(root, 'reference/R4/data'));
 const oracleDirectory = option('--oracle', join(root, 'build/reference'));
 const outputDirectory = option('--out', build);
@@ -35,11 +35,11 @@ assert.equal(createHash('sha256').update(binary).digest('hex'),backend.binarySha
 const backendIndex=process.argv.indexOf('--backend');
 if (backendIndex>=0) assert.equal(backend.backend,process.argv[backendIndex+1]);
 if (backend.backend==='c') {
-  for (const kernel of ['speex_avr_iir40','speex_avr_pitch_add','speex_avr_innovation10',
+  for (const kernel of ['speex_avr_iir40','speex_avr_pitch_add24','speex_avr_innovation10',
                         'speex_avr_mul16_32_q14','speex_avr_lsp_mul_q14'])
     assert.ok(!symbols.has(kernel),'C backend unexpectedly linked ASM kernel '+kernel);
 }
-assert.equal(address('scratch') & 3, 0, '220-byte scratch requires a four-byte-aligned base');
+assert.equal(address('scratch') & 3, 0, '180-byte scratch requires a four-byte-aligned base');
 for (const table of ['cdbk_nb', 'cdbk_nb_low1', 'cdbk_nb_high1', 'gain_cdbk_lbr', 'exc_10_32_table', 'nb3_gain_table']) {
   assert.ok(symbols.has(table) && symbols.get(table) < 32768, table + ' must reside in Flash');
 }

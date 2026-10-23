@@ -1,22 +1,21 @@
-/* Exact Xiph product/MAC16_16 over a contiguous pitch-history segment.
- * NB3 gains are signed8 values (-50..97 from the codebook+32) scaled by 128.
+/* Exact Xiph product/MAC16_16 into packed signed24 over a contiguous pitch-history segment.
+ * NB3 gains are signed8 values (-50..97 from the codebook+32) with their common *128 deferred to innovation.
  * First tap writes products; later taps accumulate into existing output.
  * A shared multiply loop avoids duplicating the two vector operations.
- * void speex_avr_pitch_add(int32_t *out, const int16_t *in, int16_t gain,
+ * void speex_avr_pitch_add24(uint8_t *out, const int16_t *in, int8_t gain,
  *                          uint8_t count, uint8_t accumulate);
- * AVR ABI: out r25:r24, in r23:r22, gain r21:r20, count r18, accumulate r16.
+ * AVR ABI: out r25:r24, in r23:r22, gain r20, count r18, accumulate r16.
  * Keep invariant write/add mode in SREG.T (GCC ISRs save/restore SREG).
  * Preserve call-saved r17/Y; restore the C ABI zero register. */
 .text
-.global speex_avr_pitch_add
-.type speex_avr_pitch_add, @function
-speex_avr_pitch_add:
+.global speex_avr_pitch_add24
+.type speex_avr_pitch_add24, @function
+speex_avr_pitch_add24:
     tst r18
     brne .L_pitch_nonempty
     ret
 .L_pitch_nonempty:
-    mov r0, r20
-    or r0, r21
+    tst r20
     brne .L_pitch_nonzero
     /* Zero is an identity only for accumulation. A first/write pass must
      * initialize every output. r1 is zero on entry by the AVR-GCC ABI. */
@@ -26,7 +25,6 @@ speex_avr_pitch_add:
 .L_pitch_clear:
     movw r26, r24
 .L_pitch_clear_loop:
-    st X+, r1
     st X+, r1
     st X+, r1
     st X+, r1
@@ -45,38 +43,26 @@ speex_avr_pitch_add:
     mov r17, r18
     movw r28, r24
     movw r26, r22
-    /* Extract signed8 gain from its <<7 representation. r20 becomes zero
-     * and serves as the multiply carry/sign-correction zero throughout. */
-    lsl r20
-    rol r21
+    clr r21             /* zero for signed-product correction */
 .L_pitch_loop:
     ld r18, X+
     ld r19, X+
-    muls r19, r21
+    muls r19, r20
     movw r24, r0
-    /* signed8 gain * signed16 input in r25:r23, shifted left by one byte.
-     * Then arithmetic >>1 produces the exact original gain*input*128. */
-    mulsu r21, r18
+    /* Exact signed8 gain * signed16 input in r25:r23. */
+    mulsu r20, r18
     mov r23, r0
-    sbc r25, r20
+    sbc r25, r21
     add r24, r1
-    adc r25, r20
-    clr r22
-    asr r25
-    ror r24
-    ror r23
-    ror r22
+    adc r25, r21
     brtc .L_pitch_store
     ldd r0, Y+0
-    add r22, r0
+    add r23, r0
     ldd r0, Y+1
-    adc r23, r0
-    ldd r0, Y+2
     adc r24, r0
-    ldd r0, Y+3
+    ldd r0, Y+2
     adc r25, r0
 .L_pitch_store:
-    st Y+, r22
     st Y+, r23
     st Y+, r24
     st Y+, r25
@@ -88,4 +74,4 @@ speex_avr_pitch_add:
     pop r17
 .L_pitch_return:
     ret
-.size speex_avr_pitch_add, .-speex_avr_pitch_add
+.size speex_avr_pitch_add24, .-speex_avr_pitch_add24

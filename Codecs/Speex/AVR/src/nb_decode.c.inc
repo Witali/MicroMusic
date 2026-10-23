@@ -4,19 +4,21 @@
  * synthesis delay. Remove bookkeeping used only by unsupported PLC/enhancer
  * and general ctl APIs. The vendored release remains the independent oracle. */
 #include "speex_platform.h"
+#include "pitch24.h"
+_Static_assert(NB_SUBFRAME_SIZE==40 && NB_PITCH_START==17 && NB_PITCH_END==144,
+               "Packed pitch is specialized for the pinned NB3 frame/pitch bounds");
 SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, void *vout)
 {
    DecState *st=(DecState *)state;
    spx_word16_t *out=(spx_word16_t *)vout;
    spx_word16_t *frame_exc=st->excBuf+NB_DEC_EXC_OFFSET;
    char *stack=st->stack;
-   int qe,sub,i,pitch;
+   int qe,sub,i;
    uint8_t repeat_lsp;
    const uint8_t *packet;
-   spx_word16_t pitch_gain[3];
    VARDECL(spx_lsp_t *qlsp);
    VARDECL(spx_coef_t *ak);
-   VARDECL(spx_word32_t *exc32);
+   VARDECL(uint8_t *pitch24);
    VARDECL(spx_lsp_t *interp_qlsp);
    if (!bits) return -2;
    packet=(const uint8_t *)bits->chars;
@@ -36,7 +38,7 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, voi
    if (st->first) SPEEX_COPY(st->old_qlsp,qlsp,NB_ORDER);
    qe=speex_bits_unpack_unsigned(bits,5);
    ALLOC(ak,NB_ORDER,spx_coef_t);
-   ALLOC(exc32,NB_SUBFRAME_SIZE,spx_word32_t);
+   ALLOC(pitch24,3*NB_SUBFRAME_SIZE,uint8_t);
    for (sub=0;sub<NB_NB_SUBFRAMES;sub++)
    {
       spx_word16_t *exc=frame_exc+NB_SUBFRAME_SIZE*sub;
@@ -44,13 +46,10 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, voi
       spx_word32_t ener;
       /* Every pitch source index is negative: each segment ends before its
        * source reaches exc[0]. No clear of the current excitation is needed. */
-      pitch_unquant_3tap(exc,exc32,NB_PITCH_START,NB_PITCH_END,0,&avr_ltp,
-         NB_SUBFRAME_SIZE,&pitch,pitch_gain,bits,stack,0,NB_SUBFRAME_SIZE*sub,0,0);
-      sanitize_values32(exc32,-QCONST32(32000,SIG_SHIFT-1),
-                        QCONST32(32000,SIG_SHIFT-1),NB_SUBFRAME_SIZE);
+      speex_nb3_pitch24(exc,pitch24,bits);
       q_energy=speex_bits_unpack_unsigned(bits,1);
       ener=AVR_READ_I32(&nb3_gain_table[(qe<<1)|q_energy]);
-      speex_avr_innovation(exc,exc32,bits,ener);
+      speex_avr_innovation(exc,pitch24,bits,ener);
    }
    ALLOC(interp_qlsp,NB_ORDER,spx_lsp_t);
    SPEEX_COPY(out,&frame_exc[-NB_SUBFRAME_SIZE],NB_FRAME_SIZE);

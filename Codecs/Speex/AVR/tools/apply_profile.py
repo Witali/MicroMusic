@@ -24,6 +24,9 @@ def apply(source: Path):
     if len(pitch_values) != 128 or any(not -128 <= v+32 <= 127
         for i, v in enumerate(pitch_values) if i % 4 != 3):
         raise RuntimeError('NB3 pitch gains do not satisfy the signed8 ASM contract')
+    if max(sum(abs(pitch_values[i+j]+32) for j in range(3))
+           for i in range(0,128,4))*32768 >= (1<<23):
+        raise RuntimeError('NB3 pitch sums exceed packed signed24')
     mul = lib / 'avr_fastmul.h'
     mul.write_text((Path(__file__).resolve().parents[1] / 'src/avr_multiply.h').read_text())
     path = lib / 'arch.h'
@@ -46,32 +49,6 @@ def apply(source: Path):
     assert len(values)==64 and max(values)==120988612
     table = '\nstatic const spx_word32_t nb3_gain_table[64] AVR_TABLE={' + ','.join(map(str,values)) + '};\n'
     text = text[:start] + table + fragment.read_text() + '\n#endif /* DISABLE_DECODER */\n'
-    path.write_text(text)
-
-    path = lib / 'ltp.c'
-    text = path.read_text()
-    decode_start = text.index('void pitch_unquant_3tap(')
-    before, body = text[:decode_start], text[decode_start:]
-    body = replace(body, '   SPEEX_MEMSET(exc_out, 0, nsf);', '')
-    body = replace(body, '   }\n   /*for (i=0;i<nsf;i++)',
-        '      if (!i) SPEEX_MEMSET(exc_out+tmp3,0,nsf-tmp3);\n   }\n   /*for (i=0;i<nsf;i++)')
-    text = before + body
-    first = '''      for (j=0;j<tmp1;j++)
-         exc_out[j]=MAC16_16(exc_out[j],gain[2-i],exc[j-pp]);'''
-    second = '''      for (j=tmp1;j<tmp3;j++)
-         exc_out[j]=MAC16_16(exc_out[j],gain[2-i],exc[j-pp-pitch]);'''
-    text = replace(text, first, '''#if SPEEX_NB3_USE_AVR_ASM
-      extern void speex_avr_pitch_add(spx_word32_t *, const spx_word16_t *, spx_word16_t, uint8_t, uint8_t);
-      speex_avr_pitch_add(exc_out, exc-pp, gain[2-i], tmp1, i!=0);
-#else
-''' + first.replace('MAC16_16(exc_out[j],gain[2-i],exc[j-pp])',
-                    '(i ? MAC16_16(exc_out[j],gain[2-i],exc[j-pp]) : MULT16_16(gain[2-i],exc[j-pp]))') + '\n#endif')
-    text = replace(text, second, '''#if SPEEX_NB3_USE_AVR_ASM
-      if (tmp3!=tmp1)
-         speex_avr_pitch_add(exc_out+tmp1, exc+tmp1-pp-pitch, gain[2-i], tmp3-tmp1, i!=0);
-#else
-''' + second.replace('MAC16_16(exc_out[j],gain[2-i],exc[j-pp-pitch])',
-                     '(i ? MAC16_16(exc_out[j],gain[2-i],exc[j-pp-pitch]) : MULT16_16(gain[2-i],exc[j-pp-pitch]))') + '\n#endif')
     path.write_text(text)
 
     for filename, functions in [('filters.c', ['iir_mem16', 'signal_mul']),

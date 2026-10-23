@@ -1,12 +1,13 @@
 /* Original ATmega328P NB3 vector kernel, 10 signed Flash shapes.
- * void speex_avr_innovation10(int16_t *out, const int32_t *pitch,
+ * void speex_avr_innovation10(int16_t *out, const uint8_t *pitch24,
  *                            const int8_t *shape_flash, int32_t scale);
  * ABI: out r25:r24, pitch r23:r22, shape r21:r20, scale r19:r16.
  * NB3 scale is positive and <=121000000; shape*scale >>12 fits signed32.
  * floor(shape*scale/256) is formed with four signed 8x8 products, then
  * clearing its low nibble and shifting left 3 gives (shape*scale>>12)<<7.
  * This is exactly upstream MULT16_32_Q14(shape*4,scale)<<7 for this bound.
- * Pitch is already sanitized by upstream. Round >>14 and saturate +/-32767.
+ * Read packed unscaled pitch, clamp +/-2048000 and insert a zero low byte
+ * to form the original sanitized pitch*2. Round >>14 and saturate +/-32767.
  * Callee-saved registers and r1 restored; interrupts remain enabled. */
 .text
 .global speex_avr_innovation10
@@ -55,16 +56,48 @@ speex_avr_innovation10:
     rol r24
     rol r25
     .endr
-    ld r20, X+
-    ld r21, X+
+    ld r21, X+         /* unscaled pitch low byte */
     ld r0, X+
-    ld r1, X+
-    lsl r20
-    rol r21
-    rol r0
-    rol r1
-    add r22, r20
-    adc r23, r21
+    ld r1, X+          /* signed high byte */
+    /* Clamp signed24 to +/-2048000 (0x1f4000 / 0xe0c000).
+     * Compare signed high bytes first; only boundary bytes need lower tests. */
+    ldi r20, 31
+    cp r20, r1
+    brlt .Lpitch_clip_positive
+    brne .Lpitch_check_lower
+    ldi r20, 64
+    cp r20, r0
+    brlo .Lpitch_clip_positive
+    brne .Lpitch_ready
+    tst r21
+    brne .Lpitch_clip_positive
+    rjmp .Lpitch_ready
+.Lpitch_check_lower:
+    ldi r20, 224
+    cp r1, r20
+    brlt .Lpitch_clip_negative
+    brne .Lpitch_ready
+    ldi r20, 192
+    cp r0, r20
+    brlo .Lpitch_clip_negative
+    rjmp .Lpitch_ready
+.Lpitch_clip_positive:
+    ldi r21, 0
+    ldi r20, 64
+    mov r0, r20
+    ldi r20, 31
+    mov r1, r20
+    rjmp .Lpitch_ready
+.Lpitch_clip_negative:
+    ldi r21, 0
+    ldi r20, 192
+    mov r0, r20
+    ldi r20, 224
+    mov r1, r20
+.Lpitch_ready:
+    /* pitch*2*128 has a zero low byte. The lower innovation byte stays
+     * unchanged, and ADD (not ADC) starts the upper-byte carry chain. */
+    add r23, r21
     adc r24, r0
     adc r25, r1
     ldi r20, 32

@@ -55,17 +55,18 @@ const corrections=upstream.match(/exc_gain_quant_scal1\[2\]=\{([^}]+)\}/)[1].spl
 const scales=gains.flatMap(g=>corrections.map(c=>Math.floor(c*Math.floor(28406*g/32768)/16384)));
 const scaleAddress=address('innovation_scale'),pitchAddress=address('innovation_pitch');
 let innovationCases=0,innovationClipped=0;
-const pitchEdges=[-262144000,262144000,-1,0,1,-8192,8191,8192];
+const pitchEdges=[-8388608,8388607,-2048001,-2048000,2048000,2048001,-1,0,1];
 for(const scale of scales)for(let index=0;index<256;index++){
   cpu.dataView.setInt32(scaleAddress,scale,true);cpu.data[address('innovation_index')]=index;
   for(let i=0;i<10;i++){
-    const shape=(index+i)%256-128,pitch=i<8?pitchEdges[i]:(next()%524288001)-262144000;
+    const shape=(index+i)%256-128,pitch=i<9?pitchEdges[i]:(next()<<8)>>8;
     const value=shape*4;
     const upstream=((value*(scale>>14)+Math.floor(value*(scale&16383)/16384))*128)|0;
     assert.equal(upstream,(Math.floor(shape*scale/4096)*128)|0,'Bounded transformation exact');
-    const raw=((((2*pitch+upstream)|0)+8192)|0)>>14;
+    const adaptive=Math.max(-262144000,Math.min(262144000,pitch*128));
+    const raw=((((2*adaptive+upstream)|0)+8192)|0)>>14;
     expected[i]=Math.max(-32767,Math.min(32767,raw));innovationClipped+=expected[i]!==raw;
-    cpu.dataView.setInt32(pitchAddress+4*i,pitch,true);
+    for(let byte=0;byte<3;byte++)cpu.data[pitchAddress+3*i+byte]=(pitch>>>(8*byte))&255;
   }
   cpu.data[status]=1;cpu.data[command]=2;
   until(()=>cpu.data[status]===2);
@@ -75,6 +76,7 @@ for(const scale of scales)for(let index=0;index<256;index++){
 const innovationReport={mcu:'ATmega328P',simulator:'avr8js 0.21.1',compiler:report.compiler,
   gains:scales.length,scaleMin:Math.min(...scales),scaleMax:Math.max(...scales),shapeMin:-128,shapeMax:127,
   samples:innovationCases,clipped:innovationClipped,exact:true,zeroRegisterRestored:true,
+  pitchFormat:'signed24le unscaled',pitchSanitizationVerified:true,
   includesInterrupts:false,physicalBoardTested:false};
 writeFileSync(join(build,'verification-innovation.json'),JSON.stringify(innovationReport,null,2)+'\n');
 console.log(JSON.stringify(innovationReport,null,2));

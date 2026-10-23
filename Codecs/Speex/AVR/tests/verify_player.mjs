@@ -26,7 +26,7 @@ const symbols = new Map(readFileSync(join(build, 'symbols.txt'), 'utf8').split(/
   .map(line => line.match(/^([0-9a-f]+)\s+\w\s+(.+)$/)).filter(Boolean)
   .map(m => [m[2], parseInt(m[1], 16)]));
 function address(name) { assert.ok(symbols.has(name), name); return symbols.get(name) & 0xffff; }
-assert.equal(address('scratch') & 3, 0, '220-byte scratch requires a four-byte-aligned base');
+assert.equal(address('scratch') & 3, 0, '180-byte scratch requires a four-byte-aligned base');
 const end = address('__bss_end'), started = address('speex_player_started');
 const done = address('speex_player_done'), underruns = address('speex_player_underruns');
 const head = address('head'), tail = address('tail');

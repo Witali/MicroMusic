@@ -78,24 +78,19 @@ binary measurements. Vendor and R4 files remain unmodified.
   gap 80,013 cycles; the final ordinary speech demo occupies 11,996 B Flash.
   An 88-frame sample profile now excludes startup/reset and records 48.1%
   LPC, 12.7% pitch products and 11.8% innovation; keep its sampled scope.
+- Packed unscaled signed24 pitch: native C and AVR C/ASM reproduce upstream;
+  scratch 220 -> 180 B, static SRAM 1,279 -> 1,239 B. ASM fixture maximum
+  142,602 -> 134,258 cycles, Flash 8,764 -> 8,572 B, peak stack 147 -> 143 B.
+  The initial C implementation is 9,238 B (1,972 B smaller), peak stack 151 B,
+  corpus maximum 333,531 cycles and pitch-coverage maximum 334,106 cycles;
+  it trades a small C cycle cost for code/SRAM savings. Independent raw pitch
+  checks cover 1,966,080 packed outputs and all counts/modes; innovation checks
+  include unsanitized pitch extrema and both clamp boundaries. Full new PWM
+  gate and final C hot-loop selection remain pending for this series.
 
 ## Next candidates (unmeasured)
 
-1. **Packed signed24 unscaled pitch.** The original gains are signed8*128;
-   all three unscaled products/sums fit signed24 for the pinned codebook:
-   maximum gain L1 norm is 147, so every prefix is bounded by
-   147*32768=4,816,896 (<2^23), and scaling by 128 also fits signed32.
-   A portable three-byte pitch buffer could save 40 B and eliminate per-product
-   scaling shifts; innovation would insert a zero low byte to form 2*pitch.
-   Compare packed-read/clamp overhead, prove the codebook L1 bound and retain
-   selectable C arithmetic before considering this profile change.
-   Allocate 120 uint8_t elements, not 40 three-byte structs: the scratch
-   allocator requires power-of-two alignment. Scratch offsets would become
-   0/20/40/160, total 180 B; portable byte pack/unpack must be endian-neutral.
-   Sanitization can move to innovation's per-sample read (unscaled limit
-   +/-2,048,000), avoiding a separate scan. Keep all pitch sources negative,
-   original bit order, first-tap tail zeroing and full C fallback verification.
-2. **C-backend compiler hot spots.** The C fallback currently misses the AVR
+1. **C-backend compiler hot spots.** The C fallback currently misses the AVR
    20-ms budget. Measure function-specific `-O3` on C IIR/pitch loops before
    adding architecture-specific code; prefer the smallest setting that actually
    improves speed without exceeding Flash/SRAM. Preserve default C selection.

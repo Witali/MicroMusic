@@ -14,8 +14,10 @@ import build
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--node',default='node')
+    parser.add_argument('--firmware',type=Path,help='Use a preserved firmware directory')
+    parser.add_argument('--out',type=Path,default=build.ROOT/'build/pitch-cases')
     args=parser.parse_args()
-    output=build.ROOT/'build/pitch-cases'
+    output=args.out
     streams=output/'streams'
     oracle=output/'oracle'
     streams.mkdir(parents=True,exist_ok=True)
@@ -43,7 +45,8 @@ if __name__=='__main__':
     if sys.platform!='win32': reference=reference.with_suffix('')
     subprocess.run([reference,raw,oracle/'all_pitch_gains.pcm'],check=True)
     subprocess.run([args.node,build.ROOT/'tests/verify_avr.mjs','--streams',streams,
-                    '--oracle',oracle,'--out',output],check=True)
+                    '--oracle',oracle,'--out',output,
+                    *(['--firmware',args.firmware] if args.firmware else [])],check=True)
     report=json.loads((output/'avr-verification.json').read_text())
     report['coverage']={'pitchCodes':128,'pitchGainCodes':32,'pairs':4096,
                         'subframes':16384,'seed':'0x5971bc31'}
