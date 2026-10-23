@@ -1,0 +1,4017 @@
+{
+  "schema": "lpc2-quality-listening-selection-v1",
+  "targets": {
+    "stoi": 0.98,
+    "estoi": 0.95,
+    "raw_snr_db": 26.0
+  },
+  "recordings": [
+    {
+      "id": "vinni",
+      "listening_baseline": "lpx4-6bit",
+      "selected": "lpv1-24db",
+      "quality_targets_met": true,
+      "selected_storage": {
+        "method": "original-other-format",
+        "stored_bytes": 12462,
+        "original_bytes": 12462,
+        "exact_original_restored": true
+      },
+      "selected_metrics": {
+        "stoi": 0.989036467034508,
+        "estoi": 0.9741284682607394,
+        "raw_snr_db": 26.749323424652044,
+        "spectrogram_loss": 0.03139716437092084
+      },
+      "alternatives": [
+        {
+          "name": "lpx3-2bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 6426,
+            "stored_bytes": 6017,
+            "saved_bytes": 409,
+            "candidate_bytes": {
+              "original": 6426,
+              "deflate-packed": 6017,
+              "deflate-code-bytes": 7550,
+              "deflate-delta-bytes": 7881,
+              "canonical-huffman": 6128
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9229608536411923,
+            "estoi": 0.870483410313121,
+            "raw_snr_db": 11.274744950847852,
+            "spectrogram_loss": 0.13782966124973023
+          }
+        },
+        {
+          "name": "lpx3-3bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 9210,
+            "stored_bytes": 8555,
+            "saved_bytes": 655,
+            "candidate_bytes": {
+              "original": 9210,
+              "deflate-packed": 9040,
+              "deflate-code-bytes": 10613,
+              "deflate-delta-bytes": 11035,
+              "canonical-huffman": 8555
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9657135891165846,
+            "estoi": 0.9428448303186865,
+            "raw_snr_db": 18.01866687037418,
+            "spectrogram_loss": 0.07176321891115964
+          }
+        },
+        {
+          "name": "lpx3-4bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 11994,
+            "stored_bytes": 11020,
+            "saved_bytes": 974,
+            "candidate_bytes": {
+              "original": 11994,
+              "deflate-packed": 11101,
+              "deflate-code-bytes": 13366,
+              "deflate-delta-bytes": 13787,
+              "canonical-huffman": 11020
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9860213357213702,
+            "estoi": 0.9755281395645543,
+            "raw_snr_db": 23.51167758772614,
+            "spectrogram_loss": 0.036579573844092605
+          }
+        },
+        {
+          "name": "lpx4-6bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 17562,
+            "stored_bytes": 16407,
+            "saved_bytes": 1155,
+            "candidate_bytes": {
+              "original": 17562,
+              "deflate-packed": 17299,
+              "deflate-code-bytes": 17186,
+              "deflate-delta-bytes": 17782,
+              "canonical-huffman": 16407
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9951191442618575,
+            "estoi": 0.9918575211417543,
+            "raw_snr_db": 30.889782198360773,
+            "spectrogram_loss": 0.014378256017279658
+          }
+        },
+        {
+          "name": "lpx4-8bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 23130,
+            "stored_bytes": 21934,
+            "saved_bytes": 1196,
+            "candidate_bytes": {
+              "original": 23130,
+              "deflate-packed": 21934,
+              "deflate-code-bytes": 21935,
+              "deflate-delta-bytes": 22830,
+              "canonical-huffman": 22077
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9971878093310431,
+            "estoi": 0.9950566657022835,
+            "raw_snr_db": 32.77218180672349,
+            "spectrogram_loss": 0.010374171057312519
+          }
+        },
+        {
+          "name": "lpv1-20db",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "original-other-format",
+            "stored_bytes": 10615,
+            "original_bytes": 10615,
+            "exact_original_restored": true
+          },
+          "metrics": {
+            "stoi": 0.9830276566421947,
+            "estoi": 0.9602028815588282,
+            "raw_snr_db": 23.786231613776764,
+            "spectrogram_loss": 0.04718813670405328
+          }
+        },
+        {
+          "name": "lpv1-24db",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "original-other-format",
+            "stored_bytes": 12462,
+            "original_bytes": 12462,
+            "exact_original_restored": true
+          },
+          "metrics": {
+            "stoi": 0.989036467034508,
+            "estoi": 0.9741284682607394,
+            "raw_snr_db": 26.749323424652044,
+            "spectrogram_loss": 0.03139716437092084
+          }
+        },
+        {
+          "name": "lpv1-28db",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "original-other-format",
+            "stored_bytes": 14459,
+            "original_bytes": 14459,
+            "exact_original_restored": true
+          },
+          "metrics": {
+            "stoi": 0.9948579003371923,
+            "estoi": 0.9876732755491643,
+            "raw_snr_db": 31.35090883982366,
+            "spectrogram_loss": 0.01788554397484395
+          }
+        }
+      ],
+      "comparison_audio": "audio/vinni-comparison.wav",
+      "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03"
+    },
+    {
+      "id": "tail",
+      "listening_baseline": "lpx4-6bit",
+      "selected": "lpv1-24db",
+      "quality_targets_met": true,
+      "selected_storage": {
+        "method": "original-other-format",
+        "stored_bytes": 12115,
+        "original_bytes": 12115,
+        "exact_original_restored": true
+      },
+      "selected_metrics": {
+        "stoi": 0.989123494408217,
+        "estoi": 0.9675806089976626,
+        "raw_snr_db": 27.324649726511797,
+        "spectrogram_loss": 0.02907951916692014
+      },
+      "alternatives": [
+        {
+          "name": "lpx3-2bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 5551,
+            "stored_bytes": 5327,
+            "saved_bytes": 224,
+            "candidate_bytes": {
+              "original": 5551,
+              "deflate-packed": 5327,
+              "deflate-code-bytes": 6723,
+              "deflate-delta-bytes": 6980,
+              "canonical-huffman": 5456
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.8532693036842813,
+            "estoi": 0.6974132931588772,
+            "raw_snr_db": 9.20040418916658,
+            "spectrogram_loss": 0.1974514959360265
+          }
+        },
+        {
+          "name": "lpx3-3bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 7967,
+            "stored_bytes": 7519,
+            "saved_bytes": 448,
+            "candidate_bytes": {
+              "original": 7967,
+              "deflate-packed": 7883,
+              "deflate-code-bytes": 9377,
+              "deflate-delta-bytes": 9685,
+              "canonical-huffman": 7519
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.908920485455058,
+            "estoi": 0.8107186122846601,
+            "raw_snr_db": 14.901981206760173,
+            "spectrogram_loss": 0.10934404738960661
+          }
+        },
+        {
+          "name": "lpx3-4bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 10383,
+            "stored_bytes": 9623,
+            "saved_bytes": 760,
+            "candidate_bytes": {
+              "original": 10383,
+              "deflate-packed": 9724,
+              "deflate-code-bytes": 11676,
+              "deflate-delta-bytes": 11974,
+              "canonical-huffman": 9623
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9521810773878902,
+            "estoi": 0.8900505386893077,
+            "raw_snr_db": 20.42781082505906,
+            "spectrogram_loss": 0.05563351336786859
+          }
+        },
+        {
+          "name": "lpx4-6bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 15215,
+            "stored_bytes": 14313,
+            "saved_bytes": 902,
+            "candidate_bytes": {
+              "original": 15215,
+              "deflate-packed": 15005,
+              "deflate-code-bytes": 15035,
+              "deflate-delta-bytes": 15507,
+              "canonical-huffman": 14313
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9861676028320687,
+            "estoi": 0.9730492012386506,
+            "raw_snr_db": 28.397057409877505,
+            "spectrogram_loss": 0.019997117322439476
+          }
+        },
+        {
+          "name": "lpx4-8bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 20047,
+            "stored_bytes": 19106,
+            "saved_bytes": 941,
+            "candidate_bytes": {
+              "original": 20047,
+              "deflate-packed": 19106,
+              "deflate-code-bytes": 19107,
+              "deflate-delta-bytes": 19880,
+              "canonical-huffman": 19239
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9920809681908055,
+            "estoi": 0.9867218336030827,
+            "raw_snr_db": 30.686573831623004,
+            "spectrogram_loss": 0.013382463239999455
+          }
+        },
+        {
+          "name": "lpv1-20db",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "original-other-format",
+            "stored_bytes": 9796,
+            "original_bytes": 9796,
+            "exact_original_restored": true
+          },
+          "metrics": {
+            "stoi": 0.9748948639325867,
+            "estoi": 0.9342234517518774,
+            "raw_snr_db": 23.087105980385232,
+            "spectrogram_loss": 0.05082938867777567
+          }
+        },
+        {
+          "name": "lpv1-24db",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "original-other-format",
+            "stored_bytes": 12115,
+            "original_bytes": 12115,
+            "exact_original_restored": true
+          },
+          "metrics": {
+            "stoi": 0.989123494408217,
+            "estoi": 0.9675806089976626,
+            "raw_snr_db": 27.324649726511797,
+            "spectrogram_loss": 0.02907951916692014
+          }
+        },
+        {
+          "name": "lpv1-28db",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "original-other-format",
+            "stored_bytes": 13568,
+            "original_bytes": 13568,
+            "exact_original_restored": true
+          },
+          "metrics": {
+            "stoi": 0.9957252860499801,
+            "estoi": 0.9862046651184085,
+            "raw_snr_db": 31.876048333685695,
+            "spectrogram_loss": 0.016726111529072895
+          }
+        }
+      ],
+      "comparison_audio": "audio/tail-comparison.wav",
+      "reference_sha256": "4914d2c349e1f2e9e102ec23949a2bb96b95b7145aa252b54a6a8341ba5ce55d"
+    },
+    {
+      "id": "chego",
+      "listening_baseline": "lpx4-6bit",
+      "selected": "lpx4-8bit",
+      "quality_targets_met": false,
+      "selected_storage": {
+        "method": "deflate-packed",
+        "original_bytes": 9684,
+        "stored_bytes": 9193,
+        "saved_bytes": 491,
+        "candidate_bytes": {
+          "original": 9684,
+          "deflate-packed": 9193,
+          "deflate-code-bytes": 9194,
+          "deflate-delta-bytes": 9563,
+          "canonical-huffman": 9390
+        },
+        "exact_original_restored": true,
+        "decoder_code_included": false,
+        "avr_implemented": false
+      },
+      "selected_metrics": {
+        "stoi": 0.9303153670238962,
+        "estoi": 0.9325879772724782,
+        "raw_snr_db": 35.47293713874804,
+        "spectrogram_loss": 0.007544829224022981
+      },
+      "alternatives": [
+        {
+          "name": "lpx3-2bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 2772,
+            "stored_bytes": 2687,
+            "saved_bytes": 85,
+            "candidate_bytes": {
+              "original": 2772,
+              "deflate-packed": 2687,
+              "deflate-code-bytes": 3319,
+              "deflate-delta-bytes": 3482,
+              "canonical-huffman": 2739
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.7650852003844582,
+            "estoi": 0.7225269329877652,
+            "raw_snr_db": 8.170236394704336,
+            "spectrogram_loss": 0.1919254165363648
+          }
+        },
+        {
+          "name": "lpx3-3bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 3924,
+            "stored_bytes": 3678,
+            "saved_bytes": 246,
+            "candidate_bytes": {
+              "original": 3924,
+              "deflate-packed": 3893,
+              "deflate-code-bytes": 4536,
+              "deflate-delta-bytes": 4764,
+              "canonical-huffman": 3678
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.7927258940798992,
+            "estoi": 0.7689468330805906,
+            "raw_snr_db": 14.875060296389723,
+            "spectrogram_loss": 0.1112554769076418
+          }
+        },
+        {
+          "name": "lpx3-4bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 5076,
+            "stored_bytes": 4732,
+            "saved_bytes": 344,
+            "candidate_bytes": {
+              "original": 5076,
+              "deflate-packed": 4784,
+              "deflate-code-bytes": 5668,
+              "deflate-delta-bytes": 5835,
+              "canonical-huffman": 4732
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.8292754738746178,
+            "estoi": 0.8023573859979282,
+            "raw_snr_db": 21.231354039230173,
+            "spectrogram_loss": 0.05035011835774757
+          }
+        },
+        {
+          "name": "lpx4-6bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 7380,
+            "stored_bytes": 6939,
+            "saved_bytes": 441,
+            "candidate_bytes": {
+              "original": 7380,
+              "deflate-packed": 7291,
+              "deflate-code-bytes": 7307,
+              "deflate-delta-bytes": 7548,
+              "canonical-huffman": 6939
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.901289675264917,
+            "estoi": 0.90315753225478,
+            "raw_snr_db": 31.914245455633864,
+            "spectrogram_loss": 0.012997347348588002
+          }
+        },
+        {
+          "name": "lpx4-8bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 9684,
+            "stored_bytes": 9193,
+            "saved_bytes": 491,
+            "candidate_bytes": {
+              "original": 9684,
+              "deflate-packed": 9193,
+              "deflate-code-bytes": 9194,
+              "deflate-delta-bytes": 9563,
+              "canonical-huffman": 9390
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9303153670238962,
+            "estoi": 0.9325879772724782,
+            "raw_snr_db": 35.47293713874804,
+            "spectrogram_loss": 0.007544829224022981
+          }
+        }
+      ],
+      "comparison_audio": "audio/chego-comparison.wav",
+      "reference_sha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c"
+    },
+    {
+      "id": "otvechaesh",
+      "listening_baseline": "lpx4-6bit",
+      "selected": "lpx4-8bit",
+      "quality_targets_met": false,
+      "selected_storage": {
+        "method": "deflate-packed",
+        "original_bytes": 8307,
+        "stored_bytes": 7828,
+        "saved_bytes": 479,
+        "candidate_bytes": {
+          "original": 8307,
+          "deflate-packed": 7828,
+          "deflate-code-bytes": 7829,
+          "deflate-delta-bytes": 8097,
+          "canonical-huffman": 8132
+        },
+        "exact_original_restored": true,
+        "decoder_code_included": false,
+        "avr_implemented": false
+      },
+      "selected_metrics": {
+        "stoi": 0.9547740757768,
+        "estoi": 0.9484044316797285,
+        "raw_snr_db": 35.03448924185502,
+        "spectrogram_loss": 0.007529086694853561
+      },
+      "alternatives": [
+        {
+          "name": "lpx3-2bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 2355,
+            "stored_bytes": 2284,
+            "saved_bytes": 71,
+            "candidate_bytes": {
+              "original": 2355,
+              "deflate-packed": 2284,
+              "deflate-code-bytes": 2869,
+              "deflate-delta-bytes": 2945,
+              "canonical-huffman": 2333
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.7294061312906027,
+            "estoi": 0.5941838725620232,
+            "raw_snr_db": 11.315894214932579,
+            "spectrogram_loss": 0.14639475150633746
+          }
+        },
+        {
+          "name": "lpx3-3bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 3347,
+            "stored_bytes": 3181,
+            "saved_bytes": 166,
+            "candidate_bytes": {
+              "original": 3347,
+              "deflate-packed": 3301,
+              "deflate-code-bytes": 3919,
+              "deflate-delta-bytes": 4037,
+              "canonical-huffman": 3181
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.7620792084646066,
+            "estoi": 0.6466186071429405,
+            "raw_snr_db": 18.544299252461183,
+            "spectrogram_loss": 0.07687948743946232
+          }
+        },
+        {
+          "name": "lpx3-4bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 4339,
+            "stored_bytes": 4073,
+            "saved_bytes": 266,
+            "candidate_bytes": {
+              "original": 4339,
+              "deflate-packed": 4073,
+              "deflate-code-bytes": 4826,
+              "deflate-delta-bytes": 4930,
+              "canonical-huffman": 4088
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.7800578447765966,
+            "estoi": 0.7038775291977346,
+            "raw_snr_db": 24.110603166748735,
+            "spectrogram_loss": 0.03938733364324491
+          }
+        },
+        {
+          "name": "lpx4-6bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 6323,
+            "stored_bytes": 6014,
+            "saved_bytes": 309,
+            "candidate_bytes": {
+              "original": 6323,
+              "deflate-packed": 6176,
+              "deflate-code-bytes": 6220,
+              "deflate-delta-bytes": 6388,
+              "canonical-huffman": 6014
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9185156041389289,
+            "estoi": 0.8928737138076346,
+            "raw_snr_db": 32.82830891643753,
+            "spectrogram_loss": 0.01113462427360225
+          }
+        },
+        {
+          "name": "lpx4-8bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 8307,
+            "stored_bytes": 7828,
+            "saved_bytes": 479,
+            "candidate_bytes": {
+              "original": 8307,
+              "deflate-packed": 7828,
+              "deflate-code-bytes": 7829,
+              "deflate-delta-bytes": 8097,
+              "canonical-huffman": 8132
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9547740757768,
+            "estoi": 0.9484044316797285,
+            "raw_snr_db": 35.03448924185502,
+            "spectrogram_loss": 0.007529086694853561
+          }
+        }
+      ],
+      "comparison_audio": "audio/otvechaesh-comparison.wav",
+      "reference_sha256": "96c09f80396643dd80efb9c5c8557d83359eeb829a0b855a7f8f5c32bbff0b96"
+    },
+    {
+      "id": "ru_pushkin_a-center2048",
+      "listening_baseline": "lpx4-6bit",
+      "selected": "lpx4-6bit",
+      "quality_targets_met": true,
+      "selected_storage": {
+        "method": "canonical-huffman",
+        "original_bytes": 12193,
+        "stored_bytes": 11260,
+        "saved_bytes": 933,
+        "candidate_bytes": {
+          "original": 12193,
+          "deflate-packed": 11970,
+          "deflate-code-bytes": 11869,
+          "deflate-delta-bytes": 12294,
+          "canonical-huffman": 11260
+        },
+        "exact_original_restored": true,
+        "decoder_code_included": false,
+        "avr_implemented": false
+      },
+      "selected_metrics": {
+        "stoi": 0.989196422755254,
+        "estoi": 0.9917843488249773,
+        "raw_snr_db": 30.977761899103267,
+        "spectrogram_loss": 0.012850923392574988
+      },
+      "alternatives": [
+        {
+          "name": "lpx3-2bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 4513,
+            "stored_bytes": 4042,
+            "saved_bytes": 471,
+            "candidate_bytes": {
+              "original": 4513,
+              "deflate-packed": 4042,
+              "deflate-code-bytes": 4998,
+              "deflate-delta-bytes": 5340,
+              "canonical-huffman": 4047
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.8847209100851304,
+            "estoi": 0.8172204920134567,
+            "raw_snr_db": 14.49661417769578,
+            "spectrogram_loss": 0.09099790519812267
+          }
+        },
+        {
+          "name": "lpx3-3bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 6433,
+            "stored_bytes": 5712,
+            "saved_bytes": 721,
+            "candidate_bytes": {
+              "original": 6433,
+              "deflate-packed": 6250,
+              "deflate-code-bytes": 7172,
+              "deflate-delta-bytes": 7561,
+              "canonical-huffman": 5712
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9516660817915299,
+            "estoi": 0.9323212378074125,
+            "raw_snr_db": 21.77290950975337,
+            "spectrogram_loss": 0.0423125565666516
+          }
+        },
+        {
+          "name": "lpx3-4bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 8353,
+            "stored_bytes": 7427,
+            "saved_bytes": 926,
+            "candidate_bytes": {
+              "original": 8353,
+              "deflate-packed": 7523,
+              "deflate-code-bytes": 9038,
+              "deflate-delta-bytes": 9352,
+              "canonical-huffman": 7427
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.973197359956927,
+            "estoi": 0.9706162833913183,
+            "raw_snr_db": 26.70744336715684,
+            "spectrogram_loss": 0.02367562571356134
+          }
+        },
+        {
+          "name": "lpx4-6bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 12193,
+            "stored_bytes": 11260,
+            "saved_bytes": 933,
+            "candidate_bytes": {
+              "original": 12193,
+              "deflate-packed": 11970,
+              "deflate-code-bytes": 11869,
+              "deflate-delta-bytes": 12294,
+              "canonical-huffman": 11260
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.989196422755254,
+            "estoi": 0.9917843488249773,
+            "raw_snr_db": 30.977761899103267,
+            "spectrogram_loss": 0.012850923392574988
+          }
+        },
+        {
+          "name": "lpx4-8bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 16033,
+            "stored_bytes": 15120,
+            "saved_bytes": 913,
+            "candidate_bytes": {
+              "original": 16033,
+              "deflate-packed": 15120,
+              "deflate-code-bytes": 15121,
+              "deflate-delta-bytes": 15722,
+              "canonical-huffman": 15260
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9895135512900303,
+            "estoi": 0.9927089831778045,
+            "raw_snr_db": 31.780761855304426,
+            "spectrogram_loss": 0.01143278904958109
+          }
+        }
+      ],
+      "comparison_audio": "audio/ru_pushkin_a-center2048-comparison.wav",
+      "reference_sha256": "d817aff327e860c34b556261f0d016dd1da4bd3f04e2a5a9c1c03621e938f242"
+    },
+    {
+      "id": "ru_pushkin_b-center2048",
+      "listening_baseline": "lpx4-6bit",
+      "selected": "lpx3-4bit",
+      "quality_targets_met": true,
+      "selected_storage": {
+        "method": "canonical-huffman",
+        "original_bytes": 8263,
+        "stored_bytes": 7313,
+        "saved_bytes": 950,
+        "candidate_bytes": {
+          "original": 8263,
+          "deflate-packed": 7404,
+          "deflate-code-bytes": 8882,
+          "deflate-delta-bytes": 9226,
+          "canonical-huffman": 7313
+        },
+        "exact_original_restored": true,
+        "decoder_code_included": false,
+        "avr_implemented": false
+      },
+      "selected_metrics": {
+        "stoi": 0.9873184991102476,
+        "estoi": 0.9767876508315508,
+        "raw_snr_db": 27.859185488661605,
+        "spectrogram_loss": 0.017530993417215524
+      },
+      "alternatives": [
+        {
+          "name": "lpx3-2bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 4423,
+            "stored_bytes": 3948,
+            "saved_bytes": 475,
+            "candidate_bytes": {
+              "original": 4423,
+              "deflate-packed": 3948,
+              "deflate-code-bytes": 4899,
+              "deflate-delta-bytes": 5217,
+              "canonical-huffman": 3959
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.903948009078581,
+            "estoi": 0.8062730884700421,
+            "raw_snr_db": 15.056285832327783,
+            "spectrogram_loss": 0.0703191378418482
+          }
+        },
+        {
+          "name": "lpx3-3bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 6343,
+            "stored_bytes": 5609,
+            "saved_bytes": 734,
+            "candidate_bytes": {
+              "original": 6343,
+              "deflate-packed": 6180,
+              "deflate-code-bytes": 7062,
+              "deflate-delta-bytes": 7414,
+              "canonical-huffman": 5609
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9588460281526648,
+            "estoi": 0.9204961265650545,
+            "raw_snr_db": 23.069608788892676,
+            "spectrogram_loss": 0.03301174609421509
+          }
+        },
+        {
+          "name": "lpx3-4bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 8263,
+            "stored_bytes": 7313,
+            "saved_bytes": 950,
+            "candidate_bytes": {
+              "original": 8263,
+              "deflate-packed": 7404,
+              "deflate-code-bytes": 8882,
+              "deflate-delta-bytes": 9226,
+              "canonical-huffman": 7313
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9873184991102476,
+            "estoi": 0.9767876508315508,
+            "raw_snr_db": 27.859185488661605,
+            "spectrogram_loss": 0.017530993417215524
+          }
+        },
+        {
+          "name": "lpx4-6bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 12103,
+            "stored_bytes": 11159,
+            "saved_bytes": 944,
+            "candidate_bytes": {
+              "original": 12103,
+              "deflate-packed": 11890,
+              "deflate-code-bytes": 11752,
+              "deflate-delta-bytes": 12198,
+              "canonical-huffman": 11159
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9963220465642488,
+            "estoi": 0.9937580038976777,
+            "raw_snr_db": 32.346743356807295,
+            "spectrogram_loss": 0.009431883348023692
+          }
+        },
+        {
+          "name": "lpx4-8bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 15943,
+            "stored_bytes": 15002,
+            "saved_bytes": 941,
+            "candidate_bytes": {
+              "original": 15943,
+              "deflate-packed": 15002,
+              "deflate-code-bytes": 15003,
+              "deflate-delta-bytes": 15655,
+              "canonical-huffman": 15139
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.997130858432084,
+            "estoi": 0.9951922133135885,
+            "raw_snr_db": 33.171603602978756,
+            "spectrogram_loss": 0.00849626869654988
+          }
+        }
+      ],
+      "comparison_audio": "audio/ru_pushkin_b-center2048-comparison.wav",
+      "reference_sha256": "8e96ae489c474614eda647458e0c89ad45c0b9d9de7b8fe1e230bb0be1b5b9a7"
+    },
+    {
+      "id": "ru_square_a-center2048",
+      "listening_baseline": "lpx4-6bit",
+      "selected": "lpx3-4bit",
+      "quality_targets_met": true,
+      "selected_storage": {
+        "method": "deflate-packed",
+        "original_bytes": 8266,
+        "stored_bytes": 7673,
+        "saved_bytes": 593,
+        "candidate_bytes": {
+          "original": 8266,
+          "deflate-packed": 7673,
+          "deflate-code-bytes": 8977,
+          "deflate-delta-bytes": 9121,
+          "canonical-huffman": 7781
+        },
+        "exact_original_restored": true,
+        "decoder_code_included": false,
+        "avr_implemented": false
+      },
+      "selected_metrics": {
+        "stoi": 0.9911450490663095,
+        "estoi": 0.9845581072052918,
+        "raw_snr_db": 31.73498352565158,
+        "spectrogram_loss": 0.01083055112644911
+      },
+      "alternatives": [
+        {
+          "name": "lpx3-2bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 4426,
+            "stored_bytes": 3968,
+            "saved_bytes": 458,
+            "candidate_bytes": {
+              "original": 4426,
+              "deflate-packed": 3968,
+              "deflate-code-bytes": 4864,
+              "deflate-delta-bytes": 5105,
+              "canonical-huffman": 4227
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.8723977444934459,
+            "estoi": 0.8164669221258356,
+            "raw_snr_db": 17.308476569755072,
+            "spectrogram_loss": 0.06528526319320357
+          }
+        },
+        {
+          "name": "lpx3-3bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 6346,
+            "stored_bytes": 5977,
+            "saved_bytes": 369,
+            "candidate_bytes": {
+              "original": 6346,
+              "deflate-packed": 6191,
+              "deflate-code-bytes": 7031,
+              "deflate-delta-bytes": 7292,
+              "canonical-huffman": 5977
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9664433089900255,
+            "estoi": 0.9418155361108334,
+            "raw_snr_db": 25.77392409757564,
+            "spectrogram_loss": 0.023678481954407964
+          }
+        },
+        {
+          "name": "lpx3-4bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 8266,
+            "stored_bytes": 7673,
+            "saved_bytes": 593,
+            "candidate_bytes": {
+              "original": 8266,
+              "deflate-packed": 7673,
+              "deflate-code-bytes": 8977,
+              "deflate-delta-bytes": 9121,
+              "canonical-huffman": 7781
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9911450490663095,
+            "estoi": 0.9845581072052918,
+            "raw_snr_db": 31.73498352565158,
+            "spectrogram_loss": 0.01083055112644911
+          }
+        },
+        {
+          "name": "lpx4-6bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 12106,
+            "stored_bytes": 11546,
+            "saved_bytes": 560,
+            "candidate_bytes": {
+              "original": 12106,
+              "deflate-packed": 11978,
+              "deflate-code-bytes": 12021,
+              "deflate-delta-bytes": 12124,
+              "canonical-huffman": 11546
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9985980510092063,
+            "estoi": 0.9978111837373739,
+            "raw_snr_db": 38.65388073591238,
+            "spectrogram_loss": 0.004187091010683423
+          }
+        },
+        {
+          "name": "lpx4-8bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 15946,
+            "stored_bytes": 15355,
+            "saved_bytes": 591,
+            "candidate_bytes": {
+              "original": 15946,
+              "deflate-packed": 15355,
+              "deflate-code-bytes": 15356,
+              "deflate-delta-bytes": 15513,
+              "canonical-huffman": 15507
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9992515400600384,
+            "estoi": 0.9987860518977347,
+            "raw_snr_db": 39.88718330874975,
+            "spectrogram_loss": 0.0033218129191034994
+          }
+        }
+      ],
+      "comparison_audio": "audio/ru_square_a-center2048-comparison.wav",
+      "reference_sha256": "42e954dadf77b916325f4d0ba392144487d420bb4a3a38ef9e5c95735b7e8d35"
+    },
+    {
+      "id": "ru_square_b-center2048",
+      "listening_baseline": "lpx4-6bit",
+      "selected": "lpx3-4bit",
+      "quality_targets_met": true,
+      "selected_storage": {
+        "method": "deflate-packed",
+        "original_bytes": 8302,
+        "stored_bytes": 7641,
+        "saved_bytes": 661,
+        "candidate_bytes": {
+          "original": 8302,
+          "deflate-packed": 7641,
+          "deflate-code-bytes": 9018,
+          "deflate-delta-bytes": 9125,
+          "canonical-huffman": 7714
+        },
+        "exact_original_restored": true,
+        "decoder_code_included": false,
+        "avr_implemented": false
+      },
+      "selected_metrics": {
+        "stoi": 0.9948902869431405,
+        "estoi": 0.9922714305230582,
+        "raw_snr_db": 27.431105303840823,
+        "spectrogram_loss": 0.019454016394056535
+      },
+      "alternatives": [
+        {
+          "name": "lpx3-2bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 4462,
+            "stored_bytes": 4035,
+            "saved_bytes": 427,
+            "candidate_bytes": {
+              "original": 4462,
+              "deflate-packed": 4035,
+              "deflate-code-bytes": 4928,
+              "deflate-delta-bytes": 5208,
+              "canonical-huffman": 4237
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9388574324103003,
+            "estoi": 0.9086232961997289,
+            "raw_snr_db": 14.368242356910844,
+            "spectrogram_loss": 0.0912903386713707
+          }
+        },
+        {
+          "name": "lpx3-3bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 6382,
+            "stored_bytes": 5913,
+            "saved_bytes": 469,
+            "candidate_bytes": {
+              "original": 6382,
+              "deflate-packed": 6247,
+              "deflate-code-bytes": 7077,
+              "deflate-delta-bytes": 7333,
+              "canonical-huffman": 5913
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9844948719014037,
+            "estoi": 0.9720107641805282,
+            "raw_snr_db": 22.78882656443955,
+            "spectrogram_loss": 0.035448194625656626
+          }
+        },
+        {
+          "name": "lpx3-4bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 8302,
+            "stored_bytes": 7641,
+            "saved_bytes": 661,
+            "candidate_bytes": {
+              "original": 8302,
+              "deflate-packed": 7641,
+              "deflate-code-bytes": 9018,
+              "deflate-delta-bytes": 9125,
+              "canonical-huffman": 7714
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9948902869431405,
+            "estoi": 0.9922714305230582,
+            "raw_snr_db": 27.431105303840823,
+            "spectrogram_loss": 0.019454016394056535
+          }
+        },
+        {
+          "name": "lpx4-6bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 12142,
+            "stored_bytes": 11480,
+            "saved_bytes": 662,
+            "candidate_bytes": {
+              "original": 12142,
+              "deflate-packed": 12004,
+              "deflate-code-bytes": 11992,
+              "deflate-delta-bytes": 12151,
+              "canonical-huffman": 11480
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9989685304769945,
+            "estoi": 0.9986703140127546,
+            "raw_snr_db": 33.51302138354832,
+            "spectrogram_loss": 0.008889250887668098
+          }
+        },
+        {
+          "name": "lpx4-8bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 15982,
+            "stored_bytes": 15292,
+            "saved_bytes": 690,
+            "candidate_bytes": {
+              "original": 15982,
+              "deflate-packed": 15292,
+              "deflate-code-bytes": 15293,
+              "deflate-delta-bytes": 15505,
+              "canonical-huffman": 15450
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9991123910273703,
+            "estoi": 0.9990340200119925,
+            "raw_snr_db": 34.65544925239152,
+            "spectrogram_loss": 0.00754993179036983
+          }
+        }
+      ],
+      "comparison_audio": "audio/ru_square_b-center2048-comparison.wav",
+      "reference_sha256": "01dc2ec6c0d39a3b897f721805c0bae3aa097a63805d75439ad63a10d8b44e3c"
+    },
+    {
+      "id": "ru_slutskaya_a-center2048",
+      "listening_baseline": "lpx4-6bit",
+      "selected": "lpx4-8bit",
+      "quality_targets_met": false,
+      "selected_storage": {
+        "method": "deflate-packed",
+        "original_bytes": 15925,
+        "stored_bytes": 15051,
+        "saved_bytes": 874,
+        "candidate_bytes": {
+          "original": 15925,
+          "deflate-packed": 15051,
+          "deflate-code-bytes": 15052,
+          "deflate-delta-bytes": 15734,
+          "canonical-huffman": 15215
+        },
+        "exact_original_restored": true,
+        "decoder_code_included": false,
+        "avr_implemented": false
+      },
+      "selected_metrics": {
+        "stoi": 0.9887708265181521,
+        "estoi": 0.9876194565007682,
+        "raw_snr_db": 21.377435012498363,
+        "spectrogram_loss": 0.03295174065591225
+      },
+      "alternatives": [
+        {
+          "name": "lpx3-2bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 4405,
+            "stored_bytes": 4171,
+            "saved_bytes": 234,
+            "candidate_bytes": {
+              "original": 4405,
+              "deflate-packed": 4171,
+              "deflate-code-bytes": 5256,
+              "deflate-delta-bytes": 5480,
+              "canonical-huffman": 4210
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.8770879323874894,
+            "estoi": 0.8257305872889986,
+            "raw_snr_db": 13.469467940350931,
+            "spectrogram_loss": 0.09563130950803539
+          }
+        },
+        {
+          "name": "lpx3-3bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 6325,
+            "stored_bytes": 5837,
+            "saved_bytes": 488,
+            "candidate_bytes": {
+              "original": 6325,
+              "deflate-packed": 6241,
+              "deflate-code-bytes": 7303,
+              "deflate-delta-bytes": 7635,
+              "canonical-huffman": 5837
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9501149938140735,
+            "estoi": 0.932436783920161,
+            "raw_snr_db": 19.272754283221193,
+            "spectrogram_loss": 0.04958021601678246
+          }
+        },
+        {
+          "name": "lpx3-4bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 8245,
+            "stored_bytes": 7546,
+            "saved_bytes": 699,
+            "candidate_bytes": {
+              "original": 8245,
+              "deflate-packed": 7621,
+              "deflate-code-bytes": 9162,
+              "deflate-delta-bytes": 9397,
+              "canonical-huffman": 7546
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9769237846635525,
+            "estoi": 0.9723404065504884,
+            "raw_snr_db": 20.582664091092052,
+            "spectrogram_loss": 0.03835438929742187
+          }
+        },
+        {
+          "name": "lpx4-6bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 12085,
+            "stored_bytes": 11262,
+            "saved_bytes": 823,
+            "candidate_bytes": {
+              "original": 12085,
+              "deflate-packed": 11892,
+              "deflate-code-bytes": 11809,
+              "deflate-delta-bytes": 12288,
+              "canonical-huffman": 11262
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9882103090321341,
+            "estoi": 0.9865120890167481,
+            "raw_snr_db": 21.36893266506439,
+            "spectrogram_loss": 0.033296921119784995
+          }
+        },
+        {
+          "name": "lpx4-8bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 15925,
+            "stored_bytes": 15051,
+            "saved_bytes": 874,
+            "candidate_bytes": {
+              "original": 15925,
+              "deflate-packed": 15051,
+              "deflate-code-bytes": 15052,
+              "deflate-delta-bytes": 15734,
+              "canonical-huffman": 15215
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9887708265181521,
+            "estoi": 0.9876194565007682,
+            "raw_snr_db": 21.377435012498363,
+            "spectrogram_loss": 0.03295174065591225
+          }
+        }
+      ],
+      "comparison_audio": "audio/ru_slutskaya_a-center2048-comparison.wav",
+      "reference_sha256": "f83d3b8bc480cf7881df1fffc679240fa5c5187e9441db4abaa5f6282575d0a6"
+    },
+    {
+      "id": "ru_slutskaya_b-center2048",
+      "listening_baseline": "lpx4-6bit",
+      "selected": "lpx4-6bit",
+      "quality_targets_met": false,
+      "selected_storage": {
+        "method": "canonical-huffman",
+        "original_bytes": 12176,
+        "stored_bytes": 11277,
+        "saved_bytes": 899,
+        "candidate_bytes": {
+          "original": 12176,
+          "deflate-packed": 11968,
+          "deflate-code-bytes": 11906,
+          "deflate-delta-bytes": 12333,
+          "canonical-huffman": 11277
+        },
+        "exact_original_restored": true,
+        "decoder_code_included": false,
+        "avr_implemented": false
+      },
+      "selected_metrics": {
+        "stoi": 0.9792050812306589,
+        "estoi": 0.9702456221827841,
+        "raw_snr_db": 15.885595920176847,
+        "spectrogram_loss": 0.0699497650548495
+      },
+      "alternatives": [
+        {
+          "name": "lpx3-2bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 4496,
+            "stored_bytes": 4222,
+            "saved_bytes": 274,
+            "candidate_bytes": {
+              "original": 4496,
+              "deflate-packed": 4235,
+              "deflate-code-bytes": 5338,
+              "deflate-delta-bytes": 5539,
+              "canonical-huffman": 4222
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9499926524879185,
+            "estoi": 0.8967918113367211,
+            "raw_snr_db": 9.830171818943043,
+            "spectrogram_loss": 0.17159732532850694
+          }
+        },
+        {
+          "name": "lpx3-3bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 6416,
+            "stored_bytes": 5799,
+            "saved_bytes": 617,
+            "candidate_bytes": {
+              "original": 6416,
+              "deflate-packed": 6267,
+              "deflate-code-bytes": 7336,
+              "deflate-delta-bytes": 7619,
+              "canonical-huffman": 5799
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9721938104730806,
+            "estoi": 0.951576521872644,
+            "raw_snr_db": 12.917190357999003,
+            "spectrogram_loss": 0.12104880056339912
+          }
+        },
+        {
+          "name": "lpx3-4bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 8336,
+            "stored_bytes": 7499,
+            "saved_bytes": 837,
+            "candidate_bytes": {
+              "original": 8336,
+              "deflate-packed": 7571,
+              "deflate-code-bytes": 9102,
+              "deflate-delta-bytes": 9385,
+              "canonical-huffman": 7499
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9792744399161757,
+            "estoi": 0.9674306752469541,
+            "raw_snr_db": 15.560376612894668,
+            "spectrogram_loss": 0.08097730783710264
+          }
+        },
+        {
+          "name": "lpx4-6bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 12176,
+            "stored_bytes": 11277,
+            "saved_bytes": 899,
+            "candidate_bytes": {
+              "original": 12176,
+              "deflate-packed": 11968,
+              "deflate-code-bytes": 11906,
+              "deflate-delta-bytes": 12333,
+              "canonical-huffman": 11277
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9792050812306589,
+            "estoi": 0.9702456221827841,
+            "raw_snr_db": 15.885595920176847,
+            "spectrogram_loss": 0.0699497650548495
+          }
+        },
+        {
+          "name": "lpx4-8bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 16016,
+            "stored_bytes": 15061,
+            "saved_bytes": 955,
+            "candidate_bytes": {
+              "original": 16016,
+              "deflate-packed": 15061,
+              "deflate-code-bytes": 15062,
+              "deflate-delta-bytes": 15702,
+              "canonical-huffman": 15216
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9793446231578875,
+            "estoi": 0.9710210409965757,
+            "raw_snr_db": 15.85045860953501,
+            "spectrogram_loss": 0.07054795566736624
+          }
+        }
+      ],
+      "comparison_audio": "audio/ru_slutskaya_b-center2048-comparison.wav",
+      "reference_sha256": "92b466258dd24bc99494e7a790117c2d76fe560ae5a2eb0a6ea64d7a3cf3b286"
+    },
+    {
+      "id": "ru_russia_a-center2048",
+      "listening_baseline": "lpx4-6bit",
+      "selected": "lpx4-6bit",
+      "quality_targets_met": false,
+      "selected_storage": {
+        "method": "canonical-huffman",
+        "original_bytes": 12115,
+        "stored_bytes": 11300,
+        "saved_bytes": 815,
+        "candidate_bytes": {
+          "original": 12115,
+          "deflate-packed": 11920,
+          "deflate-code-bytes": 11868,
+          "deflate-delta-bytes": 12285,
+          "canonical-huffman": 11300
+        },
+        "exact_original_restored": true,
+        "decoder_code_included": false,
+        "avr_implemented": false
+      },
+      "selected_metrics": {
+        "stoi": 0.9929237468788266,
+        "estoi": 0.9933900385296672,
+        "raw_snr_db": 20.162521179110765,
+        "spectrogram_loss": 0.03599578698106334
+      },
+      "alternatives": [
+        {
+          "name": "lpx3-2bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 4435,
+            "stored_bytes": 4175,
+            "saved_bytes": 260,
+            "candidate_bytes": {
+              "original": 4435,
+              "deflate-packed": 4175,
+              "deflate-code-bytes": 5318,
+              "deflate-delta-bytes": 5544,
+              "canonical-huffman": 4178
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9448495634269138,
+            "estoi": 0.8858557510113159,
+            "raw_snr_db": 10.517172904451229,
+            "spectrogram_loss": 0.14771439127654076
+          }
+        },
+        {
+          "name": "lpx3-3bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 6355,
+            "stored_bytes": 5848,
+            "saved_bytes": 507,
+            "candidate_bytes": {
+              "original": 6355,
+              "deflate-packed": 6258,
+              "deflate-code-bytes": 7429,
+              "deflate-delta-bytes": 7662,
+              "canonical-huffman": 5848
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9801125070870107,
+            "estoi": 0.9639299403620476,
+            "raw_snr_db": 15.808809374736676,
+            "spectrogram_loss": 0.07925789352940424
+          }
+        },
+        {
+          "name": "lpx3-4bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 8275,
+            "stored_bytes": 7586,
+            "saved_bytes": 689,
+            "candidate_bytes": {
+              "original": 8275,
+              "deflate-packed": 7673,
+              "deflate-code-bytes": 9223,
+              "deflate-delta-bytes": 9416,
+              "canonical-huffman": 7586
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9902128623550058,
+            "estoi": 0.9866523916875589,
+            "raw_snr_db": 18.838610667049217,
+            "spectrogram_loss": 0.050049264445424894
+          }
+        },
+        {
+          "name": "lpx4-6bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 12115,
+            "stored_bytes": 11300,
+            "saved_bytes": 815,
+            "candidate_bytes": {
+              "original": 12115,
+              "deflate-packed": 11920,
+              "deflate-code-bytes": 11868,
+              "deflate-delta-bytes": 12285,
+              "canonical-huffman": 11300
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9929237468788266,
+            "estoi": 0.9933900385296672,
+            "raw_snr_db": 20.162521179110765,
+            "spectrogram_loss": 0.03599578698106334
+          }
+        },
+        {
+          "name": "lpx4-8bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 15955,
+            "stored_bytes": 15096,
+            "saved_bytes": 859,
+            "candidate_bytes": {
+              "original": 15955,
+              "deflate-packed": 15096,
+              "deflate-code-bytes": 15097,
+              "deflate-delta-bytes": 15745,
+              "canonical-huffman": 15269
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9931341540535097,
+            "estoi": 0.994010749798445,
+            "raw_snr_db": 20.15696246763969,
+            "spectrogram_loss": 0.034565193446345496
+          }
+        }
+      ],
+      "comparison_audio": "audio/ru_russia_a-center2048-comparison.wav",
+      "reference_sha256": "182fe32fa28bddda8b45f9c05e143f583de1d52c7ebcab197ca66d1b9462948f"
+    },
+    {
+      "id": "ru_russia_b-center2048",
+      "listening_baseline": "lpx4-6bit",
+      "selected": "lpx4-6bit",
+      "quality_targets_met": false,
+      "selected_storage": {
+        "method": "canonical-huffman",
+        "original_bytes": 12084,
+        "stored_bytes": 11137,
+        "saved_bytes": 947,
+        "candidate_bytes": {
+          "original": 12084,
+          "deflate-packed": 11852,
+          "deflate-code-bytes": 11723,
+          "deflate-delta-bytes": 12021,
+          "canonical-huffman": 11137
+        },
+        "exact_original_restored": true,
+        "decoder_code_included": false,
+        "avr_implemented": false
+      },
+      "selected_metrics": {
+        "stoi": 0.9881327579032928,
+        "estoi": 0.970664897935362,
+        "raw_snr_db": 19.47706862575747,
+        "spectrogram_loss": 0.04206194858221005
+      },
+      "alternatives": [
+        {
+          "name": "lpx3-2bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 4404,
+            "stored_bytes": 3963,
+            "saved_bytes": 441,
+            "candidate_bytes": {
+              "original": 4404,
+              "deflate-packed": 3963,
+              "deflate-code-bytes": 4905,
+              "deflate-delta-bytes": 5067,
+              "canonical-huffman": 3989
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9481039481955641,
+            "estoi": 0.8762323610024416,
+            "raw_snr_db": 11.647481259962678,
+            "spectrogram_loss": 0.11964992075740881
+          }
+        },
+        {
+          "name": "lpx3-3bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 6324,
+            "stored_bytes": 5650,
+            "saved_bytes": 674,
+            "candidate_bytes": {
+              "original": 6324,
+              "deflate-packed": 6080,
+              "deflate-code-bytes": 6914,
+              "deflate-delta-bytes": 7112,
+              "canonical-huffman": 5650
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.977241048781677,
+            "estoi": 0.9441281697764805,
+            "raw_snr_db": 16.597136563247236,
+            "spectrogram_loss": 0.06630893227853996
+          }
+        },
+        {
+          "name": "lpx3-4bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 8244,
+            "stored_bytes": 7382,
+            "saved_bytes": 862,
+            "candidate_bytes": {
+              "original": 8244,
+              "deflate-packed": 7426,
+              "deflate-code-bytes": 8782,
+              "deflate-delta-bytes": 9002,
+              "canonical-huffman": 7382
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9856000853734392,
+            "estoi": 0.9644408556406044,
+            "raw_snr_db": 18.83054637038604,
+            "spectrogram_loss": 0.04658749476800024
+          }
+        },
+        {
+          "name": "lpx4-6bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 12084,
+            "stored_bytes": 11137,
+            "saved_bytes": 947,
+            "candidate_bytes": {
+              "original": 12084,
+              "deflate-packed": 11852,
+              "deflate-code-bytes": 11723,
+              "deflate-delta-bytes": 12021,
+              "canonical-huffman": 11137
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9881327579032928,
+            "estoi": 0.970664897935362,
+            "raw_snr_db": 19.47706862575747,
+            "spectrogram_loss": 0.04206194858221005
+          }
+        },
+        {
+          "name": "lpx4-8bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 15924,
+            "stored_bytes": 14950,
+            "saved_bytes": 974,
+            "candidate_bytes": {
+              "original": 15924,
+              "deflate-packed": 14950,
+              "deflate-code-bytes": 14951,
+              "deflate-delta-bytes": 15408,
+              "canonical-huffman": 15094
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9881997702902565,
+            "estoi": 0.9713026656259673,
+            "raw_snr_db": 19.41654743633642,
+            "spectrogram_loss": 0.04177074187744395
+          }
+        }
+      ],
+      "comparison_audio": "audio/ru_russia_b-center2048-comparison.wav",
+      "reference_sha256": "1c713c915b7600a6af228d3b6be0520439a75d5ecd058642b45197c5d1e611f4"
+    },
+    {
+      "id": "en_sense_a-center2048",
+      "listening_baseline": "lpx4-6bit",
+      "selected": "lpv1-28db",
+      "quality_targets_met": false,
+      "selected_storage": {
+        "method": "original-other-format",
+        "stored_bytes": 7345,
+        "original_bytes": 7345,
+        "exact_original_restored": true
+      },
+      "selected_metrics": {
+        "stoi": 0.9652922149137476,
+        "estoi": 0.9372854347815855,
+        "raw_snr_db": 29.550168345641737,
+        "spectrogram_loss": 0.01979365570123618
+      },
+      "alternatives": [
+        {
+          "name": "lpx3-2bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 4288,
+            "stored_bytes": 3139,
+            "saved_bytes": 1149,
+            "candidate_bytes": {
+              "original": 4288,
+              "deflate-packed": 3139,
+              "deflate-code-bytes": 3687,
+              "deflate-delta-bytes": 3915,
+              "canonical-huffman": 3375
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.8143576275265064,
+            "estoi": 0.6823085653014999,
+            "raw_snr_db": 14.105289169355316,
+            "spectrogram_loss": 0.08539282415979003
+          }
+        },
+        {
+          "name": "lpx3-3bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 6208,
+            "stored_bytes": 5182,
+            "saved_bytes": 1026,
+            "candidate_bytes": {
+              "original": 6208,
+              "deflate-packed": 5638,
+              "deflate-code-bytes": 6053,
+              "deflate-delta-bytes": 6342,
+              "canonical-huffman": 5182
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9358760713924364,
+            "estoi": 0.8911072025623767,
+            "raw_snr_db": 18.560213608080936,
+            "spectrogram_loss": 0.051991456044891596
+          }
+        },
+        {
+          "name": "lpx3-4bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 8128,
+            "stored_bytes": 7035,
+            "saved_bytes": 1093,
+            "candidate_bytes": {
+              "original": 8128,
+              "deflate-packed": 7035,
+              "deflate-code-bytes": 8068,
+              "deflate-delta-bytes": 8338,
+              "canonical-huffman": 7079
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9769276793843666,
+            "estoi": 0.9588895389067589,
+            "raw_snr_db": 20.04204442505573,
+            "spectrogram_loss": 0.041265642207665036
+          }
+        },
+        {
+          "name": "lpx4-6bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 11968,
+            "stored_bytes": 10916,
+            "saved_bytes": 1052,
+            "candidate_bytes": {
+              "original": 11968,
+              "deflate-packed": 11695,
+              "deflate-code-bytes": 11384,
+              "deflate-delta-bytes": 11430,
+              "canonical-huffman": 10916
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9932131470816875,
+            "estoi": 0.9840393755429586,
+            "raw_snr_db": 20.44590249526076,
+            "spectrogram_loss": 0.039639381727866796
+          }
+        },
+        {
+          "name": "lpx4-8bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 15808,
+            "stored_bytes": 14792,
+            "saved_bytes": 1016,
+            "candidate_bytes": {
+              "original": 15808,
+              "deflate-packed": 14792,
+              "deflate-code-bytes": 14792,
+              "deflate-delta-bytes": 14809,
+              "canonical-huffman": 14892
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9938900002386296,
+            "estoi": 0.9843063392778829,
+            "raw_snr_db": 20.391972042345756,
+            "spectrogram_loss": 0.03984749613834658
+          }
+        },
+        {
+          "name": "lpv1-20db",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "original-other-format",
+            "stored_bytes": 5143,
+            "original_bytes": 5143,
+            "exact_original_restored": true
+          },
+          "metrics": {
+            "stoi": 0.8786863889577567,
+            "estoi": 0.7882631195460247,
+            "raw_snr_db": 23.569595070267827,
+            "spectrogram_loss": 0.042230063449616786
+          }
+        },
+        {
+          "name": "lpv1-24db",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "original-other-format",
+            "stored_bytes": 6257,
+            "original_bytes": 6257,
+            "exact_original_restored": true
+          },
+          "metrics": {
+            "stoi": 0.9120394448259257,
+            "estoi": 0.8598966186652652,
+            "raw_snr_db": 26.751275157193938,
+            "spectrogram_loss": 0.028186773665676464
+          }
+        },
+        {
+          "name": "lpv1-28db",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "original-other-format",
+            "stored_bytes": 7345,
+            "original_bytes": 7345,
+            "exact_original_restored": true
+          },
+          "metrics": {
+            "stoi": 0.9652922149137476,
+            "estoi": 0.9372854347815855,
+            "raw_snr_db": 29.550168345641737,
+            "spectrogram_loss": 0.01979365570123618
+          }
+        }
+      ],
+      "comparison_audio": "audio/en_sense_a-center2048-comparison.wav",
+      "reference_sha256": "810bdf80f939fb293cc7ca4f0e6e59872a8ea35e18fb6034ff4d045c268a2f08"
+    },
+    {
+      "id": "en_sense_b-center2048",
+      "listening_baseline": "lpx4-6bit",
+      "selected": "lpx3-4bit",
+      "quality_targets_met": false,
+      "selected_storage": {
+        "method": "canonical-huffman",
+        "original_bytes": 8324,
+        "stored_bytes": 7334,
+        "saved_bytes": 990,
+        "candidate_bytes": {
+          "original": 8324,
+          "deflate-packed": 7370,
+          "deflate-code-bytes": 8740,
+          "deflate-delta-bytes": 8956,
+          "canonical-huffman": 7334
+        },
+        "exact_original_restored": true,
+        "decoder_code_included": false,
+        "avr_implemented": false
+      },
+      "selected_metrics": {
+        "stoi": 0.9800471114899966,
+        "estoi": 0.9685210738802499,
+        "raw_snr_db": 18.269717482797134,
+        "spectrogram_loss": 0.05809461464710233
+      },
+      "alternatives": [
+        {
+          "name": "lpx3-2bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 4484,
+            "stored_bytes": 3918,
+            "saved_bytes": 566,
+            "candidate_bytes": {
+              "original": 4484,
+              "deflate-packed": 3918,
+              "deflate-code-bytes": 4765,
+              "deflate-delta-bytes": 5040,
+              "canonical-huffman": 4000
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9305467695588849,
+            "estoi": 0.8753848944944016,
+            "raw_snr_db": 11.263351556449635,
+            "spectrogram_loss": 0.12592194151563016
+          }
+        },
+        {
+          "name": "lpx3-3bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 6404,
+            "stored_bytes": 5593,
+            "saved_bytes": 811,
+            "candidate_bytes": {
+              "original": 6404,
+              "deflate-packed": 6089,
+              "deflate-code-bytes": 6814,
+              "deflate-delta-bytes": 7113,
+              "canonical-huffman": 5593
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9686986069420649,
+            "estoi": 0.9412776482303715,
+            "raw_snr_db": 16.789908096063368,
+            "spectrogram_loss": 0.07289848983652296
+          }
+        },
+        {
+          "name": "lpx3-4bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 8324,
+            "stored_bytes": 7334,
+            "saved_bytes": 990,
+            "candidate_bytes": {
+              "original": 8324,
+              "deflate-packed": 7370,
+              "deflate-code-bytes": 8740,
+              "deflate-delta-bytes": 8956,
+              "canonical-huffman": 7334
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9800471114899966,
+            "estoi": 0.9685210738802499,
+            "raw_snr_db": 18.269717482797134,
+            "spectrogram_loss": 0.05809461464710233
+          }
+        },
+        {
+          "name": "lpx4-6bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 12164,
+            "stored_bytes": 11095,
+            "saved_bytes": 1069,
+            "candidate_bytes": {
+              "original": 12164,
+              "deflate-packed": 11898,
+              "deflate-code-bytes": 11771,
+              "deflate-delta-bytes": 12008,
+              "canonical-huffman": 11095
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9833577033292689,
+            "estoi": 0.9744692088929832,
+            "raw_snr_db": 18.255732824431718,
+            "spectrogram_loss": 0.055436915676026946
+          }
+        },
+        {
+          "name": "lpx4-8bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 16004,
+            "stored_bytes": 14924,
+            "saved_bytes": 1080,
+            "candidate_bytes": {
+              "original": 16004,
+              "deflate-packed": 14924,
+              "deflate-code-bytes": 14925,
+              "deflate-delta-bytes": 15306,
+              "canonical-huffman": 15052
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9830136080286765,
+            "estoi": 0.974468002379346,
+            "raw_snr_db": 18.01705313446101,
+            "spectrogram_loss": 0.05670358332893969
+          }
+        }
+      ],
+      "comparison_audio": "audio/en_sense_b-center2048-comparison.wav",
+      "reference_sha256": "de580830b04edf333662ab2d84a2d938c05f1dcd26fe5c9223c08c89a3153efe"
+    },
+    {
+      "id": "en_portrait_a-center2048",
+      "listening_baseline": "lpx4-6bit",
+      "selected": "lpx3-4bit",
+      "quality_targets_met": true,
+      "selected_storage": {
+        "method": "deflate-packed",
+        "original_bytes": 8186,
+        "stored_bytes": 7581,
+        "saved_bytes": 605,
+        "candidate_bytes": {
+          "original": 8186,
+          "deflate-packed": 7581,
+          "deflate-code-bytes": 8971,
+          "deflate-delta-bytes": 9078,
+          "canonical-huffman": 7594
+        },
+        "exact_original_restored": true,
+        "decoder_code_included": false,
+        "avr_implemented": false
+      },
+      "selected_metrics": {
+        "stoi": 0.9937316240142042,
+        "estoi": 0.98710362049408,
+        "raw_snr_db": 27.958924264303864,
+        "spectrogram_loss": 0.020492408164159266
+      },
+      "alternatives": [
+        {
+          "name": "lpx3-2bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 4346,
+            "stored_bytes": 4000,
+            "saved_bytes": 346,
+            "candidate_bytes": {
+              "original": 4346,
+              "deflate-packed": 4000,
+              "deflate-code-bytes": 4966,
+              "deflate-delta-bytes": 5160,
+              "canonical-huffman": 4151
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9348987775278866,
+            "estoi": 0.8631241296250529,
+            "raw_snr_db": 14.645890271678146,
+            "spectrogram_loss": 0.08766893365450508
+          }
+        },
+        {
+          "name": "lpx3-3bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 6266,
+            "stored_bytes": 5872,
+            "saved_bytes": 394,
+            "candidate_bytes": {
+              "original": 6266,
+              "deflate-packed": 6151,
+              "deflate-code-bytes": 7099,
+              "deflate-delta-bytes": 7316,
+              "canonical-huffman": 5872
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9784128620422055,
+            "estoi": 0.9562287265393368,
+            "raw_snr_db": 21.506481411648974,
+            "spectrogram_loss": 0.041881508411387686
+          }
+        },
+        {
+          "name": "lpx3-4bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 8186,
+            "stored_bytes": 7581,
+            "saved_bytes": 605,
+            "candidate_bytes": {
+              "original": 8186,
+              "deflate-packed": 7581,
+              "deflate-code-bytes": 8971,
+              "deflate-delta-bytes": 9078,
+              "canonical-huffman": 7594
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9937316240142042,
+            "estoi": 0.98710362049408,
+            "raw_snr_db": 27.958924264303864,
+            "spectrogram_loss": 0.020492408164159266
+          }
+        },
+        {
+          "name": "lpx4-6bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 12026,
+            "stored_bytes": 11290,
+            "saved_bytes": 736,
+            "candidate_bytes": {
+              "original": 12026,
+              "deflate-packed": 11849,
+              "deflate-code-bytes": 11786,
+              "deflate-delta-bytes": 11861,
+              "canonical-huffman": 11290
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9987415617734197,
+            "estoi": 0.9980281890469995,
+            "raw_snr_db": 34.1701359409338,
+            "spectrogram_loss": 0.007944962189252109
+          }
+        },
+        {
+          "name": "lpx4-8bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 15866,
+            "stored_bytes": 15100,
+            "saved_bytes": 766,
+            "candidate_bytes": {
+              "original": 15866,
+              "deflate-packed": 15100,
+              "deflate-code-bytes": 15101,
+              "deflate-delta-bytes": 15274,
+              "canonical-huffman": 15261
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9990192751195516,
+            "estoi": 0.9985993261412294,
+            "raw_snr_db": 35.084975258441574,
+            "spectrogram_loss": 0.0059971695644231784
+          }
+        }
+      ],
+      "comparison_audio": "audio/en_portrait_a-center2048-comparison.wav",
+      "reference_sha256": "65cf9f0cbe8e0d396753a49c0d3a84c30ca09bcedcaeeb18ff897e473a0a67b9"
+    },
+    {
+      "id": "en_portrait_b-center2048",
+      "listening_baseline": "lpx4-6bit",
+      "selected": "lpx3-4bit",
+      "quality_targets_met": true,
+      "selected_storage": {
+        "method": "deflate-packed",
+        "original_bytes": 8178,
+        "stored_bytes": 7604,
+        "saved_bytes": 574,
+        "candidate_bytes": {
+          "original": 8178,
+          "deflate-packed": 7604,
+          "deflate-code-bytes": 8990,
+          "deflate-delta-bytes": 9105,
+          "canonical-huffman": 7636
+        },
+        "exact_original_restored": true,
+        "decoder_code_included": false,
+        "avr_implemented": false
+      },
+      "selected_metrics": {
+        "stoi": 0.9953251665976846,
+        "estoi": 0.9898579110740107,
+        "raw_snr_db": 28.64493171677769,
+        "spectrogram_loss": 0.017612778842357985
+      },
+      "alternatives": [
+        {
+          "name": "lpx3-2bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 4338,
+            "stored_bytes": 4010,
+            "saved_bytes": 328,
+            "candidate_bytes": {
+              "original": 4338,
+              "deflate-packed": 4010,
+              "deflate-code-bytes": 4915,
+              "deflate-delta-bytes": 5119,
+              "canonical-huffman": 4180
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9341706429175926,
+            "estoi": 0.8653092684950712,
+            "raw_snr_db": 12.050951394072014,
+            "spectrogram_loss": 0.10205493753319106
+          }
+        },
+        {
+          "name": "lpx3-3bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 6258,
+            "stored_bytes": 5896,
+            "saved_bytes": 362,
+            "candidate_bytes": {
+              "original": 6258,
+              "deflate-packed": 6164,
+              "deflate-code-bytes": 7118,
+              "deflate-delta-bytes": 7286,
+              "canonical-huffman": 5896
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9807365461273376,
+            "estoi": 0.9601509111747701,
+            "raw_snr_db": 22.347516861121154,
+            "spectrogram_loss": 0.035859971540713784
+          }
+        },
+        {
+          "name": "lpx3-4bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 8178,
+            "stored_bytes": 7604,
+            "saved_bytes": 574,
+            "candidate_bytes": {
+              "original": 8178,
+              "deflate-packed": 7604,
+              "deflate-code-bytes": 8990,
+              "deflate-delta-bytes": 9105,
+              "canonical-huffman": 7636
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9953251665976846,
+            "estoi": 0.9898579110740107,
+            "raw_snr_db": 28.64493171677769,
+            "spectrogram_loss": 0.017612778842357985
+          }
+        },
+        {
+          "name": "lpx4-6bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 12018,
+            "stored_bytes": 11366,
+            "saved_bytes": 652,
+            "candidate_bytes": {
+              "original": 12018,
+              "deflate-packed": 11869,
+              "deflate-code-bytes": 11855,
+              "deflate-delta-bytes": 11871,
+              "canonical-huffman": 11366
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9992742738238403,
+            "estoi": 0.9988337195823014,
+            "raw_snr_db": 36.16302419933805,
+            "spectrogram_loss": 0.006627605431820712
+          }
+        },
+        {
+          "name": "lpx4-8bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 15858,
+            "stored_bytes": 15145,
+            "saved_bytes": 713,
+            "candidate_bytes": {
+              "original": 15858,
+              "deflate-packed": 15145,
+              "deflate-code-bytes": 15146,
+              "deflate-delta-bytes": 15274,
+              "canonical-huffman": 15309
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9996093917982294,
+            "estoi": 0.9995324139921732,
+            "raw_snr_db": 37.99136924481009,
+            "spectrogram_loss": 0.004636537745806319
+          }
+        }
+      ],
+      "comparison_audio": "audio/en_portrait_b-center2048-comparison.wav",
+      "reference_sha256": "7776eb7bda2e22b0309ae98828453532eb462dab6ead92c389c28288d141c02f"
+    },
+    {
+      "id": "en_letter_a-center2048",
+      "listening_baseline": "lpx4-6bit",
+      "selected": "lpx4-8bit",
+      "quality_targets_met": false,
+      "selected_storage": {
+        "method": "deflate-packed",
+        "original_bytes": 15869,
+        "stored_bytes": 15006,
+        "saved_bytes": 863,
+        "candidate_bytes": {
+          "original": 15869,
+          "deflate-packed": 15006,
+          "deflate-code-bytes": 15006,
+          "deflate-delta-bytes": 15370,
+          "canonical-huffman": 15156
+        },
+        "exact_original_restored": true,
+        "decoder_code_included": false,
+        "avr_implemented": false
+      },
+      "selected_metrics": {
+        "stoi": 0.9960952704725431,
+        "estoi": 0.9944590006366893,
+        "raw_snr_db": 22.946421464642594,
+        "spectrogram_loss": 0.02475347065503769
+      },
+      "alternatives": [
+        {
+          "name": "lpx3-2bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 4349,
+            "stored_bytes": 3986,
+            "saved_bytes": 363,
+            "candidate_bytes": {
+              "original": 4349,
+              "deflate-packed": 3986,
+              "deflate-code-bytes": 4964,
+              "deflate-delta-bytes": 5148,
+              "canonical-huffman": 4060
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9198609763289818,
+            "estoi": 0.8582347175771121,
+            "raw_snr_db": 10.23055403068781,
+            "spectrogram_loss": 0.13283889729291365
+          }
+        },
+        {
+          "name": "lpx3-3bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 6269,
+            "stored_bytes": 5699,
+            "saved_bytes": 570,
+            "candidate_bytes": {
+              "original": 6269,
+              "deflate-packed": 6081,
+              "deflate-code-bytes": 6980,
+              "deflate-delta-bytes": 7192,
+              "canonical-huffman": 5699
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9718347915163712,
+            "estoi": 0.9526302439121955,
+            "raw_snr_db": 16.36107802129956,
+            "spectrogram_loss": 0.06771643585589966
+          }
+        },
+        {
+          "name": "lpx3-4bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 8189,
+            "stored_bytes": 7429,
+            "saved_bytes": 760,
+            "candidate_bytes": {
+              "original": 8189,
+              "deflate-packed": 7449,
+              "deflate-code-bytes": 8844,
+              "deflate-delta-bytes": 9032,
+              "canonical-huffman": 7429
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9887783623284132,
+            "estoi": 0.9824549064603809,
+            "raw_snr_db": 20.289489291353288,
+            "spectrogram_loss": 0.03758335721308885
+          }
+        },
+        {
+          "name": "lpx4-6bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 12029,
+            "stored_bytes": 11202,
+            "saved_bytes": 827,
+            "candidate_bytes": {
+              "original": 12029,
+              "deflate-packed": 11839,
+              "deflate-code-bytes": 11700,
+              "deflate-delta-bytes": 11965,
+              "canonical-huffman": 11202
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9957904474604973,
+            "estoi": 0.9940131392305418,
+            "raw_snr_db": 22.65230110023967,
+            "spectrogram_loss": 0.026423152194162747
+          }
+        },
+        {
+          "name": "lpx4-8bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 15869,
+            "stored_bytes": 15006,
+            "saved_bytes": 863,
+            "candidate_bytes": {
+              "original": 15869,
+              "deflate-packed": 15006,
+              "deflate-code-bytes": 15006,
+              "deflate-delta-bytes": 15370,
+              "canonical-huffman": 15156
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9960952704725431,
+            "estoi": 0.9944590006366893,
+            "raw_snr_db": 22.946421464642594,
+            "spectrogram_loss": 0.02475347065503769
+          }
+        }
+      ],
+      "comparison_audio": "audio/en_letter_a-center2048-comparison.wav",
+      "reference_sha256": "76ccd3493dde3907132e2bbbf08b47ba2ffd1740d78577a0d23b82bb984d3111"
+    },
+    {
+      "id": "en_letter_b-center2048",
+      "listening_baseline": "lpx4-6bit",
+      "selected": "lpx4-6bit",
+      "quality_targets_met": false,
+      "selected_storage": {
+        "method": "canonical-huffman",
+        "original_bytes": 12020,
+        "stored_bytes": 11245,
+        "saved_bytes": 775,
+        "candidate_bytes": {
+          "original": 12020,
+          "deflate-packed": 11835,
+          "deflate-code-bytes": 11726,
+          "deflate-delta-bytes": 11952,
+          "canonical-huffman": 11245
+        },
+        "exact_original_restored": true,
+        "decoder_code_included": false,
+        "avr_implemented": false
+      },
+      "selected_metrics": {
+        "stoi": 0.9879083441967812,
+        "estoi": 0.9847752902413118,
+        "raw_snr_db": 22.017369701707242,
+        "spectrogram_loss": 0.028870778797535752
+      },
+      "alternatives": [
+        {
+          "name": "lpx3-2bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 4340,
+            "stored_bytes": 4002,
+            "saved_bytes": 338,
+            "candidate_bytes": {
+              "original": 4340,
+              "deflate-packed": 4002,
+              "deflate-code-bytes": 4965,
+              "deflate-delta-bytes": 5157,
+              "canonical-huffman": 4092
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9069626746638879,
+            "estoi": 0.8448449543283961,
+            "raw_snr_db": 8.501361955162047,
+            "spectrogram_loss": 0.14249625056372267
+          }
+        },
+        {
+          "name": "lpx3-3bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 6260,
+            "stored_bytes": 5770,
+            "saved_bytes": 490,
+            "candidate_bytes": {
+              "original": 6260,
+              "deflate-packed": 6136,
+              "deflate-code-bytes": 7075,
+              "deflate-delta-bytes": 7258,
+              "canonical-huffman": 5770
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9630302652988334,
+            "estoi": 0.9371678140176068,
+            "raw_snr_db": 18.073783925239397,
+            "spectrogram_loss": 0.05634318140560145
+          }
+        },
+        {
+          "name": "lpx3-4bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 8180,
+            "stored_bytes": 7469,
+            "saved_bytes": 711,
+            "candidate_bytes": {
+              "original": 8180,
+              "deflate-packed": 7493,
+              "deflate-code-bytes": 8915,
+              "deflate-delta-bytes": 9028,
+              "canonical-huffman": 7469
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9842037228749893,
+            "estoi": 0.973219376820673,
+            "raw_snr_db": 21.987575270012538,
+            "spectrogram_loss": 0.03319339475752638
+          }
+        },
+        {
+          "name": "lpx4-6bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 12020,
+            "stored_bytes": 11245,
+            "saved_bytes": 775,
+            "candidate_bytes": {
+              "original": 12020,
+              "deflate-packed": 11835,
+              "deflate-code-bytes": 11726,
+              "deflate-delta-bytes": 11952,
+              "canonical-huffman": 11245
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9879083441967812,
+            "estoi": 0.9847752902413118,
+            "raw_snr_db": 22.017369701707242,
+            "spectrogram_loss": 0.028870778797535752
+          }
+        },
+        {
+          "name": "lpx4-8bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 15860,
+            "stored_bytes": 15066,
+            "saved_bytes": 794,
+            "candidate_bytes": {
+              "original": 15860,
+              "deflate-packed": 15066,
+              "deflate-code-bytes": 15067,
+              "deflate-delta-bytes": 15389,
+              "canonical-huffman": 15213
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9882873183360494,
+            "estoi": 0.9855283127346892,
+            "raw_snr_db": 21.77936624160816,
+            "spectrogram_loss": 0.028440644008203845
+          }
+        }
+      ],
+      "comparison_audio": "audio/en_letter_b-center2048-comparison.wav",
+      "reference_sha256": "dba9a739d1c4395b08d5901b8377b3444c6b33ef29c6c0bd9f670f103df19450"
+    },
+    {
+      "id": "en_normcore_a-center2048",
+      "listening_baseline": "lpx4-6bit",
+      "selected": "lpx4-6bit",
+      "quality_targets_met": true,
+      "selected_storage": {
+        "method": "canonical-huffman",
+        "original_bytes": 11978,
+        "stored_bytes": 11162,
+        "saved_bytes": 816,
+        "candidate_bytes": {
+          "original": 11978,
+          "deflate-packed": 11726,
+          "deflate-code-bytes": 11591,
+          "deflate-delta-bytes": 11703,
+          "canonical-huffman": 11162
+        },
+        "exact_original_restored": true,
+        "decoder_code_included": false,
+        "avr_implemented": false
+      },
+      "selected_metrics": {
+        "stoi": 0.9940291557873424,
+        "estoi": 0.9926444549346085,
+        "raw_snr_db": 27.96183018091631,
+        "spectrogram_loss": 0.016556261870894633
+      },
+      "alternatives": [
+        {
+          "name": "lpx3-2bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 4298,
+            "stored_bytes": 3780,
+            "saved_bytes": 518,
+            "candidate_bytes": {
+              "original": 4298,
+              "deflate-packed": 3780,
+              "deflate-code-bytes": 4528,
+              "deflate-delta-bytes": 4759,
+              "canonical-huffman": 4050
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9029569978005847,
+            "estoi": 0.8080908536665269,
+            "raw_snr_db": 13.995084247867295,
+            "spectrogram_loss": 0.11874308355189578
+          }
+        },
+        {
+          "name": "lpx3-3bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 6218,
+            "stored_bytes": 5770,
+            "saved_bytes": 448,
+            "candidate_bytes": {
+              "original": 6218,
+              "deflate-packed": 5980,
+              "deflate-code-bytes": 6632,
+              "deflate-delta-bytes": 6896,
+              "canonical-huffman": 5770
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.954007031307131,
+            "estoi": 0.9028835226507074,
+            "raw_snr_db": 20.799890754512987,
+            "spectrogram_loss": 0.05180012303656221
+          }
+        },
+        {
+          "name": "lpx3-4bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 8138,
+            "stored_bytes": 7352,
+            "saved_bytes": 786,
+            "candidate_bytes": {
+              "original": 8138,
+              "deflate-packed": 7352,
+              "deflate-code-bytes": 8500,
+              "deflate-delta-bytes": 8668,
+              "canonical-huffman": 7464
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9805610187766292,
+            "estoi": 0.961404726496137,
+            "raw_snr_db": 24.45345689952766,
+            "spectrogram_loss": 0.03116921047504644
+          }
+        },
+        {
+          "name": "lpx4-6bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 11978,
+            "stored_bytes": 11162,
+            "saved_bytes": 816,
+            "candidate_bytes": {
+              "original": 11978,
+              "deflate-packed": 11726,
+              "deflate-code-bytes": 11591,
+              "deflate-delta-bytes": 11703,
+              "canonical-huffman": 11162
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9940291557873424,
+            "estoi": 0.9926444549346085,
+            "raw_snr_db": 27.96183018091631,
+            "spectrogram_loss": 0.016556261870894633
+          }
+        },
+        {
+          "name": "lpx4-8bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 15818,
+            "stored_bytes": 14892,
+            "saved_bytes": 926,
+            "candidate_bytes": {
+              "original": 15818,
+              "deflate-packed": 14892,
+              "deflate-code-bytes": 14893,
+              "deflate-delta-bytes": 14985,
+              "canonical-huffman": 15041
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9954859613109917,
+            "estoi": 0.9949572578398209,
+            "raw_snr_db": 28.429686505808466,
+            "spectrogram_loss": 0.014811133689074859
+          }
+        }
+      ],
+      "comparison_audio": "audio/en_normcore_a-center2048-comparison.wav",
+      "reference_sha256": "289dd07d5b96e89530dd00d246dd4e585203fbf3c4b0788d8c329294bed7bd5b"
+    },
+    {
+      "id": "en_normcore_b-center2048",
+      "listening_baseline": "lpx4-6bit",
+      "selected": "lpx3-4bit",
+      "quality_targets_met": false,
+      "selected_storage": {
+        "method": "deflate-packed",
+        "original_bytes": 8125,
+        "stored_bytes": 7192,
+        "saved_bytes": 933,
+        "candidate_bytes": {
+          "original": 8125,
+          "deflate-packed": 7192,
+          "deflate-code-bytes": 8054,
+          "deflate-delta-bytes": 8124,
+          "canonical-huffman": 7643
+        },
+        "exact_original_restored": true,
+        "decoder_code_included": false,
+        "avr_implemented": false
+      },
+      "selected_metrics": {
+        "stoi": 0.9490829556360667,
+        "estoi": 0.9035234194003072,
+        "raw_snr_db": 23.47976864825614,
+        "spectrogram_loss": 0.03049598004536764
+      },
+      "alternatives": [
+        {
+          "name": "lpx3-2bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 4285,
+            "stored_bytes": 3538,
+            "saved_bytes": 747,
+            "candidate_bytes": {
+              "original": 4285,
+              "deflate-packed": 3538,
+              "deflate-code-bytes": 4062,
+              "deflate-delta-bytes": 4260,
+              "canonical-huffman": 4148
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.8119561198939045,
+            "estoi": 0.6492004293120255,
+            "raw_snr_db": 9.906566407241863,
+            "spectrogram_loss": 0.16337667648164425
+          }
+        },
+        {
+          "name": "lpx3-3bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 6205,
+            "stored_bytes": 5799,
+            "saved_bytes": 406,
+            "candidate_bytes": {
+              "original": 6205,
+              "deflate-packed": 5799,
+              "deflate-code-bytes": 6098,
+              "deflate-delta-bytes": 6342,
+              "canonical-huffman": 5938
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.8987364623446608,
+            "estoi": 0.803172573408043,
+            "raw_snr_db": 16.978207583192503,
+            "spectrogram_loss": 0.07175120033561316
+          }
+        },
+        {
+          "name": "lpx3-4bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 8125,
+            "stored_bytes": 7192,
+            "saved_bytes": 933,
+            "candidate_bytes": {
+              "original": 8125,
+              "deflate-packed": 7192,
+              "deflate-code-bytes": 8054,
+              "deflate-delta-bytes": 8124,
+              "canonical-huffman": 7643
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9490829556360667,
+            "estoi": 0.9035234194003072,
+            "raw_snr_db": 23.47976864825614,
+            "spectrogram_loss": 0.03049598004536764
+          }
+        },
+        {
+          "name": "lpx4-6bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-delta-bytes",
+            "original_bytes": 11965,
+            "stored_bytes": 11206,
+            "saved_bytes": 759,
+            "candidate_bytes": {
+              "original": 11965,
+              "deflate-packed": 11667,
+              "deflate-code-bytes": 11451,
+              "deflate-delta-bytes": 11206,
+              "canonical-huffman": 11405
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9729547775121691,
+            "estoi": 0.9656433881143476,
+            "raw_snr_db": 16.746756198153516,
+            "spectrogram_loss": 0.056805236153180734
+          }
+        },
+        {
+          "name": "lpx4-8bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-delta-bytes",
+            "original_bytes": 15805,
+            "stored_bytes": 14571,
+            "saved_bytes": 1234,
+            "candidate_bytes": {
+              "original": 15805,
+              "deflate-packed": 14966,
+              "deflate-code-bytes": 14967,
+              "deflate-delta-bytes": 14571,
+              "canonical-huffman": 15241
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9856086111752429,
+            "estoi": 0.9849095411477082,
+            "raw_snr_db": 20.05447173617624,
+            "spectrogram_loss": 0.03592066857200025
+          }
+        }
+      ],
+      "comparison_audio": "audio/en_normcore_b-center2048-comparison.wav",
+      "reference_sha256": "5b69fe8df93ed28dce414cf2fedca34b1292cb352dc45cd1586dfab8b80af918"
+    },
+    {
+      "id": "ru_square_a_quiet_minus24dB-center2048",
+      "listening_baseline": "lpx4-6bit",
+      "selected": "lpx4-6bit",
+      "quality_targets_met": true,
+      "selected_storage": {
+        "method": "deflate-delta-bytes",
+        "original_bytes": 11850,
+        "stored_bytes": 10996,
+        "saved_bytes": 854,
+        "candidate_bytes": {
+          "original": 11850,
+          "deflate-packed": 11672,
+          "deflate-code-bytes": 11490,
+          "deflate-delta-bytes": 10996,
+          "canonical-huffman": 11516
+        },
+        "exact_original_restored": true,
+        "decoder_code_included": false,
+        "avr_implemented": false
+      },
+      "selected_metrics": {
+        "stoi": 0.9969809440230836,
+        "estoi": 0.9956653101607197,
+        "raw_snr_db": 37.279408356766154,
+        "spectrogram_loss": 0.005230810647162084
+      },
+      "alternatives": [
+        {
+          "name": "lpx3-2bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 4170,
+            "stored_bytes": 3102,
+            "saved_bytes": 1068,
+            "candidate_bytes": {
+              "original": 4170,
+              "deflate-packed": 3102,
+              "deflate-code-bytes": 3469,
+              "deflate-delta-bytes": 3648,
+              "canonical-huffman": 4072
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.7765520594140026,
+            "estoi": 0.6813679488902794,
+            "raw_snr_db": 11.536440800792093,
+            "spectrogram_loss": 0.13614047720375394
+          }
+        },
+        {
+          "name": "lpx3-3bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 6090,
+            "stored_bytes": 5526,
+            "saved_bytes": 564,
+            "candidate_bytes": {
+              "original": 6090,
+              "deflate-packed": 5526,
+              "deflate-code-bytes": 5572,
+              "deflate-delta-bytes": 5682,
+              "canonical-huffman": 5913
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.8966686747675772,
+            "estoi": 0.8556524943632926,
+            "raw_snr_db": 19.935225459490518,
+            "spectrogram_loss": 0.05526437940979607
+          }
+        },
+        {
+          "name": "lpx3-4bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 8010,
+            "stored_bytes": 7124,
+            "saved_bytes": 886,
+            "candidate_bytes": {
+              "original": 8010,
+              "deflate-packed": 7124,
+              "deflate-code-bytes": 7826,
+              "deflate-delta-bytes": 7705,
+              "canonical-huffman": 7770
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9628375705727812,
+            "estoi": 0.9501549058842906,
+            "raw_snr_db": 25.811631611243612,
+            "spectrogram_loss": 0.02443816721916809
+          }
+        },
+        {
+          "name": "lpx4-6bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "deflate-delta-bytes",
+            "original_bytes": 11850,
+            "stored_bytes": 10996,
+            "saved_bytes": 854,
+            "candidate_bytes": {
+              "original": 11850,
+              "deflate-packed": 11672,
+              "deflate-code-bytes": 11490,
+              "deflate-delta-bytes": 10996,
+              "canonical-huffman": 11516
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9969809440230836,
+            "estoi": 0.9956653101607197,
+            "raw_snr_db": 37.279408356766154,
+            "spectrogram_loss": 0.005230810647162084
+          }
+        },
+        {
+          "name": "lpx4-8bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "deflate-delta-bytes",
+            "original_bytes": 15690,
+            "stored_bytes": 14057,
+            "saved_bytes": 1633,
+            "candidate_bytes": {
+              "original": 15690,
+              "deflate-packed": 15115,
+              "deflate-code-bytes": 15116,
+              "deflate-delta-bytes": 14057,
+              "canonical-huffman": 15347
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9994035473867611,
+            "estoi": 0.9990335863602381,
+            "raw_snr_db": 43.80317920177353,
+            "spectrogram_loss": 0.0022313749832426144
+          }
+        }
+      ],
+      "comparison_audio": "audio/ru_square_a_quiet_minus24dB-center2048-comparison.wav",
+      "reference_sha256": "dac6c1d04c863947021144930c0b16b7d14f054311742d7f1bb9d4e02617d33b"
+    },
+    {
+      "id": "ru_russia_a_white_noise_15dB-center2048",
+      "listening_baseline": "lpx4-6bit",
+      "selected": "lpx4-6bit",
+      "quality_targets_met": false,
+      "selected_storage": {
+        "method": "canonical-huffman",
+        "original_bytes": 12061,
+        "stored_bytes": 11218,
+        "saved_bytes": 843,
+        "candidate_bytes": {
+          "original": 12061,
+          "deflate-packed": 11871,
+          "deflate-code-bytes": 11762,
+          "deflate-delta-bytes": 12176,
+          "canonical-huffman": 11218
+        },
+        "exact_original_restored": true,
+        "decoder_code_included": false,
+        "avr_implemented": false
+      },
+      "selected_metrics": {
+        "stoi": 0.9944880810932197,
+        "estoi": 0.994127506114296,
+        "raw_snr_db": 20.808468940252563,
+        "spectrogram_loss": 0.03798440832729536
+      },
+      "alternatives": [
+        {
+          "name": "lpx3-2bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 4381,
+            "stored_bytes": 4116,
+            "saved_bytes": 265,
+            "candidate_bytes": {
+              "original": 4381,
+              "deflate-packed": 4116,
+              "deflate-code-bytes": 5231,
+              "deflate-delta-bytes": 5425,
+              "canonical-huffman": 4144
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9201694707701811,
+            "estoi": 0.8429672422110313,
+            "raw_snr_db": 9.38884642299253,
+            "spectrogram_loss": 0.1842295710382726
+          }
+        },
+        {
+          "name": "lpx3-3bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 6301,
+            "stored_bytes": 5811,
+            "saved_bytes": 490,
+            "candidate_bytes": {
+              "original": 6301,
+              "deflate-packed": 6200,
+              "deflate-code-bytes": 7303,
+              "deflate-delta-bytes": 7552,
+              "canonical-huffman": 5811
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9737512774661373,
+            "estoi": 0.9537171075654172,
+            "raw_snr_db": 14.797821507387985,
+            "spectrogram_loss": 0.100313208734143
+          }
+        },
+        {
+          "name": "lpx3-4bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 8221,
+            "stored_bytes": 7500,
+            "saved_bytes": 721,
+            "candidate_bytes": {
+              "original": 8221,
+              "deflate-packed": 7588,
+              "deflate-code-bytes": 9088,
+              "deflate-delta-bytes": 9343,
+              "canonical-huffman": 7500
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9888236661215198,
+            "estoi": 0.9819846270619024,
+            "raw_snr_db": 18.505220706838067,
+            "spectrogram_loss": 0.05954046448178115
+          }
+        },
+        {
+          "name": "lpx4-6bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 12061,
+            "stored_bytes": 11218,
+            "saved_bytes": 843,
+            "candidate_bytes": {
+              "original": 12061,
+              "deflate-packed": 11871,
+              "deflate-code-bytes": 11762,
+              "deflate-delta-bytes": 12176,
+              "canonical-huffman": 11218
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9944880810932197,
+            "estoi": 0.994127506114296,
+            "raw_snr_db": 20.808468940252563,
+            "spectrogram_loss": 0.03798440832729536
+          }
+        },
+        {
+          "name": "lpx4-8bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 15901,
+            "stored_bytes": 15019,
+            "saved_bytes": 882,
+            "candidate_bytes": {
+              "original": 15901,
+              "deflate-packed": 15019,
+              "deflate-code-bytes": 15020,
+              "deflate-delta-bytes": 15676,
+              "canonical-huffman": 15192
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9948955057755702,
+            "estoi": 0.9952493485838929,
+            "raw_snr_db": 20.661480560422486,
+            "spectrogram_loss": 0.03646963706943011
+          }
+        }
+      ],
+      "comparison_audio": "audio/ru_russia_a_white_noise_15dB-center2048-comparison.wav",
+      "reference_sha256": "87e47b60bd993cec24788d807fc2a3eb90635e6bd1be2c88f674267ce16d7546"
+    },
+    {
+      "id": "en_normcore_a_quiet_minus24dB-center2048",
+      "listening_baseline": "lpx4-6bit",
+      "selected": "lpx4-6bit",
+      "quality_targets_met": true,
+      "selected_storage": {
+        "method": "deflate-delta-bytes",
+        "original_bytes": 11850,
+        "stored_bytes": 10060,
+        "saved_bytes": 1790,
+        "candidate_bytes": {
+          "original": 11850,
+          "deflate-packed": 10693,
+          "deflate-code-bytes": 10255,
+          "deflate-delta-bytes": 10060,
+          "canonical-huffman": 10601
+        },
+        "exact_original_restored": true,
+        "decoder_code_included": false,
+        "avr_implemented": false
+      },
+      "selected_metrics": {
+        "stoi": 0.9921850661073149,
+        "estoi": 0.9879733595461176,
+        "raw_snr_db": 30.23614872039105,
+        "spectrogram_loss": 0.013443158387875496
+      },
+      "alternatives": [
+        {
+          "name": "lpx3-2bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 4170,
+            "stored_bytes": 3036,
+            "saved_bytes": 1134,
+            "candidate_bytes": {
+              "original": 4170,
+              "deflate-packed": 3036,
+              "deflate-code-bytes": 3398,
+              "deflate-delta-bytes": 3635,
+              "canonical-huffman": 3761
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.8632141289293924,
+            "estoi": 0.7126645640914193,
+            "raw_snr_db": 10.85490809742478,
+            "spectrogram_loss": 0.17020969157806137
+          }
+        },
+        {
+          "name": "lpx3-3bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 6090,
+            "stored_bytes": 5270,
+            "saved_bytes": 820,
+            "candidate_bytes": {
+              "original": 6090,
+              "deflate-packed": 5270,
+              "deflate-code-bytes": 5339,
+              "deflate-delta-bytes": 5615,
+              "canonical-huffman": 5576
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9296876289939294,
+            "estoi": 0.8529566949912252,
+            "raw_snr_db": 16.72438126144951,
+            "spectrogram_loss": 0.086905604979268
+          }
+        },
+        {
+          "name": "lpx3-4bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 8010,
+            "stored_bytes": 6606,
+            "saved_bytes": 1404,
+            "candidate_bytes": {
+              "original": 8010,
+              "deflate-packed": 6606,
+              "deflate-code-bytes": 7184,
+              "deflate-delta-bytes": 7326,
+              "canonical-huffman": 7297
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9655682436641261,
+            "estoi": 0.9265011696304108,
+            "raw_snr_db": 21.835542282797405,
+            "spectrogram_loss": 0.043577154409421
+          }
+        },
+        {
+          "name": "lpx4-6bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "deflate-delta-bytes",
+            "original_bytes": 11850,
+            "stored_bytes": 10060,
+            "saved_bytes": 1790,
+            "candidate_bytes": {
+              "original": 11850,
+              "deflate-packed": 10693,
+              "deflate-code-bytes": 10255,
+              "deflate-delta-bytes": 10060,
+              "canonical-huffman": 10601
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9921850661073149,
+            "estoi": 0.9879733595461176,
+            "raw_snr_db": 30.23614872039105,
+            "spectrogram_loss": 0.013443158387875496
+          }
+        },
+        {
+          "name": "lpx4-8bit",
+          "quality_targets_met": true,
+          "storage": {
+            "method": "deflate-delta-bytes",
+            "original_bytes": 15690,
+            "stored_bytes": 12293,
+            "saved_bytes": 3397,
+            "candidate_bytes": {
+              "original": 15690,
+              "deflate-packed": 12951,
+              "deflate-code-bytes": 12952,
+              "deflate-delta-bytes": 12293,
+              "canonical-huffman": 13713
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.993680062153224,
+            "estoi": 0.9926474290495751,
+            "raw_snr_db": 32.64405532508504,
+            "spectrogram_loss": 0.008998261474400174
+          }
+        }
+      ],
+      "comparison_audio": "audio/en_normcore_a_quiet_minus24dB-center2048-comparison.wav",
+      "reference_sha256": "80553a2be4697ab1daeac1582ba98aa8c7f73c48d9220e537dc65c43e7e0cea1"
+    },
+    {
+      "id": "en_sense_a_white_noise_15dB-center2048",
+      "listening_baseline": "lpx4-6bit",
+      "selected": "lpx4-8bit",
+      "quality_targets_met": false,
+      "selected_storage": {
+        "method": "deflate-packed",
+        "original_bytes": 15862,
+        "stored_bytes": 14928,
+        "saved_bytes": 934,
+        "candidate_bytes": {
+          "original": 15862,
+          "deflate-packed": 14928,
+          "deflate-code-bytes": 14929,
+          "deflate-delta-bytes": 15588,
+          "canonical-huffman": 15087
+        },
+        "exact_original_restored": true,
+        "decoder_code_included": false,
+        "avr_implemented": false
+      },
+      "selected_metrics": {
+        "stoi": 0.9965529352441712,
+        "estoi": 0.9966451354483269,
+        "raw_snr_db": 25.13207980727752,
+        "spectrogram_loss": 0.026993852101632163
+      },
+      "alternatives": [
+        {
+          "name": "lpx3-2bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 4342,
+            "stored_bytes": 3856,
+            "saved_bytes": 486,
+            "candidate_bytes": {
+              "original": 4342,
+              "deflate-packed": 3856,
+              "deflate-code-bytes": 4793,
+              "deflate-delta-bytes": 5110,
+              "canonical-huffman": 3936
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.7556272019306995,
+            "estoi": 0.7048431140565778,
+            "raw_snr_db": 9.917789425230048,
+            "spectrogram_loss": 0.17740794651364997
+          }
+        },
+        {
+          "name": "lpx3-3bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 6262,
+            "stored_bytes": 5564,
+            "saved_bytes": 698,
+            "candidate_bytes": {
+              "original": 6262,
+              "deflate-packed": 6055,
+              "deflate-code-bytes": 6908,
+              "deflate-delta-bytes": 7308,
+              "canonical-huffman": 5564
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.8828881169205925,
+            "estoi": 0.8629900878352504,
+            "raw_snr_db": 16.21754943223975,
+            "spectrogram_loss": 0.1058472509869003
+          }
+        },
+        {
+          "name": "lpx3-4bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 8182,
+            "stored_bytes": 7333,
+            "saved_bytes": 849,
+            "candidate_bytes": {
+              "original": 8182,
+              "deflate-packed": 7420,
+              "deflate-code-bytes": 8870,
+              "deflate-delta-bytes": 9184,
+              "canonical-huffman": 7333
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9513803571957307,
+            "estoi": 0.9425734593633013,
+            "raw_snr_db": 20.724079529656215,
+            "spectrogram_loss": 0.06036767957593976
+          }
+        },
+        {
+          "name": "lpx4-6bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "canonical-huffman",
+            "original_bytes": 12022,
+            "stored_bytes": 11100,
+            "saved_bytes": 922,
+            "candidate_bytes": {
+              "original": 12022,
+              "deflate-packed": 11807,
+              "deflate-code-bytes": 11587,
+              "deflate-delta-bytes": 12061,
+              "canonical-huffman": 11100
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9937261398728516,
+            "estoi": 0.9935069834945078,
+            "raw_snr_db": 24.978798949604347,
+            "spectrogram_loss": 0.031004634466332406
+          }
+        },
+        {
+          "name": "lpx4-8bit",
+          "quality_targets_met": false,
+          "storage": {
+            "method": "deflate-packed",
+            "original_bytes": 15862,
+            "stored_bytes": 14928,
+            "saved_bytes": 934,
+            "candidate_bytes": {
+              "original": 15862,
+              "deflate-packed": 14928,
+              "deflate-code-bytes": 14929,
+              "deflate-delta-bytes": 15588,
+              "canonical-huffman": 15087
+            },
+            "exact_original_restored": true,
+            "decoder_code_included": false,
+            "avr_implemented": false
+          },
+          "metrics": {
+            "stoi": 0.9965529352441712,
+            "estoi": 0.9966451354483269,
+            "raw_snr_db": 25.13207980727752,
+            "spectrogram_loss": 0.026993852101632163
+          }
+        }
+      ],
+      "comparison_audio": "audio/en_sense_a_white_noise_15dB-center2048-comparison.wav",
+      "reference_sha256": "991609adad33230674622136a9cb689f171e1fc7e795e2e4373851f956103b92"
+    }
+  ],
+  "input_manifest_sha256": "4d99f80e2383f5ba06e4a72f4049df1a6689a549d6c36322db274bd23ade0d8b",
+  "selection": "Smallest complete stored container meeting all common targets; otherwise highest waveform SNR, explicitly marked below target",
+  "listening": "Same 70Hz highpass, one RMS match to original, common peak scale per recording; raw WAVs linked separately",
+  "decoder_code_included": false,
+  "avr_implemented": false
+}
