@@ -1,0 +1,28 @@
+{
+  "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+  "input_stream_sha256": "fe24fbdaf5260266d7b29b04f7e4d3926c48ce13c5697b214e0728b431433d03",
+  "seed": 23143,
+  "proposals": 6000,
+  "avr_assembled": false,
+  "final": {
+    "loss": 0.782327565803685,
+    "log_spectral_error": 0.7578244880135774,
+    "relative_spectral_error": 0.8803398769641154,
+    "stoi": 0.847093794848152,
+    "peak": 49,
+    "steps": 0,
+    "mean_pcm": 0.6939206178160919,
+    "stream_bytes": 613,
+    "energy": 2.0055772070184696,
+    "estoi": 0.6633534576361478
+  },
+  "sources_sha256_normalized_lf": {
+    "tools/probe-hq4-precision.py": "15268ca43b2962cc2c6ab82251dabeb41b40f5fed84fbe00f621e6313b5cbd1b",
+    "ATtiny13A/Sound/codec/hq4_precision.py": "2a6593fc148ddd7dedd9f1d76941683aa447a0b0797c0033394d5888bfdc003d",
+    "ATtiny13A/Sound/codec/new_hq4_encoder.py": "bf9f3f15b496558e56a1a5ca92bf6454d8065861618ae8fb27efe9716fce885c",
+    "ATtiny13A/Sound/codec/hq4_speech_search.py": "3178c817fe02e9845449e2b501afe7dcc1b03a099fb59d56010e77e38640b2ab"
+  },
+  "accepted_proposals": 168,
+  "decision": "Not promoted: both STOI and eSTOI remain below the retained public Vinni",
+  "baseline_measurements_file": "initial.json"
+}
