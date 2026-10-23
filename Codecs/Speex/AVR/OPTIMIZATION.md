@@ -138,6 +138,16 @@ binary measurements. Vendor and R4 files remain unmodified.
   independent full signed8 shape/scale/pitch-edge samples match upstream.
   Complete corpus and C timer admission remain pending for the series.
 
+- Portable C excitation saturation before Q14 extraction: after the unchanged
+  rounding addition, clamp at +/-536854528, then extract bits 14..29 with
+  unsigned left alignment. This removes the generic 32-bit >>14 loop without
+  losing either sign or the -32768 -> -32767 rule. Fixture maximum 297,279 ->
+  283,935 cycles, Flash 9,578 -> 9,594 B; stack/static SRAM unchanged. All
+  459,012 independent signed32 saturation cases, 163,840 innovation samples
+  and 1,058 fixture/reset frames pass. The formerly failing 402-frame
+  en_letter_a C player now passes with interrupts, zero underruns, minimum
+  queue 55 and 514 B free SRAM. Full-corpus admission is still pending.
+
 ## Next candidates (unmeasured)
 
 1. **Portable C fixed-point narrowing.** Generic signed32 shifts dominate C

@@ -3,6 +3,7 @@
  * (shape << 9) >> 7 == shape * 4, including negative signed shapes. */
 #include "avr_tables.h"
 #include "packed24.h"
+_Static_assert(SIG_SHIFT==14,"NB3 excitation rounding requires Q14");
 extern const signed char exc_10_32_table[];
 #if SPEEX_NB3_USE_AVR_ASM
 extern void speex_avr_innovation10(int16_t *, const uint8_t *, const int8_t *, int32_t);
@@ -32,7 +33,8 @@ static void speex_avr_innovation(spx_word16_t *out, const uint8_t *pitch,
             pitch+=3;
             /* Original clamp +/-262144000, expressed before the common *128. */
             adaptive=SATURATE32(adaptive,2048000);
-            *out++ = EXTRACT16(SATURATE32(PSHR32(ADD32(SHL32(adaptive,8),innovation),SIG_SHIFT),32767));
+            *out++ = speex_nb3_saturating_q14_c(
+                ADD32(ADD32(SHL32(adaptive,8),innovation),8192));
         }
 #endif
     }

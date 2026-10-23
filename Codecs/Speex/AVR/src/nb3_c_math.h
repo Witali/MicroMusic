@@ -17,4 +17,14 @@ static SPEEX_NB3_ALWAYS_INLINE int32_t speex_nb3_shape_scale_c(int8_t shape,
     int32_t quotient=(int32_t)shape*high+fraction;
     return (int32_t)((uint32_t)quotient<<8)>>1;
 }
+/* Saturate floor(rounded/16384) to +/-32767. Clamp before discarding
+ * bits: every remaining result fits signed16, so retain only bits 14..29
+ * with unsigned left alignment and a whole-word extraction. This also
+ * preserves the original -32768 -> -32767 saturation for all signed32. */
+static SPEEX_NB3_ALWAYS_INLINE int16_t speex_nb3_saturating_q14_c(int32_t rounded)
+{
+    if (rounded>=536854528) return 32767;
+    if (rounded<=-536854528) return -32767;
+    return (int16_t)(((uint32_t)rounded<<2)>>16);
+}
 #endif

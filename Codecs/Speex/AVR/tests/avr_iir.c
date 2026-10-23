@@ -23,10 +23,8 @@ static void innovation10_c(int16_t *out,const uint8_t *pitch,
       int32_t innovation=speex_nb3_shape_scale_c((int8_t)pgm_read_byte(shape+i),high,low);
       if (adaptive>2048000) adaptive=2048000;
       if (adaptive<-2048000) adaptive=-2048000;
-      int32_t value=(int32_t)(((uint32_t)adaptive<<8)+(uint32_t)innovation+8192)>>14;
-      if (value>32767) value=32767;
-      if (value<-32767) value=-32767;
-      out[i]=(int16_t)value;
+      int32_t rounded=(int32_t)(((uint32_t)adaptive<<8)+(uint32_t)innovation+8192);
+      out[i]=speex_nb3_saturating_q14_c(rounded);
    }
 }
 int main(void)
@@ -36,6 +34,8 @@ int main(void)
       while (!iir_command) {}
       if (iir_command==1)
          speex_avr_iir40(iir_samples,iir_coef,iir_samples,iir_state);
+      else if (iir_command==4)
+         iir_samples[0]=speex_nb3_saturating_q14_c(innovation_scale);
       else if (iir_command==3)
          innovation10_c(iir_samples,innovation_pitch,
                         innovation_shapes+innovation_index,innovation_scale);

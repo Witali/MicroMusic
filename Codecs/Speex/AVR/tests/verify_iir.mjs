@@ -91,3 +91,20 @@ const cInnovationReport={...innovationReport,backend:'c',
   minMailboxCycles:cInnovationMin,maxMailboxCycles:cInnovationMax};
 writeFileSync(join(build,'verification-innovation-c.json'),JSON.stringify(cInnovationReport,null,2)+'\n');
 console.log(JSON.stringify(cInnovationReport,null,2));
+let cSaturationCases=0;
+function checkCSaturation(v) {
+  cpu.dataView.setInt32(scaleAddress,v,true);cpu.data[status]=1;cpu.data[command]=4;
+  until(()=>cpu.data[status]===2);
+  assert.equal(cpu.dataView.getInt16(samples,true),Math.max(-32767,Math.min(32767,v>>14)),`C Q14 saturation ${v}`);
+  assert.equal(cpu.data[zero],0,'GCC zero register after C saturation');cSaturationCases++;
+}
+for(let word=-32768;word<=32767;word++)for(const remainder of [0,1,8191,8192,16383])
+  checkCSaturation(word*16384+remainder);
+for(let i=0;i<131072;i++)checkCSaturation(next()|0);
+for(const edge of [-2147483648,2147483647,536854528,-536854528])
+  for(let offset=-32;offset<=32;offset++)checkCSaturation((edge+offset)|0);
+const cSaturationReport={mcu:report.mcu,simulator:report.simulator,compiler:report.compiler,
+  samples:cSaturationCases,exact:true,fullSigned32Inputs:true,zeroRegisterRestored:true,
+  includesInterrupts:false,physicalBoardTested:false};
+writeFileSync(join(build,'verification-c-q14-saturation.json'),JSON.stringify(cSaturationReport,null,2)+'\n');
+console.log(JSON.stringify(cSaturationReport,null,2));
