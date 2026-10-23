@@ -12,7 +12,8 @@ HOP = 64
 PERIOD = 32
 
 
-def track_pitch(audio, sr=SR, hop=HOP, window=256, low=65., high=850.):
+def track_pitch(audio, sr=SR, hop=HOP, window=256, low=65., high=850.,
+                prior_hz=None, prior_weight=0.):
     """Return frame-centred F0/periodicity estimates, with zero for unvoiced.
 
     Fixed-length difference comparisons avoid a preference for long lags.
@@ -25,6 +26,8 @@ def track_pitch(audio, sr=SR, hop=HOP, window=256, low=65., high=850.):
         raise ValueError('Expected finite mono audio at least one window long')
     if not 0 < low < high < sr / 2 or not 0 < hop <= window:
         raise ValueError('Invalid pitch range or frame size')
+    if prior_weight < 0 or (prior_hz is not None and not low <= prior_hz <= high):
+        raise ValueError('Invalid pitch prior')
     lo, hi = max(2, int(sr / high)), int(np.ceil(sr / low))
     if window <= 2 * hi:
         raise ValueError('Analysis window too short for minimum F0')
@@ -60,7 +63,8 @@ def track_pitch(audio, sr=SR, hop=HOP, window=256, low=65., high=850.):
                     f = sr / (k+shift)
                     if low <= f <= high:
                         fs.append(float(f))
-                        emission.append(float(cmnd[k] + .09*abs(np.log2(k/convincing))))
+                        prior = prior_weight*abs(np.log2(f/prior_hz)) if prior_hz is not None else 0.
+                        emission.append(float(cmnd[k] + .09*abs(np.log2(k/convincing)) + prior))
         candidates.append(np.array(fs))
         costs.append(np.array(emission))
         qualities.append(quality)
@@ -254,16 +258,26 @@ def decode_model(model):
     return periodic + noise_at(left)*(1-blend) + noise_at(right)*blend
 
 
-def encode_model(audio, seed=23065, starts=8):
+def encode_model(audio, seed=23065, starts=8, *, pitch_mode='legacy',pitch_options=None):
     """Learn pitch, phase-aligned book, gain and noise color from a single clip."""
-    centres, f0, quality = track_pitch(audio)
+    if pitch_mode=='voice-priority':
+        from speech_pitch import track_speech_pitch
+        centres,f0,quality,pitch_analysis = track_speech_pitch(audio,**(pitch_options or {}))
+        book_mask = np.asarray(pitch_analysis['book_mask'],dtype=bool)
+    elif pitch_mode=='legacy':
+        if pitch_options:
+            raise ValueError('Pitch mask options require voice-priority mode')
+        centres, f0, quality = track_pitch(audio)
+        book_mask,pitch_analysis = f0>0,None
+    else:
+        raise ValueError('Unknown pitch analysis mode')
     phase = align_phase(audio, continuous_phase(f0, centres, len(audio)), f0, centres)
     phase -= np.floor(phase[0])
     initial = int(np.rint(phase[0]*65536)) % 65536
     phase += initial/65536-phase[0]
     codes, quantized_phase = quantize_phase(phase, len(audio))
     shapes = fit_periods(audio, quantized_phase, f0, centres)
-    book = train_book(shapes, f0 > 0, seed, starts)
+    book = train_book(shapes, book_mask, seed, starts)
     peaks = np.max(abs(shapes), axis=1)
     rms = np.array([np.sqrt(np.mean(audio[max(0, int(c)-HOP//2):min(len(audio), int(c)+HOP//2)]**2)) for c in centres])
     scale = float(min(1., max(np.max(peaks), np.max(rms), 1e-6)))
@@ -289,7 +303,8 @@ def encode_model(audio, seed=23065, starts=8):
                  codebook=book.astype(int).tolist(), frames=frames.tolist())
     analysis = dict(centres=centres, f0=f0, periodicity=quality, phase=quantized_phase,
                     shapes=shapes, continuous_unquantized=render_periods(shapes, quantized_phase, centres),
-                    phase_target=phase)
+                    phase_target=phase,pitch_mode=pitch_mode,pitch_analysis=pitch_analysis,
+                    voice_mask=f0>0,book_mask=book_mask)
     return model, analysis
 
 
@@ -369,7 +384,7 @@ class FrameSynthesis:
         return out
 
 
-def refine_frames(model, objective, proposals=5000, seed=23066):
+def refine_frames(model, objective, proposals=5000, seed=23066, *, voiced_mask=None):
     """Greedy analysis-by-synthesis, balancing spectra and STOI explicitly.
 
     Does not promise a global optimum or a STOI floor. Pitch/book stay fixed;
@@ -380,6 +395,10 @@ def refine_frames(model, objective, proposals=5000, seed=23066):
     rng = np.random.default_rng(seed)
     result = deepcopy(model)
     frames = np.array(model['frames'], dtype=int)
+    if voiced_mask is not None:
+        voiced_mask = np.asarray(voiced_mask,dtype=bool)
+        if voiced_mask.shape!=(len(frames),) or np.any((frames[:,3]>0)&~voiced_mask):
+            raise ValueError('Initial voicing contradicts the allowed voice mask')
     cache = FrameSynthesis(model)
     audio = cache.render(frames)
     def score(x):
@@ -396,6 +415,8 @@ def refine_frames(model, objective, proposals=5000, seed=23066):
             proposed[1] = int(rng.integers(16))
         if kind == 2:
             proposed[3] ^= 1
+        if voiced_mask is not None and proposed[3] and not voiced_mask[i]:
+            continue
         if np.array_equal(proposed, frames[i]):
             continue
         candidate = audio.copy()
