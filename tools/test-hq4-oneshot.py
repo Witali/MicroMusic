@@ -76,6 +76,21 @@ class CandidateTest(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     builder.validate_stream(payload)
 
+    def test_new_recording_needs_explicit_complete_sample_count(self):
+        with tempfile.TemporaryDirectory(prefix='hq4-new-', dir=self.scratch) as directory:
+            candidate = Path(directory)/'speech.hq'
+            candidate.write_bytes(bytes((64, 0, 136, 136, 136, 136)))
+            source, payload, phrase, frozen_sha = builder.load_stream('new-phrase', candidate, 64)
+            self.assertEqual(len(phrase), 64)
+            self.assertIsNone(frozen_sha)
+            for invalid in (0, -64, 65, True):
+                with self.assertRaisesRegex(ValueError, 'multiple-of-64'):
+                    builder.load_stream('new-phrase', candidate, invalid)
+            with self.assertRaisesRegex(ValueError, 'complete phrase duration'):
+                builder.load_stream('new-phrase', candidate, 128)
+            with self.assertRaisesRegex(ValueError, 'explicit stream'):
+                builder.load_stream('new-phrase', None, 64)
+
 
 if __name__ == '__main__':
     unittest.main()

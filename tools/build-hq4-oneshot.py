@@ -69,13 +69,21 @@ def validate_stream(payload):
     return unpack_stream(payload)
 
 
-def load_stream(clip, stream=None):
+def load_stream(clip, stream=None, expected_samples=None):
     """Load and validate a candidate against the retained phrase duration."""
     if not re.fullmatch(r'[a-z0-9_-]+', clip):
         raise ValueError('Invalid retained HQ4 clip name')
     retained_source = CODEC/'release'/clip/'speech.hq'
-    retained_payload = retained_source.read_bytes()
-    _, retained_durations = validate_stream(retained_payload)
+    if expected_samples is None:
+        retained_payload = retained_source.read_bytes()
+        _, retained_durations = validate_stream(retained_payload)
+        required_samples = int(np.sum(retained_durations))
+    else:
+        if (stream is None or isinstance(expected_samples, bool)
+                or not isinstance(expected_samples, int) or expected_samples <= 0
+                or expected_samples % 64):
+            raise ValueError('A new recording requires an explicit stream and positive multiple-of-64 sample count')
+        required_samples = expected_samples
     source = Path(stream).resolve() if stream is not None else retained_source
     payload = source.read_bytes()
     if stream is not None:
@@ -87,7 +95,7 @@ def load_stream(clip, stream=None):
         if len(payload) > capacity:
             raise ValueError(f'Experimental HQ4 stream exceeds the {capacity}-byte Flash budget')
     frames, durations = validate_stream(payload)
-    if int(np.sum(durations)) != int(np.sum(retained_durations)):
+    if int(np.sum(durations)) != required_samples:
         raise ValueError('HQ4 candidate must preserve the retained complete phrase duration')
     phrase = decode(frames, durations, 0)
     prefix_sha = sha(phrase.tobytes())
@@ -100,8 +108,8 @@ def load_stream(clip, stream=None):
     return source, payload, phrase, frozen_prefix_sha
 
 
-def build(clip, output, avr_bin=None, node='node', stream=None):
-    source, payload, phrase, frozen_prefix_sha = load_stream(clip, stream)
+def build(clip, output, avr_bin=None, node='node', stream=None, expected_samples=None):
+    source, payload, phrase, frozen_prefix_sha = load_stream(clip, stream, expected_samples)
     phrase_samples = len(phrase)
     prefix_sha = sha(phrase.tobytes())
     expected = np.concatenate((phrase, np.full(phrase_samples*2, 128, dtype=np.uint8)))
@@ -157,7 +165,10 @@ def build(clip, output, avr_bin=None, node='node', stream=None):
         # Stable fingerprints never contain an absolute scratch path or machine name.
         label = source.relative_to(ROOT).as_posix() if source.is_relative_to(ROOT) else 'external/'+source.name
         report.update(experimental=True, streamInput=dict(sourcePath=label, copiedPath='speech.hq',
-                      sha256=sha(payload)), retainedStreamSha256=sha((CODEC/'release'/clip/'speech.hq').read_bytes()))
+                      sha256=sha(payload)), retainedStreamSha256=(
+                          sha((CODEC/'release'/clip/'speech.hq').read_bytes()) if expected_samples is None else None))
+        if expected_samples is not None:
+            report.update(newRecording=True, expectedPhraseSamples=expected_samples)
         report['normalizedSourceSha256']['input/speech.hq'] = sha(payload)
     if flash_bytes <= 1024:
         run([compiler, '-mmcu=attiny13', '-nostdlib', '-Wl,--defsym=__TEXT_REGION_LENGTH__=1024',
@@ -197,8 +208,10 @@ def main():
     parser.add_argument('--node', default='node')
     parser.add_argument('--stream', type=Path,
                         help='Experimental HQ4 stream; preserve retained phrase duration and fit 1024-byte Flash')
+    parser.add_argument('--samples', type=int,
+                        help='New recording: expected complete phrase samples; requires --stream and a multiple of 64')
     args = parser.parse_args()
-    report = build(args.clip, args.output, args.avr_bin, args.node, args.stream)
+    report = build(args.clip, args.output, args.avr_bin, args.node, args.stream, args.samples)
     print(json.dumps(report, indent=2))
     return 1 if report['status'] == 'verification-failed' or (args.stream is not None and report['status'] != 'verified') else 0
 

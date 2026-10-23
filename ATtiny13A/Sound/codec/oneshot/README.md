@@ -46,3 +46,13 @@ Admission tests: `python tools/test-hq4-oneshot.py`. A frozen Vinni stream passe
 explicit external-input mode with 1024 Flash bytes, 22272 speech samples, and
 44544 following samples all equal to `128` in all three engines. This qualifies
 the build path; every changed candidate still requires its own verification.
+# New recordings
+
+For a newly encoded recording without a retained release directory, supply
+`--stream FILE --samples N --clip recording-id`. `N` is the complete prepared
+reference length (a positive multiple of 64), not a desired shortened length.
+The builder checks exact equality before compilation, enforces 617 stream bytes,
+and verifies the full phrase plus twice its length of midpoint silence. A new
+recording report is marked `newRecording` and does not claim a frozen release
+PCM hash. Omitting `--samples` preserves retained-clip behavior and guards.
+
