@@ -11,8 +11,10 @@ and its analog output have not been tested.
 
 - Narrowband submode 3, mono 8 kHz, CBR 8 kbit/s.
 - Exactly 20 compressed bytes produce 160 signed 16-bit samples (20 ms).
-- Enhancement and highpass are disabled; all four LSP interpolations and LPC
-  conversions are retained. Decoded s16 PCM matches unmodified upstream.
+- Enhancement and highpass are disabled; all four coefficient steps are
+  retained. Identical NB3 LSP indices reuse exact interpolation/LPC results;
+  filter synthesis and coefficient ageing always execute. Decoded s16 PCM
+  matches unmodified upstream.
 - Input consists of raw packets, as in `reference/R4/data/*.spxraw`. Ogg/Speex
   containers, other submodes, WB, DTX, stereo, encoder and packet loss concealment
   are outside this profile. The API rejects wrong lengths and mode headers

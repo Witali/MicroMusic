@@ -3,10 +3,10 @@
  * No PLC, enhancer, level queries, highpass or vocoder state is observable
  * through the restricted API. The pinned original structure remains vendored. */
 typedef struct DecState {
-   int first;
+   uint8_t first;
+   uint8_t lsp_key[3]; /* Exactly the packet's 18 LSP codebook bits. */
    char *stack;
    spx_word16_t excBuf[NB_DEC_BUFFER];
-   spx_word16_t *exc;
    spx_lsp_t old_qlsp[NB_ORDER];
    spx_coef_t interp_qlpc[NB_ORDER];
    spx_mem_t mem_sp[15]; /* 60-byte direct LPC history and coefficient ages */

@@ -93,6 +93,7 @@ def verify_primitives(compiler):
          '-c', reference / 'libspeex/lsp.c', '-o', obj])
     executable = output / ('primitives.exe' if os.name == 'nt' else 'primitives')
     run([compiler, *flags, '-DSPEEX_AVR_COMPACT_LSP', obj, source / 'libspeex/lsp.c',
+         source / 'libspeex/quant_lsp.c',source / 'libspeex/lsp_tables_nb.c',
          ROOT / 'src/bits.c', ROOT / 'tests/primitives.c', '-o', executable])
     run([executable])
     executable = output / ('iir-direct.exe' if os.name == 'nt' else 'iir-direct')

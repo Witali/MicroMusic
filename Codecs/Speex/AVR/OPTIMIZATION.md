@@ -23,25 +23,24 @@ binary measurements. Vendor and R4 files remain unmodified.
 - Exact 64-entry gain-pair table generated from pinned upstream constants.
 - Exhaustive 128 x 32 pitch/gain coverage; independent saturation/overflow tests.
 - Complete 31-stream PWM test with 128,000 additional CPU cycles per frame.
+- Raw 18-bit LSP-key reuse, exhaustively justified for all NB3 code triples.
+  Mean human-speech time -1.16%, corpus mean -2.35%, silence mean -22.1%;
+  corpus worst +0.19%, Flash +218 B, stack +3 B, static SRAM unchanged.
+  Decoder/reset verification is complete; final PWM gate for this series is pending.
 
 ## Next candidates (unmeasured)
 
-1. **Cache identical interpolated LSP vectors.** Store the last ten angles and
-   a valid flag (21 B). `interp_qlpc` already holds the corresponding LPC.
-   When all ten angles match, skip only the conversion and subsequent LPC copy;
-   synthesis and coefficient ageing must still execute. Reset invalidates the
-   cache. Likely useful for silence/repeated quantized envelopes; measure both
-   the hit case and the comparison/copy cost on changing envelopes.
-2. **Ten-sample pitch staging.** Upstream pitch sources always have negative
+1. **Ten-sample pitch staging.** Upstream pitch sources always have negative
    offsets: the first segment stops before `j==pp`, the second before
    `j==pp+pitch`. Thus a completed innovation vector can be written before the
    next vector's pitch is computed. A 10-word pitch buffer could replace 40
    words, saving 120 B, but additional segment calls may cost cycles. Verify
    every short-pitch tail and compare speed before accepting.
-3. **Shared bounded Q14 polynomial arithmetic.** Explore an ASM helper that
+2. **Shared Q14 polynomial arithmetic.** Explore an ASM helper that
    avoids the generic C decomposition/copies. Prove the polynomial-input bound
-   first: unrestricted `MULT16_32_Q14` truncates its high operand to signed16,
-   so a generic wide multiply/shift is not automatically equivalent. Count
+   first, or reproduce the generic truncation explicitly: `MULT16_32_Q14`
+   treats the low 30 bits of its 32-bit operand as signed30. Thus a wide
+   multiply/shift can be exact if the top byte is sign-extended from bit 29. Count
    call/register-save costs as well as code size.
 
 No claim of a global speed optimum has been established. Do not mark the
@@ -55,6 +54,11 @@ ongoing optimization goal complete while useful candidates remain untested.
 - Generic peeled LSP helper: larger stack and slower than constant shared stages.
 - Outlined interpolation alone: negligible size benefit, extra cycles/stack.
 - Uniform `-O2`: slower than the selected mixed configuration.
+- A 20-byte interpolated-LSP cache was superseded by a frame/raw-key cache
+  without additional static SRAM. Comparing quantized angles once per frame
+  was correct but slower on hits than also skipping codebook reads. Hoisting
+  the update flag outside the subframe loop increased stack by 5 B and miss
+  time by 112 cycles, so the simpler inner flag was retained.
 
 Do not outline tiny MAC/shift instructions solely to eliminate textual
 repetition: per-tap calls and ABI saves can dominate their work. Prefer shared
