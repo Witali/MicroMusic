@@ -1,0 +1,51 @@
+{
+  "schema": "q3-perceptual-feature-qualification-v1",
+  "captures_remain_unchanged": true,
+  "hardware_tested": false,
+  "profiles": {
+    "cycle02-start": {
+      "build_report": "cycle02-start/before/avr/build.json",
+      "status": "verified",
+      "avr_qualified": true,
+      "flash_bytes": 1002,
+      "code_bytes": 392,
+      "stream_bytes": 608,
+      "eeprom_bytes": 64,
+      "image_sha256": "226c08eacb0d1b393b2fb0c1d327de1273f71f9f935735d1f462b4276d22d0d9",
+      "phrase_pcm_sha256": "6f9439914c4e76723da8a23c280af7fad9ac62bc9fe0daa6697a80318eb3cb9d",
+      "engines": [
+        "reference",
+        "wasm",
+        "wasm-unoptimized"
+      ],
+      "verified_samples": 66816,
+      "silence_samples": 44544,
+      "minimum_slack_cycles": 332,
+      "mismatches": 0,
+      "lost_overflows": 0,
+      "missed_samples": 0
+    },
+    "stronger32-start": {
+      "build_report": "stronger32-start/before/avr/build.json",
+      "status": "verified",
+      "avr_qualified": true,
+      "flash_bytes": 1014,
+      "code_bytes": 392,
+      "stream_bytes": 620,
+      "eeprom_bytes": 64,
+      "image_sha256": "b9cf233d73fe4b8f50e08505160fa9638863336a96d93e3951e1ff51ff1e7177",
+      "phrase_pcm_sha256": "4155925af8a10464f0b3b7c26973ee2963adc514bb670ed6f93d9533ae7c4e12",
+      "engines": [
+        "reference",
+        "wasm",
+        "wasm-unoptimized"
+      ],
+      "verified_samples": 66816,
+      "silence_samples": 44544,
+      "minimum_slack_cycles": 332,
+      "mismatches": 0,
+      "lost_overflows": 0,
+      "missed_samples": 0
+    }
+  }
+}
