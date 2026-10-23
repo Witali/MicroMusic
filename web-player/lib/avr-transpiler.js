@@ -1,6 +1,7 @@
 // ATtiny13A binary -> WebAssembly MVP. No C compiler or WAT assembler required.
 // Encodings: WebAssembly Core, binary/{modules,instructions,values}.html.
 // AVR semantics: Microchip DS40002198A and ATtiny13A DS40002307A.
+import {AT13_DATA,AT13_MEMORY} from './attiny13a-registers.js';
 const uleb = value => {
   const out = []; do { const byte = value & 127; value >>>= 7; out.push(byte | (value ? 128 : 0)); } while (value);
   return out;
@@ -115,7 +116,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   const putF=(name,value)=>store64(S(name),value), put=(name,value)=>putF(name,asFloat(value));
   const reg=n=>load8(constant(abi.data+n)), writeReg=(n,value)=>store8(constant(abi.data+n),value);
   const dataAt=address=>add(constant(abi.data),address);
-  const flagsAddress=constant(abi.data+95), flags=()=>get(5);
+  const flagsAddress=constant(abi.data+AT13_DATA.SREG), flags=()=>get(5);
   const fail=(code,result=false)=>bytes(put('error',constant(code)),result?constant(0):[],0x0f);
   const guard=()=>condition(state('error'),[0x0f]);
   // Runtime imports are WASM functions, not JS callbacks. None execute opcodes.
@@ -183,13 +184,13 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     return code;
   }
   function push(value) {
-    return bytes(set(6,reg(93)),condition(or(lt(Z,constant(96)),binary(0x4b,Z,constant(159))),fail(3)),
-      store8(dataAt(Z),value),writeReg(93,sub(Z,constant(1))),
-      condition(lt(reg(93),state('minSP')),put('minSP',reg(93))));
+    return bytes(set(6,reg(AT13_DATA.SPL)),condition(or(lt(Z,constant(AT13_MEMORY.RAMSTART)),binary(0x4b,Z,constant(AT13_MEMORY.RAMEND))),fail(3)),
+      store8(dataAt(Z),value),writeReg(AT13_DATA.SPL,sub(Z,constant(1))),
+      condition(lt(reg(AT13_DATA.SPL),state('minSP')),put('minSP',reg(AT13_DATA.SPL))));
   }
   function pop(local) {
-    return bytes(set(6,reg(93)),condition(or(lt(Z,constant(95)),ge(Z,constant(159))),fail(4)),
-      set(6,add(Z,constant(1))),writeReg(93,Z),set(local,load8(dataAt(Z))));
+    return bytes(set(6,reg(AT13_DATA.SPL)),condition(or(lt(Z,constant(AT13_MEMORY.RAMSTART-1)),ge(Z,constant(AT13_MEMORY.RAMEND))),fail(4)),
+      set(6,add(Z,constant(1))),writeReg(AT13_DATA.SPL,Z),set(local,load8(dataAt(Z))));
   }
   function effects(i) {
     const {name,d,s,k,pc:p}=i,next=(p+1)&511;
@@ -241,21 +242,21 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     if(name==='IN')return bytes(full?bytes(clockHalf(.5),set(0,call(READ,constant(k))),clockHalf(.5),writeReg(d,X)):bytes(clock(constant(1)),writeReg(d,reg(32+k))),set(7,constant(0)));
     if(name==='OUT'||name==='SBI'||name==='CBI')return bytes(clock(constant(name==='OUT'?1:2)),set(7,full?call(MASKED,constant(name==='OUT'?k:d),name==='OUT'?reg(d):constant(name==='SBI'?1<<k:0),constant(name==='OUT'?255:1<<k)):call(IO,constant(name==='OUT'?k:d),name==='SBI'?or(reg(32+d),constant(1<<k)):name==='CBI'?and(reg(32+d),constant(255^(1<<k))):reg(d))),guard(),set(5,load8(flagsAddress)));
     if(name==='LDS'||name==='STS'){
-      if(k>=160)return fail(16);
-      if(full&&name==='LDS')return bytes(put('pc',constant((p+2)&511)),clockHalf(1.5),set(0,k>=32&&k<96?call(READ,constant(k-32)):reg(k)),clockHalf(.5),writeReg(d,X),set(7,constant(0)));
+      if(k>AT13_MEMORY.RAMEND)return fail(16);
+      if(full&&name==='LDS')return bytes(put('pc',constant((p+2)&511)),clockHalf(1.5),set(0,k>=32&&k<AT13_MEMORY.RAMSTART?call(READ,constant(k-32)):reg(k)),clockHalf(.5),writeReg(d,X),set(7,constant(0)));
       return bytes(set(0,reg(d)),put('pc',constant((p+2)&511)),clock(constant(2)),set(7,constant(0)),
-        name==='LDS'?writeReg(d,full&&k>=32&&k<96?call(READ,constant(k-32)):reg(k)):k>=32&&k<96?bytes(set(7,call(IO,constant(k-32),X)),guard(),set(5,load8(flagsAddress))):writeReg(k,X));
+        name==='LDS'?writeReg(d,full&&k>=32&&k<AT13_MEMORY.RAMSTART?call(READ,constant(k-32)):reg(k)):k>=32&&k<AT13_MEMORY.RAMSTART?bytes(set(7,call(IO,constant(k-32),X)),guard(),set(5,load8(flagsAddress))):writeReg(k,X));
     }
     if(name==='LD'||name==='ST'){
       if(k<2&&(d===s||d===s+1))return fail(name==='LD'?19:17);
       // DS40002198A 5.66-68/5.114-116: for <=256-byte data spaces only
       // the low pointer byte participates; XH/YH/ZH remain general registers.
-      const code=bytes(set(6,and(add(reg(s),constant(k<0?-1:k>=2?k-2:0)),constant(255))),condition(ge(Z,constant(160)),fail(name==='LD'?20:18)),
+      const code=bytes(set(6,and(add(reg(s),constant(k<0?-1:k>=2?k-2:0)),constant(255))),condition(ge(Z,constant(AT13_MEMORY.RAMEND+1)),fail(name==='LD'?20:18)),
         !full&&k<0?writeReg(s,Z):[],set(0,reg(d)),
-        full&&name==='LD'?bytes(clockHalf(1.5),set(0,conditionValue(and(ge(Z,constant(32)),lt(Z,constant(96))),call(READ,sub(Z,constant(32))),load8(dataAt(Z)))),clockHalf(.5)):clock(constant(2)),
+        full&&name==='LD'?bytes(clockHalf(1.5),set(0,conditionValue(and(ge(Z,constant(32)),lt(Z,constant(AT13_MEMORY.RAMSTART))),call(READ,sub(Z,constant(32))),load8(dataAt(Z)))),clockHalf(.5)):clock(constant(2)),
         set(7,constant(0)),full&&k<0?writeReg(s,Z):[]);
       if(name==='LD')code.push(...writeReg(d,full?X:load8(dataAt(Z))));
-      else code.push(...condition(and(ge(Z,constant(32)),lt(Z,constant(96))),bytes(set(7,call(IO,sub(Z,constant(32)),X)),guard()),store8(dataAt(Z),X)));
+      else code.push(...condition(and(ge(Z,constant(32)),lt(Z,constant(AT13_MEMORY.RAMSTART))),bytes(set(7,call(IO,sub(Z,constant(32)),X)),guard()),store8(dataAt(Z),X)));
       if(k===1)code.push(...writeReg(s,and(add(Z,constant(1)),constant(255))));
       // Indirect stores can alias SREG, just like OUT or STS.
       if(name==='ST')code.push(...set(5,load8(flagsAddress)));
@@ -338,7 +339,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
         }else{
           const alias=k<2&&(d===s||d===s+1);
           effects=bytes(set(6,and(add(reg(s),constant(k<0?-1:k>=2?k-2:0)),constant(255))),
-            condition(alias?constant(1):or(lt(Z,constant(96)),ge(Z,constant(160))),bailout),
+            condition(alias?constant(1):or(lt(Z,constant(AT13_MEMORY.RAMSTART)),ge(Z,constant(AT13_MEMORY.RAMEND+1))),bailout),
             k<0?writeReg(s,Z):[],name==='LD'?writeReg(d,load8(dataAt(Z))):store8(dataAt(Z),reg(d)),
             k===1?writeReg(s,and(add(Z,constant(1)),constant(255))):[]);
         }

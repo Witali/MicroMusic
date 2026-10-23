@@ -1,12 +1,8 @@
 // Source-only, hand-encoded AVR fixtures. No compiler or binary fixture files.
 // Encodings/cycles: Microchip AVR instruction-set manual DS40002198A and
 // ATtiny13A DS40002307A section21. Addresses below are I/O offsets/PC words.
-export const IO = Object.freeze({
-  ADCL:0x04, ADCH:0x05, ADCSRA:0x06, ADMUX:0x07, ACSR:0x08,
-  DIDR0:0x14, PCMSK:0x15, PINB:0x16, DDRB:0x17, PORTB:0x18,
-  WDTCR:0x21, CLKPR:0x26, MCUSR:0x34, MCUCR:0x35,
-  GIFR:0x3a, GIMSK:0x3b, SPL:0x3d, SREG:0x3f,
-});
+import {AT13_IO} from '../../lib/attiny13a-registers.js';
+export const IO=AT13_IO;
 const register = d => {
   if(!Number.isInteger(d)||d<0||d>31)throw new Error('Invalid fixture register');
   return d;

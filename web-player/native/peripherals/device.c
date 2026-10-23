@@ -1,4 +1,5 @@
 #include "device.h"
+#include "../attiny13a-registers.h"
 #include "timer0.h"
 #include "system_gpio.h"
 #include "system_sleep.h"
@@ -8,7 +9,8 @@
 #include "device_clock.h"
 #include <stddef.h>
 
-enum { PIN_CAPACITY=1024, INPUT_CAPACITY=128, CLKPR=0x26, OSCCAL=0x31, BODCR=0x30 };
+enum { PIN_CAPACITY=1024, INPUT_CAPACITY=128,
+ CLKPR=AT13_IO_CLKPR, OSCCAL=AT13_IO_OSCCAL, BODCR=AT13_IO_BODCR };
 typedef struct {
  uint64_t at;
  int32_t voltage;
@@ -268,8 +270,8 @@ static void mirror(void) {
  if (!board.data) return;
 #define IO(a,v) (board.data[32+(a)]=(uint8_t)(v))
  IO(ANALOG_ADCSRB,board.analog.adc.adcsrb);
- IO(ANALOG_ADCL,(board.analog.adc.admux&0x20)?board.analog.adc.result<<6:board.analog.adc.result);
- IO(ANALOG_ADCH,(board.analog.adc.admux&0x20)?board.analog.adc.result>>2:board.analog.adc.result>>8);
+ IO(ANALOG_ADCL,(board.analog.adc.admux&AT13_MASK_ADLAR)?board.analog.adc.result<<6:board.analog.adc.result);
+ IO(ANALOG_ADCH,(board.analog.adc.admux&AT13_MASK_ADLAR)?board.analog.adc.result>>2:board.analog.adc.result>>8);
  IO(ANALOG_ADCSRA,board.analog.adc.adcsra); IO(ANALOG_ADMUX,board.analog.adc.admux);
  IO(ANALOG_ACSR,board.analog.comparator.acsr);
  IO(SYSTEM_DIDR0,board.gpio.didr0); IO(SYSTEM_PCMSK,board.gpio.pcmsk);
@@ -508,7 +510,7 @@ uint8_t device_read(uint8_t io) {
   if ((board.prr&1) && io!=ANALOG_ACSR) fail(DEVICE_FAULT_ANALOG,10);
   else if (!analog_read(&board.analog,io,&value,board.half)) fail(DEVICE_FAULT_ANALOG,11);
  } else if (io==OSCCAL) value=board.data[32+io]&127;
- else if (io==0x3f || io==0x3d) value=board.data[32+io];
+ else if (io==AT13_IO_SREG || io==AT13_IO_SPL) value=board.data[32+io];
  /* DWDR reads zero without an attached debugger. Reserved addresses read0. */
  board.data[32+io]=value;
  return value;
@@ -548,7 +550,7 @@ uint32_t device_write(uint8_t io, uint8_t value, uint8_t mask) {
  else if (system_watchdog_write(&board.watchdog,io,value,mask,cpu_cycle())) { }
  else if (timer_register(io)) {
   uint8_t written=io==TIMER0_TIFR0 ? value&mask : merged;
-  if (io==TIMER0_TCCR0B) written=(merged&15)|(value&mask&0xc0);
+  if (io==TIMER0_TCCR0B) written=(merged&15)|(value&mask&(AT13_MASK_FOC0A|AT13_MASK_FOC0B));
   int error=timer0_write(&board.timer,cpu_cycle(),io,written);
   if (error) fail(DEVICE_FAULT_TIMER,(uint32_t)error);
   timer_outputs();
@@ -559,7 +561,7 @@ uint32_t device_write(uint8_t io, uint8_t value, uint8_t mask) {
   if (io==ANALOG_ACSR) merged=(merged&(uint8_t)~ANALOG_ACI)|(value&mask&ANALOG_ACI);
   if ((board.prr&1) && io!=ANALOG_ACSR) fail(DEVICE_FAULT_ANALOG,12);
   else if (!analog_write(&board.analog,io,merged,board.half)) fail(DEVICE_FAULT_ANALOG,13);
- } else if (io==0x3f || io==0x3d) board.data[32+io]=merged;
+ } else if (io==AT13_IO_SREG || io==AT13_IO_SPL) board.data[32+io]=merged;
  else if (io==OSCCAL) {
   uint8_t cal=merged&127;
   if (cal!=(previous&127)) {
@@ -573,7 +575,7 @@ uint32_t device_write(uint8_t io, uint8_t value, uint8_t mask) {
   } else board.data[32+OSCCAL]=cal;
  } else if (io==BODCR) {
   if (mask&3) bod_write(merged);
- } else if (io!=0x2e && value&mask) fail(DEVICE_FAULT_UNIMPLEMENTED_IO,io);
+ } else if (io!=AT13_IO_DWDR && value&mask) fail(DEVICE_FAULT_UNIMPLEMENTED_IO,io);
  sources(); wake(); check_faults(); mirror();
  return stalls;
 }

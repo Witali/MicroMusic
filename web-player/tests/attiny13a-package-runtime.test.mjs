@@ -54,7 +54,7 @@ test('corrupt package fails before any runtime or translated instance is created
 test('package loader runs with only JavaScript loader files and no default WASM artifacts',async t=>{
   const dir=await mkdtemp(join(tmpdir(),'micromusic-package-loader-'));
   t.after(()=>rm(dir,{recursive:true,force:true}));
-  for(const name of ['avr-runtime.js','avr-transpiler.js','avr-transpiled-runtime.js','attiny13a-runtime.js','attiny13a-package.js'])
+  for(const name of ['avr-runtime.js','avr-transpiler.js','avr-transpiled-runtime.js','attiny13a-runtime.js','attiny13a-package.js','attiny13a-registers.js'])
     await copyFile(new URL('../lib/'+name,import.meta.url),join(dir,name));
   await writeFile(join(dir,'package.json'),'{"type":"module"}');
   await writeFile(join(dir,'firmware.json'),JSON.stringify(pkg));

@@ -1,4 +1,5 @@
 /* Full-device bridges. Included after the legacy ABI definitions in avr.c. */
+#include "attiny13a-registers.h"
 static uint64_t full_generation;
 static uint32_t full_reset_count;
 static uint32_t full_audio_rate, full_audio_channels;
@@ -27,7 +28,7 @@ static void full_fault(void) { if(device_fault())ERROR=25; }
 static void full_deadline(void) {
  uint64_t next=device_next_cpu_event();
  S(overflowAt)=next==UINT64_MAX?INFINITY:S(cyc)+(double)next;
- S(timer)=!!(IO(0x33)&7) && !(IO(0x25)&2);
+ S(timer)=!!(IO(AT13_IO_TCCR0B)&(AT13_MASK_CS00|AT13_MASK_CS01|AT13_MASK_CS02)) && !(IO(AT13_IO_PRR)&AT13_MASK_PRTIM0);
  full_fault();
 }
 static void full_reset(void) {
@@ -45,22 +46,22 @@ static void full_clock(double n) {
 static int full_write_io(int a,int v,int mask) {
  if(device_reset_requested())return 0;
  unsigned stalls=device_write(a,v,mask);
- if(a==0x29 && S(timer)){S(duty)=IO(a);S(writes)++;}
- if(a==0x36 && S(timer)){S(dutyLeft)=IO(a);S(leftWrites)++;}
+ if(a==AT13_IO_OCR0B && S(timer)){S(duty)=IO(a);S(writes)++;}
+ if(a==AT13_IO_OCR0A && S(timer)){S(dutyLeft)=IO(a);S(leftWrites)++;}
  full_deadline();return (int)stalls;
 }
 static void full_interrupt(void) {
  uint8_t reset=device_reset_requested();
  if(reset){
-  device_reset(reset);S(pc)=0;FLAGS=0;SP=0x9f;S(irqDelay)=0;
+  device_reset(reset);S(pc)=0;FLAGS=0;SP=AT13_MEMORY_RAMEND;S(irqDelay)=0;
   S(frameCount)=0;S(inIRQ)=0;S(irqStart)=0;full_reset_count++;full_deadline();return;
  }
  if(S(irqDelay)){S(irqDelay)--;return;}
- if(device_halted()||!(FLAGS&128))return;
+ if(device_halted()||!(FLAGS&AT13_MASK_SREG_I))return;
  uint8_t vector=device_next_irq();if(!vector)return;
  if(S(frameCount)>=32){fail(E_PUSH);return;}
  int return_pc=(int)S(pc);double started=S(cyc);
- FLAGS&=127;
+ FLAGS&=~AT13_MASK_SREG_I;
  /* Digital-profile phases: SRAM writes at C2/C3, vector at C4. The data
   * sheet guarantees the four-cycle total, not these internal stack phases.
   * A reset at any barrier cancels later writes and frame bookkeeping. */
