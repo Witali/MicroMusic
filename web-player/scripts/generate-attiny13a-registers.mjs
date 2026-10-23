@@ -89,6 +89,14 @@ const rawConstants={FLASH_BYTES:'(FLASHEND + 1)',FLASH_PAGE_BYTES:'SPM_PAGESIZE'
   EEPROM_PAGE_BYTES:'E2PAGESIZE',RAM_BYTES:'RAMSIZE',RAM_START:'RAMSTART',RAM_END:'RAMEND',
   FUSE_LOW_DEFAULT:'LFUSE_DEFAULT',FUSE_HIGH_DEFAULT:'HFUSE_DEFAULT',VECTOR_BYTES:'_VECTOR_SIZE',
   SLEEP_MODE_IDLE:'SLEEP_MODE_IDLE',SLEEP_MODE_ADC:'SLEEP_MODE_ADC',SLEEP_MODE_PWR_DOWN:'SLEEP_MODE_PWR_DOWN'};
+for(let index=0;index<3;index++){
+  const name='SIGNATURE_'+index,macro=macros.get(name);
+  assert.ok(/^0x[\da-f]+$/i.test(macro||''),'Missing C device signature '+name);
+  const property=atdf.match(new RegExp('<property\\s+name="SIGNATURE'+index+'"\\s+value="([^"]+)"'));
+  assert.ok(property,'Missing ATDF device signature '+name);
+  constants[name]=Number(macro);assert.equal(constants[name],Number(property[1]),'C/ATDF device signature '+name);
+  rawConstants[name]=name;
+}
 const memory={RAMSTART:constants.RAM_START,RAMSIZE:constants.RAM_BYTES,RAMEND:constants.RAM_END,
   FLASHEND:constants.FLASH_BYTES-1,SPM_PAGESIZE:constants.FLASH_PAGE_BYTES,
   E2END:constants.EEPROM_BYTES-1,E2PAGESIZE:constants.EEPROM_PAGE_BYTES};
