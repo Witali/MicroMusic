@@ -35,3 +35,39 @@ use the retained 48-kHz original excerpts rather than Speex-decoded speech.
 Prepared audio remains under ignored `build/`. Source attributions, exact
 preparation metadata and the bilingual corpus definition are retained in
 `../../test-corpus/`.
+
+## Prepared references and listening
+
+`prepared-audit.json` independently checks all 40 final reference WAVs against
+resampling of the selected upstream original, float32 storage, the declared
+crop and trailing zero padding. All saved PCM agrees exactly. The final
+manifest SHA identifies the preparation being audited. Speaker sets for
+tuning and evaluation are disjoint. One full excerpt and its short window
+retain a 1.013 peak from resampling; this is explicitly reported rather than
+silently clipped or normalized.
+
+`reference-properties.json` measures the first short natural excerpt from
+each of the eight speakers with the same generic source analysis used for
+the earlier character voices. Estimated median F0 ranges from about 78 to
+243 Hz. These values are analysis estimates with possible octave errors,
+not annotated pitch ground truth. The corpus extends testing toward low
+natural voices and different amounts of aperiodic speech; the already good
+high cartoon voices remain separate controls.
+
+The ignored local gallery contains all 20 short originals and the automatic
+HQ4 baseline outputs, including quiet/noisy variants. It preserves their raw
+level relationships and displays source credits and the unqualified Flash
+estimate. The baseline has zero search proposals and must not be described
+as the best quality attainable by HQ4.
+
+```
+python tools/make-speech-corpus-player.py \
+  --manifest build/speech-corpus/manifest.json \
+  --references-root build/speech-corpus \
+  --benchmark build/speech-corpus-benchmark/short/report.json \
+  --output build/speech-corpus-listen
+```
+
+Serve the development checkout and open `build/speech-corpus-listen/`.
+The gallery copies generated WAVs only into ignored build output. No speech
+recordings or derived PCM are added to Git.
