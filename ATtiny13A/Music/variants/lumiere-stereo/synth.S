@@ -8,6 +8,7 @@
  */
 .section .text,"ax",@progbits
 .global vectors
+.include "../../../../web-player/native/attiny13a-registers.generated.inc"
 .include "config.inc"
 
 vectors:
@@ -46,9 +47,9 @@ envelope_release:
 reset:
   /* SPL resets to RAMEND=159. Switch the internal RC divider to 9.6 MHz. */
   ldi r16, 128
-  out 38, r16
+  out CLKPR, r16
   clr r16
-  out 38, r16
+  out CLKPR, r16
   clr r0
   sts 96, r0
   ldi r30, 1
@@ -78,17 +79,17 @@ clear_registers:
   ldi r16, 167
   mov r14, r16
   /* Configure hardware stereo Fast PWM on OC0A/PB0 and OC0B/PB1, fixed TOP=255 at 37.5 kHz. */
-  sbi 23, 0
-  sbi 23, 1
-  out 54, r18 /* OCR0A I/O0x36; data0x56, DS40002307A section11.9.4. */
-  out 41, r18
+  sbi DDRB, 0
+  sbi DDRB, 1
+  out OCR0A, r18
+  out OCR0B, r18
   ldi r23, 1
   ldi r16, 163
-  out 47, r16
+  out TCCR0A, r16
   ldi r16, 1
-  out 51, r16
+  out TCCR0B, r16
   ldi r16, 2
-  out 57, r16
+  out TIMSK0, r16
   sei
 idle:
   brtc idle
@@ -102,12 +103,12 @@ pwm_irq:
   lds r18, 101
   sbrs r23, 0
   lds r18, 102
-  out 54, r18 /* OCR0A, I/O0x36. */
+  out OCR0A, r18
   sbrc r23, 0
   lds r18, 97
   sbrs r23, 0
   lds r18, 98
-  out 41, r18
+  out OCR0B, r18
   swap r23
   set
   reti
@@ -302,9 +303,9 @@ render_tone:
   andi r17, 15
   lsr r17
   add r16, r17
-  out 30, r16
-  sbi 28, 0
-  in r17, 29
+  out EEARL, r16
+  sbi EECR, 0
+  in r17, EEDR
   sbrc r0, 4
   swap r17
   andi r17, 15

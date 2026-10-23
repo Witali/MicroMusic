@@ -5,6 +5,7 @@ import {createHash} from 'node:crypto';
 // Per-instruction observation belongs in the reference audit. Avoid crossing
 // the JS/WASM boundary for every observed instruction of the complete song.
 import {AVRCore} from '../web-player/lib/avr-reference.js';
+import {AT13_IO,AT13_DATA,AT13_MEMORY} from '../web-player/lib/attiny13a-registers.js';
 const folder='ATtiny13A/Music/variants/lumiere-stereo';
 const read=(dir,name)=>fs.readFileSync(`${dir}/${name}`);
 const meta=JSON.parse(read(folder,'build-report.json')),sourceMeta=meta;
@@ -13,8 +14,8 @@ const {labels,timing}=meta,units=[1,2,3,4,6,8,16],expected=[];
 const outAddresses=[];
 for(let at=0;at<meta.codeBytes;at+=2){const word=sourceRom[at]|sourceRom[at+1]<<8;
   if((word&0xf800)===0xb800)outAddresses.push(((word>>5)&48)|(word&15));}
-assert.equal(outAddresses.filter(address=>address===0x36).length,2);
-assert.ok(!outAddresses.includes(0x2a),'Reserved0x2a must not be used for OCR0A');
+assert.equal(outAddresses.filter(address=>address===AT13_IO.OCR0A).length,2);
+assert.ok(outAddresses.every(address=>Object.values(AT13_IO).includes(address)),'Stereo must not write undefined I/O');
 let totalUnits=0;
 for(const section of meta.score.playlist){
   let address=sourceMeta.labels[`section_${section}`];
@@ -59,17 +60,17 @@ while(!finished&&c.cyc<225*9600000){
   cross+=values[0]*values[1];frames++;
 }
 assert.ok(finished);assert.equal(index,expected.length);assert.equal(c.lost+c.workLost,0);assert.ok(maximumTimingErrorMs<25);
-assert.ok(maxForeground<512);assert.ok(c.minSP>=103);assert.equal(c.leftWrites,c.writes);
+assert.ok(maxForeground<512);assert.ok(c.minSP>=AT13_MEMORY.RAMSTART+7);assert.equal(c.leftWrites,c.writes);
 assert.ok(min.every(x=>x>0)&&max.every(x=>x<255),'No PWM clipping');
 const correlation=(cross-sum[0]*sum[1]/frames)/Math.sqrt((sumSquares[0]-sum[0]**2/frames)*(sumSquares[1]-sum[1]**2/frames));
 assert.ok(correlation<.999,'Stereo channels must contain different music mixes');
 const report={image:'lumiere-stereo',flashSha256:meta.flashSha256,flashBytes:meta.flashBytes,channels:2,
-  hardwareAddressFix:{register:'OCR0A',previousIoAddress:0x2a,ioAddress:0x36,dataAddress:0x56,
+  hardwareAddressFix:{register:'OCR0A',previousIoAddress:0x2a,ioAddress:AT13_IO.OCR0A,dataAddress:AT13_DATA.OCR0A,
     binaryOutInstructionCount:2,reservedAliasOutInstructionCount:0,datasheet:'Microchip DS40002307A section11.9.4 and register summary'},
   completeSong:{commands:index,beats:totalUnits/4,idealSeconds:totalUnits/4*60/source.tempo_bpm,elapsedSeconds:(c.cyc-anchor)/9600000,maximumTimingErrorMs,missingCommands:0},
   outputs:meta.outputs,panorama:meta.panorama,pwm:{frames,min,max,mean:sum.map(x=>x/frames),correlation,channelWriteCountMismatch:0},
   timing:{isrCycles:c.maxIRQ,maxForegroundCyclesIncludingWaitAndIrq:maxForeground,minimumBufferPublishMarginCycles:minimumPublishMargin,lostTimerEvents:c.lost,lostWorkEvents:c.workLost},
-  memory:{stateBytes:7,maxStackBytes:159-c.minSP},
+  memory:{stateBytes:7,maxStackBytes:AT13_MEMORY.RAMEND-c.minSP},
   model:'Paired OCR0A/OCR0B duty writes, one AVR execution. Physical PWM edges and double-buffer latch timing are not synthesized.'};
 fs.writeFileSync('web-player/reports/lumiere-stereo-verification.json',JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify(report,null,2));

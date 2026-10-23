@@ -5,8 +5,17 @@ encoder was validated against the original GNU/LLVM-produced images before
 those obsolete firmware versions were removed from the working tree.
 """
 from pathlib import Path
+import json
 import re
 import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+DEVICE_INCLUDE = (ROOT / 'web-player/native/attiny13a-registers.generated.inc').resolve()
+DEFINITION = json.loads((ROOT / 'web-player/lib/attiny13a-registers.json').read_text(encoding='utf-8'))
+assert DEFINITION['schema'] == 'micromusic-attiny13a-register-map-v1', 'Unsupported device map schema'
+AT13_IO = DEFINITION['maps']['AT13_IO']
+AT13_MEMORY = DEFINITION['maps']['AT13_MEMORY']
+IO_ADDRESSES = frozenset(AT13_IO.values())
 
 
 def assemble(path):
@@ -16,14 +25,19 @@ def assemble(path):
         for line in source.splitlines():
             line=line.strip()
             if line.startswith('.include '): lines.extend(expand(file.parent/line.split('"')[1]))
-            elif line: lines.append(line)
+            elif line: lines.append((line, file.resolve()))
         return lines
-    lines=expand(Path(path));symbols={};rows=[];pc=0
-    for line in lines:
-        if line.endswith(':'): symbols[line[:-1]]=pc
+    lines=expand(Path(path));symbols={};public_symbols={};rows=[];pc=0
+    for line, source in lines:
+        if line.endswith(':'):
+            symbols[line[:-1]]=pc;public_symbols[line[:-1]]=pc
         elif line.startswith(('.section ','.global ')):continue
         elif line.startswith('.set '):
-            key,value=line[5:].split(',');symbols[key.strip()]=int(value.strip(),0)
+            key,value=line[5:].split(',');key=key.strip()
+            symbols[key]=int(value.strip(),0)
+            # Imported vendor constants encode instructions, but do not pollute
+            # the existing project-label/build-report contract.
+            if source != DEVICE_INCLUDE: public_symbols[key]=symbols[key]
         elif line.startswith('.byte '):
             values=line[6:].split(',');rows.append((pc,'bytes',values));pc+=len(values)
         elif line.startswith('.'): raise ValueError(f'Unsupported directive: {line}')
@@ -56,7 +70,7 @@ def assemble(path):
             return {'inc':0x9403,'dec':0x940a,'com':0x9400,'lsr':0x9406,'asr':0x9405,'ror':0x9407,'swap':0x9402,'push':0x920f,'pop':0x900f}[op]|register(a[0])<<4
         if op in {'lds','sts'}:
             d,address=(register(a[0]),value(a[1])) if op=='lds' else (register(a[1]),value(a[0]))
-            assert 96<=address<160, 'Only ATtiny13A SRAM addresses are supported'
+            assert AT13_MEMORY['RAMSTART']<=address<=AT13_MEMORY['RAMEND'], 'Only ATtiny13A SRAM addresses are supported'
             return ((0x9000 if op=='lds' else 0x9200)|(d<<4))|(address<<16)
         if op in {'rjmp','rcall','breq','brne','brcs','brcc','brtc','brts'}:
             offset=symbols[a[0]]-at-2;assert offset%2==0
@@ -71,10 +85,12 @@ def assemble(path):
             return (0xfc00 if op=='sbrc' else 0xfe00)|(d<<4)|bit
         if op=='sbi':
             io,bit=map(value,a);assert 0<=io<=31 and 0<=bit<=7
+            assert io in IO_ADDRESSES, 'Undefined ATtiny13A I/O address'
             return 0x9a00|(io<<3)|bit
         if op in {'in','out'}:
             d,io=(register(a[0]),value(a[1])) if op=='in' else (register(a[1]),value(a[0]))
             assert 0<=io<=63
+            assert io in IO_ADDRESSES, 'Undefined ATtiny13A I/O address'
             return (0xb000 if op=='in' else 0xb800)|(d<<4)|(io&15)|((io&48)<<5)
         if op=='lpm':
             assert a[1] in {'Z','Z+'}
@@ -99,7 +115,7 @@ def assemble(path):
             size=4 if row.split()[0] in {'lds','sts'} else 2
             rom[at:at+size]=encode(row,at).to_bytes(size,'little')
     if len(rom)%2:rom.append(255)
-    return bytes(rom),symbols
+    return bytes(rom),public_symbols
 
 
 def verify_sources(root):

@@ -8,6 +8,11 @@ from importlib.util import spec_from_file_location, module_from_spec
 
 ROOT = Path(__file__).resolve().parents[1]
 FOLDER = ROOT / 'ATtiny13A/Music/variants/lumiere-stereo'
+DEFINITION = json.loads((ROOT / 'web-player/lib/attiny13a-registers.json').read_text(encoding='utf-8'))
+assert DEFINITION['schema'] == 'micromusic-attiny13a-register-map-v1', 'Unsupported device map schema'
+AT13_IO = DEFINITION['maps']['AT13_IO']
+AT13_DATA = DEFINITION['maps']['AT13_DATA']
+AT13_MEMORY = DEFINITION['maps']['AT13_MEMORY']
 
 
 def module(name, path):
@@ -40,13 +45,14 @@ def build():
     (FOLDER / 'config.inc').write_text(''.join(f'.set {k}, {v}\n' for k, v in settings.items()), encoding='utf-8', newline='\n')
     (FOLDER / 'score.inc').write_text(score, encoding='utf-8', newline='\n')
     rom, labels = assembler.assemble(FOLDER / 'synth.S')
-    assert len(rom) <= 1024, f'{len(rom)} bytes exceeds ATtiny13A Flash'
-    # DS40002307A section11.9.4 and register summary: OCR0A I/O0x36, not0x2a.
+    assert len(rom) <= AT13_MEMORY['FLASHEND'] + 1, f'{len(rom)} bytes exceeds ATtiny13A Flash'
+    # Register offsets come from the pinned official device definitions.
     # Code operands for LDS/STS are SRAM addresses, so cannot resemble OUT words.
     out_addresses = [((word >> 5) & 48) | (word & 15)
                      for offset in range(0, labels['playlist'], 2)
                      if ((word := int.from_bytes(rom[offset:offset + 2], 'little')) & 0xf800) == 0xb800]
-    assert out_addresses.count(0x36) == 2 and 0x2a not in out_addresses, 'Stereo must write actual OCR0A, not the legacy emulator alias'
+    assert out_addresses.count(AT13_IO['OCR0A']) == 2, 'Stereo must write actual OCR0A'
+    assert set(out_addresses) <= set(AT13_IO.values()), 'Stereo writes an undefined I/O address'
     ep = (FOLDER / 'eeprom.bin').read_bytes()
     (FOLDER / 'synth.bin').write_bytes(rom)
     for name, raw in [('synth', rom), ('eeprom', ep)]:
@@ -55,8 +61,8 @@ def build():
                   eepromBytes=len(ep), flashSha256=hashlib.sha256(rom).hexdigest(),
                   eepromSha256=hashlib.sha256(ep).hexdigest(), labels=labels, score=meta,
                   audioChannels=2, outputs=data['outputs'], panorama=data['panorama'],
-                  hardwareRegisters=dict(OCR0A=dict(ioAddress=0x36, dataAddress=0x56),
-                                         OCR0B=dict(ioAddress=0x29, dataAddress=0x49)),
+                  hardwareRegisters={name: dict(ioAddress=AT13_IO[name], dataAddress=AT13_DATA[name])
+                                     for name in ('OCR0A', 'OCR0B')},
                   timing=dict(phaseStep=step, phaseBits=16, envelopeTickCycles=131072,
                               tempoBpm=data['tempo_bpm'], actualTempoBpm=step / 65536 * (37500 / 512) * 60 / 4,
                               synthesisHz=18750, pwmHz=37500))
