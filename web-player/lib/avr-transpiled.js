@@ -1,6 +1,32 @@
 import {AVRCore as PeripheralRuntime} from './avr-wasm.js';
 import {runtimeABI,transpileAVR} from './avr-transpiler.js';
 const littleEndian=new Uint8Array(Uint16Array.of(1).buffer)[0]===1;
+const runtimeCaches=new WeakMap(),legacyCache=new Map();
+const abiKey=abi=>JSON.stringify([abi.data,abi.rom,abi.idle,abi.frames,abi.pwm,
+  abi.memoryPages,!!abi.device,Object.entries(abi.state).sort(([a],[b])=>a.localeCompare(b))]);
+function compileTranslation(binary,abi,options) {
+  const runtime=options.runtimeModule;
+  let cache=legacyCache;
+  if(runtime){if(!runtimeCaches.has(runtime))runtimeCaches.set(runtime,new Map());cache=runtimeCaches.get(runtime);}
+  const padded=new Uint8Array(1024).fill(255);padded.set(binary);
+  // Exact image keys avoid hash collisions. Configuration does not enter the
+  // lowering: live clocks/fuses are supplied by this runtime instance's bus.
+  const key=JSON.stringify([abiKey(abi),options.optimizeFlags??true,options.maxBlockInstructions??32,Array.from(padded)]);
+  if(options.cacheTranslation!==false&&cache.has(key)) {
+    const cached=cache.get(key);cache.delete(key);cache.set(key,cached);
+    return {...cached,cacheHit:true};
+  }
+  const generated=transpileAVR(binary,abi,options);
+  const compiled={...generated,module:new WebAssembly.Module(generated.bytes),cacheHit:false};
+  if(options.cacheTranslation!==false) {
+    cache.set(key,compiled);
+    // Bounded per runtime identity; instances and mutable device memory are
+    // never cached. Changed Flash naturally selects a different image key.
+    while(cache.size>8||[...cache.values()].reduce((n,v)=>n+v.bytes.length,0)>16*1024*1024)
+      cache.delete(cache.keys().next().value);
+  }
+  return compiled;
+}
 
 // CPU instructions are generated WASM. Only timers, I/O and interrupt entry
 // use the existing C/WASM peripheral runtime, sharing its linear memory.
@@ -12,10 +38,17 @@ export class AVRCore extends PeripheralRuntime {
   }
   _compile(binary=this.rom) {
     const options=this._translationOptions;
-    const generated=transpileAVR(binary,runtimeABI(this._exports),options);
-    this.transpilation=generated.manifest;
-    this.transpiledBytes=generated.bytes;
-    this._translated=new WebAssembly.Instance(new WebAssembly.Module(generated.bytes),{avr:{
+    const abi=runtimeABI(this._exports);let generated;
+    if(!this._translated&&options.precompiled) {
+      generated=options.precompiled;
+      if(abiKey(generated.manifest.abi)!==abiKey(abi))throw Error('Packaged translation runtime ABI mismatch');
+      generated={...generated,module:new WebAssembly.Module(generated.bytes),cacheHit:false};
+    } else generated=compileTranslation(binary,abi,options);
+    // Public diagnostics must not mutate a module cached for another device.
+    this.transpilation=structuredClone(generated.manifest);
+    this.transpiledBytes=new Uint8Array(generated.bytes);
+    this.translationCacheHit=generated.cacheHit;this._translatedModule=generated.module;
+    this._translated=new WebAssembly.Instance(generated.module,{avr:{
       memory:this._exports.memory,clock:this._exports.avr_clock,
       interrupt:this._exports.avr_interrupt,writeIO:this._exports.avr_write_io,idle:this._exports.avr_idle,
       readIO:this._exports.avr_read_io,writeMasked:this._exports.avr_write_io_masked,
