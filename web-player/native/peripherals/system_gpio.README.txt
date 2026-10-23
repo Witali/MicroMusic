@@ -1,0 +1,83 @@
+ATtiny13A GPIO and external interrupts
+
+Source: Microchip ATtiny13A Data Sheet Complete DS40002307A (2021),
+sections 9.2-9.3, 10.2-10.4, 12.3 and 14.12.5:
+https://ww1.microchip.com/downloads/aemDocuments/documents/MCU08/ProductDocuments/DataSheets/ATtiny13A-Data-Sheet-DS40002307A.pdf
+
+system_gpio.c is a standalone C/WASM module. It does not yet replace the player
+bus. It allocates no memory, imports no host functions and invokes no callbacks.
+The embedding C/WASM CPU owns scheduling, SREG.I, interrupt priority, instruction
+entry latency and output buffers. Each instance has explicit deterministic state.
+
+Integration
+
+1. Initialize with system_gpio_reset. Its reset_pin_enabled argument represents
+   the RSTDISBL fuse: true retains normal RESET function; false enables GPIO PB5.
+   reset resets peripheral registers only; the board should reapply external
+   levels and peripheral alternate-function overrides after a system reset.
+2. Route I/O offsets 14/15/16/17/18/35/3a/3b hex through read/write. These are
+   DIDR0, PCMSK, PINB, DDRB, PORTB, MCUCR, GIFR and GIMSK. Add 0x20 only when
+   converting CPU data-memory addresses to I/O offsets. MCUCR is wholly stored
+   here, including SE and SM bits, so a sleep controller must share this value.
+3. OUT/STS write with write; SBI/CBI write with write_masked. For bit instructions
+   mask only the selected bit. For PINB, one toggles its PORT latch; zero has no
+   effect. GIFR is write-one-to-clear. A synthesized full-register RMW is wrong
+   for both register types. Reserved bits read zero.
+4. Pass external strong digital levels through external(mask, levels, stamp).
+   Unconnected pins use caller-defined floating_levels (zero initially), or a
+   weak pull-up if enabled. Internal output drivers resolve ahead of external
+   drivers; opposing drivers set pins.contention. That resolution is a board
+   model convention, not a prediction of the voltage of a physical short.
+5. Timer0 uses timer_outputs(enabled, levels, stamp) for PB0/PB1. The output
+   override changes the PORT value, not the DDR output-enable bit. PORTB retains
+   the software latch. Other alternate functions and debugWIRE are not modeled.
+6. Invoke clock for each actual rising/falling clkI/O edge in the C scheduler.
+   Timestamps use explicit uint64 half-cycle units; input changes before/after
+   the call define the phase at that edge. Clock-high pin latches are transparent
+   until the falling edge. PINB samples that latch at the next rising edge.
+   The physical .5-1.5 clkI/O synchronization interval is preserved. A CPU port
+   write performed just after a rising edge becomes readable after the next
+   rising edge, consistent with the documented OUT/NOP/IN sequence.
+7. clock returns SYSTEM_T0_RISING/FALLING at the timer counting edge. Its T0
+   pipeline includes pin sampling and edge-detector delay (2.5-3.5 clkI/O).
+   Forward this in C to timer0_external_edge(timer, stamp/2, rising). Do not also
+   feed that module raw PB2 transitions. Do not use half-unit timestamp changes
+   as physical frequency modulation; fractional analog phase/metastability is
+   outside this discrete model. Sub-clock pulses have no guaranteed capture.
+8. pending returns enabled INT0/PCINT requests in GIMSK bit positions. Low-level
+   INT0 is a live condition and INTF0 remains clear; edge modes latch INTF0 even
+   while masked. PCMSK gates PCINT detection; GIMSK gates CPU requests. Output
+   pin changes can also raise interrupts. ack(1/2) performs vector flag clearing.
+9. Before sleep, call sleep(io_running, power_down, stamp). Idle keeps clkI/O;
+   ADC Noise Reduction stops clkI/O without Power-down input clamping. With
+   clkI/O stopped, PCINT and low-level INT0 wake detection remain asynchronous.
+   Power-down keeps enabled interrupt input buffers and clamps unused buffers.
+   The caller owns fuse-dependent wake startup, wake-without-vector behavior
+   if an INT0 low level disappears during startup, and actual SLEEP execution.
+
+pins is a C-level snapshot containing resolved levels, strong-driver, pull-up,
+floating and contention masks plus the timestamp of the last pin-state change.
+The embedding PWM event producer can copy snapshots directly into its WASM-owned
+buffer. No JavaScript crossing is needed at any instruction or pin transition.
+The caller must process edges and input events chronologically. This low-level
+API intentionally does not maintain a second history buffer or event scheduler.
+
+Boundaries
+
+This is a digital runtime peripheral, not programming/debugWIRE, an electrical
+solver, oscillator/fuse startup, brown-out or reset-pin timing. External RESET
+detection belongs to the system reset controller. No full-chip claim is made.
+Interrupt synchronizers use the documented phase/edge topology; silicon behavior
+inside the metastability aperture and under undersized pulses is unspecified.
+The core still needs to connect the bus, clock, reset and interrupt APIs.
+
+Verification
+
+  node --test web-player/tests/system-gpio.test.mjs
+
+The tests build this source into a temporary import-free WASM module under the
+ignored build/system-gpio-test directory, using a read-only Emscripten SDK.
+Set EMSDK when the repository's prepared toolchain is not installed. Tests cover
+GPIO truth tables, external levels and contention, RESET/PB5, PINB synchronization,
+PINB toggling, single-bit writes, DIDR0, timer output overrides, interrupt senses,
+masks, W1C/acknowledgement, asynchronous wake detection and T0 phase delay.
