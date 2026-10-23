@@ -42,11 +42,12 @@ speex_nb8_lpc_update_asm:
     adc r24, r18
     ldd r18, Y+7
     adc r25, r18
-    std Y+0, r22
-    std Y+1, r23
-    std Y+2, r24
-    std Y+3, r25
-    adiw r28, 4
+    /* Next state was loaded before overwriting the current one. Postincrement
+     * stores advance Y for free, removing ADIW from each of nine taps. */
+    st Y+, r22
+    st Y+, r23
+    st Y+, r24
+    st Y+, r25
     .endr
     /* Final coefficient, no mem[j+1] */
     ld r18, X+
