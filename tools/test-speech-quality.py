@@ -25,7 +25,8 @@ def main():
         'test-q3-track-rate.py', 'test-hq4-q3-influence.py',
         'test-partial-error-effects.py', 'test-partial-bounds.py',
         'test-q3-phasebook.py', 'test-sin-partials.py',
-        'test-speech-regression.py'))
+        'test-speech-regression.py', 'test-speech-corpus.py',
+        'test-speech-corpus-benchmark.py', 'test-tiny-pitch-hypotheses.py'))
     for path in sorted(paths):
         name = 'speech_'+path.stem.replace('-', '_')
         spec = importlib.util.spec_from_file_location(name, path)
