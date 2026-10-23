@@ -11,7 +11,8 @@ enum {
  DEVICE_CFG_ADC_FIRST_SAMPLE=8, DEVICE_CFG_COMPARATOR_PROPAGATION=9,
  DEVICE_CFG_BANDGAP_STARTUP=10, DEVICE_CFG_COMPARATOR_INITIAL=11,
  DEVICE_CFG_WAKE_STARTUP_BASE_HALF=12, DEVICE_CFG_SPM_COMMAND_CYCLES=13,
- DEVICE_CFG_FLASH_MAXIMUM=14, DEVICE_CFG_BOD_RECOVERY_NS=15
+ DEVICE_CFG_FLASH_MAXIMUM=14, DEVICE_CFG_BOD_RECOVERY_NS=15,
+ DEVICE_CFG_FACTORY_OSCCAL96=16
 };
 enum { DEVICE_CONTROL_SLEEP=1, DEVICE_CONTROL_SPM=2, DEVICE_CONTROL_WDR=3 };
 enum {
@@ -31,7 +32,8 @@ typedef struct {
  * 5V supply/1.1V bandgap, fuses7a/ff, lockff, ADC first sample27 half ADC
  * periods, comparator propagation0/startup0/initial0, wake startup0,
  * SPM command cycles0 (explicit fault if needed), Flash maximum bound,
- * BOD recovery60000ns (datasheet approximate digital profile, configurable). */
+ * BOD recovery60000ns (datasheet approximate digital profile, configurable),
+ * factory OSCCAL96=0 (explicit fixture byte, not a universal chip value). */
 int device_configure(uint32_t key, uint32_t value);
 int device_init(uint8_t data[160], uint8_t flash[1024], uint8_t eeprom[64]);
 void device_reset(uint8_t reset_sources);
