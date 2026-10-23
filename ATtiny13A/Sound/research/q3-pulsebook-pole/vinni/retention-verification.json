@@ -1,0 +1,79 @@
+{
+  "schema": "pulsebook-pole-retention-verification-v1",
+  "original_report_sha256": "f7205a1073a26ceb336f53f603ab05e8b76d5e39c9beaa35405fc06ae89d064b",
+  "seed_snapshots": 98,
+  "source_hashes_current_match": {
+    "tools/probe-q3-pulsebook.py": true,
+    "ATtiny13A/Sound/codec/q3_pulsebook.py": true,
+    "ATtiny13A/Sound/codec/spectrogram_objective.py": true,
+    "ATtiny13A/Sound/codec/hq4_speech_search.py": true,
+    "tools/probe-q3-pulsebook-pole.py": true,
+    "ATtiny13A/Sound/codec/q3_pulsebook_pole.py": true
+  },
+  "endpoints": [
+    {
+      "endpoint": "balanced",
+      "metrics": {
+        "stoi": 0.8422860558825136,
+        "estoi": 0.6508900335996826,
+        "spectrogram_loss": 0.4976957883436937,
+        "fine_log_error": 0.48355030347047323,
+        "envelope_error": 0.5888572790817759,
+        "unsupported_energy": 0.19736772665105648,
+        "missing_energy": 0.1938786787559073
+      },
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "stream_bytes": 591,
+      "model_sha256": "62ea1c21d39af7d08b674d4e4de2a7d103dc74d816ea4c4c20dbbe85d1730896",
+      "pcm_sha256": "a95b90c85feb6b78adce66d4c9faa9fd7cc083b4b195b155eb32de9f0ae35338"
+    },
+    {
+      "endpoint": "best_stoi",
+      "metrics": {
+        "stoi": 0.8422860558825136,
+        "estoi": 0.6508900335996826,
+        "spectrogram_loss": 0.4976957883436937,
+        "fine_log_error": 0.48355030347047323,
+        "envelope_error": 0.5888572790817759,
+        "unsupported_energy": 0.19736772665105648,
+        "missing_energy": 0.1938786787559073
+      },
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "stream_bytes": 591,
+      "model_sha256": "62ea1c21d39af7d08b674d4e4de2a7d103dc74d816ea4c4c20dbbe85d1730896",
+      "pcm_sha256": "a95b90c85feb6b78adce66d4c9faa9fd7cc083b4b195b155eb32de9f0ae35338"
+    },
+    {
+      "endpoint": "best_spectrum",
+      "metrics": {
+        "stoi": 0.799541543926533,
+        "estoi": 0.588942803867132,
+        "spectrogram_loss": 0.4692444620395698,
+        "fine_log_error": 0.45683188551042364,
+        "envelope_error": 0.554175829172744,
+        "unsupported_energy": 0.17318717401976877,
+        "missing_energy": 0.1755160024796184
+      },
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "stream_bytes": 588,
+      "model_sha256": "90602c5c33d4b397785cea3144ec099fd5264c83d82f4b9c7df12e0e7be66d65",
+      "pcm_sha256": "0534a6ee26dfb02b0ef315a989990298fc2d7304b0bbc52ecd3c330aa4eab8e4"
+    }
+  ],
+  "target_met": false
+}
