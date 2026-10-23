@@ -1,0 +1,86 @@
+{
+  "reference_sha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+  "baseline_stream_sha256": "5033738490e0ae0ba30c8ea62d9d53404b04b592eb53a7a0750329e641b29e6e",
+  "seed": 23061,
+  "passes": 8,
+  "stoi_floor": 0.9005,
+  "initial_filtered": {
+    "stoi": 0.8961227388194063,
+    "spectral_error": 0.7404789955727411,
+    "steps_ge_48": 0,
+    "peak_signed": 89
+  },
+  "final": {
+    "stoi": 0.9005003163212995,
+    "spectral_error": 0.7418437598691217,
+    "steps_ge_48": 0,
+    "peak_signed": 89
+  },
+  "history": [
+    {
+      "pass_number": 1,
+      "stoi": 0.8992890718567403,
+      "spectral_error": 0.7446097318061861,
+      "stream_bytes": 554,
+      "checks": 3961,
+      "accepted": 54
+    },
+    {
+      "pass_number": 2,
+      "stoi": 0.900503054490989,
+      "spectral_error": 0.7498057600936404,
+      "stream_bytes": 554,
+      "checks": 7925,
+      "accepted": 77
+    },
+    {
+      "pass_number": 3,
+      "stoi": 0.9005026419123816,
+      "spectral_error": 0.7433474925508904,
+      "stream_bytes": 556,
+      "checks": 11885,
+      "accepted": 112
+    },
+    {
+      "pass_number": 4,
+      "stoi": 0.9005029459323073,
+      "spectral_error": 0.7423402656868552,
+      "stream_bytes": 556,
+      "checks": 15845,
+      "accepted": 119
+    },
+    {
+      "pass_number": 5,
+      "stoi": 0.9005003163212995,
+      "spectral_error": 0.7418437598691217,
+      "stream_bytes": 556,
+      "checks": 19805,
+      "accepted": 124
+    },
+    {
+      "pass_number": 6,
+      "stoi": 0.9005003163212995,
+      "spectral_error": 0.7418437598691217,
+      "stream_bytes": 556,
+      "checks": 23764,
+      "accepted": 124
+    },
+    {
+      "pass_number": 7,
+      "stoi": 0.9005003163212995,
+      "spectral_error": 0.7418437598691217,
+      "stream_bytes": 556,
+      "checks": 27723,
+      "accepted": 124
+    },
+    {
+      "pass_number": 8,
+      "stoi": 0.9005003163212995,
+      "spectral_error": 0.7418437598691217,
+      "stream_bytes": 556,
+      "checks": 31682,
+      "accepted": 124
+    }
+  ],
+  "pcm_sha256": "4aa8707ae5af8da6ba555f0612de729e65eed4f639387b694b9c486143860a77"
+}

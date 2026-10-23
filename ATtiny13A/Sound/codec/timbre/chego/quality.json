@@ -1,0 +1,27 @@
+{
+  "referenceSha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+  "numpy": "2.5.4",
+  "scipy": "1.18.1",
+  "sampleHz": 7500,
+  "samples": 9216,
+  "metrics": {
+    "hq4": {
+      "stoi": 0.9006005040626661,
+      "spectral_error": 1.1745515853329722,
+      "steps_ge_48": 0,
+      "peak_signed": 55,
+      "hp70_spectral_error": 1.276925854789502,
+      "rms": 0.05728426798817431
+    },
+    "hq4-t": {
+      "stoi": 0.9005003163212995,
+      "spectral_error": 0.7418437598691217,
+      "steps_ge_48": 0,
+      "peak_signed": 89,
+      "hp70_spectral_error": 0.9802257051476775,
+      "rms": 0.17768652415043948
+    }
+  },
+  "spectralErrorReductionPercent": 36.84025724090974,
+  "hp70SpectralErrorReductionPercent": 23.23550334022603
+}
