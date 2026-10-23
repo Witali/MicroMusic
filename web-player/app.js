@@ -92,7 +92,7 @@ function load(entry) {
   $('selected-order').textContent=entry.order; $('selected-title').textContent=entry.title; $('selected-description').textContent=entry.description;
   if(entry.kind==='speech') {
     $('speech-audit').href=entry.codec==='hq4-t'
-      ? '../ATtiny13A/Sound/codec/timbre/README.md'
+      ? entry.research||'../ATtiny13A/Sound/codec/timbre/README.md'
       : '../ATtiny13A/Sound/research/hq4-emulator-comparison.json';
     $('speech-audit').textContent=entry.codec==='hq4-t' ? 'Исследование HQ4-T ↗' : 'Сверка HQ4 ↗';
   }
@@ -170,21 +170,22 @@ try {
     document.title='MicroMusic / ATtiny13A — речь HQ4';
     document.querySelector('.intro .eyebrow').textContent='ATtiny13A / РЕЧЬ ИЗ МАШИННОГО КОДА';
     document.querySelector('.intro h1').textContent='Речь в одном килобайте.';
-    document.querySelector('.subtitle').textContent='Новый HQ4-T и исходный HQ4: сравните тембр на фразе «Чего тебе нужно?».';
-    document.querySelector('.library h2').textContent='HQ4-T или HQ4?';
-    document.querySelector('.library-caption').textContent='HQ4-T восстанавливает спектральный наклон голоса. Выберите версию и сравните на слух.';
+    document.querySelector('.subtitle').textContent='Автоматический подбор HQ4-T: сравните новые варианты на фразе «Чего тебе нужно?».';
+    document.querySelector('.library h2').textContent='Какой вариант звучит лучше?';
+    document.querySelector('.library-caption').textContent='Auto сохраняет разборчивость по STOI. «Спектр» допускает небольшое снижение STOI ради более близкой спектрограммы.';
     $('speech-level-control').hidden=false;
     document.querySelector('.source-only').hidden=true;
     const history=document.querySelector('.header-link');history.href='../ATtiny13A/Sound/AUDIO_REFERENCES.md';history.textContent='Звуковые эталоны ↗';
     $('original-player').textContent='Плеер из ChatGPT ↗';
     $('speech-audit').hidden=false;
-    document.querySelector('footer span:last-child').textContent='MiniLPC HQ4 / HQ4-T · 5 образов · Worker + AudioWorklet';
+    document.querySelector('footer span:last-child').textContent='MiniLPC HQ4 / HQ4-T · Worker + AudioWorklet';
   }
   // Public speech playback needs only the source-built catalog. Local listening
   // can additionally use restored original WAVs and the archived ChatGPT player.
   const response=await fetch(speech?'./hq4-firmware.json':'./firmware.json');
   if (!response.ok) throw new Error('HTTP '+response.status);
   catalog=await response.json();
+  if(speech)document.querySelector('footer span:last-child').textContent=`MiniLPC HQ4 / HQ4-T · ${catalog.entries.length} образов · Worker + AudioWorklet`;
   if(speech&&['127.0.0.1','localhost'].includes(location.hostname)) {
     try {
       const localResponse=await fetch('../build/hq4-preview/firmware.json');
