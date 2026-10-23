@@ -10,7 +10,8 @@ separate explicit ASM-enable define must both permit an optimized backend;
 otherwise use C. Hardware memory access stays independent of arithmetic.
 
 The latest implementation and measurements are described in README.md and
-`reports/nb-round4-*.json`. Earlier reports are stage baselines, not current
+`reports/nb-loop-hoist-*.json` and `reports/c-loop-hoist-*.json`. Earlier
+reports are stage baselines, not current
 binary measurements. Vendor and R4 files remain unmodified.
 
 ## Completed, measured
@@ -19,7 +20,7 @@ binary measurements. Vendor and R4 files remain unmodified.
 - Exact direct LPC with coefficient ages; one ASM call per 40 samples.
 - Constant LSP stages and shared cosine: 5,278 B saved for 0.78% cycle cost.
 - Shared signed-byte innovation vectors, merging scale, pitch and saturation.
-- Minimal NB3 state; 145-sample history, 160 current samples, aligned 220 B scratch.
+- Minimal NB3 state; 145-sample history, 160 current samples, aligned 220 B scratch (later reduced to 180 B below).
 - Merged high-product carry chain in the LPC MAC.
 - First pitch tap writes; later taps add. Only the unwritten tail is cleared.
 - Mixed `-Os/O3`: 1,730 B and 45 B stack saved for 0.58% cycle cost.
@@ -106,7 +107,7 @@ binary measurements. Vendor and R4 files remain unmodified.
   history+cursor again: exactly 2 cycles/sample, 320 cycles/frame saved;
   fixture maximum 134,258 -> 133,938, Flash 8,572 -> 8,568 B, stack/static
   unchanged. All 163,840 independent LPC samples and 1,058 frames/reset pass.
-  The selectable C recurrence is unchanged; final full-player gate pending.
+  The selectable C recurrence is unchanged; the full 31-stream/40% PWM gate passes.
   AVR GCC already hoists C innovation scale high/low decomposition before
   both vector/sample loops, so adding explicit locals offers no new hoist.
 
@@ -120,7 +121,13 @@ binary measurements. Vendor and R4 files remain unmodified.
   maxima unchanged at 315,375 / 315,950, Flash 9,604 B. Both backends match
   13,196 corpus/pitch frames and 58 envelope/reset frames. Two fresh native
   exported C archives each match 9,100 frames. C still fails the long
-  en_letter_a timer test (1,103 underruns); ASM full-player gate pending.
+  en_letter_a timer test (1,103 underruns). All 31 ASM players pass with
+  128,000 extra cycles/frame, zero underruns, minimum queue 27, maximum
+  publication gap 202,123 cycles and 524 B free SRAM; hashes match upstream.
+  All 31 ordinary players also pass: minimum queue 73, maximum publication
+  gap 80,013 cycles; final speech demo 11,874 B Flash including 2,940 B audio,
+  static SRAM 1,374 B, peak stack 150 B, free SRAM 524 B. The final ASM mailbox
+  was rebuilt and its hash equals the verified 13,254-frame image.
 
 ## Next candidates (unmeasured)
 
@@ -132,11 +139,11 @@ binary measurements. Vendor and R4 files remain unmodified.
    Innovation also permits signed8*scale decomposition at bit 12, followed by
    a byte-aligned left shift and one signed right shift for *128. Its bounds
    must be explicit; do not replace the generic unrestricted Q14 semantics.
-3. **Special Q14 for p1.** This polynomial coefficient remains a multiple of
+2. **Special Q14 for p1.** This polynomial coefficient remains a multiple of
    64. A signed16 x signed24 core followed by a byte-aligned >>8 might use six
    hardware multiplies instead of eight. Preserve the original floor, prove
    the input truncation/range and compare added code size against speed.
-4. **Ten-sample pitch staging.** Upstream pitch sources always have negative
+3. **Ten-sample pitch staging.** Upstream pitch sources always have negative
    offsets: the first segment stops before `j==pp`, the second before
    `j==pp+pitch`. Thus a completed innovation vector can be written before the
    next vector's pitch is computed. A 10-word pitch buffer could replace 40

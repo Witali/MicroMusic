@@ -43,7 +43,7 @@ matching optimized kernel is provided yet.
 | Signed shifts and rounded products | `avr_shift.h`, `avr_fixed.h` | C shifts in `avr_shift.h` / upstream fixed-point macros |
 | Generic and bounded Q14 product | `q14.S` | upstream `MULT16_32_Q14` in `fixed_generic.h` |
 | LSP polynomial stages | `compact_lsp.c.inc` calling Q14 ASM | same recurrence using C Q14 |
-| Pitch write/add | `pitch_add.S` | C loops installed by `tools/apply_profile.py` into `ltp.c` |
+| Pitch write/add | `pitch_add.S` | C block loop in `pitch24.h` |
 | Innovation, scaling and saturation | `innovation.S` | C branch in `innovation.h` |
 | Whole-block LPC synthesis | `lpc_dot.S` | C dot product and coefficient-age loop in `iir_direct.c.inc` |
 
@@ -68,7 +68,8 @@ python Codecs/Speex/AVR/tools/build.py --avr-gcc avr-gcc --backend asm
 The verifier checks the binary hash against its backend metadata and rejects
 linked ASM kernels in a C build. C is a correctness/portability fallback;
 real-time support depends on the target and must be measured. On ATmega328P
-the C build exceeds the 20-ms frame budget on some packets.
+the C decoder core fits the measured 20-ms frame budget, but the complete
+player still underruns on long audio with timer/ISR and output costs.
 The build tool defaults to C; `--backend asm` explicitly adds the enable define.
 
 ## Export and integrate
@@ -122,9 +123,11 @@ or PWM code; the decoder does not know which output peripheral is used.
   types and return the stored integer value, independent of byte order.
 - Scratch is explicitly aligned to four bytes using C11 `_Alignas(4)`;
   pointer alignment uses `uintptr_t`, not `long`. No CPU-register layout or
-  little-endian byte slicing is used by the C arithmetic kernels.
+  CPU endianness is assumed by the C arithmetic kernels. Internal packed
+  signed24 pitch storage uses three explicit low-to-high bytes; `packed24.h`
+  assembles them by value, independent of native byte order or alignment.
 - `SPEEX_NB3_CHECK_SCRATCH=0` removes the host-only bounds checker and its
-  `abort` dependency. The embedded path uses the same 220-byte arena. Provide
+  `abort` dependency. The embedded path uses the same 180-byte arena. Provide
   normal C runtime `memcpy`, `memmove`, `memset`; a hosted OS is unnecessary.
 - GCC-specific optimization attributes are isolated in `speex_platform.h` and
   disappear for other compilers. Target-specific intrinsic/ASM optimizations
@@ -146,4 +149,4 @@ The second test exports a fresh package, builds both manifest and CMake static
 archives, and links a consumer with public includes only. It compares complete
 prepared fixture/human-speech streams with upstream. It requires the reference
 host decoder built first; human-speech coverage is included when those streams
-are prepared. `reports/portable-library.json` records the 31-stream run.
+are prepared. `reports/portable-loop-hoist-library.json` records the current 31-stream run.
