@@ -62,6 +62,12 @@ directly from the actual AVR samples without DC removal or normalization,
 in `raw-level-comparison.json`. Reduced bias is useful but does not override
 the failed STOI guard or establish subjective acceptance.
 
+After listening, the user found the rounded variant slightly better. A fresh
+three-way remeasurement confirms lower spectral/level errors and much lower
+DC, alongside the STOI/p95-frequency tradeoffs. See
+[LISTENING_MEASUREMENTS.md](LISTENING_MEASUREMENTS.md) for matched versus raw
+levels, the strict 5 dB audit, actual memory and reproducible input/build hashes.
+
 `qualified/build.json` verifies all 66816 samples (22272 phrase plus twice
 that length of midpoint silence) in reference, WASM and unoptimized WASM
 engines, with no mismatches, missed samples or lost timer overflows. SRAM span
