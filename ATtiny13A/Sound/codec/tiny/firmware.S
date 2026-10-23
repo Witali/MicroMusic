@@ -3,6 +3,9 @@
  * No hardware MUL. Word-immediate arithmetic is supported by this core.
  */
 .include "config.inc"
+.ifndef PLAY_ONCE
+.set PLAY_ONCE,0
+.endif
 .section .text
 .global __vectors, decoder_end, wave_data, field_data, field_end
 .set HIST,0x68
@@ -17,6 +20,9 @@ __vectors:
 .org 8
 reset:
  cli
+.if PLAY_ONCE
+ clt
+.endif
  clr r0
  ldi r16,0x9f
  out 0x3d,r16
@@ -42,6 +48,15 @@ reset:
 wait:
  tst r8
  brne wait
+.if PLAY_ONCE
+ /* T survives arithmetic and the ISR. Wait for the last queued sample first. */
+ brtc speaking
+ ldi r16,128
+ mov r7,r16
+ inc r8
+ rjmp wait
+speaking:
+.endif
  /* Store raw unsigned noise: its difference equals the signed-noise difference. */
  lds r16,HIST
  sts HIST+1,r16
@@ -135,7 +150,11 @@ block_boundary:
  /* Long phrases use exact stream exhaustion instead of a second counter byte. */
  tst r15
  breq block_continue
+.if PLAY_ONCE
+ set
+.else
  rcall restart
+.endif
 block_continue:
  rjmp wait
 .else
@@ -143,7 +162,11 @@ block_continue:
  breq phrase_end
  rjmp wait
 phrase_end:
+.if PLAY_ONCE
+ set
+.else
  rcall restart
+.endif
  rjmp wait
 .endif
 center:
