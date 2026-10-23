@@ -139,6 +139,32 @@ def unused_pole_conversion(model):
         source_parameters_unchanged=True,actual_converted_firmware_verified=False)
 
 
+def zero_tail_conversion(model):
+    """Remove only unused lags16..31 after two frozen exact oracle checks."""
+    import q3_pulsebook32 as extended
+    ordinary = load_cycles().load_search(False)
+    if model['schema'] != extended.SCHEMA:
+        raise ValueError('Tail trimming requires an explicitly tagged 32-tap model')
+    f,d,b = np.asarray(model['frames'],np.uint8),np.asarray(model['durations'],np.uint16),np.asarray(model['pulsebook'],np.int8)
+    extended.validate(f,d,b,int(d.sum()))
+    if np.any(b[:,16:]):
+        raise ValueError('Active 32-tap excitation tails cannot be silently removed')
+    trimmed = b[:,:16].copy()
+    payload = ordinary.validate(f,d,trimmed,int(d.sum()))
+    nearest,tilt = bool(model.get('nearest',False)),int(model.get('tilt_shift',1))
+    a,ac = extended.render(f,d,b,tilt,nearest)
+    z,zc = ordinary.render(f,d,trimmed,tilt,nearest)
+    if not np.array_equal(a,z) or not np.array_equal(ac,zc):
+        raise AssertionError('Zero-tail conversion changed exact PCM or internal arithmetic')
+    if payload != extended.validate(f,d,b,int(d.sum())):
+        raise AssertionError('Zero-tail conversion changed the complete packed parameter stream')
+    return dict(model,schema=ordinary.SCHEMA,pulsebook=trimmed.tolist()),dict(
+        from_schema=extended.SCHEMA,to_schema=ordinary.SCHEMA,removed_table_entries=64,
+        all_removed_entries_zero=True,exact_pcm_equal=True,exact_internal_counts_equal=True,
+        exact_packed_stream_equal=True,pcm_sha256=hashlib.sha256(a.tobytes()).hexdigest(),
+        source_frames_durations_unchanged=True,actual_converted_firmware_verified=False)
+
+
 def source_variants(state,index):
     """Joint source alternatives; beam composes these across adjacent frames."""
     old = state.frames[index]
@@ -255,7 +281,7 @@ def final_metrics(module,state,reference):
 
 
 def run(reference_path,model_path,core_report,output,*,exact_evaluations=500,beam_width=6,block_frames=4,passes=2,
-        ordinary_core_report=None):
+        ordinary_core_report=None,trim_zero_tail=False):
     if exact_evaluations < 1 or beam_width < 2 or block_frames < 2 or passes < 1:
         raise ValueError('Expected positive finite search budget and multi-frame lookahead')
     started = time.perf_counter()
@@ -263,6 +289,11 @@ def run(reference_path,model_path,core_report,output,*,exact_evaluations=500,bea
     core = cycles.load_core_profile(core_report)
     module = cycles.load_search(core['pole'])
     model = json.loads(Path(model_path).read_text(encoding='utf-8'))
+    source_conversion = None
+    if trim_zero_tail:
+        if core['pole']:
+            raise ValueError('Zero-tail conversion requires the compatible ordinary actual core')
+        model,source_conversion = zero_tail_conversion(model)
     if model['schema'] != module.SCHEMA or bool(model.get('nearest',False)) != core['nearest']:
         raise ValueError('Seed schema/rounding must match the verified actual core')
     source_core,feature_selection = core,None
@@ -385,10 +416,13 @@ def run(reference_path,model_path,core_report,output,*,exact_evaluations=500,bea
     source_paths = [Path(__file__),ROOT/'tools/probe-q3-pulsebook.py',ROOT/'tools/probe-q3-pulsebook-cycles.py',
         CODEC/'q3_pulsebook.py',CODEC/'q3_pulsebook_pole.py',CODEC/'spectrogram_objective.py',
         CODEC/'harmonic_tracks.py',CODEC/'partial_bounds.py',CODEC/'hq4_speech_search.py',CODEC/'hq4_core.py']
+    if source_conversion is not None:
+        source_paths.append(CODEC/'q3_pulsebook32.py')
     report = dict(schema='q3-perceptual-lookahead-v1',reference_sha256=module.sha(reference_path),
         seed_sha256=module.sha(model_path),seed_model_path=Path(model_path).resolve().relative_to(ROOT).as_posix(),
         samples=len(reference),sample_rate=sr,core_profile=core,source_core_profile=source_core,
-        feature_selection=feature_selection,initial=dict(**initial.score,**initial_checks),
+        feature_selection=feature_selection,source_conversion=source_conversion,
+        initial=dict(**initial.score,**initial_checks),
         targets=dict(stoi=.9,spectrogram_loss=.3449755536),target_met=any(x['quality']['target_met'] for x in finalists.values()),
         configuration=dict(max_exact_evaluations=exact_evaluations,beam_width=beam_width,block_frames=block_frames,passes=passes,
             lpc_order=8,gamma1=.92,gamma2=.6,guide_window_samples=512,guide_hop_samples=128),
@@ -410,6 +444,7 @@ def main():
     p.add_argument('--model',type=Path,required=True)
     p.add_argument('--core-report',type=Path,required=True)
     p.add_argument('--ordinary-core-report',type=Path,help='Explicitly select a verified smaller ordinary core if the pole nibble is unused')
+    p.add_argument('--trim-zero-tail',action='store_true',help='Explicitly convert a 32-tap seed only when removed lags are allzero and both exact oracles agree')
     p.add_argument('--output',type=Path,required=True)
     p.add_argument('--exact-evaluations',type=int,default=500)
     p.add_argument('--beam-width',type=int,default=6)
@@ -418,7 +453,7 @@ def main():
     args = p.parse_args()
     run(args.reference,args.model,args.core_report,args.output,exact_evaluations=args.exact_evaluations,
         beam_width=args.beam_width,block_frames=args.block_frames,passes=args.passes,
-        ordinary_core_report=args.ordinary_core_report)
+        ordinary_core_report=args.ordinary_core_report,trim_zero_tail=args.trim_zero_tail)
 
 
 if __name__ == '__main__':

@@ -121,6 +121,23 @@ class PerceptualFitTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'active'):
             fit.unused_pole_conversion(model)
 
+    def test_zero_tail_conversion_is_exact_and_rejects_nonzero_tail(self):
+        seed = state(3)
+        book = np.zeros((4,32),np.int8)
+        book[:,:4] = [2,3,2,-1]
+        model = dict(schema='hq4-q3-pulsebook32-v1',frames=seed.frames.tolist(),
+            durations=seed.durations.tolist(),pulsebook=book.tolist(),nearest=False,tilt_shift=1)
+        converted,proof = fit.zero_tail_conversion(model)
+        self.assertEqual(converted['schema'],'hq4-q3-pulsebook-v1')
+        self.assertEqual(np.asarray(converted['pulsebook']).shape,(4,16))
+        self.assertTrue(proof['exact_pcm_equal'])
+        self.assertTrue(proof['exact_internal_counts_equal'])
+        self.assertTrue(proof['exact_packed_stream_equal'])
+        self.assertEqual(np.asarray(model['pulsebook']).shape,(4,32))
+        model['pulsebook'][3][31] = 1
+        with self.assertRaisesRegex(ValueError,'Active'):
+            fit.zero_tail_conversion(model)
+
 
 if __name__ == '__main__':
     unittest.main()
