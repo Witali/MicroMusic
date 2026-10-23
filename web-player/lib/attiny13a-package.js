@@ -1,7 +1,7 @@
 // Portable package validation. No Node imports, host callbacks, or WASM instances.
 // SHA-256 protects integrity; packages are executable code, not signed artifacts.
 export const PACKAGE_FORMAT='micromusic-attiny13a-package';
-export const PACKAGE_VERSION=1;
+export const PACKAGE_VERSION=2;
 export const PACKAGE_ABI='micromusic-attiny13a-device-v1';
 export const PACKAGE_LIMITS=Object.freeze({json:16*1024*1024,translated:4*1024*1024,runtime:2*1024*1024,manifest:512*1024});
 export const DEFAULT_CONFIGURATION=Object.freeze({
@@ -9,7 +9,7 @@ export const DEFAULT_CONFIGURATION=Object.freeze({
   fuseLow:0x7a,fuseHigh:0xff,lock:0xff,adcFirstSample:27,
   comparatorPropagationHalf:0,bandgapStartupHalf:0,comparatorInitial:0,
   wakeStartupHalf:0,spmCommandCycles:0,flashMaximum:1,bodRecoveryNs:60000,
-  factoryOsccal96:0,fuseStartupProfile:0,
+  factoryOsccal96:0,fuseStartupProfile:0,nvmClockProfile:0,nvmCalibrationReferenceHz:0,osccalHz:null,
 });
 
 const encoder=new TextEncoder(),decoder=new TextDecoder('utf-8',{fatal:true});
@@ -44,20 +44,35 @@ async function sha256(bytes){
   if(!globalThis.crypto?.subtle)fail('WebCrypto SHA-256 is unavailable (use a secure browser context)');
   return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),n=>n.toString(16).padStart(2,'0')).join('');
 }
-function normalizeConfiguration(input={},complete=false){
+function normalizeConfiguration(input={},complete=false,version=PACKAGE_VERSION){
   record(input,'configuration');
-  for(const name of Object.keys(input))if(!Object.hasOwn(DEFAULT_CONFIGURATION,name))fail('unknown configuration '+name);
-  if(complete)keys(input,Object.keys(DEFAULT_CONFIGURATION),'configuration');
-  const configuration={...DEFAULT_CONFIGURATION,...input};
+  const defaults=version===1?Object.fromEntries(Object.entries(DEFAULT_CONFIGURATION).filter(([key])=>!['nvmClockProfile','nvmCalibrationReferenceHz','osccalHz'].includes(key))):DEFAULT_CONFIGURATION;
+  for(const name of Object.keys(input))if(!Object.hasOwn(defaults,name))fail('unknown configuration '+name);
+  if(complete)keys(input,Object.keys(defaults),'configuration');
+  const configuration={...defaults,...input};
   for(const [name,value] of Object.entries(configuration)){
+    if(name==='osccalHz'){
+      if(value!==null){
+        if(!Array.isArray(value)||value.length!==128||!value.some(Boolean))fail('invalid configuration osccalHz');
+        configuration.osccalHz=Array.from(value,(hz,cal)=>integer(hz,0,1000000000,'configuration osccalHz['+cal+']'));
+      }
+      continue;
+    }
     let min=0,max=0xffffffff;
     if(name==='oscillatorHz'||name==='watchdogHz'){min=1;max=1000000000;}
     if(name==='vccMicrovolts'||name==='bandgapMicrovolts'){min=1;max=0x7fffffff;}
     if(['fuseLow','fuseHigh','lock'].includes(name))max=255;
     if(name==='factoryOsccal96')max=127;
-    if(['comparatorInitial','flashMaximum','fuseStartupProfile'].includes(name))max=1;
+    if(['comparatorInitial','flashMaximum','fuseStartupProfile','nvmClockProfile'].includes(name))max=1;
+    if(name==='nvmCalibrationReferenceHz')max=1000000000;
     integer(value,min,max,'configuration '+name);
     if(name==='adcFirstSample'&&![27,29].includes(value))fail('invalid configuration adcFirstSample');
+  }
+  if(configuration.nvmClockProfile===1&&!configuration.nvmCalibrationReferenceHz)fail('configuration nvmClockProfile requires a calibration reference');
+  if(configuration.fuseStartupProfile&&((configuration.fuseLow>>2)&3)===3)fail('configuration fuseStartupProfile uses reserved SUT11');
+  if(configuration.osccalHz){
+    const factory=configuration.osccalHz[configuration.factoryOsccal96];
+    if(!factory||([1,2].includes(configuration.fuseLow&3)&&factory!==configuration.oscillatorHz))fail('configuration OSCCAL factory frequency/clock source mismatch');
   }
   return configuration;
 }
@@ -134,7 +149,7 @@ const bridges={clock:'avr_clock',interrupt:'avr_interrupt',writeIO:'avr_write_io
   readIO:'avr_read_io',writeMasked:'avr_write_io_masked',ready:'avr_device_ready',time:'avr_device_time',
   wait:'avr_device_wait',control:'avr_device_control',lpm:'avr_device_lpm',audioDeadline:'avr_device_audio_deadline',
   audioSample:'avr_device_audio_sample',pending:'avr_device_pending',cpuDeadline:'avr_device_cpu_deadline',idleUntil:'avr_device_idle'};
-const i32=0x7f,f64=0x7c,signature=(params=[],results=[])=>({params,results});
+const i32=0x7f,i64=0x7e,f64=0x7c,signature=(params=[],results=[])=>({params,results});
 const bridgeSignatures={clock:signature([f64]),interrupt:signature(),writeIO:signature([i32,i32],[i32]),idle:signature([],[i32]),
   readIO:signature([i32],[i32]),writeMasked:signature([i32,i32,i32],[i32]),ready:signature([],[i32]),time:signature([],[f64]),
   wait:signature([f64],[i32]),control:signature([i32,i32,i32],[i32]),lpm:signature([i32],[i32]),audioDeadline:signature([],[f64]),
@@ -173,7 +188,7 @@ function validateManifest(manifest,flash){
     if(item?.pc!==pc||item.byteAddress!==pc*2||item.word!==(flash[pc*2]|flash[pc*2+1]<<8))fail('Flash/translation mapping mismatch at word '+pc);
   }
 }
-async function validateCode(translated,runtime,flash,manifest){
+async function validateCode(translated,runtime,flash,manifest,version=PACKAGE_VERSION){
   const t=inspectWasm(translated,'translated'),r=inspectWasm(runtime,'runtime');
   const [translatedModule]=await Promise.all([WebAssembly.compile(translated),WebAssembly.compile(runtime)]);
   const sections=WebAssembly.Module.customSections(translatedModule,'micromusic.avr');
@@ -196,6 +211,16 @@ async function validateCode(translated,runtime,flash,manifest){
   if(!equal([...names].sort(),['memory',...Object.keys(bridges)].sort()))fail('incomplete full-device translated imports');
   for(const [name,type] of Object.entries({avr_layout:signature([i32],[i32]),avr_field_name:signature([i32],[i32]),
     avr_device_configure:signature([i32,i32],[i32]),avr_reset:signature([i32,i32])})){
+    const exported=r.exports.find(e=>e.name===name&&e.kind===0);
+    if(!exported||!equal(r.signature(exported.index),type))fail('runtime export mismatch: '+name);
+  }
+  if(version>=2)for(const [name,type] of Object.entries({
+    avr_device_configure_osccal_hz:signature([i32,i32],[i32]),avr_device_physical_mode:signature([],[i32]),
+    avr_device_rebase_time:signature([],[i64]),avr_device_time_ps:signature([],[i64]),avr_device_startup_deadline_ps:signature([],[i64]),
+    avr_device_oscillator_hz:signature([],[i32]),avr_device_inject_pins_ps:signature([i64,i32,i32],[i32]),
+    avr_device_inject_analog_ps:signature([i64,i32,i32],[i32]),avr_device_pin_buffer_ps:signature([],[i32]),
+    avr_device_pin_count_ps:signature([],[i32]),avr_device_pins_ps:signature([],[i32]),
+  })){
     const exported=r.exports.find(e=>e.name===name&&e.kind===0);
     if(!exported||!equal(r.signature(exported.index),type))fail('runtime export mismatch: '+name);
   }
@@ -227,10 +252,10 @@ export async function decodePackage(json){
   if(json.length>PACKAGE_LIMITS.json||encoder.encode(json).length>PACKAGE_LIMITS.json)fail('JSON size limit');
   let pkg;try{pkg=JSON.parse(json);}catch{fail('invalid JSON');}
   keys(pkg,['format','version','device','abi','configuration','manifest','assets','integrity'],'package');
-  if(pkg.format!==PACKAGE_FORMAT||pkg.version!==PACKAGE_VERSION)fail('unsupported format/version');
+  if(pkg.format!==PACKAGE_FORMAT||![1,PACKAGE_VERSION].includes(pkg.version))fail('unsupported format/version');
   if(pkg.device!=='ATtiny13A')fail('unsupported device');
   keys(pkg.abi,['id','layout'],'ABI');if(pkg.abi.id!==PACKAGE_ABI)fail('unsupported ABI identity');
-  const configuration=normalizeConfiguration(pkg.configuration,true);
+  const configuration=normalizeConfiguration(pkg.configuration,true,pkg.version);
   keys(pkg.assets,['flash','eeprom','translated','runtime'],'assets');
   keys(pkg.integrity,['algorithm','sha256'],'integrity');
   const {integrity,...payload}=pkg;
@@ -239,9 +264,9 @@ export async function decodePackage(json){
     readAsset(pkg.assets.flash,1024,1024,'Flash'),readAsset(pkg.assets.eeprom,64,64,'EEPROM'),
     readAsset(pkg.assets.translated,8,PACKAGE_LIMITS.translated,'translated'),readAsset(pkg.assets.runtime,8,PACKAGE_LIMITS.runtime,'runtime'),
   ]);
-  const manifest=await validateCode(translated,runtime,flash,pkg.manifest);
+  const manifest=await validateCode(translated,runtime,flash,pkg.manifest,pkg.version);
   if(!equal(pkg.abi.layout,manifest.abi))fail('ABI layout differs from translation');
-  return {flash,eeprom,translated,runtime,configuration,options:{...configuration},manifest,abi:pkg.abi,integrity:{...integrity}};
+  return {version:pkg.version,flash,eeprom,translated,runtime,configuration,options:structuredClone(configuration),manifest,abi:pkg.abi,integrity:{...integrity}};
 }
 
 /** Compare the verified descriptor with runtimeABI(instance.exports) before linking. */

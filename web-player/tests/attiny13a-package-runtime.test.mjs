@@ -33,6 +33,15 @@ test('package executes the supplied translation and reproduces explicit initial 
   c.runUntil(40n);c.run(3);assert.equal(c.readIO(IO.PORTB),2);assert.equal(c.state().deviceFault,0);
 });
 
+test('calibrated clock package executes its supplied CPU and physical audio path',async()=>{
+  const osccalHz=Array(128).fill(0);osccalHz[50]=9600000;osccalHz[51]=9696000;
+  const image=sequential([avr.ldi(16,51),avr.out(0x31,16),avr.ldi(17,42)]);
+  const c=await ATtiny13A.fromPackage(await pack(image,{factoryOsccal96:50,osccalHz}));
+  c.run(3);assert.equal(c.r[17],42);assert.equal(c.state().oscillatorHz,9696000);
+  c.runUntilPs(1000000n);assert.equal(c.state().deviceFault,0);
+  assert.equal(c.capturePhysical(11,48000,2).length,22);
+});
+
 test('corrupt package fails before any runtime or translated instance is created',async()=>{
   const bad=structuredClone(pkg);bad.configuration.fuseLow^=16;
   const original=WebAssembly.Instance;

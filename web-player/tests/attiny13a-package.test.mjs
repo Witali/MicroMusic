@@ -44,6 +44,30 @@ test('default configuration, erased EEPROM and serialization are deterministic',
   const again=await decodePackage(original);assert.equal(again.flash[0],flash[0]);assert.equal(again.configuration.fuseLow,0x7a);
 });
 
+test('version1 preserves its original configuration contract',async()=>{
+  const pkg=copy(original);pkg.version=1;
+  for(const key of ['osccalHz','nvmClockProfile','nvmCalibrationReferenceHz'])delete pkg.configuration[key];
+  const decoded=await decodePackage(seal(pkg));assert.equal(decoded.version,1);
+  assert.deepEqual(decoded.configuration,pkg.configuration);assert.equal(Object.keys(decoded.options).length,17);
+});
+
+test('version2 binds a calibrated clock table and programming profile into the package',async()=>{
+  const table=Array(128).fill(0);table[50]=9600000;table[51]=9696000;
+  const configuration={factoryOsccal96:50,osccalHz:table,nvmClockProfile:1,nvmCalibrationReferenceHz:9600000};
+  const pkg=await createPackage({...input,configuration}),decoded=await decodePackage(pkg);
+  assert.equal(pkg.version,2);assert.deepEqual(decoded.configuration.osccalHz,table);
+  decoded.options.osccalHz[50]=1;assert.equal(decoded.configuration.osccalHz[50],9600000);
+  table[50]=1;assert.equal(pkg.configuration.osccalHz[50],9600000);
+  const bad=copy(pkg);bad.configuration.osccalHz[51]++;
+  await assert.rejects(decodePackage(bad),/SHA-256 mismatch/);
+  for(const configuration of [{osccalHz:[]},{osccalHz:Array(128).fill(0)},
+    {factoryOsccal96:51,osccalHz:pkg.configuration.osccalHz},
+    {nvmClockProfile:1},{nvmClockProfile:2},{nvmCalibrationReferenceHz:1000000001}])
+    await assert.rejects(createPackage({...input,configuration}),/configuration/);
+  const external=await decodePackage(await createPackage({...input,configuration:{...configuration,fuseLow:0x78,oscillatorHz:1000000}}));
+  assert.equal(external.configuration.oscillatorHz,1000000,'external source is independent of the internal RC calibration table');
+});
+
 test('decoding compiles and inspects WASM without constructing any instance',async()=>{
   const saved=WebAssembly.Instance;
   try{WebAssembly.Instance=class{constructor(){assert.fail('unverified module was instantiated');}};await decodePackage(original);}
@@ -86,7 +110,7 @@ test('outer and embedded translation manifests and ABI layout must agree',async(
 test('invalid configuration, unknown options and omitted defaults are rejected',async()=>{
   for(const configuration of [{fuseLow:256},{fuseHigh:-1},{lock:1.5},{oscillatorHz:0},{watchdogHz:1000000001},
     {vccMicrovolts:2147483648},{adcFirstSample:28},{comparatorInitial:2},{flashMaximum:2},{wakeStartupHalf:4294967296},
-    {factoryOsccal96:128},{fuseStartupProfile:true},{fuseStartupProfile:2},{fastIdle:true}]){
+    {factoryOsccal96:128},{fuseStartupProfile:true},{fuseStartupProfile:2},{fuseStartupProfile:1,fuseLow:0x7e},{fastIdle:true}]){
     await assert.rejects(createPackage({...input,configuration}),/configuration/);
   }
   const pkg=copy(original);delete pkg.configuration.watchdogHz;
