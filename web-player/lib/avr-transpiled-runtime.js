@@ -4,7 +4,8 @@ import {deviceProfile,DEFAULT_DEVICE} from './devices/profiles.js';
 const littleEndian=new Uint8Array(Uint16Array.of(1).buffer)[0]===1;
 const runtimeCaches=new WeakMap(),legacyCache=new Map();
 const abiKey=abi=>JSON.stringify([abi.data,abi.rom,abi.idle,abi.frames,abi.pwm,
-  abi.memoryPages,!!abi.device,Object.entries(abi.state).sort(([a],[b])=>a.localeCompare(b))]);
+  abi.memoryPages,!!abi.device,Object.entries(abi.state).sort(([a],[b])=>a.localeCompare(b)),
+  abi.phase?Object.entries(abi.phase).sort(([a],[b])=>a.localeCompare(b)):null]);
 function compileTranslation(binary,abi,options) {
   const runtime=options.runtimeModule;
   let cache=legacyCache;
@@ -13,7 +14,7 @@ function compileTranslation(binary,abi,options) {
   const padded=new Uint8Array(profile.flashBytes).fill(255);padded.set(binary);
   // Exact image keys avoid hash collisions. Configuration does not enter the
   // lowering: live clocks/fuses are supplied by this runtime instance's bus.
-  const key=JSON.stringify([profile.name,abiKey(abi),options.optimizeFlags??true,options.maxBlockInstructions??32,Array.from(padded)]);
+  const key=JSON.stringify([profile.name,abiKey(abi),!!options.resumable,options.optimizeFlags??true,options.maxBlockInstructions??32,Array.from(padded)]);
   if(options.cacheTranslation!==false&&cache.has(key)) {
     const cached=cache.get(key);cache.delete(key);cache.set(key,cached);
     return {...cached,cacheHit:true};
@@ -41,16 +42,18 @@ export class AVRCore extends PeripheralRuntime {
   }
   _compile(binary=this.rom) {
     const options=this._translationOptions;
-    const abi=runtimeABI(this._exports);let generated;
+    const abi=runtimeABI(this._exports,{resumable:!!options.resumable});let generated;
     if(!this._translated)options.validateRuntimeABI?.(abi);
     if(!this._translated&&options.precompiled) {
       generated=options.precompiled;
       if(generated.manifest.device!==options.device)throw Error('Packaged translation device profile mismatch');
+      if((generated.manifest.executionMode==='resumable-v1')!==!!options.resumable)throw Error('Packaged translation execution mode mismatch');
       if(abiKey(generated.manifest.abi)!==abiKey(abi))throw Error('Packaged translation runtime ABI mismatch');
       generated={...generated,module:new WebAssembly.Module(generated.bytes),cacheHit:false};
     } else generated=compileTranslation(binary,abi,options);
     // Public diagnostics must not mutate a module cached for another device.
     this.transpilation=structuredClone(generated.manifest);
+    this._phaseABI=generated.manifest.abi.phase?{...generated.manifest.abi.phase}:null;
     this.transpiledBytes=new Uint8Array(generated.bytes);
     this.translationCacheHit=generated.cacheHit;this._translatedModule=generated.module;
     this._translated=new WebAssembly.Instance(generated.module,{avr:{
@@ -63,6 +66,9 @@ export class AVRCore extends PeripheralRuntime {
       pending:this._exports.avr_device_pending,
       cpuDeadline:this._exports.avr_device_cpu_deadline,
       idleUntil:this._exports.avr_device_idle,
+      phaseClock:this._exports.avr_device_phase_clock,
+      phaseDeadline:this._exports.avr_device_phase_deadline,
+      phaseRetire:this._exports.avr_device_phase_retire,
     }}).exports;
     this._bridges=Object.fromEntries(Object.entries(this._translated).filter(([,fn])=>typeof fn==='function').map(([name,fn])=>[name,{...this._exports,translated:fn}]));
     const pwm=generated.manifest.abi.pwm;
@@ -80,7 +86,10 @@ export class AVRCore extends PeripheralRuntime {
     }
     finally {this._exports=native;}
   }
-  step(){this._execute('step');}
+  step(){
+    if(this._translationOptions.resumable)this._exports.avr_device_phase_deadline(Infinity);
+    this._execute('step');
+  }
   get controlRequest(){return this._translated.controlRequest.value;}
   get watchdogResetCycle(){return this._translated.watchdogResetCycle.value;}
   get debugEnabled(){return!!this._translated.debugEnabled.value;}
@@ -95,10 +104,14 @@ export class AVRCore extends PeripheralRuntime {
     if(!Number.isInteger(instructions)||instructions<0||instructions>0x7fffffff)throw new Error('Invalid instruction count');
     return this._execute('run',instructions);
   }
-  runBlock(deadline=Infinity){return!!this._execute('block',deadline,0x7fffffff);}
-  skipIdle(){return this.fastIdle&&!!this._call('avr_idle');}
-  nextDuty(){return this._execute('nextDuty');}
+  runBlock(deadline=Infinity){return !this._translationOptions.resumable&&!!this._execute('block',deadline,0x7fffffff);}
+  skipIdle(){return !this._translationOptions.resumable&&this.fastIdle&&!!this._call('avr_idle');}
+  nextDuty(){
+    if(this._translationOptions.resumable)throw Error('Resumable execution requires capturePhysical for audio');
+    return this._execute('nextDuty');
+  }
   capturePWM(count,channels=1){
+    if(this._translationOptions.resumable)throw Error('Resumable execution requires capturePhysical for audio');
     if(!Number.isInteger(count)||count<0||count>1048576||![1,2].includes(channels))throw new Error('Invalid PWM capture size or channels');
     const output=channels===2?new Uint16Array(count):new Uint8Array(count);
     for(let offset=0;offset<count;offset+=4096){

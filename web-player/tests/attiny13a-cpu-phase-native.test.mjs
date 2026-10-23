@@ -148,6 +148,36 @@ int sleep_controller_can_halt_before_retirement(void) {
  S(pc)=1;avr_device_phase_retire();CHECK(!ERROR&&full_phase.retired==1&&avr_device_ready()==0);
  return 0;
 }
+int zero_span_retires_sleep_during_immediate_bod_wake_recovery(void) {
+ const uint32_t fields[]={1300000,1400000,4300000,2700000,1800000,50000,20,60000,1800000};
+ for(unsigned i=0;i<9;i++)CHECK(device_configure_power(i+1,fields[i]));
+ CHECK(device_configure_power(0,1)&&setup(1,0));
+ CHECK(device_configure(DEVICE_CFG_FUSE_HIGH,0xfb));avr_reset(0,0);CHECK(!ERROR);
+ instruction(0,1);avr_device_phase_deadline(1000000);
+ avr_write_io_masked(AT13_IO_MCUCR,48,255); // SE, Power-down, INT0 low-level.
+ avr_write_io_masked(AT13_IO_GIMSK,64,255); // Default low PB1 is an immediate wake source.
+ avr_write_io_masked(AT13_IO_BODCR,3,255);avr_write_io_masked(AT13_IO_BODCR,2,255);
+ CHECK(avr_device_phase_clock(1)==1&&device_time_ps()==100000);
+ CHECK(avr_device_control(DEVICE_CONTROL_SLEEP,0,0)==0&&device_bod_recovering()&&device_halted());
+ CHECK(avr_device_phase_clock(0)==1&&!ERROR&&device_time_ps()==100000);
+ S(pc)=1;avr_device_phase_retire();
+ CHECK(!ERROR&&full_phase.active==0&&full_phase.retired==1&&S(pc)==1&&S(irqCount)==0);
+ CHECK(avr_device_ready()==0&&avr_device_wait(1000000)==1);
+ CHECK(!ERROR&&device_time_ps()==1000000&&device_bod_recovering()&&full_phase.retired==1);
+ return 0;
+}
+int zero_span_preserves_reset_and_fault_priority(void) {
+ CHECK(setup(1,0));instruction(0,1);avr_device_phase_deadline(0);
+ CHECK(device_inject_digital_ps(0,32,0)&&device_reset_requested());
+ CHECK(avr_device_phase_clock(0)==-1&&!ERROR&&full_phase.active==0&&full_phase.retired==0);
+ CHECK(S(pc)==0&&device_reset_held()&&full_reset_count==1);
+ // A cold reset creates a fresh board; an invalid input then faults it without
+ // starting a clock span. No zero-clock completion or retirement may bypass it.
+ avr_reset(0,0);CHECK(!ERROR);instruction(0,1);
+ CHECK(!device_inject_analog_ps(0,6,0)&&device_fault());
+ CHECK(avr_device_phase_clock(0)==-1&&ERROR==25&&full_phase.retired==0);
+ return 0;
+}
 int disabled_legacy_irq_is_unbounded(void) {
  CHECK(setup(0,0));S(pc)=0x124;FLAGS=128;avr_write_io_masked(AT13_IO_EECR,8,255);
  avr_device_phase_deadline(1);full_interrupt();
@@ -169,6 +199,7 @@ for(const name of [
   'async_reset_cancels_instruction_without_error26','current_time_reset_cancels_context',
   'reset_during_irq_cancels_later_stack_and_vector','spm_halt_and_generation_do_not_strand_active_instruction',
   'sleep_controller_can_halt_before_retirement','disabled_legacy_irq_is_unbounded',
+  'zero_span_retires_sleep_during_immediate_bod_wake_recovery','zero_span_preserves_reset_and_fault_priority',
   'invalid_phase_calls_fault_without_retiring',
 ])test('native CPU phases: '+name.replaceAll('_',' '),()=>{
   const line=make()[name]();assert.equal(line,0,`${name}: inline C assertion failed at line ${line}`);

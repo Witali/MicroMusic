@@ -57,6 +57,26 @@ declared profile, not unpublished silicon phases. Optimized blocks still commit
 as a batch only when their entire duration is strictly before every known
 peripheral/input event and the caller's deadline.
 
+### Resumable physical deadlines
+
+With `resumable:true` and an explicit physical OSCCAL table, the emitter splits
+each instruction at generation-time clock markers. `lib/avr-wasm-phases.js`
+emits stage tests, WASM-local save/restore and calls to the native bounded clock
+bridge. It does not interpret AVR opcodes or reparse generated WASM. WAIT
+returns to the host with saved operands; resuming skips completed bus effects.
+Reset cancels that context before it can be spilled back. PC/SREG retirement
+and a zero-length trailing phase can commit at the exact observation deadline.
+
+This optional path keeps SREG exact at every observable boundary and disables
+instruction blocks/idle skipping until their continuation behavior is proved.
+The default block path retains live-flag elimination and emits identical bytes
+for all13 retained firmware images. Physical PWM integration remains in native
+WASM; use `capturePhysical` in this mode. The current implementation supplies
+bounded internal-clock spans and staged IRQ entry. External CLKI delivery and
+portable-package support for this ABI are still open; see the
+[native continuation contract](devices/attiny13a/cpu_phase.md) and
+[CLKI design](devices/attiny13a/clki-design.md).
+
 ## Instruction correspondence
 
 The primary operation is shown, not the entire expansion. Registers reside in

@@ -175,6 +175,12 @@ proceed when hardware is available.
   specifies real edge budgets, bounded waits, persistent instruction/IRQ
   phases and exactly-once effects. A periodic-only source is insufficient;
   implementation and its acceptance tests remain open.
+  The first implementation checkpoint adds a standalone exact-uint64 CLKI
+  edge/horizon queue and an opt-in resumable CPU/IRQ backend. Generated WASM
+  can now suspend within its existing clock barriers using the internal
+  physical source, retaining latched operands and completed memory effects.
+  The full source-to-PB3/divider/startup integration, electrical validation and
+  package continuation ABI remain open; these foundations do not complete CLKI.
 - [x] Add a separately profiled analog RESET receiver feeding the existing
   reset aggregator; keep prequalified digital inputs explicit.
   The device-owned receiver uses VCC-relative hysteresis and separate explicit
@@ -243,6 +249,19 @@ then passed, including exact1.9V/5V completion and a low-voltage read. The
 post-fix focused NVM, power, RESET, cache and package regression set passed
 111/111. This later native change retains the same import-free, fixed-memory
 runtime contract; the 919-test result above belongs to the RESET checkpoint.
+
+CPU continuation checkpoint, 2026-10-23: the first integration passed all979
+default regression tests, including all123 official instruction forms sliced
+at half edges and adjacent1ps deadlines. A subsequent native review found and
+fixed zero-clock SLEEP retirement during immediate INT0/BOD wake recovery.
+The final focused set passed66/66 with that fix, native IRQ/reset tests,
+22 actual generated WAIT/resume oracles, package loading and native audio.
+All13 retained default firmware translations are byte-identical to39e4ecb.
+The rebuilt native runtime is100230bytes,88exports, no host imports and fixed
+two-page memory. Its hash is878bd0266347ad9544f07cf2825f7720ddc95f641304ccda3646ad6a58730655.
+The optional continuation path uses the existing internal physical source;
+PB3 CLKI/divider/startup integration, electrical profiles and a versioned
+package ABI remain open. ISP/HVSP/programmer support remains excluded.
 
 ## Primary references
 

@@ -38,6 +38,11 @@ export class ATtiny13A extends TranslatedCore {
   }
   constructor(binary,eeprom,options={}){
     super(binary,eeprom,{...options,fastIdle:false,runtimeModule:options.runtimeModule,configureRuntime:exports=>{
+      if(options.resumable!==undefined&&typeof options.resumable!=='boolean')throw Error('resumable must be a boolean');
+      if(options.resumable){
+        if(!options.osccalHz)throw Error('Resumable execution requires a physical OSCCAL table');
+        if(!exports.avr_device_phase_enable?.(1))throw Error('Runtime has no resumable CPU mode');
+      }
       for(const [name,key] of Object.entries(configuration))if(options[name]!==undefined){
         const value=options[name];if(!Number.isInteger(value)||value<0||value>0xffffffff)throw Error('Invalid device configuration: '+name);
         const accepted=exports.avr_device_configure(key,value);
@@ -77,6 +82,9 @@ export class ATtiny13A extends TranslatedCore {
   _refreshFlash(){
     const generation=this._exports.avr_device_generation();
     if(generation===this._generation)return false;
+    // An in-flight instruction owns its latched code and operands. Replacing
+    // its continuation before retirement would replay or discard its effects.
+    if(this._translationOptions.resumable&&this._exports.avr_device_phase_active())return false;
     const debug=this.debugEnabled;this._compile();this.debugEnabled=debug;
     this._exports.avr_device_bind_generation();this._generation=generation;return true;
   }
@@ -181,7 +189,11 @@ export class ATtiny13A extends TranslatedCore {
     const resetInput=exports.avr_device_reset_input_enabled?.()?{resetInputEnabled:true,
       resetInputAsserted:!!exports.avr_device_reset_input_asserted(),
       resetInputDeadlinePs:BigInt.asUintN(64,exports.avr_device_reset_input_deadline_ps())}:{};
-    return {...super.state(),...time,...power,...resetInput,clockDivisor:exports.avr_device_divisor(),
+    const p=this._phaseABI,phase=p?new DataView(exports.memory.buffer,p.pointer,p.bytes):null;
+    const continuation=phase?{cpuPhase:{active:phase.getUint32(p.active-p.pointer,true),
+      execPc:phase.getUint32(p.execPc-p.pointer,true),stage:phase.getUint32(p.stage-p.pointer,true),
+      remainingHalves:phase.getBigUint64(p.remaining-p.pointer,true),retired:phase.getBigUint64(p.retired-p.pointer,true)}}:{};
+    return {...super.state(),...time,...power,...resetInput,...continuation,clockDivisor:exports.avr_device_divisor(),
       halted:!!exports.avr_device_halted(),sleeping:!!exports.avr_device_sleep_phase(),resetHeld:!!exports.avr_device_reset_held(),
       starting:!!exports.avr_device_starting?.(),
       bodDisabled:!!exports.avr_device_bod_disabled?.(),bodRecovering:!!exports.avr_device_bod_recovering?.(),

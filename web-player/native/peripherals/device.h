@@ -93,6 +93,8 @@ void device_advance_half(uint64_t cpu_half_cycles);
  * bound). Retain the fractional clock phase across WAIT, including CLKPR
  * transitions. *consumed is the actual whole-half delta, never a rounded-up
  * budget. Return1 COMPLETE,0 WAIT/reset hold/startup, or-1 fault/reset request.
+ * A zero span flushes current events and can retire during BOD wake recovery;
+ * reset/fault still wins. A nonzero span waits for recovery completion.
  * The caller owns remaining instruction work and must cancel it on reset. */
 int device_advance_half_until_ps(uint64_t wanted,uint64_t wall_deadline_ps,
                                  uint64_t *consumed);

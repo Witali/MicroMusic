@@ -1,7 +1,10 @@
 # Timestamped CLKI and resumable CPU design
 
-Status: **implementation open**. This document proposes a contract; it does not
-add CLKI support or change the supported hardware scope. Audit baseline:
+Status: **source integration open; continuation foundation implemented**.
+This document defines the full contract. The standalone `clki_input.c/.h`
+queue and optional [CPU continuation backend](cpu_phase.md) implement its first
+building blocks. They do not yet connect CLKI to PB3 or clock the board from
+input edges. Audit baseline:
 `abd0cfe3686c195f5aba3806184a239c295ae8e8`. The scope is execution of an already
 loaded ATtiny13A image. External programming protocols are outside this design.
 
@@ -329,4 +332,8 @@ timestamps and exported state remain uint64, including times above 2^53 ps.
     Flash recompilation preserves or safely finishes an active old-generation
     continuation; unbounded step/clock APIs cannot hang or fabricate progress.
 
-No items above are implemented by this documentation-only change.
+The original design was documentation-only. Subsequent continuation tests
+exercise instruction/IRQ suspension and exact deadlines using the internal
+physical source; standalone queue tests exercise atomic batches/horizons.
+The cases above remain acceptance criteria for the complete external source
+integration, including independent peripheral progress during a stopped CLKI.
