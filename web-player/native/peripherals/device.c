@@ -808,6 +808,33 @@ void device_advance_half(uint64_t halves) {
  }
 }
 void device_advance(uint32_t cycles) { device_advance_half((uint64_t)cycles*2); }
+int device_advance_half_until_ps(uint64_t wanted,uint64_t wall,uint64_t *consumed) {
+ if(consumed)*consumed=0;
+ if(!board.initialized||!consumed){fail(DEVICE_FAULT_CONFIG,14);return -1;}
+ if(!time_contract(1,12)||board.fault)return -1;
+ if(wall<board.base){fail(DEVICE_FAULT_TIME,12);return -1;}
+ if(board.reset_requested)return -1;
+ if(board.reset_held||reset_starting()||power_recovering())return 0;
+ uint64_t before=board.half,target=add(before,wanted);
+ if(board.fault)return -1;
+ if(!wanted)advance_to(board.base);
+ while(board.half<target&&board.base<wall&&!board.fault&&!board.reset_requested) {
+  uint64_t deadline=minimum(at_half(target),wall);
+  /* A protected prescaler transition changes the target's physical time.
+   * Stop at that edge and recompute rather than overrun or round up halves. */
+  if(board.pending_divisor)deadline=minimum(deadline,at_half(board.clkpr_switch_half));
+  if(board.fault)break;
+  uint64_t previous=board.base;
+  advance_to(deadline);
+  if(board.base==previous&&!board.fault&&!board.reset_requested) {
+   fail(DEVICE_FAULT_TIME,13);break;
+  }
+ }
+ *consumed=board.half-before;
+ if(*consumed>wanted){fail(DEVICE_FAULT_TIME,14);return -1;}
+ if(board.fault||board.reset_requested)return -1;
+ return *consumed==wanted;
+}
 uint64_t device_next_cpu_event(void) {
  if (!board.initialized || board.fault || board.reset_requested || board.reset_held || reset_starting() || power_recovering()) return 0;
  uint64_t next=next_event();
