@@ -1,0 +1,516 @@
+{
+  "schema": "lpc2-protected-profile-regression-v1",
+  "scope": "Same7500Hzfullreferences, finite protected corpus only; numerical PC quality, no AVR claim",
+  "profiles": {
+    "lpx3-2bit": {
+      "schema": "speech-recording-regression-v1",
+      "tolerance": 1e-09,
+      "protected_ids": [
+        "chego",
+        "otvechaesh"
+      ],
+      "unchecked_ids": [],
+      "candidate_passed": false,
+      "selection_passed": true,
+      "baseline_fallback_used": true,
+      "recordings": {
+        "chego": {
+          "candidate_passed": false,
+          "baseline_valid": true,
+          "candidate_valid": true,
+          "tolerance": 1e-09,
+          "baseline_metrics": {
+            "stoi": 0.9106671379676519,
+            "estoi": 0.8571547131301246,
+            "fine_log_error": 0.22674711358456298,
+            "envelope_error": 0.27515187565337795,
+            "unsupported_energy": 0.02881765045459687,
+            "missing_energy": 0.04933290762145494
+          },
+          "candidate_metrics": {
+            "stoi": 0.7650852003844582,
+            "estoi": 0.7225269329877652,
+            "fine_log_error": 0.22455936723988784,
+            "envelope_error": 0.20315693619064512,
+            "unsupported_energy": 0.0295725168570811,
+            "missing_energy": 0.003238912144714479
+          },
+          "violations": [
+            {
+              "metric": "stoi",
+              "reason": "decreased",
+              "baseline": 0.9106671379676519,
+              "candidate": 0.7650852003844582
+            },
+            {
+              "metric": "estoi",
+              "reason": "decreased",
+              "baseline": 0.8571547131301246,
+              "candidate": 0.7225269329877652
+            },
+            {
+              "metric": "unsupported_energy",
+              "reason": "increased",
+              "baseline": 0.02881765045459687,
+              "candidate": 0.0295725168570811
+            }
+          ],
+          "selected_source": "baseline",
+          "baseline_fallback_used": true,
+          "selected_metrics": {
+            "stoi": 0.9106671379676519,
+            "estoi": 0.8571547131301246,
+            "fine_log_error": 0.22674711358456298,
+            "envelope_error": 0.27515187565337795,
+            "unsupported_energy": 0.02881765045459687,
+            "missing_energy": 0.04933290762145494
+          }
+        },
+        "otvechaesh": {
+          "candidate_passed": false,
+          "baseline_valid": true,
+          "candidate_valid": true,
+          "tolerance": 1e-09,
+          "baseline_metrics": {
+            "stoi": 0.8408967368617384,
+            "estoi": 0.7052556907477538,
+            "fine_log_error": 0.24082060310591297,
+            "envelope_error": 0.19742699645957032,
+            "unsupported_energy": 0.016701108705757153,
+            "missing_energy": 0.03574799082444935
+          },
+          "candidate_metrics": {
+            "stoi": 0.7294061312906027,
+            "estoi": 0.5941838725620232,
+            "fine_log_error": 0.17013067981751215,
+            "envelope_error": 0.15823322808097676,
+            "unsupported_energy": 0.018300336964135033,
+            "missing_energy": 0.0010380581366931368
+          },
+          "violations": [
+            {
+              "metric": "stoi",
+              "reason": "decreased",
+              "baseline": 0.8408967368617384,
+              "candidate": 0.7294061312906027
+            },
+            {
+              "metric": "estoi",
+              "reason": "decreased",
+              "baseline": 0.7052556907477538,
+              "candidate": 0.5941838725620232
+            },
+            {
+              "metric": "unsupported_energy",
+              "reason": "increased",
+              "baseline": 0.016701108705757153,
+              "candidate": 0.018300336964135033
+            }
+          ],
+          "selected_source": "baseline",
+          "baseline_fallback_used": true,
+          "selected_metrics": {
+            "stoi": 0.8408967368617384,
+            "estoi": 0.7052556907477538,
+            "fine_log_error": 0.24082060310591297,
+            "envelope_error": 0.19742699645957032,
+            "unsupported_energy": 0.016701108705757153,
+            "missing_energy": 0.03574799082444935
+          }
+        }
+      },
+      "scope": "Explicit finite protected corpus; no guarantee for unseen recordings"
+    },
+    "lpx3-3bit": {
+      "schema": "speech-recording-regression-v1",
+      "tolerance": 1e-09,
+      "protected_ids": [
+        "chego",
+        "otvechaesh"
+      ],
+      "unchecked_ids": [],
+      "candidate_passed": false,
+      "selection_passed": true,
+      "baseline_fallback_used": true,
+      "recordings": {
+        "chego": {
+          "candidate_passed": false,
+          "baseline_valid": true,
+          "candidate_valid": true,
+          "tolerance": 1e-09,
+          "baseline_metrics": {
+            "stoi": 0.9106671379676519,
+            "estoi": 0.8571547131301246,
+            "fine_log_error": 0.22674711358456298,
+            "envelope_error": 0.27515187565337795,
+            "unsupported_energy": 0.02881765045459687,
+            "missing_energy": 0.04933290762145494
+          },
+          "candidate_metrics": {
+            "stoi": 0.7927258940798992,
+            "estoi": 0.7689468330805906,
+            "fine_log_error": 0.1213616286522487,
+            "envelope_error": 0.1304298215984118,
+            "unsupported_energy": 0.01202007326267869,
+            "missing_energy": 0.0004443957746463576
+          },
+          "violations": [
+            {
+              "metric": "stoi",
+              "reason": "decreased",
+              "baseline": 0.9106671379676519,
+              "candidate": 0.7927258940798992
+            },
+            {
+              "metric": "estoi",
+              "reason": "decreased",
+              "baseline": 0.8571547131301246,
+              "candidate": 0.7689468330805906
+            }
+          ],
+          "selected_source": "baseline",
+          "baseline_fallback_used": true,
+          "selected_metrics": {
+            "stoi": 0.9106671379676519,
+            "estoi": 0.8571547131301246,
+            "fine_log_error": 0.22674711358456298,
+            "envelope_error": 0.27515187565337795,
+            "unsupported_energy": 0.02881765045459687,
+            "missing_energy": 0.04933290762145494
+          }
+        },
+        "otvechaesh": {
+          "candidate_passed": false,
+          "baseline_valid": true,
+          "candidate_valid": true,
+          "tolerance": 1e-09,
+          "baseline_metrics": {
+            "stoi": 0.8408967368617384,
+            "estoi": 0.7052556907477538,
+            "fine_log_error": 0.24082060310591297,
+            "envelope_error": 0.19742699645957032,
+            "unsupported_energy": 0.016701108705757153,
+            "missing_energy": 0.03574799082444935
+          },
+          "candidate_metrics": {
+            "stoi": 0.7620792084646066,
+            "estoi": 0.6466186071429405,
+            "fine_log_error": 0.0915938836901675,
+            "envelope_error": 0.08187481798671248,
+            "unsupported_energy": 0.004761646762794355,
+            "missing_energy": 0.0001939329124588983
+          },
+          "violations": [
+            {
+              "metric": "stoi",
+              "reason": "decreased",
+              "baseline": 0.8408967368617384,
+              "candidate": 0.7620792084646066
+            },
+            {
+              "metric": "estoi",
+              "reason": "decreased",
+              "baseline": 0.7052556907477538,
+              "candidate": 0.6466186071429405
+            }
+          ],
+          "selected_source": "baseline",
+          "baseline_fallback_used": true,
+          "selected_metrics": {
+            "stoi": 0.8408967368617384,
+            "estoi": 0.7052556907477538,
+            "fine_log_error": 0.24082060310591297,
+            "envelope_error": 0.19742699645957032,
+            "unsupported_energy": 0.016701108705757153,
+            "missing_energy": 0.03574799082444935
+          }
+        }
+      },
+      "scope": "Explicit finite protected corpus; no guarantee for unseen recordings"
+    },
+    "lpx3-4bit": {
+      "schema": "speech-recording-regression-v1",
+      "tolerance": 1e-09,
+      "protected_ids": [
+        "chego",
+        "otvechaesh"
+      ],
+      "unchecked_ids": [],
+      "candidate_passed": false,
+      "selection_passed": true,
+      "baseline_fallback_used": true,
+      "recordings": {
+        "chego": {
+          "candidate_passed": false,
+          "baseline_valid": true,
+          "candidate_valid": true,
+          "tolerance": 1e-09,
+          "baseline_metrics": {
+            "stoi": 0.9106671379676519,
+            "estoi": 0.8571547131301246,
+            "fine_log_error": 0.22674711358456298,
+            "envelope_error": 0.27515187565337795,
+            "unsupported_energy": 0.02881765045459687,
+            "missing_energy": 0.04933290762145494
+          },
+          "candidate_metrics": {
+            "stoi": 0.8292754738746178,
+            "estoi": 0.8023573859979282,
+            "fine_log_error": 0.05843650578742159,
+            "envelope_error": 0.05530436454108184,
+            "unsupported_energy": 0.0021520491879182283,
+            "missing_energy": 9.016694785964095e-05
+          },
+          "violations": [
+            {
+              "metric": "stoi",
+              "reason": "decreased",
+              "baseline": 0.9106671379676519,
+              "candidate": 0.8292754738746178
+            },
+            {
+              "metric": "estoi",
+              "reason": "decreased",
+              "baseline": 0.8571547131301246,
+              "candidate": 0.8023573859979282
+            }
+          ],
+          "selected_source": "baseline",
+          "baseline_fallback_used": true,
+          "selected_metrics": {
+            "stoi": 0.9106671379676519,
+            "estoi": 0.8571547131301246,
+            "fine_log_error": 0.22674711358456298,
+            "envelope_error": 0.27515187565337795,
+            "unsupported_energy": 0.02881765045459687,
+            "missing_energy": 0.04933290762145494
+          }
+        },
+        "otvechaesh": {
+          "candidate_passed": false,
+          "baseline_valid": true,
+          "candidate_valid": true,
+          "tolerance": 1e-09,
+          "baseline_metrics": {
+            "stoi": 0.8408967368617384,
+            "estoi": 0.7052556907477538,
+            "fine_log_error": 0.24082060310591297,
+            "envelope_error": 0.19742699645957032,
+            "unsupported_energy": 0.016701108705757153,
+            "missing_energy": 0.03574799082444935
+          },
+          "candidate_metrics": {
+            "stoi": 0.7800578447765966,
+            "estoi": 0.7038775291977346,
+            "fine_log_error": 0.044868005824913064,
+            "envelope_error": 0.04455659686125187,
+            "unsupported_energy": 0.0013610911774058821,
+            "missing_energy": 4.610246552205996e-05
+          },
+          "violations": [
+            {
+              "metric": "stoi",
+              "reason": "decreased",
+              "baseline": 0.8408967368617384,
+              "candidate": 0.7800578447765966
+            },
+            {
+              "metric": "estoi",
+              "reason": "decreased",
+              "baseline": 0.7052556907477538,
+              "candidate": 0.7038775291977346
+            }
+          ],
+          "selected_source": "baseline",
+          "baseline_fallback_used": true,
+          "selected_metrics": {
+            "stoi": 0.8408967368617384,
+            "estoi": 0.7052556907477538,
+            "fine_log_error": 0.24082060310591297,
+            "envelope_error": 0.19742699645957032,
+            "unsupported_energy": 0.016701108705757153,
+            "missing_energy": 0.03574799082444935
+          }
+        }
+      },
+      "scope": "Explicit finite protected corpus; no guarantee for unseen recordings"
+    },
+    "lpx4-6bit": {
+      "schema": "speech-recording-regression-v1",
+      "tolerance": 1e-09,
+      "protected_ids": [
+        "chego",
+        "otvechaesh"
+      ],
+      "unchecked_ids": [],
+      "candidate_passed": false,
+      "selection_passed": true,
+      "baseline_fallback_used": true,
+      "recordings": {
+        "chego": {
+          "candidate_passed": false,
+          "baseline_valid": true,
+          "candidate_valid": true,
+          "tolerance": 1e-09,
+          "baseline_metrics": {
+            "stoi": 0.9106671379676519,
+            "estoi": 0.8571547131301246,
+            "fine_log_error": 0.22674711358456298,
+            "envelope_error": 0.27515187565337795,
+            "unsupported_energy": 0.02881765045459687,
+            "missing_energy": 0.04933290762145494
+          },
+          "candidate_metrics": {
+            "stoi": 0.901289675264917,
+            "estoi": 0.90315753225478,
+            "fine_log_error": 0.014622785931970115,
+            "envelope_error": 0.014814612028959222,
+            "unsupported_energy": 0.000136323319169524,
+            "missing_energy": 1.4310265893372729e-05
+          },
+          "violations": [
+            {
+              "metric": "stoi",
+              "reason": "decreased",
+              "baseline": 0.9106671379676519,
+              "candidate": 0.901289675264917
+            }
+          ],
+          "selected_source": "baseline",
+          "baseline_fallback_used": true,
+          "selected_metrics": {
+            "stoi": 0.9106671379676519,
+            "estoi": 0.8571547131301246,
+            "fine_log_error": 0.22674711358456298,
+            "envelope_error": 0.27515187565337795,
+            "unsupported_energy": 0.02881765045459687,
+            "missing_energy": 0.04933290762145494
+          }
+        },
+        "otvechaesh": {
+          "candidate_passed": true,
+          "baseline_valid": true,
+          "candidate_valid": true,
+          "tolerance": 1e-09,
+          "baseline_metrics": {
+            "stoi": 0.8408967368617384,
+            "estoi": 0.7052556907477538,
+            "fine_log_error": 0.24082060310591297,
+            "envelope_error": 0.19742699645957032,
+            "unsupported_energy": 0.016701108705757153,
+            "missing_energy": 0.03574799082444935
+          },
+          "candidate_metrics": {
+            "stoi": 0.9185156041389289,
+            "estoi": 0.8928737138076346,
+            "fine_log_error": 0.013481296661771915,
+            "envelope_error": 0.011825468358176602,
+            "unsupported_energy": 7.479263760930602e-05,
+            "missing_energy": 1.4593847866641876e-05
+          },
+          "violations": [],
+          "selected_source": "candidate",
+          "baseline_fallback_used": false,
+          "selected_metrics": {
+            "stoi": 0.9185156041389289,
+            "estoi": 0.8928737138076346,
+            "fine_log_error": 0.013481296661771915,
+            "envelope_error": 0.011825468358176602,
+            "unsupported_energy": 7.479263760930602e-05,
+            "missing_energy": 1.4593847866641876e-05
+          }
+        }
+      },
+      "scope": "Explicit finite protected corpus; no guarantee for unseen recordings"
+    },
+    "lpx4-8bit": {
+      "schema": "speech-recording-regression-v1",
+      "tolerance": 1e-09,
+      "protected_ids": [
+        "chego",
+        "otvechaesh"
+      ],
+      "unchecked_ids": [],
+      "candidate_passed": true,
+      "selection_passed": true,
+      "baseline_fallback_used": false,
+      "recordings": {
+        "chego": {
+          "candidate_passed": true,
+          "baseline_valid": true,
+          "candidate_valid": true,
+          "tolerance": 1e-09,
+          "baseline_metrics": {
+            "stoi": 0.9106671379676519,
+            "estoi": 0.8571547131301246,
+            "fine_log_error": 0.22674711358456298,
+            "envelope_error": 0.27515187565337795,
+            "unsupported_energy": 0.02881765045459687,
+            "missing_energy": 0.04933290762145494
+          },
+          "candidate_metrics": {
+            "stoi": 0.9303153670238962,
+            "estoi": 0.9325879772724782,
+            "fine_log_error": 0.008129624255485269,
+            "envelope_error": 0.00911806635048006,
+            "unsupported_energy": 4.208453775143167e-05,
+            "missing_energy": 9.580869192950967e-06
+          },
+          "violations": [],
+          "selected_source": "candidate",
+          "baseline_fallback_used": false,
+          "selected_metrics": {
+            "stoi": 0.9303153670238962,
+            "estoi": 0.9325879772724782,
+            "fine_log_error": 0.008129624255485269,
+            "envelope_error": 0.00911806635048006,
+            "unsupported_energy": 4.208453775143167e-05,
+            "missing_energy": 9.580869192950967e-06
+          }
+        },
+        "otvechaesh": {
+          "candidate_passed": true,
+          "baseline_valid": true,
+          "candidate_valid": true,
+          "tolerance": 1e-09,
+          "baseline_metrics": {
+            "stoi": 0.8408967368617384,
+            "estoi": 0.7052556907477538,
+            "fine_log_error": 0.24082060310591297,
+            "envelope_error": 0.19742699645957032,
+            "unsupported_energy": 0.016701108705757153,
+            "missing_energy": 0.03574799082444935
+          },
+          "candidate_metrics": {
+            "stoi": 0.9547740757768,
+            "estoi": 0.9484044316797285,
+            "fine_log_error": 0.008399352564578928,
+            "envelope_error": 0.008633049620524488,
+            "unsupported_energy": 3.8855526301941515e-05,
+            "missing_energy": 1.186331361119268e-05
+          },
+          "violations": [],
+          "selected_source": "candidate",
+          "baseline_fallback_used": false,
+          "selected_metrics": {
+            "stoi": 0.9547740757768,
+            "estoi": 0.9484044316797285,
+            "fine_log_error": 0.008399352564578928,
+            "envelope_error": 0.008633049620524488,
+            "unsupported_energy": 3.8855526301941515e-05,
+            "missing_energy": 1.186331361119268e-05
+          }
+        }
+      },
+      "scope": "Explicit finite protected corpus; no guarantee for unseen recordings"
+    }
+  },
+  "public_model_sha256": {
+    "chego": "ffed4665deb5745183c4a5175ac5b0bf83dec07f0ce03f4094cf154d16107c3f",
+    "otvechaesh": "ab016e9d7df50a141b3b183dfecde819ac3dbf8265dddd8cce77b02584ba0982"
+  },
+  "reference_sha256": {
+    "chego": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+    "otvechaesh": "96c09f80396643dd80efb9c5c8557d83359eeb829a0b855a7f8f5c32bbff0b96"
+  }
+}
