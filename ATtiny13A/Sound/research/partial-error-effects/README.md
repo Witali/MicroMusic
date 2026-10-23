@@ -64,6 +64,27 @@ stored in this research directory.
 
 ## Reproduction and listening
 
+The same controlled experiment was repeated on the exact 12800-sample voice
+tail (1.7067 seconds), WAV SHA-256
+`e725be54dc17ba77051002b20c3dd825560e2554f49e70c20628c89fecea0c0c`.
+The identity maximum error is `2.7755575615628914e-17`; both scores are 1.0.
+Its full report and intervention figure are retained in `tail-voice/`.
+
+| Nominal intervention | Measured mean frequency error, cents | Measured mean level error, dB | STOI | eSTOI |
+| --- | ---: | ---: | ---: | ---: |
+| Frequency +/-10 cents | 12.353 | 0.850 | 0.947549 | 0.909114 |
+| Frequency +/-25 cents | 26.851 | 0.963 | 0.955062 | 0.907451 |
+| Frequency +/-50 cents | 47.850 | 1.462 | 0.957459 | 0.913062 |
+| Levels +/-1 dB | 1.022 | 0.757 | 0.999192 | 0.998232 |
+| Levels +/-3 dB | 2.268 | 2.389 | 0.992861 | 0.984688 |
+| Levels +/-6 dB | 5.566 | 5.018 | 0.973687 | 0.947093 |
+
+Frequency perturbation again has a larger effect on these scores for the
+chosen interventions, with a non-monotonic response. This supports keeping
+frequency and level errors separate; it does not provide a universal weight
+ratio for the codec optimizer. The unchanged original residual makes these
+diagnostic stimuli unsuitable as compressed-codec quality claims.
+
 ```
 python tools/probe-partial-error-effects.py \
   --reference path/to/original.wav \
