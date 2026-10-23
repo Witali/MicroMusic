@@ -13,7 +13,7 @@ static inline __attribute__((always_inline)) void lsp_stage(spx_word32_t *p, spx
     p[1] = SUB32(p[1],SHL32(EXTEND32(f),6));
 }
 #ifdef __AVR__
-#define STAGE_ATTR __attribute__((noinline,noclone))
+#define STAGE_ATTR __attribute__((noinline,noclone,optimize("O3")))
 #else
 #define STAGE_ATTR __attribute__((noinline))
 #endif

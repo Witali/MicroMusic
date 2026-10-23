@@ -1,0 +1,81 @@
+{
+  "mcu": "ATmega328P",
+  "compiler": "AVR GCC 7.3.0 -flto -fwrapv -fno-strict-aliasing",
+  "includesInterrupts": false,
+  "physicalBoardTested": false,
+  "scope": "88-frame candidate sweeps; selected configuration and O3 baseline additionally verified on all 1058 fixture frames. Reports show their actual frame counts. Hot functions remain separate noinline subroutines.",
+  "candidates": [
+    {
+      "configuration": "O3, inline interpolation",
+      "frames": 1058,
+      "maxCycles": 145789,
+      "flashBytes": 11456,
+      "peakStackBytes": 191,
+      "exact": true
+    },
+    {
+      "configuration": "O2",
+      "frames": 88,
+      "maxCycles": 149440,
+      "flashBytes": 8838,
+      "peakStackBytes": 155,
+      "exact": true
+    },
+    {
+      "configuration": "O2, O3 LSP stages/output",
+      "frames": 88,
+      "maxCycles": 147276,
+      "flashBytes": 10302,
+      "peakStackBytes": 195,
+      "exact": true
+    },
+    {
+      "configuration": "O2, O3 interpolation subroutine",
+      "frames": 88,
+      "maxCycles": 147203,
+      "flashBytes": 10640,
+      "peakStackBytes": 193,
+      "exact": true
+    },
+    {
+      "configuration": "O3, interpolation subroutine",
+      "frames": 88,
+      "maxCycles": 146072,
+      "flashBytes": 11434,
+      "peakStackBytes": 195,
+      "exact": true
+    },
+    {
+      "configuration": "O2, O3 LSP stages",
+      "frames": 88,
+      "maxCycles": 148432,
+      "flashBytes": 9250,
+      "peakStackBytes": 155,
+      "exact": true
+    },
+    {
+      "configuration": "O2, O3 LSP stages/controller",
+      "frames": 88,
+      "maxCycles": 147943,
+      "flashBytes": 9718,
+      "peakStackBytes": 151,
+      "exact": true
+    },
+    {
+      "configuration": "O2, O3 LSP stages/controller/bit reader",
+      "frames": 88,
+      "maxCycles": 147140,
+      "flashBytes": 9888,
+      "peakStackBytes": 151,
+      "exact": true
+    },
+    {
+      "configuration": "Os, O3 LSP stages/controller/bit reader (selected)",
+      "frames": 1058,
+      "maxCycles": 146632,
+      "flashBytes": 9726,
+      "peakStackBytes": 146,
+      "exact": true
+    }
+  ]
+}

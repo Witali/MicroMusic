@@ -3,6 +3,9 @@
  * Preserve the original excitation, interpolation, rounding and 40-sample
  * synthesis delay. Remove bookkeeping used only by unsupported PLC/enhancer
  * and general ctl APIs. The vendored release remains the independent oracle. */
+#ifdef __AVR__
+__attribute__((optimize("O3")))
+#endif
 __attribute__((noinline)) int nb_decode(void *state, SpeexBits *bits, void *vout)
 {
    DecState *st=(DecState *)state;
