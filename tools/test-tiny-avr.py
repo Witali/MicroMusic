@@ -23,6 +23,7 @@ SEED = 6095
 WORDS = (1, 2, 4, 5, 8, 10, 12, 16)
 SOURCES = (
     Path(__file__), ROOT/'tools/build-tiny-speech.py', ROOT/'tools/verify-tiny-speech.mjs',
+    ROOT/'tools/lib/tiny-work-profile.mjs',
     ROOT/'ATtiny13A/Sound/codec/tiny/firmware.S', ROOT/'ATtiny13A/Sound/codec/tiny_period.py',
     ROOT/'ATtiny13A/Sound/codec/fixed_period.py', ROOT/'ATtiny13A/Sound/codec/dc_blocker.py',
     ROOT/'web-player/lib/avr-reference.js', ROOT/'web-player/lib/avr-wasm.js', ROOT/'web-player/native/avr.c',

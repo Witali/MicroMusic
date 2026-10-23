@@ -3,6 +3,7 @@ import {readFileSync,writeFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {AVRCore as Reference} from '../web-player/lib/avr-reference.js';
 import {AVRCore as Wasm} from '../web-player/lib/avr-core.js';
+import {traceForeground} from './lib/tiny-work-profile.mjs';
 
 const positional=[],options={};
 for(let i=2;i<process.argv.length;i++){
@@ -14,7 +15,7 @@ for(let i=2;i<process.argv.length;i++){
 }
 const [imagePath,expectedPath,reportPath]=positional;
 if(!imagePath||!expectedPath||!options.eeprom)
-  throw new Error('Usage: node tools/verify-tiny-speech.mjs firmware.bin expected.raw [report.json] --eeprom eeprom.bin [--phrase-samples N --loops N --minimum-sp N --actual-raw path]');
+  throw new Error('Usage: node tools/verify-tiny-speech.mjs firmware.bin expected.raw [report.json] --eeprom eeprom.bin [--phrase-samples N --loops N --minimum-sp N --wait-pc byte-address --actual-raw path]');
 const image=readFileSync(imagePath),expected=readFileSync(expectedPath),eeprom=readFileSync(options.eeprom);
 if(!image.length||image.length>1024)throw new Error('ATtiny13 Flash must contain 1..1024 bytes');
 if(eeprom.length!==64)throw new Error('ATtiny13 EEPROM image must contain exactly 64 bytes');
@@ -30,6 +31,7 @@ const diagnostic=cpu=>({pcBytes:cpu.pc*2,cycles:cpu.cyc,irqCount:cpu.irqCount,wr
 const engines=[['reference',new Reference(image,eeprom)],['wasm',new Wasm(image,eeprom)],
   ['wasm-unoptimized',new Wasm(image,eeprom,{fastIdle:false,fastBlocks:false})]];
 const reference=engines[0][1],wasm=engines[1][1],actualPcm=Buffer.alloc(expected.length);
+const foreground=options['wait-pc']===undefined?null:traceForeground(reference,Number(options['wait-pc']));
 let minPeriod=Infinity,maxPeriod=0,previous=0,completed=0,error=null,firstMismatch=null;
 try{
   for(let i=0;i<expected.length;i++){
@@ -59,6 +61,7 @@ try{
   if(wasm.irqCount!==expected.length*5)throw new Error(`Expected five Timer0 IRQs per PCM sample, got ${wasm.irqCount}`);
   if(minPeriod<1279||maxPeriod>1281)throw new Error(`Sample intervals ${minPeriod}..${maxPeriod} cycles exceed 1280 +/- 1`);
   if(wasm.minSP<minimumSP)throw new Error(`Stack 0x${wasm.minSP.toString(16)} collides with data below 0x${minimumSP.toString(16)}`);
+  foreground?.assertComplete(expected.length);
 }catch(cause){error=String(cause.message||cause);}
 const report={schema:'micromusic-tiny-speech-verification-v1',pass:error===null,hardwareTested:false,
   engines:engines.map(([name])=>name),cpuHz:9600000,sampleHz:7500,flashBytes:image.length,eepromBytes:eeprom.length,
@@ -71,7 +74,8 @@ const report={schema:'micromusic-tiny-speech-verification-v1',pass:error===null,
   minimumSP:wasm.minSP,requiredMinimumSP:minimumSP,
   staticSramSpanBytes:minimumSP-0x60,stackHighWaterBytes:0x9f-wasm.minSP,
   maximumSramSpanBytes:minimumSP-0x60+0x9f-wasm.minSP,
-  stackSpareBytes:wasm.minSP-minimumSP,totalCycles:wasm.cyc};
+  stackSpareBytes:wasm.minSP-minimumSP,totalCycles:wasm.cyc,
+  foregroundTiming:foreground?.report()??null};
 if(reportPath)writeFileSync(reportPath,JSON.stringify(report,null,2)+'\n');
 if(options['actual-raw']&&completed===expected.length)writeFileSync(options['actual-raw'],actualPcm);
 console.log(JSON.stringify(report,null,2));

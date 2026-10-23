@@ -129,7 +129,7 @@ def build(model_path, output, avr_bin=None, node='node'):
                     sha((output/'firmware.S' if p==TEMPLATE else p).read_text(encoding='utf-8').encode('utf-8')) for p in (
                       TEMPLATE, Path(__file__), ROOT/'ATtiny13A/Sound/codec/tiny_period.py',
                       ROOT/'ATtiny13A/Sound/codec/fixed_period.py', ROOT/'ATtiny13A/Sound/codec/dc_blocker.py',
-                      ROOT/'tools/verify-tiny-speech.mjs')})
+                      ROOT/'tools/verify-tiny-speech.mjs', ROOT/'tools/lib/tiny-work-profile.mjs')})
     if flash_bytes <= 1024:
         run([compiler, '-mmcu=attiny13', '-nostdlib', '-Wl,--defsym=__TEXT_REGION_LENGTH__=1024',
              '-Wl,-Ttext=0', '-x', 'assembler', 'firmware.S', '-o', 'firmware.elf'], output)
@@ -146,6 +146,8 @@ def build(model_path, output, avr_bin=None, node='node'):
                    output/'verification.json', '--eeprom', output/'eeprom.bin',
                    '--phrase-samples', model['samples'], '--loops', 3,
                    '--minimum-sp', symbols['STACK_FLOOR'], '--actual-raw', output/'actual.raw']
+        if 'wait' in symbols:
+            command.extend(('--wait-pc',symbols['wait']))
         verification = run(command, ROOT, check=False)
         if (output/'verification.json').exists():
             report['verification'] = json.loads((output/'verification.json').read_text(encoding='utf-8'))
