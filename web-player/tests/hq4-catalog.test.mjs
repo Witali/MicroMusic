@@ -24,6 +24,8 @@ test('public speech catalog contains one selected image per phrase without priva
     assert.equal(e.source,undefined);assert.equal(e.preview,undefined);
     assert.equal(e.reference,undefined);assert.equal(e.originalPlayer,undefined);
     assert.equal(e.sampleHz,7500);assert.equal(e.pwmHz,7500);assert.equal(e.carrierHz,37500);
+    assert.equal(e.playOnce,true);
+    assert.equal(e.phraseSamples,references.find(clip=>clip.id===e.audioReferenceId).samples);
   }
   assert.ok(catalog.entries.slice(0,2).every(e=>e.codec==='tiny-period'&&e.eepromBytes===64));
   assert.equal(catalog.entries[2].eepromBytes,0);
@@ -74,22 +76,18 @@ test('speech variants share the exact public canonical WAV for their phrase',()=
   const music=JSON.parse(read('web-player/firmware.json'));
   assert.ok(music.entries.every(entry=>entry.originalAudioUrl===undefined));
 });
-for(const entry of catalog.entries)test(`${entry.id}: selected Flash/EEPROM and three complete PCM loops match retained verification`,()=>{
+for(const entry of catalog.entries)test(`${entry.id}: selected Flash/EEPROM plays once and then holds two phrase lengths of silence`,()=>{
   const binary=parseHex(entry.flashHex),eeprom=entry.eepromHex?parseHex(entry.eepromHex,64):null;
-  let samples,expectedHash,imageHash;
-  if(entry.codec==='tiny-period'){
-    const report=JSON.parse(read(`ATtiny13A/Sound/research/tiny-speech/${entry.audioReferenceId}/build.json`));
-    assert.equal(report.status,'verified');assert.equal(report.verifiedLoops,3);
-    assert.equal(report.verification.pass,true);assert.equal(report.verification.mismatches,0);
-    samples=report.verification.verifiedSamples;expectedHash=report.verification.actualPcmSha256;imageHash=report.imageSha256;
-    assert.equal(binary.length,report.flashBytes);assert.equal(eeprom.length,64);
+  const report=JSON.parse(readFileSync(new URL(entry.verification,new URL('web-player/',root))));
+  assert.equal(report.status,'verified');assert.equal(report.verifiedLoops,1);
+  assert.equal(report.verification.pass,true);assert.equal(report.verification.mismatches,0);
+  const samples=report.verification.verifiedSamples,expectedHash=report.verification.actualPcmSha256,imageHash=report.imageSha256;
+  assert.equal(samples,entry.phraseSamples*3);assert.equal(report.phraseSamples,entry.phraseSamples);
+  assert.equal(binary.length,report.flashBytes);
+  if(eeprom){
+    assert.equal(eeprom.length,64);
     assert.equal(hash(eeprom),report.eepromSha256);assert.equal(entry.eepromSha256,report.eepromSha256);
-  }else{
-    const report=JSON.parse(read('ATtiny13A/Sound/research/tiny-speech/vinni/listening.json')).before;
-    assert.equal(report.id,entry.id);assert.equal(report.verifiedSamples,frozen.vinni.samples*3);
-    samples=report.verifiedSamples;expectedHash=report.pcmSha256;imageHash=frozen.vinni.image_sha256;
-    assert.equal(eeprom,null);assert.equal(binary.length,frozen.vinni.flash_bytes);
-  }
+  }else assert.equal(entry.eepromBytes,0);
   assert.equal(hash(binary),imageHash);assert.equal(entry.flashSha256,imageHash);
   assert.equal(binary.length,entry.flashBytes);assert.ok(binary.length<=1024);
   for(const [path,sha] of Object.entries(entry.sourceInputs))assert.equal(hash(read(path)),sha,path);
@@ -98,6 +96,8 @@ for(const entry of catalog.entries)test(`${entry.id}: selected Flash/EEPROM and 
     for(let i=0;i<pcm.length;i++)pcm[i]=core.nextDuty();
     assert.equal(hash(pcm),expectedHash);assert.equal(core.lost,0);assert.equal(core.workLost,0);
     assert.equal(core.irqCount,samples*5);
+    assert.ok(pcm.subarray(0,entry.phraseSamples).some(value=>value!==128),'speech is present before EOS');
+    assert.ok(pcm.subarray(entry.phraseSamples).every(value=>value===128),'neutral PWM persists after EOS');
   }
 });
 
