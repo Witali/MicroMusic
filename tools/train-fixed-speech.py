@@ -14,7 +14,7 @@ CODEC = ROOT/'ATtiny13A/Sound/codec'
 sys.path.insert(0, str(CODEC))
 from auto_encoder import SpectralObjective
 from fixed_period import decode_fixed, from_colored, pack_fixed
-from fixed_search import FixedSearch
+from fixed_search import FixedSearch, decoder_constraints
 from refine_period_helpers import atomic_json, digest, matched_audio
 
 
@@ -34,6 +34,10 @@ def main():
     parser.add_argument('--max-data-bytes', type=int)
     parser.add_argument('--dc-shift', choices=(0, 5, 6, 7), type=int, default=7)
     parser.add_argument('--dc-choices', default='5,6,7')
+    parser.add_argument('--voiced-only', action='store_true', help='forbid active unvoiced base frames')
+    parser.add_argument('--residual-colors', help='allowed decoder residual color indices (default all)')
+    parser.add_argument('--no-gain6', action='store_true', help='omit the non-power-of-two gain mode')
+    parser.add_argument('--preserve-features', action='store_true', help='automatically preserve no-FIR/single-FIR/no-unvoiced specialization')
     parser.add_argument('--resume', action='store_true')
     args = parser.parse_args()
     if args.proposals < 0:
@@ -58,11 +62,19 @@ def main():
     saved = json.loads((args.output/'checkpoint.json').read_text(encoding='utf-8')) if args.resume else None
     if saved and saved['inputs'] != inputs:
         raise ValueError('Checkpoint source/input hashes differ')
+    constraints = decoder_constraints(model) if args.preserve_features else {}
+    if args.voiced_only:
+        constraints['voiced_only'] = True
+    if args.residual_colors:
+        constraints['residual_colors'] = tuple(int(value) for value in args.residual_colors.split(','))
+    if args.no_gain6:
+        constraints['allow_gain6'] = False
     search = FixedSearch(model, objective, seed=args.seed, stoi_weight=args.weight,
                          objective_kind=args.objective,
                          stoi_floor=args.stoi_floor, spectral_ceiling=args.spectral_ceiling,
                          max_peak=args.max_peak, max_data_bytes=args.max_data_bytes,
                          dc_choices=tuple(int(value) for value in args.dc_choices.split(',')),
+                         **constraints,
                          checkpoint=saved['search'] if saved else None)
     runtime = {name:importlib.metadata.version(name) for name in ('numpy', 'scipy', 'pystoi', 'soundfile', 'numba')}
     runtime['python'] = sys.version.split()[0]

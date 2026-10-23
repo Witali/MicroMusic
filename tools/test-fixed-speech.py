@@ -13,7 +13,7 @@ sys.path.insert(0, str(ROOT/'ATtiny13A/Sound/codec'))
 from auto_encoder import SpectralObjective
 from colored_period import decode_colored
 from fixed_period import decode_fixed, from_colored, pack_fixed, unpack_fixed
-from fixed_search import FixedSearch
+from fixed_search import FixedSearch, decoder_constraints
 
 
 class FixedSpeechTests(unittest.TestCase):
@@ -83,6 +83,25 @@ class FixedSpeechTests(unittest.TestCase):
             search.step()
         self.assertTrue(search.feasible(search.best[2]))
         self.assertLessEqual(search.best[2]['loss'], search.initial['loss'])
+
+    def test_compact_search_cannot_restore_omitted_decoder_features(self):
+        model = deepcopy(self.model)
+        for frame in model['frames']:
+            if not frame[1] & 128:
+                frame[1] &= 143
+            frame[2] &= 15
+        self.assertEqual(decoder_constraints(model), dict(voiced_only=True, residual_colors=(0,)))
+        search = FixedSearch(model, self.objective, voiced_only=True, residual_colors=(0,), seed=14)
+        for _ in range(80):
+            search.step()
+        self.assertTrue(search.compatible(search.current[0]))
+        self.assertTrue(search.compatible(search.export()))
+        bad = deepcopy(model)
+        bad['frames'][0][2] = 17
+        self.assertFalse(search.compatible(bad))
+        bad = deepcopy(model)
+        bad['frames'][0][1] = 16
+        self.assertFalse(search.compatible(bad))
 
 
 if __name__ == '__main__':

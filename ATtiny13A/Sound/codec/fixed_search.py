@@ -15,17 +15,30 @@ from pystoi import stoi
 from fixed_period import decode_fixed, pack_fixed, unpack_fixed, validate
 
 
-VERSION = 'fixed-speech-search-v2'
+VERSION = 'fixed-speech-search-v3'
 
 
 def _tuples(value):
     return tuple(_tuples(item) for item in value) if isinstance(value, list) else value
 
 
+def decoder_constraints(model):
+    """Keep an automatically specialized decoder's existing feature set."""
+    from fixed_period import avr_features
+    features = avr_features(model)
+    colors = (0, 1, 2, 3)
+    if not features['ENABLE_FIR']:
+        colors = (0,)
+    elif features['SINGLE_FIR']:
+        colors = tuple(sorted({0} | {residual >> 4 for _, _, residual in model['frames'] if residual & 15}))
+    return dict(voiced_only=not bool(features['ENABLE_UNVOICED']), residual_colors=colors)
+
+
 class FixedSearch:
     def __init__(self, model, objective, *, seed=23074, stoi_weight=8., stoi_floor=None,
                  spectral_ceiling=None, max_peak=.95, max_data_bytes=None,
-                 restart_every=2000, dc_choices=(5, 6, 7), objective_kind='balanced', checkpoint=None):
+                 restart_every=2000, dc_choices=(5, 6, 7), objective_kind='balanced',
+                 voiced_only=False, residual_colors=(0, 1, 2, 3), allow_gain6=True, checkpoint=None):
         validate(model)
         if len(objective.reference) != model['samples']:
             raise ValueError('Reference/model duration mismatch')
@@ -37,6 +50,8 @@ class FixedSearch:
             raise ValueError('Invalid DC choices')
         if model.get('dc_block_shift', 0) not in dc_choices:
             raise ValueError('Initial DC setting must be included in dc_choices')
+        if not residual_colors or any(value not in (0, 1, 2, 3) for value in residual_colors):
+            raise ValueError('Invalid residual colors')
         self.objective = objective
         self.initial_model = deepcopy(model)
         initial_pcm = decode_fixed(model)
@@ -45,8 +60,11 @@ class FixedSearch:
                            stoi_floor=initial['stoi'] if stoi_floor is None else float(stoi_floor),
                            spectral_ceiling=initial['log_spectral_error']*1.1 if spectral_ceiling is None else float(spectral_ceiling),
                            max_peak=float(max_peak), max_data_bytes=len(pack_fixed(model)) if max_data_bytes is None else int(max_data_bytes),
-                           restart_every=restart_every, dc_choices=list(dc_choices))
+                           restart_every=restart_every, dc_choices=list(dc_choices),
+                           voiced_only=bool(voiced_only), residual_colors=list(residual_colors), allow_gain6=bool(allow_gain6))
         self.initial = initial
+        if not self.compatible(model):
+            raise ValueError('Initial model uses unsupported decoder features')
         if not self.feasible(initial):
             raise ValueError('Initial model violates fixed search limits')
         self.current = (deepcopy(model), initial_pcm, initial)
@@ -79,6 +97,17 @@ class FixedSearch:
                 score['clips'] == score['pre_dc_clips'] == 0 and
                 score['data_bytes'] <= self.config['max_data_bytes'])
 
+    def compatible(self, model):
+        for _, header, residual in model['frames']:
+            gain = (header >> 4) & 7
+            if gain and self.config['voiced_only'] and not header & 128:
+                return False
+            if gain == 6 and not self.config['allow_gain6']:
+                return False
+            if residual & 15 and residual >> 4 not in self.config['residual_colors']:
+                return False
+        return True
+
     def energy(self, score):
         reward = self.config['stoi_weight']*(1-score['stoi']) if self.config['objective'] == 'balanced' else 0.
         return (score['loss']+reward+
@@ -102,7 +131,7 @@ class FixedSearch:
         elif kind < 51:
             level, color = frame[2] & 15, frame[2] >> 4
             if self.rng.random() < .25:
-                color = self.rng.randrange(4)
+                color = self.rng.choice(self.config['residual_colors'])
             else:
                 level = min(15, max(0, level+delta))
             frame[2] = level | color << 4
@@ -142,7 +171,7 @@ class FixedSearch:
         anchor = self.best if self.rng.random() < .35 else self.current
         model = self.propose(anchor[0])
         self.proposals += 1
-        if model == anchor[0] or len(pack_fixed(model)) > self.config['max_data_bytes']:
+        if model == anchor[0] or not self.compatible(model) or len(pack_fixed(model)) > self.config['max_data_bytes']:
             return
         pcm = decode_fixed(model)
         if np.array_equal(pcm, anchor[1]) or np.any((pcm == 0) | (pcm == 255)):
@@ -163,7 +192,7 @@ class FixedSearch:
 
     def export(self):
         model, pcm, value = self.best
-        if (not self.feasible(value) or not np.array_equal(pcm, decode_fixed(model)) or
+        if (not self.feasible(value) or not self.compatible(model) or not np.array_equal(pcm, decode_fixed(model)) or
                 model['noise_filters'] != self.initial_model['noise_filters']):
             raise AssertionError('Fixed search elite is invalid')
         restored = unpack_fixed(pack_fixed(model))
@@ -185,7 +214,7 @@ class FixedSearch:
         def state(value):
             model = value['model']
             pcm = np.frombuffer(base64.b64decode(value['pcm_u8']), dtype=np.uint8).copy()
-            if not np.array_equal(pcm, decode_fixed(model)) or value['score'] != self.score(model, pcm):
+            if not self.compatible(model) or not np.array_equal(pcm, decode_fixed(model)) or value['score'] != self.score(model, pcm):
                 raise ValueError('Fixed checkpoint PCM or score differs from exact decoder')
             return deepcopy(model), pcm, value['score']
         self.current, self.best = state(checkpoint['current']), state(checkpoint['best'])
