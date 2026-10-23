@@ -128,6 +128,13 @@ class SoftPriorTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             probe.fit(Objective(), self.frames, self.durations, self.prior, proposals=2001)
 
+    def test_completed_search_console_summary_keeps_baseline_without_duplicate_fields(self):
+        report = dict(changed=False, baseline=metrics(), final=metrics(),
+            estimated_full_flash_bytes=1024, proposals=2000, seed=17,
+            counts=dict(existing=1000, reflection=400), accepted_elites=0)
+        summary = probe.console_summary(report)
+        self.assertEqual(json.loads(json.dumps(summary)), report)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -44,6 +44,12 @@ def save(path, value):
     path.write_text(json.dumps(value, indent=2, ensure_ascii=False)+'\n', encoding='utf-8', newline='\n')
 
 
+def console_summary(report):
+    """Select existing fields without duplicating baseline from fit counters."""
+    return {key: report[key] for key in ('changed', 'baseline', 'final',
+        'estimated_full_flash_bytes', 'proposals', 'seed', 'counts', 'accepted_elites')}
+
+
 def eligible(score, baseline):
     """Missing/nonfinite scores never pass a scalar or component guard."""
     return bool(isinstance(score, dict) and isinstance(baseline, dict)
@@ -364,6 +370,8 @@ def main():
     sf.write(a.output/'comparison.wav', np.concatenate([part for audio in signals for part in
         (audio*scale, np.zeros(2250))]), sr, subtype='PCM_16')
     report['listening_processing'] = 'Diagnostic only: common70Hz highpass/globalRMSmatch/shared peak scale; decoded.wav remains raw'
+    # A missing compiler/runtime must not discard the completed search history.
+    save(a.output/'quality.json', report)
     if a.build and (changed or a.storage == 'eeprom-prefix'):
         builder_path = ROOT/('tools/build-q3-rounded-eeprom.py' if a.storage == 'eeprom-prefix' else 'tools/probe-hq4-q3.py')
         spec = importlib.util.spec_from_file_location('q3_soft_prior_builder', builder_path)
@@ -388,8 +396,7 @@ def main():
         shutil.copyfile(a.output/'model.json', a.retain/'model.json')
         if report['avr_assembled']:
             shutil.copyfile(a.output/'avr/build.json', a.retain/'build.json')
-    print(json.dumps(dict(changed=changed, baseline=baseline, final=score,
-                         estimated_full_flash_bytes=report['estimated_full_flash_bytes'], **counters)), flush=True)
+    print(json.dumps(console_summary(report)), flush=True)
 
 
 if __name__ == '__main__':
