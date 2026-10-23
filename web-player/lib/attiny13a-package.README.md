@@ -1,4 +1,4 @@
-# ATtiny13A package format v1
+# ATtiny13A package format v2
 
 `attiny13a-package.js` creates and verifies a self-contained initial device image.
 It has no Node imports and uses asynchronous WebCrypto SHA-256, so the same
@@ -24,7 +24,7 @@ const decoded = await decodePackage(savedJSON);
 translation's embedded `micromusic.avr` manifest. No files or URLs are referenced
 by the saved package.
 
-The envelope identifies format `micromusic-attiny13a-package`, version `1`,
+The envelope identifies format `micromusic-attiny13a-package`, version `2`,
 device `ATtiny13A`, and ABI `micromusic-attiny13a-device-v1`. Each of the four
 binary assets records its length, canonical base64 and SHA-256. The envelope
 hash covers all fields except `integrity`, including configuration, manifests
@@ -41,6 +41,10 @@ and no WASM start section. Both binaries must pass the engine's validation.
 Limits are 1024-byte Flash, 64-byte EEPROM, 4 MiB translation, 2 MiB runtime,
 512 KiB embedded manifest and 16 MiB JSON. These are format limits, not device
 performance promises.
+
+The decoder also accepts version1 with its original17 configuration fields and
+runtime contract. New packages use version2 and require the physical-clock
+bridge exports. The generated CPU instruction/import ABI is unchanged.
 
 SHA-256 detects corruption and inconsistent components. An author can modify
 code and recompute its hashes. This is not a signature, a trust decision, or a
@@ -94,6 +98,29 @@ it does not assert complete silicon behavior or measured oscillator calibration.
 | `bodRecoveryNs` | 60000 | uint32, nanoseconds |
 | `factoryOsccal96` | 0 | integer 0–127, caller-supplied fixture byte |
 | `fuseStartupProfile` | 0 | integer 0 or 1 |
+| `osccalHz` | null | null, or128 integer frequencies0–1000000000;0 means unspecified |
+| `nvmClockProfile` | 0 | 0 unspecified,1 explicit fixed-nanosecond programming fixture |
+| `nvmCalibrationReferenceHz` | 0 | 0 unspecified, otherwise1–1000000000 |
+
+A non-null `osccalHz` table selects a physical picosecond clock domain. Its
+factory CAL entry must be supplied and, for the internal calibrated RC source,
+equal `oscillatorHz`. Other selected clock sources keep their configured
+frequency when CAL is written. An unlisted CAL write fails explicitly for the
+internal calibrated RC source.
+The table is supplied by the caller; no universal CAL/frequency curve is implied.
+`nvmClockProfile:1` requires a nonzero calibration reference and explicitly keeps
+the selected programming durations fixed in nanoseconds. With profile0,
+programming in the variable-clock model requires a timing profile first. This
+fixture does not claim the silicon's undocumented CAL/programming-clock relation.
+
+For this clock domain, use `runUntilPs(bigint)`, `injectPinsPs`, `setAnalogPs`
+and `drainPinsPs`. `state()` exposes `timePs`, `startupDeadlinePs` and the current
+`oscillatorHz`. Input and output timestamps are unsigned64-bit picoseconds.
+The original methods retain their oscillator-half unit for the fixed-clock
+profile. Mixing the two domains fails before advancing the device.
+Physical audio capture keeps its sample grid independent of CAL and CLKPR.
+Its native WASM execution uses relative deadlines per host batch while storing
+absolute time as integers, preserving precision beyond2^53 picoseconds.
 
 ## CLI
 

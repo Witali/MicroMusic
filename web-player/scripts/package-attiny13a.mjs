@@ -20,7 +20,7 @@ async function read(path,limit){
   if((await stat(path)).size>limit)throw new Error('Input exceeds size limit: '+path);
   const bytes=await readFile(path);if(bytes.length>limit)throw new Error('Input exceeds size limit: '+path);return bytes;
 }
-const summary=decoded=>({format:PACKAGE_FORMAT,version:PACKAGE_VERSION,device:'ATtiny13A',abi:decoded.abi.id,
+const summary=decoded=>({format:PACKAGE_FORMAT,version:decoded.version??PACKAGE_VERSION,device:'ATtiny13A',abi:decoded.abi.id,
   flashBytes:decoded.flash.length,eepromBytes:decoded.eeprom.length,translatedBytes:decoded.translated.length,runtimeBytes:decoded.runtime.length,
   integrity:decoded.integrity,configuration:decoded.configuration});
 async function main(){
