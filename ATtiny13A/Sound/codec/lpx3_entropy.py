@@ -1,9 +1,12 @@
-"""Optional lossless storage for LPX3 v1; synthesis and quantization are unchanged.
+"""Optional lossless storage for LPX3/LPX4; synthesis and quantization unchanged.
 
 The smallest actual representation wins: original LPX3, DEFLATE of the packed
 container, or DEFLATE after reversible excitation/scale byte rearrangement.
+Canonical Huffman codes also preserve every original quantized symbol.
 This is a PC container experiment, not an AVR decompressor.
 """
+from collections import Counter
+import heapq
 import struct
 import zlib
 
@@ -16,7 +19,8 @@ def header(data):
     if len(data) < LPX.size:
         raise ValueError('Truncated LPX3 header')
     magic, version, bits, rate, samples, base, block, brightness, blocks = LPX.unpack_from(data)
-    if (magic != b'LPX3' or version != 1 or bits not in (2, 3, 4) or not 4000 <= rate <= 96000
+    valid_format = (magic == b'LPX3' and bits in (2, 3, 4)) or (magic == b'LPX4' and bits in (6, 8))
+    if (not valid_format or version != 1 or not 4000 <= rate <= 96000
             or not 0 < samples <= MAX_BYTES or not 36 <= base <= MAX_BYTES
             or not 20 <= block <= 2048 or brightness > 700 or blocks != (samples+block-1)//block):
         raise ValueError('Invalid LPX3 descriptor')
@@ -131,17 +135,125 @@ def restore(data, method):
     return bytes(result)
 
 
+def canonical_codes(lengths):
+    """Bounded canonical codebook; reject ambiguous or incomplete trees."""
+    ordered = sorted((length,symbol) for symbol,length in enumerate(lengths) if length)
+    if not ordered or ordered[-1][0] > 32:
+        raise ValueError('Invalid Huffman code lengths')
+    code = previous = 0
+    result = {}
+    for length,symbol in ordered:
+        code <<= length-previous
+        if code >= 1 << length:
+            raise ValueError('Oversubscribed Huffman tree')
+        result[symbol] = (code,length)
+        code += 1
+        previous = length
+    if len(ordered) == 1:
+        if ordered[0][0] != 1:
+            raise ValueError('Invalid single-symbol Huffman tree')
+    elif code != 1 << previous:
+        raise ValueError('Incomplete Huffman tree')
+    return result
+
+
+def huffman_payload(data):
+    bits,samples,base,blocks,prefix,_ = validate(data)
+    codes = unpack_codes(data[prefix:],bits,samples)
+    heap = [(count,symbol,symbol) for symbol,count in Counter(codes).items()]
+    heapq.heapify(heap)
+    serial = 1 << bits
+    while len(heap) > 1:
+        left,right = heapq.heappop(heap),heapq.heappop(heap)
+        heapq.heappush(heap,(left[0]+right[0],serial,(left[2],right[2])))
+        serial += 1
+    lengths = bytearray(1 << bits)
+    pending = [(heap[0][2],0)]
+    while pending:
+        node,depth = pending.pop()
+        if isinstance(node,int):
+            lengths[node] = max(1,depth)
+        else:
+            pending.extend((child,depth+1) for child in node)
+    book = canonical_codes(lengths)
+    packed = bytearray()
+    accumulator = count = 0
+    for symbol in codes:
+        value,width = book[symbol]
+        accumulator = accumulator << width | value
+        count += width
+        while count >= 8:
+            count -= 8
+            packed.append((accumulator >> count) & 255)
+        accumulator &= (1 << count)-1
+    if count:
+        packed.append(accumulator << (8-count))
+    used = samples*bits % 8
+    padding = data[-1] & (255 ^ ((1 << used)-1)) if used else 0
+    return data[:prefix]+bytes(lengths)+bytes([padding])+bytes(packed)
+
+
+def restore_huffman(payload):
+    bits,samples,base,blocks,prefix,_ = header(payload)
+    start = prefix+(1 << bits)+1
+    if len(payload) < start:
+        raise ValueError('Truncated Huffman codebook')
+    book = canonical_codes(payload[prefix:start-1])
+    inverse = {(width,code):symbol for symbol,(code,width) in book.items()}
+    maximum = max(width for _,width in book.values())
+    symbols = bytearray()
+    code = width = 0
+    last_bit = None
+    for index,value in enumerate(payload[start:]):
+        for bit in range(7,-1,-1):
+            code = code << 1 | ((value >> bit) & 1)
+            width += 1
+            symbol = inverse.get((width,code))
+            if symbol is not None:
+                symbols.append(symbol)
+                code = width = 0
+                if len(symbols) == samples:
+                    last_bit = (index,bit)
+                    break
+            elif width >= maximum:
+                raise ValueError('Invalid Huffman symbol')
+        if last_bit is not None:
+            break
+    if last_bit is None:
+        raise ValueError('Truncated Huffman symbols')
+    index,bit = last_bit
+    if index+1 != len(payload)-start or payload[-1] & ((1 << bit)-1):
+        raise ValueError('Trailing Huffman symbols or nonzero padding')
+    used = samples*bits % 8
+    padding_mask = 255 ^ ((1 << used)-1) if used else 0
+    padding = payload[start-1]
+    if padding & ~padding_mask:
+        raise ValueError('Invalid original excitation padding')
+    packed = pack_codes(symbols,bits)
+    packed[-1] |= padding
+    result = payload[:prefix]+bytes(packed)
+    validate(result)
+    return result
+
+
 def unpack(data):
     data = bytes(data)
-    if data[:4] == b'LPX3':
+    if data[:4] in (b'LPX3', b'LPX4'):
         validate(data)
         return data
     if len(data) < WRAP.size:
         raise ValueError('Truncated LPZ1 wrapper')
     magic, method, raw_bytes, expanded_bytes, checksum = WRAP.unpack_from(data)
-    if (magic != b'LPZ1' or method not in (0, 1, 2) or not 60 <= raw_bytes <= MAX_BYTES
+    if (magic != b'LPZ1' or method not in (0, 1, 2, 3) or not 60 <= raw_bytes <= MAX_BYTES
             or not 60 <= expanded_bytes <= MAX_BYTES):
         raise ValueError('Invalid LPZ1 header')
+    if method == 3:
+        if len(data)-WRAP.size != expanded_bytes:
+            raise ValueError('Invalid Huffman payload length')
+        raw = restore_huffman(data[WRAP.size:])
+        if len(raw) != raw_bytes or zlib.crc32(raw) != checksum:
+            raise ValueError('LPX3 checksum mismatch')
+        return raw
     inflater = zlib.decompressobj()
     try:
         expanded = inflater.decompress(data[WRAP.size:], expanded_bytes+1)
@@ -165,6 +277,15 @@ def pack(data):
         expanded = transform(data, method)
         blob = WRAP.pack(b'LPZ1', method, len(data), len(expanded), zlib.crc32(data))+zlib.compress(expanded, 9)
         candidates.append((label, blob))
+    try:
+        payload = huffman_payload(data)
+    except ValueError:
+        # The bounded canonical representation is optional; a rare extreme
+        # tree cannot prevent original/DEFLATE storage of a valid stream.
+        pass
+    else:
+        blob = WRAP.pack(b'LPZ1',3,len(data),len(payload),zlib.crc32(data))+payload
+        candidates.append(('canonical-huffman',blob))
     label, selected = min(candidates, key=lambda item: len(item[1]))
     if unpack(selected) != data:
         raise AssertionError('Entropy packing changed the original LPX3 stream')
