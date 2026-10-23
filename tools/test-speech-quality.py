@@ -11,7 +11,7 @@ def main():
     paths = set((root / 'tools').glob('test-*period*.py'))
     paths.update(root/'tools'/name for name in (
         'test-fixed-speech.py', 'test-speech-dc.py', 'test-speech-targets.py',
-        'test-tiny-speech.py', 'test-tiny-speech-build.py'))
+        'test-tiny-speech.py', 'test-tiny-speech-build.py', 'test-speech-pitch.py'))
     for path in sorted(paths):
         name = 'speech_'+path.stem.replace('-', '_')
         spec = importlib.util.spec_from_file_location(name, path)

@@ -30,7 +30,7 @@ def write_json(path, value):
     path.write_text(json.dumps(value, indent=2, ensure_ascii=False)+'\n', encoding='utf-8', newline='\n')
 
 
-def run_clip(clip, reference_root, output, starts, proposals, plot):
+def run_clip(clip, reference_root, output, starts, proposals, plot, *, pitch_mode='legacy', pitch_options=None):
     path = reference_root / clip['id'] / 'original.wav'
     source = path.read_bytes()
     if sha(source) != clip['sha256']:
@@ -39,9 +39,10 @@ def run_clip(clip, reference_root, output, starts, proposals, plot):
     if sr != clip['sample_rate'] or len(reference) != clip['samples'] or reference.ndim != 1:
         raise ValueError('Unexpected WAV format')
     objective = SpectralObjective(reference, sr)
-    model, analysis = encode_model(reference, starts=starts)
+    model, analysis = encode_model(reference, starts=starts, pitch_mode=pitch_mode, pitch_options=pitch_options)
     initial_audio = decode_model(model)
-    model, search = refine_frames(model, objective, proposals=proposals)
+    refine_options = {'voiced_mask':analysis['voice_mask']} if pitch_mode=='voice-priority' else {}
+    model, search = refine_frames(model, objective, proposals=proposals, **refine_options)
     payload = packed_bytes(model)
     candidate = decode_model(unpack_bytes(payload))
     if not np.array_equal(candidate, decode_model(model)):
@@ -52,6 +53,7 @@ def run_clip(clip, reference_root, output, starts, proposals, plot):
     clips = {'Original': reference}
     report = dict(clip_id=clip['id'], title=clip['title'], reference_sha256=sha(source),
                   samples=len(reference), sample_rate=sr, seed=23065, starts=starts,
+                  pitch_mode=pitch_mode, pitch_options=pitch_options or {},
                   avr_assembled=False, hardware_verified=False, search=search,
                   before_search=dict(**objective.spectrum(initial_audio), stoi=float(stoi(reference, initial_audio, sr))), metrics={})
     for name, path in streams.items():
@@ -82,7 +84,13 @@ def run_clip(clip, reference_root, output, starts, proposals, plot):
     output.mkdir(parents=True, exist_ok=True)
     write_json(output / 'model.json', model)
     (output / 'speech.pw').write_bytes(payload)
-    write_json(output / 'analysis.json', {k: analysis[k].tolist() for k in ('centres', 'f0', 'periodicity')})
+    analysis_json = {k: analysis[k].tolist() for k in ('centres', 'f0', 'periodicity')}
+    if 'pitch_analysis' in analysis:
+        analysis_json['pitch_analysis'] = analysis['pitch_analysis']
+        report['pitch_analysis'] = analysis['pitch_analysis']
+        for key in ('voice_mask','book_mask'):
+            analysis_json[key] = analysis[key].tolist()
+    write_json(output / 'analysis.json', analysis_json)
     write_json(output / 'quality.json', report)
     balanced = {}
     for name, audio in clips.items():
@@ -126,17 +134,36 @@ def main():
     p.add_argument('--starts', type=int, default=8)
     p.add_argument('--proposals', type=int, default=5000)
     p.add_argument('--plot', action='store_true')
+    p.add_argument('--clip', choices=('chego','otvechaesh','vinni'), help='process one phrase; default all three')
+    p.add_argument('--voice-priority', action='store_true', help='exclude transients from voice pitch and dictionary fitting')
+    p.add_argument('--pitch-prior-weight', type=float, help='voice-pitch prior strength (requires --voice-priority)')
+    p.add_argument('--pitch-min-run-ms', type=float, help='minimum continuous stable voice interval in milliseconds (default 80; requires --voice-priority)')
     a = p.parse_args()
     if a.starts < 1 or a.proposals < 0:
         p.error('Starts must be positive; proposals must be nonnegative')
+    if a.pitch_prior_weight is not None and (not a.voice_priority or not 0 <= a.pitch_prior_weight <= 2):
+        p.error('--pitch-prior-weight requires --voice-priority and a value between 0 and 2')
+    if a.pitch_min_run_ms is not None and (not a.voice_priority or not 0 < a.pitch_min_run_ms <= 5000):
+        p.error('--pitch-min-run-ms requires --voice-priority and a value between 0 and 5000')
+    pitch_options = {}
+    if a.pitch_prior_weight is not None:
+        pitch_options['prior_weight'] = a.pitch_prior_weight
+    if a.pitch_min_run_ms is not None:
+        pitch_options['min_run_ms'] = a.pitch_min_run_ms
     manifest = json.loads((ROOT / 'ATtiny13A/Sound/audio-references.json').read_text(encoding='utf-8'))
     reports = []
     for clip in manifest['clips']:
-        report = run_clip(clip, a.references, a.output / clip['id'], a.starts, a.proposals, a.plot)
+        if a.clip and clip['id'] != a.clip:
+            continue
+        report = run_clip(clip, a.references, a.output / clip['id'], a.starts, a.proposals, a.plot,
+                          pitch_mode='voice-priority' if a.voice_priority else 'legacy',
+                          pitch_options=pitch_options or None)
         reports.append(report)
         print(json.dumps(dict(clip=clip['id'], data_bytes=report['data_bytes'], metrics=report['metrics']), ensure_ascii=False), flush=True)
     fingerprints = {str(path.relative_to(ROOT)).replace('\\', '/'): sha(path.read_text(encoding='utf-8').encode('utf-8')) for path in
                     [CODEC / 'period_wave.py', Path(__file__), CODEC / 'auto_encoder.py', CODEC / 'hq4_timbre.py', CODEC / 'model.py', CODEC / 'hq4_core.py']}
+    if a.voice_priority:
+        fingerprints['ATtiny13A/Sound/codec/speech_pitch.py'] = sha((CODEC/'speech_pitch.py').read_text(encoding='utf-8').encode('utf-8'))
     versions = {name: importlib.metadata.version(name) for name in ('numpy', 'scipy', 'numba', 'soundfile', 'pystoi')}
     versions['python'] = sys.version.split()[0]
     write_json(a.output / 'quality.json', dict(schema='period-wave-experiment-v2', runtime=versions,
