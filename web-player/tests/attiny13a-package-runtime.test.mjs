@@ -9,6 +9,8 @@ import {ATtiny13A,runtimeModule} from '../lib/attiny13a.js';
 import {createPackage} from '../lib/attiny13a-package.js';
 import {runtimeABI,transpileAVR} from '../lib/avr-transpiler.js';
 import {createRenderer} from '../lib/engines.js';
+import {packageEntry} from '../lib/package-entry.js';
+import {parseHex} from '../lib/hex.js';
 import {avr,IO,flash,sequential} from './fixtures/attiny13a-system-firmware.mjs';
 
 const runtime=new Uint8Array(await readFile(new URL('../wasm/attiny13a.wasm',import.meta.url)));
@@ -73,6 +75,17 @@ test('package renderer preserves physical samples, DSP and controls across batch
   actual.set(b.render(127));actual.set(b.render(3969),127);
   assert.deepEqual(actual,expected);assert.deepEqual(a.core.state(),b.core.state());
   await assert.rejects(createRenderer(entry,48000,{},'wasm'),/requires the device engine/);
+});
+
+test('browser import derives display memory and fuses from the verified package',async()=>{
+  const entry=await packageEntry(JSON.stringify(pkg),{name:'test.attiny13a.json'});
+  assert.equal(entry.title,'test.attiny13a.json');assert.equal(entry.audioChannels,2);
+  assert.equal(entry.deviceConfiguration.factoryOsccal96,73);
+  assert.ok(Buffer.from(parseHex(entry.flashHex)).equals(Buffer.from(pkg.assets.flash.data,'base64')));
+  assert.ok(Buffer.from(parseHex(entry.eepromHex,64)).equals(Buffer.from(pkg.assets.eeprom.data,'base64')));
+  assert.equal(entry.flashSha256,pkg.assets.flash.sha256);
+  const renderer=await createRenderer(entry,48000,{},'device');
+  assert.equal(renderer.render(128).length,256);
 });
 
 function message(target,type){return new Promise((resolve,reject)=>{
