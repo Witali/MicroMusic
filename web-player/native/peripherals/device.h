@@ -25,7 +25,13 @@ enum {
  DEVICE_FAULT_OUTPUT_OVERFLOW=9, DEVICE_FAULT_SPM_TIMING=10,
  DEVICE_FAULT_CLKPR=11, DEVICE_FAULT_UNIMPLEMENTED_IO=12,
  DEVICE_FAULT_CLOCK_CONTRACT=13, DEVICE_FAULT_OSCCAL=14,
- DEVICE_FAULT_NVM_CLOCK_PROFILE=15
+ DEVICE_FAULT_NVM_CLOCK_PROFILE=15, DEVICE_FAULT_POWER=16
+};
+enum {
+ DEVICE_POWER_ENABLE=0, DEVICE_POWER_POR_ASSERT_UV=1, DEVICE_POWER_POR_RELEASE_UV=2,
+ DEVICE_POWER_BOD00_UV=3, DEVICE_POWER_BOD01_UV=4, DEVICE_POWER_BOD10_UV=5,
+ DEVICE_POWER_HYSTERESIS_UV=6, DEVICE_POWER_FILTER_NS=7,
+ DEVICE_POWER_RECOVERY_NS=8, DEVICE_POWER_FLASH_PROGRAM_MIN_UV=9
 };
 typedef struct {
  union { uint64_t base_half; uint64_t time_ps; };
@@ -43,6 +49,14 @@ typedef device_pin_event_t device_pin_event_ps_t;
  * factory OSCCAL96=0 (explicit fixture byte, not a universal chip value),
  * fuse startup profile0 (zero-delay digital fixture; set1 for fuse timing). */
 int device_configure(uint32_t key, uint32_t value);
+/* Opt-in physical1ps supply profile. field0 enables; all fields1..9 must be
+ * explicitly provided before init. field0=0 clears the profile selection.
+ * Thresholds are selected digital-profile microvolts, timings nanoseconds;
+ * no typical threshold is silently assumed for a physical chip. Requires an
+ * explicit OSCCAL table, even for a constant oscillator frequency. */
+int device_configure_power(uint32_t field, uint32_t value);
+uint8_t device_power_enabled(void);
+int32_t device_vcc_microvolts(void);
 /* Pre-init, instance-specific CAL[0..127] -> internal RC Hz table. Zero means
  * unknown. Calling this opts into fixed1ps time. A factory entry is required;
  * for an internal RC source it must match configured oscillatorHz. No curve is
@@ -93,8 +107,8 @@ uint32_t device_control(uint8_t command, uint16_t z, uint16_t r1r0);
 uint8_t device_lpm(uint16_t z);
 int device_halted(void);
 uint8_t device_sleep_phase(void);
-/* Logical BOD state only: BODLEVEL fuse plus the protected BODCR sequence.
- * No supply threshold or analog brown-out/reset behavior is inferred. */
+/* Without a power profile these are logical BODCR observers. With an explicit
+ * power profile they also reflect the supply observer's sleep/recovery state. */
 uint8_t device_bod_disabled(void);
 uint8_t device_bod_recovering(void);
 const device_pin_event_t *device_pin_state(void);
@@ -103,10 +117,13 @@ const device_pin_event_t *device_pin_state(void);
  * Board time remains authoritative if the endpoint is between CPU edges. */
 uint64_t device_wait_until(uint64_t base_half_deadline);
 uint8_t device_reset_requested(void);
-/* Ideal digital RESET profile: PB5 low means an ALREADY RECOGNIZED assertion,
+/* Ideal digital RESET input: PB5 low means an ALREADY RECOGNIZED assertion,
  * bypassing an analog pulse filter. RSTDISBL disables this RESET role.
  * device_reset acknowledges the request, but halted remains true until queued
- * PB5 high/release. Optional fuse startup begins on that release edge. */
+ * PB5 high/release. An enabled supply profile additionally aggregates POR/BOD
+ * and the WDT pulse. Optional fuse startup begins after the final release.
+ * Power-profile peripherals reset at ASSERT; device_reset acknowledges the
+ * CPU request without reinitializing the observer or resetting them twice. */
 uint8_t device_reset_held(void);
 /* Optional fuse reset stretch, independent of a physical RESET hold. The
  * deadline uses base_half; UINT64_MAX means external RESET is still held,
@@ -123,6 +140,8 @@ int device_inject_digital(uint64_t base_half, uint8_t driven_mask, uint8_t level
 int device_inject_analog(uint64_t base_half, uint8_t pb_pin, int32_t microvolts);
 int device_inject_digital_ps(uint64_t time_ps, uint8_t driven_mask, uint8_t levels);
 int device_inject_analog_ps(uint64_t time_ps, uint8_t pb_pin, int32_t microvolts);
+/* VCC0 is valid for an enabled profile. Inputs use the shared ordered queue. */
+int device_inject_vcc_ps(uint64_t time_ps, int32_t microvolts);
 const device_pin_event_t *device_pin_events(uint32_t *count);
 const device_pin_event_ps_t *device_pin_events_ps(uint32_t *count);
 const device_pin_event_ps_t *device_pin_state_ps(void);

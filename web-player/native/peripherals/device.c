@@ -7,6 +7,7 @@
 #include "analog.h"
 #include "nvm.h"
 #include "device_clock.h"
+#include "power_reset.h"
 #include <stddef.h>
 
 enum { PIN_CAPACITY=1024, INPUT_CAPACITY=128,
@@ -29,6 +30,11 @@ typedef struct {
  uint8_t external_mask, external_levels;
  uint8_t bodcr, bod_armed, bod_committed, bod_disabled;
  uint8_t physical;
+ uint8_t power_enabled, reset_preapplied, raw_other_reset;
+ uint32_t power_config[10];
+ int32_t vcc_uv;
+ uint64_t wdt_reset_end;
+ power_reset_t power;
  int32_t analog_uv[6];
  timer0_t timer;
  system_gpio_t gpio;
@@ -46,6 +52,11 @@ static uint32_t configuration[20] = {
 };
 static uint32_t calibration_configuration[128];
 static uint8_t calibration_configured;
+static uint32_t power_configuration[10];
+static uint16_t power_fields;
+static void reset_state(uint8_t sources_mask);
+static void clock_domains(void);
+static void mirror(void);
 
 static uint64_t minimum(uint64_t a, uint64_t b) { return a < b ? a : b; }
 static void fail(uint32_t fault, uint32_t detail) {
@@ -139,7 +150,7 @@ static void reset_startup(uint8_t sources) {
  /* Internal source tables6-5/6-6 require the4ms reset minimum with RSTDISBL.
   * The external clock table6-3 has no such footnote. */
  if (!sut && (low&3) && !(board.config[DEVICE_CFG_FUSE_HIGH]&1)) pulses=512;
- uint64_t pulse=(sources&SYSTEM_WDRF) ? source_duration(2) : 0;
+ uint64_t pulse=!board.power_enabled&&(sources&SYSTEM_WDRF) ? source_duration(2) : 0;
  uint64_t at=add(board.base,pulse);
  if (pulses) {
   uint64_t rate=board.config[DEVICE_CFG_WATCHDOG_HZ];
@@ -151,6 +162,42 @@ static void reset_startup(uint8_t sources) {
   * then6CK oscillator startup plus14CK additional reset delay. CK is the
   * configured undivided source period, never a CLKPR CPU period. */
  board.reset_until=add(at,source_duration(40));
+}
+static int power_recovering(void) {
+ return board.power_enabled && board.power.recovery_deadline!=POWER_RESET_NEVER;
+}
+static void supply_guard(void) {
+ if(!board.power_enabled) return;
+ uint32_t mask=0;
+ if(board.vcc_uv<1900000) mask|=NVM_FAULT_EEPROM_VOLTAGE_UNCERTAIN;
+ if(board.vcc_uv<(int32_t)board.power_config[DEVICE_POWER_FLASH_PROGRAM_MIN_UV])
+  mask|=NVM_FAULT_FLASH_VOLTAGE_UNCERTAIN;
+ nvm_voltage_uncertain(&board.nvm,mask);
+ if(board.nvm.faults) fail(DEVICE_FAULT_NVM,board.nvm.faults);
+}
+static void power_sync(void) {
+ power_reset_event_t event;
+ board.reset_held=board.power.held;
+ while(power_reset_pop_event(&board.power,&event)) {
+  if(event.kind==POWER_RESET_ASSERT) {
+   board.reset_until=0;reset_state(event.flags_set);
+   board.reset_requested|=event.flags_set;board.reset_preapplied=1;
+  } else if(event.kind==POWER_RESET_HOLD && event.flags_set) {
+   /* Additional reset causes update MCUSR/WDE, without a second CPU restart. */
+   system_watchdog_reset(&board.watchdog,event.flags_set,cpu_cycle(),board.wdt_ticks);
+  } else if(event.kind==POWER_RESET_RELEASE) reset_startup(event.causes);
+ }
+ board.reset_held=board.power.held;
+ board.bod_disabled=board.power.bod_sleep_off;
+ board.bod_recovery_until=power_recovering()?board.power.recovery_deadline:0;
+ if(board.power.fault) fail(DEVICE_FAULT_POWER,board.power.fault);
+ clock_domains();mirror();
+}
+static void power_other_sources(void) {
+ board.raw_other_reset=(uint8_t)((board.raw_other_reset&POWER_RESET_WDRF)|
+  (external_reset_asserted()?POWER_RESET_EXTRF:0));
+ power_reset_set_other_sources(&board.power,board.base,board.raw_other_reset);
+ power_sync();
 }
 static uint64_t at_half(uint64_t half) {
  if (half==UINT64_MAX) return UINT64_MAX;
@@ -184,7 +231,7 @@ static void capture_pins(void) {
 static void pin_voltages(void) {
  for (unsigned pin=0;pin<6;pin++) {
   int32_t voltage=(board.analog_mask&(1u<<pin)) ? board.analog_uv[pin] :
-   ((board.gpio.pins.levels&(1u<<pin)) ? (int32_t)board.config[DEVICE_CFG_VCC_UV] : 0);
+   ((board.gpio.pins.levels&(1u<<pin)) ? board.vcc_uv : 0);
   /* analog_input advances sampling before mutating the physical voltage. */
   if (!analog_input(&board.analog,(uint8_t)pin,voltage,board.half))
    fail(DEVICE_FAULT_ANALOG,1);
@@ -246,8 +293,8 @@ static void clock_domains(void) {
 static void wake(void) {
  if (board.sleep.phase==SYSTEM_SLEEP_ASLEEP) {
   uint16_t pending=device_pending_irqs();
-  uint64_t recovery=board.bod_disabled ?
-   duration(board.config[DEVICE_CFG_BOD_RECOVERY_NS],base_frequency(),1000000000,0) : 0;
+  uint32_t recovery_ns=board.power_enabled?board.power_config[DEVICE_POWER_RECOVERY_NS]:board.config[DEVICE_CFG_BOD_RECOVERY_NS];
+  uint64_t recovery=board.bod_disabled ? duration(recovery_ns,base_frequency(),1000000000,0) : 0;
   uint64_t startup=duration(board.config[DEVICE_CFG_WAKE_STARTUP_BASE_HALF],
    base_frequency(),(uint64_t)board.config[DEVICE_CFG_OSCILLATOR_HZ]*2,0);
   uint64_t fuse_startup=source_duration(12);
@@ -260,6 +307,7 @@ static void wake(void) {
    !(board.gpio.mcucr&3),startup,source_duration(8u*board.divisor),board.base);
   if (status&SYSTEM_SLEEP_INVALID_TIME) fail(DEVICE_FAULT_SLEEP,status);
   if (status&SYSTEM_SLEEP_WAKE_STARTED) {
+   if(board.power_enabled) {power_reset_wake(&board.power,board.base);power_sync();}
    if (board.bod_disabled) board.bod_recovery_until=add(board.base,recovery);
    board.bod_disabled=0;
   }
@@ -302,15 +350,23 @@ static void inputs_at_current_time(void) {
   if (!event->type) {
    board.external_mask=event->mask; board.external_levels=event->value;
    system_gpio_external(&board.gpio,event->mask,event->value,board.half);
+   if(board.power_enabled) power_other_sources();
+   else {
    uint8_t held=(uint8_t)external_reset_asserted();
    if (held && !board.reset_held) board.reset_requested|=SYSTEM_EXTRF;
    uint8_t released=board.reset_held && !held;
    board.reset_held=held;
    if (held) board.reset_until=0;
    else if (released) reset_startup(SYSTEM_EXTRF);
-  } else {
+   }
+  } else if(event->type==1) {
    board.analog_mask|=(uint8_t)(1u<<event->pin);
    board.analog_uv[event->pin]=event->voltage;
+  } else {
+   board.vcc_uv=event->voltage;supply_guard();
+   power_reset_set_vcc(&board.power,board.base,board.vcc_uv);power_sync();
+   if(!analog_reference(&board.analog,(uint32_t)board.vcc_uv,board.config[DEVICE_CFG_BANDGAP_UV],board.half))
+    fail(DEVICE_FAULT_ANALOG,15);
   }
   board.input_head=(board.input_head+1)%INPUT_CAPACITY; --board.input_count;
   capture_pins(); pin_voltages(); sources();
@@ -328,7 +384,13 @@ static void service(uint64_t previous_half) {
   error=timer0_external_edge(&board.timer,t0[i].half_cycle/2,t0[i].edge==SYSTEM_T0_RISING);
   if (error) fail(DEVICE_FAULT_TIMER,(uint32_t)error);
  }
- nvm_advance(&board.nvm,cpu_cycle(),board.ns);
+ supply_guard();nvm_advance(&board.nvm,cpu_cycle(),board.ns);
+ if(board.power_enabled) {
+  power_reset_advance(&board.power,board.base);power_sync();
+  if(board.wdt_reset_end && board.base>=board.wdt_reset_end) {
+   board.wdt_reset_end=0;board.raw_other_reset&=(uint8_t)~POWER_RESET_WDRF;power_other_sources();
+  }
+ }
  /* Internal/external RESET holds the watchdog COUNTER reset. Its oscillator
   * pulses and NVM wall time still advance. Include the ending edge so that
   * the last stretched-reset interval is never counted as normal operation. */
@@ -338,7 +400,12 @@ static void service(uint64_t previous_half) {
   board.watchdog.oscillator_tick=board.wdt_ticks;
   board.watchdog.cpu_cycle=cpu_cycle();
  } else wdt=system_watchdog_advance(&board.watchdog,cpu_cycle(),board.wdt_ticks);
- if (wdt&SYSTEM_WDT_RESET) board.reset_requested|=SYSTEM_WDRF;
+ if (wdt&SYSTEM_WDT_RESET) {
+  if(board.power_enabled) {
+   board.raw_other_reset|=POWER_RESET_WDRF;power_other_sources();
+   board.wdt_reset_end=add(board.base,source_duration(2));
+  } else board.reset_requested|=SYSTEM_WDRF;
+ }
  if (wdt&(SYSTEM_WDT_RESERVED|SYSTEM_WDT_TIME_REVERSED)) fail(DEVICE_FAULT_WATCHDOG,wdt);
  uint8_t sleep=system_sleep_advance(&board.sleep,board.base);
  if (sleep&SYSTEM_SLEEP_INVALID_TIME) fail(DEVICE_FAULT_SLEEP,sleep);
@@ -356,6 +423,10 @@ static void service(uint64_t previous_half) {
 }
 static uint64_t next_event(void) {
  uint64_t next=at_cycle(timer0_next_event(&board.timer));
+ if(board.power_enabled) {
+  next=minimum(next,power_reset_next_deadline(&board.power));
+  if(board.wdt_reset_end) next=minimum(next,board.wdt_reset_end);
+ }
  next=minimum(next,at_half(system_gpio_next_event_half(&board.gpio,board.half)));
  next=minimum(next,at_half(analog_next_event(&board.analog)));
  next=minimum(next,at_cycle(nvm_next_event_cycle(&board.nvm)));
@@ -406,7 +477,7 @@ int device_configure(uint32_t key, uint32_t value) {
  if (!key || key>=20) return 0;
  if ((key==DEVICE_CFG_OSCILLATOR_HZ || key==DEVICE_CFG_WATCHDOG_HZ) &&
      (!value || value>1000000000)) return 0;
- if ((key==DEVICE_CFG_VCC_UV || key==DEVICE_CFG_BANDGAP_UV) && (!value || value>INT32_MAX)) return 0;
+ if ((key==DEVICE_CFG_VCC_UV || key==DEVICE_CFG_BANDGAP_UV) && (value>INT32_MAX || (!value&&key==DEVICE_CFG_BANDGAP_UV))) return 0;
  if (key>=DEVICE_CFG_FUSE_LOW && key<=DEVICE_CFG_LOCK && value>255) return 0;
  if (key==DEVICE_CFG_ADC_FIRST_SAMPLE && value!=27 && value!=29) return 0;
  if (key==DEVICE_CFG_FACTORY_OSCCAL96 && value>127) return 0;
@@ -415,6 +486,18 @@ int device_configure(uint32_t key, uint32_t value) {
  if (key==DEVICE_CFG_NVM_CALIBRATION_REFERENCE_HZ && value>1000000000) return 0;
  configuration[key]=value;
  return 1;
+}
+int device_configure_power(uint32_t field,uint32_t value) {
+ if(field>DEVICE_POWER_FLASH_PROGRAM_MIN_UV) return 0;
+ if(field==DEVICE_POWER_ENABLE) {
+  if(value>1) return 0;
+  if(!value) {power_fields=0;for(unsigned i=0;i<10;i++)power_configuration[i]=0;}
+  power_configuration[field]=value;return 1;
+ }
+ if(field<=DEVICE_POWER_HYSTERESIS_UV || field==DEVICE_POWER_FLASH_PROGRAM_MIN_UV) {
+  if(value>INT32_MAX || (!value&&field!=DEVICE_POWER_HYSTERESIS_UV)) return 0;
+ }
+ power_configuration[field]=value;power_fields|=(uint16_t)(1u<<field);return 1;
 }
 int device_configure_osccal_hz(uint32_t cal,uint32_t hz) {
  if (cal>127 || hz>1000000000) return 0;
@@ -429,7 +512,14 @@ int device_init(uint8_t *data, uint8_t *flash, uint8_t *eeprom) {
  for (unsigned i=0;i<20;i++) board.config[i]=configuration[i];
  for (unsigned i=0;i<128;i++) board.calibration[i]=calibration_configuration[i];
  board.physical=calibration_configured;
+ board.power_enabled=(uint8_t)power_configuration[DEVICE_POWER_ENABLE];
+ for(unsigned i=0;i<10;i++)board.power_config[i]=power_configuration[i];
+ board.vcc_uv=(int32_t)board.config[DEVICE_CFG_VCC_UV];
  if (!data || !flash || !eeprom) { fail(DEVICE_FAULT_CONFIG,1); return 0; }
+ if((!board.vcc_uv&&!board.power_enabled) ||
+    (board.power_enabled&&(!board.physical||power_fields!=0x3fe))) {
+  fail(DEVICE_FAULT_CONFIG,12);return 0;
+ }
  if (board.config[DEVICE_CFG_FUSE_STARTUP_PROFILE] &&
      ((board.config[DEVICE_CFG_FUSE_LOW]>>2)&3)==3) {
   fail(DEVICE_FAULT_CONFIG,8); return 0;
@@ -454,13 +544,28 @@ int device_init(uint8_t *data, uint8_t *flash, uint8_t *eeprom) {
  }
  system_watchdog_init(&board.watchdog,!(board.config[DEVICE_CFG_FUSE_LOW]&32));
  board.initialized=1;
- device_reset(SYSTEM_PORF);
+ if(board.power_enabled) {
+  power_reset_profile_t profile={
+   .por_assert_uv=(int32_t)board.power_config[DEVICE_POWER_POR_ASSERT_UV],
+   .por_release_uv=(int32_t)board.power_config[DEVICE_POWER_POR_RELEASE_UV],
+   .bod_center_uv={(int32_t)board.power_config[DEVICE_POWER_BOD00_UV],
+    (int32_t)board.power_config[DEVICE_POWER_BOD01_UV],(int32_t)board.power_config[DEVICE_POWER_BOD10_UV]},
+   .bod_hysteresis_uv=(int32_t)board.power_config[DEVICE_POWER_HYSTERESIS_UV],
+   .bod_filter_ticks=(uint64_t)board.power_config[DEVICE_POWER_FILTER_NS]*1000,
+   .timeout_ticks=0,.bod_recovery_ticks=(uint64_t)board.power_config[DEVICE_POWER_RECOVERY_NS]*1000};
+  int32_t initial_vcc=board.vcc_uv;board.vcc_uv=0;
+  if(!power_reset_init(&board.power,&profile,(uint8_t)board.config[DEVICE_CFG_FUSE_HIGH],0,0)) {
+   fail(DEVICE_FAULT_POWER,board.power.fault);return 0;
+  }
+  power_sync();device_reset(SYSTEM_PORF); /* Acknowledge initial POR without a second reset. */
+  board.vcc_uv=initial_vcc;power_reset_set_vcc(&board.power,0,initial_vcc);power_sync();
+  analog_reference(&board.analog,(uint32_t)initial_vcc,board.config[DEVICE_CFG_BANDGAP_UV],board.half);
+  pin_voltages();mirror();
+ } else device_reset(SYSTEM_PORF);
  return !board.fault;
 }
-void device_reset(uint8_t sources_mask) {
- if (!board.initialized) return;
- board.reset_requested=0;
- board.reset_held=(uint8_t)external_reset_asserted();
+static void reset_state(uint8_t sources_mask) {
+ board.reset_held=board.power_enabled?board.power.held:(uint8_t)external_reset_asserted();
  board.clkpr=(board.config[DEVICE_CFG_FUSE_LOW]&16)?0:3;
  board.divisor=1u<<board.clkpr; board.phase=0; board.clkpr_until=0; board.prr=0;
  board.pending_divisor=0; board.clkpr_switch_half=0;
@@ -476,13 +581,20 @@ void device_reset(uint8_t sources_mask) {
  system_gpio_reset(&board.gpio,board.config[DEVICE_CFG_FUSE_HIGH]&1);
  system_gpio_external(&board.gpio,board.external_mask,board.external_levels,board.half);
  analog_comparator_config_t config={board.config[9],board.config[10],0,(uint8_t)board.config[11]};
- analog_reset(&board.analog,board.config[3],board.config[4],(uint8_t)board.config[8],&config,board.half);
+ analog_reset(&board.analog,(uint32_t)board.vcc_uv,board.config[4],(uint8_t)board.config[8],&config,board.half);
  system_watchdog_reset(&board.watchdog,sources_mask,cpu_cycle(),board.wdt_ticks);
  system_sleep_reset(&board.sleep,board.base);
  nvm_reset(&board.nvm,cpu_cycle(),board.ns);
- reset_startup(sources_mask);
+ if(!board.power_enabled) reset_startup(sources_mask);
  board.domains=0; clock_domains();
  capture_pins(); pin_voltages(); sources(); mirror();
+}
+void device_reset(uint8_t sources_mask) {
+ if(!board.initialized) return;
+ board.reset_requested=0;
+ if(board.power_enabled&&board.reset_preapplied) {board.reset_preapplied=0;mirror();return;}
+ reset_state(sources_mask);
+ if(board.power_enabled&&!board.reset_held) reset_startup(sources_mask);
 }
 static int timer_register(uint8_t io) {
  return io==TIMER0_GTCCR || io==TIMER0_TCCR0A || io==TIMER0_TCCR0B ||
@@ -517,7 +629,7 @@ uint8_t device_read(uint8_t io) {
 }
 uint32_t device_write(uint8_t io, uint8_t value, uint8_t mask) {
  if (!board.initialized || io>=64) { fail(DEVICE_FAULT_CONFIG,4); return 0; }
- if (board.reset_held || reset_starting()) return 0;
+ if (board.fault || board.reset_requested || board.reset_held || reset_starting() || power_recovering()) return 0;
  uint32_t stalls=0;
  uint8_t previous=board.data[32+io], merged=(previous&(uint8_t)~mask)|(value&mask);
  if (io==CLKPR) {
@@ -546,6 +658,7 @@ uint32_t device_write(uint8_t io, uint8_t value, uint8_t mask) {
    (board.nvm.eecr&NVM_EEMPE) && !board.nvm.eeprom_busy && !board.nvm.flash_busy;
   if (!program || programming_clock_known())
    stalls=nvm_write_io(&board.nvm,io,value,mask,cpu_cycle(),board.ns);
+  supply_guard();
  }
  else if (system_watchdog_write(&board.watchdog,io,value,mask,cpu_cycle())) { }
  else if (timer_register(io)) {
@@ -581,7 +694,7 @@ uint32_t device_write(uint8_t io, uint8_t value, uint8_t mask) {
 }
 void device_advance_half(uint64_t halves) {
  if (!board.initialized) { fail(DEVICE_FAULT_CONFIG,5); return; }
- if (board.reset_requested || board.reset_held || reset_starting()) return;
+ if (board.reset_requested || board.reset_held || reset_starting() || power_recovering()) return;
  uint64_t target=add(board.half,halves);
  if (!halves) { advance_to(board.base); return; }
  while (board.half<target) {
@@ -600,7 +713,7 @@ void device_advance_half(uint64_t halves) {
 }
 void device_advance(uint32_t cycles) { device_advance_half((uint64_t)cycles*2); }
 uint64_t device_next_cpu_event(void) {
- if (!board.initialized || board.fault || board.reset_requested || board.reset_held || reset_starting()) return 0;
+ if (!board.initialized || board.fault || board.reset_requested || board.reset_held || reset_starting() || power_recovering()) return 0;
  uint64_t next=next_event();
  if (next==UINT64_MAX) return UINT64_MAX;
  uint64_t remainder;
@@ -625,7 +738,7 @@ void device_ack_irq(uint8_t vector) {
  sources(); mirror();
 }
 uint32_t device_control(uint8_t command, uint16_t z, uint16_t word) {
- if (board.reset_held || reset_starting()) return 0;
+ if (board.fault || board.reset_requested || board.reset_held || reset_starting() || power_recovering()) return 0;
  if (command==DEVICE_CONTROL_SLEEP) {
   bod_expire();
   uint8_t result=system_sleep_enter(&board.sleep,board.gpio.mcucr,board.base);
@@ -635,6 +748,9 @@ uint32_t device_control(uint8_t command, uint16_t z, uint16_t word) {
       ((board.config[DEVICE_CFG_FUSE_HIGH]>>1)&3)!=3 && board.bod_committed &&
       (board.bodcr&2) && cpu_cycle()<board.bod_sleep_until)
    board.bod_disabled=1;
+  if(board.power_enabled && (result&SYSTEM_SLEEP_ENTERED)) {
+   power_reset_sleep(&board.power,board.base,board.sleep.mode,board.bod_disabled);power_sync();
+  }
   clock_domains();
   if (system_sleep_adc_start(&board.sleep))
    analog_adc_noise_cancel_start(&board.analog.adc,board.half);
@@ -646,6 +762,7 @@ uint32_t device_control(uint8_t command, uint16_t z, uint16_t word) {
    !board.nvm.flash_busy && (spm==3 || spm==5);
   if (program && !programming_clock_known()) return 0;
   int result=nvm_spm(&board.nvm,z,word,cpu_cycle(),board.ns);
+  supply_guard();
   if (result<0) fail(DEVICE_FAULT_NVM,board.nvm.faults);
   check_faults(); mirror();
   if (result==NVM_SPM_ERASE || result==NVM_SPM_WRITE) return 0;
@@ -666,7 +783,7 @@ uint8_t device_lpm(uint16_t z) {
  mirror(); return value;
 }
 int device_halted(void) {
- return board.fault || board.reset_requested || board.reset_held || reset_starting() || board.sleep.phase!=SYSTEM_SLEEP_RUNNING ||
+ return board.fault || board.reset_requested || board.reset_held || reset_starting() || power_recovering() || board.sleep.phase!=SYSTEM_SLEEP_RUNNING ||
   nvm_cpu_halted(&board.nvm);
 }
 uint8_t device_sleep_phase(void) { return board.sleep.phase; }
@@ -724,6 +841,11 @@ int device_inject_analog_ps(uint64_t at,uint8_t pin,int32_t uv) {
  input_t event={at,uv,1,0,0,pin};
  return queue_input(event);
 }
+int device_inject_vcc_ps(uint64_t at,int32_t uv) {
+ if(!time_contract(1,11)) return 0;
+ if(!board.power_enabled || uv<0 || at==UINT64_MAX) {fail(DEVICE_FAULT_POWER,6);return 0;}
+ input_t event={at,uv,2,0,0,0};return queue_input(event);
+}
 static const device_pin_event_t *pin_events(uint32_t *count) {
  uint32_t contiguous=PIN_CAPACITY-board.pin_head;
  if (contiguous>board.pin_count) contiguous=board.pin_count;
@@ -768,6 +890,8 @@ uint64_t device_next_sample_ps(uint64_t start,uint64_t frame,uint32_t rate) {
 uint64_t device_virtual_half(void) { return board.half; }
 uint32_t device_clkpr_divisor(void) { return board.divisor; }
 uint32_t device_oscillator_hz(void) { return board.oscillator_hz; }
+uint8_t device_power_enabled(void) { return board.power_enabled; }
+int32_t device_vcc_microvolts(void) { return board.vcc_uv; }
 uint8_t device_bod_disabled(void) { return board.bod_disabled; }
 uint8_t device_bod_recovering(void) { return board.base<board.bod_recovery_until; }
 uint8_t device_reset_requested(void) { return board.reset_requested; }

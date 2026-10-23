@@ -6,6 +6,10 @@ import assert from 'node:assert/strict';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 export function compileAnalog(name, sources, fixture) {
+  // device.c owns the supply observer even when the selected fixture leaves it
+  // disabled. Keep its linked dependency common to all standalone board tests.
+  if(sources.includes('web-player/native/peripherals/device.c')&&!sources.includes('web-player/native/peripherals/power_reset.c'))
+    sources=[...sources,'web-player/native/peripherals/power_reset.c'];
   let sdk = process.env.EMSDK;
   for (let p = root; !sdk;) {
     const candidate = join(p, 'build/toolchains/emscripten-6.0.12');
