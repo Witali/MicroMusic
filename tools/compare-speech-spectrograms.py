@@ -21,6 +21,7 @@ def main():
     p.add_argument('--reference', type=Path, required=True)
     p.add_argument('--candidate', action='append', required=True, help='Label=path.wav')
     p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--listen', action='store_true', help='Export a level-matched original then each candidate, with shared peak scale')
     a = p.parse_args()
     reference, sr = sf.read(a.reference)
     objective = SpectrogramObjective(reference, sr)
@@ -37,6 +38,16 @@ def main():
             sha256=hashlib.sha256(path.read_bytes()).hexdigest())
         signals.append((label, objective.matched(value)))
     a.output.mkdir(parents=True, exist_ok=True)
+    if a.listen:
+        scale = .85/max(float(np.max(abs(x))) for _, x in signals)
+        report['listening_order'] = []
+        parts = []
+        for index, (label, value) in enumerate(signals):
+            filename = f'track-{index}.wav'
+            sf.write(a.output/filename, value*scale, sr, subtype='PCM_16')
+            report['listening_order'].append(dict(label=label, file=filename))
+            parts.extend((value*scale, np.zeros(round(.3*sr))))
+        sf.write(a.output/'comparison.wav', np.concatenate(parts), sr, subtype='PCM_16')
     for size, hop in ((512, 64), (1024, 128)):
         fig, axes = plt.subplots(len(signals), 2, figsize=(14, 3*len(signals)),
             gridspec_kw={'width_ratios': [3.6, 1]}, constrained_layout=True, squeeze=False)
