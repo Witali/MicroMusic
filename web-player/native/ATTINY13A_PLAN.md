@@ -209,6 +209,78 @@ benchmarks to establish speed; small results within host variation stay
 inconclusive. No per-edge JavaScript callbacks, cross-device code mixing or
 external programmer support are introduced by this plan.
 
+### AVR to WASM generation and execution improvements
+
+Saved improvement plan, 2026-10-23. This also refines stage5 and remains planned
+work. Treat warmed execution speed separately from translation, WASM compilation,
+module size and retranslation after SPM; improvements in one do not establish
+improvements in the others.
+
+Starting point: [`avr-transpiler.js`](../lib/avr-transpiler.js) generates ordinary
+optimized blocks only when `!resumable`. The exact resumable path dispatches
+individual instruction functions. AVR registers remain in shared linear memory;
+flag elimination currently applies within ordinary blocks. The phase emitter
+saves nine i32 temporaries and one f64 temporary on a suspended phase, rather
+than saving only values live across that particular boundary. These are concrete
+candidates, not measurements of their individual cost.
+
+Implementation priorities:
+
+1. Add a guarded block path for resumable execution. Execute several generated
+   instructions between proven CPU observation/interruption boundaries, retaining
+   the existing single-instruction phase path when the proof fails or a deadline
+   is near. Include pending IRQs, SEI/RETI delay, asynchronous reset, known input
+   horizons, instruction-count limits and host/debug observation deadlines.
+   Native peripherals must still process every required CLK edge and event;
+   batching CPU work must not silently batch away the external waveform.
+2. Keep AVR register values in WASM locals within accepted blocks. Load values
+   when needed and publish dirty registers at every observable exit, before
+   relevant helpers, ISR entry or suspension. Guard dynamic LD/ST aliases to
+   registers and I/O; direct register-file memory access must see coherent state.
+   Cancel effects from later instructions if reset interrupts execution.
+3. Extend flag liveness across eligible connected blocks and evaluate deferred
+   flag materialization. Preserve each instruction's actual flag dependencies,
+   including carry and chained Z. SREG reads, ISR entry, debugger/host observation
+   and fallback exits must materialize the exact required state. Global interrupt
+   masking alone does not prove that flags are dead. Retain differential checks
+   against the full-flags path.
+4. Add constant propagation, dead-store elimination and small sequence rewrites,
+   including register-pair operations, inside proven safe spans. Preserve all
+   original AVR cycles, PC/error reporting, intermediate observation boundaries
+   and I/O side effects even if fewer WASM operations represent the sequence.
+5. Lower eligible control-flow regions and loops to direct WASM control flow,
+   reducing repeated instruction-table `call_indirect` dispatch. Keep a guarded
+   table/fallback path for indirect targets and entries outside the region.
+   AVR call/return stack bytes remain firmware-visible SRAM state; native WASM
+   calls alone cannot replace those semantics.
+6. Compute temporary-value liveness across instruction phases. Save/restore only
+   values needed after a particular suspension, and evaluate a shorter path for
+   instructions that complete within the available budget. Resume without
+   replaying bus reads/writes, stack operations or protected commands; keep the
+   full context path as an oracle until parity is established.
+
+For loading and retranslation, separately evaluate reachable-code generation
+from reset/interrupt vectors and known branch targets, with safe handling of
+dynamic jumps and code/data ambiguity. Do not assume unvisited Flash words can
+never be executed. Evaluate compilation in regions and replacement after SPM;
+invalidate every affected block and dependency, including cross-region blocks
+and any folded Flash reads. Persistent cache keys must cover firmware, compiler
+version/options, device profile and exact runtime ABI/identity. Keep per-device
+mutable state outside cached compiled modules.
+
+Validation: use the official AVR instruction descriptions and WASM specification
+linked below. Start with guarded resumable blocks and register locals, measuring
+each change separately. Compare against the existing generated instruction path
+at cycle/half-phase, bus and observation boundaries, including all123 instruction
+forms, flags, pointer aliases, skip/branch timing, nested IRQs, reset during an
+instruction, sleep, CLKPR/OSCCAL, unequal/held CLKI phases and SPM invalidation.
+Require exact registers/SREG/SRAM/EEPROM/Flash, retired counts, pin timestamps
+and PCM, plus package and debugger compatibility. Run focused tests and the full
+suite at integration checkpoints; retain serial paired uninstrumented timings
+and compilation/size data. The older sampled CPU share is not a prediction of
+the speedup available in the current runtime. Preserve the device/translator/
+generated-code separation and add no per-instruction JavaScript callbacks.
+
 ## Execution and verification
 
 Prioritize these stages while developing independent peripheral fixes in parallel.
