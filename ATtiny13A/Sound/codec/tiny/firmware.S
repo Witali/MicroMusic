@@ -211,23 +211,20 @@ base_wave:
  andi r16,15
  or r30,r16
  rcall wave_byte
+ mov r18,r16
  sbrc r11,3
- rjmp wave_odd
- mov r18,r16
- andi r18,15
- swap r16
- andi r16,15
- rjmp wave_pair
-wave_odd:
- mov r18,r16
  swap r18
  andi r18,15
- mov r16,r30
- andi r30,0xf0
- inc r16
- andi r16,15
- or r30,r16
+ sbrs r11,3
+ rjmp wave_second
+ /* Increment only the byte-within-word nibble, wrapping 15 to 0. */
+ swap r30
+ subi r30,-16
+ swap r30
  rcall wave_byte
+wave_second:
+ sbrs r11,3
+ swap r16
  andi r16,15
 wave_pair:
  mov r21,r18
