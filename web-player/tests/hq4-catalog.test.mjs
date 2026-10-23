@@ -10,11 +10,12 @@ const root=new URL('../../',import.meta.url);
 const read=path=>readFileSync(new URL(path,root));
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
 const catalog=JSON.parse(read('web-player/hq4-firmware.json'));
+const references=JSON.parse(read('ATtiny13A/Sound/audio-references.json')).clips;
 const frozen=JSON.parse(read('ATtiny13A/Sound/research/FROZEN_VERIFICATION.json')).variants;
 const timbre=Object.fromEntries(['chego','chego-auto','chego-spectrum'].map(name=>
   [name,JSON.parse(read(`ATtiny13A/Sound/codec/timbre/${name}/verification.json`))]));
 
-test('public HQ4 catalog is complete and has no dependency on local files or media',()=>{
+test('public HQ4 catalog is complete and has no dependency on private build files',()=>{
   assert.equal(catalog.entries.length,7);assert.equal(catalog.defaultId,'hq4-chego-auto');
   assert.equal(new Set(catalog.entries.map(e=>e.id)).size,7);
   for(const e of catalog.entries){
@@ -22,6 +23,34 @@ test('public HQ4 catalog is complete and has no dependency on local files or med
     assert.equal(e.reference,undefined);assert.equal(e.originalPlayer,undefined);
     assert.equal(e.sampleHz,7500);assert.equal(e.pwmHz,7500);assert.equal(e.carrierHz,37500);
   }
+});
+test('speech variants share the exact public canonical WAV for their phrase',()=>{
+  const urls=new Set();
+  for(const entry of catalog.entries){
+    assert.equal(entry.kind,'speech');
+    const reference=references.find(clip=>clip.id===entry.audioReferenceId);
+    assert.ok(reference,entry.id+' has a canonical phrase');
+    assert.equal(entry.originalAudioUrl,`./audio/originals/${reference.id}.wav`);
+    assert.equal(entry.originalAudioSha256,reference.sha256);
+    const wav=read('web-player/'+entry.originalAudioUrl);
+    assert.equal(wav.length,reference.bytes);assert.equal(hash(wav),reference.sha256);
+    assert.equal(wav.toString('ascii',0,4),'RIFF');assert.equal(wav.toString('ascii',8,12),'WAVE');
+    let format,dataBytes;
+    for(let offset=12;offset+8<=wav.length;){
+      const id=wav.toString('ascii',offset,offset+4),size=wav.readUInt32LE(offset+4),start=offset+8;
+      assert.ok(start+size<=wav.length);
+      if(id==='fmt ')format={encoding:wav.readUInt16LE(start),channels:wav.readUInt16LE(start+2),
+        sampleRate:wav.readUInt32LE(start+4),bits:wav.readUInt16LE(start+14)};
+      if(id==='data')dataBytes=size;
+      offset=start+size+(size&1);
+    }
+    assert.deepEqual(format,{encoding:1,channels:reference.channels,sampleRate:reference.sample_rate,bits:reference.bits_per_sample});
+    assert.equal(dataBytes/(format.channels*format.bits/8),reference.samples);
+    urls.add(entry.originalAudioUrl);
+  }
+  assert.equal(urls.size,3,'only one public WAV per phrase');
+  const music=JSON.parse(read('web-player/firmware.json'));
+  assert.ok(music.entries.every(entry=>entry.originalAudioUrl===undefined));
 });
 for(const entry of catalog.entries)test(`${entry.id}: public HEX, retained sources and both engines match the frozen PCM`,()=>{
   const name=entry.id.slice(4),v=timbre[entry.variant],expected=entry.codec==='hq4-t'

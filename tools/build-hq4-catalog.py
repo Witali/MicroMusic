@@ -5,6 +5,7 @@ import hashlib
 import json
 import subprocess
 import sys
+import wave
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -25,12 +26,27 @@ def intel_hex(binary):
     return '\n'.join(rows + [':00000001FF']) + '\n'
 
 
+def original_audio(clip):
+    path = ROOT/'web-player/audio/originals'/(clip['id']+'.wav')
+    if path.stat().st_size != clip['bytes'] or digest(path.read_bytes()) != clip['sha256']:
+        raise ValueError('Public original WAV differs from canonical reference: '+clip['id'])
+    with wave.open(str(path), 'rb') as audio:
+        if (audio.getnframes(), audio.getframerate(), audio.getnchannels(), audio.getsampwidth()*8,
+                audio.getcomptype()) != (clip['samples'], clip['sample_rate'], clip['channels'],
+                                        clip['bits_per_sample'], 'NONE'):
+            raise ValueError('Unexpected public original WAV format: '+clip['id'])
+    return dict(audioReferenceId=clip['id'], originalAudioUrl='./audio/originals/'+clip['id']+'.wav',
+                originalAudioSha256=clip['sha256'])
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--avr-bin', type=Path)
     parser.add_argument('--node', default='node')
     parser.add_argument('--check', action='store_true')
     args = parser.parse_args()
+    clips = json.loads((SOUND/'audio-references.json').read_text(encoding='utf-8'))['clips']
+    originals = {clip['id']: original_audio(clip) for clip in clips}
     command = [sys.executable, str(ROOT / 'tools/verify-frozen-speech.py'), '--node', args.node]
     if args.avr_bin:
         command += ['--avr-bin', str(args.avr_bin.resolve())]
@@ -47,7 +63,7 @@ def main():
             timbre_command += ['--avr-bin', str(args.avr_bin.resolve())]
         subprocess.run(timbre_command, cwd=ROOT, check=True, stdout=subprocess.PIPE, text=True)
     frozen = json.loads((SOUND / 'research/FROZEN_VERIFICATION.json').read_text(encoding='utf-8'))['variants']
-    titles = {r['id']: r['title'] for r in json.loads((SOUND / 'audio-references.json').read_text(encoding='utf-8'))['clips']}
+    titles = {clip['id']: clip['title'] for clip in clips}
     result = {'schema': 1, 'defaultId': 'hq4-chego-auto', 'generator': 'tools/build-hq4-catalog.py', 'entries': []}
     for order, (variant, entry_id, title, description) in enumerate(variants, 1):
         verification = json.loads((SOUND / 'codec/timbre' / variant / 'verification.json').read_text(encoding='utf-8'))
@@ -63,7 +79,7 @@ def main():
             'flashBytes': len(binary), 'eepromBytes': 0, 'sampleHz': 7500,
             'pwmHz': 7500, 'carrierHz': 37500, 'voices': 1,
             'flashSha256': digest(binary), 'flashHex': intel_hex(binary),
-            'sourceInputs': verification['sourceInputs'], 'audioReferenceId': 'chego', 'monitorGain': 1,
+            'sourceInputs': verification['sourceInputs'], **originals['chego'], 'monitorGain': 1,
             'research': '../ATtiny13A/Sound/codec/' + ('timbre/README.md' if variant == 'chego' else 'AUTO_ENCODER.md'),
         })
     for order, (name, expected) in enumerate(frozen.items(), 1):
@@ -81,6 +97,7 @@ def main():
             'pwmHz': 7500, 'carrierHz': 37500, 'voices': 1,
             'flashSha256': digest(binary), 'flashHex': intel_hex(binary),
             'sourceInputs': {source + file: digest((ROOT / source / file).read_bytes()) for file in ('firmware.S', 'speech.hq')},
+            **originals[clip],
         })
     levels = subprocess.run([args.node, str(ROOT / 'tools/measure-hq4-level.mjs'), '--stdin'],
                             cwd=ROOT, input=json.dumps(result), capture_output=True, text=True, check=True)
