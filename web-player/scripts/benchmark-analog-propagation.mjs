@@ -1,0 +1,192 @@
+// Paired, uninstrumented comparison with the actual pre-optimization artifact.
+import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
+import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
+import {cpus,platform,arch,release} from 'node:os';
+import {dirname,resolve,relative} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {parseArgs} from 'node:util';
+import {ATtiny13A} from '../lib/attiny13a-runtime.js';
+import {parseHex} from '../lib/hex.js';
+import {avr,IO,flash} from '../tests/fixtures/attiny13a-system-firmware.mjs';
+
+const root=fileURLToPath(new URL('../../',import.meta.url));
+const {values}=parseArgs({options:{
+  'baseline-ref':{type:'string',default:'a2bd135'},trials:{type:'string',default:'6'},
+  frames:{type:'string',default:'12000'},instructions:{type:'string',default:'1000000'},
+  out:{type:'string',default:'build/benchmarks/analog-propagation.json'},help:{type:'boolean'},
+}});
+if(values.help){
+  console.log('node web-player/scripts/benchmark-analog-propagation.mjs [--baseline-ref a2bd135] [--trials 6] [--frames 12000] [--instructions 1000000] [--out build/benchmarks/analog-propagation.json]');
+  process.exit(0);
+}
+function integer(value,min,max){const n=Number(value);assert.ok(Number.isInteger(n)&&n>=min&&n<=max);return n;}
+const trials=integer(values.trials,2,32),frames=integer(values.frames,1024,48000);
+const instructions=integer(values.instructions,1000,10000000),rate=48000,blockFrames=1024;
+const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
+const bytes=array=>Buffer.from(array.buffer,array.byteOffset,array.byteLength);
+const replacer=(_,v)=>typeof v==='bigint'?v.toString():v;
+const digest=value=>hash(JSON.stringify(value,replacer));
+const source=path=>readFileSync(resolve(root,path),'utf8').replaceAll('\r\n','\n');
+const git=args=>execFileSync('git',args,{cwd:root,maxBuffer:8*1024*1024});
+const gitText=args=>git(args).toString().trim();
+const wasmPath='web-player/wasm/attiny13a.wasm',manifestPath='web-player/wasm/device-build.json';
+const baselineRef=values['baseline-ref'];
+const variants=[
+  {id:'baseline',binary:git(['show',`${baselineRef}:${wasmPath}`]),
+    manifest:JSON.parse(git(['show',`${baselineRef}:${manifestPath}`]))},
+  {id:'candidate',binary:readFileSync(resolve(root,wasmPath)),manifest:JSON.parse(source(manifestPath))},
+];
+for(const v of variants){
+  assert.equal(hash(v.binary),v.manifest.artifacts['attiny13a.wasm']);
+  assert.equal(v.binary.length,v.manifest.bytes);
+  for(const [path,expected] of Object.entries(v.manifest.inputs)){
+    const text=v.id==='baseline'?git(['show',`${baselineRef}:${path}`]).toString().replaceAll('\r\n','\n'):source(path);
+    assert.equal(hash(text),expected,`${v.id}: ${path}`);
+  }
+  v.module=new WebAssembly.Module(v.binary);assert.deepEqual(WebAssembly.Module.imports(v.module),[]);
+  assert.equal(new WebAssembly.Instance(v.module).exports.memory.buffer.byteLength,131072);
+}
+const [baseline,candidate]=variants;
+for(const key of ['compilerVersion','flags','sources','exports'])
+  assert.deepEqual(candidate.manifest[key],baseline.manifest[key],key);
+assert.deepEqual(Object.keys(candidate.manifest.inputs),Object.keys(baseline.manifest.inputs));
+const changedInputs=Object.keys(candidate.manifest.inputs)
+  .filter(path=>candidate.manifest.inputs[path]!==baseline.manifest.inputs[path]);
+assert.deepEqual(changedInputs,['web-player/native/peripherals/analog.c','web-player/native/peripherals/device.c']);
+function stats(samples){const sorted=[...samples].sort((a,b)=>a-b),n=sorted.length,mean=samples.reduce((a,b)=>a+b,0)/n;
+  return {median:n%2?sorted[n>>1]:(sorted[n/2-1]+sorted[n/2])/2,min:sorted[0],max:sorted[n-1],mean,
+    standardDeviation:Math.sqrt(samples.reduce((sum,v)=>sum+(v-mean)**2,0)/(n-1))};}
+function table(hz){const result=Array(128).fill(0);result[0]=hz;return result;}
+const kernel=flash({instructions:[avr.ldi(16,1),avr.ldi(17,0x55),avr.add(18,16),
+  avr.eor(19,17),avr.inc(20),avr.rjmp(5,2)]});
+const catalog=['web-player/firmware.json','web-player/hq4-firmware.json'].flatMap(path=>JSON.parse(source(path)).entries);
+const cases=[];
+for(const id of ['rhythmic','lumiere-stereo','hq4-chego-auto'])for(const physical of [false,true]){
+  const entry=catalog.find(e=>e.id===id);assert.ok(entry,id);const hz=entry.cpuHz||9600000;
+  const binary=parseHex(entry.flashHex);assert.equal(hash(binary),entry.flashSha256);
+  cases.push({id:id+(physical?'-physical':'-compatible'),binary,
+    eeprom:entry.eepromHex?parseHex(entry.eepromHex,64):null,frames,channels:entry.audioChannels||1,
+    physical,options:{oscillatorHz:hz,fastIdle:true,optimizeFlags:true,
+      ...physical?{resumable:true,osccalHz:table(hz),nvmClockProfile:1,nvmCalibrationReferenceHz:hz}:{}}});
+}
+for(const physical of [false,true])cases.push({id:'kernel-'+(physical?'physical':'compatible')+'-direct',
+  binary:kernel,instructions,physical,options:{oscillatorHz:9600000,fastIdle:false,fuseLow:0x72,
+    ...physical?{resumable:true,osccalHz:table(9600000)}:{}}});
+for(const external of [false,true])for(const divisor of external?[1,256]:[1])
+  cases.push({id:'kernel-'+(external?'clki':'internal')+'-20m-div'+divisor,binary:kernel,
+    frames:1200,channels:1,physical:true,external,divisor,
+    options:{oscillatorHz:20000000,resumable:true,fastIdle:false,fuseLow:external?0x70:0x72,
+      ...external?{clkiProfile:{phasePolicy:'digital-noninverting-zero-seed-v1',initialLevel:1}}:{osccalHz:table(20000000)}}});
+function construct(entry,variant){
+  const c=new ATtiny13A(entry.binary,entry.eeprom,{...entry.options,runtimeModule:variant.module});
+  if(entry.divisor){c.writeIO(IO.CLKPR,128);c.writeIO(IO.CLKPR,Math.log2(entry.divisor));}
+  if(entry.external){const end=BigInt(entry.frames)*1000000000000n/BigInt(rate);
+    assert.equal(c.injectClkiPeriodicPs({startPs:0n,initialLevel:1,highPs:25000n,lowPs:25000n,
+      transitionCount:end/25000n,knownUntilPs:end}),true);}
+  else if(!entry.instructions){
+    // Keep both variants' queued digital and analog input work identical.
+    if(entry.physical){c.injectPinsPs({at:777777n,mask:4,levels:4});c.setAnalogPs({at:1601601n,pin:2,microvolts:1234567});}
+    else{c.injectPins({at:777n,mask:4,levels:4});c.setAnalog({at:1601n,pin:2,microvolts:1234567});}
+  }
+  return c;
+}
+function snapshot(c){return {state:c.state(),diagnostics:Array.from(c._state),data:c.data.slice(),
+  flash:c.rom.slice(),eeprom:c.eeprom.slice(),irqFrames:Array.from(c.irqFrames)};}
+function execute(c,entry,count){
+  const checkpoints=[],raw=[],snapshots=[];let ms=0;
+  if(entry.instructions){const start=performance.now(),retired=c.run(count);ms=performance.now()-start;
+    assert.equal(retired,count);assert.equal(c.cyc,count+Math.floor((count-2)/4));
+    assert.equal(c.r[18],Math.floor((count+1)/4)&255);assert.equal(c.r[20],Math.floor((count-1)/4)&255);
+    snapshots.push(snapshot(c));
+  }else for(let offset=0;offset<count;offset+=blockFrames){
+    const n=Math.min(blockFrames,count-offset),start=performance.now(),pcm=c.capturePhysical(n,rate,entry.channels);
+    ms+=performance.now()-start;raw.push(bytes(pcm));snapshots.push(snapshot(c));
+    if(entry.divisor)assert.ok(pcm.every(v=>v===-1));
+    checkpoints.push({frames:offset+n,architectureSha256:digest(snapshots.at(-1)),rawSha256:hash(bytes(pcm))});
+  }
+  for(const snap of snapshots)assert.equal(snap.state.deviceFault,0,entry.id);
+  const pins=entry.physical?c.drainPinsPs():c.drainPins();
+  return {raw:Buffer.concat(raw),snapshots,pins,record:{ms,checkpoints,finalState:c.state(),
+    rawSha256:hash(Buffer.concat(raw)),architectureSha256:digest(snapshots.at(-1)),remainingPinsSha256:digest(pins),
+    translatedBytes:c.transpiledBytes.length,translatedSha256:hash(c.transpiledBytes),translationCacheHit:c.translationCacheHit}};
+}
+function compare(actual,expected,label){
+  assert.ok(actual.raw.equals(expected.raw),label+' raw PCM');
+  assert.deepEqual(actual.snapshots,expected.snapshots,label+' full state/registers/IO/RAM/Flash/EEPROM/IRQ frames');
+  assert.deepEqual(actual.pins,expected.pins,label+' remaining pins');
+}
+const out=resolve(root,values.out),started=performance.now();
+const report={schema:'micromusic-analog-propagation-benchmark-v1',createdAt:new Date().toISOString(),
+  git:{head:gitText(['rev-parse','HEAD']),status:gitText(['status','--short']),baselineCommit:gitText(['rev-parse',baselineRef])},
+  host:{node:process.version,v8:process.versions.v8,flags:process.execArgv,platform:platform(),release:release(),
+    arch:arch(),cpu:cpus()[0]?.model,logicalCpus:cpus().length},
+  provenance:{changedInputs,runtimes:Object.fromEntries(variants.map(v=>[v.id,{sha256:hash(v.binary),bytes:v.binary.length,
+    sourceInputs:v.manifest.inputs,compilerVersion:v.manifest.compilerVersion,flags:v.manifest.flags,imports:[],memoryPages:2}])),
+    supportingSources:Object.fromEntries(['web-player/scripts/benchmark-analog-propagation.mjs',
+      'web-player/lib/attiny13a-runtime.js','web-player/lib/avr-transpiler.js','web-player/lib/avr-wasm-phases.js',
+      'web-player/lib/avr-transpiled-runtime.js','web-player/lib/avr-runtime.js',
+      'web-player/tests/fixtures/attiny13a-system-firmware.mjs'].map(path=>[path,hash(source(path))]))},
+  parameters:{frames,instructions,trials,rate,blockFrames,clockFrames:1200},
+  method:{timing:'Serial uninstrumented capturePhysical (1024-frame blocks) or run(N) calls only. Fresh reset instance for every run. WASM compilation, construction, input submission, copying, snapshots, assertions and hashing are outside timers.',
+    order:'One discarded run per case/variant, then alternating baseline/candidate and candidate/baseline pairs. Warmup is min(4096,frames) or min(100000,instructions). No forced GC, affinity or V8 flags.',
+    parity:'Every pair and all later baseline runs match full state/_state diagnostics/registers/IO/SRAM/Flash/EEPROM/IRQ frames at each block, raw Float32 PCM bytes, and remaining pin events. Kernel count/register/cycle and constant-low PCM assertions are additional checks.',
+    scope:'Firmware: 250ms by default, compatible clock and fixed-ps resumable CPU. Kernel: direct throughput, internal20MHz and finite 20MHz CLKI /1,/256 at25ms; every source edge still serviced.',
+    limits:'Node host timing with CPU, peripherals, native pin/audio integration and JS batch copying coupled. No DSP filtering or browser latency guarantee. Scheduling, tiering and GC may affect samples.'},results:[]};
+for(const entry of cases){
+  console.log('Paired '+entry.id);
+  const count=entry.instructions??entry.frames,warmup=Math.min(count,entry.instructions?100000:4096);
+  for(const v of variants)execute(construct(entry,v),entry,warmup);
+  const row={id:entry.id,frames:entry.frames,instructions:entry.instructions,channels:entry.channels,
+    options:entry.options,flashSha256:hash(entry.binary),runs:[]};let reference;
+  for(let trial=0;trial<trials;trial++){
+    const completed={},order=trial%2?[...variants].reverse():variants;
+    for(const [position,v] of order.entries()){
+      const c=construct(entry,v);assert.equal(c.translationCacheHit,true);
+      const result=execute(c,entry,count);completed[v.id]=result;
+      row.runs.push({trial,position,variant:v.id,...result.record});
+    }
+    compare(completed.candidate,completed.baseline,`${entry.id}/${trial}`);
+    if(reference)compare(completed.baseline,reference,entry.id+' baseline determinism');else reference=completed.baseline;
+  }
+  row.summary=Object.fromEntries(variants.map(v=>[v.id,stats(row.runs.filter(r=>r.variant===v.id).map(r=>r.ms))]));
+  row.summary.pairedSpeedup=stats(Array.from({length:trials},(_,trial)=>{
+    const time=id=>row.runs.find(r=>r.variant===id&&r.trial===trial).ms;return time('baseline')/time('candidate');}));
+  row.summary.medianRatio=row.summary.baseline.median/row.summary.candidate.median;
+  row.validation={rawPcmByteEquality:true,fullArchitecturalStateEquality:true,remainingPinTraceEquality:true,
+    crossTrialDeterminism:true,checkpointsCompared:trials*Math.max(1,Math.ceil((entry.frames??0)/blockFrames))};
+  report.results.push(row);report.timingsComplete=report.results.length===cases.length;report.complete=false;
+  report.elapsedMs=performance.now()-started;
+  mkdirSync(dirname(out),{recursive:true});writeFileSync(out,JSON.stringify(report,replacer,2)+'\n');
+}
+// Keep every CLK/PWM pin event in a separate untimed comparison, while ADC3
+// samples the actual PB3 clock waveform. Audio capture consumes its pin ring.
+const traceCores=variants.map(v=>new ATtiny13A(flash({instructions:[avr.rjmp(0,0)]}),null,{
+  runtimeModule:v.module,resumable:true,fastIdle:false,fuseLow:0x70,
+  clkiProfile:{phasePolicy:'digital-noninverting-zero-seed-v1',initialLevel:1}}));
+for(const c of traceCores){
+  for(const [io,value] of [[IO.DDRB,3],[IO.OCR0A,3],[IO.OCR0B,1],[IO.TCCR0A,0xa3],
+    [IO.TCCR0B,1],[IO.ADMUX,3],[IO.ADCSRA,0xe0]])c.writeIO(io,value);
+  c.setAnalogPs({at:111111n,pin:2,microvolts:1234567});
+  assert.equal(c.injectClkiPeriodicPs({startPs:0n,initialLevel:1,highPs:25000n,lowPs:35000n,
+    transitionCount:2000n,knownUntilPs:60000000n}),true);
+}
+const traceEvents=traceCores.map(c=>c.drainPinsPs()),traceCheckpoints=[];
+for(let end=12000000n;end<=60000000n;end+=12000000n){
+  traceCores.forEach((c,i)=>{c.runUntilPs(end);traceEvents[i].push(...c.drainPinsPs());});
+  assert.deepEqual(snapshot(traceCores[1]),snapshot(traceCores[0]),'untimed ADC3/PWM/CLK full state');
+  assert.deepEqual(traceEvents[1],traceEvents[0],'every CLK/PWM pin event');
+  assert.equal(traceCores[1].state().deviceFault,0);
+  traceCheckpoints.push({timePs:end.toString(),architectureSha256:digest(snapshot(traceCores[1]))});
+}
+assert.equal(traceEvents[0].filter(e=>e.timePs>0n).length>=2000,true);
+for(const mask of [1,2])assert.ok(traceEvents[0].some(e=>(e.levels&mask)!==0),'PWM output went high');
+assert.equal(traceCores[0].data[32+IO.ADCSRA]&0x10,0x10,'ADC3 conversion completed');
+report.pinTraceValidation={everyPinEventEqual:true,adcChannel:3,sourceTransitions:2000,
+  pinEvents:traceEvents[0].length,traceSha256:digest(traceEvents[0]),checkpoints:traceCheckpoints};
+report.complete=true;report.elapsedMs=performance.now()-started;
+writeFileSync(out,JSON.stringify(report,replacer,2)+'\n');
+console.table(report.results.map(r=>({case:r.id,before_ms:r.summary.baseline.median.toFixed(2),
+  after_ms:r.summary.candidate.median.toFixed(2),speedup:r.summary.medianRatio.toFixed(3)+'x'})));
+console.log('All paired PCM/state checks passed: '+relative(root,out));

@@ -310,6 +310,17 @@ hardware measurements, Timer0 TOP=0, debugWIRE behavior, performance/cache work
 and the default-engine gate. The earlier open-CLKI statements above describe
 historical checkpoints. ISP/HVSP and external programming remain excluded.
 
+Analog propagation optimization checkpoint, 2026-10-23: changed-only PB voltage
+and ADC trigger-flag notifications preserve all input/event phases and pass
+1139/1139 tests. Against `a2bd135`, eight paired trials show median1.300x/1.447x
+speedup for the20MHz CLKI /1,/256 kernels; ordinary firmware gains remain small
+relative to host variation. The112522-byte import-free runtime is recorded with
+exact state/PCM/pin parity and source-entry reductions in
+[the optimization report](../reports/analog-propagation-20261023.md).
+This does not close the exclusive-timing or default-engine acceptance items;
+the checklist remains21 of30 complete, with nine open. External programming
+remains excluded.
+
 ## Primary references
 
 - [ATtiny13A Data Sheet DS40002307A](https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf)
