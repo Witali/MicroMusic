@@ -22,7 +22,7 @@ const edges=[-32768,-32767,-256,-255,-129,-128,-127,-1,0,1,127,128,129,255,256,3
 const sums=[-2147483648,-2147483647,-1,0,1,2147483646,2147483647];
 until(()=>cpu.data[status]===1);
 let cases=0,checked=0,minCycles=Infinity,maxCycles=0;
-for(let gain=-128;gain<=127;gain++)for(let add=0;add<2;add++)for(let vector=0;vector<48;vector++){
+for(let gain=-128;gain<=127;gain++)for(const add of [0,1,2,255])for(let vector=0;vector<48;vector++){
   const count=Math.min(vector,40);
   assert.ok(count<=40);
   cpu.dataView.setInt16(address('pitch_gain'),gain*128,true);
@@ -44,6 +44,7 @@ for(let gain=-128;gain<=127;gain++)for(let add=0;add<2;add++)for(let vector=0;ve
 const report={mcu:'ATmega328P',simulator:'avr8js 0.21.1',compiler:'AVR GCC 7.3.0 -O3 -flto -fwrapv',
   gains:256,gainUnscaledMin:-128,gainUnscaledMax:127,vectors:cases,samplesChecked:checked,
   counts:[0,40],everyCountVerified:true,
+  accumulateFlags:[0,1,2,255],
   exact:true,emptyAndZeroPaths:true,tailSentinelsIntact:true,zeroRegisterRestored:true,
   minMailboxCycles:minCycles,maxMailboxCycles:maxCycles,includesInterrupts:false,physicalBoardTested:false};
 writeFileSync(join(build,'verification.json'),JSON.stringify(report,null,2)+'\n');

@@ -63,24 +63,25 @@ binary measurements. Vendor and R4 files remain unmodified.
   983,040 outputs, all signed8 gains, every count 0..40, write/add and zero
   paths; all 4,096 actual pitch/gain code pairs also match upstream PCM.
   The build validates the codebook range; full-series PWM gate pending.
+- Pitch write/add mode moved to SREG.T: another 504 cycles off the fixture
+  maximum (143,106 -> 142,602), same Flash/global stack. Free r19 for input;
+  preserve only r17/Y. All 1,966,080 independent outputs, counts 0..40 and
+  accumulation flags 0/1/2/255 pass. GCC ISR SREG restoration is required;
+  final interrupt-enabled admission test for this series is still pending.
 
 ## Next candidates (unmeasured)
 
-1. **Loop-invariant pitch mode in T.** Arithmetic leaves AVR's T bit alone;
-   moving write/add mode there could eliminate the per-sample TST, free r19
-   for input and avoid another callee-saved register. Preserve bool/nonzero
-   semantics, zero-register ABI and GCC ISR SREG restoration.
-2. **Ten-sample pitch staging.** Upstream pitch sources always have negative
+1. **Ten-sample pitch staging.** Upstream pitch sources always have negative
    offsets: the first segment stops before `j==pp`, the second before
    `j==pp+pitch`. Thus a completed innovation vector can be written before the
    next vector's pitch is computed. A 10-word pitch buffer could replace 40
    words, saving 120 B, but additional segment calls may cost cycles. Verify
    every short-pitch tail and compare speed before accepting.
-3. **Special Q14 for p1.** This polynomial coefficient remains a multiple of
+2. **Special Q14 for p1.** This polynomial coefficient remains a multiple of
    64. A signed16 x signed24 core followed by a byte-aligned >>8 might use six
    hardware multiplies instead of eight. Preserve the original floor, prove
    the input truncation/range and compare added code size against speed.
-4. **Packed signed24 unscaled pitch.** The original gains are signed8*128;
+3. **Packed signed24 unscaled pitch.** The original gains are signed8*128;
    all three unscaled products/sums fit signed24 for the pinned codebook.
    A portable three-byte pitch buffer could save 40 B and eliminate per-product
    scaling shifts; innovation would insert a zero low byte to form 2*pitch.

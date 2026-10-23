@@ -4,8 +4,9 @@
  * A shared multiply loop avoids duplicating the two vector operations.
  * void speex_avr_pitch_add(int32_t *out, const int16_t *in, int16_t gain,
  *                          uint8_t count, uint8_t accumulate);
- * AVR ABI: out r25:r24, in r23:r22, gain r21:r20, count r18, accumulate r16 (copied to r19).
- * Preserve call-saved r16/r17/Y; restore the C ABI zero register. */
+ * AVR ABI: out r25:r24, in r23:r22, gain r21:r20, count r18, accumulate r16.
+ * Keep invariant write/add mode in SREG.T (GCC ISRs save/restore SREG).
+ * Preserve call-saved r17/Y; restore the C ABI zero register. */
 .text
 .global speex_avr_pitch_add
 .type speex_avr_pitch_add, @function
@@ -33,11 +34,15 @@ speex_avr_pitch_add:
     brne .L_pitch_clear_loop
     ret
 .L_pitch_nonzero:
-    push r16
     push r17
     push r28
     push r29
-    mov r19, r16
+    /* Any nonzero accumulate value sets T; r1 is still the entry ABI zero.
+     * These three cycles replace a test at every sample and free r19. */
+    clt
+    cpse r16, r1
+    set
+    mov r17, r18
     movw r28, r24
     movw r26, r22
     /* Extract signed8 gain from its <<7 representation. r20 becomes zero
@@ -45,13 +50,13 @@ speex_avr_pitch_add:
     lsl r20
     rol r21
 .L_pitch_loop:
-    ld r16, X+
-    ld r17, X+
-    muls r17, r21
+    ld r18, X+
+    ld r19, X+
+    muls r19, r21
     movw r24, r0
     /* signed8 gain * signed16 input in r25:r23, shifted left by one byte.
      * Then arithmetic >>1 produces the exact original gain*input*128. */
-    mulsu r21, r16
+    mulsu r21, r18
     mov r23, r0
     sbc r25, r20
     add r24, r1
@@ -61,8 +66,7 @@ speex_avr_pitch_add:
     ror r24
     ror r23
     ror r22
-    tst r19
-    breq .L_pitch_store
+    brtc .L_pitch_store
     ldd r0, Y+0
     add r22, r0
     ldd r0, Y+1
@@ -76,13 +80,12 @@ speex_avr_pitch_add:
     st Y+, r23
     st Y+, r24
     st Y+, r25
-    dec r18
+    dec r17
     brne .L_pitch_loop
     clr r1
     pop r29
     pop r28
     pop r17
-    pop r16
 .L_pitch_return:
     ret
 .size speex_avr_pitch_add, .-speex_avr_pitch_add
