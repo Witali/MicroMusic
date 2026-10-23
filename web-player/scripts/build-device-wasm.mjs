@@ -28,6 +28,10 @@ const nativeFiles = readdirSync(join(root, peripheralDir)).sort()
   .filter(name => /\.[ch]$/.test(name) && !isTest(name)).map(name => peripheralDir + '/' + name);
 const sources = ['web-player/native/avr.c', ...nativeFiles.filter(name => name.endsWith('.c'))];
 const runtimeSource = readFileSync(join(root, sources[0]), 'utf8');
+const nativeSupport = readdirSync(join(root, 'web-player/native')).sort()
+  .filter(name => /\.(?:h|inc)$/.test(name)).map(name => 'web-player/native/' + name);
+const bridgeSource = [runtimeSource, ...nativeSupport.filter(name => name.endsWith('.inc'))
+  .map(name => readFileSync(join(root, name), 'utf8'))].join('\n');
 if (!runtimeSource.includes('AVR_FULL_DEVICE') || !nativeFiles.includes(peripheralDir + '/device.c')) {
   throw new Error('The connected AVR_FULL_DEVICE hooks and peripherals/device.c are required.');
 }
@@ -39,7 +43,7 @@ const originalExports = ['layout', 'field_name', 'error_message', 'reset', 'deco
   'step', 'next', 'block', 'idle', 'clock', 'interrupt', 'write_io', 'update_timer', 'timer_mode',
   'push', 'pop', 'push_pc', 'pop_pc', 'nzvs', 'arithmetic', 'audio_init', 'audio_channels',
   'audio_controls', 'render', 'filter', 'average'].map(name => 'avr_' + name);
-const publicDefinitions = [...runtimeSource.matchAll(
+const publicDefinitions = [...bridgeSource.matchAll(
   /^\s*(?!static\b)(?:const\s+)?\w+[\s*]+(avr_\w+)\s*\([^;{}]*\)\s*\{/gm,
 )].map(match => match[1]);
 const requiredBridges = ['read_io', 'write_io_masked', 'device_configure', 'device_ready',
@@ -77,8 +81,6 @@ try {
   if (!(error instanceof RangeError)) throw error;
 }
 const hash = value => createHash('sha256').update(value).digest('hex');
-const nativeSupport = readdirSync(join(root, 'web-player/native')).sort()
-  .filter(name => /\.(?:h|inc)$/.test(name)).map(name => 'web-player/native/' + name);
 const inputs = [sources[0], ...nativeSupport, ...nativeFiles, 'web-player/scripts/build-device-wasm.mjs'];
 const normalized = path => path.replaceAll(sdk, '<emsdk>').replaceAll(sdk.replaceAll('\\', '/'), '<emsdk>');
 const manifest = {
