@@ -1,0 +1,528 @@
+#include "device.h"
+#include "timer0.h"
+#include "system_gpio.h"
+#include "system_sleep.h"
+#include "system_watchdog.h"
+#include "analog.h"
+#include "nvm.h"
+#include <stddef.h>
+
+enum { PIN_CAPACITY=1024, INPUT_CAPACITY=128, CLKPR=0x26, OSCCAL=0x31, BODCR=0x30 };
+typedef struct {
+ uint64_t at;
+ int32_t voltage;
+ uint8_t type, mask, value, pin;
+} input_t;
+typedef struct {
+ uint8_t *data, *flash, *eeprom;
+ uint32_t config[15];
+ uint64_t base, half, phase, ns, ns_remainder, wdt_ticks, wdt_remainder;
+ uint64_t clkpr_until, clkpr_switch_half, dropped;
+ uint32_t fault, detail, divisor, pending_divisor;
+ uint16_t input_head, input_count, pin_head, pin_count;
+ uint8_t initialized, clkpr, prr, domains, reset_requested, analog_mask;
+ uint8_t external_mask, external_levels;
+ int32_t analog_uv[6];
+ timer0_t timer;
+ system_gpio_t gpio;
+ analog_t analog;
+ system_watchdog_t watchdog;
+ system_sleep_t sleep;
+ attiny13a_nvm_t nvm;
+ device_pin_event_t pins;
+ device_pin_event_t pin_events[PIN_CAPACITY];
+ input_t inputs[INPUT_CAPACITY];
+} device_t;
+static device_t board;
+static uint32_t configuration[15] = {
+ 0,9600000,128000,5000000,1100000,0x7a,0xff,0xff,27,0,0,0,0,0,1
+};
+
+static uint64_t minimum(uint64_t a, uint64_t b) { return a < b ? a : b; }
+static void fail(uint32_t fault, uint32_t detail) {
+ if (!board.fault) { board.fault=fault; board.detail=detail; }
+}
+static uint64_t add(uint64_t a, uint64_t b) {
+ if (b > UINT64_MAX-a) { fail(DEVICE_FAULT_TIME,1); return UINT64_MAX; }
+ return a+b;
+}
+static uint64_t multiply(uint64_t a, uint64_t b) {
+ if (b && a > UINT64_MAX/b) { fail(DEVICE_FAULT_TIME,2); return UINT64_MAX; }
+ return a*b;
+}
+static uint64_t cpu_cycle(void) { return board.half/2; }
+static uint64_t base_frequency(void) { return (uint64_t)board.config[1]*2; }
+/* Convert elapsed base ticks with retained numerator phase, without ever
+ * multiplying a long absolute timestamp by a frequency. */
+static uint64_t rational(uint64_t delta, uint64_t rate, uint64_t *remainder) {
+ uint64_t denominator=base_frequency();
+ uint64_t tail=(delta%denominator)*rate+*remainder;
+ uint64_t whole=multiply(delta/denominator,rate);
+ *remainder=tail%denominator;
+ return add(whole,tail/denominator);
+}
+static uint64_t after_units(uint64_t units, uint64_t rate, uint64_t remainder) {
+ if (!units) return board.base;
+ uint64_t numerator=multiply(units,base_frequency());
+ if (numerator==UINT64_MAX && board.fault) return UINT64_MAX;
+ if (numerator<=remainder) return board.base;
+ numerator-=remainder;
+ return add(board.base,numerator/rate+(numerator%rate!=0));
+}
+static uint64_t at_half(uint64_t half) {
+ if (half==UINT64_MAX) return UINT64_MAX;
+ if (half<=board.half) return board.base;
+ uint64_t delta=multiply(half-board.half,board.divisor);
+ if (delta==UINT64_MAX && board.fault) return UINT64_MAX;
+ return add(board.base,delta-board.phase);
+}
+static uint64_t at_cycle(uint64_t cycle) {
+ return cycle==UINT64_MAX || cycle>UINT64_MAX/2 ? UINT64_MAX : at_half(cycle*2);
+}
+static int same_pins(const device_pin_event_t *a, const device_pin_event_t *b) {
+ return a->levels==b->levels && a->driven==b->driven && a->pullups==b->pullups &&
+  a->floating==b->floating && a->contention==b->contention;
+}
+static void capture_pins(void) {
+ device_pin_event_t pins={board.base,board.gpio.pins.levels,board.gpio.pins.driven,
+  board.gpio.pins.pullups,board.gpio.pins.floating,board.gpio.pins.contention,{0}};
+ if (same_pins(&pins,&board.pins)) return;
+ board.pins=pins;
+ if (board.pin_count) {
+  unsigned last=(board.pin_head+board.pin_count-1)%PIN_CAPACITY;
+  if (board.pin_events[last].base_half==board.base) { board.pin_events[last]=pins; return; }
+ }
+ if (board.pin_count==PIN_CAPACITY) {
+  if (board.dropped!=UINT64_MAX) ++board.dropped;
+  fail(DEVICE_FAULT_OUTPUT_OVERFLOW,PIN_CAPACITY);
+  return;
+ }
+ board.pin_events[(board.pin_head+board.pin_count++)%PIN_CAPACITY]=pins;
+}
+static void pin_voltages(void) {
+ for (unsigned pin=0;pin<6;pin++) {
+  int32_t voltage=(board.analog_mask&(1u<<pin)) ? board.analog_uv[pin] :
+   ((board.gpio.pins.levels&(1u<<pin)) ? (int32_t)board.config[DEVICE_CFG_VCC_UV] : 0);
+  /* analog_input advances sampling before mutating the physical voltage. */
+  if (!analog_input(&board.analog,(uint8_t)pin,voltage,board.half))
+   fail(DEVICE_FAULT_ANALOG,1);
+ }
+}
+static void timer_outputs(void) {
+ if (board.gpio.override_mask!=board.timer.overrides ||
+     board.gpio.override_levels!=board.timer.levels) {
+  system_gpio_timer_outputs(&board.gpio,board.timer.overrides,board.timer.levels,board.half);
+  capture_pins(); pin_voltages();
+ }
+}
+static uint8_t trigger_flags(void) {
+ uint8_t flags=0;
+ if ((board.gpio.gifr&SYSTEM_INT0) ||
+     (!(board.gpio.mcucr&3) && !(board.gpio.digital&2))) flags|=1u<<ANALOG_TRIGGER_INT0;
+ if (board.timer.tifr&TIMER0_OCF0A) flags|=1u<<ANALOG_TRIGGER_COMPA;
+ if (board.timer.tifr&TIMER0_TOV0) flags|=1u<<ANALOG_TRIGGER_OVERFLOW;
+ if (board.timer.tifr&TIMER0_OCF0B) flags|=1u<<ANALOG_TRIGGER_COMPB;
+ if (board.gpio.gifr&SYSTEM_PCINT) flags|=1u<<ANALOG_TRIGGER_PCINT;
+ return flags;
+}
+static void sources(void) {
+ if (!analog_sources(&board.analog,trigger_flags(),board.half)) fail(DEVICE_FAULT_ANALOG,2);
+}
+uint16_t device_pending_irqs(void) {
+ uint16_t flags=analog_pending(&board.analog);
+ uint8_t gpio=system_gpio_pending(&board.gpio), timer=timer0_irq_pending(&board.timer);
+ if (gpio&SYSTEM_INT0) flags|=1u<<1;
+ if (gpio&SYSTEM_PCINT) flags|=1u<<2;
+ if (timer&TIMER0_TOV0) flags|=1u<<3;
+ if (nvm_ready_irq(&board.nvm)) flags|=1u<<4;
+ if (timer&TIMER0_OCF0A) flags|=1u<<6;
+ if (timer&TIMER0_OCF0B) flags|=1u<<7;
+ if (system_watchdog_pending(&board.watchdog)) flags|=1u<<8;
+ return flags;
+}
+static void clock_domains(void) {
+ uint8_t domains=system_sleep_domains(&board.sleep,board.prr,
+  (board.watchdog.control&(SYSTEM_WDE|SYSTEM_WDTIE))!=0);
+ if (domains==board.domains) return;
+ int io=(domains&SYSTEM_CLOCK_IO)!=0, adc=(domains&SYSTEM_CLOCK_ADC)!=0;
+ int error=timer0_set_clock_enabled(&board.timer,cpu_cycle(),io);
+ if (error) fail(DEVICE_FAULT_TIMER,(uint32_t)error);
+ if (!analog_adc_clock_running(&board.analog.adc,adc,board.half)) fail(DEVICE_FAULT_ANALOG,3);
+ if (!analog_comparator_clock_running(&board.analog.comparator,io,0,board.half))
+  fail(DEVICE_FAULT_ANALOG,4);
+ if (!analog_comparator_sleep(&board.analog.comparator,
+       system_sleep_input_clamp(&board.sleep)||(board.prr&1),board.half)) fail(DEVICE_FAULT_ANALOG,5);
+ system_gpio_sleep(&board.gpio,io,system_sleep_input_clamp(&board.sleep),board.half);
+ board.domains=domains;
+ capture_pins(); pin_voltages();
+}
+static void wake(void) {
+ if (board.sleep.phase==SYSTEM_SLEEP_ASLEEP) {
+  uint16_t pending=device_pending_irqs();
+  system_sleep_timing_t timing={board.config[DEVICE_CFG_WAKE_STARTUP_BASE_HALF],2u*board.divisor};
+  uint8_t status=system_sleep_wake(&board.sleep,pending,pending,
+   !(board.gpio.mcucr&3),timing,board.base);
+  if (status&SYSTEM_SLEEP_INVALID_TIME) fail(DEVICE_FAULT_SLEEP,status);
+ }
+ clock_domains();
+}
+static void mirror(void) {
+ if (!board.data) return;
+#define IO(a,v) (board.data[32+(a)]=(uint8_t)(v))
+ IO(ANALOG_ADCSRB,board.analog.adc.adcsrb);
+ IO(ANALOG_ADCL,(board.analog.adc.admux&0x20)?board.analog.adc.result<<6:board.analog.adc.result);
+ IO(ANALOG_ADCH,(board.analog.adc.admux&0x20)?board.analog.adc.result>>2:board.analog.adc.result>>8);
+ IO(ANALOG_ADCSRA,board.analog.adc.adcsra); IO(ANALOG_ADMUX,board.analog.adc.admux);
+ IO(ANALOG_ACSR,board.analog.comparator.acsr);
+ IO(SYSTEM_DIDR0,board.gpio.didr0); IO(SYSTEM_PCMSK,board.gpio.pcmsk);
+ IO(SYSTEM_PINB,board.gpio.pinb); IO(SYSTEM_DDRB,board.gpio.ddrb); IO(SYSTEM_PORTB,board.gpio.portb);
+ IO(SYSTEM_MCUCR,board.gpio.mcucr); IO(SYSTEM_GIFR,board.gpio.gifr); IO(SYSTEM_GIMSK,board.gpio.gimsk);
+ IO(SYSTEM_WDTCR,board.watchdog.control); IO(SYSTEM_MCUSR,board.watchdog.mcusr);
+ IO(NVM_EECR,board.nvm.eecr); IO(NVM_EEDR,board.nvm.eedr); IO(NVM_EEARL,board.nvm.eearl);
+ IO(NVM_SPMCSR,board.nvm.spmcsr);
+ IO(TIMER0_PRR,board.prr); IO(TIMER0_GTCCR,board.timer.gtccr);
+ IO(TIMER0_TCCR0A,board.timer.tccra); IO(TIMER0_TCCR0B,board.timer.tccrb);
+ IO(TIMER0_TCNT0,board.timer.tcnt); IO(TIMER0_OCR0A,board.timer.ocra); IO(TIMER0_OCR0B,board.timer.ocrb);
+ IO(TIMER0_TIFR0,board.timer.tifr); IO(TIMER0_TIMSK0,board.timer.timsk);
+ IO(CLKPR,board.clkpr);
+#undef IO
+}
+static void check_faults(void) {
+ if (board.nvm.faults) fail(DEVICE_FAULT_NVM,board.nvm.faults);
+ if (board.analog.adc.invalid_reference) fail(DEVICE_FAULT_ANALOG,6);
+ if ((board.analog.adc.adcsrb&7)==7) fail(DEVICE_FAULT_ANALOG,7);
+ if ((board.analog.comparator.acsr&3)==1) fail(DEVICE_FAULT_ANALOG,8);
+ if ((board.watchdog.control&(SYSTEM_WDE|SYSTEM_WDTIE)) && !system_watchdog_period(&board.watchdog))
+  fail(DEVICE_FAULT_WATCHDOG,SYSTEM_WDT_RESERVED);
+}
+static void inputs_at_current_time(void) {
+ while (board.input_count && board.inputs[board.input_head].at==board.base) {
+  input_t *event=&board.inputs[board.input_head];
+  if (!event->type) {
+   board.external_mask=event->mask; board.external_levels=event->value;
+   system_gpio_external(&board.gpio,event->mask,event->value,board.half);
+  } else {
+   board.analog_mask|=(uint8_t)(1u<<event->pin);
+   board.analog_uv[event->pin]=event->voltage;
+  }
+  board.input_head=(board.input_head+1)%INPUT_CAPACITY; --board.input_count;
+  capture_pins(); pin_voltages(); sources();
+ }
+}
+static void service(uint64_t previous_half) {
+ system_gpio_t0_event_t t0[4];
+ uint8_t edges=system_gpio_advance(&board.gpio,previous_half,board.half,t0);
+ if (edges==255) { fail(DEVICE_FAULT_TIME,3); return; }
+ if (!analog_advance(&board.analog,board.half)) fail(DEVICE_FAULT_ANALOG,9);
+ int error=timer0_advance(&board.timer,cpu_cycle());
+ if (error) fail(DEVICE_FAULT_TIMER,(uint32_t)error);
+ for (unsigned i=0;i<edges;i++) {
+  if (t0[i].half_cycle!=board.half) { fail(DEVICE_FAULT_TIME,4); break; }
+  error=timer0_external_edge(&board.timer,t0[i].half_cycle/2,t0[i].edge==SYSTEM_T0_RISING);
+  if (error) fail(DEVICE_FAULT_TIMER,(uint32_t)error);
+ }
+ nvm_advance(&board.nvm,cpu_cycle(),board.ns);
+ uint8_t wdt=system_watchdog_advance(&board.watchdog,cpu_cycle(),board.wdt_ticks);
+ if (wdt&SYSTEM_WDT_RESET) board.reset_requested|=SYSTEM_WDRF;
+ if (wdt&(SYSTEM_WDT_RESERVED|SYSTEM_WDT_TIME_REVERSED)) fail(DEVICE_FAULT_WATCHDOG,wdt);
+ uint8_t sleep=system_sleep_advance(&board.sleep,board.base);
+ if (sleep&SYSTEM_SLEEP_INVALID_TIME) fail(DEVICE_FAULT_SLEEP,sleep);
+ if ((board.clkpr&128) && cpu_cycle()>=board.clkpr_until) board.clkpr&=15;
+ /* Deterministic lower-bound CLKPR transition: the first active edge is one
+  * old period after the write; the second is one new period after that edge.
+  * Thus the new waveform is established at T1+T2, within section6.3.1's
+  * documented range, without inventing an observable hardware ripple phase. */
+ if (board.pending_divisor && board.half>=board.clkpr_switch_half) {
+  board.divisor=board.pending_divisor; board.pending_divisor=0; board.phase=0;
+ }
+ timer_outputs(); sources();
+ inputs_at_current_time(); wake(); check_faults(); mirror();
+}
+static uint64_t next_event(void) {
+ uint64_t next=at_cycle(timer0_next_event(&board.timer));
+ next=minimum(next,at_half(system_gpio_next_event_half(&board.gpio,board.half)));
+ next=minimum(next,at_half(analog_next_event(&board.analog)));
+ next=minimum(next,at_cycle(nvm_next_event_cycle(&board.nvm)));
+ uint64_t ns=nvm_next_event_ns(&board.nvm);
+ if (ns!=UINT64_MAX) next=minimum(next,after_units(ns>board.ns?ns-board.ns:0,1000000000,board.ns_remainder));
+ if (!board.reset_requested) {
+  uint32_t left=system_watchdog_until_timeout(&board.watchdog);
+  if (left) next=minimum(next,after_units(left,board.config[DEVICE_CFG_WATCHDOG_HZ],board.wdt_remainder));
+ }
+ if (board.watchdog.control&SYSTEM_WDCE) next=minimum(next,at_cycle(board.watchdog.unlock_until));
+ if (board.clkpr&128) next=minimum(next,at_cycle(board.clkpr_until));
+ if (board.pending_divisor) next=minimum(next,at_half(board.clkpr_switch_half));
+ next=minimum(next,system_sleep_next_event(&board.sleep));
+ if (board.input_count) next=minimum(next,board.inputs[board.input_head].at);
+ return next;
+}
+static void elapse(uint64_t target) {
+ uint64_t delta=target-board.base;
+ uint64_t halves=delta/board.divisor;
+ uint64_t tail=delta%board.divisor+board.phase;
+ halves+=tail/board.divisor;
+ board.phase=tail%board.divisor;
+ board.half=add(board.half,halves);
+ board.ns=add(board.ns,rational(delta,1000000000,&board.ns_remainder));
+ board.wdt_ticks=add(board.wdt_ticks,rational(delta,board.config[DEVICE_CFG_WATCHDOG_HZ],&board.wdt_remainder));
+ board.base=target;
+}
+static void advance_to(uint64_t target) {
+ if (target<board.base) { fail(DEVICE_FAULT_TIME,5); return; }
+ if (board.reset_requested) return;
+ unsigned stagnant=0;
+ do {
+  if (board.fault) { if (target>board.base) elapse(target); break; }
+  uint64_t next=minimum(next_event(),target), before=board.half, base_before=board.base;
+  if (next<board.base) { fail(DEVICE_FAULT_TIME,6); break; }
+  elapse(next); service(before);
+  /* The CPU bridge aborts the interrupted instruction before later bus effects.
+   * Do not consume the rest of its requested span after an asynchronous reset. */
+  if (board.reset_requested) break;
+  if (board.base==base_before) {
+   if (++stagnant>16) { fail(DEVICE_FAULT_TIME,7); break; }
+  } else stagnant=0;
+  if (board.base==target && next_event()>target) break;
+ } while (board.base<=target);
+}
+int device_configure(uint32_t key, uint32_t value) {
+ if (!key || key>=15) return 0;
+ if ((key==DEVICE_CFG_OSCILLATOR_HZ || key==DEVICE_CFG_WATCHDOG_HZ) &&
+     (!value || value>1000000000)) return 0;
+ if ((key==DEVICE_CFG_VCC_UV || key==DEVICE_CFG_BANDGAP_UV) && (!value || value>INT32_MAX)) return 0;
+ if (key>=DEVICE_CFG_FUSE_LOW && key<=DEVICE_CFG_LOCK && value>255) return 0;
+ if (key==DEVICE_CFG_ADC_FIRST_SAMPLE && value!=27 && value!=29) return 0;
+ configuration[key]=value;
+ return 1;
+}
+int device_init(uint8_t *data, uint8_t *flash, uint8_t *eeprom) {
+ board=(device_t){0};
+ for (unsigned i=0;i<15;i++) board.config[i]=configuration[i];
+ if (!data || !flash || !eeprom) { fail(DEVICE_FAULT_CONFIG,1); return 0; }
+ board.data=data; board.flash=flash; board.eeprom=eeprom;
+ nvm_timing_t timing=nvm_datasheet_timing(board.config[DEVICE_CFG_FLASH_MAXIMUM]!=0);
+ if (!nvm_init(&board.nvm,flash,eeprom,&timing,(uint8_t)board.config[5],
+               (uint8_t)board.config[6],(uint8_t)board.config[7])) {
+  fail(DEVICE_FAULT_CONFIG,2); return 0;
+ }
+ system_watchdog_init(&board.watchdog,!(board.config[DEVICE_CFG_FUSE_LOW]&32));
+ board.initialized=1;
+ device_reset(SYSTEM_PORF);
+ return !board.fault;
+}
+void device_reset(uint8_t sources_mask) {
+ if (!board.initialized) return;
+ board.reset_requested=0;
+ board.clkpr=(board.config[DEVICE_CFG_FUSE_LOW]&16)?0:3;
+ board.divisor=1u<<board.clkpr; board.phase=0; board.clkpr_until=0; board.prr=0;
+ board.pending_divisor=0; board.clkpr_switch_half=0;
+ timer0_init(&board.timer,NULL,0,cpu_cycle());
+ system_gpio_reset(&board.gpio,board.config[DEVICE_CFG_FUSE_HIGH]&1);
+ system_gpio_external(&board.gpio,board.external_mask,board.external_levels,board.half);
+ analog_comparator_config_t config={board.config[9],board.config[10],0,(uint8_t)board.config[11]};
+ analog_reset(&board.analog,board.config[3],board.config[4],(uint8_t)board.config[8],&config,board.half);
+ system_watchdog_reset(&board.watchdog,sources_mask,cpu_cycle(),board.wdt_ticks);
+ system_sleep_reset(&board.sleep,board.base);
+ nvm_reset(&board.nvm,cpu_cycle(),board.ns);
+ board.domains=0; clock_domains();
+ capture_pins(); pin_voltages(); sources(); mirror();
+}
+static int timer_register(uint8_t io) {
+ return io==TIMER0_GTCCR || io==TIMER0_TCCR0A || io==TIMER0_TCCR0B ||
+  io==TIMER0_TCNT0 || io==TIMER0_OCR0A || io==TIMER0_OCR0B ||
+  io==TIMER0_TIFR0 || io==TIMER0_TIMSK0;
+}
+uint8_t device_read(uint8_t io) {
+ uint8_t value=0;
+ if (!board.initialized || io>=64) { fail(DEVICE_FAULT_CONFIG,3); return 0; }
+ if (io==CLKPR) value=board.clkpr;
+ else if (io==TIMER0_PRR) value=board.prr;
+ else if (system_gpio_read(&board.gpio,io,&value)) { }
+ else if (nvm_owns_io(io)) value=nvm_read_io(&board.nvm,io,cpu_cycle(),board.ns);
+ else if (system_watchdog_read(&board.watchdog,io,cpu_cycle(),&value)) { }
+ else if (timer_register(io)) {
+  int error=timer0_read(&board.timer,cpu_cycle(),io,&value);
+  if (error) fail(DEVICE_FAULT_TIMER,(uint32_t)error);
+ } else if (io>=ANALOG_ADCSRB && io<=ANALOG_ACSR) {
+  if ((board.prr&1) && io!=ANALOG_ACSR) fail(DEVICE_FAULT_ANALOG,10);
+  else if (!analog_read(&board.analog,io,&value,board.half)) fail(DEVICE_FAULT_ANALOG,11);
+ } else if (io==0x3f || io==0x3d || io==OSCCAL) value=board.data[32+io];
+ /* DWDR reads zero without an attached debugger. Reserved addresses read0. */
+ board.data[32+io]=value;
+ return value;
+}
+uint32_t device_write(uint8_t io, uint8_t value, uint8_t mask) {
+ if (!board.initialized || io>=64) { fail(DEVICE_FAULT_CONFIG,4); return 0; }
+ uint32_t stalls=0;
+ uint8_t previous=board.data[32+io], merged=(previous&(uint8_t)~mask)|(value&mask);
+ if (io==CLKPR) {
+  if (value&mask&128) {
+   if (!(board.clkpr&128) && !(merged&127)) {
+    board.clkpr|=128; board.clkpr_until=add(cpu_cycle(),4);
+   }
+  } else if ((board.clkpr&128) && cpu_cycle()<board.clkpr_until) {
+   unsigned code=merged&15;
+   if (code>8) fail(DEVICE_FAULT_CLKPR,code);
+   else {
+    board.clkpr=(uint8_t)code;
+    board.pending_divisor=1u<<code;
+    board.clkpr_switch_half=multiply(add(cpu_cycle(),1),2);
+   }
+  }
+ } else if (io==TIMER0_PRR) {
+  board.prr=merged&3;
+  int error=timer0_write(&board.timer,cpu_cycle(),io,board.prr);
+  if (error) fail(DEVICE_FAULT_TIMER,(uint32_t)error);
+  clock_domains();
+ } else if (system_gpio_write_masked(&board.gpio,io,value,mask,board.half)) {
+  capture_pins(); pin_voltages();
+ } else if (nvm_owns_io(io)) stalls=nvm_write_io(&board.nvm,io,value,mask,cpu_cycle(),board.ns);
+ else if (system_watchdog_write(&board.watchdog,io,value,mask,cpu_cycle())) { }
+ else if (timer_register(io)) {
+  uint8_t written=io==TIMER0_TIFR0 ? value&mask : merged;
+  if (io==TIMER0_TCCR0B) written=(merged&15)|(value&mask&0xc0);
+  int error=timer0_write(&board.timer,cpu_cycle(),io,written);
+  if (error) fail(DEVICE_FAULT_TIMER,(uint32_t)error);
+  timer_outputs();
+ } else if (io>=ANALOG_ADCSRB && io<=ANALOG_ACSR) {
+  /* ADCSRA section14.12.2 specifically warns that SBI/CBI can clear ADIF.
+   * Preserve that register's actual RMW byte, including its old ADIF=1.
+   * ACSR masked writes only strobe ACI when the selected bit writes one. */
+  if (io==ANALOG_ACSR) merged=(merged&(uint8_t)~ANALOG_ACI)|(value&mask&ANALOG_ACI);
+  if ((board.prr&1) && io!=ANALOG_ACSR) fail(DEVICE_FAULT_ANALOG,12);
+  else if (!analog_write(&board.analog,io,merged,board.half)) fail(DEVICE_FAULT_ANALOG,13);
+ } else if (io==0x3f || io==0x3d) board.data[32+io]=merged;
+ else if (io==OSCCAL) {
+  if ((merged&127)!=(previous&127)) fail(DEVICE_FAULT_UNIMPLEMENTED_IO,OSCCAL);
+ } else if (io==BODCR) {
+  if (value&mask&3) fail(DEVICE_FAULT_UNIMPLEMENTED_IO,BODCR);
+ } else if (io!=0x2e && value&mask) fail(DEVICE_FAULT_UNIMPLEMENTED_IO,io);
+ sources(); wake(); check_faults(); mirror();
+ return stalls;
+}
+void device_advance(uint32_t cycles) {
+ if (!board.initialized) { fail(DEVICE_FAULT_CONFIG,5); return; }
+ if (board.reset_requested) return;
+ uint64_t target=add(board.half,(uint64_t)cycles*2);
+ if (!cycles) { advance_to(board.base); return; }
+ while (board.half<target) {
+  if (board.fault) {
+   /* Preserve the CPU bridge's full-instruction accounting even when the
+    * peripheral model stopped at a fault before a pending clock transition. */
+   uint64_t end=at_half(target);
+   if (end>board.base) elapse(end);
+   break;
+  }
+  uint64_t deadline=at_half(target);
+  if (board.pending_divisor) deadline=minimum(deadline,at_half(board.clkpr_switch_half));
+  advance_to(deadline);
+  if (board.reset_requested) break;
+ }
+}
+uint64_t device_next_cpu_event(void) {
+ if (!board.initialized || board.fault || board.reset_requested) return 0;
+ uint64_t next=next_event();
+ if (next==UINT64_MAX) return UINT64_MAX;
+ uint64_t delta=next-board.base, period=2u*board.divisor;
+ return delta/period+(delta%period!=0);
+}
+uint8_t device_next_irq(void) {
+ uint16_t pending=device_pending_irqs();
+ for (uint8_t vector=1;vector<10;vector++) if (pending&(1u<<vector)) return vector;
+ return 0;
+}
+void device_ack_irq(uint8_t vector) {
+ if (vector==1 || vector==2) system_gpio_ack(&board.gpio,vector);
+ else if (vector==3) timer0_irq_ack(&board.timer,TIMER0_TOV0);
+ else if (vector==6) timer0_irq_ack(&board.timer,TIMER0_OCF0A);
+ else if (vector==7) timer0_irq_ack(&board.timer,TIMER0_OCF0B);
+ else if (vector==8) system_watchdog_ack(&board.watchdog);
+ else if (vector==5 || vector==9) {
+  if (!analog_ack(&board.analog,vector,board.half)) fail(DEVICE_FAULT_ANALOG,14);
+ }
+ sources(); mirror();
+}
+uint32_t device_control(uint8_t command, uint16_t z, uint16_t word) {
+ if (command==DEVICE_CONTROL_SLEEP) {
+  uint8_t result=system_sleep_enter(&board.sleep,board.gpio.mcucr,board.base);
+  if (result&(SYSTEM_SLEEP_RESERVED|SYSTEM_SLEEP_INVALID_TIME|SYSTEM_SLEEP_BUSY))
+   fail(DEVICE_FAULT_SLEEP,result);
+  clock_domains();
+  if (system_sleep_adc_start(&board.sleep))
+   analog_adc_noise_cancel_start(&board.analog.adc,board.half);
+  wake();
+ } else if (command==DEVICE_CONTROL_WDR) system_watchdog_wdr(&board.watchdog);
+ else if (command==DEVICE_CONTROL_SPM) {
+  int result=nvm_spm(&board.nvm,z,word,cpu_cycle(),board.ns);
+  if (result<0) fail(DEVICE_FAULT_NVM,board.nvm.faults);
+  check_faults(); mirror();
+  if (result==NVM_SPM_ERASE || result==NVM_SPM_WRITE) return 0;
+  if (!board.config[DEVICE_CFG_SPM_COMMAND_CYCLES]) fail(DEVICE_FAULT_SPM_TIMING,(uint32_t)result);
+  return board.config[DEVICE_CFG_SPM_COMMAND_CYCLES];
+ } else fail(DEVICE_FAULT_CONFIG,6);
+ check_faults(); mirror();
+ return 0;
+}
+uint8_t device_lpm(uint16_t z) {
+ uint8_t value=0xff;
+ int special=nvm_lpm(&board.nvm,z,&value,cpu_cycle(),board.ns);
+ if (special<0) fail(DEVICE_FAULT_NVM,board.nvm.faults);
+ else if (!special) {
+  if (z>=1024) fail(DEVICE_FAULT_NVM,0x10000u|z);
+  else value=board.flash[z];
+ }
+ mirror(); return value;
+}
+int device_halted(void) {
+ return board.fault || board.reset_requested || board.sleep.phase!=SYSTEM_SLEEP_RUNNING ||
+  nvm_cpu_halted(&board.nvm);
+}
+uint64_t device_wait_until(uint64_t deadline) {
+ uint64_t before=cpu_cycle();
+ if (deadline<board.base) { fail(DEVICE_FAULT_TIME,8); return 0; }
+ while (device_halted() && !board.fault && !board.reset_requested && board.base<deadline) {
+  uint64_t next=minimum(next_event(),deadline);
+  advance_to(next);
+ }
+ return cpu_cycle()-before;
+}
+static int queue_input(input_t event) {
+ if (!board.initialized || event.at<board.base) { fail(DEVICE_FAULT_TIME,9); return 0; }
+ if (board.input_count==INPUT_CAPACITY) { fail(DEVICE_FAULT_INPUT_OVERFLOW,INPUT_CAPACITY); return 0; }
+ if (board.input_count && event.at<board.inputs[(board.input_head+board.input_count-1)%INPUT_CAPACITY].at) {
+  fail(DEVICE_FAULT_TIME,10); return 0;
+ }
+ board.inputs[(board.input_head+board.input_count++)%INPUT_CAPACITY]=event;
+ if (event.at==board.base) { inputs_at_current_time(); wake(); mirror(); }
+ return 1;
+}
+int device_inject_digital(uint64_t at, uint8_t mask, uint8_t levels) {
+ input_t event={at,0,0,(uint8_t)(mask&63),(uint8_t)(levels&63),0};
+ return queue_input(event);
+}
+int device_inject_analog(uint64_t at, uint8_t pin, int32_t uv) {
+ if (pin>5) { fail(DEVICE_FAULT_CONFIG,7); return 0; }
+ input_t event={at,uv,1,0,0,pin};
+ return queue_input(event);
+}
+const device_pin_event_t *device_pin_events(uint32_t *count) {
+ uint32_t contiguous=PIN_CAPACITY-board.pin_head;
+ if (contiguous>board.pin_count) contiguous=board.pin_count;
+ *count=contiguous;
+ return contiguous ? &board.pin_events[board.pin_head] : NULL;
+}
+void device_consume_pin_events(uint32_t count) {
+ if (count>board.pin_count) count=board.pin_count;
+ board.pin_head=(uint16_t)((board.pin_head+count)%PIN_CAPACITY); board.pin_count-=(uint16_t)count;
+}
+void device_clear_pin_events(void) { board.pin_head=board.pin_count=0; board.dropped=0; }
+uint64_t device_dropped_pin_events(void) { return board.dropped; }
+uint64_t device_base_half(void) { return board.base; }
+uint64_t device_virtual_half(void) { return board.half; }
+uint32_t device_clkpr_divisor(void) { return board.divisor; }
+uint32_t device_oscillator_hz(void) { return board.config[DEVICE_CFG_OSCILLATOR_HZ]; }
+uint8_t device_reset_requested(void) { return board.reset_requested; }
+uint64_t device_flash_generation(void) { return board.nvm.flash_generation; }
+uint32_t device_take_dirty_pages(void) { return nvm_take_dirty_pages(&board.nvm); }
+uint32_t device_fault(void) { return board.fault; }
+uint32_t device_fault_detail(void) { return board.detail; }
