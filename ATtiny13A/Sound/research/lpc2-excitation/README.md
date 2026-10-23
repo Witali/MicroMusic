@@ -1,5 +1,9 @@
 # LPC2 predictor and encoded-excitation study
 
+The user subsequently restored a hard limit of **1024 Flash bytes including
+the decoder, plus 64 EEPROM bytes**. This larger PC study remains a quality
+reference; these containers do not satisfy that firmware budget.
+
 This study follows the user's removal of the 1 KB limit. The target is a more
 natural voice while retaining a measurable size/quality tradeoff. These are
 numerical PC decoders with complete data containers, not AVR firmware.

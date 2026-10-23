@@ -53,6 +53,15 @@ intelligibility guard rejects the candidate. Its smaller mean level error is
 not an all-component 5 dB guarantee. Keep it as a listening experiment; the
 separate floor-Q3 soft-prior study supplies the guarded selection.
 
+The raw-level audit reveals a separate improvement that the RMS/highpass
+spectral objective does not describe. Previous Q3 has raw mean +0.073995,
+the selected floor/EEPROM variant +0.074232, while this rounded candidate has
+mean -0.000227 (original -0.000059). Rounded raw RMS is 0.060649 versus
+previous Q3 0.110910; raw levels are not identical. These measurements come
+directly from the actual AVR samples without DC removal or normalization,
+in `raw-level-comparison.json`. Reduced bias is useful but does not override
+the failed STOI guard or establish subjective acceptance.
+
 `qualified/build.json` verifies all 66816 samples (22272 phrase plus twice
 that length of midpoint silence) in reference, WASM and unoptimized WASM
 engines, with no mismatches, missed samples or lost timer overflows. SRAM span

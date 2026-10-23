@@ -1,5 +1,9 @@
 # LPV1 bounded rate/distortion experiment
 
+The user subsequently restored a hard limit of **1024 Flash bytes including
+the decoder, plus 64 EEPROM bytes**. This larger PC study remains a quality
+reference; these containers do not satisfy that firmware budget.
+
 Nine adaptive encodes: original Vinni (22272 samples), the complete bell-plus-
 voice tail phrase (19328 samples), and the frozen English en_sense_a center
 excerpt (15360 samples). All are unchanged mono7500Hz references. Each reuses
