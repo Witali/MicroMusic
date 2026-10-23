@@ -11,6 +11,7 @@ const program=new Uint16Array(16384).fill(0xffff);
 new Uint8Array(program.buffer).set(readFileSync(join(build,'math.bin')));
 const cpu=new CPU(program,2048),status=address('math_status'),command=address('math_command');
 const a=address('math_a'),b=address('math_b'),result=address('math_result'),zero=address('math_zero');
+const value=address('math_value');
 function until(predicate){const end=cpu.cycles+10000;while(!predicate()){
   assert.ok(cpu.cycles<end,'Arithmetic mailbox timeout');avrInstruction(cpu);cpu.tick();
 }}
@@ -24,8 +25,21 @@ for(const rhs of [0,1,-1,32767,-32768,0x1234,-5678])for(let lhs=-32768;lhs<=3276
   assert.equal(cpu.data[zero],0,'GCC zero-register contract');
   const cycles=cpu.cycles-before;minCycles=Math.min(minCycles,cycles);maxCycles=Math.max(maxCycles,cycles);count++;
 }
+let shiftCases=0,seed=0x31415926;
+const edges=[-2147483648,2147483647,-1,0,1,4095,4096,-4096,-4097,8191,8192,-8192,-8193,
+  16383,16384,-16384,-16385,32767,32768,-32768,-32769,65535,65536,-65536,-65537];
+for(const shift of [13,14,15])for(let i=0;i<131072+edges.length;i++){
+  seed^=seed<<13;seed^=seed>>>17;seed^=seed<<5;
+  // Exhaust all sign-extended s16 values, plus
+  // independent full-width random operands. This catches byte boundaries.
+  const v=i>=131072?edges[i-131072]:i<65536?(i&0x8000?i|0xffff0000:i):seed;
+  cpu.dataView.setInt32(value,v,true);cpu.data[status]=1;cpu.data[command]=shift;
+  until(()=>cpu.data[status]===2);
+  assert.equal(cpu.dataView.getInt32(result,true),v>>shift,`shift ${v} >> ${shift}`);
+  assert.equal(cpu.data[zero],0,'GCC zero-register contract after shift');shiftCases++;
+}
 const report={mcu:'ATmega328P',simulator:'avr8js 0.21.1',compiler:'AVR GCC 7.3.0 -O3 -flto -fwrapv',
-  multiplyCases:count,exact:true,zeroRegisterRestored:true,minMailboxCycles:minCycles,maxMailboxCycles:maxCycles,
+  multiplyCases:count,shiftCases,exact:true,zeroRegisterRestored:true,minMailboxCycles:minCycles,maxMailboxCycles:maxCycles,
   includesInterrupts:false,physicalBoardTested:false};
 writeFileSync(join(build,'verification.json'),JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify(report,null,2));

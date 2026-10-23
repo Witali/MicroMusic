@@ -18,6 +18,9 @@ def apply(source: Path):
     lib = source / 'libspeex'
     mul = lib / 'avr_fastmul.h'
     mul.write_text((Path(__file__).resolve().parents[1] / 'src/avr_multiply.h').read_text())
+    path = lib / 'arch.h'
+    path.write_text(replace(path.read_text(), '#include "avr_fastmul.h"',
+                           '#include "avr_fastmul.h"\n#include "avr_fixed.h"'))
     path = lib / 'nb_celp.c'
     text = path.read_text()
     text = replace(text, '#define SUBMODE(x) st->submodes[st->submodeID]->x',
