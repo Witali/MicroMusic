@@ -124,12 +124,16 @@ int avr_device_inject_pins(uint64_t at,int mask,int levels){
  int accepted=device_inject_digital(at,mask,levels);
  if(device_reset_requested())full_interrupt();full_deadline();return accepted;
 }
-int avr_device_inject_analog(uint64_t at,int pin,int uv){return device_inject_analog(at,pin,uv);}
+int avr_device_inject_analog(uint64_t at,int pin,int uv){
+ int accepted=device_inject_analog(at,pin,uv);full_deadline();return accepted;
+}
 int avr_device_inject_pins_ps(uint64_t at,int mask,int levels){
  int accepted=device_inject_digital_ps(at,mask,levels);
  if(device_reset_requested())full_interrupt();full_deadline();return accepted;
 }
-int avr_device_inject_analog_ps(uint64_t at,int pin,int uv){return device_inject_analog_ps(at,pin,uv);}
+int avr_device_inject_analog_ps(uint64_t at,int pin,int uv){
+ int accepted=device_inject_analog_ps(at,pin,uv);full_deadline();return accepted;
+}
 int avr_device_inject_vcc_ps(uint64_t at,int uv){
  int accepted=device_inject_vcc_ps(at,uv);
  if(device_reset_requested())full_interrupt();full_deadline();return accepted;
