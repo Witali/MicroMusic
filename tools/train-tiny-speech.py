@@ -135,6 +135,7 @@ def main():
     parser.add_argument('--proposals', type=int, default=30000)
     parser.add_argument('--seed', type=int, default=23108)
     parser.add_argument('--weight', type=float, default=8.)
+    parser.add_argument('--objective', choices=('balanced', 'spectral'), default='balanced')
     parser.add_argument('--stoi-floor', type=float)
     parser.add_argument('--spectral-ceiling', type=float, default=.6)
     parser.add_argument('--max-peak', type=float, default=.95)
@@ -179,6 +180,7 @@ def main():
     if args.no_gain6:
         constraints['allow_gain6'] = False
     search = TinySearch(model, objective, words=args.words, seed=args.seed, stoi_weight=args.weight,
+                        objective_kind=args.objective,
                         stoi_floor=args.stoi_floor, spectral_ceiling=args.spectral_ceiling,
                         max_peak=args.max_peak, max_data_bytes=args.max_data_bytes,
                         dc_choices=(model.get('dc_block_shift', 0),), **constraints,
