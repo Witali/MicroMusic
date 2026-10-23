@@ -10,7 +10,7 @@ separate explicit ASM-enable define must both permit an optimized backend;
 otherwise use C. Hardware memory access stays independent of arithmetic.
 
 The latest implementation and measurements are described in README.md and
-`reports/nb-round3-*.json`. Earlier reports are stage baselines, not current
+`reports/nb-round4-*.json`. Earlier reports are stage baselines, not current
 binary measurements. Vendor and R4 files remain unmodified.
 
 ## Completed, measured
@@ -52,41 +52,63 @@ binary measurements. Vendor and R4 files remain unmodified.
 - Pure-value Q14 call declarations: fixture maximum 146,384 -> 146,072
   cycles, 104 B additional Flash and 4 B additional peak stack. Each LSP
   conversion saves 78 cycles; arithmetic and selectable C path unchanged.
-  All 1,058 fixtures and reset checks pass; full-series PWM gate pending.
+  All 1,058 fixtures and reset checks pass; final PWM gate below also passes.
 - Signed24 final LPC/innovation clamps: another 974 cycles off the fixture
   maximum (146,072 -> 145,098), 18 B less Flash, stack unchanged. Independent
   AVR tests cover 163,840 LPC samples (105,600 clipped, 68,671 wraps) and
   163,840 innovation samples across all 64 scales and signed-byte shapes.
-  The C reference branches are unchanged; full-series PWM gate pending.
+  The C reference branches are unchanged; final PWM gate below also passes.
 - Two-MUL signed8 pitch gain: fixture maximum 145,098 -> 143,106 cycles,
   Flash 8,770 -> 8,764 B, peak stack unchanged. Independent AVR mailbox checks
   983,040 outputs, all signed8 gains, every count 0..40, write/add and zero
   paths; all 4,096 actual pitch/gain code pairs also match upstream PCM.
-  The build validates the codebook range; full-series PWM gate pending.
+  The build validates the codebook range; final PWM gate below also passes.
 - Pitch write/add mode moved to SREG.T: another 504 cycles off the fixture
   maximum (143,106 -> 142,602), same Flash/global stack. Free r19 for input;
   preserve only r17/Y. All 1,966,080 independent outputs, counts 0..40 and
   accumulation flags 0/1/2/255 pass. GCC ISR SREG restoration is required;
-  final interrupt-enabled admission test for this series is still pending.
+  the final interrupt-enabled admission test below passes.
+- Round4 complete series: 9,100 corpus + 4,096 coverage + 58 reset frames
+  exact; corpus maximum 146,499 -> 142,690 cycles, weighted corpus mean -2.52%,
+  human-speech mean -2.54%. Decoder Flash 8,764 B (+80), stack 147 B (+4),
+  static SRAM 1,279 B unchanged. All 31 loaded PWM streams pass 128,000 extra
+  cycles/frame with zero underruns, minimum queue 23 and 478 B free SRAM.
+  The C firmware is byte-identical to its fully verified 13,196-frame baseline.
+  All 31 ordinary players also pass, minimum queue 73, maximum publication
+  gap 80,013 cycles; the final ordinary speech demo occupies 11,996 B Flash.
+  An 88-frame sample profile now excludes startup/reset and records 48.1%
+  LPC, 12.7% pitch products and 11.8% innovation; keep its sampled scope.
 
 ## Next candidates (unmeasured)
 
-1. **Ten-sample pitch staging.** Upstream pitch sources always have negative
+1. **Packed signed24 unscaled pitch.** The original gains are signed8*128;
+   all three unscaled products/sums fit signed24 for the pinned codebook:
+   maximum gain L1 norm is 147, so every prefix is bounded by
+   147*32768=4,816,896 (<2^23), and scaling by 128 also fits signed32.
+   A portable three-byte pitch buffer could save 40 B and eliminate per-product
+   scaling shifts; innovation would insert a zero low byte to form 2*pitch.
+   Compare packed-read/clamp overhead, prove the codebook L1 bound and retain
+   selectable C arithmetic before considering this profile change.
+   Allocate 120 uint8_t elements, not 40 three-byte structs: the scratch
+   allocator requires power-of-two alignment. Scratch offsets would become
+   0/20/40/160, total 180 B; portable byte pack/unpack must be endian-neutral.
+   Sanitization can move to innovation's per-sample read (unscaled limit
+   +/-2,048,000), avoiding a separate scan. Keep all pitch sources negative,
+   original bit order, first-tap tail zeroing and full C fallback verification.
+2. **C-backend compiler hot spots.** The C fallback currently misses the AVR
+   20-ms budget. Measure function-specific `-O3` on C IIR/pitch loops before
+   adding architecture-specific code; prefer the smallest setting that actually
+   improves speed without exceeding Flash/SRAM. Preserve default C selection.
+3. **Special Q14 for p1.** This polynomial coefficient remains a multiple of
+   64. A signed16 x signed24 core followed by a byte-aligned >>8 might use six
+   hardware multiplies instead of eight. Preserve the original floor, prove
+   the input truncation/range and compare added code size against speed.
+4. **Ten-sample pitch staging.** Upstream pitch sources always have negative
    offsets: the first segment stops before `j==pp`, the second before
    `j==pp+pitch`. Thus a completed innovation vector can be written before the
    next vector's pitch is computed. A 10-word pitch buffer could replace 40
    words, saving 120 B, but additional segment calls may cost cycles. Verify
    every short-pitch tail and compare speed before accepting.
-2. **Special Q14 for p1.** This polynomial coefficient remains a multiple of
-   64. A signed16 x signed24 core followed by a byte-aligned >>8 might use six
-   hardware multiplies instead of eight. Preserve the original floor, prove
-   the input truncation/range and compare added code size against speed.
-3. **Packed signed24 unscaled pitch.** The original gains are signed8*128;
-   all three unscaled products/sums fit signed24 for the pinned codebook.
-   A portable three-byte pitch buffer could save 40 B and eliminate per-product
-   scaling shifts; innovation would insert a zero low byte to form 2*pitch.
-   Compare packed-read/clamp overhead, prove the codebook L1 bound and retain
-   selectable C arithmetic before considering this profile change.
 
 No claim of a global speed optimum has been established. Do not mark the
 ongoing optimization goal complete while useful candidates remain untested.

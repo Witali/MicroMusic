@@ -25,6 +25,9 @@ def main():
     # PWM hashes must remain identical to the pre-optimization full player.
     old_players=[row for p in args.before_players for row in read(p)['streams']]
     old={r['input']['file']:r for r in old_players}
+    old_loads={r.get('extraCpuCyclesPerFrame',0) for r in old_players}
+    new_loads={r.get('extraCpuCyclesPerFrame',0) for r in players['streams']}
+    assert len(old_loads)==1 and old_loads==new_loads, 'Compare the same injected player CPU-load scenario'
     for row in players['streams']:
         previous=old[row['input']['file']]
         assert row['input']['sha256']==previous['input']['sha256']
@@ -34,6 +37,7 @@ def main():
             'simulator':'avr8js 0.21.1','physicalBoardTested':False,
             'streams':31,'frames':players['frames'],'samples':players['samples'],
             'exactS16AgainstUpstream':True,'pwmHashesUnchanged':True,'underruns':0,
+            'playerExtraCpuCyclesPerFrame':next(iter(new_loads)),
             'decoderFrameBudgetCycles':320000,'beforeMaxDecoderCycles':before,'afterMaxDecoderCycles':after,
             'decoderTimeReductionPercent':round((before-after)/before*100,3),
             'beforeMaxDecoderMs':before/16000,'afterMaxDecoderMs':after/16000,
