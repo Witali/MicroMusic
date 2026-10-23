@@ -1,0 +1,4751 @@
+{
+  "nodes": [
+    {
+      "id": 1,
+      "callFrame": {
+        "functionName": "(root)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 0,
+      "children": [
+        2
+      ]
+    },
+    {
+      "id": 2,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "88",
+        "url": "file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/scripts/profile-device.mjs",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 0,
+      "children": [
+        3,
+        6,
+        12
+      ]
+    },
+    {
+      "id": 3,
+      "callFrame": {
+        "functionName": "fn",
+        "scriptId": "13",
+        "url": "node:internal/util",
+        "lineNumber": 464,
+        "columnNumber": 13
+      },
+      "hitCount": 0,
+      "children": [
+        4
+      ]
+    },
+    {
+      "id": 4,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "13",
+        "url": "node:internal/util",
+        "lineNumber": 465,
+        "columnNumber": 23
+      },
+      "hitCount": 0,
+      "children": [
+        5
+      ]
+    },
+    {
+      "id": 5,
+      "callFrame": {
+        "functionName": "post",
+        "scriptId": "122",
+        "url": "node:inspector",
+        "lineNumber": 117,
+        "columnNumber": 6
+      },
+      "hitCount": 0,
+      "children": [
+        217
+      ]
+    },
+    {
+      "id": 217,
+      "callFrame": {
+        "functionName": "dispatch",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 142,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "callFrame": {
+        "functionName": "get",
+        "scriptId": "13",
+        "url": "node:internal/util",
+        "lineNumber": 635,
+        "columnNumber": 16
+      },
+      "hitCount": 0,
+      "children": [
+        7
+      ]
+    },
+    {
+      "id": 7,
+      "callFrame": {
+        "functionName": "requireBuiltin",
+        "scriptId": "6",
+        "url": "node:internal/bootstrap/realm",
+        "lineNumber": 421,
+        "columnNumber": 23
+      },
+      "hitCount": 0,
+      "children": [
+        8
+      ]
+    },
+    {
+      "id": 8,
+      "callFrame": {
+        "functionName": "compileForInternalLoader",
+        "scriptId": "6",
+        "url": "node:internal/bootstrap/realm",
+        "lineNumber": 384,
+        "columnNumber": 26
+      },
+      "hitCount": 0,
+      "children": [
+        9
+      ]
+    },
+    {
+      "id": 9,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "183",
+        "url": "node:perf_hooks",
+        "lineNumber": 0,
+        "columnNumber": 0
+      },
+      "hitCount": 0,
+      "children": [
+        10
+      ]
+    },
+    {
+      "id": 10,
+      "callFrame": {
+        "functionName": "requireBuiltin",
+        "scriptId": "6",
+        "url": "node:internal/bootstrap/realm",
+        "lineNumber": 421,
+        "columnNumber": 23
+      },
+      "hitCount": 0,
+      "children": [
+        11
+      ]
+    },
+    {
+      "id": 11,
+      "callFrame": {
+        "functionName": "compileForInternalLoader",
+        "scriptId": "6",
+        "url": "node:internal/bootstrap/realm",
+        "lineNumber": 384,
+        "columnNumber": 26
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 397,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "callFrame": {
+        "functionName": "capture",
+        "scriptId": "88",
+        "url": "file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/scripts/profile-device.mjs",
+        "lineNumber": 193,
+        "columnNumber": 16
+      },
+      "hitCount": 0,
+      "children": [
+        13
+      ]
+    },
+    {
+      "id": 13,
+      "callFrame": {
+        "functionName": "capturePhysical",
+        "scriptId": "165",
+        "url": "file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/attiny13a-runtime.js",
+        "lineNumber": 241,
+        "columnNumber": 17
+      },
+      "hitCount": 0,
+      "children": [
+        14
+      ]
+    },
+    {
+      "id": 14,
+      "callFrame": {
+        "functionName": "_execute",
+        "scriptId": "168",
+        "url": "file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/avr-transpiled-runtime.js",
+        "lineNumber": 77,
+        "columnNumber": 10
+      },
+      "hitCount": 0,
+      "children": [
+        15
+      ]
+    },
+    {
+      "id": 15,
+      "callFrame": {
+        "functionName": "_call",
+        "scriptId": "165",
+        "url": "file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/attiny13a-runtime.js",
+        "lineNumber": 30,
+        "columnNumber": 7
+      },
+      "hitCount": 0,
+      "children": [
+        16
+      ]
+    },
+    {
+      "id": 16,
+      "callFrame": {
+        "functionName": "_call",
+        "scriptId": "172",
+        "url": "file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/avr-runtime.js",
+        "lineNumber": 58,
+        "columnNumber": 7
+      },
+      "hitCount": 0,
+      "children": [
+        17
+      ]
+    },
+    {
+      "id": 17,
+      "callFrame": {
+        "functionName": "js-to-wasm:i:i",
+        "scriptId": "182",
+        "url": "wasm://wasm/micromusic.profile.cpu.kernel-clki-div1-capture-0010e322",
+        "lineNumber": 0,
+        "columnNumber": 212799
+      },
+      "hitCount": 0,
+      "children": [
+        18
+      ]
+    },
+    {
+      "id": 18,
+      "callFrame": {
+        "functionName": "cpu.capturePhysical",
+        "scriptId": "182",
+        "url": "wasm://wasm/micromusic.profile.cpu.kernel-clki-div1-capture-0010e322",
+        "lineNumber": 0,
+        "columnNumber": 212799
+      },
+      "hitCount": 0,
+      "children": [
+        19,
+        112
+      ]
+    },
+    {
+      "id": 19,
+      "callFrame": {
+        "functionName": "cpu.runUntil",
+        "scriptId": "182",
+        "url": "wasm://wasm/micromusic.profile.cpu.kernel-clki-div1-capture-0010e322",
+        "lineNumber": 0,
+        "columnNumber": 212662
+      },
+      "hitCount": 6,
+      "children": [
+        20,
+        44,
+        99,
+        191
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 6
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "callFrame": {
+        "functionName": "cpu.step",
+        "scriptId": "182",
+        "url": "wasm://wasm/micromusic.profile.cpu.kernel-clki-div1-capture-0010e322",
+        "lineNumber": 0,
+        "columnNumber": 212257
+      },
+      "hitCount": 4,
+      "children": [
+        21,
+        26,
+        28,
+        37,
+        198
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 4
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "callFrame": {
+        "functionName": "cpu.insn_0x0008_INC",
+        "scriptId": "182",
+        "url": "wasm://wasm/micromusic.profile.cpu.kernel-clki-div1-capture-0010e322",
+        "lineNumber": 0,
+        "columnNumber": 5504
+      },
+      "hitCount": 1,
+      "children": [
+        22,
+        51,
+        130
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "callFrame": {
+        "functionName": "native.avr.avr_device_phase_clock",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 29021
+      },
+      "hitCount": 5,
+      "children": [
+        23,
+        97
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 5
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "callFrame": {
+        "functionName": "native.device.advance_half_until_ps",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 67023
+      },
+      "hitCount": 7,
+      "children": [
+        24,
+        129,
+        207
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 7
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "callFrame": {
+        "functionName": "native.device.advance_to",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 55622
+      },
+      "hitCount": 5,
+      "children": [
+        25,
+        33,
+        60,
+        69,
+        71,
+        84,
+        104,
+        168,
+        177,
+        214
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 5
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "callFrame": {
+        "functionName": "native.device.clki_refill",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 64666
+      },
+      "hitCount": 2,
+      "children": [
+        209
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 209,
+      "callFrame": {
+        "functionName": "native.clki_input.attiny13a_clki_enqueue",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 82725
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "callFrame": {
+        "functionName": "native.device.pin_voltages",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 46971
+      },
+      "hitCount": 2,
+      "children": [
+        34
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 34,
+      "callFrame": {
+        "functionName": "native.analog.analog_input",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 43574
+      },
+      "hitCount": 2,
+      "children": [
+        35,
+        161
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 35,
+      "callFrame": {
+        "functionName": "native.analog.analog_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 43274
+      },
+      "hitCount": 3,
+      "children": [
+        36
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 3
+        }
+      ]
+    },
+    {
+      "id": 36,
+      "callFrame": {
+        "functionName": "native.analog_comparator.analog_comparator_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 45254
+      },
+      "hitCount": 6,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 6
+        }
+      ]
+    },
+    {
+      "id": 161,
+      "callFrame": {
+        "functionName": "native.analog_comparator.analog_comparator_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 45254
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 60,
+      "callFrame": {
+        "functionName": "native.device.service_end",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 66572
+      },
+      "hitCount": 2,
+      "children": [
+        61,
+        133,
+        135,
+        199,
+        216
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 61,
+      "callFrame": {
+        "functionName": "native.analog.analog_sources",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 44163
+      },
+      "hitCount": 0,
+      "children": [
+        62
+      ]
+    },
+    {
+      "id": 62,
+      "callFrame": {
+        "functionName": "native.analog.analog_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 43274
+      },
+      "hitCount": 5,
+      "children": [
+        197
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 5
+        }
+      ]
+    },
+    {
+      "id": 197,
+      "callFrame": {
+        "functionName": "native.analog_adc.analog_adc_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 44215
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 133,
+      "callFrame": {
+        "functionName": "native.analog.analog_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 43274
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 135,
+      "callFrame": {
+        "functionName": "native.device.clock_domains",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 50483
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 199,
+      "callFrame": {
+        "functionName": "native.device.mirror",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 47533
+      },
+      "hitCount": 5,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 5
+        }
+      ]
+    },
+    {
+      "id": 216,
+      "callFrame": {
+        "functionName": "native.device.check_faults",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 54729
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 69,
+      "callFrame": {
+        "functionName": "native.device.service_async",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 63069
+      },
+      "hitCount": 2,
+      "children": [
+        183
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 183,
+      "callFrame": {
+        "functionName": "native.nvm.nvm_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 71397
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 71,
+      "callFrame": {
+        "functionName": "native.system_gpio.system_gpio_external",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 74850
+      },
+      "hitCount": 1,
+      "children": [
+        72
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 72,
+      "callFrame": {
+        "functionName": "native.system_gpio.resolve",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 74323
+      },
+      "hitCount": 3,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 3
+        }
+      ]
+    },
+    {
+      "id": 84,
+      "callFrame": {
+        "functionName": "native.device.next_event",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 59499
+      },
+      "hitCount": 8,
+      "children": [
+        201
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 8
+        }
+      ]
+    },
+    {
+      "id": 201,
+      "callFrame": {
+        "functionName": "native.clki_input.attiny13a_clki_peek",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 83394
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 104,
+      "callFrame": {
+        "functionName": "native.device.service_clocks",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 65439
+      },
+      "hitCount": 3,
+      "children": [
+        105
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 3
+        }
+      ]
+    },
+    {
+      "id": 105,
+      "callFrame": {
+        "functionName": "native.analog.analog_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 43274
+      },
+      "hitCount": 0,
+      "children": [
+        106
+      ]
+    },
+    {
+      "id": 106,
+      "callFrame": {
+        "functionName": "native.analog_comparator.analog_comparator_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 45254
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 168,
+      "callFrame": {
+        "functionName": "native.device.wake",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 52966
+      },
+      "hitCount": 0,
+      "children": [
+        169
+      ]
+    },
+    {
+      "id": 169,
+      "callFrame": {
+        "functionName": "native.device.clock_domains",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 50483
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 177,
+      "callFrame": {
+        "functionName": "native.device.elapse",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 55189
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 214,
+      "callFrame": {
+        "functionName": "native.device.inputs_at_current_time",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 69897
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 129,
+      "callFrame": {
+        "functionName": "native.system_gpio.system_gpio_external",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 74850
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 207,
+      "callFrame": {
+        "functionName": "native.device.wake",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 52966
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 97,
+      "callFrame": {
+        "functionName": "native.avr.full_audio_collect",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 29699
+      },
+      "hitCount": 0,
+      "children": [
+        98,
+        164,
+        202
+      ]
+    },
+    {
+      "id": 98,
+      "callFrame": {
+        "functionName": "native.device.device_pin_events_ps",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 70931
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 164,
+      "callFrame": {
+        "functionName": "native.device.device_next_sample_ps",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 71189
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 202,
+      "callFrame": {
+        "functionName": "native.device.device_time_ps",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 71125
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 51,
+      "callFrame": {
+        "functionName": "native.avr.full_interrupt",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 26310
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 130,
+      "callFrame": {
+        "functionName": "native.avr.avr_device_phase_retire",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 30997
+      },
+      "hitCount": 0,
+      "children": [
+        131
+      ]
+    },
+    {
+      "id": 131,
+      "callFrame": {
+        "functionName": "native.avr.full_interrupt",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 26310
+      },
+      "hitCount": 1,
+      "children": [
+        132
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 132,
+      "callFrame": {
+        "functionName": "native.device.device_halted",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 68836
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "callFrame": {
+        "functionName": "cpu.insn_0x0006_EOR",
+        "scriptId": "182",
+        "url": "wasm://wasm/micromusic.profile.cpu.kernel-clki-div1-capture-0010e322",
+        "lineNumber": 0,
+        "columnNumber": 4879
+      },
+      "hitCount": 2,
+      "children": [
+        27,
+        94
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "callFrame": {
+        "functionName": "native.avr.avr_device_phase_clock",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 29021
+      },
+      "hitCount": 4,
+      "children": [
+        52,
+        82,
+        109,
+        136,
+        162
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 4
+        }
+      ]
+    },
+    {
+      "id": 52,
+      "callFrame": {
+        "functionName": "native.device.advance_half_until_ps",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 67023
+      },
+      "hitCount": 3,
+      "children": [
+        53
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 3
+        }
+      ]
+    },
+    {
+      "id": 53,
+      "callFrame": {
+        "functionName": "native.device.advance_to",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 55622
+      },
+      "hitCount": 8,
+      "children": [
+        54,
+        70,
+        75,
+        77,
+        79,
+        85,
+        93,
+        157,
+        160,
+        171,
+        173,
+        174,
+        185
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 8
+        }
+      ]
+    },
+    {
+      "id": 54,
+      "callFrame": {
+        "functionName": "native.device.service_end",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 66572
+      },
+      "hitCount": 2,
+      "children": [
+        55,
+        121,
+        126,
+        176
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 55,
+      "callFrame": {
+        "functionName": "native.device.wake",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 52966
+      },
+      "hitCount": 1,
+      "children": [
+        89
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 89,
+      "callFrame": {
+        "functionName": "native.device.clock_domains",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 50483
+      },
+      "hitCount": 3,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 3
+        }
+      ]
+    },
+    {
+      "id": 121,
+      "callFrame": {
+        "functionName": "native.analog.analog_sources",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 44163
+      },
+      "hitCount": 0,
+      "children": [
+        122,
+        170
+      ]
+    },
+    {
+      "id": 122,
+      "callFrame": {
+        "functionName": "native.analog_adc.analog_adc_sources",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 45089
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 170,
+      "callFrame": {
+        "functionName": "native.analog.analog_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 43274
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 126,
+      "callFrame": {
+        "functionName": "native.device.mirror",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 47533
+      },
+      "hitCount": 4,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 4
+        }
+      ]
+    },
+    {
+      "id": 176,
+      "callFrame": {
+        "functionName": "native.analog.analog_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 43274
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 70,
+      "callFrame": {
+        "functionName": "native.device.service_async",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 63069
+      },
+      "hitCount": 2,
+      "children": [
+        139
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 139,
+      "callFrame": {
+        "functionName": "native.nvm.nvm_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 71397
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 75,
+      "callFrame": {
+        "functionName": "native.analog.analog_input",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 43574
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 77,
+      "callFrame": {
+        "functionName": "native.device.capture_pins",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 51290
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 79,
+      "callFrame": {
+        "functionName": "native.device.pin_voltages",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 46971
+      },
+      "hitCount": 4,
+      "children": [
+        80,
+        123
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 4
+        }
+      ]
+    },
+    {
+      "id": 80,
+      "callFrame": {
+        "functionName": "native.analog_comparator.analog_comparator_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 45254
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 123,
+      "callFrame": {
+        "functionName": "native.analog.analog_input",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 43574
+      },
+      "hitCount": 7,
+      "children": [
+        124,
+        145,
+        150
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 7
+        }
+      ]
+    },
+    {
+      "id": 124,
+      "callFrame": {
+        "functionName": "native.analog_comparator.analog_comparator_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 45254
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 145,
+      "callFrame": {
+        "functionName": "native.analog_adc.analog_adc_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 44215
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 150,
+      "callFrame": {
+        "functionName": "native.analog.analog_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 43274
+      },
+      "hitCount": 3,
+      "children": [
+        151
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 3
+        }
+      ]
+    },
+    {
+      "id": 151,
+      "callFrame": {
+        "functionName": "native.analog_comparator.analog_comparator_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 45254
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 85,
+      "callFrame": {
+        "functionName": "native.device.elapse",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 55189
+      },
+      "hitCount": 2,
+      "children": [
+        86
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 86,
+      "callFrame": {
+        "functionName": "native.device.ratio",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 52304
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 93,
+      "callFrame": {
+        "functionName": "native.system_watchdog.system_watchdog_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 76026
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 157,
+      "callFrame": {
+        "functionName": "native.device.next_event",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 59499
+      },
+      "hitCount": 7,
+      "children": [
+        200
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 7
+        }
+      ]
+    },
+    {
+      "id": 200,
+      "callFrame": {
+        "functionName": "native.clki_input.attiny13a_clki_peek",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 83394
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 160,
+      "callFrame": {
+        "functionName": "native.device.wake",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 52966
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 171,
+      "callFrame": {
+        "functionName": "native.device.clki_refill",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 64666
+      },
+      "hitCount": 3,
+      "children": [
+        172
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 3
+        }
+      ]
+    },
+    {
+      "id": 172,
+      "callFrame": {
+        "functionName": "native.clki_input.attiny13a_clki_enqueue",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 82725
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 173,
+      "callFrame": {
+        "functionName": "native.device.ratio",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 52304
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 174,
+      "callFrame": {
+        "functionName": "native.system_gpio.system_gpio_external",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 74850
+      },
+      "hitCount": 1,
+      "children": [
+        175
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 175,
+      "callFrame": {
+        "functionName": "native.system_gpio.resolve",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 74323
+      },
+      "hitCount": 3,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 3
+        }
+      ]
+    },
+    {
+      "id": 185,
+      "callFrame": {
+        "functionName": "native.device.service_clocks",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 65439
+      },
+      "hitCount": 0,
+      "children": [
+        186,
+        192
+      ]
+    },
+    {
+      "id": 186,
+      "callFrame": {
+        "functionName": "native.analog.analog_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 43274
+      },
+      "hitCount": 1,
+      "children": [
+        187
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 187,
+      "callFrame": {
+        "functionName": "native.analog_comparator.analog_comparator_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 45254
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 192,
+      "callFrame": {
+        "functionName": "native.system_gpio.system_gpio_clock",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 74915
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 82,
+      "callFrame": {
+        "functionName": "native.device.advance_to",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 55622
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 109,
+      "callFrame": {
+        "functionName": "native.avr.full_audio_collect",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 29699
+      },
+      "hitCount": 1,
+      "children": [
+        110,
+        190,
+        203
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 110,
+      "callFrame": {
+        "functionName": "native.device.device_next_sample_ps",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 71189
+      },
+      "hitCount": 2,
+      "children": [
+        111
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 111,
+      "callFrame": {
+        "functionName": "native.device.ratio",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 52304
+      },
+      "hitCount": 4,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 4
+        }
+      ]
+    },
+    {
+      "id": 190,
+      "callFrame": {
+        "functionName": "native.device.ratio",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 52304
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 203,
+      "callFrame": {
+        "functionName": "native.device.device_pin_events_ps",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 70931
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 136,
+      "callFrame": {
+        "functionName": "native.device.device_next_sample_ps",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 71189
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 162,
+      "callFrame": {
+        "functionName": "native.device.device_time_ps",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 71125
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 94,
+      "callFrame": {
+        "functionName": "native.avr.avr_device_phase_retire",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 30997
+      },
+      "hitCount": 0,
+      "children": [
+        95
+      ]
+    },
+    {
+      "id": 95,
+      "callFrame": {
+        "functionName": "native.avr.full_interrupt",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 26310
+      },
+      "hitCount": 1,
+      "children": [
+        96
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 96,
+      "callFrame": {
+        "functionName": "native.device.device_halted",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 68836
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "callFrame": {
+        "functionName": "cpu.insn_0x000a_RJMP",
+        "scriptId": "182",
+        "url": "wasm://wasm/micromusic.profile.cpu.kernel-clki-div1-capture-0010e322",
+        "lineNumber": 0,
+        "columnNumber": 6136
+      },
+      "hitCount": 1,
+      "children": [
+        29,
+        213
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 29,
+      "callFrame": {
+        "functionName": "native.avr.avr_device_phase_clock",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 29021
+      },
+      "hitCount": 3,
+      "children": [
+        30,
+        90,
+        103,
+        196
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 3
+        }
+      ]
+    },
+    {
+      "id": 30,
+      "callFrame": {
+        "functionName": "native.device.advance_half_until_ps",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 67023
+      },
+      "hitCount": 3,
+      "children": [
+        31,
+        108,
+        208
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 3
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "callFrame": {
+        "functionName": "native.device.advance_to",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 55622
+      },
+      "hitCount": 14,
+      "children": [
+        32,
+        43,
+        46,
+        49,
+        56,
+        63,
+        66,
+        67,
+        113,
+        118,
+        119,
+        120,
+        167,
+        180,
+        181
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 14
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "callFrame": {
+        "functionName": "native.device.mirror",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 47533
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 43,
+      "callFrame": {
+        "functionName": "native.system_watchdog.system_watchdog_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 76026
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 46,
+      "callFrame": {
+        "functionName": "native.device.next_event",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 59499
+      },
+      "hitCount": 6,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 6
+        }
+      ]
+    },
+    {
+      "id": 49,
+      "callFrame": {
+        "functionName": "native.device.service_clocks",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 65439
+      },
+      "hitCount": 2,
+      "children": [
+        50,
+        142
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 50,
+      "callFrame": {
+        "functionName": "native.system_gpio.system_gpio_clock",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 74915
+      },
+      "hitCount": 3,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 3
+        }
+      ]
+    },
+    {
+      "id": 142,
+      "callFrame": {
+        "functionName": "native.timer0.timer0_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 76897
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 56,
+      "callFrame": {
+        "functionName": "native.device.pin_voltages",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 46971
+      },
+      "hitCount": 4,
+      "children": [
+        57,
+        140
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 4
+        }
+      ]
+    },
+    {
+      "id": 57,
+      "callFrame": {
+        "functionName": "native.analog.analog_input",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 43574
+      },
+      "hitCount": 6,
+      "children": [
+        58,
+        146,
+        184
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 6
+        }
+      ]
+    },
+    {
+      "id": 58,
+      "callFrame": {
+        "functionName": "native.analog.analog_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 43274
+      },
+      "hitCount": 8,
+      "children": [
+        68,
+        143
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 8
+        }
+      ]
+    },
+    {
+      "id": 68,
+      "callFrame": {
+        "functionName": "native.analog_adc.analog_adc_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 44215
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 143,
+      "callFrame": {
+        "functionName": "native.analog_comparator.analog_comparator_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 45254
+      },
+      "hitCount": 4,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 4
+        }
+      ]
+    },
+    {
+      "id": 146,
+      "callFrame": {
+        "functionName": "native.analog_adc.analog_adc_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 44215
+      },
+      "hitCount": 3,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 3
+        }
+      ]
+    },
+    {
+      "id": 184,
+      "callFrame": {
+        "functionName": "native.analog_comparator.analog_comparator_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 45254
+      },
+      "hitCount": 5,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 5
+        }
+      ]
+    },
+    {
+      "id": 140,
+      "callFrame": {
+        "functionName": "native.analog.analog_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 43274
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 63,
+      "callFrame": {
+        "functionName": "native.device.service_end",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 66572
+      },
+      "hitCount": 5,
+      "children": [
+        64,
+        81,
+        148,
+        210
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 5
+        }
+      ]
+    },
+    {
+      "id": 64,
+      "callFrame": {
+        "functionName": "native.device.wake",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 52966
+      },
+      "hitCount": 1,
+      "children": [
+        65
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 65,
+      "callFrame": {
+        "functionName": "native.device.clock_domains",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 50483
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 81,
+      "callFrame": {
+        "functionName": "native.device.mirror",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 47533
+      },
+      "hitCount": 3,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 3
+        }
+      ]
+    },
+    {
+      "id": 148,
+      "callFrame": {
+        "functionName": "native.analog.analog_sources",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 44163
+      },
+      "hitCount": 2,
+      "children": [
+        182,
+        211
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 182,
+      "callFrame": {
+        "functionName": "native.analog_adc.analog_adc_sources",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 45089
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 211,
+      "callFrame": {
+        "functionName": "native.analog.analog_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 43274
+      },
+      "hitCount": 0,
+      "children": [
+        212
+      ]
+    },
+    {
+      "id": 212,
+      "callFrame": {
+        "functionName": "native.analog_adc.analog_adc_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 44215
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 210,
+      "callFrame": {
+        "functionName": "native.analog_adc.analog_adc_sources",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 45089
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 66,
+      "callFrame": {
+        "functionName": "native.device.service_async",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 63069
+      },
+      "hitCount": 2,
+      "children": [
+        159,
+        179
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 159,
+      "callFrame": {
+        "functionName": "native.nvm.nvm_voltage_uncertain",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 71889
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 179,
+      "callFrame": {
+        "functionName": "native.system_watchdog.system_watchdog_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 76026
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 67,
+      "callFrame": {
+        "functionName": "native.device.inputs_at_current_time",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 69897
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 113,
+      "callFrame": {
+        "functionName": "native.system_gpio.system_gpio_external",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 74850
+      },
+      "hitCount": 0,
+      "children": [
+        114
+      ]
+    },
+    {
+      "id": 114,
+      "callFrame": {
+        "functionName": "native.system_gpio.resolve",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 74323
+      },
+      "hitCount": 3,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 3
+        }
+      ]
+    },
+    {
+      "id": 118,
+      "callFrame": {
+        "functionName": "native.device.elapse",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 55189
+      },
+      "hitCount": 1,
+      "children": [
+        158
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 158,
+      "callFrame": {
+        "functionName": "native.device.ratio",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 52304
+      },
+      "hitCount": 5,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 5
+        }
+      ]
+    },
+    {
+      "id": 119,
+      "callFrame": {
+        "functionName": "native.device.check_faults",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 54729
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 120,
+      "callFrame": {
+        "functionName": "native.device.clki_refill",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 64666
+      },
+      "hitCount": 2,
+      "children": [
+        152
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 152,
+      "callFrame": {
+        "functionName": "native.clki_input.attiny13a_clki_enqueue",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 82725
+      },
+      "hitCount": 7,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 7
+        }
+      ]
+    },
+    {
+      "id": 167,
+      "callFrame": {
+        "functionName": "native.device.wake",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 52966
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 180,
+      "callFrame": {
+        "functionName": "native.system_sleep.system_sleep_clock_edge",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 75418
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 181,
+      "callFrame": {
+        "functionName": "native.analog.analog_input",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 43574
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 108,
+      "callFrame": {
+        "functionName": "native.device.elapse",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 55189
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 208,
+      "callFrame": {
+        "functionName": "native.device.service_async",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 63069
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 90,
+      "callFrame": {
+        "functionName": "native.avr.full_audio_collect",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 29699
+      },
+      "hitCount": 2,
+      "children": [
+        91
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 91,
+      "callFrame": {
+        "functionName": "native.device.device_next_sample_ps",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 71189
+      },
+      "hitCount": 0,
+      "children": [
+        92
+      ]
+    },
+    {
+      "id": 92,
+      "callFrame": {
+        "functionName": "native.device.ratio",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 52304
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 103,
+      "callFrame": {
+        "functionName": "native.device.device_next_sample_ps",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 71189
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 196,
+      "callFrame": {
+        "functionName": "native.device.device_time_ps",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 71125
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 213,
+      "callFrame": {
+        "functionName": "native.avr.full_audio_collect",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 29699
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 37,
+      "callFrame": {
+        "functionName": "cpu.insn_0x0004_ADD",
+        "scriptId": "182",
+        "url": "wasm://wasm/micromusic.profile.cpu.kernel-clki-div1-capture-0010e322",
+        "lineNumber": 0,
+        "columnNumber": 4164
+      },
+      "hitCount": 1,
+      "children": [
+        38,
+        76,
+        195
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 38,
+      "callFrame": {
+        "functionName": "native.avr.avr_device_phase_clock",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 29021
+      },
+      "hitCount": 3,
+      "children": [
+        39,
+        102
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 3
+        }
+      ]
+    },
+    {
+      "id": 39,
+      "callFrame": {
+        "functionName": "native.device.advance_half_until_ps",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 67023
+      },
+      "hitCount": 0,
+      "children": [
+        40,
+        78
+      ]
+    },
+    {
+      "id": 40,
+      "callFrame": {
+        "functionName": "native.device.advance_to",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 55622
+      },
+      "hitCount": 11,
+      "children": [
+        41,
+        47,
+        59,
+        73,
+        83,
+        87,
+        134,
+        141,
+        144,
+        149,
+        153,
+        188,
+        204,
+        215
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 11
+        }
+      ]
+    },
+    {
+      "id": 41,
+      "callFrame": {
+        "functionName": "native.device.service_clocks",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 65439
+      },
+      "hitCount": 1,
+      "children": [
+        42,
+        154,
+        166
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 42,
+      "callFrame": {
+        "functionName": "native.system_gpio.system_gpio_clock",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 74915
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 154,
+      "callFrame": {
+        "functionName": "native.analog.analog_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 43274
+      },
+      "hitCount": 0,
+      "children": [
+        155
+      ]
+    },
+    {
+      "id": 155,
+      "callFrame": {
+        "functionName": "native.analog_adc.analog_adc_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 44215
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 166,
+      "callFrame": {
+        "functionName": "native.timer0.timer0_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 76897
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 47,
+      "callFrame": {
+        "functionName": "native.device.service_end",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 66572
+      },
+      "hitCount": 2,
+      "children": [
+        48,
+        107,
+        115,
+        127
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 48,
+      "callFrame": {
+        "functionName": "native.device.check_faults",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 54729
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 107,
+      "callFrame": {
+        "functionName": "native.device.wake",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 52966
+      },
+      "hitCount": 1,
+      "children": [
+        156
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 156,
+      "callFrame": {
+        "functionName": "native.device.clock_domains",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 50483
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 115,
+      "callFrame": {
+        "functionName": "native.analog.analog_sources",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 44163
+      },
+      "hitCount": 0,
+      "children": [
+        116,
+        193
+      ]
+    },
+    {
+      "id": 116,
+      "callFrame": {
+        "functionName": "native.analog_adc.analog_adc_sources",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 45089
+      },
+      "hitCount": 1,
+      "children": [
+        117
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 117,
+      "callFrame": {
+        "functionName": "native.analog_adc.analog_adc_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 44215
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 193,
+      "callFrame": {
+        "functionName": "native.analog.analog_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 43274
+      },
+      "hitCount": 0,
+      "children": [
+        194
+      ]
+    },
+    {
+      "id": 194,
+      "callFrame": {
+        "functionName": "native.analog_comparator.analog_comparator_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 45254
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 127,
+      "callFrame": {
+        "functionName": "native.device.mirror",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 47533
+      },
+      "hitCount": 4,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 4
+        }
+      ]
+    },
+    {
+      "id": 59,
+      "callFrame": {
+        "functionName": "native.analog.analog_input",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 43574
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 73,
+      "callFrame": {
+        "functionName": "native.device.pin_voltages",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 46971
+      },
+      "hitCount": 4,
+      "children": [
+        74,
+        125,
+        163
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 4
+        }
+      ]
+    },
+    {
+      "id": 74,
+      "callFrame": {
+        "functionName": "native.analog.analog_input",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 43574
+      },
+      "hitCount": 5,
+      "children": [
+        100,
+        128,
+        165
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 5
+        }
+      ]
+    },
+    {
+      "id": 100,
+      "callFrame": {
+        "functionName": "native.analog.analog_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 43274
+      },
+      "hitCount": 4,
+      "children": [
+        101
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 4
+        }
+      ]
+    },
+    {
+      "id": 101,
+      "callFrame": {
+        "functionName": "native.analog_comparator.analog_comparator_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 45254
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 128,
+      "callFrame": {
+        "functionName": "native.analog_comparator.analog_comparator_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 45254
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 165,
+      "callFrame": {
+        "functionName": "native.analog_adc.analog_adc_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 44215
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 125,
+      "callFrame": {
+        "functionName": "native.analog_comparator.analog_comparator_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 45254
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 163,
+      "callFrame": {
+        "functionName": "native.analog.analog_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 43274
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 83,
+      "callFrame": {
+        "functionName": "native.device.next_event",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 59499
+      },
+      "hitCount": 6,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 6
+        }
+      ]
+    },
+    {
+      "id": 87,
+      "callFrame": {
+        "functionName": "native.device.clki_refill",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 64666
+      },
+      "hitCount": 2,
+      "children": [
+        88
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 88,
+      "callFrame": {
+        "functionName": "native.clki_input.attiny13a_clki_enqueue",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 82725
+      },
+      "hitCount": 4,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 4
+        }
+      ]
+    },
+    {
+      "id": 134,
+      "callFrame": {
+        "functionName": "native.device.elapse",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 55189
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 141,
+      "callFrame": {
+        "functionName": "native.device.service_async",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 63069
+      },
+      "hitCount": 3,
+      "children": [
+        178
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 3
+        }
+      ]
+    },
+    {
+      "id": 178,
+      "callFrame": {
+        "functionName": "native.system_watchdog.system_watchdog_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 76026
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 144,
+      "callFrame": {
+        "functionName": "native.analog.analog_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 43274
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 149,
+      "callFrame": {
+        "functionName": "native.device.inputs_at_current_time",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 69897
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 153,
+      "callFrame": {
+        "functionName": "native.nvm.nvm_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 71397
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 188,
+      "callFrame": {
+        "functionName": "native.device.wake",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 52966
+      },
+      "hitCount": 0,
+      "children": [
+        189
+      ]
+    },
+    {
+      "id": 189,
+      "callFrame": {
+        "functionName": "native.device.clock_domains",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 50483
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 204,
+      "callFrame": {
+        "functionName": "native.timer0.timer0_advance",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 76897
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 215,
+      "callFrame": {
+        "functionName": "native.device.mirror",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 47533
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 78,
+      "callFrame": {
+        "functionName": "native.system_sleep.system_sleep_clock_edge",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 75418
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 102,
+      "callFrame": {
+        "functionName": "native.avr.full_audio_collect",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 29699
+      },
+      "hitCount": 1,
+      "children": [
+        137,
+        147,
+        206
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 137,
+      "callFrame": {
+        "functionName": "native.device.device_next_sample_ps",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 71189
+      },
+      "hitCount": 2,
+      "children": [
+        138
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 138,
+      "callFrame": {
+        "functionName": "native.device.ratio",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 52304
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 147,
+      "callFrame": {
+        "functionName": "native.device.ratio",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 52304
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 206,
+      "callFrame": {
+        "functionName": "native.device.device_time_ps",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 71125
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 76,
+      "callFrame": {
+        "functionName": "native.avr.full_audio_collect",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 29699
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 195,
+      "callFrame": {
+        "functionName": "native.avr.avr_device_phase_retire",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 30997
+      },
+      "hitCount": 1,
+      "children": [
+        205
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 205,
+      "callFrame": {
+        "functionName": "native.avr.full_interrupt",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 26310
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 198,
+      "callFrame": {
+        "functionName": "native.avr.avr_device_ready",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 34676
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 44,
+      "callFrame": {
+        "functionName": "native.avr.avr_device_ready",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 34676
+      },
+      "hitCount": 2,
+      "children": [
+        45
+      ],
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 45,
+      "callFrame": {
+        "functionName": "native.device.device_halted",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 68836
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 99,
+      "callFrame": {
+        "functionName": "cpu.insn_0x0008_INC",
+        "scriptId": "182",
+        "url": "wasm://wasm/micromusic.profile.cpu.kernel-clki-div1-capture-0010e322",
+        "lineNumber": 0,
+        "columnNumber": 5504
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 191,
+      "callFrame": {
+        "functionName": "native.avr.avr_device_time",
+        "scriptId": "178",
+        "url": "wasm://wasm/micromusic.profile.native-00073cce",
+        "lineNumber": 0,
+        "columnNumber": 34876
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 112,
+      "callFrame": {
+        "functionName": "cpu.step",
+        "scriptId": "182",
+        "url": "wasm://wasm/micromusic.profile.cpu.kernel-clki-div1-capture-0010e322",
+        "lineNumber": 0,
+        "columnNumber": 212257
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1,
+          "ticks": 1
+        }
+      ]
+    }
+  ],
+  "startTime": 810652584092,
+  "endTime": 810653027837,
+  "samples": [
+    5,
+    11,
+    25,
+    27,
+    32,
+    36,
+    22,
+    42,
+    43,
+    40,
+    45,
+    46,
+    31,
+    40,
+    48,
+    50,
+    51,
+    55,
+    19,
+    58,
+    59,
+    62,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    43,
+    72,
+    74,
+    75,
+    76,
+    74,
+    77,
+    62,
+    41,
+    78,
+    80,
+    81,
+    82,
+    83,
+    84,
+    34,
+    86,
+    88,
+    89,
+    31,
+    92,
+    93,
+    40,
+    49,
+    96,
+    53,
+    98,
+    24,
+    99,
+    73,
+    31,
+    101,
+    53,
+    49,
+    60,
+    23,
+    102,
+    103,
+    40,
+    106,
+    104,
+    107,
+    108,
+    111,
+    112,
+    114,
+    85,
+    117,
+    22,
+    118,
+    89,
+    114,
+    89,
+    46,
+    119,
+    120,
+    64,
+    52,
+    122,
+    19,
+    111,
+    83,
+    124,
+    125,
+    126,
+    127,
+    88,
+    123,
+    100,
+    79,
+    128,
+    74,
+    79,
+    53,
+    129,
+    132,
+    133,
+    134,
+    135,
+    95,
+    136,
+    138,
+    44,
+    139,
+    63,
+    140,
+    28,
+    141,
+    26,
+    142,
+    22,
+    74,
+    38,
+    104,
+    143,
+    144,
+    34,
+    123,
+    26,
+    145,
+    146,
+    29,
+    147,
+    31,
+    72,
+    148,
+    149,
+    19,
+    151,
+    101,
+    84,
+    152,
+    29,
+    153,
+    155,
+    128,
+    156,
+    157,
+    151,
+    158,
+    83,
+    116,
+    22,
+    57,
+    58,
+    66,
+    150,
+    33,
+    40,
+    40,
+    159,
+    68,
+    73,
+    123,
+    53,
+    92,
+    127,
+    160,
+    157,
+    161,
+    84,
+    162,
+    54,
+    141,
+    163,
+    164,
+    106,
+    47,
+    165,
+    62,
+    126,
+    87,
+    56,
+    31,
+    20,
+    156,
+    23,
+    36,
+    150,
+    25,
+    31,
+    157,
+    58,
+    123,
+    166,
+    70,
+    20,
+    27,
+    167,
+    126,
+    169,
+    134,
+    31,
+    170,
+    86,
+    83,
+    172,
+    40,
+    173,
+    175,
+    175,
+    127,
+    176,
+    109,
+    177,
+    137,
+    127,
+    157,
+    126,
+    178,
+    21,
+    46,
+    23,
+    179,
+    37,
+    152,
+    180,
+    157,
+    181,
+    63,
+    110,
+    175,
+    88,
+    100,
+    182,
+    63,
+    183,
+    60,
+    63,
+    184,
+    184,
+    44,
+    160,
+    58,
+    174,
+    187,
+    189,
+    190,
+    40,
+    31,
+    19,
+    58,
+    191,
+    32,
+    24,
+    35,
+    184,
+    192,
+    24,
+    171,
+    83,
+    184,
+    157,
+    110,
+    100,
+    83,
+    31,
+    194,
+    35,
+    195,
+    19,
+    158,
+    88,
+    53,
+    56,
+    122,
+    84,
+    31,
+    31,
+    79,
+    196,
+    63,
+    20,
+    62,
+    152,
+    56,
+    38,
+    81,
+    30,
+    152,
+    197,
+    120,
+    146,
+    33,
+    104,
+    30,
+    36,
+    192,
+    40,
+    79,
+    198,
+    198,
+    199,
+    131,
+    123,
+    200,
+    23,
+    27,
+    84,
+    84,
+    153,
+    146,
+    36,
+    24,
+    31,
+    53,
+    58,
+    150,
+    36,
+    201,
+    180,
+    24,
+    65,
+    27,
+    81,
+    52,
+    202,
+    142,
+    62,
+    77,
+    186,
+    190,
+    72,
+    123,
+    203,
+    111,
+    23,
+    56,
+    171,
+    111,
+    143,
+    30,
+    125,
+    57,
+    199,
+    53,
+    199,
+    123,
+    23,
+    46,
+    204,
+    90,
+    36,
+    182,
+    57,
+    46,
+    87,
+    46,
+    205,
+    206,
+    84,
+    31,
+    158,
+    69,
+    152,
+    40,
+    137,
+    74,
+    207,
+    208,
+    22,
+    57,
+    209,
+    84,
+    90,
+    50,
+    199,
+    100,
+    143,
+    141,
+    143,
+    35,
+    199,
+    50,
+    157,
+    58,
+    171,
+    20,
+    29,
+    114,
+    184,
+    38,
+    23,
+    158,
+    210,
+    212,
+    73,
+    213,
+    214,
+    31,
+    172,
+    85,
+    57,
+    58,
+    54,
+    71,
+    40,
+    19,
+    215,
+    53,
+    57,
+    52,
+    152,
+    47,
+    148,
+    152,
+    73,
+    158,
+    216,
+    217
+  ],
+  "timeDeltas": [
+    18434,
+    931,
+    998,
+    998,
+    1005,
+    1003,
+    1025,
+    1006,
+    1004,
+    1024,
+    1023,
+    1238,
+    917,
+    1023,
+    1038,
+    993,
+    1004,
+    1024,
+    1024,
+    1024,
+    1024,
+    1024,
+    1024,
+    1023,
+    1042,
+    1035,
+    1096,
+    982,
+    1000,
+    1011,
+    1001,
+    1000,
+    1006,
+    1004,
+    1017,
+    1002,
+    1007,
+    1004,
+    1001,
+    1004,
+    1099,
+    1034,
+    981,
+    997,
+    1015,
+    996,
+    1015,
+    1000,
+    1000,
+    1004,
+    1007,
+    1008,
+    1024,
+    1033,
+    1075,
+    990,
+    1037,
+    990,
+    990,
+    1017,
+    992,
+    1003,
+    1007,
+    1003,
+    1008,
+    1004,
+    1016,
+    999,
+    1095,
+    997,
+    1007,
+    1040,
+    993,
+    991,
+    1038,
+    994,
+    1012,
+    1000,
+    1003,
+    1025,
+    1024,
+    1034,
+    1059,
+    1008,
+    1002,
+    1002,
+    1081,
+    962,
+    1003,
+    999,
+    1003,
+    1006,
+    1003,
+    1006,
+    1004,
+    1016,
+    1096,
+    1003,
+    1002,
+    1004,
+    1005,
+    1211,
+    814,
+    1007,
+    993,
+    1015,
+    1004,
+    1005,
+    998,
+    1019,
+    1043,
+    1031,
+    997,
+    1003,
+    1015,
+    996,
+    1208,
+    1070,
+    1040,
+    1006,
+    1016,
+    1033,
+    1003,
+    1023,
+    1067,
+    990,
+    1014,
+    1002,
+    1003,
+    1002,
+    1007,
+    1037,
+    991,
+    1032,
+    969,
+    1002,
+    1018,
+    1004,
+    1090,
+    996,
+    1006,
+    1004,
+    1007,
+    1004,
+    1007,
+    1005,
+    1045,
+    997,
+    981,
+    1001,
+    1007,
+    1022,
+    1058,
+    1001,
+    1001,
+    1003,
+    1031,
+    982,
+    1006,
+    1003,
+    1007,
+    1034,
+    1126,
+    992,
+    1069,
+    1004,
+    1082,
+    1001,
+    1011,
+    996,
+    1006,
+    1012,
+    1000,
+    1003,
+    1007,
+    1004,
+    1219,
+    827,
+    977,
+    1022,
+    1042,
+    1353,
+    1005,
+    1005,
+    1004,
+    1007,
+    1014,
+    1003,
+    1000,
+    1006,
+    1004,
+    1055,
+    967,
+    1010,
+    1081,
+    1009,
+    1007,
+    1000,
+    1002,
+    1005,
+    1005,
+    1005,
+    1007,
+    1004,
+    1007,
+    1004,
+    1228,
+    798,
+    1072,
+    990,
+    1004,
+    1004,
+    1002,
+    1006,
+    1005,
+    1005,
+    1018,
+    1014,
+    1034,
+    983,
+    1001,
+    1090,
+    1103,
+    1034,
+    1076,
+    1013,
+    1005,
+    1152,
+    913,
+    1002,
+    1010,
+    1005,
+    996,
+    1006,
+    1004,
+    1033,
+    1162,
+    927,
+    1446,
+    908,
+    999,
+    1004,
+    1006,
+    1004,
+    1172,
+    1004,
+    1381,
+    1002,
+    1000,
+    1013,
+    1118,
+    1021,
+    977,
+    1004,
+    1009,
+    999,
+    1010,
+    1002,
+    1001,
+    1004,
+    1007,
+    1004,
+    1007,
+    1007,
+    1109,
+    984,
+    1064,
+    958,
+    1004,
+    1005,
+    1014,
+    1004,
+    1010,
+    1007,
+    1005,
+    1004,
+    1019,
+    1008,
+    1071,
+    1022,
+    978,
+    1051,
+    972,
+    997,
+    1002,
+    1004,
+    1016,
+    1000,
+    1002,
+    1004,
+    1006,
+    1011,
+    1098,
+    1000,
+    1039,
+    966,
+    1040,
+    977,
+    1002,
+    1004,
+    1006,
+    1006,
+    1006,
+    1004,
+    1007,
+    1015,
+    1084,
+    1000,
+    1002,
+    1019,
+    993,
+    1031,
+    993,
+    995,
+    1007,
+    1004,
+    1016,
+    1001,
+    1002,
+    1018,
+    1081,
+    985,
+    1032,
+    1183,
+    1016,
+    989,
+    1057,
+    963,
+    1022,
+    1024,
+    994,
+    1011,
+    999,
+    1011,
+    1092,
+    1001,
+    1006,
+    1002,
+    1016,
+    990,
+    1007,
+    1460,
+    1023,
+    1027,
+    1017,
+    1033,
+    1028,
+    1097,
+    1002,
+    1007,
+    999,
+    1005,
+    1003,
+    1009,
+    1003,
+    1006,
+    1040,
+    983,
+    997,
+    1005,
+    1004,
+    1088,
+    998,
+    1012,
+    996,
+    1006,
+    1013,
+    1016,
+    985,
+    1006,
+    1004,
+    1034,
+    986,
+    1000,
+    1003,
+    1100,
+    997,
+    1009,
+    996,
+    1006,
+    1004,
+    1006,
+    1018,
+    994,
+    1003,
+    1006,
+    1057,
+    977,
+    988,
+    1093,
+    994,
+    1006,
+    1004,
+    1006,
+    1005,
+    1005,
+    1015,
+    1017,
+    994,
+    1002,
+    1008,
+    1049,
+    970,
+    1049,
+    1002,
+    1008,
+    1005,
+    1003,
+    999,
+    1005,
+    1004,
+    1006,
+    1020,
+    992,
+    1004,
+    1006,
+    1054,
+    1399
+  ]
+}

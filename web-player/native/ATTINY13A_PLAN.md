@@ -137,6 +137,18 @@ the compatible full-device mode. Source-edge/scheduler work is the next
 profiling target; exclusive subsystem timings and the default-engine gate
 remain open. These measurements preserve the implemented phase semantics.
 
+Post-CLK tracing checkpoint: the
+[current runtime profile/call trace](../reports/runtime-profile-20261023.md)
+retains40 profiles/12566 attributed samples and five source-entry counter traces.
+Real firmware spends10–13% of leaf samples in `next_event`,10–13% in integer
+time conversion and roughly15% in generated CPU bodies/drivers. At20MHz CLKI,
+25ms produces6000000 analog-input updates and13–14million ADC-advance entries;
+analog function bodies account for25–35% of sampled leaves. All diagnostic
+cases match production PCM and complete public/memory observations. Prioritize
+changed-pin propagation, same-time analog coalescing, deadline conversion and
+dirty-register publication. These are measured candidates; no speedup or exact
+exclusive subsystem time is claimed from sampling alone.
+
 ## Execution and verification
 
 Prioritize these stages while developing independent peripheral fixes in parallel.
