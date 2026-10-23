@@ -148,21 +148,27 @@ binary measurements. Vendor and R4 files remain unmodified.
   en_letter_a C player now passes with interrupts, zero underruns, minimum
   queue 55 and 514 B free SRAM. Full-corpus admission is still pending.
 
+- Portable generic C Q14 word extraction: preserve upstream's signed16
+  high-word cast and extract bits 14..29 from both b and the bounded low
+  product, avoiding both wide shift loops. This is exact for all signed16 a
+  and signed32 b, including ignored top input bits. Independently verified
+  917,504 C Q14 cases alongside the two ASM entries. Fixture maximum
+  283,935 -> 271,191 cycles, Flash 9,594 -> 9,684 B; RAM/stack unchanged.
+  The fixed override now follows the optional fastmul include on every CPU,
+  so the exported C library uses it without an AVR-specific enable flag.
+  All 13,196 C corpus/pitch frames, 58 reset/envelope frames and both native
+  exported archives (9,100 frames each) pass. The three C changes reduce
+  weighted corpus mean by 13.73%, corpus maximum 315,375 -> 272,281 cycles.
+  ASM hash is unchanged (d884b63633f7171de18399ec6ae51bf130e7bc7daf2315e4dab5ecfb7edeecf5).
+  The C 31-stream / 10% CPU reserve admission test is running.
+
 ## Next candidates (unmeasured)
 
-1. **Portable C fixed-point narrowing.** Generic signed32 shifts dominate C
-   fallback costs. A Q14 low term (signed16*unsigned14)>>14 always fits signed16;
-   extracting its 16-bit result with unsigned left alignment may avoid AVR's
-   long arithmetic-shift loops without handwritten ASM. Preserve upstream's
-   signed16 high-word cast and all rounding, and verify independently.
-   Innovation also permits signed8*scale decomposition at bit 12, followed by
-   a byte-aligned left shift and one signed right shift for *128. Its bounds
-   must be explicit; do not replace the generic unrestricted Q14 semantics.
-2. **Special Q14 for p1.** This polynomial coefficient remains a multiple of
+1. **Special Q14 for p1.** This polynomial coefficient remains a multiple of
    64. A signed16 x signed24 core followed by a byte-aligned >>8 might use six
    hardware multiplies instead of eight. Preserve the original floor, prove
    the input truncation/range and compare added code size against speed.
-3. **Ten-sample pitch staging.** Upstream pitch sources always have negative
+2. **Ten-sample pitch staging.** Upstream pitch sources always have negative
    offsets: the first segment stops before `j==pp`, the second before
    `j==pp+pitch`. Thus a completed innovation vector can be written before the
    next vector's pitch is computed. A 10-word pitch buffer could replace 40

@@ -40,7 +40,7 @@ for(const commandValue of [13,14,15,114,115])for(let i=0;i<131072+edges.length;i
   assert.equal(cpu.dataView.getInt32(result,true),expected,`shift ${v} >> ${shift}, output ${commandValue>100?16:32} bits`);
   assert.equal(cpu.data[zero],0,'GCC zero-register contract after shift');shiftCases++;
 }
-let q14Cases=0,q14BoundedCases=0;
+let q14Cases=0,q14BoundedCases=0,q14CCases=0;
 function q14(lhs,rhs){
   cpu.dataView.setInt16(a,lhs,true);cpu.dataView.setInt32(value,rhs,true);
   cpu.data[status]=1;cpu.data[command]=100;until(()=>cpu.data[status]===2);
@@ -52,6 +52,10 @@ function q14(lhs,rhs){
   cpu.data[status]=1;cpu.data[command]=101;until(()=>cpu.data[status]===2);
   assert.equal(cpu.dataView.getInt32(result,true),expected,'Bounded signed30 Q14');
   assert.equal(cpu.data[zero],0,'GCC zero register after bounded Q14');q14BoundedCases++;
+  cpu.dataView.setInt32(value,rhs,true);
+  cpu.data[status]=1;cpu.data[command]=102;until(()=>cpu.data[status]===2);
+  assert.equal(cpu.dataView.getInt32(result,true),expected,'Portable C generic Q14');
+  assert.equal(cpu.data[zero],0,'GCC zero register after C Q14');q14CCases++;
 }
 for(const rhs of [0,1,-1,16383,16384,536870911,536870912,1073741823,-2147483648,2147483647,0x12345678,-0x12345678])
   for(let lhs=-32768;lhs<=32767;lhs++)q14(lhs,rhs);
@@ -60,7 +64,7 @@ for(let i=0;i<131072;i++){
   seed^=seed<<13;seed^=seed>>>17;seed^=seed<<5;q14(lhs,seed);
 }
 const report={mcu:'ATmega328P',simulator:'avr8js 0.21.1',compiler:'AVR GCC 7.3.0 -O3 -flto -fwrapv',
-  multiplyCases:count,shiftCases,q14Cases,q14BoundedCases,exact:true,zeroRegisterRestored:true,minMailboxCycles:minCycles,maxMailboxCycles:maxCycles,
+  multiplyCases:count,shiftCases,q14Cases,q14BoundedCases,q14CCases,exact:true,zeroRegisterRestored:true,minMailboxCycles:minCycles,maxMailboxCycles:maxCycles,
   includesInterrupts:false,physicalBoardTested:false};
 writeFileSync(join(build,'verification.json'),JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify(report,null,2));

@@ -28,5 +28,9 @@ extern SPEEX_NB3_CONST int32_t speex_avr_mul16_32_q14(int16_t,int32_t);
 #define MULT16_32_Q14(a,b) speex_avr_mul16_32_q14((int16_t)(a),(int32_t)(b))
 #define MULT16_32_Q15(a,b) ADD32(MULT16_16((a),speex_avr_asr15_word(b)),speex_avr_asr15(MULT16_16((a),((b)&0x7fff))))
 #define MULT16_32_P15(a,b) ADD32(MULT16_16((a),speex_avr_asr15_word(b)),speex_avr_asr15(ADD32(16384,MULT16_16((a),((b)&0x7fff)))))
+#else
+#include "nb3_c_math.h"
+#undef MULT16_32_Q14
+#define MULT16_32_Q14(a,b) speex_nb3_mul16_32_q14_c((int16_t)(a),(int32_t)(b))
 #endif
 #endif

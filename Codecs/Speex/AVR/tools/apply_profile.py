@@ -30,8 +30,11 @@ def apply(source: Path):
     mul = lib / 'avr_fastmul.h'
     mul.write_text((Path(__file__).resolve().parents[1] / 'src/avr_multiply.h').read_text())
     path = lib / 'arch.h'
-    path.write_text(replace(path.read_text(), '#include "avr_fastmul.h"',
-                           '#include "avr_fastmul.h"\n#include "avr_fixed.h"'))
+    # Fixed-point C optimizations also apply outside AVR and do not require
+    # the optional hardware-multiply flag. Keep the override after fastmul.
+    path.write_text(replace(path.read_text(),
+                           '#include "avr_fastmul.h"\n#endif',
+                           '#include "avr_fastmul.h"\n#endif\n#include "avr_fixed.h"'))
     path.write_text(replace(path.read_text(), '#include "fixed_generic.h"',
                            '#include "fixed_generic.h"\n#include "speex_platform.h"'))
     path = lib / 'nb_celp.c'
