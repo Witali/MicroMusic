@@ -12,21 +12,28 @@ enum {
  DEVICE_CFG_BANDGAP_STARTUP=10, DEVICE_CFG_COMPARATOR_INITIAL=11,
  DEVICE_CFG_WAKE_STARTUP_BASE_HALF=12, DEVICE_CFG_SPM_COMMAND_CYCLES=13,
  DEVICE_CFG_FLASH_MAXIMUM=14, DEVICE_CFG_BOD_RECOVERY_NS=15,
- DEVICE_CFG_FACTORY_OSCCAL96=16, DEVICE_CFG_FUSE_STARTUP_PROFILE=17
+ DEVICE_CFG_FACTORY_OSCCAL96=16, DEVICE_CFG_FUSE_STARTUP_PROFILE=17,
+ DEVICE_CFG_NVM_CLOCK_PROFILE=18, DEVICE_CFG_NVM_CALIBRATION_REFERENCE_HZ=19
 };
+enum { DEVICE_NVM_CLOCK_UNSPECIFIED=0, DEVICE_NVM_CLOCK_FIXED_NS=1 };
+#define DEVICE_PS_PER_SECOND UINT64_C(1000000000000)
 enum { DEVICE_CONTROL_SLEEP=1, DEVICE_CONTROL_SPM=2, DEVICE_CONTROL_WDR=3 };
 enum {
  DEVICE_FAULT_CONFIG=1, DEVICE_FAULT_TIME=2, DEVICE_FAULT_TIMER=3,
  DEVICE_FAULT_ANALOG=4, DEVICE_FAULT_NVM=5, DEVICE_FAULT_WATCHDOG=6,
  DEVICE_FAULT_SLEEP=7, DEVICE_FAULT_INPUT_OVERFLOW=8,
  DEVICE_FAULT_OUTPUT_OVERFLOW=9, DEVICE_FAULT_SPM_TIMING=10,
- DEVICE_FAULT_CLKPR=11, DEVICE_FAULT_UNIMPLEMENTED_IO=12
+ DEVICE_FAULT_CLKPR=11, DEVICE_FAULT_UNIMPLEMENTED_IO=12,
+ DEVICE_FAULT_CLOCK_CONTRACT=13, DEVICE_FAULT_OSCCAL=14,
+ DEVICE_FAULT_NVM_CLOCK_PROFILE=15
 };
 typedef struct {
- uint64_t base_half;
+ union { uint64_t base_half; uint64_t time_ps; };
  uint8_t levels, driven, pullups, floating, contention;
  uint8_t reserved[3];
 } device_pin_event_t;
+/* Same wire layout; select the accessor to select the time contract. */
+typedef device_pin_event_t device_pin_event_ps_t;
 
 /* Configure BEFORE init. Defaults: 9.6MHz oscillator, nominal128kHz watchdog,
  * 5V supply/1.1V bandgap, fuses7a/ff, lockff, ADC first sample27 half ADC
@@ -36,6 +43,13 @@ typedef struct {
  * factory OSCCAL96=0 (explicit fixture byte, not a universal chip value),
  * fuse startup profile0 (zero-delay digital fixture; set1 for fuse timing). */
 int device_configure(uint32_t key, uint32_t value);
+/* Pre-init, instance-specific CAL[0..127] -> internal RC Hz table. Zero means
+ * unknown. Calling this opts into fixed1ps time. A factory entry is required;
+ * for an internal RC source it must match configured oscillatorHz. No curve is
+ * interpolated. clear restores the legacy fixed-frequency timing contract. */
+int device_configure_osccal_hz(uint32_t cal, uint32_t hz);
+void device_clear_osccal_hz(void);
+uint8_t device_physical_mode(void);
 int device_init(uint8_t data[160], uint8_t flash[1024], uint8_t eeprom[64]);
 void device_reset(uint8_t reset_sources);
 uint8_t device_read(uint8_t io);
@@ -51,6 +65,19 @@ void device_advance_half(uint64_t cpu_half_cycles);
 uint64_t device_next_cpu_event(void);
 uint64_t device_base_half(void);
 uint64_t device_virtual_half(void);
+/* Fixed1ps APIs require the explicitly configured OSCCAL table. Legacy timed
+ * APIs (including pin getters) fail CLOCK_CONTRACT in this mode, preserving
+ * their original initial-half-oscillator-period meaning. CPU-cycle APIs,
+ * GPIO/analog register APIs and ring consume remain common to both modes. */
+uint64_t device_time_ps(void);
+uint64_t device_wait_until_ps(uint64_t deadline_ps);
+uint64_t device_startup_deadline_ps(void);
+uint64_t device_cpu_half_deadline_ps(uint64_t cpu_half_cycles);
+/* Rounded-UP relative CPU half-cycle budget to a physical deadline. The
+ * caller must recompute after clock writes; an instruction may straddle it. */
+uint64_t device_cpu_halves_until_ps(uint64_t deadline_ps);
+/* start+floor(frame*1e12/rate), independent of oscillator and CLKPR. */
+uint64_t device_next_sample_ps(uint64_t start_ps,uint64_t frame,uint32_t rate);
 /* Actual waveform divisor. A protected CLKPR request takes one old period
  * followed by one new period to establish its two transition edges (the
  * deterministic T1+T2 lower bound in DS40002307A6.3.1). */
@@ -94,7 +121,11 @@ uint32_t device_fault_detail(void);
  * independent CLKPR. Equal-time inputs apply AFTER device sampling. */
 int device_inject_digital(uint64_t base_half, uint8_t driven_mask, uint8_t levels);
 int device_inject_analog(uint64_t base_half, uint8_t pb_pin, int32_t microvolts);
+int device_inject_digital_ps(uint64_t time_ps, uint8_t driven_mask, uint8_t levels);
+int device_inject_analog_ps(uint64_t time_ps, uint8_t pb_pin, int32_t microvolts);
 const device_pin_event_t *device_pin_events(uint32_t *count);
+const device_pin_event_ps_t *device_pin_events_ps(uint32_t *count);
+const device_pin_event_ps_t *device_pin_state_ps(void);
 void device_consume_pin_events(uint32_t count);
 uint64_t device_dropped_pin_events(void);
 void device_clear_pin_events(void);

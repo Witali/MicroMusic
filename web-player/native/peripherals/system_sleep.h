@@ -47,6 +47,11 @@ uint16_t system_sleep_wake_mask(uint8_t mode, int int0_level_sense);
 uint8_t system_sleep_wake(system_sleep_t *sleep, uint16_t asserted,
                           uint16_t enabled, int int0_level_sense,
                           system_sleep_timing_t timing, uint64_t now);
+/* Physical clock schedulers can round the entire four-cycle hold once,
+ * without rounding an individual CPU period and then multiplying it. */
+uint8_t system_sleep_wake_exact(system_sleep_t *sleep,uint16_t asserted,
+ uint16_t enabled,int int0_level_sense,uint64_t startup_ticks,
+ uint64_t extra_wake_ticks,uint64_t now);
 uint8_t system_sleep_advance(system_sleep_t *sleep, uint64_t now);
 uint64_t system_sleep_next_event(const system_sleep_t *sleep);
 /* Availability of clock domains. The owning peripheral also applies its enable

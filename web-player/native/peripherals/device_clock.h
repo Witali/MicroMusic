@@ -12,6 +12,15 @@ static inline int device_clock_ratio(uint64_t a,uint64_t b,uint64_t carry,
   uint64_t n=a*b+carry;
   *quotient=n/divisor; *remainder=n%divisor; return 1;
  }
+ /* Long sample/frame counters commonly reduce to a small remainder. Avoid
+  * wide division when quotient/remainder decomposition fits native64 bits. */
+ uint64_t whole=a/divisor,tail=a%divisor;
+ if (tail<=(UINT64_MAX-carry)/b) {
+  if (whole>UINT64_MAX/b) return 0;
+  uint64_t n=tail*b+carry,q=whole*b,extra=n/divisor;
+  if (extra>UINT64_MAX-q) return 0;
+  *quotient=q+extra; *remainder=n%divisor; return 1;
+ }
  uint64_t a0=(uint32_t)a,a1=a>>32,b0=(uint32_t)b,b1=b>>32;
  uint64_t p=a0*b0,t=a1*b0+(p>>32),middle=(uint32_t)t;
  uint64_t high=a1*b1+(t>>32);

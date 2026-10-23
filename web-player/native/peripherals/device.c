@@ -5,6 +5,7 @@
 #include "system_watchdog.h"
 #include "analog.h"
 #include "nvm.h"
+#include "device_clock.h"
 #include <stddef.h>
 
 enum { PIN_CAPACITY=1024, INPUT_CAPACITY=128, CLKPR=0x26, OSCCAL=0x31, BODCR=0x30 };
@@ -15,7 +16,7 @@ typedef struct {
 } input_t;
 typedef struct {
  uint8_t *data, *flash, *eeprom;
- uint32_t config[18];
+ uint32_t config[20], calibration[128], oscillator_hz;
  uint64_t base, half, phase, ns, ns_remainder, wdt_ticks, wdt_remainder;
  uint64_t clkpr_until, clkpr_switch_half, dropped;
  uint64_t bod_arm_until, bod_sleep_until, bod_recovery_until;
@@ -25,6 +26,7 @@ typedef struct {
  uint8_t initialized, clkpr, prr, domains, reset_requested, reset_held, analog_mask;
  uint8_t external_mask, external_levels;
  uint8_t bodcr, bod_armed, bod_committed, bod_disabled;
+ uint8_t physical;
  int32_t analog_uv[6];
  timer0_t timer;
  system_gpio_t gpio;
@@ -37,9 +39,11 @@ typedef struct {
  input_t inputs[INPUT_CAPACITY];
 } device_t;
 static device_t board;
-static uint32_t configuration[18] = {
- 0,9600000,128000,5000000,1100000,0x7a,0xff,0xff,27,0,0,0,0,0,1,60000,0,0
+static uint32_t configuration[20] = {
+ 0,9600000,128000,5000000,1100000,0x7a,0xff,0xff,27,0,0,0,0,0,1,60000,0,0,0,0
 };
+static uint32_t calibration_configuration[128];
+static uint8_t calibration_configured;
 
 static uint64_t minimum(uint64_t a, uint64_t b) { return a < b ? a : b; }
 static void fail(uint32_t fault, uint32_t detail) {
@@ -54,7 +58,32 @@ static uint64_t multiply(uint64_t a, uint64_t b) {
  return a*b;
 }
 static uint64_t cpu_cycle(void) { return board.half/2; }
-static uint64_t base_frequency(void) { return (uint64_t)board.config[1]*2; }
+static uint64_t base_frequency(void) {
+ return board.physical ? DEVICE_PS_PER_SECOND : (uint64_t)board.config[1]*2;
+}
+static uint64_t source_rate(void) { return (uint64_t)board.oscillator_hz*2; }
+static int time_contract(int physical,uint32_t operation) {
+ if (board.physical==physical) return 1;
+ fail(DEVICE_FAULT_CLOCK_CONTRACT,operation); return 0;
+}
+static uint64_t ratio(uint64_t value,uint64_t rate,uint64_t carry,uint64_t denominator,
+ uint64_t *remainder) {
+ uint64_t result;
+ if (!device_clock_ratio(value,rate,carry,denominator,&result,remainder)) {
+  fail(DEVICE_FAULT_TIME,11); return UINT64_MAX;
+ }
+ return result;
+}
+static uint64_t duration(uint64_t units,uint64_t denominator,uint64_t rate,uint64_t phase) {
+ uint64_t ticks;
+ if (!device_clock_delay(units,denominator,rate,phase,&ticks)) {
+  fail(DEVICE_FAULT_TIME,12); return UINT64_MAX;
+ }
+ return ticks;
+}
+static uint64_t source_duration(uint64_t halves) {
+ return duration(halves,base_frequency(),source_rate(),0);
+}
 static void bod_expire(void) {
  uint64_t now=cpu_cycle();
  if (board.bod_sleep_until && now>=board.bod_sleep_until) {
@@ -92,19 +121,11 @@ static int external_reset_asserted(void) {
 /* Convert elapsed base ticks with retained numerator phase, without ever
  * multiplying a long absolute timestamp by a frequency. */
 static uint64_t rational(uint64_t delta, uint64_t rate, uint64_t *remainder) {
- uint64_t denominator=base_frequency();
- uint64_t tail=(delta%denominator)*rate+*remainder;
- uint64_t whole=multiply(delta/denominator,rate);
- *remainder=tail%denominator;
- return add(whole,tail/denominator);
+ return ratio(delta,rate,*remainder,base_frequency(),remainder);
 }
 static uint64_t after_units(uint64_t units, uint64_t rate, uint64_t remainder) {
  if (!units) return board.base;
- uint64_t numerator=multiply(units,base_frequency());
- if (numerator==UINT64_MAX && board.fault) return UINT64_MAX;
- if (numerator<=remainder) return board.base;
- numerator-=remainder;
- return add(board.base,numerator/rate+(numerator%rate!=0));
+ return add(board.base,duration(units,base_frequency(),rate,remainder));
 }
 static int reset_starting(void) { return board.base<board.reset_until; }
 static void reset_startup(uint8_t sources) {
@@ -116,25 +137,24 @@ static void reset_startup(uint8_t sources) {
  /* Internal source tables6-5/6-6 require the4ms reset minimum with RSTDISBL.
   * The external clock table6-3 has no such footnote. */
  if (!sut && (low&3) && !(board.config[DEVICE_CFG_FUSE_HIGH]&1)) pulses=512;
- uint64_t pulse=(sources&SYSTEM_WDRF) ? 2 : 0;
+ uint64_t pulse=(sources&SYSTEM_WDRF) ? source_duration(2) : 0;
  uint64_t at=add(board.base,pulse);
  if (pulses) {
   uint64_t rate=board.config[DEVICE_CFG_WATCHDOG_HZ];
-  uint64_t phase=(board.wdt_remainder+pulse*rate)%base_frequency();
-  uint64_t numerator=multiply(pulses,base_frequency())-phase;
-  at=add(at,numerator/rate+(numerator%rate!=0));
+  uint64_t phase;
+  ratio(pulse,rate,board.wdt_remainder,base_frequency(),&phase);
+  at=add(at,duration(pulses,base_frequency(),rate,phase));
  }
  /* Explicit digital order: one-CK WDT reset pulse, asynchronous timeout,
   * then6CK oscillator startup plus14CK additional reset delay. CK is the
   * configured undivided source period, never a CLKPR CPU period. */
- board.reset_until=add(at,40);
+ board.reset_until=add(at,source_duration(40));
 }
 static uint64_t at_half(uint64_t half) {
  if (half==UINT64_MAX) return UINT64_MAX;
  if (half<=board.half) return board.base;
- uint64_t delta=multiply(half-board.half,board.divisor);
- if (delta==UINT64_MAX && board.fault) return UINT64_MAX;
- return add(board.base,delta-board.phase);
+ return add(board.base,duration(half-board.half,base_frequency()*board.divisor,
+  source_rate(),board.phase));
 }
 static uint64_t at_cycle(uint64_t cycle) {
  return cycle==UINT64_MAX || cycle>UINT64_MAX/2 ? UINT64_MAX : at_half(cycle*2);
@@ -144,7 +164,7 @@ static int same_pins(const device_pin_event_t *a, const device_pin_event_t *b) {
   a->floating==b->floating && a->contention==b->contention;
 }
 static void capture_pins(void) {
- device_pin_event_t pins={board.base,board.gpio.pins.levels,board.gpio.pins.driven,
+ device_pin_event_t pins={{board.base},board.gpio.pins.levels,board.gpio.pins.driven,
   board.gpio.pins.pullups,board.gpio.pins.floating,board.gpio.pins.contention,{0}};
  if (same_pins(&pins,&board.pins)) return;
  board.pins=pins;
@@ -225,16 +245,17 @@ static void wake(void) {
  if (board.sleep.phase==SYSTEM_SLEEP_ASLEEP) {
   uint16_t pending=device_pending_irqs();
   uint64_t recovery=board.bod_disabled ?
-   add(multiply(board.config[DEVICE_CFG_BOD_RECOVERY_NS],base_frequency()),999999999u)/1000000000u : 0;
-  uint64_t startup=board.config[DEVICE_CFG_WAKE_STARTUP_BASE_HALF];
+   duration(board.config[DEVICE_CFG_BOD_RECOVERY_NS],base_frequency(),1000000000,0) : 0;
+  uint64_t startup=duration(board.config[DEVICE_CFG_WAKE_STARTUP_BASE_HALF],
+   base_frequency(),(uint64_t)board.config[DEVICE_CFG_OSCILLATOR_HZ]*2,0);
+  uint64_t fuse_startup=source_duration(12);
   if (board.config[DEVICE_CFG_FUSE_STARTUP_PROFILE] &&
-      board.sleep.mode==SYSTEM_SLEEP_POWER_DOWN && startup<12) startup=12;
+      board.sleep.mode==SYSTEM_SLEEP_POWER_DOWN && startup<fuse_startup) startup=fuse_startup;
   /* Explicit profile: oscillator/startup and BOD recovery start concurrently.
    * The CPU waits for both; never double-charge a caller's combined startup. */
   if (recovery>startup) startup=recovery;
-  system_sleep_timing_t timing={startup,2u*board.divisor};
-  uint8_t status=system_sleep_wake(&board.sleep,pending,pending,
-   !(board.gpio.mcucr&3),timing,board.base);
+  uint8_t status=system_sleep_wake_exact(&board.sleep,pending,pending,
+   !(board.gpio.mcucr&3),startup,source_duration(8u*board.divisor),board.base);
   if (status&SYSTEM_SLEEP_INVALID_TIME) fail(DEVICE_FAULT_SLEEP,status);
   if (status&SYSTEM_SLEEP_WAKE_STARTED) {
    if (board.bod_disabled) board.bod_recovery_until=add(board.base,recovery);
@@ -354,10 +375,8 @@ static uint64_t next_event(void) {
 }
 static void elapse(uint64_t target) {
  uint64_t delta=target-board.base;
- uint64_t halves=delta/board.divisor;
- uint64_t tail=delta%board.divisor+board.phase;
- halves+=tail/board.divisor;
- board.phase=tail%board.divisor;
+ uint64_t halves=ratio(delta,source_rate(),board.phase,
+  base_frequency()*board.divisor,&board.phase);
  board.half=add(board.half,halves);
  board.ns=add(board.ns,rational(delta,1000000000,&board.ns_remainder));
  board.wdt_ticks=add(board.wdt_ticks,rational(delta,board.config[DEVICE_CFG_WATCHDOG_HZ],&board.wdt_remainder));
@@ -382,7 +401,7 @@ static void advance_to(uint64_t target) {
  } while (board.base<=target);
 }
 int device_configure(uint32_t key, uint32_t value) {
- if (!key || key>=18) return 0;
+ if (!key || key>=20) return 0;
  if ((key==DEVICE_CFG_OSCILLATOR_HZ || key==DEVICE_CFG_WATCHDOG_HZ) &&
      (!value || value>1000000000)) return 0;
  if ((key==DEVICE_CFG_VCC_UV || key==DEVICE_CFG_BANDGAP_UV) && (!value || value>INT32_MAX)) return 0;
@@ -390,16 +409,40 @@ int device_configure(uint32_t key, uint32_t value) {
  if (key==DEVICE_CFG_ADC_FIRST_SAMPLE && value!=27 && value!=29) return 0;
  if (key==DEVICE_CFG_FACTORY_OSCCAL96 && value>127) return 0;
  if (key==DEVICE_CFG_FUSE_STARTUP_PROFILE && value>1) return 0;
+ if (key==DEVICE_CFG_NVM_CLOCK_PROFILE && value>DEVICE_NVM_CLOCK_FIXED_NS) return 0;
+ if (key==DEVICE_CFG_NVM_CALIBRATION_REFERENCE_HZ && value>1000000000) return 0;
  configuration[key]=value;
  return 1;
 }
+int device_configure_osccal_hz(uint32_t cal,uint32_t hz) {
+ if (cal>127 || hz>1000000000) return 0;
+ calibration_configuration[cal]=hz; calibration_configured=1; return 1;
+}
+void device_clear_osccal_hz(void) {
+ for (unsigned i=0;i<128;i++) calibration_configuration[i]=0;
+ calibration_configured=0;
+}
 int device_init(uint8_t *data, uint8_t *flash, uint8_t *eeprom) {
  board=(device_t){0};
- for (unsigned i=0;i<18;i++) board.config[i]=configuration[i];
+ for (unsigned i=0;i<20;i++) board.config[i]=configuration[i];
+ for (unsigned i=0;i<128;i++) board.calibration[i]=calibration_configuration[i];
+ board.physical=calibration_configured;
  if (!data || !flash || !eeprom) { fail(DEVICE_FAULT_CONFIG,1); return 0; }
  if (board.config[DEVICE_CFG_FUSE_STARTUP_PROFILE] &&
      ((board.config[DEVICE_CFG_FUSE_LOW]>>2)&3)==3) {
   fail(DEVICE_FAULT_CONFIG,8); return 0;
+ }
+ if (board.physical) {
+  uint32_t factory=board.calibration[board.config[DEVICE_CFG_FACTORY_OSCCAL96]];
+  unsigned source=board.config[DEVICE_CFG_FUSE_LOW]&3;
+  if (!factory) { fail(DEVICE_FAULT_CONFIG,9); return 0; }
+  if ((source==1 || source==2) && factory!=board.config[DEVICE_CFG_OSCILLATOR_HZ]) {
+   fail(DEVICE_FAULT_CONFIG,10); return 0;
+  }
+  if (board.config[DEVICE_CFG_NVM_CLOCK_PROFILE] &&
+      !board.config[DEVICE_CFG_NVM_CALIBRATION_REFERENCE_HZ]) {
+   fail(DEVICE_FAULT_CONFIG,11); return 0;
+  }
  }
  board.data=data; board.flash=flash; board.eeprom=eeprom;
  nvm_timing_t timing=nvm_datasheet_timing(board.config[DEVICE_CFG_FLASH_MAXIMUM]!=0);
@@ -424,6 +467,9 @@ void device_reset(uint8_t sources_mask) {
  /* Section17.3: hardware always loads the 9.6MHz calibration byte, even
   * when CKSEL selects 4.8MHz. The byte itself is device-specific input. */
  board.data[32+OSCCAL]=(uint8_t)board.config[DEVICE_CFG_FACTORY_OSCCAL96];
+ unsigned source=board.config[DEVICE_CFG_FUSE_LOW]&3;
+ board.oscillator_hz=board.physical && (source==1 || source==2) ?
+  board.calibration[board.data[32+OSCCAL]] : board.config[DEVICE_CFG_OSCILLATOR_HZ];
  timer0_init(&board.timer,NULL,0,cpu_cycle());
  system_gpio_reset(&board.gpio,board.config[DEVICE_CFG_FUSE_HIGH]&1);
  system_gpio_external(&board.gpio,board.external_mask,board.external_levels,board.half);
@@ -440,6 +486,11 @@ static int timer_register(uint8_t io) {
  return io==TIMER0_GTCCR || io==TIMER0_TCCR0A || io==TIMER0_TCCR0B ||
   io==TIMER0_TCNT0 || io==TIMER0_OCR0A || io==TIMER0_OCR0B ||
   io==TIMER0_TIFR0 || io==TIMER0_TIMSK0;
+}
+static int programming_clock_known(void) {
+ if (!board.physical || (board.config[DEVICE_CFG_NVM_CLOCK_PROFILE]==DEVICE_NVM_CLOCK_FIXED_NS &&
+     board.config[DEVICE_CFG_NVM_CALIBRATION_REFERENCE_HZ])) return 1;
+ fail(DEVICE_FAULT_NVM_CLOCK_PROFILE,1); return 0;
 }
 uint8_t device_read(uint8_t io) {
  uint8_t value=0;
@@ -488,7 +539,12 @@ uint32_t device_write(uint8_t io, uint8_t value, uint8_t mask) {
   clock_domains();
  } else if (system_gpio_write_masked(&board.gpio,io,value,mask,board.half)) {
   capture_pins(); pin_voltages();
- } else if (nvm_owns_io(io)) stalls=nvm_write_io(&board.nvm,io,value,mask,cpu_cycle(),board.ns);
+ } else if (nvm_owns_io(io)) {
+  int program=io==NVM_EECR && (value&mask&NVM_EEPE) &&
+   (board.nvm.eecr&NVM_EEMPE) && !board.nvm.eeprom_busy && !board.nvm.flash_busy;
+  if (!program || programming_clock_known())
+   stalls=nvm_write_io(&board.nvm,io,value,mask,cpu_cycle(),board.ns);
+ }
  else if (system_watchdog_write(&board.watchdog,io,value,mask,cpu_cycle())) { }
  else if (timer_register(io)) {
   uint8_t written=io==TIMER0_TIFR0 ? value&mask : merged;
@@ -505,8 +561,16 @@ uint32_t device_write(uint8_t io, uint8_t value, uint8_t mask) {
   else if (!analog_write(&board.analog,io,merged,board.half)) fail(DEVICE_FAULT_ANALOG,13);
  } else if (io==0x3f || io==0x3d) board.data[32+io]=merged;
  else if (io==OSCCAL) {
-  if ((merged&127)!=(previous&127)) fail(DEVICE_FAULT_UNIMPLEMENTED_IO,OSCCAL);
-  else board.data[32+OSCCAL]=merged&127;
+  uint8_t cal=merged&127;
+  if (cal!=(previous&127)) {
+   if (!board.physical) fail(DEVICE_FAULT_UNIMPLEMENTED_IO,OSCCAL);
+   else if (!board.calibration[cal]) fail(DEVICE_FAULT_OSCCAL,cal);
+   else {
+    unsigned source=board.config[DEVICE_CFG_FUSE_LOW]&3;
+    if (source==1 || source==2) board.oscillator_hz=board.calibration[cal];
+    board.data[32+OSCCAL]=cal;
+   }
+  } else board.data[32+OSCCAL]=cal;
  } else if (io==BODCR) {
   if (mask&3) bod_write(merged);
  } else if (io!=0x2e && value&mask) fail(DEVICE_FAULT_UNIMPLEMENTED_IO,io);
@@ -537,8 +601,10 @@ uint64_t device_next_cpu_event(void) {
  if (!board.initialized || board.fault || board.reset_requested || board.reset_held || reset_starting()) return 0;
  uint64_t next=next_event();
  if (next==UINT64_MAX) return UINT64_MAX;
- uint64_t delta=next-board.base, period=2u*board.divisor;
- return delta/period+(delta%period!=0);
+ uint64_t remainder;
+ uint64_t cycles=ratio(next-board.base,source_rate(),board.phase,
+  2*base_frequency()*board.divisor,&remainder);
+ return cycles==UINT64_MAX ? UINT64_MAX : cycles+(remainder!=0);
 }
 uint8_t device_next_irq(void) {
  uint16_t pending=device_pending_irqs();
@@ -573,6 +639,10 @@ uint32_t device_control(uint8_t command, uint16_t z, uint16_t word) {
   wake();
  } else if (command==DEVICE_CONTROL_WDR) system_watchdog_wdr(&board.watchdog);
  else if (command==DEVICE_CONTROL_SPM) {
+  uint8_t spm=board.nvm.spmcsr;
+  int program=!(board.config[DEVICE_CFG_FUSE_HIGH]&16) && !board.nvm.eeprom_busy &&
+   !board.nvm.flash_busy && (spm==3 || spm==5);
+  if (program && !programming_clock_known()) return 0;
   int result=nvm_spm(&board.nvm,z,word,cpu_cycle(),board.ns);
   if (result<0) fail(DEVICE_FAULT_NVM,board.nvm.faults);
   check_faults(); mirror();
@@ -598,8 +668,13 @@ int device_halted(void) {
   nvm_cpu_halted(&board.nvm);
 }
 uint8_t device_sleep_phase(void) { return board.sleep.phase; }
-const device_pin_event_t *device_pin_state(void) { return &board.pins; }
-uint64_t device_wait_until(uint64_t deadline) {
+const device_pin_event_t *device_pin_state(void) {
+ return time_contract(0,2) ? &board.pins : NULL;
+}
+const device_pin_event_ps_t *device_pin_state_ps(void) {
+ return time_contract(1,2) ? &board.pins : NULL;
+}
+static uint64_t wait_until(uint64_t deadline) {
  uint64_t before=cpu_cycle();
  if (deadline<board.base) { fail(DEVICE_FAULT_TIME,8); return 0; }
  while (device_halted() && !board.fault && !board.reset_requested && board.base<deadline) {
@@ -607,6 +682,13 @@ uint64_t device_wait_until(uint64_t deadline) {
   advance_to(next);
  }
  return cpu_cycle()-before;
+}
+uint64_t device_wait_until(uint64_t deadline) {
+ return time_contract(0,3) ? wait_until(deadline) : 0;
+}
+uint64_t device_wait_until_ps(uint64_t deadline) {
+ if (!time_contract(1,3)) return 0;
+ wait_until(deadline); return board.base;
 }
 static int queue_input(input_t event) {
  if (!board.initialized || event.at<board.base) { fail(DEVICE_FAULT_TIME,9); return 0; }
@@ -619,19 +701,40 @@ static int queue_input(input_t event) {
  return 1;
 }
 int device_inject_digital(uint64_t at, uint8_t mask, uint8_t levels) {
+ if (!time_contract(0,4)) return 0;
+ input_t event={at,0,0,(uint8_t)(mask&63),(uint8_t)(levels&63),0};
+ return queue_input(event);
+}
+int device_inject_digital_ps(uint64_t at,uint8_t mask,uint8_t levels) {
+ if (!time_contract(1,4)) return 0;
  input_t event={at,0,0,(uint8_t)(mask&63),(uint8_t)(levels&63),0};
  return queue_input(event);
 }
 int device_inject_analog(uint64_t at, uint8_t pin, int32_t uv) {
+ if (!time_contract(0,5)) return 0;
  if (pin>5) { fail(DEVICE_FAULT_CONFIG,7); return 0; }
  input_t event={at,uv,1,0,0,pin};
  return queue_input(event);
 }
-const device_pin_event_t *device_pin_events(uint32_t *count) {
+int device_inject_analog_ps(uint64_t at,uint8_t pin,int32_t uv) {
+ if (!time_contract(1,5)) return 0;
+ if (pin>5) { fail(DEVICE_FAULT_CONFIG,7); return 0; }
+ input_t event={at,uv,1,0,0,pin};
+ return queue_input(event);
+}
+static const device_pin_event_t *pin_events(uint32_t *count) {
  uint32_t contiguous=PIN_CAPACITY-board.pin_head;
  if (contiguous>board.pin_count) contiguous=board.pin_count;
  *count=contiguous;
  return contiguous ? &board.pin_events[board.pin_head] : NULL;
+}
+const device_pin_event_t *device_pin_events(uint32_t *count) {
+ if (!time_contract(0,6)) { *count=0; return NULL; }
+ return pin_events(count);
+}
+const device_pin_event_ps_t *device_pin_events_ps(uint32_t *count) {
+ if (!time_contract(1,6)) { *count=0; return NULL; }
+ return pin_events(count);
 }
 void device_consume_pin_events(uint32_t count) {
  if (count>board.pin_count) count=board.pin_count;
@@ -639,18 +742,40 @@ void device_consume_pin_events(uint32_t count) {
 }
 void device_clear_pin_events(void) { board.pin_head=board.pin_count=0; board.dropped=0; }
 uint64_t device_dropped_pin_events(void) { return board.dropped; }
-uint64_t device_base_half(void) { return board.base; }
+uint64_t device_base_half(void) { return time_contract(0,1) ? board.base : 0; }
+uint8_t device_physical_mode(void) { return board.physical; }
+uint64_t device_time_ps(void) { return time_contract(1,1) ? board.base : 0; }
+uint64_t device_cpu_half_deadline_ps(uint64_t halves) {
+ return time_contract(1,7) ? at_half(add(board.half,halves)) : 0;
+}
+uint64_t device_cpu_halves_until_ps(uint64_t deadline) {
+ if (!time_contract(1,8) || deadline<=board.base) return 0;
+ uint64_t remainder;
+ uint64_t halves=ratio(deadline-board.base,source_rate(),board.phase,
+  base_frequency()*board.divisor,&remainder);
+ return halves==UINT64_MAX ? UINT64_MAX : halves+(remainder!=0);
+}
+uint64_t device_next_sample_ps(uint64_t start,uint64_t frame,uint32_t rate) {
+ if (!time_contract(1,9) || !rate) {
+  if (!rate) fail(DEVICE_FAULT_CONFIG,12);
+  return 0;
+ }
+ uint64_t remainder;
+ return add(start,ratio(frame,DEVICE_PS_PER_SECOND,0,rate,&remainder));
+}
 uint64_t device_virtual_half(void) { return board.half; }
 uint32_t device_clkpr_divisor(void) { return board.divisor; }
-uint32_t device_oscillator_hz(void) { return board.config[DEVICE_CFG_OSCILLATOR_HZ]; }
+uint32_t device_oscillator_hz(void) { return board.oscillator_hz; }
 uint8_t device_bod_disabled(void) { return board.bod_disabled; }
 uint8_t device_bod_recovering(void) { return board.base<board.bod_recovery_until; }
 uint8_t device_reset_requested(void) { return board.reset_requested; }
 uint8_t device_reset_held(void) { return board.reset_held; }
 uint8_t device_starting(void) { return (uint8_t)reset_starting(); }
-uint64_t device_startup_deadline(void) {
+static uint64_t startup_deadline(void) {
  return board.reset_held ? UINT64_MAX : reset_starting() ? board.reset_until : board.base;
 }
+uint64_t device_startup_deadline(void) { return time_contract(0,10) ? startup_deadline() : 0; }
+uint64_t device_startup_deadline_ps(void) { return time_contract(1,10) ? startup_deadline() : 0; }
 uint64_t device_flash_generation(void) { return board.nvm.flash_generation; }
 uint32_t device_take_dirty_pages(void) { return nvm_take_dirty_pages(&board.nvm); }
 uint32_t device_fault(void) { return board.fault; }
