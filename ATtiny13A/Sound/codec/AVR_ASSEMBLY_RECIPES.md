@@ -73,6 +73,28 @@ coefficients compared with repeated addition; compare the complete player and
 data budget before selecting it. Our subsequent Kmap experiment measures
 unrolled Q7 separately from the smaller stage-selected Q3/Q7 implementation.
 
+### Keep the cheaper arithmetic for stages that do not need more precision
+
+Our [Kmap lattice](q3-kmap/README.md) needs Q7 only for K1/K2. The existing
+stage counter selects Q7 for those two stages and retains the small Q3 product
+for the other six. The sample, sign handling and rounding rules stay identical
+to the independent oracle; storage precision alone is not a reason to run the
+more expensive multiplier everywhere.
+
+In the measured floor profiles, stage selection uses **458 code bytes** versus
+**470** for unrolled Q7 throughout. On the same edge-test stream/table the
+minimum timing margins are **204** and **117 cycles**, respectively. The
+nearest variants use464/474 code bytes and186/84 cycles of margin. These are
+complete fixture measurements, not isolated multiply latencies or a universal
+upper bound for arbitrary speech parameters. Every fitted phrase still needs
+its own timing verification. The selected full quality-study phrase has135
+cycles of slack at1022 Flash +64 EEPROM bytes.
+
+The practical rule is to measure both branches: a loop-free small product is
+useful, but preserving a cheap specialized path can save both bytes and cycles.
+The [qualification report](../research/q3-kmap-avr-qualification/report.json)
+records829,440 exhaustive product cases in three engines and the source hashes.
+
 ## Changes that preserve the decoded bytes
 
 - **Round using the last discarded bit.** After a signed ASR/ROR loop, carry
