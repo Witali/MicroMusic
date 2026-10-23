@@ -42,6 +42,16 @@ uint16_t system_sleep_wake_mask(uint8_t mode, int int0_level_sense) {
 uint8_t system_sleep_wake(system_sleep_t *s, uint16_t asserted, uint16_t enabled,
                           int int0_level_sense, system_sleep_timing_t timing,
                           uint64_t now) {
+    uint64_t extra=(!timing.ticks_per_cpu_cycle ||
+        timing.ticks_per_cpu_cycle > UINT64_MAX / SYSTEM_SLEEP_EXTRA_WAKE_CYCLES) ? 0 :
+        timing.ticks_per_cpu_cycle*SYSTEM_SLEEP_EXTRA_WAKE_CYCLES;
+    return system_sleep_wake_exact(s,asserted,enabled,int0_level_sense,
+        timing.startup_ticks,extra,now);
+}
+
+uint8_t system_sleep_wake_exact(system_sleep_t *s,uint16_t asserted,uint16_t enabled,
+                               int int0_level_sense,uint64_t startup_ticks,
+                               uint64_t extra_ticks,uint64_t now) {
     if (now < s->now) return SYSTEM_SLEEP_INVALID_TIME;
     if (asserted & SYSTEM_WAKE_RESET) {
         system_sleep_reset(s, now);
@@ -58,19 +68,16 @@ uint8_t system_sleep_wake(system_sleep_t *s, uint16_t asserted, uint16_t enabled
         return SYSTEM_SLEEP_NO_CHANGE;
     }
     /* Reject invalid/overflowing deadlines before changing the sleeping state. */
-    if (!timing.ticks_per_cpu_cycle ||
-        timing.ticks_per_cpu_cycle > UINT64_MAX / SYSTEM_SLEEP_EXTRA_WAKE_CYCLES ||
-        timing.startup_ticks > UINT64_MAX - now)
+    if (!extra_ticks || startup_ticks > UINT64_MAX - now)
         return SYSTEM_SLEEP_INVALID_TIME;
-    uint64_t startup_until = now + timing.startup_ticks;
-    uint64_t extra_ticks = timing.ticks_per_cpu_cycle * SYSTEM_SLEEP_EXTRA_WAKE_CYCLES;
+    uint64_t startup_until = now + startup_ticks;
     if (extra_ticks > UINT64_MAX - startup_until) return SYSTEM_SLEEP_INVALID_TIME;
     s->now = now;
     s->wake_at = now;
     s->wake_sources = sources;
     s->startup_until = startup_until;
     s->ready_at = startup_until + extra_ticks;
-    s->phase = timing.startup_ticks ? SYSTEM_SLEEP_STARTING : SYSTEM_SLEEP_WAKE_DELAY;
+    s->phase = startup_ticks ? SYSTEM_SLEEP_STARTING : SYSTEM_SLEEP_WAKE_DELAY;
     return SYSTEM_SLEEP_WAKE_STARTED;
 }
 

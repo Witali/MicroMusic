@@ -58,6 +58,11 @@ coordinate during sleep while those APIs gate their actual clocks. Timer0's
 prescaler and GPIO synchronizers freeze when clkI/O stops; ADC Noise Reduction
 retains the ADC clock. Power reduction also gates the relevant modules.
 
+This paragraph describes the default fixed-frequency contract. Supplying an
+explicit OSCCAL table selects the separate fixed1ps contract, `_ps` input/output
+and deadline APIs; legacy timed accessors then fail rather than changing units.
+See [runtime OSCCAL and physical time](device-osccal.md).
+
 Nanoseconds and watchdog pulses are rational conversions from elapsed
 `base_half` with retained remainders. They are never derived from executed
 instruction count. EEPROM/Flash programming and the watchdog therefore keep
@@ -143,8 +148,9 @@ voltage injections alone do not assert this digital reset line. When RSTDISBL
 is programmed (high-fuse bit0=0), PB5 remains available as GPIO/ADC0 and these
 digital inputs do not reset the device.
 
-Runtime OSCCAL frequency recalibration does not have a calibrated physical model
-in these modules; writes changing calibration fail explicitly. BODCR's digital
+Without an explicit calibration table, runtime OSCCAL changes still fail.
+The opt-in table model is described in [device-osccal.md](device-osccal.md).
+BODCR's digital
 sleep-disable sequencing is implemented as described below. Reads of reserved
 I/O return0; nonzero reserved writes
 also fault. DWDR reads0 without a debugger. Sustained phase-correct TOP=0 and
@@ -234,13 +240,12 @@ hardware always loads the9.6MHz calibration, while using the distinct4.8MHz
 calibration requires firmware action. OSCCAL bit7 is reserved, reads0 and ignores
 writes. Same-CAL writes, including ones setting reserved bit7, are accepted.
 
-Changing CAL[6:0] still faults with `DEVICE_FAULT_UNIMPLEMENTED_IO`, detail0x31.
-The provided `oscillatorHz` contract remains authoritative and unchanged. A
-register-only implementation that silently accepted calibration changes while
-retaining the old frequency would misrepresent CPU, ADC, timer and NVM timing.
-Faithful runtime trimming needs a per-device CAL-to-frequency model and phase
-preservation across clock changes; neither a universal linear curve nor measured
-temperature/voltage dependence is inferred here. `device-osccal.test.mjs` covers
+Without a provided table, changing CAL[6:0] still faults with
+`DEVICE_FAULT_UNIMPLEMENTED_IO`, detail0x31, preserving existing fixtures.
+The optional [per-device runtime calibration model](device-osccal.md) supplies
+up to128 explicit frequencies, fixed physical time and retained clock phase.
+Neither a universal linear curve nor measured temperature/voltage dependence
+is inferred. `device-osccal.test.mjs` covers
 factory values, validation, all reset causes, fuse independence and reserved bits
 using the actual import-free C/WASM board.
 
