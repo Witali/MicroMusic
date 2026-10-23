@@ -17,6 +17,12 @@ typedef struct {
  int32_t voltage;
  uint8_t type, mask, value, pin;
 } input_t;
+enum deadline_reason {
+ DEADLINE_INIT, DEADLINE_ELAPSE, DEADLINE_SERVICE,
+ DEADLINE_READ, DEADLINE_WRITE, DEADLINE_IRQ_ACK,
+ DEADLINE_CONTROL, DEADLINE_LPM, DEADLINE_INPUT,
+ DEADLINE_RESET, DEADLINE_FAULT
+};
 typedef struct {
  uint8_t *data, *flash, *eeprom;
  uint32_t config[20], calibration[128], oscillator_hz;
@@ -34,6 +40,7 @@ typedef struct {
  uint32_t power_config[10];
  int32_t vcc_uv;
  uint64_t wdt_reset_end;
+ struct { uint64_t base, at; uint8_t valid; } deadline;
  power_reset_t power;
  int32_t analog_uv[6];
  timer0_t timer;
@@ -58,8 +65,15 @@ static void reset_state(uint8_t sources_mask);
 static void clock_domains(void);
 static void mirror(void);
 
+/* Reuse only an unchanged, same-base serviced state. An absolute deadline is
+ * not assumed invariant across any clock advance, including a zero delta. */
+static inline void deadline_invalidate(enum deadline_reason reason) {
+ (void)reason;
+ board.deadline.valid=0;
+}
 static uint64_t minimum(uint64_t a, uint64_t b) { return a < b ? a : b; }
 static void fail(uint32_t fault, uint32_t detail) {
+ deadline_invalidate(DEADLINE_FAULT);
  if (!board.fault) { board.fault=fault; board.detail=detail; }
 }
 static uint64_t add(uint64_t a, uint64_t b) {
@@ -373,6 +387,7 @@ static void inputs_at_current_time(void) {
  }
 }
 static void service(uint64_t previous_half) {
+ deadline_invalidate(DEADLINE_SERVICE);
  system_gpio_t0_event_t t0[4];
  uint8_t edges=system_gpio_advance(&board.gpio,previous_half,board.half,t0);
  if (edges==255) { fail(DEVICE_FAULT_TIME,3); return; }
@@ -421,7 +436,7 @@ static void service(uint64_t previous_half) {
  timer_outputs(); sources();
  inputs_at_current_time(); wake(); check_faults(); mirror();
 }
-static uint64_t next_event(void) {
+static uint64_t next_event_scan(void) {
  uint64_t next=at_cycle(timer0_next_event(&board.timer));
  if(board.power_enabled) {
   next=minimum(next,power_reset_next_deadline(&board.power));
@@ -446,7 +461,20 @@ static uint64_t next_event(void) {
  if (board.input_count) next=minimum(next,board.inputs[board.input_head].at);
  return next;
 }
+static uint64_t next_event(void) {
+ if (board.deadline.valid && board.deadline.base==board.base)
+  return board.deadline.at;
+ board.deadline.valid=0;
+ uint64_t at=next_event_scan();
+ /* at_half/after_units may fail while scanning. A fault is never cached. */
+ if (!board.fault) {
+  board.deadline.base=board.base; board.deadline.at=at;
+  board.deadline.valid=1;
+ }
+ return at;
+}
 static void elapse(uint64_t target) {
+ deadline_invalidate(DEADLINE_ELAPSE);
  uint64_t delta=target-board.base;
  uint64_t halves=ratio(delta,source_rate(),board.phase,
   base_frequency()*board.divisor,&board.phase);
@@ -509,6 +537,7 @@ void device_clear_osccal_hz(void) {
 }
 int device_init(uint8_t *data, uint8_t *flash, uint8_t *eeprom) {
  board=(device_t){0};
+ deadline_invalidate(DEADLINE_INIT);
  for (unsigned i=0;i<20;i++) board.config[i]=configuration[i];
  for (unsigned i=0;i<128;i++) board.calibration[i]=calibration_configuration[i];
  board.physical=calibration_configured;
@@ -590,6 +619,7 @@ static void reset_state(uint8_t sources_mask) {
  capture_pins(); pin_voltages(); sources(); mirror();
 }
 void device_reset(uint8_t sources_mask) {
+ deadline_invalidate(DEADLINE_RESET);
  if(!board.initialized) return;
  board.reset_requested=0;
  if(board.power_enabled&&board.reset_preapplied) {board.reset_preapplied=0;mirror();return;}
@@ -607,6 +637,7 @@ static int programming_clock_known(void) {
  fail(DEVICE_FAULT_NVM_CLOCK_PROFILE,1); return 0;
 }
 uint8_t device_read(uint8_t io) {
+ deadline_invalidate(DEADLINE_READ);
  uint8_t value=0;
  if (!board.initialized || io>=64) { fail(DEVICE_FAULT_CONFIG,3); return 0; }
  if (io==CLKPR) value=board.clkpr;
@@ -628,6 +659,7 @@ uint8_t device_read(uint8_t io) {
  return value;
 }
 uint32_t device_write(uint8_t io, uint8_t value, uint8_t mask) {
+ deadline_invalidate(DEADLINE_WRITE);
  if (!board.initialized || io>=64) { fail(DEVICE_FAULT_CONFIG,4); return 0; }
  if (board.fault || board.reset_requested || board.reset_held || reset_starting() || power_recovering()) return 0;
  uint32_t stalls=0;
@@ -727,6 +759,7 @@ uint8_t device_next_irq(void) {
  return 0;
 }
 void device_ack_irq(uint8_t vector) {
+ deadline_invalidate(DEADLINE_IRQ_ACK);
  if (vector==1 || vector==2) system_gpio_ack(&board.gpio,vector);
  else if (vector==3) timer0_irq_ack(&board.timer,TIMER0_TOV0);
  else if (vector==6) timer0_irq_ack(&board.timer,TIMER0_OCF0A);
@@ -738,6 +771,7 @@ void device_ack_irq(uint8_t vector) {
  sources(); mirror();
 }
 uint32_t device_control(uint8_t command, uint16_t z, uint16_t word) {
+ deadline_invalidate(DEADLINE_CONTROL);
  if (board.fault || board.reset_requested || board.reset_held || reset_starting() || power_recovering()) return 0;
  if (command==DEVICE_CONTROL_SLEEP) {
   bod_expire();
@@ -773,6 +807,7 @@ uint32_t device_control(uint8_t command, uint16_t z, uint16_t word) {
  return 0;
 }
 uint8_t device_lpm(uint16_t z) {
+ deadline_invalidate(DEADLINE_LPM);
  uint8_t value=0xff;
  int special=nvm_lpm(&board.nvm,z,&value,cpu_cycle(),board.ns);
  if (special<0) fail(DEVICE_FAULT_NVM,board.nvm.faults);
@@ -810,6 +845,7 @@ uint64_t device_wait_until_ps(uint64_t deadline) {
  wait_until(deadline); return board.base;
 }
 static int queue_input(input_t event) {
+ deadline_invalidate(DEADLINE_INPUT);
  if (!board.initialized || event.at<board.base) { fail(DEVICE_FAULT_TIME,9); return 0; }
  if (board.input_count==INPUT_CAPACITY) { fail(DEVICE_FAULT_INPUT_OVERFLOW,INPUT_CAPACITY); return 0; }
  if (board.input_count && event.at<board.inputs[(board.input_head+board.input_count-1)%INPUT_CAPACITY].at) {
