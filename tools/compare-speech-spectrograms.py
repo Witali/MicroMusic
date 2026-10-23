@@ -1,0 +1,65 @@
+"""Plot RMS-matched speech spectrograms on shared scales and report discrepancies."""
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import sys
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+import soundfile as sf
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT/'ATtiny13A/Sound/codec'))
+from spectrogram_objective import SpectrogramObjective, VERSION
+
+
+def main():
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--reference', type=Path, required=True)
+    p.add_argument('--candidate', action='append', required=True, help='Label=path.wav')
+    p.add_argument('--output', type=Path, required=True)
+    a = p.parse_args()
+    reference, sr = sf.read(a.reference)
+    objective = SpectrogramObjective(reference, sr)
+    signals = [('Original', objective.filtered)]
+    report = dict(version=VERSION, reference_sha256=hashlib.sha256(a.reference.read_bytes()).hexdigest(),
+                  samples=len(reference), sample_rate=sr, processing='Identical 70 Hz highpass, global RMS match; no time/frequency warping', candidates={})
+    for entry in a.candidate:
+        label, filename = entry.split('=', 1)
+        path = Path(filename)
+        value, rate = sf.read(path)
+        if rate != sr:
+            p.error('Every sample rate must equal the reference')
+        report['candidates'][label] = dict(**objective.evaluate(value),
+            sha256=hashlib.sha256(path.read_bytes()).hexdigest())
+        signals.append((label, objective.matched(value)))
+    a.output.mkdir(parents=True, exist_ok=True)
+    for size, hop in ((512, 64), (1024, 128)):
+        fig, axes = plt.subplots(len(signals), 2, figsize=(14, 3*len(signals)),
+            gridspec_kw={'width_ratios': [3.6, 1]}, constrained_layout=True, squeeze=False)
+        f, t, target = objective.magnitude(signals[0][1], size, hop)
+        maximum = max(float(target.max()), 1e-20)
+        for index, (label, x) in enumerate(signals):
+            mag = objective.magnitude(x, size, hop)[2]
+            db = 20*np.log10(np.maximum(mag/maximum, 1e-6))
+            im = axes[index, 0].pcolormesh(t, f, db, shading='auto', cmap='magma', vmin=-60, vmax=0)
+            axes[index, 0].set(title=label, ylabel='Frequency, Hz', ylim=(0, 3750), xlim=(0, len(x)/sr))
+            mean = np.mean(mag**2, axis=1)
+            ref = np.mean(target**2, axis=1)
+            axes[index, 1].plot(10*np.log10(np.maximum(ref/maximum**2, 1e-12)), f, color='#777', label='Original')
+            axes[index, 1].plot(10*np.log10(np.maximum(mean/maximum**2, 1e-12)), f, label=label, alpha=.8)
+            axes[index, 1].set(ylim=(0, 3750), xlim=(-70, 0), xlabel='Mean spectrum, dB')
+            axes[index, 1].grid(alpha=.2)
+        axes[-1, 0].set_xlabel('Time, seconds')
+        fig.colorbar(im, ax=axes[:, 0].tolist(), label='dB relative to original peak')
+        fig.savefig(a.output/f'spectrograms-{size}.png', dpi=125, bbox_inches='tight', pad_inches=.12)
+        plt.close(fig)
+    (a.output/'metrics.json').write_text(json.dumps(report, indent=2)+'\n', encoding='utf-8', newline='\n')
+    print(json.dumps(report))
+
+
+if __name__ == '__main__':
+    main()
