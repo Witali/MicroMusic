@@ -61,10 +61,12 @@ and phase state can advance. Invalid calls return a negative status and change
 neither state nor output. The output byte must not overlap the state object.
 Init/request/reset return1 for success and do not represent output events.
 
-Electrical qualification remains **open**. This ideal logical fixture does not
-validate source frequency, slew, thresholds, the 2% period/frequency wording,
-or hardware behavior after hot stops/restarts. It promises only the specified
-digital state transitions. There are no external programming operations.
+The independent optional [ideal-signal validator](clki_validation.md) checks
+source period/pulse bounds and the selected conservative 2% rule. This divider
+itself promises only the specified digital transitions. Analog thresholds,
+slew reconstruction and measured hot-stop/restart behavior remain outside this
+fixture. The [board integration](clki_board.md) owns validation and scheduling.
+There are no external programming operations.
 
 Run:
 

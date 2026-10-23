@@ -1,10 +1,10 @@
 # ATtiny13A logical CLKI stream
 
 Implemented here: a standalone, allocation-free timestamped input queue.
-Board/PB3 ownership, the source divider, startup/wake source-CK counters and
-resumable translated CPU integration remain **open**. This is a component of
-the full stopped-clock design in [clki-design.md](clki-design.md), not a
-period-only replacement. It has no host imports or per-edge callbacks.
+The [device owner](clki_board.md) connects it to PB3, the source divider,
+startup/wake source-CK counters and the resumable translated CPU. This component
+contains no board or CPU policy and does not impose a period-only restriction.
+It has no host imports or per-edge callbacks.
 
 The caller supplies disjoint state and edge storage with a fixed capacity.
 Initialization supplies an explicit uint64 picosecond time and logical level;
@@ -55,11 +55,12 @@ is valid; a hold to10 returns `EDGE_PENDING`. Consume10, hold to24, consume25,
 then hold to40. A hold to41 returns `UNKNOWN_HORIZON`. Publishing `(50,high)`
 with horizon60 resumes the clock without inventing transitions in40..50.
 
-This is an **ideal logical fixture**. Electrical validation is still open:
-the module does not establish that arbitrary supplied pulses, slew, clock
-stops/restarts or cycle-to-cycle changes satisfy silicon limits. In particular,
-it does not choose a universal interpretation of the 2% period/frequency wording,
-an initial divider phase, or a CLKI-to-system-clock latency. The authoritative
+This queue is an **ideal logical fixture**. The separate optional
+[validator](clki_validation.md) checks the selected ideal-signal bounds; the
+queue itself establishes no electrical guarantee for arbitrary supplied pulses,
+slew, stops/restarts or cycle-to-cycle changes. It does not choose an initial
+divider phase or a CLKI-to-system-clock latency. Physical measurements and
+analog threshold reconstruction remain open. The authoritative
 electrical reference remains Microchip [DS40002307A sections6.2.1/6.3.1 and
 Table18-3](https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf#page=125).
 There are no external programming protocol operations in this component.

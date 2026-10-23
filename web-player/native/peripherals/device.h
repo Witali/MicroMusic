@@ -121,9 +121,10 @@ void device_advance_half(uint64_t cpu_half_cycles);
  * The caller owns remaining instruction work and must cancel it on reset. */
 int device_advance_half_until_ps(uint64_t wanted,uint64_t wall_deadline_ps,
                                  uint64_t *consumed);
-/* Same continuation contract, plus return2 BUFFER_READY when the physical pin
- * ring is half full. The native consumer drains it and retries the remaining
- * phase before returning to generated code. No instruction effect is repeated. */
+/* In CLKI mode, same continuation contract plus return2 BUFFER_READY when the
+ * physical pin ring is half full. The native consumer drains it and retries
+ * the remaining phase before returning to generated code. Fixed internal
+ * sources retain the ordinary bounded advance. No effect is repeated. */
 int device_advance_half_until_ps_buffered(uint64_t wanted,uint64_t wall_deadline_ps,
                                           uint64_t *consumed);
 /* advance stops at an asynchronous reset deadline even inside an instruction;

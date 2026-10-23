@@ -88,8 +88,9 @@ Hardware-dependent checks remain open until actual measurements are available.
 Acceptance: a package reproduces the configured device without implicit host
 defaults; CLI and browser execute the same firmware and physical output.
 
-Format v4 includes per-asset and envelope SHA-256, explicit clock/supply/RESET
-configuration, embedded manifest and ABI validation. Readers retain v1/v2/v3
+Format v5 includes per-asset and envelope SHA-256, explicit clock/supply/RESET
+configuration, optional CPU continuation/CLKI, embedded manifest and ABI validation.
+Readers retain v1/v2/v3/v4
 support, including retained original v1/v3 runtime regressions. A standalone
 loader test runs with no default WASM files; Worker tests cover audio restart
 and SPM.
@@ -166,21 +167,20 @@ proceed when hardware is available.
 - [x] Audit the external-clock, RESET electrical qualification and physical
   pin characteristics against explicit board profiles; distinguish logical
   injections from analog signal recognition.
-  The [interface inventory](devices/attiny13a/interfaces.md) records the
-  free-running external-clock fixture, prequalified digital RESET and missing
-  analog receiver as separate implementation boundaries.
-- [ ] Implement external CLKI source events and stopped-clock behavior while
+  The [interface inventory](devices/attiny13a/interfaces.md) distinguishes the
+  digital clock/RESET fixtures and optional qualification from unmeasured
+  analog receiver and silicon phase behavior.
+- [x] Implement external CLKI source events and stopped-clock behavior while
   preserving CPU instruction phases and independent peripheral time.
-  The audited [CLKI/CPU continuation design](devices/attiny13a/clki-design.md)
-  specifies real edge budgets, bounded waits, persistent instruction/IRQ
-  phases and exactly-once effects. A periodic-only source is insufficient;
-  implementation and its acceptance tests remain open.
-  The first implementation checkpoint adds a standalone exact-uint64 CLKI
-  edge/horizon queue and an opt-in resumable CPU/IRQ backend. Generated WASM
-  can now suspend within its existing clock barriers using the internal
-  physical source, retaining latched operands and completed memory effects.
-  The full source-to-PB3/divider/startup integration, electrical validation and
-  package continuation ABI remain open; these foundations do not complete CLKI.
+  The [board integration](devices/attiny13a/clki_board.md) connects exact source
+  edges to PB3, CKDIV8/CLKPR, GPIO/ADC/Timer0 phases, startup and clocked wake.
+  Bounded translated CPU/IRQ continuations retain latched operands and completed
+  effects while the source holds high or low. WDT, power and NVM wall time
+  continue independently. Package v5 validates the profile and continuation ABI.
+  Arbitrary edges and finite high/low descriptors share the same native queue;
+  descriptor refill, output draining and stereo integration stay in WASM.
+  Optional ideal-signal qualification is explicit. Silicon clock phase and
+  analog reception remain hardware-validation work, not completed measurements.
 - [x] Add a separately profiled analog RESET receiver feeding the existing
   reset aggregator; keep prequalified digital inputs explicit.
   The device-owned receiver uses VCC-relative hysteresis and separate explicit
@@ -262,6 +262,30 @@ two-page memory. Its hash is878bd0266347ad9544f07cf2825f7720ddc95f641304ccda3646
 The optional continuation path uses the existing internal physical source;
 PB3 CLKI/divider/startup integration, electrical profiles and a versioned
 package ABI remain open. ISP/HVSP/programmer support remains excluded.
+
+External CLK integration checkpoint, 2026-10-23: all1128 default regression
+tests passed, including20 new finite-source/device/audio acceptance checks.
+All123 instruction forms also execute from unequal external phases with exact
+half-phase/1ps observations. The source, PB3, divider, GPIO/ADC/Timer0 sampling,
+reset/startup/wake, native IRQ entry and package v5 now exercise one integrated
+clock model. WDT and NVM continue during a held source; known holds and unknown
+input horizons remain distinct.
+
+A single descriptor supplied80000 source transitions at20MHz for native stereo
+capture without JavaScript source refills. New regressions first reproduced
+output-ring overflow during Power-down, fuse startup and all three LPM forms
+at CLKPR/256. Native buffered waits and clock phases now drain internally,
+preserve exactly-once effects and match the internal physical-clock reference.
+The output stream, phase policy, remaining physical limitations and acceptance
+coverage are described in [clki_board.md](devices/attiny13a/clki_board.md).
+
+The rebuilt runtime is112340bytes,103exports, no host imports and fixed two-page
+memory. Its SHA-256 is
+`ae66ad2e64f8e96af046cd02b04f49c82c371026b8686bd54647678c8a8efa97`.
+This checkpoint closes21 of30 checklist items. The remaining nine include
+hardware measurements, Timer0 TOP=0, debugWIRE behavior, performance/cache work
+and the default-engine gate. The earlier open-CLKI statements above describe
+historical checkpoints. ISP/HVSP and external programming remain excluded.
 
 ## Primary references
 
