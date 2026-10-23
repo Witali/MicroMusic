@@ -6,7 +6,9 @@
  * branches and pointer arithmetic in exchange for additional Flash. */
 #include "speex_platform.h"
 #if SPEEX_NB3_USE_AVR_ASM
-extern int32_t speex_avr_lsp_mul_q14(int16_t,int32_t);
+/* Value-only ASM: no reads/writes of C-visible memory. Let GCC retain other
+ * polynomial coefficients across the call, just as for a C expression. */
+extern SPEEX_NB3_CONST int32_t speex_avr_lsp_mul_q14(int16_t,int32_t);
 #define LSP_Q14(a,b) speex_avr_lsp_mul_q14(a,b)
 #else
 #define LSP_Q14(a,b) MULT16_32_Q14(a,b)

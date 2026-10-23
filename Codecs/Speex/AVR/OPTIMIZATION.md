@@ -49,13 +49,17 @@ binary measurements. Vendor and R4 files remain unmodified.
   explicitly enabled AVR ASM preserve their previous binary hashes.
   C is slower on ATmega328P (maximum 332,239 cycles, ISR excluded); retain
   explicit ASM opt-in for the admitted real-time player. See PORTING.md.
+- Pure-value Q14 call declarations: fixture maximum 146,384 -> 146,072
+  cycles, 104 B additional Flash and 4 B additional peak stack. Each LSP
+  conversion saves 78 cycles; arithmetic and selectable C path unchanged.
+  All 1,058 fixtures and reset checks pass; full-series PWM gate pending.
 
 ## Next candidates (unmeasured)
 
-1. **Pure Q14 call attributes.** The generic and bounded Q14 ASM functions only
-   consume value arguments and return a product. Correct `const` declarations
-   may remove compiler-assumed memory clobbers/reloads; measure generated code
-   and full PCM/timing before accepting. Keep the C fallback selectable.
+1. **Narrow post-shift saturation.** LPC's wrapped rounded sum >>13 plus
+   signed16 input fits signed20; innovation's wrapped rounded sum >>14 fits
+   signed18. Use signed24 for the final add/clamp to avoid an unnecessary
+   fourth byte, retaining exact -32767 lower saturation.
 2. **Ten-sample pitch staging.** Upstream pitch sources always have negative
    offsets: the first segment stops before `j==pp`, the second before
    `j==pp+pitch`. Thus a completed innovation vector can be written before the

@@ -57,9 +57,11 @@
 #if defined(__GNUC__) || defined(__clang__)
 #define SPEEX_NB3_NOINLINE __attribute__((noinline))
 #define SPEEX_NB3_ALWAYS_INLINE inline __attribute__((always_inline))
+#define SPEEX_NB3_CONST __attribute__((const))
 #else
 #define SPEEX_NB3_NOINLINE
 #define SPEEX_NB3_ALWAYS_INLINE inline
+#define SPEEX_NB3_CONST
 #endif
 #if defined(__AVR__) && defined(__GNUC__) && !defined(__clang__)
 #define SPEEX_NB3_HOT __attribute__((optimize("O3")))
