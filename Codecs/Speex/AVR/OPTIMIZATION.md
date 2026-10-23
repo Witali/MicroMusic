@@ -179,6 +179,13 @@ binary measurements. Vendor and R4 files remain unmodified.
   All 31 p1 ASM players pass the 40% timer/ISR gate: no underruns, minimum
   queue 27, maximum publication gap 202,051 cycles, free SRAM 524 B.
 
+- LPC rounding constant held in preserved r3 across the 40-sample block:
+  remove 40 repeated LDI instructions for 6 setup/save/restore cycles, saving
+  34 cycles/block and 136/frame. Fixture maximum 133,650 -> 133,514, Flash
+  8,750 -> 8,756 B; observed global peak stack/static SRAM unchanged. All
+  163,840 independent LPC samples and 1,058 fixture/reset frames pass.
+  The C branch is unchanged. Final combined timer/ISR gate remains pending.
+
 ## Next candidates (unmeasured)
 
 1. **Scratch lifetime reuse.** Quantized LSP needs 20 B throughout the frame;

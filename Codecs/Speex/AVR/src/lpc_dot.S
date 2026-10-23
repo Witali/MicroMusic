@@ -11,6 +11,7 @@
 .type speex_avr_iir40, @function
 speex_avr_iir40:
     push r2
+    push r3
     push r4
     push r5
     push r6
@@ -36,6 +37,9 @@ speex_avr_iir40:
     add r14, r24
     adc r15, r1
     clr r2
+    /* One rounding constant for the whole block; r3 survives every MAC. */
+    ldi r18,16
+    mov r3,r18
     clr r16
     ldi r17, 40
 .Lsample:
@@ -77,8 +81,7 @@ speex_avr_iir40:
      * for both history copies and coefficient ageing before Z becomes I/O. */
     movw r28, r30
     /* PSHR32(sum,13), preserving wrap when adding the rounding bias. */
-    ldi r18, 16
-    add r23, r18
+    add r23,r3
     adc r24, r2
     adc r25, r2
     lsl r23
@@ -180,6 +183,7 @@ speex_avr_iir40:
     pop r6
     pop r5
     pop r4
+    pop r3
     pop r2
     ret
 .size speex_avr_iir40, .-speex_avr_iir40
