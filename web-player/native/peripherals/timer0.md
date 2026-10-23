@@ -105,8 +105,10 @@ external edges, capture overflow, and timestamps beyond 2^32.
 There is no silicon trace oracle yet. These tests establish the documented
 digital model and event-jump equivalence; they do not establish electrical or
 oscillator fidelity. Raw external-pin phase belongs to the GPIO module.
-Sustained phase-correct TOP=0 has no useful documented dual-slope period, so
-`TIMER0_ZERO_PHASE_TOP` rejects it instead of inventing a waveform. An initial
+Sustained WGM5/TOP=0 has no fully specified counter/IRQ cadence in the checked
+device sources, so `TIMER0_ZERO_PHASE_TOP` rejects it instead of inventing one.
+This corner is pending hardware; the [source-only probe](timer0-top-zero-probe.md)
+records observations without supplying a predicted waveform. An initial
 zero active TOP may load a nonzero buffered OCR0A on its first pulse. Reserved
 WGM4/WGM6 and PWM COM0B=1 also return explicit errors. Fast-PWM TOP=0 is supported.
 
