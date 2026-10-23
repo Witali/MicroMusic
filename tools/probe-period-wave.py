@@ -2,6 +2,7 @@
 """Reproducible three-clip period-wave experiment; original WAVs stay external."""
 import argparse
 import hashlib
+import importlib.metadata
 import json
 import os
 import sys
@@ -18,7 +19,7 @@ from auto_encoder import SpectralObjective
 from hq4_core import unpack_stream
 from hq4_timbre import decode as decode_timbre
 from model import decode as decode_hq4
-from period_wave import encode_model, decode_model, packed_bytes, unpack_bytes, track_pitch
+from period_wave import encode_model, decode_model, packed_bytes, unpack_bytes, refine_frames
 
 
 def sha(data):
@@ -29,7 +30,7 @@ def write_json(path, value):
     path.write_text(json.dumps(value, indent=2, ensure_ascii=False)+'\n', encoding='utf-8', newline='\n')
 
 
-def run_clip(clip, reference_root, output, starts, plot):
+def run_clip(clip, reference_root, output, starts, proposals, plot):
     path = reference_root / clip['id'] / 'original.wav'
     source = path.read_bytes()
     if sha(source) != clip['sha256']:
@@ -39,6 +40,8 @@ def run_clip(clip, reference_root, output, starts, plot):
         raise ValueError('Unexpected WAV format')
     objective = SpectralObjective(reference, sr)
     model, analysis = encode_model(reference, starts=starts)
+    initial_audio = decode_model(model)
+    model, search = refine_frames(model, objective, proposals=proposals)
     payload = packed_bytes(model)
     candidate = decode_model(unpack_bytes(payload))
     if not np.array_equal(candidate, decode_model(model)):
@@ -49,7 +52,8 @@ def run_clip(clip, reference_root, output, starts, plot):
     clips = {'Original': reference}
     report = dict(clip_id=clip['id'], title=clip['title'], reference_sha256=sha(source),
                   samples=len(reference), sample_rate=sr, seed=23065, starts=starts,
-                  avr_assembled=False, hardware_verified=False, metrics={})
+                  avr_assembled=False, hardware_verified=False, search=search,
+                  before_search=dict(**objective.spectrum(initial_audio), stoi=float(stoi(reference, initial_audio, sr))), metrics={})
     for name, path in streams.items():
         frames, durations = unpack_stream(path.read_bytes())
         decoder = decode_hq4 if name == 'HQ4' else decode_timbre
@@ -120,17 +124,23 @@ def main():
     p.add_argument('--references', type=Path, required=True, help='External/ignored directory with <clip>/original.wav')
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--starts', type=int, default=8)
+    p.add_argument('--proposals', type=int, default=5000)
     p.add_argument('--plot', action='store_true')
     a = p.parse_args()
+    if a.starts < 1 or a.proposals < 0:
+        p.error('Starts must be positive; proposals must be nonnegative')
     manifest = json.loads((ROOT / 'ATtiny13A/Sound/audio-references.json').read_text(encoding='utf-8'))
     reports = []
     for clip in manifest['clips']:
-        report = run_clip(clip, a.references, a.output / clip['id'], a.starts, a.plot)
+        report = run_clip(clip, a.references, a.output / clip['id'], a.starts, a.proposals, a.plot)
         reports.append(report)
         print(json.dumps(dict(clip=clip['id'], data_bytes=report['data_bytes'], metrics=report['metrics']), ensure_ascii=False), flush=True)
     fingerprints = {str(path.relative_to(ROOT)).replace('\\', '/'): sha(path.read_text(encoding='utf-8').encode('utf-8')) for path in
                     [CODEC / 'period_wave.py', Path(__file__), CODEC / 'auto_encoder.py', CODEC / 'hq4_timbre.py', CODEC / 'model.py', CODEC / 'hq4_core.py']}
-    write_json(a.output / 'quality.json', dict(schema='period-wave-experiment-v1', sources_sha256_normalized_lf=fingerprints, clips=reports))
+    versions = {name: importlib.metadata.version(name) for name in ('numpy', 'scipy', 'numba', 'soundfile', 'pystoi')}
+    versions['python'] = sys.version.split()[0]
+    write_json(a.output / 'quality.json', dict(schema='period-wave-experiment-v2', runtime=versions,
+               sources_sha256_normalized_lf=fingerprints, clips=reports))
 
 
 if __name__ == '__main__':

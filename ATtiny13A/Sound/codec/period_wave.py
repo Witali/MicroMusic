@@ -12,7 +12,7 @@ HOP = 64
 PERIOD = 32
 
 
-def track_pitch(audio, sr=SR, hop=HOP, window=384, low=65., high=850.):
+def track_pitch(audio, sr=SR, hop=HOP, window=256, low=65., high=850.):
     """Return frame-centred F0/periodicity estimates, with zero for unvoiced.
 
     Fixed-length difference comparisons avoid a preference for long lags.
@@ -29,14 +29,17 @@ def track_pitch(audio, sr=SR, hop=HOP, window=384, low=65., high=850.):
     if window <= 2 * hi:
         raise ValueError('Analysis window too short for minimum F0')
     centres = np.arange(0, len(x), hop) + hop / 2
-    padded = np.pad(x, (window, window))
+    # High-frequency turbulence must not overwhelm the periodic low bands.
+    # This is analysis only: synthesis and objective retain the full bandwidth.
+    filtered = sosfilt(butter(2, 1300, fs=sr, output='sos'), x)
+    padded = np.pad(filtered, (window, window))
     gate = max(np.sqrt(np.mean(x*x)) * .045, 1e-7)
     candidates, costs, qualities = [], [], []
     for centre in centres:
         start = int(centre) - window // 2 + window
         segment = padded[start:start + window]
         quality = 0.
-        fs, emission = [0.], [.22]
+        fs, emission = [0.], [.36]
         if np.sqrt(np.mean(segment**2)) > gate:
             width = window - hi - 1
             base = segment[:width]
@@ -202,12 +205,29 @@ def train_book(shapes, voiced, seed=23065, starts=8, count=16):
     return best[1]
 
 
-GAIN_LEVELS = np.array([0., .125, .1875, .25, .375, .5, .75, 1.])
+GAIN_LEVELS = np.array([0., .03125, .0625, .125, .25, .5, .75, 1.])
+
+
+def noise_colors(samples):
+    """Fixed-seed unit-RMS noise colors, independent of source or frame fields."""
+    state, noise = 23065, np.empty(samples)
+    for i in range(samples):
+        state ^= (state << 13) & 0xffffffff
+        state ^= state >> 17
+        state ^= (state << 5) & 0xffffffff
+        state &= 0xffffffff
+        noise[i] = (state/2147483648-1)*np.sqrt(3)
+    colors = []
+    for k in range(16):
+        cutoff = 200+400*(k % 8)
+        color = sosfilt(butter(1, cutoff, fs=SR, btype='lowpass' if k<8 else 'highpass', output='sos'), noise)
+        colors.append(color/(np.sqrt(np.mean(color*color))+1e-12))
+    return np.asarray(colors)
 
 
 def decode_model(model):
     """Decode solely retained parameters; does not accept reference audio/F0."""
-    if model['schema'] != 'period-wave-v1' or model['sample_rate'] != SR or model['hop'] != HOP:
+    if model['schema'] != 'period-wave-v2' or model['sample_rate'] != SR or model['hop'] != HOP:
         raise ValueError('Unsupported period-wave model')
     samples = int(model['samples'])
     frames = np.asarray(model['frames'], dtype=int)
@@ -224,28 +244,13 @@ def decode_model(model):
     periodic = render_periods(shapes, phase, centres)
     # Deterministic xorshift32 white noise, then 16 simple spectral colors.
     # Noise selection reuses the template index in unvoiced frames.
-    state, noise = 23065, np.empty(samples)
-    for i in range(samples):
-        state ^= (state << 13) & 0xffffffff
-        state ^= state >> 17
-        state ^= (state << 5) & 0xffffffff
-        state &= 0xffffffff
-        noise[i] = (state/2147483648-1)*np.sqrt(3)
-    colors = []
-    for k in range(16):
-        if k < 8:
-            cutoff = 200+400*k
-            color = sosfilt(butter(1, cutoff, fs=SR, output='sos'), noise)
-        else:
-            cutoff = 200+400*(k-8)
-            color = sosfilt(butter(1, cutoff, fs=SR, btype='highpass', output='sos'), noise)
-        colors.append(color/(np.sqrt(np.mean(color*color))+1e-12))
+    colors = noise_colors(samples)
     frame = np.interp(np.arange(samples), centres, np.arange(len(frames)))
     left = np.floor(frame).astype(int)
     right = np.minimum(left+1, len(frames)-1)
     blend = frame-left
     def noise_at(indices):
-        return np.asarray(colors)[frames[indices, 1], np.arange(samples)]*gains[indices]*(1-frames[indices, 3])
+        return colors[frames[indices, 1], np.arange(samples)]*gains[indices]*(1-frames[indices, 3])
     return periodic + noise_at(left)*(1-blend) + noise_at(right)*blend
 
 
@@ -279,7 +284,7 @@ def encode_model(audio, seed=23065, starts=8):
         # An explicitly limited two-family noise-color initializer.
         ids[i] = np.argmin(abs(np.r_[np.arange(8)*160+300, np.arange(8)*150+1900]-centroid))
     frames = np.column_stack((codes, ids, gains, f0>0)).astype(int)
-    model = dict(schema='period-wave-v1', sample_rate=SR, samples=len(audio), hop=HOP,
+    model = dict(schema='period-wave-v2', sample_rate=SR, samples=len(audio), hop=HOP,
                  initial_phase_u16=initial, scale_u16=scale_u16,
                  codebook=book.astype(int).tolist(), frames=frames.tolist())
     analysis = dict(centres=centres, f0=f0, periodicity=quality, phase=quantized_phase,
@@ -291,7 +296,7 @@ def encode_model(audio, seed=23065, starts=8):
 def packed_bytes(model):
     """Actual compact research payload: 10-byte header, 256-byte book, 2B/frame.
 
-    Header: samples u16, initial phase u16, scale u16, PW version 1 (4 bytes).
+    Header: samples u16, initial phase u16, scale u16, PW version 2 (4 bytes).
     Fixed sample rate/hop/book/noise seed/gain levels are decoder conventions.
     Decoder code and constants are deliberately NOT included in this count.
     """
@@ -302,7 +307,7 @@ def packed_bytes(model):
     decode_model(model)
     book = np.asarray(model['codebook'], dtype=int).ravel()
     nibbles = book & 15
-    output = bytearray(struct.pack('<4sHHH', b'PW\x01\x00', model['samples'], model['initial_phase_u16'], model['scale_u16']))
+    output = bytearray(struct.pack('<4sHHH', b'PW\x02\x00', model['samples'], model['initial_phase_u16'], model['scale_u16']))
     output.extend((nibbles[::2] | nibbles[1::2] << 4).astype(np.uint8).tobytes())
     for pitch, index, gain, voiced in model['frames']:
         output.extend((pitch, index | gain << 4 | voiced << 7))
@@ -315,12 +320,93 @@ def unpack_bytes(payload):
         raise ValueError('Truncated period-wave payload')
     magic, samples, initial, scale = struct.unpack('<4sHHH', payload[:10])
     count = (samples+HOP-1)//HOP
-    if magic != b'PW\x01\x00' or len(payload) != 266+2*count:
+    if magic != b'PW\x02\x00' or len(payload) != 266+2*count:
         raise ValueError('Invalid period-wave payload')
     packed = np.frombuffer(payload[10:266], dtype=np.uint8).astype(int)
     book = np.column_stack((packed & 15, packed >> 4)).ravel()
     book[book >= 8] -= 16
     frames = [[payload[i], payload[i+1] & 15, (payload[i+1] >> 4) & 7, payload[i+1] >> 7] for i in range(266, len(payload), 2)]
-    return dict(schema='period-wave-v1', sample_rate=SR, samples=samples, hop=HOP,
+    return dict(schema='period-wave-v2', sample_rate=SR, samples=samples, hop=HOP,
                 initial_phase_u16=initial, scale_u16=scale,
                 codebook=book.reshape(16, PERIOD).tolist(), frames=frames)
+
+
+class FrameSynthesis:
+    """Cached linear contributions for fixed-pitch frame-parameter search.
+
+    The final decoder remains decode_model. This cache only speeds up encoder
+    proposals; matching it against the independent decoder is a test contract.
+    """
+    def __init__(self, model):
+        samples = model['samples']
+        frames = np.array(model['frames'], dtype=int)
+        centres = np.arange(len(frames))*HOP+HOP/2
+        phase = model['initial_phase_u16']/65536 + np.r_[0., np.cumsum(np.repeat(frames[:, 0], HOP)[:samples-1]*32/65536)]
+        lookup = np.remainder(phase, 1)*PERIOD
+        a = np.floor(lookup).astype(int) % PERIOD
+        b, mix = (a+1) % PERIOD, lookup-np.floor(lookup)
+        book = np.array(model['codebook'])/7
+        periodic = book[:, a]*(1-mix)+book[:, b]*mix
+        noise = noise_colors(samples)
+        self.bases, self.slices = [], []
+        position = np.interp(np.arange(samples), centres, np.arange(len(frames)))
+        for i in range(len(frames)):
+            weight = np.maximum(0, 1-abs(position-i))
+            support = np.flatnonzero(weight > 0)
+            region = slice(int(support[0]), int(support[-1])+1)
+            self.slices.append(region)
+            self.bases.append(np.stack((noise[:, region], periodic[:, region]))*weight[region]*model['scale_u16']/65535)
+        self.samples = samples
+
+    def contribution(self, i, frame):
+        _, index, gain, voiced = frame
+        return self.bases[i][voiced, index]*GAIN_LEVELS[gain]
+
+    def render(self, frames):
+        out = np.zeros(self.samples)
+        for i, frame in enumerate(frames):
+            out[self.slices[i]] += self.contribution(i, frame)
+        return out
+
+
+def refine_frames(model, objective, proposals=5000, seed=23066):
+    """Greedy analysis-by-synthesis, balancing spectra and STOI explicitly.
+
+    Does not promise a global optimum or a STOI floor. Pitch/book stay fixed;
+    gain, template/color and voiced/noise mode are chosen through actual audio.
+    """
+    from copy import deepcopy
+    from pystoi import stoi
+    rng = np.random.default_rng(seed)
+    result = deepcopy(model)
+    frames = np.array(model['frames'], dtype=int)
+    cache = FrameSynthesis(model)
+    audio = cache.render(frames)
+    def score(x):
+        return objective.spectrum(x)['loss'] + 2*(1-float(stoi(objective.reference, x, SR)))
+    initial = energy = score(audio)
+    improvements = 0
+    for step in range(proposals):
+        i = int(rng.integers(len(frames)))
+        proposed = frames[i].copy()
+        kind = int(rng.integers(4))
+        if kind in (0, 3):
+            proposed[2] = int(rng.integers(8))
+        if kind in (1, 3):
+            proposed[1] = int(rng.integers(16))
+        if kind == 2:
+            proposed[3] ^= 1
+        if np.array_equal(proposed, frames[i]):
+            continue
+        candidate = audio.copy()
+        candidate[cache.slices[i]] += cache.contribution(i, proposed)-cache.contribution(i, frames[i])
+        value = score(candidate)
+        if value < energy:
+            frames[i], audio, energy = proposed, candidate, value
+            improvements += 1
+    result['frames'] = frames.tolist()
+    exact = decode_model(result)
+    if not np.allclose(audio, exact, atol=1e-11, rtol=0):
+        raise AssertionError('Search cache differs from independent decoder')
+    return result, dict(proposals=proposals, improvements=improvements, seed=seed,
+                        objective='spectral_loss + 2 * (1 - STOI)', initial_energy=initial, final_energy=energy)

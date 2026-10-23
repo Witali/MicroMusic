@@ -8,7 +8,8 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'ATtiny13A/Sound/codec'))
 from period_wave import (track_pitch, continuous_phase, quantize_phase, encode_model,
-                         decode_model, packed_bytes, unpack_bytes, render_periods)
+                         decode_model, packed_bytes, unpack_bytes, render_periods,
+                         FrameSynthesis, refine_frames)
 
 
 class PeriodWaveTests(unittest.TestCase):
@@ -30,6 +31,17 @@ class PeriodWaveTests(unittest.TestCase):
         for x in (np.zeros(7500), np.random.default_rng(7).normal(0, .2, 7500)):
             _, f0, _ = track_pitch(x)
             self.assertLess(np.mean(f0 > 0), .05)
+
+    def test_low_noisy_glide_keeps_pitch(self):
+        frequency = np.linspace(110, 310, 7500)
+        phase = np.cumsum(frequency/7500)*2*np.pi
+        audio = .2*np.cos(phase)+.07*np.cos(2*phase)+.08*np.random.default_rng(17).normal(size=len(phase))
+        centres, f0, _ = track_pitch(audio)
+        mask = (centres > 500) & (centres < len(audio)-500)
+        target = np.interp(centres[mask], np.arange(len(audio)), frequency)
+        cents = 1200*abs(np.log2(np.maximum(f0[mask], 1)/target))
+        self.assertGreater(np.mean(f0[mask] > 0), .97)
+        self.assertLess(np.quantile(cents, .95), 40)
 
     def test_phase_quantization_carries_error_without_frame_resets(self):
         centres = np.arange(60)*64+32
@@ -57,6 +69,18 @@ class PeriodWaveTests(unittest.TestCase):
         for bad in (encoded[:-1], b'XX'+encoded[2:]):
             with self.assertRaises(ValueError):
                 unpack_bytes(bad)
+
+    def test_search_cache_matches_decoder_including_noise_and_frame_edges(self):
+        t = np.arange(3901)/7500
+        model, _ = encode_model(.3*np.cos(2*np.pi*230*t), starts=2)
+        rng = np.random.default_rng(5)
+        for frame in model['frames']:
+            frame[1:] = [int(rng.integers(16)), int(rng.integers(8)), int(rng.integers(2))]
+        self.assertTrue(np.allclose(FrameSynthesis(model).render(model['frames']), decode_model(model), atol=1e-12, rtol=0))
+        from auto_encoder import SpectralObjective
+        refined, stats = refine_frames(model, SpectralObjective(.3*np.cos(2*np.pi*230*t)), proposals=30)
+        self.assertLessEqual(stats['final_energy'], stats['initial_energy'])
+        self.assertEqual(len(packed_bytes(refined)), len(packed_bytes(model)))
 
 
 if __name__ == '__main__':

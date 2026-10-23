@@ -1,0 +1,221 @@
+{
+  "schema": "period-wave-experiment-v2",
+  "runtime": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "numba": "0.68.0",
+    "soundfile": "0.14.0",
+    "pystoi": "0.4.1",
+    "python": "3.12.14"
+  },
+  "sources_sha256_normalized_lf": {
+    "ATtiny13A/Sound/codec/period_wave.py": "ad0aa3f5db96d0e6a9573c1df660ea71417fc9dc3280aa81e559a440fe7118cd",
+    "tools/probe-period-wave.py": "52790fd6296802c1097f694cd7367725bc30a715a96f9d3bd75d22753a840231",
+    "ATtiny13A/Sound/codec/auto_encoder.py": "ab97a68e00409640531c26cebc43f2fc2fdd3c4cb111e6ffb7c0a7dbcdff2202",
+    "ATtiny13A/Sound/codec/hq4_timbre.py": "ff22427010ddb169bafbc8a35502dcd413980299fd36d292fdf99eae7ffb371b",
+    "ATtiny13A/Sound/codec/model.py": "d9c3449ddd2da1929e71da99ef3b040d46d95988d2f5ea704f9416e30c1ba71e",
+    "ATtiny13A/Sound/codec/hq4_core.py": "936c21384042c24be9525ff7cb73b6e1421c852b4a63ea393e318cc60e9bd466"
+  },
+  "clips": [
+    {
+      "clip_id": "chego",
+      "title": "Чего тебе нужно?",
+      "reference_sha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+      "samples": 9216,
+      "sample_rate": 7500,
+      "seed": 23065,
+      "starts": 8,
+      "avr_assembled": false,
+      "hardware_verified": false,
+      "search": {
+        "proposals": 5000,
+        "improvements": 144,
+        "seed": 23066,
+        "objective": "spectral_loss + 2 * (1 - STOI)",
+        "initial_energy": 0.940596840694,
+        "final_energy": 0.623045467671178
+      },
+      "before_search": {
+        "loss": 0.3103049944384956,
+        "log_spectral_error": 0.3210799664035117,
+        "relative_spectral_error": 0.2672051065784309,
+        "stoi": 0.6848540768722478
+      },
+      "metrics": {
+        "HQ4": {
+          "loss": 1.2015368276169764,
+          "log_spectral_error": 1.276925854789502,
+          "relative_spectral_error": 0.8999807189268734,
+          "stoi": 0.9006005040626661,
+          "assembled_flash_bytes": 959,
+          "stream_sha256": "5033738490e0ae0ba30c8ea62d9d53404b04b592eb53a7a0750329e641b29e6e"
+        },
+        "HQ4-T Auto": {
+          "loss": 0.9101479560514576,
+          "log_spectral_error": 0.9359480734784557,
+          "relative_spectral_error": 0.8069474863434652,
+          "stoi": 0.9005000749339589,
+          "assembled_flash_bytes": 1007,
+          "stream_sha256": "16d924e1586a52356a61abbac7b82d421e4eee8404bc2f6d157bcaaa81e99769"
+        },
+        "Period unquantized": {
+          "loss": 0.18717918614484313,
+          "log_spectral_error": 0.19931044470842,
+          "relative_spectral_error": 0.13865415189053562,
+          "stoi": 0.8060404497412629,
+          "waveform_snr_db": 15.598537676617033
+        },
+        "Period 16x32": {
+          "loss": 0.3166727471935802,
+          "log_spectral_error": 0.3148607951785921,
+          "relative_spectral_error": 0.32392055525353247,
+          "stoi": 0.8468136397612008,
+          "waveform_snr_db": 6.78289041031467
+        }
+      },
+      "data_bytes": 554,
+      "header_bytes": 10,
+      "codebook_bytes": 256,
+      "frame_bytes": 288,
+      "available_flash_after_data": 470,
+      "voiced_frame_fraction": 0.8402777777777778,
+      "f0_voiced_percentiles_hz": [
+        278.68014494904696,
+        393.43863794350466,
+        529.5408028593073
+      ],
+      "max_phase_quantization_error_cycles": 0.09608575151369791,
+      "decoder_reference_independent": true,
+      "payload_sha256": "13421669eefe85782b6a45ac8e7b19b4e264d4a613a85dc149b7f9fa27e37083",
+      "unquantized_model": "floating per-frame periods; same quantized phase; unvoiced muted; no size claim"
+    },
+    {
+      "clip_id": "otvechaesh",
+      "title": "Что ж ты не отвечаешь?",
+      "reference_sha256": "96c09f80396643dd80efb9c5c8557d83359eeb829a0b855a7f8f5c32bbff0b96",
+      "samples": 7936,
+      "sample_rate": 7500,
+      "seed": 23065,
+      "starts": 8,
+      "avr_assembled": false,
+      "hardware_verified": false,
+      "search": {
+        "proposals": 5000,
+        "improvements": 178,
+        "seed": 23066,
+        "objective": "spectral_loss + 2 * (1 - STOI)",
+        "initial_energy": 1.1494351847040774,
+        "final_energy": 0.8175598047616279
+      },
+      "before_search": {
+        "loss": 0.41179142268819824,
+        "log_spectral_error": 0.4591215858292727,
+        "relative_spectral_error": 0.22247077012390026,
+        "stoi": 0.6311781189920604
+      },
+      "metrics": {
+        "HQ4": {
+          "loss": 1.0972926452380038,
+          "log_spectral_error": 1.1921568705663546,
+          "relative_spectral_error": 0.7178357439246009,
+          "stoi": 0.8190556436552531,
+          "assembled_flash_bytes": 885,
+          "stream_sha256": "6e44fbc2b548627cd71c7329ed5683ec9ce40ee51a1fa61f8f24039d55810d2d"
+        },
+        "Period unquantized": {
+          "loss": 0.3254847343567105,
+          "log_spectral_error": 0.36294119356044563,
+          "relative_spectral_error": 0.17565889754176991,
+          "stoi": 0.7006675727684019,
+          "waveform_snr_db": 14.157277662250394
+        },
+        "Period 16x32": {
+          "loss": 0.4049903511628716,
+          "log_spectral_error": 0.434815463295628,
+          "relative_spectral_error": 0.2856899026318458,
+          "stoi": 0.7937152732006216,
+          "waveform_snr_db": 8.196982241363632
+        }
+      },
+      "data_bytes": 514,
+      "header_bytes": 10,
+      "codebook_bytes": 256,
+      "frame_bytes": 248,
+      "available_flash_after_data": 510,
+      "voiced_frame_fraction": 0.7338709677419355,
+      "f0_voiced_percentiles_hz": [
+        269.17108314639495,
+        549.7599312670857,
+        640.1988430980693
+      ],
+      "max_phase_quantization_error_cycles": 0.10705071249577713,
+      "decoder_reference_independent": true,
+      "payload_sha256": "da46308d7dea31c77c65329bdeb730a956e8298d72eae4ccdcc5aa34af6d4d66",
+      "unquantized_model": "floating per-frame periods; same quantized phase; unvoiced muted; no size claim"
+    },
+    {
+      "clip_id": "vinni",
+      "title": "Сова! Открывай! Медведь пришёл!",
+      "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+      "samples": 22272,
+      "sample_rate": 7500,
+      "seed": 23065,
+      "starts": 8,
+      "avr_assembled": false,
+      "hardware_verified": false,
+      "search": {
+        "proposals": 5000,
+        "improvements": 378,
+        "seed": 23066,
+        "objective": "spectral_loss + 2 * (1 - STOI)",
+        "initial_energy": 1.455189050022406,
+        "final_energy": 1.0868502879645054
+      },
+      "before_search": {
+        "loss": 0.633340932845892,
+        "log_spectral_error": 0.6191381650953289,
+        "relative_spectral_error": 0.690152003848144,
+        "stoi": 0.5890759414117428
+      },
+      "metrics": {
+        "HQ4": {
+          "loss": 0.8232287703712707,
+          "log_spectral_error": 0.8128841292213537,
+          "relative_spectral_error": 0.8646073349709388,
+          "stoi": 0.8596022716157532,
+          "assembled_flash_bytes": 1024,
+          "stream_sha256": "fe24fbdaf5260266d7b29b04f7e4d3926c48ce13c5697b214e0728b431433d03"
+        },
+        "Period unquantized": {
+          "loss": 0.5493530545481573,
+          "log_spectral_error": 0.5253870180320587,
+          "relative_spectral_error": 0.6452172006125515,
+          "stoi": 0.49218026997482717,
+          "waveform_snr_db": 3.558133214391055
+        },
+        "Period 16x32": {
+          "loss": 0.5426431480068394,
+          "log_spectral_error": 0.5138894935018291,
+          "relative_spectral_error": 0.6576577660268805,
+          "stoi": 0.7278964300211671,
+          "waveform_snr_db": 0.9005133270349208
+        }
+      },
+      "data_bytes": 962,
+      "header_bytes": 10,
+      "codebook_bytes": 256,
+      "frame_bytes": 696,
+      "available_flash_after_data": 62,
+      "voiced_frame_fraction": 0.4224137931034483,
+      "f0_voiced_percentiles_hz": [
+        121.59524919177,
+        132.8983696986113,
+        824.1583267359409
+      ],
+      "max_phase_quantization_error_cycles": 0.3653846952312563,
+      "decoder_reference_independent": true,
+      "payload_sha256": "822e6f6a66776e1380335384a14a057ff87462cdb9e8e7ced681128bd94c70ac",
+      "unquantized_model": "floating per-frame periods; same quantized phase; unvoiced muted; no size claim"
+    }
+  ]
+}
