@@ -1,0 +1,87 @@
+ATtiny13A sleep and wake policy
+
+Source: Microchip ATtiny13A Data Sheet Complete DS40002307A (2021), sections
+4.7.1, 6.2, 7.1-7.5, 8.4 and 9.2; Tables 7-1 and 7-2:
+https://ww1.microchip.com/downloads/aemDocuments/documents/MCU08/ProductDocuments/DataSheets/ATtiny13A-Data-Sheet-DS40002307A.pdf
+
+system_sleep.c is a standalone allocation-free C/WASM policy. It owns no I/O
+registers, callbacks or JavaScript imports. GPIO/bus remains the sole MCUCR
+owner; the board/CPU owns actual clock scheduling, PRR register, oscillator
+configuration, power supply/BOD, SREG.I and interrupt/reset execution.
+
+After executing SLEEP's instruction cycle and PC advance, call enter with the
+current MCUCR. With SE=0 it does nothing. SM=0 enters Idle, SM=1 ADC Noise
+Reduction, SM=2 Power-down, and SM=3 reports an explicit reserved configuration.
+The policy does not clear SE or change CPU registers/SRAM. Re-entry while already
+asleep or waking reports busy. The caller should invoke analog sleep-entry
+conversion handling when adc_start reports true; its analog module validates
+ADEN, ADIE, busy state and single-conversion mode. This helper applies to Idle
+and ADC Noise Reduction, and is a request once at entry, not every policy read.
+
+domains reports clock availability. Asleep Idle stops clkCPU/clkFLASH and keeps
+clkI/O, clkADC and the main clock. ADC Noise Reduction also stops clkI/O while
+keeping clkADC and the main clock. Power-down stops all generated/main clocks.
+Asynchronous inputs and the separately enabled watchdog remain available in all
+three modes. PRR bit0 gates ADC and bit1 gates Timer0; each peripheral must still
+apply its own functional enable bits. This policy does not model current draw.
+
+Wake-source masks use the vector address as the bit number: reset=bit0, INT0=1,
+PCINT=2, Timer0 overflow=3, NVM ready=4, comparator=5, Timer0 A/B=6/7,
+watchdog=8, ADC=9. Idle permits every source. ADC Noise Reduction permits
+asynchronous INT0 level/PCINT, NVM ready, watchdog and ADC. Power-down permits
+asynchronous INT0 level/PCINT and watchdog. Reset is always permitted. These
+follow Table 7-1, including its watchdog-interrupt column and INT0 level footnote.
+An INT0 edge is not an eligible wake source when clkI/O has stopped.
+
+wake receives asserted sources and their individual enable-mask state. An
+ineligible or masked source leaves the CPU asleep. An eligible source starts
+waking. Reset requests immediate reset fan-out and bypasses ordinary IRQ wake
+latency. The policy does not accept an interrupt vector, clear a flag, push the
+PC, modify SREG or force an ISR. After wake completes the CPU must arbitrate its
+current live enabled requests and SREG.I. For example, a low INT0 can begin
+Power-down wake but disappear during startup: execution then resumes after
+SLEEP without INT0 service, as described in section 9.2.1. wake_sources is wake
+history only; it must never be treated as the later pending-interrupt mask.
+
+Time is an explicit uniform uint64 scheduler domain selected by the board.
+For the CPU's half-cycle domain use ticks_per_cpu_cycle=2. startup_ticks is
+supplied for this wake from the actual CKSEL/SUT/fuse and any BOD/reference
+recovery policy; no typical oscillator/BOD time is silently invented. Normally
+Idle/ADC Noise Reduction require no oscillator restart, so the board passes zero.
+If oscillator/BOD startup overlaps, the board supplies its actual combined wait
+instead of adding guesses. Changes in clock frequency are likewise board-owned.
+
+An accepted interrupt wake first waits startup_ticks, then exactly four further
+CPU cycles, the extra sleep response from sections 7.1 and 4.7.1. The existing CPU
+must then execute its ordinary four-cycle interrupt entry, if a vector is still
+eligible. Therefore a vectored wake is startup + 4 extra + 4 normal entry cycles;
+do not replace normal entry with the extra delay or count the extra delay twice.
+ready_at reports the point where instruction/normal-IRQ arbitration may resume.
+No RJMP at the vector is included; its cost belongs to ordinary CPU execution.
+
+During startup, the old asleep clock domains remain gated; the board starts the
+oscillator as required, but the main-clock availability flag is not set while
+Power-down recovery is still pending. At the startup deadline all clock domains
+are available for the four wake cycles, but phase is WAKE_DELAY and instructions
+remain halted. input_clamp reports Power-down input clamping until startup ends;
+GPIO keeps individually enabled interrupt inputs active itself.
+
+next_event returns the startup or wake-ready deadline and UINT64_MAX while
+asleep awaiting an external event, or while normally running. advance is O(1)
+even over arbitrarily long sleeps and can cross both deadlines. Backward time,
+zero ticks_per_cpu_cycle and arithmetic overflow are rejected explicitly.
+Other peripheral events must still split spans in the board scheduler.
+
+This module does not implement the BODCR timed sequence, analog thresholds,
+physical oscillator startup, reset stretching, GPIO wake detection or ADC itself.
+Those are separate modules/board configuration. It is not connected to the
+current player until the C CPU bus and event scheduler integrate its APIs.
+
+Verification:
+  node --test web-player/tests/system-sleep.test.mjs
+
+Tests compile to import-free WASM in ignored build/system-sleep-test using the
+read-only prepared Emscripten SDK (or EMSDK). They cover SE/SM, reserved/busy
+states, all clock domains and PRR gates, every wake-mode policy, disabled/edge
+INT0 wake rejection, explicit startup and sleep latency deadlines, asynchronous
+watchdog/PCINT wake, reset, disappeared INT0 levels, bad time and huge spans.
