@@ -44,6 +44,15 @@ def apply(source: Path):
         'speex_avr_innovation(innov, bits, ener);')
     decode_start = text.index('int nb_decode(')
     text = text[:decode_start] + replace(text[decode_start:], 'signal_mul(innov, innov, ener, NB_SUBFRAME_SIZE);', '')
+    text = replace(text,
+        '         st->interp_qlpc[i] = ak[i];',
+        '''         st->interp_qlpc[i] = ak[i];
+#ifdef SPEEX_AVR_OUTPUT_HOOK
+      {
+         extern void speex_avr_output(const spx_word16_t *, uint8_t);
+         speex_avr_output(sp, NB_SUBFRAME_SIZE);
+      }
+#endif''')
     path.write_text(text)
 
     path = lib / 'ltp.c'

@@ -1,69 +1,115 @@
 # Speex for AVR
 
-Target: ATmega328P, 16 MHz, 2 KiB SRAM, 32 KiB Flash. Initial stream profile:
-Speex narrowband submode 3, mono 8 kHz, 160 samples / 20-byte packet / 20 ms.
+An adaptation of the **original Xiph Speex 1.2.1 fixed-point decoder** for
+ATmega328P at 16 MHz, with a linked PWM player and reproducible host/AVR tests.
+The complete player passes ISA simulation on all 11 retained streams: **1,058
+frames / 169,280 samples, zero underruns, 152 bytes SRAM free at the observed
+peak**. A physical board and its analog output have not been tested.
 
-The active implementation adapts **Xiph Speex 1.2.1 fixed point**. The previous
-custom R4 decoder is retained separately under `reference/R4` for comparisons.
-Its source and test streams are unchanged from the supplied handoff archive.
-R4 timing estimates do not describe the upstream port.
+## Supported profile
 
-`handoff/upstream` contains the previous agent's patch candidates and tests,
-copied without modification. The accompanying historical notes describe the
-state before this repository import; they are context, not current test results.
-`handoff/import-manifest.json` records the source archive and each imported
-file's SHA-256. The remaining historical stages and generated files stay in
-the external handoff ZIP.
+- Narrowband submode 3, mono 8 kHz, CBR 8 kbit/s.
+- Exactly 20 compressed bytes produce 160 signed 16-bit samples (20 ms).
+- Enhancement and highpass are disabled; all four LSP interpolations and LPC
+  conversions are retained. Decoded s16 PCM matches unmodified upstream.
+- Input consists of raw packets, as in `reference/R4/data/*.spxraw`. Ogg/Speex
+  containers, other submodes, WB, DTX, stereo, encoder and packet loss concealment
+  are outside this profile. The API rejects wrong lengths and mode headers
+  before changing state.
 
-The original 1.2.1 C sources and headers are retained under `vendor/speex-1.2.1`,
-including their license and hashes. Builds use disposable copies under `build/`;
-the vendor and R4 trees are checked against their hashes before every build.
+`src/speex_avr.h` exposes a static, non-reentrant decoder: reset with
+`speex_avr_init()`, then call `speex_avr_decode(packet, 20, pcm)` for each packet.
+The caller supplies space for 160 samples. No heap is used. The 400-byte scratch
+arena is checked on the host; the 312-sample excitation history is sufficient
+for the restricted lossless profile (maximum backward pitch access: 145 samples).
 
-Run from the repository root with Python 3 and Clang on PATH:
+## PWM player
+
+`src/player.c` reads embedded packets from Flash and sends the high eight bits
+of PCM, converted to unsigned samples, to **OC1A / PB1 / Arduino D9**.
+Timer1 runs 8-bit fast PWM at 62.5 kHz; Timer2 CTC advances PCM at 8 kHz.
+Timer divisors assume a 16 MHz CPU clock. A 128-byte ring receives each completed
+40-sample subframe, so decoding and playback overlap without a second s16 frame.
+Playback starts after an 80-sample prefill and drains the final sample before
+returning PWM to midpoint.
+
+The demo stops at the end of the embedded stream. The supplied `speech_ru`
+fixture is historical synthesized test speech from the handoff, not a recording
+of a human speaker. The 8-bit PWM conversion is separate from the exact s16
+decoder comparison.
+
+## Build and verify
+
+Use Python 3, Clang, AVR GCC/avr-libc and Node on PATH. On this Windows checkout,
+the shared tools can be enabled from the task worktree with
+`. ../../build/toolchains/env.ps1` in PowerShell. Clang's native Windows build
+also needs the installed Microsoft C runtime/SDK and linker.
+
+From the task worktree root:
 
 ```sh
 python Codecs/Speex/AVR/tests/verify_pcm.py --cc clang
+npm --prefix Codecs/Speex/AVR ci --ignore-scripts
+python Codecs/Speex/AVR/tools/build.py --avr-gcc avr-gcc
+node Codecs/Speex/AVR/tests/verify_avr.mjs
+python Codecs/Speex/AVR/tools/build.py --avr-gcc avr-gcc --player Codecs/Speex/AVR/reference/R4/data/speech_ru.spxraw
+node Codecs/Speex/AVR/tests/verify_player.mjs
 ```
 
-This builds the unmodified fixed-point decoder, compact LSP variant, and compact
-LSP + tight excitation variant, and compares complete signed 16-bit PCM on all
-11 saved streams (1,058 frames / 169,280 samples). All three agree byte for byte
-with enhancement and highpass disabled. See `reports/host-pcm.json` for the
-retained oracle hashes. The test is for this restricted, lossless mode-3 profile;
-it does not validate packet loss concealment or other Speex modes.
-
-The upstream port is under development. Successful host tests or AVR object
-compilation alone do not establish a working real-time ATmega328P player.
-
-The static `src/speex_avr.h` API adapts the original decoder for the restricted
-profile. It uses a 400-byte scratch arena, a tested 312-sample excitation
-history, and explicit PROGMEM codebook reads. It rejects other packet sizes and
-mode headers before changing state. Enhancement, highpass and packet loss
-concealment are excluded; no heap allocator is linked.
-
-Build the linked AVR GCC validation firmware and execute it on AVR8js:
+For the full player matrix (rebuilds and simulates every stream):
 
 ```sh
-python Codecs/Speex/AVR/tools/build.py --avr-gcc /path/to/avr-gcc
-cd Codecs/Speex/AVR
-npm ci --ignore-scripts
-npm run test:avr
+python Codecs/Speex/AVR/tests/verify_players.py --avr-gcc avr-gcc --node node
 ```
 
-The initial linked port uses 10,312 bytes Flash, 1,671 bytes static SRAM including
-the packet/PCM test mailbox. All 1,058 frames agree with the unmodified upstream
-oracle when executing AVR instructions. Peak C stack is 238 bytes, leaving 139
-bytes free in this harness. Maximum frame time is 547,940 cycles, exceeding the
-320,000-cycle real-time budget. These are ISA simulation results without ISR
-or peripheral I/O, not measurements from a physical board. The baseline report
-is retained in `reports/avr-initial.json`.
+Outputs are ignored under `build/`. The decoder validation firmware is
+`build/profile/speex-test.{elf,hex,bin,map}`. The PWM demo is
+`build/player/speex-player.{elf,hex,bin,map}`; `input.json` records its payload
+hash. The matrix leaves `speech_ru` as the final demo. Player tests retain the
+captured unsigned PCM as `build/player/player-pwm.u8`.
 
-The optimized decoder retains exact upstream arithmetic with symmetric 48-byte
-LSP polynomials, fused innovation scaling, a bounded field reader, and AVR
-assembly for LPC state updates and pitch MACs. AVR GCC `-O3` with controlled
-inlining gives **14,712 B Flash / 1,535 B static SRAM / 221 B peak C stack**.
-All 1,058 AVR frames remain exact, with a worst observed **295,334 cycles**
-(18.46 ms at 16 MHz) and **292 B free SRAM**. See `reports/avr-optimized.json`.
-This decoder-only timing excludes interrupts and is a corpus maximum, not a
-proof over every possible packet. Host primitive tests also compare 240,000
-complete LSP conversions to original upstream and exhaust 3,670,016 bit fields.
+## Verified results
+
+AVR GCC 7.3.0, `-O3 -flto -fwrapv -fno-strict-aliasing`, ATmega328P, AVR8js
+0.21.1. Static SRAM includes the packet, s16 PCM, decoder state, scratch and,
+for the player, PWM ring. Stack peaks are observed during actual ISR execution.
+
+| Build | Flash | Static SRAM | Peak stack | Free SRAM at peak |
+| --- | ---: | ---: | ---: | ---: |
+| Optimized decoder test mailbox | 14,712 B | 1,535 B | 221 B | 292 B |
+| Full PWM speech demo, including 2,940 B compressed audio | 17,860 B | 1,668 B | 228 B | 152 B |
+
+- All 1,058 host and AVR-decoded frames match unmodified upstream s16 PCM.
+- Complete player tests on all 11 streams match upstream PCM converted to u8,
+  with zero ring underruns and no stack/static-memory collisions.
+- Maximum observed decoder-only frame cost: **295,334 cycles / 18.46 ms**;
+  the 20-ms budget at 16 MHz is 320,000 cycles. ISR and output costs are verified
+  separately by the complete-player runs.
+- Primitive tests cover 240,000 complete LSP conversions and 3,670,016 bit fields;
+  stream tests insert invalid API calls and verify unchanged output/state.
+- Codebooks reside in Flash, use explicit signed `pgm_read_*` accesses, and no
+  malloc/calloc/realloc/free symbols are linked.
+
+See `reports/host-pcm.json`, `reports/avr-optimized.json` and
+`reports/player-all.json`. These are corpus maxima and ISA simulation results,
+not exhaustive packet timing proofs or physical board measurements.
+`reports/avr-initial.json` preserves the initial 547,940-cycle port for comparison.
+
+## Sources and provenance
+
+`vendor/speex-1.2.1` contains unmodified release source/header files, their BSD
+license, and `UPSTREAM.json` hashes. The official release tarball SHA-256 is
+`4b44d4f2b38a370a2d98a78329fefc56a0cf93d1c1be70029217baae6628feea`.
+Builds patch disposable copies; every build verifies vendor and handoff hashes.
+
+`handoff/upstream` contains the previous agent's unmodified patch candidates
+and tests. `reference/R4` retains the earlier custom decoder and input streams
+byte for byte. It is a regression reference, distinct from this upstream port.
+`handoff/import-manifest.json` records the supplied archive and imported files.
+Historical notes describe their original state; the remaining historical stages
+and generated files stay in the external ZIP.
+
+The active adaptation uses exact symmetric 48-byte LSP polynomials, fused
+innovation scaling, a bounded field reader and AVR assembly for pitch MACs and
+LPC state updates. The latter starts from the retained R4 assembly, with its loop
+unrolled in the active copy. The reference source and vendor files remain intact.

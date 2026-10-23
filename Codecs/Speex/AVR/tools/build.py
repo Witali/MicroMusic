@@ -97,25 +97,41 @@ def verify_primitives(compiler):
     run([executable])
 
 
-def avr(compiler):
+def avr(compiler, packet_file=None):
     output, source = prepare('profile')
     definitions = DEFINES + ['SPEEX_AVR_COMPACT_LSP', 'SPEEX_AVR_TIGHT_EXC',
                              'SPEEX_AVR_PROFILE', 'SPEEX_AVR_FAST_MUL']
+    name = 'speex-test'
+    main = ROOT / 'tests/avr_decode.c'
+    if packet_file is not None:
+        data = packet_file.read_bytes()
+        if not data or len(data) % 20 or len(data) > 32760 or any(data[i] >> 3 != 3 for i in range(0, len(data), 20)):
+            raise ValueError('Expected complete 20-byte NB mode-3 packets fitting AVR Flash')
+        output = ROOT / 'build/player'
+        output.mkdir(parents=True, exist_ok=True)
+        rows = [','.join(str(v) for v in data[i:i+20]) for i in range(0, len(data), 20)]
+        (output / 'sample.h').write_text('#define SPEEX_SAMPLE_FRAMES ' + str(len(data)//20) +
+            '\nstatic const uint8_t sample_data[] PROGMEM = {\n' + ',\n'.join(rows) + '\n};\n', encoding='utf-8')
+        (output / 'input.json').write_text(json.dumps({'file': packet_file.name,
+            'sha256': hashlib.sha256(data).hexdigest(), 'frames': len(data)//20}, indent=2) + '\n', encoding='utf-8')
+        name = 'speex-player'
+        main = ROOT / 'src/player.c'
+        definitions.append('SPEEX_AVR_OUTPUT_HOOK')
     flags = ['-mmcu=atmega328p', '-O3', '-flto', '-fwrapv', '-fno-strict-aliasing',
              '-ffunction-sections', '-fdata-sections', '-fstack-usage',
              *['-D' + d for d in definitions],
              '-I' + str(source / 'include'), '-I' + str(source / 'libspeex'),
-             '-I' + str(ROOT / 'src')]
-    executable = output / 'speex-test.elf'
+             '-I' + str(ROOT / 'src'), '-I' + str(output)]
+    executable = output / (name + '.elf')
     run([compiler, *flags,
          *[source / 'libspeex' / (s + '.c') for s in PROFILE_SOURCES],
          ROOT / 'src/speex_avr.c', ROOT / 'src/bits.c', ROOT / 'src/lpc_update.S',
-         ROOT / 'src/pitch_add.S', ROOT / 'tests/avr_decode.c',
-         '-Wl,--gc-sections,-Map=' + str(output / 'speex-test.map'), '-o', executable], cwd=output)
+         ROOT / 'src/pitch_add.S', main,
+         '-Wl,--gc-sections,-Map=' + str(output / (name + '.map')), '-o', executable], cwd=output)
     prefix = str(Path(compiler).with_name('avr-'))
     extension = '.exe' if str(compiler).endswith('.exe') else ''
-    run([prefix + 'objcopy' + extension, '-O', 'ihex', '-R', '.eeprom', executable, output / 'speex-test.hex'])
-    run([prefix + 'objcopy' + extension, '-O', 'binary', '-R', '.eeprom', executable, output / 'speex-test.bin'])
+    run([prefix + 'objcopy' + extension, '-O', 'ihex', '-R', '.eeprom', executable, output / (name + '.hex')])
+    run([prefix + 'objcopy' + extension, '-O', 'binary', '-R', '.eeprom', executable, output / (name + '.bin')])
     run([prefix + 'size' + extension, '-C', '--mcu=atmega328p', executable])
     symbols = subprocess.check_output([prefix + 'nm' + extension, '-n', str(executable)], text=True)
     (output / 'symbols.txt').write_text(symbols, encoding='utf-8')
@@ -127,5 +143,8 @@ if __name__ == '__main__':
     parser.add_argument('--cc', default=os.environ.get('CC', 'clang'))
     parser.add_argument('--variant', choices=['reference', 'compact', 'tight', 'profile'], default='reference')
     parser.add_argument('--avr-gcc', help='Build the ATmega328P validation firmware instead of the host decoder')
+    parser.add_argument('--player', type=Path, help='Embed this NB3 raw stream and build the PWM player (requires --avr-gcc)')
     args = parser.parse_args()
-    print(avr(args.avr_gcc) if args.avr_gcc else host(args.cc, args.variant))
+    if args.player and not args.avr_gcc:
+        parser.error('--player requires --avr-gcc')
+    print(avr(args.avr_gcc, args.player) if args.avr_gcc else host(args.cc, args.variant))
