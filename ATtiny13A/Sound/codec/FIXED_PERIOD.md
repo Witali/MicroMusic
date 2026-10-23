@@ -4,7 +4,7 @@ The independent integer specification is [`fixed_period.py`](fixed_period.py).
 The runtime is handwritten AVR assembly in [`fixed/firmware.S`](fixed/firmware.S).
 The general decoder still exceeds the ATtiny13 1024-byte Flash limit. A
 specialized voiced/white implementation now fits the real speech example in
-**988 bytes Flash plus 64 bytes EEPROM**; see [`TINY_SPEECH.md`](TINY_SPEECH.md).
+**978 bytes Flash plus 64 bytes EEPROM**; see [`TINY_SPEECH.md`](TINY_SPEECH.md).
 The original HQ4/HQ4-T firmware and public player remain the references.
 
 ## Integer arithmetic
