@@ -41,10 +41,10 @@ matching optimized kernel is provided yet.
 | --- | --- | --- |
 | Signed 16x16 multiply | `avr_multiply.h` | exact-width C multiply in that header / upstream `fixed_generic.h` |
 | Signed shifts and rounded products | `avr_shift.h`, `avr_fixed.h` | C shifts in `avr_shift.h` / upstream fixed-point macros |
-| Generic and bounded Q14 product | `q14.S` | upstream `MULT16_32_Q14` in `fixed_generic.h` |
+| Generic and bounded Q14 product | `q14.S` | exact word extraction in `nb3_c_math.h`, selected by `avr_fixed.h` |
 | LSP polynomial stages | `compact_lsp.c.inc` calling Q14 ASM | same recurrence using C Q14 |
 | Pitch write/add | `pitch_add.S` | C block loop in `pitch24.h` |
-| Innovation, scaling and saturation | `innovation.S` | C branch in `innovation.h` |
+| Innovation, scaling and saturation | `innovation.S` | C branch in `innovation.h` and bounded helpers in `nb3_c_math.h` |
 | Whole-block LPC synthesis | `lpc_dot.S` | C dot product and coefficient-age loop in `iir_direct.c.inc` |
 
 The C build does not link any `.S` file. The historical, unused
@@ -68,8 +68,10 @@ python Codecs/Speex/AVR/tools/build.py --avr-gcc avr-gcc --backend asm
 The verifier checks the binary hash against its backend metadata and rejects
 linked ASM kernels in a C build. C is a correctness/portability fallback;
 real-time support depends on the target and must be measured. On ATmega328P
-the C decoder core fits the measured 20-ms frame budget, but the complete
-player still underruns on long audio with timer/ISR and output costs.
+both C and explicitly enabled ASM pass all 31 complete PWM streams with
+interrupts. The tested additional CPU reserve is 10% for C and 40% for ASM;
+these are measured corpus/ISA results, not physical-board guarantees. The
+C corpus maximum is 272,281 cycles (272,846 with pitch coverage).
 The build tool defaults to C; `--backend asm` explicitly adds the enable define.
 
 ## Export and integrate
@@ -149,4 +151,4 @@ The second test exports a fresh package, builds both manifest and CMake static
 archives, and links a consumer with public includes only. It compares complete
 prepared fixture/human-speech streams with upstream. It requires the reference
 host decoder built first; human-speech coverage is included when those streams
-are prepared. `reports/portable-loop-hoist-library.json` records the current 31-stream run.
+are prepared. `reports/portable-c-word-math-library.json` records the current 31-stream run.

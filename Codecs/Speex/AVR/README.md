@@ -2,7 +2,7 @@
 
 An adaptation of the **original Xiph Speex 1.2.1 fixed-point decoder** for
 ATmega328P at 16 MHz, with a linked PWM player and reproducible host/AVR tests.
-The complete player passes ISA simulation on all 31 streams: **9,100
+The ASM player passes ISA simulation on all 31 streams: **9,100
 frames / 1,456,000 samples, zero underruns, 524 bytes SRAM free at the observed
 peak**, including a separate 40% extra-CPU admission test. A physical board
 and its analog output have not been tested.
@@ -11,8 +11,9 @@ The same decoder has a selectable C backend and an architecture-neutral
 `speex_nb3.h` interface. Architecture defines and a separate explicit ASM
 enable control selection; without a matching enabled backend it uses C.
 See [PORTING.md](PORTING.md) for C fallbacks, platform headers and an exportable
-CMake/static-library package for other microcontrollers. The C fallback is
-correct on AVR; sustained PWM playback still underruns with timer/ISR costs.
+CMake/static-library package for other microcontrollers. The C player now
+also passes all 31 streams with timers/ISR and 10% extra CPU work: zero
+underruns and 514 B free SRAM at peak. Both retain exact upstream s16 PCM.
 
 ## Supported profile
 
@@ -91,7 +92,8 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
 | --- | ---: | ---: | ---: | ---: |
 | Optimized decoder test mailbox, ASM enabled | 8,662 B | 1,239 B | 143 B | 666 B |
 | Full PWM speech demo, including 2,940 B compressed audio | 11,874 B | 1,374 B | 150 B | 524 B |
-| C fallback decoder test mailbox | 9,604 B | 1,239 B | 151 B | 658 B |
+| C fallback decoder test mailbox | 9,684 B | 1,239 B | 151 B | 658 B |
+| Full C PWM speech demo, including 2,940 B audio | 12,874 B | 1,374 B | 160 B | 514 B |
 
 - All 9,100 corpus frames and 4,096 additional pitch/gain coverage frames match
   unmodified upstream s16 PCM (13,196 frames total).
@@ -105,11 +107,12 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
 - Another 458,752 signed multiply and 655,485 signed shift cases execute the
   actual AVR instructions and check exact results and the r1 zero-register ABI.
 - Shared generic and bounded Q14 ASM entries each pass 917,504 independent
+  cases; the portable C Q14 helper independently passes another 917,504
   cases. The C fallback matches all 13,196 corpus/pitch frames on AVR plus
-  58 repeated-envelope/reset frames. Its corpus maximum is 315,375 cycles
-  (315,950 with pitch coverage),
-  excluding ISR. A long-stream C player still fails with 1,103 underruns;
-  only explicit ASM is admitted for real-time playback on ATmega328P.
+  58 repeated-envelope/reset frames. Its corpus maximum is 272,281 cycles
+  (272,846 with pitch coverage), excluding ISR. Complete C PWM playback now
+  passes all 31 streams with 32,000 extra cycles/frame (10%), zero underruns
+  and at least 40 queued samples. ASM retains the stronger 40% reserve gate.
 - Pitch ASM independently checks 1,966,080 outputs, all signed8 gains,
   every count 0..40, write/add flags 0/1/2/255, zero gains and intact tails.
   Signed24 LPC/innovation clamps pass another 327,680 independent samples,
@@ -121,7 +124,7 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
 
 Current decoder results: `reports/nb-loop-hoist-{fixtures,speech,means,pitch-coverage,lsp-reuse}.json`.
 Player results: `reports/nb-loop-hoist-{player,summary,headroom40,headroom-summary}.json`.
-Portable results: `reports/c-loop-hoist-*.json`, `reports/portable-loop-hoist-library.json`.
+Portable results: `reports/c-word-math-*.json`, `reports/portable-c-word-math-library.json`.
 The earlier `nb-round5-*`, `nb-round4-*`, `nb-round3-*`, `nb-round2-*`, `nb-final-*` and
 `nb-optimization-summary.json` reports remain historical baselines.
 These are corpus maxima and ISA simulation results,

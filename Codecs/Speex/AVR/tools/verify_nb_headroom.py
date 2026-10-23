@@ -22,6 +22,8 @@ def main():
     baseline=json.loads((ROOT/'reports/nb-final-player.json').read_text(encoding='utf-8'))
     old={r['input']['file']:r for r in baseline['streams']}
     rows=current['streams']
+    backends={r.get('backend','unrecorded') for r in rows}
+    assert len(backends)==1, 'Do not mix arithmetic backends in one admission run'
     assert len(rows)==len(old)==31
     assert {r['input']['file'] for r in rows}==set(old)
     assert current['frames']==baseline['frames']==9100
@@ -29,6 +31,7 @@ def main():
     assert current['includesInterrupts'] and not current['physicalBoardTested']
     required_cycles=3200*args.reserve_percent
     for row in rows:
+        assert row.get('passed',True)
         previous=old[row['input']['file']]
         assert row['includesInterrupts'] and row['cpuHz']==16000000
         assert row['pcmHz']==8000 and row['pwmHz']==62500
@@ -45,6 +48,7 @@ def main():
         assert row['timerIntervalMinCycles']>=1992 and row['timerIntervalMaxCycles']<=2008
     minimum_load=min(r['measuredExtraLoadMinCycles'] for r in rows)
     report={'goal':f'At least {args.reserve_percent}% CPU-time reserve while decoding Speex NB',
+            'arithmeticBackend':next(iter(backends)),
             'mcu':'ATmega328P','cpuHz':16000000,'frameMs':20,'frameBudgetCycles':320000,
             'requiredReservePercent':args.reserve_percent,'verifiedExtraCpuCyclesPerFrame':minimum_load,
             'verifiedExtraCpuMsPerFrame':minimum_load/16000,

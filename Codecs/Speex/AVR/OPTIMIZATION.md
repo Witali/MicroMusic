@@ -9,8 +9,8 @@ Every ASM kernel has a selectable C fallback. Architecture defines and a
 separate explicit ASM-enable define must both permit an optimized backend;
 otherwise use C. Hardware memory access stays independent of arithmetic.
 
-The latest implementation and measurements are described in README.md and
-`reports/nb-loop-hoist-*.json` and `reports/c-loop-hoist-*.json`. Earlier
+The latest implementation and measurements are described in README.md,
+`reports/nb-loop-hoist-*.json` and `reports/c-word-math-*.json`. Earlier
 reports are stage baselines, not current
 binary measurements. Vendor and R4 files remain unmodified.
 
@@ -160,7 +160,10 @@ binary measurements. Vendor and R4 files remain unmodified.
   exported archives (9,100 frames each) pass. The three C changes reduce
   weighted corpus mean by 13.73%, corpus maximum 315,375 -> 272,281 cycles.
   ASM hash is unchanged (d884b63633f7171de18399ec6ae51bf130e7bc7daf2315e4dab5ecfb7edeecf5).
-  The C 31-stream / 10% CPU reserve admission test is running.
+  C admission now passes all 31 streams twice: ordinary and 32,000 extra
+  cycles/frame (10%), exact PWM, zero underruns, minimum queues 56 / 40,
+  514 B free SRAM. The ordinary C demo is 12,874 B Flash with 2,940 B audio.
+  See c-word-math-summary.json and c-word-math-headroom-summary.json.
 
 ## Next candidates (unmeasured)
 
