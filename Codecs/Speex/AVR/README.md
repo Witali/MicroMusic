@@ -90,8 +90,8 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
 
 | Build | Flash | Static SRAM | Peak stack | Free SRAM at peak |
 | --- | ---: | ---: | ---: | ---: |
-| Optimized decoder test mailbox, ASM enabled | 8,662 B | 1,239 B | 143 B | 666 B |
-| Full PWM speech demo, including 2,940 B compressed audio | 11,874 B | 1,374 B | 150 B | 524 B |
+| Optimized decoder test mailbox, ASM enabled | 8,754 B | 1,239 B | 143 B | 666 B |
+| Full PWM speech demo, including 2,940 B compressed audio | 11,966 B | 1,374 B | 150 B | 524 B |
 | C fallback decoder test mailbox | 9,684 B | 1,239 B | 151 B | 658 B |
 | Full C PWM speech demo, including 2,940 B audio | 12,874 B | 1,374 B | 160 B | 514 B |
 
@@ -99,7 +99,7 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
   unmodified upstream s16 PCM (13,196 frames total).
 - Complete player tests on all 31 streams match upstream PCM converted to u8,
   with zero ring underruns and no stack/static-memory collisions.
-- Maximum observed ASM decoder-only corpus frame cost: **134,026 cycles / 8.38 ms**;
+- Maximum observed ASM decoder-only corpus frame cost: **133,142 cycles / 8.32 ms**;
   the 20-ms budget at 16 MHz is 320,000 cycles. ISR and output costs are verified
   separately by the complete-player runs.
 - Primitive tests cover 240,000 complete LSP conversions and 3,670,016 bit fields;
@@ -108,7 +108,8 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
   actual AVR instructions and check exact results and the r1 zero-register ABI.
 - Shared generic and bounded Q14 ASM entries each pass 917,504 independent
   cases; the portable C Q14 helper independently passes another 917,504
-  cases. The C fallback matches all 13,196 corpus/pitch frames on AVR plus
+  cases. The aligned p1 core adds 655,360 independent exact cases.
+  The C fallback matches all 13,196 corpus/pitch frames on AVR plus
   58 repeated-envelope/reset frames. Its corpus maximum is 272,281 cycles
   (272,846 with pitch coverage), excluding ISR. Complete C PWM playback now
   passes all 31 streams with 32,000 extra cycles/frame (10%), zero underruns
@@ -122,10 +123,10 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
 - Codebooks reside in Flash, use explicit signed `pgm_read_*` accesses, and no
   malloc/calloc/realloc/free symbols are linked.
 
-Current decoder results: `reports/nb-loop-hoist-{fixtures,speech,means,pitch-coverage,lsp-reuse}.json`.
-Player results: `reports/nb-loop-hoist-{player,summary,headroom40,headroom-summary}.json`.
-Portable results: `reports/c-word-math-*.json`, `reports/portable-c-word-math-library.json`.
-The earlier `nb-round5-*`, `nb-round4-*`, `nb-round3-*`, `nb-round2-*`, `nb-final-*` and
+Current decoder results: `reports/nb-word-math-{fixtures,speech,means,pitch-coverage,lsp-reuse}.json`.
+Player results: `reports/nb-word-math-{player,summary,headroom40,headroom-summary}.json`.
+Portable results: `reports/c-word-math-*.json`, `reports/portable-p1-library.json`.
+The earlier `nb-p1-*`, `nb-loop-hoist-*`, `nb-round5-*`, `nb-round4-*`, `nb-round3-*`, `nb-round2-*`, `nb-final-*` and
 `nb-optimization-summary.json` reports remain historical baselines.
 These are corpus maxima and ISA simulation results,
 not exhaustive packet timing proofs or physical board measurements.
@@ -134,9 +135,9 @@ not exhaustive packet timing proofs or physical board measurements.
 `reports/real-speech-{avr,player}.json` retain the earlier NB baseline.
 `node Codecs/Speex/AVR/tests/verify_avr.mjs --frames 8 --profile` also writes `avr-profile.json`
 under the selected output directory. It counts only frame-command intervals,
-excluding boot/reset; the current 88-frame fixture profile spends 51.3% in
-LPC synthesis, 10.5% in pitch products and 13.0% in innovation
-(`reports/nb-loop-hoist-profile.json`). These shares
+excluding boot/reset; the current 88-frame fixture profile spends 51.2% in
+LPC synthesis, 10.5% in pitch products and 13.1% in innovation
+(`reports/nb-word-math-profile.json`). These shares
 describe that sampled workload, not every possible packet.
 
 ## Further exact NB optimization
@@ -166,15 +167,24 @@ The Xiph NB3 adaptation has the following separately measured stages:
 | Packed unscaled signed24 pitch | 134,258 | 8,572 B | 1,239 B |
 | Reuse the LPC dot-product end pointer | 133,938 | 8,568 B | 1,239 B |
 | Select full pitch spans before the tap loop | 133,938 | 8,662 B | 1,239 B |
+| Six-MUL Q14 for the p1 polynomial coefficient | 133,650 | 8,750 B | 1,239 B |
+| One LPC rounding constant per block | 133,514 | 8,756 B | 1,239 B |
+| Persistent LPC history cursor with postincrement stores | 133,054 | 8,754 B | 1,239 B |
 
 Across the combined 31-stream corpus the maximum fell from 204,770 to
-134,026 cycles: **34.55% less decoder time**. The latest loop changes reduce
-the weighted corpus mean by **0.6672%** (human speech **0.6608%**). LPC pointer
-reuse saves exactly 320 cycles/frame and 4 B Flash; selecting the full-pitch
-case once before the three-tap loop adds 94 B Flash and saves another 543
-cycles/frame on the weighted corpus. RAM and peak stack are unchanged.
-The preceding packed-pitch stage reduced the mean by 5.90%, saved 192 B Flash,
-40 B static SRAM and 4 B stack. PCM and captured PWM hashes remain unchanged.
+133,142 cycles: **34.98% less decoder time**. The latest p1-specific ASM core
+uses six hardware multiplies instead of eight: **65 -> 53 kernel cycles**,
+up to 288 cycles/frame saved, weighted corpus mean **-0.198%**, human speech
+**-0.207%**. It costs 88 B Flash and no RAM/stack; other coefficients retain
+the generic bounded kernel. Two LPC loop changes save another 596 cycles
+on every frame. The combined ASM series reduces the corpus mean by
+**0.6619%** at 92 B extra Flash and no RAM/global-stack cost. C still uses
+exact generic Q14 arithmetic.
+The preceding loop changes reduced the mean by 0.6672%; the packed-pitch
+stage saved another 5.90%, 192 B Flash, 40 B static SRAM and 4 B stack.
+The latest three portable C arithmetic changes reduce its mean by **13.73%**
+and maximum from 315,375 to 272,281 cycles, at 80 B additional Flash and no
+RAM/stack cost. Both backends preserve all PCM and captured PWM hashes.
 Decoder timings exclude ISR;
 complete players include timers, interrupts and ring-buffer backpressure.
 The sample rate, frame length, four coefficient steps and arithmetic remain exact.
@@ -226,13 +236,13 @@ After collecting the original 11 and human-speech 20 `.spxraw` files in the
 ignored `build/nb-all-streams` directory, reproduce with:
 
 ```sh
-python Codecs/Speex/AVR/tests/verify_players.py --avr-gcc avr-gcc --node node --streams Codecs/Speex/AVR/build/nb-all-streams --out Codecs/Speex/AVR/build/loop-final-headroom40 --frame-load-cycles 128000
-python Codecs/Speex/AVR/tools/verify_nb_headroom.py --report Codecs/Speex/AVR/build/loop-final-headroom40/player-all.json --reserve-percent 40 --out Codecs/Speex/AVR/build/loop-final-headroom-summary.json
+python Codecs/Speex/AVR/tests/verify_players.py --avr-gcc avr-gcc --node node --streams Codecs/Speex/AVR/build/nb-all-streams --out Codecs/Speex/AVR/build/word-math-final-headroom40 --frame-load-cycles 128000
+python Codecs/Speex/AVR/tools/verify_nb_headroom.py --report Codecs/Speex/AVR/build/word-math-final-headroom40/player-all.json --reserve-percent 40 --out Codecs/Speex/AVR/build/word-math-final-headroom-summary.json
 ```
 
 Omit the frame-load option to restore ordinary firmware. The full matrix and
-compact audit are retained in `reports/nb-loop-hoist-headroom40.json` and
-`reports/nb-loop-hoist-headroom-summary.json`. The previous 20% gate reports remain
+compact audit are retained in `reports/nb-word-math-headroom40.json` and
+`reports/nb-word-math-headroom-summary.json`. The previous 20% gate reports remain
 as historical evidence.
 
 ## Human speech and PWM headroom
@@ -247,9 +257,9 @@ SHA-256 hashes are retained in `tests/real-speech-sources.json` and
 All **8,042 frames / 1,286,720 samples** match unmodified upstream s16 PCM on
 the AVR ISA simulator. Every full player run, with both timers and interrupts,
 also matches the expected PWM duties, with **zero underruns**. Worst observed
-decoder frame is 134,026 cycles (8.377 ms). Current queue and publication-gap
-measurements are in `reports/nb-loop-hoist-summary.json`; load-test queue and gaps
-are in `reports/nb-loop-hoist-headroom-summary.json` (at least 27 samples queued).
+decoder frame is 133,142 cycles (8.321 ms). Current queue and publication-gap
+measurements are in `reports/nb-word-math-summary.json`; load-test queue and gaps
+are in `reports/nb-word-math-headroom-summary.json` (at least 27 samples queued).
 Ordinary playback retains at least 73 samples; the maximum block-ready gap
 is 80,013 cycles (5.001 ms).
 Full-player SRAM/stack are 1,374/150 B, leaving 524 B.

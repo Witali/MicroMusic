@@ -41,7 +41,7 @@ matching optimized kernel is provided yet.
 | --- | --- | --- |
 | Signed 16x16 multiply | `avr_multiply.h` | exact-width C multiply in that header / upstream `fixed_generic.h` |
 | Signed shifts and rounded products | `avr_shift.h`, `avr_fixed.h` | C shifts in `avr_shift.h` / upstream fixed-point macros |
-| Generic and bounded Q14 product | `q14.S` | exact word extraction in `nb3_c_math.h`, selected by `avr_fixed.h` |
+| Generic, bounded and aligned-p1 Q14 products | `q14.S` | exact word extraction in `nb3_c_math.h`, selected by `avr_fixed.h` |
 | LSP polynomial stages | `compact_lsp.c.inc` calling Q14 ASM | same recurrence using C Q14 |
 | Pitch write/add | `pitch_add.S` | C block loop in `pitch24.h` |
 | Innovation, scaling and saturation | `innovation.S` | C branch in `innovation.h` and bounded helpers in `nb3_c_math.h` |
@@ -151,4 +151,4 @@ The second test exports a fresh package, builds both manifest and CMake static
 archives, and links a consumer with public includes only. It compares complete
 prepared fixture/human-speech streams with upstream. It requires the reference
 host decoder built first; human-speech coverage is included when those streams
-are prepared. `reports/portable-c-word-math-library.json` records the current 31-stream run.
+are prepared. `reports/portable-p1-library.json` records the current 31-stream run.
