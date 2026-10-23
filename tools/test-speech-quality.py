@@ -8,7 +8,10 @@ from pathlib import Path
 def main():
     root = Path(__file__).resolve().parents[1]
     suite = unittest.TestSuite()
-    for path in sorted((root / 'tools').glob('test-*period*.py')):
+    paths = set((root / 'tools').glob('test-*period*.py'))
+    paths.update(root/'tools'/name for name in (
+        'test-fixed-speech.py', 'test-speech-dc.py', 'test-speech-targets.py'))
+    for path in sorted(paths):
         name = 'speech_'+path.stem.replace('-', '_')
         spec = importlib.util.spec_from_file_location(name, path)
         module = importlib.util.module_from_spec(spec)
