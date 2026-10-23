@@ -8,6 +8,7 @@ excluded by [`EMULATION_SCOPE.md`](EMULATION_SCOPE.md).
 | Layer | Source or artifact | Responsibility |
 |---|---|---|
 | AVR decoder and WASM emitter | `lib/avr-transpiler.js` | Decode machine instructions, lower effects and flags, emit WASM functions and instruction blocks |
+| CPU continuation lowering | `lib/avr-wasm-phases.js` | Split generation-time clock barriers into saved phases; emit native WASM control and local spills without an opcode interpreter |
 | Target registry | `lib/devices/profiles.js` | Select a supported device explicitly and reject unregistered targets |
 | ATtiny13A profile | `lib/devices/attiny13a-profile.js` | Flash/data geometry, PC wrapping, register placement and legacy hardware hooks |
 | Manufacturer definitions | `vendor/microchip/ATtiny_DFP/3.4.278/` | Original register, bit, fuse, vector and memory definitions with versioned provenance |
@@ -34,6 +35,14 @@ effects call native WASM bridges, which advance the selected device scheduler.
 Pin transitions and audio integration stay in native memory. Host calls operate
 on batches or queued inputs. Modified Flash regenerates the CPU module while
 the hardware instance retains its state.
+
+The optional `resumable:true` execution mode uses the native80-byte phase
+context described in [`devices/attiny13a/cpu_phase.md`](devices/attiny13a/cpu_phase.md).
+It preserves instruction/IRQ progress across physical observation deadlines.
+Its first integration uses the existing internal clock and explicit OSCCAL
+table. The standalone CLKI input queue is a separate device-owned source;
+PB3, source-edge clocking and package integration remain pending. Package v4
+rejects the additional continuation ABI instead of dropping its state.
 
 Generated firmware bytes belong in compiler outputs or package assets. Keep
 handwritten device logic in source modules and keep imported manufacturer files

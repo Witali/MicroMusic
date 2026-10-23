@@ -2,6 +2,7 @@
 // Encodings: WebAssembly Core, binary/{modules,instructions,values}.html.
 // AVR semantics: Microchip DS40002198A. Device placement comes from its profile.
 import {deviceProfile,DEFAULT_DEVICE} from './devices/profiles.js';
+import {clockPhase,assertAtomicPhase,emitInstructionPhases} from './avr-wasm-phases.js';
 const uleb = value => {
   const out = []; do { const byte = value & 127; value >>>= 7; out.push(byte | (value ? 128 : 0)); } while (value);
   return out;
@@ -26,14 +27,16 @@ const eqz = a => bytes(a,0x45);
 const load8 = address => bytes(address,0x2d,0,0);
 const load8Signed = address => bytes(address,0x2c,0,0);
 const store8 = (address,value) => bytes(address,value,0x3a,0,0);
+const load32 = address => bytes(address,0x28,2,0);
+const store32 = (address,value) => bytes(address,value,0x36,2,0);
 const load64 = address => bytes(address,0x2b,3,0);
 const store64 = (address,value) => bytes(address,value,0x39,3,0);
 const float = n => { const data = new Uint8Array(8); new DataView(data.buffer).setFloat64(0,n,true); return bytes(0x44,Array.from(data)); };
 const asFloat = value => bytes(value,0xb7);
 const asInt = value => bytes(value,0xaa);
 const call = (index,...args) => bytes(args,0x10,uleb(index));
-const condition = (test,yes,no=[]) => bytes(test,0x04,0x40,yes,no.length ? bytes(0x05,no) : [],0x0b);
-const conditionValue = (test,yes,no) => bytes(test,0x04,0x7f,yes,0x05,no,0x0b);
+const condition = (test,yes,no=[]) => {assertAtomicPhase(test,yes,no);return bytes(test,0x04,0x40,yes,no.length ? bytes(0x05,no) : [],0x0b);};
+const conditionValue = (test,yes,no) => {assertAtomicPhase(test,yes,no);return bytes(test,0x04,0x7f,yes,0x05,no,0x0b);};
 const sign = (v,bit) => v & bit ? v - 2*bit : v;
 const width = w => (w&0xfe0f)===0x9000 || (w&0xfe0f)===0x9200 || (w&0xfe0e)===0x940c || (w&0xfe0e)===0x940e ? 2 : 1;
 
@@ -85,14 +88,21 @@ export function decodeAVR(word, second = 0xffff) {
 }
 
 // The runtime ABI is discovered, never hard-coded to a particular C build.
-export function runtimeABI(exports) {
+export function runtimeABI(exports,{resumable=false}={}) {
   const data=new Uint8Array(exports.memory.buffer), decoder=new TextDecoder();
   const state={};
   for(let i=0;i<exports.avr_layout(1);i++){
     const start=exports.avr_field_name(i);let end=start;while(data[end])end++;
     state[decoder.decode(data.subarray(start,end))]=exports.avr_layout(0)+8*i;
   }
-  return {state,data:exports.avr_layout(4),rom:exports.avr_layout(2),idle:exports.avr_layout(10),frames:exports.avr_layout(11),pwm:exports.avr_layout(13),memoryPages:exports.memory.buffer.byteLength/65536,device:typeof exports.avr_device_time==='function'};
+  const abi={state,data:exports.avr_layout(4),rom:exports.avr_layout(2),idle:exports.avr_layout(10),frames:exports.avr_layout(11),pwm:exports.avr_layout(13),memoryPages:exports.memory.buffer.byteLength/65536,device:typeof exports.avr_device_time==='function'};
+  if(resumable){
+    if(typeof exports.avr_device_phase_layout!=='function')throw Error('Runtime has no resumable CPU ABI');
+    const layout=exports.avr_device_phase_layout;
+    abi.phase={pointer:layout(0),bytes:layout(1),...Object.fromEntries(
+      ['active','execPc','nextPc','stage','remaining','locals','temp','retired'].map((name,i)=>[name,layout(i+2)]))};
+  }
+  return abi;
 }
 
 const writes={ADD:63,ADC:63,SUB:63,CP:63,CPI:63,SUBI:63,NEG:63,SBC:63,SBCI:63,CPC:63,ADIW:31,SBIW:31,BST:64,AND:30,ANDI:30,OR:30,ORI:30,EOR:30,INC:30,DEC:30,COM:31,LSR:31,ASR:31,ROR:31};
@@ -103,10 +113,21 @@ const batchable=i=>pure.has(i.name)||guardedMemory.has(i.name);
 const instructionCycles=i=>i.name==='LPM'?3:['ADIW','SBIW','LD','ST'].includes(i.name)?2:1;
 const popcount=n=>{let count=0;for(;n;n&=n-1)count++;return count;};
 
-export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructions=32,device=DEFAULT_DEVICE}={}) {
+export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructions=32,device=DEFAULT_DEVICE,resumable=false}={}) {
   const profile=deviceProfile(device),{flashBytes,flashWords,pcMask,ioStart,ioEnd,ramStart,ramEnd,sreg,stackPointer}=profile;
   if(profile.dataAddressBits!==8||profile.programCounterBytes!==2)throw Error('Unsupported AVR emitter memory geometry');
   const full=!!abi.device,canBatch=i=>batchable(i)&&(!full||i.name!=='LPM');
+  if(resumable&&(!full||!abi.phase||abi.phase.bytes!==80))throw Error('Resumable CPU requires its full-device phase ABI');
+  if(resumable){
+    const p=abi.phase,limit=(abi.memoryPages||1)*65536;
+    const sizes={active:4,execPc:4,nextPc:4,stage:4,remaining:8,locals:36,temp:8,retired:8};
+    if(!Number.isInteger(p.pointer)||p.pointer<0||p.pointer%8||p.pointer+p.bytes>limit||
+      Object.entries(sizes)
+        .some(([name,size])=>!Number.isInteger(p[name])||p[name]<p.pointer||p[name]+size>p.pointer+p.bytes||p[name]%(size===8?8:4)))
+      throw Error('Invalid resumable CPU context layout');
+    const regions=Object.entries(sizes).map(([name,size])=>[p[name],p[name]+size]).sort(([a],[b])=>a-b);
+    if(regions.some(([start],i)=>i&&start<regions[i-1][1]))throw Error('Overlapping resumable CPU context layout');
+  }
   if(!(image instanceof Uint8Array)||!image.length||image.length>flashBytes)throw new Error(`${profile.name} Flash must contain 1–${flashBytes} bytes`);
   if(!Number.isInteger(maxBlockInstructions)||maxBlockInstructions<2||maxBlockInstructions>64)throw new Error('Block size must be 2–64 instructions');
   for(const field of ['pc','cyc','error','errorPC','irqDelay','overflowAt','writes','frameCount'])
@@ -115,7 +136,9 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   const word=p=>flash[(p&pcMask)*2]|(flash[(p&pcMask)*2+1]<<8);
   const decoded=Array.from({length:flashWords},(_,p)=>({...decodeAVR(word(p),word(p+1)),pc:p,word:word(p)}));
   const S=name=>constant(abi.state[name]), stateF=name=>load64(S(name)), state=name=>asInt(stateF(name));
-  const putF=(name,value)=>store64(S(name),value), put=(name,value)=>putF(name,asFloat(value));
+  let inInstruction=false;
+  const putF=(name,value)=>store64(S(name),value), put=(name,value)=>resumable&&inInstruction&&name==='pc'?
+    store32(constant(abi.phase.nextPc),value):putF(name,asFloat(value));
   const reg=n=>load8(constant(abi.data+n)), writeReg=(n,value)=>store8(constant(abi.data+n),value);
   const dataAt=address=>add(constant(abi.data),address);
   const flagsAddress=constant(abi.data+sreg), flags=()=>get(5);
@@ -125,11 +148,16 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   const imports=[['clock',0],['interrupt',1],['writeIO',2],['idle',5]];
   const CLOCK=0, IRQ=1, IO=2, IDLE=3;
   if(full)imports.push(['readIO',4],['writeMasked',7],['ready',5],['time',8],['wait',9],['control',7],['lpm',4],['audioDeadline',8],['audioSample',4],['pending',5],['cpuDeadline',10],['idleUntil',9]);
+  if(resumable)imports.push(['phaseClock',9],['phaseDeadline',0],['phaseRetire',1]);
   const READ=4,MASKED=5,READY=6,TIME=7,WAIT=8,CONTROL=9,LPM=10,AUDIO_DEADLINE=11,AUDIO_SAMPLE=12,PENDING=13;
   const firstFunction=imports.length;
-  const clock=value=>bytes(call(CLOCK,asFloat(value)),guard());
-  const clockHalf=cycles=>bytes(call(CLOCK,float(cycles)),guard());
-  const finish=()=>bytes(guard(),put('pc',and(state('pc'),constant(pcMask))),clock(get(7)),call(IRQ));
+  const PHASE_CLOCK=16,PHASE_DEADLINE=17,PHASE_RETIRE=18;
+  const clock=value=>resumable?bytes(clockPhase(asFloat(value))):bytes(call(CLOCK,asFloat(value)),guard());
+  const clockHalf=cycles=>resumable?bytes(clockPhase(float(cycles))):bytes(call(CLOCK,float(cycles)),guard());
+  const finish=()=>resumable?bytes(guard(),clock(get(7)),
+    putF('pc',asFloat(and(load32(constant(abi.phase.nextPc)),constant(pcMask)))),
+    store8(flagsAddress,flags()),call(PHASE_RETIRE)):
+    bytes(guard(),put('pc',and(state('pc'),constant(pcMask))),clock(get(7)),call(IRQ));
 
   // Locals: x,y,carry,total,value,flags,address,cycles,temp (i32); f64 temporaries.
   const X=get(0),Y=get(1),C=get(2),T=get(3),V=get(4),Z=get(6);
@@ -198,6 +226,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     const {name,d,s,k,pc:p}=i,next=(p+1)&pcMask;
     if(pure.has(name))return bytes(full?clock(constant(instructionCycles(i))):[],alu(i,writes[name]||0),set(7,constant(full?0:instructionCycles(i))));
     if(['SLEEP','WDR','BREAK','SPM'].includes(name)){
+      if(resumable&&name==='BREAK')return bytes(clock(constant(1)),set(7,constant(0)),condition([0x23,2],bytes(constant(4),0x24,0)));
       if(full&&name!=='BREAK')return bytes(name==='SPM'?[]:clock(constant(1)),set(7,call(CONTROL,constant({SLEEP:1,SPM:2,WDR:3}[name]),or(reg(30),shl(reg(31),8)),or(reg(0),shl(reg(1),8)))),guard());
       // Device requests are exported globals, not calls from WASM into JS.
       // SPM cannot invent a fixed latency; its controller completes it later.
@@ -217,9 +246,10 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     if(name==='SBIC'||name==='SBIS'){
       const skip=width(word(next));return bytes(full?bytes(clockHalf(.5),set(0,call(READ,constant(d))),clockHalf(.5)):clock(constant(1)),set(7,constant(0)),condition(eq(and(shr(full?X:reg(ioStart+d),k),constant(1)),constant(name==='SBIS'?1:0)),bytes(put('pc',constant((next+skip)&pcMask)),set(7,constant(skip)))));
     }
-    if(name==='CLI')return set(5,and(flags(),constant(127)));
-    if(name==='SEI')return bytes(set(5,or(flags(),constant(128))),put('irqDelay',constant(1)));
-    if(name==='FLAG')return bytes(d===6&&k?condition(and(binary(0x47,and(flags(),constant(64)),constant(0)),binary(0x47,state('inIRQ'),constant(0))),putF('workLost',binary(0xa0,stateF('workLost'),float(1)))):[],set(5,or(and(flags(),constant(255^(1<<d))),constant(k<<d))));
+    const flagClock=()=>resumable?bytes(clock(constant(1)),set(7,constant(0))):[];
+    if(name==='CLI')return bytes(flagClock(),set(5,and(flags(),constant(127))));
+    if(name==='SEI')return bytes(flagClock(),set(5,or(flags(),constant(128))),put('irqDelay',constant(1)));
+    if(name==='FLAG')return bytes(flagClock(),d===6&&k?condition(and(binary(0x47,and(flags(),constant(64)),constant(0)),binary(0x47,state('inIRQ'),constant(0))),putF('workLost',binary(0xa0,stateF('workLost'),float(1)))):[],set(5,or(and(flags(),constant(255^(1<<d))),constant(k<<d))));
     // The manuals specify cycle totals and stack ordering, not every internal
     // stack phase. The full-device digital profile uses accesses at C2/C3;
     // every access follows a reset-aware clock barrier (see AVR_TO_WASM.md).
@@ -274,7 +304,14 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     }
     return fail(2);
   }
-  const instructionBodies=decoded.map(i=>bytes(set(5,load8(flagsAddress)),set(7,constant(1)),put('errorPC',constant(i.pc)),put('pc',constant((i.pc+1)&pcMask)),effects(i),store8(flagsAddress,flags()),finish()));
+  const instructionBodies=decoded.map(i=>{
+    inInstruction=true;
+    const code=bytes(set(5,load8(flagsAddress)),set(7,constant(1)),put('errorPC',constant(i.pc)),
+      put('pc',constant((i.pc+1)&pcMask)),effects(i),resumable?[]:store8(flagsAddress,flags()),finish());
+    inInstruction=false;
+    return resumable?emitInstructionPhases(code,{context:abi.phase,pc:i.pc,clockImport:PHASE_CLOCK,
+      emit:{bytes,constant,get,set,call,condition,eq,eqz,lt,load32,store32,load64,store64}}):code;
+  });
 
   // SRAM/Flash accesses use guards before observable I/O, alias faults or
   // invalid addresses. Every guard exit observes a complete, exact SREG.
@@ -285,7 +322,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     if(['SKIP','CPSE','SBIC','SBIS'].includes(i.name))leaders.add((i.pc+1+width(word(i.pc+1)))&pcMask);
   }
   const blocks=[];
-  for(let p=0;p<flashWords;){
+  for(let p=0;!resumable&&p<flashWords;){
     if(!canBatch(decoded[p])){p++;continue;}
     const sequence=[decoded[p++]];
     while(p<flashWords&&canBatch(decoded[p])&&!leaders.has(p)&&sequence.length<maxBlockInstructions)sequence.push(decoded[p++]);
@@ -355,10 +392,18 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
 
   const STEP=firstFunction+flashWords+blocks.length+1, BLOCK=STEP+1, RUN=STEP+2, NEXT=STEP+3, CAPTURE=STEP+4, UNTIL=STEP+5, PHYSICAL=STEP+6;
   const emptyBlock=bytes(constant(0));
-  const step=bytes(condition([0x23,0],[0x0f]),full?condition(eqz(call(READY)),[0x0f]):[],put('error',constant(0)),condition(or(lt(state('pc'),constant(0)),ge(state('pc'),constant(flashWords))),fail(1)),state('pc'),0x11,1,0,full?condition(eq(state('error'),constant(26)),put('error',constant(0))):[]);
+  const phaseActive=()=>load32(constant(abi.phase.active));
+  const retired=()=>load32(constant(abi.phase.retired));
+  const dispatchPc=resumable?conditionValue(eq(phaseActive(),constant(1)),load32(constant(abi.phase.execPc)),state('pc')):state('pc');
+  const step=bytes(condition([0x23,0],[0x0f]),full?condition(eqz(call(READY)),[0x0f]):[],put('error',constant(0)),condition(or(lt(dispatchPc,constant(0)),ge(dispatchPc,constant(flashWords))),fail(1)),dispatchPc,0x11,1,0,full?condition(eq(state('error'),constant(26)),put('error',constant(0))):[]);
   const block=bytes(condition([0x23,0],bytes(constant(0),0x0f)),full?condition(eqz(call(READY)),bytes(constant(0),0x0f)):[],put('error',constant(0)),condition(or(lt(state('pc'),constant(0)),ge(state('pc'),constant(flashWords))),fail(1,true)),
     get(0),get(1),add(state('pc'),constant(flashWords)),0x11,3,0);
-  const run=bytes(set(1,constant(0)),0x02,0x40,0x03,0x40,
+  const run=resumable?bytes(call(PHASE_DEADLINE,float(Infinity)),set(1,constant(0)),0x02,0x40,0x03,0x40,
+    condition(ge(get(1),get(0)),[0x0c,2]),condition([0x23,0],[0x0c,2]),
+    condition(eqz(call(READY)),[0x0c,2]),set(3,retired()),call(STEP),
+    set(2,sub(retired(),get(3))),set(1,add(get(1),get(2))),
+    condition(state('error'),[0x0c,2]),condition(and(eqz(get(2)),phaseActive()),[0x0c,2]),
+    0x0c,0,0x0b,0x0b,get(1)):bytes(set(1,constant(0)),0x02,0x40,0x03,0x40,
     condition(ge(get(1),get(0)),[0x0c,2]),
     condition([0x23,0],[0x0c,2]),
     full?condition(eqz(call(READY)),[0x0c,2]):[],
@@ -375,7 +420,15 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     condition(eqz(conditionValue(and(state('fastIdle'),eqz(eqz(load8(add(constant(abi.idle),state('pc')))))),call(IDLE),constant(0))),condition(eqz(call(BLOCK,get(1),constant(2147483647))),call(STEP))),
     condition(state('error'),bytes(constant(0),0x0f)),
     condition(binary(0x64,stateF('cyc'),get(1)),fail(23,true)),0x0c,0,0x0b,0x0b,state('duty'));
-  const until=full?bytes(set(1,constant(0)),0x02,0x40,0x03,0x40,
+  const until=resumable?bytes(call(PHASE_DEADLINE,get(0)),set(1,constant(0)),0x02,0x40,0x03,0x40,
+    condition(binary(0x66,call(TIME),get(0)),[0x0c,2]),
+    condition(or(state('error'),[0x23,0]),[0x0c,2]),
+    condition(eqz(call(READY)),bytes(condition(eqz(call(WAIT,get(0))),[0x0c,3]),0x0c,1)),
+    // Completing an IRQ in ready() may itself reach the observation deadline.
+    condition(binary(0x66,call(TIME),get(0)),[0x0c,2]),
+    set(3,retired()),call(STEP),set(2,sub(retired(),get(3))),set(1,add(get(1),get(2))),
+    condition(state('error'),[0x0c,2]),condition(and(eqz(get(2)),phaseActive()),[0x0c,2]),
+    0x0c,0,0x0b,0x0b,get(1)):full?bytes(set(1,constant(0)),0x02,0x40,0x03,0x40,
     condition(binary(0x66,call(TIME),get(0)),[0x0c,2]),
     condition(or(state('error'),[0x23,0]),[0x0c,2]),
     condition(eqz(call(READY)),bytes(condition(eqz(call(WAIT,get(0))),[0x0c,3]),0x0c,1)),
@@ -427,15 +480,15 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   const blockIndex=new Map(blocks.map((b,n)=>[b.start,firstFunction+flashWords+n]));
   for(let p=0;p<flashWords;p++)table.push(blockIndex.get(p)??firstFunction+flashWords+blocks.length);
   const body=(code,locals)=>{const content=bytes(vector(locals),code,0x0b);return bytes(uleb(content.length),content);};
-  const codes=[...instructionBodies.map(code=>body(code,[[9,0x7f],[1,0x7c]])),
-    ...blockBodies.map(code=>body(code,[[9,0x7f]])),body(emptyBlock,[]),body(step,[]),body(block,[]),body(run,[[2,0x7f]]),body(next,[[2,0x7c]]),body(capture,[[3,0x7f],[1,0x7c]]),...(full?[body(until,[[2,0x7f]]),body(physical,[[1,0x7f]])]:[])];
+  const codes=[...instructionBodies.map(code=>body(code,[[9,0x7f],[1,0x7c],...(resumable?[[1,0x7f]]:[])])),
+    ...blockBodies.map(code=>body(code,[[9,0x7f]])),body(emptyBlock,[]),body(step,[]),body(block,[]),body(run,[[resumable?3:2,0x7f]]),body(resumable?fail(24,true):next,[[2,0x7c]]),body(resumable?fail(24,true):capture,[[3,0x7f],[1,0x7c]]),...(full?[body(until,[[resumable?3:2,0x7f]]),body(physical,[[1,0x7f]])]:[])];
   const exports=vector([...['controlRequest','watchdogResetCycle','debugEnabled','captureFault'].map((name,index)=>bytes(string(name),3,index)),
     ...[['step',STEP],['block',BLOCK],['run',RUN],['nextDuty',NEXT],['capturePWM',CAPTURE],...(full?[['runUntil',UNTIL],['capturePhysical',PHYSICAL]]:[])].map(([name,index])=>bytes(string(name),0,uleb(index)))]);
   const mapping=decoded.map(({pc,word,name,d,s,k,words})=>({pc,byteAddress:pc*2,word,name,d,s,k,words}));
   const stats={decodableWords:decoded.filter(i=>i.name!=='unsupported').length,unsupportedWords:decoded.filter(i=>i.name==='unsupported').length,
     blocks:blocks.length,flagBitsComputed:blocks.reduce((n,b)=>n+b.computed,0),flagBitsEliminated:blocks.reduce((n,b)=>n+b.removed,0)};
   const manifest={schema:'micromusic-avr-transpiled-v1',device:profile.name,abi,optimizeFlags,maxBlockInstructions,stats,
-    blocks:blocks.map(({sequence,...block})=>block),mapping};
+    ...(resumable?{executionMode:'resumable-v1'}:{}),blocks:blocks.map(({sequence,...block})=>block),mapping};
   const output=Uint8Array.from(bytes([0,97,115,109,1,0,0,0],section(1,vector(types)),section(2,importSection),section(3,vector(functionTypes.map(uleb))),
     section(4,[1,0x70,1,...uleb(flashWords*2),...uleb(flashWords*2)]),section(6,vector([bytes(0x7f,1,constant(0),0x0b),bytes(0x7c,1,float(-1),0x0b),bytes(0x7f,1,constant(0),0x0b),bytes(0x7f,1,constant(0),0x0b)])),
     section(7,exports),section(9,bytes(1,0,constant(0),0x0b,vector(table.map(uleb)))),section(10,vector(codes)),

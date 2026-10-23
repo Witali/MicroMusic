@@ -98,6 +98,43 @@ IRQ, then bind/retranslate before another fetch. Mid-instruction waits do not
 arbitrate an IRQ. Native idle-loop skipping is disabled only in this optional
 backend, avoiding retirement bypass. Disabled mode preserves the old fast path.
 
+## Generated WASM and JavaScript entry points
+
+`ATtiny13A` accepts `resumable:true` together with the existing explicit
+`osccalHz` physical clock table. This optional mode is disabled by default;
+the legacy ABI and retained firmware bytes stay unchanged. The shared emitter
+adds clock markers while generating effects; `lib/avr-wasm-phases.js` lowers
+those top-level markers into native WASM stage tests and local saves. Clock
+markers nested in a conditional are rejected during generation. There is no
+AVR opcode interpreter or opaque binary-to-continuation rewrite at runtime.
+
+Each instruction context owns its word PC, staged next PC, stage and saved
+operands. A WAIT returns through WASM `return` after saving nine i32 locals and
+one f64 temporary in linear memory. The next call dispatches the latched word
+PC, restores locals and skips completed prefixes. A reset return skips the
+spill, preserving the native cancellation. Architectural PC/SREG commit before
+the single native retirement call. Blocks and idle skipping remain disabled
+in this mode; all flags are live at the observable instruction boundary.
+
+`runUntilPs` establishes a bounded physical deadline, rebasing its exact uint64
+wall timestamp for the f64 runner offset. `step`/`run` explicitly select an
+unbounded span with the currently implemented internal source. Instruction
+counts include completed retirements only. `state().cpuPhase` exposes active,
+word execPc, stage, remainingHalves and retired. It is diagnostic state, not a
+second source of CPU truth. `capturePhysical` integrates pin levels inside
+native WASM across exact sample deadlines. Legacy duty capture is unavailable
+in this optional mode. No host callback is used for instruction/clock phases.
+
+Package v4 still accepts the original ABI only; it rejects the additional
+continuation layout. A future package revision must preserve the execution
+mode and validate its phase exports/layout. External CLKI remains unconnected;
+the input queue alone must not be described as stopped-clock device support.
+
+The generated control, local and memory encodings follow the official
+[WASM binary instruction specification](https://webassembly.github.io/spec/core/binary/instructions.html);
+the early exits follow its
+[`return` execution rules](https://webassembly.github.io/spec/core/exec/instructions.html#exec-return).
+
 ## Verification
 
 `node --test web-player/tests/attiny13a-cpu-phase-native.test.mjs` compiles the
@@ -105,3 +142,11 @@ real C CPU bridge and board using the read-only toolchain, warnings as errors
 and no WASM imports. It checks the ABI, fractional spans, exact deadlines,
 CLKPR, all three IRQ stages, wait/resume, SEI/RETI-delay preservation, reset
 cancellation, real Flash-generation changes/SPM halt, SLEEP and disabled mode.
+
+`avr-resumable-runtime.test.mjs` slices all123 official forms at every half edge
+and adjacent1ps deadline, comparing final CPU/memory state with the existing
+full-device path. It also checks public entry points, ABI/cache/mode identity,
+package rejection, SLEEP/BOD recovery and audio partition invariance.
+`avr-resumable-oracles.test.mjs` records real native bridge calls in WASM to
+check read latches, stack phases, once-only RFLB/EEPROM commands, reset/edge
+ties and persistent IRQ entry across actual WAIT returns.
