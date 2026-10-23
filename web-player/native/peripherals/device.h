@@ -12,7 +12,7 @@ enum {
  DEVICE_CFG_BANDGAP_STARTUP=10, DEVICE_CFG_COMPARATOR_INITIAL=11,
  DEVICE_CFG_WAKE_STARTUP_BASE_HALF=12, DEVICE_CFG_SPM_COMMAND_CYCLES=13,
  DEVICE_CFG_FLASH_MAXIMUM=14, DEVICE_CFG_BOD_RECOVERY_NS=15,
- DEVICE_CFG_FACTORY_OSCCAL96=16
+ DEVICE_CFG_FACTORY_OSCCAL96=16, DEVICE_CFG_FUSE_STARTUP_PROFILE=17
 };
 enum { DEVICE_CONTROL_SLEEP=1, DEVICE_CONTROL_SPM=2, DEVICE_CONTROL_WDR=3 };
 enum {
@@ -33,7 +33,8 @@ typedef struct {
  * periods, comparator propagation0/startup0/initial0, wake startup0,
  * SPM command cycles0 (explicit fault if needed), Flash maximum bound,
  * BOD recovery60000ns (datasheet approximate digital profile, configurable),
- * factory OSCCAL96=0 (explicit fixture byte, not a universal chip value). */
+ * factory OSCCAL96=0 (explicit fixture byte, not a universal chip value),
+ * fuse startup profile0 (zero-delay digital fixture; set1 for fuse timing). */
 int device_configure(uint32_t key, uint32_t value);
 int device_init(uint8_t data[160], uint8_t flash[1024], uint8_t eeprom[64]);
 void device_reset(uint8_t reset_sources);
@@ -78,8 +79,13 @@ uint8_t device_reset_requested(void);
 /* Ideal digital RESET profile: PB5 low means an ALREADY RECOGNIZED assertion,
  * bypassing an analog pulse filter. RSTDISBL disables this RESET role.
  * device_reset acknowledges the request, but halted remains true until queued
- * PB5 high/release. No automatic fuse/startup delay is invented on release. */
+ * PB5 high/release. Optional fuse startup begins on that release edge. */
 uint8_t device_reset_held(void);
+/* Optional fuse reset stretch, independent of a physical RESET hold. The
+ * deadline uses base_half; UINT64_MAX means external RESET is still held,
+ * and current base_half means no reset stretch remains. */
+uint8_t device_starting(void);
+uint64_t device_startup_deadline(void);
 uint64_t device_flash_generation(void);
 uint32_t device_take_dirty_pages(void);
 uint32_t device_fault(void);

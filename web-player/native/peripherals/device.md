@@ -134,10 +134,11 @@ state stays reset, the watchdog counter is held reset, and its oscillator time
 and already-active EEPROM/Flash programming continue on the physical timeline.
 
 The provided low level means an **already recognized** assertion. This profile
-does not invent an analog RESET threshold, spike filter, minimum pulse width,
-fuse-dependent startup interval or BOD waveform. Release resumes the digital
-board at the supplied timestamp; a fixture requiring those analog/startup
-effects must supply recognized reset transitions with those timings. Analog
+does not invent an analog RESET threshold, spike filter, minimum pulse width
+or BOD waveform. With the default zero-startup fixture, release resumes the
+digital board at the supplied timestamp. The optional fuse timing profile below
+instead stretches reset after release. A fixture requiring analog recognition
+must supply recognized reset transitions with those timings. Analog
 voltage injections alone do not assert this digital reset line. When RSTDISBL
 is programmed (high-fuse bit0=0), PB5 remains available as GPIO/ADC0 and these
 digital inputs do not reset the device.
@@ -170,6 +171,57 @@ watchdog during held reset; and RSTDISBL GPIO/ADC0 behavior. They are compiled
 with all production component C files and `-Wall -Wextra -Werror`, targeting
 WASM with no host imports. Tests are generated only under ignored `build/`.
 All16 return0. The separate module suites continue to verify each component.
+
+## Optional fuse startup and reset timing
+
+Configuration key17, `DEVICE_CFG_FUSE_STARTUP_PROFILE`, accepts0/1 and defaults0.
+The default preserves the existing zero-startup digital fixture. Enabling it
+uses [DS40002307A section6.2, Tables6-2/6-3/6-5/6-6 and section8.2](https://www.microchip.com/content/dam/mchp/documents/MCU08/ProductDocuments/DataSheets/ATtiny13A-Data-Sheet-DS40002307A.pdf#page=30).
+CKSEL selects the applicable table; it does not replace the caller's existing
+`oscillatorHz` value with a nominal frequency. Source CK therefore means one
+configured undivided oscillator period, independent of CKDIV8 and CLKPR.
+
+| SUT | Power-down oscillator startup | Additional reset delay |
+| --- | --- | --- |
+|00|6 source CK|14 source CK|
+|01|6 source CK|14 source CK +512 watchdog oscillator pulses|
+|10|6 source CK|14 source CK +8192 watchdog oscillator pulses|
+|11|Reserved; initialization fails with config fault/detail8|Reserved|
+
+The internal-source tables require at least the512-pulse timeout for SUT00 when
+RSTDISBL is programmed. The external-source table has no corresponding note.
+The512/8192 pulses follow configured `watchdogHz`, including rational phase;
+their nominal4/64ms labels are not hardcoded durations. Reset is modeled as the
+asynchronous timeout followed by20 source CK. A watchdog reset first supplies
+its documented one-CK reset pulse. This ordering and the retained watchdog
+oscillator phase are explicit digital choices; sub-cycle silicon reset/clock
+phase is not measured here. Power-on/BOD reset calls mean an already recognized
+source that has become inactive; this profile does not detect analog voltages.
+
+`device_reset` immediately resets peripheral registers and reloads OSCCAL.
+The CPU and synchronous peripheral clocks remain held until the reset deadline;
+CPU advancement, writes and control effects are blocked. Already-active NVM
+operations and physical watchdog oscillator time continue. The watchdog counter
+itself remains reset throughout this internal/external reset stretch, including
+its ending edge, and starts a fresh count after release. This also permits the
+long SUT10 interval with a fuse-forced watchdog. A queued external RESET release
+starts the delay at its timestamp; asserting RESET again cancels/restarts it.
+
+`device_starting()` exposes reset stretch, separately from physical
+`device_reset_held()`. `device_startup_deadline()` returns its `base_half`
+deadline, UINT64_MAX during external RESET hold, or current time when ready.
+`device_halted()` includes both states. `device_wait_until` services their
+deadlines without host callbacks. Monotonic nominal virtual time is unchanged.
+
+Power-down wake adds only6 source CK before the existing four extra CPU cycles;
+SUT's reset timeout is not charged again. Idle and ADC Noise Reduction retain
+their oscillator. Fuse startup overlaps explicit caller startup and BOD recovery
+by taking their maximum, preserving the previously documented overlap profile.
+Ordinary interrupt entry remains CPU-owned. Missing external clock edges, clock
+settling waveforms, supply ramps and oscillator calibration require a richer
+physical model. `device-startup.test.mjs` covers exact boundaries, repeated and
+external/watchdog resets, phase/divider independence, sleep modes, WDTON and
+EEPROM/Flash completion using the actual import-free board.
 
 ## Factory oscillator calibration
 
