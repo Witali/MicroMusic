@@ -12,6 +12,7 @@ const build = join(root, 'build/player');
 const metadata = JSON.parse(readFileSync(join(build, 'input.json')));
 const input = process.argv[2] ? resolve(process.argv[2]) : join(root, 'reference/R4/data', metadata.file);
 const raw = readFileSync(input);
+const frameLoadCycles = metadata.frameLoadCycles || 0;
 assert.equal(createHash('sha256').update(raw).digest('hex'), metadata.sha256);
 const oracleFile = join(build, 'reference.pcm');
 execFileSync(join(root, 'build/reference', process.platform === 'win32' ? 'decode.exe' : 'decode'), [input, oracleFile]);
@@ -26,6 +27,8 @@ function address(name) { assert.ok(symbols.has(name), name); return symbols.get(
 const end = address('__bss_end'), started = address('speex_player_started');
 const done = address('speex_player_done'), underruns = address('speex_player_underruns');
 const head = address('head'), tail = address('tail');
+const loadBegin = frameLoadCycles ? address('speex_player_load_begin') : -1;
+const loadEnd = frameLoadCycles ? address('speex_player_load_end') : -1;
 const program = new Uint16Array(16384).fill(0xffff);
 new Uint8Array(program.buffer).set(binary);
 const cpu = new CPU(program, 2048);
@@ -50,14 +53,30 @@ cpu.writeHooks[0x88] = (value, old, address, mask) => {
 let minSP = 0x8ff;
 const addressOfFinished = address('input_finished');
 const deadline = metadata.frames * 320000 + 2000000;
+const measuredLoads = [];
+let loadActive = false, loadCycles = 0;
 while (!cpu.data[done]) {
   assert.ok(cpu.cycles < deadline, 'Player did not finish');
+  const pc = cpu.pc*2, before = cpu.cycles;
+  if (pc === loadBegin) { assert.ok(!loadActive); loadActive = true; loadCycles = 0; }
   avrInstruction(cpu);
+  // Count only instructions in the load function's marked interval. Timer
+  // interrupt entry/ISR/return remain live, and consume additional wall time.
+  if (pc >= loadBegin && pc < loadEnd) loadCycles += cpu.cycles-before;
+  if (loadActive && cpu.pc*2 === loadEnd) {
+    measuredLoads.push(loadCycles); loadActive = false;
+  }
   cpu.tick();
   minSP = Math.min(minSP, cpu.SP);
   assert.ok(cpu.SP >= end, 'Player stack collided with static SRAM');
 }
 assert.equal(cpu.data[address('speex_player_error')], 0);
+if (frameLoadCycles) {
+  assert.equal(measuredLoads.length, metadata.frames, 'One extra CPU load per frame');
+  assert.ok(measuredLoads.every(cycles => cycles === frameLoadCycles), 'Exact injected CPU cycles, excluding interrupts');
+} else {
+  assert.ok(!symbols.has('speex_player_frame_load'), 'Ordinary firmware contains no test load');
+}
 assert.equal(cpu.dataView.getUint16(underruns, true), 0, 'PCM ring underrun');
 assert.equal(samples.length, expected.length + 1, 'One timer output per sample plus final midpoint');
 assert.equal(samples.at(-1), 128);
@@ -76,6 +95,12 @@ const report = {simulator: 'avr8js 0.21.1', input: metadata, frames: metadata.fr
   timerIntervalMaxCycles: Math.max(...gaps), elapsedCycles: cpu.cycles,
   minQueuedSamplesBeforeOutput: minQueued,
   maxBlockReadyGapCycles: Math.max(0,...readyGaps),
+  extraCpuCyclesPerFrame: frameLoadCycles,
+  extraCpuMsPerFrame: frameLoadCycles / 16000,
+  verifiedReservedCpuPercent: frameLoadCycles / 320000 * 100,
+  measuredExtraLoadCount: measuredLoads.length,
+  measuredExtraLoadMinCycles: measuredLoads.length ? Math.min(...measuredLoads) : 0,
+  measuredExtraLoadMaxCycles: measuredLoads.length ? Math.max(...measuredLoads) : 0,
   pwmSha256: createHash('sha256').update(output).digest('hex'), includesInterrupts: true,
   physicalBoardTested: false};
 writeFileSync(join(build, 'player-verification.json'), JSON.stringify(report, null, 2) + '\n');

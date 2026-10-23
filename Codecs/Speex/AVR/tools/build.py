@@ -97,7 +97,9 @@ def verify_primitives(compiler):
     run([executable])
 
 
-def avr(compiler, packet_file=None):
+def avr(compiler, packet_file=None, frame_load_cycles=0):
+    if not 0 <= frame_load_cycles <= 320000 or (frame_load_cycles and packet_file is None):
+        raise ValueError('Frame load requires a player stream and 0..320000 cycles')
     output, source = prepare('profile')
     definitions = DEFINES + ['SPEEX_AVR_COMPACT_LSP', 'SPEEX_AVR_TIGHT_EXC',
                              'SPEEX_AVR_PROFILE', 'SPEEX_AVR_FAST_MUL']
@@ -113,10 +115,13 @@ def avr(compiler, packet_file=None):
         (output / 'sample.h').write_text('#define SPEEX_SAMPLE_FRAMES ' + str(len(data)//20) +
             '\nstatic const uint8_t sample_data[] PROGMEM = {\n' + ',\n'.join(rows) + '\n};\n', encoding='utf-8')
         (output / 'input.json').write_text(json.dumps({'file': packet_file.name,
-            'sha256': hashlib.sha256(data).hexdigest(), 'frames': len(data)//20}, indent=2) + '\n', encoding='utf-8')
+            'sha256': hashlib.sha256(data).hexdigest(), 'frames': len(data)//20,
+            'frameLoadCycles': frame_load_cycles}, indent=2) + '\n', encoding='utf-8')
         name = 'speex-player'
         main = ROOT / 'src/player.c'
         definitions.append('SPEEX_AVR_OUTPUT_HOOK')
+        if frame_load_cycles:
+            definitions.append('SPEEX_AVR_FRAME_LOAD_CYCLES=' + str(frame_load_cycles))
     flags = ['-mmcu=atmega328p', '-O3', '-flto', '-fwrapv', '-fno-strict-aliasing',
              '-ffunction-sections', '-fdata-sections', '-fstack-usage',
              *['-D' + d for d in definitions],
@@ -144,7 +149,11 @@ if __name__ == '__main__':
     parser.add_argument('--variant', choices=['reference', 'compact', 'tight', 'profile'], default='reference')
     parser.add_argument('--avr-gcc', help='Build the ATmega328P validation firmware instead of the host decoder')
     parser.add_argument('--player', type=Path, help='Embed this NB3 raw stream and build the PWM player (requires --avr-gcc)')
+    parser.add_argument('--frame-load-cycles', type=int, default=0,
+                        help='Inject this many extra CPU cycles per player frame to verify headroom (test only)')
     args = parser.parse_args()
     if args.player and not args.avr_gcc:
         parser.error('--player requires --avr-gcc')
-    print(avr(args.avr_gcc, args.player) if args.avr_gcc else host(args.cc, args.variant))
+    if args.frame_load_cycles and not (args.player and args.avr_gcc):
+        parser.error('--frame-load-cycles requires --player and --avr-gcc')
+    print(avr(args.avr_gcc, args.player, args.frame_load_cycles) if args.avr_gcc else host(args.cc, args.variant))

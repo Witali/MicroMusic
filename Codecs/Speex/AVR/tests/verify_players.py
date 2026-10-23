@@ -18,6 +18,8 @@ def main():
     parser.add_argument('--node', default='node')
     parser.add_argument('--streams', type=Path, default=ROOT / 'reference/R4/data')
     parser.add_argument('--out', type=Path, default=ROOT / 'build/player-matrix')
+    parser.add_argument('--frame-load-cycles', type=int, default=0,
+                        help='Extra CPU work injected into every 20-ms player frame')
     args = parser.parse_args()
     streams = sorted(args.streams.glob('*.spxraw'))
     if not streams:
@@ -27,7 +29,7 @@ def main():
     streams.sort(key=lambda p: p.name == 'speech_ru.spxraw')
     results = []
     for stream in streams:
-        build.avr(args.avr_gcc, stream)
+        build.avr(args.avr_gcc, stream, args.frame_load_cycles)
         subprocess.run([args.node, ROOT / 'tests/verify_player.mjs', stream.resolve()], check=True, capture_output=True)
         row = json.loads((ROOT / 'build/player/player-verification.json').read_text(encoding='utf-8'))
         results.append(row)
@@ -37,11 +39,13 @@ def main():
         print(f"PASS {stream.name}: {row['frames']} frames, no underruns, {row['freeSramAtPeak']} bytes free SRAM", flush=True)
     report = {'simulator': 'avr8js 0.21.1', 'physicalBoardTested': False,
               'includesInterrupts': True, 'frames': sum(r['frames'] for r in results),
+              'extraCpuCyclesPerFrame': args.frame_load_cycles,
+              'verifiedReservedCpuPercent': args.frame_load_cycles / 320000 * 100,
               'samples': sum(r['samples'] for r in results),
               'freeSramAtPeak': min(r['freeSramAtPeak'] for r in results),
               'streams': results}
     (args.out / 'player-all.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
-    if args.streams == ROOT / 'reference/R4/data':
+    if args.streams == ROOT / 'reference/R4/data' and not args.frame_load_cycles:
         shutil.copyfile(args.out / 'player-all.json', ROOT / 'build/player-all.json')
     print('PASS: complete player', report['frames'], 'frames /', report['samples'], 'samples', flush=True)
 

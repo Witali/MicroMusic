@@ -16,6 +16,19 @@ volatile uint16_t speex_player_underruns;
 static int16_t pcm[160];
 static uint8_t packet[20];
 
+/* Test-only admission load: reserve this much CPU work in every audio frame.
+ * Interrupts remain enabled during steady playback. Empty assembly labels
+ * let the ISA verifier count the exact injected instruction cycles, excluding
+ * ISR cycles. No function or instructions are emitted in the ordinary build. */
+#if defined(SPEEX_AVR_FRAME_LOAD_CYCLES) && SPEEX_AVR_FRAME_LOAD_CYCLES > 0
+static __attribute__((noinline,noclone)) void speex_player_frame_load(void)
+{
+    __asm__ volatile (".global speex_player_load_begin\nspeex_player_load_begin:");
+    __builtin_avr_delay_cycles(SPEEX_AVR_FRAME_LOAD_CYCLES);
+    __asm__ volatile (".global speex_player_load_end\nspeex_player_load_end:");
+}
+#endif
+
 ISR(TIMER2_COMPA_vect)
 {
     if (tail != head) {
@@ -66,6 +79,9 @@ int main(void)
     OCR2A = 249;
     speex_avr_init();
     for (frame = 0; frame < SPEEX_SAMPLE_FRAMES; ++frame) {
+#if defined(SPEEX_AVR_FRAME_LOAD_CYCLES) && SPEEX_AVR_FRAME_LOAD_CYCLES > 0
+        speex_player_frame_load();
+#endif
         for (i = 0; i < 20; ++i)
             packet[i] = pgm_read_byte(sample_data + (uint16_t)(frame*20) + i);
         if (speex_avr_decode(packet, 20, pcm)) {

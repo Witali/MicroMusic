@@ -135,6 +135,39 @@ Stage reports are `reports/nb-{fused-excitation,multiply,byte-shifts,lpc-postinc
 The reusable recipes and exact ASM sources are linked from
 [`docs/avr-asm-cookbook`](../../../docs/avr-asm-cookbook/README.md).
 
+## Explicit 20% CPU-reserve gate
+
+Decoder-only timing leaves 36.01% of the 320,000-cycle frame budget, before
+packet reads, output and ISR. A separate admission test checks the complete
+player: **64,000 extra foreground instruction cycles / 4 ms are injected in
+every 20-ms frame**, reserving at least 20% CPU for other work. Interrupts stay
+enabled during playback. The ISA verifier counts the marked load instructions
+independently; interrupt entry, ISR and return consume additional wall time.
+Function-call overhead is additional to the 64,000 counted load cycles.
+
+The gate requires the same complete 31-stream corpus and exact PWM hashes,
+one verified load per frame, zero underruns, uninterrupted sample timing and
+no SRAM/stack collision. **All 9,100 frames passed**, with 9,100 separately
+counted 64,000-cycle loads, zero underruns, unchanged PWM hashes, at least
+38 queued samples under load and 314 bytes free SRAM at peak. Normal firmware
+was rebuilt and verified with zero test-load instructions. This
+validates CPU admission for this corpus, ATmega328P at 16 MHz, the embedded
+Flash transport and the tested timer/ISR workload; it is not a physical-board
+measurement or a guarantee for arbitrary additional application interrupts.
+
+After collecting the original 11 and real-speech 20 `.spxraw` files in the
+ignored `build/nb-all-streams` directory, reproduce with:
+
+```sh
+python Codecs/Speex/AVR/tests/verify_players.py --avr-gcc avr-gcc --node node --streams Codecs/Speex/AVR/build/nb-all-streams --out Codecs/Speex/AVR/build/nb-headroom-20 --frame-load-cycles 64000
+python Codecs/Speex/AVR/tools/verify_nb_headroom.py
+```
+
+For a single stream, `tools/build.py --avr-gcc avr-gcc --player <stream>
+--frame-load-cycles 64000` builds the same stress firmware. Omit the frame-load
+option to restore the ordinary player. The full audit and compact outcome are
+retained in `reports/nb-headroom-20.json` and `reports/nb-headroom-summary.json`.
+
 ## Human speech and PWM headroom
 
 The expanded corpus contains 20 eight-second clips: eight human speakers
