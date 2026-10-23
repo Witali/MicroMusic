@@ -1,6 +1,6 @@
 {
   "schema": "micromusic-avr-optimization-fixture-v1",
-  "baseSourceSha256": "e27f722196a9b0ec1803b7e66f4a85421dfd867e24f3742fa689ce032bb220ad",
+  "baseSourceSha256": "b3b0f6a1f30db70b2a6a17d4f68fc1b6d87db73fa36a01ba90878b690c08abff",
   "edits": {
     "budget": {
       "before": "double budget=fmin(64,fmin(S(overflowAt)-S(cyc)-1,deadline-S(cyc)));",
