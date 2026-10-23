@@ -67,3 +67,30 @@ test('music entries hide original playback and root hosting resolves the same as
   const root=await playerApp({prefix:'/'});
   assert.equal(root.original.src,'https://example.test/web-player/audio/originals/chego.wav');
 });
+
+test('legacy speech URLs open the selected version of the same phrase',async()=>{
+  const initial=await playerApp();
+  for(const [previous,current] of Object.entries(initial.catalog.aliases)){
+    const app=await playerApp({firmware:previous});
+    const entry=app.workers.at(-1).messages.find(message=>message.type==='init').entry;
+    assert.equal(entry.id,current,previous);
+    assert.equal(app.location.searchParams.get('firmware'),current);
+    assert.equal(app.original.src,`https://example.test/MicroMusic/web-player/audio/originals/${entry.audioReferenceId}.wav`);
+    assert.equal(app.get('catalog').children.length,3);
+  }
+});
+
+test('tiny speech shows its paired EEPROM image and research, while Vinni uses its frozen HQ4 image',async()=>{
+  const app=await playerApp({firmware:'hq4-otvechaesh-tiny'}),{get}=app;
+  const entry=app.workers.at(-1).messages.find(message=>message.type==='init').entry;
+  assert.equal(entry.codec,'tiny-period');assert.equal(get('download-eeprom').hidden,false);
+  assert.equal(get('download-eeprom').href,'data:text/plain;charset=utf-8,'+encodeURIComponent(entry.eepromHex));
+  assert.match(get('speech-audit').href,/tiny-speech\/otvechaesh\/README\.md$/);
+  assert.equal(get('speech-audit').textContent,'Исследование речевого ядра ↗');
+  assert.match(get('rom-details').textContent,/64 \/ 64 Б EEPROM/);
+  const cards=get('catalog').children.map(item=>item.children[0]);
+  assert.match(cards.find(card=>card.dataset.firmware===entry.id).children[1].children[1].textContent,/\+ 64 Б EEPROM/);
+  cards.find(card=>card.dataset.firmware==='hq4-vinni').onclick();
+  assert.equal(get('download-eeprom').hidden,true);assert.match(get('rom-details').textContent,/0 \/ 64 Б EEPROM/);
+  assert.equal(get('speech-audit').textContent,'Сверка HQ4 ↗');
+});

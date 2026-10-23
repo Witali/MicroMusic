@@ -78,7 +78,7 @@ function renderCatalog() {
     const name=document.createElement('strong'); name.textContent=entry.title;
     const voices=entry.voices??4;
     const meta=document.createElement('span'); meta.className='card-meta'; meta.textContent=entry.kind==='speech'
-      ? `${entry.flashBytes} Б Flash · речь 7,5 кГц`
+      ? `${entry.flashBytes} Б Flash${entry.eepromBytes ? ` + ${entry.eepromBytes} Б EEPROM` : ''} · речь 7,5 кГц`
       : `${entry.flashBytes} Б Flash${entry.eepromBytes ? ' + 64 Б EEPROM' : ''} · ${entry.status==='experimental' ? 'ТЕСТ' : `${voices} ${voices===1?'ОСНОВНОЙ':'ОСНОВНЫХ'}`}${entry.releaseTailSlots ? ` · ${entry.releaseTailSlots} РЕЗЕРВНЫХ` : ''}${entry.audioChannels===2?' · СТЕРЕО L / R':''}`;
     const arrow=document.createElement('span'); arrow.className='card-arrow'; arrow.textContent=selected?.id===entry.id ? '●' : '↗'; arrow.setAttribute('aria-hidden','true');
     body.append(name,meta); button.append(number,body,arrow); button.onclick=()=>load(entry); item.append(button); $('catalog').append(item);
@@ -139,10 +139,11 @@ function load(entry) {
   delete $('tempo').dataset.wallMs; delete $('tempo').dataset.audioMs;
   $('selected-order').textContent=entry.order; $('selected-title').textContent=entry.title; $('selected-description').textContent=entry.description;
   if(entry.kind==='speech') {
-    $('speech-audit').href=entry.codec==='hq4-t'
-      ? entry.research||'../ATtiny13A/Sound/codec/timbre/README.md'
-      : '../ATtiny13A/Sound/research/hq4-emulator-comparison.json';
-    $('speech-audit').textContent=entry.codec==='hq4-t' ? 'Исследование HQ4-T ↗' : 'Сверка HQ4 ↗';
+    $('speech-audit').href=entry.research||(entry.codec==='hq4-t'
+      ? '../ATtiny13A/Sound/codec/timbre/README.md'
+      : '../ATtiny13A/Sound/research/hq4-emulator-comparison.json');
+    $('speech-audit').textContent=entry.codec==='tiny-period' ? 'Исследование речевого ядра ↗'
+      : entry.codec==='hq4-t' ? 'Исследование HQ4-T ↗' : 'Сверка HQ4 ↗';
   }
   const flashSource=entry.source||'data:text/plain;charset=utf-8,'+encodeURIComponent(entry.flashHex);
   $('rom-name').textContent=`attiny13a-${entry.id}.hex`; $('rom-details').textContent=`${entry.flashBytes} / 1024 Б Flash · ${entry.eepromBytes} / 64 Б EEPROM · ${(entry.sampleHz/1000).toLocaleString('ru')} кГц отсчёты`;
@@ -154,7 +155,8 @@ function load(entry) {
   const reference=originalUrl||entry.reference;
   $('reference-wav').hidden=!reference; if(reference)$('reference-wav').href=reference;
   $('download-eeprom').hidden=!entry.eepromHex; $('reset').disabled=false;
-  for(const [id,source,suffix] of [['download',flashSource,''],['download-eeprom',entry.eepromSource,'-eeprom']]){
+  const eepromSource=entry.eepromSource||(entry.eepromHex ? 'data:text/plain;charset=utf-8,'+encodeURIComponent(entry.eepromHex) : null);
+  for(const [id,source,suffix] of [['download',flashSource,''],['download-eeprom',eepromSource,'-eeprom']]){
     const link=$(id);if(source){link.href=source;link.download=`attiny13a-${entry.id}${suffix}.hex`;link.removeAttribute('aria-disabled');}
   }
   const bytes=parseHex(entry.flashHex); $('memory').textContent=Array.from({length:8},(_,line)=>formatHex(line*16,4)+'  '+Array.from(bytes.subarray(line*16,line*16+16),x=>formatHex(x)).join(' ')).join('\n');
@@ -217,25 +219,25 @@ window.addEventListener('pagehide',()=>{ originalAudio.pause(); runtime?.termina
 try {
   const speech=new URL(location.href).searchParams.get('collection')==='hq4';
   if(speech){
-    document.title='MicroMusic / ATtiny13A — речь HQ4';
+    document.title='MicroMusic / ATtiny13A — речевые кодеки';
     document.querySelector('.intro .eyebrow').textContent='ATtiny13A / РЕЧЬ ИЗ МАШИННОГО КОДА';
     document.querySelector('.intro h1').textContent='Речь в одном килобайте.';
-    document.querySelector('.subtitle').textContent='Автоматический подбор HQ4-T: сравните новые варианты на фразе «Чего тебе нужно?».';
-    document.querySelector('.library h2').textContent='Какой вариант звучит лучше?';
-    document.querySelector('.library-caption').textContent='Auto сохраняет разборчивость по STOI. «Спектр» допускает небольшое снижение STOI ради более близкой спектрограммы.';
+    document.querySelector('.subtitle').textContent='Три фразы — три выбранных варианта. Сравните прошивку с оригиналом.';
+    document.querySelector('.library h2').textContent='Выберите фразу';
+    document.querySelector('.library-caption').textContent='Слушайте речь из прошивки и сравнивайте с исходной записью.';
     $('speech-level-control').hidden=false;
     document.querySelector('.source-only').hidden=true;
     const history=document.querySelector('.header-link');history.href='../ATtiny13A/Sound/AUDIO_REFERENCES.md';history.textContent='Звуковые эталоны ↗';
     $('original-player').textContent='Плеер из ChatGPT ↗';
     $('speech-audit').hidden=false;
-    document.querySelector('footer span:last-child').textContent='MiniLPC HQ4 / HQ4-T · Worker + AudioWorklet';
+    document.querySelector('footer span:last-child').textContent='Речевые кодеки · Worker + AudioWorklet';
   }
   // Original recordings are shared public assets. Local listening can also use
   // restored emulator previews and the archived ChatGPT player.
-  const response=await fetch(speech?'./hq4-firmware.json?v=20261023-original-audio':'./firmware.json');
+  const response=await fetch(speech?'./hq4-firmware.json?v=20261023-three-phrases':'./firmware.json');
   if (!response.ok) throw new Error('HTTP '+response.status);
   catalog=await response.json();
-  if(speech)document.querySelector('footer span:last-child').textContent=`MiniLPC HQ4 / HQ4-T · ${catalog.entries.length} образов · Worker + AudioWorklet`;
+  if(speech)document.querySelector('footer span:last-child').textContent=`Речевые кодеки · ${catalog.entries.length} фразы · Worker + AudioWorklet`;
   if(speech&&['127.0.0.1','localhost'].includes(location.hostname)) {
     try {
       const localResponse=await fetch('../build/hq4-preview/firmware.json');
@@ -251,7 +253,8 @@ try {
       }
     } catch { /* Optional private listening assets must not hide public firmware. */ }
   }
-  const id=new URL(location.href).searchParams.get('firmware')||catalog.defaultId;
+  const requested=new URL(location.href).searchParams.get('firmware')||catalog.defaultId;
+  const id=catalog.aliases?.[requested]??requested;
   load(catalog.entries.find(e=>e.id===id)||catalog.entries.find(e=>e.id===catalog.defaultId));
 } catch (error) { showError('Не удалось загрузить каталог прошивок. Обновите страницу или проверьте подключение. '+error.message); }
 draw();
