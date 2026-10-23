@@ -80,7 +80,7 @@ test('legacy speech URLs open the selected version of the same phrase',async()=>
   }
 });
 
-test('tiny speech shows its paired EEPROM image and research, while Vinni uses its frozen HQ4 image',async()=>{
+test('tiny speech shows its paired EEPROM image and research, while Vinni uses its selected HQ4 image',async()=>{
   const app=await playerApp({firmware:'hq4-otvechaesh-tiny'}),{get}=app;
   const entry=app.workers.at(-1).messages.find(message=>message.type==='init').entry;
   assert.equal(entry.codec,'tiny-period');assert.equal(get('download-eeprom').hidden,false);

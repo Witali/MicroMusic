@@ -11,7 +11,7 @@ export function deferred(){
 
 // Execute the actual app handlers with a small DOM/media model. This tests
 // transport ordering and cancellation; it does not claim browser audio output.
-export async function playerApp({speech=true,holdWorklet=false,prefix='/MicroMusic/',firmware}={}){
+export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,playOnce,prefix='/MicroMusic/',firmware}={}){
   const location=new URL(`https://example.test${prefix}web-player/`);
   if(speech)location.searchParams.set('collection','hq4');
   if(firmware)location.searchParams.set('firmware',firmware);
@@ -66,14 +66,23 @@ export async function playerApp({speech=true,holdWorklet=false,prefix='/MicroMus
   class Worker{
     constructor(){this.messages=[];workers.push(this);}
     terminate(){this.terminated=true;}
+    ready(){
+      if(!this.terminated)this.onmessage?.({data:{type:'ready',state:{registers:new Uint8Array(32),pc:0,cycles:0,irqs:0,maxISR:0,lost:0}}});
+    }
     postMessage(message){
       this.messages.push(message);
-      if(message.type==='init')queueMicrotask(()=>{
-        if(!this.terminated)this.onmessage?.({data:{type:'ready',state:{registers:new Uint8Array(32),pc:0,cycles:0,irqs:0,maxISR:0,lost:0}}});
-      });
+      if(message.type==='init'&&!holdWorker)queueMicrotask(()=>this.ready());
     }
   }
   const catalog=JSON.parse(readFileSync(new URL(speech?'../../hq4-firmware.json':'../../firmware.json',import.meta.url)));
+  if(playOnce!==undefined){
+    // Explicit fixtures use canonical lengths; the catalog suite independently
+    // checks the production playOnce and phraseSamples metadata.
+    const references=JSON.parse(readFileSync(new URL('../../../ATtiny13A/Sound/audio-references.json',import.meta.url))).clips;
+    for(const entry of catalog.entries)if(entry.kind==='speech'){
+      entry.playOnce=playOnce;entry.phraseSamples=references.find(clip=>clip.id===entry.audioReferenceId).samples;
+    }
+  }
   const window={devicePixelRatio:1,AudioContext:Context,addEventListener(){}};
   const sandbox={document,window,location,URL,Float32Array,Uint8Array,console,parseHex,RealtimeMonitor,
     Worker,AudioWorkletNode:Worklet,ResizeObserver:class{observe(){}},
@@ -85,5 +94,9 @@ export async function playerApp({speech=true,holdWorklet=false,prefix='/MicroMus
     .replace(/^import .*;\r?\n/gm,'').replaceAll('import.meta.url',JSON.stringify(location.href));
   await runInNewContext(`(async()=>{${source}\n})()`,sandbox);
   await Promise.resolve();
-  return {get,body:document.body,original:get('original-audio'),workers,contexts,worklets,workletSetup,catalog,location,selectors};
+  function position(frames,extra={}){
+    const node=worklets.at(-1),connection=node.messages.findLast(message=>message.type==='connect');
+    node.port.onmessage({data:{type:'position',session:connection.session,frames,clockFrames:frames,underruns:0,...extra}});
+  }
+  return {get,body:document.body,original:get('original-audio'),workers,contexts,worklets,workletSetup,catalog,location,selectors,position};
 }

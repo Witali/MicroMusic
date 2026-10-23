@@ -6,7 +6,7 @@ const canvas = $('wave');
 const originalAudio = $('original-audio');
 let catalog, selected, runtime, runtimeReady=false, connectedRuntime, playing=false, busy=false;
 let audio, output, scopes=[new Float32Array(512)], headroom=0;
-let session=0, hasPlayed=false, realtime;
+let session=0, hasPlayed=false, completed=false, realtime;
 let playAttempt=0, busyAttempt=0;
 let lastScopeDraw=-Infinity, scopeDrawTimer;
 let originalLoading=false, originalAttempt=0;
@@ -22,11 +22,11 @@ function transport() {
   document.body.dataset.playing = String(playing);
   document.body.dataset.originalPlaying = String(originalPlaying);
   $('play-icon').textContent = playing ? 'Ⅱ' : '▶';
-  $('play-label').textContent = playing ? 'Пауза' : 'Слушать';
+  $('play-label').textContent = playing ? 'Пауза' : completed ? 'Ещё раз' : 'Слушать';
   $('play').disabled = !runtimeReady || busy;
   $('play-original').textContent=originalPlaying||originalLoading ? 'Остановить оригинал' : 'Прослушать оригинал';
   $('play-original').setAttribute('aria-pressed',String(originalPlaying||originalLoading));
-  $('run-status').textContent = originalLoading ? 'Загрузка оригинала…' : originalPlaying ? 'Оригинальная запись' : busy ? 'Подключение звука…' : playing ? 'Воспроизведение' : runtimeReady ? (hasPlayed ? 'Пауза' : 'Готов к запуску') : 'Загрузка образа…';
+  $('run-status').textContent = originalLoading ? 'Загрузка оригинала…' : originalPlaying ? 'Оригинальная запись' : busy ? 'Подключение звука…' : playing ? 'Воспроизведение' : completed ? 'Завершено' : runtimeReady ? (hasPlayed ? 'Пауза' : 'Готов к запуску') : 'Загрузка образа…';
 }
 function draw() {
   const now=performance.now(), wait=1000/30-(now-lastScopeDraw);
@@ -114,9 +114,10 @@ for(const event of ['playing','pause','ended'])originalAudio.addEventListener(ev
 originalAudio.addEventListener('error',()=>{
   if(selected?.originalAudioUrl){stopOriginal();showError('Не удалось загрузить оригинальную запись.');}
 });
-function load(entry) {
+function load(entry,{autoplay=false}={}) {
   stopOriginal(); pause(); showError(''); busy=false; runtimeReady=false; runtime?.terminate(); connectedRuntime=null;
-  session++; hasPlayed=false;
+  session++; hasPlayed=false; completed=false;
+  const autoplayAttempt=playAttempt;
   output?.port.postMessage({type:'disconnect'});
   selected=entry; headroom=0;
   const originalUrl=entry.kind==='speech' ? entry.originalAudioUrl : null;
@@ -165,7 +166,10 @@ function load(entry) {
   const worker=new Worker(new URL('./worker.js?v=20261023-stereo',import.meta.url),{type:'module'}); runtime=worker;
   worker.onmessage=({data})=>{
     if (runtime!==worker) return;
-    if (data.type==='ready') { runtimeReady=true; stateUI(data.state); connectAudio(); transport(); }
+    if (data.type==='ready') {
+      runtimeReady=true; stateUI(data.state); connectAudio(); transport();
+      if(autoplay&&autoplayAttempt===playAttempt)toggle();
+    }
     if (data.type==='state') {
       stateUI(data.state); scopes=data.scopes; draw(); $('average').textContent=data.averages.map(x=>x.toFixed(1)).join(' / ');
       headroom=headroom ? headroom*.8+data.headroom*.2 : data.headroom; $('headroom').textContent=headroom.toFixed(1)+'×';
@@ -187,10 +191,13 @@ async function ensureAudio() {
     output.connect(audio.destination);
     output.port.onmessage=({data})=>{
       if (data.type!=='position' || data.session!==session || !playing) return;
-      const timing=realtime.observe(data,performance.now()),seconds=timing.seconds;
+      const timing=realtime.observe(data,performance.now());
+      const duration=selected.playOnce ? selected.phraseSamples/selected.sampleHz : Infinity;
+      const seconds=Math.min(timing.seconds,duration);
       $('elapsed').textContent=String(Math.floor(seconds/60)).padStart(2,'0')+':'+(seconds%60).toFixed(1).padStart(4,'0');
       $('tempo').textContent=timing.tempoPercent.toFixed(1)+'%'; $('lag').textContent=timing.lagMs.toFixed(1)+' мс';
       $('tempo').dataset.wallMs=timing.wallMs.toFixed(3); $('tempo').dataset.audioMs=timing.audioMs.toFixed(3);
+      if(timing.seconds>=duration){completed=true;pause();return;}
       if (data.underruns) $('run-status').textContent=`Воспроизведение · задержки звука: ${data.underruns}`;
     };
     output.onprocessorerror=()=>{ pause(); showError('Ошибка звукового потока. Обновите страницу для повторного запуска.'); };
@@ -200,6 +207,7 @@ async function ensureAudio() {
 async function toggle() {
   if (!runtimeReady || busy) return;
   if (playing) { pause(); return; }
+  if (completed) { load(selected,{autoplay:true}); return; }
   stopOriginal();
   const target=runtime,attempt=++playAttempt; busyAttempt=attempt; busy=true; transport(); showError('');
   try {
@@ -234,7 +242,7 @@ try {
   }
   // Original recordings are shared public assets. Local listening can also use
   // restored emulator previews and the archived ChatGPT player.
-  const response=await fetch(speech?'./hq4-firmware.json?v=20261023-three-phrases':'./firmware.json');
+  const response=await fetch(speech?'./hq4-firmware.json?v=20261023-play-once':'./firmware.json');
   if (!response.ok) throw new Error('HTTP '+response.status);
   catalog=await response.json();
   if(speech)document.querySelector('footer span:last-child').textContent=`Речевые кодеки · ${catalog.entries.length} фразы · Worker + AudioWorklet`;
