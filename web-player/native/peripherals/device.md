@@ -171,6 +171,27 @@ with all production component C files and `-Wall -Wextra -Werror`, targeting
 WASM with no host imports. Tests are generated only under ignored `build/`.
 All16 return0. The separate module suites continue to verify each component.
 
+## Factory oscillator calibration
+
+Configuration key16, `DEVICE_CFG_FACTORY_OSCCAL96`, supplies the device-specific
+9.6MHz calibration byte (0..127). Its default0 is an explicit digital fixture
+value; it is not claimed to be the factory byte of an arbitrary chip. Every
+reset loads this byte into OSCCAL, including external/watchdog resets and when
+CKSEL selects4.8MHz or another source. This follows [DS40002307A section17.3](https://www.microchip.com/content/dam/mchp/documents/MCU08/ProductDocuments/DataSheets/ATtiny13A-Data-Sheet-DS40002307A.pdf#page=111):
+hardware always loads the9.6MHz calibration, while using the distinct4.8MHz
+calibration requires firmware action. OSCCAL bit7 is reserved, reads0 and ignores
+writes. Same-CAL writes, including ones setting reserved bit7, are accepted.
+
+Changing CAL[6:0] still faults with `DEVICE_FAULT_UNIMPLEMENTED_IO`, detail0x31.
+The provided `oscillatorHz` contract remains authoritative and unchanged. A
+register-only implementation that silently accepted calibration changes while
+retaining the old frequency would misrepresent CPU, ADC, timer and NVM timing.
+Faithful runtime trimming needs a per-device CAL-to-frequency model and phase
+preservation across clock changes; neither a universal linear curve nor measured
+temperature/voltage dependence is inferred here. `device-osccal.test.mjs` covers
+factory values, validation, all reset causes, fuse independence and reserved bits
+using the actual import-free C/WASM board.
+
 ## BODCR sleep disable and recovery profile
 
 The official reference is [DS40002307A sections7.2 and7.5.1](https://www.microchip.com/content/dam/mchp/documents/MCU08/ProductDocuments/DataSheets/ATtiny13A-Data-Sheet-DS40002307A.pdf#page=37).

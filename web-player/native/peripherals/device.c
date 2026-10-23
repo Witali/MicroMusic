@@ -15,7 +15,7 @@ typedef struct {
 } input_t;
 typedef struct {
  uint8_t *data, *flash, *eeprom;
- uint32_t config[16];
+ uint32_t config[17];
  uint64_t base, half, phase, ns, ns_remainder, wdt_ticks, wdt_remainder;
  uint64_t clkpr_until, clkpr_switch_half, dropped;
  uint64_t bod_arm_until, bod_sleep_until, bod_recovery_until;
@@ -36,8 +36,8 @@ typedef struct {
  input_t inputs[INPUT_CAPACITY];
 } device_t;
 static device_t board;
-static uint32_t configuration[16] = {
- 0,9600000,128000,5000000,1100000,0x7a,0xff,0xff,27,0,0,0,0,0,1,60000
+static uint32_t configuration[17] = {
+ 0,9600000,128000,5000000,1100000,0x7a,0xff,0xff,27,0,0,0,0,0,1,60000,0
 };
 
 static uint64_t minimum(uint64_t a, uint64_t b) { return a < b ? a : b; }
@@ -350,18 +350,19 @@ static void advance_to(uint64_t target) {
  } while (board.base<=target);
 }
 int device_configure(uint32_t key, uint32_t value) {
- if (!key || key>=16) return 0;
+ if (!key || key>=17) return 0;
  if ((key==DEVICE_CFG_OSCILLATOR_HZ || key==DEVICE_CFG_WATCHDOG_HZ) &&
      (!value || value>1000000000)) return 0;
  if ((key==DEVICE_CFG_VCC_UV || key==DEVICE_CFG_BANDGAP_UV) && (!value || value>INT32_MAX)) return 0;
  if (key>=DEVICE_CFG_FUSE_LOW && key<=DEVICE_CFG_LOCK && value>255) return 0;
  if (key==DEVICE_CFG_ADC_FIRST_SAMPLE && value!=27 && value!=29) return 0;
+ if (key==DEVICE_CFG_FACTORY_OSCCAL96 && value>127) return 0;
  configuration[key]=value;
  return 1;
 }
 int device_init(uint8_t *data, uint8_t *flash, uint8_t *eeprom) {
  board=(device_t){0};
- for (unsigned i=0;i<16;i++) board.config[i]=configuration[i];
+ for (unsigned i=0;i<17;i++) board.config[i]=configuration[i];
  if (!data || !flash || !eeprom) { fail(DEVICE_FAULT_CONFIG,1); return 0; }
  board.data=data; board.flash=flash; board.eeprom=eeprom;
  nvm_timing_t timing=nvm_datasheet_timing(board.config[DEVICE_CFG_FLASH_MAXIMUM]!=0);
@@ -383,6 +384,9 @@ void device_reset(uint8_t sources_mask) {
  board.pending_divisor=0; board.clkpr_switch_half=0;
  board.bodcr=board.bod_armed=board.bod_committed=board.bod_disabled=0;
  board.bod_arm_until=board.bod_sleep_until=board.bod_recovery_until=0;
+ /* Section17.3: hardware always loads the 9.6MHz calibration byte, even
+  * when CKSEL selects 4.8MHz. The byte itself is device-specific input. */
+ board.data[32+OSCCAL]=(uint8_t)board.config[DEVICE_CFG_FACTORY_OSCCAL96];
  timer0_init(&board.timer,NULL,0,cpu_cycle());
  system_gpio_reset(&board.gpio,board.config[DEVICE_CFG_FUSE_HIGH]&1);
  system_gpio_external(&board.gpio,board.external_mask,board.external_levels,board.half);
@@ -414,7 +418,8 @@ uint8_t device_read(uint8_t io) {
  } else if (io>=ANALOG_ADCSRB && io<=ANALOG_ACSR) {
   if ((board.prr&1) && io!=ANALOG_ACSR) fail(DEVICE_FAULT_ANALOG,10);
   else if (!analog_read(&board.analog,io,&value,board.half)) fail(DEVICE_FAULT_ANALOG,11);
- } else if (io==0x3f || io==0x3d || io==OSCCAL) value=board.data[32+io];
+ } else if (io==OSCCAL) value=board.data[32+io]&127;
+ else if (io==0x3f || io==0x3d) value=board.data[32+io];
  /* DWDR reads zero without an attached debugger. Reserved addresses read0. */
  board.data[32+io]=value;
  return value;
@@ -463,6 +468,7 @@ uint32_t device_write(uint8_t io, uint8_t value, uint8_t mask) {
  } else if (io==0x3f || io==0x3d) board.data[32+io]=merged;
  else if (io==OSCCAL) {
   if ((merged&127)!=(previous&127)) fail(DEVICE_FAULT_UNIMPLEMENTED_IO,OSCCAL);
+  else board.data[32+OSCCAL]=merged&127;
  } else if (io==BODCR) {
   if (mask&3) bod_write(merged);
  } else if (io!=0x2e && value&mask) fail(DEVICE_FAULT_UNIMPLEMENTED_IO,io);
