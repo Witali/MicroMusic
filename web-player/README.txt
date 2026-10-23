@@ -287,12 +287,18 @@ JSON содержит все события источника; музыкаль
 
 РЕЧЬ MINILPC HQ4
 Публичный сайт: https://witali.github.io/MicroMusic/web-player/?collection=hq4
-Он работает без внешнего архива: hq4-firmware.json содержит три сбалансированных
-образа HQ4, по одному на каждую фразу:
-01 «Чего тебе нужно?» — ?collection=hq4&firmware=hq4-chego (по умолчанию).
-02 «Что ж ты не отвечаешь?» — ?collection=hq4&firmware=hq4-otvechaesh.
+Он работает без внешнего архива: hq4-firmware.json содержит по одному выбранному
+образу для трёх фраз, исходные оригиналы лежат в audio/originals/:
+01 «Чего тебе нужно?» — ?collection=hq4&firmware=hq4-chego-tiny (по умолчанию).
+02 «Что ж ты не отвечаешь?» — ?collection=hq4&firmware=hq4-otvechaesh-tiny.
 03 «Сова! Открывай! Медведь пришёл!» — ?collection=hq4&firmware=hq4-vinni.
-Исследования других вариантов сохранены в ../ATtiny13A/Sound/codec/.
+Первые две прошивки: 990 Б Flash + 64 Б EEPROM. Винни: сохранённый HQ4,
+1024 Б Flash, без EEPROM. После одной фразы прошивка выдаёт PWM 128;
+«Ещё раз» запускает AVR с начала. Соседняя кнопка воспроизводит исходный WAV.
+Семь прежних образов сохранены отдельно в research/hq4-catalog-archive.json;
+старые URL перенаправляются к выбранному варианту той же фразы.
+Модели, качество и проверки: ../ATtiny13A/Sound/codec/SPEECH_SHOWCASE.md.
+Пересборке нужны codec/requirements.txt (numpy/numba/scipy/pystoi/soundfile).
 Пересборка каталога из сохранённого ассемблера:
   python tools/build-hq4-catalog.py --avr-bin build/toolchains/avr-7.3.0/bin
 Добавьте --check для проверки, что опубликованный каталог не устарел.

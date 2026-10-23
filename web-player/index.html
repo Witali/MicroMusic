@@ -7,8 +7,8 @@
   <title>MicroMusic / ATtiny13A — плеер прошивок</title>
   <meta name="description" content="Музыкальная прошивка ATtiny13A с исправленным ритмом: исполнение AVR-кода, звук PWM и осциллограмма в браузере.">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=20261023-stereo">
-  <script type="module" src="./app.js?v=20261023-hq4-three-phrases"></script>
+  <link rel="stylesheet" href="./styles.css?v=20261023-original-audio">
+  <script type="module" src="./app.js?v=20261023-play-once"></script>
 </head>
 <body>
   <header class="site-header">
@@ -38,10 +38,11 @@
           </div>
           <div class="now-playing"><span id="selected-order" class="version-number">06</span><div><span class="eyebrow">ВЫБРАННАЯ ВЕРСИЯ</span><h2 id="selected-title">Люмьер · стерео</h2><p id="selected-description">Загрузка…</p></div></div>
           <div class="elapsed-line"><span>ВРЕМЯ ВОСПРОИЗВЕДЕНИЯ</span><output id="elapsed">00:00.0</output></div>
-          <div class="transport"><button id="play" class="primary" disabled><span id="play-icon" aria-hidden="true">▶</span><span id="play-label">Слушать</span><kbd>Space</kbd></button><button id="reset" disabled>↺ Сначала</button><div class="transport-links"><a id="download" class="download-link" aria-disabled="true">↓ Flash HEX</a><a id="download-eeprom" class="download-link" hidden>↓ EEPROM</a></div></div>
+          <div class="transport"><button id="play" class="primary" disabled><span id="play-icon" aria-hidden="true">▶</span><span id="play-label">Слушать</span><kbd>Space</kbd></button><button id="play-original" class="original-play" type="button" aria-pressed="false" hidden>Прослушать оригинал</button><button id="reset" disabled>↺ Сначала</button><div class="transport-links"><a id="download" class="download-link" aria-disabled="true">↓ Flash HEX</a><a id="download-eeprom" class="download-link" hidden>↓ EEPROM</a></div></div>
+          <audio id="original-audio" preload="none" hidden></audio>
           <div class="engine-controls"><fieldset class="engine-selector"><legend>Движок эмуляции</legend><div class="engine-options"><label><input type="radio" name="engine" value="js"><span>JS</span></label><label><input type="radio" name="engine" value="wasm" checked><span>WASM</span></label></div></fieldset><p>При смене — сброс на начало.</p></div>
           <div class="audio-controls"><label class="volume-label">Громкость <input id="volume" type="range" min="0" max="1" step="0.01" value="0.65"></label><label>RC-фильтр <select id="cutoff" aria-label="Частота среза фильтра"><option value="4000">4 кГц</option><option value="6000">6 кГц</option><option value="9000" selected>9 кГц</option><option value="12000">12 кГц</option></select></label></div>
-          <label id="speech-level-control" class="technical-note" hidden><input id="match-speech-level" type="checkbox" checked> Выровнять громкость HQ4 / HQ4-T для сравнения</label>
+          <label id="speech-level-control" class="technical-note" hidden><input id="match-speech-level" type="checkbox" checked> Выровнять громкость для сравнения</label>
         </section>
         <section class="panel scope-panel" aria-label="Осциллограмма PWM">
           <div class="panel-heading"><span class="eyebrow">02 / СИГНАЛ</span><span class="technical-note" id="audio-mode">МОНО · 1 PWM-ВЫХОД</span></div>
@@ -64,8 +65,8 @@
       <details><summary>Образ Flash <span id="rom-size"></span></summary><pre id="memory" aria-label="Первые 128 байт Flash"></pre></details>
     </section>
     <div class="loaded-rom"><span class="file-icon">▤</span><div><a id="rom-name" href="#" download>synth.hex</a><span id="rom-details"></span></div><span id="rom-hash" class="rom-hash" title="SHA-256 Flash"></span></div>
-    <div class="archive-links"><a id="original-player" href="#" target="_blank" rel="noopener">Исходный HTML-плеер ↗</a><a id="wav-link" href="#" target="_blank" rel="noopener">Звуковой пример WAV ↗</a><a id="reference-wav" href="#" target="_blank" rel="noopener" hidden>Оригинальная запись WAV ↗</a><a id="speech-audit" href="../ATtiny13A/Sound/research/hq4-emulator-comparison.json" target="_blank" rel="noopener" hidden>Сверка HQ4 ↗</a><a href="./?collection=hq4">Речевой кодек HQ4 ↗</a><a href="../i8080/Emulator/">Эмулятор Intel 8080 ↗</a><span>Одинаковые образы объединены по SHA-256.</span></div>
-    <footer><span>MICROMUSIC / LAB <i>·</i> На основе HTML-эмуляторов проекта</span><span>Моно / стерео PWM · 6 образов · Worker + AudioWorklet</span></footer>
+    <div class="archive-links"><a id="original-player" href="#" target="_blank" rel="noopener">Исходный HTML-плеер ↗</a><a id="wav-link" href="#" target="_blank" rel="noopener">Звуковой пример WAV ↗</a><a id="reference-wav" href="#" target="_blank" rel="noopener" hidden>Оригинальная запись WAV ↗</a><a id="speech-audit" href="../ATtiny13A/Sound/research/hq4-emulator-comparison.json" target="_blank" rel="noopener" hidden>Исследование речи ↗</a><a href="./?collection=hq4">Речевые кодеки ATtiny13A ↗</a><a href="../i8080/Emulator/">Эмулятор Intel 8080 ↗</a><span>Одинаковые образы объединены по SHA-256.</span></div>
+    <footer><span>MICROMUSIC / LAB <i>·</i> На основе HTML-эмуляторов проекта</span><span>Моно / стерео PWM · Worker + AudioWorklet</span></footer>
   </main>
   <noscript>Для плеера необходим JavaScript.</noscript>
 </body>
