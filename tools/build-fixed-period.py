@@ -109,7 +109,8 @@ def build(model_path, output, avr_bin=None, node='node'):
                       TEMPLATE, Path(__file__), ROOT/'ATtiny13A/Sound/codec/fixed_period.py',
                       ROOT/'ATtiny13A/Sound/codec/dc_blocker.py', ROOT/'tools/verify-fixed-period.mjs')})
     if flash_bytes <= 1024:
-        run([compiler, '-mmcu=attiny13', '-nostdlib', '-Wl,-Ttext=0', '-x', 'assembler',
+        run([compiler, '-mmcu=attiny13', '-nostdlib', '-Wl,--defsym=__TEXT_REGION_LENGTH__=1024',
+             '-Wl,-Ttext=0', '-x', 'assembler',
              'firmware.S', '-o', 'firmware.elf'], output)
         run([objcopy, '-O', 'binary', 'firmware.elf', 'firmware.bin'], output)
         image = (output/'firmware.bin').read_bytes()
