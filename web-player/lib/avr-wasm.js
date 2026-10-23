@@ -1,5 +1,5 @@
 // C/WASM owns execution. Each CPU has one fixed 64-KiB memory, no host imports.
-const url = new URL('../wasm/avr.wasm', import.meta.url);
+const url = new URL('../wasm/avr.wasm?v=20261023-stereo', import.meta.url);
 const bytes = globalThis.process?.versions?.node
   ? await (await import('node:fs/promises')).readFile(url)
   : await (async () => { const r=await fetch(url); if(!r.ok)throw new Error('AVR WASM HTTP '+r.status); return r.arrayBuffer(); })();
@@ -85,16 +85,24 @@ export class AVRCore {
     }
     return this.duty;
   }
-  configureAudio(sampleRate,pwmHz,{cutoff=4000,volume=1,filtered=true}={}){
+  nextStereoDuty(){
+    const before=this.leftWrites;this.nextDuty();
+    if(this.leftWrites!==before+1)throw new Error('Stereo frame requires one OC0A write before OC0B');
+    return this.dutyLeft|(this.duty<<8);
+  }
+  configureAudio(sampleRate,pwmHz,{cutoff=4000,volume=1,filtered=true,channels=1}={}){
+    if(![1,2].includes(channels))throw new Error('Unsupported audio channel count');
     this._call('avr_audio_init',sampleRate,pwmHz,cutoff,volume,Number(filtered));
+    this._call('avr_audio_channels',channels);this.audioChannels=channels;
   }
   setAudioControls({cutoff=4000,volume=1}){this._call('avr_audio_controls',cutoff,volume);}
   render(count){
     if(!Number.isInteger(count)||count<1||count>16384)throw new Error('Invalid audio block size');
-    const output=new Float32Array(count),raw=new Float32Array(count);let sum=0;
-    for(let offset=0;offset<count;offset+=4096){
-      const n=Math.min(4096,count-offset);this._call('avr_render',n);
-      output.set(this._pcm.subarray(0,n),offset);raw.set(this._raw.subarray(0,n),offset);
+    const channels=this.audioChannels||1,block=4096/channels;
+    const output=new Float32Array(count*channels),raw=new Float32Array(count*channels);let sum=0;
+    for(let offset=0;offset<count;offset+=block){
+      const n=Math.min(block,count-offset);this._call('avr_render',n);
+      output.set(this._pcm.subarray(0,n*channels),offset*channels);raw.set(this._raw.subarray(0,n*channels),offset*channels);
       sum+=(this._exports.avr_average()-128)/128*n;
     }
     this.rawSamples=raw;this.averagePWM=128+128*sum/count;return output;

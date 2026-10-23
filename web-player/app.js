@@ -2,14 +2,17 @@ import { parseHex } from './lib/hex.js';
 import { RealtimeMonitor } from './lib/realtime.js';
 const $ = id => document.getElementById(id);
 const formatHex = (value, length=2) => value.toString(16).toUpperCase().padStart(length,'0');
-const canvas = $('wave'), ctx = canvas.getContext('2d');
+const canvas = $('wave');
 let catalog, selected, runtime, runtimeReady=false, connectedRuntime, playing=false, busy=false;
-let audio, output, scope=new Float32Array(512), headroom=0;
+let audio, output, scopes=[new Float32Array(512)], headroom=0;
 let session=0, hasPlayed=false, realtime;
 let lastScopeDraw=-Infinity, scopeDrawTimer;
 
 function showError(message) { $('error').textContent = message; $('error').hidden = !message; }
-function audioControls() { return {cutoff:+$('cutoff').value,volume:+$('volume').value}; }
+function audioControls() {
+  const trim=$('match-speech-level').checked ? (selected?.monitorGain??1) : 1;
+  return {cutoff:+$('cutoff').value,volume:+$('volume').value*trim};
+}
 function selectedEngine() { return document.querySelector('input[name="engine"]:checked').value; }
 function transport() {
   document.body.dataset.playing = String(playing);
@@ -26,6 +29,11 @@ function draw() {
   }
   if(scopeDrawTimer!==undefined){clearTimeout(scopeDrawTimer);scopeDrawTimer=undefined;}
   lastScopeDraw=now;
+  drawWave(canvas,scopes[0],'#c9ef86');
+  if(scopes[1])drawWave($('wave-right'),scopes[1],'#86d9ef');
+}
+function drawWave(canvas,scope,color){
+  const ctx=canvas.getContext('2d');
   const ratio = window.devicePixelRatio || 1, width=canvas.clientWidth, height=canvas.clientHeight;
   if (!width || !height) return;
   if (canvas.width !== Math.round(width*ratio) || canvas.height !== Math.round(height*ratio)) { canvas.width=Math.round(width*ratio); canvas.height=Math.round(height*ratio); }
@@ -34,10 +42,11 @@ function draw() {
   for (let x=0;x<width;x+=width/12) { ctx.moveTo(x,0); ctx.lineTo(x,height); }
   for (let y=0;y<=height;y+=height/4) { ctx.moveTo(0,y); ctx.lineTo(width,y); } ctx.stroke();
   ctx.strokeStyle='#647b45'; ctx.setLineDash([4,5]); ctx.beginPath(); ctx.moveTo(0,height/2); ctx.lineTo(width,height/2); ctx.stroke(); ctx.setLineDash([]);
-  ctx.strokeStyle='#c9ef86'; ctx.lineWidth=1.5; ctx.beginPath();
+  ctx.strokeStyle=color; ctx.lineWidth=1.5; ctx.beginPath();
   for (let i=0;i<scope.length;i++) { const x=i/(scope.length-1)*width,y=height/2-scope[i]*height*.43; if (!i) ctx.moveTo(x,y); else ctx.lineTo(x,y); } ctx.stroke();
 }
 new ResizeObserver(draw).observe(canvas);
+new ResizeObserver(draw).observe($('wave-right'));
 const registerNodes=Array.from({length:32},(_,i) => {
   const box=document.createElement('div'); box.className='register';
   const label=document.createElement('span'); label.textContent='R'+i;
@@ -63,7 +72,7 @@ function renderCatalog() {
     const voices=entry.voices??4;
     const meta=document.createElement('span'); meta.className='card-meta'; meta.textContent=entry.kind==='speech'
       ? `${entry.flashBytes} Б Flash · речь 7,5 кГц`
-      : `${entry.flashBytes} Б Flash${entry.eepromBytes ? ' + 64 Б EEPROM' : ''} · ${entry.status==='experimental' ? 'ТЕСТ' : `${voices} ${voices===1?'ОСНОВНОЙ':'ОСНОВНЫХ'}`}${entry.releaseTailSlots ? ` · ${entry.releaseTailSlots} РЕЗЕРВНЫХ` : ''}`;
+      : `${entry.flashBytes} Б Flash${entry.eepromBytes ? ' + 64 Б EEPROM' : ''} · ${entry.status==='experimental' ? 'ТЕСТ' : `${voices} ${voices===1?'ОСНОВНОЙ':'ОСНОВНЫХ'}`}${entry.releaseTailSlots ? ` · ${entry.releaseTailSlots} РЕЗЕРВНЫХ` : ''}${entry.audioChannels===2?' · СТЕРЕО L / R':''}`;
     const arrow=document.createElement('span'); arrow.className='card-arrow'; arrow.textContent=selected?.id===entry.id ? '●' : '↗'; arrow.setAttribute('aria-hidden','true');
     body.append(name,meta); button.append(number,body,arrow); button.onclick=()=>load(entry); item.append(button); $('catalog').append(item);
   }
@@ -72,7 +81,7 @@ function renderCatalog() {
 function connectAudio() {
   if (!output || !runtimeReady || connectedRuntime===runtime) return;
   const channel=new MessageChannel();
-  output.port.postMessage({type:'connect',session,port:channel.port1},[channel.port1]);
+  output.port.postMessage({type:'connect',session,channels:selected.audioChannels||1,port:channel.port1},[channel.port1]);
   runtime.postMessage({type:'audio-port',port:channel.port2,sampleRate:audio.sampleRate,controls:audioControls()},[channel.port2]);
   connectedRuntime=runtime;
   document.querySelector('.scope-scale').textContent=(4096/audio.sampleRate*1000).toFixed(0)+' мс';
@@ -82,11 +91,28 @@ function load(entry) {
   pause(); showError(''); busy=false; runtimeReady=false; runtime?.terminate(); connectedRuntime=null;
   session++; hasPlayed=false;
   output?.port.postMessage({type:'disconnect'});
-  selected=entry; headroom=0; scope.fill(0); draw();
-  $('elapsed').textContent='00:00.0'; $('average').textContent='128.0'; $('headroom').textContent='—';
+  selected=entry; headroom=0;
+  const stereo=entry.audioChannels===2;
+  document.body.dataset.stereo=String(stereo);
+  scopes=Array.from({length:stereo?2:1},()=>new Float32Array(512));
+  $('stereo-output').hidden=!stereo;$('scope-right').hidden=!stereo;$('panorama').hidden=!stereo;
+  $('right-output-label').textContent=(stereo?'R · ':'')+'PB1 / OC0B · вывод 6';
+  $('audio-mode').textContent=stereo?'СТЕРЕО · 2 PWM-ВЫХОДА':'МОНО · 1 PWM-ВЫХОД';
+  $('scope-left-label').textContent=stereo?'L · OCR0A':'МОНО · OCR0B';
+  $('wave').setAttribute('aria-label',stereo?'Левый канал PWM до фильтра':'Осциллограмма PWM до фильтра');
+  $('average-label').textContent=stereo?'СРЕДНИЙ PWM · L / R':'СРЕДНИЙ PWM';
+  document.querySelector('.chip').setAttribute('aria-label',stereo?'ATtiny13A, вид сверху: правый канал PB1 вывод 6, левый канал PB0 вывод 5':'ATtiny13A, вид сверху: выход PWM PB1 вывод 6');
+  draw();
+  $('elapsed').textContent='00:00.0'; $('average').textContent=stereo?'128.0 / 128.0':'128.0'; $('headroom').textContent='—';
   $('tempo').textContent='100.0%'; $('lag').textContent='0.0 мс'; realtime?.resetAnchor();
   delete $('tempo').dataset.wallMs; delete $('tempo').dataset.audioMs;
   $('selected-order').textContent=entry.order; $('selected-title').textContent=entry.title; $('selected-description').textContent=entry.description;
+  if(entry.kind==='speech') {
+    $('speech-audit').href=entry.codec==='hq4-t'
+      ? '../ATtiny13A/Sound/codec/timbre/README.md'
+      : '../ATtiny13A/Sound/research/hq4-emulator-comparison.json';
+    $('speech-audit').textContent=entry.codec==='hq4-t' ? 'Исследование HQ4-T ↗' : 'Сверка HQ4 ↗';
+  }
   const flashSource=entry.source||'data:text/plain;charset=utf-8,'+encodeURIComponent(entry.flashHex);
   $('rom-name').textContent=`attiny13a-${entry.id}.hex`; $('rom-details').textContent=`${entry.flashBytes} / 1024 Б Flash · ${entry.eepromBytes} / 64 Б EEPROM · ${(entry.sampleHz/1000).toLocaleString('ru')} кГц отсчёты`;
   $('rom-name').href=flashSource; $('rom-name').download=`attiny13a-${entry.id}.hex`;
@@ -102,12 +128,12 @@ function load(entry) {
   const bytes=parseHex(entry.flashHex); $('memory').textContent=Array.from({length:8},(_,line)=>formatHex(line*16,4)+'  '+Array.from(bytes.subarray(line*16,line*16+16),x=>formatHex(x)).join(' ')).join('\n');
   const url=new URL(location.href); url.searchParams.set('firmware',entry.id); history.replaceState(null,'',url);
   renderCatalog(); transport();
-  const worker=new Worker(new URL('./worker.js',import.meta.url),{type:'module'}); runtime=worker;
+  const worker=new Worker(new URL('./worker.js?v=20261023-stereo',import.meta.url),{type:'module'}); runtime=worker;
   worker.onmessage=({data})=>{
     if (runtime!==worker) return;
     if (data.type==='ready') { runtimeReady=true; stateUI(data.state); connectAudio(); transport(); }
     if (data.type==='state') {
-      stateUI(data.state); scope=data.scope; draw(); $('average').textContent=data.averagePWM.toFixed(1);
+      stateUI(data.state); scopes=data.scopes; draw(); $('average').textContent=data.averages.map(x=>x.toFixed(1)).join(' / ');
       headroom=headroom ? headroom*.8+data.headroom*.2 : data.headroom; $('headroom').textContent=headroom.toFixed(1)+'×';
     }
     if (data.type==='error') { runtimeReady=false; pause(); showError('Ошибка эмуляции: '+data.message); }
@@ -123,7 +149,7 @@ async function ensureAudio() {
   try {
     if (!context.audioWorklet) throw new Error('AudioWorklet недоступен. Откройте страницу через localhost или HTTPS.');
     await context.audioWorklet.addModule(new URL('./audio-worklet.js',import.meta.url));
-    audio=context; realtime=new RealtimeMonitor(audio.sampleRate); output=new AudioWorkletNode(audio,'firmware-output',{numberOfInputs:0,numberOfOutputs:1,outputChannelCount:[1]});
+    audio=context; realtime=new RealtimeMonitor(audio.sampleRate); output=new AudioWorkletNode(audio,'firmware-output',{numberOfInputs:0,numberOfOutputs:1,outputChannelCount:[2]});
     output.connect(audio.destination);
     output.port.onmessage=({data})=>{
       if (data.type!=='position' || data.session!==session || !playing) return;
@@ -151,6 +177,7 @@ async function toggle() {
 $('play').onclick=toggle; $('reset').onclick=()=>load(selected); $('search').oninput=renderCatalog;
 $('volume').oninput=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
 $('cutoff').onchange=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
+$('match-speech-level').onchange=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
 for (const choice of document.querySelectorAll('input[name="engine"]')) choice.onchange=()=>{ if (selected) load(selected); };
 document.addEventListener('keydown',event=>{ if (event.code==='Space' && !event.repeat && !/INPUT|SELECT|TEXTAREA|BUTTON|A/.test(event.target.tagName)) { event.preventDefault(); toggle(); } });
 window.addEventListener('pagehide',()=>{ runtime?.terminate(); audio?.close(); });
@@ -160,24 +187,36 @@ try {
     document.title='MicroMusic / ATtiny13A — речь HQ4';
     document.querySelector('.intro .eyebrow').textContent='ATtiny13A / РЕЧЬ ИЗ МАШИННОГО КОДА';
     document.querySelector('.intro h1').textContent='Речь в одном килобайте.';
-    document.querySelector('.subtitle').textContent='MiniLPC HQ4: три фразы и вариант с максимальным STOI.';
-    document.querySelector('.library h2').textContent='Как звучит HQ4?';
-    document.querySelector('.library-caption').textContent='Сохранённые прошивки. Переключайте JS и WASM для сравнения.';
+    document.querySelector('.subtitle').textContent='Новый HQ4-T и исходный HQ4: сравните тембр на фразе «Чего тебе нужно?».';
+    document.querySelector('.library h2').textContent='HQ4-T или HQ4?';
+    document.querySelector('.library-caption').textContent='HQ4-T восстанавливает спектральный наклон голоса. Выберите версию и сравните на слух.';
+    $('speech-level-control').hidden=false;
     document.querySelector('.source-only').hidden=true;
     const history=document.querySelector('.header-link');history.href='../ATtiny13A/Sound/AUDIO_REFERENCES.md';history.textContent='Звуковые эталоны ↗';
     $('original-player').textContent='Плеер из ChatGPT ↗';
     $('speech-audit').hidden=false;
-    document.querySelector('footer span:last-child').textContent='MiniLPC HQ4 · 4 образа · Worker + AudioWorklet';
+    document.querySelector('footer span:last-child').textContent='MiniLPC HQ4 / HQ4-T · 5 образов · Worker + AudioWorklet';
   }
   // Public speech playback needs only the source-built catalog. Local listening
   // can additionally use restored original WAVs and the archived ChatGPT player.
-  let response;
-  if(speech&&['127.0.0.1','localhost'].includes(location.hostname)) {
-    response=await fetch('../build/hq4-preview/firmware.json');
-  }
-  if(!response?.ok)response=await fetch(speech?'./hq4-firmware.json':'./firmware.json');
+  const response=await fetch(speech?'./hq4-firmware.json':'./firmware.json');
   if (!response.ok) throw new Error('HTTP '+response.status);
   catalog=await response.json();
+  if(speech&&['127.0.0.1','localhost'].includes(location.hostname)) {
+    try {
+      const localResponse=await fetch('../build/hq4-preview/firmware.json');
+      if(localResponse.ok) {
+        const local=await localResponse.json();
+        for(const entry of catalog.entries) {
+          const same=local.entries.find(e=>e.id===entry.id&&e.flashSha256===entry.flashSha256);
+          const reference=same||local.entries.find(e=>e.id==='hq4-'+entry.audioReferenceId);
+          if(same?.preview)entry.preview=same.preview;
+          if(reference?.reference)entry.reference=reference.reference;
+          if(reference?.originalPlayer)entry.originalPlayer=reference.originalPlayer;
+        }
+      }
+    } catch { /* Optional private listening assets must not hide public firmware. */ }
+  }
   const id=new URL(location.href).searchParams.get('firmware')||catalog.defaultId;
   load(catalog.entries.find(e=>e.id===id)||catalog.entries.find(e=>e.id===catalog.defaultId));
 } catch (error) { showError('Не удалось загрузить каталог прошивок. Обновите страницу или проверьте подключение. '+error.message); }

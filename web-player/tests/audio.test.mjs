@@ -15,7 +15,7 @@ for (const entry of catalog.entries) {
     assert.equal(createHash('sha256').update(flash).digest('hex'),entry.flashSha256);
     if (ep) assert.equal(createHash('sha256').update(ep).digest('hex'),entry.eepromSha256);
     const html=readFileSync(new URL(entry.originalPlayer,new URL('../',import.meta.url)),'utf8');
-    const start=html.indexOf('class AVRCore'),end=html.indexOf('</script>',start);
+    const coreAt=html.indexOf('class AVRCore'),start=html.lastIndexOf('<script>',coreAt)+8,end=html.indexOf('</script>',coreAt);
     assert.ok(start>=0 && end>start);
     const Original=runInNewContext(html.slice(start,end)+'\nAVRCore;');
     const original=new Original(flash,ep),optimized=new AVRCore(flash,ep);
@@ -29,9 +29,9 @@ for (const entry of catalog.entries) {
 for (const rate of [22050,44100,48000,96000]) {
   test(`audio at ${rate} Hz stays continuous across arbitrary block boundaries`,()=>{
     const entry=catalog.entries.find(x=>x.id===catalog.defaultId),whole=new Renderer(entry,rate),parts=new Renderer(entry,rate);
-    const expected=whole.render(8192),actual=new Float32Array(8192);
+    const channels=whole.channels,expected=whole.render(8192),actual=new Float32Array(8192*channels);
     let offset=0;
-    for (const size of [1,127,4096,17,3951]) { actual.set(parts.render(size),offset); offset+=size; }
+    for (const size of [1,127,4096,17,3951]) { actual.set(parts.render(size),offset*channels); offset+=size; }
     assert.equal(offset,8192); assert.deepEqual(actual,expected);
     assert.equal(whole.core.cyc,parts.core.cyc);
     assert.ok(actual.some(x=>Math.abs(x)>.01));

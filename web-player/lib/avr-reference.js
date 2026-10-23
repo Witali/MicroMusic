@@ -41,7 +41,7 @@ export class AVRCore {
     this.irqStart = this.irqCount = this.lost = this.maxIRQ = this.writes = 0;
     this.irqFrames = [];
     this.workLost = 0;
-    this.duty = 128; this.fastIdle = fastIdle; this.idleCycles = 0;
+    this.duty = this.dutyLeft = 128; this.leftWrites=0; this.fastIdle = fastIdle; this.idleCycles = 0;
     this.fastBlocks = fastBlocks; this.blockInstructions = 0;
     for (let p = 0; p < 512; p++) this.decode(p);
     this.idle = new Uint8Array(512);
@@ -235,6 +235,7 @@ export class AVRCore {
     this.io[address] = value;
     if ([0x25,0x28,0x2f,0x32,0x33].includes(address)) this.updateTimer();
     if (address === 0x29 && this.timer) { this.duty = value; this.writes++; }
+    if (address === 0x2a && this.timer) { this.dutyLeft=value;this.leftWrites++; }
     return 0;
   }
   clock(n) {
@@ -452,6 +453,11 @@ export class AVRCore {
       if (this.cyc > deadline) throw new Error('Firmware produced no PWM for one emulated second');
     }
     return this.duty;
+  }
+  nextStereoDuty() {
+    const before=this.leftWrites;this.nextDuty();
+    if(this.leftWrites!==before+1)throw new Error('Stereo frame requires one OC0A write before OC0B');
+    return this.dutyLeft|(this.duty<<8);
   }
   state() {
     return { pc:this.pc * 2, cycles:this.cyc, irqs:this.irqCount, maxISR:this.maxIRQ,

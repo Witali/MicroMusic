@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 export const fields=['pc','cyc','irqDelay','timer','overflowAt','timerDivisor','prescalerAt',
   'irqStart','irqCount','lost','maxIRQ','writes','inIRQ','minSP','workLost','duty',
-  'eempeUntil','clkprUntil'];
+  'eempeUntil','clkprUntil','dutyLeft','leftWrites'];
 export function sameCPU(actual,expected,context=''){
   assert.deepEqual(actual.data,expected.data,context+' data/SREG/TCNT0/SPL');
   assert.deepEqual(actual.irqFrames,expected.irqFrames,context+' IRQ frames');

@@ -26,12 +26,20 @@ export class Renderer {
     validateControls(cutoff, volume);
     if (!Number.isFinite(entry.pwmHz) || entry.pwmHz <= 0) throw new Error('Invalid audio configuration');
     this.core = new AVRCore(parseHex(entry.flashHex), entry.eepromHex ? parseHex(entry.eepromHex, 64) : null);
+    this.channels=entry.audioChannels||1;
+    if(![1,2].includes(this.channels))throw new Error('Unsupported audio channel count');
+    this.nextValue=this.channels===2?()=>this.core.nextStereoDuty():()=>this.core.nextDuty();
     this.sampleRate = sampleRate; this.ratio = entry.pwmHz / sampleRate;
     this.frames = 0; this.phase = 0; this.first = true; this.filtered = filtered;
     this.cutoff = this.targetCutoff = Math.min(cutoff, sampleRate * .45);
     this.volume = this.targetVolume = volume; this.smoothing = Math.exp(-1 / (sampleRate * .015));
     this.hp = {z1:0, z2:0}; this.lp = {z1:0, z2:0};
     coefficients(this.hp, sampleRate, 35, true); coefficients(this.lp, sampleRate, this.cutoff);
+    this.filters=[{hp:this.hp,lp:this.lp}];
+    if(this.channels===2){
+      const hp={z1:0,z2:0},lp={z1:0,z2:0};
+      coefficients(hp,sampleRate,35,true);coefficients(lp,sampleRate,this.cutoff);this.filters.push({hp,lp});
+    }
   }
   setAudioControls({cutoff = 4000, volume = 1}) {
     validateControls(cutoff, volume);
@@ -39,24 +47,27 @@ export class Renderer {
   }
   render(count) {
     if (!Number.isInteger(count) || count < 1 || count > 16384) throw new Error('Invalid audio block size');
-    const output = new Float32Array(count), raw = new Float32Array(count);
-    if (this.first) { this.v0 = this.core.nextDuty(); this.v1 = this.core.nextDuty(); this.first = false; }
+    const output = new Float32Array(count*this.channels), raw = new Float32Array(count*this.channels);
+    if (this.first) { this.v0 = this.nextValue(); this.v1 = this.nextValue(); this.first = false; }
     let sum = 0;
     for (let n = 0; n < count; n++) {
-      raw[n] = (this.v0 + (this.v1 - this.v0) * this.phase - 128) / 128; sum += raw[n];
       if (this.filtered) {
         if (this.cutoff !== this.targetCutoff) {
           this.cutoff = this.targetCutoff + (this.cutoff - this.targetCutoff) * this.smoothing;
           if (Math.abs(this.cutoff - this.targetCutoff) < 1e-9) this.cutoff = this.targetCutoff;
-          coefficients(this.lp, this.sampleRate, this.cutoff);
+          for(const {lp} of this.filters)coefficients(lp, this.sampleRate, this.cutoff);
         }
         this.volume = this.targetVolume + (this.volume - this.targetVolume) * this.smoothing;
-        output[n] = filtered(this.lp, filtered(this.hp, raw[n])) * this.volume;
-      } else output[n] = raw[n];
+      }
+      for(let ch=0;ch<this.channels;ch++){
+        const at=n*this.channels+ch,a=this.channels===2?(this.v0>>(ch*8))&255:this.v0,b=this.channels===2?(this.v1>>(ch*8))&255:this.v1;
+        raw[at]=(a+(b-a)*this.phase-128)/128;sum+=raw[at];
+        const {hp,lp}=this.filters[ch];output[at]=this.filtered?filtered(lp,filtered(hp,raw[at]))*this.volume:raw[at];
+      }
       this.phase += this.ratio;
-      while (this.phase >= 1) { this.phase--; this.v0 = this.v1; this.v1 = this.core.nextDuty(); }
+      while (this.phase >= 1) { this.phase--; this.v0 = this.v1; this.v1 = this.nextValue(); }
     }
-    this.frames += count; this.core.rawSamples = raw; this.core.averagePWM = 128 + 128 * sum / count;
+    this.frames += count; this.core.rawSamples = raw; this.core.averagePWM = 128 + 128 * sum / (count*this.channels);
     return output;
   }
 }

@@ -17,13 +17,13 @@ function message(target,type){
 let worker,ports;
 try{
   const catalog=await(await fetch('../firmware.json')).json(),entry=catalog.entries[0];
-  for(const engine of [undefined,'js']){
+  for(const entry of catalog.entries.filter((entry,index)=>index===0||entry.audioChannels===2))for(const engine of [undefined,'js']){
     // Post immediately: imports must not drop init or overtake queued controls.
     const name=engine??'wasm';
     worker=new Worker('../worker.js',{type:'module'});
     const ready=message(worker,'ready');worker.postMessage({type:'init',entry,engine,sampleRate:48000,controls:{cutoff:9000,volume:.65}});
     assert((await ready).engine===name,'Selected Worker engine differs');
-    log('PASS: immediate Worker init / '+name);
+    log('PASS: immediate Worker init / '+name+' / '+entry.id);
     ports=new MessageChannel();ports.port1.start();
     worker.postMessage({type:'audio-port',port:ports.port2,sampleRate:48000,controls:{cutoff:9000,volume:.65}},[ports.port2]);
     const reference=await createRenderer(entry,48000,{cutoff:9000,volume:.65},engine);
@@ -35,7 +35,7 @@ try{
       assert(JSON.stringify(actualState.state)===JSON.stringify(reference.core.state()),'Worker CPU/IRQ counters differ');
       assert(Math.abs(actualState.averagePWM-reference.core.averagePWM)<1e-12,'Raw PWM average differs');
     }
-    log('PASS: Worker/MessageChannel PCM, PWM, CPU cycles and IRQs / '+name);
+    log('PASS: Worker/MessageChannel PCM, PWM, CPU cycles and IRQs / '+name+' / '+entry.id);
     worker.terminate();ports.port1.close();
   }
   for(const engine of ['js','wasm'])for(const rate of [44100,48000,96000])for(const cutoff of [4000,6000,9000,12000]){

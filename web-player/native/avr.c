@@ -11,7 +11,7 @@
  X(prescalerAt) X(irqStart) X(irqCount) X(lost) X(maxIRQ) X(writes) \
  X(inIRQ) X(minSP) X(workLost) X(duty) X(fastIdle) X(fastBlocks) \
  X(idleCycles) X(blockInstructions) X(eempeUntil) X(clkprUntil) \
- X(frameCount) X(error) X(errorPC)
+ X(frameCount) X(error) X(errorPC) X(dutyLeft) X(leftWrites)
 #define FIELD_ENUM(n) S_##n,
 enum { FIELDS(FIELD_ENUM) S_COUNT };
 #define FIELD_NAME(n) #n,
@@ -180,6 +180,7 @@ static int write_io(int a,int v) {
  IO(a)=v;
  if(a==0x25||a==0x28||a==0x2f||a==0x32||a==0x33)update_timer();
  if(a==0x29 && S(timer)){S(duty)=v;S(writes)++;}
+ if(a==0x2a && S(timer)){S(dutyLeft)=v;S(leftWrites)++;}
  return 0;
 }
 /* Keep the common timer path in the caller; Clang otherwise outlines it. */
@@ -357,9 +358,9 @@ static int next_duty(void) {
 
 /* PCM resampling and filtering share the CPU's WebAssembly instance. */
 typedef struct {double b0,b1,b2,a1,a2,z1,z2;} Biquad;
-static Biquad hp,lp;
+static Biquad hp[2],lp[2];
 static double sample_rate,ratio,phase,v0,v1,cutoff,target_cutoff,volume,target_volume,smoothing;
-static int first_audio,filter_audio;
+static int first_audio,filter_audio,audio_channels=1;
 static float pcm[4096],raw[4096],scope[512];
 static double average_pwm;
 static void coefficients(Biquad *f,double hz,int highpass) {
@@ -370,39 +371,49 @@ static void coefficients(Biquad *f,double hz,int highpass) {
 static double filtered(Biquad *f,double x) {
  double y=f->b0*x+f->z1;f->z1=f->b1*x-f->a1*y+f->z2;f->z2=f->b2*x-f->a2*y;return y;
 }
-static double process_sample(double x) {
- if(cutoff!=target_cutoff){cutoff=target_cutoff+(cutoff-target_cutoff)*smoothing;if(fabs(cutoff-target_cutoff)<1e-9)cutoff=target_cutoff;coefficients(&lp,cutoff,0);}
+static void update_controls(void) {
+ if(cutoff!=target_cutoff){cutoff=target_cutoff+(cutoff-target_cutoff)*smoothing;if(fabs(cutoff-target_cutoff)<1e-9)cutoff=target_cutoff;for(int ch=0;ch<audio_channels;ch++)coefficients(&lp[ch],cutoff,0);}
  volume=target_volume+(volume-target_volume)*smoothing;
- return filtered(&lp,filtered(&hp,x))*volume;
 }
+static double process_sample(double x,int ch) {return filtered(&lp[ch],filtered(&hp[ch],x))*volume;}
+static int next_stereo_duty(void) {
+ double before=S(leftWrites);int right=next_duty();
+ if(S(leftWrites)!=before+1)fail(E_AUDIO);
+ return (int)S(dutyLeft)|(right<<8);
+}
+static int next_audio_value(void) {return audio_channels==2?next_stereo_duty():next_duty();}
 void avr_audio_init(double rate,double pwm,double hz,double gain,int filters) {
  ERROR=0;if(!isfinite(rate)||rate<8000||rate>192000||!isfinite(pwm)||pwm<=0||!isfinite(hz)||hz<=0||!isfinite(gain)||gain<0||gain>1){fail(E_AUDIO);return;}
- sample_rate=rate;ratio=pwm/rate;phase=0;first_audio=1;filter_audio=filters;
+ sample_rate=rate;ratio=pwm/rate;phase=0;first_audio=1;filter_audio=filters;audio_channels=1;
  cutoff=target_cutoff=fmin(hz,rate*.45);volume=target_volume=gain;smoothing=exp(-1/(rate*.015));
- hp=(Biquad){0};lp=(Biquad){0};coefficients(&hp,35,1);coefficients(&lp,cutoff,0);
+ for(int ch=0;ch<2;ch++){hp[ch]=(Biquad){0};lp[ch]=(Biquad){0};coefficients(&hp[ch],35,1);coefficients(&lp[ch],cutoff,0);}
 }
+void avr_audio_channels(int channels) {ERROR=0;if(channels!=1&&channels!=2){fail(E_AUDIO);return;}audio_channels=channels;}
 void avr_audio_controls(double hz,double gain) {
  ERROR=0;if(!isfinite(hz)||hz<=0||!isfinite(gain)||gain<0||gain>1){fail(E_AUDIO);return;}
  target_cutoff=fmin(hz,sample_rate*.45);target_volume=gain;
 }
 int avr_render(int count) {
- ERROR=0;if(count<1||count>4096||sample_rate==0)return fail(E_AUDIO);
- if(first_audio){v0=next_duty();v1=next_duty();first_audio=0;}
+ ERROR=0;if(count<1||count>4096/audio_channels||sample_rate==0)return fail(E_AUDIO);
+ if(first_audio){v0=next_audio_value();v1=next_audio_value();first_audio=0;}
  double sum=0;
  for(int i=0;i<count&&!ERROR;i++){
-  double x=(v0+(v1-v0)*phase-128)/128;raw[i]=(float)x;sum+=raw[i];
-  if(filter_audio){
-   pcm[i]=(float)process_sample(raw[i]);
-  }else pcm[i]=(float)x;
-  phase+=ratio;while(phase>=1&&!ERROR){phase--;v0=v1;v1=next_duty();}
+  if(filter_audio)update_controls();
+  for(int ch=0;ch<audio_channels;ch++){
+   int at=i*audio_channels+ch;
+   double a=audio_channels==2?((int)v0>>(ch*8))&255:v0,b=audio_channels==2?((int)v1>>(ch*8))&255:v1;
+   double x=(a+(b-a)*phase-128)/128;raw[at]=(float)x;sum+=raw[at];
+   pcm[at]=(float)(filter_audio?process_sample(raw[at],ch):x);
+  }
+  phase+=ratio;while(phase>=1&&!ERROR){phase--;v0=v1;v1=next_audio_value();}
  }
- average_pwm=128+128*sum/count;
- for(int i=0;i<512;i++)scope[i]=raw[i*count/512];
+ average_pwm=128+128*sum/(count*audio_channels);
+ for(int i=0;i<512;i++)scope[i]=raw[i*count/512*audio_channels];
  return ERROR?0:count;
 }
 int avr_filter(int count) {
  ERROR=0;if(count<1||count>4096||sample_rate==0)return fail(E_AUDIO);
- for(int i=0;i<count;i++)pcm[i]=(float)(filter_audio?process_sample(raw[i]):raw[i]);
+ for(int i=0;i<count;i++){if(filter_audio)update_controls();pcm[i]=(float)(filter_audio?process_sample(raw[i],0):raw[i]);}
  return count;
 }
 double avr_average(void){return average_pwm;}
@@ -419,7 +430,7 @@ const char *avr_field_name(int i){return i>=0&&i<S_COUNT?field_names[i]:"";}
 const char *avr_error_message(void){int e=(int)ERROR;return e>0&&e<=E_AUDIO?errors[e]:"";}
 void avr_reset(int fast_idle,int fast_blocks) {
  for(int i=0;i<S_COUNT;i++)st[i]=0;for(int i=0;i<160;i++)data[i]=0;
- SP=0x9f;S(minSP)=SP;S(overflowAt)=INFINITY;S(duty)=128;S(fastIdle)=fast_idle;S(fastBlocks)=fast_blocks;
+ SP=0x9f;S(minSP)=SP;S(overflowAt)=INFINITY;S(duty)=S(dutyLeft)=128;S(fastIdle)=fast_idle;S(fastBlocks)=fast_blocks;
  S(eempeUntil)=NAN;S(clkprUntil)=NAN;sample_rate=0;
  for(int p=0;p<512;p++)decode(p);for(int p=0;p<512;p++)decode_idle(p);
 }

@@ -8,6 +8,13 @@ MicroMusic
 Локально: node web-player/scripts/serve.mjs 8134
 Открыть: http://127.0.0.1:8134/web-player/
 
+СТЕРЕО ЛЮМЬЕР
+Прослушивание: https://witali.github.io/MicroMusic/web-player/?firmware=lumiere-stereo
+На главной есть ссылка на стерео и скачивание Flash/EEPROM HEX.
+L = PB0/OC0A, вывод 5; R = PB1/OC0B, вывод 6. Отдельные RC и динамики
+показаны у обоих выводов. Четыре голоса, 3:42, Flash 1020 Б.
+Сборка: python tools/build-stereo.py; аудит: node tools/audit-stereo.mjs.
+
 РЕЧЬ ATTINY13A / MINILPC HQ4
 Онлайн: https://witali.github.io/MicroMusic/web-player/?collection=hq4
 Три фразы и maximum-STOI образ, общий JS/WASM-эмулятор, без внешнего архива.

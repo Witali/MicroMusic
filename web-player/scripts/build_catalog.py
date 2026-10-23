@@ -15,6 +15,7 @@ SPECS = [
     ('turkish-march', '03', 'Турецкий марш · фортепиано', 'Моцарт: фортепиано правой и левой руки, 151 BPM. Фрагмент с каденцией; узнаваемое вступление и выключения нот сохранены.', 'variants/turkish-march', 'release'),
     ('children', '04', 'Children · Robert Miles', 'Четыре партии: основное пиано, фортепианное эхо, fretless-бас и мягкие струнные FluidR3. Вся ведущая мелодия и 345 басовых атак, 3:05 при 140 BPM. Сопровождение упрощено; два резервных канала.', 'variants/children', 'release'),
     ('greensleeves', '05', 'Greensleeves', 'Полная мелодия: флейта, скрипка и виолончель. Размер 6/8 с исходным затактом; 48 секунд и пауза перед повтором.', 'variants/greensleeves', 'release'),
+    ('lumiere-stereo', '06', 'Люмьер · стерео', 'Четыре голоса, два PWM-выхода и полная композиция 3:42. Скрипка левее, гитара правее, пианино и ударные по центру.', 'variants/lumiere-stereo', 'release'),
 ]
 
 
@@ -67,6 +68,10 @@ def build():
                      eepromSource=f'../ATtiny13A/Music/{folder}/eeprom.hex' if eeprom else None,
                      preview=f'../ATtiny13A/Music/{folder}/preview.wav' if (directory / 'preview.wav').exists() else None)
         key = (entry['flashSha256'], entry['eepromSha256'])
+        entry['audioChannels']=report.get('audioChannels',1)
+        if entry['audioChannels']==2:
+            entry['outputs']=report['outputs']
+            entry['panorama']=report['panorama']
         entry['referenceCore'] = f'../ATtiny13A/Music/{folder}/avr_core.js'
         assert key not in by_key
         by_key[key] = entry
@@ -106,7 +111,7 @@ def build():
                         target = name.rsplit('/', 1)[0] + '/' + n
                         return z.read(target) if target in z.namelist() else None
                     inspect(path.relative_to(ROOT).as_posix() + '!/' + name, z.read(name), sibling)
-    return dict(schema=1, defaultId='rhythmic', entries=entries,
+    return dict(schema=1, defaultId='lumiere-stereo', entries=entries,
                 sourceOnly=[dict(title='Исходный C-прототип · 2016',
                                  source='../ATtiny13A/Music/00_original/attiny13a_initial_2016.c',
                                  reason='Сохранён исходник C; готового HEX / BIN в архиве нет.')])

@@ -8,7 +8,8 @@ export class Renderer {
     this.ratio = entry.pwmHz / sampleRate;
     this.sampleRate = sampleRate;
     this.frames = 0;
-    this.core.configureAudio(sampleRate,entry.pwmHz,controls);
+    this.channels=entry.audioChannels||1;
+    this.core.configureAudio(sampleRate,entry.pwmHz,{...controls,channels:this.channels});
   }
   render(count) {
     if (!Number.isInteger(count) || count < 1 || count > 16384) throw new Error('Invalid audio block size');

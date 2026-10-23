@@ -13,7 +13,7 @@ const sysroot=join(resolve(sdk),'upstream','emscripten','cache','sysroot');
 const output=join(root,'web-player','wasm');mkdirSync(output,{recursive:true});
 const exports=['layout','field_name','error_message','reset','decode','decode_idle','step','next','block','idle','clock',
  'interrupt','write_io','update_timer','timer_mode','push','pop','push_pc','pop_pc','nzvs','arithmetic',
- 'audio_init','audio_controls','render','filter','average'].map(n=>'avr_'+n);
+ 'audio_init','audio_channels','audio_controls','render','filter','average'].map(n=>'avr_'+n);
 const flags=['--target=wasm32-unknown-unknown','-O3','-std=c11','-ffreestanding','-nostdlib',
  '--sysroot='+sysroot,'-isystem',join(sysroot,'include'),'-L'+join(sysroot,'lib','wasm32-emscripten'),
  '-Wl,--no-entry','-Wl,--export-memory','-Wl,--initial-memory=65536','-Wl,--max-memory=65536','-Wl,-z,stack-size=8192',

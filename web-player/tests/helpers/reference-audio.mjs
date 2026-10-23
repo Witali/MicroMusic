@@ -25,15 +25,20 @@ export class ReferenceRenderer {
     this.core=new AVRCore(parseHex(entry.flashHex),entry.eepromHex?parseHex(entry.eepromHex,64):null);
     this.ratio=entry.pwmHz/rate;this.phase=0;this.first=true;this.frames=0;
     this.filtered=filtered;this.filter=new ReferenceFilter(rate,cutoff,volume);
+    this.channels=entry.audioChannels||1;this.filters=Array.from({length:this.channels},()=>new ReferenceFilter(rate,cutoff,volume));
+    this.nextValue=this.channels===2?()=>this.core.nextStereoDuty():()=>this.core.nextDuty();
   }
   render(count){
-    const out=new Float32Array(count),raw=new Float32Array(count);
-    if(this.first){this.v0=this.core.nextDuty();this.v1=this.core.nextDuty();this.first=false;}
+    const out=new Float32Array(count*this.channels),raw=new Float32Array(count*this.channels);
+    if(this.first){this.v0=this.nextValue();this.v1=this.nextValue();this.first=false;}
     for(let i=0;i<count;i++){
-      raw[i]=(this.v0+(this.v1-this.v0)*this.phase-128)/128;
-      out[i]=this.filtered?this.filter.sample(raw[i]):raw[i];
+      for(let ch=0;ch<this.channels;ch++){
+        const at=i*this.channels+ch,a=this.channels===2?(this.v0>>(ch*8))&255:this.v0,b=this.channels===2?(this.v1>>(ch*8))&255:this.v1;
+        raw[at]=(a+(b-a)*this.phase-128)/128;
+        out[at]=this.filtered?this.filters[ch].sample(raw[at]):raw[at];
+      }
       this.phase+=this.ratio;
-      while(this.phase>=1){this.phase--;this.v0=this.v1;this.v1=this.core.nextDuty();}
+      while(this.phase>=1){this.phase--;this.v0=this.v1;this.v1=this.nextValue();}
     }
     this.frames+=count;this.rawSamples=raw;return out;
   }

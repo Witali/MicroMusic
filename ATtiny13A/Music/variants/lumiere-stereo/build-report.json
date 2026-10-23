@@ -1,0 +1,277 @@
+{
+  "flashBytes": 1020,
+  "codeBytes": 736,
+  "tableBytes": 284,
+  "eepromBytes": 64,
+  "flashSha256": "bbe2c732f1b58d28b19a5f6b8344feea6e615ecb93ad6aee1f16b20c1695edb3",
+  "eepromSha256": "ac29eb2ba4b6718b3b490b9b74be52d5a1ea819149df9edac4d4aecf80443f81",
+  "labels": {
+    "REST_INDEX": 13,
+    "HOLD_INDEX": 14,
+    "PLAYLIST_LEN": 15,
+    "GRID_STEP_LOW": 164,
+    "GRID_STEP_HIGH": 18,
+    "GRID_INITIAL_HIGH": 238,
+    "vectors": 0,
+    "envelope_return": 2,
+    "update_envelope": 8,
+    "envelope_gate": 36,
+    "envelope_release": 46,
+    "reset": 56,
+    "clear_registers": 74,
+    "idle": 146,
+    "pwm_irq": 154,
+    "audio_step": 188,
+    ".L064": 198,
+    "music_tick": 212,
+    "lead_attack_ready": 228,
+    ".L084": 232,
+    ".L08e": 242,
+    ".L0a8": 268,
+    "grid_step": 288,
+    "drum_trigger": 296,
+    ".L0ba": 302,
+    "read_event": 308,
+    ".L0c8": 316,
+    "note_off": 324,
+    "release_lead": 342,
+    "chord_event": 350,
+    "melodic_event": 388,
+    "lead_commit": 446,
+    "hold_sample": 448,
+    "next_section": 450,
+    ".L15c": 468,
+    "render_tone": 478,
+    ".L216": 492,
+    ".L25c": 524,
+    "scale_bit": 528,
+    "voice_silent": 546,
+    "render_sample": 552,
+    "render_drum": 612,
+    ".L280": 622,
+    ".L28a": 624,
+    ".L298": 638,
+    ".L2a0": 652,
+    ".L2ae": 680,
+    "write_pwm": 692,
+    "publish_wait": 712,
+    "playlist": 736,
+    "durations": 751,
+    "note_steps": 758,
+    "chord_steps": 784,
+    "melody_data": 804,
+    "section_packed_000": 804,
+    "first_section": 804,
+    "section_packed_002": 842,
+    "section_packed_004": 895,
+    "section_packed_006": 923,
+    "section_packed_005": 972,
+    "section_packed_003": 987,
+    "section_packed_001": 1000,
+    "section_packed_007": 1007
+  },
+  "score": {
+    "note_count": 198,
+    "event_bytes": 216,
+    "maximum_entry_offset": 203,
+    "playlist_bytes": 15,
+    "note_table_bytes": 26,
+    "chord_table_bytes": 20,
+    "durations": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      8,
+      16
+    ],
+    "pitches": [
+      "E3",
+      "F#3",
+      "G3",
+      "B3",
+      "C#4",
+      "D4",
+      "E4",
+      "F#4",
+      "G4",
+      "A4",
+      "B4",
+      "C#5",
+      "D5",
+      "R"
+    ],
+    "chords": [
+      "Bm",
+      "Gmaj7",
+      "Em",
+      "F#m",
+      "C#m7b5"
+    ],
+    "chord_notes": {
+      "Bm": [
+        59,
+        54
+      ],
+      "Gmaj7": [
+        55,
+        50
+      ],
+      "Em": [
+        52,
+        47
+      ],
+      "F#m": [
+        54,
+        49
+      ],
+      "C#m7b5": [
+        49,
+        44
+      ]
+    },
+    "total_data_bytes": 284,
+    "section_bars": {
+      "intro": 2,
+      "A": 8,
+      "B": 8,
+      "C": 4,
+      "D": 8,
+      "F": 4
+    },
+    "playlist": [
+      "packed_000",
+      "packed_001",
+      "packed_002",
+      "packed_003",
+      "packed_004",
+      "packed_005",
+      "packed_005",
+      "packed_006",
+      "packed_005",
+      "packed_007",
+      "packed_007",
+      "packed_006",
+      "packed_005",
+      "packed_007",
+      "packed_007"
+    ],
+    "source_playlist": [
+      "intro",
+      "A",
+      "B",
+      "C",
+      "C",
+      "D",
+      "C",
+      "C",
+      "F",
+      "F",
+      "D",
+      "C",
+      "C",
+      "F",
+      "F"
+    ],
+    "section_offsets": {
+      "packed_000": 0,
+      "packed_002": 38,
+      "packed_004": 91,
+      "packed_001": 196,
+      "packed_003": 183,
+      "packed_005": 168,
+      "packed_006": 119,
+      "packed_007": 203
+    },
+    "compression": {
+      "method": "Repeated command phrases; dynamic-programming parsing; suffix sharing; deterministic dictionary search",
+      "globallyMinimal": false,
+      "candidateLimit": 4096,
+      "candidateCount": 3958,
+      "dictionaryTrials": 118789,
+      "originalCommandBytes": 491,
+      "originalStreamSha256": "3ab96fdc2a91946e2e6ee4f20f8737b04e2ff9d846bd9b6c373bee910d0c3043",
+      "sourceLayoutBytes": 257,
+      "packedEventBytes": 216,
+      "playlistBytes": 15,
+      "packedBytes": 231,
+      "savedAgainstSourceLayoutBytes": 26,
+      "storedSections": 5,
+      "referencedSections": 8,
+      "verifiedLossless": true
+    },
+    "source": "Lumière — stereo four-voice arrangement",
+    "rest_index": 13,
+    "hold_index": 14,
+    "holds": [
+      {
+        "section": "A",
+        "bar": 4,
+        "pitch": "G4",
+        "beat": 2.0
+      },
+      {
+        "section": "A",
+        "bar": 7,
+        "pitch": "G4",
+        "beat": 0.0
+      }
+    ],
+    "instruments": {
+      "lead": "violin",
+      "keys": "acoustic-grand-piano",
+      "pluck": "acoustic-guitar-nylon"
+    }
+  },
+  "audioChannels": 2,
+  "outputs": [
+    {
+      "channel": "L",
+      "pin": "PB0",
+      "compare": "OC0A",
+      "register": "OCR0A",
+      "packagePin": 5
+    },
+    {
+      "channel": "R",
+      "pin": "PB1",
+      "compare": "OC0B",
+      "register": "OCR0B",
+      "packagePin": 6
+    }
+  ],
+  "panorama": {
+    "source": "New stereo placement for this adaptation; the retained lead sheet contains no pan instructions.",
+    "law": "Linear levels, quantized halves; negative odd samples round toward minus infinity.",
+    "lead": {
+      "instrument": "violin",
+      "left": 1,
+      "right": 0.5
+    },
+    "keys": {
+      "instrument": "piano",
+      "left": 1,
+      "right": 1
+    },
+    "pluck": {
+      "instrument": "guitar",
+      "left": 0.5,
+      "right": 1
+    },
+    "drums": {
+      "instrument": "percussion",
+      "left": 1,
+      "right": 1
+    }
+  },
+  "timing": {
+    "phaseStep": 4772,
+    "phaseBits": 16,
+    "envelopeTickCycles": 131072,
+    "tempoBpm": 80,
+    "actualTempoBpm": 79.99688386917114,
+    "synthesisHz": 18750,
+    "pwmHz": 37500
+  }
+}

@@ -3,12 +3,17 @@ let renderer, entry, port, engine = DEFAULT_ENGINE, controls = {cutoff:4000,volu
 let messages = Promise.resolve();
 
 function publish(samples, milliseconds) {
-  const scope = new Float32Array(512);
   const raw = renderer.core.rawSamples;
-  for (let i = 0; i < scope.length; i++) scope[i] = raw[Math.floor(i * raw.length / scope.length)];
-  self.postMessage({type:'state',state:renderer.core.state(),scope,
+  const channels=renderer.channels||1,frames=raw.length/channels,scopes=[],averages=[];
+  for(let ch=0;ch<channels;ch++){
+    const scope=new Float32Array(512);let sum=0;
+    for(let i=0;i<frames;i++)sum+=raw[i*channels+ch];
+    for(let i=0;i<scope.length;i++)scope[i]=raw[Math.floor(i*frames/scope.length)*channels+ch];
+    scopes.push(scope);averages.push(128+128*sum/frames);
+  }
+  self.postMessage({type:'state',state:renderer.core.state(),scope:scopes[0],scopes,averages,
     averagePWM:renderer.core.averagePWM,
-    headroom:samples.length * 1000 / renderer.sampleRate / Math.max(milliseconds, 0.01)}, [scope.buffer]);
+    headroom:frames * 1000 / renderer.sampleRate / Math.max(milliseconds, 0.01)}, scopes.map(scope=>scope.buffer));
 }
 function fail(error) {
   port?.postMessage({type:'error'});

@@ -7,7 +7,7 @@ class FirmwareOutput extends AudioWorkletProcessor {
       if (data.type === 'playing') this.playing = data.value;
       if (data.type === 'connect' || data.type === 'disconnect') {
         this.session = data.session;
-        this.source?.close(); this.source = null; this.queue.clear();
+        this.source?.close(); this.source = null; this.queue = new AudioQueue(32768, data.channels || 1);
         this.playing = this.primed = this.requested = false;
         this.frames = this.clockFrames = this.underruns = this.reportAt = 0; this.started = false;
         if (data.port) {
@@ -24,7 +24,8 @@ class FirmwareOutput extends AudioWorkletProcessor {
     };
   }
   process(inputs, outputs) {
-    const out = outputs[0][0]; out.fill(0);
+    const channels = outputs[0], out = channels[0];
+    for (const channel of channels) channel.fill(0);
     if (!this.playing || !this.source) return true;
     if (!this.requested && this.queue.size <= 8192) {
       this.requested = true; this.source.postMessage({type:'need',frames:4096});
@@ -32,7 +33,7 @@ class FirmwareOutput extends AudioWorkletProcessor {
     if (!this.primed && this.queue.size >= 8192) { this.primed = true; this.started = true; }
     if (this.started) this.clockFrames += out.length;
     if (this.primed) {
-      const count = this.queue.take(out); this.frames += count;
+      const count = this.queue.take(channels); this.frames += count;
       if (count < out.length) { this.underruns++; this.primed = false; }
     }
     if (this.clockFrames - this.reportAt >= 2048) {

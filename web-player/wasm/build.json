@@ -38,19 +38,20 @@
     "-Wl,--export=avr_nzvs",
     "-Wl,--export=avr_arithmetic",
     "-Wl,--export=avr_audio_init",
+    "-Wl,--export=avr_audio_channels",
     "-Wl,--export=avr_audio_controls",
     "-Wl,--export=avr_render",
     "-Wl,--export=avr_filter",
     "-Wl,--export=avr_average"
   ],
   "inputs": {
-    "web-player/native/avr.c": "7559847026cfbc9566223ad2dbbe549bf9d934df0cfc13b8e0790b1b4ae8de6d",
-    "web-player/scripts/build-wasm.mjs": "fa75f1354f77c5fda279001b9dc7105be40489e0fa06be96ebc352e26fde58e5"
+    "web-player/native/avr.c": "f48a2c6a6e2b53799fcce9ba6face0bc01ead450f868541186ef0b7b6fabf6b0",
+    "web-player/scripts/build-wasm.mjs": "ec6d573ec9ed720359a889776fb04055c9cc3d8832cd7853b7b0477d52a6bd5d"
   },
   "artifacts": {
-    "avr.wasm": "beef534a1927cd10ec7f47fbd9450a25d203ea57917fedd02b43f3cf6df7c58f"
+    "avr.wasm": "341697056f0dbc61423a5684289b75b0453f6b9014ea6fe23548556456b19f9a"
   },
-  "bytes": 49433,
+  "bytes": 51028,
   "memoryPages": 1,
   "imports": []
 }

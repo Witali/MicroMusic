@@ -140,7 +140,8 @@ test(entry.id+' '+rate+' Hz: every PCM/raw sample and complete state match JS ac
   while(offset<rate*2){
     const count=Math.min(sizes[block++%sizes.length],rate*2-offset),actual=a.render(count),expected=b.render(count);
     assert.deepEqual(a.core.rawSamples,b.rawSamples);
-    for(let i=0;i<count;i++)max=Math.max(max,Math.abs(actual[i]-expected[i]));
+    assert.equal(actual.length,expected.length);
+    for(let i=0;i<actual.length;i++)max=Math.max(max,Math.abs(actual[i]-expected[i]));
     sameCPU(a.core,b.core,'audio block '+block);offset+=count;
   }
   assert.ok(max<2e-7,'Full filtered PCM comparison, max error '+max);
