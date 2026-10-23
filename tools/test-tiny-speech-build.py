@@ -71,6 +71,14 @@ class BuildTest(unittest.TestCase):
         source.pop('dc_block_shift')
         np.testing.assert_array_equal(builder.expected_loops(source),np.tile(decode_fixed(source),3))
 
+    def test_one_shot_keeps_the_full_phrase_then_centers_the_output(self):
+        source = model()
+        expected = builder.expected_loops(source,play_once=True)
+        np.testing.assert_array_equal(expected[:source['samples']],decode_fixed(source))
+        self.assertEqual(len(expected),source['samples']*3)
+        self.assertTrue(np.all(expected[source['samples']:]==128))
+        self.assertFalse(np.array_equal(expected[source['samples']:2*source['samples']],decode_fixed(source)))
+
     def test_symbol_parser_keeps_absolute_constants_and_code_labels(self):
         parsed = builder.parse_symbols('00000078 A STACK_FLOOR\n00000200 T wave_data\n         U undefined\n')
         self.assertEqual(parsed,{'STACK_FLOOR':0x78,'wave_data':0x200})

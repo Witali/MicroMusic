@@ -21,10 +21,14 @@ if(!image.length||image.length>1024)throw new Error('ATtiny13 Flash must contain
 if(eeprom.length!==64)throw new Error('ATtiny13 EEPROM image must contain exactly 64 bytes');
 const phraseSamples=Number(options['phrase-samples']||expected.length);
 const loops=Number(options.loops||1),minimumSP=Number(options['minimum-sp']||0x60);
+const playbackMode=options.playback||'loop';
+if(!['once','loop'].includes(playbackMode))throw new Error('Playback must be once or loop');
 if(!Number.isInteger(phraseSamples)||phraseSamples<1||!Number.isInteger(loops)||loops<1||expected.length!==phraseSamples*loops)
   throw new Error('Expected PCM length does not match phrase samples/loops');
 if(!Number.isInteger(minimumSP)||minimumSP<0x60||minimumSP>0x9f)
   throw new Error('Required stack floor must be in the ATtiny13 SRAM address range');
+if(playbackMode==='once'&&(loops<2||!expected.subarray(phraseSamples).every(value=>value===128)))
+  throw new Error('One-shot validation requires at least one full phrase of centered silence after speech');
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
 const diagnostic=cpu=>({pcBytes:cpu.pc*2,cycles:cpu.cyc,irqCount:cpu.irqCount,writes:cpu.writes,
   registers:Array.from(cpu.r),sram:Buffer.from(cpu.sram).toString('hex')});
@@ -64,8 +68,10 @@ try{
   foreground?.assertComplete(expected.length);
 }catch(cause){error=String(cause.message||cause);}
 const report={schema:'micromusic-tiny-speech-verification-v1',pass:error===null,hardwareTested:false,
+  playbackMode,
   engines:engines.map(([name])=>name),cpuHz:9600000,sampleHz:7500,flashBytes:image.length,eepromBytes:eeprom.length,
-  expectedSamples:expected.length,verifiedSamples:completed,phraseSamples,verifiedLoops:error===null?loops:0,
+  expectedSamples:expected.length,verifiedSamples:completed,phraseSamples,verifiedLoops:error===null?(playbackMode==='once'?1:loops):0,
+  silenceSamplesVerified:error===null&&playbackMode==='once'?expected.length-phraseSamples:0,
   imageSha256:hash(image),eepromSha256:hash(eeprom),expectedPcmSha256:hash(expected),
   actualPcmSha256:completed===expected.length?hash(actualPcm):null,
   mismatches:firstMismatch?1:0,firstMismatch,error,

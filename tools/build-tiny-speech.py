@@ -54,8 +54,10 @@ def parse_symbols(output):
     return result
 
 
-def expected_loops(model, loops=3):
+def expected_loops(model, loops=3, play_once=False):
     """Restart excitation per phrase and preserve the DC integrator across loops."""
+    if play_once:
+        return np.r_[decode_fixed(model),np.full(model['samples']*(loops-1),128,np.uint8)]
     source = deepcopy(model)
     source.pop('dc_block_shift', None)
     expected = np.tile(decode_fixed(source), loops)
@@ -63,7 +65,7 @@ def expected_loops(model, loops=3):
     return block_dc(expected, shift)[0] if shift else expected
 
 
-def build(model_path, output, avr_bin=None, node='node'):
+def build(model_path, output, avr_bin=None, node='node', play_once=False):
     from tiny_period import pack_tiny
     model_path, output = Path(model_path).resolve(), Path(output).resolve()
     model = json.loads(model_path.read_text(encoding='utf-8'))
@@ -84,6 +86,7 @@ def build(model_path, output, avr_bin=None, node='node'):
                      INITIAL_PHASE=model['initial_phase_u16'], NOISE_SEED=model['noise_seed_u16'],
                      DC_SHIFT=model.get('dc_block_shift', 0))
     constants.update(features)
+    constants['PLAY_ONCE'] = int(play_once)
     output.mkdir(parents=True, exist_ok=True)
     for name in ('firmware.elf', 'firmware.bin', 'firmware.hex', 'eeprom.bin', 'eeprom.hex',
                  'verification.json', 'build.json', 'actual.raw'):
@@ -94,7 +97,7 @@ def build(model_path, output, avr_bin=None, node='node'):
     (output/'config.inc').write_text(''.join(f'.set {name},{value}\n' for name,value in constants.items()),
                                     encoding='ascii', newline='\n')
     shutil.copyfile(TEMPLATE, output/'firmware.S')
-    expected = expected_loops(model)
+    expected = expected_loops(model, play_once=play_once)
     (output/'expected.raw').write_bytes(expected.tobytes())
     suffix = '.exe' if os.name == 'nt' else ''
     def executable(name):
@@ -116,6 +119,7 @@ def build(model_path, output, avr_bin=None, node='node'):
         raise ValueError('Unexpected packed tiny AVR Flash-table layout')
     flash_bytes = (object_bytes+1) & ~1
     report = dict(schema='micromusic-tiny-speech-build-v1', status='oversized' if flash_bytes>1024 else 'pending',
+                  playbackMode='once' if play_once else 'loop',
                   hardwareTested=False, cpuHz=9600000, sampleHz=7500, flashLimitBytes=1024,
                   eepromLimitBytes=64, flashBytes=flash_bytes, eepromBytes=len(eeprom),
                   eepromUsedBytes=features['EEPROM_USED_BYTES'], objectTextBytes=object_bytes,
@@ -146,6 +150,8 @@ def build(model_path, output, avr_bin=None, node='node'):
                    output/'verification.json', '--eeprom', output/'eeprom.bin',
                    '--phrase-samples', model['samples'], '--loops', 3,
                    '--minimum-sp', symbols['STACK_FLOOR'], '--actual-raw', output/'actual.raw']
+        if play_once:
+            command.extend(('--playback','once'))
         if 'wait' in symbols:
             command.extend(('--wait-pc',symbols['wait']))
         verification = run(command, ROOT, check=False)
@@ -166,8 +172,9 @@ def main():
     parser.add_argument('--output', required=True, type=Path)
     parser.add_argument('--avr-bin', type=Path)
     parser.add_argument('--node', default='node')
+    parser.add_argument('--play-once', action='store_true', help='play the phrase once, then output centered silence')
     args = parser.parse_args()
-    report = build(args.model, args.output, args.avr_bin, args.node)
+    report = build(args.model, args.output, args.avr_bin, args.node, play_once=args.play_once)
     print(json.dumps(report, indent=2))
     return 1 if report['status']=='verification-failed' else 0
 
