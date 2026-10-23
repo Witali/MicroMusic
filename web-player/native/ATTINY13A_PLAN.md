@@ -126,6 +126,17 @@ Retained measurements and methodology:
 The report records individual trials, source/runtime identities and host
 variation; its timings are not an isolated browser guarantee.
 
+Post-CLK measurement, 2026-10-23: the
+[current emulator speed report](../reports/emulator-speed-20261023.md) retains
+195 timed runs and576 firmware checkpoints against the112340-byte runtime.
+The arithmetic kernel delivers7.16million instructions/s with the compatible
+full-device clock and3.89million with physical continuation. Full20MHz CLKI
+capture needs410ms for25ms at D1, and293ms at D256 despite the much smaller
+CPU workload. Three real firmware excerpts run at0.62–0.91times real time in
+the compatible full-device mode. Source-edge/scheduler work is the next
+profiling target; exclusive subsystem timings and the default-engine gate
+remain open. These measurements preserve the implemented phase semantics.
+
 ## Execution and verification
 
 Prioritize these stages while developing independent peripheral fixes in parallel.
