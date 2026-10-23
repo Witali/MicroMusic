@@ -1,0 +1,18 @@
+{
+  "mcu": "ATmega328P",
+  "compiler": "AVR GCC 7.3.0 -O3 -flto -fwrapv",
+  "simulator": "avr8js 0.21.1",
+  "cases": 655360,
+  "exact": true,
+  "r1": true,
+  "bound": "signed30 b divisible by 64",
+  "beforeMeanMailboxCycles": 109,
+  "afterMeanMailboxCycles": 102,
+  "minMailboxGain": 7,
+  "maxMailboxGain": 7,
+  "beforeMeanKernelCycles": 65,
+  "afterMeanKernelCycles": 53,
+  "kernelScope": "Entry through RET, excluding CALL/mailbox/dispatch",
+  "includesInterrupts": false,
+  "physicalBoardTested": false
+}

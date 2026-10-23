@@ -78,3 +78,58 @@ speex_avr_lsp_mul_q14:
     clr r1
     ret
 .size speex_avr_lsp_mul_q14, .-speex_avr_lsp_mul_q14
+
+/* Exact Q14 for the p1 polynomial coefficient, always divisible by 64.
+ * int32_t speex_avr_p1_mul_q14(int16_t a,int32_t b), standard AVR GCC ABI.
+ * Requires -2^29 <= b < 2^29 and b%64==0 (p1 has the tighter |b|<=8388608).
+ * (a*b)>>14 == (a*(b>>6))>>8: use six MULs and a signed40 product.
+ * b<<2 fits signed32; its upper three bytes are the exact signed24 b>>6.
+ * Caller-clobbered registers only; no SRAM or interrupt masking, restore r1.
+ * The selectable C fallback uses the exact generic Q14 helper. */
+.section .text.speex_avr_p1_mul_q14,"ax",@progbits
+.global speex_avr_p1_mul_q14
+.type speex_avr_p1_mul_q14,@function
+speex_avr_p1_mul_q14:
+    movw r18,r24
+    .rept 2
+    lsl r20
+    rol r21
+    rol r22
+    rol r23
+    .endr
+    mov r30,r23
+    mov r20,r21
+    mov r21,r22
+    clr r27
+    mulsu r19,r21
+    movw r24,r0
+    mul r18,r20
+    movw r22,r0
+    mulsu r19,r20
+    sbc r25,r27
+    add r23,r0
+    adc r24,r1
+    adc r25,r27
+    mul r18,r21
+    add r23,r0
+    adc r24,r1
+    adc r25,r27
+    mov r26,r25
+    lsl r26
+    sbc r26,r26
+    mov r20,r30
+    muls r19,r20
+    add r25,r0
+    adc r26,r1
+    mulsu r20,r18
+    sbc r26,r27
+    add r24,r0
+    adc r25,r1
+    adc r26,r27
+    mov r22,r23
+    mov r23,r24
+    mov r24,r25
+    mov r25,r26
+    clr r1
+    ret
+.size speex_avr_p1_mul_q14,.-speex_avr_p1_mul_q14

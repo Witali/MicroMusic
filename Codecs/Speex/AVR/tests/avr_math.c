@@ -5,6 +5,7 @@
 #include "nb3_c_math.h"
 extern int32_t speex_avr_mul16_32_q14(int16_t,int32_t);
 extern int32_t speex_avr_lsp_mul_q14(int16_t,int32_t);
+extern int32_t speex_avr_p1_mul_q14(int16_t,int32_t);
 volatile int16_t math_a,math_b;
 volatile int32_t math_value;
 volatile int32_t math_result;
@@ -21,6 +22,7 @@ int main(void)
         switch (math_command) {
         case 100: math_result=speex_avr_mul16_32_q14(math_a,math_value); break;
         case 101: math_result=speex_avr_lsp_mul_q14(math_a,math_value); break;
+        case 103: math_result=speex_avr_p1_mul_q14(math_a,math_value); break;
         case 102: math_result=speex_nb3_mul16_32_q14_c(math_a,math_value); break;
         case 13: math_result=speex_avr_asr13(math_value); break;
         case 14: math_result=speex_avr_asr14(math_value); break;

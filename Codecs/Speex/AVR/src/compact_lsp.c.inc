@@ -9,9 +9,15 @@
 /* Value-only ASM: no reads/writes of C-visible memory. Let GCC retain other
  * polynomial coefficients across the call, just as for a C expression. */
 extern SPEEX_NB3_CONST int32_t speex_avr_lsp_mul_q14(int16_t,int32_t);
+extern SPEEX_NB3_CONST int32_t speex_avr_p1_mul_q14(int16_t,int32_t);
 #define LSP_Q14(a,b) speex_avr_lsp_mul_q14(a,b)
+/* p1 starts at -(a+b)*64 and only subtracts f*64. For stages 2..4,
+ * its input is a sum of at most four signed16 roots: |p1|<=8388608.
+ * Only j==2 reads p1; other coefficients need the general bounded core. */
+#define LSP_INNER_Q14(a,b,j) ((j)==2 ? speex_avr_p1_mul_q14(a,b) : LSP_Q14(a,b))
 #else
 #define LSP_Q14(a,b) MULT16_32_Q14(a,b)
+#define LSP_INNER_Q14(a,b,j) LSP_Q14(a,b)
 #endif
 /* |f|<=32768, so |Q14(f,x)|<=2*|x|+1. Starting at 2^20/2^21,
  * the four stages bound their largest product inputs by
@@ -22,7 +28,7 @@ static SPEEX_NB3_ALWAYS_INLINE void lsp_stage(spx_word32_t *p, spx_word16_t f, i
     int j;
     p[stage+1] = SUB32(SHL32(p[stage-1],1), LSP_Q14(f,p[stage]));
     for (j=stage;j>=2;--j)
-        p[j] = ADD32(SUB32(p[j], LSP_Q14(f,p[j-1])),p[j-2]);
+        p[j] = ADD32(SUB32(p[j], LSP_INNER_Q14(f,p[j-1],j)),p[j-2]);
     p[1] = SUB32(p[1],SHL32(EXTEND32(f),6));
 }
 #define STAGE_ATTR SPEEX_NB3_STAGE

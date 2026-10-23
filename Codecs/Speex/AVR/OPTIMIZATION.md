@@ -165,17 +165,33 @@ binary measurements. Vendor and R4 files remain unmodified.
   514 B free SRAM. The ordinary C demo is 12,874 B Flash with 2,940 B audio.
   See c-word-math-summary.json and c-word-math-headroom-summary.json.
 
+- Six-MUL ASM p1 Q14: p1 is a sum of signed16 roots times 64, so factor
+  the power of two and form a signed40 16x24 product followed by a byte drop.
+  The standalone bounded/divisible64 core takes 53 vs 65 cycles including
+  RET, no callee saves or extra RAM. All 655,360 independent cases pass;
+  mailbox dispatch differs, so its 7-cycle delta is not the kernel's 12.
+  Production fixture maximum 133,938 -> 133,650, corpus max 134,026 ->
+  133,738, weighted mean -0.198%, Flash 8,662 -> 8,750 B, RAM/stack unchanged.
+  All 13,196 corpus/pitch and 58 reset/envelope frames match upstream.
+  The current image hash equals the independently tested experimental image;
+  the C fallback remains byte-identical to its admitted 10%-reserve image.
+  Both freshly exported C archives still match all 9,100 native host frames.
+  Final ASM timer/ISR admission remains pending for this stage.
+
 ## Next candidates (unmeasured)
 
-1. **Special Q14 for p1.** This polynomial coefficient remains a multiple of
-   64. A signed16 x signed24 core followed by a byte-aligned >>8 might use six
-   hardware multiplies instead of eight. Preserve the original floor, prove
-   the input truncation/range and compare added code size against speed.
+1. **Scratch lifetime reuse.** Quantized LSP needs 20 B throughout the frame;
+   the packed 120 B pitch buffer is dead before LPC interpolation/synthesis.
+   Reuse its first 20 B for the new LPC coefficients. The compact converter
+   consumes every frequency before writing coefficients, so interpolation
+   and LPC output may also share those 20 B. The arena could shrink 180 ->
+   140 B with no new sample-buffer pass; verify pointer alignment, aliasing,
+   all coefficient ages, native/AVR C and ASM, and timer/ISR behavior.
 2. **Ten-sample pitch staging.** Upstream pitch sources always have negative
    offsets: the first segment stops before `j==pp`, the second before
    `j==pp+pitch`. Thus a completed innovation vector can be written before the
-   next vector's pitch is computed. A 10-word pitch buffer could replace 40
-   words, saving 120 B, but additional segment calls may cost cycles. Verify
+   next vector's pitch is computed. A 30-byte packed pitch buffer could replace
+   the current 120 B, saving 90 B, but additional segment calls may cost cycles. Verify
    every short-pitch tail and compare speed before accepting.
 
 No claim of a global speed optimum has been established. Do not mark the
