@@ -66,11 +66,12 @@ test('firmware IN/OUT/SBI/CBI/LDS/STS/LD/ST share real GPIO bus effects',()=>{
 });
 
 test('timestamped input changes after sampling preserve PINB half-cycle synchronization',()=>{
-  const c=make(sequential([avr.in(16,IO.PINB),avr.in(17,IO.PINB),avr.in(18,IO.PINB),avr.in(19,IO.PINB)]));
-  // The board applies equal-timestamp injections after that timestamp's sampling.
+  const c=make(sequential(Array.from({length:5},(_,n)=>avr.in(16+n,IO.PINB))));
+  // Inputs at a falling edge follow that edge's latch sampling. The CPU reads
+  // before its final rising edge updates PINB (DS40002307A Figure10-4).
   c.injectPins({at:1n,mask:1,levels:1});c.injectPins({at:5n,mask:1,levels:0});
-  c.run(4);assert.deepEqual(Array.from(c.r.slice(16,20),v=>v&1),[0,1,1,0]);
-  assert.equal(state(c).baseHalf,8n);
+  c.run(5);assert.deepEqual(Array.from(c.r.slice(16,21),v=>v&1),[0,0,1,1,0]);
+  assert.equal(state(c).baseHalf,10n);
   const events=c.drainPins();
   assert.ok(events.some(e=>e.baseHalf===1n&&(e.levels&1)===1));
   assert.ok(events.some(e=>e.baseHalf===5n&&(e.levels&1)===0));
@@ -78,10 +79,10 @@ test('timestamped input changes after sampling preserve PINB half-cycle synchron
 });
 
 test('INT0 and PCINT flags traverse their synchronization paths before CPU reads',()=>{
-  const c=make(sequential(Array.from({length:5},(_,n)=>avr.in(16+n,IO.GIFR))));
+  const c=make(sequential(Array.from({length:6},(_,n)=>avr.in(16+n,IO.GIFR))));
   c.writeIO(IO.MCUCR,3);c.writeIO(IO.PCMSK,1);
-  c.injectPins({at:3n,mask:3,levels:3});c.run(5);
-  assert.deepEqual(Array.from(c.r.slice(16,21),v=>v&0x60),[0,0,0,0x40,0x60]);
+  c.injectPins({at:3n,mask:3,levels:3});c.run(6);
+  assert.deepEqual(Array.from(c.r.slice(16,22),v=>v&0x60),[0,0,0,0,0x40,0x60]);
   c.writeIO(IO.GIFR,0x40);assert.equal(c.readIO(IO.GIFR)&0x60,0x20);
   c.writeIO(IO.GIFR,0);assert.equal(c.readIO(IO.GIFR)&0x60,0x20);
   c.writeIO(IO.GIFR,0x20);assert.equal(c.readIO(IO.GIFR)&0x60,0);
@@ -200,6 +201,24 @@ test('INT0 low disappearing during explicit startup resumes after SLEEP without 
   c.runUntil(120n);
   assert.equal(state(c).sleeping,false);assert.equal(c.r[18],1);
   assert.equal(c.readIO(IO.SPL),0x9f);assert.equal(c.readIO(IO.GIFR)&0x40,0);
+});
+
+test('firmware BODCR disables BOD only during Power-down and charges configured recovery',()=>{
+  const BODCR=0x30;
+  const c=make(sequential([avr.ldi(16,0x30),avr.out(IO.MCUCR,16),
+    avr.ldi(16,3),avr.out(BODCR,16),avr.ldi(16,2),avr.out(BODCR,16),avr.sleep(),avr.nop()]),
+    {fuseHigh:0xf9,bodRecoveryNs:1000});
+  c.writeIO(IO.PCMSK,1);c.writeIO(IO.GIMSK,0x20);c.run(7);
+  assert.equal(state(c).baseHalf,14n);assert.equal(state(c).sleeping,true);
+  assert.equal(state(c).bodDisabled,true);assert.equal(state(c).bodRecovering,false);
+  c.injectPins({at:15n,mask:1,levels:1});c.runUntil(16n);
+  assert.equal(state(c).bodDisabled,false);assert.equal(state(c).bodRecovering,true);
+  // PCINT wakes Power-down asynchronously at15. Recovery is ceil(19.2)
+  // base halves, followed by four CPU wake cycles (eight base halves).
+  c.runUntil(34n);assert.equal(state(c).bodRecovering,true);assert.equal(state(c).halted,true);
+  c.runUntil(35n);assert.equal(state(c).bodRecovering,false);assert.equal(state(c).halted,true);
+  c.runUntil(43n);assert.equal(state(c).bodRecovering,false);assert.equal(state(c).halted,false);
+  assert.equal(c.pc,7);assert.equal(c.readIO(IO.SPL),0x9f);
 });
 
 test('ADCSRA bit-operation interpretation follows its register-specific ADIF warning',()=>{

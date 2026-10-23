@@ -21,8 +21,8 @@ static void full_reset(void) {
  full_audio_rate=0;full_audio_active=0;S(fastIdle)=0;S(fastBlocks)=0;full_deadline();
 }
 static void full_clock(double n) {
- if(n<0||n>4294967295.0||floor(n)!=n){ERROR=25;return;}
- device_advance((uint32_t)n);S(cyc)=(double)device_virtual_half()/2.0;full_deadline();
+ if(n<0||n>4294967295.0||floor(n*2)!=n*2){ERROR=25;return;}
+ device_advance_half((uint64_t)(n*2));S(cyc)=(double)device_virtual_half()/2.0;full_deadline();
  if(full_audio_active)full_audio_collect();
  if(device_reset_requested()){full_interrupt();ERROR=26;}
 }
@@ -43,10 +43,16 @@ static void full_interrupt(void) {
  if(device_halted()||!(FLAGS&128))return;
  uint8_t vector=device_next_irq();if(!vector)return;
  if(S(frameCount)>=32){fail(E_PUSH);return;}
- push_pc((int)S(pc));if(ERROR)return;
- device_ack_irq(vector);S(pc)=vector;FLAGS&=127;
- S(irqStart)=S(cyc);frames[(int)S(frameCount)++]=S(irqStart);
- full_clock(4);if(ERROR)return;S(inIRQ)=1;S(irqCount)++;
+ int return_pc=(int)S(pc);double started=S(cyc);
+ FLAGS&=127;
+ /* Digital-profile phases: SRAM writes at C2/C3, vector at C4. The data
+  * sheet guarantees the four-cycle total, not these internal stack phases.
+  * A reset at any barrier cancels later writes and frame bookkeeping. */
+ full_clock(2);if(ERROR)return;push(return_pc&255);if(ERROR)return;
+ full_clock(1);if(ERROR)return;push(return_pc>>8);if(ERROR)return;
+ full_clock(1);if(ERROR)return;device_ack_irq(vector);S(pc)=vector;
+ S(irqStart)=started;frames[(int)S(frameCount)++]=started;
+ S(inIRQ)=1;S(irqCount)++;
 }
 
 int avr_read_io(int a){int value=device_read(a);full_deadline();return value;}
@@ -96,6 +102,8 @@ int avr_device_divisor(void){return device_clkpr_divisor();}
 int avr_device_reset_count(void){return full_reset_count;}
 int avr_device_halted(void){return device_halted();}
 int avr_device_sleep_phase(void){return device_sleep_phase();}
+int avr_device_bod_disabled(void){return device_bod_disabled();}
+int avr_device_bod_recovering(void){return device_bod_recovering();}
 int avr_device_reset_held(void){return device_reset_held();}
 uintptr_t avr_device_pins(void){return (uintptr_t)device_pin_state();}
 int avr_device_pending(void){return device_pending_irqs();}

@@ -125,6 +125,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   const READ=4,MASKED=5,READY=6,TIME=7,WAIT=8,CONTROL=9,LPM=10,AUDIO_DEADLINE=11,AUDIO_SAMPLE=12,PENDING=13;
   const firstFunction=imports.length;
   const clock=value=>bytes(call(CLOCK,asFloat(value)),guard());
+  const clockHalf=cycles=>bytes(call(CLOCK,float(cycles)),guard());
   const finish=()=>bytes(guard(),put('pc',and(state('pc'),constant(511))),clock(get(7)),call(IRQ));
 
   // Locals: x,y,carry,total,value,flags,address,cycles,temp (i32); f64 temporaries.
@@ -192,7 +193,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   }
   function effects(i) {
     const {name,d,s,k,pc:p}=i,next=(p+1)&511;
-    if(pure.has(name))return bytes(alu(i,writes[name]||0),set(7,constant(instructionCycles(i))));
+    if(pure.has(name))return bytes(full?clock(constant(instructionCycles(i))):[],alu(i,writes[name]||0),set(7,constant(full?0:instructionCycles(i))));
     if(['SLEEP','WDR','BREAK','SPM'].includes(name)){
       if(full&&name!=='BREAK')return bytes(name==='SPM'?[]:clock(constant(1)),set(7,call(CONTROL,constant({SLEEP:1,SPM:2,WDR:3}[name]),or(reg(30),shl(reg(31),8)),or(reg(0),shl(reg(1),8)))),guard());
       // Device requests are exported globals, not calls from WASM into JS.
@@ -211,30 +212,37 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
       const skip=width(word(next));return condition(eq(reg(d),reg(s)),bytes(put('pc',constant((next+skip)&511)),set(7,constant(1+skip))));
     }
     if(name==='SBIC'||name==='SBIS'){
-      const skip=width(word(next));return bytes(clock(constant(1)),set(7,constant(0)),condition(eq(and(shr(full?call(READ,constant(d)):reg(32+d),k),constant(1)),constant(name==='SBIS'?1:0)),bytes(put('pc',constant((next+skip)&511)),set(7,constant(skip)))));
+      const skip=width(word(next));return bytes(full?bytes(clockHalf(.5),set(0,call(READ,constant(d))),clockHalf(.5)):clock(constant(1)),set(7,constant(0)),condition(eq(and(shr(full?X:reg(32+d),k),constant(1)),constant(name==='SBIS'?1:0)),bytes(put('pc',constant((next+skip)&511)),set(7,constant(skip)))));
     }
     if(name==='CLI')return set(5,and(flags(),constant(127)));
     if(name==='SEI')return bytes(set(5,or(flags(),constant(128))),put('irqDelay',constant(1)));
     if(name==='FLAG')return bytes(d===6&&k?condition(and(binary(0x47,and(flags(),constant(64)),constant(0)),binary(0x47,state('inIRQ'),constant(0))),putF('workLost',binary(0xa0,stateF('workLost'),float(1)))):[],set(5,or(and(flags(),constant(255^(1<<d))),constant(k<<d))));
-    if(name==='PUSH')return bytes(set(0,reg(d)),push(X),set(7,constant(2)));
-    if(name==='POP')return bytes(pop(0),writeReg(d,X),set(7,constant(2)));
-    if(name==='RCALL')return bytes(push(constant(next&255)),push(constant(next>>8)),put('pc',constant((next+k)&511)),set(7,constant(3)));
-    if(name==='IJMP'||name==='ICALL')return bytes(set(0,and(or(reg(30),shl(reg(31),8)),constant(511))),name==='ICALL'?bytes(push(constant(next&255)),push(constant(next>>8))):[],put('pc',X),set(7,constant(name==='ICALL'?3:2)));
+    // The manuals specify cycle totals and stack ordering, not every internal
+    // stack phase. The full-device digital profile uses accesses at C2/C3;
+    // every access follows a reset-aware clock barrier (see AVR_TO_WASM.md).
+    const stackClock=n=>full?clock(constant(n)):[];
+    if(name==='PUSH')return bytes(set(0,reg(d)),stackClock(2),push(X),set(7,constant(full?0:2)));
+    if(name==='POP')return bytes(stackClock(2),pop(0),writeReg(d,X),set(7,constant(full?0:2)));
+    if(name==='RCALL')return bytes(stackClock(2),push(constant(next&255)),stackClock(1),push(constant(next>>8)),put('pc',constant((next+k)&511)),set(7,constant(full?0:3)));
+    if(name==='IJMP'||name==='ICALL')return bytes(set(0,and(or(reg(30),shl(reg(31),8)),constant(511))),
+      name==='ICALL'?bytes(stackClock(2),push(constant(next&255)),stackClock(1),push(constant(next>>8))):[],
+      put('pc',X),set(7,constant(name==='ICALL'?(full?0:3):2)));
     if(name==='RET'||name==='RETI'){
-      let code=bytes(pop(0),pop(1),put('pc',and(or(shl(X,8),Y),constant(511))),set(7,constant(4)));
+      let code=bytes(stackClock(2),pop(0),stackClock(1),pop(1),stackClock(1),put('pc',and(or(shl(X,8),Y),constant(511))),set(7,constant(full?0:4)));
       if(name==='RETI')code.push(...set(5,or(flags(),constant(128))),put('irqDelay',constant(1)),
         condition(state('frameCount'),bytes(put('frameCount',sub(state('frameCount'),constant(1))),
           set(9,load64(add(constant(abi.frames),shl(state('frameCount'),3)))),
-          // maxISR includes the four RETI cycles, as in the peripheral runtime.
-          putF('maxIRQ',binary(0xa5,stateF('maxIRQ'),binary(0xa1,binary(0xa0,stateF('cyc'),float(4)),get(9)))))),
+          // Full-device RETI has already charged its four cycles.
+          putF('maxIRQ',binary(0xa5,stateF('maxIRQ'),binary(0xa1,binary(0xa0,stateF('cyc'),float(full?0:4)),get(9)))))),
         put('inIRQ',binary(0x4b,state('frameCount'),constant(0))),
         condition(state('inIRQ'),putF('irqStart',load64(add(constant(abi.frames),shl(sub(state('frameCount'),constant(1)),3)))),putF('irqStart',float(0))));
       return code;
     }
-    if(name==='IN')return bytes(clock(constant(1)),writeReg(d,full?call(READ,constant(k)):reg(32+k)),set(7,constant(0)));
+    if(name==='IN')return bytes(full?bytes(clockHalf(.5),set(0,call(READ,constant(k))),clockHalf(.5),writeReg(d,X)):bytes(clock(constant(1)),writeReg(d,reg(32+k))),set(7,constant(0)));
     if(name==='OUT'||name==='SBI'||name==='CBI')return bytes(clock(constant(name==='OUT'?1:2)),set(7,full?call(MASKED,constant(name==='OUT'?k:d),name==='OUT'?reg(d):constant(name==='SBI'?1<<k:0),constant(name==='OUT'?255:1<<k)):call(IO,constant(name==='OUT'?k:d),name==='SBI'?or(reg(32+d),constant(1<<k)):name==='CBI'?and(reg(32+d),constant(255^(1<<k))):reg(d))),guard(),set(5,load8(flagsAddress)));
     if(name==='LDS'||name==='STS'){
       if(k>=160)return fail(16);
+      if(full&&name==='LDS')return bytes(put('pc',constant((p+2)&511)),clockHalf(1.5),set(0,k>=32&&k<96?call(READ,constant(k-32)):reg(k)),clockHalf(.5),writeReg(d,X),set(7,constant(0)));
       return bytes(set(0,reg(d)),put('pc',constant((p+2)&511)),clock(constant(2)),set(7,constant(0)),
         name==='LDS'?writeReg(d,full&&k>=32&&k<96?call(READ,constant(k-32)):reg(k)):k>=32&&k<96?bytes(set(7,call(IO,constant(k-32),X)),guard(),set(5,load8(flagsAddress))):writeReg(k,X));
     }
@@ -243,8 +251,10 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
       // DS40002198A 5.66-68/5.114-116: for <=256-byte data spaces only
       // the low pointer byte participates; XH/YH/ZH remain general registers.
       const code=bytes(set(6,and(add(reg(s),constant(k<0?-1:k>=2?k-2:0)),constant(255))),condition(ge(Z,constant(160)),fail(name==='LD'?20:18)),
-        k<0?writeReg(s,Z):[],set(0,reg(d)),clock(constant(2)),set(7,constant(0)));
-      if(name==='LD')code.push(...writeReg(d,full?conditionValue(and(ge(Z,constant(32)),lt(Z,constant(96))),call(READ,sub(Z,constant(32))),load8(dataAt(Z))):load8(dataAt(Z))));
+        !full&&k<0?writeReg(s,Z):[],set(0,reg(d)),
+        full&&name==='LD'?bytes(clockHalf(1.5),set(0,conditionValue(and(ge(Z,constant(32)),lt(Z,constant(96))),call(READ,sub(Z,constant(32))),load8(dataAt(Z)))),clockHalf(.5)):clock(constant(2)),
+        set(7,constant(0)),full&&k<0?writeReg(s,Z):[]);
+      if(name==='LD')code.push(...writeReg(d,full?X:load8(dataAt(Z))));
       else code.push(...condition(and(ge(Z,constant(32)),lt(Z,constant(96))),bytes(set(7,call(IO,sub(Z,constant(32)),X)),guard()),store8(dataAt(Z),X)));
       if(k===1)code.push(...writeReg(s,and(add(Z,constant(1)),constant(255))));
       // Indirect stores can alias SREG, just like OUT or STS.
@@ -255,8 +265,9 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
       if(k&&d>=30)return fail(21);
       // The special fuse/lock LPM command is recognized when LPM starts,
       // within RFLB's three-cycle window; its own three cycles follow.
-      return bytes(set(6,or(reg(30),shl(reg(31),8))),condition(ge(Z,constant(1024)),fail(22)),writeReg(d,full?call(LPM,Z):load8(add(constant(abi.rom),Z))),
-        k?bytes(set(6,add(Z,constant(1))),writeReg(30,Z),writeReg(31,shr(Z,8))):[],set(7,constant(3)));
+      return bytes(set(6,or(reg(30),shl(reg(31),8))),condition(ge(Z,constant(1024)),fail(22)),
+        full?bytes(set(0,call(LPM,Z)),clock(constant(3)),writeReg(d,X)):writeReg(d,load8(add(constant(abi.rom),Z))),
+        k?bytes(set(6,add(Z,constant(1))),writeReg(30,Z),writeReg(31,shr(Z,8))):[],set(7,constant(full?0:3)));
     }
     return fail(2);
   }

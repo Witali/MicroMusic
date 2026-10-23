@@ -25,6 +25,38 @@ hashes, all 123 forms, opcode patterns, cycle counts and flag-write masks.
 Tests compare the new independent decoder against all 65,536 possible first
 words and that official-document fixture, rather than the interpreter decoder.
 
+## Instruction effect timing
+
+The full-device profile commits OUT after its clock cycle and data-memory
+writes after the second cycle. IN samples the bus half a cycle before its final
+rising edge, then commits Rd after that edge. This preserves the NOP required
+between OUT PORT and IN PIN by ATtiny13A Figure10-4: an immediate IN sees the
+old PIN synchronizer value. LDS/LD use the same read/retire separation in C2;
+SBIC/SBIS sample during their first cycle. This finer bus phase for other I/O
+registers is a model choice. Sections4.6/5.2.1 and Figure5-3 publish the general
+completion and SRAM access cycles. Single-step ALU results, pointer updates and LPM destination writes also
+commit after their instruction cycles. LPM recognizes a fuse/lock command at
+instruction start and retains its result until the three-cycle completion.
+
+For stack operations, the AVR manual specifies pre/post SP ordering and total
+cycles, but does not publish each byte's internal access phase. The digital
+profile makes the following explicit choices, pending silicon validation:
+
+| Operation | SRAM and retirement phases |
+| --- | --- |
+| PUSH / POP | Byte access and SP update at the end of C2. |
+| RCALL / ICALL | Low return byte at C2, high byte and target PC at C3. |
+| RET / RETI | High return byte at C2, low at C3; PC and RETI's I bit at C4. |
+| IRQ entry | Low return byte at C2, high at C3; vector acknowledgment and PC at C4. |
+
+An asynchronous reset takes precedence over an effect at the same timestamp.
+Each phase advances the native scheduler and checks for reset before committing
+its effects. A reset cancels later writes and ISR diagnostic frames. Tests
+inject RESET at every half-cycle through these operations; they validate this
+declared profile, not unpublished silicon phases. Optimized blocks still commit
+as a batch only when their entire duration is strictly before every known
+peripheral/input event and the caller's deadline.
+
 ## Instruction correspondence
 
 The primary operation is shown, not the entire expansion. Registers reside in
@@ -63,7 +95,7 @@ masked to 255 when flags need the wrapped result. WASM has no AVR SREG or
 | all `ST`/`STD` X/Y/Z forms | `i32.store8` (`3a`), or peripheral write helper | Same pointer modes; I/O side effects occur at the completing cycle. |
 | `LDS`, `STS` | byte load/store, constant address | Two-word instruction, two cycles; I/O addresses use the peripheral model. |
 | `LPM Rd,Z`, `LPM Rd,Z+` | Flash `i32.load8_u`, optional pointer increment | Three cycles; byte address differs from word-addressed PC. |
-| `IN`, `OUT` | byte load / peripheral write helper | Clock the one AVR cycle before observing/changing I/O. |
+| `IN`, `OUT` | byte load / peripheral write helper | One AVR cycle; the full device samples IN before the final edge and commits Rd/OUT at completion. |
 | `SBI` | load, `i32.or`, peripheral write helper | Two cycles and the same I/O behavior as OUT/ST. |
 | `PUSH`, `POP` | byte store/load and SPL adjustment | Two cycles, shared SRAM stack and explicit bounds diagnostics. |
 

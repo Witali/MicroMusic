@@ -11,23 +11,28 @@ edge. These are the starting point, not a claim of complete silicon fidelity.
 
 ## 1 Instruction effects within CPU cycles
 
-- [ ] Audit the documented access timing of PUSH, POP, RCALL, ICALL, RET,
+- [x] Audit the documented access timing of PUSH, POP, RCALL, ICALL, RET,
   RETI and interrupt entry; distinguish guaranteed timing from model choices.
-- [ ] Stage stack and register effects so an asynchronous reset cannot commit
+- [x] Stage stack and register effects so an asynchronous reset cannot commit
   accesses belonging to later instruction cycles.
-- [ ] Audit other multicycle instructions, including pointer updates and LPM.
-- [ ] Test reset before, during and at instruction completion, normal execution,
+- [x] Audit other multicycle instructions, including pointer updates and LPM.
+- [x] Test reset before, during and at instruction completion, normal execution,
   nested interrupts and physical output parity.
 
 Acceptance: published cycle totals and access timing are preserved; a reset
 aborts subsequent instruction effects at its exact scheduler timestamp.
 Unspecified internal phases are documented as model choices.
 
+Implemented in the full-device emitter and native IRQ bridge. Focused phase,
+system, analog/NVM and physical-output tests exercise reset cancellation,
+ordinary execution and output parity. See `AVR_TO_WASM.md` for the explicit
+stack-phase convention; the hardware phase audit remains part of stage3.
+
 ## 2 Remaining device behavior
 
 - [ ] Handle phase-correct Timer0 PWM with variable TOP equal to zero.
 - [ ] Model OSCCAL changes with an explicit oscillator calibration contract.
-- [ ] Implement the BODCR timed sleep-disable sequence.
+- [x] Implement the BODCR timed sleep-disable sequence.
 - [ ] Apply fuse-dependent oscillator startup and reset recovery delays.
 - [ ] Resolve SPM command timing where the datasheet supplies a bound; expose
   explicit timing parameters where it does not.
@@ -35,6 +40,10 @@ Unspecified internal phases are documented as model choices.
 Acceptance: supported register operations no longer fail merely because these
 behaviors are missing; each behavior has focused tests and a documented time
 and clock domain. Analog properties are parameters rather than invented facts.
+
+BODCR includes the protected four-cycle write and three-cycle SLEEP windows,
+fuse/mode gating and an explicit configurable recovery time. Its logical state
+is observable separately from analog supply-threshold behavior.
 
 ## 3 Timing ambiguities and hardware validation
 
