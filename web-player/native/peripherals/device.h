@@ -64,6 +64,11 @@ int device_halted(void);
  * Board time remains authoritative if the endpoint is between CPU edges. */
 uint64_t device_wait_until(uint64_t base_half_deadline);
 uint8_t device_reset_requested(void);
+/* Ideal digital RESET profile: PB5 low means an ALREADY RECOGNIZED assertion,
+ * bypassing an analog pulse filter. RSTDISBL disables this RESET role.
+ * device_reset acknowledges the request, but halted remains true until queued
+ * PB5 high/release. No automatic fuse/startup delay is invented on release. */
+uint8_t device_reset_held(void);
 uint64_t device_flash_generation(void);
 uint32_t device_take_dirty_pages(void);
 uint32_t device_fault(void);

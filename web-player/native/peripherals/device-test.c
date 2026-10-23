@@ -214,12 +214,76 @@ static int diagnostics(void) {
  device_control(2,0,0); CHECK(device_fault()==DEVICE_FAULT_SPM_TIMING);
  return 0;
 }
+static int external_reset_line(void) {
+ CHECK(fresh());
+ data[96]=71;
+ device_write(0x17,1,255); device_write(0x18,1,255);
+ CHECK(device_inject_digital(5,32,0));
+ CHECK(device_inject_digital(17,32,32));
+ device_advance(10);
+ CHECK(device_base_half()==5 && device_virtual_half()==5);
+ CHECK(device_reset_requested()==2 && device_reset_held() && device_halted());
+ device_reset(device_reset_requested());
+ CHECK(!device_reset_requested() && device_reset_held() && device_halted());
+ CHECK(device_read(0x34)==3 && !device_read(0x17) && !device_read(0x18));
+ CHECK(data[96]==71 && device_next_cpu_event()==0);
+ device_write(0x18,1,255); CHECK(!device_read(0x18));
+ device_advance(3); CHECK(device_base_half()==5);
+ device_wait_until(16); CHECK(device_base_half()==16 && device_reset_held() && device_halted());
+ device_wait_until(100);
+ CHECK(device_base_half()==17 && !device_reset_held() && !device_halted());
+ CHECK(!device_reset_requested() && device_read(0x34)==3);
+ device_advance(1); CHECK(device_base_half()==19);
+ /* Returning the externally driven pin to high-impedance also releases it. */
+ CHECK(device_inject_digital(19,32,0)); CHECK(device_reset_requested()==2);
+ device_reset(2);
+ CHECK(device_inject_digital(23,0,0));
+ device_wait_until(30); CHECK(device_base_half()==23 && !device_halted());
+ CHECK(!device_fault());
+ return 0;
+}
+static int external_reset_preserves_nvm(void) {
+ CHECK(fresh());
+ device_write(0x1e,4,255); device_write(0x1d,0x5a,255);
+ device_write(0x1c,4,4); device_advance(1);
+ CHECK(device_write(0x1c,2,2)==2);
+ CHECK(device_inject_digital(3,32,0)); CHECK(device_inject_digital(8000,32,32));
+ device_advance(2); CHECK(device_base_half()==3 && device_reset_requested()==2);
+ device_reset(2); CHECK(eeprom[4]==255);
+ device_wait_until(6801); CHECK(eeprom[4]==255 && device_reset_held());
+ device_wait_until(6802); CHECK(eeprom[4]==0x5a && device_reset_held());
+ device_wait_until(9000); CHECK(device_base_half()==8000 && !device_halted());
+ CHECK(!device_fault());
+ /* A fuse-forced watchdog does not accumulate timeouts while RESET is held. */
+ CHECK(fresh()); CHECK(device_configure(5,0x5a)); CHECK(device_init(data,flash,eeprom));
+ CHECK(device_inject_digital(0,32,0)); device_reset(2);
+ CHECK(device_inject_digital(100000,32,32));
+ device_wait_until(100000);
+ CHECK(!device_reset_requested() && !device_reset_held() && device_read(0x34)==3);
+ device_advance(16000); CHECK(device_reset_requested()==8 && device_base_half()==132000);
+ return 0;
+}
+static int reset_disabled_pb5(void) {
+ CHECK(fresh()); CHECK(device_configure(6,0xfe)); CHECK(device_init(data,flash,eeprom));
+ CHECK(device_inject_digital(1,32,0));
+ CHECK(device_inject_analog(1,5,2500000));
+ device_advance(1);
+ CHECK(!device_reset_requested() && !device_reset_held() && !device_halted());
+ device_write(0x06,0xc0,255); device_advance(52);
+ CHECK(device_read(4)==0 && device_read(5)==2); /* ADC0/PB5=512. */
+ device_write(0x17,32,255); device_write(0x18,32,255);
+ device_advance(3); CHECK(device_read(0x16)&32);
+ CHECK(!device_reset_requested() && !device_reset_held() && !device_fault());
+ return 0;
+}
 int device_test_case(unsigned index) {
  switch(index) {
  case 0:return bus(); case 1:return pwm_pins(); case 2:return external_t0();
  case 3:return interrupts(); case 4:return adc(); case 5:return adc_trigger();
  case 6:return idle_sleep(); case 7:return watchdog_powerdown(); case 8:return clock_division();
  case 9:return eeprom_programming(); case 10:return flash_programming();
- case 11:return watchdog_reset(); case 12:return diagnostics(); default:return -1;
+ case 11:return watchdog_reset(); case 12:return diagnostics();
+ case 13:return external_reset_line(); case 14:return external_reset_preserves_nvm();
+ case 15:return reset_disabled_pb5(); default:return -1;
  }
 }

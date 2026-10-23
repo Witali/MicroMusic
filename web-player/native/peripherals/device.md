@@ -122,6 +122,26 @@ multi-cycle instruction. The CPU bridge must abandon its remaining register/bus
 effects and apply `device_reset` before fetching again. Reset preserves
 physical time, caller EEPROM/Flash/SRAM and already-active NVM programming.
 
+PB5/RESET has an explicit **recognized digital reset-line** profile. With
+RSTDISBL unprogrammed (high-fuse bit0=1), a strong external PB5 driver going low
+latches EXTRF at that injection timestamp and stops advancement there. The CPU
+bridge applies `device_reset`; the CPU remains halted while the external driver
+holds PB5 low. A queued high level or removal of that driver releases the line
+at its timestamp. `device_reset_held()` exposes the distinction between a reset
+request awaiting acknowledgment and an acknowledged reset still held active.
+Register writes and CPU advancement are blocked while held; I/O/ADC clocked
+state stays reset, the watchdog counter is held reset, and its oscillator time
+and already-active EEPROM/Flash programming continue on the physical timeline.
+
+The provided low level means an **already recognized** assertion. This profile
+does not invent an analog RESET threshold, spike filter, minimum pulse width,
+fuse-dependent startup interval or BOD waveform. Release resumes the digital
+board at the supplied timestamp; a fixture requiring those analog/startup
+effects must supply recognized reset transitions with those timings. Analog
+voltage injections alone do not assert this digital reset line. When RSTDISBL
+is programmed (high-fuse bit0=0), PB5 remains available as GPIO/ADC0 and these
+digital inputs do not reset the device.
+
 BODCR brownout-disable sequencing and runtime OSCCAL frequency recalibration do
 not have calibrated physical models in these modules. Writes requesting those
 behaviors fail explicitly. Reads of reserved I/O return0; nonzero reserved writes
@@ -129,11 +149,13 @@ also fault. DWDR reads0 without a debugger. Sustained phase-correct TOP=0 and
 other reserved/ambiguous configurations retain the component's explicit faults.
 There is no silicon/electrical trace oracle or voltage/temperature calibration.
 
-`device-test.c` exports `device_test_case(index)` with13 deterministic C fixtures:
+`device-test.c` exports `device_test_case(index)` with16 deterministic C fixtures:
 bus masks; physical PWM; synchronized T0; vector priority/ACK; ADC sample/result
 locks and ADIF policy; all six auto-trigger sources; Idle; Power-down/watchdog;
 CLKPR transition/protection; independent EEPROM time; Flash stall/generation;
-watchdog reset preservation; and bounded-buffer diagnostics. They are compiled
+watchdog reset preservation; bounded-buffer diagnostics; recognized RESET
+assertion/hold/release at exact timestamps; NVM programming and a fuse-forced
+watchdog during held reset; and RSTDISBL GPIO/ADC0 behavior. They are compiled
 with all production component C files and `-Wall -Wextra -Werror`, targeting
 WASM with no host imports. Tests are generated only under ignored `build/`.
-All13 return0. The separate module suites continue to verify each component.
+All16 return0. The separate module suites continue to verify each component.
