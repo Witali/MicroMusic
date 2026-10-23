@@ -13,6 +13,33 @@ static int full_ps;
 static uint8_t full_audio_levels;
 static int full_audio_active;
 static void full_audio_collect(void);
+/* Optional instruction continuation ABI. The emitter owns architectural effects
+ * and its locals/stage; native code owns bounded clock spans and IRQ entry. */
+typedef struct {
+ uint32_t active,exec_pc,next_pc,stage;
+ uint64_t remaining_halves;
+ int32_t locals[9];
+ uint32_t padding;
+ double temp;
+ uint64_t retired;
+} full_phase_context_t;
+_Static_assert(sizeof(full_phase_context_t)==80,"CPU phase context ABI size");
+_Static_assert(offsetof(full_phase_context_t,remaining_halves)==16,"CPU phase half offset");
+_Static_assert(offsetof(full_phase_context_t,locals)==24,"CPU phase local offset");
+_Static_assert(offsetof(full_phase_context_t,temp)==64,"CPU phase temp offset");
+_Static_assert(offsetof(full_phase_context_t,retired)==72,"CPU phase retirement offset");
+static full_phase_context_t full_phase;
+static int full_phase_enabled,full_phase_initialized;
+static uint64_t full_phase_limit=UINT64_MAX;
+static uint8_t full_phase_vector;
+static int full_phase_return_pc;
+static double full_phase_irq_started;
+static void full_phase_irq_resume(void);
+static void full_phase_cancel(void) {
+ uint64_t retired=full_phase.retired;
+ full_phase=(full_phase_context_t){0};full_phase.retired=retired;
+ full_phase_vector=0;
+}
 static uint64_t full_time64(void){return full_ps?device_time_ps():device_base_half();}
 static const void *full_pin_events(uint32_t *count){
  return full_ps?(const void *)device_pin_events_ps(count):(const void *)device_pin_events(count);
@@ -32,8 +59,11 @@ static void full_deadline(void) {
  full_fault();
 }
 static void full_reset(void) {
+ full_phase=(full_phase_context_t){0};full_phase_vector=0;full_phase_limit=UINT64_MAX;
+ full_phase_initialized=1;
  if(!device_init(data,rom,eeprom))ERROR=25;
  full_ps=device_physical_mode();full_time_origin=0;
+ if(full_phase_enabled&&!full_ps)ERROR=25;
  full_generation=device_flash_generation();full_reset_count=0;
  full_audio_rate=0;full_audio_active=0;S(fastIdle)=0;S(fastBlocks)=0;full_deadline();
 }
@@ -53,8 +83,13 @@ static int full_write_io(int a,int v,int mask) {
 static void full_interrupt(void) {
  uint8_t reset=device_reset_requested();
  if(reset){
+  if(full_phase_enabled)full_phase_cancel();
   device_reset(reset);S(pc)=0;FLAGS=0;SP=AT13_MEMORY_RAMEND;S(irqDelay)=0;
   S(frameCount)=0;S(inIRQ)=0;S(irqStart)=0;full_reset_count++;full_deadline();return;
+ }
+ if(full_phase_enabled){
+  if(full_phase.active==1)return;
+  if(full_phase.active==2){full_phase_irq_resume();return;}
  }
  if(S(irqDelay)){S(irqDelay)--;return;}
  if(device_halted()||!(FLAGS&AT13_MASK_SREG_I))return;
@@ -62,6 +97,12 @@ static void full_interrupt(void) {
  if(S(frameCount)>=32){fail(E_PUSH);return;}
  int return_pc=(int)S(pc);double started=S(cyc);
  FLAGS&=~AT13_MASK_SREG_I;
+ if(full_phase_enabled){
+  full_phase.active=2;full_phase.exec_pc=(uint32_t)return_pc;
+  full_phase.next_pc=vector;full_phase.stage=0;full_phase.remaining_halves=0;
+  full_phase_vector=vector;full_phase_return_pc=return_pc;full_phase_irq_started=started;
+  full_phase_irq_resume();return;
+ }
  /* Digital-profile phases: SRAM writes at C2/C3, vector at C4. The data
   * sheet guarantees the four-cycle total, not these internal stack phases.
   * A reset at any barrier cancels later writes and frame bookkeeping. */
@@ -70,6 +111,67 @@ static void full_interrupt(void) {
  full_clock(1);if(ERROR)return;device_ack_irq(vector);S(pc)=vector;
  S(irqStart)=started;frames[(int)S(frameCount)++]=started;
  S(inIRQ)=1;S(irqCount)++;
+}
+
+int avr_device_phase_enable(int enabled){
+ if(full_phase_initialized||(enabled!=0&&enabled!=1))return 0;
+ full_phase_enabled=enabled;return 1;
+}
+uintptr_t avr_device_phase_layout(int item){
+ switch(item){
+ case 0:return (uintptr_t)&full_phase;case 1:return sizeof full_phase;
+ case 2:return (uintptr_t)&full_phase.active;case 3:return (uintptr_t)&full_phase.exec_pc;
+ case 4:return (uintptr_t)&full_phase.next_pc;case 5:return (uintptr_t)&full_phase.stage;
+ case 6:return (uintptr_t)&full_phase.remaining_halves;case 7:return (uintptr_t)&full_phase.locals;
+ case 8:return (uintptr_t)&full_phase.temp;case 9:return (uintptr_t)&full_phase.retired;
+ default:return 0;
+ }
+}
+int avr_device_phase_active(void){return full_phase_enabled?(int)full_phase.active:0;}
+void avr_device_phase_deadline(double relative){
+ if(!full_phase_enabled)return;
+ if(relative==INFINITY){full_phase_limit=UINT64_MAX;return;}
+ if(!isfinite(relative)||relative<0||relative>9007199254740991.0||floor(relative)!=relative||
+    (uint64_t)relative>=UINT64_MAX-full_time_origin){ERROR=25;return;}
+ full_phase_limit=full_time_origin+(uint64_t)relative;
+}
+int avr_device_phase_clock(double cycles){
+ if(!full_phase_enabled||!full_ps||full_phase.active<1||full_phase.active>2||
+    !isfinite(cycles)||cycles<0||cycles>4294967295.0||floor(cycles*2)!=cycles*2){ERROR=25;return -1;}
+ if(device_reset_requested()){full_interrupt();return -1;}
+ if(ERROR||device_fault()){full_fault();return -1;}
+ if(!full_phase.remaining_halves)full_phase.remaining_halves=(uint64_t)(cycles*2);
+ if(full_phase.remaining_halves&&full_phase_limit<=device_time_ps())return 0;
+ uint64_t consumed=0;
+ int result=device_advance_half_until_ps(full_phase.remaining_halves,full_phase_limit,&consumed);
+ full_phase.remaining_halves-=consumed;
+ S(cyc)=(double)device_virtual_half()/2.0;full_deadline();
+ if(full_audio_active)full_audio_collect();
+ if(device_reset_requested()){full_interrupt();return -1;}
+ if(result<0||ERROR)return -1;
+ return !full_phase.remaining_halves&&result==1;
+}
+static void full_phase_irq_resume(void){
+ while(full_phase.active==2&&!ERROR){
+  if(full_phase.stage>2){ERROR=25;return;}
+  int complete=avr_device_phase_clock(full_phase.stage?1:2);
+  if(complete!=1)return;
+  if(full_phase.stage==0){push(full_phase_return_pc&255);if(ERROR)return;full_phase.stage=1;}
+  else if(full_phase.stage==1){push(full_phase_return_pc>>8);if(ERROR)return;full_phase.stage=2;}
+  else {
+   device_ack_irq(full_phase_vector);S(pc)=full_phase_vector;
+   S(irqStart)=full_phase_irq_started;frames[(int)S(frameCount)++]=full_phase_irq_started;
+   S(inIRQ)=1;S(irqCount)++;
+   full_phase.active=0;full_phase.stage=0;full_phase.remaining_halves=0;full_phase_vector=0;
+   full_deadline();return;
+  }
+ }
+}
+void avr_device_phase_retire(void){
+ if(!full_phase_enabled||full_phase.active!=1||full_phase.remaining_halves||ERROR){ERROR=25;return;}
+ if(full_phase.retired==UINT64_MAX){ERROR=25;return;}
+ full_phase.retired++;full_phase.active=0;full_phase.stage=0;
+ full_interrupt();
 }
 
 int avr_read_io(int a){int value=device_read(a);full_deadline();return value;}
@@ -82,7 +184,13 @@ int avr_device_reset_input_enabled(void){return device_reset_input_enabled();}
 int avr_device_reset_input_asserted(void){return device_reset_input_asserted();}
 uint64_t avr_device_reset_input_deadline_ps(void){return device_reset_input_deadline_ps();}
 int avr_device_ready(void){
- if(device_reset_requested())full_interrupt();full_fault();
+ if(device_reset_requested())full_interrupt();
+ if(full_phase_enabled){
+  if(full_phase.active==2)full_phase_irq_resume();
+  full_fault();if(ERROR||full_phase.active==2)return 0;
+  if(full_phase.active==1)return 1;
+ }
+ full_fault();
  return !ERROR&&!device_halted()&&full_generation==device_flash_generation();
 }
 double avr_device_time(void){return (double)(full_time64()-full_time_origin);}
@@ -104,6 +212,10 @@ int avr_device_control(int command,int z,int value){
 int avr_device_lpm(int z){int value=device_lpm(z);full_deadline();return value;}
 int avr_device_wait(double deadline){
  uint64_t before=full_time64(),target=full_time_origin+(uint64_t)deadline;
+ if(full_phase_enabled&&full_phase.active==2){
+  uint64_t saved=full_phase_limit;if(target<full_phase_limit)full_phase_limit=target;
+  full_phase_irq_resume();full_phase_limit=saved;return full_time64()>before;
+ }
  if(full_audio_active){
   uint64_t next=device_next_cpu_event();if(next>64)next=64;if(!next)next=1;
   uint64_t bounded=full_ps?device_cpu_half_deadline_ps(next*2):before+next*2*device_clkpr_divisor();
@@ -112,7 +224,8 @@ int avr_device_wait(double deadline){
  if(full_ps)device_wait_until_ps(target);else device_wait_until(target);
  S(cyc)=(double)device_virtual_half()/2.0;
  if(full_audio_active)full_audio_collect();
- full_deadline();full_interrupt();
+ full_deadline();
+ if(!full_phase_enabled||full_phase.active!=1||device_reset_requested())full_interrupt();
  return full_time64()>before;
 }
 uint64_t avr_device_generation(void){return device_flash_generation();}
@@ -164,6 +277,7 @@ uintptr_t avr_device_pins(void){return (uintptr_t)device_pin_state();}
 uintptr_t avr_device_pins_ps(void){return (uintptr_t)device_pin_state_ps();}
 int avr_device_pending(void){return device_pending_irqs();}
 int avr_device_idle(double deadline){
+ if(full_phase_enabled)return 0;
  if(!avr_device_ready()||S(irqDelay)||device_pending_irqs())return 0;
  int p=(int)S(pc);if(p<0||p>=512)return 0;
  int kind=idle[p];if(!kind||(kind==2&&(FLAGS&64)))return 0;
