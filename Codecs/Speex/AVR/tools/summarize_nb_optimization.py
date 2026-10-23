@@ -1,27 +1,36 @@
 #!/usr/bin/env python3
 """Compare the retained NB baseline with completed final decoder/player runs."""
+import argparse
 import json
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-def read(path):return json.loads((ROOT/path).read_text(encoding='utf-8'))
+def read(path):return json.loads(Path(path).read_text(encoding='utf-8'))
 def main():
-    baseline=[read('reports/avr-optimized.json'),read('reports/real-speech-avr.json')]
-    final=[read('build/nb-final/avr-verification.json'),read('build/nb-final-speech/avr-verification.json')]
-    players=read('build/nb-final-player/player-all.json')
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--before',nargs='+',type=Path,default=[ROOT/'reports/avr-optimized.json',ROOT/'reports/real-speech-avr.json'])
+    parser.add_argument('--after',nargs='+',type=Path,default=[ROOT/'build/nb-final/avr-verification.json',ROOT/'build/nb-final-speech/avr-verification.json'])
+    parser.add_argument('--players',type=Path,default=ROOT/'build/nb-final-player/player-all.json')
+    parser.add_argument('--before-players',nargs='+',type=Path,default=[ROOT/'reports/player-all.json',ROOT/'reports/real-speech-player.json'])
+    parser.add_argument('--compiler',default='AVR GCC 7.3.0 -O3 -flto -fwrapv -fno-strict-aliasing')
+    parser.add_argument('--out',type=Path,default=ROOT/'build/nb-optimization-summary.json')
+    args=parser.parse_args()
+    baseline=[read(p) for p in args.before]
+    final=[read(p) for p in args.after]
+    players=read(args.players)
     before=max(r['maxCycles'] for r in baseline)
     after=max(r['maxCycles'] for r in final)
     assert sum(r['frames'] for r in final)==players['frames']==9100
     assert len(players['streams'])==31
     assert all(r['underruns']==0 for r in players['streams'])
     # PWM hashes must remain identical to the pre-optimization full player.
-    old_players=read('reports/player-all.json')['streams']+read('reports/real-speech-player.json')['streams']
+    old_players=[row for p in args.before_players for row in read(p)['streams']]
     old={r['input']['file']:r for r in old_players}
     for row in players['streams']:
         previous=old[row['input']['file']]
         assert row['input']['sha256']==previous['input']['sha256']
         assert row['pwmSha256']==previous['pwmSha256']
     report={'mcu':'ATmega328P','cpuHz':16000000,'pcmHz':8000,'pwmHz':62500,
-            'compiler':'AVR GCC 7.3.0 -O3 -flto -fwrapv -fno-strict-aliasing',
+            'compiler':args.compiler,
             'simulator':'avr8js 0.21.1','physicalBoardTested':False,
             'streams':31,'frames':players['frames'],'samples':players['samples'],
             'exactS16AgainstUpstream':True,'pwmHashesUnchanged':True,'underruns':0,
@@ -43,6 +52,7 @@ def main():
             'timerIntervalMinCycles':min(r['timerIntervalMinCycles'] for r in players['streams']),
             'timerIntervalMaxCycles':max(r['timerIntervalMaxCycles'] for r in players['streams']),
             'scope':'Decoder frame timings exclude ISR. All complete player streams include hardware timers and interrupt delivery. Corpus maxima are not an exhaustive timing proof.'}
-    (ROOT/'build/nb-optimization-summary.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
+    args.out.parent.mkdir(parents=True,exist_ok=True)
+    args.out.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     print(json.dumps(report,indent=2))
 if __name__=='__main__':main()
