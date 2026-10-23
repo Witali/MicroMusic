@@ -58,6 +58,16 @@ class TinySpeechTests(unittest.TestCase):
         invalid['frames'][1][1] |= 1
         self.assertFalse(search.compatible(invalid))
 
+    def test_non_power_gain_removal_evaluates_every_choice(self):
+        model = tiny.canonicalize(fixture())
+        for index in (2, 3):
+            model['frames'][index][1] = (model['frames'][index][1] & 143) | 6 << 4
+        objective = SpectralObjective((decode_fixed(model).astype(float)-128)/128)
+        reduced, report = tiny.remove_gain6(model, objective, spectral_ceiling=1.)
+        self.assertEqual(report['evaluated'], 4)
+        self.assertEqual(report['affected_frames'], 2)
+        self.assertTrue(all((header >> 4) & 7 != 6 for _, header, _ in reduced['frames']))
+
 
 if __name__ == '__main__':
     unittest.main()
