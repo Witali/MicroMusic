@@ -31,9 +31,12 @@ stack-phase convention; the hardware phase audit remains part of stage 3.
 ## 2 Remaining device behavior
 
 - [ ] Handle phase-correct Timer0 PWM with variable TOP equal to zero.
-- [ ] Model OSCCAL changes with an explicit oscillator calibration contract.
-  Factory calibration reload and the reserved-bit mask are implemented; a
-  measured CAL-to-frequency table and variable oscillator phase remain open.
+- [x] Model OSCCAL changes with an explicit oscillator calibration contract.
+  A caller-supplied128-entry CAL/frequency table selects a1ps physical timeline;
+  missing CAL values fail explicitly. Integer phase survives CAL and CLKPR
+  changes. The generated CPU and native PWM collector use relative deadlines
+  while retaining integer absolute timestamps. A measured per-chip table and
+  analog settling behavior remain hardware-validation work.
 - [x] Implement the BODCR timed sleep-disable sequence.
 - [x] Apply fuse-dependent oscillator startup and reset recovery delays.
   `fuseStartupProfile:1` enables source-clock and watchdog-pulse delays,
@@ -80,9 +83,11 @@ Hardware-dependent checks remain open until actual measurements are available.
 Acceptance: a package reproduces the configured device without implicit host
 defaults; CLI and browser execute the same firmware and physical output.
 
-Format v1 includes per-asset and envelope SHA-256, explicit configuration,
-embedded manifest and ABI validation. A standalone loader test runs with no
-default WASM files; Worker tests cover initialization/audio restart and SPM.
+Format v3 includes per-asset and envelope SHA-256, explicit clock/supply
+configuration, embedded manifest and ABI validation. Readers retain v1/v2
+support, including a retained original v1 runtime regression. A standalone
+loader test runs with no default WASM files; Worker tests cover audio restart
+and SPM.
 The browser can open a local package and observes both PWM pins as stereo.
 The default switch is additionally gated on real-time performance: browser
 verification initially measured about 0.4x audio throughput on this host.
@@ -124,10 +129,51 @@ verification evidence. Run focused tests for each change and the full regression
 suite at integration checkpoints. Never mark hardware checks complete from
 simulation alone.
 
-The next software priority is to instrument the coupled CPU/peripheral path and
-reduce scheduler work between known events. Keep instruction-effect barriers
-and physical output parity as the acceptance conditions. A measured OSCCAL
-frequency curve and silicon probes proceed when hardware is available.
+The sampling profile now attributes the largest repeated cost to native
+`next_event` scans (about20% leaf samples on three representative firmwares).
+Generated CPU bodies account for about14–15%; the JS bridge is below0.2%.
+These are sampled function-body observations, not precise exclusive subsystem
+timings. See [`reports/device-profile-20261023.md`](../reports/device-profile-20261023.md)
+for source/runtime identities, naming methodology and limitations.
+
+The next software priority is to reuse scheduler deadlines with explicit
+invalidation, following [`device-deadline-cache-design.md`](peripherals/device-deadline-cache-design.md).
+Keep instruction-effect barriers and
+physical output parity as acceptance conditions. A measured OSCCAL curve and
+silicon probes proceed when hardware is available.
+
+## 6 Hardware coverage beyond firmware-visible registers
+
+- [x] Connect the POR/BOD supply observer to the device scheduler, shared reset
+  hold, reset-cause flags, VCC-dependent ADC/GPIO and nonvolatile operations.
+  The observer, board integration, generated CPU bridge, physical capture and
+  package path are connected and tested. Thresholds, hysteresis, durations and
+  the Flash programming voltage boundary require an explicit profile. Below-
+  voltage EEPROM/Flash operations retain uncertainty diagnostics across reset
+  and every implicit NVM completion path.
+- [ ] Audit the external-clock, RESET electrical qualification and physical
+  pin characteristics against explicit board profiles; distinguish logical
+  injections from analog signal recognition.
+- [ ] Audit serial ISP, high-voltage serial programming and debugWIRE coverage.
+  Loading a Flash/EEPROM package does not emulate these physical interfaces.
+  Do not infer undocumented protocols or electrical behavior.
+- [ ] Track applicable silicon errata and represent undefined outcomes explicitly
+  instead of silently inventing deterministic success or memory corruption.
+- [x] Use the manufacturer's official device definition files as the address
+  source for the model, generated register maps and new firmware tooling.
+  Pinned Microchip ATtiny_DFP3.4.278 originals retain source URL, version,
+  license and byte hashes. Generated C/JS/JSON/assembly views feed peripheral
+  headers, CPU target placement and active stereo firmware. The repository
+  rule is recorded in `AGENTS.md`.
+- [x] Separate device geometry and register placement from the shared emitter.
+  `lib/devices/attiny13a-profile.js` supplies the target parameters; registry
+  lookup rejects unsupported devices and cache keys include the target name.
+  Native hardware, emitted firmware WASM and runtime/package assets retain
+  separate ownership. See [`ARCHITECTURE.md`](ARCHITECTURE.md).
+
+Acceptance: the coverage inventory identifies every supported interface and
+its required profile. Standalone modules count as integrated only after the
+generated CPU, scheduler and package path exercise them together.
 
 Integration checkpoint, 2026-10-23: all 768 default regression tests passed,
 plus 8 native-candidate preload/cache checks. Browser verification opened a
@@ -136,10 +182,21 @@ observed zero lost IRQs. The Timer0 probe decoder's four synthetic checks and
 nine successful assembly profiles validate the probe tooling; no hardware
 trace has been supplied.
 
+Later integration checkpoint, 2026-10-23: all852 default regression tests passed
+after the calibrated-clock, power-profile, official-register and analog-input
+deadline changes. Device-profile separation additionally passed37 focused
+checks, including three new profile checks, standalone package loading and the
+original v1 runtime fixture. All13 retained firmware translations remained
+byte-identical after extracting target geometry, and active stereo firmware
+remained byte-identical after adopting official assembly symbols. Hardware
+measurements and performance gating remain open.
+
 ## Primary references
 
 - [ATtiny13A Data Sheet DS40002307A](https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf)
 - [AVR Instruction Set Manual DS40002198A](https://ww1.microchip.com/downloads/en/DeviceDoc/AVR-Instruction-Set-Manual-DS40002198A.pdf)
 - [WebAssembly Core binary instructions](https://webassembly.github.io/spec/core/binary/instructions.html)
+- [Microchip ATtiny DFP3.4.278](https://packs.download.microchip.com/Microchip.ATtiny_DFP.3.4.278.atpack)
+- [Imported manufacturer definitions and provenance](../vendor/microchip/ATtiny_DFP/3.4.278/README.md)
 - [Current instruction mapping and runtime contract](AVR_TO_WASM.md)
 - [Device bus and scheduler contract](peripherals/device.md)
