@@ -235,7 +235,7 @@ export class AVRCore {
     this.io[address] = value;
     if ([0x25,0x28,0x2f,0x32,0x33].includes(address)) this.updateTimer();
     if (address === 0x29 && this.timer) { this.duty = value; this.writes++; }
-    if (address === 0x2a && this.timer) { this.dutyLeft=value;this.leftWrites++; }
+    if (address === 0x36 && this.timer) { this.dutyLeft=value;this.leftWrites++; }
     return 0;
   }
   clock(n) {

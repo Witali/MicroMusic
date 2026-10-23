@@ -247,7 +247,7 @@ class AVRCore {
     this.io[address] = value;
     if ([0x25,0x28,0x2f,0x32,0x33].includes(address)) this.updateTimer();
     if (address === 0x29 && this.timer) { this.duty = value; this.writes++; }
-    if (address === 0x2a && this.timer) { this.dutyLeft=value;this.leftWrites++; }
+    if (address === 0x36 && this.timer) { this.dutyLeft=value;this.leftWrites++; }
     return 0;
   }
   clock(n) {
@@ -530,11 +530,11 @@ function validateControls(cutoff, volume) {
 }
 
 class Renderer {
-  constructor(entry, sampleRate, {cutoff = 4000, volume = 1, filtered = true} = {}) {
+  constructor(entry, sampleRate, {cutoff = 4000, volume = 1, filtered = true} = {}, Core = AVRCore) {
     if (!Number.isFinite(sampleRate) || sampleRate < 8000 || sampleRate > 192000) throw new Error('Invalid audio sample rate');
     validateControls(cutoff, volume);
     if (!Number.isFinite(entry.pwmHz) || entry.pwmHz <= 0) throw new Error('Invalid audio configuration');
-    this.core = new AVRCore(parseHex(entry.flashHex), entry.eepromHex ? parseHex(entry.eepromHex, 64) : null);
+    this.core = new Core(parseHex(entry.flashHex), entry.eepromHex ? parseHex(entry.eepromHex, 64) : null);
     this.channels=entry.audioChannels||1;
     if(![1,2].includes(this.channels))throw new Error('Unsupported audio channel count');
     this.nextValue=this.channels===2?()=>this.core.nextStereoDuty():()=>this.core.nextDuty();
@@ -587,10 +587,10 @@ const FIRMWARE_HEX = `:100000001BC00024089549C0012E102F1F70C9F392
 :10004000002400926000E1E0FF270193EE31E9F720
 :1000500020E82093650020936600E1E62193219338
 :10006000019204E0502F6395C3950EEE0093640057
-:10007000D7E0E4E2F3E007EAE02EB89AB99A2ABDA5
+:10007000D7E0E4E2F3E007EAE02EB89AB99A26BFA7
 :1000800029BD71E003EA0FBD01E003BF02E009BF33
 :100090007894FEF7E89412D0FCCF70FD20916500B3
-:1000A00070FF209166002ABD70FD2091610070FFF5
+:1000A00070FF2091660026BF70FD2091610070FFF7
 :1000B0002091620029BD729568941895F39419F007
 :1000C000F0FE7EC0B1C00091630000950093630014
 :1000D00009F076C0839517FE07C0012D0C5F00392B

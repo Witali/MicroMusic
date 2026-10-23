@@ -6,11 +6,32 @@ import {AVRCore} from '../lib/avr-core.js';
 import {Renderer} from '../lib/renderer.js';
 import {AudioQueue} from '../lib/audio-queue.js';
 import {createRenderer} from '../lib/engines.js';
+import {AVRCore as ReferenceCore} from '../lib/avr-reference.js';
+import {decodeAVR} from '../lib/avr-transpiler.js';
 const base=new URL('../../ATtiny13A/Music/variants/lumiere-stereo/',import.meta.url);
 const read=name=>readFileSync(new URL(name,base));
 const {labels}=JSON.parse(read('build-report.json'));
 const core=()=>new AVRCore(read('synth.bin'),read('eeprom.bin'));
 const signed=x=>x&128 ? x-256 : x;
+
+test('stereo binary writes actual ATtiny13A OCR0A I/O0x36, with no reserved0x2a OUT',()=>{
+  const rom=read('synth.bin'),metadata=JSON.parse(read('build-report.json')),writes=[];
+  for(let at=0;at<metadata.codeBytes;){
+    const instruction=decodeAVR(rom[at]|rom[at+1]<<8,rom[at+2]|rom[at+3]<<8);
+    if(instruction.name==='OUT')writes.push(instruction.k);
+    at+=instruction.words*2;
+  }
+  assert.equal(writes.filter(io=>io===0x36).length,2);assert.ok(!writes.includes(0x2a));
+  assert.deepEqual(metadata.hardwareRegisters.OCR0A,{ioAddress:0x36,dataAddress:0x56});
+});
+
+test('player captures real OCR0A and reserved0x2a has no audio side effects',()=>{
+  for(const Core of [ReferenceCore,AVRCore]){
+    const c=new Core(Uint8Array.of(0,0));c.timer=true;
+    c.writeIO(0x36,81);assert.equal(c.dutyLeft,81);assert.equal(c.leftWrites,1);
+    c.writeIO(0x2a,173);assert.equal(c.dutyLeft,81);assert.equal(c.leftWrites,1);
+  }
+});
 
 test('stereo filter controls stay synchronized and block independent in JS and WASM',async()=>{
   const entry={audioChannels:2,pwmHz:37500,flashHex:read('synth.hex').toString(),eepromHex:read('eeprom.hex').toString()};
@@ -58,7 +79,7 @@ test('stereo ISR preserves foreground arithmetic flags in both interpolation pha
     c.sreg=flags;c.inIRQ=true;c.irqFrames.push(0);c.pushPC(0);
     while(c.inIRQ)c.step();
     assert.equal(c.sreg&63,flags);assert.equal(c.t,1);assert.equal(c.r[23],phase===1?16:1);
-    assert.equal(c.io[0x2a],phase===1?51:203);assert.equal(c.io[0x29],phase===1?31:211);
+    assert.equal(c.io[0x36],phase===1?51:203);assert.equal(c.io[0x29],phase===1?31:211);
   }
 });
 

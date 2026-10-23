@@ -2,12 +2,19 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
-import {AVRCore} from '../web-player/lib/avr-core.js';
+// Per-instruction observation belongs in the reference audit. Avoid crossing
+// the JS/WASM boundary for every observed instruction of the complete song.
+import {AVRCore} from '../web-player/lib/avr-reference.js';
 const folder='ATtiny13A/Music/variants/lumiere-stereo';
 const read=(dir,name)=>fs.readFileSync(`${dir}/${name}`);
 const meta=JSON.parse(read(folder,'build-report.json')),sourceMeta=meta;
 const source=JSON.parse(read(folder,'score.json')),sourceRom=read(folder,'synth.bin');
 const {labels,timing}=meta,units=[1,2,3,4,6,8,16],expected=[];
+const outAddresses=[];
+for(let at=0;at<meta.codeBytes;at+=2){const word=sourceRom[at]|sourceRom[at+1]<<8;
+  if((word&0xf800)===0xb800)outAddresses.push(((word>>5)&48)|(word&15));}
+assert.equal(outAddresses.filter(address=>address===0x36).length,2);
+assert.ok(!outAddresses.includes(0x2a),'Reserved0x2a must not be used for OCR0A');
 let totalUnits=0;
 for(const section of meta.score.playlist){
   let address=sourceMeta.labels[`section_${section}`];
@@ -57,6 +64,8 @@ assert.ok(min.every(x=>x>0)&&max.every(x=>x<255),'No PWM clipping');
 const correlation=(cross-sum[0]*sum[1]/frames)/Math.sqrt((sumSquares[0]-sum[0]**2/frames)*(sumSquares[1]-sum[1]**2/frames));
 assert.ok(correlation<.999,'Stereo channels must contain different music mixes');
 const report={image:'lumiere-stereo',flashSha256:meta.flashSha256,flashBytes:meta.flashBytes,channels:2,
+  hardwareAddressFix:{register:'OCR0A',previousIoAddress:0x2a,ioAddress:0x36,dataAddress:0x56,
+    binaryOutInstructionCount:2,reservedAliasOutInstructionCount:0,datasheet:'Microchip DS40002307A section11.9.4 and register summary'},
   completeSong:{commands:index,beats:totalUnits/4,idealSeconds:totalUnits/4*60/source.tempo_bpm,elapsedSeconds:(c.cyc-anchor)/9600000,maximumTimingErrorMs,missingCommands:0},
   outputs:meta.outputs,panorama:meta.panorama,pwm:{frames,min,max,mean:sum.map(x=>x/frames),correlation,channelWriteCountMismatch:0},
   timing:{isrCycles:c.maxIRQ,maxForegroundCyclesIncludingWaitAndIrq:maxForeground,minimumBufferPublishMarginCycles:minimumPublishMargin,lostTimerEvents:c.lost,lostWorkEvents:c.workLost},
