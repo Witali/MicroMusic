@@ -15,6 +15,7 @@ mkdirSync(dirname(out), { recursive: true });
 const wrapper = join(dirname(out), 'wrapper.c');
 writeFileSync(wrapper, `#include "system_gpio.h"
 static system_gpio_t gpio;
+static system_gpio_t0_event_t events[4];
 void reset(int reset_pin) { system_gpio_reset(&gpio, reset_pin); }
 int read_io(int io) { uint8_t v = 0; return system_gpio_read(&gpio, io, &v) ? v : -1; }
 int write_io(int io,int value,uint64_t at) { return system_gpio_write(&gpio,io,value,at); }
@@ -24,6 +25,13 @@ void floating(int levels,uint64_t at) { system_gpio_floating(&gpio,levels,at); }
 void outputs(int mask,int levels,uint64_t at) { system_gpio_timer_outputs(&gpio,mask,levels,at); }
 void sleep_mode(int running,int deep,uint64_t at) { system_gpio_sleep(&gpio,running,deep,at); }
 int clock_edge(int rising,uint64_t at) { return system_gpio_clock(&gpio,rising,at); }
+int advance(uint64_t begin,uint64_t end) { return system_gpio_advance(&gpio,begin,end,events); }
+uint64_t next_event(uint64_t at) { return system_gpio_next_event_half(&gpio,at); }
+int settled(void) { return system_gpio_settled(&gpio); }
+uint64_t event_time(int i) { return events[i].half_cycle; }
+int event_edge(int i) { return events[i].edge; }
+unsigned state(void) { return (unsigned)&gpio; }
+unsigned size(void) { return sizeof(gpio); }
 int pending(void) { return system_gpio_pending(&gpio); }
 void ack(int vector) { system_gpio_ack(&gpio,vector); }
 int pins(int field) { switch(field) {
@@ -33,13 +41,14 @@ case 4: return gpio.pins.contention; default: return -1; } }
 uint64_t timestamp(void) { return gpio.pins.half_cycle; }
 `);
 const exports = ['reset','read_io','write_io','write_bit','external','floating','outputs','sleep_mode',
-  'clock_edge','pending','ack','pins','timestamp'];
+  'clock_edge','advance','next_event','settled','event_time','event_edge','state','size',
+  'pending','ack','pins','timestamp'];
 const sysroot = join(sdk, 'upstream/emscripten/cache/sysroot');
 const result = spawnSync(join(sdk, 'upstream/bin/clang.exe'), [
   '--target=wasm32-unknown-unknown', '-O3', '-std=c11', '-ffreestanding', '-nostdlib',
   '-Wall', '-Wextra', '-Werror', '--sysroot=' + sysroot,
   '-isystem', join(sysroot, 'include'), '-I', join(root, 'web-player/native/peripherals'),
-  '-Wl,--no-entry', ...exports.map(n => '-Wl,--export=' + n),
+  '-Wl,--no-entry', '-Wl,--export-memory', ...exports.map(n => '-Wl,--export=' + n),
   join(root, 'web-player/native/peripherals/system_gpio.c'), wrapper, '-o', out
 ], { encoding: 'utf8' });
 if (result.error || result.status !== 0) throw result.error || new Error(result.stderr);
@@ -181,4 +190,45 @@ test('T0 edge detector returns pulses after 2.5–3.5 clkI/O cycles', () => {
   fall(5); assert.equal(rise(6),0); fall(7); assert.equal(rise(8),1);
   external(4,0,8); fall(9); assert.equal(rise(10),0);
   fall(11); assert.equal(rise(12),0); fall(13); assert.equal(rise(14),2);
+});
+
+test('bounded GPIO advance timestamps T0 and skips a trillion settled half-cycles',()=>{
+  g.reset(0); external(4,4,0);
+  assert.equal(g.next_event(0n),1n);
+  assert.equal(g.advance(0n,1000000000000n),1);
+  assert.equal(g.event_time(0),6n); assert.equal(g.event_edge(0),1);
+  assert.equal(g.settled(),1); assert.equal(g.next_event(1000000000000n),-1n);
+  assert.equal(g.advance(1000000000000n,2000000000000n),0);
+  assert.equal(g.advance(10n,9n),255);
+});
+
+test('seeded bounded advancement matches every clock edge across GPIO mutations',async()=>{
+  const slow=(await WebAssembly.instantiate(module)).exports;
+  g.reset(0); slow.reset(0); let seed=0x13a44,now=0n;
+  const random=()=>{seed^=seed<<13;seed^=seed>>>17;seed^=seed<<5;return seed>>>0;};
+  const state=instance=>new Uint8Array(instance.memory.buffer,instance.state(),instance.size()).slice();
+  for(let run=0;run<2000;run++) {
+    const value=random()&63, mask=random()&63, choice=random()%5;
+    for(const x of [g,slow]) {
+      if(choice===0) x.external(mask,value,now);
+      if(choice===1) x.outputs(mask,value,now);
+      if(choice===2) x.floating(value,now);
+      if(choice===3) x.sleep_mode(value&1,(value>>1)&1,now);
+      if(choice===4) {
+        const registers=[IO.DDR,IO.PORT,IO.PIN,IO.MASK,IO.ENABLE,IO.MCU,IO.DIDR,IO.FLAG];
+        // Choice must be identical for both instances.
+        x.write_io(registers[run%registers.length],value,now);
+      }
+    }
+    const end=now+BigInt(random()%32), expected=[];
+    for(let at=now+1n;at<=end;at++) {
+      const edge=slow.clock_edge(Number(!(at&1n)),at);
+      if(edge) expected.push([at,edge]);
+    }
+    const count=g.advance(now,end);
+    assert.equal(count,expected.length,'T0 count at run '+run);
+    assert.deepEqual(Array.from({length:count},(_,i)=>[g.event_time(i),g.event_edge(i)]),expected);
+    assert.deepEqual(state(g),state(slow),'peripheral state at run '+run);
+    now=end;
+  }
 });
