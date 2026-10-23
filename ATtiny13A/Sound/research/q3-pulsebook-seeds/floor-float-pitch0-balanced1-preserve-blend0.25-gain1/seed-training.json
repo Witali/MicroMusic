@@ -1,0 +1,62 @@
+{
+  "inverse": "float",
+  "local_pitch": false,
+  "balance": true,
+  "noise_gain": "incumbent",
+  "iterations": 8,
+  "stream_bytes": 602,
+  "history": [
+    {
+      "iteration": 1,
+      "voiced_excitation_mse": 89.3661032948301,
+      "stream_bytes": 602
+    },
+    {
+      "iteration": 2,
+      "voiced_excitation_mse": 82.51620779920403,
+      "stream_bytes": 602
+    },
+    {
+      "iteration": 3,
+      "voiced_excitation_mse": 80.46176264621973,
+      "stream_bytes": 602
+    },
+    {
+      "iteration": 4,
+      "voiced_excitation_mse": 80.75264437918959,
+      "stream_bytes": 602
+    },
+    {
+      "iteration": 5,
+      "voiced_excitation_mse": 80.4802235061812,
+      "stream_bytes": 602
+    },
+    {
+      "iteration": 6,
+      "voiced_excitation_mse": 80.35294678138015,
+      "stream_bytes": 602
+    },
+    {
+      "iteration": 7,
+      "voiced_excitation_mse": 80.35294678138015,
+      "stream_bytes": 602
+    },
+    {
+      "iteration": 8,
+      "voiced_excitation_mse": 80.35294678138015,
+      "stream_bytes": 602
+    }
+  ],
+  "target_analysis_quantization": "Unchanged float source",
+  "alignment": "Exact frame-reset lag windows; first sample lag1, lag0 at period-1; no phase shift/resampling",
+  "table_sums": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "changed_pitch_frames": 0,
+  "residual_rms_pwm": 8.514981855310943,
+  "preservation_blend": 0.25,
+  "row_matching": "One-to-one absolute-correlation assignment; sign and L2energy aligned to incumbent rows"
+}
