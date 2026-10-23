@@ -23,6 +23,17 @@ def fixture(words=8):
 
 
 class TinyPeriodTest(unittest.TestCase):
+    def test_long_phrases_preserve_their_final_bit_position_and_pcm(self):
+        for blocks in (255,256,257,348,512,1023):
+            source=fixture(4)
+            source['frames']=(source['frames']*((blocks+15)//16))[:blocks]
+            source['samples']=blocks*64
+            packed=pack_tiny(source)
+            restored=unpack_tiny(packed)
+            np.testing.assert_array_equal(decode_fixed(source),decode_fixed(restored))
+            self.assertEqual(packed,pack_tiny(restored))
+            self.assertIn(packed['constants']['FIELD_END_MASK'],(1,2,4,8,16,32,64,128))
+
     def test_all_pitch_prefixes_and_eeprom_splits_preserve_integer_pcm(self):
         for words in (1,2,4,5,8,10,12,16):
             source=fixture(words)
@@ -53,12 +64,13 @@ class TinyPeriodTest(unittest.TestCase):
 
     def test_rejects_truncation_extra_bits_and_inconsistent_layout(self):
         packed=pack_tiny(fixture())
-        for kind in ('truncated','extra','layout','eeprom'):
+        for kind in ('truncated','extra','layout','eeprom','end_sentinel'):
             broken=deepcopy(packed)
             if kind=='truncated':broken['flash_data']=broken['flash_data'][:-2]
             if kind=='extra':broken['flash_data']+=b'\x00'
             if kind=='layout':broken['constants']['EEPROM_WAVE_SPLIT']+=1
             if kind=='eeprom':broken['eeprom']=broken['eeprom'][:-1]
+            if kind=='end_sentinel':broken['constants']['FIELD_END_MASK']^=255
             with self.assertRaises(ValueError):unpack_tiny(broken)
 
 

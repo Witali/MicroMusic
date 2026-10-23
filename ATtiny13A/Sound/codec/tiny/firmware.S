@@ -4,7 +4,7 @@
  */
 .include "config.inc"
 .section .text
-.global __vectors, decoder_end, wave_data, field_data
+.global __vectors, decoder_end, wave_data, field_data, field_end
 .set HIST,0x68
 .global STACK_FLOOR
 .set STACK_FLOOR,HIST+2
@@ -131,18 +131,40 @@ random_skip:
  rjmp wait
 block_boundary:
  mov r6,r14
+.if BLOCKS > 255
+ /* Long phrases use exact stream exhaustion instead of a second counter byte. */
+ tst r15
+ breq block_continue
+ rcall restart
+block_continue:
+ rjmp wait
+.else
  dec r15
  breq phrase_end
  rjmp wait
 phrase_end:
  rcall restart
  rjmp wait
+.endif
 center:
  mov r2,r4
  mov r3,r5
+.if BLOCKS > 255
+ /* X alone may reach the final byte before its remaining fields are consumed.
+  * The one-bit reservoir sentinel identifies the exact final bit position. */
+ cpi r26,lo8(field_end)
+ brne next_frame
+ cpi r27,hi8(field_end)
+ brne next_frame
+ cpi r23,FIELD_END_MASK
+ brne next_frame
+ inc r15
+ rjmp wait
+.else
  ldi r16,1
  cp r15,r16
  breq no_next_frame
+.endif
 next_frame:
  rcall read_frame
 no_next_frame:
@@ -171,8 +193,12 @@ restart:
  mov r2,r4
  mov r3,r5
  mov r6,r14
+.if BLOCKS > 255
+ clr r15
+.else
  ldi r16,BLOCKS
  mov r15,r16
+.endif
  ldi r16,32
  mov r1,r16
  ret
@@ -447,4 +473,5 @@ irq_done:
 decoder_end:
 wave_data:
 .incbin "model-flash.bin"
+field_end:
 .set field_data,wave_data+WAVE_FLASH_BYTES
