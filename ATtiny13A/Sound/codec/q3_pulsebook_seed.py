@@ -8,6 +8,7 @@ import math
 import numpy as np
 from numba import njit
 from scipy.signal import find_peaks
+from scipy.optimize import linear_sum_assignment
 
 from hq4_core import pack_stream
 from q3_phasebook import inverse_residual
@@ -237,4 +238,105 @@ def initialize(reference, frames, durations, *, nearest=False, inverse='float',
         table_sums=book.astype(int).sum(axis=1).tolist(),
         changed_pitch_frames=int(np.sum(f[:, 0] != incumbent[:, 0])),
         residual_rms_pwm=float(np.sqrt(np.mean(residual**2))))
+    return model, report
+
+
+def minimum_phase_wave(log_magnitude, length=16):
+    """Canonical causal waveform from magnitude only, with a short cepstrum."""
+    log_magnitude = np.asarray(log_magnitude, float)
+    nfft = 2*(len(log_magnitude)-1)
+    if (log_magnitude.ndim != 1 or nfft < 2*length or length != 16
+            or not np.all(np.isfinite(log_magnitude))):
+        raise ValueError('Expected finite one-sided log magnitude for a16sample pulse')
+    cepstrum = np.fft.irfft(log_magnitude, n=nfft)
+    causal = np.zeros(nfft)
+    causal[0] = cepstrum[0]
+    causal[1:length] = 2*cepstrum[1:length]
+    response = np.fft.ifft(np.exp(np.fft.fft(causal))).real[:length]
+    return response
+
+
+def _quantize_minphase(wave, balance):
+    desired = np.asarray(wave, float).copy()
+    if balance:
+        desired -= desired.mean()
+    out = np.clip(np.rint(desired), -7, 7).astype(np.int8)
+    while balance and int(out.sum()):
+        step = -1 if out.sum() > 0 else 1
+        allowed = np.flatnonzero((out.astype(int)+step >= -7) & (out.astype(int)+step <= 7))
+        index = min(allowed, key=lambda i: ((float(out[i])+step-desired[i])**2-
+                    (float(out[i])-desired[i])**2, abs(int(out[i])), int(i)))
+        out[index] += step
+    return out
+
+
+def minimum_phase_initialize(reference, frames, durations, *, nearest=False,
+                             balance=False, selector='incumbent', blend=.25, stream_budget=615):
+    """Cluster phase-insensitive residual envelopes; preserve source timing."""
+    x = np.asarray(reference, float)
+    f, d = np.asarray(frames), np.asarray(durations)
+    validate(f, d, legacy_tables(), samples=len(x), stream_budget=stream_budget)
+    if x.ndim != 1 or len(x) < 3072 or not np.all(np.isfinite(x)) or selector not in ('incumbent', 'cluster') or not 0 < blend <= 1:
+        raise ValueError('Invalid complete source or bounded minphase seed configuration')
+    f, d = f.astype(np.uint8).copy(), d.astype(np.uint16).copy()
+    residual = inverse_residual(x, f, d)*128
+    starts = np.r_[0, np.cumsum(d.astype(int))[:-1]-1]
+    stops = np.r_[starts[1:], len(x)-1]
+    log_shapes, energies = [], []
+    nfft = 512
+    for start, stop in zip(starts, stops):
+        centre = (int(start)+int(stop))//2
+        left = centre-nfft//2
+        indices = np.arange(left, left+nfft)
+        window = np.zeros(nfft)
+        present = (indices >= 0) & (indices < len(x))
+        window[present] = residual[indices[present]]
+        magnitude = np.abs(np.fft.rfft(window*np.hanning(nfft)))
+        shape = np.log(np.maximum(magnitude, max(float(magnitude.max())*1e-5, 1e-10)))
+        log_shapes.append(shape-shape.mean())
+        energies.append(float(np.dot(window, window)))
+    data = np.asarray(log_shapes)
+    active = (f[:, 0] > 0) & ((f[:, 1] & 15) > 0) & (np.asarray(energies) > 1e-8)
+    if np.count_nonzero(active) < 4:
+        raise ValueError('Need at least four voiced non-silent spectral observations')
+    observations = data[active]
+    median = np.median(observations, axis=0)
+    centres = [observations[int(np.argmin(np.sum((observations-median)**2, axis=1)))] ]
+    while len(centres) < 4:
+        distances = np.min(np.mean((observations[:, None, :]-np.asarray(centres)[None, :, :])**2, axis=2), axis=1)
+        centres.append(observations[int(np.argmax(distances))])
+    centres = np.asarray(centres)
+    for _ in range(12):
+        labels = np.argmin(np.mean((observations[:, None, :]-centres[None, :, :])**2, axis=2), axis=1)
+        for group in range(4):
+            if np.any(labels == group):
+                centres[group] = np.mean(observations[labels == group], axis=0)
+    selected = np.argmin(np.mean((data[:, None, :]-centres[None, :, :])**2, axis=2), axis=1)
+    legacy = legacy_tables().astype(float)
+    old_features = np.log(np.maximum(abs(np.fft.rfft(legacy, n=nfft)), 1e-5))
+    old_features -= old_features.mean(axis=1)[:, None]
+    old_rows, groups = linear_sum_assignment(np.mean((old_features[:, None, :]-centres[None, :, :])**2, axis=2))
+    group_to_old = dict(zip(groups.tolist(), old_rows.tolist()))
+    waves = np.asarray([minimum_phase_wave(centre) for centre in centres])
+    if balance:
+        waves -= waves.mean(axis=1)[:, None]
+    book = np.zeros((4, 16), np.int8)
+    for group in range(4):
+        old = group_to_old[group]
+        wave = waves[group]*np.linalg.norm(legacy[old])/max(float(np.linalg.norm(waves[group])), 1e-20)
+        book[old if selector == 'incumbent' else group] = _quantize_minphase((1-blend)*legacy[old]+blend*wave, balance)
+    if selector == 'cluster':
+        for index in np.flatnonzero(f[:, 0] > 0):
+            old_mode, gain = int(f[index, 1] >> 4), int(f[index, 1] & 15)
+            group = int(selected[index])
+            gain = int(np.clip(np.rint(gain*np.linalg.norm(legacy[old_mode])/max(float(np.linalg.norm(book[group])), 1e-20)), 0, 15))
+            f[index, 1] = group*16+gain
+    validate(f, d, book, samples=len(x), stream_budget=stream_budget)
+    model = dict(schema=SCHEMA, sample_rate=7500, samples=len(x), tilt_shift=1, nearest=bool(nearest),
+                 frames=f.tolist(), durations=d.tolist(), pulsebook=book.tolist())
+    report = dict(method='Four source-derived log-magnitude clusters; causal real-cepstral minimum-phase16tap response',
+        nfft=nfft, cepstrum_taps=16, selector=selector, balance=bool(balance), blend=blend,
+        table_sums=book.astype(int).sum(axis=1).tolist(), voiced_observations=int(np.count_nonzero(active)),
+        stream_bytes=len(pack_stream(f, d)),
+        source_policy='No phase alignment, source time shift, resampling, hidden side information or target normalization')
     return model, report

@@ -9,7 +9,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT/'ATtiny13A/Sound/codec'))
 from q3_pulsebook import legacy_tables, render, validate
-from q3_pulsebook_seed import timing, byte_inverse, initialize
+from q3_pulsebook_seed import timing, byte_inverse, initialize, minimum_phase_wave, minimum_phase_initialize
 
 
 class PulsebookSeedTests(unittest.TestCase):
@@ -75,6 +75,24 @@ class PulsebookSeedTests(unittest.TestCase):
                 initialize(np.zeros(4096), invalid, d)
         with self.assertRaises(ValueError):
             initialize(np.zeros(4095), f, d)
+
+    def test_minimum_phase_depends_on_magnitude_and_keeps_decoder_parameters_only(self):
+        spectrum = np.fft.rfft(np.r_[1., -.3, .2, np.zeros(509)])
+        shifted = spectrum*np.exp(-2j*np.pi*np.arange(len(spectrum))*23/512)
+        a = minimum_phase_wave(np.log(np.maximum(abs(spectrum), 1e-10)))
+        b = minimum_phase_wave(np.log(np.maximum(abs(shifted), 1e-10)))
+        np.testing.assert_allclose(a, b, atol=1e-12)
+        f = np.array([[30, 2+16*(i % 4), 0x88, 0x88, 0x88, 0x88] for i in range(16)], np.uint8)
+        d = np.full(16, 256, np.uint16)
+        pcm, _ = render(f, d, legacy_tables(), 1, True)
+        model, report = minimum_phase_initialize((pcm.astype(float)-128)/128, f, d,
+            nearest=True, balance=True, selector='cluster', blend=.5)
+        book = np.asarray(model['pulsebook'], np.int8)
+        np.testing.assert_array_equal(book.sum(axis=1), 0)
+        np.testing.assert_array_equal(np.asarray(model['frames'])[:, 0], f[:, 0])
+        np.testing.assert_array_equal(model['durations'], d)
+        validate(np.asarray(model['frames'], np.uint8), d, book, len(pcm), 615)
+        self.assertEqual(report['nfft'], 512)
 
 
 if __name__ == '__main__':
