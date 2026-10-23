@@ -1,0 +1,677 @@
+{
+  "schema": "q3-pulsebook-search-v1",
+  "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+  "samples": 22272,
+  "targets": {
+    "stoi": 0.9,
+    "spectrogram_loss": 0.344975554
+  },
+  "target_met": false,
+  "proposals": 6000,
+  "evaluated": 4467,
+  "accepted": 673,
+  "seed": 23143,
+  "initial": [
+    {
+      "source": "model.json",
+      "source_sha256": "8b3232fc55d565fcf950eb4f1b13e620d87d21c0dd16a6236e0c1b72bcdc70d6",
+      "nearest": true,
+      "original_stream_bytes": 637,
+      "coefficient_reuse": [
+        {
+          "frame": 87,
+          "coefficient_byte": 2,
+          "before_bytes": 637,
+          "after_bytes": 633
+        },
+        {
+          "frame": 48,
+          "coefficient_byte": 2,
+          "before_bytes": 633,
+          "after_bytes": 631
+        },
+        {
+          "frame": 69,
+          "coefficient_byte": 4,
+          "before_bytes": 631,
+          "after_bytes": 629
+        },
+        {
+          "frame": 104,
+          "coefficient_byte": 4,
+          "before_bytes": 629,
+          "after_bytes": 627
+        },
+        {
+          "frame": 24,
+          "coefficient_byte": 2,
+          "before_bytes": 627,
+          "after_bytes": 623
+        },
+        {
+          "frame": 125,
+          "coefficient_byte": 4,
+          "before_bytes": 623,
+          "after_bytes": 619
+        },
+        {
+          "frame": 15,
+          "coefficient_byte": 4,
+          "before_bytes": 619,
+          "after_bytes": 615
+        },
+        {
+          "frame": 62,
+          "coefficient_byte": 2,
+          "before_bytes": 615,
+          "after_bytes": 611
+        }
+      ],
+      "score": {
+        "stoi": 0.8276655035618349,
+        "spectrogram_loss": 0.49452712308701563,
+        "fine_log_error": 0.4806010329321344,
+        "envelope_error": 0.5864303410930494,
+        "unsupported_energy": 0.19284723245957092,
+        "missing_energy": 0.1920220721383799,
+        "stream_bytes": 611,
+        "peak_signed": 59,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -9.470972521551724e-06,
+        "raw_rms": 0.06061723840460801,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "c6ffc4b7d5f4a4c2fd6a3b0a359a773ba98bb7505c8b89064f7c1032b391b232",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [],
+      "score": {
+        "stoi": 0.8383964351890083,
+        "spectrogram_loss": 0.5043571420994826,
+        "fine_log_error": 0.4884439221989016,
+        "envelope_error": 0.6008140591006578,
+        "unsupported_energy": 0.20068080105885014,
+        "missing_energy": 0.20033717350850047,
+        "stream_bytes": 602,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07399530520384338,
+        "raw_rms": 0.11090971747201675,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "845d8a41ece0e8fc21a6c07f7b1cd0e45a123664d66a7697a1aaab0ea1ebaf62",
+      "nearest": false,
+      "original_stream_bytes": 629,
+      "coefficient_reuse": [
+        {
+          "frame": 95,
+          "coefficient_byte": 2,
+          "before_bytes": 629,
+          "after_bytes": 625
+        },
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 625,
+          "after_bytes": 623
+        },
+        {
+          "frame": 43,
+          "coefficient_byte": 2,
+          "before_bytes": 623,
+          "after_bytes": 621
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 621,
+          "after_bytes": 619
+        },
+        {
+          "frame": 23,
+          "coefficient_byte": 2,
+          "before_bytes": 619,
+          "after_bytes": 615
+        }
+      ],
+      "score": {
+        "stoi": 0.8385015639350403,
+        "spectrogram_loss": 0.5044579024244674,
+        "fine_log_error": 0.48836148074892016,
+        "envelope_error": 0.6011641469207352,
+        "unsupported_energy": 0.2011066602837851,
+        "missing_energy": 0.1999374425230146,
+        "stream_bytes": 615,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07437344255118535,
+        "raw_rms": 0.1112093021166973,
+        "target_met": false
+      }
+    }
+  ],
+  "finalists": {
+    "balanced": {
+      "stoi": 0.8401795881411157,
+      "spectrogram_loss": 0.5018000416752924,
+      "fine_log_error": 0.48587393841121657,
+      "envelope_error": 0.5980431503425274,
+      "unsupported_energy": 0.1989312037066651,
+      "missing_energy": 0.19751422919190126,
+      "stream_bytes": 615,
+      "peak_signed": 83,
+      "steps_ge48": 0,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "raw_mean": 0.07456742209949713,
+      "raw_rms": 0.11140851616209231,
+      "target_met": false,
+      "estoi": 0.6461958543520487,
+      "harmonic_metrics": {
+        "harmonic_track_loss": 0.9171794854453797,
+        "frequency_trajectory_error": 0.9415041074165094,
+        "level_error": 2.430269923692431,
+        "missing_reference_energy": 0.1674045584249121,
+        "extra_candidate_energy": 0.23281758419282308,
+        "weighted_match_rate": 0.8325954415750882,
+        "frequency_error_cents": 49.12549065613539,
+        "frequency_error_hz": 11.00572727320044,
+        "level_error_db": 7.290809771077289,
+        "frequency_error_p95_cents": 115.99863419210726,
+        "frequency_error_p95_hz": 34.06105629694048,
+        "level_error_p95_db": 17.62913346878731,
+        "continuity_break_rate": 0.32910115909436555
+      },
+      "stream_sha256": "acd3f308c1dd7ec4116ecb5db9eb1c358d9d7e74a72b6dfd2a4c15109230da83",
+      "pcm_sha256": "2284a33ae0693048c3353c87fcf03a8eb0495967c403e124eb05c59a31239745",
+      "eeprom_bytes": 64,
+      "avr_assembled": false,
+      "avr_verified": false,
+      "hardware_tested": false,
+      "size_policy": "Actual stream+64EEPROM; separate exact assembler must confirm fullFlash size and cycles"
+    },
+    "best_stoi": {
+      "stoi": 0.8404483168744483,
+      "spectrogram_loss": 0.5044739166619912,
+      "fine_log_error": 0.4867289508755781,
+      "envelope_error": 0.603530668802981,
+      "unsupported_energy": 0.20056295348487538,
+      "missing_energy": 0.20245239907652635,
+      "stream_bytes": 615,
+      "peak_signed": 83,
+      "steps_ge48": 0,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "raw_mean": 0.07457619151849856,
+      "raw_rms": 0.1113927353309375,
+      "target_met": false,
+      "estoi": 0.6456840282672242,
+      "harmonic_metrics": {
+        "harmonic_track_loss": 0.9209188273594144,
+        "frequency_trajectory_error": 0.9247220676975689,
+        "level_error": 2.480714151914021,
+        "missing_reference_energy": 0.16751866714465038,
+        "extra_candidate_energy": 0.22831378836624916,
+        "weighted_match_rate": 0.83248133285535,
+        "frequency_error_cents": 47.95892421280761,
+        "frequency_error_hz": 10.927752552263208,
+        "level_error_db": 7.442142455742056,
+        "frequency_error_p95_cents": 121.89232261156097,
+        "frequency_error_p95_hz": 34.06105629694048,
+        "level_error_p95_db": 17.622538106857345,
+        "continuity_break_rate": 0.3324120976825733
+      },
+      "stream_sha256": "f35d97928666ba4c0b0ea00fd179c1daff080f1ed5235140d0d3aa569dfdc3f9",
+      "pcm_sha256": "4866cb8026b5088489f02a4494f5d5246d53cef0a1042ee2e504c788e4e2ee70",
+      "eeprom_bytes": 64,
+      "avr_assembled": false,
+      "avr_verified": false,
+      "hardware_tested": false,
+      "size_policy": "Actual stream+64EEPROM; separate exact assembler must confirm fullFlash size and cycles"
+    },
+    "best_spectrum": {
+      "stoi": 0.8025357242389193,
+      "spectrogram_loss": 0.4682765138793826,
+      "fine_log_error": 0.45579502623249557,
+      "envelope_error": 0.5522019813550612,
+      "unsupported_energy": 0.17011210245236724,
+      "missing_energy": 0.18172282192629097,
+      "stream_bytes": 613,
+      "peak_signed": 81,
+      "steps_ge48": 0,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "raw_mean": 0.012323138357579023,
+      "raw_rms": 0.07929846263773783,
+      "target_met": false,
+      "estoi": 0.593431325744896,
+      "harmonic_metrics": {
+        "harmonic_track_loss": 0.7952877224586463,
+        "frequency_trajectory_error": 0.8322517503213366,
+        "level_error": 1.9770108391983425,
+        "missing_reference_energy": 0.1994766377699243,
+        "extra_candidate_energy": 0.23109114158721583,
+        "weighted_match_rate": 0.8005233622300755,
+        "frequency_error_cents": 43.91506472750923,
+        "frequency_error_hz": 9.861202219353011,
+        "level_error_db": 5.931032517595028,
+        "frequency_error_p95_cents": 112.799095245488,
+        "frequency_error_p95_hz": 31.47319524390832,
+        "level_error_p95_db": 14.86861505781704,
+        "continuity_break_rate": 0.281815588749009
+      },
+      "stream_sha256": "4a02cc8c9ee7125aed922c8d0ff4d1f7ee1d353d42ce7426a017fa4c31548511",
+      "pcm_sha256": "a83f51738ffa99a49530ad68b46ce4eaecb428325675927f299a1dcf906e3b10",
+      "eeprom_bytes": 64,
+      "avr_assembled": false,
+      "avr_verified": false,
+      "hardware_tested": false,
+      "size_policy": "Actual stream+64EEPROM; separate exact assembler must confirm fullFlash size and cycles"
+    }
+  },
+  "guard_rejections": {
+    "layout": 1441,
+    "wrap": 2,
+    "peak": 16,
+    "steps": 74
+  },
+  "history": [
+    {
+      "proposals": 500,
+      "evaluated": 377,
+      "accepted": 80,
+      "pareto": 13,
+      "best_balanced": {
+        "stoi": 0.8387839170221522,
+        "spectrogram_loss": 0.5036405192919247,
+        "fine_log_error": 0.48920321818532486,
+        "envelope_error": 0.5983715420108027,
+        "unsupported_energy": 0.20027944558650904,
+        "missing_energy": 0.1971449012759834,
+        "stream_bytes": 615,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07491854963631465,
+        "raw_rms": 0.11215030061127697,
+        "target_met": false
+      },
+      "best_stoi": 0.8387839170221522,
+      "best_spectrum": 0.4834855705059193,
+      "elapsed_seconds": 6.474030699930154
+    },
+    {
+      "proposals": 1000,
+      "evaluated": 753,
+      "accepted": 131,
+      "pareto": 17,
+      "best_balanced": {
+        "stoi": 0.8388256545304634,
+        "spectrogram_loss": 0.5027940972765255,
+        "fine_log_error": 0.4879845880528816,
+        "envelope_error": 0.5977775115885364,
+        "unsupported_energy": 0.1998920164147801,
+        "missing_energy": 0.1965865761903482,
+        "stream_bytes": 614,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07522723318516523,
+        "raw_rms": 0.11222001772564288,
+        "target_met": false
+      },
+      "best_stoi": 0.8388609486368407,
+      "best_spectrum": 0.4827262699384002,
+      "elapsed_seconds": 12.125373899936676
+    },
+    {
+      "proposals": 1500,
+      "evaluated": 1134,
+      "accepted": 174,
+      "pareto": 23,
+      "best_balanced": {
+        "stoi": 0.838859904206891,
+        "spectrogram_loss": 0.5025372722094483,
+        "fine_log_error": 0.4874046407730071,
+        "envelope_error": 0.5977811949835918,
+        "unsupported_energy": 0.19991146698863466,
+        "missing_energy": 0.19657664468048613,
+        "stream_bytes": 614,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07515076385147271,
+        "raw_rms": 0.11218963479337112,
+        "target_met": false
+      },
+      "best_stoi": 0.8392082975548485,
+      "best_spectrum": 0.4827262699384002,
+      "elapsed_seconds": 17.718009099946357
+    },
+    {
+      "proposals": 2000,
+      "evaluated": 1533,
+      "accepted": 276,
+      "pareto": 26,
+      "best_balanced": {
+        "stoi": 0.8392061648883706,
+        "spectrogram_loss": 0.5032565514141172,
+        "fine_log_error": 0.4873881006105035,
+        "envelope_error": 0.5993768838235274,
+        "unsupported_energy": 0.2003382285937279,
+        "missing_energy": 0.19864285477971544,
+        "stream_bytes": 614,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07550750381645115,
+        "raw_rms": 0.11255041383783795,
+        "target_met": false
+      },
+      "best_stoi": 0.8392610870141176,
+      "best_spectrum": 0.4827262699384002,
+      "elapsed_seconds": 23.56263359996956
+    },
+    {
+      "proposals": 2500,
+      "evaluated": 1916,
+      "accepted": 341,
+      "pareto": 28,
+      "best_balanced": {
+        "stoi": 0.8391244548337393,
+        "spectrogram_loss": 0.5024173749648522,
+        "fine_log_error": 0.48683796834790793,
+        "envelope_error": 0.5988874900329486,
+        "unsupported_energy": 0.19863554918186863,
+        "missing_energy": 0.19785878493226675,
+        "stream_bytes": 615,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07546821681932471,
+        "raw_rms": 0.11238976896450935,
+        "target_met": false
+      },
+      "best_stoi": 0.839289483069497,
+      "best_spectrum": 0.4817368098099939,
+      "elapsed_seconds": 29.245527699938975
+    },
+    {
+      "proposals": 3000,
+      "evaluated": 2277,
+      "accepted": 375,
+      "pareto": 15,
+      "best_balanced": {
+        "stoi": 0.839441547834413,
+        "spectrogram_loss": 0.5027151333768844,
+        "fine_log_error": 0.4874713545087029,
+        "envelope_error": 0.5987896172314897,
+        "unsupported_energy": 0.19880706759003297,
+        "missing_energy": 0.1978474598207109,
+        "stream_bytes": 615,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07488312118354885,
+        "raw_rms": 0.11212186635674454,
+        "target_met": false
+      },
+      "best_stoi": 0.839441547834413,
+      "best_spectrum": 0.4799075018582202,
+      "elapsed_seconds": 34.669114899937995
+    },
+    {
+      "proposals": 3500,
+      "evaluated": 2655,
+      "accepted": 451,
+      "pareto": 17,
+      "best_balanced": {
+        "stoi": 0.839507915123879,
+        "spectrogram_loss": 0.5025845916933626,
+        "fine_log_error": 0.48757334188335355,
+        "envelope_error": 0.5983297870541453,
+        "unsupported_energy": 0.19880164944513956,
+        "missing_energy": 0.1973117202257625,
+        "stream_bytes": 615,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07503886606501436,
+        "raw_rms": 0.1121756495293588,
+        "target_met": false
+      },
+      "best_stoi": 0.8395915497649319,
+      "best_spectrum": 0.4781812292559492,
+      "elapsed_seconds": 40.41067799995653
+    },
+    {
+      "proposals": 4000,
+      "evaluated": 3019,
+      "accepted": 494,
+      "pareto": 21,
+      "best_balanced": {
+        "stoi": 0.8396999805816384,
+        "spectrogram_loss": 0.5016265762582429,
+        "fine_log_error": 0.4859398880454464,
+        "envelope_error": 0.5974909860272547,
+        "unsupported_energy": 0.19880422918874485,
+        "missing_energy": 0.19718878956030816,
+        "stream_bytes": 615,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07491609419899425,
+        "raw_rms": 0.11210414475983775,
+        "target_met": false
+      },
+      "best_stoi": 0.8399540262184513,
+      "best_spectrum": 0.4688268980656738,
+      "elapsed_seconds": 46.09785589994863
+    },
+    {
+      "proposals": 4500,
+      "evaluated": 3372,
+      "accepted": 531,
+      "pareto": 25,
+      "best_balanced": {
+        "stoi": 0.8399325517082926,
+        "spectrogram_loss": 0.5017043477009653,
+        "fine_log_error": 0.4861543836099331,
+        "envelope_error": 0.5974671041922331,
+        "unsupported_energy": 0.19882984533434434,
+        "missing_energy": 0.1970242904241874,
+        "stream_bytes": 615,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07468879085847702,
+        "raw_rms": 0.11166264499104701,
+        "target_met": false
+      },
+      "best_stoi": 0.8399648917108752,
+      "best_spectrum": 0.4687637880242821,
+      "elapsed_seconds": 51.55831669992767
+    },
+    {
+      "proposals": 5000,
+      "evaluated": 3742,
+      "accepted": 589,
+      "pareto": 31,
+      "best_balanced": {
+        "stoi": 0.8400599767114925,
+        "spectrogram_loss": 0.5016355725398207,
+        "fine_log_error": 0.4860004977153849,
+        "envelope_error": 0.5974699472517598,
+        "unsupported_energy": 0.19882790850428683,
+        "missing_energy": 0.19702604007785832,
+        "stream_bytes": 615,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.0746740582345546,
+        "raw_rms": 0.11165079049444987,
+        "target_met": false
+      },
+      "best_stoi": 0.8401284158147836,
+      "best_spectrum": 0.4686261803264073,
+      "elapsed_seconds": 57.10025339992717
+    },
+    {
+      "proposals": 5500,
+      "evaluated": 4112,
+      "accepted": 640,
+      "pareto": 32,
+      "best_balanced": {
+        "stoi": 0.8401795881411157,
+        "spectrogram_loss": 0.5018000416752924,
+        "fine_log_error": 0.48587393841121657,
+        "envelope_error": 0.5980431503425274,
+        "unsupported_energy": 0.1989312037066651,
+        "missing_energy": 0.19751422919190126,
+        "stream_bytes": 615,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07456742209949713,
+        "raw_rms": 0.11140851616209231,
+        "target_met": false
+      },
+      "best_stoi": 0.8404483168744483,
+      "best_spectrum": 0.4682765138793826,
+      "elapsed_seconds": 62.95607489999384
+    },
+    {
+      "proposals": 6000,
+      "evaluated": 4467,
+      "accepted": 673,
+      "pareto": 31,
+      "best_balanced": {
+        "stoi": 0.8401795881411157,
+        "spectrogram_loss": 0.5018000416752924,
+        "fine_log_error": 0.48587393841121657,
+        "envelope_error": 0.5980431503425274,
+        "unsupported_energy": 0.1989312037066651,
+        "missing_energy": 0.19751422919190126,
+        "stream_bytes": 615,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07456742209949713,
+        "raw_rms": 0.11140851616209231,
+        "target_met": false
+      },
+      "best_stoi": 0.8404483168744483,
+      "best_spectrum": 0.4682765138793826,
+      "elapsed_seconds": 68.33930769993458
+    }
+  ],
+  "elapsed_seconds": 68.90939659997821,
+  "rounded_stream_budget": 613,
+  "floor_stream_budget": 615,
+  "eeprom_bytes": 64,
+  "avr_qualified": false,
+  "public_firmware_changed": false,
+  "objective_policy": "Original STOI+wholeSpectrogramObjective; no baseline-quality ceilings, waveform/DC/gain postprocessing or manual frequency masks",
+  "source_sha256_normalized_lf": {
+    "tools/probe-q3-pulsebook.py": "58e434af0841ef95fc6e323b9739e2536765db88591fa3482bbab781e5d2c277",
+    "ATtiny13A/Sound/codec/q3_pulsebook.py": "9252905ba28151205695f2927dfe5dbcd62d92cfc629e049bc272c63c9a90ed4",
+    "ATtiny13A/Sound/codec/spectrogram_objective.py": "66fd5c3d5e3a0716d3c18269a261a70ad9165575eaf33acb5c7ee166a8d4e927",
+    "ATtiny13A/Sound/codec/hq4_speech_search.py": "3178c817fe02e9845449e2b501afe7dcc1b03a099fb59d56010e77e38640b2ab"
+  }
+}
