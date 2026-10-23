@@ -15,7 +15,7 @@ const sourcePath=p=>relative(testRoot,join(native,p));
 const sources=readdirSync(join(native,'peripherals')).sort()
   .filter(name=>name.endsWith('.c')&&!/(?:^|[.\-_])tests?(?:[.\-_]|$)/i.test(name))
   .map(name=>sourcePath('peripherals/'+name));
-for(const name of ['reset_input.c','clki_input.c','clki_clock.c'])
+for(const name of ['reset_input.c','clki_input.c','clki_clock.c','clki_validation.c','clki_periodic.c'])
   sources.push(sourcePath('devices/attiny13a/'+name));
 const header=join(native,'peripherals/device.h').replaceAll('\\','/');
 const create=compileAnalog('attiny13a-clki-board',sources,`

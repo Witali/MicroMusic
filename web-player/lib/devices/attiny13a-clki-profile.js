@@ -1,4 +1,5 @@
-// Ideal digital CLKI fixture; no electrical pulse qualification is implied.
+// Digital CLKI phase fixture, with optional explicitly selected ideal-signal
+// datasheet checks. Neither profile reconstructs analog threshold crossings.
 export const CLKI_PHASE_POLICY='digital-noninverting-zero-seed-v1';
 export function normalizeClkiProfile(value){
   if(value===null)return null;

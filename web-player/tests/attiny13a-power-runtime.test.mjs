@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {ATtiny13A,runtimeModule} from '../lib/attiny13a.js';
-import {createPackage} from '../lib/attiny13a-package.js';
+import {createPackage,PACKAGE_VERSION} from '../lib/attiny13a-package.js';
 import {runtimeABI,transpileAVR} from '../lib/avr-transpiler.js';
 import {avr,IO,sequential} from './fixtures/attiny13a-system-firmware.mjs';
 
@@ -45,7 +45,7 @@ test('cold-supply package preserves its explicit power profile and release-only 
   const runtime=new Uint8Array(await readFile(new URL('../wasm/attiny13a.wasm',import.meta.url)));
   const abi=runtimeABI(new WebAssembly.Instance(runtimeModule).exports);
   const pkg=await createPackage({flash:loop,configuration,runtime,translated:transpileAVR(loop,abi).bytes});
-  assert.equal(pkg.version,4);const c=await ATtiny13A.fromPackage(pkg);
+  assert.equal(pkg.version,PACKAGE_VERSION);const c=await ATtiny13A.fromPackage(pkg);
   assert.equal(c.state().powerResetEnabled,true);assert.equal(c.state().resetHeld,true);assert.equal(c.state().vccMicrovolts,0);
   c.setVccPs({at:1000000n,microvolts:5000000});c.runUntilPs(1000000n);
   assert.equal(c.state().startupDeadlinePs,3000000n);assert.equal(c.state().starting,true);

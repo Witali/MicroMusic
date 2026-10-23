@@ -9,9 +9,13 @@
 #include "device_clock.h"
 #include "power_reset.h"
 #include "../devices/attiny13a/reset_input.h"
+#include "../devices/attiny13a/clki_input.h"
+#include "../devices/attiny13a/clki_clock.h"
+#include "../devices/attiny13a/clki_validation.h"
+#include "../devices/attiny13a/clki_periodic.h"
 #include <stddef.h>
 
-enum { PIN_CAPACITY=1024, INPUT_CAPACITY=128,
+enum { PIN_CAPACITY=1024, INPUT_CAPACITY=128, CLKI_CAPACITY=512,
  CLKPR=AT13_IO_CLKPR, OSCCAL=AT13_IO_OSCCAL, BODCR=AT13_IO_BODCR };
 typedef struct {
  uint64_t at;
@@ -46,6 +50,17 @@ typedef struct {
  attiny13a_reset_input_t reset_input;
  uint32_t reset_input_config[7];
  uint8_t reset_input_enabled;
+ uint8_t clki_enabled,clki_aligned,clki_status,clki_edge;
+ attiny13a_clki_input_t clki_input;
+ attiny13a_clki_edge_t clki_storage[CLKI_CAPACITY];
+ attiny13a_clki_clock_t clki_clock;
+ attiny13a_clki_periodic_t clki_periodic;
+ uint64_t clki_declared_horizon;
+ uint64_t clki_last_rise,clki_reset_arm,clki_reset_wait_until,clki_wdt_arm;
+ uint32_t clki_reset_ck,clki_wdt_reset_ck;
+ attiny13a_clki_validation_t clki_validation;
+ int32_t clki_min_edge_vcc,clki_min_period_vcc,clki_max_period_vcc;
+ uint8_t clki_validation_enabled;
  int32_t analog_uv[6];
  timer0_t timer;
  system_gpio_t gpio;
@@ -67,9 +82,19 @@ static uint32_t power_configuration[10];
 static uint16_t power_fields;
 static uint32_t reset_input_configuration[7];
 static uint8_t reset_input_fields;
+static uint8_t clki_configuration[3],clki_initial_set;
 static void reset_state(uint8_t sources_mask);
 static void clock_domains(void);
 static void mirror(void);
+static void clki_reset_startup(uint8_t sources);
+static int clki_prepare(void);
+static void clki_service(uint64_t previous_half);
+static uint64_t clki_next_edge(void);
+static int clki_fetch_ready(void);
+static void clki_wake(void);
+static void clki_watchdog_reset(void);
+static void gpio_external(void);
+static int clki_advance(uint64_t wanted,uint64_t wall,uint64_t *consumed);
 
 /* Reuse only an unchanged, same-base serviced state. An absolute deadline is
  * not assumed invariant across any clock advance, including a zero delta. */
@@ -161,8 +186,11 @@ static uint64_t after_units(uint64_t units, uint64_t rate, uint64_t remainder) {
  if (!units) return board.base;
  return add(board.base,duration(units,base_frequency(),rate,remainder));
 }
-static int reset_starting(void) { return board.base<board.reset_until; }
+static int reset_starting(void) {
+ return board.clki_enabled ? board.clki_reset_ck!=0 || board.base<board.clki_reset_wait_until : board.base<board.reset_until;
+}
 static void reset_startup(uint8_t sources) {
+ if(board.clki_enabled){clki_reset_startup(sources);return;}
  board.reset_until=0;
  if (!board.config[DEVICE_CFG_FUSE_STARTUP_PROFILE] || board.reset_held) return;
  uint8_t low=(uint8_t)board.config[DEVICE_CFG_FUSE_LOW];
@@ -223,7 +251,7 @@ static void power_other_sources(void) {
 }
 static void external_reset_sync(void) {
  if(board.power_enabled){power_other_sources();return;}
- uint8_t held=(uint8_t)external_reset_asserted();
+ uint8_t held=(uint8_t)(external_reset_asserted()||board.clki_wdt_reset_ck);
  if(held&&!board.reset_held)board.reset_requested|=SYSTEM_EXTRF;
  uint8_t released=board.reset_held&&!held;
  board.reset_held=held;
@@ -239,6 +267,7 @@ static void reset_input_voltage(void) {
 static uint64_t at_half(uint64_t half) {
  if (half==UINT64_MAX) return UINT64_MAX;
  if (half<=board.half) return board.base;
+ if(board.clki_enabled)return UINT64_MAX; /* Unknown future edge time, never Hz extrapolation. */
  return add(board.base,duration(half-board.half,base_frequency()*board.divisor,
   source_rate(),board.phase));
 }
@@ -328,6 +357,7 @@ static void clock_domains(void) {
  capture_pins(); pin_voltages();
 }
 static void wake(void) {
+ if(board.clki_enabled){clki_wake();return;}
  if (board.sleep.phase==SYSTEM_SLEEP_ASLEEP) {
   uint16_t pending=device_pending_irqs();
   uint32_t recovery_ns=board.power_enabled?board.power_config[DEVICE_POWER_RECOVERY_NS]:board.config[DEVICE_CFG_BOD_RECOVERY_NS];
@@ -386,7 +416,7 @@ static void inputs_at_current_time(void) {
   input_t *event=&board.inputs[board.input_head];
   if (!event->type) {
    board.external_mask=event->mask; board.external_levels=event->value;
-   system_gpio_external(&board.gpio,event->mask,event->value,board.half);
+   gpio_external();
    external_reset_sync();
   } else if(event->type==1) {
    board.analog_mask|=(uint8_t)(1u<<event->pin);
@@ -407,10 +437,15 @@ static void inputs_at_current_time(void) {
   capture_pins(); pin_voltages(); sources();
  }
 }
-static void service(uint64_t previous_half) {
- deadline_invalidate(DEADLINE_SERVICE);
+static void service_clocks(uint64_t previous_half) {
  system_gpio_t0_event_t t0[4];
- uint8_t edges=system_gpio_advance(&board.gpio,previous_half,board.half,t0);
+ uint8_t edges=0;
+ if(board.clki_enabled){
+  if(board.clki_edge){
+   uint8_t edge=system_gpio_clock(&board.gpio,board.clki_edge==2,board.half);
+   if(edge){t0[0]=(system_gpio_t0_event_t){board.half,edge};edges=1;}
+  }
+ }else edges=system_gpio_advance(&board.gpio,previous_half,board.half,t0);
  if (edges==255) { fail(DEVICE_FAULT_TIME,3); return; }
  if (!analog_advance(&board.analog,board.half)) fail(DEVICE_FAULT_ANALOG,9);
  int error=timer0_advance(&board.timer,cpu_cycle());
@@ -420,6 +455,8 @@ static void service(uint64_t previous_half) {
   error=timer0_external_edge(&board.timer,t0[i].half_cycle/2,t0[i].edge==SYSTEM_T0_RISING);
   if (error) fail(DEVICE_FAULT_TIMER,(uint32_t)error);
  }
+}
+static void service_async(void) {
  supply_guard();nvm_advance(&board.nvm,cpu_cycle(),board.ns);
  if(board.reset_input_enabled){
   if(!attiny13a_reset_input_advance(&board.reset_input,board.base))
@@ -436,13 +473,14 @@ static void service(uint64_t previous_half) {
   * pulses and NVM wall time still advance. Include the ending edge so that
   * the last stretched-reset interval is never counted as normal operation. */
  uint8_t wdt=SYSTEM_WDT_NONE;
- if (board.reset_held || (board.reset_until && board.base<=board.reset_until)) {
+ if (board.reset_held || reset_starting() || (board.reset_until && board.base<=board.reset_until)) {
   system_watchdog_wdr(&board.watchdog);
   board.watchdog.oscillator_tick=board.wdt_ticks;
   board.watchdog.cpu_cycle=cpu_cycle();
  } else wdt=system_watchdog_advance(&board.watchdog,cpu_cycle(),board.wdt_ticks);
  if (wdt&SYSTEM_WDT_RESET) {
-  if(board.power_enabled) {
+  if(board.clki_enabled)clki_watchdog_reset();
+  else if(board.power_enabled) {
    board.raw_other_reset|=POWER_RESET_WDRF;power_other_sources();
    board.wdt_reset_end=add(board.base,source_duration(2));
   } else board.reset_requested|=SYSTEM_WDRF;
@@ -450,17 +488,24 @@ static void service(uint64_t previous_half) {
  if (wdt&(SYSTEM_WDT_RESERVED|SYSTEM_WDT_TIME_REVERSED)) fail(DEVICE_FAULT_WATCHDOG,wdt);
  uint8_t sleep=system_sleep_advance(&board.sleep,board.base);
  if (sleep&SYSTEM_SLEEP_INVALID_TIME) fail(DEVICE_FAULT_SLEEP,sleep);
+}
+static void service_end(void) {
  if ((board.clkpr&128) && cpu_cycle()>=board.clkpr_until) board.clkpr&=15;
  bod_expire();
  /* Deterministic lower-bound CLKPR transition: the first active edge is one
   * old period after the write; the second is one new period after that edge.
   * Thus the new waveform is established at T1+T2, within section6.3.1's
   * documented range, without inventing an observable hardware ripple phase. */
- if (board.pending_divisor && board.half>=board.clkpr_switch_half) {
+ if (!board.clki_enabled && board.pending_divisor && board.half>=board.clkpr_switch_half) {
   board.divisor=board.pending_divisor; board.pending_divisor=0; board.phase=0;
  }
  timer_outputs(); sources();
  inputs_at_current_time(); wake(); check_faults(); mirror();
+}
+static void service(uint64_t previous_half) {
+ deadline_invalidate(DEADLINE_SERVICE);
+ if(board.clki_enabled){clki_service(previous_half);return;}
+ service_clocks(previous_half);service_async();service_end();
 }
 static uint64_t next_event_scan(void) {
  uint64_t next=at_cycle(timer0_next_event(&board.timer));
@@ -483,9 +528,13 @@ static uint64_t next_event_scan(void) {
  }
  if (board.watchdog.control&SYSTEM_WDCE) next=minimum(next,at_cycle(board.watchdog.unlock_until));
  if (board.clkpr&128) next=minimum(next,at_cycle(board.clkpr_until));
- if (board.pending_divisor) next=minimum(next,at_half(board.clkpr_switch_half));
+ if (board.pending_divisor&&!board.clki_enabled) next=minimum(next,at_half(board.clkpr_switch_half));
  next=minimum(next,system_sleep_next_event(&board.sleep));
- if (reset_starting()) next=minimum(next,board.reset_until);
+ if (reset_starting()&&!board.clki_enabled) next=minimum(next,board.reset_until);
+ if(board.clki_enabled){
+  next=minimum(next,clki_next_edge());
+  if(board.clki_reset_wait_until>board.base)next=minimum(next,board.clki_reset_wait_until);
+ }
  if (board.input_count) next=minimum(next,board.inputs[board.input_head].at);
  return next;
 }
@@ -504,14 +553,17 @@ static uint64_t next_event(void) {
 static void elapse(uint64_t target) {
  deadline_invalidate(DEADLINE_ELAPSE);
  uint64_t delta=target-board.base;
- uint64_t halves=ratio(delta,source_rate(),board.phase,
-  base_frequency()*board.divisor,&board.phase);
- board.half=add(board.half,halves);
+ if(!board.clki_enabled){
+  uint64_t halves=ratio(delta,source_rate(),board.phase,
+   base_frequency()*board.divisor,&board.phase);
+  board.half=add(board.half,halves);
+ }
  board.ns=add(board.ns,rational(delta,1000000000,&board.ns_remainder));
  board.wdt_ticks=add(board.wdt_ticks,rational(delta,board.config[DEVICE_CFG_WATCHDOG_HZ],&board.wdt_remainder));
  board.base=target;
 }
 static void advance_to(uint64_t target) {
+ if(board.clki_enabled)target=minimum(target,device_clki_horizon_ps());
  if (target<board.base) { fail(DEVICE_FAULT_TIME,5); return; }
  if (board.reset_requested) return;
  unsigned stagnant=0;
@@ -586,13 +638,15 @@ int device_init(uint8_t *data, uint8_t *flash, uint8_t *eeprom) {
  deadline_invalidate(DEADLINE_INIT);
  for (unsigned i=0;i<20;i++) board.config[i]=configuration[i];
  for (unsigned i=0;i<128;i++) board.calibration[i]=calibration_configuration[i];
- board.physical=calibration_configured;
+ board.clki_enabled=clki_configuration[0];
+ board.physical=calibration_configured||board.clki_enabled;
  board.power_enabled=(uint8_t)power_configuration[DEVICE_POWER_ENABLE];
  board.reset_input_enabled=(uint8_t)reset_input_configuration[DEVICE_RESET_INPUT_ENABLE];
  for(unsigned i=0;i<7;i++)board.reset_input_config[i]=reset_input_configuration[i];
  for(unsigned i=0;i<10;i++)board.power_config[i]=power_configuration[i];
  board.vcc_uv=(int32_t)board.config[DEVICE_CFG_VCC_UV];
  if (!data || !flash || !eeprom) { fail(DEVICE_FAULT_CONFIG,1); return 0; }
+ if(board.clki_enabled&&!clki_prepare())return 0;
  if(board.reset_input_enabled){
   if(!board.physical||reset_input_fields!=0x7e||
      !(board.config[DEVICE_CFG_FUSE_HIGH]&AT13_FUSE_HIGH_DWEN_MASK)){
@@ -620,7 +674,7 @@ int device_init(uint8_t *data, uint8_t *flash, uint8_t *eeprom) {
  if (board.physical) {
   uint32_t factory=board.calibration[board.config[DEVICE_CFG_FACTORY_OSCCAL96]];
   unsigned source=board.config[DEVICE_CFG_FUSE_LOW]&3;
-  if (!factory) { fail(DEVICE_FAULT_CONFIG,9); return 0; }
+  if (!factory&&calibration_configured) { fail(DEVICE_FAULT_CONFIG,9); return 0; }
   if ((source==1 || source==2) && factory!=board.config[DEVICE_CFG_OSCILLATOR_HZ]) {
    fail(DEVICE_FAULT_CONFIG,10); return 0;
   }
@@ -658,10 +712,11 @@ int device_init(uint8_t *data, uint8_t *flash, uint8_t *eeprom) {
  return !board.fault;
 }
 static void reset_state(uint8_t sources_mask) {
- board.reset_held=board.power_enabled?board.power.held:(uint8_t)external_reset_asserted();
+ board.reset_held=board.power_enabled?board.power.held:(uint8_t)(external_reset_asserted()||board.clki_wdt_reset_ck);
  board.clkpr=(board.config[DEVICE_CFG_FUSE_LOW]&16)?0:3;
  board.divisor=1u<<board.clkpr; board.phase=0; board.clkpr_until=0; board.prr=0;
  board.pending_divisor=0; board.clkpr_switch_half=0;
+ if(board.clki_enabled)attiny13a_clki_clock_reset_divisor(&board.clki_clock,(uint16_t)board.divisor);
  board.bodcr=board.bod_armed=board.bod_committed=board.bod_disabled=0;
  board.bod_arm_until=board.bod_sleep_until=board.bod_recovery_until=0;
  /* Section17.3: hardware always loads the 9.6MHz calibration byte, even
@@ -672,7 +727,8 @@ static void reset_state(uint8_t sources_mask) {
   board.calibration[board.data[32+OSCCAL]] : board.config[DEVICE_CFG_OSCILLATOR_HZ];
  timer0_init(&board.timer,NULL,0,cpu_cycle());
  system_gpio_reset(&board.gpio,board.config[DEVICE_CFG_FUSE_HIGH]&1);
- system_gpio_external(&board.gpio,board.external_mask,board.external_levels,board.half);
+ if(board.clki_enabled)board.gpio.clock_high=board.clki_clock.output_level;
+ gpio_external();
  analog_comparator_config_t config={board.config[9],board.config[10],0,(uint8_t)board.config[11]};
  analog_reset(&board.analog,(uint32_t)board.vcc_uv,board.config[4],(uint8_t)board.config[8],&config,board.half);
  system_watchdog_reset(&board.watchdog,sources_mask,cpu_cycle(),board.wdt_ticks);
@@ -739,7 +795,8 @@ uint32_t device_write(uint8_t io, uint8_t value, uint8_t mask) {
    else {
     board.clkpr=(uint8_t)code;
     board.pending_divisor=1u<<code;
-    board.clkpr_switch_half=multiply(add(cpu_cycle(),1),2);
+    if(board.clki_enabled)attiny13a_clki_clock_request_divisor(&board.clki_clock,(uint16_t)board.pending_divisor);
+    else board.clkpr_switch_half=multiply(add(cpu_cycle(),1),2);
    }
   }
  } else if (io==TIMER0_PRR) {
@@ -748,6 +805,7 @@ uint32_t device_write(uint8_t io, uint8_t value, uint8_t mask) {
   if (error) fail(DEVICE_FAULT_TIMER,(uint32_t)error);
   clock_domains();
  } else if (system_gpio_write_masked(&board.gpio,io,value,mask,board.half)) {
+  if(board.clki_enabled&&(board.gpio.ddrb&8))fail(DEVICE_FAULT_CLKI,1);
   capture_pins(); pin_voltages();
  } else if (nvm_owns_io(io)) {
   int program=io==NVM_EECR && (value&mask&NVM_EEPE) &&
@@ -774,7 +832,8 @@ uint32_t device_write(uint8_t io, uint8_t value, uint8_t mask) {
  else if (io==OSCCAL) {
   uint8_t cal=merged&127;
   if (cal!=(previous&127)) {
-   if (!board.physical) fail(DEVICE_FAULT_UNIMPLEMENTED_IO,OSCCAL);
+   if(board.clki_enabled)board.data[32+OSCCAL]=cal; /* The inactive RC curve cannot change CLKI. */
+   else if (!board.physical) fail(DEVICE_FAULT_UNIMPLEMENTED_IO,OSCCAL);
    else if (!board.calibration[cal]) fail(DEVICE_FAULT_OSCCAL,cal);
    else {
     unsigned source=board.config[DEVICE_CFG_FUSE_LOW]&3;
@@ -789,6 +848,7 @@ uint32_t device_write(uint8_t io, uint8_t value, uint8_t mask) {
  return stalls;
 }
 void device_advance_half(uint64_t halves) {
+ if(board.clki_enabled){fail(DEVICE_FAULT_CLOCK_CONTRACT,13);return;}
  if (!board.initialized) { fail(DEVICE_FAULT_CONFIG,5); return; }
  if (board.reset_requested || board.reset_held || reset_starting() || power_recovering()) return;
  uint64_t target=add(board.half,halves);
@@ -813,6 +873,7 @@ int device_advance_half_until_ps(uint64_t wanted,uint64_t wall,uint64_t *consume
  if(!board.initialized||!consumed){fail(DEVICE_FAULT_CONFIG,14);return -1;}
  if(!time_contract(1,12)||board.fault)return -1;
  if(wall<board.base){fail(DEVICE_FAULT_TIME,12);return -1;}
+ if(board.clki_enabled)return clki_advance(wanted,wall,consumed);
  if(board.reset_requested)return -1;
  if(board.reset_held||reset_starting())return 0;
  uint64_t before=board.half,target=add(before,wanted);
@@ -843,6 +904,7 @@ int device_advance_half_until_ps(uint64_t wanted,uint64_t wall,uint64_t *consume
  return *consumed==wanted;
 }
 uint64_t device_next_cpu_event(void) {
+ if(board.clki_enabled)return 0; /* No positive batch budget without proved future phases. */
  if (!board.initialized || board.fault || board.reset_requested || board.reset_held || reset_starting() || power_recovering()) return 0;
  uint64_t next=next_event();
  if (next==UINT64_MAX) return UINT64_MAX;
@@ -917,7 +979,7 @@ uint8_t device_lpm(uint16_t z) {
 }
 int device_halted(void) {
  return board.fault || board.reset_requested || board.reset_held || reset_starting() || power_recovering() || board.sleep.phase!=SYSTEM_SLEEP_RUNNING ||
-  nvm_cpu_halted(&board.nvm);
+  nvm_cpu_halted(&board.nvm) || (board.clki_enabled&&!clki_fetch_ready());
 }
 uint8_t device_sleep_phase(void) { return board.sleep.phase; }
 const device_pin_event_t *device_pin_state(void) {
@@ -927,12 +989,15 @@ const device_pin_event_ps_t *device_pin_state_ps(void) {
  return time_contract(1,2) ? &board.pins : NULL;
 }
 static uint64_t wait_until(uint64_t deadline) {
+ uint64_t requested=deadline;
+ if(board.clki_enabled)deadline=minimum(deadline,device_clki_horizon_ps());
  uint64_t before=cpu_cycle();
  if (deadline<board.base) { fail(DEVICE_FAULT_TIME,8); return 0; }
  while (device_halted() && !board.fault && !board.reset_requested && board.base<deadline) {
   uint64_t next=minimum(next_event(),deadline);
   advance_to(next);
  }
+ if(board.clki_enabled)board.clki_status=board.base==deadline&&device_halted() ? (deadline<requested?2:1) : 0;
  return cpu_cycle()-before;
 }
 uint64_t device_wait_until(uint64_t deadline) {
@@ -960,6 +1025,7 @@ int device_inject_digital(uint64_t at, uint8_t mask, uint8_t levels) {
 }
 int device_inject_digital_ps(uint64_t at,uint8_t mask,uint8_t levels) {
  if (!time_contract(1,4)) return 0;
+ if(board.clki_enabled&&(mask&8))return 0;
  input_t event={at,0,0,(uint8_t)(mask&63),(uint8_t)(levels&63),0};
  return queue_input(event);
 }
@@ -971,6 +1037,7 @@ int device_inject_analog(uint64_t at, uint8_t pin, int32_t uv) {
 }
 int device_inject_analog_ps(uint64_t at,uint8_t pin,int32_t uv) {
  if (!time_contract(1,5)) return 0;
+ if(board.clki_enabled&&pin==3)return 0;
  if (pin>5) { fail(DEVICE_FAULT_CONFIG,7); return 0; }
  input_t event={at,uv,1,0,0,pin};
  return queue_input(event);
@@ -1007,6 +1074,7 @@ uint64_t device_cpu_half_deadline_ps(uint64_t halves) {
  return time_contract(1,7) ? at_half(add(board.half,halves)) : 0;
 }
 uint64_t device_cpu_halves_until_ps(uint64_t deadline) {
+ if(board.clki_enabled)return 0;
  if (!time_contract(1,8) || deadline<=board.base) return 0;
  uint64_t remainder;
  uint64_t halves=ratio(deadline-board.base,source_rate(),board.phase,
@@ -1023,7 +1091,7 @@ uint64_t device_next_sample_ps(uint64_t start,uint64_t frame,uint32_t rate) {
 }
 uint64_t device_virtual_half(void) { return board.half; }
 uint32_t device_clkpr_divisor(void) { return board.divisor; }
-uint32_t device_oscillator_hz(void) { return board.oscillator_hz; }
+uint32_t device_oscillator_hz(void) { return board.clki_enabled?0:board.oscillator_hz; }
 uint8_t device_power_enabled(void) { return board.power_enabled; }
 int32_t device_vcc_microvolts(void) { return board.vcc_uv; }
 uint8_t device_bod_disabled(void) { return board.bod_disabled; }
@@ -1032,6 +1100,7 @@ uint8_t device_reset_requested(void) { return board.reset_requested; }
 uint8_t device_reset_held(void) { return board.reset_held; }
 uint8_t device_starting(void) { return (uint8_t)reset_starting(); }
 static uint64_t startup_deadline(void) {
+ if(board.clki_enabled)return board.reset_held||reset_starting()?UINT64_MAX:board.base;
  return board.reset_held ? UINT64_MAX : reset_starting() ? board.reset_until : board.base;
 }
 uint64_t device_startup_deadline(void) { return time_contract(0,10) ? startup_deadline() : 0; }
@@ -1040,3 +1109,5 @@ uint64_t device_flash_generation(void) { return board.nvm.flash_generation; }
 uint32_t device_take_dirty_pages(void) { return nvm_take_dirty_pages(&board.nvm); }
 uint32_t device_fault(void) { return board.fault; }
 uint32_t device_fault_detail(void) { return board.detail; }
+
+#include "../devices/attiny13a/clki_board.inc"

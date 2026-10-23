@@ -41,6 +41,7 @@ export class ATtiny13A extends TranslatedCore {
     const clkiProfile=normalizeClkiProfile(options.clkiProfile??null);
     if(clkiProfile&&(options.resumable!==true||((options.fuseLow??0x7a)&3)!==0))
       throw Error('clkiProfile requires resumable:true and CKSEL00');
+    if(clkiProfile&&((options.wakeStartupHalf??0)%2))throw Error('clkiProfile requires whole source CK wake startup');
     super(binary,eeprom,{...options,fastIdle:false,runtimeModule:options.runtimeModule,configureRuntime:exports=>{
       if(options.resumable!==undefined&&typeof options.resumable!=='boolean')throw Error('resumable must be a boolean');
       if(options.resumable){
@@ -91,6 +92,8 @@ export class ATtiny13A extends TranslatedCore {
     this._ps=!!this._exports.avr_device_physical_mode?.();
     this._clki=!!this._exports.avr_device_clki_enabled?.();
     if(clkiProfile&&!this._clki)throw Error('CLKI profile unavailable');
+    if(clkiProfile?.electricalValidation==='datasheet-ideal-v1'&&!this._exports.avr_device_clki_validation_enabled?.())
+      throw Error('CLKI electrical validation unavailable');
     this.fastIdle=options.fastIdle??true;
   }
   _refreshFlash(){
@@ -182,7 +185,8 @@ export class ATtiny13A extends TranslatedCore {
     const e=this._exports,horizon=BigInt.asUintN(64,e.avr_device_clki_horizon_ps());
     if(knownUntilPs===0xffffffffffffffffn||knownUntilPs<horizon)throw Error('Invalid CLKI known-input horizon');
     if(!Array.isArray(edges))throw Error('CLKI edges must be an array');
-    let previous=horizon,level;
+    const periodic=BigInt.asUintN(64,e.avr_device_clki_periodic_remaining());
+    let previous=horizon,level=e.avr_device_clki_level()^(e.avr_device_clki_count()&1)^Number(periodic&1n);
     // Validate the whole batch before touching the shared staging region.
     const batch=Array.from(edges,edge=>{
       if(!edge||typeof edge!=='object'||Array.isArray(edge)||Object.keys(edge).sort().join()!=='level,timePs')
@@ -205,6 +209,20 @@ export class ATtiny13A extends TranslatedCore {
     const status=e.avr_device_clki_commit(batch.length,knownUntilPs);
     if(status===1)return true;if(status===-1)return false;
     throw Error('Invalid CLKI input batch (native status '+status+')');
+  }
+  injectClkiPeriodicPs({startPs,initialLevel,highPs,lowPs,transitionCount,knownUntilPs}){
+    if(!this._clki)throw Error('CLKI input requires clkiProfile');
+    const max=0xffffffffffffffffn;
+    for(const at of [startPs,knownUntilPs])if(timestampPs(at)===max)throw Error('Invalid CLKI periodic timestamp');
+    for(const value of [highPs,lowPs,transitionCount])timestampPs(value);
+    if(!highPs||!lowPs||(initialLevel!==0&&initialLevel!==1))throw Error('Invalid CLKI periodic durations or level');
+    const pairs=transitionCount/2n;
+    const end=startPs+pairs*highPs+pairs*lowPs+(transitionCount&1n?(initialLevel?highPs:lowPs):0n);
+    if(end>=max||knownUntilPs<end||startPs<BigInt.asUintN(64,this._exports.avr_device_clki_horizon_ps()))
+      throw Error('Invalid CLKI periodic interval or horizon');
+    const status=this._exports.avr_device_clki_periodic_ps(startPs,initialLevel,highPs,lowPs,transitionCount,knownUntilPs);
+    if(status===1)return true;if(status===-1)return false;
+    throw Error('Invalid CLKI periodic segment (native status '+status+')');
   }
   drainPins(){
     this._clockDomain(false);return this._drainPins('','baseHalf');
@@ -265,6 +283,7 @@ export class ATtiny13A extends TranslatedCore {
       remainingHalves:phase.getBigUint64(p.remaining-p.pointer,true),retired:phase.getBigUint64(p.retired-p.pointer,true)}}:{};
     const clki=this._clki?{clki:{horizonPs:BigInt.asUintN(64,exports.avr_device_clki_horizon_ps()),
       level:exports.avr_device_clki_level(),queued:exports.avr_device_clki_count(),free:exports.avr_device_clki_free(),
+      periodicRemaining:BigInt.asUintN(64,exports.avr_device_clki_periodic_remaining()),
       status:['COMPLETE','WAIT_CLOCK','WAIT_INPUT'][exports.avr_device_clki_status()],
       aligned:!!exports.avr_device_clki_aligned(),startupCK:BigInt.asUintN(64,exports.avr_device_clki_startup_ck())}}:{};
     return {...super.state(),...time,...power,...resetInput,...continuation,...clki,clockDivisor:exports.avr_device_divisor(),

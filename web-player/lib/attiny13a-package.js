@@ -106,6 +106,7 @@ function normalizeConfiguration(input={},complete=false,version=PACKAGE_VERSION)
   if(configuration.nvmClockProfile===1&&!configuration.nvmCalibrationReferenceHz)fail('configuration nvmClockProfile requires a calibration reference');
   if(configuration.clkiProfile&&(configuration.resumable!==true||(configuration.fuseLow&3)!==0))
     fail('configuration clkiProfile requires resumable:true and CKSEL00');
+  if(configuration.clkiProfile&&configuration.wakeStartupHalf%2)fail('configuration clkiProfile requires whole source CK wake startup');
   if(configuration.resumable&&!configuration.osccalHz&&!configuration.clkiProfile)
     fail('configuration resumable requires physical time');
   if(configuration.fuseStartupProfile&&((configuration.fuseLow>>2)&3)===3)fail('configuration fuseStartupProfile uses reserved SUT11');
@@ -307,6 +308,10 @@ async function validateCode(translated,runtime,flash,manifest,version=PACKAGE_VE
     avr_device_clki_commit:signature([i32,i64],[i32]),avr_device_clki_horizon_ps:signature([],[i64]),
     avr_device_clki_count:signature([],[i32]),avr_device_clki_free:signature([],[i32]),avr_device_clki_level:signature([],[i32]),
     avr_device_clki_status:signature([],[i32]),avr_device_clki_aligned:signature([],[i32]),avr_device_clki_startup_ck:signature([],[i64]),
+    avr_device_clki_periodic_ps:signature([i64,i32,i64,i64,i64,i64],[i32]),
+    avr_device_clki_periodic_remaining:signature([],[i64]),
+    ...(configuration.clkiProfile.electricalValidation==='datasheet-ideal-v1'?
+      {avr_device_clki_validation_enabled:signature([],[i32])}:{}),
   })){
     const exported=r.exports.find(e=>e.name===name&&e.kind===0);
     if(!exported||!equal(r.signature(exported.index),type))fail('runtime export mismatch: '+name);

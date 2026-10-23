@@ -1,6 +1,7 @@
 #ifndef MICROMUSIC_ATTINY13A_DEVICE_H
 #define MICROMUSIC_ATTINY13A_DEVICE_H
 #include <stdint.h>
+#include "../devices/attiny13a/clki_input.h"
 
 /* One allocation-free board per WASM instance. All I/O addresses are offsets
  * 0..63; caller data-space addresses add 32. No CPU PC/stack/SREG ownership. */
@@ -26,7 +27,7 @@ enum {
  DEVICE_FAULT_CLKPR=11, DEVICE_FAULT_UNIMPLEMENTED_IO=12,
  DEVICE_FAULT_CLOCK_CONTRACT=13, DEVICE_FAULT_OSCCAL=14,
  DEVICE_FAULT_NVM_CLOCK_PROFILE=15, DEVICE_FAULT_POWER=16,
- DEVICE_FAULT_RESET_INPUT=17
+ DEVICE_FAULT_RESET_INPUT=17, DEVICE_FAULT_CLKI=18
 };
 enum {
  DEVICE_POWER_ENABLE=0, DEVICE_POWER_POR_ASSERT_UV=1, DEVICE_POWER_POR_RELEASE_UV=2,
@@ -73,6 +74,28 @@ int device_configure_reset_input(uint32_t field,uint32_t value);
 uint8_t device_reset_input_enabled(void);
 uint8_t device_reset_input_asserted(void);
 uint64_t device_reset_input_deadline_ps(void);
+/* Explicit digital CLKI fixture: field0 enables, field1 supplies initial PB3
+ * level; field2 selects optional datasheet-ideal-v1 validation. CKSEL00 and
+ * bounded CPU continuation are required by the host API.
+ * Physical1ps time does not require an unrelated internal RC calibration. */
+int device_configure_clki(uint32_t field,uint32_t value);
+uint8_t device_clki_enabled(void);
+uint8_t device_clki_validation_enabled(void);
+int device_clki_enqueue(const attiny13a_clki_edge_t *edges,uint32_t count,uint64_t known_until_ps);
+/* Finite exact periodic producer, lazily refilling the same edge queue in C.
+ * Start is at/after the old horizon; initial level must match the queued tail.
+ * No period is inferred from measurements and no edge exists beyond count. */
+int device_clki_periodic_ps(uint64_t start_ps,uint32_t initial_level,uint64_t high_ps,
+ uint64_t low_ps,uint64_t edge_count,uint64_t known_until_ps);
+uint64_t device_clki_periodic_remaining(void);
+uint64_t device_clki_horizon_ps(void);
+uint32_t device_clki_count(void);
+uint32_t device_clki_free(void);
+uint8_t device_clki_level(void);
+/* COMPLETE0, WAIT_CLOCK1 (known held interval), WAIT_INPUT2 (unknown future). */
+uint8_t device_clki_status(void);
+uint8_t device_clki_aligned(void);
+uint64_t device_clki_startup_ck(void);
 /* Pre-init, instance-specific CAL[0..127] -> internal RC Hz table. Zero means
  * unknown. Calling this opts into fixed1ps time. A factory entry is required;
  * for an internal RC source it must match configured oscillatorHz. No curve is

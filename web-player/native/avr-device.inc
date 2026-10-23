@@ -180,6 +180,28 @@ int avr_device_configure(int key,int value){return device_configure(key,value);}
 int avr_device_configure_osccal_hz(int cal,int hz){return device_configure_osccal_hz(cal,hz);}
 int avr_device_configure_power(int field,int value){return device_configure_power(field,value);}
 int avr_device_configure_reset_input(int field,int value){return device_configure_reset_input(field,value);}
+int avr_device_configure_clki(int field,int value){return device_configure_clki(field,value);}
+static attiny13a_clki_edge_t full_clki_batch[512];
+int avr_device_clki_enabled(void){return device_clki_enabled();}
+int avr_device_clki_validation_enabled(void){return device_clki_validation_enabled();}
+int avr_device_clki_periodic_ps(uint64_t start,int initial,uint64_t high,uint64_t low,uint64_t count,uint64_t horizon){
+ if(initial<0||initial>1)return AT13_CLKI_BAD_ARGUMENT;
+ int result=device_clki_periodic_ps(start,(uint32_t)initial,high,low,count,horizon);full_deadline();return result;
+}
+uint64_t avr_device_clki_periodic_remaining(void){return device_clki_periodic_remaining();}
+uintptr_t avr_device_clki_buffer(void){return (uintptr_t)full_clki_batch;}
+int avr_device_clki_capacity(void){return 512;}
+int avr_device_clki_commit(int count,uint64_t horizon){
+ if(count<0||count>512)return AT13_CLKI_BAD_ARGUMENT;
+ int result=device_clki_enqueue(full_clki_batch,(uint32_t)count,horizon);full_deadline();return result;
+}
+uint64_t avr_device_clki_horizon_ps(void){return device_clki_horizon_ps();}
+int avr_device_clki_count(void){return device_clki_count();}
+int avr_device_clki_free(void){return device_clki_free();}
+int avr_device_clki_level(void){return device_clki_level();}
+int avr_device_clki_status(void){return device_clki_status();}
+int avr_device_clki_aligned(void){return device_clki_aligned();}
+uint64_t avr_device_clki_startup_ck(void){return device_clki_startup_ck();}
 int avr_device_reset_input_enabled(void){return device_reset_input_enabled();}
 int avr_device_reset_input_asserted(void){return device_reset_input_asserted();}
 uint64_t avr_device_reset_input_deadline_ps(void){return device_reset_input_deadline_ps();}

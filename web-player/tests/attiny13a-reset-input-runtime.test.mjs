@@ -144,12 +144,12 @@ test('physical audio capture includes the analog reset edge without per-edge hos
   assert.equal(c.state().resetCount,1);assert.equal(c.state().deviceFault,0);
 });
 
-test('RESET package v4 retains the exact explicit profile and executes its supplied translation',async()=>{
+test('RESET package retains the exact explicit profile and executes its supplied translation',async()=>{
   const runtime=new Uint8Array(await readFile(new URL('../wasm/attiny13a.wasm',import.meta.url)));
   const abi=runtimeABI(new WebAssembly.Instance(runtimeModule).exports);
   const profile={...resetInputProfile},pkg=await createPackage({flash:loop,runtime,
     translated:transpileAVR(loop,abi).bytes,configuration:{...options,resetInputProfile:profile}});
-  assert.equal(pkg.version,4);profile.assertQualificationNs=999;
+  assert.equal(pkg.version,5);profile.assertQualificationNs=999;
   const decoded=await decodePackage(pkg);assert.deepEqual(decoded.configuration.resetInputProfile,resetInputProfile);
   decoded.options.resetInputProfile.assertQualificationNs=777;
   assert.equal(decoded.configuration.resetInputProfile.assertQualificationNs,50);

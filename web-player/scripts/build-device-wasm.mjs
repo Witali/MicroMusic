@@ -41,7 +41,12 @@ const nativeFiles = readdirSync(join(root, peripheralDir)).sort()
 // Select device-owned modules explicitly; adding another MCU must not silently
 // link its implementation into the ATtiny13A board.
 const deviceFiles=['web-player/native/devices/attiny13a/reset_input.c',
-  'web-player/native/devices/attiny13a/reset_input.h'];
+  'web-player/native/devices/attiny13a/reset_input.h',
+  'web-player/native/devices/attiny13a/clki_input.c','web-player/native/devices/attiny13a/clki_input.h',
+  'web-player/native/devices/attiny13a/clki_clock.c','web-player/native/devices/attiny13a/clki_clock.h',
+  'web-player/native/devices/attiny13a/clki_validation.c','web-player/native/devices/attiny13a/clki_validation.h',
+  'web-player/native/devices/attiny13a/clki_periodic.c','web-player/native/devices/attiny13a/clki_periodic.h',
+  'web-player/native/devices/attiny13a/clki_board.inc'];
 const sources = ['web-player/native/avr.c', ...nativeFiles.filter(name => name.endsWith('.c')),
   ...deviceFiles.filter(name=>name.endsWith('.c'))];
 const runtimeSource = readFileSync(join(root, sources[0]), 'utf8');

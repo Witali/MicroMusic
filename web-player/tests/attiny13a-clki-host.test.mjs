@@ -17,7 +17,7 @@ const stage=c=>new Uint8Array(c._exports.memory.buffer,c._exports.avr_device_clk
 test('CLKI selects physical time without an RC table and exposes complete source state',()=>{
   const c=make();assert.equal(c.state().timePs,0n);assert.equal(c.state().deviceFault,0);
   assert.equal(c.transpilation.executionMode,'resumable-v1');
-  assert.deepEqual(c.state().clki,{horizonPs:0n,level:0,queued:0,free:512,status:'COMPLETE',aligned:false,startupCK:0n});
+  assert.deepEqual(c.state().clki,{horizonPs:0n,level:0,queued:0,free:512,periodicRemaining:0n,status:'COMPLETE',aligned:false,startupCK:0n});
   for(const patch of [{resumable:false},{fuseLow:0x7a},{clkiProfile:{}},
     {clkiProfile:{...profile,phasePolicy:'unspecified'}},{clkiProfile:{...profile,initialLevel:true}}])
     assert.throws(()=>make(patch),/clkiProfile/);
@@ -46,8 +46,8 @@ test('the whole batch is validated before staging or native queue mutation',()=>
     assert.throws(()=>c.injectClkiPs(batch),/CLKI|timestamp|Timestamp/);
     assert.deepEqual(stage(c),before);assert.deepEqual(c.state(),state);
   }
-  assert.throws(()=>c.injectClkiPs({edges:[{timePs:1n,level:0}],knownUntilPs:2n}),/native status/);
-  assert.deepEqual(c.state(),state,'Native alternating-tail rejection is nonsticky and atomic');
+  assert.throws(()=>c.injectClkiPs({edges:[{timePs:1n,level:0}],knownUntilPs:2n}),/CLKI edge level/);
+  assert.deepEqual(stage(c),before);assert.deepEqual(c.state(),state,'Alternating-tail rejection is nonsticky and atomic');
 });
 
 test('staging uses exact uint64 ps and zero-filled16-byte edge records',()=>{
