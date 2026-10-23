@@ -25,7 +25,8 @@ export class Renderer {
     if (!Number.isFinite(sampleRate) || sampleRate < 8000 || sampleRate > 192000) throw new Error('Invalid audio sample rate');
     validateControls(cutoff, volume);
     if (!Number.isFinite(entry.pwmHz) || entry.pwmHz <= 0) throw new Error('Invalid audio configuration');
-    this.core = new Core(parseHex(entry.flashHex), entry.eepromHex ? parseHex(entry.eepromHex, 64) : null);
+    this.core = typeof Core==='function'
+      ? new Core(parseHex(entry.flashHex), entry.eepromHex ? parseHex(entry.eepromHex, 64) : null) : Core;
     this.channels=entry.audioChannels||1;
     if(![1,2].includes(this.channels))throw new Error('Unsupported audio channel count');
     this.nextValue=this.channels===2?()=>this.core.nextStereoDuty():()=>this.core.nextDuty();
