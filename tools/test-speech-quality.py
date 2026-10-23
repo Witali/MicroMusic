@@ -22,7 +22,10 @@ def main():
         'test-spectrogram-objective.py', 'test-hq4-excitation.py',
         'test-hq4-q3.py', 'test-q3-bell-hq4.py',
         'test-harmonic-tracks.py', 'test-hq4-q3-tracks.py',
-        'test-q3-track-rate.py'))
+        'test-q3-track-rate.py', 'test-hq4-q3-influence.py',
+        'test-partial-error-effects.py', 'test-partial-bounds.py',
+        'test-q3-phasebook.py', 'test-sin-partials.py',
+        'test-speech-regression.py'))
     for path in sorted(paths):
         name = 'speech_'+path.stem.replace('-', '_')
         spec = importlib.util.spec_from_file_location(name, path)
