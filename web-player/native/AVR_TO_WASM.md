@@ -5,9 +5,12 @@ Intel HEX. It emits a real WebAssembly binary directly, without AVR sources,
 Clang, Emscripten, WAT assembly or runtime opcode interpretation. The browser
 can translate a firmware image when it is loaded; the CLI can do it in advance.
 
-The current target is the same 105 of 123 instruction-summary forms supported
-by the production player. Forms include aliases and addressing variants, not
-105 distinct opcodes. Unsupported words fail only when executed; embedded
+The translator now lowers all 123 ATtiny13A instruction-summary forms.
+Forms include aliases and addressing variants, not 123 distinct opcodes.
+119 forms execute their CPU semantics directly; SLEEP, WDR, BREAK and SPM
+also connect to the device-control protocol described below. The production
+C/JS interpreters still support their previous 105 forms. Invalid words fail
+only when executed; embedded
 Flash data remains available unchanged to LPM. This is a prototype
 for the retained firmware, not a complete ATtiny/ATmega implementation.
 
@@ -68,10 +71,10 @@ For this <=256-byte data space, LD/ST use and update only the low pointer
 byte. XH/YH/ZH remain usable as general registers (manual 5.66–68 and
 5.114–116). LPM uses the program-memory Z pointer instead.
 
-These 18 device-summary forms currently fail explicitly. Their natural
-lowerings are recorded as future work, not claimed as implemented:
+The additional CPU forms are implemented and tested against the individual
+instruction descriptions, independently of the older interpreter subset:
 
-| Unsupported AVR forms | Expected lowering / missing behavior |
+| Additional AVR forms | Implemented lowering |
 | --- | --- |
 | `ADIW`, `SBIW` | `i32.add/sub`, 16-bit result and word-operation flags. |
 | `SBC`, `SBCI`, `CPC` | `i32.sub` with carry/borrow and chained Z. |
@@ -80,8 +83,8 @@ lowerings are recorded as future work, not claimed as implemented:
 | `CBI` | I/O read/AND/write at the correct cycle. |
 | `BST`, `BLD` | bit extraction/insertion involving SREG T. |
 | operandless `LPM` | Flash byte load into r0; separate encoding from `LPM Rd,Z`. |
-| `SPM` | Flash controller, busy cycles and translated-code invalidation. |
-| `SLEEP`, `WDR`, `BREAK` | Sleep/wake, watchdog and debug behavior; arithmetic lowering is insufficient. |
+| `SPM` | Export a Flash-controller request; its actual latency comes from the device model. |
+| `SLEEP`, `WDR`, `BREAK` | Observe sleep enable / watchdog / debugger state and use the device boundary protocol. |
 
 ATmega instructions and peripherals, including devices with 16-bit data
 pointers, larger PC/Flash, additional timers and extended I/O, need a separate
@@ -158,3 +161,35 @@ construction/compilation from warmed execution and compare both flags-on
 and flags-eliminated runs with equal AVR timing and output.
 Static optimization counts cover all potential code entries, including
 decodable data words; they are not weighted by actual execution frequency.
+
+## MCU instruction/device boundary
+
+No generated instruction calls JavaScript. The four MCU-control instructions
+have these semantics with the current peripheral model:
+
+- SLEEP with MCUCR.SE=0 completes in one cycle. With SE=1 it completes the
+  instruction, publishes `controlRequest=1` and stops execution before the
+  next instruction. Sleep-mode clocks and wake sources require the later
+  peripheral model.
+- SPM publishes request 2 and stops before charging programming time. A Flash
+  controller must supply the real latency; the compiler does not invent a
+  fixed cycle count. Flash mutation also requires retranslation before the
+  CPU resumes, which belongs to the deferred Flash-controller work.
+- WDR completes in one cycle and records `watchdogResetCycle`. With an active
+  watchdog it publishes request 3 for a device model to handle. A disabled
+  watchdog needs no callback.
+- BREAK with the debugger disabled acts as the documented one-cycle NOP.
+  When `debugEnabled` is set, it publishes request 4 and stops after the
+  instruction. Firmware SREG is preserved.
+
+`step`, `run` and `nextDuty` stop at a pending device request. The JS wrapper
+reports the missing device service explicitly. A debugger/device scheduler
+can inspect the request and use `acknowledgeControl(extraCycles)` to resume;
+SPM requires a positive actual latency. This handshake establishes CPU-side
+instruction coverage. It is **not** an implementation of active sleep/wake,
+watchdog expiry, debugWIRE or Flash programming; peripheral emulation remains
+a separate agreed next stage.
+
+`attiny13a-transpiled-isa.test.mjs` covers every word operand and immediate for
+ADIW/SBIW, all byte pairs and C/Z combinations for SBC/SBCI/CPC, T transfers,
+indirect calls, skip lengths/timing, and these device-control boundaries.

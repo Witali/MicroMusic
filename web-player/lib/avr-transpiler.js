@@ -44,14 +44,26 @@ export function decodeAVR(word, second = 0xffff) {
   else if(word===0x9518)name='RETI';
   else if(word===0x94f8)name='CLI';
   else if(word===0x9478)name='SEI';
+  else if(word===0x9409)name='IJMP';
+  else if(word===0x9509)name='ICALL';
+  else if(word===0x9588)name='SLEEP';
+  else if(word===0x95a8)name='WDR';
+  else if(word===0x9598)name='BREAK';
+  else if(word===0x95e8)name='SPM';
+  else if(word===0x95c8){name='LPM';d=0;}
+  else if((word&0xfe08)===0xfa00 || (word&0xfe08)===0xf800){name=word&0x200?'BST':'BLD';s=word&7;}
+  else if((word&0xff00)===0x9600 || (word&0xff00)===0x9700){name=word&0x100?'SBIW':'ADIW';d=24+2*((word>>4)&3);k=(word&15)|((word>>2)&48);}
+  else if((word&0xfc00)===0x0800)name='SBC';
+  else if((word&0xfc00)===0x0400)name='CPC';
+  else if((word&0xfc00)===0x1000)name='CPSE';
   else if((word&0xff0f)===0x9408){name='FLAG';d=(word>>4)&7;k=Number(!(word&128));}
   else if((word&0xf000)===0xd000){name='RCALL';k=sign(word&4095,2048);}
   else if((word&0xf000)===0xc000){name='RJMP';k=sign(word&4095,2048);}
   else if((word&0xf800)===0xf000){name='BRANCH';d=word&7;s=Number(!(word&0x400));k=sign((word>>3)&127,64);}
   else if((word&0xfc08)===0xfc00){name='SKIP';s=word&7;k=Number(!!(word&0x200));}
   else if((word&0xf000)===0xe000){name='LDI';d=16+((word>>4)&15);k=(word&15)|((word>>4)&240);}
-  else if([0x3000,0x5000,0x6000,0x7000].includes(word&0xf000)){
-    name=({0x3000:'CPI',0x5000:'SUBI',0x6000:'ORI',0x7000:'ANDI'})[word&0xf000];d=16+((word>>4)&15);k=(word&15)|((word>>4)&240);
+  else if([0x3000,0x4000,0x5000,0x6000,0x7000].includes(word&0xf000)){
+    name=({0x3000:'CPI',0x4000:'SBCI',0x5000:'SUBI',0x6000:'ORI',0x7000:'ANDI'})[word&0xf000];d=16+((word>>4)&15);k=(word&15)|((word>>4)&240);
   } else if((word&0xff00)===0x0100){name='MOVW';d=2*((word>>4)&15);s=2*(word&15);}
   else if(({0x0c00:'ADD',0x1c00:'ADC',0x1800:'SUB',0x2000:'AND',0x2400:'EOR',0x2800:'OR',0x2c00:'MOV',0x1400:'CP'})[word&0xfc00])
     name=({0x0c00:'ADD',0x1c00:'ADC',0x1800:'SUB',0x2000:'AND',0x2400:'EOR',0x2800:'OR',0x2c00:'MOV',0x1400:'CP'})[word&0xfc00];
@@ -59,7 +71,7 @@ export function decodeAVR(word, second = 0xffff) {
     name=({0x9401:'NEG',0x9403:'INC',0x940a:'DEC',0x9400:'COM',0x9406:'LSR',0x9405:'ASR',0x9407:'ROR',0x9402:'SWAP'})[word&0xfe0f];
   else if((word&0xfe0f)===0x9000 || (word&0xfe0f)===0x9200){name=word&0x200?'STS':'LDS';k=second;}
   else if((word&0xf800)===0xb000 || (word&0xf800)===0xb800){name=word&0x800?'OUT':'IN';k=((word>>5)&48)|(word&15);}
-  else if((word&0xff00)===0x9a00){name='SBI';d=(word>>3)&31;k=word&7;}
+  else if((word&0xfc00)===0x9800){name=['CBI','SBIC','SBI','SBIS'][(word>>8)&3];d=(word>>3)&31;k=word&7;}
   else if((word&0xfe0f)===0x920f)name='PUSH';
   else if((word&0xfe0f)===0x900f)name='POP';
   else if([0x900c,0x900d,0x900e,0x9009,0x900a,0x9001,0x9002,0x920c,0x920d,0x920e,0x9209,0x920a,0x9201,0x9202].includes(word&0xfe0f)){
@@ -81,8 +93,10 @@ export function runtimeABI(exports) {
   return {state,data:exports.avr_layout(4),rom:exports.avr_layout(2),frames:exports.avr_layout(11)};
 }
 
-const writes={ADD:63,ADC:63,SUB:63,CP:63,CPI:63,SUBI:63,NEG:63,AND:30,ANDI:30,OR:30,ORI:30,EOR:30,INC:30,DEC:30,COM:31,LSR:31,ASR:31,ROR:31};
-const pure=new Set(['NOP','LDI','MOV','MOVW','SWAP',...Object.keys(writes)]);
+const writes={ADD:63,ADC:63,SUB:63,CP:63,CPI:63,SUBI:63,NEG:63,SBC:63,SBCI:63,CPC:63,ADIW:31,SBIW:31,BST:64,AND:30,ANDI:30,OR:30,ORI:30,EOR:30,INC:30,DEC:30,COM:31,LSR:31,ASR:31,ROR:31};
+const reads={ADC:1,ROR:1,SBC:3,SBCI:3,CPC:3,BLD:64};
+const pure=new Set(['NOP','LDI','MOV','MOVW','SWAP','BLD',...Object.keys(writes)]);
+const instructionCycles=i=>['ADIW','SBIW'].includes(i.name)?2:1;
 const popcount=n=>{let count=0;for(;n;n&=n-1)count++;return count;};
 
 export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructions=32}={}) {
@@ -116,24 +130,34 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   }
   function alu(i,mask) {
     const {name,d,s,k}=i;let code=[];
+    if(['CP','CPI','CPC'].includes(name)&&!mask)return code;
     if(name==='NOP')return code;
     if(name==='LDI')return writeReg(d,constant(k));
     if(name==='MOV')return writeReg(d,reg(s));
     if(name==='MOVW')return bytes(writeReg(d,reg(s)),writeReg(d+1,reg(s+1)));
     if(name==='SWAP')return writeReg(d,or(shl(and(reg(d),constant(15)),4),shr(reg(d),4)));
+    if(name==='BST')return updateFlags(mask,()=>and(shr(reg(d),s),constant(1)));
+    if(name==='BLD')return writeReg(d,or(and(reg(d),constant(255^(1<<s))),shl(and(shr(flags(),6),constant(1)),s)));
+    if(name==='ADIW'||name==='SBIW'){
+      const subtract=name==='SBIW';
+      code.push(...set(0,or(reg(d),shl(reg(d+1),8))),...set(3,subtract?sub(X,constant(k)):add(X,constant(k))),...set(4,and(T,constant(65535))));
+      const n=shr(V,15),old=shr(X,15),overflow=subtract?and(old,xor(n,constant(1))):and(xor(old,constant(1)),n);
+      code.push(...updateFlags(mask,bit=>[subtract?lt(T,constant(0)):binary(0x4b,T,constant(65535)),eqz(V),n,overflow,xor(n,overflow)][bit]),...writeReg(d,V),...writeReg(d+1,shr(V,8)));
+      return code;
+    }
     code.push(...set(0,name==='ASR'?load8Signed(constant(abi.data+d)):reg(d)));
-    if(['ADD','ADC','SUB','CP','CPI','SUBI','NEG'].includes(name)){
-      const subtract=['SUB','CP','CPI','SUBI','NEG'].includes(name);
-      code.push(...set(1,['CPI','SUBI'].includes(name)?constant(k):name==='NEG'?X:reg(s)));
+    if(['ADD','ADC','SUB','CP','CPI','SUBI','NEG','SBC','SBCI','CPC'].includes(name)){
+      const subtract=['SUB','CP','CPI','SUBI','NEG','SBC','SBCI','CPC'].includes(name),chained=['SBC','SBCI','CPC'].includes(name);
+      code.push(...set(1,['CPI','SUBI','SBCI'].includes(name)?constant(k):name==='NEG'?X:reg(s)));
       if(name==='NEG')code.push(...set(0,constant(0)));
-      code.push(...set(2,name==='ADC'?and(flags(),constant(1)):constant(0)),
+      code.push(...set(2,name==='ADC'||chained?and(flags(),constant(1)):constant(0)),
         ...set(3,subtract?sub(sub(X,Y),C):add(add(X,Y),C)),...set(4,and(T,constant(255))));
       const n=shr(V,7), overflow=shr(and(and(subtract?xor(X,Y):xor(xor(X,Y),constant(255)),xor(X,V)),constant(128)),7);
       code.push(...updateFlags(mask,bit=>[
-        subtract?lt(T,constant(0)):binary(0x4b,T,constant(255)), eqz(V), n, overflow, xor(n,overflow),
+        subtract?lt(T,constant(0)):binary(0x4b,T,constant(255)), chained?and(eqz(V),and(shr(flags(),1),constant(1))):eqz(V), n, overflow, xor(n,overflow),
         subtract?lt(and(X,constant(15)),add(and(Y,constant(15)),C)):binary(0x4b,add(add(and(X,constant(15)),and(Y,constant(15))),C),constant(15)),
       ][bit]));
-      if(!['CP','CPI'].includes(name))code.push(...writeReg(d,V));
+      if(!['CP','CPI','CPC'].includes(name))code.push(...writeReg(d,V));
     }else{
       let value,overflow=constant(0),carry=and(X,constant(1));
       if(['AND','ANDI','OR','ORI','EOR'].includes(name)){
@@ -161,11 +185,25 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   }
   function effects(i) {
     const {name,d,s,k,pc:p}=i,next=(p+1)&511;
-    if(pure.has(name))return alu(i,writes[name]||0);
+    if(pure.has(name))return bytes(alu(i,writes[name]||0),set(7,constant(instructionCycles(i))));
+    if(['SLEEP','WDR','BREAK','SPM'].includes(name)){
+      // Device requests are exported globals, not calls from WASM into JS.
+      // SPM cannot invent a fixed latency; its controller completes it later.
+      if(name==='SPM')return bytes(constant(2),0x24,0,store8(flagsAddress,flags()),0x0f);
+      if(name==='SLEEP')return condition(and(reg(85),constant(32)),bytes(constant(1),0x24,0));
+      if(name==='BREAK')return condition([0x23,2],bytes(constant(4),0x24,0));
+      return bytes(binary(0xa0,stateF('cyc'),float(1)),0x24,1,condition(and(reg(65),constant(0x48)),bytes(constant(3),0x24,0)));
+    }
     if(name==='RJMP')return bytes(put('pc',constant((next+k)&511)),set(7,constant(2)));
     if(name==='BRANCH')return condition(eq(and(shr(flags(),d),constant(1)),constant(s)),bytes(put('pc',constant((next+k)&511)),set(7,constant(2))));
     if(name==='SKIP'){
       const skip=width(word(next));return condition(eq(and(shr(reg(d),s),constant(1)),constant(k)),bytes(put('pc',constant((next+skip)&511)),set(7,constant(1+skip))));
+    }
+    if(name==='CPSE'){
+      const skip=width(word(next));return condition(eq(reg(d),reg(s)),bytes(put('pc',constant((next+skip)&511)),set(7,constant(1+skip))));
+    }
+    if(name==='SBIC'||name==='SBIS'){
+      const skip=width(word(next));return bytes(clock(constant(1)),set(7,constant(0)),condition(eq(and(shr(reg(32+d),k),constant(1)),constant(name==='SBIS'?1:0)),bytes(put('pc',constant((next+skip)&511)),set(7,constant(skip)))));
     }
     if(name==='CLI')return set(5,and(flags(),constant(127)));
     if(name==='SEI')return bytes(set(5,or(flags(),constant(128))),put('irqDelay',constant(1)));
@@ -173,6 +211,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     if(name==='PUSH')return bytes(set(0,reg(d)),push(X),set(7,constant(2)));
     if(name==='POP')return bytes(pop(0),writeReg(d,X),set(7,constant(2)));
     if(name==='RCALL')return bytes(push(constant(next&255)),push(constant(next>>8)),put('pc',constant((next+k)&511)),set(7,constant(3)));
+    if(name==='IJMP'||name==='ICALL')return bytes(set(0,and(or(reg(30),shl(reg(31),8)),constant(511))),name==='ICALL'?bytes(push(constant(next&255)),push(constant(next>>8))):[],put('pc',X),set(7,constant(name==='ICALL'?3:2)));
     if(name==='RET'||name==='RETI'){
       let code=bytes(pop(0),pop(1),put('pc',and(or(shl(X,8),Y),constant(511))),set(7,constant(4)));
       if(name==='RETI')code.push(...set(5,or(flags(),constant(128))),put('irqDelay',constant(1)),
@@ -185,7 +224,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
       return code;
     }
     if(name==='IN')return bytes(clock(constant(1)),writeReg(d,reg(32+k)),set(7,constant(0)));
-    if(name==='OUT'||name==='SBI')return bytes(clock(constant(name==='SBI'?2:1)),set(7,call(IO,constant(name==='SBI'?d:k),name==='SBI'?or(reg(32+d),constant(1<<k)):reg(d))),guard(),set(5,load8(flagsAddress)));
+    if(name==='OUT'||name==='SBI'||name==='CBI')return bytes(clock(constant(name==='OUT'?1:2)),set(7,call(IO,constant(name==='OUT'?k:d),name==='SBI'?or(reg(32+d),constant(1<<k)):name==='CBI'?and(reg(32+d),constant(255^(1<<k))):reg(d))),guard(),set(5,load8(flagsAddress)));
     if(name==='LDS'||name==='STS'){
       if(k>=160)return fail(16);
       return bytes(set(0,reg(d)),put('pc',constant((p+2)&511)),clock(constant(2)),set(7,constant(0)),
@@ -219,7 +258,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   for(const i of decoded){
     if(!pure.has(i.name))leaders.add((i.pc+i.words)&511);
     if(['RJMP','RCALL','BRANCH'].includes(i.name))leaders.add((i.pc+1+i.k)&511);
-    if(i.name==='SKIP')leaders.add((i.pc+1+width(word(i.pc+1)))&511);
+    if(['SKIP','CPSE','SBIC','SBIS'].includes(i.name))leaders.add((i.pc+1+width(word(i.pc+1)))&511);
   }
   const blocks=[];
   for(let p=0;p<512;){
@@ -232,9 +271,12 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     for(let n=sequence.length-1;n>=0;n--){
       const i=sequence[n],written=writes[i.name]||0,needed=optimizeFlags?written&live:written;
       masks[n]=needed;removed+=popcount(written&~needed);computed+=popcount(needed);
-      live=(live&~written)|(['ADC','ROR'].includes(i.name)?1:0);
+      let read=reads[i.name]||0;
+      if(['SBC','SBCI','CPC'].includes(i.name))read=1|(needed&2);
+      if(i.name==='CPC'&&!needed)read=0;
+      live=(live&~written)|read;
     }
-    blocks.push({start:sequence[0].pc,end:p&511,instructions:sequence.length,cycles:sequence.length,masks,removed,computed,sequence});
+    blocks.push({start:sequence[0].pc,end:p&511,instructions:sequence.length,cycles:sequence.reduce((n,i)=>n+instructionCycles(i),0),masks,removed,computed,sequence});
   }
   const blockBodies=[];
   // Function local remapping is performed while emitting block ALU below.
@@ -268,17 +310,19 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
 
   const STEP=firstFunction+512+blocks.length+1, BLOCK=STEP+1, RUN=STEP+2, NEXT=STEP+3;
   const emptyBlock=bytes(constant(0));
-  const step=bytes(put('error',constant(0)),condition(or(lt(state('pc'),constant(0)),ge(state('pc'),constant(512))),fail(1)),state('pc'),0x11,1,0);
-  const block=bytes(put('error',constant(0)),condition(or(lt(state('pc'),constant(0)),ge(state('pc'),constant(512))),fail(1,true)),
+  const step=bytes(condition([0x23,0],[0x0f]),put('error',constant(0)),condition(or(lt(state('pc'),constant(0)),ge(state('pc'),constant(512))),fail(1)),state('pc'),0x11,1,0);
+  const block=bytes(condition([0x23,0],bytes(constant(0),0x0f)),put('error',constant(0)),condition(or(lt(state('pc'),constant(0)),ge(state('pc'),constant(512))),fail(1,true)),
     get(0),get(1),add(state('pc'),constant(512)),0x11,3,0);
   const run=bytes(set(1,constant(0)),0x02,0x40,0x03,0x40,
     condition(ge(get(1),get(0)),[0x0c,2]),
+    condition([0x23,0],[0x0c,2]),
     set(2,call(BLOCK,float(Infinity),sub(get(0),get(1)))),
     condition(state('error'),[0x0c,2]),condition(eqz(get(2)),bytes(call(STEP),set(2,constant(1)))),
     set(1,add(get(1),get(2))),condition(state('error'),[0x0c,2]),0x0c,0,0x0b,0x0b,get(1));
   const next=bytes(put('error',constant(0)),set(0,stateF('writes')),set(1,binary(0xa0,stateF('cyc'),float(9600000))),
     0x02,0x40,0x03,0x40,
     condition(binary(0x62,stateF('writes'),get(0)),[0x0c,2]),
+    condition([0x23,0],bytes(constant(0),0x0f)),
     condition(eqz(call(BLOCK,get(1),constant(2147483647))),call(STEP)),
     condition(state('error'),bytes(constant(0),0x0f)),
     condition(binary(0x64,stateF('cyc'),get(1)),fail(23,true)),0x0c,0,0x0b,0x0b,state('duty'));
@@ -301,14 +345,16 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   const body=(code,locals)=>{const content=bytes(vector(locals),code,0x0b);return bytes(uleb(content.length),content);};
   const codes=[...instructionBodies.map(code=>body(code,[[9,0x7f],[1,0x7c]])),
     ...blockBodies.map(code=>body(code,[[9,0x7f]])),body(emptyBlock,[]),body(step,[]),body(block,[]),body(run,[[2,0x7f]]),body(next,[[2,0x7c]])];
-  const exports=vector([['step',STEP],['block',BLOCK],['run',RUN],['nextDuty',NEXT]].map(([name,index])=>bytes(string(name),0,uleb(index))));
+  const exports=vector([...['controlRequest','watchdogResetCycle','debugEnabled'].map((name,index)=>bytes(string(name),3,index)),
+    ...[['step',STEP],['block',BLOCK],['run',RUN],['nextDuty',NEXT]].map(([name,index])=>bytes(string(name),0,uleb(index)))]);
   const mapping=decoded.map(({pc,word,name,d,s,k,words})=>({pc,byteAddress:pc*2,word,name,d,s,k,words}));
   const stats={decodableWords:decoded.filter(i=>i.name!=='unsupported').length,unsupportedWords:decoded.filter(i=>i.name==='unsupported').length,
     blocks:blocks.length,flagBitsComputed:blocks.reduce((n,b)=>n+b.computed,0),flagBitsEliminated:blocks.reduce((n,b)=>n+b.removed,0)};
   const manifest={schema:'micromusic-avr-transpiled-v1',device:'ATtiny13A',abi,optimizeFlags,maxBlockInstructions,stats,
     blocks:blocks.map(({sequence,...block})=>block),mapping};
   const output=Uint8Array.from(bytes([0,97,115,109,1,0,0,0],section(1,vector(types)),section(2,importSection),section(3,vector(functionTypes.map(uleb))),
-    section(4,[1,0x70,1,...uleb(1024),...uleb(1024)]),section(7,exports),section(9,bytes(1,0,constant(0),0x0b,vector(table.map(uleb)))),section(10,vector(codes)),
+    section(4,[1,0x70,1,...uleb(1024),...uleb(1024)]),section(6,vector([bytes(0x7f,1,constant(0),0x0b),bytes(0x7c,1,float(-1),0x0b),bytes(0x7f,1,constant(0),0x0b)])),
+    section(7,exports),section(9,bytes(1,0,constant(0),0x0b,vector(table.map(uleb)))),section(10,vector(codes)),
     section(0,bytes(string('micromusic.avr'),Array.from(new TextEncoder().encode(JSON.stringify(manifest)))))));
   return {bytes:output,manifest};
 }
