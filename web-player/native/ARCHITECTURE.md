@@ -14,6 +14,7 @@ excluded by [`EMULATION_SCOPE.md`](EMULATION_SCOPE.md).
 | Manufacturer definitions | `vendor/microchip/ATtiny_DFP/3.4.278/` | Original register, bit, fuse, vector and memory definitions with versioned provenance |
 | Generated register views | `lib/attiny13a-registers.*`, `native/attiny13a-registers.*` | C, JS, JSON and assembly views of the same official definitions |
 | ATtiny13A hardware | `native/peripherals/`, `native/devices/attiny13a/`, `native/avr-device.inc` | Device bus, timers, GPIO, ADC/comparator, sleep/reset, power, NVM and physical time |
+| ATtiny13A CLKI source | `native/devices/attiny13a/clki_{input,clock,periodic,validation}.*`, `clki_board.inc` | Bounded source edges, digital divider phase, finite periodic production and optional ideal timing qualification on the shared PB3 pad |
 | Shared generated-CPU loader | `lib/avr-transpiled-runtime.js` | Link emitted CPU functions to their native ABI and maintain the translation cache |
 | ATtiny13A host API | `lib/attiny13a-runtime.js` | Device configuration, queued external inputs, diagnostics and native pin capture |
 | Native runtime WASM | `wasm/attiny13a.wasm` | Compiled peripheral implementation and ABI bridges, with no host imports |
@@ -39,10 +40,21 @@ the hardware instance retains its state.
 The optional `resumable:true` execution mode uses the native80-byte phase
 context described in [`devices/attiny13a/cpu_phase.md`](devices/attiny13a/cpu_phase.md).
 It preserves instruction/IRQ progress across physical observation deadlines.
-Its first integration uses the existing internal clock and explicit OSCCAL
-table. The standalone CLKI input queue is a separate device-owned source;
-PB3, source-edge clocking and package integration remain pending. Package v4
-rejects the additional continuation ABI instead of dropping its state.
+It supports the internal physical clock with an explicit OSCCAL table and the
+external CLKI profile without a dummy RC table. CLKI transitions enter the
+device-owned native source queue, update PB3 and drive the divider, startup,
+sleep gates and peripheral clock domains. Known high/low holds preserve phase;
+an unknown input horizon returns `WAIT_INPUT`. Independent physical-time
+domains continue during a stopped source.
+
+Finite `highPs`/`lowPs`/transition-count descriptors lazily refill the same
+512-edge queue in C. They avoid JS work per edge; the scheduler still services
+each externally observable source edge rather than skipping the signal
+analytically. The named initial/divider phase is a deterministic digital policy,
+with optional ideal timing qualification and no measured silicon-phase claim.
+Package v5 preserves the execution mode and initial CLKI profile and validates
+the continuation ABI. Earlier package versions retain their original contracts;
+they do not acquire a saved continuation or source queue.
 
 Generated firmware bytes belong in compiler outputs or package assets. Keep
 handwritten device logic in source modules and keep imported manufacturer files
