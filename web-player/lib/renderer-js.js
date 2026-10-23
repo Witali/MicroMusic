@@ -45,6 +45,25 @@ export class Renderer {
     validateControls(cutoff, volume);
     this.targetCutoff = Math.min(cutoff, this.sampleRate * .45); this.targetVolume = volume;
   }
+  processRaw(raw,count) {
+    const output=new Float32Array(raw.length);let sum=0;
+    for(let n=0;n<count;n++){
+      if(this.filtered){
+        if(this.cutoff!==this.targetCutoff){
+          this.cutoff=this.targetCutoff+(this.cutoff-this.targetCutoff)*this.smoothing;
+          if(Math.abs(this.cutoff-this.targetCutoff)<1e-9)this.cutoff=this.targetCutoff;
+          for(const {lp} of this.filters)coefficients(lp,this.sampleRate,this.cutoff);
+        }
+        this.volume=this.targetVolume+(this.volume-this.targetVolume)*this.smoothing;
+      }
+      for(let ch=0;ch<this.channels;ch++){
+        const at=n*this.channels+ch,{hp,lp}=this.filters[ch];sum+=raw[at];
+        output[at]=this.filtered?filtered(lp,filtered(hp,raw[at]))*this.volume:raw[at];
+      }
+    }
+    this.frames+=count;this.core.rawSamples=raw;this.core.averagePWM=128+128*sum/raw.length;
+    return output;
+  }
   render(count) {
     if (!Number.isInteger(count) || count < 1 || count > 16384) throw new Error('Invalid audio block size');
     const output = new Float32Array(count*this.channels), raw = new Float32Array(count*this.channels);
