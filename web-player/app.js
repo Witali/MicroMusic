@@ -187,22 +187,21 @@ try {
     document.title='MicroMusic / ATtiny13A — речь HQ4';
     document.querySelector('.intro .eyebrow').textContent='ATtiny13A / РЕЧЬ ИЗ МАШИННОГО КОДА';
     document.querySelector('.intro h1').textContent='Речь в одном килобайте.';
-    document.querySelector('.subtitle').textContent='Автоматический подбор HQ4-T: сравните новые варианты на фразе «Чего тебе нужно?».';
-    document.querySelector('.library h2').textContent='Какой вариант звучит лучше?';
-    document.querySelector('.library-caption').textContent='Auto сохраняет разборчивость по STOI. «Спектр» допускает небольшое снижение STOI ради более близкой спектрограммы.';
-    $('speech-level-control').hidden=false;
+    document.querySelector('.subtitle').textContent='Три речевые фразы MiniLPC HQ4: машинные инструкции, таймер и PWM микроконтроллера.';
+    document.querySelector('.library h2').textContent='Выберите речевую фразу';
+    document.querySelector('.library-caption').textContent='По одной прошивке для каждой фразы. Речь воспроизводит эмулятор ATtiny13A.';
     document.querySelector('.source-only').hidden=true;
     const history=document.querySelector('.header-link');history.href='../ATtiny13A/Sound/AUDIO_REFERENCES.md';history.textContent='Звуковые эталоны ↗';
     $('original-player').textContent='Плеер из ChatGPT ↗';
     $('speech-audit').hidden=false;
-    document.querySelector('footer span:last-child').textContent='MiniLPC HQ4 / HQ4-T · Worker + AudioWorklet';
+    document.querySelector('footer span:last-child').textContent='MiniLPC HQ4 · Worker + AudioWorklet';
   }
   // Public speech playback needs only the source-built catalog. Local listening
   // can additionally use restored original WAVs and the archived ChatGPT player.
   const response=await fetch(speech?'./hq4-firmware.json':'./firmware.json');
   if (!response.ok) throw new Error('HTTP '+response.status);
   catalog=await response.json();
-  if(speech)document.querySelector('footer span:last-child').textContent=`MiniLPC HQ4 / HQ4-T · ${catalog.entries.length} образов · Worker + AudioWorklet`;
+  if(speech)document.querySelector('footer span:last-child').textContent=`MiniLPC HQ4 · ${catalog.entries.length} образа · Worker + AudioWorklet`;
   if(speech&&['127.0.0.1','localhost'].includes(location.hostname)) {
     try {
       const localResponse=await fetch('../build/hq4-preview/firmware.json');
