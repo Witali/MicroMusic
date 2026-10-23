@@ -1,0 +1,274 @@
+{
+  "schema": "micromusic-q3-kmap-music-unroll-benchmark-v1",
+  "hardware_tested": false,
+  "literal_q3_horner": {
+    "images": [
+      {
+        "name": "loop-floor",
+        "image": "C:\\Work\\MicroMusic\\.worktree\\speech-quality\\build\\q3-kmap-music-unroll\\loop-floor\\firmware.bin",
+        "entry": 232,
+        "rounded": false,
+        "horner": false,
+        "code_bytes": 458,
+        "generated_asm_sha256": "92879fb6fb17259c77787c0c1889f80e32db1a542a0e1ccb732937509d60e234",
+        "base_source": "ATtiny13A/Sound/codec/q3-kmap/hq4-floor.S",
+        "base_source_sha256": "92879fb6fb17259c77787c0c1889f80e32db1a542a0e1ccb732937509d60e234",
+        "image_sha256": "df29fb1f2e738f681627f3d5508e05d4d72c9af0660b8302a2ed25625347149b"
+      },
+      {
+        "name": "horner-floor",
+        "image": "C:\\Work\\MicroMusic\\.worktree\\speech-quality\\build\\q3-kmap-music-unroll\\horner-floor\\firmware.bin",
+        "entry": 232,
+        "rounded": false,
+        "horner": true,
+        "code_bytes": 482,
+        "generated_asm_sha256": "33fd1f41aecf1e40e0d94118d96f771a23546d1d74e4a9a4240675a89b8051f9",
+        "base_source": "ATtiny13A/Sound/codec/q3-kmap/hq4-floor.S",
+        "base_source_sha256": "92879fb6fb17259c77787c0c1889f80e32db1a542a0e1ccb732937509d60e234",
+        "image_sha256": "a70a82af399e5fbc9b578d71ca59cf5afbdb78a8111d1599765c1254ee8d1698"
+      },
+      {
+        "name": "loop-nearest",
+        "image": "C:\\Work\\MicroMusic\\.worktree\\speech-quality\\build\\q3-kmap-music-unroll\\loop-nearest\\firmware.bin",
+        "entry": 232,
+        "rounded": true,
+        "horner": false,
+        "code_bytes": 464,
+        "generated_asm_sha256": "3dd3c01f5cccaea93e68f25cbe8636078b0277d8ab3016d81315825c866b7d36",
+        "base_source": "ATtiny13A/Sound/codec/q3-kmap/hq4-rounded.S",
+        "base_source_sha256": "3dd3c01f5cccaea93e68f25cbe8636078b0277d8ab3016d81315825c866b7d36",
+        "image_sha256": "a0d826b61912286f98907131ebb7f61fabcd24df6fd5a6adad2643633ef6731e"
+      },
+      {
+        "name": "horner-nearest",
+        "image": "C:\\Work\\MicroMusic\\.worktree\\speech-quality\\build\\q3-kmap-music-unroll\\horner-nearest\\firmware.bin",
+        "entry": 232,
+        "rounded": true,
+        "horner": true,
+        "code_bytes": 488,
+        "generated_asm_sha256": "6d0fb39ebbd9958d573e090d8684873e376874857f97fb8fe57f94de665ec204",
+        "base_source": "ATtiny13A/Sound/codec/q3-kmap/hq4-rounded.S",
+        "base_source_sha256": "3dd3c01f5cccaea93e68f25cbe8636078b0277d8ab3016d81315825c866b7d36",
+        "image_sha256": "d8391d2b315b27d273f85e874c9d763d972b804119befb022dd8e1824564ad7b"
+      }
+    ],
+    "verification": {
+      "checked": 92160,
+      "timing": [
+        {
+          "name": "loop-floor",
+          "body_cycles_including_ret_by_coefficient_magnitude": [
+            {
+              "minimum": 9,
+              "maximum": 9
+            },
+            {
+              "minimum": 26,
+              "maximum": 27
+            },
+            {
+              "minimum": 31,
+              "maximum": 32
+            },
+            {
+              "minimum": 36,
+              "maximum": 37
+            },
+            {
+              "minimum": 41,
+              "maximum": 42
+            },
+            {
+              "minimum": 46,
+              "maximum": 47
+            },
+            {
+              "minimum": 51,
+              "maximum": 52
+            },
+            {
+              "minimum": 56,
+              "maximum": 57
+            }
+          ],
+          "rcall_cycles": 3
+        },
+        {
+          "name": "horner-floor",
+          "body_cycles_including_ret_by_coefficient_magnitude": [
+            {
+              "minimum": 9,
+              "maximum": 9
+            },
+            {
+              "minimum": 38,
+              "maximum": 39
+            },
+            {
+              "minimum": 38,
+              "maximum": 39
+            },
+            {
+              "minimum": 38,
+              "maximum": 39
+            },
+            {
+              "minimum": 38,
+              "maximum": 39
+            },
+            {
+              "minimum": 38,
+              "maximum": 39
+            },
+            {
+              "minimum": 38,
+              "maximum": 39
+            },
+            {
+              "minimum": 38,
+              "maximum": 39
+            }
+          ],
+          "rcall_cycles": 3
+        },
+        {
+          "name": "loop-nearest",
+          "body_cycles_including_ret_by_coefficient_magnitude": [
+            {
+              "minimum": 9,
+              "maximum": 9
+            },
+            {
+              "minimum": 27,
+              "maximum": 28
+            },
+            {
+              "minimum": 32,
+              "maximum": 33
+            },
+            {
+              "minimum": 37,
+              "maximum": 38
+            },
+            {
+              "minimum": 42,
+              "maximum": 43
+            },
+            {
+              "minimum": 47,
+              "maximum": 48
+            },
+            {
+              "minimum": 52,
+              "maximum": 53
+            },
+            {
+              "minimum": 57,
+              "maximum": 58
+            }
+          ],
+          "rcall_cycles": 3
+        },
+        {
+          "name": "horner-nearest",
+          "body_cycles_including_ret_by_coefficient_magnitude": [
+            {
+              "minimum": 9,
+              "maximum": 9
+            },
+            {
+              "minimum": 39,
+              "maximum": 40
+            },
+            {
+              "minimum": 39,
+              "maximum": 40
+            },
+            {
+              "minimum": 39,
+              "maximum": 40
+            },
+            {
+              "minimum": 39,
+              "maximum": 40
+            },
+            {
+              "minimum": 39,
+              "maximum": 40
+            },
+            {
+              "minimum": 39,
+              "maximum": 40
+            },
+            {
+              "minimum": 39,
+              "maximum": 40
+            }
+          ],
+          "rcall_cycles": 3
+        }
+      ],
+      "pass": true
+    },
+    "limits": "Arithmetic and assembled core-size test; no complete-player timing claim for the literalQ3 Horner profile"
+  },
+  "matched_full_phrase": {
+    "samples": 22272,
+    "stream_bytes": 550,
+    "stream_sha256": "1092506bb83f3866f69fe0653fac029d518c084de269305ace5d5754c2fe4974",
+    "source_stream_sha256": "17d091101c3a59af16b6c0cbe9641164c11585608590a6b96472b229cf2bf34d",
+    "source_table_sha256": "ac6130432872408eb54cd4c08b0c1011f2cfc0ca72d431bb819ad5e864a377b3",
+    "coalesced_tail_frames": 20,
+    "pcm_equal": true,
+    "quality_assessed": false,
+    "reports": [
+      {
+        "profile": "stage-selected-Q3-Q7",
+        "code_bytes": 458,
+        "flash_bytes": 1010,
+        "eeprom_bytes": 64,
+        "stream_bytes": 550,
+        "image_sha256": "f638211cd03e1507037e0a33269ff61133144caf4aa709e0fc773a87ae8f5cfc",
+        "phrase_pcm_sha256": "d7508235d60e410e9426c0231458208914bc85c284f1aeea3cc3f27796cf20aa",
+        "verified_samples": 66816,
+        "maximum_completion_cycles": 1144,
+        "minimum_slack_cycles": 136,
+        "normalized_source_sha256": {
+          "ATtiny13A/Sound/codec/q3-kmap/hq4-floor.S": "92879fb6fb17259c77787c0c1889f80e32db1a542a0e1ccb732937509d60e234",
+          "tools/build-q3-kmap.py": "37cdc5a4eba9ec0571aee811b0ff433ab54c53bb6c9246bfedc18bf0cc7ec70f",
+          "ATtiny13A/Sound/codec/q3_kmap.py": "16175ea48286b7b9558619d8fae1ad25b9cb1c06a41a53cd0fa5f2cd5e1d27d3",
+          "ATtiny13A/Sound/codec/q3_pulsebook.py": "9252905ba28151205695f2927dfe5dbcd62d92cfc629e049bc272c63c9a90ed4",
+          "ATtiny13A/Sound/codec/hq4_core.py": "936c21384042c24be9525ff7cb73b6e1421c852b4a63ea393e318cc60e9bd466",
+          "tools/build-hq4-oneshot.py": "582cd97ffb7aac77238bd017cc2563e1856e2ac47e15686e9ecc9d2c95fab035",
+          "tools/build-tiny-speech.py": "242c393d1e7799684b039968909de71da7c16845dc4730201a5110eeb0b4182d",
+          "tools/verify-tiny-speech.mjs": "de7dd227a8aba5139ff0944c4023e46c71e40f6c6ac87fa794f9944d6a1e135b",
+          "tools/lib/tiny-work-profile.mjs": "35de6d7f062cb306bf1a18bd9bb5a433648d4646daf9c76da9f9d777b36568a3"
+        }
+      },
+      {
+        "profile": "unrolled-all-Q7",
+        "code_bytes": 470,
+        "flash_bytes": 1022,
+        "eeprom_bytes": 64,
+        "stream_bytes": 550,
+        "image_sha256": "74f2d79b23b1fd278331c6f8a3b37495cd199cfa11c28b607ee02224a6b0211d",
+        "phrase_pcm_sha256": "d7508235d60e410e9426c0231458208914bc85c284f1aeea3cc3f27796cf20aa",
+        "verified_samples": 66816,
+        "maximum_completion_cycles": 1166,
+        "minimum_slack_cycles": 114,
+        "normalized_source_sha256": {
+          "ATtiny13A/Sound/codec/q3-kmap/hq4-unrolled-floor.S": "2d9e8653b1078f07166c0f14d47a1cc9f8ac4a3d3c06c8b7800a28b5bd2f8fc3",
+          "tools/build-q3-kmap.py": "37cdc5a4eba9ec0571aee811b0ff433ab54c53bb6c9246bfedc18bf0cc7ec70f",
+          "ATtiny13A/Sound/codec/q3_kmap.py": "16175ea48286b7b9558619d8fae1ad25b9cb1c06a41a53cd0fa5f2cd5e1d27d3",
+          "ATtiny13A/Sound/codec/q3_pulsebook.py": "9252905ba28151205695f2927dfe5dbcd62d92cfc629e049bc272c63c9a90ed4",
+          "ATtiny13A/Sound/codec/hq4_core.py": "936c21384042c24be9525ff7cb73b6e1421c852b4a63ea393e318cc60e9bd466",
+          "tools/build-hq4-oneshot.py": "582cd97ffb7aac77238bd017cc2563e1856e2ac47e15686e9ecc9d2c95fab035",
+          "tools/build-tiny-speech.py": "242c393d1e7799684b039968909de71da7c16845dc4730201a5110eeb0b4182d",
+          "tools/verify-tiny-speech.mjs": "de7dd227a8aba5139ff0944c4023e46c71e40f6c6ac87fa794f9944d6a1e135b",
+          "tools/lib/tiny-work-profile.mjs": "35de6d7f062cb306bf1a18bd9bb5a433648d4646daf9c76da9f9d777b36568a3"
+        }
+      }
+    ]
+  },
+  "probe_source_sha256": "bf61dbeb40d51774d8cc0a421f4bb5bd3a712199b21ca47dbe026d4e093c7d1d"
+}
