@@ -8,11 +8,18 @@ export const root=fileURLToPath(new URL('../../../',import.meta.url));
 export const hash=data=>createHash('sha256').update(data).digest('hex');
 export const normalized=path=>readFileSync(path,'utf8').replaceAll('\r\n','\n');
 export const fixture=JSON.parse(readFileSync(new URL('../fixtures/block-optimizations.json',import.meta.url)));
-export const variants=['budget','alu','budget-alu'];
+export const variants=['generic','budget','alu','budget-alu'];
 export function candidateSource(source,variant){
   if(!variants.includes(variant))throw new Error('Unknown candidate '+variant);
   if(hash(source)!==fixture.baseSourceSha256)throw new Error('AVR C source changed: review and update optimization fixture');
-  for(const name of variant.split('-')){
+  // The selected optimizations may already be in production. Reconstruct the
+  // generic control first so each matrix row still isolates the named edits.
+  for(const name of fixture.applied??[]){
+    const {before,after}=fixture.edits[name];
+    if(source.split(after).length!==2)throw new Error('Applied edit must match exactly once: '+name);
+    source=source.replace(after,before);
+  }
+  for(const name of variant==='generic'?[]:variant.split('-')){
     const {before,after}=fixture.edits[name];
     if(source.split(before).length!==2)throw new Error('Candidate edit must match exactly once: '+name);
     source=source.replace(before,after);

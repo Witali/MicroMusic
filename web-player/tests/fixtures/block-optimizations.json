@@ -1,14 +1,18 @@
 {
   "schema": "micromusic-avr-optimization-fixture-v1",
-  "baseSourceSha256": "79c1297b12743d7496da6d2734085292d4a9a8a7ddd6e472065e87f01468bfe6",
+  "baseSourceSha256": "7559847026cfbc9566223ad2dbbe549bf9d934df0cfc13b8e0790b1b4ae8de6d",
   "edits": {
     "budget": {
       "before": "double budget=fmin(64,fmin(S(overflowAt)-S(cyc)-1,deadline-S(cyc)));",
-      "after": "double budget=64,remaining=S(overflowAt)-S(cyc)-1;if(remaining<budget)budget=remaining;remaining=deadline-S(cyc);if(remaining<budget)budget=remaining;"
+      "after": "double budget=64,remaining=S(overflowAt)-S(cyc)-1;\n if(remaining<budget)budget=remaining;\n remaining=deadline-S(cyc);if(remaining<budget)budget=remaining;"
     },
     "alu": {
       "before": "  case ADD:case ADC:case SUB:case CPI:case SUBI:\n   result=arithmetic_result(flags,data[d],o==CPI||o==SUBI?k:data[s],o==ADC?flags&1:0,o!=ADD&&o!=ADC);\n   flags=result>>8;if(o!=CPI)data[d]=result&255;break;",
       "after": "  case ADD:case ADC:\n   result=arithmetic_result(flags,data[d],data[s],o==ADC?flags&1:0,0);\n   flags=result>>8;data[d]=result&255;break;\n  case SUB:case CPI:case SUBI:\n   result=arithmetic_result(flags,data[d],o==SUB?data[s]:k,0,1);\n   flags=result>>8;if(o!=CPI)data[d]=result&255;break;"
     }
-  }
+  },
+  "applied": [
+    "budget",
+    "alu"
+  ]
 }

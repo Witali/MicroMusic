@@ -182,7 +182,8 @@ static int write_io(int a,int v) {
  if(a==0x29 && S(timer)){S(duty)=v;S(writes)++;}
  return 0;
 }
-static void clock_cycles(double n) {
+/* Keep the common timer path in the caller; Clang otherwise outlines it. */
+static __attribute__((always_inline)) inline void clock_cycles(double n) {
  double before=S(cyc);S(cyc)+=n;
  if(S(eempeUntil)<=S(cyc))IO(0x1c)&=~4;
  if(S(clkprUntil)<=S(cyc))IO(0x26)&=~128;
@@ -273,7 +274,12 @@ static int execute(void) {
  }
  if(!ERROR)S(pc)=(int)S(pc)&511;return n;
 }
-static void step_cpu(void) {int n=execute();if(!ERROR){clock_cycles(n);interrupt_cpu();}}
+static void step_cpu(void) {
+ int n=execute();
+ /* I/O instructions already advanced to their bus cycle. A positive return
+  * still includes EEPROM stalls; the public avr_clock(0) remains observable. */
+ if(!ERROR){if(n)clock_cycles(n);interrupt_cpu();}
+}
 static int skip_idle(void) {
  if(!S(timer)||!(FLAGS&128)||S(irqDelay)||PENDING||!(IO(0x39)&2))return 0;
  int p=(int)S(pc),kind=idle[p];if(!kind)return 0;double n;
@@ -285,7 +291,9 @@ static int skip_idle(void) {
 }
 static int run_block(double deadline) {
  if(S(irqDelay)||PENDING)return 0;
- double budget=fmin(64,fmin(S(overflowAt)-S(cyc)-1,deadline-S(cyc)));
+ double budget=64,remaining=S(overflowAt)-S(cyc)-1;
+ if(remaining<budget)budget=remaining;
+ remaining=deadline-S(cyc);if(remaining<budget)budget=remaining;
  int elapsed=0,count=0,p=(int)S(pc),flags=FLAGS;
  /* PC and SREG remain integers in locals until the event boundary. Register
   * and SRAM writes cannot alias SREG: I/O always takes the single-step path. */
@@ -296,8 +304,11 @@ static int run_block(double deadline) {
   case LDI:data[d]=k;break;
   case MOV:data[d]=data[s];break;
   case MOVW:data[d]=data[s];data[d+1]=data[s+1];break;
-  case ADD:case ADC:case SUB:case CPI:case SUBI:
-   result=arithmetic_result(flags,data[d],o==CPI||o==SUBI?k:data[s],o==ADC?flags&1:0,o!=ADD&&o!=ADC);
+  case ADD:case ADC:
+   result=arithmetic_result(flags,data[d],data[s],o==ADC?flags&1:0,0);
+   flags=result>>8;data[d]=result&255;break;
+  case SUB:case CPI:case SUBI:
+   result=arithmetic_result(flags,data[d],o==SUB?data[s]:k,0,1);
    flags=result>>8;if(o!=CPI)data[d]=result&255;break;
   case AND:data[d]&=data[s];flags=nzvs_flags(flags,data[d],0);break;
   case EOR:data[d]^=data[s];flags=nzvs_flags(flags,data[d],0);break;

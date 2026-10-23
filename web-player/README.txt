@@ -171,6 +171,8 @@ reports/block-benchmark.json. Повторить из корня репозит�
 
 ПРОВЕРКИ
 Наборы, кандидаты оптимизаций и длительные прогоны описаны в TESTING_RU.txt.
+Сравнение текущего C/WASM с прошлым коммитом: scripts/benchmark-native.mjs
+--baseline-ref <commit>. Условия и все времена: reports/native-speed-benchmark.json.
   node --test web-player/tests/*.test.mjs
   node web-player/scripts/benchmark-wasm.mjs
   node web-player/scripts/benchmark.mjs

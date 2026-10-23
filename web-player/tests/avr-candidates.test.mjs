@@ -5,10 +5,11 @@ import {fileURLToPath,pathToFileURL} from 'node:url';
 import * as bridge from '../lib/avr-wasm.js';
 import {candidateSource,fixture,hash,normalized,variants} from './helpers/native-candidates.mjs';
 const source=normalized(fileURLToPath(new URL('../native/avr.c',import.meta.url)));
-test('experimental edits are pinned to the reviewed C source and fail closed when stale',()=>{
+test('optimization controls are pinned to the reviewed C source and fail closed when stale',()=>{
   assert.equal(hash(source),fixture.baseSourceSha256);
   for(const variant of variants){
-    const candidate=candidateSource(source,variant);assert.notEqual(hash(candidate),hash(source));
+    const candidate=candidateSource(source,variant);
+    assert.equal(hash(candidate)===hash(source),variant===((fixture.applied??[]).join('-')||'generic'));
     for(const [name,edit] of Object.entries(fixture.edits)){
       assert.equal(candidate.includes(edit.after),variant.split('-').includes(name),name);
     }

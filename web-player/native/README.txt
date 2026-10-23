@@ -18,6 +18,12 @@ the compiler, flags, normalized source/build-script hashes and binary hash.
 The module has no host imports, no allocation and one fixed 64-KiB memory per
 CPU, including an 8-KiB stack and 4096-frame PCM/raw buffers. C double counters
 preserve exact integer clocks beyond 2^32; block-local PC/SREG use integers.
+The clock helper is forced inline for the verified Clang build. I/O instructions
+already account for their bus cycles; step_cpu calls the remaining clock only
+when nonzero, including EEPROM stalls. The exported avr_clock(0) still settles
+current events and expired control windows. The 64-cycle block cap and strict
+pre-overflow guard are unchanged. Separate add/subtract paths let Clang fold
+the ALU operation type; compare-based budgeting retains fmin's single-NaN rule.
 
 avr_layout and avr_field_name expose memory offsets and double state fields.
 lib/avr-wasm.js maintains typed views and the existing debugging API, including
@@ -37,6 +43,7 @@ Web Audio Q uses dB; the old graph sets Q to 20*log10(0.5).
 Verification:
   node --test web-player/tests/*.test.mjs
   node web-player/scripts/benchmark-wasm.mjs
+  node web-player/scripts/benchmark-native.mjs --baseline-ref <commit>
 Serve and open /web-player/tests/browser-smoke.html for real Worker and
 OfflineAudioContext comparisons. The independent JS DSP uses Direct Form I;
 the browser graph has stage rounding differences and is checked within 5e-5
