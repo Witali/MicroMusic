@@ -15,7 +15,7 @@ from pystoi import stoi
 from fixed_period import decode_fixed, pack_fixed, unpack_fixed, validate
 
 
-VERSION = 'fixed-speech-search-v1'
+VERSION = 'fixed-speech-search-v2'
 
 
 def _tuples(value):
@@ -25,12 +25,14 @@ def _tuples(value):
 class FixedSearch:
     def __init__(self, model, objective, *, seed=23074, stoi_weight=8., stoi_floor=None,
                  spectral_ceiling=None, max_peak=.95, max_data_bytes=None,
-                 restart_every=2000, dc_choices=(5, 6, 7), checkpoint=None):
+                 restart_every=2000, dc_choices=(5, 6, 7), objective_kind='balanced', checkpoint=None):
         validate(model)
         if len(objective.reference) != model['samples']:
             raise ValueError('Reference/model duration mismatch')
         if stoi_weight <= 0 or restart_every < 2 or not 0 < max_peak < 1:
             raise ValueError('Invalid fixed search configuration')
+        if objective_kind not in ('balanced', 'spectral'):
+            raise ValueError('Objective must be balanced or spectral')
         if not dc_choices or any(value not in (0, 5, 6, 7) for value in dc_choices):
             raise ValueError('Invalid DC choices')
         if model.get('dc_block_shift', 0) not in dc_choices:
@@ -39,7 +41,7 @@ class FixedSearch:
         self.initial_model = deepcopy(model)
         initial_pcm = decode_fixed(model)
         initial = self.score(model, initial_pcm)
-        self.config = dict(version=VERSION, seed=seed, stoi_weight=float(stoi_weight),
+        self.config = dict(version=VERSION, objective=objective_kind, seed=seed, stoi_weight=float(stoi_weight),
                            stoi_floor=initial['stoi'] if stoi_floor is None else float(stoi_floor),
                            spectral_ceiling=initial['log_spectral_error']*1.1 if spectral_ceiling is None else float(spectral_ceiling),
                            max_peak=float(max_peak), max_data_bytes=len(pack_fixed(model)) if max_data_bytes is None else int(max_data_bytes),
@@ -60,7 +62,7 @@ class FixedSearch:
         signed = pcm.astype(np.float64)-128
         audio = signed/128
         raw = decode_fixed(dict(model, dc_block_shift=0)) if model.get('dc_block_shift', 0) else pcm
-        windows = np.array_split(signed, max(1, len(signed)//64))
+        windows = [signed[start:start+64] for start in range(0, len(signed), 64)]
         return dict(**self.objective.spectrum(audio),
                     stoi=float(stoi(self.objective.reference, audio, self.objective.sr)),
                     peak=float(np.max(abs(audio))),
@@ -78,7 +80,8 @@ class FixedSearch:
                 score['data_bytes'] <= self.config['max_data_bytes'])
 
     def energy(self, score):
-        return (score['loss']+self.config['stoi_weight']*(1-score['stoi'])+
+        reward = self.config['stoi_weight']*(1-score['stoi']) if self.config['objective'] == 'balanced' else 0.
+        return (score['loss']+reward+
                 50*max(0., self.config['stoi_floor']-score['stoi'])+
                 50*max(0., score['log_spectral_error']-self.config['spectral_ceiling'])+
                 50*max(0., score['peak']-self.config['max_peak']))

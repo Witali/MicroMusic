@@ -72,6 +72,18 @@ class FixedSpeechTests(unittest.TestCase):
             model = candidate
         self.assertTrue({'frames', 'codebook', 'initial_phase_u16', 'dc_block_shift'} <= observed)
 
+    def test_spectral_polish_retains_floor_without_rewarding_excess_stoi(self):
+        search = FixedSearch(self.model, self.objective, objective_kind='spectral', seed=3,
+                             stoi_floor=.8, spectral_ceiling=1.)
+        first = dict(search.initial, stoi=.85)
+        second = dict(search.initial, stoi=.95)
+        self.assertEqual(search.energy(first), search.energy(second))
+        self.assertGreater(search.energy(dict(first, stoi=.79)), search.energy(first))
+        for _ in range(40):
+            search.step()
+        self.assertTrue(search.feasible(search.best[2]))
+        self.assertLessEqual(search.best[2]['loss'], search.initial['loss'])
+
 
 if __name__ == '__main__':
     unittest.main()
