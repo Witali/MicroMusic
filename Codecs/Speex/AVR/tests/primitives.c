@@ -43,6 +43,13 @@ int main(void)
             for (j = i; j && angles[j-1] > x; --j) angles[j] = angles[j-1];
             angles[j] = x;
         }
+        if (test<36) {
+            static const spx_lsp_t edge[6]={0,16,8192,12868,25720,25736};
+            /* Include extrema, mixed signs and zero cosine in both first
+             * polynomial pairs. Unordered inputs also stress saturation. */
+            for (i=0;i<10;i++) angles[i]=edge[(i&1)?test/6:test%6];
+            angles[2]=edge[test/6];angles[3]=edge[test%6];
+        }
         reference_lsp(angles, a, 10, arena.bytes);
         lsp_to_lpc(angles, b, 10, arena.bytes);
         assert(memcmp(a, b, sizeof(a)) == 0);

@@ -28,8 +28,15 @@ static inline __attribute__((always_inline)) void lsp_stage(spx_word32_t *p, spx
 #define STAGE_ATTR __attribute__((noinline))
 #endif
 static STAGE_ATTR spx_word16_t lsp_angle(spx_lsp_t angle) {return ANGLE2X(angle);}
+/* The first two roots give p1=-(a+b)*64 and p2=2^21+ceil(a*b/256).
+ * Fold the constant and ceil bias before the byte-aligned >>8. The sum
+ * stays inside signed32 for all signed16 a/b, including both extrema. */
+static STAGE_ATTR void lsp_first(spx_word32_t *p,spx_word16_t a,spx_word16_t b)
+{
+    p[1]=-ADD32(EXTEND32(a),EXTEND32(b))*64;
+    p[2]=SHR32(ADD32(MULT16_16(a,b),536871167),8);
+}
 #define DEFINE_STAGE(s) static STAGE_ATTR void lsp_stage##s(spx_word32_t *p, spx_word16_t f) {lsp_stage(p,f,s);}
-DEFINE_STAGE(1)
 DEFINE_STAGE(2)
 DEFINE_STAGE(3)
 DEFINE_STAGE(4)
@@ -43,10 +50,10 @@ void lsp_to_lpc(const spx_lsp_t *freq, spx_coef_t *ak, int lpcrdr, char *stack)
     (void)lpcrdr;
     (void)stack;
     p[0]=q[0]=1048576;
-    p[1]=-SHL32(EXTEND32(lsp_angle(freq[0])),6);
-    q[1]=-SHL32(EXTEND32(lsp_angle(freq[1])),6);
+    lsp_first(p,lsp_angle(freq[0]),lsp_angle(freq[2]));
+    lsp_first(q,lsp_angle(freq[1]),lsp_angle(freq[3]));
 #define STAGE(s) lsp_stage##s(p,lsp_angle(freq[2*s])); lsp_stage##s(q,lsp_angle(freq[2*s+1]))
-    STAGE(1); STAGE(2); STAGE(3); STAGE(4);
+    STAGE(2); STAGE(3); STAGE(4);
 #undef STAGE
     for (j = 1; j <= 10; ++j) {
         int index = j <= 5 ? j : 10-j;

@@ -30,6 +30,8 @@ binary measurements. Vendor and R4 files remain unmodified.
 - Shared Q14 signed48 ASM: 1,102 B Flash saved for 0.44% maximum frame cost;
   stack -1 B, no callee-saved registers. Generic signed30 semantics and the
   bounded LSP entry each passed 917,504 independent AVR cases.
+- Closed-form first LSP stage: 824 cycles/frame and 44 B Flash saved;
+  exact ceil handling, deterministic extrema and full upstream LSP/PCM checks.
 
 ## Next candidates (unmeasured)
 
@@ -39,10 +41,14 @@ binary measurements. Vendor and R4 files remain unmodified.
    next vector's pitch is computed. A 10-word pitch buffer could replace 40
    words, saving 120 B, but additional segment calls may cost cycles. Verify
    every short-pitch tail and compare speed before accepting.
-2. **Simplify the first LSP polynomial stage.** For cosine words a/b,
-   `p1=-(a+b)*64`, `p2=2^21+ceil(a*b/256)`. This may replace the first two
-   Q14 calls per conversion with 16x16 products and remove stage-0 stores.
-   Preserve ceil for negative products; measure register lifetimes and stack.
+2. **Skip zero pitch gains and empty segments.** Gain code 0 has three zero
+   taps; gain code 26 has a zero first tap. A write pass must still clear its
+   output, whereas an add pass can return immediately. Empty pitch segments
+   should avoid caller argument setup as well as the callee's quick return.
+3. **Special Q14 for p1.** This polynomial coefficient remains a multiple of
+   64. A signed16 x signed24 core followed by a byte-aligned >>8 might use six
+   hardware multiplies instead of eight. Preserve the original floor, prove
+   the input truncation/range and compare added code size against speed.
 
 No claim of a global speed optimum has been established. Do not mark the
 ongoing optimization goal complete while useful candidates remain untested.
