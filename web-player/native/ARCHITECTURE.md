@@ -2,6 +2,8 @@
 
 The project currently registers ATtiny13A. The CPU translator, device-specific
 hardware implementation and generated firmware are separate layers.
+The virtual device runs a supplied image; external programming interfaces are
+excluded by [`EMULATION_SCOPE.md`](EMULATION_SCOPE.md).
 
 | Layer | Source or artifact | Responsibility |
 |---|---|---|

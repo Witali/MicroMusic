@@ -4,6 +4,11 @@ Complete the AVR binary to WebAssembly path for ATtiny13A, with peripheral
 events synchronized to original CPU cycles and physical pin output collected
 inside WASM. Other ATtiny and ATmega devices require separate profiles.
 
+The virtual chip runs a supplied firmware image. External programming through
+ISP/HVSP or a simulated programmer is outside the current scope and acceptance
+criteria, as explicitly requested by the user. See
+[`EMULATION_SCOPE.md`](EMULATION_SCOPE.md).
+
 The current implementation lowers all 123 instruction-summary forms, connects
 the device bus and peripheral scheduler, retranslates modified Flash, and
 captures physical PWM output without JavaScript callbacks per instruction or
@@ -158,12 +163,22 @@ proceed when hardware is available.
   the Flash programming voltage boundary require an explicit profile. Below-
   voltage EEPROM/Flash operations retain uncertainty diagnostics across reset
   and every implicit NVM completion path.
-- [ ] Audit the external-clock, RESET electrical qualification and physical
+- [x] Audit the external-clock, RESET electrical qualification and physical
   pin characteristics against explicit board profiles; distinguish logical
   injections from analog signal recognition.
-- [ ] Audit serial ISP, high-voltage serial programming and debugWIRE coverage.
-  Loading a Flash/EEPROM package does not emulate these physical interfaces.
-  Do not infer undocumented protocols or electrical behavior.
+  The [interface inventory](devices/attiny13a/interfaces.md) records the
+  free-running external-clock fixture, prequalified digital RESET and missing
+  analog receiver as separate implementation boundaries.
+- [ ] Implement external CLKI source events and stopped-clock behavior while
+  preserving CPU instruction phases and independent peripheral time.
+- [ ] Add a separately profiled analog RESET receiver feeding the existing
+  reset aggregator; keep prequalified digital inputs explicit.
+- [x] Record the exclusion of ISP/HVSP and external-chip programming.
+  A ready firmware image initializes the virtual device directly. No external
+  programming backend or programmer transport is retained.
+- [ ] Resolve documented debugWIRE pin/reset behavior and unsupported DWEN
+  configurations. The audit found no authoritative wire protocol in the pinned
+  manufacturer definitions; do not invent one.
 - [ ] Track applicable silicon errata and represent undefined outcomes explicitly
   instead of silently inventing deterministic success or memory corruption.
 - [x] Use the manufacturer's official device definition files as the address
