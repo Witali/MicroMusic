@@ -1,0 +1,72 @@
+ATtiny13A watchdog and reset-status registers
+
+Source: Microchip ATtiny13A Data Sheet Complete DS40002307A (2021), sections
+8.2, 8.4 and 8.5, especially watchdog configuration Tables 8-1 and 8-2:
+https://ww1.microchip.com/downloads/aemDocuments/documents/MCU08/ProductDocuments/DataSheets/ATtiny13A-Data-Sheet-DS40002307A.pdf
+
+system_watchdog.c is an allocation-free standalone C/WASM peripheral. It exposes
+WDTCR at I/O offset 0x21 and MCUSR at 0x34 (data-memory addresses 0x41 and 0x54).
+It has no host imports or callbacks. The CPU/bus, reset fan-out, oscillator clock
+source, sleep and interrupt entry are owned by the embedding C/WASM scheduler.
+
+There are two independent time domains. cpu_cycle counts actual CPU/system
+clock edges for WDCE's protected write window. oscillator_tick is the absolute
+count of actual watchdog oscillator pulses. The latter nominally run at 128 kHz,
+but hardware frequency depends on operating conditions. The board supplies those
+ticks or their rational physical-time mapping; no fixed CPU/WDT divisor is
+assumed here. Stopping clkCPU/clkI/O or changing the system prescaler does not
+stop or rescale the watchdog oscillator. Call advance before same-time bus I/O.
+
+All documented WDP settings 0..9 are supported (2048 through 1048576 watchdog
+oscillator ticks). Selectors 10..15 are reserved by the datasheet: period returns
+zero and advance reports SYSTEM_WDT_RESERVED instead of inventing a timeout.
+
+An opening write must write both WDCE and WDE as one in the same bus operation.
+WDP and WDE clearing are allowed only while the old WDCE window is open. The
+opening write retains the old WDP value. A window opened at CPU edge c expires
+at c+4, before a write at that edge; writes at c+1,c+2,c+3 are accepted. A write
+clearing WDCE closes the window earlier. Masked writes of other bits neither
+open nor extend it. This explicit edge order is the scheduler contract for the
+four-cycle hardware window. WDE can be set outside the window. WDTIE can change
+without it. WDTIF is write-one-to-clear. MCUSR flags are write-zero-to-clear.
+
+init(always_on) initializes the WDTON fuse and applies power-on reset. The fuse
+forces WDE=1 and WDTIE=0, while still permitting protected prescaler changes.
+reset(sources,cpu,ticks) accumulates reset flags; a power-on reset clears earlier
+causes and sets PORF. WDRF forces WDE until software first clears WDRF, then uses
+the timed disable sequence. reset also resets WDP, WDCE, WDTIF, WDTIE and the
+counter. The core must actually reset all other peripherals and execution state.
+
+advance returns interrupt/reset event bits. until_timeout supplies the remaining
+watchdog pulses for scheduling the next event. In interrupt mode, timeouts latch
+WDTIF and coalesce; even millions of unserviced timeouts advance in constant time.
+pending exposes WDTIF && WDTIE; CPU owns SREG.I and vector 8 entry. ack clears
+WDTIF; in combined interrupt/reset mode, ack additionally clears WDTIE. If a
+combined-mode first interrupt is not serviced, the next timeout causes a reset,
+including when software clears WDTIF without executing its interrupt vector.
+wdr restarts the counter without changing register bits or combined-mode state.
+
+At a reset event, advance stops oscillator_tick at that event's exact tick and
+sets reset_requested; it does not consume the remainder of an overlong span.
+The scheduler should normally stop at until_timeout, arbitrate interrupts, and
+apply a reset at the recorded last_event_tick. If it requests a larger span,
+the CPU timestamp passed to advance is only a write-window timestamp, not an
+inferred CPU reset-event timestamp: the board must map the WDT reset tick back
+to its own physical-time/CPU scheduling domain. No cross-domain mapping is
+silently approximated. Backward CPU or watchdog times report an explicit error.
+
+The watchdog does not generate a JavaScript callback at a timeout or at any
+oscillator tick. Its timestamped event state is consumed by the C scheduler.
+This module is not wired into the current player until CPU integration occurs.
+Analog oscillator drift, electrical reset pulse widths, power supply, brown-out
+thresholds and fuse-dependent reset/startup stretching are separate board tasks.
+
+Verification:
+  node --test web-player/tests/system-watchdog.test.mjs
+
+Tests compile the source to import-free WASM in ignored build/system-watchdog-test
+using the read-only prepared Emscripten SDK, or EMSDK. They cover all periods,
+independent clocks, protection deadlines and bit writes, WDR, interrupt-only,
+reset-only and combined behavior, W1C/zero-clear semantics, WDTON/WDRF, reset
+history, explicit undefined/time errors, large batches and seeded batched versus
+individual oscillator pulses. No native executable or generated binary is kept.
