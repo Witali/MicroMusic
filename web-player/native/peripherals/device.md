@@ -63,6 +63,16 @@ explicit OSCCAL table selects the separate fixed1ps contract, `_ps` input/output
 and deadline APIs; legacy timed accessors then fail rather than changing units.
 See [runtime OSCCAL and physical time](device-osccal.md).
 
+Pin voltage propagation uses the comparator's stored PB0..PB5 voltages as its
+existing resolved-input state. Only changed voltages are injected, in ascending
+pin order; unchanged PB5 still settles events at the end of the board operation.
+Explicit analog overrides, GPIO levels, VCC changes and reset all use this same
+path, including PB3/ADC3 while CLKI owns the pin. No additional cache or reset
+invalidation protocol is needed. The analog scheduler processes all due events
+even at an already-serviced timestamp, then skips empty repeated module advances.
+Held trigger flags need no new ADC notification; ADTS/ADATE register writes keep
+their own edge handling. Sampling still precedes voltage mutation at equal time.
+
 Nanoseconds and watchdog pulses are rational conversions from elapsed
 `base_half` with retained remainders. They are never derived from executed
 instruction count. EEPROM/Flash programming and the watchdog therefore keep

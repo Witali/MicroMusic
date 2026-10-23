@@ -298,9 +298,18 @@ static void pin_voltages(void) {
  for (unsigned pin=0;pin<6;pin++) {
   int32_t voltage=(board.analog_mask&(1u<<pin)) ? board.analog_uv[pin] :
    ((board.gpio.pins.levels&(1u<<pin)) ? board.vcc_uv : 0);
-  /* analog_input advances sampling before mutating the physical voltage. */
-  if (!analog_input(&board.analog,(uint8_t)pin,voltage,board.half))
+  /* The comparator stores the resolved voltage of every PB pin, including
+   * ADC-only pins. Reuse that authoritative state across VCC, DDR and reset
+   * changes instead of maintaining a second cache that needs invalidation. */
+  if (voltage!=board.analog.comparator.pin_uv[pin]) {
+   /* Sampling still precedes each changed voltage, in ascending pin order. */
+   if (!analog_input(&board.analog,(uint8_t)pin,voltage,board.half))
+    fail(DEVICE_FAULT_ANALOG,1);
+  } else if (pin==5 && !analog_advance(&board.analog,board.half)) {
+   /* The old final PB5 update also settled any earlier same-time changes.
+    * Preserve that boundary even when every physical voltage is unchanged. */
    fail(DEVICE_FAULT_ANALOG,1);
+  }
  }
 }
 static void timer_outputs(void) {

@@ -2,7 +2,10 @@
 
 static void connect_sources(analog_t *a, uint64_t time) {
     uint8_t comparator_flag = (a->comparator.acsr & ANALOG_ACI) ? 2 : 0;
-    analog_adc_sources(&a->adc, a->external_flags | comparator_flag, time);
+    uint8_t flags = a->external_flags | comparator_flag;
+    /* Every caller has already advanced the ADC through time. Register writes
+     * handle changes to ADTS/ADATE themselves; a held flag has no new edge. */
+    if (flags != a->adc.source_flags) analog_adc_sources(&a->adc, flags, time);
 }
 
 void analog_reset(analog_t *a, uint32_t vcc_uv, uint32_t bandgap_uv,
@@ -27,8 +30,11 @@ int analog_advance(analog_t *a, uint64_t time) {
         analog_comparator_advance(&a->comparator, next);
         connect_sources(a, next);
     }
-    analog_adc_advance(&a->adc, time);
-    analog_comparator_advance(&a->comparator, time);
+    /* The event loop above must still run at an equal timestamp: an input,
+     * reference or control change can have scheduled zero-delay propagation.
+     * Once those events are settled, advancing either module again is empty. */
+    if (a->adc.half_cycle != time) analog_adc_advance(&a->adc, time);
+    if (a->comparator.half_cycle != time) analog_comparator_advance(&a->comparator, time);
     return 1;
 }
 

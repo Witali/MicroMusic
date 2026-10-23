@@ -113,6 +113,8 @@ int advance(uint64_t t) { return analog_advance(&a,t); }
 int read_io(int io,uint64_t t) { uint8_t v=0;return analog_read(&a,io,&v,t)?v:-1; }
 int write_io(int io,int v,uint64_t t) { return analog_write(&a,io,v,t); }
 int input(int pin,int uv,uint64_t t) { return analog_input(&a,pin,uv,t); }
+int reference(int vcc,int bg,uint64_t t) { return analog_reference(&a,vcc,bg,t); }
+int sleep_disable(int disabled,uint64_t t) { return analog_comparator_sleep(&a.comparator,disabled,t); }
 int flags(int v,uint64_t t) { return analog_sources(&a,v,t); }
 int pending(void) { return analog_pending(&a); }
 int ack(int vector,uint64_t t) { return analog_ack(&a,vector,t); }
@@ -142,4 +144,46 @@ test('combined event schedule is invariant to batch size for deterministic exter
   a.advance(1000n);for(let t=1n;t<=1000n;t++) b.advance(t);
   for(const io of [3,4,5,6,7,8]) assert.equal(a.read_io(io,1000n),b.read_io(io,1000n));
   assert.equal(a.count(),b.count());assert.equal(a.pending(),b.pending());
+});
+
+test('same-time advances service new zero-delay inputs and cancel a pulse before the next sampling edge',()=>{
+  const a=createSystem();a.reset();a.advance(0n);a.advance(0n);
+  a.input(0,2000000,0n);assert.equal(a.next_event(),0n);
+  a.advance(0n);assert.equal(a.next_event(),2n,'new propagation cannot reuse an earlier settled timestamp');
+  a.input(0,0,0n);a.advance(0n);assert.equal(a.next_event(),-1n);
+  assert.equal(a.read_io(8,4n)&0x30,0,'neither ACO nor ACI sees a pulse between clock edges');
+});
+
+test('same-time reference, control and direct sleep-domain changes reschedule comparator sampling',()=>{
+  const a=createSystem();a.reset();a.advance(0n);a.input(1,1000000,0n);
+  a.write_io(8,0x40,0n);a.advance(0n);assert.equal(a.next_event(),2n);
+  assert.equal(a.read_io(8,4n)&0x20,0x20);
+  a.reference(5000000,900000,4n);a.advance(4n);assert.equal(a.next_event(),6n);
+  assert.equal(a.read_io(8,8n)&0x20,0);
+  a.write_io(8,0x80,8n);a.input(0,2000000,8n);a.advance(8n);
+  a.write_io(8,0,8n);a.advance(8n);assert.equal(a.next_event(),10n);
+  assert.equal(a.read_io(8,12n)&0x20,0x20);
+  a.sleep_disable(1,12n);a.input(0,0,12n);a.advance(12n);
+  a.sleep_disable(0,12n);a.advance(12n);assert.equal(a.next_event(),14n);
+  assert.equal(a.read_io(8,16n)&0x20,0);
+});
+
+test('repeated held flags retain ADTS/ADATE write triggers and require a new edge after conversion',()=>{
+  const a=createSystem();a.reset();a.input(5,2500000,0n);
+  a.flags(8,0n);a.flags(8,0n);a.write_io(3,3,0n);a.write_io(6,0xa0,0n);
+  a.flags(8,0n);assert.equal(a.next_event(),6n);
+  a.advance(106n);assert.equal(a.count(),1n);
+  a.write_io(6,0xb0,106n);a.flags(8,106n);a.advance(200n);
+  assert.equal(a.count(),1n);assert.equal(a.read_io(6,200n)&0x10,0);
+  // Switching ADTS to a flag that is already high also supplies a rising edge.
+  a.flags(0x10,200n);a.write_io(3,4,200n);a.flags(0x10,200n);
+  a.advance(260n);assert.equal(a.count(),2n);
+  a.flags(0,260n);a.flags(0x10,260n);a.advance(320n);assert.equal(a.count(),3n);
+});
+
+test('coalesced same-time work still samples the old ADC voltage before an equal-time input',()=>{
+  const a=createSystem();a.reset();a.input(5,1250000,0n);a.write_io(6,0xc0,0n);
+  a.advance(58n);a.advance(58n);a.input(5,3750000,58n);a.flags(0,58n);
+  a.advance(104n);assert.equal(a.count(),1n);
+  assert.equal(a.read_io(4,104n)|(a.read_io(5,104n)<<8),256);
 });
