@@ -13,7 +13,12 @@ def main():
         'test-fixed-speech.py', 'test-speech-dc.py', 'test-speech-targets.py',
         'test-tiny-speech.py', 'test-tiny-speech-build.py', 'test-speech-pitch.py',
         'test-hq4-oneshot.py', 'test-hq4-speech-search.py', 'test-speech-spectrum.py',
-        'test-hq4-mixed.py'))
+        'test-hq4-mixed.py', 'test-prepare-speech-inputs.py',
+        'test-new-hq4-encoder.py', 'test-new-tiny-encoder.py',
+        'test-long-hq4.py', 'test-hq4-tonal-probe.py',
+        'test-bell-hq4.py', 'test-package-new-speech-trials.py',
+        'test-hq4-phase.py', 'test-hq4-precision.py',
+        'test-hq4-natural-timbre.py', 'test-natural-bell-hq4.py'))
     for path in sorted(paths):
         name = 'speech_'+path.stem.replace('-', '_')
         spec = importlib.util.spec_from_file_location(name, path)
