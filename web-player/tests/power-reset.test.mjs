@@ -25,6 +25,7 @@ int custom(int activate,int release,int center,int hysteresis) {
  return power_reset_init(&p,&profile,0xfb,0,5000000);
 }
 int vcc(uint64_t at,int uv){return power_reset_set_vcc(&p,at,uv);}
+int inputs(uint64_t at,int uv,int mask){return power_reset_set_inputs(&p,at,uv,(uint8_t)mask);}
 int advance(uint64_t at){return power_reset_advance(&p,at);}
 int sources(uint64_t at,int mask){return power_reset_set_other_sources(&p,at,mask);}
 int sleep(uint64_t at,int mode,int bods){return power_reset_sleep(&p,at,mode,bods);}
@@ -35,6 +36,7 @@ int enabled(void){return power_reset_bod_enabled(&p);}
 int fault(void){return p.fault;}
 int uncertain(void){return power_reset_eeprom_voltage_uncertain(&p);}
 int voltage(void){return p.vcc_uv;}
+int other(void){return p.other_sources;}
 uint64_t next(void){return power_reset_next_deadline(&p);}
 uint64_t now(void){return p.now;}
 int pop(void){return power_reset_pop_event(&p,&last);}
@@ -46,8 +48,8 @@ int cause(void){return last.causes;}
 int flag_set(void){return last.flags_set;}
 int flag_clear(void){return last.flags_clear;}
 `);
-const names=['init','custom','vcc','advance','sources','sleep','wake','blocked','held','enabled','fault',
-  'uncertain','voltage','next','now','pop','event_at','event_deadline','kind','active','cause','flag_set','flag_clear'];
+const names=['init','custom','vcc','inputs','advance','sources','sleep','wake','blocked','held','enabled','fault',
+  'uncertain','voltage','other','next','now','pop','event_at','event_deadline','kind','active','cause','flag_set','flag_clear'];
 const sysroot=join(sdk,'upstream/emscripten/cache/sysroot');
 const compiled=spawnSync(join(sdk,'upstream/bin/clang.exe'),['--target=wasm32-unknown-unknown','-O3','-std=c11',
   '-ffreestanding','-nostdlib','-Wall','-Wextra','-Werror','--sysroot='+sysroot,'-isystem',join(sysroot,'include'),
@@ -61,6 +63,7 @@ const init=(code=3,uv=5000000,{at=0,filter=2000,timeout=10000,recovery=60000}={}
 const vcc=(at,uv)=>assert.equal(p.vcc(BigInt(at),uv),1);
 const advance=at=>assert.equal(p.advance(BigInt(at)),1);
 const sources=(at,mask)=>assert.equal(p.sources(BigInt(at),mask),1);
+const inputs=(at,uv,mask)=>assert.equal(p.inputs(BigInt(at),uv,mask),1);
 function drain(){const events=[];while(p.pop())events.push({at:p.event_at(),deadline:p.event_deadline(),kind:p.kind(),sources:p.active(),causes:p.cause(),set:p.flag_set(),clear:p.flag_clear()});return events;}
 const kinds=()=>drain().map(e=>[e.kind,e.at,e.sources,e.set,e.clear]);
 
@@ -160,6 +163,56 @@ test('external/WDT aggregation starts tTOUT only after every source is inactive'
   advance(10040);assert.equal(p.held(),0);
   assert.deepEqual(kinds(),[[ASSERT,10n,2,2,0],[HOLD,20n,10,8,0],[HOLD,30n,8,0,0],
     [HOLD,40n,0,0,0],[RELEASE,10040n,0,0,0]]);
+});
+
+test('atomic POR to EXTRF handoff stays held with zero timeout and retains combined causes',()=>{
+  init(3,0,{timeout:0});assert.deepEqual(kinds(),[[ASSERT,0n,1,1,14]]);
+  inputs(10,5000000,2);
+  assert.equal(p.held(),1);assert.equal(next(),NEVER);assert.equal(p.other(),2);
+  const handoff=drain();
+  assert.deepEqual(handoff.map(e=>[e.kind,e.at,e.sources,e.set,e.clear]),[[HOLD,10n,2,2,0]]);
+  assert.equal(handoff[0].causes,3);
+  inputs(20,5000000,0);assert.equal(p.held(),0);
+  const released=drain();assert.deepEqual(released.map(e=>e.kind),[HOLD,RELEASE]);
+  assert.equal(released[1].at,20n);assert.equal(released[1].causes,3);
+});
+
+test('atomic EXTRF to POR handoff stays held and POR flag clearing wins without another assertion',()=>{
+  init(3,5000000,{timeout:0});sources(1,2);assert.deepEqual(kinds(),[[ASSERT,1n,2,2,0]]);
+  inputs(10,0,0);
+  assert.equal(p.held(),1);assert.equal(next(),NEVER);assert.equal(p.other(),0);
+  assert.deepEqual(drain().map(e=>[e.kind,e.at,e.sources,e.causes,e.set,e.clear]),[[HOLD,10n,1,1,1,14]]);
+  inputs(20,5000000,0);assert.equal(p.held(),0);
+  const released=drain();assert.deepEqual(released.map(e=>e.kind),[HOLD,RELEASE]);
+  assert.equal(released[1].causes,1);
+});
+
+test('atomic supply/source updates combine newly added causes in one aggregate event',()=>{
+  init(3,5000000,{timeout:0});inputs(10,0,10);
+  assert.equal(p.held(),1);assert.equal(p.voltage(),0);assert.equal(p.other(),10);
+  assert.deepEqual(kinds(),[[ASSERT,10n,11,11,14]]);
+  inputs(20,5000000,10);assert.equal(p.held(),1);
+  assert.deepEqual(kinds(),[[HOLD,20n,10,0,0]]);
+  inputs(30,5000000,0);const events=drain();
+  assert.deepEqual(events.map(e=>e.kind),[HOLD,RELEASE]);assert.equal(events[1].causes,11);
+});
+
+test('atomic inputs process existing due deadlines before the same-time replacement',()=>{
+  init(1,5000000,{filter:20,timeout:0});vcc(10,2600000);assert.equal(next(),30n);
+  inputs(30,5000000,2);
+  const events=drain();assert.deepEqual(events.map(e=>[e.kind,e.at,e.sources,e.set]),[
+    [ASSERT,30n,4,4],[HOLD,30n,2,2],
+  ]);
+  assert.equal(events[1].causes,6);assert.equal(p.held(),1);assert.equal(next(),NEVER);
+});
+
+test('invalid atomic input pairs cannot advance time, replace either input or consume a pending event',()=>{
+  for(const [uv,mask] of [[-1,2],[5000000,4],[-1,4]]){
+    init(1,5000000,{filter:20,timeout:0});vcc(10,2600000);assert.equal(next(),30n);
+    assert.equal(p.inputs(30n,uv,mask),0);assert.equal(p.fault(),3);
+    assert.equal(p.now(),10n);assert.equal(p.voltage(),2600000);assert.equal(p.other(),0);
+    assert.equal(next(),30n);assert.equal(p.held(),0);assert.deepEqual(drain(),[]);
+  }
 });
 
 test('POR clears previous reset reasons through event metadata, while new reasons accumulate',()=>{
