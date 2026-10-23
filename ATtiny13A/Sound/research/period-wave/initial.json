@@ -1,0 +1,171 @@
+{
+  "schema": "period-wave-experiment-v1",
+  "sources_sha256_normalized_lf": {
+    "ATtiny13A/Sound/codec/period_wave.py": "5fa0ee46ba4fa0ef40f58d01fc46f468a87be485ca607911cc939c213c6b6f4a",
+    "tools/probe-period-wave.py": "81798a025afb86bcaccc0ad0e5efa754a9ab9450dcda9d0a83cd37a070d93261",
+    "ATtiny13A/Sound/codec/auto_encoder.py": "ab97a68e00409640531c26cebc43f2fc2fdd3c4cb111e6ffb7c0a7dbcdff2202",
+    "ATtiny13A/Sound/codec/hq4_timbre.py": "ff22427010ddb169bafbc8a35502dcd413980299fd36d292fdf99eae7ffb371b",
+    "ATtiny13A/Sound/codec/model.py": "d9c3449ddd2da1929e71da99ef3b040d46d95988d2f5ea704f9416e30c1ba71e",
+    "ATtiny13A/Sound/codec/hq4_core.py": "936c21384042c24be9525ff7cb73b6e1421c852b4a63ea393e318cc60e9bd466"
+  },
+  "clips": [
+    {
+      "clip_id": "chego",
+      "title": "Чего тебе нужно?",
+      "reference_sha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+      "samples": 9216,
+      "sample_rate": 7500,
+      "seed": 23065,
+      "starts": 8,
+      "avr_assembled": false,
+      "hardware_verified": false,
+      "metrics": {
+        "HQ4": {
+          "loss": 1.2015368276169764,
+          "log_spectral_error": 1.276925854789502,
+          "relative_spectral_error": 0.8999807189268734,
+          "stoi": 0.9006005040626661,
+          "assembled_flash_bytes": 959,
+          "stream_sha256": "5033738490e0ae0ba30c8ea62d9d53404b04b592eb53a7a0750329e641b29e6e"
+        },
+        "HQ4-T Auto": {
+          "loss": 0.9101479560514576,
+          "log_spectral_error": 0.9359480734784557,
+          "relative_spectral_error": 0.8069474863434652,
+          "stoi": 0.9005000749339589,
+          "assembled_flash_bytes": 1007,
+          "stream_sha256": "16d924e1586a52356a61abbac7b82d421e4eee8404bc2f6d157bcaaa81e99769"
+        },
+        "Period unquantized": {
+          "loss": 0.19834042440746916,
+          "log_spectral_error": 0.2111685191341595,
+          "relative_spectral_error": 0.14702804550070778,
+          "stoi": 0.7696216712199494,
+          "waveform_snr_db": 15.22444891901375
+        },
+        "Period 16x32": {
+          "loss": 0.32180118226020077,
+          "log_spectral_error": 0.3383162715831262,
+          "relative_spectral_error": 0.25574082496849887,
+          "stoi": 0.7012498774177393,
+          "waveform_snr_db": 10.092722496489028
+        }
+      },
+      "data_bytes": 554,
+      "header_bytes": 10,
+      "codebook_bytes": 256,
+      "frame_bytes": 288,
+      "available_flash_after_data": 470,
+      "voiced_frame_fraction": 0.7986111111111112,
+      "f0_voiced_percentiles_hz": [
+        279.44748963224237,
+        396.2903339480078,
+        537.2169086046111
+      ],
+      "max_phase_quantization_error_cycles": 0.07018866910763677,
+      "decoder_reference_independent": true,
+      "payload_sha256": "02638b80881c9662f6cda8662a9b7286e24108a9129176882e886c5a2ec09fea",
+      "unquantized_model": "floating per-frame periods; same quantized phase; unvoiced muted; no size claim"
+    },
+    {
+      "clip_id": "otvechaesh",
+      "title": "Что ж ты не отвечаешь?",
+      "reference_sha256": "96c09f80396643dd80efb9c5c8557d83359eeb829a0b855a7f8f5c32bbff0b96",
+      "samples": 7936,
+      "sample_rate": 7500,
+      "seed": 23065,
+      "starts": 8,
+      "avr_assembled": false,
+      "hardware_verified": false,
+      "metrics": {
+        "HQ4": {
+          "loss": 1.0972926452380038,
+          "log_spectral_error": 1.1921568705663546,
+          "relative_spectral_error": 0.7178357439246009,
+          "stoi": 0.8190556436552531,
+          "assembled_flash_bytes": 885,
+          "stream_sha256": "6e44fbc2b548627cd71c7329ed5683ec9ce40ee51a1fa61f8f24039d55810d2d"
+        },
+        "Period unquantized": {
+          "loss": 0.33646483532145727,
+          "log_spectral_error": 0.3752624502743747,
+          "relative_spectral_error": 0.18127437550978742,
+          "stoi": 0.6761856487018234,
+          "waveform_snr_db": 13.837238147709785
+        },
+        "Period 16x32": {
+          "loss": 0.40921293423901184,
+          "log_spectral_error": 0.4549765281085089,
+          "relative_spectral_error": 0.22615855876102334,
+          "stoi": 0.6354293138166014,
+          "waveform_snr_db": 11.131064099282321
+        }
+      },
+      "data_bytes": 514,
+      "header_bytes": 10,
+      "codebook_bytes": 256,
+      "frame_bytes": 248,
+      "available_flash_after_data": 510,
+      "voiced_frame_fraction": 0.7258064516129032,
+      "f0_voiced_percentiles_hz": [
+        266.66379256226736,
+        559.6788541294582,
+        640.1778333959954
+      ],
+      "max_phase_quantization_error_cycles": 0.12999168870777567,
+      "decoder_reference_independent": true,
+      "payload_sha256": "3af626aa84cf7712250728b8aaeb1209e249dce0f5556fa81427ad311cfe038c",
+      "unquantized_model": "floating per-frame periods; same quantized phase; unvoiced muted; no size claim"
+    },
+    {
+      "clip_id": "vinni",
+      "title": "Сова! Открывай! Медведь пришёл!",
+      "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+      "samples": 22272,
+      "sample_rate": 7500,
+      "seed": 23065,
+      "starts": 8,
+      "avr_assembled": false,
+      "hardware_verified": false,
+      "metrics": {
+        "HQ4": {
+          "loss": 0.8232287703712707,
+          "log_spectral_error": 0.8128841292213537,
+          "relative_spectral_error": 0.8646073349709388,
+          "stoi": 0.8596022716157532,
+          "assembled_flash_bytes": 1024,
+          "stream_sha256": "fe24fbdaf5260266d7b29b04f7e4d3926c48ce13c5697b214e0728b431433d03"
+        },
+        "Period unquantized": {
+          "loss": 0.800173943880836,
+          "log_spectral_error": 0.7381273480059288,
+          "relative_spectral_error": 1.048360327380464,
+          "stoi": 0.09787649580408536,
+          "waveform_snr_db": 0.8554642555636702
+        },
+        "Period 16x32": {
+          "loss": 0.7514296794466113,
+          "log_spectral_error": 0.7254378607893468,
+          "relative_spectral_error": 0.8553969540756693,
+          "stoi": 0.5953301160914944,
+          "waveform_snr_db": -2.0143520158650956
+        }
+      },
+      "data_bytes": 962,
+      "header_bytes": 10,
+      "codebook_bytes": 256,
+      "frame_bytes": 696,
+      "available_flash_after_data": 62,
+      "voiced_frame_fraction": 0.13793103448275862,
+      "f0_voiced_percentiles_hz": [
+        124.63326892718814,
+        287.4843844621196,
+        825.7084735802687
+      ],
+      "max_phase_quantization_error_cycles": 0.06321587572515597,
+      "decoder_reference_independent": true,
+      "payload_sha256": "1d9b386862c3fa1cab7cad9c3ebeb92d01157b2f14d590c773da0350a7c5c724",
+      "unquantized_model": "floating per-frame periods; same quantized phase; unvoiced muted; no size claim"
+    }
+  ]
+}
