@@ -1,9 +1,14 @@
 import {AVRCore as TranslatedCore} from './avr-transpiled-runtime.js';
 const configuration={oscillatorHz:1,watchdogHz:2,vccMicrovolts:3,bandgapMicrovolts:4,
   fuseLow:5,fuseHigh:6,lock:7,adcFirstSample:8,comparatorPropagationHalf:9,
-  bandgapStartupHalf:10,comparatorInitial:11,wakeStartupHalf:12,spmCommandCycles:13,flashMaximum:14,bodRecoveryNs:15,factoryOsccal96:16,fuseStartupProfile:17};
+  bandgapStartupHalf:10,comparatorInitial:11,wakeStartupHalf:12,spmCommandCycles:13,flashMaximum:14,bodRecoveryNs:15,factoryOsccal96:16,fuseStartupProfile:17,
+  nvmClockProfile:18,nvmCalibrationReferenceHz:19};
 const timestamp=value=>{
   if(typeof value!=='bigint'||value<0n||value>BigInt(Number.MAX_SAFE_INTEGER))throw Error('Timestamp must be an exact nonnegative bigint below 2^53');
+  return value;
+};
+const timestampPs=value=>{
+  if(typeof value!=='bigint'||value<0n||value>0xffffffffffffffffn)throw Error('Picosecond timestamp must be a nonnegative uint64 bigint');
   return value;
 };
 export class ATtiny13A extends TranslatedCore {
@@ -32,10 +37,17 @@ export class ATtiny13A extends TranslatedCore {
       for(const [name,key] of Object.entries(configuration))if(options[name]!==undefined){
         const value=options[name];if(!Number.isInteger(value)||value<0||value>0xffffffff||!exports.avr_device_configure(key,value))throw Error('Invalid device configuration: '+name);
       }
+      if(options.osccalHz!=null){
+        const table=options.osccalHz;
+        if(!Array.isArray(table)||table.length!==128||!table.some(Boolean))throw Error('osccalHz must contain128 CAL frequencies (zero means unspecified)');
+        for(let cal=0;cal<128;cal++)if(!Number.isInteger(table[cal])||table[cal]<0||table[cal]>1000000000||
+          !exports.avr_device_configure_osccal_hz?.(cal,table[cal]))throw Error('Invalid OSCCAL frequency at CAL '+cal);
+      }
     }});
     this._exports.avr_device_bind_generation();
     this._generation=this._exports.avr_device_generation();
     this._physicalRate=0;
+    this._ps=!!this._exports.avr_device_physical_mode?.();
     this.fastIdle=options.fastIdle??true;
   }
   _refreshFlash(){
@@ -45,9 +57,29 @@ export class ATtiny13A extends TranslatedCore {
     this._exports.avr_device_bind_generation();this._generation=generation;return true;
   }
   runUntil(at){
+    this._clockDomain(false);
     const target=Number(timestamp(at));let instructions=0;
     if(at<this._exports.avr_device_time64())throw Error('Cannot run backwards');
     do{instructions+=this._execute('runUntil',target);}while(this._refreshFlash()&&this._exports.avr_device_time()<target);
+    return instructions;
+  }
+  _clockDomain(ps){if(this._ps!==ps)throw Error(ps?'Use runUntil/injectPins/setAnalog/drainPins with the fixed oscillator profile':'Use runUntilPs/injectPinsPs/setAnalogPs/drainPinsPs with the physical clock profile');}
+  runUntilPs(at){
+    this._clockDomain(true);timestampPs(at);let instructions=0;
+    let now=BigInt.asUintN(64,this._exports.avr_device_time_ps());
+    if(at<now)throw Error('Cannot run backwards');
+    // Bound both the f64 time offset and the generated i32 instruction count.
+    // A one-second slice has at most1e9 instructions at the configuration limit.
+    while(now<at){
+      const origin=BigInt.asUintN(64,this._exports.avr_device_rebase_time());
+      const end=at-origin>1000000000000n?origin+1000000000000n:at;
+      const target=Number(end-origin);let refreshed;
+      do{
+        instructions+=this._execute('runUntil',target);refreshed=this._refreshFlash();
+        now=BigInt.asUintN(64,this._exports.avr_device_time_ps());
+      }while(refreshed&&now<end);
+      if(now<end)throw Error('Device stopped before the physical deadline');
+    }
     return instructions;
   }
   readIO(address){this._address(address);return this._call('avr_read_io',address);}
@@ -58,18 +90,36 @@ export class ATtiny13A extends TranslatedCore {
   }
   _address(value){if(!Number.isInteger(value)||value<0||value>63)throw Error('I/O address must be 0..63');}
   injectPins({at,mask,levels}){
+    this._clockDomain(false);this._injectPins('avr_device_inject_pins',timestamp(at),mask,levels);
+  }
+  injectPinsPs({at,mask,levels}){
+    this._clockDomain(true);this._injectPins('avr_device_inject_pins_ps',timestampPs(at),mask,levels);
+  }
+  _injectPins(name,at,mask,levels){
     if(![mask,levels].every(v=>Number.isInteger(v)&&v>=0&&v<64))throw Error('Pin masks must contain PB0..PB5 only');
-    if(!this._call('avr_device_inject_pins',timestamp(at),mask,levels))throw Error('Invalid or full timestamped input queue');
+    if(!this._call(name,at,mask,levels))throw Error('Invalid or full timestamped input queue');
   }
   setAnalog({at,pin,microvolts}){
+    this._clockDomain(false);this._setAnalog('avr_device_inject_analog',timestamp(at),pin,microvolts);
+  }
+  setAnalogPs({at,pin,microvolts}){
+    this._clockDomain(true);this._setAnalog('avr_device_inject_analog_ps',timestampPs(at),pin,microvolts);
+  }
+  _setAnalog(name,at,pin,microvolts){
     if(!Number.isInteger(pin)||pin<0||pin>5||!Number.isInteger(microvolts)||microvolts<0||microvolts>0x7fffffff)throw Error('Invalid analog input');
-    if(!this._call('avr_device_inject_analog',timestamp(at),pin,microvolts))throw Error('Invalid or full timestamped input queue');
+    if(!this._call(name,at,pin,microvolts))throw Error('Invalid or full timestamped input queue');
   }
   drainPins(){
+    this._clockDomain(false);return this._drainPins('','baseHalf');
+  }
+  drainPinsPs(){
+    this._clockDomain(true);return this._drainPins('_ps','timePs');
+  }
+  _drainPins(suffix,timeKey){
     const result=[],exports=this._exports;
-    for(let count;(count=exports.avr_device_pin_count());){
-      const pointer=exports.avr_device_pin_buffer(),view=new DataView(exports.memory.buffer,pointer,count*16);
-      for(let n=0;n<count;n++){const at=n*16;result.push({baseHalf:view.getBigUint64(at,true),levels:view.getUint8(at+8),driven:view.getUint8(at+9),pullups:view.getUint8(at+10),floating:view.getUint8(at+11),contention:view.getUint8(at+12)});}
+    for(let count;(count=exports['avr_device_pin_count'+suffix]());){
+      const pointer=exports['avr_device_pin_buffer'+suffix](),view=new DataView(exports.memory.buffer,pointer,count*16);
+      for(let n=0;n<count;n++){const at=n*16;result.push({[timeKey]:view.getBigUint64(at,true),levels:view.getUint8(at+8),driven:view.getUint8(at+9),pullups:view.getUint8(at+10),floating:view.getUint8(at+11),contention:view.getUint8(at+12)});}
       exports.avr_device_pin_consume(count);
     }
     return result;
@@ -82,6 +132,7 @@ export class ATtiny13A extends TranslatedCore {
     const result=new Float32Array(count*channels);let offset=0;
     while(offset<count){
       const n=Math.min(4096/channels,count-offset);let done;
+      if(this._ps)this._exports.avr_device_rebase_time();
       this._exports.avr_device_audio_begin();
       try{done=this._execute('capturePhysical',n);}finally{this._exports.avr_device_audio_end();}
       result.set(this._raw.subarray(0,done*channels),offset*channels);offset+=done;
@@ -91,10 +142,12 @@ export class ATtiny13A extends TranslatedCore {
     return result;
   }
   state(){
-    const exports=this._exports,view=new DataView(exports.memory.buffer,exports.avr_device_pins(),16);
-    return {...super.state(),baseHalf:exports.avr_device_time64(),clockDivisor:exports.avr_device_divisor(),
+    const exports=this._exports,view=new DataView(exports.memory.buffer,this._ps?exports.avr_device_pins_ps():exports.avr_device_pins(),16);
+    const time=this._ps?{timePs:BigInt.asUintN(64,exports.avr_device_time_ps()),startupDeadlinePs:BigInt.asUintN(64,exports.avr_device_startup_deadline_ps()),oscillatorHz:exports.avr_device_oscillator_hz()}:
+      {baseHalf:exports.avr_device_time64(),startupDeadline:BigInt.asUintN(64,exports.avr_device_startup_deadline())};
+    return {...super.state(),...time,clockDivisor:exports.avr_device_divisor(),
       halted:!!exports.avr_device_halted(),sleeping:!!exports.avr_device_sleep_phase(),resetHeld:!!exports.avr_device_reset_held(),
-      starting:!!exports.avr_device_starting(),startupDeadline:BigInt.asUintN(64,exports.avr_device_startup_deadline()),
+      starting:!!exports.avr_device_starting(),
       bodDisabled:!!exports.avr_device_bod_disabled(),bodRecovering:!!exports.avr_device_bod_recovering(),
       resetCount:exports.avr_device_reset_count(),deviceFault:exports.avr_device_fault(),pendingIRQs:exports.avr_device_pending(),
       pins:{levels:view.getUint8(8),driven:view.getUint8(9),pullups:view.getUint8(10),floating:view.getUint8(11),contention:view.getUint8(12)}};
