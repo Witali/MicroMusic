@@ -142,14 +142,21 @@ int avr_device_phase_clock(double cycles){
  if(ERROR||device_fault()){full_fault();return -1;}
  if(!full_phase.remaining_halves)full_phase.remaining_halves=(uint64_t)(cycles*2);
  if(full_phase.remaining_halves&&full_phase_limit<=device_time_ps())return 0;
- uint64_t consumed=0;
- int result=device_advance_half_until_ps(full_phase.remaining_halves,full_phase_limit,&consumed);
- full_phase.remaining_halves-=consumed;
- S(cyc)=(double)device_virtual_half()/2.0;full_deadline();
- if(full_audio_active)full_audio_collect();
- if(device_reset_requested()){full_interrupt();return -1;}
- if(result<0||ERROR)return -1;
- return !full_phase.remaining_halves&&result==1;
+ for(;;){
+  uint64_t consumed=0;
+  int result=full_audio_active?
+   device_advance_half_until_ps_buffered(full_phase.remaining_halves,full_phase_limit,&consumed):
+   device_advance_half_until_ps(full_phase.remaining_halves,full_phase_limit,&consumed);
+  full_phase.remaining_halves-=consumed;
+  S(cyc)=(double)device_virtual_half()/2.0;full_deadline();
+  if(full_audio_active)full_audio_collect();
+  if(device_reset_requested()){full_interrupt();return -1;}
+  if(result<0||ERROR)return -1;
+  /* One CPU cycle can require512 source transitions. Drain inside this one
+   * clock barrier without replaying its instruction effect or asking JS. */
+  if(result==2)continue;
+  return !full_phase.remaining_halves&&result==1;
+ }
 }
 static void full_phase_irq_resume(void){
  while(full_phase.active==2&&!ERROR){
@@ -243,7 +250,10 @@ int avr_device_wait(double deadline){
   uint64_t bounded=full_ps?device_cpu_half_deadline_ps(next*2):before+next*2*device_clkpr_divisor();
   if(target>bounded)target=bounded;
  }
- if(full_ps)device_wait_until_ps(target);else device_wait_until(target);
+ if(full_ps){
+  if(full_audio_active)device_wait_until_ps_buffered(target);
+  else device_wait_until_ps(target);
+ }else device_wait_until(target);
  S(cyc)=(double)device_virtual_half()/2.0;
  if(full_audio_active)full_audio_collect();
  full_deadline();

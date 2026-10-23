@@ -55,7 +55,7 @@ int device_configure(uint32_t key, uint32_t value);
  * explicitly provided before init. field0=0 clears the profile selection.
  * Thresholds are selected digital-profile microvolts, timings nanoseconds;
  * no typical threshold is silently assumed for a physical chip. Requires an
- * explicit OSCCAL table, even for a constant oscillator frequency. */
+ * explicit physical source: an OSCCAL table or the CLKI profile. */
 int device_configure_power(uint32_t field, uint32_t value);
 uint8_t device_power_enabled(void);
 int32_t device_vcc_microvolts(void);
@@ -121,6 +121,11 @@ void device_advance_half(uint64_t cpu_half_cycles);
  * The caller owns remaining instruction work and must cancel it on reset. */
 int device_advance_half_until_ps(uint64_t wanted,uint64_t wall_deadline_ps,
                                  uint64_t *consumed);
+/* Same continuation contract, plus return2 BUFFER_READY when the physical pin
+ * ring is half full. The native consumer drains it and retries the remaining
+ * phase before returning to generated code. No instruction effect is repeated. */
+int device_advance_half_until_ps_buffered(uint64_t wanted,uint64_t wall_deadline_ps,
+                                          uint64_t *consumed);
 /* advance stops at an asynchronous reset deadline even inside an instruction;
  * the CPU bridge must abandon its remaining bus/register effects and reset. */
 /* Safe distance in nominal CPU cycles, rounded UP to include an event inside
@@ -128,12 +133,16 @@ int device_advance_half_until_ps(uint64_t wanted,uint64_t wall_deadline_ps,
 uint64_t device_next_cpu_event(void);
 uint64_t device_base_half(void);
 uint64_t device_virtual_half(void);
-/* Fixed1ps APIs require the explicitly configured OSCCAL table. Legacy timed
+/* Fixed1ps APIs require the explicit OSCCAL table or CLKI profile. Legacy timed
  * APIs (including pin getters) fail CLOCK_CONTRACT in this mode, preserving
  * their original initial-half-oscillator-period meaning. CPU-cycle APIs,
  * GPIO/analog register APIs and ring consume remain common to both modes. */
 uint64_t device_time_ps(void);
 uint64_t device_wait_until_ps(uint64_t deadline_ps);
+/* Native streaming consumer variant. May yield early when the pin ring is
+ * half full, so C/WASM can drain it before continuing the same wall deadline.
+ * This neither consumes pins nor invokes a JavaScript callback. */
+uint64_t device_wait_until_ps_buffered(uint64_t deadline_ps);
 uint64_t device_startup_deadline_ps(void);
 uint64_t device_cpu_half_deadline_ps(uint64_t cpu_half_cycles);
 /* Rounded-UP relative CPU half-cycle budget to a physical deadline. The

@@ -94,7 +94,7 @@ static int clki_fetch_ready(void);
 static void clki_wake(void);
 static void clki_watchdog_reset(void);
 static void gpio_external(void);
-static int clki_advance(uint64_t wanted,uint64_t wall,uint64_t *consumed);
+static int clki_advance(uint64_t wanted,uint64_t wall,uint64_t *consumed,uint32_t pin_limit);
 
 /* Reuse only an unchanged, same-base serviced state. An absolute deadline is
  * not assumed invariant across any clock advance, including a zero delta. */
@@ -868,12 +868,12 @@ void device_advance_half(uint64_t halves) {
  }
 }
 void device_advance(uint32_t cycles) { device_advance_half((uint64_t)cycles*2); }
-int device_advance_half_until_ps(uint64_t wanted,uint64_t wall,uint64_t *consumed) {
+static int advance_half_until_ps(uint64_t wanted,uint64_t wall,uint64_t *consumed,uint32_t pin_limit) {
  if(consumed)*consumed=0;
  if(!board.initialized||!consumed){fail(DEVICE_FAULT_CONFIG,14);return -1;}
  if(!time_contract(1,12)||board.fault)return -1;
  if(wall<board.base){fail(DEVICE_FAULT_TIME,12);return -1;}
- if(board.clki_enabled)return clki_advance(wanted,wall,consumed);
+ if(board.clki_enabled)return clki_advance(wanted,wall,consumed,pin_limit);
  if(board.reset_requested)return -1;
  if(board.reset_held||reset_starting())return 0;
  uint64_t before=board.half,target=add(before,wanted);
@@ -902,6 +902,12 @@ int device_advance_half_until_ps(uint64_t wanted,uint64_t wall,uint64_t *consume
  if(*consumed>wanted){fail(DEVICE_FAULT_TIME,14);return -1;}
  if(board.fault||board.reset_requested)return -1;
  return *consumed==wanted;
+}
+int device_advance_half_until_ps(uint64_t wanted,uint64_t wall,uint64_t *consumed) {
+ return advance_half_until_ps(wanted,wall,consumed,0);
+}
+int device_advance_half_until_ps_buffered(uint64_t wanted,uint64_t wall,uint64_t *consumed) {
+ return advance_half_until_ps(wanted,wall,consumed,PIN_CAPACITY/2);
 }
 uint64_t device_next_cpu_event(void) {
  if(board.clki_enabled)return 0; /* No positive batch budget without proved future phases. */
@@ -988,12 +994,13 @@ const device_pin_event_t *device_pin_state(void) {
 const device_pin_event_ps_t *device_pin_state_ps(void) {
  return time_contract(1,2) ? &board.pins : NULL;
 }
-static uint64_t wait_until(uint64_t deadline) {
+static uint64_t wait_until(uint64_t deadline,uint32_t pin_limit) {
  uint64_t requested=deadline;
  if(board.clki_enabled)deadline=minimum(deadline,device_clki_horizon_ps());
  uint64_t before=cpu_cycle();
  if (deadline<board.base) { fail(DEVICE_FAULT_TIME,8); return 0; }
- while (device_halted() && !board.fault && !board.reset_requested && board.base<deadline) {
+ while (device_halted() && !board.fault && !board.reset_requested && board.base<deadline &&
+        (!pin_limit||board.pin_count<pin_limit)) {
   uint64_t next=minimum(next_event(),deadline);
   advance_to(next);
  }
@@ -1001,11 +1008,18 @@ static uint64_t wait_until(uint64_t deadline) {
  return cpu_cycle()-before;
 }
 uint64_t device_wait_until(uint64_t deadline) {
- return time_contract(0,3) ? wait_until(deadline) : 0;
+ return time_contract(0,3) ? wait_until(deadline,0) : 0;
 }
 uint64_t device_wait_until_ps(uint64_t deadline) {
  if (!time_contract(1,3)) return 0;
- wait_until(deadline); return board.base;
+ wait_until(deadline,0); return board.base;
+}
+uint64_t device_wait_until_ps_buffered(uint64_t deadline) {
+ if (!time_contract(1,3)) return 0;
+ /* The native audio consumer drains this ring between chunks. A stopped CPU
+  * can still have an arbitrarily fast CLKI input; a CPU-cycle bound cannot
+  * protect its pin ring while MAIN is gated or reset startup is pending. */
+ wait_until(deadline,PIN_CAPACITY/2); return board.base;
 }
 static int queue_input(input_t event) {
  deadline_invalidate(DEADLINE_INPUT);

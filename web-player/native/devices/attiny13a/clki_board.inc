@@ -45,7 +45,7 @@ static void clki_refill(void) {
   fail(DEVICE_FAULT_CLKI,8);
 }
 int device_clki_enqueue(const attiny13a_clki_edge_t *edges,uint32_t count,uint64_t horizon) {
- if(!board.initialized||!board.clki_enabled)return AT13_CLKI_BAD_ARGUMENT;
+ if(!board.initialized||!board.clki_enabled||board.fault)return AT13_CLKI_BAD_ARGUMENT;
  if(board.clki_periodic.remaining_edges){
   if(count)return AT13_CLKI_BACKPRESSURE;
   if(horizon==UINT64_MAX||horizon<board.clki_declared_horizon)return AT13_CLKI_BAD_TIME;
@@ -56,7 +56,7 @@ int device_clki_enqueue(const attiny13a_clki_edge_t *edges,uint32_t count,uint64
  return result;
 }
 int device_clki_periodic_ps(uint64_t start,uint32_t initial,uint64_t high,uint64_t low,uint64_t count,uint64_t horizon){
- if(!board.initialized||!board.clki_enabled||initial>1)return AT13_CLKI_BAD_ARGUMENT;
+ if(!board.initialized||!board.clki_enabled||board.fault||initial>1)return AT13_CLKI_BAD_ARGUMENT;
  if(board.clki_periodic.remaining_edges)return AT13_CLKI_BACKPRESSURE;
  if(start<board.clki_declared_horizon)return AT13_CLKI_BAD_TIME;
  uint8_t tail=attiny13a_clki_level(&board.clki_input)^(attiny13a_clki_count(&board.clki_input)&1);
@@ -212,14 +212,15 @@ static void clki_service(uint64_t previous_half) {
  service_end();
  if(attiny13a_clki_hold_until(&board.clki_input,board.base)!=1)fail(DEVICE_FAULT_CLKI,5);
 }
-static int clki_advance(uint64_t wanted,uint64_t wall,uint64_t *consumed) {
+static int clki_advance(uint64_t wanted,uint64_t wall,uint64_t *consumed,uint32_t pin_limit) {
  uint64_t before=board.half,target=add(before,wanted);
  uint64_t horizon=device_clki_horizon_ps(),limit=minimum(wall,horizon);
  board.clki_status=0;
  if(board.fault||board.reset_requested)return -1;
  if(!wanted){advance_to(board.base);return board.fault||board.reset_requested?-1:1;}
  if(board.reset_held||reset_starting()||power_recovering())return 0;
- while(board.half<target&&board.base<limit&&!board.fault&&!board.reset_requested){
+ while(board.half<target&&board.base<limit&&!board.fault&&!board.reset_requested&&
+       (!pin_limit||board.pin_count<pin_limit)){
   uint64_t previous=board.base;
   advance_to(minimum(next_event(),limit));
   if(previous==board.base&&!board.fault&&!board.reset_requested){fail(DEVICE_FAULT_TIME,13);break;}
@@ -228,6 +229,7 @@ static int clki_advance(uint64_t wanted,uint64_t wall,uint64_t *consumed) {
  if(*consumed>wanted){fail(DEVICE_FAULT_TIME,14);return -1;}
  if(board.fault||board.reset_requested)return -1;
  if(*consumed==wanted)return 1;
+ if(pin_limit&&board.pin_count>=pin_limit)return 2;
  board.clki_status=limit<wall&&board.base==limit?2:1;
  return 0;
 }
