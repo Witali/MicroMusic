@@ -15,7 +15,7 @@ export class ATtiny13A extends TranslatedCore {
   static async fromPackage(input,{fastIdle=true}={}){
     const {decodePackage,assertPackageRuntimeABI}=await import('./attiny13a-package.js');
     const decoded=await decodePackage(input);
-    const core=new this(decoded.flash,decoded.eeprom,{...decoded.options,fastIdle,
+    const core=new this(decoded.flash,decoded.eeprom,{...decoded.options,fastIdle,_packageVersion:decoded.version,
       runtimeModule:await WebAssembly.compile(decoded.runtime),
       precompiled:{bytes:decoded.translated,manifest:decoded.manifest},
       optimizeFlags:decoded.manifest.optimizeFlags,maxBlockInstructions:decoded.manifest.maxBlockInstructions,
@@ -35,7 +35,10 @@ export class ATtiny13A extends TranslatedCore {
   constructor(binary,eeprom,options={}){
     super(binary,eeprom,{...options,fastIdle:false,runtimeModule:options.runtimeModule,configureRuntime:exports=>{
       for(const [name,key] of Object.entries(configuration))if(options[name]!==undefined){
-        const value=options[name];if(!Number.isInteger(value)||value<0||value>0xffffffff||!exports.avr_device_configure(key,value))throw Error('Invalid device configuration: '+name);
+        const value=options[name];if(!Number.isInteger(value)||value<0||value>0xffffffff)throw Error('Invalid device configuration: '+name);
+        const accepted=exports.avr_device_configure(key,value);
+        const historicalDefault=options._packageVersion===1&&((key===15&&value===60000)||([16,17].includes(key)&&value===0));
+        if(!accepted&&!historicalDefault)throw Error('Invalid device configuration: '+name);
       }
       if(options.osccalHz!=null){
         const table=options.osccalHz;
@@ -144,11 +147,11 @@ export class ATtiny13A extends TranslatedCore {
   state(){
     const exports=this._exports,view=new DataView(exports.memory.buffer,this._ps?exports.avr_device_pins_ps():exports.avr_device_pins(),16);
     const time=this._ps?{timePs:BigInt.asUintN(64,exports.avr_device_time_ps()),startupDeadlinePs:BigInt.asUintN(64,exports.avr_device_startup_deadline_ps()),oscillatorHz:exports.avr_device_oscillator_hz()}:
-      {baseHalf:exports.avr_device_time64(),startupDeadline:BigInt.asUintN(64,exports.avr_device_startup_deadline())};
+      {baseHalf:exports.avr_device_time64(),startupDeadline:BigInt.asUintN(64,exports.avr_device_startup_deadline?.()??exports.avr_device_time64())};
     return {...super.state(),...time,clockDivisor:exports.avr_device_divisor(),
       halted:!!exports.avr_device_halted(),sleeping:!!exports.avr_device_sleep_phase(),resetHeld:!!exports.avr_device_reset_held(),
-      starting:!!exports.avr_device_starting(),
-      bodDisabled:!!exports.avr_device_bod_disabled(),bodRecovering:!!exports.avr_device_bod_recovering(),
+      starting:!!exports.avr_device_starting?.(),
+      bodDisabled:!!exports.avr_device_bod_disabled?.(),bodRecovering:!!exports.avr_device_bod_recovering?.(),
       resetCount:exports.avr_device_reset_count(),deviceFault:exports.avr_device_fault(),pendingIRQs:exports.avr_device_pending(),
       pins:{levels:view.getUint8(8),driven:view.getUint8(9),pullups:view.getUint8(10),floating:view.getUint8(11),contention:view.getUint8(12)}};
   }

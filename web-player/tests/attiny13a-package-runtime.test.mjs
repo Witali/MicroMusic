@@ -5,8 +5,10 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {Worker,MessageChannel} from 'node:worker_threads';
+import {gunzipSync} from 'node:zlib';
+import {createHash} from 'node:crypto';
 import {ATtiny13A,runtimeModule} from '../lib/attiny13a.js';
-import {createPackage} from '../lib/attiny13a-package.js';
+import {createPackage,DEFAULT_CONFIGURATION,PACKAGE_ABI,PACKAGE_FORMAT} from '../lib/attiny13a-package.js';
 import {runtimeABI,transpileAVR} from '../lib/avr-transpiler.js';
 import {createRenderer} from '../lib/engines.js';
 import {packageEntry} from '../lib/package-entry.js';
@@ -20,6 +22,33 @@ async function pack(image,configuration={},eeprom){
 }
 const gpio=sequential([avr.ldi(16,2),avr.out(IO.DDRB,16),avr.out(IO.PORTB,16)]);
 const pkg=await pack(gpio,{factoryOsccal96:73});
+
+async function originalV1(configuration={}){
+  const fixture=JSON.parse(await readFile(new URL('./fixtures/attiny13a-runtime-v1.json',import.meta.url),'utf8'));
+  const runtime=gunzipSync(Buffer.from(fixture.data,'base64'));
+  const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
+  assert.equal(runtime.length,fixture.bytes);assert.equal(hash(runtime),fixture.sha256);
+  const abi=runtimeABI(new WebAssembly.Instance(await WebAssembly.compile(runtime)).exports);
+  const generated=transpileAVR(gpio,abi),flash=new Uint8Array(1024).fill(255);flash.set(gpio);
+  const assets=Object.fromEntries(Object.entries({flash,eeprom:new Uint8Array(64).fill(255),translated:generated.bytes,runtime})
+    .map(([key,value])=>[key,{encoding:'base64',bytes:value.length,sha256:hash(value),data:Buffer.from(value).toString('base64')}]));
+  const options={...DEFAULT_CONFIGURATION,...configuration};
+  for(const name of ['osccalHz','nvmClockProfile','nvmCalibrationReferenceHz','powerResetProfile'])delete options[name];
+  const pkg={format:PACKAGE_FORMAT,version:1,device:'ATtiny13A',abi:{id:PACKAGE_ABI,layout:abi},configuration:options,manifest:generated.manifest,assets};
+  const canonical=v=>v===null||typeof v!=='object'?JSON.stringify(v):Array.isArray(v)?'['+v.map(canonical).join(',')+']':'{'+Object.keys(v).sort().map(k=>JSON.stringify(k)+':'+canonical(v[k])).join(',')+'}';
+  pkg.integrity={algorithm:'SHA-256',sha256:hash(canonical(pkg))};return pkg;
+}
+
+test('original v1 runtime loads default legacy options and supplies missing state observers',async()=>{
+  const c=await ATtiny13A.fromPackage(await originalV1());c.run(3);
+  assert.equal(c.readIO(IO.PORTB),2);assert.equal(c.state().starting,false);
+  assert.equal(c.state().bodDisabled,false);assert.equal(c.state().bodRecovering,false);
+  assert.equal(c.state().startupDeadline,c.state().baseHalf);
+  assert.deepEqual(c.capturePhysical(3,48000),Float32Array.of(1,1,1));
+  assert.equal(c.state().deviceFault,0);
+  for(const configuration of [{factoryOsccal96:1},{bodRecoveryNs:70000},{fuseStartupProfile:1}])
+    await assert.rejects(ATtiny13A.fromPackage(await originalV1(configuration)),/Invalid device configuration/);
+});
 
 test('package executes the supplied translation and reproduces explicit initial EEPROM/configuration',async()=>{
   const eeprom=Uint8Array.from({length:64},(_,n)=>n);
