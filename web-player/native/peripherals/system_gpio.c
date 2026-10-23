@@ -150,6 +150,42 @@ uint8_t system_gpio_clock(system_gpio_t *g, int rising, uint64_t at) {
     return edge;
 }
 
+int system_gpio_settled(const system_gpio_t *g) {
+    uint8_t digital = g->digital;
+    uint8_t t0 = !!(digital & T0_PIN);
+    return g->latch == digital && g->pinb == digital &&
+           g->pcint_previous == (uint8_t)(digital & g->pcmsk) && !g->pcint_edge &&
+           g->int0_previous == !!(digital & INT0_PIN) &&
+           g->t0_sync1 == t0 && g->t0_sync2 == t0 && g->t0_previous == t0;
+}
+
+uint64_t system_gpio_next_event_half(const system_gpio_t *g, uint64_t after) {
+    if (!g->io_running || system_gpio_settled(g) || after == UINT64_MAX)
+        return UINT64_MAX;
+    return after + 1;
+}
+
+uint8_t system_gpio_advance(system_gpio_t *g, uint64_t begin, uint64_t end,
+                            system_gpio_t0_event_t *events) {
+    if (end < begin) return 255;
+    if (!g->io_running || end == begin) return 0;
+    uint64_t at = begin;
+    uint8_t count = 0;
+    /* With no mutations, every state element is a fixed-depth feed-forward
+     * pipeline. Four rising edges settle even an input changed just after a
+     * falling edge. Once settled, no new flag or T0 edge can appear. */
+    for (uint8_t steps = 0; at < end && steps < 8 && !system_gpio_settled(g); steps++) {
+        at++;
+        uint8_t edge = system_gpio_clock(g, !(at & 1), at);
+        if (edge) {
+            if (events) events[count] = (system_gpio_t0_event_t){at, edge};
+            count++;
+        }
+    }
+    if (at < end) g->clock_high = !(end & 1);
+    return count;
+}
+
 uint8_t system_gpio_pending(const system_gpio_t *g) {
     uint8_t pending = g->gifr;
     if (!(g->mcucr & 3) && !(g->digital & INT0_PIN)) pending |= SYSTEM_INT0;

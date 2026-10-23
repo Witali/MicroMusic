@@ -31,6 +31,11 @@ typedef struct {
     system_gpio_pins_t pins;
 } system_gpio_t;
 
+typedef struct {
+    uint64_t half_cycle;
+    uint8_t edge;
+} system_gpio_t0_event_t;
+
 /* reset_pin_enabled is true for the normal unprogrammed RSTDISBL fuse.
  * Floating pins resolve to the caller's chosen fixture level, initially zero.
  * This is a digital model: contention is reported, never an analog simulation. */
@@ -57,6 +62,17 @@ void system_gpio_sleep(system_gpio_t *gpio, int io_running, int power_down,
  * Returns a synchronized T0 edge at the cycle where the timer must count it.
  * The caller can forward it directly to timer0_external_edge in C/WASM. */
 uint8_t system_gpio_clock(system_gpio_t *gpio, int rising, uint64_t half_cycle);
+/* Input/register-stable span, with rising clkI/O edges at even half_cycle.
+ * Consumes edges in (begin_half_cycle,end_half_cycle]. Runs at most eight
+ * half-edges before skipping an arbitrarily long settled span in O(1).
+ * events must hold four entries, or may be null to deliberately discard T0.
+ * Returns 0..4 events; 255 means backward time. Split spans at all injections,
+ * register changes and interrupt arbitration boundaries. */
+uint8_t system_gpio_advance(system_gpio_t *gpio, uint64_t begin_half_cycle,
+                            uint64_t end_half_cycle, system_gpio_t0_event_t *events);
+int system_gpio_settled(const system_gpio_t *gpio);
+/* First possible synchronization event, or UINT64_MAX for stable/no clkI/O. */
+uint64_t system_gpio_next_event_half(const system_gpio_t *gpio, uint64_t after_half_cycle);
 /* Returns GIMSK bit positions. CPU owns SREG.I, priority and entry latency. */
 uint8_t system_gpio_pending(const system_gpio_t *gpio);
 void system_gpio_ack(system_gpio_t *gpio, uint8_t vector_word);

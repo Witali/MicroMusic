@@ -31,7 +31,8 @@ Integration
 5. Timer0 uses timer_outputs(enabled, levels, stamp) for PB0/PB1. The output
    override changes the PORT value, not the DDR output-enable bit. PORTB retains
    the software latch. Other alternate functions and debugWIRE are not modeled.
-6. Invoke clock for each actual rising/falling clkI/O edge in the C scheduler.
+6. Invoke clock for individual rising/falling clkI/O edges in the C scheduler,
+   or use the bounded advance API described below for stable spans.
    Timestamps use explicit uint64 half-cycle units; input changes before/after
    the call define the phase at that edge. Clock-high pin latches are transparent
    until the falling edge. PINB samples that latch at the next rising edge.
@@ -62,6 +63,31 @@ buffer. No JavaScript crossing is needed at any instruction or pin transition.
 The caller must process edges and input events chronologically. This low-level
 API intentionally does not maintain a second history buffer or event scheduler.
 
+Stable spans and performance
+
+Use system_gpio_advance(begin_half,end_half,events) between input or register
+mutations. It processes actual edges in (begin,end], with rising edges at even
+timestamps and falling edges at odd timestamps. The state at begin must reflect
+the already-processed edge at begin; apply an injection before or after its
+individual clock call when coincident-edge ordering matters. With constant
+inputs/registers, four full clocks settle every synchronization/edge pipeline.
+advance performs at most eight half-edge steps, then skips any remaining stable
+duration in constant time, preserving clock phase. A trillion stable half-clocks
+requires the same work as a few clocks. An already-settled state skips directly.
+
+Supply four system_gpio_t0_event_t entries in caller-owned C memory to collect
+every T0 edge and exact timestamp during settling. No C callback, JavaScript
+callback, allocation or extra history buffer is needed. Null deliberately drops
+T0 edges and is only appropriate when nobody consumes that input. The result is
+the event count 0..4; 255 explicitly rejects backward spans without mutation.
+
+next_event_half(after) reports the next half-edge while unsettled and UINT64_MAX
+once settled or clkI/O is stopped. The CPU scheduler can use this as a deadline
+for block execution. Split spans at every external injection, register mutation,
+timer-output change, clock gate change and CPU interrupt-arbitration boundary.
+Do not fast-forward past an instruction boundary at which a newly set interrupt
+must be accepted; the GPIO deadline allows the scheduler to retain that order.
+
 Boundaries
 
 This is a digital runtime peripheral, not programming/debugWIRE, an electrical
@@ -81,3 +107,5 @@ Set EMSDK when the repository's prepared toolchain is not installed. Tests cover
 GPIO truth tables, external levels and contention, RESET/PB5, PINB synchronization,
 PINB toggling, single-bit writes, DIDR0, timer output overrides, interrupt senses,
 masks, W1C/acknowledgement, asynchronous wake detection and T0 phase delay.
+Seeded tests also compare bounded advance with every individual clock edge over
+2000 mixed mutations, and verify a trillion-half-cycle stable skip.
