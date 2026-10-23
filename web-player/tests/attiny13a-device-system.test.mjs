@@ -203,6 +203,24 @@ test('INT0 low disappearing during explicit startup resumes after SLEEP without 
   assert.equal(c.readIO(IO.SPL),0x9f);assert.equal(c.readIO(IO.GIFR)&0x40,0);
 });
 
+test('firmware BODCR disables BOD only during Power-down and charges configured recovery',()=>{
+  const BODCR=0x30;
+  const c=make(sequential([avr.ldi(16,0x30),avr.out(IO.MCUCR,16),
+    avr.ldi(16,3),avr.out(BODCR,16),avr.ldi(16,2),avr.out(BODCR,16),avr.sleep(),avr.nop()]),
+    {fuseHigh:0xf9,bodRecoveryNs:1000});
+  c.writeIO(IO.PCMSK,1);c.writeIO(IO.GIMSK,0x20);c.run(7);
+  assert.equal(state(c).baseHalf,14n);assert.equal(state(c).sleeping,true);
+  assert.equal(state(c).bodDisabled,true);assert.equal(state(c).bodRecovering,false);
+  c.injectPins({at:15n,mask:1,levels:1});c.runUntil(16n);
+  assert.equal(state(c).bodDisabled,false);assert.equal(state(c).bodRecovering,true);
+  // PCINT wakes Power-down asynchronously at15. Recovery is ceil(19.2)
+  // base halves, followed by four CPU wake cycles (eight base halves).
+  c.runUntil(34n);assert.equal(state(c).bodRecovering,true);assert.equal(state(c).halted,true);
+  c.runUntil(35n);assert.equal(state(c).bodRecovering,false);assert.equal(state(c).halted,true);
+  c.runUntil(43n);assert.equal(state(c).bodRecovering,false);assert.equal(state(c).halted,false);
+  assert.equal(c.pc,7);assert.equal(c.readIO(IO.SPL),0x9f);
+});
+
 test('ADCSRA bit-operation interpretation follows its register-specific ADIF warning',()=>{
   // DS40002307A14.12.2 explicitly warns about SBI/CBI clearing ADIF; this
   // conflicts with the generic register-summary bit-only note. The device

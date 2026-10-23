@@ -32,7 +32,7 @@ stack-phase convention; the hardware phase audit remains part of stage3.
 
 - [ ] Handle phase-correct Timer0 PWM with variable TOP equal to zero.
 - [ ] Model OSCCAL changes with an explicit oscillator calibration contract.
-- [ ] Implement the BODCR timed sleep-disable sequence.
+- [x] Implement the BODCR timed sleep-disable sequence.
 - [ ] Apply fuse-dependent oscillator startup and reset recovery delays.
 - [ ] Resolve SPM command timing where the datasheet supplies a bound; expose
   explicit timing parameters where it does not.
@@ -40,6 +40,10 @@ stack-phase convention; the hardware phase audit remains part of stage3.
 Acceptance: supported register operations no longer fail merely because these
 behaviors are missing; each behavior has focused tests and a documented time
 and clock domain. Analog properties are parameters rather than invented facts.
+
+BODCR includes the protected four-cycle write and three-cycle SLEEP windows,
+fuse/mode gating and an explicit configurable recovery time. Its logical state
+is observable separately from analog supply-threshold behavior.
 
 ## 3 Timing ambiguities and hardware validation
 

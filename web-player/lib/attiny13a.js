@@ -6,7 +6,7 @@ const bytes=globalThis.process?.versions?.node
 const runtimeModule=await WebAssembly.compile(bytes);
 const configuration={oscillatorHz:1,watchdogHz:2,vccMicrovolts:3,bandgapMicrovolts:4,
   fuseLow:5,fuseHigh:6,lock:7,adcFirstSample:8,comparatorPropagationHalf:9,
-  bandgapStartupHalf:10,comparatorInitial:11,wakeStartupHalf:12,spmCommandCycles:13,flashMaximum:14};
+  bandgapStartupHalf:10,comparatorInitial:11,wakeStartupHalf:12,spmCommandCycles:13,flashMaximum:14,bodRecoveryNs:15};
 const timestamp=value=>{
   if(typeof value!=='bigint'||value<0n||value>BigInt(Number.MAX_SAFE_INTEGER))throw Error('Timestamp must be an exact nonnegative bigint below 2^53');
   return value;
@@ -88,6 +88,7 @@ export class ATtiny13A extends TranslatedCore {
     const exports=this._exports,view=new DataView(exports.memory.buffer,exports.avr_device_pins(),16);
     return {...super.state(),baseHalf:exports.avr_device_time64(),clockDivisor:exports.avr_device_divisor(),
       halted:!!exports.avr_device_halted(),sleeping:!!exports.avr_device_sleep_phase(),resetHeld:!!exports.avr_device_reset_held(),
+      bodDisabled:!!exports.avr_device_bod_disabled(),bodRecovering:!!exports.avr_device_bod_recovering(),
       resetCount:exports.avr_device_reset_count(),deviceFault:exports.avr_device_fault(),pendingIRQs:exports.avr_device_pending(),
       pins:{levels:view.getUint8(8),driven:view.getUint8(9),pullups:view.getUint8(10),floating:view.getUint8(11),contention:view.getUint8(12)}};
   }

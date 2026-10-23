@@ -32,6 +32,8 @@
     "-Wl,--export=avr_device_audio_end",
     "-Wl,--export=avr_device_audio_sample",
     "-Wl,--export=avr_device_bind_generation",
+    "-Wl,--export=avr_device_bod_disabled",
+    "-Wl,--export=avr_device_bod_recovering",
     "-Wl,--export=avr_device_configure",
     "-Wl,--export=avr_device_control",
     "-Wl,--export=avr_device_cpu_deadline",
@@ -79,15 +81,15 @@
   ],
   "inputs": {
     "web-player/native/avr.c": "43057a52004d53b21431f054f7ffda6376a936d565658c745a6dad63c5afceed",
-    "web-player/native/avr-device.inc": "42bf35a8a7f2e7f2f9f0df834e9f9707b8030e196ad538be7511f8ac67e92b83",
+    "web-player/native/avr-device.inc": "fff4ce0853c13dafe1d30154c473c29e530d7ccb73a09db2255194a96513738a",
     "web-player/native/peripherals/analog.c": "e1ea3ac297ced9b256ccef5d529dec98af10c1861c65193e0b64f3717269c567",
     "web-player/native/peripherals/analog.h": "3784b94d275c540518f2429e6b53a5a16b60e471f274c4e4f831b11a9421196d",
     "web-player/native/peripherals/analog_adc.c": "a527bdd1e016d31ae36634ce491ad9f1c2d526783ac1dae0fba430c71bb65038",
     "web-player/native/peripherals/analog_adc.h": "b21ae2ce4cae22f5692e13333db0960f44bf41a8e48c3a98e6bc282a25c24291",
     "web-player/native/peripherals/analog_comparator.c": "fbdc17028ee6998c857ef6911af5f05407cce524322697e3b9fd1da914d87a48",
     "web-player/native/peripherals/analog_comparator.h": "4b806705c991e3ae0d1459e3e05c744eb16adc31786abc2b8ef14190bb87378e",
-    "web-player/native/peripherals/device.c": "94d60da8f90a042e0d04141cf4a187c71ee1d8fa26edd5852e4af8c42661f499",
-    "web-player/native/peripherals/device.h": "3e7f60890c6991b575de08815ffb140fb41263f47f4c5258e87ba06b99d492ce",
+    "web-player/native/peripherals/device.c": "69b661302e47af91e7cfe979b89c0386cf33113998902433775ff9a5e222f9a1",
+    "web-player/native/peripherals/device.h": "2128bf947fbe28a31608b34cc3b153612761ded0974b9ef3da8a54b3932005db",
     "web-player/native/peripherals/nvm.c": "f54b67d85fda42e1cc8f9a097b986c1185702d199a4ea9f4f0696e680cdfa500",
     "web-player/native/peripherals/nvm.h": "adcd45df8ec83f2c656ba680ca079949d2203b9929bf70c175128f47208c8389",
     "web-player/native/peripherals/system_gpio.c": "bd62a5bd9c7bd8c523f674312b9971d08d568477174f33178b69fd5d90f90428",
@@ -128,6 +130,8 @@
     "avr_device_audio_end",
     "avr_device_audio_sample",
     "avr_device_bind_generation",
+    "avr_device_bod_disabled",
+    "avr_device_bod_recovering",
     "avr_device_configure",
     "avr_device_control",
     "avr_device_cpu_deadline",
@@ -174,9 +178,9 @@
     "avr_write_io_masked"
   ],
   "artifacts": {
-    "attiny13a.wasm": "f7c732e9fae8d63f29e9bf544812b75543f9e7d5d9ec0e674faa6f9c5e8867bc"
+    "attiny13a.wasm": "c6610bb26b4b20193e45450b42720f54a7c75be49d014bb88103b65ff132e312"
   },
-  "bytes": 80702,
+  "bytes": 82413,
   "memoryPages": 2,
   "maximumMemoryPages": 2,
   "stackBytes": 8192,
