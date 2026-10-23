@@ -26,7 +26,7 @@ Unspecified internal phases are documented as model choices.
 Implemented in the full-device emitter and native IRQ bridge. Focused phase,
 system, analog/NVM and physical-output tests exercise reset cancellation,
 ordinary execution and output parity. See `AVR_TO_WASM.md` for the explicit
-stack-phase convention; the hardware phase audit remains part of stage3.
+stack-phase convention; the hardware phase audit remains part of stage 3.
 
 ## 2 Remaining device behavior
 
@@ -38,9 +38,11 @@ stack-phase convention; the hardware phase audit remains part of stage3.
 - [x] Apply fuse-dependent oscillator startup and reset recovery delays.
   `fuseStartupProfile:1` enables source-clock and watchdog-pulse delays,
   external RESET release/reassertion and mode-dependent wake startup. The
-  explicit zero-startup fixture remains available as profile0.
-- [ ] Resolve SPM command timing where the datasheet supplies a bound; expose
+  explicit zero-startup fixture remains available as profile 0.
+- [x] Resolve SPM command timing where the datasheet supplies a bound; expose
   explicit timing parameters where it does not.
+  Page erase/write use the documented 3.7–4.5 ms range; short commands require
+  `spmCommandCycles`. No undocumented universal instruction duration is assumed.
 
 Acceptance: supported register operations no longer fail merely because these
 behaviors are missing; each behavior has focused tests and a documented time
@@ -52,7 +54,7 @@ is observable separately from analog supply-threshold behavior.
 
 ## 3 Timing ambiguities and hardware validation
 
-- [ ] Retain explicit choices for the conflicting first ADC sample timing and
+- [x] Retain explicit choices for the conflicting first ADC sample timing and
   ADIF behavior under SBI/CBI until measured on ATtiny13A hardware.
 - [ ] Validate CLKPR transition timing and external RESET recognition/recovery.
 - [ ] Create small firmware probes and an expected trace format for comparison
@@ -68,20 +70,31 @@ Hardware-dependent checks remain open until actual measurements are available.
 
 ## 4 Complete firmware delivery
 
-- [ ] Package translated WASM, the peripheral runtime, Flash, EEPROM, fuses and
+- [x] Package translated WASM, the peripheral runtime, Flash, EEPROM, fuses and
   timing configuration in a versioned artifact with integrity checks.
-- [ ] Load and validate that artifact in the CLI and browser worker.
-- [ ] Verify self-programming and cache invalidation after loading a package.
+- [x] Load and validate that artifact in the CLI and browser worker.
+- [x] Verify self-programming and cache invalidation after loading a package.
 - [ ] Make the full ATtiny13A engine the default after integration and parity
   checks pass; retain explicit engine selection for comparisons.
 
 Acceptance: a package reproduces the configured device without implicit host
 defaults; CLI and browser execute the same firmware and physical output.
 
+Format v1 includes per-asset and envelope SHA-256, explicit configuration,
+embedded manifest and ABI validation. A standalone loader test runs with no
+default WASM files; Worker tests cover initialization/audio restart and SPM.
+The browser can open a local package and observes both PWM pins as stereo.
+The default switch is additionally gated on real-time performance: browser
+verification initially measured about 0.4x audio throughput on this host.
+
 ## 5 Performance without loss of timing accuracy
 
 - [ ] Measure CPU translation/execution, peripheral scheduling, pin collection
   and audio filtering separately on identical firmware and sample intervals.
+  The reproducible benchmark now separates cold/warm construction, coupled
+  CPU/peripheral/pin capture and JS DSP. Exclusive CPU/peripheral timings still
+  need instrumentation. All 13 firmwares passed 208 measured runs and 2496
+  optimization-parity checkpoints; capture throughput was 0.29–0.95x real time.
 - [ ] Reduce repeated register-memory traffic and WASM helper calls where the
   event deadline proves a block safe; preserve live SREG bits at every exit.
 - [ ] Cache translation using firmware, translator, runtime and configuration
@@ -90,18 +103,38 @@ defaults; CLI and browser execute the same firmware and physical output.
   compiler options, ABI and runtime module identity. Clocks/fuses stay in each
   runtime instance; changed Flash invalidates by image. Region-level
   retranslation and a persistent cache remain open.
-- [ ] Evaluate moving audio filters into WASM using measured costs.
+- [x] Evaluate moving audio filters into WASM using measured costs.
+  JS DSP took 0.17–0.29 ms per 250 ms audio, compared with 262–872 ms capture.
+  Keep the filters in JS while optimizing the coupled native execution path.
 
 Acceptance: report reproducible cold and warm timings, output parity and cycle
 counts. Keep optimizations only when those checks preserve device behavior.
 
+Retained measurements and methodology:
+[`reports/device-benchmark-20261023.md`](../reports/device-benchmark-20261023.md).
+The report records individual trials, source/runtime identities and host
+variation; its timings are not an isolated browser guarantee.
+
 ## Execution and verification
 
-Work in this order while developing independent peripheral fixes in parallel.
+Prioritize these stages while developing independent peripheral fixes in parallel.
+Continue independent software work when a hardware measurement is unavailable.
 Commit each completed change separately and update this checklist with its
 verification evidence. Run focused tests for each change and the full regression
 suite at integration checkpoints. Never mark hardware checks complete from
 simulation alone.
+
+The next software priority is to instrument the coupled CPU/peripheral path and
+reduce scheduler work between known events. Keep instruction-effect barriers
+and physical output parity as the acceptance conditions. A measured OSCCAL
+frequency curve and silicon probes proceed when hardware is available.
+
+Integration checkpoint, 2026-10-23: all 768 default regression tests passed,
+plus 8 native-candidate preload/cache checks. Browser verification opened a
+CLI-built stereo package, checked its fuses, started physical pin playback and
+observed zero lost IRQs. The Timer0 probe decoder's four synthetic checks and
+nine successful assembly profiles validate the probe tooling; no hardware
+trace has been supplied.
 
 ## Primary references
 
