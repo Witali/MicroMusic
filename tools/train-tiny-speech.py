@@ -1,0 +1,190 @@
+#!/usr/bin/env python3
+"""Automatically reduce a speech wave dictionary and retune exact integer PCM.
+
+The merge stage renders every possible whole-word replacement through the
+integer decoder. The refinement stage preserves the reduced dictionary and
+the tiny decoder's feature set. No speech-specific frame edits are hard coded.
+"""
+import argparse
+from copy import deepcopy
+import importlib.metadata
+import json
+from pathlib import Path
+import sys
+
+import numpy as np
+import soundfile as sf
+
+ROOT = Path(__file__).resolve().parents[1]
+CODEC = ROOT/'ATtiny13A/Sound/codec'
+sys.path.insert(0, str(CODEC))
+from auto_encoder import SpectralObjective
+from fixed_period import avr_features, decode_fixed, pack_avr_data, pack_fixed
+from fixed_search import FixedSearch, decoder_constraints
+from refine_period_helpers import atomic_json, digest, matched_audio
+
+
+def active_words(model):
+    return sorted({h & 15 for _, h, _ in model['frames'] if h & 128 and h & 112})
+
+
+def canonicalize(model):
+    """Densely number only audible waves; unused table entries stay zero."""
+    result = deepcopy(model)
+    words = active_words(result)
+    mapping = {old:new for new,old in enumerate(words)}
+    result['codebook'] = [result['codebook'][old] for old in words]
+    result['codebook'] += [[0]*32 for _ in range(16-len(words))]
+    for frame in result['frames']:
+        header = frame[1]
+        frame[1] = (header & 240) | (mapping[header & 15] if header & 128 and header & 112 else 0)
+    return result
+
+
+class TinySearch(FixedSearch):
+    def __init__(self, model, objective, *, words, **kwargs):
+        self.words = words
+        super().__init__(model, objective, **kwargs)
+
+    def compatible(self, model):
+        return (super().compatible(model) and
+                all(index < self.words for index in active_words(model)) and
+                all(not any(word) for word in model['codebook'][self.words:]))
+
+    def propose(self, source):
+        proposal = super().propose(source)
+        # FixedSearch can propose any four-bit index. Restrict it without
+        # changing the shared decoder or the deterministic random stream.
+        for frame in proposal['frames']:
+            if frame[1] & 128 and frame[1] & 112:
+                frame[1] = (frame[1] & 240) | ((frame[1] & 15) % self.words)
+        return proposal
+
+
+def merge_words(model, objective, target, *, weight=8., max_peak=.95,
+                spectral_ceiling=.6, save=None):
+    """Greedy exhaustive merges, chosen by exact output STOI and spectrum."""
+    model = canonicalize(model)
+    scorer = FixedSearch(model, objective, stoi_floor=0., spectral_ceiling=spectral_ceiling,
+                         stoi_weight=weight, max_peak=max_peak, max_data_bytes=65535,
+                         dc_choices=(model.get('dc_block_shift', 0),),
+                         **decoder_constraints(model))
+    history = []
+    while len(active_words(model)) > target:
+        words = active_words(model)
+        best = None
+        evaluated = 0
+        for old in words:
+            for replacement in words:
+                if old == replacement:
+                    continue
+                candidate = deepcopy(model)
+                for frame in candidate['frames']:
+                    if frame[1] & 128 and frame[1] & 112 and frame[1] & 15 == old:
+                        frame[1] = (frame[1] & 240) | replacement
+                candidate = canonicalize(candidate)
+                score = scorer.score(candidate)
+                evaluated += 1
+                if not scorer.feasible(score):
+                    continue
+                key = scorer.energy(score)
+                if best is None or key < best[0]:
+                    best = key, candidate, score, old, replacement
+        if best is None:
+            raise RuntimeError('No dictionary merge satisfies clipping/peak/spectrum limits')
+        _, model, score, old, replacement = best
+        report = dict(words=len(active_words(model)), removed_word=old, replacement_word=replacement,
+                      evaluated=evaluated, avr_data_bytes=len(pack_avr_data(model, specialize=True)), **score)
+        history.append(report)
+        print(json.dumps(dict(stage='merge', **report)), flush=True)
+        if save:
+            save(model, report)
+    return model, history
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--model', required=True, type=Path)
+    parser.add_argument('--reference', required=True, type=Path)
+    parser.add_argument('--clip', choices=('chego', 'otvechaesh', 'vinni'), default='chego')
+    parser.add_argument('--output', required=True, type=Path)
+    parser.add_argument('--words', type=int, default=8)
+    parser.add_argument('--proposals', type=int, default=30000)
+    parser.add_argument('--seed', type=int, default=23108)
+    parser.add_argument('--weight', type=float, default=8.)
+    parser.add_argument('--stoi-floor', type=float)
+    parser.add_argument('--spectral-ceiling', type=float, default=.6)
+    parser.add_argument('--max-peak', type=float, default=.95)
+    parser.add_argument('--max-data-bytes', type=int)
+    parser.add_argument('--resume', action='store_true')
+    args = parser.parse_args()
+    if not 1 <= args.words <= 16 or args.proposals < 0:
+        parser.error('Expected 1..16 words and a nonnegative proposal count')
+    clips = json.loads((ROOT/'ATtiny13A/Sound/audio-references.json').read_text(encoding='utf-8'))['clips']
+    clip = next(value for value in clips if value['id'] == args.clip)
+    if digest(args.reference.read_bytes()) != clip['sha256']:
+        raise ValueError('Reference SHA-256 does not match canonical '+args.clip)
+    reference, sr = sf.read(args.reference)
+    objective = SpectralObjective(reference, sr)
+    initial = json.loads(args.model.read_text(encoding='utf-8'))
+    inputs = dict(reference_sha256=clip['sha256'], initial_model_sha256=digest(args.model.read_bytes()))
+    args.output.mkdir(parents=True, exist_ok=True)
+    if args.resume:
+        saved = json.loads((args.output/'checkpoint.json').read_text(encoding='utf-8'))
+        if saved['inputs'] != inputs:
+            raise ValueError('Checkpoint input hashes differ')
+        model = json.loads((args.output/'merged-model.json').read_text(encoding='utf-8'))
+        merges = saved['merges']
+    else:
+        def save_merge(model, report):
+            atomic_json(args.output/f"merged-{report['words']}-model.json", model)
+            atomic_json(args.output/f"merged-{report['words']}-quality.json", report)
+        model, merges = merge_words(initial, objective, args.words, weight=args.weight,
+                                   max_peak=args.max_peak, spectral_ceiling=args.spectral_ceiling,
+                                   save=save_merge)
+        atomic_json(args.output/'merged-model.json', model)
+        saved = None
+    constraints = decoder_constraints(model)
+    search = TinySearch(model, objective, words=args.words, seed=args.seed, stoi_weight=args.weight,
+                        stoi_floor=args.stoi_floor, spectral_ceiling=args.spectral_ceiling,
+                        max_peak=args.max_peak, max_data_bytes=args.max_data_bytes,
+                        dc_choices=(model.get('dc_block_shift', 0),), **constraints,
+                        checkpoint=saved['search'] if saved else None)
+    runtime = {name:importlib.metadata.version(name) for name in ('numpy', 'scipy', 'pystoi', 'soundfile', 'numba')}
+    runtime['python'] = sys.version.split()[0]
+
+    def save(status):
+        elite = search.export()
+        payload = pack_fixed(elite)
+        score = search.score(elite)
+        report = dict(schema='tiny-speech-training-v1', clip_id=args.clip, inputs=inputs,
+                      runtime=runtime, words=args.words, features=avr_features(elite),
+                      config=search.config, merged_initial=search.initial, final=score,
+                      proposals=search.proposals, evaluated=search.evaluated, accepted=search.accepted,
+                      improvements=search.improvements, history=search.history, merges=merges,
+                      avr_data_bytes=len(pack_avr_data(elite, specialize=True)),
+                      portable_data_bytes=len(payload), payload_sha256=digest(payload),
+                      avr_assembled=False, hardware_verified=False, status=status)
+        atomic_json(args.output/'retuned-model.json', elite)
+        atomic_json(args.output/'quality.json', report)
+        atomic_json(args.output/'checkpoint.json', dict(inputs=inputs, merges=merges, search=search.checkpoint()))
+        (args.output/'expected.raw').write_bytes(decode_fixed(elite).tobytes())
+        print(json.dumps(dict(stage=status, proposals=search.proposals, improvements=search.improvements,
+                              avr_data_bytes=report['avr_data_bytes'], **score)), flush=True)
+
+    try:
+        while search.proposals < args.proposals:
+            search.step()
+            if search.proposals % 2000 == 0:
+                save('searching')
+    except KeyboardInterrupt:
+        save('interrupted')
+        return
+    save('complete')
+    audio = lambda value:(decode_fixed(value).astype(np.float64)-128)/128
+    matched_audio(args.output, dict(Original=reference, Before=audio(initial), Tiny=audio(search.export())), objective,
+                  ('Original', 'Before', 'Original', 'Tiny'))
+
+
+if __name__ == '__main__':
+    main()
