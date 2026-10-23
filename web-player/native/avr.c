@@ -5,6 +5,11 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <math.h>
+#ifdef AVR_FULL_DEVICE
+#include "peripherals/device.h"
+static int full_write_io(int a,int v,int mask);
+static void full_clock(double n), full_interrupt(void), full_reset(void), full_deadline(void);
+#endif
 
 #define FIELDS(X) \
  X(pc) X(cyc) X(irqDelay) X(timer) X(overflowAt) X(timerDivisor) \
@@ -144,6 +149,9 @@ static int pop(void) {if (SP<0x5f || SP>=0x9f) return fail(E_POP);return data[++
 static void push_pc(int v) {push(v&255);if(!ERROR)push(v>>8);}
 static int pop_pc(void) {int hi=pop();if(ERROR)return 0;int lo=pop();return ((hi<<8)|lo)&511;}
 static void update_timer(void) {
+#ifdef AVR_FULL_DEVICE
+ full_deadline();return;
+#endif
  static const int divisors[]={0,1,8,64,256,1024};
  int source=IO(0x33)&7,m=mode();
  if(source>=6){fail(E_EXTCLK);return;}
@@ -155,6 +163,9 @@ static void update_timer(void) {
  S(overflowAt)=S(prescalerAt)+(floor((S(cyc)-S(prescalerAt))/S(timerDivisor))+ticks)*S(timerDivisor);
 }
 static int write_io(int a,int v) {
+#ifdef AVR_FULL_DEVICE
+ return full_write_io(a,v,255);
+#endif
  v&=255;
  if(a==0x37 && (v&31)) return fail(E_FLASH);
  if(a==0x21 && (v&0x58)) return fail(E_WDT);
@@ -184,6 +195,9 @@ static int write_io(int a,int v) {
  return 0;
 }
 static void clock_cycles(double n) {
+#ifdef AVR_FULL_DEVICE
+ full_clock(n);return;
+#endif
  double before=S(cyc);S(cyc)+=n;
  if(S(eempeUntil)<=S(cyc))IO(0x1c)&=~4;
  if(S(clkprUntil)<=S(cyc))IO(0x26)&=~128;
@@ -198,6 +212,9 @@ static void clock_cycles(double n) {
  }
 }
 static void interrupt_cpu(void) {
+#ifdef AVR_FULL_DEVICE
+ full_interrupt();return;
+#endif
  if(S(irqDelay)){S(irqDelay)--;return;}
  if(!(FLAGS&128)||!(IO(0x39)&2)||!PENDING)return;
  SET_PENDING(0);push_pc((int)S(pc));if(ERROR)return;S(pc)=3;FLAGS&=127;
@@ -276,6 +293,9 @@ static int execute(void) {
 }
 static void step_cpu(void) {int n=execute();if(!ERROR){clock_cycles(n);interrupt_cpu();}}
 static int skip_idle(void) {
+#ifdef AVR_FULL_DEVICE
+ return 0;
+#endif
  if(!S(timer)||!(FLAGS&128)||S(irqDelay)||PENDING||!(IO(0x39)&2))return 0;
  int p=(int)S(pc),kind=idle[p];if(!kind)return 0;double n;
  if(kind==3){int v=(data[src[p]]-data[src[(p+1)&511]])&imm[(p+2)&511],limit=imm[(p+3)&511];
@@ -416,12 +436,19 @@ uintptr_t avr_layout(int item) {
  case 12:return (uintptr_t)pcm;case 13:return (uintptr_t)raw;case 14:return (uintptr_t)scope;default:return 0;}
 }
 const char *avr_field_name(int i){return i>=0&&i<S_COUNT?field_names[i]:"";}
-const char *avr_error_message(void){int e=(int)ERROR;return e>0&&e<=E_AUDIO?errors[e]:"";}
+const char *avr_error_message(void){int e=(int)ERROR;
+#ifdef AVR_FULL_DEVICE
+ if(e==25)return "ATtiny13A peripheral fault";
+#endif
+ return e>0&&e<=E_AUDIO?errors[e]:"";}
 void avr_reset(int fast_idle,int fast_blocks) {
  for(int i=0;i<S_COUNT;i++)st[i]=0;for(int i=0;i<160;i++)data[i]=0;
  SP=0x9f;S(minSP)=SP;S(overflowAt)=INFINITY;S(duty)=S(dutyLeft)=128;S(fastIdle)=fast_idle;S(fastBlocks)=fast_blocks;
  S(eempeUntil)=NAN;S(clkprUntil)=NAN;sample_rate=0;
  for(int p=0;p<512;p++)decode(p);for(int p=0;p<512;p++)decode_idle(p);
+#ifdef AVR_FULL_DEVICE
+ full_reset();
+#endif
 }
 void avr_decode(int p){ERROR=0;if(p<0||p>=512){fail(E_PC);return;}decode(p);}
 void avr_decode_idle(int p){ERROR=0;decode_idle(p&511);}
@@ -440,3 +467,7 @@ void avr_push_pc(int v){ERROR=0;push_pc(v);}
 int avr_pop_pc(void){ERROR=0;return pop_pc();}
 void avr_nzvs(int value,int overflow){ERROR=0;nzvs(value,overflow);}
 int avr_arithmetic(int x,int y,int carry,int subtract){ERROR=0;return arithmetic(x,y,carry,subtract);}
+
+#ifdef AVR_FULL_DEVICE
+#include "avr-device.inc"
+#endif

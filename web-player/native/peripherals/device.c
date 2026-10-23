@@ -498,6 +498,8 @@ int device_halted(void) {
  return board.fault || board.reset_requested || board.reset_held || board.sleep.phase!=SYSTEM_SLEEP_RUNNING ||
   nvm_cpu_halted(&board.nvm);
 }
+uint8_t device_sleep_phase(void) { return board.sleep.phase; }
+const device_pin_event_t *device_pin_state(void) { return &board.pins; }
 uint64_t device_wait_until(uint64_t deadline) {
  uint64_t before=cpu_cycle();
  if (deadline<board.base) { fail(DEVICE_FAULT_TIME,8); return 0; }

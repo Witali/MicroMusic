@@ -6,13 +6,25 @@ const littleEndian=new Uint8Array(Uint16Array.of(1).buffer)[0]===1;
 // use the existing C/WASM peripheral runtime, sharing its linear memory.
 export class AVRCore extends PeripheralRuntime {
   constructor(binary,eeprom,options={}) {
-    super(binary,eeprom,{fastIdle:options.fastIdle??true,fastBlocks:false});
+    super(binary,eeprom,{fastIdle:options.fastIdle??true,fastBlocks:false,runtimeModule:options.runtimeModule,configureRuntime:options.configureRuntime});
+    this._translationOptions=options;
+    this._compile(binary);
+  }
+  _compile(binary=this.rom) {
+    const options=this._translationOptions;
     const generated=transpileAVR(binary,runtimeABI(this._exports),options);
     this.transpilation=generated.manifest;
     this.transpiledBytes=generated.bytes;
     this._translated=new WebAssembly.Instance(new WebAssembly.Module(generated.bytes),{avr:{
       memory:this._exports.memory,clock:this._exports.avr_clock,
       interrupt:this._exports.avr_interrupt,writeIO:this._exports.avr_write_io,idle:this._exports.avr_idle,
+      readIO:this._exports.avr_read_io,writeMasked:this._exports.avr_write_io_masked,
+      ready:this._exports.avr_device_ready,time:this._exports.avr_device_time,wait:this._exports.avr_device_wait,
+      control:this._exports.avr_device_control,lpm:this._exports.avr_device_lpm,
+      audioDeadline:this._exports.avr_device_audio_deadline,audioSample:this._exports.avr_device_audio_sample,
+      pending:this._exports.avr_device_pending,
+      cpuDeadline:this._exports.avr_device_cpu_deadline,
+      idleUntil:this._exports.avr_device_idle,
     }}).exports;
     this._bridges=Object.fromEntries(Object.entries(this._translated).filter(([,fn])=>typeof fn==='function').map(([name,fn])=>[name,{...this._exports,translated:fn}]));
     const pwm=generated.manifest.abi.pwm;

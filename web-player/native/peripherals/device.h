@@ -59,6 +59,8 @@ void device_ack_irq(uint8_t vector_word);
 uint32_t device_control(uint8_t command, uint16_t z, uint16_t r1r0);
 uint8_t device_lpm(uint16_t z);
 int device_halted(void);
+uint8_t device_sleep_phase(void);
+const device_pin_event_t *device_pin_state(void);
 /* Advance halted hardware to wake/program completion or caller deadline;
  * returns elapsed complete virtual CPU periods, including clock-stopped spans.
  * Board time remains authoritative if the endpoint is between CPU edges. */

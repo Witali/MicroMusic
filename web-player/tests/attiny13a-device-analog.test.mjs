@@ -104,3 +104,20 @@ test('SELFPRGEN-disabled fuse leaves Flash and its compiled generation unchanged
   assert.equal(c._exports.avr_device_generation(),0n);assert.equal(c._translated,original);
   assert.equal(c.r[20],0x11);assert.equal(c.state().deviceFault,0);
 });
+
+test('SPM invalidates native wait-loop metadata together with generated code',()=>{
+  const rom=flashRewrite();put(rom,128,0xcfff);
+  const c=new ATtiny13A(rom,null,{fuseLow:0x7a,fuseHigh:0xef,spmCommandCycles:4});
+  assert.equal(c.idle[128],1);c.runUntil(200000n);
+  assert.equal(c.r[20],0x5a);assert.equal(c.idle[128],0);
+  assert.equal(c.state().deviceFault,0);
+});
+
+test('fuse/lock LPM recognizes RFLB before charging its own three cycles',()=>{
+  for(const [z,expected] of [[0,0x7a],[1,0xff],[3,0xff]])for(const gap of [0,2,3]){
+    const words=[ldi(30,z),ldi(31,0),...write(IO.SPMCSR,9),...Array(gap).fill(0),0x9005|(20<<4)];
+    const c=make(words);c.run(5+gap);
+    assert.equal(c.r[20],gap<3?expected:c.rom[z],`${z}/${gap}`);
+    assert.equal(c.r[30],z+1);assert.equal(c.state().cycles,7+gap);
+  }
+});

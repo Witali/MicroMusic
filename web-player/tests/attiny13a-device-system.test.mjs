@@ -14,6 +14,27 @@ const make=(binary,options={})=>new ATtiny13A(binary,null,{...fast,...options});
 const state=c=>c.state();
 const cycles=c=>state(c).cycles;
 
+test('recognized RESET/PB5 aborts OUT, holds CPU and releases at the queued timestamp',()=>{
+  const c=make(sequential([avr.ldi(16,1),avr.out(IO.PORTB,16),avr.inc(17)]));
+  c.writeIO(IO.DDRB,1);c.writeIO(IO.PORTB,1);
+  c.injectPins({at:3n,mask:32,levels:0});c.runUntil(10n);
+  assert.equal(state(c).baseHalf,10n);assert.equal(state(c).resetCount,1);
+  assert.equal(c.pc,0);assert.equal(state(c).halted,true);assert.equal(state(c).resetHeld,true);
+  assert.equal(c.readIO(IO.PORTB),0);assert.equal(c.readIO(IO.MCUSR)&2,2);
+  assert.ok(c.drainPins().some(e=>e.baseHalf===3n&&!(e.levels&1)));
+  c.writeIO(IO.PORTB,1);assert.equal(c.readIO(IO.PORTB),0);
+  c.injectPins({at:11n,mask:32,levels:32});c.runUntil(11n);
+  assert.equal(state(c).baseHalf,11n);assert.equal(state(c).halted,false);assert.equal(state(c).resetHeld,false);assert.equal(c.pc,0);
+  c.step();assert.equal(c.pc,1);assert.equal(state(c).baseHalf,13n);
+});
+
+test('a recognized RESET injected at the current bus instant resets CPU state immediately',()=>{
+  const c=make(sequential([avr.nop(),avr.nop(),avr.nop()]));c.run(2);
+  c.injectPins({at:state(c).baseHalf,mask:32,levels:0});
+  assert.equal(c.pc,0);assert.equal(state(c).resetCount,1);assert.equal(state(c).resetHeld,true);
+  assert.equal(state(c).baseHalf,4n);
+});
+
 // Official basis: DS40002307A4.7,6.3-6.4,7.1,8.4,9.2-9.3,10.2 and14.12.
 // These test the documented digital scheduling profile and public firmware bus;
 // they do not claim real-silicon metastability or analog startup measurements.

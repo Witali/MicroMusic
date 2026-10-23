@@ -91,7 +91,7 @@ export function runtimeABI(exports) {
     const start=exports.avr_field_name(i);let end=start;while(data[end])end++;
     state[decoder.decode(data.subarray(start,end))]=exports.avr_layout(0)+8*i;
   }
-  return {state,data:exports.avr_layout(4),rom:exports.avr_layout(2),idle:exports.avr_layout(10),frames:exports.avr_layout(11),pwm:exports.avr_layout(13)};
+  return {state,data:exports.avr_layout(4),rom:exports.avr_layout(2),idle:exports.avr_layout(10),frames:exports.avr_layout(11),pwm:exports.avr_layout(13),memoryPages:exports.memory.buffer.byteLength/65536,device:typeof exports.avr_device_time==='function'};
 }
 
 const writes={ADD:63,ADC:63,SUB:63,CP:63,CPI:63,SUBI:63,NEG:63,SBC:63,SBCI:63,CPC:63,ADIW:31,SBIW:31,BST:64,AND:30,ANDI:30,OR:30,ORI:30,EOR:30,INC:30,DEC:30,COM:31,LSR:31,ASR:31,ROR:31};
@@ -103,6 +103,7 @@ const instructionCycles=i=>i.name==='LPM'?3:['ADIW','SBIW','LD','ST'].includes(i
 const popcount=n=>{let count=0;for(;n;n&=n-1)count++;return count;};
 
 export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructions=32}={}) {
+  const full=!!abi.device,canBatch=i=>batchable(i)&&(!full||i.name!=='LPM');
   if(!(image instanceof Uint8Array)||!image.length||image.length>1024)throw new Error('ATtiny13A Flash must contain 1–1024 bytes');
   if(!Number.isInteger(maxBlockInstructions)||maxBlockInstructions<2||maxBlockInstructions>64)throw new Error('Block size must be 2–64 instructions');
   for(const field of ['pc','cyc','error','errorPC','irqDelay','overflowAt','writes','frameCount'])
@@ -119,7 +120,10 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   const guard=()=>condition(state('error'),[0x0f]);
   // Runtime imports are WASM functions, not JS callbacks. None execute opcodes.
   const imports=[['clock',0],['interrupt',1],['writeIO',2],['idle',5]];
-  const CLOCK=0, IRQ=1, IO=2, IDLE=3, firstFunction=imports.length;
+  const CLOCK=0, IRQ=1, IO=2, IDLE=3;
+  if(full)imports.push(['readIO',4],['writeMasked',7],['ready',5],['time',8],['wait',9],['control',7],['lpm',4],['audioDeadline',8],['audioSample',4],['pending',5],['cpuDeadline',10],['idleUntil',9]);
+  const READ=4,MASKED=5,READY=6,TIME=7,WAIT=8,CONTROL=9,LPM=10,AUDIO_DEADLINE=11,AUDIO_SAMPLE=12,PENDING=13;
+  const firstFunction=imports.length;
   const clock=value=>bytes(call(CLOCK,asFloat(value)),guard());
   const finish=()=>bytes(guard(),put('pc',and(state('pc'),constant(511))),clock(get(7)),call(IRQ));
 
@@ -190,6 +194,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     const {name,d,s,k,pc:p}=i,next=(p+1)&511;
     if(pure.has(name))return bytes(alu(i,writes[name]||0),set(7,constant(instructionCycles(i))));
     if(['SLEEP','WDR','BREAK','SPM'].includes(name)){
+      if(full&&name!=='BREAK')return bytes(name==='SPM'?[]:clock(constant(1)),set(7,call(CONTROL,constant({SLEEP:1,SPM:2,WDR:3}[name]),or(reg(30),shl(reg(31),8)),or(reg(0),shl(reg(1),8)))),guard());
       // Device requests are exported globals, not calls from WASM into JS.
       // SPM cannot invent a fixed latency; its controller completes it later.
       if(name==='SPM')return bytes(constant(2),0x24,0,store8(flagsAddress,flags()),0x0f);
@@ -206,7 +211,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
       const skip=width(word(next));return condition(eq(reg(d),reg(s)),bytes(put('pc',constant((next+skip)&511)),set(7,constant(1+skip))));
     }
     if(name==='SBIC'||name==='SBIS'){
-      const skip=width(word(next));return bytes(clock(constant(1)),set(7,constant(0)),condition(eq(and(shr(reg(32+d),k),constant(1)),constant(name==='SBIS'?1:0)),bytes(put('pc',constant((next+skip)&511)),set(7,constant(skip)))));
+      const skip=width(word(next));return bytes(clock(constant(1)),set(7,constant(0)),condition(eq(and(shr(full?call(READ,constant(d)):reg(32+d),k),constant(1)),constant(name==='SBIS'?1:0)),bytes(put('pc',constant((next+skip)&511)),set(7,constant(skip)))));
     }
     if(name==='CLI')return set(5,and(flags(),constant(127)));
     if(name==='SEI')return bytes(set(5,or(flags(),constant(128))),put('irqDelay',constant(1)));
@@ -226,12 +231,12 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
         condition(state('inIRQ'),putF('irqStart',load64(add(constant(abi.frames),shl(sub(state('frameCount'),constant(1)),3)))),putF('irqStart',float(0))));
       return code;
     }
-    if(name==='IN')return bytes(clock(constant(1)),writeReg(d,reg(32+k)),set(7,constant(0)));
-    if(name==='OUT'||name==='SBI'||name==='CBI')return bytes(clock(constant(name==='OUT'?1:2)),set(7,call(IO,constant(name==='OUT'?k:d),name==='SBI'?or(reg(32+d),constant(1<<k)):name==='CBI'?and(reg(32+d),constant(255^(1<<k))):reg(d))),guard(),set(5,load8(flagsAddress)));
+    if(name==='IN')return bytes(clock(constant(1)),writeReg(d,full?call(READ,constant(k)):reg(32+k)),set(7,constant(0)));
+    if(name==='OUT'||name==='SBI'||name==='CBI')return bytes(clock(constant(name==='OUT'?1:2)),set(7,full?call(MASKED,constant(name==='OUT'?k:d),name==='OUT'?reg(d):constant(name==='SBI'?1<<k:0),constant(name==='OUT'?255:1<<k)):call(IO,constant(name==='OUT'?k:d),name==='SBI'?or(reg(32+d),constant(1<<k)):name==='CBI'?and(reg(32+d),constant(255^(1<<k))):reg(d))),guard(),set(5,load8(flagsAddress)));
     if(name==='LDS'||name==='STS'){
       if(k>=160)return fail(16);
       return bytes(set(0,reg(d)),put('pc',constant((p+2)&511)),clock(constant(2)),set(7,constant(0)),
-        name==='LDS'?writeReg(d,reg(k)):k>=32&&k<96?bytes(set(7,call(IO,constant(k-32),X)),guard(),set(5,load8(flagsAddress))):writeReg(k,X));
+        name==='LDS'?writeReg(d,full&&k>=32&&k<96?call(READ,constant(k-32)):reg(k)):k>=32&&k<96?bytes(set(7,call(IO,constant(k-32),X)),guard(),set(5,load8(flagsAddress))):writeReg(k,X));
     }
     if(name==='LD'||name==='ST'){
       if(k<2&&(d===s||d===s+1))return fail(name==='LD'?19:17);
@@ -239,7 +244,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
       // the low pointer byte participates; XH/YH/ZH remain general registers.
       const code=bytes(set(6,and(add(reg(s),constant(k<0?-1:k>=2?k-2:0)),constant(255))),condition(ge(Z,constant(160)),fail(name==='LD'?20:18)),
         k<0?writeReg(s,Z):[],set(0,reg(d)),clock(constant(2)),set(7,constant(0)));
-      if(name==='LD')code.push(...writeReg(d,load8(dataAt(Z))));
+      if(name==='LD')code.push(...writeReg(d,full?conditionValue(and(ge(Z,constant(32)),lt(Z,constant(96))),call(READ,sub(Z,constant(32))),load8(dataAt(Z))):load8(dataAt(Z))));
       else code.push(...condition(and(ge(Z,constant(32)),lt(Z,constant(96))),bytes(set(7,call(IO,sub(Z,constant(32)),X)),guard()),store8(dataAt(Z),X)));
       if(k===1)code.push(...writeReg(s,and(add(Z,constant(1)),constant(255))));
       // Indirect stores can alias SREG, just like OUT or STS.
@@ -248,7 +253,9 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     }
     if(name==='LPM'){
       if(k&&d>=30)return fail(21);
-      return bytes(set(6,or(reg(30),shl(reg(31),8))),condition(ge(Z,constant(1024)),fail(22)),writeReg(d,load8(add(constant(abi.rom),Z))),
+      // The special fuse/lock LPM command is recognized when LPM starts,
+      // within RFLB's three-cycle window; its own three cycles follow.
+      return bytes(set(6,or(reg(30),shl(reg(31),8))),condition(ge(Z,constant(1024)),fail(22)),writeReg(d,full?call(LPM,Z):load8(add(constant(abi.rom),Z))),
         k?bytes(set(6,add(Z,constant(1))),writeReg(30,Z),writeReg(31,shr(Z,8))):[],set(7,constant(3)));
     }
     return fail(2);
@@ -259,15 +266,15 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   // invalid addresses. Every guard exit observes a complete, exact SREG.
   const leaders=new Set([0,3]);
   for(const i of decoded){
-    if(!batchable(i))leaders.add((i.pc+i.words)&511);
+    if(!canBatch(i))leaders.add((i.pc+i.words)&511);
     if(['RJMP','RCALL','BRANCH'].includes(i.name))leaders.add((i.pc+1+i.k)&511);
     if(['SKIP','CPSE','SBIC','SBIS'].includes(i.name))leaders.add((i.pc+1+width(word(i.pc+1)))&511);
   }
   const blocks=[];
   for(let p=0;p<512;){
-    if(!batchable(decoded[p])){p++;continue;}
+    if(!canBatch(decoded[p])){p++;continue;}
     const sequence=[decoded[p++]];
-    while(p<512&&batchable(decoded[p])&&!leaders.has(p)&&sequence.length<maxBlockInstructions)sequence.push(decoded[p++]);
+    while(p<512&&canBatch(decoded[p])&&!leaders.has(p)&&sequence.length<maxBlockInstructions)sequence.push(decoded[p++]);
     if(sequence.length<2)continue;
     let live=255,removed=0,computed=0;
     const masks=new Array(sequence.length);
@@ -305,7 +312,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     const elapsed=binary(0xa0,stateF('cyc'),float(block.cycles));
     // No IRQ can occur inside an accepted block. Timer state advances by the
     // exact number of original CPU cycles, including the prescaler phase.
-    const blocked=or(or(state('irqDelay'),and(reg(88),constant(2))),or(lt(get(1),constant(block.instructions)),
+    const blocked=or(or(state('irqDelay'),full?call(PENDING):and(reg(88),constant(2))),or(lt(get(1),constant(block.instructions)),
       or(binary(0x66,elapsed,stateF('overflowAt')),binary(0x64,elapsed,get(0)))));
     const code=bytes(condition(blocked,bytes(constant(0),0x0f)),set(7,load8(flagsAddress)));
     let elapsedCycles=0;
@@ -332,14 +339,15 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     blockBodies[index]=code;
   });
 
-  const STEP=firstFunction+512+blocks.length+1, BLOCK=STEP+1, RUN=STEP+2, NEXT=STEP+3, CAPTURE=STEP+4;
+  const STEP=firstFunction+512+blocks.length+1, BLOCK=STEP+1, RUN=STEP+2, NEXT=STEP+3, CAPTURE=STEP+4, UNTIL=STEP+5, PHYSICAL=STEP+6;
   const emptyBlock=bytes(constant(0));
-  const step=bytes(condition([0x23,0],[0x0f]),put('error',constant(0)),condition(or(lt(state('pc'),constant(0)),ge(state('pc'),constant(512))),fail(1)),state('pc'),0x11,1,0);
-  const block=bytes(condition([0x23,0],bytes(constant(0),0x0f)),put('error',constant(0)),condition(or(lt(state('pc'),constant(0)),ge(state('pc'),constant(512))),fail(1,true)),
+  const step=bytes(condition([0x23,0],[0x0f]),full?condition(eqz(call(READY)),[0x0f]):[],put('error',constant(0)),condition(or(lt(state('pc'),constant(0)),ge(state('pc'),constant(512))),fail(1)),state('pc'),0x11,1,0,full?condition(eq(state('error'),constant(26)),put('error',constant(0))):[]);
+  const block=bytes(condition([0x23,0],bytes(constant(0),0x0f)),full?condition(eqz(call(READY)),bytes(constant(0),0x0f)):[],put('error',constant(0)),condition(or(lt(state('pc'),constant(0)),ge(state('pc'),constant(512))),fail(1,true)),
     get(0),get(1),add(state('pc'),constant(512)),0x11,3,0);
   const run=bytes(set(1,constant(0)),0x02,0x40,0x03,0x40,
     condition(ge(get(1),get(0)),[0x0c,2]),
     condition([0x23,0],[0x0c,2]),
+    full?condition(eqz(call(READY)),[0x0c,2]):[],
     set(2,call(BLOCK,float(Infinity),sub(get(0),get(1)))),
     condition(state('error'),[0x0c,2]),condition(eqz(get(2)),bytes(call(STEP),set(2,constant(1)))),
     set(1,add(get(1),get(2))),condition(state('error'),[0x0c,2]),0x0c,0,0x0b,0x0b,get(1));
@@ -353,6 +361,22 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     condition(eqz(conditionValue(and(state('fastIdle'),eqz(eqz(load8(add(constant(abi.idle),state('pc')))))),call(IDLE),constant(0))),condition(eqz(call(BLOCK,get(1),constant(2147483647))),call(STEP))),
     condition(state('error'),bytes(constant(0),0x0f)),
     condition(binary(0x64,stateF('cyc'),get(1)),fail(23,true)),0x0c,0,0x0b,0x0b,state('duty'));
+  const until=full?bytes(set(1,constant(0)),0x02,0x40,0x03,0x40,
+    condition(binary(0x66,call(TIME),get(0)),[0x0c,2]),
+    condition(or(state('error'),[0x23,0]),[0x0c,2]),
+    condition(eqz(call(READY)),bytes(condition(eqz(call(WAIT,get(0))),[0x0c,3]),0x0c,1)),
+    condition(or(lt(state('pc'),constant(0)),ge(state('pc'),constant(512))),fail(1,true)),
+    condition(conditionValue(and(state('fastIdle'),eqz(eqz(load8(add(constant(abi.idle),state('pc')))))),call(15,call(14,get(0))),constant(0)),[0x0c,1]),
+    set(2,call(BLOCK,call(14,get(0)),constant(2147483647))),
+    condition(state('error'),[0x0c,2]),
+    condition(eqz(get(2)),bytes(call(STEP),set(2,constant(1)))),set(1,add(get(1),get(2))),
+    0x0c,0,0x0b,0x0b,get(1)):[];
+  const physical=full?bytes(set(1,constant(0)),0x02,0x40,0x03,0x40,
+    condition(ge(get(1),get(0)),[0x0c,2]),
+    call(UNTIL,call(AUDIO_DEADLINE)),0x1a,
+    condition(or(state('error'),[0x23,0]),[0x0c,2]),
+    condition(eqz(call(AUDIO_SAMPLE,get(1))),[0x0c,2]),
+    set(1,add(get(1),constant(1))),0x0c,0,0x0b,0x0b,get(1)):[];
   // Collect OCR0A/OCR0B duty frames into a dedicated byte region of WASM
   // memory. This reuses the unused native raw-audio scratch buffer; generated
   // execution never invokes the native renderer or writes its DSP state.
@@ -374,20 +398,25 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     [0x60,2,0x7c,0x7f,1,0x7f], // block(f64 deadline,i32 limit)->i32
     [0x60,1,0x7f,1,0x7f], // run(i32)->i32
     [0x60,0,1,0x7f], // nextDuty()->i32
+    [0x60,0,0], // reserved
+    [0x60,3,0x7f,0x7f,0x7f,1,0x7f], // maskedIO/control(i32,i32,i32)->i32
+    [0x60,0,1,0x7c], // time()->f64
+    [0x60,1,0x7c,1,0x7f], // wait/runUntil(f64)->i32
+    [0x60,1,0x7c,1,0x7c], // base-time deadline -> CPU-cycle deadline
   ];
   const importSection=vector([
-    bytes(string('avr'),string('memory'),2,1,1,1), // one fixed 64-KiB imported memory
+    bytes(string('avr'),string('memory'),2,1,...uleb(abi.memoryPages||1),...uleb(abi.memoryPages||1)),
     ...imports.map(([name,type])=>bytes(string('avr'),string(name),0,uleb(type))),
   ]);
-  const functionTypes=[...Array(512).fill(1),...Array(blocks.length+1).fill(3),1,3,4,5,2];
+  const functionTypes=[...Array(512).fill(1),...Array(blocks.length+1).fill(3),1,3,4,5,2,...(full?[9,4]:[])];
   const table=Array.from({length:512},(_,p)=>firstFunction+p);
   const blockIndex=new Map(blocks.map((b,n)=>[b.start,firstFunction+512+n]));
   for(let p=0;p<512;p++)table.push(blockIndex.get(p)??firstFunction+512+blocks.length);
   const body=(code,locals)=>{const content=bytes(vector(locals),code,0x0b);return bytes(uleb(content.length),content);};
   const codes=[...instructionBodies.map(code=>body(code,[[9,0x7f],[1,0x7c]])),
-    ...blockBodies.map(code=>body(code,[[9,0x7f]])),body(emptyBlock,[]),body(step,[]),body(block,[]),body(run,[[2,0x7f]]),body(next,[[2,0x7c]]),body(capture,[[3,0x7f],[1,0x7c]])];
+    ...blockBodies.map(code=>body(code,[[9,0x7f]])),body(emptyBlock,[]),body(step,[]),body(block,[]),body(run,[[2,0x7f]]),body(next,[[2,0x7c]]),body(capture,[[3,0x7f],[1,0x7c]]),...(full?[body(until,[[2,0x7f]]),body(physical,[[1,0x7f]])]:[])];
   const exports=vector([...['controlRequest','watchdogResetCycle','debugEnabled','captureFault'].map((name,index)=>bytes(string(name),3,index)),
-    ...[['step',STEP],['block',BLOCK],['run',RUN],['nextDuty',NEXT],['capturePWM',CAPTURE]].map(([name,index])=>bytes(string(name),0,uleb(index)))]);
+    ...[['step',STEP],['block',BLOCK],['run',RUN],['nextDuty',NEXT],['capturePWM',CAPTURE],...(full?[['runUntil',UNTIL],['capturePhysical',PHYSICAL]]:[])].map(([name,index])=>bytes(string(name),0,uleb(index)))]);
   const mapping=decoded.map(({pc,word,name,d,s,k,words})=>({pc,byteAddress:pc*2,word,name,d,s,k,words}));
   const stats={decodableWords:decoded.filter(i=>i.name!=='unsupported').length,unsupportedWords:decoded.filter(i=>i.name==='unsupported').length,
     blocks:blocks.length,flagBitsComputed:blocks.reduce((n,b)=>n+b.computed,0),flagBitsEliminated:blocks.reduce((n,b)=>n+b.removed,0)};
