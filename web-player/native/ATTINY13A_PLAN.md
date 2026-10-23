@@ -32,6 +32,8 @@ stack-phase convention; the hardware phase audit remains part of stage3.
 
 - [ ] Handle phase-correct Timer0 PWM with variable TOP equal to zero.
 - [ ] Model OSCCAL changes with an explicit oscillator calibration contract.
+  Factory calibration reload and the reserved-bit mask are implemented; a
+  measured CAL-to-frequency table and variable oscillator phase remain open.
 - [x] Implement the BODCR timed sleep-disable sequence.
 - [ ] Apply fuse-dependent oscillator startup and reset recovery delays.
 - [ ] Resolve SPM command timing where the datasheet supplies a bound; expose
@@ -52,6 +54,9 @@ is observable separately from analog supply-threshold behavior.
 - [ ] Validate CLKPR transition timing and external RESET recognition/recovery.
 - [ ] Create small firmware probes and an expected trace format for comparison
   with logic-analyzer or oscilloscope captures.
+  Timer0 WGM5/TOP=0 now has source-only firmware, nine control/measurement
+  profiles, trace framing/decoder tests and acquisition instructions in
+  `peripherals/timer0-top-zero-probe.md`; silicon results remain pending.
 - [ ] Record measured chip, clock, fuse configuration and measurement tolerance;
   update the default profile only when the evidence supports it.
 
@@ -78,6 +83,10 @@ defaults; CLI and browser execute the same firmware and physical output.
   event deadline proves a block safe; preserve live SREG bits at every exit.
 - [ ] Cache translation using firmware, translator, runtime and configuration
   identities; invalidate changed Flash regions after self-programming.
+  A bounded in-process module cache now uses the exact padded Flash image,
+  compiler options, ABI and runtime module identity. Clocks/fuses stay in each
+  runtime instance; changed Flash invalidates by image. Region-level
+  retranslation and a persistent cache remain open.
 - [ ] Evaluate moving audio filters into WASM using measured costs.
 
 Acceptance: report reproducible cold and warm timings, output parity and cycle

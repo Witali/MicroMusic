@@ -35,6 +35,14 @@ test('a recognized RESET injected at the current bus instant resets CPU state im
   assert.equal(state(c).baseHalf,4n);
 });
 
+test('the configured factory OSCCAL byte reloads on RESET and reserved bit7 stays zero',()=>{
+  const c=make(sequential([avr.ldi(16,0xc2),avr.out(0x31,16)]),{factoryOsccal96:0x42});
+  assert.equal(c.readIO(0x31),0x42);c.run(2);assert.equal(c.readIO(0x31),0x42);
+  c.injectPins({at:state(c).baseHalf,mask:32,levels:0});
+  assert.equal(c.readIO(0x31),0x42);assert.equal(state(c).resetCount,1);
+  assert.throws(()=>make(sequential([avr.nop()]),{factoryOsccal96:128}),/configuration/);
+});
+
 // Official basis: DS40002307A4.7,6.3-6.4,7.1,8.4,9.2-9.3,10.2 and14.12.
 // These test the documented digital scheduling profile and public firmware bus;
 // they do not claim real-silicon metastability or analog startup measurements.

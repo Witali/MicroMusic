@@ -6,7 +6,7 @@ const bytes=globalThis.process?.versions?.node
 const runtimeModule=await WebAssembly.compile(bytes);
 const configuration={oscillatorHz:1,watchdogHz:2,vccMicrovolts:3,bandgapMicrovolts:4,
   fuseLow:5,fuseHigh:6,lock:7,adcFirstSample:8,comparatorPropagationHalf:9,
-  bandgapStartupHalf:10,comparatorInitial:11,wakeStartupHalf:12,spmCommandCycles:13,flashMaximum:14,bodRecoveryNs:15};
+  bandgapStartupHalf:10,comparatorInitial:11,wakeStartupHalf:12,spmCommandCycles:13,flashMaximum:14,bodRecoveryNs:15,factoryOsccal96:16};
 const timestamp=value=>{
   if(typeof value!=='bigint'||value<0n||value>BigInt(Number.MAX_SAFE_INTEGER))throw Error('Timestamp must be an exact nonnegative bigint below 2^53');
   return value;
