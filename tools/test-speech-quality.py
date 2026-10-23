@@ -36,7 +36,12 @@ def main():
         'test-q3-pulsebook-pole.py', 'test-q3-pulsebook-pole-avr.py',
         'test-q3-pulsebook-compact-avr.py', 'test-q3-core-data-cycles.py',
         'test-q3-pulsebook-mixed.py', 'test-q3-pulsebook-mixed-avr.py',
-        'test-hq4-stream-entropy.py', 'test-q3-wide-pulsebook.py'))
+        'test-hq4-stream-entropy.py', 'test-q3-wide-pulsebook.py',
+        'test-q3-kmap.py', 'test-q3-kmap-search.py', 'test-q3-kmap-avr.py',
+        'test-q3-pulsebook32.py', 'test-probe-q3-pulsebook32.py',
+        'test-q3-pulsebook32-avr.py', 'test-q3-perceptual-fit.py',
+        'test-q3-shaped-noise.py', 'test-probe-q3-shaped-noise.py',
+        'test-q3-rate-prune.py'))
     for path in sorted(paths):
         name = 'speech_'+path.stem.replace('-', '_')
         spec = importlib.util.spec_from_file_location(name, path)
