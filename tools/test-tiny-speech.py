@@ -68,6 +68,23 @@ class TinySpeechTests(unittest.TestCase):
         self.assertEqual(report['affected_frames'], 2)
         self.assertTrue(all((header >> 4) & 7 != 6 for _, header, _ in reduced['frames']))
 
+    def test_flash_limit_measures_eeprom_split_and_survives_resume(self):
+        from tiny_period import pack_tiny
+        model = tiny.canonicalize(fixture())
+        model['dc_block_shift'] = 7
+        objective = SpectralObjective((decode_fixed(model).astype(float)-128)/128)
+        flash = len(pack_tiny(model)['flash_data'])
+        options = dict(words=2, stoi_floor=0., spectral_ceiling=1., max_peak=.95,
+                       max_data_bytes=65535, dc_choices=(7,), voiced_only=True, residual_colors=(0,))
+        search = tiny.TinySearch(model, objective, max_flash_data_bytes=flash, **options)
+        self.assertEqual(search.initial['tiny_flash_data_bytes'], flash)
+        restored = tiny.TinySearch(model, objective, max_flash_data_bytes=flash,
+                                   checkpoint=search.checkpoint(), **options)
+        self.assertEqual(restored.config, search.config)
+        self.assertEqual(restored.best[2], search.best[2])
+        with self.assertRaises(ValueError):
+            tiny.TinySearch(model, objective, max_flash_data_bytes=flash-1, **options)
+
 
 if __name__ == '__main__':
     unittest.main()

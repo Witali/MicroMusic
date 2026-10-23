@@ -43,9 +43,24 @@ def canonicalize(model):
 
 
 class TinySearch(FixedSearch):
-    def __init__(self, model, objective, *, words, **kwargs):
+    def __init__(self, model, objective, *, words, max_flash_data_bytes=None, checkpoint=None, **kwargs):
         self.words = words
-        super().__init__(model, objective, **kwargs)
+        self.max_flash_data_bytes = max_flash_data_bytes
+        super().__init__(model, objective, checkpoint=None, **kwargs)
+        self.config.update(tiny_words=words, max_flash_data_bytes=max_flash_data_bytes)
+        if checkpoint is not None:
+            self.restore(checkpoint)
+
+    def score(self, model, pcm=None):
+        score = super().score(model, pcm)
+        if self.max_flash_data_bytes is not None:
+            from tiny_period import pack_tiny
+            score['tiny_flash_data_bytes'] = len(pack_tiny(model)['flash_data'])
+        return score
+
+    def feasible(self, score):
+        return (super().feasible(score) and (self.max_flash_data_bytes is None or
+                                           score['tiny_flash_data_bytes'] <= self.max_flash_data_bytes))
 
     def compatible(self, model):
         return (super().compatible(model) and
@@ -140,6 +155,7 @@ def main():
     parser.add_argument('--spectral-ceiling', type=float, default=.6)
     parser.add_argument('--max-peak', type=float, default=.95)
     parser.add_argument('--max-data-bytes', type=int)
+    parser.add_argument('--max-flash-data-bytes', type=int, help='hard limit for actual Flash data after the EEPROM split')
     parser.add_argument('--no-gain6', action='store_true', help='automatically remove and forbid the 3/4 gain mode')
     parser.add_argument('--resume', action='store_true')
     args = parser.parse_args()
@@ -183,12 +199,13 @@ def main():
                         objective_kind=args.objective,
                         stoi_floor=args.stoi_floor, spectral_ceiling=args.spectral_ceiling,
                         max_peak=args.max_peak, max_data_bytes=args.max_data_bytes,
+                        max_flash_data_bytes=args.max_flash_data_bytes,
                         dc_choices=(model.get('dc_block_shift', 0),), **constraints,
                         checkpoint=saved['search'] if saved else None)
     runtime = {name:importlib.metadata.version(name) for name in ('numpy', 'scipy', 'pystoi', 'soundfile', 'numba')}
     runtime['python'] = sys.version.split()[0]
     sources = [Path(__file__), ROOT/'tools/refine_period_helpers.py']
-    sources += [CODEC/name for name in ('fixed_search.py', 'fixed_period.py', 'dc_blocker.py',
+    sources += [CODEC/name for name in ('fixed_search.py', 'fixed_period.py', 'dc_blocker.py', 'tiny_period.py',
                                        'compact_period.py', 'colored_period.py', 'period_wave.py', 'auto_encoder.py')]
     fingerprints = {str(path.relative_to(ROOT)).replace('\\', '/'):
                     digest(path.read_text(encoding='utf-8').encode()) for path in sources}
