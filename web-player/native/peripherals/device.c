@@ -814,10 +814,17 @@ int device_advance_half_until_ps(uint64_t wanted,uint64_t wall,uint64_t *consume
  if(!time_contract(1,12)||board.fault)return -1;
  if(wall<board.base){fail(DEVICE_FAULT_TIME,12);return -1;}
  if(board.reset_requested)return -1;
- if(board.reset_held||reset_starting()||power_recovering())return 0;
+ if(board.reset_held||reset_starting())return 0;
  uint64_t before=board.half,target=add(before,wanted);
  if(board.fault)return -1;
- if(!wanted)advance_to(board.base);
+ if(!wanted){
+  /* A completed instruction may have just entered SLEEP and immediately
+   * started BOD wake recovery. Its zero-clock trailing commit still retires;
+   * only a later nonzero CPU span waits for that clock-domain recovery. */
+  advance_to(board.base);
+  return board.fault||board.reset_requested?-1:1;
+ }
+ if(power_recovering())return 0;
  while(board.half<target&&board.base<wall&&!board.fault&&!board.reset_requested) {
   uint64_t deadline=minimum(at_half(target),wall);
   /* A protected prescaler transition changes the target's physical time.
