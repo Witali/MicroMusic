@@ -9,6 +9,7 @@ test('translation cache shares compiled code while isolating memory and public d
   const a=new AVRCore(image),b=new AVRCore(image);
   assert.equal(b.translationCacheHit,true);assert.equal(a._translatedModule,b._translatedModule);
   assert.notEqual(a._exports.memory,b._exports.memory);
+  assert.equal(Object.getPrototypeOf(a),Object.getPrototypeOf(b));
   a.transpilation.abi.data=0;a.transpiledBytes.fill(0);a.r[17]=0xaa;
   const c=new AVRCore(image);assert.equal(c.translationCacheHit,true);
   assert.ok(c.transpilation.abi.data>0);assert.equal(WebAssembly.validate(c.transpiledBytes),true);
