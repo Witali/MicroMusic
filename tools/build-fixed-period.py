@@ -19,7 +19,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = ROOT/'ATtiny13A/Sound/codec/fixed/firmware.S'
 sys.path.insert(0, str(ROOT/'ATtiny13A/Sound/codec'))
-from fixed_period import decode_fixed, pack_avr_data, validate
+from fixed_period import avr_features, decode_fixed, pack_avr_data, validate
 from dc_blocker import block_dc
 
 
@@ -61,7 +61,9 @@ def build(model_path, output, avr_bin=None, node='node'):
         raise ValueError('Current AVR firmware supports only phase_bits=4')
     if model['samples'] % 64 or (model['samples']+63)//64 > 255:
         raise ValueError('Current AVR block counter requires 64-sample blocks and at most 16320 samples')
-    data = pack_avr_data(model)
+    features = avr_features(model)
+    data = pack_avr_data(model, specialize=True)
+    fir_bytes = features['FIR_BYTES']
     output.mkdir(parents=True, exist_ok=True)
     # Never let an old successful image appear to belong to a failed build.
     for name in ('firmware.elf', 'firmware.bin', 'verification.json', 'build.json'):
@@ -69,7 +71,7 @@ def build(model_path, output, avr_bin=None, node='node'):
     (output/'model-avr.bin').write_bytes(data)
     constants = dict(SAMPLES=model['samples'], BLOCKS=(model['samples']+63)//64,
                      INITIAL_PHASE=model['initial_phase_u16'], NOISE_SEED=model['noise_seed_u16'],
-                     DC_SHIFT=model.get('dc_block_shift', 0))
+                     DC_SHIFT=model.get('dc_block_shift', 0), **features)
     (output/'config.inc').write_text(''.join(f'.set {name},{value}\n' for name,value in constants.items()),
                                     encoding='ascii', newline='\n')
     shutil.copyfile(TEMPLATE, output/'firmware.S')
@@ -91,7 +93,7 @@ def build(model_path, output, avr_bin=None, node='node'):
     if not match or 'wave_data' not in symbols:
         raise ValueError('Firmware must expose .text and wave_data')
     object_bytes, code_bytes = int(match[1], 16), symbols['wave_data']
-    if (symbols.get('noise_data') != code_bytes+256 or symbols.get('field_data') != code_bytes+280 or
+    if (symbols.get('noise_data') != code_bytes+256 or symbols.get('field_data') != code_bytes+256+fir_bytes or
             object_bytes != code_bytes+len(data)):
         raise ValueError('Unexpected packed AVR flash-table layout')
     flash_bytes = (object_bytes+1) & ~1  # The AVR linker aligns final .text to a word.
@@ -99,7 +101,8 @@ def build(model_path, output, avr_bin=None, node='node'):
                   hardwareTested=False, cpuHz=9600000, sampleHz=7500, flashLimitBytes=1024,
                   flashBytes=flash_bytes, objectTextBytes=object_bytes,
                   linkerPaddingBytes=flash_bytes-object_bytes, codeBytes=code_bytes, dataBytes=len(data),
-                  waveformBytes=256, firBytes=24, fieldBytes=len(data)-280,
+                  waveformBytes=256, firBytes=fir_bytes, fieldBytes=len(data)-256-fir_bytes,
+                  compileFeatures=features,
                   phraseSamples=model['samples'], verifiedLoops=0,
                   constants=constants, compiler=compiler_version, symbols=symbols,
                   modelSha256=sha(model_path.read_bytes()), dataSha256=sha(data),
