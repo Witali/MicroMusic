@@ -88,6 +88,14 @@ uint32_t device_write(uint8_t io, uint8_t value, uint8_t mask);
 void device_advance(uint32_t cpu_cycles);
 /* CPU bus sampling can precede its final rising edge by half a CPU cycle. */
 void device_advance_half(uint64_t cpu_half_cycles);
+/* Opt-in physical-time CPU continuation span. Consume at most wanted virtual
+ * CPU half periods and never pass wall_deadline_ps (UINT64_MAX means no wall
+ * bound). Retain the fractional clock phase across WAIT, including CLKPR
+ * transitions. *consumed is the actual whole-half delta, never a rounded-up
+ * budget. Return1 COMPLETE,0 WAIT/reset hold/startup, or-1 fault/reset request.
+ * The caller owns remaining instruction work and must cancel it on reset. */
+int device_advance_half_until_ps(uint64_t wanted,uint64_t wall_deadline_ps,
+                                 uint64_t *consumed);
 /* advance stops at an asynchronous reset deadline even inside an instruction;
  * the CPU bridge must abandon its remaining bus/register effects and reset. */
 /* Safe distance in nominal CPU cycles, rounded UP to include an event inside
