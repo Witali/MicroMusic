@@ -110,6 +110,18 @@ binary measurements. Vendor and R4 files remain unmodified.
   AVR GCC already hoists C innovation scale high/low decomposition before
   both vector/sample loops, so adding explicit locals offers no new hoist.
 
+- Hoist the full-pitch-span decision before the three-tap loop. For pitch>=41
+  every pp>=40, so all taps use count=40, with no repeated segment or tail
+  clear. Retain the original short-pitch path and the shared block subroutines.
+  This adds 94 B Flash and leaves RAM/stack unchanged in both backends.
+  Combined with LPC pointer reuse: ASM weighted mean 129,334.859 -> 128,471.883
+  cycles (-0.6672%), corpus maximum 134,346 -> 134,026, Flash 8,662 B.
+  C weighted mean 303,552.455 -> 303,009.847 (-0.1788%), corpus/coverage
+  maxima unchanged at 315,375 / 315,950, Flash 9,604 B. Both backends match
+  13,196 corpus/pitch frames and 58 envelope/reset frames. Two fresh native
+  exported C archives each match 9,100 frames. C still fails the long
+  en_letter_a timer test (1,103 underruns); ASM full-player gate pending.
+
 ## Next candidates (unmeasured)
 
 1. **Portable C fixed-point narrowing.** Generic signed32 shifts dominate C

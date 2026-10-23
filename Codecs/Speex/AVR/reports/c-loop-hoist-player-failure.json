@@ -1,0 +1,24 @@
+{
+  "passed": false,
+  "reason": "Player did not finish within the real-time deadline",
+  "simulator": "avr8js 0.21.1",
+  "input": {
+    "file": "en_letter_a.spxraw",
+    "sha256": "3375d20d0cec46e285841352ffee9def3c582103f0c8f14b885389d29dcc9e01",
+    "frames": 402,
+    "frameLoadCycles": 0
+  },
+  "backend": "c",
+  "binarySha256": "50dff4aa95ae75335b6a6831d303f5a25063e7b1fc112352afeb1a91b209b9e1",
+  "includesInterrupts": true,
+  "physicalBoardTested": false,
+  "elapsedCycles": 130640000,
+  "deadlineCycles": 130640000,
+  "timerOutputs": 65221,
+  "expectedSamples": 64320,
+  "underruns": 1103,
+  "minQueuedSamplesBeforeOutput": 0,
+  "freeSramAtPeak": 514,
+  "inputFinished": false,
+  "decoderError": 0
+}
