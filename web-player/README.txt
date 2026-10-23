@@ -39,6 +39,12 @@ I/O и вход в IRQ использует существующая модел�
 CLI: node web-player/scripts/transpile-avr.mjs input.hex build/output.wasm
 Замер: node web-player/scripts/benchmark-transpiler.mjs
 
+Новые модули периферии ATtiny13A находятся в native/peripherals/:
+Timer0/PWM, GPIO/INT0/PCINT, watchdog, EEPROM/Flash, ADC, компаратор и сон.
+Они тестируются отдельно и собираются в WASM без импортов JavaScript.
+Общий планировщик и подключение к CPU плеера остаются следующим этапом;
+готовность модулей и правила интеграции: native/peripherals/README.md.
+
 ФЬЮЗЫ В ГЛАВНОМ БЛОКЕ
 Low 0x7A: внутренний RC 9,6 МГц, CKDIV8 отключён (бит 4 равен 1),
 делитель /1. High 0xFF — заводской High Fuse; как указано в документах
