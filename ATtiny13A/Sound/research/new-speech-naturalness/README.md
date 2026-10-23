@@ -4,6 +4,13 @@ These experiments investigate alternatives after the HQ4 voice was heard as
 too buzzy. Objective scores are diagnostics, not proof of naturalness. No
 public firmware selection changes are made here.
 
+The separately qualified [compact T1 bell-and-voice experiment](../../codec/natural-bell-oneshot/README.md)
+uses 1018 Flash + 64 EEPROM bytes and preserves the complete effect/voice
+excerpt. Its capped voice improves STOI to 0.82508 and eSTOI to 0.51995.
+The controlled and automatically level-balanced source models and AVR reports
+are retained in `bell-hybrid-t1/`. These are complete executable alternatives;
+the waveform study below retains its own distinct size limitations.
+
 The input is the final phrase selected from `vhodit-i-vyhodit.mp3`, with the
 bell treated separately. The source MP3 SHA-256 is recorded in the imported
 input manifest. The selected complete tail is 19328 samples at 7500 Hz,
