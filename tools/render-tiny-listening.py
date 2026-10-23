@@ -20,37 +20,46 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'ATtiny13A/Sound/codec'))
 from auto_encoder import SpectralObjective
 from refine_period_helpers import atomic_json,matched_audio
+from hq4_core import unpack_stream
+from hq4_timbre import decode as decode_timbre
+from model import decode as decode_hq4
 
 CAPTURE = r"""
 import fs from 'node:fs';
 import {pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
 import assert from 'node:assert/strict';
-const [root,output]=process.argv.slice(1);
+const [root,output,clip,phrase,expectedHash]=process.argv.slice(1);
+const phraseSamples=Number(phrase);
 const hash=x=>createHash('sha256').update(x).digest('hex');
 const load=path=>JSON.parse(fs.readFileSync(root+'/'+path,'utf8'));
 const {parseHex}=await import(pathToFileURL(root+'/web-player/lib/hex.js'));
 const {AVRCore:JS}=await import(pathToFileURL(root+'/web-player/lib/avr-reference.js'));
 const {AVRCore:Wasm}=await import(pathToFileURL(root+'/web-player/lib/avr-core.js'));
 const catalog=load('web-player/hq4-firmware.json');
-const entry=catalog.entries.find(e=>e.id==='hq4-chego-auto');
-assert.ok(entry,'Retained public HQ4-T Auto is missing');
-const frozen=load('ATtiny13A/Sound/codec/timbre/chego-auto/verification.json');
+const entry=catalog.entries.find(e=>e.id===(clip==='chego'?'hq4-chego-auto':'hq4-'+clip));
+assert.ok(entry,'Retained public HQ4 firmware is missing');
+const frozen=clip==='chego'?load('ATtiny13A/Sound/codec/timbre/chego-auto/verification.json'):null;
 const image=parseHex(entry.flashHex);
 assert.equal(hash(image),entry.flashSha256);
-assert.equal(hash(image),frozen.imageSha256);
+if(frozen)assert.equal(hash(image),frozen.imageSha256);
+for(const [path,expected] of Object.entries(entry.sourceInputs)){
+  const source=fs.readFileSync(root+'/'+path);
+  assert.equal(hash(source),expected,`Old source hash mismatch: ${path}`);
+}
 const cores=[new JS(image),new Wasm(image)];
-const pcm=Buffer.alloc(frozen.samples);
+const pcm=Buffer.alloc(phraseSamples*3);
 for(let i=0;i<pcm.length;i++){
   pcm[i]=cores[0].nextDuty();
   assert.equal(cores[1].nextDuty(),pcm[i],`Old firmware PCM mismatch at ${i}`);
 }
-assert.equal(hash(pcm),frozen.pcmSha256);
-assert.equal(hash(pcm.subarray(0,frozen.phraseSamples)),frozen.firstLoopPcmSha256);
+if(frozen)assert.equal(hash(pcm),frozen.pcmSha256);
+const firstLoopPcmSha256=hash(pcm.subarray(0,phraseSamples));
+assert.equal(firstLoopPcmSha256,expectedHash,'Old numerical decoder does not match actual AVR output');
 for(const c of cores){assert.equal(c.lost,0);assert.equal(c.workLost,0);}
-fs.writeFileSync(output,pcm.subarray(0,frozen.phraseSamples));
+fs.writeFileSync(output,pcm.subarray(0,phraseSamples));
 console.log(JSON.stringify({id:entry.id,flashBytes:image.length,
-  imageSha256:hash(image),pcmSha256:hash(pcm),firstLoopPcmSha256:frozen.firstLoopPcmSha256,
+  imageSha256:hash(image),pcmSha256:hash(pcm),firstLoopPcmSha256,
   verifiedSamples:pcm.length,engines:['JS','WASM']}));
 """
 
@@ -73,11 +82,12 @@ def main():
     parser.add_argument('--firmware',required=True,type=Path,help='Verified tiny firmware output directory')
     parser.add_argument('--output',required=True,type=Path)
     parser.add_argument('--node',default='node')
+    parser.add_argument('--clip',choices=('chego','otvechaesh','vinni'),default='chego')
     args=parser.parse_args()
     clip=next(c for c in json.loads((ROOT/'ATtiny13A/Sound/audio-references.json').read_text(encoding='utf-8'))['clips']
-              if c['id']=='chego')
+              if c['id']==args.clip)
     if sha(args.reference.read_bytes())!=clip['sha256']:
-        raise ValueError('Original audio does not match canonical chego SHA-256')
+        raise ValueError('Original audio does not match canonical '+args.clip+' SHA-256')
     report=json.loads((args.firmware/'build.json').read_text(encoding='utf-8'))
     verification=report.get('verification') or {}
     if report['status']!='verified' or not verification.get('pass'):
@@ -94,14 +104,22 @@ def main():
     if sr!=7500 or original.shape!=(samples,):
         raise ValueError('Listening clips must have the same mono duration at 7500 Hz')
     args.output.mkdir(parents=True,exist_ok=True)
+    control=ROOT/'ATtiny13A/Sound/codec'/('timbre/chego-auto/speech.hq' if args.clip=='chego'
+                                      else f'release/{args.clip}/speech.hq')
+    frames,durations=unpack_stream(control.read_bytes())
+    expected=(decode_timbre if args.clip=='chego' else decode_hq4)(frames,durations).tobytes()
+    if len(expected)!=samples:
+        raise ValueError('Previous firmware stream has a different duration')
     result=subprocess.run([args.node,'--input-type=module','--eval',CAPTURE,str(ROOT),
-                           str((args.output/'before.raw').resolve())],check=True,capture_output=True,text=True)
+                           str((args.output/'before.raw').resolve()),args.clip,str(samples),sha(expected)],
+                          check=True,capture_output=True,text=True)
     before_report=json.loads(result.stdout)
     before=(args.output/'before.raw').read_bytes()
     if len(before)!=samples:
         raise ValueError('Before/after duration differs')
     shutil.copyfile(args.reference,args.output/'01-original.wav')
-    pwm_wav(args.output/'02-before-hq4-t-auto.wav',before)
+    before_name='02-before-hq4-t-auto.wav' if args.clip=='chego' else '02-before-hq4.wav'
+    pwm_wav(args.output/before_name,before)
     pwm_wav(args.output/'03-after-tiny.wav',after)
     audio=lambda data:(np.frombuffer(data,np.uint8).astype(float)-128)/128
     matched=args.output/'matched'
@@ -111,7 +129,7 @@ def main():
     shutil.copyfile(matched/'comparison.wav',args.output/'04-comparison-matched.wav')
     files={path.name:dict(bytes=path.stat().st_size,sha256=sha(path.read_bytes()))
            for path in sorted(args.output.glob('*.wav'))}
-    listening=dict(schema='tiny-speech-listening-v1',clip='chego',sampleRate=sr,phraseSamples=samples,
+    listening=dict(schema='tiny-speech-listening-v1',clip=args.clip,sampleRate=sr,phraseSamples=samples,
                    originalSha256=clip['sha256'],originalFileExact=True,before=before_report,
                    after=dict(flashBytes=report['flashBytes'],eepromBytes=report['eepromUsedBytes'],
                               imageSha256=report['imageSha256'],eepromSha256=report['eepromSha256'],
@@ -119,7 +137,8 @@ def main():
                               engines=verification['engines'],verifiedLoops=report['verifiedLoops']),
                    individualProcessing='Original file copied byte-for-byte; before/after are exact unsigned8 DAC samples.',
                    comparisonProcessing='Original, Before, After: common 70Hz highpass, matched RMS, common peak scaling, 0.3s pauses.',
-                   normalizedSourceSha256=sha(Path(__file__).read_text(encoding='utf-8').encode()),files=files)
+                   normalizedSourceSha256=sha(Path(__file__).read_text(encoding='utf-8').encode()),
+                   controlStreamSha256=sha(control.read_bytes()),files=files)
     atomic_json(args.output/'listening.json',listening)
     print(json.dumps(listening,indent=2))
 

@@ -17,6 +17,7 @@ from auto_encoder import SpectralObjective
 from fixed_period import decode_fixed
 from hq4_core import unpack_stream
 from hq4_timbre import decode as decode_timbre
+from model import decode as decode_hq4
 from tiny_period import pack_tiny, unpack_tiny
 from refine_period_helpers import atomic_json, digest, matched_audio
 
@@ -26,11 +27,12 @@ def main():
     parser.add_argument('--model', required=True, type=Path)
     parser.add_argument('--reference', required=True, type=Path)
     parser.add_argument('--output', required=True, type=Path)
+    parser.add_argument('--clip', choices=('chego', 'otvechaesh', 'vinni'), default='chego')
     args = parser.parse_args()
     manifest_path = ROOT/'ATtiny13A/Sound/audio-references.json'
-    clip = next(c for c in json.loads(manifest_path.read_text(encoding='utf-8'))['clips'] if c['id']=='chego')
+    clip = next(c for c in json.loads(manifest_path.read_text(encoding='utf-8'))['clips'] if c['id']==args.clip)
     if digest(args.reference.read_bytes()) != clip['sha256']:
-        raise ValueError('Reference SHA-256 does not match canonical chego')
+        raise ValueError('Reference SHA-256 does not match canonical '+args.clip)
     reference, sr = sf.read(args.reference)
     objective = SpectralObjective(reference, sr)
     model = json.loads(args.model.read_text(encoding='utf-8'))
@@ -41,14 +43,19 @@ def main():
         raise AssertionError('Tiny Flash/EEPROM packing changes exact integer PCM')
     if len(pcm) != len(reference):
         raise ValueError('Reference/model duration mismatch')
-    control_path = CODEC/'timbre/chego-auto/speech.hq'
+    control_path = CODEC/('timbre/chego-auto/speech.hq' if args.clip=='chego' else
+                         f'release/{args.clip}/speech.hq')
     frames, durations = unpack_stream(control_path.read_bytes())
     previous_path = ROOT/'ATtiny13A/Sound/research/fixed-period/chego/white-model.json'
-    previous = json.loads(previous_path.read_text(encoding='utf-8'))
-    clips = dict(Original=reference,
-                 HQ4TAuto=(decode_timbre(frames, durations).astype(float)-128)/128,
-                 Fixed16=(decode_fixed(previous).astype(float)-128)/128,
-                 Tiny=(pcm.astype(float)-128)/128)
+    control_name = 'HQ4TAuto' if args.clip=='chego' else 'HQ4'
+    decoder = decode_timbre if args.clip=='chego' else decode_hq4
+    clips = {'Original':reference, control_name:(decoder(frames, durations).astype(float)-128)/128}
+    previous_hash = None
+    if args.clip=='chego':
+        previous = json.loads(previous_path.read_text(encoding='utf-8'))
+        previous_hash = digest(previous_path.read_bytes())
+        clips['Fixed16'] = (decode_fixed(previous).astype(float)-128)/128
+    clips['Tiny'] = (pcm.astype(float)-128)/128
     metrics = {}
     for name, audio in clips.items():
         signed = audio*128
@@ -62,14 +69,14 @@ def main():
     source_paths = [Path(__file__), ROOT/'tools/train-tiny-speech.py', ROOT/'tools/refine_period_helpers.py']
     source_paths += [CODEC/name for name in ('fixed_period.py', 'fixed_search.py', 'dc_blocker.py',
                                             'tiny_period.py', 'compact_period.py', 'colored_period.py',
-                                            'period_wave.py', 'auto_encoder.py', 'hq4_core.py', 'hq4_timbre.py')]
+                                            'period_wave.py', 'auto_encoder.py', 'hq4_core.py', 'hq4_timbre.py', 'model.py')]
     fingerprints = {str(path.relative_to(ROOT)).replace('\\', '/'):
                     digest(path.read_text(encoding='utf-8').encode()) for path in source_paths}
     runtime = {name:importlib.metadata.version(name) for name in ('numpy', 'scipy', 'pystoi', 'soundfile', 'numba')}
     runtime['python'] = sys.version.split()[0]
-    report = dict(schema='tiny-speech-quality-review-v1', clip_id='chego',
+    report = dict(schema='tiny-speech-quality-review-v1', clip_id=args.clip,
                   reference_sha256=clip['sha256'], manifest_sha256=digest(manifest_path.read_bytes()),
-                  model_sha256=digest(args.model.read_bytes()), previous_model_sha256=digest(previous_path.read_bytes()),
+                  model_sha256=digest(args.model.read_bytes()), previous_model_sha256=previous_hash,
                   control_stream_sha256=digest(control_path.read_bytes()),
                   pcm_sha256=digest(pcm.tobytes()), raw_pcm_sha256=digest(raw_pcm.tobytes()),
                   source_sha256_normalized_lf=fingerprints, runtime=runtime, metrics=metrics,
@@ -88,7 +95,7 @@ def main():
     (args.output/'expected.raw').write_bytes(pcm.tobytes())
     # Preserve the 8-bit samples; these files contain no automatic volume fit.
     sf.write(args.output/'tiny-raw-level.wav', clips['Tiny'], sr, subtype='PCM_16')
-    matched_audio(args.output, clips, objective, ('Original', 'HQ4TAuto', 'Original', 'Tiny'))
+    matched_audio(args.output, clips, objective, ('Original', control_name, 'Original', 'Tiny'))
     print(json.dumps(dict(metrics=metrics, flash_data_bytes=report['flash_data_bytes'],
                           eeprom_used_bytes=report['eeprom_used_bytes'],
                           clips=report['output_clips'], pcm_sha256=report['pcm_sha256']), indent=2))
