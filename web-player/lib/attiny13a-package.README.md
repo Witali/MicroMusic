@@ -108,7 +108,7 @@ it does not assert complete silicon behavior or measured oscillator calibration.
 | `adcFirstSample` | 27 | 27 or 29 (half ADC periods) |
 | `comparatorPropagationHalf`, `bandgapStartupHalf` | 0 | uint32, runtime half-clock domain |
 | `comparatorInitial` | 0 | integer 0 or 1 |
-| `wakeStartupHalf` | 0 | uint32, base half ticks |
+| `wakeStartupHalf` | 0 | uint32, base half ticks; even for CLKI's explicit source-CK count |
 | `spmCommandCycles` | 0 | uint32; 0 keeps missing timing explicit |
 | `flashMaximum` | 1 | integer 0 or 1 |
 | `bodRecoveryNs` | 60000 | uint32, nanoseconds |
@@ -196,10 +196,11 @@ The only accepted external fixture is
 (or initial level1). It requires `resumable:true` and CKSEL00 (`fuseLow&3===0`).
 This profile selects physical time independently of `osccalHz`; no dummy
 calibration table or predicted clock period is needed. It is a logical input
-fixture, with no claim about electrical pulse validity or undocumented silicon
-startup phase. Packages using it must supply the complete native CLKI bridge
+fixture with a named initial/divider phase, rather than a measurement of silicon
+phase. Packages using it must supply the complete native CLKI bridge
 with the checked signatures. A package stores the initial profile, not a saved
-edge queue or continuation.
+edge queue, periodic descriptor or continuation. ISP/HVSP transport is outside
+the runtime's scope; loading the image does not execute a programming protocol.
 
 Raw constructor/writer input may additionally select
 `electricalValidation:'none'|'datasheet-ideal-v1'`. Omitting it means `none`;
@@ -220,13 +221,61 @@ a bounded512-edge staging buffer, and commits once in C/WASM. `false` reports
 backpressure without accepting a partial batch or horizon; malformed input
 throws. There are no per-edge JS callbacks while executing the CPU.
 
+A finite exact periodic descriptor avoids constructing a large JS edge array:
+
+```js
+const cpu = new ATtiny13A(flash, eeprom, {
+  fuseLow: 0x78, // CKSEL00, CKDIV8 unprogrammed: divide by one
+  resumable: true,
+  clkiProfile: {
+    phasePolicy: 'digital-noninverting-zero-seed-v1', initialLevel: 0,
+  },
+});
+cpu.injectClkiPeriodicPs({
+  startPs: 0n, initialLevel: 0,
+  highPs: 40_000n, lowPs: 60_000n,
+  transitionCount: 20_000n, knownUntilPs: 1_200_000_000n,
+});
+const rawPCM = cpu.capturePhysical(48, 48_000, 1); // native pin integration
+cpu.runUntilPs(1_200_000_000n); // known low hold after the final edge
+```
+
+All descriptor timestamps, durations and counts are BigInt uint64 values;
+durations are positive. The start must be at or after the old horizon and its
+initial level must match the already-declared tail. The first transition is
+`startPs + (initialLevel ? highPs : lowPs)`; start itself creates no edge.
+Transitions alternate using exact integer durations, without Hz rounding or a
+fractional-duration option. The final actual transition must fit at/before
+`knownUntilPs`, below UINT64_MAX. Count zero declares a known hold. After the
+finite count, the last level remains held through the horizon; another period
+is never inferred.
+
+C lazily fills the same 512-edge queue from this descriptor. While producer edges
+remain unmaterialized, another descriptor or nonempty raw batch returns `false`
+for backpressure; an empty raw batch may still extend the horizon. Once no
+producer edges remain, later input may follow the usual horizon/tail rules even
+if materialized edges are still queued. `state().clki.periodicRemaining` counts
+unmaterialized edges, separately from `queued` and `free`. Each externally
+observable source edge is still serviced in native code: compact production
+does not analytically skip the clock, peripheral or pin work.
+
 `runUntilPs` returns the number of retired instructions. If the known-input
 horizon is exhausted it returns normally at that earlier time; `state().clki`
 reports `WAIT_INPUT`. It also exposes `horizonPs`, `level`, `queued`, `free`,
-`status` (`COMPLETE`, `WAIT_CLOCK`, `WAIT_INPUT`), `aligned` and BigInt `startupCK`.
+`periodicRemaining`, `status` (`COMPLETE`, `WAIT_CLOCK`, `WAIT_INPUT`), `aligned`
+and BigInt `startupCK`.
 Extend the horizon/edges and call again to continue. Bounded physical audio
 capture preflights the entire requested sample interval; insufficient input
 throws an explicit `CLKI WAIT_INPUT` before changing CPU/audio state.
+
+A high/low hold preserves divider and pending CPU/IRQ phase. WDT, power/RESET
+observation and NVM wall latency continue; source-CK startup and synchronous
+peripherals advance only when their required real edges and gates permit it.
+An unknown horizon is distinct from a declared stop. Silicon source-pad timing,
+hardware phase and physical hot stop/restart behavior remain unmeasured; the
+optional ideal validator does not replace that qualification. See the
+[CLKI contract](../native/devices/attiny13a/clki-design.md) for event ordering,
+divider and startup rules.
 
 With CLKI selected, use bounded `runUntilPs`; unbounded `step`, `run`, `clock`,
 `interrupt` and `runBlock` are rejected. Host EEPROM EERE/EEPE command writes

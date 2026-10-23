@@ -59,7 +59,8 @@ peripheral/input event and the caller's deadline.
 
 ### Resumable physical deadlines
 
-With `resumable:true` and an explicit physical OSCCAL table, the emitter splits
+With `resumable:true` and physical time (an explicit OSCCAL table for the
+internal source, or a digital CLKI profile), the emitter splits
 each instruction at generation-time clock markers. `lib/avr-wasm-phases.js`
 emits stage tests, WASM-local save/restore and calls to the native bounded clock
 bridge. It does not interpret AVR opcodes or reparse generated WASM. WAIT
@@ -72,8 +73,11 @@ instruction blocks/idle skipping until their continuation behavior is proved.
 The default block path retains live-flag elimination and emits identical bytes
 for all13 retained firmware images. Physical PWM integration remains in native
 WASM; use `capturePhysical` in this mode. The current implementation supplies
-bounded internal-clock spans and staged IRQ entry. External CLKI delivery and
-portable-package support for this ABI are still open; see the
+bounded internal-clock spans and staged IRQ entry. Timestamped CLKI source
+edges also drive the board through PB3, CKDIV8/CLKPR, startup and sleep gates.
+Known holds preserve phase; unknown input beyond the published horizon returns
+`WAIT_INPUT` rather than extrapolating a period. Package v5 preserves this
+execution mode and validates its continuation/source ABI. See the
 [native continuation contract](devices/attiny13a/cpu_phase.md) and
 [CLKI design](devices/attiny13a/clki-design.md).
 
@@ -334,10 +338,12 @@ See [the format and CLI guide](../lib/attiny13a-package.README.md) and the
 [completion plan](ATTINY13A_PLAN.md). The full device remains selectable while
 the default-player switch waits for real-time performance.
 
-Public input and trace timestamps are `bigint` counts of half oscillator
-periods, independent of CLKPR. The browser API limits timestamps to 2^53-1
-to preserve exact conversion into the generated WASM loop. Queue inputs in
-chronological order across both input types. Digital drivers and analog
+The fixed-clock API uses `bigint` counts of half oscillator periods, independent
+of CLKPR, limited to 2^53-1 for its generated loop. The physical profile instead
+uses unsigned64-bit picoseconds with `runUntilPs`, `injectPinsPs`, `setAnalogPs`
+and `drainPinsPs`; absolute times remain integers while runner offsets are
+rebased. CLKI selects physical time independently of an OSCCAL table. Queue
+inputs chronologically in their selected domain. Digital drivers and analog
 voltages are explicit; analog injections do not guess a digital threshold.
 `readIO` and `writeIO(address,value,mask=255)` access the live bus without
 instruction cycles; use firmware IN/OUT/LD/ST/SBI/CBI for instruction timing.
@@ -352,12 +358,25 @@ returns for retranslation when Flash generation changes, and cannot fetch old
 generated code afterward. Commands without documented duration require an
 explicit `spmCommandCycles` board parameter rather than an invented latency.
 
+In resumable mode, `runUntilPs` can stop partway through an instruction or IRQ
+entry and resume its latched state on the next call. Read/command side effects
+are not replayed and retirement counts exclude partial work. With CLKI selected,
+unbounded CPU APIs are rejected. Use atomic raw edge batches or
+`injectClkiPeriodicPs` with finite high/low durations and a known-input horizon.
+The periodic descriptor lazily refills a 512-edge queue in C, without a JS call
+per edge. Each externally observable source edge is still serviced; this does
+not analytically skip the coupled clock/peripheral work. Holds advance WDT,
+power/reset observation and NVM wall latency without manufacturing CPU phases.
+
 `capturePhysical(frames,sampleRate,channels)` integrates physical PB1 for mono,
 or PB0/PB1 for left/right stereo, into normalized Float32 samples. It includes
 DDRB, GPIO mux, comparator-triggering pin changes and Timer0 buffered compare
-updates. Its deadlines use rational sample periods on the oscillator timeline.
-Future transitions from the CPU's final instruction remain queued for the next
-audio interval. The generated WASM loop captures up to 4096 samples per host
+updates. Its rational sample grid uses the selected fixed-clock or physical
+timeline. In the default instruction-boundary path, future transitions from the
+CPU's final instruction remain queued for the next audio interval. Resumable
+physical capture observes exact sample deadlines, including during a CLKI hold;
+it preflights the full requested CLKI horizon before changing CPU/audio state.
+The generated WASM loop captures up to 4096 samples per host
 call, consuming transitions during instruction execution and halted waits.
 Even maximum-rate pin toggling need not fit a whole audio interval in the
 trace ring. The JS renderer applies the existing
@@ -371,3 +390,7 @@ disables it for differential checks. See [device.md](peripherals/device.md) for
 CLKPR phase choice, ADC/ADIF document conflicts, analog fixture parameters and
 remaining electrical/debug boundaries. This is a deterministic digital profile,
 not a claim of voltage/temperature calibration or silicon trace equivalence.
+The CLKI profile names a deterministic initial/divider phase and optionally
+checks ideal digital timing limits. Analog clock reception, hardware phase and
+physical stop/restart qualification remain unmeasured. ISP/HVSP are excluded by
+[`EMULATION_SCOPE.md`](EMULATION_SCOPE.md).

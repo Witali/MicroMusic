@@ -5,7 +5,7 @@ loading a firmware package does not implement a programming or debug transport.
 
 | Interface | Current boundary | Work required for physical support |
 | --- | --- | --- |
-| CLKI on PB3 | CKSEL selects a configured frequency; injected PB3 transitions do not clock the CPU | Timestamped source edges, stopped-clock state, CKDIV8/CLKPR division, startup CK counting and resumable instruction phases |
+| CLKI on PB3 | Timestamped physical source edges clock the board through CKDIV8/CLKPR; bounded CPU/IRQ continuations preserve progress through holds, startup and sleep | The named digital phase policy is implemented; pad timing, analog clock reception and silicon phase measurements remain open |
 | External RESET | Optional analog PB5 receiver feeds the reset aggregator; digital injection stays prequalified | Supply and receiver parameters are explicit profiles; silicon calibration/measurement remains open |
 | ISP | Excluded by the user's scope decision | No programmer or command transport is planned |
 | HVSP | Excluded by the user's scope decision | No programming backend, HV entry or wire receiver is planned |
@@ -19,11 +19,21 @@ device-specific directory.
 
 ## Clock and reset constraints
 
-Changing `source_rate()` alone cannot implement an external clock. WDT, supply
-events and NVM must continue on physical time while CLKI stops, and no later
-instruction effect may occur before its source edge. Startup combines source CK
-with an independent watchdog timeout. PB3's alternate-function table does not
-authorize inventing a DDRB3 override.
+The [CLKI implementation](clki-design.md) uses physical picoseconds and real
+queued transitions rather than a configured average frequency. WDT, supply
+events and NVM wall latency continue while CLKI is held high or low. CPU/IRQ
+effects wait for their remaining delivered phases. Startup combines source CK
+with an independent watchdog timeout. PB3 is the same pad observed by GPIO,
+ADC3 and pin capture; separate PB3 injection and output contention are rejected
+in this fixture rather than inventing a DDRB3 override.
+
+Arbitrary batches and finite exact periodic descriptors feed a bounded native
+edge queue. Periodic descriptors refill it lazily in C, with no per-edge JS
+callback. Each externally observable source edge is still serviced. A declared
+edge-free interval means a known hold; exhausting the published input horizon
+returns `WAIT_INPUT` without extrapolating a period. The optional
+`datasheet-ideal-v1` validator checks ideal digital timing limits, not analog
+receiver behavior or measured silicon phase.
 
 The RESET pulse requirement is not a published exact assertion delay. Typical
 voltage and hysteresis plots do not provide a universal receiver transfer
@@ -33,8 +43,10 @@ that receiver. RESET-specific characteristics are distinct from PB5 GPIO plots.
 
 The board uses the receiver's next physical deadline, preserves it through CPU
 reset acknowledgement and combines its output with POR/BOD/WDT and the digital
-bypass. The generated CPU, native audio collector and package v4 path exercise
+bypass. The generated CPU, native audio collector and package v5 path use
 the same model; no host callback handles individual voltage transitions.
+Package v4 is the historical RESET-receiver format; v5 also records the optional
+resumable execution and CLKI profiles.
 
 ## Debug and programming constraints
 

@@ -4,15 +4,18 @@ This is an optional physical-time execution backend. It does not decode guest
 opcodes or change the legacy executor. The translated emitter owns instruction
 effects, PC/SREG commits and its saved locals/stage. Native code supplies bounded
 clock spans, asynchronous reset cancellation and resumable interrupt entry.
-There is no external CLKI edge source integration in this change.
+Both the internal physical clock and the timestamped CLKI board source use
+this backend. The original native-only checkpoint preceded CLKI integration;
+that historical boundary no longer describes the current runtime.
 
 ## Stable context and exports
 
 Call `avr_device_phase_enable(1)` before the first `avr_reset`. It returns1 for
 pre-init values0/1 and0 for an invalid value or a late configuration. Enabling
-requires the existing physical1ps board profile; a fixed oscillator legacy
-timebase is rejected on reset. The enabled choice survives a subsequent cold
-reset; the context, retirement counter and deadline are cleared by that reset.
+requires a physical1ps board profile, selected by an explicit OSCCAL table or
+the digital CLKI profile; a fixed oscillator legacy timebase is rejected on
+reset. The enabled choice survives a subsequent cold reset; the context,
+retirement counter and deadline are cleared by that reset.
 
 `avr_device_phase_layout(item)` returns absolute WASM-memory addresses:
 
@@ -62,7 +65,12 @@ wall limit, and reports an actual floor-counted virtual-half delta. It stops at
 the wall bound, all requested halves, reset or fault; reset hold/startup/recovery
 returns WAIT without consuming CPU work. A pending CLKPR change is a separate
 boundary, after which the remaining target time is recomputed. This preserves
-clock phase through a partial period and prevents rounding a bus effect early.
+clock phase through a partial internal-clock period and prevents rounding a bus
+effect early. CLKI instead consumes actual queued source/divider edges, never a
+frequency estimate. A known high/low hold preserves the remaining span while
+independent wall-time events continue. An exhausted input horizon returns WAIT
+at that earlier bound, with native CLKI status `WAIT_INPUT`; a known clock wait
+reports `WAIT_CLOCK`. Unavailable future source phases are not charged to the CPU.
 
 A zero-clock trailing span completes even if SLEEP just started BOD wake
 recovery, so that the instruction can retire before the halted-board wait loop
@@ -100,8 +108,9 @@ backend, avoiding retirement bypass. Disabled mode preserves the old fast path.
 
 ## Generated WASM and JavaScript entry points
 
-`ATtiny13A` accepts `resumable:true` together with the existing explicit
-`osccalHz` physical clock table. This optional mode is disabled by default;
+`ATtiny13A` accepts `resumable:true` together with an explicit `osccalHz` physical
+clock table for the internal source, or a `clkiProfile` for CKSEL00. CLKI enables
+physical time without a dummy RC table. This optional mode is disabled by default;
 the legacy ABI and retained firmware bytes stay unchanged. The shared emitter
 adds clock markers while generating effects; `lib/avr-wasm-phases.js` lowers
 those top-level markers into native WASM stage tests and local saves. Clock
@@ -118,17 +127,27 @@ in this mode; all flags are live at the observable instruction boundary.
 
 `runUntilPs` establishes a bounded physical deadline, rebasing its exact uint64
 wall timestamp for the f64 runner offset. `step`/`run` explicitly select an
-unbounded span with the currently implemented internal source. Instruction
-counts include completed retirements only. `state().cpuPhase` exposes active,
+unbounded span only with an internal source. With CLKI selected these methods,
+manual `clock`/`interrupt` and `runBlock` are rejected; use bounded `runUntilPs`.
+An unknown CLKI horizon returns normally with explicit `state().clki` status,
+allowing another edge batch or finite periodic descriptor to resume the same
+context. Instruction counts include completed retirements only.
+`state().cpuPhase` exposes active,
 word execPc, stage, remainingHalves and retired. It is diagnostic state, not a
 second source of CPU truth. `capturePhysical` integrates pin levels inside
-native WASM across exact sample deadlines. Legacy duty capture is unavailable
-in this optional mode. No host callback is used for instruction/clock phases.
+native WASM across exact sample deadlines. CLKI capture preflights the full
+requested input horizon, including a known held level; insufficient input fails
+before CPU/audio mutation. Legacy duty capture is unavailable in this optional
+mode. No host callback is used for instruction/clock phases.
 
-Package v4 still accepts the original ABI only; it rejects the additional
-continuation layout. A future package revision must preserve the execution
-mode and validate its phase exports/layout. External CLKI remains unconnected;
-the input queue alone must not be described as stopped-clock device support.
+Package v5 records `resumable` and the initial CLKI profile, matches the
+translation's `executionMode:'resumable-v1'`, and validates phase exports,
+signatures, the 80-byte layout and nonoverlap with other ABI regions. It stores
+an initial device image, not an active continuation or queued source signal.
+Versions 1..4 retain their historical contracts and do not acquire this ABI.
+The [CLKI contract](clki-design.md) describes PB3, divider/startup/sleep, known
+holds, input horizons and the finite native producer. Its deterministic phase
+policy and optional ideal validation do not establish measured silicon phase.
 
 The generated control, local and memory encodings follow the official
 [WASM binary instruction specification](https://webassembly.github.io/spec/core/binary/instructions.html);
@@ -146,7 +165,13 @@ cancellation, real Flash-generation changes/SPM halt, SLEEP and disabled mode.
 `avr-resumable-runtime.test.mjs` slices all123 official forms at every half edge
 and adjacent1ps deadline, comparing final CPU/memory state with the existing
 full-device path. It also checks public entry points, ABI/cache/mode identity,
-package rejection, SLEEP/BOD recovery and audio partition invariance.
+package v5 roundtrips/ABI rejection, SLEEP/BOD recovery and audio partition
+invariance.
 `avr-resumable-oracles.test.mjs` records real native bridge calls in WASM to
 check read latches, stack phases, once-only RFLB/EEPROM commands, reset/edge
 ties and persistent IRQ entry across actual WAIT returns.
+
+`attiny13a-clki-runtime.test.mjs` and
+`attiny13a-clki-periodic-runtime.test.mjs` exercise the connected external source
+and host producer. These are verification entry points, not a statement that
+the latest combined integration run has completed.
