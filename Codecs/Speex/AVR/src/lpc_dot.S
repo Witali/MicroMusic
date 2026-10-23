@@ -11,6 +11,8 @@
 .type speex_avr_iir40, @function
 speex_avr_iir40:
     push r2
+    push r4
+    push r5
     push r6
     push r7
     push r8
@@ -51,14 +53,15 @@ speex_avr_iir40:
     ld r19, X+
     ld r21, -Z
     ld r20, -Z
+    /* AVR201 method_B carry scheduling: retain high*high in r5:r4,
+     * add it with low*low in one 32-bit carry chain (one cycle/tap less). */
     muls r19, r21
-    add r24, r0
-    adc r25, r1
+    movw r4, r0
     mul r18, r20
     add r22, r0
     adc r23, r1
-    adc r24, r2
-    adc r25, r2
+    adc r24, r4
+    adc r25, r5
     mulsu r19, r20
     sbc r25, r2
     add r23, r0
@@ -178,6 +181,8 @@ speex_avr_iir40:
     pop r8
     pop r7
     pop r6
+    pop r5
+    pop r4
     pop r2
     ret
 .size speex_avr_iir40, .-speex_avr_iir40
