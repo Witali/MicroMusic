@@ -1,0 +1,145 @@
+{
+  "id": "vhodit-i-vyhodit-final",
+  "input": {
+    "id": "vhodit-i-vyhodit-final",
+    "source_file": "vhodit-i-vyhodit.mp3",
+    "source_sha256": "97e7bcea0992c483ca3e88feb442f772bce2fbe25ee9211c1bb7c75924dc264c",
+    "source_bytes": 54560,
+    "source_sample_rate": 16000,
+    "source_channels": 1,
+    "source_samples": 268992,
+    "source_seconds": 16.812,
+    "source_mono_dc_removed": 6.8935962528207875e-06,
+    "selection_start_seconds": 14.24,
+    "selection_end_seconds": 16.812,
+    "mono_policy": "arithmetic mean of channels",
+    "resampling": "scipy.signal.resample_poly default Kaiser anti-alias filter",
+    "normalization_gain": 0.702455199369083,
+    "sample_rate": 7500,
+    "reference_samples": 19328,
+    "unpadded_samples": 19290,
+    "trailing_zero_padding_samples": 38,
+    "reference_seconds": 2.5770666666666666,
+    "speech_cropped": true,
+    "reference_sha256": "4914d2c349e1f2e9e102ec23949a2bb96b95b7145aa252b54a6a8341ba5ce55d",
+    "reference_file": "reference.wav",
+    "reference_peak": 0.850006103515625,
+    "reference_rms": 0.1854004524758374,
+    "current_tiny_duration_supported": true,
+    "hq4_minimum_frames": 76,
+    "hq4_minimum_stream_bytes": 156,
+    "hq4_stream_budget_bytes": 617
+  },
+  "selectedFamily": "tonal",
+  "requestedFinalFamily": "tonal",
+  "selectionProvisional": true,
+  "flashBytes": 1024,
+  "eepromUsedBytes": 0,
+  "phraseSamples": 19328,
+  "sampleHz": 7500,
+  "imageSha256": "8ec9d6e0686c46ef559bd20659f4e33d48cbaa26d308e876adead4a33dde0b6a",
+  "actualPhrasePcmSha256": "74a73dedacf25b9af9b91f9451119a6be8a2a7abd89ea55ef8424b0a5c1fc15b",
+  "quality": {
+    "loss": 0.9590479993052353,
+    "log_spectral_error": 0.9691867966322846,
+    "relative_spectral_error": 0.9184928099970381,
+    "stoi": 0.7544560811002966,
+    "estoi": 0.4241894662985095,
+    "balanced_score": 0.6777322411558778,
+    "pcm_sha256": "74a73dedacf25b9af9b91f9451119a6be8a2a7abd89ea55ef8424b0a5c1fc15b",
+    "measured_from": "actual AVR recording",
+    "samples": 19328,
+    "sample_rate": 7500
+  },
+  "alternatives": [
+    {
+      "family": "hq4",
+      "flashBytes": 1024,
+      "eepromUsedBytes": 0,
+      "quality": {
+        "loss": 0.9391287091487732,
+        "log_spectral_error": 0.9446834957807302,
+        "relative_spectral_error": 0.9169095626209449,
+        "stoi": 0.7544041675818749,
+        "estoi": 0.41962726081461255,
+        "balanced_score": 0.679273870849973,
+        "pcm_sha256": "6e51030c0f295d81e87d865c7ee77acda6259dc83c7619b424450b15465e42fb",
+        "measured_from": "actual AVR recording",
+        "samples": 19328,
+        "sample_rate": 7500
+      }
+    },
+    {
+      "family": "tiny",
+      "flashBytes": 1024,
+      "eepromUsedBytes": 64,
+      "quality": {
+        "loss": 1.235728707956782,
+        "log_spectral_error": 1.2750464877303158,
+        "relative_spectral_error": 1.0784575888626466,
+        "stoi": 0.5586431339983212,
+        "estoi": 0.1356699353058706,
+        "balanced_score": 0.45978483736177866,
+        "pcm_sha256": "e45e67205cac0b3c74c364ea32a69e946546834a9a087abfc351e3a4fbc1f740",
+        "measured_from": "actual AVR recording",
+        "samples": 19328,
+        "sample_rate": 7500
+      }
+    },
+    {
+      "family": "tonal",
+      "flashBytes": 1024,
+      "eepromUsedBytes": 0,
+      "quality": {
+        "loss": 0.9590479993052353,
+        "log_spectral_error": 0.9691867966322846,
+        "relative_spectral_error": 0.9184928099970381,
+        "stoi": 0.7544560811002966,
+        "estoi": 0.4241894662985095,
+        "balanced_score": 0.6777322411558778,
+        "pcm_sha256": "74a73dedacf25b9af9b91f9451119a6be8a2a7abd89ea55ef8424b0a5c1fc15b",
+        "measured_from": "actual AVR recording",
+        "samples": 19328,
+        "sample_rate": 7500
+      }
+    },
+    {
+      "family": "hybrid",
+      "flashBytes": 986,
+      "eepromUsedBytes": 64,
+      "quality": {
+        "loss": 0.7870612031965898,
+        "log_spectral_error": 0.8019122198555678,
+        "relative_spectral_error": 0.7276571365606778,
+        "stoi": 0.6721118615127909,
+        "estoi": 0.393558702243227,
+        "balanced_score": 0.6091469652570637,
+        "pcm_sha256": "8ecaabfc88e48a42e4360ba6065fbaa5f275379c624346014f5d202115d217d2",
+        "measured_from": "actual AVR recording",
+        "samples": 19328,
+        "sample_rate": 7500
+      }
+    }
+  ],
+  "originalAudio": "audio/vhodit-i-vyhodit-final/original.wav",
+  "afterAudio": "audio/vhodit-i-vyhodit-final/after.wav",
+  "referenceAudio": "audio/vhodit-i-vyhodit-final/reference.wav",
+  "firmware": "firmware/vhodit-i-vyhodit-final/firmware.hex",
+  "eeprom": null,
+  "hybridAlternative": {
+    "audio": "audio/vhodit-i-vyhodit-final/hybrid.wav",
+    "firmware": "firmware/vhodit-i-vyhodit-final/hybrid/firmware.hex",
+    "eeprom": "firmware/vhodit-i-vyhodit-final/hybrid/eeprom.hex"
+  },
+  "verification": {
+    "engines": [
+      "reference",
+      "wasm",
+      "wasm-unoptimized"
+    ],
+    "verifiedSamples": 57984,
+    "silenceSamplesVerified": 38656,
+    "lostOverflows": 0,
+    "missedSamples": 0
+  }
+}
