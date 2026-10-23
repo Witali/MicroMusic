@@ -35,7 +35,10 @@ stack-phase convention; the hardware phase audit remains part of stage3.
   Factory calibration reload and the reserved-bit mask are implemented; a
   measured CAL-to-frequency table and variable oscillator phase remain open.
 - [x] Implement the BODCR timed sleep-disable sequence.
-- [ ] Apply fuse-dependent oscillator startup and reset recovery delays.
+- [x] Apply fuse-dependent oscillator startup and reset recovery delays.
+  `fuseStartupProfile:1` enables source-clock and watchdog-pulse delays,
+  external RESET release/reassertion and mode-dependent wake startup. The
+  explicit zero-startup fixture remains available as profile0.
 - [ ] Resolve SPM command timing where the datasheet supplies a bound; expose
   explicit timing parameters where it does not.
 

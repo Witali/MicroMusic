@@ -43,6 +43,20 @@ test('the configured factory OSCCAL byte reloads on RESET and reserved bit7 stay
   assert.throws(()=>make(sequential([avr.nop()]),{factoryOsccal96:128}),/configuration/);
 });
 
+test('optional fuse startup gates translated execution until source-clock reset delay completes',()=>{
+  const c=make(sequential([avr.ldi(16,0x5a)]),{fuseLow:0x72,fuseStartupProfile:1});
+  assert.equal(state(c).starting,true);assert.equal(state(c).startupDeadline,40n);
+  c.step();assert.equal(c.pc,0);assert.equal(state(c).baseHalf,0n);
+  c.runUntil(39n);assert.equal(c.r[16],0);assert.equal(state(c).starting,true);
+  c.runUntil(40n);assert.equal(state(c).starting,false);assert.equal(c.pc,0);
+  c.step();assert.equal(c.r[16],0x5a);assert.equal(state(c).baseHalf,42n);
+  c.injectPins({at:42n,mask:32,levels:0});assert.equal(state(c).resetHeld,true);
+  assert.equal(state(c).startupDeadline,0xffffffffffffffffn);
+  c.injectPins({at:50n,mask:32,levels:32});c.runUntil(50n);
+  assert.equal(state(c).starting,true);assert.equal(state(c).startupDeadline,90n);
+  c.runUntil(90n);assert.equal(c.pc,0);assert.equal(state(c).halted,false);
+});
+
 // Official basis: DS40002307A4.7,6.3-6.4,7.1,8.4,9.2-9.3,10.2 and14.12.
 // These test the documented digital scheduling profile and public firmware bus;
 // they do not claim real-silicon metastability or analog startup measurements.

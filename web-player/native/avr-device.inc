@@ -102,6 +102,8 @@ int avr_device_divisor(void){return device_clkpr_divisor();}
 int avr_device_reset_count(void){return full_reset_count;}
 int avr_device_halted(void){return device_halted();}
 int avr_device_sleep_phase(void){return device_sleep_phase();}
+int avr_device_starting(void){return device_starting();}
+uint64_t avr_device_startup_deadline(void){return device_startup_deadline();}
 int avr_device_bod_disabled(void){return device_bod_disabled();}
 int avr_device_bod_recovering(void){return device_bod_recovering();}
 int avr_device_reset_held(void){return device_reset_held();}

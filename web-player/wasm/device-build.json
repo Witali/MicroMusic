@@ -55,6 +55,8 @@
     "-Wl,--export=avr_device_reset_count",
     "-Wl,--export=avr_device_reset_held",
     "-Wl,--export=avr_device_sleep_phase",
+    "-Wl,--export=avr_device_starting",
+    "-Wl,--export=avr_device_startup_deadline",
     "-Wl,--export=avr_device_time",
     "-Wl,--export=avr_device_time64",
     "-Wl,--export=avr_device_wait",
@@ -81,15 +83,15 @@
   ],
   "inputs": {
     "web-player/native/avr.c": "43057a52004d53b21431f054f7ffda6376a936d565658c745a6dad63c5afceed",
-    "web-player/native/avr-device.inc": "fff4ce0853c13dafe1d30154c473c29e530d7ccb73a09db2255194a96513738a",
+    "web-player/native/avr-device.inc": "83c0805cda1e42520a63f8e3553956099a19e0f1bc73433241e8486257f4ca1b",
     "web-player/native/peripherals/analog.c": "e1ea3ac297ced9b256ccef5d529dec98af10c1861c65193e0b64f3717269c567",
     "web-player/native/peripherals/analog.h": "3784b94d275c540518f2429e6b53a5a16b60e471f274c4e4f831b11a9421196d",
     "web-player/native/peripherals/analog_adc.c": "a527bdd1e016d31ae36634ce491ad9f1c2d526783ac1dae0fba430c71bb65038",
     "web-player/native/peripherals/analog_adc.h": "b21ae2ce4cae22f5692e13333db0960f44bf41a8e48c3a98e6bc282a25c24291",
     "web-player/native/peripherals/analog_comparator.c": "fbdc17028ee6998c857ef6911af5f05407cce524322697e3b9fd1da914d87a48",
     "web-player/native/peripherals/analog_comparator.h": "4b806705c991e3ae0d1459e3e05c744eb16adc31786abc2b8ef14190bb87378e",
-    "web-player/native/peripherals/device.c": "7e7448fc1ececc2cada0125a48fcb620dccc3b2531d404b0dd1b7f0170f0d467",
-    "web-player/native/peripherals/device.h": "7ffbc175e1198730add96937c54504aafd8f9d0b092fdced73538ef43856b274",
+    "web-player/native/peripherals/device.c": "68c689712968fa98b3ca3ec74408c28ee5cdd08e99ea690182dfb04d664a2754",
+    "web-player/native/peripherals/device.h": "a36b3ff6a667a3baacac21e262bf68c2f50f61f18de840c4a75011074fe9f71e",
     "web-player/native/peripherals/nvm.c": "f54b67d85fda42e1cc8f9a097b986c1185702d199a4ea9f4f0696e680cdfa500",
     "web-player/native/peripherals/nvm.h": "adcd45df8ec83f2c656ba680ca079949d2203b9929bf70c175128f47208c8389",
     "web-player/native/peripherals/system_gpio.c": "bd62a5bd9c7bd8c523f674312b9971d08d568477174f33178b69fd5d90f90428",
@@ -153,6 +155,8 @@
     "avr_device_reset_count",
     "avr_device_reset_held",
     "avr_device_sleep_phase",
+    "avr_device_starting",
+    "avr_device_startup_deadline",
     "avr_device_time",
     "avr_device_time64",
     "avr_device_wait",
@@ -178,9 +182,9 @@
     "avr_write_io_masked"
   ],
   "artifacts": {
-    "attiny13a.wasm": "c19080f8a9980e4460b7f7029c110f94facc5af163e006873e8909711edb0338"
+    "attiny13a.wasm": "ff1f8203977328de99e20eb41a396b331ffb8c1ce886cf2d7e5be0caadc079d9"
   },
-  "bytes": 82490,
+  "bytes": 83482,
   "memoryPages": 2,
   "maximumMemoryPages": 2,
   "stackBytes": 8192,
