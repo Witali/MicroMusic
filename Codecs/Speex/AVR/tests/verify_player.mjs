@@ -58,8 +58,23 @@ const addressOfFinished = address('input_finished');
 const deadline = metadata.frames * 320000 + 2000000;
 const measuredLoads = [];
 let loadActive = false, loadCycles = 0;
+function recordFailure(reason) {
+  const report={passed:false,reason,simulator:'avr8js 0.21.1',input:metadata,
+    backend:backend.backend,binarySha256:backend.binarySha256,includesInterrupts:true,
+    physicalBoardTested:false,elapsedCycles:cpu.cycles,deadlineCycles:deadline,
+    timerOutputs:samples.length,expectedSamples:expected.length,
+    underruns:cpu.dataView.getUint16(underruns,true),
+    minQueuedSamplesBeforeOutput:minQueued,freeSramAtPeak:minSP-end+1,
+    inputFinished:Boolean(cpu.data[addressOfFinished]),
+    decoderError:cpu.data[address('speex_player_error')]};
+  for (const name of ['player-verification.json','player-failure.json'])
+    writeFileSync(join(build,name),JSON.stringify(report,null,2)+'\n');
+}
 while (!cpu.data[done]) {
-  assert.ok(cpu.cycles < deadline, 'Player did not finish');
+  if (cpu.cycles>=deadline) {
+    recordFailure('Player did not finish within the real-time deadline');
+    assert.fail('Player did not finish');
+  }
   const pc = cpu.pc*2, before = cpu.cycles;
   if (pc === loadBegin) { assert.ok(!loadActive); loadActive = true; loadCycles = 0; }
   avrInstruction(cpu);
@@ -80,6 +95,7 @@ if (frameLoadCycles) {
 } else {
   assert.ok(!symbols.has('speex_player_frame_load'), 'Ordinary firmware contains no test load');
 }
+if (cpu.dataView.getUint16(underruns,true)) recordFailure('PCM ring underrun');
 assert.equal(cpu.dataView.getUint16(underruns, true), 0, 'PCM ring underrun');
 assert.equal(samples.length, expected.length + 1, 'One timer output per sample plus final midpoint');
 assert.equal(samples.at(-1), 128);
@@ -91,7 +107,7 @@ if (!output.equals(expected)) {
 const gaps = times.slice(1).map((t,i) => t-times[i]);
 const readyGaps = readyTimes.slice(1).map((t,i) => t-readyTimes[i]);
 assert.ok(Math.min(...gaps) >= 1992 && Math.max(...gaps) <= 2008, 'Timer period / IRQ latency');
-const report = {simulator: 'avr8js 0.21.1', input: metadata, frames: metadata.frames,
+const report = {passed:true,simulator: 'avr8js 0.21.1', input: metadata, frames: metadata.frames,
   backend: backend.backend, binarySha256: backend.binarySha256,
   samples: expected.length, cpuHz: 16000000, pcmHz: 8000, pwmHz: 62500,
   flashBytes: binary.length, staticSramBytes: end-0x100, peakStackBytes: 0x8ff-minSP,

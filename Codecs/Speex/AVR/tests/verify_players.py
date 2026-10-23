@@ -31,7 +31,11 @@ def main():
     results = []
     for stream in streams:
         build.avr(args.avr_gcc, stream, args.frame_load_cycles, args.backend)
-        subprocess.run([args.node, ROOT / 'tests/verify_player.mjs', stream.resolve()], check=True, capture_output=True)
+        try:
+            subprocess.run([args.node, ROOT / 'tests/verify_player.mjs', stream.resolve()], check=True, capture_output=True)
+        except subprocess.CalledProcessError as failure:
+            sys.stderr.write(failure.stderr.decode(errors='replace'))
+            raise
         row = json.loads((ROOT / 'build/player/player-verification.json').read_text(encoding='utf-8'))
         results.append(row)
         for name, suffix in [('player-pwm.u8', '.u8'), ('reference.pcm', '.pcm'),

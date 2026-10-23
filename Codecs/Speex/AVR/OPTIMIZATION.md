@@ -94,6 +94,12 @@ binary measurements. Vendor and R4 files remain unmodified.
   C, still 1,700 B below the previous C baseline), stack/static unchanged.
   All 13,196 C frames pass. The ASM binary remains identical; C timer/ISR
   admission is under test and is distinct from the decoder-only budget.
+- C PWM admission fails on the long en_letter_a stream despite passing the
+  315,950-cycle decoder-only budget: at the 130,640,000-cycle deadline there
+  are 1,226 underruns, an empty queue and 514 B free SRAM; decoderError=0.
+  The short adversarial/chirp probes pass. This is a sustained timing limit,
+  not an arithmetic or SRAM failure; keep ASM for admitted ATmega328P PWM.
+  Native manifest/CMake C archives still match all 9,100 corpus frames.
 
 ## Next candidates (unmeasured)
 
