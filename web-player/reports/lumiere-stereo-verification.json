@@ -1,8 +1,17 @@
 {
   "image": "lumiere-stereo",
-  "flashSha256": "bbe2c732f1b58d28b19a5f6b8344feea6e615ecb93ad6aee1f16b20c1695edb3",
+  "flashSha256": "44c721533c44c832c159cf4618962667b807c12b00936ce82dbf9176cb93c341",
   "flashBytes": 1020,
   "channels": 2,
+  "hardwareAddressFix": {
+    "register": "OCR0A",
+    "previousIoAddress": 42,
+    "ioAddress": 54,
+    "dataAddress": 86,
+    "binaryOutInstructionCount": 2,
+    "reservedAliasOutInstructionCount": 0,
+    "datasheet": "Microchip DS40002307A section11.9.4 and register summary"
+  },
   "completeSong": {
     "commands": 491,
     "beats": 296,

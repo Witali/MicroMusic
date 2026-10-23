@@ -1,9 +1,13 @@
 # ATtiny13A peripheral modules
 
 These allocation-free C modules compile to WebAssembly without host imports.
-They are developed and tested separately from the player's current `avr.c`
-runtime. The translated player still uses that existing peripheral runtime;
-adding these files does not yet enable full device emulation in the player.
+[`device.c`](device.c) connects them to the translated CPU through a shared bus,
+clock scheduler, interrupt routing and physical six-pin output buffer. Select
+**ATtiny13A** in the player to use this connected runtime. The older JS, WASM and
+AVR → WASM profiles retain the simpler duty-stream playback model.
+
+See [device.md](device.md) for the clock, bus and event-ordering contract, and
+[../AVR_TO_WASM.md](../AVR_TO_WASM.md#connected-device-runtime) for the browser/API.
 
 The hardware reference is Microchip's
 [ATtiny13A Data Sheet DS40002307A](https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf).
@@ -46,13 +50,13 @@ must not be derived from executed instruction count.
 All register addresses in the APIs are I/O offsets; data-space addresses add
 0x20. Route each register to one owner. GPIO owns MCUCR and DIDR0, analog owns
 ADCSRB/ADMUX, and the board owns the canonical PRR/clock configuration. In
-particular, OCR0A is I/O 0x36. The old player's 0x2a left-duty alias must not be
-carried into the device bus.
+particular, OCR0A is I/O 0x36. Firmware and every player model now use this
+address; the earlier reserved-address alias has been removed.
 
 The bus must preserve the selected write mask for SBI/CBI. A whole-register
 read/modify/write is incorrect for PINB toggles, write-one-to-clear flags and
-write strobes. The present translated player's two-argument `writeIO` import
-must be extended before connecting these register semantics.
+write strobes. The connected translator imports separate bus reads and masked
+writes, including ADC result locks and register-specific bit-operation behavior.
 
 The CPU owns SREG.I, interrupt priority, SEI/RETI delay, stack writes and normal
 entry latency. Module pending masks have different documented encodings and
@@ -60,11 +64,11 @@ must be converted to vector-word indices 1..9 before arbitration. A wake source
 starts wakeup; after startup, arbitrate current live requests again. Do not force
 an old INT0 request that disappeared during oscillator startup.
 
-The generated CPU's SLEEP/SPM/WDR boundaries are ready to be connected to these
-APIs. SPM must stop execution until Flash completion and retranslation of dirty
+The generated CPU's SLEEP/SPM/WDR instructions call these APIs inside WASM.
+SPM stops execution until Flash completion and retranslation of dirty
 pages. Clearing a dirty mask does not make previously generated code valid.
-The playback wait-loop accelerator currently assumes Timer0-only IRQs; use the
-full scheduler's earliest deadline before enabling other peripherals in it.
+The connected wait-loop accelerator uses the earliest event across every module
+and queued input, and also respects the caller's physical-time deadline.
 
 ## Output buffering
 
@@ -75,8 +79,8 @@ must report incomplete capture. Combine these transitions with GPIO DDRB,
 PORTB, override and external-driver state to obtain physical pin levels.
 
 The player's separate PWM batch path currently captures its historical OCR-duty
-stream, up to 4096 mono/stereo frames per WASM call. Physical pin reconstruction
-is part of connecting Timer0 and GPIO to the shared scheduler. Both output paths
+stream, up to 4096 mono/stereo frames per WASM call. The connected device
+reconstructs physical pin levels and integrates audio intervals inside WASM. Both output paths
 avoid a callback into JavaScript for each transition or value.
 
 ## Verification and remaining integration
@@ -96,7 +100,7 @@ set `EMSDK`):
 node --test web-player/tests/timer0-peripheral.test.mjs web-player/tests/system-gpio.test.mjs web-player/tests/system-watchdog.test.mjs web-player/tests/nvm.test.mjs web-player/tests/analog-adc.test.mjs web-player/tests/analog-comparator.test.mjs web-player/tests/system-sleep.test.mjs
 ```
 
-The shared bus/scheduler, whole-device reset and clock/fuse configuration,
-BODCR sequence and electrical behavior, physical oscillator/reset delays and
-debugWIRE remain device-integration work. The modules expose the required
-boundaries without pretending that the existing player already implements them.
+The shared bus/scheduler, whole-device digital reset and CLKPR/fuse configuration
+are connected. BODCR electrical behavior, OSCCAL frequency calibration, physical
+oscillator/reset pulse filtering and debugWIRE remain outside this digital
+profile. The detailed module notes preserve documented timing ambiguities.

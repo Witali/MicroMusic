@@ -5,7 +5,8 @@ Source: Microchip ATtiny13A DS40002307A, chapter 14, especially sections
 https://www.microchip.com/content/dam/mchp/documents/MCU08/ProductDocuments/DataSheets/ATtiny13A-Data-Sheet-DS40002307A.pdf
 
 The module models register-visible digital ADC behavior and an ideal integer
-voltage-to-code conversion. It is standalone and is not linked into avr.c yet.
+voltage-to-code conversion. device.c connects it to the full translated runtime;
+its component API can also be embedded independently.
 Use analog_adc_reset with external VCC and bandgap-reference microvolt values;
 then inject ADC0..3 input voltages through analog_adc_input. Channels correspond
 to PB5, PB2, PB4 and PB3. A zero selected reference produces zero and exposes

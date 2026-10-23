@@ -74,8 +74,8 @@ Other peripheral events must still split spans in the board scheduler.
 
 This module does not implement the BODCR timed sequence, analog thresholds,
 physical oscillator startup, reset stretching, GPIO wake detection or ADC itself.
-Those are separate modules/board configuration. It is not connected to the
-current player until the C CPU bus and event scheduler integrate its APIs.
+Those are separate modules/board configuration. device.c now connects this
+policy to the full translated CPU, board bus and event scheduler.
 
 Verification:
   node --test web-player/tests/system-sleep.test.mjs

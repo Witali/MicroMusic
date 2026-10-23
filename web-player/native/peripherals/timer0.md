@@ -28,8 +28,8 @@ running when CS selects stop or external T0; PRTIM0 and clkI/O gating freeze it.
 PRTIM0 also prevents Timer0 register access. Reserved WGM/COM settings fail
 explicitly. OCR0A is I/O **0x36**, OCR0B is **0x29**; 0x2a is not a Timer0 register.
 
-The legacy `avr.c` stereo interpretation of 0x2a is deliberately absent. The
-CPU integration must decide how to migrate legacy stereo firmware separately.
+The earlier player mapping of reserved 0x2a to OCR0A has been removed. Retained
+stereo firmware writes the actual OCR0A address in both reset and interrupt code.
 
 ## Time and CPU integration
 

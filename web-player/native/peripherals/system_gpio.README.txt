@@ -4,8 +4,8 @@ Source: Microchip ATtiny13A Data Sheet Complete DS40002307A (2021),
 sections 9.2-9.3, 10.2-10.4, 12.3 and 14.12.5:
 https://ww1.microchip.com/downloads/aemDocuments/documents/MCU08/ProductDocuments/DataSheets/ATtiny13A-Data-Sheet-DS40002307A.pdf
 
-system_gpio.c is a standalone C/WASM module. It does not yet replace the player
-bus. It allocates no memory, imports no host functions and invokes no callbacks.
+system_gpio.c is connected by device.c to the full translated runtime's bus.
+It allocates no memory, imports no host functions and invokes no callbacks.
 The embedding C/WASM CPU owns scheduling, SREG.I, interrupt priority, instruction
 entry latency and output buffers. Each instance has explicit deterministic state.
 
