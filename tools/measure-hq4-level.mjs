@@ -4,7 +4,8 @@ import {Renderer} from '../web-player/lib/renderer-js.js';
 const stdin=process.argv.includes('--stdin');
 const catalog=JSON.parse(readFileSync(stdin?0:new URL('../web-player/hq4-firmware.json',import.meta.url),'utf8'));
 const sampleRate=48000,cutoff=9000,frames=Math.round(9216/7500*sampleRate),rms={};
-for(const id of ['hq4-chego','hq4-chego-timbre']){
+const variants=catalog.entries.filter(e=>e.codec==='hq4-t').map(e=>e.id);
+for(const id of ['hq4-chego',...variants]){
   const entry=catalog.entries.find(e=>e.id===id);
   if(!entry)throw new Error('Missing '+id);
   const renderer=new Renderer(entry,sampleRate,{cutoff,volume:1});
@@ -13,7 +14,8 @@ for(const id of ['hq4-chego','hq4-chego-timbre']){
     for(const value of renderer.render(Math.min(4096,frames-offset)))power+=value*value;
   rms[id]=Math.sqrt(power/frames);
 }
-const monitorGain=Number((rms['hq4-chego']/rms['hq4-chego-timbre']).toFixed(10));
-if(!stdin&&Math.abs(catalog.entries.find(e=>e.id==='hq4-chego-timbre').monitorGain-monitorGain)>1e-9)
-  throw new Error('Stale listening gain');
-console.log(JSON.stringify({sampleRate,cutoff,frames,rms,monitorGain}));
+const monitorGains=Object.fromEntries(variants.map(id=>[id,Number((rms['hq4-chego']/rms[id]).toFixed(10))]));
+for(const [id,gain] of Object.entries(monitorGains))
+  if(!stdin&&Math.abs(catalog.entries.find(e=>e.id===id).monitorGain-gain)>1e-9)
+    throw new Error('Stale listening gain: '+id);
+console.log(JSON.stringify({sampleRate,cutoff,frames,rms,monitorGains}));

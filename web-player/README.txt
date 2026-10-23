@@ -287,13 +287,16 @@ JSON содержит все события источника; музыкаль
 
 РЕЧЬ MINILPC HQ4
 Публичный сайт: https://witali.github.io/MicroMusic/web-player/?collection=hq4
-Он работает без внешнего архива: hq4-firmware.json содержит HQ4-T и четыре
+Он работает без внешнего архива: hq4-firmware.json содержит три варианта HQ4-T и четыре
 исторических образа HQ4, как firmware.json для музыкальных прошивок.
-Новый вариант: ?collection=hq4&firmware=hq4-chego-timbre.
+Автоподбор: ?collection=hq4&firmware=hq4-chego-auto (STOI ≥0,9005).
+Более свободный режим: ?collection=hq4&firmware=hq4-chego-spectrum (STOI ≥0,89).
+Предыдущий HQ4-T: ?collection=hq4&firmware=hq4-chego-timbre.
 HQ4-T добавляет восстановление тембра в AVR: 979 Б Flash, 7,5 кГц.
 Для сравнения с исходным HQ4 включено выравнивание громкости, которое
 можно отключить. Полный отчёт: ../ATtiny13A/Sound/codec/timbre/README.md.
 Для пересборки HQ4-T нужны также codec/requirements.txt (numpy/numba/scipy/pystoi).
+Автоматический кодировщик, контрольные точки и метрики: ../ATtiny13A/Sound/codec/AUTO_ENCODER.md.
 Пересборка каталога из сохранённого ассемблера:
   python tools/build-hq4-catalog.py --avr-bin build/toolchains/avr-7.3.0/bin
 Добавьте --check для проверки, что опубликованный каталог не устарел.

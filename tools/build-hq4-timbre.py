@@ -11,7 +11,8 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / 'ATtiny13A/Sound/codec/timbre/chego'
+BASE = ROOT / 'ATtiny13A/Sound/codec/timbre'
+TEMPLATE = BASE / 'chego/firmware.S'
 sys.path.insert(0, str(ROOT / 'ATtiny13A/Sound/codec'))
 from hq4_core import unpack_stream
 from hq4_timbre import decode
@@ -33,11 +34,15 @@ def main():
     parser.add_argument('--avr-bin', type=Path)
     parser.add_argument('--node', default='node')
     parser.add_argument('--check', action='store_true')
+    parser.add_argument('--variant', choices=('chego', 'chego-auto', 'chego-spectrum'), default='chego')
     args = parser.parse_args()
+    source = BASE / args.variant
     folder = ROOT / 'build/hq4-timbre'
+    if args.variant != 'chego':
+        folder /= args.variant
     folder.mkdir(parents=True, exist_ok=True)
-    for filename in ('firmware.S', 'speech.hq'):
-        shutil.copyfile(SOURCE / filename, folder / filename)
+    shutil.copyfile(TEMPLATE, folder / 'firmware.S')
+    shutil.copyfile(source / 'speech.hq', folder / 'speech.hq')
     suffix = '.exe' if os.name == 'nt' else ''
     compiler = args.avr_bin.resolve() / ('avr-gcc' + suffix) if args.avr_bin else 'avr-gcc'
     objcopy = args.avr_bin.resolve() / ('avr-objcopy' + suffix) if args.avr_bin else 'avr-objcopy'
@@ -69,13 +74,13 @@ def main():
         'firstLoopPcmSha256': digest(pcm[:phrase_samples].tobytes()),
         'sourceInputs': {str(path.relative_to(ROOT)).replace('\\', '/'):
                          digest(path.read_bytes()) for path in (
-                             SOURCE / 'firmware.S', SOURCE / 'speech.hq',
+                             TEMPLATE, source / 'speech.hq',
                              ROOT / 'ATtiny13A/Sound/codec/model.py',
                              ROOT / 'ATtiny13A/Sound/codec/hq4_timbre.py')},
         **verification,
     }
     # Firmware sources, stream and hashes are retained; generated binaries stay in build/.
-    retained = SOURCE / 'verification.json'
+    retained = source / 'verification.json'
     if args.check:
         if json.loads(retained.read_text(encoding='utf-8')) != report:
             raise ValueError('Retained verification is stale')
