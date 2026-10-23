@@ -106,6 +106,68 @@ useful, but preserving a cheap specialized path can save both bytes and cycles.
 The [qualification report](../research/q3-kmap-avr-qualification/report.json)
 records 829,440 exhaustive product cases in three engines and the source hashes.
 
+## Recipe: spend unused registers before saving them on the IRQ stack
+
+In the whole-program ordinary Q3 player, frame-mode bits can move from high
+register r22 to unused r14. Reserve r22 for the IRQ countdown and r12 for SREG.
+Startup initializes r22 to five; the main loop must leave both registers alone.
+Nested IRQs are disabled.
+The handler then needs no PUSH/POP scratch-register preservation:
+
+```asm
+irq:
+ in r12, SREG
+ dec r22
+ brne irq_end
+ ldi r22, 5
+ tst r8
+ breq irq_end
+ out OCR0B, r7
+ clr r8
+irq_end:
+ out SREG, r12
+ reti
+```
+
+Against our previous handler, this saves **12 complete-player bytes** including
+initialization and reload changes. The measured maximum handler length falls
+from **28 to 19 cycles**, and stack high-water use from **6 to 4 bytes**. This
+requires auditing every writer of r12/r22; it is not a C calling-convention rule.
+The real routine passes **1,536** flag/countdown/ready cases across three engines,
+checking all other registers, SREG/T, output, return and stack.
+
+## Recipe: move an exact scale into an existing constant table
+
+Our excitation computes `tap*gain`, with signed tap −7…7 and gain 0…15, using
+the lattice's wide Q3 multiplier. Instead of shifting gain left three times
+for every lookup, store `tap*8` in EEPROM and exchange the multiply operands:
+
+```asm
+ in r21, 0x1d     /* EEPROM data: signed tap*8, within -56..56 */
+ mov r23, r3      /* nonnegative gain 0..15 */
+ rcall mul_q3     /* floor((tap*8)*gain/8) = tap*gain */
+ mov r18, r24
+```
+
+This removes **three instructions / six code bytes**, while retaining the same
+64 EEPROM bytes and exact PCM. Products stay within ±840; neither negated
+sample nor intermediate width reaches an unsupported boundary. It can take
+more multiply iterations because the coefficient is now gain, so qualify
+complete-player timing. The actual path passes **9,216** address/gain/flag
+cases across three engines. Firmware and its scaled EEPROM image form one pair.
+
+Two additional whole-program invariants save another **six bytes**: YH remains
+zero after initialization, so its reader CLR is redundant (two bytes); reset
+CLI/CLT fit the unused words before the Timer0 vector (four bytes). Reset must
+enter address zero, and additional enabled interrupt vectors need a new layout.
+
+Together, these four measured steps reduce **392 → 368 core bytes**, with the
+same full Vinni sound at **990 Flash + 64 EEPROM** instead of 1014 + 64. The
+final minimum preparation slack is **352 cycles**, versus 332 before. These
+figures apply to the ordinary floor profile and measured streams. The eight
+full builds, expanded 655-byte stream capacity and reproducible guarded source
+transformations are retained in the [compaction study](../research/q3-core-compaction/README.md).
+
 ## Changes that preserve the decoded bytes
 
 - **Round using the last discarded bit.** After a signed ASR/ROR loop, carry
