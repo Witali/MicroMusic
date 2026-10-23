@@ -118,6 +118,7 @@ def run(reference_path,model_paths,output,*,proposals=1500,seed=423107,stream_bu
     reference_sha = search.sha(reference_path)
     objective = search.Objective(reference,rounded_budget=stream_budget,floor_budget=stream_budget)
     archive,controls,initializers,rows,strict_wins = [],[],[],[],[]
+    best_noise = None
     for source_index,path in enumerate(model_paths):
         path = Path(path)
         model = json.loads(path.read_text(encoding='utf8'))
@@ -151,6 +152,8 @@ def run(reference_path,model_paths,output,*,proposals=1500,seed=423107,stream_bu
                         'envelope_error','unsupported_energy','missing_energy','raw_mean','raw_rms',
                         'stream_bytes','peak_signed','steps_ge48')})
                     archive = search.pareto_add(archive,state)
+                    if code and (best_noise is None or state.score['stoi']>best_noise.score['stoi']):
+                        best_noise = state
                 rows.append(row)
             print(json.dumps(dict(source_index=source_index,gain_scale=gain_scale,
                 screened=len(rows),strict_paired_wins=len(strict_wins),control=control)),flush=True)
@@ -195,6 +198,10 @@ def run(reference_path,model_paths,output,*,proposals=1500,seed=423107,stream_bu
     selected = dict(balanced=min(archive,key=lambda s:objective.energy(s.score)),
         best_stoi=max(archive,key=lambda s:s.score['stoi']),
         best_spectrum=min(archive,key=lambda s:s.score['spectrogram_loss']))
+    # Keep one failed nonzero-noise example even when every colored state is
+    # dominated. Its name and paired screen results never mark it a success.
+    if best_noise is not None:
+        selected['least_bad_noise'] = best_noise
     results = {name:export(output/name,state,objective,reference_sha) for name,state in selected.items()}
     all_off = {name:export(output/'controls'/name,state,objective,reference_sha)
                for name,state in controls if state.score is not None}
