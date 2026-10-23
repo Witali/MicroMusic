@@ -12,8 +12,10 @@ if __name__=='__main__':
     args=parser.parse_args()
     output=build.ROOT/'build/iir'
     output.mkdir(parents=True,exist_ok=True)
+    (output/'test-shapes.h').write_text(','.join(str(i%256-128) for i in range(265))+'\n')
     build.run([args.avr_gcc,'-mmcu=atmega328p','-O3','-flto','-fwrapv',
-               build.ROOT/'tests/avr_iir.c',build.ROOT/'src/lpc_dot.S','-o',output/'iir.elf'])
+               '-I'+str(output),build.ROOT/'tests/avr_iir.c',build.ROOT/'src/lpc_dot.S',
+               build.ROOT/'src/innovation.S','-o',output/'iir.elf'])
     prefix=str(Path(args.avr_gcc).with_name('avr-'))
     extension='.exe' if args.avr_gcc.endswith('.exe') else ''
     build.run([prefix+'objcopy'+extension,'-O','binary','-R','.eeprom',output/'iir.elf',output/'iir.bin'])

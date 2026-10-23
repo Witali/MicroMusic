@@ -47,3 +47,34 @@ const report={mcu:'ATmega328P',simulator:'avr8js 0.21.1',compiler:'AVR GCC 7.3.0
   minMailboxCycles:minCycles,maxMailboxCycles:maxCycles,includesInterrupts:false,physicalBoardTested:false};
 writeFileSync(join(build,'verification.json'),JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify(report,null,2));
+
+// Independent upstream arithmetic, all 64 NB3 gains and all signed-byte shapes.
+const upstream=readFileSync(join(root,'vendor/speex-1.2.1/libspeex/nb_celp.c'),'utf8');
+const gains=upstream.match(/ol_gain_table\[32\]=\{([^}]+)\}/)[1].split(',').map(Number);
+const corrections=upstream.match(/exc_gain_quant_scal1\[2\]=\{([^}]+)\}/)[1].split(',').map(Number);
+const scales=gains.flatMap(g=>corrections.map(c=>Math.floor(c*Math.floor(28406*g/32768)/16384)));
+const scaleAddress=address('innovation_scale'),pitchAddress=address('innovation_pitch');
+let innovationCases=0,innovationClipped=0;
+const pitchEdges=[-262144000,262144000,-1,0,1,-8192,8191,8192];
+for(const scale of scales)for(let index=0;index<256;index++){
+  cpu.dataView.setInt32(scaleAddress,scale,true);cpu.data[address('innovation_index')]=index;
+  for(let i=0;i<10;i++){
+    const shape=(index+i)%256-128,pitch=i<8?pitchEdges[i]:(next()%524288001)-262144000;
+    const value=shape*4;
+    const upstream=((value*(scale>>14)+Math.floor(value*(scale&16383)/16384))*128)|0;
+    assert.equal(upstream,(Math.floor(shape*scale/4096)*128)|0,'Bounded transformation exact');
+    const raw=((((2*pitch+upstream)|0)+8192)|0)>>14;
+    expected[i]=Math.max(-32767,Math.min(32767,raw));innovationClipped+=expected[i]!==raw;
+    cpu.dataView.setInt32(pitchAddress+4*i,pitch,true);
+  }
+  cpu.data[status]=1;cpu.data[command]=2;
+  until(()=>cpu.data[status]===2);
+  for(let i=0;i<10;i++)assert.equal(cpu.dataView.getInt16(samples+2*i,true),expected[i],`innovation gain ${scale}, shape ${(index+i)%256-128}`);
+  assert.equal(cpu.data[zero],0,'GCC zero register after innovation');innovationCases+=10;
+}
+const innovationReport={mcu:'ATmega328P',simulator:'avr8js 0.21.1',compiler:report.compiler,
+  gains:scales.length,scaleMin:Math.min(...scales),scaleMax:Math.max(...scales),shapeMin:-128,shapeMax:127,
+  samples:innovationCases,clipped:innovationClipped,exact:true,zeroRegisterRestored:true,
+  includesInterrupts:false,physicalBoardTested:false};
+writeFileSync(join(build,'verification-innovation.json'),JSON.stringify(innovationReport,null,2)+'\n');
+console.log(JSON.stringify(innovationReport,null,2));
