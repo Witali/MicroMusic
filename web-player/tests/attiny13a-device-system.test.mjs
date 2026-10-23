@@ -66,11 +66,12 @@ test('firmware IN/OUT/SBI/CBI/LDS/STS/LD/ST share real GPIO bus effects',()=>{
 });
 
 test('timestamped input changes after sampling preserve PINB half-cycle synchronization',()=>{
-  const c=make(sequential([avr.in(16,IO.PINB),avr.in(17,IO.PINB),avr.in(18,IO.PINB),avr.in(19,IO.PINB)]));
-  // The board applies equal-timestamp injections after that timestamp's sampling.
+  const c=make(sequential(Array.from({length:5},(_,n)=>avr.in(16+n,IO.PINB))));
+  // Inputs at a falling edge follow that edge's latch sampling. The CPU reads
+  // before its final rising edge updates PINB (DS40002307A Figure10-4).
   c.injectPins({at:1n,mask:1,levels:1});c.injectPins({at:5n,mask:1,levels:0});
-  c.run(4);assert.deepEqual(Array.from(c.r.slice(16,20),v=>v&1),[0,1,1,0]);
-  assert.equal(state(c).baseHalf,8n);
+  c.run(5);assert.deepEqual(Array.from(c.r.slice(16,21),v=>v&1),[0,0,1,1,0]);
+  assert.equal(state(c).baseHalf,10n);
   const events=c.drainPins();
   assert.ok(events.some(e=>e.baseHalf===1n&&(e.levels&1)===1));
   assert.ok(events.some(e=>e.baseHalf===5n&&(e.levels&1)===0));
@@ -78,10 +79,10 @@ test('timestamped input changes after sampling preserve PINB half-cycle synchron
 });
 
 test('INT0 and PCINT flags traverse their synchronization paths before CPU reads',()=>{
-  const c=make(sequential(Array.from({length:5},(_,n)=>avr.in(16+n,IO.GIFR))));
+  const c=make(sequential(Array.from({length:6},(_,n)=>avr.in(16+n,IO.GIFR))));
   c.writeIO(IO.MCUCR,3);c.writeIO(IO.PCMSK,1);
-  c.injectPins({at:3n,mask:3,levels:3});c.run(5);
-  assert.deepEqual(Array.from(c.r.slice(16,21),v=>v&0x60),[0,0,0,0x40,0x60]);
+  c.injectPins({at:3n,mask:3,levels:3});c.run(6);
+  assert.deepEqual(Array.from(c.r.slice(16,22),v=>v&0x60),[0,0,0,0,0x40,0x60]);
   c.writeIO(IO.GIFR,0x40);assert.equal(c.readIO(IO.GIFR)&0x60,0x20);
   c.writeIO(IO.GIFR,0);assert.equal(c.readIO(IO.GIFR)&0x60,0x20);
   c.writeIO(IO.GIFR,0x20);assert.equal(c.readIO(IO.GIFR)&0x60,0);

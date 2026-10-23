@@ -38,6 +38,8 @@ uint8_t device_read(uint8_t io);
 /* maskff=OUT/ST, one bit=SBI/CBI. Returns additional NVM CPU stall cycles. */
 uint32_t device_write(uint8_t io, uint8_t value, uint8_t mask);
 void device_advance(uint32_t cpu_cycles);
+/* CPU bus sampling can precede its final rising edge by half a CPU cycle. */
+void device_advance_half(uint64_t cpu_half_cycles);
 /* advance stops at an asynchronous reset deadline even inside an instruction;
  * the CPU bridge must abandon its remaining bus/register effects and reset. */
 /* Safe distance in nominal CPU cycles, rounded UP to include an event inside

@@ -420,11 +420,11 @@ uint32_t device_write(uint8_t io, uint8_t value, uint8_t mask) {
  sources(); wake(); check_faults(); mirror();
  return stalls;
 }
-void device_advance(uint32_t cycles) {
+void device_advance_half(uint64_t halves) {
  if (!board.initialized) { fail(DEVICE_FAULT_CONFIG,5); return; }
  if (board.reset_requested || board.reset_held) return;
- uint64_t target=add(board.half,(uint64_t)cycles*2);
- if (!cycles) { advance_to(board.base); return; }
+ uint64_t target=add(board.half,halves);
+ if (!halves) { advance_to(board.base); return; }
  while (board.half<target) {
   if (board.fault) {
    /* Preserve the CPU bridge's full-instruction accounting even when the
@@ -439,6 +439,7 @@ void device_advance(uint32_t cycles) {
   if (board.reset_requested) break;
  }
 }
+void device_advance(uint32_t cycles) { device_advance_half((uint64_t)cycles*2); }
 uint64_t device_next_cpu_event(void) {
  if (!board.initialized || board.fault || board.reset_requested || board.reset_held) return 0;
  uint64_t next=next_event();
