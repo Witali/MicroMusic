@@ -7,7 +7,7 @@ all four LSP interpolations and preserve rounding, saturation and output delay.
 Publish support only after the complete timer/ISR player has passed.
 
 The latest implementation and measurements are described in README.md and
-`reports/nb-round2-*.json`. Earlier reports are stage baselines, not current
+`reports/nb-round3-*.json`. Earlier reports are stage baselines, not current
 binary measurements. Vendor and R4 files remain unmodified.
 
 ## Completed, measured
@@ -26,7 +26,7 @@ binary measurements. Vendor and R4 files remain unmodified.
 - Raw 18-bit LSP-key reuse, exhaustively justified for all NB3 code triples.
   Mean human-speech time -1.16%, corpus mean -2.35%, silence mean -22.1%;
   corpus worst +0.19%, Flash +218 B, stack +3 B, static SRAM unchanged.
-  Decoder/reset verification is complete; final PWM gate for this series is pending.
+  Decoder/reset verification and the final 31-stream PWM gate are complete.
 - Shared Q14 signed48 ASM: 1,102 B Flash saved for 0.44% maximum frame cost;
   stack -1 B, no callee-saved registers. Generic signed30 semantics and the
   bounded LSP entry each passed 917,504 independent AVR cases.
@@ -35,6 +35,10 @@ binary measurements. Vendor and R4 files remain unmodified.
 - Zero pitch gain write/add fast paths and caller-side empty-segment guard:
   silence mean -14.85% versus the previous stage, corpus worst +0.11%,
   Flash +36 B. Every pitch/gain pair remains exact.
+- Completed series: decoder Flash 8,684 B; all-stream weighted mean -3.22%,
+  human-speech mean -1.73%; corpus maximum 146,499 versus 146,247 cycles.
+  The 31-stream player passed with 128,000 extra cycles/frame, zero underruns
+  and 482 B free SRAM. The ordinary speech demo is 11,916 B including audio.
 
 ## Next candidates (unmeasured)
 
