@@ -27,6 +27,8 @@ INTEL 8080
 Автономная версия: i8080/Emulator/Intel_8080_ROM_Player.html.
 Проверки: node --test i8080/Emulator/tests/*.test.mjs
 Документация и исправления: i8080/Emulator/README.md.
+Схема платы BM80/BM1 Tester: i8080/Hardware/bm80-bm1-tester.jpg
+(встроена в i8080/Emulator/README.md, раздел «Схема платы BM80/BM1 Tester»).
 Исследования CRC: i8080/CRC/README.md.
 
 УСТАНОВКА ИНСТРУМЕНТОВ WINDOWS x64
