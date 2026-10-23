@@ -140,9 +140,11 @@ function load(entry,{autoplay=false}={}) {
   delete $('tempo').dataset.wallMs; delete $('tempo').dataset.audioMs;
   $('selected-order').textContent=entry.order; $('selected-title').textContent=entry.title; $('selected-description').textContent=entry.description;
   if(entry.kind==='speech') {
-    $('speech-audit').href=entry.research||(entry.codec==='hq4-t'
+    const research=entry.research||(entry.codec==='hq4-t'
       ? '../ATtiny13A/Sound/codec/timbre/README.md'
       : '../ATtiny13A/Sound/research/hq4-emulator-comparison.json');
+    $('speech-audit').href=research.endsWith('.md')
+      ? new URL(research,'https://github.com/Witali/MicroMusic/blob/main/web-player/').href : research;
     $('speech-audit').textContent=entry.codec==='tiny-period' ? 'Исследование речевого ядра ↗'
       : entry.codec==='hq4-t' ? 'Исследование HQ4-T ↗' : 'Сверка HQ4 ↗';
   }
@@ -235,7 +237,7 @@ try {
     document.querySelector('.library-caption').textContent='Слушайте речь из прошивки и сравнивайте с исходной записью.';
     $('speech-level-control').hidden=false;
     document.querySelector('.source-only').hidden=true;
-    const history=document.querySelector('.header-link');history.href='../ATtiny13A/Sound/AUDIO_REFERENCES.md';history.textContent='Звуковые эталоны ↗';
+    const history=document.querySelector('.header-link');history.href='https://github.com/Witali/MicroMusic/blob/main/ATtiny13A/Sound/AUDIO_REFERENCES.md';history.textContent='Звуковые эталоны ↗';
     $('original-player').textContent='Плеер из ChatGPT ↗';
     $('speech-audit').hidden=false;
     document.querySelector('footer span:last-child').textContent='Речевые кодеки · Worker + AudioWorklet';

@@ -25,7 +25,7 @@ function createWorker() { return new Worker(new URL('./worker.mjs', import.meta.
 // Replaced by embedded data in the standalone build.
 async function getExampleCatalog() { const response = await fetch(new URL('./examples.json', import.meta.url)); if (!response.ok) throw Error('Не удалось загрузить список примеров'); return response.json(); }
 async function readExample(entry) { const response = await fetch(new URL(entry.rom, import.meta.url)); if (!response.ok) throw Error('Не удалось загрузить ROM примера'); return response.arrayBuffer(); }
-function exampleSourceURL(entry) { return entry.source; }
+function exampleSourceURL(entry) { return new URL(entry.source, 'https://github.com/Witali/MicroMusic/blob/main/i8080/Emulator/').href; }
 
 function renderCatalog() {
   if (!catalog) return;
