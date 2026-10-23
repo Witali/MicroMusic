@@ -1,0 +1,114 @@
+{
+  "simulator": "avr8js 0.21.1",
+  "compiler": "AVR GCC",
+  "mcu": "ATmega328P",
+  "flashBytes": 13422,
+  "staticSramBytes": 1375,
+  "includesInterrupts": false,
+  "frames": 1058,
+  "maxCycles": 279557,
+  "minStackPointer": 2079,
+  "streams": [
+    {
+      "stream": "adversarial_24.spxraw",
+      "frames": 24,
+      "minCycles": 276070,
+      "maxCycles": 279181,
+      "meanCycles": 278564,
+      "stackBytes": 224,
+      "freeSramAtPeak": 449
+    },
+    {
+      "stream": "chirp.spxraw",
+      "frames": 100,
+      "minCycles": 278141,
+      "maxCycles": 279537,
+      "meanCycles": 278973,
+      "stackBytes": 224,
+      "freeSramAtPeak": 449
+    },
+    {
+      "stream": "hard_clipped.spxraw",
+      "frames": 100,
+      "minCycles": 278191,
+      "maxCycles": 279482,
+      "meanCycles": 278963,
+      "stackBytes": 224,
+      "freeSramAtPeak": 449
+    },
+    {
+      "stream": "impulses.spxraw",
+      "frames": 100,
+      "minCycles": 277603,
+      "maxCycles": 279153,
+      "meanCycles": 278841,
+      "stackBytes": 224,
+      "freeSramAtPeak": 449
+    },
+    {
+      "stream": "random_40.spxraw",
+      "frames": 40,
+      "minCycles": 277796,
+      "maxCycles": 279153,
+      "meanCycles": 278747,
+      "stackBytes": 224,
+      "freeSramAtPeak": 449
+    },
+    {
+      "stream": "sample_mode3_8kbps.spxraw",
+      "frames": 100,
+      "minCycles": 278118,
+      "maxCycles": 279517,
+      "meanCycles": 278926,
+      "stackBytes": 224,
+      "freeSramAtPeak": 449
+    },
+    {
+      "stream": "silence.spxraw",
+      "frames": 100,
+      "minCycles": 276094,
+      "maxCycles": 276237,
+      "meanCycles": 276096,
+      "stackBytes": 224,
+      "freeSramAtPeak": 449
+    },
+    {
+      "stream": "speech_from_wb16_lowband.spxraw",
+      "frames": 147,
+      "minCycles": 276088,
+      "maxCycles": 279445,
+      "meanCycles": 278121,
+      "stackBytes": 224,
+      "freeSramAtPeak": 449
+    },
+    {
+      "stream": "speech_ru.spxraw",
+      "frames": 147,
+      "minCycles": 275858,
+      "maxCycles": 279473,
+      "meanCycles": 278110,
+      "stackBytes": 224,
+      "freeSramAtPeak": 449
+    },
+    {
+      "stream": "voicelike.spxraw",
+      "frames": 100,
+      "minCycles": 278421,
+      "maxCycles": 279141,
+      "meanCycles": 278994,
+      "stackBytes": 224,
+      "freeSramAtPeak": 449
+    },
+    {
+      "stream": "white_noise.spxraw",
+      "frames": 100,
+      "minCycles": 277788,
+      "maxCycles": 279557,
+      "meanCycles": 278816,
+      "stackBytes": 224,
+      "freeSramAtPeak": 449
+    }
+  ],
+  "freeSramAtPeak": 449,
+  "fitsDecoderBudget": true
+}

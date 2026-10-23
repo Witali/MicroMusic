@@ -17,8 +17,7 @@ def replace(text, old, new, count=1):
 def apply(source: Path):
     lib = source / 'libspeex'
     mul = lib / 'avr_fastmul.h'
-    mul.write_text(replace(mul.read_text(), 'static inline spx_word32_t',
-                           'static inline __attribute__((always_inline)) spx_word32_t'))
+    mul.write_text((Path(__file__).resolve().parents[1] / 'src/avr_multiply.h').read_text())
     path = lib / 'nb_celp.c'
     text = path.read_text()
     text = replace(text, '#define SUBMODE(x) st->submodes[st->submodeID]->x',
