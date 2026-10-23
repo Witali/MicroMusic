@@ -6,18 +6,25 @@ const OP = { NOP:1, CLI:2, SEI:3, RETI:4, RET:5, CALL:6, JUMP:7, BRANCH:8,
   SKIP:9, LDI:10, CPI:11, SUBI:12, ORI:13, ANDI:14, MOVW:15, ADD:16,
   ADC:17, SUB:18, AND:19, EOR:20, MOV:21, INC:22, DEC:23, COM:24,
   LSR:25, ASR:26, SWAP:27, IN:28, OUT:29, SBI:30, PUSH:31, POP:32, ST:33, LPM:34, FLAG:35,
-  ROR:36, LDS:37, STS:38, OR:39, LD:40, CP:41, NEG:42, SBC:43, SBCI:44 };
+  ROR:36, LDS:37, STS:38, OR:39, LD:40, CP:41, NEG:42, SBC:43, SBCI:44, ADIW:45, SBIW:46 };
 const sign = (v, bit) => v & bit ? v - bit * 2 : v;
 // Maximum cycles for instructions that can execute without observing I/O.
 // Everything else remains in step(), including all peripheral and stack access.
-const BATCH_CYCLES = new Uint8Array(45);
+const BATCH_CYCLES = new Uint8Array(47);
 for (const op of [OP.NOP, OP.LDI, OP.CPI, OP.SUBI, OP.ORI, OP.ANDI, OP.MOVW,
   OP.ADD, OP.ADC, OP.SUB, OP.AND, OP.EOR, OP.OR, OP.MOV, OP.INC, OP.DEC,
   OP.COM, OP.LSR, OP.ASR, OP.ROR, OP.SWAP, OP.SBC, OP.SBCI]) BATCH_CYCLES[op] = 1;
-for (const op of [OP.JUMP, OP.BRANCH, OP.LD, OP.ST]) BATCH_CYCLES[op] = 2;
+for (const op of [OP.JUMP, OP.BRANCH, OP.LD, OP.ST, OP.ADIW, OP.SBIW]) BATCH_CYCLES[op] = 2;
 BATCH_CYCLES[OP.SKIP] = BATCH_CYCLES[OP.LPM] = 3;
 const NZ = Uint8Array.from({length:256}, (_, v) => (v === 0 ? 2 : 0) | (v & 128 ? 0x14 : 0));
 // NZ assumes V=0 (S=N). XOR 0x18 sets V and flips S when overflow is set.
+const wordArithmetic = (flags, x, k, subtract) => {
+  const total = subtract ? x-k : x+k, value = total&65535, negative = value>>15;
+  const overflow = ((subtract ? x&~value : ~x&value)>>15)&1;
+  flags = (flags&0xe0) | ((negative^overflow)<<4) | (overflow<<3) | (negative<<2) |
+    (Number(value===0)<<1) | Number(subtract ? total<0 : total>65535);
+  return (flags<<16)|value;
+};
 
 export class AVRCore {
   constructor(binary, eeprom, { fastIdle = true, fastBlocks = fastIdle } = {}) {
@@ -95,6 +102,9 @@ export class AVRCore {
     else if ([0x3000,0x4000,0x5000,0x6000,0x7000].includes(w & 0xf000)) {
       o = ({12288:OP.CPI,16384:OP.SBCI,20480:OP.SUBI,24576:OP.ORI,28672:OP.ANDI})[w & 0xf000];
       d = 16 + ((w >> 4) & 15); k = (w & 15) | ((w >> 4) & 240);
+    } else if ((w & 0xff00) === 0x9600 || (w & 0xff00) === 0x9700) {
+      o = (w & 0xff00) === 0x9600 ? OP.ADIW : OP.SBIW;
+      d = 24 + ((w >> 3) & 6); k = (w & 15) | ((w >> 2) & 48);
     } else if ((w & 0xff00) === 0x0100) { o = OP.MOVW; d = 2 * ((w >> 4) & 15); s = 2 * (w & 15); }
     else if ([0x0c00,0x1c00,0x1800,0x2000,0x2400,0x2800,0x2c00].includes(w & 0xfc00))
       o = ({3072:OP.ADD,7168:OP.ADC,6144:OP.SUB,8192:OP.AND,9216:OP.EOR,10240:OP.OR,11264:OP.MOV})[w & 0xfc00];
@@ -300,6 +310,10 @@ export class AVRCore {
       case OP.ORI: r[d] |= k; this.nzvs(r[d]); break;
       case OP.ANDI: r[d] &= k; this.nzvs(r[d]); break;
       case OP.MOVW: r[d] = r[s]; r[d + 1] = r[s + 1]; break;
+      case OP.ADIW:
+      case OP.SBIW:
+        v = wordArithmetic(this.sreg, r[d] | r[d+1]<<8, k, this.op[p] === OP.SBIW);
+        r[d] = v; r[d+1] = v>>8; this.sreg = v>>16; n = 2; break;
       case OP.ADD: r[d] = this.arithmetic(r[d], r[s]); break;
       case OP.ADC: r[d] = this.arithmetic(r[d], r[s], this.c); break;
       case OP.SUB: r[d] = this.arithmetic(r[d], r[s], 0, true); break;
@@ -381,6 +395,10 @@ export class AVRCore {
         case OP.LDI: r[d] = k; break;
         case OP.MOV: r[d] = r[s]; break;
         case OP.MOVW: r[d] = r[s]; r[d + 1] = r[s + 1]; break;
+        case OP.ADIW:
+        case OP.SBIW:
+          v = wordArithmetic(flags, r[d] | r[d+1]<<8, k, o === OP.SBIW);
+          r[d] = v; r[d+1] = v>>8; flags = v>>16; break;
         case OP.ADD:
         case OP.ADC:
           x = r[d]; y = r[s]; total = x + y + (o === OP.ADC ? flags & 1 : 0); v = total & 255;
