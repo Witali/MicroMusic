@@ -42,6 +42,15 @@ const originalExports = ['layout', 'field_name', 'error_message', 'reset', 'deco
 const publicDefinitions = [...runtimeSource.matchAll(
   /^\s*(?!static\b)(?:const\s+)?\w+[\s*]+(avr_\w+)\s*\([^;{}]*\)\s*\{/gm,
 )].map(match => match[1]);
+const requiredBridges = ['read_io', 'write_io_masked', 'device_configure', 'device_ready',
+  'device_time', 'device_time64', 'device_control', 'device_lpm', 'device_wait',
+  'device_generation', 'device_bind_generation', 'device_fault', 'device_inject_pins',
+  'device_inject_analog', 'device_pin_buffer', 'device_pin_count', 'device_pin_consume',
+  'device_divisor', 'device_reset_count', 'device_halted', 'device_audio_config',
+  'device_audio_deadline', 'device_audio_sample'].map(name => 'avr_' + name);
+for (const name of requiredBridges) {
+  if (!publicDefinitions.includes(name)) throw new Error('Missing connected device bridge: ' + name);
+}
 const exports = [...new Set([...originalExports, ...publicDefinitions])].sort();
 const flags = ['--target=wasm32-unknown-unknown', '-O3', '-std=c11', '-ffreestanding', '-nostdlib',
   '-DAVR_FULL_DEVICE', '--sysroot=' + sysroot, '-isystem', join(sysroot, 'include'),
@@ -68,7 +77,9 @@ try {
   if (!(error instanceof RangeError)) throw error;
 }
 const hash = value => createHash('sha256').update(value).digest('hex');
-const inputs = [sources[0], ...nativeFiles, 'web-player/scripts/build-device-wasm.mjs'];
+const nativeSupport = readdirSync(join(root, 'web-player/native')).sort()
+  .filter(name => /\.(?:h|inc)$/.test(name)).map(name => 'web-player/native/' + name);
+const inputs = [sources[0], ...nativeSupport, ...nativeFiles, 'web-player/scripts/build-device-wasm.mjs'];
 const normalized = path => path.replaceAll(sdk, '<emsdk>').replaceAll(sdk.replaceAll('\\', '/'), '<emsdk>');
 const manifest = {
   schema: 'micromusic-attiny13a-device-wasm-v1',
