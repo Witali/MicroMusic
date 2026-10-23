@@ -36,12 +36,12 @@ void nvm_advance(attiny13a_nvm_t *n, uint64_t cycle, uint64_t now_ns) {
   n->eecr&=(uint8_t)~NVM_EEMPE;
  if (!n->flash_busy && n->spmcsr &&
      cycle>=((n->spmcsr&NVM_RFLB)?n->rflb_until:n->spm_until)) clear_command(n);
- if (n->eeprom_busy && now_ns>=n->eeprom_until_ns) {
+ if (n->eeprom_busy && !(n->faults&NVM_FAULT_EEPROM_VOLTAGE_UNCERTAIN) && now_ns>=n->eeprom_until_ns) {
   if (n->eeprom_mode==1) n->eeprom[n->pending_address]=0xff;
   else n->eeprom[n->pending_address]=n->pending_data;
   n->eeprom_busy=0; n->eecr&=(uint8_t)~NVM_EEPE;
  }
- if (n->flash_busy && now_ns>=n->flash_until_ns) {
+ if (n->flash_busy && !(n->faults&NVM_FAULT_FLASH_VOLTAGE_UNCERTAIN) && now_ns>=n->flash_until_ns) {
   if (n->flash_busy==NVM_SPM_ERASE)
    memset(n->flash+n->pending_page,0xff,NVM_PAGE_BYTES);
   else {
@@ -51,6 +51,10 @@ void nvm_advance(attiny13a_nvm_t *n, uint64_t cycle, uint64_t now_ns) {
   n->flash_dirty_pages|=(uint32_t)1<<(n->pending_page/32);
   n->flash_generation++; n->flash_busy=0; clear_command(n);
  }
+}
+void nvm_voltage_uncertain(attiny13a_nvm_t *n,uint32_t mask) {
+ if(n->eeprom_busy) n->faults|=mask&NVM_FAULT_EEPROM_VOLTAGE_UNCERTAIN;
+ if(n->flash_busy) n->faults|=mask&NVM_FAULT_FLASH_VOLTAGE_UNCERTAIN;
 }
 void nvm_reset(attiny13a_nvm_t *n, uint64_t cycle, uint64_t now_ns) {
  nvm_advance(n,cycle,now_ns);
@@ -75,6 +79,7 @@ uint8_t nvm_read_io(attiny13a_nvm_t *n, uint8_t a, uint64_t cyc, uint64_t ns) {
 unsigned nvm_write_io(attiny13a_nvm_t *n, uint8_t a, uint8_t v,
  uint8_t mask, uint64_t cyc, uint64_t ns) {
  nvm_advance(n,cyc,ns);
+ if(n->faults&(NVM_FAULT_EEPROM_VOLTAGE_UNCERTAIN|NVM_FAULT_FLASH_VOLTAGE_UNCERTAIN)) return 0;
  if (a==NVM_EEARL) {
   if (!n->eeprom_busy) n->eearl=((n->eearl&~mask)|(v&mask))&63;
   return 0;
@@ -118,6 +123,7 @@ unsigned nvm_write_io(attiny13a_nvm_t *n, uint8_t a, uint8_t v,
 int nvm_spm(attiny13a_nvm_t *n, uint16_t z, uint16_t data,
  uint64_t cyc, uint64_t ns) {
  nvm_advance(n,cyc,ns);
+ if(n->faults&(NVM_FAULT_EEPROM_VOLTAGE_UNCERTAIN|NVM_FAULT_FLASH_VOLTAGE_UNCERTAIN)) return NVM_SPM_UNDEFINED;
  if ((n->fuse_high&16) || n->eeprom_busy || n->flash_busy ||
      !(n->spmcsr&NVM_SELFPRGEN)) return NVM_SPM_IGNORED;
  unsigned cmd=n->spmcsr;
@@ -172,8 +178,8 @@ uint64_t nvm_next_event_cycle(const attiny13a_nvm_t *n) {
  return at;
 }
 uint64_t nvm_next_event_ns(const attiny13a_nvm_t *n) {
- return earliest(n->eeprom_busy?n->eeprom_until_ns:UINT64_MAX,
-  n->flash_busy?n->flash_until_ns:UINT64_MAX);
+ return earliest(n->eeprom_busy&&!(n->faults&NVM_FAULT_EEPROM_VOLTAGE_UNCERTAIN)?n->eeprom_until_ns:UINT64_MAX,
+  n->flash_busy&&!(n->faults&NVM_FAULT_FLASH_VOLTAGE_UNCERTAIN)?n->flash_until_ns:UINT64_MAX);
 }
 uint32_t nvm_take_dirty_pages(attiny13a_nvm_t *n) {
  uint32_t pages=n->flash_dirty_pages; n->flash_dirty_pages=0; return pages;
