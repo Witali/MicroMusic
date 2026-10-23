@@ -214,8 +214,32 @@ def export_model(model, output, profile, *, build=False, adapter_options=(), sym
         manifest['validation']['firmware'] = 'build_failed' if result.returncode else 'built_unverified'
         manifest['adapter_returncode'] = result.returncode
         report = output/'firmware/build.json'
-        if result.returncode == 0 and report.is_file():
-            manifest['adapter_report'] = json.loads(report.read_text(encoding='utf-8'))
+        if report.is_file():
+            measured = json.loads(report.read_text(encoding='utf-8'))
+            manifest['adapter_report'] = measured
+            if (measured.get('schema') == 'micromusic-fixed-period-build-v1' and
+                    measured.get('modelSha256') == sha256((output/'model.json').read_bytes()).hexdigest()):
+                validation = manifest['validation']
+                validation['total_flash_bytes'] = measured['flashBytes']
+                validation['firmware_data_bytes'] = measured['dataBytes']
+                validation['flash_total_fits'] = None if profile.flash_bytes is None else measured['flashBytes'] <= profile.flash_bytes
+                if result.returncode == 0 and measured['status'] == 'oversized':
+                    validation['firmware'] = 'oversized'
+                if result.returncode == 0 and measured['status'] == 'verified':
+                    image = output/'firmware/firmware.bin'
+                    verified = measured.get('verification') or {}
+                    if (not image.is_file() or measured.get('imageSha256') != sha256(image.read_bytes()).hexdigest() or
+                            not verified.get('pass') or verified.get('imageSha256') != measured.get('imageSha256')):
+                        raise RuntimeError('Adapter verification report does not match its image')
+                    validation['firmware'] = 'verified'
+                    validation['timing_verified'] = True
+                    validation['verified_loops'] = measured['verifiedLoops']
+                    validation['sample_period_cycles'] = [verified['minimumSamplePeriod'], verified['maximumSamplePeriod']]
+                    validation['minimum_stack_pointer'] = verified['minimumSP']
+        for name in ('build.log', 'firmware/build.json'):
+            path = output/name
+            if path.is_file():
+                manifest['artifacts'][name] = dict(bytes=path.stat().st_size, sha256=sha256(path.read_bytes()).hexdigest())
         _write(output/'manifest.json', _json_bytes(manifest))
         if result.returncode:
             raise RuntimeError('Firmware adapter failed; see '+str(output/'build.log'))

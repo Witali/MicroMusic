@@ -91,6 +91,26 @@ class TargetTests(unittest.TestCase):
             self.assertEqual(saved['adapter_returncode'], 3)
             self.assertIn('deliberate', (folder/'failure/build.log').read_text())
 
+    def test_measured_oversize_is_not_reported_as_successful_firmware(self):
+        with tempfile.TemporaryDirectory(prefix='speech-target-', dir=ROOT/'build') as directory:
+            folder = Path(directory)
+            adapter = folder/'oversized.py'
+            adapter.write_text(
+                "import argparse,hashlib,json,pathlib\n"
+                "p=argparse.ArgumentParser();p.add_argument('--model');p.add_argument('--output');a=p.parse_args()\n"
+                "o=pathlib.Path(a.output);o.mkdir(parents=True)\n"
+                "r=dict(schema='micromusic-fixed-period-build-v1',status='oversized',flashBytes=1533,dataBytes=511,"
+                "modelSha256=hashlib.sha256(pathlib.Path(a.model).read_bytes()).hexdigest())\n"
+                "(o/'build.json').write_text(json.dumps(r))\n", encoding='utf-8')
+            profile = resolve_profile('mcu', custom_profile=dict(schema='speech-output-profile-v1',
+                adapter=str(adapter), flash_bytes=1024))
+            report = export_model(self.fixed, folder/'result', profile, build=True)
+            self.assertEqual(report['validation']['firmware'], 'oversized')
+            self.assertEqual(report['validation']['total_flash_bytes'], 1533)
+            self.assertFalse(report['validation']['flash_total_fits'])
+            self.assertFalse(report['validation']['timing_verified'])
+            self.assertIsNone(report['validation']['sram_bytes'])
+
 
 if __name__ == '__main__':
     (ROOT/'build').mkdir(exist_ok=True)
