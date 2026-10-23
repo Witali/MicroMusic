@@ -41,9 +41,17 @@ def apply(source: Path):
     text = text.replace('st->count_lost, offset, st->last_pitch_gain, 0', '0, offset, 0, 0')
     text = replace(text,
         'SUBMODE(innovation_unquant)(innov, SUBMODE(innovation_params), NB_SUBFRAME_SIZE, bits, stack, &st->seed);',
-        'speex_avr_innovation(innov, bits, ener);')
+        'speex_avr_innovation(exc, exc32, bits, ener);')
     decode_start = text.index('int nb_decode(')
     text = text[:decode_start] + replace(text[decode_start:], 'signal_mul(innov, innov, ener, NB_SUBFRAME_SIZE);', '')
+    # The fixed NB3 path writes every final excitation sample directly.
+    # Unsupported vocoder/double-codebook/innovation-save paths are dead.
+    before, body = text[:decode_start], text[decode_start:]
+    body = replace(body, '   ALLOC(innov, NB_SUBFRAME_SIZE, spx_sig_t);', '')
+    body = replace(body, '         SPEEX_MEMSET(innov, 0, NB_SUBFRAME_SIZE);', '')
+    body = replace(body, '''            for (i=0;i<NB_SUBFRAME_SIZE;i++)
+               exc[i]=EXTRACT16(SATURATE32(PSHR32(ADD32(SHL32(exc32[i],1),innov[i]),SIG_SHIFT),32767));''', '')
+    text = before + body
     text = replace(text,
         '         st->interp_qlpc[i] = ak[i];',
         '''         st->interp_qlpc[i] = ak[i];

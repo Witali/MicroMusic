@@ -3,7 +3,8 @@
  * (shape << 9) >> 7 == shape * 4, including negative signed shapes. */
 #include "avr_tables.h"
 extern const signed char exc_10_32_table[];
-static void speex_avr_innovation(spx_sig_t *out, SpeexBits *bits, spx_word32_t scale)
+static void speex_avr_innovation(spx_word16_t *out, const spx_word32_t *pitch,
+                                  SpeexBits *bits, spx_word32_t scale)
 {
     int vector, sample;
     for (vector = 0; vector < 4; ++vector) {
@@ -11,7 +12,9 @@ static void speex_avr_innovation(spx_sig_t *out, SpeexBits *bits, spx_word32_t s
         const signed char *shape = exc_10_32_table + 10*index;
         for (sample = 0; sample < 10; ++sample) {
             spx_word16_t value = SHL16(AVR_READ_I8(shape + sample), 2);
-            *out++ = SHL32(MULT16_32_Q14(value, scale), 7);
+            spx_word32_t innovation = SHL32(MULT16_32_Q14(value, scale), 7);
+            spx_word32_t adaptive = *pitch++;
+            *out++ = EXTRACT16(SATURATE32(PSHR32(ADD32(SHL32(adaptive,1),innovation),SIG_SHIFT),32767));
         }
     }
 }
