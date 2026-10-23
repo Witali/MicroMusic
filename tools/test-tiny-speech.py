@@ -85,6 +85,41 @@ class TinySpeechTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             tiny.TinySearch(model, objective, max_flash_data_bytes=flash-1, **options)
 
+    def test_rate_target_allows_oversize_start_and_preserves_resume_settings(self):
+        from tiny_period import pack_tiny
+        model = tiny.canonicalize(fixture())
+        model['dc_block_shift'] = 7
+        objective = SpectralObjective((decode_fixed(model).astype(float)-128)/128)
+        flash = len(pack_tiny(model)['flash_data'])
+        options = dict(words=2, stoi_floor=0., spectral_ceiling=1., max_peak=.95,
+                       max_data_bytes=65535, dc_choices=(7,), voiced_only=True,
+                       residual_colors=(0,), compression_level=6, target_flash_data_bytes=flash-4)
+        search = tiny.TinySearch(model, objective, **options)
+        self.assertGreater(search.initial['tiny_flash_data_bytes'], options['target_flash_data_bytes'])
+        restored = tiny.TinySearch(model, objective, checkpoint=search.checkpoint(), **options)
+        self.assertEqual(restored.config, search.config)
+        expensive = dict(search.initial, tiny_flash_data_bytes=flash+20)
+        self.assertGreater(search.energy(expensive), search.energy(search.initial))
+        below = dict(search.initial, tiny_flash_data_bytes=flash-4)
+        smaller = dict(search.initial, tiny_flash_data_bytes=flash-8)
+        self.assertEqual(search.energy(below), search.energy(smaller))
+
+    def test_rate_proposals_remain_valid_at_extreme_pitch_and_wave_indices(self):
+        from fixed_period import validate
+        model = tiny.canonicalize(fixture())
+        model['dc_block_shift'] = 7
+        for index, frame in enumerate(model['frames']):
+            frame[0] = 255 if index % 3 else 254
+        objective = SpectralObjective((decode_fixed(model).astype(float)-128)/128)
+        search = tiny.TinySearch(model, objective, words=2, compression_level=8,
+                                 stoi_floor=0., spectral_ceiling=1., max_peak=.95,
+                                 max_data_bytes=65535, dc_choices=(7,),
+                                 voiced_only=True, residual_colors=(0,))
+        for _ in range(400):
+            proposal = search.propose(model)
+            validate(proposal)
+            self.assertTrue(all(index < 2 for index in tiny.active_words(proposal)))
+
 
 if __name__ == '__main__':
     unittest.main()

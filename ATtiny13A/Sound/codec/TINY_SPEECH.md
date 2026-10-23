@@ -54,6 +54,49 @@ SRAM оценена по измеренной нижней границе ука
 фаза и удаление смещения нуля сохранены. Синтез полностью целочисленный,
 аппаратный умножитель для ATtiny13 не требуется.
 
+## Управление сжатием в кодировщике
+
+`tools/train-tiny-speech.py` принимает `--compression-level 0..9`:
+0 отдаёт предпочтение качеству, 9 — размеру. Если `--words` не задан явно,
+уровни выбирают соответственно 16, 14, 12, 10, 8, 6, 4, 3, 2, 1 период.
+Более высокие уровни также сильнее штрафуют расход байт при совместном
+подборе параметров и чаще предлагают повторяющиеся параметры соседних кадров.
+Изменения оцениваются через точный целочисленный синтез, STOI и спектральную
+ошибку. При сглаживании высоты сохраняется сумма приращений фазы участка.
+Это управляемый компромисс; одинаковое качество при любом размере не гарантируется.
+
+`--target-flash-data-bytes N` задаёт цель для **данных во Flash после вынесения
+таблиц в EEPROM**, без машинного кода. Штраф за размер прекращается при
+достижении этой цели. Поиск может начинаться с более крупной модели, в отличие
+от строгого фильтра `--max-flash-data-bytes`. В отчёте указаны фактический размер
+и `target_size_met`; если цель не достигнута, CLI возвращает код 2 и сохраняет
+кандидата с отчётом для исследования. Ограничения `--stoi-floor`,
+`--spectral-ceiling`, отсутствие отсечения и предел пиков продолжают действовать.
+
+Например, для ядра 728 байт целевой бюджет данных — 296 байт:
+
+```powershell
+python tools/train-tiny-speech.py --model ATtiny13A/Sound/research/fixed-period/chego/white-model.json --reference C:/Work/MicroMusic/build/hq4-preview/chego/original.wav --output build/tiny-compression --compression-level 4 --target-flash-data-bytes 296 --proposals 12000 --stoi-floor .88 --spectral-ceiling .60
+```
+
+Окончательный общий размер подтверждает сборка: условные ветви ядра и выравнивание
+могут менять расход Flash. Без новых параметров старые команды и последовательность
+поиска сохраняются.
+
+Проверенный пример дополнительного сжатия «Чего…» сохранил восемь периодов:
+при уровне 5 и цели 240 байт скрипт за 2000 предложений уменьшил Flash-данные
+с 260 до 230 байт. Полная прошивка занимает **958 байт Flash + 64 EEPROM**,
+STOI 0,909634, ошибка лог-спектра 0,363448; отсечения отсутствуют. Все 27648
+отсчётов прошли проверку в трёх движках. Это отдельный пример управления
+сжатием; основной вариант выше сохранён для сравнения.
+Модель и результаты: [`compression-model.json`](../research/tiny-speech/chego/compression-model.json),
+[`compression-training.json`](../research/tiny-speech/chego/compression-training.json),
+[`compression-build.json`](../research/tiny-speech/chego/compression-build.json).
+
+```powershell
+python tools/train-tiny-speech.py --model ATtiny13A/Sound/research/tiny-speech/chego/model.json --reference C:/Work/MicroMusic/build/hq4-preview/chego/original.wav --output build/tiny-compression-example --words 8 --compression-level 5 --target-flash-data-bytes 240 --proposals 2000 --stoi-floor .89 --spectral-ceiling .45 --max-data-bytes 65535
+```
+
 ## Качество
 
 | Вариант «Чего…» | STOI | eSTOI | Ошибка лог-спектра |
