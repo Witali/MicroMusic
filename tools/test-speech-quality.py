@@ -30,7 +30,13 @@ def main():
         'test-lpx3-entropy.py', 'test-speech-clipping.py',
         'test-lpc2-excitation.py', 'test-lpc-vbr.py',
         'test-hq4-q3-rounded.py', 'test-q3-rounded-eeprom.py',
-        'test-hq4-q3-lpc2-prior.py'))
+        'test-hq4-q3-lpc2-prior.py',
+        'test-q3-pulsebook.py', 'test-q3-pulsebook-search.py',
+        'test-q3-pulsebook-seed.py', 'test-q3-pulsebook-avr.py',
+        'test-q3-pulsebook-pole.py', 'test-q3-pulsebook-pole-avr.py',
+        'test-q3-pulsebook-compact-avr.py', 'test-q3-core-data-cycles.py',
+        'test-q3-pulsebook-mixed.py', 'test-q3-pulsebook-mixed-avr.py',
+        'test-hq4-stream-entropy.py', 'test-q3-wide-pulsebook.py'))
     for path in sorted(paths):
         name = 'speech_'+path.stem.replace('-', '_')
         spec = importlib.util.spec_from_file_location(name, path)
