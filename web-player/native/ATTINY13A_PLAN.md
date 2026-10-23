@@ -136,11 +136,18 @@ These are sampled function-body observations, not precise exclusive subsystem
 timings. See [`reports/device-profile-20261023.md`](../reports/device-profile-20261023.md)
 for source/runtime identities, naming methodology and limitations.
 
-The next software priority is to reuse scheduler deadlines with explicit
-invalidation, following [`device-deadline-cache-design.md`](peripherals/device-deadline-cache-design.md).
-Keep instruction-effect barriers and
-physical output parity as acceptance conditions. A measured OSCCAL curve and
-silicon probes proceed when hardware is available.
+The scheduler now reuses deadlines only at an unchanged timestamp and state,
+with explicit invalidation at every mutation boundary. The retained serial
+[baseline/candidate measurement](peripherals/device-deadline-cache-benchmark.md)
+compared 72 runs and 3384 endpoint snapshots with byte-identical PCM and full
+CPU/peripheral state. Median paired gains were 1.14–1.19x with physical time and
+1.12–1.24x with the compatible clock contract on this host. These are coupled
+capture measurements with host variance; physical capture still misses real
+time, so the default-engine performance gate remains open. The rebuilt runtime
+matches the measured candidate SHA-256. All 871 default regression tests passed
+at this integration checkpoint. A new profile of the optimized runtime should
+guide the next performance change. Measured OSCCAL curves and silicon probes
+proceed when hardware is available.
 
 ## 6 Hardware coverage beyond firmware-visible registers
 
