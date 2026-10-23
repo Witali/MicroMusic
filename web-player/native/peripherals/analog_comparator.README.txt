@@ -1,0 +1,87 @@
+Standalone ATtiny13A comparator and combined analog scheduler
+
+Source: Microchip ATtiny13A DS40002307A, chapter13, section13.1, section13.2
+and Table13-2; chapter14 Table14-5 for the ADC trigger connection:
+https://www.microchip.com/content/dam/mchp/documents/MCU08/ProductDocuments/DataSheets/ATtiny13A-Data-Sheet-DS40002307A.pdf
+
+analog_comparator.c models the ideal voltage comparison, digital synchronization
+and registers. It does not execute the CPU or call the host. It is currently a
+standalone module, not linked into avr.c. Physical inputs are explicit PB0..PB5
+signed microvolt parameters, timestamped in HALF CPU/clkI/O periods. CPU cycle N
+maps to timestamp2*N. Its time domain agrees with analog_adc.c. All timestamped
+calls advance existing events THROUGH their timestamp, then apply the mutation.
+next_event supplies deadlines, so an in-C scheduler can jump directly to work.
+
+AIN0/PB0 is positive and AIN1/PB1 negative by default. ACBG substitutes the supplied
+bandgap voltage for the positive input. With ACME set and ADEN clear, MUX0..3
+select ADC0/PB5, ADC1/PB2, ADC2/PB4 or ADC3/PB3 as the negative input. Call
+analog_comparator_adc after shared ADC-register writes; ADC retains ownership of
+ADCSRA, ADCSRB and ADMUX. DIDR0 belongs to system_gpio. Disabling the digital pin
+buffer affects PINB reads independently of this voltage comparison.
+
+Explicit analog assumptions
+
+The caller supplies propagation_half_cycles and bandgap_startup_half_cycles.
+Zero chooses an ideal instantaneous analog response, not a silicon timing claim.
+Propagation is inertial: an opposite pulse shorter than the supplied delay is
+discarded. Comparator polarity is ideal positive>negative; equality resolves low
+as a deterministic fixture convention. Offset, hysteresis, common-mode limits,
+noise, metastability, temperature and calibration are not simulated. The caller
+must supply any desired analog voltage/settling trajectory. ACBG selection or
+reenabling a bandgap comparator starts the supplied startup delay; comparison is
+held until this delay expires. No unsettled analog result is invented. Shared
+bandgap enable/retention from ADC or BOD is outside this standalone module: use
+zero startup delay when the integration already knows the reference is stable.
+
+The analog result passes through two digital stages on actual modeled clkI/O
+rising edges. clock_origin_half_cycle sets their phase (origin parity defines
+the rising edges in this CPU-half-period domain). A change propagates to ACO
+after 1..2 CPU periods, depending on phase, plus the configured analog delay.
+Pulses sampled by the first stage traverse both stages, even if the analog
+input changes before the second edge. Analog deadline events are processed
+before a synchronizer deadline when both are already scheduled at the same
+timestamp. An external input injection at that timestamp follows existing events.
+This deterministic boundary convention is not a metastability model.
+
+clock_running stops/restarts only digital synchronization; analog propagation
+continues. sleep explicitly implements the system's automatic comparator disable
+in Power-down. ACD and the sleep gate cancel deadlines but preserve last ACO;
+hardware disabled/reset ACO is unspecified, so reset initial_output is also a
+caller parameter. Register ACD remains as written while the sleep gate is active.
+The CPU/system module owns sleep selection, clocks, wakeup eligibility and SREG.I.
+
+ACI is set by selected synchronized output events independently of ACIE. ACIS00
+selects toggle,10 falling,11 rising; reserved01 is inactive. ACI is W1C and ack
+clears it on vector0x0005 acceptance. ACO/reserved bits ignore writes. pending is
+the local ACI+ACIE condition. unsafe_control_changes counts changes to ACD/ACIS
+while ACIE is enabled, which section13.2 says can cause spurious interrupts.
+Their exact analog transient is unspecified: this module diagnoses the unsafe
+configuration without inventing a random interrupt. Firmware depending on those
+spurious interrupts is outside its supported behavior.
+
+Combined integration (analog.c/h)
+
+analog_t embeds both modules. It merges next-event deadlines and routes ACI to
+ADC trigger source1 at its event timestamp wholly inside C/WASM, independent of
+ACIE. Timer/INT0/PCINT interrupt flags enter analog_sources in bits2..6, according
+to ADTS codes. Always forward both flag set and flag clear transitions. Reads and
+writes take I/O offsets0x03..0x08 (add0x20 for data addresses). analog_input maps a
+physical PB voltage into the relevant ADC channel and comparator input in one
+operation. analog_reference updates the externally supplied VCC/bandgap values.
+analog_pending returns bits indexed by vector word: comparator bit5, ADC bit9.
+analog_ack accepts those vector word numbers and updates the ADC trigger level.
+
+Use analog_advance instead of separately advancing component states when using
+the combined wrapper: advancing the comparator over a block before forwarding
+its flags could otherwise erase intermediate trigger timestamps. Sleep/clock
+configuration remains explicit through the embedded component APIs; call
+analog_advance to the desired boundary before changing either component. The
+standalone APIs remain available for an existing central event scheduler.
+
+Verification:
+  node --test web-player/tests/analog-adc.test.mjs web-player/tests/analog-comparator.test.mjs
+The read-only Emscripten SDK is found via EMSDK or the repository build directory.
+Tests compile the actual C sources with strict warnings, reject host imports,
+check polarity, all mux inputs/senses, delayed synchronization, sampled pulses,
+clock/sleep gating, flags, reference startup, ADC trigger integration and batch
+size invariance. Outputs remain ignored under build/analog-tests.
