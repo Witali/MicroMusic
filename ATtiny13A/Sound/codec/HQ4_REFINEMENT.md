@@ -13,14 +13,16 @@ those proposals with the original HQ4 arithmetic and its 617-byte stream budget.
 It also tests octave alternatives and adjacent-frame periods as candidates;
 neither an estimated F0 nor an attack detector forbids a synthesis alternative.
 
-The score combines 80% of the existing multi-resolution STFT objective and 20%
-of the new one-third-octave band-envelope/shape objective. Both comparisons use
+The score combines 70% of the existing multi-resolution STFT objective, 20%
+of the new one-third-octave band-envelope/shape objective and 10% of the
+persistence-weighted spectral error. These comparisons use
 the same 70 Hz highpass and global RMS match. Band envelopes retain time context;
 band shape measures how energy is distributed between frequency regions. The
-persistent-ridge diagnostic additionally identifies lasting peaks and their
-deficit/excess, but does not directly add or remove sinusoids in the signal.
+persistent-ridge analysis additionally identifies lasting peaks and their
+deficit/excess. Positive weights softly emphasize those regions during search,
+without directly adding or removing sinusoids in the signal.
 
-The exported elite must preserve **both STOI and eSTOI of the input stream**,
+The exported elite must preserve **both STOI and eSTOI of the frozen HQ4 stream**,
 the original multi-resolution spectral loss and its log-error ceiling. Peak
 signed PCM must be at most 115; steps of 48 or more are rejected. The full
 recording length is preserved; decoder + stream + EOF must fit 1024 bytes.
@@ -30,8 +32,10 @@ exported. A lower objective is not a claim of better subjective quality.
 
 The current tool refines a supplied stream; it is not a general initial encoder
 for arbitrary new speech. It intentionally does not replace a public example.
-When evaluating an explicit input other than the retained HQ4, the floors belong
-to that input and the comparison labels refer to that baseline.
+An explicit `--input-stream` must already satisfy the frozen HQ4 floors and
+ceilings. Its quality cannot weaken those limits. The listening comparison
+uses that input as the "before" sound; the report records both frozen control
+and input metrics separately.
 
 ## Reproduce and resume
 
@@ -44,6 +48,8 @@ python tools/build-hq4-oneshot.py --clip vinni --stream build/hq4-refinement/vin
 Keep sources unchanged when resuming. Checkpoints retain exact streams, metrics
 and random-generator state; source/input hashes and recomputed metrics reject
 incompatible resumes. Proposal count includes pre-synthesis budget rejections.
+The eSTOI wrapper isolates pystoi's epsilon-scale random normalization with a
+fixed NumPy RNG seed and restores the caller's RNG state after each evaluation.
 Search schedule parameters must be identical; stopping and resuming reproduce
 an uninterrupted run. This is best-effort optimization, not a global minimum.
 

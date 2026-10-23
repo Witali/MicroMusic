@@ -44,6 +44,7 @@ def main():
     p.add_argument('--restart-every', type=int, default=1500)
     p.add_argument('--temperature', type=float, default=.004)
     p.add_argument('--band-weight', type=float, default=.2)
+    p.add_argument('--ridge-weight', type=float, default=.1)
     p.add_argument('--checkpoint-every', type=int, default=500)
     p.add_argument('--resume', type=Path)
     a = p.parse_args()
@@ -55,7 +56,8 @@ def main():
     reference_bytes = a.reference.read_bytes()
     reference, sr = sf.read(a.reference)
     band_objective = PersistentSpectrumObjective(reference, sr)
-    objective = SpeechObjective(reference, sr, band_objective=band_objective, band_weight=a.band_weight)
+    objective = SpeechObjective(reference, sr, band_objective=band_objective,
+                                band_weight=a.band_weight, ridge_weight=a.ridge_weight)
     f, d = unpack_stream(source_bytes)
     if pack_stream(f, d) != source_bytes:
         p.error('Input HQ4 stream must be canonical, without an embedded EOF marker')
@@ -69,8 +71,11 @@ def main():
     saved = json.loads(a.resume.read_text(encoding='utf-8')) if a.resume else None
     if saved and saved['inputs'] != inputs:
         p.error('Checkpoint input or encoder sources changed')
+    frozen_f, frozen_d = unpack_stream(frozen.read_bytes())
+    baseline_score = objective.evaluate(frozen_f, frozen_d)
     search = SpeechSearch(objective, f, d, seed=a.seed, restart_every=a.restart_every,
-                          temperature=a.temperature, checkpoint=saved['search'] if saved else None)
+                          temperature=a.temperature, checkpoint=saved['search'] if saved else None,
+                          baseline_score=baseline_score)
     runtime = {name: importlib.metadata.version(name) for name in ('numpy', 'scipy', 'numba', 'soundfile', 'pystoi')}
     a.output.mkdir(parents=True, exist_ok=True)
     start = time.monotonic()
@@ -85,7 +90,7 @@ def main():
                       inputs=inputs, samples=len(reference), sample_rate=sr,
                       decoder='original HQ4 signed eight-bit lattice',
                       assembled=False, hardware_tested=False,
-                      config=search.config, initial=search.initial, final=score,
+                      config=search.config, baseline=search.baseline, initial=search.initial, final=score,
                       proposals=search.proposals, evaluated=search.evaluated,
                       accepted=search.accepted, improvements=search.improvements,
                       decoder_bytes=DECODER_BYTES, stream_bytes=len(payload),

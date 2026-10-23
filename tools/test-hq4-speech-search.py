@@ -10,7 +10,8 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT/'ATtiny13A/Sound/codec'))
-from hq4_speech_search import SpeechObjective, SpeechSearch, proposal, validate, MAX_STREAM_BYTES
+from hq4_speech_search import (SpeechObjective, SpeechSearch, proposal, validate,
+                               MAX_STREAM_BYTES, deterministic_estoi)
 from hq4_core import pack_stream, unpack_stream
 from model import decode
 from speech_spectrum import PersistentSpectrumObjective
@@ -45,6 +46,17 @@ class SpeechSearchTests(unittest.TestCase):
         bad = dict(search.initial, estoi=float('nan'))
         self.assertFalse(search.feasible(bad))
 
+    def test_estoi_is_deterministic_and_preserves_callers_rng(self):
+        np.random.seed(911)
+        saved = np.random.get_state()
+        value = deterministic_estoi(self.reference, self.reference*.7, 7500)
+        after = np.random.get_state()
+        self.assertEqual(saved[0], after[0])
+        np.testing.assert_array_equal(saved[1], after[1])
+        self.assertEqual(saved[2:], after[2:])
+        np.random.standard_normal(123)
+        self.assertEqual(value, deterministic_estoi(self.reference, self.reference*.7, 7500))
+
     def test_exact_resume_and_tampered_checkpoint_rejection(self):
         kwargs = dict(seed=130, restart_every=30, temperature=.02)
         whole = SpeechSearch(self.objective, self.f, self.d, **kwargs)
@@ -66,6 +78,16 @@ class SpeechSearchTests(unittest.TestCase):
         damaged['config']['stoi_floor'] -= .01
         with self.assertRaisesRegex(ValueError, 'configuration'):
             SpeechSearch(self.objective, self.f, self.d, checkpoint=damaged, **kwargs)
+        damaged = copy.deepcopy(saved)
+        damaged['current']['score']['loss'] = float('nan')
+        with self.assertRaisesRegex(ValueError, 'metrics'):
+            SpeechSearch(self.objective, self.f, self.d, checkpoint=damaged, **kwargs)
+
+    def test_custom_start_cannot_weaken_frozen_control(self):
+        score = self.objective.evaluate(self.f, self.d)
+        better_control = dict(score, stoi=score['stoi']+.001)
+        with self.assertRaisesRegex(ValueError, 'frozen HQ4 baseline'):
+            SpeechSearch(self.objective, self.f, self.d, baseline_score=better_control)
 
     def test_full_recording_and_budget_survive_joint_proposals(self):
         rng = random.Random(14)

@@ -38,13 +38,27 @@ def validate(frames, durations, samples):
     return payload
 
 
+def deterministic_estoi(reference, audio, sr):
+    # pystoi adds epsilon-scale random noise during extended normalization.
+    # Isolate its RNG so evaluation/resumption do not depend on other callers.
+    state = np.random.get_state()
+    try:
+        np.random.seed(0)
+        return float(stoi(reference, audio, sr, extended=True))
+    finally:
+        np.random.set_state(state)
+
+
 class SpeechObjective(SpectralObjective):
-    def __init__(self, reference, sr=7500, *, band_objective=None, band_weight=.2):
+    def __init__(self, reference, sr=7500, *, band_objective=None, band_weight=.2,
+                 ridge_weight=.1):
         super().__init__(reference, sr)
-        if not 0 <= band_weight <= 1:
-            raise ValueError('Band weight must be between zero and one')
+        if not (0 <= band_weight <= 1 and 0 <= ridge_weight <= 1
+                and band_weight+ridge_weight <= 1):
+            raise ValueError('Detail weights must be nonnegative and sum to at most one')
         self.band_objective = band_objective
         self.band_weight = band_weight if band_objective is not None else 0.
+        self.ridge_weight = ridge_weight if band_objective is not None else 0.
 
     def evaluate(self, frames, durations):
         pcm = decode(frames, durations, 0)
@@ -57,11 +71,12 @@ class SpeechObjective(SpectralObjective):
         spectral = self.spectrum(audio)
         bands = self.band_objective.evaluate(audio) if self.band_objective is not None else {}
         spectral['spectral_loss'] = spectral.pop('loss')
-        loss = ((1-self.band_weight)*spectral['spectral_loss']
-                + self.band_weight*bands.get('band_loss', 0.))
+        loss = ((1-self.band_weight-self.ridge_weight)*spectral['spectral_loss']
+                + self.band_weight*bands.get('band_loss', 0.)
+                + self.ridge_weight*bands.get('persistent_spectral_error', 0.))
         return dict(loss=float(loss), **spectral, **bands,
                     stoi=float(stoi(self.reference, audio, self.sr)),
-                    estoi=float(stoi(self.reference, audio, self.sr, extended=True)),
+                    estoi=deterministic_estoi(self.reference, audio, self.sr),
                     peak_signed=peak, steps_ge_48=steps,
                     stream_bytes=len(pack_stream(frames, durations)))
 
@@ -85,7 +100,7 @@ def proposal(frames, durations, rng):
 
 class SpeechSearch:
     def __init__(self, objective, frames, durations, *, seed=23101,
-                 restart_every=1500, temperature=.004, checkpoint=None):
+                 restart_every=1500, temperature=.004, checkpoint=None, baseline_score=None):
         if restart_every < 2 or not math.isfinite(temperature) or temperature <= 0:
             raise ValueError('Invalid search schedule')
         validate(frames, durations, len(objective.reference))
@@ -93,11 +108,17 @@ class SpeechSearch:
         if score is None or not all(math.isfinite(v) for v in score.values()):
             raise ValueError('Starting HQ4 exceeds peak/step limits or has invalid metrics')
         self.objective = objective
+        self.baseline = copy.deepcopy(score if baseline_score is None else baseline_score)
+        if not all(math.isfinite(v) for v in self.baseline.values()):
+            raise ValueError('Invalid frozen HQ4 baseline metrics')
         self.config = dict(version=VERSION, seed=seed, restart_every=restart_every,
                            temperature=temperature, band_weight=objective.band_weight,
-                           stoi_floor=score['stoi'], estoi_floor=score['estoi'],
-                           spectral_ceiling=score['spectral_loss'],
-                           log_spectral_ceiling=score['log_spectral_error'])
+                           ridge_weight=objective.ridge_weight,
+                           stoi_floor=self.baseline['stoi'], estoi_floor=self.baseline['estoi'],
+                           spectral_ceiling=self.baseline['spectral_loss'],
+                           log_spectral_ceiling=self.baseline['log_spectral_error'])
+        if not self.feasible(score):
+            raise ValueError('Starting stream violates the frozen HQ4 baseline guards')
         self.initial = copy.deepcopy(score)
         self.best = (frames.copy(), durations.copy(), copy.deepcopy(score))
         self.current = copy.deepcopy(self.best)
@@ -165,9 +186,13 @@ class SpeechSearch:
             validate(f, d, len(self.objective.reference))
             score = self.objective.evaluate(f, d)
             if (score is None or score.keys() != value['score'].keys()
+                    or not all(isinstance(v, (int, float)) and math.isfinite(v)
+                               for v in value['score'].values())
                     or any(abs(score[k]-v) > 1e-10 for k, v in value['score'].items())):
                 raise ValueError('HQ4 checkpoint metrics do not reproduce')
-            return f, d, score
+            # Recalculation validates compatibility. Retain the serialized
+            # score so sub-ULP BLAS rounding cannot alter a resumed chain.
+            return f, d, copy.deepcopy(value['score'])
         best, current = state(saved['best']), state(saved['current'])
         if not self.feasible(best[2]) or best[2]['loss'] > self.initial['loss']+1e-12:
             raise ValueError('HQ4 checkpoint elite violates the baseline guards')
