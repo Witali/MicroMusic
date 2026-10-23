@@ -111,7 +111,7 @@ def build():
                         target = name.rsplit('/', 1)[0] + '/' + n
                         return z.read(target) if target in z.namelist() else None
                     inspect(path.relative_to(ROOT).as_posix() + '!/' + name, z.read(name), sibling)
-    return dict(schema=1, defaultId='rhythmic', entries=entries,
+    return dict(schema=1, defaultId='lumiere-stereo', entries=entries,
                 sourceOnly=[dict(title='Исходный C-прототип · 2016',
                                  source='../ATtiny13A/Music/00_original/attiny13a_initial_2016.c',
                                  reason='Сохранён исходник C; готового HEX / BIN в архиве нет.')])
