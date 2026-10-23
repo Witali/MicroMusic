@@ -29,7 +29,13 @@ def apply(source: Path):
     # omits only state/control work outside the public NB3 profile.
     start = text.index('void *nb_decoder_init(')
     fragment = Path(__file__).resolve().parents[1] / 'src/nb_decode.c.inc'
-    text = text[:start] + fragment.read_text() + '\n#endif /* DISABLE_DECODER */\n'
+    gains = [int(v) for v in re.search(r'ol_gain_table\[32\]=\{([^}]+)\}',text)[1].split(',')]
+    corrections = [int(v) for v in re.search(r'exc_gain_quant_scal1\[2\]=\{([^}]+)\}',text)[1].split(',')]
+    # Exact two-stage Q15/Q14 floors, generated from pinned upstream constants.
+    values = [(c*((28406*g)//32768))//16384 for g in gains for c in corrections]
+    assert len(values)==64 and max(values)==120988612
+    table = '\nstatic const spx_word32_t nb3_gain_table[64] AVR_TABLE={' + ','.join(map(str,values)) + '};\n'
+    text = text[:start] + table + fragment.read_text() + '\n#endif /* DISABLE_DECODER */\n'
     path.write_text(text)
 
     path = lib / 'ltp.c'

@@ -29,7 +29,7 @@ const packet = address('speex_test_packet'), pcm = address('speex_test_pcm');
 const result = address('speex_test_result'), end = address('__bss_end');
 const binary = readFileSync(join(build, 'speex-test.bin'));
 assert.equal(address('scratch') & 3, 0, '220-byte scratch requires a four-byte-aligned base');
-for (const table of ['cdbk_nb', 'cdbk_nb_low1', 'cdbk_nb_high1', 'gain_cdbk_lbr', 'exc_10_32_table', 'ol_gain_table']) {
+for (const table of ['cdbk_nb', 'cdbk_nb_low1', 'cdbk_nb_high1', 'gain_cdbk_lbr', 'exc_10_32_table', 'nb3_gain_table']) {
   assert.ok(symbols.has(table) && symbols.get(table) < 32768, table + ' must reside in Flash');
 }
 for (const name of ['malloc', 'calloc', 'realloc', 'free']) assert.ok(!symbols.has(name), 'Unexpected heap: ' + name);

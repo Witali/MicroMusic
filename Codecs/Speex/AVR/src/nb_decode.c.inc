@@ -13,7 +13,6 @@ __attribute__((noinline)) int nb_decode(void *state, SpeexBits *bits, void *vout
    char *stack=st->stack;
    int qe,sub,i,pitch;
    spx_word16_t pitch_gain[3];
-   spx_word32_t ol_gain;
    VARDECL(spx_lsp_t *qlsp);
    VARDECL(spx_coef_t *ak);
    VARDECL(spx_word32_t *exc32);
@@ -25,7 +24,6 @@ __attribute__((noinline)) int nb_decode(void *state, SpeexBits *bits, void *vout
    lsp_unquant_lbr(qlsp,NB_ORDER,bits);
    if (st->first) SPEEX_COPY(st->old_qlsp,qlsp,NB_ORDER);
    qe=speex_bits_unpack_unsigned(bits,5);
-   ol_gain=MULT16_32_Q15(28406,ol_gain_table[qe]);
    ALLOC(ak,NB_ORDER,spx_coef_t);
    ALLOC(exc32,NB_SUBFRAME_SIZE,spx_word32_t);
    for (sub=0;sub<NB_NB_SUBFRAMES;sub++)
@@ -40,7 +38,7 @@ __attribute__((noinline)) int nb_decode(void *state, SpeexBits *bits, void *vout
       sanitize_values32(exc32,-QCONST32(32000,SIG_SHIFT-1),
                         QCONST32(32000,SIG_SHIFT-1),NB_SUBFRAME_SIZE);
       q_energy=speex_bits_unpack_unsigned(bits,1);
-      ener=MULT16_32_Q14(exc_gain_quant_scal1[q_energy],ol_gain);
+      ener=AVR_READ_I32(&nb3_gain_table[(qe<<1)|q_energy]);
       speex_avr_innovation(exc,exc32,bits,ener);
    }
    ALLOC(interp_qlsp,NB_ORDER,spx_lsp_t);
