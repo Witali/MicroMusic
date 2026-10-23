@@ -19,36 +19,7 @@ def module(name, path):
 
 def compile_score(data):
     compiler = module('score_format', 'tools/score-format.py')
-    packer = module('pack_score', 'tools/pack-score.py')
-    text, meta = compiler.to_inc(data)
-    prefix, raw = text.split('melody_data:\n')
-    sections = {}
-    for line in raw.splitlines():
-        if line.startswith('section_'):
-            name = line.removeprefix('section_').rstrip(':')
-            sections[name] = bytearray()
-        elif '.byte ' in line:
-            sections[name].extend(int(x.strip(), 0) for x in line.split('.byte ')[1].split('/*')[0].split(','))
-    chunks = [bytes(sections[s][:-1]) for s in data['playlist']]
-    packed = packer.pack(b''.join(chunks), chunks, candidate_limit=4096)
-    offsets = packed['offsets']
-    playlist = [offsets[s] for s in packed['playlist']]
-    assert max(playlist) < 256 and len(packed['storage']) <= 256
-    prefix = re.sub(r'(playlist:\n)  .byte [^\n]+',
-                    r'\g<1>  .byte ' + ', '.join(map(str, playlist)), prefix)
-    lines = [prefix.rstrip(), 'melody_data:']
-    for i, value in enumerate(packed['storage']):
-        for name, offset in offsets.items():
-            if i == offset:
-                lines.append('section_' + name + ':')
-        if i == playlist[0]:
-            lines.append('first_section:')
-        lines.append(f'  .byte {value}')
-    meta.update(source_playlist=meta['playlist'], playlist=packed['playlist'],
-                section_offsets=offsets, event_bytes=len(packed['storage']),
-                playlist_bytes=len(playlist), compression=packed['report'])
-    meta['total_data_bytes'] = len(packed['storage']) + len(playlist) + 7 + meta['note_table_bytes'] + meta['chord_table_bytes']
-    return '\n'.join(lines) + '\n', meta
+    return compiler.to_inc({**data, 'packing_candidates': 4096})
 
 
 def build():
@@ -82,13 +53,13 @@ def build():
                               tempoBpm=data['tempo_bpm'], actualTempoBpm=step / 65536 * (37500 / 512) * 60 / 4,
                               synthesisHz=18750, pwmHz=37500))
     (FOLDER / 'build-report.json').write_text(json.dumps(report, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
-    core = (ROOT / 'web-player/lib/avr-core.js').read_text(encoding='utf-8').replace('export class AVRCore', 'class AVRCore')
+    core = (ROOT / 'web-player/lib/avr-reference.js').read_text(encoding='utf-8').replace('export class AVRCore', 'class AVRCore')
     core += "\nif(typeof module!=='undefined' && module.exports)module.exports={AVRCore};\n"
     (FOLDER / 'avr_core.js').write_text(core, encoding='utf-8', newline='\n')
     html = (ROOT / 'tools/stereo-player-template.html').read_text(encoding='utf-8')
     for key, value in [('AVR_CORE', core), ('FIRMWARE_HEX', common.ihex(rom)), ('EEPROM_HEX', common.ihex(ep)),
                        ('HEX_PARSER', (ROOT / 'web-player/lib/hex.js').read_text(encoding='utf-8').replace('export function', 'function')),
-                       ('RENDERER', '\n'.join(line for line in (ROOT / 'web-player/lib/renderer.js').read_text(encoding='utf-8').splitlines() if not line.startswith('import ')).replace('export class', 'class'))]:
+                       ('RENDERER', '\n'.join(line for line in (ROOT / 'web-player/lib/renderer-js.js').read_text(encoding='utf-8').splitlines() if not line.startswith('import ')).replace('export class', 'class'))]:
         html = html.replace('/*' + key + '*/', value)
     (FOLDER / 'player.html').write_text(html, encoding='utf-8', newline='\n')
     print(f'Stereo: {len(rom)} Flash; {labels["playlist"]} code; {meta["total_data_bytes"]} tables')

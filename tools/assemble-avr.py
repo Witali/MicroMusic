@@ -44,8 +44,8 @@ def assemble(path):
         if op in {'nop','cli','sei','ret','reti','set','clt'}:return {'nop':0,'cli':0x94f8,'sei':0x9478,'ret':0x9508,'reti':0x9518,'set':0x9468,'clt':0x94e8}[op]
         if op in {'clr','tst','lsl'}:
             d=register(a[0]);return rr({'clr':0x2400,'tst':0x2000,'lsl':0x0c00}[op],d,d)
-        if op in {'mov','add','adc','sub','and','eor'}:
-            return rr({'mov':0x2c00,'add':0x0c00,'adc':0x1c00,'sub':0x1800,'and':0x2000,'eor':0x2400}[op],register(a[0]),register(a[1]))
+        if op in {'mov','add','adc','sub','and','or','eor'}:
+            return rr({'mov':0x2c00,'add':0x0c00,'adc':0x1c00,'sub':0x1800,'and':0x2000,'or':0x2800,'eor':0x2400}[op],register(a[0]),register(a[1]))
         if op=='movw':
             d,r=map(register,a);assert d%2==r%2==0
             return 0x0100|(d//2<<4)|r//2
@@ -79,9 +79,16 @@ def assemble(path):
         if op=='lpm':
             assert a[1] in {'Z','Z+'}
             return 0x9004|(register(a[0])<<4)|(a[1]=='Z+')
+        if op=='ld':
+            assert a[1] in {'X+','Y+'}
+            d=register(a[0]);pointer=26 if a[1]=='X+' else 28
+            assert d not in (pointer,pointer+1),'Undefined LD with destination in post-increment pointer'
+            return {'X+':0x900d,'Y+':0x9009}[a[1]]|(d<<4)
         if op=='st':
-            assert a[0]=='Z+'
-            return 0x9201|(register(a[1])<<4)
+            assert a[0] in {'X+','Z+'}
+            d=register(a[1]);pointer=26 if a[0]=='X+' else 30
+            assert d not in (pointer,pointer+1),'Undefined ST with source in post-increment pointer'
+            return {'X+':0x920d,'Z+':0x9201}[a[0]]|(d<<4)
         raise ValueError(f'Unsupported instruction: {line}')
     rom=bytearray(pc)
     for at,kind,row in rows:

@@ -1,0 +1,314 @@
+{
+  "slug": "fast-encoder-c",
+  "target": "ATtiny13A/Sound/fast-encoder",
+  "title": "Accelerate host MiniLPC training with C",
+  "origin": {
+    "archive": "MicroMusic_FastEncoder_C_Private.zip",
+    "sha256": "f77edff8a718cd925b8c0db60c912d46d5f23b97c6449a2439bf2918856d8ff8"
+  },
+  "previous_commit": "4c471943445845d08680dfc3e5adfea9d6053238",
+  "files": [
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/MicroMusic_C_Encoder_Player.html",
+      "sha256": "7eea01d7c652fa33ff7ba76ad1cb5254b3178cad7fd32d36490e652899751f82",
+      "bytes": 583208
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/README.md",
+      "sha256": "a0c1d115279b6d4ea77bd71b9693800766891bc9c73115b6a6d5a1a52e1778ed",
+      "bytes": 4601
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/avr_emulator.js",
+      "sha256": "dae6393748cc70178a6a6924a2c73f79b6ed67b7517c688ec3657fa9a87a3ffe",
+      "bytes": 9806
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/benchmark.py",
+      "sha256": "2ba48026921bac6f4d450e2f872ccf6a3d2f7769cae92a31e2cfc41c12752ce9",
+      "bytes": 1333
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/build_native.sh",
+      "sha256": "6da1ca125384a33cb668e3fd9eda721ad26b8fcee890989ea6b2bb993c596887",
+      "bytes": 155
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/convert_audio.py",
+      "sha256": "885d4a1f2eaff1cb06f2f6494cc525208efe0079b252334e208778a037af12a4",
+      "bytes": 4467
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/decoder_template.S",
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0",
+      "bytes": 3603
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/examples/chego/firmware.S",
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0",
+      "bytes": 3603
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/examples/chego/speech.hq",
+      "sha256": "2794d45c10e19139b877b5c3f9750966037e281cbcef3f144afd303dc29dc663",
+      "bytes": 540
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/examples/demo/firmware.S",
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0",
+      "bytes": 3603
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/examples/demo/speech.hq",
+      "sha256": "3fed55a52d21e978ea312de0f6f51ba1066f150c6e684d3a3eecc0b03a34ed4f",
+      "bytes": 84
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/examples/otvechaesh/firmware.S",
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0",
+      "bytes": 3603
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/examples/otvechaesh/speech.hq",
+      "sha256": "6e203928d96d728464be4ed6436fa387f16bf189c070c9f175b798a4e531ae5d",
+      "bytes": 471
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/examples/vinni/firmware.S",
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0",
+      "bytes": 3603
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/examples/vinni/speech.hq",
+      "sha256": "395a0fb048dc2d0dd695e4814ece038f88ceecfbab27af2a543b7f6301d165b2",
+      "bytes": 600
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/fast_core.c",
+      "sha256": "7b2fd2fd3bb02e5b02a557cab735974af243531cff5eea0803b840f34fc12290",
+      "bytes": 17224
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/fast_train.py",
+      "sha256": "3f0cc1bbfa511b5ec12ab5230329113ca5885f51fee63f1c198b7f8a28c1bd16",
+      "bytes": 12229
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/final/chego/firmware.S",
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0",
+      "bytes": 3603
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/final/chego/result.json",
+      "sha256": "8c8d31ba04714f94e457327efdf382f8e2846c0f2b30c19cda499638ea20d06a",
+      "bytes": 574
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/final/chego/speech.hq",
+      "sha256": "3d0b9b442ad20a3c2c49044a6f4e7d15837063e396b80b946c8b068101d4f5f6",
+      "bytes": 550
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/final/chego_balanced/firmware.S",
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0",
+      "bytes": 3603
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/final/chego_balanced/result.json",
+      "sha256": "8089b930a43dbfeb1a05bf33dfa095c3767b6d904e9976a63d7b678d3c5f4b87",
+      "bytes": 574
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/final/chego_balanced/speech.hq",
+      "sha256": "430ec12f575137124cc78c3f9e5e2f802a799dd1d39dea704441821e14e427cf",
+      "bytes": 546
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/final/otvechaesh/firmware.S",
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0",
+      "bytes": 3603
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/final/otvechaesh/result.json",
+      "sha256": "fb11696d7e56541f5d286e98dc63d6396de83e1bc0e8dd3d4224d74531b19ce2",
+      "bytes": 576
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/final/otvechaesh/speech.hq",
+      "sha256": "0c7dfb8632dba9155763bb9a1bd63255273d0fc1fd8c61bf76420d3c4b31db32",
+      "bytes": 471
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/final/vinni/firmware.S",
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0",
+      "bytes": 3603
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/final/vinni/result.json",
+      "sha256": "fa7f6f0e5793bd5eca84eb2f0085981d0f186ccedd38f74e0efbfd97c1833eb1",
+      "bytes": 576
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/final/vinni/speech.hq",
+      "sha256": "c931840bebe1dd67a43cc4fb8f79cf2405f3e744d4a1bef72148247d61469c1b",
+      "bytes": 616
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/make_demo.py",
+      "sha256": "25f2fb9b285d7bbc1dcb1caaf38b160957439ba0bcd8de6f055320c92d9c2725",
+      "bytes": 1683
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/make_player.py",
+      "sha256": "46616feba33bfd22251da4c851cdccc047bf8ae93fd0b5150147b9169906f678",
+      "bytes": 7955
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/package.py",
+      "sha256": "96df65f3d8e3004b5a011716c60d62ee36a075d0cb286d49f4a2200f6b413a7c",
+      "bytes": 2634
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/quality_reference.py",
+      "sha256": "da70e6a91330e4b175b829f68df3db54bb251766e6e83d4f0dd7bbd3af6a7ce7",
+      "bytes": 979
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/release_report.csv",
+      "sha256": "2a38fe65bac85fcd6cde38453433304cc587591e4f2d6170cce9a183a01cc350",
+      "bytes": 489
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/release_report.json",
+      "sha256": "be99e02e87aa921203c17dfe2146009f4fbd86f5e52f35d371bef3fef65e10d1",
+      "bytes": 2560
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/requirements.txt",
+      "sha256": "b80ee5cf1c5df33013bfbe1e7e3e23a9857334100feb11520407ce226f612c64",
+      "bytes": 51
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/test_regression.py",
+      "sha256": "1a116c91362dd0c8798ec27329e3891c583f207c268354fb016ae6861b0fba6b",
+      "bytes": 1149
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/verify_avr.js",
+      "sha256": "f1a64b69b6981d3f99b0fe9e16a6fafc82a79cb9506e4ed186a3890ea6d3908e",
+      "bytes": 1149
+    },
+    {
+      "path": "ATtiny13A/Sound/fast-encoder/verify_release.py",
+      "sha256": "98809c1184d6399e7c6363820050a7cb544f934d9ece182b1f6536d5e4b65507",
+      "bytes": 1133
+    }
+  ],
+  "omitted": [
+    {
+      "path": "examples/chego/original.wav",
+      "bytes": 18476,
+      "sha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c"
+    },
+    {
+      "path": "examples/demo/original.wav",
+      "bytes": 18476,
+      "sha256": "702cbe754f1fabd4701699927aa56fd40281adf4e03b6bd05ddd00a37d16d013"
+    },
+    {
+      "path": "examples/otvechaesh/original.wav",
+      "bytes": 15916,
+      "sha256": "96c09f80396643dd80efb9c5c8557d83359eeb829a0b855a7f8f5c32bbff0b96"
+    },
+    {
+      "path": "examples/vinni/original.wav",
+      "bytes": 44588,
+      "sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03"
+    },
+    {
+      "path": "final/chego/decoded.wav",
+      "bytes": 18476,
+      "sha256": "e3a7c9b7891b69c939bb67a858e09c014859b705532aad63fb32fc19d91bbf37"
+    },
+    {
+      "path": "final/chego/expected_pcm.raw",
+      "bytes": 9216,
+      "sha256": "ed57e8aee2d0d4a391235c7a9d7e008401ff246fd3ec90c262b7f71b090fba34"
+    },
+    {
+      "path": "final/chego/firmware.bin",
+      "bytes": 957,
+      "sha256": "1f62a9c5e2937c2d118a165b699dcdc1bcc66ede0bbcc8792f85b17875e4b156"
+    },
+    {
+      "path": "final/chego/firmware.hex",
+      "bytes": 2646,
+      "sha256": "1e433f8b03005a107e38407ca5d92b9f40b3cf14fa2e56519d04178338e5c67e"
+    },
+    {
+      "path": "final/chego_balanced/decoded.wav",
+      "bytes": 18476,
+      "sha256": "e5371e9ea3e76ad13f6e567476b354a8e41ab067ceb7ec7ad4effdaa4b873333"
+    },
+    {
+      "path": "final/chego_balanced/expected_pcm.raw",
+      "bytes": 9216,
+      "sha256": "c6a87c7a132839eb37b39cd0a8a02b95ad9c0243fbcf621ee84bcaa7a5e13474"
+    },
+    {
+      "path": "final/chego_balanced/firmware.bin",
+      "bytes": 953,
+      "sha256": "3391b62143f9c6ee8de253df8f14cb3a54d5e96eb0aae62bb66b5ef66d170abd"
+    },
+    {
+      "path": "final/chego_balanced/firmware.hex",
+      "bytes": 2638,
+      "sha256": "a9cbf4fb115bf20e649f4ada63ff3ebf4501b279393ebdd1b46e80d1a6fc374b"
+    },
+    {
+      "path": "final/otvechaesh/decoded.wav",
+      "bytes": 15916,
+      "sha256": "ec6b317297f76a0e0de28dee18ba4369cb80dad6bf9065dd278795d014474ea1"
+    },
+    {
+      "path": "final/otvechaesh/expected_pcm.raw",
+      "bytes": 7936,
+      "sha256": "eb3afe9e63e48b751aa2600969b4c3bf51f6824c7cfe39535e58e8662d7b8a9c"
+    },
+    {
+      "path": "final/otvechaesh/firmware.bin",
+      "bytes": 878,
+      "sha256": "8e108fc6dda537751a097da62b33d814c1e83167c6fa802159e44db30063080f"
+    },
+    {
+      "path": "final/otvechaesh/firmware.hex",
+      "bytes": 2428,
+      "sha256": "ffe1fccead3ae11c12cb634c5e3378e411e8304f0c155f03e7fab3e63cf9836c"
+    },
+    {
+      "path": "final/vinni/decoded.wav",
+      "bytes": 44588,
+      "sha256": "65ab717342dcc3eada475ab54a41328f8042d9279ce984d09e512c6713ff7f7a"
+    },
+    {
+      "path": "final/vinni/expected_pcm.raw",
+      "bytes": 22272,
+      "sha256": "95e9bd6989d6652fc7366f67b34ed8bc5e01f6607ca1ecd1dcba2fcfd2dd52cc"
+    },
+    {
+      "path": "final/vinni/firmware.bin",
+      "bytes": 1023,
+      "sha256": "bb6e4edafd5b80025f929e3361b28b6c2639d02ebcef970047b8725115a930c2"
+    },
+    {
+      "path": "final/vinni/firmware.hex",
+      "bytes": 2826,
+      "sha256": "85c60958b0d6b99d8eae6301564f23f161b5625459bfbcc7d4338725a0e73ea1"
+    },
+    {
+      "path": "libmicrolpc.so",
+      "bytes": 37160,
+      "sha256": "96560a84e5fd921a42166f2cc62c8f10a4bb3a737a9cdf2565c6e6482a1b6aab"
+    }
+  ]
+}

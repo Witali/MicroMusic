@@ -1,0 +1,10 @@
+Smoke test Intel 8080 CRC-16 handoff
+Date: 2026-10-22
+Command: python3 run_quick_checks.py
+Environment: software emulator, no hardware
+
+strong   | poly 0x002D | 39 bytes | 8,785,713 T | 134.059 T/byte | full-ROM + fault PASS
+fastest  | poly 0x0009 | 33 bytes | 6,164,278 T | 94.059 T/byte | full-ROM + fault PASS
+balanced | poly 0x001B | 38 bytes | 8,130,353 T | 124.059 T/byte | full-ROM + fault PASS
+speed    | poly 0x000F | 37 bytes | 7,474,993 T | 114.059 T/byte | full-ROM + fault PASS
+ALL QUICK CHECKS PASSED

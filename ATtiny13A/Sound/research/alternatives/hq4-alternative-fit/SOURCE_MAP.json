@@ -1,0 +1,428 @@
+{
+  "origin": {
+    "archive": "MicroMusic_HQ4_Private.zip",
+    "sha256": "571a3fb1b715d413e51558f1dec9d75afa519887198f53930e81d3f0b682752e"
+  },
+  "related_stage": "hq4-conservative",
+  "related_commit": "03698ddea2ad7d1bfe9a22009382621c058f0dc2",
+  "status": "Archived research alternative; training not rerun during import",
+  "files": [
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/README.md",
+      "bytes": 5986,
+      "sha256": "98d293f9f341c551b6622afab637735fa9ea483c4a1ec00e124cfa94d0ccfb95"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/avr_emulator.js",
+      "bytes": 9806,
+      "sha256": "dae6393748cc70178a6a6924a2c73f79b6ed67b7517c688ec3657fa9a87a3ffe"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/build_verify.py",
+      "bytes": 4104,
+      "sha256": "e57c42c4ab8b62011e27b167fdd17b6ef7c0d14938e62bf08d6c38450cc54d05"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/codec.py",
+      "bytes": 2415,
+      "sha256": "8019636fd5253f84ce1f543463b5ae1ed708bdeb4eda0e0616e389e705dcb213"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/convert_audio.py",
+      "bytes": 4467,
+      "sha256": "885d4a1f2eaff1cb06f2f6494cc525208efe0079b252334e208778a037af12a4"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/demo_verify.js",
+      "bytes": 534,
+      "sha256": "aa92f25e64c22a55aea3d5cb566774995d38303741c2fd12c5beb6dd24230f5d"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/firmware_template.S",
+      "bytes": 3603,
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/inputs/chego/firmware.S",
+      "bytes": 3603,
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/inputs/chego/speech.hq",
+      "bytes": 540,
+      "sha256": "2794d45c10e19139b877b5c3f9750966037e281cbcef3f144afd303dc29dc663"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/inputs/otvechaesh/firmware.S",
+      "bytes": 3603,
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/inputs/otvechaesh/speech.hq",
+      "bytes": 471,
+      "sha256": "6e203928d96d728464be4ed6436fa387f16bf189c070c9f175b798a4e531ae5d"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/inputs/vinni/firmware.S",
+      "bytes": 3603,
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/inputs/vinni/speech.hq",
+      "bytes": 600,
+      "sha256": "395a0fb048dc2d0dd695e4814ece038f88ceecfbab27af2a543b7f6301d165b2"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/make_player.py",
+      "bytes": 12410,
+      "sha256": "b4945d9475ddf842cf6119cd3904f08005cf16fcd9d805ddf063899fcfdfe361"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/make_synthetic_demo.py",
+      "bytes": 1746,
+      "sha256": "a706f6f294b7b49c758244626014eb5873f4900dee9ea9a69191ee013b73170a"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/metrics.json",
+      "bytes": 2028,
+      "sha256": "02db391b62c8a702c86584383ae0f5c6648d203e995c876011c6101f19ff9840"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/model.py",
+      "bytes": 1610,
+      "sha256": "d9c3449ddd2da1929e71da99ef3b040d46d95988d2f5ea704f9416e30c1ba71e"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/optimize.py",
+      "bytes": 7941,
+      "sha256": "75b7ca198a7de9fa27dcc89ff8873e90b6891441ef628a4f33cf144bfec4200e"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/polish_timbre.py",
+      "bytes": 2041,
+      "sha256": "d7663e3e8fd95817befd5a95c082103f655f0db6aacde4c2103a98781be8ae4d"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/quality.py",
+      "bytes": 1058,
+      "sha256": "15237fa293e8866d6af5baeb42ddefe446225d34d22a42c389bc7f910b3efbc5"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/report.csv",
+      "bytes": 406,
+      "sha256": "e2e189698e98e77a6cae61fb23c4198ac63cdcc779bfe4e1099567d8ecf8e4e6"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/requirements.txt",
+      "bytes": 35,
+      "sha256": "31e3510f51957dccd113d467177dcdeddf4d77883b64a84ee4b183d3a769e14a"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/results/chego/firmware.S",
+      "bytes": 3603,
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/results/chego/optimizer.json",
+      "bytes": 2806,
+      "sha256": "e814b33603b677d630eb19dd38a1c6de5992b9258e8857c6aee126465183ff68"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/results/chego/spectral_polish.json",
+      "bytes": 239,
+      "sha256": "bfb006c34a40acc8fa1577ccfdc2b8d8577f77c5c5237dd1ef7b0e026780fd2f"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/results/chego/speech.hq",
+      "bytes": 548,
+      "sha256": "65a8d335c1985e5ad1c85d886af055f7e640e70f491a2d726ed6fe2276664589"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/results/chego/timbre_candidate.npz",
+      "bytes": 1020,
+      "sha256": "5dc453853311bfa447d9ca178ebc6e5bf9099e90f932c411eeed89d92ef8bd4e"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/results/chego/trained.npz",
+      "bytes": 1017,
+      "sha256": "abf5325f43c3dfde0e122aa28f73c8b12e286b9770bb35c0b29d1cd298ccdee9"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/results/otvechaesh/firmware.S",
+      "bytes": 3603,
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/results/otvechaesh/optimizer.json",
+      "bytes": 1187,
+      "sha256": "3fe712855a9984f691c526d45f77516011032c35cfdef688159cea30dc4f3c75"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/results/otvechaesh/spectral_best_candidate.npz",
+      "bytes": 944,
+      "sha256": "74ed5468bf4c4146e1015df893bf27e6d39de1bc8ed32473af5ce41c7b3a4d28"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/results/otvechaesh/spectral_polish.json",
+      "bytes": 236,
+      "sha256": "99496731df659884fc5fbf463cad8ef03e907fea4fd0a45c9b34b83f0459593d"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/results/otvechaesh/speech.hq",
+      "bytes": 479,
+      "sha256": "c8abaec5a81e92919df9fc175f6d17630cd48e51cf73e73d1d23386b1380e0ad"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/results/otvechaesh/trained.npz",
+      "bytes": 944,
+      "sha256": "92a3b0088f6e5234a125f0f651c6dd19300b2ca18c2482ad22e21dbac6b5c5ae"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/results/vinni/firmware.S",
+      "bytes": 3603,
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/results/vinni/optimizer.json",
+      "bytes": 1551,
+      "sha256": "f470d6f39b81ea6f0348aa0d1c06bebd8bed6f0a30840f0bbc020f1b2888a4e7"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/results/vinni/spectral_polish.json",
+      "bytes": 238,
+      "sha256": "9c007f23b6f50a05ec7541a0877c626fc90361d340e5eede933e9580841e8ac5"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/results/vinni/speech.hq",
+      "bytes": 617,
+      "sha256": "a018ee0a3dfc2484832aaf30edc877ab80d435ef8b825d037a7b452c4ff2f789"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/results/vinni/trained.npz",
+      "bytes": 1131,
+      "sha256": "aa130a9ce6f968434a03cdab3b62a16ddb1d7e52eb8e9ef524da8fb9d72352f6"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/synthetic_demo/firmware.S",
+      "bytes": 3603,
+      "sha256": "af72092c3d99d9a3e490aaea8da0c68d498846260cf1e9423091a1856f145de0"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/synthetic_demo/speech.hq",
+      "bytes": 80,
+      "sha256": "ccdf7c95b25a322658943ea3045e813b76fdee19aff4abf5a123c768d6d17dfd"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/verify_avr.js",
+      "bytes": 1118,
+      "sha256": "20444cd32da1e563fe8c88c46dc9bceb3e9ebf8b5b3d5449469d21a404a65180"
+    },
+    {
+      "path": "ATtiny13A/Sound/research/alternatives/hq4-alternative-fit/verify_samples.js",
+      "bytes": 714,
+      "sha256": "1f91ce81a7665bc40b743dfdda9f56df4984ee107d388317016d7cf3454c4830"
+    }
+  ],
+  "omitted": [
+    {
+      "path": "index.html",
+      "bytes": 1434153,
+      "sha256": "c7026b80ebd2ca0cb45f17378f6e27b3f51d672b1c25d5dabffa2974664e05bd"
+    },
+    {
+      "path": "inputs/chego/firmware.bin",
+      "bytes": 947,
+      "sha256": "5c4f461fb3f5b26a7b559cc9592cc96590723fbf57d9c2c09c883f841be0d23f"
+    },
+    {
+      "path": "inputs/chego/lpx3.wav",
+      "bytes": 18476,
+      "sha256": "9f6f7701fa569d2879e13a152dfcafa68e261bc873e2402b893babd0450f5124"
+    },
+    {
+      "path": "inputs/chego/original.wav",
+      "bytes": 18476,
+      "sha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c"
+    },
+    {
+      "path": "inputs/otvechaesh/firmware.bin",
+      "bytes": 878,
+      "sha256": "2ec86fd09a66c4220097085ff39de0508caf4e3b378c30a53852bcd733ceb70a"
+    },
+    {
+      "path": "inputs/otvechaesh/lpx3.wav",
+      "bytes": 15916,
+      "sha256": "a648b1e06eabf2e6baa43cabfd89a8d13ffe9247afb5e9dfffe9ae39f40c314c"
+    },
+    {
+      "path": "inputs/otvechaesh/original.wav",
+      "bytes": 15916,
+      "sha256": "96c09f80396643dd80efb9c5c8557d83359eeb829a0b855a7f8f5c32bbff0b96"
+    },
+    {
+      "path": "inputs/vinni/firmware.bin",
+      "bytes": 1007,
+      "sha256": "e2527993f420e055a886d67836111879b6d2fa4185faeefd245183153279e640"
+    },
+    {
+      "path": "inputs/vinni/lpx3.wav",
+      "bytes": 44588,
+      "sha256": "cecedfddac5b68b8c5bac4c9ddd8e0b8c014b8d02012e63f23026212d172544c"
+    },
+    {
+      "path": "inputs/vinni/original.wav",
+      "bytes": 44588,
+      "sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03"
+    },
+    {
+      "path": "results/chego/AB_original_HQ3_HQ4_LPX3.wav",
+      "bytes": 92972,
+      "sha256": "9ba33f6a4b0c0eee5d62b3ae3f608fc29f264c86a8207a650564da438e0e7bbb"
+    },
+    {
+      "path": "results/chego/HQ3_player.wav",
+      "bytes": 59028,
+      "sha256": "988b8cc98d8a5199a948dd06e1eedb70314aa56643f6a6143ea2a582c48ed3e8"
+    },
+    {
+      "path": "results/chego/HQ4_player.wav",
+      "bytes": 59028,
+      "sha256": "f3867d404920342f5064a3f434129d3d1e7fd07fd0ae0d9762de78665a8c7124"
+    },
+    {
+      "path": "results/chego/LPX3_player.wav",
+      "bytes": 59028,
+      "sha256": "e3ad7aeb87969ea13dd14f9df27cb28983bdd192ea6f8151ce06b49cec2bec8f"
+    },
+    {
+      "path": "results/chego/expected.raw",
+      "bytes": 9216,
+      "sha256": "7a67b9cbf6468d0c7f08c667e63f1dfa3312c51410b98eb06a7caaec4e08854a"
+    },
+    {
+      "path": "results/chego/firmware.bin",
+      "bytes": 955,
+      "sha256": "e8a6284ee1de44559f3f7ed6413fb023922320dfdbdbc964185b4f8ee918525f"
+    },
+    {
+      "path": "results/chego/firmware.hex",
+      "bytes": 2642,
+      "sha256": "cfff57aae2336f5ac4733c50b17ab31828e88185c1789289050f3a90cd6aee99"
+    },
+    {
+      "path": "results/chego/new_7500.wav",
+      "bytes": 18476,
+      "sha256": "ddcf756ed555dfeefa0ea96d0791e56b8ad2e3d92cba2d18a41621f9b3d20d18"
+    },
+    {
+      "path": "results/chego/original_player.wav",
+      "bytes": 59028,
+      "sha256": "ed795e6211a890212ce251f179de54ed2ea3f3f9ecc762db9a1709724d13f358"
+    },
+    {
+      "path": "results/otvechaesh/AB_original_HQ3_HQ4_LPX3.wav",
+      "bytes": 82732,
+      "sha256": "cf8a2bb882087a814e832bd388bcaedfccfb204c1ea00c1dd1b1881811c32fd6"
+    },
+    {
+      "path": "results/otvechaesh/HQ3_player.wav",
+      "bytes": 50836,
+      "sha256": "733d3c6e98ab7372f174993a67272a71617e00a4002d94559b7444954d124133"
+    },
+    {
+      "path": "results/otvechaesh/HQ4_player.wav",
+      "bytes": 50836,
+      "sha256": "2084ad1af3e204231e1c77312584b7c76de7783ec2252261340d11a8227ec3c1"
+    },
+    {
+      "path": "results/otvechaesh/LPX3_player.wav",
+      "bytes": 50836,
+      "sha256": "960591d93801002d3b2fbfe64f41c1e98f093b343be5c0475431a0bac350c3f7"
+    },
+    {
+      "path": "results/otvechaesh/expected.raw",
+      "bytes": 7936,
+      "sha256": "b28f570b0f42d6be5551b63e268f6292648d9c93d5071fbcb19b49dec6f00763"
+    },
+    {
+      "path": "results/otvechaesh/firmware.bin",
+      "bytes": 886,
+      "sha256": "9ac7444caca55ad70441ab3bf7e924bc75c691b1334b9487cd5b68ed5c5835cb"
+    },
+    {
+      "path": "results/otvechaesh/firmware.hex",
+      "bytes": 2456,
+      "sha256": "1e49fe24e3966e28c9d445fed06f815445a5216835edaec88775a4e57de67240"
+    },
+    {
+      "path": "results/otvechaesh/new_7500.wav",
+      "bytes": 15916,
+      "sha256": "ce186275024d31ab23b941f8cfcc76ec25c4f93f65548c77a082ecc468d93ac2"
+    },
+    {
+      "path": "results/otvechaesh/original_player.wav",
+      "bytes": 50836,
+      "sha256": "408a3b690dc42c2da43daac0a47cac2eabd7843f65f4e79ff21cd8b0e602338f"
+    },
+    {
+      "path": "results/vinni/AB_original_HQ3_HQ4_LPX3.wav",
+      "bytes": 197420,
+      "sha256": "87fb83c63cdf9bb19e628e28a7be7cf6d3be94a0a976eb4e73420d5e35a0a3e1"
+    },
+    {
+      "path": "results/vinni/HQ3_player.wav",
+      "bytes": 142586,
+      "sha256": "b8bf453e6f11e8a9dbca1b0810eb4afd3d74f8bab672b804f7b28b4c854a0c63"
+    },
+    {
+      "path": "results/vinni/HQ4_player.wav",
+      "bytes": 142586,
+      "sha256": "a77d58b5a738a16d0a745a9bcb1ca64c0bcd1b5ae8650ceae26cd5927f2c9d97"
+    },
+    {
+      "path": "results/vinni/LPX3_player.wav",
+      "bytes": 142586,
+      "sha256": "831c5116adaa3859084abc1aa8e650c97cf8d684f7c482ded4d1c393a734b969"
+    },
+    {
+      "path": "results/vinni/expected.raw",
+      "bytes": 22272,
+      "sha256": "680dcef16e2ebbc4b6ae59639607adc3aa4f678aeff81d0703f758947ee6c556"
+    },
+    {
+      "path": "results/vinni/firmware.bin",
+      "bytes": 1024,
+      "sha256": "adecd7c263b7244184a20fd743f60814a0a20471c98751b4abf2a86885ae5be4"
+    },
+    {
+      "path": "results/vinni/firmware.hex",
+      "bytes": 2828,
+      "sha256": "3e36c93a184b02f73368141730ed2ff7fdd2cf4b2d67b2210f90c884944df6a8"
+    },
+    {
+      "path": "results/vinni/new_7500.wav",
+      "bytes": 44588,
+      "sha256": "164c3976f1e686615b1f8fbc1edd842a7167fbcf58366dc1e922fc6d15dc2d8b"
+    },
+    {
+      "path": "results/vinni/original_player.wav",
+      "bytes": 142586,
+      "sha256": "c4f0755613826aa3cec9a4c7ddd6a9a0655c90c778d094c1ac5f8166e96b00e9"
+    },
+    {
+      "path": "synthetic_demo/expected.raw",
+      "bytes": 9728,
+      "sha256": "da98a64c9fa31e3835316f2d07ad1321a6f4545c5e9d0a70192b00e4eb60b3f9"
+    },
+    {
+      "path": "synthetic_demo/firmware.bin",
+      "bytes": 487,
+      "sha256": "9bdeb1799124f236a9f63428994f394c4708c88bab2cab619e9b7f615ec9ea53"
+    },
+    {
+      "path": "synthetic_demo/synthetic_reference.wav",
+      "bytes": 19500,
+      "sha256": "5f8d10a24a296ae1f4246bfd948a925bee6a28a8f7641b7b0c69321d1e1608cf"
+    }
+  ]
+}

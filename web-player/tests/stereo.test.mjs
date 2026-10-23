@@ -5,11 +5,29 @@ import {runInNewContext} from 'node:vm';
 import {AVRCore} from '../lib/avr-core.js';
 import {Renderer} from '../lib/renderer.js';
 import {AudioQueue} from '../lib/audio-queue.js';
+import {createRenderer} from '../lib/engines.js';
 const base=new URL('../../ATtiny13A/Music/variants/lumiere-stereo/',import.meta.url);
 const read=name=>readFileSync(new URL(name,base));
 const {labels}=JSON.parse(read('build-report.json'));
 const core=()=>new AVRCore(read('synth.bin'),read('eeprom.bin'));
 const signed=x=>x&128 ? x-256 : x;
+
+test('stereo filter controls stay synchronized and block independent in JS and WASM',async()=>{
+  const entry={audioChannels:2,pwmHz:37500,flashHex:read('synth.hex').toString(),eepromHex:read('eeprom.hex').toString()};
+  const whole=await createRenderer(entry,48000,{},'wasm'),parts=await createRenderer(entry,48000,{},'wasm'),js=await createRenderer(entry,48000,{},'js');
+  for(const renderer of [whole,parts,js])renderer.render(4096);
+  for(const controls of [{cutoff:12000,volume:.2},{cutoff:4000,volume:0}]){
+    for(const renderer of [whole,parts,js])renderer.setAudioControls(controls);
+    const expected=whole.render(16384),actual=new Float32Array(32768);let offset=0;
+    for(const n of [1,127,4096,17,12143]){actual.set(parts.render(n),offset*2);offset+=n;}
+    assert.deepEqual(actual,expected);
+    const reference=js.render(16384);let error=0;
+    for(let i=0;i<expected.length;i++)error=Math.max(error,Math.abs(expected[i]-reference[i]));
+    assert.ok(error<2e-7);assert.deepEqual(whole.core.data,parts.core.data);assert.deepEqual(whole.core.data,js.core.data);
+    assert.equal(whole.frames,parts.frames);assert.equal(whole.core.lost+whole.core.workLost,0);
+    if(!controls.volume)assert.ok(expected.slice(-2048).every(x=>Math.abs(x)<1e-8));
+  }
+});
 
 test('both PWM channels deliver every point and its exact midpoint as a synchronized frame',t=>{
   const c=core(),points=[],frames=[];
@@ -98,7 +116,7 @@ test('stereo worklet preserves L/R, pause, reset and late-packet isolation with 
 
 for(const rate of [22050,44100,48000,96000])test(`stereo resampling at ${rate} Hz matches both raw AVR outputs`,()=>{
   const entry={audioChannels:2,pwmHz:37500,flashHex:read('synth.hex').toString(),eepromHex:read('eeprom.hex').toString()};
-  const renderer=new Renderer(entry,rate),c=core(),actual=renderer.render(4096);
+  const renderer=new Renderer(entry,rate,{filtered:false}),c=core(),actual=renderer.render(4096);
   let a=c.nextStereoDuty(),b=c.nextStereoDuty(),phase=0;
   for(let i=0;i<4096;i++){
     for(let ch=0;ch<2;ch++){const v0=(a>>(8*ch))&255,v1=(b>>(8*ch))&255;

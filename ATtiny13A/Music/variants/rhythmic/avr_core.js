@@ -68,7 +68,7 @@ class AVRCore {
     else if((w&0xff00)===0x0100){ // MOVW
       let d=2*((w>>4)&15),r=2*(w&15);rr[d]=rr[r];rr[d+1]=rr[r+1];
     }
-    else if([0x0c00,0x1c00,0x1800,0x2000,0x2400,0x2c00].includes(w&0xfc00)){
+    else if([0x0c00,0x1c00,0x1800,0x2000,0x2400,0x2800,0x2c00].includes(w&0xfc00)){
       let d=(w>>4)&31,r=(w&15)|((w>>5)&16),x=rr[d],y=rr[r],mode=w&0xfc00;
       if(mode===0x0c00 || mode===0x1c00){
         let val=x+y+(mode===0x1c00?this.c:0);
@@ -77,6 +77,7 @@ class AVRCore {
       } else if(mode===0x1800){rr[d]=(x-y)&255;this.c=Number(x<y);this.z=Number(rr[d]===0)}
       else if(mode===0x2000){rr[d]=x&y;this.z=Number(rr[d]===0)}
       else if(mode===0x2400){rr[d]=x^y;this.z=Number(rr[d]===0)}
+      else if(mode===0x2800){rr[d]=x|y;this.z=Number(rr[d]===0)}
       else rr[d]=y;
     }
     else if([0x9403,0x940a,0x9400,0x9406,0x9405,0x9407,0x9402].includes(w&0xfe0f)){
@@ -119,9 +120,18 @@ class AVRCore {
     else if((w&0xfe0f)===0x900f){ // POP r
       rr[(w>>4)&31]=this.stack.pop();n=2;
     }
-    else if((w&0xfe0f)===0x9201){ // ST Z+,Rr
-      let r=(w>>4)&31,z=rr[30]|rr[31]<<8;
-      if(z>=96&&z<160)this.ram[z-96]=rr[r];else if(z<32)rr[z]=rr[r];else throw new Error('Data write out of range');z=(z+1)&65535;rr[30]=z&255;rr[31]=z>>8;n=2;
+    else if([0x900d,0x9009].includes(w&0xfe0f)){ // LD Rd,X+/Y+
+      let d=(w>>4)&31,pointer=(w&15)===13?26:28,z=rr[pointer]|rr[pointer+1]<<8;
+      if(d===pointer||d===pointer+1)throw new Error('Undefined LD post-increment');
+      if(z>=160)throw new Error('Data read out of range');
+      rr[d]=z<32?rr[z]:z<96?this.io[z-32]:this.ram[z-96];
+      z=(z+1)&65535;rr[pointer]=z&255;rr[pointer+1]=z>>8;n=2;
+    }
+    else if([0x9201,0x920d].includes(w&0xfe0f)){ // ST Z+/X+,Rr
+      let d=(w>>4)&31,pointer=(w&15)===13?26:30,z=rr[pointer]|rr[pointer+1]<<8;
+      if(d===pointer||d===pointer+1)throw new Error('Undefined ST post-increment');
+      if(z>=96&&z<160)this.ram[z-96]=rr[d];else if(z<32)rr[z]=rr[d];else throw new Error('Data write out of range');
+      z=(z+1)&65535;rr[pointer]=z&255;rr[pointer+1]=z>>8;n=2;
     }
     else if((w&0xfe0f)===0x9004 || (w&0xfe0f)===0x9005){ // LPM Rd,Z[+]
       let r=(w>>4)&31,z=rr[30]|rr[31]<<8;

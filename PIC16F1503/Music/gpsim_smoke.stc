@@ -1,0 +1,17 @@
+# Independent gpsim cross-check, using PIC16F1503 and program-only HEX.
+# Execute from the project root with: gpsim -i -c gpsim_smoke.stc
+load p16f1503 firmware/micromusic.hex
+echo AFTER_LOAD
+step 1
+dump s
+echo AFTER_10_INSTRUCTIONS
+step 9
+dump s
+echo AFTER_100_INSTRUCTIONS
+step 90
+dump s
+echo AFTER_1000_INSTRUCTIONS
+step 900
+dump s
+trace save reports/gpsim_native_trace.log
+quit

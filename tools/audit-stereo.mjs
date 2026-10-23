@@ -1,18 +1,20 @@
 // Check the complete stereo song against the retained mono score and grid.
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
 import {AVRCore} from '../web-player/lib/avr-core.js';
-const folder='ATtiny13A/Music/variants/lumiere-stereo',mono='ATtiny13A/Music/variants/rhythmic';
+const folder='ATtiny13A/Music/variants/lumiere-stereo';
 const read=(dir,name)=>fs.readFileSync(`${dir}/${name}`);
-const meta=JSON.parse(read(folder,'build-report.json')),sourceMeta=JSON.parse(read(mono,'build-report.json'));
-const source=JSON.parse(read(mono,'score.json')),sourceRom=read(mono,'synth.bin');
+const meta=JSON.parse(read(folder,'build-report.json')),sourceMeta=meta;
+const source=JSON.parse(read(folder,'score.json')),sourceRom=read(folder,'synth.bin');
 const {labels,timing}=meta,units=[1,2,3,4,6,8,16],expected=[];
 let totalUnits=0;
-for(const section of source.playlist){
+for(const section of meta.score.playlist){
   let address=sourceMeta.labels[`section_${section}`];
   for(;;){const token=sourceRom[address++];if(token===255)break;
     expected.push({token,unit:totalUnits});if(token<224)totalUnits+=units[token&7];}
 }
+assert.equal(createHash('sha256').update(Uint8Array.from(expected,e=>e.token)).digest('hex'),meta.score.compression.originalStreamSha256);
 const ticks=[];let phase=Math.ceil((65536-timing.phaseStep)/256)<<8;
 for(let tick=1;ticks.length<=totalUnits;tick++){
   phase+=timing.phaseStep;if(phase>=65536){phase-=65536;ticks.push(tick);}

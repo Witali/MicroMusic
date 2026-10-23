@@ -1,0 +1,159 @@
+{
+  "slug": "minilpc-hq3",
+  "target": "ATtiny13A/Sound/codec",
+  "title": "Improve MiniLPC speech fitting with HQ3",
+  "origin": {
+    "archive": "MicroMusic_HQ3_Verified_Release.zip",
+    "sha256": "6b0bc027d14a85374c045ac6d0b4c20c510e1e129c5f43e1821ab8ad9d572185"
+  },
+  "previous_commit": "9d5369b90498ef958d2fd99722d82f8f99a4f572",
+  "files": [
+    {
+      "path": "ATtiny13A/Sound/codec/README.md",
+      "sha256": "dc27c196e2f5744f4d11f6526b86f4ad89f8840d52e4393bf174141bd3e744a7",
+      "bytes": 1716
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/build_and_verify.py",
+      "sha256": "7150ad2febc3f60b88609e13180e3eb0a9f6afe13af21c3e5c7fc9178a4de640",
+      "bytes": 694
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/chego/firmware.S",
+      "sha256": "46402c64dedb7de910bebd70574cfb36fa624450d1d370a51158bce0e5937662",
+      "bytes": 3667
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/chego/speech.hq",
+      "sha256": "2794d45c10e19139b877b5c3f9750966037e281cbcef3f144afd303dc29dc663",
+      "bytes": 540
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/convert_audio.py",
+      "sha256": "885d4a1f2eaff1cb06f2f6494cc525208efe0079b252334e208778a037af12a4",
+      "bytes": 4467
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/index.html",
+      "sha256": "f740b517e8408822d35c73838d80f181c5716ec867260fefb97b3df136cb4a83",
+      "bytes": 359989
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/otvechaesh/firmware.S",
+      "sha256": "46402c64dedb7de910bebd70574cfb36fa624450d1d370a51158bce0e5937662",
+      "bytes": 3667
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/otvechaesh/speech.hq",
+      "sha256": "6e203928d96d728464be4ed6436fa387f16bf189c070c9f175b798a4e531ae5d",
+      "bytes": 471
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/report.csv",
+      "sha256": "d6acde3e65ac1338c025cbe871620f44a55dc44ea40b813a853b0c73a72fe487",
+      "bytes": 491
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/vinni/firmware.S",
+      "sha256": "46402c64dedb7de910bebd70574cfb36fa624450d1d370a51158bce0e5937662",
+      "bytes": 3667
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/vinni/speech.hq",
+      "sha256": "395a0fb048dc2d0dd695e4814ece038f88ceecfbab27af2a543b7f6301d165b2",
+      "bytes": 600
+    }
+  ],
+  "omitted": [
+    {
+      "path": "chego/firmware.bin",
+      "bytes": 963,
+      "sha256": "6f00e0bc21121500e8c7f455751c667bdc79d1e9c68c77a199ae7bd3ceb7b523"
+    },
+    {
+      "path": "chego/firmware.hex",
+      "bytes": 2670,
+      "sha256": "12f5c380ee348ed54b633f913513318693fa42b9c5a8163916b858a6536b4da2"
+    },
+    {
+      "path": "chego/hq.wav",
+      "bytes": 9260,
+      "sha256": "32ce648c3722f5aeb5468ec280400526ae93b59d4fd8c983cdfa4bed066b49f4"
+    },
+    {
+      "path": "chego/lpx3.wav",
+      "bytes": 18476,
+      "sha256": "9f6f7701fa569d2879e13a152dfcafa68e261bc873e2402b893babd0450f5124"
+    },
+    {
+      "path": "chego/old.wav",
+      "bytes": 9260,
+      "sha256": "886be7dcb1347d0d353ae4fe26c78fa88b45c15b0a2aeddef3db4a93e3bd86ee"
+    },
+    {
+      "path": "chego/original.wav",
+      "bytes": 18476,
+      "sha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c"
+    },
+    {
+      "path": "otvechaesh/firmware.bin",
+      "bytes": 894,
+      "sha256": "db0418925d6cc1e1c573ddca3d30f8a102dee56b0ae284a0ac61f2267172a11e"
+    },
+    {
+      "path": "otvechaesh/firmware.hex",
+      "bytes": 2472,
+      "sha256": "ddcb52e87a47c77bc8493f341a0397afd2de9496718300f8048e532a24af03b7"
+    },
+    {
+      "path": "otvechaesh/hq.wav",
+      "bytes": 7980,
+      "sha256": "c8534e7450627d3a0ad3f1a4f6bc3674808e4d44068b4678312808694993be9f"
+    },
+    {
+      "path": "otvechaesh/lpx3.wav",
+      "bytes": 15916,
+      "sha256": "a648b1e06eabf2e6baa43cabfd89a8d13ffe9247afb5e9dfffe9ae39f40c314c"
+    },
+    {
+      "path": "otvechaesh/old.wav",
+      "bytes": 7980,
+      "sha256": "6e7a0a1f1cf226cede73810a09fdbcabdf03eacde5434ef93eb8481f89e5f73a"
+    },
+    {
+      "path": "otvechaesh/original.wav",
+      "bytes": 15916,
+      "sha256": "96c09f80396643dd80efb9c5c8557d83359eeb829a0b855a7f8f5c32bbff0b96"
+    },
+    {
+      "path": "vinni/firmware.bin",
+      "bytes": 1023,
+      "sha256": "11caa3060b63f51708a7ef202905761e76f1604aedcf51a3e8e25820bb48e6e5"
+    },
+    {
+      "path": "vinni/firmware.hex",
+      "bytes": 2826,
+      "sha256": "acbf19606da866f47a7dcf8bf0db6fa3572d74e37f8b8ab4e60193d22456c305"
+    },
+    {
+      "path": "vinni/hq.wav",
+      "bytes": 22316,
+      "sha256": "434227b520ae71b8b748a351855ce0a7a005b18c20c5817439358ad94cac1582"
+    },
+    {
+      "path": "vinni/lpx3.wav",
+      "bytes": 44588,
+      "sha256": "cecedfddac5b68b8c5bac4c9ddd8e0b8c014b8d02012e63f23026212d172544c"
+    },
+    {
+      "path": "vinni/old.wav",
+      "bytes": 22316,
+      "sha256": "96cd1bca0969885e2096040f9d2d01562bcc45f7a40611acadec7f6d7c6ee867"
+    },
+    {
+      "path": "vinni/original.wav",
+      "bytes": 44588,
+      "sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03"
+    }
+  ]
+}

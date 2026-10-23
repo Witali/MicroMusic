@@ -1,0 +1,71 @@
+{
+  "name": "ne-otv",
+  "selected": "LPC2 Voice v2 fine-tuned",
+  "metrics": {
+    "stoi": 0.6199308762280135,
+    "mel_original": 0.9645201600272271,
+    "mel_lpc2": 0.7955075835551136,
+    "envelope": 0.23332286511412748,
+    "clicks_60": 0,
+    "clicks_48": 0,
+    "max_step": 47
+  },
+  "baseline": {
+    "stoi": 0.6188576510802953,
+    "mel_original": 0.9674638350334968,
+    "mel_lpc2": 0.8051098014122778,
+    "envelope": 0.21526659441504548,
+    "clicks_60": 0,
+    "clicks_48": 0,
+    "max_step": 47
+  },
+  "flash_bytes": 935,
+  "voice_bytes": 166,
+  "pcm_samples": 7936,
+  "frames": 31,
+  "rate_hz": 7500,
+  "source_sec": 1.0289333333333333,
+  "avr_matches_model_exactly": true,
+  "firmware_file": "/mnt/data/MicroMusic_ATtiny13_Voice_v2/ne-otv/firmware/tinylpc.hex",
+  "candidates": [
+    {
+      "name": "existing LPC-8",
+      "metrics": {
+        "stoi": 0.6188576510802953,
+        "mel_original": 0.9674638350334968,
+        "mel_lpc2": 0.8051098014122778,
+        "envelope": 0.21526659441504548,
+        "clicks_60": 0,
+        "clicks_48": 0,
+        "max_step": 47
+      },
+      "score": 0.7778335414282834
+    },
+    {
+      "name": "pitch-guided",
+      "metrics": {
+        "stoi": 0.6188576510802953,
+        "mel_original": 0.9674638350334968,
+        "mel_lpc2": 0.8051098014122778,
+        "envelope": 0.21526659441504548,
+        "clicks_60": 0,
+        "clicks_48": 0,
+        "max_step": 47
+      },
+      "score": 0.7778335414282834
+    },
+    {
+      "name": "LPC2 Voice v2 fine-tuned",
+      "metrics": {
+        "stoi": 0.6199308762280135,
+        "mel_original": 0.9645201600272271,
+        "mel_lpc2": 0.7955075835551136,
+        "envelope": 0.23332286511412748,
+        "clicks_60": 0,
+        "clicks_48": 0,
+        "max_step": 47
+      },
+      "score": 0.7856229679485133
+    }
+  ]
+}

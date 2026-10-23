@@ -1,0 +1,282 @@
+code_end:
+playlist:
+  .byte 0,12,7,231,23,0,28,48,77,48,90,101,10,100,160,166,166,166,166,166,189,169,181,169,195,107,224,100,227
+durations:
+  .byte 1,2,3,4,6,8,16
+note_steps:
+  .byte 197,4
+  .byte 63,4
+  .byte 146,3
+  .byte 98,2
+  .byte 47,3
+  .byte 90,5
+  .byte 172,5
+  .byte 93,6
+  .byte 37,7
+  .byte 146,7
+  .byte 137,137
+  .byte 180,138
+  .byte 173,2
+  .byte 214,2
+  .byte 201,3
+  .byte 127,136
+  .byte 87,139
+  .byte 242,0
+  .byte 204,0
+  .byte 153,0
+melody_data:
+section_packed_000:
+first_section:
+  .byte 152
+  .byte 86
+  .byte 168
+  .byte 149
+  .byte 131
+  .byte 89
+  .byte 121
+section_packed_002:
+  .byte 185
+  .byte 150
+  .byte 201
+section_packed_010:
+  .byte 149
+  .byte 255
+section_packed_001:
+  .byte 131
+  .byte 89
+  .byte 65
+  .byte 153
+  .byte 150
+  .byte 169
+  .byte 149
+  .byte 131
+  .byte 89
+  .byte 49
+  .byte 255
+section_packed_004:
+  .byte 0
+  .byte 40
+  .byte 48
+  .byte 64
+  .byte 255
+section_packed_005:
+  .byte 140
+  .byte 72
+  .byte 64
+  .byte 151
+  .byte 75
+  .byte 65
+  .byte 53
+  .byte 145
+  .byte 166
+  .byte 137
+  .byte 44
+  .byte 51
+  .byte 65
+  .byte 1
+  .byte 182
+  .byte 150
+  .byte 198
+  .byte 149
+  .byte 141
+  .byte 255
+section_packed_006:
+  .byte 174
+  .byte 49
+  .byte 1
+  .byte 49
+  .byte 1
+  .byte 49
+  .byte 1
+  .byte 49
+  .byte 40
+  .byte 48
+  .byte 195
+  .byte 57
+  .byte 41
+  .byte 57
+  .byte 41
+  .byte 57
+  .byte 41
+  .byte 57
+  .byte 40
+  .byte 48
+  .byte 180
+  .byte 65
+  .byte 49
+  .byte 65
+  .byte 49
+  .byte 65
+  .byte 49
+  .byte 65
+  .byte 255
+section_packed_007:
+  .byte 40
+  .byte 48
+  .byte 195
+  .byte 57
+  .byte 41
+  .byte 57
+  .byte 41
+  .byte 57
+  .byte 41
+  .byte 57
+  .byte 0
+  .byte 40
+  .byte 255
+section_packed_008:
+  .byte 56
+  .byte 64
+  .byte 197
+  .byte 121
+  .byte 57
+  .byte 121
+  .byte 57
+  .byte 121
+  .byte 57
+  .byte 255
+section_packed_011:
+  .byte 139
+section_packed_009:
+  .byte 0
+  .byte 40
+  .byte 48
+  .byte 64
+  .byte 206
+  .byte 86
+section_packed_018:
+  .byte 232
+  .byte 149
+  .byte 131
+  .byte 89
+  .byte 121
+  .byte 249
+  .byte 150
+  .byte 149
+  .byte 131
+  .byte 89
+  .byte 65
+  .byte 217
+  .byte 150
+  .byte 233
+  .byte 149
+  .byte 131
+  .byte 89
+  .byte 49
+  .byte 249
+  .byte 150
+  .byte 149
+  .byte 139
+  .byte 0
+  .byte 40
+  .byte 48
+  .byte 64
+  .byte 216
+  .byte 86
+  .byte 232
+  .byte 149
+  .byte 131
+  .byte 89
+  .byte 121
+  .byte 249
+  .byte 150
+  .byte 149
+  .byte 140
+  .byte 72
+  .byte 64
+  .byte 215
+  .byte 75
+  .byte 65
+  .byte 53
+  .byte 145
+  .byte 230
+  .byte 137
+  .byte 44
+  .byte 51
+  .byte 65
+  .byte 1
+  .byte 246
+  .byte 150
+  .byte 255
+section_packed_012:
+  .byte 189
+  .byte 149
+  .byte 141
+  .byte 253
+  .byte 142
+  .byte 255
+section_packed_013:
+  .byte 142
+  .byte 142
+  .byte 255
+section_packed_015:
+  .byte 16
+  .byte 241
+  .byte 1
+  .byte 141
+  .byte 140
+  .byte 238
+  .byte 9
+  .byte 33
+  .byte 137
+  .byte 113
+  .byte 137
+  .byte 255
+section_packed_016:
+  .byte 105
+  .byte 137
+  .byte 113
+  .byte 253
+  .byte 17
+  .byte 141
+  .byte 140
+  .byte 240
+section_packed_014:
+  .byte 141
+  .byte 139
+  .byte 24
+  .byte 96
+  .byte 104
+  .byte 255
+section_packed_017:
+  .byte 17
+  .byte 137
+  .byte 105
+  .byte 253
+  .byte 25
+  .byte 139
+  .byte 96
+  .byte 104
+  .byte 33
+  .byte 139
+  .byte 104
+  .byte 32
+  .byte 242
+  .byte 17
+  .byte 32
+  .byte 16
+  .byte 9
+  .byte 16
+  .byte 8
+  .byte 1
+  .byte 8
+  .byte 0
+  .byte 48
+  .byte 56
+  .byte 64
+  .byte 120
+  .byte 212
+  .byte 86
+  .byte 255
+section_packed_019:
+  .byte 253
+  .byte 141
+  .byte 255
+section_packed_020:
+  .byte 174
+  .byte 3
+  .byte 254
+  .byte 141
+section_packed_003:
+  .byte 139
+  .byte 255

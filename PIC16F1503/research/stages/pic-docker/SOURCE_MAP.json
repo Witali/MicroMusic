@@ -1,0 +1,49 @@
+{
+  "slug": "pic-docker",
+  "target": "PIC16F1503/validation/docker",
+  "title": "Prepare MPLAB simulator container workflow",
+  "origin": {
+    "archive": "PIC16F1503_MPLAB_DOCKER_KIT_20261021.zip",
+    "sha256": "b11dadd0308bbac39277098a40bc6ca8c0f3e3a299e69d0c50f2b423ad7c78a5"
+  },
+  "previous_commit": "edbe11404f051c5366b517127c0332401cc3d793",
+  "files": [
+    {
+      "path": "PIC16F1503/validation/docker/README_RU.md",
+      "sha256": "801d63d19be90092e629761db3f14d19c56ca9f8dd952a54c5d228df680412b2",
+      "bytes": 3055
+    },
+    {
+      "path": "PIC16F1503/validation/docker/compare_logs.py",
+      "sha256": "451d8679318009396d2ffc3e5ead494f56aed2699867468c273d0d246a9a2409",
+      "bytes": 1772
+    },
+    {
+      "path": "PIC16F1503/validation/docker/local_107_tests.log",
+      "sha256": "fea4d19debb4eaa0cff5b28729389baf83829925dd46faf175cdbe9a2364ff4c",
+      "bytes": 17277
+    },
+    {
+      "path": "PIC16F1503/validation/docker/mdb_check.txt",
+      "sha256": "99c6611826a214e833d21080a1c7662514ff784a71a0520e298317bdd027e26e",
+      "bytes": 3178
+    },
+    {
+      "path": "PIC16F1503/validation/docker/reference_our_emulator.json",
+      "sha256": "4bf54affdba312043cf01153e704546e8c1e395caf79bcd176fbe857c889be86",
+      "bytes": 7015
+    },
+    {
+      "path": "PIC16F1503/validation/docker/run_mplab_docker.sh",
+      "sha256": "d91db14dc7a734f1dea9c811bc428888764952b9bb759a9207cf555ee5cd8df3",
+      "bytes": 2316
+    }
+  ],
+  "omitted": [
+    {
+      "path": "micromusic_with_config.hex",
+      "bytes": 11092,
+      "sha256": "7787e6dae4f115a36cf4f4a9054ed02c74411106efb02ba861195755854ae578"
+    }
+  ]
+}

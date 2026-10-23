@@ -1,0 +1,46 @@
+{
+  "cpu": "Intel 8080",
+  "bit_order": "MSB-first",
+  "width": 16,
+  "init": "0x0000",
+  "refin": false,
+  "refout": false,
+  "xorout": "0x0000",
+  "single_polynomials": ["0x0007", "0x0009", "0x001B", "0x002D"],
+  "dual_profiles": [
+    {"polynomials": ["0x0007", "0x0009"], "combined_full_polynomial": "0x1000E003F", "code_bytes": 66, "cycles_per_rom_byte": 179.118423},
+    {"polynomials": ["0x0007", "0x0021"], "code_bytes": 66, "cycles_per_rom_byte": 179.118423},
+    {
+      "polynomials": ["0x0025", "0x0047"],
+      "combined_full_polynomial": "0x1006209BB",
+      "rom_bytes": 65536,
+      "footer_offset": 65532,
+      "footer_bytes": 4,
+      "footer_byte_order": "big-endian",
+      "footer_rule": "CRC32 of preceding bytes with polynomial low 0x006209BB, init 0, xorout 0",
+      "full_rom_residues": ["0x0000", "0x0000"],
+      "variants": [
+        {"name": "min42", "code_bytes": 42, "full_rom_cycles": 50200714},
+        {"name": "min41_reset_only", "code_bytes": 41, "full_rom_cycles": 50200710, "requires_hardware_reset": true},
+        {"name": "mid47", "code_bytes": 47, "full_rom_cycles": 42336394},
+        {"name": "mid57", "code_bytes": 57, "full_rom_cycles": 38404234},
+        {"name": "fast75", "code_bytes": 75, "full_rom_cycles": 18882115},
+        {"name": "fast82", "code_bytes": 82, "full_rom_cycles": 18292291}
+      ],
+      "known_undetected_error_exponents": [0, 1065, 1278, 3920]
+    }
+  ],
+  "integration_profile": {
+    "path": "integration/no-ram-diagnostics",
+    "polynomial": "0x002D",
+    "table_bytes": 512,
+    "rom_sizes": [32768, 65536],
+    "correction_offsets": [32752, 65520],
+    "correction_bytes": 2,
+    "correction_storage_order": "little-endian",
+    "full_rom_residue": "0x0000",
+    "patcher": "build.py in the corresponding ROM-size folder"
+  },
+  "measurement_model": "8080 instruction emulation, no WAIT states, good complete ROM; dual costs include both passes",
+  "hardware_validation": false
+}

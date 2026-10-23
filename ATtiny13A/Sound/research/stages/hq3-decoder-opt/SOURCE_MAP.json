@@ -1,0 +1,184 @@
+{
+  "slug": "hq3-decoder-opt",
+  "target": "ATtiny13A/Sound/codec",
+  "title": "Preserve further HQ3 decoder optimization experiment",
+  "origin": {
+    "archive": "MicroMusic_HQ3_DecoderOpt_Private.zip",
+    "sha256": "3a3ef97d96e5cc8fff47c3ccaa74a287e34c185994d7031e46ac99330090a35e"
+  },
+  "previous_commit": "57bf67e64c262e48f7b4f78da887985df5544017",
+  "files": [
+    {
+      "path": "ATtiny13A/Sound/codec/README.md",
+      "sha256": "23b465ed13691838b3dee5b7d2de9ffe66eaff92ccc19ef50e7eb352e8b6776b",
+      "bytes": 3166
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/avr_emulator.js",
+      "sha256": "dae6393748cc70178a6a6924a2c73f79b6ed67b7517c688ec3657fa9a87a3ffe",
+      "bytes": 9806
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/browser_test.py",
+      "sha256": "d35fbd90b5ca4a5ad49c5da292f9be35e2d529f3f3cd588ee0313f05d2d35de0",
+      "bytes": 1181
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/build_and_verify.py",
+      "sha256": "297112ebbc458c5d46fd6d1e703354d18651d13c4d51afc1eaa87f22cb719793",
+      "bytes": 1393
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/chego/firmware.S",
+      "sha256": "d9ad86b511f193f5c7f2f44c6556a5fdfeaf32b299798bed736f3299131e076c",
+      "bytes": 3636
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/chego/speech.hq",
+      "sha256": "2794d45c10e19139b877b5c3f9750966037e281cbcef3f144afd303dc29dc663",
+      "bytes": 540
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/index.html",
+      "sha256": "dd0fee1c525e21ddacc71717b9ac6728c76642c811b2bcb417c532c85f55093d",
+      "bytes": 83264
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/make_player.py",
+      "sha256": "4ade5b447ee8d9deecd4ed48e31d1e8455490fc5ec86d285d0af28b82f2344af",
+      "bytes": 9800
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/otvechaesh/firmware.S",
+      "sha256": "d9ad86b511f193f5c7f2f44c6556a5fdfeaf32b299798bed736f3299131e076c",
+      "bytes": 3636
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/otvechaesh/speech.hq",
+      "sha256": "6e203928d96d728464be4ed6436fa387f16bf189c070c9f175b798a4e531ae5d",
+      "bytes": 471
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/report.csv",
+      "sha256": "07e07c19ce5d888cee6382a90a47fb3c9377135a7762e6561abcf1bfa12b7bc5",
+      "bytes": 223
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/report.json",
+      "sha256": "8d5ba2cba71d5619f106ac7174374be18ce550e0219f4c6f9cedd3fb28a87144",
+      "bytes": 1317
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/verify.js",
+      "sha256": "9a7683277788a38aadeeb6a9e624ec0d256e8beef59f94db6e9e358563e51040",
+      "bytes": 1339
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/vinni/firmware.S",
+      "sha256": "d9ad86b511f193f5c7f2f44c6556a5fdfeaf32b299798bed736f3299131e076c",
+      "bytes": 3636
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/vinni/speech.hq",
+      "sha256": "395a0fb048dc2d0dd695e4814ece038f88ceecfbab27af2a543b7f6301d165b2",
+      "bytes": 600
+    }
+  ],
+  "omitted": [
+    {
+      "path": "chego/AVR_preview.wav",
+      "bytes": 18476,
+      "sha256": "e6a72f62c8d9d97379122fc920f54317e3a3d3732d6cc3c1b3496912ab405f18"
+    },
+    {
+      "path": "chego/emulated.pcm",
+      "bytes": 9216,
+      "sha256": "fcff8507dbdc5f9a0f536d741671f5fd3ce94d49ac9703aefbcddf427dda815c"
+    },
+    {
+      "path": "chego/firmware.bin",
+      "bytes": 929,
+      "sha256": "5945bd0411a2ae3419ca1d3c89be8e8aa31f071d01af816a2692e2bc0254df51"
+    },
+    {
+      "path": "chego/firmware.hex",
+      "bytes": 2638,
+      "sha256": "ba0f9bd195b9140ccbc74fe1ea2440e5f7b29ab1b941857b4a9f372d1dd56722"
+    },
+    {
+      "path": "chego/firmware.sha256",
+      "bytes": 65,
+      "sha256": "089df8cfa158962e0cd9eed659a9156ec3b96b75313dc186c1e5fd690d4e8023"
+    },
+    {
+      "path": "chego/reference.bin",
+      "bytes": 947,
+      "sha256": "5c4f461fb3f5b26a7b559cc9592cc96590723fbf57d9c2c09c883f841be0d23f"
+    },
+    {
+      "path": "mobile_preview.png",
+      "bytes": 118975,
+      "sha256": "cb1edb8eba343fdd7dc4b4086f512bbfd61df340dcaa1689fb30299ebcc4dacf"
+    },
+    {
+      "path": "otvechaesh/AVR_preview.wav",
+      "bytes": 15916,
+      "sha256": "29195a06dc69214f455ed3531c438a7390c6392f4499c93ea707124fd1b2b876"
+    },
+    {
+      "path": "otvechaesh/emulated.pcm",
+      "bytes": 7936,
+      "sha256": "9dc5895bd647d941fd0d9dd55f9e6eab7ea3877d680eb84e57bdb2f4e812e1c5"
+    },
+    {
+      "path": "otvechaesh/firmware.bin",
+      "bytes": 860,
+      "sha256": "eb330480a5d89b77c4eb4f5552aedea71e9b10b666f2a0fefc6851eb8c10add3"
+    },
+    {
+      "path": "otvechaesh/firmware.hex",
+      "bytes": 2435,
+      "sha256": "33be8d3ad8030a8a9ab125f7303b9300d315d253f6cf0ed830fc1b90f2985fc1"
+    },
+    {
+      "path": "otvechaesh/firmware.sha256",
+      "bytes": 65,
+      "sha256": "fbd70435c452a62e09d370e81a3160a8129440747ff4ca390bdf4cc1dd2352fe"
+    },
+    {
+      "path": "otvechaesh/reference.bin",
+      "bytes": 878,
+      "sha256": "2ec86fd09a66c4220097085ff39de0508caf4e3b378c30a53852bcd733ceb70a"
+    },
+    {
+      "path": "vinni/AVR_preview.wav",
+      "bytes": 44588,
+      "sha256": "21988c6c11c87aa4df5ca496be992f7321db4c9d3e8dd0641c11cdab635f02c7"
+    },
+    {
+      "path": "vinni/emulated.pcm",
+      "bytes": 22272,
+      "sha256": "d08d54f8dfbdbfc47136f69a4ff1c03cad18d0590e3f79814bfd307ee301eaaf"
+    },
+    {
+      "path": "vinni/firmware.bin",
+      "bytes": 989,
+      "sha256": "a0839d0ac2d7d5a8a74f0539a584edbebd5755b2203eb1c84541912481446b0e"
+    },
+    {
+      "path": "vinni/firmware.hex",
+      "bytes": 2797,
+      "sha256": "75d07600c003a4d20b2312f3cee29d8785ce6bdd4ecdc326948a5abcdca9c36a"
+    },
+    {
+      "path": "vinni/firmware.sha256",
+      "bytes": 65,
+      "sha256": "85c053a9c743b18459ff3dfdab1ec7c853fa9ac8094967bc3f62b6a9528c8392"
+    },
+    {
+      "path": "vinni/reference.bin",
+      "bytes": 1007,
+      "sha256": "e2527993f420e055a886d67836111879b6d2fa4185faeefd245183153279e640"
+    }
+  ]
+}

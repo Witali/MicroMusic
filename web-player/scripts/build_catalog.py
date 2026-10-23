@@ -10,8 +10,12 @@ ROOT = Path(__file__).resolve().parents[2]
 MUSIC = ROOT / 'ATtiny13A' / 'Music'
 OUTPUT = ROOT / 'web-player' / 'firmware.json'
 SPECS = [
-    ('lumiere-stereo', '01', 'Люмьер · стерео', 'Полная композиция 3:42. Скрипка левее, гитара правее, пианино и ударные по центру. Два выхода PWM и два звуковых канала.', 'variants/lumiere-stereo', 'release'),
-    ('rhythmic', '02', 'Люмьер · моно', 'Общая сетка нот и ударных, повторная атака и явные лиги; мягкие тембры FluidR3 и плавный PWM.', 'variants/rhythmic', 'release'),
+    ('rhythmic', '01', 'Люмьер · Экспедиция 33', 'Полная аранжировка из Expedition 33, 3:42. Автоупаковка повторов, общая сетка нот и ударных, мягкие тембры FluidR3.', 'variants/rhythmic', 'release'),
+    ('alicia', '02', 'Алисия · Экспедиция 33', 'Четыре партии: мягкий рояль/скрипка в мелодии, фортепианное сопровождение, виолончель и внутренняя скрипка. Все 169 нот и 55 тактов, исходные 3/4, 4/4, триоли и 78/58/87 BPM; повторное арпеджио упрощено.', 'variants/alicia', 'release'),
+    ('turkish-march', '03', 'Турецкий марш · фортепиано', 'Моцарт: фортепиано правой и левой руки, 151 BPM. Фрагмент с каденцией; узнаваемое вступление и выключения нот сохранены.', 'variants/turkish-march', 'release'),
+    ('children', '04', 'Children · Robert Miles', 'Четыре партии: основное пиано, фортепианное эхо, fretless-бас и мягкие струнные FluidR3. Вся ведущая мелодия и 345 басовых атак, 3:05 при 140 BPM. Сопровождение упрощено; два резервных канала.', 'variants/children', 'release'),
+    ('greensleeves', '05', 'Greensleeves', 'Полная мелодия: флейта, скрипка и виолончель. Размер 6/8 с исходным затактом; 48 секунд и пауза перед повтором.', 'variants/greensleeves', 'release'),
+    ('lumiere-stereo', '06', 'Люмьер · стерео', 'Четыре голоса, два PWM-выхода и полная композиция 3:42. Скрипка левее, гитара правее, пианино и ударные по центру.', 'variants/lumiere-stereo', 'release'),
 ]
 
 
@@ -50,7 +54,11 @@ def build():
         ep = directory / 'eeprom.hex'
         eeprom = ep.read_text(encoding='utf-8') if ep.exists() else None
         binary = decode(flash)
+        report=json.loads((directory/'build-report.json').read_text(encoding='utf-8'))
+        assignments=report.get('instrumentAssignments',{})
+        voices=sum(p.get('instrument')!='off' and p.get('level',0)>0 for p in assignments.values())
         entry = dict(id=id_, order=order, title=title, description=description, status=status,
+                     voices=report.get('activePrimaryVoices',voices or 4),instruments=assignments,releaseTailSlots=report.get('releaseChannels',{}).get('tailSlots',0),
                      flashBytes=len(binary), eepromBytes=64 if eeprom else 0,
                      cpuHz=9600000, pwmHz=37500, sampleHz=37500, synthesisHz=18750,
                      flashSha256=digest(binary), eepromSha256=digest(decode(eeprom, 64)) if eeprom else None,
@@ -59,12 +67,11 @@ def build():
                      source=f'../ATtiny13A/Music/{folder}/synth.hex',
                      eepromSource=f'../ATtiny13A/Music/{folder}/eeprom.hex' if eeprom else None,
                      preview=f'../ATtiny13A/Music/{folder}/preview.wav' if (directory / 'preview.wav').exists() else None)
-        entry['audioChannels'] = 2 if id_ == 'lumiere-stereo' else 1
-        if entry['audioChannels'] == 2:
-            report = json.loads((directory / 'build-report.json').read_text(encoding='utf-8'))
-            entry['outputs'] = report['outputs']
-            entry['panorama'] = report['panorama']
         key = (entry['flashSha256'], entry['eepromSha256'])
+        entry['audioChannels']=report.get('audioChannels',1)
+        if entry['audioChannels']==2:
+            entry['outputs']=report['outputs']
+            entry['panorama']=report['panorama']
         entry['referenceCore'] = f'../ATtiny13A/Music/{folder}/avr_core.js'
         assert key not in by_key
         by_key[key] = entry
@@ -104,7 +111,7 @@ def build():
                         target = name.rsplit('/', 1)[0] + '/' + n
                         return z.read(target) if target in z.namelist() else None
                     inspect(path.relative_to(ROOT).as_posix() + '!/' + name, z.read(name), sibling)
-    return dict(schema=1, defaultId='lumiere-stereo', entries=entries,
+    return dict(schema=1, defaultId='rhythmic', entries=entries,
                 sourceOnly=[dict(title='Исходный C-прототип · 2016',
                                  source='../ATtiny13A/Music/00_original/attiny13a_initial_2016.c',
                                  reason='Сохранён исходник C; готового HEX / BIN в архиве нет.')])

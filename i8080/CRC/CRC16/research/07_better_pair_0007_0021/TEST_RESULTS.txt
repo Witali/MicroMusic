@@ -1,0 +1,12 @@
+./dual_crc_0007_0021_onepass.bin: 66 bytes, 11738705 T, 179.118423 T/B, all test ROMs OK
+PASS: 114 full-ROM emulated checks, 65536 data addresses, independent CRCs, corrupted ROMs, collision cases
+Coprime polynomials: 0x10007 0x10021
+Product Q= 0x1002600e7 poly32= 0x2600e7
+Periods old: 32767 57337 LCM: 268394497
+Periods new: 32767 16383 LCM: 536821761
+Old 4-bit undetected witness (0, 777, 1076, 2007) not missed by new pair: PASS
+New 4-bit undetected witness (0, 1968, 2021, 3224) span 3225 : PASS
+Guaranteed at 65536 bytes: all 1-, 2-, 3-bit errors; all odd parity errors and <=32-bit bursts
+ROM bytes: 65536 footer: 29D07119 CRC16: OK/OK
+poly=000E003F window=4096, minimum_span=2008, normalized_undetected_4bit=9, placements_within_64KiB=4690331
+poly=002600E7 window=4096, minimum_span=3225, normalized_undetected_4bit=2, placements_within_64KiB=1041364

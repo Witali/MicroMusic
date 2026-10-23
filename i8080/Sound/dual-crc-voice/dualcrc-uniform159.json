@@ -1,0 +1,300 @@
+{
+  "name": "dualcrc-uniform159",
+  "sha256": "34f3d46ab764bdc16e609589fd89fe23a16a2f6609207bdf59f3408eeedc5175",
+  "original_sha256": "90fc9de477eb9b2b9f15a2b0d9bdaff390e124df24c024e77aaf4a42555007b1",
+  "bytes": 32768,
+  "cpu_hz": 3500000,
+  "period_t": 159,
+  "carrier_hz": 22012.578616352203,
+  "levels": 16,
+  "width_t": "4+4*level",
+  "sample_count": 63085,
+  "voice_code_start": "1100",
+  "kernel_end": "18A7",
+  "ramp_start": "7C40",
+  "ramp_stage_pc": [
+    "7C41",
+    "7C6A",
+    "7C93",
+    "7CD6",
+    "7CFF",
+    "7D42",
+    "7D6B",
+    "7DAE",
+    "7DD7",
+    "7E1A",
+    "7E43",
+    "7E86",
+    "7EAF",
+    "7EF2",
+    "7F1B",
+    "7F5E"
+  ],
+  "labels": {
+    "VOICE": "1100",
+    "AFTER_4": "110E",
+    "PHASE_0": "1115",
+    "AFTER_0": "111E",
+    "PHASE_1": "1124",
+    "AFTER_1": "112E",
+    "PHASE_2": "1130",
+    "AFTER_2": "113F",
+    "PHASE_3": "1145",
+    "AFTER_3": "114F",
+    "PHASE_4": "1156",
+    "PHASE_4_LINK": "1161",
+    "DONE": "1170",
+    "WIDTH_0_0": "1200",
+    "WIDTH_0_1": "1211",
+    "WIDTH_0_2": "1223",
+    "WIDTH_0_3": "1235",
+    "WIDTH_0_4": "1247",
+    "WIDTH_0_5": "1259",
+    "WIDTH_0_6": "126A",
+    "WIDTH_0_7": "127C",
+    "WIDTH_0_8": "128E",
+    "WIDTH_0_9": "12A0",
+    "WIDTH_0_10": "12B2",
+    "WIDTH_0_11": "12C3",
+    "WIDTH_0_12": "12D5",
+    "WIDTH_0_13": "12E7",
+    "WIDTH_0_14": "12F9",
+    "WIDTH_0_15": "130B",
+    "WIDTH_1_0": "131C",
+    "WIDTH_1_1": "132D",
+    "WIDTH_1_2": "133F",
+    "WIDTH_1_3": "1351",
+    "WIDTH_1_4": "1363",
+    "WIDTH_1_5": "1375",
+    "WIDTH_1_6": "1386",
+    "WIDTH_1_7": "1398",
+    "WIDTH_1_8": "13AA",
+    "WIDTH_1_9": "13BC",
+    "WIDTH_1_10": "13CE",
+    "WIDTH_1_11": "13DF",
+    "WIDTH_1_12": "13F1",
+    "WIDTH_1_13": "1403",
+    "WIDTH_1_14": "1415",
+    "WIDTH_1_15": "1427",
+    "WIDTH_2_0": "1438",
+    "WIDTH_2_1": "1449",
+    "WIDTH_2_2": "145B",
+    "WIDTH_2_3": "146D",
+    "WIDTH_2_4": "147F",
+    "WIDTH_2_5": "1491",
+    "WIDTH_2_6": "14A2",
+    "WIDTH_2_7": "14B4",
+    "WIDTH_2_8": "14C6",
+    "WIDTH_2_9": "14D8",
+    "WIDTH_2_10": "14EA",
+    "WIDTH_2_11": "14FB",
+    "WIDTH_2_12": "150D",
+    "WIDTH_2_13": "151F",
+    "WIDTH_2_14": "1531",
+    "WIDTH_2_15": "1543",
+    "WIDTH_3_0": "1554",
+    "WIDTH_3_1": "1566",
+    "WIDTH_3_2": "1578",
+    "WIDTH_3_3": "158A",
+    "WIDTH_3_4": "159C",
+    "WIDTH_3_5": "15AE",
+    "WIDTH_3_6": "15C0",
+    "WIDTH_3_7": "15D2",
+    "WIDTH_3_8": "15E4",
+    "WIDTH_3_9": "15F6",
+    "WIDTH_3_10": "1608",
+    "WIDTH_3_11": "161A",
+    "WIDTH_3_12": "162C",
+    "WIDTH_3_13": "163E",
+    "WIDTH_3_14": "1650",
+    "WIDTH_3_15": "1662",
+    "WIDTH_4_0": "1674",
+    "WIDTH_4_1": "1685",
+    "WIDTH_4_2": "1697",
+    "WIDTH_4_3": "16A9",
+    "WIDTH_4_4": "16BB",
+    "WIDTH_4_5": "16CD",
+    "WIDTH_4_6": "16DE",
+    "WIDTH_4_7": "16F0",
+    "WIDTH_4_8": "1702",
+    "WIDTH_4_9": "1714",
+    "WIDTH_4_10": "1726",
+    "WIDTH_4_11": "1737",
+    "WIDTH_4_12": "1749",
+    "WIDTH_4_13": "175B",
+    "WIDTH_4_14": "176D",
+    "WIDTH_4_15": "177F",
+    "WIDTH_5_0": "1790",
+    "WIDTH_5_1": "17A1",
+    "WIDTH_5_2": "17B2",
+    "WIDTH_5_3": "17C4",
+    "WIDTH_5_4": "17D6",
+    "WIDTH_5_5": "17E8",
+    "WIDTH_5_6": "17F9",
+    "WIDTH_5_7": "180A",
+    "WIDTH_5_8": "181C",
+    "WIDTH_5_9": "182E",
+    "WIDTH_5_10": "1840",
+    "WIDTH_5_11": "1851",
+    "WIDTH_5_12": "1862",
+    "WIDTH_5_13": "1873",
+    "WIDTH_5_14": "1885",
+    "WIDTH_5_15": "1896",
+    "STREAM": "0FB0"
+  },
+  "segments": [
+    {
+      "from": 4016,
+      "bytes": 62,
+      "link": 4078,
+      "target": 4272
+    },
+    {
+      "from": 4272,
+      "bytes": 78,
+      "link": 4350,
+      "target": 4466
+    },
+    {
+      "from": 4466,
+      "bytes": 140,
+      "link": 4606,
+      "target": 6311
+    },
+    {
+      "from": 6311,
+      "bytes": 854,
+      "link": 7165,
+      "target": 7488
+    },
+    {
+      "from": 7488,
+      "bytes": 190,
+      "link": 7678,
+      "target": 7744
+    },
+    {
+      "from": 7744,
+      "bytes": 430,
+      "link": 8174,
+      "target": 8180
+    },
+    {
+      "from": 8180,
+      "bytes": 10,
+      "link": 8190,
+      "target": 8193
+    },
+    {
+      "from": 8193,
+      "bytes": 4076,
+      "link": 12269,
+      "target": 12276
+    },
+    {
+      "from": 12276,
+      "bytes": 4090,
+      "link": 16366,
+      "target": 16372
+    },
+    {
+      "from": 16372,
+      "bytes": 8,
+      "link": 16380,
+      "target": 16385
+    },
+    {
+      "from": 16385,
+      "bytes": 4076,
+      "link": 20461,
+      "target": 20468
+    },
+    {
+      "from": 20468,
+      "bytes": 4090,
+      "link": 24558,
+      "target": 24564
+    },
+    {
+      "from": 24564,
+      "bytes": 8,
+      "link": 24572,
+      "target": 24576
+    },
+    {
+      "from": 24576,
+      "bytes": 4078,
+      "link": 28654,
+      "target": 28660
+    },
+    {
+      "from": 28660,
+      "bytes": 8,
+      "link": 28668,
+      "target": 28672
+    },
+    {
+      "from": 28672,
+      "bytes": 2044,
+      "link": 30716,
+      "target": 30720
+    },
+    {
+      "from": 30720,
+      "bytes": 992,
+      "link": 31712,
+      "target": 0
+    }
+  ],
+  "footers": [
+    {
+      "address": "0FF0",
+      "hex": "3f31b7ed",
+      "crc0007": 0,
+      "crc0009": 0
+    },
+    {
+      "address": "1FF0",
+      "hex": "cf14e1dd",
+      "crc0007": 0,
+      "crc0009": 0
+    },
+    {
+      "address": "2FF0",
+      "hex": "2b9a4e8d",
+      "crc0007": 0,
+      "crc0009": 0
+    },
+    {
+      "address": "3FF0",
+      "hex": "2f851e8b",
+      "crc0007": 0,
+      "crc0009": 0
+    },
+    {
+      "address": "4FF0",
+      "hex": "b9a830e6",
+      "crc0007": 0,
+      "crc0009": 0
+    },
+    {
+      "address": "5FF0",
+      "hex": "bcfa2c6c",
+      "crc0007": 0,
+      "crc0009": 0
+    },
+    {
+      "address": "6FF0",
+      "hex": "35e8aa90",
+      "crc0007": 0,
+      "crc0009": 0
+    },
+    {
+      "address": "7FF0",
+      "hex": "e2ad0ebf",
+      "crc0007": 0,
+      "crc0009": 0
+    }
+  ],
+  "address_tests": 60
+}

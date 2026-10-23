@@ -27,7 +27,7 @@ function draw(block){for(let ch=0;ch<2;ch++){
 }}
 async function stop(){processor?.disconnect();if(processor)processor.onaudioprocess=null;if(audio)await audio.close();audio=processor=null;$('play').disabled=false;$('stop').disabled=true}
 $('play').onclick=async()=>{try{
-  audio=new AudioContext();renderer=new Renderer(entry,audio.sampleRate);processor=audio.createScriptProcessor(4096,0,2);
+  audio=new AudioContext();renderer=new Renderer(entry,audio.sampleRate,{filtered:false});processor=audio.createScriptProcessor(4096,0,2);
   const high=audio.createBiquadFilter();high.type='highpass';high.frequency.value=35;high.Q.value=20*Math.log10(.5);
   const low=audio.createBiquadFilter();low.type='lowpass';low.frequency.value=4000;low.Q.value=20*Math.log10(.5);
   gain=audio.createGain();gain.gain.value=+$('volume').value;processor.connect(high);high.connect(low);low.connect(gain);gain.connect(audio.destination);

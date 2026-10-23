@@ -1,0 +1,371 @@
+{
+  "flashBytes": 964,
+  "codeBytes": 574,
+  "tableBytes": 390,
+  "eepromBytes": 64,
+  "flashSha256": "75976c7c66bf88e10d2e4b1bd63d31cfb8b3542ee0fe8c0e43123647bcb17430",
+  "eepromSha256": "896736a3ec3dd8b64facf639507349cb4aa26a9161b3f26adec3fbdd25985173",
+  "labels": {
+    "REST_INDEX": 17,
+    "HOLD_INDEX": 18,
+    "PLAYLIST_LEN": 28,
+    "FIRST_PLAYLIST_INDEX": 1,
+    "GRID_STEP_LOW": 48,
+    "GRID_STEP_HIGH": 35,
+    "GRID_INITIAL_HIGH": 221,
+    "vectors": 0,
+    "envelope_return": 2,
+    "reset": 8,
+    "clear_ram": 22,
+    "fill_ring": 32,
+    "idle": 78,
+    "check_space": 84,
+    "audio_step": 88,
+    "render_sample": 94,
+    "voice_loop": 98,
+    "primary_gain": 132,
+    "write_pwm": 138,
+    "ring_published": 156,
+    "pwm_irq": 160,
+    "ring_read": 162,
+    "irq_restore": 168,
+    "music_tick": 170,
+    "envelope_loop": 174,
+    "state_plucked": 184,
+    "state_mask": 202,
+    "state_gate": 216,
+    "state_release": 224,
+    "envelope_store": 238,
+    ".L0a8": 248,
+    "grid_step": 260,
+    ".L0ba": 260,
+    "read_event": 266,
+    ".L0c8": 274,
+    "note_off": 282,
+    "note_off_loop": 284,
+    "chord_event": 304,
+    "melodic_event": 330,
+    "lead_commit": 376,
+    "note_rest": 378,
+    "release_lead": 378,
+    "hold_sample": 388,
+    "next_section": 392,
+    ".L15c": 412,
+    "render_tone": 422,
+    ".L216": 438,
+    "piano_attack_done": 448,
+    "eeprom_low_nibble": 466,
+    ".L25c": 470,
+    "voice_silent": 498,
+    "initialize_voice": 502,
+    "voice_initialized": 520,
+    "capture_ram_tail": 522,
+    "ram_tail_destination": 544,
+    "ram_tail_copy": 560,
+    "no_ram_tail": 570,
+    "playlist": 574,
+    "durations": 602,
+    "note_steps": 609,
+    "chord_steps": 643,
+    "melody_data": 675,
+    "section_packed_000": 675,
+    "first_section": 675,
+    "section_packed_002": 678,
+    "section_packed_004": 722,
+    "section_packed_005": 737,
+    "section_packed_003": 738,
+    "section_packed_006": 741,
+    "section_packed_007": 759,
+    "section_packed_001": 760,
+    "section_packed_008": 795,
+    "section_packed_009": 837,
+    "section_packed_011": 840,
+    "section_packed_013": 853,
+    "section_packed_010": 854,
+    "section_packed_012": 879,
+    "section_packed_014": 892
+  },
+  "score": {
+    "note_count": 285,
+    "event_bytes": 289,
+    "maximum_entry_offset": 217,
+    "playlist_bytes": 28,
+    "note_table_bytes": 34,
+    "chord_table_bytes": 32,
+    "durations": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      8,
+      16
+    ],
+    "pitches": [
+      "D4",
+      "D#4",
+      "F4",
+      "F#4",
+      "G4",
+      "G#4",
+      "A4",
+      "A#4",
+      "B4",
+      "C5",
+      "C#5",
+      "D5",
+      "D#5",
+      "F5",
+      "F#5",
+      "G5",
+      "G#5",
+      "R"
+    ],
+    "chords": [
+      "left_54",
+      "left_53",
+      "left_46",
+      "left_49",
+      "left_51",
+      "left_39",
+      "left_44",
+      "left_50"
+    ],
+    "chord_notes": {
+      "left_54": [
+        54,
+        null
+      ],
+      "left_53": [
+        53,
+        null
+      ],
+      "left_46": [
+        46,
+        null
+      ],
+      "left_49": [
+        49,
+        null
+      ],
+      "left_51": [
+        51,
+        null
+      ],
+      "left_39": [
+        39,
+        null
+      ],
+      "left_44": [
+        44,
+        null
+      ],
+      "left_50": [
+        50,
+        null
+      ]
+    },
+    "total_data_bytes": 390,
+    "section_bars": {
+      "intro": 35,
+      "ending": 1
+    },
+    "playlist": [
+      "packed_000",
+      "packed_001",
+      "packed_002",
+      "packed_001",
+      "packed_002",
+      "packed_003",
+      "packed_004",
+      "packed_005",
+      "packed_004",
+      "packed_006",
+      "packed_006",
+      "packed_007",
+      "packed_008",
+      "packed_005",
+      "packed_004",
+      "packed_005",
+      "packed_004",
+      "packed_006",
+      "packed_006",
+      "packed_007",
+      "packed_008",
+      "packed_009",
+      "packed_010",
+      "packed_011",
+      "packed_012",
+      "packed_013",
+      "packed_011",
+      "packed_014"
+    ],
+    "source_playlist": [
+      "intro",
+      "ending"
+    ],
+    "section_offsets": {
+      "packed_000": 0,
+      "packed_002": 3,
+      "packed_004": 47,
+      "packed_003": 63,
+      "packed_005": 62,
+      "packed_006": 66,
+      "packed_001": 85,
+      "packed_007": 84,
+      "packed_008": 120,
+      "packed_009": 162,
+      "packed_010": 179,
+      "packed_011": 165,
+      "packed_013": 178,
+      "packed_012": 204,
+      "packed_014": 217
+    },
+    "compression": {
+      "method": "Repeated command phrases; dynamic-programming parsing; suffix sharing; deterministic dictionary search",
+      "globallyMinimal": false,
+      "candidateLimit": 4096,
+      "candidateCount": 4096,
+      "dictionaryTrials": 213132,
+      "originalCommandBytes": 653,
+      "originalStreamSha256": "0b1d2600830b0872144855effd8f1a3690d3d4c0bb5792fb1637b18f91e87134",
+      "sourceLayoutBytes": 657,
+      "packedEventBytes": 289,
+      "playlistBytes": 28,
+      "packedBytes": 317,
+      "savedAgainstSourceLayoutBytes": 340,
+      "storedSections": 11,
+      "referencedSections": 15,
+      "verifiedLossless": true
+    },
+    "source": "Моцарт — Турецкий марш (начальный фрагмент)",
+    "rest_index": 17,
+    "hold_index": 18,
+    "holds": [],
+    "instruments": {
+      "lead": "acoustic-grand-piano",
+      "keys": {
+        "instrument": "acoustic-grand-piano",
+        "level": 10
+      },
+      "pluck": "off",
+      "percussion": "off"
+    }
+  },
+  "timing": {
+    "phaseStep": 9008,
+    "phaseBits": 16,
+    "envelopeTickCycles": 131072,
+    "tempoBpm": 151,
+    "actualTempoBpm": 151.00836753845215,
+    "sharedGrid": "One sixteenth grid drives score and half-beat percussion",
+    "initialHighPhase": 221
+  },
+  "articulation": {
+    "holdIndex": 18,
+    "holds": [],
+    "attack": "piano",
+    "retrigger": "full",
+    "phaseContinuous": true
+  },
+  "instrumentAssignments": {
+    "lead": {
+      "instrument": "acoustic-grand-piano",
+      "label": "Акустический рояль",
+      "gmProgram": 0,
+      "eepromOffset": 0,
+      "level": 15,
+      "envelope": {
+        "model": "piano",
+        "defaultLevel": 15,
+        "decayMask": 3,
+        "retrigger": "peak",
+        "releaseStep": 2,
+        "decayMaskByRegister": {
+          "thresholdMidi": 75,
+          "thresholdDdsStep": 2175,
+          "lowMask": 3,
+          "highMask": 0
+        }
+      },
+      "transient": {
+        "kind": "piano-attack",
+        "minEnvelopeLevel": 14,
+        "eepromOffsets": {
+          "low": 48,
+          "high": 56
+        },
+        "maximumSwitchSampleDelta": 1
+      }
+    },
+    "keys": {
+      "instrument": "acoustic-grand-piano",
+      "label": "Акустический рояль",
+      "gmProgram": 0,
+      "eepromOffset": 16,
+      "level": 10,
+      "envelope": {
+        "model": "piano",
+        "defaultLevel": 15,
+        "decayMask": 3,
+        "retrigger": "peak",
+        "releaseStep": 2,
+        "decayMaskByRegister": {
+          "thresholdMidi": 75,
+          "thresholdDdsStep": 2175,
+          "lowMask": 3,
+          "highMask": 0
+        }
+      },
+      "transient": {
+        "kind": "piano-attack",
+        "minEnvelopeLevel": 14,
+        "eepromOffsets": {
+          "low": 48,
+          "high": 56
+        },
+        "maximumSwitchSampleDelta": 1
+      }
+    },
+    "pluck": {
+      "instrument": "off",
+      "label": "Выключен",
+      "gmProgram": null,
+      "eepromOffset": 32,
+      "level": 0,
+      "envelope": {
+        "model": "off",
+        "defaultLevel": 0
+      }
+    },
+    "percussion": {
+      "instrument": "off",
+      "label": "Выключены",
+      "level": 0,
+      "enabled": false,
+      "notes": []
+    }
+  },
+  "instrumentBankSha256": "ddf64e6c18950407c002d3c1a3dba9356e566bccba099c08918e7c5d0aa52221",
+  "releaseChannels": {
+    "primaryVoices": 3,
+    "tailSlots": 2,
+    "voiceAddresses": [
+      96,
+      101,
+      106,
+      111,
+      116
+    ],
+    "voiceStateBytes": 25,
+    "pwmRingBytes": 16,
+    "tailGain": 0.5,
+    "stealing": "Quietest of two release levels",
+    "phaseContinuous": true,
+    "isrCycles": 15,
+    "requiredFuses": {
+      "low": "0x7A",
+      "high": "0xFF"
+    }
+  }
+}

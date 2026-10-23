@@ -1,0 +1,535 @@
+{
+  "engine": "alicia-native",
+  "activePrimaryVoices": 4,
+  "flashBytes": 1022,
+  "codeBytes": 660,
+  "tableBytes": 362,
+  "eepromBytes": 64,
+  "flashSha256": "11e975d5638764ab06314f325aa68a2081d06b21c48bd7707cf304ae34b00890",
+  "eepromSha256": "233eb6508fce5e44d1230ea6e2b1eaff23bd1dc6c35ea3c30a80678c95255e45",
+  "labels": {
+    "REST_INDEX": 20,
+    "HOLD_INDEX": 21,
+    "PLAYLIST_LEN": 13,
+    "FIRST_PLAYLIST_INDEX": 1,
+    "GRID_STEP_LOW": 135,
+    "GRID_STEP_HIGH": 54,
+    "GRID_INITIAL_HIGH": 202,
+    "BASS_BASE_NEGATIVE": 236,
+    "vectors": 0,
+    "envelope_return": 2,
+    "reset": 8,
+    "clear_ram": 22,
+    "fill_ring": 32,
+    "idle": 74,
+    "check_space": 80,
+    "audio_step": 84,
+    "render_sample": 90,
+    "voice_loop": 94,
+    "primary_gain": 124,
+    "write_pwm": 130,
+    "ring_published": 148,
+    "pwm_irq": 152,
+    "ring_read": 154,
+    "irq_restore": 160,
+    "music_tick": 162,
+    "envelope_loop": 166,
+    "state_plucked": 188,
+    "state_mask": 206,
+    "state_release": 214,
+    "envelope_store": 228,
+    ".L0a8": 238,
+    "grid_step": 246,
+    ".L0ba": 248,
+    "read_event": 254,
+    "release_long_branch_0": 278,
+    "tempo_event": 282,
+    "instrument_event": 302,
+    "chord_event": 312,
+    "melodic_event": 382,
+    "lead_commit": 420,
+    "note_rest": 424,
+    "release_lead": 424,
+    "hold_sample": 434,
+    "next_section": 436,
+    ".L15c": 454,
+    "render_tone": 464,
+    ".L216": 480,
+    "piano_attack_done": 490,
+    "eeprom_low_nibble": 508,
+    ".L25c": 512,
+    "voice_silent": 542,
+    "initialize_voice": 546,
+    "voice_initialized": 564,
+    "capture_ram_tail": 566,
+    "ram_tail_destination": 588,
+    "ram_tail_copy": 604,
+    "no_ram_tail": 614,
+    "indexed_note": 618,
+    "accompaniment_tick": 628,
+    "accompaniment_return": 638,
+    "stop_accompaniment": 640,
+    "stop_companion_loop": 644,
+    "playlist": 660,
+    "durations": 673,
+    "tempo_steps": 681,
+    "note_steps": 687,
+    "chord_descriptors": 745,
+    "melody_data": 797,
+    "section_packed_000": 797,
+    "first_section": 797,
+    "section_packed_001": 820,
+    "section_packed_002": 831,
+    "section_packed_003": 859,
+    "section_packed_004": 875,
+    "section_packed_005": 888,
+    "section_packed_006": 941,
+    "section_packed_007": 963,
+    "section_packed_008": 983,
+    "section_packed_009": 995
+  },
+  "instrumentBankSha256": "ddf64e6c18950407c002d3c1a3dba9356e566bccba099c08918e7c5d0aa52221",
+  "instrumentAssignments": {
+    "lead": {
+      "instrument": "acoustic-grand-piano-soft",
+      "label": "Мягкий акустический рояль",
+      "gmProgram": 0,
+      "eepromOffset": 0,
+      "level": 14,
+      "envelope": {
+        "model": "piano",
+        "defaultLevel": 14,
+        "decayMask": 3,
+        "retrigger": "peak",
+        "releaseStep": 2,
+        "decayMaskByRegister": {
+          "thresholdMidi": 75,
+          "thresholdDdsStep": 2175,
+          "lowMask": 3,
+          "highMask": 0
+        }
+      },
+      "transient": {
+        "kind": "piano-attack",
+        "minEnvelopeLevel": 14,
+        "eepromOffsets": {
+          "low": 48,
+          "high": 56
+        },
+        "maximumSwitchSampleDelta": 1
+      }
+    },
+    "keys": {
+      "instrument": "violin",
+      "label": "Скрипка",
+      "gmProgram": 40,
+      "eepromOffset": 16,
+      "level": 15,
+      "envelope": {
+        "model": "bowed",
+        "defaultLevel": 15,
+        "attackStep": 4,
+        "retrigger": "half-current-level",
+        "releaseStep": 1
+      }
+    },
+    "pluck": {
+      "instrument": "cello",
+      "label": "Виолончель",
+      "gmProgram": 42,
+      "eepromOffset": 32,
+      "level": 10,
+      "envelope": {
+        "model": "bowed",
+        "defaultLevel": 10,
+        "attackStep": 4,
+        "retrigger": "half-current-level",
+        "releaseStep": 1
+      }
+    },
+    "percussion": {
+      "instrument": "off",
+      "label": "Выключены",
+      "level": 0,
+      "enabled": false,
+      "notes": []
+    }
+  },
+  "primaryVoiceAssignments": [
+    {
+      "state": 97,
+      "role": "source-melody",
+      "instruments": [
+        "acoustic-grand-piano-soft",
+        "violin"
+      ],
+      "programs": [
+        0,
+        40
+      ],
+      "sourcePrograms": [
+        0,
+        1
+      ],
+      "pianoLevel": 14,
+      "bowedLevel": 12,
+      "gain": 1
+    },
+    {
+      "state": 102,
+      "role": "piano-chord-tone",
+      "instrument": "acoustic-grand-piano-soft",
+      "level": 5,
+      "gain": 1
+    },
+    {
+      "state": 107,
+      "role": "cello-bass",
+      "instrument": "cello",
+      "level": 12,
+      "gain": 0.5
+    },
+    {
+      "state": 112,
+      "role": "violin-inner-voice",
+      "instrument": "violin",
+      "level": 12,
+      "gain": 0.5
+    }
+  ],
+  "nativeEnvelopeOverride": {
+    "bowed": {
+      "attackLevels": [
+        0,
+        4,
+        8,
+        12
+      ],
+      "retrigger": "zero",
+      "releaseStep": 1
+    },
+    "piano": {
+      "leadLevel": 14,
+      "companionLevel": 5,
+      "decayMasks": [
+        3,
+        7,
+        15
+      ],
+      "releaseStep": 2
+    },
+    "outputGain": {
+      "lead": 1,
+      "pianoCompanion": 1,
+      "cello": 0.5,
+      "innerViolin": 0.5,
+      "releaseSlots": 0.5
+    },
+    "note": "Measured bank waves and piano attack are unchanged. The native1KiB envelope explicitly replaces the bank default half-current bowed retrigger with a zero-level soft attack."
+  },
+  "scoreDecoder": {
+    "format": "Native compact score, not raw MIDI/SMF",
+    "mainBytes": 210,
+    "helperBytes": 42,
+    "totalBytes": 252,
+    "staticInstructionCount": 124,
+    "scope": "read_event through playlist decoding; indexed DDS lookup and companion-gate helper. Shared voice initialization, reserve allocation, DSP and PWM are excluded."
+  },
+  "sourceScoreSha256": "f209bf058b6c8f68ffdf50db9eac48e923e08a3eba81021058d827cd63dfc5c0",
+  "score": {
+    "note_count": 207,
+    "event_bytes": 225,
+    "maximum_entry_offset": 198,
+    "playlist_bytes": 13,
+    "note_table_bytes": 58,
+    "chord_table_bytes": 52,
+    "durations": [
+      3,
+      4,
+      6,
+      12,
+      18,
+      24,
+      30,
+      36
+    ],
+    "native_units_per_quarter": 12,
+    "source": "Alicia — four-voice instrumental arrangement",
+    "pitches": [
+      "F3",
+      "G3",
+      "G#3",
+      "A3",
+      "A#3",
+      "B3",
+      "C4",
+      "C#4",
+      "D4",
+      "D#4",
+      "E4",
+      "F4",
+      "G4",
+      "G#4",
+      "A4",
+      "A#4",
+      "B4",
+      "C5",
+      "D5",
+      "D#5",
+      "R",
+      "HOLD"
+    ],
+    "dds_pitches": [
+      "F3",
+      "G3",
+      "G#3",
+      "A3",
+      "A#3",
+      "B3",
+      "C4",
+      "C#4",
+      "D4",
+      "D#4",
+      "E4",
+      "F4",
+      "G4",
+      "G#4",
+      "A4",
+      "A#4",
+      "B4",
+      "C5",
+      "D5",
+      "D#5",
+      "C2",
+      "D2",
+      "D#2",
+      "F2",
+      "G2",
+      "G#2",
+      "A2",
+      "A#2",
+      "B2"
+    ],
+    "rest_index": 20,
+    "hold_index": 21,
+    "total_data_bytes": 362,
+    "playlist": [
+      "packed_000",
+      "packed_001",
+      "packed_002",
+      "packed_003",
+      "packed_004",
+      "packed_005",
+      "packed_006",
+      "packed_001",
+      "packed_007",
+      "packed_003",
+      "packed_008",
+      "packed_005",
+      "packed_009"
+    ],
+    "source_playlist": [
+      "AL_intro",
+      "AL_A",
+      "AL_B",
+      "AL_B_end",
+      "AL_C",
+      "AL_B",
+      "AL_D_end"
+    ],
+    "section_offsets": {
+      "packed_000": 0,
+      "packed_001": 23,
+      "packed_002": 34,
+      "packed_003": 62,
+      "packed_004": 78,
+      "packed_005": 91,
+      "packed_006": 144,
+      "packed_007": 166,
+      "packed_008": 186,
+      "packed_009": 198
+    },
+    "compression": {
+      "method": "Repeated command phrases; dynamic-programming parsing; suffix sharing; deterministic dictionary search",
+      "globallyMinimal": false,
+      "candidateLimit": 4096,
+      "candidateCount": 687,
+      "dictionaryTrials": 16552,
+      "originalCommandBytes": 292,
+      "originalStreamSha256": "3871dd7b9af583c41f86d1636a256939caad53f7694e68e451a29c308e83c104",
+      "sourceLayoutBytes": 258,
+      "packedEventBytes": 225,
+      "playlistBytes": 13,
+      "packedBytes": 238,
+      "savedAgainstSourceLayoutBytes": 20,
+      "storedSections": 10,
+      "referencedSections": 10,
+      "verifiedLossless": true
+    },
+    "chord_descriptors": [
+      [
+        "Cm",
+        36
+      ],
+      [
+        "Fm",
+        36
+      ],
+      [
+        "Bb",
+        36
+      ],
+      [
+        "Eb",
+        36
+      ],
+      [
+        "Cm",
+        18
+      ],
+      [
+        "C7b9",
+        18
+      ],
+      [
+        "Gsus4",
+        18
+      ],
+      [
+        "G7",
+        18
+      ],
+      [
+        "Abmaj7",
+        36
+      ],
+      [
+        "Am7b5",
+        36
+      ],
+      [
+        "Bb7",
+        36
+      ],
+      [
+        "G7/B",
+        36
+      ],
+      [
+        "Cm",
+        24
+      ],
+      [
+        "Bb/D",
+        24
+      ],
+      [
+        "Eb",
+        24
+      ],
+      [
+        "Ab",
+        24
+      ],
+      [
+        "Fm",
+        24
+      ],
+      [
+        "Cm/Eb",
+        24
+      ],
+      [
+        "Dm7b5",
+        24
+      ],
+      [
+        "G7b9",
+        24
+      ],
+      [
+        "Cm/G",
+        24
+      ],
+      [
+        "G7",
+        24
+      ],
+      [
+        "G7",
+        36
+      ],
+      [
+        "Abmaj7",
+        48
+      ],
+      [
+        "F5",
+        24
+      ],
+      [
+        "Cmadd9",
+        48
+      ]
+    ],
+    "source_bars": 55,
+    "source_events": 194,
+    "source_note_ons": 169
+  },
+  "timing": {
+    "phaseBits": 16,
+    "envelopeTickCycles": 131072,
+    "nativeUnitsPerQuarter": 12,
+    "sourceDurationSeconds": 157.6392572944297,
+    "tempoBpm": 78,
+    "tempos": [
+      {
+        "tempoBpm": 78,
+        "phaseStep": 13959,
+        "actualTempoBpm": 78.00199091434479
+      },
+      {
+        "tempoBpm": 58,
+        "phaseStep": 10380,
+        "actualTempoBpm": 58.002769947052
+      },
+      {
+        "tempoBpm": 87,
+        "phaseStep": 15569,
+        "actualTempoBpm": 86.99856698513031
+      }
+    ],
+    "sharedGrid": "Native source quarter grid; tempo changes retained; meters remain 3/4 and 4/4"
+  },
+  "articulation": {
+    "attack": "piano/bowed",
+    "retrigger": "Piano full; bowed from zero",
+    "phaseContinuous": true,
+    "bowedAttackStep": 4,
+    "bowedMaximumLevel": 12,
+    "pianoReleaseStep": 2,
+    "bowedReleaseStep": 1
+  },
+  "releaseChannels": {
+    "primaryVoices": 4,
+    "tailSlots": 2,
+    "voiceAddresses": [
+      97,
+      102,
+      107,
+      112,
+      117,
+      122
+    ],
+    "voiceStateBytes": 30,
+    "pwmRingBytes": 16,
+    "tailGain": 0.5,
+    "stealing": "Quietest of two release levels",
+    "phaseContinuous": true,
+    "isrCycles": 15,
+    "requiredFuses": {
+      "low": "0x7A",
+      "high": "0xFF"
+    }
+  }
+}

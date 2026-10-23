@@ -1,0 +1,25 @@
+  baseline_fast75           :  75 bytes ASM==BIN OK
+  baseline_compact73        :  73 bytes ASM==BIN OK
+  baseline_compact_reset72  :  72 bytes ASM==BIN OK
+  baseline_unroll2_120      : 120 bytes ASM==BIN OK
+  fast75_peephole           :  75 bytes ASM==BIN OK
+  fast_p47_rotate           :  82 bytes ASM==BIN OK
+  speed74_reset             :  74 bytes ASM==BIN OK
+  speed81_reset             :  81 bytes ASM==BIN OK
+  baseline_fast75           : 64-KiB ROM CRC-16 pair 0/0, footer 99bea8ac
+  fast75_peephole           : 64-KiB ROM CRC-16 pair 0/0, footer aeab8110
+  fast_p47_rotate           : 64-KiB ROM CRC-16 pair 0/0, footer 94ace472
+  speed74_reset             : 64-KiB ROM CRC-16 pair 0/0, footer cf5bf9de
+  speed81_reset             : 64-KiB ROM CRC-16 pair 0/0, footer c0c96203
+  Verified composite polynomial, both periods, four-bit collision
+PASS: all source/binary/ROM/math checks
+
+bin/baseline_fast75.bin 75 bytes PASS 124 cases, cycles 18947651, T/byte 289.11821
+bin/fast75_peephole.bin 75 bytes PASS 124 cases, cycles 18882115, T/byte 288.11821
+bin/fast_p47_rotate.bin 82 bytes PASS 124 cases, cycles 18292291, T/byte 279.11821
+bin/speed74_reset.bin 74 bytes PASS 124 cases, cycles 18882111, T/byte 288.11815
+bin/speed81_reset.bin 81 bytes PASS 124 cases, cycles 18292287, T/byte 279.11815
+bin/baseline_compact73.bin 73 bytes PASS 124 cases, cycles 20119629, T/byte 307.00117
+bin/baseline_compact_reset72.bin 72 bytes PASS 124 cases, cycles 20119625, T/byte 307.00111
+bin/baseline_unroll2_120.bin 120 bytes PASS 124 cases, cycles 18292291, T/byte 279.11821
+PASS 992 full ROM emulations

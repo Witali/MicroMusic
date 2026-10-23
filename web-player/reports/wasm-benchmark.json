@@ -1,0 +1,65 @@
+{
+  "runtime": "v22.22.3",
+  "platform": "win32",
+  "arch": "x64",
+  "cpu": "AMD Ryzen 5 5600X 6-Core Processor             ",
+  "sampleRate": 48000,
+  "controls": {
+    "cutoff": 9000,
+    "volume": 0.65
+  },
+  "compiler": "clang version 24.0.0git (https:/github.com/llvm/llvm-project 55ea1f4ebea23d0355d5cdb075f1e12f28ab82d0)",
+  "wasmBytes": 45588,
+  "memoryBytes": 65536,
+  "nativeSourceSha256": "b55bdbfd00bc2331ef045ff0ffaa64245dfdc93b368729070768ef6cd0cd2b8f",
+  "wasmSha256": "217557a30b0e667d363964bd142f9c15e6dd0e4c2c4476e8b57ecafa867d289a",
+  "jsReferenceSha256": "f33ec0a17fbc4c519995f62be53644643e8a02a5140563df206c1c8205d070d9",
+  "method": "Median of seven warmed alternating runs of three seconds, normalized to one second. Same firmware, resampling, 35-Hz HPF, 9-kHz LPF (Q=0.5), gain=0.65. JS uses the previous block interpreter and independent Direct Form I filtering; C/WASM uses one call per audio block and transposed Direct Form II. Construction/compilation excluded. Final memory, cycles, IRQs and filtered PCM checksum verified.",
+  "results": [
+    {
+      "id": "rhythmic",
+      "flashSha256": "6a05b147bac66f4781b75f26b0473a60e057bc9c05d039a2676c0843f151dd0b",
+      "eepromSha256": "45ba4c476cf214ef25d91494c6fa70b2567722b44403bcd25b09326e190fee37",
+      "jsMs": 41.88850000000002,
+      "wasmMs": 26.466099999999944,
+      "speedup": 1.5827228038887524,
+      "realtimeHeadroom": 37.784184296137404
+    },
+    {
+      "id": "alicia",
+      "flashSha256": "11e975d5638764ab06314f325aa68a2081d06b21c48bd7707cf304ae34b00890",
+      "eepromSha256": "233eb6508fce5e44d1230ea6e2b1eaff23bd1dc6c35ea3c30a80678c95255e45",
+      "jsMs": 46.2182000000001,
+      "wasmMs": 29.194200000000063,
+      "speedup": 1.5831295257277131,
+      "realtimeHeadroom": 34.253379095847734
+    },
+    {
+      "id": "turkish-march",
+      "flashSha256": "75976c7c66bf88e10d2e4b1bd63d31cfb8b3542ee0fe8c0e43123647bcb17430",
+      "eepromSha256": "896736a3ec3dd8b64facf639507349cb4aa26a9161b3f26adec3fbdd25985173",
+      "jsMs": 34.76076666666677,
+      "wasmMs": 21.66070000000006,
+      "speedup": 1.6047850100258383,
+      "realtimeHeadroom": 46.16655971413654
+    },
+    {
+      "id": "children",
+      "flashSha256": "4b5e2c03a82e6891a111f20db02dec575c63b4f0644d46c97577823003d05233",
+      "eepromSha256": "bfdbabaa2a1d87396593b4636fa8c496f61abede05cb2380e18d9356310f4589",
+      "jsMs": 39.62913333333321,
+      "wasmMs": 24.795666666666573,
+      "speedup": 1.5982281850323319,
+      "realtimeHeadroom": 40.32962748867425
+    },
+    {
+      "id": "greensleeves",
+      "flashSha256": "f994991ab83161a7d17d33af460006d8f2d4ff7018d2fd22261c35a531f03224",
+      "eepromSha256": "f81755e5b88d7041208ce5e59da3edf864d4c2162dfdaee1ba4f306f64cff60e",
+      "jsMs": 39.889900000000125,
+      "wasmMs": 25.259699999999913,
+      "speedup": 1.5791913601507643,
+      "realtimeHeadroom": 39.58875204376946
+    }
+  ]
+}

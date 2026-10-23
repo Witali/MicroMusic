@@ -1,0 +1,16 @@
+family,polynomial_low_hex,variant,code_bytes,cycles_for_full_65536B,cycles_per_rom_byte,seconds_at_3_5MHz,source_research_dir,note
+single,002D,fast39,39,8785713,134.059341,2.510204,01_single_crc16_foundation,"stronger single CRC16, 134.059 T/B"
+single,0009,fast33,33,6164278,94.059418,1.761222,01_single_crc16_foundation,"smaller/faster, different polynomial"
+dual,0007+0009,2passes,66,13049432,199.118530,3.728409,03_first_dual_crc16,two independent ROM scans
+dual,0007+0009,onepass optimized v4,66,11738705,179.118423,3.353916,06_one_pass_v4_optimization,"SP/POP PSW, 2 physical data reads per byte"
+dual,0007+0021,onepass newpair,66,11738705,179.118423,3.353916,07_better_pair_0007_0021,improved local 4bit detection vs 0007+0009
+dual,0025+0047,onepass first,92,19013201,290.118423,5.432343,08_pair_0025_0047_initial,not faster or smaller than two-pass
+dual,0025+0047,compact original,73,20119629,307.001175,5.748465,08_pair_0025_0047_initial,early size-oriented two-pass
+dual,0025+0047,fast v4,75,18947651,289.118210,5.413615,08_pair_0025_0047_initial,before peephole
+dual,0025+0047,fast75 v5,75,18882115,288.118210,5.394890,09_pair_0025_0047_v5_fast,recommended balance
+dual,0025+0047,fast82 v5,82,18292291,279.118210,5.226369,09_pair_0025_0047_v5_fast,faster compact build
+dual,0025+0047,unroll 8,390,17800771,271.618210,5.085935,08_pair_0025_0047_initial,larger but faster
+dual,0025+0047,v6 min reset,41,50200710,766.002045,14.343060,10_pair_0025_0047_v6_minimal,"no DI, only after hardware reset"
+dual,0025+0047,v6 min42,42,50200714,766.002106,14.343061,10_pair_0025_0047_v6_minimal,smallest universal build
+dual,0025+0047,v6 bitloop u2,47,42336394,646.002106,12.096113,10_pair_0025_0047_v6_minimal,mid size/speed
+dual,0025+0047,v6 bitloop u4,57,38404234,586.002106,10.972638,10_pair_0025_0047_v6_minimal,mid size/speed

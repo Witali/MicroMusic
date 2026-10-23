@@ -4,10 +4,13 @@ const $ = id => document.getElementById(id);
 const formatHex = (value, length=2) => value.toString(16).toUpperCase().padStart(length,'0');
 const canvas = $('wave');
 let catalog, selected, runtime, runtimeReady=false, connectedRuntime, playing=false, busy=false;
-let audio, output, gain, lowpass, scopes=[new Float32Array(512)], headroom=0;
+let audio, output, scopes=[new Float32Array(512)], headroom=0;
 let session=0, hasPlayed=false, realtime;
+let lastScopeDraw=-Infinity, scopeDrawTimer;
 
 function showError(message) { $('error').textContent = message; $('error').hidden = !message; }
+function audioControls() { return {cutoff:+$('cutoff').value,volume:+$('volume').value}; }
+function selectedEngine() { return document.querySelector('input[name="engine"]:checked').value; }
 function transport() {
   document.body.dataset.playing = String(playing);
   $('play-icon').textContent = playing ? 'Ⅱ' : '▶';
@@ -16,11 +19,18 @@ function transport() {
   $('run-status').textContent = busy ? 'Подключение звука…' : playing ? 'Воспроизведение' : runtimeReady ? (hasPlayed ? 'Пауза' : 'Готов к запуску') : 'Загрузка образа…';
 }
 function draw() {
-  drawWave(canvas, scopes[0], '#c9ef86');
-  if (scopes[1]) drawWave($('wave-right'), scopes[1], '#86d9ef');
+  const now=performance.now(), wait=1000/30-(now-lastScopeDraw);
+  if(wait>0){
+    if(scopeDrawTimer===undefined)scopeDrawTimer=setTimeout(()=>{scopeDrawTimer=undefined;draw();},wait);
+    return;
+  }
+  if(scopeDrawTimer!==undefined){clearTimeout(scopeDrawTimer);scopeDrawTimer=undefined;}
+  lastScopeDraw=now;
+  drawWave(canvas,scopes[0],'#c9ef86');
+  if(scopes[1])drawWave($('wave-right'),scopes[1],'#86d9ef');
 }
-function drawWave(canvas, scope, color) {
-  const ctx = canvas.getContext('2d');
+function drawWave(canvas,scope,color){
+  const ctx=canvas.getContext('2d');
   const ratio = window.devicePixelRatio || 1, width=canvas.clientWidth, height=canvas.clientHeight;
   if (!width || !height) return;
   if (canvas.width !== Math.round(width*ratio) || canvas.height !== Math.round(height*ratio)) { canvas.width=Math.round(width*ratio); canvas.height=Math.round(height*ratio); }
@@ -56,7 +66,10 @@ function renderCatalog() {
     const number=document.createElement('span'); number.className='card-number'; number.textContent=entry.order;
     const body=document.createElement('span'); body.className='card-body';
     const name=document.createElement('strong'); name.textContent=entry.title;
-    const meta=document.createElement('span'); meta.className='card-meta'; meta.textContent=`${entry.flashBytes} Б Flash${entry.eepromBytes ? ' + 64 Б EEPROM' : ''} · ${entry.audioChannels===2 ? 'СТЕРЕО L / R' : 'МОНО'}`;
+    const voices=entry.voices??4;
+    const meta=document.createElement('span'); meta.className='card-meta'; meta.textContent=entry.kind==='speech'
+      ? `${entry.flashBytes} Б Flash · речь 7,5 кГц`
+      : `${entry.flashBytes} Б Flash${entry.eepromBytes ? ' + 64 Б EEPROM' : ''} · ${entry.status==='experimental' ? 'ТЕСТ' : `${voices} ${voices===1?'ОСНОВНОЙ':'ОСНОВНЫХ'}`}${entry.releaseTailSlots ? ` · ${entry.releaseTailSlots} РЕЗЕРВНЫХ` : ''}${entry.audioChannels===2?' · СТЕРЕО L / R':''}`;
     const arrow=document.createElement('span'); arrow.className='card-arrow'; arrow.textContent=selected?.id===entry.id ? '●' : '↗'; arrow.setAttribute('aria-hidden','true');
     body.append(name,meta); button.append(number,body,arrow); button.onclick=()=>load(entry); item.append(button); $('catalog').append(item);
   }
@@ -65,8 +78,8 @@ function renderCatalog() {
 function connectAudio() {
   if (!output || !runtimeReady || connectedRuntime===runtime) return;
   const channel=new MessageChannel();
-  output.port.postMessage({type:'connect',session,channels:selected.audioChannels || 1,port:channel.port1},[channel.port1]);
-  runtime.postMessage({type:'audio-port',port:channel.port2,sampleRate:audio.sampleRate},[channel.port2]);
+  output.port.postMessage({type:'connect',session,channels:selected.audioChannels||1,port:channel.port1},[channel.port1]);
+  runtime.postMessage({type:'audio-port',port:channel.port2,sampleRate:audio.sampleRate,controls:audioControls()},[channel.port2]);
   connectedRuntime=runtime;
   document.querySelector('.scope-scale').textContent=(4096/audio.sampleRate*1000).toFixed(0)+' мс';
 }
@@ -78,30 +91,35 @@ function load(entry) {
   selected=entry; headroom=0;
   const stereo=entry.audioChannels===2;
   document.body.dataset.stereo=String(stereo);
-  scopes=Array.from({length:stereo ? 2 : 1},()=>new Float32Array(512));
-  $('stereo-output').hidden=!stereo; $('scope-right').hidden=!stereo;
-  $('left-output').textContent=stereo ? 'L · PB0 / OC0A · вывод 5' : 'PB1 / OC0B · вывод 6';
-  $('left-output').title=stereo ? 'Левый выход, вывод 5 в 8-выводном корпусе' : 'Моно, вывод 6 в 8-выводном корпусе';
-  $('audio-mode').textContent=stereo ? 'СТЕРЕО · 2 PWM-ВЫХОДА' : 'МОНО · 1 PWM-ВЫХОД';
-  $('scope-left-label').textContent=stereo ? 'L · OCR0A' : 'МОНО · OCR0B';
-  $('average-label').textContent=stereo ? 'СРЕДНИЙ PWM · L / R' : 'СРЕДНИЙ PWM';
-  $('panorama').hidden=!stereo;
-  $('wave').setAttribute('aria-label',stereo ? 'Левый канал PWM до фильтра' : 'Осциллограмма PWM до фильтра');
+  scopes=Array.from({length:stereo?2:1},()=>new Float32Array(512));
+  $('stereo-output').hidden=!stereo;$('scope-right').hidden=!stereo;$('panorama').hidden=!stereo;
+  $('right-output-label').textContent=(stereo?'R · ':'')+'PB1 / OC0B · вывод 6';
+  $('audio-mode').textContent=stereo?'СТЕРЕО · 2 PWM-ВЫХОДА':'МОНО · 1 PWM-ВЫХОД';
+  $('scope-left-label').textContent=stereo?'L · OCR0A':'МОНО · OCR0B';
+  $('wave').setAttribute('aria-label',stereo?'Левый канал PWM до фильтра':'Осциллограмма PWM до фильтра');
+  $('average-label').textContent=stereo?'СРЕДНИЙ PWM · L / R':'СРЕДНИЙ PWM';
+  document.querySelector('.chip').setAttribute('aria-label',stereo?'ATtiny13A, вид сверху: правый канал PB1 вывод 6, левый канал PB0 вывод 5':'ATtiny13A, вид сверху: выход PWM PB1 вывод 6');
   draw();
-  $('elapsed').textContent='00:00.0'; $('average').textContent='128.0'; $('headroom').textContent='—';
+  $('elapsed').textContent='00:00.0'; $('average').textContent=stereo?'128.0 / 128.0':'128.0'; $('headroom').textContent='—';
   $('tempo').textContent='100.0%'; $('lag').textContent='0.0 мс'; realtime?.resetAnchor();
   delete $('tempo').dataset.wallMs; delete $('tempo').dataset.audioMs;
   $('selected-order').textContent=entry.order; $('selected-title').textContent=entry.title; $('selected-description').textContent=entry.description;
+  const flashSource=entry.source||'data:text/plain;charset=utf-8,'+encodeURIComponent(entry.flashHex);
   $('rom-name').textContent=`attiny13a-${entry.id}.hex`; $('rom-details').textContent=`${entry.flashBytes} / 1024 Б Flash · ${entry.eepromBytes} / 64 Б EEPROM · ${(entry.sampleHz/1000).toLocaleString('ru')} кГц отсчёты`;
-  $('rom-name').href=entry.source; $('rom-name').download=`attiny13a-${entry.id}.hex`;
+  $('rom-name').href=flashSource; $('rom-name').download=`attiny13a-${entry.id}.hex`;
   $('rom-hash').textContent=entry.flashSha256.slice(0,16)+'…'; $('rom-hash').title='SHA-256 Flash: '+entry.flashSha256;
   $('rom-size').textContent=entry.flashBytes+' байт';
-  $('original-player').href=entry.originalPlayer; $('wav-link').hidden=!entry.preview; if (entry.preview) $('wav-link').href=entry.preview;
-  $('download-eeprom').hidden=!entry.eepromHex; $('download').disabled=$('reset').disabled=false;
+  $('original-player').hidden=!entry.originalPlayer; if(entry.originalPlayer)$('original-player').href=entry.originalPlayer;
+  $('wav-link').hidden=!entry.preview; if (entry.preview) $('wav-link').href=entry.preview;
+  $('reference-wav').hidden=!entry.reference; if(entry.reference)$('reference-wav').href=entry.reference;
+  $('download-eeprom').hidden=!entry.eepromHex; $('reset').disabled=false;
+  for(const [id,source,suffix] of [['download',flashSource,''],['download-eeprom',entry.eepromSource,'-eeprom']]){
+    const link=$(id);if(source){link.href=source;link.download=`attiny13a-${entry.id}${suffix}.hex`;link.removeAttribute('aria-disabled');}
+  }
   const bytes=parseHex(entry.flashHex); $('memory').textContent=Array.from({length:8},(_,line)=>formatHex(line*16,4)+'  '+Array.from(bytes.subarray(line*16,line*16+16),x=>formatHex(x)).join(' ')).join('\n');
   const url=new URL(location.href); url.searchParams.set('firmware',entry.id); history.replaceState(null,'',url);
   renderCatalog(); transport();
-  const worker=new Worker(new URL('./worker.js',import.meta.url),{type:'module'}); runtime=worker;
+  const worker=new Worker(new URL('./worker.js?v=20261023-stereo',import.meta.url),{type:'module'}); runtime=worker;
   worker.onmessage=({data})=>{
     if (runtime!==worker) return;
     if (data.type==='ready') { runtimeReady=true; stateUI(data.state); connectAudio(); transport(); }
@@ -109,10 +127,10 @@ function load(entry) {
       stateUI(data.state); scopes=data.scopes; draw(); $('average').textContent=data.averages.map(x=>x.toFixed(1)).join(' / ');
       headroom=headroom ? headroom*.8+data.headroom*.2 : data.headroom; $('headroom').textContent=headroom.toFixed(1)+'×';
     }
-    if (data.type==='error') { pause(); showError('Ошибка эмуляции: '+data.message); }
+    if (data.type==='error') { runtimeReady=false; pause(); showError('Ошибка эмуляции: '+data.message); }
   };
   worker.onerror=event=>{ if (runtime===worker) { runtimeReady=false; pause(); showError('Не удалось запустить AVR-эмулятор: '+event.message); } };
-  worker.postMessage({type:'init',entry,sampleRate:audio?.sampleRate||48000});
+  worker.postMessage({type:'init',entry,engine:selectedEngine(),sampleRate:audio?.sampleRate||48000,controls:audioControls()});
 }
 async function ensureAudio() {
   if (audio) { await audio.resume(); return; }
@@ -123,10 +141,7 @@ async function ensureAudio() {
     if (!context.audioWorklet) throw new Error('AudioWorklet недоступен. Откройте страницу через localhost или HTTPS.');
     await context.audioWorklet.addModule(new URL('./audio-worklet.js',import.meta.url));
     audio=context; realtime=new RealtimeMonitor(audio.sampleRate); output=new AudioWorkletNode(audio,'firmware-output',{numberOfInputs:0,numberOfOutputs:1,outputChannelCount:[2]});
-    const highpass=audio.createBiquadFilter(); highpass.type='highpass'; highpass.frequency.value=35; highpass.Q.value=20*Math.log10(.5);
-    lowpass=audio.createBiquadFilter(); lowpass.type='lowpass'; lowpass.Q.value=20*Math.log10(.5); lowpass.frequency.value=Math.min(+$('cutoff').value,audio.sampleRate*.45);
-    gain=audio.createGain(); gain.gain.value=+$('volume').value;
-    output.connect(highpass); highpass.connect(lowpass); lowpass.connect(gain); gain.connect(audio.destination);
+    output.connect(audio.destination);
     output.port.onmessage=({data})=>{
       if (data.type!=='position' || data.session!==session || !playing) return;
       const timing=realtime.observe(data,performance.now()),seconds=timing.seconds;
@@ -150,21 +165,37 @@ async function toggle() {
   } catch (error) { showError('Не удалось включить звук: '+error.message); }
   finally { busy=false; transport(); }
 }
-function download(eeprom=false) {
-  const blob=new Blob([eeprom ? selected.eepromHex : selected.flashHex],{type:'text/plain'}),url=URL.createObjectURL(blob);
-  const link=document.createElement('a'); link.href=url; link.download=`attiny13a-${selected.id}${eeprom ? '-eeprom' : ''}.hex`; link.click(); setTimeout(()=>URL.revokeObjectURL(url),1000);
-}
 $('play').onclick=toggle; $('reset').onclick=()=>load(selected); $('search').oninput=renderCatalog;
-$('download').onclick=()=>download(); $('download-eeprom').onclick=()=>download(true);
-$('volume').oninput=()=>{ if (gain) gain.gain.setTargetAtTime(+$('volume').value,audio.currentTime,.015); };
-$('cutoff').onchange=()=>{ if (lowpass) lowpass.frequency.setTargetAtTime(Math.min(+$('cutoff').value,audio.sampleRate*.45),audio.currentTime,.015); };
+$('volume').oninput=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
+$('cutoff').onchange=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
+for (const choice of document.querySelectorAll('input[name="engine"]')) choice.onchange=()=>{ if (selected) load(selected); };
 document.addEventListener('keydown',event=>{ if (event.code==='Space' && !event.repeat && !/INPUT|SELECT|TEXTAREA|BUTTON|A/.test(event.target.tagName)) { event.preventDefault(); toggle(); } });
-document.addEventListener('visibilitychange',()=>{ if (document.hidden) pause(); });
 window.addEventListener('pagehide',()=>{ runtime?.terminate(); audio?.close(); });
 try {
-  const response=await fetch('./firmware.json'); if (!response.ok) throw new Error('HTTP '+response.status);
+  const speech=new URL(location.href).searchParams.get('collection')==='hq4';
+  if(speech){
+    document.title='MicroMusic / ATtiny13A — речь HQ4';
+    document.querySelector('.intro .eyebrow').textContent='ATtiny13A / РЕЧЬ ИЗ МАШИННОГО КОДА';
+    document.querySelector('.intro h1').textContent='Речь в одном килобайте.';
+    document.querySelector('.subtitle').textContent='MiniLPC HQ4: три фразы и вариант с максимальным STOI.';
+    document.querySelector('.library h2').textContent='Как звучит HQ4?';
+    document.querySelector('.library-caption').textContent='Сохранённые прошивки. Переключайте JS и WASM для сравнения.';
+    document.querySelector('.source-only').hidden=true;
+    const history=document.querySelector('.header-link');history.href='../ATtiny13A/Sound/AUDIO_REFERENCES.md';history.textContent='Звуковые эталоны ↗';
+    $('original-player').textContent='Плеер из ChatGPT ↗';
+    $('speech-audit').hidden=false;
+    document.querySelector('footer span:last-child').textContent='MiniLPC HQ4 · 4 образа · Worker + AudioWorklet';
+  }
+  // Public speech playback needs only the source-built catalog. Local listening
+  // can additionally use restored original WAVs and the archived ChatGPT player.
+  let response;
+  if(speech&&['127.0.0.1','localhost'].includes(location.hostname)) {
+    response=await fetch('../build/hq4-preview/firmware.json');
+  }
+  if(!response?.ok)response=await fetch(speech?'./hq4-firmware.json':'./firmware.json');
+  if (!response.ok) throw new Error('HTTP '+response.status);
   catalog=await response.json();
   const id=new URL(location.href).searchParams.get('firmware')||catalog.defaultId;
   load(catalog.entries.find(e=>e.id===id)||catalog.entries.find(e=>e.id===catalog.defaultId));
-} catch (error) { showError('Не удалось загрузить каталог. Запустите локальный сервер по инструкции README.txt. '+error.message); }
+} catch (error) { showError('Не удалось загрузить каталог прошивок. Обновите страницу или проверьте подключение. '+error.message); }
 draw();

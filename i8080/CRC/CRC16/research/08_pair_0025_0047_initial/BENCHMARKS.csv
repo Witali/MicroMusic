@@ -1,0 +1,9 @@
+profile,code_bytes,full_rom_cycles,tstates_per_byte,seconds_2MHz,seconds_3.5MHz,notes
+compact_reset72,72,20119625,307.001114,10.059812,5.748464,"Minimum code, hardware RESET only"
+compact73,73,20119629,307.001175,10.059814,5.748465,"Minimum size, explicit DI"
+fast_reset74,74,18947647,289.118149,9.473823,5.413613,"Fast and small, hardware RESET only"
+fast75,75,18947651,289.118210,9.473826,5.413615,Recommended general-purpose firmware
+unroll2_120,120,18292291,279.118210,9.146145,5.226369,Speed optimized 2 bytes/iteration
+unroll4_210,210,17964611,274.118210,8.982306,5.132746,Speed optimized 4 bytes/iteration
+unroll8_390,390,17800771,271.618210,8.900386,5.085935,"Fastest tested, 8 bytes/iteration"
+onepass92,92,19013201,290.118423,9.506600,5.432343,Single logical pass (slower/larger than fast75)

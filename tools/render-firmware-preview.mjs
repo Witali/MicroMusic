@@ -4,14 +4,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { Renderer } from '../web-player/lib/renderer.js';
 const folder = process.argv[2], seconds = Number(process.argv[3] || 14);
-const cutoff=Number(process.argv[4]||4000),q=Number(process.argv[5]||.5);
+const cutoff=Number(process.argv[4]||9000),q=Number(process.argv[5]||.5);
 if (!folder || !Number.isFinite(seconds) || seconds <= 0 || seconds > 300)
   throw new Error('Usage: node tools/render-firmware-preview.mjs firmware-folder [seconds]');
-const reportPath=path.join(folder,'build-report.json');
-const channels=fs.existsSync(reportPath) ? (JSON.parse(fs.readFileSync(reportPath)).audioChannels || 1) : 1;
-const rate = 48000, renderer = new Renderer({pwmHz: 37500, audioChannels:channels,
+const channels=JSON.parse(fs.readFileSync(path.join(folder,'build-report.json'))).audioChannels||1;
+const rate = 48000, renderer = new Renderer({pwmHz: 37500,audioChannels:channels,
   flashHex: fs.readFileSync(path.join(folder, 'synth.hex'), 'utf8'),
-  eepromHex: fs.readFileSync(path.join(folder, 'eeprom.hex'), 'utf8')}, rate);
+  eepromHex: fs.readFileSync(path.join(folder, 'eeprom.hex'), 'utf8')}, rate,{filtered:false});
 function biquad(type, frequency) {
   const w = 2 * Math.PI * frequency / rate, cos = Math.cos(w), alpha = Math.sin(w) / (2 * q);
   const a0 = 1 + alpha, b0 = (type === 'highpass' ? 1 + cos : 1 - cos) / 2;

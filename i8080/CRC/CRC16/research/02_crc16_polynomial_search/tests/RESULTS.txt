@@ -1,0 +1,11 @@
+odd-fast 0x7 36 bytes 6885169 cycles 105.059341 T/B GOOD PASS
+  random image: PASS
+  five isolated errors including CRC footer: detected
+  triple error: detected
+  intentional 2-bit collision: NOT detected (expected)
+  intentional local 4-bit collision: NOT detected (expected)
+  all single positions + 2KiB <=3-bit guaranteed detection: PASS
+fastest 0x9 33 bytes 6164278 cycles 94.059418 T/B GOOD PASS
+balanced 0x1b 38 bytes 8130353 cycles 124.059341 T/B GOOD PASS
+primitive 0x2d 39 bytes 8785713 cycles 134.059341 T/B GOOD PASS
+PASS: emulator, arithmetic, intentional undetected patterns

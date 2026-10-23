@@ -1,0 +1,73 @@
+{
+  "schema": "micromusic-avr-hq4-official-audit-v1",
+  "date": "2026-10-22",
+  "runtime": "Node.js v22.22.3",
+  "device": "ATtiny13A",
+  "core": "AVRe",
+  "officialSources": [
+    {
+      "url": "https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf",
+      "document": "DS40002307A, section 21",
+      "sha256": "7c363e5deb94b5527a3ebfe9ac98338ce38e7d4499fe481100b7ede44bf37445"
+    },
+    {
+      "url": "https://ww1.microchip.com/downloads/en/DeviceDoc/AVR-Instruction-Set-Manual-DS40002198A.pdf",
+      "document": "DS40002198A, sections 5 and 6.2.2",
+      "sha256": "d8e75ad7cc92de2b86c718495ed9392096e0192a08269a4dba8da16075be1e00"
+    }
+  ],
+  "implementedSummaryRows": 105,
+  "unsupportedSummaryRows": 18,
+  "tests": {
+    "tests": 402,
+    "pass": 402,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "tapSha256": "81a9c251e84fd84c0abe30935a36348d0842408bd2ad4e2b0ca1ed7c8a926c6b",
+  "textHashNormalization": "UTF-8, CRLF normalized to LF",
+  "inputs": {
+    "web-player/lib/avr-reference.js": "da93381856fa293bc274459c27418c7054059a5bc1c582be065625d03a0cdf10",
+    "web-player/native/avr.c": "79c1297b12743d7496da6d2734085292d4a9a8a7ddd6e472065e87f01468bfe6",
+    "web-player/scripts/build-wasm.mjs": "fa75f1354f77c5fda279001b9dc7105be40489e0fa06be96ebc352e26fde58e5",
+    "web-player/tests/fixtures/block-optimizations.json": "333087ddbe48f9a51d815eefa96edb2e554fb2141b5187b72e42bf7390dd7354",
+    "web-player/tests/alicia.test.mjs": "2b778aab2957c27b4e9cce7d4e926158a809764bfbe52990aa9fe1e52d731d2d",
+    "web-player/tests/audio.test.mjs": "f8ef688005cb037ae3510d23e3415a1f877411e6a2597a158adb6a68cf1b8907",
+    "web-player/tests/avr-blocks.test.mjs": "8d64ec127ce30cf9a1d08ee1da6d881c97d5353ca406a02753fcf55afd1ff398",
+    "web-player/tests/avr-candidates.test.mjs": "ceaad506f4283fb26d294ff4c584ee127528bb34c867c3c09fc801175674cb36",
+    "web-player/tests/avr-coverage.test.mjs": "8ff41adfce04f08fa67708c21c69843cb517acd886e8d3ba29bef16c5ceac426",
+    "web-player/tests/avr-idle.test.mjs": "5a5df6dcbc9558dab6755f2607524f57a170820fc1d077213404ce9abae3f78b",
+    "web-player/tests/avr-indirect.test.mjs": "e387665a948888270046063eca90666fb5a303920ddb97a841de44ee0526fc8f",
+    "web-player/tests/avr-instructions.test.mjs": "6ce30e58322300d1f0afde0948be6e99c019bd4e3ac28ef6fc71ecd5def3ec0b",
+    "web-player/tests/avr-optimization-regressions.test.mjs": "851052c0e797201f5885b9a6595edffa9a61fcd23b9a2c68e795648db0da450a",
+    "web-player/tests/avr-speech-instructions.test.mjs": "9f3c9a0f44cc2856e2b58f2495297a7c225a450e11d652ce729186bbcfa1f6bf",
+    "web-player/tests/avr-timing.test.mjs": "53d4289936e50f4bcf0f21ba47c7688bdc11e40ba54d8a9af572a6565f11f3b8",
+    "web-player/tests/avr-wasm.test.mjs": "fa2cc729b65d693607f47a55ea76491d49bb43a2486ae32fa796a8c0f2e99d00",
+    "web-player/tests/browser-smoke.mjs": "b0f1c8764b86192aac095add16dd1ce1e9bac9968ae987763cdf0ca71dddb303",
+    "web-player/tests/children.test.mjs": "c3fdfef2a318e639553c6b4b32b382736cc4495a5c400f02c048f362eaaa5a05",
+    "web-player/tests/core.test.mjs": "982bdbc7ce96f134bbb7d2a476e3fd0e50f6040aa161716b9f0341fc4bc41af9",
+    "web-player/tests/engines.test.mjs": "eb9419695e9f95b785e77a66f13af09a58b75b8bc23f46ad8094a99895f84c6d",
+    "web-player/tests/extended/avr-long-run.test.mjs": "4014fbd41689cd55ca445113360819ef488edca9409d372c23603e9f33099d44",
+    "web-player/tests/greensleeves.test.mjs": "286b0a55c04e9b5888af2e32bebaf072ca1249be90ed9f639ba9de2c8503528f",
+    "web-player/tests/helpers/avr-expectations.mjs": "26cc51deca29d10ff3a804b5b4d04d849c6699e9a5655a9c5013ed90124f36bf",
+    "web-player/tests/helpers/avr-test-state.mjs": "06ea86cb625b9abd4c4ed824994a8edc93c1ed5ee952b6151fb2a0f902aa73b0",
+    "web-player/tests/helpers/browser-worker-node.mjs": "2cfcd00a40ca7095aa520857863f9b76b571e1efbb190e9fbc81f5fc39f0176c",
+    "web-player/tests/helpers/native-candidates.mjs": "605eca85c1e7b48f94c0ac31cdfd7e5ef8ab93a7bddcc371e82e1018a4db2b06",
+    "web-player/tests/helpers/native-test-loader.mjs": "3cd89b987938205368e060e95d6f702bc2cb9136f111c924f931d4b4680bd902",
+    "web-player/tests/helpers/reference-audio.mjs": "43c83efae424e2202df8f25a446ebf1ce222474fe125c3056b0d8e3194c3a47d",
+    "web-player/tests/realtime.test.mjs": "ca9860fdadbfab40a5c86b7fe34f2d7df72cf72ba09c66729623eaa5890996fc",
+    "web-player/tests/release-engine.test.mjs": "59e935d2d7a8eb09c5ac513c205cc392ea9f546095bd51f7d7efe59d04c422dd",
+    "web-player/tests/rhythmic.test.mjs": "f2c71efe43b677656d4c90d95c8ffb147edf8f516eb156e977dd28acc79b883f",
+    "web-player/tests/turkish-march.test.mjs": "bab331b1c0cd00bfb2ebe389df5c39ed7f7d1011ed1de6e51e2c56bfc8ee0c7c"
+  },
+  "wasmSha256": "24bc946fc84695e174c430f77e7f98065ed98099cd7bbb02e6f5acd9906bdc37",
+  "comparisonReport": "ATtiny13A/Sound/research/hq4-emulator-comparison.json",
+  "browserChecks": [
+    "HQ4 in repository Worker/AudioWorklet player with JS",
+    "HQ4 in repository Worker/AudioWorklet player with WASM"
+  ],
+  "hardwareTested": false,
+  "pass": true
+}

@@ -25,16 +25,42 @@ def layout(pieces):
     # A reference may start inside a longer section and reuse its terminator.
     roots=[s for s in unique if not any(len(t)>len(s) and t.endswith(s) for t in unique)]
     roots.sort(key=lambda s:unique.index(s))
-    offsets={};storage=bytearray()
-    for root in roots:
-        start=len(storage);storage.extend(root);storage.append(255)
-        for s in unique:
-            if s not in offsets and root.endswith(s):offsets[s]=start+len(root)-len(s)
+    def place(order):
+        offsets={};storage=bytearray()
+        for root in order:
+            start=len(storage);storage.extend(root);storage.append(255)
+            for s in unique:
+                if s not in offsets and root.endswith(s):offsets[s]=start+len(root)-len(s)
+        return offsets,storage
+    offsets,storage=place(roots)
+    if max(offsets.values(),default=0)>255:
+        # Only playlist entry addresses are eight bits; Z/LPM may continue
+        # beyond byte255. All starts in earlier roots precede the last root's
+        # own start, so the largest entry belongs to that last root. A suffix
+        # shared with another root is already assigned before we reach it.
+        # Thus only exclusive suffixes constrain a root's final tail budget.
+        exclusive_delta={root:0 for root in roots}
+        for word in unique:
+            owner=None
+            for root in roots:
+                if root.endswith(word):
+                    if owner is not None:
+                        owner=None;break
+                    owner=root
+            if owner is not None:
+                exclusive_delta[owner]=max(exclusive_delta[owner],len(owner)-len(word))
+        # For total storage T, max entry = T - (len(last)+1-max_delta).
+        # Choose its minimum over all root orders. Preserve the current last
+        # root on ties; valid existing layouts never enter this branch.
+        last=max(roots,key=lambda root:(len(root)+1-exclusive_delta[root],root==roots[-1]))
+        if last!=roots[-1]:offsets,storage=place([root for root in roots if root!=last]+[last])
     return dict(storage=bytes(storage),offsets=offsets,playlist=[offsets[s] for s in pieces],
                 unique=unique,cost=len(storage)+len(pieces))
 
 
-def pack(stream,source_chunks=(),candidate_limit=96):
+def pack(stream,source_chunks=(),candidate_limit=96,max_entry_offset=None):
+    if max_entry_offset is not None and (type(max_entry_offset) is not int or max_entry_offset<0):
+        raise ValueError('Entry offset limit must be a nonnegative integer')
     stream=bytes(stream);aa=atoms(stream)
     vocabulary={a:i for i,a in enumerate(dict.fromkeys(aa))}
     seq=tuple(vocabulary[a] for a in aa);n=len(seq)
@@ -103,6 +129,10 @@ def pack(stream,source_chunks=(),candidate_limit=96):
         assert b''.join(pieces)==stream
         return result
 
+    def fitness(result):
+        base=(result['cost'],len(result['storage']),result['storage'])
+        if max_entry_offset is None:return base
+        return (max(0,max(result['offsets'].values(),default=0)-max_entry_offset),)+base
     trials=0
     def improve(seed):
         nonlocal trials
@@ -113,18 +143,18 @@ def pack(stream,source_chunks=(),candidate_limit=96):
             removals.append({key for key in chosen if current['counts'][key]>1})
             for reduced in removals:
                 trial=parse(reduced);trials+=1
-                if (trial['cost'],len(trial['storage']),trial['storage'])<(best['cost'],len(best['storage']),best['storage']):best=trial
+                if fitness(trial)<fitness(best):best=trial
             for key in candidates:
                 if key in chosen:continue
                 trial=parse(chosen|{key});trials+=1
-                if (trial['cost'],len(trial['storage']),trial['storage'])<(best['cost'],len(best['storage']),best['storage']):best=trial
-            if best['cost']>=current['cost']:break
+                if fitness(trial)<fitness(best):best=trial
+            if fitness(best)>=fitness(current):break
             current=best
         return current
 
     baseline=layout([bytes(c) for c in source_chunks]) if source_chunks else layout([stream])
     best=min([baseline,*[layout(chunks) for chunks in seed_chunks],improve(set()),*[improve(seed) for seed in manual]],
-             key=lambda r:(r['cost'],len(r['storage']),r['storage']))
+             key=fitness)
     names={word:f'packed_{i:03d}' for i,word in enumerate(best['unique'])}
     # Recover words for each emitted reference, including shared suffixes.
     by_offset={best['offsets'][word]:names[word] for word in best['unique']}

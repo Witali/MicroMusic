@@ -1,0 +1,64 @@
+{
+  "slug": "pic-mplab",
+  "target": "PIC16F1503/validation/mplab",
+  "title": "Prepare independent MPLAB comparison",
+  "origin": {
+    "archive": "PIC16F1503_MPLAB_SIM_comparison_kit.zip",
+    "sha256": "dbb5602cae3a8a9af773e1e2f4831412fc8bc4e0c43cbebaec2f20d1456f2aad"
+  },
+  "previous_commit": "43682a3862ab30aa7adfc1171d1f06cd2f8fa4d8",
+  "files": [
+    {
+      "path": "PIC16F1503/validation/mplab/README_RU.md",
+      "sha256": "8416cb5caa7d791b7667723c4cfabf3cef53f11fac81e0ddfc344359adada372",
+      "bytes": 4768
+    },
+    {
+      "path": "PIC16F1503/validation/mplab/compare_logs.py",
+      "sha256": "451d8679318009396d2ffc3e5ead494f56aed2699867468c273d0d246a9a2409",
+      "bytes": 1772
+    },
+    {
+      "path": "PIC16F1503/validation/mplab/generate_reference.mjs",
+      "sha256": "630b9afaa47338ed337ed34fe49a973e5622c93d4f3bc1bcf24ae74291e37ed0",
+      "bytes": 1416
+    },
+    {
+      "path": "PIC16F1503/validation/mplab/local_tests.log",
+      "sha256": "d26164d7039881e6e42d27abbb1d291f89f7b938a33a7e4183861e4c179b602b",
+      "bytes": 17278
+    },
+    {
+      "path": "PIC16F1503/validation/mplab/mdb_check.txt",
+      "sha256": "72188d4a19d628e946deb6cfe07f705dcf3d00ad9afd18a96803ec702fe46858",
+      "bytes": 3203
+    },
+    {
+      "path": "PIC16F1503/validation/mplab/pic16-core.mjs",
+      "sha256": "f02f891f3f508306b38ed1b2ccabb08b242c0e3f80b743358032ae4a88180012",
+      "bytes": 21498
+    },
+    {
+      "path": "PIC16F1503/validation/mplab/prepare_mdb.py",
+      "sha256": "78756715bb377f308dd77352addc1c3c16feb4794cec83d9c1d3bc8ecad6c062",
+      "bytes": 1932
+    },
+    {
+      "path": "PIC16F1503/validation/mplab/reference_our_emulator.json",
+      "sha256": "4bf54affdba312043cf01153e704546e8c1e395caf79bcd176fbe857c889be86",
+      "bytes": 7015
+    }
+  ],
+  "omitted": [
+    {
+      "path": "HEX_SHA256.txt",
+      "bytes": 93,
+      "sha256": "4e58f906b71e8d80a803902855ee82ec746825c17e5fc31f908e4f187f0378e9"
+    },
+    {
+      "path": "micromusic_with_config.hex",
+      "bytes": 11092,
+      "sha256": "7787e6dae4f115a36cf4f4a9054ed02c74411106efb02ba861195755854ae578"
+    }
+  ]
+}

@@ -1,22 +1,40 @@
 {
   "image": "rhythmic",
-  "flashSha256": "60c516658676aea787543b337e28d9042a3eb30cb72404fc281643be30eb9678",
+  "flashSha256": "3e2b5b5babe1a8da5e6994f30a099b10c3093449ac7e4f92b0f5a448e0135eae",
   "flashBytes": 1024,
   "fullPlaylist": {
-    "commands": 522,
+    "commands": 506,
     "beats": 296,
     "idealSeconds": 222,
-    "actualSeconds": 222.01685343749998,
-    "maximumTimingErrorMs": 21.176770833320916,
-    "finalTimingErrorMs": 16.853437499987194,
-    "maximumExecutionErrorAgainstGridUs": 8.645833333333334,
+    "actualSeconds": 222.01685333333333,
+    "maximumTimingErrorMs": 21.175312500010477,
+    "finalTimingErrorMs": 16.853333333332557,
+    "maximumExecutionErrorAgainstGridUs": 8.75,
     "missingEvents": 0
+  },
+  "compression": {
+    "method": "Repeated command phrases; dynamic-programming parsing; suffix sharing; deterministic dictionary search",
+    "globallyMinimal": false,
+    "candidateLimit": 4096,
+    "candidateCount": 3958,
+    "dictionaryTrials": 118789,
+    "originalCommandBytes": 491,
+    "originalStreamSha256": "3ab96fdc2a91946e2e6ee4f20f8737b04e2ff9d846bd9b6c373bee910d0c3043",
+    "sourceLayoutBytes": 257,
+    "packedEventBytes": 216,
+    "playlistBytes": 15,
+    "packedBytes": 231,
+    "savedAgainstSourceLayoutBytes": 26,
+    "storedSections": 5,
+    "referencedSections": 8,
+    "verifiedLossless": true,
+    "runtimeStreamSha256": "3ab96fdc2a91946e2e6ee4f20f8737b04e2ff9d846bd9b6c373bee910d0c3043"
   },
   "grid": {
     "phaseStep": 4772,
     "targetBpm": 80,
     "actualBpm": 79.99688386917114,
-    "drumHitsIncludingBothEndpoints": 593,
+    "drumHitsIncludingBothEndpoints": 521,
     "drumGridMismatches": 0
   },
   "articulation": {
@@ -25,24 +43,30 @@
     "repeatedNotes": 61,
     "repeatedNotesArticulated": 61,
     "phaseResets": 0,
-    "firstAttack50PercentMs": 27.297916666666666,
-    "firstAttack100PercentMs": 54.60458333333333
+    "firstAttack50PercentMs": 27.298125,
+    "firstAttack100PercentMs": 54.604791666666664
   },
   "envelopes": {
+    "models": [
+      "bowed",
+      "piano",
+      "pluck"
+    ],
     "ticksChecked": 16262,
     "mismatches": 0
   },
+  "loop": {
+    "endState": {
+      "levels": [
+        0,
+        0,
+        0
+      ],
+      "drumAge": 4
+    },
+    "allPartsSilentBeforeRestart": true
+  },
   "isrCycles": 19,
   "lostTimerEvents": 0,
-  "lostWorkEvents": 0,
-  "browser": {
-    "elapsedSeconds": 62.3,
-    "tempoPercent": 100,
-    "accumulatedLagMs": 0,
-    "lostEvents": 0,
-    "audioClockMs": 61909.333,
-    "wallClockMs": 61899.0,
-    "filterHz": 4000,
-    "note": "Clocks observed in page DOM before pausing; UI delivery jitter is not accumulating audio lag."
-  }
+  "lostWorkEvents": 0
 }

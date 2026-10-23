@@ -1,0 +1,8 @@
+variant,code_bytes,cycles_65536,cycles_per_byte,seconds_at_3_5MHz,description
+bitwise_shared_parity_reset,41,50200710,766.002045,14.34306,after_hardware_reset_only
+bitwise_shared_parity,42,50200714,766.002106,14.34306,smallest_with_DI
+bitwise_shared,44,50200728,766.002319,14.34307,no_parity_flag_trick
+bitwise_shared_parity_u2,47,42336394,646.002106,12.09611,bitloop_unroll_2
+bitwise_shared_parity_u4,57,38404234,586.002106,10.97264,bitloop_unroll_4
+fast75_peephole_v5,75,18882115,288.118210,5.39489,previous_size_speed_balance
+fast_p47_rotate_v5,82,18292291,279.118210,5.22637,previous_faster

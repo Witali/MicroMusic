@@ -1,0 +1,4504 @@
+{
+  "schema": "micromusic-midi-events",
+  "version": 1,
+  "format": 1,
+  "ppqn": 384,
+  "source": {
+    "fileName": "greensleeves.mid",
+    "bytes": 2200,
+    "sha256": "04a6e03dd6128aa291aa75e4df757bbba40567ef885eca18d14d51d9365cb8e8"
+  },
+  "tracks": [
+    {
+      "index": 0,
+      "events": [
+        {
+          "tick": 0,
+          "delta": 0,
+          "status": 255,
+          "type": "text",
+          "metaType": 3,
+          "dataHex": "636f6e74726f6c20747261636b",
+          "text": "control track"
+        },
+        {
+          "tick": 0,
+          "delta": 0,
+          "status": 255,
+          "type": "text",
+          "metaType": 1,
+          "dataHex": "63726561746f723a20",
+          "text": "creator: "
+        },
+        {
+          "tick": 0,
+          "delta": 0,
+          "status": 255,
+          "type": "text",
+          "metaType": 1,
+          "dataHex": "474e55204c696c79506f6e6420322e31382e322020202020202020202020",
+          "text": "GNU LilyPond 2.18.2           "
+        },
+        {
+          "tick": 0,
+          "delta": 0,
+          "status": 255,
+          "type": "timeSignature",
+          "metaType": 88,
+          "dataHex": "06031208",
+          "numerator": 6,
+          "denominator": 8,
+          "clocksPerClick": 18,
+          "thirtySecondsPerQuarter": 8
+        },
+        {
+          "tick": 0,
+          "delta": 0,
+          "status": 255,
+          "type": "tempo",
+          "metaType": 81,
+          "dataHex": "0f4240",
+          "microsecondsPerQuarter": 1000000
+        },
+        {
+          "tick": 0,
+          "delta": 0,
+          "status": 255,
+          "type": "endOfTrack",
+          "metaType": 47,
+          "dataHex": ""
+        }
+      ],
+      "name": "control track",
+      "summary": {
+        "noteOnCount": 0,
+        "channels": [],
+        "pitchRange": null,
+        "firstNoteTick": null,
+        "endTick": 0,
+        "instruments": []
+      }
+    },
+    {
+      "index": 1,
+      "events": [
+        {
+          "tick": 0,
+          "delta": 0,
+          "status": 255,
+          "type": "text",
+          "metaType": 3,
+          "dataHex": "75707065723a6f6e65",
+          "text": "upper:one"
+        },
+        {
+          "tick": 0,
+          "delta": 0,
+          "status": 176,
+          "channel": 0,
+          "type": "controlChange",
+          "controller": 7,
+          "value": 100
+        },
+        {
+          "tick": 0,
+          "delta": 0,
+          "status": 176,
+          "channel": 0,
+          "type": "controlChange",
+          "controller": 7,
+          "value": 100
+        },
+        {
+          "tick": 0,
+          "delta": 0,
+          "status": 176,
+          "channel": 0,
+          "type": "controlChange",
+          "controller": 7,
+          "value": 100
+        },
+        {
+          "tick": 0,
+          "delta": 0,
+          "status": 176,
+          "channel": 0,
+          "type": "controlChange",
+          "controller": 7,
+          "value": 100
+        },
+        {
+          "tick": 0,
+          "delta": 0,
+          "status": 255,
+          "type": "meta",
+          "metaType": 89,
+          "dataHex": "0100"
+        },
+        {
+          "tick": 0,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 90
+        },
+        {
+          "tick": 0,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 192,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 0
+        },
+        {
+          "tick": 192,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 192,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 67,
+          "velocity": 90
+        },
+        {
+          "tick": 192,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 90
+        },
+        {
+          "tick": 576,
+          "delta": 384,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 67,
+          "velocity": 0
+        },
+        {
+          "tick": 576,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 0
+        },
+        {
+          "tick": 576,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 69,
+          "velocity": 90
+        },
+        {
+          "tick": 576,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 90
+        },
+        {
+          "tick": 768,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 69,
+          "velocity": 0
+        },
+        {
+          "tick": 768,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 0
+        },
+        {
+          "tick": 768,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 71,
+          "velocity": 90
+        },
+        {
+          "tick": 768,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 90
+        },
+        {
+          "tick": 1056,
+          "delta": 288,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 71,
+          "velocity": 0
+        },
+        {
+          "tick": 1056,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 0
+        },
+        {
+          "tick": 1056,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 72,
+          "velocity": 90
+        },
+        {
+          "tick": 1152,
+          "delta": 96,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 72,
+          "velocity": 0
+        },
+        {
+          "tick": 1152,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 67,
+          "velocity": 90
+        },
+        {
+          "tick": 1152,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 71,
+          "velocity": 90
+        },
+        {
+          "tick": 1344,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 67,
+          "velocity": 0
+        },
+        {
+          "tick": 1344,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 71,
+          "velocity": 0
+        },
+        {
+          "tick": 1344,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 69,
+          "velocity": 90
+        },
+        {
+          "tick": 1344,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 90
+        },
+        {
+          "tick": 1728,
+          "delta": 384,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 69,
+          "velocity": 0
+        },
+        {
+          "tick": 1728,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 0
+        },
+        {
+          "tick": 1728,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 90
+        },
+        {
+          "tick": 1728,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 90
+        },
+        {
+          "tick": 1920,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 0
+        },
+        {
+          "tick": 1920,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 0
+        },
+        {
+          "tick": 1920,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 90
+        },
+        {
+          "tick": 2208,
+          "delta": 288,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 0
+        },
+        {
+          "tick": 2208,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 90
+        },
+        {
+          "tick": 2304,
+          "delta": 96,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 0
+        },
+        {
+          "tick": 2304,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 90
+        },
+        {
+          "tick": 2304,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 60,
+          "velocity": 90
+        },
+        {
+          "tick": 2496,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 0
+        },
+        {
+          "tick": 2496,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 60,
+          "velocity": 0
+        },
+        {
+          "tick": 2496,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 67,
+          "velocity": 90
+        },
+        {
+          "tick": 2496,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 2880,
+          "delta": 384,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 67,
+          "velocity": 0
+        },
+        {
+          "tick": 2880,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 2880,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 90
+        },
+        {
+          "tick": 2880,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 3072,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 0
+        },
+        {
+          "tick": 3072,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 3072,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 90
+        },
+        {
+          "tick": 3072,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 90
+        },
+        {
+          "tick": 3360,
+          "delta": 288,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 0
+        },
+        {
+          "tick": 3360,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 0
+        },
+        {
+          "tick": 3360,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 63,
+          "velocity": 90
+        },
+        {
+          "tick": 3456,
+          "delta": 96,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 63,
+          "velocity": 0
+        },
+        {
+          "tick": 3456,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 90
+        },
+        {
+          "tick": 3648,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 0
+        },
+        {
+          "tick": 3648,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 90
+        },
+        {
+          "tick": 3648,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 63,
+          "velocity": 90
+        },
+        {
+          "tick": 4224,
+          "delta": 576,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 0
+        },
+        {
+          "tick": 4224,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 63,
+          "velocity": 0
+        },
+        {
+          "tick": 4224,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 4608,
+          "delta": 384,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 4608,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 90
+        },
+        {
+          "tick": 4608,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 4800,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 0
+        },
+        {
+          "tick": 4800,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 4800,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 67,
+          "velocity": 90
+        },
+        {
+          "tick": 4800,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 90
+        },
+        {
+          "tick": 5184,
+          "delta": 384,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 67,
+          "velocity": 0
+        },
+        {
+          "tick": 5184,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 0
+        },
+        {
+          "tick": 5184,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 69,
+          "velocity": 90
+        },
+        {
+          "tick": 5184,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 90
+        },
+        {
+          "tick": 5376,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 69,
+          "velocity": 0
+        },
+        {
+          "tick": 5376,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 0
+        },
+        {
+          "tick": 5376,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 71,
+          "velocity": 90
+        },
+        {
+          "tick": 5376,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 90
+        },
+        {
+          "tick": 5664,
+          "delta": 288,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 71,
+          "velocity": 0
+        },
+        {
+          "tick": 5664,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 0
+        },
+        {
+          "tick": 5664,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 72,
+          "velocity": 90
+        },
+        {
+          "tick": 5760,
+          "delta": 96,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 72,
+          "velocity": 0
+        },
+        {
+          "tick": 5760,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 71,
+          "velocity": 90
+        },
+        {
+          "tick": 5760,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 67,
+          "velocity": 90
+        },
+        {
+          "tick": 5952,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 71,
+          "velocity": 0
+        },
+        {
+          "tick": 5952,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 67,
+          "velocity": 0
+        },
+        {
+          "tick": 5952,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 90
+        },
+        {
+          "tick": 5952,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 69,
+          "velocity": 90
+        },
+        {
+          "tick": 6336,
+          "delta": 384,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 0
+        },
+        {
+          "tick": 6336,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 69,
+          "velocity": 0
+        },
+        {
+          "tick": 6336,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 90
+        },
+        {
+          "tick": 6336,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 90
+        },
+        {
+          "tick": 6528,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 0
+        },
+        {
+          "tick": 6528,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 0
+        },
+        {
+          "tick": 6528,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 90
+        },
+        {
+          "tick": 6816,
+          "delta": 288,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 0
+        },
+        {
+          "tick": 6816,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 90
+        },
+        {
+          "tick": 6912,
+          "delta": 96,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 0
+        },
+        {
+          "tick": 6912,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 90
+        },
+        {
+          "tick": 6912,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 60,
+          "velocity": 90
+        },
+        {
+          "tick": 7104,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 0
+        },
+        {
+          "tick": 7104,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 60,
+          "velocity": 0
+        },
+        {
+          "tick": 7104,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 67,
+          "velocity": 90
+        },
+        {
+          "tick": 7104,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 7392,
+          "delta": 288,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 67,
+          "velocity": 0
+        },
+        {
+          "tick": 7392,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 7392,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 90
+        },
+        {
+          "tick": 7488,
+          "delta": 96,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 0
+        },
+        {
+          "tick": 7488,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 90
+        },
+        {
+          "tick": 7488,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 60,
+          "velocity": 90
+        },
+        {
+          "tick": 7680,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 0
+        },
+        {
+          "tick": 7680,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 60,
+          "velocity": 0
+        },
+        {
+          "tick": 7680,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 63,
+          "velocity": 90
+        },
+        {
+          "tick": 7680,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 7968,
+          "delta": 288,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 63,
+          "velocity": 0
+        },
+        {
+          "tick": 7968,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 7968,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 61,
+          "velocity": 90
+        },
+        {
+          "tick": 8064,
+          "delta": 96,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 61,
+          "velocity": 0
+        },
+        {
+          "tick": 8064,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 8064,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 63,
+          "velocity": 90
+        },
+        {
+          "tick": 8256,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 8256,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 63,
+          "velocity": 0
+        },
+        {
+          "tick": 8256,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 90
+        },
+        {
+          "tick": 8256,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 8832,
+          "delta": 576,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 0
+        },
+        {
+          "tick": 8832,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 8832,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 90
+        },
+        {
+          "tick": 8832,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 9216,
+          "delta": 384,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 0
+        },
+        {
+          "tick": 9216,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 9408,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 74,
+          "velocity": 90
+        },
+        {
+          "tick": 9408,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 90
+        },
+        {
+          "tick": 9984,
+          "delta": 576,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 74,
+          "velocity": 0
+        },
+        {
+          "tick": 9984,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 0
+        },
+        {
+          "tick": 9984,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 74,
+          "velocity": 90
+        },
+        {
+          "tick": 9984,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 71,
+          "velocity": 90
+        },
+        {
+          "tick": 10272,
+          "delta": 288,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 74,
+          "velocity": 0
+        },
+        {
+          "tick": 10272,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 71,
+          "velocity": 0
+        },
+        {
+          "tick": 10272,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 73,
+          "velocity": 90
+        },
+        {
+          "tick": 10272,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 69,
+          "velocity": 90
+        },
+        {
+          "tick": 10368,
+          "delta": 96,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 73,
+          "velocity": 0
+        },
+        {
+          "tick": 10368,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 69,
+          "velocity": 0
+        },
+        {
+          "tick": 10368,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 71,
+          "velocity": 90
+        },
+        {
+          "tick": 10368,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 67,
+          "velocity": 90
+        },
+        {
+          "tick": 10560,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 71,
+          "velocity": 0
+        },
+        {
+          "tick": 10560,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 67,
+          "velocity": 0
+        },
+        {
+          "tick": 10560,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 69,
+          "velocity": 90
+        },
+        {
+          "tick": 10560,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 90
+        },
+        {
+          "tick": 10944,
+          "delta": 384,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 69,
+          "velocity": 0
+        },
+        {
+          "tick": 10944,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 0
+        },
+        {
+          "tick": 10944,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 90
+        },
+        {
+          "tick": 10944,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 90
+        },
+        {
+          "tick": 11136,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 0
+        },
+        {
+          "tick": 11136,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 0
+        },
+        {
+          "tick": 11136,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 90
+        },
+        {
+          "tick": 11424,
+          "delta": 288,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 0
+        },
+        {
+          "tick": 11424,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 90
+        },
+        {
+          "tick": 11520,
+          "delta": 96,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 0
+        },
+        {
+          "tick": 11520,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 90
+        },
+        {
+          "tick": 11520,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 60,
+          "velocity": 90
+        },
+        {
+          "tick": 11712,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 0
+        },
+        {
+          "tick": 11712,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 60,
+          "velocity": 0
+        },
+        {
+          "tick": 11712,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 67,
+          "velocity": 90
+        },
+        {
+          "tick": 11712,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 12096,
+          "delta": 384,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 67,
+          "velocity": 0
+        },
+        {
+          "tick": 12096,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 12096,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 90
+        },
+        {
+          "tick": 12096,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 12288,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 0
+        },
+        {
+          "tick": 12288,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 12288,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 90
+        },
+        {
+          "tick": 12288,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 90
+        },
+        {
+          "tick": 12576,
+          "delta": 288,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 0
+        },
+        {
+          "tick": 12576,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 0
+        },
+        {
+          "tick": 12576,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 63,
+          "velocity": 90
+        },
+        {
+          "tick": 12672,
+          "delta": 96,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 63,
+          "velocity": 0
+        },
+        {
+          "tick": 12672,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 90
+        },
+        {
+          "tick": 12864,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 0
+        },
+        {
+          "tick": 12864,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 90
+        },
+        {
+          "tick": 12864,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 63,
+          "velocity": 90
+        },
+        {
+          "tick": 13248,
+          "delta": 384,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 0
+        },
+        {
+          "tick": 13248,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 63,
+          "velocity": 0
+        },
+        {
+          "tick": 13248,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 13248,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 63,
+          "velocity": 90
+        },
+        {
+          "tick": 13440,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 13440,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 63,
+          "velocity": 0
+        },
+        {
+          "tick": 13440,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 13824,
+          "delta": 384,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 14016,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 74,
+          "velocity": 90
+        },
+        {
+          "tick": 14016,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 90
+        },
+        {
+          "tick": 14592,
+          "delta": 576,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 74,
+          "velocity": 0
+        },
+        {
+          "tick": 14592,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 0
+        },
+        {
+          "tick": 14592,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 74,
+          "velocity": 90
+        },
+        {
+          "tick": 14592,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 71,
+          "velocity": 90
+        },
+        {
+          "tick": 14880,
+          "delta": 288,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 74,
+          "velocity": 0
+        },
+        {
+          "tick": 14880,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 71,
+          "velocity": 0
+        },
+        {
+          "tick": 14880,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 72,
+          "velocity": 90
+        },
+        {
+          "tick": 14880,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 69,
+          "velocity": 90
+        },
+        {
+          "tick": 14976,
+          "delta": 96,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 72,
+          "velocity": 0
+        },
+        {
+          "tick": 14976,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 69,
+          "velocity": 0
+        },
+        {
+          "tick": 14976,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 71,
+          "velocity": 90
+        },
+        {
+          "tick": 14976,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 67,
+          "velocity": 90
+        },
+        {
+          "tick": 15168,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 71,
+          "velocity": 0
+        },
+        {
+          "tick": 15168,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 67,
+          "velocity": 0
+        },
+        {
+          "tick": 15168,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 69,
+          "velocity": 90
+        },
+        {
+          "tick": 15168,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 90
+        },
+        {
+          "tick": 15552,
+          "delta": 384,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 69,
+          "velocity": 0
+        },
+        {
+          "tick": 15552,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 0
+        },
+        {
+          "tick": 15552,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 90
+        },
+        {
+          "tick": 15552,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 90
+        },
+        {
+          "tick": 15744,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 0
+        },
+        {
+          "tick": 15744,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 0
+        },
+        {
+          "tick": 15744,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 90
+        },
+        {
+          "tick": 16032,
+          "delta": 288,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 90
+        },
+        {
+          "tick": 16128,
+          "delta": 96,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 0
+        },
+        {
+          "tick": 16128,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 0
+        },
+        {
+          "tick": 16128,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 90
+        },
+        {
+          "tick": 16128,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 60,
+          "velocity": 90
+        },
+        {
+          "tick": 16320,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 0
+        },
+        {
+          "tick": 16320,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 60,
+          "velocity": 0
+        },
+        {
+          "tick": 16320,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 67,
+          "velocity": 90
+        },
+        {
+          "tick": 16320,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 16608,
+          "delta": 288,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 67,
+          "velocity": 0
+        },
+        {
+          "tick": 16608,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 16608,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 90
+        },
+        {
+          "tick": 16704,
+          "delta": 96,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 66,
+          "velocity": 0
+        },
+        {
+          "tick": 16704,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 90
+        },
+        {
+          "tick": 16704,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 60,
+          "velocity": 90
+        },
+        {
+          "tick": 16896,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 0
+        },
+        {
+          "tick": 16896,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 60,
+          "velocity": 0
+        },
+        {
+          "tick": 16896,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 16896,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 63,
+          "velocity": 90
+        },
+        {
+          "tick": 17184,
+          "delta": 288,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 17184,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 63,
+          "velocity": 0
+        },
+        {
+          "tick": 17184,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 61,
+          "velocity": 90
+        },
+        {
+          "tick": 17280,
+          "delta": 96,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 61,
+          "velocity": 0
+        },
+        {
+          "tick": 17280,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 63,
+          "velocity": 90
+        },
+        {
+          "tick": 17280,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 17472,
+          "delta": 192,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 63,
+          "velocity": 0
+        },
+        {
+          "tick": 17472,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 17472,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 90
+        },
+        {
+          "tick": 17472,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 18048,
+          "delta": 576,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 0
+        },
+        {
+          "tick": 18048,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 18048,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 90
+        },
+        {
+          "tick": 18048,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 18432,
+          "delta": 384,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 64,
+          "velocity": 0
+        },
+        {
+          "tick": 18432,
+          "delta": 0,
+          "status": 144,
+          "channel": 0,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 18432,
+          "delta": 0,
+          "status": 255,
+          "type": "endOfTrack",
+          "metaType": 47,
+          "dataHex": ""
+        }
+      ],
+      "name": "upper:one",
+      "summary": {
+        "noteOnCount": 122,
+        "channels": [
+          0
+        ],
+        "pitchRange": [
+          57,
+          74
+        ],
+        "firstNoteTick": 0,
+        "endTick": 18432,
+        "instruments": [
+          {
+            "channel": 0,
+            "program": 0,
+            "name": "Yamaha Grand Piano",
+            "percussion": false
+          }
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "events": [
+        {
+          "tick": 0,
+          "delta": 0,
+          "status": 255,
+          "type": "text",
+          "metaType": 3,
+          "dataHex": "6c6f7765723a6f6e65",
+          "text": "lower:one"
+        },
+        {
+          "tick": 0,
+          "delta": 0,
+          "status": 177,
+          "channel": 1,
+          "type": "controlChange",
+          "controller": 7,
+          "value": 100
+        },
+        {
+          "tick": 0,
+          "delta": 0,
+          "status": 177,
+          "channel": 1,
+          "type": "controlChange",
+          "controller": 7,
+          "value": 100
+        },
+        {
+          "tick": 0,
+          "delta": 0,
+          "status": 177,
+          "channel": 1,
+          "type": "controlChange",
+          "controller": 7,
+          "value": 100
+        },
+        {
+          "tick": 0,
+          "delta": 0,
+          "status": 177,
+          "channel": 1,
+          "type": "controlChange",
+          "controller": 7,
+          "value": 100
+        },
+        {
+          "tick": 0,
+          "delta": 0,
+          "status": 255,
+          "type": "meta",
+          "metaType": 89,
+          "dataHex": "0100"
+        },
+        {
+          "tick": 0,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 90
+        },
+        {
+          "tick": 0,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 90
+        },
+        {
+          "tick": 192,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 0
+        },
+        {
+          "tick": 192,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 0
+        },
+        {
+          "tick": 192,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 192,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 90
+        },
+        {
+          "tick": 576,
+          "delta": 384,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 576,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 0
+        },
+        {
+          "tick": 576,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 90
+        },
+        {
+          "tick": 576,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 54,
+          "velocity": 90
+        },
+        {
+          "tick": 768,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 0
+        },
+        {
+          "tick": 768,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 54,
+          "velocity": 0
+        },
+        {
+          "tick": 768,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 90
+        },
+        {
+          "tick": 1152,
+          "delta": 384,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 0
+        },
+        {
+          "tick": 1152,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 90
+        },
+        {
+          "tick": 1152,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 1344,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 0
+        },
+        {
+          "tick": 1344,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 1344,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 90
+        },
+        {
+          "tick": 1344,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 90
+        },
+        {
+          "tick": 1536,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 0
+        },
+        {
+          "tick": 1536,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 90
+        },
+        {
+          "tick": 1728,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 0
+        },
+        {
+          "tick": 1728,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 0
+        },
+        {
+          "tick": 1728,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 90
+        },
+        {
+          "tick": 1728,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 90
+        },
+        {
+          "tick": 1920,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 0
+        },
+        {
+          "tick": 1920,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 0
+        },
+        {
+          "tick": 1920,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 54,
+          "velocity": 90
+        },
+        {
+          "tick": 1920,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 90
+        },
+        {
+          "tick": 2304,
+          "delta": 384,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 54,
+          "velocity": 0
+        },
+        {
+          "tick": 2304,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 0
+        },
+        {
+          "tick": 2304,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 90
+        },
+        {
+          "tick": 2304,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 51,
+          "velocity": 90
+        },
+        {
+          "tick": 2496,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 0
+        },
+        {
+          "tick": 2496,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 51,
+          "velocity": 0
+        },
+        {
+          "tick": 2496,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 90
+        },
+        {
+          "tick": 2496,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 90
+        },
+        {
+          "tick": 2880,
+          "delta": 384,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 0
+        },
+        {
+          "tick": 2880,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 0
+        },
+        {
+          "tick": 2880,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 90
+        },
+        {
+          "tick": 2880,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 90
+        },
+        {
+          "tick": 3072,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 0
+        },
+        {
+          "tick": 3072,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 0
+        },
+        {
+          "tick": 3072,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 48,
+          "velocity": 90
+        },
+        {
+          "tick": 3072,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 90
+        },
+        {
+          "tick": 3456,
+          "delta": 384,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 48,
+          "velocity": 0
+        },
+        {
+          "tick": 3456,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 0
+        },
+        {
+          "tick": 3456,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 90
+        },
+        {
+          "tick": 3456,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 48,
+          "velocity": 90
+        },
+        {
+          "tick": 3648,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 0
+        },
+        {
+          "tick": 3648,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 48,
+          "velocity": 0
+        },
+        {
+          "tick": 3648,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 3648,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 47,
+          "velocity": 90
+        },
+        {
+          "tick": 4224,
+          "delta": 576,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 4224,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 47,
+          "velocity": 0
+        },
+        {
+          "tick": 4224,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 4224,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 47,
+          "velocity": 90
+        },
+        {
+          "tick": 4608,
+          "delta": 384,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 4608,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 47,
+          "velocity": 0
+        },
+        {
+          "tick": 4608,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 90
+        },
+        {
+          "tick": 4608,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 90
+        },
+        {
+          "tick": 4800,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 0
+        },
+        {
+          "tick": 4800,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 0
+        },
+        {
+          "tick": 4800,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 4800,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 90
+        },
+        {
+          "tick": 5184,
+          "delta": 384,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 5184,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 0
+        },
+        {
+          "tick": 5184,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 90
+        },
+        {
+          "tick": 5184,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 54,
+          "velocity": 90
+        },
+        {
+          "tick": 5376,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 0
+        },
+        {
+          "tick": 5376,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 54,
+          "velocity": 0
+        },
+        {
+          "tick": 5376,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 90
+        },
+        {
+          "tick": 5760,
+          "delta": 384,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 0
+        },
+        {
+          "tick": 5760,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 90
+        },
+        {
+          "tick": 5760,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 5952,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 0
+        },
+        {
+          "tick": 5952,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 5952,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 90
+        },
+        {
+          "tick": 5952,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 90
+        },
+        {
+          "tick": 6144,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 0
+        },
+        {
+          "tick": 6144,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 90
+        },
+        {
+          "tick": 6336,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 0
+        },
+        {
+          "tick": 6336,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 0
+        },
+        {
+          "tick": 6336,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 90
+        },
+        {
+          "tick": 6336,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 90
+        },
+        {
+          "tick": 6528,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 0
+        },
+        {
+          "tick": 6528,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 0
+        },
+        {
+          "tick": 6528,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 54,
+          "velocity": 90
+        },
+        {
+          "tick": 6528,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 90
+        },
+        {
+          "tick": 6912,
+          "delta": 384,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 54,
+          "velocity": 0
+        },
+        {
+          "tick": 6912,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 0
+        },
+        {
+          "tick": 6912,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 90
+        },
+        {
+          "tick": 6912,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 54,
+          "velocity": 90
+        },
+        {
+          "tick": 7104,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 0
+        },
+        {
+          "tick": 7104,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 54,
+          "velocity": 0
+        },
+        {
+          "tick": 7104,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 90
+        },
+        {
+          "tick": 7104,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 90
+        },
+        {
+          "tick": 7488,
+          "delta": 384,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 0
+        },
+        {
+          "tick": 7488,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 0
+        },
+        {
+          "tick": 7488,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 90
+        },
+        {
+          "tick": 7488,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 45,
+          "velocity": 90
+        },
+        {
+          "tick": 7680,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 0
+        },
+        {
+          "tick": 7680,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 45,
+          "velocity": 0
+        },
+        {
+          "tick": 7680,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 47,
+          "velocity": 90
+        },
+        {
+          "tick": 7680,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 54,
+          "velocity": 90
+        },
+        {
+          "tick": 8064,
+          "delta": 384,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 47,
+          "velocity": 0
+        },
+        {
+          "tick": 8064,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 54,
+          "velocity": 0
+        },
+        {
+          "tick": 8064,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 54,
+          "velocity": 90
+        },
+        {
+          "tick": 8064,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 47,
+          "velocity": 90
+        },
+        {
+          "tick": 8256,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 54,
+          "velocity": 0
+        },
+        {
+          "tick": 8256,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 47,
+          "velocity": 0
+        },
+        {
+          "tick": 8256,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 90
+        },
+        {
+          "tick": 8256,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 90
+        },
+        {
+          "tick": 8832,
+          "delta": 576,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 0
+        },
+        {
+          "tick": 8832,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 0
+        },
+        {
+          "tick": 8832,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 90
+        },
+        {
+          "tick": 8832,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 90
+        },
+        {
+          "tick": 9216,
+          "delta": 384,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 0
+        },
+        {
+          "tick": 9216,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 0
+        },
+        {
+          "tick": 9408,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 9984,
+          "delta": 576,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 9984,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 90
+        },
+        {
+          "tick": 9984,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 90
+        },
+        {
+          "tick": 10368,
+          "delta": 384,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 0
+        },
+        {
+          "tick": 10368,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 0
+        },
+        {
+          "tick": 10368,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 90
+        },
+        {
+          "tick": 10368,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 90
+        },
+        {
+          "tick": 10560,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 0
+        },
+        {
+          "tick": 10560,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 0
+        },
+        {
+          "tick": 10560,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 90
+        },
+        {
+          "tick": 10560,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 90
+        },
+        {
+          "tick": 10944,
+          "delta": 384,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 0
+        },
+        {
+          "tick": 10944,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 0
+        },
+        {
+          "tick": 10944,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 90
+        },
+        {
+          "tick": 10944,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 90
+        },
+        {
+          "tick": 11136,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 0
+        },
+        {
+          "tick": 11136,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 0
+        },
+        {
+          "tick": 11136,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 54,
+          "velocity": 90
+        },
+        {
+          "tick": 11136,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 90
+        },
+        {
+          "tick": 11520,
+          "delta": 384,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 54,
+          "velocity": 0
+        },
+        {
+          "tick": 11520,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 0
+        },
+        {
+          "tick": 11520,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 90
+        },
+        {
+          "tick": 11520,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 51,
+          "velocity": 90
+        },
+        {
+          "tick": 11712,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 0
+        },
+        {
+          "tick": 11712,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 51,
+          "velocity": 0
+        },
+        {
+          "tick": 11712,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 90
+        },
+        {
+          "tick": 11712,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 90
+        },
+        {
+          "tick": 12096,
+          "delta": 384,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 0
+        },
+        {
+          "tick": 12096,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 0
+        },
+        {
+          "tick": 12096,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 90
+        },
+        {
+          "tick": 12096,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 90
+        },
+        {
+          "tick": 12288,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 0
+        },
+        {
+          "tick": 12288,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 0
+        },
+        {
+          "tick": 12288,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 90
+        },
+        {
+          "tick": 12288,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 48,
+          "velocity": 90
+        },
+        {
+          "tick": 12672,
+          "delta": 384,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 0
+        },
+        {
+          "tick": 12672,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 48,
+          "velocity": 0
+        },
+        {
+          "tick": 12672,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 90
+        },
+        {
+          "tick": 12672,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 48,
+          "velocity": 90
+        },
+        {
+          "tick": 12864,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 0
+        },
+        {
+          "tick": 12864,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 48,
+          "velocity": 0
+        },
+        {
+          "tick": 12864,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 12864,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 47,
+          "velocity": 90
+        },
+        {
+          "tick": 13248,
+          "delta": 384,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 13248,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 47,
+          "velocity": 0
+        },
+        {
+          "tick": 13248,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 47,
+          "velocity": 90
+        },
+        {
+          "tick": 13248,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 54,
+          "velocity": 90
+        },
+        {
+          "tick": 13440,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 47,
+          "velocity": 0
+        },
+        {
+          "tick": 13440,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 54,
+          "velocity": 0
+        },
+        {
+          "tick": 13440,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 13440,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 47,
+          "velocity": 90
+        },
+        {
+          "tick": 13824,
+          "delta": 384,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 13824,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 47,
+          "velocity": 0
+        },
+        {
+          "tick": 14016,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 90
+        },
+        {
+          "tick": 14592,
+          "delta": 576,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 59,
+          "velocity": 0
+        },
+        {
+          "tick": 14592,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 90
+        },
+        {
+          "tick": 14592,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 90
+        },
+        {
+          "tick": 14976,
+          "delta": 384,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 0
+        },
+        {
+          "tick": 14976,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 0
+        },
+        {
+          "tick": 14976,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 90
+        },
+        {
+          "tick": 14976,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 90
+        },
+        {
+          "tick": 15168,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 0
+        },
+        {
+          "tick": 15168,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 0
+        },
+        {
+          "tick": 15168,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 90
+        },
+        {
+          "tick": 15168,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 90
+        },
+        {
+          "tick": 15360,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 0
+        },
+        {
+          "tick": 15360,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 90
+        },
+        {
+          "tick": 15552,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 62,
+          "velocity": 0
+        },
+        {
+          "tick": 15552,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 0
+        },
+        {
+          "tick": 15552,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 90
+        },
+        {
+          "tick": 15552,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 90
+        },
+        {
+          "tick": 15744,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 0
+        },
+        {
+          "tick": 15744,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 0
+        },
+        {
+          "tick": 15744,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 90
+        },
+        {
+          "tick": 15744,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 54,
+          "velocity": 90
+        },
+        {
+          "tick": 16128,
+          "delta": 384,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 50,
+          "velocity": 0
+        },
+        {
+          "tick": 16128,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 54,
+          "velocity": 0
+        },
+        {
+          "tick": 16128,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 90
+        },
+        {
+          "tick": 16128,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 51,
+          "velocity": 90
+        },
+        {
+          "tick": 16320,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 0
+        },
+        {
+          "tick": 16320,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 51,
+          "velocity": 0
+        },
+        {
+          "tick": 16320,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 90
+        },
+        {
+          "tick": 16320,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 90
+        },
+        {
+          "tick": 16704,
+          "delta": 384,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 0
+        },
+        {
+          "tick": 16704,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 0
+        },
+        {
+          "tick": 16704,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 90
+        },
+        {
+          "tick": 16704,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 45,
+          "velocity": 90
+        },
+        {
+          "tick": 16896,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 57,
+          "velocity": 0
+        },
+        {
+          "tick": 16896,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 45,
+          "velocity": 0
+        },
+        {
+          "tick": 16896,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 54,
+          "velocity": 90
+        },
+        {
+          "tick": 16896,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 47,
+          "velocity": 90
+        },
+        {
+          "tick": 17280,
+          "delta": 384,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 54,
+          "velocity": 0
+        },
+        {
+          "tick": 17280,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 47,
+          "velocity": 0
+        },
+        {
+          "tick": 17280,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 54,
+          "velocity": 90
+        },
+        {
+          "tick": 17280,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 47,
+          "velocity": 90
+        },
+        {
+          "tick": 17472,
+          "delta": 192,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 54,
+          "velocity": 0
+        },
+        {
+          "tick": 17472,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 47,
+          "velocity": 0
+        },
+        {
+          "tick": 17472,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 90
+        },
+        {
+          "tick": 17472,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 90
+        },
+        {
+          "tick": 18048,
+          "delta": 576,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 0
+        },
+        {
+          "tick": 18048,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 0
+        },
+        {
+          "tick": 18048,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 90
+        },
+        {
+          "tick": 18048,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 90
+        },
+        {
+          "tick": 18432,
+          "delta": 384,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 55,
+          "velocity": 0
+        },
+        {
+          "tick": 18432,
+          "delta": 0,
+          "status": 145,
+          "channel": 1,
+          "type": "noteOn",
+          "note": 52,
+          "velocity": 0
+        },
+        {
+          "tick": 18432,
+          "delta": 0,
+          "status": 255,
+          "type": "endOfTrack",
+          "metaType": 47,
+          "dataHex": ""
+        }
+      ],
+      "name": "lower:one",
+      "summary": {
+        "noteOnCount": 113,
+        "channels": [
+          1
+        ],
+        "pitchRange": [
+          45,
+          62
+        ],
+        "firstNoteTick": 0,
+        "endTick": 18432,
+        "instruments": [
+          {
+            "channel": 1,
+            "program": 0,
+            "name": "Yamaha Grand Piano",
+            "percussion": false
+          }
+        ]
+      }
+    }
+  ],
+  "numbering": "Zero-based MIDI channels0..15 and General MIDI programs0..127; channel9 is percussion",
+  "tempoMap": [
+    {
+      "track": 0,
+      "tick": 0,
+      "microsecondsPerQuarter": 1000000,
+      "bpm": 60.0
+    }
+  ],
+  "timeSignatures": [
+    {
+      "track": 0,
+      "tick": 0,
+      "numerator": 6,
+      "denominator": 8
+    }
+  ]
+}

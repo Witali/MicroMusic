@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ATtiny13A: четырёхголосный плеер — эмулятор HEX</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,sans-serif;background:#10151f;color:#e5edf9}
+body{max-width:900px;margin:auto;padding:22px 16px 56px;line-height:1.55;background:radial-gradient(circle at 93% 0,#233a52 0%,transparent 33%)}
+h1{font-size:clamp(22px,5vw,32px);line-height:1.2;margin-bottom:10px}
+p{color:#acbacd}
+.card{background:#1b2535;border:1px solid #324157;border-radius:16px;padding:20px;margin:16px 0}
+.stats{display:flex;gap:24px;flex-wrap:wrap;color:#a9b8cb}.stats strong{display:block;color:#fff;font-size:23px}
+button{font:inherit;border:0;border-radius:12px;background:#65afff;color:#10151f;padding:12px 20px;font-weight:750;cursor:pointer}
+button:disabled{opacity:.5;cursor:default}button.secondary{background:#34435b;color:#e5edf9}
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.filegrid{display:flex;flex-wrap:wrap;gap:16px;margin-top:14px}.filegrid label{display:flex;flex-direction:column;gap:5px;font-size:14px;color:#d1dded}.filegrid input{max-width:250px}
+code{word-break:break-word}
+canvas{width:100%;height:180px;display:block;background:#0b1524;border-radius:10px}
+code{background:#0a1729;padding:3px 6px;border-radius:4px}
+small{color:#a9b8cb}
+</style>
+</head>
+<body>
+<h1>ATtiny13A — 04 · Robert Miles — Children</h1>
+<p>Никакого отдельного JS-синтезатора: браузер исполняет инструкции из <code>synth.hex</code> с длительностями в тактах AVR, обрабатывает переполнения Timer0 и читает записи в PWM-регистр <code>OCR0B</code>.</p>
+<div class="card">
+ <div class="controls"><button id="start">▶ Слушать</button><button id="stop" class="secondary" disabled>■ Стоп</button><label for="volume">Громкость</label><input id="volume" type="range" min="0" max="1" step="0.01" value="0.65" /></div>
+ <div class="filegrid"><label>Заменить Flash HEX <input id="flashPick" type="file" accept=".hex,.ihx,text/plain"></label><label>Заменить EEPROM HEX <input id="eepPick" type="file" accept=".hex,.eep,text/plain"></label></div>
+ <small>По умолчанию уже встроены проверенные образы Flash и EEPROM. Для других образов требуется тот же набор поддерживаемых инструкций AVR.</small>
+ <div class="stats" style="margin:18px 0"><div>Время <strong id="time">0.0 с</strong></div><div>Выполнено <strong id="cycles">0 M тактов</strong></div><div>Прерывания <strong id="irqs">0</strong></div><div>Макс. ISR <strong id="maxisr">—</strong></div><div>Средний PWM <strong id="avgpwm">128</strong></div><div>Потери IRQ <strong id="lost">0</strong></div></div>
+ <canvas id="wave" width="900" height="180" role="img" aria-label="Осциллограмма звукового сигнала"></canvas>
+ <small>Жёлтая горизонтальная линия обозначает PWM=128. График построен по PWM duty до фильтра, а не по аналоговому напряжению на выходе.</small><div style="height:8px"></div><small id="status">Ожидает нажатия «Слушать».</small>
+</div>
+<div class="card"><strong>Готовый звуковой пример (без эмуляции)</strong><p>Если браузер на телефоне не успевает исполнять AVR по тактам, можно послушать заранее рассчитанный WAV из той же прошивки.</p><audio controls preload="none" src="preview.wav" style="width:100%;max-width:480px"></audio><small>Файл preview.wav должен находиться рядом с player.html (он есть в ZIP).</small></div>
+<div class="card"><strong>Воспроизводимая конфигурация</strong><p>ATtiny13A · CPU 9,6 МГц · 37,5 кГц Fast PWM · 18,75 кГц новых отсчётов · выход PB1/OC0B · мелодия, пианино, гитара и ударные. Ноты и секции воспроизводятся из прошитого кода. Браузер имитирует только инструкции, используемые этой конкретной прошивкой.</p><small>Это цифровая модель усреднённого PWM-сигнала. Реальная АЧХ зависит от RC-фильтра, усилителя и частоты RC-генератора микроконтроллера.</small></div>
+<script>
+
+/* Minimal, cycle-counting AVR interpreter for the actual ATtiny13A firmware.
+ * Supported opcodes cover synth.S (NOT a general ATtiny13A emulator).
+ * PWM compare writes are read as 37,500 duty-cycle averages; actual
+ * 9.6 MHz PB1 carrier edges are analog-filtered in hardware.
+ */
+class AVRCore {
+  constructor(binary,eeprom) {
+    this.eeprom=new Uint8Array(64).fill(255);
+    if(eeprom)this.eeprom.set(eeprom);
+    this.rom = new Uint8Array(1024).fill(255);
+    this.rom.set(binary);
+    this.r = new Uint8Array(32);
+    this.io = new Uint8Array(64); this.ram = new Uint8Array(64);
+    this.pc = 0; this.cyc = 0; this.z=0; this.c=0; this.i=0; this.t=0; this.workLost=0;
+    this.stack=[]; this.timer=false; this.overflowAt=Infinity; this.pending=false;
+    this.inIRQ=false; this.irqStart=0; this.irqCount=0; this.lost=0; this.maxIRQ=0;
+    this.samples=[]; this.writes=0;
+  }
+  step() {
+    let rr=this.r, p=this.pc<<1;
+    if(p+1>=this.rom.length)throw new Error('PC out of Flash at 0x'+p.toString(16));
+    let w=this.rom[p] | this.rom[p+1]<<8, n=1;
+    this.pc++;
+    if(w===0){}
+    else if(w===0x9468){if(this.t&&this.inIRQ)this.workLost++;this.t=1;}
+    else if(w===0x94e8)this.t=0;
+    else if(w===0x94f8) this.i=0;
+    else if(w===0x9478) this.i=1;
+    else if(w===0x9518){
+      if(!this.stack.length)throw new Error('RETI without interrupt');
+      this.pc=this.stack.pop();this.i=1;n=4;this.inIRQ=false;
+      if(this.cyc+n-this.irqStart>this.maxIRQ){
+        this.maxIRQ=this.cyc+n-this.irqStart;
+        this.peakInfo={sec:this.cyc/9600000,cycles:this.maxIRQ,env:[rr[19],rr[20],rr[21]],beat:rr[29],tick:rr[24],step:[rr[5],rr[9],rr[13]],cursor:(rr[31]<<8)|rr[30]};
+      }
+    }
+    else if(w===0x9508){ if(!this.stack.length)throw new Error('RET without RCALL');this.pc=this.stack.pop();n=4; }
+    else if((w&0xf000)===0xd000){let k=w&4095;if(k&2048)k-=4096;this.stack.push(this.pc);this.pc+=k;n=3;}
+    else if((w&0xf000)===0xc000){ // RJMP
+      let k=w&4095;if(k&2048)k-=4096;this.pc+=k;n=2;
+    }
+    else if((w&0xfc00)===0xf000 || (w&0xfc00)===0xf400){ // BRBS/BRBC
+      let f=w&7;if(f>1&&f!==6)throw new Error('Unsupported branch flag');
+      let bit=f===0?this.c:f===6?this.t:this.z;
+      if(bit===Number((w&0xfc00)===0xf000)){
+        let k=(w>>3)&127;if(k&64)k-=128;this.pc+=k;n=2;
+      }
+    }
+    else if((w&0xfe08)===0xfc00 || (w&0xfe08)===0xfe00){ // SBRC/SBRS
+      let r=(w>>4)&31,bit=w&7;
+      if(((rr[r]>>bit)&1)===Number((w&0xfe08)===0xfe00)){
+        let next=this.rom[this.pc<<1]|this.rom[(this.pc<<1)+1]<<8;
+        let words=[0x940c,0x940e,0x9000,0x9200].includes(next&0xfe0e)?2:1;
+        this.pc+=words;n=1+words;
+      }
+    }
+    else if((w&0xf000)===0xe000){ // LDI
+      rr[16+((w>>4)&15)]=(w&15)|((w>>4)&240);
+    }
+    else if([0x3000,0x5000,0x6000,0x7000].includes(w&0xf000)){
+      let d=16+((w>>4)&15),k=(w&15)|((w>>4)&240),x=rr[d];
+      if((w&0xf000)===0x7000){rr[d]=x&k;this.z=Number(rr[d]===0)}
+      else if((w&0xf000)===0x6000){rr[d]=x|k;this.z=Number(rr[d]===0)}
+      else {let v=(x-k)&255;if((w&0xf000)===0x5000)rr[d]=v;
+        this.c=Number(x<k);this.z=Number(v===0)}
+    }
+    else if((w&0xff00)===0x0100){ // MOVW
+      let d=2*((w>>4)&15),r=2*(w&15);rr[d]=rr[r];rr[d+1]=rr[r+1];
+    }
+    else if([0x0c00,0x1c00,0x1800,0x2000,0x2400,0x2800,0x2c00].includes(w&0xfc00)){
+      let d=(w>>4)&31,r=(w&15)|((w>>5)&16),x=rr[d],y=rr[r],mode=w&0xfc00;
+      if(mode===0x0c00 || mode===0x1c00){
+        let val=x+y+(mode===0x1c00?this.c:0);
+        rr[d]=val&255;this.c=Number(val>255);
+        this.z=Number(rr[d]===0 && (mode!==0x1c00 || this.z));
+      } else if(mode===0x1800){rr[d]=(x-y)&255;this.c=Number(x<y);this.z=Number(rr[d]===0)}
+      else if(mode===0x2000){rr[d]=x&y;this.z=Number(rr[d]===0)}
+      else if(mode===0x2400){rr[d]=x^y;this.z=Number(rr[d]===0)}
+      else if(mode===0x2800){rr[d]=x|y;this.z=Number(rr[d]===0)}
+      else rr[d]=y;
+    }
+    else if([0x9403,0x940a,0x9400,0x9406,0x9405,0x9407,0x9402].includes(w&0xfe0f)){
+      let d=(w>>4)&31,x=rr[d],op=w&0xfe0f;
+      if(op===0x9403){rr[d]=(x+1)&255;this.z=Number(rr[d]===0)}
+      else if(op===0x940a){rr[d]=(x-1)&255;this.z=Number(rr[d]===0)}
+      else if(op===0x9400){rr[d]=x^255;this.z=Number(rr[d]===0);this.c=1}
+      else if(op===0x9402){rr[d]=((x&15)<<4)|(x>>4)} // SWAP leaves SREG unchanged
+      else if(op===0x9407){rr[d]=(x>>1)|(this.c<<7);this.z=Number(rr[d]===0);this.c=x&1}
+      else if(op===0x9405){rr[d]=((x>>1)|(x&128))&255;this.z=Number(rr[d]===0);this.c=x&1}
+      else{rr[d]=x>>1;this.z=Number(rr[d]===0);this.c=x&1}
+    }
+    else if((w&0xfe0f)===0x9000 || (w&0xfe0f)===0x9200){
+      let d=(w>>4)&31,a=this.rom[p+2]|this.rom[p+3]<<8;
+      if(a<96||a>=160)throw new Error('SRAM address out of range');
+      if((w&0xfe0f)===0x9000)rr[d]=this.ram[a-96];else this.ram[a-96]=rr[d];
+      this.pc++;n=2;
+    }
+    else if((w&0xf800)===0xb000){ // IN Rd,A
+      let r=(w>>4)&31,a=((w>>5)&48)|(w&15);
+      rr[r]=this.io[a];
+    }
+    else if((w&0xf800)===0xb800){ // OUT
+      let r=(w>>4)&31,a=((w>>5)&48)|(w&15),v=rr[r];
+      this.io[a]=v;
+      if(a===0x33 && v===1 && !this.timer){this.timer=true;this.overflowAt=this.cyc+256}
+      if(a===0x29 && this.timer){this.samples.push(v);this.writes++}
+    }
+    else if((w&0xff00)===0x9a00){ // SBI
+      let a=(w>>3)&31, b=w&7;
+      this.io[a]|=1<<b;n=2;
+      if(a===0x1c && b===0){ // EEPROM read + 4-cycle CPU stall, per datasheet
+        this.io[0x1d]=this.eeprom[this.io[0x1e]&63];
+        this.io[0x1c]&=254;n+=4;
+      }
+    }
+    else if((w&0xfe0f)===0x920f){ // PUSH r
+      this.stack.push(rr[(w>>4)&31]);n=2;
+    }
+    else if((w&0xfe0f)===0x900f){ // POP r
+      rr[(w>>4)&31]=this.stack.pop();n=2;
+    }
+    else if([0x900d,0x9009].includes(w&0xfe0f)){ // LD Rd,X+/Y+
+      let d=(w>>4)&31,pointer=(w&15)===13?26:28,z=rr[pointer]|rr[pointer+1]<<8;
+      if(d===pointer||d===pointer+1)throw new Error('Undefined LD post-increment');
+      if(z>=160)throw new Error('Data read out of range');
+      rr[d]=z<32?rr[z]:z<96?this.io[z-32]:this.ram[z-96];
+      z=(z+1)&65535;rr[pointer]=z&255;rr[pointer+1]=z>>8;n=2;
+    }
+    else if([0x9201,0x920d].includes(w&0xfe0f)){ // ST Z+/X+,Rr
+      let d=(w>>4)&31,pointer=(w&15)===13?26:30,z=rr[pointer]|rr[pointer+1]<<8;
+      if(d===pointer||d===pointer+1)throw new Error('Undefined ST post-increment');
+      if(z>=96&&z<160)this.ram[z-96]=rr[d];else if(z<32)rr[z]=rr[d];else throw new Error('Data write out of range');
+      z=(z+1)&65535;rr[pointer]=z&255;rr[pointer+1]=z>>8;n=2;
+    }
+    else if((w&0xfe0f)===0x9004 || (w&0xfe0f)===0x9005){ // LPM Rd,Z[+]
+      let r=(w>>4)&31,z=rr[30]|rr[31]<<8;
+      if(z>=this.rom.length)throw new Error('LPM out of Flash');
+      rr[r]=this.rom[z];
+      if(w&1){z++;rr[30]=z&255;rr[31]=z>>8}
+      n=3;
+    }
+    else throw new Error('Unknown opcode 0x'+w.toString(16)+' at 0x'+p.toString(16));
+    this.cyc+=n;
+    if(this.timer){
+      if(this.overflowAt<=this.cyc){
+        // No assumption about overflow latency: pending TOV0 is a 1-bit flag.
+        if(this.pending)this.lost++;
+        this.pending=true;
+        this.overflowAt+=256;
+        while(this.overflowAt<=this.cyc){this.lost++;this.overflowAt+=256}
+      }
+      if(this.i && (this.io[0x39]&2) && this.pending){
+        this.pending=false;this.stack.push(this.pc);this.pc=3;this.i=0;
+        this.irqStart=this.cyc;this.cyc+=4;this.inIRQ=true;this.irqCount++;
+      }
+    }
+  }
+  nextDuty(){
+    while(this.samples.length===0)this.step();
+    return this.samples.shift();
+  }
+  static fromHex(hex,eepromHex){
+    let rows=hex.trim().split(/\s+/),data=[];
+    for(let row of rows){
+      if(!row.startsWith(':'))continue;
+      let b=[];
+      for(let j=1;j+1<row.length;j+=2)b.push(parseInt(row.slice(j,j+2),16));
+      if(b.reduce((a,x)=>a+x,0)%256!==0)throw new Error('HEX checksum mismatch');
+      if(b[3]===1)break;
+      if(b[3]!==0)throw new Error('Only flat 1KB HEX supported');
+      let addr=b[1]*256+b[2];
+      for(let j=0;j<b[0];j++)data[addr+j]=b[4+j];
+    }
+    if(data.length>1024 || data.length===0 || data.length%2 || Array.from({length:data.length},(_,i)=>i).some(i=>data[i]===undefined))
+      throw new Error('Некорректный или неполный Flash HEX');
+    let eeprom=null;
+    if(eepromHex){
+      const bytes=[];
+      for(const row of eepromHex.trim().split(/\s+/)){
+        if(!row.startsWith(':'))continue;
+        const b=[];for(let j=1;j+1<row.length;j+=2)b.push(parseInt(row.slice(j,j+2),16));
+        if(b.reduce((a,x)=>a+x,0)%256)throw new Error('EEPROM HEX checksum mismatch');
+        if(b[3]===1)break;
+        if(b[3]!==0)throw new Error('Invalid EEPROM HEX record type');
+        const addr=b[1]*256+b[2];
+        for(let j=0;j<b[0];j++)bytes[addr+j]=b[4+j];
+      }
+      if(bytes.length!==64||Array.from({length:64},(_,i)=>i).some(i=>bytes[i]===undefined))
+        throw new Error('EEPROM HEX должен содержать ровно 64 байта');
+      eeprom=Uint8Array.from(bytes);
+    }
+    return new AVRCore(Uint8Array.from(data),eeprom);
+  }
+}
+if(typeof module!=='undefined' && module.exports)module.exports={AVRCore};
+
+</script>
+<script>
+const FIRMWARE_HEX = `:1000000003C01595089550C0DD27BB272224FF2487
+:1000100088270FEF802E00E8E02EE1E6FF27D1933E
+:10002000E039E9F720E8E0E82193E039E9F7722FB9
+:10003000C0E86EE801E0102E01E0402E00EE302E08
+:10004000EEE0F3E0B99A29BD03E20FBD01E003BF82
+:1000500002E009BF7894062F0C1B0F700D30D8F703
+:10006000F39409F426D0A1E655279D910D917D903A
+:100070006D901D911F77060D711EA4500D937D92FA
+:10008000AE5F012F172DCED0A4FD1595510FAF37C0
+:1000900061F75058072F050F0795A62F0D935D9315
+:1000A0006A2F6F78752FD7CF29BD2991C4FDC0E87D
+:1000B00018958395A1E60D91102F1F7007FF1CC0A6
+:1000C00005FF06C080FD24C0173011F1039520C044
+:1000D0001123F1F09FE0173020F097E01A3008F07C
+:1000E00093E0AD5F0D90A45007FC969507FC9695A4
+:1000F000982371F40A950CC005FF03C0982F9770E0
+:1001000039F4112329F00A95113011F006FD0A95F2
+:10011000A1500D93AC5FAF3771F61FE9210E10E2CD
+:10012000311E08F0089583941A9409F040C0059197
+:100130000F3F09F42EC00739A0F00E3F39F0E7FE5B
+:1001400002C01FEF912E0E58E02EF1CFA1E60D91C7
+:100150000F77A1500D93AC5FA537C9F700E8E02EEB
+:10016000E6CF6F01102F1770EFEDF2E0E10F149062
+:10017000069506950695013131F00231B9F0A1E6F8
+:100180009FEC4AD013C0109161001F77109361005B
+:100190000EC0E2ECF2E0E40D04914394142D1D3105
+:1001A00009F44424EEE0F3E0E00FC1CF00C0F60113
+:1001B000E7FC0895082D037041F0023059F50091D5
+:1001C00066000F770093660025C00E2D0F700F306C
+:1001D00019F0A6E697EC20D0E6FC03C0082D0F70BE
+:1001E000C9F40E2D02950370033021F00F5EABE6CB
+:1001F00097E912D0082D0F7069F49394092D0830F7
+:1002000048F00E2D02950370033009F402E0A0E7D8
+:1002100090EA02D0F6010895000FE6EEF2E0E00F5A
+:10022000FD1F29C0092E9F7021F10430002D00739D
+:1002300008F00860AC3618F49E3008F000631295A0
+:100240001F701695012B0EBBE09A1DB308F4129592
+:100250001F701850012E93FF1127110F92FD100DE2
+:10026000110F91FD100D110F90FD100D15951595A5
+:1002700008951127C6CE0BD00F700695092BA150FB
+:100280000D93AE5F05910D9305910D9308955F0158
+:10029000009175000F7010917A001F70011BE5E747
+:1002A00008F0EAE70D910F77102F1F7041F0FF273C
+:1002B000019314E00D9001921A95E1F7A450F50115
+:1002C000A0CE000C07E717001C304D305A650A64B9
+:1002D000A0A6A6A6A6A6BDA9B5A9C36BE064E30126
+:1002E000020304060810C5043F04920362022F03B0
+:1002F0005A05AC055D06250792078989B48AAD02C7
+:10030000D602C9037F88578BF200CC00990098561B
+:10031000A895835979B996C995FF8359419996A9AA
+:1003200095835931FF00283040FF8C4840974B415E
+:100330003591A6892C334101B696C6958DFFAE3115
+:100340000131013101312830C3392939293929399D
+:100350002830B441314131413141FF2830C339297E
+:1003600039293929390028FF3840C579397939794F
+:1003700039FF8B00283040CE56E895835979F9969D
+:1003800095835941D996E995835931F996958B0012
+:10039000283040D856E895835979F996958C48408D
+:1003A000D74B413591E6892C334101F696FFBD9537
+:1003B0008DFD8EFF8E8EFF10F1018D8CEE0921894F
+:1003C0007189FF698971FD118D8CF08D8B186068C2
+:1003D000FF118969FD198B6068218B6820F211205B
+:1003E0001009100801080030384078D456FFFD8D00
+:0803F000FFAE03FE8D8BFFFF41
+:00000001FF
+`;
+let selectedFlashHex=FIRMWARE_HEX;
+const EEPROM_HEX = `:10000000A9BB9A3642979A99B9CCBBCC6A23327570
+:10001000684454A8CCCC8B75684454A8CCCC8B7560
+:1000200078564485CBABAA8998AAAACB8B4644655F
+:10003000A9AC9A3642A79999B8CDAADC6B13318640
+:00000001FF
+`;
+let selectedEEPROMHex=EEPROM_HEX;
+let audio=null, processor=null, gainNode=null, core=null, scope=[], phase=0, v0=0, v1=0, sampleNumber=0, avgPWM=128;
+const $=id=>document.getElementById(id), canvas=$('wave'), g=canvas.getContext('2d');
+function draw(){
+ g.fillStyle='#0b1524';g.fillRect(0,0,canvas.width,canvas.height);
+ g.strokeStyle='#263b59';g.lineWidth=1;
+ for(let y=30;y<canvas.height;y+=30){g.beginPath();g.moveTo(0,y);g.lineTo(canvas.width,y);g.stroke()}
+ g.strokeStyle='#d0bb77';g.lineWidth=1;g.beginPath();g.moveTo(0,canvas.height/2);g.lineTo(canvas.width,canvas.height/2);g.stroke();
+ if(scope.length){g.strokeStyle='#65afff';g.lineWidth=2;g.beginPath();
+  for(let i=0;i<scope.length;i++){let x=i/(scope.length-1)*canvas.width,y=canvas.height/2-scope[i]*canvas.height*.42;
+   if(i===0)g.moveTo(x,y);else g.lineTo(x,y)}g.stroke()}
+}
+function ui(){
+ if(!core)return;
+ $('time').textContent=(sampleNumber/(audio?.sampleRate||48000)).toFixed(1)+' с';
+ $('cycles').textContent=(core.cyc/1e6).toFixed(2)+' M';
+ $('irqs').textContent=core.irqCount.toLocaleString('ru');
+ $('maxisr').textContent=core.maxIRQ+' из 256 тактов (период PWM)';
+ $('avgpwm').textContent=avgPWM.toFixed(1)+' / 128';
+ $('lost').textContent=core.lost.toLocaleString('ru');
+ draw();
+}
+let interval=null;
+async function start(){
+ try{
+  if(audio)await stop();
+  core=AVRCore.fromHex(selectedFlashHex,selectedEEPROMHex);
+  audio=new (window.AudioContext||window.webkitAudioContext)();
+  processor=audio.createScriptProcessor(4096,0,1);
+  const hp=audio.createBiquadFilter();hp.type='highpass';hp.frequency.value=35;
+  const lp=audio.createBiquadFilter();lp.type='lowpass';lp.frequency.value=4000;lp.Q.value=.5;hp.Q.value=.5;
+  gainNode=audio.createGain();gainNode.gain.value=+$('volume').value;
+  processor.connect(hp);hp.connect(lp);lp.connect(gainNode);gainNode.connect(audio.destination);
+  // One new duty for each Timer0 overflow; 37.5kHz -> AudioContext rate.
+  phase=0;v0=core.nextDuty();v1=core.nextDuty();sampleNumber=0;avgPWM=128;
+  processor.onaudioprocess=e=>{
+   const out=e.outputBuffer.getChannelData(0),ratio=37500/audio.sampleRate;
+   try{
+    let dutySum=0;
+    for(let j=0;j<out.length;j++){
+     const duty=v0+(v1-v0)*phase;
+     dutySum+=duty;
+     out[j]=(duty-128)/128;sampleNumber++;
+     phase+=ratio;
+     if(phase>=1){phase-=1;v0=v1;v1=core.nextDuty()}
+    }
+    // Slow moving mean of the unfiltered PWM duty, before the high-pass.
+    avgPWM=0.85*avgPWM+0.15*dutySum/out.length;
+    // Draw only ~500 points from the latest output buffer.
+    scope=[];for(let j=0;j<500;j++)scope.push(out[Math.floor(j*out.length/500)]);
+   }catch(err){console.error(err);$('status').textContent='Ошибка эмуляции: '+err.message;stop()}
+  };
+  await audio.resume();
+  $('start').disabled=true;$('stop').disabled=false;
+  $('status').textContent='Воспроизводится настоящий HEX; отключите другие тяжёлые вкладки, если на телефоне появятся щелчки.';
+  interval=setInterval(ui,250);
+ }catch(err){console.error(err);$('status').textContent='Не удалось начать: '+err.message;await stop()}
+}
+async function stop(){
+ if(interval){clearInterval(interval);interval=null}
+ if(processor){processor.disconnect();processor.onaudioprocess=null;processor=null}
+ if(audio){let a=audio;audio=null;await a.close()}
+ $('start').disabled=false;$('stop').disabled=true;
+ ui();
+}
+$('start').onclick=start;$('stop').onclick=stop;
+$('volume').oninput=()=>{if(gainNode)gainNode.gain.value=+$('volume').value};
+// Explicit user action is required by browsers before audio can start.
+$('flashPick').onchange=async e=>{
+ const f=e.target.files?.[0];if(!f)return;
+ try{const hex=await f.text();AVRCore.fromHex(hex,selectedEEPROMHex);selectedFlashHex=hex;
+ $('status').textContent='Flash загружен: '+f.name+' (для применения нажмите «Слушать» заново).';}
+ catch(err){$('status').textContent='Ошибка Flash HEX: '+err.message}
+};
+$('eepPick').onchange=async e=>{
+ const f=e.target.files?.[0];if(!f)return;
+ try{const hex=await f.text();AVRCore.fromHex(selectedFlashHex,hex);selectedEEPROMHex=hex;
+ $('status').textContent='EEPROM загружена: '+f.name+' (перезапустите прослушивание).';}
+ catch(err){$('status').textContent='Ошибка EEPROM HEX: '+err.message}
+};
+draw();
+</script>
+</body></html>

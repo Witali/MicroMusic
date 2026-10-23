@@ -1,0 +1,101 @@
+{
+  "date": "2026-10-22",
+  "version": "2.1.0",
+  "node": "22.22.3",
+  "node_test_groups": 31,
+  "node_passed": 31,
+  "node_failed": 0,
+  "source_integrity": "Original ZIP manifest and all three retained ROM hashes verified",
+  "opcode_timings": {
+    "documented": 244,
+    "deliberately_rejected": 12
+  },
+  "alu_input_combinations": 1048576,
+  "differential_instruction_states": 7776,
+  "bcd_additions": 20000,
+  "imported_regression_assertions": 35550,
+  "roms": [
+    {
+      "name": "uniform26.bin",
+      "instructions": 54399333,
+      "t_states": 266506117,
+      "original_report_t_states": 266554245,
+      "xchg_executions": 48128,
+      "pc": 11069,
+      "sp": 29088,
+      "mem_writes": 0,
+      "halted": true
+    },
+    {
+      "name": "balanced27.bin",
+      "instructions": 52909359,
+      "t_states": 261000805,
+      "original_report_t_states": 261050469,
+      "xchg_executions": 49664,
+      "pc": 11069,
+      "sp": 29168,
+      "mem_writes": 0,
+      "halted": true
+    },
+    {
+      "name": "diagnostic_dualcrc.bin",
+      "instructions": 3869609,
+      "t_states": 19827541,
+      "original_report_t_states": 19827566,
+      "xchg_executions": 25,
+      "pc": 4453,
+      "sp": 31800,
+      "mem_writes": 0,
+      "halted": true
+    }
+  ],
+  "browser": {
+    "engine": "Chromium (Codex in-app browser)",
+    "builds": [
+      "index.html",
+      "Intel_8080_ROM_Player.html"
+    ],
+    "results": [
+      "BIN to INTE to HLT; downloaded firmware matches the loaded BIN",
+      "Valid Intel HEX",
+      "Corrupt HEX clears prior ROM and disables firmware download",
+      "RAM stack, registers and WR pulses",
+      "Live audio clock advances",
+      "Pause freezes audio clock and CPU; resume/reset work; live lookahead remains below 3 seconds in the test",
+      "Undocumented opcode error",
+      "No separate audio element",
+      "No WAV export control; live audio and waveform filters remain available",
+      "390 px viewport without horizontal overflow",
+      "Five example ROM SHA-256 values match in both builds; 159T default executes to HLT",
+      "Search and switching examples clear CPU/audio; upload deselects catalog",
+      "Standalone examples and engines need no external resource requests",
+      "Speaker icon matches ATtiny13; specification reads 244 instructions"
+    ],
+    "live_music_excerpt": {
+      "rom": "uniform26.bin",
+      "seconds_limit": 4,
+      "instructions": 2857167,
+      "t_states": 14000004,
+      "audio_elapsed_seconds": 4.0,
+      "edges": 205216,
+      "stop_reason": "time_limit"
+    },
+    "standalone": "Embedded Worker and AudioWorklet passed the same HTTP browser suite; direct file: testing is blocked by the browser tool policy",
+    "default_example": {
+      "id": "voice159",
+      "period_t": 159,
+      "cpu_hz": 3500000,
+      "t_states": 19814634,
+      "tempo_change_percent": 0.13,
+      "levels": 16,
+      "samples": 63085
+    }
+  },
+  "standalone_build_check": true,
+  "hardware_tested": false,
+  "independent_exercisers": "EXERCISERS.json",
+  "rotation_cases": 32768,
+  "pwm_test_groups": 5,
+  "total_test_groups": 36,
+  "pwm_report": "../Sound/dual-crc-voice/AUDIT.json"
+}

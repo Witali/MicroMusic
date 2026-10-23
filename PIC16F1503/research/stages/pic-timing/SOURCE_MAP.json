@@ -1,0 +1,249 @@
+{
+  "slug": "pic-timing",
+  "target": "PIC16F1503/Music",
+  "title": "Refine PIC instruction timer and PWM timing",
+  "origin": {
+    "archive": "MicroMusic_PIC16F1503_timing_corrected.zip",
+    "sha256": "beea223d4dc1da6f0b231a9471df4fc148ea772bb7a28275cc76000dac31dd3b"
+  },
+  "previous_commit": "d68ad5bdba05bdbb7a47ba58b70b351d64d0bccf",
+  "files": [
+    {
+      "path": "PIC16F1503/Music/AUDIT_MICROCHIP_RU.md",
+      "sha256": "51f7feb6410e789f58ef53fd2aa5089d228818c9e0f0181905a9065d1c0e9ecf",
+      "bytes": 11767
+    },
+    {
+      "path": "PIC16F1503/Music/README.md",
+      "sha256": "dc56c38793a349db51173dd581f1eb32f91562f85fd31ed0a6690c07d688f799",
+      "bytes": 12672
+    },
+    {
+      "path": "PIC16F1503/Music/README_FIRST.txt",
+      "sha256": "73d81ca12e4c917b5ed8dff4d6d269c23e955d01449d86ea2753dd03ae84df8c",
+      "bytes": 1082
+    },
+    {
+      "path": "PIC16F1503/Music/TIMING_AUDIT_DS40001607D_RU.md",
+      "sha256": "d90a8760ba64dbb42b19e4b1971f39e65bbd9f587ade93313123f1fc18c1e980",
+      "bytes": 12581
+    },
+    {
+      "path": "PIC16F1503/Music/emulator_fixes.patch",
+      "sha256": "e5f7620f84133a0e54adc67da6469341ba2f73b16c8ce967a2fba70bf28fff45",
+      "bytes": 9193
+    },
+    {
+      "path": "PIC16F1503/Music/firmware/gain_tables.inc",
+      "sha256": "37a1f4501d6ef488a861a66913acaf1d43121a13d65bc234179aa5350254a078",
+      "bytes": 1724
+    },
+    {
+      "path": "PIC16F1503/Music/firmware/micromusic.asm",
+      "sha256": "97e98e55c0223e310133b4f113b4d20d8d0b698d504cba5151adb442c3c6b837",
+      "bytes": 13952
+    },
+    {
+      "path": "PIC16F1503/Music/firmware/music_tables.inc",
+      "sha256": "4e500c4fc2b1aee97c687aa612268eb02e4bc30fd66ecaa1b70dfcd7b5cf9ee3",
+      "bytes": 2039
+    },
+    {
+      "path": "PIC16F1503/Music/firmware/wave_tables.inc",
+      "sha256": "c490c471d300d9155e2824e19cbd200db34e82e553290d75fcd9679e0df9a18c",
+      "bytes": 1092
+    },
+    {
+      "path": "PIC16F1503/Music/reports/assembly.json",
+      "sha256": "73c4c1cd96cc546ccb25a1feaf7b9b31e11c5602f88785eb24070121fd3808ea",
+      "bytes": 1096
+    },
+    {
+      "path": "PIC16F1503/Music/reports/audit_full.log",
+      "sha256": "85ff9d75c89ed3774058c938e871c42991245c6273ef23b5fc667065c0c91400",
+      "bytes": 1449
+    },
+    {
+      "path": "PIC16F1503/Music/reports/datasheet_audit_verification.json",
+      "sha256": "c80a85cbbf8262c3f3d384b03f9b205c7e94319158627fe36a5feb6cc1fe6dc2",
+      "bytes": 897
+    },
+    {
+      "path": "PIC16F1503/Music/reports/emulator_smoke.json",
+      "sha256": "19fa44589bb7dcc8c41c1eef27166d2e790580e48b533d19fa203f95e66179b5",
+      "bytes": 704
+    },
+    {
+      "path": "PIC16F1503/Music/reports/firmware_unit_tests.log",
+      "sha256": "51986c582faf11cbb4572c867d9d3946fe715959cd570d591abe74cd329a2016",
+      "bytes": 261
+    },
+    {
+      "path": "PIC16F1503/Music/reports/full_score_audit.json",
+      "sha256": "edee2bec7d13b337340aff15f8750e13124b77c6b771fb3ebdc8c9ece6dbd100",
+      "bytes": 1147
+    },
+    {
+      "path": "PIC16F1503/Music/reports/long_run.json",
+      "sha256": "9d1989cf7cad4bd532551ae0c28443a0e66d9703f5ba3e864d36db4660adb042",
+      "bytes": 774
+    },
+    {
+      "path": "PIC16F1503/Music/reports/rebuild.log",
+      "sha256": "bbf8a7300685ee9b3ded4d86ea5281675461cdd33e416477515fa9ad95eb1a1d",
+      "bytes": 564
+    },
+    {
+      "path": "PIC16F1503/Music/reports/static_tests.json",
+      "sha256": "51986c582faf11cbb4572c867d9d3946fe715959cd570d591abe74cd329a2016",
+      "bytes": 261
+    },
+    {
+      "path": "PIC16F1503/Music/reports/timing_full_230.log",
+      "sha256": "2f80fe0b1e08306e5754efd68faaa864a15bff494bc8da9983ea1922299df49d",
+      "bytes": 1491
+    },
+    {
+      "path": "PIC16F1503/Music/reports/timing_render_14.log",
+      "sha256": "b32ff7488cb3e95dad3134ff84dd75d31bfa5aa8ba6827c76a58f30e9b9af29e",
+      "bytes": 1192
+    },
+    {
+      "path": "PIC16F1503/Music/reports/timing_unit_tests.log",
+      "sha256": "b1780ac74e9e1a4181fab8ec640e5dd15c40d8bedebd79ce9562b9d3314b47af",
+      "bytes": 17288
+    },
+    {
+      "path": "PIC16F1503/Music/source/FluidR3-MIT.txt",
+      "sha256": "33087692c963b4e5e536f4fc4d625714e519d06d570057bb0b921923ac9141d5",
+      "bytes": 2118
+    },
+    {
+      "path": "PIC16F1503/Music/source/music-assets.json",
+      "sha256": "0e4975e069ad48d4462764bc8f4b6a0c1f0f20f246e74d844aa9c73063fe52f7",
+      "bytes": 4577
+    },
+    {
+      "path": "PIC16F1503/Music/tests/audit_full_score.mjs",
+      "sha256": "e580b0a3e92a124394ffab13a36a59c585e2e8801627b6fc1892c2881cddfd89",
+      "bytes": 1718
+    },
+    {
+      "path": "PIC16F1503/Music/tests/check_machine.mjs",
+      "sha256": "5f171d5e1eea59f52608df7b2b193d19b0405a0f2ba2b7294d7f58a184c5b892",
+      "bytes": 1226
+    },
+    {
+      "path": "PIC16F1503/Music/tests/isa_timing_matrix.test.mjs",
+      "sha256": "8fc94fa7d8e223458adaed975316f63bee5223caaf42afe2e509e29e7970130e",
+      "bytes": 2105
+    },
+    {
+      "path": "PIC16F1503/Music/tests/official_datasheet_audit.test.mjs",
+      "sha256": "22f5d7253e2198c80607208b98fc32edb73b0735c9ce8d9002c72cd2d7e9f5ef",
+      "bytes": 5188
+    },
+    {
+      "path": "PIC16F1503/Music/tests/official_timing_v2.test.mjs",
+      "sha256": "c9700217c01e02fa29ba9e490b78b50c67d201083ac3465ab6b8cfbb8faff28c",
+      "bytes": 9422
+    },
+    {
+      "path": "PIC16F1503/Music/tests/test_firmware.py",
+      "sha256": "b940cc2257abfa4d4e1d7e409876d1b8076fc0f899002cfa0d342358af25d3ca",
+      "bytes": 2033
+    },
+    {
+      "path": "PIC16F1503/Music/tools/assemble_pic.py",
+      "sha256": "a6c369e22174add1611f657440e24577f6fe04648d49747a24d640a1278ba09e",
+      "bytes": 7067
+    },
+    {
+      "path": "PIC16F1503/Music/tools/build_firmware.py",
+      "sha256": "aa0918d2100845b212f4d03b666a500958a6440ae46928b47e1fe150c2b86541",
+      "bytes": 1806
+    },
+    {
+      "path": "PIC16F1503/Music/tools/build_player.py",
+      "sha256": "5da1232ea7e989ee17d852783547a4e3d36a38c80018a3965fd47f4ed935461b",
+      "bytes": 8732
+    },
+    {
+      "path": "PIC16F1503/Music/tools/generate_tables.py",
+      "sha256": "2f0766c914446519a2f52fca2c497ee3e7be76ebb5e7d66886dd3df55b81e0c7",
+      "bytes": 2525
+    },
+    {
+      "path": "PIC16F1503/Music/tools/package.py",
+      "sha256": "d05153819507537a4f8634855a32c7bebd6e3dc3ffffe709c3bc73c4360e8d1e",
+      "bytes": 947
+    },
+    {
+      "path": "PIC16F1503/Music/tools/render_machine.mjs",
+      "sha256": "ddc60442803a369f5afc2fbb5e8679fd671a3787466af28751abfb51ad325544",
+      "bytes": 3071
+    },
+    {
+      "path": "PIC16F1503/Music/web/pic16-core.mjs",
+      "sha256": "f02f891f3f508306b38ed1b2ccabb08b242c0e3f80b743358032ae4a88180012",
+      "bytes": 21498
+    },
+    {
+      "path": "PIC16F1503/Music/web/player.html",
+      "sha256": "ca5a6b3864ec769ab3b74ea51634f2c80651318f4ef201c69e244eb8102be94f",
+      "bytes": 274023
+    }
+  ],
+  "omitted": [
+    {
+      "path": "MANIFEST_SHA256.txt",
+      "bytes": 4290,
+      "sha256": "5227fa834ece9a81e8201c3bfa4629ae607ac32f801a0b1f7627045bb5e3441a"
+    },
+    {
+      "path": "firmware/micromusic.bin",
+      "bytes": 4016,
+      "sha256": "00ff1896df26a55cece6cbc6c219dc8aeddf3f464841d6df4be0c1a5db1a8419"
+    },
+    {
+      "path": "firmware/micromusic.hex",
+      "bytes": 11056,
+      "sha256": "f334f78c8c8749e880c601bd27e76fabc5a83e8f46c11b8488e5836a7ff67dee"
+    },
+    {
+      "path": "firmware/micromusic.lst",
+      "bytes": 93885,
+      "sha256": "9c2748779e5a24e7c4f84fa07e1f6ebdb8ee77500456c70e69116fd746f08307"
+    },
+    {
+      "path": "firmware/micromusic_config.hex",
+      "bytes": 48,
+      "sha256": "d6995f501403cb245efd672d6d9a15202c318fa36ad164133ea1f2db4e646f53"
+    },
+    {
+      "path": "firmware/micromusic_with_config.hex",
+      "bytes": 11092,
+      "sha256": "7787e6dae4f115a36cf4f4a9054ed02c74411106efb02ba861195755854ae578"
+    },
+    {
+      "path": "reference/preview_pic16_asm.pcm8",
+      "bytes": 175000,
+      "sha256": "3c2b424af986cf4f779ae680c056ece7febf2b58d3cc599393f906d1c6a59065"
+    },
+    {
+      "path": "reference/preview_pic16_asm.wav",
+      "bytes": 350044,
+      "sha256": "c8f17c48bb9ae5627d080b99394a30aa369a90b53d3369705d32d454073f5f6e"
+    },
+    {
+      "path": "reports/pic_player.png",
+      "bytes": 152921,
+      "sha256": "24b08b12974ccbc613688319075b86cc38ad0902af4b0991c561a79eb36b5add"
+    },
+    {
+      "path": "reports/timing_full_230.exit",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    }
+  ]
+}

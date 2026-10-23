@@ -1,0 +1,9 @@
+variant,code_bytes,cycles_full_64KiB,cycles_per_rom_byte,seconds_at_3_5MHz,reset_only
+baseline_compact_reset72,72,20119625,307.001114,5.748464,true
+baseline_compact73,73,20119629,307.001175,5.748465,false
+baseline_fast75,75,18947651,289.118210,5.413615,false
+fast75_peephole,75,18882115,288.118210,5.394890,false
+speed74_reset,74,18882111,288.118149,5.394889,true
+fast_p47_rotate,82,18292291,279.118210,5.226369,false
+speed81_reset,81,18292287,279.118149,5.226368,true
+baseline_unroll2_120,120,18292291,279.118210,5.226369,false

@@ -1,0 +1,579 @@
+{
+  "slug": "minilpc-hq2",
+  "target": "ATtiny13A/Sound/codec",
+  "title": "Add reproducible HQ2 training pipeline",
+  "origin": {
+    "archive": "MicroMusic_MiniLPC_HQ2_Private.zip",
+    "sha256": "b4c715eea1ba03aa1fca94faf20645797e05a1624d8c7a73b4c719056632444a"
+  },
+  "previous_commit": "17ec03e5b1ceec30b4e60859f94c1e2d8fd5cafd",
+  "files": [
+    {
+      "path": "ATtiny13A/Sound/codec/README.md",
+      "sha256": "03fb31b64301811f7d1a0fe146c284666b7356595f0d53ace9d70447005989d8",
+      "bytes": 6180
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/README_PUBLIC.md",
+      "sha256": "706cbed3f8ca0bfea1cb454751034cad0ecc2969d61d76386fc9945f6decb834",
+      "bytes": 1153
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/avr_emulator.js",
+      "sha256": "dae6393748cc70178a6a6924a2c73f79b6ed67b7517c688ec3657fa9a87a3ffe",
+      "bytes": 9806
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/baselines/chego_base.S",
+      "sha256": "642b601c6dcf539a79a99fa0bc91512adcc2cb4a86e32fbbe5565b5df17af471",
+      "bytes": 3544
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/baselines/chego_best_joint.npz",
+      "sha256": "1011c4c2320216f2c72e9c3cbbd9676f3eff31fbd77e1af156a99aaf17a0e827",
+      "bytes": 1212
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/baselines/chego_best_phase2.npz",
+      "sha256": "9bcf13bdec424cb582ed985dd39a1797bd387bd9d13366422b96d91b11e74b16",
+      "bytes": 1212
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/baselines/chego_best_phase3.npz",
+      "sha256": "401a7cc4f4361e875a605f3bc572bf2e6522155c5c1c01d718d2ec0179ae88d6",
+      "bytes": 1212
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/baselines/chego_best_phase4.npz",
+      "sha256": "9b26cb5d0093f5886058b1fe9673cf6fcd55e76a3dd1b0cd09414de4d2752c5e",
+      "bytes": 1244
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/baselines/chego_best_v1.npz",
+      "sha256": "d4d8989dac8fca63a092eacfe41de81f3c6d298d4ddcf4528f01e22ae98b9413",
+      "bytes": 1140
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/baselines/chego_refined.npz",
+      "sha256": "ffde5d1b45e0544b74de0080764aa5f1d95b38fd2be92c2cdc5563ae0a364cbb",
+      "bytes": 10406
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/baselines/otvechaesh_best_joint.npz",
+      "sha256": "90456376dbc62739565ea524094a7fded25c8c33c247016bb41f37c1b275106b",
+      "bytes": 1124
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/baselines/otvechaesh_best_phase2.npz",
+      "sha256": "a115da6bd7adb1b7a5c14065758cae624ee2ce23e8ad8722f81f7fc575dd91be",
+      "bytes": 1124
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/baselines/otvechaesh_best_phase3.npz",
+      "sha256": "b17d02282007a4a57bd6128c414650464bf06f38af657441c9d1eb641161ea3a",
+      "bytes": 1124
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/baselines/otvechaesh_best_phase4.npz",
+      "sha256": "979b65eaa4ae2dd12f7f4bd3bf7399cca151bed32d87e18c26d9bc7600d4eb07",
+      "bytes": 1156
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/baselines/otvechaesh_best_v1.npz",
+      "sha256": "d24d292c57a24cf61415bd4add15983e9a6cc379612ac5d7affc17f9dcc72c53",
+      "bytes": 1044
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/baselines/otvechaesh_refined.npz",
+      "sha256": "ce26efb781249681e4aea12d1ec5b7ec226e5d486d1f6e587be3d2fec7ab55ac",
+      "bytes": 9086
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/baselines/vinni_best_joint.npz",
+      "sha256": "e707f22a32f2dcd331169ece4ad4ff1428c310b3a003730e3ff9df4f126b22ed",
+      "bytes": 1636
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/baselines/vinni_best_phase2.npz",
+      "sha256": "455ef51660b5d4dc06b406ff8946e60be973db91b15a56eae3081d42213047d2",
+      "bytes": 1636
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/baselines/vinni_best_phase3.npz",
+      "sha256": "9ccb168cba48c55d6cbe511a20bd1276843f8ea58e25e17d51ea04b18003e35f",
+      "bytes": 1636
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/baselines/vinni_best_v1.npz",
+      "sha256": "5c9c691731432fd34b7cc44c4dbe57f522b0570faa5613d1b41dea081efe7712",
+      "bytes": 1636
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/baselines/vinni_refined.npz",
+      "sha256": "cf44945448e6212122f1cd1c1ee554ec041f9bcbcf3f4a87b9143262cea365e6",
+      "bytes": 24094
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/browser_test.py",
+      "sha256": "cdc6737c6b466c1aa9aba11eaf862fb7f3b411c2747b54a25f874f1fb3a15a7d",
+      "bytes": 2109
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/build_demo.py",
+      "sha256": "31eb6f0c52dccf9101fb2dab46242590c5247e116ac3d26f3ad6ac1167e34bca",
+      "bytes": 609
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/build_hq.py",
+      "sha256": "8892451006ec93472de00eb1e754f2f496f42c367e2b28486b3dd516798142e7",
+      "bytes": 5271
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/convert_audio.py",
+      "sha256": "885d4a1f2eaff1cb06f2f6494cc525208efe0079b252334e208778a037af12a4",
+      "bytes": 4467
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/demo_verify.js",
+      "sha256": "d6ce36fce887a5c62d57cb6910d986effa196861674d885b53d81e619d759075",
+      "bytes": 582
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/index.html",
+      "sha256": "dc0d8689006e31a4353505634353f4db14d33232e511e5813450412ba4ee1b8e",
+      "bytes": 359473
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/inputs/README.md",
+      "sha256": "7699057d69852458baba36d976942fe0df933645f9670bbc26cf098563b87709",
+      "bytes": 1259
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/joint_opt.py",
+      "sha256": "2532d996d6d00ce60bf1ba9700e74e99da43b92f33fa5faac3fad699ee6405ce",
+      "bytes": 4815
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/make_player.py",
+      "sha256": "8b44e6f2b4f76ab1b4fbaa3211f5c0eac9a99432c7764ca37be1fe671852e58e",
+      "bytes": 14997
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/make_release.py",
+      "sha256": "baacbd4c2277d160a5cef2df5e2d1e1a59bc44624c5a72e45f9cf98f10b6758b",
+      "bytes": 3612
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/model.py",
+      "sha256": "d9c3449ddd2da1929e71da99ef3b040d46d95988d2f5ea704f9416e30c1ba71e",
+      "bytes": 1610
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/noise_lab.py",
+      "sha256": "5ebee2dd53ba8119468a94ef0128cdbb4a86e44bb328c3eed18548e189b9fa1b",
+      "bytes": 2760
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/package_release.py",
+      "sha256": "f1c399a66fd644ea7d7cb6b9457f2e702ebe1d0d2e15aa315596f9133c82e116",
+      "bytes": 1700
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/prepared/chego.json",
+      "sha256": "9ca21f2c7ff6efadfaabc6e5f41418866f2a98aa2b0a8df251189e3950ee8ba9",
+      "bytes": 228
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/prepared/otvechaesh.json",
+      "sha256": "d489dc2859eca28d48bf985e321fa4075eb25e24937f695c530354b9035571eb",
+      "bytes": 258
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/prepared/vinni.json",
+      "sha256": "e8e860c01875c9088e6cc55df95b1a139b3f7acdc05e155ad9b88d6fb0fae745",
+      "bytes": 240
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/pulse_lab.py",
+      "sha256": "53909d1e505155d8ba067bb8b9715dece9eb84e3ac37466a3dbe38d8637e9777",
+      "bytes": 2911
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/pulse_report.json",
+      "sha256": "36bac59be1087b490a6639cbf7f68a84dd899ea1cbd9cb9c116f08caec072df4",
+      "bytes": 10564
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/quality.py",
+      "sha256": "15237fa293e8866d6af5baeb42ddefe446225d34d22a42c389bc7f910b3efbc5",
+      "bytes": 1058
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/refine_hq.py",
+      "sha256": "78ca2499ed5d39f05724cb6a8e3ba6fa5f047233c19ff03995c18bb2d6f95f26",
+      "bytes": 3689
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/report.csv",
+      "sha256": "5105d9181ee9623756b0e98a70428842c16b276d8ff3ad245e56cbfdd957fda4",
+      "bytes": 491
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/report.json",
+      "sha256": "45d58bedb8e2fc74228a72fd36b36de4c013b444d1bd6708034a474dbe9b148c",
+      "bytes": 1089
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/requirements.txt",
+      "sha256": "6298ecc848ecfc2fb689f7c93359aaac70b0d8c765c7ad121b1e5a50432ea03b",
+      "bytes": 35
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/run_all.py",
+      "sha256": "a6d1a45588d75aba8cd4f3dc06cc75988e0e5fd198af0bd65685a14971e0c85a",
+      "bytes": 3121
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/chego/firmware.S",
+      "sha256": "868f4b24b5bb23251d254e4ad53eb487113a1b69ce831a474692297604bb18a6",
+      "bytes": 3605
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/chego/joint_search.json",
+      "sha256": "7dbd49702b82da11f43e7976c5da5489c7739a5f58766447b1d5a04fcf442da9",
+      "bytes": 395
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/chego/noise_search.json",
+      "sha256": "bbcf154d3ed5de97864eb4048dcd4ae6fe263a60205e070f94bc2e697c67a4ff",
+      "bytes": 897
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/chego/refinement.json",
+      "sha256": "cb26af145b13c1bf3413e27aeb8d437d0e86e66c1daadace8d2dcbc18872de83",
+      "bytes": 229
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/chego/speech.hq",
+      "sha256": "019476217321f3a04d390cd26c22d30f1d1bb96d5c46fb1f577dbc92ee4a9f88",
+      "bytes": 570
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/chego/trained.npz",
+      "sha256": "1934e9f8db04a65bd01cc04d1acd6c878ad61c348035c05dea8405d9ad1b6587",
+      "bytes": 1244
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/chego/training.json",
+      "sha256": "a8ec28a628e933680bf2d60c0ea50133ebaf0f5379da5daf5ab71a9ffcbc239e",
+      "bytes": 1006
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/demo/firmware.S",
+      "sha256": "868f4b24b5bb23251d254e4ad53eb487113a1b69ce831a474692297604bb18a6",
+      "bytes": 3605
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/demo/speech.hq",
+      "sha256": "d3e9052c878fc7c43ebe6c7f75cddf2f8b40d81fb0538e434312d88c5608445d",
+      "bytes": 106
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/otvechaesh/firmware.S",
+      "sha256": "868f4b24b5bb23251d254e4ad53eb487113a1b69ce831a474692297604bb18a6",
+      "bytes": 3605
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/otvechaesh/joint_search.json",
+      "sha256": "587f81e4fa38dbb9a5d8bbf5a044bf599d66cf3700760b98955b01c3b4feb3e4",
+      "bytes": 397
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/otvechaesh/noise_search.json",
+      "sha256": "4b0b1798d37b96cd1a34de0625125ec45128793a9142a87bc73665e2e9ef174a",
+      "bytes": 898
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/otvechaesh/refinement.json",
+      "sha256": "f86390e5cac47465a8608cb5eee79134e5616df971593407528fb0b9c765affd",
+      "bytes": 232
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/otvechaesh/speech.hq",
+      "sha256": "16193779d0a1405c374ed6b71c9b4c7cefb36cef79e18aba4c2cd0017fb83bdf",
+      "bytes": 500
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/otvechaesh/trained.npz",
+      "sha256": "e94188741e07e045bdf9d07455e6adf9f445b0df4b20869093c195b9d36a66d0",
+      "bytes": 1156
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/otvechaesh/training.json",
+      "sha256": "7db1db4bc266896556875eb6b1c694861bf0f3687656b71652238ea8574077f6",
+      "bytes": 1008
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/vinni/firmware.S",
+      "sha256": "868f4b24b5bb23251d254e4ad53eb487113a1b69ce831a474692297604bb18a6",
+      "bytes": 3605
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/vinni/joint_search.json",
+      "sha256": "19cba594e7b1bf7331cb92e1da822539c9f4d9c8f51d87b9e4639f62ed462601",
+      "bytes": 368
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/vinni/noise_search.json",
+      "sha256": "2cf63634fca2e548474bac2489acf219d54d1ac8bc13941dc4af4cab8a7e7259",
+      "bytes": 891
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/vinni/refinement.json",
+      "sha256": "6e6052bfe97b74692f00cba4d6d9cd554af7fe69fed8b001fa5a92db9b18d778",
+      "bytes": 231
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/vinni/speech.hq",
+      "sha256": "a6368c37d055087dcaf43b9bd9f1f3e2710735630ce9efd8f978558bb6d1b832",
+      "bytes": 610
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/vinni/trained.npz",
+      "sha256": "d202742f0da84ca83f6930b94b79964b7ab9b2e89750f5d5249f7c5780b19d92",
+      "bytes": 1636
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/samples/vinni/training.json",
+      "sha256": "cf547b9133390b8160b95c3a293e55c26d2ad8d85061d96f1a5cc80d078e5034",
+      "bytes": 1196
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/train_hq.py",
+      "sha256": "4a44d3b542c394e85c4801eae7ae8bdcc8e4e413531c73caa1c52a9e2ed95acc",
+      "bytes": 5984
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/ui_smoke.js",
+      "sha256": "ad624dde91246e313d47b91ee9c972073d7c5801813e4edc052076f986ec071d",
+      "bytes": 2401
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/verification.json",
+      "sha256": "3f6ba97f1c514265b8b553a47aae4685c13c7ca5eb0af681397433fba09a2268",
+      "bytes": 423
+    },
+    {
+      "path": "ATtiny13A/Sound/codec/verify.js",
+      "sha256": "2e507028e45c1bc46ee65b874cd02b9d2fc1d4c8df8dad4f981792bce9749c56",
+      "bytes": 1061
+    }
+  ],
+  "omitted": [
+    {
+      "path": "inputs/ne-otv.mp3",
+      "bytes": 40261,
+      "sha256": "fb3b40dabe848fef449b04b03cf07fa41a64fa6a2f1d0661d281c969cbb456c6"
+    },
+    {
+      "path": "inputs/vinni-pux-3654654.mp3",
+      "bytes": 110101,
+      "sha256": "e0061b8416ea19fef7103bd0f2d4bc7cce2a51523ec935e544f9d5b471b0db44"
+    },
+    {
+      "path": "inputs/xtuj-ntt.mp3",
+      "bytes": 47158,
+      "sha256": "5377a40549377bc6e8b0f89a24faf412ed2b18e4e51a565888f651f7e9f89955"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 763,
+      "sha256": "2c46e154f713e6d575d795295e2f94a10363037c05a8ae6b83e1df680f8ad5a9"
+    },
+    {
+      "path": "prepared/chego.wav",
+      "bytes": 18476,
+      "sha256": "350dd43c3aeaa54eb2185577631c364bc18c15f6a2237ab3f8cf368c8fe30ea8"
+    },
+    {
+      "path": "prepared/otvechaesh.wav",
+      "bytes": 15916,
+      "sha256": "fc6dc1bdc27b6550d04a50a6fae1f77ba80816d2d604f58b7e2fce01ad56ce4e"
+    },
+    {
+      "path": "prepared/vinni.wav",
+      "bytes": 44588,
+      "sha256": "4944b8489963d3ffb1743b385807e98dc842e8d291150df7af74603ed1acb7dc"
+    },
+    {
+      "path": "references/chego/lpx3.wav",
+      "bytes": 18476,
+      "sha256": "d6dee82bcd81b276d6480cc25dd1550745c0d370364635abb87b0bcebfdd8e70"
+    },
+    {
+      "path": "references/chego/original.wav",
+      "bytes": 18476,
+      "sha256": "83d6fc0728f01b1d7df705ef470abac2ab6bdadfa758262bfc5b2a2e1d7f053b"
+    },
+    {
+      "path": "references/otvechaesh/lpx3.wav",
+      "bytes": 15916,
+      "sha256": "efb4dc976dda5806d7d671bdd0fecc209f6f02e034524a6f148e7ea61938581d"
+    },
+    {
+      "path": "references/otvechaesh/original.wav",
+      "bytes": 15916,
+      "sha256": "1dd26da0d563401ebb9ece617e8b1122968e6a6f924404401d179096ff6dbfd0"
+    },
+    {
+      "path": "references/vinni/lpx3.wav",
+      "bytes": 44588,
+      "sha256": "378ed2936376c353024c8733ce94283a6ddc9bd15b8a17e379dc92a21b9e61e1"
+    },
+    {
+      "path": "references/vinni/original.wav",
+      "bytes": 44588,
+      "sha256": "a7863b41cb04e6c4229b3866a856fd00e4b2386c132963176a2ea449dbfbd54a"
+    },
+    {
+      "path": "samples/chego/AB_original_VBR2_HQ_LPX3.wav",
+      "bytes": 85472,
+      "sha256": "5d9a901abf75ab2d40a55c45e20961b4a9eb9d881d1fe67ab24968c6f64d5f01"
+    },
+    {
+      "path": "samples/chego/avr_pcm.raw",
+      "bytes": 9216,
+      "sha256": "dd8f8e27a88c428ea49e4325d0873c14bfd66964e9910138b7a3517eff1053c7"
+    },
+    {
+      "path": "samples/chego/avr_preview.wav",
+      "bytes": 18476,
+      "sha256": "27688409f822f486c712fbdaf2a8912374874a779e201aa380b915c689342262"
+    },
+    {
+      "path": "samples/chego/baseline_pcm.raw",
+      "bytes": 9216,
+      "sha256": "91d351a4e78e5ad23e7811d27d5e9590e487776441e19ed24a5146cd18df7f05"
+    },
+    {
+      "path": "samples/chego/expected_pcm.raw",
+      "bytes": 9216,
+      "sha256": "dd8f8e27a88c428ea49e4325d0873c14bfd66964e9910138b7a3517eff1053c7"
+    },
+    {
+      "path": "samples/chego/firmware.bin",
+      "bytes": 983,
+      "sha256": "5449946908b88ecbac0e025abb9bb1fbc3ed744445a4405941ded5a1cb90c323"
+    },
+    {
+      "path": "samples/chego/firmware.hex",
+      "bytes": 2722,
+      "sha256": "d7db10a5cac26221463050d8c7ae3ca5d260f9d8be49f39b25a3ff58b4481751"
+    },
+    {
+      "path": "samples/chego/speech.vbr2",
+      "bytes": 280,
+      "sha256": "02cabb9c9b8ec2af224a9f5636e764b198a16c4efe95bce140759d54593e0360"
+    },
+    {
+      "path": "samples/demo/avr_preview.wav",
+      "bytes": 9260,
+      "sha256": "714499a2ce1fc62635144281f4683efb218d943b683df28c61ce30ee8ef2d7b9"
+    },
+    {
+      "path": "samples/demo/expected_pcm.raw",
+      "bytes": 4608,
+      "sha256": "08f606ba53571a3a2e9182d36907307cd33a968acafa10436b65295e95575aa1"
+    },
+    {
+      "path": "samples/demo/firmware.bin",
+      "bytes": 519,
+      "sha256": "a98c209b1f7c600e52fa7d875661e30fa41c331458c86e1fcd33ba92c820c3df"
+    },
+    {
+      "path": "samples/demo/firmware.hex",
+      "bytes": 1446,
+      "sha256": "e165772a8830c414eff73850885d37b87402d8b86203e4f243b220292814d445"
+    },
+    {
+      "path": "samples/otvechaesh/AB_original_VBR2_HQ_LPX3.wav",
+      "bytes": 75232,
+      "sha256": "13a31e4039071e53d7e634625d081f55f22f46f2ac36ab2dfb46455f5b8ce984"
+    },
+    {
+      "path": "samples/otvechaesh/avr_pcm.raw",
+      "bytes": 7936,
+      "sha256": "d45f49504b392984e35603a6cff21aa02b7f26d3396372d262a5b99c9409819d"
+    },
+    {
+      "path": "samples/otvechaesh/avr_preview.wav",
+      "bytes": 15916,
+      "sha256": "616b197c7102c6659b0efaa1f20eb87f1d239f3ebafe4a3488f197e853d1d646"
+    },
+    {
+      "path": "samples/otvechaesh/baseline_pcm.raw",
+      "bytes": 7936,
+      "sha256": "257d752af1984d5d036e3ccb4ffb5bcf1a9a37689b8eb6087b68ddc4c0cfe4d7"
+    },
+    {
+      "path": "samples/otvechaesh/expected_pcm.raw",
+      "bytes": 7936,
+      "sha256": "d45f49504b392984e35603a6cff21aa02b7f26d3396372d262a5b99c9409819d"
+    },
+    {
+      "path": "samples/otvechaesh/firmware.bin",
+      "bytes": 913,
+      "sha256": "24ce21d16741a25eb24f7cc5f9109d7b267862b823a5d28dbf52a1e85c5de8ac"
+    },
+    {
+      "path": "samples/otvechaesh/firmware.hex",
+      "bytes": 2534,
+      "sha256": "661faed76357147190f69338d35fa330e07b75078b5a8e1dd8ff778c1fdf1e1d"
+    },
+    {
+      "path": "samples/otvechaesh/speech.vbr2",
+      "bytes": 242,
+      "sha256": "ff1298e26a388ffba4b40a3c893571c1d1ff21ccbeceadeb6cd4118c8fe82e6a"
+    },
+    {
+      "path": "samples/vinni/AB_original_VBR2_HQ_LPX3.wav",
+      "bytes": 189920,
+      "sha256": "61c03851aa25bbc8c5edf1ee7633adb56db8f46e96008515b1c816a5b164d304"
+    },
+    {
+      "path": "samples/vinni/avr_pcm.raw",
+      "bytes": 22272,
+      "sha256": "1726c0cec9e04db1d2012107b043accb9ca15c43dd1b79e56fba4b3ae0e632dc"
+    },
+    {
+      "path": "samples/vinni/avr_preview.wav",
+      "bytes": 44588,
+      "sha256": "05a4b8c164a6a59b91b41458cd0e520fdb22ee4e793b90c968a2953ecd83be03"
+    },
+    {
+      "path": "samples/vinni/baseline_pcm.raw",
+      "bytes": 22272,
+      "sha256": "8dd0b9baf7acf64291f588d12336fe640c1851145e12841a64748021f0f2e69c"
+    },
+    {
+      "path": "samples/vinni/expected_pcm.raw",
+      "bytes": 22272,
+      "sha256": "1726c0cec9e04db1d2012107b043accb9ca15c43dd1b79e56fba4b3ae0e632dc"
+    },
+    {
+      "path": "samples/vinni/firmware.bin",
+      "bytes": 1023,
+      "sha256": "7ed497c6a7e13d77a5d96b8673e9227063a8064473fe627694f5dcfa5194f1eb"
+    },
+    {
+      "path": "samples/vinni/firmware.hex",
+      "bytes": 2826,
+      "sha256": "47dc3d0dea3cd484050c877ad59194f049a762dba9ee5976965ce13b4ebb20b5"
+    },
+    {
+      "path": "samples/vinni/speech.vbr2",
+      "bytes": 574,
+      "sha256": "acd8b2c0ae1bf94573670dd8e588cdfcfe3fbadc5c47a0eca9b5c980b7ce9431"
+    }
+  ]
+}

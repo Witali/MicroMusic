@@ -1,0 +1,10 @@
+profile,poly,code_bytes,total_T_65536,T_per_byte,seconds_at_2MHz,double_bit_syndrome_period_bits,asm_path
+compact33,0x002D,33,26673206,407.000824,13.336603,65535,versions/02_compact_31_32_33B/crc16_8080_33bytes.asm
+unroll39,0x002D,39,22741046,347.000824,11.370523,65535,versions/03_fast_40_42B/crc16_8080_unroll39.asm
+fast40,0x002D,40,10027062,153.000824,5.013531,65535,versions/03_fast_40_42B/crc16_8080_fast40.asm
+fast42,0x002D,42,9441078,144.059418,4.720539,65535,versions/03_fast_40_42B/crc16_8080_fast42.asm
+refined38,0x002D,38,9371702,143.000824,4.685851,65535,versions/04_refined_38_39B/crc16_8080_fast38.asm
+strong39,0x002D,39,8785713,134.059341,4.392856,65535,versions/05_latest_v3/crc16_8080_fast39.asm
+fastest33,0x0009,33,6164278,94.059418,3.082139,57337,versions/05_latest_v3/crc16_8080_fast33z_poly0009.asm
+balanced38,0x001B,38,8130353,124.059341,4.065176,59055,versions/05_latest_v3/crc16_8080_fast38_poly001B.asm
+speed37,0x000F,37,7474993,114.059341,3.737497,57337,versions/05_latest_v3/crc16_8080_fast37_poly000F.asm
