@@ -1,0 +1,87 @@
+Standalone ATtiny13A ADC (C and import-free WebAssembly)
+
+Source: Microchip ATtiny13A DS40002307A, chapter 14, especially sections
+14.4-14.6, 14.11-14.12 and Tables 14-1, 14-3, 14-4 and 14-5:
+https://www.microchip.com/content/dam/mchp/documents/MCU08/ProductDocuments/DataSheets/ATtiny13A-Data-Sheet-DS40002307A.pdf
+
+The module models register-visible digital ADC behavior and an ideal integer
+voltage-to-code conversion. It is standalone and is not linked into avr.c yet.
+Use analog_adc_reset with external VCC and bandgap-reference microvolt values;
+then inject ADC0..3 input voltages through analog_adc_input. Channels correspond
+to PB5, PB2, PB4 and PB3. A zero selected reference produces zero and exposes
+invalid_reference; it is an invalid fixture, not a prediction of real hardware.
+Voltages beyond the conversion range clamp to 0..1023. No source impedance,
+noise, temperature, calibration, leakage or reference-settling precision is
+claimed. The fixture must supply any desired analog settling trajectory.
+
+Time and scheduling
+
+Every timestamp is an absolute uint64_t count of HALF CPU/clkADC-input periods.
+This is not a prescaled ADC clock count. Integrating with a CPU-cycle scheduler
+uses half_cycle = cycles * 2. One prescaled ADC half-period takes divisor such
+units. The domain must remain monotonic; changing physical frequency requires
+the integration to preserve this virtual clock or explicitly rescale deadlines.
+Calls with older timestamps fail. Timestamped operations process existing events
+through the requested timestamp before applying the operation. Thus an input
+changed exactly at sampling time is applied after the sample. next_event returns
+UINT64_MAX when no active work needs scheduling. All events run in C; no host
+callbacks, imports, per-CPU-cycle polling or allocations are needed.
+
+Enabling ADEN establishes the prescaler origin at that timestamp. For a manual
+start the following rising ADC edge is the first strictly later multiple of
+2*divisor half_cycle units from that origin. This deterministic phase contract
+must be aligned by the CPU integration with its actual register-write boundary.
+The prescaler continues while ADEN is set even when idle. Changing ADPS selects
+the new counter tap relative to the same origin, keeping conversion progress;
+firmware relying on a transient glitch during a live divider change is outside
+the model. An auto-triggered conversion has three CPU periods of synchronizer
+latency and resets the ADC prescaler at its end; ordinary auto conversions then
+sample after 2 ADC clocks and complete after 13.5. First conversions use 25 ADC
+clocks. Manual subsequent conversions use 1.5 and 13 respectively. Free running
+starts the next conversion at completion without clearing ADSC or requiring an
+ADIF transition. Input/reference selection latches when conversion actually starts.
+The model holds the sampled ideal code for the rest of the conversion.
+
+The official document contradicts itself about FIRST sample timing: section14.5
+(page91) states 14.5 ADC clocks, while Table14-1 (page93) states13.5. Neither is
+silently treated as authoritative: reset takes first_sample_half_adc=29 or27.
+27 selects the table interpretation;29 selects the section14.5 interpretation.
+Other arguments select27. Completion remains25 clocks in both modes. Tests
+exercise both. Hardware measurements or a Microchip clarification are required
+to resolve the silicon phase before calling this an exact analog timing model.
+
+clock_running freezes the source clock and shifts all pending deadlines over the
+stopped interval, preserving phase even if registers are written while stopped.
+Call it for actual clock gating. Idle/ADC Noise Reduction must retain clkADC.
+Call noise_cancel_start on relevant sleep entry; CPU wakeup and interrupt entry
+are owned by the CPU/system scheduler. It requests a conversion only for enabled,
+idle, single-conversion ADC with ADIE set.
+
+Register/interrupt integration
+
+read/write take I/O OFFSETS0x03..0x07 (data addresses add0x20). ADMUX and ADCSRB
+mask reserved bits, data registers ignore writes, ADLAR reformats immediately,
+ADSC ignores software zero, clearing ADEN aborts, and ADIF is write-one-to-clear.
+Reading ADCL blocks replacement until ADCH is read; completed results while
+blocked are discarded, but still set ADIF. Reading ADCH alone never locks data.
+pending returns the local ADIF+ADIE condition. The CPU handles SREG.I, priority,
+entry latency and vector0x0009; call ack when that vector is accepted.
+
+sources receives current interrupt-FLAG levels in bits1..6 corresponding to ADTS
+codes1..6. It is independent of source interrupt enables and SREG.I. Forward
+both assertion and clearing: a held flag cannot produce repeated triggers.
+Edges while busy are ignored. Switching ADTS from a low to a high source causes
+a trigger; switching to free running does not. Source7 is reserved/inactive.
+ACME is retained in ADCSRB for comparator integration. The comparator consumes
+the current ADCSRB, ADEN and ADMUX values; it does not own duplicate registers.
+DIDR0 stays in system_gpio, where its bits already match PB0..PB5 bit positions.
+Digital-input disable affects PINB reads, not analog conversion.
+
+Build/verification (read-only SDK; output ignored under build/analog-tests):
+  node --test web-player/tests/analog-adc.test.mjs
+Set EMSDK if the repository's build/toolchains/emscripten-6.0.12 is unavailable.
+The test builds the actual C source using strict warnings and asserts that its
+WASM has zero imports. Cases cover timing boundaries, all dividers/channels,
+sample/hold, both first-sample interpretations, latches, flags, auto-source edges,
+free running, clock gating and sleep requests. They are specification fixtures,
+not silicon measurements or an independent analog circuit simulation.
