@@ -46,7 +46,7 @@ def apply(source: Path):
     corrections = [int(v) for v in re.search(r'exc_gain_quant_scal1\[2\]=\{([^}]+)\}',text)[1].split(',')]
     # Exact two-stage Q15/Q14 floors, generated from pinned upstream constants.
     values = [(c*((28406*g)//32768))//16384 for g in gains for c in corrections]
-    assert len(values)==64 and max(values)==120988612
+    assert len(values)==64 and min(values)>0 and max(values)==120988612
     table = '\nstatic const spx_word32_t nb3_gain_table[64] AVR_TABLE={' + ','.join(map(str,values)) + '};\n'
     text = text[:start] + table + fragment.read_text() + '\n#endif /* DISABLE_DECODER */\n'
     path.write_text(text)

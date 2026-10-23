@@ -54,7 +54,7 @@ const gains=upstream.match(/ol_gain_table\[32\]=\{([^}]+)\}/)[1].split(',').map(
 const corrections=upstream.match(/exc_gain_quant_scal1\[2\]=\{([^}]+)\}/)[1].split(',').map(Number);
 const scales=gains.flatMap(g=>corrections.map(c=>Math.floor(c*Math.floor(28406*g/32768)/16384)));
 const scaleAddress=address('innovation_scale'),pitchAddress=address('innovation_pitch');
-let innovationCases=0,innovationClipped=0;
+let innovationCases=0,innovationClipped=0,cInnovationMin=Infinity,cInnovationMax=0;
 const pitchEdges=[-8388608,8388607,-2048001,-2048000,2048000,2048001,-1,0,1];
 for(const scale of scales)for(let index=0;index<256;index++){
   cpu.dataView.setInt32(scaleAddress,scale,true);cpu.data[address('innovation_index')]=index;
@@ -68,10 +68,17 @@ for(const scale of scales)for(let index=0;index<256;index++){
     expected[i]=Math.max(-32767,Math.min(32767,raw));innovationClipped+=expected[i]!==raw;
     for(let byte=0;byte<3;byte++)cpu.data[pitchAddress+3*i+byte]=(pitch>>>(8*byte))&255;
   }
-  cpu.data[status]=1;cpu.data[command]=2;
-  until(()=>cpu.data[status]===2);
-  for(let i=0;i<10;i++)assert.equal(cpu.dataView.getInt16(samples+2*i,true),expected[i],`innovation gain ${scale}, shape ${(index+i)%256-128}`);
-  assert.equal(cpu.data[zero],0,'GCC zero register after innovation');innovationCases+=10;
+  for (const backendCommand of [2,3]) {
+    cpu.data[status]=1;cpu.data[command]=backendCommand;const before=cpu.cycles;
+    until(()=>cpu.data[status]===2);
+    for(let i=0;i<10;i++)assert.equal(cpu.dataView.getInt16(samples+2*i,true),expected[i],`innovation backend ${backendCommand}, gain ${scale}, shape ${(index+i)%256-128}`);
+    assert.equal(cpu.data[zero],0,'GCC zero register after innovation');
+    if (backendCommand===3) {
+      cInnovationMin=Math.min(cInnovationMin,cpu.cycles-before);
+      cInnovationMax=Math.max(cInnovationMax,cpu.cycles-before);
+    }
+  }
+  innovationCases+=10;
 }
 const innovationReport={mcu:'ATmega328P',simulator:'avr8js 0.21.1',compiler:report.compiler,
   gains:scales.length,scaleMin:Math.min(...scales),scaleMax:Math.max(...scales),shapeMin:-128,shapeMax:127,
@@ -80,3 +87,7 @@ const innovationReport={mcu:'ATmega328P',simulator:'avr8js 0.21.1',compiler:repo
   includesInterrupts:false,physicalBoardTested:false};
 writeFileSync(join(build,'verification-innovation.json'),JSON.stringify(innovationReport,null,2)+'\n');
 console.log(JSON.stringify(innovationReport,null,2));
+const cInnovationReport={...innovationReport,backend:'c',
+  minMailboxCycles:cInnovationMin,maxMailboxCycles:cInnovationMax};
+writeFileSync(join(build,'verification-innovation-c.json'),JSON.stringify(cInnovationReport,null,2)+'\n');
+console.log(JSON.stringify(cInnovationReport,null,2));

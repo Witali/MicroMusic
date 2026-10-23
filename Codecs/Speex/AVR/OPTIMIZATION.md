@@ -129,6 +129,15 @@ binary measurements. Vendor and R4 files remain unmodified.
   static SRAM 1,374 B, peak stack 150 B, free SRAM 524 B. The final ASM mailbox
   was rebuilt and its hash equals the verified 13,254-frame image.
 
+- Portable C innovation scale decomposition at bit 12: split scale once per
+  subframe, multiply the signed-byte shape, narrow the low product after >>8,
+  then use a byte-aligned *256 and one signed >>1 for *128. All bounds follow
+  from the pinned 64-scale table; the build now asserts positivity as well.
+  Fixture maximum 314,243 -> 297,279 cycles, Flash 9,604 -> 9,578 B; static
+  SRAM/peak stack unchanged. All 1,058 fixture/reset frames and 163,840
+  independent full signed8 shape/scale/pitch-edge samples match upstream.
+  Complete corpus and C timer admission remain pending for the series.
+
 ## Next candidates (unmeasured)
 
 1. **Portable C fixed-point narrowing.** Generic signed32 shifts dominate C
