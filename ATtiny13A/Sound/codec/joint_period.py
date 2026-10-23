@@ -13,7 +13,7 @@ from pystoi import stoi
 from period_wave import FrameSynthesis, noise_colors, HOP, SR
 from period_residual import decode_residual, pack_residual
 
-VERSION = 'joint-period-v1'
+VERSION = 'joint-period-v2'
 
 
 def tuples(value):
@@ -21,6 +21,10 @@ def tuples(value):
 
 
 class JointSynthesis:
+    gain_count = 16
+    pack = staticmethod(pack_residual)
+    decode = staticmethod(decode_residual)
+
     def __init__(self, model):
         self.base = FrameSynthesis(model['base'])
         self.template = deepcopy(model)
@@ -50,18 +54,20 @@ class JointSynthesis:
 
 class JointSearch:
     def __init__(self, model, objective, *, seed=23068, stoi_weight=6.,
-                 spectral_ceiling=None, restart_every=1500, checkpoint=None):
+                 spectral_ceiling=None, restart_every=1500, checkpoint=None,
+                 cache_factory=JointSynthesis):
         if stoi_weight <= 0 or restart_every < 2:
             raise ValueError('Invalid search configuration')
         self.objective = objective
-        self.cache = JointSynthesis(model)
+        self.cache = cache_factory(model)
         frames = np.array(model['base']['frames'], dtype=int)
         gains = np.array(model['gains'], dtype=int)
         audio = self.cache.render(frames, gains)
-        if not np.allclose(audio, decode_residual(model), atol=1e-11, rtol=0):
+        if not np.allclose(audio, self.cache.decode(model), atol=1e-11, rtol=0):
             raise ValueError('Initial cache differs from decoder')
         initial = self.score(audio)
-        self.config = dict(version=VERSION, seed=seed, stoi_weight=stoi_weight,
+        self.config = dict(version=VERSION, model_schema=model['schema'], gain_count=self.cache.gain_count,
+                           seed=seed, stoi_weight=stoi_weight,
                            spectral_ceiling=spectral_ceiling or initial['log_spectral_error']*1.15,
                            stoi_floor=initial['stoi'], restart_every=restart_every,
                            max_peak=max(.95, initial['peak']))
@@ -73,7 +79,7 @@ class JointSearch:
         self.rng = random.Random(seed)
         self.proposals = self.evaluated = self.accepted = self.improvements = 0
         self.history = []
-        self.data_bytes = len(pack_residual(model))
+        self.data_bytes = len(self.cache.pack(model))
         if checkpoint is not None:
             self.restore(checkpoint)
 
@@ -112,7 +118,7 @@ class JointSearch:
             if kind in (2, 6):
                 nf[j, 3] ^= 1
             if kind in (4, 5, 6, 7):
-                ng[j] = self.rng.randrange(16)
+                ng[j] = self.rng.randrange(self.cache.gain_count)
             candidate[self.cache.base.slices[j]] += self.cache.contribution(j, nf[j], ng[j])-self.cache.contribution(j, frames[j], gains[j])
         self.proposals += 1
         if np.array_equal(nf, frames) and np.array_equal(ng, gains):
@@ -131,10 +137,10 @@ class JointSearch:
 
     def export(self):
         model = self.cache.model(self.best[0], self.best[1])
-        exact = decode_residual(model)
+        exact = self.cache.decode(model)
         if not self.feasible(self.best[3]) or not np.allclose(exact, self.best[2], atol=1e-11, rtol=0):
             raise AssertionError('Invalid joint-search elite')
-        if len(pack_residual(model)) != self.data_bytes:
+        if len(self.cache.pack(model)) != self.data_bytes:
             raise AssertionError('Joint search changed the payload budget')
         return model
 
