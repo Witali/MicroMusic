@@ -34,3 +34,26 @@ it does not validate packet loss concealment or other Speex modes.
 
 The upstream port is under development. Successful host tests or AVR object
 compilation alone do not establish a working real-time ATmega328P player.
+
+The static `src/speex_avr.h` API adapts the original decoder for the restricted
+profile. It uses a 400-byte scratch arena, the tested 372-sample excitation
+history, and explicit PROGMEM codebook reads. It rejects other packet sizes and
+mode headers before changing state. Enhancement, highpass and packet loss
+concealment are excluded; no heap allocator is linked.
+
+Build the linked AVR GCC validation firmware and execute it on AVR8js:
+
+```sh
+python Codecs/Speex/AVR/tools/build.py --avr-gcc /path/to/avr-gcc
+cd Codecs/Speex/AVR
+npm ci --ignore-scripts
+npm run test:avr
+```
+
+The initial linked port uses 10,312 bytes Flash, 1,671 bytes static SRAM including
+the packet/PCM test mailbox. All 1,058 frames agree with the unmodified upstream
+oracle when executing AVR instructions. Peak C stack is 238 bytes, leaving 139
+bytes free in this harness. Maximum frame time is 547,940 cycles, exceeding the
+320,000-cycle real-time budget. These are ISA simulation results without ISR
+or peripheral I/O, not measurements from a physical board. The baseline report
+is retained in `reports/avr-initial.json`; optimization is still required.

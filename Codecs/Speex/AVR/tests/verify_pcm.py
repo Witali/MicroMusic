@@ -16,7 +16,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--cc', default='clang')
     args = parser.parse_args()
-    variants = ['reference', 'compact', 'tight']
+    variants = ['reference', 'compact', 'tight', 'profile']
     binaries = {name: build.host(args.cc, name) for name in variants}
     results = []
     for path in sorted((ROOT / 'reference/R4/data').glob('*.spxraw')):

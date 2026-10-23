@@ -8,6 +8,8 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import apply_profile
 
 ROOT = Path(__file__).resolve().parents[1]
 VENDOR = ROOT / 'vendor/speex-1.2.1'
@@ -28,8 +30,8 @@ def verify_sources():
                 raise RuntimeError('Source hash mismatch: ' + item['path'])
 
 
-def run(args):
-    subprocess.run([str(a) for a in args], check=True)
+def run(args, cwd=None):
+    subprocess.run([str(a) for a in args], check=True, cwd=cwd)
 
 
 def prepare(variant):
@@ -45,6 +47,8 @@ def prepare(variant):
         scripts = ROOT / 'handoff/upstream/tools'
         run([sys.executable, scripts / 'apply_upstream_port.py', source])
         run([sys.executable, scripts / 'apply_tight_exc.py', source])
+    if variant == 'profile':
+        apply_profile.apply(source)
     return output, source
 
 
@@ -53,8 +57,11 @@ def host(compiler, variant):
     definitions = DEFINES.copy()
     if variant != 'reference':
         definitions.append('SPEEX_AVR_COMPACT_LSP')
-    if variant == 'tight':
+    if variant in ('tight', 'profile'):
         definitions.append('SPEEX_AVR_TIGHT_EXC')
+    if variant == 'profile':
+        definitions.append('SPEEX_AVR_PROFILE')
+    sources = SOURCES if variant != 'profile' else PROFILE_SOURCES
     executable = output / ('decode.exe' if os.name == 'nt' else 'decode')
     # Upstream ALIGN casts pointers to long only to examine low alignment bits;
     # Windows has 32-bit long even in a 64-bit process. Keep the oracle intact.
@@ -62,15 +69,46 @@ def host(compiler, variant):
          '-Wno-pointer-to-int-cast', '-D_CRT_SECURE_NO_WARNINGS',
          *['-D' + d for d in definitions],
          '-I' + str(source / 'include'), '-I' + str(source / 'libspeex'),
-         *[source / 'libspeex' / (s + '.c') for s in SOURCES],
+         '-I' + str(ROOT / 'src'),
+         *[source / 'libspeex' / (s + '.c') for s in sources],
+         *([ROOT / 'src/speex_avr.c'] if variant == 'profile' else []),
          ROOT / 'tests/decode.c', '-o', executable,
          *([] if os.name == 'nt' else ['-lm'])])
+    return executable
+
+
+PROFILE_SOURCES = '''bits cb_search exc_10_32_table filters gain_table_lbr lsp
+lsp_tables_nb ltp nb_celp quant_lsp'''.split()
+
+
+def avr(compiler):
+    output, source = prepare('profile')
+    definitions = DEFINES + ['SPEEX_AVR_COMPACT_LSP', 'SPEEX_AVR_TIGHT_EXC',
+                             'SPEEX_AVR_PROFILE', 'SPEEX_AVR_FAST_MUL']
+    flags = ['-mmcu=atmega328p', '-Os', '-flto', '-fwrapv', '-fno-strict-aliasing',
+             '-ffunction-sections', '-fdata-sections', '-fstack-usage',
+             *['-D' + d for d in definitions],
+             '-I' + str(source / 'include'), '-I' + str(source / 'libspeex'),
+             '-I' + str(ROOT / 'src')]
+    executable = output / 'speex-test.elf'
+    run([compiler, *flags,
+         *[source / 'libspeex' / (s + '.c') for s in PROFILE_SOURCES],
+         ROOT / 'src/speex_avr.c', ROOT / 'tests/avr_decode.c',
+         '-Wl,--gc-sections,-Map=' + str(output / 'speex-test.map'), '-o', executable], cwd=output)
+    prefix = str(Path(compiler).with_name('avr-'))
+    extension = '.exe' if str(compiler).endswith('.exe') else ''
+    run([prefix + 'objcopy' + extension, '-O', 'ihex', '-R', '.eeprom', executable, output / 'speex-test.hex'])
+    run([prefix + 'objcopy' + extension, '-O', 'binary', '-R', '.eeprom', executable, output / 'speex-test.bin'])
+    run([prefix + 'size' + extension, '-C', '--mcu=atmega328p', executable])
+    symbols = subprocess.check_output([prefix + 'nm' + extension, '-n', str(executable)], text=True)
+    (output / 'symbols.txt').write_text(symbols, encoding='utf-8')
     return executable
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--cc', default=os.environ.get('CC', 'clang'))
-    parser.add_argument('--variant', choices=['reference', 'compact', 'tight'], default='reference')
+    parser.add_argument('--variant', choices=['reference', 'compact', 'tight', 'profile'], default='reference')
+    parser.add_argument('--avr-gcc', help='Build the ATmega328P validation firmware instead of the host decoder')
     args = parser.parse_args()
-    print(host(args.cc, args.variant))
+    print(avr(args.avr_gcc) if args.avr_gcc else host(args.cc, args.variant))
