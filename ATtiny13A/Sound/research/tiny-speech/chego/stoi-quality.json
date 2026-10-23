@@ -1,0 +1,103 @@
+{
+  "schema": "tiny-speech-quality-review-v1",
+  "clip_id": "chego",
+  "reference_sha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+  "manifest_sha256": "2a7895820934e0d53cf6acba0e4f93da238eb297ba8ad05af5d9afc7eb320f26",
+  "model_sha256": "eaa6e135738bb1b306dba0ce2fa2a0ae7ef9f5a4fbabf27eff6d801b262b3754",
+  "previous_model_sha256": "7371b734c0d3dc5c270831f967419f73a0ee2ccca9f93ded46433aa43c7c2d04",
+  "control_stream_sha256": "16d924e1586a52356a61abbac7b82d421e4eee8404bc2f6d157bcaaa81e99769",
+  "pcm_sha256": "afb9bb70e662bdf68b56bfd8e475f2d37670964fda51f6b95f3d71ae14da8ada",
+  "raw_pcm_sha256": "4e84fb9de479f644b81ad003866aa0ce037c4b2707035efefb7d7dd5ffe3eb7f",
+  "source_sha256_normalized_lf": {
+    "tools/report-tiny-speech.py": "64e8af34d0339db1e0b827915cb403e26201600f34f757ec1191528ec11511dc",
+    "tools/train-tiny-speech.py": "568917c2b735a666c08b7937a12f99c94f46791b131f40914f19ea81da4752aa",
+    "tools/refine_period_helpers.py": "a0aad8182f063a0280b87de4379912d97acc152ccae1d0610a0f13bc47c80a29",
+    "ATtiny13A/Sound/codec/fixed_period.py": "eadfcdf132d3dfb031b78253f9b8fa159ae711e17b2caba34d2cfdf804d7e40e",
+    "ATtiny13A/Sound/codec/fixed_search.py": "585953aeeddd9f1914dfdf8245be1db2cb87b0251b5869b108287c68ddf2b68c",
+    "ATtiny13A/Sound/codec/dc_blocker.py": "fb86b467afa3050b67715c4aed8942c86bbeb4dadfa17054d5f6015c1fc30230",
+    "ATtiny13A/Sound/codec/tiny_period.py": "b90d334f4c2ddf9c0817b61a1ffb62d3f3c238174ab6cbc65f0d3e35bcdee33f",
+    "ATtiny13A/Sound/codec/compact_period.py": "0e5e7d7967646a168621b0f28a24cf55678785d55a701583ba8567a4a5afa42f",
+    "ATtiny13A/Sound/codec/colored_period.py": "db02620b67c3a0574b5f24c99cbaa9d0c25048cafc1a94e3ce83026e8095e27b",
+    "ATtiny13A/Sound/codec/period_wave.py": "ad0aa3f5db96d0e6a9573c1df660ea71417fc9dc3280aa81e559a440fe7118cd",
+    "ATtiny13A/Sound/codec/auto_encoder.py": "ab97a68e00409640531c26cebc43f2fc2fdd3c4cb111e6ffb7c0a7dbcdff2202",
+    "ATtiny13A/Sound/codec/hq4_core.py": "936c21384042c24be9525ff7cb73b6e1421c852b4a63ea393e318cc60e9bd466",
+    "ATtiny13A/Sound/codec/hq4_timbre.py": "ff22427010ddb169bafbc8a35502dcd413980299fd36d292fdf99eae7ffb371b"
+  },
+  "runtime": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "pystoi": "0.4.1",
+    "soundfile": "0.14.0",
+    "numba": "0.68.0",
+    "python": "3.12.14"
+  },
+  "metrics": {
+    "Original": {
+      "loss": 3.823642413686427e-10,
+      "log_spectral_error": 2.964179056620488e-10,
+      "relative_spectral_error": 7.261495841950178e-10,
+      "stoi": 0.9999999999999997,
+      "estoi": 1.0,
+      "peak": 0.89459228515625,
+      "mean_pcm": -0.005265977647569444,
+      "max_abs_64_sample_mean": 3.9910888671875
+    },
+    "HQ4TAuto": {
+      "loss": 0.9101479560514576,
+      "log_spectral_error": 0.9359480734784557,
+      "relative_spectral_error": 0.8069474863434652,
+      "stoi": 0.9005000749339589,
+      "estoi": 0.7946063824122164,
+      "peak": 0.6953125,
+      "mean_pcm": 18.63129340277778,
+      "max_abs_64_sample_mean": 48.125
+    },
+    "Fixed16": {
+      "loss": 0.3727391875191396,
+      "log_spectral_error": 0.385720166056096,
+      "relative_spectral_error": 0.3208152733713136,
+      "stoi": 0.9211744019021797,
+      "estoi": 0.8627306367531833,
+      "peak": 0.8984375,
+      "mean_pcm": 0.0035807291666666665,
+      "max_abs_64_sample_mean": 5.171875
+    },
+    "Tiny": {
+      "loss": 0.37429472282687093,
+      "log_spectral_error": 0.3834664649934665,
+      "relative_spectral_error": 0.33760775416048866,
+      "stoi": 0.912268172459946,
+      "estoi": 0.8572408810191576,
+      "peak": 0.890625,
+      "mean_pcm": 0.004448784722222222,
+      "max_abs_64_sample_mean": 4.796875
+    }
+  },
+  "phrase_samples": 9216,
+  "sample_rate": 7500,
+  "duration_seconds": 1.2288,
+  "output_clips": 0,
+  "pre_dc_clips": 0,
+  "raw_mean_pcm": 0.03634982638888889,
+  "flash_data_bytes": 304,
+  "waveform_flash_bytes": 96,
+  "parameter_stream_bytes": 208,
+  "eeprom_used_bytes": 64,
+  "packed_pcm_exact": true,
+  "compile_constants": {
+    "SAMPLES": 9216,
+    "BLOCKS": 144,
+    "INITIAL_PHASE": 56263,
+    "NOISE_SEED": 44257,
+    "DC_SHIFT": 7,
+    "INDEX_BITS": 4,
+    "INDEX_MASK": 15,
+    "WAVE_BYTES": 160,
+    "WAVE_FLASH_BYTES": 96,
+    "EEPROM_WAVE_SPLIT": 96,
+    "EEPROM_USED_BYTES": 64,
+    "ENABLE_GAIN6": 0
+  },
+  "hardware_verified": false,
+  "assembly_verification": "A separate build report must establish code size, cycle deadlines and SRAM."
+}

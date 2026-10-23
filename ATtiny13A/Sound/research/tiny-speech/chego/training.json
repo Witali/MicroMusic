@@ -1,0 +1,382 @@
+{
+  "schema": "tiny-speech-retained-training-v1",
+  "reference_sha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+  "initial_retained_model": "ATtiny13A/Sound/research/fixed-period/chego/white-model.json",
+  "initial_retained_model_sha256": "7371b734c0d3dc5c270831f967419f73a0ee2ccca9f93ded46433aa43c7c2d04",
+  "method": "Exact integer analysis by synthesis: exhaustive whole-word dictionary merges, balanced stochastic retuning, exhaustive gain6 removal, then constrained retuning.",
+  "objective": "loss + 8*(1-STOI), with hard peak/no-clipping/spectral/data bounds; no manual speech-specific frame changes.",
+  "dictionary_merge_history": [
+    {
+      "words": 15,
+      "removed_word": 15,
+      "replacement_word": 1,
+      "evaluated": 240,
+      "avr_data_bytes": 470,
+      "loss": 0.3738584884906406,
+      "log_spectral_error": 0.3871237766949158,
+      "relative_spectral_error": 0.32079733567353946,
+      "stoi": 0.9199258970684135,
+      "peak": 0.8984375,
+      "clips": 0,
+      "pre_dc_clips": 0,
+      "mean_pcm": 0.0035807291666666665,
+      "max_abs_64_sample_mean": 5.171875,
+      "data_bytes": 510
+    },
+    {
+      "words": 14,
+      "removed_word": 0,
+      "replacement_word": 11,
+      "evaluated": 210,
+      "avr_data_bytes": 454,
+      "loss": 0.37471534718039856,
+      "log_spectral_error": 0.3880848403362114,
+      "relative_spectral_error": 0.32123737455714724,
+      "stoi": 0.9175614374137783,
+      "peak": 0.8984375,
+      "clips": 0,
+      "pre_dc_clips": 0,
+      "mean_pcm": 0.003472222222222222,
+      "max_abs_64_sample_mean": 5.171875,
+      "data_bytes": 510
+    },
+    {
+      "words": 13,
+      "removed_word": 5,
+      "replacement_word": 2,
+      "evaluated": 182,
+      "avr_data_bytes": 437,
+      "loss": 0.3737983158314568,
+      "log_spectral_error": 0.3869872610611895,
+      "relative_spectral_error": 0.32104253491252555,
+      "stoi": 0.9143688575300686,
+      "peak": 0.8984375,
+      "clips": 0,
+      "pre_dc_clips": 0,
+      "mean_pcm": 0.003472222222222222,
+      "max_abs_64_sample_mean": 5.171875,
+      "data_bytes": 509
+    },
+    {
+      "words": 12,
+      "removed_word": 6,
+      "replacement_word": 1,
+      "evaluated": 156,
+      "avr_data_bytes": 421,
+      "loss": 0.37422325944750573,
+      "log_spectral_error": 0.38761297567270975,
+      "relative_spectral_error": 0.32066439454668944,
+      "stoi": 0.911592979110918,
+      "peak": 0.8984375,
+      "clips": 0,
+      "pre_dc_clips": 0,
+      "mean_pcm": 0.003472222222222222,
+      "max_abs_64_sample_mean": 5.125,
+      "data_bytes": 509
+    },
+    {
+      "words": 11,
+      "removed_word": 10,
+      "replacement_word": 2,
+      "evaluated": 132,
+      "avr_data_bytes": 404,
+      "loss": 0.3716989008868281,
+      "log_spectral_error": 0.38374881312207504,
+      "relative_spectral_error": 0.3234992519458402,
+      "stoi": 0.9047187409942113,
+      "peak": 0.8984375,
+      "clips": 0,
+      "pre_dc_clips": 0,
+      "mean_pcm": 0.003472222222222222,
+      "max_abs_64_sample_mean": 5.125,
+      "data_bytes": 508
+    },
+    {
+      "words": 10,
+      "removed_word": 1,
+      "replacement_word": 2,
+      "evaluated": 110,
+      "avr_data_bytes": 387,
+      "loss": 0.37721362647402745,
+      "log_spectral_error": 0.38743731881445226,
+      "relative_spectral_error": 0.3363188571123283,
+      "stoi": 0.8997668127002967,
+      "peak": 0.890625,
+      "clips": 0,
+      "pre_dc_clips": 0,
+      "mean_pcm": 0.003472222222222222,
+      "max_abs_64_sample_mean": 5.140625,
+      "data_bytes": 507
+    },
+    {
+      "words": 9,
+      "removed_word": 6,
+      "replacement_word": 8,
+      "evaluated": 90,
+      "avr_data_bytes": 371,
+      "loss": 0.37672045786057073,
+      "log_spectral_error": 0.3868483691860462,
+      "relative_spectral_error": 0.3362088125586686,
+      "stoi": 0.893045878724895,
+      "peak": 0.890625,
+      "clips": 0,
+      "pre_dc_clips": 0,
+      "mean_pcm": 0.0035807291666666665,
+      "max_abs_64_sample_mean": 5.140625,
+      "data_bytes": 507
+    },
+    {
+      "words": 8,
+      "removed_word": 0,
+      "replacement_word": 1,
+      "evaluated": 72,
+      "avr_data_bytes": 349,
+      "loss": 0.3801043882644139,
+      "log_spectral_error": 0.3905908780794392,
+      "relative_spectral_error": 0.3381584290043123,
+      "stoi": 0.8865777897276361,
+      "peak": 0.890625,
+      "clips": 0,
+      "pre_dc_clips": 0,
+      "mean_pcm": 0.0035807291666666665,
+      "max_abs_64_sample_mean": 5.140625,
+      "data_bytes": 501
+    }
+  ],
+  "stages": [
+    {
+      "name": "ten-word-balanced",
+      "config": {
+        "version": "fixed-speech-search-v3",
+        "objective": "balanced",
+        "seed": 23108,
+        "stoi_weight": 8.0,
+        "stoi_floor": 0.895,
+        "spectral_ceiling": 0.5,
+        "max_peak": 0.95,
+        "max_data_bytes": 507,
+        "restart_every": 2000,
+        "dc_choices": [
+          7
+        ],
+        "voiced_only": true,
+        "residual_colors": [
+          0
+        ],
+        "allow_gain6": true
+      },
+      "merged_initial": {
+        "loss": 0.37721362647402745,
+        "log_spectral_error": 0.38743731881445226,
+        "relative_spectral_error": 0.3363188571123283,
+        "stoi": 0.8997668127002967,
+        "peak": 0.890625,
+        "clips": 0,
+        "pre_dc_clips": 0,
+        "mean_pcm": 0.003472222222222222,
+        "max_abs_64_sample_mean": 5.140625,
+        "data_bytes": 507
+      },
+      "final": {
+        "loss": 0.3674680397951614,
+        "log_spectral_error": 0.3749287489191564,
+        "relative_spectral_error": 0.3376252032991815,
+        "stoi": 0.9136950922928937,
+        "peak": 0.890625,
+        "clips": 0,
+        "pre_dc_clips": 0,
+        "mean_pcm": 0.003689236111111111,
+        "max_abs_64_sample_mean": 5.140625,
+        "data_bytes": 507
+      },
+      "proposals": 6000,
+      "evaluated": 2931,
+      "accepted": 210,
+      "improvements": 71,
+      "initial_model_sha256": "a9318bf869b6d4312d7d031301f6bceebd42ba1e91a9ad10eb8d2708b1b7fd1f",
+      "final_model_sha256": "9340ca2bbe550fbb4652fa06a34306f42faf28414abd269280fff6d5bcf2207c",
+      "implementation_commit": "cb28374"
+    },
+    {
+      "name": "ten-word-power-of-two-gains",
+      "config": {
+        "version": "fixed-speech-search-v3",
+        "objective": "balanced",
+        "seed": 23108,
+        "stoi_weight": 8.0,
+        "stoi_floor": 0.89,
+        "spectral_ceiling": 0.45,
+        "max_peak": 0.95,
+        "max_data_bytes": 506,
+        "restart_every": 2000,
+        "dc_choices": [
+          7
+        ],
+        "voiced_only": true,
+        "residual_colors": [
+          0
+        ],
+        "allow_gain6": false
+      },
+      "gain_removal": {
+        "affected_frames": 4,
+        "evaluated": 16,
+        "loss": 0.37254830768328406,
+        "log_spectral_error": 0.38103518428640887,
+        "relative_spectral_error": 0.33860080127078485,
+        "stoi": 0.9090303648460714,
+        "peak": 0.890625,
+        "clips": 0,
+        "pre_dc_clips": 0,
+        "mean_pcm": 0.003689236111111111,
+        "max_abs_64_sample_mean": 4.78125,
+        "data_bytes": 506
+      },
+      "final": {
+        "loss": 0.37254830768328406,
+        "log_spectral_error": 0.38103518428640887,
+        "relative_spectral_error": 0.33860080127078485,
+        "stoi": 0.9090303648460714,
+        "peak": 0.890625,
+        "clips": 0,
+        "pre_dc_clips": 0,
+        "mean_pcm": 0.003689236111111111,
+        "max_abs_64_sample_mean": 4.78125,
+        "data_bytes": 506
+      },
+      "final_model_sha256": "cd34bcea4cb299ffa695e603e6e3325de9c971c101eb5eb07d2f3844566a3015",
+      "implementation_commit": "c3cf0d6"
+    },
+    {
+      "name": "ten-word-final-budgeted",
+      "config": {
+        "version": "fixed-speech-search-v3",
+        "objective": "balanced",
+        "seed": 23108,
+        "stoi_weight": 8.0,
+        "stoi_floor": 0.909,
+        "spectral_ceiling": 0.4,
+        "max_peak": 0.95,
+        "max_data_bytes": 506,
+        "restart_every": 2000,
+        "dc_choices": [
+          7
+        ],
+        "voiced_only": true,
+        "residual_colors": [
+          0
+        ],
+        "allow_gain6": false,
+        "tiny_words": 10,
+        "max_flash_data_bytes": 312
+      },
+      "merged_initial": {
+        "loss": 0.37254830768328406,
+        "log_spectral_error": 0.38103518428640887,
+        "relative_spectral_error": 0.33860080127078485,
+        "stoi": 0.9090303648460714,
+        "peak": 0.890625,
+        "clips": 0,
+        "pre_dc_clips": 0,
+        "mean_pcm": 0.003689236111111111,
+        "max_abs_64_sample_mean": 4.78125,
+        "data_bytes": 506,
+        "tiny_flash_data_bytes": 303
+      },
+      "final": {
+        "loss": 0.37429472282687093,
+        "log_spectral_error": 0.3834664649934665,
+        "relative_spectral_error": 0.33760775416048866,
+        "stoi": 0.912268172459946,
+        "peak": 0.890625,
+        "clips": 0,
+        "pre_dc_clips": 0,
+        "mean_pcm": 0.004448784722222222,
+        "max_abs_64_sample_mean": 4.796875,
+        "data_bytes": 506,
+        "tiny_flash_data_bytes": 304
+      },
+      "proposals": 2000,
+      "evaluated": 900,
+      "accepted": 67,
+      "improvements": 17,
+      "initial_model_sha256": "cd34bcea4cb299ffa695e603e6e3325de9c971c101eb5eb07d2f3844566a3015",
+      "final_model_sha256": "eaa6e135738bb1b306dba0ce2fa2a0ae7ef9f5a4fbabf27eff6d801b262b3754",
+      "sources_sha256_normalized_lf": {
+        "tools/train-tiny-speech.py": "568917c2b735a666c08b7937a12f99c94f46791b131f40914f19ea81da4752aa",
+        "tools/refine_period_helpers.py": "a0aad8182f063a0280b87de4379912d97acc152ccae1d0610a0f13bc47c80a29",
+        "ATtiny13A/Sound/codec/fixed_search.py": "585953aeeddd9f1914dfdf8245be1db2cb87b0251b5869b108287c68ddf2b68c",
+        "ATtiny13A/Sound/codec/fixed_period.py": "eadfcdf132d3dfb031b78253f9b8fa159ae711e17b2caba34d2cfdf804d7e40e",
+        "ATtiny13A/Sound/codec/dc_blocker.py": "fb86b467afa3050b67715c4aed8942c86bbeb4dadfa17054d5f6015c1fc30230",
+        "ATtiny13A/Sound/codec/tiny_period.py": "b90d334f4c2ddf9c0817b61a1ffb62d3f3c238174ab6cbc65f0d3e35bcdee33f",
+        "ATtiny13A/Sound/codec/compact_period.py": "0e5e7d7967646a168621b0f28a24cf55678785d55a701583ba8567a4a5afa42f",
+        "ATtiny13A/Sound/codec/colored_period.py": "db02620b67c3a0574b5f24c99cbaa9d0c25048cafc1a94e3ce83026e8095e27b",
+        "ATtiny13A/Sound/codec/period_wave.py": "ad0aa3f5db96d0e6a9573c1df660ea71417fc9dc3280aa81e559a440fe7118cd",
+        "ATtiny13A/Sound/codec/auto_encoder.py": "ab97a68e00409640531c26cebc43f2fc2fdd3c4cb111e6ffb7c0a7dbcdff2202"
+      },
+      "implementation_commit": "a460268"
+    },
+    {
+      "name": "eight-word-default",
+      "config": {
+        "version": "fixed-speech-search-v3",
+        "objective": "balanced",
+        "seed": 23108,
+        "stoi_weight": 8.0,
+        "stoi_floor": 0.88,
+        "spectral_ceiling": 0.6,
+        "max_peak": 0.95,
+        "max_data_bytes": 501,
+        "restart_every": 2000,
+        "dc_choices": [
+          7
+        ],
+        "voiced_only": true,
+        "residual_colors": [
+          0
+        ],
+        "allow_gain6": true
+      },
+      "merged_initial": {
+        "loss": 0.3801043882644139,
+        "log_spectral_error": 0.3905908780794392,
+        "relative_spectral_error": 0.3381584290043123,
+        "stoi": 0.8865777897276361,
+        "peak": 0.890625,
+        "clips": 0,
+        "pre_dc_clips": 0,
+        "mean_pcm": 0.0035807291666666665,
+        "max_abs_64_sample_mean": 5.140625,
+        "data_bytes": 501
+      },
+      "final": {
+        "loss": 0.3701210939118079,
+        "log_spectral_error": 0.37023183854862185,
+        "relative_spectral_error": 0.36967811536455214,
+        "stoi": 0.9106671379676519,
+        "peak": 0.8828125,
+        "clips": 0,
+        "pre_dc_clips": 0,
+        "mean_pcm": 0.002387152777777778,
+        "max_abs_64_sample_mean": 5.28125,
+        "data_bytes": 501
+      },
+      "proposals": 12000,
+      "evaluated": 6607,
+      "accepted": 512,
+      "improvements": 161,
+      "initial_model_sha256": "7371b734c0d3dc5c270831f967419f73a0ee2ccca9f93ded46433aa43c7c2d04",
+      "final_model_sha256": "ffed4665deb5745183c4a5175ac5b0bf83dec07f0ce03f4094cf154d16107c3f",
+      "implementation_commit": "cb28374"
+    }
+  ],
+  "notes": [
+    "The first eight- and ten-word runs predate provenance fields in the training CLI; the fresh independent quality reports fingerprint the exact current decoder and model.",
+    "Ignored intermediate models, raw PCM, WAVs and search checkpoints are not retained in Git. Stages can be recreated from the retained white model and the documented deterministic commands.",
+    "The portable PF payload size includes unused wave/FIR placeholders and differs from actual tiny Flash and EEPROM storage.",
+    "The hardware has not been physically tested. An independent AVR build report establishes complete image size and cycle deadlines."
+  ],
+  "selection": "The eight-word default has lower spectral loss and log error and more Flash headroom; the ten-word alternative has slightly higher STOI with essentially equal eSTOI.",
+  "default_model_sha256": "ffed4665deb5745183c4a5175ac5b0bf83dec07f0ce03f4094cf154d16107c3f",
+  "stoi_alternative_model_sha256": "eaa6e135738bb1b306dba0ce2fa2a0ae7ef9f5a4fbabf27eff6d801b262b3754"
+}
