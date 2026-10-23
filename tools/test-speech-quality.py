@@ -26,7 +26,11 @@ def main():
         'test-partial-error-effects.py', 'test-partial-bounds.py',
         'test-q3-phasebook.py', 'test-sin-partials.py',
         'test-speech-regression.py', 'test-speech-corpus.py',
-        'test-speech-corpus-benchmark.py', 'test-tiny-pitch-hypotheses.py'))
+        'test-speech-corpus-benchmark.py', 'test-tiny-pitch-hypotheses.py',
+        'test-lpx3-entropy.py', 'test-speech-clipping.py',
+        'test-lpc2-excitation.py', 'test-lpc-vbr.py',
+        'test-hq4-q3-rounded.py', 'test-q3-rounded-eeprom.py',
+        'test-hq4-q3-lpc2-prior.py'))
     for path in sorted(paths):
         name = 'speech_'+path.stem.replace('-', '_')
         spec = importlib.util.spec_from_file_location(name, path)
