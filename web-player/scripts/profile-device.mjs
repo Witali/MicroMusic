@@ -10,17 +10,32 @@ import {fileURLToPath} from 'node:url';
 import {parseArgs} from 'node:util';
 import {ATtiny13A} from '../lib/attiny13a-runtime.js';
 import {parseHex} from '../lib/hex.js';
+import {avr,IO,flash} from '../tests/fixtures/attiny13a-system-firmware.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const {values}=parseArgs({options:{frames:{type:'string',default:'48000'},
   rate:{type:'string',default:'48000'},repeats:{type:'string',default:'3'},
   'interval-us':{type:'string',default:'1000'},firmware:{type:'string',multiple:true},
   'out-dir':{type:'string',default:'build/profiles/device'},emsdk:{type:'string'},
+  kernel:{type:'boolean'},clock:{type:'string',default:'compatible'},
+  frequency:{type:'string',default:'20000000'},divisor:{type:'string',default:'1'},
+  operation:{type:'string',default:'capture'},instructions:{type:'string',default:'1000000'},
   help:{type:'boolean'}}});
-if(values.help){console.log('node web-player/scripts/profile-device.mjs [--frames 48000] [--rate 48000] [--repeats 3] [--interval-us 1000] [--firmware id,id] [--out-dir build/profiles/device] [--emsdk path]');process.exit(0);}
+if(values.help){console.log('node web-player/scripts/profile-device.mjs [--frames 48000] [--rate 48000] [--repeats 3] [--interval-us 1000] [--firmware id,id] [--kernel --clock compatible|physical|clki --frequency 20000000 --divisor 1 --operation capture|direct --instructions 1000000] [--out-dir build/profiles/device] [--emsdk path]');process.exit(0);}
 function integer(value,name,low,high){const n=Number(value);assert.ok(Number.isInteger(n)&&n>=low&&n<=high,`${name}: integer ${low}..${high} required`);return n;}
 const frames=integer(values.frames,'frames',1,1048576),rate=integer(values.rate,'rate',8000,192000);
 const repeats=integer(values.repeats,'repeats',1,16),intervalUs=integer(values['interval-us'],'interval-us',100,100000);
+const clock=values.clock,operation=values.operation;
+assert.ok(['compatible','physical','clki'].includes(clock),'Invalid clock');
+assert.ok(['capture','direct'].includes(operation),'Invalid operation');
+assert.ok(!values.kernel||!values.firmware,'Select kernel or firmware');
+assert.ok(clock!=='clki'||values.kernel,'CLKI profiling currently requires --kernel');
+assert.ok(operation!=='direct'||(values.kernel&&clock!=='clki'),'Direct profiling requires kernel and an internal clock');
+const frequency=integer(values.frequency,'frequency',1,20000000),divisor=integer(values.divisor,'divisor',1,256);
+assert.equal(Math.log2(divisor)%1,0,'divisor must be a power of two');
+assert.ok(values.kernel||divisor===1,'divisor requires --kernel');
+if(clock==='clki')assert.equal(1000000000000n%BigInt(2*frequency),0n,'CLKI frequency requires exact integer picosecond phases');
+const instructions=integer(values.instructions,'instructions',1,100000000);
 const blockFrames=1024,out=resolve(root,values['out-dir']);mkdirSync(out,{recursive:true});
 const read=path=>readFileSync(resolve(root,path));
 const source=path=>read(path).toString('utf8').replaceAll('\r\n','\n');
@@ -79,6 +94,7 @@ function named(binary,moduleName,functions){
 }
 function executable(binary){return Buffer.concat([binary.subarray(0,8),...sections(binary).filter(s=>s.id!==0).map(s=>binary.subarray(s.start,s.end))]);}
 function runtimeCategory(owner,symbol){
+  if(owner.startsWith('clki')||symbol.startsWith('clki_'))return 'native_clki_body';
   if(owner==='device')return ['capture_pins','pin_voltages','timer_outputs'].includes(symbol)?'native_pin_body':'native_board_body';
   if(owner==='avr')return /audio_(?:collect|deadline|sample|config|begin|end)/.test(symbol)?'native_audio_body':'native_bridge_body';
   if(owner==='timer0')return 'native_timer0_body';
@@ -133,17 +149,23 @@ writeFileSync(join(out,'runtime-named.wasm'),namedRuntime);
 const runtimeModule=new WebAssembly.Module(namedRuntime),productionModule=new WebAssembly.Module(production);
 assert.deepEqual(WebAssembly.Module.imports(runtimeModule),[]);
 const catalog=['web-player/firmware.json','web-player/hq4-firmware.json'].flatMap(path=>json(path).entries);
-const ids=values.firmware?.flatMap(value=>value.split(',').filter(Boolean))||['rhythmic','lumiere-stereo','hq4-chego-auto'];
+const kernel=flash({instructions:[avr.ldi(16,1),avr.ldi(17,0x55),avr.add(18,16),
+  avr.eor(19,17),avr.inc(20),avr.rjmp(5,2)]});
+const ids=values.kernel?[`kernel-${clock}-div${divisor}-${operation}`]:
+  values.firmware?.flatMap(value=>value.split(',').filter(Boolean))||['rhythmic','lumiere-stereo','hq4-chego-auto'];
 assert.ok(ids.length,'Select at least one firmware');assert.equal(new Set(ids).size,ids.length,'Duplicate firmware');
-const selected=ids.map(id=>{const entry=catalog.find(item=>item.id===id);assert.ok(entry,'Unknown firmware '+id);return entry;});
+const selected=values.kernel?[{id:ids[0],cpuHz:frequency,audioChannels:1,binary:kernel,flashSha256:hash(kernel)}]:
+  ids.map(id=>{const entry=catalog.find(item=>item.id===id);assert.ok(entry,'Unknown firmware '+id);return entry;});
 const sourcePaths=[...Object.keys(manifest.inputs),'web-player/lib/avr-transpiler.js',
   'web-player/lib/avr-transpiled-runtime.js','web-player/lib/avr-runtime.js',
-  'web-player/lib/attiny13a-runtime.js','web-player/lib/hex.js','web-player/scripts/profile-device.mjs'];
+  'web-player/lib/attiny13a-runtime.js','web-player/lib/avr-wasm-phases.js',
+  'web-player/tests/fixtures/attiny13a-system-firmware.mjs','web-player/lib/hex.js','web-player/scripts/profile-device.mjs'];
 const report={schema:'micromusic-device-sampling-profile-v1',createdAt:new Date().toISOString(),
   git:{head:git(['rev-parse','HEAD']),status:git(['status','--short'])},
   node:{version:process.version,versions:process.versions,flags:process.execArgv,executable:process.execPath},
   host:{platform:platform(),release:release(),arch:arch(),cpu:cpus()[0]?.model,logicalCpus:cpus().length},
-  parameters:{frames,rate,repeats,intervalUs,blockFrames,fastIdle:true,optimizeFlags:true,firmwareOrder:ids},
+  parameters:{frames,rate,repeats,intervalUs,blockFrames,fastIdle:!values.kernel,optimizeFlags:true,firmwareOrder:ids,
+    kernel:!!values.kernel,clock,frequency:values.kernel?frequency:null,divisor,operation,instructions},
   provenance:{runtimeSha256:hash(production),namedRuntimeSha256:hash(namedRuntime),
     executableSectionsSha256:hash(executable(production)),runtimeRebuildByteEqual:true,
     diagnosticCompiler:compiler,compilerVersion:manifest.compilerVersion,compileArgs,optimizer,optimizeArgs,
@@ -151,7 +173,7 @@ const report={schema:'micromusic-device-sampling-profile-v1',createdAt:new Date(
   methodology:{sampling:'Node inspector CPU profiler, no instruction/event callbacks or production instrumentation. Profiles run sequentially; construction, lowering, warmup, comparison, hashing and profile serialization are outside the capture window.',
     naming:'Clang -O3 link followed by the same wasm-opt -O3 pass with --print-function-map gives the optimized function name/index mapping. The link map supplies source-object ownership only. The rebuilt runtime must match every production byte. Diagnostic names are attached to that production binary in a custom name section; all executable sections remain identical. Generated instruction/block/driver names follow existing manifest mapping, block order and exports.',
     attribution:'Self/leaf sample counts are observations, not exact exclusive times. Inclusive samples count ancestors and overlap; do not sum them. O3/V8 inlining attributes inlined work to the surviving containing frame. Body categories describe function ownership, not pure subsystem cost. Native bridge bodies may include inlined pin/audio/clock work.',
-    window:'captureStackSamples retain samples with capturePhysical from attiny13a-runtime.js in their recorded ancestors. GC/VM samples may lack this ancestry; total-profile categories remain available. Requested interval is not guaranteed; actual deltas/gaps are retained in raw profiles.',
+    window:'workStackSamples retain samples with public capturePhysical or run in their recorded ancestors. Capture cases retain historical capture* aliases. GC/VM samples may lack this ancestry; total-profile categories remain available. Requested interval is not guaranteed; actual deltas/gaps are retained in raw profiles.',
     limits:'Single Node host, profiler overhead and tiering, no affinity/GC/frequency control. No parallel benchmark is launched by this script. OS/other application load is uncontrolled. Sampling resolves likely hotspots, not causal speedup, exact call counts or browser AudioWorklet latency.'},results:[]};
 save('runtime-functions.json',runtimeFunctions);
 function generatedFunctions(core){
@@ -170,6 +192,7 @@ function snapshot(core){
   return {state:core.state(),data:core.data.slice(),eeprom:core.eeprom.slice(),flash:core.rom.slice(),irqFrames:Array.from(core.irqFrames)};
 }
 function capture(core,entry){
+  if(operation==='direct'){assert.equal(core.run(instructions),instructions);return[];}
   const blocks=[],channels=entry.audioChannels||1;
   for(let offset=0;offset<frames;offset+=blockFrames)blocks.push(core.capturePhysical(Math.min(blockFrames,frames-offset),rate,channels));
   return blocks;
@@ -194,7 +217,9 @@ function summarize(profile){
   let captureStackSamples=0;
   for(const id of profile.samples||[]){
     const stack=[];for(let at=id;at!==undefined;at=parent.get(at)){const node=nodes.get(at);assert.ok(node);stack.push(frameInfo(node.callFrame));}
-    const inCapture=stack.some(frame=>frame.name==='capturePhysical'&&/\/attiny13a-runtime\.js$/.test(frame.url));
+    const inCapture=stack.some(frame=>operation==='capture'?
+      frame.name==='capturePhysical'&&/\/attiny13a-runtime\.js$/.test(frame.url):
+      frame.name==='run'&&/\/(?:avr-transpiled-runtime|attiny13a-runtime)\.js$/.test(frame.url));
     if(inCapture)captureStackSamples++;
     for(const window of inCapture?['all','capture']:['all']){
       const leaf=stack[0];categories[window].set(leaf.category,(categories[window].get(leaf.category)||0)+1);
@@ -210,22 +235,38 @@ function summarize(profile){
   const sorted=(map,n)=>[...map.values()].map(row=>({...row,selfPercent:100*row.selfSamples/n,inclusivePercent:100*row.inclusiveSamples/n})).sort((a,b)=>b.selfSamples-a.selfSamples||b.inclusiveSamples-a.inclusiveSamples);
   const categoryRows=(map,n)=>[...map].map(([category,samples])=>({category,samples,percent:100*samples/n})).sort((a,b)=>b.samples-a.samples);
   const deltas=[...(profile.timeDeltas||[])].sort((a,b)=>a-b);
-  return {profileDurationMs:(profile.endTime-profile.startTime)/1000,samples:count,captureStackSamples,
+  const result={profileDurationMs:(profile.endTime-profile.startTime)/1000,samples:count,workStackSamples:captureStackSamples,
     sampleDeltasUs:{min:deltas[0],median:deltas[Math.floor(deltas.length/2)],max:deltas.at(-1)},
-    allLeafCategories:categoryRows(categories.all,count),captureLeafCategories:categoryRows(categories.capture,captureStackSamples),
-    allFrames:sorted(totals.all,count),captureFrames:sorted(totals.capture,captureStackSamples)};
+    allLeafCategories:categoryRows(categories.all,count),workLeafCategories:categoryRows(categories.capture,captureStackSamples),
+    allFrames:sorted(totals.all,count),workFrames:sorted(totals.capture,captureStackSamples)};
+  if(operation==='capture')Object.assign(result,{captureStackSamples,captureLeafCategories:result.workLeafCategories,captureFrames:result.workFrames});
+  return result;
 }
 for(const entry of selected){
-  console.log(`Profile ${entry.id}: ${frames} frames @ ${rate} Hz, ${repeats} sequential profiles`);
-  const binary=parseHex(entry.flashHex),eeprom=entry.eepromHex?parseHex(entry.eepromHex,64):null;
+  console.log(`Profile ${entry.id}: ${operation==='capture'?frames+' frames @ '+rate+' Hz':instructions+' instructions'}, ${repeats} sequential profiles`);
+  const binary=entry.binary??parseHex(entry.flashHex),eeprom=entry.eepromHex?parseHex(entry.eepromHex,64):null;
   assert.equal(hash(binary),entry.flashSha256);
-  const options={oscillatorHz:entry.cpuHz||9600000,fastIdle:true,optimizeFlags:true,runtimeModule};
+  const hz=entry.cpuHz||9600000,options={oscillatorHz:hz,fastIdle:!values.kernel,optimizeFlags:true,runtimeModule};
+  if(clock!=='compatible'){
+    options.resumable=true;options.fuseLow=clock==='clki'?0x70:0x72;
+    if(clock==='clki')options.clkiProfile={phasePolicy:'digital-noninverting-zero-seed-v1',initialLevel:1};
+    else{options.osccalHz=Array(128).fill(0);options.osccalHz[0]=hz;}
+  }
+  function prepare(core){
+    if(values.kernel){core.writeIO(IO.CLKPR,128);core.writeIO(IO.CLKPR,Math.log2(divisor));}
+    if(clock==='clki'){
+      const endPs=BigInt(frames)*1000000000000n/BigInt(rate),width=1000000000000n/BigInt(2*hz);
+      assert.equal(core.injectClkiPeriodicPs({startPs:0n,initialLevel:1,highPs:width,lowPs:width,
+        transitionCount:endPs/width,knownUntilPs:endPs}),true);
+    }
+    return core;
+  }
   const seed=new ATtiny13A(binary,eeprom,options),generated=generatedFunctions(seed);
   for(const fn of generated.functions)known.set(fn.name,fn);
   const namedCpu=named(Buffer.from(seed.transpiledBytes),`micromusic.profile.cpu.${entry.id}`,generated.functions);
   writeFileSync(join(out,entry.id+'-cpu-named.wasm'),namedCpu);save(entry.id+'-functions.json',generated);
-  const make=()=>new ATtiny13A(binary,eeprom,{...options,precompiled:{bytes:namedCpu,manifest:seed.transpilation}});
-  const reference=new ATtiny13A(binary,eeprom,{...options,runtimeModule:productionModule});
+  const make=()=>prepare(new ATtiny13A(binary,eeprom,{...options,precompiled:{bytes:namedCpu,manifest:seed.transpilation}}));
+  const reference=prepare(new ATtiny13A(binary,eeprom,{...options,runtimeModule:productionModule}));
   const expected=combined(capture(reference,entry)),expectedState=snapshot(reference);
   capture(make(),entry); // Unprofiled named-module warmup, same interval.
   const result={id:entry.id,channels:entry.audioChannels||1,flashSha256:hash(binary),
@@ -241,10 +282,11 @@ for(const entry of selected){
     const raw=combined(blocks);assert.ok(raw.equals(expected),entry.id+' named/profiled PCM differs from production');
     assert.deepEqual(snapshot(core),expectedState,entry.id+' named/profiled architecture differs from production');
     const rawName=`${entry.id}-${repeat}.cpuprofile`;save(rawName,profile);
-    result.runs.push({repeat,profile:rawName,profileSha256:hash(readFileSync(join(out,rawName))),captureWallMs:elapsed,
+    result.runs.push({repeat,profile:rawName,profileSha256:hash(readFileSync(join(out,rawName))),workWallMs:elapsed,
+      ...(operation==='capture'?{captureWallMs:elapsed}:{}),
       rawPcmSha256:hash(raw),architectureSha256:hash(stringify(snapshot(core))),productionEquality:true,...summarize(profile)});
   }
   report.results.push(result);report.complete=report.results.length===selected.length;report.updatedAt=new Date().toISOString();save('summary.json',report);
-  console.log(entry.id,JSON.stringify(result.runs.map(run=>({ms:run.captureWallMs,samples:run.samples,captureSamples:run.captureStackSamples,top:run.captureFrames.slice(0,5).map(row=>({name:row.name,self:row.selfPercent,inclusive:row.inclusivePercent}))}))));
+  console.log(entry.id,JSON.stringify(result.runs.map(run=>({ms:run.workWallMs,samples:run.samples,workSamples:run.workStackSamples,top:run.workFrames.slice(0,5).map(row=>({name:row.name,self:row.selfPercent,inclusive:row.inclusivePercent}))}))));
 }
 console.log('Raw profiles, function maps, diagnostic WASM and summary: '+relative(root,out));
