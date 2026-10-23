@@ -5,6 +5,9 @@ Speed comes first. A small cycle cost is acceptable for a substantial Flash
 saving; repeated expensive operations should be shared subroutines. Keep
 all four LSP interpolations and preserve rounding, saturation and output delay.
 Publish support only after the complete timer/ISR player has passed.
+Every ASM kernel has a selectable C fallback. Architecture defines and a
+separate explicit ASM-enable define must both permit an optimized backend;
+otherwise use C. Hardware memory access stays independent of arithmetic.
 
 The latest implementation and measurements are described in README.md and
 `reports/nb-round3-*.json`. Earlier reports are stage baselines, not current
@@ -39,16 +42,27 @@ binary measurements. Vendor and R4 files remain unmodified.
   human-speech mean -1.73%; corpus maximum 146,499 versus 146,247 cycles.
   The 31-stream player passed with 128,000 extra cycles/frame, zero underruns
   and 482 B free SRAM. The ordinary speech demo is 11,916 B including audio.
+- Portable backend selection and exported C library: 12 architecture/enable
+  configurations passed. C matches all 13,196 AVR corpus/pitch frames plus
+  58 repeated-envelope/reset frames. Native manifest/CMake static archives
+  each match all 9,100 corpus frames through the public API. Default C and
+  explicitly enabled AVR ASM preserve their previous binary hashes.
+  C is slower on ATmega328P (maximum 332,239 cycles, ISR excluded); retain
+  explicit ASM opt-in for the admitted real-time player. See PORTING.md.
 
 ## Next candidates (unmeasured)
 
-1. **Ten-sample pitch staging.** Upstream pitch sources always have negative
+1. **Pure Q14 call attributes.** The generic and bounded Q14 ASM functions only
+   consume value arguments and return a product. Correct `const` declarations
+   may remove compiler-assumed memory clobbers/reloads; measure generated code
+   and full PCM/timing before accepting. Keep the C fallback selectable.
+2. **Ten-sample pitch staging.** Upstream pitch sources always have negative
    offsets: the first segment stops before `j==pp`, the second before
    `j==pp+pitch`. Thus a completed innovation vector can be written before the
    next vector's pitch is computed. A 10-word pitch buffer could replace 40
    words, saving 120 B, but additional segment calls may cost cycles. Verify
    every short-pitch tail and compare speed before accepting.
-2. **Special Q14 for p1.** This polynomial coefficient remains a multiple of
+3. **Special Q14 for p1.** This polynomial coefficient remains a multiple of
    64. A signed16 x signed24 core followed by a byte-aligned >>8 might use six
    hardware multiplies instead of eight. Preserve the original floor, prove
    the input truncation/range and compare added code size against speed.
