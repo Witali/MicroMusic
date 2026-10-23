@@ -48,6 +48,7 @@ const profile = process.argv.includes('--profile');
 const lspEntry=[...symbols].find(([name,value])=>/^lsp_to_lpc(?:\.|$)/.test(name)&&value<32768)?.[1];
 assert.ok(lspEntry!==undefined,'Count the actual out-of-line LSP conversion entries');
 const hits = new Map();
+let collectingProfile=false,profileFrameCycles=0;
 const functions = [...symbols].filter(([name, value]) => value < 0x800000 && name !== '__stack')
   .sort((a,b) => a[1]-b[1]);
 assert.ok(binary.length <= 32768);
@@ -72,7 +73,7 @@ for (const file of readdirSync(streamsDirectory).filter(s => s.endsWith('.spxraw
       if (pc===lspEntry) lspConversions++;
       avrInstruction(cpu);
       cpu.tick();
-      if (profile) hits.set(pc, (hits.get(pc) || 0) + cpu.cycles - before);
+      if (profile && collectingProfile) hits.set(pc, (hits.get(pc) || 0) + cpu.cycles - before);
       if (cpu.SP < minSP) minSP = cpu.SP;
       assert.ok(cpu.SP >= end, 'C stack collided with static SRAM');
     }
@@ -87,7 +88,10 @@ for (const file of readdirSync(streamsDirectory).filter(s => s.endsWith('.spxraw
     cpu.data[status] = 1;
     cpu.data[command] = 1;
     const start = cpu.cycles;
+    collectingProfile=true;
     until(() => cpu.data[status] === 2);
+    collectingProfile=false;
+    profileFrameCycles+=cpu.cycles-start;
     assert.equal(cpu.data[result], 0, file + ': decode result');
     const actual = Buffer.from(cpu.data.subarray(pcm, pcm + 320));
     const oracle = expected.subarray(frame * 320, frame * 320 + 320);
@@ -134,5 +138,14 @@ if (profile) {
     const fn = functions.findLast(([,address]) => address <= pc)?.[0];
     totals.set(fn, (totals.get(fn) || 0) + cycles);
   }
-  console.log('Cycle profile:', [...totals].sort((a,b) => b[1]-a[1]).slice(0,15));
+  const rows=[...totals].sort((a,b) => b[1]-a[1]);
+  const measured=rows.reduce((sum,[,cycles])=>sum+cycles,0);
+  assert.equal(measured,profileFrameCycles,'Profile covers decoding intervals only');
+  writeFileSync(join(outputDirectory,'avr-profile.json'),JSON.stringify({
+    scope:'Measured frame-command intervals; mailbox included, startup/reset/ISR excluded.',
+    frames:report.frames,streams:report.streams.length,binarySha256:backend.binarySha256,
+    totalFrameCycles:measured,functions:rows.map(([name,cycles])=>({name,cycles,
+      cyclesPerFrame:Number((cycles/report.frames).toFixed(3)),
+      percent:Number((100*cycles/measured).toFixed(3))}))},null,2)+'\n');
+  console.log('Cycle profile:',rows.slice(0,15));
 }
