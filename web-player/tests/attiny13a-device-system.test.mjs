@@ -148,6 +148,27 @@ test('watchdog system reset exits Power-down and preserves reset-cause evidence'
   assert.equal(c.readIO(IO.SPL),0x9f);assert.equal(c.pc,0);
 });
 
+test('an asynchronous watchdog reset aborts OUT and resets timer/pins at its exact timestamp',()=>{
+  // A slightly different explicitly configured WDT frequency places timeout
+  // inside a one-cycle OUT, between CPU edges. This is a digital phase fixture.
+  const watchdogHz=128005;
+  const timeout=(2048n*19200000n+BigInt(watchdogHz)-1n)/BigInt(watchdogHz);
+  assert.equal(timeout%6n,1n); // OUT starts at6k and would finish at6k+2.
+  const c=make(sequential([avr.ldi(16,8),avr.out(IO.WDTCR,16),avr.ldi(17,1),
+    avr.out(IO.PORTB,17),avr.rjmp(4,3)]),{watchdogHz});
+  c.writeIO(0x33,1);c.writeIO(0x32,7); // Timer0 runs before asynchronous reset.
+  c.runUntil(timeout);
+  assert.equal(state(c).baseHalf,timeout);assert.equal(state(c).resetCount,1);
+  assert.equal(c.pc,0);assert.equal(c.readIO(IO.PORTB),0);assert.equal(c.readIO(IO.DDRB),0);
+  assert.equal(c.readIO(0x33),0);assert.equal(c.readIO(0x32),0);
+  assert.equal(c.readIO(IO.MCUSR)&9,9);assert.equal(c.readIO(IO.SPL),0x9f);
+  const pins=c.drainPins();
+  assert.ok(pins.some(e=>e.baseHalf<timeout&&(e.levels&1)===1),'pre-reset OUT must be observable');
+  const atReset=pins.filter(e=>e.baseHalf===timeout);
+  assert.ok(atReset.length>0,'reset must capture the physical transition at its own timestamp');
+  assert.ok(atReset.every(e=>(e.levels&1)===0),'aborted OUT must not re-enable the pull-up after reset');
+});
+
 test('INT0 low disappearing during explicit startup resumes after SLEEP without its ISR',()=>{
   const c=make(sequential([avr.sei(),avr.sleep(),avr.inc(18)]),{wakeStartupHalf:100});
   c.writeIO(IO.MCUCR,0x30);c.writeIO(IO.GIMSK,0x40);
