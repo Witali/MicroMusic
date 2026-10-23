@@ -68,8 +68,8 @@ def build(model_path, output, avr_bin=None, node='node'):
     model_path, output = Path(model_path).resolve(), Path(output).resolve()
     model = json.loads(model_path.read_text(encoding='utf-8'))
     validate(model)
-    if model['phase_bits'] != 4 or model['samples'] % 64 or not 1 <= model['samples']//64 <= 255:
-        raise ValueError('Tiny AVR requires phase_bits=4 and 1..255 complete 64-sample blocks')
+    if model['phase_bits'] != 4 or model['samples'] % 64 or not 1 <= model['samples']//64 <= 1023:
+        raise ValueError('Tiny AVR requires phase_bits=4 and 1..1023 complete 64-sample blocks')
     packed = pack_tiny(model)
     tables, fields = bytes(packed['flash_tables']), bytes(packed['field_stream'])
     data, eeprom = bytes(packed['flash_data']), bytes(packed['eeprom'])
