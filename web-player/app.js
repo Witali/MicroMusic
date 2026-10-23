@@ -3,10 +3,13 @@ import { RealtimeMonitor } from './lib/realtime.js';
 const $ = id => document.getElementById(id);
 const formatHex = (value, length=2) => value.toString(16).toUpperCase().padStart(length,'0');
 const canvas = $('wave');
+const originalAudio = $('original-audio');
 let catalog, selected, runtime, runtimeReady=false, connectedRuntime, playing=false, busy=false;
 let audio, output, scopes=[new Float32Array(512)], headroom=0;
 let session=0, hasPlayed=false, realtime;
+let playAttempt=0, busyAttempt=0;
 let lastScopeDraw=-Infinity, scopeDrawTimer;
+let originalLoading=false, originalAttempt=0;
 
 function showError(message) { $('error').textContent = message; $('error').hidden = !message; }
 function audioControls() {
@@ -15,11 +18,15 @@ function audioControls() {
 }
 function selectedEngine() { return document.querySelector('input[name="engine"]:checked').value; }
 function transport() {
+  const originalPlaying=!originalAudio.paused&&!originalAudio.ended;
   document.body.dataset.playing = String(playing);
+  document.body.dataset.originalPlaying = String(originalPlaying);
   $('play-icon').textContent = playing ? 'Ⅱ' : '▶';
   $('play-label').textContent = playing ? 'Пауза' : 'Слушать';
   $('play').disabled = !runtimeReady || busy;
-  $('run-status').textContent = busy ? 'Подключение звука…' : playing ? 'Воспроизведение' : runtimeReady ? (hasPlayed ? 'Пауза' : 'Готов к запуску') : 'Загрузка образа…';
+  $('play-original').textContent=originalPlaying||originalLoading ? 'Остановить оригинал' : 'Прослушать оригинал';
+  $('play-original').setAttribute('aria-pressed',String(originalPlaying||originalLoading));
+  $('run-status').textContent = originalLoading ? 'Загрузка оригинала…' : originalPlaying ? 'Оригинальная запись' : busy ? 'Подключение звука…' : playing ? 'Воспроизведение' : runtimeReady ? (hasPlayed ? 'Пауза' : 'Готов к запуску') : 'Загрузка образа…';
 }
 function draw() {
   const now=performance.now(), wait=1000/30-(now-lastScopeDraw);
@@ -86,12 +93,36 @@ function connectAudio() {
   connectedRuntime=runtime;
   document.querySelector('.scope-scale').textContent=(4096/audio.sampleRate*1000).toFixed(0)+' мс';
 }
-function pause() { playing=false; output?.port.postMessage({type:'playing',value:false}); transport(); }
+function pause() { playAttempt++; playing=false; output?.port.postMessage({type:'playing',value:false}); transport(); }
+function stopOriginal() {
+  originalAttempt++; originalLoading=false;
+  originalAudio.pause(); originalAudio.currentTime=0; transport();
+}
+async function toggleOriginal() {
+  if(selected?.kind!=='speech'||!selected.originalAudioUrl)return;
+  if(originalLoading||!originalAudio.paused){stopOriginal();return;}
+  pause(); showError('');
+  const attempt=++originalAttempt; originalLoading=true; transport();
+  try { await originalAudio.play(); }
+  catch(error) {
+    if(attempt===originalAttempt&&error.name!=='AbortError') {
+      stopOriginal(); showError('Не удалось воспроизвести оригинальную запись: '+error.message);
+    }
+  } finally { if(attempt===originalAttempt){originalLoading=false;transport();} }
+}
+for(const event of ['playing','pause','ended'])originalAudio.addEventListener(event,transport);
+originalAudio.addEventListener('error',()=>{
+  if(selected?.originalAudioUrl){stopOriginal();showError('Не удалось загрузить оригинальную запись.');}
+});
 function load(entry) {
-  pause(); showError(''); busy=false; runtimeReady=false; runtime?.terminate(); connectedRuntime=null;
+  stopOriginal(); pause(); showError(''); busy=false; runtimeReady=false; runtime?.terminate(); connectedRuntime=null;
   session++; hasPlayed=false;
   output?.port.postMessage({type:'disconnect'});
   selected=entry; headroom=0;
+  const originalUrl=entry.kind==='speech' ? entry.originalAudioUrl : null;
+  $('play-original').hidden=!originalUrl;
+  if(originalUrl)originalAudio.src=originalUrl;else originalAudio.removeAttribute('src');
+  originalAudio.load(); originalAudio.volume=+$('volume').value;
   const stereo=entry.audioChannels===2;
   document.body.dataset.stereo=String(stereo);
   scopes=Array.from({length:stereo?2:1},()=>new Float32Array(512));
@@ -120,7 +151,8 @@ function load(entry) {
   $('rom-size').textContent=entry.flashBytes+' байт';
   $('original-player').hidden=!entry.originalPlayer; if(entry.originalPlayer)$('original-player').href=entry.originalPlayer;
   $('wav-link').hidden=!entry.preview; if (entry.preview) $('wav-link').href=entry.preview;
-  $('reference-wav').hidden=!entry.reference; if(entry.reference)$('reference-wav').href=entry.reference;
+  const reference=originalUrl||entry.reference;
+  $('reference-wav').hidden=!reference; if(reference)$('reference-wav').href=reference;
   $('download-eeprom').hidden=!entry.eepromHex; $('reset').disabled=false;
   for(const [id,source,suffix] of [['download',flashSource,''],['download-eeprom',entry.eepromSource,'-eeprom']]){
     const link=$(id);if(source){link.href=source;link.download=`attiny13a-${entry.id}${suffix}.hex`;link.removeAttribute('aria-disabled');}
@@ -166,21 +198,22 @@ async function ensureAudio() {
 async function toggle() {
   if (!runtimeReady || busy) return;
   if (playing) { pause(); return; }
-  const target=runtime; busy=true; transport(); showError('');
+  stopOriginal();
+  const target=runtime,attempt=++playAttempt; busyAttempt=attempt; busy=true; transport(); showError('');
   try {
     await ensureAudio();
-    if (target!==runtime) return;
+    if (target!==runtime||attempt!==playAttempt) return;
     connectAudio(); realtime.resetAnchor(); playing=true; hasPlayed=true; output.port.postMessage({type:'playing',value:true});
-  } catch (error) { showError('Не удалось включить звук: '+error.message); }
-  finally { busy=false; transport(); }
+  } catch (error) { if(target===runtime&&attempt===playAttempt)showError('Не удалось включить звук: '+error.message); }
+  finally { if(busyAttempt===attempt){busy=false;transport();} }
 }
-$('play').onclick=toggle; $('reset').onclick=()=>load(selected); $('search').oninput=renderCatalog;
-$('volume').oninput=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
+$('play').onclick=toggle; $('play-original').onclick=toggleOriginal; $('reset').onclick=()=>load(selected); $('search').oninput=renderCatalog;
+$('volume').oninput=()=>{originalAudio.volume=+$('volume').value;runtime?.postMessage({type:'controls',controls:audioControls()});};
 $('cutoff').onchange=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
 $('match-speech-level').onchange=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
 for (const choice of document.querySelectorAll('input[name="engine"]')) choice.onchange=()=>{ if (selected) load(selected); };
 document.addEventListener('keydown',event=>{ if (event.code==='Space' && !event.repeat && !/INPUT|SELECT|TEXTAREA|BUTTON|A/.test(event.target.tagName)) { event.preventDefault(); toggle(); } });
-window.addEventListener('pagehide',()=>{ runtime?.terminate(); audio?.close(); });
+window.addEventListener('pagehide',()=>{ originalAudio.pause(); runtime?.terminate(); audio?.close(); });
 try {
   const speech=new URL(location.href).searchParams.get('collection')==='hq4';
   if(speech){
@@ -197,9 +230,9 @@ try {
     $('speech-audit').hidden=false;
     document.querySelector('footer span:last-child').textContent='MiniLPC HQ4 / HQ4-T · Worker + AudioWorklet';
   }
-  // Public speech playback needs only the source-built catalog. Local listening
-  // can additionally use restored original WAVs and the archived ChatGPT player.
-  const response=await fetch(speech?'./hq4-firmware.json':'./firmware.json');
+  // Original recordings are shared public assets. Local listening can also use
+  // restored emulator previews and the archived ChatGPT player.
+  const response=await fetch(speech?'./hq4-firmware.json?v=20261023-original-audio':'./firmware.json');
   if (!response.ok) throw new Error('HTTP '+response.status);
   catalog=await response.json();
   if(speech)document.querySelector('footer span:last-child').textContent=`MiniLPC HQ4 / HQ4-T · ${catalog.entries.length} образов · Worker + AudioWorklet`;

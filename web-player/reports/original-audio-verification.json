@@ -1,0 +1,78 @@
+{
+  "schema": "micromusic-original-audio-verification-v1",
+  "scope": "Public canonical original playback for speech entries; firmware synthesis and music entries unchanged.",
+  "publicAssets": [
+    {
+      "id": "chego",
+      "bytes": 18476,
+      "samples": 9216,
+      "sampleRate": 7500,
+      "durationSeconds": 1.2288,
+      "sha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+      "url": "./audio/originals/chego.wav",
+      "localHttpStatus": 200,
+      "contentType": "audio/wav",
+      "pagesResolvedUrl": "https://witali.github.io/MicroMusic/web-player/audio/originals/chego.wav"
+    },
+    {
+      "id": "otvechaesh",
+      "bytes": 15916,
+      "samples": 7936,
+      "sampleRate": 7500,
+      "durationSeconds": 1.0581333333333334,
+      "sha256": "96c09f80396643dd80efb9c5c8557d83359eeb829a0b855a7f8f5c32bbff0b96",
+      "url": "./audio/originals/otvechaesh.wav",
+      "localHttpStatus": 200,
+      "contentType": "audio/wav",
+      "pagesResolvedUrl": "https://witali.github.io/MicroMusic/web-player/audio/originals/otvechaesh.wav"
+    },
+    {
+      "id": "vinni",
+      "bytes": 44588,
+      "samples": 22272,
+      "sampleRate": 7500,
+      "durationSeconds": 2.9696,
+      "sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+      "url": "./audio/originals/vinni.wav",
+      "localHttpStatus": 200,
+      "contentType": "audio/wav",
+      "pagesResolvedUrl": "https://witali.github.io/MicroMusic/web-player/audio/originals/vinni.wav"
+    }
+  ],
+  "checks": {
+    "catalogTestsPassed": 10,
+    "transportTestsPassed": 5,
+    "generatorCheckPassed": true,
+    "originalFilesMatchCanonicalManifest": true,
+    "oneAssetPerPhrase": true,
+    "localHttpHashesMatch": true,
+    "pagesRelativePathResolutionPassed": true
+  },
+  "transportMethod": "Actual app.js event handlers run in a Node VM with DOM, HTMLAudio and AudioContext models; this checks state and asynchronous cancellation, not browser audio.",
+  "transportCases": [
+    "Native original playback creates no emulator AudioWorklet; stop and firmware playback are mutually exclusive.",
+    "Pending original play resolves safely after firmware start and rejects safely after phrase selection.",
+    "A pending emulator AudioWorklet cannot restart playback after the original is selected.",
+    "A canceled AudioWorklet failure cannot overwrite successful original playback with a stale error.",
+    "Music hides the original button; both root hosting and /MicroMusic/ Pages hosting resolve canonical URLs."
+  ],
+  "browserCheck": {
+    "available": false,
+    "reason": "CUA returned Browser is not available: iab and an empty browser/app inventory.",
+    "visualCheckPerformed": false,
+    "audiblePlaybackCheckPerformed": false
+  },
+  "publicSiteFetched": false,
+  "localPreview": "http://127.0.0.1:8146/web-player/?collection=hq4",
+  "normalizedSourceSha256": {
+    "tools/build-hq4-catalog.py": "2a1b84986f7b9d06c3cffd2dbc4881f44473cdc594fd6be858758fb9a2bc8ae9",
+    "tools/prepare-hq4-preview.py": "d8d483b457e1388f1865e467818053211b01e5e2c16d023c51df3c390ef10dc0",
+    "web-player/hq4-firmware.json": "8b4f1687829cc0a4c6dcf5669d5a0b1fda91e318b6355d9406ef915215c52574",
+    "web-player/app.js": "8d281cb78987c96deb4b66086ea263eff6c8d5ac10aa55186bcb50068224a0e2",
+    "web-player/index.html": "4867b8bb8e128b68985178e4b551ef5b88e182972dea8d9d5e6dba2d78ad1290",
+    "web-player/styles.css": "c7f5cf41183ab5a7b560054407a85d54ef96f912906e5b3afa7431c57990f486",
+    "web-player/tests/hq4-catalog.test.mjs": "7371c2321d1f3636d6e0b98054fe13a0768e8c1f617659c2924c44353a8e72ff",
+    "web-player/tests/helpers/player-app.mjs": "1422b5d38463ded9c816961efb89430a8f980ef4d04ed00b4902bf581cc405d2",
+    "web-player/tests/original-audio.test.mjs": "9c1c31e5eb6370ee9d291b82300979eb71a2306b2c2654ca32d6a0707adc0c2e"
+  }
+}
