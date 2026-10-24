@@ -2,7 +2,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-import {AVRCore} from '../web-player/lib/avr-core.js';
+import {AVRCore as WasmCore} from '../web-player/lib/avr-core.js';
+import {AVRCore as ReferenceCore} from '../web-player/lib/avr-reference.js';
+// JS avoids a WASM boundary for every inspected register during this detailed
+// instruction trace. Both cores share exhaustive opcode/timing parity tests.
+const AVRCore=process.argv.includes('--js')?ReferenceCore:WasmCore;
 
 const signed=n=>n&128?n-256:n;
 const halfEven=x=>{const f=Math.floor(x),d=x-f;return d===.5?f+(f&1):Math.round(x);};
@@ -16,7 +20,7 @@ function sourceNotes(source,track){
   else if(list.length){const start=list.shift();if(event.tick>start)result.push({pitch:event.note,unit:halfEven(start*4/source.ppqn),off:Math.max(halfEven(start*4/source.ppqn)+1,halfEven(event.tick*4/source.ppqn))});}
   active.set(key,list);
  }
- return result.filter(n=>n.unit<1712).sort((a,b)=>a.unit-b.unit);
+ return result.sort((a,b)=>a.unit-b.unit);
 }
 
 export function audit(folder='build/children-four'){
@@ -26,8 +30,10 @@ export function audit(folder='build/children-four'){
  const rom=read('synth.bin'),ep=read('eeprom.bin'),raw=meta.sourceStream?Buffer.from(meta.sourceStream):read('source-stream.bin');
  const sourceBytes=fs.readFileSync('ATtiny13A/Music/reference/children/source-events.json');
  assert.equal(hash(sourceBytes),meta.sourceSha256);
- const source=JSON.parse(sourceBytes),lead=sourceNotes(source,1),bass=sourceNotes(source,4);
- assert.equal(lead.length,256);assert.equal(bass.length,345);
+ const source=JSON.parse(sourceBytes),lead=sourceNotes(source,1),bass=sourceNotes(source,4).filter(n=>n.pitch!==41),
+  continuation=sourceNotes(source,15).filter(n=>n.unit>=1792&&n.pitch===77),totalUnits=2256;
+ assert.equal(lead.length,256);assert.equal(bass.length,458);assert.equal(continuation.length,448);
+ assert.ok(continuation.every((n,i)=>n.unit===1792+i&&n.off===n.unit+1),'Actual GM50 source run, including every repeated Note On and gate');
  assert.ok(rom.length<=1024);assert.equal(ep.length,64);
  const p=Object.fromEntries(Object.entries(labels).map(([name,value])=>[name,value/2]));
  const addresses=[97,102,107,112,117,122],durations=[1,2,3,4,6,8,16];
@@ -36,7 +42,7 @@ export function audit(folder='build/children-four'){
   let at=labels.melody_data+rom[labels.playlist+index];
   for(;;){const token=rom[at++];expected.push({token,unit});if(token===255)break;if(token<151)unit+=durations[token&7];}
  }
- assert.equal(unit,1728);assert.deepEqual(Buffer.from(expected.filter(e=>e.token!==255).map(e=>e.token)),raw);
+ assert.equal(unit,totalUnits);assert.deepEqual(Buffer.from(expected.filter(e=>e.token!==255).map(e=>e.token)),raw);
  const model=(value,clock,fast)=>{
   const level=value&15,flags=value&240;
   if(value&128){
@@ -108,30 +114,30 @@ export function audit(folder='build/children-four'){
   maxStack=Math.max(maxStack,159-c.minSP);
  };
  // Two complete passes expose stale macro counters and non-silent restarts.
- while(commands.length<expected.length*2+2&&c.cyc<9600000*372)c.nextDuty();
+ while(commands.length<expected.length*2+2&&c.cyc<9600000*486)c.nextDuty();
  assert.ok(commands.length>=expected.length*2+2,'Two whole songs and restart finish within their source duration');
  assert.equal(c.lost+c.workLost,0);assert.equal(underruns,0);assert.ok(c.minSP>=144);assert.ok(maxRender<512);assert.ok(sixActive>0&&tailCopies>0&&loopSilent.length>=2);
  let maximumTimingErrorMs=0,sourceLeadGateChecks=0;
  for(let loop=0;loop<2;loop++){
   const commandsAt=commands.slice(loop*expected.length,(loop+1)*expected.length),anchor=commandsAt[0].cycles;
   assert.deepEqual(commandsAt.map(e=>e.token),expected.map(e=>e.token),'Lossless dictionary command replay');
-  for(let i=0;i<expected.length;i++)assert.equal(commandsAt[i].grid,expected[i].unit+loop*1728,'Every command remains on its grid');
+  for(let i=0;i<expected.length;i++)assert.equal(commandsAt[i].grid,expected[i].unit+loop*totalUnits,'Every command remains on its grid');
   const maxError=Math.max(...commandsAt.map((e,i)=>Math.abs((e.cycles-anchor)/9600-expected[i].unit/4*60000/140)));
   maximumTimingErrorMs=Math.max(maximumTimingErrorMs,maxError);
   assert.ok(maxError<25,`Timing error ${maxError} ms`);
-  for(const [index,wanted] of [[0,[...lead,{unit:1712,pitch:65}]],[2,[...bass,{unit:1712,pitch:29}]]]){
-   const actual=onsets[index].filter(e=>e.unit>=loop*1728&&e.unit<(loop+1)*1728).map(e=>({unit:e.unit-loop*1728,pitch:e.pitch}));
-   assert.deepEqual(actual,wanted.map(({unit,pitch})=>({unit,pitch})),`Source ${index===0?'256 piano':'345 bass'} note attacks preserved`);
+  for(const [index,wanted] of [[0,[...lead,...continuation,{unit:2240,pitch:65}]],[2,bass]]){
+   const actual=onsets[index].filter(e=>e.unit>=loop*totalUnits&&e.unit<(loop+1)*totalUnits).map(e=>({unit:e.unit-loop*totalUnits,pitch:e.pitch}));
+   assert.deepEqual(actual,wanted.map(({unit,pitch})=>({unit,pitch})),`Source ${index===0?'256 piano and448 late strings':'458 bass'} note attacks preserved`);
   }
-  for(const note of bass){const next=onsets[2].find(e=>e.unit>note.unit+loop*1728);assert.equal(next.unit-loop*1728,note.off,'Selected source bass NoteOff equals next native onset');gateChecks++;}
-  for(const note of lead){const next=onsets[0].find(e=>e.unit>note.unit+loop*1728);if(note.off<next.unit-loop*1728)assert.ok(releases[0].includes(note.off+loop*1728),'Every main-piano gap receives its source NoteOff');else assert.equal(note.off,next.unit-loop*1728,'Contiguous piano note gate ends at atomic replacement');sourceLeadGateChecks++;}
-  for(const echo of onsets[1].filter(e=>e.unit>=loop*1728&&e.unit<(loop+1)*1728))assert.ok(releases[1].includes(echo.unit+2),'Echo eighth gate ends exactly');
-  assert.ok(releases[2].includes(loop*1728+1716),'Bass cadence finite gate');assert.ok(releases[3].includes(loop*1728+1716),'Pad cadence finite gate');
-  assert.ok(!onsets[3].some(e=>e.unit>=loop*1728&&e.unit<loop*1728+128),'Pad initial silence is reset every loop');
+  for(const note of bass){const next=onsets[2].find(e=>e.unit>note.unit+loop*totalUnits);if(next&&next.unit<(loop+1)*totalUnits)assert.equal(next.unit-loop*totalUnits,note.off,'Selected source bass NoteOff equals next native onset');else assert.ok(releases[2].includes(note.off+loop*totalUnits),'Last bass source NoteOff');gateChecks++;}
+  for(const note of lead){const next=onsets[0].find(e=>e.unit>note.unit+loop*totalUnits);if(note.off<next.unit-loop*totalUnits)assert.ok(releases[0].includes(note.off+loop*totalUnits),'Every main-piano gap receives its source NoteOff');else assert.equal(note.off,next.unit-loop*totalUnits,'Contiguous piano note gate ends at atomic replacement');sourceLeadGateChecks++;}
+  for(const echo of onsets[1].filter(e=>e.unit>=loop*totalUnits&&e.unit<(loop+1)*totalUnits))assert.ok(releases[1].includes(echo.unit+2),'Echo eighth gate ends exactly');
+  assert.ok(releases[2].includes(loop*totalUnits+2176),'Bass finite gate');assert.ok(releases[3].includes(loop*totalUnits+2176),'Pad finite gate');
+  assert.ok(!onsets[3].some(e=>e.unit>=loop*totalUnits&&e.unit<loop*totalUnits+128),'Pad initial silence is reset every loop');
  }
  const report={engine:'children-native',flashBytes:rom.length,codeBytes:labels.code_end,emulatedSeconds:c.cyc/9600000,mainVoices:4,releaseVoices:2,
-  sourceLeadNotes:lead.length,sourceBassNotes:bass.length,leadAndBassExactOnNearestSixteenthGrid:true,completeSourceQuarterBeats:428,cadenceQuarterBeats:4,
-  mainVoiceOnsetsPerLoop:onsets.map(events=>events.filter(e=>e.unit<1728).length),sourceEchoReduction:metadata.limitation,
+  sourceLeadNotes:lead.length,sourceBassNotes:bass.length,sourceContinuationNotes:continuation.length,leadAndBassExactOnNearestSixteenthGrid:true,completeSourceQuarterBeats:560,cadenceQuarterBeats:4,
+  mainVoiceOnsetsPerLoop:onsets.map(events=>events.filter(e=>e.unit<totalUnits).length),sourceEchoReduction:metadata.limitation,
   waveformChecks:waveChecks,envelopeChecks,initializerChecks,sourceBassGateChecks:gateChecks,sourceLeadGateChecks,tailChecks,tailDecayChecks:tailChecks,tailCopies,sixActiveRenderedPoints:sixActive,bothTailsActiveRenderedPoints:bothTails,bothActiveRenderedPoints:bothTails,
   maxRenderElapsedCycles:maxRender,maxRenderActiveCycles:maxRenderActive,maxEventBurstCycles:maxBurst,maxEventActiveCycles:maxBurstActive,isrCycles:c.maxIRQ,
   ringUnderruns:underruns,lostTimerEvents:c.lost,lostWorkEvents:c.workLost,minQueuedPwmBytes:minQueued,maxQueuedPwmBytes:maxQueued,mixRange:[mixMin,mixMax],

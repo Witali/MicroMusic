@@ -22,10 +22,28 @@ test('Children has four main voices, two independent tails, and distinct measure
  assert.deepEqual(report.primaryVoiceAssignments.map(v=>v.eeprom),[0,0,16,32]);
  assert.notDeepEqual(ep.subarray(0,16),ep.subarray(16,32));
  assert.notDeepEqual(ep.subarray(16,32),ep.subarray(32,48));
- assert.equal(report.native.metadata.sourceLeadNotes,256);assert.equal(report.native.metadata.sourceBassNotes,345);
- assert.equal(report.native.metadata.totalUnits,1728);
+ assert.equal(report.native.metadata.sourceLeadNotes,256);assert.equal(report.native.metadata.sourceBassNotes,458);
+ assert.equal(report.native.metadata.totalUnits,2256);
+ assert.equal(report.native.metadata.continuation.noteOns,448);
+ assert.equal(report.native.metadata.continuation.program,50);
  assert.equal(report.score.compression.verifiedLossless,true);
  assert.match(report.native.metadata.limitation,/not an exact copy/);
+});
+
+test('Children shares its idle piano voice with448 real GM50 attacks through source beat560',()=>{
+ const meta=report.native.metadata,source=JSON.parse(fs.readFileSync(new URL('../../ATtiny13A/Music/reference/children/source-events.json',import.meta.url)));
+ const ons=source.tracks.find(t=>t.index===15).events.filter(e=>e.type==='noteOn'&&e.velocity>0&&e.note===77&&e.tick>=448*source.ppqn);
+ assert.equal(ons.length,448);
+ assert.deepEqual(ons.map(e=>e.tick*4/source.ppqn),Array.from({length:448},(_,i)=>1792+i));
+ const c=new AVRCore(rom,ep,{fastIdle:false});
+ c.r[9]=112;c.r[8]=0;c.r[14]=128;
+ c.pushPC(0);c.pc=labels.companion_grid/2;
+ let steps=0;while(c.pc!==0){c.step();assert.ok(++steps<180);}
+ assert.equal(c.data[97],128|32|7,'Measured strings bank, with its seven-level envelope');
+ assert.equal(c.data[100]|(c.data[101]&127)<<8,Math.round(440*2**((77-69)/12)*65536/18750));
+ assert.equal(meta.continuation.firstQuarterBeat,448);assert.equal(meta.continuation.lastQuarterBeat,560);
+ assert.equal(report.native.sourceQuarterBeats,560);
+ assert.ok(report.flashBytes<=1024);assert.equal(report.eepromBytes,64);
 });
 
 test('Children measured strings attack/release masks and both tails reach zero without underflow',()=>{

@@ -18,6 +18,8 @@ OUT = ROOT / 'build/children-four'
 SOURCE = ROOT / 'ATtiny13A/Music/reference/children/source-events.json'
 BASE = ROOT / 'ATtiny13A/Music/variants/children'
 DURATIONS = (1, 2, 3, 4, 6, 8, 16)
+SOURCE_BARS = 140
+SOURCE_UNITS = SOURCE_BARS * 16
 
 
 def module(name, path):
@@ -156,12 +158,21 @@ def bar_macro_stream(notes, ppqn, bpm):
     bass bar shapes (three bits). GM50 supplies a quiet harmonic pad from bar8.
     Every generated echo has an eighth-note gate; the pad changes per bar.
     """
-    score = reader.create_score(notes, ppqn, bpm, 107, 107, 1, 4)
+    continuation=[n for n in notes if n[0]==15 and n[2]==77 and n[3]>=448*ppqn]
+    assert len(continuation)==448
+    assert sorted((round(n[3]*4/ppqn),round(n[4]*4/ppqn)) for n in continuation)==[
+        (unit,unit+1) for unit in range(1792,2240)]
+    score = reader.create_score(notes, ppqn, bpm, SOURCE_BARS, SOURCE_BARS, 1, 4,
+                                extent_ticks=SOURCE_BARS*4*ppqn)
     score['patterns']['ending'] = ['F4:1 R:3']
-    echo, source_echo = selected_segments(notes, ppqn, (2,3), 1712, 'latest')
-    bass, source_bass = selected_segments(notes, ppqn, (4,), 1712, 'latest')
+    echo, source_echo = selected_segments(notes, ppqn, (2,3), SOURCE_UNITS, 'latest')
+    # A single extra F2 is simultaneous with F1 at beat428. Keep the lower
+    # fundamental in the existing monophonic bass, without replacing any of
+    # the 345 already retained attacks.
+    bass_notes = [n for n in notes if n[0] != 4 or n[2] != 41]
+    bass, source_bass = selected_segments(bass_notes, ppqn, (4,), SOURCE_UNITS, 'latest')
     echo_at_bar = [next((n['pitch'] for n in echo if n['start'] <= bar*16 < n['end']), None)
-                   for bar in range(107)]
+                   for bar in range(SOURCE_BARS)]
     # The first three entries are also the source-inspired pad voicings for
     # Db/Bb/F bass roots: F4/Eb4/C4. The echo uses only entries below15.
     pitches = [65,63,60]
@@ -177,11 +188,11 @@ def bar_macro_stream(notes, ppqn, bpm):
     pitches += [37,34,29]
     bass_pitches = [37,34,29]
     bass_glyphs = []
-    for bar in range(107):
+    for bar in range(SOURCE_BARS):
         begin,end = bar*16,(bar+1)*16
         attacks = [n for n in bass if begin<=n['start']<end]
         if not attacks:
-            assert any(n['start']<begin and n['end']>=end for n in bass)
+            assert bar >= 136 or any(n['start']<begin and n['end']>=end for n in bass)
             glyph=3
         elif len(attacks)==1 and attacks[0]['start']==begin and attacks[0]['end']>=end:
             glyph=bass_pitches.index(attacks[0]['pitch'])
@@ -191,7 +202,7 @@ def bar_macro_stream(notes, ppqn, bpm):
             assert all(n['end']-n['start']==4 for n in attacks)
             glyph=4+bass_pitches.index(attacks[0]['pitch'])
         bass_glyphs.append(glyph)
-    assert sum(4 if g&4 else int(g!=3) for g in bass_glyphs)==source_bass==345
+    assert sum(4 if g&4 else int(g!=3) for g in bass_glyphs)==source_bass==458
     controls,records,bar_indices = {},[],[]
     def chord(pitch,glyph):
         value=(15 if pitch is None else pitches.index(pitch))|(glyph<<4)
@@ -199,15 +210,18 @@ def bar_macro_stream(notes, ppqn, bpm):
         assert 9<=value<=111,value
         return 142+value
     for bar,(pitch,glyph) in enumerate(zip(echo_at_bar,bass_glyphs)):
+        if bar >= 136:
+            bar_indices.append(None)
+            continue
         control=chord(pitch,glyph)
         # The quarter driver repeats the active macro independently. Repeating
         # its unchanged selector wastes Flash and changes no note or gate.
         if not bar_indices or records[bar_indices[-1]]!=control-142:
             controls[bar*16]=bytes([control])
         bar_indices.append(records.index(control-142))
-    controls[1712]=bytes([chord(65,2)])
-    controls[1716]=b'\xfe'
-    assert len(records)<=30,(len(records),records)
+    controls[2176]=b'\xfe'  # Source bass ends at beat544; late strings continue.
+    controls[SOURCE_UNITS+4]=b'\xfe'
+    assert len(records)<=31,(len(records),records)
     note_index={compiler.pname(pitch):index for index,pitch in enumerate(pitches[:17])}
     note_index['R']=17
     lead=[]
@@ -235,11 +249,13 @@ def bar_macro_stream(notes, ppqn, bpm):
     return bytes(output),dict(pitches=pitches,bassPitches=bass_pitches,
         restIndex=17,holdIndex=18,totalUnits=unit,sourceLeadNotes=256,
         sourceEchoNotes=source_echo,sourceBassNotes=source_bass,
+        continuation=dict(track=15,program=50,firstQuarterBeat=448,lastQuarterBeat=560,
+                          pitch=77,noteOns=448,gateUnits=1),
         chordRecords=records,barIndices=bar_indices,bassGlyphs=bass_glyphs,
         echoAtBar=echo_at_bar,mode='bar-macros',descriptorInline=True,timedTokenLimit=151,
         sourceSha256=hashlib.sha256(SOURCE.read_bytes()).hexdigest(),
         originalMidiSha256='065ea095a29a7086f736d9b61895ae3b35aa8950d980c045110145f8b2832321',
-        limitation='Echo principal pitch sampled from the source once per bar, then quarter pulses with eighth gates. Synth Strings 1 is a new source-inspired F4/Eb4/C4 harmonic pad, not an exact copy of track5. Lead and345 bass attacks retain the nearest-sixteenth source grid.')
+        limitation='Echo principal pitch sampled from the source once per bar, then quarter pulses with eighth gates. The original Synth Strings1 F4/Eb4/C4 harmonic pad is not an exact copy of track5. All256 main piano attacks and all345 previously retained bass attacks remain;113 more bass attacks are restored through beat544. The simultaneous F2 at beat428 is omitted in favor of F1. After the piano ends, its voice plays all448 F5 attacks/gates from GM50 track15 at beats448..560, using the measured strings bank. The12 lower Eb4 notes simultaneously sounding in track15 and the late saw, percussion and other layers remain omitted; this is not a lossless rendering of every source part.')
 
 
 def atoms(stream):
@@ -467,7 +483,69 @@ render_tone:
     # pad keeps half its old level alongside the half-gain release copy.
     text=text.replace('  mov r16, r25\n  subi r26, 1\n',
         '  andi r16, 15\n  lsr r16\n  or r16, r25\n  subi r26, 1\n',1)
-    return optimize_macro_source(text)
+    text=optimize_macro_source(text)
+    text=text.replace('grid_step:\n  inc r8\n', '''grid_step:
+  inc r8
+  mov r16, r8
+  andi r16, 15
+  brne bar_clock_done
+  inc r9
+bar_clock_done:
+''',1)
+    text=text.replace('companion_grid:\n  movw r30, r12\n', '''companion_grid:
+  mov r16, r9
+  subi r16, 112
+  cpi r16, 28
+  brcc continuation_done
+  ldi r16, 10
+  ldi r26, 97
+  ldi r25, 167
+  rcall macro_note
+continuation_done:
+  movw r30, r12
+''',1)
+    text=text.replace('  inc r9\n  mov r16, r9\n  cpi r16, 8\n',
+                      '  mov r16, r9\n  cpi r16, 8\n',1)
+    text=text.replace('  ldi r17, 255\n  mov r9, r17\n','  clr r9\n',1)
+    text=text.replace('clear_ram:\n  st Z+, r29\n  cpi r30, 144\n',
+                      'clear_ram:\n  st Z+, r29\n  cpi r30, 128\n',1)
+    text=text.replace('  ldi r18, 128\n  ldi r30, 128\n','  ldi r18, 128\n',1)
+    text=text.replace('hold_sample:\n  rjmp companion_grid\n','hold_sample:\n',1)
+    text=text.replace('  lds r17, 97\n  andi r17, 127\n  sts 97, r17\n',
+                      '  ldi r26, 97\n  ld r17, X\n  andi r17, 127\n  st X, r17\n',1)
+    text=text.replace('  lds r16, 102\n  andi r16, 127\n  sts 102, r16\n',
+                      '  ldi r26, 102\n  ld r16, X\n  andi r16, 127\n  st X, r16\n',1)
+    text=text.replace('all_parts_off_loop:\n  ld r16, X+\n  andi r16, 127\n  subi r26, 1\n  st X+, r16\n  subi r26, 252\n',
+                      'all_parts_off_loop:\n  ld r16, X\n  andi r16, 127\n  st X, r16\n  subi r26, 251\n',1)
+    text=text.replace('envelope_store:\n\n  subi r26, 1\n  st X+, r16\n  subi r26, 252\n',
+                      'envelope_store:\n  st -X, r16\n  subi r26, 251\n',1)
+    text=text.replace('  cpi r16, HOLD_INDEX\n  breq hold_sample\n',
+                      '  brcc hold_sample\n',1)
+    text=text.replace('  subi r26, 1\n  st X+, r16\n  subi r26, 254\n',
+                      '  st -X, r16\n  subi r26, 253\n',1)
+    text=text.replace('ordinary_release:\n  tst r17\n  breq envelope_store\n  dec r16\n  cpi r17, 1\n  breq envelope_store\n  sbrc r16, 6\n  dec r16\n', '''ordinary_release:
+  subi r17, 1
+  brcs envelope_store
+  breq release_last_level
+  sbrc r16, 6
+  dec r16
+release_last_level:
+  dec r16
+''',1)
+    a=text.index('next_section:');b=text.index('hold_sample:',a)
+    section=text[a:b]
+    text=text[:a]+text[b:]
+    text=text.replace('read_event:\n',section+'read_event:\n',1)
+    text=text.replace('  cpi r16, 255\n  brne .L0c8\n  rjmp next_section\n',
+                      '  cpi r16, 255\n  breq next_section\n',1)
+    # The two unused vector words can hold the silent-voice return. Keep the
+    # renderer nearby so its conditional branch remains in the AVR range.
+    a=text.index('render_tone:');b=text.index('initialize_voice:',a)
+    renderer=text[a:b].replace('voice_silent:\n  clr r17\n  rjmp envelope_return\n','')
+    text=text[:a]+text[b:]
+    text=text.replace('envelope_return:\n  asr r17\n  ret\n  rjmp pwm_irq\n',
+                      'voice_silent:\n  clr r17\nenvelope_return:\n  ret\n  rjmp pwm_irq\n'+renderer,1)
+    return text
 
 
 def optimize_macro_source(text):
@@ -537,6 +615,9 @@ def assemble(packed, metadata):
         GRID_INITIAL_HIGH=math.ceil((65536 - step) / 256))
     (OUT / 'config.inc').write_text(''.join(f'.set {k}, {v}\n' for k,v in constants.items()), encoding='utf-8', newline='\n')
     source=macro_source() if metadata.get('mode')=='bar-macros' else six_state_source()
+    if metadata.get('mode')=='bar-macros' and len(playlist)>1:
+        source=source.replace('  ldi r16, FIRST_PLAYLIST_INDEX\n  mov r4, r16\n',
+                              '  mov r4, r16\n',1)
     if metadata.get('mode')=='bar-macros':
         source,score,proof=page_local_tables(source,score,playlist,release)
         metadata['pageLocalProof']=proof
@@ -612,6 +693,8 @@ def write_kernel_fixture(metadata):
     release=module('children_four_fixture_assembler',ROOT/'tools/build-release-engine.py')
     fixture=OUT/'fixture';fixture.mkdir(parents=True,exist_ok=True)
     source=(OUT/'synth.S').read_text(encoding='utf-8')
+    source=source.replace('  mov r1, r16\n  mov r4, r16\n',
+                          '  mov r1, r16\n  clr r4\n',1)
     (fixture/'synth.S').write_text(source,encoding='utf-8',newline='\n')
     config=(OUT/'config.inc').read_text(encoding='utf-8')
     import re
@@ -681,7 +764,7 @@ def build(folder=None,candidates=4096,production=False,mode='bar-macros'):
     eeprom_sha256=write_eeprom()
     fixture_bytes=write_kernel_fixture(metadata) if mode=='bar-macros' else None
     report = dict(experimental=True, primaryVoices=4, releaseVoices=2,
-        sourceQuarterBeats=428, cadenceQuarterBeats=4, tempoBpm=bpm,
+        sourceQuarterBeats=560, sourcePianoQuarterBeats=428, cadenceQuarterBeats=4, tempoBpm=bpm,
         sourceCommandBytes=len(stream), packedDataBytes=len(packed['storage']) + len(packed['playlist']) + table_bytes,
         fixedTableBytes=table_bytes, sourceSha256=metadata['sourceSha256'],
         actualCodeBytes=labels['code_end'], actualFlashBytes=flash_bytes,
@@ -690,7 +773,8 @@ def build(folder=None,candidates=4096,production=False,mode='bar-macros'):
         maximumEntryOffset=max(packed['offsets'].values()),
         layout=dict(stateBytes=30, stateAddresses=[97,102,107,112,117,122],
                     pwmRingStart=128, pwmRingBytes=16, stackBudgetBytes=8, totalBytes=54),
-        voices=[dict(role='main-piano', tracks=[1], program=0, level=15, eeprom=0),
+        voices=[dict(role='main-piano', tracks=[1], program=0, level=15, eeprom=0,
+                     continuation=dict(track=15,program=50,level=7,eeprom=32,firstQuarterBeat=448,lastQuarterBeat=560)),
                 dict(role='piano-echo', tracks=[2,3], program=0, level=7, eeprom=0),
                 dict(role='bass', tracks=[4], program=35, level=7, gain=0.5, eeprom=16),
                 dict(role='strings', tracks=[5], program=50, level=7, gain=0.5, eeprom=32)],
@@ -717,7 +801,8 @@ def publish(folder,notes,ppqn,bpm,stream,packed,native):
     instruments=dict(lead='acoustic-grand-piano',keys=dict(instrument='fretless-bass',level=7),
                      pluck=dict(instrument='synth-strings-1',level=7),percussion='off')
     source=legacy.source_metadata(notes,ppqn)
-    score=reader.create_score(notes,ppqn,bpm,107,107,1,4)
+    score=reader.create_score(notes,ppqn,bpm,SOURCE_BARS,SOURCE_BARS,1,4,
+                              extent_ticks=SOURCE_BARS*4*ppqn)
     score['patterns']['ending']=['F4:1 R:3'];score['playlist'].append('ending')
     score.update(engine='children-native',title='04 · Robert Miles — Children',
         instruments=instruments,instrument_slots_are='EEPROM wave banks, not the four physical main voices',
@@ -727,10 +812,10 @@ def publish(folder,notes,ppqn,bpm,stream,packed,native):
         keys_envelope_model='pluck',keys_retrigger='full',keys_max_level=7,keys_gain=.5,
         pluck_envelope_model='sustain',pluck_retrigger='half',pluck_max_level=7,pluck_gain=.5,
         pluck_attack_step=1,pluck_attack_mask=1,pluck_release_step=1,pluck_release_mask=7,
-        source_midi=source,bass_source_note_ons=345,
-        arrangement=dict(firstSourceQuarterBeat=0,sourceQuarterBeats=428,sourceLeadNotes=256,
-            sourceBassNotes=345,totalQuarterBeats=432,durationSeconds=432*60/bpm,
-            rhythm='Nearest-sixteenth source grid; all256 main piano and345 bass attack identities/gates preserved; constant140BPM.',
+        source_midi=source,bass_source_note_ons=458,
+        arrangement=dict(firstSourceQuarterBeat=0,sourceQuarterBeats=560,sourceLeadNotes=256,
+            sourceBassNotes=458,sourceContinuationNotes=448,totalQuarterBeats=564,durationSeconds=564*60/bpm,
+            rhythm='Nearest-sixteenth source grid; all256 main piano,458 selected bass and448 late GM50 string attack identities/gates preserved; constant140BPM.',
             reduction=metadata['limitation'],loopSilence='One-beat cadence followed by three beats rest; all six voice levels zero before every restart.'))
     assignments=bank.describe_assignments(instruments)
     rom=(folder/'synth.bin').read_bytes();ep=(folder/'eeprom.bin').read_bytes()
@@ -739,13 +824,14 @@ def publish(folder,notes,ppqn,bpm,stream,packed,native):
         tableBytes=len(rom)-labels['code_end'],eepromBytes=64,flashSha256=sha(rom),eepromSha256=sha(ep),labels=labels,
         instrumentBankSha256=sha(bank.BANK_PATH.read_bytes()),instrumentAssignments=assignments,
         primaryVoiceAssignments=native['voices'],sourceScoreSha256=source['sha256'],
-        score=dict(note_count=257,event_bytes=len(packed['storage']),playlist_bytes=len(packed['playlist']),
+        score=dict(note_count=705,event_bytes=len(packed['storage']),playlist_bytes=len(packed['playlist']),
             note_table_bytes=40,chord_table_bytes=0,durations=list(DURATIONS),
             pitches=[compiler.pname(n) for n in metadata['pitches'][:17]]+['R','HOLD'],
             dds_pitches=[compiler.pname(n) for n in metadata['pitches']],rest_index=17,hold_index=18,
             source_playlist=['intro','ending'],playlist=packed['playlist'],section_offsets=packed['offsets'],
             maximum_entry_offset=max(packed['offsets'].values()),total_data_bytes=len(rom)-labels['code_end'],
-            compression=packed['report'],source_note_ons=256,source_bass_note_ons=345),
+            compression=packed['report'],source_note_ons=256,source_bass_note_ons=458,
+            source_continuation_note_ons=448,proceduralContinuation=metadata['continuation']),
         timing=dict(phaseStep=labels['GRID_STEP_LOW']|(labels['GRID_STEP_HIGH']<<8),phaseBits=16,
             envelopeTickCycles=131072,tempoBpm=bpm,actualTempoBpm=(labels['GRID_STEP_LOW']|(labels['GRID_STEP_HIGH']<<8))/65536*(37500/512)*60/4,
             sharedGrid='One sixteenth counter drives all four main voices and finite gates'),
@@ -759,6 +845,13 @@ def publish(folder,notes,ppqn,bpm,stream,packed,native):
         slots={role:dict(instrument=assignments[role]['instrument'],waves=profiles[assignments[role]['instrument']]['waves'])
                for role in ('lead','keys','pluck')},
         pianoTransient=profiles['acoustic-grand-piano']['transient']))
+    # Keep the downloadable, self-contained player on the same validated AVR
+    # instruction set as the emulator, including native indirect SRAM forms.
+    core=(ROOT/'web-player/lib/avr-reference.js').read_text(encoding='utf-8').replace('export class AVRCore','class AVRCore')
+    parser=(ROOT/'web-player/lib/hex.js').read_text(encoding='utf-8').replace('export function parseHex','function parseHex')
+    core+='\n'+parser+'\nAVRCore.fromHex=(flash,eeprom)=>new AVRCore(parseHex(flash),eeprom?parseHex(eeprom,64):null);\n'
+    core+='\nif(typeof module!=="undefined"&&module.exports)module.exports={AVRCore};\n'
+    text('avr_core.js',core)
     html=(ROOT/'tools/player-template.html').read_text(encoding='utf-8')
     for key,value in [('AVR_CORE',(folder/'avr_core.js').read_text(encoding='utf-8')),
                       ('FIRMWARE_HEX',(folder/'synth.hex').read_text(encoding='utf-8')),
