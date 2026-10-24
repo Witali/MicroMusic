@@ -34,7 +34,7 @@ def specialize(data, original):
     """Concrete five-state SRAM architecture, with an MCU-side PWM ring."""
     roles=('lead','keys','pluck');banks=(0,16,32)
     models=tuple(data[role] for role in ('lead_envelope_model','accompaniment_envelope_model','pluck_envelope_model'))
-    if models not in (('bowed','piano','pluck'),('sustain','bowed','bowed'),('piano','piano','off'),('piano','pluck','off'),('piano','off','off')):
+    if models not in (('bowed','piano','pluck'),('sustain','bowed','bowed'),('piano','piano','off'),('piano','pluck','off'),('piano','off','off'),('pluck','pluck','pluck')):
         raise ValueError('Unsupported release-slot instrument combination')
     if data.get('keys_rest_check') or data.get('pluck_rest_check'):
         raise ValueError('Release-slot profile requires nonzero companion DDS tables')
@@ -151,6 +151,7 @@ envelope_loop:
 state_mask:
 '''
         if held:header+='  sbrs r16, 4\n  lsr r25\n'
+        elif all(model == 'pluck' for model in models):header+='  lsr r25\n'
         if data.get('dds_fast_decay_roles'):
             header+='''  subi r26, 253
   ld r0, X+
