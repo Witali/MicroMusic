@@ -57,8 +57,8 @@ random chord sequences, repeated attacks, malformed packets and explicit
 rejection of unsupported input.
 
 ATtiny13A complete excerpt player:
-A dedicated compiler now fits all 1027 excerpt notes in a complete 918-byte
-AVR image: 566 code bytes and 352 bytes of tables, including precomputed DDS
+A dedicated compiler now fits all 1027 excerpt notes in a complete 926-byte
+AVR image: 574 code bytes and 352 bytes of tables, including precomputed DDS
 steps. It shares fixed-size two/six-tone guitar shapes, gap/gate pairs and
 binary phrase rules. It does not directly decode the archival MNC1 packets.
 Two source guitar parts use eight independent 16-bit phase/step oscillators;
@@ -73,6 +73,9 @@ pass; timing error stays below 14.19 ms at nominal 9.6 MHz, DDS error below
 2.16 cents. No lost timer/work events or underruns occur. Peak SRAM is 61/64
 bytes (32 phase/step, 16 PWM ring, 7 pending phrase symbols, 6 hardware stack).
 This is emulation evidence; short FluidR3 waves approximate the guitar timbre.
+The second guitar has separate, circularly smoothed nylon waves in EEPROM
+and half gain (-6.02 dB) after its envelope. The lead profile, every source
+note and the original gates remain intact. Four waves occupy 32 EEPROM bytes.
 
 Reproduce the complete player:
   python tools/build-mariachi-lossless.py --output ATtiny13A/Music/variants/cancion-del-mariachi-polyphonic

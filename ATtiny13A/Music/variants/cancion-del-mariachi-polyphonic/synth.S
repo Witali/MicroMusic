@@ -85,6 +85,10 @@ voice_loop:
   st X+, r17
   subi r26, 254
   ldi r16, 0
+  cpi r26, 121
+  brcs guitar_bank
+  ldi r16, 16
+guitar_bank:
   mov r25, r7
   cpi r25, 4
   brcs wave_register
@@ -115,6 +119,7 @@ rhythm_group:
   mov r25, r5
   andi r25, 15
   rcall chord_gain
+  asr r17
   add r17, r20
 write_pwm:
   subi r17, 128

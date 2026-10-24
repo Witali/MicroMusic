@@ -82,8 +82,9 @@ Flash 1016 Б, EEPROM 64 Б. Два полных цикла проверены �
 Все 1027 нот обеих исходных нейлоновых гитар, включая внутренние тоны
 аккордов, атаки и Note Off. Фрагмент 30 секунд без вступления, 126 BPM;
 цикл с затуханием и паузой — 31,13 с. Восемь генераторов, максимум семь
-исходных нот одновременно. Flash 918 Б (код 566 Б, таблицы 352 Б),
+исходных нот одновременно. Flash 926 Б (код 574 Б, таблицы 352 Б),
 EEPROM 64 Б; измеренный максимум SRAM 61/64 Б. Проверено в эмуляторе.
+Вторая гитара звучит мягче и на 6 дБ тише, чтобы частые аккорды не перекрывали тему.
 Онлайн: https://witali.github.io/MicroMusic/web-player/?firmware=cancion-del-mariachi
 Сборка: python tools/build-mariachi-lossless.py --output ATtiny13A/Music/variants/cancion-del-mariachi-polyphonic
 Сверка всех исходных нот: node tools/audit-release-engine.mjs cancion-del-mariachi-polyphonic

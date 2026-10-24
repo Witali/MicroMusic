@@ -190,6 +190,10 @@ voice_loop:
   st X+, r17
   subi r26, 254
   ldi r16, 0
+  cpi r26, 121
+  brcs guitar_bank
+  ldi r16, 16
+guitar_bank:
   mov r25, r7
   cpi r25, 4
   brcs wave_register
@@ -220,6 +224,7 @@ rhythm_group:
   mov r25, r5
   andi r25, 15
   rcall chord_gain
+  asr r17
   add r17, r20
 write_pwm:
   subi r17, 128
@@ -442,14 +447,23 @@ chord_loaded:
     (folder/'synth.bin').write_bytes(rom);(folder/'synth.hex').write_text(ihex(rom),encoding='ascii',newline='\n')
     bank=json.loads((ROOT/'ATtiny13A/Music/instruments/bank.json').read_text(encoding='utf-8'))
     profile=bank['instruments']['acoustic-guitar-nylon'];ep=bytearray(64)
-    waves={}
-    for index,register in enumerate(('low','high')):
-        wave=profile['waves'][register][:]
-        if register=='low':
-            zero=wave.index(0);wave=wave[zero:]+wave[:zero]
-        waves[register]=wave
-        ep[index*8:index*8+8]=bytes((wave[n]+8)|((wave[n+1]+8)<<4) for n in range(0,16,2))
-    assert waves['low'][0]==0,'A zero DDS step/phase contributes exact silence'
+    part_waves=[]
+    for part in range(2):
+        waves={}
+        for index,register in enumerate(('low','high')):
+            wave=profile['waves'][register][:]
+            if part:
+                # Circular binomial smoothing keeps the measured nylon profile,
+                # reducing upper harmonics without adding a runtime audio filter.
+                kernel=(1,4,6,4,1)
+                wave=[round(sum(k*wave[(i+j-2)%16] for j,k in enumerate(kernel))/16) for i in range(16)]
+            if register=='low' or part:
+                zero=wave.index(0);wave=wave[zero:]+wave[:zero]
+            waves[register]=wave
+            offset=part*16+index*8
+            ep[offset:offset+8]=bytes((wave[n]+8)|((wave[n+1]+8)<<4) for n in range(0,16,2))
+        assert waves['low'][0]==0,'A zero DDS step/phase contributes exact silence'
+        part_waves.append(waves)
     (folder/'eeprom.bin').write_bytes(ep);(folder/'eeprom.hex').write_text(ihex(ep),encoding='ascii',newline='\n')
     report=dict(engine='mariachi-polyphonic',experimental=False,flashBytes=len(rom),codeBytes=labels['song_shapes'],
         tableBytes=len(rom)-labels['song_shapes'],eepromBytes=64,labels=labels,scoreBytes=codec['scoreBytes'],
@@ -458,12 +472,16 @@ chord_loaded:
         sourceNotes=1027,sourceParts=2,maximumSimultaneousSourceNotes=7,oscillators=8,
         cpuHz=9600000,pwmHz=37500,synthesisHz=18750,unitTicks=160,ppqn=480,tempoMicroseconds=476190,
         gridStep=5637,envelopeEverySamples=256,voiceAddresses=list(range(112,144,4)),
-        pendingSymbolAddresses=[[144,145],[146,147,148,149,150]],waves=waves,
+        pendingSymbolAddresses=[[144,145],[146,147,148,149,150]],waves=part_waves[0],
+        partWaves=part_waves,partWaveOffsets=[0,16],partGainShifts=[0,1],
         sourceSelection=dict(firstBeat=58,lastBeat=121),verifiedLosslessScore=True)
     report['activePrimaryVoices']=8
     report['instrumentAssignments']={role:dict(instrument='acoustic-guitar-nylon',
         label='Акустическая гитара с нейлоновыми струнами',gmProgram=24,sourceVelocity=80,level=15)
         for role in ('leadGuitar','rhythmGuitar')}
+    report['instrumentAssignments']['rhythmGuitar'].update(
+        label='Мягкая нейлоновая гитара сопровождения',mixGain=0.5,mixGainDb=-6.020599913,
+        waveDerivation='Circular [1,4,6,4,1]/16 smoothing of the measured nylon waves, rounded to 4-bit samples; both registers start at zero.')
     report['instrumentBankSha256']=hashlib.sha256((ROOT/'ATtiny13A/Music/instruments/bank.json').read_bytes()).hexdigest()
     report['articulation']='Shared plucked envelope for each common-gate source chord; phases reset on picking; no additional release slots.'
     (folder/'build-report.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
@@ -476,7 +494,8 @@ chord_loaded:
         html=html.replace('/*'+key+'*/',value)
     html=html.replace('ATtiny13A: четырёхголосный плеер — эмулятор HEX','Canción del Mariachi · все 1027 нот')
     html=html.replace('ATtiny13A — проигрыватель AVR-прошивки','Canción del Mariachi · две гитары, все ноты')
-    html=html.replace('мелодия, пианино, гитара и ударные.','две нейлоновые гитары, все 1027 исходных нот и 8 тональных генераторов.')
+    html=html.replace('мелодия, пианино, гитара и ударные.',
+                      'две нейлоновые гитары, мягкое сопровождение на 6 дБ тише, все 1027 исходных нот и 8 тональных генераторов.')
     html=html.replace('lp.frequency.value=4000','lp.frequency.value=9000')
     html=html.replace('Файл preview.wav должен находиться рядом с player.html (он есть в ZIP).',
                       'Файл preview.wav находится рядом с player.html.')

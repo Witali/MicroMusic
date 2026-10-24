@@ -2,10 +2,10 @@
   "passed": true,
   "engine": "mariachi-polyphonic",
   "sourceSha256": "3bdfb9a7756aff5f395199f25aaa9787695d5bffb238dd7cd16bf2cbb842dda9",
-  "flashSha256": "41fa4d768b38135f7b617b89f79eebc27a553b3f62a8af2a67bc557efac15e69",
-  "eepromSha256": "f1600a9527ea3f8748838fc4bacb9d7a455786af3eb97cde313f6632dc8c4b4f",
-  "flashBytes": 918,
-  "codeBytes": 566,
+  "flashSha256": "13f13fecd24a9add2e7122e0086de1d954086074ed0b77ab78c16f7c0fa50ca4",
+  "eepromSha256": "9ba03ad3f029cb8b903d16b7a1f87878477fa952aaf2c59cc7aae244f3765cda",
+  "flashBytes": 926,
+  "codeBytes": 574,
   "tableBytes": 352,
   "allSourceNotes": 1027,
   "allSourceNoteGatesVerified": true,
@@ -20,15 +20,23 @@
   ],
   "oscillators": 8,
   "maximumSimultaneousSourceNotes": 7,
+  "partWaveOffsets": [
+    0,
+    16
+  ],
+  "partGainShifts": [
+    0,
+    1
+  ],
   "firstSongSeconds": 30,
-  "loopSeconds": 31.129628229166666,
-  "maximumOnsetErrorMs": 14.181354166666438,
-  "maximumGateEndErrorMs": 14.160833333331624,
-  "maximumGateDurationErrorMs": 10.212291666666594,
+  "loopSeconds": 31.129628125,
+  "maximumOnsetErrorMs": 14.181249999996481,
+  "maximumGateEndErrorMs": 14.16072916666522,
+  "maximumGateDurationErrorMs": 10.212916666666572,
   "maximumPitchQuantizationErrorCents": 2.1530851746425674,
-  "maxRenderActiveCycles": 444,
-  "maxRenderElapsedCycles": 474,
-  "maxControlAndRenderActiveCycles": 898,
+  "maxRenderActiveCycles": 469,
+  "maxRenderElapsedCycles": 499,
+  "maxControlAndRenderActiveCycles": 923,
   "maxStackBytes": 6,
   "phaseStateBytes": 32,
   "pendingSymbolBytes": 7,
@@ -47,8 +55,8 @@
   "lostWorkEvents": 0,
   "isrCycles": 15,
   "mixRange": [
-    -65,
-    50
+    -31,
+    27
   ],
   "bothPartsSilentBeforeRestart": true,
   "emulationOnly": true

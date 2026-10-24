@@ -36,6 +36,7 @@ for(const track of source.tracks){
 }
 assert.deepEqual(expected.map(groups=>groups.reduce((sum,g)=>sum+g.pitches.length,0)),[117,910]);
 const core=new AVRCore(rom,ep),pc=Object.fromEntries(Object.entries(meta.labels).map(([k,v])=>[k,v/2]));
+const waveOffsets=meta.partWaveOffsets??[0,0],gainShifts=meta.partGainShifts??[0,0];
 const notes=[[],[]],current=[null,null],queue=Array(14).fill(128);
 let finished=false,firstCycle=null,restartCycle=null,previousPwm=128,nextPwm=null,minQueued=16;
 let underruns=0,mixChecks=0,pwmChecks=0,maxActive=0,maxElapsed=0,renderStart=null,renderIRQs=0;
@@ -78,11 +79,11 @@ core.step=()=>{
     assert.equal(voice[i].phase,(phaseBefore[i].phase+phaseBefore[i].step)&65535,'Each oscillator advances independently');
     phaseChecks++;
    }
-   const values=voice.map(({phase,step})=>{
-    const index=phase>>12,b=ep[(step>=1024?8:0)+(index>>1)];return ((index&1?b>>4:b)&15)-8;
+   const values=voice.map(({phase,step},i)=>{
+    const index=phase>>12,b=ep[waveOffsets[i<2?0:1]+(step>=1024?8:0)+(index>>1)];return ((index&1?b>>4:b)&15)-8;
    });
-   const expectedMix=Math.floor(values.slice(0,2).reduce((a,b)=>a+b,0)*(core.r[4]&15)/8)
-    +Math.floor(values.slice(2).reduce((a,b)=>a+b,0)*(core.r[5]&15)/8);
+   const expectedMix=(Math.floor(values.slice(0,2).reduce((a,b)=>a+b,0)*(core.r[4]&15)/8)>>gainShifts[0])
+    +(Math.floor(values.slice(2).reduce((a,b)=>a+b,0)*(core.r[5]&15)/8)>>gainShifts[1]);
    const mix=core.r[17]&128?core.r[17]-256:core.r[17];assert.equal(mix,expectedMix||0,'Every chord tone contributes exactly');
    assert.ok(mix>=-120&&mix<=120);minMix=Math.min(minMix,mix);maxMix=Math.max(maxMix,mix);
    nextPwm=mix+128;mixChecks++;
@@ -128,7 +129,8 @@ assert.equal(totalNotes,1027);assert.ok(maxOn<25&&maxOff<25);
 const report={passed:true,engine:meta.engine,sourceSha256:hash(sourceRaw),flashSha256:hash(rom),eepromSha256:hash(ep),
  flashBytes:rom.length,codeBytes:meta.codeBytes,tableBytes:meta.tableBytes,allSourceNotes:totalNotes,
  allSourceNoteGatesVerified:true,sourceParts:2,sourceNotesByPart:[117,910],chordAttacksByPart:notes.map(g=>g.length),
- oscillators:8,maximumSimultaneousSourceNotes:7,firstSongSeconds:30,loopSeconds:(restartCycle-firstCycle)/9600000,
+ oscillators:8,maximumSimultaneousSourceNotes:7,partWaveOffsets:waveOffsets,partGainShifts:gainShifts,
+ firstSongSeconds:30,loopSeconds:(restartCycle-firstCycle)/9600000,
  maximumOnsetErrorMs:maxOn,maximumGateEndErrorMs:maxOff,maximumGateDurationErrorMs:maxDuration,
  maximumPitchQuantizationErrorCents:maxPitchError,maxRenderActiveCycles:maxActive,maxRenderElapsedCycles:maxElapsed,
  maxControlAndRenderActiveCycles:maxBurst,maxStackBytes:159-core.minSP,phaseStateBytes:32,pendingSymbolBytes:7,

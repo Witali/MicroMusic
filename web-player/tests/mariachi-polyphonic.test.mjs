@@ -60,7 +60,7 @@ test('Mariachi polyphonic: actual Flash phrases preserve every source chord, att
     while(rom[at]!==255){assert.ok(at<rom.length);expand(rom[at++]);}
   }
   assert.deepEqual(actual,expected);
-  assert.equal(meta.tableBytes,352);assert.equal(meta.codeBytes,566);assert.equal(rom.length,918);
+  assert.equal(meta.tableBytes,352);assert.equal(meta.codeBytes,574);assert.equal(rom.length,926);
   assert.equal(compiled.verifiedLossless,true);
 });
 
@@ -71,6 +71,7 @@ test('Mariachi polyphonic: retained full-loop audit belongs to these exact image
   assert.equal(verification.allSourceNotes,1027);assert.equal(verification.allSourceNoteGatesVerified,true);
   assert.deepEqual(verification.chordAttacksByPart,[94,167]);
   assert.equal(verification.oscillators,8);assert.equal(verification.maximumSimultaneousSourceNotes,7);
+  assert.deepEqual(verification.partWaveOffsets,[0,16]);assert.deepEqual(verification.partGainShifts,[0,1]);
   assert.ok(verification.flashBytes<=1024&&verification.sramUsedWorstCase<=64);
   assert.equal(verification.sramUsedWorstCase,61);assert.equal(ep.length,64);
   assert.ok(verification.maximumOnsetErrorMs<15&&verification.maximumGateEndErrorMs<15);
@@ -119,4 +120,28 @@ test('Mariachi polyphonic: default song points to all notes and keeps the reduce
   const wav=read('preview.wav');assert.equal(wav.toString('ascii',0,4),'RIFF');
   assert.equal(wav.readUInt16LE(22),1);assert.equal(wav.readUInt32LE(24),48000);
   assert.equal(wav.readUInt32LE(40)/(48000*2),30.9);
+});
+
+test('Mariachi polyphonic: accompaniment has its own softer nylon waves and half gain',()=>{
+  const bank=JSON.parse(readFileSync(new URL('../../instruments/bank.json',base)));
+  assert.equal(hash(readFileSync(new URL('../../instruments/bank.json',base))),meta.instrumentBankSha256);
+  const profile=bank.instruments['acoustic-guitar-nylon'];
+  const upperRatio=wave=>{
+    const energy=Array.from({length:8},(_,j)=>{
+      let re=0,im=0;for(let i=0;i<16;i++){
+        const angle=2*Math.PI*(j+1)*i/16;re+=wave[i]*Math.cos(angle);im+=wave[i]*Math.sin(angle);
+      }
+      return re*re+im*im;
+    });
+    return energy.slice(3).reduce((a,b)=>a+b,0)/energy.slice(0,3).reduce((a,b)=>a+b,0);
+  };
+  for(const [register,index] of [['low',0],['high',1]]){
+    const decode=offset=>Array.from({length:16},(_,n)=>((ep[offset+(n>>1)]>>(n%2*4))&15)-8);
+    assert.deepEqual(decode(index*8),profile.waves[register],'Leading guitar keeps its measured timbre');
+    const backing=decode(16+index*8);
+    assert.equal(backing[0],0,'Backing attacks begin at a zero sample');
+    assert.ok(upperRatio(backing)<upperRatio(profile.waves[register]),'Backing has fewer upper harmonics');
+  }
+  assert.equal(meta.instrumentAssignments.rhythmGuitar.mixGain,0.5);
+  assert.equal(meta.instrumentAssignments.rhythmGuitar.gmProgram,24);
 });
