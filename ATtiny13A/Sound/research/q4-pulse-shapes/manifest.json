@@ -394,6 +394,114 @@
         "2": 0,
         "3": 9
       }
+    },
+    "voice-search": {
+      "source_commit": "5106758",
+      "model": "voice-search/model.json",
+      "report": "voice-search/report.json",
+      "final": {
+        "stoi": 0.8885910280071512,
+        "spectrogram_loss": 0.3913708022968807,
+        "fine_log_error": 0.39942274169641556,
+        "envelope_error": 0.44193986672458696,
+        "unsupported_energy": 0.11330323333473852,
+        "missing_energy": 0.11440975143235835,
+        "raw_mean": 0.00926226034931753,
+        "raw_rms": 0.08762051718551737,
+        "peak": 80,
+        "maximum_step": 46,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pcm_sha256": "2b1a8a30717bcc7657df024b1002350b816086492e092535193ba7123abc7523",
+        "estoi": 0.7507217910750104,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.6599168283629381,
+          "frequency_trajectory_error": 0.8320472352258937,
+          "level_error": 1.37400076615952,
+          "missing_reference_energy": 0.17333599065949293,
+          "extra_candidate_energy": 0.22028460105197054,
+          "weighted_match_rate": 0.8266640093405078,
+          "frequency_error_cents": 45.103049037033905,
+          "frequency_error_hz": 8.476946391648703,
+          "level_error_db": 4.122002298478569,
+          "frequency_error_p95_cents": 105.31264055023607,
+          "frequency_error_p95_hz": 21.197163116136494,
+          "level_error_p95_db": 10.704148656651235,
+          "continuity_break_rate": 0.17713310892655643
+        }
+      },
+      "seed_model": "q2-continuation-legacy/model.json",
+      "active_forms": 8,
+      "wave_fraction_bits": 2,
+      "pulse_length": 32,
+      "nonzero_tail_taps": 79,
+      "packed_waveform_bytes": 160,
+      "waveforms_fit_eeprom": false,
+      "serialized_format": false,
+      "phase_mode_counts": {
+        "0": 121,
+        "1": 3,
+        "2": 0,
+        "3": 8
+      }
+    },
+    "voice-control": {
+      "source_commit": "5106758",
+      "model": "voice-control/model.json",
+      "report": "voice-control/report.json",
+      "final": {
+        "stoi": 0.887260123322206,
+        "spectrogram_loss": 0.3927327411805935,
+        "fine_log_error": 0.4012269801973214,
+        "envelope_error": 0.44309837234576066,
+        "unsupported_energy": 0.11444043383646103,
+        "missing_energy": 0.11389217969484294,
+        "raw_mean": 0.009268223554238507,
+        "raw_rms": 0.08760636352769245,
+        "peak": 80,
+        "maximum_step": 46,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "pcm_sha256": "77742675998fc4851d9cfee3b252f0c883129fbc640d646dc7bd8eccca1ff916",
+        "estoi": 0.7452260326160616,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.6490319557010062,
+          "frequency_trajectory_error": 0.827052697509188,
+          "level_error": 1.3631350292217332,
+          "missing_reference_energy": 0.15229059942143283,
+          "extra_candidate_energy": 0.21406281254345733,
+          "weighted_match_rate": 0.8477094005785676,
+          "frequency_error_cents": 44.76043222782452,
+          "frequency_error_hz": 8.200669152440968,
+          "level_error_db": 4.089405087665206,
+          "frequency_error_p95_cents": 107.2682427778467,
+          "frequency_error_p95_hz": 19.619780901010017,
+          "level_error_p95_db": 10.706466430722617,
+          "continuity_break_rate": 0.18279808040990653
+        }
+      },
+      "seed_model": "q2-continuation-legacy/model.json",
+      "active_forms": 8,
+      "wave_fraction_bits": 2,
+      "pulse_length": 32,
+      "nonzero_tail_taps": 79,
+      "packed_waveform_bytes": 160,
+      "waveforms_fit_eeprom": false,
+      "serialized_format": false,
+      "phase_mode_counts": {
+        "0": 122,
+        "1": 2,
+        "2": 0,
+        "3": 8
+      }
     }
   },
   "aliases": {
@@ -402,7 +510,9 @@
     "q2-short/best-intelligibility-model.json": "q2-short/model.json",
     "q2-wide-zero/best-intelligibility-model.json": "q2-wide-zero/model.json",
     "q2-continuation-legacy/best-intelligibility-model.json": "q2-continuation-legacy/model.json",
-    "q2-continuation-reference/best-intelligibility-model.json": "q2-continuation-reference/model.json"
+    "q2-continuation-reference/best-intelligibility-model.json": "q2-continuation-reference/model.json",
+    "voice-search/best-intelligibility-model.json": "voice-search/model.json",
+    "voice-control/best-intelligibility-model.json": "voice-control/model.json"
   },
   "forward_proposals": {
     "q1-16": {
@@ -682,6 +792,10 @@
     "q2-short/report.json": "f4ae613dc0bf308226359ed46ef5c41dd8c4a9b81c727211ed15b8b3c9bb6cfd",
     "q2-wide-zero/model.json": "50f3c5ba5e47efa437da9d8dbf6a5035defd49b8a0e43558282fcd5162dccd5d",
     "q2-wide-zero/report.json": "0ac58c5304e11e4a0cf280203df69abddf81cf610967126a020aa768f59a385a",
+    "voice-control/model.json": "b0cfa646b35022988cd53648f51af5b14e76873e2bff95bd49fcd78c4dc7da85",
+    "voice-control/report.json": "8c0b3cc4c7f44f24ce17430fcdb6971715a36c111e2be6fb2afdf810687ece43",
+    "voice-search/model.json": "ba776a3ff1283eaeca342f8c8b306364cefdd27b72b3984700317b01de711f6e",
+    "voice-search/report.json": "c6d84c46b40a9f658e968c5910241d0644b1f7480e538cf9d8984658bde11d5c",
     "wide32/model.json": "73f158d16774a31d885e8bcb2cdfe7114765d33a68021991190c79fc5151a1fc",
     "wide32/report.json": "f6c7ac168ea89a48d0a0d0645288e841f5eac2d2f7e6ec9a578ed50c2f6bd48d",
     "wide32-zero/best-intelligibility-model.json": "8c538c754f0f7b41e8ac784ee606d13e0476bb9b82e0e42d8c0cc379c88f2d98",
