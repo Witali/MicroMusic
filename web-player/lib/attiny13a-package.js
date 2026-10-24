@@ -103,6 +103,8 @@ function normalizeConfiguration(input={},complete=false,version=PACKAGE_VERSION)
     integer(value,min,max,'configuration '+name);
     if(name==='adcFirstSample'&&![27,29].includes(value))fail('invalid configuration adcFirstSample');
   }
+  if(!(configuration.fuseHigh&FUSE.HIGH_DWEN))
+    fail('configuration requires DWEN unprogrammed; debugWIRE startup and PB5 pin behavior are unsupported');
   if(configuration.nvmClockProfile===1&&!configuration.nvmCalibrationReferenceHz)fail('configuration nvmClockProfile requires a calibration reference');
   if(configuration.clkiProfile&&(configuration.resumable!==true||(configuration.fuseLow&3)!==0))
     fail('configuration clkiProfile requires resumable:true and CKSEL00');

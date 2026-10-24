@@ -667,10 +667,16 @@ int device_init(uint8_t *data, uint8_t *flash, uint8_t *eeprom) {
  for(unsigned i=0;i<10;i++)board.power_config[i]=power_configuration[i];
  board.vcc_uv=(int32_t)board.config[DEVICE_CFG_VCC_UV];
  if (!data || !flash || !eeprom) { fail(DEVICE_FAULT_CONFIG,1); return 0; }
+ /* DS40002307A15.3/15.5: DWEN changes PB5 and disables external RESET.
+  * Its debugger startup/sleep-clock contract is not implemented. Reject all
+  * such configurations, including without the optional analog receiver;
+  * lock bits/RSTDISBL must not silently select an invented debug truth table. */
+ if(!(board.config[DEVICE_CFG_FUSE_HIGH]&AT13_FUSE_HIGH_DWEN_MASK)){
+  fail(DEVICE_FAULT_CONFIG,14);return 0;
+ }
  if(board.clki_enabled&&!clki_prepare())return 0;
  if(board.reset_input_enabled){
-  if(!board.physical||reset_input_fields!=0x7e||
-     !(board.config[DEVICE_CFG_FUSE_HIGH]&AT13_FUSE_HIGH_DWEN_MASK)){
+  if(!board.physical||reset_input_fields!=0x7e){
    fail(DEVICE_FAULT_CONFIG,13);return 0;
   }
   attiny13a_reset_input_profile_t profile={

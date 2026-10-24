@@ -49,7 +49,11 @@ typedef device_pin_event_t device_pin_event_ps_t;
  * SPM command cycles0 (explicit fault if needed), Flash maximum bound,
  * BOD recovery60000ns (datasheet approximate digital profile, configurable),
  * factory OSCCAL96=0 (explicit fixture byte, not a universal chip value),
- * fuse startup profile0 (zero-delay digital fixture; set1 for fuse timing). */
+ * fuse startup profile0 (zero-delay digital fixture; set1 for fuse timing).
+ * DWEN must be unprogrammed for every clock/reset profile. Until debugWIRE
+ * startup, PB5 mux and sleep-clock behavior are implemented, init rejects
+ * programmed DWEN with DEVICE_FAULT_CONFIG/detail14, regardless of lock bits
+ * or RSTDISBL. The host diagnostic BREAK option does not emulate debugWIRE. */
 int device_configure(uint32_t key, uint32_t value);
 /* Opt-in physical1ps supply profile. field0 enables; all fields1..9 must be
  * explicitly provided before init. field0=0 clears the profile selection.

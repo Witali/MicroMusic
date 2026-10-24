@@ -38,6 +38,11 @@ export class ATtiny13A extends TranslatedCore {
     }
   }
   constructor(binary,eeprom,options={}){
+    // Enforce this boundary before instantiating historical packaged runtimes
+    // too: their device_init may otherwise treat the debugWIRE pad as RESET.
+    const high=options.fuseHigh;
+    if(Number.isInteger(high)&&high>=0&&high<=255&&!(high&FUSE.HIGH_DWEN))
+      throw Error('Invalid device configuration: DWEN unprogrammed required; debugWIRE startup and PB5 pin behavior are unsupported');
     const clkiProfile=normalizeClkiProfile(options.clkiProfile??null);
     if(clkiProfile&&(options.resumable!==true||((options.fuseLow??0x7a)&3)!==0))
       throw Error('clkiProfile requires resumable:true and CKSEL00');

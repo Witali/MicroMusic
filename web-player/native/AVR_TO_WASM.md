@@ -320,6 +320,12 @@ cpu.runUntil(2000n);
 const physicalTransitions = cpu.drainPins();
 ```
 
+All current clock/reset profiles require unprogrammed DWEN (high-fuse bit3=1).
+Programmed DWEN is rejected by native init, runtime construction and package
+validation because its PB5/debug/startup contract is not yet implemented. The
+host `debugEnabled` instruction diagnostic does not select that fuse mode; see
+the [interface inventory](devices/attiny13a/interfaces.md).
+
 `factoryOsccal96` supplies the device's seven-bit calibration fixture byte,
 reloaded on every reset. Its default 0 is an explicit digital fixture. Changing
 CAL without a measured frequency model remains unsupported. `bodRecoveryNs`

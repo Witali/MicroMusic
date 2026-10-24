@@ -1,0 +1,138 @@
+{
+  "schema": "micromusic-attiny13a-debugwire-admission-verification-v1",
+  "status": "software-verification-only",
+  "sourceParent": "df914f1",
+  "environment": {
+    "node": "v22.22.3",
+    "platform": "win32",
+    "arch": "x64",
+    "osRelease": "10.0.26300",
+    "cpu": "AMD Ryzen 5 5600X 6-Core Processor             "
+  },
+  "baseline": {
+    "runtimeBytes": 112642,
+    "runtimeSha256": "4adb36626e3151b91147b14a49c7a36ee9709b0da173db9531ed1aa39b5b1210",
+    "reproduction": {
+      "fuseHigh": 247,
+      "resetInputProfile": null,
+      "digitalInjection": {
+        "at": "0",
+        "mask": 32,
+        "levels": 0
+      },
+      "observed": {
+        "resetHeld": true,
+        "resetCount": 1
+      }
+    },
+    "newChecks": {
+      "path": "build/dwen-before.tap",
+      "sha256": "7452d6d4c161faa44887bc51238fcef114ecb81e1d6fd52cf5fa558c63b7eb42",
+      "tests": 11,
+      "pass": 2,
+      "fail": 9,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 5926.7126
+    }
+  },
+  "validation": {
+    "firstFocused": {
+      "path": "build/dwen-focused.tap",
+      "sha256": "fea62ec7a22887d86761f2d1cf93e9890028aa5e57a7cefb79c60e26f2852833",
+      "tests": 38,
+      "pass": 38,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 7691.6375
+    },
+    "finalFocused": {
+      "path": "build/dwen-final-focused.tap",
+      "sha256": "4ec4f9bab2c63ca664965efeb412f51cd7da7c4c119a6aa17413223d024c800c",
+      "tests": 14,
+      "pass": 14,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 6546.9173
+    },
+    "fullSuite": {
+      "path": "build/dwen-integration.tap",
+      "sha256": "1d5ca651143da13072c0dd88223a3aa3886b64c7fb8d6e71b8574fae57b167a2",
+      "tests": 1208,
+      "pass": 1208,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 447908.1966
+    }
+  },
+  "coverage": {
+    "nativeModes": [
+      "compatible clock",
+      "physical OSCCAL",
+      "external CLKI",
+      "analog RESET"
+    ],
+    "highFuseBytes": [
+      247,
+      246,
+      231,
+      230
+    ],
+    "lockBytes": [
+      255,
+      254,
+      253,
+      252
+    ],
+    "nativeRejectedAndRecoveredConfigurations": 64,
+    "publicRejectedConfigurations": 64,
+    "packageVersions": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "actualHistoricalRuntimeVersions": [
+      1,
+      3
+    ],
+    "ordinaryResetAndRstdisblControl": true,
+    "distributedNativeGuard": true,
+    "callerMemoriesUnchangedOnRejectedInit": true
+  },
+  "runtime": {
+    "bytes": 112674,
+    "sha256": "d7be3a7378d14c2896a92106291715ed8fcb0d291359e5153efb639f9c18e0a8",
+    "imports": [],
+    "functionExports": 103,
+    "totalExports": 104,
+    "memoryBytes": 131072
+  },
+  "sourceFiles": {
+    "web-player/native/peripherals/device.c": "52e04dcef28b64435a3d5624c98b8e2e15a3513affda64e55f15dd1f6313e6e9",
+    "web-player/native/peripherals/device.h": "716aec75f571b5a554cd8d3c7d48aae0117fb6b382fa3ed6ad02124ca4525dbf",
+    "web-player/lib/attiny13a-runtime.js": "64e4fb44c2d7fc4039608350eb4535f2b60eece6ac2d2656f6f585e275b243fd",
+    "web-player/lib/attiny13a-package.js": "48c18a99932030c02b6eaf64f4856b16e537801f005938dfb58736e94a3871eb",
+    "web-player/tests/device-debugwire-config.test.mjs": "4595bf08b8f66784469fda54fabfdf75109d3259b0485675413303deed55befd",
+    "web-player/tests/attiny13a-package.test.mjs": "6fd6da953698ad279d18828859d26681ff9de0d3b8b67b49f64c780c09dd20b4",
+    "web-player/tests/attiny13a-package-runtime.test.mjs": "84a3abdae54a6544583c3682661c720fd485da3775779b5b2ef9583e91021b75",
+    "web-player/wasm/device-build.json": "9dcc730dfd41d934f260a2f3b84eb5e09185cf34a6bd18d03cb8904649b1391c",
+    "web-player/tests/fixtures/attiny13a-runtime-v1.json": "417ddf1d502827c760c5c1cb5efaed6ea6018bd7b5813ce2a766624867d16a8b",
+    "web-player/tests/fixtures/attiny13a-runtime-v3.json": "f937703edbb26320f5312cc072820cd8f7d45773bd48dd7e7d7cad1c263fa2cd"
+  },
+  "remaining": [
+    "debugWIRE startup/debug state contract",
+    "PB5 debugWIRE mux and transport",
+    "debugWIRE sleep clock contract",
+    "manufacturer lock-bit conflict"
+  ],
+  "expectedSiliconTrace": null
+}

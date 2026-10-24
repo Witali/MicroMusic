@@ -154,6 +154,12 @@ Register writes and CPU advancement are blocked while held; I/O/ADC clocked
 state stays reset, the watchdog counter is held reset, and its oscillator time
 and already-active EEPROM/Flash programming continue on the physical timeline.
 
+Every admitted board profile requires DWEN unprogrammed. Programmed DWEN is
+rejected at init with config fault1/detail14, independently of the optional
+analog RESET receiver, so this digital RESET contract is never silently applied
+to an active debugWIRE configuration. Its pin/startup/sleep behavior remains
+unimplemented; see the [device interface inventory](../devices/attiny13a/interfaces.md).
+
 The provided low level means an **already recognized** assertion. This profile
 does not invent an analog RESET threshold, spike filter, minimum pulse width
 or BOD waveform. With the default zero-startup fixture, release resumes the

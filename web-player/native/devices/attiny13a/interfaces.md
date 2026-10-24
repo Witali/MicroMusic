@@ -9,7 +9,7 @@ loading a firmware package does not implement a programming or debug transport.
 | External RESET | Optional analog PB5 receiver feeds the reset aggregator; digital injection stays prequalified | Supply and receiver parameters are explicit profiles; silicon calibration/measurement remains open |
 | ISP | Excluded by the user's scope decision | No programmer or command transport is planned |
 | HVSP | Excluded by the user's scope decision | No programming backend, HV entry or wire receiver is planned |
-| debugWIRE | Diagnostic BREAK support is controlled by the host option; DWDR has no debugger channel | Documented DWEN pin mux/reset effects and a debugger state contract; a wire implementation requires an authoritative protocol source |
+| debugWIRE | All programmed-DWEN configurations are rejected at native init, runtime construction and package validation; diagnostic BREAK is controlled separately by the host option; DWDR has no debugger channel | Documented DWEN pin mux/reset effects and a debugger state contract; a wire implementation requires an authoritative protocol source |
 
 All existing native peripheral sources implement ATtiny13A; the shared AVR
 emitter and generated firmware have separate ownership. Other chips require
@@ -54,6 +54,24 @@ The datasheet describes DWEN, open-drain PB5, BREAK and DWDR, but the retained
 manufacturer pack supplies no debugWIRE framing, commands or wire timing.
 Its `interface=dw`, `OCD_REVISION=0` and `OCD_DATAREG=0x2e` metadata do not define
 a protocol. A semantic debugger API must identify itself as such.
+
+Section15.3 specifies the open-drain PB5 gateway with pull-up for programmed
+DWEN and unprogrammed lock bits, preserving the CKSEL clock source. Section15.5
+excludes ordinary external RESET and says parts of the clock system remain
+active during sleep. It does not supply the complete cold-start run/halt or
+sleep-clock contract needed by this runtime. The host `debugEnabled` option is
+an instruction diagnostic; it is not evidence that fuse-enabled OCD is inactive
+when no debugger is attached.
+
+Admission correction, 2026-10-24: previously DWEN was checked only when the
+optional analog RESET receiver was enabled. Without that receiver, high fuse
+`0xf7` was accepted and driving PB5 low held the CPU in ordinary RESET. The
+native board now rejects programmed DWEN with config fault/detail14 before
+touching supplied memories, regardless of clock source, RSTDISBL or lock bits.
+The public runtime also rejects it before instantiation, protecting historical
+runtime binaries, and package versions1 through5 reject it during configuration
+validation. This corrects an unsupported-mode boundary; debugWIRE support
+remains unfinished. Unprogrammed DWEN retains ordinary RESET/RSTDISBL behavior.
 
 There is also a documentation conflict: section17.1 warns that debugWIRE can
 read locked Flash, while Table17-2 and section15.3 say lock bits disable it.

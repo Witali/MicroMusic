@@ -117,6 +117,27 @@ test('version4 retains its RESET contract and rejects later continuation/CLKI fi
   }
 });
 
+test('packages reject DWEN without requiring an analog RESET profile',async()=>{
+  for(const fuseHigh of [0xf7,0xf6,0xe7,0xe6])for(const lock of [0xff,0xfe,0xfd,0xfc]){
+    const configuration={fuseHigh,lock};
+    await assert.rejects(createPackage({...input,configuration}),/DWEN unprogrammed/);
+    const pkg=copy(original);Object.assign(pkg.configuration,configuration);
+    await assert.rejects(decodePackage(seal(pkg)),/DWEN unprogrammed/);
+  }
+});
+
+test('the DWEN admission boundary also covers historical package versions',async()=>{
+  const introduced={osccalHz:2,nvmClockProfile:2,nvmCalibrationReferenceHz:2,
+    powerResetProfile:3,resetInputProfile:4,resumable:5,clkiProfile:5};
+  for(let version=1;version<=5;version++){
+    const pkg=copy(original);pkg.version=version;
+    for(const [key,since] of Object.entries(introduced))if(version<since)delete pkg.configuration[key];
+    // Establish that the complete historical schema itself is still accepted.
+    await decodePackage(seal(pkg));pkg.configuration.fuseHigh=0xf7;
+    await assert.rejects(decodePackage(seal(pkg)),/DWEN unprogrammed/);
+  }
+});
+
 const phaseAbi=runtimeABI(new WebAssembly.Instance(await WebAssembly.compile(runtime)).exports,{resumable:true});
 const phased=transpileAVR(flash,phaseAbi,{resumable:true});
 const phaseConfiguration={resumable:true,osccalHz:Array.from({length:128},(_,n)=>n===0?9600000:0)};

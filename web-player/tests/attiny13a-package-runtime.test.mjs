@@ -59,6 +59,13 @@ test('original v3 runtime loads without requiring later analog RESET exports',as
   assert.deepEqual(c.capturePhysical(3,48000),Float32Array.of(1,1,1));
 });
 
+for(const version of [1,3])test(`original v${version} runtime cannot bypass DWEN admission`,async()=>{
+  const saved=await historicalPackage(version,{fuseHigh:0xf7});
+  await assert.rejects(ATtiny13A.fromPackage(saved),/DWEN unprogrammed/);
+  const oldRuntime=await WebAssembly.compile(Buffer.from(saved.assets.runtime.data,'base64'));
+  assert.throws(()=>new ATtiny13A(gpio,null,{runtimeModule:oldRuntime,fuseHigh:0xf7}),/DWEN unprogrammed/);
+});
+
 test('package executes the supplied translation and reproduces explicit initial EEPROM/configuration',async()=>{
   const eeprom=Uint8Array.from({length:64},(_,n)=>n);
   const saved=await pack(gpio,{fuseLow:0x62,factoryOsccal96:73,fuseStartupProfile:1},eeprom);

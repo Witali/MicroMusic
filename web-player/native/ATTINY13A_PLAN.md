@@ -480,7 +480,14 @@ proceed when hardware is available.
   programming backend or programmer transport is retained.
 - [ ] Resolve documented debugWIRE pin/reset behavior and unsupported DWEN
   configurations. The audit found no authoritative wire protocol in the pinned
-  manufacturer definitions; do not invent one.
+  manufacturer definitions; do not invent one. The2026-10-24 admission audit
+  found DWEN was rejected only with the optional analog RESET receiver; other
+  profiles incorrectly accepted it as ordinary RESET. Native init, the public
+  runtime and all package versions now reject programmed DWEN independently of
+  that receiver, RSTDISBL and lock bits. This closes the silent fallback, not
+  debugWIRE support: documented PB5 mux behavior, cold-start/debug state and
+  sleep-clock behavior still need a complete supported contract. See the
+  [interface inventory](devices/attiny13a/interfaces.md).
 - [x] Track applicable silicon errata and represent undefined outcomes explicitly
   instead of silently inventing deterministic success or memory corruption.
   DS80000857A identifies EEPROM writes below1.9V for revisions G/H/I, with no
