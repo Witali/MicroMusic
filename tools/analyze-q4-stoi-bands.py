@@ -20,12 +20,12 @@ def teacher_pcm(path):
     if schema=='q4-lattice-fit-v1':script='refine-q4-lattice.py'
     elif schema=='q4-quarter-fit-v1':script='refine-q4-quarter.py'
     elif schema in ('q4-product233-v1','q4-product233-phase-v1'):script='fit-q4-product233.py'
-    elif schema=='mixed-lattice-v1':script='fit-mixed-lattice.py'
+    elif schema in ('mixed-lattice-v1','mixed-lattice-pulse-v1'):script='fit-mixed-lattice.py'
     else:raise ValueError('Unsupported explicitly tagged PC speech model')
     spec=importlib.util.spec_from_file_location('band_renderer_'+script.replace('-','_').replace('.','_'),ROOT/'tools'/script)
     renderer=importlib.util.module_from_spec(spec);sys.modules[spec.name]=renderer;spec.loader.exec_module(renderer)
     sources.append(ROOT/'tools'/script)
-    if schema=='mixed-lattice-v1':
+    if schema in ('mixed-lattice-v1','mixed-lattice-pulse-v1'):
         state,bits,state_bits,mode,_,_,_=renderer.load(path)
         pcm,counts=renderer.render(state,bits,state_bits,mode)
         sources.append(ROOT/'ATtiny13A/Sound/codec/mixed_lattice.py')

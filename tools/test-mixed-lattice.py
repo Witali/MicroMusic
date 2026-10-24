@@ -1,9 +1,11 @@
 """Precision promotion, order-neutral zero stages and bounded zero-area pulses."""
 import hashlib
 import importlib.util
+import json
 from pathlib import Path
 import sys
 import unittest
+import tempfile
 import numpy as np
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -12,6 +14,52 @@ fit=importlib.util.module_from_spec(spec);sys.modules[spec.name]=fit;spec.loader
 
 
 class MixedLatticeTests(unittest.TestCase):
+    def test_frame_phase_training_starts_exact_and_keeps_the_input_immutable(self):
+        path=ROOT/'ATtiny13A/Sound/research/q4-pattern-precision/mixed/q8/best-intelligibility-model.json'
+        state,bits,state_bits,mode,_,_,_=fit.load(path,pulse_length=32,fit_phase=True)
+        self.assertFalse(np.any(state.phase_modes))
+        pcm,counts=fit.render(state,bits,state_bits,mode)
+        self.assertFalse(np.any(counts));self.assertEqual(hashlib.sha256(pcm.tobytes()).hexdigest(),
+            '4cc6676f5a91995be4189f65ae08745b68cacd254732de7c5e4c4ee3e416058e')
+        before=state.fields();changed=fit.apply(state,('phase',0,0,3),bits)
+        self.assertEqual(state.fields(),before);self.assertEqual(int(changed.phase_modes[0]),3)
+        fit.validate(changed,bits,state_bits)
+        changed.phase_modes[0]=4
+        with self.assertRaises(ValueError):fit.validate(changed,bits,state_bits)
+
+    def test_zero_padding_a_full_pulse_teacher_preserves_all_pcm(self):
+        path=ROOT/'ATtiny13A/Sound/research/q4-pattern-precision/mixed/q8/best-intelligibility-model.json'
+        state,bits,state_bits,mode,_,_,_=fit.load(path,pulse_length=32)
+        self.assertEqual(state.waves_q1.shape,(8,32));self.assertFalse(np.any(state.waves_q1[:,16:]))
+        pcm,counts=fit.render(state,bits,state_bits,mode)
+        self.assertFalse(np.any(counts))
+        self.assertEqual(hashlib.sha256(pcm.tobytes()).hexdigest(),
+            '4cc6676f5a91995be4189f65ae08745b68cacd254732de7c5e4c4ee3e416058e')
+
+    def test_extended_taps_are_read_but_never_cross_a_short_pitch_cycle(self):
+        p=np.full(4,64,np.int16);g=np.full(4,2,np.int16);d=np.full(4,128,np.int16)
+        modes=np.zeros(4,np.int16);q=modes.copy();waves=np.zeros((8,32),np.int16);waves[0,31]=4
+        _,old=fit.phase.legacy_excitation(p,g,d,modes,waves,q,pitch_bits=2)
+        _,wide=fit.phase.legacy_excitation(p,g,d,modes,waves,q,pitch_bits=2,pulse_width=32)
+        self.assertFalse(np.any(old));self.assertEqual(int(wide[94]),8)
+        _,short=fit.phase.legacy_excitation(np.full(4,20,np.int16),g,d,modes,waves,q,pitch_bits=2,pulse_width=32)
+        self.assertFalse(np.any(short))
+
+    def test_long_pulse_schema_zero_area_and_truncation_are_explicit(self):
+        path=ROOT/'ATtiny13A/Sound/research/q4-pattern-precision/mixed/q8/model.json'
+        old=json.loads(path.read_text());state,bits,state_bits,_,_,_,_=fit.load(path,pulse_length=32)
+        state.waves_q1=fit.zero_area(state.waves_q1)
+        fit.validate(state,bits,state_bits,True);self.assertFalse(np.any(state.waves_q1.sum(axis=1)))
+        with tempfile.TemporaryDirectory(dir=ROOT/'build') as folder:
+            target=Path(folder)/'model.json'
+            meta=dict(old,schema=fit.codec.PULSE_SCHEMA,pulse_length=32,**state.fields())
+            fit.base.save(target,meta);fit.load(target)
+            state.waves_q1[0,31]=1
+            fit.base.save(target,dict(meta,**state.fields()))
+            with self.assertRaises(ValueError):fit.load(target,pulse_length=16)
+            fit.base.save(target,dict(meta,schema=fit.codec.SCHEMA))
+            with self.assertRaises(ValueError):fit.load(target)
+
     def test_promoting_q4_to_q7_preserves_every_boundary_product(self):
         values=[-32768,-32767,-4096,-129,-128,-127,-17,-16,-15,-1,0,1,15,16,17,127,128,4095,32767]
         for value in values:

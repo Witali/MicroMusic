@@ -8,6 +8,7 @@ import numpy as np
 from numba import njit
 
 SCHEMA='mixed-lattice-v1'
+PULSE_SCHEMA='mixed-lattice-pulse-v1'
 
 
 @njit(cache=True)

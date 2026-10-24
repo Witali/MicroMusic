@@ -92,8 +92,8 @@ def render(steps,gains,durations,coefficients,modes,waves,offsets,resets,tilt_sh
 
 
 @njit(cache=True)
-def legacy_excitation(pitches,gains,durations,modes,waves,halves,pitch_bits=1,phase_mode=0,phase_modes=None):
-    """One-bit legacy or explicitly selected two-bit period fractions."""
+def legacy_excitation(pitches,gains,durations,modes,waves,halves,pitch_bits=1,phase_mode=0,phase_modes=None,pulse_width=16):
+    """Explicit period precision and pulse width; defaults preserve old PCM."""
     rows=np.empty(int(durations.sum()),np.int32);excitation=np.empty(len(rows),np.int32)
     seed,phase,frame,next_t=0xa7,1,0,int(durations[0])-1
     period=gain=mode=cycle_extra=half=0;fraction_acc=3;cycle_period=0
@@ -121,7 +121,7 @@ def legacy_excitation(pitches,gains,durations,modes,waves,halves,pitch_bits=1,ph
                 phase=period+cycle_extra;cycle_period=phase;ex=int(waves[mode,0])*gain
             else:
                 lag=cycle_period-phase
-                if lag<16:ex=int(waves[mode,lag])*gain
+                if lag<pulse_width:ex=int(waves[mode,lag])*gain
         else:
             low=seed&1;seed>>=1
             if low:seed^=0xb8
