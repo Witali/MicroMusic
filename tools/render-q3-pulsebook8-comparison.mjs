@@ -6,14 +6,15 @@ import {parseArgs} from 'node:util';
 import {createRenderer} from '../web-player/lib/engines.js';
 import {parseHex} from '../web-player/lib/hex.js';
 
-const {values:options}=parseArgs({options:{before:{type:'string',default:'build/q3-short-eeprom/4-raw-prefix-48'},after:{type:'string',default:'build/q3-pulsebook8/refit4/guarded/avr'},output:{type:'string',default:'build/q3-pulsebook8/listening'}}});
+const {values:options}=parseArgs({options:{before:{type:'string',default:'build/q3-short-eeprom/4-raw-prefix-48'},after:{type:'string',default:'build/q3-pulsebook8/refit4/guarded/avr'},output:{type:'string',default:'build/q3-pulsebook8/listening'},'before-name':{type:'string',default:'before-four-forms'},'after-name':{type:'string',default:'after-eight-forms'}}});
 const root=process.cwd(),output=path.resolve(options.output);
 fs.mkdirSync(output,{recursive:true});
 const read=p=>fs.readFileSync(path.join(root,p));
 const json=p=>JSON.parse(read(p));
 const hash=data=>createHash('sha256').update(data).digest('hex');
 const base=json('web-player/hq4-firmware.json').entries.find(e=>e.id==='hq4-vinni');
-const records=[['before-four-forms',options.before],['after-eight-forms',options.after]];
+const records=[[options['before-name'],options.before],[options['after-name'],options.after]];
+assert.ok(records.every(([name])=>/^[a-z0-9-]+$/.test(name)),'Use simple output labels');
 function wavFloat(name,data){
  const bytes=Buffer.from(data.buffer,data.byteOffset,data.byteLength),header=Buffer.alloc(44);
  header.write('RIFF');header.writeUInt32LE(bytes.length+36,4);header.write('WAVEfmt ',8);
@@ -52,5 +53,5 @@ comparison.set(audio[0]);comparison.set(audio[1],audio[0].length+pause);wavFloat
 fs.copyFileSync(path.join(root,'web-player/audio/originals/vinni.wav'),path.join(output,'original.wav'));
 fs.writeFileSync(path.join(output,'listening.json'),JSON.stringify({schema:'q3-pulsebook8-listening-v1',sampleRate:48000,
  description:'Actual paired Flash/EEPROM images through unmodified site WASM renderer; same 9 kHz filter and 0.65 volume with catalog monitorGain; no extra normalization.',
- results,comparison:'Four forms, 0.3 seconds pause, eight forms'},null,2)+'\n');
+ results,comparison:`${options['before-name']}, 0.3 seconds pause, ${options['after-name']}`},null,2)+'\n');
 console.log(JSON.stringify(results.map(r=>({file:r.file,flash:r.flashBytes,eeprom:r.eepromBytes}))));

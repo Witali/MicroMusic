@@ -44,7 +44,8 @@ def main():
         'test-q3-rate-prune.py', 'test-q3-short-eeprom.py',
         'test-q3-short-eeprom-avr.py', 'test-q3-pulsebook8.py',
         'test-q3-pulsebook8-search.py', 'test-q3-pulsebook8-avr.py',
-        'test-q3-adaptive.py', 'test-q3-adaptive-avr.py', 'test-q3-adaptive-fit.py'))
+        'test-q3-adaptive.py', 'test-q3-adaptive-avr.py', 'test-q3-adaptive-fit.py',
+        'test-q3-half-pitch.py'))
     for path in sorted(paths):
         name = 'speech_'+path.stem.replace('-', '_')
         spec = importlib.util.spec_from_file_location(name, path)
