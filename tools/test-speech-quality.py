@@ -50,7 +50,8 @@ def main():
         'test-q4-lattice-results.py', 'test-q4-product233.py', 'test-q4-quarter.py',
         'test-word-q4-mul.py', 'test-mixed-lattice.py', 'test-q4-pattern-results.py',
         'test-word-q4-filter.py', 'test-pulse-output.py', 'test-q4-pulse-results.py',
-        'test-balanced-tail.py', 'test-lattice-blocks.py', 'test-prune-mixed-pulses.py'))
+        'test-balanced-tail.py', 'test-lattice-blocks.py', 'test-prune-mixed-pulses.py',
+        'test-q5-stream.py'))
     for path in sorted(paths):
         name = 'speech_'+path.stem.replace('-', '_')
         spec = importlib.util.spec_from_file_location(name, path)
