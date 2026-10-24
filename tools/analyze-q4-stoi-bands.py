@@ -14,13 +14,37 @@ from stoi_diagnostics import band_scores
 import q4_phase_wave as codec
 
 
+def teacher_pcm(path):
+    model=json.loads(path.read_text(encoding='utf-8'))
+    schema=model.get('schema');sources=[ROOT/'ATtiny13A/Sound/codec/q4_phase_wave.py']
+    if schema=='q4-lattice-fit-v1':script='refine-q4-lattice.py'
+    elif schema=='q4-quarter-fit-v1':script='refine-q4-quarter.py'
+    elif schema in ('q4-product233-v1','q4-product233-phase-v1'):script='fit-q4-product233.py'
+    elif schema=='mixed-lattice-v1':script='fit-mixed-lattice.py'
+    else:raise ValueError('Unsupported explicitly tagged PC speech model')
+    spec=importlib.util.spec_from_file_location('band_renderer_'+script.replace('-','_').replace('.','_'),ROOT/'tools'/script)
+    renderer=importlib.util.module_from_spec(spec);sys.modules[spec.name]=renderer;spec.loader.exec_module(renderer)
+    sources.append(ROOT/'tools'/script)
+    if schema=='mixed-lattice-v1':
+        state,bits,state_bits,mode,_,_,_=renderer.load(path)
+        pcm,counts=renderer.render(state,bits,state_bits,mode)
+        sources.append(ROOT/'ATtiny13A/Sound/codec/mixed_lattice.py')
+    elif schema=='q4-quarter-fit-v1':
+        state,_=renderer.load(path)
+        pcm,counts=renderer.render(state,model['state_bits'],model['nearest'],model.get('phase_mode',0))
+    elif schema.startswith('q4-product233'):
+        state=renderer.from_model(model);pcm,counts=renderer.render(state,model['state_bits'],model['nearest'])
+        sources.extend((ROOT/'tools/refine-q4-lattice.py',ROOT/'ATtiny13A/Sound/codec/q4_product233.py'))
+    else:
+        state=renderer.load(path);renderer.validate(state);pcm,counts=renderer.render(state,model['state_bits'],model['nearest'])
+    return pcm,counts,model,sources
+
+
 def run(reference_path,baseline_path,teacher_path,output):
     reference,sr=sf.read(reference_path,dtype='float64')
     if sr!=7500 or reference.ndim!=1:raise ValueError('Expected unchanged mono7500 original')
-    spec=importlib.util.spec_from_file_location('stoi_band_teacher',ROOT/'tools/refine-q4-lattice.py')
-    fit=importlib.util.module_from_spec(spec);sys.modules[spec.name]=fit;spec.loader.exec_module(fit)
-    teacher=json.loads(teacher_path.read_text(encoding='utf-8'));state=fit.load(teacher_path)
-    fit.validate(state);pcm,counts=fit.render(state,teacher['state_bits'],teacher['nearest'])
+    pcm,counts,teacher,decoder_sources=teacher_pcm(teacher_path)
+    if teacher['reference_sha256']!=hashlib.sha256(reference_path.read_bytes()).hexdigest():raise ValueError('Teacher original hash mismatch')
     if np.any(counts):raise ValueError('Teacher arithmetic wraps')
     baseline=json.loads(baseline_path.read_text(encoding='utf-8'));f=np.array(baseline['frames'],np.int16)
     d=np.array(baseline['durations'],np.int16);b=np.array(baseline['pulsebook'],np.int16)
@@ -35,7 +59,7 @@ def run(reference_path,baseline_path,teacher_path,output):
         baseline_sha256=hashlib.sha256(baseline_path.read_bytes()).hexdigest(),
         teacher_sha256=hashlib.sha256(teacher_path.read_bytes()).hexdigest(),
         source_sha256_normalized_lf={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_text(encoding='utf-8').encode()).hexdigest()
-            for p in (Path(__file__),ROOT/'ATtiny13A/Sound/codec/stoi_diagnostics.py')})
+            for p in (Path(__file__),ROOT/'ATtiny13A/Sound/codec/stoi_diagnostics.py',*decoder_sources)})
     output.parent.mkdir(parents=True,exist_ok=True);output.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
     print(json.dumps(dict(stoi=report['teacher']['stoi'],bands=report['teacher']['bands'])));return report
 
