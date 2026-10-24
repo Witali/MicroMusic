@@ -22,6 +22,7 @@ TEMPLATE = ROOT/'ATtiny13A/Sound/codec/tiny/firmware.S'
 sys.path.insert(0, str(ROOT/'ATtiny13A/Sound/codec'))
 from fixed_period import decode_fixed, validate
 from dc_blocker import block_dc
+from output_level import choose_gain, scale_pcm, describe_level
 
 
 def sha(data):
@@ -65,7 +66,7 @@ def expected_loops(model, loops=3, play_once=False):
     return block_dc(expected, shift)[0] if shift else expected
 
 
-def build(model_path, output, avr_bin=None, node='node', play_once=False):
+def build(model_path, output, avr_bin=None, node='node', play_once=False, maximize_output=False):
     from tiny_period import pack_tiny
     model_path, output = Path(model_path).resolve(), Path(output).resolve()
     model = json.loads(model_path.read_text(encoding='utf-8'))
@@ -87,6 +88,9 @@ def build(model_path, output, avr_bin=None, node='node', play_once=False):
                      DC_SHIFT=model.get('dc_block_shift', 0))
     constants.update(features)
     constants['PLAY_ONCE'] = int(play_once)
+    source_expected = expected_loops(model, play_once=play_once)
+    gain, gain_shift = choose_gain(source_expected, error_feedback=True) if maximize_output else (128, 7)
+    constants['OUTPUT_GAIN_Q7'] = gain
     output.mkdir(parents=True, exist_ok=True)
     for name in ('firmware.elf', 'firmware.bin', 'firmware.hex', 'eeprom.bin', 'eeprom.hex',
                  'verification.json', 'build.json', 'actual.raw'):
@@ -97,7 +101,7 @@ def build(model_path, output, avr_bin=None, node='node', play_once=False):
     (output/'config.inc').write_text(''.join(f'.set {name},{value}\n' for name,value in constants.items()),
                                     encoding='ascii', newline='\n')
     shutil.copyfile(TEMPLATE, output/'firmware.S')
-    expected = expected_loops(model, play_once=play_once)
+    expected = scale_pcm(source_expected, gain, gain_shift, error_feedback=maximize_output)
     (output/'expected.raw').write_bytes(expected.tobytes())
     suffix = '.exe' if os.name == 'nt' else ''
     def executable(name):
@@ -133,7 +137,10 @@ def build(model_path, output, avr_bin=None, node='node', play_once=False):
                     sha((output/'firmware.S' if p==TEMPLATE else p).read_text(encoding='utf-8').encode('utf-8')) for p in (
                       TEMPLATE, Path(__file__), ROOT/'ATtiny13A/Sound/codec/tiny_period.py',
                       ROOT/'ATtiny13A/Sound/codec/fixed_period.py', ROOT/'ATtiny13A/Sound/codec/dc_blocker.py',
-                      ROOT/'tools/verify-tiny-speech.mjs', ROOT/'tools/lib/tiny-work-profile.mjs')})
+                      ROOT/'tools/verify-tiny-speech.mjs', ROOT/'tools/lib/tiny-work-profile.mjs',
+                      ROOT/'ATtiny13A/Sound/codec/output_level.py')})
+    if maximize_output:
+        report['outputLevel'] = describe_level(source_expected[:model['samples']], gain, gain_shift, error_feedback=True)
     if flash_bytes <= 1024:
         run([compiler, '-mmcu=attiny13', '-nostdlib', '-Wl,--defsym=__TEXT_REGION_LENGTH__=1024',
              '-Wl,-Ttext=0', '-x', 'assembler', 'firmware.S', '-o', 'firmware.elf'], output)
@@ -173,8 +180,9 @@ def main():
     parser.add_argument('--avr-bin', type=Path)
     parser.add_argument('--node', default='node')
     parser.add_argument('--play-once', action='store_true', help='play the phrase once, then output centered silence')
+    parser.add_argument('--maximize-output', action='store_true', help='select the largest non-clipping constant firmware gain')
     args = parser.parse_args()
-    report = build(args.model, args.output, args.avr_bin, args.node, play_once=args.play_once)
+    report = build(args.model, args.output, args.avr_bin, args.node, play_once=args.play_once, maximize_output=args.maximize_output)
     print(json.dumps(report, indent=2))
     return 1 if report['status']=='verification-failed' else 0
 

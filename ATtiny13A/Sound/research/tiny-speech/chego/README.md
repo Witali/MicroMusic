@@ -67,9 +67,11 @@ python tools/build-tiny-speech.py --model ATtiny13A/Sound/research/tiny-speech/c
 ## Public one-shot firmware
 
 The retained `build.json` above describes the historical looping image. The public
-player uses the 990-byte Flash, 64-byte EEPROM one-shot image verified in
+player uses the 1024-byte Flash, 64-byte EEPROM one-shot image verified in
 [`speech-showcase/chego/build.json`](../../speech-showcase/chego/build.json).
-Its complete first phrase matches the retained model; PWM stays at 128 afterward.
+Its complete first phrase matches the retained model after the constant firmware
+gain, with fractional error feedback; PWM stays at 128 afterward. Measurements
+are in [`output-levels.json`](../../speech-showcase/output-levels.json).
 Build it with `python tools/build-tiny-speech.py --model
 ATtiny13A/Sound/research/tiny-speech/chego/model.json --output build/chego
---play-once`.
+--play-once --maximize-output`.

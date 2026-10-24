@@ -57,6 +57,8 @@ def retain_report(report, clip, check):
         for key in ('actualPcmSha256','verifiedSamples','silenceSamplesVerified','pass'):
             if retained['verification'][key] != report['verification'][key]:
                 raise ValueError('Stale selected speech PCM verification: '+clip+' / '+key)
+        if retained.get('outputLevel') != report.get('outputLevel'):
+            raise ValueError('Stale firmware output level: '+clip)
     else:
         path.parent.mkdir(parents=True,exist_ok=True)
         path.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
@@ -72,21 +74,23 @@ def tiny_entry(clip, original, avr_bin, node, check):
     builder = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(builder)
     output = ROOT/'build/speech-showcase'/clip['id']
-    report = builder.build(model, output, avr_bin, node, play_once=True)
+    report = builder.build(model, output, avr_bin, node, play_once=True, maximize_output=True)
     if (report['status'] != 'verified' or report['verifiedLoops'] != 1 or
             report['modelSha256'] != quality['model_sha256'] or
             report['eepromSha256'] != retained['eepromSha256'] or
-            digest((output/'actual.raw').read_bytes()[:clip['samples']]) != quality['pcm_sha256']):
+            report['outputLevel']['before']['pcmSha256'] != quality['pcm_sha256'] or
+            digest((output/'actual.raw').read_bytes()[:clip['samples']]) != report['outputLevel']['after']['pcmSha256']):
         raise ValueError('Selected speech does not match its retained model, quality or AVR verification: '+clip['id'])
     sources = [SOUND/'codec/tiny/firmware.S', SOUND/'codec/tiny_period.py',
                SOUND/'codec/fixed_period.py', SOUND/'codec/dc_blocker.py',
-               model]
+               SOUND/'codec/output_level.py', model]
     binary, eeprom = (output/'firmware.bin').read_bytes(), (output/'eeprom.bin').read_bytes()
     return dict(id='hq4-'+clip['id']+'-tiny', kind='speech', codec='tiny-period',
                 title=clip['title'], description=f"Tiny Speech · {clip['samples']/7500:.3f} с",
                 flashBytes=len(binary), eepromBytes=len(eeprom), sampleHz=7500, pwmHz=7500,
                 carrierHz=37500, voices=1, phraseSamples=clip['samples'],
                 playOnce=True,
+                outputLevel=report['outputLevel'],
                 flashSha256=digest(binary), flashHex=intel_hex(binary),
                 eepromSha256=digest(eeprom), eepromHex=intel_hex(eeprom),
                 sourceInputs={str(path.relative_to(ROOT)).replace('\\','/'):digest(path.read_bytes()) for path in sources},
@@ -99,15 +103,17 @@ def hq4_once_entry(clip, original, avr_bin, node, check):
     builder = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(builder)
     output = ROOT/'build/speech-showcase'/clip['id']
-    report = builder.build(clip['id'],output,avr_bin,node)
+    report = builder.build(clip['id'],output,avr_bin,node,maximize_output=True)
     if report['status']!='verified' or report['verifiedLoops']!=1:
         raise ValueError('One-shot HQ4 verification failed: '+clip['id'])
     binary = (output/'firmware.bin').read_bytes()
-    sources = [SOUND/'codec/oneshot/hq4.S',SOUND/'codec/release'/clip['id']/'speech.hq']
+    sources = [SOUND/'codec/oneshot/hq4.S',SOUND/'codec/release'/clip['id']/'speech.hq',
+               SOUND/'codec/output_level.py']
     return dict(id='hq4-'+clip['id'],kind='speech',codec='hq4',title=clip['title'],
                 description=f"MiniLPC HQ4 · {clip['samples']/7500:.3f} с",order='03',
                 flashBytes=len(binary),eepromBytes=0,sampleHz=7500,pwmHz=7500,carrierHz=37500,
                 voices=1,phraseSamples=clip['samples'],playOnce=True,
+                outputLevel=report['outputLevel'],
                 flashSha256=digest(binary),flashHex=intel_hex(binary),
                 sourceInputs={str(path.relative_to(ROOT)).replace('\\','/'):digest(path.read_bytes()) for path in sources},
                 verification=retain_report(report,clip['id'],check),

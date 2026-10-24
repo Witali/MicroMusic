@@ -21,6 +21,7 @@ TEMPLATE = ROOT/'ATtiny13A/Sound/codec/oneshot/hq4.S'
 CODEC = ROOT/'ATtiny13A/Sound/codec'
 sys.path.insert(0, str(CODEC))
 from hq4_core import decode, unpack_stream
+from output_level import choose_gain, scale_pcm, describe_level
 
 _spec = importlib.util.spec_from_file_location('tiny_build_helpers', ROOT/'tools/build-tiny-speech.py')
 _helpers = importlib.util.module_from_spec(_spec)
@@ -110,8 +111,11 @@ def load_stream(clip, stream=None, expected_samples=None):
     return source, payload, phrase, frozen_prefix_sha
 
 
-def build(clip, output, avr_bin=None, node='node', stream=None, expected_samples=None):
+def build(clip, output, avr_bin=None, node='node', stream=None, expected_samples=None, maximize_output=False):
     source, payload, phrase, frozen_prefix_sha = load_stream(clip, stream, expected_samples)
+    source_phrase = phrase.copy()
+    gain, gain_shift = choose_gain(phrase, 'shift') if maximize_output else (1, 0)
+    phrase = scale_pcm(phrase, gain, gain_shift)
     phrase_samples = len(phrase)
     prefix_sha = sha(phrase.tobytes())
     expected = np.concatenate((phrase, np.full(phrase_samples*2, 128, dtype=np.uint8)))
@@ -120,6 +124,9 @@ def build(clip, output, avr_bin=None, node='node', stream=None, expected_samples
     for name in ('firmware.elf', 'firmware.bin', 'firmware.hex', 'verification.json', 'actual.raw', 'build.json'):
         (output/name).unlink(missing_ok=True)
     shutil.copyfile(TEMPLATE, output/'firmware.S')
+    if maximize_output:
+        firmware = (output/'firmware.S').read_text(encoding='utf-8')
+        (output/'firmware.S').write_text(f'.set OUTPUT_SHIFT,{gain.bit_length()-1}\n'+firmware, encoding='utf-8', newline='\n')
     (output/'speech.hq').write_bytes(payload)
     (output/'expected.raw').write_bytes(expected.tobytes())
     erased = b'\xff'*64
@@ -146,7 +153,7 @@ def build(clip, output, avr_bin=None, node='node', stream=None, expected_samples
     flash_bytes = (object_bytes+1) & ~1
     inputs = (TEMPLATE, Path(__file__), ROOT/'tools/build-tiny-speech.py',
               CODEC/'hq4_core.py', CODEC/'model.py', ROOT/'tools/verify-tiny-speech.mjs',
-              ROOT/'tools/lib/tiny-work-profile.mjs')
+              ROOT/'tools/lib/tiny-work-profile.mjs', CODEC/'output_level.py')
     report = dict(schema='micromusic-hq4-oneshot-build-v1', clip=clip,
                   status='oversized' if flash_bytes > 1024 else 'pending', playbackMode='once',
                   hardwareTested=False, cpuHz=9600000, sampleHz=7500, flashLimitBytes=1024,
@@ -161,6 +168,8 @@ def build(clip, output, avr_bin=None, node='node', stream=None, expected_samples
                   imageSha256=None, verification=None,
                   normalizedSourceSha256={str(path.relative_to(ROOT)).replace('\\', '/'):
                     sha(path.read_text(encoding='utf-8').encode('utf-8')) for path in inputs})
+    if maximize_output:
+        report['outputLevel'] = describe_level(source_phrase, gain, gain_shift)
     if stream is None:
         report['normalizedSourceSha256'][source.relative_to(ROOT).as_posix()] = sha(payload)
     else:
@@ -212,8 +221,9 @@ def main():
                         help='Experimental HQ4 stream; preserve retained phrase duration and fit 1024-byte Flash')
     parser.add_argument('--samples', type=int,
                         help='New recording: expected complete phrase samples; requires --stream and a multiple of 64')
+    parser.add_argument('--maximize-output', action='store_true', help='select a non-clipping power-of-two firmware gain')
     args = parser.parse_args()
-    report = build(args.clip, args.output, args.avr_bin, args.node, args.stream, args.samples)
+    report = build(args.clip, args.output, args.avr_bin, args.node, args.stream, args.samples, args.maximize_output)
     print(json.dumps(report, indent=2))
     return 1 if report['status'] == 'verification-failed' or (args.stream is not None and report['status'] != 'verified') else 0
 

@@ -6,9 +6,13 @@
 .ifndef PLAY_ONCE
 .set PLAY_ONCE,0
 .endif
+.ifndef OUTPUT_GAIN_Q7
+.set OUTPUT_GAIN_Q7,128
+.endif
 .section .text
 .global __vectors, decoder_end, wave_data, field_data, field_end
 .set HIST,0x68
+.set GAIN_RESIDUAL,0x60
 .global STACK_FLOOR
 .set STACK_FLOOR,HIST+2
 .org 0
@@ -29,6 +33,10 @@ reset:
  ldi r16,0x80
  out 0x26,r16
  out 0x26,r0
+.if OUTPUT_GAIN_Q7 != 128
+ /* Doubled Q7 remainder starts at 2*64; r16 still contains 128. */
+ sts GAIN_RESIDUAL,r16
+.endif
  clr r28
  clr r29
  clr r8
@@ -121,6 +129,24 @@ random_skip:
  adc r19,r25
  movw r28,r18
  rcall saturate
+.endif
+.if OUTPUT_GAIN_Q7 != 128
+ /* Constant post-DC gain; carry discarded fractions to the next sample.
+  * Reuse the signed-word multiply. The builder proves no sample can clip. */
+ mov r18,r24
+ lsl r24
+ sbc r19,r19
+ ldi r22,OUTPUT_GAIN_Q7
+ rcall multiply
+ lds r16,GAIN_RESIDUAL
+ lsr r16
+ add r24,r16
+ adc r25,r0
+ lsl r24
+ rol r25
+ /* The shifted low byte is twice the new seven-bit remainder. */
+ sts GAIN_RESIDUAL,r24
+ mov r24,r25
 .endif
  subi r24,128
  mov r7,r24

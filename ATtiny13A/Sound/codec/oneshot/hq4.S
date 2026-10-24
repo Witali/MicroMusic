@@ -3,6 +3,9 @@
  * Preserve the HQ4-Vinni stream, then emit midpoint silence at 7.5 kHz.
  * CPU 9.6MHz (software CLKPR reset), PB1 OC0B output.
  */
+.ifndef OUTPUT_SHIFT
+.set OUTPUT_SHIFT,0
+.endif
 .section .text
 .global __vectors, code_end, voice_data, STACK_FLOOR
 .set DDRB,0x17
@@ -145,9 +148,18 @@ skip_state_update:
  dec r19
  brne filter_loop
  st Y,r18
+.if OUTPUT_SHIFT
+ /* Scale the emitted sample only; preserve the original lattice state. */
+.rept OUTPUT_SHIFT
+ lsl r18
+.endr
+ subi r18,128
+ mov r7,r18
+.else
  mov r16,r18
  subi r16,128
  mov r7,r16
+.endif
  inc r8
  rjmp wait_slot
 /* signed 8-bit sample * coefficient (signed -7..7), arithmetic >>4 */
