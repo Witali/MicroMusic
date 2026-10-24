@@ -411,9 +411,18 @@ generated-code separation and add no per-instruction JavaScript callbacks.
 Saved follow-up priorities, 2026-10-24. These are separate experiments, not a
 promise of speedup or additional completed checklist items.
 
+Post-merge sampling checkpoint: [24 current-runtime profiles](../reports/post-main-profile-20261024.md)
+retain exact production PCM/state parity across six real-firmware and two direct
+kernel cases (20,231 work-stack samples). The real-firmware hotspots include
+`next_event`, `ratio` and `duration`; try reducing repeated event/time conversion
+as the next isolated native experiment, preserving integer residues and event
+boundaries. Kernel sample counts are small. Sampling is not exclusive timing or
+a speedup claim; balanced uninstrumented controls, CLKI and enabled-ADC cases
+remain mandatory before acceptance. Continuation liveness stays separate.
+
 | Priority | Candidate | Evidence required before keeping it |
 | --- | --- | --- |
-| 1 | Refresh the current profile of the retained runtime, including CPU dispatch, continuation saves and enabled/idle peripheral service. Pin/PCM ownership and buffered long spans are implemented; broader activity gating remains open. | Balanced identical-runtime controls, independent pin/PCM parity, source-entry counts and uninstrumented paired timings. Inspect the exact optimized WASM when testing an inlining/layout hypothesis; reduced entries or changed C alone do not prove speed. |
+| 1 | Use the refreshed profile to test fewer repeated event/time conversions in `next_event`, `ratio` and `duration`. Broader peripheral activity gating remains open. | Exact integer residues, clock/input/event boundaries and pin/PCM parity; enabled-ADC and CLKI controls. Use balanced identical-runtime controls and uninstrumented paired timings. Inspect the exact optimized WASM for an inlining/layout hypothesis; reduced entries alone do not prove speed. |
 | 2 | Reduce continuation saves using per-phase temporary liveness. | The full-context path remains an oracle; partial execution, reset, faults and resume must not repeat bus effects or protected operations. Measure module size and warmed execution separately. |
 | 3 | Extend SREG liveness between connected blocks, then try constant and short-sequence folding as independent changes. | Exact C/chained-Z dependencies, all observable SREG values and original AVR cycle/phase boundaries; compare with full flags and the unchanged generated instruction path. |
 | 4 | Generate direct WASM control flow for proven regions and loops; reconsider register locals only when these larger regions can amortize their cost. | Safe indirect/external-entry fallback, coherent register aliases and visible AVR stack state; real-firmware gains in addition to synthetic-loop results. |
