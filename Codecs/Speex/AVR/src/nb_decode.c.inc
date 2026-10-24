@@ -1,4 +1,7 @@
 #include "nb3_header.h"
+#if SPEEX_ENABLE_WB1
+#include "wb_internal.h"
+#endif
 #include "nb3_indices.h"
 /* Restricted NB3 body adapted from Xiph Speex 1.2.1 nb_celp.c.
  * Copyright (C) 2002-2006 Jean-Marc Valin; BSD terms in vendor/speex-1.2.1/COPYING.
@@ -94,7 +97,12 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, voi
    ALLOC(interp_qlsp,NB_ORDER,spx_lsp_t);
    for (sub=0;sub<NB_NB_SUBFRAMES;sub++)
    {
-      spx_word16_t *sp=out+NB_SUBFRAME_SIZE*sub;
+      spx_word16_t *sp;
+#if SPEEX_ENABLE_WB1
+      sp=out?out+NB_SUBFRAME_SIZE*sub:speex_wb_low_buffer();
+#else
+      sp=out+NB_SUBFRAME_SIZE*sub;
+#endif
       uint8_t update_lpc=!repeat_lsp || (st->first && !sub);
       /* NB3 unquantized angles are multiples of 16. Its quarter-step P14
        * products are exact even though upstream rounds the two products
@@ -113,9 +121,24 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, voi
       iir_mem16(frame_exc-NB_SUBFRAME_SIZE+NB_SUBFRAME_SIZE*sub,
                 st->interp_qlpc,sp,NB_SUBFRAME_SIZE,NB_ORDER,st->mem_sp,stack);
       if (update_lpc) for (i=0;i<NB_ORDER;i++) st->interp_qlpc[i]=ak[i];
+#if SPEEX_ENABLE_WB1
+      if (!out) {
+         SpeexBits cursor={0};
+         uint8_t indices[4];
+         uint16_t header;
+         cursor.nbBits=160;cursor.chars=(char *)packet;cursor.charPtr=3+4*sub;cursor.bitPtr=4+sub;
+         header=speex_nb3_unpack_header(&cursor);
+         speex_nb3_unpack_indices(&cursor,indices);
+         speex_wb_low_ready(sp,st->interp_qlpc,indices,
+             AVR_READ_I32(nb3_gain_table+(qe<<1)+(header&1)));
+      }
+#endif
 #ifdef SPEEX_AVR_OUTPUT_HOOK
       {
          extern void speex_avr_output(const spx_word16_t *,uint8_t);
+#if SPEEX_ENABLE_WB1
+         if (out)
+#endif
          speex_avr_output(sp,NB_SUBFRAME_SIZE);
       }
 #endif

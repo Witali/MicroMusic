@@ -15,6 +15,13 @@
 #include SPEEX_NB3_PLATFORM_HEADER
 #endif
 
+#ifndef SPEEX_ENABLE_WB1
+#define SPEEX_ENABLE_WB1 0
+#endif
+#if SPEEX_ENABLE_WB1 != 0 && SPEEX_ENABLE_WB1 != 1
+#error SPEEX_ENABLE_WB1 must be 0 or 1
+#endif
+
 #ifndef SPEEX_NB3_ARCH
 #if defined(__AVR__)
 #define SPEEX_NB3_ARCH SPEEX_NB3_ARCH_AVR

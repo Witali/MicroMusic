@@ -31,9 +31,15 @@ if __name__ == '__main__':
     parser.add_argument('--cmake', help='Also build and test the exported CMake target')
     parser.add_argument('--ninja', help='Ninja executable for the optional CMake build')
     parser.add_argument('--package', type=Path, help='Verify an existing exported package')
+    parser.add_argument('--wb', action='store_true', help='Also verify compact WB from the exported package')
     args = parser.parse_args()
     output = Path(tempfile.mkdtemp(prefix='portable-check-', dir=ROOT / 'build'))
-    package = args.package.resolve() if args.package else build.export_c(output / 'package')
+    if args.wb and not args.package:
+        import build_wb
+        package=output/'package'
+        build_wb.export_c(package)
+    else:
+        package = args.package.resolve() if args.package else build.export_c(output / 'package')
     assert not list(package.rglob('*.S'))
     for name, digest in json.loads((package / 'SHA256.json').read_text()).items():
         assert hashlib.sha256((package / name).read_bytes()).hexdigest() == digest
@@ -93,5 +99,27 @@ if __name__ == '__main__':
               'exactS16AgainstUpstream': True, 'invalidCallsVerified': True,
               'frames': sum(r['frames'] for r in rows), 'streams': rows,
               'scope': 'Native host static-library execution; other MCU hardware/timing untested.'}
+    if args.wb:
+        wb_rows=[]
+        wb_streams=sorted((ROOT/'build/wb-corpus/streams').glob('*.spxraw'))
+        assert wb_streams
+        for archive in libraries:
+            run([args.cc,'-std=c11','-O2','-D_CRT_SECURE_NO_WARNINGS',
+                 '-I'+str(package/'include'),ROOT/'tests/wb_decode.c',archive,'-o',consumer])
+            actual_rows=[]
+            for stream in wb_streams:
+                actual=output/'wb-actual.pcm'
+                run([consumer,stream,actual])
+                pcm=actual.read_bytes()
+                assert pcm==(ROOT/'build/wb-corpus/oracle'/(stream.stem+'.pcm')).read_bytes()
+                actual_rows.append(dict(stream=stream.name,frames=len(pcm)//640,
+                    pcmSha256=hashlib.sha256(pcm).hexdigest()))
+            if wb_rows:assert wb_rows==actual_rows
+            wb_rows=actual_rows
+            run([args.cc,'-std=c11','-O2','-D_CRT_SECURE_NO_WARNINGS',
+                 '-I'+str(package/'include'),ROOT/'tests/wb_api.c',archive,'-o',consumer])
+            run([consumer,wb_streams[-1]])
+        report['wideband']=dict(profile='WB1-Q7-16',frames=sum(r['frames'] for r in wb_rows),
+            streams=wb_rows,invalidCallsAndResetVerified=True,exactAgainstCompactProfileOracle=True)
     (ROOT / 'build/portable-library.json').write_text(json.dumps(report, indent=2) + '\n')
     print(json.dumps({k: v for k, v in report.items() if k != 'streams'}, indent=2))
