@@ -55,9 +55,49 @@ class PulseResultsTests(unittest.TestCase):
         self.assertGreater(self.manifest['runs']['wide32-zero']['nonzero_tail_taps'],0)
         for name,entry in self.manifest['runs'].items():
             state,*_=fit.load(self.base/entry['model']);active=np.unique(state.modes[(state.pitches>0)&(state.gains_q1>0)])
-            expected=(len(active)*state.waves_q1.shape[1]*(state.wave_fraction_bits+3)+7)//8
+            width=16 if state.tail_policy=='balance16' else state.waves_q1.shape[1]
+            expected=(len(active)*width*(state.wave_fraction_bits+3)+7)//8
             self.assertEqual(entry['packed_waveform_bytes'],expected)
             self.assertFalse(entry['serialized_format']);self.assertEqual(entry['waveforms_fit_eeprom'],expected<=64)
+
+    def test_derived_heads_and_lossy_merge_results_are_measured_from_full_pcm(self):
+        for name,entry in self.manifest['runs'].items():
+            if 'initial_model' in entry:
+                state,bits,state_bits,mode,_,_,meta=fit.load(self.base/entry['initial_model'])
+                report=json.loads((self.base/entry['report']).read_text())
+                self.assert_score(state,bits,state_bits,mode,report['initial'],meta['step_limit'])
+            if entry.get('tail_policy')=='balance16':
+                state,*_=fit.load(self.base/entry['model'])
+                self.assertFalse(np.any(state.waves_q1.sum(axis=1)))
+                self.assertEqual(entry['area_descriptor_bytes'],entry['active_forms']*(1 if state.wave_fraction_bits==1 else 2))
+                if state.wave_fraction_bits==1:
+                    packed,areas=fit.codec.pack_balanced_heads(state.waves_q1[:,:16])
+                    self.assertEqual(len(packed),64);self.assertEqual(len(areas),8)
+                    np.testing.assert_array_equal(fit.codec.unpack_balanced_heads(packed,areas),state.waves_q1)
+        pruning=self.manifest.get('form_pruning')
+        if pruning:
+            folder=(self.base/pruning['report']).parent
+            report=json.loads((self.base/pruning['report']).read_text())
+            for entry in report['records']:
+                state,bits,state_bits,mode,_,_,meta=fit.load(folder/entry['model'])
+                pcm,counts=fit.render(state,bits,state_bits,mode)
+                self.assertFalse(np.any(counts));self.assertEqual(hashlib.sha256(pcm.tobytes()).hexdigest(),entry['score']['pcm_sha256'])
+                y=(pcm.astype(np.int16)-128)/128
+                self.assertAlmostEqual(float(fit.base.stoi(self.x,y,self.sr)),entry['score']['stoi'],places=11)
+                self.assertAlmostEqual(self.spectral.evaluate(y)['spectrogram_loss'],entry['score']['spectrogram_loss'],places=11)
+
+    def test_best_listening_model_matches_the_full_assembled_filter_proof(self):
+        if 'highest_stoi_model' not in self.manifest:self.skipTest('Historical manifest without a selected listening model')
+        model=self.base/self.manifest['highest_stoi_model']
+        state,bits,state_bits,mode,_,_,meta=fit.load(model)
+        self.assert_score(state,bits,state_bits,mode,self.manifest['highest_stoi_metrics'],meta['step_limit'])
+        self.assertFalse(self.manifest['highest_stoi_avr_player_qualified'])
+        proof=json.loads((self.base/self.manifest['word_filter_proof']).read_text())
+        self.assertTrue(proof['pass']);self.assertFalse(proof['fullDecoderImplemented'])
+        self.assertEqual(proof['samples'],66816);self.assertEqual(proof['stateChecks'],601344)
+        for result in proof['results']:
+            self.assertEqual(result['model_sha256'],hashlib.sha256(model.read_bytes()).hexdigest())
+            self.assertEqual(result['pcm_sha256'],self.manifest['highest_stoi_metrics']['pcm_sha256'])
 
 
 if __name__=='__main__':unittest.main()
