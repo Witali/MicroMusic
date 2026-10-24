@@ -24,8 +24,10 @@ def build():
 .global vectors
 vectors:
   rjmp reset
-  nop
-  nop
+gain_finish:
+  adc r17, r17
+gain_return:
+  ret
   rjmp pwm_irq
 reset:
   clr r27
@@ -55,7 +57,7 @@ initialize:
   ldi r18, 128
   mov r23, r18
   ldi r28, 96
-  ldi r22, 110
+  ldi r30, 110
   sbi 23, 1
   out 41, r18
   ldi r16, 35
@@ -66,7 +68,7 @@ initialize:
   out 57, r16
   sei
 idle:
-  mov r16, r22
+  mov r16, r30
   sub r16, r28
   andi r16, 15
   cpi r16, 13
@@ -118,14 +120,11 @@ rhythm_group:
   add r17, r20
 write_pwm:
   subi r17, 128
-  mov r16, r23
-  add r16, r17
-  ror r16
-  mov r26, r22
-  st X+, r16
-  st X+, r17
-  mov r22, r26
-  andi r22, 111
+  add r23, r17
+  ror r23
+  st Z+, r23
+  st Z+, r17
+  andi r30, 111
   mov r23, r17
 ring_published:
   rjmp idle
@@ -137,19 +136,25 @@ ring_read:
   ldi r28, 96
   reti
 chord_gain:
-  /* Exact signed 16-bit sum*level, then /8; no hardware multiplier. */
-  mov r16, r21
-  clr r0
-  sbrc r16, 7
-  com r0
+  /* Bounded signed 8x4 product: ASR/ROR retain the exact remainder.
+     Input sum is -48..42. DEC/BRNE must preserve ROR's next input bit.
+     After four steps, [r17:r25] = signed(sum*level)<<4.
+     One more carry shift gives floor(sum*level/8), with no rounding loss. */
   clr r17
-  clr r7
+  ldi r24, 4
+  lsr r25
+gain_loop:
+  brcc gain_no_add
+  add r17, r21
+gain_no_add:
+  asr r17
+  ror r25
+  dec r24
+  brne gain_loop
+  lsl r25
+  rjmp gain_finish
 '''
-    for bit in range(3,-1,-1):
-        if bit!=3:
-            source += '  lsl r17\n  adc r7, r7\n'
-        source += f'  sbrs r25, {bit}\n  rjmp gain_bit_{bit}\n  add r17, r16\n  adc r7, r0\ngain_bit_{bit}:\n'
-    source += '  asr r7\n  ror r17\n'*3+'gain_return:\n  ret\nnote_steps:\n.byte '
+    source += 'note_steps:\n.byte '
     source += ','.join(str(b) for step in steps for b in (step&255,step>>8))+'\n'
     (folder/'synth.S').write_text(source,encoding='utf-8',newline='\n')
     rom,labels = assembler.assemble_relaxed(folder/'synth.S')
@@ -165,6 +170,7 @@ chord_gain:
                   cpuHz=9600000,pwmHz=37500,synthesisHz=18750,flashBytes=len(rom),
                   codeBytes=labels['note_steps'],eepromBytes=64,labels=labels,pitches=pitches,steps=steps,
                   voiceAddresses=list(range(112,144,4)),phaseStateBytes=32,pwmRingBytes=16,
+                  pwmWritePointerRegister=30,
                   sharedChordGainRegisters=[4,5],gainDivisor=8)
     (folder/'build-report.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
     print(json.dumps({k:report[k] for k in ('flashBytes','codeBytes','synthesisHz','phaseStateBytes')}))

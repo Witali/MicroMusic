@@ -70,10 +70,10 @@ Eight-voice synthesis feasibility has now been checked separately:
 The static AVR probe has eight independent 16-bit DDS phases and steps,
 using the measured nylon guitar EEPROM waves. It sums each guitar chord
 before applying its shared gain with signed 16-bit arithmetic. No chord
-tone is removed. Code is 270 bytes plus a 16-byte demonstration pitch table.
-At 18,750 synthesis samples/s it takes at most 453 active cycles, within
+tone is removed. Code is 216 bytes plus a 16-byte demonstration pitch table.
+At 18,750 synthesis samples/s it takes at most 450 active cycles, within
 512 CPU cycles per output. A one-second emulation verifies 149984 phase
-advances, 18748 complete mixes and all 1456 signed chord-gain cases, with
+advances, 18748 complete mixes/PWM pairs and all 1456 signed chord-gain cases, with
 no lost timer events or PWM underruns. SRAM usage is 50 bytes in this probe,
 including the observed two-byte stack; gain values live in registers.
 The retained report is eight-voice-synthesis-probe.json.
@@ -81,3 +81,18 @@ The retained report is eight-voice-synthesis-probe.json.
 This proves the feasibility of eight simultaneous tones with two shared
 chord gains. The probe has no note scheduler, envelope updates or MNC1
 decoder. Its code and RAM measurements are not those of a full song player.
+
+The first measured probe used 270 code bytes (Git f07b5c2). The current
+216-byte version saves 54 bytes / 20%, and improves the measured render
+cost from 453 to 450 active cycles. A four-step signed shift/add loop replaces
+the unrolled 16-bit multiply; ASR/ROR retain the exact remainder, including
+negative inputs. All possible six-note chord sums (-48..42) at levels 0..15
+are checked. ADC/RET share the unused interrupt-vector words. The PWM writer
+owns Z during synthesis, removing pointer copies, and its midpoint is formed
+in the previous-output register. The audit checks every queued output byte
+and midpoint as well as the eight-note mix.
+
+Relevant general ideas were reviewed in the local companion project's
+z80-tester/docs/Z80-COOKBOOK.md: shared code/continuations, live carry flags,
+register reuse and measuring space separately from timing. The AVR loop is
+independently implemented and tested; Z80 ROM-stack mechanisms are not used.
