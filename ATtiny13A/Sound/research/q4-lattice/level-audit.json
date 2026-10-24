@@ -1,0 +1,25 @@
+{
+  "schema": "q4-raw-level-audit-v1",
+  "signals": {
+    "original": {
+      "mean": -5.8897610368399786e-05,
+      "rms": 0.12985253948480677,
+      "peak": 0.545928955078125,
+      "rms_ratio_to_original": 1.0
+    },
+    "byte": {
+      "mean": 0.08020300152658046,
+      "rms": 0.12568804044134235,
+      "peak": 0.8984375,
+      "rms_ratio_to_original": 0.9679290134795424
+    },
+    "word": {
+      "mean": 0.02039942248114224,
+      "rms": 0.07546686095272412,
+      "peak": 0.6796875,
+      "rms_ratio_to_original": 0.58117354694903
+    }
+  },
+  "source_commit": "3e0c14a",
+  "policy": "Raw decoded output, no HP, normalization or equalization"
+}
