@@ -1,0 +1,79 @@
+{
+  "experimental": true,
+  "admittedToPlayer": false,
+  "mcu": "ATmega328P",
+  "cpuHz": 16000000,
+  "compiler": "AVR GCC 7.3.0 -Os/-O3 -flto -fwrapv -fno-strict-aliasing, fused routine O2 in selected prototype",
+  "simulator": "avr8js 0.21.1",
+  "includesInterrupts": false,
+  "physicalBoardTested": false,
+  "patch": "docs/avr-asm-cookbook/examples/nb3-long-pitch-fusion.patch",
+  "patchSha256Lf": "b6abd56b8f9e6af430c2cf6891b02480aa0867b9d6bdc7881ac2d8e1b39b0b45",
+  "modifiedSourceSha256Lf": {
+    "src/nb_decode.c.inc": "97319243e080c81f38365916fdb7d9a0b70c56404eb1cb7ee7f7e6d1c47053d3",
+    "src/pitch24.h": "9840f6a0d1d45c1367abf1ac60e00cd41d195fee22e34200b719df7c42b6a01f"
+  },
+  "rebuildFromRetainedPatchMatchesVerifiedImage": true,
+  "baselineFixtures": {
+    "sourceCommit": "30779f0",
+    "flashBytes": 9698,
+    "staticSramBytes": 1199,
+    "peakStackBytes": 153,
+    "maxCycles": 268707,
+    "weightedMeanCycles": 227682.8
+  },
+  "fixtureVariants": [
+    {
+      "variant": "rolling, O3",
+      "frames": 1058,
+      "binarySha256": "44de7d903e6a1fd07525bddb46a3ef99d40f635a81f65ded379c1ee159e03107",
+      "flashBytes": 13124,
+      "staticSramBytes": 1199,
+      "peakStackBytes": 153,
+      "maxCycles": 268472,
+      "weightedMeanCycles": 214846.216,
+      "exactS16AgainstUpstream": true
+    },
+    {
+      "variant": "rolling, O2",
+      "frames": 1058,
+      "binarySha256": "b9cc79536ad70c9b33b57356d7fdea5c4171ea9e34145c1fccaec7bec118658d",
+      "flashBytes": 10380,
+      "staticSramBytes": 1199,
+      "peakStackBytes": 153,
+      "maxCycles": 268472,
+      "weightedMeanCycles": 216079.642,
+      "exactS16AgainstUpstream": true
+    },
+    {
+      "variant": "rolling, O3 with no-peel/no-unroll flags",
+      "frames": 1058,
+      "binarySha256": "44de7d903e6a1fd07525bddb46a3ef99d40f635a81f65ded379c1ee159e03107",
+      "flashBytes": 13124,
+      "staticSramBytes": 1199,
+      "peakStackBytes": 153,
+      "maxCycles": 268472,
+      "weightedMeanCycles": 214846.216,
+      "exactS16AgainstUpstream": true
+    },
+    {
+      "variant": "flat variable-count loop, O3 noclone",
+      "frames": 1058,
+      "binarySha256": "1acdf8dedc693b498b2b158a4554e90dbe041e8ad47e457352510c719c035087",
+      "flashBytes": 10342,
+      "staticSramBytes": 1199,
+      "peakStackBytes": 153,
+      "maxCycles": 268472,
+      "weightedMeanCycles": 216630.534,
+      "exactS16AgainstUpstream": true
+    }
+  ],
+  "selectedPrototype": "rolling, O2",
+  "exactAvrFrames": 13254,
+  "exactNativeFrames": 9100,
+  "pending": [
+    "Independent fused-kernel signed16 history and shape/scale extremes with guards",
+    "Evaluate shared-vector form and AVR ASM kernel with selectable C fallback",
+    "Complete timer/ISR PWM corpus and load admission before production use"
+  ]
+}

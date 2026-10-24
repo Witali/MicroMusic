@@ -1,0 +1,41 @@
+{
+  "simulator": "avr8js 0.21.1",
+  "compiler": "AVR GCC",
+  "mcu": "ATmega328P",
+  "backend": "asm",
+  "binarySha256": "854a761dc5faafac9bec9d3c85d41900473972a76f4270e70d6845a05c288c99",
+  "flashBytes": 8754,
+  "staticSramBytes": 1239,
+  "includesInterrupts": false,
+  "frames": 58,
+  "maxCycles": 132071,
+  "minStackPointer": 2160,
+  "streams": [
+    {
+      "stream": "repeated_lsp_0.spxraw",
+      "frames": 29,
+      "minCycles": 96543,
+      "maxCycles": 132071,
+      "meanCycles": 105470,
+      "stackBytes": 143,
+      "freeSramAtPeak": 666,
+      "lspConversions": 21,
+      "lspCacheHits": 95,
+      "resetVerified": true
+    },
+    {
+      "stream": "repeated_lsp_1.spxraw",
+      "frames": 29,
+      "minCycles": 96940,
+      "maxCycles": 131899,
+      "meanCycles": 105735,
+      "stackBytes": 143,
+      "freeSramAtPeak": 666,
+      "lspConversions": 21,
+      "lspCacheHits": 95,
+      "resetVerified": true
+    }
+  ],
+  "freeSramAtPeak": 666,
+  "fitsDecoderBudget": true
+}

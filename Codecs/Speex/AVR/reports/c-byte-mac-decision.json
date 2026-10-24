@@ -1,0 +1,211 @@
+{
+  "baseCommit": "d000fc4",
+  "backend": "c",
+  "asmEnabled": false,
+  "decision": "rejected: slower and larger; production C unchanged",
+  "exactDecoderFrames": 9100,
+  "streams": 31,
+  "beforeWeightedMeanCycles": 240912.816,
+  "afterWeightedMeanCycles": 323641.342,
+  "meanTimeIncreasePercent": 34.3396,
+  "beforeFlashBytes": 11836,
+  "afterFlashBytes": 13400,
+  "beforeMaxCycles": 254619,
+  "afterMaxCycles": 336505,
+  "staticSramBytes": 1119,
+  "stackBytes": 153,
+  "fixtureAndSpeechExact": true,
+  "simulator": "avr8js 0.21.1",
+  "includesInterrupts": false,
+  "physicalBoardTested": false,
+  "patch": "docs/avr-asm-cookbook/examples/nb3-c-byte-mac.patch",
+  "scope": "Full signed16 products, arbitrary uint32 accumulator; measured only ATmega328P / AVR GCC 7.3 mixed Os/O3 LTO fwrapv. No PWM admission attempted for rejected candidate.",
+  "rows": [
+    {
+      "stream": "adversarial_24.spxraw",
+      "frames": 24,
+      "beforeMeanCycles": 238861,
+      "afterMeanCycles": 321869
+    },
+    {
+      "stream": "chirp.spxraw",
+      "frames": 100,
+      "beforeMeanCycles": 216241,
+      "afterMeanCycles": 299128
+    },
+    {
+      "stream": "hard_clipped.spxraw",
+      "frames": 100,
+      "beforeMeanCycles": 206597,
+      "afterMeanCycles": 289263
+    },
+    {
+      "stream": "impulses.spxraw",
+      "frames": 100,
+      "beforeMeanCycles": 190244,
+      "afterMeanCycles": 273712
+    },
+    {
+      "stream": "random_40.spxraw",
+      "frames": 40,
+      "beforeMeanCycles": 246148,
+      "afterMeanCycles": 328727
+    },
+    {
+      "stream": "sample_mode3_8kbps.spxraw",
+      "frames": 100,
+      "beforeMeanCycles": 206780,
+      "afterMeanCycles": 289904
+    },
+    {
+      "stream": "silence.spxraw",
+      "frames": 100,
+      "beforeMeanCycles": 136203,
+      "afterMeanCycles": 221101
+    },
+    {
+      "stream": "speech_from_wb16_lowband.spxraw",
+      "frames": 147,
+      "beforeMeanCycles": 209930,
+      "afterMeanCycles": 293036
+    },
+    {
+      "stream": "speech_ru.spxraw",
+      "frames": 147,
+      "beforeMeanCycles": 209269,
+      "afterMeanCycles": 292447
+    },
+    {
+      "stream": "voicelike.spxraw",
+      "frames": 100,
+      "beforeMeanCycles": 213817,
+      "afterMeanCycles": 296972
+    },
+    {
+      "stream": "white_noise.spxraw",
+      "frames": 100,
+      "beforeMeanCycles": 247537,
+      "afterMeanCycles": 330470
+    },
+    {
+      "stream": "en_letter_a.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 247692,
+      "afterMeanCycles": 330293
+    },
+    {
+      "stream": "en_letter_b.spxraw",
+      "frames": 403,
+      "beforeMeanCycles": 246452,
+      "afterMeanCycles": 329089
+    },
+    {
+      "stream": "en_normcore_a.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 240851,
+      "afterMeanCycles": 323458
+    },
+    {
+      "stream": "en_normcore_a_quiet_minus24dB.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 233545,
+      "afterMeanCycles": 316518
+    },
+    {
+      "stream": "en_normcore_b.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 240552,
+      "afterMeanCycles": 323170
+    },
+    {
+      "stream": "en_portrait_a.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 246559,
+      "afterMeanCycles": 329213
+    },
+    {
+      "stream": "en_portrait_b.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 248046,
+      "afterMeanCycles": 330666
+    },
+    {
+      "stream": "en_sense_a.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 246813,
+      "afterMeanCycles": 329342
+    },
+    {
+      "stream": "en_sense_a_white_noise_15dB.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 247528,
+      "afterMeanCycles": 330100
+    },
+    {
+      "stream": "en_sense_b.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 245610,
+      "afterMeanCycles": 328074
+    },
+    {
+      "stream": "ru_pushkin_a.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 246670,
+      "afterMeanCycles": 329469
+    },
+    {
+      "stream": "ru_pushkin_b.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 242921,
+      "afterMeanCycles": 325727
+    },
+    {
+      "stream": "ru_russia_a.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 247900,
+      "afterMeanCycles": 330488
+    },
+    {
+      "stream": "ru_russia_a_white_noise_15dB.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 248562,
+      "afterMeanCycles": 331175
+    },
+    {
+      "stream": "ru_russia_b.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 242937,
+      "afterMeanCycles": 325667
+    },
+    {
+      "stream": "ru_slutskaya_a.spxraw",
+      "frames": 403,
+      "beforeMeanCycles": 247763,
+      "afterMeanCycles": 330390
+    },
+    {
+      "stream": "ru_slutskaya_b.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 247950,
+      "afterMeanCycles": 330559
+    },
+    {
+      "stream": "ru_square_a.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 246305,
+      "afterMeanCycles": 328996
+    },
+    {
+      "stream": "ru_square_a_quiet_minus24dB.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 245783,
+      "afterMeanCycles": 328580
+    },
+    {
+      "stream": "ru_square_b.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 247197,
+      "afterMeanCycles": 329926
+    }
+  ]
+}

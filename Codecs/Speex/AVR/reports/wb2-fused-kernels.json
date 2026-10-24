@@ -1,0 +1,109 @@
+{
+  "scope": "AVR machine code; independent mathematical/Xiph equations, both backends",
+  "streams": [
+    {
+      "kernel": "speex_wb_qmf40_avr",
+      "blocks": 512,
+      "samples": 40960,
+      "pcmExact": true,
+      "minCycles": 13407,
+      "maxCycles": 14270,
+      "calleeSavedAndR1Returns": 512,
+      "guards": true,
+      "readOnlyInputs": true,
+      "aliasQmf": true,
+      "peakStackBytes": 30
+    },
+    {
+      "kernel": "speex_wb_qmf40_c",
+      "blocks": 512,
+      "samples": 40960,
+      "pcmExact": true,
+      "minCycles": 57532,
+      "maxCycles": 59270,
+      "calleeSavedAndR1Returns": null,
+      "guards": true,
+      "readOnlyInputs": true,
+      "aliasQmf": true,
+      "peakStackBytes": 62
+    },
+    {
+      "kernel": "speex_wb_fold40_avr",
+      "blocks": 1640,
+      "samples": 65600,
+      "pcmExact": true,
+      "minCycles": 3370,
+      "maxCycles": 3971,
+      "calleeSavedAndR1Returns": 1640,
+      "guards": true,
+      "readOnlyInputs": true,
+      "aliasQmf": false,
+      "peakStackBytes": 22
+    },
+    {
+      "kernel": "speex_wb_fold40_c",
+      "blocks": 1640,
+      "samples": 65600,
+      "pcmExact": true,
+      "minCycles": 12012,
+      "maxCycles": 12693,
+      "calleeSavedAndR1Returns": null,
+      "guards": true,
+      "readOnlyInputs": true,
+      "aliasQmf": false,
+      "peakStackBytes": 26
+    },
+    {
+      "kernel": "speex_wb_iir40_avr",
+      "blocks": 512,
+      "samples": 20480,
+      "pcmExact": true,
+      "minCycles": 12192,
+      "maxCycles": 12864,
+      "calleeSavedAndR1Returns": 512,
+      "guards": true,
+      "readOnlyInputs": true,
+      "aliasQmf": false,
+      "peakStackBytes": 30
+    },
+    {
+      "kernel": "speex_wb_iir40_c",
+      "blocks": 512,
+      "samples": 20480,
+      "pcmExact": true,
+      "minCycles": 24230,
+      "maxCycles": 25548,
+      "calleeSavedAndR1Returns": null,
+      "guards": true,
+      "readOnlyInputs": true,
+      "aliasQmf": false,
+      "peakStackBytes": 32
+    },
+    {
+      "kernel": "speex_wb_excitation40_avr",
+      "blocks": 5760,
+      "samples": 230400,
+      "pcmExact": true,
+      "minCycles": 4941,
+      "maxCycles": 5526,
+      "calleeSavedAndR1Returns": 5760,
+      "guards": true,
+      "readOnlyInputs": true,
+      "aliasQmf": false,
+      "peakStackBytes": 28
+    },
+    {
+      "kernel": "speex_wb_excitation40_c",
+      "blocks": 5760,
+      "samples": 230400,
+      "pcmExact": true,
+      "minCycles": 13674,
+      "maxCycles": 14307,
+      "calleeSavedAndR1Returns": null,
+      "guards": true,
+      "readOnlyInputs": true,
+      "aliasQmf": false,
+      "peakStackBytes": 38
+    }
+  ]
+}

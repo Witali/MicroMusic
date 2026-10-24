@@ -1,0 +1,202 @@
+{
+  "baseCommit": "a4c3b39",
+  "compiler": "AVR GCC 7.3.0 mixed Os/O2/O3, LTO, fwrapv, fno-strict-aliasing",
+  "baselineAdditionalFlags": [],
+  "variantAdditionalFlags": {
+    "prologues": [
+      "-mcall-prologues"
+    ],
+    "relax": [
+      "-mrelax"
+    ],
+    "prologues-relax": [
+      "-mcall-prologues",
+      "-mrelax"
+    ]
+  },
+  "selected": "prologues-relax",
+  "decision": "Share register-save/restore machine code, relax eligible transfers; all measured ASM stream means grow less than 0.633%, faster C and smaller images.",
+  "smokeScope": "88 matched fixture frames; rounded per-stream means. Superseded C outlining and prologues-only variants have no complete-corpus or PWM admission.",
+  "variants": [
+    {
+      "variant": "prologues",
+      "backend": "asm",
+      "smokeExactFrames": 88,
+      "flashBytes": 10286,
+      "staticSramBytes": 1119,
+      "peakStackBytes": 158,
+      "smokeApproxMeanTimeChangePercent": 0.6226,
+      "binarySha256": "cb7ad426c0041f772dc7e3461b09b60b365ae7ac23f8046e51f63ec43c4c913e",
+      "selected": false,
+      "fullPwmAdmission": false
+    },
+    {
+      "variant": "prologues",
+      "backend": "c",
+      "smokeExactFrames": 88,
+      "flashBytes": 12018,
+      "staticSramBytes": 1119,
+      "peakStackBytes": 166,
+      "smokeApproxMeanTimeChangePercent": 0.1618,
+      "binarySha256": "618e7b121cc01f0599e418035be497a7576cb6e9337f07a7cf5bb7ffe19320ce",
+      "selected": false,
+      "fullPwmAdmission": false
+    },
+    {
+      "variant": "relax",
+      "backend": "asm",
+      "smokeExactFrames": 88,
+      "flashBytes": 10522,
+      "staticSramBytes": 1119,
+      "peakStackBytes": 145,
+      "smokeApproxMeanTimeChangePercent": -0.1217,
+      "binarySha256": "be116933198052036608d48a9a27108d427222d40d0b29cb7ceac21e6b555e86",
+      "selected": false,
+      "fullPwmAdmission": false,
+      "corpusExactFrames": 9100,
+      "corpusMeans": {
+        "streams": 31,
+        "frames": 9100,
+        "beforeWeightedMeanCycles": 114665.785,
+        "afterWeightedMeanCycles": 114482.303,
+        "weightedMeanTimeReductionPercent": 0.16,
+        "beforeMaxCycles": 121741,
+        "afterMaxCycles": 121527,
+        "minimumStreamMeanReductionPercent": 0.0141
+      },
+      "humanSpeechMeans": {
+        "streams": 20,
+        "frames": 8042,
+        "beforeWeightedMeanCycles": 116749.347,
+        "afterWeightedMeanCycles": 116556.046,
+        "weightedMeanTimeReductionPercent": 0.1656,
+        "beforeMaxCycles": 121741,
+        "afterMaxCycles": 121527,
+        "minimumStreamMeanReductionPercent": 0.1555
+      }
+    },
+    {
+      "variant": "relax",
+      "backend": "c",
+      "smokeExactFrames": 88,
+      "flashBytes": 12180,
+      "staticSramBytes": 1119,
+      "peakStackBytes": 153,
+      "smokeApproxMeanTimeChangePercent": -2.4204,
+      "binarySha256": "4135f32fcdb2317a6d76dcae02be9beeb8b45d0745d2d73f51da364c759be5c0",
+      "selected": false,
+      "fullPwmAdmission": false,
+      "corpusExactFrames": 9100,
+      "corpusMeans": {
+        "streams": 31,
+        "frames": 9100,
+        "beforeWeightedMeanCycles": 237676.141,
+        "afterWeightedMeanCycles": 232024.415,
+        "weightedMeanTimeReductionPercent": 2.3779,
+        "beforeMaxCycles": 251823,
+        "afterMaxCycles": 245983,
+        "minimumStreamMeanReductionPercent": 2.3574
+      },
+      "humanSpeechMeans": {
+        "streams": 20,
+        "frames": 8042,
+        "beforeWeightedMeanCycles": 242128.325,
+        "afterWeightedMeanCycles": 236384.115,
+        "weightedMeanTimeReductionPercent": 2.3724,
+        "beforeMaxCycles": 251823,
+        "afterMaxCycles": 245983,
+        "minimumStreamMeanReductionPercent": 2.3599
+      }
+    },
+    {
+      "variant": "prologues-relax",
+      "backend": "asm",
+      "smokeExactFrames": 88,
+      "flashBytes": 10150,
+      "staticSramBytes": 1119,
+      "peakStackBytes": 158,
+      "smokeApproxMeanTimeChangePercent": 0.4426,
+      "binarySha256": "8b2382307d5bada790016c4744d513ec82d17c55471f67024fd8229ed495230d",
+      "selected": true,
+      "fullPwmAdmission": true,
+      "corpusExactFrames": 9100,
+      "corpusMeans": {
+        "streams": 31,
+        "frames": 9100,
+        "beforeWeightedMeanCycles": 114665.785,
+        "afterWeightedMeanCycles": 115337.677,
+        "weightedMeanTimeReductionPercent": -0.586,
+        "beforeMaxCycles": 121741,
+        "afterMaxCycles": 122498,
+        "minimumStreamMeanReductionPercent": -0.6322
+      },
+      "humanSpeechMeans": {
+        "streams": 20,
+        "frames": 8042,
+        "beforeWeightedMeanCycles": 116749.347,
+        "afterWeightedMeanCycles": 117458.35,
+        "weightedMeanTimeReductionPercent": -0.6073,
+        "beforeMaxCycles": 121741,
+        "afterMaxCycles": 122498,
+        "minimumStreamMeanReductionPercent": -0.6285
+      }
+    },
+    {
+      "variant": "prologues-relax",
+      "backend": "c",
+      "smokeExactFrames": 88,
+      "flashBytes": 11870,
+      "staticSramBytes": 1119,
+      "peakStackBytes": 166,
+      "smokeApproxMeanTimeChangePercent": -2.2701,
+      "binarySha256": "46a3f066f72a32de1496f9969bc27c8f182d83abacb4c4b275cfd3f9bce55faa",
+      "selected": true,
+      "fullPwmAdmission": true,
+      "corpusExactFrames": 9100,
+      "corpusMeans": {
+        "streams": 31,
+        "frames": 9100,
+        "beforeWeightedMeanCycles": 237676.141,
+        "afterWeightedMeanCycles": 232365.3,
+        "weightedMeanTimeReductionPercent": 2.2345,
+        "beforeMaxCycles": 251823,
+        "afterMaxCycles": 246334,
+        "minimumStreamMeanReductionPercent": 2.1994
+      },
+      "humanSpeechMeans": {
+        "streams": 20,
+        "frames": 8042,
+        "beforeWeightedMeanCycles": 242128.325,
+        "afterWeightedMeanCycles": 236729.816,
+        "weightedMeanTimeReductionPercent": 2.2296,
+        "beforeMaxCycles": 251823,
+        "afterMaxCycles": 246334,
+        "minimumStreamMeanReductionPercent": 2.2182
+      }
+    },
+    {
+      "variant": "finish",
+      "backend": "c",
+      "smokeExactFrames": 88,
+      "flashBytes": 12022,
+      "staticSramBytes": 1119,
+      "peakStackBytes": 153,
+      "smokeApproxMeanTimeChangePercent": 2.0863,
+      "binarySha256": "bd4bccc1937fb2cff81188aca9733e9dd758824ebbb92386b31f9e6286a0503e",
+      "selected": false,
+      "fullPwmAdmission": false
+    },
+    {
+      "variant": "shape-finish",
+      "backend": "c",
+      "smokeExactFrames": 88,
+      "flashBytes": 11784,
+      "staticSramBytes": 1119,
+      "peakStackBytes": 153,
+      "smokeApproxMeanTimeChangePercent": 3.2449,
+      "binarySha256": "6dc3123a83fd9aa4d6457d5174d9461725dd143e802d7e90db5f19fabdf0eadc",
+      "selected": false,
+      "fullPwmAdmission": false
+    }
+  ]
+}

@@ -1,0 +1,447 @@
+{
+  "mcu": "ATmega328P",
+  "simulator": "avr8js 0.21.1",
+  "compiler": "AVR GCC 7.3.0 mixed Os/O2/O3, LTO, fwrapv",
+  "binarySha256": "5594f44d1d11640d1c4b07cde6fe482e38f063f663ac3d5c1e4b2097859c270e",
+  "blocks": 49152,
+  "samplesPerBackend": 1966080,
+  "pitches": 24,
+  "pitchMin": 17,
+  "pitchMax": 40,
+  "gainCodes": 32,
+  "scales": 64,
+  "shapeCodes": 32,
+  "historyMin": -32768,
+  "historyMax": 32767,
+  "pitchClipped": 102116,
+  "outputClipped": 6750,
+  "exact": true,
+  "historyPreserved": true,
+  "packetPreserved": true,
+  "guardsIntact": true,
+  "bitConsumptionExact": true,
+  "calleeSavedRegistersPreserved": true,
+  "zeroRegisterRestored": true,
+  "asmControllerCycles": {
+    "min": 6553,
+    "max": 7163,
+    "calls": 49152
+  },
+  "cControllerCycles": {
+    "min": 15541,
+    "max": 16923,
+    "calls": 49152
+  },
+  "perPitch": [
+    {
+      "pitch": 17,
+      "asm": {
+        "min": 6788,
+        "max": 6953,
+        "total": 14043247,
+        "calls": 2048,
+        "mean": 6857.054
+      },
+      "c": {
+        "min": 15541,
+        "max": 15857,
+        "total": 32144100,
+        "calls": 2048,
+        "mean": 15695.361
+      }
+    },
+    {
+      "pitch": 18,
+      "asm": {
+        "min": 6933,
+        "max": 7084,
+        "total": 14330255,
+        "calls": 2048,
+        "mean": 6997.195
+      },
+      "c": {
+        "min": 15955,
+        "max": 16256,
+        "total": 32988436,
+        "calls": 2048,
+        "mean": 16107.635
+      }
+    },
+    {
+      "pitch": 19,
+      "asm": {
+        "min": 6983,
+        "max": 7163,
+        "total": 14444149,
+        "calls": 2048,
+        "mean": 7052.807
+      },
+      "c": {
+        "min": 16206,
+        "max": 16566,
+        "total": 33582464,
+        "calls": 2048,
+        "mean": 16397.688
+      }
+    },
+    {
+      "pitch": 20,
+      "asm": {
+        "min": 6842,
+        "max": 7016,
+        "total": 14158806,
+        "calls": 2048,
+        "mean": 6913.479
+      },
+      "c": {
+        "min": 16407,
+        "max": 16744,
+        "total": 33960976,
+        "calls": 2048,
+        "mean": 16582.508
+      }
+    },
+    {
+      "pitch": 21,
+      "asm": {
+        "min": 6709,
+        "max": 6883,
+        "total": 13894981,
+        "calls": 2048,
+        "mean": 6784.659
+      },
+      "c": {
+        "min": 16424,
+        "max": 16757,
+        "total": 33975199,
+        "calls": 2048,
+        "mean": 16589.453
+      }
+    },
+    {
+      "pitch": 22,
+      "asm": {
+        "min": 6821,
+        "max": 7020,
+        "total": 14124102,
+        "calls": 2048,
+        "mean": 6896.534
+      },
+      "c": {
+        "min": 16524,
+        "max": 16923,
+        "total": 34192251,
+        "calls": 2048,
+        "mean": 16695.435
+      }
+    },
+    {
+      "pitch": 23,
+      "asm": {
+        "min": 6862,
+        "max": 7024,
+        "total": 14193345,
+        "calls": 2048,
+        "mean": 6930.344
+      },
+      "c": {
+        "min": 16528,
+        "max": 16887,
+        "total": 34195100,
+        "calls": 2048,
+        "mean": 16696.826
+      }
+    },
+    {
+      "pitch": 24,
+      "asm": {
+        "min": 6854,
+        "max": 7023,
+        "total": 14192592,
+        "calls": 2048,
+        "mean": 6929.977
+      },
+      "c": {
+        "min": 16482,
+        "max": 16870,
+        "total": 34191248,
+        "calls": 2048,
+        "mean": 16694.945
+      }
+    },
+    {
+      "pitch": 25,
+      "asm": {
+        "min": 6854,
+        "max": 7025,
+        "total": 14192486,
+        "calls": 2048,
+        "mean": 6929.925
+      },
+      "c": {
+        "min": 16545,
+        "max": 16876,
+        "total": 34192923,
+        "calls": 2048,
+        "mean": 16695.763
+      }
+    },
+    {
+      "pitch": 26,
+      "asm": {
+        "min": 6858,
+        "max": 7021,
+        "total": 14190614,
+        "calls": 2048,
+        "mean": 6929.011
+      },
+      "c": {
+        "min": 16545,
+        "max": 16872,
+        "total": 34192306,
+        "calls": 2048,
+        "mean": 16695.462
+      }
+    },
+    {
+      "pitch": 27,
+      "asm": {
+        "min": 6854,
+        "max": 7043,
+        "total": 14192821,
+        "calls": 2048,
+        "mean": 6930.088
+      },
+      "c": {
+        "min": 16535,
+        "max": 16884,
+        "total": 34193437,
+        "calls": 2048,
+        "mean": 16696.014
+      }
+    },
+    {
+      "pitch": 28,
+      "asm": {
+        "min": 6811,
+        "max": 6985,
+        "total": 14120691,
+        "calls": 2048,
+        "mean": 6894.869
+      },
+      "c": {
+        "min": 16545,
+        "max": 16862,
+        "total": 34191287,
+        "calls": 2048,
+        "mean": 16694.964
+      }
+    },
+    {
+      "pitch": 29,
+      "asm": {
+        "min": 6701,
+        "max": 6873,
+        "total": 13870863,
+        "calls": 2048,
+        "mean": 6772.882
+      },
+      "c": {
+        "min": 16420,
+        "max": 16749,
+        "total": 33937803,
+        "calls": 2048,
+        "mean": 16571.193
+      }
+    },
+    {
+      "pitch": 30,
+      "asm": {
+        "min": 6701,
+        "max": 6872,
+        "total": 13870050,
+        "calls": 2048,
+        "mean": 6772.485
+      },
+      "c": {
+        "min": 16423,
+        "max": 16743,
+        "total": 33934864,
+        "calls": 2048,
+        "mean": 16569.758
+      }
+    },
+    {
+      "pitch": 31,
+      "asm": {
+        "min": 6699,
+        "max": 6879,
+        "total": 13876074,
+        "calls": 2048,
+        "mean": 6775.427
+      },
+      "c": {
+        "min": 16425,
+        "max": 16721,
+        "total": 33937443,
+        "calls": 2048,
+        "mean": 16571.017
+      }
+    },
+    {
+      "pitch": 32,
+      "asm": {
+        "min": 6807,
+        "max": 6992,
+        "total": 14103247,
+        "calls": 2048,
+        "mean": 6886.351
+      },
+      "c": {
+        "min": 16521,
+        "max": 16831,
+        "total": 34155098,
+        "calls": 2048,
+        "mean": 16677.294
+      }
+    },
+    {
+      "pitch": 33,
+      "asm": {
+        "min": 6848,
+        "max": 7013,
+        "total": 14172502,
+        "calls": 2048,
+        "mean": 6920.167
+      },
+      "c": {
+        "min": 16538,
+        "max": 16863,
+        "total": 34157166,
+        "calls": 2048,
+        "mean": 16678.304
+      }
+    },
+    {
+      "pitch": 34,
+      "asm": {
+        "min": 6840,
+        "max": 7006,
+        "total": 14170052,
+        "calls": 2048,
+        "mean": 6918.971
+      },
+      "c": {
+        "min": 16531,
+        "max": 16866,
+        "total": 34154741,
+        "calls": 2048,
+        "mean": 16677.12
+      }
+    },
+    {
+      "pitch": 35,
+      "asm": {
+        "min": 6840,
+        "max": 7017,
+        "total": 14172803,
+        "calls": 2048,
+        "mean": 6920.314
+      },
+      "c": {
+        "min": 16527,
+        "max": 16838,
+        "total": 34156156,
+        "calls": 2048,
+        "mean": 16677.811
+      }
+    },
+    {
+      "pitch": 36,
+      "asm": {
+        "min": 6840,
+        "max": 7023,
+        "total": 14172425,
+        "calls": 2048,
+        "mean": 6920.129
+      },
+      "c": {
+        "min": 16527,
+        "max": 16826,
+        "total": 34155955,
+        "calls": 2048,
+        "mean": 16677.712
+      }
+    },
+    {
+      "pitch": 37,
+      "asm": {
+        "min": 6840,
+        "max": 7014,
+        "total": 14172895,
+        "calls": 2048,
+        "mean": 6920.359
+      },
+      "c": {
+        "min": 16539,
+        "max": 16850,
+        "total": 34158028,
+        "calls": 2048,
+        "mean": 16678.725
+      }
+    },
+    {
+      "pitch": 38,
+      "asm": {
+        "min": 6805,
+        "max": 6987,
+        "total": 14099876,
+        "calls": 2048,
+        "mean": 6884.705
+      },
+      "c": {
+        "min": 16541,
+        "max": 16831,
+        "total": 34154868,
+        "calls": 2048,
+        "mean": 16677.182
+      }
+    },
+    {
+      "pitch": 39,
+      "asm": {
+        "min": 6683,
+        "max": 6865,
+        "total": 13851401,
+        "calls": 2048,
+        "mean": 6763.379
+      },
+      "c": {
+        "min": 16418,
+        "max": 16702,
+        "total": 33902180,
+        "calls": 2048,
+        "mean": 16553.799
+      }
+    },
+    {
+      "pitch": 40,
+      "asm": {
+        "min": 6553,
+        "max": 6713,
+        "total": 13575615,
+        "calls": 2048,
+        "mean": 6628.718
+      },
+      "c": {
+        "min": 16374,
+        "max": 16652,
+        "total": 33806547,
+        "calls": 2048,
+        "mean": 16507.103
+      }
+    }
+  ],
+  "includesInterrupts": false,
+  "physicalBoardTested": false
+}

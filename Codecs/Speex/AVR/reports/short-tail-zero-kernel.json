@@ -1,0 +1,122 @@
+{
+  "mcu": "ATmega328P",
+  "compiler": "AVR GCC 7.3.0 mixed Os/O2, LTO, fwrapv",
+  "simulator": "avr8js 0.21.1",
+  "binarySha256": "7a183c13fcd008c9d750c5c6421d6550b4e0bdd3fba890d5bfc35d8027f65c6a",
+  "blocks": 28096,
+  "samplesPerBackend": 280960,
+  "actualNb3Scales": 64,
+  "scaleMin": 0,
+  "scaleMax": 121000000,
+  "shapeMin": -128,
+  "shapeMax": 127,
+  "gridBlocks": 1976,
+  "roundingBlocks": 6120,
+  "randomBlocks": 20000,
+  "largestAbsoluteOutput": 29541,
+  "exact": true,
+  "zeroIdentityVerified": true,
+  "explicitCWorker": true,
+  "guardsIntact": true,
+  "packedPitchPreserved": true,
+  "calleeSavedRegistersPreserved": true,
+  "zeroRegisterRestored": true,
+  "asmKernelCycles": {
+    "min": 501,
+    "max": 501,
+    "calls": 28096
+  },
+  "cKernelCycles": {
+    "min": 549,
+    "max": 549,
+    "calls": 28096
+  },
+  "packedZeroKernelCycles": {
+    "min": 941,
+    "max": 981,
+    "calls": 28096
+  },
+  "pairedAsmCyclesSaved": [
+    440,
+    444,
+    448,
+    452,
+    456,
+    460,
+    464,
+    468,
+    472,
+    476,
+    480
+  ],
+  "variableAsmKernelCycles": {
+    "min": 6,
+    "max": 505,
+    "calls": 28096
+  },
+  "variableCKernelCycles": {
+    "min": 25,
+    "max": 556,
+    "calls": 28096
+  },
+  "counts": [
+    {
+      "count": 0,
+      "calls": 2555,
+      "samples": 0
+    },
+    {
+      "count": 1,
+      "calls": 2555,
+      "samples": 2555
+    },
+    {
+      "count": 2,
+      "calls": 2554,
+      "samples": 5108
+    },
+    {
+      "count": 3,
+      "calls": 2554,
+      "samples": 7662
+    },
+    {
+      "count": 4,
+      "calls": 2554,
+      "samples": 10216
+    },
+    {
+      "count": 5,
+      "calls": 2554,
+      "samples": 12770
+    },
+    {
+      "count": 6,
+      "calls": 2554,
+      "samples": 15324
+    },
+    {
+      "count": 7,
+      "calls": 2554,
+      "samples": 17878
+    },
+    {
+      "count": 8,
+      "calls": 2554,
+      "samples": 20432
+    },
+    {
+      "count": 9,
+      "calls": 2554,
+      "samples": 22986
+    },
+    {
+      "count": 10,
+      "calls": 2554,
+      "samples": 25540
+    }
+  ],
+  "variableSamplesPerBackend": 140471,
+  "includesInterrupts": false,
+  "physicalBoardTested": false
+}

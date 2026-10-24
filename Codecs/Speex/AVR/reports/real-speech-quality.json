@@ -1,0 +1,518 @@
+{
+  "method": "Cross-correlation delay alignment (0..60ms), no gain normalization; compare each native-rate input with decoded result. STOI is an intelligibility estimate, not MOS; waveform SNR is descriptive for a speech vocoder. PWM files are captured digital duties, without analog reconstruction/hardware noise.",
+  "summary": {
+    "clips": 20,
+    "speakers": 8,
+    "seconds": 160,
+    "frames": 8042,
+    "samples": 1286720,
+    "underruns": 0,
+    "minQueuedSamplesBeforeOutput": 31,
+    "maxBlockReadyGapCycles": 164313,
+    "maxDecoderFrameCycles": 295386,
+    "freeSramAtPeak": 152,
+    "timerIntervalMinCycles": 1994,
+    "timerIntervalMaxCycles": 2004,
+    "physicalBoardTested": false
+  },
+  "groups": {
+    "natural": {
+      "avrS16": {
+        "stoiMean": 0.9016,
+        "stoiMin": 0.8614,
+        "stoiMax": 0.9457
+      },
+      "avrPwm8": {
+        "stoiMean": 0.8373,
+        "stoiMin": 0.7356,
+        "stoiMax": 0.9434
+      }
+    },
+    "quiet_minus24dB": {
+      "avrS16": {
+        "stoiMean": 0.8976,
+        "stoiMin": 0.8974,
+        "stoiMax": 0.8977
+      },
+      "avrPwm8": {
+        "stoiMean": 0.519,
+        "stoiMin": 0.5106,
+        "stoiMax": 0.5273
+      }
+    },
+    "white_noise_15dB": {
+      "avrS16": {
+        "stoiMean": 0.8016,
+        "stoiMin": 0.7907,
+        "stoiMax": 0.8126
+      },
+      "avrPwm8": {
+        "stoiMean": 0.7878,
+        "stoiMin": 0.77,
+        "stoiMax": 0.8057
+      }
+    }
+  },
+  "clips": [
+    {
+      "clip": "ru_pushkin_a",
+      "language": "ru",
+      "condition": "natural",
+      "avrS16": {
+        "delaySamples": 78,
+        "delayMs": 9.75,
+        "comparedSamples": 64000,
+        "stoi": 0.8758,
+        "waveformSnrDb": 4.489,
+        "correlation": 0.8417,
+        "rmsInputDbfs": -22.014
+      },
+      "avrPwm8": {
+        "delaySamples": 78,
+        "delayMs": 9.75,
+        "comparedSamples": 64000,
+        "stoi": 0.8535,
+        "waveformSnrDb": 4.123,
+        "correlation": 0.8412,
+        "rmsInputDbfs": -22.014
+      }
+    },
+    {
+      "clip": "ru_pushkin_b",
+      "language": "ru",
+      "condition": "natural",
+      "avrS16": {
+        "delaySamples": 79,
+        "delayMs": 9.875,
+        "comparedSamples": 64000,
+        "stoi": 0.8823,
+        "waveformSnrDb": 5.725,
+        "correlation": 0.8863,
+        "rmsInputDbfs": -20.844
+      },
+      "avrPwm8": {
+        "delaySamples": 79,
+        "delayMs": 9.875,
+        "comparedSamples": 64000,
+        "stoi": 0.853,
+        "waveformSnrDb": 5.351,
+        "correlation": 0.8861,
+        "rmsInputDbfs": -20.844
+      }
+    },
+    {
+      "clip": "ru_square_a",
+      "language": "ru",
+      "condition": "natural",
+      "avrS16": {
+        "delaySamples": 79,
+        "delayMs": 9.875,
+        "comparedSamples": 64000,
+        "stoi": 0.8988,
+        "waveformSnrDb": 9.158,
+        "correlation": 0.9382,
+        "rmsInputDbfs": -26.583
+      },
+      "avrPwm8": {
+        "delaySamples": 79,
+        "delayMs": 9.875,
+        "comparedSamples": 64000,
+        "stoi": 0.8422,
+        "waveformSnrDb": 8.83,
+        "correlation": 0.9369,
+        "rmsInputDbfs": -26.583
+      }
+    },
+    {
+      "clip": "ru_square_b",
+      "language": "ru",
+      "condition": "natural",
+      "avrS16": {
+        "delaySamples": 79,
+        "delayMs": 9.875,
+        "comparedSamples": 63952,
+        "stoi": 0.919,
+        "waveformSnrDb": 8.487,
+        "correlation": 0.9274,
+        "rmsInputDbfs": -26.202
+      },
+      "avrPwm8": {
+        "delaySamples": 79,
+        "delayMs": 9.875,
+        "comparedSamples": 63952,
+        "stoi": 0.8714,
+        "waveformSnrDb": 8.235,
+        "correlation": 0.9262,
+        "rmsInputDbfs": -26.202
+      }
+    },
+    {
+      "clip": "ru_slutskaya_a",
+      "language": "ru",
+      "condition": "natural",
+      "avrS16": {
+        "delaySamples": 80,
+        "delayMs": 10.0,
+        "comparedSamples": 64036,
+        "stoi": 0.9433,
+        "waveformSnrDb": 7.192,
+        "correlation": 0.9008,
+        "rmsInputDbfs": -19.993
+      },
+      "avrPwm8": {
+        "delaySamples": 80,
+        "delayMs": 10.0,
+        "comparedSamples": 64036,
+        "stoi": 0.941,
+        "waveformSnrDb": 7.143,
+        "correlation": 0.9005,
+        "rmsInputDbfs": -19.993
+      }
+    },
+    {
+      "clip": "ru_slutskaya_b",
+      "language": "ru",
+      "condition": "natural",
+      "avrS16": {
+        "delaySamples": 80,
+        "delayMs": 10.0,
+        "comparedSamples": 64000,
+        "stoi": 0.9457,
+        "waveformSnrDb": 7.547,
+        "correlation": 0.9087,
+        "rmsInputDbfs": -19.163
+      },
+      "avrPwm8": {
+        "delaySamples": 80,
+        "delayMs": 10.0,
+        "comparedSamples": 64000,
+        "stoi": 0.9434,
+        "waveformSnrDb": 7.515,
+        "correlation": 0.9085,
+        "rmsInputDbfs": -19.163
+      }
+    },
+    {
+      "clip": "ru_russia_a",
+      "language": "ru",
+      "condition": "natural",
+      "avrS16": {
+        "delaySamples": 79,
+        "delayMs": 9.875,
+        "comparedSamples": 64000,
+        "stoi": 0.8614,
+        "waveformSnrDb": 6.041,
+        "correlation": 0.8681,
+        "rmsInputDbfs": -24.74
+      },
+      "avrPwm8": {
+        "delaySamples": 79,
+        "delayMs": 9.875,
+        "comparedSamples": 64000,
+        "stoi": 0.8484,
+        "waveformSnrDb": 5.934,
+        "correlation": 0.8672,
+        "rmsInputDbfs": -24.74
+      }
+    },
+    {
+      "clip": "ru_russia_b",
+      "language": "ru",
+      "condition": "natural",
+      "avrS16": {
+        "delaySamples": 79,
+        "delayMs": 9.875,
+        "comparedSamples": 64000,
+        "stoi": 0.9303,
+        "waveformSnrDb": 7.145,
+        "correlation": 0.8999,
+        "rmsInputDbfs": -22.349
+      },
+      "avrPwm8": {
+        "delaySamples": 79,
+        "delayMs": 9.875,
+        "comparedSamples": 64000,
+        "stoi": 0.9217,
+        "waveformSnrDb": 7.068,
+        "correlation": 0.899,
+        "rmsInputDbfs": -22.349
+      }
+    },
+    {
+      "clip": "en_sense_a",
+      "language": "en",
+      "condition": "natural",
+      "avrS16": {
+        "delaySamples": 79,
+        "delayMs": 9.875,
+        "comparedSamples": 64000,
+        "stoi": 0.8915,
+        "waveformSnrDb": 4.39,
+        "correlation": 0.8315,
+        "rmsInputDbfs": -26.51
+      },
+      "avrPwm8": {
+        "delaySamples": 79,
+        "delayMs": 9.875,
+        "comparedSamples": 64000,
+        "stoi": 0.782,
+        "waveformSnrDb": 3.779,
+        "correlation": 0.8297,
+        "rmsInputDbfs": -26.51
+      }
+    },
+    {
+      "clip": "en_sense_b",
+      "language": "en",
+      "condition": "natural",
+      "avrS16": {
+        "delaySamples": 80,
+        "delayMs": 10.0,
+        "comparedSamples": 64000,
+        "stoi": 0.9165,
+        "waveformSnrDb": 5.152,
+        "correlation": 0.8576,
+        "rmsInputDbfs": -25.097
+      },
+      "avrPwm8": {
+        "delaySamples": 80,
+        "delayMs": 10.0,
+        "comparedSamples": 64000,
+        "stoi": 0.8587,
+        "waveformSnrDb": 4.627,
+        "correlation": 0.8564,
+        "rmsInputDbfs": -25.097
+      }
+    },
+    {
+      "clip": "en_portrait_a",
+      "language": "en",
+      "condition": "natural",
+      "avrS16": {
+        "delaySamples": 79,
+        "delayMs": 9.875,
+        "comparedSamples": 64000,
+        "stoi": 0.8649,
+        "waveformSnrDb": 5.845,
+        "correlation": 0.8634,
+        "rmsInputDbfs": -35.785
+      },
+      "avrPwm8": {
+        "delaySamples": 79,
+        "delayMs": 9.875,
+        "comparedSamples": 64000,
+        "stoi": 0.7462,
+        "waveformSnrDb": 4.772,
+        "correlation": 0.8554,
+        "rmsInputDbfs": -35.785
+      }
+    },
+    {
+      "clip": "en_portrait_b",
+      "language": "en",
+      "condition": "natural",
+      "avrS16": {
+        "delaySamples": 79,
+        "delayMs": 9.875,
+        "comparedSamples": 64000,
+        "stoi": 0.8763,
+        "waveformSnrDb": 6.243,
+        "correlation": 0.8756,
+        "rmsInputDbfs": -33.884
+      },
+      "avrPwm8": {
+        "delaySamples": 79,
+        "delayMs": 9.875,
+        "comparedSamples": 64000,
+        "stoi": 0.7795,
+        "waveformSnrDb": 5.444,
+        "correlation": 0.8703,
+        "rmsInputDbfs": -33.884
+      }
+    },
+    {
+      "clip": "en_letter_a",
+      "language": "en",
+      "condition": "natural",
+      "avrS16": {
+        "delaySamples": 80,
+        "delayMs": 10.0,
+        "comparedSamples": 64000,
+        "stoi": 0.9238,
+        "waveformSnrDb": 7.528,
+        "correlation": 0.9079,
+        "rmsInputDbfs": -36.84
+      },
+      "avrPwm8": {
+        "delaySamples": 80,
+        "delayMs": 10.0,
+        "comparedSamples": 64000,
+        "stoi": 0.7985,
+        "waveformSnrDb": 5.49,
+        "correlation": 0.8906,
+        "rmsInputDbfs": -36.84
+      }
+    },
+    {
+      "clip": "en_letter_b",
+      "language": "en",
+      "condition": "natural",
+      "avrS16": {
+        "delaySamples": 80,
+        "delayMs": 10.0,
+        "comparedSamples": 64060,
+        "stoi": 0.8811,
+        "waveformSnrDb": 7.416,
+        "correlation": 0.9055,
+        "rmsInputDbfs": -38.322
+      },
+      "avrPwm8": {
+        "delaySamples": 80,
+        "delayMs": 10.0,
+        "comparedSamples": 64060,
+        "stoi": 0.7356,
+        "waveformSnrDb": 4.774,
+        "correlation": 0.8809,
+        "rmsInputDbfs": -38.322
+      }
+    },
+    {
+      "clip": "en_normcore_a",
+      "language": "en",
+      "condition": "natural",
+      "avrS16": {
+        "delaySamples": 80,
+        "delayMs": 10.0,
+        "comparedSamples": 64000,
+        "stoi": 0.9083,
+        "waveformSnrDb": 8.058,
+        "correlation": 0.9192,
+        "rmsInputDbfs": -35.858
+      },
+      "avrPwm8": {
+        "delaySamples": 80,
+        "delayMs": 10.0,
+        "comparedSamples": 64000,
+        "stoi": 0.8058,
+        "waveformSnrDb": 6.265,
+        "correlation": 0.9041,
+        "rmsInputDbfs": -35.858
+      }
+    },
+    {
+      "clip": "en_normcore_b",
+      "language": "en",
+      "condition": "natural",
+      "avrS16": {
+        "delaySamples": 79,
+        "delayMs": 9.875,
+        "comparedSamples": 64000,
+        "stoi": 0.9067,
+        "waveformSnrDb": 8.288,
+        "correlation": 0.9232,
+        "rmsInputDbfs": -35.152
+      },
+      "avrPwm8": {
+        "delaySamples": 79,
+        "delayMs": 9.875,
+        "comparedSamples": 64000,
+        "stoi": 0.8159,
+        "waveformSnrDb": 6.582,
+        "correlation": 0.9092,
+        "rmsInputDbfs": -35.152
+      }
+    },
+    {
+      "clip": "ru_square_a_quiet_minus24dB",
+      "language": "ru",
+      "condition": "quiet_minus24dB",
+      "avrS16": {
+        "delaySamples": 79,
+        "delayMs": 9.875,
+        "comparedSamples": 64000,
+        "stoi": 0.8974,
+        "waveformSnrDb": 8.758,
+        "correlation": 0.9319,
+        "rmsInputDbfs": -50.583
+      },
+      "avrPwm8": {
+        "delaySamples": 79,
+        "delayMs": 9.875,
+        "comparedSamples": 64000,
+        "stoi": 0.5106,
+        "waveformSnrDb": -4.252,
+        "correlation": 0.6765,
+        "rmsInputDbfs": -50.583
+      }
+    },
+    {
+      "clip": "ru_russia_a_white_noise_15dB",
+      "language": "ru",
+      "condition": "white_noise_15dB",
+      "avrS16": {
+        "delaySamples": 80,
+        "delayMs": 10.0,
+        "comparedSamples": 64000,
+        "stoi": 0.8126,
+        "waveformSnrDb": 5.477,
+        "correlation": 0.8498,
+        "rmsInputDbfs": -24.612
+      },
+      "avrPwm8": {
+        "delaySamples": 80,
+        "delayMs": 10.0,
+        "comparedSamples": 64000,
+        "stoi": 0.8057,
+        "waveformSnrDb": 5.382,
+        "correlation": 0.849,
+        "rmsInputDbfs": -24.612
+      }
+    },
+    {
+      "clip": "en_normcore_a_quiet_minus24dB",
+      "language": "en",
+      "condition": "quiet_minus24dB",
+      "avrS16": {
+        "delaySamples": 80,
+        "delayMs": 10.0,
+        "comparedSamples": 64000,
+        "stoi": 0.8977,
+        "waveformSnrDb": 7.577,
+        "correlation": 0.9093,
+        "rmsInputDbfs": -59.857
+      },
+      "avrPwm8": {
+        "delaySamples": 80,
+        "delayMs": 10.0,
+        "comparedSamples": 64000,
+        "stoi": 0.5273,
+        "waveformSnrDb": -12.307,
+        "correlation": 0.5306,
+        "rmsInputDbfs": -59.857
+      }
+    },
+    {
+      "clip": "en_sense_a_white_noise_15dB",
+      "language": "en",
+      "condition": "white_noise_15dB",
+      "avrS16": {
+        "delaySamples": 80,
+        "delayMs": 10.0,
+        "comparedSamples": 64000,
+        "stoi": 0.7907,
+        "waveformSnrDb": 4.249,
+        "correlation": 0.8244,
+        "rmsInputDbfs": -26.374
+      },
+      "avrPwm8": {
+        "delaySamples": 80,
+        "delayMs": 10.0,
+        "comparedSamples": 64000,
+        "stoi": 0.77,
+        "waveformSnrDb": 3.683,
+        "correlation": 0.8232,
+        "rmsInputDbfs": -26.374
+      }
+    }
+  ]
+}

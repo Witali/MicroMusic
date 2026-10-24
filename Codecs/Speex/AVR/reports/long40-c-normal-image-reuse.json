@@ -1,0 +1,199 @@
+{
+  "backend": "c",
+  "scenario": "normal",
+  "reusedPwmReport": "reports/shared-routines-c-player.json",
+  "reusedPwmReportSha256": "aab81a501a2cdcf840cc3f5776ed9bc3124809951112eb3101940c746e197c13",
+  "method": "Every stream/load firmware rebuilt and compared byte-for-byte by SHA256; no fresh C PWM simulation.",
+  "frames": 9100,
+  "samples": 1456000,
+  "streams": [
+    {
+      "stream": "adversarial_24.spxraw",
+      "binarySha256": "3850d40438259be990ce18fcecbe3c36d233a366be94cabaaa4587340afc20cd",
+      "frames": 24,
+      "samples": 3840
+    },
+    {
+      "stream": "chirp.spxraw",
+      "binarySha256": "313f17070a08cd746edf19789edc0b5ada81eec6f27e5fe02d679f33d4577a0b",
+      "frames": 100,
+      "samples": 16000
+    },
+    {
+      "stream": "en_letter_a.spxraw",
+      "binarySha256": "8573f34012cd2b7e420ea69f59d84a66637299702424903f75ce124fd2093beb",
+      "frames": 402,
+      "samples": 64320
+    },
+    {
+      "stream": "en_letter_b.spxraw",
+      "binarySha256": "e8c32ac24e86c7e53fa385671b22dc089feb1f5cf71fb7542bfae0c0e252b6d2",
+      "frames": 403,
+      "samples": 64480
+    },
+    {
+      "stream": "en_normcore_a.spxraw",
+      "binarySha256": "c0cc4ab4b06dbd4248568a20ea37f2e68d925cecc13228754da2dafd6033c13d",
+      "frames": 402,
+      "samples": 64320
+    },
+    {
+      "stream": "en_normcore_a_quiet_minus24dB.spxraw",
+      "binarySha256": "29f2688482d3db9253fc4f653c9c441cce5475a262d51679baf61f912130dbbf",
+      "frames": 402,
+      "samples": 64320
+    },
+    {
+      "stream": "en_normcore_b.spxraw",
+      "binarySha256": "de94a1d1b63ef3c899f95fb7cfb8f3301525ad2f90ba5fa49bf6ab84852cf41f",
+      "frames": 402,
+      "samples": 64320
+    },
+    {
+      "stream": "en_portrait_a.spxraw",
+      "binarySha256": "2db8789c72acf1bbfe2461ba3160f88cb986a912f7f0d2aa6ffe44783133300e",
+      "frames": 402,
+      "samples": 64320
+    },
+    {
+      "stream": "en_portrait_b.spxraw",
+      "binarySha256": "175d9ac25205a65b5732a7c123ed1c9a141357e3107c9a0cf0b5f190f13627ec",
+      "frames": 402,
+      "samples": 64320
+    },
+    {
+      "stream": "en_sense_a.spxraw",
+      "binarySha256": "faa2e4fe6ca88eb44cf03b3ceb82c11f1884a0615eb5b2c637196b3b0b875d59",
+      "frames": 402,
+      "samples": 64320
+    },
+    {
+      "stream": "en_sense_a_white_noise_15dB.spxraw",
+      "binarySha256": "2d9227e26d9be7b2a6b34653edc6ec3e95b49a70e766d3aa219d5ae264465431",
+      "frames": 402,
+      "samples": 64320
+    },
+    {
+      "stream": "en_sense_b.spxraw",
+      "binarySha256": "6ebd41b77963b4b22d680ebcccb095f008700704a70f4475eaa9cd2d6b75cc3b",
+      "frames": 402,
+      "samples": 64320
+    },
+    {
+      "stream": "hard_clipped.spxraw",
+      "binarySha256": "7f1fbe54ee8bfa792df3dd887f015ef9ce8d39fcdbb0c3ed6c4d85bf89dff2e6",
+      "frames": 100,
+      "samples": 16000
+    },
+    {
+      "stream": "impulses.spxraw",
+      "binarySha256": "8aa032b5902fb06673691e9d6bbee842c343dadeb6e49eed5e32fa31d1ce6db6",
+      "frames": 100,
+      "samples": 16000
+    },
+    {
+      "stream": "random_40.spxraw",
+      "binarySha256": "359fd414f5d8f5e20e05ba492ee0395e4dfddad9cedc40dd24fc06279a0e90ef",
+      "frames": 40,
+      "samples": 6400
+    },
+    {
+      "stream": "ru_pushkin_a.spxraw",
+      "binarySha256": "d3a88356341a4585059911b4f96bf9a2f5f319de613777919986ee25e51d1d1f",
+      "frames": 402,
+      "samples": 64320
+    },
+    {
+      "stream": "ru_pushkin_b.spxraw",
+      "binarySha256": "0be48721d3ae5bb5e3da309b678d9cf28f5dc0b1dd00935373da3e886b2a7912",
+      "frames": 402,
+      "samples": 64320
+    },
+    {
+      "stream": "ru_russia_a.spxraw",
+      "binarySha256": "47ec6ef39753ed2ff5f5a505a6ed91b3bae15644c7fc7b561d9aa4f2c649f729",
+      "frames": 402,
+      "samples": 64320
+    },
+    {
+      "stream": "ru_russia_a_white_noise_15dB.spxraw",
+      "binarySha256": "5ea2cab964f31da99953267664a348b3188c4904202ee3ebd7174ae6e5c542f1",
+      "frames": 402,
+      "samples": 64320
+    },
+    {
+      "stream": "ru_russia_b.spxraw",
+      "binarySha256": "7013f2a01330ff279d07353b90bc8acf55a5b3d90abafa4886dd3f45525240d0",
+      "frames": 402,
+      "samples": 64320
+    },
+    {
+      "stream": "ru_slutskaya_a.spxraw",
+      "binarySha256": "2c2d83542ca20e373a9af0de4194e6622a5d5fd0013317fc773d4029798c8859",
+      "frames": 403,
+      "samples": 64480
+    },
+    {
+      "stream": "ru_slutskaya_b.spxraw",
+      "binarySha256": "4a883de228b3ddb0ce3c5761629388d0f63cb4271511d6e59628f15da93171b8",
+      "frames": 402,
+      "samples": 64320
+    },
+    {
+      "stream": "ru_square_a.spxraw",
+      "binarySha256": "fdf89e120e29537649d0ece2f15578d8de3d162c316307678006e7a9147a2397",
+      "frames": 402,
+      "samples": 64320
+    },
+    {
+      "stream": "ru_square_a_quiet_minus24dB.spxraw",
+      "binarySha256": "5e85e039b037012fd54ea2e6880a2544f7901103acbad599da31f6fd833c8627",
+      "frames": 402,
+      "samples": 64320
+    },
+    {
+      "stream": "ru_square_b.spxraw",
+      "binarySha256": "b3e4dffdaa25b2a91fdcc45f01c18e70b5206efc0091f5829c2dd1e90b9fb260",
+      "frames": 402,
+      "samples": 64320
+    },
+    {
+      "stream": "sample_mode3_8kbps.spxraw",
+      "binarySha256": "5164d29d23a3c6d4c22d797fdabe9562bd3c9eab0191bccd2876784345828ec1",
+      "frames": 100,
+      "samples": 16000
+    },
+    {
+      "stream": "silence.spxraw",
+      "binarySha256": "78d89e0633921ef856e6914226e100d0bb4041ef7178c23451b465927fd6afa6",
+      "frames": 100,
+      "samples": 16000
+    },
+    {
+      "stream": "speech_from_wb16_lowband.spxraw",
+      "binarySha256": "8d49025db8e850b020ece2cd8d6034db050bd6783824dec6cf20e5569529571e",
+      "frames": 147,
+      "samples": 23520
+    },
+    {
+      "stream": "voicelike.spxraw",
+      "binarySha256": "cf12069a8a535124627a5a89e5efa6ce4329f73e21825de675ab4b77b8b3a3d8",
+      "frames": 100,
+      "samples": 16000
+    },
+    {
+      "stream": "white_noise.spxraw",
+      "binarySha256": "36a314b967dae74f5d5b3d301341f073e7376b74aa744e81be6480d3827a4a10",
+      "frames": 100,
+      "samples": 16000
+    },
+    {
+      "stream": "speech_ru.spxraw",
+      "binarySha256": "4feccf1a0a258fe6ad99673ea3e379fc6cc4d0299c91e308cb467be8342144c5",
+      "frames": 147,
+      "samples": 23520
+    }
+  ],
+  "allBinariesByteIdentical": true,
+  "freshSimulation": false
+}

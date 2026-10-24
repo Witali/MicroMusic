@@ -1,0 +1,5 @@
+# Retain the imported bytes so the handoff hashes also hold after checkout.
+# Original whitespace is part of the hashed imports too.
+handoff/** -text -whitespace
+reference/** -text -whitespace
+vendor/** -text -whitespace
