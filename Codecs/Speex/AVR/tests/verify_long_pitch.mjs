@@ -13,10 +13,11 @@ const binary=readFileSync(join(build,'long-pitch.bin'));
 const program=new Uint16Array(16384).fill(0xffff);new Uint8Array(program.buffer).set(binary);
 const cpu=new CPU(program,2048),command=address('long_command'),status=address('long_status');
 const input=address('long_input')+2,out=address('long_output')+2,gain=address('long_gains')+1;
+const packed=address('long_packed')+1;
 const cEntry=[...symbols].find(([n])=>/^long_test_c(?:\.|$)/.test(n))[1];
-const entries=new Set([address('speex_avr_long_innovation10'),cEntry]);
+const entries=new Set([address('speex_avr_long_innovation10'),address('speex_avr_innovation10'),cEntry]);
 const preserved=[...Array.from({length:16},(_,i)=>i+2),28,29];
-const times=[null,{min:Infinity,max:0,calls:0},{min:Infinity,max:0,calls:0}];
+const times=[null,...Array.from({length:3},()=>({min:Infinity,max:0,calls:0}))];
 let active=null,which=0,seed=0xc38021d7,clipped=0,pitchClipped=0,cases=0;
 function random(){seed^=seed<<13;seed^=seed>>>17;seed^=seed<<5;return seed>>>0;}
 function until(predicate){const deadline=cpu.cycles+100000;while(!predicate()){
@@ -53,10 +54,12 @@ function check(g,scale,index){
   cpu.dataView.setUint16(input-2,0x1357,true);cpu.dataView.setUint16(input+24,0x2468,true);
   cpu.dataView.setUint16(out-2,0x9876,true);cpu.dataView.setUint16(out+20,0xabcd,true);
   cpu.data[gain-1]=0x56;cpu.data[gain+3]=0x78;
+  cpu.data[packed-1]=0x12;cpu.data[packed+30]=0x34;
   g.forEach((v,i)=>cpu.data[gain+i]=v&255);
   for(let i=0;i<12;i++)cpu.dataView.setInt16(input+2*i,samples[i],true);
   for(let i=0;i<10;i++){
     const raw=g[0]*samples[i]+g[1]*samples[i+1]+g[2]*samples[i+2];
+    for(let byte=0;byte<3;byte++)cpu.data[packed+3*i+byte]=(raw>>>(8*byte))&255;
     const pitch=Math.max(-262144000,Math.min(262144000,raw*128));
     pitchClipped+=raw*128!==pitch;
     const shape=((index+i)%256-128)*4;
@@ -64,7 +67,8 @@ function check(g,scale,index){
     const value=((2*pitch+innovation+8192)|0)>>14;
     expected[i]=Math.max(-32767,Math.min(32767,value));clipped+=expected[i]!==value;
   }
-  for(which=1;which<=2;which++){
+  const packedBefore=cpu.data.slice(packed-1,packed+31);
+  for(which=1;which<=3;which++){
     for(let i=0;i<10;i++)cpu.dataView.setInt16(out+2*i,0x55aa,true);
     cpu.data[status]=1;cpu.data[command]=which;
     until(()=>cpu.data[status]===2);
@@ -75,6 +79,7 @@ function check(g,scale,index){
     for(const [p,v] of [[input-2,0x1357],[input+24,0x2468],[out-2,0x9876],[out+20,0xabcd]])
       assert.equal(cpu.dataView.getUint16(p,true),v,'Buffer guard');
     assert.equal(cpu.data[gain-1],0x56);assert.equal(cpu.data[gain+3],0x78);
+    assert.deepEqual(cpu.data.slice(packed-1,packed+31),packedBefore,'Read-only packed pitch and guards');
     assert.equal(cpu.data[address('long_zero')],0,'ABI zero in caller');
   }
   cases++;
@@ -99,13 +104,13 @@ for(let block=0;block<4096;block++){
   check(g,scales[block%64],random()&255);
 }
 assert.ok(pitchClipped>1000 && clipped>10000);
-assert.equal(times[1].calls,cases);assert.equal(times[2].calls,cases);
+assert.equal(times[1].calls,cases);assert.equal(times[2].calls,cases);assert.equal(times[3].calls,cases);
 const report={mcu:'ATmega328P',simulator:'avr8js 0.21.1',compiler:'AVR GCC 7.3.0 mixed Os/O2, LTO, fwrapv',
   binarySha256:createHash('sha256').update(binary).digest('hex'),blocks:cases,samplesPerBackend:cases*10,
   tableGainTriples:32,scales:64,shapeMin:-128,shapeMax:127,historyMin:-32768,historyMax:32767,
   fullTableShapeScaleCases:tableCases,clampBoundaryBlocks:boundaryCases,randomGainBlocks:4096,
   outputClippedSamples:clipped,pitchClippedSamples:pitchClipped,exact:true,
   gainsPreserved:true,historyPreserved:true,guardsIntact:true,calleeSavedRegistersPreserved:true,
-  zeroRegisterRestored:true,asmKernelCycles:times[1],cKernelCycles:times[2],
+  zeroRegisterRestored:true,asmKernelCycles:times[1],cKernelCycles:times[2],packedKernelCycles:times[3],
   includesInterrupts:false,physicalBoardTested:false};
 writeFileSync(join(build,'verification.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));

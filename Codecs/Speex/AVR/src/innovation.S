@@ -22,6 +22,7 @@
 speex_avr_innovation10:
     push r2
     push r3
+    push r8
     push r13
     push r14
     push r15
@@ -34,6 +35,7 @@ speex_avr_innovation10:
 speex_avr_long_innovation10:
     push r2
     push r3
+    push r8
     push r4
     push r5
     push r6
@@ -53,6 +55,8 @@ speex_avr_long_innovation10:
     clr r2
     ldi r20, 10
     mov r3, r20
+    ldi r20, 32
+    mov r8, r20
     brts .Linnovation_long_setup
     rjmp .Linnovation_packed_setup
 .Linnovation_long_setup:
@@ -172,8 +176,7 @@ speex_avr_long_innovation10:
     add r23, r13
     adc r24, r14
     adc r25, r15
-    ldi r20, 32
-    add r23, r20
+    add r23, r8
     adc r24, r2
     adc r25, r2
     /* Arithmetic >>14 through left alignment and carry. */
@@ -237,6 +240,7 @@ speex_avr_long_innovation10:
     pop r5
     pop r4
 .Linnovation_restore_common:
+    pop r8
     pop r3
     pop r2
     ret

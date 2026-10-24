@@ -283,13 +283,26 @@ binary measurements. Vendor and R4 files remain unmodified.
   Packed pitch and the C fallback are unchanged. Complete corpus and PWM
   admission will cover the combined register/bias series.
 
+- Hold the shared innovation rounding byte (32) in preserved r8 across each
+  ten-sample block. Save/restore it in both entry paths, below mode-specific
+  history saves. Six setup/save/restore cycles replace ten repeated LDIs,
+  saving 4 cycles per vector / 64 per frame in both packed and fused use.
+  A matched three-entry mailbox on the preceding commit and new source checks
+  673,280 samples per fused ASM, packed ASM and C path, including all callee-
+  saved registers, r1, read-only buffers and guards. Fused kernel ranges
+  1,442..1,515 -> 1,438..1,511; packed 944..1,017 -> 940..1,013; C unchanged.
+  Flash 9,068 -> 9,076 B; net vs prior admitted image -2 B. Combined mean
+  119,819.031 -> 119,531.219 cycles (-0.2402%), human speech -0.2389%; corpus
+  and pitch-coverage maxima 130,421 / 130,645 (both -64). All 13,196 corpus/
+  pitch and 58 envelope/reset frames pass; static SRAM/global stack unchanged.
+  A rebuilt C mailbox is byte-identical to its admitted image, retaining the
+  existing corpus, export and 10%-CPU PWM admission. Full ASM PWM gates are
+  running for the combined series. Reports: shared-bias-{before-kernel,kernel,
+  fixtures,innovation}.json, register-asm-*.json, register-c-reuse.json.
+
 ## Next candidates (not yet measured/admitted)
 
-1. **Hoist the shared innovation bias.** Keep 32 in a newly freed preserved
-   register instead of a repeated LDI. Account for both entry save/restore
-   paths and measure packed as well as fused samples before accepting.
-
-2. **Fuse short-pitch contiguous ranges.** For pitch 17..40, the ranges
+1. **Fuse short-pitch contiguous ranges.** For pitch 17..40, the ranges
    j<pitch-1 and pitch+1<=j<min(2*pitch-1,40) have three adjacent history
    words. Handle the two switch samples and optional two tail samples
    separately, then the all-zero tail. A variable-count kernel and tiny
@@ -297,7 +310,7 @@ binary measurements. Vendor and R4 files remain unmodified.
    currently slowest frames. Preserve each tap's exact negative source,
    second segment and zero tail; extra short calls may erase the speed gain.
 
-3. **Ten-sample pitch staging.** Upstream sources always have negative offsets:
+2. **Ten-sample pitch staging.** Upstream sources always have negative offsets:
    the first segment stops before j==pp, the second before j==pp+pitch.
    A completed innovation vector may be written before the next pitch vector.
    A 30-byte packed buffer could replace 120 B, saving 90 B, but additional
