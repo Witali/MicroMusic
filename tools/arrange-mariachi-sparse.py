@@ -76,9 +76,14 @@ def arrange(last_beat=Fraction(553,3)):
     return parts,description
 
 
-def build(folder,last_beat=Fraction(553,3)):
+def build(folder,last_beat=Fraction(553,3),percussion=True):
     parts,description=arrange(last_beat)
-    codec=engine.compile_parts(parts,compact=True,unit=80,voices=(3,5),pending=(4,3))
+    if percussion:
+        description['percussion']=dict(sourceVariant='cancion-del-mariachi',kit='natural-kit',
+            instruments=['acoustic-bass-drum','closed-hi-hat'],gmNotes=[35,42],
+            pattern=['kick','hat'],quarterBeatsPerHit=.5,attenuationShift=3,
+            policy='New alternating kick/hat backing using the retained old kit; no source guitar note is removed. Legacy generator and four-stage decay, rounded to nearest at the final quiet gain.')
+    codec=engine.compile_parts(parts,compact=True,unit=80,voices=(3,3) if percussion else (3,5),pending=(4,3),percussion=percussion)
     report=engine.build_normalized(folder,codec=codec,arrangement=description)
     (folder/'arrangement.json').write_text(json.dumps(dict(**description,parts=parts),indent=2)+'\n',encoding='utf-8',newline='\n')
     print(json.dumps({key:description[key] for key in ('leadSourceNotes','backingNotes','backingAttacks')}))
@@ -89,4 +94,5 @@ if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output',type=Path,default=ROOT/'build/mariachi-sparse')
     parser.add_argument('--end-beat',type=Fraction,default=Fraction(553,3),help='Exclusive source quarter beat; fractions such as 553/3 preserve exact ticks')
-    args=parser.parse_args();build(args.output,args.end_beat)
+    parser.add_argument('--no-percussion',action='store_true',help='Rebuild the previous two-guitar arrangement without kick/hat')
+    args=parser.parse_args();build(args.output,args.end_beat,not args.no_percussion)

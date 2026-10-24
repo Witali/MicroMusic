@@ -30,16 +30,19 @@ def compile_score():
     return compile_parts(parts)
 
 
-def compile_parts(parts,*,compact=False,unit=160,voices=(2,6),pending=(2,5)):
+def compile_parts(parts,*,compact=False,unit=160,voices=(2,6),pending=(2,5),percussion=False):
     """Encode supplied parts exactly; arrangement policy belongs to the caller."""
     p=module('poly_events','pack-musical-events.py')
     assert len(parts)==2
-    assert sum(voices)==8 and sum(pending)==7
+    assert sum(voices)==(6 if percussion else 8) and sum(pending)==7
+    assert not percussion or (compact and voices==(3,3) and pending==(4,3) and unit==80)
     assert all(1<=len(g['pitches'])<=voices[i] for i,part in enumerate(parts) for g in part['groups'])
     assert all(g['velocity']==80 for part in parts for g in part['groups'])
     assert all(part['program']==24 and part['offVelocity']==64 for part in parts)
     shapes=[];bases=[];rules=[];streams=[];gap_values=[];gate_values=[];stats=[]
     shape_notes=[];base_notes=[]
+    palette=sorted({pitch for part in parts for g in part['groups'] for pitch in g['pitches']}) if percussion else []
+    assert len(palette)<=16
     for track,part in enumerate(parts):
         local_shapes=[];local_bases=[];symbols=[];end=0
         for g in part['groups']:
@@ -63,16 +66,18 @@ def compile_parts(parts,*,compact=False,unit=160,voices=(2,6),pending=(2,5)):
             shape_offsets.append(len(shapes))
             padded=shape if compact else shape+(None,)*(voices[track]-len(shape))
             shape_notes.append(dict(offset=len(shapes),track=track,pitches=list(shape)))
-            if compact:shapes.append(len(shape))
-            for pitch in padded:
+            if compact and not percussion:shapes.append(len(shape))
+            for index,pitch in enumerate(padded):
                 step=0 if pitch is None else round(440*2**((pitch-69)/12)*65536/18750)
-                shapes.extend([step&255,step>>8])
-        bases.extend((shape_offsets[shape],gap_values.index(gap)*16+(gate_values.index(gate) if compact else gate)) for shape,gap,gate in local_bases)
+                if percussion:shapes.append(32+2*palette.index(pitch)+(128 if index==len(shape)-1 else 0))
+                else:shapes.extend([step&255,step>>8])
+        bases.extend((shape_offsets[shape],gap//2*8+gate_values.index(gate) if percussion else gap_values.index(gap)*16+(gate_values.index(gate) if compact else gate)) for shape,gap,gate in local_bases)
         base_notes.extend(dict(track=track,pitches=list(local_shapes[shape]),gap=gap,gate=gate)
                           for shape,gap,gate in local_bases)
         rules.append(local_rules);streams.append(encoded)
     assert len(gap_values)<=8 and max(gap_values)<=255
     assert not compact or len(gate_values)<=16
+    assert not percussion or (len(gate_values)<=8 and all(gap%2==0 and 0<=gap<=62 for gap in gap_values))
     base_count=len(bases)
     rule_maps=[];base_at=rule_at=0
     for track,st in enumerate(stats):
@@ -110,6 +115,11 @@ def compile_parts(parts,*,compact=False,unit=160,voices=(2,6),pending=(2,5)):
         result['gates']=gate_values
         result['formatOptions']=dict(compactShapes=True,unitTicks=unit,voices=list(voices),pending=list(pending))
         result['scoreBytes']+=len(gate_values)
+    if percussion:
+        result['formatOptions'].update(percussion=True,pitchEeprom=True,rawGaps=True)
+        result['pitchPalette']=palette
+        result['pitchSteps']=[round(440*2**((pitch-69)/12)*65536/18750) for pitch in palette]
+        result['scoreBytes']-=len(gap_values)
     return result
 
 
@@ -525,10 +535,17 @@ write_pwm:''')
   ldi r16, 16
 guitar_bank:
 ''','  mov r16, r19\n')
-        source=source.replace('  mov r20, r17\n','  mov r20, r17\n  ldi r19, 16\n')
+        source=source.replace('  mov r20, r17\n','  mov r20, r17\n  ldi r19, 16\n',1)
+    drums=bool(options and options.get('percussion'))
+    if drums:
+        drum_bank=module('mariachi_drum_bank','percussion-bank.py')
+        drum_bank.verify_source()
+        hits=drum_bank.select_kit('natural-kit',3)
+        source=module('mariachi_drums','mariachi-percussion.py').specialize(source,hits)
     source=f'.set BASE_COUNT, {base_count}\n.set STREAM_SECOND, {codec["streamOffsets"][1]}\n'+source
     for name,data in [('song_shapes',codec['shapes']),('song_bases',[b for pair in codec['bases'] for b in pair]),
                       ('song_rules',[b for pair in codec['rules'] for b in pair]),('song_gaps',codec['gaps']),('song_stream',codec['stream'])]:
+        if drums and name=='song_gaps':continue
         source+=name+':\n.byte '+','.join(map(str,data))+'\n'
     if options:source+='song_gates:\n.byte '+','.join(map(str,codec['gates']))+'\n'
     if normalization and normalization['implementation']=='linear-flash-table':
@@ -557,6 +574,8 @@ guitar_bank:
             ep[offset:offset+8]=bytes((wave[n]+8)|((wave[n+1]+8)<<4) for n in range(0,16,2))
         assert waves['low'][0]==0,'A zero DDS step/phase contributes exact silence'
         part_waves.append(waves)
+    if drums:
+        for index,step in enumerate(codec['pitchSteps']):ep[32+2*index:34+2*index]=bytes([step&255,step>>8])
     (folder/'eeprom.bin').write_bytes(ep);(folder/'eeprom.hex').write_text(ihex(ep),encoding='ascii',newline='\n')
     report=dict(engine='mariachi-polyphonic',experimental=False,flashBytes=len(rom),codeBytes=labels['song_shapes'],
         tableBytes=len(rom)-labels['song_shapes'],eepromBytes=64,labels=labels,scoreBytes=codec['scoreBytes'],
@@ -581,14 +600,26 @@ guitar_bank:
         report['partVoiceCounts']=options['voices']
         report['pendingSymbolAddresses']=[list(range(144,144+options['pending'][0])),list(range(144+options['pending'][0],151))]
         report['unitTicks']=options['unitTicks'];report['gridStep']=grid_step
+    if drums:
+        report.update(oscillators=6,voiceAddresses=list(range(112,136,4)),decoderPartSelectors=[144,148],
+            percussionProfile=dict(kit='natural-kit',hits={role:hits[role] for role in ('kick','hat')},
+                bankSha256=hashlib.sha256(drum_bank.BANK_PATH.read_bytes()).hexdigest(),attenuationShift=3,
+                pattern=['kick','hat'],gridUnitsPerHit=3,quarterBeatsPerHit=.5,
+                stageRegister=6,phaseRegister=22,noiseHighRegister=7,countdownIo=54,
+                countdownStorage='Unused OCR0A compare register; Fast PWM TOP=255, COM0A=0, OCIE0A=0',
+                attenuationRounding='Add 4 before final ASR3; nearest integer after the original decay, ties toward positive infinity',
+                stageEncoding='kick7..4, hat15..12; descending every two envelope ticks; active bit2; decay shifts 0,1,1,2',
+                sourceVariant='cancion-del-mariachi',independentDrumVoices=1))
     if normalization:report['outputNormalization']=normalization
-    report['activePrimaryVoices']=8
+    report['activePrimaryVoices']=6 if drums else 8
     report['instrumentAssignments']={role:dict(instrument='acoustic-guitar-nylon',
         label='Акустическая гитара с нейлоновыми струнами',gmProgram=24,sourceVelocity=80,level=15)
         for role in ('leadGuitar','rhythmGuitar')}
     report['instrumentAssignments']['rhythmGuitar'].update(
         label='Мягкая нейлоновая гитара сопровождения',mixGain=0.5,mixGainDb=-6.020599913,
         waveDerivation='Circular [1,4,6,4,1]/16 smoothing of the measured nylon waves, rounded to 4-bit samples; both registers start at zero.')
+    if drums:report['instrumentAssignments']['percussion']=dict(instrument='natural-kit',gmNotes=[35,42],level=2,
+        label='Тихий бас-барабан и закрытый хай-хэт из прежней аранжировки')
     report['instrumentBankSha256']=hashlib.sha256((ROOT/'ATtiny13A/Music/instruments/bank.json').read_bytes()).hexdigest()
     report['articulation']='Shared plucked envelope for each common-gate source chord; phases reset on picking; no additional release slots.'
     (folder/'build-report.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
@@ -611,6 +642,7 @@ guitar_bank:
         html=html.replace('Canción del Mariachi · две гитары, все ноты',arrangement['title'])
         html=html.replace('две нейлоновые гитары, мягкое сопровождение на 6 дБ тише, все 1027 исходных нот и 8 тональных генераторов.',
                           'соло нейлоновой гитары, редкие басовые опоры и короткие аккордовые ответы. Сопровождение переработано.')
+    if drums:html=html.replace('Сопровождение переработано.','Тихие бас-барабан и хай-хэт поддерживают ритм.')
     (folder/'player.html').write_text(html,encoding='utf-8',newline='\n')
     print(json.dumps({k:report[k] for k in ('flashBytes','codeBytes','tableBytes','sourceNotes')}))
     return report

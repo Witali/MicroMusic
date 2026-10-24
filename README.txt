@@ -99,10 +99,11 @@ EEPROM 64 Б; измеренный максимум SRAM 61/64 Б. Провер�
 09 · Mariachi · соло и редкие аккорды — cancion-del-mariachi-sparse/
 Все 261 исходная нота солирующей гитары; вместо частого аккордового боя —
 60 редких басовых/аккордовых атак и паузы. 60,16 секунды; сопровождение
-переработано, прежняя полная нотная версия сохранена отдельно. Flash 1006 Б,
-EEPROM 64 Б; SRAM до 61 Б.
+переработано. Добавлены тихие бас-барабан и хай-хэт из старого варианта,
+253 удара за минуту. Все 381 гитарная нота сохранена. Flash 1024 Б,
+EEPROM 64 Б: 32 Б волн и 30 Б частот. Прежняя полная нотная версия — отдельно.
 Сборка: python tools/arrange-mariachi-sparse.py --output ATtiny13A/Music/variants/cancion-del-mariachi-sparse
-Нормализация реального PWM x4 до 0..248; WAV нормализуется после фильтра:
+Нормализация реального PWM вместе с ударными x4 до 0..252; WAV нормализуется после фильтра:
   node tools/render-firmware-preview.mjs ATtiny13A/Music/variants/cancion-del-mariachi-sparse 61 --normalize
 Все сборщики и калибровка находятся в tools/ и сохраняются в Git вместе с исходниками.
 Плеер: web-player/?firmware=cancion-del-mariachi-sparse

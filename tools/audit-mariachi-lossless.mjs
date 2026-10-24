@@ -62,6 +62,8 @@ if(meta.arrangement){
 const core=new AVRCore(rom,ep),pc=Object.fromEntries(Object.entries(meta.labels).map(([k,v])=>[k,v/2]));
 const waveOffsets=meta.partWaveOffsets??[0,0],gainShifts=meta.partGainShifts??[0,0];
 const leadVoices=meta.partVoiceCounts?.[0]??2,normalization=meta.outputNormalization;
+const drums=meta.percussionProfile,voiceCount=meta.voiceAddresses.length;
+const decoderPart=()=>meta.decoderPartSelectors?meta.decoderPartSelectors.indexOf(core.r[19]):core.r[19];
 const notes=[[],[]],current=[null,null],queue=Array(14).fill(128);
 let finished=false,firstCycle=null,restartCycle=null,previousPwm=128,nextPwm=null,minQueued=16;
 let underruns=0,mixChecks=0,pwmChecks=0,maxActive=0,maxElapsed=0,renderStart=null,renderIRQs=0;
@@ -69,6 +71,8 @@ let burstStart=null,burstIRQs=0,maxBurst=0,maxDepth=[0,0],lastProgress=0,loopQui
 let minMix=127,maxMix=-128,maxPitchError=0;
 let minPwm=255,maxPwm=0,normalizationChecks=0;
 let phaseBefore=null,phaseChecks=0;
+let drumValue=0,drumBefore=null,drumChecks=0,drumEnvelopeBefore=null,drumEnvelopeChecks=0;
+const drumAttacks=[];
 const states=()=>meta.voiceAddresses.map(a=>({phase:core.data[a]|core.data[a+1]<<8,step:core.data[a+2]|core.data[a+3]<<8}));
 const run=core.step.bind(core);
 core.step=()=>{
@@ -77,13 +81,24 @@ core.step=()=>{
   if(core.pc===pc.render_sample){renderStart=core.cyc;renderIRQs=core.irqCount;phaseBefore=states();}
   if(core.pc===pc.restart_song){
    assert.deepEqual([core.r[4],core.r[5]],[0,0],'Both guitars decay before the repeat');loopQuiet=true;
+   if(drums)assert.equal(core.r[6]&4,0,'The last drum hit decays before repeat');
+  }
+  if(drums&&core.pc===pc.music_tick)drumEnvelopeBefore={stage:core.r[6],clock:core.r[14]};
+  if(drums&&core.pc===pc.drum_envelope_done){
+   const expected=drumEnvelopeBefore.stage-Number(!((drumEnvelopeBefore.clock+1)&1)&&!!(drumEnvelopeBefore.stage&4));
+   assert.equal(core.r[6],expected,'Original two-tick four-stage drum decay');drumEnvelopeChecks++;
+  }
+  if(drums&&core.pc===pc.drum_trigger){
+   assert.equal(core.r[6]&15,!loopQuiet&&drumAttacks.length%2?15:7,'Alternating kick and hat, restarting on kick');
+   assert.equal(core.data[32+54],1,'Half-beat countdown expires');
+   drumAttacks.push({cycle:core.cyc,kind:core.r[6]&8?'hat':'kick'});
   }
   if(core.pc===pc.next_symbol){
-   const part=core.r[19];if(current[part]){current[part].offCycle=core.cyc;current[part]=null;}
+   const part=decoderPart();if(current[part]){current[part].offCycle=core.cyc;current[part]=null;}
   }
   if(core.pc===pc.chord_loaded){
-   const part=core.r[19],pitches=[];
-   for(const s of states().slice(part?leadVoices:0,part?8:leadVoices))if(s.step){
+   const part=decoderPart(),pitches=[];
+   for(const s of states().slice(part?leadVoices:0,part?voiceCount:leadVoices))if(s.step){
     const frequency=s.step*18750/65536,pitch=Math.round(69+12*Math.log2(frequency/440));pitches.push(pitch);
     maxPitchError=Math.max(maxPitchError,Math.abs(1200*Math.log2(frequency/(440*2**((pitch-69)/12)))));
    }
@@ -95,12 +110,27 @@ core.step=()=>{
    }
   }
   if(core.pc===pc.part_return||core.pc===pc.classify_symbol){
-   const part=core.r[19];maxDepth[part]=Math.max(maxDepth[part],core.r[24]);
+   const part=decoderPart();maxDepth[part]=Math.max(maxDepth[part],core.r[24]);
    assert.ok(core.r[24]<=meta.pendingSymbolAddresses[part].length,'Pending grammar symbols remain in their SRAM partition');
+  }
+  if(drums&&core.pc===pc.render_drum){
+   const stage=core.r[6],phase=core.r[22],high=core.r[7];let low=phase,hi=high,value=0;
+   if(stage&4){
+    if(stage&8){
+     let state=((high<<8)|phase);state=((state<<1)&65535)^((state&32768)?45:0);
+     low=state&255;hi=state>>8;value=(((low>>1)&63)-(low&63))>>2;
+    }else{low=(phase+1)&255;value=((low&128?255-low:low)-61)>>2;}
+    value>>=Number(!(stage&1))+Number(!(stage&2));value=(value+4)>>3;
+   }
+   drumValue=value;drumBefore={low,hi};
+  }
+  if(drums&&core.pc===pc.drum_mixed){
+   assert.equal(core.r[17],drumValue&255,'Exact old kick/hat generator with rounded quiet gain');
+   assert.equal(core.r[22],drumBefore.low);assert.equal(core.r[7],drumBefore.hi);drumChecks++;
   }
   if(core.pc===(normalization?pc.master_gain:pc.write_pwm)){
    const voice=states();
-   for(let i=0;i<8;i++){
+   for(let i=0;i<voiceCount;i++){
     assert.equal(voice[i].step,phaseBefore[i].step);
     assert.equal(voice[i].phase,(phaseBefore[i].phase+phaseBefore[i].step)&65535,'Each oscillator advances independently');
     phaseChecks++;
@@ -109,7 +139,7 @@ core.step=()=>{
     const index=phase>>12,b=ep[waveOffsets[i<leadVoices?0:1]+(step>=1024?8:0)+(index>>1)];return ((index&1?b>>4:b)&15)-8;
    });
    const expectedMix=(Math.floor(values.slice(0,leadVoices).reduce((a,b)=>a+b,0)*(core.r[4]&15)/8)>>gainShifts[0])
-    +(Math.floor(values.slice(leadVoices).reduce((a,b)=>a+b,0)*(core.r[5]&15)/8)>>gainShifts[1]);
+    +(Math.floor(values.slice(leadVoices).reduce((a,b)=>a+b,0)*(core.r[5]&15)/8)>>gainShifts[1])+(drums?drumValue:0);
    const mix=core.r[17]&128?core.r[17]-256:core.r[17];assert.equal(mix,expectedMix||0,'Every chord tone contributes exactly');
    assert.ok(mix>=-120&&mix<=120);minMix=Math.min(minMix,mix);maxMix=Math.max(maxMix,mix);
    if(normalization){
@@ -149,7 +179,7 @@ while(!finished&&core.cyc<9600000*(musicSeconds+4)){
 }
 assert.ok(finished,'One full song and repeat must execute');
 assert.equal(underruns,0);assert.equal(core.lost+core.workLost,0);
-assert.ok(core.minSP>=151,'Hardware stack must stay above pending symbols');
+assert.ok(core.minSP>=(drums?150:151),'Hardware stack writes must stay above pending symbols');
 let maxOn=0,maxOff=0,maxDuration=0,totalNotes=0;
 for(let part=0;part<2;part++){
  assert.equal(notes[part].length,expected[part].length);
@@ -166,13 +196,13 @@ assert.equal(totalNotes,meta.arrangement?meta.playedNotes:1027);assert.ok(maxOn<
 const report={passed:true,engine:meta.engine,sourceSha256:hash(sourceRaw),flashSha256:hash(rom),eepromSha256:hash(ep),
  flashBytes:rom.length,codeBytes:meta.codeBytes,tableBytes:meta.tableBytes,allSourceNotes:sourceCounts.reduce((a,b)=>a+b,0),
  allSourceNoteGatesVerified:!meta.arrangement,sourceParts:2,sourceNotesByPart:sourceCounts,chordAttacksByPart:notes.map(g=>g.length),
- oscillators:8,maximumSimultaneousSourceNotes:sourcePeak,maximumSimultaneousPlayedNotes:peakPolyphony(expected),
+ oscillators:voiceCount,maximumSimultaneousSourceNotes:sourcePeak,maximumSimultaneousPlayedNotes:peakPolyphony(expected),
  partWaveOffsets:waveOffsets,partGainShifts:gainShifts,
  firstSongSeconds:musicSeconds,loopSeconds:(restartCycle-firstCycle)/9600000,
  maximumOnsetErrorMs:maxOn,maximumGateEndErrorMs:maxOff,maximumGateDurationErrorMs:maxDuration,
  maximumPitchQuantizationErrorCents:maxPitchError,maxRenderActiveCycles:maxActive,maxRenderElapsedCycles:maxElapsed,
- maxControlAndRenderActiveCycles:maxBurst,maxStackBytes:159-core.minSP,phaseStateBytes:32,pendingSymbolBytes:7,
- pwmRingBytes:16,sramUsedWorstCase:55+159-core.minSP,maxPendingSymbolsByPart:maxDepth,
+ maxControlAndRenderActiveCycles:maxBurst,maxStackBytes:159-core.minSP,phaseStateBytes:4*voiceCount,pendingSymbolBytes:7,
+ pwmRingBytes:16,sramUsedWorstCase:16+4*voiceCount+7+159-core.minSP,maxPendingSymbolsByPart:maxDepth,
  independentPhaseChecks:phaseChecks,mixChecks,pwmPairChecks:pwmChecks,minQueuedPwmBytes:minQueued,ringUnderruns:underruns,
  lostTimerEvents:core.lost,lostWorkEvents:core.workLost,isrCycles:core.maxIRQ,mixRange:[minMix,maxMix],
  bothPartsSilentBeforeRestart:loopQuiet,emulationOnly:true};
@@ -181,6 +211,19 @@ if(normalization){
  assert.equal(normalization.table[-normalization.minimum],128,'Digital silence retains midpoint 128');
  Object.assign(report,{pwmRange:[minPwm,maxPwm],normalizationChecks,masterGain:normalization.gain,
   normalizationGainDb:normalization.gainDb,normalizationLinear:true,normalizationClippedSamples:0});
+}
+if(drums){
+ assert.equal(drumChecks,mixChecks);assert.ok(drumEnvelopeChecks>0);
+ // The trace stops at the next lead attack, after that repeat's first kick.
+ const firstLoop=drumAttacks.filter(h=>h.cycle<restartCycle-9600000*.5);
+ const count=Math.ceil(musicSeconds/(.476190*.5));assert.equal(firstLoop.length,count);
+ let maxError=0;
+ for(let n=0;n<firstLoop.length;n++)maxError=Math.max(maxError,Math.abs((firstLoop[n].cycle-firstLoop[0].cycle)/9600000-n*.476190*.5)*1000);
+ assert.ok(maxError<25);assert.equal(drumAttacks.at(-1).kind,'kick');
+ Object.assign(report,{drumChecks,drumEnvelopeChecks,drumAttacks:firstLoop.length,
+  drumAttacksByType:{kick:firstLoop.filter(h=>h.kind==='kick').length,hat:firstLoop.filter(h=>h.kind==='hat').length},
+  maximumDrumOnsetErrorMs:maxError,drumGeneratorMatchesRetainedKit:true,drumGainRounded:true,
+  independentDrumVoices:1,normalizationIncludesDrums:true});
 }
 if(meta.arrangement)Object.assign(report,{arrangementPolicy:meta.arrangement.policy,playedNotes:totalNotes,
  arrangedNoteGatesVerified:true,leadSourceNoteGatesVerified:true,

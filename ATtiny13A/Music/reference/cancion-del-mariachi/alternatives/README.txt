@@ -54,6 +54,16 @@ The first sparse audition above was subsequently extended to source beat
 shapes and a gate palette preserve the new triplets, sixteenths and three-note
 lead chords. Every build calibrates the complete unscaled AVR output, then
 uses fixed linear peak gain x4 around midpoint 128: physical PWM codes 0..248.
-The normalized firmware occupies 1006 Flash bytes; WAV export separately
+At that stage the normalized firmware occupied 1006 Flash bytes; WAV export separately
 normalizes the filtered signal to full digital peak. All builders, calibration
 and audit scripts are retained under tools/.
+
+At the user's request, the current version also uses the previous ensemble's
+GM35 kick and GM42 closed hat, alternating every half-quarter. These are newly
+added accompaniment, not an original soundtrack drum transcription. The old
+triangle/noise generators and four-stage decay are retained; final quiet gain
+rounds to nearest to avoid a persistent negative one-code tail. All 381 guitar
+notes are unchanged. Six tonal generators and one drum generator fit in exactly
+1024 Flash bytes after moving the 15 pitch steps into 30 free EEPROM bytes.
+The complete mix calibrates to PWM 0..252, and the exported WAV to 0 dBFS.
+The --no-percussion builder option reproduces the previous minute exactly.

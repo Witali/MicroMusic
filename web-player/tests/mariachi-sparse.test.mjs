@@ -6,7 +6,7 @@ import {createHash} from 'node:crypto';
 const base=new URL('../../ATtiny13A/Music/variants/cancion-del-mariachi-sparse/',import.meta.url);
 const read=name=>readFileSync(new URL(name,base));
 const meta=JSON.parse(read('build-report.json')),score=JSON.parse(read('compiled-score.json'));
-const arrangement=JSON.parse(read('arrangement.json')),rom=read('synth.bin');
+const arrangement=JSON.parse(read('arrangement.json')),rom=read('synth.bin'),eeprom=read('eeprom.bin');
 const original=JSON.parse(readFileSync(new URL('../cancion-del-mariachi-polyphonic/compiled-score.json',base)));
 const hash=b=>createHash('sha256').update(b).digest('hex');
 const source=JSON.parse(readFileSync(new URL('../../reference/cancion-del-mariachi/source-events.json',base)));
@@ -46,7 +46,7 @@ test('Mariachi sparse: preserves every original lead note and leaves space betwe
   }
   assert.equal(meta.verifiedLosslessScore,false,'Rearranged backing is not claimed to preserve all source notes');
   assert.equal(meta.verifiedCodecRoundTrip,true);assert.equal(meta.playedNotes,381);
-  assert.equal(rom.length,1006);assert.ok(rom.length<=1024);
+  assert.equal(rom.length,1024);assert.ok(rom.length<=1024);
 });
 
 test('Mariachi sparse: compact Flash decoder retains all 381 arranged notes and their gates',()=>{
@@ -60,11 +60,13 @@ test('Mariachi sparse: compact Flash decoder retains all 381 arranged notes and 
         expand(rom[address],depth+1);expand(rom[address+1],depth+1);return;
       }
       const address=meta.labels.song_bases+symbol*2,packed=rom[address+1];
-      const on=end+80*rom[meta.labels.song_gaps+((packed>>4)&7)];end=on+80*rom[meta.labels.song_gates+(packed&15)];
-      const pitches=[],shape=meta.labels.song_shapes+rom[address],count=rom[shape];
-      for(let voice=0;voice<count;voice++){
-        const step=rom.readUInt16LE(shape+1+2*voice);assert.ok(step);
-        pitches.push(Math.round(69+12*Math.log2(step*18750/65536/440)));
+      const on=end+80*((packed>>2)&62);end=on+80*rom[meta.labels.song_gates+(packed&7)];
+      const pitches=[];let shape=meta.labels.song_shapes+rom[address];
+      for(let voice=0;;voice++){
+        assert.ok(voice<3);const entry=rom[shape++],step=eeprom.readUInt16LE(entry&127);assert.ok(step);
+        const pitch=Math.round(69+12*Math.log2(step*18750/65536/440));
+        assert.equal(step,Math.round(440*2**((pitch-69)/12)*65536/18750),'DDS pitch precision is unchanged');pitches.push(pitch);
+        if(entry&128)break;
       }
       groups.push({on,off:end,pitches,velocity:80});
     }
@@ -91,13 +93,27 @@ test('Mariachi sparse: real PWM and exported WAV use their peak range with a fix
   assert.equal(normalization.table[-normalization.minimum],128);
   for(let i=0;i<normalization.table.length;i++)
     assert.equal(normalization.table[i],128+4*(i+normalization.minimum));
-  assert.deepEqual(report.pwmRange,[0,248]);assert.equal(report.normalizationClippedSamples,0);
+  assert.deepEqual(report.pwmRange,[0,252]);assert.equal(report.normalizationClippedSamples,0);
   assert.equal(report.normalizationChecks,report.mixChecks);
   const wav=read('preview.wav'),level=JSON.parse(read('preview-level.json'));
   assert.equal(level.flashSha256,hash(rom));assert.equal(level.wavSha256,hash(wav));
   assert.equal(level.normalized,true);assert.equal(level.peakTarget,1);
   let min=32767,max=-32768;for(let n=44;n<wav.length;n+=2){const s=wav.readInt16LE(n);min=Math.min(min,s);max=Math.max(max,s);}
   assert.equal(Math.max(-min,max),32767);assert.equal(wav.readUInt32LE(40)/(48000*2),61);
+});
+
+test('Mariachi sparse: retained old kick/hat profiles run independently of all guitar notes',()=>{
+  const previous=JSON.parse(readFileSync(new URL('../cancion-del-mariachi/build-report.json',base)));
+  const drum=meta.percussionProfile,report=JSON.parse(read('verification.json'));
+  for(const role of ['kick','hat'])assert.deepEqual(drum.hits[role],previous.percussionProfile.hits[role]);
+  assert.deepEqual(Object.keys(drum.hits),['kick','hat']);assert.equal(drum.attenuationShift,3);
+  assert.deepEqual(meta.partVoiceCounts,[3,3]);assert.equal(meta.oscillators,6);
+  assert.equal(drum.independentDrumVoices,1);assert.equal(drum.quarterBeatsPerHit,.5);
+  assert.equal(report.drumChecks,report.mixChecks);assert.ok(report.drumEnvelopeChecks>4000);
+  assert.deepEqual(report.drumAttacksByType,{kick:127,hat:126});assert.equal(report.drumAttacks,253);
+  assert.equal(report.drumGeneratorMatchesRetainedKit,true);assert.equal(report.normalizationIncludesDrums,true);
+  assert.ok(report.maximumDrumOnsetErrorMs<25);assert.equal(report.phaseStateBytes,24);
+  assert.ok(report.maxStackBytes<=9);assert.equal(report.sramUsedWorstCase,56);
 });
 
 test('Mariachi sparse: catalogue offers new arrangement and keeps the original full score separately',()=>{
