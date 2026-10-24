@@ -34,8 +34,11 @@ def specialize(data, original):
     """Concrete five-state SRAM architecture, with an MCU-side PWM ring."""
     roles=('lead','keys','pluck');banks=(0,16,32)
     models=tuple(data[role] for role in ('lead_envelope_model','accompaniment_envelope_model','pluck_envelope_model'))
-    if models not in (('bowed','piano','pluck'),('sustain','bowed','bowed'),('piano','piano','off'),('piano','pluck','off'),('piano','off','off'),('pluck','pluck','pluck')):
+    if models not in (('bowed','piano','pluck'),('sustain','bowed','bowed'),('piano','piano','off'),('piano','pluck','off'),('piano','off','off'),('pluck','pluck','pluck'),('pluck','piano','pluck')):
         raise ValueError('Unsupported release-slot instrument combination')
+    guitar_trio=models==('pluck','piano','pluck')
+    if guitar_trio and tuple(data.get(role+'_decay_mask') for role in roles)!=(1,3,3):
+        raise ValueError('Guitar/piano/bass requires measured decay masks 1/3/3')
     if data.get('keys_rest_check') or data.get('pluck_rest_check'):
         raise ValueError('Release-slot profile requires nonzero companion DDS tables')
     if any(data[role+'_attack_step'] != 4 for role, model in zip(roles,models) if model in ('bowed','sustain')):
@@ -47,6 +50,9 @@ def specialize(data, original):
     caps=[data[role+'_max_level'] for role in roles]
     descriptors=[bank|(64 if model=='piano' else 0) for bank,model in zip(banks,models)]
     percussion=data.get('percussion_enabled',False)
+    drum_units=data.get('percussion_half_beat_units')
+    if drum_units is not None and (not percussion or type(drum_units) is not int or not 1<=drum_units<=64):
+        raise ValueError('percussion_half_beat_units requires percussion and 1..64 grid units')
     trigger=lambda voice:(f'  lds r16, {addresses[voice]}\n  andi r16, 15\n  lsr r16\n  ori r16, {128+descriptors[voice]}\n'
                           if data.get(roles[voice]+'_retrigger')!='full' else f'  ldi r16, {128+descriptors[voice]+caps[voice]}\n')+f'  sts {addresses[voice]}, r16\n'
     header='''.section .text,"ax",@progbits
@@ -87,6 +93,7 @@ fill_ring:
   mov r3, r16
 '''
     if percussion:header+='  clr r5\n  ldi r19, 7\n  ldi r20, 4\n  ldi r16, 167\n  mov r14, r16\n'
+    if drum_units is not None:header+='  ldi r19, 6\n  ldi r16, 1\n  mov r8, r16\n'
     header+='''  ldi r30, lo8(first_section)
   ldi r31, hi8(first_section)
   sbi 23, 1
@@ -152,6 +159,7 @@ state_mask:
 '''
         if held:header+='  sbrs r16, 4\n  lsr r25\n'
         elif all(model == 'pluck' for model in models):header+='  lsr r25\n'
+        elif guitar_trio:header+='  mov r17, r16\n  andi r17, 48\n  brne state_gate\n  lsr r25\n'
         if data.get('dds_fast_decay_roles'):
             header+='''  subi r26, 253
   ld r0, X+
@@ -193,7 +201,10 @@ envelope_store:
   ret
 grid_step:
 '''
-    if percussion:header+='  inc r19\n  andi r19, 7\n  sbrc r19, 0\n  rjmp .L0ba\ndrum_trigger:\n  sbrc r20, 7\n  rjmp .L0ba\n  clr r20\n  ldi r16, 167\n  mov r14, r16\n'
+    if percussion:
+        if drum_units is None:header+='  inc r19\n  andi r19, 7\n  sbrc r19, 0\n  rjmp .L0ba\n'
+        else:header+=f'  dec r8\n  brne .L0ba\n  ldi r16, {drum_units}\n  mov r8, r16\n  subi r19, 254\n  andi r19, 7\n'
+        header+='drum_trigger:\n  sbrc r20, 7\n  rjmp .L0ba\n  clr r20\n  ldi r16, 167\n  mov r14, r16\n'
     header+='.L0ba:\n  dec r1\n  breq read_event\n  ret\n'
     decoder=original[original.index('read_event:'):original.index('render_tone:')]
     start,end=decoder.index('note_off:'),decoder.index('release_lead:')
@@ -255,6 +266,10 @@ lead_commit:
   rjmp hold_sample
 '''+decoder[end:]
     decoder=decoder.replace('  add r30, r28\n','  add r30, r4\n').replace('  inc r28\n','  inc r4\n').replace('  cpi r28, PLAYLIST_LEN\n','  mov r17, r4\n  cpi r17, PLAYLIST_LEN\n').replace('  clr r28\n','  clr r4\n')
+    if drum_units is not None:
+        # R4 names the selected phrase here, before INC advances it. Preserve
+        # R16: it already contains that phrase's Flash offset from LPM.
+        decoder=decoder.replace('  inc r4\n',f'  tst r4\n  brne drum_loop_continues\n  clr r19\n  clr r20\n  ldi r17, {drum_units}\n  mov r8, r17\n  ldi r17, 167\n  mov r14, r17\ndrum_loop_continues:\n  inc r4\n',1)
     decoder=decoder.replace('  ldi r21, 3\n','  ldi r20, 3\n')
     release_start,release_end=decoder.index('release_lead:'),decoder.index('chord_event:')
     release_body=decoder[release_start:release_end]
