@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {AVRCore} from '../lib/avr-core.js';
 
-const variants=['rhythmic','alicia','turkish-march','children','greensleeves'];
+const variants=['rhythmic','alicia','turkish-march','children','greensleeves','cancion-del-mariachi'];
 function image(name){
   const base=new URL(`../../ATtiny13A/Music/variants/${name}/`,import.meta.url);
   const read=n=>readFileSync(new URL(n,base));
