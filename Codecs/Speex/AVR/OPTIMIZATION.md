@@ -533,13 +533,7 @@ and portable-iir-phases-library.json retain source/image hashes and evidence.
 
 ## Next candidates (not yet measured/admitted)
 
-1. **Separate coefficient-age/steady phases in C.** The C IIR still tests
-   i<10 inside its forty-sample loop. A split could remove that test, but
-   register allocation, constant propagation, duplicated code and stack may
-   offset the gain. Keep native signed16 multiply: the measured byte-product
-   substitute was substantially slower. Measure full streams and C PWM.
-
-2. **Batch NB3 innovation indices.** Four five-bit fields per subframe repeat
+1. **Batch NB3 innovation indices.** Four five-bit fields per subframe repeat
    reader validation/state updates. The sampled profile attributes 3.83% to
    generic plus constant-propagated bit-reader functions. A bounded batch
    reader may amortize overhead, but needs independent boundary/overflow and
@@ -551,6 +545,13 @@ ongoing optimization goal complete while useful candidates remain untested.
 
 ## Rejected or superseded experiments
 
+- C IIR phase splits (base 098c3d9) preserve all 9,100 AVR frames and each
+  passes two million native full-signed16 direct/transposed samples. The simple
+  split increases corpus mean by 2.7157%; also caching two coefficients in C
+  scalars increases it by 1.9606%. Both grow Flash 514 B with unchanged static
+  SRAM/stack. Retain the previous C loop. No PWM admission for rejected
+  candidates. Reports c-iir-phase-*.json and both cookbook patches retain
+  the evidence; the successful ASM split does not predict C compiler behavior.
 - Portable byte-product C MAC (base d000fc4) is exact on 1,310,720 independent
   pairs per implementation and all 9,100 decoder frames, but takes 119 versus
   69..73 standalone cycles, increases corpus mean by 34.3396% and Flash by

@@ -94,6 +94,28 @@ node tests/verify_avr.mjs --backend c --verify-reset --oracle /path/to/oracle
 по себе не предсказывает результат C-компилятора: важны переносы, расширения,
 регистры и r1; ASM method B имеет другую последовательность инструкций.
 
+## Разделение C IIR на фазы — отклонённые эксперименты
+
+`nb3-c-iir-split.patch` и `nb3-c-iir-cached.patch`, база `098c3d9`, пути
+относительно `Codecs/Speex/AVR/`. Первый выделяет десять обновлений коэффициентов
+в отдельный цикл, затем выполняет тридцать шагов без age-test. Второй также
+выносит два неизменных коэффициента в скаляры. Авторские C-прототипы сохраняют
+modulo-32 math и точный порядок age updates, selectable C/architecture defines
+и Xiph BSD notices. Проверены in-place и separate I/O.
+
+На ATmega328P / AVR GCC 7.3 mixed Os/O2/O3+LTO оба точны на 9 100 кадрах
+и проходят по 2 млн native direct/transposed LPC-сэмплов (Clang AMD64 O2,
+fwrapv, fno-strict-aliasing), но **замедляют** полное декодирование на
+2,7157% / 1,9606%. Flash у обоих +514 Б, static SRAM/stack прежние.
+Кандидаты отклонены, production C IIR прежний. Ускорение ручного ASM тем же
+алгоритмическим приёмом не доказывает результат C-компилятора. Точная причина
+разницы здесь не установлена. Иные MCU и физическая плата не измерены;
+PWM admission для отклонённых вариантов не проводился.
+
+В отдельную копию базы применить один patch, собрать `--backend c` и выполнить
+обычные `verify_pcm.py`/`verify_avr.mjs` из README кодека. Сохранённые отчёты:
+`Codecs/Speex/AVR/reports/c-iir-phase-*.json`.
+
 ## Скалярный ASM-вход для одного сэмпла — исходный прототип
 
 `nb3-scalar-boundary.patch`, база `db4f492`, добавляет отдельный ASM-вход для

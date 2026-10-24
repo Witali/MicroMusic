@@ -1,0 +1,423 @@
+{
+  "baseCommit": "098c3d9",
+  "backend": "c",
+  "asmEnabled": false,
+  "simulator": "avr8js 0.21.1",
+  "physicalBoardTested": false,
+  "includesInterrupts": false,
+  "compiler": "AVR GCC 7.3.0 mixed Os/O2/O3, LTO, fwrapv, fno-strict-aliasing",
+  "nativeCompiler": "Clang 24.0.0git AMD64, O2, fwrapv, fno-strict-aliasing",
+  "scope": "Exact whole corpus and native full-signed16 changing LPC tests; no PWM admission for rejected candidates. ASM phase result does not establish C compiler behavior.",
+  "variants": [
+    {
+      "variant": "split",
+      "decision": "rejected: slower and larger; production C unchanged",
+      "beforeWeightedMeanCycles": 240912.816,
+      "afterWeightedMeanCycles": 247455.225,
+      "meanTimeIncreasePercent": 2.7157,
+      "beforeFlashBytes": 11836,
+      "afterFlashBytes": 12350,
+      "beforeMaxCycles": 254619,
+      "afterMaxCycles": 261191,
+      "staticSramBytes": 1119,
+      "stackBytes": 153,
+      "exactFrames": 9100,
+      "streams": 31,
+      "nativeDirectTransposedSamples": 2000000,
+      "nativeBinarySha256": "485e752fb6a5c73f0af5481d7cd70cfb6b82819b51d1a1b17d204a64e39aba76",
+      "rows": [
+        {
+          "stream": "adversarial_24.spxraw",
+          "frames": 24,
+          "beforeMeanCycles": 238861,
+          "afterMeanCycles": 245596
+        },
+        {
+          "stream": "chirp.spxraw",
+          "frames": 100,
+          "beforeMeanCycles": 216241,
+          "afterMeanCycles": 222387
+        },
+        {
+          "stream": "hard_clipped.spxraw",
+          "frames": 100,
+          "beforeMeanCycles": 206597,
+          "afterMeanCycles": 213099
+        },
+        {
+          "stream": "impulses.spxraw",
+          "frames": 100,
+          "beforeMeanCycles": 190244,
+          "afterMeanCycles": 196493
+        },
+        {
+          "stream": "random_40.spxraw",
+          "frames": 40,
+          "beforeMeanCycles": 246148,
+          "afterMeanCycles": 252654
+        },
+        {
+          "stream": "sample_mode3_8kbps.spxraw",
+          "frames": 100,
+          "beforeMeanCycles": 206780,
+          "afterMeanCycles": 213670
+        },
+        {
+          "stream": "silence.spxraw",
+          "frames": 100,
+          "beforeMeanCycles": 136203,
+          "afterMeanCycles": 144681
+        },
+        {
+          "stream": "speech_from_wb16_lowband.spxraw",
+          "frames": 147,
+          "beforeMeanCycles": 209930,
+          "afterMeanCycles": 217027
+        },
+        {
+          "stream": "speech_ru.spxraw",
+          "frames": 147,
+          "beforeMeanCycles": 209269,
+          "afterMeanCycles": 216397
+        },
+        {
+          "stream": "voicelike.spxraw",
+          "frames": 100,
+          "beforeMeanCycles": 213817,
+          "afterMeanCycles": 220760
+        },
+        {
+          "stream": "white_noise.spxraw",
+          "frames": 100,
+          "beforeMeanCycles": 247537,
+          "afterMeanCycles": 253540
+        },
+        {
+          "stream": "en_letter_a.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 247692,
+          "afterMeanCycles": 254149
+        },
+        {
+          "stream": "en_letter_b.spxraw",
+          "frames": 403,
+          "beforeMeanCycles": 246452,
+          "afterMeanCycles": 252956
+        },
+        {
+          "stream": "en_normcore_a.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 240851,
+          "afterMeanCycles": 247266
+        },
+        {
+          "stream": "en_normcore_a_quiet_minus24dB.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 233545,
+          "afterMeanCycles": 240207
+        },
+        {
+          "stream": "en_normcore_b.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 240552,
+          "afterMeanCycles": 247003
+        },
+        {
+          "stream": "en_portrait_a.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 246559,
+          "afterMeanCycles": 253021
+        },
+        {
+          "stream": "en_portrait_b.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 248046,
+          "afterMeanCycles": 254494
+        },
+        {
+          "stream": "en_sense_a.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 246813,
+          "afterMeanCycles": 253275
+        },
+        {
+          "stream": "en_sense_a_white_noise_15dB.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 247528,
+          "afterMeanCycles": 253923
+        },
+        {
+          "stream": "en_sense_b.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 245610,
+          "afterMeanCycles": 251986
+        },
+        {
+          "stream": "ru_pushkin_a.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 246670,
+          "afterMeanCycles": 253387
+        },
+        {
+          "stream": "ru_pushkin_b.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 242921,
+          "afterMeanCycles": 249543
+        },
+        {
+          "stream": "ru_russia_a.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 247900,
+          "afterMeanCycles": 254362
+        },
+        {
+          "stream": "ru_russia_a_white_noise_15dB.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 248562,
+          "afterMeanCycles": 254978
+        },
+        {
+          "stream": "ru_russia_b.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 242937,
+          "afterMeanCycles": 249622
+        },
+        {
+          "stream": "ru_slutskaya_a.spxraw",
+          "frames": 403,
+          "beforeMeanCycles": 247763,
+          "afterMeanCycles": 254180
+        },
+        {
+          "stream": "ru_slutskaya_b.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 247950,
+          "afterMeanCycles": 254340
+        },
+        {
+          "stream": "ru_square_a.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 246305,
+          "afterMeanCycles": 252854
+        },
+        {
+          "stream": "ru_square_a_quiet_minus24dB.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 245783,
+          "afterMeanCycles": 252407
+        },
+        {
+          "stream": "ru_square_b.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 247197,
+          "afterMeanCycles": 253755
+        }
+      ]
+    },
+    {
+      "variant": "cached",
+      "decision": "rejected: slower and larger; production C unchanged",
+      "beforeWeightedMeanCycles": 240912.816,
+      "afterWeightedMeanCycles": 245636.126,
+      "meanTimeIncreasePercent": 1.9606,
+      "beforeFlashBytes": 11836,
+      "afterFlashBytes": 12350,
+      "beforeMaxCycles": 254619,
+      "afterMaxCycles": 259233,
+      "staticSramBytes": 1119,
+      "stackBytes": 153,
+      "exactFrames": 9100,
+      "streams": 31,
+      "nativeDirectTransposedSamples": 2000000,
+      "nativeBinarySha256": "84d4c1b255b952829e2a0a45bba430ff43d4fb695c67bc763368bd6387d3faf1",
+      "rows": [
+        {
+          "stream": "adversarial_24.spxraw",
+          "frames": 24,
+          "beforeMeanCycles": 238861,
+          "afterMeanCycles": 243768
+        },
+        {
+          "stream": "chirp.spxraw",
+          "frames": 100,
+          "beforeMeanCycles": 216241,
+          "afterMeanCycles": 220697
+        },
+        {
+          "stream": "hard_clipped.spxraw",
+          "frames": 100,
+          "beforeMeanCycles": 206597,
+          "afterMeanCycles": 211262
+        },
+        {
+          "stream": "impulses.spxraw",
+          "frames": 100,
+          "beforeMeanCycles": 190244,
+          "afterMeanCycles": 194935
+        },
+        {
+          "stream": "random_40.spxraw",
+          "frames": 40,
+          "beforeMeanCycles": 246148,
+          "afterMeanCycles": 250891
+        },
+        {
+          "stream": "sample_mode3_8kbps.spxraw",
+          "frames": 100,
+          "beforeMeanCycles": 206780,
+          "afterMeanCycles": 211680
+        },
+        {
+          "stream": "silence.spxraw",
+          "frames": 100,
+          "beforeMeanCycles": 136203,
+          "afterMeanCycles": 142694
+        },
+        {
+          "stream": "speech_from_wb16_lowband.spxraw",
+          "frames": 147,
+          "beforeMeanCycles": 209930,
+          "afterMeanCycles": 215150
+        },
+        {
+          "stream": "speech_ru.spxraw",
+          "frames": 147,
+          "beforeMeanCycles": 209269,
+          "afterMeanCycles": 214526
+        },
+        {
+          "stream": "voicelike.spxraw",
+          "frames": 100,
+          "beforeMeanCycles": 213817,
+          "afterMeanCycles": 218722
+        },
+        {
+          "stream": "white_noise.spxraw",
+          "frames": 100,
+          "beforeMeanCycles": 247537,
+          "afterMeanCycles": 251862
+        },
+        {
+          "stream": "en_letter_a.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 247692,
+          "afterMeanCycles": 252375
+        },
+        {
+          "stream": "en_letter_b.spxraw",
+          "frames": 403,
+          "beforeMeanCycles": 246452,
+          "afterMeanCycles": 251166
+        },
+        {
+          "stream": "en_normcore_a.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 240851,
+          "afterMeanCycles": 245477
+        },
+        {
+          "stream": "en_normcore_a_quiet_minus24dB.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 233545,
+          "afterMeanCycles": 238378
+        },
+        {
+          "stream": "en_normcore_b.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 240552,
+          "afterMeanCycles": 245196
+        },
+        {
+          "stream": "en_portrait_a.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 246559,
+          "afterMeanCycles": 251240
+        },
+        {
+          "stream": "en_portrait_b.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 248046,
+          "afterMeanCycles": 252729
+        },
+        {
+          "stream": "en_sense_a.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 246813,
+          "afterMeanCycles": 251504
+        },
+        {
+          "stream": "en_sense_a_white_noise_15dB.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 247528,
+          "afterMeanCycles": 252090
+        },
+        {
+          "stream": "en_sense_b.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 245610,
+          "afterMeanCycles": 250224
+        },
+        {
+          "stream": "ru_pushkin_a.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 246670,
+          "afterMeanCycles": 251521
+        },
+        {
+          "stream": "ru_pushkin_b.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 242921,
+          "afterMeanCycles": 247680
+        },
+        {
+          "stream": "ru_russia_a.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 247900,
+          "afterMeanCycles": 252591
+        },
+        {
+          "stream": "ru_russia_a_white_noise_15dB.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 248562,
+          "afterMeanCycles": 253129
+        },
+        {
+          "stream": "ru_russia_b.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 242937,
+          "afterMeanCycles": 247751
+        },
+        {
+          "stream": "ru_slutskaya_a.spxraw",
+          "frames": 403,
+          "beforeMeanCycles": 247763,
+          "afterMeanCycles": 252397
+        },
+        {
+          "stream": "ru_slutskaya_b.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 247950,
+          "afterMeanCycles": 252551
+        },
+        {
+          "stream": "ru_square_a.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 246305,
+          "afterMeanCycles": 250976
+        },
+        {
+          "stream": "ru_square_a_quiet_minus24dB.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 245783,
+          "afterMeanCycles": 250504
+        },
+        {
+          "stream": "ru_square_b.spxraw",
+          "frames": 402,
+          "beforeMeanCycles": 247197,
+          "afterMeanCycles": 251893
+        }
+      ]
+    }
+  ]
+}
