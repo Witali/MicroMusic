@@ -209,8 +209,8 @@ binary measurements. Vendor and R4 files remain unmodified.
   Production hashes equal the independently verified fixture experiments:
   ASM max 133,054 -> 130,369, Flash 8,754 -> 8,750 B, peak stack 143 -> 141;
   C max 271,191 -> 268,681, Flash 9,684 -> 9,694 B, peak stack 151 -> 153.
-  All 1,058 fixture/reset frames pass in each backend. Full-corpus and
-  timer/ISR admission for this series remain pending.
+  All 1,058 fixture/reset frames pass in each backend. The combined series
+  below also passes complete corpus and loaded timer/ISR admission.
 
 - Reclaim pitch workspace for synthesis: qlsp stays live at offset 0 (20 B),
   pitch uses 20..139 during excitation; after it dies, rewind the local
@@ -224,12 +224,35 @@ binary measurements. Vendor and R4 files remain unmodified.
   C pays about 26 cycles/frame and 4 B Flash for the same 40 B SRAM saving.
   Direct typed views were smaller but cost ASM about 260 cycles per four
   conversions and 2 B stack; retain the faster common allocator path.
-  All 1,058 fixture/reset frames per backend pass; final corpus/PWM tests
-  are running from isolated source copies with matching file hashes.
+  All 13,196 corpus/pitch frames and 58 envelope/reset frames per backend
+  pass with a single firmware hash. ASM weighted corpus mean falls 2.0941%
+  versus the previous admitted image (127,621.476 -> 124,949.016 cycles);
+  C falls 0.9502% (261,406.472 -> 258,922.472). Corpus maxima become
+  130,449 / 269,797 cycles; pitch-coverage maxima 130,673 / 270,362.
+  All 31 loaded players per backend pass exact PWM, independently counted
+  loads, zero underruns and intact SRAM: ASM +128,000 cycles/frame (40%),
+  minimum queue 28, maximum publication gap 199,290 cycles, free SRAM 564 B;
+  C +32,000 (10%), queue 41, gap 173,573, free SRAM 552 B. Runs use isolated
+  source copies whose 67 source/tool/test file hashes match the main tree.
+  All 31 ordinary players also pass. ASM minimum queue 73, maximum gap
+  80,013 cycles, speech demo 11,954 B Flash; C queue 58, gap 140,476,
+  demo 12,888 B. Static player SRAM is 1,334 B, observed stack 150 / 162 B.
+  The rebuilt main ASM mailbox matches the 13,254-frame verified hash;
+  the rebuilt main speech demo matches the independently simulated clone.
+  Reports: phase-reuse-{asm,c}-{summary,means,headroom-summary}.json.
 
 ## Next candidates (not yet admitted)
 
-1. **Ten-sample pitch staging.** Upstream pitch sources always have negative
+1. **Fuse long-pitch products and innovation.** For pitch>=41 all three taps
+   read completed negative excitation indices. Compute their signed24-bounded
+   sum in registers, clamp and combine with innovation without writing and
+   rereading the 120-byte pitch array. Adjacent samples share two source words,
+   so a rolling three-word window may also remove redundant history reads.
+   Retain the existing segmented path for shorter pitch, exact signed sums,
+   deferred scaling and clamps. Prototype C first; compare zero-gain paths,
+   whole-frame speed and stack before implementing ASM. Not yet measured.
+
+2. **Ten-sample pitch staging.** Upstream pitch sources always have negative
    offsets: the first segment stops before `j==pp`, the second before
    `j==pp+pitch`. Thus a completed innovation vector can be written before the
    next vector's pitch is computed. A 30-byte packed pitch buffer could replace
