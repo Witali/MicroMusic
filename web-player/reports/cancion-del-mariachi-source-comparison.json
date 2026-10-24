@@ -1,0 +1,368 @@
+{
+  "scope": "Current reduced AVR image compared with the retained third-party two-guitar transcription; not an authenticated film score or recording.",
+  "sourceJsonSha256": "3bdfb9a7756aff5f395199f25aaa9787695d5bffb238dd7cd16bf2cbb842dda9",
+  "sourceMidiSha256": "d4ecee581603b3cac662fceb0d333289e17a635f4e7f998b0da548b6c85c90b7",
+  "flashSha256": "4958f03dec535cf68dcf7e6783c5a607f5a4745347589119e40c1d8193950d26",
+  "eepromSha256": "b9f3a74d012b9c3c3b7a1944e06a9a7314e4e8ea7413580f6a5931a4c35b85ae",
+  "audioVerification": {
+    "file": "Cancion-del-Mariachi-v3-guitars-reduced.wav",
+    "seconds": 31.65,
+    "sampleRate": 48000,
+    "sha256": "787dbb369ad279b8a1d218fd54bde1454bd3a068dfc980d4faa0140917ce320b",
+    "bitIdenticalToNewRender": true,
+    "render": {
+      "seconds": 31.65,
+      "channels": 1,
+      "sampleRate": 48000,
+      "min": -0.246792067900248,
+      "max": 0.23834842023656688,
+      "maxIsrCycles": 15,
+      "lostIrq": 0
+    }
+  },
+  "excerpt": {
+    "firstSourceQuarterBeat": 58,
+    "lastSourceQuarterBeat": 121,
+    "musicSeconds": 29.999970000000005,
+    "loopSeconds": 31.746000000000002,
+    "sourceNoteCount": 1027,
+    "sourcePeakPolyphony": 7
+  },
+  "originalTracks": [
+    {
+      "track": 0,
+      "name": "Gtr.1 Antonio",
+      "sourceNotes": 117,
+      "sourceChordAttacks": 94,
+      "exactSourceAttacksInAnyTonalRole": 94,
+      "exactSourceGatesInAnyTonalRole": 94,
+      "sourceAttacksMatchedByRole": {
+        "lead": 94,
+        "rhythmGuitar": 0,
+        "bass": 0
+      },
+      "uniqueSourceNotesUsedByLead": 94,
+      "leadRetriggers": 94,
+      "leadExactSourceOnOff": 94,
+      "notUsedByLead": 23
+    },
+    {
+      "track": 1,
+      "name": "Gtr.2 Meysam",
+      "sourceNotes": 910,
+      "sourceChordAttacks": 167,
+      "exactSourceAttacksInAnyTonalRole": 161,
+      "exactSourceGatesInAnyTonalRole": 50,
+      "sourceAttacksMatchedByRole": {
+        "lead": 51,
+        "rhythmGuitar": 55,
+        "bass": 55
+      },
+      "uniqueSourceNotesUsedByLead": 52,
+      "leadRetriggers": 52,
+      "leadExactSourceOnOff": 50,
+      "notUsedByLead": 858
+    }
+  ],
+  "arrangement": {
+    "tonalAttacks": 272,
+    "attacksByRole": {
+      "lead": 146,
+      "rhythmGuitar": 63,
+      "bass": 63
+    },
+    "primaryHeldPolyphony": 3,
+    "releaseSlots": 2,
+    "percussionAdded": true,
+    "allLeadNotesFromCurrentlyActiveSource": true,
+    "uniqueOriginalNotesUsedByLead": 146,
+    "leadExtraRetriggers": 0,
+    "instrumentAssignments": {
+      "lead": {
+        "instrument": "acoustic-guitar-nylon",
+        "label": "Акустическая гитара с нейлоновыми струнами",
+        "gmProgram": 24,
+        "eepromOffset": 0,
+        "level": 15,
+        "envelope": {
+          "model": "pluck",
+          "defaultLevel": 15,
+          "decayMask": 1,
+          "retrigger": "peak",
+          "releaseStep": 1
+        }
+      },
+      "keys": {
+        "instrument": "acoustic-guitar-nylon",
+        "label": "Акустическая гитара с нейлоновыми струнами",
+        "gmProgram": 24,
+        "eepromOffset": 16,
+        "level": 10,
+        "envelope": {
+          "model": "pluck",
+          "defaultLevel": 15,
+          "decayMask": 1,
+          "retrigger": "peak",
+          "releaseStep": 1
+        }
+      },
+      "pluck": {
+        "instrument": "fretless-bass",
+        "label": "Безладовый бас",
+        "gmProgram": 35,
+        "eepromOffset": 32,
+        "level": 8,
+        "envelope": {
+          "model": "pluck",
+          "defaultLevel": 6,
+          "decayMask": 3,
+          "retrigger": "peak",
+          "releaseStep": 1
+        }
+      },
+      "percussion": {
+        "instrument": "natural-kit",
+        "label": "Естественная ударная установка",
+        "level": 2,
+        "enabled": true,
+        "notes": [
+          {
+            "gmNote": 35,
+            "label": "Басовый барабан"
+          },
+          {
+            "gmNote": 38,
+            "label": "Малый барабан"
+          },
+          {
+            "gmNote": 42,
+            "label": "Закрытый хай-хэт"
+          }
+        ],
+        "generator": "AVR triangle kick, soft noise plus low snare body, existing long-period hi-hat",
+        "profiles": "ATtiny13A/Music/instruments/percussion-profiles.json",
+        "eepromBytes": 0
+      }
+    }
+  },
+  "comparison": {
+    "definition": "Maximum multiset matches at exact original tick/pitch; ignores timbre and release tails. A played attack matches at most one source attack.",
+    "exactPitchAndOnset": 255,
+    "exactPitchOnsetAndGate": 144,
+    "omittedOrDisplacedOriginalAttacks": 772,
+    "addedOrDisplacedArrangementAttacks": 17,
+    "originalAttackRecallPercent": 24.82960077896787,
+    "exactGuitarPitchAndOnset": 200,
+    "exactGuitarPitchOnsetAndGate": 144,
+    "heldPitchTime": {
+      "definition": "One-to-one active pitch multiplicities on the exact source tick grid; includes bass, excludes percussion/release tails.",
+      "sourcePitchTicks": 172160,
+      "playedPitchTicks": 89760,
+      "commonPitchTicks": 80000,
+      "recallPercent": 46.468401486988846,
+      "precisionPercent": 89.12655971479501
+    }
+  },
+  "meter": {
+    "sourceTimeSignatures": [
+      {
+        "track": 0,
+        "tick": 0,
+        "numerator": 3,
+        "denominator": 4
+      },
+      {
+        "track": 0,
+        "tick": 25920,
+        "numerator": 4,
+        "denominator": 4
+      },
+      {
+        "track": 0,
+        "tick": 87360,
+        "numerator": 2,
+        "denominator": 4
+      },
+      {
+        "track": 0,
+        "tick": 88320,
+        "numerator": 4,
+        "denominator": 4
+      },
+      {
+        "track": 0,
+        "tick": 142080,
+        "numerator": 2,
+        "denominator": 4
+      },
+      {
+        "track": 0,
+        "tick": 143040,
+        "numerator": 4,
+        "denominator": 4
+      }
+    ],
+    "configuredSourceMeter": "4/4",
+    "signaturesApplicableToExcerpt": [
+      {
+        "track": 0,
+        "tick": 25920,
+        "numerator": 4,
+        "denominator": 4
+      }
+    ],
+    "decoderStorageBeatsPerBar": 4,
+    "addedDrumPatternQuarterBeats": 2,
+    "sourceMeterMetadataMatches": true
+  },
+  "actualAvrPlayback": {
+    "commandsVerified": 261,
+    "tonalAttacksVerified": 272,
+    "allPitchesMatchEncodedArrangement": true,
+    "maximumOnsetErrorMs": 14.166249999998826,
+    "maximumGateEndErrorMs": 14.166249999998826,
+    "maximumGateDurationErrorMs": 11.980104166666727,
+    "maximumPitchQuantizationErrorCents": 2.1530851746425674,
+    "lostTimerEvents": 0,
+    "lostWorkEvents": 0,
+    "precisionScope": "Timing against the encoded arrangement, not against omitted original notes; cents error uses the nominal 9.6 MHz clock."
+  },
+  "examples": {
+    "leadRetimedOrShortened": [
+      {
+        "played": {
+          "role": "lead",
+          "pitch": 66,
+          "onSeconds": 3.3333300000000006,
+          "offSeconds": 3.4920600000000004
+        },
+        "original": {
+          "track": 1,
+          "pitch": 66,
+          "onSeconds": 3.1746000000000003,
+          "offSeconds": 3.4920600000000004
+        }
+      },
+      {
+        "played": {
+          "role": "lead",
+          "pitch": 66,
+          "onSeconds": 3.4920600000000004,
+          "offSeconds": 3.65079
+        },
+        "original": {
+          "track": 1,
+          "pitch": 66,
+          "onSeconds": 3.4920600000000004,
+          "offSeconds": 3.8095200000000005
+        }
+      }
+    ],
+    "accompanimentWithoutExactSourceAttack": [
+      {
+        "role": "rhythmGuitar",
+        "pitch": 55,
+        "onSeconds": 0,
+        "offSeconds": 0.47619000000000006
+      },
+      {
+        "role": "bass",
+        "pitch": 40,
+        "onSeconds": 0,
+        "offSeconds": 0.47619000000000006
+      },
+      {
+        "role": "rhythmGuitar",
+        "pitch": 59,
+        "onSeconds": 0.47619000000000006,
+        "offSeconds": 0.9523800000000001
+      },
+      {
+        "role": "bass",
+        "pitch": 47,
+        "onSeconds": 0.47619000000000006,
+        "offSeconds": 0.9523800000000001
+      },
+      {
+        "role": "rhythmGuitar",
+        "pitch": 60,
+        "onSeconds": 0.9523800000000001,
+        "offSeconds": 1.4285700000000001
+      },
+      {
+        "role": "bass",
+        "pitch": 45,
+        "onSeconds": 0.9523800000000001,
+        "offSeconds": 1.4285700000000001
+      },
+      {
+        "role": "rhythmGuitar",
+        "pitch": 59,
+        "onSeconds": 1.4285700000000001,
+        "offSeconds": 1.9047600000000002
+      },
+      {
+        "role": "bass",
+        "pitch": 47,
+        "onSeconds": 1.4285700000000001,
+        "offSeconds": 1.9047600000000002
+      }
+    ],
+    "matchingAttackWithChangedGate": [
+      {
+        "role": "lead",
+        "pitch": 66,
+        "onSeconds": 3.4920600000000004,
+        "offSeconds": 3.65079
+      },
+      {
+        "role": "rhythmGuitar",
+        "pitch": 59,
+        "onSeconds": 3.8095200000000005,
+        "offSeconds": 4.285710000000001
+      },
+      {
+        "role": "bass",
+        "pitch": 47,
+        "onSeconds": 3.8095200000000005,
+        "offSeconds": 4.285710000000001
+      },
+      {
+        "role": "rhythmGuitar",
+        "pitch": 59,
+        "onSeconds": 4.285710000000001,
+        "offSeconds": 4.761900000000001
+      },
+      {
+        "role": "bass",
+        "pitch": 45,
+        "onSeconds": 4.285710000000001,
+        "offSeconds": 4.761900000000001
+      },
+      {
+        "role": "rhythmGuitar",
+        "pitch": 59,
+        "onSeconds": 4.761900000000001,
+        "offSeconds": 5.238090000000001
+      },
+      {
+        "role": "bass",
+        "pitch": 47,
+        "onSeconds": 4.761900000000001,
+        "offSeconds": 5.238090000000001
+      },
+      {
+        "role": "rhythmGuitar",
+        "pitch": 59,
+        "onSeconds": 5.238090000000001,
+        "offSeconds": 5.7142800000000005
+      }
+    ]
+  },
+  "limitations": [
+    "No percentage here is a perceptual similarity score.",
+    "The source is a third-party transcription; fidelity of that transcription to the soundtrack is not established.",
+    "Compact measured guitar profiles approximate a timbre; they do not reproduce the original guitar recording.",
+    "The eight-voice feasibility probe and lossless note packets are not the current AVR song player."
+  ]
+}
