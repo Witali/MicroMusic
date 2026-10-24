@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "sourceCommit": "9f7fff6a77ab05e8060e3bffff8a31983b69a35a",
+  "modelPath": "ATtiny13A/Sound/research/q4-pulse-shapes/head5/best-intelligibility-model.json",
+  "modelSha256": "2b10e6f976602e1ba379f8151ad72cadf61ee9ee378a2f02c26764d752bb2d77",
+  "referenceSha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+  "metrics": {
+    "stoi": 0.893135861645246,
+    "spectrogram_loss": 0.3848495216978015,
+    "fine_log_error": 0.39334184281547346,
+    "envelope_error": 0.43347937016140636,
+    "unsupported_energy": 0.11048763520834443,
+    "missing_energy": 0.10887682943052271,
+    "raw_mean": 0.011075425422054598,
+    "raw_rms": 0.09561557689243359,
+    "peak": 94,
+    "maximum_step": 48,
+    "wrap_counts": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "pcm_sha256": "19286c14df85e5a88e074b519646615bf549df1ca7547c52a357f41d5f2dbc4d",
+    "estoi": 0.7591177708403742,
+    "harmonic_metrics": {
+      "harmonic_track_loss": 0.6842604112642947,
+      "frequency_trajectory_error": 0.851778938507794,
+      "level_error": 1.4717646611964192,
+      "missing_reference_energy": 0.17003030598287686,
+      "extra_candidate_energy": 0.22226856428997543,
+      "weighted_match_rate": 0.8299696940171244,
+      "frequency_error_cents": 46.15811153948682,
+      "frequency_error_hz": 9.162758565514444,
+      "level_error_db": 4.415293983589268,
+      "frequency_error_p95_cents": 106.17752987620149,
+      "frequency_error_p95_hz": 25.13850542681689,
+      "level_error_p95_db": 12.111862250755587,
+      "continuity_break_rate": 0.1487094821784706
+    }
+  },
+  "fullPlayerImplemented": false,
+  "flashQualified": false
+}
