@@ -280,8 +280,8 @@ binary measurements. Vendor and R4 files remain unmodified.
   ten-sample kernel takes 1,442..1,515 vs 1,460..1,533 cycles, including RET;
   all 673,280 independent outputs per backend and 1,058 fixture/reset frames
   pass. Decoder Flash 9,078 -> 9,068 B; static SRAM/global peak stack unchanged.
-  Packed pitch and the C fallback are unchanged. Complete corpus and PWM
-  admission will cover the combined register/bias series.
+  Packed pitch and the C fallback are unchanged. The combined register/bias
+  series below also passes complete corpus and PWM admission.
 
 - Hold the shared innovation rounding byte (32) in preserved r8 across each
   ten-sample block. Save/restore it in both entry paths, below mode-specific
@@ -296,8 +296,13 @@ binary measurements. Vendor and R4 files remain unmodified.
   and pitch-coverage maxima 130,421 / 130,645 (both -64). All 13,196 corpus/
   pitch and 58 envelope/reset frames pass; static SRAM/global stack unchanged.
   A rebuilt C mailbox is byte-identical to its admitted image, retaining the
-  existing corpus, export and 10%-CPU PWM admission. Full ASM PWM gates are
-  running for the combined series. Reports: shared-bias-{before-kernel,kernel,
+  existing corpus, export and 10%-CPU PWM admission. All 31 ordinary ASM
+  players pass: queue >=73, maximum gap 80,013 cycles. All 31 with +40% CPU
+  also pass: queue >=28, maximum gap 199,256, zero underruns and unchanged
+  PWM hashes. Free SRAM remains 564 B; demo Flash 12,280 B with 2,940 B
+  audio, static SRAM 1,334 B, peak stack 150 B. Both main mailbox/demo
+  rebuilds match independently simulated images; both 71-file copies match
+  the main sources. Reports: shared-bias-{before-kernel,kernel,
   fixtures,innovation}.json, register-asm-*.json, register-c-reuse.json.
 
 ## Next candidates (not yet measured/admitted)
