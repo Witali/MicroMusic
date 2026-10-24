@@ -364,6 +364,30 @@ figures do not prove the full decoder's deadline, SRAM bound or 1024-byte fit.
 `probe-word-q4-mul.py` defaults to exhaustive Q4 verification; its `--quick`
 profile is used by the ordinary test suite to avoid repeating millions of calls.
 
+## A word lattice with descending Flash coefficients
+
+[`word-q4/filter.S`](word-q4/filter.S) keeps eight little-endian word states
+and the deemphasis history in **18 SRAM bytes**. Y walks the states backwards;
+Z reads signed Q4 coefficients directly from Flash. The top stage needs one
+multiply, the remaining seven need two. Preserving the old state in r17:r16
+across the shared multiplier avoids temporary SRAM writes. The same source
+supports four or six state fraction bits; only the final arithmetic shifts change.
+
+The assembled arithmetic occupies **172 / 180 bytes**, including the shared
+72-byte multiplier. Complete retained phrases match all three engines, every
+word state and the PWM output, with an IRQ injected between the final ROR and
+rounding ADC. The four-bit cases take up to **1212 cycles**, the six-bit Q4
+teacher up to **1218**, excluding the outer RCALL, excitation and frame parsing.
+The eight-byte observed stack includes outer/inner calls and the synthetic IRQ.
+This is insufficient slack to claim a complete 7500 Hz player: optimize the
+multiply/stage schedule or test fewer stages before attempting selection.
+
+Reproduce with `tools/test-word-q4-filter.py`. The input generator checks each
+model's state precision and coefficient profile rather than silently running
+Q7 controls through a Q4 kernel. Reports: [four-bit](../research/word-q4/filter.json),
+[six-bit](../research/word-q4/filter-six.json). This is an arithmetic fixture;
+the host supplies decoded excitation and coefficient transport.
+
 ## Changes that preserve the decoded bytes
 
 - **Round using the last discarded bit.** After a signed ASR/ROR loop, carry
