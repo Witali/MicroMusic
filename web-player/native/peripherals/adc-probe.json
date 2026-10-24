@@ -1,0 +1,77 @@
+{
+  "schema": "micromusic-attiny13a-hardware-probe-v1",
+  "probeId": 3,
+  "status": "pending-hardware",
+  "sequencePolicy": "consecutive",
+  "expectedRecords": 3,
+  "requiredCsvColumns": ["clock", "data", "clki", "vcc", "marker", "adc1", "reset"],
+  "firmware": "adc-probe.S",
+  "device": "ATtiny13A",
+  "fuses": {"low": "0x70", "high": "0xff", "lock": "0xff"},
+  "clock": {
+    "source": "external-CLKI-PB3",
+    "frequencyHz": 8000000,
+    "cpuDivisor": 1,
+    "adcDivisor": 64,
+    "adcFrequencyHz": 125000
+  },
+  "pins": {
+    "marker": "PB0",
+    "clock": "PB1",
+    "analogInput": "PB2",
+    "clki": "PB3",
+    "data": "PB4",
+    "reset": "PB5"
+  },
+  "manufacturerDefinitions": "../attiny13a-registers.generated.inc",
+  "fields": ["adcl", "adch", "adcsraBefore", "adcsraAfter", "sreg", "recordKind"],
+  "supplyMicrovolts": 5000000,
+  "recoveryCpuCycles": 32008,
+  "sequence": {
+    "boot": 0,
+    "firstTrial": 1,
+    "increment": "Once before each independent measured trial; stop at PROBE_TRIALS, with no wrap"
+  },
+  "wire": {
+    "include": "probe-wire.inc",
+    "version": 2,
+    "bytes": 14,
+    "syncHex": "a55a",
+    "bitOrder": "MSB-first",
+    "sampleDataAt": "rising trace clock",
+    "payloadOrder": ["version", "probeId", "profileId", "sequenceLow", "sequenceHigh", "data0", "data1", "data2", "data3", "data4", "data5"],
+    "checksum": "XOR of all 11 payload bytes",
+    "recordKinds": {
+      "0": "boot: data0=planned ADCSRA start byte, data1=ADMUX, data2=ADCSRB, data3=DIDR0, data4=SREG",
+      "1": "conversion: data2 before measured ADSC OUT, data3 after polled completion",
+      "2": "ADIF test: data2 immediately before SBI/CBI, data3 immediately after",
+      "3": "ADIF control: data2 before the control operation, data3 after"
+    }
+  },
+  "profiles": [
+    {"id": "first-conversion", "profileId": 1, "defines": {"PROBE_PROFILE_ID": 1, "PROBE_TRIALS": 2, "PROBE_MODE": 0}},
+    {"id": "normal-conversion-control", "profileId": 2, "defines": {"PROBE_PROFILE_ID": 2, "PROBE_TRIALS": 2, "PROBE_MODE": 1}},
+    {"id": "adif-sbi-adie", "profileId": 3, "defines": {"PROBE_PROFILE_ID": 3, "PROBE_TRIALS": 2, "PROBE_MODE": 2, "PROBE_ADIF_OPERATION": 1}},
+    {"id": "adif-cbi-adie", "profileId": 4, "defines": {"PROBE_PROFILE_ID": 4, "PROBE_TRIALS": 2, "PROBE_MODE": 2, "PROBE_ADIF_OPERATION": 2}},
+    {"id": "adif-cbi-adps0", "profileId": 5, "defines": {"PROBE_PROFILE_ID": 5, "PROBE_TRIALS": 2, "PROBE_MODE": 2, "PROBE_ADIF_OPERATION": 3}},
+    {"id": "adif-no-write-control", "profileId": 6, "defines": {"PROBE_PROFILE_ID": 6, "PROBE_TRIALS": 2, "PROBE_MODE": 2, "PROBE_ADIF_OPERATION": 0}},
+    {"id": "adif-out-zero-control", "profileId": 7, "defines": {"PROBE_PROFILE_ID": 7, "PROBE_TRIALS": 2, "PROBE_MODE": 2, "PROBE_ADIF_OPERATION": 4}},
+    {"id": "adif-out-one-control", "profileId": 8, "defines": {"PROBE_PROFILE_ID": 8, "PROBE_TRIALS": 2, "PROBE_MODE": 2, "PROBE_ADIF_OPERATION": 5}},
+    {"id": "adif-explicit-rmw-control", "profileId": 9, "defines": {"PROBE_PROFILE_ID": 9, "PROBE_TRIALS": 2, "PROBE_MODE": 2, "PROBE_ADIF_OPERATION": 6}}
+  ],
+  "stimulus": {
+    "conversionProfiles": "External low-impedance ADC1 step, triggered by PB0 rising; sweep its delay and capture the actual analog transition/settling, in both directions",
+    "suggestedLevelsVccFraction": [0.2, 0.8],
+    "adifProfiles": "Hold ADC1 at a known constant in-range voltage",
+    "baseline": "Return to the declared initial analog level before every marker; ADC is off for 32008 CPU clocks before each trial",
+    "controls": ["constant low level", "constant high level", "step well before either candidate aperture", "step after conversion completion", "normal conversion after an initialization conversion"],
+    "minimumRepeatedTrialsPerSetting": 32
+  },
+  "capture": {
+    "signals": ["clock", "data", "clki", "vcc", "marker", "adc1", "reset"],
+    "measurementTiming": "Infer a completion interval from the four-cycle polling loop, marker and measured clock. The marker falling edge is not the completion or sampling instant.",
+    "transportTiming": "frameEndSeconds is transport metadata only, never ADC sample time",
+    "retain": ["raw analog/digital waveform and SHA-256", "device marking/revision", "fuse and lock readback", "measured VCC and temperature", "measured CLKI", "source/include/programmed-image SHA-256", "instrument bandwidth, sampling and probe loading", "stimulus levels, direction, actual settling and delay uncertainty"]
+  },
+  "expectedSiliconTrace": null
+}
