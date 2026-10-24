@@ -80,15 +80,15 @@ def assemble(path):
             assert a[1] in {'Z','Z+'}
             return 0x9004|(register(a[0])<<4)|(a[1]=='Z+')
         if op=='ld':
-            assert a[1] in {'X+','Y+'}
-            d=register(a[0]);pointer=26 if a[1]=='X+' else 28
-            assert d not in (pointer,pointer+1),'Undefined LD with destination in post-increment pointer'
-            return {'X+':0x900d,'Y+':0x9009}[a[1]]|(d<<4)
+            assert a[1] in {'X','X+','-X','Y+'}
+            d=register(a[0]);pointer=28 if a[1]=='Y+' else 26
+            assert a[1]=='X' or d not in (pointer,pointer+1),'Undefined LD with destination in modified pointer'
+            return {'X':0x900c,'X+':0x900d,'-X':0x900e,'Y+':0x9009}[a[1]]|(d<<4)
         if op=='st':
-            assert a[0] in {'X+','Z+'}
-            d=register(a[1]);pointer=26 if a[0]=='X+' else 30
-            assert d not in (pointer,pointer+1),'Undefined ST with source in post-increment pointer'
-            return {'X+':0x920d,'Z+':0x9201}[a[0]]|(d<<4)
+            assert a[0] in {'X','X+','-X','Z+'}
+            d=register(a[1]);pointer=30 if a[0]=='Z+' else 26
+            assert a[0]=='X' or d not in (pointer,pointer+1),'Undefined ST with source in modified pointer'
+            return {'X':0x920c,'X+':0x920d,'-X':0x920e,'Z+':0x9201}[a[0]]|(d<<4)
         raise ValueError(f'Unsupported instruction: {line}')
     rom=bytearray(pc)
     for at,kind,row in rows:
