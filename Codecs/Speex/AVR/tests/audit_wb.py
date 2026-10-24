@@ -21,12 +21,15 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--avr-gcc');p.add_argument('--rebuild',action='store_true')
     p.add_argument('--speed',action='store_true',help='Audit the subsequent WB speed optimization reports/images')
+    p.add_argument('--round2',action='store_true',help='Audit fused excitation and QMF alignment optimization')
     args=p.parse_args()
     if args.rebuild and not args.avr_gcc:p.error('--rebuild requires --avr-gcc')
+    if args.speed and args.round2:p.error('Choose one optimization series')
     build.verify_sources()
-    prefix='wb1-speed' if args.speed else 'wb1'
-    image_prefix='wb-speed' if args.speed else 'wb'
-    rebuild_root=ROOT/'build'/('wb-speed-rebuild' if args.speed else 'wb-final-rebuild')
+    optimized=args.speed or args.round2
+    prefix='wb2' if args.round2 else 'wb1-speed' if args.speed else 'wb1'
+    image_prefix='wb2' if args.round2 else 'wb-speed' if args.speed else 'wb'
+    rebuild_root=ROOT/'build'/('wb2-rebuild' if args.round2 else 'wb-speed-rebuild' if args.speed else 'wb-final-rebuild')
     native=read(ROOT/'reports'/(prefix+'-native.json'));by_name={r['stream']:r for r in native['streams']}
     assert native['frames']==10563 and len(by_name)==17
     for name,row in by_name.items():
@@ -39,16 +42,17 @@ def main():
         assert report['frames']==10563 and report['binarySha256']==digest(image/'wb.bin')
         assert {r['name']:r['frames'] for r in report['streams']}=={n:r['frames'] for n,r in by_name.items()}
         assert all(r['pcmExact'] and r['reset'] for r in report['streams'])
+        if backend=='c':assert 'speex_wb_excitation40_avr' not in (image/'symbols.txt').read_text()
         if args.rebuild:
             fresh=rebuild_root/('decoder-'+backend)
             build_wb.avr(args.avr_gcc,backend,destination=fresh)
             assert digest(fresh/'wb.bin')==report['binarySha256']
         images.append(dict(image='decoder-'+backend,sha256=report['binarySha256'],frames=report['frames']))
-    matrices=[image_prefix+'-pwm',image_prefix+('-pwm-load5' if args.speed else '-pwm-load2')]
+    matrices=[image_prefix+'-pwm',image_prefix+('-pwm-load5' if optimized else '-pwm-load2')]
     for matrix in matrices:
         report=read(ROOT/'build'/matrix/'player-all.json')
         assert report['underruns']==0 and report['includesInterrupts'] and report['sampleRate']==16000
-        if args.speed:
+        if optimized:
             from verify_wb_players import source_hashes
             assert read(ROOT/'build'/matrix/'source-sha256.json')==source_hashes()
         for row in report['streams']:
@@ -72,10 +76,10 @@ def main():
     assert portable['testedStaticArchives']==2 and portable['frames']==9100
     assert portable['wideband']['frames']==10563 and portable['wideband']['invalidCallsAndResetVerified']
     assert portable['wideband']['streams']==[dict(stream=n,frames=r['frames'],pcmSha256=r['pcmSha256']) for n,r in sorted(by_name.items())]
-    unit=read(ROOT/'reports'/(prefix+'-kernels.json'));assert len(unit['streams'])==6
+    unit=read(ROOT/'reports'/(prefix+'-kernels.json'));assert len(unit['streams'])==(8 if args.round2 else 6)
     for row in unit['streams']:assert row['pcmExact'] and row['guards'] and row['readOnlyInputs']
-    if args.speed:
-        repeats=read(ROOT/'reports/wb1-speed-repeats-native.json')
+    if optimized:
+        repeats=read(ROOT/'reports'/(prefix+'-repeats-native.json'))
         assert repeats['codebookPairs']==4096 and repeats['streams'][0]['frames']==12288
         for row in repeats['streams']:
             source=ROOT/'build/wb-speed-repeats'
@@ -83,8 +87,8 @@ def main():
             assert digest(source/(row['name']+'.spxraw'))==row['inputSha256']
             assert digest(ROOT/'build/wb-speed-repeats/oracle'/(row['name']+'.pcm'))==row['pcmSha256']
         for backend in ['asm','c']:
-            repeat=read(ROOT/'reports'/('wb1-speed-repeats-'+backend+'.json'))
-            full=read(ROOT/'reports'/('wb1-speed-'+backend+'.json'))
+            repeat=read(ROOT/'reports'/(prefix+'-repeats-'+backend+'.json'))
+            full=read(ROOT/'reports'/(prefix+'-'+backend+'.json'))
             assert repeat['frames']==744 and repeat['binarySha256']==full['binarySha256']
             assert all(r['pcmExact'] and r['reset'] for r in repeat['streams'])
     nb_expected=dict(asm='fe3f4c24d682009d663bee6929bc5903fb660f1d39a578ab98067ea202c0de63',
@@ -103,9 +107,9 @@ def main():
         fullPwmFrames=6467,fullPwmSamples=2069440,loadedPwmFrames=loaded['frames'],
         additionalCpuCyclesPerLoadedFrame=loaded['extraCpuCyclesPerFrame'],underruns=0,
         scope='Exact compact-profile PCM; final QMF intentionally differs from full Xiph synthesis')
-    if args.speed:
-        before=read(ROOT/'reports/wb1-asm.json')
-        after=read(ROOT/'reports/wb1-speed-asm.json')
+    if optimized:
+        before=read(ROOT/'reports'/('wb1-speed-asm.json' if args.round2 else 'wb1-asm.json'))
+        after=read(ROOT/'reports'/(prefix+'-asm.json'))
         keys=['binarySha256','frames','flashBytes','staticSramBytes','maxCycles',
               'meanCycles','peakStack','freeSram']
         report['decoderComparison']=dict(before={k:before[k] for k in keys},

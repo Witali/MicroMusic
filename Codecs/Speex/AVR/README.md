@@ -12,7 +12,7 @@ An additional [compact wideband profile](WIDEBAND.md) decodes **16 kHz /
 synthesis QMF; its PCM differs from full 64-tap Xiph synthesis. The NB3
 profile retains exact original PCM and its previous binary image.
 The WB PWM player passes all 16 speech recordings: **6,467 frames,
-2,069,440 samples, zero underruns, 355 B free SRAM at peak** in AVR simulation
+2,069,440 samples, zero underruns, 353 B free SRAM at peak** in AVR simulation
 with timers and interrupts active. WB playback on ATmega328P requires ASM;
 the portable C fallback retains correctness but exceeds its frame deadline.
 

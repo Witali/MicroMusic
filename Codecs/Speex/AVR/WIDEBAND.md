@@ -55,8 +55,8 @@ Run from the worktree root with Python, Clang, AVR GCC and Node on PATH:
 
 ```sh
 python Codecs/Speex/AVR/tools/build_wb.py --cc clang --reference
-python Codecs/Speex/AVR/tools/build_wb.py --avr-gcc avr-gcc --backend asm --out Codecs/Speex/AVR/build/wb-speed-asm-decoder
-python Codecs/Speex/AVR/tools/build_wb.py --avr-gcc avr-gcc --backend c --out Codecs/Speex/AVR/build/wb-speed-c-decoder
+python Codecs/Speex/AVR/tools/build_wb.py --avr-gcc avr-gcc --backend asm --out Codecs/Speex/AVR/build/wb2-asm-decoder
+python Codecs/Speex/AVR/tools/build_wb.py --avr-gcc avr-gcc --backend c --out Codecs/Speex/AVR/build/wb2-c-decoder
 python Codecs/Speex/AVR/tools/build_wb.py --export-c Codecs/Speex/AVR/build/wb-library
 ```
 
@@ -72,22 +72,23 @@ on ATmega328P**. Use ASM for this MCU's WB playback. Other MCU timing requires
 its own admission test. The exported C11 manifest and CMake static library
 include both public APIs; the compatible CMake target remains `speex_nb3`.
 
-The optimized AVR ASM decoder uses 17,622 B Flash and 1,299 B static SRAM in
-the mailbox harness. On the same 10,563 frames, compared with the first WB
-implementation:
+The optimized AVR ASM decoder uses 17,616 B Flash and 1,299 B static SRAM in
+the mailbox harness. On the same 10,563 frames:
 
-| Decoder-only measurement | Before | After |
-| --- | ---: | ---: |
-| Mean cycles/frame | 279,128 | 269,804 |
-| Maximum observed cycles/frame | 285,596 | 277,665 |
-| Maximum observed time at 16 MHz | 17.850 ms | 17.354 ms |
-| Peak stack | 401 B | 255 B |
-| Free SRAM at peak | 349 B | 494 B |
-| Flash | 17,504 B | 17,622 B |
+| Decoder-only measurement | Initial WB | Previous optimization | Current |
+| --- | ---: | ---: | ---: |
+| Mean cycles/frame | 279,128 | 269,804 | 265,805 |
+| Maximum observed cycles/frame | 285,596 | 277,665 | 273,528 |
+| Maximum observed time at 16 MHz | 17.850 ms | 17.354 ms | 17.096 ms |
+| Peak stack | 401 B | 255 B | 257 B |
+| Free SRAM at peak | 349 B | 494 B | 492 B |
+| Flash | 17,504 B | 17,622 B | 17,616 B |
 
-This saves 3.34% mean and 2.78% maximum observed decoding cycles without
-changing compact-profile PCM. Decoder-only timing excludes output/interrupts
-and does not establish continuous playback.
+This round saves another 1.48% mean and 1.49% maximum observed decoding cycles
+without changing compact-profile PCM; mean time is 4.77% below initial WB.
+Static RAM is unchanged; the fused ASM kernel adds two bytes of peak stack.
+Decoder-only timing excludes output/interrupts and does not establish
+continuous playback.
 
 The QMF computes two input pairs together, sharing seven history records among
 four accumulators. Its oldest required record is captured before insertion
@@ -100,9 +101,16 @@ coefficient-age transition still execute on every subframe. The interpolation
 helper is outlined to keep code size and stack low. C fallbacks and the
 architecture/explicit-ASM selection remain available.
 
+Innovation reconstruction and folding now share one pass, keeping the
+intermediate signed16 sample in registers while preserving both original
+rounding stages. NB and WB use shared source macros without a per-sample
+CALL; the NB-only image remains unchanged. QMF checks signed24 range before
+alignment, avoiding the extra sign-extension byte; the exact -32768 output
+still clamps to -32767. Both optimized kernels retain selectable C paths.
+
 The decoder state structures/arena total 1,268 B on AVR (716 B NB state, 60 B scratch,
 492 B WB state). The full PWM player uses 1,429 B static SRAM and reaches
-264 B stack, leaving **355 B free**. A Russian 404-frame demo uses 28,008 B
+266 B stack, leaving **353 B free**. A Russian 404-frame demo uses 28,002 B
 Flash, including 10,100 B of compressed audio.
 
 ## Reproduce validation
@@ -113,8 +121,8 @@ decoder/reference above, then run:
 
 ```sh
 python Codecs/Speex/AVR/tests/prepare_wb.py
-node Codecs/Speex/AVR/tests/verify_wb.mjs --backend asm --firmware Codecs/Speex/AVR/build/wb-speed-asm-decoder
-node Codecs/Speex/AVR/tests/verify_wb.mjs --backend c --firmware Codecs/Speex/AVR/build/wb-speed-c-decoder
+node Codecs/Speex/AVR/tests/verify_wb.mjs --backend asm --firmware Codecs/Speex/AVR/build/wb2-asm-decoder
+node Codecs/Speex/AVR/tests/verify_wb.mjs --backend c --firmware Codecs/Speex/AVR/build/wb2-c-decoder
 python Codecs/Speex/AVR/tests/verify_wb_repeats.py
 python Codecs/Speex/AVR/tools/build_wb.py --avr-gcc avr-gcc --backend asm --kernels --out Codecs/Speex/AVR/build/wb-kernels
 node Codecs/Speex/AVR/tests/verify_wb_kernels.mjs
@@ -138,6 +146,13 @@ aliasing, all signed16 folding inputs with varied gains, independent original
 Xiph rounding, arbitrary IIR coefficient transitions, guards and actual ASM
 RET preservation of callee-saved registers/r1. New ASM and C use the same
 equations. NB-only builds retain their previous binary bytes.
+QMF adds 92 blocks placing each phase precisely around rounding/clipping
+boundaries. Fused excitation adds 5,760 blocks / 230,400 samples per backend,
+all codebook indices, 12 scale boundaries and 15 gains including signed32
+extrema. On this AVR, the C image uses 19,326 B Flash (previously 19,002 B),
+with mean time 699,537 -> 666,616 cycles/frame (4.71% less) and maximum
+711,178 -> 678,242. It still exceeds the real-time deadline; these timings
+do not establish performance on another architecture.
 
 The complete 16-kHz PWM player is `src/wb_player.c`, using OC1A/PB1/D9 at
 62.5 kHz carrier, Timer2 CTC (`OCR2A=124`, prescaler 8), a 128-byte output
@@ -145,8 +160,8 @@ ring and 80-sample callbacks. Build a demo or run all retained speech:
 
 ```sh
 python Codecs/Speex/AVR/tools/build_wb.py --avr-gcc avr-gcc --backend asm --stream Codecs/Speex/AVR/build/wb-corpus/streams/ru_pushkin_a.spxraw --out Codecs/Speex/AVR/build/wb-demo
-python Codecs/Speex/AVR/tests/verify_wb_players.py --avr-gcc avr-gcc --node node --out Codecs/Speex/AVR/build/wb-speed-pwm
-python Codecs/Speex/AVR/tests/verify_wb_players.py --avr-gcc avr-gcc --node node --out Codecs/Speex/AVR/build/wb-speed-pwm-load5 --filter "^(ru_pushkin_a|en_letter_a)$" --frame-load-cycles 16000
+python Codecs/Speex/AVR/tests/verify_wb_players.py --avr-gcc avr-gcc --node node --out Codecs/Speex/AVR/build/wb2-pwm
+python Codecs/Speex/AVR/tests/verify_wb_players.py --avr-gcc avr-gcc --node node --out Codecs/Speex/AVR/build/wb2-pwm-load5 --filter "^(ru_pushkin_a|en_letter_a)$" --frame-load-cycles 16000
 ```
 
 The simulator uses `tests/avr_tick.mjs` for the AVR interrupt-enable delay and
@@ -154,13 +169,13 @@ four-cycle interrupt entry. Clock events continue while an IRQ is deferred.
 A physical ATmega328P board and analog output have not been measured.
 
 All 16 speech recordings pass the complete player: **6,467 frames /
-2,069,440 samples, zero underruns**, minimum queue 23 samples (previously 20). Two additional
+2,069,440 samples, zero underruns**, minimum queue 24 samples (previously 23). Two additional
 Russian/English runs reserve 16,000 extra CPU cycles/frame (5%): 808 frames,
-zero underruns, minimum queue 8. This extra-load result applies to those
+zero underruns, minimum queue 9. This extra-load result applies to those
 two streams, not to arbitrary application workloads. See
-`reports/wb1-speed-{asm,c,kernels,pwm,pwm-load5,admission-audit}.json`.
-The earlier `wb1-*` reports retain the original measurements. The speed audit
-(`tests/audit_wb.py --speed --rebuild --avr-gcc avr-gcc`) verifies frozen source
+`reports/wb2-{asm,c,kernels,pwm,pwm-load5,admission-audit}.json`.
+The earlier `wb1-*` reports retain the previous measurements. The audit
+(`tests/audit_wb.py --round2 --rebuild --avr-gcc avr-gcc`) verifies frozen source
 hashes, inputs/PCM/PWM and freshly rebuilt images against the executed binaries.
 
 ## Listening comparison
