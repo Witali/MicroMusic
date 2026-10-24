@@ -364,6 +364,24 @@ figures do not prove the full decoder's deadline, SRAM bound or 1024-byte fit.
 `probe-word-q4-mul.py` defaults to exhaustive Q4 verification; its `--quick`
 profile is used by the ordinary test suite to avoid repeating millions of calls.
 
+## Factor initial zero bits in the small coefficient
+
+[`word-q4/multiply-factored.S`](word-q4/multiply-factored.S) implements the
+same signed Q4/Q5 ABI and symmetric rounding as the compact multiplier.
+Before the first set coefficient bit, the accumulator is zero: skip its word
+shifts and reduce the remaining division count. Copy the first nonzero term
+instead of adding to zero. For powers of two, finish with a shift-only loop.
+DEC, branches and the final jump preserve the last rounding carry.
+
+The profile costs **106 rather than 72 bytes**. It passed **6 147 462** scalar
+checks plus **192 IRQ cases** in three engines. Worst scalar time improves
+only **66 → 65** Q4 cycles, but common small coefficients benefit more: the
+complete six-fraction-bit Q4 teacher drops **1218 → 1178 cycles** per worst
+filter call with identical PCM and every state. Arithmetic grows **180 → 214
+bytes**. This remains an optional tradeoff, not a complete-player deadline
+or a proven total-size win. Reports: [scalar](../research/word-q4/multiplier-factored.json),
+[full filter](../research/word-q4/filter-six-factored.json).
+
 ## A word lattice with descending Flash coefficients
 
 [`word-q4/filter.S`](word-q4/filter.S) keeps eight little-endian word states

@@ -10,6 +10,17 @@ probe=importlib.util.module_from_spec(spec);spec.loader.exec_module(probe)
 
 
 class WordQ4FilterTests(unittest.TestCase):
+    def test_factored_profile_reduces_full_teacher_time_without_changing_states(self):
+        avr=Path(os.environ.get('AVR_BIN',ROOT.parents[1]/'build/toolchains/avr-7.3.0/bin'))
+        node=Path(os.environ.get('NODE',ROOT.parents[1]/'build/toolchains/node-22.22.3/node.exe'))
+        if not (avr/'avr-gcc.exe').exists() or not node.exists():self.skipTest('Set AVR_BIN and NODE')
+        report=probe.run(avr,node,ROOT/'build/word-q4/factored-filter-contracts',6,'factored')
+        self.assertEqual(report['arithmeticBytes'],214);self.assertEqual(report['samples'],66816)
+        self.assertEqual(report['stateChecks'],601344);self.assertEqual(report['irqChecked'],261)
+        for r in report['results']:
+            self.assertLessEqual(r['maximumCycles'],1178)
+            self.assertEqual(r['pcm_sha256'],'d131729dda4d34f7dc83ee3adb7541abfaf09e18646f5f32cf26d7d11002e695')
+
     def test_assembled_chain_matches_pcm_and_all_fractional_states(self):
         avr=Path(os.environ.get('AVR_BIN',ROOT.parents[1]/'build/toolchains/avr-7.3.0/bin'))
         node=Path(os.environ.get('NODE',ROOT.parents[1]/'build/toolchains/node-22.22.3/node.exe'))

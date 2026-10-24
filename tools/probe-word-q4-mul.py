@@ -9,9 +9,10 @@ import sys
 ROOT=Path(__file__).resolve().parents[1]
 
 
-def run(avr_bin,node,output,quick=False):
+def run(avr_bin,node,output,quick=False,profile='compact'):
+    if profile not in ('compact','factored'):raise ValueError('Unknown word multiply profile')
     output=output.resolve();output.mkdir(parents=True,exist_ok=True)
-    source=ROOT/'ATtiny13A/Sound/codec/word-q4/multiply.S'
+    source=ROOT/'ATtiny13A/Sound/codec/word-q4'/('multiply.S' if profile=='compact' else 'multiply-factored.S')
     fixture='''.section .text
 .global __vectors
 __vectors:
@@ -51,7 +52,7 @@ irq:
     (output/'spec.json').write_text(json.dumps(spec),encoding='utf-8')
     execute([node,ROOT/'tools/verify-word-q4-mul.mjs',output/'spec.json',output/'verification.json'])
     report=json.loads((output/'verification.json').read_text())
-    report.update(fixture_bytes=len(binary),fixture_sha256=hashlib.sha256(binary).hexdigest(),
+    report.update(profile=profile,fixture_bytes=len(binary),fixture_sha256=hashlib.sha256(binary).hexdigest(),
         source_sha256_normalized_lf={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_text(encoding='utf-8').encode()).hexdigest()
             for p in (Path(__file__),source,ROOT/'tools/verify-word-q4-mul.mjs')})
     (output/'report.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
@@ -61,4 +62,5 @@ irq:
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     for key in ('avr-bin','node','output'):p.add_argument('--'+key,type=Path,required=True)
-    p.add_argument('--quick',action='store_true');a=p.parse_args();run(a.avr_bin,a.node,a.output,a.quick)
+    p.add_argument('--quick',action='store_true');p.add_argument('--profile',choices=('compact','factored'),default='compact')
+    a=p.parse_args();run(a.avr_bin,a.node,a.output,a.quick,a.profile)

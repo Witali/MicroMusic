@@ -17,10 +17,12 @@ spec=importlib.util.spec_from_file_location('word_filter_product_api',ROOT/'tool
 fit=importlib.util.module_from_spec(spec);sys.modules[spec.name]=fit;spec.loader.exec_module(fit)
 
 
-def run(avr_bin,node,output,state_bits=4):
+def run(avr_bin,node,output,state_bits=4,profile='compact'):
     if state_bits not in (4,6):raise ValueError('Expected four or six fractional state bits')
+    if profile not in ('compact','factored'):raise ValueError('Unknown word multiply profile')
     output=output.resolve();output.mkdir(parents=True,exist_ok=True)
-    source=ROOT/'ATtiny13A/Sound/codec/word-q4/filter.S';multiply=source.with_name('multiply.S')
+    source=ROOT/'ATtiny13A/Sound/codec/word-q4/filter.S'
+    multiply=source.with_name('multiply.S' if profile=='compact' else 'multiply-factored.S')
     fixture='''.section .text
 .global __vectors
 __vectors:
@@ -94,7 +96,7 @@ coefficient_data:
     (output/'spec.json').write_text(json.dumps(specification),encoding='utf-8')
     execute([node,ROOT/'tools/verify-word-q4-filter.mjs',output/'spec.json',output/'verification.json'])
     report=json.loads((output/'verification.json').read_text())
-    report.update(fixture_bytes=(output/'fixture.bin').stat().st_size,source_sha256_normalized_lf={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_text(encoding='utf-8').encode()).hexdigest()
+    report.update(profile=profile,fixture_bytes=(output/'fixture.bin').stat().st_size,source_sha256_normalized_lf={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_text(encoding='utf-8').encode()).hexdigest()
         for p in (Path(__file__),source,multiply,ROOT/'tools/verify-word-q4-filter.mjs')})
     (output/'report.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
     print(json.dumps(report));return report
@@ -104,4 +106,5 @@ if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     for key in ('avr-bin','node','output'):p.add_argument('--'+key,type=Path,required=True)
     p.add_argument('--state-bits',type=int,choices=(4,6),default=4)
-    a=p.parse_args();run(a.avr_bin,a.node,a.output,a.state_bits)
+    p.add_argument('--profile',choices=('compact','factored'),default='compact')
+    a=p.parse_args();run(a.avr_bin,a.node,a.output,a.state_bits,a.profile)

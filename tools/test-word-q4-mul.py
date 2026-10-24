@@ -10,6 +10,16 @@ probe=importlib.util.module_from_spec(spec);spec.loader.exec_module(probe)
 
 
 class WordQ4MultiplyTests(unittest.TestCase):
+    def test_factored_profile_keeps_the_same_word_and_irq_contracts(self):
+        avr=Path(os.environ.get('AVR_BIN',ROOT.parents[1]/'build/toolchains/avr-7.3.0/bin'))
+        node=Path(os.environ.get('NODE',ROOT.parents[1]/'build/toolchains/node-22.22.3/node.exe'))
+        if not (avr/'avr-gcc.exe').exists() or not node.exists():self.skipTest('Set AVR_BIN and NODE')
+        result=probe.run(avr,node,ROOT/'build/word-q4/factored-contracts',quick=True,profile='factored')
+        self.assertTrue(result['pass']);self.assertEqual(result['kernelBytes'],106)
+        self.assertGreaterEqual(result['checked'],76000);self.assertEqual(result['irqChecked'],192)
+        for engine in result['engines']:
+            self.assertLessEqual(engine['q4']['maximum'],65);self.assertLessEqual(engine['q5']['maximum'],72)
+
     def test_assembled_compact_kernel_matches_three_engines_and_preserves_the_abi(self):
         avr=Path(os.environ.get('AVR_BIN',ROOT.parents[1]/'build/toolchains/avr-7.3.0/bin'))
         node=Path(os.environ.get('NODE',ROOT.parents[1]/'build/toolchains/node-22.22.3/node.exe'))
