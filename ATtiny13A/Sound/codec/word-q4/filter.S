@@ -1,7 +1,8 @@
 /* Eight-stage signed-word Q4 lattice plus the original 1/2 deemphasis.
  * Input excitation r15:r14 scaled to WORD_STATE_BITS fractional bits (4/6).
  * Y points at 8 little-endian word states, followed by previous output.
- * Z points at the last of 8 signed Q4 coefficients in Flash. r27 = zero.
+ * Z points at the last of 8 signed Q4 coefficients. Default is Flash;
+ * WORD_COEFFICIENTS_IN_RAM selects a predecoded SRAM buffer. r27 = zero.
  * Result r24 is unsigned midpoint PWM; states and previous output updated.
  * Clobbers r14:r26, Y/Z, arithmetic flags; preserves SREG.T/I and r27.
  * No overflow guards at runtime: the encoder must qualify its exact stream.
@@ -18,7 +19,11 @@ filter_word_q4:
  adiw r28,14
  ld r16,Y
  ldd r17,Y+1
+.ifdef WORD_COEFFICIENTS_IN_RAM
+ ld r20,Z
+.else
  lpm r20,Z
+.endif
  movw r18,r16
  rcall mul_word_q4
  sub r14,r24
@@ -29,7 +34,11 @@ word_filter_stage:
  sbiw r30,1
  ld r16,Y
  ldd r17,Y+1
+.ifdef WORD_COEFFICIENTS_IN_RAM
+ ld r20,Z
+.else
  lpm r20,Z
+.endif
  movw r18,r16
  rcall mul_word_q4
  sub r14,r24

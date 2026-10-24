@@ -19,7 +19,8 @@ for(const [engine,create] of [['reference',b=>new Reference(b)],['wasm',b=>new W
   let minimum=Infinity,maximum=0,irqChecked=0,maximumStack=0,previous=0,stateChecks=0;
   const states=new Int32Array(8);
   for(let n=0;n<frames.length;n++){
-   const [value,...coefficients]=frames[n];cpu.rom.set(coefficients.map(k=>k&255),spec.symbols.coefficient_data);
+   const [value,...coefficients]=frames[n];
+   (spec.coefficientMemory==='ram'?cpu.data:cpu.rom).set(coefficients.map(k=>k&255),spec.symbols.coefficient_data);
    const interrupt=n%257===0;
    cpu.pc=spec.symbols.filter_word_q4/2;cpu.sp=0x9f;cpu.sreg=interrupt?0xc1:0x41;
    cpu.io[0x39]=interrupt?2:0;cpu.pending=false;cpu.irqDelay=0;cpu.r[27]=0;
@@ -48,7 +49,8 @@ for(const [engine,create] of [['reference',b=>new Reference(b)],['wasm',b=>new W
  }
 }
 const report={pass:true,stateBits:spec.stateBits,filterBytes:spec.filterBytes,multiplyBytes:spec.multiplyBytes,
- arithmeticBytes:spec.filterBytes+spec.multiplyBytes,stateBytes:18,results,
+ arithmeticBytes:spec.filterBytes+spec.multiplyBytes,stateBytes:18,coefficientMemory:spec.coefficientMemory,
+ coefficientBytes:spec.coefficientMemory==='ram'?8:0,results,
  samples:results.reduce((n,r)=>n+r.samples,0),stateChecks:results.reduce((n,r)=>n+r.stateChecks,0),irqChecked:results.reduce((n,r)=>n+r.irqChecked,0),
  scope:'Actual assembled 8-stage Q4 word filter on full phrases; host supplies excitation and coefficients; cycles include internal calls and RET, exclude outer RCALL',
  fullDecoderImplemented:false,hardwareTested:false};

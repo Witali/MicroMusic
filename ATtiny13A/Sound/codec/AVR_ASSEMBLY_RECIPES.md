@@ -405,6 +405,25 @@ It also passes the exhaustive Q4 and boundary/strided Q5 proof:
 [scalar](../research/word-q4/multiplier-adaptive.json),
 [filter](../research/word-q4/filter-six-adaptive.json).
 
+## Recipe: predecoded coefficients in SRAM
+
+`WORD_COEFFICIENTS_IN_RAM=1` switches the coefficient load in
+[`word-q4/filter.S`](word-q4/filter.S) from `LPM` to `LD`. Eight predecoded
+signed coefficient bytes cost eight SRAM bytes and save **eight cycles per
+sample**, without changing the arithmetic code size or any word state.
+On the same extended Q2 pulse model, the unrolled filter changes from
+**1078 to 1070 cycles** at its worst call; arithmetic remains **228 bytes**.
+The isolated state, coefficient and measured stack budget is 18 + 8 + 8 =
+34 SRAM bytes. Frame decoding and the real timer/reader state are additional.
+
+All 22272 samples and 200448 word-state comparisons per engine agree with
+the PC model in the reference, optimized WASM and unoptimized WASM engines;
+87 injected interrupts per engine also preserve the result.
+Reports: [Flash coefficients](../research/word-q4/filter-pulse-flash.json),
+[SRAM coefficients](../research/word-q4/filter-pulse-ram.json).
+This fixture supplies coefficients from the host: it proves the load path,
+not a complete prefetcher, serialized stream, or player deadline.
+
 ## A word lattice with descending Flash coefficients
 
 [`word-q4/filter.S`](word-q4/filter.S) keeps eight little-endian word states

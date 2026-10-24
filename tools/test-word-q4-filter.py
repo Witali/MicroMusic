@@ -10,6 +10,23 @@ probe=importlib.util.module_from_spec(spec);spec.loader.exec_module(probe)
 
 
 class WordQ4FilterTests(unittest.TestCase):
+    def test_predecoded_ram_coefficients_preserve_the_extended_pulse_model(self):
+        avr=Path(os.environ.get('AVR_BIN',ROOT.parents[1]/'build/toolchains/avr-7.3.0/bin'))
+        node=Path(os.environ.get('NODE',ROOT.parents[1]/'build/toolchains/node-22.22.3/node.exe'))
+        if not (avr/'avr-gcc.exe').exists() or not node.exists():self.skipTest('Set AVR_BIN and NODE')
+        model=ROOT/'ATtiny13A/Sound/research/q4-pulse-shapes/q2-continuation-legacy/model.json'
+        results=[]
+        for memory in ('flash','ram'):
+            report=probe.run(avr,node,ROOT/f'build/word-q4/pulse-{memory}-contracts',6,'unrolled',memory,model)
+            self.assertEqual(report['arithmeticBytes'],228);self.assertEqual(report['coefficientBytes'],8 if memory=='ram' else 0)
+            self.assertEqual(report['samples'],66816);self.assertEqual(report['stateChecks'],601344)
+            self.assertEqual(report['irqChecked'],261)
+            for r in report['results']:
+                self.assertEqual(r['pcm_sha256'],'e1ccb96d96be67a4dcde2cbfb1ebd676d5ba57c99609055fcdad96d2e3b5d748')
+                self.assertEqual(r['maximumCycles'],1070 if memory=='ram' else 1078)
+            results.append(report)
+        self.assertEqual(results[0]['results'][0]['maximumCycles']-results[1]['results'][0]['maximumCycles'],8)
+
     def test_factored_profile_reduces_full_teacher_time_without_changing_states(self):
         avr=Path(os.environ.get('AVR_BIN',ROOT.parents[1]/'build/toolchains/avr-7.3.0/bin'))
         node=Path(os.environ.get('NODE',ROOT.parents[1]/'build/toolchains/node-22.22.3/node.exe'))
