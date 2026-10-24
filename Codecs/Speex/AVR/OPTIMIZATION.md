@@ -369,7 +369,14 @@ up to 0.0165%, and corpus maximum rises 125,587 -> 125,613; C maximum falls
 On the deliberately mixed zero-gain workload means fall 104,592 -> 103,549 /
 212,344 -> 211,255. This is primarily a memory saving with a small aggregate
 speed gain, not a speedup on every packet. Full ordinary/loaded PWM admission
-for this source is pending; earlier segment-series admission is not its proof.
+now passes all 31 streams in both backends: 9,100 frames / 1,456,000 samples
+per scenario, exact PWM hashes, zero underruns. ASM +40% CPU retains queue 31
+and gap 194,237; C +10% retains queue 49 and gap 157,970 cycles. Ordinary
+queues are 73 / 65, gaps 80,013 / 124,873. Player SRAM is 1,254 B, stack
+150 / 162 B and free space 644 / 632 B. Speech demos use 12,506 / 14,532 B
+Flash including 2,940 B audio. All four 77-file source copies match the main
+tree; main mailbox/demo binary hashes match the verified images. Source
+commit and hashes are pinned in zero-vector-admission-audit.json.
 Reports: zero-vector-{asm,c}-*.json, zero-vector-host.json,
 zero-vector-native.json and portable-zero-vector-library.json.
 

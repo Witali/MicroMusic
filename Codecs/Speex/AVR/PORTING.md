@@ -74,7 +74,7 @@ real-time support depends on the target and must be measured. On ATmega328P
 both C and explicitly enabled ASM pass all 31 complete PWM streams with
 interrupts. The tested additional CPU reserve is 10% for C and 40% for ASM;
 these are measured corpus/ISA results, not physical-board guarantees. The
-C corpus maximum is 254,742 cycles (255,307 with pitch coverage).
+C corpus maximum is 254,720 cycles (255,285 with pitch coverage).
 The build tool defaults to C; `--backend asm` explicitly adds the enable define.
 
 ## Export and integrate
@@ -132,9 +132,11 @@ or PWM code; the decoder does not know which output peripheral is used.
   signed24 pitch storage uses three explicit low-to-high bytes; `packed24.h`
   assembles them by value, independent of native byte order or alignment.
 - `SPEEX_NB3_CHECK_SCRATCH=0` removes the host-only bounds checker and its
-  `abort` dependency. The embedded path uses the same 140-byte arena. Pitch
-  storage is reused for separate LPC and interpolated-LSP arrays after all
-  excitation is complete; the live quantized LSP array remains disjoint. Provide
+  `abort` dependency. The embedded path uses the same 60-byte arena. The live
+  quantized LSP array takes the first 20 bytes. One 30-byte zero-pitch vector
+  serves all zero-gain calls; its frame-local initialization flag resets before
+  reuse. After all excitation, separate LPC and interpolated-LSP arrays reuse
+  the region at offsets 20 and 40. Nonzero-gain paths do not touch it. Provide
   normal C runtime `memcpy`, `memmove`, `memset`; a hosted OS is unnecessary.
 - GCC-specific optimization attributes are isolated in `speex_platform.h` and
   disappear for other compilers. Target-specific intrinsic/ASM optimizations
