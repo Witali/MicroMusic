@@ -1,74 +1,92 @@
 {
-  "flashBytes": 1020,
-  "codeBytes": 736,
-  "tableBytes": 284,
+  "engine": "lumiere-chords",
+  "activePrimaryVoices": 6,
+  "flashBytes": 1018,
+  "codeBytes": 706,
+  "tableBytes": 312,
   "eepromBytes": 64,
-  "flashSha256": "bbe2c732f1b58d28b19a5f6b8344feea6e615ecb93ad6aee1f16b20c1695edb3",
-  "eepromSha256": "ac29eb2ba4b6718b3b490b9b74be52d5a1ea819149df9edac4d4aecf80443f81",
+  "flashSha256": "7226fa6a7679ab66ebe7068c948aff729a0b2334c6fe69c43ea1868ec0693bcc",
+  "eepromSha256": "45ba4c476cf214ef25d91494c6fa70b2567722b44403bcd25b09326e190fee37",
   "labels": {
     "REST_INDEX": 13,
     "HOLD_INDEX": 14,
     "PLAYLIST_LEN": 15,
+    "FIRST_PLAYLIST_INDEX": 1,
     "GRID_STEP_LOW": 164,
     "GRID_STEP_HIGH": 18,
     "GRID_INITIAL_HIGH": 238,
     "vectors": 0,
     "envelope_return": 2,
-    "update_envelope": 8,
-    "envelope_gate": 36,
-    "envelope_release": 46,
-    "reset": 56,
-    "clear_registers": 74,
-    "idle": 146,
-    "pwm_irq": 154,
-    "audio_step": 188,
-    ".L064": 198,
-    "music_tick": 212,
-    "lead_attack_ready": 228,
-    ".L084": 232,
-    ".L08e": 242,
-    ".L0a8": 268,
-    "grid_step": 288,
-    "drum_trigger": 296,
-    ".L0ba": 302,
-    "read_event": 308,
-    ".L0c8": 316,
-    "note_off": 324,
-    "release_lead": 342,
-    "chord_event": 350,
-    "melodic_event": 388,
-    "lead_commit": 446,
-    "hold_sample": 448,
-    "next_section": 450,
-    ".L15c": 468,
-    "render_tone": 478,
-    ".L216": 492,
-    ".L25c": 524,
-    "scale_bit": 528,
-    "voice_silent": 546,
-    "render_sample": 552,
-    "render_drum": 612,
-    ".L280": 622,
-    ".L28a": 624,
-    ".L298": 638,
-    ".L2a0": 652,
-    ".L2ae": 680,
-    "write_pwm": 692,
-    "publish_wait": 712,
-    "playlist": 736,
-    "durations": 751,
-    "note_steps": 758,
-    "chord_steps": 784,
-    "melody_data": 804,
-    "section_packed_000": 804,
-    "first_section": 804,
-    "section_packed_002": 842,
-    "section_packed_004": 895,
-    "section_packed_006": 923,
-    "section_packed_005": 972,
-    "section_packed_003": 987,
-    "section_packed_001": 1000,
-    "section_packed_007": 1007
+    "reset": 8,
+    "clear_ram": 22,
+    "fill_ring": 32,
+    "idle": 96,
+    "check_space": 102,
+    "audio_step": 106,
+    "render_sample": 112,
+    "voice_loop": 118,
+    "primary_gain": 144,
+    "right_gain_ready": 152,
+    "left_gain_ready": 160,
+    "render_drum": 166,
+    ".L280": 176,
+    ".L28a": 180,
+    ".L298": 194,
+    ".L2a0": 206,
+    ".L2ae": 230,
+    "write_pwm": 242,
+    "ring_published": 276,
+    "pwm_irq": 280,
+    "ring_read": 284,
+    "irq_restore": 292,
+    "music_tick": 294,
+    "envelope_loop": 298,
+    "state_plucked": 322,
+    "state_mask": 340,
+    "state_gate": 344,
+    "state_release": 352,
+    "envelope_store": 366,
+    ".L0a8": 386,
+    "grid_step": 398,
+    "drum_trigger": 406,
+    ".L0ba": 416,
+    "read_event": 422,
+    ".L0c8": 430,
+    "note_off": 438,
+    "note_off_loop": 440,
+    "off_shift": 460,
+    "off_same_piano": 462,
+    "chord_event": 472,
+    "piano_chord_loop": 496,
+    "melodic_event": 510,
+    "lead_commit": 556,
+    "note_rest": 558,
+    "release_lead": 558,
+    "hold_sample": 568,
+    "next_section": 572,
+    ".L15c": 592,
+    "render_tone": 602,
+    ".L216": 618,
+    "piano_attack_done": 628,
+    "eeprom_low_nibble": 650,
+    ".L25c": 654,
+    "voice_silent": 676,
+    "initialize_voice": 680,
+    "voice_initialized": 704,
+    "playlist": 706,
+    "durations": 721,
+    "note_steps": 728,
+    "chord_steps": 754,
+    "melody_data": 802,
+    "section_packed_000": 802,
+    "first_section": 802,
+    "section_packed_002": 840,
+    "section_packed_004": 893,
+    "section_packed_006": 921,
+    "section_packed_005": 970,
+    "section_packed_003": 985,
+    "section_packed_001": 998,
+    "section_packed_007": 1005
   },
   "score": {
     "note_count": 198,
@@ -76,7 +94,7 @@
     "maximum_entry_offset": 203,
     "playlist_bytes": 15,
     "note_table_bytes": 26,
-    "chord_table_bytes": 20,
+    "chord_table_bytes": 48,
     "durations": [
       1,
       2,
@@ -107,31 +125,48 @@
       "Gmaj7",
       "Em",
       "F#m",
-      "C#m7b5"
+      "C#m7b5",
+      "F#"
     ],
     "chord_notes": {
       "Bm": [
         59,
+        62,
+        66,
         54
       ],
       "Gmaj7": [
         55,
+        59,
+        66,
         50
       ],
       "Em": [
         52,
+        55,
+        59,
         47
       ],
       "F#m": [
         54,
+        57,
+        61,
         49
       ],
       "C#m7b5": [
         49,
-        44
+        52,
+        59,
+        43
+      ],
+      "F#": [
+        54,
+        58,
+        61,
+        49
       ]
     },
-    "total_data_bytes": 284,
+    "total_data_bytes": 312,
     "section_bars": {
       "intro": 2,
       "A": 8,
@@ -189,9 +224,9 @@
       "globallyMinimal": false,
       "candidateLimit": 4096,
       "candidateCount": 3958,
-      "dictionaryTrials": 118789,
+      "dictionaryTrials": 114830,
       "originalCommandBytes": 491,
-      "originalStreamSha256": "3ab96fdc2a91946e2e6ee4f20f8737b04e2ff9d846bd9b6c373bee910d0c3043",
+      "originalStreamSha256": "de7a40df895624bfd73c45373517d2bf0f04feb69d9ec1c3cbc052a1caa6b548",
       "sourceLayoutBytes": 257,
       "packedEventBytes": 216,
       "playlistBytes": 15,
@@ -201,7 +236,7 @@
       "referencedSections": 8,
       "verifiedLossless": true
     },
-    "source": "Lumière — stereo four-voice arrangement",
+    "source": "Lumière — five tonal voices stereo",
     "rest_index": 13,
     "hold_index": 14,
     "holds": [
@@ -221,10 +256,125 @@
     "instruments": {
       "lead": "violin",
       "keys": "acoustic-grand-piano",
-      "pluck": "acoustic-guitar-nylon"
+      "pluck": "acoustic-guitar-nylon",
+      "percussion": "natural-kit"
+    }
+  },
+  "instrumentAssignments": {
+    "lead": {
+      "instrument": "violin",
+      "label": "Скрипка",
+      "gmProgram": 40,
+      "eepromOffset": 0,
+      "level": 15,
+      "envelope": {
+        "model": "bowed",
+        "defaultLevel": 15,
+        "attackStep": 4,
+        "retrigger": "half-current-level",
+        "releaseStep": 1
+      }
+    },
+    "keys": {
+      "instrument": "acoustic-grand-piano",
+      "label": "Акустический рояль",
+      "gmProgram": 0,
+      "eepromOffset": 16,
+      "level": 15,
+      "envelope": {
+        "model": "piano",
+        "defaultLevel": 15,
+        "decayMask": 3,
+        "retrigger": "peak",
+        "releaseStep": 2,
+        "decayMaskByRegister": {
+          "thresholdMidi": 75,
+          "thresholdDdsStep": 2175,
+          "lowMask": 3,
+          "highMask": 0
+        }
+      },
+      "transient": {
+        "kind": "piano-attack",
+        "minEnvelopeLevel": 14,
+        "eepromOffsets": {
+          "low": 48,
+          "high": 56
+        },
+        "maximumSwitchSampleDelta": 1
+      }
+    },
+    "pluck": {
+      "instrument": "acoustic-guitar-nylon",
+      "label": "Акустическая гитара с нейлоновыми струнами",
+      "gmProgram": 24,
+      "eepromOffset": 32,
+      "level": 15,
+      "envelope": {
+        "model": "pluck",
+        "defaultLevel": 15,
+        "decayMask": 1,
+        "retrigger": "peak",
+        "releaseStep": 1
+      }
+    },
+    "percussion": {
+      "instrument": "natural-kit",
+      "label": "Естественная ударная установка",
+      "level": 15,
+      "enabled": true,
+      "notes": [
+        {
+          "gmNote": 35,
+          "label": "Басовый барабан"
+        },
+        {
+          "gmNote": 38,
+          "label": "Малый барабан"
+        },
+        {
+          "gmNote": 42,
+          "label": "Закрытый хай-хэт"
+        }
+      ],
+      "generator": "AVR triangle kick, soft noise plus low snare body, existing long-period hi-hat",
+      "profiles": "ATtiny13A/Music/instruments/percussion-profiles.json",
+      "eepromBytes": 0
     }
   },
   "audioChannels": 2,
+  "channels": {
+    "tonalVoices": 5,
+    "parts": 4,
+    "percussionGenerators": 1,
+    "tailSlots": 0,
+    "roles": [
+      "violin",
+      "piano root",
+      "piano third",
+      "piano fifth or seventh",
+      "nylon guitar"
+    ],
+    "voiceAddresses": [
+      96,
+      101,
+      106,
+      111,
+      116
+    ],
+    "voiceStateBytes": 25,
+    "pwmRingBytes": 16
+  },
+  "timing": {
+    "tempoBpm": 80,
+    "actualTempoBpm": 79.99688386917114,
+    "phaseStep": 4772,
+    "phaseBits": 16,
+    "envelopeTickCycles": 131072,
+    "synthesisHz": 18750,
+    "pwmHz": 37500
+  },
+  "amplitudeLevels": 8,
   "outputs": [
     {
       "channel": "L",
@@ -264,14 +414,5 @@
       "left": 1,
       "right": 1
     }
-  },
-  "timing": {
-    "phaseStep": 4772,
-    "phaseBits": 16,
-    "envelopeTickCycles": 131072,
-    "tempoBpm": 80,
-    "actualTempoBpm": 79.99688386917114,
-    "synthesisHz": 18750,
-    "pwmHz": 37500
   }
 }

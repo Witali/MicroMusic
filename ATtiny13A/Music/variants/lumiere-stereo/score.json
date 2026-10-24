@@ -1,5 +1,5 @@
 {
-  "title": "Lumière — stereo four-voice arrangement",
+  "title": "Lumière — five tonal voices stereo",
   "composers": [
     "Lorien Testard",
     "Alice Duport-Percier"
@@ -140,6 +140,81 @@
       ]
     ]
   },
+  "packing_candidates": 4096,
+  "instruments": {
+    "lead": "violin",
+    "keys": "acoustic-grand-piano",
+    "pluck": "acoustic-guitar-nylon",
+    "percussion": "natural-kit"
+  },
+  "engine": "lumiere-chords",
+  "lead_envelope_model": "bowed",
+  "accompaniment_envelope_model": "piano",
+  "pluck_envelope_model": "pluck",
+  "percussion_enabled": true,
+  "keys_rest_check": false,
+  "pluck_rest_check": false,
+  "lead_max_level": 15,
+  "lead_attack_step": 4,
+  "lead_release_step": 1,
+  "lead_retrigger": "half",
+  "lead_release_model": "linear",
+  "keys_max_level": 15,
+  "keys_attack_step": 0,
+  "keys_release_step": 2,
+  "keys_retrigger": "full",
+  "keys_release_model": "shared-decay",
+  "pluck_max_level": 15,
+  "pluck_attack_step": 0,
+  "pluck_release_step": 1,
+  "pluck_retrigger": "full",
+  "pluck_release_model": "shared-decay",
+  "dds_fast_decay_roles": {},
+  "keys_decay_mask": 3,
+  "keys_fast_decay_mask": null,
+  "pluck_decay_mask": 1,
+  "pluck_fast_decay_mask": null,
+  "release_tail_slots": 0,
+  "chord_voicings": {
+    "Bm": [
+      "B3",
+      "D4",
+      "F#4",
+      "F#3"
+    ],
+    "Gmaj7": [
+      "G3",
+      "B3",
+      "F#4",
+      "D3"
+    ],
+    "Em": [
+      "E3",
+      "G3",
+      "B3",
+      "B2"
+    ],
+    "F#m": [
+      "F#3",
+      "A3",
+      "C#4",
+      "C#3"
+    ],
+    "F#": [
+      "F#3",
+      "A#3",
+      "C#4",
+      "C#3"
+    ],
+    "C#m7b5": [
+      "C#3",
+      "E3",
+      "B3",
+      "G2"
+    ]
+  },
+  "player_description": "Скрипка, трёхголосное пианино, гитара и ударные; все 3:42 сохранённой аранжировки.",
+  "arrangement_note": "Full saved lead-sheet arrangement. Piano triads and guitar realize the named chords; this is not the original orchestral score. Two former tail slots now carry two added piano chord tones. Gmaj7 and C#m7b5 include their seventh in the piano and fifth in the guitar. F# major is distinct from F#m.",
   "panorama": {
     "source": "New stereo placement for this adaptation; the retained lead sheet contains no pan instructions.",
     "law": "Linear levels, quantized halves; negative odd samples round toward minus infinity.",

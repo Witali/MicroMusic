@@ -111,4 +111,15 @@ class ScoreFormatTests(unittest.TestCase):
         # note selects pair1 and swapping parts selects pair2.
         self.assertEqual(unpacked,[0xe0,5,0xe0,21,0xe1,5,0xe2,21])
 
+    def test_full_voicings_keep_major_and_minor_chords_distinct(self):
+        data=self.fixture([['F#m','F#']],{'F#m':[54,49],'F#':[54,49]})
+        data['chord_voicings']={'F#m':[54,57,61,49],'F#':[54,58,61,49]}
+        assembly,meta=score.to_inc(data)
+        self.assertEqual(meta['chords'],['F#m','F#'])
+        self.assertEqual(meta['chord_table_bytes'],16)
+        rows=self.table(assembly,'chord_steps','melody_data')
+        self.assertEqual(rows[:2],rows[8:10])
+        self.assertNotEqual(rows[2:4],rows[10:12])
+        self.assertEqual(rows[4:8],rows[12:16])
+
 if __name__=='__main__':unittest.main()

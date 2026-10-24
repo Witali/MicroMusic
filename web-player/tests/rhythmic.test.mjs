@@ -1,11 +1,35 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {AVRCore} from '../lib/avr-core.js';
+import {createHash} from 'node:crypto';
+import {AVRCore} from '../lib/avr-reference.js';
 const base=new URL('../../ATtiny13A/Music/variants/rhythmic/',import.meta.url);
 const read=n=>readFileSync(new URL(n,base));
 const report=JSON.parse(read('build-report.json')),{labels,score}=report;
-const voices=report.releaseChannels.voiceAddresses;
+const voices=report.channels.voiceAddresses;
+
+for(const image of ['rhythmic','lumiere-stereo'])test(`${image}: NoteOff masks release all piano tones as one part`,()=>{
+  const folder=new URL(`../../ATtiny13A/Music/variants/${image}/`,import.meta.url);
+  const rom=readFileSync(new URL('synth.bin',folder)),ep=readFileSync(new URL('eeprom.bin',folder));
+  const labels=JSON.parse(readFileSync(new URL('build-report.json',folder))).labels;
+  for(let mask=1;mask<=14;mask++){
+    const c=new AVRCore(rom,ep);for(const a of [96,101,106,111,116])c.data[a]=143;
+    c.pc=labels.note_off/2;c.r[16]=240|mask;
+    while(c.pc!==labels.read_event/2)c.step();
+    for(const [a,bit] of [[96,0],[101,1],[106,1],[111,1],[116,2]])
+      assert.equal(!!(c.data[a]&128),!(mask&(1<<bit)),`mask ${mask}, state ${a}`);
+    assert.equal(c.r[20],mask&8?132:0);
+  }
+});
+
+test('the pinned complete-song trace includes every lead attack and four-tone harmony',()=>{
+  const audit=JSON.parse(readFileSync(new URL('../reports/rhythmic-release-verification.json',import.meta.url)));
+  assert.equal(audit.flashSha256,createHash('sha256').update(read('synth.bin')).digest('hex'));
+  assert.deepEqual([audit.completeSong.leadNotes,audit.completeSong.pianoNotes,audit.completeSong.guitarNotes],[309,348,116]);
+  assert.equal(audit.completeSong.missingAttacks,0);assert.equal(audit.completeSong.idealSeconds,222);
+  assert.equal(audit.pwm.fifoUnderruns,0);assert.equal(audit.timing.lostTimerEvents,0);
+  assert.equal(score.chords.length,6);assert.notDeepEqual(score.chord_notes['F#'],score.chord_notes['F#m']);
+});
 
 test('packed Lumiere preserves its original opening and first-section entry point',()=>{
   const c=new AVRCore(read('synth.bin'),read('eeprom.bin')),notes=[];
@@ -24,7 +48,7 @@ test('the tone routine exactly scales every sustain and piano attack sample at a
     do{c.step();}while(c.pc!==0);
     const bank=offset===16&&level>=14?48:offset;
     const packed=ep[bank+(high?8:0)+(phase>>1)],q=((phase&1)?packed>>4:packed&15)-8;
-    assert.equal(c.r[17],Math.floor(q*level/4)&255,`${offset}/${high}/${level}/${phase}`);
+    assert.equal(c.r[17],Math.floor(q*(offset===16?level>>1:level)/4)&255,`${offset}/${high}/${level}/${phase}`);
     assert.equal(c.r[29],0);assert.equal(c.sp,159);
   }
 });

@@ -1,5 +1,5 @@
 {
-  "title": "Lumière — four-voice instrumental arrangement",
+  "title": "Lumière — five tonal voices",
   "composers": [
     "Lorien Testard",
     "Alice Duport-Percier"
@@ -147,7 +147,7 @@
     "pluck": "acoustic-guitar-nylon",
     "percussion": "natural-kit"
   },
-  "engine": "instrument-bank",
+  "engine": "lumiere-chords",
   "lead_envelope_model": "bowed",
   "accompaniment_envelope_model": "piano",
   "pluck_envelope_model": "pluck",
@@ -174,5 +174,45 @@
   "keys_fast_decay_mask": null,
   "pluck_decay_mask": 1,
   "pluck_fast_decay_mask": null,
-  "release_tail_slots": 2
+  "release_tail_slots": 0,
+  "chord_voicings": {
+    "Bm": [
+      "B3",
+      "D4",
+      "F#4",
+      "F#3"
+    ],
+    "Gmaj7": [
+      "G3",
+      "B3",
+      "F#4",
+      "D3"
+    ],
+    "Em": [
+      "E3",
+      "G3",
+      "B3",
+      "B2"
+    ],
+    "F#m": [
+      "F#3",
+      "A3",
+      "C#4",
+      "C#3"
+    ],
+    "F#": [
+      "F#3",
+      "A#3",
+      "C#4",
+      "C#3"
+    ],
+    "C#m7b5": [
+      "C#3",
+      "E3",
+      "B3",
+      "G2"
+    ]
+  },
+  "player_description": "Скрипка, трёхголосное пианино, гитара и ударные; все 3:42 сохранённой аранжировки.",
+  "arrangement_note": "Full saved lead-sheet arrangement. Piano triads and guitar realize the named chords; this is not the original orchestral score. Two former tail slots now carry two added piano chord tones. Gmaj7 and C#m7b5 include their seventh in the piano and fifth in the guitar. F# major is distinct from F#m."
 }

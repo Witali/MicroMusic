@@ -1,9 +1,11 @@
 {
-  "flashBytes": 1012,
-  "codeBytes": 728,
-  "tableBytes": 284,
+  "engine": "lumiere-chords",
+  "activePrimaryVoices": 6,
+  "flashBytes": 1002,
+  "codeBytes": 690,
+  "tableBytes": 312,
   "eepromBytes": 64,
-  "flashSha256": "6a05b147bac66f4781b75f26b0473a60e057bc9c05d039a2676c0843f151dd0b",
+  "flashSha256": "3bf6b878c2e0a6a0ec0c231d7d909c874ea38b62483ecbfa20416684acfd7270",
   "eepromSha256": "45ba4c476cf214ef25d91494c6fa70b2567722b44403bcd25b09326e190fee37",
   "labels": {
     "REST_INDEX": 13,
@@ -23,67 +25,66 @@
     "audio_step": 98,
     "render_sample": 104,
     "voice_loop": 108,
-    "primary_gain": 138,
-    "render_drum": 144,
-    ".L280": 154,
-    ".L28a": 158,
-    ".L298": 172,
-    ".L2a0": 184,
-    ".L2ae": 234,
-    "write_pwm": 244,
-    "ring_published": 262,
-    "pwm_irq": 266,
-    "ring_read": 268,
-    "irq_restore": 274,
-    "music_tick": 276,
-    "envelope_loop": 280,
-    "state_plucked": 304,
-    "state_mask": 322,
-    "state_gate": 326,
-    "state_release": 334,
-    "envelope_store": 348,
-    ".L0a8": 368,
-    "grid_step": 380,
-    "drum_trigger": 388,
-    ".L0ba": 398,
-    "read_event": 404,
-    ".L0c8": 412,
-    "note_off": 420,
-    "note_off_loop": 422,
-    "chord_event": 446,
-    "melodic_event": 480,
-    "lead_commit": 526,
-    "note_rest": 528,
-    "release_lead": 528,
-    "hold_sample": 538,
-    "next_section": 542,
-    ".L15c": 562,
-    "render_tone": 572,
-    ".L216": 588,
-    "piano_attack_done": 598,
-    "eeprom_low_nibble": 616,
-    ".L25c": 620,
-    "voice_silent": 648,
-    "initialize_voice": 652,
-    "voice_initialized": 674,
-    "capture_ram_tail": 676,
-    "ram_tail_destination": 698,
-    "ram_tail_copy": 714,
-    "no_ram_tail": 724,
-    "playlist": 728,
-    "durations": 743,
-    "note_steps": 750,
-    "chord_steps": 776,
-    "melody_data": 796,
-    "section_packed_000": 796,
-    "first_section": 796,
-    "section_packed_002": 834,
-    "section_packed_004": 887,
-    "section_packed_006": 915,
-    "section_packed_005": 964,
-    "section_packed_003": 979,
-    "section_packed_001": 992,
-    "section_packed_007": 999
+    "primary_gain": 134,
+    "render_drum": 140,
+    ".L280": 150,
+    ".L28a": 154,
+    ".L298": 168,
+    ".L2a0": 180,
+    ".L2ae": 230,
+    "write_pwm": 240,
+    "ring_published": 258,
+    "pwm_irq": 262,
+    "ring_read": 264,
+    "irq_restore": 270,
+    "music_tick": 272,
+    "envelope_loop": 276,
+    "state_plucked": 300,
+    "state_mask": 318,
+    "state_gate": 322,
+    "state_release": 330,
+    "envelope_store": 344,
+    ".L0a8": 364,
+    "grid_step": 376,
+    "drum_trigger": 384,
+    ".L0ba": 394,
+    "read_event": 400,
+    ".L0c8": 408,
+    "note_off": 416,
+    "note_off_loop": 418,
+    "off_shift": 438,
+    "off_same_piano": 440,
+    "chord_event": 450,
+    "piano_chord_loop": 474,
+    "melodic_event": 488,
+    "lead_commit": 534,
+    "note_rest": 536,
+    "release_lead": 536,
+    "hold_sample": 546,
+    "next_section": 550,
+    ".L15c": 570,
+    "render_tone": 580,
+    ".L216": 596,
+    "piano_attack_done": 606,
+    "eeprom_low_nibble": 628,
+    ".L25c": 632,
+    "voice_silent": 660,
+    "initialize_voice": 664,
+    "voice_initialized": 688,
+    "playlist": 690,
+    "durations": 705,
+    "note_steps": 712,
+    "chord_steps": 738,
+    "melody_data": 786,
+    "section_packed_000": 786,
+    "first_section": 786,
+    "section_packed_002": 824,
+    "section_packed_004": 877,
+    "section_packed_006": 905,
+    "section_packed_005": 954,
+    "section_packed_003": 969,
+    "section_packed_001": 982,
+    "section_packed_007": 989
   },
   "score": {
     "note_count": 198,
@@ -91,7 +92,7 @@
     "maximum_entry_offset": 203,
     "playlist_bytes": 15,
     "note_table_bytes": 26,
-    "chord_table_bytes": 20,
+    "chord_table_bytes": 48,
     "durations": [
       1,
       2,
@@ -122,31 +123,48 @@
       "Gmaj7",
       "Em",
       "F#m",
-      "C#m7b5"
+      "C#m7b5",
+      "F#"
     ],
     "chord_notes": {
       "Bm": [
         59,
+        62,
+        66,
         54
       ],
       "Gmaj7": [
         55,
+        59,
+        66,
         50
       ],
       "Em": [
         52,
+        55,
+        59,
         47
       ],
       "F#m": [
         54,
+        57,
+        61,
         49
       ],
       "C#m7b5": [
         49,
-        44
+        52,
+        59,
+        43
+      ],
+      "F#": [
+        54,
+        58,
+        61,
+        49
       ]
     },
-    "total_data_bytes": 284,
+    "total_data_bytes": 312,
     "section_bars": {
       "intro": 2,
       "A": 8,
@@ -204,9 +222,9 @@
       "globallyMinimal": false,
       "candidateLimit": 4096,
       "candidateCount": 3958,
-      "dictionaryTrials": 118789,
+      "dictionaryTrials": 114830,
       "originalCommandBytes": 491,
-      "originalStreamSha256": "3ab96fdc2a91946e2e6ee4f20f8737b04e2ff9d846bd9b6c373bee910d0c3043",
+      "originalStreamSha256": "de7a40df895624bfd73c45373517d2bf0f04feb69d9ec1c3cbc052a1caa6b548",
       "sourceLayoutBytes": 257,
       "packedEventBytes": 216,
       "playlistBytes": 15,
@@ -216,7 +234,7 @@
       "referencedSections": 8,
       "verifiedLossless": true
     },
-    "source": "Lumière — four-voice instrumental arrangement",
+    "source": "Lumière — five tonal voices",
     "rest_index": 13,
     "hold_index": 14,
     "holds": [
@@ -239,35 +257,6 @@
       "pluck": "acoustic-guitar-nylon",
       "percussion": "natural-kit"
     }
-  },
-  "timing": {
-    "phaseStep": 4772,
-    "phaseBits": 16,
-    "envelopeTickCycles": 131072,
-    "tempoBpm": 80,
-    "actualTempoBpm": 79.99688386917114,
-    "sharedGrid": "One sixteenth grid drives score and half-beat percussion",
-    "initialHighPhase": 238
-  },
-  "articulation": {
-    "holdIndex": 14,
-    "holds": [
-      {
-        "section": "A",
-        "bar": 4,
-        "pitch": "G4",
-        "beat": 2.0
-      },
-      {
-        "section": "A",
-        "bar": 7,
-        "pitch": "G4",
-        "beat": 0.0
-      }
-    ],
-    "attack": "bowed",
-    "retrigger": "half",
-    "phaseContinuous": true
   },
   "instrumentAssignments": {
     "lead": {
@@ -351,165 +340,19 @@
       "eepromBytes": 0
     }
   },
-  "instrumentBankSha256": "ddf64e6c18950407c002d3c1a3dba9356e566bccba099c08918e7c5d0aa52221",
-  "percussionProfile": {
-    "kit": "natural-kit",
-    "attenuationShift": 0,
-    "hits": {
-      "kick": {
-        "gmBank": 128,
-        "gmNote": 35,
-        "label": "FluidR3 GM35 acoustic bass drum, compact triangle",
-        "generator": {
-          "kind": "triangle",
-          "phaseSource": "per-hit R14",
-          "phaseStep": 1,
-          "phaseStart": 168,
-          "phaseOffset": 0,
-          "triangleBias": 61,
-          "triangleShift": 2
-        },
-        "gainShift": 0,
-        "envelope": {
-          "decayShifts": [
-            0,
-            1,
-            1,
-            2
-          ],
-          "ticksPerStep": 2,
-          "firstStageTicks": [
-            1,
-            2
-          ],
-          "attackRampSamples": 0,
-          "schedule": "Existing R21 bit shifts, popcount(stage): levels1,1/2,1/2,1/4; one/two global ticks until first transition."
-        },
-        "limitations": [
-          "Fixed73.242Hz triangle; source body/impact/pitch trajectory and long sample tail are approximated."
-        ],
-        "id": "acoustic-bass-drum",
-        "timing": {
-          "cpuHz": 9600000,
-          "synthesisHz": 18750,
-          "pwmHz": 37500,
-          "envelopeTickCycles": 131072
-        },
-        "noise": {
-          "bits": 16,
-          "feedbackXor": 45,
-          "nonzeroSeed": 167,
-          "period": 65535
-        },
-        "signedDutyRange": [
-          -16,
-          16
-        ]
-      },
-      "snare": {
-        "gmBank": 128,
-        "gmNote": 38,
-        "label": "Selected soft acoustic snare: half noise plus triangle body",
-        "generator": {
-          "kind": "noise+triangle",
-          "noiseMode": "centered",
-          "noiseShift": 2,
-          "phaseSource": "existing PWM counter R15",
-          "phaseStep": 2,
-          "phaseStart": 1,
-          "phaseOffset": -64,
-          "triangleBias": 61,
-          "triangleShift": 2
-        },
-        "gainShift": 0,
-        "envelope": {
-          "decayShifts": [
-            0,
-            1,
-            1,
-            2
-          ],
-          "ticksPerStep": 2,
-          "firstStageTicks": [
-            1,
-            2
-          ],
-          "attackRampSamples": 0,
-          "schedule": "Existing R21 bit shifts, popcount(stage): levels1,1/2,1/2,1/4; one/two global ticks until first transition."
-        },
-        "limitations": [
-          "Measured approximation; body146.484Hz, source body~180Hz. Higher partials and original sample tail are not exact."
-        ],
-        "id": "acoustic-snare-soft-body",
-        "timing": {
-          "cpuHz": 9600000,
-          "synthesisHz": 18750,
-          "pwmHz": 37500,
-          "envelopeTickCycles": 131072
-        },
-        "noise": {
-          "bits": 16,
-          "feedbackXor": 45,
-          "nonzeroSeed": 167,
-          "period": 65535
-        },
-        "signedDutyRange": [
-          -24,
-          23
-        ]
-      },
-      "hat": {
-        "gmBank": 128,
-        "gmNote": 42,
-        "label": "Existing Lumiere natural closed hi-hat",
-        "generator": {
-          "kind": "noise",
-          "noiseMode": "difference",
-          "noiseShift": 2
-        },
-        "gainShift": 0,
-        "envelope": {
-          "decayShifts": [
-            0,
-            1,
-            1,
-            2
-          ],
-          "ticksPerStep": 2,
-          "firstStageTicks": [
-            1,
-            2
-          ],
-          "attackRampSamples": 0,
-          "schedule": "Existing R21 bit shifts, popcount(stage): levels1,1/2,1/2,1/4; one/two global ticks until first transition."
-        },
-        "limitations": [
-          "Preserved unchanged; compact high-pass-like noise, not metallic sample playback; four-step decay remains coarse."
-        ],
-        "id": "closed-hi-hat",
-        "timing": {
-          "cpuHz": 9600000,
-          "synthesisHz": 18750,
-          "pwmHz": 37500,
-          "envelopeTickCycles": 131072
-        },
-        "noise": {
-          "bits": 16,
-          "feedbackXor": 45,
-          "nonzeroSeed": 167,
-          "period": 65535
-        },
-        "signedDutyRange": [
-          -8,
-          8
-        ]
-      }
-    },
-    "bankSha256": "85dec89f9383f2274f7b8f9d9abbd426781e92451c01ddbff61db50f414f593a"
-  },
-  "releaseChannels": {
-    "primaryVoices": 3,
-    "tailSlots": 2,
+  "audioChannels": 1,
+  "channels": {
+    "tonalVoices": 5,
+    "parts": 4,
+    "percussionGenerators": 1,
+    "tailSlots": 0,
+    "roles": [
+      "violin",
+      "piano root",
+      "piano third",
+      "piano fifth or seventh",
+      "nylon guitar"
+    ],
     "voiceAddresses": [
       96,
       101,
@@ -518,14 +361,16 @@
       116
     ],
     "voiceStateBytes": 25,
-    "pwmRingBytes": 16,
-    "tailGain": 0.5,
-    "stealing": "Quietest of two release levels",
-    "phaseContinuous": true,
-    "isrCycles": 15,
-    "requiredFuses": {
-      "low": "0x7A",
-      "high": "0xFF"
-    }
-  }
+    "pwmRingBytes": 16
+  },
+  "timing": {
+    "tempoBpm": 80,
+    "actualTempoBpm": 79.99688386917114,
+    "phaseStep": 4772,
+    "phaseBits": 16,
+    "envelopeTickCycles": 131072,
+    "synthesisHz": 18750,
+    "pwmHz": 37500
+  },
+  "amplitudeLevels": 16
 }

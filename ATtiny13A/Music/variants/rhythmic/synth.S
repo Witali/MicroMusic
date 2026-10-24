@@ -79,8 +79,6 @@ voice_loop:
   subi r26, 254
   mov r16, r7
   rcall render_tone
-  sbrc r26, 4
-  asr r17
 primary_gain:
   add r21, r17
   cpi r26, 121
@@ -259,8 +257,14 @@ note_off_loop:
   subi r26, 1
   st X+, r17
   subi r26, 252
+  cpi r26, 101
+  breq off_shift
+  cpi r26, 116
+  brcs off_same_piano
+off_shift:
   lsr r16
-  cpi r26, 111
+off_same_piano:
+  cpi r26, 121
   brne note_off_loop
   sbrc r16, 0
   ldi r20, 132
@@ -272,14 +276,17 @@ chord_event:
   andi r16, 15
   lsl r16
   lsl r16
+  lsl r16
   ldi r30, lo8(chord_steps)
   ldi r31, hi8(chord_steps)
   add r30, r16
   adc r31, r29
   ldi r26, 101
   ldi r25, 223
+piano_chord_loop:
   rcall initialize_voice
-  ldi r26, 106
+  cpi r26, 116
+  brne piano_chord_loop
   ldi r25, 175
   rcall initialize_voice
   movw r30, r12
@@ -349,12 +356,15 @@ render_tone:
   brcs .L216
   ori r16, 8
 .L216:
-  cpi r26, 106
-  brne piano_attack_done
+  sbrs r0, 4
+  rjmp piano_attack_done
   cpi r25, 14
   brcs piano_attack_done
   ori r16, 48
 piano_attack_done:
+  /* Balance three simultaneous piano tones against the solo and guitar. */
+  sbrc r0, 4
+  lsr r25
   swap r17
   andi r17, 15
   lsr r17
@@ -386,7 +396,8 @@ voice_silent:
   clr r17
   rjmp envelope_return
 initialize_voice:
-  rcall capture_ram_tail
+  ld r16, X+
+  andi r16, 15
   andi r16, 15
   lsr r16
   or r16, r25
@@ -399,32 +410,4 @@ initialize_voice:
   st X+, r16
 voice_initialized:
   ret
-capture_ram_tail:
-  movw r10, r30
-  lds r16, 111
-  andi r16, 15
-  lds r17, 116
-  andi r17, 15
-  sub r16, r17
-  ldi r30, 111
-  brcs ram_tail_destination
-  ldi r30, 116
-ram_tail_destination:
-  ld r16, X+
-  andi r16, 127
-  mov r17, r16
-  andi r17, 15
-  breq no_ram_tail
-  clr r31
-  st Z+, r16
-  ldi r17, 4
-ram_tail_copy:
-  ld r0, X+
-  st Z+, r0
-  dec r17
-  brne ram_tail_copy
-  subi r26, 4
-no_ram_tail:
-  movw r30, r10
-  rjmp envelope_return
 .include "score.inc"

@@ -1,83 +1,59 @@
 {
   "image": "lumiere-stereo",
-  "flashSha256": "bbe2c732f1b58d28b19a5f6b8344feea6e615ecb93ad6aee1f16b20c1695edb3",
-  "flashBytes": 1020,
-  "channels": 2,
+  "engine": "lumiere-chords",
+  "flashSha256": "7226fa6a7679ab66ebe7068c948aff729a0b2334c6fe69c43ea1868ec0693bcc",
+  "flashBytes": 1018,
   "completeSong": {
-    "commands": 491,
-    "beats": 296,
+    "quarterNotes": 296,
     "idealSeconds": 222,
-    "elapsedSeconds": 222.016869375,
-    "maximumTimingErrorMs": 21.175416666665114,
-    "missingCommands": 0
+    "attacks": 773,
+    "leadNotes": 309,
+    "pianoNotes": 348,
+    "guitarNotes": 116,
+    "missingAttacks": 0,
+    "phaseChecks": 773
   },
-  "outputs": [
-    {
-      "channel": "L",
-      "pin": "PB0",
-      "compare": "OC0A",
-      "register": "OCR0A",
-      "packagePin": 5
-    },
-    {
-      "channel": "R",
-      "pin": "PB1",
-      "compare": "OC0B",
-      "register": "OCR0B",
-      "packagePin": 6
-    }
-  ],
-  "panorama": {
-    "source": "New stereo placement for this adaptation; the retained lead sheet contains no pan instructions.",
-    "law": "Linear levels, quantized halves; negative odd samples round toward minus infinity.",
-    "lead": {
-      "instrument": "violin",
-      "left": 1,
-      "right": 0.5
-    },
-    "keys": {
-      "instrument": "piano",
-      "left": 1,
-      "right": 1
-    },
-    "pluck": {
-      "instrument": "guitar",
-      "left": 0.5,
-      "right": 1
-    },
-    "drums": {
-      "instrument": "percussion",
-      "left": 1,
-      "right": 1
-    }
+  "voices": {
+    "tonal": 5,
+    "percussion": 1,
+    "maxActiveTonal": 5,
+    "releaseTails": 0
   },
   "pwm": {
-    "frames": 8326145,
+    "points": 4163071,
+    "channels": 2,
     "min": [
-      70,
-      65
+      63,
+      60
     ],
     "max": [
-      184,
-      184
+      179,
+      178
     ],
-    "mean": [
-      127.3206280937937,
-      127.32615742339343
+    "unboundedMixMin": [
+      -65,
+      -68
     ],
-    "correlation": 0.9136502955796972,
-    "channelWriteCountMismatch": 0
+    "unboundedMixMax": [
+      51,
+      50
+    ],
+    "checkedMixSamples": 4163071,
+    "fifoUnderruns": 0,
+    "minQueuedBytes": 6,
+    "maxQueuedBytes": 12
   },
   "timing": {
-    "isrCycles": 26,
-    "maxForegroundCyclesIncludingWaitAndIrq": 302,
-    "minimumBufferPublishMarginCycles": 192,
+    "isrCycles": 18,
+    "maxRenderCycles": 462,
     "lostTimerEvents": 0,
     "lostWorkEvents": 0
   },
   "memory": {
-    "stateBytes": 7,
-    "maxStackBytes": 5
+    "voiceStateBytes": 25,
+    "pwmRingBytes": 16,
+    "maxStackBytes": 6,
+    "minimumSP": 153
   },
-  "model": "Paired OCR0A/OCR0B duty writes, one AVR execution. Physical PWM edges and double-buffer latch timing are not synthesized."
+  "sourceLimit": "Saved lead-sheet adaptation; new piano tones realize its chord symbols. No claim of an original orchestral transcription. Stereo uses a noise-only snare to fit the second PWM channel."
 }
