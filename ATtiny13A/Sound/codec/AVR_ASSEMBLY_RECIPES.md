@@ -261,6 +261,72 @@ proves this recoding for the input stream. It freed **five bytes** in the first
 fit, without adding any AVR instructions. This storage optimization alone does
 not improve sound; further fitting uses the freed budget.
 
+## Recipe: store only reachable waveform rows
+
+The maximum selector space can be a power of two without reserving that many
+physical EEPROM rows for each recording. Canonicalize duplicate rows, set the
+selector to zero on unvoiced/zero-gain frames, and collect the rows used by voiced
+nonzero-gain frames. Reindex them consecutively and retain one zero row when
+there are no active forms. Keep a full logical table on the PC as the oracle.
+
+Assign the first four indices by how often they avoid forcing an extended
+header, rather than by tap values or row number. Then select width, byte/nibble
+storage and decoder together. Four or fewer forms need no upper-selector parser;
+the existing four-form ASM is sufficient. The EEPROM speech prefix starts
+immediately after the last stored row. A non-power-of-two table needs no extra
+AVR dispatch or bounds instructions when all reachable indices are proven.
+
+For four-tap forms, the complete-image choices are:
+
+| Stored forms | Physical taps | Waveform EEPROM | Speech prefix | Core | Stream capacity |
+| --- | --- | ---: | ---: | ---: | ---: |
+| 1 | scaled bytes | 4 | 60 | 398 | 685 |
+| 4 | scaled bytes | 16 | 48 | 398 | 673 |
+| 5 | scaled bytes | 20 | 44 | 412 | 655 |
+| 6 | signed nibbles | 12 | 52 | 422 | 653 |
+| 7 | signed nibbles | 14 | 50 | 422 | 651 |
+| 8 | signed nibbles | 16 | 48 | 422 | 649 |
+
+Five forms tie in total size between byte and nibble storage; the smaller,
+faster byte decoder wins the tie. Re-evaluate this decision whenever width,
+prefix or stream changes. Unused space is useful only if code plus data plus
+EOF/alignment is smaller after rebuilding the whole image.
+
+The seven-form Vinni control saves **1012 → 1010 Flash bytes**, with the same
+PCM, **64 EEPROM**, **199 cycles** of slack and **28 bytes** maximum SRAM span.
+Actual builds test zero through eight active forms, and one/seven-form maximum
+streams execute at exactly 1024 Flash bytes. The portable packer preserves the
+whole PCM and all wrap counters. Generated Flash and EEPROM remain one pair.
+
+## Recipe: extract a high flag into a low register through carry
+
+An extended pitch byte holds a seven-bit integer period and a high fraction
+flag. Saving the original, masking twice and copying into low registers takes
+seven words. This six-word sequence retains both fields:
+
+```asm
+ lsl r16                 /* high fraction flag -> C; period shifts left */
+ clr r9                  /* preserves C; IRQ must preserve SREG and r9 */
+ rol r9                  /* fraction flag -> r9 bit 0 */
+ lsr r16                 /* original seven-bit period */
+ mov r4,r16
+ mov r2,r16
+```
+
+Keep the cycle's extra-sample toggle in R9 bit 1, separate from the enable bit.
+Toggle with `EOR` against 2, not an increment that could eventually carry into
+the enable bit. Adjust both the phase reload and waveform lag on extra-sample
+cycles; otherwise the first tap would be repeated. Clear both bits on each
+frame load, including noise/integer frames. SREG.T remains the one-shot flag.
+
+The complete half-pitch extension measures **24 added bytes** after this
+two-byte saving. The selected four-form Vinni is **1022 Flash + 64 EEPROM**,
+with **202 cycles** minimum preparation slack and unchanged PCM versus the
+previous 1024-byte image. Four targeted contracts include rapid period-one
+alternation beyond 128 toggles, eight-form mixed packets and full phrases in
+three engines. The [half-pitch study](../research/q3-adaptive/README.md) retains
+the measured spectral/intelligibility changes, complete images and limits.
+
 ## Changes that preserve the decoded bytes
 
 - **Round using the last discarded bit.** After a signed ASR/ROR loop, carry
