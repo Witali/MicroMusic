@@ -13,6 +13,10 @@ volatile uint8_t innovation_index;
 /* Guard words surround both the input and output mailboxes. */
 int16_t iir_samples[42],iir_input[42],iir_coef[10];
 int32_t iir_state[15];
+/* AVR GCC aligns int32_t to one byte: cover every low-byte address. */
+_Static_assert(__alignof__(int32_t)==1,"AVR byte-address sweep");
+uint8_t iir_state_arena[324];
+volatile uint8_t iir_state_offset;
 volatile uint8_t iir_command,iir_status,iir_zero;
 static void innovation10_c(int16_t *out,const uint8_t *pitch,
                            const int8_t *shape,int32_t scale)
@@ -37,6 +41,12 @@ int main(void)
          speex_avr_iir40(iir_samples+1,iir_coef,iir_samples+1,iir_state);
       else if (iir_command==5)
          speex_avr_iir40(iir_input+1,iir_coef,iir_samples+1,iir_state);
+      else if (iir_command==6)
+         speex_avr_iir40(iir_samples+1,iir_coef,iir_samples+1,
+                        (int32_t *)(iir_state_arena+4+iir_state_offset));
+      else if (iir_command==7)
+         speex_avr_iir40(iir_input+1,iir_coef,iir_samples+1,
+                        (int32_t *)(iir_state_arena+4+iir_state_offset));
       else if (iir_command==4)
          iir_samples[1]=speex_nb3_saturating_q14_c(innovation_scale);
       else if (iir_command==3)

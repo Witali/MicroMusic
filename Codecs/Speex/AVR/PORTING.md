@@ -53,6 +53,11 @@ matching optimized kernel is provided yet.
 | Short-pitch range selection and boundary sums | `short_pitch.h` calling variable ASM vectors | `short_pitch.h`, scalar boundaries and inlined C vectors |
 | Whole-block LPC synthesis | `lpc_dot.S` | C dot product and coefficient-age loop in `iir_direct.c.inc` |
 
+The AVR IIR cursor compares a low address byte only because ten word positions
+span exactly 20 bytes; every state-base low byte and page crossing is tested.
+Changing that span requires a new wrap proof. The portable C path retains its
+ordinary indexed ring cursor and is byte-identical to the prior admitted build.
+
 The C build does not link any `.S` file. The historical, unused
 `lpc_update.S` corresponds to upstream transposed C synthesis and is not a
 library dependency. The optional player load-test markers are instrumentation,

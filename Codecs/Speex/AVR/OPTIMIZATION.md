@@ -473,21 +473,45 @@ gaps 80,013 / 193,874, 644 B free SRAM. Speech demo is 12,806 B including
 copies match the main tree. Fresh manifest/CMake C archives each match 9,100
 frames. Reports: short-tail-*.json, portable-short-tail-library.json.
 
-## Next candidates (not yet admitted)
+### IIR wrap check from the already advancing pointer
 
-1. **Replace the redundant IIR cursor with the pointer-end low byte.** The
-   isolated prototype saves exactly 43 cycles/call over 655,360 independent
-   samples, all 256 SRAM low-byte positions and both I/O modes; guards,
-   coefficient ages, wrapping arithmetic, saturation and ABI pass. Twenty
-   bytes contain ten distinct word positions modulo 256, including across a
-   page. The pointer already advances, so compare its low byte to a precomputed
-   end rather than updating a second cursor. Full decoder/PWM admission is
-   still pending; no production IIR change yet.
+Precompute the low byte of history+20 in r16 once, then compare it to Y's low
+byte after each word store. Ten positions in a 20-byte span are distinct
+modulo 256, even across a page; reset the full Y from the history base when
+they match. Remove the parallel byte cursor and its update/reset. Callee-saved
+registers and C fallback stay unchanged. The extra setup cycle costs one;
+36 ordinary iterations save one each and four wraps save two each: net 43
+cycles per 40-sample call, 172 per full frame. Flash decreases two bytes.
 
-2. **Revisit synthesis using the current profile.** The fresh 88-frame fixture
-   profile attributes 55.966% to IIR and 18.342% to shared pitch/innovation.
-   Inspect the MAC carry chains and history/control loads before selecting a
-   new candidate. No untested IIR speedup is assumed.
+Paired unit tests match 655,360 samples, all 256 SRAM base low bytes, both
+I/O modes, coefficient ages, clipped/wrapped values, guards, callee-saved
+registers and r1. Every one of the 512 per-mode/address rows saves exactly
+43 cycles/call. The earlier full IIR/innovation/C saturation suites also pass.
+All 14,278 decoder frames remain exact; every stream minimum/mean/maximum
+falls by 172 cycles. Corpus mean improves 0.1455%, human speech 0.1430%;
+corpus max 125,073 and coverage max 125,581. Flash 9,600 B, SRAM/stack
+1,119 / 141 B unchanged. Both complete ordinary/+40% CPU PWM runs pass all
+31 streams, exact output and zero underruns, queues 73 / 31, gaps
+80,013 / 193,831 cycles, free SRAM 644 B. Ordinary demo is 12,804 B including
+2,940 B audio. Main decoder/player/unit match verified images, and both
+83-file source copies match the main tree. C decoder and both C demos are
+rebuilt and byte-identical to the admitted images. Reports: iir-cursor-*.
+
+## Next candidates (not yet measured/admitted)
+
+1. **Inspect a portable byte-product MAC for AVR C IIR.** Actual C disassembly
+   has ten static calls to __mulhisi3 in the unrolled dot product (retained in
+   c-iir-multiply-inspection.json). Four signed/unsigned byte products might
+   avoid call overhead, but compiler-generated r1 clearing, carry scheduling,
+   code size and register pressure can erase that benefit. Measure rather than
+   extrapolating from the ASM MAC; keep native multiply on other CPUs unless
+   evidence supports a change there. No speedup is established yet.
+
+2. **Split IIR coefficient ageing from its steady phase.** After the first ten
+   samples, all coefficients are stable for thirty more. The former den/base
+   registers could cache two words, and a separate steady loop could omit the
+   ageing test. Account for extra code and transition work, retain exact first
+   ten samples and all modulo-32 arithmetic; no timing/size claim yet.
 
 No claim of a global speed optimum has been established. Do not mark the
 ongoing optimization goal complete while useful candidates remain untested.

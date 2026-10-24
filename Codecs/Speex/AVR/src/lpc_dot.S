@@ -2,8 +2,8 @@
  * void speex_avr_iir40(const int16_t *x, const int16_t *den,
  *                      int16_t *y, int32_t *state);
  * ABI arguments r25:r24, r23:r22, r21:r20, r19:r18; state is 60 zeroed bytes.
- * r6:x, r8:y, r10:den, r12:history base, r14:coef base; r16:history byte
- * cursor, r17:remaining samples. X/Z walk the dot product; Y retains the
+ * r6:x, r8:y, r10:den, r12:history base, r14:coef base; r16:history end
+ * low byte, r17:remaining samples. X/Z walk the dot product; Y retains the
  * history write cursor, advanced by the two stores and reset each ten samples.
  * Arithmetic is modulo 2^32, then rounded >>13 and saturated to +/-32767.
  * All callee-saved registers and r1 restored; interrupts remain enabled. */
@@ -42,7 +42,10 @@ speex_avr_iir40:
     /* One rounding constant for the whole block; r3 survives every MAC. */
     ldi r18,16
     mov r3,r18
-    clr r16
+    /* Y traverses exactly twenty bytes, so its low byte reaches the low
+     * end byte only after ten words, including across a 256-byte page. */
+    mov r16,r12
+    subi r16,-20
     ldi r17, 40
 .Lsample:
     movw r26, r14
@@ -156,10 +159,8 @@ speex_avr_iir40:
     std Y+38,r18
     std Y+39,r19
 .Lcoeff_done:
-    subi r16, -2
-    cpi r16, 20
-    brlo .Lcursor_done
-    clr r16
+    cp r28,r16
+    brne .Lcursor_done
     movw r28,r12
 .Lcursor_done:
     dec r17
