@@ -2,6 +2,7 @@
  * Build with avr-gcc -mmcu=attiny13a -nostdlib -nostartfiles.
  * Do not infer the WGM5/TOP=0 result from this firmware: it only records it.
  */
+#include "../attiny13a-registers.generated.inc"
 #ifndef PROBE_MODE
 #define PROBE_MODE 5
 #endif
@@ -49,23 +50,23 @@
 #error "Initial counter/latch value out of range"
 #endif
 
-/* I/O offsets from DS40002307A section20. No copied device header required. */
-.equ PINB_IO,   0x16
-.equ DDRB_IO,   0x17
-.equ PORTB_IO,  0x18
-.equ WDTCR_IO,  0x21
-.equ PRR_IO,    0x25
-.equ CLKPR_IO,  0x26
-.equ OCR0B_IO,  0x29
-.equ TCCR0A_IO, 0x2f
-.equ TCNT0_IO,  0x32
-.equ TCCR0B_IO, 0x33
-.equ MCUSR_IO,  0x34
-.equ OCR0A_IO,  0x36
-.equ TIFR0_IO,  0x38
-.equ TIMSK0_IO, 0x39
-.equ GIMSK_IO,  0x3b
-.equ SPL_IO,    0x3d
+/* Project aliases use the pinned manufacturer's definitions above. */
+.equ PINB_IO,   PINB
+.equ DDRB_IO,   DDRB
+.equ PORTB_IO,  PORTB
+.equ WDTCR_IO,  WDTCR
+.equ PRR_IO,    PRR
+.equ CLKPR_IO,  CLKPR
+.equ OCR0B_IO,  OCR0B
+.equ TCCR0A_IO, TCCR0A
+.equ TCNT0_IO,  TCNT0
+.equ TCCR0B_IO, TCCR0B
+.equ MCUSR_IO,  MCUSR
+.equ OCR0A_IO,  OCR0A
+.equ TIFR0_IO,  TIFR0
+.equ TIMSK0_IO, TIMSK0
+.equ GIMSK_IO,  GIMSK
+.equ SPL_IO,    SPL
 
 .section .text
 .global __vectors
@@ -77,7 +78,7 @@ __vectors:
 
 reset:
  cli
- ldi r16,0x9f
+ ldi r16,RAMEND
  out SPL_IO,r16
  clr r16
  out MCUSR_IO,r16
@@ -91,9 +92,9 @@ reset:
  out PRR_IO,r16
  out TCCR0B_IO,r16
  out TCCR0A_IO,r16
- out 0x06,r16                 /* ADC disabled. */
+ out ADCSRA,r16               /* ADC disabled. */
  ldi r16,0x80
- out 0x08,r16                 /* Comparator disabled; PB0/PB1 remain digital. */
+ out ACSR,r16                 /* Comparator disabled; PB0/PB1 remain digital. */
  out CLKPR_IO,r16
  clr r16
  out CLKPR_IO,r16             /* /1, then settle before accepting T0 pulses. */
