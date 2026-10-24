@@ -228,14 +228,14 @@
   "instrumentAssignments": {
     "leadGuitar": {
       "instrument": "acoustic-guitar-nylon",
-      "label": "\u0410\u043a\u0443\u0441\u0442\u0438\u0447\u0435\u0441\u043a\u0430\u044f \u0433\u0438\u0442\u0430\u0440\u0430 \u0441 \u043d\u0435\u0439\u043b\u043e\u043d\u043e\u0432\u044b\u043c\u0438 \u0441\u0442\u0440\u0443\u043d\u0430\u043c\u0438",
+      "label": "Акустическая гитара с нейлоновыми струнами",
       "gmProgram": 24,
       "sourceVelocity": 80,
       "level": 15
     },
     "rhythmGuitar": {
       "instrument": "acoustic-guitar-nylon",
-      "label": "\u041c\u044f\u0433\u043a\u0430\u044f \u043d\u0435\u0439\u043b\u043e\u043d\u043e\u0432\u0430\u044f \u0433\u0438\u0442\u0430\u0440\u0430 \u0441\u043e\u043f\u0440\u043e\u0432\u043e\u0436\u0434\u0435\u043d\u0438\u044f",
+      "label": "Мягкая нейлоновая гитара сопровождения",
       "gmProgram": 24,
       "sourceVelocity": 80,
       "level": 15,
@@ -245,5 +245,13 @@
     }
   },
   "instrumentBankSha256": "ddf64e6c18950407c002d3c1a3dba9356e566bccba099c08918e7c5d0aa52221",
-  "articulation": "Shared plucked envelope for each common-gate source chord; phases reset on picking; no additional release slots."
+  "articulation": "Shared plucked envelope for each common-gate source chord; phases reset on picking; no additional release slots.",
+  "standaloneCoreSources": {
+    "normalization": "UTF-8, LF",
+    "sha256": {
+      "web-player/lib/avr-profiles.js": "37583c2bbb1e36c5cc8687e0911ce46c062a97b0df21747ef92535628fa84c2b",
+      "web-player/lib/avr-reference.js": "f62e6f5d46699472d64dd6e49962f4832531ae8cf1b457d92753c6203b9763c6",
+      "web-player/lib/hex.js": "73026ff8e78caab294b86bd32b3588cf92f77e59203531aa3bf3bc7979dd09ab"
+    }
+  }
 }

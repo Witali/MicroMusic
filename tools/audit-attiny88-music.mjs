@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {AVRCore as ReferenceCore} from '../web-player/lib/avr-reference.js';
-import {AVRMusicTargetCore} from './avr-music-target-core.mjs';
+import {AVRCore as WasmCore} from '../web-player/lib/avr-core.js';
 
 const root=fileURLToPath(new URL('../',import.meta.url));
 const sha=b=>createHash('sha256').update(b).digest('hex');
@@ -80,11 +80,13 @@ function auditTables(oldFolder,newFolder){
   allOtherMusicTableBytesIdentical:true,allWavetablesIdentical:true,independentlyVerifiedGainCells:verifiedGainCells};
 }
 
-export function trace(name,folder,{target=false,baseline=null,afterRestartTicks=74,maxSeconds=320}={}){
+export function trace(name,folder,{target=false,baseline=null,afterRestartTicks=74,maxSeconds=320,engine='js'}={}){
  const meta=readJSON(path.join(folder,'build-report.json'));
  const rom=fs.readFileSync(path.join(folder,'synth.bin')),ep=fs.readFileSync(path.join(folder,'eeprom.bin'));
  assert.equal(sha(rom),meta.flashSha256);assert.equal(sha(ep),meta.eepromSha256);
- const c=target?new AVRMusicTargetCore(rom,ep):new ReferenceCore(rom,ep);
+ assert.ok(['js','wasm'].includes(engine),'Unknown audit engine');
+ const Core=engine==='wasm'?WasmCore:ReferenceCore;
+ const c=new Core(rom,ep,{target:target?'attiny88':'attiny13a'});
  const cpu=target?8000000:9600000,layout=voiceLayout(name,meta),poly=layout.poly;
  const addresses=target?(meta.memory?.voiceAddresses??layout.addresses.map(a=>a<256?a+256:a)):layout.addresses;
  const p=Object.fromEntries(Object.entries(meta.labels).map(([k,v])=>[k,v/2]));
@@ -112,6 +114,16 @@ export function trace(name,folder,{target=false,baseline=null,afterRestartTicks=
   for(let pc=p.chord_gain;pc<p.music_tick;pc++)if(word(rom,pc*2)===0x9508){chordGainReturn=pc;break;}
   assert.notEqual(chordGainReturn,null,'Chord gain return found');hookPCs.add(chordGainReturn);
  }
+ // Observe the actual EERE instruction in both executors. Native instructions
+ // call C's internal I/O handler; overriding the JS bridge cannot observe it.
+ // EEAR and voice phase remain stable through the synchronous SBI bus access.
+ const eepromReadPCs=new Set();
+ if(target){
+  for(let pc=0;pc<meta.codeBytes/2;pc++)if(word(rom,pc*2)===0x9af8){
+   eepromReadPCs.add(pc);hookPCs.add(pc);
+  }
+  assert.ok(eepromReadPCs.size>0,'Target EEPROM-read instruction located');
+ }
  // runBlock must never jump across an observation point.
  for(const pc of hookPCs)c.batch[pc]=0;
  const finishVoice=()=>{
@@ -120,13 +132,11 @@ export function trace(name,folder,{target=false,baseline=null,afterRestartTicks=
   assert.equal(word(c.data,a+(poly?0:1)),phase,`${name}: exact 16-bit DDS accumulation`);phaseChecks++;
   currentVoice=null;
  };
- if(target){
-  const writeIO=c.writeIO.bind(c);
-  c.writeIO=(address,value)=>{
+ const observeEEPROM=()=>{
    // EERE used for musical DDS loads outside rendering is checked by snapshots.
    // During synthesis its address must select the expected instrument/register
    // and the correct packed pair of the sixteen waveform points.
-   if(address===0x1f&&(value&1)&&rendering&&currentVoice){
+   if(rendering&&currentVoice){
     const {index,env,phase,step}=currentVoice,high=(step&0x7fff)>=1229?8:0;
     let bank;
     if(poly)bank=(index<(name.endsWith('-sparse')?3:2)?0:16)|high;
@@ -141,9 +151,7 @@ export function trace(name,folder,{target=false,baseline=null,afterRestartTicks=
     const packed=ep[bank|(phase>>13)];
     currentVoice.rawSample=((phase&4096?packed>>4:packed)&15)-8;waveReadChecks++;
    }
-   return writeIO(address,value);
-  };
- }
+ };
  const recordEvent=(kind,code)=>{
   const e=[ticks,kind,code];
   if(target&&baseline)assert.deepEqual(e,baseline.events[events.length],`${name}: musical command ${events.length}`);
@@ -161,6 +169,7 @@ export function trace(name,folder,{target=false,baseline=null,afterRestartTicks=
  };
  const observe=()=>{
   if(!c.inIRQ){
+   if(eepromReadPCs.has(c.pc))observeEEPROM();
    if(c.pc===p.idle){
     if(!initialized){
      initialized=true;
@@ -260,6 +269,10 @@ export function trace(name,folder,{target=false,baseline=null,afterRestartTicks=
   }else if(!(c.fastIdle&&c.idle[c.pc]&&c.skipIdle())&&!c.runBlock())c.step();
  }
  assert.ok(done,`${name}: full song and restart must finish in ${maxSeconds} seconds`);
+ if(target){
+  assert.ok(phaseChecks>0&&waveReadChecks>0,'Executed DDS and wavetable-read observations');
+  if(meta.amplitudeGain||meta.chordGain)assert.ok(gainChecks>0,'Executed gain observations');
+ }
  assert.notEqual(restartTick,null,`${name}: restart reached`);
  assert.equal(underruns+c.lost+c.workLost,0,`${name}: uninterrupted PWM and foreground work`);
  assert.ok(maxRender<512,`${name}: render budget ${maxRender} cycles`);
@@ -285,14 +298,14 @@ export function trace(name,folder,{target=false,baseline=null,afterRestartTicks=
  return result;
 }
 
-export function audit(name,{writeReport=true,log=true,maxSeconds=320}={}){
+export function audit(name,{writeReport=true,log=true,maxSeconds=320,engine='js'}={}){
  assert.ok(VARIANTS.includes(name),'Unknown variant: '+name);
  const oldFolder=path.join(root,'ATtiny13A/Music/variants',name),newFolder=path.join(root,'ATtiny88/Music/variants',name);
  const tables=auditTables(oldFolder,newFolder);
  if(log)console.log(`${name}: executing complete ATtiny13A reference song`);
- const baseline=trace(name,oldFolder,{maxSeconds});
+ const baseline=trace(name,oldFolder,{maxSeconds,engine});
  if(log)console.log(`${name}: executing complete ATtiny88 port song (${baseline.ticks} control ticks)`);
- const port=trace(name,newFolder,{target:true,baseline,maxSeconds});
+ const port=trace(name,newFolder,{target:true,baseline,maxSeconds,engine});
  const result={target:'ATtiny88',variant:name,method:'All CPU samples, complete song plus one second of restart',
   musicalStateCompared:'Every control tick: all voice envelopes and independently retuned DDS words; all score and expanded grammar commands in order',
   samplePhaseCompared:false,phaseReason:'Sample rate changes from 18750 to 15625 Hz; phase positions therefore differ',

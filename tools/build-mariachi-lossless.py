@@ -21,6 +21,9 @@ def module(name,file):
     result=importlib.util.module_from_spec(spec);spec.loader.exec_module(result);return result
 
 
+standalone = module('avr_standalone', ROOT/'tools/avr-standalone.py')
+
+
 def compile_score():
     p=module('poly_events','pack-musical-events.py')
     doc=json.loads(SOURCE.read_text(encoding='utf-8'))
@@ -622,9 +625,9 @@ guitar_bank:
         label='Тихий бас-барабан и закрытый хай-хэт из прежней аранжировки')
     report['instrumentBankSha256']=hashlib.sha256((ROOT/'ATtiny13A/Music/instruments/bank.json').read_bytes()).hexdigest()
     report['articulation']='Shared plucked envelope for each common-gate source chord; phases reset on picking; no additional release slots.'
-    (folder/'build-report.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
+    (folder/'build-report.json').write_text(json.dumps(standalone.record_sources(report),indent=2)+'\n',encoding='utf-8',newline='\n')
     (folder/'compiled-score.json').write_text(json.dumps(codec,indent=2)+'\n',encoding='utf-8',newline='\n')
-    shutil.copyfile(ROOT/'ATtiny13A/Music/variants/rhythmic/avr_core.js',folder/'avr_core.js')
+    standalone.save_core(folder)
     shutil.copyfile(ROOT/'ATtiny13A/Music/instruments/FluidR3-MIT.txt',folder/'FluidR3-MIT.txt')
     html=(ROOT/'tools/player-template.html').read_text(encoding='utf-8')
     for key,value in [('AVR_CORE',(folder/'avr_core.js').read_text(encoding='utf-8')),

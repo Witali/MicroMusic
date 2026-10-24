@@ -4,6 +4,7 @@ import {readFileSync} from 'node:fs';
 import {Worker, MessageChannel} from 'node:worker_threads';
 import {createRenderer} from '../lib/engines.js';
 import {AVRMusicTargetCore} from '../lib/avr-attiny88.js';
+import {AVRCore as JSCore} from '../lib/avr-reference.js?v=20261024-common-avr';
 import {AVRMusicTargetCore as AuditCore} from '../../tools/avr-music-target-core.mjs';
 import {parseHex} from '../lib/hex.js';
 
@@ -17,23 +18,22 @@ function entryFor(id) {
     eepromHex:readFileSync(new URL('eeprom.hex', folder), 'utf8')};
 }
 
-test('ATtiny88 playback and firmware audits share one implementation; unsupported WASM fails explicitly', async () => {
+test('ATtiny88 playback and firmware audits use the configurable AVR core in both engines', async () => {
   assert.equal(AuditCore, AVRMusicTargetCore);
   const entry = entryFor('rhythmic');
-  await assert.rejects(createRenderer(entry, 48000), /ATtiny88.*JavaScript/);
-  await assert.rejects(createRenderer(entry, 48000, {}, 'wasm'), /ATtiny88.*JavaScript/);
+  assert.equal((await createRenderer(entry, 48000)).engine, 'wasm');
   await assert.rejects(createRenderer(entry, 48000, {}, 'unknown'), /Unknown AVR engine/);
   const renderer = await createRenderer(entry, 48000, {}, 'js');
   assert.equal(renderer.engine, 'js');
-  assert.ok(renderer.core instanceof AVRMusicTargetCore);
+  assert.ok(renderer.core instanceof JSCore);
   assert.equal(renderer.core.profile.flashBytes, 8192);
   assert.equal(renderer.core.sram.length, 512);
   assert.equal(renderer.core.cpuHz, 8000000);
   assert.equal(renderer.ratio, 31250 / 48000);
 });
 
-for (const id of variants) test(id + ': browser renderer runs actual ATtiny88 HEX at 8 MHz / Timer1, without lost interrupts', async () => {
-  const entry = entryFor(id), renderer = await createRenderer(entry, 48000, {}, 'js');
+for (const engine of ['js','wasm']) for (const id of variants) test(engine + ' / ' + id + ': browser renderer runs actual ATtiny88 HEX at 8 MHz / Timer1, without lost interrupts', async () => {
+  const entry = entryFor(id), renderer = await createRenderer(entry, 48000, {}, engine);
   const binary = readFileSync(new URL('../../ATtiny88/Music/variants/' + id + '/synth.bin', import.meta.url));
   assert.deepEqual(Buffer.from(parseHex(entry.flashHex, 8192)), binary);
   assert.ok(binary.length > 1024 || id === 'greensleeves');
@@ -57,9 +57,9 @@ for (const id of variants) test(id + ': browser renderer runs actual ATtiny88 HE
   assert.ok(Math.abs(renderer.core.cyc - 32768 / 48000 * 8000000) < 10000, 'CPU runs at 8 MHz');
 });
 
-test('ATtiny88 stereo resampling and control smoothing are independent of audio block boundaries', async () => {
+for (const engine of ['js','wasm']) test(engine + ': ATtiny88 stereo resampling and control smoothing are independent of audio block boundaries', async () => {
   const entry = entryFor('lumiere-stereo');
-  const whole = await createRenderer(entry, 44100, {}, 'js'), split = await createRenderer(entry, 44100, {}, 'js');
+  const whole = await createRenderer(entry, 44100, {}, engine), split = await createRenderer(entry, 44100, {}, engine);
   for (const controls of [{volume:.3, cutoff:7500}, {volume:0, cutoff:2000}]) {
     for (const renderer of [whole, split]) renderer.setAudioControls(controls);
     const expected = whole.render(16384), actual = new Float32Array(32768);
@@ -83,16 +83,16 @@ function message(target, type) {
   });
 }
 
-for (const id of ['lumiere-stereo', 'cancion-del-mariachi-sparse']) test(id + ': actual browser Worker preserves ATtiny88 selection and PCM channels', async t => {
+for (const engine of ['js','wasm']) for (const id of ['lumiere-stereo', 'cancion-del-mariachi-sparse']) test(engine + ' / ' + id + ': actual browser Worker preserves ATtiny88 selection and PCM channels', async t => {
   const worker = new Worker(new URL('./helpers/browser-worker-node.mjs', import.meta.url));
   t.after(() => worker.terminate());
   const ports = new MessageChannel(); t.after(() => ports.port1.close());
   const entry = entryFor(id), controls = {volume:.5, cutoff:6000};
   const ready = message(worker, 'ready');
-  worker.postMessage({type:'init', entry, engine:'js', sampleRate:48000, controls});
+  worker.postMessage({type:'init', entry, engine, sampleRate:48000, controls});
   worker.postMessage({type:'audio-port', port:ports.port2, sampleRate:48000}, [ports.port2]);
-  assert.equal((await ready).engine, 'js');
-  const expected = await createRenderer(entry, 48000, controls, 'js');
+  assert.equal((await ready).engine, engine);
+  const expected = await createRenderer(entry, 48000, controls, engine);
   for (let n = 0; n < 3; n++) {
     const state = message(worker, 'state'), samples = message(ports.port1, 'samples');
     ports.port1.postMessage({type:'need', frames:4096});

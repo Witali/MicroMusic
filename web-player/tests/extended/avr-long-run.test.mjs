@@ -18,7 +18,7 @@ for(const entry of catalog.entries)test(entry.id+': five minutes retain every PC
     for(let n=0;n<actual.length;n++)max=Math.max(max,Math.abs(actual[n]-expected[n]));
     sameCPU(a.core,b.core,entry.id+' block '+blocks++);
     assert.equal(a.core.lost,0);assert.equal(a.core.workLost,0);
-    assert.equal(a.core._exports.memory.buffer,memory);assert.equal(memory.byteLength,65536);
+    assert.equal(a.core._exports.memory.buffer,memory);assert.equal(memory.byteLength,131072);
     renderedFrames+=count;
     const clockOffset=a.core.cyc-renderedFrames/rate*entry.cpuHz;
     if(startupOffset===undefined){

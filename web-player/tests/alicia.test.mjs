@@ -124,8 +124,10 @@ test('downloadable player includes the current CPU and strict HEX loader',()=>{
   const standalone=Standalone.fromHex(read('synth.hex').toString(),read('eeprom.hex').toString()),wasm=new WasmCore(rom,ep);
   for(let sample=0;sample<2*37500;sample++)assert.equal(standalone.nextDuty(),wasm.nextDuty(),`Standalone PWM ${sample}`);
   sameCPU(standalone,wasm);assert.ok(read('player.html').includes(read('avr_core.js')));
-  assert.equal(report.standaloneCoreSourceSha256,hash(readFileSync(new URL('../lib/avr-reference.js',import.meta.url))));
-  assert.equal(report.standaloneHexParserSourceSha256,hash(readFileSync(new URL('../lib/hex.js',import.meta.url))));
+  for(const [path,expected] of Object.entries(report.standaloneCoreSources.sha256))
+    assert.equal(hash(readFileSync(new URL('../../'+path,import.meta.url),'utf8').replace(/\r\n/g,'\n')),expected,path);
+  assert.equal(report.standaloneCoreSourceSha256,report.standaloneCoreSources.sha256['web-player/lib/avr-reference.js']);
+  assert.equal(report.standaloneHexParserSourceSha256,report.standaloneCoreSources.sha256['web-player/lib/hex.js']);
   assert.throws(()=>Standalone.fromHex(read('synth.hex').toString().replace(':100000',':100001'),read('eeprom.hex').toString()),/checksum/);
 });
 

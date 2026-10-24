@@ -235,7 +235,7 @@
   "verifiedLosslessScore": false,
   "arrangement": {
     "policy": "sparse-source-voicings-v1",
-    "title": "Canci\u00f3n del Mariachi \u00b7 \u0440\u0435\u0434\u043a\u0438\u0435 \u0430\u043a\u043a\u043e\u0440\u0434\u044b",
+    "title": "Canción del Mariachi · редкие аккорды",
     "sourceFile": "../../reference/cancion-del-mariachi/source-events.json",
     "sourceSha256": "3bdfb9a7756aff5f395199f25aaa9787695d5bffb238dd7cd16bf2cbb842dda9",
     "firstBeat": 58,
@@ -263,7 +263,7 @@
       },
       {
         "url": "https://christianshowtoplays.de/download/PDF/Los_Lobos_Cancin_Del_Mariachi_antonio_banderas_version.pdf",
-        "use": "Compared lead rests and Verse/Interlude sections on pages 1\u20132; no external note transcription copied."
+        "use": "Compared lead rests and Verse/Interlude sections on pages 1–2; no external note transcription copied."
       }
     ],
     "percussion": {
@@ -496,14 +496,14 @@
   "instrumentAssignments": {
     "leadGuitar": {
       "instrument": "acoustic-guitar-nylon",
-      "label": "\u0410\u043a\u0443\u0441\u0442\u0438\u0447\u0435\u0441\u043a\u0430\u044f \u0433\u0438\u0442\u0430\u0440\u0430 \u0441 \u043d\u0435\u0439\u043b\u043e\u043d\u043e\u0432\u044b\u043c\u0438 \u0441\u0442\u0440\u0443\u043d\u0430\u043c\u0438",
+      "label": "Акустическая гитара с нейлоновыми струнами",
       "gmProgram": 24,
       "sourceVelocity": 80,
       "level": 15
     },
     "rhythmGuitar": {
       "instrument": "acoustic-guitar-nylon",
-      "label": "\u041c\u044f\u0433\u043a\u0430\u044f \u043d\u0435\u0439\u043b\u043e\u043d\u043e\u0432\u0430\u044f \u0433\u0438\u0442\u0430\u0440\u0430 \u0441\u043e\u043f\u0440\u043e\u0432\u043e\u0436\u0434\u0435\u043d\u0438\u044f",
+      "label": "Мягкая нейлоновая гитара сопровождения",
       "gmProgram": 24,
       "sourceVelocity": 80,
       "level": 15,
@@ -518,9 +518,17 @@
         42
       ],
       "level": 2,
-      "label": "\u0422\u0438\u0445\u0438\u0439 \u0431\u0430\u0441-\u0431\u0430\u0440\u0430\u0431\u0430\u043d \u0438 \u0437\u0430\u043a\u0440\u044b\u0442\u044b\u0439 \u0445\u0430\u0439-\u0445\u044d\u0442 \u0438\u0437 \u043f\u0440\u0435\u0436\u043d\u0435\u0439 \u0430\u0440\u0430\u043d\u0436\u0438\u0440\u043e\u0432\u043a\u0438"
+      "label": "Тихий бас-барабан и закрытый хай-хэт из прежней аранжировки"
     }
   },
   "instrumentBankSha256": "ddf64e6c18950407c002d3c1a3dba9356e566bccba099c08918e7c5d0aa52221",
-  "articulation": "Shared plucked envelope for each common-gate source chord; phases reset on picking; no additional release slots."
+  "articulation": "Shared plucked envelope for each common-gate source chord; phases reset on picking; no additional release slots.",
+  "standaloneCoreSources": {
+    "normalization": "UTF-8, LF",
+    "sha256": {
+      "web-player/lib/avr-profiles.js": "37583c2bbb1e36c5cc8687e0911ce46c062a97b0df21747ef92535628fa84c2b",
+      "web-player/lib/avr-reference.js": "f62e6f5d46699472d64dd6e49962f4832531ae8cf1b457d92753c6203b9763c6",
+      "web-player/lib/hex.js": "73026ff8e78caab294b86bd32b3588cf92f77e59203531aa3bf3bc7979dd09ab"
+    }
+  }
 }

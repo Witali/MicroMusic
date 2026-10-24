@@ -24,14 +24,14 @@ test('music opens on ATtiny13A by default and retains the existing WASM choice',
   assert.equal(new URL(app.fetches[0]).pathname.split('/').at(-1),'firmware.json');
 });
 
-test('an ATtiny88 link loads the matching real firmware, forces JS and changes download capacity',async()=>{
+test('an ATtiny88 link loads the matching real firmware, retains WASM and changes download capacity',async()=>{
   const app=await playerApp({speech:false,device:'attiny88',firmware:'children'}),message=init(app);
   const expected=tiny88.entries.find(entry=>entry.id==='children');
   assert.equal(app.get('device-select').value,'attiny88');
   assert.equal(message.entry.device,'attiny88');assert.equal(message.entry.id,'children');
   assert.equal(message.entry.flashHex,expected.flashHex);assert.notEqual(message.entry.flashHex,tiny13.entries.find(entry=>entry.id==='children').flashHex);
-  assert.equal(message.engine,'js');assert.equal(engine(app,'js').checked,true);
-  assert.equal(engine(app,'wasm').checked,false);assert.equal(engine(app,'wasm').disabled,true);
+  assert.equal(message.engine,'wasm');assert.equal(engine(app,'wasm').checked,true);
+  assert.equal(engine(app,'js').checked,false);assert.equal(engine(app,'wasm').disabled,false);
   assert.equal(new URL(app.fetches[0]).pathname.split('/').at(-1),'firmware-attiny88.json');
   assert.equal(app.get('download').href,expected.source);
   assert.equal(app.get('download').download,'attiny88-children.hex');
@@ -122,6 +122,18 @@ test('unknown devices use ATtiny13A and speech remains on ATtiny13A even with a 
   assert.equal(engine(speech,'wasm').disabled,false);
   assert.equal(new URL(speech.fetches[0]).pathname.split('/').at(-1),'hq4-firmware.json');
   assert.notEqual(speech.location.searchParams.get('device'),'attiny88');
+});
+
+test('the engine selected on either chip is retained when switching to the other chip',async()=>{
+  const app=await playerApp({speech:false});
+  await chooseDevice(app,'attiny88');
+  engine(app,'js').checked=true;engine(app,'js').onchange();await flush();
+  await chooseDevice(app,'attiny13a');assert.equal(init(app).engine,'js');
+  await chooseDevice(app,'attiny88');assert.equal(init(app).engine,'js');
+  engine(app,'wasm').checked=true;engine(app,'wasm').onchange();await flush();
+  assert.equal(init(app).entry.device,'attiny88');assert.equal(init(app).engine,'wasm');
+  await chooseDevice(app,'attiny13a');assert.equal(init(app).engine,'wasm');
+  assert.equal(engine(app,'wasm').disabled,false);
 });
 
 test('a song absent from the new device falls back to that device catalog default',async()=>{

@@ -1,5 +1,5 @@
-import { AVRCore } from './avr-reference.js?v=20261024-ocr0a';
-import { AVRMusicTargetCore } from './avr-attiny88.js';
+import { AVRCore } from './avr-reference.js?v=20261024-common-avr';
+import { resolveAVRProfile } from './avr-profiles.js?v=20261024-common-avr';
 import { parseHex } from './hex.js';
 
 // Same resampling, Q=0.5 biquads and 15-ms control smoothing as the C engine.
@@ -26,9 +26,9 @@ export class Renderer {
     if (!Number.isFinite(sampleRate) || sampleRate < 8000 || sampleRate > 192000) throw new Error('Invalid audio sample rate');
     validateControls(cutoff, volume);
     if (!Number.isFinite(entry.pwmHz) || entry.pwmHz <= 0) throw new Error('Invalid audio configuration');
-    const tiny88 = entry.device === 'attiny88';
-    const Core = tiny88 ? AVRMusicTargetCore : AVRCore;
-    this.core = new Core(parseHex(entry.flashHex, tiny88 ? 8192 : 1024), entry.eepromHex ? parseHex(entry.eepromHex, 64) : null);
+    const profile = resolveAVRProfile(entry.device);
+    this.core = new AVRCore(parseHex(entry.flashHex, profile.flashBytes),
+      entry.eepromHex ? parseHex(entry.eepromHex, profile.eepromBytes) : null, {target:profile.id});
     this.channels=entry.audioChannels||1;
     if(![1,2].includes(this.channels))throw new Error('Unsupported audio channel count');
     this.nextValue=this.channels===2?()=>this.core.nextStereoDuty():()=>this.core.nextDuty();

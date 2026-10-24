@@ -18,6 +18,9 @@ def module(name,file):
     result=importlib.util.module_from_spec(spec);spec.loader.exec_module(result);return result
 
 
+standalone = module('avr_standalone', ROOT/'tools/avr-standalone.py')
+
+
 def replace(source,old,new):
     assert source.count(old)==1,(old,source.count(old))
     return source.replace(old,new)
@@ -142,12 +145,8 @@ def build(folder,stereo=False):
             phaseStep=step,phaseBits=16,envelopeTickCycles=131072,synthesisHz=18750,pwmHz=37500))
     report['amplitudeLevels']=8 if stereo else 16
     if stereo:report.update(outputs=data['outputs'],panorama=data['panorama'])
-    common.save_text(folder/'build-report.json',json.dumps(report,indent=2,ensure_ascii=False)+'\n')
-    core=(ROOT/'web-player/lib/avr-reference.js').read_text(encoding='utf-8').replace('export class AVRCore','class AVRCore')
-    core+='\n'+(ROOT/'web-player/lib/hex.js').read_text(encoding='utf-8').replace('export function','function')
-    core+='\nAVRCore.fromHex=(flash,eeprom)=>new AVRCore(parseHex(flash),eeprom?parseHex(eeprom,64):null);\n'
-    core+="\nif(typeof module!=='undefined' && module.exports)module.exports={AVRCore};\n"
-    common.save_text(folder/'avr_core.js',core)
+    common.save_text(folder/'build-report.json',json.dumps(standalone.record_sources(report),indent=2,ensure_ascii=False)+'\n')
+    core=standalone.save_core(folder)
     html=(ROOT/'tools'/('stereo-player-template.html' if stereo else 'player-template.html')).read_text(encoding='utf-8')
     for key,value in [('AVR_CORE',(folder/'avr_core.js').read_text(encoding='utf-8')),('FIRMWARE_HEX',common.ihex(rom)),('EEPROM_HEX',common.ihex(ep))]:
         html=html.replace('/*'+key+'*/',value)

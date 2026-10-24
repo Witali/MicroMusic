@@ -13,6 +13,9 @@ def module(name,path):
     spec=importlib.util.spec_from_file_location(name,path)
     result=importlib.util.module_from_spec(spec);spec.loader.exec_module(result);return result
 
+
+standalone = module('avr_standalone', ROOT/'tools/avr-standalone.py')
+
 assembler=module('assembler',ROOT/'tools/assemble-avr.py')
 compiler=module('score_format',ROOT/'tools/score-format.py')
 bank=module('instrument_bank',ROOT/'tools/instrument-bank.py')
@@ -91,6 +94,7 @@ def build(folder):
     (folder/'synth.bin').write_bytes(rom)
     save_text(folder/'synth.hex',ihex(rom))
     save_text(folder/'eeprom.hex',ihex(ep))
+    standalone.save_core(folder)
     html=(ROOT/'tools/player-template.html').read_text(encoding='utf-8')
     for key,value in [('AVR_CORE',(folder/'avr_core.js').read_text(encoding='utf-8')),('FIRMWARE_HEX',ihex(rom)),('EEPROM_HEX',ihex(ep))]:
         html=html.replace('/*'+key+'*/',value)
@@ -114,7 +118,7 @@ def build(folder):
         report['releaseChannels']=dict(primaryVoices=3,tailSlots=2,voiceAddresses=[96,101,106,111,116],
             voiceStateBytes=25,pwmRingBytes=16,tailGain=.5,stealing='Quietest of two release levels',
             phaseContinuous=True,isrCycles=15,requiredFuses=dict(low='0x7A',high='0xFF'))
-    save_text(folder/'build-report.json',json.dumps(report,indent=2,ensure_ascii=False)+'\n')
+    save_text(folder/'build-report.json',json.dumps(standalone.record_sources(report),indent=2,ensure_ascii=False)+'\n')
     print(folder.name+':',len(rom),'Flash;',labels['playlist'],'code;',len(meta['holds']),'unique hold commands; phase step',step)
 
 if __name__=='__main__':

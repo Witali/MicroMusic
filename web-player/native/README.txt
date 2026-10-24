@@ -1,7 +1,11 @@
 AVR C/WASM
 
-avr.c is the production firmware-oriented ATtiny13A subset. It preserves the
-existing instruction, timer, EEPROM, stack and diagnostic behavior. Unsupported
+avr.c is the production firmware-oriented AVR subset for ATtiny13A and ATtiny88.
+One executor receives memory/register/timer configuration from avr-profiles.js
+through lib/avr-wasm.js. The default target remains ATtiny13A; construct an
+AVRCore with {target:'attiny88'} to select its 8-KiB Flash, 16-bit stack and
+Timer1 model. It preserves the existing instruction, timer, EEPROM, stack and
+diagnostic behavior. Unsupported
 instructions/peripherals still fail explicitly; this is not a complete MCU.
 WASM is the default UI engine; the JS core is also available for playback.
 lib/engines.js loads only the selected renderer; WASM is loaded on selection.
@@ -15,8 +19,9 @@ directly, without emcc or writes to the SDK. No npm dependencies.
 
 The committed wasm/avr.wasm is sufficient for playback. wasm/build.json records
 the compiler, flags, normalized source/build-script hashes and binary hash.
-The module has no host imports, no allocation and one fixed 64-KiB memory per
-CPU, including an 8-KiB stack and 4096-frame PCM/raw buffers. C double counters
+The module has no host imports, no allocation and one fixed 128-KiB memory per
+CPU, including an 8-KiB C stack and PCM/raw buffers of 4096 values each
+(4096 mono frames or 2048 stereo frames). C double counters
 preserve exact integer clocks beyond 2^32; block-local PC/SREG use integers.
 The clock helper is forced inline for the verified Clang build. I/O instructions
 already account for their bus cycles; step_cpu calls the remaining clock only
@@ -29,6 +34,9 @@ avr_layout and avr_field_name expose memory offsets and double state fields.
 lib/avr-wasm.js maintains typed views and the existing debugging API, including
 instruction hooks and SRAM aliases. An overridden JS step hook disables blocks
 for audits. Production rendering enters WASM once per block, not per instruction.
+Native instructions perform I/O inside C: overriding the JS writeIO bridge does
+not observe those bus writes. Shared audits stop at decoded instruction PCs,
+including SBI EECR,EERE, to inspect both executors at the same boundary.
 The Worker installs its handler before dynamically loading the selected engine
 and serializes init, audio-port and controls while that import completes.
 

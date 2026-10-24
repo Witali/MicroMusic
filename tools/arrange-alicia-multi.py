@@ -44,6 +44,9 @@ def module(name, path):
     return result
 
 
+standalone = module('avr_standalone', ROOT/'tools/avr-standalone.py')
+
+
 compiler = module('alicia_multi_score', ROOT / 'tools/score-format.py')
 release = module('alicia_multi_release', ROOT / 'tools/build-release-engine.py')
 bank = module('alicia_multi_bank', ROOT / 'tools/instrument-bank.py')
@@ -378,16 +381,12 @@ def publish(data, packed, meta, feasibility, rom, labels, candidates):
                     voiceStateBytes=30,pwmRingBytes=16,tailGain=.5,stealing='Quietest of two release levels',
                     phaseContinuous=True,isrCycles=15,requiredFuses=dict(low='0x7A',high='0xFF')))
     json_text('score.json',score)
-    json_text('build-report.json',report)
+    json_text('build-report.json',standalone.record_sources(report))
     json_text('waveforms.json',dict(source='Shared measured FluidR3 build-time bank',
         bankSha256=report['instrumentBankSha256'],slots={name:dict(instrument=instrument,waves=profiles[instrument]['waves'])
             for name,instrument in assignments.items() if name!='percussion'},
         pianoTransient=profiles['acoustic-grand-piano-soft']['transient']))
-    core=(ROOT/'web-player/lib/avr-reference.js').read_text(encoding='utf-8').replace('export class AVRCore','class AVRCore')
-    parser=(ROOT/'web-player/lib/hex.js').read_text(encoding='utf-8').replace('export function parseHex','function parseHex')
-    core += '\n'+parser+'\nAVRCore.fromHex=(flash,eeprom)=>new AVRCore(parseHex(flash),eeprom?parseHex(eeprom,64):null);\n'
-    core += "if(typeof module!=='undefined'&&module.exports)module.exports={AVRCore};\n"
-    text('avr_core.js',core)
+    core=standalone.save_core(OUT)
     if not (OUT/'FluidR3-MIT.txt').exists():
         shutil.copyfile(BASE/'FluidR3-MIT.txt',OUT/'FluidR3-MIT.txt')
     text('synth.hex',ihex(rom))

@@ -14,6 +14,9 @@ def module(name,file):
     result=importlib.util.module_from_spec(spec);spec.loader.exec_module(result);return result
 
 
+standalone = module('avr_standalone', ROOT/'tools/avr-standalone.py')
+
+
 def specialize(score,common):
     assignments=common.bank.describe_assignments(score['instruments'])
     source,metadata=common.engine.specialize(score,assignments);score.update(metadata)
@@ -63,7 +66,7 @@ def build(folder,score=None):
     ep=common.bank.build_eeprom(score['instruments'])
     for name,raw in [('synth',rom),('eeprom',ep)]:
         (folder/(name+'.bin')).write_bytes(raw);(folder/(name+'.hex')).write_text(common.ihex(raw),encoding='ascii',newline='\n')
-    (folder/'avr_core.js').write_text((ROOT/'web-player/lib/hex.js').read_text(encoding='utf-8').replace('export function parseHex','function parseHex')+'\n'+(ROOT/'web-player/lib/avr-reference.js').read_text(encoding='utf-8').replace('export class AVRCore','class AVRCore')+'\nAVRCore.fromHex=(flash,eeprom)=>new AVRCore(parseHex(flash),eeprom?parseHex(eeprom,64):null);\nif(typeof module!==\"undefined\")module.exports={AVRCore};\n',encoding='utf-8',newline='\n')
+    standalone.save_core(folder)
     shutil.copyfile(ROOT/'ATtiny13A/Music/instruments/FluidR3-MIT.txt',folder/'FluidR3-MIT.txt')
     html=(ROOT/'tools/player-template.html').read_text(encoding='utf-8')
     for key,value in [('AVR_CORE',(folder/'avr_core.js').read_text(encoding='utf-8')),('FIRMWARE_HEX',common.ihex(rom)),('EEPROM_HEX',common.ihex(ep))]:html=html.replace('/*'+key+'*/',value)
@@ -76,6 +79,7 @@ def build(folder,score=None):
         channels=dict(tonalVoices=3,parts=2,tailSlots=0,voiceAddresses=[96,101,106],pwmRingBytes=16,roles=['right-hand melody','left-hand bass','left-hand chord tone']),
         articulation=dict(holdIndex=meta['hold_index'],phaseContinuous=True,attack='piano',release='linear'),
         outputNormalization=None)
+    standalone.record_sources(report)
     for name,obj in [('score.json',score),('build-report.json',report),('waveforms.json',assignments)]:
         (folder/name).write_text(json.dumps(obj,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     return report

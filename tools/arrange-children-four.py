@@ -29,6 +29,9 @@ def module(name, path):
     return result
 
 
+standalone = module('avr_standalone', ROOT/'tools/avr-standalone.py')
+
+
 reader = module('children_four_midi', ROOT / 'tools/midi-reader.py')
 compiler = module('children_four_score', ROOT / 'tools/score-format.py')
 packing = module('children_four_packing', ROOT / 'tools/pack-score.py')
@@ -840,18 +843,14 @@ def publish(folder,notes,ppqn,bpm,stream,packed,native):
             voiceStateBytes=30,pwmRingBytes=16,tailGain=.5,stealing='Quietest of two release levels',
             phaseContinuous=True,isrCycles=15,requiredFuses=dict(low='0x7A',high='0xFF')),
         native=dict(native,sourceStream=list(stream)))
-    json_text('score.json',score);json_text('build-report.json',report)
+    json_text('score.json',score);json_text('build-report.json',standalone.record_sources(report))
     json_text('waveforms.json',dict(source='Shared measured FluidR3 build-time bank',bankSha256=report['instrumentBankSha256'],
         slots={role:dict(instrument=assignments[role]['instrument'],waves=profiles[assignments[role]['instrument']]['waves'])
                for role in ('lead','keys','pluck')},
         pianoTransient=profiles['acoustic-grand-piano']['transient']))
     # Keep the downloadable, self-contained player on the same validated AVR
     # instruction set as the emulator, including native indirect SRAM forms.
-    core=(ROOT/'web-player/lib/avr-reference.js').read_text(encoding='utf-8').replace('export class AVRCore','class AVRCore')
-    parser=(ROOT/'web-player/lib/hex.js').read_text(encoding='utf-8').replace('export function parseHex','function parseHex')
-    core+='\n'+parser+'\nAVRCore.fromHex=(flash,eeprom)=>new AVRCore(parseHex(flash),eeprom?parseHex(eeprom,64):null);\n'
-    core+='\nif(typeof module!=="undefined"&&module.exports)module.exports={AVRCore};\n'
-    text('avr_core.js',core)
+    core=standalone.save_core(folder)
     html=(ROOT/'tools/player-template.html').read_text(encoding='utf-8')
     for key,value in [('AVR_CORE',(folder/'avr_core.js').read_text(encoding='utf-8')),
                       ('FIRMWARE_HEX',(folder/'synth.hex').read_text(encoding='utf-8')),

@@ -1,11 +1,13 @@
-// C/WASM owns execution. Each CPU has one fixed 64-KiB memory, no host imports.
-const url = new URL('../wasm/avr.wasm?v=20261024-ocr0a', import.meta.url);
+// One C/WASM executor uses the shared numeric chip profile. Fixed 128-KiB
+// instances cover the maximum Flash/decode/data geometry without host imports.
+import { resolveAVRProfile } from './avr-profiles.js?v=20261024-common-avr';
+const url = new URL('../wasm/avr.wasm?v=20261024-common-avr', import.meta.url);
 const bytes = globalThis.process?.versions?.node
   ? await (await import('node:fs/promises')).readFile(url)
   : await (async () => { const r=await fetch(url); if(!r.ok)throw new Error('AVR WASM HTTP '+r.status); return r.arrayBuffer(); })();
 const module = await WebAssembly.compile(bytes);
 const metadata = new WebAssembly.Instance(module).exports;
-const layout = Array.from({length:15}, (_, i) => metadata.avr_layout(i));
+const layout = Array.from({length:17}, (_, i) => metadata.avr_layout(i));
 const decoder = new TextDecoder();
 function cstring(memory,address) {
   const view=new Uint8Array(memory.buffer); let end=address;
@@ -15,22 +17,26 @@ function cstring(memory,address) {
 const fields=Array.from({length:layout[1]},(_,i)=>cstring(metadata.memory,metadata.avr_field_name(i)));
 const index=Object.fromEntries(fields.map((name,i)=>[name,i]));
 const booleans=new Set(['timer','inIRQ','fastIdle','fastBlocks']);
-const optional=new Set(['eempeUntil','clkprUntil']);
+const optional=new Set(['eempeUntil','clkprUntil','watchdogResetAt','watchdogResets']);
 
 export class AVRCore {
-  constructor(binary,eeprom,{fastIdle=true,fastBlocks=fastIdle}={}) {
-    if(!binary.length||binary.length>1024)throw new Error('Flash must contain 1–1024 bytes');
-    if(eeprom&&eeprom.length!==64)throw new Error('EEPROM must contain 64 bytes');
+  constructor(binary,eeprom,{target='attiny13a',fastIdle=true,fastBlocks=fastIdle}={}) {
+    this.profile=resolveAVRProfile(target);this.target=this.profile.id;this.cpuHz=this.profile.cpuHz;
+    const p=this.profile,t=p.timer,system=p.system;
+    this.words=p.flashBytes/2;this.pcMask=this.words-1;
+    if(!binary?.length||binary.length>p.flashBytes)throw new Error('Flash must contain 1\u2013'+p.flashBytes+' bytes');
+    if(eeprom&&(p.strictEeprom?eeprom.length!==p.eepromBytes:eeprom.length>p.eepromBytes))
+      throw new Error(p.strictEeprom?'EEPROM must contain '+p.eepromBytes+' bytes':'EEPROM exceeds target capacity');
     this._exports=new WebAssembly.Instance(module).exports;
     const buffer=this._exports.memory.buffer;
     this._state=new Float64Array(buffer,layout[0],layout[1]);
-    this.rom=new Uint8Array(buffer,layout[2],1024);this.eeprom=new Uint8Array(buffer,layout[3],64);
-    this.data=new Uint8Array(buffer,layout[4],160);
-    this.r=this.data.subarray(0,32);this.io=this.data.subarray(32,96);
-    this.sram=this.data.subarray(96);this.ram=this.sram;
-    this.op=new Uint8Array(buffer,layout[5],512);this.d=new Uint8Array(buffer,layout[6],512);
-    this.s=new Uint8Array(buffer,layout[7],512);this.k=new Int16Array(buffer,layout[8],512);
-    this.batch=new Uint8Array(buffer,layout[9],512);this.idle=new Uint8Array(buffer,layout[10],512);
+    this.rom=new Uint8Array(buffer,layout[2],p.flashBytes);this.eeprom=new Uint8Array(buffer,layout[3],p.eepromBytes);
+    this.data=new Uint8Array(buffer,layout[4],p.ramEnd+1);
+    this.r=this.data.subarray(0,32);this.io=this.data.subarray(32,p.sramStart);
+    this.sram=this.data.subarray(p.sramStart);this.ram=this.sram;
+    this.op=new Uint8Array(buffer,layout[5],this.words);this.d=new Uint8Array(buffer,layout[6],this.words);
+    this.s=new Uint8Array(buffer,layout[7],this.words);this.k=new Int32Array(buffer,layout[8],this.words);
+    this.batch=new Uint8Array(buffer,layout[9],this.words);this.idle=new Uint8Array(buffer,layout[10],this.words);
     this._frameMemory=new Float64Array(buffer,layout[11],32);
     this._pcm=new Float32Array(buffer,layout[12],4096);this._raw=new Float32Array(buffer,layout[13],4096);
     this._frames=[];this._framesDirty=false;
@@ -38,6 +44,19 @@ export class AVRCore {
       set:(target,key,value)=>{this._framesDirty=true;return Reflect.set(target,key,value);},
       deleteProperty:(target,key)=>{this._framesDirty=true;return Reflect.deleteProperty(target,key);},
     });
+    // This ordered numeric ABI is structural; chip register values live solely
+    // in avr-profiles.js, shared by both executors. Absent registers use -1.
+    const ext=system.externalInterrupts,number=value=>value==null?-1:Number(value);
+    const config=[p.flashBytes,p.eepromBytes,p.sramStart,p.ramEnd,p.cpuHz,p.pointerMask,
+      ...['sreg','spl','sph','spHighMask','eecr','eedr','eear','clkpr','gtccr','prr','spmcsr',
+        'wdt','protectedWatchdog','mcusr','adc','acsr'].map(key=>system[key]),
+      ext[0]?.address,ext[0]?.mask,ext[1]?.address,ext[1]?.mask,
+      ...['a','b','c','counter','counterHigh','ocra','ocraHigh','ocrb','ocrbHigh','icr','icrHigh',
+        'timsk','tifr','vector','fastMode','normalTop','prrMask','overflowMask','flagMask',
+        'interruptRejectMask','interruptStoreMask','modeAMask','modeBMask','modeBShift',
+        'controlBMask','forceBMask','forceCMask'].map(key=>t[key])].map(number);
+    if(config.length!==layout[16])throw new Error('AVR profile/native ABI mismatch');
+    this._configuration=new Int32Array(buffer,layout[15],layout[16]);this._configuration.set(config);
     this.rom.fill(255);this.rom.set(binary);this.eeprom.fill(255);if(eeprom)this.eeprom.set(eeprom);
     this._call('avr_reset',Number(fastIdle),Number(fastBlocks));
   }
@@ -52,25 +71,33 @@ export class AVRCore {
     if(this._state[index.error]){
       let message=cstring(this._exports.memory,this._exports.avr_error_message());
       if(this._state[index.error]===2)message+=' at 0x'+(this._state[index.errorPC]*2).toString(16);
-      if(this._state[index.error]===6)message='Timer0 WGM mode '+((this.io[0x2f]&3)|((this.io[0x33]&8)>>1))+' is not implemented';
+      if(this._state[index.error]===5)message='External '+this.profile.timer.name+' clock is not implemented';
+      if(this._state[index.error]===6)message=this.profile.timer.name+' WGM mode '+((this.data[this.profile.timer.a]&this.profile.timer.modeAMask)|((this.data[this.profile.timer.b]&this.profile.timer.modeBMask)>>this.profile.timer.modeBShift))+' is not implemented';
+      if(this._state[index.error]===13)message=this.profile.timer.interruptError;
+      if(this._state[index.error]===15&&this.profile.timer.c!==null)message='Forced '+this.profile.timer.name+' compare is not implemented';
       throw new Error(message);
     }
     return result;
   }
-  get sreg(){return this.io[0x3f];} set sreg(v){this.io[0x3f]=v;}
+  get sreg(){return this.data[this.profile.system.sreg];} set sreg(v){this.data[this.profile.system.sreg]=v;}
   get c(){return this.sreg&1;} set c(v){this.sreg=(this.sreg&~1)|(v&1);}
   get z(){return(this.sreg>>1)&1;} set z(v){this.sreg=(this.sreg&~2)|((v&1)<<1);}
   get i(){return this.sreg>>7;} set i(v){this.sreg=(this.sreg&127)|((v&1)<<7);}
   get t(){return(this.sreg>>6)&1;} set t(v){this.sreg=(this.sreg&~64)|((v&1)<<6);}
-  get sp(){return this.io[0x3d];} set sp(v){this.io[0x3d]=v;}
-  get pending(){return!!(this.io[0x38]&2);} set pending(v){this.io[0x38]=(this.io[0x38]&~2)|(v?2:0);}
+  get sp(){const s=this.profile.system;return this.data[s.spl]|(s.sph===null?0:this.data[s.sph]<<8);}
+  set sp(v){const s=this.profile.system;this.data[s.spl]=v;if(s.sph!==null)this.data[s.sph]=(v>>8)&s.spHighMask;}
+  get pending(){const t=this.profile.timer;return!!(this.data[t.tifr]&t.overflowMask);}
+  set pending(v){const t=this.profile.timer;this.data[t.tifr]=(this.data[t.tifr]&~t.overflowMask)|(v?t.overflowMask:0);}
   decode(p){this._call('avr_decode',p);}
   decodeIdle(p){this._call('avr_decode_idle',p);}
   arithmetic(x,y,carry=0,subtract=false){return this._call('avr_arithmetic',x,y,carry,Number(subtract));}
   nzvs(v,overflow=0){this._call('avr_nzvs',v,overflow);}
   push(v){this._call('avr_push',v);} pop(){return this._call('avr_pop');}
   pushPC(v){this._call('avr_push_pc',v);} popPC(){return this._call('avr_pop_pc');}
-  timerMode(){return this._call('avr_timer_mode');} updateTimer(){this._call('avr_update_timer');}
+  timerMode(){return this._call('avr_timer_mode');}
+  timerTop(){return this._call('avr_timer_top');} timerCounter(){return this._call('avr_timer_counter');}
+  readData(a){return this._call('avr_read_data',a);} writeData(a,v){return this._call('avr_write_data',a,v);}
+  updateTimer(){this._call('avr_update_timer');}
   writeIO(a,v){return this._call('avr_write_io',a,v);}
   clock(n){this._call('avr_clock',n);} interrupt(){this._call('avr_interrupt');}
   step(){this._call('avr_step');} skipIdle(){return!!this._call('avr_idle');}
@@ -78,7 +105,7 @@ export class AVRCore {
   nextDuty(){
     if(this.step===AVRCore.prototype.step)return this._call('avr_next');
     // Preserve instruction hooks used by musical and timing audits.
-    const before=this.writes,deadline=this.cyc+9600000;
+    const before=this.writes,deadline=this.cyc+this.cpuHz;
     while(this.writes===before){
       if(!(this.fastIdle&&this.idle[this.pc]&&this.skipIdle()))this.step();
       if(this.cyc>deadline)throw new Error('Firmware produced no PWM for one emulated second');
@@ -87,7 +114,7 @@ export class AVRCore {
   }
   nextStereoDuty(){
     const before=this.leftWrites;this.nextDuty();
-    if(this.leftWrites!==before+1)throw new Error('Stereo frame requires one OC0A write before OC0B');
+    if(this.leftWrites!==before+1)throw new Error('Stereo frame requires one '+this.profile.timer.channelA+' write before '+this.profile.timer.channelB);
     return this.dutyLeft|(this.duty<<8);
   }
   configureAudio(sampleRate,pwmHz,{cutoff=4000,volume=1,filtered=true,channels=1}={}){

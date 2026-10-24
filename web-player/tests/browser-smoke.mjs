@@ -19,7 +19,7 @@ try{
   const catalog=await(await fetch('../firmware.json')).json(),entry=catalog.entries[0];
   const tiny88=await(await fetch('../firmware-attiny88.json')).json();
   const cases=[...catalog.entries.filter((entry,index)=>index===0||entry.audioChannels===2).flatMap(entry=>[undefined,'js'].map(engine=>({entry,engine}))),
-    ...tiny88.entries.map(entry=>({entry,engine:'js'}))];
+    ...tiny88.entries.flatMap(entry=>['js','wasm'].map(engine=>({entry,engine})))];
   for(const {entry,engine} of cases){
     // Post immediately: imports must not drop init or overtake queued controls.
     const name=(entry.device==='attiny88'?'ATtiny88 / ':'ATtiny13A / ')+(engine??'wasm');

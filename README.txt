@@ -13,6 +13,8 @@ ATTINY88
 или ATtiny88: все девять аранжировок, свои HEX/EEPROM и схема выводов.
 Прямая ссылка: https://witali.github.io/MicroMusic/web-player/?device=attiny88
 Исходники, прошивки и проверка по даташиту: ATtiny88/Music/README.txt.
+Общий AVR-эмулятор с профилями обоих чипов работает в JS и WASM.
+Архитектура, схема и добавление профиля: web-player/AVR_ENGINE_RU.md.
 Сборщик: python tools/build-attiny88-music.py.
 ATtiny88: RC 8 МГц, Timer1 PWM 31,25 кГц, моно/R PB2/OC1B, стерео L PB1/OC1A.
 

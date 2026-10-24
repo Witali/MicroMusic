@@ -7,7 +7,10 @@ import {AVRCore as WASM13} from '../web-player/lib/avr-core.js';
 import {AVRMusicTargetCore as JS88} from './avr-music-target-core.mjs';
 
 export const baseline=JSON.parse(fs.readFileSync(new URL('./fixtures/attiny-music-startup-baseline.json',import.meta.url)));
-export const engines=[['ATtiny13A','JS',JS13,'flash13'],['ATtiny13A','WASM',WASM13,'flash13'],['ATtiny88','JS',JS88,'flash88']];
+class WASM88 extends WASM13 {
+  constructor(rom,ep,options){super(rom,ep,{...options,target:'attiny88'});}
+}
+export const engines=[['ATtiny13A','JS',JS13,'flash13'],['ATtiny13A','WASM',WASM13,'flash13'],['ATtiny88','JS',JS88,'flash88'],['ATtiny88','WASM',WASM88,'flash88']];
 const sha=b=>createHash('sha256').update(b).digest('hex');
 const folder=(target,name)=>new URL(`../${target}/Music/variants/${name}/`,import.meta.url);
 function startup(Core,rom,ep){

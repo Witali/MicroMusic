@@ -23,6 +23,9 @@ def module(name, file):
     return result
 
 
+standalone = module('avr_standalone', ROOT/'tools/avr-standalone.py')
+
+
 def encode(parts, end_unit, depth=8):
     pitches = sorted({n['pitch'] for part in parts for n in part['notes']})
     assert len(parts) == 4
@@ -407,9 +410,10 @@ write_pwm:''' if normalization else 'master_gain:\n  mov r17, r22\nwrite_pwm:\n 
                       envelope='Independent linear attack/release; phase continuous; no voice stealing'),
                   outputNormalization=({**normalization,'implementation':'linear-flash-table','midpoint':128}
                                        if normalization else dict(gain=1,implementation='none',midpoint=128)))
+    standalone.record_sources(report)
     for name, obj in [('score.json',score),('compiled-score.json',codec),('build-report.json',report)]:
         (folder/name).write_text(json.dumps(obj, ensure_ascii=False, indent=2)+'\n',encoding='utf-8',newline='\n')
-    (folder/'avr_core.js').write_text((ROOT/'web-player/lib/hex.js').read_text(encoding='utf-8').replace('export function parseHex','function parseHex')+'\n'+(ROOT/'web-player/lib/avr-reference.js').read_text(encoding='utf-8').replace('export class AVRCore','class AVRCore')+'\nAVRCore.fromHex=(flash,eeprom)=>new AVRCore(parseHex(flash),eeprom?parseHex(eeprom,64):null);\nif(typeof module!==\"undefined\")module.exports={AVRCore};\n',encoding='utf-8',newline='\n')
+    standalone.save_core(folder)
     shutil.copyfile(ROOT/'ATtiny13A/Music/instruments/FluidR3-MIT.txt',folder/'FluidR3-MIT.txt')
     html=(ROOT/'tools/player-template.html').read_text(encoding='utf-8')
     for key, value in [('AVR_CORE',(folder/'avr_core.js').read_text(encoding='utf-8')),

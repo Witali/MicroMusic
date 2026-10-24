@@ -12,7 +12,6 @@ let lastScopeDraw=-Infinity, scopeDrawTimer;
 let originalLoading=false, originalAttempt=0;
 const speechCollection=new URL(location.href).searchParams.get('collection')==='hq4';
 let currentDevice='attiny13a', deviceRequest=0;
-let preferred13Engine=selectedEngine();
 
 function showError(message) { $('error').textContent = message; $('error').hidden = !message; }
 function audioControls() {
@@ -38,9 +37,8 @@ function deviceUI(device) {
   $('fuse-clock-note').textContent='CKDIV8 отключён · делитель /1';
   $('fuse-datasheet').href=tiny88?'https://ww1.microchip.com/downloads/en/DeviceDoc/doc8008.pdf':'https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf';
   $('fuse-datasheet').textContent='Фьюзы в datasheet, §'+(tiny88?'20.2':'17.2')+' ↗';
-  document.querySelector('input[name="engine"][value="wasm"]').disabled=tiny88;
-  document.querySelector(`input[name="engine"][value="${tiny88?'js':preferred13Engine}"]`).checked=true;
-  $('engine-note').textContent=tiny88?'ATtiny88 воспроизводится движком JS.':'При смене — сброс на начало.';
+  document.querySelector('input[name="engine"][value="wasm"]').disabled=false;
+  $('engine-note').textContent='При смене — сброс на начало.';
   if(!speechCollection) {
     document.title=`MicroMusic / ${name} — плеер прошивок`;
     document.querySelector('.intro .eyebrow').textContent=name+' / МУЗЫКА ИЗ МАШИННОГО КОДА';
@@ -64,7 +62,6 @@ async function switchDevice(device) {
     const entry=next.entries.find(e=>e.id===id)||next.entries.find(e=>e.id===next.defaultId);
     if(!entry)throw new Error('В каталоге нет доступных прошивок.');
     parseHex(entry.flashHex,device==='attiny88'?8192:1024);
-    if(currentDevice==='attiny13a')preferred13Engine=selectedEngine();
     catalog=next; currentDevice=device; deviceUI(device); load(entry);
   } catch(error) {
     if(request!==deviceRequest)return;
@@ -232,7 +229,7 @@ function load(entry,{autoplay=false}={}) {
   if(tiny88)url.searchParams.set('device','attiny88');else url.searchParams.delete('device');
   history.replaceState(null,'',url);
   renderCatalog(); transport();
-  const worker=new Worker(new URL('./worker.js?v=20261024-ocr0a',import.meta.url),{type:'module'}); runtime=worker;
+  const worker=new Worker(new URL('./worker.js?v=20261024-common-avr',import.meta.url),{type:'module'}); runtime=worker;
   worker.onmessage=({data})=>{
     if (runtime!==worker) return;
     if (data.type==='ready') {
@@ -291,7 +288,6 @@ $('volume').oninput=()=>{originalAudio.volume=+$('volume').value;runtime?.postMe
 $('cutoff').onchange=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
 $('match-speech-level').onchange=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
 for (const choice of document.querySelectorAll('input[name="engine"]')) choice.onchange=()=>{
-  if(currentDevice==='attiny13a')preferred13Engine=selectedEngine();
   if (selected) load(selected);
 };
 $('device-select').onchange=()=>switchDevice($('device-select').value);
