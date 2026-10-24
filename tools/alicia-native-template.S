@@ -166,12 +166,7 @@ read_event:
   brcs tempo_event
   cpi r16, 253
   brcs instrument_event
-  cpi r16, 255
-  brne release_long_branch_0
   rjmp next_section
-release_long_branch_0:
-  rcall stop_accompaniment
-  rjmp read_event
 tempo_event:
   subi r16, 248
   lsl r16
@@ -219,13 +214,18 @@ chord_event:
   ldi r26, 112
   ldi r25, 144
   rcall indexed_note
+  ldi r20, 6
+  rcall arpeggio_note
+  rjmp read_event
+arpeggio_note:
   mov r16, r5
   andi r16, 15
+  swap r5
   ldi r26, 102
   ldi r25, 197
   rcall indexed_note
   movw r30, r12
-  rjmp read_event
+  ret
 melodic_event:
   /* Decode compact note/duration; load 16-bit DDS increment or signal lead release. */
   movw r12, r30
@@ -243,9 +243,7 @@ melodic_event:
   lsr r16
   cpi r16, REST_INDEX
   breq note_rest
-  cpi r16, HOLD_INDEX
-  breq hold_sample
-  movw r12, r30
+  brcc hold_sample
   ldi r26, 97
   mov r25, r7
   rcall indexed_note
@@ -327,9 +325,8 @@ voice_silent:
   rjmp envelope_return
 initialize_voice:
   rcall capture_ram_tail
-  mov r16, r25
   subi r26, 1
-  st X+, r16
+  st X+, r25
   subi r26, 254
   lpm r16, Z+
   st X+, r16
@@ -378,6 +375,11 @@ accompaniment_tick:
   dec r19
   cpi r19, 1
   breq stop_accompaniment
+  dec r20
+  brne accompaniment_return
+  ldi r20, 6
+  movw r12, r30
+  rcall arpeggio_note
 accompaniment_return:
   ret
 stop_accompaniment:

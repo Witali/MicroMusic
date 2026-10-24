@@ -2,7 +2,8 @@
 
 The original 3/4, 4/4 and triplets use twelve units per quarter; tempo changes
 remain commands. Harmony/arpeggios reuse the Z80 arrangement's actual chord
-voicings, encoded as four nibbles per chord rather than hundreds of Note Ons.
+voicings. Repeated eighth-note piano motion alternates two retained chord
+tones; a register counter replaces hundreds of literal accompaniment events.
 By default write feasibility artifacts to build/alicia-multi. --production
 publishes the checked native codec to variants/alicia; --output selects a folder.
 """
@@ -59,13 +60,13 @@ def duration_parts(length):
     return best[length]
 
 
-def musical_stream(data, arpeggio=False):
+def musical_stream(data, arpeggio=True):
     # Thirteen used piano notes fit nibbles; no unused chromatic DDS entries.
     pitched = set()
     descriptors = []
     def descriptor_key(chord, duration):
         root, tones = CHORDS[chord]
-        return root, tuple(tones if arpeggio else tones[:2]), duration
+        return root, tuple(tones[:2]), duration
     def descriptor_index(chord, duration):
         key = descriptor_key(chord, duration)
         return next((i for i,(old,old_duration) in enumerate(descriptors)
@@ -107,8 +108,6 @@ def musical_stream(data, arpeggio=False):
             if inst != previous_instrument:
                 controls.setdefault(position, []).append(251 + inst)
                 previous_instrument = inst
-            if not bar['chords']:
-                controls.setdefault(position, []).append(253)
             cursor = position
             for chord, beats in bar['chords']:
                 duration = int(Fraction(str(beats)) * 12)
@@ -161,8 +160,6 @@ def native_packer():
 
 def native_source(meta, arpeggio):
     """Use the reviewed native kernel independently of all published variants."""
-    if arpeggio:
-        raise ValueError('The stable native codec uses chord tones; repeated arpeggio needs a separate larger kernel')
     return (ROOT/'tools/alicia-native-template.S').read_text(encoding='utf-8')
 
 
@@ -187,10 +184,7 @@ def assemble(packed, meta, arpeggio):
         root, tones = CHORDS[chord]
         a, b, c = (meta['pitches'].index(pitch) for pitch in tones)
         assert all(0 <= value <= 15 for value in (a,b,c))
-        if arpeggio:
-            rows.append(f'  .byte {a|(b<<4)},{c|(meta["bassPitches"].index(root)<<4)},{duration}')
-        else:
-            rows.append(f'  .byte {a|(b<<4)},{meta["bassPitches"].index(root)|((duration//6)<<4)}')
+        rows.append(f'  .byte {a|(b<<4)},{meta["bassPitches"].index(root)|((duration//6)<<4)}')
     rows.append('melody_data:')
     for i, token in enumerate(packed['storage']):
         rows.extend(name+':' for name in labels_at.get(i, []))
@@ -226,7 +220,7 @@ def assemble(packed, meta, arpeggio):
     return rom, labels
 
 
-def build(folder=None, candidates=4096, arpeggio=False, production=False):
+def build(folder=None, candidates=4096, arpeggio=True, production=False):
     """Build the native codec; production dispatch preserves the saved source."""
     global OUT
     OUT = Path(folder) if folder is not None else ROOT/'build/alicia-multi'
@@ -241,8 +235,6 @@ def build(folder=None, candidates=4096, arpeggio=False, production=False):
     data = previous.get('native_score', json.loads(SOURCE.read_text(encoding='utf-8')))
     if candidates < 1:
         raise ValueError('Candidate count must be positive')
-    if production and arpeggio:
-        raise ValueError('Repeated arpeggio is a feasibility-only mode; the published native codec uses chord tones')
     if production:
         # A failed budget search must leave the saved firmware intact.
         OUT=ROOT/'build/alicia-native-trial'
@@ -263,9 +255,9 @@ def build(folder=None, candidates=4096, arpeggio=False, production=False):
                   temposBpm=TEMPOS, durations=DURATIONS,
                   maximumEntryOffset=max(packed['offsets'].values()), packing=packed['report'],
                   metadata=meta, labels=labels,
-                  reduction='All 169 source melody attacks, 55 written bars, source octave/program changes and native rational note lengths retained. The Z80 repeated piano arpeggio is reduced to its first chord tone; bass root and bowed inner second chord tone remain. Companion gates close one native unit before the chord boundary.',
+                  reduction='All 169 source melody attacks, 55 written bars, source octave/program changes and native rational note lengths retained. Repeated eighth-note piano motion is restored using the first two source chord tones; the third chord tone remains omitted. Bass root and bowed inner second chord tone remain. Companion gates close one native unit before the chord boundary.',
                   voices=[dict(state=97,role='source-melody',instruments=['acoustic-grand-piano-soft','violin'],programs=[0,40],sourcePrograms=[0,1],pianoLevel=14,bowedLevel=12,gain=1),
-                          dict(state=102,role='piano-chord-tone',instrument='acoustic-grand-piano-soft',level=5,gain=1),
+                          dict(state=102,role='piano-arpeggio',instrument='acoustic-grand-piano-soft',level=5,gain=1),
                           dict(state=107,role='cello-bass',instrument='cello',level=12,gain=.5),
                           dict(state=112,role='violin-inner-voice',instrument='violin',level=12,gain=.5)],
                   layout=dict(stateAddresses=[97,102,107,112,117,122], stateBytes=30,
@@ -308,7 +300,10 @@ def publish(data, packed, meta, feasibility, rom, labels, candidates):
     source_bars=sum(len(data['patterns'][name]['bars']) for name in data['playlist'])
     source_events=sum(len(meta['patterns'][name]['sourceEvents']) for name in data['playlist'])
     source_notes=sum(event['pitch'] is not None for name in data['playlist'] for event in meta['patterns'][name]['sourceEvents'])
-    companion_notes=sum(len(bar['chords'])*3 for name in data['playlist'] for bar in data['patterns'][name]['bars'])
+    chord_count=sum(len(bar['chords']) for name in data['playlist'] for bar in data['patterns'][name]['bars'])
+    piano_notes=sum(int(Fraction(str(beats))*2) for name in data['playlist']
+                    for bar in data['patterns'][name]['bars'] for chord,beats in bar['chords'])
+    companion_notes=2*chord_count+piano_notes
     source_seconds=sum(meta['patterns'][name]['quarterBeats']*60/data['patterns'][name]['tempo_bpm'] for name in data['playlist'])
     envelope_override=dict(bowed=dict(attackLevels=[0,4,8,12],retrigger='zero',releaseStep=1),
         piano=dict(leadLevel=14,companionLevel=5,decayMasks=[3,7,15],releaseStep=2),
@@ -337,14 +332,21 @@ def publish(data, packed, meta, feasibility, rom, labels, candidates):
                                 durationSeconds=source_seconds,
                                 rhythm='Native 12-units/quarter retains every rational source duration, including triplets; runtime switches tempo rather than flattening bars.',
                                 reduction=feasibility['reduction'],
-                                companionNoteOns=companion_notes,loopSilence='The original final four-quarter rest; all six envelopes finish before restart.'))
+                                companionNoteOns=companion_notes,pianoNoteOns=piano_notes,
+                                accompaniment=dict(chords=chord_count,pianoTonesPerChord=2,pianoStepQuarterBeats=.5,
+                                    pianoMotion='Alternating first and second source chord tones; third tone omitted',
+                                    retainedOriginalDuration=True),
+                                loopSilence='The original final four-quarter rest; all six envelopes finish before restart.'))
     # Resolve the bank provenance separately from the actual four state roles.
     report=dict(engine='alicia-native',activePrimaryVoices=4,
                 flashBytes=len(rom),codeBytes=labels['playlist'],tableBytes=len(rom)-labels['playlist'],
                 eepromBytes=64,flashSha256=sha(rom),eepromSha256=sha(ep),labels=labels,
                 instrumentBankSha256=sha(bank.BANK_PATH.read_bytes()),
+                standaloneCoreSourceSha256=sha((ROOT/'web-player/lib/avr-reference.js').read_bytes()),
+                standaloneHexParserSourceSha256=sha((ROOT/'web-player/lib/hex.js').read_bytes()),
                 instrumentAssignments=bank.describe_assignments(assignments),
                 primaryVoiceAssignments=feasibility['voices'],
+                pianoArpeggio=score['arrangement']['accompaniment'],
                 nativeEnvelopeOverride=envelope_override,
                 scoreDecoder=dict(format='Native compact score, not raw MIDI/SMF',
                     mainBytes=decoder_ranges[0][1]-decoder_ranges[0][0],
@@ -381,22 +383,28 @@ def publish(data, packed, meta, feasibility, rom, labels, candidates):
         bankSha256=report['instrumentBankSha256'],slots={name:dict(instrument=instrument,waves=profiles[instrument]['waves'])
             for name,instrument in assignments.items() if name!='percussion'},
         pianoTransient=profiles['acoustic-grand-piano-soft']['transient']))
-    for name in ('avr_core.js','FluidR3-MIT.txt'):
-        if not (OUT/name).exists():
-            shutil.copyfile(BASE/name,OUT/name)
+    core=(ROOT/'web-player/lib/avr-reference.js').read_text(encoding='utf-8').replace('export class AVRCore','class AVRCore')
+    parser=(ROOT/'web-player/lib/hex.js').read_text(encoding='utf-8').replace('export function parseHex','function parseHex')
+    core += '\n'+parser+'\nAVRCore.fromHex=(flash,eeprom)=>new AVRCore(parseHex(flash),eeprom?parseHex(eeprom,64):null);\n'
+    core += "if(typeof module!=='undefined'&&module.exports)module.exports={AVRCore};\n"
+    text('avr_core.js',core)
+    if not (OUT/'FluidR3-MIT.txt').exists():
+        shutil.copyfile(BASE/'FluidR3-MIT.txt',OUT/'FluidR3-MIT.txt')
     text('synth.hex',ihex(rom))
     text('eeprom.hex',ihex(ep))
     html=(ROOT/'tools/player-template.html').read_text(encoding='utf-8')
     for key,value in [('AVR_CORE',(OUT/'avr_core.js').read_text(encoding='utf-8')),('FIRMWARE_HEX',ihex(rom)),('EEPROM_HEX',ihex(ep))]:
         html=html.replace('/*'+key+'*/',value)
     html=html.replace('ATtiny13A — проигрыватель AVR-прошивки','ATtiny13A — '+score['title'])
+    html=html.replace('мелодия, пианино, гитара и ударные.',
+                      'мелодия рояля/скрипки, арпеджио рояля, виолончель и внутренняя скрипка.')
     text('player.html',html)
 
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--candidates',type=int,default=4096)
-    parser.add_argument('--arpeggio',action='store_true',help='Reserved alternate codec; rejected by the stable native template')
+    parser.add_argument('--arpeggio',action='store_true',default=True,help='Retained compatibility flag; repeated two-tone piano motion is always enabled')
     parser.add_argument('--output',type=Path,help='Output folder; defaults to build/alicia-multi')
     parser.add_argument('--production',action='store_true',help='Write self-contained native firmware; defaults to variants/alicia')
     args=parser.parse_args()

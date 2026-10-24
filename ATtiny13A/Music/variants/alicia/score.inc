@@ -1,5 +1,5 @@
 playlist:
-  .byte 0,23,34,62,78,91,144,23,166,62,186,91,198
+  .byte 0,23,34,62,78,89,142,23,164,62,184,89,196
 durations:
   .byte 3,4,6,12,18,24,30,36
 tempo_steps:
@@ -151,12 +151,10 @@ section_packed_004:
   .byte 203
   .byte 151
   .byte 251
-  .byte 253
   .byte 98
   .byte 114
   .byte 98
   .byte 92
-  .byte 253
   .byte 162
   .byte 75
   .byte 68
@@ -296,7 +294,6 @@ section_packed_009:
   .byte 217
   .byte 55
   .byte 171
-  .byte 253
   .byte 167
   .byte 163
   .byte 255

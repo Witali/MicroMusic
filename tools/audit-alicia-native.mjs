@@ -1,6 +1,9 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
-import {AVRCore} from '../web-player/lib/avr-core.js';
+// Instruction hooks run in the independent JavaScript interpreter. Crossing
+// the WASM/JS boundary at every instruction makes a full 158-second audit
+// needlessly expensive; the waveform render and cross-engine test use WASM.
+import {AVRCore} from '../web-player/lib/avr-reference.js';
 import {createHash} from 'node:crypto';
 import {pathToFileURL} from 'node:url';
 export function audit(folder='ATtiny13A/Music/variants/alicia',{writeReport=true,log=true}={}){
@@ -13,6 +16,10 @@ assert.equal(hash(rom),meta.flashSha256);assert.equal(hash(ep),meta.eepromSha256
 assert.equal(hash(fs.readFileSync('ATtiny13A/Music/instruments/bank.json')),meta.instrumentBankSha256);
 assert.deepEqual(JSON.parse(fs.readFileSync(folder+'/score.json')).native_score,source);
 const c=new AVRCore(rom,ep),labels=Object.fromEntries(Object.entries(meta.labels).map(([k,v])=>[k,v/2]));
+// Batch only instructions between observation points. Clearing these entries
+// makes runBlock stop before every semantic hook, including inside loops.
+const observed=new Set([...Object.values(labels),labels.stop_companion_loop+7,labels.ring_published-2]);
+for(const pc of observed)if(Number.isInteger(pc)&&pc>=0&&pc<512)c.batch[pc]=0;
 const voices=[97,102,107,112,117,122],signed=n=>n<128?n:n-256;
 const fraction=x=>{const [n,d=1]=String(x).split('/').map(Number);return n/d;};
 const midi=x=>{if(x==='R')return null;const [,n,a,o]=/^([A-G])([#b]?)(-?\d+)$/.exec(x);return(Number(o)+1)*12+{C:0,D:2,E:4,F:5,G:7,A:9,B:11}[n]+(a==='#'?1:a==='b'?-1:0);};
@@ -20,7 +27,8 @@ const chords={Cm:[36,[55,60,63]],Fm:[41,[56,60,65]],Bb:[46,[58,62,65]],Eb:[39,[5
 const expected=[],expectedComp=[];let seconds=0;
 for(const name of source.playlist){const p=source.patterns[name];for(const bar of p.bars){let beat=0;for(const token of bar.melody.split(' ')){
  const [pitch,length]=token.split(':'),n=midi(pitch);if(n!==null)expected.push({pitch:n+(bar.lead_transpose??p.lead_transpose??0),instrument:bar.lead_instrument??p.lead_instrument??1,at:seconds+beat*60/p.tempo_bpm});beat+=fraction(length);
- }let cursor=0;for(const [chord,duration]of bar.chords){const [bass,tones]=chords[chord];for(const [state,pitch]of[[107,bass],[112,tones[1]],[102,tones[0]]])expectedComp.push({state,pitch,at:seconds+cursor*60/p.tempo_bpm});cursor+=duration;}seconds+=beat*60/p.tempo_bpm;}}
+ }let cursor=0;for(const [chord,duration]of bar.chords){const [bass,tones]=chords[chord];for(const [state,pitch]of[[107,bass],[112,tones[1]]])expectedComp.push({state,pitch,at:seconds+cursor*60/p.tempo_bpm});
+ for(let eighth=0;eighth<duration*2;eighth++)expectedComp.push({state:102,pitch:tones[eighth%2],at:seconds+(cursor+eighth/2)*60/p.tempo_bpm});cursor+=duration;}seconds+=beat*60/p.tempo_bpm;}}
 assert.equal(expected.length,169);assert.equal(rom.length,meta.flashBytes);assert.ok(rom.length<=1024);
 const queue=Array(14).fill(128),attacks=[],companion=[],envelopeChecks=[];
 const expectedCommands=[];for(const phrase of meta.score.playlist){let at=meta.labels['section_'+phrase];for(;;){const token=rom[at++];expectedCommands.push(token);if(token===255)break;}}
@@ -64,7 +72,7 @@ c.step=()=>{
   }
  }
  if(irq&&at===labels.ring_read){assert.equal(queue.length,(c.r[22]-c.r[28])&15);minQueued=Math.min(minQueued,queue.length);assert.ok(queue.length>0,JSON.stringify({error:'PWM underrun',seconds:c.cyc/9600000,pc:c.pc,maxRender,maxBurst,voiceStates:voices.map(a=>Array.from(c.data.subarray(a,a+5)))}));assert.equal(c.data[c.r[28]],queue.shift());}
- run();
+ if(observed.has(at)||!c.runBlock())run();
  if(!irq&&at===labels.ring_published-2){const point=c.r[21],mid=(previous+point)>>1,a=128|((c.r[22]-2)&15);assert.equal(c.data[a],mid);assert.equal(c.data[a+1],point);queue.push(mid,point);previous=point;}
  if(c.writes!==writes)assert.equal(c.duty,latched);if(irq&&at===labels.ring_read)latched=c.r[18];
  if(!c.inIRQ&&c.pc===labels.idle&&renderStart!==null){maxRender=Math.max(maxRender,c.cyc-renderStart-15*(c.irqCount-renderIrqs));maxBurst=Math.max(maxBurst,c.cyc-burstStart-15*(c.irqCount-burstIrqs));renderStart=null;}
@@ -80,7 +88,7 @@ for(let i=0;i<expectedComp.length;i++){const actual=companion[i],e=expectedComp[
 assert.equal(c.lost+c.workLost,0);assert.equal(c.maxIRQ,15);assert.ok(maxRender<=512);assert.ok(c.minSP>=144);assert.ok(tailCopies>0&&bothTails>0);
 assert.deepEqual(commands.slice(0,expectedCommands.length),expectedCommands,'Every losslessly packed native command executes');
 assert.ok(stopChecks>=71);
-const result={image:'alicia',engine:'alicia-native',passed:true,flashBytes:rom.length,sourceNotes:169,sourceCompanionNotes:expectedComp.length,wholeSourceSeconds:seconds,emulatedSeconds:c.cyc/9600000,maximumMelodyTimingErrorMs:maxError,allSixVoicesSilentBeforeLoop:quietAtRestart,minQueued,maxRenderCycles:maxRender,maxBurstCycles:maxBurst,maxStackBytes:maxStack,tailCopies,bothTailPoints:bothTails,mixRange:[minimumMix,maximumMix],envelopeChecks:envelopeChecks.length,noteOffChecks:stopChecks,voiceRamBytes:30,pwmRingBytes:16,sramUsedWorstCase:46+maxStack,sramHighWaterReservedBytes:48+maxStack,commands:commands.length,semanticComparison:{exactCommandBytes:expectedCommands.length,allSixVoicesSilentBeforeRestart:quietAtRestart},isrCycles:c.maxIRQ,lost:c.lost+c.workLost};
+const result={image:'alicia',engine:'alicia-native',passed:true,flashBytes:rom.length,sourceNotes:169,sourceCompanionNotes:expectedComp.length,pianoArpeggioNotes:expectedComp.filter(e=>e.state===102).length,wholeSourceSeconds:seconds,emulatedSeconds:c.cyc/9600000,maximumMelodyTimingErrorMs:maxError,allSixVoicesSilentBeforeLoop:quietAtRestart,minQueued,maxRenderCycles:maxRender,maxBurstCycles:maxBurst,maxStackBytes:maxStack,tailCopies,bothTailPoints:bothTails,mixRange:[minimumMix,maximumMix],envelopeChecks:envelopeChecks.length,noteOffChecks:stopChecks,voiceRamBytes:30,pwmRingBytes:16,sramUsedWorstCase:46+maxStack,sramHighWaterReservedBytes:48+maxStack,commands:commands.length,semanticComparison:{exactCommandBytes:expectedCommands.length,allSixVoicesSilentBeforeRestart:quietAtRestart},isrCycles:c.maxIRQ,lost:c.lost+c.workLost};
 result.flashSha256=hash(rom);result.eepromSha256=hash(ep);
 if(writeReport){fs.mkdirSync('web-player/reports',{recursive:true});fs.writeFileSync('web-player/reports/alicia-release-verification.json',JSON.stringify(result,null,2)+'\n');}
 if(log)console.log(JSON.stringify(result,null,2));return result;
