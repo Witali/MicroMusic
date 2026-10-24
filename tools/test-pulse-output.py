@@ -11,6 +11,18 @@ probe=importlib.util.module_from_spec(spec);sys.modules[spec.name]=probe;spec.lo
 
 
 class PulseOutputTests(unittest.TestCase):
+    def test_wave_precision_does_not_change_the_linear_voice_or_noise_scale(self):
+        fit=probe.fit
+        state=fit.State(np.array([40,0,50,35]),np.array([4,3,6,4]),np.full(4,128),
+            np.tile(np.array([2,-3,1,0,1,-1,0,0]),(4,1)),np.array([0,0,1,0]),
+            np.zeros((8,16),np.int16),np.array([0,0,1,2]))
+        state.waves_q1[0,:2]=[4,-2];state.waves_q1[1,:3]=[3,-2,-1]
+        a,offset,old,_,_=probe.responses(state,np.full(8,4),0)
+        promoted=state.copy();promoted.waves_q1*=2;promoted.wave_fraction_bits=2
+        b,new_offset,new_old,_,error=probe.responses(promoted,np.full(8,4),0)
+        self.assertLess(error,1e-12);np.testing.assert_allclose(offset,new_offset,atol=1e-12,rtol=0)
+        np.testing.assert_allclose(a@old,b@new_old,atol=1e-12,rtol=0)
+
     def test_response_matrix_reconstructs_mixed_voice_noise_and_transitions(self):
         fit=probe.fit
         for width in (16,32):
