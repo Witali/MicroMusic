@@ -63,3 +63,21 @@ simultaneous source notes. The complete no-intro payload alone leaves only
 not advertised as fitting firmware, and the existing reduced AVR player
 must not be described as lossless. Playback requires further decoder and
 polyphonic engine work or a target with more resources.
+
+Eight-voice synthesis feasibility has now been checked separately:
+  python tools/probe-eight-guitar-voices.py
+  node tools/audit-eight-guitar-voices.mjs
+The static AVR probe has eight independent 16-bit DDS phases and steps,
+using the measured nylon guitar EEPROM waves. It sums each guitar chord
+before applying its shared gain with signed 16-bit arithmetic. No chord
+tone is removed. Code is 270 bytes plus a 16-byte demonstration pitch table.
+At 18,750 synthesis samples/s it takes at most 453 active cycles, within
+512 CPU cycles per output. A one-second emulation verifies 149984 phase
+advances, 18748 complete mixes and all 1456 signed chord-gain cases, with
+no lost timer events or PWM underruns. SRAM usage is 50 bytes in this probe,
+including the observed two-byte stack; gain values live in registers.
+The retained report is eight-voice-synthesis-probe.json.
+
+This proves the feasibility of eight simultaneous tones with two shared
+chord gains. The probe has no note scheduler, envelope updates or MNC1
+decoder. Its code and RAM measurements are not those of a full song player.

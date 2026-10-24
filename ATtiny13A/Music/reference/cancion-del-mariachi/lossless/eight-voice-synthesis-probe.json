@@ -1,0 +1,67 @@
+{
+  "experimental": true,
+  "scope": "Static eight-voice synthesis only; no score decoder or complete-song fit claim.",
+  "cpuHz": 9600000,
+  "pwmHz": 37500,
+  "synthesisHz": 18750,
+  "flashBytes": 286,
+  "codeBytes": 270,
+  "eepromBytes": 64,
+  "pitches": [
+    71,
+    67,
+    64,
+    59,
+    55,
+    52,
+    47,
+    40
+  ],
+  "steps": [
+    1726,
+    1370,
+    1152,
+    863,
+    685,
+    576,
+    432,
+    288
+  ],
+  "voiceAddresses": [
+    112,
+    116,
+    120,
+    124,
+    128,
+    132,
+    136,
+    140
+  ],
+  "phaseStateBytes": 32,
+  "pwmRingBytes": 16,
+  "sharedChordGainRegisters": [
+    4,
+    5
+  ],
+  "gainDivisor": 8,
+  "flashSha256": "0e19f7ef21c0df6a7fbf3cf44f88d53bcd6735596433f0762df7ae9e843a140e",
+  "emulatedSeconds": 1.0000001041666666,
+  "renders": 18749,
+  "independentPhaseChecks": 149984,
+  "eightVoiceMixChecks": 18748,
+  "chordGainChecks": 1456,
+  "maxRenderElapsedCycles": 468,
+  "maxRenderActiveCycles": 453,
+  "cyclesAvailablePerRender": 512,
+  "minQueuedPwmBytes": 12,
+  "ringUnderruns": 0,
+  "lostTimerEvents": 0,
+  "isrCycles": 15,
+  "maxStackBytes": 2,
+  "sramUsedWorstCase": 50,
+  "mixRange": [
+    -80,
+    60
+  ],
+  "limitation": "Eight continuous notes verified in emulation; score decoding, note scheduling and envelope updates are not implemented in this probe."
+}
