@@ -215,6 +215,52 @@ short prefixes and actual 1024-byte maximum images are checked. See the
 for the automatic whole-image selection and reproduction commands. The PCM,
 duration and quality metrics are unchanged.
 
+## Recipe: extend a selector through an unused packet bit
+
+When a compact stream has no free bits in its common spectral byte, check its
+extended header before reducing gain precision or adding an unconditional byte.
+The Q3 header has an unused bit 2 in the `0xc0..0xc3` duration escape. It can hold
+the third waveform bit, selecting eight forms while retaining **all sixteen gains**.
+Selectors 0–3 keep their original bytes. Selectors 4–7 force an extended header
+only when the frame did not already require one; the actual packer must charge
+this extra byte during fitting. Tag the extension as a separate format and reject
+unknown header bits in the portable reader.
+
+The eight-form four-tap nibble decoder clears the upper address in R13 at every
+frame, then captures it from extended headers:
+
+```asm
+vbr_pitch:
+ clr r13
+ /* compact-header parser or branch to vbr_extended */
+vbr_extended:
+ mov r23, r16
+ andi r23, 4
+ lsl r23                  /* four rows * two bytes per row = eight */
+ mov r13, r23
+ /* existing extended pitch/duration parser */
+```
+
+At the lookup, OR the upper base into the address after forming its low bits.
+`OR` preserves carry, needed for the packed odd/even tap. The IRQ must preserve
+both the carry and R13. Clearing R13 only for extended headers is insufficient:
+a later compact header could otherwise retain an upper selector.
+
+The real core grows **410 → 422 bytes** relative to four-form nibble storage.
+Eight four-tap forms occupy **16 EEPROM bytes**, leaving **48 speech bytes**.
+The same-PCM control is 996 Flash; the fitted Vinni image is **1012 Flash +
+64 EEPROM**, with **199 cycles** of preparation slack. The 649-byte stream limit
+is checked with a complete 1024-byte build. Header, gain and IRQ lookup checks
+cover **73,728 cases** in three engines. See the
+[eight-form study](../research/q3-pulsebook8/README.md) for evidence and limits.
+
+Before spending header bytes, recode exact duplicate rows to the cheapest lower
+index, and zero the inaudible selector on unvoiced/zero-gain frames. Keep the gain
+and all decoder state rules. Equality of the full PCM and all four wrap counters
+proves this recoding for the input stream. It freed **five bytes** in the first
+fit, without adding any AVR instructions. This storage optimization alone does
+not improve sound; further fitting uses the freed budget.
+
 ## Changes that preserve the decoded bytes
 
 - **Round using the last discarded bit.** After a signed ASR/ROR loop, carry
