@@ -45,6 +45,7 @@ matching optimized kernel is provided yet.
 | LSP polynomial stages | `compact_lsp.c.inc` calling Q14 ASM | same recurrence using C Q14 |
 | Historical pitch write/add | `pitch_add.S` | C block loop in `pitch24.h` |
 | Innovation, scaling and saturation | `innovation.S` | C branch in `innovation.h` and bounded helpers in `nb3_c_math.h` |
+| Known-zero adaptive gain | separate `speex_avr_zero_innovation10` entry | four byte products/carries in `speex_nb3_zero_shape_c` |
 | Fused long-pitch/innovation | second entry in `innovation.S`, shared scaling/clamps | `long_pitch.h`, inlined into the C forty-sample caller |
 | Variable-count fused vectors (0..10) | separate entry in `innovation.S`, same scaling/clamps | `long_pitch.h` with runtime count |
 | One-sample fused vectors | scalar entry in `innovation.S`, same transform with fewer saved registers | same `long_pitch.h` helper with count=1 |
@@ -61,6 +62,13 @@ cast. Replacing it with a seemingly equivalent wide multiply/shift changes
 results outside the bounded polynomial range. Keep rounding, modulo-32 sums
 and saturation identical in every backend.
 
+The zero-adaptive transform alone has a stronger bound: signed8 shape and
+0..121,000,000 scale give s16 output without saturation. Its mathematical
+shape*scale product can require 35 signed bits; do not implement the folded
+formula with a wrapping signed32 multiply. The C byte-product carry cascade
+and ASM partial products avoid that intermediate. Other submodes or nonzero
+adaptive sums need their own bounds and original clamps.
+
 AVR commands, from the repository worktree root:
 
 ```sh
@@ -75,7 +83,7 @@ real-time support depends on the target and must be measured. On ATmega328P
 both C and explicitly enabled ASM pass all 31 complete PWM streams with
 interrupts. The tested additional CPU reserve is 10% for C and 40% for ASM;
 these are measured corpus/ISA results, not physical-board guarantees. The
-C corpus maximum is 254,720 cycles (255,285 with pitch coverage).
+C corpus maximum is 254,619 cycles (255,184 with pitch coverage).
 The build tool defaults to C; `--backend asm` explicitly adds the enable define.
 
 ## Export and integrate
@@ -134,10 +142,10 @@ or PWM code; the decoder does not know which output peripheral is used.
   assembles them by value, independent of native byte order or alignment.
 - `SPEEX_NB3_CHECK_SCRATCH=0` removes the host-only bounds checker and its
   `abort` dependency. The embedded path uses the same 60-byte arena. The live
-  quantized LSP array takes the first 20 bytes. One 30-byte zero-pitch vector
-  serves all zero-gain calls; its frame-local initialization flag resets before
-  reuse. After all excitation, separate LPC and interpolated-LSP arrays reuse
-  the region at offsets 20 and 40. Nonzero-gain paths do not touch it. Provide
+  quantized LSP array takes the first 20 bytes. Excitation needs no other
+  scratch; the zero-gain path directly rounds its bounded shape/scale product.
+  After all excitation, separate LPC and interpolated-LSP arrays occupy
+  offsets 20 and 40. Provide
   normal C runtime `memcpy`, `memmove`, `memset`; a hosted OS is unnecessary.
 - GCC-specific optimization attributes are isolated in `speex_platform.h` and
   disappear for other compilers. Target-specific intrinsic/ASM optimizations

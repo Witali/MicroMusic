@@ -333,3 +333,72 @@ speex_avr_long_innovation1:
     clt
     rjmp .Linnovation_sample
 .size speex_avr_long_innovation1, .-speex_avr_long_innovation1
+
+
+/* Zero adaptive sum only. ABI out r25:r24, Flash shape r23:r22,
+ * nonnegative scale<=121000000 in r21:r18. Exact rounded output fits s16:
+ * floor((shape*scale+262144)/524288). First form floor(product/256),
+ * add 1024 and shift eleven. No pitch read/clamp or final saturation. */
+.global speex_avr_zero_innovation10
+.type speex_avr_zero_innovation10, @function
+speex_avr_zero_innovation10:
+    push r2
+    push r3
+    push r8
+    push r16
+    push r17
+    push r28
+    push r29
+    movw r28, r24
+    movw r30, r22
+    movw r16, r18
+    movw r18, r20
+    clr r2
+    ldi r20, 10
+    mov r3, r20
+    ldi r20, 4
+    mov r8, r20
+.Lzero_innovation_sample:
+    lpm r20, Z+
+    mulsu r20, r16
+    mov r22, r1
+    sbc r23, r23
+    mov r24, r23
+    mov r25, r23
+    mulsu r20, r17
+    sbc r24, r2
+    sbc r25, r2
+    add r22, r0
+    adc r23, r1
+    adc r24, r2
+    adc r25, r2
+    mulsu r20, r18
+    sbc r25, r2
+    add r23, r0
+    adc r24, r1
+    adc r25, r2
+    mulsu r20, r19
+    add r24, r0
+    adc r25, r1
+    add r23, r8
+    adc r24, r2
+    adc r25, r2
+    .rept 3
+    asr r25
+    ror r24
+    ror r23
+    .endr
+    st Y+, r23
+    st Y+, r24
+    dec r3
+    brne .Lzero_innovation_sample
+    clr r1
+    pop r29
+    pop r28
+    pop r17
+    pop r16
+    pop r8
+    pop r3
+    pop r2
+    ret
+.size speex_avr_zero_innovation10, .-speex_avr_zero_innovation10

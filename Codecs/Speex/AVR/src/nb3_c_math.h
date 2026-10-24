@@ -29,6 +29,21 @@ static SPEEX_NB3_ALWAYS_INLINE int32_t speex_nb3_shape_scale_c(int8_t shape,
     int32_t quotient=(int32_t)shape*high+fraction;
     return (int32_t)((uint32_t)quotient<<8)>>1;
 }
+/* Zero adaptive sum, signed8 shape, 0<=scale<=121000000. The original
+ * double floor and Q14 rounding reduce exactly to (shape*scale+2^18)>>19.
+ * The result fits +/-29542, so neither wrap nor output saturation is active.
+ * Each byte product plus floor carry fits signed16. The first three steps
+ * divide the low 24-bit contribution by 65536; the fourth contributes an
+ * exact multiple of 256. c+4 and d*32 fit signed16 for this bound. */
+static SPEEX_NB3_ALWAYS_INLINE int16_t speex_nb3_zero_shape_c(int8_t shape,
+                                                            int32_t scale)
+{
+    int16_t a=(int16_t)shape*(uint8_t)scale;
+    int16_t b=(int16_t)shape*(uint8_t)(scale>>8)+(a>>8);
+    int16_t c=(int16_t)shape*(uint8_t)(scale>>16)+(b>>8);
+    int16_t d=(int16_t)shape*(uint8_t)(scale>>24);
+    return (int16_t)(((c+4)>>3)+d*32);
+}
 /* Saturate floor(rounded/16384) to +/-32767. Clamp before discarding
  * bits: every remaining result fits signed16, so retain only bits 14..29
  * with unsigned left alignment and a whole-word extraction. This also

@@ -404,13 +404,57 @@ their admitted zero-vector images. Both freshly exported C archives pass
 the 77-file source copies, decoder/unit hashes and C equivalence.
 Reports: scalar-main-*.json, portable-scalar-main-library.json.
 
+### Direct rounded output for known-zero adaptive gain
+
+For signed8 shape and 0<=scale<=121,000,000, the original two floors and Q14
+rounding reduce to floor((shape*scale+262144)/524288). The output fits s16
+without saturation; use this only for proven zero adaptive sum. Remove the
+packed zero vector, readiness flag and clear entirely. Scratch remains 60 B
+because the live qlsp plus the later synthesis arrays still require it.
+ASM uses four signed-byte products, the high-byte rounding addition and three
+right shifts. C uses four signed8-by-unsigned8 products with signed16 floor
+carries, then ((c+4)>>3)+d*32; all intermediates fit their documented bounds.
+This retains explicitly selectable C and its real AVR Flash accesses.
+
+Three paths (new ASM, actual AVR C with ASM disabled, original packed-zero
+ASM) match 280,960 independent samples each. All signed8 shapes, 64 NB3 scales,
+scale boundaries, 6,120 rounding-neighbor blocks and 20,000 random blocks pass
+guards/ABI/r1. Kernel cycles including RET: new ASM 501 constant / ten samples,
+packed zero 941..981, separate O2 C worker 549. The selected production O3 C
+wrapper uses 11,836 B vs 11,072 for O2, but improves the 1,024-frame transition
+mean 196,006 -> 195,736 cycles. Speed takes priority; wide-product C variants
+are slower. Their exact workload/Flash/timing comparison is in the variants
+report; other MCU timings are unmeasured.
+
+Both main binaries match 14,278 exact AVR frames each. Mean over 31 streams
+improves 0.2730% ASM / 0.5649% C (human speech 0.1342% / 0.2760%). ASM has a
+small synthetic-stream mean regression, at most 0.0341%; C improves every
+stream mean. Corpus maxima 125,465 / 254,619; pitch coverage 127,245 / 255,184.
+Flash 9,578 / 11,836 B (+118 / +502); SRAM/stack stay 1,119 / 141 or 153 B.
+Two fresh native public C archives each match 9,100 frames, and native scratch
+tracking remains 60 B. Twelve architecture/backend configurations pass.
+
+All four ordinary/loaded PWM scenarios pass all 31 streams, exact output and
+zero underruns, 9,100 frames / 1,456,000 samples each. ASM +40% CPU retains
+queue 31 / gap 194,094; C +10% retains queue 49 / gap 157,864 cycles. Ordinary
+queues 73 / 65 and gaps 80,013 / 124,767. Player SRAM/stack/free remain 1,254 /
+150 or 162 / 644 or 632 B. Speech demos are 12,782 / 15,036 B including 2,940 B
+audio. Audit pins four 81-file copies, actual binary hashes and a post-run
+comment clarification that preserves both rebuilt decoder images.
+Reports: zero-transform-*.json, portable-zero-transform-library.json.
+
 ## Next candidates (not yet admitted)
 
-1. **Specialize known-zero adaptive arithmetic.** The zero-gain C/ASM kernels
-   still read and clamp a proven-zero packed value. A dedicated transform could
-   remove those operations and its buffer/flag entirely. Preserve exact shape
-   scaling/rounding and measure code duplication versus shared-body overhead;
-   never slow the common nonzero vector to accelerate a rare zero path.
+1. **Use the bounded zero transform for short-pitch tails.** Pitch 17..19 still
+   sends zero-gain tails through the three-MAC ASM kernel; C uses the earlier
+   general shape-scale/finish helper. Add a count 0..10 zero entry and reuse the
+   bounded C transform, avoiding history/gain loads and possibly the three-byte
+   zero-gain staging array. Measure dispatch costs on all other short pitches.
+
+2. **Revisit synthesis using the current profile.** The fresh 88-frame fixture
+   profile attributes 55.966% to IIR and 18.342% to shared pitch/innovation.
+   Inspect the MAC carry chains and history/control loads before selecting a
+   new candidate. No untested IIR speedup is assumed.
 
 No claim of a global speed optimum has been established. Do not mark the
 ongoing optimization goal complete while useful candidates remain untested.
