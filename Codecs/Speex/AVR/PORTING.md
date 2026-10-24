@@ -43,9 +43,11 @@ matching optimized kernel is provided yet.
 | Signed shifts and rounded products | `avr_shift.h`, `avr_fixed.h` | C shifts in `avr_shift.h` / upstream fixed-point macros |
 | Generic, bounded and aligned-p1 Q14 products | `q14.S` | exact word extraction in `nb3_c_math.h`, selected by `avr_fixed.h` |
 | LSP polynomial stages | `compact_lsp.c.inc` calling Q14 ASM | same recurrence using C Q14 |
-| Pitch write/add | `pitch_add.S` | C block loop in `pitch24.h` |
+| Historical pitch write/add | `pitch_add.S` | C block loop in `pitch24.h` |
 | Innovation, scaling and saturation | `innovation.S` | C branch in `innovation.h` and bounded helpers in `nb3_c_math.h` |
 | Fused long-pitch/innovation | second entry in `innovation.S`, shared scaling/clamps | `long_pitch.h`, inlined into the C forty-sample caller |
+| Variable-count fused vectors (0..10) | separate entry in `innovation.S`, same scaling/clamps | `long_pitch.h` with runtime count |
+| Short-pitch range selection and boundary sums | `short_pitch.h` calling variable ASM vectors | `short_pitch.h`, scalar boundaries and inlined C vectors |
 | Whole-block LPC synthesis | `lpc_dot.S` | C dot product and coefficient-age loop in `iir_direct.c.inc` |
 
 The C build does not link any `.S` file. The historical, unused
@@ -72,7 +74,7 @@ real-time support depends on the target and must be measured. On ATmega328P
 both C and explicitly enabled ASM pass all 31 complete PWM streams with
 interrupts. The tested additional CPU reserve is 10% for C and 40% for ASM;
 these are measured corpus/ISA results, not physical-board guarantees. The
-C corpus maximum is 269,656 cycles (270,221 with pitch coverage).
+C corpus maximum is 254,742 cycles (255,307 with pitch coverage).
 The build tool defaults to C; `--backend asm` explicitly adds the enable define.
 
 ## Export and integrate
@@ -154,5 +156,5 @@ The second test exports a fresh package, builds both manifest and CMake static
 archives, and links a consumer with public includes only. It compares complete
 prepared fixture/human-speech streams with upstream. It requires the reference
 host decoder built first; human-speech coverage is included when those streams
-are prepared. `reports/portable-fused-long-library.json` records the current
+are prepared. `reports/portable-segment-library.json` records the current
 31-stream run through both build paths.

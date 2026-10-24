@@ -313,7 +313,7 @@ binary measurements. Vendor and R4 files remain unmodified.
   336,628 variable-length outputs each in ASM/C, all eleven counts, output
   tails, input/gain guards, all callee-saved registers and r1, alongside
   673,280 outputs each in the three existing entries. Full segment and PWM
-  admission follows with the short-pitch caller. See variable-innovation-kernel.json.
+  admission passes with the short-pitch caller below. See variable-innovation-kernel.json.
 
 - Fuse short pitch by selecting contiguous ranges outside the sample loop.
   For pitch 17..40, j<pitch-1 and pitch+1<=j<min(2*pitch-1,40) use the rolling
@@ -338,7 +338,13 @@ binary measurements. Vendor and R4 files remain unmodified.
   11,316 B, static SRAM 1,199 B and global peak stacks 141 / 153 B unchanged.
   The smaller shared C edge-staging experiment used 10,868 B but raised fixture
   maximum to 257,223 and stack to 157; prefer the faster scalar-edge C form.
-  Full ordinary/loaded PWM tests are running from four matching 76-file copies.
+  All 31 ordinary players per backend pass exact PWM without underruns:
+  queues 73 / 65, maximum gaps 80,013 / 124,895 cycles. Loaded players also
+  pass: ASM +40% CPU, queue 31, gap 194,266; C +10%, queue 49, gap 157,992.
+  Free SRAM remains 564 / 552 B. Speech demos are 12,498 / 14,514 B including
+  2,940 B audio, static SRAM 1,334 B, stack 150 / 162 B. All four 76-file
+  source copies match the main tree; main mailbox/demo rebuild hashes match
+  the independently verified images.
   Reports: segment-{asm,c}-{fixtures,speech,means,pitch-coverage,lsp-reuse}.json,
   segment-short-kernel.json, portable-segment-library.json.
 
