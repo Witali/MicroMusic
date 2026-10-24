@@ -315,6 +315,111 @@ static int scheduler_differential(void) {
  }
  return 0;
 }
+static int zero_top_uncertainty(void) {
+ uint8_t value;
+ /* Pending OCR3 cannot prove a TOP0 buffer transfer, overflow or OC change.
+  * A TCNT write suppresses compare only; it does not resolve TOP/BOTTOM. */
+ reset(); WRITE(TIMER0_TCCR0A, 0xf0); WRITE(TIMER0_TCCR0B, 0xc0);
+ CHECK(t.levels == 3);
+ WRITE(TIMER0_TCCR0A, 0x61); WRITE(TIMER0_TCCR0B, 9);
+ WRITE(TIMER0_OCR0A, 3); WRITE(TIMER0_OCR0B, 1); WRITE(TIMER0_TCNT0, 0);
+ timer0_clear_events(&t);
+ CHECK(t.active_a == 0 && t.ocra == 3 && t.active_b == 0 && t.ocrb == 1);
+ CHECK(timer0_next_event(&t) == 1);
+ value = 255; CHECK(timer0_read(&t, 0, TIMER0_OCR0A, &value) == 0 && value == 3);
+ value = 255;
+ CHECK(timer0_read(&t, 1, TIMER0_OCR0A, &value) == TIMER0_ZERO_PHASE_TOP && value == 255);
+ CHECK(timer0_write(&t, 1, TIMER0_TCNT0, 99) == TIMER0_ZERO_PHASE_TOP);
+ CHECK(timer0_advance(&t, 100) == TIMER0_ZERO_PHASE_TOP);
+ CHECK(t.cycle == 0 && t.prescaler == 0 && t.tcnt == 0 && t.block_compare == 1);
+ CHECK(t.active_a == 0 && t.active_b == 0 && t.ocra == 3 && t.ocrb == 1);
+ CHECK(t.tifr == 0 && t.levels == 3 && t.count == 0 && t.scheduled_events == 0);
+ CHECK(timer0_next_event(&t) == 1);
+ CHECK(timer0_advance(&t, 1) == TIMER0_ZERO_PHASE_TOP && t.cycle == 0);
+
+ /* Free-running prescaler: no error before the selected pulse. A long call
+  * keeps its known prefix and retries the same rejected boundary. */
+ reset(); ADVANCE(3); WRITE(TIMER0_TCCR0A, 1);
+ WRITE(TIMER0_OCR0A, 3); WRITE(TIMER0_TCCR0B, 10);
+ CHECK(timer0_next_event(&t) == 8);
+ ADVANCE(7); CHECK(t.prescaler == 7 && t.tcnt == 0);
+ CHECK(timer0_advance(&t, 100) == TIMER0_ZERO_PHASE_TOP && t.cycle == 7);
+ CHECK(t.prescaler == 7 && t.active_a == 0 && t.ocra == 3 && t.tifr == 0);
+ CHECK(timer0_next_event(&t) == 8);
+ CHECK(timer0_advance(&t, 8) == TIMER0_ZERO_PHASE_TOP && t.cycle == 7);
+ CHECK(timer0_set_clock_enabled(&t, 8, 0) == TIMER0_ZERO_PHASE_TOP && t.clock_enabled);
+ /* Gates asserted in the known prefix stop the pulse; elapsed wall time is
+  * not an unsupported counter transition. */
+ WRITE(TIMER0_PRR, 2); CHECK(timer0_next_event(&t) == UINT64_MAX);
+ ADVANCE(1000); CHECK(t.prescaler == 7 && t.tcnt == 0);
+ WRITE(TIMER0_PRR, 0); CHECK(timer0_next_event(&t) == 1001);
+ CHECK(timer0_set_clock_enabled(&t, 1000, 0) == 0);
+ ADVANCE(2000); CHECK(t.prescaler == 7);
+ CHECK(timer0_set_clock_enabled(&t, 2000, 1) == 0);
+ CHECK(timer0_next_event(&t) == 2001);
+ WRITE(TIMER0_GTCCR, 0x81); ADVANCE(3000);
+ CHECK(t.prescaler == 0 && timer0_next_event(&t) == UINT64_MAX);
+ WRITE(TIMER0_GTCCR, 0); CHECK(timer0_next_event(&t) == 3008);
+ CHECK(timer0_advance(&t, 3008) == TIMER0_ZERO_PHASE_TOP && t.cycle == 3007);
+ CHECK(t.prescaler == 7 && t.active_a == 0 && t.ocra == 3);
+
+ /* CS0 is a valid stopped configuration. External T0 has no autonomous pulse,
+  * and only the selected polarity with an enabled clock can reach uncertainty. */
+ reset(); WRITE(TIMER0_TCCR0A, 1); WRITE(TIMER0_TCCR0B, 8);
+ WRITE(TIMER0_OCR0A, 3); ADVANCE(1000000);
+ CHECK(t.tcnt == 0 && t.active_a == 0 && t.ocra == 3 && t.tifr == 0);
+ CHECK(timer0_next_event(&t) == UINT64_MAX);
+ for (int rising = 0; rising < 2; ++rising) {
+  reset(); WRITE(TIMER0_TCCR0A, 0x61);
+  WRITE(TIMER0_OCR0A, 3); WRITE(TIMER0_OCR0B, 1);
+  WRITE(TIMER0_TCCR0B, (uint8_t)(8 | (rising ? 7 : 6)));
+  CHECK(timer0_next_event(&t) == UINT64_MAX);
+  ADVANCE(1000); CHECK(t.active_a == 0 && t.tcnt == 0 && t.tifr == 0);
+  CHECK(timer0_external_edge(&t, 1001, !rising) == 0);
+  CHECK(timer0_set_clock_enabled(&t, 1001, 0) == 0);
+  CHECK(timer0_external_edge(&t, 1002, rising) == 0);
+  CHECK(timer0_set_clock_enabled(&t, 1002, 1) == 0);
+  WRITE(TIMER0_PRR, 2); CHECK(timer0_external_edge(&t, 1003, rising) == 0);
+  WRITE(TIMER0_PRR, 0); WRITE(TIMER0_GTCCR, 0x81);
+  CHECK(timer0_external_edge(&t, 1004, rising) == 0);
+  WRITE(TIMER0_GTCCR, 0); timer0_clear_events(&t);
+  CHECK(timer0_external_edge(&t, 1005, rising) == TIMER0_ZERO_PHASE_TOP);
+  CHECK(t.cycle == 1005 && t.tcnt == 0 && t.active_a == 0 && t.ocra == 3);
+  CHECK(t.active_b == 0 && t.ocrb == 1 && t.tifr == 0 && t.scheduled_events == 0 && !t.count);
+  CHECK(timer0_external_edge(&t, 1005, rising) == TIMER0_ZERO_PHASE_TOP);
+ }
+
+ /* A known nonzero-TOP prefix may latch zero before the uncertainty boundary.
+  * Jump and short advance agree through that prefix, including existing IRQs. */
+ for (unsigned period = 1; period <= 8; period += 7) {
+  reset(); WRITE(TIMER0_OCR0A, 3); WRITE(TIMER0_OCR0B, 1);
+  WRITE(TIMER0_TIMSK0, 14); WRITE(TIMER0_TCCR0A, 0x61);
+  WRITE(TIMER0_TCCR0B, (uint8_t)(period == 1 ? 9 : 10));
+  ADVANCE(period); WRITE(TIMER0_OCR0A, 0);
+  reference = t; reference.events = reference_events;
+  for (uint32_t i = 0; i < t.count; ++i) reference_events[i] = events[i];
+  CHECK(timer0_advance(&reference, period * 4 - 1) == 0);
+  CHECK(timer0_advance(&t, period * 100) == TIMER0_ZERO_PHASE_TOP);
+  CHECK(same_state() == 0);
+  CHECK(t.scheduled_events == reference.scheduled_events && t.scheduled_events == 2);
+  CHECK(t.cycle == period * 4 - 1 && t.tcnt == 3 && t.descending);
+  CHECK(t.active_a == 0 && t.ocra == 0 && t.tifr == TIMER0_OCF0B);
+  CHECK(timer0_irq_pending(&t) == TIMER0_OCF0B && timer0_next_event(&t) == period * 4);
+  WRITE(TIMER0_OCR0A, 3);
+  CHECK(timer0_advance(&t, period * 4) == TIMER0_ZERO_PHASE_TOP);
+  CHECK(t.cycle == period * 4 - 1 && t.active_a == 0 && t.tcnt == 3);
+ }
+
+ /* Reset discards the rejected state. Non-PWM preload before selecting WGM5
+  * establishes active TOP3 without requiring an invented zero-TOP pulse. */
+ reset(); CHECK(t.tccra == 0 && t.tccrb == 0 && t.scheduled_events == 0);
+ WRITE(TIMER0_OCR0A, 3); WRITE(TIMER0_OCR0B, 1);
+ CHECK(t.active_a == 3 && t.active_b == 1);
+ WRITE(TIMER0_TCCR0A, 0x61); WRITE(TIMER0_TCCR0B, 9);
+ ADVANCE(6); CHECK(t.tcnt == 0 && t.active_a == 3 && t.scheduled_events == 4);
+ CHECK((t.tifr & 14) == 14 && timer0_next_event(&t) == 8);
+ return 0;
+}
 static int deadlines_and_boundaries(void) {
  timer0_init(&t, NULL, 0, UINT64_C(1) << 40);
  WRITE(TIMER0_OCR0A, 100); WRITE(TIMER0_OCR0B, 200);
@@ -326,14 +431,17 @@ static int deadlines_and_boundaries(void) {
  CHECK(timer0_advance(&t, 1) == TIMER0_RESERVED_WGM && t.cycle == 0);
  WRITE(TIMER0_TCCR0A, 0x11); /* PWM with reserved COM0B=1. */
  CHECK(timer0_advance(&t, 1) == TIMER0_RESERVED_COM0B && t.cycle == 0);
- WRITE(TIMER0_TCCR0A, 1); WRITE(TIMER0_OCR0A, 255); ADVANCE(1);
+ WRITE(TIMER0_TCCR0A, 0); WRITE(TIMER0_TCCR0B, 0);
+ WRITE(TIMER0_OCR0A, 255); WRITE(TIMER0_TCCR0A, 1);
+ WRITE(TIMER0_TCCR0B, 9); ADVANCE(1);
  reset(); WRITE(TIMER0_TCCR0A, 1); WRITE(TIMER0_TCCR0B, 9);
  CHECK(timer0_advance(&t, 1) == TIMER0_ZERO_PHASE_TOP && t.cycle == 0);
- WRITE(TIMER0_OCR0A, 3); ADVANCE(1); CHECK(t.active_a == 3 && t.tcnt == 0);
+ WRITE(TIMER0_OCR0A, 3);
+ CHECK(timer0_advance(&t, 1) == TIMER0_ZERO_PHASE_TOP && t.active_a == 0 && t.ocra == 3);
  timer0_init(&t, NULL, 0, UINT64_MAX - 1);
  WRITE(TIMER0_TCCR0B, 1); ADVANCE(UINT64_MAX);
  CHECK(t.tcnt == 1 && timer0_next_event(&t) == UINT64_MAX);
- return 0;
+ return zero_top_uncertainty();
 }
 
 int timer0_test_case(unsigned index) {

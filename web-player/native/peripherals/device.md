@@ -169,7 +169,7 @@ The opt-in table model is described in [device-osccal.md](device-osccal.md).
 BODCR's digital
 sleep-disable sequencing is implemented as described below. Reads of reserved
 I/O return0; nonzero reserved writes
-also fault. DWDR reads0 without a debugger. Sustained phase-correct TOP=0 and
+also fault. DWDR reads0 without a debugger. A timer pulse with active phase-correct TOP=0 and
 other reserved/ambiguous configurations retain the component's explicit faults.
 There is no silicon/electrical trace oracle or voltage/temperature calibration.
 
@@ -181,7 +181,12 @@ adds no Timer0 clarification. The source-only
 [measurement probe](timer0-top-zero-probe.md) provides controlled external T0
 stepping, raw register/physical-pin capture profiles and a trace schema without
 assuming the unknown outcome. The existing explicit fault remains until that
-evidence is available.
+evidence is available. It now occurs at the first unknown timer pulse, including
+active TOP=0 with a nonzero pending OCR0A. A held external T0, stopped source or
+clock gate does not fault just for this configuration. The board publishes the
+internal pulse deadline before CPU work can cross it; no buffer transfer, flag
+or OC transition is invented. Non-PWM preload remains the supported way to
+establish active nonzero TOP before selecting WGM5.
 
 `device-test.c` exports `device_test_case(index)` with16 deterministic C fixtures:
 bus masks; physical PWM; synchronized T0; vector priority/ACK; ADC sample/result

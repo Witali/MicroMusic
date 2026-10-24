@@ -105,12 +105,19 @@ external edges, capture overflow, and timestamps beyond 2^32.
 There is no silicon trace oracle yet. These tests establish the documented
 digital model and event-jump equivalence; they do not establish electrical or
 oscillator fidelity. Raw external-pin phase belongs to the GPIO module.
-Sustained WGM5/TOP=0 has no fully specified counter/IRQ cadence in the checked
-device sources, so `TIMER0_ZERO_PHASE_TOP` rejects it instead of inventing one.
+WGM5 with active TOP=0 has no fully specified counter/IRQ cadence in the checked
+device sources, so `TIMER0_ZERO_PHASE_TOP` stops before the first unknown pulse.
 This corner is pending hardware; the [source-only probe](timer0-top-zero-probe.md)
-records observations without supplying a predicted waveform. An initial
-zero active TOP may load a nonzero buffered OCR0A on its first pulse. Reserved
-WGM4/WGM6 and PWM COM0B=1 also return explicit errors. Fast-PWM TOP=0 is supported.
+records observations without supplying a predicted waveform. A nonzero pending
+OCR0A does not establish when its buffer transfers; the earlier invented first-
+pulse transfer is removed. Configuration, CS=0, clock-gated intervals and an
+external T0 hold remain valid until a selected timer pulse actually occurs.
+For an internal source, `next_event` publishes that boundary and an advance
+retains the last known cycle/prescaler prefix; retrying cannot consume the pulse.
+For external T0 the module reaches the selected edge's timestamp but does not
+change TCNT, flags, output latches or OCR buffers. Non-PWM OCR preload before
+selecting WGM5 establishes a known nonzero TOP. Reserved WGM4/WGM6 and PWM
+COM0B=1 also return explicit errors. Fast-PWM TOP=0 is supported.
 
 The data sheet's fast-PWM COM summary tables say “TOP” for output restoration,
 while section 11.7.3 explicitly describes restoration on TOP-to-BOTTOM. This

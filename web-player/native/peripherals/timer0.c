@@ -20,11 +20,14 @@ static int validate(const timer0_t *t) {
  uint8_t m = waveform(t);
  if (m == 4 || m == 6) return TIMER0_RESERVED_WGM;
  if (pwm(m) && ((t->tccra >> 4) & 3) == 1) return TIMER0_RESERVED_COM0B;
- /* The data sheet does not specify a useful dual-slope period for TOP=0.
-  * Allow an initial zero TOP to load a nonzero buffered OCR0A, but reject
-  * sustained zero instead of inventing a silicon waveform. */
- if (m == 5 && !t->active_a && !t->ocra) return TIMER0_ZERO_PHASE_TOP;
  return TIMER0_OK;
+}
+/* DS40002307A 11.7.4/Table11-8 do not resolve the simultaneous TOP/BOTTOM
+ * precedence. A nonzero pending buffer does not establish how to leave this
+ * state. Configuration and an edge-free hold are known; its next timer pulse
+ * is not. Check before changing TCNT, flags, OC latches or buffered OCR. */
+static int uncertain_pulse(const timer0_t *t) {
+ return waveform(t) == 5 && !t->active_a;
 }
 static void capture(timer0_t *t) {
  timer0_event_t *event;
@@ -122,11 +125,7 @@ static void pulse(timer0_t *t) {
  if (phase_correct(m)) {
   if (old == top && top) down = t->descending = 1;
   else if (!old) down = t->descending = 0;
-  if (!top && !old) {
-   /* Degenerate TOP=0: no representable slope, remain at BOTTOM. */
-   t->tcnt = 0; t->descending = 0; t->tifr |= TIMER0_TOV0;
-   load_buffers(t); phase_top_output(t, top_value(t, m));
-  } else if (down && old) {
+  if (down && old) {
    t->tcnt = (uint8_t)(old - 1);
    if (!t->tcnt) { t->descending = 0; t->tifr |= TIMER0_TOV0; }
   } else {
@@ -206,7 +205,9 @@ uint64_t timer0_next_event(const timer0_t *t) {
  uint64_t distance;
  if (!period || !clocked(t) || validate(t)) return UINT64_MAX;
  distance = period - (t->prescaler % period);
- distance += (uint64_t)(event_distance(t) - 1) * period;
+ /* Publish the rejected pulse too, so the board stops before crossing an
+  * unsupported state rather than giving the CPU a speculative event budget. */
+ if (!uncertain_pulse(t)) distance += (uint64_t)(event_distance(t) - 1) * period;
  return distance > UINT64_MAX - t->cycle ? UINT64_MAX : t->cycle + distance;
 }
 int timer0_advance(timer0_t *t, uint64_t cycle) {
@@ -219,6 +220,14 @@ int timer0_advance(timer0_t *t, uint64_t cycle) {
   error = validate(t);
   if (error) return error;
   if (!period) { elapse(t, delta); break; } /* T0 owned by GPIO synchronizer. */
+  if (uncertain_pulse(t)) {
+   uint64_t until = period - (t->prescaler % period);
+   if (delta < until) { elapse(t, delta); break; }
+   /* Retain the last known prefix, including the prescaler before the rejected
+    * pulse. Retrying keeps the same deadline; do not silently consume it. */
+   elapse(t, until - 1);
+   return TIMER0_ZERO_PHASE_TOP;
+  }
   pulses = delta / period + ((delta % period + t->prescaler % period) >= period);
   distance = event_distance(t);
   if (pulses < distance) {
@@ -238,6 +247,7 @@ int timer0_external_edge(timer0_t *t, uint64_t cycle, int rising) {
  if (!clocked(t) || source != (rising ? 7u : 6u)) return TIMER0_OK;
  error = validate(t);
  if (error) return error;
+ if (uncertain_pulse(t)) return TIMER0_ZERO_PHASE_TOP;
  pulse(t);
  return TIMER0_OK;
 }
