@@ -161,8 +161,12 @@ or PWM code; the decoder does not know which output peripheral is used.
 
 Validate upstream PCM, reset/invalid calls, stack/SRAM and the actual output
 peripheral with interrupts/DMA active on each new CPU. AVR measurements do not
-establish ARM, RISC-V or another MCU's timing or board support. Native WB/UWB
-profiles remain separate experiments and are not enabled by choosing C.
+establish ARM, RISC-V or another MCU's timing or board support. Full-filter
+WB/UWB remain separate experiments. [Compact WB1](WIDEBAND.md) has its own
+streaming `speex_wb1.h` interface and `SPEEX_ENABLE_WB1=1` build option, sharing
+the NB state and the same architecture/ASM selector. `tools/build_wb.py
+--export-c <new-directory>` exports both APIs and all C fallbacks. C is exact
+to the compact profile, but WB playback on ATmega328P requires enabled ASM.
 
 The AVR IIR uses separate ten-sample coefficient-age and thirty-sample steady
 loops, caching two coefficient words in registers after the age transition.

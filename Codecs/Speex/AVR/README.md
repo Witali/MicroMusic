@@ -7,15 +7,24 @@ frames / 1,456,000 samples, zero underruns, 629 bytes SRAM free at the observed
 peak**, including a separate 40% extra-CPU admission test. A physical board
 and its analog output have not been tested.
 
-The same decoder has a selectable C backend and an architecture-neutral
+An additional [compact wideband profile](WIDEBAND.md) decodes **16 kHz /
+9.8 kbit/s** (NB3 + HB1) on the same MCU. It uses a normalized 16-tap Q7
+synthesis QMF; its PCM differs from full 64-tap Xiph synthesis. The NB3
+profile retains exact original PCM and its previous binary image.
+The WB PWM player passes all 16 speech recordings: **6,467 frames,
+2,069,440 samples, zero underruns, 218 B free SRAM at peak** in AVR simulation
+with timers and interrupts active. WB playback on ATmega328P requires ASM;
+the portable C fallback retains correctness but exceeds its frame deadline.
+
+The narrowband decoder has a selectable C backend and an architecture-neutral
 `speex_nb3.h` interface. Architecture defines and a separate explicit ASM
 enable control selection; without a matching enabled backend it uses C.
 See [PORTING.md](PORTING.md) for C fallbacks, platform headers and an exportable
 CMake/static-library package for other microcontrollers. The C player now
 also passes all 31 streams with timers/ISR and 10% extra CPU work: zero
-underruns and 621 B free SRAM at peak. Both retain exact upstream s16 PCM.
+underruns and 621 B free SRAM at peak. Both NB3 backends retain exact upstream s16 PCM.
 
-## Supported profile
+## Narrowband profile
 
 - Narrowband submode 3, mono 8 kHz, CBR 8 kbit/s.
 - Exactly 20 compressed bytes produce 160 signed 16-bit samples (20 ms).
@@ -488,10 +497,10 @@ are in `reports/real-speech-{avr,player,quality}.json`.
 
 ## Native 16/32-kHz memory experiment
 
-The ATmega328P player currently supports **8 kHz only**. Native Speex WB
-(16 kHz) and UWB (32 kHz) are experimental PC builds; no 22.05-kHz output
-profile is introduced. The separate experiment retains native high-band
-information rather than resampling the narrowband result.
+The full 64-tap Speex WB (16 kHz) and UWB (32 kHz) implementations below remain
+experimental PC builds. The separate [compact WB1 profile](WIDEBAND.md) adds
+16-kHz AVR playback with a measured quality/speed tradeoff. No 22.05-kHz output
+profile is introduced. Both retain high-band information from the packet.
 
 `tools/build_rates.py --memory` applies three changes to a disposable upstream
 copy, without changing the working NB3 player:
@@ -526,9 +535,9 @@ This is a memory-focused implementation and not a speed limit for all possible
 implementations. It currently fails the real-time requirement even before
 adding CELP decoding, packet transport, output and interrupts. UWB also needs
 the inner WB synthesis layer. A larger buffer cannot compensate for a sustained
-production rate below consumption. Enabling either mode in the PWM player
-would therefore be incorrect. Further arithmetic/assembly work or a measured
-quality/speed tradeoff is required before either can become a supported profile.
+production rate below consumption. These full-filter implementations cannot be
+enabled in the AVR player. The compact WB1 implementation makes a separate,
+explicit filter approximation; UWB playback remains unsupported.
 
 Reproduce after preparing real speech:
 
