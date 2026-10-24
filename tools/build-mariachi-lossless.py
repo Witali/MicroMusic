@@ -10,6 +10,7 @@ import importlib.util
 import json
 import argparse
 import shutil
+import subprocess
 
 ROOT=Path(__file__).resolve().parents[1]
 SOURCE=ROOT/'ATtiny13A/Music/reference/cancion-del-mariachi/source-events.json'
@@ -29,15 +30,15 @@ def compile_score():
     return compile_parts(parts)
 
 
-def compile_parts(parts):
+def compile_parts(parts,*,compact=False,unit=160,voices=(2,6),pending=(2,5)):
     """Encode supplied parts exactly; arrangement policy belongs to the caller."""
     p=module('poly_events','pack-musical-events.py')
     assert len(parts)==2
-    assert all(1<=len(g['pitches'])<=(2 if i==0 else 6) for i,part in enumerate(parts) for g in part['groups'])
+    assert sum(voices)==8 and sum(pending)==7
+    assert all(1<=len(g['pitches'])<=voices[i] for i,part in enumerate(parts) for g in part['groups'])
     assert all(g['velocity']==80 for part in parts for g in part['groups'])
     assert all(part['program']==24 and part['offVelocity']==64 for part in parts)
-    unit=160
-    shapes=[];bases=[];rules=[];streams=[];gap_values=[];stats=[]
+    shapes=[];bases=[];rules=[];streams=[];gap_values=[];gate_values=[];stats=[]
     shape_notes=[];base_notes=[]
     for track,part in enumerate(parts):
         local_shapes=[];local_bases=[];symbols=[];end=0
@@ -46,28 +47,32 @@ def compile_parts(parts):
             shape=tuple(g['pitches'])
             if shape not in local_shapes:local_shapes.append(shape)
             gap=(g['on']-end)//unit;gate=(g['off']-g['on'])//unit;end=g['off']
-            assert 1<=gate<=15
+            assert 1<=gate<=255 and (compact or gate<=15)
+            if gate not in gate_values:gate_values.append(gate)
             if gap not in gap_values:gap_values.append(gap)
             value=(local_shapes.index(shape),gap,gate)
             if value not in local_bases:local_bases.append(value)
             symbols.append(local_bases.index(value))
+        if compact:p.MAX_DEPTH=pending[track]
         encoded,local_rules,depth=p.grammar(symbols,len(local_bases))
-        assert depth<=(2 if track==0 else 5)
+        assert depth<=pending[track]
         stats.append(dict(track=track,groups=len(symbols),notes=sum(len(g['pitches']) for g in part['groups']),
                           baseCount=len(local_bases),ruleCount=len(local_rules),depth=depth))
         shape_offsets=[]
         for shape in local_shapes:
             shape_offsets.append(len(shapes))
-            padded=shape+(None,)*((2 if track==0 else 6)-len(shape))
+            padded=shape if compact else shape+(None,)*(voices[track]-len(shape))
             shape_notes.append(dict(offset=len(shapes),track=track,pitches=list(shape)))
+            if compact:shapes.append(len(shape))
             for pitch in padded:
                 step=0 if pitch is None else round(440*2**((pitch-69)/12)*65536/18750)
                 shapes.extend([step&255,step>>8])
-        bases.extend((shape_offsets[shape],gap_values.index(gap)*16+gate) for shape,gap,gate in local_bases)
+        bases.extend((shape_offsets[shape],gap_values.index(gap)*16+(gate_values.index(gate) if compact else gate)) for shape,gap,gate in local_bases)
         base_notes.extend(dict(track=track,pitches=list(local_shapes[shape]),gap=gap,gate=gate)
                           for shape,gap,gate in local_bases)
         rules.append(local_rules);streams.append(encoded)
-    assert len(gap_values)<=8
+    assert len(gap_values)<=8 and max(gap_values)<=255
+    assert not compact or len(gate_values)<=16
     base_count=len(bases)
     rule_maps=[];base_at=rule_at=0
     for track,st in enumerate(stats):
@@ -84,22 +89,28 @@ def compile_parts(parts):
     for track in range(2):
         groups=[];at=stream_offsets[track];end=0
         while combined_stream[at]!=255:
-            pending=[combined_stream[at]];at+=1
-            while pending:
-                code=pending.pop()
+            to_expand=[combined_stream[at]];at+=1
+            while to_expand:
+                code=to_expand.pop()
                 if code>=base_count:
-                    a,b=combined_rules[code-base_count];pending.extend([b,a]);continue
+                    a,b=combined_rules[code-base_count];to_expand.extend([b,a]);continue
                 n=base_notes[code];assert n['track']==track
                 on=end+n['gap']*unit;end=on+n['gate']*unit
                 groups.append(dict(on=on,off=end,pitches=n['pitches'],velocity=80))
         decoded.append({**parts[track],'groups':groups})
     assert p.records(decoded)==p.records(parts)
     normalized=json.dumps(p.records(parts),separators=(',',':')).encode()
-    return dict(parts=parts,shapes=shapes,bases=bases,rules=combined_rules,stream=combined_stream,
+    result=dict(parts=parts,shapes=shapes,bases=bases,rules=combined_rules,stream=combined_stream,
                 gaps=gap_values,streamOffsets=stream_offsets,stats=stats,shapeNotes=shape_notes,
                 baseNotes=base_notes,baseCount=base_count,
                 decodedNotesSha256=hashlib.sha256(normalized).hexdigest(),verifiedLossless=True,
                 scoreBytes=len(shapes)+2*len(bases)+2*len(combined_rules)+len(combined_stream)+len(gap_values))
+    assert len(shapes)<=256 and len(bases)<128 and len(combined_stream)<=256
+    if compact:
+        result['gates']=gate_values
+        result['formatOptions']=dict(compactShapes=True,unitTicks=unit,voices=list(voices),pending=list(pending))
+        result['scoreBytes']+=len(gate_values)
+    return result
 
 
 def ihex(data):
@@ -110,7 +121,7 @@ def ihex(data):
     return '\n'.join(lines+[':00000001FF'])+'\n'
 
 
-def build(folder,codec=None,arrangement=None):
+def build(folder,codec=None,arrangement=None,normalization=None):
     codec=compile_score() if codec is None else codec
     base_count=codec['baseCount']
     folder.mkdir(parents=True,exist_ok=True)
@@ -445,10 +456,83 @@ load_chord:
 chord_loaded:
   ret
 '''
+    options=codec.get('formatOptions')
+    if options:
+        lead,back=options['voices'];lead_end=112+4*lead
+        source=source.replace('ldi r21, 240',f'ldi r21, {256-8*lead}')
+        source=source.replace('ldi r21, 208',f'ldi r21, {256-8*back}')
+        source=source.replace('cpi r26, 121',f'cpi r26, {lead_end+1}')
+        source=source.replace('cpi r26, 120',f'cpi r26, {lead_end}')
+        source=source.replace('ldi r26, 120',f'ldi r26, {lead_end}')
+        source=source.replace('ldi r21, 2\n',f'ldi r21, {lead}\n')
+        source=source.replace('ldi r21, 6\n',f'ldi r21, {back}\n')
+        source=source.replace('sbrc r19, 0\n  subi r26, 254',f'sbrc r19, 0\n  subi r26, {256-options["pending"][0]}')
+        grid_step=round(65536/(options['unitTicks']/480*.476190*18750/256))
+        source=source.replace('ldi r16, 5\n  add r12',f'ldi r16, {grid_step&255}\n  add r12')
+        source=source.replace('ldi r16, 22\n  adc r13',f'ldi r16, {grid_step>>8}\n  adc r13')
+        source=source.replace('andi r17, 15\n  ldi r20, 143','''andi r17, 15
+  ldi r30, lo8(song_gates)
+  ldi r31, hi8(song_gates)
+  add r30, r17
+  adc r31, r29
+  lpm r17, Z
+  ldi r20, 143''')
+        source=source.replace('load_chord:\n','  lpm r6, Z+\nload_chord:\n')
+        source=source.replace('''  lpm r7, Z+
+  st X+, r7
+  lpm r7, Z+
+  st X+, r7
+  dec r21''','''  clr r7
+  tst r6
+  breq shape_low
+  lpm r7, Z+
+shape_low:
+  st X+, r7
+  tst r6
+  breq shape_high
+  lpm r7, Z+
+  dec r6
+shape_high:
+  st X+, r7
+  dec r21''')
+    if normalization:
+        if normalization['gain'] in (1,2,4,8,16):
+            exponent={1:0,2:1,4:2,8:3,16:4}[normalization['gain']]
+            source=source.replace('write_pwm:\n  subi r17, 128',
+                'master_gain:\n'+''.join('  lsl r17\n' for _ in range(exponent))+'write_pwm:\n  subi r17, 128')
+            normalization={**normalization,'implementation':'constant-shifts'}
+        else:
+            source=source.replace('write_pwm:\n  subi r17, 128',f'''master_gain:
+  mov r22, r30
+  ldi r30, lo8(output_gain)
+  ldi r31, hi8(output_gain)
+  subi r17, {normalization['minimum']&255}
+  add r30, r17
+  adc r31, r29
+  lpm r17, Z
+  mov r30, r22
+  clr r31
+write_pwm:''')
+            normalization={**normalization,'implementation':'linear-flash-table'}
+    if options or normalization:
+        # The decoder's part selector is dead during synthesis. Reuse it for
+        # the EEPROM bank, avoiding a comparison/branch in all eight voices.
+        lead_end=112+4*(options['voices'][0] if options else 2)
+        source=source.replace('render_sample:\n','render_sample:\n  ldi r19, 0\n')
+        source=source.replace(f'''  ldi r16, 0
+  cpi r26, {lead_end+1}
+  brcs guitar_bank
+  ldi r16, 16
+guitar_bank:
+''','  mov r16, r19\n')
+        source=source.replace('  mov r20, r17\n','  mov r20, r17\n  ldi r19, 16\n')
     source=f'.set BASE_COUNT, {base_count}\n.set STREAM_SECOND, {codec["streamOffsets"][1]}\n'+source
     for name,data in [('song_shapes',codec['shapes']),('song_bases',[b for pair in codec['bases'] for b in pair]),
                       ('song_rules',[b for pair in codec['rules'] for b in pair]),('song_gaps',codec['gaps']),('song_stream',codec['stream'])]:
         source+=name+':\n.byte '+','.join(map(str,data))+'\n'
+    if options:source+='song_gates:\n.byte '+','.join(map(str,codec['gates']))+'\n'
+    if normalization and normalization['implementation']=='linear-flash-table':
+        source+='output_gain:\n.byte '+','.join(map(str,normalization['table']))+'\n'
     (folder/'synth.S').write_text(source,encoding='utf-8',newline='\n')
     assembler=module('poly_assembler','build-release-engine.py')
     rom,labels=assembler.assemble_relaxed(folder/'synth.S')
@@ -488,6 +572,16 @@ chord_loaded:
         report['arrangement']=arrangement
         report['playedNotes']=sum(st['notes'] for st in codec['stats'])
         report['verifiedCodecRoundTrip']=True
+        report['sourceSelection']=dict(firstBeat=arrangement['firstBeat'],lastBeat=arrangement['lastBeat'])
+        report['sourceNotes']=sum(arrangement.get('sourceNotesByPart',[117,910]))
+        if 'sourceMaximumSimultaneousNotes' in arrangement:
+            report['maximumSimultaneousSourceNotes']=arrangement['sourceMaximumSimultaneousNotes']
+            report['maximumSimultaneousPlayedNotes']=arrangement['playedMaximumSimultaneousNotes']
+    if options:
+        report['partVoiceCounts']=options['voices']
+        report['pendingSymbolAddresses']=[list(range(144,144+options['pending'][0])),list(range(144+options['pending'][0],151))]
+        report['unitTicks']=options['unitTicks'];report['gridStep']=grid_step
+    if normalization:report['outputNormalization']=normalization
     report['activePrimaryVoices']=8
     report['instrumentAssignments']={role:dict(instrument='acoustic-guitar-nylon',
         label='Акустическая гитара с нейлоновыми струнами',gmProgram=24,sourceVelocity=80,level=15)
@@ -522,7 +616,21 @@ chord_loaded:
     return report
 
 
+def build_normalized(folder,codec=None,arrangement=None):
+    """Calibrate the exact unscaled AVR, then compile its fixed master gain."""
+    calibration=ROOT/'build'/('level-calibration-'+folder.name)
+    baseline=build(calibration,codec=codec,arrangement=arrangement)
+    end=max(g['off'] for part in (codec or compile_score())['parts'] for g in part['groups'])
+    seconds=end/480*.476190+2
+    result=subprocess.run(['node',str(ROOT/'tools/calibrate-firmware-level.mjs'),str(calibration),str(seconds)],
+                          check=True,capture_output=True,text=True)
+    normalization=json.loads(result.stdout)
+    assert normalization['calibrationFlashSha256']==baseline['flashSha256']
+    return build(folder,codec=codec,arrangement=arrangement,normalization=normalization)
+
+
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output',type=Path,default=ROOT/'build/mariachi-lossless')
-    args=parser.parse_args();build(args.output)
+    parser.add_argument('--normalize-output',action='store_true',help='Measure the AVR loop and normalize real PWM peaks around midpoint 128')
+    args=parser.parse_args();(build_normalized if args.normalize_output else build)(args.output)

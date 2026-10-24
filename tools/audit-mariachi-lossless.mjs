@@ -12,6 +12,7 @@ const meta=JSON.parse(fs.readFileSync(path.join(folder,'build-report.json')));
 const rom=fs.readFileSync(path.join(folder,'synth.bin')),ep=fs.readFileSync(path.join(folder,'eeprom.bin'));
 const sourceRaw=fs.readFileSync(path.join(root,'ATtiny13A/Music/reference/cancion-del-mariachi/source-events.json'));
 const source=JSON.parse(sourceRaw),hash=b=>createHash('sha256').update(b).digest('hex');
+const firstTick=Math.round(meta.sourceSelection.firstBeat*480),lastTick=Math.round(meta.sourceSelection.lastBeat*480);
 assert.equal(hash(sourceRaw),meta.sourceSha256);assert.equal(hash(rom),meta.flashSha256);assert.equal(hash(ep),meta.eepromSha256);
 assert.ok(rom.length<=1024,'Complete Flash must fit');
 const expected=[];
@@ -23,7 +24,7 @@ for(const track of source.tracks){
   if(e.type==='noteOn'&&e.velocity){const q=active.get(key)||[];q.push({...e,order:order++});active.set(key,q);}
   else{
    assert.ok(active.get(key)?.length);const on=active.get(key).shift();
-   if(on.tick>=58*480&&on.tick<121*480)notes.push({pitch:on.note,on:on.tick-58*480,off:e.tick-58*480,order:on.order,velocity:on.velocity,offVelocity:e.velocity});
+   if(on.tick>=firstTick&&on.tick<lastTick)notes.push({pitch:on.note,on:on.tick-firstTick,off:e.tick-firstTick,order:on.order,velocity:on.velocity,offVelocity:e.velocity});
   }
  }
  assert.ok([...active.values()].every(q=>!q.length));
@@ -34,8 +35,13 @@ for(const track of source.tracks){
  }
  expected.push(groups);
 }
-assert.deepEqual(expected.map(groups=>groups.reduce((sum,g)=>sum+g.pitches.length,0)),[117,910]);
-const sourceCounts=[117,910];
+const counts=parts=>parts.map(groups=>groups.reduce((sum,g)=>sum+g.pitches.length,0));
+const peakPolyphony=parts=>{
+ const events=parts.flatMap(groups=>groups.flatMap(g=>[[g.on,g.pitches.length],[g.off,-g.pitches.length]]));
+ let active=0,peak=0;for(const [,delta] of events.sort((a,b)=>a[0]-b[0]||a[1]-b[1])){active+=delta;peak=Math.max(peak,active);}return peak;
+};
+const sourceCounts=counts(expected),sourcePeak=peakPolyphony(expected);
+assert.deepEqual(sourceCounts,meta.arrangement?.sourceNotesByPart??[117,910]);
 if(meta.arrangement){
  assert.equal(meta.arrangement.policy,'sparse-source-voicings-v1');
  const arranged=JSON.parse(fs.readFileSync(path.join(folder,'arrangement.json')));
@@ -44,7 +50,7 @@ if(meta.arrangement){
  assert.deepEqual(groups[0],expected[0],'Every original lead chord and gate is retained');
  let previous=-Infinity;
  for(const g of groups[1]){
-  assert.equal(g.on%960,0);assert.equal(g.off-g.on,480);assert.ok(g.on>previous);previous=g.on;
+  assert.equal(g.on%960,0);assert.equal(g.off,Math.min(g.on+480,lastTick-firstTick));assert.ok(g.on>previous);previous=g.on;
   assert.equal(g.velocity,80);assert.equal(g.offVelocity,64);
   const sourceChord=expected[1].find(s=>s.on<=g.on&&g.on<s.off)??expected[1].findLast(s=>s.on<=g.on);
   assert.ok(sourceChord);assert.ok(g.pitches.every(p=>sourceChord.pitches.includes(p)),'Backing pitches belong to the source chord');
@@ -55,11 +61,13 @@ if(meta.arrangement){
 }
 const core=new AVRCore(rom,ep),pc=Object.fromEntries(Object.entries(meta.labels).map(([k,v])=>[k,v/2]));
 const waveOffsets=meta.partWaveOffsets??[0,0],gainShifts=meta.partGainShifts??[0,0];
+const leadVoices=meta.partVoiceCounts?.[0]??2,normalization=meta.outputNormalization;
 const notes=[[],[]],current=[null,null],queue=Array(14).fill(128);
 let finished=false,firstCycle=null,restartCycle=null,previousPwm=128,nextPwm=null,minQueued=16;
 let underruns=0,mixChecks=0,pwmChecks=0,maxActive=0,maxElapsed=0,renderStart=null,renderIRQs=0;
 let burstStart=null,burstIRQs=0,maxBurst=0,maxDepth=[0,0],lastProgress=0,loopQuiet=false;
 let minMix=127,maxMix=-128,maxPitchError=0;
+let minPwm=255,maxPwm=0,normalizationChecks=0;
 let phaseBefore=null,phaseChecks=0;
 const states=()=>meta.voiceAddresses.map(a=>({phase:core.data[a]|core.data[a+1]<<8,step:core.data[a+2]|core.data[a+3]<<8}));
 const run=core.step.bind(core);
@@ -75,7 +83,7 @@ core.step=()=>{
   }
   if(core.pc===pc.chord_loaded){
    const part=core.r[19],pitches=[];
-   for(const s of states().slice(part?2:0,part?8:2))if(s.step){
+   for(const s of states().slice(part?leadVoices:0,part?8:leadVoices))if(s.step){
     const frequency=s.step*18750/65536,pitch=Math.round(69+12*Math.log2(frequency/440));pitches.push(pitch);
     maxPitchError=Math.max(maxPitchError,Math.abs(1200*Math.log2(frequency/(440*2**((pitch-69)/12)))));
    }
@@ -88,9 +96,9 @@ core.step=()=>{
   }
   if(core.pc===pc.part_return||core.pc===pc.classify_symbol){
    const part=core.r[19];maxDepth[part]=Math.max(maxDepth[part],core.r[24]);
-   assert.ok(core.r[24]<=(part?5:2),'Pending grammar symbols remain in their SRAM partition');
+   assert.ok(core.r[24]<=meta.pendingSymbolAddresses[part].length,'Pending grammar symbols remain in their SRAM partition');
   }
-  if(core.pc===pc.write_pwm){
+  if(core.pc===(normalization?pc.master_gain:pc.write_pwm)){
    const voice=states();
    for(let i=0;i<8;i++){
     assert.equal(voice[i].step,phaseBefore[i].step);
@@ -98,13 +106,23 @@ core.step=()=>{
     phaseChecks++;
    }
    const values=voice.map(({phase,step},i)=>{
-    const index=phase>>12,b=ep[waveOffsets[i<2?0:1]+(step>=1024?8:0)+(index>>1)];return ((index&1?b>>4:b)&15)-8;
+    const index=phase>>12,b=ep[waveOffsets[i<leadVoices?0:1]+(step>=1024?8:0)+(index>>1)];return ((index&1?b>>4:b)&15)-8;
    });
-   const expectedMix=(Math.floor(values.slice(0,2).reduce((a,b)=>a+b,0)*(core.r[4]&15)/8)>>gainShifts[0])
-    +(Math.floor(values.slice(2).reduce((a,b)=>a+b,0)*(core.r[5]&15)/8)>>gainShifts[1]);
+   const expectedMix=(Math.floor(values.slice(0,leadVoices).reduce((a,b)=>a+b,0)*(core.r[4]&15)/8)>>gainShifts[0])
+    +(Math.floor(values.slice(leadVoices).reduce((a,b)=>a+b,0)*(core.r[5]&15)/8)>>gainShifts[1]);
    const mix=core.r[17]&128?core.r[17]-256:core.r[17];assert.equal(mix,expectedMix||0,'Every chord tone contributes exactly');
    assert.ok(mix>=-120&&mix<=120);minMix=Math.min(minMix,mix);maxMix=Math.max(maxMix,mix);
-   nextPwm=mix+128;mixChecks++;
+   if(normalization){
+    assert.ok(mix>=normalization.minimum&&mix<=normalization.maximum,'Calibration covers every mixed sample');
+    nextPwm=Math.round(128+mix*normalization.gain);
+    if(normalization.implementation==='linear-flash-table')
+      assert.equal(rom[meta.labels.output_gain+mix-normalization.minimum],nextPwm,'Linear normalized PWM table');
+   }else nextPwm=mix+128;
+   minPwm=Math.min(minPwm,nextPwm);maxPwm=Math.max(maxPwm,nextPwm);mixChecks++;
+  }
+  if(normalization&&core.pc===pc.write_pwm){
+   const actual=normalization.implementation==='constant-shifts'?(core.r[17]+128)&255:core.r[17];
+   assert.equal(actual,nextPwm,'Master gain reaches physical PWM without overflow');normalizationChecks++;
   }
   if(core.pc===pc.ring_published){
    const address=96|((core.r[30]-2)&15),mid=(previousPwm+nextPwm)>>1;
@@ -124,7 +142,8 @@ core.step=()=>{
   if(burstStart!==null){maxBurst=Math.max(maxBurst,core.cyc-burstStart-15*(core.irqCount-burstIRQs));burstStart=null;}
  }
 };
-while(!finished&&core.cyc<9600000*34){
+const musicSeconds=Math.max(...expected.flatMap(g=>g.map(n=>n.off)))/480*.476190;
+while(!finished&&core.cyc<9600000*(musicSeconds+4)){
  core.nextDuty();
  const progress=Math.floor(core.cyc/(9600000*8));if(progress>lastProgress){if(log)console.log(`Verified ${progress*8} seconds`);lastProgress=progress;}
 }
@@ -145,10 +164,11 @@ for(let part=0;part<2;part++){
 }
 assert.equal(totalNotes,meta.arrangement?meta.playedNotes:1027);assert.ok(maxOn<25&&maxOff<25);
 const report={passed:true,engine:meta.engine,sourceSha256:hash(sourceRaw),flashSha256:hash(rom),eepromSha256:hash(ep),
- flashBytes:rom.length,codeBytes:meta.codeBytes,tableBytes:meta.tableBytes,allSourceNotes:1027,
+ flashBytes:rom.length,codeBytes:meta.codeBytes,tableBytes:meta.tableBytes,allSourceNotes:sourceCounts.reduce((a,b)=>a+b,0),
  allSourceNoteGatesVerified:!meta.arrangement,sourceParts:2,sourceNotesByPart:sourceCounts,chordAttacksByPart:notes.map(g=>g.length),
- oscillators:8,maximumSimultaneousSourceNotes:7,partWaveOffsets:waveOffsets,partGainShifts:gainShifts,
- firstSongSeconds:30,loopSeconds:(restartCycle-firstCycle)/9600000,
+ oscillators:8,maximumSimultaneousSourceNotes:sourcePeak,maximumSimultaneousPlayedNotes:peakPolyphony(expected),
+ partWaveOffsets:waveOffsets,partGainShifts:gainShifts,
+ firstSongSeconds:musicSeconds,loopSeconds:(restartCycle-firstCycle)/9600000,
  maximumOnsetErrorMs:maxOn,maximumGateEndErrorMs:maxOff,maximumGateDurationErrorMs:maxDuration,
  maximumPitchQuantizationErrorCents:maxPitchError,maxRenderActiveCycles:maxActive,maxRenderElapsedCycles:maxElapsed,
  maxControlAndRenderActiveCycles:maxBurst,maxStackBytes:159-core.minSP,phaseStateBytes:32,pendingSymbolBytes:7,
@@ -156,6 +176,12 @@ const report={passed:true,engine:meta.engine,sourceSha256:hash(sourceRaw),flashS
  independentPhaseChecks:phaseChecks,mixChecks,pwmPairChecks:pwmChecks,minQueuedPwmBytes:minQueued,ringUnderruns:underruns,
  lostTimerEvents:core.lost,lostWorkEvents:core.workLost,isrCycles:core.maxIRQ,mixRange:[minMix,maxMix],
  bothPartsSilentBeforeRestart:loopQuiet,emulationOnly:true};
+if(normalization){
+ assert.equal(normalizationChecks,mixChecks);assert.ok(minPwm===0||maxPwm===255,'A peak reaches full PWM scale');
+ assert.equal(normalization.table[-normalization.minimum],128,'Digital silence retains midpoint 128');
+ Object.assign(report,{pwmRange:[minPwm,maxPwm],normalizationChecks,masterGain:normalization.gain,
+  normalizationGainDb:normalization.gainDb,normalizationLinear:true,normalizationClippedSamples:0});
+}
 if(meta.arrangement)Object.assign(report,{arrangementPolicy:meta.arrangement.policy,playedNotes:totalNotes,
  arrangedNoteGatesVerified:true,leadSourceNoteGatesVerified:true,
  arrangedNotesByPart:expected.map(groups=>groups.reduce((sum,g)=>sum+g.pitches.length,0))});
