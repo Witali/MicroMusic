@@ -212,16 +212,24 @@ binary measurements. Vendor and R4 files remain unmodified.
   All 1,058 fixture/reset frames pass in each backend. Full-corpus and
   timer/ISR admission for this series remain pending.
 
+- Reclaim pitch workspace for synthesis: qlsp stays live at offset 0 (20 B),
+  pitch uses 20..139 during excitation; after it dies, rewind the local
+  allocator and put distinct ak/interpolated-LSP arrays at 20/40. Scratch
+  shrinks 180 -> 140 B, static SRAM 1,239 -> 1,199 B. No in-place LSP
+  assumption or new aliasing between its input/output is required. Native
+  bounds tracking reports peak 140; both exported C archives pass 9,100 frames.
+  The selected aligned-allocation variant gives ASM fixture max 130,361,
+  Flash 8,742 B, peak stack 141; C max 268,707, Flash 9,698 B, peak stack 153.
+  Compared with direct-input-only, ASM saves 8 cycles/frame and 8 B Flash;
+  C pays about 26 cycles/frame and 4 B Flash for the same 40 B SRAM saving.
+  Direct typed views were smaller but cost ASM about 260 cycles per four
+  conversions and 2 B stack; retain the faster common allocator path.
+  All 1,058 fixture/reset frames per backend pass; final corpus/PWM tests
+  are running from isolated source copies with matching file hashes.
+
 ## Next candidates (not yet admitted)
 
-1. **Scratch lifetime reuse.** Quantized LSP needs 20 B throughout the frame;
-   the packed 120 B pitch buffer is dead before LPC interpolation/synthesis.
-   Reuse its first 20 B for the new LPC coefficients. The compact converter
-   consumes every frequency before writing coefficients, so interpolation
-   and LPC output may also share those 20 B. The arena could shrink 180 ->
-   140 B with no new sample-buffer pass; verify pointer alignment, aliasing,
-   all coefficient ages, native/AVR C and ASM, and timer/ISR behavior.
-2. **Ten-sample pitch staging.** Upstream pitch sources always have negative
+1. **Ten-sample pitch staging.** Upstream pitch sources always have negative
    offsets: the first segment stops before `j==pp`, the second before
    `j==pp+pitch`. Thus a completed innovation vector can be written before the
    next vector's pitch is computed. A 30-byte packed pitch buffer could replace

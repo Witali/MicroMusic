@@ -7,10 +7,10 @@
 #endif
 
 static DecState decoder;
-/* qlsp + ak + packed unscaled pitch + interpolated LSP = 180 B.
- * Fused innovation writes final excitation without a 160-byte intermediate.
- * All allocations have aligned offsets (0,20,40,160); host checks every PUSH. */
-_Alignas(4) static uint32_t scratch[45];
+/* qlsp (20 B) stays live throughout the frame. Pitch needs the next 120 B
+ * only during excitation; LPC then reuses them for distinct ak/interp arrays
+ * at offsets 20/40. Peak = 140 B; the host checks every aligned PUSH. */
+_Alignas(4) static uint32_t scratch[35];
 static size_t scratch_peak;
 
 #if SPEEX_NB3_CHECK_SCRATCH

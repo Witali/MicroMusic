@@ -7,6 +7,8 @@
 #include "pitch24.h"
 _Static_assert(NB_SUBFRAME_SIZE==40 && NB_PITCH_START==17 && NB_PITCH_END==144,
                "Packed pitch is specialized for the pinned NB3 frame/pitch bounds");
+_Static_assert(NB_ORDER*(sizeof(spx_coef_t)+sizeof(spx_lsp_t))<=3*NB_SUBFRAME_SIZE,
+               "Synthesis arrays must fit the reclaimed pitch workspace");
 SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, void *vout)
 {
    DecState *st=(DecState *)state;
@@ -37,7 +39,6 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, voi
    }
    if (st->first) SPEEX_COPY(st->old_qlsp,qlsp,NB_ORDER);
    qe=speex_bits_unpack_unsigned(bits,5);
-   ALLOC(ak,NB_ORDER,spx_coef_t);
    ALLOC(pitch24,3*NB_SUBFRAME_SIZE,uint8_t);
    for (sub=0;sub<NB_NB_SUBFRAMES;sub++)
    {
@@ -51,6 +52,11 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, voi
       ener=AVR_READ_I32(&nb3_gain_table[(qe<<1)|q_energy]);
       speex_avr_innovation(exc,pitch24,bits,ener);
    }
+   /* All pitch/innovation samples are complete. Rewind only the dead pitch
+    * workspace: keep qlsp live, and allocate distinct LPC/frequency arrays
+    * in the reclaimed space. Every new pitch block writes before reading. */
+   stack=(char *)pitch24;
+   ALLOC(ak,NB_ORDER,spx_coef_t);
    ALLOC(interp_qlsp,NB_ORDER,spx_lsp_t);
    for (sub=0;sub<NB_NB_SUBFRAMES;sub++)
    {

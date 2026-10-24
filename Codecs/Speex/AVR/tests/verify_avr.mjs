@@ -39,7 +39,7 @@ if (backend.backend==='c') {
                         'speex_avr_mul16_32_q14','speex_avr_lsp_mul_q14','speex_avr_p1_mul_q14'])
     assert.ok(!symbols.has(kernel),'C backend unexpectedly linked ASM kernel '+kernel);
 }
-assert.equal(address('scratch') & 3, 0, '180-byte scratch requires a four-byte-aligned base');
+assert.equal(address('scratch') & 3, 0, '140-byte scratch requires a four-byte-aligned base');
 for (const table of ['cdbk_nb', 'cdbk_nb_low1', 'cdbk_nb_high1', 'gain_cdbk_lbr', 'exc_10_32_table', 'nb3_gain_table']) {
   assert.ok(symbols.has(table) && symbols.get(table) < 32768, table + ' must reside in Flash');
 }
