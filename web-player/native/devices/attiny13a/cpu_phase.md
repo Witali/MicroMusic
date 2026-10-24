@@ -159,16 +159,6 @@ The context's execPc identifies the final instruction. A clock reset/fault
 cancels effects; an unexpected WAIT fails closed. The existing instruction path
 handles every rejected block and every suspended instruction.
 
-Within accepted register-only blocks, incoming GPR bytes load lazily into a
-fresh WASM-local bank. Writes update that local with an explicit byte mask;
-ASR sign-extends its current value with MVP `i32.shl`/`i32.shr_s`. Dirty registers
-flush before SREG, PC and the native retirement call. No native helper or
-conditional exit occurs between the ALU effects and that flush. The clock and
-all rejecting guards precede every cache load/effect. Locals never survive a
-block return or suspension: the next block reloads host/fallback/ISR mutations.
-Memory/I/O instructions retain their existing bus phases and shared-register
-accesses; expanding the cache to them requires new alias and timing proofs.
-
 `runUntilPs` establishes a bounded physical deadline, rebasing its exact uint64
 wall timestamp for the f64 runner offset. `step`/`run` explicitly select an
 unbounded span only with an internal source. With CLKI selected these methods,
@@ -231,15 +221,6 @@ At9MHz, RESET at222223ps also verifies that a rounded physical endpoint cannot
 cancel earlier instructions in a block. The shared native event budget rounds
 down and every block ends strictly before it; the same regression covers the
 ordinary full-device emitter and deadlines on either adjacent picosecond.
-
-`attiny13a-register-locals.test.mjs` additionally decodes emitted instructions
-and immediates to require one GPR input load and one dirty flush for repeated
-INC, no input load after an initial LDI, and no extra bank for a NOP block.
-It checks the flush precedes native retirement and uses native probes to prove
-the public runner actually executes the whole span. Differential cases cover
-ASR after a write, ADIW/SBIW byte truncation, MOVW, dependent flags with either
-flag setting, all 32 locals in a 64-instruction block, host mutations, indirect
-register/I/O aliases and the retirement low-word carry.
 
 `attiny13a-clki-runtime.test.mjs` and
 `attiny13a-clki-periodic-runtime.test.mjs` exercise the connected external source

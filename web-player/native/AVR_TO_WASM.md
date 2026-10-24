@@ -74,12 +74,6 @@ the next device/input event and physical observation deadline. Pending IRQs,
 SEI/RETI delay, an active continuation, instruction limits, physical timestamp
 capacity and the full64-bit retirement counter can force individual execution.
 The clock span completes before register effects; every exit retains live flags.
-Accepted resumable blocks retain AVR registers in WASM locals: the first needed
-incoming value loads from shared memory, later reads use the local, and dirty
-values flush before SREG/PC publication and native retirement. Each block entry
-starts a fresh bank. Cached writes are masked to eight bits, and ASR sign-extends
-the current byte using MVP shifts. This cache is restricted to register-only
-blocks; rejected spans and individual instructions keep their original path.
 Memory/I/O operations and external CLKI still use individual instruction phases;
 CLKI exposes no positive block budget without proven future phase timing.
 Idle skipping remains disabled. The default block path retains live-flag
@@ -96,10 +90,8 @@ execution mode and validates its continuation/source ABI. See the
 ## Instruction correspondence
 
 The primary operation is shown, not the entire expansion. Registers reside in
-the shared AVR data image. Accepted resumable blocks reuse their WASM locals and
-publish dirty values at exit; the table also covers individual instruction
-lowering. `i32.store8` truncates register writes to eight bits; cached writes
-explicitly apply `i32.and 255`. Intermediate results are
+the shared AVR data image and are loaded into WASM locals within a block.
+`i32.store8` truncates register writes to eight bits; intermediate results are
 masked to 255 when flags need the wrapped result. WASM has no AVR SREG or
 8-bit arithmetic type. Only live flag bits are calculated in optimized blocks.
 
@@ -230,9 +222,8 @@ all flags; `run()` and `nextDuty()` can use optimized blocks. Flash is immutable
 for the lifetime of a translated CPU: construct a new instance to load a
 different firmware. Do not mutate the debugger's underlying Flash view.
 
-The authoritative register image remains shared memory; the optional resumable
-block cache is temporary. The emitter compiles every Flash word as a possible
-entry, including data. Module size and load-time compilation
+The prototype keeps registers in shared memory and compiles every Flash word
+as a possible entry, including data. Module size and load-time compilation
 are costs to measure, not evidence of a speedup. Benchmarks must distinguish
 construction/compilation from warmed execution and compare both flags-on
 and flags-eliminated runs with equal AVR timing and output.

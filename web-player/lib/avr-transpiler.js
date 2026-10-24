@@ -179,28 +179,27 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     for(let bit=0;bit<8;bit++)if(mask&(1<<bit))value=or(value,shl(formula(bit),bit));
     return set(5,value);
   }
-  function alu(i,mask,registers) {
-    const read=registers?.read||reg,write=registers?.write||writeReg;
+  function alu(i,mask) {
     const {name,d,s,k}=i;let code=[];
     if(['CP','CPI','CPC'].includes(name)&&!mask)return code;
     if(name==='NOP')return code;
-    if(name==='LDI')return write(d,constant(k));
-    if(name==='MOV')return write(d,read(s));
-    if(name==='MOVW')return bytes(write(d,read(s)),write(d+1,read(s+1)));
-    if(name==='SWAP')return write(d,or(shl(and(read(d),constant(15)),4),shr(read(d),4)));
-    if(name==='BST')return updateFlags(mask,()=>and(shr(read(d),s),constant(1)));
-    if(name==='BLD')return write(d,or(and(read(d),constant(255^(1<<s))),shl(and(shr(flags(),6),constant(1)),s)));
+    if(name==='LDI')return writeReg(d,constant(k));
+    if(name==='MOV')return writeReg(d,reg(s));
+    if(name==='MOVW')return bytes(writeReg(d,reg(s)),writeReg(d+1,reg(s+1)));
+    if(name==='SWAP')return writeReg(d,or(shl(and(reg(d),constant(15)),4),shr(reg(d),4)));
+    if(name==='BST')return updateFlags(mask,()=>and(shr(reg(d),s),constant(1)));
+    if(name==='BLD')return writeReg(d,or(and(reg(d),constant(255^(1<<s))),shl(and(shr(flags(),6),constant(1)),s)));
     if(name==='ADIW'||name==='SBIW'){
       const subtract=name==='SBIW';
-      code.push(...set(0,or(read(d),shl(read(d+1),8))),...set(3,subtract?sub(X,constant(k)):add(X,constant(k))),...set(4,and(T,constant(65535))));
+      code.push(...set(0,or(reg(d),shl(reg(d+1),8))),...set(3,subtract?sub(X,constant(k)):add(X,constant(k))),...set(4,and(T,constant(65535))));
       const n=shr(V,15),old=shr(X,15),overflow=subtract?and(old,xor(n,constant(1))):and(xor(old,constant(1)),n);
-      code.push(...updateFlags(mask,bit=>[subtract?lt(T,constant(0)):binary(0x4b,T,constant(65535)),eqz(V),n,overflow,xor(n,overflow)][bit]),...write(d,V),...write(d+1,shr(V,8)));
+      code.push(...updateFlags(mask,bit=>[subtract?lt(T,constant(0)):binary(0x4b,T,constant(65535)),eqz(V),n,overflow,xor(n,overflow)][bit]),...writeReg(d,V),...writeReg(d+1,shr(V,8)));
       return code;
     }
-    code.push(...set(0,name==='ASR'?(registers?registers.signed(d):load8Signed(constant(abi.data+d))):read(d)));
+    code.push(...set(0,name==='ASR'?load8Signed(constant(abi.data+d)):reg(d)));
     if(['ADD','ADC','SUB','CP','CPI','SUBI','NEG','SBC','SBCI','CPC'].includes(name)){
       const subtract=['SUB','CP','CPI','SUBI','NEG','SBC','SBCI','CPC'].includes(name),chained=['SBC','SBCI','CPC'].includes(name);
-      code.push(...set(1,['CPI','SUBI','SBCI'].includes(name)?constant(k):name==='NEG'?X:read(s)));
+      code.push(...set(1,['CPI','SUBI','SBCI'].includes(name)?constant(k):name==='NEG'?X:reg(s)));
       if(name==='NEG')code.push(...set(0,constant(0)));
       code.push(...set(2,name==='ADC'||chained?and(flags(),constant(1)):constant(0)),
         ...set(3,subtract?sub(sub(X,Y),C):add(add(X,Y),C)),...set(4,and(T,constant(255))));
@@ -209,11 +208,11 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
         subtract?lt(T,constant(0)):binary(0x4b,T,constant(255)), chained?and(eqz(V),and(shr(flags(),1),constant(1))):eqz(V), n, overflow, xor(n,overflow),
         subtract?lt(and(X,constant(15)),add(and(Y,constant(15)),C)):binary(0x4b,add(add(and(X,constant(15)),and(Y,constant(15))),C),constant(15)),
       ][bit]));
-      if(!['CP','CPI','CPC'].includes(name))code.push(...write(d,V));
+      if(!['CP','CPI','CPC'].includes(name))code.push(...writeReg(d,V));
     }else{
       let value,overflow=constant(0),carry=and(X,constant(1));
       if(['AND','ANDI','OR','ORI','EOR'].includes(name)){
-        const rhs=['ANDI','ORI'].includes(name)?constant(k):read(s);
+        const rhs=['ANDI','ORI'].includes(name)?constant(k):reg(s);
         value=name==='EOR'?xor(X,rhs):['AND','ANDI'].includes(name)?and(X,rhs):or(X,rhs);
       }else if(name==='INC'){value=and(add(X,constant(1)),constant(255));overflow=eq(V,constant(128));}
       else if(name==='DEC'){value=and(sub(X,constant(1)),constant(255));overflow=eq(V,constant(127));}
@@ -222,7 +221,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
       else if(name==='ASR'){value=and(binary(0x75,X,constant(1)),constant(255));overflow=xor(shr(V,7),carry);}
       else if(name==='ROR'){value=or(shr(X,1),shl(and(flags(),constant(1)),7));overflow=xor(shr(V,7),carry);}
       else throw new Error('Missing ALU lowering: '+name);
-      code.push(...set(4,value),...write(d,V),...updateFlags(mask,bit=>[carry,eqz(V),shr(V,7),overflow,xor(shr(V,7),overflow)][bit]));
+      code.push(...set(4,value),...writeReg(d,V),...updateFlags(mask,bit=>[carry,eqz(V),shr(V,7),overflow,xor(shr(V,7),overflow)][bit]));
     }
     return code;
   }
@@ -353,7 +352,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     }
     blocks.push({start:sequence[0].pc,end:p&pcMask,instructions:sequence.length,cycles:sequence.reduce((n,i)=>n+instructionCycles(i),0),masks,removed,computed,sequence});
   }
-  const blockBodies=[],blockLocalCounts=[];
+  const blockBodies=[];
   // Function local remapping is performed while emitting block ALU below.
   // Separate emitters make the local types and their indices explicit.
   function remapLocals(code, shift) {
@@ -371,33 +370,8 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     }
     return out;
   }
-  // A bank lives only inside one accepted pure block. ALU expressions are
-  // emitted in evaluation order, so the first read can initialize its local
-  // inline. No native calls or conditional exits occur between these effects.
-  function registerBank() {
-    const entries=new Map();
-    const entry=n=>{
-      if(!entries.has(n))entries.set(n,{local:9+entries.size,initialized:false,dirty:false});
-      return entries.get(n);
-    };
-    const read=n=>{
-      const item=entry(n);
-      if(item.initialized)return get(item.local);
-      item.initialized=true;
-      return bytes(set(item.local,reg(n)),get(item.local));
-    };
-    return {read,signed:n=>binary(0x75,shl(read(n),24),constant(24)),
-      write:(n,value)=>{
-        const item=entry(n);item.initialized=true;item.dirty=true;
-        // Match store8 truncation, including a 16-bit ADIW/SBIW low result.
-        return set(item.local,and(value,constant(255)));
-      },
-      flush:()=>bytes(...Array.from(entries,([n,item])=>item.dirty?writeReg(n,get(item.local+2)):[])),
-      localCount:()=>9+entries.size};
-  }
   // Rebuild block functions with remapped i32 locals (arguments precede them).
   blocks.forEach((block,index)=>{
-    const registers=resumable?registerBank():null;
     const elapsed=binary(0xa0,stateF('cyc'),float(block.cycles));
     // No IRQ can occur inside an accepted block. Timer state advances by the
     // exact number of original CPU cycles, including the prescaler phase.
@@ -440,14 +414,13 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
             k<0?writeReg(s,Z):[],name==='LD'?writeReg(d,load8(dataAt(Z))):store8(dataAt(Z),reg(d)),
             k===1?writeReg(s,and(add(Z,constant(1)),constant(255))):[]);
         }
-      }else effects=alu(i,block.masks[n],registers);
+      }else effects=alu(i,block.masks[n]);
       code.push(...remapLocals(effects,2));elapsedCycles+=instructionCycles(i);
     });
-    code.push(...(registers?registers.flush():[]),...store8(flagsAddress,get(7)),put('pc',constant(block.end)),put('errorPC',constant((block.end-1)&pcMask)),
+    code.push(...store8(flagsAddress,get(7)),put('pc',constant(block.end)),put('errorPC',constant((block.end-1)&pcMask)),
       resumable?bytes(storeI64(constant(abi.phase.retired),binary(0x7c,loadI64(constant(abi.phase.retired)),constantI64(block.instructions-1))),call(PHASE_RETIRE)):
         call(CLOCK,float(block.cycles)),constant(block.instructions));
     blockBodies[index]=code;
-    blockLocalCounts[index]=registers?registers.localCount():9;
   });
 
   const STEP=firstFunction+flashWords+blocks.length+1, BLOCK=STEP+1, RUN=STEP+2, NEXT=STEP+3, CAPTURE=STEP+4, UNTIL=STEP+5, PHYSICAL=STEP+6;
@@ -553,7 +526,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   for(let p=0;p<flashWords;p++)table.push(blockIndex.get(p)??firstFunction+flashWords+blocks.length);
   const body=(code,locals)=>{const content=bytes(vector(locals),code,0x0b);return bytes(uleb(content.length),content);};
   const codes=[...instructionBodies.map(code=>body(code,[[9,0x7f],[1,0x7c],...(resumable?[[1,0x7f]]:[])])),
-    ...blockBodies.map((code,n)=>body(code,[[blockLocalCounts[n],0x7f]])),body(emptyBlock,[]),body(step,[]),body(block,[]),body(run,[[resumable?3:2,0x7f]]),body(resumable?fail(24,true):next,[[2,0x7c]]),body(resumable?fail(24,true):capture,[[3,0x7f],[1,0x7c]]),...(full?[body(until,[[resumable?3:2,0x7f]]),body(physical,[[1,0x7f]])]:[])];
+    ...blockBodies.map(code=>body(code,[[9,0x7f]])),body(emptyBlock,[]),body(step,[]),body(block,[]),body(run,[[resumable?3:2,0x7f]]),body(resumable?fail(24,true):next,[[2,0x7c]]),body(resumable?fail(24,true):capture,[[3,0x7f],[1,0x7c]]),...(full?[body(until,[[resumable?3:2,0x7f]]),body(physical,[[1,0x7f]])]:[])];
   const exports=vector([...['controlRequest','watchdogResetCycle','debugEnabled','captureFault'].map((name,index)=>bytes(string(name),3,index)),
     ...[['step',STEP],['block',BLOCK],['run',RUN],['nextDuty',NEXT],['capturePWM',CAPTURE],...(full?[['runUntil',UNTIL],['capturePhysical',PHYSICAL]]:[])].map(([name,index])=>bytes(string(name),0,uleb(index)))]);
   const mapping=decoded.map(({pc,word,name,d,s,k,words})=>({pc,byteAddress:pc*2,word,name,d,s,k,words}));
