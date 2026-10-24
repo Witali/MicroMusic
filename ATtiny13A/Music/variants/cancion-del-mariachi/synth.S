@@ -35,6 +35,14 @@ fill_ring:
   mov r4, r16
   ldi r16, GRID_INITIAL_HIGH
   mov r3, r16
+  clr r5
+  ldi r19, 7
+  ldi r20, 4
+  ldi r16, 167
+  mov r14, r16
+  ldi r19, 6
+  ldi r16, 1
+  mov r8, r16
   ldi r30, lo8(first_section)
   ldi r31, hi8(first_section)
   sbi 23, 1
@@ -80,6 +88,65 @@ primary_gain:
   add r21, r17
   cpi r26, 121
   brne voice_loop
+render_drum:
+  /* Compact measured kit; parameters from percussion-bank.py. */
+  cpi r20, 4
+  brcc write_pwm
+  cpi r19, 2
+  brcs .L280
+  rjmp .L298
+.L280:
+  ldi r17, 1
+  add r14, r17
+.L28a:
+  mov r17, r14
+  sbrc r17, 7
+  com r17
+  subi r17, 61
+  asr r17
+  asr r17
+  rjmp .L2ae
+.L298:
+  mov r25, r5
+  lsl r14
+  adc r25, r25
+  brcc .L2a0
+  ldi r17, 45
+  eor r14, r17
+.L2a0:
+  mov r5, r25
+  mov r17, r14
+  lsr r17
+  andi r17, 63
+  mov r25, r14
+  andi r25, 63
+  sbrc r19, 1
+  sub r17, r25
+  sbrs r19, 1
+  subi r17, 32
+  asr r17
+  sbrc r19, 1
+  asr r17
+  sbrc r19, 1
+  rjmp .L2ae
+  asr r17
+  mov r25, r15
+  lsl r25
+  subi r25, 65
+  sbrc r25, 7
+  com r25
+  subi r25, 61
+  asr r25
+  asr r25
+  add r17, r25
+.L2ae:
+  sbrc r20, 0
+  asr r17
+  sbrc r20, 1
+  asr r17
+  asr r17
+  asr r17
+  add r21, r17
 write_pwm:
   subi r21, 128
   mov r16, r23
@@ -121,6 +188,9 @@ state_plucked:
   brcs state_mask
   ldi r25, 3
 state_mask:
+  mov r17, r16
+  andi r17, 48
+  brne state_gate
   lsr r25
 state_gate:
   and r25, r24
@@ -142,6 +212,11 @@ envelope_store:
   subi r26, 252
   cpi r26, 121
   brne envelope_loop
+  sbrc r24, 0
+  rjmp .L0a8
+  cpi r20, 4
+  brcc .L0a8
+  inc r20
 .L0a8:
   ldi r17, GRID_STEP_LOW
   add r2, r17
@@ -150,6 +225,18 @@ envelope_store:
   brcs grid_step
   ret
 grid_step:
+  dec r8
+  brne .L0ba
+  ldi r16, 3
+  mov r8, r16
+  subi r19, 254
+  andi r19, 7
+drum_trigger:
+  sbrc r20, 7
+  rjmp .L0ba
+  clr r20
+  ldi r16, 167
+  mov r14, r16
 .L0ba:
   dec r1
   breq read_event
@@ -177,8 +264,11 @@ note_off_loop:
   lsr r16
   cpi r26, 111
   brne note_off_loop
+  sbrc r16, 0
+  ldi r20, 132
   rjmp read_event
 chord_event:
+  andi r20, 127
 
   movw r12, r30
   andi r16, 15
@@ -189,7 +279,7 @@ chord_event:
   add r30, r16
   adc r31, r29
   ldi r26, 101
-  ldi r25, 152
+  ldi r25, 215
   rcall initialize_voice
   ldi r26, 106
   ldi r25, 170
@@ -239,6 +329,15 @@ next_section:
   add r30, r4
   adc r31, r29
   lpm r16, Z
+  tst r4
+  brne drum_loop_continues
+  clr r19
+  clr r20
+  ldi r17, 3
+  mov r8, r17
+  ldi r17, 167
+  mov r14, r17
+drum_loop_continues:
   inc r4
   mov r17, r4
   cpi r17, PLAYLIST_LEN
@@ -261,6 +360,12 @@ render_tone:
   brcs .L216
   ori r16, 8
 .L216:
+  cpi r26, 106
+  brne piano_attack_done
+  cpi r25, 14
+  brcs piano_attack_done
+  ori r16, 48
+piano_attack_done:
   swap r17
   andi r17, 15
   lsr r17
