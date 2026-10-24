@@ -499,15 +499,7 @@ rebuilt and byte-identical to the admitted images. Reports: iir-cursor-*.
 
 ## Next candidates (not yet measured/admitted)
 
-1. **Inspect a portable byte-product MAC for AVR C IIR.** Actual C disassembly
-   has ten static calls to __mulhisi3 in the unrolled dot product (retained in
-   c-iir-multiply-inspection.json). Four signed/unsigned byte products might
-   avoid call overhead, but compiler-generated r1 clearing, carry scheduling,
-   code size and register pressure can erase that benefit. Measure rather than
-   extrapolating from the ASM MAC; keep native multiply on other CPUs unless
-   evidence supports a change there. No speedup is established yet.
-
-2. **Split IIR coefficient ageing from its steady phase.** After the first ten
+1. **Split IIR coefficient ageing from its steady phase.** After the first ten
    samples, all coefficients are stable for thirty more. The former den/base
    registers could cache two words, and a separate steady loop could omit the
    ageing test. Account for extra code and transition work, retain exact first
@@ -518,6 +510,12 @@ ongoing optimization goal complete while useful candidates remain untested.
 
 ## Rejected or superseded experiments
 
+- Portable byte-product C MAC (base d000fc4) is exact on 1,310,720 independent
+  pairs per implementation and all 9,100 decoder frames, but takes 119 versus
+  69..73 standalone cycles, increases corpus mean by 34.3396% and Flash by
+  1,564 B (11,836 to 13,400), with unchanged 1,119 B static / 153 B stack.
+  Native C multiply remains. Reports c-byte-mac-*.json and the reproducible
+  cookbook patch retain the failed experiment; no PWM admission was attempted.
 - The per-sample direct short-pitch prototype (short-pitch-experiment-*)
   preserved PCM and reduced mean by 0.2238%, but some streams regressed.
   It is superseded by the range-selected ASM/C controller above. Its pinned

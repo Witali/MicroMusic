@@ -63,6 +63,37 @@ node Codecs/Speex/AVR/tests/verify_avr.mjs --backend c --verify-reset --firmware
 
 Полные замеры: `Codecs/Speex/AVR/reports/short-pitch-experiment-*.json`.
 
+## Побайтовый C MAC — отклонённый эксперимент
+
+`nb3-c-byte-mac.patch`, база `d000fc4`, пути относительно `Codecs/Speex/AVR/`.
+Авторский C-прототип заменяет signed16 × signed16 на четыре signed/unsigned
+8-битных произведения и uint32-суммирование modulo 2³². Все промежуточные
+произведения помещаются в 16 бит; перед сдвигами выполняется приведение к
+uint32. ASM явно отключён, аппаратные PROGMEM-чтения остаются отдельными.
+Xiph BSD-лицензия и остальные notices базы сохраняются.
+
+На ATmega328P / AVR GCC 7.3 mixed Os/O3, LTO, fwrapv результат **хуже**:
+отдельный MAC 119 против 69..73 тактов, декодер +34,3396% среднего времени
+31 потока, Flash 11 836→13 400 Б, SRAM/stack прежние. Точны 1 310 720 пар
+каждого MAC, все первые s16 operands × 16 граничных вторых, ещё 262 144
+случайных пар, произвольный uint32 accumulator, ABI/r1/read-only inputs.
+Все 9 100 кадров декодера точны. PWM admission не проводился: кандидат
+отклонён по скорости. На иных MCU и физической плате не измерено.
+
+В отдельной копии исходников базы применить patch с `git apply`, затем:
+
+```sh
+python tools/build_c_mac_test.py --avr-gcc avr-gcc
+node tests/verify_c_mac.mjs
+python tools/build.py --avr-gcc avr-gcc --backend c
+node tests/verify_avr.mjs --backend c --verify-reset --oracle /path/to/oracle
+```
+
+Отчёты `Codecs/Speex/AVR/reports/c-byte-mac-*.json` содержат hashes, cycles
+и решение. Native 16×16 C multiply остаётся в production. Число MUL само
+по себе не предсказывает результат C-компилятора: важны переносы, расширения,
+регистры и r1; ASM method B имеет другую последовательность инструкций.
+
 ## Скалярный ASM-вход для одного сэмпла — исходный прототип
 
 `nb3-scalar-boundary.patch`, база `db4f492`, добавляет отдельный ASM-вход для
