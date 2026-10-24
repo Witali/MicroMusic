@@ -211,8 +211,10 @@ external programmer support are introduced by this plan.
 
 ### AVR to WASM generation and execution improvements
 
-Saved improvement plan, 2026-10-23. This also refines stage5 and remains planned
-work. Treat warmed execution speed separately from translation, WASM compilation,
+Saved improvement plan, 2026-10-23; next-step details updated 2026-10-24.
+This also refines stage5; implemented work is recorded in the checkpoint below,
+and the remaining priorities stay open. Treat warmed execution speed separately
+from translation, WASM compilation,
 module size and retranslation after SPM; improvements in one do not establish
 improvements in the others.
 
@@ -281,6 +283,43 @@ suite at integration checkpoints; retain serial paired uninstrumented timings
 and compilation/size data. The older sampled CPU share is not a prediction of
 the speedup available in the current runtime. Preserve the device/translator/
 generated-code separation and add no per-instruction JavaScript callbacks.
+
+#### Next experiment: registers in WASM locals
+
+Use `ad66d6d` as the measured baseline for this compiler-only experiment, with
+the identical native runtime in both variants. Begin with register-only blocks
+already accepted by the resumable deadline guards; keep memory/I/O and rejected
+blocks on the existing instruction path. Do not combine this measurement with
+new peripheral activity changes.
+
+- Give each accepted block a fresh register map. Load an incoming register only
+  when first needed, retain updated values in locals and flush dirty registers
+  before retirement, native helpers or another observable exit. Reload on the
+  next block entry; host mutations and fallback instructions must remain visible.
+- Preserve byte semantics on every cached write, including the low byte of
+  ADIW/SBIW. ASR must sign-extend the current cached byte. Allocate register locals
+  separately from ALU temporaries and account for parameter-index remapping.
+- Keep the existing clock-before-effects contract and event guards. A reset or
+  fault that prevents the span from completing must not publish speculative
+  register values. Expanding to memory instructions requires explicit alias and
+  bus-phase proofs before enabling that path.
+- Add differential cases for signed shifts after writes, register-pair carry,
+  dependent flags with optimization enabled/disabled, all 32 registers, repeated
+  block entry and transitions through memory/I/O fallback and IRQ boundaries.
+- Prove both block execution through public runners and the register cache's
+  emitted structure. Decode WASM instructions and their immediates: repeated
+  INC of one register should need one incoming load and one dirty flush; an
+  initial LDI should eliminate that incoming load. Raw opcode-byte counts and
+  state parity alone do not prove that the optimization ran.
+- Run focused and full regression checks, then quiet serial paired measurements
+  on real firmware and arithmetic kernels. Record individual timings, output
+  parity, translation/compilation time and module size. Synthetic gains do not
+  establish real-firmware gains; retain the change only with measured benefit.
+
+After this experiment, continue in the priority order above: flag liveness,
+constant/sequence optimization, direct control flow and smaller continuation
+contexts. Evaluate reachable-code generation, region recompilation and persistent
+caching separately, with SPM invalidation and complete cache identities.
 
 Implementation checkpoint, 2026-10-24: register-only resumable blocks now use
 the existing phase context and native clock bridge. Strict event/observation
