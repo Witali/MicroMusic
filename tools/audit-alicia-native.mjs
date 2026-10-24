@@ -5,15 +5,15 @@ import assert from 'node:assert/strict';
 // needlessly expensive; the waveform render and cross-engine test use WASM.
 import {AVRCore} from '../web-player/lib/avr-reference.js';
 import {createHash} from 'node:crypto';
-import {pathToFileURL} from 'node:url';
-export function audit(folder='ATtiny13A/Music/variants/alicia',{writeReport=true,log=true}={}){
+import {pathToFileURL,fileURLToPath} from 'node:url';
+export function audit(folder=fileURLToPath(new URL('../ATtiny13A/Music/variants/alicia/',import.meta.url)),{writeReport=true,log=true}={}){
 const meta=JSON.parse(fs.readFileSync(folder+'/build-report.json'));
 assert.equal(meta.engine,'alicia-native');
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
-const source=JSON.parse(fs.readFileSync('ATtiny13A/Music/reference/alicia/source-score.json'));
+const source=JSON.parse(fs.readFileSync(new URL('../ATtiny13A/Music/reference/alicia/source-score.json',import.meta.url)));
 const rom=fs.readFileSync(folder+'/synth.bin'),ep=fs.readFileSync(folder+'/eeprom.bin');
 assert.equal(hash(rom),meta.flashSha256);assert.equal(hash(ep),meta.eepromSha256);
-assert.equal(hash(fs.readFileSync('ATtiny13A/Music/instruments/bank.json')),meta.instrumentBankSha256);
+assert.equal(hash(fs.readFileSync(new URL('../ATtiny13A/Music/instruments/bank.json',import.meta.url))),meta.instrumentBankSha256);
 assert.deepEqual(JSON.parse(fs.readFileSync(folder+'/score.json')).native_score,source);
 const c=new AVRCore(rom,ep),labels=Object.fromEntries(Object.entries(meta.labels).map(([k,v])=>[k,v/2]));
 // Batch only instructions between observation points. Clearing these entries
@@ -90,7 +90,7 @@ assert.deepEqual(commands.slice(0,expectedCommands.length),expectedCommands,'Eve
 assert.ok(stopChecks>=71);
 const result={image:'alicia',engine:'alicia-native',passed:true,flashBytes:rom.length,sourceNotes:169,sourceCompanionNotes:expectedComp.length,pianoArpeggioNotes:expectedComp.filter(e=>e.state===102).length,wholeSourceSeconds:seconds,emulatedSeconds:c.cyc/9600000,maximumMelodyTimingErrorMs:maxError,allSixVoicesSilentBeforeLoop:quietAtRestart,minQueued,maxRenderCycles:maxRender,maxBurstCycles:maxBurst,maxStackBytes:maxStack,tailCopies,bothTailPoints:bothTails,mixRange:[minimumMix,maximumMix],envelopeChecks:envelopeChecks.length,noteOffChecks:stopChecks,voiceRamBytes:30,pwmRingBytes:16,sramUsedWorstCase:46+maxStack,sramHighWaterReservedBytes:48+maxStack,commands:commands.length,semanticComparison:{exactCommandBytes:expectedCommands.length,allSixVoicesSilentBeforeRestart:quietAtRestart},isrCycles:c.maxIRQ,lost:c.lost+c.workLost};
 result.flashSha256=hash(rom);result.eepromSha256=hash(ep);
-if(writeReport){fs.mkdirSync('web-player/reports',{recursive:true});fs.writeFileSync('web-player/reports/alicia-release-verification.json',JSON.stringify(result,null,2)+'\n');}
+if(writeReport){fs.mkdirSync(new URL('../web-player/reports/',import.meta.url),{recursive:true});fs.writeFileSync(new URL('../web-player/reports/alicia-release-verification.json',import.meta.url),JSON.stringify(result,null,2)+'\n');}
 if(log)console.log(JSON.stringify(result,null,2));return result;
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href)audit(process.argv[2]);
