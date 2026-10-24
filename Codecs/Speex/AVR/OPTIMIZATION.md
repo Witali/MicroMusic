@@ -263,7 +263,14 @@ binary measurements. Vendor and R4 files remain unmodified.
   random bounded gains: preserve all buffers, AVR callee-saved registers and r1.
   Existing packed innovation still matches 163,840 signed24 edge samples;
   native primitives/PCM, 12 backend configurations and both exported C archives
-  (9,100 frames each) pass. Complete loaded and ordinary PWM gates are running.
+  (9,100 frames each) pass. All 31 loaded players per backend pass exact PWM,
+  zero underruns and intact SRAM. ASM +40% CPU: minimum queue 28, maximum
+  publication gap 199,320 cycles; C +10%: queue 41, gap 173,411. Free SRAM
+  remains 564 / 552 B. All 31 ordinary players also pass: queues 73 / 58,
+  maximum gaps 80,013 / 140,314 cycles. Demo Flash 12,282 / 13,508 B includes
+  2,940 B compressed speech; static SRAM 1,334 B, peak stack 150 / 162 B.
+  All 71 source/tool/test files in each of four isolated copies match the
+  main tree. Main ASM mailbox/demo rebuilds match the verified images.
   Reports: fused-long-{asm,c}-{fixtures,speech,means,pitch-coverage,lsp-reuse}.json,
   fused-long-kernel.json, fused-long-innovation.json, portable-fused-long-library.json.
 

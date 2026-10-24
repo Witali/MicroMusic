@@ -72,7 +72,7 @@ real-time support depends on the target and must be measured. On ATmega328P
 both C and explicitly enabled ASM pass all 31 complete PWM streams with
 interrupts. The tested additional CPU reserve is 10% for C and 40% for ASM;
 these are measured corpus/ISA results, not physical-board guarantees. The
-C corpus maximum is 269,797 cycles (270,362 with pitch coverage).
+C corpus maximum is 269,656 cycles (270,221 with pitch coverage).
 The build tool defaults to C; `--backend asm` explicitly adds the enable define.
 
 ## Export and integrate
@@ -154,5 +154,5 @@ The second test exports a fresh package, builds both manifest and CMake static
 archives, and links a consumer with public includes only. It compares complete
 prepared fixture/human-speech streams with upstream. It requires the reference
 host decoder built first; human-speech coverage is included when those streams
-are prepared. `reports/portable-phase-reuse-library.json` records the current
+are prepared. `reports/portable-fused-long-library.json` records the current
 31-stream run through both build paths.

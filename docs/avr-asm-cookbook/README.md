@@ -553,8 +553,10 @@ frame +36 тактов, C -141: выигрыш относится к средн�
 кадра/reset точны в каждом backend; два native C-архива проходят по 9 100.
 Независимо точны по **673 280 сэмплов C и ASM**: full signed16 history,
 все gain/scale/shape, clamp ±1, guards и все callee-saved регистры/r1.
-Старый packed путь проверен ещё на 163 840 сэмплах. PWM/ISR-gate новой серии
-пока выполняется; физическая плата и timing иных MCU не проверены.
+Старый packed путь проверен ещё на 163 840 сэмплах. Все 31 потока прошли
+обычный PWM и нагрузочный PWM/ISR-gate: ASM +40% CPU, очередь >=28; C +10%,
+очередь >=41. Underrun нет, PWM хэши прежние, свободная SRAM 564/552 Б.
+Физическая плата и timing иных MCU не проверены.
 Отчёты — `Codecs/Speex/AVR/reports/fused-long-*.json`; независимый тест:
 `tools/build_long_pitch_test.py` + `tests/verify_long_pitch.mjs` в папке кодека.
 
