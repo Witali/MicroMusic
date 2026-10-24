@@ -1,0 +1,89 @@
+{
+  "file": "C:\\Work\\YouTube Videos\\MicroMusic\\MicroMusic-1KB-2026-10-24-preview.mp4",
+  "sha256": "431ad9d65b0e6609a55157b58df5327cbc7a73f8656e67323a115254661e3c8e",
+  "bytes": 1699213108,
+  "duration_seconds": 791.279344,
+  "resolution": [
+    1920,
+    1080
+  ],
+  "frames": 23738,
+  "video_frames": "all original decoded frame hashes match",
+  "decode_check": "passed",
+  "packets": {
+    "v:0": {
+      "packets": 23738,
+      "max_gap_seconds": 0.12295599999998785
+    },
+    "a:0": {
+      "packets": 37092,
+      "max_gap_seconds": 0.02133400000002439
+    }
+  },
+  "final_aac_loudness": {
+    "overall": {
+      "input_i": "-16.08",
+      "input_tp": "-1.15",
+      "input_lra": "10.00",
+      "input_thresh": "-27.37",
+      "output_i": "-15.85",
+      "output_tp": "-1.50",
+      "output_lra": "9.90",
+      "output_thresh": "-27.11",
+      "normalization_type": "dynamic",
+      "target_offset": "-0.15"
+    },
+    "parts": [
+      {
+        "input_i": "-inf",
+        "input_tp": "-inf",
+        "input_lra": "0.00",
+        "input_thresh": "-70.00",
+        "output_i": "-inf",
+        "output_tp": "-inf",
+        "output_lra": "0.00",
+        "output_thresh": "-70.00",
+        "normalization_type": "dynamic",
+        "target_offset": "inf"
+      },
+      {
+        "input_i": "-16.17",
+        "input_tp": "-1.15",
+        "input_lra": "10.60",
+        "input_thresh": "-27.45",
+        "output_i": "-15.78",
+        "output_tp": "-1.50",
+        "output_lra": "10.40",
+        "output_thresh": "-27.04",
+        "normalization_type": "dynamic",
+        "target_offset": "-0.22"
+      },
+      {
+        "input_i": "-16.03",
+        "input_tp": "-1.31",
+        "input_lra": "8.90",
+        "input_thresh": "-27.31",
+        "output_i": "-15.91",
+        "output_tp": "-1.50",
+        "output_lra": "9.10",
+        "output_thresh": "-27.21",
+        "normalization_type": "dynamic",
+        "target_offset": "-0.09"
+      }
+    ]
+  },
+  "reference_audio": [
+    {
+      "id": "intro",
+      "correlation": null
+    },
+    {
+      "id": "part-1",
+      "correlation": 0.9998375226958767
+    },
+    {
+      "id": "part-2",
+      "correlation": 0.9999536793239501
+    }
+  ]
+}
