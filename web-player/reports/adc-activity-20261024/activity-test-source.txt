@@ -1,0 +1,215 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {compileAnalog} from './analog-test-build.mjs';
+import {AT13_IO as IO} from '../lib/attiny13a-registers.js';
+
+// Restore unconditional scheduler dispatch in a separate ignored fixture,
+// retaining the same real ADC/comparator APIs and merged event ordering.
+const source=readFileSync(new URL('../native/peripherals/analog.c',import.meta.url),'utf8');
+const definition='static int adc_active(const analog_t *a) {';
+assert.equal(source.split(definition).length,2);
+const before=`
+#include "analog.h"
+#include <string.h>
+static uint64_t advances,queries;
+static int counted_advance(analog_adc_t *a,uint64_t time){
+ advances++;return analog_adc_advance(a,time);
+}
+static uint64_t counted_query(const analog_adc_t *a){
+ queries++;return analog_adc_next_event(a);
+}
+#define analog_adc_advance counted_advance
+#define analog_adc_next_event counted_query
+`;
+const after=`
+#undef analog_adc_advance
+#undef analog_adc_next_event
+static analog_t state,image;
+void reset(int propagation,int startup,int initial,int first,uint64_t time){
+ analog_comparator_config_t config={propagation,startup,0,initial};
+ memset(&state,0,sizeof state);analog_reset(&state,5000000,1100000,first,&config,time);
+ advances=queries=0;
+}
+void clear_counts(void){advances=queries=0;}
+uint64_t advance_count(void){return advances;}
+uint64_t query_count(void){return queries;}
+int advance(uint64_t time){return analog_advance(&state,time);}
+uint64_t next_event(void){return analog_next_event(&state);}
+uint64_t adc_half(void){return state.adc.half_cycle;}
+uint64_t cmp_half(void){return state.comparator.half_cycle;}
+uint64_t origin(void){return state.adc.origin;}
+uint64_t conversions(void){return state.adc.conversions;}
+uint64_t sampled_at(void){return state.adc.sampled_at;}
+uint64_t completed_at(void){return state.adc.completed_at;}
+int flags_value(void){return state.adc.source_flags;}
+int result(void){return state.adc.result;}
+int pending(void){return analog_pending(&state);}
+int write(int io,int value,uint64_t time){return analog_write(&state,io,value,time);}
+int read(int io,uint64_t time){
+ uint8_t value=0;return analog_read(&state,io,&value,time)?value:-1;
+}
+int input(int pin,int uv,uint64_t time){return analog_input(&state,pin,uv,time);}
+int reference(int vcc,int bg,uint64_t time){return analog_reference(&state,vcc,bg,time);}
+int flags(int value,uint64_t time){return analog_sources(&state,value,time);}
+int ack(int vector,uint64_t time){return analog_ack(&state,vector,time);}
+int gate(int running,uint64_t time){
+ return analog_advance(&state,time)&&analog_adc_clock_running(&state.adc,running,time);
+}
+int cmp_gate(int running,uint64_t time){
+ return analog_advance(&state,time)&&analog_comparator_clock_running(&state.comparator,running,0,time);
+}
+int sleep_disable(int disabled,uint64_t time){
+ return analog_advance(&state,time)&&analog_comparator_sleep(&state.comparator,disabled,time);
+}
+int sleep_start(uint64_t time){
+ return analog_advance(&state,time)&&analog_adc_noise_cancel_start(&state.adc,time);
+}
+int capture(uint64_t time){
+ memcpy(&image,&state,sizeof image);
+ /* Canonicalize a COPY using the original component's exact gate/phase rules.
+  * Do not exclude origin or settle the production state to hide differences. */
+ return (image.adc.adcsra&ANALOG_ADEN)||analog_adc_advance(&image.adc,time);
+}
+unsigned image_ptr(void){return (unsigned)(uintptr_t)&image;}
+unsigned image_size(void){return sizeof image;}
+`;
+const dependencies=['analog_adc','analog_comparator'].map(name=>`web-player/native/peripherals/${name}.c`);
+const optimized=compileAnalog('adc-activity',dependencies,before+source+after);
+const unconditional=compileAnalog('adc-activity-reference',dependencies,
+  before+source.replace(definition,definition+' return 1;')+after);
+function make({propagation=0,startup=0,initial=0,first=27,time=0n}={}){
+  const a=optimized(),b=unconditional();
+  for(const c of [a,b])c.reset(propagation,startup,initial,first,time);
+  const pair={a,b,time,call(name,...args){
+    const actual=a[name](...args),expected=b[name](...args);assert.equal(actual,expected,name);
+    parity(pair,name);return actual;
+  },at(name,time,...args){pair.time=time;return pair.call(name,...args,time);}};
+  parity(pair,'reset');return pair;
+}
+function parity({a,b,time},context){
+  assert.equal(a.capture(time),1,context+' candidate copy');assert.equal(b.capture(time),1,context+' reference copy');
+  assert.deepEqual(new Uint8Array(a.memory.buffer,a.image_ptr(),a.image_size()),
+    new Uint8Array(b.memory.buffer,b.image_ptr(),b.image_size()),context);
+  assert.equal(a.next_event(),b.next_event(),context+' deadline');
+  assert.equal(a.pending(),b.pending(),context+' pending IRQs');
+}
+function write(c,time,io,value){return c.at('write',time,io,value);}
+
+test('disabled ADC leaves recurring work while comparator retains monotonic time, even with ACD set',()=>{
+  const c=make();write(c,0n,IO.ACSR,0x80);c.call('clear_counts');
+  for(const time of [1n,51n,1234n])assert.equal(c.at('advance',time),1);
+  assert.equal(c.a.advance_count(),0n);assert.equal(c.a.query_count(),0n);
+  assert.ok(c.b.advance_count()>0n);assert.ok(c.b.query_count()>0n);
+  assert.equal(c.a.adc_half(),0n);assert.equal(c.a.cmp_half(),1234n);
+  assert.equal(c.a.advance(1233n),0);assert.equal(c.b.advance(1233n),0);
+  parity(c,'rejected time reversal');
+  assert.equal(c.at('input',1300n,3,2345678),1);
+  assert.equal(c.a.adc_half(),1300n,'direct ADC input must catch up');
+  assert.equal(c.at('read',1400n,IO.ADCSRA),0);
+  assert.equal(c.a.adc_half(),1400n,'register observation must catch up');
+});
+
+for(const code of [0,1,2,3,4,5,6,7])for(const phase of [0n,1n])
+test(`reenabling ADC after disabled clock gating starts the exact /${code<2?2:1<<code} phase ${phase}`,()=>{
+  const c=make();c.at('advance',17n);c.at('gate',20n,0);c.at('advance',10000n+phase);
+  assert.equal(c.a.adc_half(),20n);assert.equal(c.a.origin(),0n);
+  c.at('gate',10001n+phase,1);
+  assert.equal(c.a.adc_half(),10001n+phase);assert.equal(c.a.origin(),9981n+phase);
+  const start=10003n+phase,d=BigInt(code<2?2:1<<code);
+  write(c,start,IO.ADCSRA,0xc0|code);
+  assert.equal(c.a.origin(),start);assert.equal(c.a.next_event(),start+2n*d);
+  c.at('advance',start+52n*d-1n);assert.equal(c.a.conversions(),0n);
+  c.at('advance',start+52n*d);assert.equal(c.a.conversions(),1n);
+  assert.equal(c.a.completed_at(),start+52n*d);
+});
+
+test('enabled idle prescaler phase is retained; abort and reenable still require first-conversion timing',()=>{
+  const c=make();write(c,3n,IO.ADCSRA,0x80);c.at('advance',1005n);
+  assert.equal(c.a.adc_half(),1005n);assert.equal(c.a.origin(),3n);
+  write(c,1005n,IO.ADCSRA,0xc0);assert.equal(c.a.next_event(),1007n);
+  c.at('advance',1030n);write(c,1030n,IO.ADCSRA,0);
+  c.at('advance',10000n);assert.equal(c.a.conversions(),0n);
+  write(c,10001n,IO.ADCSRA,0xc0);assert.equal(c.a.next_event(),10005n);
+  c.at('advance',10104n);assert.equal(c.a.conversions(),0n);
+  c.at('advance',10105n);assert.equal(c.a.conversions(),1n);
+});
+
+test('ADIF/ADIE and locked results remain independent of ADEN activity',()=>{
+  const c=make();c.at('input',0n,5,2500000);write(c,0n,IO.ADCSRA,0xc8);
+  c.at('advance',104n);assert.equal(c.a.pending(),1<<9);assert.equal(c.a.result(),512);
+  assert.equal(c.at('read',104n,IO.ADCL),0);write(c,104n,IO.ADCSRA,8);
+  c.call('clear_counts');c.at('advance',10000n);
+  assert.equal(c.a.advance_count(),0n);assert.equal(c.a.pending(),1<<9);
+  assert.equal(c.a.result(),512);assert.equal(c.at('read',10000n,IO.ADCH),2);
+  write(c,10000n,IO.ADCSRA,0x18);assert.equal(c.a.pending(),0);
+  c.at('ack',10001n,9);assert.equal(c.a.adc_half(),10001n);
+});
+
+test('disabled trigger levels, held flags and ADTS/ADATE writes retain their edge semantics',()=>{
+  const c=make();c.at('flags',0n,8);write(c,0n,IO.ADCSRB,3);write(c,0n,IO.ADCSRA,0x20);
+  c.at('advance',1000n);assert.equal(c.a.flags_value()&8,8);
+  write(c,1000n,IO.ADCSRA,0xa0);c.at('advance',2000n);assert.equal(c.a.conversions(),0n);
+  c.at('flags',2000n,0);c.at('flags',2000n,8);assert.equal(c.a.next_event(),2006n);
+  c.at('advance',2106n);assert.equal(c.a.conversions(),1n);
+  c.at('flags',2106n,8);c.at('advance',2200n);assert.equal(c.a.conversions(),1n);
+  c.at('flags',2200n,16);write(c,2200n,IO.ADCSRB,4);
+  assert.equal(c.a.next_event(),2206n);c.at('advance',2260n);assert.equal(c.a.conversions(),2n);
+});
+
+test('comparator ACI still triggers enabled ADC after disabled recurring service',()=>{
+  const c=make();c.at('input',0n,5,2500000);c.at('input',0n,0,2000000);c.at('advance',4n);
+  assert.equal(c.a.flags_value()&2,2,'ACI must be forwarded without ACIE');
+  write(c,4n,IO.ADCSRB,1);write(c,4n,IO.ADCSRA,0xa8);
+  assert.equal(c.a.next_event(),10n);c.at('advance',110n);
+  assert.equal(c.a.conversions(),1n);assert.equal(c.a.pending(),1<<9);
+  assert.equal(c.a.result(),512);
+});
+
+test('ACME still sees every cached channel with ADC disabled and reschedules after component clock/sleep gates',()=>{
+  const c=make({propagation:3,startup:5});c.at('input',0n,0,2000000);
+  for(const [channel,pin] of [5,2,4,3].entries())c.at('input',0n,pin,channel&1?3000000:1000000);
+  write(c,0n,IO.ADCSRB,0x40);
+  let time=0n;
+  for(let channel=0;channel<4;channel++){
+    write(c,time,IO.ADMUX,channel);time+=10n;c.at('advance',time);
+    assert.equal(c.at('read',time,IO.ACSR)&0x20,channel&1?0:0x20);
+  }
+  c.at('gate',time,0);c.at('sleep_disable',time,1);c.at('advance',time+1000n);
+  time+=1000n;c.at('input',time,3,100000);c.at('reference',time,3300000,1200000);
+  write(c,time,IO.ACSR,0x40);c.at('sleep_disable',time,0);c.at('gate',time,1);
+  assert.equal(c.a.next_event(),time+5n);c.at('advance',time+12n);
+  assert.equal(c.at('read',time+12n,IO.ACSR)&0x20,0x20);
+});
+
+test('equal-time voltage updates preserve the existing ADC sample and comparator zero-delay ordering',()=>{
+  const c=make();c.at('advance',0n);c.at('input',0n,0,2000000);
+  c.at('advance',0n);assert.equal(c.a.next_event(),2n);
+  c.at('input',0n,0,0);c.at('advance',0n);assert.equal(c.a.next_event(),-1n);
+  c.at('input',0n,5,1250000);write(c,0n,IO.ADCSRA,0xc0);
+  c.at('advance',58n);c.at('input',58n,5,3750000);c.at('advance',104n);
+  assert.equal(c.a.result(),256);assert.equal(c.a.sampled_at(),58n);
+});
+
+for(const propagation of [0,1,5])for(const first of [27,29])
+test(`unconditional-reference private-state parity across mutations: propagation=${propagation}, first=${first}`,()=>{
+  const c=make({propagation,startup:7,initial:1,first});let seed=0xadc13,time=0n;
+  const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed;};
+  for(let n=0;n<500;n++){
+    time+=BigInt(random()%17);c.at('advance',time);
+    switch(random()%11){
+      case 0:c.at('input',time,random()%6,[0,100000,1200000,2500000,5000000][random()%5]);break;
+      case 1:write(c,time,IO.ADCSRA,[0,8,0x20,0x80,0x88,0xc0,0xc8,0xe0][random()%8]|(random()&7));break;
+      case 2:write(c,time,IO.ADCSRB,(random()%7)|(random()&0x40));break;
+      case 3:write(c,time,IO.ADMUX,random()&0x63);break;
+      case 4:write(c,time,IO.ACSR,(random()&0xd8)|[0,2,3][random()%3]);break;
+      case 5:c.at('flags',time,random()&0x7c);break;
+      case 6:c.at('gate',time,random()&1);break;
+      case 7:c.at('cmp_gate',time,random()&1);c.at('sleep_disable',time,random()&1);break;
+      case 8:c.at('reference',time,random()&1?3300000:5000000,random()&1?1100000:1200000);break;
+      case 9:c.at('read',time,3+random()%6);break;
+      case 10:c.at('ack',time,random()&1?5:9);c.at('sleep_start',time);break;
+    }
+    c.at('advance',time);
+  }
+});

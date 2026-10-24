@@ -18,9 +18,10 @@ const {values}=parseArgs({options:{
   frames:{type:'string',default:'12000'},instructions:{type:'string',default:'1000000'},
   out:{type:'string',default:'build/benchmarks/planned-optimizations.json'},help:{type:'boolean'},
   'compiler-only':{type:'boolean',default:false},
+  'native-only':{type:'boolean',default:false},
 }});
 if(values.help){
-  console.log('node web-player/scripts/benchmark-planned-optimizations.mjs [--compiler-only] [--baseline-ref 0a61ae7] [--trials 6] [--frames 12000] [--instructions 1000000] [--out build/benchmarks/planned-optimizations.json]');
+  console.log('node web-player/scripts/benchmark-planned-optimizations.mjs [--compiler-only | --native-only] [--baseline-ref 0a61ae7] [--trials 6] [--frames 12000] [--instructions 1000000] [--out build/benchmarks/planned-optimizations.json]');
   console.log('Compiler-only requires --baseline-ref with identical native artifacts, e.g. --compiler-only --baseline-ref ad66d6d.');
   process.exit(0);
 }
@@ -37,8 +38,11 @@ const gitText=args=>git(args).toString().trim();
 const wasmPath='web-player/wasm/attiny13a.wasm',manifestPath='web-player/wasm/device-build.json';
 const baselineRef=values['baseline-ref'];
 const compilerOnly=values['compiler-only'];
+const nativeOnly=values['native-only'],paired=compilerOnly||nativeOnly;
+assert.ok(!(compilerOnly&&nativeOnly),'Choose one paired attribution mode');
 const compilerPath='web-player/lib/avr-transpiler.js';
 const baselineCompiler=git(['show',`${baselineRef}:${compilerPath}`]).toString().replaceAll('\r\n','\n');
+if(nativeOnly)assert.equal(source(compilerPath),baselineCompiler,'native-only requires identical compiler source');
 const baselineCompilerFile=resolve(root,'build/benchmarks/compiler-'+hash(baselineCompiler).slice(0,16)+'.mjs');
 mkdirSync(dirname(baselineCompilerFile),{recursive:true});
 // Only relocate the two static imports. Both imported implementations must
@@ -55,7 +59,7 @@ const currentBinary=readFileSync(resolve(root,wasmPath)),currentManifest=JSON.pa
 const variants=[
   {id:'baseline',binary:git(['show',`${baselineRef}:${wasmPath}`]),
     manifest:JSON.parse(git(['show',`${baselineRef}:${manifestPath}`])),compiler:baselineTranspile},
-  ...compilerOnly?[]:[{id:'native-only',binary:currentBinary,manifest:currentManifest,compiler:baselineTranspile}],
+  ...paired?[]:[{id:'native-only',binary:currentBinary,manifest:currentManifest,compiler:baselineTranspile}],
   {id:'candidate',binary:currentBinary,manifest:currentManifest,compiler:transpileAVR},
 ];
 for(const v of variants){
@@ -75,7 +79,7 @@ for(const key of ['compilerVersion','flags','sources','exports'])
 assert.deepEqual(Object.keys(candidate.manifest.inputs),Object.keys(baseline.manifest.inputs));
 const changedInputs=Object.keys(candidate.manifest.inputs)
   .filter(path=>candidate.manifest.inputs[path]!==baseline.manifest.inputs[path]);
-assert.deepEqual(changedInputs,compilerOnly?[]:['web-player/native/avr-device.inc','web-player/native/peripherals/device.c',
+assert.deepEqual(changedInputs,compilerOnly?[]:nativeOnly?['web-player/native/peripherals/analog.c']:['web-player/native/avr-device.inc','web-player/native/peripherals/device.c',
   'web-player/native/peripherals/device.h','web-player/native/devices/attiny13a/clki_board.inc']);
 function stats(samples){const sorted=[...samples].sort((a,b)=>a-b),n=sorted.length,mean=samples.reduce((a,b)=>a+b,0)/n;
   return {median:n%2?sorted[n>>1]:(sorted[n/2-1]+sorted[n/2])/2,min:sorted[0],max:sorted[n-1],mean,
@@ -108,10 +112,17 @@ for(const external of [false,true])for(const divisor of external?[1,256]:[1])
     frames:1200,channels:1,physical:true,external,divisor,
     options:{oscillatorHz:20000000,resumable:true,fastIdle:false,fuseLow:external?0x70:0x72,
       ...external?{clkiProfile:{phasePolicy:'digital-noninverting-zero-seed-v1',initialLevel:1}}:{osccalHz:table(20000000)}}});
+// Enabled ADC controls expose the activity guard's cost when it cannot skip
+// work. At20MHz /128 its156.25kHz clock also exercises complete conversions.
+if(nativeOnly)for(const id of ['kernel-internal-20m-div1','kernel-clki-20m-div1']){
+  const entry=cases.find(v=>v.id===id);
+  cases.push({...entry,id:id+'-adc-active',adcEnabled:true});
+}
 function construct(entry,variant){
   const c=new ATtiny13A(entry.binary,entry.eeprom,{...entry.options,runtimeModule:variant.module,
     precompiled:entry.translations.get(variant.id)});
   if(entry.divisor){c.writeIO(IO.CLKPR,128);c.writeIO(IO.CLKPR,Math.log2(entry.divisor));}
+  if(entry.adcEnabled){c.writeIO(IO.ADMUX,3);c.writeIO(IO.ADCSRA,0xe7);}
   if(entry.external){const end=BigInt(entry.frames)*1000000000000n/BigInt(rate);
     assert.equal(c.injectClkiPeriodicPs({startPs:0n,initialLevel:1,highPs:25000n,lowPs:25000n,
       transitionCount:end/25000n,knownUntilPs:end}),true);}
@@ -147,6 +158,7 @@ function execute(c,entry,count){
       eventHint:String(snapshots.at(-1).diagnostics[eventHintIndex]),rawSha256:hash(bytes(pcm))});
   }
   for(const snap of snapshots)assert.equal(snap.state.deviceFault,0,entry.id);
+  if(entry.adcEnabled)assert.equal(c.data[32+IO.ADCSRA]&0x90,0x90,'enabled ADC completed conversions');
   const pins=entry.physical?c.drainPinsPs():c.drainPins();
   return {raw:Buffer.concat(raw),snapshots,pins,eventHintIndex,record:{ms,checkpoints,finalState:c.state(),
     finalEventHint:String(c.overflowAt),chipAndStableDiagnosticsSha256:digest(stableSnapshot(snapshots.at(-1),eventHintIndex)),
@@ -173,7 +185,7 @@ function compare(actual,expected,label,allowConservativeEventHint=false){
 }
 const out=resolve(root,values.out),started=performance.now();
 const report={schema:'micromusic-planned-optimizations-benchmark-v3',createdAt:new Date().toISOString(),
-  mode:compilerOnly?'compiler-only':'native-and-compiler',
+  mode:compilerOnly?'compiler-only':nativeOnly?'native-only':'native-and-compiler',
   git:{head:gitText(['rev-parse','HEAD']),status:gitText(['status','--short']),baselineCommit:gitText(['rev-parse',baselineRef])},
   host:{node:process.version,v8:process.versions.v8,flags:process.execArgv,platform:platform(),release:release(),
     arch:arch(),cpu:cpus()[0]?.model,logicalCpus:cpus().length},
@@ -185,14 +197,15 @@ const report={schema:'micromusic-planned-optimizations-benchmark-v3',createdAt:n
       'web-player/lib/attiny13a-runtime.js','web-player/lib/avr-transpiler.js','web-player/lib/avr-wasm-phases.js',
       'web-player/lib/avr-transpiled-runtime.js','web-player/lib/avr-runtime.js',
       'web-player/tests/fixtures/attiny13a-system-firmware.mjs'].map(path=>[path,hash(source(path))]))},
-  parameters:{frames,instructions,trials,rate,blockFrames,clockFrames:1200},
+  parameters:{frames,instructions,trials,rate,blockFrames,clockFrames:1200,activeAdcControls:nativeOnly?2:0},
   method:{timing:'Serial uninstrumented capturePhysical (1024-frame blocks) or run(N) calls only. Fresh reset instance for every run. Explicit WASM module compilation, construction, input submission, retained-output concatenation, snapshots, assertions and hashing are outside timers. Public API batch copying and any engine tiering during those calls remain included.',
-    order:compilerOnly?'One discarded run per case/variant, then alternate baseline/candidate and candidate/baseline pairs. Warmup is min(4096,frames) or min(100000,instructions). No forced GC, affinity or V8 flags.':'One discarded run per case/variant, then rotate the three variants and reverse on odd trials. Warmup is min(4096,frames) or min(100000,instructions). No forced GC, affinity or V8 flags.',
-    attribution:compilerOnly?'Identical native runtime, original versus current compiler. All modules are generated and compiled before warmup, then bound as precompiled modules to fresh native memory outside execution timers.':'baseline=original native+original compiler; native-only=current native+original compiler; candidate=current native+current compiler. All modules are generated and compiled before warmup, then bound as precompiled modules to fresh native memory outside execution timers.',
+    order:paired?'One discarded run per case/variant, then alternate baseline/candidate and candidate/baseline pairs. Warmup is min(4096,frames) or min(100000,instructions). No forced GC, affinity or V8 flags.':'One discarded run per case/variant, then rotate the three variants and reverse on odd trials. Warmup is min(4096,frames) or min(100000,instructions). No forced GC, affinity or V8 flags.',
+    attribution:compilerOnly?'Identical native runtime, original versus current compiler. All modules are generated and compiled before warmup; fresh instances use the pre-generated artifacts outside execution timers.':nativeOnly?'Identical compiler, original versus current native runtime. Exactly one native source input differs: analog.c. All modules are generated and compiled before warmup; fresh instances use the pre-generated artifacts outside execution timers.':'baseline=original native+original compiler; native-only=current native+original compiler; candidate=current native+current compiler. All modules are generated and compiled before warmup, then bound as precompiled modules to fresh native memory outside execution timers.',
     coldTranslation:'Generation and WASM compilation times are single startup observations per case/variant, outside execution timers. They are retained as diagnostics, not stable cold-start performance estimates.',
     constructor:'Pre-generated bytes and manifest are supplied to each fresh instance. The current loader constructs its own WebAssembly.Module from those bytes, outside execution timers, even when the artifact includes a module. Startup observations exclude this repeated validation/compilation; they do not measure total construction cost.',
-    parity:compilerOnly?'Exact chip state and all diagnostics, registers/IO/SRAM/Flash/EEPROM/IRQ frames, raw Float32 PCM and remaining pins at each checkpoint. Exact cross-trial baseline state. No scheduling-hint normalization. Kernel counts/registers/cycles and constant-low PCM are additional checks.':'All chip state, registers/IO/SRAM/Flash/EEPROM/IRQ frames, raw Float32 PCM and remaining pins match at each checkpoint. Only the private overflowAt scheduling hint may change against the old runtime, validated as exactly old ceil minus new floor (0 or1); each raw hint and its difference count are retained. Native-only versus candidate and cross-trial baseline checks require exact complete diagnostics too. Kernel counts/registers/cycles and constant-low PCM are additional checks.',
+    parity:paired?'Exact chip state and all diagnostics, registers/IO/SRAM/Flash/EEPROM/IRQ frames, raw Float32 PCM and remaining pins at each checkpoint. Exact cross-trial baseline state. No scheduling-hint normalization. Kernel counts/registers/cycles and constant-low PCM are additional checks.':'All chip state, registers/IO/SRAM/Flash/EEPROM/IRQ frames, raw Float32 PCM and remaining pins match at each checkpoint. Only the private overflowAt scheduling hint may change against the old runtime, validated as exactly old ceil minus new floor (0 or1); each raw hint and its difference count are retained. Native-only versus candidate and cross-trial baseline checks require exact complete diagnostics too. Kernel counts/registers/cycles and constant-low PCM are additional checks.',
     scope:'Firmware: 250ms by default, compatible clock and fixed-ps resumable CPU. Kernels: three-ALU and thirty-ALU loops for direct throughput; short-loop internal20MHz and finite 20MHz CLKI /1,/256 at25ms; every source edge still serviced.',
+    adcControl:nativeOnly?'Two additional25ms internal/CLKI /1 controls run free-running ADC3 with ADCSRA=0xe7, ADMUX=3 and CLKPR=0. Both must complete conversions; /128 gives156.25kHz ADC clock.':'No additional active-ADC timing controls in this mode.',
     limits:'Node host timing with CPU, peripherals, native pin/audio integration and JS batch copying coupled. No DSP filtering or browser latency guarantee. Scheduling, tiering and GC may affect samples.'},results:[]};
 const legacyBinary=readFileSync(resolve(root,'web-player/wasm/avr.wasm'));
 assert.equal(hash(legacyBinary),hash(git(['show',`${baselineRef}:web-player/wasm/avr.wasm`])));
@@ -208,7 +221,7 @@ report.defaultTranslationValidation=catalog.map(entry=>{
   return {id:entry.id,flashSha256:hash(image),targets};
 });
 for(const entry of cases){
-  console.log((compilerOnly?'Compiler pair ':'Three-way ')+entry.id);
+  console.log((paired?(compilerOnly?'Compiler pair ':'Native pair '):'Three-way ')+entry.id);
   entry.translations=new Map();
   for(const v of variants){
     const abi=runtimeABI(new WebAssembly.Instance(v.module).exports,{resumable:!!entry.options.resumable});
@@ -218,11 +231,12 @@ for(const entry of cases){
     generated.compileMs=performance.now()-compileStart;
     entry.translations.set(v.id,generated);
   }
-  if(!entry.options.resumable)assert.deepEqual(entry.translations.get('candidate').bytes,
+  if(!entry.options.resumable&&!nativeOnly)assert.deepEqual(entry.translations.get('candidate').bytes,
     entry.translations.get(compilerOnly?'baseline':'native-only').bytes,'ordinary emitted code remains byte-identical');
   const count=entry.instructions??entry.frames,warmup=Math.min(count,entry.instructions?100000:4096);
   for(const v of variants)execute(construct(entry,v),entry,warmup);
   const row={id:entry.id,frames:entry.frames,instructions:entry.instructions,channels:entry.channels,
+    adcEnabled:!!entry.adcEnabled,
     options:entry.options,flashSha256:hash(entry.binary),translations:Object.fromEntries(variants.map(v=>{
       const t=entry.translations.get(v.id);return[v.id,{sha256:hash(t.bytes),bytes:t.bytes.length,
         generationMs:t.generationMs,wasmCompileMs:t.compileMs,stats:t.manifest.stats}];})),runs:[],eventHintPolicyComparisons:[]};let reference;
@@ -235,8 +249,8 @@ for(const entry of cases){
       const result=execute(c,entry,count);completed[v.id]=result;
       row.runs.push({trial,position,variant:v.id,...result.record});
     }
-    const changedCandidate=compare(completed.candidate,completed.baseline,`${entry.id}/${trial}`,!compilerOnly);
-    if(!compilerOnly){
+    const changedCandidate=compare(completed.candidate,completed.baseline,`${entry.id}/${trial}`,!paired);
+    if(!paired){
       const changedNative=compare(completed['native-only'],completed.baseline,`${entry.id}/${trial}/native-only`,true);
       compare(completed.candidate,completed['native-only'],`${entry.id}/${trial}/compiler-only-exact`);
       row.eventHintPolicyComparisons.push({trial,candidate:changedCandidate,nativeOnly:changedNative});
@@ -246,14 +260,14 @@ for(const entry of cases){
   row.summary=Object.fromEntries(variants.map(v=>[v.id,stats(row.runs.filter(r=>r.variant===v.id).map(r=>r.ms))]));
   row.summary.pairedSpeedup=stats(Array.from({length:trials},(_,trial)=>{
     const time=id=>row.runs.find(r=>r.variant===id&&r.trial===trial).ms;return time('baseline')/time('candidate');}));
-  for(const [name,before,after] of compilerOnly?[['compilerSpeedup','baseline','candidate']]:
+  for(const [name,before,after] of paired?[[compilerOnly?'compilerSpeedup':'nativeSpeedup','baseline','candidate']]:
     [['nativeSpeedup','baseline','native-only'],['compilerSpeedup','native-only','candidate']])
     row.summary[name]=stats(Array.from({length:trials},(_,trial)=>{
       const time=id=>row.runs.find(r=>r.variant===id&&r.trial===trial).ms;return time(before)/time(after);}));
   row.summary.medianRatio=row.summary.baseline.median/row.summary.candidate.median;
   row.validation={rawPcmByteEquality:true,chipStateAndStableDiagnosticsEquality:true,remainingPinTraceEquality:true,
-    ...compilerOnly?{allDiagnosticsEquality:true}:{nativeOnlyCandidateFullStateEquality:true,conservativeEventHintPolicy:true},
-    crossTrialDeterminism:true,checkpointsCompared:(compilerOnly?1:3)*trials*Math.max(1,Math.ceil((entry.frames??0)/blockFrames))};
+    ...paired?{allDiagnosticsEquality:true}:{nativeOnlyCandidateFullStateEquality:true,conservativeEventHintPolicy:true},
+    crossTrialDeterminism:true,checkpointsCompared:(paired?1:3)*trials*Math.max(1,Math.ceil((entry.frames??0)/blockFrames))};
   report.results.push(row);report.timingsComplete=report.results.length===cases.length;report.complete=false;
   report.elapsedMs=performance.now()-started;
   mkdirSync(dirname(out),{recursive:true});writeFileSync(out,JSON.stringify(report,replacer,2)+'\n');
@@ -295,5 +309,5 @@ report.complete=true;report.elapsedMs=performance.now()-started;
 writeFileSync(out,JSON.stringify(report,replacer,2)+'\n');
 console.table(report.results.map(r=>({case:r.id,before_ms:r.summary.baseline.median.toFixed(2),
   after_ms:r.summary.candidate.median.toFixed(2),...compilerOnly?{}:{native:r.summary.nativeSpeedup.median.toFixed(3)+'x'},
-  compiler:r.summary.compilerSpeedup.median.toFixed(3)+'x',combined:r.summary.pairedSpeedup.median.toFixed(3)+'x'})));
+  ...nativeOnly?{}:{compiler:r.summary.compilerSpeedup.median.toFixed(3)+'x'},combined:r.summary.pairedSpeedup.median.toFixed(3)+'x'})));
 console.log('All paired PCM/state checks passed: '+relative(root,out));

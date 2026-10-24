@@ -5,6 +5,14 @@ Saved 2026-10-24. This is a proposed implementation contract for the
 or a completed acceptance item. It changes neither the current native runtime
 nor its WASM artifact.
 
+Two implementations were evaluated and restored out of production on
+2026-10-24. Both preserve the modeled state but fail the measured-benefit gate,
+including enabled-ADC and real-firmware regressions. The
+[experiment report](../../../reports/adc-activity-20261024.md) retains both
+sources, tests, timings and counters. This contract remains a correctness
+boundary for future work, not an instruction to repeat isolated guards or a
+claim that ADC activity gating is enabled.
+
 ## First implementation boundary
 
 Omit a disabled ADC only from recurring advancement in

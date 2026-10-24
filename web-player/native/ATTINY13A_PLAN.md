@@ -216,6 +216,20 @@ timestamped component API, trigger/IRQ level and comparator operation. The
 comparator remains the shared monotonic-time anchor. Broader analog gating
 requires its own phase/dependency proof; this contract is not completion evidence.
 
+ADC experiment checkpoint, 2026-10-24: both recurring-call guards and separate
+enabled/disabled loops preserve model behavior but fail the speed gate. The
+initial candidate passed1216/1216 tests; the split version passed108 focused
+checks. Together480 timed runs retain1376 exact pairwise checkpoints. Despite
+millions fewer ADC entries, the initial active-ADC internal-clock control is
+slower in8/8 pairs (0.942x median), and split rhythmic physical capture is
+slower in8/8 pairs (0.915x). Other times show substantial host variation. Both
+candidates were restored out of production. The
+[complete report](../reports/adc-activity-20261024.md) retains sources, test
+adaptations, exact harness, timings and counters. Activity gating for ADC and
+the other unoptimized modules remains open. Do not equate removed entries with
+speed; include enabled-module controls and improve cost attribution/isolation
+before more fine-grained per-call guards.
+
 ### AVR to WASM generation and execution improvements
 
 Saved improvement plan, 2026-10-23; next-step details updated 2026-10-24.
@@ -338,8 +352,10 @@ transformations. Cross-block flag liveness, constant/sequence optimization,
 direct control flow and smaller continuation contexts remain open compiler
 candidates. Evaluate reachable-code generation, region recompilation and
 persistent caching separately, with SPM invalidation and complete cache
-identities. The next independent performance step is the audited ADC activity
-change above; it must pass its own correctness and speed gates.
+identities. The independent ADC activity experiment above also failed its
+speed gate. The next performance step must resolve these measured guard costs
+and timing uncertainty before retaining more fine-grained dispatch changes;
+the exact scheduling/dependency contracts remain requirements.
 
 Implementation checkpoint, 2026-10-24: register-only resumable blocks now use
 the existing phase context and native clock bridge. Strict event/observation
