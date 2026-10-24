@@ -73,7 +73,7 @@ irq:
             rows,excitation=fit.fit.codec.legacy_excitation(expanded.pitches,expanded.gains_q1,expanded.durations,expanded.modes,expanded.waves_q1,expanded.halves,phase_modes=modes)
             excitation[expanded.pitches[rows]==0]*=2
             expected,counts=fit.render(state,4,True)
-        elif meta['schema'] in ('mixed-lattice-v1','mixed-lattice-pulse-v1'):
+        elif meta['schema'] in ('mixed-lattice-v1','mixed-lattice-pulse-v1','mixed-lattice-balanced-v1'):
             if meta['coefficient_bits']!=[4]*8:raise ValueError('This kernel requires Q4 in all eight stages')
             s=importlib.util.spec_from_file_location('word_filter_mixed_api',ROOT/'tools/fit-mixed-lattice.py')
             mixed=importlib.util.module_from_spec(s);sys.modules[s.name]=mixed;s.loader.exec_module(mixed)

@@ -9,6 +9,46 @@ from numba import njit
 
 SCHEMA='mixed-lattice-v1'
 PULSE_SCHEMA='mixed-lattice-pulse-v1'
+BALANCED_SCHEMA='mixed-lattice-balanced-v1'
+
+
+def balanced_pulses(heads,wave_fraction_bits=1):
+    """Append a bounded 16-sample tail with exactly opposite area.
+
+    Whole Q1 units occupy the end of the tail. An optional finer Q2 unit
+    precedes them, so exact Q1-to-Q2 promotion preserves every physical tap.
+    """
+    heads=np.asarray(heads)
+    if (heads.shape!=(8,16) or heads.dtype.kind not in 'iu' or wave_fraction_bits not in (1,2)
+            or np.any(abs(heads.astype(np.int64))>7<<(wave_fraction_bits-1))):
+        raise ValueError('Expected eight bounded 16-tap pulse heads')
+    result=np.zeros((8,32),np.int16);result[:,:16]=heads
+    unit=1<<(wave_fraction_bits-1)
+    for row in range(8):
+        area=-int(heads[row].astype(np.int64).sum());sign=-1 if area<0 else 1
+        whole,fine=divmod(abs(area),unit);base,remainder=divmod(whole,16)
+        result[row,16:]=sign*base*unit
+        if remainder:result[row,32-remainder:]+=sign*unit
+        if fine:result[row,31-remainder]+=sign*fine
+    return result
+
+
+def pack_balanced_heads(heads):
+    """Q1 pulse book: 64 EEPROM bytes and eight signed Flash area bytes."""
+    waves=balanced_pulses(heads);heads=waves[:,:16]
+    packed=bytes((int(row[i])&15)|((int(row[i+1])&15)<<4) for row in heads for i in range(0,16,2))
+    areas=bytes((-int(row.sum()))&255 for row in heads)
+    return packed,areas
+
+
+def unpack_balanced_heads(packed,areas):
+    if len(packed)!=64 or len(areas)!=8:raise ValueError('Expected 64 head bytes and eight area bytes')
+    values=np.asarray([((value>>shift)&15) for value in packed for shift in (0,4)],np.int16)
+    values[values>=8]-=16
+    waves=balanced_pulses(values.reshape(8,16))
+    expected=bytes((-int(row.sum()))&255 for row in waves[:,:16])
+    if bytes(areas)!=expected:raise ValueError('Tail area descriptor disagrees with the stored head')
+    return waves
 
 
 @njit(cache=True)
