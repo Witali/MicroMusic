@@ -46,3 +46,14 @@ that source part enters. No new filler melody is fabricated.
 This intentionally reduces backing attacks from 167 to 28 and backing notes
 from 910 to 56. The original 1027-note player remains a separate variant.
 The new player is not described as lossless relative to both source parts.
+
+The first sparse audition above was subsequently extended to source beat
+184 1/3 (tick 88480), ending on E4. It now retains all 261 lead notes over
+60.15867 seconds, with 60 backing attacks / 120 backing notes. The earlier
+117 lead notes remain an unchanged prefix. Compact variable-length chord
+shapes and a gate palette preserve the new triplets, sixteenths and three-note
+lead chords. Every build calibrates the complete unscaled AVR output, then
+uses fixed linear peak gain x4 around midpoint 128: physical PWM codes 0..248.
+The normalized firmware occupies 1006 Flash bytes; WAV export separately
+normalizes the filtered signal to full digital peak. All builders, calibration
+and audit scripts are retained under tools/.

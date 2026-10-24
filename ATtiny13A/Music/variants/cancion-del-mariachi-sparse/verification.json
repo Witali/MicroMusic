@@ -2,24 +2,25 @@
   "passed": true,
   "engine": "mariachi-polyphonic",
   "sourceSha256": "3bdfb9a7756aff5f395199f25aaa9787695d5bffb238dd7cd16bf2cbb842dda9",
-  "flashSha256": "bfa57486d387923a37a740b64803eaebebc868008b639fe112225a6ec04a5131",
+  "flashSha256": "cd0f4783ae944582bdcb6e4fed7f383fda0c53d857ae4a451ccd7bcf6caf4786",
   "eepromSha256": "9ba03ad3f029cb8b903d16b7a1f87878477fa952aaf2c59cc7aae244f3765cda",
-  "flashBytes": 868,
-  "codeBytes": 574,
-  "tableBytes": 294,
-  "allSourceNotes": 1027,
+  "flashBytes": 1006,
+  "codeBytes": 600,
+  "tableBytes": 406,
+  "allSourceNotes": 2215,
   "allSourceNoteGatesVerified": false,
   "sourceParts": 2,
   "sourceNotesByPart": [
-    117,
-    910
+    261,
+    1954
   ],
   "chordAttacksByPart": [
-    94,
-    28
+    198,
+    60
   ],
   "oscillators": 8,
-  "maximumSimultaneousSourceNotes": 7,
+  "maximumSimultaneousSourceNotes": 8,
+  "maximumSimultaneousPlayedNotes": 6,
   "partWaveOffsets": [
     0,
     16
@@ -28,15 +29,15 @@
     0,
     1
   ],
-  "firstSongSeconds": 30,
-  "loopSeconds": 31.075015,
-  "maximumOnsetErrorMs": 14.158749999999998,
-  "maximumGateEndErrorMs": 14.160937499998028,
-  "maximumGateDurationErrorMs": 12.000208333334095,
+  "firstSongSeconds": 60.15867,
+  "loopSeconds": 61.28984520833333,
+  "maximumOnsetErrorMs": 15.195104166664919,
+  "maximumGateEndErrorMs": 15.182083333336038,
+  "maximumGateDurationErrorMs": 12.004479166667469,
   "maximumPitchQuantizationErrorCents": 2.1530851746425674,
-  "maxRenderActiveCycles": 469,
-  "maxRenderElapsedCycles": 499,
-  "maxControlAndRenderActiveCycles": 814,
+  "maxRenderActiveCycles": 449,
+  "maxRenderElapsedCycles": 479,
+  "maxControlAndRenderActiveCycles": 869,
   "maxStackBytes": 6,
   "phaseStateBytes": 32,
   "pendingSymbolBytes": 7,
@@ -44,28 +45,37 @@
   "sramUsedWorstCase": 61,
   "maxPendingSymbolsByPart": [
     2,
-    1
+    3
   ],
-  "independentPhaseChecks": 4661240,
-  "mixChecks": 582655,
-  "pwmPairChecks": 582655,
+  "independentPhaseChecks": 9193464,
+  "mixChecks": 1149183,
+  "pwmPairChecks": 1149183,
   "minQueuedPwmBytes": 10,
   "ringUnderruns": 0,
   "lostTimerEvents": 0,
   "lostWorkEvents": 0,
   "isrCycles": 15,
   "mixRange": [
-    -26,
-    22
+    -32,
+    30
   ],
   "bothPartsSilentBeforeRestart": true,
   "emulationOnly": true,
+  "pwmRange": [
+    0,
+    248
+  ],
+  "normalizationChecks": 1149183,
+  "masterGain": 4,
+  "normalizationGainDb": 12.041199826559248,
+  "normalizationLinear": true,
+  "normalizationClippedSamples": 0,
   "arrangementPolicy": "sparse-source-voicings-v1",
-  "playedNotes": 173,
+  "playedNotes": 381,
   "arrangedNoteGatesVerified": true,
   "leadSourceNoteGatesVerified": true,
   "arrangedNotesByPart": [
-    117,
-    56
+    261,
+    120
   ]
 }
