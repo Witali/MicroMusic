@@ -15,27 +15,6 @@ OUTPUT = ROOT / 'web-player/hq4-firmware.json'
 ARCHIVE = SOUND / 'research/hq4-catalog-archive.json'
 
 
-def append_quality_previews(entries):
-    previews = json.loads((ROOT/'web-player/audio/speech-previews/manifest.json').read_text(encoding='utf-8'))['entries']
-    entries[:] = [entry for entry in entries if entry.get('playback') != 'audio']
-    for entry in entries:
-        entry.pop('qualityPreview', None)
-    firmware = {entry['id']: entry for entry in entries}
-    for preview in previews:
-        original = firmware[preview['firmwareId']]
-        entries.append(dict(
-            id=preview['catalogId'], order=f'{len(entries)+1:02d}', kind='speech', codec='lattice-q5',
-            playback='audio', status='experimental', title=preview['title'],
-            description='Улучшенный кодек Q5 · STOI 0,8931 · аудиопример; перенос в 1 КБ ещё не завершён.',
-            sampleHz=preview['sampleRate'], phraseSamples=preview['samples'], playOnce=True,
-            audioUrl=preview['audioUrl'], playbackUrl=preview['playbackUrl'],
-            audioSha256=preview['audioSha256'], playbackSha256=preview['playbackSha256'],
-            stoi=preview['stoi'], research=preview['researchUrl'], metadataUrl=preview['reportUrl'],
-            flashQualified=False,
-            **{key: original[key] for key in ('audioReferenceId', 'originalAudioUrl', 'originalAudioSha256',
-                                             'originalPlaybackUrl', 'originalPlaybackSha256')}))
-
-
 def digest(data):
     return hashlib.sha256(data).hexdigest()
 
@@ -217,7 +196,6 @@ def main():
                   aliases={entry['id']:winners[entry['audioReferenceId']] for entry in archive['entries']
                            if entry['id'] != winners[entry['audioReferenceId']]})
     listening_levels(dict(entries=selected, referenceEntries=archive['entries']), args.node)
-    append_quality_previews(selected)
     for path, catalog in ((OUTPUT,result),(ARCHIVE,archive)):
         text = json.dumps(catalog, ensure_ascii=False, indent=2)+'\n'
         if args.check:

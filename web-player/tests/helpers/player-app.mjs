@@ -11,11 +11,10 @@ export function deferred(){
 
 // Execute the actual app handlers with a small DOM/media model. This tests
 // transport ordering and cancellation; it does not claim browser audio output.
-export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,playOnce,prefix='/MicroMusic/',firmware,hash=''}={}){
+export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,playOnce,prefix='/MicroMusic/',firmware}={}){
   const location=new URL(`https://example.test${prefix}web-player/`);
   if(speech)location.searchParams.set('collection','hq4');
   if(firmware)location.searchParams.set('firmware',firmware);
-  location.hash=hash;
   const elements=new Map(),selectors=new Map(),workers=[],contexts=[],worklets=[];
   class Element{
     constructor(tag='div',attributes=''){
