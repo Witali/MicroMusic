@@ -15,6 +15,11 @@ const textAddresses=readFileSync(join(dir,'symbols.txt'),'utf8').split(/\r?\n/)
  .map(l=>l.match(/^([0-9a-f]+)\s+[tT]\s+/)).filter(Boolean).map(m=>parseInt(m[1],16));
 const h=[-4,-10,7,15,-14,-26,37,123,123,37,-26,-14,15,7,-10,-4];
 const clip=x=>Math.max(-32767,Math.min(32767,x)),s16=x=>(x<<16)>>16;
+// Preload physically valid low/high histories so the first output lands
+// exactly around Q6 rounding/clipping boundaries, including -32768 -> -32767.
+const edgeOffsets=[-129,-97,-65,-64,-63,-33,-32,-31,-1,0,1,31,32,33,63,64,65,95,96,97,127,128,129];
+const qmfEdges=[-2097152,2097152].flatMap(base=>edgeOffsets.flatMap(offset=>
+ [{phase:0,target:base+offset},{phase:1,target:base+offset}]));
 const callee=[...Array.from({length:16},(_,i)=>i+2),28,29];
 for(let test=0;test<8;test++) {
  const program=new Uint16Array(16384).fill(65535);new Uint8Array(program.buffer).set(binary);
@@ -36,9 +41,11 @@ for(let test=0;test<8;test++) {
  const lowMem=Array(8).fill(0),highMem=Array(8).fill(0),iirMem=Array(8).fill(0);
  const scales=[0,1,255,256,4095,4096,262143,262144,524287,524288,120988612,121000000];
  const gains=[0,1,255,256,511,512,513,32767,32768,65535,65536,904448,0x7fffffff,-2147483648,-1];
- const blocks=family===1?1640:family===3?32*scales.length*gains.length:512,cycles=[];
+ const blocks=family===0?512+qmfEdges.length:family===1?1640:family===3?32*scales.length*gains.length:512,cycles=[];
  for(let f=0;f<blocks;f++) {
-   const input=Array.from({length:80},(_,i)=>family===1?s16(f*40+i-32768):f===0?0:f===1?32767:f===2?-32768:f===3?(i<40?32767:-32768):f===4?(i&1?-32768:32767):random());
+   const edge=family===0&&f<qmfEdges.length?qmfEdges[f]:null;
+   const normal=family===0?f-qmfEdges.length:f;
+   const input=Array.from({length:80},(_,i)=>edge?0:family===1?s16(f*40+i-32768):normal===0?0:normal===1?32767:normal===2?-32768:normal===3?(i<40?32767:-32768):normal===4?(i&1?-32768:32767):random());
    const coeff=Array.from({length:8},()=>random());
    const g=gains[family===3?Math.floor(f/(32*scales.length)):f%gains.length],expected=[];
    const s=scales[Math.floor(f/32)%scales.length],codes=Array.from({length:4},(_,v)=>(f+7*v)&31);
@@ -47,6 +54,20 @@ for(let test=0;test<8;test++) {
    for(let i=0;i<80;i++)cpu.dataView.setInt16(buffer+4+2*i,input[i],true);
    for(let i=0;i<8;i++)cpu.dataView.setInt16(den+2*i,coeff[i],true);
    cpu.dataView.setInt32(gain,g,true);
+   if(edge) {
+     lowMem.fill(0);highMem.fill(0);cpu.data.fill(0,buffer+332,buffer+396);
+     // 7 and 123 are coprime (7*88 == 1 mod 123). Both chosen half-inputs
+     // fit signed16 and arise from real low/high pairs with the other phase zero.
+     const small=((edge.target*88)%123+123)%123,large=(edge.target-7*small)/123;
+     for(const [k,value] of [[edge.phase?6:1,small],[edge.phase?3:4,large]]) {
+       assert.ok(Number.isInteger(value)&&Math.abs(value)<32768);
+       const pos=(-k)&7;lowMem[pos]=value;highMem[pos]=edge.phase?value:-value;
+       for(const mirror of [0,32]) {
+         cpu.dataView.setInt16(buffer+332+mirror+4*pos,edge.phase?0:value,true);
+         cpu.dataView.setInt16(buffer+334+mirror+4*pos,edge.phase?value:0,true);
+       }
+     }
+   }
    if(family===0)for(let i=0;i<40;i++) {
      lowMem[i&7]=input[i];highMem[i&7]=input[i+40];let e=0,o=0;
      for(let k=0;k<8;k++){const j=(i-k)&7,l=lowMem[j],r=highMem[j];e+=h[2*k]*((l-r)>>1);o+=h[2*k+1]*((l+r)>>1);}
@@ -78,7 +99,8 @@ for(let test=0;test<8;test++) {
  if(isAsm)assert.equal(returns,blocks,'actual top-level RET count');
  rows.push({kernel:fn,blocks,samples:blocks*(family===0?80:40),pcmExact:true,
    minCycles:Math.min(...cycles),maxCycles:Math.max(...cycles),calleeSavedAndR1Returns:isAsm?returns:null,
-   guards:true,readOnlyInputs:true,aliasQmf:family===0,peakStackBytes:2303-minSP});
+   guards:true,readOnlyInputs:true,aliasQmf:family===0,
+   qmfRoundingAndClippingBoundaryBlocks:family===0?qmfEdges.length:0,peakStackBytes:2303-minSP});
  console.log(JSON.stringify(rows.at(-1)));
 }
 writeFileSync(join(dir,'verification.json'),JSON.stringify({scope:'AVR machine code; independent mathematical/Xiph equations, both backends',streams:rows},null,2)+'\n');

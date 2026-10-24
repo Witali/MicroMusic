@@ -68,32 +68,26 @@
     add \a,r20
     adc \b,r2
     adc \c,r2
-    mov r0,\c
-    lsl r0
-    sbc r0,r0
+    /* A rounded signed24 value fits the signed16 Q6 output when its
+     * top three bits are all zero or all one. Check before left alignment. */
+    mov r20,\c
+    andi r20,224
+    breq .Lconvert\@
+    cpi r20,224
+    breq .Lconvert\@
+    sbrc \c,7
+    rjmp .Lclipneg\@
+    ldi r21,255
+    ldi r24,127
+    rjmp .Lstore\@
+.Lconvert\@:
     .rept 2
     lsl \a
     rol \b
     rol \c
-    rol r0
     .endr
     mov r21,\b
     mov r24,\c
-    tst r0
-    brmi .Lnegative\@
-    brne .Lclippos\@
-    sbrs r24,7
-    rjmp .Lstore\@
-.Lclippos\@:
-    ldi r21,255
-    ldi r24,127
-    rjmp .Lstore\@
-.Lnegative\@:
-    mov r20,r0
-    cpi r20,255
-    brne .Lclipneg\@
-    sbrs r24,7
-    rjmp .Lclipneg\@
     cpi r24,128
     brne .Lstore\@
     tst r21
