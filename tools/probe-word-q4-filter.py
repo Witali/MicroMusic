@@ -17,10 +17,11 @@ spec=importlib.util.spec_from_file_location('word_filter_product_api',ROOT/'tool
 fit=importlib.util.module_from_spec(spec);sys.modules[spec.name]=fit;spec.loader.exec_module(fit)
 
 
-def run(avr_bin,node,output,state_bits=4,profile='compact',coefficient_memory='flash',model_path=None):
+def run(avr_bin,node,output,state_bits=4,profile='compact',coefficient_memory='flash',model_path=None,coefficient_bits=4):
     if state_bits not in (4,6):raise ValueError('Expected four or six fractional state bits')
     if profile not in ('compact','factored','adaptive','unrolled'):raise ValueError('Unknown word multiply profile')
     if coefficient_memory not in ('flash','ram'):raise ValueError('Expected Flash or SRAM coefficients')
+    if coefficient_bits not in (4,5):raise ValueError('Expected uniform Q4 or Q5 transport')
     output=output.resolve();output.mkdir(parents=True,exist_ok=True)
     source=ROOT/'ATtiny13A/Sound/codec/word-q4/filter.S'
     multiply=source.with_name('multiply.S' if profile in ('compact','unrolled') else 'multiply-factored.S')
@@ -32,7 +33,7 @@ __vectors:
  rjmp irq
 halt:
  rjmp halt
-'''+f'.equ WORD_STATE_BITS,{state_bits}\n'+('.equ WORD_COEFFICIENTS_IN_RAM,1\n' if coefficient_memory=='ram' else '')+('.equ WORD_MUL_ADAPTIVE,1\n' if profile=='adaptive' else '.equ WORD_MUL_UNROLLED,1\n' if profile=='unrolled' else '')+''.join('.include '+json.dumps(p.as_posix())+'\n' for p in (source,multiply))+'''
+'''+f'.equ WORD_STATE_BITS,{state_bits}\n.equ WORD_COEFFICIENT_BITS,{coefficient_bits}\n'+('.equ WORD_COEFFICIENTS_IN_RAM,1\n' if coefficient_memory=='ram' else '')+('.equ WORD_MUL_ADAPTIVE,1\n' if profile=='adaptive' else '.equ WORD_MUL_UNROLLED,1\n' if profile=='unrolled' else '')+''.join('.include '+json.dumps(p.as_posix())+'\n' for p in (source,multiply))+'''
 irq:
  push r16
  in r16,0x3f
@@ -65,6 +66,7 @@ irq:
     for name,path in model_paths:
         meta=json.loads(path.read_text(encoding='utf-8'))
         excitation_bits=2
+        precision=np.full(8,4,np.int16)
         if meta['state_bits']!=state_bits or not meta['nearest']:raise ValueError('Expected matching word states and nearest rounding')
         if meta['schema'].startswith('q4-product233'):
             state=fit.from_model(meta);expanded=fit.expand(state)
@@ -74,7 +76,8 @@ irq:
             excitation[expanded.pitches[rows]==0]*=2
             expected,counts=fit.render(state,4,True)
         elif meta['schema'] in ('mixed-lattice-v1','mixed-lattice-pulse-v1','mixed-lattice-balanced-v1'):
-            if meta['coefficient_bits']!=[4]*8:raise ValueError('This kernel requires Q4 in all eight stages')
+            precision=np.asarray(meta['coefficient_bits'],np.int16)
+            if precision.shape!=(8,) or np.any(precision>coefficient_bits):raise ValueError('Kernel precision cannot discard coefficient bits')
             s=importlib.util.spec_from_file_location('word_filter_mixed_api',ROOT/'tools/fit-mixed-lattice.py')
             mixed=importlib.util.module_from_spec(s);sys.modules[s.name]=mixed;s.loader.exec_module(mixed)
             expanded,bits,_,mode,_,_,_=mixed.load(path)
@@ -90,11 +93,12 @@ irq:
             excitation[expanded.pitches[rows]==0]*=2
             expected,counts=fit.fit.render(expanded,state_bits,True)
         if np.any(counts):raise ValueError('Starting stream wraps')
-        inputs=np.column_stack((excitation.astype(np.int16)*(1<<(state_bits-excitation_bits)),expanded.coefficients[rows]))
+        transported=expanded.coefficients*(1<<(coefficient_bits-precision))
+        inputs=np.column_stack((excitation.astype(np.int16)*(1<<(state_bits-excitation_bits)),transported[rows]))
         input_path=output/(name+'-input.json');input_path.write_text(json.dumps(inputs.tolist()),encoding='utf-8')
         expected.tofile(output/(name+'-expected.raw'))
         cases.append(dict(name=name,input=str(input_path),expected=str(output/(name+'-expected.raw')),model_sha256=hashlib.sha256(path.read_bytes()).hexdigest()))
-    specification=dict(image=str(output/'fixture.bin'),symbols=symbols,cases=cases,stateBits=state_bits,coefficientMemory=coefficient_memory,
+    specification=dict(image=str(output/'fixture.bin'),symbols=symbols,cases=cases,stateBits=state_bits,coefficientMemory=coefficient_memory,coefficientBits=coefficient_bits,
         filterBytes=symbols['word_filter_end']-symbols['filter_word_q4'],multiplyBytes=symbols['word_mul_end']-symbols['mul_word_q4'])
     (output/'spec.json').write_text(json.dumps(specification),encoding='utf-8')
     execute([node,ROOT/'tools/verify-word-q4-filter.mjs',output/'spec.json',output/'verification.json'])
@@ -111,4 +115,5 @@ if __name__=='__main__':
     p.add_argument('--state-bits',type=int,choices=(4,6),default=4)
     p.add_argument('--profile',choices=('compact','factored','adaptive','unrolled'),default='compact')
     p.add_argument('--coefficients',choices=('flash','ram'),default='flash');p.add_argument('--model',type=Path)
-    a=p.parse_args();run(a.avr_bin,a.node,a.output,a.state_bits,a.profile,a.coefficients,a.model)
+    p.add_argument('--coefficient-bits',type=int,choices=(4,5),default=4)
+    a=p.parse_args();run(a.avr_bin,a.node,a.output,a.state_bits,a.profile,a.coefficients,a.model,a.coefficient_bits)

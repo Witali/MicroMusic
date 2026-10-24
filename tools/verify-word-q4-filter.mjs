@@ -7,9 +7,10 @@ import {AVRCore as Wasm} from '../web-player/lib/avr-core.js';
 const [input,output]=process.argv.slice(2),spec=JSON.parse(readFileSync(input,'utf8'));
 const bytes=readFileSync(spec.image),results=[];
 const word=value=>((value+32768)&65535)-32768;
-function multiply(value,k){
+function multiply(value,k,bits){
  if(k<0)value=word(-value);
- const p=value*Math.abs(k);return word(p<0?-Math.floor((-p+8)/16):Math.floor((p+8)/16));
+ const p=value*Math.abs(k),half=1<<(bits-1),scale=1<<bits;
+ return word(p<0?-Math.floor((-p+half)/scale):Math.floor((p+half)/scale));
 }
 for(const [engine,create] of [['reference',b=>new Reference(b)],['wasm',b=>new Wasm(b)],
  ['wasm-unoptimized',b=>new Wasm(b,undefined,{fastIdle:false,fastBlocks:false})]]){
@@ -34,7 +35,7 @@ for(const [engine,create] of [['reference',b=>new Reference(b)],['wasm',b=>new W
    assert.equal(cpu.pc,511);assert.equal(cpu.sp,0x9f);assert.equal(cpu.r[27],0);assert.equal(cpu.sreg&0xc0,interrupt?0xc0:0x40);
    actual[n]=cpu.r[24];assert.equal(actual[n],expected[n],`${engine} ${fixture.name} sample ${n}`);
    let ex=value;
-   for(let j=7;j>=0;j--){const old=states[j],k=coefficients[j];ex=word(ex-multiply(old,k));if(j<7)states[j+1]=word(old+multiply(ex,k));}
+   for(let j=7;j>=0;j--){const old=states[j],k=coefficients[j];ex=word(ex-multiply(old,k,spec.coefficientBits));if(j<7)states[j+1]=word(old+multiply(ex,k,spec.coefficientBits));}
    states[0]=ex;previous=word(ex+previous-(previous>>1));
    const stateWords=[...states,previous];
    for(let j=0;j<stateWords.length;j++){
@@ -48,10 +49,10 @@ for(const [engine,create] of [['reference',b=>new Reference(b)],['wasm',b=>new W
    pcm_sha256:createHash('sha256').update(actual).digest('hex'),model_sha256:fixture.model_sha256,irqChecked,stateChecks});
  }
 }
-const report={pass:true,stateBits:spec.stateBits,filterBytes:spec.filterBytes,multiplyBytes:spec.multiplyBytes,
+const report={pass:true,stateBits:spec.stateBits,coefficientBits:spec.coefficientBits,filterBytes:spec.filterBytes,multiplyBytes:spec.multiplyBytes,
  arithmeticBytes:spec.filterBytes+spec.multiplyBytes,stateBytes:18,coefficientMemory:spec.coefficientMemory,
  coefficientBytes:spec.coefficientMemory==='ram'?8:0,results,
  samples:results.reduce((n,r)=>n+r.samples,0),stateChecks:results.reduce((n,r)=>n+r.stateChecks,0),irqChecked:results.reduce((n,r)=>n+r.irqChecked,0),
- scope:'Actual assembled 8-stage Q4 word filter on full phrases; host supplies excitation and coefficients; cycles include internal calls and RET, exclude outer RCALL',
+ scope:`Actual assembled 8-stage uniform Q${spec.coefficientBits} word filter on full phrases; host supplies excitation and promoted coefficients; cycles include internal calls and RET, exclude outer RCALL`,
  fullDecoderImplemented:false,hardwareTested:false};
 writeFileSync(output,JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));
