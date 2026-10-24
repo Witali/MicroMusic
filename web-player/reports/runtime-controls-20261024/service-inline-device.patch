@@ -1,0 +1,16 @@
+diff --git a/web-player/native/peripherals/device.c b/web-player/native/peripherals/device.c
+index 0baa450..959823f 100644
+--- a/web-player/native/peripherals/device.c
++++ b/web-player/native/peripherals/device.c
+@@ -541,7 +541,10 @@ static void service_end(void) {
+  timer_outputs(); sources();
+  inputs_at_current_time(); wake(); check_faults(); mirror();
+ }
+-static void service(uint64_t previous_half) {
++/* A second, rare buffered-loop caller must not outline ordinary event service.
++ * Preserve the hot loop's original integration and measure the size tradeoff. */
++__attribute__((always_inline))
++static inline void service(uint64_t previous_half) {
+  deadline_invalidate(DEADLINE_SERVICE);
+  if(board.clki_enabled){clki_service(previous_half);return;}
+  service_clocks(previous_half);service_async();service_end();

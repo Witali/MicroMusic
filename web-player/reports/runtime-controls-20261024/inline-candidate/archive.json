@@ -1,0 +1,103 @@
+{
+  "schema": "micromusic-static-comparison-archive-v1",
+  "origin": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\function-comparisons\\compare-t8Cw36",
+  "counts": {
+    "identical": 155,
+    "relocation-only": 36,
+    "body-changed": 2,
+    "added": 1,
+    "removed": 1
+  },
+  "files": {
+    "summary.json": {
+      "bytesNormalizedLF": 216263,
+      "sha256NormalizedLF": "9f98e29fd90fb14d9a9c6a5c62850c04bdd9166129d77fcfd044356d09540ee3"
+    },
+    "compare-source.mjs": {
+      "bytesNormalizedLF": 22143,
+      "sha256NormalizedLF": "8e53ef6424a7c2042856d8cd32f144223bb8c92a821f47c0e1a94ec9d1c1c166"
+    },
+    "baseline/provenance.json": {
+      "bytesNormalizedLF": 21646,
+      "sha256NormalizedLF": "455232cf169b2ab3e2ba49118253bf3152c0f5d3dc3b6a7cc115ccc4ac6aec43"
+    },
+    "baseline/functions.json": {
+      "bytesNormalizedLF": 56682,
+      "sha256NormalizedLF": "23fbe2f9be90df6bdddd5fa8eb3f2043a2d9a93fd3120a5c60d9df8cc499b14d"
+    },
+    "baseline/runtime-optimized.map": {
+      "bytesNormalizedLF": 4197,
+      "sha256NormalizedLF": "7a8a27a9e7296c97db34f434f8873663bdb1c1e8a088951f13e208c88b423ed7"
+    },
+    "baseline/device-build.json": {
+      "bytesNormalizedLF": 15952,
+      "sha256NormalizedLF": "a72ee78944b27763b98d274357e320afbbee5eb5f2663de506e2d06f79e96636"
+    },
+    "candidate/provenance.json": {
+      "bytesNormalizedLF": 21663,
+      "sha256NormalizedLF": "c0d3230f610e433151330b7de2fb1cd75a05469d645cb40f488967a31079e6fe"
+    },
+    "candidate/functions.json": {
+      "bytesNormalizedLF": 56687,
+      "sha256NormalizedLF": "e8c917c99cfc2a1c1bc571d59f645200a97787348508a4829c5ceb0188d95828"
+    },
+    "candidate/runtime-optimized.map": {
+      "bytesNormalizedLF": 4202,
+      "sha256NormalizedLF": "d37eeba4a744eb5d3114d7001ade2f9010b8643dd36c5a9e7cd26305888a018c"
+    },
+    "candidate/device-build.json": {
+      "bytesNormalizedLF": 15952,
+      "sha256NormalizedLF": "723282a18f875a21360ebeb66be6e1f9cef5e21436afea0bf2bd09794990b189"
+    },
+    "function-diffs-BX1JFz/advance_half_until_ps.diff": {
+      "bytesNormalizedLF": 14077,
+      "sha256NormalizedLF": "a1e9be8dbc69468b769f2707f65872fe705fbddd17d0868c2a85b2908ab38428"
+    },
+    "function-diffs-BX1JFz/advance_half_until_ps.before.wat": {
+      "bytesNormalizedLF": 30538,
+      "sha256NormalizedLF": "155b02dc89c8cfc8647f09356d047b538124e0a778f2ab6e21be251fefa31354"
+    },
+    "function-diffs-BX1JFz/advance_half_until_ps.after.wat": {
+      "bytesNormalizedLF": 30928,
+      "sha256NormalizedLF": "4f3da8fc9335bc15ff602dad192bcaab444a1346c6bb4b1290648efcca5346f2"
+    },
+    "function-diffs-BX1JFz/advance_to.diff": {
+      "bytesNormalizedLF": 2837,
+      "sha256NormalizedLF": "3586f7a23d0ac616b8052c86e6de461cb8ca1b757dd2f5b0cf628f46d7d7d275"
+    },
+    "function-diffs-BX1JFz/advance_to.before.wat": {
+      "bytesNormalizedLF": 3673,
+      "sha256NormalizedLF": "05c8579614700b9c6a7d6e18c155d845532d11aeae34c2b63eb6a79e369a8eee"
+    },
+    "function-diffs-BX1JFz/advance_to.after.wat": {
+      "bytesNormalizedLF": 3962,
+      "sha256NormalizedLF": "d88c0bb9db5a8e31050bd465655e69bc764e51e49f377fcb392234a1067a457e"
+    },
+    "function-diffs-BX1JFz/clki_service.diff": {
+      "bytesNormalizedLF": 44387,
+      "sha256NormalizedLF": "4fabf877649ac77d05be61a5f2873afd84770f2c97681e960b4a1989ee74956f"
+    },
+    "function-diffs-BX1JFz/clki_service.before.wat": {
+      "bytesNormalizedLF": 0,
+      "sha256NormalizedLF": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "function-diffs-BX1JFz/clki_service.after.wat": {
+      "bytesNormalizedLF": 41503,
+      "sha256NormalizedLF": "7a8699612c6be87a04060d31bd95c93e415c41bfd8bbdae27d643b686fb973c4"
+    },
+    "function-diffs-BX1JFz/service.diff": {
+      "bytesNormalizedLF": 49178,
+      "sha256NormalizedLF": "1b09ea1d856f80d0cc6211a0801e8d840a675bea20f2066abb9c743be7dedb8f"
+    },
+    "function-diffs-BX1JFz/service.before.wat": {
+      "bytesNormalizedLF": 46297,
+      "sha256NormalizedLF": "5e7758a69899b18b23f75d50c2845812c8433e02e94af941e44b35d55aa82db9"
+    },
+    "function-diffs-BX1JFz/service.after.wat": {
+      "bytesNormalizedLF": 0,
+      "sha256NormalizedLF": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "note": "Original summary paths refer to the diagnostic build directory. Only changed/added/removed normalized bodies and diffs are retained; relocation-only bodies are represented by exact hashes in the full inventories.",
+  "textNormalization": "UTF-8 with CRLF normalized to LF"
+}

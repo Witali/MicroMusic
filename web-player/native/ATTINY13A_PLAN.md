@@ -276,6 +276,26 @@ variation with identical-runtime controls and fresh profiles. This is the next
 stage5 attribution task; do not count the repair as a speed optimization or
 close the real-time/default-engine gate.
 
+Balanced-control checkpoint, 2026-10-24: four labels with identical-runtime
+pairs, equal full-workload warmups and balanced positions/adjacent pairs now
+separate host variation from cross-version changes. The initial CLKI /1 case
+already used the correct divisor; the strengthened runner asserts actual
+divisors explicitly. Exact rebuilt optimized-function inventories establish
+that the added buffered caller changed `service` outlining, while preserving
+the distinction between raw relocations and changed normalized bodies.
+An isolated `always_inline` wrapper experiment passed125 focused checks and
+6636 exact checkpoints across832 timed executions plus208 warmups, but failed
+the performance gate. Its apparent gains overlap material identical-binary
+variation, and both CLKI cases favor it in only3/16 trials. Production was
+restored exactly to `c302a77`; the1302-test correctness result still refers to
+that exact core. The [report](../reports/runtime-controls-20261024.md) retains
+sources, exact rejected binary, maps, raw observations and isolated reproduction.
+All three control experiments total1056 timed executions,320 warmups and8140
+checkpoints. Earlier slowdown ratios are observations from their recorded run,
+not a stable regression or proved source-level attribution. Stage5 remains
+open; the main count stays21/30. Next work needs a fresh profile and the same
+identity controls before another scheduling or compiler optimization is kept.
+
 The next analog step has a separate audited
 [ADC activity contract](devices/attiny13a/analog-activity.md): omit recurring
 ADC advancement/deadline queries only with ADEN clear, preserving every
@@ -381,7 +401,7 @@ promise of speedup or additional completed checklist items.
 
 | Priority | Candidate | Evidence required before keeping it |
 | --- | --- | --- |
-| 1 | Refresh the current profile, including native pin/PCM collection and CPU dispatch. Separate output subscriptions from internal GPIO consumers; evaluate collecting PCM at sample boundaries or queue pressure. | Independent host and PCM buffer ownership, unchanged pin timestamps and PCM, queue wrap/overflow tests, source-entry counts and uninstrumented paired timings. Do not infer speed from fewer collector entries. |
+| 1 | Refresh the current profile of the retained runtime, including CPU dispatch, continuation saves and enabled/idle peripheral service. Pin/PCM ownership and buffered long spans are implemented; broader activity gating remains open. | Balanced identical-runtime controls, independent pin/PCM parity, source-entry counts and uninstrumented paired timings. Inspect the exact optimized WASM when testing an inlining/layout hypothesis; reduced entries or changed C alone do not prove speed. |
 | 2 | Reduce continuation saves using per-phase temporary liveness. | The full-context path remains an oracle; partial execution, reset, faults and resume must not repeat bus effects or protected operations. Measure module size and warmed execution separately. |
 | 3 | Extend SREG liveness between connected blocks, then try constant and short-sequence folding as independent changes. | Exact C/chained-Z dependencies, all observable SREG values and original AVR cycle/phase boundaries; compare with full flags and the unchanged generated instruction path. |
 | 4 | Generate direct WASM control flow for proven regions and loops; reconsider register locals only when these larger regions can amortize their cost. | Safe indirect/external-entry fallback, coherent register aliases and visible AVR stack state; real-firmware gains in addition to synthetic-loop results. |
@@ -393,6 +413,14 @@ candidate whose benefit is unproven. Keep necessary external CLK transitions and
 peripheral events inside the native scheduler even when fewer WASM operations
 represent the same AVR instruction span. Device definitions, translator sources
 and generated artifacts remain separate.
+
+For execution measurements, preserve identity controls, actual clock-divisor
+assertions, equal warmups and balanced run ordering from
+`scripts/benchmark-runtime-controls.mjs`. Keep real firmware, direct CPU,
+internal/CLKI and enabled-ADC controls. Sampling/instrumented runs remain
+separate from speed measurements. The rejected single-service inline hint in
+`reports/runtime-controls-20261024.md` is recorded evidence, not a pending
+production change or an implemented optimization.
 
 #### Register-local experiment contract
 

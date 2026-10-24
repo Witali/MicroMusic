@@ -1,0 +1,760 @@
+TAP version 13
+# Subtest: the eager policy oracle uses fixed two-page memory without host imports
+ok 1 - the eager policy oracle uses fixed two-page memory without host imports
+  ---
+  duration_ms: 1.5495
+  type: 'test'
+  ...
+# Subtest: legacy: ordinary collection matches reference PCM and full state across sample/batch boundaries, channels1
+ok 2 - legacy: ordinary collection matches reference PCM and full state across sample/batch boundaries, channels1
+  ---
+  duration_ms: 69.7357
+  type: 'test'
+  ...
+# Subtest: legacy: ordinary collection matches reference PCM and full state across sample/batch boundaries, channels2
+ok 3 - legacy: ordinary collection matches reference PCM and full state across sample/batch boundaries, channels2
+  ---
+  duration_ms: 4.9827
+  type: 'test'
+  ...
+# Subtest: physical: ordinary collection matches reference PCM and full state across sample/batch boundaries, channels1
+ok 4 - physical: ordinary collection matches reference PCM and full state across sample/batch boundaries, channels1
+  ---
+  duration_ms: 6.2537
+  type: 'test'
+  ...
+# Subtest: physical: ordinary collection matches reference PCM and full state across sample/batch boundaries, channels2
+ok 5 - physical: ordinary collection matches reference PCM and full state across sample/batch boundaries, channels2
+  ---
+  duration_ms: 6.207
+  type: 'test'
+  ...
+# Subtest: legacy: maximum-rate CTC crosses pressure and queue-wrap boundaries with host mask0
+ok 6 - legacy: maximum-rate CTC crosses pressure and queue-wrap boundaries with host mask0
+  ---
+  duration_ms: 51.4308
+  type: 'test'
+  ...
+# Subtest: legacy: maximum-rate CTC crosses pressure and queue-wrap boundaries with host mask63
+ok 7 - legacy: maximum-rate CTC crosses pressure and queue-wrap boundaries with host mask63
+  ---
+  duration_ms: 41.8068
+  type: 'test'
+  ...
+# Subtest: physical: maximum-rate CTC crosses pressure and queue-wrap boundaries with host mask0
+ok 8 - physical: maximum-rate CTC crosses pressure and queue-wrap boundaries with host mask0
+  ---
+  duration_ms: 42.6348
+  type: 'test'
+  ...
+# Subtest: physical: maximum-rate CTC crosses pressure and queue-wrap boundaries with host mask63
+ok 9 - physical: maximum-rate CTC crosses pressure and queue-wrap boundaries with host mask63
+  ---
+  duration_ms: 38.9215
+  type: 'test'
+  ...
+# Subtest: resumable: maximum-rate CTC crosses pressure and queue-wrap boundaries with host mask0
+ok 10 - resumable: maximum-rate CTC crosses pressure and queue-wrap boundaries with host mask0
+  ---
+  duration_ms: 159.4277
+  type: 'test'
+  ...
+# Subtest: resumable: maximum-rate CTC crosses pressure and queue-wrap boundaries with host mask63
+ok 11 - resumable: maximum-rate CTC crosses pressure and queue-wrap boundaries with host mask63
+  ---
+  duration_ms: 37.3502
+  type: 'test'
+  ...
+# Subtest: timestamped input ties contribute only to the following sample
+ok 12 - timestamped input ties contribute only to the following sample
+  ---
+  duration_ms: 9.0802
+  type: 'test'
+  ...
+# Subtest: Timer0 IRQ entry, RETI and stack/frame bookkeeping remain identical
+ok 13 - Timer0 IRQ entry, RETI and stack/frame bookkeeping remain identical
+  ---
+  duration_ms: 130.8124
+  type: 'test'
+  ...
+# Subtest: sleep0: asynchronous watchdog wake and ISR match eager collection
+ok 14 - sleep0: asynchronous watchdog wake and ISR match eager collection
+  ---
+  duration_ms: 144.1266
+  type: 'test'
+  ...
+# Subtest: sleep2: asynchronous watchdog wake and ISR match eager collection
+ok 15 - sleep2: asynchronous watchdog wake and ISR match eager collection
+  ---
+  duration_ms: 104.4088
+  type: 'test'
+  ...
+# Subtest: an asynchronous RESET aborts the OUT write and preserves its exact PCM prefix
+ok 16 - an asynchronous RESET aborts the OUT write and preserves its exact PCM prefix
+  ---
+  duration_ms: 93.103
+  type: 'test'
+  ...
+# Subtest: EEPROM read stalls and asynchronous programming completion preserve full memory and PCM
+ok 17 - EEPROM read stalls and asynchronous programming completion preserve full memory and PCM
+  ---
+  duration_ms: 146.7113
+  type: 'test'
+  ...
+# Subtest: exceptional SPM700 preserves headroom after400 NOP transitions, resumablefalse
+ok 18 - exceptional SPM700 preserves headroom after400 NOP transitions, resumablefalse
+  ---
+  duration_ms: 45.4247
+  type: 'test'
+  ...
+# Subtest: exceptional SPM700 preserves headroom after400 NOP transitions, resumabletrue
+ok 19 - exceptional SPM700 preserves headroom after400 NOP transitions, resumabletrue
+  ---
+  duration_ms: 142.5319
+  type: 'test'
+  ...
+# Subtest: SPM long command keeps its original span and following commit, resumablefalse
+ok 20 - SPM long command keeps its original span and following commit, resumablefalse
+  ---
+  duration_ms: 31.4118
+  type: 'test'
+  ...
+# Subtest: SPM long command keeps its original span and following commit, resumabletrue
+ok 21 - SPM long command keeps its original span and following commit, resumabletrue
+  ---
+  duration_ms: 93.2059
+  type: 'test'
+  ...
+# Subtest: Flash programming halt, maximum-rate CTC and recompiled CPU match eager collection
+ok 22 - Flash programming halt, maximum-rate CTC and recompiled CPU match eager collection
+  ---
+  duration_ms: 257.5092
+  type: 'test'
+  ...
+# Subtest: CLKI divide1: partial phases, clock holds and exact sample deadlines match eager collection
+ok 23 - CLKI divide1: partial phases, clock holds and exact sample deadlines match eager collection
+  ---
+  duration_ms: 106.3768
+  type: 'test'
+  ...
+# Subtest: CLKI divide256: partial phases, clock holds and exact sample deadlines match eager collection
+ok 24 - CLKI divide256: partial phases, clock holds and exact sample deadlines match eager collection
+  ---
+  duration_ms: 5.7785
+  type: 'test'
+  ...
+# Subtest: long nonresumable span preserves ordinary-fault prefix time accounting
+ok 25 - long nonresumable span preserves ordinary-fault prefix time accounting
+  ---
+  duration_ms: 3.6175
+  type: 'test'
+  ...
+# Subtest: native CPU phases: layout and enable
+ok 26 - native CPU phases: layout and enable
+  ---
+  duration_ms: 2.6107
+  type: 'test'
+  ...
+# Subtest: native CPU phases: bounded fractional span
+ok 27 - native CPU phases: bounded fractional span
+  ---
+  duration_ms: 0.9299
+  type: 'test'
+  ...
+# Subtest: native CPU phases: exact deadline allows zero cycle commit
+ok 28 - native CPU phases: exact deadline allows zero cycle commit
+  ---
+  duration_ms: 1.0523
+  type: 'test'
+  ...
+# Subtest: native CPU phases: direct board prescaler boundary
+ok 29 - native CPU phases: direct board prescaler boundary
+  ---
+  duration_ms: 0.547
+  type: 'test'
+  ...
+# Subtest: native CPU phases: irq entry is staged and resumable
+ok 30 - native CPU phases: irq entry is staged and resumable
+  ---
+  duration_ms: 0.5975
+  type: 'test'
+  ...
+# Subtest: native CPU phases: irq wait can resume without instruction retirement
+ok 31 - native CPU phases: irq wait can resume without instruction retirement
+  ---
+  duration_ms: 0.4887
+  type: 'test'
+  ...
+# Subtest: native CPU phases: no arbitration mid instruction
+ok 32 - native CPU phases: no arbitration mid instruction
+  ---
+  duration_ms: 0.7388
+  type: 'test'
+  ...
+# Subtest: native CPU phases: async reset cancels instruction without error26
+ok 33 - native CPU phases: async reset cancels instruction without error26
+  ---
+  duration_ms: 0.7633
+  type: 'test'
+  ...
+# Subtest: native CPU phases: current time reset cancels context
+ok 34 - native CPU phases: current time reset cancels context
+  ---
+  duration_ms: 1.1107
+  type: 'test'
+  ...
+# Subtest: native CPU phases: reset during irq cancels later stack and vector
+ok 35 - native CPU phases: reset during irq cancels later stack and vector
+  ---
+  duration_ms: 0.9272
+  type: 'test'
+  ...
+# Subtest: native CPU phases: spm halt and generation do not strand active instruction
+ok 36 - native CPU phases: spm halt and generation do not strand active instruction
+  ---
+  duration_ms: 0.7404
+  type: 'test'
+  ...
+# Subtest: native CPU phases: sleep controller can halt before retirement
+ok 37 - native CPU phases: sleep controller can halt before retirement
+  ---
+  duration_ms: 1.2386
+  type: 'test'
+  ...
+# Subtest: native CPU phases: disabled legacy irq is unbounded
+ok 38 - native CPU phases: disabled legacy irq is unbounded
+  ---
+  duration_ms: 0.6177
+  type: 'test'
+  ...
+# Subtest: native CPU phases: zero span retires sleep during immediate bod wake recovery
+ok 39 - native CPU phases: zero span retires sleep during immediate bod wake recovery
+  ---
+  duration_ms: 0.9411
+  type: 'test'
+  ...
+# Subtest: native CPU phases: zero span preserves reset and fault priority
+ok 40 - native CPU phases: zero span preserves reset and fault priority
+  ---
+  duration_ms: 0.5863
+  type: 'test'
+  ...
+# Subtest: native CPU phases: invalid phase calls fault without retiring
+ok 41 - native CPU phases: invalid phase calls fault without retiring
+  ---
+  duration_ms: 0.568
+  type: 'test'
+  ...
+# Subtest: PUSH/POP commit at C2 and a reset at that timestamp wins
+ok 42 - PUSH/POP commit at C2 and a reset at that timestamp wins
+  ---
+  duration_ms: 134.3511
+  type: 'test'
+  ...
+# Subtest: RCALL stack bytes commit separately at C2 and C3
+ok 43 - RCALL stack bytes commit separately at C2 and C3
+  ---
+  duration_ms: 34.149
+  type: 'test'
+  ...
+# Subtest: ICALL stack bytes commit separately at C2 and C3
+ok 44 - ICALL stack bytes commit separately at C2 and C3
+  ---
+  duration_ms: 35.6654
+  type: 'test'
+  ...
+# Subtest: RET retires PC and I after C4
+ok 45 - RET retires PC and I after C4
+  ---
+  duration_ms: 51.5584
+  type: 'test'
+  ...
+# Subtest: RETI retires PC and I after C4
+ok 46 - RETI retires PC and I after C4
+  ---
+  duration_ms: 39.0059
+  type: 'test'
+  ...
+# Subtest: reset during IRQ entry prevents later stack bytes and phantom ISR frames
+ok 47 - reset during IRQ entry prevents later stack bytes and phantom ISR frames
+  ---
+  duration_ms: 39.7832
+  type: 'test'
+  ...
+# Subtest: nested interrupt frames retain four-cycle entry and RETI accounting
+ok 48 - nested interrupt frames retain four-cycle entry and RETI accounting
+  ---
+  duration_ms: 21.6973
+  type: 'test'
+  ...
+# Subtest: ALU and word-register results are not written before their completion edge
+ok 49 - ALU and word-register results are not written before their completion edge
+  ---
+  duration_ms: 34.3149
+  type: 'test'
+  ...
+# Subtest: indirect predecrement and SRAM store wait for completion
+ok 50 - indirect predecrement and SRAM store wait for completion
+  ---
+  duration_ms: 46.4228
+  type: 'test'
+  ...
+# Subtest: LPM recognizes its command at start but commits data and Z at C3
+ok 51 - LPM recognizes its command at start but commits data and Z at C3
+  ---
+  duration_ms: 28.6988
+  type: 'test'
+  ...
+# Subtest: OUT PORT then IN PIN requires a separating cycle at both factory and playback divisors
+ok 52 - OUT PORT then IN PIN requires a separating cycle at both factory and playback divisors
+  ---
+  duration_ms: 18.4582
+  type: 'test'
+  ...
+# Subtest: a reset after IN samples the bus still cancels the destination write
+ok 53 - a reset after IN samples the bus still cancels the destination write
+  ---
+  duration_ms: 17.5117
+  type: 'test'
+  ...
+# Subtest: long internal SPM phase streams across sample and ring boundaries, 9600000Hz/8000Hz, mask0, channels1
+ok 54 - long internal SPM phase streams across sample and ring boundaries, 9600000Hz/8000Hz, mask0, channels1
+  ---
+  duration_ms: 158.0854
+  type: 'test'
+  ...
+# Subtest: long internal SPM phase streams across sample and ring boundaries, 9600000Hz/8000Hz, mask0, channels2
+ok 55 - long internal SPM phase streams across sample and ring boundaries, 9600000Hz/8000Hz, mask0, channels2
+  ---
+  duration_ms: 29.7341
+  type: 'test'
+  ...
+# Subtest: long internal SPM phase streams across sample and ring boundaries, 9600000Hz/8000Hz, mask63, channels1
+ok 56 - long internal SPM phase streams across sample and ring boundaries, 9600000Hz/8000Hz, mask63, channels1
+  ---
+  duration_ms: 33.0872
+  type: 'test'
+  ...
+# Subtest: long internal SPM phase streams across sample and ring boundaries, 9600000Hz/8000Hz, mask63, channels2
+ok 57 - long internal SPM phase streams across sample and ring boundaries, 9600000Hz/8000Hz, mask63, channels2
+  ---
+  duration_ms: 29.8877
+  type: 'test'
+  ...
+# Subtest: long internal SPM phase streams across sample and ring boundaries, 9000000Hz/11025Hz, mask0, channels1
+ok 58 - long internal SPM phase streams across sample and ring boundaries, 9000000Hz/11025Hz, mask0, channels1
+  ---
+  duration_ms: 27.4421
+  type: 'test'
+  ...
+# Subtest: long internal SPM phase streams across sample and ring boundaries, 9000000Hz/11025Hz, mask0, channels2
+ok 59 - long internal SPM phase streams across sample and ring boundaries, 9000000Hz/11025Hz, mask0, channels2
+  ---
+  duration_ms: 19.3425
+  type: 'test'
+  ...
+# Subtest: long internal SPM phase streams across sample and ring boundaries, 9000000Hz/11025Hz, mask63, channels1
+ok 60 - long internal SPM phase streams across sample and ring boundaries, 9000000Hz/11025Hz, mask63, channels1
+  ---
+  duration_ms: 21.6791
+  type: 'test'
+  ...
+# Subtest: long internal SPM phase streams across sample and ring boundaries, 9000000Hz/11025Hz, mask63, channels2
+ok 61 - long internal SPM phase streams across sample and ring boundaries, 9000000Hz/11025Hz, mask63, channels2
+  ---
+  duration_ms: 17.8982
+  type: 'test'
+  ...
+# Subtest: long internal SPM phase streams across sample and ring boundaries, 20000000Hz/8000Hz, mask0, channels1
+ok 62 - long internal SPM phase streams across sample and ring boundaries, 20000000Hz/8000Hz, mask0, channels1
+  ---
+  duration_ms: 10.4421
+  type: 'test'
+  ...
+# Subtest: long internal SPM phase streams across sample and ring boundaries, 20000000Hz/8000Hz, mask0, channels2
+ok 63 - long internal SPM phase streams across sample and ring boundaries, 20000000Hz/8000Hz, mask0, channels2
+  ---
+  duration_ms: 14.2198
+  type: 'test'
+  ...
+# Subtest: long internal SPM phase streams across sample and ring boundaries, 20000000Hz/8000Hz, mask63, channels1
+ok 64 - long internal SPM phase streams across sample and ring boundaries, 20000000Hz/8000Hz, mask63, channels1
+  ---
+  duration_ms: 11.742
+  type: 'test'
+  ...
+# Subtest: long internal SPM phase streams across sample and ring boundaries, 20000000Hz/8000Hz, mask63, channels2
+ok 65 - long internal SPM phase streams across sample and ring boundaries, 20000000Hz/8000Hz, mask63, channels2
+  ---
+  duration_ms: 16.3853
+  type: 'test'
+  ...
+# Subtest: legacy baseHalf: draining host history between captures cannot steal PCM transitions
+ok 66 - legacy baseHalf: draining host history between captures cannot steal PCM transitions
+  ---
+  duration_ms: 55.4135
+  type: 'test'
+  ...
+# Subtest: legacy baseHalf: host masks do not change 1-channel PCM at 8000Hz
+ok 67 - legacy baseHalf: host masks do not change 1-channel PCM at 8000Hz
+  ---
+  duration_ms: 11.4426
+  type: 'test'
+  ...
+# Subtest: legacy baseHalf: host masks do not change 1-channel PCM at 48000Hz
+ok 68 - legacy baseHalf: host masks do not change 1-channel PCM at 48000Hz
+  ---
+  duration_ms: 7.578
+  type: 'test'
+  ...
+# Subtest: legacy baseHalf: host masks do not change 1-channel PCM at 192000Hz
+ok 69 - legacy baseHalf: host masks do not change 1-channel PCM at 192000Hz
+  ---
+  duration_ms: 7.5694
+  type: 'test'
+  ...
+# Subtest: legacy baseHalf: host masks do not change 2-channel PCM at 8000Hz
+ok 70 - legacy baseHalf: host masks do not change 2-channel PCM at 8000Hz
+  ---
+  duration_ms: 11.9615
+  type: 'test'
+  ...
+# Subtest: legacy baseHalf: host masks do not change 2-channel PCM at 48000Hz
+ok 71 - legacy baseHalf: host masks do not change 2-channel PCM at 48000Hz
+  ---
+  duration_ms: 6.7005
+  type: 'test'
+  ...
+# Subtest: legacy baseHalf: host masks do not change 2-channel PCM at 192000Hz
+ok 72 - legacy baseHalf: host masks do not change 2-channel PCM at 192000Hz
+  ---
+  duration_ms: 6.2258
+  type: 'test'
+  ...
+# Subtest: legacy baseHalf: retained host snapshots and private PCM can be consumed independently
+ok 73 - legacy baseHalf: retained host snapshots and private PCM can be consumed independently
+  ---
+  duration_ms: 4.9292
+  type: 'test'
+  ...
+# Subtest: legacy baseHalf: mask changes return the live baseline without clearing or replaying history
+ok 74 - legacy baseHalf: mask changes return the live baseline without clearing or replaying history
+  ---
+  duration_ms: 2.9599
+  type: 'test'
+  ...
+# Subtest: legacy baseHalf: a new stream uses live levels rather than retained old host rows
+ok 75 - legacy baseHalf: a new stream uses live levels rather than retained old host rows
+  ---
+  duration_ms: 3.2454
+  type: 'test'
+  ...
+# Subtest: legacy baseHalf: reset transitions remain in PCM even with host history disabled
+ok 76 - legacy baseHalf: reset transitions remain in PCM even with host history disabled
+  ---
+  duration_ms: 4.7472
+  type: 'test'
+  ...
+# Subtest: legacy baseHalf: clock-stopped sleep and watchdog wake retain the observation policy
+ok 77 - legacy baseHalf: clock-stopped sleep and watchdog wake retain the observation policy
+  ---
+  duration_ms: 37.2136
+  type: 'test'
+  ...
+# Subtest: physical ps: draining host history between captures cannot steal PCM transitions
+ok 78 - physical ps: draining host history between captures cannot steal PCM transitions
+  ---
+  duration_ms: 4.8202
+  type: 'test'
+  ...
+# Subtest: physical ps: host masks do not change 1-channel PCM at 8000Hz
+ok 79 - physical ps: host masks do not change 1-channel PCM at 8000Hz
+  ---
+  duration_ms: 9.315
+  type: 'test'
+  ...
+# Subtest: physical ps: host masks do not change 1-channel PCM at 48000Hz
+ok 80 - physical ps: host masks do not change 1-channel PCM at 48000Hz
+  ---
+  duration_ms: 9.5851
+  type: 'test'
+  ...
+# Subtest: physical ps: host masks do not change 1-channel PCM at 192000Hz
+ok 81 - physical ps: host masks do not change 1-channel PCM at 192000Hz
+  ---
+  duration_ms: 7.9571
+  type: 'test'
+  ...
+# Subtest: physical ps: host masks do not change 2-channel PCM at 8000Hz
+ok 82 - physical ps: host masks do not change 2-channel PCM at 8000Hz
+  ---
+  duration_ms: 7.5479
+  type: 'test'
+  ...
+# Subtest: physical ps: host masks do not change 2-channel PCM at 48000Hz
+ok 83 - physical ps: host masks do not change 2-channel PCM at 48000Hz
+  ---
+  duration_ms: 6.249
+  type: 'test'
+  ...
+# Subtest: physical ps: host masks do not change 2-channel PCM at 192000Hz
+ok 84 - physical ps: host masks do not change 2-channel PCM at 192000Hz
+  ---
+  duration_ms: 5.1259
+  type: 'test'
+  ...
+# Subtest: physical ps: retained host snapshots and private PCM can be consumed independently
+ok 85 - physical ps: retained host snapshots and private PCM can be consumed independently
+  ---
+  duration_ms: 4.4335
+  type: 'test'
+  ...
+# Subtest: physical ps: mask changes return the live baseline without clearing or replaying history
+ok 86 - physical ps: mask changes return the live baseline without clearing or replaying history
+  ---
+  duration_ms: 2.068
+  type: 'test'
+  ...
+# Subtest: physical ps: a new stream uses live levels rather than retained old host rows
+ok 87 - physical ps: a new stream uses live levels rather than retained old host rows
+  ---
+  duration_ms: 2.1046
+  type: 'test'
+  ...
+# Subtest: physical ps: reset transitions remain in PCM even with host history disabled
+ok 88 - physical ps: reset transitions remain in PCM even with host history disabled
+  ---
+  duration_ms: 4.5585
+  type: 'test'
+  ...
+# Subtest: physical ps: clock-stopped sleep and watchdog wake retain the observation policy
+ok 89 - physical ps: clock-stopped sleep and watchdog wake retain the observation policy
+  ---
+  duration_ms: 4.7267
+  type: 'test'
+  ...
+# Subtest: outside capture, default observation remains the complete physical trace
+ok 90 - outside capture, default observation remains the complete physical trace
+  ---
+  duration_ms: 2.4999
+  type: 'test'
+  ...
+# Subtest: invalid observation arguments are rejected without changing policy, time or host rows
+ok 91 - invalid observation arguments are rejected without changing policy, time or host rows
+  ---
+  duration_ms: 1.8997
+  type: 'test'
+  ...
+# Subtest: GPIO input transitions survive host draining while capture channel/rate stay fixed
+ok 92 - GPIO input transitions survive host draining while capture channel/rate stay fixed
+  ---
+  duration_ms: 2.4652
+  type: 'test'
+  ...
+# Subtest: bounded external-clock capture keeps PCM independent of host-drained source-edge history
+ok 93 - bounded external-clock capture keeps PCM independent of host-drained source-edge history
+  ---
+  duration_ms: 86.2642
+  type: 'test'
+  ...
+# Subtest: renderers preserve explicit observers; packages retain default trace and permit explicit opt-out
+ok 94 - renderers preserve explicit observers; packages retain default trace and permit explicit opt-out
+  ---
+  duration_ms: 116.4161
+  type: 'test'
+  ...
+# Subtest: original package v1 keeps legacy capture with explicit unsupported-observer fallback
+ok 95 - original package v1 keeps legacy capture with explicit unsupported-observer fallback
+  ---
+  duration_ms: 107.2423
+  type: 'test'
+  ...
+# Subtest: original package v3 keeps legacy capture with explicit unsupported-observer fallback
+ok 96 - original package v3 keeps legacy capture with explicit unsupported-observer fallback
+  ---
+  duration_ms: 112.7166
+  type: 'test'
+  ...
+# Subtest: internal buffered span: watermark before either endpoint
+ok 97 - internal buffered span: watermark before either endpoint
+  ---
+  duration_ms: 6.1309
+  type: 'test'
+  ...
+# Subtest: internal buffered span: watermark exactly at the wall
+ok 98 - internal buffered span: watermark exactly at the wall
+  ---
+  duration_ms: 2.4402
+  type: 'test'
+  ...
+# Subtest: internal buffered span: watermark exactly at request completion
+ok 99 - internal buffered span: watermark exactly at request completion
+  ---
+  duration_ms: 2.4021
+  type: 'test'
+  ...
+# Subtest: internal buffered span: watermark, wall and completion together
+ok 100 - internal buffered span: watermark, wall and completion together
+  ---
+  duration_ms: 2.2564
+  type: 'test'
+  ...
+# Subtest: fractional wall one picosecond before the watermark retains its final half and phase
+ok 101 - fractional wall one picosecond before the watermark retains its final half and phase
+  ---
+  duration_ms: 5.7533
+  type: 'test'
+  ...
+# Subtest: a prefilled watermark yields consumed=0, then draining resumes the unchanged request
+ok 102 - a prefilled watermark yields consumed=0, then draining resumes the unchanged request
+  ---
+  duration_ms: 2.8193
+  type: 'test'
+  ...
+# Subtest: ordinary short spans preserve the original path even with an existing watermark
+ok 103 - ordinary short spans preserve the original path even with an existing watermark
+  ---
+  duration_ms: 6.6157
+  type: 'test'
+  ...
+# Subtest: same-time input changes settle and coalesce before the watermark is exposed
+ok 104 - same-time input changes settle and coalesce before the watermark is exposed
+  ---
+  duration_ms: 4.2077
+  type: 'test'
+  ...
+# Subtest: same-time asynchronous RESET wins over pressure and preserves its exact prefix
+ok 105 - same-time asynchronous RESET wins over pressure and preserves its exact prefix
+  ---
+  duration_ms: 3.4286
+  type: 'test'
+  ...
+# Subtest: wrapped total occupancy yields even when its contiguous head is below the watermark
+ok 106 - wrapped total occupancy yields even when its contiguous head is below the watermark
+  ---
+  duration_ms: 5.5373
+  type: 'test'
+  ...
+# Subtest: a CLKPR transition inside a long span preserves physical time, all records and fractional state
+ok 107 - a CLKPR transition inside a long span preserves physical time, all records and fractional state
+  ---
+  duration_ms: 2.7344
+  type: 'test'
+  ...
+# Subtest: retained host history alone is not an undrainable internal BUFFER_READY condition
+ok 108 - retained host history alone is not an undrainable internal BUFFER_READY condition
+  ---
+  duration_ms: 1.034
+  type: 'test'
+  ...
+# Subtest: an ordinary NVM fault after the first drainage retains the original unbuffered endpoint
+ok 109 - an ordinary NVM fault after the first drainage retains the original unbuffered endpoint
+  ---
+  duration_ms: 4.0146
+  type: 'test'
+  ...
+# Subtest: zero trailing spans retire during actual BOD wake recovery while nonzero spans wait
+ok 110 - zero trailing spans retire during actual BOD wake recovery while nonzero spans wait
+  ---
+  duration_ms: 0.7484
+  type: 'test'
+  ...
+# Subtest: cold init restores full trace; invalid observer/audio requests preserve configuration and queues
+ok 111 - cold init restores full trace; invalid observer/audio requests preserve configuration and queues
+  ---
+  duration_ms: 3.2182
+  type: 'test'
+  ...
+# Subtest: default history exactly preserves the former same-timestamp, wrapped and overflowing prefix
+ok 112 - default history exactly preserves the former same-timestamp, wrapped and overflowing prefix
+  ---
+  duration_ms: 15.7647
+  type: 'test'
+  ...
+# Subtest: host mask filters all pin metadata while current pins always retain full live state
+ok 113 - host mask filters all pin metadata while current pins always retain full live state
+  ---
+  duration_ms: 0.8476
+  type: 'test'
+  ...
+# Subtest: subscriptions preserve queued history, create no fake baseline, and coalesce only matching timestamps
+ok 114 - subscriptions preserve queued history, create no fake baseline, and coalesce only matching timestamps
+  ---
+  duration_ms: 0.6215
+  type: 'test'
+  ...
+# Subtest: private PCM contains only subscribed level changes; host drain/clear cannot steal them
+ok 115 - private PCM contains only subscribed level changes; host drain/clear cannot steal them
+  ---
+  duration_ms: 0.729
+  type: 'test'
+  ...
+# Subtest: new audio timeline clears only PCM backlog; MCU reset preserves streams and subscriptions
+ok 116 - new audio timeline clears only PCM backlog; MCU reset preserves streams and subscriptions
+  ---
+  duration_ms: 1.4942
+  type: 'test'
+  ...
+# Subtest: legacy audio discard removes only host rows through its frontier; retained ownership prevents discard
+ok 117 - legacy audio discard removes only host rows through its frontier; retained ownership prevents discard
+  ---
+  duration_ms: 0.7227
+  type: 'test'
+  ...
+# Subtest: PCM wrapping and overflow preserve its own chronological prefix and host dropped accounting
+ok 118 - PCM wrapping and overflow preserve its own chronological prefix and host dropped accounting
+  ---
+  duration_ms: 2.6633
+  type: 'test'
+  ...
+# Subtest: buffer pressure uses PCM and legacy host queues, never an explicitly retained host queue
+ok 119 - buffer pressure uses PCM and legacy host queues, never an explicitly retained host queue
+  ---
+  duration_ms: 1.4333
+  type: 'test'
+  ...
+# Subtest: retained CLKI history actually faults on capacity rather than yielding into an undrainable loop
+ok 120 - retained CLKI history actually faults on capacity rather than yielding into an undrainable loop
+  ---
+  duration_ms: 2.813
+  type: 'test'
+  ...
+# Subtest: legacy CLKI history yields at the same watermark, then native discard permits forward progress
+ok 121 - legacy CLKI history yields at the same watermark, then native discard permits forward progress
+  ---
+  duration_ms: 1.6841
+  type: 'test'
+  ...
+# Subtest: unobserved CLKI still advances all live GPIO/ADC/timer/IRQ phases with independent PCM
+ok 122 - unobserved CLKI still advances all live GPIO/ADC/timer/IRQ phases with independent PCM
+  ---
+  duration_ms: 3.3956
+  type: 'test'
+  ...
+# Subtest: control schedule balances every position and every directed adjacent pair
+ok 123 - control schedule balances every position and every directed adjacent pair
+  ---
+  duration_ms: 3.248
+  type: 'test'
+  ...
+# Subtest: identity controls remain one while a known cross-version cost is recovered
+ok 124 - identity controls remain one while a known cross-version cost is recovered
+  ---
+  duration_ms: 1.0508
+  type: 'test'
+  ...
+# Subtest: invalid observations and ordering cannot silently produce a benchmark summary
+ok 125 - invalid observations and ordering cannot silently produce a benchmark summary
+  ---
+  duration_ms: 3.1166
+  type: 'test'
+  ...
+1..125
+# tests 125
+# suites 0
+# pass 125
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 10167.4386

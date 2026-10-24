@@ -160,3 +160,9 @@ checklist item. The overall plan remains21/30 complete with nine open. No
 physical-chip measurement is added; hardware acceptance, TOP=0, debugWIRE,
 performance/cache work and the default-engine gate remain open. External
 programming remains outside the requested scope.
+
+Follow-up: [balanced identity controls and exact optimized-function comparisons](runtime-controls-20261024.md)
+do not establish these slowdown ratios as stable regressions. A single-wrapper
+inline candidate was rejected after separate measurements; the correctness
+repair remains byte-identical to `c302a77`. Preserve the raw timing observations
+above without treating them as exclusive subsystem costs or a proved cause.
