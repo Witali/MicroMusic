@@ -327,6 +327,43 @@ alternation beyond 128 toggles, eight-form mixed packets and full phrases in
 three engines. The [half-pitch study](../research/q3-adaptive/README.md) retains
 the measured spectral/intelligibility changes, complete images and limits.
 
+## Recipe: compact signed word multiplication by a fractional nibble
+
+[`word-q4/multiply.S`](word-q4/multiply.S) supplies Q4 and Q5 entry points in
+**72 bytes total**, sharing the body. Input is signed `r19:r18`, coefficient
+is preserved in `r20`, and output is `r25:r24`. It also preserves `r16:r17`,
+pointer registers and SREG.T/I; `r27` must be zero. It implements symmetric
+nearest rounding, with ties away from zero, rather than the old floor profile.
+
+After the coefficient's sign handling, form an unsigned magnitude up to 32768.
+Starting with a zero accumulator, consume coefficient bits from low to high:
+add the magnitude when the bit is one, then shift the accumulator right once.
+Four steps give `floor(magnitude*coefficient/16)`. The accumulator is always
+less than the magnitude before the next addition, so their sum fits unsigned
+16 bits. No 24-bit product or shifted multiplicand is needed. The last ROR's
+carry is the half-bit for rounding; DEC/BRNE preserve it. Round the magnitude,
+then restore its sign. The Q5 entry uses five steps and can also handle the
+half-unit waveform/gain product with an appropriate fixed input scale.
+
+The initial coefficient-sign negation wraps as a 16-bit operation, including
+`-32768`, matching the guarded PC decoder exactly. The subsequent absolute
+magnitude uses unsigned 32768. This avoids silently changing that corner case.
+
+The [retained isolated proof](../research/word-q4/multiplier.json) checks
+**6,147,462 scalar calls** in three AVR engines. Q4 exhausts every signed
+16-bit input with coefficients -15..15. Q5 covers boundary/strided words, all
+coefficients and every physical tap/gain pair. An additional **192 IRQ cases**
+interrupt between the final ROR and ADC, checking carry, SREG.T/I, caller
+registers and stack restoration. Both Q4/Q5 routines occupy 72 bytes together;
+the complete fixture with vectors and IRQ is 104 bytes.
+
+Measured entry-through-RET bounds are **13–66 cycles for Q4** and **11–73 for Q5**,
+excluding the caller's RCALL. A complete lattice uses fifteen word products
+per sample, plus excitation, parsing, output and interrupt work. These isolated
+figures do not prove the full decoder's deadline, SRAM bound or 1024-byte fit.
+`probe-word-q4-mul.py` defaults to exhaustive Q4 verification; its `--quick`
+profile is used by the ordinary test suite to avoid repeating millions of calls.
+
 ## Changes that preserve the decoded bytes
 
 - **Round using the last discarded bit.** After a signed ASR/ROR loop, carry
