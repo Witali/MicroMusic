@@ -420,6 +420,17 @@ boundaries. Kernel sample counts are small. Sampling is not exclusive timing or
 a speedup claim; balanced uninstrumented controls, CLKI and enabled-ADC cases
 remain mandatory before acceptance. Continuation liveness stays separate.
 
+Equal-rate arithmetic checkpoint: the [identity fast path](../reports/clock-identity-20261024.md)
+passes 1633 tests but fails the real-firmware speed gate. Six completed cases
+retain 384 timed runs, 96 warmups and 5688 exact checkpoints; physical medians
+are 0.967x/0.960x/0.980x. The remaining performance cases were stopped, with the
+incomplete marker preserved. Production was restored exactly. Keep the added
+full-width arithmetic boundary coverage and do not repeat this condition-only
+guard. Next, test avoiding the overflow-check division when both multiplicands
+fit 32 bits, with a separate addition-overflow check for a 64-bit carry and the
+unchanged wide fallback. This is a hypothesis, not a retained optimization;
+acceptance still needs CLKI/active-ADC and balanced identity controls.
+
 | Priority | Candidate | Evidence required before keeping it |
 | --- | --- | --- |
 | 1 | Use the refreshed profile to test fewer repeated event/time conversions in `next_event`, `ratio` and `duration`. Broader peripheral activity gating remains open. | Exact integer residues, clock/input/event boundaries and pin/PCM parity; enabled-ADC and CLKI controls. Use balanced identical-runtime controls and uninstrumented paired timings. Inspect the exact optimized WASM for an inlining/layout hypothesis; reduced entries alone do not prove speed. |

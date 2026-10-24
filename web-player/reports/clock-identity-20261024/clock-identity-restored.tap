@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: equal clock rates retain full-width counters, proper and improper carries, and input validation
+ok 1 - equal clock rates retain full-width counters, proper and improper carries, and input validation
+  ---
+  duration_ms: 1.3725
+  type: 'test'
+  ...
+# Subtest: clock multiply-add/divide matches128-bit oracle across overflow boundaries
+ok 2 - clock multiply-add/divide matches128-bit oracle across overflow boundaries
+  ---
+  duration_ms: 2.9638
+  type: 'test'
+  ...
+# Subtest: clock deadline calculation preserves phase before rounding and detects overflow
+ok 3 - clock deadline calculation preserves phase before rounding and detects overflow
+  ---
+  duration_ms: 0.3566
+  type: 'test'
+  ...
+# Subtest: control schedule balances every position and every directed adjacent pair
+ok 4 - control schedule balances every position and every directed adjacent pair
+  ---
+  duration_ms: 2.9813
+  type: 'test'
+  ...
+# Subtest: identity controls remain one while a known cross-version cost is recovered
+ok 5 - identity controls remain one while a known cross-version cost is recovered
+  ---
+  duration_ms: 1.0534
+  type: 'test'
+  ...
+# Subtest: invalid observations and ordering cannot silently produce a benchmark summary
+ok 6 - invalid observations and ordering cannot silently produce a benchmark summary
+  ---
+  duration_ms: 3.5562
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 548.4538

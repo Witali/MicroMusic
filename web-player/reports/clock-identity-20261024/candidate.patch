@@ -1,0 +1,26 @@
+diff --git a/web-player/native/peripherals/device_clock.h b/web-player/native/peripherals/device_clock.h
+index f0b9653..56114b1 100644
+--- a/web-player/native/peripherals/device_clock.h
++++ b/web-player/native/peripherals/device_clock.h
+@@ -8,6 +8,11 @@
+ static inline int device_clock_ratio(uint64_t a,uint64_t b,uint64_t carry,
+  uint64_t divisor,uint64_t *quotient,uint64_t *remainder) {
+  if (!divisor) return 0;
++ /* Equal rates preserve the integral value and its proper fractional carry,
++  * including products wider than64 bits. Validate before taking this path. */
++ if (b==divisor && carry<divisor) {
++  *quotient=a; *remainder=carry; return 1;
++ }
+  if (!b || a<=(UINT64_MAX-carry)/b) {
+   uint64_t n=a*b+carry;
+   *quotient=n/divisor; *remainder=n%divisor; return 1;
+@@ -42,6 +47,9 @@ static inline int device_clock_ratio(uint64_t a,uint64_t b,uint64_t carry,
+ static inline int device_clock_delay(uint64_t units,uint64_t denominator,
+  uint64_t rate,uint64_t phase,uint64_t *ticks) {
+  if (!rate || !denominator || phase>=denominator) return 0;
++ /* ceil(units-phase/rate)==units for a proper phase and positive units;
++  * the existing zero-unit contract also returns zero. */
++ if (denominator==rate) { *ticks=units; return 1; }
+  if (!units) { *ticks=0; return 1; }
+  uint64_t q,r;
+  if (!device_clock_ratio(units,denominator,0,rate,&q,&r)) return 0;
