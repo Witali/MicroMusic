@@ -465,8 +465,17 @@ static void service_clocks(uint64_t previous_half) {
   if (error) fail(DEVICE_FAULT_TIMER,(uint32_t)error);
  }
 }
+static int nvm_active(void) {
+ /* Only timed commands and programming require recurring service. An idle
+  * controller's private timestamps catch up inside every NVM bus/control
+  * operation, before it can arm another event. EERIE is a separate IRQ level,
+  * not evidence of timed work; it remains visible through device_pending_irqs. */
+ return (board.nvm.eecr&NVM_EEMPE) || board.nvm.spmcsr ||
+  board.nvm.eeprom_busy || board.nvm.flash_busy;
+}
 static void service_async(void) {
- supply_guard();nvm_advance(&board.nvm,cpu_cycle(),board.ns);
+ supply_guard();
+ if(nvm_active())nvm_advance(&board.nvm,cpu_cycle(),board.ns);
  if(board.reset_input_enabled){
   if(!attiny13a_reset_input_advance(&board.reset_input,board.base))
    fail(DEVICE_FAULT_RESET_INPUT,board.reset_input.fault);
@@ -517,6 +526,7 @@ static void service(uint64_t previous_half) {
  service_clocks(previous_half);service_async();service_end();
 }
 static uint64_t next_event_scan(void) {
+ int nvm_running=nvm_active();
  uint64_t next=at_cycle(timer0_next_event(&board.timer));
  if(board.reset_input_enabled)
   next=minimum(next,attiny13a_reset_input_next_deadline(&board.reset_input));
@@ -526,11 +536,13 @@ static uint64_t next_event_scan(void) {
  }
  next=minimum(next,at_half(system_gpio_next_event_half(&board.gpio,board.half)));
  next=minimum(next,at_half(analog_next_event(&board.analog)));
- next=minimum(next,at_cycle(nvm_next_event_cycle(&board.nvm)));
+ if(nvm_running)next=minimum(next,at_cycle(nvm_next_event_cycle(&board.nvm)));
  if (board.bod_arm_until) next=minimum(next,at_cycle(board.bod_arm_until));
  if (board.bod_sleep_until) next=minimum(next,at_cycle(board.bod_sleep_until));
- uint64_t ns=nvm_next_event_ns(&board.nvm);
- if (ns!=UINT64_MAX) next=minimum(next,after_units(ns>board.ns?ns-board.ns:0,1000000000,board.ns_remainder));
+ if(nvm_running) {
+  uint64_t ns=nvm_next_event_ns(&board.nvm);
+  if (ns!=UINT64_MAX) next=minimum(next,after_units(ns>board.ns?ns-board.ns:0,1000000000,board.ns_remainder));
+ }
  if (!board.reset_requested && !board.reset_held && !reset_starting()) {
   uint32_t left=system_watchdog_until_timeout(&board.watchdog);
   if (left) next=minimum(next,after_units(left,board.config[DEVICE_CFG_WATCHDOG_HZ],board.wdt_remainder));

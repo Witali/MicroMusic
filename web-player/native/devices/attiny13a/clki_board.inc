@@ -206,7 +206,7 @@ static void clki_service(uint64_t previous_half) {
  if(sleep&SYSTEM_SLEEP_INVALID_TIME)fail(DEVICE_FAULT_SLEEP,sleep);
  /* Protected CPU-cycle windows expire on delivered phases too. Independent
   * counters were already advanced above; this second update charges no time. */
- nvm_advance(&board.nvm,cpu_cycle(),board.ns);
+ if(nvm_active())nvm_advance(&board.nvm,cpu_cycle(),board.ns);
  uint8_t wdt=system_watchdog_advance(&board.watchdog,cpu_cycle(),board.wdt_ticks);
  if(wdt&(SYSTEM_WDT_RESERVED|SYSTEM_WDT_TIME_REVERSED))fail(DEVICE_FAULT_WATCHDOG,wdt);
  service_end();
