@@ -1,0 +1,32 @@
+{
+  "schema": "q3-pulsebook8-listening-v1",
+  "sampleRate": 48000,
+  "description": "Actual paired Flash/EEPROM images through unmodified site WASM renderer; same 9 kHz filter and 0.65 volume with catalog monitorGain; no extra normalization.",
+  "results": [
+    {
+      "file": "before-seven-forms.wav",
+      "flashBytes": 1010,
+      "eepromBytes": 64,
+      "controls": {
+        "cutoff": 9000,
+        "volume": 0.65
+      },
+      "firmwareSha256": "30f54fb8304db003c7b65927461d94abccc93ea64f43352195222c2c589bc659",
+      "rawPhraseSha256": "fe254b85717af3e0fc0cb96851f8138f36ec003816f3f84a7c53a4c4fea2d268",
+      "wavSha256": "cbfc11a862a80ab4b786b75e0978ffd94f3bda91641040c9e2f082dd06a6bc52"
+    },
+    {
+      "file": "after-half-pitch-four-forms.wav",
+      "flashBytes": 1022,
+      "eepromBytes": 64,
+      "controls": {
+        "cutoff": 9000,
+        "volume": 0.65
+      },
+      "firmwareSha256": "ffb53b457a576433e2ae6a78d6b7c3294d6094b7b32efa507f2a6b3f2870275d",
+      "rawPhraseSha256": "6e7460448faded3cb63371b9c4729b4c81ad69c6560eef40cef7973179efa836",
+      "wavSha256": "0265e43a0c8dcb8e53e2e881add1dd4f5cccd34f56bffdbe5c4aa9f243a5b8fd"
+    }
+  ],
+  "comparison": "before-seven-forms, 0.3 seconds pause, after-half-pitch-four-forms"
+}

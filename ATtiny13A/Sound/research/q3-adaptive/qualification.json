@@ -1,0 +1,193 @@
+{
+  "schema": "q3-adaptive-qualification-v1",
+  "hardware_tested": false,
+  "full_suite": {
+    "source_commit": "457b462",
+    "tests": 381,
+    "passed": true,
+    "skipped": 0,
+    "seconds": 144.208,
+    "log_sha256": "b2aed9afab7f5d6019bccf60271dea36d174452f3b30444b6b51101aac4d434d"
+  },
+  "post_compaction": {
+    "source_commit": "def3da1",
+    "targeted_tests": 4,
+    "passed": true,
+    "case_reports": 4,
+    "scope": "Final two-byte carry extraction; rapid alternation, eight-form mixed stream, whole phrase, same whole model with zero flags; three engines each"
+  },
+  "source_sha256_normalized_lf": {
+    "ATtiny13A/Sound/codec/q3_adaptive.py": "7fbacf792f1c20e6e6d3bf47cafbe5ea1455df690191b2514db807882b3a8693",
+    "ATtiny13A/Sound/codec/q3_pulsebook8.py": "b2816dc893114295041720353c385023d21e0f20ca63d28429ece25c5da7c43f",
+    "ATtiny13A/Sound/codec/q3_short_eeprom.py": "b09879f4955d972a0a1f1c595f8021beb2f98e5207e335e5bd35036d41d83c79",
+    "ATtiny13A/Sound/codec/q3_pulsebook.py": "9252905ba28151205695f2927dfe5dbcd62d92cfc629e049bc272c63c9a90ed4",
+    "ATtiny13A/Sound/codec/q3-pulsebook-compact/hq4-floor.S": "468ff9d29f319ec6e91bfdf851960987122ed04cb90f7569ba54926e58e07d81",
+    "tools/build-q3-pulsebook8.py": "54c3116924fb1eb4b3b230bdbfafc66c5150bf7460ef66bb2dc4a72665026759",
+    "tools/refine-q3-adaptive.py": "53675b682c7a1f7b0133011a9fa0ad8c6dddd52a2c9807658916fb7e6edec567",
+    "tools/search-q3-adaptive.py": "e479745f3c123eaeafebae9efa1a08f8176a77eb32df57d93414bd08fd19dd1e",
+    "tools/build-q3-half-pitch-probe.py": "1b068fcc657b9c1640fa741b1d791c17889522493602127ea5c57f4ee2b8e78f",
+    "tools/probe-q3-half-pitch-fit.py": "8d65b1919bf2711ec2eaeaf5bd85f14c8d5ce8108aa5f264ee73eb4c8fd0f70e",
+    "tools/refine-q3-half-pitch.py": "f1c985f76f62252d0d36b924da72620b190acbd0e8740947514250e24b23ba9c",
+    "tools/test-q3-half-pitch.py": "d89e0df9047470967d2f6adde3620955096d7fe9e769f647ec1c8cb775794c77",
+    "tools/test-speech-quality.py": "abe0941e7f4a95e216b96cff5b61a2b2a296d6b807b7c804d3bba7ed99891ee9",
+    "tools/render-q3-pulsebook8-comparison.mjs": "b5015ab7da9ecb1a4a39eb99e9677d7bff72b7aa07a0bb36b167e4b86687d4ba",
+    "tools/verify-tiny-speech.mjs": "de7dd227a8aba5139ff0944c4023e46c71e40f6c6ac87fa794f9944d6a1e135b"
+  },
+  "fixture_images": [
+    {
+      "name": "forms-0",
+      "family": "q3-pulsebook8-build-v1",
+      "flash_bytes": 416,
+      "core_bytes": 398,
+      "phrase_pcm_sha256": "e10a96297faf6c473aabdad5e6514f3189d0a7866a4281aac46aecdc04093f12",
+      "firmware_sha256": "45c4e5b514c2fea439fc02358550953fc7c883d3b0f3e52bad317d1f6b895449",
+      "eeprom_sha256": "f759941661a874fb82e655294690353ff04cfe72405fbd3134bf667a5e1a7d2e",
+      "minimum_slack_cycles": 544
+    },
+    {
+      "name": "forms-1",
+      "family": "q3-pulsebook8-build-v1",
+      "flash_bytes": 416,
+      "core_bytes": 398,
+      "phrase_pcm_sha256": "b4691a4bcdb0d0e13261a050da54f804827a598ebc923135ecf9ef5470a96d90",
+      "firmware_sha256": "00e7fa36cd2f465677f67248cad380e33381983acf39a4b8c75c8d01fd548d21",
+      "eeprom_sha256": "594cc83546dd64e33ec567465f44941144d78e48504463cbda1170d0e9155f2e",
+      "minimum_slack_cycles": 536
+    },
+    {
+      "name": "forms-2",
+      "family": "q3-pulsebook8-build-v1",
+      "flash_bytes": 420,
+      "core_bytes": 398,
+      "phrase_pcm_sha256": "eeb6ac089178cb7833dc8261acb522c812f2c080ee0342788f1630c42ad359dd",
+      "firmware_sha256": "674a92b81771af10233d14b2eb842ac22e1b5874795bd1fe50faca1f4fe0768d",
+      "eeprom_sha256": "e8c2d0fd663386416cf97a933bf035e0176d27a232b0335dacabfd5d9756fa84",
+      "minimum_slack_cycles": 535
+    },
+    {
+      "name": "forms-3",
+      "family": "q3-pulsebook8-build-v1",
+      "flash_bytes": 424,
+      "core_bytes": 398,
+      "phrase_pcm_sha256": "3c24537226ad29892cb0c9c56ca0e3f0f09ab439c22407ebdbeb382d6c4fd15d",
+      "firmware_sha256": "6d0dd7d3f48d1b110c834da894e916aef1b769ecbe22bfd88bcd65ede5b4a822",
+      "eeprom_sha256": "5c3ce6f8a65e74370f6527099da7e8ef845e71b044dd2a2fae18f940fa9a38a9",
+      "minimum_slack_cycles": 535
+    },
+    {
+      "name": "forms-4",
+      "family": "q3-pulsebook8-build-v1",
+      "flash_bytes": 428,
+      "core_bytes": 398,
+      "phrase_pcm_sha256": "3b9a1f51851acad40c4c823b0492fb36db108bb0cbf1fb87f8aa78516e3d6f8e",
+      "firmware_sha256": "7a53a05feaf9313e2b06e63dedc65d972540210d32e6365c84c3f4e69f3b5e16",
+      "eeprom_sha256": "7b0bc3fd48d433135f35ed1958267abc3c452e6e6eb4da2115431f0048109f79",
+      "minimum_slack_cycles": 536
+    },
+    {
+      "name": "forms-5",
+      "family": "q3-pulsebook8-build-v1",
+      "flash_bytes": 450,
+      "core_bytes": 412,
+      "phrase_pcm_sha256": "c9b653ada8ff72659d2c01f25b72859bcef45a94a7ee5edcb6ebd9442a0de66b",
+      "firmware_sha256": "c8915e58eab6cb90763c223827b56fc73bbb497e04497885447b35f69338c425",
+      "eeprom_sha256": "125ec6a5f840a84d9a5fe924b4a779c520fd8be0e61d1eab0aa87eaa2a50269e",
+      "minimum_slack_cycles": 533
+    },
+    {
+      "name": "forms-6",
+      "family": "q3-pulsebook8-build-v1",
+      "flash_bytes": 452,
+      "core_bytes": 422,
+      "phrase_pcm_sha256": "9a70f757a423b1799b2d20704234ee84a0b34e09fcc286e0a254a3742022ab7a",
+      "firmware_sha256": "d5b8c53452e28efb80701b20edf110623338f5fef3acf79b6ab660e07453518c",
+      "eeprom_sha256": "55ae7a38170470746bb5e73f4dbee100641b5a14caa3bdedd90dcf9caf5fa674",
+      "minimum_slack_cycles": 527
+    },
+    {
+      "name": "forms-7",
+      "family": "q3-pulsebook8-build-v1",
+      "flash_bytes": 458,
+      "core_bytes": 422,
+      "phrase_pcm_sha256": "cdf3ad1007b3b11d53dd0e027883409a8767f7e82663e16a68776455accfa02a",
+      "firmware_sha256": "6573c1711e8eb4e3073227d78ac3accb6a1a742cc9e7939b239c7c630388639c",
+      "eeprom_sha256": "17a32d7946b4707ea495e5ed8aa882c32012e2ece441f44d368f07b139eab8e1",
+      "minimum_slack_cycles": 529
+    },
+    {
+      "name": "forms-8",
+      "family": "q3-pulsebook8-build-v1",
+      "flash_bytes": 460,
+      "core_bytes": 422,
+      "phrase_pcm_sha256": "032a9a0a2a8e72f6e95ea7b812e77ac623d82ec25858de29e8aaed1640a301d8",
+      "firmware_sha256": "b80efac0168f2e6bf9cb048bd7384b7fb289e16574d8780bb6b468681fd87e28",
+      "eeprom_sha256": "e3adea48a41074e7db9e7a64111404c13525e11d2e8ff9a45bc4d114f043c8c1",
+      "minimum_slack_cycles": 529
+    },
+    {
+      "name": "maximum-1",
+      "family": "q3-pulsebook8-build-v1",
+      "flash_bytes": 1024,
+      "core_bytes": 398,
+      "phrase_pcm_sha256": "c4b02d46cae15d53ae2cf741781f636feac73c95ab93bb4ca34c4536335c0e05",
+      "firmware_sha256": "485d2b3d31c5e1a59252653439c0f1bc26b39a34032859f909b7c14d60c5d0c0",
+      "eeprom_sha256": "70ef6c1e8ce6e263ae0e57be8662b8bd97b02e3685fbfbd1b152b56b0c62abc3",
+      "minimum_slack_cycles": 391
+    },
+    {
+      "name": "maximum-7",
+      "family": "q3-pulsebook8-build-v1",
+      "flash_bytes": 1024,
+      "core_bytes": 422,
+      "phrase_pcm_sha256": "bb58375981b799d8ddbd23fd64e5052abc2bab2f829cd015c5f61061ce418357",
+      "firmware_sha256": "156574bc78278b498c9a21d7f03de717f6fa663ac015084e818cbd649e7a6767",
+      "eeprom_sha256": "80811d121d21af78c3b9f910cae05719b4f29a9f8144f166a61e89563ee23e3f",
+      "minimum_slack_cycles": 355
+    },
+    {
+      "name": "eight-forms",
+      "family": "q3-half-pitch-probe-build-v1",
+      "flash_bytes": 488,
+      "core_bytes": 446,
+      "phrase_pcm_sha256": "5c3215829246aebfde35cbf642543f1d92ef39d7ff1f7172cac1ab1df35ed304",
+      "firmware_sha256": "309f42eea3fa26622a05b8f13e3d004fd591e6e29f2fd6c362d413b996c7086f",
+      "eeprom_sha256": "fe06ce9f024e556074721b4950576a5bd34a4d1938e2fdaca01af1b30231dbb3",
+      "minimum_slack_cycles": 505
+    },
+    {
+      "name": "rapid",
+      "family": "q3-half-pitch-probe-build-v1",
+      "flash_bytes": 420,
+      "core_bytes": 418,
+      "phrase_pcm_sha256": "820fed1f33da9fad6b57ec5367d547e88fe1568535e89db645db6da1882e0042",
+      "firmware_sha256": "2a72ba2f171a398e3ff6f6bf0bb22adb4f09b3bfc6e5b6188d88e77d06dc74c2",
+      "eeprom_sha256": "943071bab15c9e05f5a7d2d19281450795f9bc51dbb4fc2cbe8c2a8a7e4d7036",
+      "minimum_slack_cycles": 478
+    },
+    {
+      "name": "vinni",
+      "family": "q3-half-pitch-probe-build-v1",
+      "flash_bytes": 1022,
+      "core_bytes": 422,
+      "phrase_pcm_sha256": "6e7460448faded3cb63371b9c4729b4c81ad69c6560eef40cef7973179efa836",
+      "firmware_sha256": "ffb53b457a576433e2ae6a78d6b7c3294d6094b7b32efa507f2a6b3f2870275d",
+      "eeprom_sha256": "765d6502d048c236b22a6dbe64b24be13cea9e01b22dabbbf4ccc67c870eef98",
+      "minimum_slack_cycles": 202
+    },
+    {
+      "name": "vinni-zero",
+      "family": "q3-half-pitch-probe-build-v1",
+      "flash_bytes": 1016,
+      "core_bytes": 422,
+      "phrase_pcm_sha256": "12d9e9878a7e7f4fd17e874e1b1c4aef78eb1c61d7627cd2dd4a750dbf81ee22",
+      "firmware_sha256": "1c61b6c63067d8a3be75c294dc626cddf061c717993365b7c4e1c6b93c3f25cf",
+      "eeprom_sha256": "56d7cb9e18729eaf29ccdc2639cdfc231ee5183bc2537053cbec3d537aeadff0",
+      "minimum_slack_cycles": 202
+    }
+  ],
+  "selected_model_sha256": "09fbf54b2677aeac9ee00b7b4512d12074567faabb506445ad92d7a6ff046a84",
+  "selected_build": "half-pitch/build.json",
+  "selected_quality": "half-pitch/quality.json",
+  "independent_rescore_exact": true,
+  "public_firmware_changed": false
+}
