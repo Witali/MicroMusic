@@ -1,0 +1,59 @@
+{
+  "schema": "micromusic-attiny13a-hardware-probe-v1",
+  "probeId": 2,
+  "status": "pending-hardware",
+  "firmware": "reset-probe.S",
+  "sequencePolicy": "reset-to-zero",
+  "fuses": {"low": "0x70", "high": "0xff", "lock": "0xff"},
+  "clock": {
+    "source": "external-CLKI-PB3",
+    "frequencyHz": 1000000,
+    "highNanoseconds": 500,
+    "lowNanoseconds": 500,
+    "note": "Firmware never writes CLKPR or OSCCAL. Held-clock cases explicitly stop and resume the generator; no average-period extrapolation is evidence."
+  },
+  "pins": {
+    "running": "PB0",
+    "heartbeat": "PB1",
+    "clock": "PB2",
+    "clki": "PB3",
+    "data": "PB4",
+    "reset": "PB5"
+  },
+  "externalPullDownOhms": {"PB0": 47000},
+  "requiredCsvColumns": ["time_s", "clock", "data", "clki", "vcc", "running", "heartbeat", "reset"],
+  "wire": {
+    "version": 2,
+    "bytes": 14,
+    "syncHex": "a55a",
+    "bitOrder": "MSB-first",
+    "sampleDataAt": "rising clock",
+    "payloadOrder": ["version", "probeId", "profileId", "sequenceLow", "sequenceHigh", "data0", "data1", "data2", "data3", "data4", "data5"],
+    "checksum": "XOR of all 11 payload bytes"
+  },
+  "fields": ["mcusr", "clkpr", "osccal", "ddrb", "portb", "kind"],
+  "kind": {"0": "boot after reset"},
+  "profiles": [
+    {"id": "sut00-clki-div1", "profileId": 1, "defines": {"PROBE_PROFILE_ID": 1}},
+    {"id": "sut01-clki-div1", "profileId": 2, "defines": {"PROBE_PROFILE_ID": 2}, "fuses": {"low": "0x74"}},
+    {"id": "sut10-clki-div1", "profileId": 3, "defines": {"PROBE_PROFILE_ID": 3}, "fuses": {"low": "0x78"}},
+    {"id": "sut00-clki-div8", "profileId": 4, "defines": {"PROBE_PROFILE_ID": 4}, "fuses": {"low": "0x60"}}
+  ],
+  "stimulus": {
+    "controlResetLowNanoseconds": 10000,
+    "resetLowWidthsNanoseconds": [100, 200, 400, 700, 2000, 2500, 5000],
+    "resetLowLevel": "measured near GND, within published limits",
+    "resetHighLevel": "measured near stable VCC, within published limits",
+    "clockHolds": ["low", "high"],
+    "cases": ["long-control", "pulse-width-sweep", "threshold-sweep", "reassert-during-recovery", "reassert-during-boot-frame", "reset-with-CLKI-held-low", "reset-with-CLKI-held-high", "resume-after-held-clock"],
+    "note": "Allow a complete new boot frame and heartbeat before independent trials. Reassertion cases deliberately interrupt that progression; keep their partial frames."
+  },
+  "capture": {
+    "requiredRawAnalog": ["RESET/PB5", "VCC", "PB0/running-marker"],
+    "requiredRawDigital": ["CLKI/PB3", "PB0/running-marker", "PB1/heartbeat", "PB2/trace-clock", "PB4/trace-data"],
+    "measurements": ["chip marking/revision if known", "fuse/lock readback", "VCC and temperature", "generator amplitudes/impedance/slew", "CLKI phase and actual pulse timings", "47k pulldown and probe capacitance", "instrument settings and thresholds", "source/config/shared-wire/programmed-image SHA-256"],
+    "note": "CSV reset/vcc are measured numeric volts; clock/data/clki/running/heartbeat are digital 0/1 observations with recorded thresholds. Preserve the raw analog marker separately. Marker transitions include output-pad RC and software prologue. Threshold/width sweeps do not uniquely identify receiver topology or its internal delays."
+  },
+  "expectedSiliconTrace": null,
+  "note": "Source-only acquisition protocol. No observed reset response or exact silicon assertion/startup timestamp is supplied. Virtual ISP/HVSP remains excluded."
+}
