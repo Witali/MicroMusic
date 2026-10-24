@@ -35,6 +35,16 @@ python tools/fit-mixed-lattice.py --reference web-player/audio/originals/vinni.w
 python tools/test-mixed-lattice.py
 ```
 
+The Q1 tail generator is also implemented in
+[`word-q4/balanced-tail.S`](word-q4/balanced-tail.S): **28 bytes**, constant
+**17 cycles** through `RET`, excluding the outer call. It uses no SRAM and
+preserves T/I. Every area -112..112 and index 0..15 is checked in three engines,
+both normally and with an IRQ between the comparison and its branch:
+10800 ordinary calls and 10800 interrupted calls in total.
+[Retained proof](../research/word-q4/balanced-tail.json).
+Descriptor reads, pitch scheduling, gain multiplication and EEPROM head reads
+still belong to the future complete player.
+
 The contracts cover every possible head area at both precisions, bounds,
 sign symmetry, exact promotion, binary round trips, malformed descriptors,
 schema tagging, mutations and retained historical PCM. Quality, AVR tail

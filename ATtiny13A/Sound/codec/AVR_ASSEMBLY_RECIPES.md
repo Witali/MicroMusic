@@ -405,6 +405,24 @@ It also passes the exhaustive Q4 and boundary/strided Q5 proof:
 [scalar](../research/word-q4/multiplier-adaptive.json),
 [filter](../research/word-q4/filter-six-adaptive.json).
 
+## Recipe: derive a balanced pulse tail from a signed area
+
+[`word-q4/balanced-tail.S`](word-q4/balanced-tail.S) converts a signed area
+(-112..112) and a tail position (0..15) to a Q1 pulse tap. Taking the magnitude,
+`SWAP`/`ANDI` split quotient and remainder by 16. Adding the position to the
+remainder and comparing against 16 selects the final extra unit; the original
+sign is restored at the end. The result matches the encoder's zero-area tail.
+
+The **28-byte** routine takes a constant **17 cycles** through `RET`, excludes
+the caller's `RCALL`, and allocates no SRAM. Both skip/sign paths and both
+branch outcomes cost the same. All 3600 legal area/position pairs pass in
+each of three engines, also with an interrupt between `CPI` and `BRLO`.
+[Proof](../research/word-q4/balanced-tail.json),
+[storage format and quality limitations](BALANCED_PULSES.md).
+This does not include loading a descriptor, reading the stored head, gain
+multiplication or phase control. Quality after replacing literal tails must
+be measured and retrained separately.
+
 ## Recipe: predecoded coefficients in SRAM
 
 `WORD_COEFFICIENTS_IN_RAM=1` switches the coefficient load in
