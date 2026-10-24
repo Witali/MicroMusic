@@ -1,0 +1,29 @@
+{
+  "experimental": true,
+  "admittedToPlayer": false,
+  "backend": "c",
+  "mcu": "ATmega328P",
+  "cpuHz": 16000000,
+  "compiler": "AVR GCC 7.3.0 -Os/-O2/-O3 -flto -fwrapv -fno-strict-aliasing",
+  "simulator": "avr8js 0.21.1",
+  "includesInterrupts": false,
+  "physicalBoardTested": false,
+  "baseCSourceCommit": "f99424c",
+  "patch": "docs/avr-asm-cookbook/examples/nb3-short-pitch-direct.patch",
+  "patchSha256Lf": "42fce1046fcbefe1002a4035a83b4bdf1671d430b44bc922df2a3029862e250b",
+  "binarySha256": "db5a68c5087d4dcdb662518c9e75fcaa7d82eadfeeb54d59b3d4f7b57ba831d9",
+  "flashBytes": 10362,
+  "baselineFlashBytes": 10316,
+  "staticSramBytes": 1199,
+  "peakStackBytes": 153,
+  "exactAvrFrames": 13254,
+  "exactNativeFrames": 9100,
+  "pitchBufferStillAllocated": true,
+  "pending": [
+    "Independent full-scale segment/tail tests",
+    "Measure separately by pitch and gain; some streams regress",
+    "Evaluate contiguous-range kernel and ASM/C implementations",
+    "Full PWM/ISR admission before production use"
+  ],
+  "rebuildFromPinnedBasePatchMatchesVerifiedImage": true
+}

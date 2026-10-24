@@ -1,4 +1,6 @@
-# Исторический эксперимент: NB3 long-pitch fusion
+# Эксперименты NB3
+
+## Исторический long-pitch fusion
 
 `nb3-long-pitch-fusion.patch` — исходный C-прототип для ATmega328P / AVR GCC
 7.3.0, база `30779f0`. Авторская переработка текущего restricted Xiph NB3;
@@ -31,3 +33,32 @@ node Codecs/Speex/AVR/tests/verify_avr.mjs --backend c --verify-reset --firmware
 120 Б пока остаётся для неё; RAM-экономия этому эксперименту не приписывается.
 Эти измерения описывают исходный эксперимент. Проверки и результаты текущей
 реализации находятся в отчётах `fused-long-*` и основном cookbook.
+
+## Direct short-pitch C — не принят
+
+`nb3-short-pitch-direct.patch`, база `f99424c`, считает три tap напрямую.
+Для `j-pitch-1+tap>=0` вычитается ещё pitch; оставшийся неотрицательный
+индекс означает нулевой хвост. Каждый прочитанный индекс отрицателен:
+готовое возбуждение можно записывать сразу. Сохранены clamp, Q14 и задержка.
+Код — авторская переработка restricted Xiph NB3 с прежней BSD-лицензией.
+
+AVR GCC 7.3.0 mixed Os/O2/O3+LTO, ATmega328P, 31 поток: среднее -0,2238%,
+human speech -0,2434%, corpus max 269 656→266 183, coverage max
+270 221→267 238 тактов; Flash +46 Б, RAM/стек прежние. Есть регрессии:
+худшее среднее потока +0,0777%, hard_clipped max +1 840 тактов. Pitch-buffer
+120 Б ещё выделяется. Точны 13 254 AVR и 9 100 native кадров; на host включены
+scratch bounds и API-проверки. Независимые full-scale segment/tail tests и
+PWM/ISR-gate этого прототипа ещё нужны. Следующий кандидат — вынести выбор
+сегмента за цикл, затем сравнить ASM и C. Другие MCU не измерены.
+
+В новой игнорируемой папке воспроизвести **только C backend** из pinned базы
+(Python 3.12+, Git, AVR/Node tools из README кодека):
+
+```powershell
+python -c "from pathlib import Path; import io, subprocess, tarfile; d=Path('Codecs/Speex/AVR/build/short-pitch-example'); d.mkdir(); data=subprocess.check_output(['git','archive','f99424c:Codecs/Speex/AVR','src','tools','tests','vendor','handoff','reference']); tarfile.open(fileobj=io.BytesIO(data)).extractall(d,filter='data')"
+git apply --ignore-space-change --directory=Codecs/Speex/AVR/build/short-pitch-example docs/avr-asm-cookbook/examples/nb3-short-pitch-direct.patch
+python Codecs/Speex/AVR/build/short-pitch-example/tools/build.py --avr-gcc avr-gcc --backend c
+node Codecs/Speex/AVR/tests/verify_avr.mjs --backend c --verify-reset --firmware Codecs/Speex/AVR/build/short-pitch-example/build/profile --oracle Codecs/Speex/AVR/build/reference --out Codecs/Speex/AVR/build/short-pitch-example/fixtures
+```
+
+Полные замеры: `Codecs/Speex/AVR/reports/short-pitch-experiment-*.json`.

@@ -314,6 +314,16 @@ binary measurements. Vendor and R4 files remain unmodified.
    boundary staging might avoid the full pitch buffer while speeding the
    currently slowest frames. Preserve each tap's exact negative source,
    second segment and zero tail; extra short calls may erase the speed gain.
+   A first isolated C prototype instead makes each tap's segment/tail decision
+   at every sample. It matches 13,254 AVR and 9,100 native frames, including
+   host scratch/API assertions. Corpus mean -0.2238% (human -0.2434%), max
+   269,656 -> 266,183; coverage max 270,221 -> 267,238. Flash +46 B, RAM/stack
+   unchanged; the pitch buffer is still allocated. Some streams regress
+   (worst mean +0.0777%, hard_clipped maximum +1,840 cycles). Do not admit it
+   yet: measure by pitch/gain, hoist the decisions out of the sample loop,
+   verify independent full-scale boundaries, then complete PWM/ISR admission.
+   Reproducible C-only patch: docs/avr-asm-cookbook/examples/nb3-short-pitch-direct.patch;
+   evidence: short-pitch-experiment-*.json.
 
 2. **Ten-sample pitch staging.** Upstream sources always have negative offsets:
    the first segment stops before j==pp, the second before j==pp+pitch.
