@@ -217,6 +217,10 @@ individual one-cycle calls because the dispatch budget comparison used f64.gt
 (`0x64`) instead of f64.lt (`0x63`). These checks prove block activation as well
 as state parity; equal final state alone cannot establish that an optimization
 ran. Probe calls remain entirely within WASM.
+At9MHz, RESET at222223ps also verifies that a rounded physical endpoint cannot
+cancel earlier instructions in a block. The shared native event budget rounds
+down and every block ends strictly before it; the same regression covers the
+ordinary full-device emitter and deadlines on either adjacent picosecond.
 
 `attiny13a-clki-runtime.test.mjs` and
 `attiny13a-clki-periodic-runtime.test.mjs` exercise the connected external source

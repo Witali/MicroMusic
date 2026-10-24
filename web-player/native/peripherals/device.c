@@ -938,7 +938,12 @@ uint64_t device_next_cpu_event(void) {
  uint64_t remainder;
  uint64_t cycles=ratio(next-board.base,source_rate(),board.phase,
   2*base_frequency()*board.divisor,&remainder);
- return cycles==UINT64_MAX ? UINT64_MAX : cycles+(remainder!=0);
+ /* A strict block-end comparison needs a conservative distance. Rounding up
+  * can admit a physical endpoint tie: at9MHz two cycles and RESET can both
+  * land at222223ps. Advancing that whole block would cancel earlier effects
+  * which individual instructions already retired. Single instructions still
+  * cross events through the ordinary phase scheduler. */
+ return cycles;
 }
 uint8_t device_next_irq(void) {
  uint16_t pending=device_pending_irqs();

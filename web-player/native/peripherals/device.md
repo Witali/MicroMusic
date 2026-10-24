@@ -93,9 +93,13 @@ actual waveform divisor. Generated blocks stop before its scheduled transition.
 crosses a pending divisor change correctly. It visits the minimum deadline of
 GPIO settling, timer/analog events, protection windows, asynchronous programming,
 watchdog, wakeup and queued inputs. Stable spans skip directly between events.
-`device_next_cpu_event` returns a rounded-up CPU-cycle **distance**, not an
-absolute timestamp; a whole instruction that crosses an event still advances
-through that event internally.
+`device_next_cpu_event` returns a conservative CPU-cycle **distance** rounded
+down. Blocks must end strictly before it. Rounding up could admit a physical
+endpoint tie (two9MHz cycles and RESET both at222223ps), cancelling a whole
+resumable block or committing an ordinary block before the individual
+instruction effects. Single instructions still advance through an event
+internally. This event bound differs from the separate rounded-up half-cycle
+observation-deadline conversion.
 
 At an event boundary, GPIO samples previous pin values, analog samples previous
 voltages, Timer0 counts, NVM/watchdog/sleep advance, and timer outputs propagate

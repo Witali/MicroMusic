@@ -159,6 +159,20 @@ test('unbounded blocks fall back before physical uint64 time overflow',()=>{
   assert.equal(a.state().cpuPhase.retired,4n);assert.equal(a.r[16],4);
 });
 
+for(const resumable of [false,true])
+test(`rounded physical endpoints preserve instructions before a tied reset (${resumable?'resumable':'ordinary'})`,()=>{
+  const frequency=9000000,cal=Array(128).fill(0);cal[0]=frequency;
+  const binary=flash({instructions:[avr.ldi(16,1),avr.inc(16),avr.rjmp(2,2)]});
+  for(const delta of [-1n,0n,1n]){
+    const cores=Array.from({length:2},()=>new ATtiny13A(binary,null,{
+      resumable,osccalHz:cal,oscillatorHz:frequency,fuseLow:0x72,fastIdle:false}));
+    for(const c of cores)c.injectPinsPs({at:222223n+delta,mask:32,levels:0});
+    const [a,b]=cores;
+    a.run(2);b.step();b.step();same(a,b,'9MHz rounded endpoint '+delta);
+    assert.equal(a.r[16],delta===1n?2:1);
+  }
+});
+
 test('bounded CLKI keeps individual phases and never claims an unproved positive block budget',()=>{
   const c=new ATtiny13A(image(),null,{resumable:true,fastIdle:false,fuseLow:0x70,
     clkiProfile:{phasePolicy:'digital-noninverting-zero-seed-v1',initialLevel:1}});

@@ -129,8 +129,9 @@ int device_advance_half_until_ps_buffered(uint64_t wanted,uint64_t wall_deadline
                                           uint64_t *consumed);
 /* advance stops at an asynchronous reset deadline even inside an instruction;
  * the CPU bridge must abandon its remaining bus/register effects and reset. */
-/* Safe distance in nominal CPU cycles, rounded UP to include an event inside
- * an instruction. UINT64_MAX means no event. IRQ requests are queried apart. */
+/* Conservative nominal CPU-cycle distance, rounded DOWN. A block must end
+ * strictly before this bound, including physical-picosecond endpoint ties.
+ * UINT64_MAX means no event. IRQ requests are queried apart. */
 uint64_t device_next_cpu_event(void);
 uint64_t device_base_half(void);
 uint64_t device_virtual_half(void);
