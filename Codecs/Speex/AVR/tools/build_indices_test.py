@@ -1,4 +1,4 @@
-"""Build both four-field readers with assembly arithmetic explicitly disabled."""
+"""Build the NB3 index/header reader pairs with assembly explicitly disabled."""
 import argparse,subprocess,sys
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parent))

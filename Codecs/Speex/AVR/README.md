@@ -88,6 +88,7 @@ addresses plus guards and callee-saved/r1 registers with ASM disabled:
 ```sh
 python Codecs/Speex/AVR/tools/build_indices_test.py --avr-gcc avr-gcc
 node Codecs/Speex/AVR/tests/verify_indices.mjs
+node Codecs/Speex/AVR/tests/verify_indices.mjs --header
 ```
 
 The independent zero-gain arithmetic/ABI test builds a separate AVR C worker
@@ -121,17 +122,17 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
 
 | Build | Flash | Static SRAM | Peak stack | Free SRAM at peak |
 | --- | ---: | ---: | ---: | ---: |
-| Optimized decoder test mailbox, ASM enabled | 10,402 B | 1,119 B | 145 B | 784 B |
-| Full PWM speech demo, including 2,940 B compressed audio | 13,670 B | 1,254 B | 154 B | 640 B |
-| C fallback decoder test mailbox | 12,084 B | 1,119 B | 153 B | 776 B |
-| Full C PWM speech demo, including 2,940 B audio | 15,284 B | 1,254 B | 162 B | 632 B |
+| Optimized decoder test mailbox, ASM enabled | 10,622 B | 1,119 B | 145 B | 784 B |
+| Full PWM speech demo, including 2,940 B compressed audio | 13,890 B | 1,254 B | 154 B | 640 B |
+| C fallback decoder test mailbox | 12,308 B | 1,119 B | 153 B | 776 B |
+| Full C PWM speech demo, including 2,940 B audio | 15,512 B | 1,254 B | 162 B | 632 B |
 
 - All 9,100 corpus frames and 4,096 additional pitch/gain coverage frames match
   unmodified upstream s16 PCM. Including 58 LSP/reset and 1,024 zero-gain
   lifetime cases, each backend matches 14,278 frames with one firmware image.
 - Complete player tests on all 31 streams match upstream PCM converted to u8,
   with zero ring underruns and no stack/static-memory collisions.
-- Maximum observed ASM decoder-only corpus frame cost: **123,008 cycles / 7.688 ms**;
+- Maximum observed ASM decoder-only corpus frame cost: **121,741 cycles / 7.609 ms**;
   the 20-ms budget at 16 MHz is 320,000 cycles. ISR and output costs are verified
   separately by the complete-player runs.
 - Primitive tests cover 240,000 complete LSP conversions and 3,670,016 bit fields;
@@ -142,7 +143,7 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
   cases; the portable C Q14 helper independently passes another 917,504
   cases. The aligned p1 core adds 655,360 independent exact cases.
   The C fallback matches the same 14,278 AVR frames. Its corpus maximum is
-  253,039 cycles (253,604 with pitch coverage), excluding ISR. Complete C PWM playback now
+  251,823 cycles (252,388 with pitch coverage), excluding ISR. Complete C PWM playback now
   passes all 31 streams with 32,000 extra cycles/frame (10%), zero underruns
   and at least 50 queued samples. ASM retains the stronger 40% reserve gate.
 - The historical pitch ASM independently checks 1,966,080 outputs, all signed8 gains,
@@ -190,14 +191,21 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
   All 31 stream means improve: ASM 1.0228%, C 0.8087%; Flash grows 232/248 B
   for decoder mailboxes. Static SRAM is unchanged; ASM stack grows 4 B,
   C stack is unchanged. Generic single-field semantics remain intact.
+- The grouped pitch/gain/energy header adds 109,568 blocks / 328,704 fields
+  per implementation: all 8,192 headers at every offset, partial/sticky
+  overflow, input-read addresses, guards, metadata and GNU ABI/r1. Inlining
+  its single production call site is faster and smaller than an outlined
+  function in both measured backends. Corpus means fall another 1.0891% ASM /
+  0.5391% C, Flash grows 220/224 B, static SRAM and peak stacks are unchanged.
 - Codebooks reside in Flash, use explicit signed `pgm_read_*` accesses, and no
   malloc/calloc/realloc/free symbols are linked.
 
-Current ASM/C decoder/player results: `reports/nb3-indices-{asm,c}-*.json`.
-Portable results: `reports/portable-nb3-indices-library.json`.
-`reports/nb3-indices-admission-audit.json` pins four 87-file player copies,
-both measured decoder images, C-only reader tests, read-address checks and
-complete normal/loaded PWM evidence. Rejected C
+Current ASM/C decoder/player results: `reports/nb3-header-{asm,c}-*.json`.
+Portable results: `reports/portable-nb3-header-library.json`.
+`reports/nb3-header-admission-audit.json` pins four 88-file player copies,
+both measured decoder images, both C-only reader pairs, read-address checks
+and complete normal/loaded PWM evidence. The `nb3-indices-*` reports retain
+the preceding admitted image. Rejected C
 experiments and their full-workload regressions remain `reports/short-tail-c-*.json`
 and `reports/c-byte-mac-*.json`, `reports/c-iir-phase-*.json`. The byte-product
 C MAC and C IIR phase splits were exact but slower; their reproducible patches
@@ -215,9 +223,9 @@ not exhaustive packet timing proofs or physical board measurements.
 `reports/real-speech-{avr,player}.json` retain the earlier NB baseline.
 `node Codecs/Speex/AVR/tests/verify_avr.mjs --frames 8 --profile` also writes `avr-profile.json`
 under the selected output directory. It counts only frame-command intervals,
-excluding boot/reset; the current 88-frame fixture profile spends 56.2% in
-LPC synthesis and 18.7% in the shared pitch/innovation ASM body
-(`reports/nb3-indices-asm-profile.json`). Separate variable-entry/controller costs
+excluding boot/reset; the current 88-frame fixture profile spends 56.9% in
+LPC synthesis and 19.0% in the shared pitch/innovation ASM body
+(`reports/nb3-header-asm-profile.json`). Separate variable-entry/controller costs
 are also recorded there. The common
 body is attributed to its second symbol for both entries. These shares describe
 that sampled workload, not every possible packet.
@@ -265,6 +273,7 @@ The Xiph NB3 adaptation has the following separately measured stages:
 | Compare IIR cursor low byte against a hoisted end byte | 124,952 | 9,600 B | 1,119 B |
 | Split IIR ageing/steady phases and cache two coefficient words | 124,068 | 10,170 B | 1,119 B |
 | Read four innovation indices as one bounded group | 122,875 | 10,402 B | 1,119 B |
+| Read pitch/gain/energy together through one inline C helper | 121,608 | 10,622 B | 1,119 B |
 
 Through the persistent-history stage, the combined corpus maximum fell from 204,770 to
 133,142 cycles: **34.98% less decoder time**. The latest p1-specific ASM core

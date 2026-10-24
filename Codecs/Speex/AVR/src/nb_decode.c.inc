@@ -1,3 +1,4 @@
+#include "nb3_header.h"
 #include "nb3_indices.h"
 /* Restricted NB3 body adapted from Xiph Speex 1.2.1 nb_celp.c.
  * Copyright (C) 2002-2006 Jean-Marc Valin; BSD terms in vendor/speex-1.2.1/COPYING.
@@ -68,13 +69,14 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, voi
    for (sub=0;sub<NB_NB_SUBFRAMES;sub++)
    {
       spx_word16_t *exc=frame_exc+NB_SUBFRAME_SIZE*sub;
-      unsigned pitch=speex_bits_unpack_unsigned(bits,7)+17;
-      unsigned index=speex_bits_unpack_unsigned(bits,5)*4;
+      uint16_t header=speex_nb3_unpack_header(bits);
+      unsigned pitch=(header>>6)+17;
+      unsigned index=((header>>1)&31)*4;
       int q_energy;
       spx_word32_t ener;
       /* Every pitch source index is negative: each segment ends before its
        * source reaches exc[0]. No clear of the current excitation is needed. */
-      q_energy=speex_bits_unpack_unsigned(bits,1);
+      q_energy=header&1;
       ener=AVR_READ_I32(&nb3_gain_table[(qe<<1)|q_energy]);
       if (!index) {
          speex_nb3_zero_innovation(exc,bits,ener);

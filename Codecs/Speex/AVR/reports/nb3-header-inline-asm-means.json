@@ -1,0 +1,312 @@
+{
+  "scope": "Matched decoder-only AVR runs; per-stream means rounded to cycles; ISR excluded.",
+  "beforeReports": [
+    "reports\\nb3-indices-asm-fixtures.json",
+    "reports\\nb3-indices-asm-speech.json"
+  ],
+  "afterReports": [
+    "build\\nb3-header-inline-asm-fixtures\\avr-verification.json",
+    "build\\nb3-header-inline-asm-speech\\avr-verification.json"
+  ],
+  "allStreams": {
+    "streams": 31,
+    "frames": 9100,
+    "beforeWeightedMeanCycles": 115928.311,
+    "afterWeightedMeanCycles": 114665.785,
+    "weightedMeanTimeReductionPercent": 1.0891,
+    "beforeMaxCycles": 123008,
+    "afterMaxCycles": 121741,
+    "minimumStreamMeanReductionPercent": 1.0546
+  },
+  "streams": [
+    {
+      "stream": "adversarial_24.spxraw",
+      "frames": 24,
+      "beforeMeanCycles": 116423,
+      "afterMeanCycles": 115156,
+      "beforeMaxCycles": 120527,
+      "afterMaxCycles": 119266,
+      "meanTimeReductionPercent": 1.0883
+    },
+    {
+      "stream": "chirp.spxraw",
+      "frames": 100,
+      "beforeMeanCycles": 102500,
+      "afterMeanCycles": 101239,
+      "beforeMaxCycles": 122875,
+      "afterMaxCycles": 121608,
+      "meanTimeReductionPercent": 1.2302
+    },
+    {
+      "stream": "hard_clipped.spxraw",
+      "frames": 100,
+      "beforeMeanCycles": 97271,
+      "afterMeanCycles": 96009,
+      "beforeMaxCycles": 122755,
+      "afterMaxCycles": 121488,
+      "meanTimeReductionPercent": 1.2974
+    },
+    {
+      "stream": "impulses.spxraw",
+      "frames": 100,
+      "beforeMeanCycles": 88890,
+      "afterMeanCycles": 87630,
+      "beforeMaxCycles": 89196,
+      "afterMaxCycles": 87911,
+      "meanTimeReductionPercent": 1.4175
+    },
+    {
+      "stream": "random_40.spxraw",
+      "frames": 40,
+      "beforeMeanCycles": 118834,
+      "afterMeanCycles": 117571,
+      "beforeMaxCycles": 122104,
+      "afterMaxCycles": 120839,
+      "meanTimeReductionPercent": 1.0628
+    },
+    {
+      "stream": "sample_mode3_8kbps.spxraw",
+      "frames": 100,
+      "beforeMeanCycles": 97583,
+      "afterMeanCycles": 96323,
+      "beforeMaxCycles": 122812,
+      "afterMaxCycles": 121545,
+      "meanTimeReductionPercent": 1.2912
+    },
+    {
+      "stream": "silence.spxraw",
+      "frames": 100,
+      "beforeMeanCycles": 72453,
+      "afterMeanCycles": 71142,
+      "beforeMaxCycles": 81066,
+      "afterMaxCycles": 79755,
+      "meanTimeReductionPercent": 1.8094
+    },
+    {
+      "stream": "speech_from_wb16_lowband.spxraw",
+      "frames": 147,
+      "beforeMeanCycles": 103722,
+      "afterMeanCycles": 102443,
+      "beforeMaxCycles": 121139,
+      "afterMaxCycles": 119876,
+      "meanTimeReductionPercent": 1.2331
+    },
+    {
+      "stream": "speech_ru.spxraw",
+      "frames": 147,
+      "beforeMeanCycles": 103448,
+      "afterMeanCycles": 102168,
+      "beforeMaxCycles": 121326,
+      "afterMaxCycles": 120063,
+      "meanTimeReductionPercent": 1.2373
+    },
+    {
+      "stream": "voicelike.spxraw",
+      "frames": 100,
+      "beforeMeanCycles": 101273,
+      "afterMeanCycles": 100014,
+      "beforeMaxCycles": 119864,
+      "afterMaxCycles": 118605,
+      "meanTimeReductionPercent": 1.2432
+    },
+    {
+      "stream": "white_noise.spxraw",
+      "frames": 100,
+      "beforeMeanCycles": 119063,
+      "afterMeanCycles": 117803,
+      "beforeMaxCycles": 121313,
+      "afterMaxCycles": 120050,
+      "meanTimeReductionPercent": 1.0583
+    },
+    {
+      "stream": "en_letter_a.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 119028,
+      "afterMeanCycles": 117768,
+      "beforeMaxCycles": 121958,
+      "afterMaxCycles": 120693,
+      "meanTimeReductionPercent": 1.0586
+    },
+    {
+      "stream": "en_letter_b.spxraw",
+      "frames": 403,
+      "beforeMeanCycles": 118422,
+      "afterMeanCycles": 117162,
+      "beforeMaxCycles": 121955,
+      "afterMaxCycles": 120690,
+      "meanTimeReductionPercent": 1.064
+    },
+    {
+      "stream": "en_normcore_a.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 116048,
+      "afterMeanCycles": 114784,
+      "beforeMaxCycles": 122749,
+      "afterMaxCycles": 121482,
+      "meanTimeReductionPercent": 1.0892
+    },
+    {
+      "stream": "en_normcore_a_quiet_minus24dB.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 113151,
+      "afterMeanCycles": 111884,
+      "beforeMaxCycles": 122741,
+      "afterMaxCycles": 121474,
+      "meanTimeReductionPercent": 1.1197
+    },
+    {
+      "stream": "en_normcore_b.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 115446,
+      "afterMeanCycles": 114184,
+      "beforeMaxCycles": 122841,
+      "afterMaxCycles": 121574,
+      "meanTimeReductionPercent": 1.0932
+    },
+    {
+      "stream": "en_portrait_a.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 118462,
+      "afterMeanCycles": 117202,
+      "beforeMaxCycles": 122836,
+      "afterMaxCycles": 121569,
+      "meanTimeReductionPercent": 1.0636
+    },
+    {
+      "stream": "en_portrait_b.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 119255,
+      "afterMeanCycles": 117994,
+      "beforeMaxCycles": 122889,
+      "afterMaxCycles": 121622,
+      "meanTimeReductionPercent": 1.0574
+    },
+    {
+      "stream": "en_sense_a.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 118510,
+      "afterMeanCycles": 117250,
+      "beforeMaxCycles": 122018,
+      "afterMaxCycles": 120753,
+      "meanTimeReductionPercent": 1.0632
+    },
+    {
+      "stream": "en_sense_a_white_noise_15dB.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 118901,
+      "afterMeanCycles": 117641,
+      "beforeMaxCycles": 122044,
+      "afterMaxCycles": 120779,
+      "meanTimeReductionPercent": 1.0597
+    },
+    {
+      "stream": "en_sense_b.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 117923,
+      "afterMeanCycles": 116663,
+      "beforeMaxCycles": 122852,
+      "afterMaxCycles": 121585,
+      "meanTimeReductionPercent": 1.0685
+    },
+    {
+      "stream": "ru_pushkin_a.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 118551,
+      "afterMeanCycles": 117291,
+      "beforeMaxCycles": 121731,
+      "afterMaxCycles": 120466,
+      "meanTimeReductionPercent": 1.0628
+    },
+    {
+      "stream": "ru_pushkin_b.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 116548,
+      "afterMeanCycles": 115288,
+      "beforeMaxCycles": 121544,
+      "afterMaxCycles": 120281,
+      "meanTimeReductionPercent": 1.0811
+    },
+    {
+      "stream": "ru_russia_a.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 119135,
+      "afterMeanCycles": 117875,
+      "beforeMaxCycles": 121988,
+      "afterMaxCycles": 120723,
+      "meanTimeReductionPercent": 1.0576
+    },
+    {
+      "stream": "ru_russia_a_white_noise_15dB.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 119477,
+      "afterMeanCycles": 118217,
+      "beforeMaxCycles": 121921,
+      "afterMaxCycles": 120656,
+      "meanTimeReductionPercent": 1.0546
+    },
+    {
+      "stream": "ru_russia_b.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 116884,
+      "afterMeanCycles": 115622,
+      "beforeMaxCycles": 122581,
+      "afterMaxCycles": 121314,
+      "meanTimeReductionPercent": 1.0797
+    },
+    {
+      "stream": "ru_slutskaya_a.spxraw",
+      "frames": 403,
+      "beforeMeanCycles": 119180,
+      "afterMeanCycles": 117919,
+      "beforeMaxCycles": 122836,
+      "afterMaxCycles": 121569,
+      "meanTimeReductionPercent": 1.0581
+    },
+    {
+      "stream": "ru_slutskaya_b.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 119261,
+      "afterMeanCycles": 117999,
+      "beforeMaxCycles": 122885,
+      "afterMaxCycles": 121618,
+      "meanTimeReductionPercent": 1.0582
+    },
+    {
+      "stream": "ru_square_a.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 118559,
+      "afterMeanCycles": 117296,
+      "beforeMaxCycles": 123008,
+      "afterMaxCycles": 121741,
+      "meanTimeReductionPercent": 1.0653
+    },
+    {
+      "stream": "ru_square_a_quiet_minus24dB.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 118369,
+      "afterMeanCycles": 117106,
+      "beforeMaxCycles": 122972,
+      "afterMaxCycles": 121705,
+      "meanTimeReductionPercent": 1.067
+    },
+    {
+      "stream": "ru_square_b.spxraw",
+      "frames": 402,
+      "beforeMeanCycles": 119102,
+      "afterMeanCycles": 117838,
+      "beforeMaxCycles": 122960,
+      "afterMaxCycles": 121693,
+      "meanTimeReductionPercent": 1.0613
+    }
+  ],
+  "humanSpeech": {
+    "streams": 20,
+    "frames": 8042,
+    "beforeWeightedMeanCycles": 118010.797,
+    "afterWeightedMeanCycles": 116749.347,
+    "weightedMeanTimeReductionPercent": 1.0689,
+    "beforeMaxCycles": 123008,
+    "afterMaxCycles": 121741,
+    "minimumStreamMeanReductionPercent": 1.0546
+  }
+}

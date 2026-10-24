@@ -569,19 +569,74 @@ images. Fresh native PCM/primitives and two C archives pass; each archive
 matches 9,100 frames, and twelve backend-selection cases pass. Reports
 nb3-indices-* and portable-nb3-indices-library.json retain the evidence.
 
+### Bounded thirteen-bit subframe header
+
+Pitch(7), gain(5), energy(1) occupy thirteen consecutive bits beginning at
+offsets 4,5,6,7 in this NB3 layout. After one complete-data/overflow check,
+assemble ab=(a<<8)|b and return ((ab<<(offset-3))|(c>>(11-offset)))&8191.
+The word's high seven, middle five and low one bits yield the original fields.
+Explicit unsigned bytes and value assembly avoid native endian/alignment
+assumptions and a 32-bit temporary. Other offsets, insufficient data or an
+existing overflow flag call the generic reader in the original 7/5/1 order.
+This preserves partial consumption and sticky overflow; the public reader
+and the four-index reader are unchanged.
+
+An outlined C helper and an inline C helper each match 9,100 frames per
+backend. Inline improves every stream mean relative to outlined, saves 40 B
+ASM / 28 B C Flash, and needs no extra peak stack. It has one production
+source call site, inside the subframe loop. Against 30f2a58, selected-inline
+corpus means fall 1.0891% ASM / 0.5391% C, versus 0.9807% / 0.4980% for
+outlined. The superseded form has no separate component-unit/PWM admission;
+its pinned two-file patch and comparative reports remain reproducible.
+
+The independent C-only reader mailbox now tests both groups. Header tests
+check 109,568 blocks / 328,704 fields per implementation, including all
+8,192 headers at every offset 0..7, available bits 0..20, 32,768 random blocks
+and 512 noncanonical sticky-overflow cases. A bit-by-bit oracle checks output,
+position and overflow; SRAM load hooks check actual read bounds. Read-only
+input/metadata, guards, all callee-saved registers and r1 are checked at RET.
+For production offsets 4..7, the linked inline wrapper takes 151 cycles
+versus 421/462/464/466 for ordered generic reads. The existing 72,192-case
+four-index test also passes in this new binary context. Unit timings are
+not a whole-decoder timing projection.
+
+Both selected backends match all 14,278 frames. Every stream mean/maximum
+improves; human-speech means fall 1.0689% ASM / 0.5283% C. Corpus maxima
+121,741/251,823 cycles, pitch maxima 122,221/252,388. Decoder Flash grows
+220/224 B to 10,622/12,308 B. Static SRAM 1,119 B and stack 145/153 B are
+unchanged. Ordinary demo Flash grows 220/228 B to 13,890/15,512 B.
+
+All four PWM matrices pass 31 streams / 9,100 frames with exact output and
+zero underruns. ASM ordinary/+40% queues 74/33, max ready gaps 80,013/190,667,
+640 B free SRAM. C ordinary/+10% queues 65/50, gaps 121,897/154,994, 632 B
+free. Stack is unchanged in every matched player row. Four 88-file source
+copies match the main tree; main decoder/demo/unit binaries match the tested
+images. Native PCM/primitives, both fresh C archives (9,100 frames each) and
+twelve backend-selection cases pass. Reports nb3-header-* and
+portable-nb3-header-library.json retain hashes and evidence. The sampled
+88-frame ASM profile now spends 0.431% in generic/constant reader functions.
+
 ## Next candidates (not yet measured/admitted)
 
-1. **Batch the thirteen-bit subframe header.** Pitch/gain/energy still perform
-   three generic reads per subframe. Valid NB3 header starts are offsets
-   4,5,6,7, before each grouped index read. A bounded 13-bit C return value
-   could amortize reader checks without a four-byte local array. Preserve
-   field order, partial/sticky overflow and all current validation; measure
-   both decoder backends and PWM before admission. Generic/constant reader
-   functions still consume 2.153% of the sampled 88-frame ASM profile.
+1. **One long-pitch ASM entry for forty outputs.** The C controller already
+   has four indices available, but calls the ten-sample kernel four times,
+   saving fifteen registers and reloading gains/history each time. A fixed
+   forty-sample entry might retain those invariants and avoid per-sample
+   packed/rolling dispatch. Register pressure, index storage and extra code
+   need measurement. Retain the selectable C controller, existing ten/count
+   entries, all exact clamps and GNU ABI/ISR behavior; no speedup is established.
 
 2. **Return grouped indices as a value.** Four explicit byte lanes in a uint32
    return could avoid the local four-byte array. Extra live registers, shifts
    and callee saves may erase any gain; no timing or memory claim is established.
+
+3. **Parse a complete 33-bit subframe group from the validated packet.** Header
+   byte/offset are 3+4*sub / 4+sub; index byte/offset are 5+4*sub / 1+sub.
+   The groups share one byte. A combined reader might avoid duplicate loads
+   and bit-cursor work. Four temporary index bytes could use scratch after
+   the live twenty-byte qlsp, before LPC/interpolated-LSP allocation; preserve
+   checked lifetime/allocation and public length/mode rejection. No speed or
+   stack benefit is established; validate raw bounds and exact packet fields.
 
 No claim of a global speed optimum has been established. Do not mark the
 ongoing optimization goal complete while useful candidates remain untested.

@@ -843,6 +843,41 @@ unit `tests/verify_indices.mjs`, отчёты `nb3-indices-*` в папке ко
 локального массива пока только гипотеза: дополнительно занятые регистры
 могут изменить ABI/стек и полное время, поэтому требуется отдельное измерение.
 
+**Три поля 7/5/1 вернуть одним словом.** В NB3 header offset 4..7, три bytes
+a,b,c и тринадцать доступных бит. Проверить границы/overflow один раз:
+
+```c
+uint16_t ab=((uint16_t)a<<8)|b;
+uint16_t h=((uint16_t)(ab<<(offset-3))|(c>>(11-offset)))&8191;
+/* pitch=h>>6; gain=(h>>1)&31; energy=h&1 */
+```
+
+Не нужны uint32 temporary, endian casts или локальный массив. Для остальных
+offsets, нехватки данных или overflow выполнить три generic calls **по порядку
+7,5,1**, сохраняя частичное продвижение. Авторский portable C приём,
+ATmega328P / AVR GCC 7.3 mixed Os/O2/O3+LTO. Все 8 192 headers × 8 offsets
+входят в 109 568 независимых блоков каждого пути; также bounds/partial/sticky,
+фактические LD addresses, input/metadata/guards и ABI/r1. При offsets 4..7
+inline unit wrapper — 151 вместо 421/462/464/466 тактов. Остальные offsets
+используют fallback; это не обещание ускорения для иных layouts/MCU.
+
+**При единственной точке вызова измерять inline и подпрограмму.** Здесь inline
+быстрее по каждому mean потока и меньше на 40 Б ASM / 28 Б C, чем отдельная
+функция. Среднее время корпуса -1,0891% / -0,5391% при +220/+224 Б decoder Flash,
+без роста SRAM/стека. Обоим backend точны по 14 278 кадров; все четыре полных
+PWM-гейта с ISR проходят без underrun, включая +40% ASM / +10% C CPU.
+Два native C-архива точны на 9 100 кадрах каждый. Код `src/nb3_header.h`,
+unit `verify_indices.mjs --header`, отчёты `nb3-header-*` в папке кодека.
+Для superseded noinline сохранён [patch и порядок воспроизведения](examples/README.md).
+Отдельного unit/PWM-гейта этого варианта не было; физическая плата не измерена.
+
+**Неизмеренная идея для NB3:** объединить header13+indices20 в 33-битный блок.
+Начало header — byte `3+4*sub`, offset `4+sub`; indices — byte `5+4*sub`,
+offset `1+sub`. Общий byte можно загрузить один раз. Четыре временных indices
+могут занять scratch после live qlsp20, до выделения LPC/интерполированных LSP.
+Нужны проверка границ/lifetime, прежний public mode/length validation и полные
+измерения; выигрыша скорости или стека пока не установлено.
+
 ## Первоисточники и готовые программы
 
 - [AVR201: аппаратное умножение и MAC](https://www.microchip.com/en-us/application-notes/an1631-1)

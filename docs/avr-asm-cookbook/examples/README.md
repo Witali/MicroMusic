@@ -116,6 +116,35 @@ PWM admission для отклонённых вариантов не провод
 обычные `verify_pcm.py`/`verify_avr.mjs` из README кодека. Сохранённые отчёты:
 `Codecs/Speex/AVR/reports/c-iir-phase-*.json`.
 
+## Совместное чтение header 7/5/1: superseded noinline
+
+`nb3-header-noinline.patch`, база `30f2a58`, пути относительно
+`Codecs/Speex/AVR/`. Авторский C helper читает три bytes при offset 4..7,
+возвращает тринадцать бит и обновляет курсор один раз. На прочих offsets,
+нехватке данных или overflow делает generic reads по порядку 7/5/1. Xiph BSD
+notices базы сохраняются; арифметика C, selectable ASM/C и Flash access прежние.
+
+На ATmega328P / AVR GCC 7.3 mixed Os/O2/O3+LTO оба варианта точны на 9 100
+кадрах каждого backend. Outlined уменьшает mean на 0,9807% ASM / 0,4980% C,
+но выбранный inline — на 1,0891% / 0,5391%, быстрее по каждому stream mean
+и меньше на 40/28 Б. В этой функции одна production source call site.
+У noinline не было отдельного component-unit/PWM-гейта; полный текущий gate
+и независимый header oracle относятся к выбранному inline. Иные MCU и
+физическая плата не измерены. Отчёты `Codecs/Speex/AVR/reports/nb3-header-*`.
+
+В новой игнорируемой копии воспроизвести базу (Python 3.12+ и tools из README):
+
+```powershell
+python -c "from pathlib import Path; import io, subprocess, tarfile; d=Path('Codecs/Speex/AVR/build/header-noinline-example'); d.mkdir(); data=subprocess.check_output(['git','archive','30f2a58:Codecs/Speex/AVR','src','tools','tests','vendor','handoff','reference','PORTING.md']); tarfile.open(fileobj=io.BytesIO(data)).extractall(d,filter='data')"
+git apply --ignore-space-change --directory=Codecs/Speex/AVR/build/header-noinline-example docs/avr-asm-cookbook/examples/nb3-header-noinline.patch
+python Codecs/Speex/AVR/build/header-noinline-example/tools/build.py --avr-gcc avr-gcc --backend asm
+node Codecs/Speex/AVR/tests/verify_avr.mjs --backend asm --verify-reset --firmware Codecs/Speex/AVR/build/header-noinline-example/build/profile --oracle Codecs/Speex/AVR/build/reference --out Codecs/Speex/AVR/build/header-noinline-example/fixtures
+```
+
+Для C повторить последние две команды с `--backend c`. Patch проверен на
+применение к базе; hashes исходных измеренных образов и full-speech результаты
+сохранены в `nb3-header-variant-decision.json` и variant reports.
+
 ## Скалярный ASM-вход для одного сэмпла — исходный прототип
 
 `nb3-scalar-boundary.patch`, база `db4f492`, добавляет отдельный ASM-вход для

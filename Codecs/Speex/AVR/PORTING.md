@@ -53,6 +53,7 @@ matching optimized kernel is provided yet.
 | Short-pitch range selection and boundary sums | `short_pitch.h` calling variable ASM vectors | `short_pitch.h`, scalar boundaries and inlined C vectors |
 | Whole-block LPC synthesis | `lpc_dot.S` | C dot product and coefficient-age loop in `iir_direct.c.inc` |
 | Four consecutive innovation indices | bounded C group in `nb3_indices.h` | same portable C helper; partial/other-offset states use four generic reads |
+| Pitch/gain/energy header | bounded inline C group in `nb3_header.h` | same portable C helper; partial/other-offset states use ordered 7/5/1 generic reads |
 
 The AVR IIR cursor compares a low address byte only because ten word positions
 span exactly 20 bytes; every state-base low byte and page crossing is tested.
@@ -90,7 +91,7 @@ real-time support depends on the target and must be measured. On ATmega328P
 both C and explicitly enabled ASM pass all 31 complete PWM streams with
 interrupts. The tested additional CPU reserve is 10% for C and 40% for ASM;
 these are measured corpus/ISA results, not physical-board guarantees. The
-C corpus maximum is 253,039 cycles (253,604 with pitch coverage).
+C corpus maximum is 251,823 cycles (252,388 with pitch coverage).
 The build tool defaults to C; `--backend asm` explicitly adds the enable define.
 
 ## Export and integrate
@@ -166,15 +167,20 @@ profiles remain separate experiments and are not enabled by choosing C.
 The AVR IIR uses separate ten-sample coefficient-age and thirty-sample steady
 loops, caching two coefficient words in registers after the age transition.
 This changes neither its 60-byte state nor the portable C recurrence.
-The newer grouped index reader is C in both backends. Its two overlapping
+The grouped index reader is C in both backends. Its two overlapping
 16-bit windows read three bytes only after checking availability; fallback
 preserves the generic reader's partial/sticky-overflow behavior. It does not
-assume native byte order or unaligned word loads. All 14,278 AVR frames per
+assume native byte order or unaligned word loads. The grouped thirteen-bit
+header is also C, returning a masked value assembled from three bytes after
+one bounds check. Offsets outside 4..7 or unavailable data use the original
+ordered 7/5/1 reads, preserving partial/sticky overflow. Its single call site
+is inlined; measured AVR speed/size were better than an outlined helper.
+All 14,278 AVR frames per
 backend and four normal/loaded PWM matrices are exact. Architecture/enable
 selection passes twelve real-compiler cases; fresh manifest/CMake C archives
 each match 9,100 host frames. These checks do not measure another MCU's
-performance. See `reports/nb3-indices-admission-audit.json` and
-`reports/portable-nb3-indices-library.json`.
+performance. See `reports/nb3-header-admission-audit.json` and
+`reports/portable-nb3-header-library.json`.
 
 Reproducible portability checks:
 
