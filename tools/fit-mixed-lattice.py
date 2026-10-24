@@ -119,8 +119,32 @@ def render(s,bits,state_bits,phase_mode):
     return codec.filter_signal(excitation,rows,s.coefficients,bits,state_bits=state_bits,nearest=True,fraction_bits=s.wave_fraction_bits+1)
 
 
-def actions(s,bits,zero_mean):
+def source_pitch_hints(reference,durations):
+    from period_wave import track_pitch
+    centers,f0,_=track_pitch(reference)
+    midpoints=np.cumsum(durations)-np.asarray(durations)/2
+    return np.asarray([int(np.clip(round(4*7500/f0[i]),4,507)) if f0[i]>0 else 0
+        for i in (int(np.argmin(abs(centers-t))) for t in midpoints)],np.int16)
+
+
+def actions(s,bits,zero_mean,pitch_hints=None):
     for row in range(len(s.pitches)):
+        if pitch_hints is not None:
+            current=int(s.pitches[row])*4+int(s.quarters[row]);periods={0,current}
+            for target in (current,int(pitch_hints[row])):
+                if target:
+                    periods.update((target,round(target/2),target*2))
+            for neighbor in (row-1,row+1):
+                if 0<=neighbor<len(s.pitches) and s.pitches[neighbor]:
+                    periods.add(int(s.pitches[neighbor])*4+int(s.quarters[neighbor]))
+            gains=sorted(set(max(1,min(30,round(int(s.gains_q1[row])*scale))) for scale in (.5,.75,1.,1.5,2.)))
+            modes=np.unique(s.modes[(s.pitches>0)&(s.gains_q1>0)])
+            for period in sorted(p for p in periods if p==0 or 4<=p<=507):
+                if period==current:continue
+                for gain in gains:
+                    for mode in (modes if period and not current else [s.modes[row]]):
+                        for phase in ((0,3) if period and not current else [int(s.phase_modes[row]) if s.phase_modes is not None else 0]):
+                            yield ('voice',row,period,gain,int(mode),phase)
         if s.phase_modes is not None and s.pitches[row]:
             for mode in range(4):
                 if mode!=s.phase_modes[row]:yield ('phase',row,0,mode)
@@ -142,7 +166,11 @@ def actions(s,bits,zero_mean):
 
 def apply(s,action,bits):
     c=s.copy();kind,row,column,value=action[:4]
-    if kind=='coefficient':
+    if kind=='voice':
+        if (column!=0 and not 4<=column<=507) or not 0<=value<=30:return None
+        c.pitches[row]=column//4;c.quarters[row]=column%4;c.gains_q1[row]=value;c.modes[row]=action[4]
+        if c.phase_modes is not None:c.phase_modes[row]=action[5]
+    elif kind=='coefficient':
         target=int(c.coefficients[row,column])+value;limit=(1<<int(bits[column]))-1
         if not -limit<=target<=limit:return None
         c.coefficients[row,column]=target
@@ -172,16 +200,18 @@ def apply(s,action,bits):
     return c
 
 
-def run(reference_path,model_path,output,evaluations=24000,order=None,profile=None,state_bits=None,zero_mean=False,pulse_length=None,wave_first=False,fit_phase=False,wave_fraction_bits=None,step_policy=None):
+def run(reference_path,model_path,output,evaluations=24000,order=None,profile=None,state_bits=None,zero_mean=False,pulse_length=None,wave_first=False,fit_phase=False,wave_fraction_bits=None,step_policy=None,voice_search=False):
     if evaluations<0:raise ValueError('Expected nonnegative evaluation budget')
-    start=time.perf_counter();s,bits,state_bits,phase_mode,profile,zero_mean,meta=load(model_path,order,profile,state_bits,zero_mean,pulse_length,fit_phase,wave_fraction_bits)
+    start=time.perf_counter();s,bits,state_bits,phase_mode,profile,zero_mean,meta=load(model_path,order,profile,state_bits,zero_mean,pulse_length,fit_phase or voice_search,wave_fraction_bits)
     x,sr=sf.read(reference_path,dtype='float64');reference_hash=hashlib.sha256(reference_path.read_bytes()).hexdigest()
     if sr!=7500 or x.ndim!=1 or len(x)!=int(s.durations.sum()) or reference_hash!=meta['reference_sha256']:
         raise ValueError('Expected unchanged complete mono7500 original')
     step_policy=meta.get('step_policy','legacy') if step_policy is None else step_policy
     step_limit=step_bound(x,step_policy)
-    source_hashes={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_text(encoding='utf-8').encode()).hexdigest()
-        for p in (Path(__file__),ROOT/'ATtiny13A/Sound/codec/mixed_lattice.py',ROOT/'ATtiny13A/Sound/codec/q4_phase_wave.py')}
+    source_paths=[Path(__file__),ROOT/'ATtiny13A/Sound/codec/mixed_lattice.py',ROOT/'ATtiny13A/Sound/codec/q4_phase_wave.py']
+    if voice_search:source_paths.append(ROOT/'ATtiny13A/Sound/codec/period_wave.py')
+    source_hashes={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_text(encoding='utf-8').encode()).hexdigest() for p in source_paths}
+    pitch_hints=source_pitch_hints(x,s.durations) if voice_search else None
     spectral=base.SpectrogramObjective(x);history=[];epochs=[];evaluated=0
     def score(state,detail=False):
         pcm,counts=render(state,bits,state_bits,phase_mode);raw=pcm.astype(np.int16)-128
@@ -209,7 +239,7 @@ def run(reference_path,model_path,output,evaluations=24000,order=None,profile=No
     print(json.dumps(dict(evaluated=0,order=len(bits),profile=profile,state_bits=state_bits,zero_mean=zero_mean,score=initial)),flush=True)
     best=(initial['stoi'],s.copy(),initial);epoch=0
     while evaluated<evaluations:
-        accepted=0;proposals=list(actions(s,bits,zero_mean))
+        accepted=0;proposals=list(actions(s,bits,zero_mean,pitch_hints))
         if epoch%2:proposals.reverse()
         if wave_first:proposals.sort(key=lambda action:action[0]!='wave')
         for action in proposals:
@@ -234,6 +264,7 @@ def run(reference_path,model_path,output,evaluations=24000,order=None,profile=No
         coefficient_bits=bits.tolist(),zero_mean=zero_mean,seed_gain_scale=seed_scale,
         pulse_length=int(s.waves_q1.shape[1]),wave_first=wave_first,fit_phase=s.phase_modes is not None,wave_fraction_bits=s.wave_fraction_bits,
         step_policy=step_policy,step_limit=step_limit,reference_maximum_step=float(np.max(abs(np.diff(x*128)))),
+        voice_search=voice_search,source_pitch_hints=pitch_hints.tolist() if pitch_hints is not None else None,
         reference_sha256=reference_hash,seed_sha256=hashlib.sha256(model_path.read_bytes()).hexdigest(),
         source_sha256_normalized_lf=source_hashes,elapsed_seconds=time.perf_counter()-start,
         avr_implemented=False,serialized_format=False,hardware_tested=False,policy='PC quality teacher; no memory-fit or sample-deadline claim')
@@ -248,5 +279,6 @@ if __name__=='__main__':
     p.add_argument('--zero-mean',action='store_true');p.add_argument('--pulse-length',type=int,choices=(16,32))
     p.add_argument('--wave-first',action='store_true')
     p.add_argument('--fit-phase',action='store_true')
-    p.add_argument('--wave-fraction-bits',type=int,choices=(1,2));p.add_argument('--step-policy',choices=('legacy','reference'));a=p.parse_args()
-    run(a.reference,a.model,a.output,a.evaluations,a.order,a.profile,a.state_bits,a.zero_mean,a.pulse_length,a.wave_first,a.fit_phase,a.wave_fraction_bits,a.step_policy)
+    p.add_argument('--wave-fraction-bits',type=int,choices=(1,2));p.add_argument('--step-policy',choices=('legacy','reference'))
+    p.add_argument('--voice-search',action='store_true');a=p.parse_args()
+    run(a.reference,a.model,a.output,a.evaluations,a.order,a.profile,a.state_bits,a.zero_mean,a.pulse_length,a.wave_first,a.fit_phase,a.wave_fraction_bits,a.step_policy,a.voice_search)

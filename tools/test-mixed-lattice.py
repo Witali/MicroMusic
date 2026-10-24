@@ -14,13 +14,25 @@ fit=importlib.util.module_from_spec(spec);sys.modules[spec.name]=fit;spec.loader
 
 
 class MixedLatticeTests(unittest.TestCase):
-    def test_reference_step_policy_preserves_natural_transients_without_weakening_overflow_checks(self):
+    def test_reference_step_policy_derives_its_bound_from_the_original(self):
         import soundfile as sf
         x,sr=sf.read(ROOT/'web-player/audio/originals/vinni.wav')
         self.assertEqual(sr,7500);self.assertEqual(fit.step_bound(x,'legacy'),47)
         self.assertEqual(fit.step_bound(x,'reference'),73)
         self.assertEqual(fit.step_bound(np.array([-1.,1.]),'reference'),255)
         with self.assertRaises(ValueError):fit.step_bound(x,'unknown')
+
+    def test_voice_proposals_can_fix_classification_and_octaves_without_mutating_the_seed(self):
+        state=fit.State(np.array([0,40]),np.array([4,5]),np.array([128,128]),np.zeros((2,8),np.int16),
+            np.array([0,1]),np.zeros((8,16),np.int16),np.zeros(2,np.int16),np.zeros(2,np.int16))
+        bits=np.full(8,4,np.int16);before=state.fields()
+        proposals=[a for a in fit.actions(state,bits,False,np.array([200,160])) if a[0]=='voice']
+        self.assertTrue(any(a[1]==0 and a[2]>0 and a[5]==3 for a in proposals))
+        self.assertTrue(any(a[1]==1 and a[2]==0 for a in proposals))
+        self.assertTrue(any(a[1]==1 and a[2]==320 for a in proposals))
+        for action in proposals:
+            changed=fit.apply(state,action,bits);fit.validate(changed,bits,6)
+        self.assertEqual(state.fields(),before)
 
     def test_wave_precision_promotion_preserves_voice_noise_and_complete_pcm(self):
         path=ROOT/'ATtiny13A/Sound/research/q4-pattern-precision/mixed/q8/best-intelligibility-model.json'
