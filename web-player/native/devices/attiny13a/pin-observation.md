@@ -81,7 +81,7 @@ package-format or generated CPU import/continuation ABI change is required.
 
 Sample begin and sample completion always collect. Ordinary clock calls retain
 eager collection after each barrier. Resumable phases collect at queue pressure
-for at most128 requested halves and also whenever the native CLKI bridge yields
+for at most128 requested halves and also whenever a native clock span yields
 BUFFER_READY. Halted waits retain their existing bounded advancement; resumable
 waits collect on pressure and ordinary waits remain eager. CPU scheduling and clock calls,
 fault time accounting, latched remaining work and reset priority are unchanged.
@@ -93,12 +93,20 @@ it, so treating it as BUFFER_READY would create an undrainable retry loop. Its
 capacity limit still faults honestly if the host fails to drain it.
 
 Exceptional long resumable spans collect before advancing to restore headroom
-consumed by deferred short phases, then preserve the old single advance and unconditional
-post-collection. This change does not add a general continuation or
-unbounded-history guarantee for long nonresumable instructions/command stalls.
-Fixed internal-source bounded advance still follows its existing contract;
-CLKI can yield within a CPU half when many source transitions fill the queue.
-Every source transition and peripheral event keeps its original timestamp.
+consumed by deferred short phases, and collect after advancing. Internal-source
+requests longer than128 halves use a separate event loop that yields at the
+512-row watermark. It settles all events at the current timestamp before
+yielding; fault/reset, request completion and wall-deadline ties retain their
+original priority. The native bridge consumes the records and retries only the
+remaining half periods, without replaying instruction effects or calling JS.
+An already-full watermark can yield with zero consumed halves.
+
+The ordinary event loop and short internal-source spans retain their previous
+path. CLKI can also yield within a CPU half when many source transitions fill
+the queue. Every source transition and peripheral event keeps its original
+timestamp. Ordinary fault accounting still charges to the original requested
+endpoint; asynchronous reset stops at its event. This does not add a general
+continuation or unbounded-history guarantee for nonresumable command stalls.
 
 Integration uses integer accumulated high time and the existing rational audio
 grid. Deferring addition across a constant level does not change the integral.
@@ -122,3 +130,12 @@ IRQ frames and Flash generation through pressure/wrap, sample ties, stalls,
 SPM, resets and held/partial CLKI phases. Both builds have fixed two-page memory
 and no host imports. Performance is measured separately, without this override
 or counters, using `scripts/benchmark-pin-observation.mjs`.
+
+`attiny13a-long-audio-span.test.mjs` independently integrates the full host
+trace in short physical-time slices, without a native audio subscription. It
+compares exact PCM and complete CPU/memory/device observations across long SPM
+phases, low sample rates and a fractional sample grid at9/9.6/20MHz. The existing
+eager-collection reference alone cannot detect an overflow inside one long
+native advance. `device-internal-buffered-span.test.mjs` checks the actual board
+API against the unbuffered path, including endpoint/reset ties, fractional
+phase, wrap, CLKPR, zero-progress yields and ordinary-fault time accounting.

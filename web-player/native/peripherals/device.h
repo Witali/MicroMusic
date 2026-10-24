@@ -125,11 +125,13 @@ void device_advance_half(uint64_t cpu_half_cycles);
  * The caller owns remaining instruction work and must cancel it on reset. */
 int device_advance_half_until_ps(uint64_t wanted,uint64_t wall_deadline_ps,
                                  uint64_t *consumed);
-/* In CLKI mode, same continuation contract plus return2 BUFFER_READY when a
+/* Same continuation contract plus return2 BUFFER_READY when a
  * PCM or legacy audio-owned host ring is half full. The native consumer drains
- * these queues and retries
- * the remaining phase before returning to generated code. Fixed internal
- * sources retain the ordinary bounded advance. No effect is repeated. */
+ * these queues and retries the remaining phase before returning to generated
+ * code. CLKI and long internal-source spans (>128 requested halves) can yield;
+ * short internal spans retain the ordinary advance and its bounded headroom.
+ * All current-timestamp events settle before a buffer yield; fault/reset and
+ * completed-span ties take precedence. No effect is repeated. */
 int device_advance_half_until_ps_buffered(uint64_t wanted,uint64_t wall_deadline_ps,
                                           uint64_t *consumed);
 /* advance stops at an asynchronous reset deadline even inside an instruction;

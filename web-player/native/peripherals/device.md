@@ -124,6 +124,15 @@ periods; `base_half` remains authoritative at an endpoint between clock edges.
 
 ## Physical output buffering
 
+The [pin/PCM ownership contract](../devices/attiny13a/pin-observation.md)
+describes the independent host and audio histories. For resumable physical
+CPU execution, long internal-source spans (>128 requested half periods) and
+CLKI spans can return BUFFER_READY at512 records. The native bridge drains and
+resumes the same CPU phase. All same-timestamp events settle before a yield;
+fault/reset and completed-span ties take priority. Short internal spans and the
+ordinary event loop retain their existing advancement. This is native output
+flow control, not a peripheral clock gate or an extra CPU observation boundary.
+
 The board captures physical six-pin levels, drive masks, pullups, floating pins
 and contention into1024 fixed16-byte records. Unlike Timer0 OC latch snapshots,
 these records include DDRB and port-mux effects. Timestamps use `base_half`.

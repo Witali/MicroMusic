@@ -623,6 +623,43 @@ static void advance_to(uint64_t target) {
   if (board.base==target && next_event()>target) break;
  } while (board.base<=target);
 }
+/* Rare long internal-source continuations need to return to the native PCM
+ * consumer before their history fills. Keep the ordinary event loop free of
+ * per-event pressure checks. Preserve its original target even on fault: a
+ * wrapper advancing one event at a time would change fault-time accounting. */
+static int advance_to_buffered_long(uint64_t target,uint32_t pin_limit) {
+ if (target<board.base) { fail(DEVICE_FAULT_TIME,5); return 0; }
+ if (board.reset_requested) return 0;
+ unsigned stagnant=0;
+ do {
+  if (board.fault) { if (target>board.base) elapse(target); break; }
+  uint64_t next=minimum(next_event(),target), before=board.half, base_before=board.base;
+  if (next<board.base) { fail(DEVICE_FAULT_TIME,6); break; }
+  /* Settle every event at the current timestamp before exposing its final
+   * snapshot to the integrator. Reset/fault and endpoint ties still win. */
+  if (!board.fault && next>board.base && pin_buffer_ready(pin_limit)) return 2;
+  elapse(next); service(before);
+  if (board.reset_requested) break;
+  if (board.base==base_before) {
+   if (++stagnant>16) { fail(DEVICE_FAULT_TIME,7); break; }
+  } else stagnant=0;
+  if (board.base==target && next_event()>target) break;
+ } while (board.base<=target);
+ return 0;
+}
+static int advance_halves_buffered_long(uint64_t target,uint64_t wall,uint32_t pin_limit) {
+ while(board.half<target&&board.base<wall&&!board.fault&&!board.reset_requested) {
+  uint64_t deadline=minimum(at_half(target),wall);
+  if(board.pending_divisor)deadline=minimum(deadline,at_half(board.clkpr_switch_half));
+  if(board.fault)break;
+  uint64_t previous=board.base;
+  if(advance_to_buffered_long(deadline,pin_limit)==2)return 2;
+  if(board.base==previous&&!board.fault&&!board.reset_requested) {
+   fail(DEVICE_FAULT_TIME,13);break;
+  }
+ }
+ return 0;
+}
 int device_configure(uint32_t key, uint32_t value) {
  if (!key || key>=20) return 0;
  if ((key==DEVICE_CFG_OSCILLATOR_HZ || key==DEVICE_CFG_WATCHDOG_HZ) &&
@@ -934,7 +971,9 @@ static int advance_half_until_ps(uint64_t wanted,uint64_t wall,uint64_t *consume
   return board.fault||board.reset_requested?-1:1;
  }
  if(power_recovering())return 0;
- while(board.half<target&&board.base<wall&&!board.fault&&!board.reset_requested) {
+ int buffered_stop=0;
+ if(pin_limit&&wanted>128)buffered_stop=advance_halves_buffered_long(target,wall,pin_limit);
+ else while(board.half<target&&board.base<wall&&!board.fault&&!board.reset_requested) {
   uint64_t deadline=minimum(at_half(target),wall);
   /* A protected prescaler transition changes the target's physical time.
    * Stop at that edge and recompute rather than overrun or round up halves. */
@@ -949,7 +988,7 @@ static int advance_half_until_ps(uint64_t wanted,uint64_t wall,uint64_t *consume
  *consumed=board.half-before;
  if(*consumed>wanted){fail(DEVICE_FAULT_TIME,14);return -1;}
  if(board.fault||board.reset_requested)return -1;
- return *consumed==wanted;
+ return *consumed==wanted?1:buffered_stop;
 }
 int device_advance_half_until_ps(uint64_t wanted,uint64_t wall,uint64_t *consumed) {
  return advance_half_until_ps(wanted,wall,consumed,0);
