@@ -41,6 +41,7 @@ def excitation(s,waves,phase_mode):
 
 
 def responses(s,bits,phase_mode):
+    if s.tail_policy!='literal':raise ValueError('Forward tap responses require literal pulses; generated tails are constrained')
     modes=np.unique(s.modes[(s.pitches>0)&(s.gains_q1>0)])
     coordinates=[(int(mode),tap) for mode in modes for tap in range(s.waves_q1.shape[1])]
     zeros=np.zeros_like(s.waves_q1);rows,noise=excitation(s,zeros,phase_mode)
@@ -68,6 +69,7 @@ def phase_target(reference,candidate,size):
 
 def run(reference_path,model_path,output,pulse_length=32,seed=20261024,wave_fraction_bits=None,step_policy=None):
     started=time.perf_counter();state,bits,state_bits,phase_mode,profile,zero_mean,meta=fit.load(model_path,pulse_length=pulse_length,wave_fraction_bits=wave_fraction_bits)
+    if state.tail_policy!='literal':raise ValueError('Forward tap fitting requires literal pulses; generated tails are constrained')
     limit=7<<(state.wave_fraction_bits-1)
     x,sr=sf.read(reference_path,dtype='float64');reference_hash=hashlib.sha256(reference_path.read_bytes()).hexdigest()
     if sr!=7500 or x.ndim!=1 or len(x)!=int(state.durations.sum()) or reference_hash!=meta['reference_sha256']:

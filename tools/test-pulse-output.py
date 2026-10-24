@@ -11,6 +11,11 @@ probe=importlib.util.module_from_spec(spec);sys.modules[spec.name]=probe;spec.lo
 
 
 class PulseOutputTests(unittest.TestCase):
+    def test_unconstrained_forward_responses_reject_generated_tails(self):
+        path=ROOT/'ATtiny13A/Sound/research/q4-pulse-shapes/wide32-zero/model.json'
+        state,bits,_,mode,*_=probe.fit.load(path,tail_policy='balance16')
+        with self.assertRaises(ValueError):probe.responses(state,bits,mode)
+
     def test_wave_precision_does_not_change_the_linear_voice_or_noise_scale(self):
         fit=probe.fit
         state=fit.State(np.array([40,0,50,35]),np.array([4,3,6,4]),np.full(4,128),
