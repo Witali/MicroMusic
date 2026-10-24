@@ -1,0 +1,14 @@
+diff --git a/web-player/native/peripherals/device.c b/web-player/native/peripherals/device.c
+index 0baa450..089f2ee 100644
+--- a/web-player/native/peripherals/device.c
++++ b/web-player/native/peripherals/device.c
+@@ -647,7 +647,8 @@ static int advance_to_buffered_long(uint64_t target,uint32_t pin_limit) {
+  } while (board.base<=target);
+  return 0;
+ }
+-static int advance_halves_buffered_long(uint64_t target,uint64_t wall,uint32_t pin_limit) {
++/* Do not inline this rare event loop into every ordinary CPU continuation. */
++static __attribute__((noinline)) int advance_halves_buffered_long(uint64_t target,uint64_t wall,uint32_t pin_limit) {
+  while(board.half<target&&board.base<wall&&!board.fault&&!board.reset_requested) {
+   uint64_t deadline=minimum(at_half(target),wall);
+   if(board.pending_divisor)deadline=minimum(deadline,at_half(board.clkpr_switch_half));

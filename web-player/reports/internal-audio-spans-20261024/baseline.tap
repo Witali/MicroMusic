@@ -1,0 +1,172 @@
+TAP version 13
+# Subtest: long internal SPM phase streams across sample and ring boundaries, 9600000Hz/8000Hz, mask0, channels1
+ok 1 - long internal SPM phase streams across sample and ring boundaries, 9600000Hz/8000Hz, mask0, channels1
+  ---
+  duration_ms: 92.9579
+  type: 'test'
+  ...
+# Subtest: long internal SPM phase streams across sample and ring boundaries, 9600000Hz/8000Hz, mask0, channels2
+not ok 2 - long internal SPM phase streams across sample and ring boundaries, 9600000Hz/8000Hz, mask0, channels2
+  ---
+  duration_ms: 5.4499
+  type: 'test'
+  location: 'C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\internal-audio-spans-reproduction\\baseline-gzuKBS\\baseline-oracle.test.mjs:51:3'
+  failureType: 'testCodeFailure'
+  error: 'ATtiny13A peripheral fault 9, detail 1024'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    ATtiny13A._call (file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/attiny13a-runtime.js:36:21)
+    ATtiny13A._execute (file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/avr-transpiled-runtime.js:82:59)
+    ATtiny13A.capturePhysical (file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/attiny13a-runtime.js:285:21)
+    TestContext.<anonymous> (file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/build/internal-audio-spans-reproduction/baseline-gzuKBS/baseline-oracle.test.mjs:57:31)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: long internal SPM phase streams across sample and ring boundaries, 9600000Hz/8000Hz, mask63, channels1
+not ok 3 - long internal SPM phase streams across sample and ring boundaries, 9600000Hz/8000Hz, mask63, channels1
+  ---
+  duration_ms: 5.3314
+  type: 'test'
+  location: 'C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\internal-audio-spans-reproduction\\baseline-gzuKBS\\baseline-oracle.test.mjs:51:3'
+  failureType: 'testCodeFailure'
+  error: 'ATtiny13A peripheral fault 9, detail 1024'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    ATtiny13A._call (file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/attiny13a-runtime.js:36:21)
+    ATtiny13A._execute (file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/avr-transpiled-runtime.js:82:59)
+    ATtiny13A.capturePhysical (file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/attiny13a-runtime.js:285:21)
+    TestContext.<anonymous> (file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/build/internal-audio-spans-reproduction/baseline-gzuKBS/baseline-oracle.test.mjs:57:31)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: long internal SPM phase streams across sample and ring boundaries, 9600000Hz/8000Hz, mask63, channels2
+not ok 4 - long internal SPM phase streams across sample and ring boundaries, 9600000Hz/8000Hz, mask63, channels2
+  ---
+  duration_ms: 5.9478
+  type: 'test'
+  location: 'C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\internal-audio-spans-reproduction\\baseline-gzuKBS\\baseline-oracle.test.mjs:51:3'
+  failureType: 'testCodeFailure'
+  error: 'ATtiny13A peripheral fault 9, detail 1024'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    ATtiny13A._call (file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/attiny13a-runtime.js:36:21)
+    ATtiny13A._execute (file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/avr-transpiled-runtime.js:82:59)
+    ATtiny13A.capturePhysical (file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/attiny13a-runtime.js:285:21)
+    TestContext.<anonymous> (file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/build/internal-audio-spans-reproduction/baseline-gzuKBS/baseline-oracle.test.mjs:57:31)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: long internal SPM phase streams across sample and ring boundaries, 9000000Hz/11025Hz, mask0, channels1
+ok 5 - long internal SPM phase streams across sample and ring boundaries, 9000000Hz/11025Hz, mask0, channels1
+  ---
+  duration_ms: 14.9746
+  type: 'test'
+  ...
+# Subtest: long internal SPM phase streams across sample and ring boundaries, 9000000Hz/11025Hz, mask0, channels2
+ok 6 - long internal SPM phase streams across sample and ring boundaries, 9000000Hz/11025Hz, mask0, channels2
+  ---
+  duration_ms: 12.9688
+  type: 'test'
+  ...
+# Subtest: long internal SPM phase streams across sample and ring boundaries, 9000000Hz/11025Hz, mask63, channels1
+ok 7 - long internal SPM phase streams across sample and ring boundaries, 9000000Hz/11025Hz, mask63, channels1
+  ---
+  duration_ms: 12.0782
+  type: 'test'
+  ...
+# Subtest: long internal SPM phase streams across sample and ring boundaries, 9000000Hz/11025Hz, mask63, channels2
+ok 8 - long internal SPM phase streams across sample and ring boundaries, 9000000Hz/11025Hz, mask63, channels2
+  ---
+  duration_ms: 11.42
+  type: 'test'
+  ...
+# Subtest: long internal SPM phase streams across sample and ring boundaries, 20000000Hz/8000Hz, mask0, channels1
+ok 9 - long internal SPM phase streams across sample and ring boundaries, 20000000Hz/8000Hz, mask0, channels1
+  ---
+  duration_ms: 10.959
+  type: 'test'
+  ...
+# Subtest: long internal SPM phase streams across sample and ring boundaries, 20000000Hz/8000Hz, mask0, channels2
+not ok 10 - long internal SPM phase streams across sample and ring boundaries, 20000000Hz/8000Hz, mask0, channels2
+  ---
+  duration_ms: 4.6883
+  type: 'test'
+  location: 'C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\internal-audio-spans-reproduction\\baseline-gzuKBS\\baseline-oracle.test.mjs:51:3'
+  failureType: 'testCodeFailure'
+  error: 'ATtiny13A peripheral fault 9, detail 1024'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    ATtiny13A._call (file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/attiny13a-runtime.js:36:21)
+    ATtiny13A._execute (file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/avr-transpiled-runtime.js:82:59)
+    ATtiny13A.capturePhysical (file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/attiny13a-runtime.js:285:21)
+    TestContext.<anonymous> (file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/build/internal-audio-spans-reproduction/baseline-gzuKBS/baseline-oracle.test.mjs:57:31)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: long internal SPM phase streams across sample and ring boundaries, 20000000Hz/8000Hz, mask63, channels1
+not ok 11 - long internal SPM phase streams across sample and ring boundaries, 20000000Hz/8000Hz, mask63, channels1
+  ---
+  duration_ms: 4.4367
+  type: 'test'
+  location: 'C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\internal-audio-spans-reproduction\\baseline-gzuKBS\\baseline-oracle.test.mjs:51:3'
+  failureType: 'testCodeFailure'
+  error: 'ATtiny13A peripheral fault 9, detail 1024'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    ATtiny13A._call (file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/attiny13a-runtime.js:36:21)
+    ATtiny13A._execute (file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/avr-transpiled-runtime.js:82:59)
+    ATtiny13A.capturePhysical (file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/attiny13a-runtime.js:285:21)
+    TestContext.<anonymous> (file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/build/internal-audio-spans-reproduction/baseline-gzuKBS/baseline-oracle.test.mjs:57:31)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: long internal SPM phase streams across sample and ring boundaries, 20000000Hz/8000Hz, mask63, channels2
+not ok 12 - long internal SPM phase streams across sample and ring boundaries, 20000000Hz/8000Hz, mask63, channels2
+  ---
+  duration_ms: 4.8759
+  type: 'test'
+  location: 'C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\internal-audio-spans-reproduction\\baseline-gzuKBS\\baseline-oracle.test.mjs:51:3'
+  failureType: 'testCodeFailure'
+  error: 'ATtiny13A peripheral fault 9, detail 1024'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    ATtiny13A._call (file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/attiny13a-runtime.js:36:21)
+    ATtiny13A._execute (file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/avr-transpiled-runtime.js:82:59)
+    ATtiny13A.capturePhysical (file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/attiny13a-runtime.js:285:21)
+    TestContext.<anonymous> (file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/build/internal-audio-spans-reproduction/baseline-gzuKBS/baseline-oracle.test.mjs:57:31)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 6
+# fail 6
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 295.8654

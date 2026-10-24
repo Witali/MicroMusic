@@ -14,6 +14,7 @@ import {avr,IO,flash} from '../tests/fixtures/attiny13a-system-firmware.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const {values}=parseArgs({options:{'baseline-ref':{type:'string',default:'d41ba7a'},
+  'change-set':{type:'string',default:'pin-observation'},
   'eager-dir':{type:'string'},
   trials:{type:'string',default:'8'},frames:{type:'string',default:'12000'},
   instructions:{type:'string',default:'1000000'},
@@ -29,6 +30,9 @@ const git=args=>execFileSync('git',args,{cwd:root,maxBuffer:8*1024*1024});
 const gitText=args=>git(args).toString().trim();
 const baselineRef=values['baseline-ref'],nativePath='web-player/wasm/attiny13a.wasm',
   manifestPath='web-player/wasm/device-build.json';
+const changeSet=values['change-set'];
+assert.ok(['pin-observation','long-internal-span'].includes(changeSet),'known audited native change set');
+if(changeSet==='long-internal-span')assert.equal(values['eager-dir'],undefined,'eager archive belongs to the pin-observation experiment');
 for(const path of ['web-player/lib/avr-transpiler.js','web-player/lib/avr-wasm-phases.js',
   'web-player/lib/devices/profiles.js','web-player/lib/devices/attiny13a-profile.js'])
   assert.equal(source(path),git(['show',`${baselineRef}:${path}`]).toString().replaceAll('\r\n','\n'),path+' unchanged compiler');
@@ -45,15 +49,17 @@ for(const [name,v] of Object.entries({baseline:previous,candidate:current})){
   assert.equal(new WebAssembly.Instance(v.module).exports.memory.buffer.byteLength,131072);
 }
 for(const key of ['compilerVersion','sources'])assert.deepEqual(current.manifest[key],previous.manifest[key],key);
-const added=['avr_device_pin_trace_config','avr_device_pin_trace_configuration'];
+const added=changeSet==='pin-observation'?['avr_device_pin_trace_config','avr_device_pin_trace_configuration']:[];
 assert.deepEqual(current.manifest.exports.filter(name=>!previous.manifest.exports.includes(name)),added);
 assert.ok(previous.manifest.exports.every(name=>current.manifest.exports.includes(name)));
 const withoutExports=flags=>flags.filter(flag=>!flag.startsWith('-Wl,--export='));
 assert.deepEqual(withoutExports(current.manifest.flags),withoutExports(previous.manifest.flags));
 assert.deepEqual(Object.keys(current.manifest.inputs),Object.keys(previous.manifest.inputs));
 const changedInputs=Object.keys(current.manifest.inputs).filter(path=>current.manifest.inputs[path]!==previous.manifest.inputs[path]);
-assert.deepEqual(changedInputs,['web-player/native/avr-device.inc','web-player/native/peripherals/device.c',
-  'web-player/native/peripherals/device.h','web-player/native/devices/attiny13a/clki_board.inc']);
+assert.deepEqual(changedInputs,changeSet==='pin-observation'?
+  ['web-player/native/avr-device.inc','web-player/native/peripherals/device.c',
+    'web-player/native/peripherals/device.h','web-player/native/devices/attiny13a/clki_board.inc']:
+  ['web-player/native/peripherals/device.c','web-player/native/peripherals/device.h']);
 const variants=[{id:'baseline',...previous}];
 if(values['eager-dir']){
   const folder=resolve(root,values['eager-dir']),manifest=JSON.parse(readFileSync(resolve(folder,'device-build.json'))),
@@ -149,10 +155,10 @@ const report={schema:'micromusic-pin-observation-benchmark-v1',createdAt:new Dat
       'web-player/lib/attiny13a-runtime.js','web-player/lib/avr-transpiled-runtime.js',
       'web-player/lib/renderer-device.js','web-player/lib/renderer-package.js',
       'web-player/lib/avr-runtime.js','web-player/tests/fixtures/attiny13a-system-firmware.mjs'].map(path=>[path,sha(source(path))]))},
-  parameters:{trials,frames,instructions,rate,blockFrames,clockFrames:1200},
+  parameters:{trials,frames,instructions,rate,blockFrames,clockFrames:1200,changeSet},
   method:{timing:'Serial uninstrumented run(N) or capturePhysical calls only, including API batch copying. Module generation/compilation, construction, subscription, inputs, hashing, snapshots and comparison are outside timers.',
     order:'One discarded warmup per case/variant, fresh instances, then rotate variants every two trials and reverse on odd trials. With four variants/eight trials, each occupies every position twice. No parallel performance run, affinity, GC control or V8 flags.',
-    attribution:'baseline=original runtime; optional eager-full=exact retained initial independent PCM ring with collection at each barrier; candidate-full=independent PCM ring with resumable-phase pressure collection, ordinary eager clock/wait calls and default full trace/legacy audio discard; candidate-audio=same new runtime with explicit host mask0. One unchanged compiler and current host wrapper for all variants.',
+    attribution:'baseline=runtime at baselineCommit, checked against the selected native change set; optional eager-full=exact retained initial independent PCM ring with collection at each barrier; candidate-full=current runtime with resumable-phase pressure collection, ordinary eager clock/wait calls and default full trace/legacy audio discard; candidate-audio=same new runtime with explicit host mask0. One unchanged compiler and current host wrapper for all variants.',
     parity:'Exact full chip/CPU state and diagnostics, SRAM/Flash/EEPROM/IRQ, PCM bytes and default full-trace tail at every checkpoint. Audio-only host history is explicitly omitted; before audio starts, queued initialization history is preserved. No deadline or clock-state normalization.',
     limits:'Node coupled CPU/peripheral/pin/PCM execution, no DSP or browser-latency guarantee. Host scheduling, GC and tiering affect timings. Profile samples are not used to assign exclusive subsystem times.'},results:[]};
 for(const entry of cases){

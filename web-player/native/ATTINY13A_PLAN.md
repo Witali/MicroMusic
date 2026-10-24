@@ -251,6 +251,31 @@ substantial host variation. Direct compatible/physical control medians are
 0.960x/0.928x and need separate cost/layout attribution. Do not claim a general
 CPU gain or close the default-engine gate; real-time throughput still falls short.
 
+Long internal-phase correctness checkpoint, 2026-10-24: restoring entry
+headroom alone did not prevent overflow within one long native advance.
+Buffered internal-source requests longer than128 half periods now yield at
+512 records after settling the current timestamp; the existing native bridge
+drains and resumes the remaining phase. An independent host-trace integral
+reproduces six old-runtime overflows and matches exact PCM/complete hardware
+observations after the fix at9/9.6/20MHz. Fourteen native cases cover pressure/
+wall/completion/reset ties, fractional phases, wrap, CLKPR, ordinary-fault
+endpoints and zero trailing commits during BOD recovery. All1302 default tests
+pass. The ordinary/short event loop is unchanged. The
+[report](../reports/internal-audio-spans-20261024.md) retains reproduction,
+test evidence and separate serial performance controls. This closes a boundary
+gap within stage5; the main count remains21/30, with nine open and no new
+physical-chip measurements.
+
+Its312-run/1932-checkpoint serial performance control finds a cost rather than
+a general gain: rhythmic compatible execution is slower in8/8 pairs (0.946x),
+and CLKI /1,/256 in7/8 each (0.894x/0.880x), with substantial variation in other
+cases. Forcing the rare helper to be noinline produces byte-identical WASM;
+the probe is archived and not retained in source. Keep the correctness repair,
+then distinguish ordinary continuation cost from module/code-layout and host
+variation with identical-runtime controls and fresh profiles. This is the next
+stage5 attribution task; do not count the repair as a speed optimization or
+close the real-time/default-engine gate.
+
 The next analog step has a separate audited
 [ADC activity contract](devices/attiny13a/analog-activity.md): omit recurring
 ADC advancement/deadline queries only with ADEN clear, preserving every
