@@ -1,0 +1,724 @@
+{
+  "schema": "q4-output-pole-probe-v1",
+  "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+  "teacher_sha256": "1932562bee6a2480eb08eb59eea3c7b63b0a7e252629810cf83dd4bb891cf2b3",
+  "results": [
+    {
+      "tilt_shift": 0,
+      "excitation_scale": 2.0,
+      "guards_pass": false,
+      "stoi": 0.8655456348746783,
+      "spectrogram_loss": 0.5342034618845928,
+      "fine_log_error": 0.5461054957473338,
+      "envelope_error": 0.5926812397349956,
+      "unsupported_energy": 0.22060841696990316,
+      "missing_energy": 0.2148112844889613,
+      "raw_mean": 0.017942231276939655,
+      "raw_rms": 0.09437585979405984,
+      "peak": 98,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pcm_sha256": "cf114dcc756108a3d158135dd4430f21d55976c5026bf96c4134f8985a90158d",
+      "bands": null
+    },
+    {
+      "tilt_shift": 0,
+      "excitation_scale": 1.0,
+      "guards_pass": true,
+      "stoi": 0.8657976040447477,
+      "spectrogram_loss": 0.5363807405876588,
+      "fine_log_error": 0.549978304487613,
+      "envelope_error": 0.5934961533703913,
+      "unsupported_energy": 0.22145479924178035,
+      "missing_energy": 0.21528205106719583,
+      "raw_mean": 0.008917797570941091,
+      "raw_rms": 0.04746668007547592,
+      "peak": 50,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pcm_sha256": "af8111c3c8453f33582868bd0ea4254448dc047f7bf39bea21bd834932ebd024",
+      "bands": [
+        {
+          "center_hz": 150.0,
+          "correlation": 0.7911602522513043,
+          "contribution_to_unit_gap": 0.013922649849913048
+        },
+        {
+          "center_hz": 188.98815748423098,
+          "correlation": 0.8273789696923051,
+          "contribution_to_unit_gap": 0.011508068687179662
+        },
+        {
+          "center_hz": 238.11015779522992,
+          "correlation": 0.8058863192955076,
+          "contribution_to_unit_gap": 0.01294091204696616
+        },
+        {
+          "center_hz": 300.0,
+          "correlation": 0.8558511263512752,
+          "contribution_to_unit_gap": 0.009609924909914984
+        },
+        {
+          "center_hz": 377.97631496846196,
+          "correlation": 0.8671365832997039,
+          "contribution_to_unit_gap": 0.008857561113353073
+        },
+        {
+          "center_hz": 476.22031559045985,
+          "correlation": 0.8471197284035248,
+          "contribution_to_unit_gap": 0.010192018106431682
+        },
+        {
+          "center_hz": 600.0000000000001,
+          "correlation": 0.9043495306419045,
+          "contribution_to_unit_gap": 0.006376697957206368
+        },
+        {
+          "center_hz": 755.952629936924,
+          "correlation": 0.8546391467879224,
+          "contribution_to_unit_gap": 0.009690723547471839
+        },
+        {
+          "center_hz": 952.4406311809199,
+          "correlation": 0.8807274231263515,
+          "contribution_to_unit_gap": 0.007951505124909896
+        },
+        {
+          "center_hz": 1200.0000000000002,
+          "correlation": 0.895158848330781,
+          "contribution_to_unit_gap": 0.006989410111281269
+        },
+        {
+          "center_hz": 1511.905259873848,
+          "correlation": 0.8992319843820452,
+          "contribution_to_unit_gap": 0.006717867707863653
+        },
+        {
+          "center_hz": 1904.8812623618398,
+          "correlation": 0.8762118830173139,
+          "contribution_to_unit_gap": 0.008252541132179074
+        },
+        {
+          "center_hz": 2400.0000000000005,
+          "correlation": 0.879191098773341,
+          "contribution_to_unit_gap": 0.008053926748443933
+        },
+        {
+          "center_hz": 3023.810519747696,
+          "correlation": 0.9060222828313587,
+          "contribution_to_unit_gap": 0.00626518114457609
+        },
+        {
+          "center_hz": 3809.76252472368,
+          "correlation": 0.8968988834865788,
+          "contribution_to_unit_gap": 0.006873407767561416
+        }
+      ]
+    },
+    {
+      "tilt_shift": 0,
+      "excitation_scale": 0.5,
+      "guards_pass": true,
+      "stoi": 0.8631021178308526,
+      "spectrogram_loss": 0.5423821195430191,
+      "fine_log_error": 0.5637847586621965,
+      "envelope_error": 0.5930425358311224,
+      "unsupported_energy": 0.22072553659908517,
+      "missing_energy": 0.2158110822239543,
+      "raw_mean": 0.004399091347880747,
+      "raw_rms": 0.02413584061200802,
+      "peak": 25,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pcm_sha256": "b0ceb02257715d8e8ea94f15c251ef12fb535805711504cffdd799c49103a129",
+      "bands": [
+        {
+          "center_hz": 150.0,
+          "correlation": 0.7846839926865118,
+          "contribution_to_unit_gap": 0.014354400487565882
+        },
+        {
+          "center_hz": 188.98815748423098,
+          "correlation": 0.8264326074245014,
+          "contribution_to_unit_gap": 0.011571159505033238
+        },
+        {
+          "center_hz": 238.11015779522992,
+          "correlation": 0.8051215167050243,
+          "contribution_to_unit_gap": 0.012991898886331713
+        },
+        {
+          "center_hz": 300.0,
+          "correlation": 0.8576081459666371,
+          "contribution_to_unit_gap": 0.009492790268890857
+        },
+        {
+          "center_hz": 377.97631496846196,
+          "correlation": 0.8601319776741302,
+          "contribution_to_unit_gap": 0.009324534821724654
+        },
+        {
+          "center_hz": 476.22031559045985,
+          "correlation": 0.851035833618139,
+          "contribution_to_unit_gap": 0.009930944425457404
+        },
+        {
+          "center_hz": 600.0000000000001,
+          "correlation": 0.902698413035158,
+          "contribution_to_unit_gap": 0.0064867724643228025
+        },
+        {
+          "center_hz": 755.952629936924,
+          "correlation": 0.8483829820252027,
+          "contribution_to_unit_gap": 0.010107801198319822
+        },
+        {
+          "center_hz": 952.4406311809199,
+          "correlation": 0.8766606663294048,
+          "contribution_to_unit_gap": 0.00822262224470635
+        },
+        {
+          "center_hz": 1200.0000000000002,
+          "correlation": 0.8924260684165134,
+          "contribution_to_unit_gap": 0.0071715954388991065
+        },
+        {
+          "center_hz": 1511.905259873848,
+          "correlation": 0.8994929364949689,
+          "contribution_to_unit_gap": 0.006700470900335409
+        },
+        {
+          "center_hz": 1904.8812623618398,
+          "correlation": 0.8729892254093022,
+          "contribution_to_unit_gap": 0.008467384972713184
+        },
+        {
+          "center_hz": 2400.0000000000005,
+          "correlation": 0.8745537267731821,
+          "contribution_to_unit_gap": 0.00836308488178786
+        },
+        {
+          "center_hz": 3023.810519747696,
+          "correlation": 0.906727516894358,
+          "contribution_to_unit_gap": 0.0062181655403761305
+        },
+        {
+          "center_hz": 3809.76252472368,
+          "correlation": 0.8875861580097526,
+          "contribution_to_unit_gap": 0.00749425613268316
+        }
+      ]
+    },
+    {
+      "tilt_shift": 1,
+      "excitation_scale": 2.0,
+      "guards_pass": false,
+      "stoi": 0.8407816827925776,
+      "spectrogram_loss": 0.5231971714017021,
+      "fine_log_error": 0.5002952826371683,
+      "envelope_error": 0.6132600997884987,
+      "unsupported_energy": 0.24558044595916612,
+      "missing_energy": 0.2082746857327607,
+      "raw_mean": 0.035998815777658046,
+      "raw_rms": 0.14646332688221048,
+      "peak": 128,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        28
+      ],
+      "pcm_sha256": "5173001a8882bf507b06b8dacc8af71a4235a01e66bc0d3c83a0dcfc99d64f0f",
+      "bands": null
+    },
+    {
+      "tilt_shift": 1,
+      "excitation_scale": 1.0,
+      "guards_pass": true,
+      "stoi": 0.8710193045442025,
+      "spectrogram_loss": 0.4707506304084067,
+      "fine_log_error": 0.44924380837625133,
+      "envelope_error": 0.5651592221798093,
+      "unsupported_energy": 0.17941563986247122,
+      "missing_energy": 0.18135796885691957,
+      "raw_mean": 0.02039942248114224,
+      "raw_rms": 0.07546686095272412,
+      "peak": 87,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pcm_sha256": "653bb543db17914229f99349208052807733a26f9c37a749d8e511f2ff67053c",
+      "bands": [
+        {
+          "center_hz": 150.0,
+          "correlation": 0.7957653856307185,
+          "contribution_to_unit_gap": 0.013615640957952098
+        },
+        {
+          "center_hz": 188.98815748423098,
+          "correlation": 0.8320184196187007,
+          "contribution_to_unit_gap": 0.011198772025419952
+        },
+        {
+          "center_hz": 238.11015779522992,
+          "correlation": 0.8074063639710769,
+          "contribution_to_unit_gap": 0.01283957573526154
+        },
+        {
+          "center_hz": 300.0,
+          "correlation": 0.8563886099960157,
+          "contribution_to_unit_gap": 0.009574092666932285
+        },
+        {
+          "center_hz": 377.97631496846196,
+          "correlation": 0.8697414909651543,
+          "contribution_to_unit_gap": 0.008683900602323047
+        },
+        {
+          "center_hz": 476.22031559045985,
+          "correlation": 0.8485938155958638,
+          "contribution_to_unit_gap": 0.010093745626942414
+        },
+        {
+          "center_hz": 600.0000000000001,
+          "correlation": 0.9081937145884594,
+          "contribution_to_unit_gap": 0.006120419027436038
+        },
+        {
+          "center_hz": 755.952629936924,
+          "correlation": 0.8543960118464382,
+          "contribution_to_unit_gap": 0.009706932543570785
+        },
+        {
+          "center_hz": 952.4406311809199,
+          "correlation": 0.8853036709840837,
+          "contribution_to_unit_gap": 0.007646421934394421
+        },
+        {
+          "center_hz": 1200.0000000000002,
+          "correlation": 0.8987312612717224,
+          "contribution_to_unit_gap": 0.006751249248551838
+        },
+        {
+          "center_hz": 1511.905259873848,
+          "correlation": 0.9034015591959466,
+          "contribution_to_unit_gap": 0.006439896053603563
+        },
+        {
+          "center_hz": 1904.8812623618398,
+          "correlation": 0.8830070139550971,
+          "contribution_to_unit_gap": 0.007799532402993529
+        },
+        {
+          "center_hz": 2400.0000000000005,
+          "correlation": 0.8926057481492558,
+          "contribution_to_unit_gap": 0.007159616790049617
+        },
+        {
+          "center_hz": 3023.810519747696,
+          "correlation": 0.9148391599639798,
+          "contribution_to_unit_gap": 0.00567738933573468
+        },
+        {
+          "center_hz": 3809.76252472368,
+          "correlation": 0.9148973424305232,
+          "contribution_to_unit_gap": 0.005673510504631785
+        }
+      ]
+    },
+    {
+      "tilt_shift": 1,
+      "excitation_scale": 0.5,
+      "guards_pass": true,
+      "stoi": 0.8631770688020474,
+      "spectrogram_loss": 0.47615517418295367,
+      "fine_log_error": 0.46189846151040326,
+      "envelope_error": 0.5644011325819493,
+      "unsupported_energy": 0.17877508252479657,
+      "missing_energy": 0.18179119182406356,
+      "raw_mean": 0.011309393521012932,
+      "raw_rms": 0.039062184299640215,
+      "peak": 44,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pcm_sha256": "16beff2336c143ae363db06d835248e8d67df0818a74306d8b9910f1e452730b",
+      "bands": [
+        {
+          "center_hz": 150.0,
+          "correlation": 0.7872233226610209,
+          "contribution_to_unit_gap": 0.014185111822598606
+        },
+        {
+          "center_hz": 188.98815748423098,
+          "correlation": 0.8304099835790502,
+          "contribution_to_unit_gap": 0.011306001094729989
+        },
+        {
+          "center_hz": 238.11015779522992,
+          "correlation": 0.8052512276062312,
+          "contribution_to_unit_gap": 0.012983251492917918
+        },
+        {
+          "center_hz": 300.0,
+          "correlation": 0.8580028994941215,
+          "contribution_to_unit_gap": 0.00946647336705857
+        },
+        {
+          "center_hz": 377.97631496846196,
+          "correlation": 0.8638370744233826,
+          "contribution_to_unit_gap": 0.009077528371774491
+        },
+        {
+          "center_hz": 476.22031559045985,
+          "correlation": 0.8442361609413669,
+          "contribution_to_unit_gap": 0.010384255937242208
+        },
+        {
+          "center_hz": 600.0000000000001,
+          "correlation": 0.9039230230517338,
+          "contribution_to_unit_gap": 0.006405131796551082
+        },
+        {
+          "center_hz": 755.952629936924,
+          "correlation": 0.854761419127166,
+          "contribution_to_unit_gap": 0.009682572058188935
+        },
+        {
+          "center_hz": 952.4406311809199,
+          "correlation": 0.8815460879637999,
+          "contribution_to_unit_gap": 0.00789692746908001
+        },
+        {
+          "center_hz": 1200.0000000000002,
+          "correlation": 0.8948089051657033,
+          "contribution_to_unit_gap": 0.0070127396556197786
+        },
+        {
+          "center_hz": 1511.905259873848,
+          "correlation": 0.8937840097181231,
+          "contribution_to_unit_gap": 0.007081066018791793
+        },
+        {
+          "center_hz": 1904.8812623618398,
+          "correlation": 0.8698376569058425,
+          "contribution_to_unit_gap": 0.008677489539610502
+        },
+        {
+          "center_hz": 2400.0000000000005,
+          "correlation": 0.8739302190762834,
+          "contribution_to_unit_gap": 0.008404652061581105
+        },
+        {
+          "center_hz": 3023.810519747696,
+          "correlation": 0.8989647966665258,
+          "contribution_to_unit_gap": 0.006735680222231611
+        },
+        {
+          "center_hz": 3809.76252472368,
+          "correlation": 0.8871392456503572,
+          "contribution_to_unit_gap": 0.007524050289976188
+        }
+      ]
+    },
+    {
+      "tilt_shift": 2,
+      "excitation_scale": 2.0,
+      "guards_pass": false,
+      "stoi": 0.6967579202955696,
+      "spectrogram_loss": 0.5832767309729933,
+      "fine_log_error": 0.5397594872561828,
+      "envelope_error": 0.6999006270164678,
+      "unsupported_energy": 0.3401754915108699,
+      "missing_energy": 0.23776033673051902,
+      "raw_mean": 0.05356922368893678,
+      "raw_rms": 0.21069181318764033,
+      "peak": 128,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        295
+      ],
+      "pcm_sha256": "53b75d5ee0f1b09ba7e2c00ae1b098efaff1bd762f597e9286492b9ec2add33f",
+      "bands": null
+    },
+    {
+      "tilt_shift": 2,
+      "excitation_scale": 1.0,
+      "guards_pass": false,
+      "stoi": 0.8422433349968974,
+      "spectrogram_loss": 0.501850233001997,
+      "fine_log_error": 0.4331478170789145,
+      "envelope_error": 0.6374149768362691,
+      "unsupported_energy": 0.26256711077379163,
+      "missing_energy": 0.20337723843405747,
+      "raw_mean": 0.04234997979525862,
+      "raw_rms": 0.12650623675964878,
+      "peak": 125,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        16
+      ],
+      "pcm_sha256": "a2b0e529a1b9323b88e27dfe31a7ef5a1a36d0417e5c91e2565e9cf19616d222",
+      "bands": null
+    },
+    {
+      "tilt_shift": 2,
+      "excitation_scale": 0.5,
+      "guards_pass": true,
+      "stoi": 0.8613008431168192,
+      "spectrogram_loss": 0.46419292308302335,
+      "fine_log_error": 0.4133593298654029,
+      "envelope_error": 0.5972127319230074,
+      "unsupported_energy": 0.18142832865536723,
+      "missing_energy": 0.19087490673989463,
+      "raw_mean": 0.025681068157327586,
+      "raw_rms": 0.06753503019570026,
+      "peak": 75,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pcm_sha256": "ea46b9104fc18323988398018d40a722a99a55524b485669380356f4af037aa1",
+      "bands": [
+        {
+          "center_hz": 150.0,
+          "correlation": 0.7958951811208356,
+          "contribution_to_unit_gap": 0.013606987925277628
+        },
+        {
+          "center_hz": 188.98815748423098,
+          "correlation": 0.8377552703717204,
+          "contribution_to_unit_gap": 0.010816315308551976
+        },
+        {
+          "center_hz": 238.11015779522992,
+          "correlation": 0.8089419052245183,
+          "contribution_to_unit_gap": 0.01273720631836545
+        },
+        {
+          "center_hz": 300.0,
+          "correlation": 0.8558851395207222,
+          "contribution_to_unit_gap": 0.009607657365285186
+        },
+        {
+          "center_hz": 377.97631496846196,
+          "correlation": 0.8635412761663992,
+          "contribution_to_unit_gap": 0.009097248255573388
+        },
+        {
+          "center_hz": 476.22031559045985,
+          "correlation": 0.8468503975444822,
+          "contribution_to_unit_gap": 0.010209973497034518
+        },
+        {
+          "center_hz": 600.0000000000001,
+          "correlation": 0.903581453602899,
+          "contribution_to_unit_gap": 0.006427903093140067
+        },
+        {
+          "center_hz": 755.952629936924,
+          "correlation": 0.8486798140599771,
+          "contribution_to_unit_gap": 0.010088012396001529
+        },
+        {
+          "center_hz": 952.4406311809199,
+          "correlation": 0.8810834025859811,
+          "contribution_to_unit_gap": 0.007927773160934596
+        },
+        {
+          "center_hz": 1200.0000000000002,
+          "correlation": 0.8898703187563376,
+          "contribution_to_unit_gap": 0.007341978749577494
+        },
+        {
+          "center_hz": 1511.905259873848,
+          "correlation": 0.8970344815022671,
+          "contribution_to_unit_gap": 0.006864367899848863
+        },
+        {
+          "center_hz": 1904.8812623618398,
+          "correlation": 0.8707627057381566,
+          "contribution_to_unit_gap": 0.008615819617456225
+        },
+        {
+          "center_hz": 2400.0000000000005,
+          "correlation": 0.8625419106466592,
+          "contribution_to_unit_gap": 0.009163872623556054
+        },
+        {
+          "center_hz": 3023.810519747696,
+          "correlation": 0.8918686766800386,
+          "contribution_to_unit_gap": 0.0072087548879974294
+        },
+        {
+          "center_hz": 3809.76252472368,
+          "correlation": 0.8652207132312942,
+          "contribution_to_unit_gap": 0.008985285784580384
+        }
+      ]
+    },
+    {
+      "tilt_shift": 3,
+      "excitation_scale": 2.0,
+      "guards_pass": false,
+      "stoi": 0.616220320294922,
+      "spectrogram_loss": 0.6330102492224767,
+      "fine_log_error": 0.6021570848036504,
+      "envelope_error": 0.7431284017614099,
+      "unsupported_energy": 0.371105674253054,
+      "missing_energy": 0.2961598861647745,
+      "raw_mean": 0.06884800702676006,
+      "raw_rms": 0.2519998637075322,
+      "peak": 128,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        1018
+      ],
+      "pcm_sha256": "d8736486e6dba6d086b9ee00768a360f65daeeeea417315b1a411fa07d61815f",
+      "bands": null
+    },
+    {
+      "tilt_shift": 3,
+      "excitation_scale": 1.0,
+      "guards_pass": false,
+      "stoi": 0.6528547060840677,
+      "spectrogram_loss": 0.6083581127362996,
+      "fine_log_error": 0.5208498445226469,
+      "envelope_error": 0.7807107071097443,
+      "unsupported_energy": 0.39490804473141305,
+      "missing_energy": 0.2821159353485062,
+      "raw_mean": 0.06847758676813936,
+      "raw_rms": 0.19557336683744195,
+      "peak": 128,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        264
+      ],
+      "pcm_sha256": "467f205e7b20c6afecebd96765e43ab923013e9b52898fe8ff104980413e1e7e",
+      "bands": null
+    },
+    {
+      "tilt_shift": 3,
+      "excitation_scale": 0.5,
+      "guards_pass": false,
+      "stoi": 0.8573960087400478,
+      "spectrogram_loss": 0.4795488644321724,
+      "fine_log_error": 0.3974085374050576,
+      "envelope_error": 0.6561705178515531,
+      "unsupported_energy": 0.2002948074698903,
+      "missing_energy": 0.22244218946109745,
+      "raw_mean": 0.05587487933279454,
+      "raw_rms": 0.1221711486359382,
+      "peak": 120,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pcm_sha256": "62308aed7c78cbd61e520fdc660aeccd2befea165ca68cfc06a41c29abf66c53",
+      "bands": null
+    },
+    {
+      "tilt_shift": 4,
+      "excitation_scale": 2.0,
+      "guards_pass": false,
+      "stoi": 0.5601509794771034,
+      "spectrogram_loss": 0.6515747512199346,
+      "fine_log_error": 0.656674269726375,
+      "envelope_error": 0.7246810498438077,
+      "unsupported_energy": 0.37125180763145754,
+      "missing_energy": 0.28132622475410896,
+      "raw_mean": 0.11177150682471264,
+      "raw_rms": 0.3177758363124229,
+      "peak": 128,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        1953
+      ],
+      "pcm_sha256": "ca207a3067e0730e10c58b0eeba52caa680f7e7601bfa1afc7832ef0f69cab02",
+      "bands": null
+    },
+    {
+      "tilt_shift": 4,
+      "excitation_scale": 1.0,
+      "guards_pass": false,
+      "stoi": 0.6117270108226757,
+      "spectrogram_loss": 0.6248840930808157,
+      "fine_log_error": 0.5559003526620447,
+      "envelope_error": 0.7822608825711035,
+      "unsupported_energy": 0.3818348054685355,
+      "missing_energy": 0.30889304634093295,
+      "raw_mean": 0.1034216168283046,
+      "raw_rms": 0.24570005286789118,
+      "peak": 128,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        928
+      ],
+      "pcm_sha256": "3f192966351502df899f3f6bcf25e1a64b6c9c36e04cc21303e51b13f49eb867",
+      "bands": null
+    },
+    {
+      "tilt_shift": 4,
+      "excitation_scale": 0.5,
+      "guards_pass": false,
+      "stoi": 0.7230790657409661,
+      "spectrogram_loss": 0.6342360343571685,
+      "fine_log_error": 0.47762757533317923,
+      "envelope_error": 0.9083648976439935,
+      "unsupported_energy": 0.4352748937897564,
+      "missing_energy": 0.3631468721413228,
+      "raw_mean": 0.09386014390265805,
+      "raw_rms": 0.2010545110470131,
+      "peak": 128,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        248
+      ],
+      "pcm_sha256": "5860536f1b3370e6610e7de46f252fefdbbc86d6745950dfd4942a7d787d445d",
+      "bands": null
+    }
+  ],
+  "avr_implemented": false,
+  "hardware_tested": false,
+  "source_sha256_normalized_lf": {
+    "tools/probe-q4-tilt.py": "2dc5791998aa06cdae66fcedb69c7259edfcab94d767c131000ad0148115f7b3",
+    "ATtiny13A/Sound/codec/q4_phase_wave.py": "48a7b64bdbc9098f9515877e8bda61dbe2652d5ed0661e9d40f9f2e0953c9f34",
+    "ATtiny13A/Sound/codec/stoi_diagnostics.py": "1389ead92c26357177fe721b0b1a38d0f0705df68776df7d3f40ac35025eb852"
+  }
+}

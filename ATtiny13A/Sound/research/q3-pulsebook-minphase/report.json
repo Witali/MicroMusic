@@ -1,0 +1,1681 @@
+{
+  "schema": "q3-minphase-seeds-v1",
+  "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+  "samples": 22272,
+  "sample_rate": 7500,
+  "target_stoi": 0.9,
+  "target_spectrogram_loss": 0.344975554,
+  "target_reached": false,
+  "annealing_proposals": 0,
+  "models": [
+    {
+      "id": "floor-balanced0-incumbent-blend0.25",
+      "score": {
+        "stoi": 0.8051513684337909,
+        "spectrogram_loss": 0.5303089508821979,
+        "fine_log_error": 0.5191555169993081,
+        "envelope_error": 0.6269731731099213,
+        "unsupported_energy": 0.21926488953862983,
+        "missing_energy": 0.21431545254469753,
+        "stream_bytes": 602,
+        "peak_signed": 76,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.0703174108746408,
+        "raw_rms": 0.1012028567105009,
+        "target_met": false
+      },
+      "physical_valid": true,
+      "training": {
+        "method": "Four source-derived log-magnitude clusters; causal real-cepstral minimum-phase16tap response",
+        "nfft": 512,
+        "cepstrum_taps": 16,
+        "selector": "incumbent",
+        "balance": false,
+        "blend": 0.25,
+        "table_sums": [
+          4,
+          4,
+          5,
+          4
+        ],
+        "voiced_observations": 87,
+        "stream_bytes": 602,
+        "source_policy": "No phase alignment, source time shift, resampling, hidden side information or target normalization"
+      },
+      "source_sha256": "c6ffc4b7d5f4a4c2fd6a3b0a359a773ba98bb7505c8b89064f7c1032b391b232",
+      "coefficient_reuse": [],
+      "model": "floor-balanced0-incumbent-blend0.25/model.json",
+      "energy": 1.0994007402794528
+    },
+    {
+      "id": "floor-balanced0-incumbent-blend0.5",
+      "score": {
+        "stoi": 0.7731006922623268,
+        "spectrogram_loss": 0.5552215582715769,
+        "fine_log_error": 0.5663078806675821,
+        "envelope_error": 0.6244210600930895,
+        "unsupported_energy": 0.24413483541806552,
+        "missing_energy": 0.2066406289880644,
+        "stream_bytes": 602,
+        "peak_signed": 67,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07021428250718391,
+        "raw_rms": 0.09386746585547086,
+        "target_met": false
+      },
+      "physical_valid": true,
+      "training": {
+        "method": "Four source-derived log-magnitude clusters; causal real-cepstral minimum-phase16tap response",
+        "nfft": 512,
+        "cepstrum_taps": 16,
+        "selector": "incumbent",
+        "balance": false,
+        "blend": 0.5,
+        "table_sums": [
+          3,
+          4,
+          4,
+          2
+        ],
+        "voiced_observations": 87,
+        "stream_bytes": 602,
+        "source_policy": "No phase alignment, source time shift, resampling, hidden side information or target normalization"
+      },
+      "source_sha256": "c6ffc4b7d5f4a4c2fd6a3b0a359a773ba98bb7505c8b89064f7c1032b391b232",
+      "coefficient_reuse": [],
+      "model": "floor-balanced0-incumbent-blend0.5/model.json",
+      "energy": 1.3166174046976162
+    },
+    {
+      "id": "floor-balanced0-incumbent-blend1",
+      "score": {
+        "stoi": 0.7076509543914005,
+        "spectrogram_loss": 0.582487480041909,
+        "fine_log_error": 0.5978152008596777,
+        "envelope_error": 0.6499353389921637,
+        "unsupported_energy": 0.2647636652296946,
+        "missing_energy": 0.2311342492883665,
+        "stream_bytes": 602,
+        "peak_signed": 79,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.06457449375897989,
+        "raw_rms": 0.09189748533181501,
+        "target_met": false
+      },
+      "physical_valid": true,
+      "training": {
+        "method": "Four source-derived log-magnitude clusters; causal real-cepstral minimum-phase16tap response",
+        "nfft": 512,
+        "cepstrum_taps": 16,
+        "selector": "incumbent",
+        "balance": false,
+        "blend": 1.0,
+        "table_sums": [
+          1,
+          0,
+          7,
+          -1
+        ],
+        "voiced_observations": 87,
+        "stream_bytes": 602,
+        "source_policy": "No phase alignment, source time shift, resampling, hidden side information or target normalization"
+      },
+      "source_sha256": "c6ffc4b7d5f4a4c2fd6a3b0a359a773ba98bb7505c8b89064f7c1032b391b232",
+      "coefficient_reuse": [],
+      "model": "floor-balanced0-incumbent-blend1/model.json",
+      "energy": 1.7365817536935064
+    },
+    {
+      "id": "floor-balanced0-cluster-blend0.25",
+      "score": {
+        "stoi": 0.8040163934380172,
+        "spectrogram_loss": 0.5067583364710394,
+        "fine_log_error": 0.4945243320981224,
+        "envelope_error": 0.5982045011409279,
+        "unsupported_energy": 0.2040847631209819,
+        "missing_energy": 0.1964242765860978,
+        "stream_bytes": 602,
+        "peak_signed": 77,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07584565261314655,
+        "raw_rms": 0.11029159752797577,
+        "target_met": false
+      },
+      "physical_valid": true,
+      "training": {
+        "method": "Four source-derived log-magnitude clusters; causal real-cepstral minimum-phase16tap response",
+        "nfft": 512,
+        "cepstrum_taps": 16,
+        "selector": "cluster",
+        "balance": false,
+        "blend": 0.25,
+        "table_sums": [
+          5,
+          4,
+          4,
+          4
+        ],
+        "voiced_observations": 87,
+        "stream_bytes": 602,
+        "source_policy": "No phase alignment, source time shift, resampling, hidden side information or target normalization"
+      },
+      "source_sha256": "c6ffc4b7d5f4a4c2fd6a3b0a359a773ba98bb7505c8b89064f7c1032b391b232",
+      "coefficient_reuse": [],
+      "model": "floor-balanced0-cluster-blend0.25/model.json",
+      "energy": 1.0826599758429363
+    },
+    {
+      "id": "floor-balanced0-cluster-blend0.5",
+      "score": {
+        "stoi": 0.7889880317491337,
+        "spectrogram_loss": 0.5065143282829633,
+        "fine_log_error": 0.5031863917471513,
+        "envelope_error": 0.5842727348775836,
+        "unsupported_energy": 0.20221611318038707,
+        "missing_energy": 0.19426388015390522,
+        "stream_bytes": 602,
+        "peak_signed": 85,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07543910234823994,
+        "raw_rms": 0.10889180253485813,
+        "target_met": false
+      },
+      "physical_valid": true,
+      "training": {
+        "method": "Four source-derived log-magnitude clusters; causal real-cepstral minimum-phase16tap response",
+        "nfft": 512,
+        "cepstrum_taps": 16,
+        "selector": "cluster",
+        "balance": false,
+        "blend": 0.5,
+        "table_sums": [
+          4,
+          4,
+          2,
+          3
+        ],
+        "voiced_observations": 87,
+        "stream_bytes": 602,
+        "source_policy": "No phase alignment, source time shift, resampling, hidden side information or target normalization"
+      },
+      "source_sha256": "c6ffc4b7d5f4a4c2fd6a3b0a359a773ba98bb7505c8b89064f7c1032b391b232",
+      "coefficient_reuse": [],
+      "model": "floor-balanced0-cluster-blend0.5/model.json",
+      "energy": 1.1725861377881612
+    },
+    {
+      "id": "floor-balanced0-cluster-blend1",
+      "score": null,
+      "physical_valid": false,
+      "training": {
+        "method": "Four source-derived log-magnitude clusters; causal real-cepstral minimum-phase16tap response",
+        "nfft": 512,
+        "cepstrum_taps": 16,
+        "selector": "cluster",
+        "balance": false,
+        "blend": 1.0,
+        "table_sums": [
+          7,
+          0,
+          -1,
+          1
+        ],
+        "voiced_observations": 87,
+        "stream_bytes": 602,
+        "source_policy": "No phase alignment, source time shift, resampling, hidden side information or target normalization"
+      },
+      "source_sha256": "c6ffc4b7d5f4a4c2fd6a3b0a359a773ba98bb7505c8b89064f7c1032b391b232",
+      "coefficient_reuse": []
+    },
+    {
+      "id": "floor-balanced1-incumbent-blend0.25",
+      "score": {
+        "stoi": 0.7721600294932751,
+        "spectrogram_loss": 0.5488720315787726,
+        "fine_log_error": 0.5210485225160741,
+        "envelope_error": 0.6775691796458496,
+        "unsupported_energy": 0.2270406464939776,
+        "missing_energy": 0.2471117576776483,
+        "stream_bytes": 602,
+        "peak_signed": 61,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.05733831997575431,
+        "raw_rms": 0.0834331845985431,
+        "target_met": false
+      },
+      "physical_valid": true,
+      "training": {
+        "method": "Four source-derived log-magnitude clusters; causal real-cepstral minimum-phase16tap response",
+        "nfft": 512,
+        "cepstrum_taps": 16,
+        "selector": "incumbent",
+        "balance": true,
+        "blend": 0.25,
+        "table_sums": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "voiced_observations": 87,
+        "stream_bytes": 602,
+        "source_policy": "No phase alignment, source time shift, resampling, hidden side information or target normalization"
+      },
+      "source_sha256": "c6ffc4b7d5f4a4c2fd6a3b0a359a773ba98bb7505c8b89064f7c1032b391b232",
+      "coefficient_reuse": [],
+      "model": "floor-balanced1-incumbent-blend0.25/model.json",
+      "energy": 1.315911854619122
+    },
+    {
+      "id": "floor-balanced1-incumbent-blend0.5",
+      "score": {
+        "stoi": 0.7533013270809708,
+        "spectrogram_loss": 0.5726515100292311,
+        "fine_log_error": 0.5584754852482912,
+        "envelope_error": 0.6871017480280959,
+        "unsupported_energy": 0.24645209842907978,
+        "missing_energy": 0.252749724885784,
+        "stream_bytes": 602,
+        "peak_signed": 58,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.05712715236619971,
+        "raw_rms": 0.07880599404708817,
+        "target_met": false
+      },
+      "physical_valid": true,
+      "training": {
+        "method": "Four source-derived log-magnitude clusters; causal real-cepstral minimum-phase16tap response",
+        "nfft": 512,
+        "cepstrum_taps": 16,
+        "selector": "incumbent",
+        "balance": true,
+        "blend": 0.5,
+        "table_sums": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "voiced_observations": 87,
+        "stream_bytes": 602,
+        "source_policy": "No phase alignment, source time shift, resampling, hidden side information or target normalization"
+      },
+      "source_sha256": "c6ffc4b7d5f4a4c2fd6a3b0a359a773ba98bb7505c8b89064f7c1032b391b232",
+      "coefficient_reuse": [],
+      "model": "floor-balanced1-incumbent-blend0.5/model.json",
+      "energy": 1.4528435475434067
+    },
+    {
+      "id": "floor-balanced1-incumbent-blend1",
+      "score": {
+        "stoi": 0.6910559555675383,
+        "spectrogram_loss": 0.6067803905978835,
+        "fine_log_error": 0.6057001009511209,
+        "envelope_error": 0.7005948423209765,
+        "unsupported_energy": 0.28322179924832214,
+        "missing_energy": 0.2769860141325806,
+        "stream_bytes": 602,
+        "peak_signed": 55,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.05931635012571839,
+        "raw_rms": 0.08252841434899273,
+        "target_met": false
+      },
+      "physical_valid": true,
+      "training": {
+        "method": "Four source-derived log-magnitude clusters; causal real-cepstral minimum-phase16tap response",
+        "nfft": 512,
+        "cepstrum_taps": 16,
+        "selector": "incumbent",
+        "balance": true,
+        "blend": 1.0,
+        "table_sums": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "voiced_observations": 87,
+        "stream_bytes": 602,
+        "source_policy": "No phase alignment, source time shift, resampling, hidden side information or target normalization"
+      },
+      "source_sha256": "c6ffc4b7d5f4a4c2fd6a3b0a359a773ba98bb7505c8b89064f7c1032b391b232",
+      "coefficient_reuse": [],
+      "model": "floor-balanced1-incumbent-blend1/model.json",
+      "energy": 1.8604446571926538
+    },
+    {
+      "id": "floor-balanced1-cluster-blend0.25",
+      "score": {
+        "stoi": 0.7770299424687764,
+        "spectrogram_loss": 0.5308098846346858,
+        "fine_log_error": 0.49925270282367606,
+        "envelope_error": 0.6605560265666242,
+        "unsupported_energy": 0.21306693021679177,
+        "missing_energy": 0.23706006707056204,
+        "stream_bytes": 602,
+        "peak_signed": 62,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.0614739779768319,
+        "raw_rms": 0.0899933461278824,
+        "target_met": false
+      },
+      "physical_valid": true,
+      "training": {
+        "method": "Four source-derived log-magnitude clusters; causal real-cepstral minimum-phase16tap response",
+        "nfft": 512,
+        "cepstrum_taps": 16,
+        "selector": "cluster",
+        "balance": true,
+        "blend": 0.25,
+        "table_sums": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "voiced_observations": 87,
+        "stream_bytes": 602,
+        "source_policy": "No phase alignment, source time shift, resampling, hidden side information or target normalization"
+      },
+      "source_sha256": "c6ffc4b7d5f4a4c2fd6a3b0a359a773ba98bb7505c8b89064f7c1032b391b232",
+      "coefficient_reuse": [],
+      "model": "floor-balanced1-cluster-blend0.25/model.json",
+      "energy": 1.2686302298220273
+    },
+    {
+      "id": "floor-balanced1-cluster-blend0.5",
+      "score": {
+        "stoi": 0.775740494826036,
+        "spectrogram_loss": 0.5307527389231275,
+        "fine_log_error": 0.5004684750556463,
+        "envelope_error": 0.6591848352569469,
+        "unsupported_energy": 0.21224146256114385,
+        "missing_energy": 0.23625795423990667,
+        "stream_bytes": 602,
+        "peak_signed": 62,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.06147713496767242,
+        "raw_rms": 0.08987247859884356,
+        "target_met": false
+      },
+      "physical_valid": true,
+      "training": {
+        "method": "Four source-derived log-magnitude clusters; causal real-cepstral minimum-phase16tap response",
+        "nfft": 512,
+        "cepstrum_taps": 16,
+        "selector": "cluster",
+        "balance": true,
+        "blend": 0.5,
+        "table_sums": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "voiced_observations": 87,
+        "stream_bytes": 602,
+        "source_policy": "No phase alignment, source time shift, resampling, hidden side information or target normalization"
+      },
+      "source_sha256": "c6ffc4b7d5f4a4c2fd6a3b0a359a773ba98bb7505c8b89064f7c1032b391b232",
+      "coefficient_reuse": [],
+      "model": "floor-balanced1-cluster-blend0.5/model.json",
+      "energy": 1.2763097699669115
+    },
+    {
+      "id": "floor-balanced1-cluster-blend1",
+      "score": {
+        "stoi": 0.7767009598619324,
+        "spectrogram_loss": 0.5467254338064309,
+        "fine_log_error": 0.5209998387028951,
+        "envelope_error": 0.668370807211977,
+        "unsupported_energy": 0.22975962780978426,
+        "missing_energy": 0.24320982633013422,
+        "stream_bytes": 602,
+        "peak_signed": 56,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.06152869915140086,
+        "raw_rms": 0.08898489344592513,
+        "target_met": false
+      },
+      "physical_valid": true,
+      "training": {
+        "method": "Four source-derived log-magnitude clusters; causal real-cepstral minimum-phase16tap response",
+        "nfft": 512,
+        "cepstrum_taps": 16,
+        "selector": "cluster",
+        "balance": true,
+        "blend": 1.0,
+        "table_sums": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "voiced_observations": 87,
+        "stream_bytes": 602,
+        "source_policy": "No phase alignment, source time shift, resampling, hidden side information or target normalization"
+      },
+      "source_sha256": "c6ffc4b7d5f4a4c2fd6a3b0a359a773ba98bb7505c8b89064f7c1032b391b232",
+      "coefficient_reuse": [],
+      "model": "floor-balanced1-cluster-blend1/model.json",
+      "energy": 1.2865196746348364
+    },
+    {
+      "id": "rounded-balanced0-incumbent-blend0.25",
+      "score": {
+        "stoi": 0.7982363360685479,
+        "spectrogram_loss": 0.5177747199127352,
+        "fine_log_error": 0.5121975637053092,
+        "envelope_error": 0.6050606248088497,
+        "unsupported_energy": 0.20593830351909245,
+        "missing_energy": 0.2048450281449564,
+        "stream_bytes": 611,
+        "peak_signed": 40,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.0036035296560704023,
+        "raw_rms": 0.04806439011223058,
+        "target_met": false
+      },
+      "physical_valid": true,
+      "training": {
+        "method": "Four source-derived log-magnitude clusters; causal real-cepstral minimum-phase16tap response",
+        "nfft": 512,
+        "cepstrum_taps": 16,
+        "selector": "incumbent",
+        "balance": false,
+        "blend": 0.25,
+        "table_sums": [
+          4,
+          4,
+          5,
+          4
+        ],
+        "voiced_observations": 88,
+        "stream_bytes": 611,
+        "source_policy": "No phase alignment, source time shift, resampling, hidden side information or target normalization"
+      },
+      "source_sha256": "8b3232fc55d565fcf950eb4f1b13e620d87d21c0dd16a6236e0c1b72bcdc70d6",
+      "coefficient_reuse": [
+        {
+          "frame": 87,
+          "coefficient_byte": 2,
+          "before_bytes": 637,
+          "after_bytes": 633
+        },
+        {
+          "frame": 48,
+          "coefficient_byte": 2,
+          "before_bytes": 633,
+          "after_bytes": 631
+        },
+        {
+          "frame": 69,
+          "coefficient_byte": 4,
+          "before_bytes": 631,
+          "after_bytes": 629
+        },
+        {
+          "frame": 104,
+          "coefficient_byte": 4,
+          "before_bytes": 629,
+          "after_bytes": 627
+        },
+        {
+          "frame": 24,
+          "coefficient_byte": 2,
+          "before_bytes": 627,
+          "after_bytes": 623
+        },
+        {
+          "frame": 125,
+          "coefficient_byte": 4,
+          "before_bytes": 623,
+          "after_bytes": 619
+        },
+        {
+          "frame": 15,
+          "coefficient_byte": 4,
+          "before_bytes": 619,
+          "after_bytes": 615
+        },
+        {
+          "frame": 62,
+          "coefficient_byte": 2,
+          "before_bytes": 615,
+          "after_bytes": 611
+        }
+      ],
+      "model": "rounded-balanced0-incumbent-blend0.25/model.json",
+      "energy": 1.1283567035014477
+    },
+    {
+      "id": "rounded-balanced0-incumbent-blend0.5",
+      "score": {
+        "stoi": 0.78586315174987,
+        "spectrogram_loss": 0.5542118402240264,
+        "fine_log_error": 0.5447802910398235,
+        "envelope_error": 0.6571552147456888,
+        "unsupported_energy": 0.234084866982335,
+        "missing_energy": 0.23046979816046584,
+        "stream_bytes": 611,
+        "peak_signed": 34,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.008525278376436782,
+        "raw_rms": 0.04458760693354262,
+        "target_met": false
+      },
+      "physical_valid": true,
+      "training": {
+        "method": "Four source-derived log-magnitude clusters; causal real-cepstral minimum-phase16tap response",
+        "nfft": 512,
+        "cepstrum_taps": 16,
+        "selector": "incumbent",
+        "balance": false,
+        "blend": 0.5,
+        "table_sums": [
+          2,
+          4,
+          3,
+          4
+        ],
+        "voiced_observations": 88,
+        "stream_bytes": 611,
+        "source_policy": "No phase alignment, source time shift, resampling, hidden side information or target normalization"
+      },
+      "source_sha256": "8b3232fc55d565fcf950eb4f1b13e620d87d21c0dd16a6236e0c1b72bcdc70d6",
+      "coefficient_reuse": [
+        {
+          "frame": 87,
+          "coefficient_byte": 2,
+          "before_bytes": 637,
+          "after_bytes": 633
+        },
+        {
+          "frame": 48,
+          "coefficient_byte": 2,
+          "before_bytes": 633,
+          "after_bytes": 631
+        },
+        {
+          "frame": 69,
+          "coefficient_byte": 4,
+          "before_bytes": 631,
+          "after_bytes": 629
+        },
+        {
+          "frame": 104,
+          "coefficient_byte": 4,
+          "before_bytes": 629,
+          "after_bytes": 627
+        },
+        {
+          "frame": 24,
+          "coefficient_byte": 2,
+          "before_bytes": 627,
+          "after_bytes": 623
+        },
+        {
+          "frame": 125,
+          "coefficient_byte": 4,
+          "before_bytes": 623,
+          "after_bytes": 619
+        },
+        {
+          "frame": 15,
+          "coefficient_byte": 4,
+          "before_bytes": 619,
+          "after_bytes": 615
+        },
+        {
+          "frame": 62,
+          "coefficient_byte": 2,
+          "before_bytes": 615,
+          "after_bytes": 611
+        }
+      ],
+      "model": "rounded-balanced0-incumbent-blend0.5/model.json",
+      "energy": 1.2390329297248066
+    },
+    {
+      "id": "rounded-balanced0-incumbent-blend1",
+      "score": {
+        "stoi": 0.7363557848883595,
+        "spectrogram_loss": 0.5639674358432011,
+        "fine_log_error": 0.5743695519829375,
+        "envelope_error": 0.6377499381458223,
+        "unsupported_energy": 0.23984795203713832,
+        "missing_energy": 0.23150633080669947,
+        "stream_bytes": 611,
+        "peak_signed": 50,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.015795126728627873,
+        "raw_rms": 0.05348881279385968,
+        "target_met": false
+      },
+      "physical_valid": true,
+      "training": {
+        "method": "Four source-derived log-magnitude clusters; causal real-cepstral minimum-phase16tap response",
+        "nfft": 512,
+        "cepstrum_taps": 16,
+        "selector": "incumbent",
+        "balance": false,
+        "blend": 1.0,
+        "table_sums": [
+          -1,
+          1,
+          7,
+          0
+        ],
+        "voiced_observations": 88,
+        "stream_bytes": 611,
+        "source_policy": "No phase alignment, source time shift, resampling, hidden side information or target normalization"
+      },
+      "source_sha256": "8b3232fc55d565fcf950eb4f1b13e620d87d21c0dd16a6236e0c1b72bcdc70d6",
+      "coefficient_reuse": [
+        {
+          "frame": 87,
+          "coefficient_byte": 2,
+          "before_bytes": 637,
+          "after_bytes": 633
+        },
+        {
+          "frame": 48,
+          "coefficient_byte": 2,
+          "before_bytes": 633,
+          "after_bytes": 631
+        },
+        {
+          "frame": 69,
+          "coefficient_byte": 4,
+          "before_bytes": 631,
+          "after_bytes": 629
+        },
+        {
+          "frame": 104,
+          "coefficient_byte": 4,
+          "before_bytes": 629,
+          "after_bytes": 627
+        },
+        {
+          "frame": 24,
+          "coefficient_byte": 2,
+          "before_bytes": 627,
+          "after_bytes": 623
+        },
+        {
+          "frame": 125,
+          "coefficient_byte": 4,
+          "before_bytes": 623,
+          "after_bytes": 619
+        },
+        {
+          "frame": 15,
+          "coefficient_byte": 4,
+          "before_bytes": 619,
+          "after_bytes": 615
+        },
+        {
+          "frame": 62,
+          "coefficient_byte": 2,
+          "before_bytes": 615,
+          "after_bytes": 611
+        }
+      ],
+      "model": "rounded-balanced0-incumbent-blend1/model.json",
+      "energy": 1.5458327265130443
+    },
+    {
+      "id": "rounded-balanced0-cluster-blend0.25",
+      "score": {
+        "stoi": 0.8084307402257181,
+        "spectrogram_loss": 0.5027930347029574,
+        "fine_log_error": 0.4863347691208737,
+        "envelope_error": 0.5965915629238634,
+        "unsupported_energy": 0.20447387472447418,
+        "missing_energy": 0.19675365978958492,
+        "stream_bytes": 611,
+        "peak_signed": 55,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.001288403039691092,
+        "raw_rms": 0.05851575549442915,
+        "target_met": false
+      },
+      "physical_valid": true,
+      "training": {
+        "method": "Four source-derived log-magnitude clusters; causal real-cepstral minimum-phase16tap response",
+        "nfft": 512,
+        "cepstrum_taps": 16,
+        "selector": "cluster",
+        "balance": false,
+        "blend": 0.25,
+        "table_sums": [
+          5,
+          4,
+          4,
+          4
+        ],
+        "voiced_observations": 88,
+        "stream_bytes": 611,
+        "source_policy": "No phase alignment, source time shift, resampling, hidden side information or target normalization"
+      },
+      "source_sha256": "8b3232fc55d565fcf950eb4f1b13e620d87d21c0dd16a6236e0c1b72bcdc70d6",
+      "coefficient_reuse": [
+        {
+          "frame": 87,
+          "coefficient_byte": 2,
+          "before_bytes": 637,
+          "after_bytes": 633
+        },
+        {
+          "frame": 48,
+          "coefficient_byte": 2,
+          "before_bytes": 633,
+          "after_bytes": 631
+        },
+        {
+          "frame": 69,
+          "coefficient_byte": 4,
+          "before_bytes": 631,
+          "after_bytes": 629
+        },
+        {
+          "frame": 104,
+          "coefficient_byte": 4,
+          "before_bytes": 629,
+          "after_bytes": 627
+        },
+        {
+          "frame": 24,
+          "coefficient_byte": 2,
+          "before_bytes": 627,
+          "after_bytes": 623
+        },
+        {
+          "frame": 125,
+          "coefficient_byte": 4,
+          "before_bytes": 623,
+          "after_bytes": 619
+        },
+        {
+          "frame": 15,
+          "coefficient_byte": 4,
+          "before_bytes": 619,
+          "after_bytes": 615
+        },
+        {
+          "frame": 62,
+          "coefficient_byte": 2,
+          "before_bytes": 615,
+          "after_bytes": 611
+        }
+      ],
+      "model": "rounded-balanced0-cluster-blend0.25/model.json",
+      "energy": 1.0522085933486487
+    },
+    {
+      "id": "rounded-balanced0-cluster-blend0.5",
+      "score": {
+        "stoi": 0.7913885267209878,
+        "spectrogram_loss": 0.5188234724717385,
+        "fine_log_error": 0.5060633480230858,
+        "envelope_error": 0.6120811971599922,
+        "unsupported_energy": 0.2113288922686109,
+        "missing_energy": 0.21283110718777065,
+        "stream_bytes": 611,
+        "peak_signed": 47,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.0051928991558908046,
+        "raw_rms": 0.0533629108769347,
+        "target_met": false
+      },
+      "physical_valid": true,
+      "training": {
+        "method": "Four source-derived log-magnitude clusters; causal real-cepstral minimum-phase16tap response",
+        "nfft": 512,
+        "cepstrum_taps": 16,
+        "selector": "cluster",
+        "balance": false,
+        "blend": 0.5,
+        "table_sums": [
+          3,
+          2,
+          4,
+          4
+        ],
+        "voiced_observations": 88,
+        "stream_bytes": 611,
+        "source_policy": "No phase alignment, source time shift, resampling, hidden side information or target normalization"
+      },
+      "source_sha256": "8b3232fc55d565fcf950eb4f1b13e620d87d21c0dd16a6236e0c1b72bcdc70d6",
+      "coefficient_reuse": [
+        {
+          "frame": 87,
+          "coefficient_byte": 2,
+          "before_bytes": 637,
+          "after_bytes": 633
+        },
+        {
+          "frame": 48,
+          "coefficient_byte": 2,
+          "before_bytes": 633,
+          "after_bytes": 631
+        },
+        {
+          "frame": 69,
+          "coefficient_byte": 4,
+          "before_bytes": 631,
+          "after_bytes": 629
+        },
+        {
+          "frame": 104,
+          "coefficient_byte": 4,
+          "before_bytes": 629,
+          "after_bytes": 627
+        },
+        {
+          "frame": 24,
+          "coefficient_byte": 2,
+          "before_bytes": 627,
+          "after_bytes": 623
+        },
+        {
+          "frame": 125,
+          "coefficient_byte": 4,
+          "before_bytes": 623,
+          "after_bytes": 619
+        },
+        {
+          "frame": 15,
+          "coefficient_byte": 4,
+          "before_bytes": 619,
+          "after_bytes": 615
+        },
+        {
+          "frame": 62,
+          "coefficient_byte": 2,
+          "before_bytes": 615,
+          "after_bytes": 611
+        }
+      ],
+      "model": "rounded-balanced0-cluster-blend0.5/model.json",
+      "energy": 1.1704923121458117
+    },
+    {
+      "id": "rounded-balanced0-cluster-blend1",
+      "score": {
+        "stoi": 0.7740867922581517,
+        "spectrogram_loss": 0.49055389876644373,
+        "fine_log_error": 0.49722054873330906,
+        "envelope_error": 0.5529988065340272,
+        "unsupported_energy": 0.18726638432688583,
+        "missing_energy": 0.17645357816582502,
+        "stream_bytes": 611,
+        "peak_signed": 63,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 9.330661817528736e-05,
+        "raw_rms": 0.061156824673234855,
+        "target_met": false
+      },
+      "physical_valid": true,
+      "training": {
+        "method": "Four source-derived log-magnitude clusters; causal real-cepstral minimum-phase16tap response",
+        "nfft": 512,
+        "cepstrum_taps": 16,
+        "selector": "cluster",
+        "balance": false,
+        "blend": 1.0,
+        "table_sums": [
+          7,
+          -1,
+          0,
+          1
+        ],
+        "voiced_observations": 88,
+        "stream_bytes": 611,
+        "source_policy": "No phase alignment, source time shift, resampling, hidden side information or target normalization"
+      },
+      "source_sha256": "8b3232fc55d565fcf950eb4f1b13e620d87d21c0dd16a6236e0c1b72bcdc70d6",
+      "coefficient_reuse": [
+        {
+          "frame": 87,
+          "coefficient_byte": 2,
+          "before_bytes": 637,
+          "after_bytes": 633
+        },
+        {
+          "frame": 48,
+          "coefficient_byte": 2,
+          "before_bytes": 633,
+          "after_bytes": 631
+        },
+        {
+          "frame": 69,
+          "coefficient_byte": 4,
+          "before_bytes": 631,
+          "after_bytes": 629
+        },
+        {
+          "frame": 104,
+          "coefficient_byte": 4,
+          "before_bytes": 629,
+          "after_bytes": 627
+        },
+        {
+          "frame": 24,
+          "coefficient_byte": 2,
+          "before_bytes": 627,
+          "after_bytes": 623
+        },
+        {
+          "frame": 125,
+          "coefficient_byte": 4,
+          "before_bytes": 623,
+          "after_bytes": 619
+        },
+        {
+          "frame": 15,
+          "coefficient_byte": 4,
+          "before_bytes": 619,
+          "after_bytes": 615
+        },
+        {
+          "frame": 62,
+          "coefficient_byte": 2,
+          "before_bytes": 615,
+          "after_bytes": 611
+        }
+      ],
+      "model": "rounded-balanced0-cluster-blend1/model.json",
+      "energy": 1.2460331452175337
+    },
+    {
+      "id": "rounded-balanced1-incumbent-blend0.25",
+      "score": {
+        "stoi": 0.7769077664527839,
+        "spectrogram_loss": 0.5345660205682633,
+        "fine_log_error": 0.5112090767754673,
+        "envelope_error": 0.6480446685645959,
+        "unsupported_energy": 0.22931794214283752,
+        "missing_energy": 0.21842969643462667,
+        "stream_bytes": 611,
+        "peak_signed": 51,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.017023897719109195,
+        "raw_rms": 0.05518355366722888,
+        "target_met": false
+      },
+      "physical_valid": true,
+      "training": {
+        "method": "Four source-derived log-magnitude clusters; causal real-cepstral minimum-phase16tap response",
+        "nfft": 512,
+        "cepstrum_taps": 16,
+        "selector": "incumbent",
+        "balance": true,
+        "blend": 0.25,
+        "table_sums": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "voiced_observations": 88,
+        "stream_bytes": 611,
+        "source_policy": "No phase alignment, source time shift, resampling, hidden side information or target normalization"
+      },
+      "source_sha256": "8b3232fc55d565fcf950eb4f1b13e620d87d21c0dd16a6236e0c1b72bcdc70d6",
+      "coefficient_reuse": [
+        {
+          "frame": 87,
+          "coefficient_byte": 2,
+          "before_bytes": 637,
+          "after_bytes": 633
+        },
+        {
+          "frame": 48,
+          "coefficient_byte": 2,
+          "before_bytes": 633,
+          "after_bytes": 631
+        },
+        {
+          "frame": 69,
+          "coefficient_byte": 4,
+          "before_bytes": 631,
+          "after_bytes": 629
+        },
+        {
+          "frame": 104,
+          "coefficient_byte": 4,
+          "before_bytes": 629,
+          "after_bytes": 627
+        },
+        {
+          "frame": 24,
+          "coefficient_byte": 2,
+          "before_bytes": 627,
+          "after_bytes": 623
+        },
+        {
+          "frame": 125,
+          "coefficient_byte": 4,
+          "before_bytes": 623,
+          "after_bytes": 619
+        },
+        {
+          "frame": 15,
+          "coefficient_byte": 4,
+          "before_bytes": 619,
+          "after_bytes": 615
+        },
+        {
+          "frame": 62,
+          "coefficient_byte": 2,
+          "before_bytes": 615,
+          "after_bytes": 611
+        }
+      ],
+      "model": "rounded-balanced1-incumbent-blend0.25/model.json",
+      "energy": 1.2731194218515598
+    },
+    {
+      "id": "rounded-balanced1-incumbent-blend0.5",
+      "score": {
+        "stoi": 0.7617559506844687,
+        "spectrogram_loss": 0.5467779588186232,
+        "fine_log_error": 0.5360170612763945,
+        "envelope_error": 0.6485775084981658,
+        "unsupported_energy": 0.22771125167032638,
+        "missing_energy": 0.23028197227598574,
+        "stream_bytes": 611,
+        "peak_signed": 40,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.0164935232579023,
+        "raw_rms": 0.0472738318838951,
+        "target_met": false
+      },
+      "physical_valid": true,
+      "training": {
+        "method": "Four source-derived log-magnitude clusters; causal real-cepstral minimum-phase16tap response",
+        "nfft": 512,
+        "cepstrum_taps": 16,
+        "selector": "incumbent",
+        "balance": true,
+        "blend": 0.5,
+        "table_sums": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "voiced_observations": 88,
+        "stream_bytes": 611,
+        "source_policy": "No phase alignment, source time shift, resampling, hidden side information or target normalization"
+      },
+      "source_sha256": "8b3232fc55d565fcf950eb4f1b13e620d87d21c0dd16a6236e0c1b72bcdc70d6",
+      "coefficient_reuse": [
+        {
+          "frame": 87,
+          "coefficient_byte": 2,
+          "before_bytes": 637,
+          "after_bytes": 633
+        },
+        {
+          "frame": 48,
+          "coefficient_byte": 2,
+          "before_bytes": 633,
+          "after_bytes": 631
+        },
+        {
+          "frame": 69,
+          "coefficient_byte": 4,
+          "before_bytes": 631,
+          "after_bytes": 629
+        },
+        {
+          "frame": 104,
+          "coefficient_byte": 4,
+          "before_bytes": 629,
+          "after_bytes": 627
+        },
+        {
+          "frame": 24,
+          "coefficient_byte": 2,
+          "before_bytes": 627,
+          "after_bytes": 623
+        },
+        {
+          "frame": 125,
+          "coefficient_byte": 4,
+          "before_bytes": 623,
+          "after_bytes": 619
+        },
+        {
+          "frame": 15,
+          "coefficient_byte": 4,
+          "before_bytes": 619,
+          "after_bytes": 615
+        },
+        {
+          "frame": 62,
+          "coefficient_byte": 2,
+          "before_bytes": 615,
+          "after_bytes": 611
+        }
+      ],
+      "model": "rounded-balanced1-incumbent-blend0.5/model.json",
+      "energy": 1.3762422547118114
+    },
+    {
+      "id": "rounded-balanced1-incumbent-blend1",
+      "score": {
+        "stoi": 0.7160376354072623,
+        "spectrogram_loss": 0.5774813478808054,
+        "fine_log_error": 0.5728264672961654,
+        "envelope_error": 0.6762397557119704,
+        "unsupported_energy": 0.2494830755982333,
+        "missing_energy": 0.2575860618935488,
+        "stream_bytes": 611,
+        "peak_signed": 41,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.017678447153376436,
+        "raw_rms": 0.05352776203584163,
+        "target_met": false
+      },
+      "physical_valid": true,
+      "training": {
+        "method": "Four source-derived log-magnitude clusters; causal real-cepstral minimum-phase16tap response",
+        "nfft": 512,
+        "cepstrum_taps": 16,
+        "selector": "incumbent",
+        "balance": true,
+        "blend": 1.0,
+        "table_sums": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "voiced_observations": 88,
+        "stream_bytes": 611,
+        "source_policy": "No phase alignment, source time shift, resampling, hidden side information or target normalization"
+      },
+      "source_sha256": "8b3232fc55d565fcf950eb4f1b13e620d87d21c0dd16a6236e0c1b72bcdc70d6",
+      "coefficient_reuse": [
+        {
+          "frame": 87,
+          "coefficient_byte": 2,
+          "before_bytes": 637,
+          "after_bytes": 633
+        },
+        {
+          "frame": 48,
+          "coefficient_byte": 2,
+          "before_bytes": 633,
+          "after_bytes": 631
+        },
+        {
+          "frame": 69,
+          "coefficient_byte": 4,
+          "before_bytes": 631,
+          "after_bytes": 629
+        },
+        {
+          "frame": 104,
+          "coefficient_byte": 4,
+          "before_bytes": 629,
+          "after_bytes": 627
+        },
+        {
+          "frame": 24,
+          "coefficient_byte": 2,
+          "before_bytes": 627,
+          "after_bytes": 623
+        },
+        {
+          "frame": 125,
+          "coefficient_byte": 4,
+          "before_bytes": 623,
+          "after_bytes": 619
+        },
+        {
+          "frame": 15,
+          "coefficient_byte": 4,
+          "before_bytes": 619,
+          "after_bytes": 615
+        },
+        {
+          "frame": 62,
+          "coefficient_byte": 2,
+          "before_bytes": 615,
+          "after_bytes": 611
+        }
+      ],
+      "model": "rounded-balanced1-incumbent-blend1/model.json",
+      "energy": 1.6812555354372318
+    },
+    {
+      "id": "rounded-balanced1-cluster-blend0.25",
+      "score": {
+        "stoi": 0.7849670303487661,
+        "spectrogram_loss": 0.5106309096068559,
+        "fine_log_error": 0.4840920846078322,
+        "envelope_error": 0.6251198385735626,
+        "unsupported_energy": 0.20399440937099725,
+        "missing_energy": 0.21324105802295062,
+        "stream_bytes": 611,
+        "peak_signed": 61,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.016544035111350573,
+        "raw_rms": 0.060415519373852915,
+        "target_met": false
+      },
+      "physical_valid": true,
+      "training": {
+        "method": "Four source-derived log-magnitude clusters; causal real-cepstral minimum-phase16tap response",
+        "nfft": 512,
+        "cepstrum_taps": 16,
+        "selector": "cluster",
+        "balance": true,
+        "blend": 0.25,
+        "table_sums": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "voiced_observations": 88,
+        "stream_bytes": 611,
+        "source_policy": "No phase alignment, source time shift, resampling, hidden side information or target normalization"
+      },
+      "source_sha256": "8b3232fc55d565fcf950eb4f1b13e620d87d21c0dd16a6236e0c1b72bcdc70d6",
+      "coefficient_reuse": [
+        {
+          "frame": 87,
+          "coefficient_byte": 2,
+          "before_bytes": 637,
+          "after_bytes": 633
+        },
+        {
+          "frame": 48,
+          "coefficient_byte": 2,
+          "before_bytes": 633,
+          "after_bytes": 631
+        },
+        {
+          "frame": 69,
+          "coefficient_byte": 4,
+          "before_bytes": 631,
+          "after_bytes": 629
+        },
+        {
+          "frame": 104,
+          "coefficient_byte": 4,
+          "before_bytes": 629,
+          "after_bytes": 627
+        },
+        {
+          "frame": 24,
+          "coefficient_byte": 2,
+          "before_bytes": 627,
+          "after_bytes": 623
+        },
+        {
+          "frame": 125,
+          "coefficient_byte": 4,
+          "before_bytes": 623,
+          "after_bytes": 619
+        },
+        {
+          "frame": 15,
+          "coefficient_byte": 4,
+          "before_bytes": 619,
+          "after_bytes": 615
+        },
+        {
+          "frame": 62,
+          "coefficient_byte": 2,
+          "before_bytes": 615,
+          "after_bytes": 611
+        }
+      ],
+      "model": "rounded-balanced1-cluster-blend0.25/model.json",
+      "energy": 1.200828727514259
+    },
+    {
+      "id": "rounded-balanced1-cluster-blend0.5",
+      "score": {
+        "stoi": 0.7869700197315402,
+        "spectrogram_loss": 0.5118513244318104,
+        "fine_log_error": 0.48576411462100155,
+        "envelope_error": 0.6225370633449662,
+        "unsupported_energy": 0.21040893107152864,
+        "missing_energy": 0.21052038467387535,
+        "stream_bytes": 611,
+        "peak_signed": 61,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.01682500729615661,
+        "raw_rms": 0.059499309771976205,
+        "target_met": false
+      },
+      "physical_valid": true,
+      "training": {
+        "method": "Four source-derived log-magnitude clusters; causal real-cepstral minimum-phase16tap response",
+        "nfft": 512,
+        "cepstrum_taps": 16,
+        "selector": "cluster",
+        "balance": true,
+        "blend": 0.5,
+        "table_sums": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "voiced_observations": 88,
+        "stream_bytes": 611,
+        "source_policy": "No phase alignment, source time shift, resampling, hidden side information or target normalization"
+      },
+      "source_sha256": "8b3232fc55d565fcf950eb4f1b13e620d87d21c0dd16a6236e0c1b72bcdc70d6",
+      "coefficient_reuse": [
+        {
+          "frame": 87,
+          "coefficient_byte": 2,
+          "before_bytes": 637,
+          "after_bytes": 633
+        },
+        {
+          "frame": 48,
+          "coefficient_byte": 2,
+          "before_bytes": 633,
+          "after_bytes": 631
+        },
+        {
+          "frame": 69,
+          "coefficient_byte": 4,
+          "before_bytes": 631,
+          "after_bytes": 629
+        },
+        {
+          "frame": 104,
+          "coefficient_byte": 4,
+          "before_bytes": 629,
+          "after_bytes": 627
+        },
+        {
+          "frame": 24,
+          "coefficient_byte": 2,
+          "before_bytes": 627,
+          "after_bytes": 623
+        },
+        {
+          "frame": 125,
+          "coefficient_byte": 4,
+          "before_bytes": 623,
+          "after_bytes": 619
+        },
+        {
+          "frame": 15,
+          "coefficient_byte": 4,
+          "before_bytes": 619,
+          "after_bytes": 615
+        },
+        {
+          "frame": 62,
+          "coefficient_byte": 2,
+          "before_bytes": 615,
+          "after_bytes": 611
+        }
+      ],
+      "model": "rounded-balanced1-cluster-blend0.5/model.json",
+      "energy": 1.190031206042569
+    },
+    {
+      "id": "rounded-balanced1-cluster-blend1",
+      "score": {
+        "stoi": 0.767431980134471,
+        "spectrogram_loss": 0.5241923964250677,
+        "fine_log_error": 0.5133435856290915,
+        "envelope_error": 0.6143447320816299,
+        "unsupported_energy": 0.21935158894265744,
+        "missing_energy": 0.21097144863862327,
+        "stream_bytes": 611,
+        "peak_signed": 54,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.016182384271731323,
+        "raw_rms": 0.055148308279633386,
+        "target_met": false
+      },
+      "physical_valid": true,
+      "training": {
+        "method": "Four source-derived log-magnitude clusters; causal real-cepstral minimum-phase16tap response",
+        "nfft": 512,
+        "cepstrum_taps": 16,
+        "selector": "cluster",
+        "balance": true,
+        "blend": 1.0,
+        "table_sums": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "voiced_observations": 88,
+        "stream_bytes": 611,
+        "source_policy": "No phase alignment, source time shift, resampling, hidden side information or target normalization"
+      },
+      "source_sha256": "8b3232fc55d565fcf950eb4f1b13e620d87d21c0dd16a6236e0c1b72bcdc70d6",
+      "coefficient_reuse": [
+        {
+          "frame": 87,
+          "coefficient_byte": 2,
+          "before_bytes": 637,
+          "after_bytes": 633
+        },
+        {
+          "frame": 48,
+          "coefficient_byte": 2,
+          "before_bytes": 633,
+          "after_bytes": 631
+        },
+        {
+          "frame": 69,
+          "coefficient_byte": 4,
+          "before_bytes": 631,
+          "after_bytes": 629
+        },
+        {
+          "frame": 104,
+          "coefficient_byte": 4,
+          "before_bytes": 629,
+          "after_bytes": 627
+        },
+        {
+          "frame": 24,
+          "coefficient_byte": 2,
+          "before_bytes": 627,
+          "after_bytes": 623
+        },
+        {
+          "frame": 125,
+          "coefficient_byte": 4,
+          "before_bytes": 623,
+          "after_bytes": 619
+        },
+        {
+          "frame": 15,
+          "coefficient_byte": 4,
+          "before_bytes": 619,
+          "after_bytes": 615
+        },
+        {
+          "frame": 62,
+          "coefficient_byte": 2,
+          "before_bytes": 615,
+          "after_bytes": 611
+        }
+      ],
+      "model": "rounded-balanced1-cluster-blend1/model.json",
+      "energy": 1.3196005156182418
+    }
+  ],
+  "avr_assembled": false,
+  "hardware_tested": false,
+  "best_by_joint_target": [
+    "rounded-balanced0-cluster-blend0.25",
+    "floor-balanced0-cluster-blend0.25",
+    "floor-balanced0-incumbent-blend0.25",
+    "rounded-balanced0-incumbent-blend0.25"
+  ],
+  "best_by_stoi": [
+    "rounded-balanced0-cluster-blend0.25",
+    "floor-balanced0-incumbent-blend0.25",
+    "floor-balanced0-cluster-blend0.25",
+    "rounded-balanced0-incumbent-blend0.25"
+  ],
+  "source_sha256_normalized_lf": {
+    "tools/probe-q3-minphase-seeds.py": "516b7634a35544ed3c7720b91fd0a94363dc393b9a42aca88fd26249a73bc8fa",
+    "ATtiny13A/Sound/codec/q3_pulsebook_seed.py": "f80b720c46bfed368fcfb07edd56904d99dc8e446ecb135a37bf3569e5494d03",
+    "ATtiny13A/Sound/codec/q3_phasebook.py": "5f81fd674b1ed11f294923d1258ba304ffcb4ff2fde555333b2a3877b5bc9c11",
+    "ATtiny13A/Sound/codec/q3_pulsebook.py": "9252905ba28151205695f2927dfe5dbcd62d92cfc629e049bc272c63c9a90ed4",
+    "tools/probe-q3-pulsebook.py": "58e434af0841ef95fc6e323b9739e2536765db88591fa3482bbab781e5d2c277",
+    "ATtiny13A/Sound/codec/spectrogram_objective.py": "66fd5c3d5e3a0716d3c18269a261a70ad9165575eaf33acb5c7ee166a8d4e927"
+  }
+}

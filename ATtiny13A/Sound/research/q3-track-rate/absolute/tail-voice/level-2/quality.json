@@ -1,0 +1,109 @@
+{
+  "feasible": true,
+  "failed_guards": [],
+  "initial_stream_bytes": 237,
+  "stream_bytes": 219,
+  "evaluations": 300,
+  "accepted_operations": 9,
+  "history": [
+    {
+      "evaluation": 29,
+      "operation": "share-2-4-rows-8-12-source-7",
+      "stream_bytes": 235
+    },
+    {
+      "evaluation": 34,
+      "operation": "merge-rows-22-23-source-22",
+      "stream_bytes": 233
+    },
+    {
+      "evaluation": 106,
+      "operation": "merge-rows-64-65-source-64",
+      "stream_bytes": 230
+    },
+    {
+      "evaluation": 211,
+      "operation": "merge-rows-49-50-source-50",
+      "stream_bytes": 229
+    },
+    {
+      "evaluation": 212,
+      "operation": "share-4-6-rows-51-52-source-52",
+      "stream_bytes": 227
+    },
+    {
+      "evaluation": 222,
+      "operation": "share-2-4-rows-12-16-source-11",
+      "stream_bytes": 225
+    },
+    {
+      "evaluation": 235,
+      "operation": "share-2-4-rows-42-46-source-41",
+      "stream_bytes": 223
+    },
+    {
+      "evaluation": 248,
+      "operation": "share-4-6-rows-24-28-source-23",
+      "stream_bytes": 221
+    },
+    {
+      "evaluation": 271,
+      "operation": "share-4-6-rows-51-55-source-50",
+      "stream_bytes": 219
+    }
+  ],
+  "level": 2,
+  "requested_frequency_tolerance": 150.0,
+  "requested_amplitude_tolerance_db": 18.0,
+  "limits": {
+    "frequency_key": "frequency_error_p95_cents",
+    "amplitude_key": "level_error_p95_db",
+    "frequency_cap": 150.0,
+    "amplitude_cap": 18.0,
+    "missing_cap": 0.21341688799808775,
+    "extra_cap": 0.31939403439798464,
+    "coverage_floor": 0.7865831120019123,
+    "continuity_cap": 0.34134095894191424,
+    "minimum_stoi": null
+  },
+  "tracking": {
+    "harmonic_track_loss": 1.0001792132811815,
+    "frequency_trajectory_error": 0.712954795814253,
+    "level_error": 3.1462820110207352,
+    "missing_reference_energy": 0.20958594593902444,
+    "extra_candidate_energy": 0.3128187541143072,
+    "weighted_match_rate": 0.7904140540609754,
+    "frequency_error_cents": 37.27632874271908,
+    "frequency_error_hz": 11.495989378055954,
+    "level_error_db": 9.4388460330622,
+    "frequency_error_p95_cents": 86.65302574514729,
+    "frequency_error_p95_hz": 36.90000074047089,
+    "level_error_p95_db": 17.321907281307094,
+    "continuity_break_rate": 0.23180071286385207
+  },
+  "computed_flash_bytes": 640,
+  "fits_target": true,
+  "firmware_qualified": true,
+  "intermediate_wraps": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "stoi": 0.6727218673772252,
+  "estoi": 0.28267367939799365,
+  "spectrum": {
+    "spectrogram_loss": 0.6289024583353321,
+    "fine_log_error": 0.6576997670592426,
+    "envelope_error": 0.6997887133343874,
+    "unsupported_energy": 0.27543647268685306,
+    "missing_energy": 0.2811788590550512
+  },
+  "stream_sha256": "5e96db488e2e71cc759966ce49b872e4124de41bc3dc708db8334de161aefc23",
+  "pcm_sha256": "f6f3af7011cb14515c81343ed14e0006bf3904c69f37671cc4173c356d7b56cc",
+  "status": "feasible",
+  "final_evaluation_verified": true,
+  "computed_complete_bell_flash_bytes": 812,
+  "complete_bell_eeprom_bytes": 64,
+  "complete_bell_firmware_qualified": false
+}

@@ -1,0 +1,60 @@
+{
+  "pass": true,
+  "stateBits": 6,
+  "filterBytes": 108,
+  "multiplyBytes": 108,
+  "arithmeticBytes": 216,
+  "stateBytes": 18,
+  "results": [
+    {
+      "engine": "reference",
+      "case": "mixed-q8",
+      "samples": 22272,
+      "minimumCycles": 771,
+      "maximumCycles": 1182,
+      "maximumStack": 8,
+      "pcm_sha256": "d131729dda4d34f7dc83ee3adb7541abfaf09e18646f5f32cf26d7d11002e695",
+      "model_sha256": "63f6a1bb7dd0b1c028436945770c7aed774ec65c1893c306b27e6f496b2140b8",
+      "irqChecked": 87,
+      "stateChecks": 200448
+    },
+    {
+      "engine": "wasm",
+      "case": "mixed-q8",
+      "samples": 22272,
+      "minimumCycles": 771,
+      "maximumCycles": 1182,
+      "maximumStack": 8,
+      "pcm_sha256": "d131729dda4d34f7dc83ee3adb7541abfaf09e18646f5f32cf26d7d11002e695",
+      "model_sha256": "63f6a1bb7dd0b1c028436945770c7aed774ec65c1893c306b27e6f496b2140b8",
+      "irqChecked": 87,
+      "stateChecks": 200448
+    },
+    {
+      "engine": "wasm-unoptimized",
+      "case": "mixed-q8",
+      "samples": 22272,
+      "minimumCycles": 771,
+      "maximumCycles": 1182,
+      "maximumStack": 8,
+      "pcm_sha256": "d131729dda4d34f7dc83ee3adb7541abfaf09e18646f5f32cf26d7d11002e695",
+      "model_sha256": "63f6a1bb7dd0b1c028436945770c7aed774ec65c1893c306b27e6f496b2140b8",
+      "irqChecked": 87,
+      "stateChecks": 200448
+    }
+  ],
+  "samples": 66816,
+  "stateChecks": 601344,
+  "irqChecked": 261,
+  "scope": "Actual assembled 8-stage Q4 word filter on full phrases; host supplies excitation and coefficients; cycles include internal calls and RET, exclude outer RCALL",
+  "fullDecoderImplemented": false,
+  "hardwareTested": false,
+  "profile": "adaptive",
+  "fixture_bytes": 256,
+  "source_sha256_normalized_lf": {
+    "tools/probe-word-q4-filter.py": "3c23d871b27d238c78e7a8e8bb52f61c02ae784839c7df13c87e7053e545153d",
+    "ATtiny13A/Sound/codec/word-q4/filter.S": "6b785845edab7935b7a808793c5320a4e78ae3bcb85178e6c4431d076420ef46",
+    "ATtiny13A/Sound/codec/word-q4/multiply-factored.S": "c1a485434a5a76b1a622608ab241a641685349c408d27bd0ea44ac9e7b9af005",
+    "tools/verify-word-q4-filter.mjs": "06e4f60c6ac1ad98c028cb54aa79d37ee8e8b85137e571467ce435e880fec426"
+  }
+}

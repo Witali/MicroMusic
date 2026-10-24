@@ -1,0 +1,939 @@
+{
+  "schema": "persistent-spectrum-v1",
+  "runtime": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "numba": "0.68.0",
+    "soundfile": "0.14.0"
+  },
+  "sources_sha256_normalized_lf": {
+    "tools/analyze-speech-spectrum.py": "7afec0c9d2ee551bf25fa1aff1cea7f207ef89e37723a13bd82057316f34d64e",
+    "ATtiny13A/Sound/codec/speech_spectrum.py": "c30f1f2035facbfa69e4389c1dead1b0aca64b7854a0614c3e4c7e4984260587",
+    "ATtiny13A/Sound/codec/speech_pitch.py": "dfff32c46a8709c7959088a9b2cf1abecef9d792834841a00f669c5f3695020b",
+    "ATtiny13A/Sound/codec/period_wave.py": "d6d92cdd2e8d910a9e4085f939e193553fac53e5cd8b0d892b29e76b3709587f",
+    "ATtiny13A/Sound/codec/hq4_core.py": "936c21384042c24be9525ff7cb73b6e1421c852b4a63ea393e318cc60e9bd466",
+    "ATtiny13A/Sound/codec/model.py": "d9c3449ddd2da1929e71da99ef3b040d46d95988d2f5ea704f9416e30c1ba71e"
+  },
+  "objective_definition": {
+    "band_envelope_loss": "Weighted mean absolute difference between temporal one-third-octave magnitude envelopes, independently normalized to unit RMS within each band.",
+    "band_shape_loss": "Weighted mean absolute natural-log difference of unit-L2 spectral-band vectors in each frame; relative magnitude floor .01.",
+    "band_loss": "0.5*(band_envelope_loss+band_shape_loss)",
+    "persistent_spectral_error": "Full-bin log magnitude error, reference-derived ridge weights 1..3, absolute magnitude floor .005*highpassed_reference_RMS.",
+    "reference_weights": "Frame weight .25+.75*min(1,frame_RMS/overall_frame_RMS); band weight1 above2% of highest band RMS, otherwise .25.",
+    "common_preprocessing": "Identical70Hz second-order Butterworth highpass and global RMS matching; no time alignment, frequency warping, trimming or phase fitting."
+  },
+  "limitations": [
+    "Magnitude deficits/excesses are not a waveform residual: phase is discarded.",
+    "The 512-sample Hann window is68.3ms long with14.65Hz FFT-bin spacing; true frequency resolution is poorer than the bin spacing. Short attacks are smeared and ridge timing is uncertain by approximately half a window.",
+    "A persistent narrow component cannot be semantically classified as speech, a formant, a knock or noise by this analysis alone.",
+    "STOI/eSTOI constraints and listening are required; these metrics are encoder search aids, not perceptual quality guarantees.",
+    "No additional MCU Flash, EEPROM data, FFT, notch filter or oscillator has been introduced."
+  ],
+  "clips": [
+    {
+      "id": "chego",
+      "source_sha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+      "samples": 9216,
+      "duration_seconds": 1.2288,
+      "recording_trimmed": false,
+      "candidate": {
+        "kind": "frozen-hq4-exact-numerical-decode",
+        "source_path": "ATtiny13A/Sound/codec/release/chego/speech.hq",
+        "sha256": "5033738490e0ae0ba30c8ea62d9d53404b04b592eb53a7a0750329e641b29e6e",
+        "stream_bytes": 552,
+        "pcm_sha256": "5f5bd15f17def3f67103ff008d38a00b161a0ad752f547f7816fef0615b4e87b",
+        "avr_verification": "See retained frozen HQ4 and one-shot verification reports; this diagnostic itself does not run an AVR emulator."
+      },
+      "persistent_voice_prior_hz": 399.46412599441743,
+      "objective": {
+        "persistent_spectral_error": 0.9573178955335186,
+        "unweighted_spectral_error": 0.9577942629851398,
+        "band_envelope_loss": 0.5303614067466946,
+        "band_shape_loss": 1.2769479403902588,
+        "band_loss": 0.9036546735684767
+      },
+      "frequency_analysis": {
+        "schema": "persistent-spectrum-v1",
+        "sample_rate": 7500,
+        "analysis_window": 512,
+        "hop": 64,
+        "frequency_bin_hz": 14.6484375,
+        "min_run_ms": 80.0,
+        "weight_range": [
+          1.0,
+          3.0
+        ],
+        "persistent_ridges": 6,
+        "ridges": [
+          {
+            "start_seconds": 0.5461333333333334,
+            "end_seconds": 1.2288,
+            "duration_ms": 682.6666666666665,
+            "median_hz": 379.69695815419783,
+            "minimum_hz": 272.7509965732024,
+            "maximum_hz": 457.3418019849229,
+            "relative_energy": 0.4303223347281287,
+            "near_estimated_voice_harmonic_fraction": 0.975,
+            "interpretation": "harmonic_context_candidate"
+          },
+          {
+            "start_seconds": 0.1024,
+            "end_seconds": 0.2901333333333333,
+            "duration_ms": 187.73333333333332,
+            "median_hz": 523.0970925874849,
+            "minimum_hz": 480.7355918685716,
+            "maximum_hz": 542.3281009823852,
+            "relative_energy": 0.2338301600111551,
+            "near_estimated_voice_harmonic_fraction": 0.8181818181818182,
+            "interpretation": "harmonic_context_candidate"
+          },
+          {
+            "start_seconds": 0.1024,
+            "end_seconds": 0.2901333333333333,
+            "duration_ms": 187.73333333333332,
+            "median_hz": 1029.0251996041588,
+            "minimum_hz": 968.4807611814518,
+            "maximum_hz": 1084.2998606843216,
+            "relative_energy": 0.06389455654376833,
+            "near_estimated_voice_harmonic_fraction": 0.8181818181818182,
+            "interpretation": "harmonic_context_candidate"
+          },
+          {
+            "start_seconds": 0.39253333333333335,
+            "end_seconds": 0.5290666666666666,
+            "duration_ms": 136.53333333333322,
+            "median_hz": 371.32280546698746,
+            "minimum_hz": 337.93744521138905,
+            "maximum_hz": 404.94686673915606,
+            "relative_energy": 0.041275654717932805,
+            "near_estimated_voice_harmonic_fraction": 0.875,
+            "interpretation": "harmonic_context_candidate"
+          },
+          {
+            "start_seconds": 0.5461333333333334,
+            "end_seconds": 0.6570666666666666,
+            "duration_ms": 110.93333333333322,
+            "median_hz": 793.6807234168781,
+            "minimum_hz": 775.7654578994576,
+            "maximum_hz": 800.7061989073884,
+            "relative_energy": 0.016709146144256372,
+            "near_estimated_voice_harmonic_fraction": 0.9230769230769231,
+            "interpretation": "harmonic_context_candidate"
+          },
+          {
+            "start_seconds": 0.5461333333333334,
+            "end_seconds": 0.6314666666666666,
+            "duration_ms": 85.33333333333326,
+            "median_hz": 1179.589191050748,
+            "minimum_hz": 1166.8580951907077,
+            "maximum_hz": 1197.2380213837082,
+            "relative_energy": 0.0009414876792499902,
+            "near_estimated_voice_harmonic_fraction": 0.9,
+            "interpretation": "harmonic_context_candidate"
+          }
+        ],
+        "interpretation": "Narrow spectral persistence is not proof of a voice harmonic, a formant or unwanted noise. Do not notch or add these components without exact-decoder search and intelligibility checks."
+      },
+      "error_bands": [
+        {
+          "low_hz": 320.0,
+          "high_hz": 403.17473596635944,
+          "reference_energy_fraction": 0.27178942436610803,
+          "missing_magnitude_energy_fraction": 0.12958352034668544,
+          "excess_magnitude_energy_fraction": 0.011326164875650958,
+          "log_error": 1.1999707726550721
+        },
+        {
+          "low_hz": 507.96833662982385,
+          "high_hz": 640.0,
+          "reference_energy_fraction": 0.21483310991276103,
+          "missing_magnitude_energy_fraction": 0.09384291455291104,
+          "excess_magnitude_energy_fraction": 0.032124127730506616,
+          "log_error": 1.4947803887518114
+        },
+        {
+          "low_hz": 1280.0,
+          "high_hz": 1612.6989438654377,
+          "reference_energy_fraction": 0.045266389015593905,
+          "missing_magnitude_energy_fraction": 0.014674586984602254,
+          "excess_magnitude_energy_fraction": 0.10360231055399649,
+          "log_error": 1.1976800288770582
+        },
+        {
+          "low_hz": 403.17473596635944,
+          "high_hz": 507.96833662982385,
+          "reference_energy_fraction": 0.2536840225203652,
+          "missing_magnitude_energy_fraction": 0.05940334291941197,
+          "excess_magnitude_energy_fraction": 0.051910756021568444,
+          "log_error": 1.2924444930085712
+        },
+        {
+          "low_hz": 1612.6989438654377,
+          "high_hz": 2031.8733465192954,
+          "reference_energy_fraction": 0.03149068734795044,
+          "missing_magnitude_energy_fraction": 0.015876465770733553,
+          "excess_magnitude_energy_fraction": 0.08213846205898047,
+          "log_error": 1.2041863288613388
+        },
+        {
+          "low_hz": 806.3494719327189,
+          "high_hz": 1015.9366732596477,
+          "reference_energy_fraction": 0.02797174950328093,
+          "missing_magnitude_energy_fraction": 0.006769361580666103,
+          "excess_magnitude_energy_fraction": 0.07332675506488312,
+          "log_error": 1.2759990762822333
+        },
+        {
+          "low_hz": 1015.9366732596477,
+          "high_hz": 1280.0,
+          "reference_energy_fraction": 0.0672363710437682,
+          "missing_magnitude_energy_fraction": 0.033424577150455305,
+          "excess_magnitude_energy_fraction": 0.04082623973276266,
+          "log_error": 1.1435810109156592
+        },
+        {
+          "low_hz": 640.0,
+          "high_hz": 806.3494719327189,
+          "reference_energy_fraction": 0.02669336535447948,
+          "missing_magnitude_energy_fraction": 0.003961365363272301,
+          "excess_magnitude_energy_fraction": 0.06097573897914442,
+          "log_error": 1.3458256622458067
+        },
+        {
+          "low_hz": 2031.8733465192954,
+          "high_hz": 2560.0,
+          "reference_energy_fraction": 0.015369981944527938,
+          "missing_magnitude_energy_fraction": 0.004953629203990258,
+          "excess_magnitude_energy_fraction": 0.03652195189683434,
+          "log_error": 0.9323163509215336
+        },
+        {
+          "low_hz": 2560.0,
+          "high_hz": 3225.3978877308755,
+          "reference_energy_fraction": 0.024329666282687113,
+          "missing_magnitude_energy_fraction": 0.011073492801949355,
+          "excess_magnitude_energy_fraction": 0.010108459282751205,
+          "log_error": 0.5449202782488984
+        },
+        {
+          "low_hz": 3225.3978877308755,
+          "high_hz": 3750.0,
+          "reference_energy_fraction": 0.0075735538916397805,
+          "missing_magnitude_energy_fraction": 0.0035338076889636807,
+          "excess_magnitude_energy_fraction": 0.010415225806247532,
+          "log_error": 0.548887648674475
+        },
+        {
+          "low_hz": 253.98416831491193,
+          "high_hz": 320.0,
+          "reference_energy_fraction": 0.013689598795269485,
+          "missing_magnitude_energy_fraction": 0.0026474778834500038,
+          "excess_magnitude_energy_fraction": 0.011033868711972138,
+          "log_error": 1.2887187734650951
+        },
+        {
+          "low_hz": 201.58736798317972,
+          "high_hz": 253.98416831491193,
+          "reference_energy_fraction": 4.331700073360367e-05,
+          "missing_magnitude_energy_fraction": 4.306104784750271e-08,
+          "excess_magnitude_energy_fraction": 0.012830753663314076,
+          "log_error": 1.4475118115715018
+        },
+        {
+          "low_hz": 160.0,
+          "high_hz": 201.58736798317972,
+          "reference_energy_fraction": 9.808122784530051e-06,
+          "missing_magnitude_energy_fraction": 2.4231647365547075e-11,
+          "excess_magnitude_energy_fraction": 0.001969235638540188,
+          "log_error": 1.078682306693355
+        },
+        {
+          "low_hz": 100.79368399158986,
+          "high_hz": 126.99208415745596,
+          "reference_energy_fraction": 4.506438543959756e-06,
+          "missing_magnitude_energy_fraction": 0.0,
+          "excess_magnitude_energy_fraction": 0.00102670358024792,
+          "log_error": 0.9122410441282051
+        },
+        {
+          "low_hz": 126.99208415745596,
+          "high_hz": 160.0,
+          "reference_energy_fraction": 8.207343217974682e-06,
+          "missing_magnitude_energy_fraction": 8.822650910958069e-10,
+          "excess_magnitude_energy_fraction": 0.0005594619006446324,
+          "log_error": 0.7996854452305666
+        },
+        {
+          "low_hz": 80.0,
+          "high_hz": 100.79368399158986,
+          "reference_energy_fraction": 2.5251061055858124e-06,
+          "missing_magnitude_energy_fraction": 3.715717332857284e-11,
+          "excess_magnitude_energy_fraction": 0.0005140211894299208,
+          "log_error": 0.9543349607570684
+        }
+      ]
+    },
+    {
+      "id": "otvechaesh",
+      "source_sha256": "96c09f80396643dd80efb9c5c8557d83359eeb829a0b855a7f8f5c32bbff0b96",
+      "samples": 7936,
+      "duration_seconds": 1.0581333333333334,
+      "recording_trimmed": false,
+      "candidate": {
+        "kind": "frozen-hq4-exact-numerical-decode",
+        "source_path": "ATtiny13A/Sound/codec/release/otvechaesh/speech.hq",
+        "sha256": "6e44fbc2b548627cd71c7329ed5683ec9ce40ee51a1fa61f8f24039d55810d2d",
+        "stream_bytes": 478,
+        "pcm_sha256": "9ef1a8374cc8ed150d6efd2bcf80d33472399519041cb17e84d90d675324dac9",
+        "avr_verification": "See retained frozen HQ4 and one-shot verification reports; this diagnostic itself does not run an AVR emulator."
+      },
+      "persistent_voice_prior_hz": 599.0098115305217,
+      "objective": {
+        "persistent_spectral_error": 0.7516624080778618,
+        "unweighted_spectral_error": 0.7506881168338354,
+        "band_envelope_loss": 0.4688161641711961,
+        "band_shape_loss": 1.226004911425554,
+        "band_loss": 0.847410537798375
+      },
+      "frequency_analysis": {
+        "schema": "persistent-spectrum-v1",
+        "sample_rate": 7500,
+        "analysis_window": 512,
+        "hop": 64,
+        "frequency_bin_hz": 14.6484375,
+        "min_run_ms": 80.0,
+        "weight_range": [
+          1.0,
+          3.0
+        ],
+        "persistent_ridges": 5,
+        "ridges": [
+          {
+            "start_seconds": 0.3157333333333333,
+            "end_seconds": 0.5205333333333333,
+            "duration_ms": 204.79999999999998,
+            "median_hz": 580.8178556646747,
+            "minimum_hz": 548.1240941094173,
+            "maximum_hz": 608.4711838474594,
+            "relative_energy": 0.4332738935683756,
+            "near_estimated_voice_harmonic_fraction": 1.0,
+            "interpretation": "harmonic_context_candidate"
+          },
+          {
+            "start_seconds": 0.09386666666666667,
+            "end_seconds": 0.17920000000000003,
+            "duration_ms": 85.33333333333336,
+            "median_hz": 461.9219317689764,
+            "minimum_hz": 455.92275344530424,
+            "maximum_hz": 463.99306958489825,
+            "relative_energy": 0.3067619386469487,
+            "near_estimated_voice_harmonic_fraction": 0.5,
+            "interpretation": "unclassified_narrow_component"
+          },
+          {
+            "start_seconds": 0.5973333333333333,
+            "end_seconds": 0.7594666666666666,
+            "duration_ms": 162.13333333333335,
+            "median_hz": 633.9753617382029,
+            "minimum_hz": 598.0799297785918,
+            "maximum_hz": 641.3400760342538,
+            "relative_energy": 0.021714217402560597,
+            "near_estimated_voice_harmonic_fraction": 0.7894736842105263,
+            "interpretation": "harmonic_context_candidate"
+          },
+          {
+            "start_seconds": 0.34986666666666666,
+            "end_seconds": 0.5376,
+            "duration_ms": 187.73333333333332,
+            "median_hz": 1191.7804312385074,
+            "minimum_hz": 1140.6204542068133,
+            "maximum_hz": 1235.8182607321128,
+            "relative_energy": 0.012971180750744386,
+            "near_estimated_voice_harmonic_fraction": 0.9090909090909091,
+            "interpretation": "harmonic_context_candidate"
+          },
+          {
+            "start_seconds": 0.9045333333333333,
+            "end_seconds": 1.0410666666666666,
+            "duration_ms": 136.53333333333327,
+            "median_hz": 287.33154741097303,
+            "minimum_hz": 258.902020193254,
+            "maximum_hz": 371.88756186090336,
+            "relative_energy": 0.003923799884259205,
+            "near_estimated_voice_harmonic_fraction": 0.0,
+            "interpretation": "unclassified_narrow_component"
+          }
+        ],
+        "interpretation": "Narrow spectral persistence is not proof of a voice harmonic, a formant or unwanted noise. Do not notch or add these components without exact-decoder search and intelligibility checks."
+      },
+      "error_bands": [
+        {
+          "low_hz": 507.96833662982385,
+          "high_hz": 640.0,
+          "reference_energy_fraction": 0.5086403260203608,
+          "missing_magnitude_energy_fraction": 0.16141138969547325,
+          "excess_magnitude_energy_fraction": 0.05927944911525743,
+          "log_error": 1.0337298050303387
+        },
+        {
+          "low_hz": 403.17473596635944,
+          "high_hz": 507.96833662982385,
+          "reference_energy_fraction": 0.3850426999285902,
+          "missing_magnitude_energy_fraction": 0.04774221673813938,
+          "excess_magnitude_energy_fraction": 0.03694081193384523,
+          "log_error": 0.8822483615830967
+        },
+        {
+          "low_hz": 1280.0,
+          "high_hz": 1612.6989438654377,
+          "reference_energy_fraction": 0.0023999098005919165,
+          "missing_magnitude_energy_fraction": 3.285821541011478e-05,
+          "excess_magnitude_energy_fraction": 0.07470766613008424,
+          "log_error": 1.004884994023439
+        },
+        {
+          "low_hz": 806.3494719327189,
+          "high_hz": 1015.9366732596477,
+          "reference_energy_fraction": 0.011256337787459993,
+          "missing_magnitude_energy_fraction": 0.0005609527384188189,
+          "excess_magnitude_energy_fraction": 0.04600560026514921,
+          "log_error": 1.1176153700863833
+        },
+        {
+          "low_hz": 1612.6989438654377,
+          "high_hz": 2031.8733465192954,
+          "reference_energy_fraction": 0.009264284366162499,
+          "missing_magnitude_energy_fraction": 0.0008457900561926958,
+          "excess_magnitude_energy_fraction": 0.02747542206475938,
+          "log_error": 0.7822296734259401
+        },
+        {
+          "low_hz": 2031.8733465192954,
+          "high_hz": 2560.0,
+          "reference_energy_fraction": 0.024957745398741578,
+          "missing_magnitude_energy_fraction": 0.011099777000189014,
+          "excess_magnitude_energy_fraction": 0.015547232643813108,
+          "log_error": 0.6158310624247446
+        },
+        {
+          "low_hz": 253.98416831491193,
+          "high_hz": 320.0,
+          "reference_energy_fraction": 0.0019394785259889858,
+          "missing_magnitude_energy_fraction": 0.00012788463138232564,
+          "excess_magnitude_energy_fraction": 0.02613597072468367,
+          "log_error": 1.6307661997936584
+        },
+        {
+          "low_hz": 320.0,
+          "high_hz": 403.17473596635944,
+          "reference_energy_fraction": 0.004919791935090194,
+          "missing_magnitude_energy_fraction": 0.0008671062665930678,
+          "excess_magnitude_energy_fraction": 0.020208577355811,
+          "log_error": 1.2733275302881932
+        },
+        {
+          "low_hz": 1015.9366732596477,
+          "high_hz": 1280.0,
+          "reference_energy_fraction": 0.01479611385422706,
+          "missing_magnitude_energy_fraction": 0.005993662341435955,
+          "excess_magnitude_energy_fraction": 0.010568595855660024,
+          "log_error": 0.7404847017526437
+        },
+        {
+          "low_hz": 2560.0,
+          "high_hz": 3225.3978877308755,
+          "reference_energy_fraction": 0.01764856775195616,
+          "missing_magnitude_energy_fraction": 0.009120315501775961,
+          "excess_magnitude_energy_fraction": 0.006648878794222512,
+          "log_error": 0.5087893541853972
+        },
+        {
+          "low_hz": 640.0,
+          "high_hz": 806.3494719327189,
+          "reference_energy_fraction": 0.013551918364820508,
+          "missing_magnitude_energy_fraction": 0.003259293299666907,
+          "excess_magnitude_energy_fraction": 0.012012311640797057,
+          "log_error": 0.881789552093484
+        },
+        {
+          "low_hz": 3225.3978877308755,
+          "high_hz": 3750.0,
+          "reference_energy_fraction": 0.005283470482852387,
+          "missing_magnitude_energy_fraction": 0.00260242665385365,
+          "excess_magnitude_energy_fraction": 0.009156800787678693,
+          "log_error": 0.48003143882116034
+        },
+        {
+          "low_hz": 201.58736798317972,
+          "high_hz": 253.98416831491193,
+          "reference_energy_fraction": 0.00013998578260688565,
+          "missing_magnitude_energy_fraction": 4.683568250966112e-06,
+          "excess_magnitude_energy_fraction": 0.007228536014024468,
+          "log_error": 1.2261551941751447
+        },
+        {
+          "low_hz": 160.0,
+          "high_hz": 201.58736798317972,
+          "reference_energy_fraction": 1.0812797097564983e-05,
+          "missing_magnitude_energy_fraction": 1.8645730391539318e-09,
+          "excess_magnitude_energy_fraction": 0.0014671490664598993,
+          "log_error": 0.9084759195439119
+        },
+        {
+          "low_hz": 126.99208415745596,
+          "high_hz": 160.0,
+          "reference_energy_fraction": 8.270519222589749e-06,
+          "missing_magnitude_energy_fraction": 4.4062601682266805e-08,
+          "excess_magnitude_energy_fraction": 0.001018311584077144,
+          "log_error": 0.9004201224805404
+        },
+        {
+          "low_hz": 80.0,
+          "high_hz": 100.79368399158986,
+          "reference_energy_fraction": 2.0563160018960203e-05,
+          "missing_magnitude_energy_fraction": 1.362541276637774e-07,
+          "excess_magnitude_energy_fraction": 0.0008209655172917194,
+          "log_error": 1.005924721607385
+        },
+        {
+          "low_hz": 100.79368399158986,
+          "high_hz": 126.99208415745596,
+          "reference_energy_fraction": 8.589540237326142e-05,
+          "missing_magnitude_energy_fraction": 1.1840460193043476e-06,
+          "excess_magnitude_energy_fraction": 0.0007531913217480746,
+          "log_error": 0.7734577402259615
+        }
+      ]
+    },
+    {
+      "id": "vinni",
+      "source_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+      "samples": 22272,
+      "duration_seconds": 2.9696,
+      "recording_trimmed": false,
+      "candidate": {
+        "kind": "frozen-hq4-exact-numerical-decode",
+        "source_path": "ATtiny13A/Sound/codec/release/vinni/speech.hq",
+        "sha256": "fe24fbdaf5260266d7b29b04f7e4d3926c48ce13c5697b214e0728b431433d03",
+        "stream_bytes": 617,
+        "pcm_sha256": "cd951656212586119b61b6a61d90d0a9a05d14c76a908257e78c4acdf97e712c",
+        "avr_verification": "See retained frozen HQ4 and one-shot verification reports; this diagnostic itself does not run an AVR emulator."
+      },
+      "persistent_voice_prior_hz": 128.96359722639306,
+      "objective": {
+        "persistent_spectral_error": 0.6730952045557586,
+        "unweighted_spectral_error": 0.6639146468521261,
+        "band_envelope_loss": 0.3932518370383321,
+        "band_shape_loss": 1.0638669017281468,
+        "band_loss": 0.7285593693832395
+      },
+      "frequency_analysis": {
+        "schema": "persistent-spectrum-v1",
+        "sample_rate": 7500,
+        "analysis_window": 512,
+        "hop": 64,
+        "frequency_bin_hz": 14.6484375,
+        "min_run_ms": 80.0,
+        "weight_range": [
+          1.0,
+          3.0
+        ],
+        "persistent_ridges": 23,
+        "ridges": [
+          {
+            "start_seconds": 1.5274666666666668,
+            "end_seconds": 1.6469333333333334,
+            "duration_ms": 119.46666666666661,
+            "median_hz": 1635.7700089910852,
+            "minimum_hz": 1627.9053957470246,
+            "maximum_hz": 1641.3156704201326,
+            "relative_energy": 0.08540868516756234,
+            "near_estimated_voice_harmonic_fraction": 0.5714285714285714,
+            "interpretation": "unclassified_narrow_component"
+          },
+          {
+            "start_seconds": 0.128,
+            "end_seconds": 0.32426666666666665,
+            "duration_ms": 196.26666666666665,
+            "median_hz": 123.40972789221495,
+            "minimum_hz": 100.76418386568892,
+            "maximum_hz": 129.16636703072575,
+            "relative_energy": 0.06273113287298818,
+            "near_estimated_voice_harmonic_fraction": 0.6956521739130435,
+            "interpretation": "harmonic_context_candidate"
+          },
+          {
+            "start_seconds": 1.408,
+            "end_seconds": 1.5957333333333332,
+            "duration_ms": 187.73333333333332,
+            "median_hz": 124.24264085638902,
+            "minimum_hz": 119.73871430687547,
+            "maximum_hz": 139.9055263567443,
+            "relative_energy": 0.05718256870930201,
+            "near_estimated_voice_harmonic_fraction": 0.5909090909090909,
+            "interpretation": "unclassified_narrow_component"
+          },
+          {
+            "start_seconds": 0.19626666666666664,
+            "end_seconds": 0.34986666666666666,
+            "duration_ms": 153.60000000000002,
+            "median_hz": 1562.9860827421253,
+            "minimum_hz": 1534.6088577410467,
+            "maximum_hz": 1574.6354434851578,
+            "relative_energy": 0.048070890603553636,
+            "near_estimated_voice_harmonic_fraction": 0.8333333333333334,
+            "interpretation": "harmonic_context_candidate"
+          },
+          {
+            "start_seconds": 1.3824,
+            "end_seconds": 1.664,
+            "duration_ms": 281.59999999999985,
+            "median_hz": 798.380048607263,
+            "minimum_hz": 765.8756582454774,
+            "maximum_hz": 820.8425985751092,
+            "relative_energy": 0.04742088378285515,
+            "near_estimated_voice_harmonic_fraction": 0.6363636363636364,
+            "interpretation": "unclassified_narrow_component"
+          },
+          {
+            "start_seconds": 0.1877333333333333,
+            "end_seconds": 0.39253333333333335,
+            "duration_ms": 204.80000000000004,
+            "median_hz": 778.5560358821568,
+            "minimum_hz": 717.6386563180645,
+            "maximum_hz": 794.6671666274265,
+            "relative_energy": 0.026969026594971614,
+            "near_estimated_voice_harmonic_fraction": 0.75,
+            "interpretation": "harmonic_context_candidate"
+          },
+          {
+            "start_seconds": 0.8106666666666666,
+            "end_seconds": 0.9045333333333333,
+            "duration_ms": 93.86666666666666,
+            "median_hz": 120.73462669413182,
+            "minimum_hz": 119.40386839315825,
+            "maximum_hz": 128.99469912427313,
+            "relative_energy": 0.025682982820196897,
+            "near_estimated_voice_harmonic_fraction": 0.18181818181818182,
+            "interpretation": "unclassified_narrow_component"
+          },
+          {
+            "start_seconds": 0.1877333333333333,
+            "end_seconds": 0.34986666666666666,
+            "duration_ms": 162.13333333333335,
+            "median_hz": 1170.9335865853013,
+            "minimum_hz": 1147.9412121747646,
+            "maximum_hz": 1178.120271321912,
+            "relative_energy": 0.017891686171047822,
+            "near_estimated_voice_harmonic_fraction": 0.7894736842105263,
+            "interpretation": "harmonic_context_candidate"
+          },
+          {
+            "start_seconds": 2.4234666666666667,
+            "end_seconds": 2.5088000000000004,
+            "duration_ms": 85.33333333333371,
+            "median_hz": 263.3443657652168,
+            "minimum_hz": 249.91377266975823,
+            "maximum_hz": 277.80649162232953,
+            "relative_energy": 0.013714786806554288,
+            "near_estimated_voice_harmonic_fraction": 0.8,
+            "interpretation": "harmonic_context_candidate"
+          },
+          {
+            "start_seconds": 1.3653333333333333,
+            "end_seconds": 1.5189333333333332,
+            "duration_ms": 153.59999999999997,
+            "median_hz": 388.62288025973777,
+            "minimum_hz": 377.01927735130266,
+            "maximum_hz": 399.60058370941096,
+            "relative_energy": 0.007025627815719024,
+            "near_estimated_voice_harmonic_fraction": 0.6111111111111112,
+            "interpretation": "unclassified_narrow_component"
+          },
+          {
+            "start_seconds": 0.9386666666666666,
+            "end_seconds": 1.0495999999999999,
+            "duration_ms": 110.93333333333322,
+            "median_hz": 126.6665918611192,
+            "minimum_hz": 122.88964134388586,
+            "maximum_hz": 133.26523387137806,
+            "relative_energy": 0.0055579232289875375,
+            "near_estimated_voice_harmonic_fraction": 0.8461538461538461,
+            "interpretation": "harmonic_context_candidate"
+          },
+          {
+            "start_seconds": 1.3909333333333334,
+            "end_seconds": 1.5189333333333332,
+            "duration_ms": 127.99999999999989,
+            "median_hz": 1166.4825138862107,
+            "minimum_hz": 1134.492052763376,
+            "maximum_hz": 1189.1713612714673,
+            "relative_energy": 0.004691574135996655,
+            "near_estimated_voice_harmonic_fraction": 0.7333333333333333,
+            "interpretation": "harmonic_context_candidate"
+          },
+          {
+            "start_seconds": 0.3413333333333333,
+            "end_seconds": 0.45226666666666665,
+            "duration_ms": 110.93333333333332,
+            "median_hz": 124.7835168198932,
+            "minimum_hz": 123.2512112670149,
+            "maximum_hz": 128.09050097769662,
+            "relative_energy": 0.004291372174647759,
+            "near_estimated_voice_harmonic_fraction": 0.3076923076923077,
+            "interpretation": "unclassified_narrow_component"
+          },
+          {
+            "start_seconds": 0.11946666666666665,
+            "end_seconds": 0.4010666666666667,
+            "duration_ms": 281.6,
+            "median_hz": 384.63639797762266,
+            "minimum_hz": 352.0181016561387,
+            "maximum_hz": 393.93996166186196,
+            "relative_energy": 0.002738054726857517,
+            "near_estimated_voice_harmonic_fraction": 0.7272727272727273,
+            "interpretation": "harmonic_context_candidate"
+          },
+          {
+            "start_seconds": 1.5530666666666666,
+            "end_seconds": 1.6383999999999999,
+            "duration_ms": 85.33333333333326,
+            "median_hz": 3270.598979403322,
+            "minimum_hz": 3256.7029898445658,
+            "maximum_hz": 3278.8172737642217,
+            "relative_energy": 0.002355771126845883,
+            "near_estimated_voice_harmonic_fraction": 0.6,
+            "interpretation": "unclassified_narrow_component"
+          },
+          {
+            "start_seconds": 1.5530666666666666,
+            "end_seconds": 1.6554666666666666,
+            "duration_ms": 102.40000000000005,
+            "median_hz": 1226.4613038292584,
+            "minimum_hz": 1197.5590557521668,
+            "maximum_hz": 1229.4934691989406,
+            "relative_energy": 0.002228501314119287,
+            "near_estimated_voice_harmonic_fraction": 0.6666666666666666,
+            "interpretation": "harmonic_context_candidate"
+          },
+          {
+            "start_seconds": 2.807466666666667,
+            "end_seconds": 2.9269333333333334,
+            "duration_ms": 119.46666666666638,
+            "median_hz": 223.51843346492177,
+            "minimum_hz": 192.88460852409958,
+            "maximum_hz": 236.3251645711127,
+            "relative_energy": 0.002115274992951903,
+            "near_estimated_voice_harmonic_fraction": 0.07142857142857142,
+            "interpretation": "unclassified_narrow_component"
+          },
+          {
+            "start_seconds": 0.22186666666666666,
+            "end_seconds": 0.3157333333333333,
+            "duration_ms": 93.86666666666666,
+            "median_hz": 975.0553143480104,
+            "minimum_hz": 960.7136876109295,
+            "maximum_hz": 978.8505513499093,
+            "relative_energy": 0.000876247126807787,
+            "near_estimated_voice_harmonic_fraction": 0.0,
+            "interpretation": "unclassified_narrow_component"
+          },
+          {
+            "start_seconds": 1.6213333333333333,
+            "end_seconds": 1.7322666666666666,
+            "duration_ms": 110.93333333333332,
+            "median_hz": 125.79007199806404,
+            "minimum_hz": 122.87624696236833,
+            "maximum_hz": 127.92647425769054,
+            "relative_energy": 0.000713379280532648,
+            "near_estimated_voice_harmonic_fraction": 0.3076923076923077,
+            "interpretation": "unclassified_narrow_component"
+          },
+          {
+            "start_seconds": 0.5205333333333333,
+            "end_seconds": 0.6741333333333333,
+            "duration_ms": 153.59999999999997,
+            "median_hz": 124.06559577444537,
+            "minimum_hz": 120.50955410249203,
+            "maximum_hz": 130.30951443961575,
+            "relative_energy": 0.0007052872601227589,
+            "near_estimated_voice_harmonic_fraction": 0.3888888888888889,
+            "interpretation": "unclassified_narrow_component"
+          },
+          {
+            "start_seconds": 0.3413333333333333,
+            "end_seconds": 0.4352,
+            "duration_ms": 93.86666666666666,
+            "median_hz": 242.25925278052404,
+            "minimum_hz": 228.01209579460289,
+            "maximum_hz": 269.1235321212108,
+            "relative_energy": 0.0004014631982681853,
+            "near_estimated_voice_harmonic_fraction": 0.18181818181818182,
+            "interpretation": "unclassified_narrow_component"
+          },
+          {
+            "start_seconds": 0.2304,
+            "end_seconds": 0.3413333333333333,
+            "duration_ms": 110.93333333333332,
+            "median_hz": 1944.506169001703,
+            "minimum_hz": 1917.9784912096773,
+            "maximum_hz": 1967.1005228407812,
+            "relative_energy": 0.00032686797773346765,
+            "near_estimated_voice_harmonic_fraction": 1.0,
+            "interpretation": "harmonic_context_candidate"
+          },
+          {
+            "start_seconds": 1.8261333333333334,
+            "end_seconds": 1.92,
+            "duration_ms": 93.86666666666655,
+            "median_hz": 125.2615202575954,
+            "minimum_hz": 118.67930329781358,
+            "maximum_hz": 130.78673577108057,
+            "relative_energy": 1.374737438311307e-05,
+            "near_estimated_voice_harmonic_fraction": 0.0,
+            "interpretation": "unclassified_narrow_component"
+          }
+        ],
+        "interpretation": "Narrow spectral persistence is not proof of a voice harmonic, a formant or unwanted noise. Do not notch or add these components without exact-decoder search and intelligibility checks."
+      },
+      "error_bands": [
+        {
+          "low_hz": 1612.6989438654377,
+          "high_hz": 2031.8733465192954,
+          "reference_energy_fraction": 0.11587575043067125,
+          "missing_magnitude_energy_fraction": 0.07426903924460407,
+          "excess_magnitude_energy_fraction": 0.0623782397886933,
+          "log_error": 0.6858470846398398
+        },
+        {
+          "low_hz": 126.99208415745596,
+          "high_hz": 160.0,
+          "reference_energy_fraction": 0.15375400586700913,
+          "missing_magnitude_energy_fraction": 0.09617371363322219,
+          "excess_magnitude_energy_fraction": 0.0010794868184740788,
+          "log_error": 1.105708144596312
+        },
+        {
+          "low_hz": 1280.0,
+          "high_hz": 1612.6989438654377,
+          "reference_energy_fraction": 0.10020981961132107,
+          "missing_magnitude_energy_fraction": 0.03623162564126208,
+          "excess_magnitude_energy_fraction": 0.04878314070307618,
+          "log_error": 0.7071735552875514
+        },
+        {
+          "low_hz": 100.79368399158986,
+          "high_hz": 126.99208415745596,
+          "reference_energy_fraction": 0.12488761289214605,
+          "missing_magnitude_energy_fraction": 0.07007679254985978,
+          "excess_magnitude_energy_fraction": 0.0015694394138524137,
+          "log_error": 1.0278637034480327
+        },
+        {
+          "low_hz": 1015.9366732596477,
+          "high_hz": 1280.0,
+          "reference_energy_fraction": 0.06835343423186221,
+          "missing_magnitude_energy_fraction": 0.00935548689104129,
+          "excess_magnitude_energy_fraction": 0.059775908723618494,
+          "log_error": 0.7277180037010241
+        },
+        {
+          "low_hz": 640.0,
+          "high_hz": 806.3494719327189,
+          "reference_energy_fraction": 0.10729385064245392,
+          "missing_magnitude_energy_fraction": 0.02822076977233389,
+          "excess_magnitude_energy_fraction": 0.02583396794713102,
+          "log_error": 0.7180572218085952
+        },
+        {
+          "low_hz": 320.0,
+          "high_hz": 403.17473596635944,
+          "reference_energy_fraction": 0.04450159863214778,
+          "missing_magnitude_energy_fraction": 0.011349953995802497,
+          "excess_magnitude_energy_fraction": 0.036020686894381225,
+          "log_error": 0.8220531939766715
+        },
+        {
+          "low_hz": 160.0,
+          "high_hz": 201.58736798317972,
+          "reference_energy_fraction": 0.08301104767342495,
+          "missing_magnitude_energy_fraction": 0.041338243330792154,
+          "excess_magnitude_energy_fraction": 0.0016531520992330126,
+          "log_error": 0.8340344543846916
+        },
+        {
+          "low_hz": 806.3494719327189,
+          "high_hz": 1015.9366732596477,
+          "reference_energy_fraction": 0.03803637372100327,
+          "missing_magnitude_energy_fraction": 0.008656943641032743,
+          "excess_magnitude_energy_fraction": 0.027323317896744304,
+          "log_error": 0.6635865673269509
+        },
+        {
+          "low_hz": 403.17473596635944,
+          "high_hz": 507.96833662982385,
+          "reference_energy_fraction": 0.012013109026852336,
+          "missing_magnitude_energy_fraction": 0.000661882482836331,
+          "excess_magnitude_energy_fraction": 0.03128084285750097,
+          "log_error": 1.0018246533446016
+        },
+        {
+          "low_hz": 507.96833662982385,
+          "high_hz": 640.0,
+          "reference_energy_fraction": 0.025765340581804394,
+          "missing_magnitude_energy_fraction": 0.0032212262638478557,
+          "excess_magnitude_energy_fraction": 0.026188895736118233,
+          "log_error": 0.7894261099508484
+        },
+        {
+          "low_hz": 3225.3978877308755,
+          "high_hz": 3750.0,
+          "reference_energy_fraction": 0.005447339404016677,
+          "missing_magnitude_energy_fraction": 0.001855590033840176,
+          "excess_magnitude_energy_fraction": 0.02581721793716269,
+          "log_error": 0.5935616668388887
+        },
+        {
+          "low_hz": 2031.8733465192954,
+          "high_hz": 2560.0,
+          "reference_energy_fraction": 0.004545985805844397,
+          "missing_magnitude_energy_fraction": 0.0003085740577688825,
+          "excess_magnitude_energy_fraction": 0.02604119307958561,
+          "log_error": 0.6523372459352095
+        },
+        {
+          "low_hz": 253.98416831491193,
+          "high_hz": 320.0,
+          "reference_energy_fraction": 0.06329434213425796,
+          "missing_magnitude_energy_fraction": 0.015160842453578056,
+          "excess_magnitude_energy_fraction": 0.010282117995591497,
+          "log_error": 0.6031682917361727
+        },
+        {
+          "low_hz": 201.58736798317972,
+          "high_hz": 253.98416831491193,
+          "reference_energy_fraction": 0.04118477421714903,
+          "missing_magnitude_energy_fraction": 0.008288901450250416,
+          "excess_magnitude_energy_fraction": 0.0060741971398848345,
+          "log_error": 0.6220573198173445
+        },
+        {
+          "low_hz": 2560.0,
+          "high_hz": 3225.3978877308755,
+          "reference_energy_fraction": 0.004927109500242895,
+          "missing_magnitude_energy_fraction": 0.0009159907724607012,
+          "excess_magnitude_energy_fraction": 0.013384743828991049,
+          "log_error": 0.5307125415687047
+        },
+        {
+          "low_hz": 80.0,
+          "high_hz": 100.79368399158986,
+          "reference_energy_fraction": 0.0027534071196319804,
+          "missing_magnitude_energy_fraction": 0.0006983175712380668,
+          "excess_magnitude_energy_fraction": 0.001029020164439216,
+          "log_error": 0.81522189732686
+        }
+      ]
+    }
+  ]
+}

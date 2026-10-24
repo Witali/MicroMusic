@@ -1,0 +1,31 @@
+{
+  "schema": "independent-existing-stress-v1",
+  "corpus_sha256": "9d3e87c6f95850c9e8751fdd3d2791260031c4abf4cf223c64057962b6db930f",
+  "input_hashes_verified": 20,
+  "rows": [
+    {
+      "id": "ru_square_a_quiet_minus24dB",
+      "condition": "quiet_minus24dB",
+      "rms_change_db": -23.99977604140602,
+      "maximum_attenuation_reproduction_error_lsb": 0.0
+    },
+    {
+      "id": "ru_russia_a_white_noise_15dB",
+      "condition": "white_noise_15dB",
+      "measured_snr_db": 15.000056787879618,
+      "clip_extreme_samples": 0
+    },
+    {
+      "id": "en_normcore_a_quiet_minus24dB",
+      "condition": "quiet_minus24dB",
+      "rms_change_db": -23.999540813752244,
+      "maximum_attenuation_reproduction_error_lsb": 0.0
+    },
+    {
+      "id": "en_sense_a_white_noise_15dB",
+      "condition": "white_noise_15dB",
+      "measured_snr_db": 15.000044697687258,
+      "clip_extreme_samples": 0
+    }
+  ]
+}

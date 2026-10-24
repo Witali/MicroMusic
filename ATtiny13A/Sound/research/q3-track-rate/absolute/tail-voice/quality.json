@@ -1,0 +1,912 @@
+{
+  "schema": "q3-track-rate-v1",
+  "sample_rate": 7500,
+  "samples": 12800,
+  "seed": 23191,
+  "mode": "absolute-error-from-original",
+  "frequency_unit": "cents",
+  "error_statistic": "p95",
+  "error_definition": "95th percentile weighted by matched original-partial power; not a maximum bound on every partial or a guarantee of full reference coverage",
+  "missing_extra_coverage_continuity": "Hard caps/floor frozen from the original input model; never loosened by the sweep",
+  "baseline_tracking": {
+    "harmonic_track_loss": 0.7613138449110975,
+    "frequency_trajectory_error": 0.7641281857188215,
+    "level_error": 1.8243388020164522,
+    "missing_reference_energy": 0.21341688799808775,
+    "extra_candidate_energy": 0.31939403439798464,
+    "weighted_match_rate": 0.7865831120019123,
+    "frequency_error_cents": 39.15957970154209,
+    "frequency_error_hz": 11.617118590342008,
+    "level_error_db": 5.473016406049356,
+    "frequency_error_p95_cents": 68.06818660400604,
+    "frequency_error_p95_hz": 30.866671671266204,
+    "level_error_p95_db": 13.880283356289706,
+    "continuity_break_rate": 0.34134095894191424
+  },
+  "baseline_stream_bytes": 430,
+  "code_bytes": 420,
+  "descriptor_bytes": 0,
+  "end_marker_bytes": 1,
+  "eeprom_bytes": 0,
+  "layout": "standalone",
+  "flash_limit_bytes": 1024,
+  "max_evaluations_per_level": 300,
+  "repair_proposals": 2,
+  "reference_sha256": "e725be54dc17ba77051002b20c3dd825560e2554f49e70c20628c89fecea0c0c",
+  "input_model_sha256": "96f1068a6b62331a5f509f82907b21a546679aa141cd3b6fe9d6cc565a10824c",
+  "harmonic_config": {
+    "version": "strongest-partial-tracks-v1",
+    "max_tracks": 10,
+    "n_fft": 1024,
+    "hop": 128,
+    "max_gap": 8,
+    "frequency_tolerance_cents": 50.0,
+    "frequency_tolerance_hz": 0.0,
+    "amplitude_tolerance_db": 3.0,
+    "matching_gate_cents": 100.0,
+    "matching_gate_floor_hz": 14.6484375
+  },
+  "hardware_tested": false,
+  "human_listening_verified": false,
+  "levels": [
+    {
+      "feasible": true,
+      "failed_guards": [],
+      "initial_stream_bytes": 430,
+      "stream_bytes": 329,
+      "evaluations": 300,
+      "accepted_operations": 43,
+      "history": [
+        {
+          "evaluation": 3,
+          "operation": "share-2-4-rows-76-78-source-75-refit-k1-1",
+          "stream_bytes": 428
+        },
+        {
+          "evaluation": 44,
+          "operation": "share-2-4-rows-51-53-source-50-refit-k3--1",
+          "stream_bytes": 426
+        },
+        {
+          "evaluation": 54,
+          "operation": "share-4-6-rows-46-47-source-47-refit-k5--1",
+          "stream_bytes": 424
+        },
+        {
+          "evaluation": 61,
+          "operation": "share-4-6-rows-54-55-source-53-refit-k7-1",
+          "stream_bytes": 422
+        },
+        {
+          "evaluation": 68,
+          "operation": "share-4-6-rows-75-77-source-74",
+          "stream_bytes": 420
+        },
+        {
+          "evaluation": 72,
+          "operation": "share-4-6-rows-28-30-source-30-refit-k6--1",
+          "stream_bytes": 416
+        },
+        {
+          "evaluation": 74,
+          "operation": "share-2-4-rows-26-28-source-25",
+          "stream_bytes": 414
+        },
+        {
+          "evaluation": 86,
+          "operation": "share-2-4-rows-55-56-source-56-refit-k6--1",
+          "stream_bytes": 412
+        },
+        {
+          "evaluation": 88,
+          "operation": "share-4-6-rows-49-51-source-51",
+          "stream_bytes": 408
+        },
+        {
+          "evaluation": 90,
+          "operation": "share-2-4-rows-54-55-source-53-refit-k1--1",
+          "stream_bytes": 406
+        },
+        {
+          "evaluation": 91,
+          "operation": "share-2-6-rows-39-41-source-41",
+          "stream_bytes": 400
+        },
+        {
+          "evaluation": 99,
+          "operation": "share-4-6-rows-37-39-source-36",
+          "stream_bytes": 396
+        },
+        {
+          "evaluation": 109,
+          "operation": "share-2-4-rows-13-14-source-12",
+          "stream_bytes": 394
+        },
+        {
+          "evaluation": 116,
+          "operation": "share-4-6-rows-19-21-source-18",
+          "stream_bytes": 392
+        },
+        {
+          "evaluation": 154,
+          "operation": "share-2-4-rows-19-21-source-18",
+          "stream_bytes": 390
+        },
+        {
+          "evaluation": 162,
+          "operation": "share-2-4-rows-37-38-source-36",
+          "stream_bytes": 388
+        },
+        {
+          "evaluation": 171,
+          "operation": "share-4-6-rows-27-28-source-26",
+          "stream_bytes": 386
+        },
+        {
+          "evaluation": 176,
+          "operation": "share-4-6-rows-60-64-source-64",
+          "stream_bytes": 382
+        },
+        {
+          "evaluation": 180,
+          "operation": "share-2-4-rows-11-12-source-10-refit-k2-1",
+          "stream_bytes": 380
+        },
+        {
+          "evaluation": 189,
+          "operation": "share-2-4-rows-22-23-source-23",
+          "stream_bytes": 378
+        },
+        {
+          "evaluation": 202,
+          "operation": "share-2-4-rows-25-29-source-24-refit-k0-1",
+          "stream_bytes": 376
+        },
+        {
+          "evaluation": 209,
+          "operation": "share-2-4-rows-44-45-source-45",
+          "stream_bytes": 374
+        },
+        {
+          "evaluation": 219,
+          "operation": "share-2-4-rows-61-62-source-60",
+          "stream_bytes": 372
+        },
+        {
+          "evaluation": 224,
+          "operation": "share-2-4-rows-45-47-source-44",
+          "stream_bytes": 370
+        },
+        {
+          "evaluation": 230,
+          "operation": "share-2-4-rows-47-48-source-48",
+          "stream_bytes": 368
+        },
+        {
+          "evaluation": 238,
+          "operation": "share-2-4-rows-67-69-source-69",
+          "stream_bytes": 366
+        },
+        {
+          "evaluation": 244,
+          "operation": "share-2-4-rows-77-79-source-76",
+          "stream_bytes": 364
+        },
+        {
+          "evaluation": 252,
+          "operation": "share-4-6-rows-26-28-source-25-refit-k6--1",
+          "stream_bytes": 362
+        },
+        {
+          "evaluation": 255,
+          "operation": "share-4-6-rows-34-35-source-35",
+          "stream_bytes": 360
+        },
+        {
+          "evaluation": 259,
+          "operation": "share-4-6-rows-5-6-source-4-refit-k7--1",
+          "stream_bytes": 358
+        },
+        {
+          "evaluation": 262,
+          "operation": "share-2-4-rows-16-18-source-18",
+          "stream_bytes": 354
+        },
+        {
+          "evaluation": 265,
+          "operation": "share-2-4-rows-26-30-source-25",
+          "stream_bytes": 352
+        },
+        {
+          "evaluation": 268,
+          "operation": "share-2-6-rows-18-22-source-17",
+          "stream_bytes": 348
+        },
+        {
+          "evaluation": 271,
+          "operation": "share-2-4-rows-38-39-source-39",
+          "stream_bytes": 346
+        },
+        {
+          "evaluation": 274,
+          "operation": "share-4-6-rows-27-31-source-26",
+          "stream_bytes": 344
+        },
+        {
+          "evaluation": 280,
+          "operation": "share-4-6-rows-75-79-source-74",
+          "stream_bytes": 342
+        },
+        {
+          "evaluation": 287,
+          "operation": "merge-rows-25-26-source-26",
+          "stream_bytes": 341
+        },
+        {
+          "evaluation": 289,
+          "operation": "share-4-6-rows-43-47-source-42",
+          "stream_bytes": 339
+        },
+        {
+          "evaluation": 292,
+          "operation": "share-4-6-rows-7-9-source-6-refit-k7--1",
+          "stream_bytes": 337
+        },
+        {
+          "evaluation": 294,
+          "operation": "share-2-4-rows-13-15-source-12",
+          "stream_bytes": 335
+        },
+        {
+          "evaluation": 295,
+          "operation": "share-4-6-rows-11-12-source-12",
+          "stream_bytes": 333
+        },
+        {
+          "evaluation": 296,
+          "operation": "share-2-4-rows-64-66-source-63",
+          "stream_bytes": 331
+        },
+        {
+          "evaluation": 300,
+          "operation": "share-2-4-rows-71-72-source-72",
+          "stream_bytes": 329
+        }
+      ],
+      "level": 0,
+      "requested_frequency_tolerance": 75.0,
+      "requested_amplitude_tolerance_db": 15.0,
+      "limits": {
+        "frequency_key": "frequency_error_p95_cents",
+        "amplitude_key": "level_error_p95_db",
+        "frequency_cap": 75.0,
+        "amplitude_cap": 15.0,
+        "missing_cap": 0.21341688799808775,
+        "extra_cap": 0.31939403439798464,
+        "coverage_floor": 0.7865831120019123,
+        "continuity_cap": 0.34134095894191424,
+        "minimum_stoi": null
+      },
+      "tracking": {
+        "harmonic_track_loss": 0.710223273641491,
+        "frequency_trajectory_error": 0.678630915791474,
+        "level_error": 1.757132327596744,
+        "missing_reference_energy": 0.20801814610349614,
+        "extra_candidate_energy": 0.29623482560917863,
+        "weighted_match_rate": 0.791981853896504,
+        "frequency_error_cents": 37.79813857298343,
+        "frequency_error_hz": 11.632255137481863,
+        "level_error_db": 5.271396982790234,
+        "frequency_error_p95_cents": 73.25679672008354,
+        "frequency_error_p95_hz": 34.285066138443426,
+        "level_error_p95_db": 14.80952201439022,
+        "continuity_break_rate": 0.2887063984540119
+      },
+      "computed_flash_bytes": 750,
+      "fits_target": true,
+      "firmware_qualified": false,
+      "intermediate_wraps": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "stoi": 0.7965637623642524,
+      "estoi": 0.4704023200424025,
+      "spectrum": {
+        "spectrogram_loss": 0.545045381949274,
+        "fine_log_error": 0.6076905060111046,
+        "envelope_error": 0.5590818095667084,
+        "unsupported_energy": 0.18823588651186027,
+        "missing_energy": 0.2028771150778696
+      },
+      "stream_sha256": "404343a82b5290d08c333377a9c29444742dc912ef19d39d1bb6f3c602931bc1",
+      "pcm_sha256": "e92aa9c27df3bb45913edb95d5a080ae7b8feec1e7933c075217c2277b550745",
+      "status": "feasible",
+      "final_evaluation_verified": true,
+      "computed_complete_bell_flash_bytes": 922,
+      "complete_bell_eeprom_bytes": 64,
+      "complete_bell_firmware_qualified": false
+    },
+    {
+      "feasible": true,
+      "failed_guards": [],
+      "initial_stream_bytes": 329,
+      "stream_bytes": 237,
+      "evaluations": 300,
+      "accepted_operations": 42,
+      "history": [
+        {
+          "evaluation": 2,
+          "operation": "share-4-6-rows-47-48-source-48",
+          "stream_bytes": 327
+        },
+        {
+          "evaluation": 4,
+          "operation": "share-2-4-rows-61-62-source-62-refit-k0--1",
+          "stream_bytes": 325
+        },
+        {
+          "evaluation": 5,
+          "operation": "merge-rows-76-77-source-76",
+          "stream_bytes": 323
+        },
+        {
+          "evaluation": 6,
+          "operation": "share-2-4-rows-31-32-source-32",
+          "stream_bytes": 321
+        },
+        {
+          "evaluation": 7,
+          "operation": "share-4-6-rows-80-84-source-79",
+          "stream_bytes": 319
+        },
+        {
+          "evaluation": 8,
+          "operation": "share-2-4-rows-50-54-source-49",
+          "stream_bytes": 317
+        },
+        {
+          "evaluation": 9,
+          "operation": "share-4-6-rows-35-39-source-39",
+          "stream_bytes": 315
+        },
+        {
+          "evaluation": 10,
+          "operation": "share-4-6-rows-33-35-source-35",
+          "stream_bytes": 313
+        },
+        {
+          "evaluation": 11,
+          "operation": "share-4-6-rows-30-34-source-34",
+          "stream_bytes": 311
+        },
+        {
+          "evaluation": 12,
+          "operation": "merge-rows-25-26-source-25",
+          "stream_bytes": 308
+        },
+        {
+          "evaluation": 13,
+          "operation": "share-2-4-rows-46-48-source-45",
+          "stream_bytes": 306
+        },
+        {
+          "evaluation": 14,
+          "operation": "share-2-4-rows-62-66-source-66",
+          "stream_bytes": 304
+        },
+        {
+          "evaluation": 15,
+          "operation": "share-4-6-rows-55-56-source-56",
+          "stream_bytes": 302
+        },
+        {
+          "evaluation": 16,
+          "operation": "share-2-4-rows-28-30-source-30",
+          "stream_bytes": 300
+        },
+        {
+          "evaluation": 17,
+          "operation": "merge-rows-29-30-source-29",
+          "stream_bytes": 298
+        },
+        {
+          "evaluation": 18,
+          "operation": "share-4-6-rows-63-67-source-62",
+          "stream_bytes": 296
+        },
+        {
+          "evaluation": 20,
+          "operation": "share-4-6-rows-4-6-source-6",
+          "stream_bytes": 294
+        },
+        {
+          "evaluation": 24,
+          "operation": "share-4-6-rows-73-77-source-72",
+          "stream_bytes": 292
+        },
+        {
+          "evaluation": 28,
+          "operation": "share-2-4-rows-4-8-source-3",
+          "stream_bytes": 288
+        },
+        {
+          "evaluation": 30,
+          "operation": "share-2-4-rows-74-76-source-73",
+          "stream_bytes": 286
+        },
+        {
+          "evaluation": 32,
+          "operation": "share-2-4-rows-5-9-source-4",
+          "stream_bytes": 284
+        },
+        {
+          "evaluation": 35,
+          "operation": "share-4-6-rows-13-17-source-12",
+          "stream_bytes": 282
+        },
+        {
+          "evaluation": 37,
+          "operation": "share-2-4-rows-24-28-source-28",
+          "stream_bytes": 280
+        },
+        {
+          "evaluation": 39,
+          "operation": "share-2-4-rows-22-24-source-24",
+          "stream_bytes": 278
+        },
+        {
+          "evaluation": 41,
+          "operation": "share-2-4-rows-14-16-source-13",
+          "stream_bytes": 276
+        },
+        {
+          "evaluation": 43,
+          "operation": "share-4-6-rows-1-5-source-5",
+          "stream_bytes": 270
+        },
+        {
+          "evaluation": 49,
+          "operation": "share-2-4-rows-76-78-source-78",
+          "stream_bytes": 268
+        },
+        {
+          "evaluation": 54,
+          "operation": "share-4-6-rows-45-49-source-44",
+          "stream_bytes": 266
+        },
+        {
+          "evaluation": 74,
+          "operation": "share-4-6-rows-67-71-source-71",
+          "stream_bytes": 264
+        },
+        {
+          "evaluation": 75,
+          "operation": "share-4-6-rows-6-10-source-5",
+          "stream_bytes": 262
+        },
+        {
+          "evaluation": 83,
+          "operation": "share-2-4-rows-29-33-source-28",
+          "stream_bytes": 260
+        },
+        {
+          "evaluation": 97,
+          "operation": "share-4-6-rows-50-52-source-52",
+          "stream_bytes": 258
+        },
+        {
+          "evaluation": 99,
+          "operation": "share-2-4-rows-31-35-source-30",
+          "stream_bytes": 256
+        },
+        {
+          "evaluation": 103,
+          "operation": "share-2-4-rows-40-44-source-39",
+          "stream_bytes": 254
+        },
+        {
+          "evaluation": 110,
+          "operation": "share-2-4-rows-59-61-source-58",
+          "stream_bytes": 252
+        },
+        {
+          "evaluation": 116,
+          "operation": "share-2-4-rows-68-72-source-67",
+          "stream_bytes": 250
+        },
+        {
+          "evaluation": 143,
+          "operation": "merge-rows-58-59-source-58",
+          "stream_bytes": 249
+        },
+        {
+          "evaluation": 146,
+          "operation": "share-2-4-rows-54-55-source-55",
+          "stream_bytes": 247
+        },
+        {
+          "evaluation": 222,
+          "operation": "share-2-6-rows-9-11-source-11",
+          "stream_bytes": 243
+        },
+        {
+          "evaluation": 223,
+          "operation": "share-4-6-rows-46-50-source-45",
+          "stream_bytes": 241
+        },
+        {
+          "evaluation": 234,
+          "operation": "share-2-6-rows-21-25-source-20",
+          "stream_bytes": 239
+        },
+        {
+          "evaluation": 260,
+          "operation": "share-2-4-rows-71-75-source-70",
+          "stream_bytes": 237
+        }
+      ],
+      "level": 1,
+      "requested_frequency_tolerance": 100.0,
+      "requested_amplitude_tolerance_db": 16.0,
+      "limits": {
+        "frequency_key": "frequency_error_p95_cents",
+        "amplitude_key": "level_error_p95_db",
+        "frequency_cap": 100.0,
+        "amplitude_cap": 16.0,
+        "missing_cap": 0.21341688799808775,
+        "extra_cap": 0.31939403439798464,
+        "coverage_floor": 0.7865831120019123,
+        "continuity_cap": 0.34134095894191424,
+        "minimum_stoi": null
+      },
+      "tracking": {
+        "harmonic_track_loss": 0.9454815720321244,
+        "frequency_trajectory_error": 0.6991895256115401,
+        "level_error": 2.8823122968334807,
+        "missing_reference_energy": 0.21040589334934767,
+        "extra_candidate_energy": 0.31761302857319684,
+        "weighted_match_rate": 0.7895941066506522,
+        "frequency_error_cents": 37.404857343024126,
+        "frequency_error_hz": 11.57229343834305,
+        "level_error_db": 8.646936890500442,
+        "frequency_error_p95_cents": 80.23529954679573,
+        "frequency_error_p95_hz": 34.0459410536904,
+        "level_error_p95_db": 13.5909568748412,
+        "continuity_break_rate": 0.2707811282121065
+      },
+      "computed_flash_bytes": 658,
+      "fits_target": true,
+      "firmware_qualified": false,
+      "intermediate_wraps": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "stoi": 0.7132361093108643,
+      "estoi": 0.33661562568578696,
+      "spectrum": {
+        "spectrogram_loss": 0.6133887134125722,
+        "fine_log_error": 0.6482887606001051,
+        "envelope_error": 0.6706744995648963,
+        "unsupported_energy": 0.2682614827423035,
+        "missing_energy": 0.2540383369952971
+      },
+      "stream_sha256": "7e5493bbfcc1bad894ff73bf9cd8eec472d3c361e8d005486954a7962233ab1e",
+      "pcm_sha256": "4707c4bd74ea7ff9fd9a872484dedb12829484c38311d8943caf91fc08de1a4d",
+      "status": "feasible",
+      "final_evaluation_verified": true,
+      "computed_complete_bell_flash_bytes": 830,
+      "complete_bell_eeprom_bytes": 64,
+      "complete_bell_firmware_qualified": false
+    },
+    {
+      "feasible": true,
+      "failed_guards": [],
+      "initial_stream_bytes": 237,
+      "stream_bytes": 219,
+      "evaluations": 300,
+      "accepted_operations": 9,
+      "history": [
+        {
+          "evaluation": 29,
+          "operation": "share-2-4-rows-8-12-source-7",
+          "stream_bytes": 235
+        },
+        {
+          "evaluation": 34,
+          "operation": "merge-rows-22-23-source-22",
+          "stream_bytes": 233
+        },
+        {
+          "evaluation": 106,
+          "operation": "merge-rows-64-65-source-64",
+          "stream_bytes": 230
+        },
+        {
+          "evaluation": 211,
+          "operation": "merge-rows-49-50-source-50",
+          "stream_bytes": 229
+        },
+        {
+          "evaluation": 212,
+          "operation": "share-4-6-rows-51-52-source-52",
+          "stream_bytes": 227
+        },
+        {
+          "evaluation": 222,
+          "operation": "share-2-4-rows-12-16-source-11",
+          "stream_bytes": 225
+        },
+        {
+          "evaluation": 235,
+          "operation": "share-2-4-rows-42-46-source-41",
+          "stream_bytes": 223
+        },
+        {
+          "evaluation": 248,
+          "operation": "share-4-6-rows-24-28-source-23",
+          "stream_bytes": 221
+        },
+        {
+          "evaluation": 271,
+          "operation": "share-4-6-rows-51-55-source-50",
+          "stream_bytes": 219
+        }
+      ],
+      "level": 2,
+      "requested_frequency_tolerance": 150.0,
+      "requested_amplitude_tolerance_db": 18.0,
+      "limits": {
+        "frequency_key": "frequency_error_p95_cents",
+        "amplitude_key": "level_error_p95_db",
+        "frequency_cap": 150.0,
+        "amplitude_cap": 18.0,
+        "missing_cap": 0.21341688799808775,
+        "extra_cap": 0.31939403439798464,
+        "coverage_floor": 0.7865831120019123,
+        "continuity_cap": 0.34134095894191424,
+        "minimum_stoi": null
+      },
+      "tracking": {
+        "harmonic_track_loss": 1.0001792132811815,
+        "frequency_trajectory_error": 0.712954795814253,
+        "level_error": 3.1462820110207352,
+        "missing_reference_energy": 0.20958594593902444,
+        "extra_candidate_energy": 0.3128187541143072,
+        "weighted_match_rate": 0.7904140540609754,
+        "frequency_error_cents": 37.27632874271908,
+        "frequency_error_hz": 11.495989378055954,
+        "level_error_db": 9.4388460330622,
+        "frequency_error_p95_cents": 86.65302574514729,
+        "frequency_error_p95_hz": 36.90000074047089,
+        "level_error_p95_db": 17.321907281307094,
+        "continuity_break_rate": 0.23180071286385207
+      },
+      "computed_flash_bytes": 640,
+      "fits_target": true,
+      "firmware_qualified": true,
+      "intermediate_wraps": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "stoi": 0.6727218673772252,
+      "estoi": 0.28267367939799365,
+      "spectrum": {
+        "spectrogram_loss": 0.6289024583353321,
+        "fine_log_error": 0.6576997670592426,
+        "envelope_error": 0.6997887133343874,
+        "unsupported_energy": 0.27543647268685306,
+        "missing_energy": 0.2811788590550512
+      },
+      "stream_sha256": "5e96db488e2e71cc759966ce49b872e4124de41bc3dc708db8334de161aefc23",
+      "pcm_sha256": "f6f3af7011cb14515c81343ed14e0006bf3904c69f37671cc4173c356d7b56cc",
+      "status": "feasible",
+      "final_evaluation_verified": true,
+      "computed_complete_bell_flash_bytes": 812,
+      "complete_bell_eeprom_bytes": 64,
+      "complete_bell_firmware_qualified": false
+    }
+  ],
+  "unique_exact_renders": 880,
+  "build": {
+    "schema": "micromusic-hq4-oneshot-build-v1",
+    "clip": "hq4-q3",
+    "status": "verified",
+    "playbackMode": "once",
+    "hardwareTested": false,
+    "cpuHz": 9600000,
+    "sampleHz": 7500,
+    "flashLimitBytes": 1024,
+    "flashBytes": 640,
+    "objectTextBytes": 640,
+    "codeBytes": 420,
+    "dataBytes": 220,
+    "streamBytes": 219,
+    "eofBytes": 1,
+    "linkerPaddingBytes": 0,
+    "codePaddingBytes": 0,
+    "eepromLimitBytes": 64,
+    "eepromBytes": 0,
+    "eepromUsedBytes": 0,
+    "eepromSha256": null,
+    "phraseSamples": 12800,
+    "verifiedLoops": 1,
+    "silenceSamplesVerified": 25600,
+    "compiler": "avr-gcc.exe (GCC) 7.3.0",
+    "symbols": {
+      "__vectors": 0,
+      "TILT_SHIFT": 1,
+      "reset": 8,
+      "DDRB": 23,
+      "CLKPR": 38,
+      "zero_states": 38,
+      "OCR0B": 41,
+      "TCCR0A": 47,
+      "TCCR0B": 51,
+      "TIMSK0": 57,
+      "IO_SPL": 61,
+      "SREG": 63,
+      "wait_slot": 76,
+      "speaking": 90,
+      "SAMPLE": 96,
+      "READY": 97,
+      "CTR": 98,
+      "current_frame": 100,
+      "COEFF": 104,
+      "STATE": 112,
+      "STACK_FLOOR": 120,
+      "pulse_second": 128,
+      "pulse_third": 140,
+      "pulse_fourth": 150,
+      "new_pulse": 156,
+      "noise_sample": 164,
+      "noise_ready": 172,
+      "filter": 178,
+      "filter_loop": 186,
+      "skip_state_update": 208,
+      "mul_q3": 234,
+      "mul_pos": 250,
+      "mul_loop": 256,
+      "mul_done": 264,
+      "read_frame": 278,
+      "vbr_pitch": 292,
+      "vbr_extended": 308,
+      "vbr_setpitch": 322,
+      "vbr_bit6": 348,
+      "vbr_low": 358,
+      "vbr_read_coeffs": 362,
+      "vbr_read_pair": 364,
+      "irq": 390,
+      "irq_end": 412,
+      "code_end": 420,
+      "VOICE_ADDR": 420,
+      "voice_data": 420
+    },
+    "streamSha256": "5e96db488e2e71cc759966ce49b872e4124de41bc3dc708db8334de161aefc23",
+    "frozenPrefixPcmSha256": null,
+    "phrasePcmSha256": "f6f3af7011cb14515c81343ed14e0006bf3904c69f37671cc4173c356d7b56cc",
+    "expectedPcmSha256": "89d21820aa6da466877d3b6433c67ccb8af8a5744f41a83e8d3e48f6bb9b3989",
+    "verificationEepromSha256": "8667e718294e9e0df1d30600ba3eeb201f764aad2dad72748643e4a285e1d1f7",
+    "imageSha256": "02df2160165dce1cdd46b3913fb96ad058e055153ad00a21158ced5caf0f9934",
+    "verification": {
+      "schema": "micromusic-tiny-speech-verification-v1",
+      "pass": true,
+      "hardwareTested": false,
+      "playbackMode": "once",
+      "engines": [
+        "reference",
+        "wasm",
+        "wasm-unoptimized"
+      ],
+      "cpuHz": 9600000,
+      "sampleHz": 7500,
+      "flashBytes": 640,
+      "eepromBytes": 64,
+      "expectedSamples": 38400,
+      "verifiedSamples": 38400,
+      "phraseSamples": 12800,
+      "verifiedLoops": 1,
+      "silenceSamplesVerified": 25600,
+      "imageSha256": "02df2160165dce1cdd46b3913fb96ad058e055153ad00a21158ced5caf0f9934",
+      "eepromSha256": "8667e718294e9e0df1d30600ba3eeb201f764aad2dad72748643e4a285e1d1f7",
+      "expectedPcmSha256": "89d21820aa6da466877d3b6433c67ccb8af8a5744f41a83e8d3e48f6bb9b3989",
+      "actualPcmSha256": "89d21820aa6da466877d3b6433c67ccb8af8a5744f41a83e8d3e48f6bb9b3989",
+      "mismatches": 0,
+      "firstMismatch": null,
+      "error": null,
+      "irqCount": 192000,
+      "lostOverflows": 0,
+      "missedSamples": 0,
+      "maxISRCycles": 28,
+      "minimumSamplePeriod": 1279,
+      "maximumSamplePeriod": 1281,
+      "minimumSP": 153,
+      "requiredMinimumSP": 120,
+      "staticSramSpanBytes": 24,
+      "stackHighWaterBytes": 6,
+      "maximumSramSpanBytes": 30,
+      "stackSpareBytes": 33,
+      "totalCycles": 49152192,
+      "foregroundTiming": {
+        "engine": "reference-instruction-trace",
+        "waitPcBytes": 76,
+        "slotOrigin": "Timer0 enable for sample 0; preceding OCR0B write thereafter",
+        "includesInterruptCycles": true,
+        "includesEEPROMWaitCycles": true,
+        "includesPhaseAndFrameParsing": true,
+        "oneTimeInitializationExcluded": true,
+        "timerStartCycle": 175,
+        "preparedSamples": 38400,
+        "completedSamples": 38400,
+        "closedOutputSlots": 38400,
+        "periodBudgetCycles": 1280,
+        "conservativeDeadlineCycles": 1279,
+        "minimumReadyCycles": 18,
+        "maximumReadyCycles": 796,
+        "minimumCompletionCycles": 20,
+        "maximumCompletionCycles": 798,
+        "minimumSlackCycles": 482,
+        "maximumReadySample": 8703,
+        "maximumCompletionSample": 8703,
+        "minimumSlackSample": 8703
+      }
+    },
+    "normalizedSourceSha256": {
+      "ATtiny13A/Sound/codec/q3-oneshot/hq4-t1.S": "7eacb7a1e68ed2f3dace034d3bc4273c50f418ef5099d41ed4ead56710a1d0c4",
+      "tools/build-hq4-oneshot.py": "582cd97ffb7aac77238bd017cc2563e1856e2ac47e15686e9ecc9d2c95fab035",
+      "tools/build-tiny-speech.py": "242c393d1e7799684b039968909de71da7c16845dc4730201a5110eeb0b4182d",
+      "ATtiny13A/Sound/codec/hq4_core.py": "936c21384042c24be9525ff7cb73b6e1421c852b4a63ea393e318cc60e9bd466",
+      "ATtiny13A/Sound/codec/model.py": "d9c3449ddd2da1929e71da99ef3b040d46d95988d2f5ea704f9416e30c1ba71e",
+      "tools/verify-tiny-speech.mjs": "de7dd227a8aba5139ff0944c4023e46c71e40f6c6ac87fa794f9944d6a1e135b",
+      "tools/lib/tiny-work-profile.mjs": "35de6d7f062cb306bf1a18bd9bb5a433648d4646daf9c76da9f9d777b36568a3",
+      "input/speech.hq": "5e96db488e2e71cc759966ce49b872e4124de41bc3dc708db8334de161aefc23"
+    },
+    "experimental": true,
+    "streamInput": {
+      "sourcePath": "build/q3-track-rate-absolute/tail-voice/level-2/speech.hq",
+      "copiedPath": "speech.hq",
+      "sha256": "5e96db488e2e71cc759966ce49b872e4124de41bc3dc708db8334de161aefc23"
+    },
+    "retainedStreamSha256": null,
+    "newRecording": true,
+    "expectedPhraseSamples": 12800,
+    "q3Profile": {
+      "tilt_shift": 1,
+      "code_bytes": 420,
+      "sourcesSha256NormalizedLf": {
+        "ATtiny13A/Sound/codec/q3-oneshot/hq4-t1.S": "7eacb7a1e68ed2f3dace034d3bc4273c50f418ef5099d41ed4ead56710a1d0c4",
+        "ATtiny13A/Sound/codec/hq4_q3.py": "9119a1defb855c38d67d19eb85c333b64c2b843f2cb9a7d3b7345a7ce837c22d",
+        "tools/probe-hq4-q3.py": "0e36da0081207cbe698b71960896b0e57086cd27e0efdd01c62023347f3f53d3"
+      }
+    }
+  },
+  "baseline_stoi": 0.8366719484523392,
+  "baseline_estoi": 0.5505716515284071,
+  "minimum_stoi": null,
+  "maximum_stoi_drop": null,
+  "training_capture_note": "The bounded p95 searches were captured before optional max/statistic and STOI-guard interfaces were finalized. Active p95/no-STOI-guard search semantics did not change. All exported models have now been independently decoded and rescored under the final frozen sources without additional search.",
+  "capture_completion_source_hashes": {
+    "tools/compress-hq4-q3-tracks.py": "3a0fd48df4abb810d14773820ebb0bb96dcb8e46db90c35596dc54d483c5b854",
+    "ATtiny13A/Sound/codec/q3_track_rate.py": "1a7a8712ecfd7f4e57ae44634ca17f2eb9defca562afaf3b32a729577c8ee826",
+    "ATtiny13A/Sound/codec/harmonic_tracks.py": "b93040a6bfe174c145152f1a9fc03d9039192b81da0b2f8ace3e2a7c70f8b5b5",
+    "ATtiny13A/Sound/codec/hq4_q3.py": "9119a1defb855c38d67d19eb85c333b64c2b843f2cb9a7d3b7345a7ce837c22d",
+    "ATtiny13A/Sound/codec/hq4_core.py": "936c21384042c24be9525ff7cb73b6e1421c852b4a63ea393e318cc60e9bd466",
+    "ATtiny13A/Sound/codec/spectrogram_objective.py": "66fd5c3d5e3a0716d3c18269a261a70ad9165575eaf33acb5c7ee166a8d4e927"
+  },
+  "final_evaluation_source_sha256_normalized_lf": {
+    "tools/compress-hq4-q3-tracks.py": "341c9c0a5dac2ae34dcfbcda4731a01197e12aabda34dd983560c40c05e7f1f0",
+    "ATtiny13A/Sound/codec/q3_track_rate.py": "fa33560507709da8b776545af58df9fc33b4a948dc828d1c1bf0a23b1014a07f",
+    "ATtiny13A/Sound/codec/harmonic_tracks.py": "b93040a6bfe174c145152f1a9fc03d9039192b81da0b2f8ace3e2a7c70f8b5b5",
+    "ATtiny13A/Sound/codec/hq4_q3.py": "9119a1defb855c38d67d19eb85c333b64c2b843f2cb9a7d3b7345a7ce837c22d",
+    "ATtiny13A/Sound/codec/hq4_core.py": "936c21384042c24be9525ff7cb73b6e1421c852b4a63ea393e318cc60e9bd466",
+    "ATtiny13A/Sound/codec/spectrogram_objective.py": "66fd5c3d5e3a0716d3c18269a261a70ad9165575eaf33acb5c7ee166a8d4e927"
+  },
+  "final_evaluation_source_commit": "5db48d4",
+  "retention_note": "Full per-operation tracking trajectories/audio/binaries remain under ignored build; retained operation histories include evaluation, operation and actual byte count only.",
+  "final_evaluation_verified": true
+}

@@ -1,0 +1,95 @@
+{
+  "pass": true,
+  "stateBits": 4,
+  "filterBytes": 100,
+  "multiplyBytes": 72,
+  "arithmeticBytes": 172,
+  "stateBytes": 18,
+  "results": [
+    {
+      "engine": "reference",
+      "case": "nearest",
+      "samples": 22272,
+      "minimumCycles": 824,
+      "maximumCycles": 1212,
+      "maximumStack": 8,
+      "pcm_sha256": "e0cce5d036ea32253cceea7915fbba2b52de5317d3318f9f3ebec633651ad440",
+      "model_sha256": "6738f85b92b705e02c9bb539e3b99273e3004a675a2950b8bf104ffde57f5d67",
+      "irqChecked": 87,
+      "stateChecks": 200448
+    },
+    {
+      "engine": "reference",
+      "case": "product-four",
+      "samples": 22272,
+      "minimumCycles": 938,
+      "maximumCycles": 1198,
+      "maximumStack": 8,
+      "pcm_sha256": "95d40fdcf7ac62ffbda2507f44c6b94ca63be62fd70f8b0eb26cc8b1f0e5543c",
+      "model_sha256": "1ca2819f69feb9acdf7fd0cfe49c44085e9de0b67d5d5381f73425e2bc9f1a02",
+      "irqChecked": 87,
+      "stateChecks": 200448
+    },
+    {
+      "engine": "wasm",
+      "case": "nearest",
+      "samples": 22272,
+      "minimumCycles": 824,
+      "maximumCycles": 1212,
+      "maximumStack": 8,
+      "pcm_sha256": "e0cce5d036ea32253cceea7915fbba2b52de5317d3318f9f3ebec633651ad440",
+      "model_sha256": "6738f85b92b705e02c9bb539e3b99273e3004a675a2950b8bf104ffde57f5d67",
+      "irqChecked": 87,
+      "stateChecks": 200448
+    },
+    {
+      "engine": "wasm",
+      "case": "product-four",
+      "samples": 22272,
+      "minimumCycles": 938,
+      "maximumCycles": 1198,
+      "maximumStack": 8,
+      "pcm_sha256": "95d40fdcf7ac62ffbda2507f44c6b94ca63be62fd70f8b0eb26cc8b1f0e5543c",
+      "model_sha256": "1ca2819f69feb9acdf7fd0cfe49c44085e9de0b67d5d5381f73425e2bc9f1a02",
+      "irqChecked": 87,
+      "stateChecks": 200448
+    },
+    {
+      "engine": "wasm-unoptimized",
+      "case": "nearest",
+      "samples": 22272,
+      "minimumCycles": 824,
+      "maximumCycles": 1212,
+      "maximumStack": 8,
+      "pcm_sha256": "e0cce5d036ea32253cceea7915fbba2b52de5317d3318f9f3ebec633651ad440",
+      "model_sha256": "6738f85b92b705e02c9bb539e3b99273e3004a675a2950b8bf104ffde57f5d67",
+      "irqChecked": 87,
+      "stateChecks": 200448
+    },
+    {
+      "engine": "wasm-unoptimized",
+      "case": "product-four",
+      "samples": 22272,
+      "minimumCycles": 938,
+      "maximumCycles": 1198,
+      "maximumStack": 8,
+      "pcm_sha256": "95d40fdcf7ac62ffbda2507f44c6b94ca63be62fd70f8b0eb26cc8b1f0e5543c",
+      "model_sha256": "1ca2819f69feb9acdf7fd0cfe49c44085e9de0b67d5d5381f73425e2bc9f1a02",
+      "irqChecked": 87,
+      "stateChecks": 200448
+    }
+  ],
+  "samples": 133632,
+  "stateChecks": 1202688,
+  "irqChecked": 522,
+  "scope": "Actual assembled 8-stage Q4 word filter on full phrases; host supplies excitation and coefficients; cycles include internal calls and RET, exclude outer RCALL",
+  "fullDecoderImplemented": false,
+  "hardwareTested": false,
+  "fixture_bytes": 212,
+  "source_sha256_normalized_lf": {
+    "tools/probe-word-q4-filter.py": "f6b8fcd00d2dba5f0772e1c604d66eea0148cb26924d1de7012936f5012abd7b",
+    "ATtiny13A/Sound/codec/word-q4/filter.S": "6b785845edab7935b7a808793c5320a4e78ae3bcb85178e6c4431d076420ef46",
+    "ATtiny13A/Sound/codec/word-q4/multiply.S": "3d754833e2bdfe6b5c697d62dca17ad52b1a1931a26f1ea455a9b298a820e198",
+    "tools/verify-word-q4-filter.mjs": "06e4f60c6ac1ad98c028cb54aa79d37ee8e8b85137e571467ce435e880fec426"
+  }
+}

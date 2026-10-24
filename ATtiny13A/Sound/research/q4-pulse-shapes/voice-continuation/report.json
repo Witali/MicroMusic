@@ -1,0 +1,982 @@
+{
+  "schema": "mixed-lattice-study-v1",
+  "initial": {
+    "stoi": 0.8885910280071512,
+    "spectrogram_loss": 0.3913708022968807,
+    "fine_log_error": 0.39942274169641556,
+    "envelope_error": 0.44193986672458696,
+    "unsupported_energy": 0.11330323333473852,
+    "missing_energy": 0.11440975143235835,
+    "raw_mean": 0.00926226034931753,
+    "raw_rms": 0.08762051718551737,
+    "peak": 80,
+    "maximum_step": 46,
+    "wrap_counts": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "pcm_sha256": "2b1a8a30717bcc7657df024b1002350b816086492e092535193ba7123abc7523",
+    "estoi": 0.7507217910750104,
+    "harmonic_metrics": {
+      "harmonic_track_loss": 0.6599168283629381,
+      "frequency_trajectory_error": 0.8320472352258937,
+      "level_error": 1.37400076615952,
+      "missing_reference_energy": 0.17333599065949293,
+      "extra_candidate_energy": 0.22028460105197054,
+      "weighted_match_rate": 0.8266640093405078,
+      "frequency_error_cents": 45.103049037033905,
+      "frequency_error_hz": 8.476946391648703,
+      "level_error_db": 4.122002298478569,
+      "frequency_error_p95_cents": 105.31264055023607,
+      "frequency_error_p95_hz": 21.197163116136494,
+      "level_error_p95_db": 10.704148656651235,
+      "continuity_break_rate": 0.17713310892655643
+    }
+  },
+  "final": {
+    "stoi": 0.8899113636798451,
+    "spectrogram_loss": 0.39140151359029685,
+    "fine_log_error": 0.39751308747171715,
+    "envelope_error": 0.44367502547543003,
+    "unsupported_energy": 0.11437866662447355,
+    "missing_energy": 0.11534199841410162,
+    "raw_mean": 0.008175553946659482,
+    "raw_rms": 0.08817628548145642,
+    "peak": 80,
+    "maximum_step": 46,
+    "wrap_counts": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "pcm_sha256": "ce3bd4f6a4b08e5ce5a3b9d7dbd219a40887e83c715e6bda9964e140ecc87053",
+    "estoi": 0.7528533864570292,
+    "harmonic_metrics": {
+      "harmonic_track_loss": 0.6737261380501621,
+      "frequency_trajectory_error": 0.863368578941102,
+      "level_error": 1.3992512104444557,
+      "missing_reference_energy": 0.1624934634295825,
+      "extra_candidate_energy": 0.22490559384734637,
+      "weighted_match_rate": 0.8375065365704185,
+      "frequency_error_cents": 46.64876509274016,
+      "frequency_error_hz": 9.077828228340259,
+      "level_error_db": 4.197753631333367,
+      "frequency_error_p95_cents": 108.23866263409337,
+      "frequency_error_p95_hz": 25.08921692634135,
+      "level_error_p95_db": 11.43827099128857,
+      "continuity_break_rate": 0.18426030451817177
+    }
+  },
+  "best_intelligibility": {
+    "stoi": 0.8899113636798451,
+    "spectrogram_loss": 0.39140151359029685,
+    "fine_log_error": 0.39751308747171715,
+    "envelope_error": 0.44367502547543003,
+    "unsupported_energy": 0.11437866662447355,
+    "missing_energy": 0.11534199841410162,
+    "raw_mean": 0.008175553946659482,
+    "raw_rms": 0.08817628548145642,
+    "peak": 80,
+    "maximum_step": 46,
+    "wrap_counts": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "pcm_sha256": "ce3bd4f6a4b08e5ce5a3b9d7dbd219a40887e83c715e6bda9964e140ecc87053",
+    "estoi": 0.7528533864570292,
+    "harmonic_metrics": {
+      "harmonic_track_loss": 0.6737261380501621,
+      "frequency_trajectory_error": 0.863368578941102,
+      "level_error": 1.3992512104444557,
+      "missing_reference_energy": 0.1624934634295825,
+      "extra_candidate_energy": 0.22490559384734637,
+      "weighted_match_rate": 0.8375065365704185,
+      "frequency_error_cents": 46.64876509274016,
+      "frequency_error_hz": 9.077828228340259,
+      "level_error_db": 4.197753631333367,
+      "frequency_error_p95_cents": 108.23866263409337,
+      "frequency_error_p95_hz": 25.08921692634135,
+      "level_error_p95_db": 11.43827099128857,
+      "continuity_break_rate": 0.18426030451817177
+    }
+  },
+  "evaluated": 24000,
+  "accepted": 57,
+  "history": [
+    {
+      "evaluation": 59,
+      "action": [
+        "coefficient",
+        1,
+        5,
+        -1
+      ],
+      "stoi": 0.8885912619365837,
+      "spectrogram_loss": 0.3913611030227896,
+      "pcm_sha256": "3ee0801cac85297d5bbef68ce06db03e49d1e8bf8e3033f416d03ff65a8dab4d"
+    },
+    {
+      "evaluation": 782,
+      "action": [
+        "coefficient",
+        13,
+        2,
+        -1
+      ],
+      "stoi": 0.8885968146888306,
+      "spectrogram_loss": 0.3913229414613059,
+      "pcm_sha256": "ee0dacef534dd72f0ad63125cd4162f1709cfdef1492cd56878f31de3e8d0393"
+    },
+    {
+      "evaluation": 786,
+      "action": [
+        "coefficient",
+        13,
+        4,
+        -1
+      ],
+      "stoi": 0.8885740805974677,
+      "spectrogram_loss": 0.39115701003427,
+      "pcm_sha256": "694785d6e6bfbcb9b314a5adca08445872730088949d9a7c68a5eb5dadb3ea74"
+    },
+    {
+      "evaluation": 792,
+      "action": [
+        "coefficient",
+        13,
+        7,
+        -1
+      ],
+      "stoi": 0.888588696846044,
+      "spectrogram_loss": 0.3911851081008016,
+      "pcm_sha256": "42266404f93e33f47f90070d0a06438fcf337d8039838b28cc235638848d9cbb"
+    },
+    {
+      "evaluation": 855,
+      "action": [
+        "coefficient",
+        14,
+        2,
+        1
+      ],
+      "stoi": 0.8885925353621629,
+      "spectrogram_loss": 0.39119936712580333,
+      "pcm_sha256": "110639f52a04e2af30e2729d92c3ab950c1c4b2888bda4a70080d2e750fc78eb"
+    },
+    {
+      "evaluation": 856,
+      "action": [
+        "coefficient",
+        14,
+        3,
+        -1
+      ],
+      "stoi": 0.8886018270974393,
+      "spectrogram_loss": 0.3912194234334342,
+      "pcm_sha256": "0ea20ddfb6282e00cf8492492877a7afcafa0937a950d8c2ef5217cbd6d245ff"
+    },
+    {
+      "evaluation": 861,
+      "action": [
+        "coefficient",
+        14,
+        5,
+        1
+      ],
+      "stoi": 0.8886235199445542,
+      "spectrogram_loss": 0.3911840609765948,
+      "pcm_sha256": "5f620326e130b43397e330d1d7b5e52789fcbc01e2480d9d4eda9b44dd9cefc0"
+    },
+    {
+      "evaluation": 923,
+      "action": [
+        "coefficient",
+        15,
+        0,
+        1
+      ],
+      "stoi": 0.8886314667684474,
+      "spectrogram_loss": 0.39113660918039256,
+      "pcm_sha256": "1975aa9fbb3270e73f9e1b1394f81f920dec4a27c032471789db908b6057bfd0"
+    },
+    {
+      "evaluation": 1125,
+      "action": [
+        "coefficient",
+        18,
+        5,
+        -1
+      ],
+      "stoi": 0.888652317472364,
+      "spectrogram_loss": 0.39110257948566507,
+      "pcm_sha256": "0b240603033470ac0000e25bf68fa5c2979b476d8d2a74245b22a342bb3d4c9c"
+    },
+    {
+      "evaluation": 1128,
+      "action": [
+        "coefficient",
+        18,
+        6,
+        1
+      ],
+      "stoi": 0.888697306982462,
+      "spectrogram_loss": 0.3911159625646696,
+      "pcm_sha256": "577b6308d7513c35466eed276def1d39cca6dcfa954dacfd5d0d8955931f4bf5"
+    },
+    {
+      "evaluation": 1131,
+      "action": [
+        "gain",
+        18,
+        0,
+        -1
+      ],
+      "stoi": 0.8887074632074493,
+      "spectrogram_loss": 0.3911612325486883,
+      "pcm_sha256": "aeb14cc42c2588f1093297f490fc71d64e055b0158a2d9cd2ade9a2936ef3171"
+    },
+    {
+      "evaluation": 1189,
+      "action": [
+        "gain",
+        19,
+        0,
+        1
+      ],
+      "stoi": 0.888704751905866,
+      "spectrogram_loss": 0.3911290660013716,
+      "pcm_sha256": "6a7164e62af2b6d286ceeac59ee06326821fbf1fc01f589adf3cf2fee258b351"
+    },
+    {
+      "evaluation": 1240,
+      "action": [
+        "coefficient",
+        20,
+        5,
+        1
+      ],
+      "stoi": 0.8887050805803239,
+      "spectrogram_loss": 0.3911078821779758,
+      "pcm_sha256": "a5b86a6199bb14e238be3438ad1e651d7158d2dcb50141a8d66c8cdbc9242213"
+    },
+    {
+      "evaluation": 1243,
+      "action": [
+        "coefficient",
+        20,
+        7,
+        -1
+      ],
+      "stoi": 0.8887087330259685,
+      "spectrogram_loss": 0.3910565031191118,
+      "pcm_sha256": "4f39ba7cc3bd0fdde1ff671054bbf6340e6b324462cd4cb309cd6eba2db54d87"
+    },
+    {
+      "evaluation": 1269,
+      "action": [
+        "voice",
+        21,
+        186,
+        12,
+        3,
+        0
+      ],
+      "stoi": 0.8887035081115826,
+      "spectrogram_loss": 0.3909158285332816,
+      "pcm_sha256": "84c45a773422a98440082a9597b503ca10acbf05348da273038268691ab5aaf7"
+    },
+    {
+      "evaluation": 1286,
+      "action": [
+        "coefficient",
+        21,
+        2,
+        1
+      ],
+      "stoi": 0.8887686916858764,
+      "spectrogram_loss": 0.390933637357311,
+      "pcm_sha256": "e355e5ec70e50fd2445523ec7e86892c2c28393954696a1bfde6989798479776"
+    },
+    {
+      "evaluation": 1287,
+      "action": [
+        "coefficient",
+        21,
+        3,
+        -1
+      ],
+      "stoi": 0.8887551175925309,
+      "spectrogram_loss": 0.3907872414483596,
+      "pcm_sha256": "a636c8b06b11bb76a5085e145ba7380f868a8ce6c53c80938a3d35490055c45a"
+    },
+    {
+      "evaluation": 1888,
+      "action": [
+        "coefficient",
+        34,
+        2,
+        -1
+      ],
+      "stoi": 0.8887404832933522,
+      "spectrogram_loss": 0.3905110332343952,
+      "pcm_sha256": "1ca11595ebe350d1839dbb262fd32383ea981aa9654b87b581606875ca4c0a81"
+    },
+    {
+      "evaluation": 1897,
+      "action": [
+        "coefficient",
+        34,
+        6,
+        1
+      ],
+      "stoi": 0.8887508691987488,
+      "spectrogram_loss": 0.39040390782891937,
+      "pcm_sha256": "7210f83d4209bbf04eb1f9f287f23cb6ea99b7c096ac7ac370bb588b89345caf"
+    },
+    {
+      "evaluation": 1972,
+      "action": [
+        "gain",
+        35,
+        0,
+        -1
+      ],
+      "stoi": 0.8889298785712553,
+      "spectrogram_loss": 0.39089643787718076,
+      "pcm_sha256": "ba100484210745efd13e4112d6c02c5b0d4c753d1eb252b58c55fa1caefe785e"
+    },
+    {
+      "evaluation": 2354,
+      "action": [
+        "coefficient",
+        40,
+        4,
+        -1
+      ],
+      "stoi": 0.888916707165503,
+      "spectrogram_loss": 0.390754290416728,
+      "pcm_sha256": "a0932df21f71b5b94e9f061f3f1ad0448cc416bfce26a2aad7e8bbe772e1a59f"
+    },
+    {
+      "evaluation": 2599,
+      "action": [
+        "coefficient",
+        43,
+        3,
+        -1
+      ],
+      "stoi": 0.8889070018121421,
+      "spectrogram_loss": 0.39068659127988625,
+      "pcm_sha256": "5142c5aa6f08a87d4c8f9b29d1b6f289ed221daea20de13073e57b467cdff25e"
+    },
+    {
+      "evaluation": 2785,
+      "action": [
+        "coefficient",
+        46,
+        2,
+        -1
+      ],
+      "stoi": 0.8889115317199989,
+      "spectrogram_loss": 0.3906870680916619,
+      "pcm_sha256": "77d85a663dbee127f30634c91a90fa97d0928f3b1f337ce42805ae553530fbe6"
+    },
+    {
+      "evaluation": 2796,
+      "action": [
+        "coefficient",
+        46,
+        7,
+        1
+      ],
+      "stoi": 0.8889203813928981,
+      "spectrogram_loss": 0.39066887630568015,
+      "pcm_sha256": "c308ef8d177908e576dabaab7b0eeab2a3f6d3f733eb9e6a065e93b778c5f1c5"
+    },
+    {
+      "evaluation": 3499,
+      "action": [
+        "coefficient",
+        61,
+        0,
+        -1
+      ],
+      "stoi": 0.8890232533359206,
+      "spectrogram_loss": 0.3911201168219117,
+      "pcm_sha256": "6ce2a078633fb675f3ee0359d3df599ae2808083598f1e013d7e4fd2448b26c4"
+    },
+    {
+      "evaluation": 3512,
+      "action": [
+        "coefficient",
+        61,
+        6,
+        1
+      ],
+      "stoi": 0.889045837488758,
+      "spectrogram_loss": 0.39116067312990205,
+      "pcm_sha256": "aea39cd4ea77b5be3e8b6b2bffc4a82ffa34036a5f87c9da93d2dc7abefaf277"
+    },
+    {
+      "evaluation": 3514,
+      "action": [
+        "coefficient",
+        61,
+        7,
+        1
+      ],
+      "stoi": 0.8891875143022249,
+      "spectrogram_loss": 0.3910899766633516,
+      "pcm_sha256": "f4bf351a33fde48080e675321a60fa14fe976ff4d3850e69ffd005e1018a5048"
+    },
+    {
+      "evaluation": 3670,
+      "action": [
+        "coefficient",
+        64,
+        4,
+        1
+      ],
+      "stoi": 0.8892998351169267,
+      "spectrogram_loss": 0.39129074659534907,
+      "pcm_sha256": "27636a5ff2b2b65c03fdd044f97828db3f8da4a2e01c472d42839cd7111cca89"
+    },
+    {
+      "evaluation": 3739,
+      "action": [
+        "coefficient",
+        65,
+        5,
+        1
+      ],
+      "stoi": 0.8893702072492625,
+      "spectrogram_loss": 0.39134126796453766,
+      "pcm_sha256": "7562e64d4342abb4a67f94de85faf717b148e0d84c114e597a2189a015608fca"
+    },
+    {
+      "evaluation": 3954,
+      "action": [
+        "coefficient",
+        68,
+        7,
+        1
+      ],
+      "stoi": 0.8893438801163911,
+      "spectrogram_loss": 0.3911465340885962,
+      "pcm_sha256": "c8543b6fffead494fae2be4ac9495709751f2cee27c9e5f56d3dc6b4104af192"
+    },
+    {
+      "evaluation": 3956,
+      "action": [
+        "gain",
+        68,
+        0,
+        1
+      ],
+      "stoi": 0.889401997441883,
+      "spectrogram_loss": 0.3912565926878991,
+      "pcm_sha256": "5f2b9075f68d207d3222a3c03aca2cdb7f2706a670e09d3bc2d1ce266ab6e8c0"
+    },
+    {
+      "evaluation": 4014,
+      "action": [
+        "coefficient",
+        69,
+        1,
+        1
+      ],
+      "stoi": 0.8894118894741084,
+      "spectrogram_loss": 0.3912050655675239,
+      "pcm_sha256": "616c990a24d86e01cb015ba351472df949a7edbec6a3c4b03bd7043752a921bd"
+    },
+    {
+      "evaluation": 4021,
+      "action": [
+        "coefficient",
+        69,
+        5,
+        -1
+      ],
+      "stoi": 0.8894474084176743,
+      "spectrogram_loss": 0.39135924441688147,
+      "pcm_sha256": "e240b73cddcdfd21cba9b0693fe5058fdfe5979c2b38cac60205622c1d93ca07"
+    },
+    {
+      "evaluation": 4089,
+      "action": [
+        "coefficient",
+        70,
+        3,
+        -1
+      ],
+      "stoi": 0.8895699554824463,
+      "spectrogram_loss": 0.39200188703467365,
+      "pcm_sha256": "59b9bf298f2fd787d42b28345d8027e0c1f3d0a4d57436faf90f12d3f9ae162d"
+    },
+    {
+      "evaluation": 4093,
+      "action": [
+        "coefficient",
+        70,
+        5,
+        -1
+      ],
+      "stoi": 0.8895078657013423,
+      "spectrogram_loss": 0.39157074839583733,
+      "pcm_sha256": "9809703388783eedb1979728ca67ffa6b158cdbacb6bce9d352a183047200575"
+    },
+    {
+      "evaluation": 5874,
+      "action": [
+        "coefficient",
+        84,
+        5,
+        -1
+      ],
+      "stoi": 0.8895183138414178,
+      "spectrogram_loss": 0.3915826784975395,
+      "pcm_sha256": "9c313d0c45c00111ce584daec52fe4b7f6d77b145fef59a38d6f99632a3fd6db"
+    },
+    {
+      "evaluation": 5904,
+      "action": [
+        "coefficient",
+        85,
+        2,
+        1
+      ],
+      "stoi": 0.8895228966204729,
+      "spectrogram_loss": 0.3916038345212331,
+      "pcm_sha256": "f4484cac1f3f979b63ced0588aab44a614989dc3b5b44353d8c26fcdee38c383"
+    },
+    {
+      "evaluation": 5905,
+      "action": [
+        "coefficient",
+        85,
+        3,
+        -1
+      ],
+      "stoi": 0.8895203489477491,
+      "spectrogram_loss": 0.391587400312891,
+      "pcm_sha256": "cef885096fbf5076a191f4bc9c87bf596cd0f2f1535b6995359679ecf7fdd8be"
+    },
+    {
+      "evaluation": 5910,
+      "action": [
+        "coefficient",
+        85,
+        5,
+        1
+      ],
+      "stoi": 0.8895280162616452,
+      "spectrogram_loss": 0.3916092277958571,
+      "pcm_sha256": "5dfd5fcc962cd2c3f9999b129c8dcc980465c075da42028d90bcda3ef1528172"
+    },
+    {
+      "evaluation": 5914,
+      "action": [
+        "coefficient",
+        85,
+        7,
+        1
+      ],
+      "stoi": 0.8895301160851046,
+      "spectrogram_loss": 0.39161414718903936,
+      "pcm_sha256": "92b82f41f8a465103f14f76aed1194f852f965dfc531978f889d542a8a9085f7"
+    },
+    {
+      "evaluation": 6321,
+      "action": [
+        "coefficient",
+        100,
+        0,
+        -1
+      ],
+      "stoi": 0.8895301160851046,
+      "spectrogram_loss": 0.39161340784969156,
+      "pcm_sha256": "2207f26700d952c317258682806478cd33ddb485dcf0d8fdbf1533b4ec01021b"
+    },
+    {
+      "evaluation": 6637,
+      "action": [
+        "coefficient",
+        106,
+        2,
+        -1
+      ],
+      "stoi": 0.8895668617654834,
+      "spectrogram_loss": 0.39150419498934697,
+      "pcm_sha256": "480a116960c67cee9ff7b22ce6ef466baf38bbfe83ab3261989289e3e79cbf83"
+    },
+    {
+      "evaluation": 6719,
+      "action": [
+        "pitch",
+        107,
+        0,
+        -1
+      ],
+      "stoi": 0.8896407130547143,
+      "spectrogram_loss": 0.39147950352355776,
+      "pcm_sha256": "d969cdf54d85ef17136cf694dde6dc34fb18764e2826b73d231375e26005e8a3"
+    },
+    {
+      "evaluation": 7136,
+      "action": [
+        "coefficient",
+        113,
+        4,
+        1
+      ],
+      "stoi": 0.8896237689988019,
+      "spectrogram_loss": 0.3913578295239495,
+      "pcm_sha256": "68a1a2326e096d694b0f40777cad48dfbff19c58c2b96b4e496d83594195b01d"
+    },
+    {
+      "evaluation": 7142,
+      "action": [
+        "coefficient",
+        113,
+        7,
+        1
+      ],
+      "stoi": 0.8896405864141886,
+      "spectrogram_loss": 0.39139959676466185,
+      "pcm_sha256": "1464e19b830e5374748d3687bac0527d85457e753dca6318a83bcf33bf6b45fd"
+    },
+    {
+      "evaluation": 7143,
+      "action": [
+        "gain",
+        113,
+        0,
+        -1
+      ],
+      "stoi": 0.8896250963180702,
+      "spectrogram_loss": 0.391306079067752,
+      "pcm_sha256": "818ad2427f7a18b87a89635cf9ac0d450626db95d59948e88e0f33786ca19e5d"
+    },
+    {
+      "evaluation": 7206,
+      "action": [
+        "coefficient",
+        114,
+        3,
+        1
+      ],
+      "stoi": 0.8896688507191792,
+      "spectrogram_loss": 0.3914460039523684,
+      "pcm_sha256": "1212c2baf0d1cef0cb66a647617eb1a874831267c18f155442dbf2d506e919aa"
+    },
+    {
+      "evaluation": 7211,
+      "action": [
+        "coefficient",
+        114,
+        6,
+        -1
+      ],
+      "stoi": 0.8896724550908979,
+      "spectrogram_loss": 0.39141120978468763,
+      "pcm_sha256": "91619cc40a15c672cd05cc1b9e6e203ed4279f148633bb63b737df2069b9ffd1"
+    },
+    {
+      "evaluation": 7214,
+      "action": [
+        "coefficient",
+        114,
+        7,
+        1
+      ],
+      "stoi": 0.8896878848995041,
+      "spectrogram_loss": 0.3914334992435545,
+      "pcm_sha256": "aecfc60bc2733c7b89350089324a202beb46db071ffebbce6e85246fb8bc7e6c"
+    },
+    {
+      "evaluation": 7234,
+      "action": [
+        "voice",
+        115,
+        292,
+        1,
+        0,
+        0
+      ],
+      "stoi": 0.8897674356768228,
+      "spectrogram_loss": 0.3914262603243183,
+      "pcm_sha256": "046ae4eac2d11fa3f70a77dbecb7c4fce25243eeff344d10f2afbd9f156c3e2b"
+    },
+    {
+      "evaluation": 7249,
+      "action": [
+        "coefficient",
+        115,
+        5,
+        1
+      ],
+      "stoi": 0.8898228503744161,
+      "spectrogram_loss": 0.39140817601689976,
+      "pcm_sha256": "dd6c97205a402584489dba57c625fff471a7fc80aa000495e233453fee9d652b"
+    },
+    {
+      "evaluation": 7279,
+      "action": [
+        "coefficient",
+        116,
+        1,
+        -1
+      ],
+      "stoi": 0.8898501267125853,
+      "spectrogram_loss": 0.3913950477982744,
+      "pcm_sha256": "5692dfb92d1533eeea6933627d7b29784cc586b5443c370e9550f9d4c05a183a"
+    },
+    {
+      "evaluation": 7290,
+      "action": [
+        "coefficient",
+        116,
+        6,
+        1
+      ],
+      "stoi": 0.8898596074370564,
+      "spectrogram_loss": 0.3913871635889963,
+      "pcm_sha256": "0b39d7480f0f6d47740802507a3a2e5423e6ca2527b79d48e7c8dd3cdb3a0c32"
+    },
+    {
+      "evaluation": 7341,
+      "action": [
+        "coefficient",
+        117,
+        6,
+        1
+      ],
+      "stoi": 0.8898894608722965,
+      "spectrogram_loss": 0.39139623547075947,
+      "pcm_sha256": "5c5c92310994bd4c8873ff664b472d28f53b9b1e9201017698c8474dbf554351"
+    },
+    {
+      "evaluation": 7342,
+      "action": [
+        "coefficient",
+        117,
+        7,
+        -1
+      ],
+      "stoi": 0.8899005946695685,
+      "spectrogram_loss": 0.39140609054926784,
+      "pcm_sha256": "b7e33ecc9473682796a4af7a43e6ab819b4cdb5d4ae8a803e9a6369ac7dd5d7c"
+    },
+    {
+      "evaluation": 8406,
+      "action": [
+        "coefficient",
+        129,
+        3,
+        -1
+      ],
+      "stoi": 0.8899112030591992,
+      "spectrogram_loss": 0.3914012643202476,
+      "pcm_sha256": "b56a2a35a4f3ea96064ab7c5259dd81c501d53a339a9c39dd2ff82e619c17980"
+    },
+    {
+      "evaluation": 8478,
+      "action": [
+        "coefficient",
+        131,
+        0,
+        1
+      ],
+      "stoi": 0.8899113636798451,
+      "spectrogram_loss": 0.39140151359029685,
+      "pcm_sha256": "ce3bd4f6a4b08e5ce5a3b9d7dbd219a40887e83c715e6bda9964e140ecc87053"
+    }
+  ],
+  "epochs": [
+    {
+      "epoch": 0,
+      "evaluated": 16501,
+      "accepted": 57
+    },
+    {
+      "epoch": 1,
+      "evaluated": 24000,
+      "accepted": 0
+    }
+  ],
+  "order": 8,
+  "state_bits": 6,
+  "coefficient_bits": [
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4
+  ],
+  "zero_mean": true,
+  "seed_gain_scale": 1.0,
+  "pulse_length": 32,
+  "wave_first": false,
+  "fit_phase": true,
+  "wave_fraction_bits": 2,
+  "tail_policy": "literal",
+  "step_policy": "reference",
+  "step_limit": 73,
+  "reference_maximum_step": 72.0390625,
+  "voice_search": true,
+  "source_pitch_hints": [
+    0,
+    0,
+    0,
+    0,
+    89,
+    0,
+    241,
+    236,
+    0,
+    0,
+    229,
+    229,
+    229,
+    231,
+    232,
+    233,
+    233,
+    239,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    256,
+    245,
+    244,
+    253,
+    245,
+    0,
+    0,
+    0,
+    242,
+    243,
+    232,
+    0,
+    0,
+    246,
+    0,
+    0,
+    0,
+    0,
+    237,
+    242,
+    239,
+    240,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    94,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    236,
+    237,
+    228,
+    226,
+    226,
+    36,
+    36,
+    36,
+    36,
+    36,
+    36,
+    0,
+    76,
+    80,
+    82,
+    90,
+    100,
+    114,
+    137,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    119,
+    110,
+    106,
+    114,
+    117,
+    115,
+    100,
+    85,
+    80,
+    80,
+    91,
+    103,
+    0,
+    0,
+    100,
+    101,
+    105,
+    114,
+    0,
+    0,
+    0,
+    0,
+    130,
+    0,
+    0,
+    0,
+    0
+  ],
+  "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+  "seed_sha256": "ba776a3ff1283eaeca342f8c8b306364cefdd27b72b3984700317b01de711f6e",
+  "source_sha256_normalized_lf": {
+    "tools/fit-mixed-lattice.py": "02ffea3d76569bf019b98df6e9fa2b07e479d65e44b2e1540dc651bb9d94204d",
+    "ATtiny13A/Sound/codec/mixed_lattice.py": "e71a6feb6886cbb13fc965b11ab0c7f5f7c6188bd8e8fa88f2201d54da40b1c2",
+    "ATtiny13A/Sound/codec/q4_phase_wave.py": "a1c1e89c47e2e7d3e1c8a5ea51eaf7018d84c9b43ca887d440592e8eb803c3c1",
+    "ATtiny13A/Sound/codec/period_wave.py": "d6d92cdd2e8d910a9e4085f939e193553fac53e5cd8b0d892b29e76b3709587f"
+  },
+  "elapsed_seconds": 497.73892529995646,
+  "avr_implemented": false,
+  "serialized_format": false,
+  "hardware_tested": false,
+  "policy": "PC quality teacher; no memory-fit or sample-deadline claim"
+}

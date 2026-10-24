@@ -1,0 +1,132 @@
+{
+  "schema": "new-period-voice-experiment-v1",
+  "samples": 12800,
+  "sample_rate": 7500,
+  "reference_sha256": "e725be54dc17ba77051002b20c3dd825560e2554f49e70c20628c89fecea0c0c",
+  "reference_file": "voice-reference.wav",
+  "starts": 8,
+  "base_seed": 23065,
+  "filter_seed": 23069,
+  "search_seed": 23123,
+  "entire_input_preserved": true,
+  "avr_assembled": false,
+  "hardware_verified": false,
+  "data_excludes_decoder": true,
+  "fits_tiny": false,
+  "residual": {
+    "seed": 23067,
+    "proposals": 500,
+    "improvements": 47,
+    "objective": "spectral_loss + 2 * (1 - STOI)",
+    "initial_energy": 1.6979360665655343,
+    "final_energy": 1.53434218394267
+  },
+  "initial": {
+    "loss": 0.830611357638164,
+    "log_spectral_error": 0.8488827481975787,
+    "relative_spectral_error": 0.7575257954005048,
+    "stoi": 0.6481345868477469
+  },
+  "frame": {
+    "initial": {
+      "loss": 0.830611357638164,
+      "log_spectral_error": 0.8488827481975787,
+      "relative_spectral_error": 0.7575257954005048,
+      "stoi": 0.648134586847747,
+      "peak": 0.8616278670856945
+    },
+    "final": {
+      "loss": 0.7993474172453775,
+      "log_spectral_error": 0.8033741917315416,
+      "relative_spectral_error": 0.7832403193007208,
+      "stoi": 0.7682507880527257,
+      "peak": 0.890495037750487
+    },
+    "proposals": 2000,
+    "evaluated": 1941,
+    "accepted": 487,
+    "improvements": 201,
+    "config": {
+      "version": "joint-period-v2",
+      "model_schema": "period-colored-v1",
+      "gain_count": 64,
+      "seed": 23123,
+      "stoi_weight": 8.0,
+      "spectral_ceiling": 0.9762151604272155,
+      "stoi_floor": 0.648134586847747,
+      "restart_every": 1500,
+      "max_peak": 0.95
+    }
+  },
+  "book": {
+    "initial": {
+      "loss": 0.7993474172453772,
+      "log_spectral_error": 0.8033741917315412,
+      "relative_spectral_error": 0.7832403193007206,
+      "stoi": 0.7682507880527257,
+      "peak": 0.8904950377504872
+    },
+    "final": {
+      "loss": 0.7856095699020944,
+      "log_spectral_error": 0.7951148132293607,
+      "relative_spectral_error": 0.7475885965930291,
+      "stoi": 0.807296352699388,
+      "peak": 0.9228011591434995
+    },
+    "proposals": 2000,
+    "evaluated": 1743,
+    "accepted": 963,
+    "improvements": 404,
+    "config": {
+      "version": "joint-period-v2",
+      "model_schema": "period-colored-v1",
+      "gain_count": 64,
+      "seed": 23123,
+      "stoi_weight": 8.0,
+      "spectral_ceiling": 0.9238803204912723,
+      "stoi_floor": 0.7682507880527257,
+      "restart_every": 1500,
+      "max_peak": 0.95,
+      "search_kind": "balanced-period-coefficients-v1"
+    }
+  },
+  "data_bytes": 834,
+  "payload_sha256": "b3be340aa9287824f03067abe646cde454eacbe07653c64d07afa62843b53a14",
+  "pcm_f64le_sha256": "dc6b58ace510b543275651dec4db6f20e2eb65ee2e98dfcc25a84a4e436c5b70",
+  "final": {
+    "loss": 0.7856095699020944,
+    "log_spectral_error": 0.7951148132293607,
+    "relative_spectral_error": 0.7475885965930291,
+    "stoi": 0.807296352699388,
+    "estoi": 0.47210510333983585
+  },
+  "pitch": {
+    "voiced_frames": 73,
+    "frames": 200
+  },
+  "baseline": {
+    "sha256": "bf05c837ed8c4f2255290a1ee76c84409927758b6347ae4c2e0e5b8202e668cf",
+    "loss": 0.8595258229214134,
+    "log_spectral_error": 0.8552934213049261,
+    "relative_spectral_error": 0.8764554293873621,
+    "stoi": 0.7885946341898025,
+    "estoi": 0.44984132619014583
+  },
+  "source_sha256_normalized_lf": {
+    "tools/probe-new-period-voice.py": "2b8ab10ef5f4e33352a94171f423ec75de18b4b016f426289f46c596f3fac566",
+    "tools/refine_period_helpers.py": "a0aad8182f063a0280b87de4379912d97acc152ccae1d0610a0f13bc47c80a29",
+    "ATtiny13A/Sound/codec/period_wave.py": "d6d92cdd2e8d910a9e4085f939e193553fac53e5cd8b0d892b29e76b3709587f",
+    "ATtiny13A/Sound/codec/period_residual.py": "f84b16a478e7c10631f5d271acf5fb48de9716cd6cdacd2342b25341c07efc49",
+    "ATtiny13A/Sound/codec/colored_period.py": "db02620b67c3a0574b5f24c99cbaa9d0c25048cafc1a94e3ce83026e8095e27b",
+    "ATtiny13A/Sound/codec/joint_period.py": "37d75d92b0d231cdad9aade244b507b19a24c52e3ae3ab2db862eaa81c48fd11",
+    "ATtiny13A/Sound/codec/period_book_search.py": "0b51cc707fcad4172a04f2039966ea822e5b49d812733c205d997d3f2355ddd2",
+    "ATtiny13A/Sound/codec/auto_encoder.py": "ab97a68e00409640531c26cebc43f2fc2fdd3c4cb111e6ffb7c0a7dbcdff2202"
+  },
+  "runtime": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "pystoi": "0.4.1",
+    "soundfile": "0.14.0",
+    "python": "3.12.14"
+  }
+}

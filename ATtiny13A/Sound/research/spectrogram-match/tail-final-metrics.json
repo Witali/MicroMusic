@@ -1,0 +1,39 @@
+{
+  "version": "spectrogram-match-v1",
+  "reference_sha256": "4914d2c349e1f2e9e102ec23949a2bb96b95b7145aa252b54a6a8341ba5ce55d",
+  "samples": 19328,
+  "sample_rate": 7500,
+  "processing": "Identical 70 Hz highpass, global RMS match; no time/frequency warping",
+  "candidates": {
+    "Previous-T1": {
+      "spectrogram_loss": 0.4948567005884359,
+      "fine_log_error": 0.5219372069841666,
+      "envelope_error": 0.5587417403869352,
+      "unsupported_energy": 0.13971016729165603,
+      "missing_energy": 0.20742446224392103,
+      "sha256": "f4698f35a7fc073541070b6b758e35912956a1a1a3274d4ce67aa56969672947"
+    },
+    "Q3-auto": {
+      "spectrogram_loss": 0.45032541027776923,
+      "fine_log_error": 0.4990025442544995,
+      "envelope_error": 0.47663596766661276,
+      "unsupported_energy": 0.11163344291655189,
+      "missing_energy": 0.158341050354903,
+      "sha256": "95e6c3637e1b479c4cf5138bf26f1005d8f7b8d44410b5a28b5dd852a4f040dc"
+    }
+  },
+  "listening_order": [
+    {
+      "label": "Original",
+      "file": "track-0.wav"
+    },
+    {
+      "label": "Previous-T1",
+      "file": "track-1.wav"
+    },
+    {
+      "label": "Q3-auto",
+      "file": "track-2.wav"
+    }
+  ]
+}

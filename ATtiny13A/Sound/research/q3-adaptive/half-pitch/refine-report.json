@@ -1,0 +1,1174 @@
+{
+  "before": {
+    "stoi": 0.8510430612378244,
+    "spectrogram_loss": 0.48941044447822163,
+    "fine_log_error": 0.47330655641954944,
+    "envelope_error": 0.5816121325893197,
+    "unsupported_energy": 0.18813460611921295,
+    "missing_energy": 0.19598761392656927,
+    "raw_mean": 0.07807694358387213,
+    "stream_bytes": 639,
+    "flash_bytes": 1016,
+    "estoi": 0.6621600234856952,
+    "harmonic_metrics": {
+      "harmonic_track_loss": 0.9271437937649367,
+      "frequency_trajectory_error": 1.0489600041099536,
+      "level_error": 2.2758915379316744,
+      "missing_reference_energy": 0.18959669137152876,
+      "extra_candidate_energy": 0.23049735614118655,
+      "weighted_match_rate": 0.8104033086284709,
+      "frequency_error_cents": 55.99646009312513,
+      "frequency_error_hz": 11.888272672958546,
+      "level_error_db": 6.827674613795006,
+      "frequency_error_p95_cents": 150.52650388740966,
+      "frequency_error_p95_hz": 35.560549280180794,
+      "level_error_p95_db": 13.626656510143105,
+      "continuity_break_rate": 0.26751747814962845
+    },
+    "partial_violation_power": 0.7145358521766073
+  },
+  "after": {
+    "stoi": 0.8530871418030158,
+    "spectrogram_loss": 0.4848481735668308,
+    "fine_log_error": 0.47250973684590336,
+    "envelope_error": 0.5725355053581231,
+    "unsupported_energy": 0.18390341694349596,
+    "missing_energy": 0.18763618206333518,
+    "raw_mean": 0.07764022651760058,
+    "stream_bytes": 647,
+    "flash_bytes": 1024,
+    "estoi": 0.6698916524393111,
+    "harmonic_metrics": {
+      "harmonic_track_loss": 0.8997783814095172,
+      "frequency_trajectory_error": 0.9600165104890477,
+      "level_error": 2.2794378224367637,
+      "missing_reference_energy": 0.18848304941563498,
+      "extra_candidate_energy": 0.23511423377349436,
+      "weighted_match_rate": 0.8115169505843645,
+      "frequency_error_cents": 51.421490652248565,
+      "frequency_error_hz": 9.864331752971005,
+      "level_error_db": 6.838313467310303,
+      "frequency_error_p95_cents": 141.850074938162,
+      "frequency_error_p95_hz": 32.895954564826525,
+      "level_error_p95_db": 16.757286589518294,
+      "continuity_break_rate": 0.32145976720565966
+    },
+    "partial_violation_power": 0.7031405490093119
+  },
+  "evaluated": 4500,
+  "accepted": 30,
+  "history": [
+    {
+      "evaluation": 855,
+      "action": [
+        "pitch",
+        40,
+        0,
+        -1
+      ],
+      "score": {
+        "stoi": 0.8510465571470371,
+        "spectrogram_loss": 0.48931314543922166,
+        "fine_log_error": 0.4731304901050549,
+        "envelope_error": 0.5815837269240824,
+        "unsupported_energy": 0.18811114916903654,
+        "missing_energy": 0.19593839172176028,
+        "raw_mean": 0.07807694358387213,
+        "stream_bytes": 639,
+        "flash_bytes": 1016,
+        "estoi": 0.6621652821098705,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.9271229930473136,
+          "frequency_trajectory_error": 1.0496569093702508,
+          "level_error": 2.274514623748684,
+          "missing_reference_energy": 0.18959669137152876,
+          "extra_candidate_energy": 0.23039677039551634,
+          "weighted_match_rate": 0.8104033086284709,
+          "frequency_error_cents": 56.04866081605092,
+          "frequency_error_hz": 11.893939614245445,
+          "level_error_db": 6.823543871246045,
+          "frequency_error_p95_cents": 150.52650388740966,
+          "frequency_error_p95_hz": 35.560549280180794,
+          "level_error_p95_db": 13.626663922519914,
+          "continuity_break_rate": 0.26803254094405793
+        },
+        "partial_violation_power": 0.7145358521766073
+      }
+    },
+    {
+      "evaluation": 994,
+      "action": [
+        "coefficient_run",
+        12,
+        5,
+        -1
+      ],
+      "score": {
+        "stoi": 0.851188422043078,
+        "spectrogram_loss": 0.4895005427805457,
+        "fine_log_error": 0.47317051965558565,
+        "envelope_error": 0.5818742840666732,
+        "unsupported_energy": 0.1883767408409789,
+        "missing_energy": 0.1962530672465947,
+        "raw_mean": 0.07810009485003593,
+        "stream_bytes": 639,
+        "flash_bytes": 1016,
+        "estoi": 0.662373627003816,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.9282101107864671,
+          "frequency_trajectory_error": 1.0501699138149143,
+          "level_error": 2.278385586856306,
+          "missing_reference_energy": 0.18972860076077463,
+          "extra_candidate_energy": 0.23111420557265427,
+          "weighted_match_rate": 0.810271399239225,
+          "frequency_error_cents": 56.07956855409991,
+          "frequency_error_hz": 11.89105034477482,
+          "level_error_db": 6.8351567605689265,
+          "frequency_error_p95_cents": 150.52650388740966,
+          "frequency_error_p95_hz": 35.560549280180794,
+          "level_error_p95_db": 13.618691916252219,
+          "continuity_break_rate": 0.26775625031710737
+        },
+        "partial_violation_power": 0.7145306573942154
+      }
+    },
+    {
+      "evaluation": 1134,
+      "action": [
+        "coefficient_run",
+        14,
+        2,
+        1
+      ],
+      "score": {
+        "stoi": 0.8512110520842414,
+        "spectrogram_loss": 0.48942506407586556,
+        "fine_log_error": 0.4730940885225438,
+        "envelope_error": 0.5817678286848915,
+        "unsupported_energy": 0.18826368457657544,
+        "missing_energy": 0.1963556934274823,
+        "raw_mean": 0.07809658708243535,
+        "stream_bytes": 639,
+        "flash_bytes": 1016,
+        "estoi": 0.6624030031935195,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.9268157288245807,
+          "frequency_trajectory_error": 1.047274783338869,
+          "level_error": 2.277417732879341,
+          "missing_reference_energy": 0.18972860076077463,
+          "extra_candidate_energy": 0.23168861145567135,
+          "weighted_match_rate": 0.810271399239225,
+          "frequency_error_cents": 55.932567912754834,
+          "frequency_error_hz": 11.793918723392574,
+          "level_error_db": 6.8322531986380195,
+          "frequency_error_p95_cents": 150.52650388740966,
+          "frequency_error_p95_hz": 35.560549280180794,
+          "level_error_p95_db": 13.626769096200428,
+          "continuity_break_rate": 0.2622827226705074
+        },
+        "partial_violation_power": 0.7145306573942154
+      }
+    },
+    {
+      "evaluation": 1599,
+      "action": [
+        "mode",
+        16,
+        3,
+        1
+      ],
+      "score": {
+        "stoi": 0.8511988139639084,
+        "spectrogram_loss": 0.48880096481749186,
+        "fine_log_error": 0.47256839306210263,
+        "envelope_error": 0.5809636083459844,
+        "unsupported_energy": 0.1877453240577372,
+        "missing_energy": 0.19576296553799527,
+        "raw_mean": 0.07808922077047414,
+        "stream_bytes": 639,
+        "flash_bytes": 1016,
+        "estoi": 0.6627654574019051,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.925437005047938,
+          "frequency_trajectory_error": 1.04608327248579,
+          "level_error": 2.2728751969996406,
+          "missing_reference_energy": 0.18972860076077463,
+          "extra_candidate_energy": 0.23119040022172155,
+          "weighted_match_rate": 0.810271399239225,
+          "frequency_error_cents": 55.87443198900393,
+          "frequency_error_hz": 11.774714427998001,
+          "level_error_db": 6.818625590998917,
+          "frequency_error_p95_cents": 150.52650388740966,
+          "frequency_error_p95_hz": 35.560549280180794,
+          "level_error_p95_db": 13.626054893611876,
+          "continuity_break_rate": 0.26271360032985624
+        },
+        "partial_violation_power": 0.7145306573942154
+      }
+    },
+    {
+      "evaluation": 2000,
+      "action": [
+        "coefficient_run",
+        34,
+        7,
+        -1
+      ],
+      "score": {
+        "stoi": 0.8513051475109088,
+        "spectrogram_loss": 0.48868096730543087,
+        "fine_log_error": 0.4730073451989334,
+        "envelope_error": 0.5800411885772991,
+        "unsupported_energy": 0.18752646078234514,
+        "missing_energy": 0.19544103760979104,
+        "raw_mean": 0.07796820278825431,
+        "stream_bytes": 639,
+        "flash_bytes": 1016,
+        "estoi": 0.6631381824235886,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.9251995137893645,
+          "frequency_trajectory_error": 1.0400974343315266,
+          "level_error": 2.277276257231422,
+          "missing_reference_energy": 0.18916082790301558,
+          "extra_candidate_energy": 0.23024673528207723,
+          "weighted_match_rate": 0.810839172096984,
+          "frequency_error_cents": 55.44039942092833,
+          "frequency_error_hz": 11.742403373325727,
+          "level_error_db": 6.831828771694276,
+          "frequency_error_p95_cents": 154.5365130423732,
+          "frequency_error_p95_hz": 35.560549280180794,
+          "level_error_p95_db": 13.627245076320065,
+          "continuity_break_rate": 0.2884980332765929
+        },
+        "partial_violation_power": 0.7140558179807476
+      }
+    },
+    {
+      "evaluation": 2139,
+      "action": [
+        "coefficient_run",
+        40,
+        7,
+        1
+      ],
+      "score": {
+        "stoi": 0.8513832658438912,
+        "spectrogram_loss": 0.48872243005111937,
+        "fine_log_error": 0.47321444800088147,
+        "envelope_error": 0.5798688077594542,
+        "unsupported_energy": 0.18749938533459165,
+        "missing_energy": 0.19541994426196074,
+        "raw_mean": 0.07792926656788793,
+        "stream_bytes": 639,
+        "flash_bytes": 1016,
+        "estoi": 0.6633817066039461,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.925041851918929,
+          "frequency_trajectory_error": 1.0398626842563545,
+          "level_error": 2.2768891808538902,
+          "missing_reference_energy": 0.18916082790301558,
+          "extra_candidate_energy": 0.23028663195486146,
+          "weighted_match_rate": 0.810839172096984,
+          "frequency_error_cents": 55.39676490952945,
+          "frequency_error_hz": 11.738183445039608,
+          "level_error_db": 6.830667542561682,
+          "frequency_error_p95_cents": 154.53651304237403,
+          "frequency_error_p95_hz": 35.560549280180794,
+          "level_error_p95_db": 13.629529244979455,
+          "continuity_break_rate": 0.28841666188585935
+        },
+        "partial_violation_power": 0.7140558179807476
+      }
+    },
+    {
+      "evaluation": 2140,
+      "action": [
+        "coefficient_frame",
+        40,
+        7,
+        1
+      ],
+      "score": {
+        "stoi": 0.8513085160539685,
+        "spectrogram_loss": 0.48825919613373636,
+        "fine_log_error": 0.4734403925885554,
+        "envelope_error": 0.578394836716057,
+        "unsupported_energy": 0.18715618146484558,
+        "missing_energy": 0.19438582474273725,
+        "raw_mean": 0.0779064660784842,
+        "stream_bytes": 639,
+        "flash_bytes": 1016,
+        "estoi": 0.6634901495453303,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.9185128745982344,
+          "frequency_trajectory_error": 1.0345804664572578,
+          "level_error": 2.25111284893308,
+          "missing_reference_energy": 0.18999380232782392,
+          "extra_candidate_energy": 0.23109546817913093,
+          "weighted_match_rate": 0.8100061976721756,
+          "frequency_error_cents": 55.096689967752255,
+          "frequency_error_hz": 11.72085378687027,
+          "level_error_db": 6.75333854679922,
+          "frequency_error_p95_cents": 154.5365130423732,
+          "frequency_error_p95_hz": 35.560549280180794,
+          "level_error_p95_db": 13.635316868605011,
+          "continuity_break_rate": 0.29049361252722794
+        },
+        "partial_violation_power": 0.7121711472318003
+      }
+    },
+    {
+      "evaluation": 2388,
+      "action": [
+        "coefficient_run",
+        51,
+        0,
+        1
+      ],
+      "score": {
+        "stoi": 0.8513399252387793,
+        "spectrogram_loss": 0.48823059376537914,
+        "fine_log_error": 0.4734064397706015,
+        "envelope_error": 0.5783610323032654,
+        "unsupported_energy": 0.18714898184765874,
+        "missing_energy": 0.19435753571862344,
+        "raw_mean": 0.07741257240032327,
+        "stream_bytes": 639,
+        "flash_bytes": 1016,
+        "estoi": 0.6647029241182535,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.9181898300467457,
+          "frequency_trajectory_error": 1.034407823086887,
+          "level_error": 2.2502340944340182,
+          "missing_reference_energy": 0.18989194862339495,
+          "extra_candidate_energy": 0.23103397003573065,
+          "weighted_match_rate": 0.8101080513766048,
+          "frequency_error_cents": 55.09785635002289,
+          "frequency_error_hz": 11.72276839443585,
+          "level_error_db": 6.750702283302043,
+          "frequency_error_p95_cents": 154.5365130423732,
+          "frequency_error_p95_hz": 35.560549280180794,
+          "level_error_p95_db": 13.635309861360582,
+          "continuity_break_rate": 0.2895518597430702
+        },
+        "partial_violation_power": 0.7120744967005501
+      }
+    },
+    {
+      "evaluation": 2389,
+      "action": [
+        "coefficient_frame",
+        51,
+        0,
+        1
+      ],
+      "score": {
+        "stoi": 0.8513448152910108,
+        "spectrogram_loss": 0.4882269659241196,
+        "fine_log_error": 0.473398263195534,
+        "envelope_error": 0.5783611870881442,
+        "unsupported_energy": 0.18714899699075244,
+        "missing_energy": 0.19435761878437477,
+        "raw_mean": 0.07741222162356322,
+        "stream_bytes": 641,
+        "flash_bytes": 1018,
+        "estoi": 0.6649460712949019,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.9181909735214373,
+          "frequency_trajectory_error": 1.0343950567735756,
+          "level_error": 2.250208707415011,
+          "missing_reference_energy": 0.18989983542966218,
+          "extra_candidate_energy": 0.23103399029056637,
+          "weighted_match_rate": 0.8101001645703375,
+          "frequency_error_cents": 55.09726000938135,
+          "frequency_error_hz": 11.722737924766601,
+          "level_error_db": 6.750626122245049,
+          "frequency_error_p95_cents": 154.5365130423732,
+          "frequency_error_p95_hz": 35.560549280180794,
+          "level_error_p95_db": 13.63530627782179,
+          "continuity_break_rate": 0.28971825990400135
+        },
+        "partial_violation_power": 0.7120744967005501
+      }
+    },
+    {
+      "evaluation": 2395,
+      "action": [
+        "coefficient_run",
+        51,
+        2,
+        -1
+      ],
+      "score": {
+        "stoi": 0.8514813938712332,
+        "spectrogram_loss": 0.48814835255680583,
+        "fine_log_error": 0.47323023340299075,
+        "envelope_error": 0.5783539942463763,
+        "unsupported_energy": 0.1871462405009786,
+        "missing_energy": 0.19435264091375692,
+        "raw_mean": 0.07754656912266523,
+        "stream_bytes": 641,
+        "flash_bytes": 1018,
+        "estoi": 0.6658319301937978,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.9181685206659304,
+          "frequency_trajectory_error": 1.0342688706521468,
+          "level_error": 2.2504103449628827,
+          "missing_reference_energy": 0.1898972795801354,
+          "extra_candidate_energy": 0.2310339874696594,
+          "weighted_match_rate": 0.8101027204198642,
+          "frequency_error_cents": 55.08943343847484,
+          "frequency_error_hz": 11.722016018021833,
+          "level_error_db": 6.751231034888637,
+          "frequency_error_p95_cents": 154.53651304237488,
+          "frequency_error_p95_hz": 35.560549280180794,
+          "level_error_p95_db": 13.635140367847027,
+          "continuity_break_rate": 0.28936129901225816
+        },
+        "partial_violation_power": 0.7121064629257524
+      }
+    },
+    {
+      "evaluation": 2553,
+      "action": [
+        "coefficient_run",
+        57,
+        4,
+        1
+      ],
+      "score": {
+        "stoi": 0.8514616252924938,
+        "spectrogram_loss": 0.48800254172050617,
+        "fine_log_error": 0.47301687443632223,
+        "envelope_error": 0.5782381615601229,
+        "unsupported_energy": 0.1870690441792126,
+        "missing_energy": 0.19432623709346836,
+        "raw_mean": 0.07752306707974138,
+        "stream_bytes": 641,
+        "flash_bytes": 1018,
+        "estoi": 0.6668965148692655,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.9181408952939942,
+          "frequency_trajectory_error": 1.034262226387204,
+          "level_error": 2.250237489913496,
+          "missing_reference_energy": 0.18987493181377607,
+          "extra_candidate_energy": 0.2311155230097003,
+          "weighted_match_rate": 0.8101250681862235,
+          "frequency_error_cents": 55.09031452899278,
+          "frequency_error_hz": 11.723796631087982,
+          "level_error_db": 6.750712469740475,
+          "frequency_error_p95_cents": 154.53651304237488,
+          "frequency_error_p95_hz": 35.560549280180794,
+          "level_error_p95_db": 13.634516561880673,
+          "continuity_break_rate": 0.2894362016037155
+        },
+        "partial_violation_power": 0.7121012753919815
+      }
+    },
+    {
+      "evaluation": 2628,
+      "action": [
+        "coefficient_frame",
+        60,
+        2,
+        1
+      ],
+      "score": {
+        "stoi": 0.851569531582049,
+        "spectrogram_loss": 0.4883714723538592,
+        "fine_log_error": 0.47293645755793934,
+        "envelope_error": 0.5793892672895251,
+        "unsupported_energy": 0.18743340871335293,
+        "missing_energy": 0.19461852119236756,
+        "raw_mean": 0.07744905318336925,
+        "stream_bytes": 643,
+        "flash_bytes": 1020,
+        "estoi": 0.666437328405109,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.9053371172021998,
+          "frequency_trajectory_error": 1.0032414111029877,
+          "level_error": 2.2475891979299814,
+          "missing_reference_energy": 0.18828566842278022,
+          "extra_candidate_energy": 0.22959431265406538,
+          "weighted_match_rate": 0.8117143315772193,
+          "frequency_error_cents": 54.13943183753091,
+          "frequency_error_hz": 11.647349672329772,
+          "level_error_db": 6.742767593789931,
+          "frequency_error_p95_cents": 141.850074938162,
+          "frequency_error_p95_hz": 35.560549280180794,
+          "level_error_p95_db": 13.645133383376553,
+          "continuity_break_rate": 0.27519872610428037
+        },
+        "partial_violation_power": 0.7071184292967695
+      }
+    },
+    {
+      "evaluation": 2663,
+      "action": [
+        "mode",
+        41,
+        0,
+        0
+      ],
+      "score": {
+        "stoi": 0.8516268421429882,
+        "spectrogram_loss": 0.48843819009701595,
+        "fine_log_error": 0.47328706900239514,
+        "envelope_error": 0.5791112422581685,
+        "unsupported_energy": 0.18744433944147607,
+        "missing_energy": 0.19440615461810135,
+        "raw_mean": 0.0774865862966954,
+        "stream_bytes": 643,
+        "flash_bytes": 1020,
+        "estoi": 0.6661556618870956,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.9047882060801337,
+          "frequency_trajectory_error": 1.0035934754205877,
+          "level_error": 2.2441354735477224,
+          "missing_reference_energy": 0.18834184704480847,
+          "extra_candidate_energy": 0.22965585244093836,
+          "weighted_match_rate": 0.8116581529551911,
+          "frequency_error_cents": 54.18292968741236,
+          "frequency_error_hz": 11.652191811363291,
+          "level_error_db": 6.732406420643166,
+          "frequency_error_p95_cents": 141.850074938162,
+          "frequency_error_p95_hz": 35.560549280180794,
+          "level_error_p95_db": 13.594357450624146,
+          "continuity_break_rate": 0.27504925987600315
+        },
+        "partial_violation_power": 0.7062719199545692
+      }
+    },
+    {
+      "evaluation": 2802,
+      "action": [
+        "mode",
+        44,
+        2,
+        1
+      ],
+      "score": {
+        "stoi": 0.8516810099130332,
+        "spectrogram_loss": 0.4886607055618387,
+        "fine_log_error": 0.47375218313597867,
+        "envelope_error": 0.5791401187260259,
+        "unsupported_energy": 0.1874835413224376,
+        "missing_energy": 0.1943791788709006,
+        "raw_mean": 0.07749325105513649,
+        "stream_bytes": 643,
+        "flash_bytes": 1020,
+        "estoi": 0.6671681187927213,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.9044581035658467,
+          "frequency_trajectory_error": 1.0032407088467872,
+          "level_error": 2.243340533793308,
+          "missing_reference_energy": 0.18826943280921465,
+          "extra_candidate_energy": 0.22959110689765852,
+          "weighted_match_rate": 0.811730567190785,
+          "frequency_error_cents": 54.172718733654385,
+          "frequency_error_hz": 11.651011023607996,
+          "level_error_db": 6.730021601379914,
+          "frequency_error_p95_cents": 141.850074938162,
+          "frequency_error_p95_hz": 35.560549280180794,
+          "level_error_p95_db": 13.594931536362063,
+          "continuity_break_rate": 0.27472505666792785
+        },
+        "partial_violation_power": 0.7061850217135354
+      }
+    },
+    {
+      "evaluation": 2856,
+      "action": [
+        "coefficient_frame",
+        68,
+        1,
+        -1
+      ],
+      "score": {
+        "stoi": 0.8518496231954266,
+        "spectrogram_loss": 0.48875555372550517,
+        "fine_log_error": 0.4738206079030228,
+        "envelope_error": 0.5795317786791475,
+        "unsupported_energy": 0.18748478457791334,
+        "missing_energy": 0.19407821452930174,
+        "raw_mean": 0.07768267050556753,
+        "stream_bytes": 645,
+        "flash_bytes": 1022,
+        "estoi": 0.6673551154801621,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.9222454959750338,
+          "frequency_trajectory_error": 0.99365938366687,
+          "level_error": 2.3392003666287624,
+          "missing_reference_energy": 0.18790212875875817,
+          "extra_candidate_energy": 0.2310029319136931,
+          "weighted_match_rate": 0.8120978712412413,
+          "frequency_error_cents": 53.175043072432686,
+          "frequency_error_hz": 10.898893085566495,
+          "level_error_db": 7.017601099886291,
+          "frequency_error_p95_cents": 141.850074938162,
+          "frequency_error_p95_hz": 35.296535602589756,
+          "level_error_p95_db": 14.52255409363783,
+          "continuity_break_rate": 0.31207119902390623
+        },
+        "partial_violation_power": 0.7056185572561724
+      }
+    },
+    {
+      "evaluation": 2865,
+      "action": [
+        "coefficient_run",
+        68,
+        4,
+        -1
+      ],
+      "score": {
+        "stoi": 0.851929042992552,
+        "spectrogram_loss": 0.48858016879958993,
+        "fine_log_error": 0.47379616526995105,
+        "envelope_error": 0.5794253125117479,
+        "unsupported_energy": 0.18700300935832642,
+        "missing_energy": 0.19384539664394604,
+        "raw_mean": 0.07769354458512931,
+        "stream_bytes": 645,
+        "flash_bytes": 1022,
+        "estoi": 0.6676966662764693,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.9154446894974186,
+          "frequency_trajectory_error": 0.9805253973432009,
+          "level_error": 2.3286099970553495,
+          "missing_reference_energy": 0.1876988778570678,
+          "extra_candidate_energy": 0.23080533023699362,
+          "weighted_match_rate": 0.8123011221429317,
+          "frequency_error_cents": 52.60121159501073,
+          "frequency_error_hz": 10.88022596302956,
+          "level_error_db": 6.985829991166061,
+          "frequency_error_p95_cents": 141.850074938162,
+          "frequency_error_p95_hz": 35.59709096329425,
+          "level_error_p95_db": 14.526683704614713,
+          "continuity_break_rate": 0.31216676247118286
+        },
+        "partial_violation_power": 0.7055075386688573
+      }
+    },
+    {
+      "evaluation": 2892,
+      "action": [
+        "coefficient_run",
+        69,
+        4,
+        1
+      ],
+      "score": {
+        "stoi": 0.8519650832498153,
+        "spectrogram_loss": 0.4884900076200098,
+        "fine_log_error": 0.4736770753547266,
+        "envelope_error": 0.5793995591733188,
+        "unsupported_energy": 0.18690347871432594,
+        "missing_energy": 0.19378276607467274,
+        "raw_mean": 0.07767811040768678,
+        "stream_bytes": 645,
+        "flash_bytes": 1022,
+        "estoi": 0.6677664829636978,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.8944690862074555,
+          "frequency_trajectory_error": 0.9869417883697889,
+          "level_error": 2.2277797800674124,
+          "missing_reference_energy": 0.1872668203506792,
+          "extra_candidate_energy": 0.2285386231230069,
+          "weighted_match_rate": 0.8127331796493203,
+          "frequency_error_cents": 53.551177807266136,
+          "frequency_error_hz": 11.69027736484705,
+          "level_error_db": 6.683339340202249,
+          "frequency_error_p95_cents": 141.850074938162,
+          "frequency_error_p95_hz": 35.60094385152297,
+          "level_error_p95_db": 13.599578562051533,
+          "continuity_break_rate": 0.26045329381784066
+        },
+        "partial_violation_power": 0.7055075386688573
+      }
+    },
+    {
+      "evaluation": 2907,
+      "action": [
+        "coefficient_run",
+        70,
+        1,
+        1
+      ],
+      "score": {
+        "stoi": 0.8518902915454618,
+        "spectrogram_loss": 0.4874568181273151,
+        "fine_log_error": 0.4731885663421806,
+        "envelope_error": 0.5777750868302304,
+        "unsupported_energy": 0.18645880578899954,
+        "missing_energy": 0.1911127076639984,
+        "raw_mean": 0.07755568931842673,
+        "stream_bytes": 645,
+        "flash_bytes": 1022,
+        "estoi": 0.6679372992535176,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.9080115063855505,
+          "frequency_trajectory_error": 0.9785343260064658,
+          "level_error": 2.2945146921939523,
+          "missing_reference_energy": 0.1876988778570678,
+          "extra_candidate_energy": 0.23181183921373247,
+          "weighted_match_rate": 0.8123011221429317,
+          "frequency_error_cents": 52.497318073789714,
+          "frequency_error_hz": 10.583022927377208,
+          "level_error_db": 6.8835440765818445,
+          "frequency_error_p95_cents": 141.850074938162,
+          "frequency_error_p95_hz": 33.001624670717774,
+          "level_error_p95_db": 14.54215017571087,
+          "continuity_break_rate": 0.31080229210633725
+        },
+        "partial_violation_power": 0.7057378511805936
+      }
+    },
+    {
+      "evaluation": 2952,
+      "action": [
+        "coefficient_run",
+        72,
+        2,
+        1
+      ],
+      "score": {
+        "stoi": 0.8517564461561103,
+        "spectrogram_loss": 0.48609515595474645,
+        "fine_log_error": 0.4717177387838991,
+        "envelope_error": 0.575365298216383,
+        "unsupported_energy": 0.1864197362061079,
+        "missing_energy": 0.1903415051736863,
+        "raw_mean": 0.07754481523886494,
+        "stream_bytes": 645,
+        "flash_bytes": 1022,
+        "estoi": 0.6683138186619247,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.8826433061438248,
+          "frequency_trajectory_error": 0.9917477579193422,
+          "level_error": 2.156314179674353,
+          "missing_reference_energy": 0.1882405820538899,
+          "extra_candidate_energy": 0.22770901309277536,
+          "weighted_match_rate": 0.8117594179461095,
+          "frequency_error_cents": 53.83173897579403,
+          "frequency_error_hz": 11.874693799849506,
+          "level_error_db": 6.468942539023073,
+          "frequency_error_p95_cents": 141.850074938162,
+          "frequency_error_p95_hz": 33.95477290401254,
+          "level_error_p95_db": 13.647135955028745,
+          "continuity_break_rate": 0.2728045671420254
+        },
+        "partial_violation_power": 0.7080796296409849
+      }
+    },
+    {
+      "evaluation": 2977,
+      "action": [
+        "coefficient_run",
+        73,
+        2,
+        1
+      ],
+      "score": {
+        "stoi": 0.8517968709722517,
+        "spectrogram_loss": 0.4845434627911194,
+        "fine_log_error": 0.4714353740954271,
+        "envelope_error": 0.5731877734786521,
+        "unsupported_energy": 0.18462307205648248,
+        "missing_energy": 0.18632195609058033,
+        "raw_mean": 0.07752096241918104,
+        "stream_bytes": 645,
+        "flash_bytes": 1022,
+        "estoi": 0.6679415763515952,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.9039631685526199,
+          "frequency_trajectory_error": 0.9651600370875073,
+          "level_error": 2.292827916378774,
+          "missing_reference_energy": 0.18835900702248037,
+          "extra_candidate_energy": 0.2359686093825456,
+          "weighted_match_rate": 0.8116409929775191,
+          "frequency_error_cents": 51.76124663539721,
+          "frequency_error_hz": 9.939348898434407,
+          "level_error_db": 6.878483749136326,
+          "frequency_error_p95_cents": 141.850074938162,
+          "frequency_error_p95_hz": 32.78465359228517,
+          "level_error_p95_db": 16.783115990084877,
+          "continuity_break_rate": 0.3137715756422305
+        },
+        "partial_violation_power": 0.6962705847339037
+      }
+    },
+    {
+      "evaluation": 2985,
+      "action": [
+        "coefficient_run",
+        73,
+        4,
+        -1
+      ],
+      "score": {
+        "stoi": 0.8519681263688257,
+        "spectrogram_loss": 0.48365264348196435,
+        "fine_log_error": 0.47154215209864614,
+        "envelope_error": 0.5715078496283664,
+        "unsupported_energy": 0.18329000724135716,
+        "missing_energy": 0.1845299395708178,
+        "raw_mean": 0.07781175635326867,
+        "stream_bytes": 645,
+        "flash_bytes": 1022,
+        "estoi": 0.668462815718343,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.8938146530108931,
+          "frequency_trajectory_error": 0.9652029774293738,
+          "level_error": 2.2413326139527197,
+          "missing_reference_energy": 0.18954802594032577,
+          "extra_candidate_energy": 0.2346254521738465,
+          "weighted_match_rate": 0.8104519740596737,
+          "frequency_error_cents": 51.73713409211408,
+          "frequency_error_hz": 9.802687977033878,
+          "level_error_db": 6.723997841858152,
+          "frequency_error_p95_cents": 141.850074938162,
+          "frequency_error_p95_hz": 32.18734972337916,
+          "level_error_p95_db": 15.060770425083906,
+          "continuity_break_rate": 0.3133772502378731
+        },
+        "partial_violation_power": 0.6803793888972655
+      }
+    },
+    {
+      "evaluation": 2990,
+      "action": [
+        "coefficient_frame",
+        73,
+        5,
+        -1
+      ],
+      "score": {
+        "stoi": 0.8526223034296253,
+        "spectrogram_loss": 0.4847945673533751,
+        "fine_log_error": 0.47139723228721025,
+        "envelope_error": 0.5736060106819605,
+        "unsupported_energy": 0.18444720821554852,
+        "missing_energy": 0.18809287194793067,
+        "raw_mean": 0.07779491906878593,
+        "stream_bytes": 647,
+        "flash_bytes": 1024,
+        "estoi": 0.6689151191174267,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.9043237419004816,
+          "frequency_trajectory_error": 0.9669329605413785,
+          "level_error": 2.290465724604913,
+          "missing_reference_energy": 0.18900707893751997,
+          "extra_candidate_energy": 0.2354866775599882,
+          "weighted_match_rate": 0.8109929210624794,
+          "frequency_error_cents": 51.80522342103115,
+          "frequency_error_hz": 9.929736797460446,
+          "level_error_db": 6.871397173814736,
+          "frequency_error_p95_cents": 141.850074938162,
+          "frequency_error_p95_hz": 32.78465377843463,
+          "level_error_p95_db": 16.789415276689546,
+          "continuity_break_rate": 0.31557870949524497
+        },
+        "partial_violation_power": 0.70827873817187
+      }
+    },
+    {
+      "evaluation": 3041,
+      "action": [
+        "coefficient_run",
+        75,
+        6,
+        -1
+      ],
+      "score": {
+        "stoi": 0.8528148757346196,
+        "spectrogram_loss": 0.48533292741091916,
+        "fine_log_error": 0.47207953721283447,
+        "envelope_error": 0.573754846384471,
+        "unsupported_energy": 0.18517580627609936,
+        "missing_energy": 0.18830658779061932,
+        "raw_mean": 0.07781561489762931,
+        "stream_bytes": 647,
+        "flash_bytes": 1024,
+        "estoi": 0.6688890035068367,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.9042769431999338,
+          "frequency_trajectory_error": 0.9676431223798103,
+          "level_error": 2.2902576623949127,
+          "missing_reference_energy": 0.18837665448431257,
+          "extra_candidate_energy": 0.23572751699647423,
+          "weighted_match_rate": 0.8116233455156869,
+          "frequency_error_cents": 51.842297801141896,
+          "frequency_error_hz": 10.0075109710322,
+          "level_error_db": 6.870772987184733,
+          "frequency_error_p95_cents": 141.850074938162,
+          "frequency_error_p95_hz": 32.78465377843463,
+          "level_error_p95_db": 16.77860856296862,
+          "continuity_break_rate": 0.31356387986505657
+        },
+        "partial_violation_power": 0.707133633019204
+      }
+    },
+    {
+      "evaluation": 3054,
+      "action": [
+        "coefficient_run",
+        76,
+        4,
+        -1
+      ],
+      "score": {
+        "stoi": 0.8528024095647312,
+        "spectrogram_loss": 0.48512152495601013,
+        "fine_log_error": 0.472040924921198,
+        "envelope_error": 0.5735261783819756,
+        "unsupported_energy": 0.18466565161797732,
+        "missing_energy": 0.18814844071965145,
+        "raw_mean": 0.07780965169270833,
+        "stream_bytes": 647,
+        "flash_bytes": 1024,
+        "estoi": 0.6689725945521106,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.9040661013763165,
+          "frequency_trajectory_error": 0.9668904675853722,
+          "level_error": 2.2911500182005073,
+          "missing_reference_energy": 0.18846309459648478,
+          "extra_candidate_energy": 0.23545556497716347,
+          "weighted_match_rate": 0.8115369054035148,
+          "frequency_error_cents": 51.80730879903207,
+          "frequency_error_hz": 9.980109690165785,
+          "level_error_db": 6.87345005460155,
+          "frequency_error_p95_cents": 141.850074938162,
+          "frequency_error_p95_hz": 32.78465377843463,
+          "level_error_p95_db": 16.77464465765797,
+          "continuity_break_rate": 0.31134341911629726
+        },
+        "partial_violation_power": 0.7069832103310458
+      }
+    },
+    {
+      "evaluation": 3055,
+      "action": [
+        "coefficient_frame",
+        76,
+        4,
+        -1
+      ],
+      "score": {
+        "stoi": 0.8527853242632868,
+        "spectrogram_loss": 0.48478735465861994,
+        "fine_log_error": 0.47210890011133955,
+        "envelope_error": 0.5729528271512329,
+        "unsupported_energy": 0.1839982259634359,
+        "missing_energy": 0.18757659779848637,
+        "raw_mean": 0.07782438431663075,
+        "stream_bytes": 647,
+        "flash_bytes": 1024,
+        "estoi": 0.6689805049956165,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.9021457321378378,
+          "frequency_trajectory_error": 0.964905000519709,
+          "level_error": 2.2873300541840815,
+          "missing_reference_energy": 0.18763737382528645,
+          "extra_candidate_energy": 0.23405665404188478,
+          "weighted_match_rate": 0.812362626174713,
+          "frequency_error_cents": 51.70882750989673,
+          "frequency_error_hz": 9.933913963017323,
+          "level_error_db": 6.861990162552242,
+          "frequency_error_p95_cents": 141.850074938162,
+          "frequency_error_p95_hz": 32.78465377843463,
+          "level_error_p95_db": 16.767532488514313,
+          "continuity_break_rate": 0.31126521730509515
+        },
+        "partial_violation_power": 0.7066926645071526
+      }
+    },
+    {
+      "evaluation": 3131,
+      "action": [
+        "coefficient_run",
+        80,
+        3,
+        -1
+      ],
+      "score": {
+        "stoi": 0.8529004521112492,
+        "spectrogram_loss": 0.4850814253797095,
+        "fine_log_error": 0.47233785561191666,
+        "envelope_error": 0.5733966596504141,
+        "unsupported_energy": 0.18421958724243384,
+        "missing_energy": 0.18782348400401006,
+        "raw_mean": 0.07783455684267242,
+        "stream_bytes": 647,
+        "flash_bytes": 1024,
+        "estoi": 0.6684454324097258,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.9022843993821732,
+          "frequency_trajectory_error": 0.9650391187826446,
+          "level_error": 2.287502698344932,
+          "missing_reference_energy": 0.18755106549875175,
+          "extra_candidate_energy": 0.2348231476324306,
+          "weighted_match_rate": 0.8124489345012478,
+          "frequency_error_cents": 51.71844519874116,
+          "frequency_error_hz": 9.957983443604395,
+          "level_error_db": 6.8625080950347845,
+          "frequency_error_p95_cents": 141.850074938162,
+          "frequency_error_p95_hz": 32.78465377843463,
+          "level_error_p95_db": 16.766324819980472,
+          "continuity_break_rate": 0.3106275268954224
+        },
+        "partial_violation_power": 0.7061873103005719
+      }
+    },
+    {
+      "evaluation": 3682,
+      "action": [
+        "mode",
+        68,
+        1,
+        0
+      ],
+      "score": {
+        "stoi": 0.8529070637810626,
+        "spectrogram_loss": 0.4849028429248227,
+        "fine_log_error": 0.47259062351806674,
+        "envelope_error": 0.572616033189622,
+        "unsupported_energy": 0.18391264106941946,
+        "missing_energy": 0.18760142156676263,
+        "raw_mean": 0.07767951351472702,
+        "stream_bytes": 647,
+        "flash_bytes": 1024,
+        "estoi": 0.6687761607678874,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.9015427508927266,
+          "frequency_trajectory_error": 0.9631772363302229,
+          "level_error": 2.2854297029807746,
+          "missing_reference_energy": 0.18842254262968441,
+          "extra_candidate_energy": 0.23513780988721225,
+          "weighted_match_rate": 0.811577457370315,
+          "frequency_error_cents": 51.59549911366931,
+          "frequency_error_hz": 9.897857978543543,
+          "level_error_db": 6.8562891089423195,
+          "frequency_error_p95_cents": 141.850074938162,
+          "frequency_error_p95_hz": 32.895954564826525,
+          "level_error_p95_db": 16.76181367265589,
+          "continuity_break_rate": 0.3109468661801316
+        },
+        "partial_violation_power": 0.7072881130989603
+      }
+    },
+    {
+      "evaluation": 3852,
+      "action": [
+        "coefficient_run",
+        107,
+        5,
+        1
+      ],
+      "score": {
+        "stoi": 0.8529604216658156,
+        "spectrogram_loss": 0.48479372453584063,
+        "fine_log_error": 0.4724952655673559,
+        "envelope_error": 0.5724844217204903,
+        "unsupported_energy": 0.18378968901488416,
+        "missing_energy": 0.18756132023721123,
+        "raw_mean": 0.07761041049299569,
+        "stream_bytes": 647,
+        "flash_bytes": 1024,
+        "estoi": 0.6688717711909486,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.8992500076146418,
+          "frequency_trajectory_error": 0.9612287363559598,
+          "level_error": 2.2837342203697206,
+          "missing_reference_energy": 0.1845622433434546,
+          "extra_candidate_energy": 0.23496144545639322,
+          "weighted_match_rate": 0.8154377566565448,
+          "frequency_error_cents": 51.41797252689414,
+          "frequency_error_hz": 9.861564709367924,
+          "level_error_db": 6.851202661109145,
+          "frequency_error_p95_cents": 141.850074938162,
+          "frequency_error_p95_hz": 32.895954564826525,
+          "level_error_p95_db": 16.763130020379386,
+          "continuity_break_rate": 0.3092043198923254
+        },
+        "partial_violation_power": 0.7072391428169098
+      }
+    },
+    {
+      "evaluation": 3913,
+      "action": [
+        "coefficient_run",
+        109,
+        7,
+        1
+      ],
+      "score": {
+        "stoi": 0.8530503735838335,
+        "spectrogram_loss": 0.4850137858544134,
+        "fine_log_error": 0.47287158686222397,
+        "envelope_error": 0.5725358262046154,
+        "unsupported_energy": 0.18393559267232837,
+        "missing_energy": 0.18759457339055613,
+        "raw_mean": 0.07755077844378593,
+        "stream_bytes": 647,
+        "flash_bytes": 1024,
+        "estoi": 0.6693642194084368,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.8998538498903057,
+          "frequency_trajectory_error": 0.9599969270072226,
+          "level_error": 2.2795221793032883,
+          "missing_reference_energy": 0.18849185498422907,
+          "extra_candidate_energy": 0.2351425430211511,
+          "weighted_match_rate": 0.8115081450157704,
+          "frequency_error_cents": 51.42155054226121,
+          "frequency_error_hz": 9.864046684965242,
+          "level_error_db": 6.838566537909864,
+          "frequency_error_p95_cents": 141.850074938162,
+          "frequency_error_p95_hz": 32.895954564826525,
+          "level_error_p95_db": 16.75772833988499,
+          "continuity_break_rate": 0.32263103257357384
+        },
+        "partial_violation_power": 0.7031505896749426
+      }
+    },
+    {
+      "evaluation": 4076,
+      "action": [
+        "coefficient_run",
+        116,
+        0,
+        -1
+      ],
+      "score": {
+        "stoi": 0.8530871418030158,
+        "spectrogram_loss": 0.4848481735668308,
+        "fine_log_error": 0.47250973684590336,
+        "envelope_error": 0.5725355053581231,
+        "unsupported_energy": 0.18390341694349596,
+        "missing_energy": 0.18763618206333518,
+        "raw_mean": 0.07764022651760058,
+        "stream_bytes": 647,
+        "flash_bytes": 1024,
+        "estoi": 0.6698916524393111,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.8997783814095172,
+          "frequency_trajectory_error": 0.9600165104890477,
+          "level_error": 2.2794378224367637,
+          "missing_reference_energy": 0.18848304941563498,
+          "extra_candidate_energy": 0.23511423377349436,
+          "weighted_match_rate": 0.8115169505843645,
+          "frequency_error_cents": 51.421490652248565,
+          "frequency_error_hz": 9.864331752971005,
+          "level_error_db": 6.838313467310303,
+          "frequency_error_p95_cents": 141.850074938162,
+          "frequency_error_p95_hz": 32.895954564826525,
+          "level_error_p95_db": 16.757286589518294,
+          "continuity_break_rate": 0.32145976720565966
+        },
+        "partial_violation_power": 0.7031405490093119
+      }
+    }
+  ],
+  "elapsed_seconds": 72.103024299955,
+  "hardware_tested": false
+}

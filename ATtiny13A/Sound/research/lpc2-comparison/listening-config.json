@@ -1,0 +1,278 @@
+{
+  "schema": "lpc2-listening-config-v1",
+  "targets": {
+    "stoi": 0.98,
+    "estoi": 0.95,
+    "raw_snr_db": 26.0
+  },
+  "preferred_profile_policy": "Keep six-bit excitation as a listening baseline; compact candidate never replaces it without listening",
+  "recordings": [
+    {
+      "id": "vinni",
+      "title": "Винни-Пух",
+      "reference": "web-player/audio/originals/vinni.wav",
+      "report": "build/lpc2-quality/vinni/report.json",
+      "language": "ru",
+      "preferred_profile": "lpx4-6bit",
+      "additional_profiles": [
+        {
+          "report": "build/lpc-vbr/vinni/report.json"
+        }
+      ]
+    },
+    {
+      "id": "tail",
+      "title": "Входит и выходит — фраза вместе со звонком",
+      "reference": "build/new-speech/tail-input/vhodit-i-vyhodit/reference.wav",
+      "report": "build/lpc2-quality/tail/report.json",
+      "language": "ru",
+      "preferred_profile": "lpx4-6bit",
+      "additional_profiles": [
+        {
+          "report": "build/lpc-vbr/tail/report.json"
+        }
+      ]
+    },
+    {
+      "id": "chego",
+      "title": "Чего тебе нужно?",
+      "reference": "web-player/audio/originals/chego.wav",
+      "report": "build/lpc2-quality/chego/report.json",
+      "language": "ru",
+      "preferred_profile": "lpx4-6bit"
+    },
+    {
+      "id": "otvechaesh",
+      "title": "Что ж ты не отвечаешь?",
+      "reference": "web-player/audio/originals/otvechaesh.wav",
+      "report": "build/lpc2-quality/otvechaesh/report.json",
+      "language": "ru",
+      "preferred_profile": "lpx4-6bit"
+    },
+    {
+      "id": "ru_pushkin_a-center2048",
+      "title": "Л. Пушкину — ru_pushkin_a (natural, 2,048 с)",
+      "speaker": "Шантопик",
+      "language": "ru",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Ru-%D0%9B_%D0%9F%D1%83%D1%88%D0%BA%D0%B8%D0%BD%D1%83.ogg",
+      "license": "CC BY-SA 4.0",
+      "reference": "build/speech-corpus/clips/ru_pushkin_a-center2048/reference.wav",
+      "report": "build/lpc2-quality/corpus-natural-a/ru_pushkin_a-center2048/report.json",
+      "preferred_profile": "lpx4-6bit"
+    },
+    {
+      "id": "ru_pushkin_b-center2048",
+      "title": "Л. Пушкину — ru_pushkin_b (natural, 2,048 с)",
+      "speaker": "Шантопик",
+      "language": "ru",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Ru-%D0%9B_%D0%9F%D1%83%D1%88%D0%BA%D0%B8%D0%BD%D1%83.ogg",
+      "license": "CC BY-SA 4.0",
+      "reference": "build/speech-corpus/clips/ru_pushkin_b-center2048/reference.wav",
+      "report": "build/lpc2-quality/corpus-remaining/ru_pushkin_b-center2048/report.json",
+      "preferred_profile": "lpx4-6bit"
+    },
+    {
+      "id": "ru_square_a-center2048",
+      "title": "Чёрный квадрат — ru_square_a (natural, 2,048 с)",
+      "speaker": "Александра Анучина",
+      "language": "ru",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Ru-Black-square-_intro.ogg",
+      "license": "CC BY-SA 4.0",
+      "reference": "build/speech-corpus/clips/ru_square_a-center2048/reference.wav",
+      "report": "build/lpc2-quality/corpus-natural-a/ru_square_a-center2048/report.json",
+      "preferred_profile": "lpx4-6bit"
+    },
+    {
+      "id": "ru_square_b-center2048",
+      "title": "Чёрный квадрат — ru_square_b (natural, 2,048 с)",
+      "speaker": "Александра Анучина",
+      "language": "ru",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Ru-Black-square-_intro.ogg",
+      "license": "CC BY-SA 4.0",
+      "reference": "build/speech-corpus/clips/ru_square_b-center2048/reference.wav",
+      "report": "build/lpc2-quality/corpus-remaining/ru_square_b-center2048/report.json",
+      "preferred_profile": "lpx4-6bit"
+    },
+    {
+      "id": "ru_slutskaya_a-center2048",
+      "title": "Вера Слуцкая — ru_slutskaya_a (natural, 2,048 с)",
+      "speaker": "Elena Krizhanovsky",
+      "language": "ru",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Ru-Slutskaya_Vera.ogg",
+      "license": "Public domain (recording); article text CC BY-SA",
+      "reference": "build/speech-corpus/clips/ru_slutskaya_a-center2048/reference.wav",
+      "report": "build/lpc2-quality/corpus-natural-a/ru_slutskaya_a-center2048/report.json",
+      "preferred_profile": "lpx4-6bit"
+    },
+    {
+      "id": "ru_slutskaya_b-center2048",
+      "title": "Вера Слуцкая — ru_slutskaya_b (natural, 2,048 с)",
+      "speaker": "Elena Krizhanovsky",
+      "language": "ru",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Ru-Slutskaya_Vera.ogg",
+      "license": "Public domain (recording); article text CC BY-SA",
+      "reference": "build/speech-corpus/clips/ru_slutskaya_b-center2048/reference.wav",
+      "report": "build/lpc2-quality/corpus-remaining/ru_slutskaya_b-center2048/report.json",
+      "preferred_profile": "lpx4-6bit"
+    },
+    {
+      "id": "ru_russia_a-center2048",
+      "title": "Россия, вступление — ru_russia_a (natural, 2,048 с)",
+      "speaker": "Andrew Krizhanovsky",
+      "language": "ru",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Ru-Russia_part_1_Intro.ogg",
+      "license": "CC BY-SA 3.0",
+      "reference": "build/speech-corpus/clips/ru_russia_a-center2048/reference.wav",
+      "report": "build/lpc2-quality/corpus-natural-a/ru_russia_a-center2048/report.json",
+      "preferred_profile": "lpx4-6bit"
+    },
+    {
+      "id": "ru_russia_b-center2048",
+      "title": "Россия, вступление — ru_russia_b (natural, 2,048 с)",
+      "speaker": "Andrew Krizhanovsky",
+      "language": "ru",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Ru-Russia_part_1_Intro.ogg",
+      "license": "CC BY-SA 3.0",
+      "reference": "build/speech-corpus/clips/ru_russia_b-center2048/reference.wav",
+      "report": "build/lpc2-quality/corpus-remaining/ru_russia_b-center2048/report.json",
+      "preferred_profile": "lpx4-6bit"
+    },
+    {
+      "id": "en_sense_a-center2048",
+      "title": "Use common sense — en_sense_a (natural, 2,048 с)",
+      "speaker": "Thorpe",
+      "language": "en",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Use_common_sense.ogg",
+      "license": "CC BY-SA 3.0",
+      "reference": "build/speech-corpus/clips/en_sense_a-center2048/reference.wav",
+      "report": "build/lpc2-quality/corpus-natural-a/en_sense_a-center2048/report.json",
+      "preferred_profile": "lpx4-6bit",
+      "additional_profiles": [
+        {
+          "report": "build/lpc-vbr/en_sense_a/report.json"
+        }
+      ]
+    },
+    {
+      "id": "en_sense_b-center2048",
+      "title": "Use common sense — en_sense_b (natural, 2,048 с)",
+      "speaker": "Thorpe",
+      "language": "en",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Use_common_sense.ogg",
+      "license": "CC BY-SA 3.0",
+      "reference": "build/speech-corpus/clips/en_sense_b-center2048/reference.wav",
+      "report": "build/lpc2-quality/corpus-remaining/en_sense_b-center2048/report.json",
+      "preferred_profile": "lpx4-6bit"
+    },
+    {
+      "id": "en_portrait_a-center2048",
+      "title": "Portrait of a Lady — en_portrait_a (natural, 2,048 с)",
+      "speaker": "eleshamc",
+      "language": "en",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Portrait_of_a_lady_1_voice.ogg",
+      "license": "CC BY-SA 3.0",
+      "reference": "build/speech-corpus/clips/en_portrait_a-center2048/reference.wav",
+      "report": "build/lpc2-quality/corpus-natural-a/en_portrait_a-center2048/report.json",
+      "preferred_profile": "lpx4-6bit"
+    },
+    {
+      "id": "en_portrait_b-center2048",
+      "title": "Portrait of a Lady — en_portrait_b (natural, 2,048 с)",
+      "speaker": "eleshamc",
+      "language": "en",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Portrait_of_a_lady_1_voice.ogg",
+      "license": "CC BY-SA 3.0",
+      "reference": "build/speech-corpus/clips/en_portrait_b-center2048/reference.wav",
+      "report": "build/lpc2-quality/corpus-remaining/en_portrait_b-center2048/report.json",
+      "preferred_profile": "lpx4-6bit"
+    },
+    {
+      "id": "en_letter_a-center2048",
+      "title": "The letter A — en_letter_a (natural, 2,048 с)",
+      "speaker": "Persent101",
+      "language": "en",
+      "source_page": "https://commons.wikimedia.org/wiki/File:En-A-article.ogg",
+      "license": "CC BY-SA 3.0",
+      "reference": "build/speech-corpus/clips/en_letter_a-center2048/reference.wav",
+      "report": "build/lpc2-quality/corpus-natural-a/en_letter_a-center2048/report.json",
+      "preferred_profile": "lpx4-6bit"
+    },
+    {
+      "id": "en_letter_b-center2048",
+      "title": "The letter A — en_letter_b (natural, 2,048 с)",
+      "speaker": "Persent101",
+      "language": "en",
+      "source_page": "https://commons.wikimedia.org/wiki/File:En-A-article.ogg",
+      "license": "CC BY-SA 3.0",
+      "reference": "build/speech-corpus/clips/en_letter_b-center2048/reference.wav",
+      "report": "build/lpc2-quality/corpus-remaining/en_letter_b-center2048/report.json",
+      "preferred_profile": "lpx4-6bit"
+    },
+    {
+      "id": "en_normcore_a-center2048",
+      "title": "Normcore — en_normcore_a (natural, 2,048 с)",
+      "speaker": "Emmiecc",
+      "language": "en",
+      "source_page": "https://commons.wikimedia.org/wiki/File:En-normcore-article.ogg",
+      "license": "CC BY-SA 3.0",
+      "reference": "build/speech-corpus/clips/en_normcore_a-center2048/reference.wav",
+      "report": "build/lpc2-quality/corpus-natural-a/en_normcore_a-center2048/report.json",
+      "preferred_profile": "lpx4-6bit"
+    },
+    {
+      "id": "en_normcore_b-center2048",
+      "title": "Normcore — en_normcore_b (natural, 2,048 с)",
+      "speaker": "Emmiecc",
+      "language": "en",
+      "source_page": "https://commons.wikimedia.org/wiki/File:En-normcore-article.ogg",
+      "license": "CC BY-SA 3.0",
+      "reference": "build/speech-corpus/clips/en_normcore_b-center2048/reference.wav",
+      "report": "build/lpc2-quality/corpus-remaining/en_normcore_b-center2048/report.json",
+      "preferred_profile": "lpx4-6bit"
+    },
+    {
+      "id": "ru_square_a_quiet_minus24dB-center2048",
+      "title": "Чёрный квадрат — ru_square_a_quiet_minus24dB (quiet_minus24dB, 2,048 с)",
+      "speaker": "Александра Анучина",
+      "language": "ru",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Ru-Black-square-_intro.ogg",
+      "license": "CC BY-SA 4.0",
+      "reference": "build/speech-corpus/clips/ru_square_a_quiet_minus24dB-center2048/reference.wav",
+      "report": "build/lpc2-quality/corpus-remaining/ru_square_a_quiet_minus24dB-center2048/report.json",
+      "preferred_profile": "lpx4-6bit"
+    },
+    {
+      "id": "ru_russia_a_white_noise_15dB-center2048",
+      "title": "Россия, вступление — ru_russia_a_white_noise_15dB (white_noise_15dB, 2,048 с)",
+      "speaker": "Andrew Krizhanovsky",
+      "language": "ru",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Ru-Russia_part_1_Intro.ogg",
+      "license": "CC BY-SA 3.0",
+      "reference": "build/speech-corpus/clips/ru_russia_a_white_noise_15dB-center2048/reference.wav",
+      "report": "build/lpc2-quality/corpus-remaining/ru_russia_a_white_noise_15dB-center2048/report.json",
+      "preferred_profile": "lpx4-6bit"
+    },
+    {
+      "id": "en_normcore_a_quiet_minus24dB-center2048",
+      "title": "Normcore — en_normcore_a_quiet_minus24dB (quiet_minus24dB, 2,048 с)",
+      "speaker": "Emmiecc",
+      "language": "en",
+      "source_page": "https://commons.wikimedia.org/wiki/File:En-normcore-article.ogg",
+      "license": "CC BY-SA 3.0",
+      "reference": "build/speech-corpus/clips/en_normcore_a_quiet_minus24dB-center2048/reference.wav",
+      "report": "build/lpc2-quality/corpus-remaining/en_normcore_a_quiet_minus24dB-center2048/report.json",
+      "preferred_profile": "lpx4-6bit"
+    },
+    {
+      "id": "en_sense_a_white_noise_15dB-center2048",
+      "title": "Use common sense — en_sense_a_white_noise_15dB (white_noise_15dB, 2,048 с)",
+      "speaker": "Thorpe",
+      "language": "en",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Use_common_sense.ogg",
+      "license": "CC BY-SA 3.0",
+      "reference": "build/speech-corpus/clips/en_sense_a_white_noise_15dB-center2048/reference.wav",
+      "report": "build/lpc2-quality/corpus-remaining/en_sense_a_white_noise_15dB-center2048/report.json",
+      "preferred_profile": "lpx4-6bit"
+    }
+  ]
+}

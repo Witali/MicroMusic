@@ -1,0 +1,98 @@
+{
+  "pass": true,
+  "sourceSha256": "09882f56bd3c1b70d6ca3134040fce601e2f3aab4632fac394649a7f5b32ae25",
+  "fixtures": [
+    {
+      "name": "core-dc5",
+      "bytes": 866,
+      "sha256": "d5d83c0df08ef4c696511b37b539ceb5ce0e7ffa21c4cfe8cbdcabd75dbedde8"
+    },
+    {
+      "name": "core-dc6",
+      "bytes": 862,
+      "sha256": "a6b99c215c11ca49c1cd58688857bc7a6b98613e90cb3bbe890ac6347810aed7"
+    },
+    {
+      "name": "core-dc7",
+      "bytes": 858,
+      "sha256": "d1da8e1928f8083649872e0ecadd36c24d0d62eb55ff4552a59fa67ad145dd31"
+    },
+    {
+      "name": "special-single-fir",
+      "bytes": 822,
+      "sha256": "35cd14464712d96f2a516d84aefe0cbfd6694f2987286ab2b649402598c74af1"
+    },
+    {
+      "name": "special-white-only",
+      "bytes": 694,
+      "sha256": "432981c20095c2b61b55898d096133b8f8f7207eca75607f91b3dcb05d6a9949"
+    },
+    {
+      "name": "special-model",
+      "bytes": 822,
+      "sha256": "d03c3548e84a320d649ddc356103e8607c8c880f9ce29c440e362018c527343f"
+    },
+    {
+      "name": "special-white-model",
+      "bytes": 694,
+      "sha256": "320c017226800f89cddec643188297fe383dc8ccdc60bd61c87f57f8ec490763"
+    },
+    {
+      "name": "special-reader-single-fir",
+      "bytes": 414,
+      "sha256": "b7131b8dbc1f773e4ef22c6caefaa730f95f4811021705fb27bc0f6a5352ef86"
+    },
+    {
+      "name": "special-reader-white-only",
+      "bytes": 392,
+      "sha256": "b6e3f16d657f6e3dae19a0503a64aa5598971781f0f5ecfdfd375183b1f4d488"
+    },
+    {
+      "name": "special-reader-model",
+      "bytes": 416,
+      "sha256": "7ee694bc919f03101fcc920ac9455d2ffe06f87a50453ec8ca50a5019c87029f"
+    },
+    {
+      "name": "special-reader-white-model",
+      "bytes": 398,
+      "sha256": "c26a9a832e7c431fdfc36f983c9a11778a46e5b56456533999ca9e1c2c601b8e"
+    },
+    {
+      "name": "reader-chego",
+      "bytes": 418,
+      "sha256": "06be17662542a9c91a7964ca8293f74c1bdbea7f1fbd66032b8d3bb0febd3960"
+    },
+    {
+      "name": "reader-otvechaesh",
+      "bytes": 414,
+      "sha256": "e4df55df4c19ab875c128c5dd8ecd7c10472268b0246394adbb3197abe2620a6"
+    },
+    {
+      "name": "reader-vinni",
+      "bytes": 786,
+      "sha256": "d175ca3f6801506b493e0119f2dea5f002e4beeb73f3d88287d7cc1fa1c6c62b"
+    },
+    {
+      "name": "reader-pitch-prefixes",
+      "bytes": 234,
+      "sha256": "63d72446b98faf99fe8ce80ebc1565d158f2006d3a088f28ccaf935d4bd1d9dd"
+    }
+  ],
+  "results": [
+    {
+      "engine": "JS",
+      "calls": 122192,
+      "frames": 1208,
+      "maxKernelCycles": 649,
+      "minimumSP": 150
+    },
+    {
+      "engine": "WASM",
+      "calls": 122192,
+      "frames": 1208,
+      "maxKernelCycles": 649,
+      "minimumSP": 150
+    }
+  ],
+  "scope": "isolated arithmetic and parser; complete firmware fit and interrupt deadlines unverified"
+}

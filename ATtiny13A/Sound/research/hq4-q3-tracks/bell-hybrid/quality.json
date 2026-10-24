@@ -1,0 +1,99 @@
+{
+  "control_t1_hybrid": {
+    "full": {
+      "stoi": 0.6975490377358722,
+      "estoi": 0.462711742909242,
+      "loss": 0.7256556259273175,
+      "log_spectral_error": 0.735934677653919,
+      "relative_spectral_error": 0.6845394190209116
+    },
+    "voice": {
+      "stoi": 0.8250794476978425,
+      "estoi": 0.5199514089074047,
+      "loss": 0.810698464723955,
+      "log_spectral_error": 0.8021835690407121,
+      "relative_spectral_error": 0.8447580474569264
+    },
+    "bell": {
+      "loss": 0.6141164066310634,
+      "log_spectral_error": 0.6553100926204793,
+      "relative_spectral_error": 0.449341662673399,
+      "mse_at_voice_matched_level": 0.047932070023500695,
+      "reference_rms": 0.21237237105398513,
+      "decoded_rms": 0.06933047597845915,
+      "reference_bell_to_voice_rms": 1.2492126579998815,
+      "decoded_bell_to_voice_rms": 1.159010885462458
+    },
+    "peak_signed": 62,
+    "steps_ge_48": 0
+  },
+  "q3_t1_hybrid": {
+    "full": {
+      "stoi": 0.7047450970597569,
+      "estoi": 0.4829840396846293,
+      "loss": 0.6976028570435262,
+      "log_spectral_error": 0.7150407557306447,
+      "relative_spectral_error": 0.6278512622950521
+    },
+    "voice": {
+      "stoi": 0.8366989519533063,
+      "estoi": 0.5511697078766246,
+      "loss": 0.7586095751947106,
+      "log_spectral_error": 0.7624685970682958,
+      "relative_spectral_error": 0.7431734877003694
+    },
+    "bell": {
+      "loss": 0.6141832661623559,
+      "log_spectral_error": 0.6551819718207456,
+      "relative_spectral_error": 0.45018844352879683,
+      "mse_at_voice_matched_level": 0.04869540537153032,
+      "reference_rms": 0.21237237105398513,
+      "decoded_rms": 0.07448402136846909,
+      "reference_bell_to_voice_rms": 1.2492126579998815,
+      "decoded_bell_to_voice_rms": 1.1735466195706237
+    },
+    "peak_signed": 57,
+    "steps_ge_48": 0
+  },
+  "voice_gate": {
+    "before": {
+      "spectrogram_loss": 0.6171305506882494,
+      "fine_log_error": 0.6484693006386382,
+      "envelope_error": 0.6803497435263992,
+      "unsupported_energy": 0.2705213170481138,
+      "missing_energy": 0.26223209120281066,
+      "stoi": 0.8250794476978425,
+      "estoi": 0.5199514089074047
+    },
+    "after": {
+      "spectrogram_loss": 0.5377945186795163,
+      "fine_log_error": 0.6015569454878182,
+      "envelope_error": 0.5483937406488364,
+      "unsupported_energy": 0.18682520983812012,
+      "missing_energy": 0.18965061898538163,
+      "stoi": 0.8366989519533063,
+      "estoi": 0.5511697078766246
+    },
+    "passed": true,
+    "failed_guards": [],
+    "schema": "micromusic-q3-bell-voice-gate-v1",
+    "sourceBellModelSha256": "39e878d8356305f3a4ed6071bad9e23a307031fd14cec3acf9029d5b6bfc29c1",
+    "sourceVoiceModelSha256": "204e4c79cf7e048554aa0f9dc62950838546f26938ab175268d423820858d6b8",
+    "referenceSha256": "4914d2c349e1f2e9e102ec23949a2bb96b95b7145aa252b54a6a8341ba5ce55d",
+    "intermediate_wraps": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "hardware_tested": false,
+    "human_listening_verified": false
+  },
+  "bell_level_policy": "source-relative-voice-rms",
+  "intermediate_wraps": [
+    0,
+    0,
+    0,
+    0
+  ]
+}

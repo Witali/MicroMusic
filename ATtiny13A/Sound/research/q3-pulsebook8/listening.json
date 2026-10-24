@@ -1,0 +1,35 @@
+{
+  "schema": "q3-pulsebook8-listening-v1",
+  "sampleRate": 48000,
+  "description": "Actual paired Flash/EEPROM images through unmodified site WASM renderer; same 9 kHz filter and 0.65 volume with catalog monitorGain; no extra normalization.",
+  "results": [
+    {
+      "file": "before-four-forms.wav",
+      "flashBytes": 972,
+      "eepromBytes": 64,
+      "controls": {
+        "cutoff": 9000,
+        "volume": 0.65
+      },
+      "firmwareSha256": "aea8ac3ddc12beae8958029fbc78c96699d31b21dc9c8ebd6981999638d102ad",
+      "rawPhraseSha256": "4155925af8a10464f0b3b7c26973ee2963adc514bb670ed6f93d9533ae7c4e12",
+      "wavSha256": "54876dd30854f5ec2af14354cd77b23c882ba864bcad3b1f3aded6d4547dbf65"
+    },
+    {
+      "file": "after-eight-forms.wav",
+      "flashBytes": 1012,
+      "eepromBytes": 64,
+      "controls": {
+        "cutoff": 9000,
+        "volume": 0.65
+      },
+      "firmwareSha256": "4a3901792d22657ea7537464ee36d113074bbe857d5d091c805e37cdfc181822",
+      "rawPhraseSha256": "fe254b85717af3e0fc0cb96851f8138f36ec003816f3f84a7c53a4c4fea2d268",
+      "wavSha256": "cbfc11a862a80ab4b786b75e0978ffd94f3bda91641040c9e2f082dd06a6bc52"
+    }
+  ],
+  "comparison": "Four forms, 0.3 seconds pause, eight forms",
+  "artifact_directory": "build/q3-pulsebook8/listening",
+  "renderer_source": "tools/render-q3-pulsebook8-comparison.mjs",
+  "renderer_source_sha256_normalized_lf": "193f7a991aed512e025e855374b6ba926a7d5205207a59164e8383b8fedec528"
+}

@@ -1,0 +1,42 @@
+{
+  "schema": "q4-voice-pattern-research-v1",
+  "source_commit": "a053eb0",
+  "reference_path": "web-player/audio/originals/vinni.wav",
+  "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+  "selected_model": "../q3-adaptive/half-pitch/model.json",
+  "selected_model_sha256": "09fbf54b2677aeac9ee00b7b4512d12074567faabb506445ad92d7a6ff046a84",
+  "firmware_changed": false,
+  "avr_decoder_implemented": false,
+  "hardware_tested": false,
+  "qualification": {
+    "command": "python tools/test-q4-voice-patterns.py",
+    "tests": 6,
+    "passed": true,
+    "scope": "PC arithmetic/packet contracts and reproduction of retained PCM, sizes, STOI, eSTOI and spectrum",
+    "normalized_test_source_sha256": "279567512150505f80ccbac81eec37d2c8d64a4700b55db6e7f1d61c56a42c23",
+    "rejected_16_full_patterns": {
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "peak": 124,
+      "maximum_step": 41
+    }
+  },
+  "artifact_sha256": {
+    "full/report.json": "7027bf215240c37d7ae625a9b394f9f2f3d116f6848d5b0c0b28ea772709eeb5",
+    "full/per-frame-control.json": "3d030c6eebb9fae1eb94d42a16fbd29b203ae76fc5c4b99b95f8a2b93a110626",
+    "full/16/model.json": "8ec0a23230da22f7ccf7fff843077e75d70dac0b2b082826f4629610e10dd191",
+    "full/32/model.json": "19a9321c5f9491e476badf9a7f25814f9cf0e54c5daa92f764aec17977022dc9",
+    "selective/report.json": "e29ea3d07e02be500a55211fd5dc6267ee50fe2ff1ad1d33f648f8d39f517d7a",
+    "selective/model.json": "5a8aa3e4c2f0c0c7254d3286859d90c9f9a41c145dfc6845e0c8a2c1c0a0f9b8"
+  },
+  "pending": [
+    "Sparse corrections for all needed coefficients",
+    "Meet all selected-model quality guards",
+    "Complete AVR size, cycles, SRAM and three-engine qualification",
+    "Protected RU/EN regressions"
+  ]
+}

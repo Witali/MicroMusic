@@ -1,0 +1,105 @@
+{
+  "id": "vinni-pu534",
+  "input": {
+    "id": "vinni-pu534",
+    "source_file": "vinni-pu534.mp3",
+    "source_sha256": "501f215cb955ca561f14cb4e7e2851e39933868fa6fb784c3991eeda9cf3bcd6",
+    "source_bytes": 29397,
+    "source_sample_rate": 44100,
+    "source_channels": 2,
+    "source_samples": 62127,
+    "source_seconds": 1.4087755102040815,
+    "source_mono_dc_removed": -1.3367792140395237e-06,
+    "mono_policy": "arithmetic mean of channels",
+    "resampling": "scipy.signal.resample_poly default Kaiser anti-alias filter",
+    "normalization_gain": 3.7062263821386563,
+    "sample_rate": 7500,
+    "reference_samples": 10624,
+    "unpadded_samples": 10566,
+    "trailing_zero_padding_samples": 58,
+    "reference_seconds": 1.4165333333333334,
+    "speech_cropped": false,
+    "reference_sha256": "80d8d1757e9eeca1c32870ff60d3b8303b9df95c4f5a32fc35b9879106680559",
+    "reference_file": "reference.wav",
+    "reference_peak": 0.8499755859375,
+    "reference_rms": 0.17954419194466478,
+    "current_tiny_duration_supported": true,
+    "hq4_minimum_frames": 42,
+    "hq4_minimum_stream_bytes": 88,
+    "hq4_stream_budget_bytes": 617
+  },
+  "selectedFamily": "hq4",
+  "requestedFinalFamily": null,
+  "selectionProvisional": true,
+  "flashBytes": 870,
+  "eepromUsedBytes": 0,
+  "phraseSamples": 10624,
+  "sampleHz": 7500,
+  "imageSha256": "17ca4c07af88db27f8b9abfd1ae5710de8ac070891b5918e1f1472f02021ad5e",
+  "actualPhrasePcmSha256": "62caa22ac9c2716e8171d0b513b9c82d6a98b07cae4f5501fefb0d833bf0a35f",
+  "quality": {
+    "loss": 0.7533701790952703,
+    "log_spectral_error": 0.7386511587724772,
+    "relative_spectral_error": 0.8122462603864419,
+    "stoi": 0.7282359254666192,
+    "estoi": 0.6195007319502741,
+    "balanced_score": 0.6679663111389975,
+    "pcm_sha256": "62caa22ac9c2716e8171d0b513b9c82d6a98b07cae4f5501fefb0d833bf0a35f",
+    "measured_from": "actual AVR recording",
+    "samples": 10624,
+    "sample_rate": 7500
+  },
+  "alternatives": [
+    {
+      "family": "hq4",
+      "flashBytes": 870,
+      "eepromUsedBytes": 0,
+      "quality": {
+        "loss": 0.7533701790952703,
+        "log_spectral_error": 0.7386511587724772,
+        "relative_spectral_error": 0.8122462603864419,
+        "stoi": 0.7282359254666192,
+        "estoi": 0.6195007319502741,
+        "balanced_score": 0.6679663111389975,
+        "pcm_sha256": "62caa22ac9c2716e8171d0b513b9c82d6a98b07cae4f5501fefb0d833bf0a35f",
+        "measured_from": "actual AVR recording",
+        "samples": 10624,
+        "sample_rate": 7500
+      }
+    },
+    {
+      "family": "tiny",
+      "flashBytes": 1010,
+      "eepromUsedBytes": 64,
+      "quality": {
+        "loss": 0.889453983299512,
+        "log_spectral_error": 0.9063368647012578,
+        "relative_spectral_error": 0.8219224576925281,
+        "stoi": 0.6312792707217155,
+        "estoi": 0.3806829262326898,
+        "balanced_score": 0.5601229520577545,
+        "pcm_sha256": "b83afcf65398b5ec9ca9147673b314976bcd74a06db704b1a75dd641477f3e71",
+        "measured_from": "actual AVR recording",
+        "samples": 10624,
+        "sample_rate": 7500
+      }
+    }
+  ],
+  "originalAudio": "audio/vinni-pu534/original.wav",
+  "afterAudio": "audio/vinni-pu534/after.wav",
+  "referenceAudio": "audio/vinni-pu534/reference.wav",
+  "firmware": "firmware/vinni-pu534/firmware.hex",
+  "eeprom": null,
+  "hybridAlternative": null,
+  "verification": {
+    "engines": [
+      "reference",
+      "wasm",
+      "wasm-unoptimized"
+    ],
+    "verifiedSamples": 31872,
+    "silenceSamplesVerified": 21248,
+    "lostOverflows": 0,
+    "missedSamples": 0
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "version": "spectrogram-match-v1",
+  "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+  "samples": 22272,
+  "sample_rate": 7500,
+  "processing": "Identical 70 Hz highpass, global RMS match; no time/frequency warping",
+  "candidates": {
+    "Public HQ4": {
+      "spectrogram_loss": 0.6296960266589171,
+      "fine_log_error": 0.6656302224316923,
+      "envelope_error": 0.6804694729731342,
+      "unsupported_energy": 0.28487069165550416,
+      "missing_energy": 0.2840730125835865,
+      "sha256": "4638213415d19833a4a1f4f48a77023e7b040a3476dc15304c52aa659e112bf7"
+    },
+    "Rejected Q4 T1": {
+      "spectrogram_loss": 0.5655478733060669,
+      "fine_log_error": 0.5470793710045452,
+      "envelope_error": 0.6716105043940851,
+      "unsupported_energy": 0.260779557043838,
+      "missing_energy": 0.2433090845968121,
+      "sha256": "c3fd0893510f542280c4f9c3eccb14a8740c650ee8baf3695d43bb08903b4ebd"
+    },
+    "Q3 T1 spectral fit": {
+      "spectrogram_loss": 0.5043571420994826,
+      "fine_log_error": 0.4884439221989016,
+      "envelope_error": 0.6008140591006578,
+      "unsupported_energy": 0.20068080105885014,
+      "missing_energy": 0.20033717350850047,
+      "sha256": "4bc81c413f5e5f2c0ca2f64ae3a8507e36a06fc19560a9fd86cac1d9f5a62b21"
+    }
+  }
+}

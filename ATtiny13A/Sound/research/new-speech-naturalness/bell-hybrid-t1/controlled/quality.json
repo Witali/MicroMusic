@@ -1,0 +1,81 @@
+{
+  "baseline_hybrid": {
+    "full": {
+      "stoi": 0.6721118615127909,
+      "estoi": 0.393558702243227,
+      "loss": 0.7870612031965898,
+      "log_spectral_error": 0.8019122198555678,
+      "relative_spectral_error": 0.7276571365606778
+    },
+    "voice": {
+      "stoi": 0.7885946341898025,
+      "estoi": 0.4498413261901459,
+      "loss": 0.8595258229214134,
+      "log_spectral_error": 0.8552934213049261,
+      "relative_spectral_error": 0.8764554293873621
+    },
+    "bell": {
+      "loss": 0.6385766335951547,
+      "log_spectral_error": 0.684240241704234,
+      "relative_spectral_error": 0.45592220115883714,
+      "mse_at_voice_matched_level": 0.04323241672840607,
+      "reference_rms": 0.21237237105398513,
+      "decoded_rms": 0.03613798734141345,
+      "reference_bell_to_voice_rms": 1.2492126579998815,
+      "decoded_bell_to_voice_rms": 1.011277596561815
+    },
+    "peak_signed": 41,
+    "steps_ge_48": 0
+  },
+  "natural_hybrid": {
+    "full": {
+      "stoi": 0.6986079426680797,
+      "estoi": 0.43647567155877925,
+      "loss": 0.7659841941347526,
+      "log_spectral_error": 0.7718417483999437,
+      "relative_spectral_error": 0.7425539770739878
+    },
+    "voice": {
+      "stoi": 0.8250794476978425,
+      "estoi": 0.5199514089074047,
+      "loss": 0.810698464723955,
+      "log_spectral_error": 0.8021835690407121,
+      "relative_spectral_error": 0.8447580474569264
+    },
+    "bell": {
+      "loss": 0.6385766335951547,
+      "log_spectral_error": 0.684240241704234,
+      "relative_spectral_error": 0.45592220115883714,
+      "mse_at_voice_matched_level": 0.03687616577231821,
+      "reference_rms": 0.21237237105398513,
+      "decoded_rms": 0.03613798734141345,
+      "reference_bell_to_voice_rms": 1.2492126579998815,
+      "decoded_bell_to_voice_rms": 0.6041256765699412
+    },
+    "peak_signed": 62,
+    "steps_ge_48": 0
+  },
+  "lattice": {
+    "samples": 12800,
+    "subtraction_wraps": 0,
+    "state_addition_wraps": 0,
+    "negative_128_multiplication": 0,
+    "fractional_products": 103469,
+    "multiplication_count": 192000,
+    "quantization_error_mean": -0.2638304036458333,
+    "minimum_intermediate": -23,
+    "maximum_intermediate": 46,
+    "frame_phase_restarts": 77,
+    "period_changes": 79,
+    "displaced_countdown_samples": 2843,
+    "positive_pulse_events": 247,
+    "pulse_interval_median": 38.0,
+    "pulse_interval_minimum": 12,
+    "pulse_interval_maximum": 402,
+    "extreme_pwm_samples": 0,
+    "peak_signed": 46
+  },
+  "tilt_wraps": 0,
+  "bell_prefix_identical": true,
+  "bell_level_policy": "fixed-original-PCM"
+}

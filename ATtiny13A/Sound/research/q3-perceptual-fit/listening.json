@@ -1,0 +1,82 @@
+{
+  "schema": "q3-raw-listening-v1",
+  "sample_rate": 7500,
+  "phrase_samples": 22272,
+  "pause_samples": 2250,
+  "original_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+  "original_file_byte_exact": true,
+  "previous": {
+    "build_sha256": "0d79e464574a38b4412888c7a04fccee4ce057d91b744c2788ff4f22f177e5ad",
+    "image_sha256": "d66db77d9b80befe34339a372c5a31c3efd64dcb3d577d615bc0d97e5ce82f97",
+    "phrase_pcm_sha256": "6f9439914c4e76723da8a23c280af7fad9ac62bc9fe0daa6697a80318eb3cb9d",
+    "full_actual_pcm_sha256": "e5f67701e358a7737876be9cae78cacd82ce96eeccd15964ad3fe8c4d6bf67aa",
+    "flash_bytes": 1024,
+    "eeprom_bytes": 64,
+    "verified_samples": 66816,
+    "silence_samples": 44544,
+    "engines": [
+      "reference",
+      "wasm",
+      "wasm-unoptimized"
+    ]
+  },
+  "current": {
+    "build_sha256": "63b0efd056196e35693f010ae497f93938151456b775abefc31b724c6800f251",
+    "image_sha256": "b9cf233d73fe4b8f50e08505160fa9638863336a96d93e3951e1ff51ff1e7177",
+    "phrase_pcm_sha256": "4155925af8a10464f0b3b7c26973ee2963adc514bb670ed6f93d9533ae7c4e12",
+    "full_actual_pcm_sha256": "2ac82d93d4aa91de24e68ca455507c38bc0beeb278b2a46a83d1604937c1e96c",
+    "flash_bytes": 1014,
+    "eeprom_bytes": 64,
+    "verified_samples": 66816,
+    "silence_samples": 44544,
+    "engines": [
+      "reference",
+      "wasm",
+      "wasm-unoptimized"
+    ]
+  },
+  "segments": [
+    {
+      "label": "Original",
+      "file": "01-original.wav",
+      "start_sample": 0,
+      "samples": 22272,
+      "source_pcm_f32_sha256": "5f50b855f43c1a74e198e86615dc4dbeb4d3b5146748fbaa71f5aac0a4c34c5e"
+    },
+    {
+      "label": "\u041f\u0440\u0435\u0434\u044b\u0434\u0443\u0449\u0438\u0439 cycle02",
+      "file": "02-previous.wav",
+      "start_sample": 24522,
+      "samples": 22272,
+      "source_pcm_f32_sha256": "f8fb5fb0e73cdc15fcad15cbc419bbec103028d2427b65b6c2fcb3e62bd1bcc3"
+    },
+    {
+      "label": "\u041d\u043e\u0432\u044b\u0439 balanced: 1014 \u0431\u0430\u0439\u0442",
+      "file": "03-current.wav",
+      "start_sample": 49044,
+      "samples": 22272,
+      "source_pcm_f32_sha256": "ed2a555aff4d6d6f3ff7b4982c9707d5b18089f5f24bd497e7ecd2eab68de348"
+    }
+  ],
+  "comparison_samples": 71316,
+  "comparison_processing": "Unchanged original/actual DAC levels and DC; noHP/RMS/gain/clipping; zero pauses only; FLOAT32 storage",
+  "source_sha256_normalized_lf": "4a9cb5896725164fe6891b646f5472eaedf167d692c7fb568c9228af8cb7a0af",
+  "files": {
+    "01-original.wav": {
+      "sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+      "bytes": 44588
+    },
+    "02-previous.wav": {
+      "sha256": "547c44910bc51edc4d493267c94b0a0f1aae0cf8c7df26f3f0b354fe370ead42",
+      "bytes": 22316
+    },
+    "03-current.wav": {
+      "sha256": "52e3a8107449a2d0bf40429761544d608ed3c32da663f94773153878f88dd65d",
+      "bytes": 22316
+    },
+    "04-comparison-raw.wav": {
+      "sha256": "a6f56ade698640c0334b87871d23bb857b4dfdc6ad865324e7ec1ee1c95f3396",
+      "bytes": 285344
+    }
+  }
+}
