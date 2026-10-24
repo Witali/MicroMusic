@@ -33,28 +33,37 @@ class State:
     waves_q1:np.ndarray
     quarters:np.ndarray
     phase_modes:np.ndarray|None=None
+    wave_fraction_bits:int=1
 
-    def copy(self):return State(*(a.copy() if a is not None else None for a in self.__dict__.values()))
-    def fields(self):return {k:v.tolist() for k,v in self.__dict__.items() if v is not None}
+    def copy(self):return State(*(a.copy() if isinstance(a,np.ndarray) else a for a in self.__dict__.values()))
+    def fields(self):return {('wave_taps' if k=='waves_q1' and self.wave_fraction_bits!=1 else k):
+        v.tolist() if isinstance(v,np.ndarray) else v for k,v in self.__dict__.items() if v is not None}
 
 
-def zero_area(waves):
+def zero_area(waves,limit=7):
     """Nearest bounded integer projection, preserving attack on equal costs."""
     original=np.asarray(waves,np.int16);result=original.copy()
     for row in range(len(result)):
         while int(result[row].sum()):
             delta=-1 if result[row].sum()>0 else 1
-            choices=[i for i in range(result.shape[1]-1,-1,-1) if -7<=int(result[row,i])+delta<=7]
+            choices=[i for i in range(result.shape[1]-1,-1,-1) if -limit<=int(result[row,i])+delta<=limit]
             tap=min(choices,key=lambda i:(int(result[row,i])+delta-int(original[row,i]))**2-(int(result[row,i])-int(original[row,i]))**2)
             result[row,tap]+=delta
     return result
 
 
-def load(path,order=None,profile=None,state_bits=None,zero_mean=False,pulse_length=None,fit_phase=False):
+def load(path,order=None,profile=None,state_bits=None,zero_mean=False,pulse_length=None,fit_phase=False,wave_fraction_bits=None):
     m=json.loads(path.read_text(encoding='utf-8'));schema=m['schema']
     if schema not in ('q4-lattice-fit-v1','q4-quarter-fit-v1',codec.SCHEMA,codec.PULSE_SCHEMA):raise ValueError('Expected a tagged lattice teacher')
-    raw={name:np.asarray(m[name if name!='quarters' else 'halves' if schema=='q4-lattice-fit-v1' else 'quarters'],np.int16)
-        for name in State.__annotations__ if name!='phase_modes'}
+    raw={name:np.asarray(m['wave_taps' if name=='waves_q1' and m.get('wave_fraction_bits',1)!=1 else name if name!='quarters' else 'halves' if schema=='q4-lattice-fit-v1' else 'quarters'],np.int16)
+        for name in State.__annotations__ if name not in ('phase_modes','wave_fraction_bits')}
+    old_wave_bits=m.get('wave_fraction_bits',1)
+    if old_wave_bits not in (1,2) or (old_wave_bits!=1 and schema!=codec.PULSE_SCHEMA):raise ValueError('Wave precision does not match its schema')
+    wave_fraction_bits=old_wave_bits if wave_fraction_bits is None else wave_fraction_bits
+    if wave_fraction_bits not in (1,2):raise ValueError('Expected one or two wave fraction bits')
+    if wave_fraction_bits<old_wave_bits and np.any(raw['waves_q1']%2):raise ValueError('Cannot silently discard wave precision')
+    raw['waves_q1']=(raw['waves_q1']*2 if wave_fraction_bits>old_wave_bits else raw['waves_q1']//2 if wave_fraction_bits<old_wave_bits else raw['waves_q1'])
+    raw['wave_fraction_bits']=wave_fraction_bits
     if 'phase_modes' in m and schema!=codec.PULSE_SCHEMA:raise ValueError('Per-frame phase controls require the pulse schema')
     raw['phase_modes']=np.asarray(m['phase_modes'],np.int16) if 'phase_modes' in m else (
         np.full(len(raw['pitches']),m.get('phase_mode',0),np.int16) if fit_phase else None)
@@ -78,7 +87,7 @@ def load(path,order=None,profile=None,state_bits=None,zero_mean=False,pulse_leng
         limit=(1<<int(bits[j]))-1
         coefficients[:,j]=np.clip(np.rint(raw['coefficients'][:,j].astype(float)*2.**(int(bits[j])-int(old_bits[j]))),-limit,limit)
     raw['coefficients']=coefficients;zero_mean=zero_mean or m.get('zero_mean',False)
-    if zero_mean:raw['waves_q1']=zero_area(raw['waves_q1'])
+    if zero_mean:raw['waves_q1']=zero_area(raw['waves_q1'],7<<(wave_fraction_bits-1))
     state=State(**raw);state_bits=m.get('state_bits',6) if state_bits is None else state_bits
     validate(state,bits,state_bits,zero_mean)
     return state,bits,state_bits,m.get('phase_mode',0),profile,zero_mean,m
@@ -86,11 +95,13 @@ def load(path,order=None,profile=None,state_bits=None,zero_mean=False,pulse_leng
 
 def validate(s,bits,state_bits,zero_mean=False):
     codec.validate(s.coefficients,bits,state_bits);n=len(s.pitches)
+    if s.wave_fraction_bits not in (1,2):raise ValueError('Invalid pulse precision')
+    limit=7<<(s.wave_fraction_bits-1)
     if (not n or s.pitches.shape!=(n,) or any(a.shape!=(n,) for a in (s.gains_q1,s.durations,s.modes,s.quarters))
             or s.coefficients.shape[0]!=n or s.waves_q1.shape not in ((8,16),(8,32))
-            or any(a.dtype.kind not in 'iu' for a in s.__dict__.values() if a is not None)
+            or any(a.dtype.kind not in 'iu' for a in s.__dict__.values() if isinstance(a,np.ndarray))
             or np.any(s.pitches<0) or np.any(s.pitches>126) or np.any(s.gains_q1<0) or np.any(s.gains_q1>30)
-            or np.any(s.modes<0) or np.any(s.modes>7) or np.any(s.waves_q1 < -7) or np.any(s.waves_q1>7)
+            or np.any(s.modes<0) or np.any(s.modes>7) or np.any(s.waves_q1 < -limit) or np.any(s.waves_q1>limit)
             or np.any(s.quarters<0) or np.any(s.quarters>3) or np.any((s.pitches==0)&(s.quarters!=0))
             or not np.all(np.isin(s.durations,[64,128,192,256]))
             or (zero_mean and np.any(s.waves_q1.sum(axis=1)))
@@ -99,8 +110,8 @@ def validate(s,bits,state_bits,zero_mean=False):
 
 def render(s,bits,state_bits,phase_mode):
     rows,excitation=phase.legacy_excitation(s.pitches,s.gains_q1,s.durations,s.modes,s.waves_q1,s.quarters,pitch_bits=2,phase_mode=phase_mode,phase_modes=s.phase_modes,pulse_width=s.waves_q1.shape[1])
-    excitation[s.pitches[rows]==0]*=2
-    return codec.filter_signal(excitation,rows,s.coefficients,bits,state_bits=state_bits,nearest=True)
+    excitation[s.pitches[rows]==0]*=1<<s.wave_fraction_bits
+    return codec.filter_signal(excitation,rows,s.coefficients,bits,state_bits=state_bits,nearest=True,fraction_bits=s.wave_fraction_bits+1)
 
 
 def actions(s,bits,zero_mean):
@@ -143,8 +154,9 @@ def apply(s,action,bits):
         if c.phase_modes is None or not 0<=value<=3:return None
         c.phase_modes[row]=value
     elif kind=='wave':
+        limit=7<<(c.wave_fraction_bits-1)
         second=action[4];target=int(c.waves_q1[row,column])+value
-        if not -7<=target<=7 or (second>=0 and not -7<=int(c.waves_q1[row,second])-value<=7):return None
+        if not -limit<=target<=limit or (second>=0 and not -limit<=int(c.waves_q1[row,second])-value<=limit):return None
         c.waves_q1[row,column]=target
         if second>=0:c.waves_q1[row,second]-=value
     elif kind=='boundary':
@@ -155,9 +167,9 @@ def apply(s,action,bits):
     return c
 
 
-def run(reference_path,model_path,output,evaluations=24000,order=None,profile=None,state_bits=None,zero_mean=False,pulse_length=None,wave_first=False,fit_phase=False):
+def run(reference_path,model_path,output,evaluations=24000,order=None,profile=None,state_bits=None,zero_mean=False,pulse_length=None,wave_first=False,fit_phase=False,wave_fraction_bits=None):
     if evaluations<0:raise ValueError('Expected nonnegative evaluation budget')
-    start=time.perf_counter();s,bits,state_bits,phase_mode,profile,zero_mean,meta=load(model_path,order,profile,state_bits,zero_mean,pulse_length,fit_phase)
+    start=time.perf_counter();s,bits,state_bits,phase_mode,profile,zero_mean,meta=load(model_path,order,profile,state_bits,zero_mean,pulse_length,fit_phase,wave_fraction_bits)
     x,sr=sf.read(reference_path,dtype='float64');reference_hash=hashlib.sha256(reference_path.read_bytes()).hexdigest()
     if sr!=7500 or x.ndim!=1 or len(x)!=int(s.durations.sum()) or reference_hash!=meta['reference_sha256']:
         raise ValueError('Expected unchanged complete mono7500 original')
@@ -180,8 +192,8 @@ def run(reference_path,model_path,output,evaluations=24000,order=None,profile=No
             initial=current=score(s,True)
             if initial is not None:seed_scale=scale;break
     if initial is None:raise ValueError('No integer-guarded initial seed')
-    def export(state):return dict(schema=codec.SCHEMA if state.waves_q1.shape[1]==16 and state.phase_modes is None else codec.PULSE_SCHEMA,
-        **({} if state.waves_q1.shape[1]==16 and state.phase_modes is None else dict(pulse_length=int(state.waves_q1.shape[1]))),
+    def export(state):return dict(schema=codec.SCHEMA if state.waves_q1.shape[1]==16 and state.phase_modes is None and state.wave_fraction_bits==1 else codec.PULSE_SCHEMA,
+        **({} if state.waves_q1.shape[1]==16 and state.phase_modes is None and state.wave_fraction_bits==1 else dict(pulse_length=int(state.waves_q1.shape[1]))),
         sample_rate=7500,coefficient_bits=bits.tolist(),state_bits=state_bits,nearest=True,
         precision_profile=profile,zero_mean=zero_mean,phase_mode=phase_mode,**state.fields(),reference_sha256=reference_hash,
         avr_implemented=False,serialized_format=False,hardware_tested=False)
@@ -212,7 +224,7 @@ def run(reference_path,model_path,output,evaluations=24000,order=None,profile=No
     report=dict(schema='mixed-lattice-study-v1',initial=initial,final=final,best_intelligibility=best_detail,
         evaluated=evaluated,accepted=len(history),history=history,epochs=epochs,order=len(bits),state_bits=state_bits,
         coefficient_bits=bits.tolist(),zero_mean=zero_mean,seed_gain_scale=seed_scale,
-        pulse_length=int(s.waves_q1.shape[1]),wave_first=wave_first,fit_phase=s.phase_modes is not None,
+        pulse_length=int(s.waves_q1.shape[1]),wave_first=wave_first,fit_phase=s.phase_modes is not None,wave_fraction_bits=s.wave_fraction_bits,
         reference_sha256=reference_hash,seed_sha256=hashlib.sha256(model_path.read_bytes()).hexdigest(),
         source_sha256_normalized_lf=source_hashes,elapsed_seconds=time.perf_counter()-start,
         avr_implemented=False,serialized_format=False,hardware_tested=False,policy='PC quality teacher; no memory-fit or sample-deadline claim')
@@ -226,5 +238,6 @@ if __name__=='__main__':
     p.add_argument('--profile',choices=('q4','head7','all7'));p.add_argument('--state-bits',type=int,choices=(0,4,6,8))
     p.add_argument('--zero-mean',action='store_true');p.add_argument('--pulse-length',type=int,choices=(16,32))
     p.add_argument('--wave-first',action='store_true')
-    p.add_argument('--fit-phase',action='store_true');a=p.parse_args()
-    run(a.reference,a.model,a.output,a.evaluations,a.order,a.profile,a.state_bits,a.zero_mean,a.pulse_length,a.wave_first,a.fit_phase)
+    p.add_argument('--fit-phase',action='store_true')
+    p.add_argument('--wave-fraction-bits',type=int,choices=(1,2));a=p.parse_args()
+    run(a.reference,a.model,a.output,a.evaluations,a.order,a.profile,a.state_bits,a.zero_mean,a.pulse_length,a.wave_first,a.fit_phase,a.wave_fraction_bits)

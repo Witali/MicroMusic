@@ -14,6 +14,23 @@ fit=importlib.util.module_from_spec(spec);sys.modules[spec.name]=fit;spec.loader
 
 
 class MixedLatticeTests(unittest.TestCase):
+    def test_wave_precision_promotion_preserves_voice_noise_and_complete_pcm(self):
+        path=ROOT/'ATtiny13A/Sound/research/q4-pattern-precision/mixed/q8/best-intelligibility-model.json'
+        for width in (16,32):
+            state,bits,state_bits,mode,_,_,meta=fit.load(path,pulse_length=width,wave_fraction_bits=2)
+            self.assertEqual(state.wave_fraction_bits,2)
+            pcm,counts=fit.render(state,bits,state_bits,mode)
+            self.assertFalse(np.any(counts));self.assertEqual(hashlib.sha256(pcm.tobytes()).hexdigest(),
+                '4cc6676f5a91995be4189f65ae08745b68cacd254732de7c5e4c4ee3e416058e')
+            with tempfile.TemporaryDirectory(dir=ROOT/'build') as folder:
+                target=Path(folder)/'model.json'
+                saved={k:v for k,v in meta.items() if k!='waves_q1'}
+                fit.base.save(target,dict(saved,schema=fit.codec.PULSE_SCHEMA,pulse_length=width,**state.fields()))
+                restored=fit.load(target)[0];np.testing.assert_array_equal(restored.waves_q1,state.waves_q1)
+                state.waves_q1[0,0]|=1
+                fit.base.save(target,dict(saved,schema=fit.codec.PULSE_SCHEMA,pulse_length=width,**state.fields()))
+                with self.assertRaises(ValueError):fit.load(target,wave_fraction_bits=1)
+
     def test_frame_phase_training_starts_exact_and_keeps_the_input_immutable(self):
         path=ROOT/'ATtiny13A/Sound/research/q4-pattern-precision/mixed/q8/best-intelligibility-model.json'
         state,bits,state_bits,mode,_,_,_=fit.load(path,pulse_length=32,fit_phase=True)

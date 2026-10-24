@@ -22,10 +22,10 @@ fit=importlib.util.module_from_spec(spec);sys.modules[spec.name]=fit;spec.loader
 
 
 @njit(cache=True)
-def floating_filter(excitation,rows,coefficients,bits):
+def floating_filter(excitation,rows,coefficients,bits,fraction_bits=2):
     states=np.zeros(coefficients.shape[1],np.float64);output=np.empty(len(rows),np.float64);previous=0.
     for n in range(len(rows)):
-        ex=excitation[n]/512.
+        ex=excitation[n]/(128.*(1<<fraction_bits))
         for j in range(len(states)-1,-1,-1):
             k=coefficients[rows[n],j]/(1<<bits[j]);old=states[j];ex-=old*k
             if j<len(states)-1:states[j+1]=old+ex*k
@@ -36,7 +36,7 @@ def floating_filter(excitation,rows,coefficients,bits):
 def excitation(s,waves,phase_mode):
     rows,values=fit.phase.legacy_excitation(s.pitches,s.gains_q1,s.durations,s.modes,waves,s.quarters,
         pitch_bits=2,phase_mode=phase_mode,phase_modes=s.phase_modes,pulse_width=waves.shape[1])
-    values[s.pitches[rows]==0]*=2
+    values[s.pitches[rows]==0]*=1<<s.wave_fraction_bits
     return rows,values
 
 
@@ -44,15 +44,15 @@ def responses(s,bits,phase_mode):
     modes=np.unique(s.modes[(s.pitches>0)&(s.gains_q1>0)])
     coordinates=[(int(mode),tap) for mode in modes for tap in range(s.waves_q1.shape[1])]
     zeros=np.zeros_like(s.waves_q1);rows,noise=excitation(s,zeros,phase_mode)
-    offset=floating_filter(noise,rows,s.coefficients,bits)
+    offset=floating_filter(noise,rows,s.coefficients,bits,s.wave_fraction_bits+1)
     matrix=np.empty((len(rows),len(coordinates)),float)
     for column,(mode,tap) in enumerate(coordinates):
         impulse=zeros.copy();impulse[mode,tap]=1
         _,values=excitation(s,impulse,phase_mode)
-        matrix[:,column]=floating_filter(values-noise,rows,s.coefficients,bits)
+        matrix[:,column]=floating_filter(values-noise,rows,s.coefficients,bits,s.wave_fraction_bits+1)
     current=np.asarray([s.waves_q1[m,t] for m,t in coordinates],float)
     _,values=excitation(s,s.waves_q1,phase_mode)
-    actual=floating_filter(values,rows,s.coefficients,bits)
+    actual=floating_filter(values,rows,s.coefficients,bits,s.wave_fraction_bits+1)
     error=float(abs(matrix@current+offset-actual).max())
     if error>1e-11:raise AssertionError('Forward basis fails linear reconstruction')
     return matrix,offset,current,coordinates,error
@@ -66,8 +66,9 @@ def phase_target(reference,candidate,size):
     return target[:len(reference)]
 
 
-def run(reference_path,model_path,output,pulse_length=32,seed=20261024):
-    started=time.perf_counter();state,bits,state_bits,phase_mode,profile,zero_mean,meta=fit.load(model_path,pulse_length=pulse_length)
+def run(reference_path,model_path,output,pulse_length=32,seed=20261024,wave_fraction_bits=None):
+    started=time.perf_counter();state,bits,state_bits,phase_mode,profile,zero_mean,meta=fit.load(model_path,pulse_length=pulse_length,wave_fraction_bits=wave_fraction_bits)
+    limit=7<<(state.wave_fraction_bits-1)
     x,sr=sf.read(reference_path,dtype='float64');reference_hash=hashlib.sha256(reference_path.read_bytes()).hexdigest()
     if sr!=7500 or x.ndim!=1 or len(x)!=int(state.durations.sum()) or reference_hash!=meta['reference_sha256']:
         raise ValueError('Expected the unchanged complete mono7500 original')
@@ -84,7 +85,7 @@ def run(reference_path,model_path,output,pulse_length=32,seed=20261024):
         if detail:q.update(estoi=fit.base.deterministic_estoi(x,y,7500),harmonic_metrics=fit.base.HarmonicTrackObjective(x).evaluate(y))
         return q
     def export(s):
-        extended=s.waves_q1.shape[1]!=16 or s.phase_modes is not None
+        extended=s.waves_q1.shape[1]!=16 or s.phase_modes is not None or s.wave_fraction_bits!=1
         return dict(schema=fit.codec.PULSE_SCHEMA if extended else fit.codec.SCHEMA,
             **(dict(pulse_length=int(s.waves_q1.shape[1])) if extended else {}),
             sample_rate=7500,coefficient_bits=bits.tolist(),state_bits=state_bits,nearest=True,precision_profile=profile,
@@ -103,9 +104,9 @@ def run(reference_path,model_path,output,pulse_length=32,seed=20261024):
             rhs=matrix.T@(target*amplitude-offset)
             for regularization in (1e-4,.001,.01,.1,1.):
                 ridge=regularization*scale;normal=gram+ridge*np.eye(len(old));linear=rhs+ridge*old
-                start=np.clip(np.linalg.solve(normal,linear),-7,7)
+                start=np.clip(np.linalg.solve(normal,linear),-limit,limit)
                 objective=lambda w:(float(.5*w@(normal@w)-linear@w),normal@w-linear)
-                solved=minimize(objective,start,jac=True,method='L-BFGS-B',bounds=[(-7,7)]*len(old),
+                solved=minimize(objective,start,jac=True,method='L-BFGS-B',bounds=[(-limit,limit)]*len(old),
                     options=dict(maxiter=1000,ftol=1e-12,gtol=1e-10))
                 solves.append(dict(target=name,amplitude=amplitude,regularization=regularization,success=bool(solved.success),iterations=int(solved.nit)))
                 for amount in (.25,.5,.75,1.):
@@ -114,8 +115,8 @@ def run(reference_path,model_path,output,pulse_length=32,seed=20261024):
                     quantizations.extend(np.floor(value)+(rng.random(len(value))<value-np.floor(value)) for _ in range(3))
                     for rounding,wave in enumerate(quantizations):
                         candidate=state.copy()
-                        for (mode,tap),v in zip(coordinates,wave):candidate.waves_q1[mode,tap]=int(np.clip(v,-7,7))
-                        if zero_mean:candidate.waves_q1=fit.zero_area(candidate.waves_q1)
+                        for (mode,tap),v in zip(coordinates,wave):candidate.waves_q1[mode,tap]=int(np.clip(v,-limit,limit))
+                        if zero_mean:candidate.waves_q1=fit.zero_area(candidate.waves_q1,limit)
                         signature=candidate.waves_q1.tobytes()
                         if signature in seen:continue
                         seen.add(signature);evaluations+=1;q=score(candidate)
@@ -143,4 +144,5 @@ if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     for key in ('reference','model','output'):p.add_argument('--'+key,type=Path,required=True)
     p.add_argument('--pulse-length',type=int,choices=(16,32),default=32);p.add_argument('--seed',type=int,default=20261024)
-    a=p.parse_args();run(a.reference,a.model,a.output,a.pulse_length,a.seed)
+    p.add_argument('--wave-fraction-bits',type=int,choices=(1,2));a=p.parse_args()
+    run(a.reference,a.model,a.output,a.pulse_length,a.seed,a.wave_fraction_bits)
