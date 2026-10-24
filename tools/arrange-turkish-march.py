@@ -3,9 +3,7 @@ from pathlib import Path
 import hashlib
 import importlib.util
 import json
-import shutil
 import argparse
-import math
 
 ROOT=Path(__file__).resolve().parents[1]
 SOURCE=ROOT/'ATtiny13A/Music/reference/turkish-march/source-events.json'
@@ -86,73 +84,61 @@ def arrange(notes,ppqn,bpm,blocks,candidates):
     return score
 
 
+def enrich_chords(score,notes):
+    segments=score['left_hand_note_events']
+    chord_notes={'left_None':[None,None]}
+    controls=[dict(unit=0,offMask=6)]
+    for segment in segments:
+        pitch=segment['pitch']
+        candidates=[(i,n) for i,n in enumerate(notes) if n[0]==2 and n[3]==segment['sourceOnTicks'] and n[4]==segment['sourceOffTicks'] and n[2]>pitch]
+        second=min(candidates,key=lambda item:item[1][2]) if candidates else None
+        segment['secondPitch']=second[1][2] if second else None
+        segment['secondSourceIndex']=second[0] if second else None
+        name='left_'+str(pitch)+'_'+str(segment['secondPitch'])
+        chord_notes[name]=[pitch,segment['secondPitch']]
+        controls.extend([dict(unit=segment['onUnit'],chord=name),dict(unit=segment['offUnit'],offMask=6)])
+    first=next(name for name in chord_notes if name!='left_None')
+    score['chord_overrides']['intro']=[[first,first] for _ in score['patterns']['intro']]
+    score['chord_pairs']=[[first,first]]
+    chord_notes['cadence']=[51,None]
+    score['chord_notes']=chord_notes
+    score['timed_controls']['intro']=sorted(controls,key=lambda event:(event['unit'],'chord' in event))
+    score['timed_controls']['ending']=[dict(unit=0,chord='cadence'),dict(unit=4,offMask=14)]
+    score['instruments']['pluck']={'instrument':'acoustic-grand-piano','level':9}
+    score['engine']='turkish-three'
+    score['release_tail_slots']=0
+    score['player_description']='Правая рука фортепиано, исходный бас и восстановленные тоны аккордов левой руки.'
+    return score
+
+
 def main():
-    notes,ppqn,bpm=reader.read_midi(SOURCE)
-    ap=argparse.ArgumentParser(description=__doc__)
-    ap.add_argument('--source-bars',type=int,help='Even number of source 2/4 bars; default searches every prefix')
-    ap.add_argument('--candidates',type=int,nargs='+',default=[96,192,384,4096],
-                    help='Deterministic dictionary search limits (default: 96 192 384 4096)')
+    ap=argparse.ArgumentParser(description='Extend the authentic opening and restore left-hand chord tones')
+    ap.add_argument('--source-bars',type=int,default=74)
+    ap.add_argument('--candidates',type=int,default=4096)
+    ap.add_argument('--output',type=Path,default=OUT)
     args=ap.parse_args()
-    if any(n<1 for n in args.candidates):ap.error('--candidates must be positive integers')
-    maximum=math.ceil(max(n[4] for n in notes if n[0]==1)/(ppqn*4))
-    trials=[];best=None
-    # Measure specialized machine code, rather than assuming the old four-voice
-    # engine's size. Score contents only change tables after the playlist label.
-    fixture=ROOT/'build/turkish-engine-budget';fixture.mkdir(parents=True,exist_ok=True)
-    # The register-dependent piano envelope can require extra code when the
-    # full pitch range reaches MIDI75. Budget against the whole source range.
-    fixture_score=arrange(notes,ppqn,bpm,maximum,96)
-    source,metadata=builder.engine.specialize(fixture_score,builder.bank.describe_assignments(fixture_score['instruments']))
-    fixture_score.update(metadata)
-    source=builder.release_engine.specialize(fixture_score,source)
-    (fixture/'synth.S').write_text(source,encoding='utf-8',newline='\n')
-    for name in ['config.inc','score.inc']:shutil.copyfile(BASE/name,fixture/name)
-    _,labels=builder.release_engine.assemble_relaxed(fixture/'synth.S');code_bytes=labels['playlist']
-    def assess(blocks,candidates):
-        nonlocal best
-        score=arrange(notes,ppqn,bpm,blocks,candidates)
-        _,meta=builder.compiler.to_inc(score,validate_size=False)
-        size=(code_bytes+meta['total_data_bytes']+1)//2*2
-        fits=size<=1024 and meta['maximum_entry_offset']<=255 and meta['playlist_bytes']<=255
-        trials.append(dict(sourceBars2_4=blocks*2,candidates=candidates,flashBytes=size,
-                           dataBytes=meta['total_data_bytes'],maximumEntryOffset=meta['maximum_entry_offset'],
-                           playlistBytes=meta['playlist_bytes'],fits=fits))
-        if fits and (best is None or (blocks,-size)>(best[0],-best[1])):best=(blocks,size,score)
-        return size
-    if args.source_bars is not None:
-        if args.source_bars<2 or args.source_bars%2:ap.error('--source-bars must be a positive even number')
-        if args.source_bars>maximum*2:ap.error('--source-bars exceeds the MIDI length')
-        for candidates in sorted(set(args.candidates)):assess(args.source_bars//2,candidates)
-    else:
-        print('Searching all',maximum,'source prefixes and refining dictionaries near the Flash budget...',flush=True)
-        sizes={blocks:assess(blocks,96) for blocks in range(1,maximum+1)}
-        for blocks,size in sizes.items():
-            if size<=1088:
-                for candidates in sorted(set(args.candidates)-{96}):
-                    # The strongest dictionary can be expensive. Only use it
-                    # to extend or improve the best prefix already found.
-                    if candidates>384 and best is not None and blocks<best[0]:continue
-                    assess(blocks,candidates)
-    if best is None:raise ValueError('No searched arrangement fits the device')
-    blocks,size,score=best
-    print('Selected',blocks*2,'source bars + cadence;',size,'Flash bytes',flush=True)
-    score['title']='Моцарт — Турецкий марш (начальный фрагмент)'
+    if args.source_bars<70 or args.source_bars%2:ap.error('--source-bars must be an even number of at least70')
+    notes,ppqn,bpm=reader.read_midi(SOURCE)
+    score=enrich_chords(arrange(notes,ppqn,bpm,args.source_bars//2,args.candidates),notes)
+    score['title']='Моцарт — Турецкий марш (расширенный фрагмент)'
     score['composer']='Wolfgang Amadeus Mozart'
-    score['source_midi']={'file':'../../reference/turkish-march/source-events.json',
-        'sha256':hashlib.sha256(SOURCE.read_bytes()).hexdigest(),'originalMidiSha256':json.loads(SOURCE.read_text(encoding='utf-8'))['source']['sha256'],'ppqn':ppqn,
-        'credit':'MIDI: Bernd Krüger / piano-midi.de; source edition 2013-07-15',
-        'timeSignature':'2/4','sourcePitchedNotes':len(notes),'sourceTempoChanges':'Expressive tempo map replaced by steady 151 BPM'}
-    score['arrangement']={'sourceQuarterBeats':blocks*4,'sourceBars2_4':blocks*2,'cadenceQuarterBeats':4,
-        'lead':'Highest active note of right-hand track 1, sixteenth grid, distinct repeated Note On events',
-        'accompaniment':'Lowest source note active half a quarter into each two-quarter window; exact selected source identity retains its real NoteOn/NoteOff within the window; continuous identities merge; pickup silence retained; full piano polyphony omitted',
-        'leftHandQuantization':'Sixteenth grid: ceil NoteOn and floor NoteOff, minimum one grid unit; no source selected for an empty window',
-        'scope':'Opening excerpt with a closing D# cadence, not the complete MIDI'}
-    OUT.mkdir(parents=True,exist_ok=True)
-    for name in ['avr_core.js','FluidR3-MIT.txt']:
-        shutil.copyfile(BASE/name,OUT/name)
-    (OUT/'packing-search.json').write_text(json.dumps(dict(selection='Longest fitting searched prefix; then smallest image. Dictionary optimization is heuristic.',
-        engineCodeBytes=code_bytes,flashLimitBytes=1024,maximumPhraseEntryOffset=255,streamPointerBits=16,trials=trials),indent=2)+'\n',encoding='utf-8',newline='\n')
-    (OUT/'score.json').write_text(json.dumps(score,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
-    builder.build(OUT)
+    score['source_midi']=dict(file='../../reference/turkish-march/source-events.json',sha256=hashlib.sha256(SOURCE.read_bytes()).hexdigest(),
+        originalMidiSha256=json.loads(SOURCE.read_text(encoding='utf-8'))['source']['sha256'],ppqn=ppqn,
+        credit='MIDI: Bernd Krüger / piano-midi.de; source edition2013-07-15',timeSignature='2/4',sourcePitchedNotes=len(notes))
+    score['arrangement']=dict(sourceQuarterBeats=args.source_bars*2,sourceBars2_4=args.source_bars,cadenceQuarterBeats=4,
+        lead='Highest active source right-hand note, sixteenth grid; every selected repeated attack preserved.',
+        accompaniment='Lowest original source left-hand note selected half a quarter into each two-quarter window, plus the lowest higher chord tone sharing its exact source onset and NoteOff. Selected source identities retain bounded attacks/releases; absent chord tones are silent.',
+        leftHandQuantization='Ceil NoteOn, floor NoteOff, minimum one sixteenth; no selected note extends beyond its two-quarter window.',
+        scope='Extended opening excerpt with added closing D# cadence. Full source polyphony and later source sections remain omitted.',
+        tempo='Steady151 BPM replaces the expressive source tempo map.',
+        restoredSecondChordNotes=sum(n['secondPitch'] is not None for n in score['left_hand_note_events']))
+    engine=module('turkish_three',ROOT/'tools/build-turkish-three.py')
+    result=engine.build(args.output,score)
+    (args.output/'packing-search.json').write_text(json.dumps(dict(
+        selection='Selected extended source prefix with genuine inner chord notes. The dictionary is heuristic; no global maximum is claimed.',
+        candidates=args.candidates,flashBytes=result['flashBytes'],codeBytes=result['codeBytes'],tableBytes=result['tableBytes'],
+        sourceBars2_4=args.source_bars,flashLimitBytes=1024,maximumPhraseEntryOffset=255,streamPointerBits=16),indent=2)+'\n',encoding='utf-8',newline='\n')
+    print(json.dumps(dict(sourceBars=args.source_bars,seconds=(args.source_bars*2+4)*60/bpm,flashBytes=result['flashBytes'],restoredSecondChordNotes=score['arrangement']['restoredSecondChordNotes'])))
+
 
 if __name__=='__main__':main()

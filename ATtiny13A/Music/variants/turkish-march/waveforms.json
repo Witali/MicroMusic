@@ -1,129 +1,96 @@
 {
-  "assignments": {
-    "lead": "acoustic-grand-piano",
-    "keys": {
-      "instrument": "acoustic-grand-piano",
-      "level": 10
+  "lead": {
+    "instrument": "acoustic-grand-piano",
+    "label": "Акустический рояль",
+    "gmProgram": 0,
+    "eepromOffset": 0,
+    "level": 15,
+    "envelope": {
+      "model": "piano",
+      "defaultLevel": 15,
+      "decayMask": 3,
+      "retrigger": "peak",
+      "releaseStep": 2,
+      "decayMaskByRegister": {
+        "thresholdMidi": 75,
+        "thresholdDdsStep": 2175,
+        "lowMask": 3,
+        "highMask": 0
+      }
     },
-    "pluck": "off",
-    "percussion": "off"
-  },
-  "instrumentBank": "../../instruments/bank.json",
-  "waves": {
-    "lead": {
-      "low": [
-        0,
-        2,
-        4,
-        5,
-        3,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        -2,
-        -4,
-        -5,
-        -4,
-        -2
-      ],
-      "high": [
-        1,
-        3,
-        3,
-        4,
-        5,
-        6,
-        3,
-        1,
-        0,
-        -1,
-        -2,
-        -3,
-        -5,
-        -6,
-        -6,
-        -3
-      ]
-    },
-    "keys": {
-      "low": [
-        0,
-        2,
-        4,
-        5,
-        3,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        -2,
-        -4,
-        -5,
-        -4,
-        -2
-      ],
-      "high": [
-        1,
-        3,
-        3,
-        4,
-        5,
-        6,
-        3,
-        1,
-        0,
-        -1,
-        -2,
-        -3,
-        -5,
-        -6,
-        -6,
-        -3
-      ]
-    },
-    "pluck": {
-      "low": [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      "high": [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ]
+    "transient": {
+      "kind": "piano-attack",
+      "minEnvelopeLevel": 14,
+      "eepromOffsets": {
+        "low": 48,
+        "high": 56
+      },
+      "maximumSwitchSampleDelta": 1
     }
   },
-  "note": "Three physical low/high EEPROM pairs; unused slots contain silence. Piano waveforms measured from FluidR3 GM program 0."
+  "keys": {
+    "instrument": "acoustic-grand-piano",
+    "label": "Акустический рояль",
+    "gmProgram": 0,
+    "eepromOffset": 16,
+    "level": 10,
+    "envelope": {
+      "model": "piano",
+      "defaultLevel": 15,
+      "decayMask": 3,
+      "retrigger": "peak",
+      "releaseStep": 2,
+      "decayMaskByRegister": {
+        "thresholdMidi": 75,
+        "thresholdDdsStep": 2175,
+        "lowMask": 3,
+        "highMask": 0
+      }
+    },
+    "transient": {
+      "kind": "piano-attack",
+      "minEnvelopeLevel": 14,
+      "eepromOffsets": {
+        "low": 48,
+        "high": 56
+      },
+      "maximumSwitchSampleDelta": 1
+    }
+  },
+  "pluck": {
+    "instrument": "acoustic-grand-piano",
+    "label": "Акустический рояль",
+    "gmProgram": 0,
+    "eepromOffset": 32,
+    "level": 9,
+    "envelope": {
+      "model": "piano",
+      "defaultLevel": 15,
+      "decayMask": 3,
+      "retrigger": "peak",
+      "releaseStep": 2,
+      "decayMaskByRegister": {
+        "thresholdMidi": 75,
+        "thresholdDdsStep": 2175,
+        "lowMask": 3,
+        "highMask": 0
+      }
+    },
+    "transient": {
+      "kind": "piano-attack",
+      "minEnvelopeLevel": 14,
+      "eepromOffsets": {
+        "low": 48,
+        "high": 56
+      },
+      "maximumSwitchSampleDelta": 1
+    }
+  },
+  "percussion": {
+    "instrument": "off",
+    "label": "Выключены",
+    "level": 0,
+    "enabled": false,
+    "notes": []
+  }
 }

@@ -7,6 +7,13 @@ source-events.json сохраняет события оригинала в ст�
   Edition: 2013-07-15
 
 Это исходник аранжировки, а не прошивка. Его полный объём не помещается
-в ATtiny13A. Текущая адаптация использует начальные 56 тактов 2/4,
+в ATtiny13A. Текущая адаптация использует начальные 74 такта 2/4,
 шестнадцатую сетку, постоянный темп и отдельную завершающую каденцию.
 Скрипт: tools/arrange-turkish-march.py.
+
+Updated native adaptation:74 source2/4bars (148quarters) plus a four-quarter
+closing cadence,60.397seconds at steady151BPM. It retains the selected
+right-hand melody and bounded bass identities, and restores37 second
+left-hand chord tones sharing the selected bass note's original on/off.
+Three real piano oscillators replace the former two-primary/two-tail mix.
+Other full-source chord tones and later sections remain explicitly omitted.

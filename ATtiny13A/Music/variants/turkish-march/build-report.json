@@ -1,14 +1,15 @@
 {
-  "flashBytes": 964,
-  "codeBytes": 574,
-  "tableBytes": 390,
+  "engine": "turkish-three",
+  "flashBytes": 1016,
+  "codeBytes": 532,
+  "tableBytes": 484,
   "eepromBytes": 64,
-  "flashSha256": "75976c7c66bf88e10d2e4b1bd63d31cfb8b3542ee0fe8c0e43123647bcb17430",
-  "eepromSha256": "896736a3ec3dd8b64facf639507349cb4aa26a9161b3f26adec3fbdd25985173",
+  "flashSha256": "2ec7cac3124cda3302938ee77938901d08ee8ba781698bde5a1a2b955030549b",
+  "eepromSha256": "de37b0a60a1a0c845d84166a6169056e364f3e88cbfc824260fafd325e5ea2b8",
   "labels": {
     "REST_INDEX": 17,
     "HOLD_INDEX": 18,
-    "PLAYLIST_LEN": 28,
+    "PLAYLIST_LEN": 27,
     "FIRST_PLAYLIST_INDEX": 1,
     "GRID_STEP_LOW": 48,
     "GRID_STEP_HIGH": 35,
@@ -23,75 +24,73 @@
     "audio_step": 88,
     "render_sample": 94,
     "voice_loop": 98,
-    "primary_gain": 132,
-    "write_pwm": 138,
-    "ring_published": 156,
-    "pwm_irq": 160,
-    "ring_read": 162,
-    "irq_restore": 168,
-    "music_tick": 170,
-    "envelope_loop": 174,
-    "state_plucked": 184,
-    "state_mask": 202,
-    "state_gate": 216,
-    "state_release": 224,
-    "envelope_store": 238,
-    ".L0a8": 248,
-    "grid_step": 260,
-    ".L0ba": 260,
-    "read_event": 266,
-    ".L0c8": 274,
-    "note_off": 282,
-    "note_off_loop": 284,
-    "chord_event": 304,
-    "melodic_event": 330,
-    "lead_commit": 376,
-    "note_rest": 378,
-    "release_lead": 378,
-    "hold_sample": 388,
-    "next_section": 392,
-    ".L15c": 412,
-    "render_tone": 422,
-    ".L216": 438,
-    "piano_attack_done": 448,
-    "eeprom_low_nibble": 466,
-    ".L25c": 470,
-    "voice_silent": 498,
-    "initialize_voice": 502,
+    "primary_gain": 128,
+    "write_pwm": 134,
+    "ring_published": 152,
+    "pwm_irq": 156,
+    "ring_read": 158,
+    "irq_restore": 164,
+    "music_tick": 166,
+    "envelope_loop": 170,
+    "state_plucked": 180,
+    "state_mask": 198,
+    "state_gate": 212,
+    "state_release": 220,
+    "envelope_store": 234,
+    ".L0a8": 244,
+    "grid_step": 256,
+    ".L0ba": 256,
+    "read_event": 262,
+    ".L0c8": 270,
+    "note_off": 278,
+    "note_off_loop": 280,
+    "chord_event": 300,
+    "melodic_event": 332,
+    "lead_commit": 378,
+    "note_rest": 380,
+    "release_lead": 380,
+    "hold_sample": 390,
+    "next_section": 394,
+    ".L15c": 414,
+    "render_tone": 424,
+    ".L216": 440,
+    "piano_attack_done": 446,
+    "eeprom_low_nibble": 464,
+    ".L25c": 468,
+    "voice_silent": 496,
+    "initialize_voice": 500,
     "voice_initialized": 520,
-    "capture_ram_tail": 522,
-    "ram_tail_destination": 544,
-    "ram_tail_copy": 560,
-    "no_ram_tail": 570,
-    "playlist": 574,
-    "durations": 602,
-    "note_steps": 609,
-    "chord_steps": 643,
-    "melody_data": 675,
-    "section_packed_000": 675,
-    "first_section": 675,
-    "section_packed_002": 678,
-    "section_packed_004": 722,
-    "section_packed_005": 737,
-    "section_packed_003": 738,
-    "section_packed_006": 741,
-    "section_packed_007": 759,
-    "section_packed_001": 760,
-    "section_packed_008": 795,
-    "section_packed_009": 837,
-    "section_packed_011": 840,
-    "section_packed_013": 853,
-    "section_packed_010": 854,
-    "section_packed_012": 879,
-    "section_packed_014": 892
+    "voice_initialized_return": 530,
+    "playlist": 532,
+    "durations": 559,
+    "note_steps": 566,
+    "chord_steps": 600,
+    "melody_data": 664,
+    "section_packed_000": 664,
+    "first_section": 664,
+    "section_packed_004": 666,
+    "section_packed_002": 668,
+    "section_packed_003": 689,
+    "section_packed_006": 733,
+    "section_packed_009": 735,
+    "section_packed_005": 736,
+    "section_packed_007": 751,
+    "section_packed_001": 789,
+    "section_packed_008": 803,
+    "section_packed_010": 845,
+    "section_packed_012": 848,
+    "section_packed_011": 874,
+    "section_packed_013": 887,
+    "section_packed_014": 908,
+    "section_packed_015": 914
   },
   "score": {
-    "note_count": 285,
-    "event_bytes": 289,
-    "maximum_entry_offset": 217,
-    "playlist_bytes": 28,
+    "note_count": 310,
+    "event_bytes": 352,
+    "maximum_entry_offset": 250,
+    "playlist_bytes": 27,
     "note_table_bytes": 34,
-    "chord_table_bytes": 32,
+    "chord_table_bytes": 64,
     "durations": [
       1,
       2,
@@ -122,83 +121,122 @@
       "R"
     ],
     "chords": [
-      "left_54",
-      "left_53",
-      "left_46",
-      "left_49",
-      "left_51",
-      "left_39",
-      "left_44",
-      "left_50"
+      "left_54_58",
+      "cadence",
+      "left_53_58",
+      "left_46_None",
+      "left_54_None",
+      "left_49_None",
+      "left_51_57",
+      "left_51_58",
+      "left_46_51",
+      "left_39_None",
+      "left_44_None",
+      "left_51_55",
+      "left_53_55",
+      "left_50_55",
+      "left_55_58",
+      "left_57_60"
     ],
     "chord_notes": {
-      "left_54": [
+      "left_54_58": [
         54,
-        null
+        58
       ],
-      "left_53": [
-        53,
-        null
-      ],
-      "left_46": [
-        46,
-        null
-      ],
-      "left_49": [
-        49,
-        null
-      ],
-      "left_51": [
+      "cadence": [
         51,
         null
       ],
-      "left_39": [
+      "left_53_58": [
+        53,
+        58
+      ],
+      "left_46_None": [
+        46,
+        null
+      ],
+      "left_54_None": [
+        54,
+        null
+      ],
+      "left_49_None": [
+        49,
+        null
+      ],
+      "left_51_57": [
+        51,
+        57
+      ],
+      "left_51_58": [
+        51,
+        58
+      ],
+      "left_46_51": [
+        46,
+        51
+      ],
+      "left_39_None": [
         39,
         null
       ],
-      "left_44": [
+      "left_44_None": [
         44,
         null
       ],
-      "left_50": [
+      "left_51_55": [
+        51,
+        55
+      ],
+      "left_53_55": [
+        53,
+        55
+      ],
+      "left_50_55": [
         50,
-        null
+        55
+      ],
+      "left_55_58": [
+        55,
+        58
+      ],
+      "left_57_60": [
+        57,
+        60
       ]
     },
-    "total_data_bytes": 390,
+    "total_data_bytes": 484,
     "section_bars": {
-      "intro": 35,
+      "intro": 37,
       "ending": 1
     },
     "playlist": [
       "packed_000",
       "packed_001",
       "packed_002",
+      "packed_003",
+      "packed_004",
       "packed_001",
       "packed_002",
       "packed_003",
-      "packed_004",
       "packed_005",
-      "packed_004",
-      "packed_006",
       "packed_006",
       "packed_007",
-      "packed_008",
-      "packed_005",
-      "packed_004",
-      "packed_005",
-      "packed_004",
-      "packed_006",
-      "packed_006",
-      "packed_007",
+      "packed_002",
       "packed_008",
       "packed_009",
+      "packed_006",
+      "packed_007",
+      "packed_002",
+      "packed_008",
       "packed_010",
       "packed_011",
       "packed_012",
       "packed_013",
+      "packed_014",
       "packed_011",
-      "packed_014"
+      "packed_012",
+      "packed_013",
+      "packed_015"
     ],
     "source_playlist": [
       "intro",
@@ -206,39 +244,40 @@
     ],
     "section_offsets": {
       "packed_000": 0,
-      "packed_002": 3,
-      "packed_004": 47,
-      "packed_003": 63,
-      "packed_005": 62,
-      "packed_006": 66,
-      "packed_001": 85,
-      "packed_007": 84,
-      "packed_008": 120,
-      "packed_009": 162,
-      "packed_010": 179,
-      "packed_011": 165,
-      "packed_013": 178,
-      "packed_012": 204,
-      "packed_014": 217
+      "packed_004": 2,
+      "packed_002": 4,
+      "packed_003": 25,
+      "packed_005": 72,
+      "packed_006": 69,
+      "packed_009": 71,
+      "packed_001": 125,
+      "packed_007": 87,
+      "packed_008": 139,
+      "packed_010": 181,
+      "packed_011": 210,
+      "packed_012": 184,
+      "packed_013": 223,
+      "packed_014": 244,
+      "packed_015": 250
     },
     "compression": {
       "method": "Repeated command phrases; dynamic-programming parsing; suffix sharing; deterministic dictionary search",
       "globallyMinimal": false,
       "candidateLimit": 4096,
       "candidateCount": 4096,
-      "dictionaryTrials": 213132,
-      "originalCommandBytes": 653,
-      "originalStreamSha256": "0b1d2600830b0872144855effd8f1a3690d3d4c0bb5792fb1637b18f91e87134",
-      "sourceLayoutBytes": 657,
-      "packedEventBytes": 289,
-      "playlistBytes": 28,
-      "packedBytes": 317,
-      "savedAgainstSourceLayoutBytes": 340,
+      "dictionaryTrials": 168076,
+      "originalCommandBytes": 691,
+      "originalStreamSha256": "775f9029d632aacaf0e1cc39ef2b037c6ffdbaedc637b228c6983a0da2e6f81e",
+      "sourceLayoutBytes": 695,
+      "packedEventBytes": 352,
+      "playlistBytes": 27,
+      "packedBytes": 379,
+      "savedAgainstSourceLayoutBytes": 316,
       "storedSections": 11,
-      "referencedSections": 15,
+      "referencedSections": 16,
       "verifiedLossless": true
     },
-    "source": "Моцарт — Турецкий марш (начальный фрагмент)",
+    "source": "Моцарт — Турецкий марш (расширенный фрагмент)",
     "rest_index": 17,
     "hold_index": 18,
     "holds": [],
@@ -248,25 +287,12 @@
         "instrument": "acoustic-grand-piano",
         "level": 10
       },
-      "pluck": "off",
+      "pluck": {
+        "instrument": "acoustic-grand-piano",
+        "level": 9
+      },
       "percussion": "off"
     }
-  },
-  "timing": {
-    "phaseStep": 9008,
-    "phaseBits": 16,
-    "envelopeTickCycles": 131072,
-    "tempoBpm": 151,
-    "actualTempoBpm": 151.00836753845215,
-    "sharedGrid": "One sixteenth grid drives score and half-beat percussion",
-    "initialHighPhase": 221
-  },
-  "articulation": {
-    "holdIndex": 18,
-    "holds": [],
-    "attack": "piano",
-    "retrigger": "full",
-    "phaseContinuous": true
   },
   "instrumentAssignments": {
     "lead": {
@@ -328,14 +354,32 @@
       }
     },
     "pluck": {
-      "instrument": "off",
-      "label": "Выключен",
-      "gmProgram": null,
+      "instrument": "acoustic-grand-piano",
+      "label": "Акустический рояль",
+      "gmProgram": 0,
       "eepromOffset": 32,
-      "level": 0,
+      "level": 9,
       "envelope": {
-        "model": "off",
-        "defaultLevel": 0
+        "model": "piano",
+        "defaultLevel": 15,
+        "decayMask": 3,
+        "retrigger": "peak",
+        "releaseStep": 2,
+        "decayMaskByRegister": {
+          "thresholdMidi": 75,
+          "thresholdDdsStep": 2175,
+          "lowMask": 3,
+          "highMask": 0
+        }
+      },
+      "transient": {
+        "kind": "piano-attack",
+        "minEnvelopeLevel": 14,
+        "eepromOffsets": {
+          "low": 48,
+          "high": 56
+        },
+        "maximumSwitchSampleDelta": 1
       }
     },
     "percussion": {
@@ -347,25 +391,35 @@
     }
   },
   "instrumentBankSha256": "ddf64e6c18950407c002d3c1a3dba9356e566bccba099c08918e7c5d0aa52221",
-  "releaseChannels": {
-    "primaryVoices": 3,
-    "tailSlots": 2,
+  "timing": {
+    "phaseStep": 9008,
+    "phaseBits": 16,
+    "envelopeTickCycles": 131072,
+    "tempoBpm": 151,
+    "actualTempoBpm": 151.00836753845215,
+    "initialHighPhase": 221
+  },
+  "channels": {
+    "tonalVoices": 3,
+    "parts": 2,
+    "tailSlots": 0,
     "voiceAddresses": [
       96,
       101,
-      106,
-      111,
-      116
+      106
     ],
-    "voiceStateBytes": 25,
     "pwmRingBytes": 16,
-    "tailGain": 0.5,
-    "stealing": "Quietest of two release levels",
+    "roles": [
+      "right-hand melody",
+      "left-hand bass",
+      "left-hand chord tone"
+    ]
+  },
+  "articulation": {
+    "holdIndex": 18,
     "phaseContinuous": true,
-    "isrCycles": 15,
-    "requiredFuses": {
-      "low": "0x7A",
-      "high": "0xFF"
-    }
-  }
+    "attack": "piano",
+    "release": "linear"
+  },
+  "outputNormalization": null
 }
