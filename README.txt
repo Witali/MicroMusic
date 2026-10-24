@@ -3,10 +3,18 @@ MicroMusic
 Общая страница всех плееров: https://witali.github.io/MicroMusic/
 Локально: node web-player/scripts/serve.mjs 8134 → http://127.0.0.1:8134/
 
-Музыкальные прошивки ATtiny13A и плеер, исполняющий настоящий AVR-код.
+Музыкальные прошивки ATtiny13A / ATtiny88 и плеер, исполняющий настоящий AVR-код.
 Онлайн: https://witali.github.io/MicroMusic/web-player/
 Локально: node web-player/scripts/serve.mjs 8134
 Открыть: http://127.0.0.1:8134/web-player/
+
+ATTINY88
+На странице музыки переключатель «Микроконтроллер» выбирает ATtiny13A
+или ATtiny88: все девять аранжировок, свои HEX/EEPROM и схема выводов.
+Прямая ссылка: https://witali.github.io/MicroMusic/web-player/?device=attiny88
+Исходники, прошивки и проверка по даташиту: ATtiny88/Music/README.txt.
+Сборщик: python tools/build-attiny88-music.py.
+ATtiny88: RC 8 МГц, Timer1 PWM 31,25 кГц, моно/R PB2/OC1B, стерео L PB1/OC1A.
 
 СТЕРЕО ЛЮМЬЕР
 Прослушивание: https://witali.github.io/MicroMusic/web-player/?firmware=lumiere-stereo

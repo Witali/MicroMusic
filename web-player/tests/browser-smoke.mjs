@@ -17,12 +17,15 @@ function message(target,type){
 let worker,ports;
 try{
   const catalog=await(await fetch('../firmware.json')).json(),entry=catalog.entries[0];
-  for(const entry of catalog.entries.filter((entry,index)=>index===0||entry.audioChannels===2))for(const engine of [undefined,'js']){
+  const tiny88=await(await fetch('../firmware-attiny88.json')).json();
+  const cases=[...catalog.entries.filter((entry,index)=>index===0||entry.audioChannels===2).flatMap(entry=>[undefined,'js'].map(engine=>({entry,engine}))),
+    ...tiny88.entries.map(entry=>({entry,engine:'js'}))];
+  for(const {entry,engine} of cases){
     // Post immediately: imports must not drop init or overtake queued controls.
-    const name=engine??'wasm';
+    const name=(entry.device==='attiny88'?'ATtiny88 / ':'ATtiny13A / ')+(engine??'wasm');
     worker=new Worker('../worker.js',{type:'module'});
     const ready=message(worker,'ready');worker.postMessage({type:'init',entry,engine,sampleRate:48000,controls:{cutoff:9000,volume:.65}});
-    assert((await ready).engine===name,'Selected Worker engine differs');
+    assert((await ready).engine===(engine??'wasm'),'Selected Worker engine differs');
     log('PASS: immediate Worker init / '+name+' / '+entry.id);
     ports=new MessageChannel();ports.port1.start();
     worker.postMessage({type:'audio-port',port:ports.port2,sampleRate:48000,controls:{cutoff:9000,volume:.65}},[ports.port2]);

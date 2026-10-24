@@ -57,3 +57,26 @@ main{max-width:1320px;margin:auto;padding:0 40px}.intro{display:flex;align-items
 /* Stereo wires leave the physical pins: PB1/6 at y=78, PB0/5 at y=104. */
 .signal-outputs{flex:1;min-width:0;position:relative;height:124px}.signal-outputs .signal-path{min-width:0}.signal-outputs .stereo-left{position:absolute;left:0;right:0;top:26px}body[data-stereo=true] .chip .p5{background:#99b96b}body[data-stereo=true] .chip .p6{background:#86d9ef}body[data-stereo=true] .right-output .signal-line svg{stroke:#86d9ef}.panorama{font-size:11px;color:var(--muted);line-height:1.7;margin:0 0 20px}.scope-channel{position:absolute;top:8px;left:8px;color:var(--accent);font:9px var(--mono);background:#0e140e;padding:2px 4px}.right-scope{margin-top:10px}.right-scope .scope-channel{color:#86d9ef}body[data-stereo=true] .scope-wrap canvas{height:126px}#average{font-size:15px}[hidden]{display:none!important}
 @container chip-board (max-width:380px){body[data-stereo=true] .signal-path>span{display:block;top:58px;font-size:7px}body[data-stereo=true] .signal-line{right:0;width:auto}body[data-stereo=true] .signal-line>b{display:block}}
+
+.machine-spec strong b{font-weight:inherit}
+.device-control{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin:0 0 26px}
+.device-control label{color:var(--muted);font-size:12px}.device-control select{min-width:150px;color:var(--accent);border-color:#6d8256;font-weight:600}.device-control>span{color:var(--muted);font-size:11px}
+.engine-options input:disabled+span{opacity:.35;cursor:not-allowed}
+.hardware-note{color:var(--muted);font:10px/1.6 var(--mono);margin:0 0 20px}
+.chip-28{height:252px;gap:14px}.chip-28 .chip-dot{top:20px}
+.pin-bank{position:absolute;top:18px;bottom:18px;width:11px;display:flex;flex-direction:column;justify-content:space-between}.pin-bank.left{left:-11px}.pin-bank.right{right:-11px}.pin-bank i{display:block;height:8px;background:#64715d;flex-shrink:0}.pin-bank .pwm-right{background:#99b96b}
+.chip .tiny88-vcc{right:calc(100% + 16px);top:118px;color:#d1ab8b}.chip .tiny88-gnd{right:calc(100% + 16px);top:134px}
+body[data-device=attiny88] .board{padding-left:60px;padding-bottom:20px}
+body[data-device=attiny88] .signal-outputs{height:252px}
+body[data-device=attiny88] .right-output{top:144px}
+body[data-device=attiny88] .signal-outputs .stereo-left{top:160px}
+body[data-device=attiny88] .signal-line{height:12px;top:64px}
+body[data-device=attiny88] .signal-line>span{font-size:8px;padding:2px 4px}
+body[data-device=attiny88] .signal-line svg{height:16px;width:16px}
+body[data-device=attiny88] .signal-path>span{top:198px;left:calc(16px - var(--board-gap));font-size:9px}
+body[data-device=attiny88] .right-output>span{top:26px}
+body[data-device=attiny88] .stereo-left>span{top:26px}
+body[data-device=attiny88][data-stereo=true] .pin-bank .pwm-right{background:#86d9ef}
+body[data-device=attiny88][data-stereo=true] .pin-bank .pwm-left{background:#99b96b}
+@media(max-width:460px){.device-control{gap:10px;margin-bottom:20px}.device-control>span{flex-basis:100%;font-size:10px}.chip-28{width:142px}.chip .tiny88-vcc,.chip .tiny88-gnd{font-size:8px;right:calc(100% + 14px)}body[data-device=attiny88] .board{padding-left:50px;--board-gap:20px}.hardware-note{font-size:9px}body[data-device=attiny88] .signal-path>span{font-size:7px}}
+@container chip-board (max-width:380px){body[data-device=attiny88] .signal-path>span{display:block;left:calc(16px - var(--board-gap));font-size:7px}}

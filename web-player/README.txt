@@ -1,4 +1,4 @@
-MICROMUSIC / ATtiny13A WEB PLAYER
+MICROMUSIC / ATtiny13A + ATtiny88 WEB PLAYER
 
 ЗАПУСК
 Из корня репозитория:
@@ -11,6 +11,18 @@ MICROMUSIC / ATtiny13A WEB PLAYER
 Web Audio и AudioWorklet. Звук включается кнопкой «Слушать».
 Страницу следует открывать через localhost или HTTPS, не через file://.
 Сервер доступен только с этого компьютера; Ctrl+C завершает его работу.
+
+ПЕРЕКЛЮЧЕНИЕ МИКРОКОНТРОЛЛЕРА
+Над плеером выберите ATtiny13A или ATtiny88. Мелодия сохраняется, плеер
+останавливается и сбрасывается на начало; ползунки сохраняют значения.
+Параметр ?device=attiny88 открывает ATtiny88 сразу. Его можно сочетать
+с &firmware=children или другим ID музыкальной аранжировки.
+Для обоих чипов доступны все девять музыкальных вариантов. ATtiny88
+получает свои HEX, EEPROM, частоты, выводы, фьюзы и ёмкость памяти.
+При ошибке загрузки нового каталога прежняя прошивка остаётся доступна.
+Речевой каталог ?collection=hq4 остаётся на ATtiny13A.
+ATtiny88 использует JS; WASM недоступен. При возврате к ATtiny13A
+восстанавливается ранее выбранный движок.
 
 ВОЗМОЖНОСТИ
 Девять прошивок: Люмьер, Алисия, Турецкий марш, Children, Greensleeves,
@@ -51,6 +63,12 @@ Low 0x7A: внутренний RC 9,6 МГц, CKDIV8 отключён (бит 4 
 таблицы 17-3 и 17-4 (стр. 110):
 https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf
 
+ATtiny88: low 0xEE, high 0xDF, extended 0xFF; внутренний RC 8 МГц,
+CKDIV8 отключён. Timer1: Fast PWM mode 5, 31 250 Гц; новые отсчёты
+синтеза 15 625 Гц. Моно/R — PB2/OC1B (PDIP-28: 16), L — PB1/OC1A (15).
+Вместе с VCC подаётся питание на AVCC. Документ Microchip doc8008,
+§20.2; подробная сверка: ATtiny88/Music/HARDWARE_REVIEW_RU.md.
+
 ПРОШИВКИ
 firmware.json генерируется из сохранённых файлов ATtiny13A/Music/.
 Flash и EEPROM включены в каталог. Проверяются SHA-256 всех оставшихся
@@ -89,6 +107,13 @@ MIDI-бинарники в проект не помещаются. Событи�
   python web-player/scripts/build_catalog.py --check
 Скрипт останавливается, если находит неизвестный образ или повреждённый HEX.
 
+Каталог ATtiny88 генерируется отдельно из ATtiny88/Music/variants/,
+с проверкой хешей исходных ATtiny13A, результатов переноса и полного аудита:
+  python web-player/scripts/build_catalog.py --target attiny88
+  python web-player/scripts/build_catalog.py --target attiny88 --check
+Прошивки пересоздаются tools/build-attiny88-music.py; инструкции сборки,
+программирования и ограничения модели: ATtiny88/Music/README.txt.
+
 БАНК ИНСТРУМЕНТОВ ПРИ СБОРКЕ
 Общий ATtiny13A/Music/instruments/bank.json хранит измеренные компактные
 профили FluidR3, их GM-программы, модель огибающей, уровень и происхождение.
@@ -116,6 +141,14 @@ EEPROM только читается. Партитура и программа �
 измеренного тембра: ATtiny13A/Music/instruments/README.txt.
 
 УСТРОЙСТВО
+ATtiny88 использует lib/avr-attiny88.js: свою карту SRAM/стека и регистров,
+Timer1, EEPROM и CLKPR. Этот же модуль используется полным аудитом прошивок
+через tools/avr-music-target-core.mjs. Это модель периферии, нужной девяти
+портированным музыкальным прошивкам; произвольные программы не поддерживаются.
+Поток OCR1A/B с частотой PWM 31,25 кГц поступает в общий JS-ресэмплер,
+фильтры и AudioWorklet. Музыкальные данные и тембры сохранены; звук не
+побитово совпадает с ATtiny13A из-за другой частоты синтеза и шума.
+
 lib/engines.js загружает выбранный исполнитель. JS использует
 lib/avr-reference.js и lib/renderer-js.js. WASM использует native/avr.c,
 собранный в wasm/avr.wasm. Оба исполняют одинаковое подмножество инструкций

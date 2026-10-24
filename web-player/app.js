@@ -10,6 +10,9 @@ let session=0, hasPlayed=false, completed=false, realtime;
 let playAttempt=0, busyAttempt=0;
 let lastScopeDraw=-Infinity, scopeDrawTimer;
 let originalLoading=false, originalAttempt=0;
+const speechCollection=new URL(location.href).searchParams.get('collection')==='hq4';
+let currentDevice='attiny13a', deviceRequest=0;
+let preferred13Engine=selectedEngine();
 
 function showError(message) { $('error').textContent = message; $('error').hidden = !message; }
 function audioControls() {
@@ -17,6 +20,58 @@ function audioControls() {
   return {cutoff:+$('cutoff').value,volume:+$('volume').value*trim};
 }
 function selectedEngine() { return document.querySelector('input[name="engine"]:checked').value; }
+function deviceUI(device) {
+  const tiny88=device==='attiny88', name=tiny88?'ATtiny88':'ATtiny13A';
+  document.body.dataset.device=device;
+  $('device-select').value=device;
+  $('device-control').hidden=speechCollection;
+  $('chip-attiny13a').hidden=tiny88; $('chip-attiny88').hidden=!tiny88;
+  $('tiny88-power').hidden=!tiny88;
+  $('machine-memory').textContent=tiny88?'8':'1';
+  $('machine-details').textContent=tiny88?'512 Б SRAM · 64 Б EEPROM · 8 МГц':'64 Б SRAM · 64 Б EEPROM · 9,6 МГц';
+  $('fuses').setAttribute('aria-label','Рекомендуемые фьюзы '+name);
+  $('fuse-low').textContent=tiny88?'0xEE':'0x7A';
+  $('fuse-high').textContent=tiny88?'0xDF':'0xFF';
+  $('fuse-high-note').textContent=tiny88?'SPI включён · RESET включён':'сохранить заводской';
+  $('fuse-extended').hidden=!tiny88; $('fuse-extended-value').textContent='0xFF';
+  $('fuse-clock-value').textContent='Внутренний RC · '+(tiny88?'8':'9,6')+' МГц';
+  $('fuse-clock-note').textContent='CKDIV8 отключён · делитель /1';
+  $('fuse-datasheet').href=tiny88?'https://ww1.microchip.com/downloads/en/DeviceDoc/doc8008.pdf':'https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf';
+  $('fuse-datasheet').textContent='Фьюзы в datasheet, §'+(tiny88?'20.2':'17.2')+' ↗';
+  document.querySelector('input[name="engine"][value="wasm"]').disabled=tiny88;
+  document.querySelector(`input[name="engine"][value="${tiny88?'js':preferred13Engine}"]`).checked=true;
+  $('engine-note').textContent=tiny88?'ATtiny88 воспроизводится движком JS.':'При смене — сброс на начало.';
+  if(!speechCollection) {
+    document.title=`MicroMusic / ${name} — плеер прошивок`;
+    document.querySelector('.intro .eyebrow').textContent=name+' / МУЗЫКА ИЗ МАШИННОГО КОДА';
+    document.querySelector('.library h2').textContent=tiny88?'Музыка на ATtiny88':'Как звучит один килобайт?';
+    document.querySelector('.source-only').hidden=tiny88;
+    const history=document.querySelector('.header-link');
+    history.href=tiny88?'https://github.com/Witali/MicroMusic/blob/main/ATtiny88/Music/HARDWARE_REVIEW_RU.md':'../ATtiny13A/Music/DEVELOPMENT_HISTORY_RU.txt';
+    history.textContent=tiny88?'Подключение ATtiny88 ↗':'История разработки ↗';
+  }
+}
+async function switchDevice(device) {
+  const request=++deviceRequest;
+  device=device==='attiny88'&&!speechCollection?'attiny88':'attiny13a';
+  try {
+    const response=await fetch(device==='attiny88'?'./firmware-attiny88.json':'./firmware.json');
+    if(!response.ok)throw new Error('HTTP '+response.status);
+    const next=await response.json();
+    if(request!==deviceRequest)return;
+    const requested=selected?.id||new URL(location.href).searchParams.get('firmware')||next.defaultId;
+    const id=next.aliases?.[requested]??requested;
+    const entry=next.entries.find(e=>e.id===id)||next.entries.find(e=>e.id===next.defaultId);
+    if(!entry)throw new Error('В каталоге нет доступных прошивок.');
+    parseHex(entry.flashHex,device==='attiny88'?8192:1024);
+    if(currentDevice==='attiny13a')preferred13Engine=selectedEngine();
+    catalog=next; currentDevice=device; deviceUI(device); load(entry);
+  } catch(error) {
+    if(request!==deviceRequest)return;
+    $('device-select').value=currentDevice;
+    showError('Не удалось загрузить каталог прошивок. '+error.message);
+  }
+}
 function transport() {
   const originalPlaying=!originalAudio.paused&&!originalAudio.ended;
   document.body.dataset.playing = String(playing);
@@ -127,15 +182,22 @@ function load(entry,{autoplay=false}={}) {
   if(originalUrl)originalAudio.src=entry.originalPlaybackUrl||originalUrl;else originalAudio.removeAttribute('src');
   originalAudio.load(); originalAudio.volume=+$('volume').value;
   const stereo=entry.audioChannels===2;
+  const tiny88=currentDevice==='attiny88', timer=tiny88?'1':'0';
   document.body.dataset.stereo=String(stereo);
   scopes=Array.from({length:stereo?2:1},()=>new Float32Array(512));
   $('stereo-output').hidden=!stereo;$('scope-right').hidden=!stereo;$('panorama').hidden=!stereo;
-  $('right-output-label').textContent=(stereo?'R · ':'')+'PB1 / OC0B · вывод 6';
+  $('right-output-label').textContent=(stereo?'R · ':'')+(tiny88?'PB2 / OC1B · вывод 16':'PB1 / OC0B · вывод 6');
+  $('right-output-label').title=tiny88?'Вывод 16 в корпусе PDIP-28':'Вывод 6 в 8-выводных корпусах';
+  $('left-output-label').textContent='L · '+(tiny88?'PB1 / OC1A · вывод 15':'PB0 / OC0A · вывод 5');
+  $('left-output-label').title=tiny88?'Вывод 15 в корпусе PDIP-28':'Вывод 5 в 8-выводных корпусах';
   $('audio-mode').textContent=stereo?'СТЕРЕО · 2 PWM-ВЫХОДА':'МОНО · 1 PWM-ВЫХОД';
-  $('scope-left-label').textContent=stereo?'L · OCR0A':'МОНО · OCR0B';
+  $('scope-left-label').textContent=stereo?`L · OCR${timer}A`:`МОНО · OCR${timer}B`;
+  $('scope-right-label').textContent=`R · OCR${timer}B`;
   $('wave').setAttribute('aria-label',stereo?'Левый канал PWM до фильтра':'Осциллограмма PWM до фильтра');
   $('average-label').textContent=stereo?'СРЕДНИЙ PWM · L / R':'СРЕДНИЙ PWM';
-  document.querySelector('.chip').setAttribute('aria-label',stereo?'ATtiny13A, вид сверху: правый канал PB1 вывод 6, левый канал PB0 вывод 5':'ATtiny13A, вид сверху: выход PWM PB1 вывод 6');
+  $(tiny88?'chip-attiny88':'chip-attiny13a').setAttribute('aria-label',tiny88
+    ? 'ATtiny88, PDIP-28, вид сверху: '+(stereo?'правый канал PB2 вывод 16, левый канал PB1 вывод 15':'выход PWM PB2 вывод 16')
+    : 'ATtiny13A, вид сверху: '+(stereo?'правый канал PB1 вывод 6, левый канал PB0 вывод 5':'выход PWM PB1 вывод 6'));
   draw();
   $('elapsed').textContent='00:00.0'; $('average').textContent=stereo?'128.0 / 128.0':'128.0'; $('headroom').textContent='—';
   $('tempo').textContent='100.0%'; $('lag').textContent='0.0 мс'; realtime?.resetAnchor();
@@ -151,8 +213,9 @@ function load(entry,{autoplay=false}={}) {
       : entry.codec==='hq4-t' ? 'Исследование HQ4-T ↗' : 'Сверка HQ4 ↗';
   }
   const flashSource=entry.source||'data:text/plain;charset=utf-8,'+encodeURIComponent(entry.flashHex);
-  $('rom-name').textContent=`attiny13a-${entry.id}.hex`; $('rom-details').textContent=`${entry.flashBytes} / 1024 Б Flash · ${entry.eepromBytes} / 64 Б EEPROM · ${(entry.sampleHz/1000).toLocaleString('ru')} кГц отсчёты`;
-  $('rom-name').href=flashSource; $('rom-name').download=`attiny13a-${entry.id}.hex`;
+  const capacity=tiny88?8192:1024, prefix=currentDevice;
+  $('rom-name').textContent=`${prefix}-${entry.id}.hex`; $('rom-details').textContent=`${entry.flashBytes} / ${capacity} Б Flash · ${entry.eepromBytes} / 64 Б EEPROM · ${(entry.sampleHz/1000).toLocaleString('ru')} кГц ${entry.kind==='speech'?'отсчёты':'PWM'}`;
+  $('rom-name').href=flashSource; $('rom-name').download=`${prefix}-${entry.id}.hex`;
   $('rom-hash').textContent=entry.flashSha256.slice(0,16)+'…'; $('rom-hash').title='SHA-256 Flash: '+entry.flashSha256;
   $('rom-size').textContent=entry.flashBytes+' байт';
   $('original-player').hidden=!entry.originalPlayer; if(entry.originalPlayer)$('original-player').href=entry.originalPlayer;
@@ -162,12 +225,14 @@ function load(entry,{autoplay=false}={}) {
   $('download-eeprom').hidden=!entry.eepromHex; $('reset').disabled=false;
   const eepromSource=entry.eepromSource||(entry.eepromHex ? 'data:text/plain;charset=utf-8,'+encodeURIComponent(entry.eepromHex) : null);
   for(const [id,source,suffix] of [['download',flashSource,''],['download-eeprom',eepromSource,'-eeprom']]){
-    const link=$(id);if(source){link.href=source;link.download=`attiny13a-${entry.id}${suffix}.hex`;link.removeAttribute('aria-disabled');}
+    const link=$(id);if(source){link.href=source;link.download=`${prefix}-${entry.id}${suffix}.hex`;link.removeAttribute('aria-disabled');}
   }
-  const bytes=parseHex(entry.flashHex); $('memory').textContent=Array.from({length:8},(_,line)=>formatHex(line*16,4)+'  '+Array.from(bytes.subarray(line*16,line*16+16),x=>formatHex(x)).join(' ')).join('\n');
-  const url=new URL(location.href); url.searchParams.set('firmware',entry.id); history.replaceState(null,'',url);
+  const bytes=parseHex(entry.flashHex,capacity); $('memory').textContent=Array.from({length:8},(_,line)=>formatHex(line*16,4)+'  '+Array.from(bytes.subarray(line*16,line*16+16),x=>formatHex(x)).join(' ')).join('\n');
+  const url=new URL(location.href); url.searchParams.set('firmware',entry.id);
+  if(tiny88)url.searchParams.set('device','attiny88');else url.searchParams.delete('device');
+  history.replaceState(null,'',url);
   renderCatalog(); transport();
-  const worker=new Worker(new URL('./worker.js?v=20261023-stereo',import.meta.url),{type:'module'}); runtime=worker;
+  const worker=new Worker(new URL('./worker.js?v=20261024-attiny88',import.meta.url),{type:'module'}); runtime=worker;
   worker.onmessage=({data})=>{
     if (runtime!==worker) return;
     if (data.type==='ready') {
@@ -225,11 +290,16 @@ $('play').onclick=toggle; $('play-original').onclick=toggleOriginal; $('reset').
 $('volume').oninput=()=>{originalAudio.volume=+$('volume').value;runtime?.postMessage({type:'controls',controls:audioControls()});};
 $('cutoff').onchange=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
 $('match-speech-level').onchange=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
-for (const choice of document.querySelectorAll('input[name="engine"]')) choice.onchange=()=>{ if (selected) load(selected); };
+for (const choice of document.querySelectorAll('input[name="engine"]')) choice.onchange=()=>{
+  if(currentDevice==='attiny13a')preferred13Engine=selectedEngine();
+  if (selected) load(selected);
+};
+$('device-select').onchange=()=>switchDevice($('device-select').value);
 document.addEventListener('keydown',event=>{ if (event.code==='Space' && !event.repeat && !/INPUT|SELECT|TEXTAREA|BUTTON|A/.test(event.target.tagName)) { event.preventDefault(); toggle(); } });
 window.addEventListener('pagehide',()=>{ originalAudio.pause(); runtime?.terminate(); audio?.close(); });
 try {
-  const speech=new URL(location.href).searchParams.get('collection')==='hq4';
+  const speech=speechCollection;
+  deviceUI('attiny13a');
   if(speech){
     document.title='MicroMusic / ATtiny13A — речевые кодеки';
     document.querySelector('.intro .eyebrow').textContent='ATtiny13A / РЕЧЬ ИЗ МАШИННОГО КОДА';
@@ -244,6 +314,9 @@ try {
     $('speech-audit').hidden=false;
     document.querySelector('footer span:last-child').textContent='Речевые кодеки · Worker + AudioWorklet';
   }
+  if(!speech) {
+    await switchDevice(new URL(location.href).searchParams.get('device'));
+  } else {
   // Original recordings are shared public assets. Local listening can also use
   // restored emulator previews and the archived ChatGPT player.
   const response=await fetch(speech?'./hq4-firmware.json?v=20261023-mobile-original':'./firmware.json');
@@ -268,5 +341,6 @@ try {
   const requested=new URL(location.href).searchParams.get('firmware')||catalog.defaultId;
   const id=catalog.aliases?.[requested]??requested;
   load(catalog.entries.find(e=>e.id===id)||catalog.entries.find(e=>e.id===catalog.defaultId));
+  }
 } catch (error) { showError('Не удалось загрузить каталог прошивок. Обновите страницу или проверьте подключение. '+error.message); }
 draw();

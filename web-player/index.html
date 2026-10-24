@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#101411">
   <title>MicroMusic / ATtiny13A — плеер прошивок</title>
-  <meta name="description" content="Музыкальная прошивка ATtiny13A с исправленным ритмом: исполнение AVR-кода, звук PWM и осциллограмма в браузере.">
+  <meta name="description" content="Музыкальные прошивки ATtiny13A и ATtiny88: исполнение AVR-кода, звук PWM и осциллограмма в браузере.">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=20261024-firmware-only">
-  <script type="module" src="./app.js?v=20261023-mobile-original"></script>
+  <link rel="stylesheet" href="./styles.css?v=20261024-attiny88">
+  <script type="module" src="./app.js?v=20261024-attiny88"></script>
 </head>
 <body>
   <header class="site-header">
@@ -19,35 +19,39 @@
   <main>
     <div class="intro">
       <div><p class="eyebrow">ATtiny13A / МУЗЫКА ИЗ МАШИННОГО КОДА</p><h1>Слушайте прошивку<span>.</span></h1><p class="subtitle">Моно и стерео. Несколько голосов. Один крошечный чип.</p></div>
-      <div class="machine-spec"><strong>1 <span>КБ FLASH</span></strong><span>64 Б SRAM <i>·</i> 64 Б EEPROM <i>·</i> 9,6 МГц</span></div>
+      <div class="machine-spec"><strong><b id="machine-memory">1</b> <span>КБ FLASH</span></strong><span id="machine-details">64 Б SRAM · 64 Б EEPROM · 9,6 МГц</span></div>
     </div>
+    <div id="device-control" class="device-control"><label for="device-select">Микроконтроллер</label><select id="device-select"><option value="attiny13a">ATtiny13A</option><option value="attiny88">ATtiny88</option></select><span>Та же мелодия · прошивка для выбранного чипа</span></div>
     <div id="error" role="alert" class="error" hidden></div>
     <div class="workspace">
       <div class="instrument">
         <section class="panel player-panel" aria-label="Проигрыватель прошивки">
           <div class="panel-heading"><span class="eyebrow">01 / ПЛЕЕР</span><span class="run-state" id="run-status" role="status">Загрузка каталога…</span></div>
           <div class="board">
-            <div class="chip" aria-label="ATtiny13A, вид сверху: вывод 1 слева сверху, питание 8, земля 4, выход PWM 6"><span>ATMEL</span><strong>ATtiny13A</strong><small>9.6 MHz · AVR</small><b class="chip-dot" title="Метка вывода 1"></b><i class="pin left p1"></i><i class="pin left p2"></i><i class="pin left p3"></i><i class="pin left p4"></i><i class="pin right p8"></i><i class="pin right p7"></i><i class="pin right p6"></i><i class="pin right p5"></i><span class="pin-label pin-vcc" title="VCC, вывод 8">+5 В</span><span class="pin-label pin-gnd" title="Земля, вывод 4">GND</span></div>
-            <div class="signal-outputs"><div class="signal-path right-output"><span id="right-output-label" title="Вывод 6 в 8-выводных корпусах">PB1 / OC0B · вывод 6</span><div class="signal-line"><b></b><span>RC</span><b></b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h4l5-4v14l-5-4H3zM16 8q6 4 0 8m3-11q10 7 0 14"/></svg></div></div><div class="signal-path stereo-left" id="stereo-output" hidden><span title="Вывод 5 в 8-выводных корпусах">L · PB0 / OC0A · вывод 5</span><div class="signal-line"><b></b><span>RC</span><b></b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h4l5-4v14l-5-4H3zM16 8q6 4 0 8m3-11q10 7 0 14"/></svg></div></div></div>
+            <div class="chip" id="chip-attiny13a" aria-label="ATtiny13A, вид сверху: вывод 1 слева сверху, питание 8, земля 4, выход PWM 6"><span>ATMEL</span><strong>ATtiny13A</strong><small>9.6 MHz · AVR</small><b class="chip-dot" title="Метка вывода 1"></b><i class="pin left p1"></i><i class="pin left p2"></i><i class="pin left p3"></i><i class="pin left p4"></i><i class="pin right p8"></i><i class="pin right p7"></i><i class="pin right p6"></i><i class="pin right p5"></i><span class="pin-label pin-vcc" title="VCC, вывод 8">+5 В</span><span class="pin-label pin-gnd" title="Земля, вывод 4">GND</span></div>
+            <div class="chip chip-28" id="chip-attiny88" hidden aria-label="ATtiny88, PDIP-28, вид сверху: PWM PB2, вывод 16; второй канал PB1, вывод 15"><span>ATMEL</span><strong>ATtiny88</strong><small>8 MHz · PDIP-28</small><b class="chip-dot" title="Метка вывода 1"></b><div class="pin-bank left" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="pin-bank right" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="pwm-right"></i><i class="pwm-left"></i></div><span class="pin-label tiny88-vcc">VCC 7</span><span class="pin-label tiny88-gnd">GND 8</span></div>
+            <div class="signal-outputs"><div class="signal-path right-output"><span id="right-output-label" title="Вывод 6 в 8-выводных корпусах">PB1 / OC0B · вывод 6</span><div class="signal-line"><b></b><span>RC</span><b></b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h4l5-4v14l-5-4H3zM16 8q6 4 0 8m3-11q10 7 0 14"/></svg></div></div><div class="signal-path stereo-left" id="stereo-output" hidden><span id="left-output-label" title="Вывод 5 в 8-выводных корпусах">L · PB0 / OC0A · вывод 5</span><div class="signal-line"><b></b><span>RC</span><b></b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h4l5-4v14l-5-4H3zM16 8q6 4 0 8m3-11q10 7 0 14"/></svg></div></div></div>
           </div>
+          <p id="tiny88-power" class="hardware-note" hidden>PDIP-28: питание VCC 7 и AVCC 20 · земля GND 8 и 22.</p>
           <p id="panorama" class="panorama" hidden>Скрипка ← · Пианино и ударные по центру · → Гитара</p>
-          <div class="fuses" aria-label="Рекомендуемые фьюзы ATtiny13A">
-            <div class="fuse-byte"><span>LOW FUSE</span><strong>0x7A</strong></div>
-            <div class="fuse-byte"><span>HIGH FUSE</span><strong>0xFF</strong><small>сохранить заводской</small></div>
-            <div class="fuse-clock"><strong>Внутренний RC · 9,6 МГц</strong><span>CKDIV8 отключён · делитель /1</span><a href="https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf" target="_blank" rel="noopener">Фьюзы в datasheet, §17.2 ↗</a></div>
+          <div class="fuses" id="fuses" aria-label="Рекомендуемые фьюзы ATtiny13A">
+            <div class="fuse-byte"><span>LOW FUSE</span><strong id="fuse-low">0x7A</strong></div>
+            <div class="fuse-byte"><span>HIGH FUSE</span><strong id="fuse-high">0xFF</strong><small id="fuse-high-note">сохранить заводской</small></div>
+            <div class="fuse-byte" id="fuse-extended" hidden><span>EXTENDED</span><strong id="fuse-extended-value">0xFF</strong></div>
+            <div class="fuse-clock"><strong id="fuse-clock-value">Внутренний RC · 9,6 МГц</strong><span id="fuse-clock-note">CKDIV8 отключён · делитель /1</span><a id="fuse-datasheet" href="https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf" target="_blank" rel="noopener">Фьюзы в datasheet, §17.2 ↗</a></div>
           </div>
           <div class="now-playing"><span id="selected-order" class="version-number">06</span><div><span class="eyebrow">ВЫБРАННАЯ ВЕРСИЯ</span><h2 id="selected-title">Люмьер · стерео</h2><p id="selected-description">Загрузка…</p></div></div>
           <div class="elapsed-line"><span>ВРЕМЯ ВОСПРОИЗВЕДЕНИЯ</span><output id="elapsed">00:00.0</output></div>
           <div class="transport"><button id="play" class="primary" disabled><span id="play-icon" aria-hidden="true">▶</span><span id="play-label">Слушать</span><kbd>Space</kbd></button><button id="play-original" class="original-play" type="button" aria-pressed="false" hidden>Прослушать оригинал</button><button id="reset" disabled>↺ Сначала</button><div class="transport-links"><a id="download" class="download-link" aria-disabled="true">↓ Flash HEX</a><a id="download-eeprom" class="download-link" hidden>↓ EEPROM</a></div></div>
           <audio id="original-audio" preload="none" playsinline hidden></audio>
-          <div class="engine-controls"><fieldset class="engine-selector"><legend>Движок эмуляции</legend><div class="engine-options"><label><input type="radio" name="engine" value="js"><span>JS</span></label><label><input type="radio" name="engine" value="wasm" checked><span>WASM</span></label></div></fieldset><p>При смене — сброс на начало.</p></div>
+          <div class="engine-controls"><fieldset class="engine-selector"><legend>Движок эмуляции</legend><div class="engine-options"><label><input type="radio" name="engine" value="js"><span>JS</span></label><label><input type="radio" name="engine" value="wasm" checked><span>WASM</span></label></div></fieldset><p id="engine-note">При смене — сброс на начало.</p></div>
           <div class="audio-controls"><label class="volume-label">Громкость <input id="volume" type="range" min="0" max="1" step="0.01" value="0.65"></label><label>RC-фильтр <select id="cutoff" aria-label="Частота среза фильтра"><option value="4000">4 кГц</option><option value="6000">6 кГц</option><option value="9000" selected>9 кГц</option><option value="12000">12 кГц</option></select></label></div>
           <label id="speech-level-control" class="technical-note" hidden><input id="match-speech-level" type="checkbox" checked> Выровнять громкость для сравнения</label>
         </section>
         <section class="panel scope-panel" aria-label="Осциллограмма PWM">
           <div class="panel-heading"><span class="eyebrow">02 / СИГНАЛ</span><span class="technical-note" id="audio-mode">МОНО · 1 PWM-ВЫХОД</span></div>
           <div class="scope-wrap"><span class="scope-channel" id="scope-left-label">МОНО · OCR0B</span><canvas id="wave" role="img" aria-label="Осциллограмма: значение PWM до фильтра"></canvas><span class="scope-mark">128</span><span class="scope-scale">85 мс</span></div>
-          <div class="scope-wrap right-scope" id="scope-right" hidden><span class="scope-channel">R · OCR0B</span><canvas id="wave-right" role="img" aria-label="Правый канал PWM до фильтра"></canvas><span class="scope-mark">128</span></div>
+          <div class="scope-wrap right-scope" id="scope-right" hidden><span class="scope-channel" id="scope-right-label">R · OCR0B</span><canvas id="wave-right" role="img" aria-label="Правый канал PWM до фильтра"></canvas><span class="scope-mark">128</span></div>
           <div class="scope-metrics"><div><span id="average-label">СРЕДНИЙ PWM</span><strong id="average">128.0</strong></div><div><span>МАКС. ISR</span><strong id="isr">—</strong></div><div><span>ПОТЕРИ IRQ</span><strong id="lost">0</strong></div><div><span>ЗАПАС СКОРОСТИ</span><strong id="headroom">—</strong></div><div><span>ТЕМП</span><strong id="tempo" title="Доля звука прошивки в отсчётах звукового устройства">100.0%</strong></div><div><span>ОТСТАВАНИЕ</span><strong id="lag" title="Накопленное отставание из-за нехватки аудиоотсчётов">0.0 мс</strong></div></div>
         </section>
       </div>

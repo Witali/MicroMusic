@@ -8,6 +8,15 @@ engines.test.mjs также проверяет выбор JS/WASM, работу 
 звука и настоящий worker.js через Node-адаптер MessageChannel.
 В браузере открыть tests/browser-smoke.html для проверки обоих движков
 с настоящими Worker/MessageChannel и независимой цепочкой Web Audio.
+Браузерный smoke также исполняет все девять HEX ATtiny88 через JS.
+tests/attiny88.test.mjs проверяет реальные образы, Timer1, стерео и Worker;
+tests/attiny88-catalog.test.mjs — соответствие файлов, хешей и аппаратных
+параметров; tests/device-switch.test.mjs — смену каталога, прошивки,
+подключения и движка, гонки запросов и восстановление после ошибки.
+Аппаратные тесты и полный цикл всех аранжировок:
+  node --test tools/avr-music-target-core.test.mjs
+  node tools/audit-attiny88-music.mjs
+Физическая проверка на ATtiny88 не проводилась.
 
 Расширенный прогон:
   node --test web-player/tests/extended/*.test.mjs
