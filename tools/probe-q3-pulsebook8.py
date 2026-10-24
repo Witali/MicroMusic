@@ -83,7 +83,7 @@ def mutate(state,rng,width):
     else:
         row,col=rng.randrange(8),rng.randrange(width)
         b[row,col]=max(-7,min(7,int(b[row,col])+rng.choice((-1,1))))
-    return search.State(f,d,b,False,1)
+    return search.State(codec.canonicalize_selectors(f,b),d,b,False,1)
 
 
 def extra_metrics(state,objective):
@@ -125,7 +125,12 @@ def run(reference_path,model_path,core_path,output,*,proposals=6000,seed=24108):
             or not evidence['verification']['pass'] or evidence['firmware_sha256']!=sha(core_path.parent/'firmware.bin')
             or evidence['packing']!='nibble' or evidence['flash_bytes']>1024):
         raise ValueError('Search requires an actual verified eight-form nibble core')
-    f,d,b,_=builder.load_model(model_path)
+    f,d,b,input_payload=builder.load_model(model_path)
+    original_pcm,original_counts=codec.render(f,d,b)
+    f=codec.canonicalize_selectors(f,b)
+    recoded_pcm,recoded_counts=codec.render(f,d,b)
+    np.testing.assert_array_equal(original_pcm,recoded_pcm)
+    np.testing.assert_array_equal(original_counts,recoded_counts)
     codec.encode_book(b,width,'nibble')
     objective=search.Objective(reference,floor_budget=budget,rounded_budget=budget)
     baseline=search.State(f,d,b,False,1);baseline.score=objective.evaluate(baseline)
@@ -160,6 +165,8 @@ def run(reference_path,model_path,core_path,output,*,proposals=6000,seed=24108):
     results={name:export(output/name,state,objective,width,sha(reference_path)) for name,state in finalists.items()}
     report=dict(schema='q3-pulsebook8-search-v1',width=width,proposals=proposals,seed=seed,evaluated=evaluated,
         accepted=accepted,reference_sha256=sha(reference_path),core_report_sha256=sha(core_path),stream_budget=budget,
+        input_model_sha256=sha(model_path),input_stream_bytes=len(input_payload),
+        canonical_input_stream_bytes=len(codec.pack_stream(f,d)),
         baseline_estoi=baseline_estoi,finalists=results,guard_rejections=objective.invalid,history=history,
         target_met=any(s.score['target_met'] for s in archive),elapsed_seconds=time.perf_counter()-started,
         policy='Exact whole-clip STOI/spectrum; no wraps, peak >115 or steps >=48; guarded export also preserves eSTOI',

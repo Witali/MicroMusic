@@ -123,6 +123,22 @@ def storage(book, payload, width, packing, prefix=None):
         code_bytes=code,maximum_stream_bytes=1024-code-1+prefix)
 
 
+def canonicalize_selectors(frames,book):
+    """Prefer an identical lower row; silent/noise frames need no form index.
+
+    This recoding preserves excitation, including phase and LFSR clock rules.
+    It frees expensive upper-selector headers and leaves unused slots trainable.
+    """
+    f=np.asarray(frames).copy();b=np.asarray(book)
+    validate_frames(f,np.full(len(f),64,np.uint16))
+    if b.shape!=(8,16):raise ValueError('Eight excitation rows are required')
+    mapping=np.array([next(j for j in range(i+1) if np.array_equal(b[i],b[j])) for i in range(8)],np.uint8)
+    modes=mapping[f[:,1]>>4]
+    modes[(f[:,0]==0)|((f[:,1]&15)==0)]=0
+    f[:,1]=(f[:,1]&15)|(modes<<4)
+    return f
+
+
 @njit(cache=True)
 def render(frames, durations, pulsebook, tilt_shift=1, nearest=False):
     output = np.empty(int(durations.sum()),np.uint8)

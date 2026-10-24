@@ -14,7 +14,8 @@ probe=importlib.util.module_from_spec(spec);sys.modules[spec.name]=probe;spec.lo
 class Pulsebook8SearchTests(unittest.TestCase):
     def state(self):
         f=np.array([[40,m*16+3,0x88,0x88,0x88,0x88] for m in range(8)],np.uint8)
-        return probe.search.State(f,np.full(8,128,np.uint16),np.zeros((8,16),np.int8),False,1)
+        book=np.zeros((8,16),np.int8);book[:,0]=np.arange(8)
+        return probe.search.State(f,np.full(8,128,np.uint16),book,False,1)
 
     def test_gain_changes_keep_the_upper_selector_bit(self):
         class GainOnly:

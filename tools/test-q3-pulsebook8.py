@@ -63,5 +63,16 @@ class Pulsebook8Tests(unittest.TestCase):
         with self.assertRaises(ValueError):new.validate(f,d,book,samples=1)
         with self.assertRaises(ValueError):new.validate(f,d,book,stream_budget=1)
 
+    def test_duplicate_and_inactive_selectors_recode_without_changing_pcm(self):
+        f,d=self.frames();f[:,1]|=64
+        book=np.vstack((old.legacy_tables(),old.legacy_tables()))
+        recoded=new.canonicalize_selectors(f,book)
+        self.assertTrue(np.all(recoded[:,1]<64))
+        self.assertLess(len(new.pack_stream(recoded,d)),len(new.pack_stream(f,d)))
+        for nearest in (False,True):
+            before,counts=new.render(f,d,book,1,nearest)
+            after,other=new.render(recoded,d,book,1,nearest)
+            np.testing.assert_array_equal(before,after);np.testing.assert_array_equal(counts,other)
+
 
 if __name__=='__main__':unittest.main()
