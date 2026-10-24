@@ -17,8 +17,8 @@ for(const path of Object.keys(manifest.inputs)){
   const target=join(out,path);mkdirSync(dirname(target),{recursive:true});
   writeFileSync(target,execFileSync('git',['show',ref+':'+path],{cwd:root,maxBuffer:16*1024*1024}));
 }
-execFileSync('git',['apply','--unsafe-paths','--directory='+out,
-  fileURLToPath(new URL('./initial-native.patch',import.meta.url))],{cwd:root});
+const patch=readFileSync(new URL('./initial-native.patch',import.meta.url),'utf8').replaceAll('\r\n','\n');
+execFileSync('git',['apply','--unsafe-paths','--directory='+out,'-'],{cwd:root,input:patch});
 for(const [path,expected] of Object.entries(manifest.inputs))
   assert.equal(sha(normalized(join(out,path))),expected,path);
 let sdk=process.env.EMSDK;
