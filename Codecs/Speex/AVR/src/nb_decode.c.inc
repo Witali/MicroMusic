@@ -52,7 +52,6 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, voi
       speex_avr_innovation(exc,pitch24,bits,ener);
    }
    ALLOC(interp_qlsp,NB_ORDER,spx_lsp_t);
-   SPEEX_COPY(out,&frame_exc[-NB_SUBFRAME_SIZE],NB_FRAME_SIZE);
    for (sub=0;sub<NB_NB_SUBFRAMES;sub++)
    {
       spx_word16_t *sp=out+NB_SUBFRAME_SIZE*sub;
@@ -68,7 +67,11 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, voi
                          NB_NB_SUBFRAMES,LSP_MARGIN);
          lsp_to_lpc(interp_qlsp,ak,NB_ORDER,stack);
       }
-      iir_mem16(sp,st->interp_qlpc,sp,NB_SUBFRAME_SIZE,NB_ORDER,st->mem_sp,stack);
+      /* Excitation is complete and remains read-only during synthesis.
+       * Filter from its delayed history directly, retaining the original
+       * 40-sample delay without copying a whole frame into the PCM output. */
+      iir_mem16(frame_exc-NB_SUBFRAME_SIZE+NB_SUBFRAME_SIZE*sub,
+                st->interp_qlpc,sp,NB_SUBFRAME_SIZE,NB_ORDER,st->mem_sp,stack);
       if (update_lpc) for (i=0;i<NB_ORDER;i++) st->interp_qlpc[i]=ak[i];
 #ifdef SPEEX_AVR_OUTPUT_HOOK
       {

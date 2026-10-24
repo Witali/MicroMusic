@@ -201,27 +201,27 @@ binary measurements. Vendor and R4 files remain unmodified.
   The final mailbox rebuild has the same hash as the 13,254-frame verified
   image (854a761dc5faafac9bec9d3c85d41900473972a76f4270e70d6845a05c288c99).
 
+- Direct excitation input to LPC: read frame_exc-40+40*sub directly into
+  separate out+40*sub instead of copying 320 B per frame. Input remains
+  unchanged, and the exact 40-sample delay and coefficient-age transition
+  remain intact. Expanded tests cover 163,840 samples per AVR mode with
+  input/output guards, plus two million native C samples across both modes.
+  Production hashes equal the independently verified fixture experiments:
+  ASM max 133,054 -> 130,369, Flash 8,754 -> 8,750 B, peak stack 143 -> 141;
+  C max 271,191 -> 268,681, Flash 9,684 -> 9,694 B, peak stack 151 -> 153.
+  All 1,058 fixture/reset frames pass in each backend. Full-corpus and
+  timer/ISR admission for this series remain pending.
+
 ## Next candidates (not yet admitted)
 
-1. **Direct excitation input to LPC.** The restricted body copies 160 s16
-   excitation samples to output before in-place filtering. Both LPC kernels
-   already have separate x/y pointers: feed frame_exc-40+40*sub directly and
-   write out+40*sub, retaining the exact 40-sample delay. A disposable copy
-   passes all 1,058 fixtures/reset: ASM max 133,054 -> 130,369, Flash -4 B,
-   peak stack -2 B; C max 271,191 -> 268,681, Flash +10 B, peak stack +2 B.
-   The production tree still uses its verified copy. Add an explicit separate
-   input/output primitive test, complete both backend corpora/exports, and
-   re-run C 10% / ASM 40% and ordinary timer/ISR gates before accepting.
-   Experiment sources: ignored build/p1-experiment/src/nb_decode.c.inc;
-   reports: build/direct-input-experiment-{fixtures,c-fixtures}.
-2. **Scratch lifetime reuse.** Quantized LSP needs 20 B throughout the frame;
+1. **Scratch lifetime reuse.** Quantized LSP needs 20 B throughout the frame;
    the packed 120 B pitch buffer is dead before LPC interpolation/synthesis.
    Reuse its first 20 B for the new LPC coefficients. The compact converter
    consumes every frequency before writing coefficients, so interpolation
    and LPC output may also share those 20 B. The arena could shrink 180 ->
    140 B with no new sample-buffer pass; verify pointer alignment, aliasing,
    all coefficient ages, native/AVR C and ASM, and timer/ISR behavior.
-3. **Ten-sample pitch staging.** Upstream pitch sources always have negative
+2. **Ten-sample pitch staging.** Upstream pitch sources always have negative
    offsets: the first segment stops before `j==pp`, the second before
    `j==pp+pitch`. Thus a completed innovation vector can be written before the
    next vector's pitch is computed. A 30-byte packed pitch buffer could replace
