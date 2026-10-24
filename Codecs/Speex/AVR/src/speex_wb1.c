@@ -12,7 +12,6 @@
 #include "wb_fold.h"
 #include "zero_innovation.h"
 #include "wb_qmf.h"
-#include "speex/speex_bits.h"
 #include <string.h>
 extern const int8_t high_lsp_cdbk[512],high_lsp_cdbk2[512],exc_10_32_table[320];
 typedef struct {
@@ -36,15 +35,20 @@ size_t speex_wb1_state_bytes(void)
 {return speex_avr_state_bytes()+sizeof(wb);}
 int speex_wb1_decode(const uint8_t *packet,size_t bytes,speex_wb1_output_fn output,void *context)
 {
-    SpeexBits bits={0};unsigned a,b,i;
+    unsigned a,b,i;
     if(!packet || !output || bytes!=25 || (packet[0]>>3)!=3 || (packet[20]>>4)!=9)return -1;
-    bits.chars=(char *)packet;bits.charPtr=20;bits.bitPtr=4;bits.nbBits=200;bits.buf_size=25;
-    a=speex_bits_unpack_unsigned(&bits,6)*8;b=speex_bits_unpack_unsigned(&bits,6)*8;
+    /* Validated HB1 layout: 6+6 LSP bits, then four 5-bit gains.
+     * Direct byte windows need no generic cursor or cursor stack frame. */
+    a=(((unsigned)(packet[20]&15)<<2)|(packet[21]>>6))*8;
+    b=(unsigned)(packet[21]&63)*8;
     for(i=0;i<8;i++) {
         wb.lsp[i]=(int16_t)(6144+2560*i+32*(int16_t)AVR_READ_I8(high_lsp_cdbk+a+i)+16*(int16_t)AVR_READ_I8(high_lsp_cdbk2+b+i));
         if(wb.first)wb.old_lsp[i]=wb.lsp[i];
     }
-    for(i=0;i<4;i++)wb.gain[i]=(uint8_t)speex_bits_unpack_unsigned(&bits,5);
+    wb.gain[0]=packet[22]>>3;
+    wb.gain[1]=((packet[22]&7)<<2)|(packet[23]>>6);
+    wb.gain[2]=(packet[23]>>1)&31;
+    wb.gain[3]=((packet[23]&1)<<4)|(packet[24]>>4);
     wb.output=output;wb.context=context;wb.sub=0;wb.error=0;
     int result=speex_wb_decode_low(packet);
     memcpy(wb.old_lsp,wb.lsp,sizeof(wb.lsp));wb.first=0;
