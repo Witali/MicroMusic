@@ -70,8 +70,8 @@ Eight-voice synthesis feasibility has now been checked separately:
 The static AVR probe has eight independent 16-bit DDS phases and steps,
 using the measured nylon guitar EEPROM waves. It sums each guitar chord
 before applying its shared gain with signed 16-bit arithmetic. No chord
-tone is removed. Code is 216 bytes plus a 16-byte demonstration pitch table.
-At 18,750 synthesis samples/s it takes at most 450 active cycles, within
+tone is removed. Code is 212 bytes plus a 16-byte demonstration pitch table.
+At 18,750 synthesis samples/s it takes at most 442 active cycles, within
 512 CPU cycles per output. A one-second emulation verifies 149984 phase
 advances, 18748 complete mixes/PWM pairs and all 1456 signed chord-gain cases, with
 no lost timer events or PWM underruns. SRAM usage is 50 bytes in this probe,
@@ -82,9 +82,10 @@ This proves the feasibility of eight simultaneous tones with two shared
 chord gains. The probe has no note scheduler, envelope updates or MNC1
 decoder. Its code and RAM measurements are not those of a full song player.
 
-The first measured probe used 270 code bytes (Git f07b5c2). The current
-216-byte version saves 54 bytes / 20%, and improves the measured render
-cost from 453 to 450 active cycles. A four-step signed shift/add loop replaces
+The first measured probe used 270 code bytes (Git f07b5c2). The first compact
+version used 216 bytes (Git 9e93895); the current 212-byte version saves
+58 bytes / 21.5% from the baseline, and improves the measured render cost
+from 453 to 442 active cycles. A four-step signed shift/add loop replaces
 the unrolled 16-bit multiply; ASR/ROR retain the exact remainder, including
 negative inputs. All possible six-note chord sums (-48..42) at levels 0..15
 are checked. ADC/RET share the unused interrupt-vector words. The PWM writer
@@ -96,3 +97,22 @@ Relevant general ideas were reviewed in the local companion project's
 z80-tester/docs/Z80-COOKBOOK.md: shared code/continuations, live carry flags,
 register reuse and measuring space separately from timing. The AVR loop is
 independently implemented and tested; Z80 ROM-stack mechanisms are not used.
+
+The AVR cookbooks were subsequently located in other branches of this same
+repository and reviewed directly, without merging unrelated changes:
+  codex/speex-avr, 780e64c336452e680793dd76f8a30e4b7cb7ad5b
+    docs/avr-asm-cookbook/README.md
+  codex/speech-quality, 29d5f2b59fd1ea9a77ba5d477d7a96782003723a
+    ATtiny13A/Sound/codec/AVR_ASSEMBLY_RECIPES.md
+
+The general cookbook's invariant-bias/register-reuse recipes apply here:
+initialize the two-note sum at -16 and the six-note sum at -48, then add
+unsigned EEPROM nibbles. This equals subtracting eight per voice exactly,
+and removes one instruction from the inner voice loop. All partial sums
+stay in signed-byte range. Retain the reset's 128 constant in r18 while
+initializing phases instead of loading it twice. Together these changes
+save four code bytes and eight cycles per render, compared with the previous
+216-byte probe. The independent mix/PWM checks and exhaustive signed gain
+checks still pass. The ATtiny13-specific recipes also confirm the relevant
+bounded shift/add, carry-preservation and unused-vector-word techniques.
+Hardware-MUL snippets in the ATmega328P cookbook are not used on ATtiny13A.

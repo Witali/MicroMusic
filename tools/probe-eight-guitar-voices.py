@@ -34,9 +34,9 @@ reset:
   clr r29
   clr r31
   ldi r30, 96
-  ldi r16, 128
+  ldi r18, 128
 fill_ring:
-  st Z+, r16
+  st Z+, r18
   cpi r30, 112
   brne fill_ring
   ldi r26, 112
@@ -54,7 +54,6 @@ initialize:
   ldi r16, 15
   mov r4, r16
   mov r5, r16
-  ldi r18, 128
   mov r23, r18
   ldi r28, 96
   ldi r30, 110
@@ -75,7 +74,8 @@ idle:
   brcc idle
 render_sample:
   ldi r26, 112
-  clr r21
+  /* Hoist the offset-binary bias: two notes * -8, then six notes * -8. */
+  ldi r21, 240
 voice_loop:
   ld r16, X+
   ld r17, X+
@@ -104,14 +104,13 @@ wave_register:
   swap r17
 wave_nibble:
   andi r17, 15
-  subi r17, 8
   add r21, r17
   cpi r26, 120
   brne rhythm_group
   mov r25, r4
   rcall chord_gain
   mov r20, r17
-  clr r21
+  ldi r21, 208
 rhythm_group:
   cpi r26, 144
   brne voice_loop
