@@ -1,5 +1,45 @@
 # Эксперименты NB3
 
+## Четыре long-pitch вектора одним вызовом — сравнение вариантов
+
+База `8fd8229`, пути относительно `Codecs/Speex/AVR/`. Авторские AVR GNU ABI
+прототипы сохраняют Xiph fixed-point math и отдельный C fallback; исходные
+notices и `vendor/speex-1.2.1/COPYING` базы остаются. Параметры — четыре RAM
+индекса 0..31, три signed8 gain с L1<=147, 42 завершённых signed16 history
+слова, scale 0..121000000. Выход — 40 сэмплов; таблица shapes в Flash.
+
+Сохранены три непринятые стадии:
+
+- `long40.patch`: один машинный scaling/clamp body для всех входов, r9
+  различает продолжение следующего вектора и обычный возврат. Старые непустые
+  вызовы платят ещё 7 тактов на ABI-вход/выход.
+- `long40-direct.patch`: собственный 40-сэмпловый цикл без mode-dispatch,
+  четыре индекса на стеке, gains/history сохраняются между векторами.
+- `long40-shared-flow.patch`: первый вариант с rolling-dot fallthrough в
+  transform и более коротким хвостом цикла для частого T=1 пути.
+
+Все три точны на полном корпусе 31 поток / 9 100 кадров. Их собственных
+component/PWM admission не было. Принятый вариант сочетает отдельный цикл
+с перестановкой старого rolling-loop; его арифметика теперь ведётся в общих
+GAS-макросах `src/innovation_core.inc`. Это общий исходный текст с двумя
+машинными телами, без дополнительных вызовов на каждый сэмпл.
+Его полные проверки — `long40-unit.json`, `long40-admission-audit.json`.
+
+В новой игнорируемой копии pinned базы применить один patch и собрать ASM
+(Python 3.12+, Git, AVR GCC/Node и oracle из README кодека):
+
+```powershell
+python -c "from pathlib import Path; import io, subprocess, tarfile; d=Path('Codecs/Speex/AVR/build/long40-example'); d.mkdir(); data=subprocess.check_output(['git','archive','8fd8229:Codecs/Speex/AVR','src','tools','tests','vendor','handoff','reference']); tarfile.open(fileobj=io.BytesIO(data)).extractall(d,filter='data')"
+git apply --ignore-space-change --directory=Codecs/Speex/AVR/build/long40-example docs/avr-asm-cookbook/examples/long40.patch
+python Codecs/Speex/AVR/build/long40-example/tools/build.py --avr-gcc avr-gcc --backend asm
+node Codecs/Speex/AVR/tests/verify_avr.mjs --backend asm --verify-reset --firmware Codecs/Speex/AVR/build/long40-example/build/profile --oracle Codecs/Speex/AVR/build/reference --out Codecs/Speex/AVR/build/long40-example/fixtures
+```
+
+Для следующих стадий заменить имя patch. Применимость всех трёх проверена
+`git apply --check`. Сравнение Flash/среднего/максимума, SHA-256 и полный
+corpus каждого варианта сохранены в `reports/long40-variant-decision.json`
+папки кодека. Другие MCU и физическая плата не измерены.
+
 ## Общая обработка сэмпла C — отклонённые эксперименты
 
 `nb3-shared-finish.patch` и `nb3-shared-shape-finish.patch`, база `a4c3b39`,

@@ -24,16 +24,16 @@ void speex_nb3_long_innovation(int16_t *out,
     gains[0]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index+2));
     gains[1]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index+1));
     gains[2]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index));
+#if SPEEX_NB3_USE_AVR_ASM
+    speex_avr_long_innovation40(out,in,indices,scale,gains);
+#else
     for (vector=0;vector<4;vector++) {
         unsigned code=indices[vector];
         const int8_t *shape=exc_10_32_table+10*code;
-#if SPEEX_NB3_USE_AVR_ASM
-        speex_avr_long_innovation10(out,in,shape,scale,gains);
-#else
         speex_nb3_long_innovation10_c(out,in,shape,scale,gains,10);
-#endif
         out+=10;in+=10;
     }
+#endif
 }
 _Static_assert(NB_SUBFRAME_SIZE==40 && NB_PITCH_START==17 && NB_PITCH_END==144,
                "Packed pitch is specialized for the pinned NB3 frame/pitch bounds");

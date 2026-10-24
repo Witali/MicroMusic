@@ -1,0 +1,125 @@
+{
+  "baseCommit": "8fd8229",
+  "compiler": "AVR GCC 7.3.0 mixed Os/O2/O3 LTO fwrapv fno-strict-aliasing mcall-prologues mrelax",
+  "selected": "long40-direct-flow",
+  "decision": "Fastest measured candidate; +304 Flash bytes versus the compact shared-body flow variant. Source arithmetic is centralized with GAS macros, with two machine loop bodies.",
+  "variants": [
+    {
+      "variant": "long40",
+      "selected": false,
+      "flashBytes": 10306,
+      "binarySha256": "f4b8aa5e6913cd40988ec6d4795e2c9e26db8ee05ab7aec9789fa2694144d2c1",
+      "exactFrames": 9100,
+      "peakStackBytes": 158,
+      "allStreams": {
+        "streams": 31,
+        "frames": 9100,
+        "beforeWeightedMeanCycles": 115337.677,
+        "afterWeightedMeanCycles": 114358.305,
+        "weightedMeanTimeReductionPercent": 0.8491,
+        "beforeMaxCycles": 122498,
+        "afterMaxCycles": 122694,
+        "minimumStreamMeanReductionPercent": 0.0
+      },
+      "humanSpeech": {
+        "streams": 20,
+        "frames": 8042,
+        "beforeWeightedMeanCycles": 117458.35,
+        "afterWeightedMeanCycles": 116467.092,
+        "weightedMeanTimeReductionPercent": 0.8439,
+        "beforeMaxCycles": 122498,
+        "afterMaxCycles": 122694,
+        "minimumStreamMeanReductionPercent": 0.453
+      },
+      "componentAndPwmAdmission": false
+    },
+    {
+      "variant": "long40-direct",
+      "selected": false,
+      "flashBytes": 10610,
+      "binarySha256": "51002fe78ec01d1e54bb4b1144b52150f4c3121c2cf2c59c637883ad202b3e59",
+      "exactFrames": 9100,
+      "peakStackBytes": 158,
+      "allStreams": {
+        "streams": 31,
+        "frames": 9100,
+        "beforeWeightedMeanCycles": 115337.677,
+        "afterWeightedMeanCycles": 113787.434,
+        "weightedMeanTimeReductionPercent": 1.3441,
+        "beforeMaxCycles": 122498,
+        "afterMaxCycles": 122502,
+        "minimumStreamMeanReductionPercent": -0.0056
+      },
+      "humanSpeech": {
+        "streams": 20,
+        "frames": 8042,
+        "beforeWeightedMeanCycles": 117458.35,
+        "afterWeightedMeanCycles": 115886.538,
+        "weightedMeanTimeReductionPercent": 1.3382,
+        "beforeMaxCycles": 122498,
+        "afterMaxCycles": 122502,
+        "minimumStreamMeanReductionPercent": 0.8123
+      },
+      "componentAndPwmAdmission": false
+    },
+    {
+      "variant": "long40-shared-flow",
+      "selected": false,
+      "flashBytes": 10304,
+      "binarySha256": "71025469c2d5958f30896b4fc85548c10ae317ed05333588753eb94388a82e53",
+      "exactFrames": 9100,
+      "peakStackBytes": 158,
+      "allStreams": {
+        "streams": 31,
+        "frames": 9100,
+        "beforeWeightedMeanCycles": 115337.677,
+        "afterWeightedMeanCycles": 113918.667,
+        "weightedMeanTimeReductionPercent": 1.2303,
+        "beforeMaxCycles": 122498,
+        "afterMaxCycles": 122258,
+        "minimumStreamMeanReductionPercent": 0.0
+      },
+      "humanSpeech": {
+        "streams": 20,
+        "frames": 8042,
+        "beforeWeightedMeanCycles": 117458.35,
+        "afterWeightedMeanCycles": 116017.241,
+        "weightedMeanTimeReductionPercent": 1.2269,
+        "beforeMaxCycles": 122498,
+        "afterMaxCycles": 122258,
+        "minimumStreamMeanReductionPercent": 0.8292
+      },
+      "componentAndPwmAdmission": false
+    },
+    {
+      "variant": "long40-direct-flow",
+      "selected": true,
+      "flashBytes": 10608,
+      "binarySha256": "fe3f4c24d682009d663bee6929bc5903fb660f1d39a578ab98067ea202c0de63",
+      "exactFrames": 9100,
+      "peakStackBytes": 158,
+      "allStreams": {
+        "streams": 31,
+        "frames": 9100,
+        "beforeWeightedMeanCycles": 115337.677,
+        "afterWeightedMeanCycles": 113708.523,
+        "weightedMeanTimeReductionPercent": 1.4125,
+        "beforeMaxCycles": 122498,
+        "afterMaxCycles": 122066,
+        "minimumStreamMeanReductionPercent": -0.0056
+      },
+      "humanSpeech": {
+        "streams": 20,
+        "frames": 8042,
+        "beforeWeightedMeanCycles": 117458.35,
+        "afterWeightedMeanCycles": 115802.44,
+        "weightedMeanTimeReductionPercent": 1.4098,
+        "beforeMaxCycles": 122498,
+        "afterMaxCycles": 122066,
+        "minimumStreamMeanReductionPercent": 0.9996
+      },
+      "componentAndPwmAdmission": true
+    }
+  ],
+  "alternativeScope": "All alternatives have 9100 exact decoder frames each. Component/PWM evidence is recorded separately for the selected version after admission."
+}

@@ -121,7 +121,7 @@ assert.ok(pitchClipped>1000 && clipped>10000);
 if(!scalarOnly){assert.equal(times[1].calls,cases);assert.equal(times[2].calls,cases);assert.equal(times[3].calls,cases);
 assert.equal(times[4].calls,cases);assert.equal(times[5].calls,cases);
 assert.ok(variableCounts.every(v=>v.calls>0),'Every runtime count, including zero');}
-assert.equal(times[6].calls,cases); assert.deepEqual([...scalarDeltas],[37]);
+assert.equal(times[6].calls,cases); assert.deepEqual([...scalarDeltas],[35]);
 const report={mcu:'ATmega328P',simulator:'avr8js 0.21.1',compiler:'AVR GCC 7.3.0 mixed Os/O2, LTO, fwrapv',
   binarySha256:createHash('sha256').update(binary).digest('hex'),blocks:cases,fullRun:!scalarOnly,fixedSamplesPerBackend:scalarOnly?0:cases*10,scalarSamples:cases,
   tableGainTriples:32,scales:64,shapeMin:-128,shapeMax:127,historyMin:-32768,historyMax:32767,

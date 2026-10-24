@@ -1,6 +1,9 @@
 #include <stdint.h>
 #include <avr/pgmspace.h>
 #include "long_pitch.h"
+/* The complete shared assembly object also contains ASM40. This mailbox
+ * calls only the legacy entries; ASM40 has its own nonzero-codebook test. */
+const int8_t exc_10_32_table[320] PROGMEM={0};
 static const int8_t shapes[] PROGMEM={
 #include "test-shapes.h"
 };

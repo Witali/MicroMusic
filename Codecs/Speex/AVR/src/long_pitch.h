@@ -32,6 +32,9 @@ static SPEEX_NB3_ALWAYS_INLINE void speex_nb3_long_innovation10_c(int16_t *out,
  * Shares the exact transform; no rolling-history registers are needed. */
 extern void speex_avr_long_innovation1(int16_t *,const int16_t *,const int8_t *,
                                        int32_t,const int8_t *);
+/* Four RAM indices 0..31, 42 completed history words, 40 outputs. */
+extern void speex_avr_long_innovation40(int16_t *,const int16_t *,const uint8_t *,
+                                        int32_t,const int8_t *);
 extern void speex_avr_long_innovation10(int16_t *,const int16_t *,const int8_t *,
                                         int32_t,const int8_t *);
 /* count 0..10; a nonempty block reads count+2 completed history words.

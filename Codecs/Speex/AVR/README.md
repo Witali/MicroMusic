@@ -99,6 +99,14 @@ python Codecs/Speex/AVR/tools/build_zero_transform_test.py --avr-gcc avr-gcc
 node Codecs/Speex/AVR/tests/verify_zero_transform.mjs
 ```
 
+The forty-sample fused pitch entry has an independent arithmetic, RAM/Flash
+read-bound and ABI test against four rolling-ten calls and explicit C:
+
+```sh
+python Codecs/Speex/AVR/tools/build_long40_test.py --avr-gcc avr-gcc
+node Codecs/Speex/AVR/tests/verify_long40.mjs
+```
+
 The SRAM page-crossing and IIR ABI sweep uses the guarded LPC mailbox:
 
 ```sh
@@ -123,8 +131,8 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
 
 | Build | Flash | Static SRAM | Peak stack | Free SRAM at peak |
 | --- | ---: | ---: | ---: | ---: |
-| Optimized decoder test mailbox, ASM enabled | 10,150 B | 1,119 B | 158 B | 771 B |
-| Full PWM speech demo, including 2,940 B compressed audio | 13,430 B | 1,254 B | 165 B | 629 B |
+| Optimized decoder test mailbox, ASM enabled | 10,608 B | 1,119 B | 158 B | 771 B |
+| Full PWM speech demo, including 2,940 B compressed audio | 13,884 B | 1,254 B | 165 B | 629 B |
 | C fallback decoder test mailbox | 11,870 B | 1,119 B | 166 B | 763 B |
 | Full C PWM speech demo, including 2,940 B audio | 15,088 B | 1,254 B | 173 B | 621 B |
 
@@ -133,7 +141,7 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
   lifetime cases, each backend matches 14,278 frames with one firmware image.
 - Complete player tests on all 31 streams match upstream PCM converted to u8,
   with zero ring underruns and no stack/static-memory collisions.
-- Maximum observed ASM decoder-only corpus frame cost: **122,498 cycles / 7.656 ms**;
+- Maximum observed ASM decoder-only corpus frame cost: **122,066 cycles / 7.629 ms**;
   the 20-ms budget at 16 MHz is 320,000 cycles. ISR and output costs are verified
   separately by the complete-player runs.
 - Primitive tests cover 240,000 complete LSP conversions and 3,670,016 bit fields;
@@ -164,6 +172,14 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
   controller tests add 1,966,080 samples each in ASM and C over all 24 pitches,
   32 gains and 64 scales, full signed16 history, packet/region guards, exact
   twenty-bit consumption and callee-saved registers/r1.
+- The forty-sample entry checks another 72,960 blocks / 2,918,400 samples
+  each in ASM40, four ASM10 calls and C, including all signed8 shapes,
+  all 32 indices at every vector position, full signed16 history, scales,
+  clamp boundaries at vector seams, exact RAM/Flash read addresses, guards
+  and actual-return callee-saved/r1 checks. ASM40 saves exactly 450 cycles
+  against four rolling-ten calls in every tested block. The legacy variable
+  entry now takes two fewer cycles per sample and one per repeated iteration;
+  its one-sample/scalar timing difference is 35 cycles rather than 37.
 - Exported C archives built from the source manifest and through CMake each
   match all 9,100 corpus frames on the native host using only the public API.
 - The bounded zero-gain transform checks 280,960 samples each in ASM,
@@ -206,15 +222,32 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
   Normal and loaded PWM retain exact output and zero underruns, including
   +40% ASM / +10% C CPU load. These AVR-only build flags leave the C sources,
   manual ASM kernels, backend selection and portable export unchanged.
+- The next ASM stage processes four long-pitch vectors in one call, retaining
+  gains and rolling history. It also lets the older rolling dot fall through
+  into the transform and shortens the common rolling tail. Decoder mean time
+  falls 1.4125% (human speech 1.4098%), Flash grows 458 B, static SRAM and
+  global stack peaks are unchanged. Corpus maximum falls 122,498→122,066
+  cycles; pitch coverage maximum falls 122,970→122,570. The largest stream
+  mean regression is 0.0056%. The compact shared-machine-body candidate was
+  304 B smaller but slower; the faster candidate follows the speed priority.
+  Both arithmetic bodies use common GAS source macros. C remains explicitly
+  selectable, with the same decoder and all 62 normal/loaded player binaries.
 - Codebooks reside in Flash, use explicit signed `pgm_read_*` accesses, and no
   malloc/calloc/realloc/free symbols are linked.
 
-Current ASM/C decoder/player results: `reports/shared-routines-{asm,c}-*.json`.
-Portable results: `reports/portable-nb3-header-library.json`.
-`reports/shared-routines-admission-audit.json` pins four 88-file player copies,
-both measured decoder images and complete normal/loaded PWM evidence. It
-verifies that only AVR build flags changed; native C evidence is reused from
-the source-identical preceding build. `shared-routines-variant-decision.json`
+Current ASM results: `reports/long40-asm-*.json`; C runtime results remain
+`reports/shared-routines-c-*.json`. Fresh portable results:
+`reports/portable-long40-library.json`. `reports/long40-admission-audit.json`
+pins five 92-file source copies, measured decoder/demo/unit images, full
+normal/+40% ASM PWM and fresh native PCM/two-library checks. Both C player
+scenarios were rebuilt for every stream and proved byte-identical to the
+previous full PWM runs; `long40-c-*-image-reuse.json` records that reuse,
+without claiming a fresh C PWM simulation. The same C decoder image retains
+the prior 14,278-frame evidence. `long40-variant-decision.json` compares four
+full-corpus candidates; alternative patches are in the AVR cookbook.
+`reports/shared-routines-admission-audit.json` retains the preceding image,
+its four 88-file source copies and complete normal/loaded PWM evidence.
+`shared-routines-variant-decision.json`
 records the comparisons: outlining the sample finish was rejected after
 88-frame screening (+2.0863% / +3.2449% C mean time). Those prototypes have
 no full-corpus/component/PWM admission. Their patches are in the AVR cookbook.
@@ -238,11 +271,11 @@ not exhaustive packet timing proofs or physical board measurements.
 `reports/real-speech-{avr,player}.json` retain the earlier NB baseline.
 `node Codecs/Speex/AVR/tests/verify_avr.mjs --frames 8 --profile` also writes `avr-profile.json`
 under the selected output directory. It counts only frame-command intervals,
-excluding boot/reset; the current 88-frame fixture profile spends 56.6% in
-LPC synthesis and 18.9% in the shared pitch/innovation ASM body
-(`reports/shared-routines-asm-profile.json`). Separate variable-entry/controller costs
-are also recorded there. The common
-body is attributed to its second symbol for both entries. These shares describe
+excluding boot/reset; the current 88-frame fixture profile spends 57.5% in
+LPC synthesis and 16.0% in the new forty-sample pitch/innovation ASM body
+(`reports/long40-asm-profile.json`). Separate variable-entry/controller costs
+are also recorded there. The older common
+body is attributed to its second symbol for its overlapping entries. These shares describe
 that sampled workload, not every possible packet.
 
 ## Further exact NB optimization
@@ -290,6 +323,7 @@ The Xiph NB3 adaptation has the following separately measured stages:
 | Read four innovation indices as one bounded group | 122,875 | 10,402 B | 1,119 B |
 | Read pitch/gain/energy together through one inline C helper | 121,608 | 10,622 B | 1,119 B |
 | Share register saves/restores and relax AVR transfers | 122,365 | 10,150 B | 1,119 B |
+| One long-pitch subframe call and a shorter rolling loop | 121,939 | 10,608 B | 1,119 B |
 
 Through the persistent-history stage, the combined corpus maximum fell from 204,770 to
 133,142 cycles: **34.98% less decoder time**. The latest p1-specific ASM core

@@ -1,0 +1,58 @@
+{
+  "mcu": "ATmega328P",
+  "simulator": "avr8js 0.21.1",
+  "compiler": "AVR GCC 7.3.0 mixed Os/O2 LTO fwrapv mcall-prologues mrelax",
+  "binarySha256": "5fbf3607a3bf3483e3f4187da962a522aa3734987f0911b70496c56fb95b29a5",
+  "casesPerImplementation": 72960,
+  "samplesPerImplementation": 2918400,
+  "tableCases": 65536,
+  "boundaryCases": 3072,
+  "randomGainBlocks": 4096,
+  "scaleEdgeBlocks": 256,
+  "tableGainTriples": 32,
+  "tableScales": 64,
+  "all256Shapes": true,
+  "all32IndicesAtEachVector": true,
+  "pitchClippedSamples": 172236,
+  "outputClippedSamples": 59332,
+  "exact": true,
+  "historyGainIndicesAndGuardsPreserved": true,
+  "actualRamReadsChecked": true,
+  "exact40FlashReadsPerCall": true,
+  "newKernelHistoryBytesRead": 84,
+  "newKernelGainBytesRead": 3,
+  "newKernelIndexBytesRead": 4,
+  "calleeSavedRegistersPreserved": true,
+  "zeroRegisterRestored": true,
+  "topLevelReturnsEach": 72960,
+  "asm40Cycles": {
+    "min": 5409,
+    "max": 5609,
+    "total": 401213992,
+    "calls": 72960,
+    "mean": 5499.0953
+  },
+  "fourAsmTenCycles": {
+    "min": 5859,
+    "max": 6059,
+    "total": 434045992,
+    "calls": 72960,
+    "mean": 5949.0953
+  },
+  "c40Cycles": {
+    "min": 14765,
+    "max": 15275,
+    "total": 1097323611,
+    "calls": 72960,
+    "mean": 15040.0714
+  },
+  "cyclesSavedVsFourTen": {
+    "min": 450,
+    "max": 450,
+    "mean": 450
+  },
+  "peakStackBytes": 48,
+  "staticSramBytes": 190,
+  "includesInterrupts": false,
+  "physicalBoardTested": false
+}
