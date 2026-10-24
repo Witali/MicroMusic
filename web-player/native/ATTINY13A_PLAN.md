@@ -313,8 +313,10 @@ version/options, device profile and exact runtime ABI/identity. Keep per-device
 mutable state outside cached compiled modules.
 
 Validation: use the official AVR instruction descriptions and WASM specification
-linked below. Start with guarded resumable blocks and register locals, measuring
-each change separately. Compare against the existing generated instruction path
+linked below. Guarded resumable blocks are implemented; choose further changes
+from a fresh profile and measure each separately. The rejected isolated register-
+local experiment below must not be repeated without a new amortization strategy.
+Compare against the existing generated instruction path
 at cycle/half-phase, bus and observation boundaries, including all123 instruction
 forms, flags, pointer aliases, skip/branch timing, nested IRQs, reset during an
 instruction, sleep, CLKPR/OSCCAL, unequal/held CLKI phases and SPM invalidation.
@@ -324,6 +326,26 @@ suite at integration checkpoints; retain serial paired uninstrumented timings
 and compilation/size data. The older sampled CPU share is not a prediction of
 the speedup available in the current runtime. Preserve the device/translator/
 generated-code separation and add no per-instruction JavaScript callbacks.
+
+#### Next experiment queue
+
+Saved follow-up priorities, 2026-10-24. These are separate experiments, not a
+promise of speedup or additional completed checklist items.
+
+| Priority | Candidate | Evidence required before keeping it |
+| --- | --- | --- |
+| 1 | Refresh the current profile, including native pin/PCM collection and CPU dispatch. Separate output subscriptions from internal GPIO consumers; evaluate collecting PCM at sample boundaries or queue pressure. | Independent host and PCM buffer ownership, unchanged pin timestamps and PCM, queue wrap/overflow tests, source-entry counts and uninstrumented paired timings. Do not infer speed from fewer collector entries. |
+| 2 | Reduce continuation saves using per-phase temporary liveness. | The full-context path remains an oracle; partial execution, reset, faults and resume must not repeat bus effects or protected operations. Measure module size and warmed execution separately. |
+| 3 | Extend SREG liveness between connected blocks, then try constant and short-sequence folding as independent changes. | Exact C/chained-Z dependencies, all observable SREG values and original AVR cycle/phase boundaries; compare with full flags and the unchanged generated instruction path. |
+| 4 | Generate direct WASM control flow for proven regions and loops; reconsider register locals only when these larger regions can amortize their cost. | Safe indirect/external-entry fallback, coherent register aliases and visible AVR stack state; real-firmware gains in addition to synthetic-loop results. |
+| 5 | Evaluate reachable-code generation, Flash-region replacement and persistent caching separately from execution optimizations. | Correct dynamic targets and code/data handling, complete SPM dependency invalidation, exact cache identities and independent cold-start/compilation measurements. |
+
+For each candidate, retain the exact baseline and sources, a correctness oracle,
+activation evidence, individual paired timings and variance. Reject or archive a
+candidate whose benefit is unproven. Keep necessary external CLK transitions and
+peripheral events inside the native scheduler even when fewer WASM operations
+represent the same AVR instruction span. Device definitions, translator sources
+and generated artifacts remain separate.
 
 #### Register-local experiment contract
 
