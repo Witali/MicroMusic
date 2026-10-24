@@ -47,7 +47,15 @@ class HalfPitchTests(unittest.TestCase):
         if not (avr/'avr-gcc.exe').exists() or not node.exists():self.skipTest('Set AVR_BIN and NODE')
         f,d,b=self.fixture();out=ROOT/'build/q3-half-validation';out.mkdir(parents=True,exist_ok=True)
         path=out/'rapid-model.json';path.write_text(json.dumps(dict(schema='q3-half-pitch-probe-v1',frames=f.tolist(),durations=d.tolist(),pulsebook=b.tolist(),fractions=[1])))
+        mixed=out/'eight-model.json'
+        mf=np.array([[p,(i%8)*16+1,0x88,0x88,0x88,0x88]
+            for i,p in enumerate([1,4,40,63,64,90,126,0]*4)],np.uint8)
+        md=np.tile(np.array([64,128,192,256],np.uint16),8)
+        mb=np.zeros((8,16),np.int8);mb[:,0]=np.arange(8)-7
+        flags=((np.arange(32)%3)>0).astype(np.uint8);flags[mf[:,0]==0]=0
+        mixed.write_text(json.dumps(dict(schema='q3-half-pitch-probe-v1',frames=mf.tolist(),durations=md.tolist(),pulsebook=mb.tolist(),fractions=flags.tolist())))
         for name,model,zero in [('rapid',path,False),
+                ('eight-forms',mixed,False),
                 ('vinni',ROOT/'ATtiny13A/Sound/research/q3-adaptive/half-pitch/model.json',False),
                 ('vinni-zero',ROOT/'ATtiny13A/Sound/research/q3-adaptive/half-pitch/model.json',True)]:
             report=phase.build(model,out/name,avr,node,zero_flags=zero)

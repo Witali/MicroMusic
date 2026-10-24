@@ -22,7 +22,7 @@ energy=lambda q:q['spectrogram_loss']+6*(.9-q['stoi'])
 def score(state,halves,ceiling=None):
  layout=fit.select(state.frames,state.durations,state.book);state.frames,state.book=layout['frames'],layout['book']
  payload=phase.pack(state.frames,state.durations,state.book,halves)
- flash=(layout['code_bytes']+26+len(payload)-layout['prefix_bytes']+2)&~1
+ flash=(layout['code_bytes']+24+len(payload)-layout['prefix_bytes']+2)&~1
  if flash>1024:return None
  pcm,counts=render(state.frames,state.durations,state.book,halves);raw=pcm.astype(np.int16)-128
  if np.any(counts) or abs(raw).max()>115 or np.any(abs(np.diff(raw))>=48):return None

@@ -63,7 +63,7 @@ def build(model_path,output,avr_bin,node,*,zero_flags=False):
     if zero_flags:flags[:]=0
     layout=select(f,d,b);f,b=layout['frames'],layout['book']
     payload=pack(f,d,b,flags);prefix=min(64-layout['book_bytes'],len(payload))
-    code=layout['code_bytes']+26;flash=(code+len(payload)-prefix+2)&~1
+    code=layout['code_bytes']+24;flash=(code+len(payload)-prefix+2)&~1
     if flash>1024:raise ValueError('Half-pitch complete image exceeds 1024 bytes')
     output=output.resolve();output.mkdir(parents=True,exist_ok=True)
     render=oracle(output);pcm,counts=render(f,d,b,flags)
@@ -74,11 +74,11 @@ def build(model_path,output,avr_bin,node,*,zero_flags=False):
     layout.update(prefix_bytes=prefix,prefix_end=layout['book_bytes']+prefix)
     source=base.source_for(layout)
     source=base.replace_once(source,'vbr_setpitch:\n mov r4,r16\n mov r2,r16',
-        'vbr_setpitch:\n mov r4,r16\n andi r16,128\n mov r9,r16\n mov r16,r4\n andi r16,127\n mov r4,r16\n mov r2,r16')
+        'vbr_setpitch:\n lsl r16\n clr r9\n rol r9\n lsr r16\n mov r4,r16\n mov r2,r16')
     source=base.replace_once(source,' mov r2,r4\n clr r18',
-        ' mov r2,r4\n sbrs r9,7\n rjmp half_period_ready\n ldi r16,1\n eor r9,r16\n sbrc r9,0\n inc r2\nhalf_period_ready:\n clr r18')
+        ' mov r2,r4\n sbrs r9,0\n rjmp half_period_ready\n ldi r16,2\n eor r9,r16\n sbrc r9,1\n inc r2\nhalf_period_ready:\n clr r18')
     source=base.replace_once(source,' sub r18,r2\n cpi r18,',
-        ' sub r18,r2\n sbrc r9,0\n inc r18\n cpi r18,')
+        ' sub r18,r2\n sbrc r9,1\n inc r18\n cpi r18,')
     eeprom=layout['eeprom'][:layout['book_bytes']]+payload[:prefix]
     eeprom=eeprom.ljust(64,b'\xff')
     (output/'firmware.S').write_text(source,encoding='utf-8',newline='\n')
