@@ -39,9 +39,10 @@ for(const [kind,version] of Object.entries({old,current})){
 }
 for(const key of ['exports','flags','compilerVersion','sources'])assert.deepEqual(old.manifest[key],current.manifest[key],key);
 const changedInputs=Object.keys(current.manifest.inputs).filter(path=>old.manifest.inputs[path]!==current.manifest.inputs[path]);
-const changeSet=values['change-set'];assert.ok(['long-internal-span','service-inlining'].includes(changeSet));
+const changeSet=values['change-set'];assert.ok(['long-internal-span','service-inlining','clock-identity'].includes(changeSet));
 assert.deepEqual(changedInputs,changeSet==='long-internal-span'?
-  ['web-player/native/peripherals/device.c','web-player/native/peripherals/device.h']:['web-player/native/peripherals/device.c']);
+  ['web-player/native/peripherals/device.c','web-player/native/peripherals/device.h']:
+  changeSet==='clock-identity'?['web-player/native/peripherals/device_clock.h']:['web-player/native/peripherals/device.c']);
 const hostSources=['web-player/lib/avr-transpiler.js','web-player/lib/avr-wasm-phases.js',
   'web-player/lib/avr-transpiled-runtime.js','web-player/lib/avr-runtime.js','web-player/lib/attiny13a-runtime.js'];
 for(const path of hostSources)assert.equal(text(path),git(['show',baseline+':'+path]).toString().replaceAll('\r\n','\n'),path+' unchanged');
@@ -50,10 +51,11 @@ assert.equal(variants[0].module,variants[1].module);assert.equal(variants[2].mod
 assert.notEqual(old.module,current.module);
 const table=hz=>{const result=Array(128).fill(0);result[0]=hz;return result;};
 const kernel=flash({instructions:[avr.ldi(16,1),avr.ldi(17,0x55),avr.add(18,16),avr.eor(19,17),avr.inc(20),avr.rjmp(5,2)]});
-const catalog=['web-player/firmware.json','web-player/hq4-firmware.json'].flatMap(path=>JSON.parse(text(path)).entries);
+const catalogs=['web-player/firmware.json','web-player/hq4-firmware.json'].map(path=>JSON.parse(text(path)));
+const catalog=catalogs.flatMap(row=>row.entries),aliases=Object.assign({},...catalogs.map(row=>row.aliases));
 const cases=[];
 for(const id of ['rhythmic','lumiere-stereo','hq4-chego-auto']){
-  const entry=catalog.find(row=>row.id===id);assert.ok(entry);const binary=parseHex(entry.flashHex);assert.equal(sha(binary),entry.flashSha256);
+  const entry=catalog.find(row=>row.id===(aliases[id]??id));assert.ok(entry);const binary=parseHex(entry.flashHex);assert.equal(sha(binary),entry.flashSha256);
   for(const physical of [false,true])cases.push({id:id+'-'+(physical?'physical':'compatible'),
     binary,eeprom:entry.eepromHex?parseHex(entry.eepromHex,64):null,frames,channels:entry.audioChannels||1,physical,
     options:{oscillatorHz:entry.cpuHz||9600000,optimizeFlags:true,
