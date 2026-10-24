@@ -712,11 +712,11 @@
   "qualification": {
     "full_suite": {
       "command": "python tools/test-speech-quality.py",
-      "source_commit": "5a85950",
-      "tests": 418,
+      "source_commit": "870011c",
+      "tests": 428,
       "passed": true,
-      "elapsed_seconds": 149.067,
-      "log_sha256": "cd9e41e5f2ad359f5fdc71dadd9638950ff0739a62ae83c51cfc4d0eb6bbc80c"
+      "elapsed_seconds": 201.743,
+      "log_sha256": "728640c651fef455c5d1ea7db177cc23601eb3921dd9f3e67f4366de47208541"
     },
     "later_mixed_tests": {
       "source_commit": "1c87efc",
@@ -728,7 +728,15 @@
       "tests": 7,
       "passed": true
     },
-    "scope": "PC contracts plus unchanged firmware tests; isolated word multiplier is separately qualified; no assembled word-state player"
+    "scope": "All PC contracts and retained results, unchanged old firmware, isolated assembled word filter and multiplier; no full word-player timing or Flash fit",
+    "historical_full_suite": {
+      "command": "python tools/test-speech-quality.py",
+      "source_commit": "5a85950",
+      "tests": 418,
+      "passed": true,
+      "elapsed_seconds": 149.067,
+      "log_sha256": "cd9e41e5f2ad359f5fdc71dadd9638950ff0739a62ae83c51cfc4d0eb6bbc80c"
+    }
   },
   "selected_pc_teacher": "mixed/q8/model.json",
   "artifact_sha256": {
@@ -771,5 +779,56 @@
     "quarter/reset/band-audit.json": "6fe66a587d24e121e1b38acee9b233484c8dfde4a7987b48c52dd750fa3600d5",
     "quarter/reset/model.json": "e693fbfc8ef9b6317e464f8ae81d854facf1cd7af934bfdee39100b16e1c6115",
     "quarter/reset/report.json": "07de4aadab019609527e4e9fcd3f35d35b9c7b6862a9b2a85bb243761d9463f6"
-  }
+  },
+  "highest_stoi_model": "mixed/q8/best-intelligibility-model.json",
+  "highest_stoi_score": {
+    "stoi": 0.8845178815561481,
+    "spectrogram_loss": 0.42921631551503037,
+    "fine_log_error": 0.4268678160451768,
+    "envelope_error": 0.49679975072408306,
+    "unsupported_energy": 0.1434572001548736,
+    "missing_energy": 0.13819339438967837,
+    "raw_mean": 0.018037642555675287,
+    "raw_rms": 0.07693394348939707,
+    "peak": 79,
+    "maximum_step": 42,
+    "wrap_counts": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "pcm_sha256": "4cc6676f5a91995be4189f65ae08745b68cacd254732de7c5e4c4ee3e416058e",
+    "estoi": 0.7360079760875029,
+    "harmonic_metrics": {
+      "harmonic_track_loss": 0.748652579905362,
+      "frequency_trajectory_error": 0.8254220417188395,
+      "level_error": 1.8065905769560144,
+      "missing_reference_energy": 0.1758112908698754,
+      "extra_candidate_energy": 0.22141485199080063,
+      "weighted_match_rate": 0.8241887091301252,
+      "frequency_error_cents": 44.456819698061956,
+      "frequency_error_hz": 8.729742746980165,
+      "level_error_db": 5.4197717308680415,
+      "frequency_error_p95_cents": 127.14748321517683,
+      "frequency_error_p95_hz": 20.594932529097832,
+      "level_error_p95_db": 11.940031031442373,
+      "continuity_break_rate": 0.2496226970596535
+    }
+  },
+  "selected_pc_policy": "Selected Q4 final endpoint minimizes the fitting objective; highest STOI endpoint is retained separately",
+  "arithmetic_proofs": [
+    {
+      "path": "../word-q4/filter.json",
+      "source_commit": "870011c",
+      "sha256": "9a3cd9962da6a37bc48068fdbb3f641764dad8ebf07b8fbca05fcc0e21d63067",
+      "full_player": false
+    },
+    {
+      "path": "../word-q4/filter-six.json",
+      "source_commit": "870011c",
+      "sha256": "0cb5c437a8dfe9d16ed3b62251ed555abf2af72baa90cc4a237fb62b6773558b",
+      "full_player": false
+    }
+  ]
 }
