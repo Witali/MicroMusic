@@ -25,7 +25,7 @@ test('all123 official instruction forms resume at half edges and intervening phy
   const complete=new ATtiny13A(image,null,physical),sliced=new ATtiny13A(image,null,options);
   assert.equal(WebAssembly.validate(sliced.transpiledBytes),true);
   assert.equal(sliced.transpilation.executionMode,'resumable-v1');
-  assert.equal(sliced.transpilation.stats.blocks,0);
+  assert.ok(sliced.transpilation.stats.blocks>0);
   for(const [n,entry] of instructions.entries()){
     for(const core of [complete,sliced]){
       core._call('avr_reset',0,0);core.pc=n*3;

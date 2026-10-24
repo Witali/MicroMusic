@@ -225,7 +225,10 @@ int avr_device_ready(void){
 double avr_device_time(void){return (double)(full_time64()-full_time_origin);}
 double avr_device_cpu_deadline(double at){
  if(full_ps){
-  uint64_t deadline=full_time_origin+(uint64_t)at;
+  /* An unbounded CPU block must still fit the finite physical timeline.
+   * Keep the reserved UINT64_MAX sentinel outside that budget. The emitter
+   * compares integer spans strictly below the rounded-up half-cycle bound. */
+  uint64_t deadline=at==INFINITY?UINT64_MAX-1:full_time_origin+(uint64_t)at;
   return S(cyc)+(double)device_cpu_halves_until_ps(deadline)/2.0;
  }
  return S(cyc)+(at-(double)device_base_half())/(2.0*device_clkpr_divisor());

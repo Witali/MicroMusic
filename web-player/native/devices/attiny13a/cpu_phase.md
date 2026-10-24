@@ -122,8 +122,33 @@ operands. A WAIT returns through WASM `return` after saving nine i32 locals and
 one f64 temporary in linear memory. The next call dispatches the latched word
 PC, restores locals and skips completed prefixes. A reset return skips the
 spill, preserving the native cancellation. Architectural PC/SREG commit before
-the single native retirement call. Blocks and idle skipping remain disabled
-in this mode; all flags are live at the observable instruction boundary.
+the single native retirement call. All flags are live at an observable
+instruction boundary; dead flags can be removed inside an accepted block.
+Idle skipping remains disabled in this mode.
+
+Register-only blocks use the same80-byte context and existing native imports.
+Their entire original cycle span must lie strictly before the next device/input
+event and the host's physical observation deadline. Active continuations,
+pending enabled IRQs, SEI/RETI delay and insufficient instruction budget reject
+a block. Memory/I/O instructions retain their individual bus phases. CLKI
+continues to expose a zero block budget, retaining every source phase and input
+horizon. No clock edge or peripheral event is omitted by CPU batching.
+
+The block also checks the exact u64 retirement capacity and the physical-time
+capacity: `avr_device_cpu_deadline(Infinity)` returns the rounded-up CPU-half
+position of `UINT64_MAX-1`, rather than converting Infinity to an integer.
+Strict comparison of the integer-cycle span against this half-position prevents
+an early whole-block timestamp fault. Near either counter limit, individual
+instructions preserve the exact successful prefix and fault location. CPU-cycle
+endpoints must remain below2^52 so half-cycle comparisons are exact in f64.
+
+An accepted block enters context active1 and clocks its full span before any
+register effects. With no intervening observable boundary, it commits the ALU
+effects, final PC/SREG and exact retirement total together. It then uses the
+ordinary native retirement call for the last instruction and IRQ arbitration.
+The context's execPc identifies the final instruction. A clock reset/fault
+cancels effects; an unexpected WAIT fails closed. The existing instruction path
+handles every rejected block and every suspended instruction.
 
 `runUntilPs` establishes a bounded physical deadline, rebasing its exact uint64
 wall timestamp for the f64 runner offset. `step`/`run` explicitly select an
@@ -170,6 +195,13 @@ invariance.
 `avr-resumable-oracles.test.mjs` records real native bridge calls in WASM to
 check read latches, stack phases, once-only RFLB/EEPROM commands, reset/edge
 ties and persistent IRQ entry across actual WAIT returns.
+
+`attiny13a-resumable-blocks.test.mjs` proves that blocks actually execute and
+compares them with the original generated instruction path, including exact
+deadlines, half-cycle starts, IRQ/input/reset boundaries, protected windows,
+CLKPR/OSCCAL, register/I/O aliases and both64-bit counter limits. The physical
+timestamp regression first reproduced an early fault with zero retirements;
+the guarded path now retains the same four successful instructions as stepping.
 
 `attiny13a-clki-runtime.test.mjs` and
 `attiny13a-clki-periodic-runtime.test.mjs` exercise the connected external source

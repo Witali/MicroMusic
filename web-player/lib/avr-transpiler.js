@@ -12,6 +12,13 @@ const sleb = value => {
   do { const byte = value & 127; value >>= 7; more = !((value === 0 && !(byte & 64)) || (value === -1 && (byte & 64))); out.push(byte | (more ? 128 : 0)); } while (more);
   return out;
 };
+const sleb64 = value => {
+  value=BigInt.asIntN(64,BigInt(value));const out=[];let more;
+  do {const byte=Number(value&127n);value>>=7n;
+    more=!((value===0n&&!(byte&64))||(value===-1n&&(byte&64)));
+    out.push(byte|(more?128:0));
+  }while(more);return out;
+};
 const bytes = (...parts) => parts.flat(Infinity);
 const vector = entries => bytes(uleb(entries.length), entries);
 const string = text => { const data = Array.from(new TextEncoder().encode(text)); return bytes(uleb(data.length), data); };
@@ -29,6 +36,9 @@ const load8Signed = address => bytes(address,0x2c,0,0);
 const store8 = (address,value) => bytes(address,value,0x3a,0,0);
 const load32 = address => bytes(address,0x28,2,0);
 const store32 = (address,value) => bytes(address,value,0x36,2,0);
+const constantI64 = value => bytes(0x42,sleb64(value));
+const loadI64 = address => bytes(address,0x29,3,0);
+const storeI64 = (address,value) => bytes(address,value,0x37,3,0);
 const load64 = address => bytes(address,0x2b,3,0);
 const store64 = (address,value) => bytes(address,value,0x39,3,0);
 const float = n => { const data = new Uint8Array(8); new DataView(data.buffer).setFloat64(0,n,true); return bytes(0x44,Array.from(data)); };
@@ -116,7 +126,9 @@ const popcount=n=>{let count=0;for(;n;n&=n-1)count++;return count;};
 export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructions=32,device=DEFAULT_DEVICE,resumable=false}={}) {
   const profile=deviceProfile(device),{flashBytes,flashWords,pcMask,ioStart,ioEnd,ramStart,ramEnd,sreg,stackPointer}=profile;
   if(profile.dataAddressBits!==8||profile.programCounterBytes!==2)throw Error('Unsupported AVR emitter memory geometry');
-  const full=!!abi.device,canBatch=i=>batchable(i)&&(!full||i.name!=='LPM');
+  // Resumable blocks initially cover register-only operations. Memory accesses
+  // retain their individual bus phases until block-wide alias guards exist.
+  const full=!!abi.device,canBatch=i=>resumable?pure.has(i.name):batchable(i)&&(!full||i.name!=='LPM');
   if(resumable&&(!full||!abi.phase||abi.phase.bytes!==80))throw Error('Resumable CPU requires its full-device phase ABI');
   if(resumable){
     const p=abi.phase,limit=(abi.memoryPages||1)*65536;
@@ -315,14 +327,14 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
 
   // SRAM/Flash accesses use guards before observable I/O, alias faults or
   // invalid addresses. Every guard exit observes a complete, exact SREG.
-  const leaders=new Set([0,3]);
+  const leaders=new Set(resumable?[0]:[0,3]);
   for(const i of decoded){
     if(!canBatch(i))leaders.add((i.pc+i.words)&pcMask);
     if(['RJMP','RCALL','BRANCH'].includes(i.name))leaders.add((i.pc+1+i.k)&pcMask);
     if(['SKIP','CPSE','SBIC','SBIS'].includes(i.name))leaders.add((i.pc+1+width(word(i.pc+1)))&pcMask);
   }
   const blocks=[];
-  for(let p=0;!resumable&&p<flashWords;){
+  for(let p=0;p<flashWords;){
     if(!canBatch(decoded[p])){p++;continue;}
     const sequence=[decoded[p++]];
     while(p<flashWords&&canBatch(decoded[p])&&!leaders.has(p)&&sequence.length<maxBlockInstructions)sequence.push(decoded[p++]);
@@ -364,8 +376,26 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     // No IRQ can occur inside an accepted block. Timer state advances by the
     // exact number of original CPU cycles, including the prescaler phase.
     const blocked=or(or(state('irqDelay'),full?call(PENDING):and(reg(profile.legacy.irqFlags),constant(profile.legacy.irqFlagMask))),or(lt(get(1),constant(block.instructions)),
-      or(binary(0x66,elapsed,stateF('overflowAt')),binary(0x64,elapsed,get(0)))));
-    const code=bytes(condition(blocked,bytes(constant(0),0x0f)),set(7,load8(flagsAddress)));
+      or(binary(0x66,elapsed,stateF('overflowAt')),resumable?constant(0):binary(0x64,elapsed,get(0)))));
+    const code=bytes(condition(blocked,bytes(constant(0),0x0f)));
+    if(resumable){
+      // cpuDeadline rounds UP to a whole half phase. A strict comparison of
+      // integer-cycle spans cannot cross the physical observation deadline.
+      // Infinity asks for the native physical timestamp capacity instead.
+      code.push(...condition(binary(0x66,elapsed,float(4503599627370496)),bytes(constant(0),0x0f)),
+        ...condition(binary(0x66,elapsed,call(14,get(0))),bytes(constant(0),0x0f)),
+        ...condition(binary(0x56,loadI64(constant(abi.phase.retired)),constantI64(0xffffffffffffffffn-BigInt(block.instructions))),bytes(constant(0),0x0f)),
+        ...store32(constant(abi.phase.active),constant(1)),
+        ...store32(constant(abi.phase.execPc),constant(block.sequence.at(-1).pc)),
+        ...store32(constant(abi.phase.nextPc),constant(block.end)),
+        ...store32(constant(abi.phase.stage),constant(0)),
+        ...set(2,call(PHASE_CLOCK,float(block.cycles))),
+        ...condition(lt(get(2),constant(0)),bytes(constant(0),0x0f)),
+        // The guards prove this span cannot suspend. Fail closed if a future
+        // clock implementation violates that proof, before register effects.
+        ...condition(eqz(get(2)),fail(25,true)));
+    }
+    code.push(...set(7,load8(flagsAddress)));
     let elapsedCycles=0;
     block.sequence.forEach((i,n)=>{
       let effects;
@@ -386,7 +416,8 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
       code.push(...remapLocals(effects,2));elapsedCycles+=instructionCycles(i);
     });
     code.push(...store8(flagsAddress,get(7)),put('pc',constant(block.end)),put('errorPC',constant((block.end-1)&pcMask)),
-      call(CLOCK,float(block.cycles)),constant(block.instructions));
+      resumable?bytes(storeI64(constant(abi.phase.retired),binary(0x7c,loadI64(constant(abi.phase.retired)),constantI64(block.instructions-1))),call(PHASE_RETIRE)):
+        call(CLOCK,float(block.cycles)),constant(block.instructions));
     blockBodies[index]=code;
   });
 
@@ -394,13 +425,21 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   const emptyBlock=bytes(constant(0));
   const phaseActive=()=>load32(constant(abi.phase.active));
   const retired=()=>load32(constant(abi.phase.retired));
+  // CLKI deliberately exposes no positive block budget. Avoid the wrapper,
+  // repeated ready/deadline calls and indirect dispatch on that common path.
+  const tryBlock=(deadline,limit)=>conditionValue(
+    and(eqz(phaseActive()),binary(0x64,stateF('cyc'),stateF('overflowAt'))),
+    call(BLOCK,deadline,limit),constant(0));
   const dispatchPc=resumable?conditionValue(eq(phaseActive(),constant(1)),load32(constant(abi.phase.execPc)),state('pc')):state('pc');
   const step=bytes(condition([0x23,0],[0x0f]),full?condition(eqz(call(READY)),[0x0f]):[],put('error',constant(0)),condition(or(lt(dispatchPc,constant(0)),ge(dispatchPc,constant(flashWords))),fail(1)),dispatchPc,0x11,1,0,full?condition(eq(state('error'),constant(26)),put('error',constant(0))):[]);
-  const block=bytes(condition([0x23,0],bytes(constant(0),0x0f)),full?condition(eqz(call(READY)),bytes(constant(0),0x0f)):[],put('error',constant(0)),condition(or(lt(state('pc'),constant(0)),ge(state('pc'),constant(flashWords))),fail(1,true)),
+  const block=bytes(condition([0x23,0],bytes(constant(0),0x0f)),
+    resumable?bytes(call(PHASE_DEADLINE,get(0)),condition(or(state('error'),phaseActive()),bytes(constant(0),0x0f))):[],
+    full?condition(eqz(call(READY)),bytes(constant(0),0x0f)):[],put('error',constant(0)),condition(or(lt(state('pc'),constant(0)),ge(state('pc'),constant(flashWords))),fail(1,true)),
     get(0),get(1),add(state('pc'),constant(flashWords)),0x11,3,0);
   const run=resumable?bytes(call(PHASE_DEADLINE,float(Infinity)),set(1,constant(0)),0x02,0x40,0x03,0x40,
     condition(ge(get(1),get(0)),[0x0c,2]),condition([0x23,0],[0x0c,2]),
-    condition(eqz(call(READY)),[0x0c,2]),set(3,retired()),call(STEP),
+    condition(eqz(call(READY)),[0x0c,2]),set(3,retired()),
+    condition(eqz(tryBlock(float(Infinity),sub(get(0),get(1)))),call(STEP)),
     set(2,sub(retired(),get(3))),set(1,add(get(1),get(2))),
     condition(state('error'),[0x0c,2]),condition(and(eqz(get(2)),phaseActive()),[0x0c,2]),
     0x0c,0,0x0b,0x0b,get(1)):bytes(set(1,constant(0)),0x02,0x40,0x03,0x40,
@@ -426,7 +465,8 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     condition(eqz(call(READY)),bytes(condition(eqz(call(WAIT,get(0))),[0x0c,3]),0x0c,1)),
     // Completing an IRQ in ready() may itself reach the observation deadline.
     condition(binary(0x66,call(TIME),get(0)),[0x0c,2]),
-    set(3,retired()),call(STEP),set(2,sub(retired(),get(3))),set(1,add(get(1),get(2))),
+    set(3,retired()),condition(eqz(tryBlock(get(0),constant(2147483647))),call(STEP)),
+    set(2,sub(retired(),get(3))),set(1,add(get(1),get(2))),
     condition(state('error'),[0x0c,2]),condition(and(eqz(get(2)),phaseActive()),[0x0c,2]),
     0x0c,0,0x0b,0x0b,get(1)):full?bytes(set(1,constant(0)),0x02,0x40,0x03,0x40,
     condition(binary(0x66,call(TIME),get(0)),[0x0c,2]),
