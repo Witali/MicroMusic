@@ -8,25 +8,101 @@
  * This is exactly upstream MULT16_32_Q14(shape*4,scale)<<7 for this bound.
  * Read packed unscaled pitch, clamp +/-2048000 and insert a zero low byte
  * to form the original sanitized pitch*2. Round >>14 and saturate +/-32767.
- * Callee-saved registers and r1 restored; interrupts remain enabled. */
+ * Second entry fuses three signed8 gains and a rolling signed16 history:
+ * void speex_avr_long_innovation10(int16_t *out,const int16_t *history,
+ *     const int8_t *shape_flash,int32_t scale,const int8_t *gains_ram);
+ * Additional ABI arg: gains r15:r14. Twelve history samples, three gains;
+ * L1(gains)<=147 keeps every prefix/product sum in signed24.
+ * Shared innovation/clamp body: T=0 packed pitch, T=1 rolling history.
+ * GCC ISRs preserve SREG.T. All callee-saved registers and r1 restored;
+ * scale registers remain read-only and interrupts remain enabled. */
 .text
 .global speex_avr_innovation10
 .type speex_avr_innovation10, @function
 speex_avr_innovation10:
     push r2
     push r3
-    push r16
-    push r17
-    push r18
-    push r19
+    push r13
+    push r14
+    push r15
     push r28
     push r29
+    clt
+    rjmp .Linnovation_setup
+.global speex_avr_long_innovation10
+.type speex_avr_long_innovation10, @function
+speex_avr_long_innovation10:
+    push r2
+    push r3
+    push r4
+    push r5
+    push r6
+    push r7
+    push r8
+    push r9
+    push r10
+    push r11
+    push r12
+    push r13
+    push r14
+    push r15
+    push r28
+    push r29
+    set
+.Linnovation_setup:
     movw r28, r24
-    movw r26, r22
     movw r30, r20
     clr r2
     ldi r20, 10
     mov r3, r20
+    brts .Linnovation_long_setup
+    rjmp .Linnovation_packed_setup
+.Linnovation_long_setup:
+    movw r26, r14
+    ld r10, X+
+    ld r11, X+
+    ld r12, X
+    movw r26, r22
+    ld r4, X+
+    ld r5, X+
+    ld r6, X+
+    ld r7, X+
+.Linnovation_long_sample:
+    ld r8, X+
+    ld r9, X+
+    /* A signed8 gain times a signed16 word, in r25:r23. */
+    .macro long_product lo, hi, gain
+    mov r20, \gain
+    mov r21, \hi
+    muls r21, r20
+    movw r24, r0
+    mov r21, \lo
+    mulsu r20, r21
+    mov r23, r0
+    sbc r25, r2
+    add r24, r1
+    adc r25, r2
+    .endm
+    long_product r4,r5,r10
+    movw r14, r24
+    mov r13, r23
+    long_product r6,r7,r11
+    add r13, r23
+    adc r14, r24
+    adc r15, r25
+    long_product r8,r9,r12
+    add r13, r23
+    adc r14, r24
+    adc r15, r25
+    movw r4, r6
+    movw r6, r8
+    rjmp .Linnovation_sample
+.Linnovation_packed_setup:
+    movw r26, r22
+.Linnovation_packed_sample:
+    ld r13, X+
+    ld r14, X+
+    ld r15, X+
 .Linnovation_sample:
     lpm r20, Z+
     mulsu r20, r16
@@ -56,50 +132,47 @@ speex_avr_innovation10:
     rol r24
     rol r25
     .endr
-    ld r21, X+         /* unscaled pitch low byte */
-    ld r0, X+
-    ld r1, X+          /* signed high byte */
     /* Clamp signed24 to +/-2048000 (0x1f4000 / 0xe0c000).
      * Compare signed high bytes first; only boundary bytes need lower tests. */
     ldi r20, 31
-    cp r20, r1
+    cp r20, r15
     brlt .Lpitch_clip_positive
     brne .Lpitch_check_lower
     ldi r20, 64
-    cp r20, r0
+    cp r20, r14
     brlo .Lpitch_clip_positive
     brne .Lpitch_ready
-    tst r21
+    tst r13
     brne .Lpitch_clip_positive
     rjmp .Lpitch_ready
 .Lpitch_check_lower:
     ldi r20, 224
-    cp r1, r20
+    cp r15, r20
     brlt .Lpitch_clip_negative
     brne .Lpitch_ready
     ldi r20, 192
-    cp r0, r20
+    cp r14, r20
     brlo .Lpitch_clip_negative
     rjmp .Lpitch_ready
 .Lpitch_clip_positive:
-    ldi r21, 0
+    mov r13, r2
     ldi r20, 64
-    mov r0, r20
+    mov r14, r20
     ldi r20, 31
-    mov r1, r20
+    mov r15, r20
     rjmp .Lpitch_ready
 .Lpitch_clip_negative:
-    ldi r21, 0
+    mov r13, r2
     ldi r20, 192
-    mov r0, r20
+    mov r14, r20
     ldi r20, 224
-    mov r1, r20
+    mov r15, r20
 .Lpitch_ready:
     /* pitch*2*128 has a zero low byte. The lower innovation byte stays
      * unchanged, and ADD (not ADC) starts the upper-byte carry chain. */
-    add r23, r21
-    adc r24, r0
-    adc r25, r1
+    add r23, r13
+    adc r24, r14
+    adc r25, r15
     ldi r20, 32
     add r23, r20
     adc r24, r2
@@ -145,16 +218,30 @@ speex_avr_innovation10:
     st Y+, r23
     dec r3
     breq .Linnovation_done
-    rjmp .Linnovation_sample
+    brts .Linnovation_long_again
+    rjmp .Linnovation_packed_sample
+.Linnovation_long_again:
+    rjmp .Linnovation_long_sample
 .Linnovation_done:
     clr r1
     pop r29
     pop r28
-    pop r19
-    pop r18
-    pop r17
-    pop r16
+    pop r15
+    pop r14
+    pop r13
+    brtc .Linnovation_restore_common
+    pop r12
+    pop r11
+    pop r10
+    pop r9
+    pop r8
+    pop r7
+    pop r6
+    pop r5
+    pop r4
+.Linnovation_restore_common:
     pop r3
     pop r2
     ret
 .size speex_avr_innovation10, .-speex_avr_innovation10
+.size speex_avr_long_innovation10, .-speex_avr_long_innovation10

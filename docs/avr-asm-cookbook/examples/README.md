@@ -1,10 +1,11 @@
-# Эксперимент: NB3 long-pitch fusion
+# Исторический эксперимент: NB3 long-pitch fusion
 
 `nb3-long-pitch-fusion.patch` — исходный C-прототип для ATmega328P / AVR GCC
 7.3.0, база `30779f0`. Авторская переработка текущего restricted Xiph NB3;
 исходные BSD-уведомления и лицензия `vendor/speex-1.2.1/COPYING` сохраняются.
-Патч не включён в основной декодер. Только C backend; ASM/другие компиляторы
-и полный PWM/ISR-gate для этого прототипа ещё не проверены. Native Clang
+Патч сохраняет отдельный ранний C-прототип. В основном декодере он заменён
+общим ASM-ядром и C fallback; этот исторический вариант сам по себе не проходил
+PWM/ISR-gate. Не применять его поверх текущей реализации. Native Clang
 24.0.0git проверен на точность C; он игнорирует GCC `optimize("O2")`.
 
 Из корня task worktree, после подготовки обычного reference/oracle и toolchain
@@ -12,6 +13,7 @@
 
 ```powershell
 python -c "from pathlib import Path; import shutil; r=Path('Codecs/Speex/AVR'); d=r/'build/fused-pitch-example'; d.mkdir(); [shutil.copytree(r/n,d/n) for n in ['src','tools','tests','vendor','handoff','reference']]"
+python -c "from pathlib import Path; import subprocess; r=Path('Codecs/Speex/AVR/build/fused-pitch-example'); [(r/n).write_bytes(subprocess.check_output(['git','show','30779f0:Codecs/Speex/AVR/'+n])) for n in ['src/nb_decode.c.inc','src/pitch24.h']]"
 git apply --ignore-space-change --directory=Codecs/Speex/AVR/build/fused-pitch-example docs/avr-asm-cookbook/examples/nb3-long-pitch-fusion.patch
 python Codecs/Speex/AVR/build/fused-pitch-example/tools/build.py --avr-gcc avr-gcc --backend c
 node Codecs/Speex/AVR/tests/verify_avr.mjs --backend c --verify-reset --firmware Codecs/Speex/AVR/build/fused-pitch-example/build/profile --oracle Codecs/Speex/AVR/build/reference --out Codecs/Speex/AVR/build/fused-pitch-example/fixtures
@@ -27,5 +29,5 @@ node Codecs/Speex/AVR/tests/verify_avr.mjs --backend c --verify-reset --firmware
 Условие pitch>=41 гарантирует, что последний tap читает не новее exc[-1].
 Отдельная ветка short pitch сохраняет все повторы и нулевые хвосты. Буфер
 120 Б пока остаётся для неё; RAM-экономия этому эксперименту не приписывается.
-Перед production нужны независимые крайние значения истории/clamp, измерение
-ASM/shared-vector формы с C fallback и весь corpus PWM с включёнными ISR.
+Эти измерения описывают исходный эксперимент. Проверки и результаты текущей
+реализации находятся в отчётах `fused-long-*` и основном cookbook.

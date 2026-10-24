@@ -21,6 +21,8 @@ def apply(source: Path):
     pitch_table = re.search(r'gain_cdbk_lbr\[128\]\s*=\s*\{([^}]+)\}',
                            (lib / 'gain_table_lbr.c').read_text())[1]
     pitch_values = [int(v) for v in pitch_table.split(',') if v.strip()]
+    if pitch_values[:3] != [-32,-32,-32]:
+        raise RuntimeError('NB3 gain code zero must have three zero gains')
     if len(pitch_values) != 128 or any(not -128 <= v+32 <= 127
         for i, v in enumerate(pitch_values) if i % 4 != 3):
         raise RuntimeError('NB3 pitch gains do not satisfy the signed8 ASM contract')

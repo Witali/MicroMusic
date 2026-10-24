@@ -32,21 +32,11 @@ static SPEEX_NB3_HOT SPEEX_NB3_NOINLINE void speex_nb3_pitch_add24_c(uint8_t *ou
 }
 #define PITCH_ADD24 speex_nb3_pitch_add24_c
 #endif
+/* Only the short-pitch segmented case reaches this helper. */
 static SPEEX_NB3_NOINLINE void speex_nb3_pitch24(const int16_t *exc,
-                                               uint8_t *out,SpeexBits *bits)
+                                               uint8_t *out,unsigned pitch,unsigned index)
 {
-    unsigned pitch=speex_bits_unpack_unsigned(bits,7)+17;
-    unsigned index=speex_bits_unpack_unsigned(bits,5)*4;
     uint8_t tap;
-    /* pitch>=41 makes pp>=40 for every tap: all segments are full and
-     * no repeated segment or zero tail exists. Decide once per subframe. */
-    if (pitch>=41) {
-        for (tap=0;tap<3;tap++) {
-            int8_t gain=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index+2-tap));
-            PITCH_ADD24(out,exc-pitch-1+tap,gain,40,tap!=0);
-        }
-        return;
-    }
     for (tap=0;tap<3;tap++) {
         unsigned pp=pitch+1-tap;
         uint8_t first=(uint8_t)(pp<40?pp:40);

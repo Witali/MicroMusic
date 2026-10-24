@@ -5,6 +5,31 @@
  * and general ctl APIs. The vendored release remains the independent oracle. */
 #include "speex_platform.h"
 #include "pitch24.h"
+#include "long_pitch.h"
+#if SPEEX_NB3_USE_AVR_ASM
+static SPEEX_NB3_NOINLINE
+#else
+static SPEEX_NB3_STAGE_O2
+#endif
+void speex_nb3_long_innovation(int16_t *out,
+    const int16_t *in,SpeexBits *bits,int32_t scale,unsigned index)
+{
+    int8_t gains[3];
+    uint8_t vector;
+    gains[0]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index+2));
+    gains[1]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index+1));
+    gains[2]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index));
+    for (vector=0;vector<4;vector++) {
+        unsigned code=speex_bits_unpack_unsigned(bits,5);
+        const int8_t *shape=exc_10_32_table+10*code;
+#if SPEEX_NB3_USE_AVR_ASM
+        speex_avr_long_innovation10(out,in,shape,scale,gains);
+#else
+        speex_nb3_long_innovation10_c(out,in,shape,scale,gains,10);
+#endif
+        out+=10;in+=10;
+    }
+}
 _Static_assert(NB_SUBFRAME_SIZE==40 && NB_PITCH_START==17 && NB_PITCH_END==144,
                "Packed pitch is specialized for the pinned NB3 frame/pitch bounds");
 _Static_assert(NB_ORDER*(sizeof(spx_coef_t)+sizeof(spx_lsp_t))<=3*NB_SUBFRAME_SIZE,
@@ -43,14 +68,23 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, voi
    for (sub=0;sub<NB_NB_SUBFRAMES;sub++)
    {
       spx_word16_t *exc=frame_exc+NB_SUBFRAME_SIZE*sub;
+      unsigned pitch=speex_bits_unpack_unsigned(bits,7)+17;
+      unsigned index=speex_bits_unpack_unsigned(bits,5)*4;
       int q_energy;
       spx_word32_t ener;
       /* Every pitch source index is negative: each segment ends before its
        * source reaches exc[0]. No clear of the current excitation is needed. */
-      speex_nb3_pitch24(exc,pitch24,bits);
       q_energy=speex_bits_unpack_unsigned(bits,1);
       ener=AVR_READ_I32(&nb3_gain_table[(qe<<1)|q_energy]);
-      speex_avr_innovation(exc,pitch24,bits,ener);
+      if (pitch>=41 && index) {
+         /* Even the last tap reads exc[-1] or earlier. No output feeds a
+          * source in this block; fuse the three sums with innovation. */
+         speex_nb3_long_innovation(exc,exc-pitch-1,bits,ener,index);
+      } else {
+         if (!index) memset(pitch24,0,3*NB_SUBFRAME_SIZE);
+         else speex_nb3_pitch24(exc,pitch24,pitch,index);
+         speex_avr_innovation(exc,pitch24,bits,ener);
+      }
    }
    /* All pitch/innovation samples are complete. Rewind only the dead pitch
     * workspace: keep qlsp live, and allocate distinct LPC/frequency arrays

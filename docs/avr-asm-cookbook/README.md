@@ -523,7 +523,7 @@ PWM-поток с таймерами/ISR прошли без underrun: ASM +40% 
 564 Б SRAM; C +10%, очередь >=41, 552 Б SRAM. Симуляция AVR8js 0.21.1;
 физическая плата и timing иных MCU не проверены.
 
-**Слить соседние проходы и сохранить скользящее окно — эксперимент.** При
+**Слить соседние проходы и сохранить скользящее окно.** При
 NB3 pitch>=41 все три tap читают отрицательные индексы готового excitation.
 Вместо трёх проходов с записью/чтением packed24 вычислить
 `g0*a+g1*b+g2*c`, выполнить прежний clamp ±2048000 и сразу innovation/rounding.
@@ -537,11 +537,26 @@ L1-норма gain из таблицы — 147; каждый полный и п�
 RAM/наблюдаемый стек прежние. Max corpus/coverage лучше только на 61 такт:
 медленные short-pitch кадры остаются. Точны 13 254 AVR и 9 100 native кадров.
 O3 экономит ещё ~1 233 такта fixture-mean, но добавляет 2 744 Б относительно
-O2. Это пока **не принятая оптимизация**: нужны независимые full-scale tests,
-компактное ASM-ядро с C fallback и полный PWM/ISR-gate. Переносимость timing
-не измерена; O2-атрибут в патче — только эксперимент AVR GCC, Clang его
-игнорирует. Код, условия и воспроизведение — в [examples](examples/README.md),
+O2. Этот исходный вариант сохранён исторически в [examples](examples/README.md),
 замеры — `Codecs/Speex/AVR/reports/long-pitch-experiment-*.json`.
+
+Текущая реализация: два ASM-входа в [innovation.S](../../Codecs/Speex/AVR/src/innovation.S)
+делят scaling/clamp/rounding/store. T=0 выбирает packed24, T=1 — три MAC в
+регистрах. Дополнительные history/gain регистры сохраняет только второй вход;
+GCC ISR сохраняет SREG.T. C fallback в [long_pitch.h](../../Codecs/Speex/AVR/src/long_pitch.h)
+встраивается в общий C40 caller с O2, чтобы разделить setup и не разворачивать
+десять MAC-тел. Выбор по прежним architecture+enable defines, по умолчанию C.
+Нулевой gain code очищает весь буфер один раз, short pitch сохраняет сегменты.
+ATmega328P / AVR GCC 7.3 mixed Os/O2/O3+LTO: среднее 31 потоков **-4,1057%
+ASM / -5,3352% C**, Flash +336/+618 Б, RAM/пиковый стек прежние. ASM worst
+frame +36 тактов, C -141: выигрыш относится к среднему времени. Все 13 254
+кадра/reset точны в каждом backend; два native C-архива проходят по 9 100.
+Независимо точны по **673 280 сэмплов C и ASM**: full signed16 history,
+все gain/scale/shape, clamp ±1, guards и все callee-saved регистры/r1.
+Старый packed путь проверен ещё на 163 840 сэмплах. PWM/ISR-gate новой серии
+пока выполняется; физическая плата и timing иных MCU не проверены.
+Отчёты — `Codecs/Speex/AVR/reports/fused-long-*.json`; независимый тест:
+`tools/build_long_pitch_test.py` + `tests/verify_long_pitch.mjs` в папке кодека.
 
 ## Первоисточники и готовые программы
 

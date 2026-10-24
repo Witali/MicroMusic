@@ -241,40 +241,65 @@ binary measurements. Vendor and R4 files remain unmodified.
   the rebuilt main speech demo matches the independently simulated clone.
   Reports: phase-reuse-{asm,c}-{summary,means,headroom-summary}.json.
 
-## Next candidates (not yet admitted)
 
-1. **Fuse long-pitch products and innovation.** For pitch>=41 all three taps
-   read completed negative excitation indices. Compute their signed24-bounded
-   sum in registers, clamp and combine with innovation without writing and
-   rereading the 120-byte pitch array. Adjacent samples share two source words,
-   so a rolling three-word window may also remove redundant history reads.
-   Retain the existing segmented path for shorter pitch, exact signed sums,
-   deferred scaling and clamps. The isolated C prototype now matches all
-   13,254 AVR frames/reset and 9,100 native frames with scratch bounds and
-   invalid-call assertions. Its corpus mean improves 5.4082% (human speech
-   5.4437%); corpus/coverage maxima improve only 61 cycles because the slowest
-   frames still use short pitch. The selected O2 function adds 682 B Flash,
-   leaving SRAM/observed stack unchanged. O3 adds 3,426 B and saves another
-   ~1,233 cycles on the 1,058-frame fixture mean; a flat O3 loop saves 38 B
-   versus O2 but costs ~551 fixture-mean cycles. Keep this experiment separate
-   from admitted firmware. Next verify independent full-scale history/clamps,
-   try a shared-vector/ASM form with its C fallback, then complete timer/ISR
-   admission. Retained reproducible patch:
-   `docs/avr-asm-cookbook/examples/nb3-long-pitch-fusion.patch`;
-   reports `long-pitch-experiment-{summary,c-means,c-fixtures,c-speech,c-pitch-coverage,c-lsp-reuse,host}.json`.
+- Fuse long-pitch sums with innovation. For pitch>=41 and nonzero gain code,
+  a shared ASM vector entry accumulates three signed8 x signed16 products in
+  signed24 registers, keeping a rolling history window. It shares scaling,
+  clamps, rounding and stores with the existing packed-pitch entry; SREG.T
+  selects the source and is preserved by GCC ISRs. Only the fused entry saves
+  its additional history/gain registers. Zero gain code clears the buffer once;
+  short nonzero pitch retains all original segments and zero tails. The pinned
+  table's zero-code contract is checked during source preparation.
+  The C vector is inlined into one O2 forty-sample subroutine: setup is shared
+  across vectors without expanding ten MAC bodies. Relative to the preceding
+  admitted image, weighted corpus mean falls 4.1057% ASM / 5.3352% C; human
+  speech falls 4.0968% / 5.3225%. Flash 8,742 -> 9,078 / 9,698 -> 10,316 B;
+  static SRAM remains 1,199 B, observed stack 141 / 153 B. ASM corpus/coverage
+  maxima rise only 36 cycles to 130,485 / 130,709; C maxima fall 141 to
+  269,656 / 270,221. This is a mean-speed optimization, not a worst-frame gain.
+  Both match 13,196 corpus/pitch and 58 envelope/reset frames with one image
+  hash each. Independently test 673,280 samples per backend over every table
+  gain/scale/shape, full signed16 history, exact clamp boundaries +/-1 and
+  random bounded gains: preserve all buffers, AVR callee-saved registers and r1.
+  Existing packed innovation still matches 163,840 signed24 edge samples;
+  native primitives/PCM, 12 backend configurations and both exported C archives
+  (9,100 frames each) pass. Complete loaded and ordinary PWM gates are running.
+  Reports: fused-long-{asm,c}-{fixtures,speech,means,pitch-coverage,lsp-reuse}.json,
+  fused-long-kernel.json, fused-long-innovation.json, portable-fused-long-library.json.
 
-2. **Ten-sample pitch staging.** Upstream pitch sources always have negative
-   offsets: the first segment stops before `j==pp`, the second before
-   `j==pp+pitch`. Thus a completed innovation vector can be written before the
-   next vector's pitch is computed. A 30-byte packed pitch buffer could replace
-   the current 120 B, saving 90 B, but additional segment calls may cost cycles. Verify
-   every short-pitch tail and compare speed before accepting.
+## Next candidates (not yet measured/admitted)
+
+1. **Retire history words earlier in the fused ASM loop.** After products a
+   and b, move b into a, load the next history word directly into b, then
+   form the third product. This may free r8/r9, remove one rolling MOVW and
+   make a preserved register available for the rounding bias. Compare both
+   entries, callee saves, unit timings and whole-frame/player behavior.
+
+2. **Fuse short-pitch contiguous ranges.** For pitch 17..40, the ranges
+   j<pitch-1 and pitch+1<=j<min(2*pitch-1,40) have three adjacent history
+   words. Handle the two switch samples and optional two tail samples
+   separately, then the all-zero tail. A variable-count kernel and tiny
+   boundary staging might avoid the full pitch buffer while speeding the
+   currently slowest frames. Preserve each tap's exact negative source,
+   second segment and zero tail; extra short calls may erase the speed gain.
+
+3. **Ten-sample pitch staging.** Upstream sources always have negative offsets:
+   the first segment stops before j==pp, the second before j==pp+pitch.
+   A completed innovation vector may be written before the next pitch vector.
+   A 30-byte packed buffer could replace 120 B, saving 90 B, but additional
+   segment calls may cost cycles. Compare speed before accepting.
 
 No claim of a global speed optimum has been established. Do not mark the
 ongoing optimization goal complete while useful candidates remain untested.
 
 ## Rejected or superseded experiments
 
+- The isolated rolling C40 long-pitch prototype (long-pitch-experiment-*) is
+  retained as a reproducible historical patch in docs/avr-asm-cookbook/examples.
+  Its O2 variant gained 5.4082% mean at +682 B Flash; O3 gained another ~1,233
+  fixture-mean cycles for +2,744 B over O2. It is superseded by the shared
+  production ASM/C design above. Outlined ten-sample C O3/O2 variants were
+  slower than the selected inlined C40 form, which also saves 84 B vs C10 O2.
 - Original fully unrolled LSP: 24,636 B decoder Flash before improved arithmetic.
 - Constant-stage inline LSP after improved arithmetic: 20,114 B, superseded by
   shared stage/cosine subroutines at 14,836 B and under 1% additional cycles.
