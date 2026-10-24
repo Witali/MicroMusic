@@ -1,0 +1,1461 @@
+{
+  "schema": "micromusic-pin-observation-probe-comparison-v1",
+  "baselineRuntimeSha256": "d7be3a7378d14c2896a92106291715ed8fcb0d291359e5153efb639f9c18e0a8",
+  "candidateRuntimeSha256": "794f8f961e8bf89ad2649c2fa470ea60fac0802f671395b3205504a740a94a4e",
+  "method": "Compare all profile fields except fingerprints of decoded JSON files. For every such fingerprint, verify both actual files against their recorded hashes, then require equality of the full parsed decoder output excluding only waveformCsv, which names the different acquisition output directories. Raw waveform hashes, every frame/timestamp/marker, source identities and CPU binaries remain exact. No clock/chip state normalization.",
+  "cpuRuns": 136,
+  "cpuResetCuts": 114,
+  "peripheralProfiles": 25,
+  "comparisons": [
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\nop-retention-control\\uncut.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\nop-retention-control\\uncut.json",
+      "oldHash": "220a7e2c2e20b618c9474cd60afbe1d269b55fd66e96fb39de969ec7d704e117",
+      "newHash": "b3651e27877d74ee9035ed1602e95887807c42adc93e298706715d5b0036fa06",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\nop-retention-control\\uncut.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\nop-retention-control\\uncut.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\nop-retention-control\\h2-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\nop-retention-control\\h2-before.json",
+      "oldHash": "04f2868fb0587dfeb97ee944ec8f27321c13d426fe644571a08a01cbb8aa4032",
+      "newHash": "a49dd22b55b07791093ecd2c14a26460705cbb143c8ce0318441ddbf15a14d4d",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\nop-retention-control\\h2-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\nop-retention-control\\h2-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\nop-retention-control\\h2-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\nop-retention-control\\h2-tie.json",
+      "oldHash": "c59524c3e1118563f85df2ac758eb1da0b599b9d323d3d73c2e98651f2c28f5e",
+      "newHash": "de5b7620d6c95123ca9695ef3edab449510cd30aad4a473eb63ab4ca8f04226b",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\nop-retention-control\\h2-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\nop-retention-control\\h2-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\nop-retention-control\\h2-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\nop-retention-control\\h2-after.json",
+      "oldHash": "123e35219ffd6205e6f66ef32eb956c39fa224e144de6c3e47e1c8b0536d34a6",
+      "newHash": "8e61976a5cf48be6012a6013016fceadd2d872e86c169ef956be08643f0d6a15",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\nop-retention-control\\h2-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\nop-retention-control\\h2-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\push\\uncut.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\push\\uncut.json",
+      "oldHash": "0316553d532721971cdac85e18ee441922c9eb645d80165a49322047b6cdc779",
+      "newHash": "a45a49e7440bab2d1c28e6603d4c640f5f292849d458bb06f4c6369ffa593d9d",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\push\\uncut.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\push\\uncut.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\push\\h4-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\push\\h4-before.json",
+      "oldHash": "67af736f016516828b28e933fe66da6f3bf2ce8e037e30750e68ffe70c9c4516",
+      "newHash": "d28f98dab379389b52b1038f21b4a149fe434761d0c3faad00b0db76b15cc3ec",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\push\\h4-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\push\\h4-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\push\\h4-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\push\\h4-tie.json",
+      "oldHash": "abfc1d1c95210e6c63659b476345563124305737134c61107940c5f172a0e741",
+      "newHash": "a7805bed00be4be276aaaaf6a52eeeeb44208b35998b05969f3a0a3ab0c6c0c2",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\push\\h4-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\push\\h4-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\push\\h4-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\push\\h4-after.json",
+      "oldHash": "932cac37f11809db88ab15eaffbfd7a8f52f82a4f986d084fbe7fe74e328fb89",
+      "newHash": "2e73a65419770125e17a308376cb44fd684520d20f9e8a120e9554cf4eeae9cf",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\push\\h4-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\push\\h4-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\pop\\uncut.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\pop\\uncut.json",
+      "oldHash": "985f6b3fef03a64385b6b0e846933684abd8aa62db4807472bee54fb5155eec7",
+      "newHash": "ac3b6b96b10cdf5bef7b3c28873cf8c7d92e8c105a1d06596c1da788467d13f4",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\pop\\uncut.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\pop\\uncut.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\pop\\h4-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\pop\\h4-before.json",
+      "oldHash": "09d5095113a852b707035b3765ee7b541201fb69103bb88db59286c59194e1f2",
+      "newHash": "c499b9b48d85ec96c81b2a146a4b1a32e28b66b69dfd5b3f8ece748727202de9",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\pop\\h4-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\pop\\h4-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\pop\\h4-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\pop\\h4-tie.json",
+      "oldHash": "5130fb4631e018f6f98aafc24206cc0f84e270d1cb677aca885107779188c428",
+      "newHash": "f47fd1b44c757f10c905c0cc7f2e13ec41ba2b891c1013366b1540c8a21f0b74",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\pop\\h4-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\pop\\h4-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\pop\\h4-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\pop\\h4-after.json",
+      "oldHash": "97fdce381edb400e96fb8bbff81439eeed00d3be6866b0020d84b53d509ee9f5",
+      "newHash": "09015e1b549d97dc98bf4a1f6145a66b2811b1c0e38916ec4854e62257033cab",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\pop\\h4-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\pop\\h4-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\rcall\\uncut.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\rcall\\uncut.json",
+      "oldHash": "4b8734fc347e66c79c6285cfe0b7be7b304efec514822e7c358bce25506967b7",
+      "newHash": "ae73b9c8cec5767cbf06c03e4b53b3fe02cc3d02ca820e28523b6fd0339bef76",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\rcall\\uncut.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\rcall\\uncut.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\rcall\\h4-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\rcall\\h4-before.json",
+      "oldHash": "1fa152204167f887f943f8e7045d979fbe91a4131349ad1b3deed2e3b1881571",
+      "newHash": "4eff2277e1b1b743f705b08b28ae3e9a34ee48c594cbe8e949887ca70ef1ad4d",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\rcall\\h4-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\rcall\\h4-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\rcall\\h4-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\rcall\\h4-tie.json",
+      "oldHash": "06ff5fed6a45191c4216e423f2d7f1b0a16252e666c519ba33c8eab8fce64e7a",
+      "newHash": "0c4184c79ea94947342102cf78888c9a87dab15a8bc2576c15f4dda9e9796102",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\rcall\\h4-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\rcall\\h4-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\rcall\\h4-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\rcall\\h4-after.json",
+      "oldHash": "6a3f1d1a5848387eba7157742bd3637861b4de1b0de6adb0052d26363ae0c051",
+      "newHash": "15193d6a74561ccb71b2d2e8e5befc181902258074ce1774beac75d10c83eb8e",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\rcall\\h4-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\rcall\\h4-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\rcall\\h6-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\rcall\\h6-before.json",
+      "oldHash": "25555bac8acd19433e522a821a207ea06160b53baee831e9cdfbe59754518918",
+      "newHash": "59644a1f712ad17561fab62be7a0fd14bff2a931d99b877f93ea79b0eb244873",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\rcall\\h6-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\rcall\\h6-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\rcall\\h6-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\rcall\\h6-tie.json",
+      "oldHash": "69332e431dba80e8651b74e96a541702ff57adbdc2efeec8d5eebdab4ab2af4d",
+      "newHash": "3943fc15134bc3d33b6bdd8f6386e1e2745e9546debfdff86823da30def8501f",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\rcall\\h6-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\rcall\\h6-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\rcall\\h6-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\rcall\\h6-after.json",
+      "oldHash": "8f7ea97a72b4fb0cf4a09e7f0e5467c66ce50f99e529e32667c4cf8ba93dcca1",
+      "newHash": "12cebc535968eb8e6fbc9053bc680609f8fd1bda33f4bad946d2c6e0ac2a170d",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\rcall\\h6-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\rcall\\h6-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\icall\\uncut.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\icall\\uncut.json",
+      "oldHash": "81ffaef2c433c8e7a373a0b5a72f377f65f62221d5ce39e870294bfea6b9c917",
+      "newHash": "8cb2f537da5827d3b70e3c912087bcac2e3a3a6de5cf1a40f303421968de1f5e",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\icall\\uncut.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\icall\\uncut.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\icall\\h4-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\icall\\h4-before.json",
+      "oldHash": "895ff9e0feec4c917752970e0d523b37828e43e7a0e16173ff57254b60b34610",
+      "newHash": "1bc02b9fa0adda705867f733542023993a9777467dcda60e7238604b9d471e37",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\icall\\h4-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\icall\\h4-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\icall\\h4-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\icall\\h4-tie.json",
+      "oldHash": "8053c39f881aeb75aeaf344e925efd8b1146ad795fb0d4e65d74651bb1345642",
+      "newHash": "deb37828de1c7be912d3d9e5473f774c14befa3a1c86471ef68fab94cbee2401",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\icall\\h4-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\icall\\h4-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\icall\\h4-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\icall\\h4-after.json",
+      "oldHash": "4b1bf8106947a371466e88d55f20494e821d587cb1f322d7fd443d97ea5d01ad",
+      "newHash": "75254903ba667b3258014cc67d0aadd1ff4bc80cb19d4c3775c9eb6393fc0a5f",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\icall\\h4-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\icall\\h4-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\icall\\h6-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\icall\\h6-before.json",
+      "oldHash": "c55773c6cf30f23c083694144824428de20305e95a282dcde34df97cdc1ca890",
+      "newHash": "e4856089921b7ee2ee3a4c1897d2f9e1bb8e7db4872dd195df627c884c5e9689",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\icall\\h6-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\icall\\h6-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\icall\\h6-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\icall\\h6-tie.json",
+      "oldHash": "eb5fe33af9c9ac06d6e2b28d8ff5682304979103fad6812bde040e2e46a2f998",
+      "newHash": "2d27c102b174fb9d902afaf717d792fba583c0dd25dfa4dcbd537ea42e2700c4",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\icall\\h6-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\icall\\h6-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\icall\\h6-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\icall\\h6-after.json",
+      "oldHash": "7da51a17cfcc4f3134be5787c09737de7b3e55da019d5bf5365ae59605db734f",
+      "newHash": "b3c4d3f75bbc0ef2effd74c7f9d995110b8025c4947a83f2d899195949183ae1",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\icall\\h6-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\icall\\h6-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ret\\uncut.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ret\\uncut.json",
+      "oldHash": "bd4787ee80242e08e12fb2900097525e812a6811a1fea0957c5406ac22db0a14",
+      "newHash": "b41fe6cca3a3ee3a728207e3b5b6885126c7c08b5f9eb9f0a0fc284524d486ee",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ret\\uncut.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ret\\uncut.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ret\\h4-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ret\\h4-before.json",
+      "oldHash": "964dcfecd91750401c5230157428b3b3c895b704d74f7fa6c2e91ed20af3c2b0",
+      "newHash": "9942f62d8d39e08b9a389588866880f568b8ca6a20c14c0caf9ff66f94ef1a06",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ret\\h4-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ret\\h4-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ret\\h4-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ret\\h4-tie.json",
+      "oldHash": "c49255ff8590bc4fd35dd41791d9d26dea5af89c3c61dd82d25b0cdb841600ce",
+      "newHash": "ced290a2dd5cd2f4d60e58f95a73e37a763da0378fd8d716112d93f786cf27fd",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ret\\h4-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ret\\h4-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ret\\h4-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ret\\h4-after.json",
+      "oldHash": "b5f59b8ddaf7633440d4f9ea4f0338e7c24a168682a17d92511402dbec5da346",
+      "newHash": "e108490fea5eefac5856fd945dfd858b9c88747e582eed66755ddf5d4f258f48",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ret\\h4-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ret\\h4-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ret\\h6-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ret\\h6-before.json",
+      "oldHash": "82ad53a9e81b672f85c1d4741f6eb6b1b236673ff598f205cfdb7073c9ccc726",
+      "newHash": "3175a428bd1cf42135bf88899858340b4f8027b35d6a1e30a0dba4dab960753e",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ret\\h6-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ret\\h6-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ret\\h6-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ret\\h6-tie.json",
+      "oldHash": "0d7371f5cf658e24767e2417301245352493d209a441776e29dbdfff5968fba5",
+      "newHash": "103d91e732da936d67b3c374ff534d779af7629534d2f2f5873878182835f2b0",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ret\\h6-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ret\\h6-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ret\\h6-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ret\\h6-after.json",
+      "oldHash": "bf6a279e11392cbfce4be5ae365d20c02ff23c84c368d228be319092d624934b",
+      "newHash": "70657e844690423fcf16b4cf4a2185a5c8e1f8d5eb9d81640e62cbc248a6ee30",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ret\\h6-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ret\\h6-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ret\\h8-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ret\\h8-before.json",
+      "oldHash": "4bc33861fefcbc770439d62ff9a8158bf9c9a2da0d8e768da59c5e8956ccdbd9",
+      "newHash": "1935faf74888e065ead9aac1b3e39613bc7bc284d966f7c94c73a633b89e723e",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ret\\h8-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ret\\h8-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ret\\h8-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ret\\h8-tie.json",
+      "oldHash": "f8412f75eb730c11c7af50c8f0b74112d2bb4837ffdf84df590691d7e2ab6dc1",
+      "newHash": "446d243c0732c49695f67542fc94b12efcbc3127ab25b841a1fb87dd8f9f4a80",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ret\\h8-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ret\\h8-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ret\\h8-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ret\\h8-after.json",
+      "oldHash": "c33a599e1942a49edb511cf68d85a7df6891905899ea5af3e93619a512381eae",
+      "newHash": "28b7d733b28b45e49284fc4f857c9ccc2f214993e3c6b26df5bce725d53b1465",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ret\\h8-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ret\\h8-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\reti\\uncut.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\reti\\uncut.json",
+      "oldHash": "992882df9793ca967fcabdaa101f84aa9efc836153b497dae4fe25634a95232e",
+      "newHash": "6337de2efff17954b41adff907d78ef6d6c8232a97cd4f00be16dcb4225b4edd",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\reti\\uncut.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\reti\\uncut.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\reti\\h4-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\reti\\h4-before.json",
+      "oldHash": "e127742cee2e3ebcee421f05848e985d9a8383148ffe189a8f07e519514b1e30",
+      "newHash": "e03ebb414d05b23a6b7b54efb59da633a2a37bbaa7331f3f3478bb8e67ee6d3d",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\reti\\h4-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\reti\\h4-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\reti\\h4-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\reti\\h4-tie.json",
+      "oldHash": "33a0e779e587aed344a3aed7e6a8d451f024250339a4cb0966a2897d360cc034",
+      "newHash": "32853f156f500d60df5743920ad047aa2bb85c8c5635b3aa30b8912e720483b2",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\reti\\h4-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\reti\\h4-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\reti\\h4-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\reti\\h4-after.json",
+      "oldHash": "98be2015e5d35d16041f181099d7a31830ad102e71830ae82aa6e78100d8c934",
+      "newHash": "cbfa492cceed85cd292ef64f22ea68264fae624d9b8f92bb34ed16202fd62959",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\reti\\h4-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\reti\\h4-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\reti\\h6-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\reti\\h6-before.json",
+      "oldHash": "33d56251b62ebb995fe404f492f58c7e013ce1bb7c21871733e73f4957729ba2",
+      "newHash": "bffa4cfcb02ad99cbffe2355bee281680fa1239c1a011c6be937b482122d0cdc",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\reti\\h6-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\reti\\h6-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\reti\\h6-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\reti\\h6-tie.json",
+      "oldHash": "82f2ef521e9764e02201fde8b4f7319dada3c65780a6929dc16edd5c3022088a",
+      "newHash": "1a98a4e1880e393d450163b39ef8928dde915ca84b7baa01e9514ff4a7396ced",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\reti\\h6-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\reti\\h6-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\reti\\h6-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\reti\\h6-after.json",
+      "oldHash": "c50bfffcca64a9ec1e80dc6b2a0890c6fd1cef244b44057a72081b5a59c82015",
+      "newHash": "a7871f158f44354ce4b7a20e8b50f0d12d287f782078770b47fb4935443e3999",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\reti\\h6-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\reti\\h6-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\reti\\h8-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\reti\\h8-before.json",
+      "oldHash": "f948aa2e3bbda2e3d637af9cc235362e30e5e322276f21ab44fe887b9f0bef4c",
+      "newHash": "49a012e14f93d456c55bbee5aa016eba649c82eb80b3255d9e1ede97c6580f45",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\reti\\h8-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\reti\\h8-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\reti\\h8-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\reti\\h8-tie.json",
+      "oldHash": "6899a8cc67d9c1203a6a3e1e7257798e27786290720821cd5157860a1b7f54e2",
+      "newHash": "cd9f4150ecf7af19f1fa44e5714b71fd91ca17153de1ed2b70d1321f2198e359",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\reti\\h8-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\reti\\h8-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\reti\\h8-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\reti\\h8-after.json",
+      "oldHash": "116751302adeb779f92d78a26c0874959f19f0e373b9f92db02d954fcf4cd163",
+      "newHash": "1dc4db639e3e5609213f9ad354cd84fb7539761faf21ca5bcbf746a7015b5d5e",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\reti\\h8-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\reti\\h8-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\irq-stack\\uncut.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\irq-stack\\uncut.json",
+      "oldHash": "4b6b03c53e4b004732afe6514b9c7b3667b88f92b03efa9dfc67940dfaf17b42",
+      "newHash": "81a640303d04ad22e660265136e357f7c0c6d06861dc3f969ed46927b0fe1fef",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\irq-stack\\uncut.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\irq-stack\\uncut.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\irq-stack\\h4-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\irq-stack\\h4-before.json",
+      "oldHash": "b412f315ef085272520fe21bca6abfebb2c3de0756f0a222924a045763cb9eb2",
+      "newHash": "dd41118d356036a1ac994cccb8e94e0381ef62d00814b855ac5e213d6189ac5d",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\irq-stack\\h4-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\irq-stack\\h4-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\irq-stack\\h4-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\irq-stack\\h4-tie.json",
+      "oldHash": "4aa517a9924097b2f07d9dd41bd21437b248da85491e52e1728e2117589f8499",
+      "newHash": "767cf84c89d08451db02214948336da20cd08f155255057ce362713dfe92a408",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\irq-stack\\h4-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\irq-stack\\h4-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\irq-stack\\h4-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\irq-stack\\h4-after.json",
+      "oldHash": "f738306faa972640b6d57302f1297eb2423d32d21d2bb6089f3572743959c0e5",
+      "newHash": "536db2bd1904cbbd92144fc3fa53c608f1335bdaf5b91d65ecfe9cefdb4502e4",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\irq-stack\\h4-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\irq-stack\\h4-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\irq-stack\\h6-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\irq-stack\\h6-before.json",
+      "oldHash": "92038f5ad0657c086e9fc2b55aea78ae41537d7bee57afe7ce03eef5895c59ba",
+      "newHash": "739952ede53fcb60a647e4f8bd992cdffa10491e10509b482dbb4975d8ded179",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\irq-stack\\h6-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\irq-stack\\h6-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\irq-stack\\h6-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\irq-stack\\h6-tie.json",
+      "oldHash": "bc301e401e66013cb56c14bcbc48ae68782468dfd8515303cde4c3417c2cf634",
+      "newHash": "bc29fdeff42f11a3b0779643a699df13c18120bfa0775809fb83ce2148018bad",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\irq-stack\\h6-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\irq-stack\\h6-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\irq-stack\\h6-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\irq-stack\\h6-after.json",
+      "oldHash": "541b5eb156aeacd471569ef40a17a569f50ff77cc3b37b76702cd073e456dabb",
+      "newHash": "45a38bed522bc513a75617aab75cac474aade244bbfb128924f5945f9d2d5b0e",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\irq-stack\\h6-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\irq-stack\\h6-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\irq-stack\\h8-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\irq-stack\\h8-before.json",
+      "oldHash": "310a620a1f0d5ebf626bca9f145682a5aa9118a0a5a2b90e395460fd383fa223",
+      "newHash": "71c4ee20a10f2e2068c75a08266b0cf0961c77a5a7f3d313b0a7db5ef44e9153",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\irq-stack\\h8-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\irq-stack\\h8-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\irq-stack\\h8-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\irq-stack\\h8-tie.json",
+      "oldHash": "c95621533c7f8f79f93c5bd7d03dbb050105032eace19833477b55bbf9cc241c",
+      "newHash": "78df204bb7b47d608bfbaded1aaaa9008e05003ae173964e535cef00f566bb71",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\irq-stack\\h8-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\irq-stack\\h8-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\irq-stack\\h8-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\irq-stack\\h8-after.json",
+      "oldHash": "9c4e241ddc22821c1abf9a3db69ff9b969f2495b4ece105032bc86cde7e1322b",
+      "newHash": "c60db80f37083b30e44a42d4824d9de6b26c3df2178bf3ef5b2a05b066392419",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\irq-stack\\h8-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\irq-stack\\h8-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ld-x\\uncut.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ld-x\\uncut.json",
+      "oldHash": "df90d23104c0f5917eae04d677ee39ad1573f6c1670211f24039bdb78845a8ea",
+      "newHash": "794555c31385607b8d5c0161e80739f9dfa0b620434fca3ec329dbea998a9153",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ld-x\\uncut.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ld-x\\uncut.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ld-x\\h3-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ld-x\\h3-before.json",
+      "oldHash": "daf0acb28a88924f3dd76323680ce42281d866bfea47ebf2a975206b833b2906",
+      "newHash": "7b2820d5e3f7740ebe3be6790a5a4bf80ea8b2032f3f420260c89d2401c84fae",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ld-x\\h3-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ld-x\\h3-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ld-x\\h3-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ld-x\\h3-tie.json",
+      "oldHash": "954e6272a804a98cef7d4858b7bdba29bc9e22340e36ee9af1f55d68255417b2",
+      "newHash": "e86d72e8a68a5ba642898c171e5367062e3d1c19c48257ebe959832439a08ad5",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ld-x\\h3-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ld-x\\h3-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ld-x\\h3-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ld-x\\h3-after.json",
+      "oldHash": "b2d401286e7f472d4fe57e6ae61a84d5c1982c882a14565dfc5cc8d0fe708907",
+      "newHash": "b46f3d84cdb621cc42f8453b5fcd5972422d7cb9e1ea036d8696ea7c4c2dbe37",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ld-x\\h3-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ld-x\\h3-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ld-x\\h4-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ld-x\\h4-before.json",
+      "oldHash": "3b698b284a4ab819297650dcb702ed0f1b0097c447006036fdd8ad80ef058887",
+      "newHash": "f33df23736c4541df3b3ac7448cf16efdf6ef70e2e4da5b6d431afdf79a6b570",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ld-x\\h4-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ld-x\\h4-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ld-x\\h4-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ld-x\\h4-tie.json",
+      "oldHash": "df134e7425aec79bce1cc9692b21ba5cae95ede8c562d2981d92dbdd1cfce6d9",
+      "newHash": "dab4834bf1ad2b79bd0caa924781b421b0bd5dd4767dfe12f2abe3edcb01a21b",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ld-x\\h4-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ld-x\\h4-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ld-x\\h4-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ld-x\\h4-after.json",
+      "oldHash": "86c4e8a066bc623dcf986e8f8ba512696841206e304348e02e8e601821722a81",
+      "newHash": "461840951adb749c9b2ff49751151dcdaf3a49a1f96e1da1791d0e6ddc732fc8",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ld-x\\h4-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ld-x\\h4-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ld-x-post\\uncut.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ld-x-post\\uncut.json",
+      "oldHash": "c58c4d16749b26c03e81c1fc77854a3af98eca3de48ba61a1ef10e63be5d26bc",
+      "newHash": "18851aef69d05e0c26e2624233acdc0fd215a0107da347d19a5374a032a782f2",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ld-x-post\\uncut.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ld-x-post\\uncut.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ld-x-post\\h3-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ld-x-post\\h3-before.json",
+      "oldHash": "70f50083e8e4b63ae4378caf2ae3f144b16a1b0b6e0fcb99a02575cbfc2dbf74",
+      "newHash": "55b262dd8228c826b8f337f4e6e2f0d6ec5e7d62364704a925c526f33d87ad1e",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ld-x-post\\h3-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ld-x-post\\h3-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ld-x-post\\h3-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ld-x-post\\h3-tie.json",
+      "oldHash": "4d6211cebe194144292e4a37b4bb77d8949f39edcdf5041bc44112f79d2bbf40",
+      "newHash": "c0a4718aa12077e7d194a329867952b6926398a3386613b85d31988d4d44dccf",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ld-x-post\\h3-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ld-x-post\\h3-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ld-x-post\\h3-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ld-x-post\\h3-after.json",
+      "oldHash": "d1eaca051c5c011337f5300beb50de80df89fd93ff892349e2c334f7c034e279",
+      "newHash": "267ceaca13bfcec451ea1b3c59de3fb0dd360bffc5e31459fc1a0898913749a0",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ld-x-post\\h3-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ld-x-post\\h3-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ld-x-post\\h4-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ld-x-post\\h4-before.json",
+      "oldHash": "953ff6c185521b86c170120e6da5bbf5f299d7af988bd4e528445919bc411b86",
+      "newHash": "0af1454609a46dfd18108cb81014cdc5f50d101bd0583f988d671ae86b494522",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ld-x-post\\h4-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ld-x-post\\h4-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ld-x-post\\h4-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ld-x-post\\h4-tie.json",
+      "oldHash": "0864a7619950486111d2a9b0a0a797ee3ebe33e562a41dda6305f852047c1e0d",
+      "newHash": "a8a278d1a5d4741638979d6d135fe4c198aa8356366ead5bd4e6ef09cd9a12ea",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ld-x-post\\h4-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ld-x-post\\h4-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ld-x-post\\h4-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ld-x-post\\h4-after.json",
+      "oldHash": "ef792d88067651ecda73ebc9dfc00b80f8ef0f074bb5f8ad148f8d6cac977ad2",
+      "newHash": "12b12cae055c31dfe5fdf56027a933ff8eada66a6cf37cf0931dae279c95a030",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ld-x-post\\h4-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ld-x-post\\h4-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ld-x-pre\\uncut.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ld-x-pre\\uncut.json",
+      "oldHash": "1e75b4e27a1d0bfc6c8aa2cee49fbacf9d1fbf54f1c3441667d35b07e9d327d8",
+      "newHash": "44f3f9b0500cbf4783840f70228ddd740afdc078e594b191c7d97f3705a3a7d6",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ld-x-pre\\uncut.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ld-x-pre\\uncut.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ld-x-pre\\h3-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ld-x-pre\\h3-before.json",
+      "oldHash": "46f945c66f363d8ff6e6fd95c9f83643f28946bd67a47fb85414d588033cf181",
+      "newHash": "9ee13a94004b31fc24b1632c423450e52546b2bfdfa1bcb2b01ea923f3913ef1",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ld-x-pre\\h3-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ld-x-pre\\h3-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ld-x-pre\\h3-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ld-x-pre\\h3-tie.json",
+      "oldHash": "712417d547ab5f2030503db8682be924f6b4f647d1657ed9e9d50ab3fe064e4d",
+      "newHash": "442663f4ddab4b194691eb3385cd30f6b39ec6c2f5fed8d675ff3fafd9d70003",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ld-x-pre\\h3-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ld-x-pre\\h3-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ld-x-pre\\h3-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ld-x-pre\\h3-after.json",
+      "oldHash": "d213b178056e127d88418c99a3bd26967c271ddf9a050150a97e7d1e6bd5f1f8",
+      "newHash": "d7cb16157f665bd071d3ce30df5cc672c204885c926694324dc1006f232d1acb",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ld-x-pre\\h3-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ld-x-pre\\h3-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ld-x-pre\\h4-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ld-x-pre\\h4-before.json",
+      "oldHash": "da3fff019d50688a08b3ebf26fb93970f54eb01fd3aa06f3b4d76b7002d232a9",
+      "newHash": "2543e8a053e733f0974595dc46f9ea18b58a3b8139e43ddd5e46c19f55c28736",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ld-x-pre\\h4-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ld-x-pre\\h4-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ld-x-pre\\h4-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ld-x-pre\\h4-tie.json",
+      "oldHash": "153a70f148704ae17855925843d583dcc2cbe70b56873e3390eaca6c5539fdf3",
+      "newHash": "8c3fe4370c008e50e96204ab850118b36258afe4fecd72e15cd37aab60be3a9b",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ld-x-pre\\h4-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ld-x-pre\\h4-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\ld-x-pre\\h4-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\ld-x-pre\\h4-after.json",
+      "oldHash": "2aadcb773c8377fcde8682cee672b68896867853dfaff96224bb66ed0ffa1476",
+      "newHash": "96464b0098eed4f4180b4eb16a561de31194e34bdb79113378d1f730e830bc8f",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\ld-x-pre\\h4-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\ld-x-pre\\h4-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\st-x\\uncut.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\st-x\\uncut.json",
+      "oldHash": "0650ab649f6df56a69525bdf749e02b02e6d9cc9bd31cab954f7a19447b03923",
+      "newHash": "f5efb5a3f4033786b08483db6eaf0b8d7cdec283a13bf5cd7ae9b2bdcf92fe49",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\st-x\\uncut.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\st-x\\uncut.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\st-x\\h4-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\st-x\\h4-before.json",
+      "oldHash": "adaf65747e2209b43fa0c8546e695d3bbbb7e92c977bcdfda803e462282a4876",
+      "newHash": "7a153f8670522585aed7b665efedcbd705c0aa269ea4302d92ae1fd1fe94e9ed",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\st-x\\h4-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\st-x\\h4-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\st-x\\h4-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\st-x\\h4-tie.json",
+      "oldHash": "c78ab85f791c8e1c79a3bb7eeb0b18f15a284becccb60111d8bc6d9c71040ebd",
+      "newHash": "8e7dae3cb401b3556f35e90c4aeea0b173aca0a8278086ed9b1e9d551ba1b755",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\st-x\\h4-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\st-x\\h4-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\st-x\\h4-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\st-x\\h4-after.json",
+      "oldHash": "89ad8a5bcaeea445cdeafc3bd54042ccab9815c9249d0756816d526b256afc26",
+      "newHash": "a9e9cca769e7c27136763a72acc1ae3ae724a81448d6038cf8c14461a1234f98",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\st-x\\h4-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\st-x\\h4-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\st-x-post\\uncut.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\st-x-post\\uncut.json",
+      "oldHash": "a4f71d4c06ab85596bd3fcb800b3a1df621284826eca06d2c920e49a98c241f9",
+      "newHash": "62a0203c543491ce96f269a0f0ee7e5ca21f92ca515f4455ba052ae397e89edf",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\st-x-post\\uncut.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\st-x-post\\uncut.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\st-x-post\\h4-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\st-x-post\\h4-before.json",
+      "oldHash": "236be14f08cd9f6da1db345d74cb327bca6067e8dfc658c873892cf70c5168f6",
+      "newHash": "9c391b6972e0c2e657770d136e7471e22c7e5d796ce2bd196b523a4401e7d5fb",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\st-x-post\\h4-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\st-x-post\\h4-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\st-x-post\\h4-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\st-x-post\\h4-tie.json",
+      "oldHash": "2d1e98c3caf674803b37c17e8aa1506290e0dd372913949534f3e79033a229b4",
+      "newHash": "700202e5644bf3039fee6a24d771c143d72a06cbb583c6c91955a12b4d7037e6",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\st-x-post\\h4-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\st-x-post\\h4-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\st-x-post\\h4-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\st-x-post\\h4-after.json",
+      "oldHash": "157a2a9256641a0de806a74bd2c763282026ba4689431eb40f2450793c727561",
+      "newHash": "74b107d72b3c1b50369830da91463e37b8894861b0a048b88676a9db0ffae010",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\st-x-post\\h4-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\st-x-post\\h4-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\st-x-pre\\uncut.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\st-x-pre\\uncut.json",
+      "oldHash": "2a8a4d7a1e7db042fcb525eb35b8c5bbc45e1e11a9c0dbbb403d15e0709e156a",
+      "newHash": "51f6b301f470b0c0639adb3cf73faa8fcd29a03532aedba12514ac9be77ebaef",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\st-x-pre\\uncut.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\st-x-pre\\uncut.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\st-x-pre\\h4-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\st-x-pre\\h4-before.json",
+      "oldHash": "8752b9e4a35d2e9bef058fcf2a95381ed7235e0dcb78b28778d38f380afb6624",
+      "newHash": "d363d71c30d055529024006c4334e383a4bc65034fdc145f0e242434f7cd3aa0",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\st-x-pre\\h4-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\st-x-pre\\h4-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\st-x-pre\\h4-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\st-x-pre\\h4-tie.json",
+      "oldHash": "c04fd748ee8fa9d7c29b3569777122cc8157295d28a4cb9c63b9da7200ccf13a",
+      "newHash": "5ec9d40f04940dda91b0dc9514e45a20c47d1f7a5f79e54fe0abb5ee2f8ed12a",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\st-x-pre\\h4-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\st-x-pre\\h4-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\st-x-pre\\h4-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\st-x-pre\\h4-after.json",
+      "oldHash": "dd914c0e7d25cda6d621e4c334263e8784be1aa0ce94e7c7b05d089aa3000515",
+      "newHash": "65ecd73c36a052d15fa1748c6053d41c7d1f7f5d393afe31e6674b97bd91b702",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\st-x-pre\\h4-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\st-x-pre\\h4-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\lds\\uncut.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\lds\\uncut.json",
+      "oldHash": "0df8c5d1acaf63502e78884b26e9bc751ab6138522aac076ca6f0e9ba10a461a",
+      "newHash": "7971e95a3fdbd449295098bd6cf1b213152281bc39261a52463d6203ef7e39ee",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\lds\\uncut.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\lds\\uncut.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\lds\\h3-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\lds\\h3-before.json",
+      "oldHash": "86197ba48309025a8d6449e01f2664d740442d55ec538cf305efce3185234d5a",
+      "newHash": "2cc705e2b1c0fe4ee600a769afc4e8e70c1048a15386235c1270c0ccd1c3044c",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\lds\\h3-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\lds\\h3-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\lds\\h3-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\lds\\h3-tie.json",
+      "oldHash": "b2a5c789c4bacaf65a324a42c96de5e14859907eeaba68fee23114875c8948ad",
+      "newHash": "cc0687c1a5619844c41fa83f54d6d611287ae322421ea999eefa6dbbeb3c792b",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\lds\\h3-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\lds\\h3-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\lds\\h3-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\lds\\h3-after.json",
+      "oldHash": "1bda2fc6e405714086899b7bd87d1e6cfb16abd91525b73cc9310cdd8da1e88d",
+      "newHash": "deeb9b276d66783049f8350a781787a9f5bce183327564d088a0c4a100f55879",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\lds\\h3-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\lds\\h3-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\lds\\h4-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\lds\\h4-before.json",
+      "oldHash": "5905e58752451cc5c55c69a80464e02f03e100323575d9485c75774cf3039153",
+      "newHash": "a282add002a4a3f30ce0c7d8d878723cca18a9b0837eaf337de15b7700c0a579",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\lds\\h4-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\lds\\h4-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\lds\\h4-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\lds\\h4-tie.json",
+      "oldHash": "9977bf16d2aae07358416748724ba4d15012bc773d8ef7360eefd0d8123c81a1",
+      "newHash": "73adfcfddc0e1ebdd1386447223ee536164d9858a24b8686e82c4815e237a4cf",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\lds\\h4-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\lds\\h4-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\lds\\h4-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\lds\\h4-after.json",
+      "oldHash": "91806ca707b0a209bb300f2b41e1b87856cd6b07e627c22b15337e1f592f8206",
+      "newHash": "88247b166790f29b442575b0bccdeec7daa844318982024dd6be6a56fd9030d2",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\lds\\h4-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\lds\\h4-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\sts\\uncut.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\sts\\uncut.json",
+      "oldHash": "f20e60e0fd95d4eeacdbee91c358da6d1c6d5933e22f7f7a51ad09c73e12c3ae",
+      "newHash": "6b8bf3661d9b216abe77246d0837960318bc21e9c7ec408ef0af0b972d82adab",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\sts\\uncut.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\sts\\uncut.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\sts\\h4-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\sts\\h4-before.json",
+      "oldHash": "161dd28fcad676f0d7fc08bb25243382ff883e4082c02a9b0c97d5d59b934bed",
+      "newHash": "da5f04c461673484d10901476dfdf8483565d07d83969c1f51990b0170c9f587",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\sts\\h4-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\sts\\h4-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\sts\\h4-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\sts\\h4-tie.json",
+      "oldHash": "4bfaf3cfe2b90cfdd82d43be787cc78601fbec7a16b6eb16e1dce54135727950",
+      "newHash": "deaee5bef4f9ef782f576bb3e79d9e672ddb7e37bbe6796a80d20003a1b286d9",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\sts\\h4-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\sts\\h4-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\sts\\h4-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\sts\\h4-after.json",
+      "oldHash": "4f25bbb3921602aca2db8f96cec033daea9f8cb628dafc3cf1b9488112fc7267",
+      "newHash": "204026a45588d264f4a73644f821170c808886bc5e073cd2cf655e9ec728c7d2",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\sts\\h4-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\sts\\h4-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\lpm-r0\\uncut.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\lpm-r0\\uncut.json",
+      "oldHash": "5643f87863b7461843035988340bd51b757a7a1787a73432e359cd2f542c9ab4",
+      "newHash": "82994e88879e54f4a0b5a7de1c6b90fe8dd3517c58e39192a416f94197c51c99",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\lpm-r0\\uncut.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\lpm-r0\\uncut.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\lpm-r0\\h6-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\lpm-r0\\h6-before.json",
+      "oldHash": "773498c1c99112c33983a93b9e7fa292a39a1e44d054f0674bc811c258dec96d",
+      "newHash": "4a5ff0208bafad7e0580839e00c68e55307733c7a56cb6d23e1ea6fa817762a0",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\lpm-r0\\h6-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\lpm-r0\\h6-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\lpm-r0\\h6-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\lpm-r0\\h6-tie.json",
+      "oldHash": "55881840ebb86cd748283c750ea3687fef7510e9d2e3b1cfafb77d514dc5333e",
+      "newHash": "6b48c0305fd71648f415458254dc5ec207bb5d487a53407d97039a15e7c17454",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\lpm-r0\\h6-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\lpm-r0\\h6-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\lpm-r0\\h6-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\lpm-r0\\h6-after.json",
+      "oldHash": "0249e7b499ccc87ee6fa139558115c2bb1756df883d8e1266d7ab2670b6760af",
+      "newHash": "6f87b792a916744689e60549086dd087a7184a1e50bc38fae191ba0cc1582622",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\lpm-r0\\h6-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\lpm-r0\\h6-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\lpm-r20\\uncut.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\lpm-r20\\uncut.json",
+      "oldHash": "93b05254f9c14e06898e58087a214a5d0d78f2d06b1c647a455754beb01a4d31",
+      "newHash": "5587353705ecbc5fb6072e3ac068a4d7a2841ed2ba4d1fe2b199f154a0e9ed6b",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\lpm-r20\\uncut.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\lpm-r20\\uncut.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\lpm-r20\\h6-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\lpm-r20\\h6-before.json",
+      "oldHash": "f4368fff86ae6e0ad9cd04e7230fba49f4f5b8e98e34af8dbecd08b42113bcee",
+      "newHash": "750deacb5756d9dfda4600adb72ee927d8071b3e3d9e5d027f59051240782e21",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\lpm-r20\\h6-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\lpm-r20\\h6-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\lpm-r20\\h6-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\lpm-r20\\h6-tie.json",
+      "oldHash": "a922e809ab5d75c7526ebd206dfc5827e47bb00a32a6c5d98292f27a821a6d68",
+      "newHash": "9e4cdae2206482f69cf22b24cad852d9c8a40e71ef17163cd83c99816756e93b",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\lpm-r20\\h6-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\lpm-r20\\h6-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\lpm-r20\\h6-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\lpm-r20\\h6-after.json",
+      "oldHash": "ab3400a5bfad157c06ff3ea4931f894f5e36dfef6e116720fe463740a8cab16b",
+      "newHash": "2aaf527ae7628af5cf93fa5d7f96c2ba37792ede2897710a5f6e23081a6007d8",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\lpm-r20\\h6-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\lpm-r20\\h6-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\lpm-r20-post\\uncut.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\lpm-r20-post\\uncut.json",
+      "oldHash": "ce873a23dede79e0424e487789def47d1e96abe73b4bd1bd5ed0347f6e4edd63",
+      "newHash": "f429aa8a6caa1c0245e5861719b00b1ad0fa911c6b80e91f223fb6b4b0e3e0c8",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\lpm-r20-post\\uncut.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\lpm-r20-post\\uncut.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\lpm-r20-post\\h6-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\lpm-r20-post\\h6-before.json",
+      "oldHash": "dd4c4ae3d36ed2088623f05c58436c9b347681297ba511ce7c9e89020f55001d",
+      "newHash": "ec460006c94310daa40567f80a0cf24927ef9067b7211d31b78a35dff749768d",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\lpm-r20-post\\h6-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\lpm-r20-post\\h6-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\lpm-r20-post\\h6-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\lpm-r20-post\\h6-tie.json",
+      "oldHash": "75f4393ea802af099c53c91894fd2b3be291b057c0be2fdd53fef326e1409f89",
+      "newHash": "5a497863966bd2d1e1321bcab9539e0f01b5ee78cbc118b403a03108eb601cfc",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\lpm-r20-post\\h6-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\lpm-r20-post\\h6-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\lpm-r20-post\\h6-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\lpm-r20-post\\h6-after.json",
+      "oldHash": "2043bcfc4b21ec8e7489b2cce4e2bd4599ffb863e573d4e73f63b0c2cb807cbb",
+      "newHash": "d352e292d37356017f9f20b2c9519ceb8e58062d7bd7e813202d58039ddbb307",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\lpm-r20-post\\h6-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\lpm-r20-post\\h6-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\in-pinb\\uncut.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\in-pinb\\uncut.json",
+      "oldHash": "b2504e5e2e43c1a045df312da32f0de504b63feb6cbdf52f7075a421d6daee1d",
+      "newHash": "d90fc936ff58202390b5b600b6f1e8baef03ff0fe36d5a3a120cc346726f5d98",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\in-pinb\\uncut.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\in-pinb\\uncut.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\in-pinb\\h1-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\in-pinb\\h1-before.json",
+      "oldHash": "70d0c97b81c196015f764c94fd89443064d033d214b06ddc5a93018e7a17baf6",
+      "newHash": "259a141293111ea8d5190d3ec13c6b5511809059295038f5a6270f5fd3927530",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\in-pinb\\h1-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\in-pinb\\h1-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\in-pinb\\h1-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\in-pinb\\h1-tie.json",
+      "oldHash": "03849de459294d2935736cb2b31d9bc36535d2e836327ae9592992e8f00e14f1",
+      "newHash": "3006b1083eb8f22fb616c93770cf7c88ec82b362d5efd7a41e0017e239a340b4",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\in-pinb\\h1-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\in-pinb\\h1-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\in-pinb\\h1-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\in-pinb\\h1-after.json",
+      "oldHash": "3ac923e065e2c9edf4f74bdab2ec2670b236d010e8fc59b04d1f0682b8472bfb",
+      "newHash": "9016fac663dca756a33e425f0732a877b27ad106883d0d0bdf2a21dd13237dee",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\in-pinb\\h1-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\in-pinb\\h1-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\in-pinb\\h2-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\in-pinb\\h2-before.json",
+      "oldHash": "fa91753988bdd48adba5aaeb6fbb10d8db8ad8e3056c73c55ded9f517738ea7e",
+      "newHash": "bd60e91bfff9b3e45bb996196b6c219068cdbb006a0836aa0876edc0521e91f3",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\in-pinb\\h2-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\in-pinb\\h2-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\in-pinb\\h2-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\in-pinb\\h2-tie.json",
+      "oldHash": "050c0e7aeb38d978cf3acc330d6415227a13fa0112ae61ab9e397c848706cade",
+      "newHash": "7794fd890d1cda725063ffb8bee9f59f5921e7fdfd058a614b862416bb4cc78a",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\in-pinb\\h2-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\in-pinb\\h2-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\in-pinb\\h2-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\in-pinb\\h2-after.json",
+      "oldHash": "bc9467371f1f477082ef8b629b7b88b5e27ce3110693cad5d0965d4ec5d1adbe",
+      "newHash": "98b514c9f91fa9dd2c465ecb41bf3a329eb418a840416d41b7437ad8e655f233",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\in-pinb\\h2-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\in-pinb\\h2-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\sbis-pinb\\uncut.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\sbis-pinb\\uncut.json",
+      "oldHash": "8845318491fcb9ccf4e29436fbcff6af6be088cecb06bd43f2b1bed6bd7cd20c",
+      "newHash": "fb4fdb1cda94efe5bef553390c2f456f033c80a357f9c753fde8dc4ccc097945",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\sbis-pinb\\uncut.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\sbis-pinb\\uncut.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\sbis-pinb\\h1-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\sbis-pinb\\h1-before.json",
+      "oldHash": "893270595655008c54161bae2ed4970f144aa20ccb3555a1de5e091f5797a117",
+      "newHash": "00c5c303dcbf27080c9397fdf1e9f9232429a9615aa68b34f73cf93b0adf9efa",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\sbis-pinb\\h1-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\sbis-pinb\\h1-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\sbis-pinb\\h1-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\sbis-pinb\\h1-tie.json",
+      "oldHash": "3716e411495788ee8dbe5b6c1d4406a528343f9e6bdc35fa2f03c7fc36940cec",
+      "newHash": "a5ab9ae87e61c07aa50bba8111a2b29ec2d44b5eeafd28a2b50aaacfad152d15",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\sbis-pinb\\h1-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\sbis-pinb\\h1-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\sbis-pinb\\h1-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\sbis-pinb\\h1-after.json",
+      "oldHash": "62e7ba92bfad44e36da4dd5380c2fafe2f021013176d3b875e1f3bcae40977a2",
+      "newHash": "55ca3018a8a2879c807f8f4d86106195201211f66c4548cfc361929b458a99c4",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\sbis-pinb\\h1-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\sbis-pinb\\h1-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\sbis-pinb\\h6-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\sbis-pinb\\h6-before.json",
+      "oldHash": "921812faeda4cd5d36fb170c728489c2dcb34e82ce2e6eba8aff5628820c2c28",
+      "newHash": "9a6d6bb827204cfd51df7a9a440e1d978b6b2ea2c7263beaa83123d6d6817d80",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\sbis-pinb\\h6-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\sbis-pinb\\h6-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\sbis-pinb\\h6-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\sbis-pinb\\h6-tie.json",
+      "oldHash": "c3d880e8cf119aa2f9c436e5844ef67f910c90241dd5d1e492d6efff27c7a76c",
+      "newHash": "263de50655d2c7b884f05faecc3ac16c00e617787cf434eda5f44ff6951d8680",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\sbis-pinb\\h6-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\sbis-pinb\\h6-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\sbis-pinb\\h6-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\sbis-pinb\\h6-after.json",
+      "oldHash": "b414e1a3a0b225dc3b87ff85c555f9b32e0f995be8ebc0425b5d7be546b87d71",
+      "newHash": "d879eae1dc700b54eecad5c02c803e6d270025526db5e1b4bdd3503f66af225c",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\sbis-pinb\\h6-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\sbis-pinb\\h6-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\sbic-pinb\\uncut.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\sbic-pinb\\uncut.json",
+      "oldHash": "299d327c948d7d5be3c2f1ba62aa9e5f3bc0c4fd58fdeaddccba88826eb7833e",
+      "newHash": "903940833086214367646a88e92caf837a13ebde9bf11cdb2ef4a3196ed75c30",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\sbic-pinb\\uncut.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\sbic-pinb\\uncut.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\sbic-pinb\\h1-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\sbic-pinb\\h1-before.json",
+      "oldHash": "5a01f592f012e3578ec26762fa24cfc2aa4229c38f7abca5829bd14526c606d6",
+      "newHash": "fc055950fae5af80c48e4578bacc5b9e3dedd2c7c9ba6f29b9bf3237bcd4ab43",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\sbic-pinb\\h1-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\sbic-pinb\\h1-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\sbic-pinb\\h1-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\sbic-pinb\\h1-tie.json",
+      "oldHash": "40005b4f156f94da948026bfde413f9426ceddcf289721fcb6f9fc8463552b40",
+      "newHash": "e51621f870be0dac6a111f0aed89f90a205fa4e7449eb261e566bb3c6c75c703",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\sbic-pinb\\h1-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\sbic-pinb\\h1-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\sbic-pinb\\h1-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\sbic-pinb\\h1-after.json",
+      "oldHash": "c72cac7468a3a98d6c4a36ec2f43e00a5deb203c8f32e543132bc7d06f8cfdeb",
+      "newHash": "5723505e83468e70a77ab33a792ca733d789ff6e350c3208766f00079ef244b5",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\sbic-pinb\\h1-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\sbic-pinb\\h1-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\sbic-pinb\\h2-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\sbic-pinb\\h2-before.json",
+      "oldHash": "f0b44940c8cbbb92ed2d8f6551855a94d092fadaaabd8db6f5eb3d23eeaf20c7",
+      "newHash": "710b088991200bc7efbf8fa19d8acf120260c8bfaa49246d0a4241c2cb7ee0cf",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\sbic-pinb\\h2-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\sbic-pinb\\h2-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\sbic-pinb\\h2-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\sbic-pinb\\h2-tie.json",
+      "oldHash": "a54219e70c69ef950cfa5e604dd1142d800b2d8e1be64e990ed2434597893b5d",
+      "newHash": "dfbfba35b52502abba0c1f1c4079374c82e96845ef285f7cab6161ff08b36386",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\sbic-pinb\\h2-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\sbic-pinb\\h2-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\sbic-pinb\\h2-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\sbic-pinb\\h2-after.json",
+      "oldHash": "e511305c210285fc44412417dc0c445870fe247c24f88665fcad94bb27aea603",
+      "newHash": "035521fdee1cdd8c47df0d28c83ec1fbd8da6668fbd1c396b246af1b08a441d8",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\sbic-pinb\\h2-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\sbic-pinb\\h2-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\sbic-pinb\\h6-before.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\sbic-pinb\\h6-before.json",
+      "oldHash": "5358fa30499f81180985e5be22e8e146250fb862548a1b899afb877dd64980ce",
+      "newHash": "7f074fb97c5c075e41553a57eb9410527099cb428816de036840823765bd2304",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\sbic-pinb\\h6-before.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\sbic-pinb\\h6-before.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\sbic-pinb\\h6-tie.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\sbic-pinb\\h6-tie.json",
+      "oldHash": "3a8c8e38652edad7523714b7ed43ff99c1658fa668b1a5e2a28e282445a90059",
+      "newHash": "9a11d85eb769c2eb051482ae2f552961f371ee1c682d65f2d044fcb9155b4abb",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\sbic-pinb\\h6-tie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\sbic-pinb\\h6-tie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-probe-verification\\sbic-pinb\\h6-after.json",
+      "newPath": "build\\pin-observation-cpu-probe-final\\sbic-pinb\\h6-after.json",
+      "oldHash": "2e93443af28b0a2d05e241076dad322456612d6666407017e154a4d30e95ac1f",
+      "newHash": "1b4a24075e075f21ac444b3d280f4a16c7c05e944149bc2a09f967e606a14238",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-probe-verification\\sbic-pinb\\h6-after.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-cpu-probe-final\\sbic-pinb\\h6-after.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-compatibility-20261024\\clkpr\\divide-1-to-2.json",
+      "newPath": "build\\pin-observation-hardware-probes-final\\clkpr\\divide-1-to-2.json",
+      "oldHash": "987e82a7128d627ba231d98503aa8fac775f61444019f7dd45f9cdc701e2e0c5",
+      "newHash": "dbcfb3512fdac57859e1e466308e1dc63fe3a3b985b5d6f3c78926ca6ca99b01",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-compatibility-20261024\\clkpr\\divide-1-to-2.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-hardware-probes-final\\clkpr\\divide-1-to-2.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-compatibility-20261024\\clkpr\\divide-1-to-8.json",
+      "newPath": "build\\pin-observation-hardware-probes-final\\clkpr\\divide-1-to-8.json",
+      "oldHash": "273e6f566425a85a8e2d1d77ccdda00d8fac86180434345d1df53afb5330de07",
+      "newHash": "464373ad0a244aba15d7b4ef1763de8aa0d5f87669e291ae33510f35c7bf916e",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-compatibility-20261024\\clkpr\\divide-1-to-8.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-hardware-probes-final\\clkpr\\divide-1-to-8.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-compatibility-20261024\\clkpr\\divide-1-to-256.json",
+      "newPath": "build\\pin-observation-hardware-probes-final\\clkpr\\divide-1-to-256.json",
+      "oldHash": "6b0529d199d9ef672347c01266c4e0ba3f0ec7b0d76549b7e9318710b95c5d0b",
+      "newHash": "a621fb555710f12a191b45324fff5189de8e898801637d1db69df0c814be0b49",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-compatibility-20261024\\clkpr\\divide-1-to-256.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-hardware-probes-final\\clkpr\\divide-1-to-256.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-compatibility-20261024\\clkpr\\divide-2-to-1.json",
+      "newPath": "build\\pin-observation-hardware-probes-final\\clkpr\\divide-2-to-1.json",
+      "oldHash": "6f2761eb75cad882003ef97816e01ffe7da818c7c93922e9e56a7d33047376fb",
+      "newHash": "a81f478b70427dab4967ab098c7419e7043d0abf98afb110acfc6b3c7bef8e03",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-compatibility-20261024\\clkpr\\divide-2-to-1.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-hardware-probes-final\\clkpr\\divide-2-to-1.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-compatibility-20261024\\clkpr\\divide-8-to-1.json",
+      "newPath": "build\\pin-observation-hardware-probes-final\\clkpr\\divide-8-to-1.json",
+      "oldHash": "1f525981addc0de09f5e35c50f88440ec694c2096cb7514f8041b39fad5fcbb2",
+      "newHash": "4cbe8a7457f9ed1182a83226dc382fc871324282ad79a03ef29ce88b925a91f9",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-compatibility-20261024\\clkpr\\divide-8-to-1.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-hardware-probes-final\\clkpr\\divide-8-to-1.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-compatibility-20261024\\clkpr\\divide-256-to-1.json",
+      "newPath": "build\\pin-observation-hardware-probes-final\\clkpr\\divide-256-to-1.json",
+      "oldHash": "450085df75d5a85c92d48a347bb4ae6a794a08ac4a38b8f5321e7325da7beae4",
+      "newHash": "4e6f2f6b7c7e01c932edffbc849398eb30ebffd90c856076150d8e2b43f4bf4d",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-compatibility-20261024\\clkpr\\divide-256-to-1.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-hardware-probes-final\\clkpr\\divide-256-to-1.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-compatibility-20261024\\clkpr\\divide-2-to-8.json",
+      "newPath": "build\\pin-observation-hardware-probes-final\\clkpr\\divide-2-to-8.json",
+      "oldHash": "761ce936d9d0b81225e811d076b913a86acc7a4463a7c210adbb66e773349a6c",
+      "newHash": "2a2ab41a80eff456ea401d38944c66329fa300061664c6598e656b863eff0c48",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-compatibility-20261024\\clkpr\\divide-2-to-8.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-hardware-probes-final\\clkpr\\divide-2-to-8.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-compatibility-20261024\\clkpr\\divide-8-to-2.json",
+      "newPath": "build\\pin-observation-hardware-probes-final\\clkpr\\divide-8-to-2.json",
+      "oldHash": "71210851f544f45b9251bc617216b84136f6ee074f4a418d8b7ad559d9c54ac6",
+      "newHash": "afd62c8b77da762eb05be27ac0501ba3967db76406befe8143058a6c1bf828e3",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-compatibility-20261024\\clkpr\\divide-8-to-2.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-hardware-probes-final\\clkpr\\divide-8-to-2.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-compatibility-20261024\\clkpr\\same-divisor-8.json",
+      "newPath": "build\\pin-observation-hardware-probes-final\\clkpr\\same-divisor-8.json",
+      "oldHash": "bac6f385ab18e65875743ac697a505e10cc5731c9c71022b94d15e89dcc6f8fb",
+      "newHash": "c964b80b6f4c6f70274da091e357c5b01b616f7aa52956280789b9403f924054",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-compatibility-20261024\\clkpr\\same-divisor-8.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-hardware-probes-final\\clkpr\\same-divisor-8.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-compatibility-20261024\\clkpr\\control-no-write.json",
+      "newPath": "build\\pin-observation-hardware-probes-final\\clkpr\\control-no-write.json",
+      "oldHash": "36cf054979bfc4120cb6e7b841ed5ff3835de2e2fd8cfc96a5a76dd9464b9c46",
+      "newHash": "edf85b311033507b201b53e7a12e628f725e70098837906c056b0786668ed74b",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-compatibility-20261024\\clkpr\\control-no-write.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-hardware-probes-final\\clkpr\\control-no-write.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-compatibility-20261024\\clkpr\\control-no-unlock.json",
+      "newPath": "build\\pin-observation-hardware-probes-final\\clkpr\\control-no-unlock.json",
+      "oldHash": "8312997a43ce561a5f4178bcb6d81548bf4a38ab83a5b39bd6765c59c8a08019",
+      "newHash": "e236c98c17b4dca02d5f47fa4213f43e22ccc6d1ef5a65796e3bf8ed3818285e",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-compatibility-20261024\\clkpr\\control-no-unlock.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-hardware-probes-final\\clkpr\\control-no-unlock.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-compatibility-20261024\\clkpr\\control-expired-unlock.json",
+      "newPath": "build\\pin-observation-hardware-probes-final\\clkpr\\control-expired-unlock.json",
+      "oldHash": "9ddece013637698c5b5f03796c422eabb07c8bdd27cdfbe505cb1ecdfe7c57fc",
+      "newHash": "da470b656c3a6991800c4ae83b44847b86be8a4c99bda3f4b148bd6d49667f26",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-compatibility-20261024\\clkpr\\control-expired-unlock.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-hardware-probes-final\\clkpr\\control-expired-unlock.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-compatibility-20261024\\reset\\sut00-clki-div1.json",
+      "newPath": "build\\pin-observation-hardware-probes-final\\reset\\sut00-clki-div1.json",
+      "oldHash": "2b62cbcd98baaca996cc0e2425a99ced582188eaaf7bda55fe57ee5e19700201",
+      "newHash": "157b55653eb3dc7d7ef1c42cd7d9ff273ccb1d5f236248d9dc1e98d32c62d2bd",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-compatibility-20261024\\reset\\sut00-clki-div1.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-hardware-probes-final\\reset\\sut00-clki-div1.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-compatibility-20261024\\reset\\sut01-clki-div1.json",
+      "newPath": "build\\pin-observation-hardware-probes-final\\reset\\sut01-clki-div1.json",
+      "oldHash": "2d5fbdbd0faeca09812b2446b02368508a3da5f6d46010121067af1b6dfc4871",
+      "newHash": "1824e4cd1961f2cea3f83a028339f80f0c58b6e2ece28a69b88ad5fcf5bfce53",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-compatibility-20261024\\reset\\sut01-clki-div1.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-hardware-probes-final\\reset\\sut01-clki-div1.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-compatibility-20261024\\reset\\sut10-clki-div1.json",
+      "newPath": "build\\pin-observation-hardware-probes-final\\reset\\sut10-clki-div1.json",
+      "oldHash": "f4434972fc78ef5e77dede5953439f90a8944450e36ea960bd51195be7ef7165",
+      "newHash": "9bfb5f456e76da751426ba5e0b53bbd81aa322af097047e8de1bc4e007d8cd75",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-compatibility-20261024\\reset\\sut10-clki-div1.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-hardware-probes-final\\reset\\sut10-clki-div1.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-compatibility-20261024\\reset\\sut00-clki-div8.json",
+      "newPath": "build\\pin-observation-hardware-probes-final\\reset\\sut00-clki-div8.json",
+      "oldHash": "152fa49f750a362315aeb002ff9e962f5e88287464d604338c9cf8dc03d335dd",
+      "newHash": "3f27eebf7c4544e1f3eb611a5e281cb51c031037f74c9ca1027fc0a29a282f29",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-compatibility-20261024\\reset\\sut00-clki-div8.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-hardware-probes-final\\reset\\sut00-clki-div8.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-compatibility-20261024\\adc\\first-conversion.json",
+      "newPath": "build\\pin-observation-hardware-probes-final\\adc\\first-conversion.json",
+      "oldHash": "57b84be3692f911dc977fad7e1f16c38c79da7633fca84305bcf7d6ea358f375",
+      "newHash": "14651a497e6a7caf9f922f88cd5b0474475688faf7bfa4380666b1f365dc4fa6",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-compatibility-20261024\\adc\\first-conversion.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-hardware-probes-final\\adc\\first-conversion.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-compatibility-20261024\\adc\\normal-conversion-control.json",
+      "newPath": "build\\pin-observation-hardware-probes-final\\adc\\normal-conversion-control.json",
+      "oldHash": "6741c33ed2d2dc06799fd30ce742d83cb21f2ae82ec073be11908c456ab53155",
+      "newHash": "5289dfcd55a16c554a8541ea0cb4cdb1a21b981f6ad3bdb3622ed510be32952c",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-compatibility-20261024\\adc\\normal-conversion-control.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-hardware-probes-final\\adc\\normal-conversion-control.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-compatibility-20261024\\adc\\adif-sbi-adie.json",
+      "newPath": "build\\pin-observation-hardware-probes-final\\adc\\adif-sbi-adie.json",
+      "oldHash": "d4ca7c2ea94d47306926be7148aefc0fbb5b202c4a8902b79a02da40137d11d9",
+      "newHash": "b6cc6a34a44bada61bfe57827fea52e6f7c5842e0317a2d5c32e7023c1c8bfe7",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-compatibility-20261024\\adc\\adif-sbi-adie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-hardware-probes-final\\adc\\adif-sbi-adie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-compatibility-20261024\\adc\\adif-cbi-adie.json",
+      "newPath": "build\\pin-observation-hardware-probes-final\\adc\\adif-cbi-adie.json",
+      "oldHash": "a86457c29df6caaff19175fc66be65d469c3b81aa17bbb9084c8037f3965b3ec",
+      "newHash": "1cb07bc62a945d3c170c1f986444e1c268195cfe1a1c918470250fc0d6e71d9e",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-compatibility-20261024\\adc\\adif-cbi-adie.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-hardware-probes-final\\adc\\adif-cbi-adie.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-compatibility-20261024\\adc\\adif-cbi-adps0.json",
+      "newPath": "build\\pin-observation-hardware-probes-final\\adc\\adif-cbi-adps0.json",
+      "oldHash": "a6378f596298359c4c6d2c0ac0e1975bbc5b202e18fbc560e4264819b15375f4",
+      "newHash": "7b09055243cff24dd8a16eafd575979dc11a59c32057f4cd381dbfd431fd728e",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-compatibility-20261024\\adc\\adif-cbi-adps0.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-hardware-probes-final\\adc\\adif-cbi-adps0.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-compatibility-20261024\\adc\\adif-no-write-control.json",
+      "newPath": "build\\pin-observation-hardware-probes-final\\adc\\adif-no-write-control.json",
+      "oldHash": "9dcae296c8f24119c19f7d57dc1eb5810a41796a7e3fb8787d6b7cd426d71ded",
+      "newHash": "1ee2360c33fa2652a24195597ef16b83e9f0eacc032ff87ffb7a9c07909d994d",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-compatibility-20261024\\adc\\adif-no-write-control.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-hardware-probes-final\\adc\\adif-no-write-control.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-compatibility-20261024\\adc\\adif-out-zero-control.json",
+      "newPath": "build\\pin-observation-hardware-probes-final\\adc\\adif-out-zero-control.json",
+      "oldHash": "d2a55ac5433e023f93e9521dc86994a69e24865e9d5985efee39cf42f13548dc",
+      "newHash": "ff5cfbaff0381d248620ede20e0fb6146b8e1e0a9a3281422419bc9005ad0e25",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-compatibility-20261024\\adc\\adif-out-zero-control.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-hardware-probes-final\\adc\\adif-out-zero-control.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-compatibility-20261024\\adc\\adif-out-one-control.json",
+      "newPath": "build\\pin-observation-hardware-probes-final\\adc\\adif-out-one-control.json",
+      "oldHash": "38443d24c2a94789c6983aa62e4346bab5673113c77922d924b4f2f251bd5afd",
+      "newHash": "0b95ebad72f53004daa1b309e0dd1320619340243d6a97cfefd097e212afafc0",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-compatibility-20261024\\adc\\adif-out-one-control.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-hardware-probes-final\\adc\\adif-out-one-control.csv",
+      "allOtherDecoderFieldsEqual": true
+    },
+    {
+      "oldPath": "build\\cpu-phase-compatibility-20261024\\adc\\adif-explicit-rmw-control.json",
+      "newPath": "build\\pin-observation-hardware-probes-final\\adc\\adif-explicit-rmw-control.json",
+      "oldHash": "f3061cd831e51f745ffb771f4594be37e892425f7654def92e5a6968e245342b",
+      "newHash": "cc8c6c202b89307a1b811c18f61aa4b3e0ea1c45b89d7a604403e46557df2e84",
+      "oldWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\cpu-phase-compatibility-20261024\\adc\\adif-explicit-rmw-control.csv",
+      "newWaveformCsv": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\pin-observation-hardware-probes-final\\adc\\adif-explicit-rmw-control.csv",
+      "allOtherDecoderFieldsEqual": true
+    }
+  ],
+  "complete": true
+}

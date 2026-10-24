@@ -1,0 +1,18 @@
+Implementation:6b54398
+Runtime:794f8f961e8bf89ad2649c2fa470ea60fac0802f671395b3205504a740a94a4e
+Command:node --test web-player/tests/*.test.mjs
+1..1276
+# tests 1276
+# suites 0
+# pass 1276
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 411668.8915
+
+Focused68/68 passed before full suite.
+Earlier headroom regression red command:
+node --test --test-name-pattern="exceptional SPM700" web-player/tests/attiny13a-audio-pressure-runtime.test.mjs
+Pre-headroom runtime4cbfc153:2/2 failed with output-overflow9/detail1024 after eager references passed.
+Final ordinary and resumable controls pass, including wrapped-ring repetition.

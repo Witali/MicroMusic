@@ -1,0 +1,320 @@
+diff --git a/web-player/native/avr-device.inc b/web-player/native/avr-device.inc
+index b9812d0..c9d906f 100644
+--- a/web-player/native/avr-device.inc
++++ b/web-player/native/avr-device.inc
+@@ -41,9 +41,6 @@ static void full_phase_cancel(void) {
+  full_phase_vector=0;
+ }
+ static uint64_t full_time64(void){return full_ps?device_time_ps():device_base_half();}
+-static const void *full_pin_events(uint32_t *count){
+- return full_ps?(const void *)device_pin_events_ps(count):(const void *)device_pin_events(count);
+-}
+ static uint64_t full_pin_time(const void *events,uint32_t n){
+  return full_ps?((const device_pin_event_ps_t *)events)[n].time_ps:((const device_pin_event_t *)events)[n].base_half;
+ }
+@@ -69,8 +66,13 @@ static void full_reset(void) {
+ }
+ static void full_clock(double n) {
+  if(n<0||n>4294967295.0||floor(n*2)!=n*2){ERROR=25;return;}
++ /* A long barrier may fit by itself while exceeding the ring together with
++  * deferred short-barrier rows. Restore its entry headroom before advancing. */
++ if(full_audio_active&&n>64)full_audio_collect();
+  device_advance_half((uint64_t)(n*2));S(cyc)=(double)device_virtual_half()/2.0;full_deadline();
+- if(full_audio_active)full_audio_collect();
++ /* Ordinary barriers are bounded. Keep the old eager policy for exceptional
++  * long spans; this does not enlarge their bounded-history overshoot limit. */
++ if(full_audio_active&&(n>64||device_pin_buffer_ready()))full_audio_collect();
+  if(device_reset_requested()){full_interrupt();ERROR=26;}
+ }
+ static int full_write_io(int a,int v,int mask) {
+@@ -143,13 +145,15 @@ int avr_device_phase_clock(double cycles){
+  if(!full_phase.remaining_halves)full_phase.remaining_halves=(uint64_t)(cycles*2);
+  if(full_phase.remaining_halves&&full_phase_limit<=device_time_ps())return 0;
+  for(;;){
++  uint64_t requested=full_phase.remaining_halves;
++  if(full_audio_active&&requested>128)full_audio_collect();
+   uint64_t consumed=0;
+   int result=full_audio_active?
+    device_advance_half_until_ps_buffered(full_phase.remaining_halves,full_phase_limit,&consumed):
+    device_advance_half_until_ps(full_phase.remaining_halves,full_phase_limit,&consumed);
+   full_phase.remaining_halves-=consumed;
+   S(cyc)=(double)device_virtual_half()/2.0;full_deadline();
+-  if(full_audio_active)full_audio_collect();
++  if(full_audio_active&&(requested>128||result==2||device_pin_buffer_ready()))full_audio_collect();
+   if(device_reset_requested()){full_interrupt();return -1;}
+   if(result<0||ERROR)return -1;
+   /* One CPU cycle can require512 source transitions. Drain inside this one
+@@ -258,7 +262,7 @@ int avr_device_wait(double deadline){
+   else device_wait_until_ps(target);
+  }else device_wait_until(target);
+  S(cyc)=(double)device_virtual_half()/2.0;
+- if(full_audio_active)full_audio_collect();
++ if(full_audio_active&&device_pin_buffer_ready())full_audio_collect();
+  full_deadline();
+  if(!full_phase_enabled||full_phase.active!=1||device_reset_requested())full_interrupt();
+  return full_time64()>before;
+@@ -298,6 +302,8 @@ int avr_device_pin_count(void){uint32_t count;device_pin_events(&count);return c
+ uintptr_t avr_device_pin_buffer_ps(void){uint32_t count;return (uintptr_t)device_pin_events_ps(&count);}
+ int avr_device_pin_count_ps(void){uint32_t count;device_pin_events_ps(&count);return count;}
+ void avr_device_pin_consume(int n){device_consume_pin_events(n);}
++int avr_device_pin_trace_config(int mask,int retain){return device_configure_pin_trace((uint32_t)mask,(uint32_t)retain);}
++int avr_device_pin_trace_configuration(void){return (int)device_pin_trace_configuration();}
+ int avr_device_divisor(void){return device_clkpr_divisor();}
+ int avr_device_reset_count(void){return full_reset_count;}
+ int avr_device_halted(void){return device_halted();}
+@@ -331,16 +337,16 @@ int avr_device_idle(double deadline){
+ /* Physical pin box integration. A CPU instruction may extend beyond an audio
+  * deadline; future pin events remain queued for the following sample. */
+ void avr_device_audio_config(int rate,int channels){
++ if(rate<8000||rate>192000||(channels!=1&&channels!=2)){ERROR=25;return;}
++ if(!device_configure_audio_pins(channels==1?2:3)){ERROR=25;return;}
+  full_audio_rate=rate;full_audio_channels=channels;
+  full_audio_start=full_audio_at=full_time64();full_audio_frame=0;
+  full_audio_interval=full_audio_at;full_audio_area[0]=full_audio_area[1]=0;
++ /* A new stream starts at the live pins. Host history is a separate observer;
++  * retaining it must never replay old levels into this initial baseline. */
++ device_discard_audio_trace(full_audio_at);
+  full_audio_levels=full_ps?device_pin_state_ps()->levels:device_pin_state()->levels;
+  full_audio_active=0;
+- uint32_t count;const void *events;
+- while((events=full_pin_events(&count))&&count){
+-  uint32_t n=0;while(n<count&&full_pin_time(events,n)<=full_audio_at){full_audio_levels=full_pin_levels(events,n);n++;}
+-  device_consume_pin_events(n);if(n<count)break;
+- }
+ }
+ static uint64_t full_audio_deadline64(void){
+  if(full_ps)return device_next_sample_ps(full_audio_start,full_audio_frame+1,full_audio_rate);
+@@ -360,17 +366,18 @@ static void full_audio_collect(void){
+  if(end>full_time64())end=full_time64();
+  uint64_t at=full_audio_at;
+  uint32_t count;const void *events;
+- while((events=full_pin_events(&count))&&count){
++ while((events=device_audio_pin_events(&count))&&count){
+   uint32_t n=0;
+   while(n<count&&full_pin_time(events,n)<=end){
+    uint64_t time=full_pin_time(events,n);if(time<at)time=at;
+    for(int ch=0;ch<2;ch++)if(full_audio_levels&(1<<ch))full_audio_area[ch]+=time-at;
+    at=time;full_audio_levels=full_pin_levels(events,n);n++;
+   }
+-  device_consume_pin_events(n);if(n<count)break;
++  device_consume_audio_pin_events(n);if(n<count)break;
+  }
+  for(int ch=0;ch<2;ch++)if(full_audio_levels&(1<<ch))full_audio_area[ch]+=end-at;
+  full_audio_at=end;
++ device_discard_audio_trace(end);
+ }
+ void avr_device_audio_begin(void){full_audio_active=1;full_audio_collect();}
+ void avr_device_audio_end(void){full_audio_active=0;}
+diff --git a/web-player/native/devices/attiny13a/clki_board.inc b/web-player/native/devices/attiny13a/clki_board.inc
+index d9bb724..b4d9a3e 100644
+--- a/web-player/native/devices/attiny13a/clki_board.inc
++++ b/web-player/native/devices/attiny13a/clki_board.inc
+@@ -220,7 +220,7 @@ static int clki_advance(uint64_t wanted,uint64_t wall,uint64_t *consumed,uint32_
+  if(!wanted){advance_to(board.base);return board.fault||board.reset_requested?-1:1;}
+  if(board.reset_held||reset_starting()||power_recovering())return 0;
+  while(board.half<target&&board.base<limit&&!board.fault&&!board.reset_requested&&
+-       (!pin_limit||board.pin_count<pin_limit)){
++       !pin_buffer_ready(pin_limit)){
+   uint64_t previous=board.base;
+   advance_to(minimum(next_event(),limit));
+   if(previous==board.base&&!board.fault&&!board.reset_requested){fail(DEVICE_FAULT_TIME,13);break;}
+@@ -229,7 +229,7 @@ static int clki_advance(uint64_t wanted,uint64_t wall,uint64_t *consumed,uint32_
+  if(*consumed>wanted){fail(DEVICE_FAULT_TIME,14);return -1;}
+  if(board.fault||board.reset_requested)return -1;
+  if(*consumed==wanted)return 1;
+- if(pin_limit&&board.pin_count>=pin_limit)return 2;
++ if(pin_buffer_ready(pin_limit))return 2;
+  board.clki_status=limit<wall&&board.base==limit?2:1;
+  return 0;
+ }
+diff --git a/web-player/native/peripherals/device.c b/web-player/native/peripherals/device.c
+index 1fafb65..260a5db 100644
+--- a/web-player/native/peripherals/device.c
++++ b/web-player/native/peripherals/device.c
+@@ -32,11 +32,12 @@ typedef struct {
+  uint8_t *data, *flash, *eeprom;
+  uint32_t config[20], calibration[128], oscillator_hz;
+  uint64_t base, half, phase, ns, ns_remainder, wdt_ticks, wdt_remainder;
+- uint64_t clkpr_until, clkpr_switch_half, dropped;
++ uint64_t clkpr_until, clkpr_switch_half, dropped, audio_dropped;
+  uint64_t bod_arm_until, bod_sleep_until, bod_recovery_until;
+  uint64_t reset_until;
+  uint32_t fault, detail, divisor, pending_divisor;
+- uint16_t input_head, input_count, pin_head, pin_count;
++ uint16_t input_head, input_count, pin_head, pin_count, audio_pin_head, audio_pin_count;
++ uint8_t pin_trace_mask, pin_trace_retain, audio_pin_mask;
+  uint8_t initialized, clkpr, prr, domains, reset_requested, reset_held, analog_mask;
+  uint8_t external_mask, external_levels;
+  uint8_t bodcr, bod_armed, bod_committed, bod_disabled;
+@@ -70,6 +71,7 @@ typedef struct {
+  attiny13a_nvm_t nvm;
+  device_pin_event_t pins;
+  device_pin_event_t pin_events[PIN_CAPACITY];
++ device_pin_event_t audio_pin_events[PIN_CAPACITY];
+  input_t inputs[INPUT_CAPACITY];
+ } device_t;
+ static device_t board;
+@@ -278,21 +280,40 @@ static int same_pins(const device_pin_event_t *a, const device_pin_event_t *b) {
+  return a->levels==b->levels && a->driven==b->driven && a->pullups==b->pullups &&
+   a->floating==b->floating && a->contention==b->contention;
+ }
++static void capture_pin_queue(device_pin_event_t *events,uint16_t *head,uint16_t *count,
++ uint64_t *dropped,const device_pin_event_t *pins,int selected_change) {
++ if (*count) {
++  unsigned last=(*head+*count-1)%PIN_CAPACITY;
++  /* A retained timestamp describes its final full live snapshot, including
++   * unselected changes at that SAME timestamp. Never rewrite an older row. */
++  if (events[last].base_half==pins->base_half) { events[last]=*pins; return; }
++ }
++ if (!selected_change) return;
++ if (*count==PIN_CAPACITY) {
++  if (*dropped!=UINT64_MAX) ++*dropped;
++  fail(DEVICE_FAULT_OUTPUT_OVERFLOW,PIN_CAPACITY);
++  return;
++ }
++ events[(*head+(*count)++)%PIN_CAPACITY]=*pins;
++}
++static int pin_buffer_ready(uint32_t limit) {
++ return limit && (board.audio_pin_count>=limit ||
++  (!board.pin_trace_retain && board.pin_count>=limit));
++}
++int device_pin_buffer_ready(void) { return pin_buffer_ready(PIN_CAPACITY/2); }
+ static void capture_pins(void) {
+  device_pin_event_t pins={{board.base},board.gpio.pins.levels,board.gpio.pins.driven,
+   board.gpio.pins.pullups,board.gpio.pins.floating,board.gpio.pins.contention,{0}};
+  if (same_pins(&pins,&board.pins)) return;
++ uint8_t level_changes=(uint8_t)(pins.levels^board.pins.levels);
++ uint8_t changes=(uint8_t)(level_changes | (pins.driven^board.pins.driven) |
++  (pins.pullups^board.pins.pullups) | (pins.floating^board.pins.floating) |
++  (pins.contention^board.pins.contention));
+  board.pins=pins;
+- if (board.pin_count) {
+-  unsigned last=(board.pin_head+board.pin_count-1)%PIN_CAPACITY;
+-  if (board.pin_events[last].base_half==board.base) { board.pin_events[last]=pins; return; }
+- }
+- if (board.pin_count==PIN_CAPACITY) {
+-  if (board.dropped!=UINT64_MAX) ++board.dropped;
+-  fail(DEVICE_FAULT_OUTPUT_OVERFLOW,PIN_CAPACITY);
+-  return;
+- }
+- board.pin_events[(board.pin_head+board.pin_count++)%PIN_CAPACITY]=pins;
++ capture_pin_queue(board.pin_events,&board.pin_head,&board.pin_count,&board.dropped,
++  &pins,(changes&board.pin_trace_mask)!=0);
++ capture_pin_queue(board.audio_pin_events,&board.audio_pin_head,&board.audio_pin_count,
++  &board.audio_dropped,&pins,(level_changes&board.audio_pin_mask)!=0);
+ }
+ static void pin_voltages(void) {
+  for (unsigned pin=0;pin<6;pin++) {
+@@ -655,7 +676,7 @@ void device_clear_osccal_hz(void) {
+  calibration_configured=0;
+ }
+ int device_init(uint8_t *data, uint8_t *flash, uint8_t *eeprom) {
+- board=(device_t){0};
++ board=(device_t){.pin_trace_mask=63};
+  deadline_invalidate(DEADLINE_INIT);
+  for (unsigned i=0;i<20;i++) board.config[i]=configuration[i];
+  for (unsigned i=0;i<128;i++) board.calibration[i]=calibration_configuration[i];
+@@ -1032,7 +1053,7 @@ static uint64_t wait_until(uint64_t deadline,uint32_t pin_limit) {
+  uint64_t before=cpu_cycle();
+  if (deadline<board.base) { fail(DEVICE_FAULT_TIME,8); return 0; }
+  while (device_halted() && !board.fault && !board.reset_requested && board.base<deadline &&
+-        (!pin_limit||board.pin_count<pin_limit)) {
++        !pin_buffer_ready(pin_limit)) {
+   uint64_t next=minimum(next_event(),deadline);
+   advance_to(next);
+  }
+@@ -1113,6 +1134,36 @@ void device_consume_pin_events(uint32_t count) {
+ }
+ void device_clear_pin_events(void) { board.pin_head=board.pin_count=0; board.dropped=0; }
+ uint64_t device_dropped_pin_events(void) { return board.dropped; }
++int device_configure_pin_trace(uint32_t mask,uint32_t retain_during_audio) {
++ if (!board.initialized || mask>63 || retain_during_audio>1) return 0;
++ board.pin_trace_mask=(uint8_t)mask;board.pin_trace_retain=(uint8_t)retain_during_audio;
++ return 1;
++}
++uint32_t device_pin_trace_configuration(void) {
++ return board.pin_trace_mask|((uint32_t)board.pin_trace_retain<<8);
++}
++int device_configure_audio_pins(uint8_t mask) {
++ if (!board.initialized || (mask!=0 && mask!=2 && mask!=3)) return 0;
++ board.audio_pin_mask=mask;board.audio_pin_head=board.audio_pin_count=0;board.audio_dropped=0;
++ return 1;
++}
++const device_pin_event_t *device_audio_pin_events(uint32_t *count) {
++ uint32_t contiguous=PIN_CAPACITY-board.audio_pin_head;
++ if (contiguous>board.audio_pin_count) contiguous=board.audio_pin_count;
++ *count=contiguous;
++ return contiguous ? &board.audio_pin_events[board.audio_pin_head] : NULL;
++}
++void device_consume_audio_pin_events(uint32_t count) {
++ if (count>board.audio_pin_count) count=board.audio_pin_count;
++ board.audio_pin_head=(uint16_t)((board.audio_pin_head+count)%PIN_CAPACITY);
++ board.audio_pin_count-=(uint16_t)count;
++}
++void device_discard_audio_trace(uint64_t until) {
++ if (board.pin_trace_retain) return;
++ while (board.pin_count && board.pin_events[board.pin_head].base_half<=until) {
++  board.pin_head=(uint16_t)((board.pin_head+1)%PIN_CAPACITY);--board.pin_count;
++ }
++}
+ uint64_t device_base_half(void) { return time_contract(0,1) ? board.base : 0; }
+ uint8_t device_physical_mode(void) { return board.physical; }
+ uint64_t device_time_ps(void) { return time_contract(1,1) ? board.base : 0; }
+diff --git a/web-player/native/peripherals/device.h b/web-player/native/peripherals/device.h
+index 13253f6..cf0c73c 100644
+--- a/web-player/native/peripherals/device.h
++++ b/web-player/native/peripherals/device.h
+@@ -125,8 +125,9 @@ void device_advance_half(uint64_t cpu_half_cycles);
+  * The caller owns remaining instruction work and must cancel it on reset. */
+ int device_advance_half_until_ps(uint64_t wanted,uint64_t wall_deadline_ps,
+                                  uint64_t *consumed);
+-/* In CLKI mode, same continuation contract plus return2 BUFFER_READY when the
+- * physical pin ring is half full. The native consumer drains it and retries
++/* In CLKI mode, same continuation contract plus return2 BUFFER_READY when a
++ * PCM or legacy audio-owned host ring is half full. The native consumer drains
++ * these queues and retries
+  * the remaining phase before returning to generated code. Fixed internal
+  * sources retain the ordinary bounded advance. No effect is repeated. */
+ int device_advance_half_until_ps_buffered(uint64_t wanted,uint64_t wall_deadline_ps,
+@@ -145,8 +146,10 @@ uint64_t device_virtual_half(void);
+  * GPIO/analog register APIs and ring consume remain common to both modes. */
+ uint64_t device_time_ps(void);
+ uint64_t device_wait_until_ps(uint64_t deadline_ps);
+-/* Native streaming consumer variant. May yield early when the pin ring is
+- * half full, so C/WASM can drain it before continuing the same wall deadline.
++/* Native streaming consumer variant. May yield early when a PCM or legacy
++ * audio-owned host ring is half full, so C/WASM can drain it before continuing
++ * the same wall deadline. Explicitly retained host history is never a yield
++ * condition: its owner must drain it, otherwise append reports overflow.
+  * This neither consumes pins nor invokes a JavaScript callback. */
+ uint64_t device_wait_until_ps_buffered(uint64_t deadline_ps);
+ uint64_t device_startup_deadline_ps(void);
+@@ -212,4 +215,28 @@ const device_pin_event_ps_t *device_pin_state_ps(void);
+ void device_consume_pin_events(uint32_t count);
+ uint64_t device_dropped_pin_events(void);
+ void device_clear_pin_events(void);
++/* Host observation, independent of live GPIO and the native PCM consumer.
++ * Post-init mask0..63 selects changes in all five pin metadata bytes; retain
++ * selects explicit ownership during audio. Default63/0 preserves legacy audio
++ * auto-discard. Changes retain queued rows and create no synthetic snapshot;
++ * read device_pin_state[_ps] for the current unmasked baseline. MCU reset
++ * preserves subscriptions/history; cold init restores defaults. Invalid
++ * requests return0 without changing state. Getter packs mask|(retain<<8). */
++int device_configure_pin_trace(uint32_t mask,uint32_t retain_during_audio);
++uint32_t device_pin_trace_configuration(void);
++/* Internal native-audio subscription. Valid masks0/2/3 mean off/PB1/PB0+PB1.
++ * Starting a new audio timeline clears only its own queue, with no fake initial
++ * event. Capture initial live levels separately. PCM records level changes;
++ * host consume/clear never consumes them. Both time contracts use the same
++ * event layout. A configured subscription persists between capture calls and
++ * across MCU reset; its bounded backlog faults on overflow. */
++int device_configure_audio_pins(uint8_t mask);
++const device_pin_event_t *device_audio_pin_events(uint32_t *count);
++void device_consume_audio_pin_events(uint32_t count);
++/* Preserve the former audio-owned host-history discard only for retain0. */
++void device_discard_audio_trace(uint64_t until);
++/* Native audio pressure query over TOTAL queue occupancy, including wrap.
++ * Ready at512 rows in PCM or legacy auto-discard host history. Explicitly
++ * retained host history is the host consumer's responsibility. No mutation. */
++int device_pin_buffer_ready(void);
+ #endif

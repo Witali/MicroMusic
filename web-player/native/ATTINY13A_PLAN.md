@@ -229,6 +229,28 @@ benchmarks to establish speed; small results within host variation stay
 inconclusive. No per-edge JavaScript callbacks, cross-device code mixing or
 external programmer support are introduced by this plan.
 
+Pin-observation checkpoint, 2026-10-24: host trace and native PCM now have
+independent1024-record queues. Host draining cannot steal audio transitions;
+explicit per-pin subscriptions suppress history without disabling live GPIO or
+internal consumers. Resumable PCM collection occurs at sample boundaries and
+total queue pressure; ordinary clocks/waits retain eager collection to avoid
+per-instruction guard costs. Long phases restore entry headroom before their original advance;
+eager-first400-NOP/700-cycle-SPM regressions cover ordinary and resumable paths
+and wrapped heads. All1276 Node tests pass, including68 new queue/observer/
+pressure checks. The22 CPU acquisition profiles/114 RESET cuts and25 existing
+CLKPR/RESET/ADC profiles also pass on the rebuilt runtime. No silicon data was
+added. The [report](../reports/pin-observation-20261024.md) retains the defect,
+independent eager oracle, source-entry counts, paired timing experiment and
+earlier checkpoints. Renderers preserve explicit/default observers; automatic
+host-history opt-out was not retained because its separate benefit was
+inconsistent. Broader peripheral gating, exclusive cost attribution and the
+default-engine performance gate remain open; the main count stays21/30.
+The final416-run/2604-checkpoint comparison has physical-audio median paired
+gains1.145–1.165x versus the original runtime (23/24 positive pairs), with
+substantial host variation. Direct compatible/physical control medians are
+0.960x/0.928x and need separate cost/layout attribution. Do not claim a general
+CPU gain or close the default-engine gate; real-time throughput still falls short.
+
 The next analog step has a separate audited
 [ADC activity contract](devices/attiny13a/analog-activity.md): omit recurring
 ADC advancement/deadline queries only with ADEN clear, preserving every

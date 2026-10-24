@@ -12,7 +12,8 @@ import {parseHex} from '../lib/hex.js';
 import {avr,IO,flash} from '../tests/fixtures/attiny13a-system-firmware.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
-const {values}=parseArgs({options:{'out-dir':{type:'string',default:'build/traces/current'},emsdk:{type:'string'}}});
+const {values}=parseArgs({options:{'out-dir':{type:'string',default:'build/traces/current'},emsdk:{type:'string'},
+  'physical-firmware':{type:'boolean',default:false},'eager-collector':{type:'boolean',default:false}}});
 const out=resolve(root,values['out-dir']),native=join(out,'native');mkdirSync(out,{recursive:true});
 const sha=b=>createHash('sha256').update(b).digest('hex');
 const source=p=>readFileSync(resolve(root,p),'utf8').replaceAll('\r\n','\n');
@@ -50,6 +51,12 @@ for(const [file,names] of Object.entries(selected)){
     text=text.replace(pattern,'$1 MM_TRACE_HIT('+id+');');functions.push({id,name,source:'web-player/native/'+file});
   }
   writeFileSync(join(native,file),text);
+}
+if(values['eager-collector']){
+  const file=join(native,'peripherals/device.c'),text=readFileSync(file,'utf8'),
+    pattern=/int device_pin_buffer_ready\(void\)\s*\{[^{}]*\}/g;
+  assert.equal([...text.matchAll(pattern)].length,1,'Independent native PCM pressure query');
+  writeFileSync(file,text.replace(pattern,'int device_pin_buffer_ready(void) { return 1; }'));
 }
 const diagHeader=join(out,'trace-counters.h');
 writeFileSync(diagHeader,`#include <stdint.h>
@@ -99,8 +106,12 @@ const program=flash({instructions:[avr.ldi(16,1),avr.ldi(17,0x55),avr.add(18,16)
 const catalog=['web-player/firmware.json','web-player/hq4-firmware.json'].flatMap(path=>JSON.parse(source(path)).entries);
 const cases=['rhythmic','lumiere-stereo','hq4-chego-auto'].map(id=>{
   const entry=catalog.find(entry=>entry.id===id);assert.ok(entry,id);
-  return{id,binary:parseHex(entry.flashHex),eeprom:entry.eepromHex?parseHex(entry.eepromHex,64):null,
-    frames:12000,channels:entry.audioChannels||1,options:{oscillatorHz:entry.cpuHz||9600000,fastIdle:true}};
+  const hz=entry.cpuHz||9600000,calibration=Array(128).fill(0);calibration[0]=hz;
+  return{id:id+(values['physical-firmware']?'-physical':''),binary:parseHex(entry.flashHex),
+    eeprom:entry.eepromHex?parseHex(entry.eepromHex,64):null,
+    frames:12000,channels:entry.audioChannels||1,options:{oscillatorHz:hz,fastIdle:true,
+      ...values['physical-firmware']?{resumable:true,osccalHz:calibration,
+        nvmClockProfile:1,nvmCalibrationReferenceHz:hz}:{}}};
 });
 for(const divisor of [1,256])cases.push({id:'kernel-clki-20m-div'+divisor,binary:program,frames:1200,channels:1,divisor,
   options:{oscillatorHz:20000000,resumable:true,fastIdle:false,fuseLow:0x70,
@@ -125,6 +136,8 @@ function capture(c,entry){
 }
 const stringify=v=>JSON.stringify(v,(_,v)=>typeof v==='bigint'?v.toString():v,2)+'\n';
 const report={schema:'micromusic-native-call-trace-v1',createdAt:new Date().toISOString(),
+  policy:{physicalFirmware:values['physical-firmware'],eagerCollector:values['eager-collector'],
+    description:'Optional eager collector forces only the copied public PCM pressure query true; ordinary scheduling/CPU semantics stay unchanged. Counters never establish production elapsed time.'},
   git:{head:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim()},
   productionRuntimeSha256:sha(production),countedRuntimeSha256:sha(countedBytes),
   sourceSha256NormalizedLF:{...Object.fromEntries(Object.keys(manifest.inputs).map(p=>[p,sha(source(p))])),
