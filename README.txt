@@ -197,3 +197,10 @@ PB1/OC0B, вывод 6; питание — 8, земля — 4. Темп на п
 Частоты и фазы каждой записи DDS: node tools/audit-frequency-grid.mjs
 Результат: web-player/reports/frequency-grid-verification.json. Строй A4=440 Гц;
 16-битный DDS даёт шаг 0,2861 Гц и ошибку округления не более 0,1431 Гц.
+
+ИЛЛЮСТРИРОВАННОЕ ОПИСАНИЕ МУЗЫКАЛЬНОГО ФОРМАТА
+  ATtiny13A/Music/docs/music-storage-and-playback-ru.pdf
+16 страниц: ноты, аккорды, сжатие фраз, короткие волны, DDS, огибающие,
+микшер и PWM; реальные байты прошивок и 19 схем и графиков.
+PDF хранится в Git LFS. Скрипт: tools/build-music-format-guide.py.
+Пересоздание и проверяемый срез: ATtiny13A/Music/docs/README.txt.

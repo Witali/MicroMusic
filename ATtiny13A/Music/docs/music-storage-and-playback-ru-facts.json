@@ -1,0 +1,326 @@
+{
+  "sourceRevision": "a875a3ead0e6c0505fa964ff13b1415832455bb5",
+  "scope": "ATtiny13A musical firmware only",
+  "images": {
+    "rhythmic": {
+      "flashBytes": 1002,
+      "codeBytes": 690,
+      "tableBytes": 312,
+      "eepromBytes": 64,
+      "flashSha256": "3bf6b878c2e0a6a0ec0c231d7d909c874ea38b62483ecbfa20416684acfd7270",
+      "eepromSha256": "45ba4c476cf214ef25d91494c6fa70b2567722b44403bcd25b09326e190fee37"
+    },
+    "alicia": {
+      "flashBytes": 1024,
+      "codeBytes": 664,
+      "tableBytes": 360,
+      "eepromBytes": 64,
+      "flashSha256": "9ecbf01ee69ab1b3c58784ad495981aa28f41b19cc01ee85d54eee851db3138e",
+      "eepromSha256": "233eb6508fce5e44d1230ea6e2b1eaff23bd1dc6c35ea3c30a80678c95255e45"
+    },
+    "turkish-march": {
+      "flashBytes": 1016,
+      "codeBytes": 532,
+      "tableBytes": 484,
+      "eepromBytes": 64,
+      "flashSha256": "2ec7cac3124cda3302938ee77938901d08ee8ba781698bde5a1a2b955030549b",
+      "eepromSha256": "de37b0a60a1a0c845d84166a6169056e364f3e88cbfc824260fafd325e5ea2b8"
+    },
+    "children": {
+      "flashBytes": 1022,
+      "codeBytes": 700,
+      "tableBytes": 322,
+      "eepromBytes": 64,
+      "flashSha256": "38b826193021d2f0f84883352c6b3aee2f4ae58d77b686c9b1650c2efd8001f9",
+      "eepromSha256": "bfdbabaa2a1d87396593b4636fa8c496f61abede05cb2380e18d9356310f4589"
+    },
+    "greensleeves": {
+      "flashBytes": 812,
+      "codeBytes": 438,
+      "tableBytes": 374,
+      "eepromBytes": 64,
+      "flashSha256": "f6735cb5d9cd33bb3acfdfdc93f5413e2e16b2e356768204a3943fbd51090466",
+      "eepromSha256": "25a20ace0caeb18735a129564fe453a3870b596a0a8c9c41aa2b196c79532bff"
+    },
+    "lumiere-stereo": {
+      "flashBytes": 1018,
+      "codeBytes": 706,
+      "tableBytes": 312,
+      "eepromBytes": 64,
+      "flashSha256": "7226fa6a7679ab66ebe7068c948aff729a0b2334c6fe69c43ea1868ec0693bcc",
+      "eepromSha256": "45ba4c476cf214ef25d91494c6fa70b2567722b44403bcd25b09326e190fee37"
+    },
+    "cancion-del-mariachi-polyphonic": {
+      "flashBytes": 926,
+      "codeBytes": 574,
+      "tableBytes": 352,
+      "eepromBytes": 64,
+      "flashSha256": "13f13fecd24a9add2e7122e0086de1d954086074ed0b77ab78c16f7c0fa50ca4",
+      "eepromSha256": "9ba03ad3f029cb8b903d16b7a1f87878477fa952aaf2c59cc7aae244f3765cda"
+    },
+    "cancion-del-mariachi": {
+      "flashBytes": 984,
+      "codeBytes": 732,
+      "tableBytes": 252,
+      "eepromBytes": 64,
+      "flashSha256": "4958f03dec535cf68dcf7e6783c5a607f5a4745347589119e40c1d8193950d26",
+      "eepromSha256": "b9f3a74d012b9c3c3b7a1944e06a9a7314e4e8ea7413580f6a5931a4c35b85ae"
+    },
+    "cancion-del-mariachi-sparse": {
+      "flashBytes": 1024,
+      "codeBytes": 682,
+      "tableBytes": 342,
+      "eepromBytes": 64,
+      "flashSha256": "96cb0581caf2e2b1c7a2100a6b3f5de154c73d49dd2dbba572b80cccc55957af",
+      "eepromSha256": "438fe422de21239835dc0b6d5f5b5d59903cb4a1c51fbc098ca8a0d4b7c47a4e"
+    }
+  },
+  "lumiere": {
+    "prefix": [
+      224,
+      25,
+      57,
+      97,
+      64,
+      80,
+      225
+    ],
+    "chordBytes": [
+      95,
+      3,
+      2,
+      4,
+      13,
+      5,
+      135,
+      2
+    ],
+    "chordSteps": [
+      863,
+      1026,
+      1293,
+      647
+    ],
+    "durations": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      8,
+      16
+    ],
+    "compression": {
+      "method": "Repeated command phrases; dynamic-programming parsing; suffix sharing; deterministic dictionary search",
+      "globallyMinimal": false,
+      "candidateLimit": 4096,
+      "candidateCount": 3958,
+      "dictionaryTrials": 114830,
+      "originalCommandBytes": 491,
+      "originalStreamSha256": "de7a40df895624bfd73c45373517d2bf0f04feb69d9ec1c3cbc052a1caa6b548",
+      "sourceLayoutBytes": 257,
+      "packedEventBytes": 216,
+      "playlistBytes": 15,
+      "packedBytes": 231,
+      "savedAgainstSourceLayoutBytes": 26,
+      "storedSections": 5,
+      "referencedSections": 8,
+      "verifiedLossless": true
+    }
+  },
+  "mariachiSparse": {
+    "base2": [
+      1,
+      8
+    ],
+    "shapeAt1": [
+      58,
+      182
+    ],
+    "rule61": [
+      1,
+      2
+    ],
+    "pitchPalette": [
+      40,
+      45,
+      47,
+      52,
+      55,
+      57,
+      59,
+      61,
+      63,
+      64,
+      66,
+      67,
+      69,
+      71,
+      72
+    ],
+    "gates": [
+      2,
+      6,
+      4,
+      24,
+      12,
+      1,
+      3
+    ]
+  },
+  "greensleeves": {
+    "prefix": [
+      15,
+      42,
+      72,
+      102,
+      129,
+      0,
+      32,
+      64,
+      96,
+      17
+    ],
+    "commands": 547,
+    "streamBytes": 175,
+    "ruleBytes": 86,
+    "normalizationBounds": [
+      -33,
+      30
+    ],
+    "normalizationGain": 3.878787878787879
+  },
+  "waves": {
+    "violin": {
+      "low": [
+        -3,
+        2,
+        4,
+        5,
+        5,
+        0,
+        -3,
+        -2,
+        -2,
+        -2,
+        0,
+        3,
+        4,
+        0,
+        -5,
+        -6
+      ],
+      "high": [
+        -2,
+        0,
+        2,
+        3,
+        3,
+        6,
+        6,
+        5,
+        0,
+        -4,
+        -5,
+        -4,
+        -4,
+        -3,
+        -2,
+        -1
+      ]
+    },
+    "acoustic-guitar-nylon": {
+      "low": [
+        0,
+        3,
+        4,
+        5,
+        3,
+        2,
+        1,
+        1,
+        0,
+        0,
+        -1,
+        0,
+        -2,
+        -5,
+        -7,
+        -4
+      ],
+      "high": [
+        4,
+        5,
+        3,
+        0,
+        -1,
+        0,
+        3,
+        4,
+        2,
+        0,
+        -3,
+        -5,
+        -5,
+        -4,
+        -3,
+        0
+      ]
+    }
+  },
+  "inputSha256": {
+    "ATtiny13A/Music/variants/rhythmic/build-report.json": "c95f164f960b74c5db6ce12787b4d17f0ae807c8d8da07138b9fcd1f99594560",
+    "ATtiny13A/Music/variants/rhythmic/synth.bin": "3bf6b878c2e0a6a0ec0c231d7d909c874ea38b62483ecbfa20416684acfd7270",
+    "ATtiny13A/Music/variants/rhythmic/eeprom.bin": "45ba4c476cf214ef25d91494c6fa70b2567722b44403bcd25b09326e190fee37",
+    "ATtiny13A/Music/variants/alicia/build-report.json": "b59c55b49fb45b99b99615b773b5a2c21fa828ec83384d7cd4234d6870250c49",
+    "ATtiny13A/Music/variants/alicia/synth.bin": "9ecbf01ee69ab1b3c58784ad495981aa28f41b19cc01ee85d54eee851db3138e",
+    "ATtiny13A/Music/variants/alicia/eeprom.bin": "233eb6508fce5e44d1230ea6e2b1eaff23bd1dc6c35ea3c30a80678c95255e45",
+    "ATtiny13A/Music/variants/turkish-march/build-report.json": "45341440098dd656b863d2807668b00b815adf39961385fa141e60005a7d8f38",
+    "ATtiny13A/Music/variants/turkish-march/synth.bin": "2ec7cac3124cda3302938ee77938901d08ee8ba781698bde5a1a2b955030549b",
+    "ATtiny13A/Music/variants/turkish-march/eeprom.bin": "de37b0a60a1a0c845d84166a6169056e364f3e88cbfc824260fafd325e5ea2b8",
+    "ATtiny13A/Music/variants/children/build-report.json": "702b066919043963be5d422cc96ec3c6f7d68efada3217980c348f043f9fc5ec",
+    "ATtiny13A/Music/variants/children/synth.bin": "38b826193021d2f0f84883352c6b3aee2f4ae58d77b686c9b1650c2efd8001f9",
+    "ATtiny13A/Music/variants/children/eeprom.bin": "bfdbabaa2a1d87396593b4636fa8c496f61abede05cb2380e18d9356310f4589",
+    "ATtiny13A/Music/variants/greensleeves/build-report.json": "7f04333ee18d1c880065864ffbb2608eae9065d412dc0c3de294fc21aae6c8b8",
+    "ATtiny13A/Music/variants/greensleeves/synth.bin": "f6735cb5d9cd33bb3acfdfdc93f5413e2e16b2e356768204a3943fbd51090466",
+    "ATtiny13A/Music/variants/greensleeves/eeprom.bin": "25a20ace0caeb18735a129564fe453a3870b596a0a8c9c41aa2b196c79532bff",
+    "ATtiny13A/Music/variants/lumiere-stereo/build-report.json": "069721c3dda5cac9b861c4587758e37b23eee70f588ec2e29f333072f0db215a",
+    "ATtiny13A/Music/variants/lumiere-stereo/synth.bin": "7226fa6a7679ab66ebe7068c948aff729a0b2334c6fe69c43ea1868ec0693bcc",
+    "ATtiny13A/Music/variants/lumiere-stereo/eeprom.bin": "45ba4c476cf214ef25d91494c6fa70b2567722b44403bcd25b09326e190fee37",
+    "ATtiny13A/Music/variants/cancion-del-mariachi-polyphonic/build-report.json": "17fdc05f6ab90b938e1bd193ed425f88c14a473879b85b163066f853a3b44438",
+    "ATtiny13A/Music/variants/cancion-del-mariachi-polyphonic/synth.bin": "13f13fecd24a9add2e7122e0086de1d954086074ed0b77ab78c16f7c0fa50ca4",
+    "ATtiny13A/Music/variants/cancion-del-mariachi-polyphonic/eeprom.bin": "9ba03ad3f029cb8b903d16b7a1f87878477fa952aaf2c59cc7aae244f3765cda",
+    "ATtiny13A/Music/variants/cancion-del-mariachi/build-report.json": "ad9913ea48367a13dca6902033fd4512871bf22b5cc47595ee56cc31ac48d31d",
+    "ATtiny13A/Music/variants/cancion-del-mariachi/synth.bin": "4958f03dec535cf68dcf7e6783c5a607f5a4745347589119e40c1d8193950d26",
+    "ATtiny13A/Music/variants/cancion-del-mariachi/eeprom.bin": "b9f3a74d012b9c3c3b7a1944e06a9a7314e4e8ea7413580f6a5931a4c35b85ae",
+    "ATtiny13A/Music/variants/cancion-del-mariachi-sparse/build-report.json": "721f5c2b4340083f6074558b6ec9fb1d1f20e97878a01a69c2b72fa6576b5582",
+    "ATtiny13A/Music/variants/cancion-del-mariachi-sparse/synth.bin": "96cb0581caf2e2b1c7a2100a6b3f5de154c73d49dd2dbba572b80cccc55957af",
+    "ATtiny13A/Music/variants/cancion-del-mariachi-sparse/eeprom.bin": "438fe422de21239835dc0b6d5f5b5d59903cb4a1c51fbc098ca8a0d4b7c47a4e",
+    "ATtiny13A/Music/variants/rhythmic/score.json": "ae3adf279cee83779ce03670305e5d381c158486896762769c2deff4e128253f",
+    "ATtiny13A/Music/variants/alicia/score.json": "62d399877e795cf2f0eed300c79162eb94e344ffb8dec995cf4e859da0ababbc",
+    "ATtiny13A/Music/variants/turkish-march/score.json": "4f895fd87ba2a32365baa8bf24c4b2f9a661cb579030bc4feba4fda53ee5b264",
+    "ATtiny13A/Music/variants/children/score.json": "ac49b2eae8d26d543b7b0999718530954cc6507bed53d25f191d25719f0dd699",
+    "ATtiny13A/Music/variants/greensleeves/score.json": "ad98271546057d3b65732009cb31744a1e8dc9bf6429614e150d8a4139b2eb2c",
+    "ATtiny13A/Music/variants/lumiere-stereo/score.json": "0782a3745ff0d113bb69078cac46e939849baea29cb22592450b505137e7564c",
+    "ATtiny13A/Music/variants/greensleeves/compiled-score.json": "2ae9cbc9ef33876a6dad05bcf235dc0fbf21c1ea0ae19b2cf0d40d8cefa67b23",
+    "ATtiny13A/Music/variants/cancion-del-mariachi-polyphonic/compiled-score.json": "1ca0ee6a77b4b58263259822c1382ba519f553f0374f6852a12122a07cc612ed",
+    "ATtiny13A/Music/variants/cancion-del-mariachi-sparse/compiled-score.json": "cd43c12a9b926cd31bd21b603b8b2c0ca14818690fb8ae2c8de94ddb27527e90",
+    "ATtiny13A/Music/instruments/bank.json": "ddf64e6c18950407c002d3c1a3dba9356e566bccba099c08918e7c5d0aa52221",
+    "tools/score-format.py": "8bd2721756e43a29cdd0056f3722fff17ea2fedd9e1ed58d43c2659bfcff69f1",
+    "tools/pack-score.py": "872b5bcc647456c23efeee127be89ba00bd0e9a2b762c95f622f6e5fa4c41b4b",
+    "tools/instrument-bank.py": "087e7c57b7692b7c39a50aa157071b98064265d03f43f60116bf17e97183d058",
+    "tools/build-lumiere-full.py": "2f17b67ad29cc8b714db08650d34831e56b4400466f2baf04d180e6584823c4d",
+    "tools/arrange-alicia-multi.py": "b87db26e296a2d29a3312aa5f612ed966a648b83cd32dad1e66ac33ccb31119c",
+    "tools/alicia-native-template.S": "fbdaee5b52724789110097ec8a9e2a08eba3a589d476d8b725e683d5a3249fc7",
+    "tools/arrange-children-four.py": "d8c15cdb3db43c685b5ae4022dd54a1bd1e39156458d8c31a92a7be601bf1ad8",
+    "tools/children-native-template.S": "1d0f5def242418f46dd86f45c870bef5b68903d04160542b695d291912e3aec8",
+    "tools/build-turkish-three.py": "ab211ca16fd00299eb805c895d3652cd8ffaf1a67956b9369042957afbb37968",
+    "tools/build-mariachi-lossless.py": "e343a9477158cc1339b51ec62431d74702bc73714a973b3790337fd526ef3185",
+    "tools/pack-musical-events.py": "72199dba86f018bf9d6b808c04e14b1c09432a2dd408a4c1e137124fa30e6f35",
+    "tools/mariachi-percussion.py": "81d967879fb0fc6f10d18b377d6b2e3a3e58d2b7f62dd784860be78e7e4e55d6",
+    "tools/build-compact-four.py": "d022c062ace63c195b7ab8fc57f9ad58ce7cfacf768c3f881db93e216fa3246e",
+    "tools/percussion-bank.py": "235a6dcd7ff556e5175a824356016a74b53654dac96ce99febfe1c9f70f45ec5",
+    "tools/render-firmware-preview.mjs": "496db1394381e5fdc6c2c0f023d5cd2aafb27e591d6684a13968a653327cf0f5"
+  },
+  "documentPages": 16
+}
