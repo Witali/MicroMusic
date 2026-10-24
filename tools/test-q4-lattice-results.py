@@ -38,7 +38,7 @@ class LatticeResultTests(unittest.TestCase):
 
     def test_retained_byte_word_and_warm_start_have_exact_metrics_and_sizes(self):
         sizes=self.read('sizes.json')
-        for name in ('byte','word'):
+        for name in ('byte','word','followups/floor','followups/nearest'):
             meta=self.read(name+'/model.json');state=fit.load(self.base/name/'model.json');fit.validate(state)
             pcm,counts=fit.render(state,meta['state_bits'],meta['nearest'])
             self.assert_score(pcm,counts,self.read(name+'/report.json')['final'])
@@ -50,6 +50,10 @@ class LatticeResultTests(unittest.TestCase):
             if name=='word':
                 result=band_scores(self.x,(pcm.astype(float)-128)/128,self.sr)
                 for expected,actual in zip(self.read('band-audit.json')['teacher']['bands'],result['bands']):
+                    self.assertAlmostEqual(expected['correlation'],actual['correlation'],places=11)
+            if name=='followups/nearest':
+                result=band_scores(self.x,(pcm.astype(float)-128)/128,self.sr)
+                for expected,actual in zip(self.read(name+'/band-audit.json')['teacher']['bands'],result['bands']):
                     self.assertAlmostEqual(expected['correlation'],actual['correlation'],places=11)
         state=fit.load(self.base/'byte/best-intelligibility-model.json')
         pcm,counts=fit.render(state,0,False)

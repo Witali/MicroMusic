@@ -5,6 +5,11 @@ The active goal is **STOI ≥0.93**, with the unchanged complete Vinni source,
 ≤0.3449755536. This study makes progress on the PC reference; it does **not**
 meet those goals or replace the qualified 1022-byte half-pitch firmware.
 
+The latest PC teacher is [`followups/nearest/model.json`](followups/nearest/model.json):
+**STOI 0.878459, eSTOI 0.725940, spectrum 0.443157**. Its stream is 992 bytes
+before decoder/EOF, with all 64 EEPROM bytes occupied by waveforms. Goal
+achievement remains false.
+
 ## Measured first fitting cycle
 
 | Complete 22,272-sample Vinni | STOI | eSTOI | Spectral loss | Raw DC |
@@ -13,6 +18,8 @@ meet those goals or replace the qualified 1022-byte half-pitch firmware.
 | Unserialized Q4 coefficient control | 0.857338 | 0.677784 | 0.481816 | +0.079846 |
 | Byte states, fine excitation, 12,000 trials | 0.861327 | 0.685303 | 0.478664 | +0.080203 |
 | Word states with four fractional bits, 12,000 trials | **0.871019** | **0.708960** | **0.470751** | **+0.020399** |
+| Word floor, another 24,000 trials | 0.876870 | 0.716733 | 0.459788 | +0.022222 |
+| Word symmetric rounding, another 24,000 trials | **0.878459** | **0.725940** | **0.443157** | **+0.016366** |
 
 The word result improves STOI by 0.01793 and eSTOI by 0.03907 relative to the
 qualified firmware, reduces spectral error by **2.91%**, and reduces raw DC by
@@ -25,6 +32,15 @@ The byte result has worse raw DC and is not accepted as a replacement. Its
 recorded even though it exceeds the later DC ceiling. That name is not proof
 of passing all export gates. The word result's balanced and best-intelligibility
 endpoints are identical; only one copy of its source model is retained.
+
+Both follow-ups start from the same first-cycle word endpoint. Symmetric
+rounding is selected by its explicit model flag; it rounds ties away from zero.
+Relative to the qualified firmware, the final nearest endpoint reduces
+spectral loss **8.60%**, matched frequency error **17.64%** (to 42.3512 cents),
+and matched level error **20.90%** (to 5.4091 dB). Relative to the historical
+0.492822 spectral baseline, the reduction is **10.08%**, still short of 30%.
+The strict per-component 5 dB bounds remain unmet. The floor follow-up retains
+a distinct slightly higher-STOI endpoint separately; nearest's endpoints match.
 
 ## What changed
 
@@ -54,8 +70,8 @@ but frequency error slightly worsens **51.4215 → 51.7760 cents**. Its p95 leve
 error remains 13.7472 dB. The all-components 5 dB requirement remains unmet,
 and a lower overall spectral loss is not proof of passing it.
 
-The [raw level audit](level-audit.json) finds another remaining defect. Word
-output RMS is only **0.5812 times** the original, while its peak is 0.6797 versus
+The [raw level audit](level-audit.json) finds another remaining defect. First-cycle
+word output RMS is only **0.5812 times** the original, while its peak is 0.6797 versus
 0.5459. Its crest factor is therefore higher. No output gain matching was
 applied to hide this: the STOI/spectral measurements' level invariance does not
 establish absolute level or waveform fidelity. Excitation shape and low-band
@@ -76,6 +92,8 @@ extended header, alongside pitch, half period and the eight waveform selectors.
 | --- | ---: | ---: | ---: |
 | Byte states | 728 bytes | 64 EEPROM bytes | 295 bytes |
 | Word states | 954 bytes | 64 EEPROM bytes | **69 bytes** |
+| Word floor follow-up | 987 bytes | 64 EEPROM bytes | 36 bytes |
+| Word nearest follow-up | 992 bytes | 64 EEPROM bytes | **31 bytes** |
 
 The last column reserves one EOF byte and assumes all EEPROM is used for the
 waveforms. It is a budget remainder, **not measured decoder size**. These
@@ -133,6 +151,18 @@ closed-loop fit.
 4. Only then optimize and assemble a promising word-state decoder. Measure full
    Flash, EEPROM, SRAM and worst preparation time, compare complete PCM in all
    three engines, and check protected RU/EN examples before selection.
+
+The next concrete compact-format experiment is a product dictionary with
+coefficient groups **2 + 3 + 3**, sixteen records per group. Three five-bit Q4
+coefficients fit one sixteen-bit record. The first group's two coefficients,
+waveform selector and three-bit gain-window selector also fit sixteen bits.
+That is **96 table bytes**, with three four-bit indices and a local four-bit
+gain per frame, plus pitch/duration. Candidate gain-window offsets are
+0/2/4/6/8/10/12/16 in Q1 units. A frame needs 3–4 bytes before table/EOF; the
+decoder and actual rate/quality remain to be measured. Jointly train selectors,
+records and gain windows against the original. Preserve difficult transitions
+with sparse corrections only when their real cost is justified. This is a
+proposal, not a demonstrated 1 KB or 0.93 solution.
 
 ## Reproduction and qualification
 
