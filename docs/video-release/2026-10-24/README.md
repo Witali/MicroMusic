@@ -82,3 +82,5 @@ Record the actual video URL and visibility only after Studio confirms them.
 
 References: [FFmpeg loudnorm](https://ffmpeg.org/ffmpeg-filters.html#loudnorm),
 [YouTube upload documentation](https://support.google.com/youtube/answer/57407).
+
+Final revision removes the SOP-8 label while keeping the eight-lead package. The final preview remains awaiting owner approval before upload.
