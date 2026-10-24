@@ -96,6 +96,14 @@ EEPROM 64 Б; измеренный максимум SRAM 61/64 Б. Провер�
 Сборка: python tools/arrange-mariachi.py.
 Плеер: web-player/?firmware=cancion-del-mariachi-ensemble
 
+09 · Mariachi · соло и редкие аккорды — cancion-del-mariachi-sparse/
+Все 117 исходных нот солирующей гитары; вместо частого аккордового боя —
+28 редких басовых/аккордовых атак и паузы. 30 секунд; сопровождение
+переработано, полная нотная версия сохранена отдельно. Flash 868 Б,
+EEPROM 64 Б; SRAM до 61 Б.
+Сборка: python tools/arrange-mariachi-sparse.py --output ATtiny13A/Music/variants/cancion-del-mariachi-sparse
+Плеер: web-player/?firmware=cancion-del-mariachi-sparse
+
 КАНАЛЫ, РИТМ И ЗВУК
 В обычном шестиканальном движке есть два резервных канала.
 Новая нота сохраняет предыдущую фазу, частоту и огибающую в свободном

@@ -26,6 +26,14 @@ def compile_score():
     parts=p.extract(doc,58*480,121*480)
     assert len(parts)==2 and len(p.records(parts))==1027
     assert [max(len(g['pitches']) for g in part['groups']) for part in parts]==[2,6]
+    return compile_parts(parts)
+
+
+def compile_parts(parts):
+    """Encode supplied parts exactly; arrangement policy belongs to the caller."""
+    p=module('poly_events','pack-musical-events.py')
+    assert len(parts)==2
+    assert all(1<=len(g['pitches'])<=(2 if i==0 else 6) for i,part in enumerate(parts) for g in part['groups'])
     assert all(g['velocity']==80 for part in parts for g in part['groups'])
     assert all(part['program']==24 and part['offVelocity']==64 for part in parts)
     unit=160
@@ -102,8 +110,9 @@ def ihex(data):
     return '\n'.join(lines+[':00000001FF'])+'\n'
 
 
-def build(folder):
-    codec=compile_score();base_count=codec['baseCount']
+def build(folder,codec=None,arrangement=None):
+    codec=compile_score() if codec is None else codec
+    base_count=codec['baseCount']
     folder.mkdir(parents=True,exist_ok=True)
     source='''.section .text,"ax",@progbits
 .global vectors
@@ -474,7 +483,11 @@ chord_loaded:
         gridStep=5637,envelopeEverySamples=256,voiceAddresses=list(range(112,144,4)),
         pendingSymbolAddresses=[[144,145],[146,147,148,149,150]],waves=part_waves[0],
         partWaves=part_waves,partWaveOffsets=[0,16],partGainShifts=[0,1],
-        sourceSelection=dict(firstBeat=58,lastBeat=121),verifiedLosslessScore=True)
+        sourceSelection=dict(firstBeat=58,lastBeat=121),verifiedLosslessScore=arrangement is None)
+    if arrangement:
+        report['arrangement']=arrangement
+        report['playedNotes']=sum(st['notes'] for st in codec['stats'])
+        report['verifiedCodecRoundTrip']=True
     report['activePrimaryVoices']=8
     report['instrumentAssignments']={role:dict(instrument='acoustic-guitar-nylon',
         label='Акустическая гитара с нейлоновыми струнами',gmProgram=24,sourceVelocity=80,level=15)
@@ -499,6 +512,11 @@ chord_loaded:
     html=html.replace('lp.frequency.value=4000','lp.frequency.value=9000')
     html=html.replace('Файл preview.wav должен находиться рядом с player.html (он есть в ZIP).',
                       'Файл preview.wav находится рядом с player.html.')
+    if arrangement:
+        html=html.replace('Canción del Mariachi · все 1027 нот',arrangement['title'])
+        html=html.replace('Canción del Mariachi · две гитары, все ноты',arrangement['title'])
+        html=html.replace('две нейлоновые гитары, мягкое сопровождение на 6 дБ тише, все 1027 исходных нот и 8 тональных генераторов.',
+                          'соло нейлоновой гитары, редкие басовые опоры и короткие аккордовые ответы. Сопровождение переработано.')
     (folder/'player.html').write_text(html,encoding='utf-8',newline='\n')
     print(json.dumps({k:report[k] for k in ('flashBytes','codeBytes','tableBytes','sourceNotes')}))
     return report

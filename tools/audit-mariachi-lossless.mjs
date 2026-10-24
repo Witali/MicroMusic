@@ -35,6 +35,24 @@ for(const track of source.tracks){
  expected.push(groups);
 }
 assert.deepEqual(expected.map(groups=>groups.reduce((sum,g)=>sum+g.pitches.length,0)),[117,910]);
+const sourceCounts=[117,910];
+if(meta.arrangement){
+ assert.equal(meta.arrangement.policy,'sparse-source-voicings-v1');
+ const arranged=JSON.parse(fs.readFileSync(path.join(folder,'arrangement.json')));
+ assert.equal(arranged.sourceSha256,hash(sourceRaw));
+ const groups=arranged.parts.map(part=>part.groups.map(g=>({...g,offVelocity:part.offVelocity})));
+ assert.deepEqual(groups[0],expected[0],'Every original lead chord and gate is retained');
+ let previous=-Infinity;
+ for(const g of groups[1]){
+  assert.equal(g.on%960,0);assert.equal(g.off-g.on,480);assert.ok(g.on>previous);previous=g.on;
+  assert.equal(g.velocity,80);assert.equal(g.offVelocity,64);
+  const sourceChord=expected[1].find(s=>s.on<=g.on&&g.on<s.off)??expected[1].findLast(s=>s.on<=g.on);
+  assert.ok(sourceChord);assert.ok(g.pitches.every(p=>sourceChord.pitches.includes(p)),'Backing pitches belong to the source chord');
+  if(g.on%1920===0)assert.deepEqual(g.pitches,[Math.min(...sourceChord.pitches)]);
+  else{assert.ok(g.pitches.length<=3);assert.equal(new Set(g.pitches.map(p=>p%12)).size,g.pitches.length);}
+ }
+ expected[1]=groups[1];
+}
 const core=new AVRCore(rom,ep),pc=Object.fromEntries(Object.entries(meta.labels).map(([k,v])=>[k,v/2]));
 const waveOffsets=meta.partWaveOffsets??[0,0],gainShifts=meta.partGainShifts??[0,0];
 const notes=[[],[]],current=[null,null],queue=Array(14).fill(128);
@@ -125,10 +143,10 @@ for(let part=0;part<2;part++){
   maxDuration=Math.max(maxDuration,Math.abs((a.offCycle-a.onCycle)/9600000-(off-onset))*1000);
  }
 }
-assert.equal(totalNotes,1027);assert.ok(maxOn<25&&maxOff<25);
+assert.equal(totalNotes,meta.arrangement?meta.playedNotes:1027);assert.ok(maxOn<25&&maxOff<25);
 const report={passed:true,engine:meta.engine,sourceSha256:hash(sourceRaw),flashSha256:hash(rom),eepromSha256:hash(ep),
- flashBytes:rom.length,codeBytes:meta.codeBytes,tableBytes:meta.tableBytes,allSourceNotes:totalNotes,
- allSourceNoteGatesVerified:true,sourceParts:2,sourceNotesByPart:[117,910],chordAttacksByPart:notes.map(g=>g.length),
+ flashBytes:rom.length,codeBytes:meta.codeBytes,tableBytes:meta.tableBytes,allSourceNotes:1027,
+ allSourceNoteGatesVerified:!meta.arrangement,sourceParts:2,sourceNotesByPart:sourceCounts,chordAttacksByPart:notes.map(g=>g.length),
  oscillators:8,maximumSimultaneousSourceNotes:7,partWaveOffsets:waveOffsets,partGainShifts:gainShifts,
  firstSongSeconds:30,loopSeconds:(restartCycle-firstCycle)/9600000,
  maximumOnsetErrorMs:maxOn,maximumGateEndErrorMs:maxOff,maximumGateDurationErrorMs:maxDuration,
@@ -138,6 +156,9 @@ const report={passed:true,engine:meta.engine,sourceSha256:hash(sourceRaw),flashS
  independentPhaseChecks:phaseChecks,mixChecks,pwmPairChecks:pwmChecks,minQueuedPwmBytes:minQueued,ringUnderruns:underruns,
  lostTimerEvents:core.lost,lostWorkEvents:core.workLost,isrCycles:core.maxIRQ,mixRange:[minMix,maxMix],
  bothPartsSilentBeforeRestart:loopQuiet,emulationOnly:true};
+if(meta.arrangement)Object.assign(report,{arrangementPolicy:meta.arrangement.policy,playedNotes:totalNotes,
+ arrangedNoteGatesVerified:true,leadSourceNoteGatesVerified:true,
+ arrangedNotesByPart:expected.map(groups=>groups.reduce((sum,g)=>sum+g.pitches.length,0))});
 if(writeReport)fs.writeFileSync(path.join(folder,'verification.json'),JSON.stringify(report,null,2)+'\n');
 if(log)console.log(JSON.stringify(report,null,2));
 return report;
