@@ -204,3 +204,11 @@ PB1/OC0B, вывод 6; питание — 8, земля — 4. Темп на п
 микшер и PWM; реальные байты прошивок и 19 схем и графиков.
 PDF хранится в Git LFS. Скрипт: tools/build-music-format-guide.py.
 Пересоздание и проверяемый срез: ATtiny13A/Music/docs/README.txt.
+
+МУЗЫКАЛЬНЫЕ ВАРИАНТЫ ДЛЯ ATTINY88
+Девять адаптированных прошивок, включая Люмьер стерео и три Mariachi:
+  ATtiny88/Music/variants/<имя>/synth.hex и eeprom.hex
+Внутренние 8 МГц; Timer1 PWM, моно PB2/OC1B, стерео также PB1/OC1A.
+Подключение, фьюзы, сборка и проверки: ATtiny88/Music/README.txt.
+Сверка официального даташита: ATtiny88/Music/HARDWARE_REVIEW_RU.md.
+Сборщик: tools/build-attiny88-music.py. ATmega88A пока отложен.
