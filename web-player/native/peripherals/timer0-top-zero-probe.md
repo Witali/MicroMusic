@@ -34,13 +34,19 @@ measurement. Match generator/analyzer logic levels to VCC and share ground.
 |---|---|
 | PB0 / OC0A | Capture the actual compare output continuously |
 | PB1 / OC0B | Capture the second compare output continuously |
-| PB2 | Serialized trace clock, idle low |
-| PB3 | Serialized trace data, sampled at PB2 rising edges |
-| PB4 / T0 | Generator input: externally stepped rising timer clocks |
+| PB2 / T0 | Generator input: externally stepped rising timer clocks |
+| PB3 | Serialized trace data, sampled at PB4 rising edges |
+| PB4 | Serialized trace clock, idle low; sample data at its rising edges |
 | PB5 / RESET | Normal reset/programming role |
 
 Release programmer drive on shared ISP pins before acquisition; those pins
 become the probe's GPIO/compare outputs when RESET is released.
+
+The corrected mapping follows the pinned manufacturer's ATDF `TC0` signal `T`
+on PB2 and data-sheet Figure1-1/Table10-3. The original probe swapped T0 and
+trace clock, so serialization would itself clock Timer0. No hardware evidence
+was retained from that mapping. Use the current firmware/configuration hashes;
+do not interpret an older-pin-map capture using this acquisition procedure.
 
 Keep T0 low during reset and initialization. Begin the pulse burst only after
 receiving the complete boot frame. Use the configured 100 Hz stimulus: 5 ms
@@ -65,16 +71,21 @@ Timer0 clock occurs during the observation interval because T0 remains high.
 
 ## Profiles and build
 
-Run both controls before interpreting TOP=0 measurements:
+Run the nonzero controls before interpreting TOP=0 measurements:
 
 - `control-fixed-top-255`: WGM1, fixed TOP, both non-inverting outputs.
 - `control-variable-top-3`: WGM5 with a nonzero TOP and OC0A toggle.
+- `control-variable-top-1-b-zero/one`: the nearest nonzero TOP, with each OCR0B
+  extreme, to check boundary behavior without the TOP=BOTTOM ambiguity.
 - `zero-top-toggle`, `zero-top-noninverting`, `zero-top-inverting`: direct zero
   TOP with different COM modes and deliberately chosen initial latch states.
 - `zero-top-compare-b-one`: OCR0B=1 while TOP is zero.
 - `zero-top-from-counter-two`: nonzero initial TCNT0 with zero TOP.
 - `buffer-top-three-to-zero`, `buffer-top-zero-to-three`: one OCR0A write after
   sample 8, with an additional write-marker record at the same sequence index.
+- `zero-top-pending-three-before-first-pulse`: initial active TOP=0, then OCR0A=3
+  is written after selecting WGM5 but before any external pulse. Its boot frame
+  reads back3; this does not establish when the hidden buffer transfers.
 
 Definitions and burst lengths are canonical in the JSON file. Each profile
 should be rerun from reset; do not reuse the previous run's hidden timer state.
@@ -97,11 +108,42 @@ the source path. For example the nonzero control uses `-DPROBE_MODE=5
 readback. Source is retained here; no ELF/HEX/binary is committed. Record source,
 configuration and programmed-image SHA-256 values with every physical capture.
 
-All nine configurations assemble with the repository's AVR GCC 7.3.0 toolchain:
-442 bytes Flash for ordinary profiles, 446 for the TCNT-seeded case, 474 for
-buffered-write profiles; zero static data/BSS. Stack use is at most two nested
-return addresses (four SRAM bytes). Compilation establishes firmware size and
-syntax, never the unknown Timer0 result.
+Addresses, register bits and RAMEND come from
+`../attiny13a-registers.generated.inc`, derived from the pinned official
+Microchip device definitions. No copied numeric register map is retained in
+the probe. Stack use is at most two nested return addresses (four SRAM bytes).
+Compilation establishes firmware size and syntax, never the unknown Timer0
+result. The verification script below builds every profile and executes only
+the nonzero controls as software smoke checks.
+
+```text
+node web-player/scripts/verify-timer0-probe.mjs
+```
+
+The script locates the prepared AVR GCC7.3.0 toolchain in an ancestor's
+`build/toolchains/avr-7.3.0/bin`, or accepts `--avr-bin DIR`. Python must be
+available for the existing protocol decoder; use `--python FILE` or `PYTHON`
+to select its executable. Generated ELF/binary/CSV/JSON files stay under ignored
+`build/timer0-probe-verification/`, overridable with `--out DIR`.
+
+The 2026-10-24 run built all12 profiles, occupying442–474 Flash bytes with no
+data/BSS section. Four nonzero controls executed their actual assembled firmware
+in the full-device emulator and emitted a boot frame plus four pulse records
+each. The verifier checks TCNT0/TIFR0 before any T0 stimulus, input/output
+directions, framing/checksum/sequence, configuration readback, sampled PB2 and
+the documented nonzero counter sequences. GPIO pin events are drained in bounded
+chunks. These controls use the fixed nominal oscillator and explicit zero-startup
+software fixture; each stimulus phase lasts40000 base half-cycles (about2.08ms),
+above the acquisition's1ms minimum. This exercises the probe transport and emulator integration; it does
+not validate silicon timing or the unknown TOP=0 outcome.
+
+The [retained verification summary](../../reports/timer0-probe-20261024.json)
+records toolchain, firmware/dependency/runtime hashes, the complete JS library
+source identities, generated CPU WASM/manifest hashes and control results.
+As a negative control, running the verifier with `--source` set to the original
+pin-map source from commit `28aba01` fails before external stimulation:
+TCNT0=112 instead of0, because each serialized bit clocks T0. The default source
+uses PB4 for serialization and PB2 exclusively for the generator input.
 
 ## Record format and decoding
 
@@ -135,6 +177,8 @@ and its final frame; do not stop in the middle of a serialized record.
 python web-player/native/peripherals/timer0-top-zero-probe-decode.py capture.csv --profile zero-top-toggle --capture-kind hardware -o observed.json
 ```
 
+The decoder accepts `--source FILE` to identify an alternate firmware source;
+the verifier forwards its actual build source, so decoded provenance matches it.
 The decoder checks sync, checksum, record order, pulse counts and scheduled-write
 markers. It preserves counter/flag/output observations without comparing them
 to a guessed TOP=0 model. Add measured conditions and instrument settings under
@@ -146,8 +190,9 @@ status, so they cannot silently become hardware evidence.
 python web-player/native/peripherals/timer0-top-zero-probe-test.py
 ```
 
-These four protocol tests cover arbitrary observed counter bytes, checksum
-corruption, dropped pulse records and truncated captures. They supply no
+These five protocol tests cover arbitrary observed counter bytes, checksum
+corruption, dropped pulse records, truncated captures and alternate-source
+provenance. They supply no
 physical Timer0 results. A future implementation must cite the actual observed
 capture, check repeatability from reset, reconcile the two controls and preserve
 any silicon-revision differences before replacing the existing fault.

@@ -1,0 +1,22 @@
+import assert from 'node:assert/strict';
+import {spawnSync} from 'node:child_process';
+import {writeFileSync} from 'node:fs';
+import {ATtiny13A} from '../web-player/lib/attiny13a.js';
+import {AT13_IO as IO} from '../web-player/lib/attiny13a-registers.js';
+import {avr,sequential} from '../web-player/tests/fixtures/attiny13a-system-firmware.mjs';
+const old=spawnSync('git',['show','a4a772a:web-player/wasm/attiny13a.wasm']);
+assert.equal(old.status,0);
+const module=await WebAssembly.compile(old.stdout),results=[];
+for(const previous of [true,false]){
+  const cpu=new ATtiny13A(sequential([...Array.from({length:7},()=>avr.nop()),avr.inc(16)]),null,
+    {fuseLow:0x7a,fuseStartupProfile:0,fastIdle:false,...(previous?{runtimeModule:module}:{})});
+  cpu.writeIO(IO.TCCR0A,0x61);cpu.writeIO(IO.TCCR0B,10);
+  cpu.writeIO(IO.OCR0A,3);cpu.writeIO(IO.OCR0B,1);
+  let error=null;try{cpu.runUntil(16n);}catch(fault){error=fault.message;}
+  results.push({previous,error,r16:cpu.r[16],pc:cpu.pc,fault:cpu.state().deviceFault,
+    tcnt:cpu.data[32+IO.TCNT0],tifr:cpu.data[32+IO.TIFR0]});
+}
+assert.equal(results[0].error,null);assert.equal(results[0].r16,1);
+assert.match(results[1].error,/peripheral fault 3, detail 6/);assert.equal(results[1].r16,0);
+writeFileSync(new URL('./timer0-uncertainty-before-after.json',import.meta.url),JSON.stringify(results,null,2)+'\n');
+console.log(JSON.stringify(results));

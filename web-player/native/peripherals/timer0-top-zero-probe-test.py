@@ -1,6 +1,12 @@
 """Synthetic protocol tests only; these are not ATtiny13A observations."""
 import importlib.util
+import hashlib
+import csv
+import json
 from pathlib import Path
+import subprocess
+import sys
+import tempfile
 import unittest
 
 spec = importlib.util.spec_from_file_location(
@@ -10,7 +16,7 @@ spec.loader.exec_module(decoder)
 
 
 def frame(kind, sequence, counter=0):
-    payload = [1, kind, sequence & 255, sequence >> 8, counter, 0, 16, 0, 0, 0x61, 0x0f]
+    payload = [1, kind, sequence & 255, sequence >> 8, counter, 0, 4 if kind else 0, 0, 0, 0x61, 0x0f]
     checksum = 0
     for value in payload:
         checksum ^= value
@@ -62,6 +68,32 @@ class ProtocolTests(unittest.TestCase):
         rows = [row for row in rows if float(row["time_s"]) < 0.0412]
         with self.assertRaisesRegex(ValueError, "Incomplete frame"):
             decoder.decode_rows(rows, self.profile)
+
+    def test_cli_records_the_actual_alternate_source(self):
+        build = Path(__file__).resolve().parents[3] / "build" / "timer0-protocol-test"
+        build.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix="micromusic-probe-", dir=build) as temporary:
+            folder = Path(temporary)
+            self.assertTrue(folder.resolve().is_relative_to(build.resolve()))
+            source = folder / "alternate.S"
+            source.write_text("/* distinct source identity, synthetic protocol test */\n", encoding="utf-8")
+            config = folder / "config.json"
+            config.write_text(json.dumps({"firmware": "unused-default.S", "profiles": [
+                {"id": "protocol-test", **self.profile}]}), encoding="utf-8")
+            waveform = folder / "capture.csv"
+            rows = capture([frame(0, 0), frame(1, 1), frame(1, 2)])
+            with waveform.open("w", newline="", encoding="utf-8") as output:
+                writer = csv.DictWriter(output, fieldnames=rows[0].keys())
+                writer.writeheader()
+                writer.writerows(rows)
+            run = subprocess.run([sys.executable, str(Path(decoder.__file__)), str(waveform),
+                                  "--config", str(config), "--source", str(source),
+                                  "--profile", "protocol-test", "--capture-kind", "synthetic"],
+                                 capture_output=True, text=True, check=True)
+            result = json.loads(run.stdout)
+            self.assertEqual(result["status"], "synthetic-decoder-test")
+            self.assertEqual(result["measurements"]["sourceSha256"],
+                             hashlib.sha256(source.read_bytes()).hexdigest())
 
 
 if __name__ == "__main__":

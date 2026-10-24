@@ -33,6 +33,9 @@
 #ifndef PROBE_INITIAL_COUNTER
 #define PROBE_INITIAL_COUNTER 0
 #endif
+#ifndef PROBE_PENDING_TOP
+#define PROBE_PENDING_TOP -1
+#endif
 
 #if PROBE_MODE != 1 && PROBE_MODE != 5
 #error "This probe supports only the two phase-correct modes"
@@ -49,6 +52,14 @@
 #if PROBE_INITIAL_COUNTER < 0 || PROBE_INITIAL_COUNTER > 255 || PROBE_INITIAL_LEVELS < 0 || PROBE_INITIAL_LEVELS > 3
 #error "Initial counter/latch value out of range"
 #endif
+#if PROBE_PENDING_TOP < -1 || PROBE_PENDING_TOP > 255
+#error "Pending TOP must be -1 (absent) or a byte"
+#endif
+
+/* ATtiny13A ATDF TC0 signal T uses PB2; PB4 has no T0 input role. */
+.equ PROBE_T0_BIT, PINB2
+.equ PROBE_CLOCK_BIT, PINB4
+.equ PROBE_DATA_BIT, PINB3
 
 /* Project aliases use the pinned manufacturer's definitions above. */
 .equ PINB_IO,   PINB
@@ -99,7 +110,7 @@ reset:
  clr r16
  out CLKPR_IO,r16             /* /1, then settle before accepting T0 pulses. */
  out PORTB_IO,r16
- ldi r16,0x0f
+ ldi r16,(1 << DDB0) | (1 << DDB1) | (1 << DDB3) | (1 << DDB4)
  out DDRB_IO,r16              /* OC0A, OC0B, trace clock, trace data outputs. */
 
  /* Establish OC latches with the documented non-PWM FOC mechanism. */
@@ -125,6 +136,10 @@ reset:
  out TCCR0A_IO,r16
  ldi r16,((PROBE_MODE & 4) << 1) | 7
  out TCCR0B_IO,r16            /* Rising external T0; no timer clock without input. */
+#if PROBE_PENDING_TOP >= 0
+ ldi r16,PROBE_PENDING_TOP
+ out OCR0A_IO,r16             /* Buffered after WGM selection, before first T0. */
+#endif
  ldi r16,0x0e
  out TIFR0_IO,r16
  clr r2                      /* External rising-edge sequence, modulo65536. */
@@ -142,7 +157,7 @@ reset:
  rcall emit_frame
 
 wait_high:
- sbis PINB_IO,4
+ sbis PINB_IO,PROBE_T0_BIT
  rjmp wait_high
  /* PINB synchronization precedes T0 edge detection.32 CPU periods exceed
   * the documented2.5..3.5-period T0 latency without assuming its exact phase. */
@@ -174,7 +189,7 @@ sequence_ready:
  rcall emit_frame
 #endif
 wait_low:
- sbic PINB_IO,4
+ sbic PINB_IO,PROBE_T0_BIT
  rjmp wait_low
  rjmp wait_high
 
@@ -227,13 +242,13 @@ checked_byte:
 send_byte:
  ldi r18,8
 send_bit:
- cbi PORTB_IO,3
+ cbi PORTB_IO,PROBE_DATA_BIT
  sbrc r17,7
- sbi PORTB_IO,3
+ sbi PORTB_IO,PROBE_DATA_BIT
  nop
- sbi PORTB_IO,2               /* Capture data on this rising trace-clock edge. */
+ sbi PORTB_IO,PROBE_CLOCK_BIT /* Capture data on this rising trace-clock edge. */
  nop
- cbi PORTB_IO,2
+ cbi PORTB_IO,PROBE_CLOCK_BIT
  lsl r17
  dec r18
  brne send_bit

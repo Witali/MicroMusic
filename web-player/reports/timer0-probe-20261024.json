@@ -1,0 +1,283 @@
+{
+  "schema": "micromusic-attiny13a-timer0-probe-verification-v1",
+  "status": "software-verification-only",
+  "verificationScriptSha256": "0ccbc19880a5c0ddfb08c90c3d9dc7a3ec6ff006928535ae6e9148c35838d9ea",
+  "decoderSha256": "a001105b66696e99582cd438e9fd31043ad42bd96ba22e66d9853fbf2460a46e",
+  "sourceSha256": "efffd96f52e2f08b60159e7a9688749c76f1021aed2a28205184f1c5d74fa5c6",
+  "configurationSha256": "e5903b06c1a3889f7a021da5d7e03e03e3afc67481dcd8f708835aad03e664aa",
+  "atdfSha256": "e12ee48543baf46bc5bc5bf9c6ef2e9e57e46e39c34b3c619bdc8280276e82ed",
+  "generatedDefinitionsSha256": "aaaf7f47e67e1f3b72754c13373ea9aa6d39acf65c8669e43333ffdf51e539e4",
+  "runtimeSha256": "4adb36626e3151b91147b14a49c7a36ee9709b0da173db9531ed1aa39b5b1210",
+  "librarySourceSha256": {
+    "web-player/lib/attiny13a-package.js": "99617c80e6cae01fcae3dab3e4023d7472d56d5644f8bacc43d40ec97da8672a",
+    "web-player/lib/attiny13a-registers.js": "2d4f35723abcaf81015d6cf167b1e9a88e77b032846ba18be8e8efe7685f38e4",
+    "web-player/lib/attiny13a-runtime.js": "23a2c10af1b332383bf4a27f141a9ec2497b1cfaa4d3b0cac8dcfb15cc642b90",
+    "web-player/lib/attiny13a.js": "c991dbb4c082717893bf34bf5f09f61dc03e15e84bc6e3439847ecba77d2a4cb",
+    "web-player/lib/audio-queue.js": "cdd040a932526796a2eb4ee226b790c5603f0cec257eca439e9c2a68a3a56df1",
+    "web-player/lib/avr-core.js": "53bf4d58501212b09bf838544c48baa3c4832434043206103bc82d9e1a8bcf36",
+    "web-player/lib/avr-reference.js": "8e5cf4485f6d6502402b2390441e1fa7a99cac071187a0ac51529f878d454e22",
+    "web-player/lib/avr-runtime.js": "5a6963f512edb163af28fd6cfd274390b521fe057fc1a8c98b9eaa53b79fa9b1",
+    "web-player/lib/avr-transpiled-runtime.js": "20fa3f33b93b149d56d90651a5a59087daef4b096aedfc879afcc81d07b2116a",
+    "web-player/lib/avr-transpiled.js": "50fe4dbc268b5983b2a0e1a0915427c884e1643ca2ee979bfe249007d5a4476e",
+    "web-player/lib/avr-transpiler.js": "e1d6de093e4204cc8c57e14e40e2b272cb9c640d211f971adb9d3eabe9cd4f46",
+    "web-player/lib/avr-wasm-phases.js": "4fe16317f36ffc3148ed54426481b096e7499241192b184b2931110892133feb",
+    "web-player/lib/avr-wasm.js": "259d7228a8fe3e9c2965a343f2a29517076ee2da0f9f2b292d273c4eb6a51d8e",
+    "web-player/lib/devices/attiny13a-clki-profile.js": "9d8579e108ff2c93823c0b6907e155b34e3fce45498fb6d60170290ba7f7fe75",
+    "web-player/lib/devices/attiny13a-profile.js": "7b356d3ee20e28febf39bf6d912d0b642f1eeb325c042f6b635853df2fe1c891",
+    "web-player/lib/devices/attiny13a-reset-profile.js": "c73e865c939463a6133fc45ffa59da7ed4490105c50272fd8b07b1aa65a50614",
+    "web-player/lib/devices/profiles.js": "837bb85e4c936e2fcd5386bb454d48b2f2e2af1fd2d6f59fa541cfd8a8348d86",
+    "web-player/lib/engines.js": "7954fc1a398e756905bc29f3cbd2c04123f5460641aade7c879356e4f2ede662",
+    "web-player/lib/hex.js": "dfbb9a5158ce9fe306e483e86f747bdafae9ee672d8f0fdc44e34e395beedfca",
+    "web-player/lib/package-entry.js": "ff9273715dcc8df7d1924b3294bccfad7156f09feba7d7466c7c89cf171169ad",
+    "web-player/lib/realtime.js": "04e346da040b7ffb9f5668fc52b0abf45d56fc25cef0fc5a1b388190d397b6b3",
+    "web-player/lib/renderer-device.js": "71f3bba81a26919c085be4f404c050d94750a04faecba37cd426f845d866fddc",
+    "web-player/lib/renderer-js.js": "b7de1ce9b3ddbfdc3557b0e3770a233bdfefee196ffa467e025431dda522de2a",
+    "web-player/lib/renderer-package.js": "6c1cf59cab50347ebb4a105128e280c3ae442a2673b08abd813ad9e8ed9d1de0",
+    "web-player/lib/renderer-transpiled.js": "16d014a9d9ba33f720a737e8ddd5033239fd75480d042784134efc7af48414cd",
+    "web-player/lib/renderer.js": "ec240e68e2a7e46faeb40317a3016e71cdd65d68f8b458860c6fc867753146f4"
+  },
+  "toolchain": "avr-gcc.exe (GCC) 7.3.0",
+  "node": "v22.22.3",
+  "profiles": [
+    {
+      "id": "control-fixed-top-255",
+      "bytes": 442,
+      "sha256": "2f3f74056c89b81e6cb7d972b6176cad0b5484c5f267571d2562d0927b3a057f",
+      "defines": {
+        "PROBE_MODE": 1,
+        "PROBE_INITIAL_TOP": 255,
+        "PROBE_OCR0B": 64,
+        "PROBE_COM0A": 2,
+        "PROBE_COM0B": 2,
+        "PROBE_INITIAL_LEVELS": 0
+      },
+      "softwareControl": {
+        "status": "synthetic-decoder-test",
+        "pulses": 4,
+        "counters": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "bootTimerCount": 0,
+        "bootFlags": 0,
+        "pinEvents": 1441,
+        "captureSha256": "00536be7d6429b61d6d6b592ab9f180ea84027f36fc01762d3d0e09c65b141ff",
+        "translatedWasmSha256": "6136acf2c7910fa2392fcdbdfff4e6fa4d6e580456ec5db418be27ed76fa1509",
+        "translatedWasmBytes": 119425,
+        "translationManifestSha256": "b2d9b5edb4185d65f7493406069f2300f87a7512034ae9bea60049a533f9a8da"
+      }
+    },
+    {
+      "id": "control-variable-top-3",
+      "bytes": 442,
+      "sha256": "79e3ce79dd6ab6e334d2e70cfa7721b2fbe9fbb35ab01a865302761b6f97ead2",
+      "defines": {
+        "PROBE_MODE": 5,
+        "PROBE_INITIAL_TOP": 3,
+        "PROBE_OCR0B": 1,
+        "PROBE_COM0A": 1,
+        "PROBE_COM0B": 2,
+        "PROBE_INITIAL_LEVELS": 0
+      },
+      "softwareControl": {
+        "status": "synthetic-decoder-test",
+        "pulses": 4,
+        "counters": [
+          1,
+          2,
+          3,
+          2
+        ],
+        "bootTimerCount": 0,
+        "bootFlags": 0,
+        "pinEvents": 1398,
+        "captureSha256": "d2a4cf45f75056e6a2428029b849d937cd10453596e568dbe5bb380ac298c1f3",
+        "translatedWasmSha256": "4f0763fc8f2e68c8f1c78d88eb28620093784e9a812de9ab7bce0a6e65f4fa3f",
+        "translatedWasmBytes": 119420,
+        "translationManifestSha256": "fd1ee61b52f6719f6748cee4d28160085f68c25dfe9d859be8b2fa0b0d481c39"
+      }
+    },
+    {
+      "id": "control-variable-top-1-b-zero",
+      "bytes": 442,
+      "sha256": "5c5d153b101ea63c46be4cde5ecfbb32cb274fb9647c0cf1ad78b4b26a1382e0",
+      "defines": {
+        "PROBE_MODE": 5,
+        "PROBE_INITIAL_TOP": 1,
+        "PROBE_OCR0B": 0,
+        "PROBE_COM0A": 1,
+        "PROBE_COM0B": 2,
+        "PROBE_INITIAL_LEVELS": 0
+      },
+      "softwareControl": {
+        "status": "synthetic-decoder-test",
+        "pulses": 4,
+        "counters": [
+          1,
+          0,
+          1,
+          0
+        ],
+        "bootTimerCount": 0,
+        "bootFlags": 0,
+        "pinEvents": 1387,
+        "captureSha256": "1bc0c5e9e33008fe985c90e125ab4e5cc8941b18f3fac176df34b149ba163f9d",
+        "translatedWasmSha256": "a0ba4d395849de1ac62dba6ad9519f5d3bc9742cf9bfb8330565687183ef8970",
+        "translatedWasmBytes": 119420,
+        "translationManifestSha256": "8cdb185fefc4badea4f051efde2d758870551f77eaaa06dff9946e5166db009c"
+      }
+    },
+    {
+      "id": "control-variable-top-1-b-one",
+      "bytes": 442,
+      "sha256": "1f94c3da64a88f64ae95fe16dac4930e4a6f8faea9b43622c34e9aa66b808f73",
+      "defines": {
+        "PROBE_MODE": 5,
+        "PROBE_INITIAL_TOP": 1,
+        "PROBE_OCR0B": 1,
+        "PROBE_COM0A": 1,
+        "PROBE_COM0B": 2,
+        "PROBE_INITIAL_LEVELS": 0
+      },
+      "softwareControl": {
+        "status": "synthetic-decoder-test",
+        "pulses": 4,
+        "counters": [
+          1,
+          0,
+          1,
+          0
+        ],
+        "bootTimerCount": 0,
+        "bootFlags": 0,
+        "pinEvents": 1413,
+        "captureSha256": "c03c5be337026cd1d9c5401ccb305dfb2d2dd59a92f65dec4cdf5c9b8083f913",
+        "translatedWasmSha256": "a1d3c3510345f996b01ea2dc2fd2f9207ab79a0b85294b795f24a904e822b4f9",
+        "translatedWasmBytes": 119420,
+        "translationManifestSha256": "476d77a92832c449175b8a42f51e73811906af31d1e1f828842f2ad2c60c0659"
+      }
+    },
+    {
+      "id": "zero-top-toggle",
+      "bytes": 442,
+      "sha256": "9724c8c236d7ae525411303d9d21221aa1db12754b20e61d91a3d73dfecb958a",
+      "defines": {
+        "PROBE_MODE": 5,
+        "PROBE_INITIAL_TOP": 0,
+        "PROBE_OCR0B": 0,
+        "PROBE_COM0A": 1,
+        "PROBE_COM0B": 2,
+        "PROBE_INITIAL_LEVELS": 0
+      },
+      "softwareControl": null
+    },
+    {
+      "id": "zero-top-noninverting",
+      "bytes": 442,
+      "sha256": "619dc42996ff3d05c3645c96016ea3be64b80f1bbc67d4b23a2e8eef0e926a43",
+      "defines": {
+        "PROBE_MODE": 5,
+        "PROBE_INITIAL_TOP": 0,
+        "PROBE_OCR0B": 0,
+        "PROBE_COM0A": 2,
+        "PROBE_COM0B": 2,
+        "PROBE_INITIAL_LEVELS": 3
+      },
+      "softwareControl": null
+    },
+    {
+      "id": "zero-top-inverting",
+      "bytes": 442,
+      "sha256": "8ab5b1abda2ff9ea6dff095cfb03a680da0bb8ea4ddce6ed9a147a81b2ce0808",
+      "defines": {
+        "PROBE_MODE": 5,
+        "PROBE_INITIAL_TOP": 0,
+        "PROBE_OCR0B": 0,
+        "PROBE_COM0A": 3,
+        "PROBE_COM0B": 3,
+        "PROBE_INITIAL_LEVELS": 0
+      },
+      "softwareControl": null
+    },
+    {
+      "id": "zero-top-compare-b-one",
+      "bytes": 442,
+      "sha256": "c50fdbdcd8d65b7091a0631a3e0e59f0dcfcfc83c3ae48a340d44fecb5fd421c",
+      "defines": {
+        "PROBE_MODE": 5,
+        "PROBE_INITIAL_TOP": 0,
+        "PROBE_OCR0B": 1,
+        "PROBE_COM0A": 1,
+        "PROBE_COM0B": 2,
+        "PROBE_INITIAL_LEVELS": 0
+      },
+      "softwareControl": null
+    },
+    {
+      "id": "zero-top-from-counter-two",
+      "bytes": 446,
+      "sha256": "f8f500c80d6391afd163532e79fec91233a3a9a6669fa5e89cc793cc5983a022",
+      "defines": {
+        "PROBE_MODE": 5,
+        "PROBE_INITIAL_TOP": 0,
+        "PROBE_OCR0B": 1,
+        "PROBE_COM0A": 1,
+        "PROBE_COM0B": 2,
+        "PROBE_INITIAL_LEVELS": 0,
+        "PROBE_WRITE_TCNT": 1,
+        "PROBE_INITIAL_COUNTER": 2
+      },
+      "softwareControl": null
+    },
+    {
+      "id": "buffer-top-three-to-zero",
+      "bytes": 474,
+      "sha256": "8aa5a270fd867bca57ddd79486008162848e9d162088cd8a42ae4bd0c42ea8ab",
+      "defines": {
+        "PROBE_MODE": 5,
+        "PROBE_INITIAL_TOP": 3,
+        "PROBE_OCR0B": 1,
+        "PROBE_COM0A": 1,
+        "PROBE_COM0B": 2,
+        "PROBE_INITIAL_LEVELS": 0,
+        "PROBE_WRITE_AFTER": 8,
+        "PROBE_NEW_TOP": 0
+      },
+      "softwareControl": null
+    },
+    {
+      "id": "buffer-top-zero-to-three",
+      "bytes": 474,
+      "sha256": "fcbdf7791ac960d81462fee8c85abb402238f0e1d1a9ccc108e93bcc8ed7aa45",
+      "defines": {
+        "PROBE_MODE": 5,
+        "PROBE_INITIAL_TOP": 0,
+        "PROBE_OCR0B": 1,
+        "PROBE_COM0A": 1,
+        "PROBE_COM0B": 2,
+        "PROBE_INITIAL_LEVELS": 0,
+        "PROBE_WRITE_AFTER": 8,
+        "PROBE_NEW_TOP": 3
+      },
+      "softwareControl": null
+    },
+    {
+      "id": "zero-top-pending-three-before-first-pulse",
+      "bytes": 446,
+      "sha256": "73999415d87ff4c6a6cc944f3b249f21270bd4b0e57ab4e0bad3a16bb5a8a49b",
+      "defines": {
+        "PROBE_MODE": 5,
+        "PROBE_INITIAL_TOP": 0,
+        "PROBE_OCR0B": 1,
+        "PROBE_COM0A": 1,
+        "PROBE_COM0B": 2,
+        "PROBE_INITIAL_LEVELS": 0,
+        "PROBE_PENDING_TOP": 3
+      },
+      "softwareControl": null
+    }
+  ],
+  "expectedSiliconTrace": null
+}

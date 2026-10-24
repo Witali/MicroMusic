@@ -36,6 +36,11 @@ stack-phase convention; the hardware phase audit remains part of stage 3.
 ## 2 Remaining device behavior
 
 - [ ] Handle phase-correct Timer0 PWM with variable TOP equal to zero.
+  The unsupported pulse boundary is explicit, including active TOP=0 with
+  pending OCR0A>0. Stopped/gated clocks and an edge-free external T0 hold remain
+  usable; no first-pulse buffer transfer is assumed. Non-PWM preload establishes
+  a known nonzero TOP before selecting WGM5. This fixes the diagnostic boundary,
+  not the missing silicon counter/IRQ behavior.
 - [x] Model OSCCAL changes with an explicit oscillator calibration contract.
   A caller-supplied128-entry CAL/frequency table selects a1ps physical timeline;
   missing CAL values fail explicitly. Integer phase survives CAL and CLKPR
@@ -67,9 +72,13 @@ is observable separately from analog supply-threshold behavior.
 - [ ] Validate CLKPR transition timing and external RESET recognition/recovery.
 - [ ] Create small firmware probes and an expected trace format for comparison
   with logic-analyzer or oscilloscope captures.
-  Timer0 WGM5/TOP=0 now has source-only firmware, nine control/measurement
+  Timer0 WGM5/TOP=0 now has source-only firmware, twelve control/measurement
   profiles, trace framing/decoder tests and acquisition instructions in
-  `peripherals/timer0-top-zero-probe.md`; silicon results remain pending.
+  `peripherals/timer0-top-zero-probe.md`. The corrected PB2/T0 and PB4 trace-clock
+  mapping matches the manufacturer ATDF; all12 profiles assemble and the four
+  nonzero controls execute through the generated CPU/native board/decoder.
+  These are software checks; silicon results remain pending. CLKPR, RESET and
+  ADC measurement probes remain to be completed.
 - [ ] Record measured chip, clock, fuse configuration and measurement tolerance;
   update the default profile only when the evidence supports it.
 
@@ -568,6 +577,18 @@ exact state/PCM/pin parity and source-entry reductions in
 This does not close the exclusive-timing or default-engine acceptance items;
 the checklist remains21 of30 complete, with nine open. External programming
 remains excluded.
+
+Timer0 diagnostic/probe checkpoint, 2026-10-24: all1194 default regression tests
+pass, including six new generated-CPU boundary cases and one PB4/T0 routing
+regression. The module's pending-OCR3 transition no longer invents a pulse from
+active TOP=0; clock-free holds remain supported. All12 source-only probe profiles
+assemble, four nonzero controls execute and five Python protocol checks pass.
+The112642-byte native runtime has103 function exports plus memory, no imports
+and fixed two-page memory. The [integration report](../reports/timer0-integration-20261024.md)
+retains before/after evidence, commands and the software-only probe identities.
+The checklist remains21/30 complete with nine open; no hardware measurement or
+TOP=0 implementation is claimed. CLKPR, RESET and ADC probes are the next
+hardware-validation tooling work.
 
 ## Primary references
 

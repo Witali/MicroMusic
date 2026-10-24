@@ -4,7 +4,7 @@
   "firmware": "timer0-top-zero-probe.S",
   "device": "ATtiny13A",
   "fuses": {"low": "0x7a", "high": "0xff", "lock": "0xff"},
-  "clock": {"nominalOscillatorHz": 9600000, "clkpr": 0, "timerSource": "external-T0-rising-PB4"},
+  "clock": {"nominalOscillatorHz": 9600000, "clkpr": 0, "timerSource": "external-T0-rising-PB2"},
   "stimulus": {
     "initialT0": 0,
     "startAfter": "decoded boot frame",
@@ -14,7 +14,7 @@
     "minimumLowMicroseconds": 1000,
     "logicLevels": "0 and measured VCC, common ground"
   },
-  "pins": {"oc0a": "PB0", "oc0b": "PB1", "clock": "PB2", "data": "PB3", "t0": "PB4", "reset": "PB5/RESET"},
+  "pins": {"oc0a": "PB0", "oc0b": "PB1", "clock": "PB4", "data": "PB3", "t0": "PB2", "reset": "PB5/RESET"},
   "wire": {
     "bytes": 14,
     "syncHex": "a55a",
@@ -27,13 +27,16 @@
   "profiles": [
     {"id": "control-fixed-top-255", "pulses": 1024, "defines": {"PROBE_MODE": 1, "PROBE_INITIAL_TOP": 255, "PROBE_OCR0B": 64, "PROBE_COM0A": 2, "PROBE_COM0B": 2, "PROBE_INITIAL_LEVELS": 0}},
     {"id": "control-variable-top-3", "pulses": 1024, "defines": {"PROBE_MODE": 5, "PROBE_INITIAL_TOP": 3, "PROBE_OCR0B": 1, "PROBE_COM0A": 1, "PROBE_COM0B": 2, "PROBE_INITIAL_LEVELS": 0}},
+    {"id": "control-variable-top-1-b-zero", "pulses": 1024, "defines": {"PROBE_MODE": 5, "PROBE_INITIAL_TOP": 1, "PROBE_OCR0B": 0, "PROBE_COM0A": 1, "PROBE_COM0B": 2, "PROBE_INITIAL_LEVELS": 0}},
+    {"id": "control-variable-top-1-b-one", "pulses": 1024, "defines": {"PROBE_MODE": 5, "PROBE_INITIAL_TOP": 1, "PROBE_OCR0B": 1, "PROBE_COM0A": 1, "PROBE_COM0B": 2, "PROBE_INITIAL_LEVELS": 0}},
     {"id": "zero-top-toggle", "pulses": 1024, "defines": {"PROBE_MODE": 5, "PROBE_INITIAL_TOP": 0, "PROBE_OCR0B": 0, "PROBE_COM0A": 1, "PROBE_COM0B": 2, "PROBE_INITIAL_LEVELS": 0}},
     {"id": "zero-top-noninverting", "pulses": 1024, "defines": {"PROBE_MODE": 5, "PROBE_INITIAL_TOP": 0, "PROBE_OCR0B": 0, "PROBE_COM0A": 2, "PROBE_COM0B": 2, "PROBE_INITIAL_LEVELS": 3}},
     {"id": "zero-top-inverting", "pulses": 1024, "defines": {"PROBE_MODE": 5, "PROBE_INITIAL_TOP": 0, "PROBE_OCR0B": 0, "PROBE_COM0A": 3, "PROBE_COM0B": 3, "PROBE_INITIAL_LEVELS": 0}},
     {"id": "zero-top-compare-b-one", "pulses": 1024, "defines": {"PROBE_MODE": 5, "PROBE_INITIAL_TOP": 0, "PROBE_OCR0B": 1, "PROBE_COM0A": 1, "PROBE_COM0B": 2, "PROBE_INITIAL_LEVELS": 0}},
     {"id": "zero-top-from-counter-two", "pulses": 1024, "defines": {"PROBE_MODE": 5, "PROBE_INITIAL_TOP": 0, "PROBE_OCR0B": 1, "PROBE_COM0A": 1, "PROBE_COM0B": 2, "PROBE_INITIAL_LEVELS": 0, "PROBE_WRITE_TCNT": 1, "PROBE_INITIAL_COUNTER": 2}},
     {"id": "buffer-top-three-to-zero", "pulses": 1024, "defines": {"PROBE_MODE": 5, "PROBE_INITIAL_TOP": 3, "PROBE_OCR0B": 1, "PROBE_COM0A": 1, "PROBE_COM0B": 2, "PROBE_INITIAL_LEVELS": 0, "PROBE_WRITE_AFTER": 8, "PROBE_NEW_TOP": 0}},
-    {"id": "buffer-top-zero-to-three", "pulses": 1024, "defines": {"PROBE_MODE": 5, "PROBE_INITIAL_TOP": 0, "PROBE_OCR0B": 1, "PROBE_COM0A": 1, "PROBE_COM0B": 2, "PROBE_INITIAL_LEVELS": 0, "PROBE_WRITE_AFTER": 8, "PROBE_NEW_TOP": 3}}
+    {"id": "buffer-top-zero-to-three", "pulses": 1024, "defines": {"PROBE_MODE": 5, "PROBE_INITIAL_TOP": 0, "PROBE_OCR0B": 1, "PROBE_COM0A": 1, "PROBE_COM0B": 2, "PROBE_INITIAL_LEVELS": 0, "PROBE_WRITE_AFTER": 8, "PROBE_NEW_TOP": 3}},
+    {"id": "zero-top-pending-three-before-first-pulse", "pulses": 1024, "defines": {"PROBE_MODE": 5, "PROBE_INITIAL_TOP": 0, "PROBE_OCR0B": 1, "PROBE_COM0A": 1, "PROBE_COM0B": 2, "PROBE_INITIAL_LEVELS": 0, "PROBE_PENDING_TOP": 3}}
   ],
   "traceSchema": {
     "$schema": "https://json-schema.org/draft/2020-12/schema",

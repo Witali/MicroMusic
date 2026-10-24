@@ -96,6 +96,7 @@ def main():
     parser.add_argument("--capture-kind", choices=("hardware", "synthetic"), required=True,
                         help="Explicit provenance; a decoder test must never be labeled a silicon observation")
     parser.add_argument("--config", type=Path, default=Path(__file__).with_name("timer0-top-zero-probe.json"))
+    parser.add_argument("--source", type=Path, help="Actual firmware source used for this capture; defaults to the configured sibling source")
     parser.add_argument("-o", "--output", type=Path)
     args = parser.parse_args()
     config = json.loads(args.config.read_text(encoding="utf-8"))
@@ -112,7 +113,7 @@ def main():
         except (ValueError, KeyError) as error:
             parser.error(str(error))
     sha = lambda path: hashlib.sha256(path.read_bytes()).hexdigest()
-    source = Path(__file__).with_name(config["firmware"])
+    source = args.source or Path(__file__).with_name(config["firmware"])
     result = {"schema": "micromusic-attiny13a-timer0-observed-trace-v1",
               "status": "observed-hardware" if args.capture_kind == "hardware" else "synthetic-decoder-test",
               "profile": args.profile, "waveformCsv": str(args.csv),

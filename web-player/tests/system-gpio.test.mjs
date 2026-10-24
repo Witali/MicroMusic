@@ -4,6 +4,7 @@ import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { AT13_BIT } from '../lib/attiny13a-registers.js';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const sdk = [process.env.EMSDK,
@@ -190,6 +191,26 @@ test('T0 edge detector returns pulses after 2.5–3.5 clkI/O cycles', () => {
   fall(5); assert.equal(rise(6),0); fall(7); assert.equal(rise(8),1);
   external(4,0,8); fall(9); assert.equal(rise(10),0);
   fall(11); assert.equal(rise(12),0); fall(13); assert.equal(rise(14),2);
+});
+
+test('PB4 trace output or external input cannot clock T0 on PB2', () => {
+  const t0=1<<AT13_BIT.PINB2, trace=1<<AT13_BIT.PINB4;
+  for(const driven of [false,true]) {
+    g.reset(0); if(driven)write(IO.DDR,trace);
+    let now=0n;
+    for(let pulse=0;pulse<16;pulse++) {
+      const level=pulse&1?trace:0;
+      if(driven)write(IO.PORT,level,now);else external(trace,level,now);
+      assert.equal(g.advance(now,now+16n),0,'PB4 must not produce a T0 event');
+      now+=16n;
+    }
+    external(t0,t0,now);
+    assert.equal(g.advance(now,now+16n),1,'PB2 still produces the selected T0 input edge');
+    assert.equal(g.event_time(0),now+6n);assert.equal(g.event_edge(0),1);
+    now+=16n;external(t0,0,now);
+    assert.equal(g.advance(now,now+16n),1);
+    assert.equal(g.event_time(0),now+6n);assert.equal(g.event_edge(0),2);
+  }
 });
 
 test('bounded GPIO advance timestamps T0 and skips a trillion settled half-cycles',()=>{
