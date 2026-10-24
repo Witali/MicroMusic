@@ -6,6 +6,9 @@ import {AVRCore} from '../web-player/lib/avr-core.js';
 const folder='ATtiny13A/Music/variants/lumiere-stereo';
 const read=(dir,name)=>fs.readFileSync(`${dir}/${name}`);
 const meta=JSON.parse(read(folder,'build-report.json')),sourceMeta=meta;
+if(meta.engine==='lumiere-chords'){
+ const {audit}=await import('./audit-lumiere-chords.mjs');audit(folder);process.exit(0);
+}
 const source=JSON.parse(read(folder,'score.json')),sourceRom=read(folder,'synth.bin');
 const {labels,timing}=meta,units=[1,2,3,4,6,8,16],expected=[];
 let totalUnits=0;

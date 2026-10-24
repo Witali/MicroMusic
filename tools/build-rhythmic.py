@@ -35,6 +35,15 @@ def ihex(raw):
 
 def build(folder):
     data=json.loads((folder/'score.json').read_text(encoding='utf-8'))
+    if data.get('engine')=='lumiere-chords':
+        native=module('lumiere_chords',ROOT/'tools/build-lumiere-full.py')
+        return native.build(folder,stereo=folder.name=='lumiere-stereo')
+    if data.get('engine')=='compact-four':
+        native=module('compact_four',ROOT/'tools/build-compact-four.py')
+        return native.build_normalized(folder,data)
+    if data.get('engine')=='turkish-three':
+        native=module('turkish_three',ROOT/'tools/build-turkish-three.py')
+        return native.build(folder,data)
     if data.get('engine')=='alicia-native':
         native=module('alicia_native',ROOT/'tools/arrange-alicia-multi.py')
         return native.build(folder,candidates=data.get('packing_candidates',4096),production=True)

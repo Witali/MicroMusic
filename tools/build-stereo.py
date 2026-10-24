@@ -26,6 +26,8 @@ def build():
     common = module('build_rhythmic', 'tools/build-rhythmic.py')
     assembler = module('assembler', 'tools/assemble-avr.py')
     data = json.loads((FOLDER / 'score.json').read_text(encoding='utf-8'))
+    if data.get('engine')=='lumiere-chords':
+        return module('lumiere_chords','tools/build-lumiere-full.py').build(FOLDER,stereo=True)
     # These gains are implemented by the two accumulators in synth.S.
     # Reject metadata-only edits instead of claiming an inaudible pan change.
     gains = {name: (data['panorama'][name]['left'], data['panorama'][name]['right'])
