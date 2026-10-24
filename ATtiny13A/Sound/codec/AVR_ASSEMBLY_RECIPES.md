@@ -442,6 +442,30 @@ Reports: [Flash coefficients](../research/word-q4/filter-pulse-flash.json),
 This fixture supplies coefficients from the host: it proves the load path,
 not a complete prefetcher, serialized stream, or player deadline.
 
+## Recipe: transport mixed Q4/Q5 reflections uniformly as Q5
+
+`WORD_COEFFICIENT_BITS=5` selects the existing Q5 multiplier at assembly time
+in [`word-q4/filter.S`](word-q4/filter.S). Promote a Q4 coefficient by doubling
+its integer value when decoding a frame. The physical coefficient and every
+rounded product stay identical, including wrapped negation at -32768.
+Native Q5 values in the first two stages then share this same path with the
+promoted upper six. No per-product precision branch or wider SRAM buffer is
+needed. The unpacker still has to perform the promotion in a complete player.
+
+With the unrolled multiplier and six fractional state bits, arithmetic stays
+**228 bytes**. The trained head-Q5 model reaches a worst isolated filter call
+of **1104 cycles**; this number excludes excitation, transport and real timer
+interrupts. All 22272 samples and nine words per sample agree in each of three
+engines, including 87 injected interrupts per engine.
+[Retained head-Q5 proof](../research/word-q4/filter-head5-best.json).
+
+The default Q4 fixture remains byte-identical to its earlier binary:
+SHA-256 `e733c2b9139c9ccc17ff58888283699b1846021f3a8c0861539906a789ce35e9`
+(six fractional bits, unrolled multiplier, SRAM coefficients). The contracts
+also exercise a native odd Q5 coefficient and reject a Q4 transport that would
+discard it. The isolated Q5 scalar multiplier already has exhaustive/strided
+proofs; it has not changed in this extension.
+
 ## A word lattice with descending Flash coefficients
 
 [`word-q4/filter.S`](word-q4/filter.S) keeps eight little-endian word states

@@ -29,7 +29,8 @@ runs={};aliases={};proposals={}
 for name,revision in [('control16','fc4cb8d'),('wide32','fc4cb8d'),('wide32-zero','fc4cb8d'),
     ('q2-short','9b800c2'),('q2-wide-zero','9b800c2'),('q2-continuation-legacy','e0b161e'),('q2-continuation-reference','e0b161e'),
     ('voice-search','5106758'),('voice-control','5106758'),('voice-continuation','acdbc4f'),
-    ('balanced-q1','acdbc4f'),('balanced-q2','acdbc4f'),('joint-blocks','cdbd9c2'),('literal-four-fit','6bc814a')]:
+    ('balanced-q1','acdbc4f'),('balanced-q2','acdbc4f'),('joint-blocks','cdbd9c2'),('literal-four-fit','6bc814a'),
+    ('head5','a5f707d'),('head5-control','a5f707d')]:
     folders={'balanced-q1':'balanced-pulses/q1','balanced-q2':'balanced-pulses/q2',
         'joint-blocks':'lattice-blocks/from-voice','literal-four-fit':'balanced-pulses/literal-four-fit'}
     source=ROOT/'build'/folders.get(name,'wide-pulse/'+name)
@@ -42,7 +43,8 @@ for name,revision in [('control16','fc4cb8d'),('wide32','fc4cb8d'),('wide32-zero
     used=np.unique(s.modes[(s.pitches>0)&(s.gains_q1>0)]);width=s.waves_q1.shape[1]
     stored_width=16 if s.tail_policy=='balance16' else width
     wave_bytes=(len(used)*stored_width*(s.wave_fraction_bits+3)+7)//8
-    seed=('voice-search/model.json' if name in ('voice-continuation','joint-blocks') else
+    seed=('joint-blocks/best-intelligibility-model.json' if name in ('head5','head5-control') else
+        'voice-search/model.json' if name in ('voice-continuation','joint-blocks') else
         'wide32-zero/model.json' if name.startswith('balanced-') else
         'prune-literal/4/model.json' if name=='literal-four-fit' else
         'q2-continuation-legacy/model.json' if name.startswith('voice-') else
@@ -97,7 +99,11 @@ for name,entry in runs.items():
     path=entry.get('best_model',entry['model'])
     if best is None or score['stoi']>best[0]:best=(score['stoi'],path,score)
 manifest.update(highest_stoi_model=best[1],highest_stoi_metrics=best[2],highest_stoi_avr_player_qualified=False)
-if (DEST/'../word-q4/filter-joint-best.json').exists():manifest['word_filter_proof']='../word-q4/filter-joint-best.json'
+proof='../word-q4/'+('filter-head5-best.json' if best[1].startswith('head5/') else
+    'filter-head5-control-best.json' if best[1].startswith('head5-control/') else 'filter-joint-best.json')
+if (DEST/proof).exists():
+    assert read(DEST/proof)['results'][0]['model_sha256']==sha(DEST/best[1])
+    manifest['word_filter_proof']=proof
 manifest['artifact_sha256']={p.relative_to(DEST).as_posix():sha(p) for p in sorted(DEST.rglob('*.json')) if p.name!='manifest.json'}
 save(DEST/'manifest.json',manifest)
 print(json.dumps({name:dict(stoi=r['final']['stoi'],spectrum=r['final']['spectrogram_loss'],wave_bytes=r['packed_waveform_bytes']) for name,r in runs.items()},indent=2))
