@@ -6,6 +6,7 @@ import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {join, resolve} from 'node:path';
 import {CPU, avrInstruction, AVRTimer, timer1Config, timer2Config} from 'avr8js';
+import {tickAvr} from './avr_tick.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const build = join(root, 'build/player');
@@ -77,6 +78,7 @@ while (!cpu.data[done]) {
   }
   const pc = cpu.pc*2, before = cpu.cycles;
   if (pc === loadBegin) { assert.ok(!loadActive); loadActive = true; loadCycles = 0; }
+  const previouslyEnabled = cpu.interruptsEnabled;
   avrInstruction(cpu);
   // Count only instructions in the load function's marked interval. Timer
   // interrupt entry/ISR/return remain live, and consume additional wall time.
@@ -84,7 +86,7 @@ while (!cpu.data[done]) {
   if (loadActive && cpu.pc*2 === loadEnd) {
     measuredLoads.push(loadCycles); loadActive = false;
   }
-  cpu.tick();
+  tickAvr(cpu, previouslyEnabled);
   minSP = Math.min(minSP, cpu.SP);
   assert.ok(cpu.SP >= end, 'Player stack collided with static SRAM');
 }
@@ -106,13 +108,15 @@ if (!output.equals(expected)) {
 }
 const gaps = times.slice(1).map((t,i) => t-times[i]);
 const readyGaps = readyTimes.slice(1).map((t,i) => t-readyTimes[i]);
-assert.ok(Math.min(...gaps) >= 1992 && Math.max(...gaps) <= 2008, 'Timer period / IRQ latency');
+const minGap = gaps.reduce((a,b) => Math.min(a,b), Infinity);
+const maxGap = gaps.reduce((a,b) => Math.max(a,b), 0);
+assert.ok(minGap >= 1992 && maxGap <= 2008, 'Timer period / IRQ latency');
 const report = {passed:true,simulator: 'avr8js 0.21.1', input: metadata, frames: metadata.frames,
   backend: backend.backend, binarySha256: backend.binarySha256,
   samples: expected.length, cpuHz: 16000000, pcmHz: 8000, pwmHz: 62500,
   flashBytes: binary.length, staticSramBytes: end-0x100, peakStackBytes: 0x8ff-minSP,
-  freeSramAtPeak: minSP-end+1, underruns: 0, timerIntervalMinCycles: Math.min(...gaps),
-  timerIntervalMaxCycles: Math.max(...gaps), elapsedCycles: cpu.cycles,
+  freeSramAtPeak: minSP-end+1, underruns: 0, timerIntervalMinCycles: minGap,
+  timerIntervalMaxCycles: maxGap, elapsedCycles: cpu.cycles,
   minQueuedSamplesBeforeOutput: minQueued,
   maxBlockReadyGapCycles: Math.max(0,...readyGaps),
   extraCpuCyclesPerFrame: frameLoadCycles,
