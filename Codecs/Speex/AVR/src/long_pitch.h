@@ -30,5 +30,9 @@ static SPEEX_NB3_ALWAYS_INLINE void speex_nb3_long_innovation10_c(int16_t *out,
 #if SPEEX_NB3_USE_AVR_ASM
 extern void speex_avr_long_innovation10(int16_t *,const int16_t *,const int8_t *,
                                         int32_t,const int8_t *);
+/* count 0..10; a nonempty block reads count+2 completed history words.
+ * Zero returns without touching the data. The fixed-ten entry stays fast. */
+extern void speex_avr_long_innovation_n(int16_t *,const int16_t *,const int8_t *,
+                                        int32_t,const int8_t *,uint8_t);
 #endif
 #endif

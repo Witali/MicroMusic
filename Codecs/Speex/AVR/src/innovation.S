@@ -55,6 +55,7 @@ speex_avr_long_innovation10:
     clr r2
     ldi r20, 10
     mov r3, r20
+.Linnovation_bias_setup:
     ldi r20, 32
     mov r8, r20
     brts .Linnovation_long_setup
@@ -246,3 +247,34 @@ speex_avr_long_innovation10:
     ret
 .size speex_avr_innovation10, .-speex_avr_innovation10
 .size speex_avr_long_innovation10, .-speex_avr_long_innovation10
+
+/* Runtime count in r12, 0..10; retain the fixed-ten entry unchanged. */
+.global speex_avr_long_innovation_n
+.type speex_avr_long_innovation_n, @function
+speex_avr_long_innovation_n:
+    tst r12
+    brne .Linnovation_n_nonempty
+    ret
+.Linnovation_n_nonempty:
+    push r2
+    push r3
+    push r8
+    push r4
+    push r5
+    push r6
+    push r7
+    push r10
+    push r11
+    push r12
+    push r13
+    push r14
+    push r15
+    push r28
+    push r29
+    movw r28, r24
+    movw r30, r20
+    clr r2
+    mov r3, r12
+    set
+    rjmp .Linnovation_bias_setup
+.size speex_avr_long_innovation_n, .-speex_avr_long_innovation_n

@@ -9,11 +9,16 @@ int8_t long_gains[5];
 uint8_t long_packed[32];
 extern void speex_avr_innovation10(int16_t *,const uint8_t *,const int8_t *,int32_t);
 volatile int32_t long_scale;
-volatile uint8_t long_index,long_command,long_status,long_zero;
+volatile uint8_t long_index,long_count,long_command,long_status,long_zero;
 static SPEEX_NB3_STAGE_O2 void long_test_c(int16_t *out,const int16_t *in,
     const int8_t *shape,int32_t scale,const int8_t *gain)
 {
     speex_nb3_long_innovation10_c(out,in,shape,scale,gain,10);
+}
+static SPEEX_NB3_STAGE_O2 void long_test_c_n(int16_t *out,const int16_t *in,
+    const int8_t *shape,int32_t scale,const int8_t *gain,uint8_t count)
+{
+    speex_nb3_long_innovation10_c(out,in,shape,scale,gain,count);
 }
 int main(void)
 {
@@ -26,9 +31,15 @@ int main(void)
         else if (long_command==2)
             long_test_c(long_output+1,long_input+1,
                 shapes+long_index,long_scale,long_gains+1);
-        else
+        else if (long_command==3)
             speex_avr_innovation10(long_output+1,long_packed+1,
                 shapes+long_index,long_scale);
+        else if (long_command==4)
+            speex_avr_long_innovation_n(long_output+1,long_input+1,
+                shapes+long_index,long_scale,long_gains+1,long_count);
+        else
+            long_test_c_n(long_output+1,long_input+1,
+                shapes+long_index,long_scale,long_gains+1,long_count);
         __asm__("mov %0,r1":"=r"(long_zero));
         long_command=0;long_status=2;
     }

@@ -15,9 +15,13 @@ const cpu=new CPU(program,2048),command=address('long_command'),status=address('
 const input=address('long_input')+2,out=address('long_output')+2,gain=address('long_gains')+1;
 const packed=address('long_packed')+1;
 const cEntry=[...symbols].find(([n])=>/^long_test_c(?:\.|$)/.test(n))[1];
-const entries=new Set([address('speex_avr_long_innovation10'),address('speex_avr_innovation10'),cEntry]);
+const cNEntry=[...symbols].find(([n])=>/^long_test_c_n(?:\.|$)/.test(n))[1];
+const entries=new Set([address('speex_avr_long_innovation10'),address('speex_avr_innovation10'),
+  address('speex_avr_long_innovation_n'),cEntry,cNEntry]);
 const preserved=[...Array.from({length:16},(_,i)=>i+2),28,29];
-const times=[null,...Array.from({length:3},()=>({min:Infinity,max:0,calls:0}))];
+const times=[null,...Array.from({length:5},()=>({min:Infinity,max:0,calls:0}))];
+const variableCounts=Array.from({length:11},(_,count)=>({count,calls:0,samples:0}));
+let returnedCycles=0;
 let active=null,which=0,seed=0xc38021d7,clipped=0,pitchClipped=0,cases=0;
 function random(){seed^=seed<<13;seed^=seed>>>17;seed^=seed<<5;return seed>>>0;}
 function until(predicate){const deadline=cpu.cycles+100000;while(!predicate()){
@@ -32,6 +36,7 @@ function until(predicate){const deadline=cpu.cycles+100000;while(!predicate()){
     assert.deepEqual(preserved.map(r=>cpu.data[r]),active.registers,'Callee-saved AVR registers');
     assert.equal(cpu.data[1],0,'Zero register at kernel return');
     const cycles=cpu.cycles-active.cycles;
+    returnedCycles=cycles;
     times[which].min=Math.min(times[which].min,cycles);
     times[which].max=Math.max(times[which].max,cycles);times[which].calls++;
     active=null;
@@ -68,12 +73,17 @@ function check(g,scale,index){
     expected[i]=Math.max(-32767,Math.min(32767,value));clipped+=expected[i]!==value;
   }
   const packedBefore=cpu.data.slice(packed-1,packed+31);
-  for(which=1;which<=3;which++){
+  const count=cases%11;cpu.data[address('long_count')]=count;
+  let fixedAsmCycles=0;
+  for(which=1;which<=5;which++){
     for(let i=0;i<10;i++)cpu.dataView.setInt16(out+2*i,0x55aa,true);
     cpu.data[status]=1;cpu.data[command]=which;
     until(()=>cpu.data[status]===2);
     assert.equal(active,null);
-    for(let i=0;i<10;i++)assert.equal(cpu.dataView.getInt16(out+2*i,true),expected[i],`backend ${which}, case ${cases}, sample ${i}`);
+    const size=which<=3?10:count;
+    for(let i=0;i<10;i++)assert.equal(cpu.dataView.getInt16(out+2*i,true),i<size?expected[i]:0x55aa,`backend ${which}, count ${size}, case ${cases}, sample ${i}`);
+    if(which===1)fixedAsmCycles=returnedCycles;
+    if(which===4 && count===10)assert.equal(returnedCycles-fixedAsmCycles,4,'Runtime-count setup cost');
     for(let i=0;i<12;i++)assert.equal(cpu.dataView.getInt16(input+2*i,true),samples[i],'Read-only history');
     g.forEach((v,i)=>assert.equal((cpu.data[gain+i]<<24)>>24,v,'Read-only gains'));
     for(const [p,v] of [[input-2,0x1357],[input+24,0x2468],[out-2,0x9876],[out+20,0xabcd]])
@@ -82,6 +92,7 @@ function check(g,scale,index){
     assert.deepEqual(cpu.data.slice(packed-1,packed+31),packedBefore,'Read-only packed pitch and guards');
     assert.equal(cpu.data[address('long_zero')],0,'ABI zero in caller');
   }
+  variableCounts[count].calls++;variableCounts[count].samples+=count;
   cases++;
 }
 for(const g of gains)for(const scale of scales)for(let index=0;index<256;index+=10){
@@ -105,6 +116,8 @@ for(let block=0;block<4096;block++){
 }
 assert.ok(pitchClipped>1000 && clipped>10000);
 assert.equal(times[1].calls,cases);assert.equal(times[2].calls,cases);assert.equal(times[3].calls,cases);
+assert.equal(times[4].calls,cases);assert.equal(times[5].calls,cases);
+assert.ok(variableCounts.every(v=>v.calls>0),'Every runtime count, including zero');
 const report={mcu:'ATmega328P',simulator:'avr8js 0.21.1',compiler:'AVR GCC 7.3.0 mixed Os/O2, LTO, fwrapv',
   binarySha256:createHash('sha256').update(binary).digest('hex'),blocks:cases,samplesPerBackend:cases*10,
   tableGainTriples:32,scales:64,shapeMin:-128,shapeMax:127,historyMin:-32768,historyMax:32767,
@@ -112,5 +125,7 @@ const report={mcu:'ATmega328P',simulator:'avr8js 0.21.1',compiler:'AVR GCC 7.3.0
   outputClippedSamples:clipped,pitchClippedSamples:pitchClipped,exact:true,
   gainsPreserved:true,historyPreserved:true,guardsIntact:true,calleeSavedRegistersPreserved:true,
   zeroRegisterRestored:true,asmKernelCycles:times[1],cKernelCycles:times[2],packedKernelCycles:times[3],
+  variableAsmKernelCycles:times[4],variableCKernelCycles:times[5],variableCounts,
+  variableSamplesPerBackend:variableCounts.reduce((s,v)=>s+v.samples,0),
   includesInterrupts:false,physicalBoardTested:false};
 writeFileSync(join(build,'verification.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));

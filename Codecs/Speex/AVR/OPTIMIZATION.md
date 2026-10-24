@@ -305,6 +305,16 @@ binary measurements. Vendor and R4 files remain unmodified.
   the main sources. Reports: shared-bias-{before-kernel,kernel,
   fixtures,innovation}.json, register-asm-*.json, register-c-reuse.json.
 
+- Add a runtime-count fused innovation entry for 0..10 samples. A separate
+  saved-register prologue jumps into the existing bias/shape/clamp body;
+  the fixed-ten and packed entries retain their exact instruction timings.
+  Empty blocks return in 6 cycles. The nonempty runtime entry costs four
+  cycles more than fixed-ten on the same ten samples. Independently check
+  336,628 variable-length outputs each in ASM/C, all eleven counts, output
+  tails, input/gain guards, all callee-saved registers and r1, alongside
+  673,280 outputs each in the three existing entries. Full segment and PWM
+  admission follows with the short-pitch caller. See variable-innovation-kernel.json.
+
 ## Next candidates (not yet measured/admitted)
 
 1. **Fuse short-pitch contiguous ranges.** For pitch 17..40, the ranges

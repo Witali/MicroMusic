@@ -1,0 +1,110 @@
+{
+  "mcu": "ATmega328P",
+  "simulator": "avr8js 0.21.1",
+  "compiler": "AVR GCC 7.3.0 mixed Os/O2, LTO, fwrapv",
+  "binarySha256": "262368227ddf50869dcaea4adc497e439e7a99260968d5284c4e22e8dafe49c3",
+  "blocks": 67328,
+  "samplesPerBackend": 673280,
+  "tableGainTriples": 32,
+  "scales": 64,
+  "shapeMin": -128,
+  "shapeMax": 127,
+  "historyMin": -32768,
+  "historyMax": 32767,
+  "fullTableShapeScaleCases": 53248,
+  "clampBoundaryBlocks": 9984,
+  "randomGainBlocks": 4096,
+  "outputClippedSamples": 13508,
+  "pitchClippedSamples": 41722,
+  "exact": true,
+  "gainsPreserved": true,
+  "historyPreserved": true,
+  "guardsIntact": true,
+  "calleeSavedRegistersPreserved": true,
+  "zeroRegisterRestored": true,
+  "asmKernelCycles": {
+    "min": 1438,
+    "max": 1511,
+    "calls": 67328
+  },
+  "cKernelCycles": {
+    "min": 3792,
+    "max": 4081,
+    "calls": 67328
+  },
+  "packedKernelCycles": {
+    "min": 940,
+    "max": 1013,
+    "calls": 67328
+  },
+  "variableAsmKernelCycles": {
+    "min": 6,
+    "max": 1503,
+    "calls": 67328
+  },
+  "variableCKernelCycles": {
+    "min": 213,
+    "max": 4093,
+    "calls": 67328
+  },
+  "variableCounts": [
+    {
+      "count": 0,
+      "calls": 6121,
+      "samples": 0
+    },
+    {
+      "count": 1,
+      "calls": 6121,
+      "samples": 6121
+    },
+    {
+      "count": 2,
+      "calls": 6121,
+      "samples": 12242
+    },
+    {
+      "count": 3,
+      "calls": 6121,
+      "samples": 18363
+    },
+    {
+      "count": 4,
+      "calls": 6121,
+      "samples": 24484
+    },
+    {
+      "count": 5,
+      "calls": 6121,
+      "samples": 30605
+    },
+    {
+      "count": 6,
+      "calls": 6121,
+      "samples": 36726
+    },
+    {
+      "count": 7,
+      "calls": 6121,
+      "samples": 42847
+    },
+    {
+      "count": 8,
+      "calls": 6120,
+      "samples": 48960
+    },
+    {
+      "count": 9,
+      "calls": 6120,
+      "samples": 55080
+    },
+    {
+      "count": 10,
+      "calls": 6120,
+      "samples": 61200
+    }
+  ],
+  "variableSamplesPerBackend": 336628,
+  "includesInterrupts": false,
+  "physicalBoardTested": false
+}
