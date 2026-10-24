@@ -33,6 +33,7 @@ def load_model(path):
 
 def source_for(layout):
     source=short.source_for(layout)
+    if layout.get('decoder_forms',8)==4:return source
     source=replace_once(source,'vbr_pitch:\n','vbr_pitch:\n clr r13 /* upper waveform address, zero for compact headers */\n')
     stride=layout['width'] if layout['packing']=='raw' else layout['width']//2
     capture=' mov r23,r16\n andi r23,4\n'+' lsl r23\n'*(stride.bit_length()-1)+' mov r13,r23\n'
@@ -42,13 +43,19 @@ def source_for(layout):
     return source
 
 
-def build(frames,durations,book,output,avr_bin,node,*,width=4,packing='nibble',prefix=None):
+def build(frames,durations,book,output,avr_bin,node,*,width=4,packing='nibble',prefix=None,adaptive=False):
     payload=validate(frames,durations,book)
-    layout=storage(book,payload,width,packing,prefix)
+    if adaptive:
+        from q3_adaptive import select
+        layout=select(frames,durations,book)
+        frames,book,payload=layout['frames'],layout['book'],layout['payload']
+        width,packing=layout['width'],layout['packing']
+    else:
+        layout=storage(book,payload,width,packing,prefix)
     code=layout['code_bytes'];flash=(code+len(layout['flash_suffix'])+2)&~1
     if flash>1024:raise ValueError('Complete eight-form image exceeds 1024 Flash bytes')
     output=Path(output).resolve();output.mkdir(parents=True,exist_ok=True)
-    for name in ('build.json','verification.json','actual.raw','firmware.bin','firmware.elf','firmware.hex','eeprom.hex'):
+    for name in ('build.json','verification.json','actual.raw','firmware.bin','firmware.elf','firmware.hex','eeprom.hex','compiled-model.json'):
         (output/name).unlink(missing_ok=True)
     source=source_for(layout)
     (output/'firmware.S').write_text(source,encoding='utf-8',newline='\n')
@@ -75,13 +82,19 @@ def build(frames,durations,book,output,avr_bin,node,*,width=4,packing='nibble',p
         '--wait-pc',symbols['wait_slot'],'--actual-raw',output/'actual.raw'],ROOT,check=False)
     verification=json.loads((output/'verification.json').read_text())
     report=dict(schema='q3-pulsebook8-build-v1',status='verified' if verification['pass'] else 'failed',
-        hardware_tested=False,forms=8,gain_levels=16,width=width,packing=packing,code_bytes=code,
+        hardware_tested=False,forms=layout.get('decoder_forms',8),gain_levels=16,width=width,packing=packing,code_bytes=code,
         flash_bytes=flash,eeprom_bytes=64,waveform_bytes=layout['book_bytes'],
         speech_prefix_bytes=layout['prefix_bytes'],prefix_start=layout['prefix_start'],prefix_end=layout['prefix_end'],
         maximum_stream_bytes=layout['maximum_stream_bytes'],stream_bytes=len(payload),phrase_samples=len(phrase),
         phrase_pcm_sha256=sha(phrase.tobytes()),stream_sha256=sha(payload),firmware_sha256=sha(image),
         eeprom_sha256=sha(layout['eeprom']),asm_sha256_normalized_lf=sha(source.encode()),
         intermediate_wraps=counts.tolist(),symbols=symbols,verification=verification)
+    if adaptive:
+        report.update(adaptive=True,active_forms=layout['active_forms'],stored_forms=layout['stored_forms'],
+            source_rows=layout['source_rows'])
+        model=dict(schema=SCHEMA,sample_rate=7500,samples=len(phrase),tilt_shift=1,nearest=False,
+            frames=np.asarray(frames).tolist(),durations=np.asarray(durations).tolist(),pulsebook=np.asarray(book).tolist())
+        (output/'compiled-model.json').write_text(json.dumps(model,indent=2)+'\n',encoding='utf-8',newline='\n')
     (output/'build.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
     if check.returncode:raise RuntimeError(str(verification.get('error')))
     return report
@@ -93,8 +106,9 @@ def main():
     p.add_argument('--avr-bin',required=True,type=Path);p.add_argument('--node',required=True,type=Path)
     p.add_argument('--width',type=int,choices=(4,8,16),default=4)
     p.add_argument('--packing',choices=('raw','nibble'),default='nibble')
+    p.add_argument('--adaptive',action='store_true',help='Remove unused rows and select the smallest complete image')
     a=p.parse_args();f,d,b,_=load_model(a.model)
-    result=build(f,d,b,a.output,a.avr_bin,a.node,width=a.width,packing=a.packing)
+    result=build(f,d,b,a.output,a.avr_bin,a.node,width=a.width,packing=a.packing,adaptive=a.adaptive)
     print(json.dumps({key:result[key] for key in ('status','code_bytes','flash_bytes','waveform_bytes','speech_prefix_bytes','maximum_stream_bytes')}))
 
 
