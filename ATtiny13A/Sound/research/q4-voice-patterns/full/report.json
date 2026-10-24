@@ -1,0 +1,188 @@
+{
+  "schema": "q4-voice-pattern-study-v1",
+  "baseline": {
+    "stoi": 0.8530871418030158,
+    "spectrogram_loss": 0.4848481735668308,
+    "fine_log_error": 0.47250973684590336,
+    "envelope_error": 0.5725355053581231,
+    "unsupported_energy": 0.18390341694349596,
+    "missing_energy": 0.18763618206333518,
+    "peak_signed": 100,
+    "raw_mean": 0.07764022651760058,
+    "wrap_counts": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "guards_pass": true,
+    "estoi": 0.6698916524393111,
+    "harmonic_metrics": {
+      "harmonic_track_loss": 0.8997783814095172,
+      "frequency_trajectory_error": 0.9600165104890477,
+      "level_error": 2.2794378224367637,
+      "missing_reference_energy": 0.18848304941563498,
+      "extra_candidate_energy": 0.23511423377349436,
+      "weighted_match_rate": 0.8115169505843645,
+      "frequency_error_cents": 51.421490652248565,
+      "frequency_error_hz": 9.864331752971005,
+      "level_error_db": 6.838313467310303,
+      "frequency_error_p95_cents": 141.850074938162,
+      "frequency_error_p95_hz": 32.895954564826525,
+      "level_error_p95_db": 16.757286589518294,
+      "continuity_break_rate": 0.32145976720565966
+    },
+    "pcm_sha256": "6e7460448faded3cb63371b9c4729b4c81ad69c6560eef40cef7973179efa836",
+    "avr_verified": false,
+    "hardware_tested": false
+  },
+  "q4_per_frame_control": {
+    "stoi": 0.8573377818943309,
+    "spectrogram_loss": 0.48181618402437,
+    "fine_log_error": 0.4688597123513914,
+    "envelope_error": 0.5713176046215424,
+    "unsupported_energy": 0.18068233525633193,
+    "missing_energy": 0.18478325393555756,
+    "peak_signed": 113,
+    "raw_mean": 0.07984626156160202,
+    "wrap_counts": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "guards_pass": true,
+    "estoi": 0.677783640160378,
+    "harmonic_metrics": {
+      "harmonic_track_loss": 0.8642266381016392,
+      "frequency_trajectory_error": 0.9295155136200817,
+      "level_error": 2.1902854654168347,
+      "missing_reference_energy": 0.17772770199816731,
+      "extra_candidate_energy": 0.2220669716821538,
+      "weighted_match_rate": 0.8222722980018329,
+      "frequency_error_cents": 48.709051393503465,
+      "frequency_error_hz": 9.727352320190663,
+      "level_error_db": 6.5708563962505275,
+      "frequency_error_p95_cents": 128.26016854501896,
+      "frequency_error_p95_hz": 32.18981020741012,
+      "level_error_p95_db": 15.551439534769262,
+      "continuity_break_rate": 0.2842151779894108
+    },
+    "pcm_sha256": "9e90cf39850388f5eb0ca01d8b1a84ce8a7e0dce94edf76977252e448c0a2133",
+    "avr_verified": false,
+    "hardware_tested": false
+  },
+  "budgets": {
+    "per_frame_coordinate_trials": 2112,
+    "dictionary_coordinate_trials": 1600,
+    "pattern_counts": [
+      16,
+      32
+    ]
+  },
+  "results": {
+    "16": {
+      "initial": {
+        "guards_pass": false
+      },
+      "final": {
+        "guards_pass": false
+      },
+      "patterns": 16,
+      "pattern_bytes": 128,
+      "stream_bytes": 297,
+      "data_bytes": 425,
+      "accepted": 0,
+      "avr_verified": false
+    },
+    "32": {
+      "initial": {
+        "stoi": 0.7218403368098697,
+        "spectrogram_loss": 0.5631718722221828,
+        "fine_log_error": 0.522881737676917,
+        "envelope_error": 0.6987128896659226,
+        "unsupported_energy": 0.2771044568762818,
+        "missing_energy": 0.22958897432522135,
+        "peak_signed": 111,
+        "raw_mean": 0.09904672907686782,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "guards_pass": true,
+        "estoi": 0.44919700273738583,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.9512216805927017,
+          "frequency_trajectory_error": 0.9832814891470598,
+          "level_error": 2.395477822991381,
+          "missing_reference_energy": 0.21027832150270148,
+          "extra_candidate_energy": 0.3275887106597223,
+          "weighted_match_rate": 0.7897216784972989,
+          "frequency_error_cents": 53.9182977135325,
+          "frequency_error_hz": 10.619028558352007,
+          "level_error_db": 7.186433468974145,
+          "frequency_error_p95_cents": 147.20601127839396,
+          "frequency_error_p95_hz": 31.794462001735383,
+          "level_error_p95_db": 15.907709028003001,
+          "continuity_break_rate": 0.3151158348637141
+        },
+        "pcm_sha256": "838a1292365d0d43af267e69ca36c6ab2d1089f32fe25e63fe285263c633f9ec",
+        "avr_verified": false,
+        "hardware_tested": false
+      },
+      "final": {
+        "stoi": 0.7584921495474325,
+        "spectrogram_loss": 0.5274927123894179,
+        "fine_log_error": 0.48887736083910016,
+        "envelope_error": 0.655355957998478,
+        "unsupported_energy": 0.2369357972218588,
+        "missing_energy": 0.2144320455101352,
+        "peak_signed": 113,
+        "raw_mean": 0.09967707491469109,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "guards_pass": true,
+        "estoi": 0.5093855271135115,
+        "harmonic_metrics": {
+          "harmonic_track_loss": 0.8998731419055999,
+          "frequency_trajectory_error": 0.9578718990190717,
+          "level_error": 2.249711297885103,
+          "missing_reference_energy": 0.21149647459852577,
+          "extra_candidate_energy": 0.260230445989498,
+          "weighted_match_rate": 0.7885035254014745,
+          "frequency_error_cents": 51.707016092118096,
+          "frequency_error_hz": 10.528368062552193,
+          "level_error_db": 6.749133893655314,
+          "frequency_error_p95_cents": 128.21163548566778,
+          "frequency_error_p95_hz": 31.84159188999456,
+          "level_error_p95_db": 14.908158562532257,
+          "continuity_break_rate": 0.2438441678784374
+        },
+        "pcm_sha256": "fbf379e0df42a166f4e874658547739a5073969d4b732bf3f34245b0cb7e8192",
+        "avr_verified": false,
+        "hardware_tested": false
+      },
+      "patterns": 32,
+      "pattern_bytes": 256,
+      "stream_bytes": 312,
+      "data_bytes": 568,
+      "accepted": 73,
+      "avr_verified": false
+    }
+  },
+  "elapsed_seconds": 73.74009819992352,
+  "exact_evaluations": 3720,
+  "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+  "model_sha256": "09fbf54b2677aeac9ee00b7b4512d12074567faabb506445ad92d7a6ff046a84",
+  "source_sha256_normalized_lf": {
+    "tools/probe-q4-voice-patterns.py": "fa8c68be52e67f9eef15d1c2df3dc9fb3af253954300d1a985ff50a00e2d4320",
+    "ATtiny13A/Sound/codec/q4_voice_patterns.py": "33e9af638de14012da2959354885961283020d1d433c548aa8d2eeb0c33d385a"
+  },
+  "policy": "Complete original, exact integer output guards and existing STOI/spectrum objective; dictionary features only initialize; table/stream sizes exclude unimplemented AVR decoder"
+}

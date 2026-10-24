@@ -88,5 +88,51 @@ class VoicePatternTests(unittest.TestCase):
         changed=list(values);changed[6]=values[6].copy();changed[6][0,0]=-16
         with self.assertRaises(ValueError):codec.pack_selective(*changed)
 
+    def test_retained_studies_reproduce_exact_pcm_sizes_and_quality(self):
+        import soundfile as sf
+        from pystoi import stoi
+        from spectrogram_objective import SpectrogramObjective
+        from hq4_speech_search import deterministic_estoi
+        research=ROOT/'ATtiny13A/Sound/research/q4-voice-patterns'
+        load=lambda name:json.loads((research/name).read_text(encoding='utf-8'))
+        reference_path=ROOT/'web-player/audio/originals/vinni.wav'
+        reference,sr=sf.read(reference_path,dtype='float64');self.assertEqual(sr,7500)
+        full=load('full/report.json')
+        self.assertEqual(hashlib.sha256(reference_path.read_bytes()).hexdigest(),full['reference_sha256'])
+        variants=[('full/per-frame-control.json',full['q4_per_frame_control']),
+            ('full/16/model.json',full['results']['16']['final']),
+            ('full/32/model.json',full['results']['32']['final']),
+            ('selective/model.json',load('selective/report.json')['final'])]
+        for name,score in variants:
+            model=load(name);array=lambda key:np.asarray(model[key],np.int16)
+            p,g,d,h=map(array,('pitches','gains','durations','fractions'))
+            waves=array('pulsebook');modes=array('modes')
+            if model['schema']=='q4-per-frame-control-v1':
+                patterns=array('coefficients');indices=np.arange(len(p),dtype=np.uint16)
+                self.assertFalse(model['serialized_format'])
+            elif model['schema']==codec.SCHEMA:
+                patterns=array('patterns');indices=array('indices')
+                table=codec.pack_patterns(patterns,modes);stream=codec.pack_stream(p,g,indices,d,h)
+                result=full['results'][str(len(patterns))]
+                self.assertEqual(len(table)+len(stream),result['data_bytes'])
+            else:
+                indices=array('indices');heads=array('heads');tails=array('tails')
+                parts=codec.pack_selective(p,g,indices,d,h,heads,tails,modes,waves)
+                result=load('selective/report.json')
+                self.assertEqual(tuple(map(len,parts)),tuple(result[k] for k in ('table_bytes','precision_bytes','stream_bytes')))
+                patterns=np.column_stack((heads,tails[indices]));modes=modes[indices]
+                indices=np.arange(len(p),dtype=np.uint16)
+            pcm,counts=codec.render(p,g,indices,d,h,patterns,modes,waves)
+            signed=pcm.astype(np.int16)-128
+            valid=not np.any(counts) and abs(signed).max()<=115 and not np.any(abs(np.diff(signed))>=48)
+            self.assertEqual(bool(valid),score['guards_pass'],name)
+            if not valid:continue
+            self.assertEqual(hashlib.sha256(pcm.tobytes()).hexdigest(),score['pcm_sha256'],name)
+            audio=signed.astype(float)/128
+            self.assertAlmostEqual(float(stoi(reference,audio,7500)),score['stoi'],places=11)
+            self.assertAlmostEqual(deterministic_estoi(reference,audio,7500),score['estoi'],places=11)
+            self.assertAlmostEqual(SpectrogramObjective(reference).evaluate(audio)['spectrogram_loss'],
+                score['spectrogram_loss'],places=11)
+
 
 if __name__=='__main__':unittest.main()
