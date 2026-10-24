@@ -1,0 +1,64 @@
+{
+  "schema": "new-hq4-encoder-v1",
+  "samples": 19328,
+  "sample_rate": 7500,
+  "complete_recording": true,
+  "assembled": false,
+  "hardware_tested": false,
+  "reference_sha256": "4914d2c349e1f2e9e102ec23949a2bb96b95b7145aa252b54a6a8341ba5ce55d",
+  "initializer": {
+    "hop": 128,
+    "preemphasis": 0.65,
+    "coefficient_scale": 8,
+    "reuse_threshold": 1.5,
+    "gain_scale": 0.65
+  },
+  "seed": 23109,
+  "stream_budget": 617,
+  "decoder_bytes": 406,
+  "stream_bytes": 617,
+  "estimated_flash_bytes": 1024,
+  "stream_sha256": "f6415e6b79a8e4526d46e78ce85505d34936aa5fdaea6d156c62aeaf38d09569",
+  "pcm_sha256": "6e51030c0f295d81e87d865c7ee77acda6259dc83c7619b424450b15465e42fb",
+  "elapsed_seconds": 48.36,
+  "runtime": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "numba": "0.68.0",
+    "soundfile": "0.14.0",
+    "pystoi": "0.4.1"
+  },
+  "sources_sha256_normalized_lf": {
+    "tools/encode-new-hq4.py": "1fad25fb2b437dc7e6dce2eee64a8cb26c0e9166f279c8870f2ba058f597810f",
+    "ATtiny13A/Sound/codec/new_hq4_encoder.py": "bf9f3f15b496558e56a1a5ca92bf6454d8065861618ae8fb27efe9716fce885c",
+    "ATtiny13A/Sound/codec/model.py": "d9c3449ddd2da1929e71da99ef3b040d46d95988d2f5ea704f9416e30c1ba71e",
+    "ATtiny13A/Sound/codec/hq4_core.py": "936c21384042c24be9525ff7cb73b6e1421c852b4a63ea393e318cc60e9bd466",
+    "ATtiny13A/Sound/codec/hq4_speech_search.py": "3178c817fe02e9845449e2b501afe7dcc1b03a099fb59d56010e77e38640b2ab",
+    "ATtiny13A/Sound/codec/auto_encoder.py": "ab97a68e00409640531c26cebc43f2fc2fdd3c4cb111e6ffb7c0a7dbcdff2202"
+  },
+  "initial": {
+    "loss": 0.9885334703025699,
+    "log_spectral_error": 1.0086717160456407,
+    "relative_spectral_error": 0.9079804873302867,
+    "stoi": 0.5373831010392187,
+    "objective": 0.4583004234150131,
+    "peak_signed": 47,
+    "steps_ge_48": 0,
+    "stream_bytes": 578
+  },
+  "final": {
+    "loss": 0.9391287091487732,
+    "log_spectral_error": 0.9446834957807302,
+    "relative_spectral_error": 0.9169095626209449,
+    "stoi": 0.7544041675818749,
+    "objective": 0.679273870849973,
+    "peak_signed": 45,
+    "steps_ge_48": 0,
+    "stream_bytes": 617,
+    "estoi": 0.41962726081461255
+  },
+  "proposals": 5000,
+  "evaluated": 2403,
+  "accepted": 1232,
+  "improvements": 430
+}

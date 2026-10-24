@@ -1,0 +1,58 @@
+{
+  "hybrid": {
+    "full": {
+      "stoi": 0.6721118615127909,
+      "estoi": 0.393558702243227,
+      "loss": 0.7870612031965898,
+      "log_spectral_error": 0.8019122198555678,
+      "relative_spectral_error": 0.7276571365606778
+    },
+    "voice": {
+      "stoi": 0.7885946341898025,
+      "estoi": 0.4498413261901459,
+      "loss": 0.8595258229214134,
+      "log_spectral_error": 0.8552934213049261,
+      "relative_spectral_error": 0.8764554293873621
+    },
+    "bell": {
+      "loss": 0.6385766335951547,
+      "log_spectral_error": 0.684240241704234,
+      "relative_spectral_error": 0.45592220115883714,
+      "mse_at_voice_matched_level": 0.04323241672840607,
+      "reference_rms": 0.21237237105398513,
+      "decoded_rms": 0.03613798734141345,
+      "reference_bell_to_voice_rms": 1.2492126579998815,
+      "decoded_bell_to_voice_rms": 1.011277596561815
+    },
+    "peak_signed": 41,
+    "steps_ge_48": 0
+  },
+  "baseline_hq4": {
+    "full": {
+      "stoi": 0.7544041675818749,
+      "estoi": 0.41962726081461255,
+      "loss": 0.9391287091487732,
+      "log_spectral_error": 0.9446834957807302,
+      "relative_spectral_error": 0.9169095626209449
+    },
+    "voice": {
+      "stoi": 0.8058740330146499,
+      "estoi": 0.4836491701253846,
+      "loss": 0.830325261324404,
+      "log_spectral_error": 0.8295959127994185,
+      "relative_spectral_error": 0.8332426554243458
+    },
+    "bell": {
+      "loss": 1.1431160631090127,
+      "log_spectral_error": 1.1798637089362936,
+      "relative_spectral_error": 0.9961254797998896,
+      "mse_at_voice_matched_level": 0.09688084455743798,
+      "reference_rms": 0.21237237105398513,
+      "decoded_rms": 0.052860195788825,
+      "reference_bell_to_voice_rms": 1.2492126579998815,
+      "decoded_bell_to_voice_rms": 1.3114236046319885
+    },
+    "peak_signed": 45,
+    "steps_ge_48": 0
+  }
+}

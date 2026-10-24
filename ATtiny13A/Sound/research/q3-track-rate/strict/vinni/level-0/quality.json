@@ -1,0 +1,63 @@
+{
+  "feasible": false,
+  "failed_guards": [
+    "frequency_error_p95_cents",
+    "level_error_p95_db"
+  ],
+  "initial_stream_bytes": 602,
+  "stream_bytes": 602,
+  "evaluations": 128,
+  "accepted_operations": 0,
+  "history": [],
+  "level": 0,
+  "requested_frequency_tolerance": 50.0,
+  "requested_amplitude_tolerance_db": 3.0,
+  "limits": {
+    "frequency_key": "frequency_error_p95_cents",
+    "amplitude_key": "level_error_p95_db",
+    "frequency_cap": 50.0,
+    "amplitude_cap": 3.0,
+    "missing_cap": 0.172824129995439,
+    "extra_cap": 0.236220110492199,
+    "coverage_floor": 0.8271758700045616,
+    "continuity_cap": 0.3530560603937906,
+    "minimum_stoi": null
+  },
+  "tracking": {
+    "harmonic_track_loss": 0.9276358854741257,
+    "frequency_trajectory_error": 0.944415168725385,
+    "level_error": 2.460787589140449,
+    "missing_reference_energy": 0.172824129995439,
+    "extra_candidate_energy": 0.236220110492199,
+    "weighted_match_rate": 0.8271758700045616,
+    "frequency_error_cents": 48.64126669310046,
+    "frequency_error_hz": 11.03659249896802,
+    "level_error_db": 7.382362767421352,
+    "frequency_error_p95_cents": 111.27547826956649,
+    "frequency_error_p95_hz": 34.06105629694048,
+    "level_error_p95_db": 17.59277251401989,
+    "continuity_break_rate": 0.3530560603937906
+  },
+  "computed_flash_bytes": 1024,
+  "fits_target": true,
+  "firmware_qualified": false,
+  "intermediate_wraps": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "stoi": 0.8383964351890083,
+  "estoi": 0.6446105144381584,
+  "spectrum": {
+    "spectrogram_loss": 0.5043571420994826,
+    "fine_log_error": 0.4884439221989016,
+    "envelope_error": 0.6008140591006578,
+    "unsupported_energy": 0.20068080105885014,
+    "missing_energy": 0.20033717350850047
+  },
+  "stream_sha256": "522cc00dea69ba1b9802e4945095eec3d902ffd0d527c0ee93484ddddb4c406c",
+  "pcm_sha256": "0ac450223c495a2ad549a3a9ac3815d5d37dcf6a5e2b0697917751f7c0257d02",
+  "status": "infeasible-tracking-bounds",
+  "final_evaluation_verified": true
+}

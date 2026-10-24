@@ -1,0 +1,90 @@
+{
+  "schema": "lpx4-lossless-packing-study-v1",
+  "user_listening": "Vinni six-bit coded excitation preferred over Q3, then LPC2 Improved",
+  "recordings": [
+    {
+      "id": "vinni",
+      "source": "build/lpc2-quality/vinni/lpx4-6bit.lpx4",
+      "packed": "build/lpc2-quality/vinni/lpx4-6bit.lpz",
+      "source_sha256": "89f1d6ddfad97b2b3dedc9a990ddc45ab4eb40cf0cc81a5480c37a6e334af1c3",
+      "packed_sha256": "4fb6bbb406c9dae0547361db483271b7e46cbb7b9920adfc203df90b51737476",
+      "method": "canonical-huffman",
+      "original_bytes": 17562,
+      "stored_bytes": 16407,
+      "saved_bytes": 1155,
+      "candidate_bytes": {
+        "original": 17562,
+        "deflate-packed": 17299,
+        "deflate-code-bytes": 17186,
+        "deflate-delta-bytes": 17782,
+        "canonical-huffman": 16407
+      },
+      "exact_original_restored": true,
+      "decoder_code_included": false,
+      "avr_implemented": false
+    },
+    {
+      "id": "tail",
+      "source": "build/lpc2-quality/tail/lpx4-6bit.lpx4",
+      "packed": "build/lpc2-quality/tail/lpx4-6bit.lpz",
+      "source_sha256": "2830efbdb35ee02cece097cea6981ecb5e37019b97af850a47838b1592f80cac",
+      "packed_sha256": "b1fa633b3eadfcab7b8f56c316338d29be23e0be0cb8090d3a467d1ef5c57521",
+      "method": "canonical-huffman",
+      "original_bytes": 15215,
+      "stored_bytes": 14313,
+      "saved_bytes": 902,
+      "candidate_bytes": {
+        "original": 15215,
+        "deflate-packed": 15005,
+        "deflate-code-bytes": 15035,
+        "deflate-delta-bytes": 15507,
+        "canonical-huffman": 14313
+      },
+      "exact_original_restored": true,
+      "decoder_code_included": false,
+      "avr_implemented": false
+    },
+    {
+      "id": "chego",
+      "source": "build/lpc2-quality/chego/lpx4-6bit.lpx4",
+      "packed": "build/lpc2-quality/chego/lpx4-6bit.lpz",
+      "source_sha256": "1a3dfa746cb6221c919c040cb03631364c4a31b9ac70585cc892a78bd7e0ce1a",
+      "packed_sha256": "f30d5920796f777b4e611eb4955285f829c97aaee11709c358e0211317f030e5",
+      "method": "canonical-huffman",
+      "original_bytes": 7380,
+      "stored_bytes": 6939,
+      "saved_bytes": 441,
+      "candidate_bytes": {
+        "original": 7380,
+        "deflate-packed": 7291,
+        "deflate-code-bytes": 7307,
+        "deflate-delta-bytes": 7548,
+        "canonical-huffman": 6939
+      },
+      "exact_original_restored": true,
+      "decoder_code_included": false,
+      "avr_implemented": false
+    },
+    {
+      "id": "otvechaesh",
+      "source": "build/lpc2-quality/otvechaesh/lpx4-6bit.lpx4",
+      "packed": "build/lpc2-quality/otvechaesh/lpx4-6bit.lpz",
+      "source_sha256": "c3855ae7b449ebb481674eed5d7762146d7152040e1aacf65d85e29d6326363b",
+      "packed_sha256": "02a86399f9847e4fb738bfc76794f19ce55e8f5c4a1e4793cc1190d1e1a86039",
+      "method": "canonical-huffman",
+      "original_bytes": 6323,
+      "stored_bytes": 6014,
+      "saved_bytes": 309,
+      "candidate_bytes": {
+        "original": 6323,
+        "deflate-packed": 6176,
+        "deflate-code-bytes": 6220,
+        "deflate-delta-bytes": 6388,
+        "canonical-huffman": 6014
+      },
+      "exact_original_restored": true,
+      "decoder_code_included": false,
+      "avr_implemented": false
+    }
+  ]
+}

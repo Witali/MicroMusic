@@ -1,0 +1,105 @@
+{
+  "id": "i-togo-i-drugogo-i-mozhno-bez-hleba",
+  "input": {
+    "id": "i-togo-i-drugogo-i-mozhno-bez-hleba",
+    "source_file": "i-togo-i-drugogo-i-mozhno-bez-hleba.mp3",
+    "source_sha256": "442bda51892a99997ec31435853cabecb59c98363f51fb298fac294a1917f4dc",
+    "source_bytes": 63155,
+    "source_sample_rate": 44100,
+    "source_channels": 1,
+    "source_samples": 105840,
+    "source_seconds": 2.4,
+    "source_mono_dc_removed": -3.429959919757756e-05,
+    "mono_policy": "arithmetic mean of channels",
+    "resampling": "scipy.signal.resample_poly default Kaiser anti-alias filter",
+    "normalization_gain": 0.8912043568886502,
+    "sample_rate": 7500,
+    "reference_samples": 18048,
+    "unpadded_samples": 18000,
+    "trailing_zero_padding_samples": 48,
+    "reference_seconds": 2.4064,
+    "speech_cropped": false,
+    "reference_sha256": "dfd27ecb97596e47105118c3cd8b33b0ff08dba73ae5211cfba0bf21cef1da30",
+    "reference_file": "reference.wav",
+    "reference_peak": 0.8499755859375,
+    "reference_rms": 0.16390791977912977,
+    "current_tiny_duration_supported": true,
+    "hq4_minimum_frames": 71,
+    "hq4_minimum_stream_bytes": 146,
+    "hq4_stream_budget_bytes": 617
+  },
+  "selectedFamily": "hq4",
+  "requestedFinalFamily": null,
+  "selectionProvisional": true,
+  "flashBytes": 884,
+  "eepromUsedBytes": 0,
+  "phraseSamples": 18048,
+  "sampleHz": 7500,
+  "imageSha256": "8811aae74002910e4a04dbb0721890356b5331da62ef6812eb62a4c3be5dcefa",
+  "actualPhrasePcmSha256": "045b0e8bd1ecbf3bf91e10890da18a6536418e5fd48ec9ca5e994a36d338ad92",
+  "quality": {
+    "loss": 0.6650419118163324,
+    "log_spectral_error": 0.6252557352028559,
+    "relative_spectral_error": 0.8241866182702381,
+    "stoi": 0.769013407495456,
+    "estoi": 0.6617596981283836,
+    "balanced_score": 0.7158100545501493,
+    "pcm_sha256": "045b0e8bd1ecbf3bf91e10890da18a6536418e5fd48ec9ca5e994a36d338ad92",
+    "measured_from": "actual AVR recording",
+    "samples": 18048,
+    "sample_rate": 7500
+  },
+  "alternatives": [
+    {
+      "family": "hq4",
+      "flashBytes": 884,
+      "eepromUsedBytes": 0,
+      "quality": {
+        "loss": 0.6650419118163324,
+        "log_spectral_error": 0.6252557352028559,
+        "relative_spectral_error": 0.8241866182702381,
+        "stoi": 0.769013407495456,
+        "estoi": 0.6617596981283836,
+        "balanced_score": 0.7158100545501493,
+        "pcm_sha256": "045b0e8bd1ecbf3bf91e10890da18a6536418e5fd48ec9ca5e994a36d338ad92",
+        "measured_from": "actual AVR recording",
+        "samples": 18048,
+        "sample_rate": 7500
+      }
+    },
+    {
+      "family": "tiny",
+      "flashBytes": 1024,
+      "eepromUsedBytes": 64,
+      "quality": {
+        "loss": 0.7840157908783254,
+        "log_spectral_error": 0.7599709512562195,
+        "relative_spectral_error": 0.8801951493667488,
+        "stoi": 0.7168730058116478,
+        "estoi": 0.4848660792930863,
+        "balanced_score": 0.6541517425413818,
+        "pcm_sha256": "8be1a30662d7f9957a16dce9de75b60ec81a134399da117c60f22090eba58cf1",
+        "measured_from": "actual AVR recording",
+        "samples": 18048,
+        "sample_rate": 7500
+      }
+    }
+  ],
+  "originalAudio": "audio/i-togo-i-drugogo-i-mozhno-bez-hleba/original.wav",
+  "afterAudio": "audio/i-togo-i-drugogo-i-mozhno-bez-hleba/after.wav",
+  "referenceAudio": "audio/i-togo-i-drugogo-i-mozhno-bez-hleba/reference.wav",
+  "firmware": "firmware/i-togo-i-drugogo-i-mozhno-bez-hleba/firmware.hex",
+  "eeprom": null,
+  "hybridAlternative": null,
+  "verification": {
+    "engines": [
+      "reference",
+      "wasm",
+      "wasm-unoptimized"
+    ],
+    "verifiedSamples": 54144,
+    "silenceSamplesVerified": 36096,
+    "lostOverflows": 0,
+    "missedSamples": 0
+  }
+}

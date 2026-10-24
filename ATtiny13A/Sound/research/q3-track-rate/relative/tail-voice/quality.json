@@ -1,0 +1,735 @@
+{
+  "schema": "q3-track-rate-v1",
+  "sample_rate": 7500,
+  "samples": 12800,
+  "seed": 23191,
+  "mode": "additional-error-over-frozen-input",
+  "frequency_unit": "cents",
+  "error_statistic": "p95",
+  "error_definition": "95th percentile weighted by matched original-partial power; not a maximum bound on every partial or a guarantee of full reference coverage",
+  "missing_extra_coverage_continuity": "Hard caps/floor frozen from the original input model; never loosened by the sweep",
+  "baseline_tracking": {
+    "harmonic_track_loss": 0.7613138449110975,
+    "frequency_trajectory_error": 0.7641281857188215,
+    "level_error": 1.8243388020164522,
+    "missing_reference_energy": 0.21341688799808775,
+    "extra_candidate_energy": 0.31939403439798464,
+    "weighted_match_rate": 0.7865831120019123,
+    "frequency_error_cents": 39.15957970154209,
+    "frequency_error_hz": 11.617118590342008,
+    "level_error_db": 5.473016406049356,
+    "frequency_error_p95_cents": 68.06818660400604,
+    "frequency_error_p95_hz": 30.866671671266204,
+    "level_error_p95_db": 13.880283356289706,
+    "continuity_break_rate": 0.34134095894191424
+  },
+  "baseline_stream_bytes": 430,
+  "code_bytes": 420,
+  "descriptor_bytes": 0,
+  "end_marker_bytes": 1,
+  "eeprom_bytes": 0,
+  "layout": "standalone",
+  "flash_limit_bytes": 1024,
+  "max_evaluations_per_level": 400,
+  "repair_proposals": 2,
+  "reference_sha256": "e725be54dc17ba77051002b20c3dd825560e2554f49e70c20628c89fecea0c0c",
+  "input_model_sha256": "96f1068a6b62331a5f509f82907b21a546679aa141cd3b6fe9d6cc565a10824c",
+  "harmonic_config": {
+    "version": "strongest-partial-tracks-v1",
+    "max_tracks": 10,
+    "n_fft": 1024,
+    "hop": 128,
+    "max_gap": 8,
+    "frequency_tolerance_cents": 50.0,
+    "frequency_tolerance_hz": 0.0,
+    "amplitude_tolerance_db": 3.0,
+    "matching_gate_cents": 100.0,
+    "matching_gate_floor_hz": 14.6484375
+  },
+  "hardware_tested": false,
+  "human_listening_verified": false,
+  "levels": [
+    {
+      "feasible": true,
+      "failed_guards": [],
+      "initial_stream_bytes": 430,
+      "stream_bytes": 400,
+      "evaluations": 400,
+      "accepted_operations": 13,
+      "history": [
+        {
+          "evaluation": 64,
+          "operation": "share-4-6-rows-53-54-source-54",
+          "stream_bytes": 428
+        },
+        {
+          "evaluation": 65,
+          "operation": "share-2-4-rows-76-78-source-75",
+          "stream_bytes": 426
+        },
+        {
+          "evaluation": 66,
+          "operation": "share-4-6-rows-43-47-source-42",
+          "stream_bytes": 424
+        },
+        {
+          "evaluation": 73,
+          "operation": "share-4-6-rows-75-77-source-74",
+          "stream_bytes": 422
+        },
+        {
+          "evaluation": 84,
+          "operation": "share-4-6-rows-29-31-source-28-refit-k3--1",
+          "stream_bytes": 420
+        },
+        {
+          "evaluation": 89,
+          "operation": "share-2-4-rows-31-32-source-30",
+          "stream_bytes": 418
+        },
+        {
+          "evaluation": 123,
+          "operation": "share-2-6-rows-39-41-source-41-refit-k6-1",
+          "stream_bytes": 414
+        },
+        {
+          "evaluation": 127,
+          "operation": "share-2-4-rows-26-28-source-25",
+          "stream_bytes": 412
+        },
+        {
+          "evaluation": 133,
+          "operation": "share-4-6-rows-49-51-source-51-refit-k1-1",
+          "stream_bytes": 408
+        },
+        {
+          "evaluation": 201,
+          "operation": "share-2-4-rows-46-47-source-45",
+          "stream_bytes": 406
+        },
+        {
+          "evaluation": 219,
+          "operation": "share-4-6-rows-39-43-source-43",
+          "stream_bytes": 404
+        },
+        {
+          "evaluation": 223,
+          "operation": "share-4-6-rows-44-48-source-43",
+          "stream_bytes": 402
+        },
+        {
+          "evaluation": 322,
+          "operation": "share-2-4-rows-44-45-source-45",
+          "stream_bytes": 400
+        }
+      ],
+      "level": 0,
+      "requested_frequency_tolerance": 0.0,
+      "requested_amplitude_tolerance_db": 0.0,
+      "limits": {
+        "frequency_key": "frequency_error_p95_cents",
+        "amplitude_key": "level_error_p95_db",
+        "frequency_cap": 68.06818660400604,
+        "amplitude_cap": 13.880283356289706,
+        "missing_cap": 0.21341688799808775,
+        "extra_cap": 0.31939403439798464,
+        "coverage_floor": 0.7865831120019123,
+        "continuity_cap": 0.34134095894191424,
+        "minimum_stoi": null
+      },
+      "tracking": {
+        "harmonic_track_loss": 0.7634618842987417,
+        "frequency_trajectory_error": 0.7733606391488972,
+        "level_error": 1.8215374864832192,
+        "missing_reference_energy": 0.21200221532970168,
+        "extra_candidate_energy": 0.31888787282035247,
+        "weighted_match_rate": 0.7879977846702986,
+        "frequency_error_cents": 39.62343902002028,
+        "frequency_error_hz": 11.886033025531782,
+        "level_error_db": 5.46461245944965,
+        "frequency_error_p95_cents": 68.06818660400604,
+        "frequency_error_p95_hz": 31.333716743296463,
+        "level_error_p95_db": 13.874682673462083,
+        "continuity_break_rate": 0.34088635556040997
+      },
+      "computed_flash_bytes": 822,
+      "fits_target": true,
+      "firmware_qualified": false,
+      "intermediate_wraps": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "stoi": 0.8308116344572746,
+      "estoi": 0.522640825430625,
+      "spectrum": {
+        "spectrogram_loss": 0.5388024833037208,
+        "fine_log_error": 0.6034092782236691,
+        "envelope_error": 0.5487982091535613,
+        "unsupported_energy": 0.186931668299302,
+        "missing_energy": 0.19007477288535424
+      },
+      "stream_sha256": "37b9aa18e790e6148eb5f734c52572923ecd329a32f36d1855b25c9fe81a6e3b",
+      "pcm_sha256": "54614172a101138cd7aca98d7985c2efc89aaae6836e5fe427ec3416d0837d7c",
+      "status": "feasible",
+      "final_evaluation_verified": true,
+      "computed_complete_bell_flash_bytes": 992,
+      "complete_bell_eeprom_bytes": 64,
+      "complete_bell_firmware_qualified": false
+    },
+    {
+      "feasible": true,
+      "failed_guards": [],
+      "initial_stream_bytes": 400,
+      "stream_bytes": 241,
+      "evaluations": 400,
+      "accepted_operations": 73,
+      "history": [
+        {
+          "evaluation": 23,
+          "operation": "share-2-4-rows-13-14-source-12",
+          "stream_bytes": 398
+        },
+        {
+          "evaluation": 47,
+          "operation": "share-2-4-rows-37-38-source-36-refit-k7--1",
+          "stream_bytes": 396
+        },
+        {
+          "evaluation": 64,
+          "operation": "share-4-6-rows-36-38-source-38-refit-k2--1",
+          "stream_bytes": 392
+        },
+        {
+          "evaluation": 75,
+          "operation": "share-4-6-rows-26-27-source-25",
+          "stream_bytes": 390
+        },
+        {
+          "evaluation": 83,
+          "operation": "share-2-4-rows-55-56-source-56-refit-k6--1",
+          "stream_bytes": 388
+        },
+        {
+          "evaluation": 84,
+          "operation": "share-2-4-rows-54-55-source-53",
+          "stream_bytes": 386
+        },
+        {
+          "evaluation": 89,
+          "operation": "share-4-6-rows-19-21-source-18",
+          "stream_bytes": 384
+        },
+        {
+          "evaluation": 94,
+          "operation": "share-4-6-rows-60-64-source-64",
+          "stream_bytes": 380
+        },
+        {
+          "evaluation": 102,
+          "operation": "share-2-4-rows-51-53-source-50",
+          "stream_bytes": 378
+        },
+        {
+          "evaluation": 110,
+          "operation": "share-4-6-rows-26-28-source-25",
+          "stream_bytes": 376
+        },
+        {
+          "evaluation": 114,
+          "operation": "share-2-4-rows-11-12-source-10-refit-k3-1",
+          "stream_bytes": 374
+        },
+        {
+          "evaluation": 116,
+          "operation": "share-2-4-rows-19-21-source-18",
+          "stream_bytes": 372
+        },
+        {
+          "evaluation": 117,
+          "operation": "share-4-6-rows-11-12-source-12",
+          "stream_bytes": 370
+        },
+        {
+          "evaluation": 120,
+          "operation": "share-2-4-rows-47-48-source-48",
+          "stream_bytes": 368
+        },
+        {
+          "evaluation": 127,
+          "operation": "share-2-4-rows-61-62-source-60",
+          "stream_bytes": 366
+        },
+        {
+          "evaluation": 134,
+          "operation": "share-2-4-rows-67-69-source-69",
+          "stream_bytes": 364
+        },
+        {
+          "evaluation": 139,
+          "operation": "share-2-4-rows-78-79-source-79",
+          "stream_bytes": 362
+        },
+        {
+          "evaluation": 144,
+          "operation": "share-4-6-rows-34-35-source-35",
+          "stream_bytes": 360
+        },
+        {
+          "evaluation": 151,
+          "operation": "share-4-6-rows-5-6-source-4",
+          "stream_bytes": 358
+        },
+        {
+          "evaluation": 152,
+          "operation": "share-2-4-rows-22-23-source-23",
+          "stream_bytes": 356
+        },
+        {
+          "evaluation": 153,
+          "operation": "share-2-4-rows-16-18-source-18",
+          "stream_bytes": 352
+        },
+        {
+          "evaluation": 154,
+          "operation": "share-2-6-rows-18-22-source-17",
+          "stream_bytes": 348
+        },
+        {
+          "evaluation": 155,
+          "operation": "share-4-6-rows-7-9-source-6",
+          "stream_bytes": 346
+        },
+        {
+          "evaluation": 156,
+          "operation": "share-4-6-rows-75-79-source-74",
+          "stream_bytes": 344
+        },
+        {
+          "evaluation": 157,
+          "operation": "merge-rows-25-26-source-25",
+          "stream_bytes": 343
+        },
+        {
+          "evaluation": 163,
+          "operation": "share-2-4-rows-50-54-source-49-refit-k1--1",
+          "stream_bytes": 341
+        },
+        {
+          "evaluation": 165,
+          "operation": "share-2-4-rows-13-15-source-12-refit-k0--1",
+          "stream_bytes": 339
+        },
+        {
+          "evaluation": 166,
+          "operation": "share-2-4-rows-37-38-source-38",
+          "stream_bytes": 337
+        },
+        {
+          "evaluation": 167,
+          "operation": "share-2-4-rows-64-66-source-63",
+          "stream_bytes": 335
+        },
+        {
+          "evaluation": 172,
+          "operation": "share-2-4-rows-71-72-source-72",
+          "stream_bytes": 333
+        },
+        {
+          "evaluation": 177,
+          "operation": "share-4-6-rows-47-48-source-48",
+          "stream_bytes": 331
+        },
+        {
+          "evaluation": 178,
+          "operation": "share-2-4-rows-26-28-source-25",
+          "stream_bytes": 329
+        },
+        {
+          "evaluation": 182,
+          "operation": "share-2-4-rows-31-32-source-32",
+          "stream_bytes": 327
+        },
+        {
+          "evaluation": 187,
+          "operation": "share-4-6-rows-8-10-source-7",
+          "stream_bytes": 325
+        },
+        {
+          "evaluation": 190,
+          "operation": "share-2-4-rows-25-29-source-24",
+          "stream_bytes": 323
+        },
+        {
+          "evaluation": 192,
+          "operation": "share-2-4-rows-61-62-source-62-refit-k0--1",
+          "stream_bytes": 321
+        },
+        {
+          "evaluation": 194,
+          "operation": "share-2-4-rows-47-49-source-46",
+          "stream_bytes": 319
+        },
+        {
+          "evaluation": 196,
+          "operation": "share-4-6-rows-81-85-source-80",
+          "stream_bytes": 317
+        },
+        {
+          "evaluation": 204,
+          "operation": "share-4-6-rows-65-69-source-64-refit-k5--1",
+          "stream_bytes": 315
+        },
+        {
+          "evaluation": 206,
+          "operation": "share-2-4-rows-63-67-source-67",
+          "stream_bytes": 313
+        },
+        {
+          "evaluation": 208,
+          "operation": "share-4-6-rows-56-57-source-57",
+          "stream_bytes": 311
+        },
+        {
+          "evaluation": 210,
+          "operation": "share-4-6-rows-26-30-source-25",
+          "stream_bytes": 309
+        },
+        {
+          "evaluation": 211,
+          "operation": "share-2-4-rows-29-31-source-31",
+          "stream_bytes": 307
+        },
+        {
+          "evaluation": 212,
+          "operation": "merge-rows-30-31-source-30",
+          "stream_bytes": 305
+        },
+        {
+          "evaluation": 213,
+          "operation": "share-4-6-rows-4-6-source-6",
+          "stream_bytes": 303
+        },
+        {
+          "evaluation": 214,
+          "operation": "share-2-4-rows-14-16-source-13",
+          "stream_bytes": 301
+        },
+        {
+          "evaluation": 215,
+          "operation": "share-4-6-rows-75-79-source-74",
+          "stream_bytes": 299
+        },
+        {
+          "evaluation": 216,
+          "operation": "share-2-4-rows-4-8-source-3",
+          "stream_bytes": 295
+        },
+        {
+          "evaluation": 217,
+          "operation": "share-4-6-rows-34-38-source-38",
+          "stream_bytes": 293
+        },
+        {
+          "evaluation": 220,
+          "operation": "share-4-6-rows-30-34-source-34-refit-k4-1",
+          "stream_bytes": 291
+        },
+        {
+          "evaluation": 221,
+          "operation": "share-2-4-rows-5-9-source-4",
+          "stream_bytes": 289
+        },
+        {
+          "evaluation": 222,
+          "operation": "merge-rows-25-26-source-25",
+          "stream_bytes": 286
+        },
+        {
+          "evaluation": 223,
+          "operation": "share-2-4-rows-72-76-source-76",
+          "stream_bytes": 284
+        },
+        {
+          "evaluation": 224,
+          "operation": "merge-rows-74-75-source-74",
+          "stream_bytes": 282
+        },
+        {
+          "evaluation": 225,
+          "operation": "share-4-6-rows-13-17-source-12",
+          "stream_bytes": 280
+        },
+        {
+          "evaluation": 226,
+          "operation": "share-4-6-rows-1-5-source-5",
+          "stream_bytes": 274
+        },
+        {
+          "evaluation": 227,
+          "operation": "share-4-6-rows-22-26-source-26",
+          "stream_bytes": 272
+        },
+        {
+          "evaluation": 232,
+          "operation": "share-2-4-rows-29-33-source-28",
+          "stream_bytes": 270
+        },
+        {
+          "evaluation": 237,
+          "operation": "share-2-4-rows-76-78-source-78",
+          "stream_bytes": 268
+        },
+        {
+          "evaluation": 242,
+          "operation": "share-4-6-rows-45-49-source-44",
+          "stream_bytes": 266
+        },
+        {
+          "evaluation": 246,
+          "operation": "share-4-6-rows-46-50-source-45",
+          "stream_bytes": 264
+        },
+        {
+          "evaluation": 248,
+          "operation": "share-2-4-rows-54-55-source-55",
+          "stream_bytes": 262
+        },
+        {
+          "evaluation": 254,
+          "operation": "share-4-6-rows-50-52-source-52",
+          "stream_bytes": 260
+        },
+        {
+          "evaluation": 256,
+          "operation": "share-4-6-rows-67-71-source-71",
+          "stream_bytes": 258
+        },
+        {
+          "evaluation": 259,
+          "operation": "share-2-4-rows-31-35-source-30",
+          "stream_bytes": 256
+        },
+        {
+          "evaluation": 263,
+          "operation": "share-2-4-rows-40-44-source-39",
+          "stream_bytes": 254
+        },
+        {
+          "evaluation": 271,
+          "operation": "share-2-4-rows-68-72-source-67",
+          "stream_bytes": 252
+        },
+        {
+          "evaluation": 303,
+          "operation": "share-2-4-rows-58-62-source-62",
+          "stream_bytes": 250
+        },
+        {
+          "evaluation": 313,
+          "operation": "share-2-4-rows-9-13-source-13-refit-k0-1",
+          "stream_bytes": 248
+        },
+        {
+          "evaluation": 321,
+          "operation": "share-4-6-rows-53-54-source-54",
+          "stream_bytes": 246
+        },
+        {
+          "evaluation": 332,
+          "operation": "merge-rows-58-59-source-58",
+          "stream_bytes": 245
+        },
+        {
+          "evaluation": 356,
+          "operation": "merge-rows-22-23-source-23",
+          "stream_bytes": 243
+        },
+        {
+          "evaluation": 380,
+          "operation": "share-4-6-rows-52-56-source-56",
+          "stream_bytes": 241
+        }
+      ],
+      "level": 1,
+      "requested_frequency_tolerance": 25.0,
+      "requested_amplitude_tolerance_db": 1.0,
+      "limits": {
+        "frequency_key": "frequency_error_p95_cents",
+        "amplitude_key": "level_error_p95_db",
+        "frequency_cap": 93.06818660400604,
+        "amplitude_cap": 14.880283356289706,
+        "missing_cap": 0.21341688799808775,
+        "extra_cap": 0.31939403439798464,
+        "coverage_floor": 0.7865831120019123,
+        "continuity_cap": 0.34134095894191424,
+        "minimum_stoi": null
+      },
+      "tracking": {
+        "harmonic_track_loss": 0.9402380278560025,
+        "frequency_trajectory_error": 0.7078182965271809,
+        "level_error": 2.854471255667447,
+        "missing_reference_energy": 0.20504854300117115,
+        "extra_candidate_energy": 0.3150317904147742,
+        "weighted_match_rate": 0.7949514569988289,
+        "frequency_error_cents": 37.550626969732626,
+        "frequency_error_hz": 11.556418683992904,
+        "level_error_db": 8.563413767002345,
+        "frequency_error_p95_cents": 88.96243943680312,
+        "frequency_error_p95_hz": 31.631672568323438,
+        "level_error_p95_db": 14.131276492918197,
+        "continuity_break_rate": 0.25676082950864937
+      },
+      "computed_flash_bytes": 662,
+      "fits_target": true,
+      "firmware_qualified": false,
+      "intermediate_wraps": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "stoi": 0.7430332541272728,
+      "estoi": 0.37726652723045123,
+      "spectrum": {
+        "spectrogram_loss": 0.5958273253065318,
+        "fine_log_error": 0.6244479898056818,
+        "envelope_error": 0.6587817450136778,
+        "unsupported_energy": 0.25079759227519693,
+        "missing_energy": 0.24970910680462613
+      },
+      "stream_sha256": "2bda6eb472abd16bd9f642278611cca618999f978c98a2647b04909d479df6d1",
+      "pcm_sha256": "a711d5e5f503aeb4810ec94fddf48a404a7a97cf33713de74e46643de2bb6a65",
+      "status": "feasible",
+      "final_evaluation_verified": true,
+      "computed_complete_bell_flash_bytes": 834,
+      "complete_bell_eeprom_bytes": 64,
+      "complete_bell_firmware_qualified": false
+    },
+    {
+      "feasible": true,
+      "failed_guards": [],
+      "initial_stream_bytes": 241,
+      "stream_bytes": 227,
+      "evaluations": 400,
+      "accepted_operations": 7,
+      "history": [
+        {
+          "evaluation": 1,
+          "operation": "share-2-4-rows-12-16-source-11",
+          "stream_bytes": 239
+        },
+        {
+          "evaluation": 26,
+          "operation": "share-2-4-rows-70-74-source-74",
+          "stream_bytes": 237
+        },
+        {
+          "evaluation": 51,
+          "operation": "share-2-4-rows-42-46-source-41",
+          "stream_bytes": 235
+        },
+        {
+          "evaluation": 130,
+          "operation": "merge-rows-42-43-source-42",
+          "stream_bytes": 233
+        },
+        {
+          "evaluation": 209,
+          "operation": "merge-rows-63-64-source-63",
+          "stream_bytes": 230
+        },
+        {
+          "evaluation": 293,
+          "operation": "merge-rows-48-49-source-49",
+          "stream_bytes": 229
+        },
+        {
+          "evaluation": 394,
+          "operation": "merge-rows-33-34-source-33",
+          "stream_bytes": 227
+        }
+      ],
+      "level": 2,
+      "requested_frequency_tolerance": 75.0,
+      "requested_amplitude_tolerance_db": 2.0,
+      "limits": {
+        "frequency_key": "frequency_error_p95_cents",
+        "amplitude_key": "level_error_p95_db",
+        "frequency_cap": 143.06818660400603,
+        "amplitude_cap": 15.880283356289706,
+        "missing_cap": 0.21341688799808775,
+        "extra_cap": 0.31939403439798464,
+        "coverage_floor": 0.7865831120019123,
+        "continuity_cap": 0.34134095894191424,
+        "minimum_stoi": null
+      },
+      "tracking": {
+        "harmonic_track_loss": 0.9282479765899938,
+        "frequency_trajectory_error": 0.6957282368923865,
+        "level_error": 2.816415090986718,
+        "missing_reference_energy": 0.20731123087961567,
+        "extra_candidate_energy": 0.31781038925204086,
+        "weighted_match_rate": 0.7926887691203839,
+        "frequency_error_cents": 36.90552107739399,
+        "frequency_error_hz": 11.208641223315574,
+        "level_error_db": 8.44924527296015,
+        "frequency_error_p95_cents": 87.90277132684535,
+        "frequency_error_p95_hz": 33.060103572988055,
+        "level_error_p95_db": 13.967593744014351,
+        "continuity_break_rate": 0.23190295657247986
+      },
+      "computed_flash_bytes": 648,
+      "fits_target": true,
+      "firmware_qualified": false,
+      "intermediate_wraps": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "stoi": 0.7099887264019494,
+      "estoi": 0.33054128646337316,
+      "spectrum": {
+        "spectrogram_loss": 0.6009452478677326,
+        "fine_log_error": 0.6300703517112896,
+        "envelope_error": 0.6651239836310934,
+        "unsupported_energy": 0.252706686481243,
+        "missing_energy": 0.25596226841242536
+      },
+      "stream_sha256": "5beb5c626f10233fcddc08b9938b8523baa59f2d5330c528d7bca8b159ddceb4",
+      "pcm_sha256": "63df304a6577c702b4b6e4efd16193ce3cca961fba00dbe7d981c999160ca0a3",
+      "status": "feasible",
+      "final_evaluation_verified": true,
+      "computed_complete_bell_flash_bytes": 820,
+      "complete_bell_eeprom_bytes": 64,
+      "complete_bell_firmware_qualified": false
+    }
+  ],
+  "unique_exact_renders": 1189,
+  "baseline_stoi": 0.8366719484523392,
+  "baseline_estoi": 0.5505716515284071,
+  "minimum_stoi": null,
+  "maximum_stoi_drop": null,
+  "training_capture_note": "The bounded p95 searches were captured before optional max/statistic and STOI-guard interfaces were finalized. Active p95/no-STOI-guard search semantics did not change. All exported models have now been independently decoded and rescored under the final frozen sources without additional search.",
+  "capture_completion_source_hashes": {
+    "tools/compress-hq4-q3-tracks.py": "b674369ba76433eca64938180d479dba9ea12c8a3285e229b2ff80f93d22002e",
+    "ATtiny13A/Sound/codec/q3_track_rate.py": "1a7a8712ecfd7f4e57ae44634ca17f2eb9defca562afaf3b32a729577c8ee826",
+    "ATtiny13A/Sound/codec/harmonic_tracks.py": "b93040a6bfe174c145152f1a9fc03d9039192b81da0b2f8ace3e2a7c70f8b5b5",
+    "ATtiny13A/Sound/codec/hq4_q3.py": "9119a1defb855c38d67d19eb85c333b64c2b843f2cb9a7d3b7345a7ce837c22d",
+    "ATtiny13A/Sound/codec/hq4_core.py": "936c21384042c24be9525ff7cb73b6e1421c852b4a63ea393e318cc60e9bd466",
+    "ATtiny13A/Sound/codec/spectrogram_objective.py": "66fd5c3d5e3a0716d3c18269a261a70ad9165575eaf33acb5c7ee166a8d4e927"
+  },
+  "final_evaluation_source_sha256_normalized_lf": {
+    "tools/compress-hq4-q3-tracks.py": "341c9c0a5dac2ae34dcfbcda4731a01197e12aabda34dd983560c40c05e7f1f0",
+    "ATtiny13A/Sound/codec/q3_track_rate.py": "fa33560507709da8b776545af58df9fc33b4a948dc828d1c1bf0a23b1014a07f",
+    "ATtiny13A/Sound/codec/harmonic_tracks.py": "b93040a6bfe174c145152f1a9fc03d9039192b81da0b2f8ace3e2a7c70f8b5b5",
+    "ATtiny13A/Sound/codec/hq4_q3.py": "9119a1defb855c38d67d19eb85c333b64c2b843f2cb9a7d3b7345a7ce837c22d",
+    "ATtiny13A/Sound/codec/hq4_core.py": "936c21384042c24be9525ff7cb73b6e1421c852b4a63ea393e318cc60e9bd466",
+    "ATtiny13A/Sound/codec/spectrogram_objective.py": "66fd5c3d5e3a0716d3c18269a261a70ad9165575eaf33acb5c7ee166a8d4e927"
+  },
+  "final_evaluation_source_commit": "5db48d4",
+  "retention_note": "Full per-operation tracking trajectories/audio/binaries remain under ignored build; retained operation histories include evaluation, operation and actual byte count only.",
+  "final_evaluation_verified": true
+}

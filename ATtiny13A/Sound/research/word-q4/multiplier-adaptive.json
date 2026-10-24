@@ -1,0 +1,61 @@
+{
+  "pass": true,
+  "quick": false,
+  "scope": "Q4 exhaustive signed16 x -15..15",
+  "q5Scope": "All coefficients on boundary/strided word samples plus every physical tap/gain pair",
+  "checked": 6147462,
+  "irqChecked": 192,
+  "kernelBytes": 108,
+  "engines": [
+    {
+      "engine": "reference",
+      "checked": 2049154,
+      "irqChecked": 64,
+      "q4": {
+        "minimum": 13,
+        "maximum": 70
+      },
+      "q5": {
+        "minimum": 11,
+        "maximum": 79
+      }
+    },
+    {
+      "engine": "wasm",
+      "checked": 2049154,
+      "irqChecked": 64,
+      "q4": {
+        "minimum": 13,
+        "maximum": 70
+      },
+      "q5": {
+        "minimum": 11,
+        "maximum": 79
+      }
+    },
+    {
+      "engine": "wasm-unoptimized",
+      "checked": 2049154,
+      "irqChecked": 64,
+      "q4": {
+        "minimum": 13,
+        "maximum": 70
+      },
+      "q5": {
+        "minimum": 11,
+        "maximum": 79
+      }
+    }
+  ],
+  "timingScope": "Entry through RET, excludes caller RCALL; isolated fixture, not full-player deadline",
+  "fullDecoderImplemented": false,
+  "hardwareTested": false,
+  "profile": "adaptive",
+  "fixture_bytes": 140,
+  "fixture_sha256": "1407f203c4172527d5919e6fcdc542b5094ed4ffd3a1e81e1f42c8b8d4c767e6",
+  "source_sha256_normalized_lf": {
+    "tools/probe-word-q4-mul.py": "f5a965f48bec0f956bf283914058302e0edd84b3821f695de18964c7b30cd535",
+    "ATtiny13A/Sound/codec/word-q4/multiply-factored.S": "c1a485434a5a76b1a622608ab241a641685349c408d27bd0ea44ac9e7b9af005",
+    "tools/verify-word-q4-mul.mjs": "918f22ea6672ce27dec6c8a28c9a4ee9ce60fdcd4af320106f1d00978068580b"
+  }
+}

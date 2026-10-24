@@ -1,0 +1,41 @@
+{
+  "schema": "q3-pulsebook8-study-manifest-v1",
+  "runs": {
+    "initial-four-tap": {
+      "search_source_commit": "1733805",
+      "models": {
+        "baseline": "baseline/model.json",
+        "guarded": "guarded/model.json",
+        "balanced": "guarded/model.json",
+        "best_stoi": "best_stoi/model.json",
+        "best_spectrum": "best_spectrum/model.json"
+      },
+      "report": "report.json"
+    },
+    "eight-tap": {
+      "search_source_commit": "1733805",
+      "models": {
+        "baseline": "baseline/model.json",
+        "guarded": "baseline/model.json",
+        "balanced": "balanced/model.json",
+        "best_stoi": "balanced/model.json",
+        "best_spectrum": "best_spectrum/model.json"
+      },
+      "report": "report.json"
+    },
+    "refit-four-tap": {
+      "search_source_commit": "230b9ca",
+      "models": {
+        "baseline": "baseline/model.json",
+        "guarded": "guarded/model.json",
+        "balanced": "balanced/model.json",
+        "best_stoi": "best_stoi/model.json",
+        "best_spectrum": "best_spectrum/model.json"
+      },
+      "report": "report.json"
+    }
+  },
+  "selected": "refit-four-tap/guarded/model.json",
+  "ablation": "ablation/model.json",
+  "scope": "Research branch; public firmware is unchanged; hardware not tested"
+}

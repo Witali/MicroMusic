@@ -1,0 +1,93 @@
+{
+  "schema": "period-teacher-tiny-projection-v1",
+  "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+  "teacher_model_sha256": "2f535531cf05f1890b3cd1c7a74fbdd279799b4cc3f734ae035f4c2ef767a96c",
+  "proposals": 1000,
+  "avr_assembled": false,
+  "hardware_verified": false,
+  "code_size_measured": false,
+  "decoder_code_excluded_from_size": true,
+  "candidates": [
+    {
+      "words": 4,
+      "loss": 0.9816332855509843,
+      "log_spectral_error": 1.008050322492015,
+      "relative_spectral_error": 0.875965137786861,
+      "stoi": 0.6326235173431752,
+      "peak": 0.7421875,
+      "clips": 0,
+      "pre_dc_clips": 0,
+      "mean_pcm": 0.0013469827586206897,
+      "max_abs_64_sample_mean": 4.375,
+      "data_bytes": 815,
+      "tiny_flash_data_bytes": 461,
+      "eeprom_used_bytes": 64
+    },
+    {
+      "words": 8,
+      "loss": 0.9404315528274905,
+      "log_spectral_error": 0.96830561018237,
+      "relative_spectral_error": 0.8289353234079719,
+      "stoi": 0.655694112943002,
+      "peak": 0.6875,
+      "clips": 0,
+      "pre_dc_clips": 0,
+      "mean_pcm": 0.002514367816091954,
+      "max_abs_64_sample_mean": 4.4375,
+      "data_bytes": 829,
+      "tiny_flash_data_bytes": 533,
+      "eeprom_used_bytes": 64
+    }
+  ],
+  "initial": {
+    "loss": 0.9404315528274905,
+    "log_spectral_error": 0.96830561018237,
+    "relative_spectral_error": 0.8289353234079719,
+    "stoi": 0.655694112943002,
+    "peak": 0.6875,
+    "clips": 0,
+    "pre_dc_clips": 0,
+    "mean_pcm": 0.002514367816091954,
+    "max_abs_64_sample_mean": 4.4375,
+    "data_bytes": 829
+  },
+  "final": {
+    "loss": 0.9217504957259413,
+    "log_spectral_error": 0.9455917791347339,
+    "relative_spectral_error": 0.82638536209077,
+    "stoi": 0.6910757906101643,
+    "peak": 0.6875,
+    "clips": 0,
+    "pre_dc_clips": 0,
+    "mean_pcm": 0.0022000718390804597,
+    "max_abs_64_sample_mean": 9.40625,
+    "data_bytes": 858
+  },
+  "tiny_flash_data_bytes": 577,
+  "eeprom_used_bytes": 64,
+  "config": {
+    "version": "fixed-speech-search-v3",
+    "objective": "balanced",
+    "seed": 23171,
+    "stoi_weight": 8.0,
+    "stoi_floor": 0.0,
+    "spectral_ceiling": 3.0,
+    "max_peak": 0.99,
+    "max_data_bytes": 65535,
+    "restart_every": 2000,
+    "dc_choices": [
+      7
+    ],
+    "voiced_only": true,
+    "residual_colors": [
+      0
+    ],
+    "allow_gain6": false,
+    "tiny_words": 8,
+    "max_flash_data_bytes": null
+  },
+  "improvements": 164,
+  "output_pcm_sha256": "8934cc64d371deefd6009f0eb3b4ad8933ee410ce426deedc13373f35034b7cf",
+  "fits_tiny": false,
+  "estoi": 0.4549324744674351
+}

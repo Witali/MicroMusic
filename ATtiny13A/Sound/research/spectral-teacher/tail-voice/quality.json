@@ -1,0 +1,269 @@
+{
+  "schema": "spectral-period-teacher-v1",
+  "samples": 12800,
+  "sample_rate": 7500,
+  "reference_sha256": "e725be54dc17ba77051002b20c3dd825560e2554f49e70c20628c89fecea0c0c",
+  "input_model_sha256": "8dc9ddcf45c5d7b628b47a7b17d4502dde13864a92a57a94c62944b8ff7d2ce9",
+  "baseline_sha256": "0474401bed1c11ea01431ef094160cc4bb33d3277b44b9c28f1eeb8543806d9c",
+  "proposals": 1000,
+  "weight": 2.0,
+  "seed": 23170,
+  "objective_kind": "spectrogram",
+  "avr_assembled": false,
+  "hardware_verified": false,
+  "fits_tiny": false,
+  "data_excludes_decoder": true,
+  "baseline": {
+    "loss": 0.810698464723955,
+    "log_spectral_error": 0.8021835690407121,
+    "relative_spectral_error": 0.8447580474569264,
+    "stoi": 0.8250794476978425,
+    "estoi": 0.5199514089074045,
+    "bands": [
+      {
+        "low_hz": 70,
+        "high_hz": 300,
+        "mean_error_db": 7.807755384341086,
+        "mean_absolute_error_db": 9.406976538951762,
+        "energy_ratio_db": 9.199539057291341
+      },
+      {
+        "low_hz": 300,
+        "high_hz": 600,
+        "mean_error_db": 0.09937053682892259,
+        "mean_absolute_error_db": 4.47040487961275,
+        "energy_ratio_db": -1.4339799994354472
+      },
+      {
+        "low_hz": 600,
+        "high_hz": 1200,
+        "mean_error_db": 2.0945643114521335,
+        "mean_absolute_error_db": 4.781660321551388,
+        "energy_ratio_db": 2.1960292141910873
+      },
+      {
+        "low_hz": 1200,
+        "high_hz": 2000,
+        "mean_error_db": 1.9266715060896082,
+        "mean_absolute_error_db": 4.455684985236715,
+        "energy_ratio_db": 0.2141383287889602
+      },
+      {
+        "low_hz": 2000,
+        "high_hz": 3000,
+        "mean_error_db": -2.0874123425330766,
+        "mean_absolute_error_db": 5.037949665750378,
+        "energy_ratio_db": -3.377587424511523
+      },
+      {
+        "low_hz": 3000,
+        "high_hz": 3750,
+        "mean_error_db": -3.454763845062703,
+        "mean_absolute_error_db": 4.746517945212213,
+        "energy_ratio_db": -4.390957417968259
+      }
+    ],
+    "reference_flatness": 0.1717870105287807,
+    "output_flatness": 0.2837632137794939
+  },
+  "initial": {
+    "loss": 0.7596536322029951,
+    "log_spectral_error": 0.7698077538855955,
+    "relative_spectral_error": 0.7190371454725928,
+    "stoi": 0.828813414485369,
+    "estoi": 0.5215024214407292,
+    "bands": [
+      {
+        "low_hz": 70,
+        "high_hz": 300,
+        "mean_error_db": 2.9830604175836837,
+        "mean_absolute_error_db": 5.565360146140931,
+        "energy_ratio_db": 7.120560229618573
+      },
+      {
+        "low_hz": 300,
+        "high_hz": 600,
+        "mean_error_db": -2.5891156133042603,
+        "mean_absolute_error_db": 4.4960218172400355,
+        "energy_ratio_db": -0.7378093078847479
+      },
+      {
+        "low_hz": 600,
+        "high_hz": 1200,
+        "mean_error_db": -0.6725529935530132,
+        "mean_absolute_error_db": 3.7126762613965827,
+        "energy_ratio_db": -0.7781123446226019
+      },
+      {
+        "low_hz": 1200,
+        "high_hz": 2000,
+        "mean_error_db": 1.987708092165218,
+        "mean_absolute_error_db": 4.8072859889548205,
+        "energy_ratio_db": -0.7411204584776487
+      },
+      {
+        "low_hz": 2000,
+        "high_hz": 3000,
+        "mean_error_db": 1.1946360350020744,
+        "mean_absolute_error_db": 4.473322691376376,
+        "energy_ratio_db": 0.5626066393653839
+      },
+      {
+        "low_hz": 3000,
+        "high_hz": 3750,
+        "mean_error_db": 3.2463241722084586,
+        "mean_absolute_error_db": 5.77419036689961,
+        "energy_ratio_db": 4.292625404845321
+      }
+    ],
+    "reference_flatness": 0.1717870105287807,
+    "output_flatness": 0.349993067675864
+  },
+  "stages": [
+    {
+      "stage": "frames",
+      "proposals": 500,
+      "initial": {
+        "loss": 0.5489254867955315,
+        "log_spectral_error": 0.653475702774172,
+        "relative_spectral_error": 0.5132296376911172,
+        "stoi": 0.828813414485369,
+        "peak": 0.9380292323065621
+      },
+      "final": {
+        "loss": 0.5470879969631323,
+        "log_spectral_error": 0.6532618393546072,
+        "relative_spectral_error": 0.5089765497693297,
+        "stoi": 0.8292655098900087,
+        "peak": 0.9380292323065622
+      },
+      "improvements": 15,
+      "config": {
+        "version": "joint-period-v2",
+        "model_schema": "period-colored-v1",
+        "gain_count": 64,
+        "seed": 23170,
+        "stoi_weight": 2.0,
+        "spectral_ceiling": 0.7514970581902978,
+        "stoi_floor": 0.828813414485369,
+        "restart_every": 1500,
+        "max_peak": 0.95
+      }
+    },
+    {
+      "stage": "waves",
+      "proposals": 500,
+      "initial": {
+        "loss": 0.5470879969631323,
+        "log_spectral_error": 0.6532618393546071,
+        "relative_spectral_error": 0.5089765497693295,
+        "stoi": 0.8292655098900087,
+        "peak": 0.9380292323065621
+      },
+      "final": {
+        "loss": 0.5412372284075834,
+        "log_spectral_error": 0.651023873880113,
+        "relative_spectral_error": 0.4965894674963717,
+        "stoi": 0.8306122422651719,
+        "peak": 0.9380292323065622
+      },
+      "improvements": 48,
+      "config": {
+        "version": "joint-period-v2",
+        "model_schema": "period-colored-v1",
+        "gain_count": 64,
+        "seed": 23170,
+        "stoi_weight": 2.0,
+        "spectral_ceiling": 0.7512511152577982,
+        "stoi_floor": 0.8292655098900087,
+        "restart_every": 1500,
+        "max_peak": 0.95,
+        "search_kind": "balanced-period-coefficients-v1"
+      }
+    }
+  ],
+  "final": {
+    "loss": 0.7590532516634526,
+    "log_spectral_error": 0.77215649325716,
+    "relative_spectral_error": 0.7066402852886227,
+    "stoi": 0.8306122422651719,
+    "estoi": 0.5257792484737337,
+    "bands": [
+      {
+        "low_hz": 70,
+        "high_hz": 300,
+        "mean_error_db": 2.888925275981918,
+        "mean_absolute_error_db": 5.224171426829198,
+        "energy_ratio_db": 6.750028446481698
+      },
+      {
+        "low_hz": 300,
+        "high_hz": 600,
+        "mean_error_db": -2.558044035503377,
+        "mean_absolute_error_db": 4.300212852281764,
+        "energy_ratio_db": -0.6839706452554483
+      },
+      {
+        "low_hz": 600,
+        "high_hz": 1200,
+        "mean_error_db": -0.6671060334752492,
+        "mean_absolute_error_db": 3.667325862514226,
+        "energy_ratio_db": -0.9358402021188618
+      },
+      {
+        "low_hz": 1200,
+        "high_hz": 2000,
+        "mean_error_db": 2.0547790472809946,
+        "mean_absolute_error_db": 4.891128784503271,
+        "energy_ratio_db": -0.6336248272707284
+      },
+      {
+        "low_hz": 2000,
+        "high_hz": 3000,
+        "mean_error_db": 1.2459097918479327,
+        "mean_absolute_error_db": 4.404902461633264,
+        "energy_ratio_db": 0.6076135834387798
+      },
+      {
+        "low_hz": 3000,
+        "high_hz": 3750,
+        "mean_error_db": 3.320418022144778,
+        "mean_absolute_error_db": 5.968436796020223,
+        "energy_ratio_db": 4.339523376136535
+      }
+    ],
+    "reference_flatness": 0.1717870105287807,
+    "output_flatness": 0.3522972443770025
+  },
+  "data_bytes": 834,
+  "spectrogram_baseline": {
+    "spectrogram_loss": 0.6171305506882494,
+    "fine_log_error": 0.6484693006386382,
+    "envelope_error": 0.6803497435263992,
+    "unsupported_energy": 0.2705213170481138,
+    "missing_energy": 0.26223209120281066
+  },
+  "spectrogram_initial": {
+    "spectrogram_loss": 0.5489254867955313,
+    "fine_log_error": 0.6534757027741717,
+    "envelope_error": 0.513229637691117,
+    "unsupported_energy": 0.17878677014607228,
+    "missing_energy": 0.17629620713049993
+  },
+  "spectrogram_final": {
+    "spectrogram_loss": 0.5412372284075834,
+    "fine_log_error": 0.651023873880113,
+    "envelope_error": 0.4965894674963717,
+    "unsupported_energy": 0.17288927687053046,
+    "missing_energy": 0.16784758091510737
+  },
+  "payload_sha256": "b7b8f14bcd197dafe002db0467694f03ba4ae9d30b107903516f0310e784d703",
+  "source_sha256_normalized_lf": {
+    "tools/probe-spectral-period-teacher.py": "4ec8943f05b5c70a93c4b1f69bd6091e7c9e985f9739a2cc1e41f2b23832a345",
+    "ATtiny13A/Sound/codec/spectrogram_objective.py": "66fd5c3d5e3a0716d3c18269a261a70ad9165575eaf33acb5c7ee166a8d4e927",
+    "ATtiny13A/Sound/codec/period_book_search.py": "0b51cc707fcad4172a04f2039966ea822e5b49d812733c205d997d3f2355ddd2",
+    "ATtiny13A/Sound/codec/colored_period.py": "db02620b67c3a0574b5f24c99cbaa9d0c25048cafc1a94e3ce83026e8095e27b",
+    "ATtiny13A/Sound/codec/joint_period.py": "37d75d92b0d231cdad9aade244b507b19a24c52e3ae3ab2db862eaa81c48fd11",
+    "ATtiny13A/Sound/codec/period_wave.py": "d6d92cdd2e8d910a9e4085f939e193553fac53e5cd8b0d892b29e76b3709587f"
+  }
+}

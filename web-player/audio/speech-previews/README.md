@@ -7,12 +7,12 @@ The full original and the selected HQ4 firmware remain available in the player.
 
 `vinni-q5-playback.wav` is a 44.1 kHz listening copy for mobile media decoders.
 Only the sample rate changes, using the resampler recorded in `manifest.json`.
-The download button offers the canonical 7500 Hz file. Metrics refer to that
+The canonical 7500 Hz file remains available as a standalone research asset. Metrics refer to that
 canonical output, not to a newly measured score on the listening copy.
 
 This is a PC prototype. Its complete AVR player, timing and 1024-byte Flash
-budget have not been qualified. The page therefore presents an audio preview
-alongside the existing firmware, with no HEX download for the prototype.
+budget have not been qualified. It is excluded from the firmware player and its catalog until a complete AVR
+firmware image has been generated and qualified.
 
 The model, source commit, original hash, PCM hash, file hashes and measured
 results are linked in `manifest.json` and `vinni-q5.json`. Reproduce from the

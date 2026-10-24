@@ -1,0 +1,7286 @@
+{
+  "schema": "q3-pulsebook-pole-search-v1",
+  "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+  "samples": 22272,
+  "targets": {
+    "stoi": 0.9,
+    "spectrogram_loss": 0.344975554
+  },
+  "target_met": false,
+  "proposals": 6000,
+  "evaluated": 4372,
+  "accepted": 604,
+  "seed": 23311,
+  "initial": [
+    {
+      "source": "model.json",
+      "source_sha256": "c1f8eed2f8d78fb13d1daac0c69d777e54997dda7e3b637c8f89f3a613d7bdb3",
+      "nearest": false,
+      "original_stream_bytes": 593,
+      "coefficient_reuse": [],
+      "score": {
+        "stoi": 0.8393394894532396,
+        "spectrogram_loss": 0.5024456522401335,
+        "fine_log_error": 0.48676975201083483,
+        "envelope_error": 0.5980213512016695,
+        "unsupported_energy": 0.19986892709107845,
+        "missing_energy": 0.19785167067838552,
+        "stream_bytes": 593,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07455268947557471,
+        "raw_rms": 0.11139806145762558,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "a56c86de921a5dc8f39d878caa6217ab4acce2b1406399d684848b15489003b1",
+      "nearest": true,
+      "original_stream_bytes": 587,
+      "coefficient_reuse": [],
+      "score": {
+        "stoi": 0.797573544366162,
+        "spectrogram_loss": 0.4739348898406775,
+        "fine_log_error": 0.46099198636140515,
+        "envelope_error": 0.5600065858319963,
+        "unsupported_energy": 0.17502019566002505,
+        "missing_energy": 0.18332115103921637,
+        "stream_bytes": 587,
+        "peak_signed": 81,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.009918563667385057,
+        "raw_rms": 0.07967073523415742,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "0d234d29a7f5725e2e8829c0693c767eb621879c565ad17618666b9eb94c0840",
+      "nearest": true,
+      "original_stream_bytes": 587,
+      "coefficient_reuse": [],
+      "score": {
+        "stoi": 0.8194239319648275,
+        "spectrogram_loss": 0.49773300076190213,
+        "fine_log_error": 0.48229066033409546,
+        "envelope_error": 0.592901661112324,
+        "unsupported_energy": 0.19526050292080005,
+        "missing_energy": 0.19448282631119623,
+        "stream_bytes": 587,
+        "peak_signed": 59,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.00034411200161637933,
+        "raw_rms": 0.060732502131135485,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "62245d38f023b3352bd1b169e07b8805b66a9698e919c51eeca7f7216246d2c1",
+      "nearest": true,
+      "original_stream_bytes": 587,
+      "coefficient_reuse": [],
+      "score": {
+        "stoi": 0.7979697706013008,
+        "spectrogram_loss": 0.4739959731346124,
+        "fine_log_error": 0.4610862792460363,
+        "envelope_error": 0.5599242513732592,
+        "unsupported_energy": 0.17515438733861297,
+        "missing_energy": 0.18338251290457944,
+        "stream_bytes": 587,
+        "peak_signed": 81,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.00966565362338362,
+        "raw_rms": 0.0790014628287809,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "151a54ecaf700f0d8b6a4782f775e36e333498b359bfa893eefd18914cf2e107",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.21581674532144918,
+        "spectrogram_loss": 0.7648677180824714,
+        "fine_log_error": 0.6370394600413295,
+        "envelope_error": 1.0410838576001882,
+        "unsupported_energy": 0.4719135285339699,
+        "missing_energy": 0.6486219861682576,
+        "stream_bytes": 590,
+        "peak_signed": 38,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.0389849783360273,
+        "raw_rms": 0.051356049997382795,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "43bcf03a7747c6797bee5d6f27ab7a15268b290598934970f7cf2eaa7b24227d",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.26187588813152934,
+        "spectrogram_loss": 0.71584709871622,
+        "fine_log_error": 0.6019325419931392,
+        "envelope_error": 0.9785121648120825,
+        "unsupported_energy": 0.36809344385356496,
+        "missing_energy": 0.624226465278064,
+        "stream_bytes": 590,
+        "peak_signed": 52,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.042287190755208336,
+        "raw_rms": 0.058442697905249814,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "e3615b37e6e98bd3624eeb123810b5b16935ccaeb3b345d7b6199efe02a619ad",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.43328312089274984,
+        "spectrogram_loss": 0.6125628233914033,
+        "fine_log_error": 0.5190616191353299,
+        "envelope_error": 0.8327535810239884,
+        "unsupported_energy": 0.26967031883580606,
+        "missing_energy": 0.44805777152395043,
+        "stream_bytes": 590,
+        "peak_signed": 84,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.05426867254849138,
+        "raw_rms": 0.08342216404953605,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "5dc4780817f5db1e1cdf436258ef7e653f0e25925ccea39d89cbdb4116dc5e14",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.2709379852968369,
+        "spectrogram_loss": 0.7223546668484595,
+        "fine_log_error": 0.6120003973222192,
+        "envelope_error": 0.9638680232665564,
+        "unsupported_energy": 0.423754488539385,
+        "missing_energy": 0.5744825489719212,
+        "stream_bytes": 590,
+        "peak_signed": 48,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.04090618265086207,
+        "raw_rms": 0.053628780147842135,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "938d380a476a6d6833341657bf4332d2b1ea7ec54f9d6a1db02571fb36460b8a",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.314274808099142,
+        "spectrogram_loss": 0.6805298599286398,
+        "fine_log_error": 0.5751607022691456,
+        "envelope_error": 0.9097899298948805,
+        "unsupported_energy": 0.3622897003005382,
+        "missing_energy": 0.5458113968638707,
+        "stream_bytes": 590,
+        "peak_signed": 57,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.045161455527119254,
+        "raw_rms": 0.060689439353389725,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "4d7bb676797d9e5f8d0a80af72ad99b8ceb3b47635d96b0fe4d5efa14e9747b5",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.5363144502843616,
+        "spectrogram_loss": 0.5889709428663231,
+        "fine_log_error": 0.516558439696584,
+        "envelope_error": 0.7627402959535419,
+        "unsupported_energy": 0.2797829614491751,
+        "missing_energy": 0.3605467228647994,
+        "stream_bytes": 590,
+        "peak_signed": 57,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.056417530980603446,
+        "raw_rms": 0.07712111647716105,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "c9c50157011e2e68b2f4d3f407dbda85dc165c64576e746f43a776cb7339198e",
+      "nearest": false,
+      "original_stream_bytes": 599,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 595,
+          "after_bytes": 591
+        }
+      ],
+      "score": {
+        "stoi": 0.21443978907360725,
+        "spectrogram_loss": 0.735863776241318,
+        "fine_log_error": 0.6196086531085574,
+        "envelope_error": 0.9894820888389038,
+        "unsupported_energy": 0.4423400020950379,
+        "missing_energy": 0.5875539484031458,
+        "stream_bytes": 591,
+        "peak_signed": 45,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.040702732130028736,
+        "raw_rms": 0.05277764569785439,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "9efebc9db2f65454a93c2019c26bca18e311349176c4ca28b5e1e748a005a6dd",
+      "nearest": false,
+      "original_stream_bytes": 599,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 595,
+          "after_bytes": 591
+        }
+      ],
+      "score": {
+        "stoi": 0.28372424629460474,
+        "spectrogram_loss": 0.6751462577741947,
+        "fine_log_error": 0.5926994322486988,
+        "envelope_error": 0.889173992609298,
+        "unsupported_energy": 0.3367448712238291,
+        "missing_energy": 0.491100594322174,
+        "stream_bytes": 591,
+        "peak_signed": 55,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.04673047997485632,
+        "raw_rms": 0.06293062958656917,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "d69618319ef63a2c47c2b78487654f68dba584262d2c0de3316b995ad284a1f2",
+      "nearest": false,
+      "original_stream_bytes": 599,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 595,
+          "after_bytes": 591
+        }
+      ],
+      "score": {
+        "stoi": 0.5276238198570758,
+        "spectrogram_loss": 0.5666515907005338,
+        "fine_log_error": 0.5114320757072071,
+        "envelope_error": 0.7247142232111261,
+        "unsupported_energy": 0.24756302495778074,
+        "missing_energy": 0.3115558636095114,
+        "stream_bytes": 591,
+        "peak_signed": 64,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.05614111889367816,
+        "raw_rms": 0.08007939120853776,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "a3f42819e63f4315098ed0a87ae1b0723a2e0b10f3745dc5df6f38ef4325a87e",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.2651158857024111,
+        "spectrogram_loss": 0.7156125593452232,
+        "fine_log_error": 0.6054760097995844,
+        "envelope_error": 0.960830502070426,
+        "unsupported_energy": 0.40769138370964464,
+        "missing_energy": 0.5660952103622572,
+        "stream_bytes": 590,
+        "peak_signed": 32,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.04067186377514368,
+        "raw_rms": 0.05099273275991542,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "fdf6bee67fc76da3febee79459c7dec7a34d81e67594dcc7cf8ef6fae48dfe0e",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.39632720651424486,
+        "spectrogram_loss": 0.6163706849814305,
+        "fine_log_error": 0.5444017284680032,
+        "envelope_error": 0.8077797652186833,
+        "unsupported_energy": 0.27314523534392543,
+        "missing_energy": 0.42143946576328223,
+        "stream_bytes": 590,
+        "peak_signed": 66,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.035353737315912355,
+        "raw_rms": 0.056878050789411314,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "88ce3f8ecd3df910babeb1e6aaade5be2e1d2f01bbc60f92c9fa021e926d172a",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.3276123672665387,
+        "spectrogram_loss": 0.7192411094830562,
+        "fine_log_error": 0.6089040763682187,
+        "envelope_error": 0.9638972361349443,
+        "unsupported_energy": 0.42313734687418886,
+        "missing_energy": 0.5499994778736724,
+        "stream_bytes": 590,
+        "peak_signed": 42,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.04212232567798132,
+        "raw_rms": 0.05418854903002605,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "6d7a9c47b9eb3e80f1de01bfafe6398e74abc79f4b7e900039870e0582884607",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.3889122169621846,
+        "spectrogram_loss": 0.6560165447133335,
+        "fine_log_error": 0.5804840415707353,
+        "envelope_error": 0.8526009220052213,
+        "unsupported_energy": 0.32783594456219595,
+        "missing_energy": 0.4507051281775728,
+        "stream_bytes": 590,
+        "peak_signed": 44,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.0490698101876796,
+        "raw_rms": 0.06328590693145776,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "170d4501f26591e87b4e23af77014b867e5146672e6edd5a534961d02d46fbf3",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.4884324614109759,
+        "spectrogram_loss": 0.6045045835374317,
+        "fine_log_error": 0.5274071636764511,
+        "envelope_error": 0.7905513418996424,
+        "unsupported_energy": 0.28054693823694576,
+        "missing_energy": 0.40449804512954546,
+        "stream_bytes": 590,
+        "peak_signed": 73,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.05453385977909483,
+        "raw_rms": 0.0727171148258749,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "4dd6be1ad8431786837f3b40e79d8d28fc16ed28774ba45278536d9a32e0cbd6",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.4743665414146453,
+        "spectrogram_loss": 0.6118881619101101,
+        "fine_log_error": 0.5211714570511552,
+        "envelope_error": 0.8144075193410061,
+        "unsupported_energy": 0.2914801086726536,
+        "missing_energy": 0.4327183479459144,
+        "stream_bytes": 590,
+        "peak_signed": 71,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.054002432987607756,
+        "raw_rms": 0.07361906523381978,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "bd175b3e0c4a5557de9c3a4affd469d358c5c6d1dc0ee1f53f65f502ed417c5a",
+      "nearest": false,
+      "original_stream_bytes": 594,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 592
+        }
+      ],
+      "score": {
+        "stoi": 0.27642586745812053,
+        "spectrogram_loss": 0.709784776549726,
+        "fine_log_error": 0.5996720393191405,
+        "envelope_error": 0.9474733169161851,
+        "unsupported_energy": 0.4167165414603,
+        "missing_energy": 0.5469616906599077,
+        "stream_bytes": 592,
+        "peak_signed": 36,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.03602337015086207,
+        "raw_rms": 0.0476033994648888,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "687e5aebe6f5796285fe6acb12248b5d9269361d5df71adae89249c03f4b85c3",
+      "nearest": false,
+      "original_stream_bytes": 594,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 592
+        }
+      ],
+      "score": {
+        "stoi": 0.4113875020659716,
+        "spectrogram_loss": 0.6090204102416991,
+        "fine_log_error": 0.5180613735578332,
+        "envelope_error": 0.8188181523712559,
+        "unsupported_energy": 0.28439906309931196,
+        "missing_energy": 0.4164133383056824,
+        "stream_bytes": 592,
+        "peak_signed": 37,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.03508679620150862,
+        "raw_rms": 0.0532113014570169,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "6be2b8499c6e999f33a035a489f9846b3469f1e6347600b60d848d3b4d45ac52",
+      "nearest": false,
+      "original_stream_bytes": 594,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 592
+        }
+      ],
+      "score": {
+        "stoi": 0.5107733930367059,
+        "spectrogram_loss": 0.5680465149451638,
+        "fine_log_error": 0.5019153797839392,
+        "envelope_error": 0.7484220662909065,
+        "unsupported_energy": 0.25220895368926255,
+        "missing_energy": 0.29853392743564966,
+        "stream_bytes": 592,
+        "peak_signed": 63,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.0321465853987069,
+        "raw_rms": 0.07590936543676007,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "dbc89d09b0aeb1b04d0a4d053f6bcec9818949225fd555ce27498daf6cf47057",
+      "nearest": false,
+      "original_stream_bytes": 600,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 596
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 596,
+          "after_bytes": 592
+        }
+      ],
+      "score": {
+        "stoi": 0.380831558736798,
+        "spectrogram_loss": 0.6904474300567123,
+        "fine_log_error": 0.5940056140404661,
+        "envelope_error": 0.9087664866596623,
+        "unsupported_energy": 0.41300013371190136,
+        "missing_energy": 0.45458756491792196,
+        "stream_bytes": 592,
+        "peak_signed": 46,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.04463739504759339,
+        "raw_rms": 0.05948899179412425,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "55c0754cac24401aeeccb1850842894cf2b232f057e32e67ab3778a2c39615ae",
+      "nearest": false,
+      "original_stream_bytes": 600,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 596
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 596,
+          "after_bytes": 592
+        }
+      ],
+      "score": {
+        "stoi": 0.46773728073916415,
+        "spectrogram_loss": 0.6348844801108106,
+        "fine_log_error": 0.5551381729046524,
+        "envelope_error": 0.8312261942223342,
+        "unsupported_energy": 0.32259206487491066,
+        "missing_energy": 0.4054044155918751,
+        "stream_bytes": 592,
+        "peak_signed": 53,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.04684518397539512,
+        "raw_rms": 0.06667134142522721,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "28675d6cbae8f7d5acc6e1be935a74d92836fd2506bbb9a72c2759692a5f5af2",
+      "nearest": false,
+      "original_stream_bytes": 600,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 596
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 596,
+          "after_bytes": 592
+        }
+      ],
+      "score": {
+        "stoi": 0.5601124660349027,
+        "spectrogram_loss": 0.6233978865572462,
+        "fine_log_error": 0.5741041354862633,
+        "envelope_error": 0.7862561130656789,
+        "unsupported_energy": 0.3077125810821617,
+        "missing_energy": 0.33112317546563147,
+        "stream_bytes": 592,
+        "peak_signed": 56,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.05866215146821121,
+        "raw_rms": 0.0780832990526655,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "3398b674f0fa54a89295ddf1ccfb6c0e28f7529ec4edf79285db86e8a518de74",
+      "nearest": false,
+      "original_stream_bytes": 600,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 596
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 596,
+          "after_bytes": 592
+        }
+      ],
+      "score": {
+        "stoi": 0.5494656150152991,
+        "spectrogram_loss": 0.6122713716940519,
+        "fine_log_error": 0.5450101303342806,
+        "envelope_error": 0.792073467362409,
+        "unsupported_energy": 0.3005253573671208,
+        "missing_energy": 0.35233792826667404,
+        "stream_bytes": 592,
+        "peak_signed": 66,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.058464664152298854,
+        "raw_rms": 0.08161907069907634,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "ec2963c9d2decc92d64ed54cac207a2541a654c52662131616ba0ce84acaf615",
+      "nearest": false,
+      "original_stream_bytes": 601,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 593
+        }
+      ],
+      "score": {
+        "stoi": 0.30601204294378304,
+        "spectrogram_loss": 0.7167514600070272,
+        "fine_log_error": 0.6195129233699896,
+        "envelope_error": 0.9460427076143585,
+        "unsupported_energy": 0.4303633483406749,
+        "missing_energy": 0.4935877250806905,
+        "stream_bytes": 593,
+        "peak_signed": 40,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.04335074589170258,
+        "raw_rms": 0.057236927313925254,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "417f546f107634b4ad4494c65de80df059d017bb3309904a1eb5228522393626",
+      "nearest": false,
+      "original_stream_bytes": 601,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 593
+        }
+      ],
+      "score": {
+        "stoi": 0.41464397343063286,
+        "spectrogram_loss": 0.6246041910095808,
+        "fine_log_error": 0.5625068664719426,
+        "envelope_error": 0.8039989400900436,
+        "unsupported_energy": 0.288127749938438,
+        "missing_energy": 0.39842986397295227,
+        "stream_bytes": 593,
+        "peak_signed": 55,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.053178458378232756,
+        "raw_rms": 0.07185776259317166,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "7b1ce37acb86d25096356fa8da289bde14103927ca085462be57156d22a3c556",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.17757357835586987,
+        "spectrogram_loss": 0.7642075624900964,
+        "fine_log_error": 0.6175715060807307,
+        "envelope_error": 1.0492168480977482,
+        "unsupported_energy": 0.4732338085650334,
+        "missing_energy": 0.7467066556141215,
+        "stream_bytes": 587,
+        "peak_signed": 19,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.006485511516702586,
+        "raw_rms": 0.013765462633598015,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "4faa9bd8d24364ca2b61c60cd9d6d419145455f03649123c53a2a7ae7a4496e4",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.1919275532290058,
+        "spectrogram_loss": 0.7315287878999635,
+        "fine_log_error": 0.5962046572306519,
+        "envelope_error": 1.0059148965853983,
+        "unsupported_energy": 0.41516228963255664,
+        "missing_energy": 0.6871049008270795,
+        "stream_bytes": 587,
+        "peak_signed": 29,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.0023575706043462642,
+        "raw_rms": 0.02011498872472911,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "b749bce4f3d2d67a8386971d33913e976818db121ad84f15aaa8b7b852c16766",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.43320979154783923,
+        "spectrogram_loss": 0.6424868949963738,
+        "fine_log_error": 0.5166017654235814,
+        "envelope_error": 0.8893524052663968,
+        "unsupported_energy": 0.3427825159628204,
+        "missing_energy": 0.4981922642063356,
+        "stream_bytes": 587,
+        "peak_signed": 50,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.00875012627963362,
+        "raw_rms": 0.0358450918271885,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "8b9563110adc7c0cfc206df568f286dfb37fc471cbfdfee6cc9ce5c5d59b696f",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.22575212018103813,
+        "spectrogram_loss": 0.7243519682243855,
+        "fine_log_error": 0.6091738792420378,
+        "envelope_error": 0.9826719163922069,
+        "unsupported_energy": 0.37980450822917833,
+        "missing_energy": 0.6609556740324142,
+        "stream_bytes": 587,
+        "peak_signed": 25,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.0076206251122485635,
+        "raw_rms": 0.01695461041792644,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "9fdc6d2d0a2e510235bbaec7c8a8f02c611f6a1ad67c168b9249bb14f1549a67",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.3424890528399058,
+        "spectrogram_loss": 0.6569184037880731,
+        "fine_log_error": 0.5440422550327497,
+        "envelope_error": 0.8958780870710821,
+        "unsupported_energy": 0.3289827689710153,
+        "missing_energy": 0.5389883828756654,
+        "stream_bytes": 587,
+        "peak_signed": 38,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.009729845770474138,
+        "raw_rms": 0.02612945841849265,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "1b926f8c1abd3080ac9c089002e43e56bd1b11a1767a5d528aade67e692b5d49",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.4825204388421594,
+        "spectrogram_loss": 0.6081263083379328,
+        "fine_log_error": 0.5011510118880187,
+        "envelope_error": 0.8415487197977904,
+        "unsupported_energy": 0.27690547715672154,
+        "missing_energy": 0.44859929066445936,
+        "stream_bytes": 587,
+        "peak_signed": 59,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.011988848105244252,
+        "raw_rms": 0.03786186051297853,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "1539ee96011df0aaf46ba7be533152cb19ac2d31dc3f15652e6215048f5d8ec3",
+      "nearest": true,
+      "original_stream_bytes": 608,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 608,
+          "after_bytes": 606
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 606,
+          "after_bytes": 604
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 604,
+          "after_bytes": 602
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 596
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 596,
+          "after_bytes": 594
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 594,
+          "after_bytes": 592
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 592,
+          "after_bytes": 590
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 590,
+          "after_bytes": 588
+        }
+      ],
+      "score": {
+        "stoi": 0.1742114235924775,
+        "spectrogram_loss": 0.7404668070115143,
+        "fine_log_error": 0.6086650672210603,
+        "envelope_error": 1.0306329845224609,
+        "unsupported_energy": 0.4079999509096851,
+        "missing_energy": 0.6586869786298546,
+        "stream_bytes": 588,
+        "peak_signed": 19,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.006209450206537357,
+        "raw_rms": 0.013765363092688302,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "fec076b0cae9642f18752358e13bf8e33b7044981900646e10071253351960ed",
+      "nearest": true,
+      "original_stream_bytes": 608,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 608,
+          "after_bytes": 606
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 606,
+          "after_bytes": 604
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 604,
+          "after_bytes": 602
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 596
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 596,
+          "after_bytes": 594
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 594,
+          "after_bytes": 592
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 592,
+          "after_bytes": 590
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 590,
+          "after_bytes": 588
+        }
+      ],
+      "score": {
+        "stoi": 0.30193275503807787,
+        "spectrogram_loss": 0.66619306386051,
+        "fine_log_error": 0.5432966865736528,
+        "envelope_error": 0.9300069830814914,
+        "unsupported_energy": 0.34995329046508133,
+        "missing_energy": 0.5025974703079719,
+        "stream_bytes": 588,
+        "peak_signed": 38,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.006526201620869253,
+        "raw_rms": 0.02708105926005702,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "c2f655ee00d57c77cdf48c29e3c045fd6c96e54302a3347eb994e253469a74eb",
+      "nearest": true,
+      "original_stream_bytes": 608,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 608,
+          "after_bytes": 606
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 606,
+          "after_bytes": 604
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 604,
+          "after_bytes": 602
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 596
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 596,
+          "after_bytes": 594
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 594,
+          "after_bytes": 592
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 592,
+          "after_bytes": 590
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 590,
+          "after_bytes": 588
+        }
+      ],
+      "score": {
+        "stoi": 0.5260901851824707,
+        "spectrogram_loss": 0.5578293343261971,
+        "fine_log_error": 0.4831665491217165,
+        "envelope_error": 0.7371496412611731,
+        "unsupported_energy": 0.26324728468105263,
+        "missing_energy": 0.2862433814942134,
+        "stream_bytes": 588,
+        "peak_signed": 48,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.005877966168283046,
+        "raw_rms": 0.04898012552726359,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "6de49b65eb091ecefb771a88e8be02be6bec1ff8e56ee36521a978b155ca1573",
+      "nearest": true,
+      "original_stream_bytes": 607,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 589
+        }
+      ],
+      "score": {
+        "stoi": 0.3158337325238693,
+        "spectrogram_loss": 0.6899805218320103,
+        "fine_log_error": 0.5831888024181395,
+        "envelope_error": 0.9370452598574696,
+        "unsupported_energy": 0.35542422437703003,
+        "missing_energy": 0.5483300892304451,
+        "stream_bytes": 589,
+        "peak_signed": 22,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.008951121363146552,
+        "raw_rms": 0.019056563242705882,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "b6795fe2bdb2ef8144b59bec141c4f63b3f87930592b16a50e680a6b6fd5658f",
+      "nearest": true,
+      "original_stream_bytes": 607,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 589
+        }
+      ],
+      "score": {
+        "stoi": 0.40438439098059464,
+        "spectrogram_loss": 0.627671882740924,
+        "fine_log_error": 0.5347405947692316,
+        "envelope_error": 0.8528455075875945,
+        "unsupported_energy": 0.2801624557844521,
+        "missing_energy": 0.46194436201535966,
+        "stream_bytes": 589,
+        "peak_signed": 34,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.008164329090337643,
+        "raw_rms": 0.029963666976813963,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "f766d766ff07aaabb6b533e262e1d3a468d0c9301e70426b001efa4296049036",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.1751324757868113,
+        "spectrogram_loss": 0.7594111267849993,
+        "fine_log_error": 0.6122490540428356,
+        "envelope_error": 1.03983541435965,
+        "unsupported_energy": 0.47291805409846865,
+        "missing_energy": 0.7465326954194266,
+        "stream_bytes": 587,
+        "peak_signed": 20,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.006660899896731322,
+        "raw_rms": 0.01446800923143395,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "b0ac38a52a58b42b4a41df0396f64dd80df055faddce2df2d0b71ad65c89aa0d",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.22181433476230314,
+        "spectrogram_loss": 0.7134518925388906,
+        "fine_log_error": 0.5881813623907179,
+        "envelope_error": 0.9802140682966923,
+        "unsupported_energy": 0.37697576335680566,
+        "missing_energy": 0.6548055835817919,
+        "stream_bytes": 587,
+        "peak_signed": 34,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.003596514120869253,
+        "raw_rms": 0.021270484465291083,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "e5cf69e7cc70814858819212307cabc06ad6103f68ff8dceb140eaf8f139d62f",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.44972676469233547,
+        "spectrogram_loss": 0.6311161782554824,
+        "fine_log_error": 0.5113894727264816,
+        "envelope_error": 0.8759579723302574,
+        "unsupported_energy": 0.3162647202949789,
+        "missing_energy": 0.483394617426366,
+        "stream_bytes": 587,
+        "peak_signed": 45,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.010920382094109195,
+        "raw_rms": 0.03669678331145845,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "319e76ecbb4a74fd6b7211e9fe86af4c18a3dcf72bb2a9d4076547a96b8fd0ab",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.27523546962417655,
+        "spectrogram_loss": 0.714061969665825,
+        "fine_log_error": 0.5863631310525858,
+        "envelope_error": 0.9612025998172142,
+        "unsupported_energy": 0.43324659389862885,
+        "missing_energy": 0.6123840383299959,
+        "stream_bytes": 587,
+        "peak_signed": 22,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.00832288018588362,
+        "raw_rms": 0.018500033527591563,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "7d6e5597894b1d1ad901d0bc71687c625621230ee0e72f85ea1342855846fad3",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.34509221971562426,
+        "spectrogram_loss": 0.6737062649230576,
+        "fine_log_error": 0.5499292722911459,
+        "envelope_error": 0.922503348985498,
+        "unsupported_energy": 0.36545196200446967,
+        "missing_energy": 0.558113723411533,
+        "stream_bytes": 587,
+        "peak_signed": 35,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.008811512212643677,
+        "raw_rms": 0.025980313694290012,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "11c6bdc74583caad49d0745f34c9cb8b397fc94f21185cbbf30f796949cb5eb4",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.4985745630507509,
+        "spectrogram_loss": 0.6221196698604213,
+        "fine_log_error": 0.500912403047982,
+        "envelope_error": 0.8549366410197387,
+        "unsupported_energy": 0.33938069964758,
+        "missing_energy": 0.44172171007612204,
+        "stream_bytes": 587,
+        "peak_signed": 43,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.01232769845545977,
+        "raw_rms": 0.03740132822375516,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "3154c2c314732f581585f0728c75ec8a9342c131d9e5cf50d0bab06e92ffd142",
+      "nearest": true,
+      "original_stream_bytes": 608,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 608,
+          "after_bytes": 606
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 606,
+          "after_bytes": 604
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 604,
+          "after_bytes": 602
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 596
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 596,
+          "after_bytes": 594
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 594,
+          "after_bytes": 592
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 592,
+          "after_bytes": 590
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 590,
+          "after_bytes": 588
+        }
+      ],
+      "score": {
+        "stoi": 0.2117515891564906,
+        "spectrogram_loss": 0.7323799735698243,
+        "fine_log_error": 0.6074188989334803,
+        "envelope_error": 1.0060618077889134,
+        "unsupported_energy": 0.39876617485377636,
+        "missing_energy": 0.6598336659955779,
+        "stream_bytes": 588,
+        "peak_signed": 23,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.0075532759743175285,
+        "raw_rms": 0.017630973870152278,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "9bfdd8d14046d43ce496ed387a3549ebe4af62d9a5b7af12a2dc6ca65422ffc4",
+      "nearest": true,
+      "original_stream_bytes": 608,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 608,
+          "after_bytes": 606
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 606,
+          "after_bytes": 604
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 604,
+          "after_bytes": 602
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 596
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 596,
+          "after_bytes": 594
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 594,
+          "after_bytes": 592
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 592,
+          "after_bytes": 590
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 590,
+          "after_bytes": 588
+        }
+      ],
+      "score": {
+        "stoi": 0.2745114062808727,
+        "spectrogram_loss": 0.6817844445641226,
+        "fine_log_error": 0.5625192285339611,
+        "envelope_error": 0.9388272158944404,
+        "unsupported_energy": 0.34881298881630657,
+        "missing_energy": 0.5749158265542209,
+        "stream_bytes": 588,
+        "peak_signed": 38,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.005288661211386494,
+        "raw_rms": 0.026730787505805115,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "e67b46b80da071eb9c6c16d7c41d93387e6030e1b0d0223709f779acf328ae91",
+      "nearest": true,
+      "original_stream_bytes": 610,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 610,
+          "after_bytes": 608
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 608,
+          "after_bytes": 606
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 606,
+          "after_bytes": 604
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 604,
+          "after_bytes": 602
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 596
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 596,
+          "after_bytes": 594
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 592
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 592,
+          "after_bytes": 590
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 590,
+          "after_bytes": 586
+        }
+      ],
+      "score": {
+        "stoi": 0.36541796996560866,
+        "spectrogram_loss": 0.6678507870401855,
+        "fine_log_error": 0.5613811604940284,
+        "envelope_error": 0.9057294431535927,
+        "unsupported_energy": 0.34119546051072275,
+        "missing_energy": 0.5180116506969991,
+        "stream_bytes": 586,
+        "peak_signed": 24,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.008314110766882184,
+        "raw_rms": 0.018934657462259915,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "fa3526c671a475c0a2321d91cf72c4d59a391d52dd22031f8e659a53d70f27a5",
+      "nearest": true,
+      "original_stream_bytes": 610,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 610,
+          "after_bytes": 608
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 608,
+          "after_bytes": 606
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 606,
+          "after_bytes": 604
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 604,
+          "after_bytes": 602
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 596
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 596,
+          "after_bytes": 594
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 592
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 592,
+          "after_bytes": 590
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 590,
+          "after_bytes": 586
+        }
+      ],
+      "score": {
+        "stoi": 0.39893364351666866,
+        "spectrogram_loss": 0.6376997509971564,
+        "fine_log_error": 0.5261974771738551,
+        "envelope_error": 0.8750469810253398,
+        "unsupported_energy": 0.3194948713314313,
+        "missing_energy": 0.4775001583875073,
+        "stream_bytes": 586,
+        "peak_signed": 35,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.008119429665050287,
+        "raw_rms": 0.030745411660210574,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "e4300769009e9180f13b20c5009e577cdb5c129136d7b65087ad34295526dea6",
+      "nearest": true,
+      "original_stream_bytes": 610,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 610,
+          "after_bytes": 608
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 608,
+          "after_bytes": 606
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 606,
+          "after_bytes": 604
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 604,
+          "after_bytes": 602
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 596
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 596,
+          "after_bytes": 594
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 592
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 592,
+          "after_bytes": 590
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 590,
+          "after_bytes": 586
+        }
+      ],
+      "score": {
+        "stoi": 0.5379475360189303,
+        "spectrogram_loss": 0.5869472477689178,
+        "fine_log_error": 0.48214468497268614,
+        "envelope_error": 0.8145370554159993,
+        "unsupported_energy": 0.2728124200582773,
+        "missing_energy": 0.38297506139005877,
+        "stream_bytes": 586,
+        "peak_signed": 45,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.013562081874102011,
+        "raw_rms": 0.04489975536707424,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "6f1650812365b9f48a8f0e03d9cf16c277ec31899bd954a35bb43c9826cf60b1",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.7863242947373948,
+        "spectrogram_loss": 0.5172596696666144,
+        "fine_log_error": 0.4810395096541499,
+        "envelope_error": 0.6432386219241144,
+        "unsupported_energy": 0.21301410785536262,
+        "missing_energy": 0.2272937280237804,
+        "stream_bytes": 590,
+        "peak_signed": 77,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07034827922952586,
+        "raw_rms": 0.09977384293525594,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "be2a1033d58fc0ab3f90eff2f91236c974c5def170e687ef6e6a4c1e3a4999e8",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.7936657346928404,
+        "spectrogram_loss": 0.5073928966398568,
+        "fine_log_error": 0.4706760376889386,
+        "envelope_error": 0.6263442212783198,
+        "unsupported_energy": 0.21232725135798836,
+        "missing_energy": 0.2194422343699504,
+        "stream_bytes": 590,
+        "peak_signed": 89,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07457022831357758,
+        "raw_rms": 0.11163188941848604,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "e92289773f8a897264c03b8f2a336e85d7a91107abdf7fcedc29e327f6d8a604",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.7459481161984381,
+        "spectrogram_loss": 0.5421823071450508,
+        "fine_log_error": 0.517258289649411,
+        "envelope_error": 0.6593061855919162,
+        "unsupported_energy": 0.23033680204974008,
+        "missing_energy": 0.23622222088900674,
+        "stream_bytes": 590,
+        "peak_signed": 80,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07410615066002155,
+        "raw_rms": 0.09956635084836724,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "1f5b423df12471c349d2f9cb09ddb60cdb2960d93ecfb3f4063cf599ce0f0acf",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.7587607674898181,
+        "spectrogram_loss": 0.5352185574847315,
+        "fine_log_error": 0.5136759225965079,
+        "envelope_error": 0.6439695065536054,
+        "unsupported_energy": 0.22873284623298007,
+        "missing_energy": 0.22486535513544945,
+        "stream_bytes": 590,
+        "peak_signed": 94,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07629780385686064,
+        "raw_rms": 0.10877443746378086,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "a2a88b603d75fc5da06b5d6df555bd155767bddac1eaa00ac1e0aa998117ec05",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.7166805755436538,
+        "spectrogram_loss": 0.5362380841564606,
+        "fine_log_error": 0.48540249840592486,
+        "envelope_error": 0.67816140059705,
+        "unsupported_energy": 0.23150710678095388,
+        "missing_energy": 0.27077701576621505,
+        "stream_bytes": 590,
+        "peak_signed": 90,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07796329191361351,
+        "raw_rms": 0.10829178682120441,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "c8e597732c639d02fe8a253215fb87208395f7008cb2c46cd62adb3fc40b848c",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.7326393277908656,
+        "spectrogram_loss": 0.523447727077272,
+        "fine_log_error": 0.4687555536750248,
+        "envelope_error": 0.6652184896537376,
+        "unsupported_energy": 0.226004786554255,
+        "missing_energy": 0.2613579948853381,
+        "stream_bytes": 590,
+        "peak_signed": 93,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.08247743803879311,
+        "raw_rms": 0.12095856891685429,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "40f1b26662e321da83f8823c0b2f4cc9d8c06355de46047edf1fe422f50307eb",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.7930153671083398,
+        "spectrogram_loss": 0.5335501246865667,
+        "fine_log_error": 0.5227923606719328,
+        "envelope_error": 0.6312842236470253,
+        "unsupported_energy": 0.2233722624505547,
+        "missing_energy": 0.21112147305731493,
+        "stream_bytes": 590,
+        "peak_signed": 71,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.0686670062185704,
+        "raw_rms": 0.09476267477404257,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "c05498359b9070d2c2eb59f6ae5c488bd430d303f4b8b5d595be34a7ee6fb7fa",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.8176183274609791,
+        "spectrogram_loss": 0.5191971222526652,
+        "fine_log_error": 0.5077723045820339,
+        "envelope_error": 0.6130070864852677,
+        "unsupported_energy": 0.21242559632494268,
+        "missing_energy": 0.2049238073026274,
+        "stream_bytes": 590,
+        "peak_signed": 76,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07222142712823276,
+        "raw_rms": 0.10510164032052419,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "a77a35d575004bd14f09e9f82ab8e779d8a83cdf72807491c47cb5027ec6f87c",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.7693328197570465,
+        "spectrogram_loss": 0.541315905784263,
+        "fine_log_error": 0.5310143063364853,
+        "envelope_error": 0.6367220838396024,
+        "unsupported_energy": 0.23381772439671333,
+        "missing_energy": 0.2159418350196312,
+        "stream_bytes": 590,
+        "peak_signed": 66,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07294297492367098,
+        "raw_rms": 0.0973142048880841,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "8d2f1020196994e290be885ecd424a4ec869930f3ba047445efed120b5c688ef",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.797818494812916,
+        "spectrogram_loss": 0.5205803340146891,
+        "fine_log_error": 0.5030101046815898,
+        "envelope_error": 0.6180577080022318,
+        "unsupported_energy": 0.22160154853201786,
+        "missing_energy": 0.20759152157652072,
+        "stream_bytes": 590,
+        "peak_signed": 76,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07603226584949713,
+        "raw_rms": 0.10712722660131278,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "d985747ba3a813322594b0075422906577b93be1100825bcdda9052db0758689",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.7445163334314554,
+        "spectrogram_loss": 0.5766785501756373,
+        "fine_log_error": 0.5713210747823637,
+        "envelope_error": 0.6769756747584583,
+        "unsupported_energy": 0.25117845432984615,
+        "missing_energy": 0.2510484375844636,
+        "stream_bytes": 590,
+        "peak_signed": 50,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.06323031721443965,
+        "raw_rms": 0.08478897155513725,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "811bc302bc8768674b0a5e74c6282ca3606ec62bd22bc5edff475a21f1922da7",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.7469439191410867,
+        "spectrogram_loss": 0.5686879308825378,
+        "fine_log_error": 0.5528639817221812,
+        "envelope_error": 0.6755258530118128,
+        "unsupported_energy": 0.25283368594743155,
+        "missing_energy": 0.25454583467287645,
+        "stream_bytes": 590,
+        "peak_signed": 58,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.06584360407686782,
+        "raw_rms": 0.09289747785714599,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "44ae455f3e9b58a1ad72e0d5b97b52d4cd475864348311020cdbe8a8a40245bc",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.7005083512866491,
+        "spectrogram_loss": 0.5781398128208589,
+        "fine_log_error": 0.5667887741718505,
+        "envelope_error": 0.6902409057231529,
+        "unsupported_energy": 0.24785437756838025,
+        "missing_energy": 0.2596380148732622,
+        "stream_bytes": 590,
+        "peak_signed": 44,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.06442681674299569,
+        "raw_rms": 0.08307745992618419,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "c10c5ed9bb937226e941129a0d8b1e0c9e95029cd4aac234ca0ccef57d67e980",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.7158308806289402,
+        "spectrogram_loss": 0.5772636244188406,
+        "fine_log_error": 0.5570742617885125,
+        "envelope_error": 0.6987665614061569,
+        "unsupported_energy": 0.2492910585127101,
+        "missing_energy": 0.270716827064115,
+        "stream_bytes": 590,
+        "peak_signed": 55,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.06627330560793822,
+        "raw_rms": 0.08995204424963964,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "494cbae697e139afcde395b1ee417ec453e1bfabecc2638910e7a71256e88d10",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.802599310539151,
+        "spectrogram_loss": 0.524165568459411,
+        "fine_log_error": 0.5056140299169438,
+        "envelope_error": 0.6312517600030736,
+        "unsupported_energy": 0.20981215164641537,
+        "missing_energy": 0.22293319716648685,
+        "stream_bytes": 590,
+        "peak_signed": 71,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.069183349609375,
+        "raw_rms": 0.09862854751807261,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "98b4368ab4aa6358397978bfa0cd881a48285677e278a27e40b32ae228f90517",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.8174602551495147,
+        "spectrogram_loss": 0.5123307549326213,
+        "fine_log_error": 0.4899364087985295,
+        "envelope_error": 0.6185183387022982,
+        "unsupported_energy": 0.20623354790478515,
+        "missing_energy": 0.21533217847840813,
+        "stream_bytes": 590,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07245153668283046,
+        "raw_rms": 0.10962469353827556,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "94506688086fea32ad8af6a254310a320cb95b08e722e459975038bb5e471fbd",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.7389592730020721,
+        "spectrogram_loss": 0.5580019315072824,
+        "fine_log_error": 0.5361054082662658,
+        "envelope_error": 0.6714471024791608,
+        "unsupported_energy": 0.23982893721323406,
+        "missing_energy": 0.25957044841306426,
+        "stream_bytes": 590,
+        "peak_signed": 69,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.06921106097341954,
+        "raw_rms": 0.09300977416556404,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "3e2ad510a86999ac5d96da15cc6bc6a59abe7b82295277bd8454c9fd35b13dea",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.7640850555713885,
+        "spectrogram_loss": 0.5441887009250497,
+        "fine_log_error": 0.5135785443253925,
+        "envelope_error": 0.6625221223481601,
+        "unsupported_energy": 0.2360709490234424,
+        "missing_energy": 0.25274307799526174,
+        "stream_bytes": 590,
+        "peak_signed": 70,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07105193741020115,
+        "raw_rms": 0.10088494065224453,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "e1c4419a7af77e8d0877988fbdf39a5bf55d37330b5eefe4480d4a4ee454f7e8",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.7118625072621046,
+        "spectrogram_loss": 0.5802241784186026,
+        "fine_log_error": 0.5144223969312758,
+        "envelope_error": 0.7448414813500237,
+        "unsupported_energy": 0.2787515859736364,
+        "missing_energy": 0.32410099457157404,
+        "stream_bytes": 590,
+        "peak_signed": 50,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.06271186916307471,
+        "raw_rms": 0.08600488649551052,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "db32123daa0c33116b0e6daae35575396da5e58d0774657f1aa78f54e189df65",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.7226806197882601,
+        "spectrogram_loss": 0.5680189772068509,
+        "fine_log_error": 0.4962388179941505,
+        "envelope_error": 0.7338317779345203,
+        "unsupported_energy": 0.27582498620825463,
+        "missing_energy": 0.3160180070429721,
+        "stream_bytes": 590,
+        "peak_signed": 61,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.06358916183997845,
+        "raw_rms": 0.09320951737409923,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "5ca8d5a2f75ddaab9b1f3a94831c15079a67d344abfc2ffaa760a9c858e6642e",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.7352821481260461,
+        "spectrogram_loss": 0.5619429367296084,
+        "fine_log_error": 0.5502773283289676,
+        "envelope_error": 0.6678349593419115,
+        "unsupported_energy": 0.24727174111697597,
+        "missing_energy": 0.22950373202781277,
+        "stream_bytes": 590,
+        "peak_signed": 69,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.0697863348599138,
+        "raw_rms": 0.09016591749711404,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "0c9a630c3a6ba7892fb91cce2f9b920f8fa46d92bd6d102e61ae8f0d8804de29",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.7488878135481593,
+        "spectrogram_loss": 0.5414299449313132,
+        "fine_log_error": 0.5223447248554799,
+        "envelope_error": 0.6499886236390118,
+        "unsupported_energy": 0.23171918774962602,
+        "missing_energy": 0.22660669665010308,
+        "stream_bytes": 590,
+        "peak_signed": 72,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07095933234554598,
+        "raw_rms": 0.0951701209023883,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "6b57f19661730eaf5e7b9fe7e0eb17b6282a6ce3a804576a6ba160c1b1c52403",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.5738221948491858,
+        "spectrogram_loss": 0.6403711607162643,
+        "fine_log_error": 0.6101295156936886,
+        "envelope_error": 0.7713031205198875,
+        "unsupported_energy": 0.34731911666315574,
+        "missing_energy": 0.3038162140013789,
+        "stream_bytes": 590,
+        "peak_signed": 46,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.06234635977909483,
+        "raw_rms": 0.07638183582448364,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "aa692e50e63ae6980a40c7bd49e6e95f47dc080f173c5253a3bc867b24d1833c",
+      "nearest": false,
+      "original_stream_bytes": 602,
+      "coefficient_reuse": [
+        {
+          "frame": 29,
+          "coefficient_byte": 4,
+          "before_bytes": 602,
+          "after_bytes": 600
+        },
+        {
+          "frame": 130,
+          "coefficient_byte": 2,
+          "before_bytes": 600,
+          "after_bytes": 598
+        },
+        {
+          "frame": 90,
+          "coefficient_byte": 2,
+          "before_bytes": 598,
+          "after_bytes": 594
+        },
+        {
+          "frame": 124,
+          "coefficient_byte": 4,
+          "before_bytes": 594,
+          "after_bytes": 590
+        }
+      ],
+      "score": {
+        "stoi": 0.6018000622062316,
+        "spectrogram_loss": 0.6348550891479157,
+        "fine_log_error": 0.5939822079672337,
+        "envelope_error": 0.7726103562003976,
+        "unsupported_energy": 0.3523048250069529,
+        "missing_energy": 0.31024859442515973,
+        "stream_bytes": 590,
+        "peak_signed": 52,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.060489698388110635,
+        "raw_rms": 0.07803341111791375,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "07bb8658d5e0fece06685aa66b6e487a5945ce0bf6d04baabf755464485c4f5f",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.7873708747979556,
+        "spectrogram_loss": 0.5132859693781231,
+        "fine_log_error": 0.501349923545779,
+        "envelope_error": 0.6089421273737723,
+        "unsupported_energy": 0.20511047953220007,
+        "missing_energy": 0.20128433696596193,
+        "stream_bytes": 587,
+        "peak_signed": 43,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.003308526400862069,
+        "raw_rms": 0.04452394832158917,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "e30e14a610d2d4f68f46572fa7cfcd8d27a551403b6f1fec4fc294e69717e413",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.792877825562775,
+        "spectrogram_loss": 0.5001102376620868,
+        "fine_log_error": 0.48173607635886306,
+        "envelope_error": 0.5996617169278522,
+        "unsupported_energy": 0.1999864843992525,
+        "missing_energy": 0.19337018759924673,
+        "stream_bytes": 587,
+        "peak_signed": 55,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.00016696973778735632,
+        "raw_rms": 0.05751998195766035,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "f23b4861a4fc900e36782c3d5fe035dcc78454563e91656ec4c789bfa2811937",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.7459452484766049,
+        "spectrogram_loss": 0.5496438944934805,
+        "fine_log_error": 0.5091366658225732,
+        "envelope_error": 0.6781102836413501,
+        "unsupported_energy": 0.26023527595314483,
+        "missing_energy": 0.239887413676525,
+        "stream_bytes": 587,
+        "peak_signed": 48,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.007547663546156609,
+        "raw_rms": 0.0419922201303836,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "9d22c99152133458b1098d50f947a5bbfdaf9f51f152debca45212914363ee74",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.7585548967377718,
+        "spectrogram_loss": 0.5453093594470096,
+        "fine_log_error": 0.500323533208135,
+        "envelope_error": 0.6763805410692453,
+        "unsupported_energy": 0.2620548084144988,
+        "missing_energy": 0.2370332043926897,
+        "stream_bytes": 587,
+        "peak_signed": 59,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.005066268745510058,
+        "raw_rms": 0.0525257568567302,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "d41309f1bdca51c1479cd88b6118a7ed51d58fe970d471562842d46d7283b593",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.7311496335754858,
+        "spectrogram_loss": 0.548414759998946,
+        "fine_log_error": 0.5172663218971252,
+        "envelope_error": 0.6675298049897851,
+        "unsupported_energy": 0.24681502796781898,
+        "missing_energy": 0.24405082161643418,
+        "stream_bytes": 587,
+        "peak_signed": 42,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.010424032978627873,
+        "raw_rms": 0.04218910704662176,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "ede912f4ef5884ad513c050544b78d6b14fd685e28c57205b51692f3efa767e4",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.7403391686629919,
+        "spectrogram_loss": 0.5420342054429902,
+        "fine_log_error": 0.5044455522616331,
+        "envelope_error": 0.6657483358736245,
+        "unsupported_energy": 0.2452476241736514,
+        "missing_energy": 0.24553668687619518,
+        "stream_bytes": 587,
+        "peak_signed": 57,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.008321477078843391,
+        "raw_rms": 0.05196808967152624,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "be8f6593ec9731d31657695f17019e9949d751a539b32cb2b78153110bbdbe35",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.7847443139220686,
+        "spectrogram_loss": 0.5275543058242855,
+        "fine_log_error": 0.49713368963034715,
+        "envelope_error": 0.646804409326279,
+        "unsupported_energy": 0.22940777095555262,
+        "missing_energy": 0.214832069979227,
+        "stream_bytes": 587,
+        "peak_signed": 46,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.006298898280352011,
+        "raw_rms": 0.04527053613517394,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "2fe6f3ab6a9d8eaac9dc0c747b2477ffa78aba2183ace40d482aac72bd15e25b",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.7990981268845566,
+        "spectrogram_loss": 0.5203088646907879,
+        "fine_log_error": 0.4873069070537991,
+        "envelope_error": 0.6392377172650002,
+        "unsupported_energy": 0.22703534468827352,
+        "missing_energy": 0.21081757532222462,
+        "stream_bytes": 587,
+        "peak_signed": 58,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.0038880096084770114,
+        "raw_rms": 0.05695068550469911,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "5b95f6259159c1374b5c7cd9717cda7714be4cd335e55ced152870d38e168856",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.752626802907979,
+        "spectrogram_loss": 0.5676524160199948,
+        "fine_log_error": 0.5222117419553359,
+        "envelope_error": 0.7096178075038664,
+        "unsupported_energy": 0.27377628580878677,
+        "missing_energy": 0.2560907396205292,
+        "stream_bytes": 587,
+        "peak_signed": 35,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.008997423895474138,
+        "raw_rms": 0.038129588688937836,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "1898443061a6a04dc9611e9a9394ad12d602a5a4529052407307e1c171cf8d0c",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.7590176590916645,
+        "spectrogram_loss": 0.5627166700252693,
+        "fine_log_error": 0.5089937747412915,
+        "envelope_error": 0.709617147847647,
+        "unsupported_energy": 0.2811177745132931,
+        "missing_energy": 0.25224605080711304,
+        "stream_bytes": 587,
+        "peak_signed": 43,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.007580636561602011,
+        "raw_rms": 0.04726377309434583,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "ca3e7e3e4608dcbd84bcee2d34647f227f0faf1c1a15b6203a301356ff541902",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.7163941617713321,
+        "spectrogram_loss": 0.5566359032606916,
+        "fine_log_error": 0.49583742474115566,
+        "envelope_error": 0.7146342122224173,
+        "unsupported_energy": 0.26297391396901104,
+        "missing_energy": 0.2734091895114975,
+        "stream_bytes": 587,
+        "peak_signed": 46,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.01238452429058908,
+        "raw_rms": 0.04451249857270008,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "6838ba434b94d530b9832c7af06db0cf2265d77b7fe49e012bf818e5ac61e6cf",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.7229948233778406,
+        "spectrogram_loss": 0.5548200289315584,
+        "fine_log_error": 0.4879680020805105,
+        "envelope_error": 0.717416138261951,
+        "unsupported_energy": 0.26519929066974635,
+        "missing_energy": 0.2796864015749536,
+        "stream_bytes": 587,
+        "peak_signed": 54,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.011220296223958334,
+        "raw_rms": 0.05582258479983921,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "98b36c52a239d0dd6874638bb7cb6c5c0d8be52cb35dcaa4e78fea9281d62f93",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.7810391407730249,
+        "spectrogram_loss": 0.5139698197023592,
+        "fine_log_error": 0.4966518961636408,
+        "envelope_error": 0.6132500669883009,
+        "unsupported_energy": 0.21157403670977667,
+        "missing_energy": 0.20402922264898893,
+        "stream_bytes": 587,
+        "peak_signed": 42,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.0038918681528376437,
+        "raw_rms": 0.043662439930829376,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "5c98619ad76826e5599284507cd72cfb722f087e196f86b80443c1bb32a295ec",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.7915675128797784,
+        "spectrogram_loss": 0.500496829556018,
+        "fine_log_error": 0.47672843440869006,
+        "envelope_error": 0.6059571413428406,
+        "unsupported_energy": 0.20302215492317355,
+        "missing_energy": 0.19681457755614373,
+        "stream_bytes": 587,
+        "peak_signed": 53,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.0006394660335847702,
+        "raw_rms": 0.05664872857304335,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "dd764bc2991886f43c3f7f87365bc2bcd572e1e0e7e19592a00db5926645b033",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.7457684374466251,
+        "spectrogram_loss": 0.5473240241968705,
+        "fine_log_error": 0.5095945244245056,
+        "envelope_error": 0.6728008986239729,
+        "unsupported_energy": 0.25650507282094553,
+        "missing_energy": 0.2353569756709959,
+        "stream_bytes": 587,
+        "peak_signed": 46,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.008036997126436782,
+        "raw_rms": 0.042242759218524537,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "b154c0ac8e21daf4412f5880646c389f9d65d39919c98656e188369c80c540e9",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.7528430674998112,
+        "spectrogram_loss": 0.5438629253327025,
+        "fine_log_error": 0.5006458684866144,
+        "envelope_error": 0.6730615987965778,
+        "unsupported_energy": 0.25860031370869896,
+        "missing_energy": 0.23620927813644604,
+        "stream_bytes": 587,
+        "peak_signed": 59,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.005250075767780173,
+        "raw_rms": 0.05232518485805396,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "794caee4e1b7942d7128df7f76aa542199c8726f82af17a5bec96a1fc3853dab",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.7293633429476964,
+        "spectrogram_loss": 0.5454159141296712,
+        "fine_log_error": 0.4977156893735295,
+        "envelope_error": 0.6816647299062388,
+        "unsupported_energy": 0.2548547476330627,
+        "missing_energy": 0.2506142809138593,
+        "stream_bytes": 587,
+        "peak_signed": 49,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.00894726281878592,
+        "raw_rms": 0.04468758570719051,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "75e4035d5bb2499f52c92162966327f77cb381d478815ee98e61044d66ec3381",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.7347999876909769,
+        "spectrogram_loss": 0.5407530337145564,
+        "fine_log_error": 0.4849212271246385,
+        "envelope_error": 0.6848888926676677,
+        "unsupported_energy": 0.2531127822715586,
+        "missing_energy": 0.2570046677893652,
+        "stream_bytes": 587,
+        "peak_signed": 63,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.007490486934267241,
+        "raw_rms": 0.05777431149910509,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "f21fbfc99626c29cd39b8c866c1445f1aeea42a5118de049665456570a75d12a",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.7869784263713017,
+        "spectrogram_loss": 0.5324867233346622,
+        "fine_log_error": 0.5224944731868845,
+        "envelope_error": 0.6293408451266979,
+        "unsupported_energy": 0.2214844848460854,
+        "missing_energy": 0.21072435747163326,
+        "stream_bytes": 587,
+        "peak_signed": 38,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.006320295662715517,
+        "raw_rms": 0.04033026051042803,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "3e6eb9655f747866efee7cbbc079cd59f402376397cc7b938a687fdd251cc47e",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.7923612542514186,
+        "spectrogram_loss": 0.5253776828162922,
+        "fine_log_error": 0.5088101355845174,
+        "envelope_error": 0.6267450709612561,
+        "unsupported_energy": 0.22232754686830908,
+        "missing_energy": 0.20633043290854886,
+        "stream_bytes": 587,
+        "peak_signed": 49,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.004377343188757184,
+        "raw_rms": 0.0505448428177533,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "d83a45cc7c8e99f1e28c2b1de3e50f291667e04f5ad82bb3ec8d7ca777b52a3b",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.740454682466381,
+        "spectrogram_loss": 0.5496577659677838,
+        "fine_log_error": 0.5218562463404564,
+        "envelope_error": 0.6686943979827563,
+        "unsupported_energy": 0.2475786285955492,
+        "missing_energy": 0.23169116279068855,
+        "stream_bytes": 587,
+        "peak_signed": 32,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.009416251346982759,
+        "raw_rms": 0.03758260172411286,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "2cf171ee9eb29520ae6954fdc2777bb3890abdb25a72b03e4d36523660399f2b",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.7630664821106107,
+        "spectrogram_loss": 0.5393397866649055,
+        "fine_log_error": 0.5039794198221845,
+        "envelope_error": 0.6610435485839095,
+        "unsupported_energy": 0.24461666177515676,
+        "missing_energy": 0.2339723415713763,
+        "stream_bytes": 587,
+        "peak_signed": 42,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.007529773931393678,
+        "raw_rms": 0.046425900581827814,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "e332fcef0008f2a80c57286d6013948b1a80422ea67f71c62d499bb0c49ce12f",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.7338352165214761,
+        "spectrogram_loss": 0.5684140080970811,
+        "fine_log_error": 0.5265831172693335,
+        "envelope_error": 0.7052566179188178,
+        "unsupported_energy": 0.26385892847374853,
+        "missing_energy": 0.27460796382199026,
+        "stream_bytes": 587,
+        "peak_signed": 34,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.011702263492277298,
+        "raw_rms": 0.03762891250040219,
+        "target_met": false
+      }
+    },
+    {
+      "source": "model.json",
+      "source_sha256": "1d3571ae108d543598bcff2c5d8dc5eef9cf62aebcf9a2aa6e2aaf1d5a1eb0c1",
+      "nearest": true,
+      "original_stream_bytes": 611,
+      "coefficient_reuse": [
+        {
+          "frame": 20,
+          "coefficient_byte": 4,
+          "before_bytes": 611,
+          "after_bytes": 609
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 4,
+          "before_bytes": 609,
+          "after_bytes": 607
+        },
+        {
+          "frame": 58,
+          "coefficient_byte": 4,
+          "before_bytes": 607,
+          "after_bytes": 605
+        },
+        {
+          "frame": 101,
+          "coefficient_byte": 4,
+          "before_bytes": 605,
+          "after_bytes": 603
+        },
+        {
+          "frame": 123,
+          "coefficient_byte": 2,
+          "before_bytes": 603,
+          "after_bytes": 601
+        },
+        {
+          "frame": 45,
+          "coefficient_byte": 2,
+          "before_bytes": 601,
+          "after_bytes": 599
+        },
+        {
+          "frame": 57,
+          "coefficient_byte": 2,
+          "before_bytes": 599,
+          "after_bytes": 597
+        },
+        {
+          "frame": 64,
+          "coefficient_byte": 2,
+          "before_bytes": 597,
+          "after_bytes": 595
+        },
+        {
+          "frame": 81,
+          "coefficient_byte": 4,
+          "before_bytes": 595,
+          "after_bytes": 593
+        },
+        {
+          "frame": 86,
+          "coefficient_byte": 4,
+          "before_bytes": 593,
+          "after_bytes": 591
+        },
+        {
+          "frame": 87,
+          "coefficient_byte": 4,
+          "before_bytes": 591,
+          "after_bytes": 587
+        }
+      ],
+      "score": {
+        "stoi": 0.7393416046609487,
+        "spectrogram_loss": 0.5665101479738468,
+        "fine_log_error": 0.5139635566233312,
+        "envelope_error": 0.7167688171994966,
+        "unsupported_energy": 0.2651151864695391,
+        "missing_energy": 0.2814903951142277,
+        "stream_bytes": 587,
+        "peak_signed": 41,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": -0.011205212823275862,
+        "raw_rms": 0.04627086944768982,
+        "target_met": false
+      }
+    }
+  ],
+  "finalists": {
+    "balanced": {
+      "stoi": 0.8422860558825136,
+      "spectrogram_loss": 0.4976957883436937,
+      "fine_log_error": 0.48355030347047323,
+      "envelope_error": 0.5888572790817759,
+      "unsupported_energy": 0.19736772665105648,
+      "missing_energy": 0.1938786787559073,
+      "stream_bytes": 591,
+      "peak_signed": 83,
+      "steps_ge48": 0,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "raw_mean": 0.07596421515804598,
+      "raw_rms": 0.11424342075217994,
+      "target_met": false,
+      "estoi": 0.6508900335996826,
+      "harmonic_metrics": {
+        "harmonic_track_loss": 0.8867632345592539,
+        "frequency_trajectory_error": 0.8909328486905681,
+        "level_error": 2.358597654707209,
+        "missing_reference_energy": 0.18278077654002936,
+        "extra_candidate_energy": 0.22491695155869734,
+        "weighted_match_rate": 0.8172192234599708,
+        "frequency_error_cents": 45.45821740402324,
+        "frequency_error_hz": 8.97585311738369,
+        "level_error_db": 7.075792964121638,
+        "frequency_error_p95_cents": 114.66679265246594,
+        "frequency_error_p95_hz": 31.607395200433075,
+        "level_error_p95_db": 17.915917770635787,
+        "continuity_break_rate": 0.29290861760599735
+      },
+      "stream_sha256": "64528a5f242649ff6b4debe39f360122820e4130cc92bb572b28b471cc721860",
+      "pcm_sha256": "a95b90c85feb6b78adce66d4c9faa9fd7cc083b4b195b155eb32de9f0ae35338",
+      "eeprom_bytes": 64,
+      "avr_assembled": false,
+      "avr_verified": false,
+      "hardware_tested": false,
+      "size_policy": "Actual stream+64EEPROM; separate exact assembler must confirm fullFlash size and cycles"
+    },
+    "best_stoi": {
+      "stoi": 0.8422860558825136,
+      "spectrogram_loss": 0.4976957883436937,
+      "fine_log_error": 0.48355030347047323,
+      "envelope_error": 0.5888572790817759,
+      "unsupported_energy": 0.19736772665105648,
+      "missing_energy": 0.1938786787559073,
+      "stream_bytes": 591,
+      "peak_signed": 83,
+      "steps_ge48": 0,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "raw_mean": 0.07596421515804598,
+      "raw_rms": 0.11424342075217994,
+      "target_met": false,
+      "estoi": 0.6508900335996826,
+      "harmonic_metrics": {
+        "harmonic_track_loss": 0.8867632345592539,
+        "frequency_trajectory_error": 0.8909328486905681,
+        "level_error": 2.358597654707209,
+        "missing_reference_energy": 0.18278077654002936,
+        "extra_candidate_energy": 0.22491695155869734,
+        "weighted_match_rate": 0.8172192234599708,
+        "frequency_error_cents": 45.45821740402324,
+        "frequency_error_hz": 8.97585311738369,
+        "level_error_db": 7.075792964121638,
+        "frequency_error_p95_cents": 114.66679265246594,
+        "frequency_error_p95_hz": 31.607395200433075,
+        "level_error_p95_db": 17.915917770635787,
+        "continuity_break_rate": 0.29290861760599735
+      },
+      "stream_sha256": "64528a5f242649ff6b4debe39f360122820e4130cc92bb572b28b471cc721860",
+      "pcm_sha256": "a95b90c85feb6b78adce66d4c9faa9fd7cc083b4b195b155eb32de9f0ae35338",
+      "eeprom_bytes": 64,
+      "avr_assembled": false,
+      "avr_verified": false,
+      "hardware_tested": false,
+      "size_policy": "Actual stream+64EEPROM; separate exact assembler must confirm fullFlash size and cycles"
+    },
+    "best_spectrum": {
+      "stoi": 0.799541543926533,
+      "spectrogram_loss": 0.4692444620395698,
+      "fine_log_error": 0.45683188551042364,
+      "envelope_error": 0.554175829172744,
+      "unsupported_energy": 0.17318717401976877,
+      "missing_energy": 0.1755160024796184,
+      "stream_bytes": 588,
+      "peak_signed": 83,
+      "steps_ge48": 0,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "raw_mean": 0.012101798221982759,
+      "raw_rms": 0.0830186404786928,
+      "target_met": false,
+      "estoi": 0.588942803867132,
+      "harmonic_metrics": {
+        "harmonic_track_loss": 0.755229037663948,
+        "frequency_trajectory_error": 0.7504842328175434,
+        "level_error": 1.976971985063162,
+        "missing_reference_energy": 0.1682311339123916,
+        "extra_candidate_energy": 0.24009747265954864,
+        "weighted_match_rate": 0.8317688660876087,
+        "frequency_error_cents": 38.42267765823616,
+        "frequency_error_hz": 9.304832044132647,
+        "level_error_db": 5.93091595518949,
+        "frequency_error_p95_cents": 108.59330785703165,
+        "frequency_error_p95_hz": 32.0834990091098,
+        "level_error_p95_db": 14.442551684085391,
+        "continuity_break_rate": 0.21362396185051374
+      },
+      "stream_sha256": "b167f51215d05b81bc813df74e0a073173a1b83321de07d360b033d25be6475d",
+      "pcm_sha256": "0534a6ee26dfb02b0ef315a989990298fc2d7304b0bbc52ecd3c330aa4eab8e4",
+      "eeprom_bytes": 64,
+      "avr_assembled": false,
+      "avr_verified": false,
+      "hardware_tested": false,
+      "size_policy": "Actual stream+64EEPROM; separate exact assembler must confirm fullFlash size and cycles"
+    }
+  },
+  "guard_rejections": {
+    "layout": 1538,
+    "wrap": 2,
+    "peak": 16,
+    "steps": 72
+  },
+  "history": [
+    {
+      "proposals": 500,
+      "evaluated": 372,
+      "accepted": 67,
+      "pareto": 11,
+      "best_balanced": {
+        "stoi": 0.8399620573399389,
+        "spectrogram_loss": 0.5003008193956995,
+        "fine_log_error": 0.48511976105648724,
+        "envelope_error": 0.5939280630913658,
+        "unsupported_energy": 0.19937153781972328,
+        "missing_energy": 0.19547744279410736,
+        "stream_bytes": 593,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07590353077855604,
+        "raw_rms": 0.11401837383911097,
+        "target_met": false
+      },
+      "best_stoi": 0.8399620573399389,
+      "best_spectrum": 0.4728546731328634,
+      "elapsed_seconds": 6.091313099954277
+    },
+    {
+      "proposals": 1000,
+      "evaluated": 757,
+      "accepted": 123,
+      "pareto": 15,
+      "best_balanced": {
+        "stoi": 0.8399620573399389,
+        "spectrogram_loss": 0.5003008193956995,
+        "fine_log_error": 0.48511976105648724,
+        "envelope_error": 0.5939280630913658,
+        "unsupported_energy": 0.19937153781972328,
+        "missing_energy": 0.19547744279410736,
+        "stream_bytes": 593,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07590353077855604,
+        "raw_rms": 0.11401837383911097,
+        "target_met": false
+      },
+      "best_stoi": 0.83997008065678,
+      "best_spectrum": 0.4728546731328634,
+      "elapsed_seconds": 15.143704199930653
+    },
+    {
+      "proposals": 1500,
+      "evaluated": 1120,
+      "accepted": 179,
+      "pareto": 15,
+      "best_balanced": {
+        "stoi": 0.8399815697263073,
+        "spectrogram_loss": 0.5003901239524037,
+        "fine_log_error": 0.4856375614975248,
+        "envelope_error": 0.5938216448193547,
+        "unsupported_energy": 0.19883212549662432,
+        "missing_energy": 0.19551093072673945,
+        "stream_bytes": 593,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.0760827777029454,
+        "raw_rms": 0.11450530677096665,
+        "target_met": false
+      },
+      "best_stoi": 0.8402225249553501,
+      "best_spectrum": 0.4716263402354692,
+      "elapsed_seconds": 35.05329549999442
+    },
+    {
+      "proposals": 2000,
+      "evaluated": 1478,
+      "accepted": 231,
+      "pareto": 13,
+      "best_balanced": {
+        "stoi": 0.8403966202058737,
+        "spectrogram_loss": 0.5001401729124726,
+        "fine_log_error": 0.4851107645607202,
+        "envelope_error": 0.5933410861679167,
+        "unsupported_energy": 0.19900454325395592,
+        "missing_energy": 0.19611795394952583,
+        "stream_bytes": 593,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07607014973958333,
+        "raw_rms": 0.11452313538947372,
+        "target_met": false
+      },
+      "best_stoi": 0.8403966202058737,
+      "best_spectrum": 0.4716263402354692,
+      "elapsed_seconds": 40.84001809998881
+    },
+    {
+      "proposals": 2500,
+      "evaluated": 1830,
+      "accepted": 270,
+      "pareto": 18,
+      "best_balanced": {
+        "stoi": 0.8407047136989334,
+        "spectrogram_loss": 0.4997173778341757,
+        "fine_log_error": 0.48458992143175206,
+        "envelope_error": 0.5928261693314241,
+        "unsupported_energy": 0.19911184912953744,
+        "missing_energy": 0.19537698882489213,
+        "stream_bytes": 593,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.0759301898123204,
+        "raw_rms": 0.11420682156609752,
+        "target_met": false
+      },
+      "best_stoi": 0.8407047136989334,
+      "best_spectrum": 0.4707570347538096,
+      "elapsed_seconds": 46.30631349992473
+    },
+    {
+      "proposals": 3000,
+      "evaluated": 2180,
+      "accepted": 310,
+      "pareto": 18,
+      "best_balanced": {
+        "stoi": 0.8412145123911845,
+        "spectrogram_loss": 0.4997124830910481,
+        "fine_log_error": 0.4846639110512111,
+        "envelope_error": 0.5926037983072923,
+        "unsupported_energy": 0.1990563934222533,
+        "missing_energy": 0.19564079658351902,
+        "stream_bytes": 593,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.0763830426095546,
+        "raw_rms": 0.11530610138819718,
+        "target_met": false
+      },
+      "best_stoi": 0.8412145123911845,
+      "best_spectrum": 0.4701363528154472,
+      "elapsed_seconds": 51.8116823999444
+    },
+    {
+      "proposals": 3500,
+      "evaluated": 2546,
+      "accepted": 374,
+      "pareto": 20,
+      "best_balanced": {
+        "stoi": 0.841513569394853,
+        "spectrogram_loss": 0.4978011413400161,
+        "fine_log_error": 0.48432186993007925,
+        "envelope_error": 0.5881269627784154,
+        "unsupported_energy": 0.19788391361892027,
+        "missing_energy": 0.19233723859282958,
+        "stream_bytes": 593,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07620028791756465,
+        "raw_rms": 0.11503575931467873,
+        "target_met": false
+      },
+      "best_stoi": 0.841513569394853,
+      "best_spectrum": 0.4700026302338015,
+      "elapsed_seconds": 57.7096008999506
+    },
+    {
+      "proposals": 4000,
+      "evaluated": 2903,
+      "accepted": 410,
+      "pareto": 32,
+      "best_balanced": {
+        "stoi": 0.8416008864334299,
+        "spectrogram_loss": 0.4981413267248317,
+        "fine_log_error": 0.485004348642507,
+        "envelope_error": 0.5881433906211022,
+        "unsupported_energy": 0.19800603366924618,
+        "missing_energy": 0.19235052506598269,
+        "stream_bytes": 593,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07624062724497127,
+        "raw_rms": 0.11505170739657933,
+        "target_met": false
+      },
+      "best_stoi": 0.8416008864334299,
+      "best_spectrum": 0.46930469323140056,
+      "elapsed_seconds": 63.31411699997261
+    },
+    {
+      "proposals": 4500,
+      "evaluated": 3258,
+      "accepted": 451,
+      "pareto": 30,
+      "best_balanced": {
+        "stoi": 0.8421103907829713,
+        "spectrogram_loss": 0.49786150720426786,
+        "fine_log_error": 0.4850766698445681,
+        "envelope_error": 0.5879210716837204,
+        "unsupported_energy": 0.1966216430420475,
+        "missing_energy": 0.1928321680054104,
+        "stream_bytes": 593,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07597719389816811,
+        "raw_rms": 0.1142331415357789,
+        "target_met": false
+      },
+      "best_stoi": 0.8421103907829713,
+      "best_spectrum": 0.46930469323140056,
+      "elapsed_seconds": 68.8660658999579
+    },
+    {
+      "proposals": 5000,
+      "evaluated": 3640,
+      "accepted": 509,
+      "pareto": 32,
+      "best_balanced": {
+        "stoi": 0.8422286736857287,
+        "spectrogram_loss": 0.49819519213427654,
+        "fine_log_error": 0.48475227203882393,
+        "envelope_error": 0.5887510985617213,
+        "unsupported_energy": 0.19734468933389698,
+        "missing_energy": 0.1937928155640172,
+        "stream_bytes": 592,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07603612439385776,
+        "raw_rms": 0.11428161487093838,
+        "target_met": false
+      },
+      "best_stoi": 0.8422286736857287,
+      "best_spectrum": 0.46930469323140056,
+      "elapsed_seconds": 75.34124459989835
+    },
+    {
+      "proposals": 5500,
+      "evaluated": 4007,
+      "accepted": 564,
+      "pareto": 30,
+      "best_balanced": {
+        "stoi": 0.8422286736857287,
+        "spectrogram_loss": 0.49819519213427654,
+        "fine_log_error": 0.48475227203882393,
+        "envelope_error": 0.5887510985617213,
+        "unsupported_energy": 0.19734468933389698,
+        "missing_energy": 0.1937928155640172,
+        "stream_bytes": 592,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07603612439385776,
+        "raw_rms": 0.11428161487093838,
+        "target_met": false
+      },
+      "best_stoi": 0.8422286736857287,
+      "best_spectrum": 0.4692444620395698,
+      "elapsed_seconds": 86.70050029992126
+    },
+    {
+      "proposals": 6000,
+      "evaluated": 4372,
+      "accepted": 604,
+      "pareto": 22,
+      "best_balanced": {
+        "stoi": 0.8422860558825136,
+        "spectrogram_loss": 0.4976957883436937,
+        "fine_log_error": 0.48355030347047323,
+        "envelope_error": 0.5888572790817759,
+        "unsupported_energy": 0.19736772665105648,
+        "missing_energy": 0.1938786787559073,
+        "stream_bytes": 591,
+        "peak_signed": 83,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07596421515804598,
+        "raw_rms": 0.11424342075217994,
+        "target_met": false
+      },
+      "best_stoi": 0.8422860558825136,
+      "best_spectrum": 0.4692444620395698,
+      "elapsed_seconds": 106.96213099989109
+    }
+  ],
+  "elapsed_seconds": 107.48726739990525,
+  "rounded_stream_budget": 589,
+  "floor_stream_budget": 593,
+  "eeprom_bytes": 64,
+  "avr_qualified": false,
+  "public_firmware_changed": false,
+  "objective_policy": "Original STOI+wholeSpectrogramObjective; no baseline-quality ceilings, waveform/DC/gain postprocessing or manual frequency masks",
+  "source_sha256_normalized_lf": {
+    "tools/probe-q3-pulsebook.py": "58e434af0841ef95fc6e323b9739e2536765db88591fa3482bbab781e5d2c277",
+    "ATtiny13A/Sound/codec/q3_pulsebook.py": "9252905ba28151205695f2927dfe5dbcd62d92cfc629e049bc272c63c9a90ed4",
+    "ATtiny13A/Sound/codec/spectrogram_objective.py": "66fd5c3d5e3a0716d3c18269a261a70ad9165575eaf33acb5c7ee166a8d4e927",
+    "ATtiny13A/Sound/codec/hq4_speech_search.py": "3178c817fe02e9845449e2b501afe7dcc1b03a099fb59d56010e77e38640b2ab",
+    "tools/probe-q3-pulsebook-pole.py": "a3472d0fb43d64bf16447947c39e07960fd74176939b2268d6ade0cb5c8c129f",
+    "ATtiny13A/Sound/codec/q3_pulsebook_pole.py": "dfb5a5c82fa1d53e4b32103a5a63a7fc2072357a0184bb649447281a0c10b9aa"
+  },
+  "format": "hq4-q3-pulsebook-pole-v1",
+  "new_coefficient": "Packed nibble0 means -15/16; other signed nibble values retain c/8"
+}

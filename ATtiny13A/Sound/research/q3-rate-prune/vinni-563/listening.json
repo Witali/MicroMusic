@@ -1,0 +1,51 @@
+{
+  "schema": "q3-rate-prune-listening-v1",
+  "sample_rate": 7500,
+  "phrase_samples": 22272,
+  "pause_samples": 2250,
+  "comparison_samples": 71316,
+  "processing": "Raw original levels/DC, exact PC byteoracle FLOAT PCM, noHP/RMS/gain/clipping; zero pauses only",
+  "old_control_scope": "Frozen Kmap numerical decoder, not AVR-qualified",
+  "new_scope_at_capture": "Frozen Kmap numerical decoder; later AVR qualification recorded separately",
+  "segments": [
+    {
+      "label": "Оригинал",
+      "file": "01-original.wav",
+      "start_sample": 0,
+      "samples": 22272,
+      "pcm_f32_sha256": "5f50b855f43c1a74e198e86615dc4dbeb4d3b5146748fbaa71f5aac0a4c34c5e"
+    },
+    {
+      "label": "Старый алгоритм сокращения: 562 байта",
+      "file": "02-legacy-prune.wav",
+      "start_sample": 24522,
+      "samples": 22272,
+      "pcm_f32_sha256": "88be20e552a5daecdc167ff674a3daee9afe901788f051a6a7ceebd64815f2ce"
+    },
+    {
+      "label": "Новый алгоритм сокращения: 562 байта",
+      "file": "03-quality-prune.wav",
+      "start_sample": 49044,
+      "samples": 22272,
+      "pcm_f32_sha256": "61dde79c9c99169cf65fc1bcf154e9e2470e7da46e2b5e03a7320a16918e3d05"
+    }
+  ],
+  "files": {
+    "01-original.wav": {
+      "bytes": 44588,
+      "sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03"
+    },
+    "02-legacy-prune.wav": {
+      "bytes": 89168,
+      "sha256": "a886f069f4dc2b3878b7353ce16b64fe4a292d56ca505a83a4955c40f14719c3"
+    },
+    "03-quality-prune.wav": {
+      "bytes": 89168,
+      "sha256": "595a08676b634bc3bebbf018db7bc479151a2781aaa8f6a0d66ca3cf07deca2b"
+    },
+    "04-comparison-raw.wav": {
+      "bytes": 285344,
+      "sha256": "d4083982e1d62d84518d7c0b79745d16616eecef3fe08030330b3d14adad48d5"
+    }
+  }
+}

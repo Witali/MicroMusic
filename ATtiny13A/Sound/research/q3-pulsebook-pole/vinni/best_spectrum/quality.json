@@ -1,0 +1,43 @@
+{
+  "stoi": 0.799541543926533,
+  "spectrogram_loss": 0.4692444620395698,
+  "fine_log_error": 0.45683188551042364,
+  "envelope_error": 0.554175829172744,
+  "unsupported_energy": 0.17318717401976877,
+  "missing_energy": 0.1755160024796184,
+  "stream_bytes": 588,
+  "peak_signed": 83,
+  "steps_ge48": 0,
+  "wrap_counts": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "raw_mean": 0.012101798221982759,
+  "raw_rms": 0.0830186404786928,
+  "target_met": false,
+  "estoi": 0.588942803867132,
+  "harmonic_metrics": {
+    "harmonic_track_loss": 0.755229037663948,
+    "frequency_trajectory_error": 0.7504842328175434,
+    "level_error": 1.976971985063162,
+    "missing_reference_energy": 0.1682311339123916,
+    "extra_candidate_energy": 0.24009747265954864,
+    "weighted_match_rate": 0.8317688660876087,
+    "frequency_error_cents": 38.42267765823616,
+    "frequency_error_hz": 9.304832044132647,
+    "level_error_db": 5.93091595518949,
+    "frequency_error_p95_cents": 108.59330785703165,
+    "frequency_error_p95_hz": 32.0834990091098,
+    "level_error_p95_db": 14.442551684085391,
+    "continuity_break_rate": 0.21362396185051374
+  },
+  "stream_sha256": "b167f51215d05b81bc813df74e0a073173a1b83321de07d360b033d25be6475d",
+  "pcm_sha256": "0534a6ee26dfb02b0ef315a989990298fc2d7304b0bbc52ecd3c330aa4eab8e4",
+  "eeprom_bytes": 64,
+  "avr_assembled": false,
+  "avr_verified": false,
+  "hardware_tested": false,
+  "size_policy": "Actual stream+64EEPROM; separate exact assembler must confirm fullFlash size and cycles"
+}

@@ -1,0 +1,34 @@
+{
+  "before": {
+    "spectrogram_loss": 0.6171305506882494,
+    "fine_log_error": 0.6484693006386382,
+    "envelope_error": 0.6803497435263992,
+    "unsupported_energy": 0.2705213170481138,
+    "missing_energy": 0.26223209120281066,
+    "stoi": 0.8250794476978425,
+    "estoi": 0.5199514089074047
+  },
+  "after": {
+    "spectrogram_loss": 0.5383593880322881,
+    "fine_log_error": 0.6026077599488922,
+    "envelope_error": 0.5485920862956399,
+    "unsupported_energy": 0.1869573085923119,
+    "missing_energy": 0.1897539300663455,
+    "stoi": 0.8366719484523392,
+    "estoi": 0.5505716515284071
+  },
+  "passed": true,
+  "failed_guards": [],
+  "schema": "micromusic-q3-bell-voice-gate-v1",
+  "sourceBellModelSha256": "39e878d8356305f3a4ed6071bad9e23a307031fd14cec3acf9029d5b6bfc29c1",
+  "sourceVoiceModelSha256": "96f1068a6b62331a5f509f82907b21a546679aa141cd3b6fe9d6cc565a10824c",
+  "referenceSha256": "4914d2c349e1f2e9e102ec23949a2bb96b95b7145aa252b54a6a8341ba5ce55d",
+  "intermediate_wraps": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "hardware_tested": false,
+  "human_listening_verified": false
+}

@@ -1,0 +1,51 @@
+{
+  "flash": 1022,
+  "eeprom": 64,
+  "model_sha256": "9d976ed5b0f71573fcd8500476a78d2ea4f9000fa4d0ecf643e930fd08204238",
+  "full": {
+    "loss": 0.6976028570435262,
+    "log_spectral_error": 0.7150407557306447,
+    "relative_spectral_error": 0.6278512622950521,
+    "stoi": 0.7047450970597569,
+    "estoi": 0.4829840396846293,
+    "balanced_score": 0.6489368684962747,
+    "pcm_sha256": "634f9bba800358b5c4a13ef549b7373c687b69c1fc4ede077e5995d62969b73a",
+    "measured_from": "actual AVR recording",
+    "samples": 19328,
+    "sample_rate": 7500
+  },
+  "voice": {
+    "loss": 0.7586095751947106,
+    "log_spectral_error": 0.7624685970682958,
+    "relative_spectral_error": 0.7431734877003694,
+    "stoi": 0.8366989519533063,
+    "estoi": 0.5511697078766246,
+    "balanced_score": 0.7760101859377295,
+    "pcm_sha256": "f5ee6915bafced99e437d7397449a170117165843fd15f9d52412b22f74f03ee",
+    "measured_from": "actual AVR recording",
+    "samples": 12800,
+    "sample_rate": 7500
+  },
+  "harmonic_voice": {
+    "harmonic_track_loss": 0.7485227819963146,
+    "frequency_trajectory_error": 0.7481428307897442,
+    "level_error": 1.7937217382055144,
+    "missing_reference_energy": 0.21222683598812025,
+    "extra_candidate_energy": 0.317958845238609,
+    "weighted_match_rate": 0.7877731640118801,
+    "frequency_error_cents": 38.34413633111379,
+    "frequency_error_hz": 11.380691114375974,
+    "level_error_db": 5.3811652146165505,
+    "frequency_error_p95_cents": 66.81936428630365,
+    "frequency_error_p95_hz": 26.497593992296174,
+    "level_error_p95_db": 13.882739935854552,
+    "continuity_break_rate": 0.33133131993147324
+  },
+  "spectrogram_voice": {
+    "spectrogram_loss": 0.5377945186795163,
+    "fine_log_error": 0.6015569454878182,
+    "envelope_error": 0.5483937406488364,
+    "unsupported_energy": 0.18682520983812012,
+    "missing_energy": 0.18965061898538163
+  }
+}

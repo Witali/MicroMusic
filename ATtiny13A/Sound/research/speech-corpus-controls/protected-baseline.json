@@ -1,0 +1,80 @@
+{
+  "schema": "protected-speech-audit-v1",
+  "recordings": {
+    "chego": {
+      "reference_sha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+      "source": "ATtiny13A/Sound/research/tiny-speech/chego/model.json",
+      "source_sha256": "ffed4665deb5745183c4a5175ac5b0bf83dec07f0ce03f4094cf154d16107c3f",
+      "phrase_pcm_sha256": "65f199e202c8544e254cedae67f7389455d57f68ff56c8e170591c1c19316c85",
+      "phrase_plus_silence_pcm_sha256": "de01e260030c70f63f9aec008e10b84ae3169b1380e1bcb945c4c483cf0b955a",
+      "samples": 9216,
+      "codec": "tiny-period",
+      "metrics": {
+        "stoi": 0.9106671379676519,
+        "estoi": 0.8571547131301246,
+        "spectrogram_loss": 0.22698670705904928,
+        "fine_log_error": 0.22674711358456298,
+        "envelope_error": 0.27515187565337795,
+        "unsupported_energy": 0.02881765045459687,
+        "missing_energy": 0.04933290762145494
+      },
+      "flash_bytes": 990,
+      "eeprom_bytes": 64,
+      "retained_avr_pcm_matches": true
+    },
+    "otvechaesh": {
+      "reference_sha256": "96c09f80396643dd80efb9c5c8557d83359eeb829a0b855a7f8f5c32bbff0b96",
+      "source": "ATtiny13A/Sound/research/tiny-speech/otvechaesh/model.json",
+      "source_sha256": "ab016e9d7df50a141b3b183dfecde819ac3dbf8265dddd8cce77b02584ba0982",
+      "phrase_pcm_sha256": "5e78ee705708385d0d6d7fd6ec20e3303d06bf4d86eab05e8b56c93a61755293",
+      "phrase_plus_silence_pcm_sha256": "700e83c5cb4a340dc7b46cbb27e5cffc4c0df6a90c0436b47efde95821ce10aa",
+      "samples": 7936,
+      "codec": "tiny-period",
+      "metrics": {
+        "stoi": 0.8408967368617384,
+        "estoi": 0.7052556907477538,
+        "spectrogram_loss": 0.2024797134886562,
+        "fine_log_error": 0.24082060310591297,
+        "envelope_error": 0.19742699645957032,
+        "unsupported_energy": 0.016701108705757153,
+        "missing_energy": 0.03574799082444935
+      },
+      "flash_bytes": 990,
+      "eeprom_bytes": 64,
+      "retained_avr_pcm_matches": true
+    },
+    "vinni": {
+      "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+      "source": "ATtiny13A/Sound/codec/release/vinni/speech.hq",
+      "source_sha256": "fe24fbdaf5260266d7b29b04f7e4d3926c48ce13c5697b214e0728b431433d03",
+      "phrase_pcm_sha256": "cd951656212586119b61b6a61d90d0a9a05d14c76a908257e78c4acdf97e712c",
+      "phrase_plus_silence_pcm_sha256": "58ccd9ec9b5a86bdd3ee4d78370806f2b1704ca9571cdcd94b84c487db697908",
+      "samples": 22272,
+      "codec": "hq4",
+      "metrics": {
+        "stoi": 0.8596022716157532,
+        "estoi": 0.6909859419813376,
+        "spectrogram_loss": 0.6296960266589171,
+        "fine_log_error": 0.6656302224316923,
+        "envelope_error": 0.6804694729731342,
+        "unsupported_energy": 0.28487069165550416,
+        "missing_energy": 0.2840730125835865
+      },
+      "flash_bytes": 1024,
+      "eeprom_bytes": 0,
+      "retained_avr_pcm_matches": true
+    }
+  },
+  "passed": true,
+  "qualification": "Numerical re-decode equals retained three-engine phrase-plus-silence PCM hashes; no new AVR or physical run.",
+  "source_sha256_normalized_lf": {
+    "tools/check-protected-speech.py": "e14d955aa9c5938133dc7eb7d19df1f97c276a0e26bf05682e9d0694868c9623",
+    "ATtiny13A/Sound/codec/fixed_period.py": "eadfcdf132d3dfb031b78253f9b8fa159ae711e17b2caba34d2cfdf804d7e40e",
+    "ATtiny13A/Sound/codec/model.py": "d9c3449ddd2da1929e71da99ef3b040d46d95988d2f5ea704f9416e30c1ba71e",
+    "ATtiny13A/Sound/codec/hq4_core.py": "936c21384042c24be9525ff7cb73b6e1421c852b4a63ea393e318cc60e9bd466",
+    "ATtiny13A/Sound/codec/hq4_speech_search.py": "3178c817fe02e9845449e2b501afe7dcc1b03a099fb59d56010e77e38640b2ab",
+    "ATtiny13A/Sound/codec/dc_blocker.py": "fb86b467afa3050b67715c4aed8942c86bbeb4dadfa17054d5f6015c1fc30230",
+    "ATtiny13A/Sound/codec/spectrogram_objective.py": "66fd5c3d5e3a0716d3c18269a261a70ad9165575eaf33acb5c7ee166a8d4e927",
+    "ATtiny13A/Sound/codec/speech_regression.py": "1095b7dccfb65ead2f3f9cd62e7a2e036de3aec86bc7469e2e7b5e7edd5b2ca2"
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "schema": "q4-lattice-research-v1",
+  "core_source_commit": "3e0c14a",
+  "diagnostic_source_commit": "a743569",
+  "target": {
+    "stoi": 0.93,
+    "spectrogram_loss": 0.344975553560209,
+    "flash_bytes": 1024,
+    "eeprom_bytes": 64
+  },
+  "reference": "web-player/audio/originals/vinni.wav",
+  "samples": 22272,
+  "sample_rate": 7500,
+  "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+  "selected_firmware": "../q3-adaptive/half-pitch/model.json",
+  "firmware_changed": false,
+  "selected_pc_teacher": "followups/nearest/model.json",
+  "pc_aliases": {
+    "word/best-intelligibility-model.json": "word/model.json",
+    "followups/nearest/best-intelligibility-model.json": "followups/nearest/model.json"
+  },
+  "achieved": false,
+  "avr_implemented": false,
+  "hardware_tested": false,
+  "qualification": {
+    "full_suite": {
+      "command": "python tools/test-speech-quality.py",
+      "source_commit": "3e0c14a",
+      "tests": 401,
+      "passed": true,
+      "elapsed_seconds": 194.475,
+      "log_sha256": "01b081c94eb218cca19f7080a8ba56697fd6c905feae6eabef06441168e8464f"
+    },
+    "later_diagnostic_tests": {
+      "command": "python tools/test-stoi-diagnostics.py",
+      "source_commit": "a743569",
+      "tests": 3,
+      "passed": true
+    },
+    "later_artifact_tests": {
+      "command": "python tools/test-q4-lattice-results.py",
+      "tests": 2,
+      "passed": true,
+      "normalized_source_sha256": "1b1d872e3d7783e68cb73b10692ce5fa564c34dd9486064ba21a0ff851c43911",
+      "scope": "All retained endpoints, follow-ups, exact data counts, scores, octave bands and pole controls"
+    },
+    "scope": "PC contracts and retained metrics plus unchanged old AVR tests; no new word-state AVR qualification"
+  },
+  "artifact_sha256": {
+    "band-audit.json": "cef07590f1e4c996e24e2a8e80936d6d7283da564600401f4eb4dacc3e03eaf6",
+    "byte/best-intelligibility-model.json": "354b6b70a987b92c84297fa2f33ab76af535f3aa7c283c487761a1963f7c78eb",
+    "byte/model.json": "92622f016c95eff03a23cc421ea5a2cc09e830f7ca833517a700fa8c0c62d6b1",
+    "byte/report.json": "a29e4e8a705f5057782768b02ea3dee1ef915a387518cfa8fe434b19f25322c9",
+    "followups/floor/best-intelligibility-model.json": "80cc8d059a1cee6e1dda5c5227fb082de7f612e4f118ac0348d1df97fd44e8ba",
+    "followups/floor/model.json": "375d0fd50fb510964537f91dd000a67466132945c5b15e2bd0def3bf9b536db6",
+    "followups/floor/report.json": "c64efaedce13285c569d38d333d63aa36dedf7f25e56d476a6b4f80b13c89df1",
+    "followups/nearest/band-audit.json": "7bb8bdca786228d91467d97572d9c0e37bdda48de0a2da382b87f1082fbffec2",
+    "followups/nearest/model.json": "6738f85b92b705e02c9bb539e3b99273e3004a675a2950b8bf104ffde57f5d67",
+    "followups/nearest/report.json": "a085f3cd630aa59417ba1e8c01e8daa039127d8ab953d4d94b0849579284a1c5",
+    "level-audit.json": "b982221d6ada6b1670dd2af5a003eee77d58ed84300ab8c991dbe26baac9c448",
+    "phase-wave/model.json": "6c3c19716c3ca8b178d8e84cbc23a27a518995b8443422a39e5e7be8ec1d9be1",
+    "phase-wave/summary.json": "1556b983560001a42ca83c119ab2a36c37c3af81ea43c02809cf19e7e47fb92c",
+    "sizes.json": "ec4573c1cc8fda9ac106d23d4846b74226dda9bb1e70b9cb5454d34295eb0696",
+    "tilt-probe.json": "513d16761f767efb0f035e2ba353ec947403dad8fd3434021ffd21332522ecde",
+    "word/model.json": "1932562bee6a2480eb08eb59eea3c7b63b0a7e252629810cf83dd4bb891cf2b3",
+    "word/report.json": "f95c014d9810e14505611a004f9a986369cb6f0d6facf45918eac8a1071f78ac"
+  },
+  "runtime": {
+    "python": "3.12.14",
+    "numpy": "2.5.4",
+    "numba": "0.68.0",
+    "scipy": "1.18.1",
+    "pystoi": "0.4.1",
+    "soundfile": "0.14.0"
+  },
+  "pending": [
+    "STOI 0.93 and spectral goal",
+    "Compact template/correction representation",
+    "Full 1024-byte image",
+    "SRAM and worst-cycle checks",
+    "Three-engine assembled PCM",
+    "Protected RU/EN validation",
+    "Physical PWM listening"
+  ],
+  "previous_pc_teacher": "word/model.json",
+  "followup_sources": {
+    "source_commit": "3e0c14a",
+    "seed": "word/model.json",
+    "evaluations_per_run": 24000,
+    "floor": "followups/floor/model.json",
+    "nearest": "followups/nearest/model.json"
+  }
+}

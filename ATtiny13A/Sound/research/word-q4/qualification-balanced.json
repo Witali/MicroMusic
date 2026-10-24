@@ -1,0 +1,29 @@
+{
+  "schema": "speech-quality-qualification-v1",
+  "suite_source_commit": "acdbc4f",
+  "suite_command": "python tools/test-speech-quality.py",
+  "suite_tests": 447,
+  "suite_seconds": 214.108,
+  "suite_pass": true,
+  "suite_log": "build/speech-quality-acdbc4f-tests.txt",
+  "suite_log_sha256": "dd11d7a890050aeb88fd01259bff3dc738bab318afa5271d2c76cba6c7b5fd72",
+  "extra_checks": [
+    {
+      "source_commit": "c443afe",
+      "command": "python tools/test-balanced-tail.py",
+      "tests": 1,
+      "passed": true,
+      "proof": "balanced-tail.json"
+    },
+    {
+      "source_commit": "cdbd9c2",
+      "command": "python tools/test-lattice-blocks.py",
+      "tests": 2,
+      "passed": true
+    }
+  ],
+  "scope": "447-test complete suite at acdbc4f, plus separate new tail and block-search contracts; not a run of the expanded 450-test suite",
+  "goal_achieved": false,
+  "full_word_player_implemented": false,
+  "hardware_tested": false
+}

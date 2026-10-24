@@ -1,0 +1,56 @@
+{
+  "processing": "Identical 70 Hz highpass and one global RMS match. Local phase shifts are plots/diagnostics only.",
+  "schema": "speech-waveform-diagnostic-v1",
+  "sample_rate": 7500,
+  "samples": 19328,
+  "voice_start_sample": 6528,
+  "reference_sha256": "4914d2c349e1f2e9e102ec23949a2bb96b95b7145aa252b54a6a8341ba5ce55d",
+  "candidate_sha256": "44bb984b9ea52ad0b6df2024588880fdd653add27c301785db61eb7ae7d49570",
+  "candidate_label": "Q3 AVR output",
+  "source_sha256_normalized_lf": {
+    "tools/compare-speech-waveforms.py": "c3a6937d3c46a3a058d57a8ef9e76d2a22220b3745678204f1cca7ed7716a959",
+    "tools/compare-speech-spectrograms.py": "52c2ef99054036539bbab427e3ed348d7f39dd4d26d5d21441225f1bdfb6c8fc",
+    "ATtiny13A/Sound/codec/spectrogram_objective.py": "66fd5c3d5e3a0716d3c18269a261a70ad9165575eaf33acb5c7ee166a8d4e927"
+  },
+  "raw_reference_mean": -1.5230368304726305e-05,
+  "raw_candidate_mean": 0.021743875465645695,
+  "windows": [
+    {
+      "start_seconds": 1.0304,
+      "end_seconds": 1.0517333333333334,
+      "period_samples": 40,
+      "periodicity_estimate": 0.9790885720796582,
+      "same_clock_correlation": -0.5646544695239969,
+      "best_phase_lag_samples": 32,
+      "phase_aligned_correlation": 0.8690307070800067,
+      "phase_aligned_relative_rmse": 0.6124717775320913,
+      "local_gain_for_shape_diagnostic": 0.7071317129441056,
+      "phase_and_local_gain_shape_rmse": 0.49572446656944924
+    },
+    {
+      "start_seconds": 1.3394666666666666,
+      "end_seconds": 1.3570666666666666,
+      "period_samples": 33,
+      "periodicity_estimate": 0.7228031887761003,
+      "same_clock_correlation": 0.19906395262886675,
+      "best_phase_lag_samples": 31,
+      "phase_aligned_correlation": 0.42144653617713757,
+      "phase_aligned_relative_rmse": 1.0511003341221892,
+      "local_gain_for_shape_diagnostic": 0.44220276255125346,
+      "phase_and_local_gain_shape_rmse": 0.90702637327265
+    },
+    {
+      "start_seconds": 2.0168,
+      "end_seconds": 2.0450666666666666,
+      "period_samples": 53,
+      "periodicity_estimate": 0.7015253624463927,
+      "same_clock_correlation": -0.21313100648052621,
+      "best_phase_lag_samples": 50,
+      "phase_aligned_correlation": 0.4777084634392081,
+      "phase_aligned_relative_rmse": 0.9509167741282684,
+      "local_gain_for_shape_diagnostic": 0.5675476701613275,
+      "phase_and_local_gain_shape_rmse": 0.8784555183095112
+    }
+  ],
+  "warning": "Correlation is not a naturalness metric. Local lag/gain fitting does not change the audio or codec."
+}

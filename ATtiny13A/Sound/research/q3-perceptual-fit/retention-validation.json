@@ -1,0 +1,173 @@
+{
+  "schema": "q3-perceptual-retention-validation-v1",
+  "source_capture_checks": [
+    {
+      "run": "cycle02-start",
+      "source_commit": "953af97",
+      "source_sha256_normalized_lf": "b7d86fc16492f9cdf337c578fca0ee1d6a18fdd15c4eabc496cc8e4be462ea42",
+      "capture_source_hash_exact": true
+    },
+    {
+      "run": "stronger32-start",
+      "source_commit": "39ec31c",
+      "source_sha256_normalized_lf": "52a35b7b03c1119ccaeb539686954f65e2fdc0984ca7003e6fcb46f9c5927321",
+      "capture_source_hash_exact": true
+    }
+  ],
+  "profiles": [
+    {
+      "run": "cycle02-start",
+      "profile": "before",
+      "samples": 22272,
+      "stream_bytes": 608,
+      "peak_signed": 100,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "steps_ge48": 0,
+      "stoi": 0.84750912234183,
+      "estoi": 0.6597706434401718,
+      "spectrogram_loss": 0.4936535123201595,
+      "pcm_sha256": "6f9439914c4e76723da8a23c280af7fad9ac62bc9fe0daa6697a80318eb3cb9d",
+      "independent_rescore_agrees": true
+    },
+    {
+      "run": "cycle02-start",
+      "profile": "balanced",
+      "samples": 22272,
+      "stream_bytes": 608,
+      "peak_signed": 100,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "steps_ge48": 0,
+      "stoi": 0.847512782572495,
+      "estoi": 0.6597402410198119,
+      "spectrogram_loss": 0.49362972253319987,
+      "pcm_sha256": "b3f8799127451f159dedcf2ed66999b4508516a5355e4f4c705a55d0922bc2ae",
+      "independent_rescore_agrees": true
+    },
+    {
+      "run": "cycle02-start",
+      "profile": "stoi",
+      "samples": 22272,
+      "stream_bytes": 608,
+      "peak_signed": 100,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "steps_ge48": 0,
+      "stoi": 0.847512782572495,
+      "estoi": 0.6597402410198119,
+      "spectrogram_loss": 0.49362972253319987,
+      "pcm_sha256": "b3f8799127451f159dedcf2ed66999b4508516a5355e4f4c705a55d0922bc2ae",
+      "independent_rescore_agrees": true
+    },
+    {
+      "run": "cycle02-start",
+      "profile": "spectrum",
+      "samples": 22272,
+      "stream_bytes": 608,
+      "peak_signed": 100,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "steps_ge48": 0,
+      "stoi": 0.8390160946707207,
+      "estoi": 0.6257134118332998,
+      "spectrogram_loss": 0.49207764192586645,
+      "pcm_sha256": "98718f84fc7f9269dabccedc41403b8e6cc44d2e7159a15a4e9359a26dfff882",
+      "independent_rescore_agrees": true
+    },
+    {
+      "run": "stronger32-start",
+      "profile": "before",
+      "samples": 22272,
+      "stream_bytes": 620,
+      "peak_signed": 100,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "steps_ge48": 0,
+      "stoi": 0.8495328543956718,
+      "estoi": 0.659937246795789,
+      "spectrogram_loss": 0.4911844212014441,
+      "pcm_sha256": "4155925af8a10464f0b3b7c26973ee2963adc514bb670ed6f93d9533ae7c4e12",
+      "independent_rescore_agrees": true
+    },
+    {
+      "run": "stronger32-start",
+      "profile": "balanced",
+      "samples": 22272,
+      "stream_bytes": 620,
+      "peak_signed": 100,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "steps_ge48": 0,
+      "stoi": 0.8495328543956718,
+      "estoi": 0.659937246795789,
+      "spectrogram_loss": 0.4911844212014441,
+      "pcm_sha256": "4155925af8a10464f0b3b7c26973ee2963adc514bb670ed6f93d9533ae7c4e12",
+      "independent_rescore_agrees": true
+    },
+    {
+      "run": "stronger32-start",
+      "profile": "stoi",
+      "samples": 22272,
+      "stream_bytes": 620,
+      "peak_signed": 100,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "steps_ge48": 0,
+      "stoi": 0.8495328543956718,
+      "estoi": 0.659937246795789,
+      "spectrogram_loss": 0.4911844212014441,
+      "pcm_sha256": "4155925af8a10464f0b3b7c26973ee2963adc514bb670ed6f93d9533ae7c4e12",
+      "independent_rescore_agrees": true
+    },
+    {
+      "run": "stronger32-start",
+      "profile": "spectrum",
+      "samples": 22272,
+      "stream_bytes": 620,
+      "peak_signed": 100,
+      "wrap_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "steps_ge48": 0,
+      "stoi": 0.8455444609766193,
+      "estoi": 0.652685813318376,
+      "spectrogram_loss": 0.48918140092496054,
+      "pcm_sha256": "5a2e9c0900298e24beebfec732a66ae79b9963c223d3c85fa1d74fe5ff1dfe6e",
+      "independent_rescore_agrees": true
+    }
+  ],
+  "all_passed": true,
+  "policy": "Fresh full frozen ordinary decoder, full objective, deterministic eSTOI and packed stream; all metrics agree within1e-12; original source snapshots verified against source commits"
+}

@@ -15,14 +15,6 @@ OUTPUT = ROOT / 'web-player/hq4-firmware.json'
 ARCHIVE = SOUND / 'research/hq4-catalog-archive.json'
 
 
-def quality_previews(entries):
-    previews = json.loads((ROOT/'web-player/audio/speech-previews/manifest.json').read_text(encoding='utf-8'))['entries']
-    by_id = {preview['firmwareId']: preview for preview in previews}
-    for entry in entries:
-        if entry['id'] in by_id:
-            entry['qualityPreview'] = by_id[entry['id']]
-
-
 def digest(data):
     return hashlib.sha256(data).hexdigest()
 
@@ -204,7 +196,6 @@ def main():
                   aliases={entry['id']:winners[entry['audioReferenceId']] for entry in archive['entries']
                            if entry['id'] != winners[entry['audioReferenceId']]})
     listening_levels(dict(entries=selected, referenceEntries=archive['entries']), args.node)
-    quality_previews(selected)
     for path, catalog in ((OUTPUT,result),(ARCHIVE,archive)):
         text = json.dumps(catalog, ensure_ascii=False, indent=2)+'\n'
         if args.check:
