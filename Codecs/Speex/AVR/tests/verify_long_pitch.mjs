@@ -17,10 +17,11 @@ const packed=address('long_packed')+1;
 const cEntry=[...symbols].find(([n])=>/^long_test_c(?:\.|$)/.test(n))[1];
 const cNEntry=[...symbols].find(([n])=>/^long_test_c_n(?:\.|$)/.test(n))[1];
 const entries=new Set([address('speex_avr_long_innovation10'),address('speex_avr_innovation10'),
-  address('speex_avr_long_innovation_n'),cEntry,cNEntry]);
+  address('speex_avr_long_innovation_n'),address('speex_avr_long_innovation1'),cEntry,cNEntry]);
 const preserved=[...Array.from({length:16},(_,i)=>i+2),28,29];
-const times=[null,...Array.from({length:5},()=>({min:Infinity,max:0,calls:0}))];
+const times=[null,...Array.from({length:6},()=>({min:Infinity,max:0,calls:0}))];
 const variableCounts=Array.from({length:11},(_,count)=>({count,calls:0,samples:0}));
+const scalarOnly=process.argv.includes('--scalar-only'),scalarDeltas=new Set();
 let returnedCycles=0;
 let active=null,which=0,seed=0xc38021d7,clipped=0,pitchClipped=0,cases=0;
 function random(){seed^=seed<<13;seed^=seed>>>17;seed^=seed<<5;return seed>>>0;}
@@ -73,16 +74,18 @@ function check(g,scale,index){
     expected[i]=Math.max(-32767,Math.min(32767,value));clipped+=expected[i]!==value;
   }
   const packedBefore=cpu.data.slice(packed-1,packed+31);
-  const count=cases%11;cpu.data[address('long_count')]=count;
-  let fixedAsmCycles=0;
-  for(which=1;which<=5;which++){
+  const count=scalarOnly?1:cases%11;cpu.data[address('long_count')]=count;
+  let fixedAsmCycles=0,variableCycles=0;
+  for(which of (scalarOnly?[4,6]:[1,2,3,4,5,6])){
     for(let i=0;i<10;i++)cpu.dataView.setInt16(out+2*i,0x55aa,true);
     cpu.data[status]=1;cpu.data[command]=which;
     until(()=>cpu.data[status]===2);
     assert.equal(active,null);
-    const size=which<=3?10:count;
+    const size=which===6?1:which<=3?10:count;
     for(let i=0;i<10;i++)assert.equal(cpu.dataView.getInt16(out+2*i,true),i<size?expected[i]:0x55aa,`backend ${which}, count ${size}, case ${cases}, sample ${i}`);
     if(which===1)fixedAsmCycles=returnedCycles;
+    if(which===4)variableCycles=returnedCycles;
+    if(which===6 && count===1)scalarDeltas.add(variableCycles-returnedCycles);
     if(which===4 && count===10)assert.equal(returnedCycles-fixedAsmCycles,4,'Runtime-count setup cost');
     for(let i=0;i<12;i++)assert.equal(cpu.dataView.getInt16(input+2*i,true),samples[i],'Read-only history');
     g.forEach((v,i)=>assert.equal((cpu.data[gain+i]<<24)>>24,v,'Read-only gains'));
@@ -115,17 +118,19 @@ for(let block=0;block<4096;block++){
   check(g,scales[block%64],random()&255);
 }
 assert.ok(pitchClipped>1000 && clipped>10000);
-assert.equal(times[1].calls,cases);assert.equal(times[2].calls,cases);assert.equal(times[3].calls,cases);
+if(!scalarOnly){assert.equal(times[1].calls,cases);assert.equal(times[2].calls,cases);assert.equal(times[3].calls,cases);
 assert.equal(times[4].calls,cases);assert.equal(times[5].calls,cases);
-assert.ok(variableCounts.every(v=>v.calls>0),'Every runtime count, including zero');
+assert.ok(variableCounts.every(v=>v.calls>0),'Every runtime count, including zero');}
+assert.equal(times[6].calls,cases); assert.deepEqual([...scalarDeltas],[37]);
 const report={mcu:'ATmega328P',simulator:'avr8js 0.21.1',compiler:'AVR GCC 7.3.0 mixed Os/O2, LTO, fwrapv',
-  binarySha256:createHash('sha256').update(binary).digest('hex'),blocks:cases,samplesPerBackend:cases*10,
+  binarySha256:createHash('sha256').update(binary).digest('hex'),blocks:cases,fullRun:!scalarOnly,fixedSamplesPerBackend:scalarOnly?0:cases*10,scalarSamples:cases,
   tableGainTriples:32,scales:64,shapeMin:-128,shapeMax:127,historyMin:-32768,historyMax:32767,
   fullTableShapeScaleCases:tableCases,clampBoundaryBlocks:boundaryCases,randomGainBlocks:4096,
   outputClippedSamples:clipped,pitchClippedSamples:pitchClipped,exact:true,
   gainsPreserved:true,historyPreserved:true,guardsIntact:true,calleeSavedRegistersPreserved:true,
   zeroRegisterRestored:true,asmKernelCycles:times[1],cKernelCycles:times[2],packedKernelCycles:times[3],
   variableAsmKernelCycles:times[4],variableCKernelCycles:times[5],variableCounts,
+  scalarAsmKernelCycles:times[6],scalarVsRuntimeCyclesSaved:[...scalarDeltas],
   variableSamplesPerBackend:variableCounts.reduce((s,v)=>s+v.samples,0),
   includesInterrupts:false,physicalBoardTested:false};
-writeFileSync(join(build,'verification.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));
+writeFileSync(join(build,scalarOnly?'scalar-pair-verification.json':'verification.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));

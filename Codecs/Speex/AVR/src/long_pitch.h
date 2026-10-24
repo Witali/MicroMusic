@@ -28,6 +28,10 @@ static SPEEX_NB3_ALWAYS_INLINE void speex_nb3_long_innovation10_c(int16_t *out,
     }
 }
 #if SPEEX_NB3_USE_AVR_ASM
+/* One output, three completed history words, same L1<=147 gain bound.
+ * Shares the exact transform; no rolling-history registers are needed. */
+extern void speex_avr_long_innovation1(int16_t *,const int16_t *,const int8_t *,
+                                       int32_t,const int8_t *);
 extern void speex_avr_long_innovation10(int16_t *,const int16_t *,const int8_t *,
                                         int32_t,const int8_t *);
 /* count 0..10; a nonempty block reads count+2 completed history words.

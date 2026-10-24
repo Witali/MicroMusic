@@ -47,6 +47,7 @@ matching optimized kernel is provided yet.
 | Innovation, scaling and saturation | `innovation.S` | C branch in `innovation.h` and bounded helpers in `nb3_c_math.h` |
 | Fused long-pitch/innovation | second entry in `innovation.S`, shared scaling/clamps | `long_pitch.h`, inlined into the C forty-sample caller |
 | Variable-count fused vectors (0..10) | separate entry in `innovation.S`, same scaling/clamps | `long_pitch.h` with runtime count |
+| One-sample fused vectors | scalar entry in `innovation.S`, same transform with fewer saved registers | same `long_pitch.h` helper with count=1 |
 | Short-pitch range selection and boundary sums | `short_pitch.h` calling variable ASM vectors | `short_pitch.h`, scalar boundaries and inlined C vectors |
 | Whole-block LPC synthesis | `lpc_dot.S` | C dot product and coefficient-age loop in `iir_direct.c.inc` |
 

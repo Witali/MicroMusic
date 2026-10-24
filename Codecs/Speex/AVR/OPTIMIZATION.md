@@ -380,6 +380,30 @@ commit and hashes are pinned in zero-vector-admission-audit.json.
 Reports: zero-vector-{asm,c}-*.json, zero-vector-host.json,
 zero-vector-native.json and portable-zero-vector-library.json.
 
+### Scalar one-sample ASM entry
+
+The pinned prototype from `nb3-scalar-boundary.patch` is now in production.
+It saves exactly 37 kernel cycles on 67,328 independent paired cases, reads
+three words/gains directly, keeps the Flash pointer in already-saved r3/r8,
+and shares the unchanged transform with T=0. The controller selects it for
+count=1; its branch can add one cycle to the fastest short-pitch unit case.
+ASM/C short-controller tests cover 1,966,080 samples each. Rebuilt main unit
+images match those independently executed binaries byte-for-byte.
+
+The main ASM decoder matches 14,278 fresh AVR frames and the measured prototype
+binary. Mean over 31 streams improves 0.0179% (speech 0.0182%); corpus max is
+125,500 (fixture max 125,373), coverage max 127,280 cycles. Flash is 9,460 B
+(+154), SRAM/stack stay 1,119 / 141 B. Full ordinary and +40% CPU PWM now
+pass all 31 streams / 9,100 frames / 1,456,000 samples each, exact PWM and no
+underruns. Queues remain 73 / 31, gaps 80,013 / 194,065 cycles. Player static
+SRAM/stack remain 1,254 / 150 B, free 644 B; ordinary speech demo is 12,660 B
+including 2,940 B audio. Main mailbox/demo hashes match the admitted images.
+Explicit C decoder, ordinary demo and +10% loaded demo are byte-identical to
+their admitted zero-vector images. Both freshly exported C archives pass
+9,100 frames through the public API. `scalar-main-admission-audit.json` pins
+the 77-file source copies, decoder/unit hashes and C equivalence.
+Reports: scalar-main-*.json, portable-scalar-main-library.json.
+
 ## Next candidates (not yet admitted)
 
 1. **Specialize known-zero adaptive arithmetic.** The zero-gain C/ASM kernels
@@ -387,22 +411,6 @@ zero-vector-native.json and portable-zero-vector-library.json.
    remove those operations and its buffer/flag entirely. Preserve exact shape
    scaling/rounding and measure code duplication versus shared-body overhead;
    never slow the common nonzero vector to accelerate a rare zero path.
-
-2. **Admit the measured one-sample ASM prototype.** A separate entry now has a
-   reproducible experimental patch, pinned to db4f492, in
-   `docs/avr-asm-cookbook/examples/nb3-scalar-boundary.patch`. It reads three
-   words/gains directly, temporarily keeps the Flash pointer in already-saved
-   r3/r8, and uses the unchanged common transform with T=0. Explicit C remains
-   bit-for-bit the admitted decoder. On 67,328 paired independent inputs the
-   entry saves exactly 37 cycles (227..242 -> 190..205). Short-controller ASM/C
-   tests pass 1,966,080 samples each; ASM minimum can rise by one cycle, so the
-   selection branch is not free. The integrated candidate matches 14,278 AVR
-   frames; over 31 streams mean improves 0.0179% (speech 0.0182%), corpus max
-   125,613 -> 125,500, coverage max 127,760 -> 127,280. Flash +154 B to 9,460;
-   SRAM/stack unchanged. Patch reproduction matches ASM decoder/unit hashes
-   and the explicit C baseline binary. Its ASM PWM/ISR admission remains to
-   be done before promotion; production still uses the admitted N entry.
-   Reports: scalar-boundary-experiment-*.json.
 
 No claim of a global speed optimum has been established. Do not mark the
 ongoing optimization goal complete while useful candidates remain untested.

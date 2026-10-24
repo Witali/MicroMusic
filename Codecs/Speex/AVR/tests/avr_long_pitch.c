@@ -8,6 +8,7 @@ int16_t long_input[14],long_output[12];
 int8_t long_gains[5];
 uint8_t long_packed[32];
 extern void speex_avr_innovation10(int16_t *,const uint8_t *,const int8_t *,int32_t);
+extern void speex_avr_long_innovation1(int16_t *,const int16_t *,const int8_t *,int32_t,const int8_t *);
 volatile int32_t long_scale;
 volatile uint8_t long_index,long_count,long_command,long_status,long_zero;
 static SPEEX_NB3_STAGE_O2 void long_test_c(int16_t *out,const int16_t *in,
@@ -37,6 +38,9 @@ int main(void)
         else if (long_command==4)
             speex_avr_long_innovation_n(long_output+1,long_input+1,
                 shapes+long_index,long_scale,long_gains+1,long_count);
+        else if (long_command==6)
+            speex_avr_long_innovation1(long_output+1,long_input+1,
+                shapes+long_index,long_scale,long_gains+1);
         else
             long_test_c_n(long_output+1,long_input+1,
                 shapes+long_index,long_scale,long_gains+1,long_count);

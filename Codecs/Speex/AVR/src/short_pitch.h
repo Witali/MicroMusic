@@ -96,7 +96,10 @@ void speex_nb3_short_innovation(int16_t *out,const int16_t *exc,uint8_t pitch,
             }
             if(count>left) count=left;
 #if SPEEX_NB3_USE_AVR_ASM
-            speex_avr_long_innovation_n(out,in,shape,scale,g,count);
+            if (count==1)
+                speex_avr_long_innovation1(out,in,shape,scale,g);
+            else
+                speex_avr_long_innovation_n(out,in,shape,scale,g,count);
 #else
             speex_nb3_long_innovation10_c(out,in,shape,scale,gains,count);
 #endif

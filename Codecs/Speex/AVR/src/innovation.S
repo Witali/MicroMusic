@@ -278,3 +278,58 @@ speex_avr_long_innovation_n:
     set
     rjmp .Linnovation_bias_setup
 .size speex_avr_long_innovation_n, .-speex_avr_long_innovation_n
+
+
+/* Scalar entry: three RAM words, then the unchanged common transform.
+ * Same five arguments as the fixed-ten entry. Preserve the Flash pointer
+ * in already-saved r3/r8 until the products are complete. */
+.global speex_avr_long_innovation1
+.type speex_avr_long_innovation1, @function
+speex_avr_long_innovation1:
+    push r2
+    push r3
+    push r8
+    push r13
+    push r14
+    push r15
+    push r28
+    push r29
+    movw r28, r24
+    mov r3, r20
+    mov r8, r21
+    movw r26, r22
+    movw r30, r14
+    clr r2
+    .macro scalar_product
+    ld r20, Z+
+    ld r22, X+
+    ld r21, X+
+    muls r21, r20
+    movw r24, r0
+    mov r21, r22
+    mulsu r20, r21
+    mov r23, r0
+    sbc r25, r2
+    add r24, r1
+    adc r25, r2
+    .endm
+    scalar_product
+    movw r14, r24
+    mov r13, r23
+    scalar_product
+    add r13, r23
+    adc r14, r24
+    adc r15, r25
+    scalar_product
+    add r13, r23
+    adc r14, r24
+    adc r15, r25
+    mov r30, r3
+    mov r31, r8
+    ldi r20, 1
+    mov r3, r20
+    ldi r20, 32
+    mov r8, r20
+    clt
+    rjmp .Linnovation_sample
+.size speex_avr_long_innovation1, .-speex_avr_long_innovation1

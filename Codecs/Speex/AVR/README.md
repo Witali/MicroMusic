@@ -97,8 +97,8 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
 
 | Build | Flash | Static SRAM | Peak stack | Free SRAM at peak |
 | --- | ---: | ---: | ---: | ---: |
-| Optimized decoder test mailbox, ASM enabled | 9,306 B | 1,119 B | 141 B | 788 B |
-| Full PWM speech demo, including 2,940 B compressed audio | 12,506 B | 1,254 B | 150 B | 644 B |
+| Optimized decoder test mailbox, ASM enabled | 9,460 B | 1,119 B | 141 B | 788 B |
+| Full PWM speech demo, including 2,940 B compressed audio | 12,660 B | 1,254 B | 150 B | 644 B |
 | C fallback decoder test mailbox | 11,334 B | 1,119 B | 153 B | 776 B |
 | Full C PWM speech demo, including 2,940 B audio | 14,532 B | 1,254 B | 162 B | 632 B |
 
@@ -107,7 +107,7 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
   lifetime cases, each backend matches 14,278 frames with one firmware image.
 - Complete player tests on all 31 streams match upstream PCM converted to u8,
   with zero ring underruns and no stack/static-memory collisions.
-- Maximum observed ASM decoder-only corpus frame cost: **125,613 cycles / 7.851 ms**;
+- Maximum observed ASM decoder-only corpus frame cost: **125,500 cycles / 7.844 ms**;
   the 20-ms budget at 16 MHz is 320,000 cycles. ISR and output costs are verified
   separately by the complete-player runs.
 - Primitive tests cover 240,000 complete LSP conversions and 3,670,016 bit fields;
@@ -143,12 +143,14 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
 - Codebooks reside in Flash, use explicit signed `pgm_read_*` accesses, and no
   malloc/calloc/realloc/free symbols are linked.
 
-Current decoder results: `reports/zero-vector-{asm,c}-{fixtures,speech,means,pitch-coverage,lsp-reuse,zero}.json`.
-Player results: `reports/zero-vector-{asm,c}-{player,summary,headroom-summary}.json`,
-`reports/zero-vector-asm-headroom40.json` and `reports/zero-vector-c-headroom10.json`.
-Portable results: `reports/portable-zero-vector-library.json`.
-`reports/zero-vector-admission-audit.json` pins the source hashes and all four
-77-file player copies; main mailbox/demo hashes match the verified images.
+Current ASM decoder results: `reports/scalar-main-asm-{fixtures,speech,means,pitch,lsp,zero}.json`.
+ASM player results: `reports/scalar-main-asm-{player,summary,headroom-summary}.json`
+and `reports/scalar-main-asm-headroom40.json`. Explicit C binaries are unchanged;
+their complete results remain `reports/zero-vector-c-*.json`.
+Portable results: `reports/portable-scalar-main-library.json`.
+`reports/scalar-main-admission-audit.json` pins both 77-file ASM player copies,
+matched decoder/unit images and unchanged ordinary/loaded C demo hashes.
+Main ASM mailbox/demo hashes match the verified images.
 The earlier `segment-*`, `register-*`, `shared-bias-*` and `fused-long-*` results remain historical.
 The `phase-reuse-*` reports retain the preceding admitted image.
 The `nb-word-math-*` and `c-word-math-*` reports are the preceding baselines.
@@ -205,6 +207,7 @@ The Xiph NB3 adaptation has the following separately measured stages:
 | Hold the shared innovation bias once per block | 130,333 | 9,076 B | 1,199 B |
 | Fuse short pitch over preselected history ranges | 125,587 | 9,300 B | 1,199 B |
 | Reuse one zero vector and reduce scratch to 60 B | 125,613 | 9,306 B | 1,119 B |
+| Use a scalar entry for one-sample pitch segments | 125,373 | 9,460 B | 1,119 B |
 
 Through the persistent-history stage, the combined corpus maximum fell from 204,770 to
 133,142 cycles: **34.98% less decoder time**. The latest p1-specific ASM core

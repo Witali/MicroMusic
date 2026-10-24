@@ -63,7 +63,7 @@ node Codecs/Speex/AVR/tests/verify_avr.mjs --backend c --verify-reset --firmware
 
 Полные замеры: `Codecs/Speex/AVR/reports/short-pitch-experiment-*.json`.
 
-## Скалярный ASM-вход для одного сэмпла — ожидает PWM/ISR-допуска
+## Скалярный ASM-вход для одного сэмпла — исходный прототип
 
 `nb3-scalar-boundary.patch`, база `db4f492`, добавляет отдельный ASM-вход для
 трёх RAM-слов/трёх signed8 gains и одного Flash shape. Он сохраняет восемь
@@ -79,8 +79,11 @@ AVR GCC 7.3 mixed Os/O2/O3+LTO: по 67 328 независимых пар яд
 ASM +1 такт: ветка выбора тоже имеет цену. В целом ASM-декодере точны 14 278
 кадров, среднее 31 потока -0,0179%, human speech -0,0182%; corpus max
 125 613→125 500, coverage max 127 760→127 280. Flash 9 306→9 460 Б,
-static SRAM 1 119 Б и peak stack 141 Б прежние. **ASM PWM/ISR не проверялся**;
-патч пока не включён в основные исходники. Другие MCU не измерены.
+static SRAM 1 119 Б и peak stack 141 Б прежние. Сам исходный эксперимент не
+включал ASM PWM/ISR. Теперь тот же машинный decoder/unit код включён в
+основные исходники и прошёл обычный и +40% CPU PWM на всех 31 потоках;
+доказательство переноса — `scalar-main-admission-audit.json`. Другие MCU
+не измерены. Патч здесь сохраняет воспроизводимую исходную стадию.
 
 В новой игнорируемой копии воспроизвести pinned базу и применить патч
 (Python 3.12+, Git и toolchain из README кодека):
