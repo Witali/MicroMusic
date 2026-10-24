@@ -32,7 +32,22 @@ def compact(s,bits,nearest):
     return result
 
 
-def run(reference_path,model_path,output):
+def choose(records,maximum_stoi_drop=.005,maximum_spectrum_increase=.01):
+    if (not np.isfinite(maximum_stoi_drop) or not np.isfinite(maximum_spectrum_increase)
+            or maximum_stoi_drop<0 or maximum_spectrum_increase<0):
+        raise ValueError('Expected finite nonnegative quality tolerances')
+    baseline=records[0]['score']
+    eligible=[r for r in records if r['score']['stoi']>=baseline['stoi']-maximum_stoi_drop
+        and r['score']['spectrogram_loss']<=baseline['spectrogram_loss']+maximum_spectrum_increase]
+    selected=min(eligible,key=lambda r:(r['waveform_bytes'],fit.fit.energy(r['score'])))
+    return dict(forms=selected['forms'],model=f"{selected['forms']}/model.json",
+        eligible_forms=[r['forms'] for r in eligible],maximum_stoi_drop=maximum_stoi_drop,
+        maximum_spectrum_increase=maximum_spectrum_increase,
+        actual_stoi_drop=baseline['stoi']-selected['score']['stoi'],
+        actual_spectrum_increase=selected['score']['spectrogram_loss']-baseline['spectrogram_loss'])
+
+
+def run(reference_path,model_path,output,maximum_stoi_drop=.005,maximum_spectrum_increase=.01):
     meta=json.loads(model_path.read_text(encoding='utf-8'));state=fit.from_model(meta)
     bits,nearest=meta['state_bits'],meta['nearest'];x,sr=sf.read(reference_path,dtype='float64')
     reference_hash=hashlib.sha256(reference_path.read_bytes()).hexdigest()
@@ -74,6 +89,7 @@ def run(reference_path,model_path,output):
         if best is None:break
         _,state,step=best;history.append(step)
     report=dict(schema='q4-product-form-prune-v1',records=records,merges=history,exact_evaluations=evaluated,
+        selection=choose(records,maximum_stoi_drop,maximum_spectrum_increase),
         reference_sha256=reference_hash,seed_sha256=hashlib.sha256(model_path.read_bytes()).hexdigest(),
         source_sha256_normalized_lf={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_text(encoding='utf-8').encode()).hexdigest()
             for p in (Path(__file__),ROOT/'tools/fit-q4-product233.py',ROOT/'ATtiny13A/Sound/codec/q4_product233.py',ROOT/'ATtiny13A/Sound/codec/q4_phase_wave.py')},
@@ -84,4 +100,6 @@ def run(reference_path,model_path,output):
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     for key in ('reference','model','output'):p.add_argument('--'+key,type=Path,required=True)
-    a=p.parse_args();run(a.reference,a.model,a.output)
+    p.add_argument('--maximum-stoi-drop',type=float,default=.005)
+    p.add_argument('--maximum-spectrum-increase',type=float,default=.01)
+    a=p.parse_args();run(a.reference,a.model,a.output,a.maximum_stoi_drop,a.maximum_spectrum_increase)

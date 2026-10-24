@@ -103,5 +103,20 @@ class Product233Tests(unittest.TestCase):
         for maximum in (0,1,9):
             with self.assertRaises(ValueError):fit.from_model(dict(model,maximum_forms=maximum))
 
+    def test_form_count_is_selected_automatically_under_both_quality_tolerances(self):
+        spec=importlib.util.spec_from_file_location('product_form_choice_contracts',ROOT/'tools/prune-q4-product-forms.py')
+        prune=importlib.util.module_from_spec(spec);sys.modules[spec.name]=prune;spec.loader.exec_module(prune)
+        records=[dict(forms=n,waveform_bytes=size,score=dict(stoi=s,spectrogram_loss=e))
+            for n,size,s,e in ((6,48,.868,.466),(4,32,.865,.469),(1,2,.840,.471))]
+        self.assertEqual(prune.choose(records)['forms'],4)
+        self.assertEqual(prune.choose(records,0,0)['forms'],6)
+        self.assertEqual(prune.choose(records,.05,.05)['forms'],1)
+        # A spectrum improvement alone cannot override the intelligibility bound.
+        reduced=[dict(r,score=dict(r['score'])) for r in records]
+        reduced[-1]['score']['spectrogram_loss']=0
+        self.assertEqual(prune.choose(reduced,.005,.01)['forms'],4)
+        for value in (-1,float('inf'),float('nan')):
+            with self.assertRaises(ValueError):prune.choose(records,value,.01)
+
 
 if __name__=='__main__':unittest.main()
