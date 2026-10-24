@@ -216,8 +216,9 @@ work. Treat warmed execution speed separately from translation, WASM compilation
 module size and retranslation after SPM; improvements in one do not establish
 improvements in the others.
 
-Starting point: [`avr-transpiler.js`](../lib/avr-transpiler.js) generates ordinary
-optimized blocks only when `!resumable`. The exact resumable path dispatches
+Starting point at the saved2026-10-23 checkpoint:
+[`avr-transpiler.js`](../lib/avr-transpiler.js) generated ordinary
+optimized blocks only when `!resumable`. The exact resumable path dispatched
 individual instruction functions. AVR registers remain in shared linear memory;
 flag elimination currently applies within ordinary blocks. The phase emitter
 saves nine i32 temporaries and one f64 temporary on a suspended phase, rather
@@ -280,6 +281,46 @@ suite at integration checkpoints; retain serial paired uninstrumented timings
 and compilation/size data. The older sampled CPU share is not a prediction of
 the speedup available in the current runtime. Preserve the device/translator/
 generated-code separation and add no per-instruction JavaScript callbacks.
+
+Implementation checkpoint, 2026-10-24: register-only resumable blocks now use
+the existing phase context and native clock bridge. Strict event/observation
+guards, IRQ delay/pending checks, exact retirement capacity and physical-time
+capacity retain the original generated instruction path whenever a whole block
+cannot fit. External CLKI still processes every source phase individually;
+memory/I/O instructions retain their existing bus phases. The arithmetic still
+accesses registers in shared memory, so register locals and the remaining
+compiler priorities are open. The counter/half-phase boundary regressions and
+all123 instruction forms pass; the complete integration suite passed1187/1187.
+Native WASM probes also require actual14-cycle block calls from run/runUntil;
+state parity alone had missed an inverted dispatch comparison. A shared
+conservative event budget now protects both CPU modes from rounded physical
+RESET ties, including the9MHz222223ps boundary and its adjacent picoseconds.
+
+The first peripheral-activity change also skips recurring idle EEPROM/Flash
+service and deadline queries, using the authoritative controller state. NVM
+reads/writes/commands catch up at their exact timestamps, and the ready IRQ
+remains a separate live level. Its24 differential checks cover internal and
+held/unequal external clocks, protected windows, programming stalls, reset,
+sleep/PRR and supply ties. Activity gating for the other modules remains open.
+See the [NVM activity contract](devices/attiny13a/nvm-activity.md) and
+[CPU block contract](devices/attiny13a/cpu_phase.md).
+
+The rebuilt112668-byte runtime retains103 function exports plus exported memory
+(104 exports total), no imports and fixed two-page memory, SHA-256
+`9a3461976f84d456ca6f2a1c8b2a24f0b1dadbc85ced2c45d20f1eeffbbc2bde`.
+The [three-way optimization report](../reports/planned-optimizations-20261024.md)
+retains234 final timed runs and1476 pairwise checkpoints. Three physical-time
+firmware examples have median paired total gains of1.365–1.640x, positive in
+all18 pairs. The short/long arithmetic loops show2.610x/22.123x; their synthetic
+gains are separate from real firmware. All chip state and PCM match, with only
+the intentionally earlier private scheduling hint validated separately against
+the old runtime. Native-only versus candidate diagnostics remain fully equal.
+Ordinary generated code stays byte-identical for all13 retained firmwares in
+both ABIs. Initial/preactivation timings, exact harness sources, individual
+variance and native entry counters are retained too. CLKI still services every
+source phase. This improves execution without closing real-time acceptance.
+This is partial stage5 progress; the checklist remains21 of30 complete with
+nine open, including silicon measurements and the default-engine gate.
 
 ## Execution and verification
 
