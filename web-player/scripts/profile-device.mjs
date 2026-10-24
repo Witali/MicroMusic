@@ -148,23 +148,28 @@ const namedRuntime=named(production,'micromusic.profile.native',runtimeFunctions
 writeFileSync(join(out,'runtime-named.wasm'),namedRuntime);
 const runtimeModule=new WebAssembly.Module(namedRuntime),productionModule=new WebAssembly.Module(production);
 assert.deepEqual(WebAssembly.Module.imports(runtimeModule),[]);
-const catalog=['web-player/firmware.json','web-player/hq4-firmware.json'].flatMap(path=>json(path).entries);
+const catalogPaths=['web-player/firmware.json','web-player/hq4-firmware.json'];
+const catalogs=catalogPaths.map(json),catalog=catalogs.flatMap(row=>row.entries);
+const aliases=Object.assign({},...catalogs.map(row=>row.aliases));
 const kernel=flash({instructions:[avr.ldi(16,1),avr.ldi(17,0x55),avr.add(18,16),
   avr.eor(19,17),avr.inc(20),avr.rjmp(5,2)]});
 const ids=values.kernel?[`kernel-${clock}-div${divisor}-${operation}`]:
   values.firmware?.flatMap(value=>value.split(',').filter(Boolean))||['rhythmic','lumiere-stereo','hq4-chego-auto'];
 assert.ok(ids.length,'Select at least one firmware');assert.equal(new Set(ids).size,ids.length,'Duplicate firmware');
 const selected=values.kernel?[{id:ids[0],cpuHz:frequency,audioChannels:1,binary:kernel,flashSha256:hash(kernel)}]:
-  ids.map(id=>{const entry=catalog.find(item=>item.id===id);assert.ok(entry,'Unknown firmware '+id);return entry;});
+  ids.map(id=>{const entry=catalog.find(item=>item.id===(aliases[id]??id));assert.ok(entry,'Unknown firmware '+id);return entry;});
+assert.equal(new Set(selected.map(entry=>entry.id)).size,selected.length,'Duplicate resolved firmware');
 const sourcePaths=[...Object.keys(manifest.inputs),'web-player/lib/avr-transpiler.js',
   'web-player/lib/avr-transpiled-runtime.js','web-player/lib/avr-runtime.js',
   'web-player/lib/attiny13a-runtime.js','web-player/lib/avr-wasm-phases.js',
-  'web-player/tests/fixtures/attiny13a-system-firmware.mjs','web-player/lib/hex.js','web-player/scripts/profile-device.mjs'];
+  'web-player/tests/fixtures/attiny13a-system-firmware.mjs','web-player/lib/hex.js','web-player/scripts/profile-device.mjs',
+  'web-player/lib/avr-profiles.js',...catalogPaths];
 const report={schema:'micromusic-device-sampling-profile-v1',createdAt:new Date().toISOString(),
   git:{head:git(['rev-parse','HEAD']),status:git(['status','--short'])},
   node:{version:process.version,versions:process.versions,flags:process.execArgv,executable:process.execPath},
   host:{platform:platform(),release:release(),arch:arch(),cpu:cpus()[0]?.model,logicalCpus:cpus().length},
-  parameters:{frames,rate,repeats,intervalUs,blockFrames,fastIdle:!values.kernel,optimizeFlags:true,firmwareOrder:ids,
+  parameters:{frames,rate,repeats,intervalUs,blockFrames,fastIdle:!values.kernel,optimizeFlags:true,
+    requestedFirmware:ids,firmwareOrder:selected.map(entry=>entry.id),
     kernel:!!values.kernel,clock,frequency:values.kernel?frequency:null,divisor,operation,instructions},
   provenance:{runtimeSha256:hash(production),namedRuntimeSha256:hash(namedRuntime),
     executableSectionsSha256:hash(executable(production)),runtimeRebuildByteEqual:true,
