@@ -52,6 +52,11 @@ def zero_area(waves,limit=7):
     return result
 
 
+def step_bound(reference,policy):
+    if policy not in ('legacy','reference'):raise ValueError('Unknown step policy')
+    return 47 if policy=='legacy' else max(1,min(255,int(np.ceil(np.max(abs(np.diff(np.asarray(reference)*128)))))))
+
+
 def load(path,order=None,profile=None,state_bits=None,zero_mean=False,pulse_length=None,fit_phase=False,wave_fraction_bits=None):
     m=json.loads(path.read_text(encoding='utf-8'));schema=m['schema']
     if schema not in ('q4-lattice-fit-v1','q4-quarter-fit-v1',codec.SCHEMA,codec.PULSE_SCHEMA):raise ValueError('Expected a tagged lattice teacher')
@@ -167,18 +172,20 @@ def apply(s,action,bits):
     return c
 
 
-def run(reference_path,model_path,output,evaluations=24000,order=None,profile=None,state_bits=None,zero_mean=False,pulse_length=None,wave_first=False,fit_phase=False,wave_fraction_bits=None):
+def run(reference_path,model_path,output,evaluations=24000,order=None,profile=None,state_bits=None,zero_mean=False,pulse_length=None,wave_first=False,fit_phase=False,wave_fraction_bits=None,step_policy=None):
     if evaluations<0:raise ValueError('Expected nonnegative evaluation budget')
     start=time.perf_counter();s,bits,state_bits,phase_mode,profile,zero_mean,meta=load(model_path,order,profile,state_bits,zero_mean,pulse_length,fit_phase,wave_fraction_bits)
     x,sr=sf.read(reference_path,dtype='float64');reference_hash=hashlib.sha256(reference_path.read_bytes()).hexdigest()
     if sr!=7500 or x.ndim!=1 or len(x)!=int(s.durations.sum()) or reference_hash!=meta['reference_sha256']:
         raise ValueError('Expected unchanged complete mono7500 original')
+    step_policy=meta.get('step_policy','legacy') if step_policy is None else step_policy
+    step_limit=step_bound(x,step_policy)
     source_hashes={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_text(encoding='utf-8').encode()).hexdigest()
         for p in (Path(__file__),ROOT/'ATtiny13A/Sound/codec/mixed_lattice.py',ROOT/'ATtiny13A/Sound/codec/q4_phase_wave.py')}
     spectral=base.SpectrogramObjective(x);history=[];epochs=[];evaluated=0
     def score(state,detail=False):
         pcm,counts=render(state,bits,state_bits,phase_mode);raw=pcm.astype(np.int16)-128
-        if np.any(counts) or abs(raw).max()>115 or np.any(abs(np.diff(raw))>=48):return None
+        if np.any(counts) or abs(raw).max()>115 or np.any(abs(np.diff(raw))>step_limit):return None
         y=raw.astype(float)/128;q=dict(stoi=float(base.stoi(x,y,7500)),**spectral.evaluate(y),raw_mean=float(y.mean()),
             raw_rms=float(np.sqrt(np.mean(y*y))),peak=int(abs(raw).max()),maximum_step=int(abs(np.diff(raw)).max()),
             wrap_counts=counts.tolist(),pcm_sha256=hashlib.sha256(pcm.tobytes()).hexdigest())
@@ -196,6 +203,7 @@ def run(reference_path,model_path,output,evaluations=24000,order=None,profile=No
         **({} if state.waves_q1.shape[1]==16 and state.phase_modes is None and state.wave_fraction_bits==1 else dict(pulse_length=int(state.waves_q1.shape[1]))),
         sample_rate=7500,coefficient_bits=bits.tolist(),state_bits=state_bits,nearest=True,
         precision_profile=profile,zero_mean=zero_mean,phase_mode=phase_mode,**state.fields(),reference_sha256=reference_hash,
+        step_policy=step_policy,step_limit=step_limit,
         avr_implemented=False,serialized_format=False,hardware_tested=False)
     output.mkdir(parents=True,exist_ok=True);base.save(output/'initial-model.json',export(s))
     print(json.dumps(dict(evaluated=0,order=len(bits),profile=profile,state_bits=state_bits,zero_mean=zero_mean,score=initial)),flush=True)
@@ -225,6 +233,7 @@ def run(reference_path,model_path,output,evaluations=24000,order=None,profile=No
         evaluated=evaluated,accepted=len(history),history=history,epochs=epochs,order=len(bits),state_bits=state_bits,
         coefficient_bits=bits.tolist(),zero_mean=zero_mean,seed_gain_scale=seed_scale,
         pulse_length=int(s.waves_q1.shape[1]),wave_first=wave_first,fit_phase=s.phase_modes is not None,wave_fraction_bits=s.wave_fraction_bits,
+        step_policy=step_policy,step_limit=step_limit,reference_maximum_step=float(np.max(abs(np.diff(x*128)))),
         reference_sha256=reference_hash,seed_sha256=hashlib.sha256(model_path.read_bytes()).hexdigest(),
         source_sha256_normalized_lf=source_hashes,elapsed_seconds=time.perf_counter()-start,
         avr_implemented=False,serialized_format=False,hardware_tested=False,policy='PC quality teacher; no memory-fit or sample-deadline claim')
@@ -239,5 +248,5 @@ if __name__=='__main__':
     p.add_argument('--zero-mean',action='store_true');p.add_argument('--pulse-length',type=int,choices=(16,32))
     p.add_argument('--wave-first',action='store_true')
     p.add_argument('--fit-phase',action='store_true')
-    p.add_argument('--wave-fraction-bits',type=int,choices=(1,2));a=p.parse_args()
-    run(a.reference,a.model,a.output,a.evaluations,a.order,a.profile,a.state_bits,a.zero_mean,a.pulse_length,a.wave_first,a.fit_phase,a.wave_fraction_bits)
+    p.add_argument('--wave-fraction-bits',type=int,choices=(1,2));p.add_argument('--step-policy',choices=('legacy','reference'));a=p.parse_args()
+    run(a.reference,a.model,a.output,a.evaluations,a.order,a.profile,a.state_bits,a.zero_mean,a.pulse_length,a.wave_first,a.fit_phase,a.wave_fraction_bits,a.step_policy)

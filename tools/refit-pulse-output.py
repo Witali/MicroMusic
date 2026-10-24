@@ -66,18 +66,20 @@ def phase_target(reference,candidate,size):
     return target[:len(reference)]
 
 
-def run(reference_path,model_path,output,pulse_length=32,seed=20261024,wave_fraction_bits=None):
+def run(reference_path,model_path,output,pulse_length=32,seed=20261024,wave_fraction_bits=None,step_policy=None):
     started=time.perf_counter();state,bits,state_bits,phase_mode,profile,zero_mean,meta=fit.load(model_path,pulse_length=pulse_length,wave_fraction_bits=wave_fraction_bits)
     limit=7<<(state.wave_fraction_bits-1)
     x,sr=sf.read(reference_path,dtype='float64');reference_hash=hashlib.sha256(reference_path.read_bytes()).hexdigest()
     if sr!=7500 or x.ndim!=1 or len(x)!=int(state.durations.sum()) or reference_hash!=meta['reference_sha256']:
         raise ValueError('Expected the unchanged complete mono7500 original')
+    step_policy=meta.get('step_policy','legacy') if step_policy is None else step_policy
+    step_limit=fit.step_bound(x,step_policy)
     paths=(Path(__file__),ROOT/'tools/fit-mixed-lattice.py',ROOT/'ATtiny13A/Sound/codec/mixed_lattice.py',ROOT/'ATtiny13A/Sound/codec/q4_phase_wave.py')
     sources={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_text(encoding='utf-8').encode()).hexdigest() for p in paths}
     spectral=fit.base.SpectrogramObjective(x);evaluations=0;valid=0;history=[];seen=set();rng=np.random.default_rng(seed)
     def score(s,detail=False):
         pcm,counts=fit.render(s,bits,state_bits,phase_mode);raw=pcm.astype(np.int16)-128
-        if np.any(counts) or abs(raw).max()>115 or np.any(abs(np.diff(raw))>=48):return None
+        if np.any(counts) or abs(raw).max()>115 or np.any(abs(np.diff(raw))>step_limit):return None
         y=raw.astype(float)/128
         q=dict(stoi=float(fit.base.stoi(x,y,7500)),**spectral.evaluate(y),raw_mean=float(y.mean()),
             raw_rms=float(np.sqrt(np.mean(y*y))),peak=int(abs(raw).max()),maximum_step=int(abs(np.diff(raw)).max()),
@@ -90,6 +92,7 @@ def run(reference_path,model_path,output,pulse_length=32,seed=20261024,wave_frac
             **(dict(pulse_length=int(s.waves_q1.shape[1])) if extended else {}),
             sample_rate=7500,coefficient_bits=bits.tolist(),state_bits=state_bits,nearest=True,precision_profile=profile,
             zero_mean=zero_mean,phase_mode=phase_mode,**s.fields(),reference_sha256=reference_hash,
+            step_policy=step_policy,step_limit=step_limit,
             avr_implemented=False,serialized_format=False,hardware_tested=False)
     initial=best=score(state,True)
     if initial is None:raise ValueError('Integer seed violates guards')
@@ -134,6 +137,7 @@ def run(reference_path,model_path,output,pulse_length=32,seed=20261024,wave_frac
     sf.write(output/'decoded.wav',(pcm.astype(float)-128)/128,7500,subtype='PCM_16')
     report=dict(schema='pulse-output-refit-v1',initial=initial,final=final,evaluated=evaluations,valid=valid,history=history,
         best_configuration=best_config,solves=solves,linear_reconstruction_error=reconstruction,variables=len(old),seed=seed,
+        step_policy=step_policy,step_limit=step_limit,reference_maximum_step=float(np.max(abs(np.diff(x*128)))),
         source_sha256_normalized_lf=sources,reference_sha256=reference_hash,seed_sha256=hashlib.sha256(model_path.read_bytes()).hexdigest(),
         elapsed_seconds=time.perf_counter()-started,avr_implemented=False,serialized_format=False,hardware_tested=False,
         policy='Floating responses propose joint waveform moves; unchanged original and exact integer output select the final model')
@@ -144,5 +148,5 @@ if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     for key in ('reference','model','output'):p.add_argument('--'+key,type=Path,required=True)
     p.add_argument('--pulse-length',type=int,choices=(16,32),default=32);p.add_argument('--seed',type=int,default=20261024)
-    p.add_argument('--wave-fraction-bits',type=int,choices=(1,2));a=p.parse_args()
-    run(a.reference,a.model,a.output,a.pulse_length,a.seed,a.wave_fraction_bits)
+    p.add_argument('--wave-fraction-bits',type=int,choices=(1,2));p.add_argument('--step-policy',choices=('legacy','reference'));a=p.parse_args()
+    run(a.reference,a.model,a.output,a.pulse_length,a.seed,a.wave_fraction_bits,a.step_policy)

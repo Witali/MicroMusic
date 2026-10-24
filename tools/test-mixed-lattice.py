@@ -14,6 +14,14 @@ fit=importlib.util.module_from_spec(spec);sys.modules[spec.name]=fit;spec.loader
 
 
 class MixedLatticeTests(unittest.TestCase):
+    def test_reference_step_policy_preserves_natural_transients_without_weakening_overflow_checks(self):
+        import soundfile as sf
+        x,sr=sf.read(ROOT/'web-player/audio/originals/vinni.wav')
+        self.assertEqual(sr,7500);self.assertEqual(fit.step_bound(x,'legacy'),47)
+        self.assertEqual(fit.step_bound(x,'reference'),73)
+        self.assertEqual(fit.step_bound(np.array([-1.,1.]),'reference'),255)
+        with self.assertRaises(ValueError):fit.step_bound(x,'unknown')
+
     def test_wave_precision_promotion_preserves_voice_noise_and_complete_pcm(self):
         path=ROOT/'ATtiny13A/Sound/research/q4-pattern-precision/mixed/q8/best-intelligibility-model.json'
         for width in (16,32):
