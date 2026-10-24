@@ -1,3 +1,4 @@
+#include "nb3_indices.h"
 /* Exact short-pitch excitation for Xiph NB3, pitch 17..40.
  * Choose contiguous history ranges before each inner loop. Four isolated
  * switch/tail samples keep the original three-tap source indices. Every
@@ -36,11 +37,13 @@ void speex_nb3_short_innovation(int16_t *out,const int16_t *exc,uint8_t pitch,
 #endif
     const uint8_t first=pitch-1,second=2*pitch-1;
     uint8_t vector,j=0;
+    uint8_t indices[4];
+    speex_nb3_unpack_indices(bits,indices);
     gains[0]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index+2));
     gains[1]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index+1));
     gains[2]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index));
     for(vector=0;vector<4;vector++) {
-        unsigned code=speex_bits_unpack_unsigned(bits,5);
+        unsigned code=indices[vector];
         const int8_t *shape=exc_10_32_table+10*code;
         uint8_t left=10;
         while(left) {

@@ -52,11 +52,12 @@ matching optimized kernel is provided yet.
 | One-sample fused vectors | scalar entry in `innovation.S`, same transform with fewer saved registers | same `long_pitch.h` helper with count=1 |
 | Short-pitch range selection and boundary sums | `short_pitch.h` calling variable ASM vectors | `short_pitch.h`, scalar boundaries and inlined C vectors |
 | Whole-block LPC synthesis | `lpc_dot.S` | C dot product and coefficient-age loop in `iir_direct.c.inc` |
+| Four consecutive innovation indices | bounded C group in `nb3_indices.h` | same portable C helper; partial/other-offset states use four generic reads |
 
 The AVR IIR cursor compares a low address byte only because ten word positions
 span exactly 20 bytes; every state-base low byte and page crossing is tested.
-Changing that span requires a new wrap proof. The portable C path retains its
-ordinary indexed ring cursor and is byte-identical to the prior admitted build.
+Changing that span requires a new wrap proof. The portable C IIR retains its
+ordinary indexed ring cursor and coefficient-age loop.
 
 The C build does not link any `.S` file. The historical, unused
 `lpc_update.S` corresponds to upstream transposed C synthesis and is not a
@@ -89,7 +90,7 @@ real-time support depends on the target and must be measured. On ATmega328P
 both C and explicitly enabled ASM pass all 31 complete PWM streams with
 interrupts. The tested additional CPU reserve is 10% for C and 40% for ASM;
 these are measured corpus/ISA results, not physical-board guarantees. The
-C corpus maximum is 254,619 cycles (255,184 with pitch coverage).
+C corpus maximum is 253,039 cycles (253,604 with pitch coverage).
 The build tool defaults to C; `--backend asm` explicitly adds the enable define.
 
 ## Export and integrate
@@ -164,12 +165,16 @@ profiles remain separate experiments and are not enabled by choosing C.
 
 The AVR IIR uses separate ten-sample coefficient-age and thirty-sample steady
 loops, caching two coefficient words in registers after the age transition.
-This changes neither its 60-byte state nor the portable C recurrence. Fresh
-AVR C decoder and normal/+10% PWM images remain byte-identical to the admitted
-images. Architecture/enable selection still passes twelve real-compiler cases;
-fresh manifest/CMake C archives each match 9,100 host frames. These checks do
-not measure another MCU's performance. See `reports/iir-phases-admission-audit.json`
-and `reports/portable-iir-phases-library.json`.
+This changes neither its 60-byte state nor the portable C recurrence.
+The newer grouped index reader is C in both backends. Its two overlapping
+16-bit windows read three bytes only after checking availability; fallback
+preserves the generic reader's partial/sticky-overflow behavior. It does not
+assume native byte order or unaligned word loads. All 14,278 AVR frames per
+backend and four normal/loaded PWM matrices are exact. Architecture/enable
+selection passes twelve real-compiler cases; fresh manifest/CMake C archives
+each match 9,100 host frames. These checks do not measure another MCU's
+performance. See `reports/nb3-indices-admission-audit.json` and
+`reports/portable-nb3-indices-library.json`.
 
 Reproducible portability checks:
 

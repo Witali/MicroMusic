@@ -1,3 +1,4 @@
+#include "nb3_indices.h"
 /* Mode 3 has four unsigned 5-bit codebook indices, ten samples each.
  * Fuse the original split_cb_shape_sign_unquant + signal_mul operations:
  * (shape << 9) >> 7 == shape * 4, including negative signed shapes. */
@@ -14,8 +15,10 @@ void speex_nb3_zero_innovation(spx_word16_t *out,
                                     SpeexBits *bits,spx_word32_t scale)
 {
     int vector, sample;
+    uint8_t indices[4];
+    speex_nb3_unpack_indices(bits,indices);
     for (vector = 0; vector < 4; ++vector) {
-        unsigned index = speex_bits_unpack_unsigned(bits, 5);
+        unsigned index = indices[vector];
         const signed char *shape = exc_10_32_table + 10*index;
 #if SPEEX_NB3_USE_AVR_ASM
         speex_avr_zero_innovation10(out,shape,scale);

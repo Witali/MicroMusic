@@ -531,14 +531,57 @@ the admitted images byte-for-byte. Two fresh native C archives each match
 9,100 frames; all twelve backend-selection cases pass. Reports iir-phases-*
 and portable-iir-phases-library.json retain source/image hashes and evidence.
 
+### Bounded group of four innovation indices
+
+NB3 index groups begin at bit offsets 1,2,3,4 and consume twenty bits. After
+one bounds/overflow check, read three unsigned bytes a,b,c. Two overlapping
+16-bit windows, ((a<<8)|b)>>(6-offset) and ((b<<8)|c)>>(4-offset), each
+contain two five-bit fields. Mask/extract them to four u8 values and advance
+the reader once. Zero, long and short pitch callers use the same private
+C subroutine. Offset zero also fits; offsets 5..7, insufficient data and
+pre-existing overflow take four generic calls, preserving partial consumption
+and sticky overflow. The public generic reader is unchanged. Bytes are
+assembled by value, without native-endian or unaligned-word assumptions.
+
+The new independent AVR C-only test checks 72,192 blocks / 288,768 indices
+per implementation. A bit-by-bit oracle covers all eight offsets, available
+bits 0..27, every adjacent index pair, 32,768 random blocks and 512 sticky
+overflow cases including noncanonical positive/negative flags. Actual SRAM
+read hooks reject reads outside valid input bytes; read-only data/metadata,
+input/output guards, all callee-saved registers and r1 are checked at RET.
+For valid offsets 1..4, the isolated new function takes 174/164/154/144 cycles
+versus 422/467/427/472 for four original reads. These unit timings describe
+their linked context, not a projection of whole-decoder timing.
+
+Against 098c3d9, both backends match all 14,278 frames. Every tested stream
+mean and maximum improves. Corpus means fall 1.0228% ASM / 0.8087% C;
+human speech 1.0081% / 0.8020%. Corpus maxima are 123,008 / 253,039 cycles;
+pitch coverage maxima 123,488 / 253,604. Decoder Flash grows 232/248 B to
+10,402/12,084 B; static SRAM remains 1,119 B. ASM stack grows 4 B to 145,
+C remains 153. Ordinary speech demo Flash grows 296/248 B to 13,670/15,284 B.
+
+All four PWM matrices pass 31 streams / 9,100 frames with exact output and
+zero underruns. ASM normal/+40% CPU queues 74/32, max gaps 80,013/191,998,
+640 B free SRAM. C normal/+10% queues 65/50, gaps 123,187/156,220, 632 B
+free. Timer intervals remain 1,994..2,006 cycles. Four 87-file source copies
+match the main tree; freshly rebuilt main decoder/demo/unit match the tested
+images. Fresh native PCM/primitives and two C archives pass; each archive
+matches 9,100 frames, and twelve backend-selection cases pass. Reports
+nb3-indices-* and portable-nb3-indices-library.json retain the evidence.
+
 ## Next candidates (not yet measured/admitted)
 
-1. **Batch NB3 innovation indices.** Four five-bit fields per subframe repeat
-   reader validation/state updates. The sampled profile attributes 3.83% to
-   generic plus constant-propagated bit-reader functions. A bounded batch
-   reader may amortize overhead, but needs independent boundary/overflow and
-   bit-order tests, unchanged public reader semantics, full stream timing and
-   PWM admission. No batch speedup is established yet.
+1. **Batch the thirteen-bit subframe header.** Pitch/gain/energy still perform
+   three generic reads per subframe. Valid NB3 header starts are offsets
+   4,5,6,7, before each grouped index read. A bounded 13-bit C return value
+   could amortize reader checks without a four-byte local array. Preserve
+   field order, partial/sticky overflow and all current validation; measure
+   both decoder backends and PWM before admission. Generic/constant reader
+   functions still consume 2.153% of the sampled 88-frame ASM profile.
+
+2. **Return grouped indices as a value.** Four explicit byte lanes in a uint32
+   return could avoid the local four-byte array. Extra live registers, shifts
+   and callee saves may erase any gain; no timing or memory claim is established.
 
 No claim of a global speed optimum has been established. Do not mark the
 ongoing optimization goal complete while useful candidates remain untested.

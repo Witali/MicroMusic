@@ -1,3 +1,4 @@
+#include "nb3_indices.h"
 /* Restricted NB3 body adapted from Xiph Speex 1.2.1 nb_celp.c.
  * Copyright (C) 2002-2006 Jean-Marc Valin; BSD terms in vendor/speex-1.2.1/COPYING.
  * Preserve the original excitation, interpolation, rounding and 40-sample
@@ -17,11 +18,13 @@ void speex_nb3_long_innovation(int16_t *out,
 {
     int8_t gains[3];
     uint8_t vector;
+    uint8_t indices[4];
+    speex_nb3_unpack_indices(bits,indices);
     gains[0]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index+2));
     gains[1]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index+1));
     gains[2]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index));
     for (vector=0;vector<4;vector++) {
-        unsigned code=speex_bits_unpack_unsigned(bits,5);
+        unsigned code=indices[vector];
         const int8_t *shape=exc_10_32_table+10*code;
 #if SPEEX_NB3_USE_AVR_ASM
         speex_avr_long_innovation10(out,in,shape,scale,gains);
