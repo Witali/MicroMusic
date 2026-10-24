@@ -4,12 +4,14 @@ const $ = id => document.getElementById(id);
 const formatHex = (value, length=2) => value.toString(16).toUpperCase().padStart(length,'0');
 const canvas = $('wave');
 const originalAudio = $('original-audio');
+const improvedAudio = $('improved-audio');
 let catalog, selected, runtime, runtimeReady=false, connectedRuntime, playing=false, busy=false;
 let audio, output, scopes=[new Float32Array(512)], headroom=0;
 let session=0, hasPlayed=false, completed=false, realtime;
 let playAttempt=0, busyAttempt=0;
 let lastScopeDraw=-Infinity, scopeDrawTimer;
 let originalLoading=false, originalAttempt=0;
+let improvedLoading=false, improvedAttempt=0;
 
 function showError(message) { $('error').textContent = message; $('error').hidden = !message; }
 function audioControls() {
@@ -19,14 +21,18 @@ function audioControls() {
 function selectedEngine() { return document.querySelector('input[name="engine"]:checked').value; }
 function transport() {
   const originalPlaying=!originalAudio.paused&&!originalAudio.ended;
+  const improvedPlaying=!improvedAudio.paused&&!improvedAudio.ended;
   document.body.dataset.playing = String(playing);
   document.body.dataset.originalPlaying = String(originalPlaying);
+  document.body.dataset.improvedPlaying = String(improvedPlaying);
   $('play-icon').textContent = playing ? 'Ⅱ' : '▶';
   $('play-label').textContent = playing ? 'Пауза' : completed ? 'Ещё раз' : 'Слушать';
   $('play').disabled = !runtimeReady || busy;
   $('play-original').textContent=originalPlaying||originalLoading ? 'Остановить оригинал' : 'Прослушать оригинал';
   $('play-original').setAttribute('aria-pressed',String(originalPlaying||originalLoading));
-  $('run-status').textContent = originalLoading ? 'Загрузка оригинала…' : originalPlaying ? 'Оригинальная запись' : busy ? 'Подключение звука…' : playing ? 'Воспроизведение' : completed ? 'Завершено' : runtimeReady ? (hasPlayed ? 'Пауза' : 'Готов к запуску') : 'Загрузка образа…';
+  $('play-improved').textContent=improvedPlaying||improvedLoading ? 'Остановить улучшенную версию' : 'Слушать улучшенную версию';
+  $('play-improved').setAttribute('aria-pressed',String(improvedPlaying||improvedLoading));
+  $('run-status').textContent = improvedLoading ? 'Загрузка улучшенной записи…' : improvedPlaying ? 'Улучшенная запись Q5' : originalLoading ? 'Загрузка оригинала…' : originalPlaying ? 'Оригинальная запись' : busy ? 'Подключение звука…' : playing ? 'Воспроизведение' : completed ? 'Завершено' : runtimeReady ? (hasPlayed ? 'Пауза' : 'Готов к запуску') : 'Загрузка образа…';
 }
 function draw() {
   const now=performance.now(), wait=1000/30-(now-lastScopeDraw);
@@ -101,7 +107,7 @@ function stopOriginal() {
 async function toggleOriginal() {
   if(selected?.kind!=='speech'||!selected.originalAudioUrl)return;
   if(originalLoading||!originalAudio.paused){stopOriginal();return;}
-  pause(); showError('');
+  stopImproved(); pause(); showError('');
   const attempt=++originalAttempt; originalLoading=true; transport();
   try { await originalAudio.play(); }
   catch(error) {
@@ -114,8 +120,28 @@ for(const event of ['playing','pause','ended'])originalAudio.addEventListener(ev
 originalAudio.addEventListener('error',()=>{
   if(selected?.originalAudioUrl){stopOriginal();showError('Не удалось загрузить оригинальную запись.');}
 });
+function stopImproved() {
+  improvedAttempt++; improvedLoading=false;
+  improvedAudio.pause(); improvedAudio.currentTime=0; transport();
+}
+async function toggleImproved() {
+  if(!selected?.qualityPreview)return;
+  if(improvedLoading||!improvedAudio.paused){stopImproved();return;}
+  stopOriginal(); pause(); showError('');
+  const attempt=++improvedAttempt; improvedLoading=true; transport();
+  try { await improvedAudio.play(); }
+  catch(error) {
+    if(attempt===improvedAttempt&&error.name!=='AbortError') {
+      stopImproved(); showError('Не удалось воспроизвести улучшенную запись: '+error.message);
+    }
+  } finally { if(attempt===improvedAttempt){improvedLoading=false;transport();} }
+}
+for(const event of ['playing','pause','ended'])improvedAudio.addEventListener(event,transport);
+improvedAudio.addEventListener('error',()=>{
+  if(selected?.qualityPreview){stopImproved();showError('Не удалось загрузить улучшенную запись.');}
+});
 function load(entry,{autoplay=false}={}) {
-  stopOriginal(); pause(); showError(''); busy=false; runtimeReady=false; runtime?.terminate(); connectedRuntime=null;
+  stopOriginal(); stopImproved(); pause(); showError(''); busy=false; runtimeReady=false; runtime?.terminate(); connectedRuntime=null;
   session++; hasPlayed=false; completed=false;
   const autoplayAttempt=playAttempt;
   output?.port.postMessage({type:'disconnect'});
@@ -126,6 +152,17 @@ function load(entry,{autoplay=false}={}) {
   // Keep the reference link canonical and play a resampled PCM listening copy.
   if(originalUrl)originalAudio.src=entry.originalPlaybackUrl||originalUrl;else originalAudio.removeAttribute('src');
   originalAudio.load(); originalAudio.volume=+$('volume').value;
+  const preview=entry.qualityPreview;
+  $('speech-preview').hidden=!preview;
+  if(preview){
+    improvedAudio.src=preview.playbackUrl;
+    $('speech-preview-title').textContent=preview.title;
+    $('speech-preview-score').textContent=`STOI ${preview.stoi.toFixed(4).replace('.',',')} · ${(preview.samples/preview.sampleRate).toFixed(2).replace('.',',')} с`;
+    $('download-improved').href=preview.audioUrl;
+    $('speech-preview-research').href=preview.researchUrl;
+  } else improvedAudio.removeAttribute('src');
+  improvedAudio.load(); improvedAudio.volume=+$('volume').value;
+  if(preview&&location.hash==='#speech-preview')$('speech-preview').scrollIntoView?.({block:'start'});
   const stereo=entry.audioChannels===2;
   document.body.dataset.stereo=String(stereo);
   scopes=Array.from({length:stereo?2:1},()=>new Float32Array(512));
@@ -212,7 +249,7 @@ async function toggle() {
   if (!runtimeReady || busy) return;
   if (playing) { pause(); return; }
   if (completed) { load(selected,{autoplay:true}); return; }
-  stopOriginal();
+  stopOriginal(); stopImproved();
   const target=runtime,attempt=++playAttempt; busyAttempt=attempt; busy=true; transport(); showError('');
   try {
     await ensureAudio();
@@ -221,13 +258,13 @@ async function toggle() {
   } catch (error) { if(target===runtime&&attempt===playAttempt)showError('Не удалось включить звук: '+error.message); }
   finally { if(busyAttempt===attempt){busy=false;transport();} }
 }
-$('play').onclick=toggle; $('play-original').onclick=toggleOriginal; $('reset').onclick=()=>load(selected); $('search').oninput=renderCatalog;
-$('volume').oninput=()=>{originalAudio.volume=+$('volume').value;runtime?.postMessage({type:'controls',controls:audioControls()});};
+$('play').onclick=toggle; $('play-original').onclick=toggleOriginal; $('play-improved').onclick=toggleImproved; $('reset').onclick=()=>load(selected); $('search').oninput=renderCatalog;
+$('volume').oninput=()=>{originalAudio.volume=improvedAudio.volume=+$('volume').value;runtime?.postMessage({type:'controls',controls:audioControls()});};
 $('cutoff').onchange=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
 $('match-speech-level').onchange=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
 for (const choice of document.querySelectorAll('input[name="engine"]')) choice.onchange=()=>{ if (selected) load(selected); };
 document.addEventListener('keydown',event=>{ if (event.code==='Space' && !event.repeat && !/INPUT|SELECT|TEXTAREA|BUTTON|A/.test(event.target.tagName)) { event.preventDefault(); toggle(); } });
-window.addEventListener('pagehide',()=>{ originalAudio.pause(); runtime?.terminate(); audio?.close(); });
+window.addEventListener('pagehide',()=>{ originalAudio.pause(); improvedAudio.pause(); runtime?.terminate(); audio?.close(); });
 try {
   const speech=new URL(location.href).searchParams.get('collection')==='hq4';
   if(speech){
@@ -246,7 +283,7 @@ try {
   }
   // Original recordings are shared public assets. Local listening can also use
   // restored emulator previews and the archived ChatGPT player.
-  const response=await fetch(speech?'./hq4-firmware.json?v=20261023-mobile-original':'./firmware.json');
+  const response=await fetch(speech?'./hq4-firmware.json?v=20261024-speech-q5':'./firmware.json');
   if (!response.ok) throw new Error('HTTP '+response.status);
   catalog=await response.json();
   if(speech)document.querySelector('footer span:last-child').textContent=`Речевые кодеки · ${catalog.entries.length} фразы · Worker + AudioWorklet`;
