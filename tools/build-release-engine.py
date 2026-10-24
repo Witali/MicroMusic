@@ -37,6 +37,9 @@ def specialize(data, original):
     if models not in (('bowed','piano','pluck'),('sustain','bowed','bowed'),('piano','piano','off'),('piano','pluck','off'),('piano','off','off'),('pluck','pluck','pluck'),('pluck','piano','pluck')):
         raise ValueError('Unsupported release-slot instrument combination')
     guitar_trio=models==('pluck','piano','pluck')
+    plucked_masks=tuple(data.get(role+'_decay_mask') for role in roles)
+    if models==('pluck','pluck','pluck') and plucked_masks not in ((1,1,1),(1,1,3)):
+        raise ValueError('Plucked trio requires measured decay masks 1/1/1 or 1/1/3')
     if guitar_trio and tuple(data.get(role+'_decay_mask') for role in roles)!=(1,3,3):
         raise ValueError('Guitar/piano/bass requires measured decay masks 1/3/3')
     if data.get('keys_rest_check') or data.get('pluck_rest_check'):
@@ -158,7 +161,9 @@ envelope_loop:
 state_mask:
 '''
         if held:header+='  sbrs r16, 4\n  lsr r25\n'
-        elif all(model == 'pluck' for model in models):header+='  lsr r25\n'
+        elif all(model == 'pluck' for model in models):
+            if plucked_masks==(1,1,3):header+='  sbrs r16, 5\n'
+            header+='  lsr r25\n'
         elif guitar_trio:header+='  mov r17, r16\n  andi r17, 48\n  brne state_gate\n  lsr r25\n'
         if data.get('dds_fast_decay_roles'):
             header+='''  subi r26, 253

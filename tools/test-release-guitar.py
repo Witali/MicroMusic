@@ -20,7 +20,7 @@ class GuitarReleaseTests(unittest.TestCase):
             (folder / 'config.inc').write_text('.set REST_INDEX, 1\n.set HOLD_INDEX, 2\n.set PLAYLIST_LEN, 1\n.set FIRST_PLAYLIST_INDEX, 0\n.set GRID_STEP_LOW, 0\n.set GRID_STEP_HIGH, 0\n.set GRID_INITIAL_HIGH, 255\n')
             (folder / 'score.inc').write_text('playlist:\n.byte 0\ndurations:\n.byte 1,2,3,4,6,8,16\nnote_steps:\n.byte 0,2\nchord_steps:\n.byte 0,1,0,2\nmelody_data:\nfirst_section:\n.byte 6,255\n')
             fixtures = []
-            for keys, bass in [('acoustic-guitar-nylon', 'acoustic-guitar-nylon'), ('acoustic-grand-piano-soft', 'fretless-bass')]:
+            for keys, bass in [('acoustic-guitar-nylon', 'acoustic-guitar-nylon'), ('acoustic-grand-piano-soft', 'fretless-bass'), ('acoustic-guitar-nylon', 'fretless-bass')]:
                 assignments = dict(lead='acoustic-guitar-nylon', keys=keys, pluck=bass, percussion='off')
                 data = dict(tempo_bpm=126, instruments=assignments, chord_pairs=[['E', 'E']],
                             chord_notes={'E': [64, 40]}, patterns={'A': ['E4:4']}, playlist=['A'])
@@ -58,7 +58,7 @@ console.log(checks);
 '''
             result = subprocess.run(['node', '--input-type=module', '-e', program, str(fixture)], cwd=ROOT, capture_output=True, text=True)
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            self.assertEqual(int(result.stdout), 81920)
+            self.assertEqual(int(result.stdout), 122880)
 
 
 if __name__ == '__main__':
