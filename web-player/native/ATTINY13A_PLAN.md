@@ -209,6 +209,13 @@ benchmarks to establish speed; small results within host variation stay
 inconclusive. No per-edge JavaScript callbacks, cross-device code mixing or
 external programmer support are introduced by this plan.
 
+The next analog step has a separate audited
+[ADC activity contract](devices/attiny13a/analog-activity.md): omit recurring
+ADC advancement/deadline queries only with ADEN clear, preserving every
+timestamped component API, trigger/IRQ level and comparator operation. The
+comparator remains the shared monotonic-time anchor. Broader analog gating
+requires its own phase/dependency proof; this contract is not completion evidence.
+
 ### AVR to WASM generation and execution improvements
 
 Saved improvement plan, 2026-10-23; next-step details updated 2026-10-24.
@@ -284,7 +291,7 @@ and compilation/size data. The older sampled CPU share is not a prediction of
 the speedup available in the current runtime. Preserve the device/translator/
 generated-code separation and add no per-instruction JavaScript callbacks.
 
-#### Next experiment: registers in WASM locals
+#### Register-local experiment contract
 
 Use `ad66d6d` as the measured baseline for this compiler-only experiment, with
 the identical native runtime in both variants. Begin with register-only blocks
@@ -316,10 +323,23 @@ new peripheral activity changes.
   parity, translation/compilation time and module size. Synthetic gains do not
   establish real-firmware gains; retain the change only with measured benefit.
 
-After this experiment, continue in the priority order above: flag liveness,
-constant/sequence optimization, direct control flow and smaller continuation
-contexts. Evaluate reachable-code generation, region recompilation and persistent
-caching separately, with SPM invalidation and complete cache identities.
+Result, 2026-10-24: candidate `6e04e5b` passed1207/1207 tests, including20 new
+structural/differential cache checks, and208 serial timed runs with656 exact
+pairwise state/PCM checkpoints. It did not establish an execution-speed benefit:
+three physical firmware medians were1.011x/0.996x/0.997x and the long arithmetic
+loop1.000x, with firmware module sizes increasing. Commit `b610be3` restored the
+previous emitter; register locals are not enabled in production. The complete
+[experiment report](../reports/register-locals-20261024.md) retains the candidate,
+exact harness, raw timings, variance and validation. Do not repeat this isolated
+change or claim speed from reduced load/store counts alone.
+
+Revisit register locals alongside larger control-flow regions or other proven
+transformations. Cross-block flag liveness, constant/sequence optimization,
+direct control flow and smaller continuation contexts remain open compiler
+candidates. Evaluate reachable-code generation, region recompilation and
+persistent caching separately, with SPM invalidation and complete cache
+identities. The next independent performance step is the audited ADC activity
+change above; it must pass its own correctness and speed gates.
 
 Implementation checkpoint, 2026-10-24: register-only resumable blocks now use
 the existing phase context and native clock bridge. Strict event/observation
