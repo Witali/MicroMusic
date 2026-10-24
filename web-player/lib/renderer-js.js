@@ -1,4 +1,4 @@
-import { AVRCore } from './avr-reference.js';
+import { AVRCore } from './avr-reference.js?v=20261024-ocr0a';
 import { AVRMusicTargetCore } from './avr-attiny88.js';
 import { parseHex } from './hex.js';
 

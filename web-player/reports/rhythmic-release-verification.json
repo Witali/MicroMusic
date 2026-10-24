@@ -1,7 +1,7 @@
 {
   "image": "rhythmic",
   "engine": "lumiere-chords",
-  "flashSha256": "3bf6b878c2e0a6a0ec0c231d7d909c874ea38b62483ecbfa20416684acfd7270",
+  "flashSha256": "84ef9f4740d8af3329d9f104e65615c84579529b487639ba80c7ab434d9ffb4d",
   "flashBytes": 1002,
   "completeSong": {
     "quarterNotes": 296,
@@ -51,5 +51,10 @@
     "maxStackBytes": 6,
     "minimumSP": 153
   },
-  "sourceLimit": "Saved lead-sheet adaptation; new piano tones realize its chord symbols. No claim of an original orchestral transcription. Stereo uses a noise-only snare to fit the second PWM channel."
+  "sourceLimit": "Saved lead-sheet adaptation; new piano tones realize its chord symbols. No claim of an original orchestral transcription. Stereo uses a noise-only snare to fit the second PWM channel.",
+  "startupEquivalence": {
+    "baselineCommit": "5748f63445e4224d996ac824e0eea2b03a23c9d7",
+    "proof": "web-player/reports/music-startup-verification.json",
+    "method": "Original complete-song audit plus identical CPU/RAM/peripheral state after SEI and identical remaining ROM bytes."
+  }
 }

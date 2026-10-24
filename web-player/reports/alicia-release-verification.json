@@ -33,6 +33,11 @@
   },
   "isrCycles": 15,
   "lost": 0,
-  "flashSha256": "9ecbf01ee69ab1b3c58784ad495981aa28f41b19cc01ee85d54eee851db3138e",
-  "eepromSha256": "233eb6508fce5e44d1230ea6e2b1eaff23bd1dc6c35ea3c30a80678c95255e45"
+  "flashSha256": "7946f0389ecbc033b30db46d4dd85bd679c84b1e6aed122c1e4c3beb31847ed5",
+  "eepromSha256": "233eb6508fce5e44d1230ea6e2b1eaff23bd1dc6c35ea3c30a80678c95255e45",
+  "startupEquivalence": {
+    "baselineCommit": "5748f63445e4224d996ac824e0eea2b03a23c9d7",
+    "proof": "web-player/reports/music-startup-verification.json",
+    "method": "Original complete-song audit plus identical CPU/RAM/peripheral state after SEI and identical remaining ROM bytes."
+  }
 }

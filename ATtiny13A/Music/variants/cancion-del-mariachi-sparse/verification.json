@@ -2,7 +2,7 @@
   "passed": true,
   "engine": "mariachi-polyphonic",
   "sourceSha256": "3bdfb9a7756aff5f395199f25aaa9787695d5bffb238dd7cd16bf2cbb842dda9",
-  "flashSha256": "96cb0581caf2e2b1c7a2100a6b3f5de154c73d49dd2dbba572b80cccc55957af",
+  "flashSha256": "3a85cb1a0b81ccda51da6c643a3313116fce4b0cafb7cc3c4a2b13ed1ed3ea54",
   "eepromSha256": "438fe422de21239835dc0b6d5f5b5d59903cb4a1c51fbc098ca8a0d4b7c47a4e",
   "flashBytes": 1024,
   "codeBytes": 682,
@@ -89,5 +89,10 @@
   "arrangedNotesByPart": [
     261,
     120
-  ]
+  ],
+  "startupEquivalence": {
+    "baselineCommit": "5748f63445e4224d996ac824e0eea2b03a23c9d7",
+    "proof": "web-player/reports/music-startup-verification.json",
+    "method": "Original complete-song audit plus identical CPU/RAM/peripheral state after SEI and identical remaining ROM bytes."
+  }
 }

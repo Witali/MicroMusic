@@ -211,10 +211,12 @@ def port(source, name):
     source = re.sub(r'\bout 30,', 'out 33,', source)
     source = source.replace('sbi 28, 0', 'sbi 31, 0')
     source = re.sub(r'(\bin r\d+, )29\b', r'\g<1>32', source)
-    source = re.sub(r'\bout 54,', 'out 30,', source)
-    source = re.sub(r'(\bin r\d+, )54\b', r'\g<1>30', source)
+    if not stereo:
+        source = re.sub(r'\bout 54,', 'out 30,', source)
+        source = re.sub(r'(\bin r\d+, )54\b', r'\g<1>30', source)
     # Use native ATtiny88 Timer1, not the non-PWM Timer0.
-    start = source.index('  sbi 23, ')
+    # The original OC registers/COM now precede DDR, per both datasheets.
+    start = source.index('  out 54, r18\n' if stereo else '  out 41, r18\n')
     end = source.index('  sei\n', start)+len('  sei\n')
     setup = '''  /* Fast PWM mode5, TOP255; high-byte TEMP remains zero. */
   clr r16
@@ -226,12 +228,15 @@ def port(source, name):
   sts 139, r16
   sts 136, r18
   sts 138, r18
+'''
+    setup += f'''  ldi r16, {161 if stereo else 33}
+  sts 128, r16
+  /* Configure OC1x before enabling the pin driver (doc8008, section 12.7.3). */
   sbi 4, 2
 '''
     if stereo:
         setup += '  sbi 4, 1\n'
-    setup += f'''  ldi r16, {161 if stereo else 33}
-  sts 128, r16
+    setup += '''
   ldi r16, 1
   out 22, r16
   sts 111, r16
@@ -242,7 +247,7 @@ def port(source, name):
     source = source[:start]+setup+source[end:]
     source = re.sub(r'\bout 41,', 'sts 138,', source)
     # Only source stereo output remains, GPIOR1 accesses use different regs.
-    source = source.replace('  out 42, r18\n', '  sts 136, r18\n')
+    source = source.replace('  out 54, r18\n', '  sts 136, r18\n')
     # Everyfive physicalsamples advance six virtualsamples. ADDcarry catches
     # both255->0 and255->1; all envelopes/tempo/arps retain their old cadence.
     match = re.search(r'audio_step:\n  inc (r\d+)\n  brne render_sample\n', source)

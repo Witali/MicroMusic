@@ -44,12 +44,12 @@ fill_ring:
   mov r14, r16
   ldi r30, lo8(first_section)
   ldi r31, hi8(first_section)
-  sbi 23, 0
-  sbi 23, 1
-  out 42, r18
+  out 54, r18
   out 41, r18
   ldi r16, 163
   out 47, r16
+  sbi 23, 0
+  sbi 23, 1
   ldi r16, 1
   out 51, r16
   ldi r16, 2
@@ -165,7 +165,7 @@ ring_published:
   mov r23, r21
   rjmp idle
 pwm_irq:
-  out 42, r18
+  out 54, r18
   out 41, r8
 ring_read:
   ld r18, Y+

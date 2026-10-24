@@ -57,7 +57,7 @@ test('stereo ring ISR preserves foreground arithmetic flags at the wrap boundary
     c.sreg=flags;c.inIRQ=true;c.irqFrames.push(0);c.pushPC(0);
     while(c.inIRQ)c.step();
     assert.equal(c.sreg,flags|128);assert.equal(c.r[28],pointer===142?128:pointer+2);
-    assert.equal(c.io[0x2a],51);assert.equal(c.io[0x29],31);
+    assert.equal(c.io[0x36],51);assert.equal(c.io[0x29],31);
     assert.equal(c.r[18],203);assert.equal(c.r[8],211);
   }
 });

@@ -81,11 +81,11 @@ clear_registers:
   ldi r16, 167
   mov r14, r16
   /* Configure hardware Fast PWM on OC0B/PB1, fixed TOP=255 at 37.5 kHz. */
-  sbi 23, 1
   out 41, r18
   ldi r23, 1
   ldi r16, 35
   out 47, r16
+  sbi 23, 1
   ldi r16, 1
   out 51, r16
   ldi r16, 2

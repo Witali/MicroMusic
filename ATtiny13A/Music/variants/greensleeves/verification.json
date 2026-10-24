@@ -1,6 +1,6 @@
 {
   "engine": "compact-four",
-  "flashSha256": "f6735cb5d9cd33bb3acfdfdc93f5413e2e16b2e356768204a3943fbd51090466",
+  "flashSha256": "83fb2b748e052f148f0b5f9099188b719e7076461399e24b0103f59e84aa34eb",
   "eepromSha256": "25a20ace0caeb18735a129564fe453a3870b596a0a8c9c41aa2b196c79532bff",
   "sourceSha256": "e50608d1e528fb0708839cebd2e7b5d3c35a91220cb2c580721bfd7ed2b10142",
   "allSourceNotesRetained": true,
@@ -36,5 +36,10 @@
   "sramUsedWorstCase": 48,
   "isrCycles": 15,
   "lostTimerEvents": 0,
-  "lostWorkEvents": 0
+  "lostWorkEvents": 0,
+  "startupEquivalence": {
+    "baselineCommit": "5748f63445e4224d996ac824e0eea2b03a23c9d7",
+    "proof": "web-player/reports/music-startup-verification.json",
+    "method": "Original complete-song audit plus identical CPU/RAM/peripheral state after SEI and identical remaining ROM bytes."
+  }
 }

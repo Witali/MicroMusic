@@ -17,6 +17,18 @@ tests/attiny88-catalog.test.mjs — соответствие файлов, хе�
   node --test tools/avr-music-target-core.test.mjs
   node tools/audit-attiny88-music.mjs
 Физическая проверка на ATtiny88 не проводилась.
+Порядок OC/COM перед DDR и неизменность музыкального продолжения всех
+18 образов проверяются отдельно:
+  node --test tools/music-startup.test.mjs
+  node tools/audit-music-startup.mjs
+Сравниваются полное состояние после первого SEI и все последующие байты
+ROM с сохранённым проверенным срезом. В старом ATtiny13A stereo две записи
+в зарезервированный 0x2A сначала исправляются на настоящий OCR0A=0x36.
+tests/avr-ocr0a.test.mjs проверяет адреса OUT/STS в JS и WASM отдельно.
+Состояние EEPE=1 при запуске не
+входит в контракт текущих прошивок: EEPROM только читается, запуск
+аппаратным сбросом с указанными фьюзами. При добавлении записи требуется
+ожидание EEPE=0 до первого обращения к EEPROM (см. README.txt).
 
 Расширенный прогон:
   node --test web-player/tests/extended/*.test.mjs

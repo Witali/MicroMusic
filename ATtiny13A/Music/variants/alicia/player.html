@@ -282,7 +282,7 @@ class AVRCore {
     this.io[address] = value;
     if ([0x25,0x28,0x2f,0x32,0x33].includes(address)) this.updateTimer();
     if (address === 0x29 && this.timer) { this.duty = value; this.writes++; }
-    if (address === 0x2a && this.timer) { this.dutyLeft=value;this.leftWrites++; }
+    if (address === 0x36 && this.timer) { this.dutyLeft=value;this.leftWrites++; }
     return 0;
   }
   clock(n) {
@@ -572,7 +572,7 @@ if(typeof module!=='undefined'&&module.exports)module.exports={AVRCore};
 const FIRMWARE_HEX = `:1000000003C01595089548C0DD27BB272224FF248F
 :100010008827E1E6FF27D193E039E9F720E8E0E817
 :100020002193E039E9F7722FC0E86EE801E0402E35
-:100030003324E1E2F3E063D0B99A29BD03E20FBDB6
+:100030003324E1E2F3E063D029BD03E20FBDB99AB6
 :1000400001E003BF02E009BF7894062F0C1B0F707C
 :100050000D30D8F7F39409F424D0A1E655279D91EB
 :100060000D911D910D906D90000D161DA4500D93D6

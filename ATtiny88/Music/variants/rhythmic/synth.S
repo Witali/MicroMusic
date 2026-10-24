@@ -99,9 +99,11 @@ fill_ring:
   sts 139, r16
   sts 136, r18
   sts 138, r18
-  sbi 4, 2
   ldi r16, 33
   sts 128, r16
+  /* Configure OC1x before enabling the pin driver (doc8008, section 12.7.3). */
+  sbi 4, 2
+
   ldi r16, 1
   out 22, r16
   sts 111, r16

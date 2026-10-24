@@ -2,7 +2,7 @@
   "engine": "turkish-three",
   "image": "turkish-march",
   "flashBytes": 1016,
-  "flashSha256": "2ec7cac3124cda3302938ee77938901d08ee8ba781698bde5a1a2b955030549b",
+  "flashSha256": "10f82775d7bb2fdbb28f6aeb6426be922eb710d401877ac16793e8d82d52380f",
   "eepromSha256": "de37b0a60a1a0c845d84166a6169056e364f3e88cbfc824260fafd325e5ea2b8",
   "sourceSha256": "3bb9f8cf997506e09631074b621c7c0c6e3032fc8d98c7499a2f5e8e3d9aeb3c",
   "sourceBars": 74,
@@ -43,5 +43,10 @@
     "exactCommandBytes": 718,
     "maximumTimingErrorMs": 13.26308705849888,
     "allThreeVoicesSilentBeforeRestart": true
+  },
+  "startupEquivalence": {
+    "baselineCommit": "5748f63445e4224d996ac824e0eea2b03a23c9d7",
+    "proof": "web-player/reports/music-startup-verification.json",
+    "method": "Original complete-song audit plus identical CPU/RAM/peripheral state after SEI and identical remaining ROM bytes."
   }
 }

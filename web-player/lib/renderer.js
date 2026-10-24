@@ -1,4 +1,4 @@
-import { AVRCore } from './avr-core.js';
+import { AVRCore } from './avr-core.js?v=20261024-ocr0a';
 import { parseHex } from './hex.js';
 
 export class Renderer {

@@ -42,10 +42,10 @@ fill_ring:
   mov r14, r16
   ldi r30, lo8(first_section)
   ldi r31, hi8(first_section)
-  sbi 23, 1
   out 41, r18
   ldi r16, 35
   out 47, r16
+  sbi 23, 1
   ldi r16, 1
   out 51, r16
   ldi r16, 2

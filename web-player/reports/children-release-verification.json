@@ -61,7 +61,12 @@
     "maximumTimingErrorMs": 21.456592261907645,
     "allSixVoicesSilentBeforeRestart": true
   },
-  "romSha256": "38b826193021d2f0f84883352c6b3aee2f4ae58d77b686c9b1650c2efd8001f9",
+  "romSha256": "0caca0370ebd6b62dd373c9849f3ed1b749a2d1541e07805b242fb275ab0ddc2",
   "eepromSha256": "bfdbabaa2a1d87396593b4636fa8c496f61abede05cb2380e18d9356310f4589",
-  "sourceSha256": "5fdc18775488d0060345891a03282e911123d9841516f1bd9bb86f93344a7f1f"
+  "sourceSha256": "5fdc18775488d0060345891a03282e911123d9841516f1bd9bb86f93344a7f1f",
+  "startupEquivalence": {
+    "baselineCommit": "5748f63445e4224d996ac824e0eea2b03a23c9d7",
+    "proof": "web-player/reports/music-startup-verification.json",
+    "method": "Original complete-song audit plus identical CPU/RAM/peripheral state after SEI and identical remaining ROM bytes."
+  }
 }

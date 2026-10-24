@@ -190,7 +190,7 @@ static int write_io(int a,int v) {
  IO(a)=v;
  if(a==0x25||a==0x28||a==0x2f||a==0x32||a==0x33)update_timer();
  if(a==0x29 && S(timer)){S(duty)=v;S(writes)++;}
- if(a==0x2a && S(timer)){S(dutyLeft)=v;S(leftWrites)++;}
+ if(a==0x36 && S(timer)){S(dutyLeft)=v;S(leftWrites)++;}
  return 0;
 }
 /* Keep the common timer path in the caller; Clang otherwise outlines it. */

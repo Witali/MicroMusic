@@ -64,8 +64,8 @@ def stereo_source(source):
     source=replace(source,'  mov r23, r18\n','  mov r23, r18\n  mov r9, r18\n  mov r8, r18\n')
     source=replace(source,'  ldi r22, 142\n','  ldi r22, 140\n')
     source=replace(source,'  cpi r16, 13\n','  cpi r16, 11\n')
-    source=replace(source,'  sbi 23, 1\n  out 41, r18\n  ldi r16, 35\n',
-        '  sbi 23, 0\n  sbi 23, 1\n  out 42, r18\n  out 41, r18\n  ldi r16, 163\n')
+    source=replace(source,'  out 41, r18\n  ldi r16, 35\n  out 47, r16\n  sbi 23, 1\n',
+        '  out 54, r18\n  out 41, r18\n  ldi r16, 163\n  out 47, r16\n  sbi 23, 0\n  sbi 23, 1\n')
     source=replace(source,'  clr r21\n','  clr r21\n  clr r10\n')
     source=replace(source,'primary_gain:\n  add r21, r17\n',
         'primary_gain:\n  mov r16, r17\n  cpi r26, 101\n  brne right_gain_ready\n  asr r16\nright_gain_ready:\n  add r10, r16\n  cpi r26, 121\n  brne left_gain_ready\n  asr r17\nleft_gain_ready:\n  add r21, r17\n')
@@ -76,7 +76,7 @@ def stereo_source(source):
     source=replace(source,'  st X+, r16\n  st X+, r21\n  mov r22, r26\n',
         '  st X+, r16\n  mov r25, r9\n  add r25, r17\n  ror r25\n  st X+, r25\n  st X+, r21\n  st X+, r17\n  mov r9, r17\n  mov r22, r26\n')
     source=replace(source,'pwm_irq:\n  out 41, r18\nring_read:\n  ld r18, Y+\n',
-        'pwm_irq:\n  out 42, r18\n  out 41, r8\nring_read:\n  ld r18, Y+\n  ld r8, Y+\n')
+        'pwm_irq:\n  out 54, r18\n  out 41, r8\nring_read:\n  ld r18, Y+\n  ld r8, Y+\n')
     # Noise-only snare leaves the bass drum oscillator and hi-hat unchanged.
     # Sharing the two noise instruments makes room for the second output.
     start=source.index('  mov r25, r15\n')
