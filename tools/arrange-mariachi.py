@@ -78,6 +78,7 @@ def arrange(candidates=192, grid_units=24):
         bars.append(' '.join(tokens))
     controls.append(dict(unit=stop, offMask=6))
     return dict(title='Canción del Mariachi · Отчаянный', composers=['César Rosas'],
+        player_description='три партии нейлоновой гитары FluidR3 и два резервных канала затухания.',
         performers=['Los Lobos', 'Antonio Banderas'], engine='instrument-bank',
         tempo_bpm=bpm * grid_units // 4, musicalTempoBpm=bpm, sourceMeters='3/4, 4/4, 2/4',
         beats_per_bar=4, release_tail_slots=2,

@@ -1,5 +1,6 @@
 """Build the canonical, self-contained firmware and its embedded HTML player."""
 from pathlib import Path
+from html import escape
 import importlib.util
 import hashlib
 import json
@@ -85,6 +86,9 @@ def build(folder):
     for key,value in [('AVR_CORE',(folder/'avr_core.js').read_text(encoding='utf-8')),('FIRMWARE_HEX',ihex(rom)),('EEPROM_HEX',ihex(ep))]:
         html=html.replace('/*'+key+'*/',value)
     html=html.replace('ATtiny13A — проигрыватель AVR-прошивки','ATtiny13A — '+data['title'])
+    if data.get('player_description'):
+        html=html.replace('ATtiny13A: четырёхголосный плеер — эмулятор HEX','ATtiny13A — '+escape(data['title']))
+        html=html.replace('мелодия, пианино, гитара и ударные.',escape(data['player_description']))
     save_text(folder/'player.html',html)
     report=dict(flashBytes=len(rom),codeBytes=labels['playlist'],tableBytes=len(rom)-labels['playlist'],eepromBytes=64,
                 flashSha256=hashlib.sha256(rom).hexdigest(),eepromSha256=hashlib.sha256(ep).hexdigest(),labels=labels,score=meta,
