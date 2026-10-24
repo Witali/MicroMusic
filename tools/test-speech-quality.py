@@ -47,7 +47,7 @@ def main():
         'test-q3-adaptive.py', 'test-q3-adaptive-avr.py', 'test-q3-adaptive-fit.py',
         'test-q3-half-pitch.py', 'test-q4-voice-patterns.py', 'test-q4-phase-wave.py',
         'test-q4-lattice-fit.py', 'test-q4-sparse-stream.py', 'test-stoi-diagnostics.py',
-        'test-q4-lattice-results.py', 'test-q4-product233.py'))
+        'test-q4-lattice-results.py', 'test-q4-product233.py', 'test-q4-quarter.py'))
     for path in sorted(paths):
         name = 'speech_'+path.stem.replace('-', '_')
         spec = importlib.util.spec_from_file_location(name, path)
