@@ -162,6 +162,15 @@ peripheral with interrupts/DMA active on each new CPU. AVR measurements do not
 establish ARM, RISC-V or another MCU's timing or board support. Native WB/UWB
 profiles remain separate experiments and are not enabled by choosing C.
 
+The AVR IIR uses separate ten-sample coefficient-age and thirty-sample steady
+loops, caching two coefficient words in registers after the age transition.
+This changes neither its 60-byte state nor the portable C recurrence. Fresh
+AVR C decoder and normal/+10% PWM images remain byte-identical to the admitted
+images. Architecture/enable selection still passes twelve real-compiler cases;
+fresh manifest/CMake C archives each match 9,100 host frames. These checks do
+not measure another MCU's performance. See `reports/iir-phases-admission-audit.json`
+and `reports/portable-iir-phases-library.json`.
+
 Reproducible portability checks:
 
 ```sh

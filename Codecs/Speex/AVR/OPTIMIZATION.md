@@ -497,13 +497,54 @@ corpus max 125,073 and coverage max 125,581. Flash 9,600 B, SRAM/stack
 83-file source copies match the main tree. C decoder and both C demos are
 rebuilt and byte-identical to the admitted images. Reports: iir-cursor-*.
 
+### IIR coefficient-age and steady phases
+
+The first ten samples still age one coefficient after each output, preserving
+the upstream transposed recurrence. At their end the full coefficient array
+is stable. Reuse the dead den pointer and coefficient base register pairs for
+words 0/1 and enter a separate thirty-sample loop. Its first two coefficients
+come from MOVW; the remaining eight still use SRAM. Source macros share MAC
+and finish text without per-tap CALL overhead. The state and ABI are unchanged.
+
+Relative to d000fc4: remove twenty warm-phase test cycles and ninety steady
+test cycles; save 120 net coefficient/address cycles over thirty samples.
+Transition setup costs ten; the warm loop exit saves one: exactly 221 cycles
+per call, 884 per frame. The IIR function grows 686 to 1,256 B, matching the
+570 B whole-image increase. Speed takes priority; the 10,170 B mailbox and
+13,374 B speech demo still fit the target. Static SRAM/stack remain
+1,119/141 B for the mailbox and 1,254/150 B at player peak.
+
+All 512 paired address/I/O rows save 221 cycles on each call. The independent
+655,360-sample sweep covers all 256 state-base low bytes, page crossings,
+changing signed16 coefficients, wrap/saturation, guards, read-only inputs and
+callee-saved/r1 checks at RET. Earlier 327,680-sample IIR, innovation ASM/C and
+C saturation tests also pass. All 14,278 decoder frames are exact; every
+stream min/mean/max falls by 884 cycles. Mean over 31 streams falls 0.7491%,
+human speech 0.7361%; corpus max is 124,189, pitch coverage max 124,697.
+
+Both full PWM matrices pass 31 streams / 9,100 frames with exact PWM and no
+underruns, including +40% CPU foreground work. Queue minima 73/31 and
+free SRAM 644 B are unchanged; max ready gaps are 80,013/193,610 cycles.
+Two 83-file source copies match the main tree; main mailbox, speech demo and
+unit match the measured images. Fresh C decoder and normal/+10% demos match
+the admitted images byte-for-byte. Two fresh native C archives each match
+9,100 frames; all twelve backend-selection cases pass. Reports iir-phases-*
+and portable-iir-phases-library.json retain source/image hashes and evidence.
+
 ## Next candidates (not yet measured/admitted)
 
-1. **Split IIR coefficient ageing from its steady phase.** After the first ten
-   samples, all coefficients are stable for thirty more. The former den/base
-   registers could cache two words, and a separate steady loop could omit the
-   ageing test. Account for extra code and transition work, retain exact first
-   ten samples and all modulo-32 arithmetic; no timing/size claim yet.
+1. **Separate coefficient-age/steady phases in C.** The C IIR still tests
+   i<10 inside its forty-sample loop. A split could remove that test, but
+   register allocation, constant propagation, duplicated code and stack may
+   offset the gain. Keep native signed16 multiply: the measured byte-product
+   substitute was substantially slower. Measure full streams and C PWM.
+
+2. **Batch NB3 innovation indices.** Four five-bit fields per subframe repeat
+   reader validation/state updates. The sampled profile attributes 3.83% to
+   generic plus constant-propagated bit-reader functions. A bounded batch
+   reader may amortize overhead, but needs independent boundary/overflow and
+   bit-order tests, unchanged public reader semantics, full stream timing and
+   PWM admission. No batch speedup is established yet.
 
 No claim of a global speed optimum has been established. Do not mark the
 ongoing optimization goal complete while useful candidates remain untested.

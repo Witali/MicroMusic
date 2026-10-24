@@ -112,8 +112,8 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
 
 | Build | Flash | Static SRAM | Peak stack | Free SRAM at peak |
 | --- | ---: | ---: | ---: | ---: |
-| Optimized decoder test mailbox, ASM enabled | 9,600 B | 1,119 B | 141 B | 788 B |
-| Full PWM speech demo, including 2,940 B compressed audio | 12,804 B | 1,254 B | 150 B | 644 B |
+| Optimized decoder test mailbox, ASM enabled | 10,170 B | 1,119 B | 141 B | 788 B |
+| Full PWM speech demo, including 2,940 B compressed audio | 13,374 B | 1,254 B | 150 B | 644 B |
 | C fallback decoder test mailbox | 11,836 B | 1,119 B | 153 B | 776 B |
 | Full C PWM speech demo, including 2,940 B audio | 15,036 B | 1,254 B | 162 B | 632 B |
 
@@ -122,7 +122,7 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
   lifetime cases, each backend matches 14,278 frames with one firmware image.
 - Complete player tests on all 31 streams match upstream PCM converted to u8,
   with zero ring underruns and no stack/static-memory collisions.
-- Maximum observed ASM decoder-only corpus frame cost: **125,073 cycles / 7.817 ms**;
+- Maximum observed ASM decoder-only corpus frame cost: **124,189 cycles / 7.762 ms**;
   the 20-ms budget at 16 MHz is 320,000 cycles. ISR and output costs are verified
   separately by the complete-player runs.
 - Primitive tests cover 240,000 complete LSP conversions and 3,670,016 bit fields;
@@ -169,16 +169,23 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
   state-base low bytes, including page crossings, in-place and separate I/O,
   changing coefficients, saturation/wrap, guards and all callee-saved registers.
   It saves exactly 43 cycles/call (172/frame) with 2 B less Flash.
+- Separate ten-sample coefficient ageing and thirty-sample steady IIR loops
+  reuse the dead den/base registers for two coefficient words. The same full
+  address/I/O/ABI sweep saves exactly 221 more cycles/call (884/frame).
+  Corpus mean falls 0.7491%, human speech 0.7361%, with 570 B additional Flash
+  and unchanged SRAM/stack. Both complete PWM scenarios retain zero underruns.
 - Codebooks reside in Flash, use explicit signed `pgm_read_*` accesses, and no
   malloc/calloc/realloc/free symbols are linked.
 
-Current ASM decoder/player results: `reports/iir-cursor-asm-*.json`.
+Current ASM decoder/player results: `reports/iir-phases-asm-*.json`.
 Explicit C decoder and ordinary/loaded demos are byte-identical to the admitted
 zero-transform images; their complete results remain `reports/zero-transform-c-*.json`.
-Portable results: `reports/portable-short-tail-library.json`.
-`reports/iir-cursor-admission-audit.json` pins both 83-file player copies,
+Portable results: `reports/portable-iir-phases-library.json`.
+`reports/iir-phases-admission-audit.json` pins both 83-file player copies,
 the measured ASM image, paired page-sweep and unchanged C decoder/demo hashes. Rejected C
-experiments and their full-workload regressions remain `reports/short-tail-c-*.json`.
+experiments and their full-workload regressions remain `reports/short-tail-c-*.json`
+and `reports/c-byte-mac-*.json`. The byte-product C MAC was exact but slower;
+its reproducible patch is retained in the AVR cookbook.
 The earlier `segment-*`, `register-*`, `shared-bias-*` and `fused-long-*` results remain historical.
 The `phase-reuse-*` reports retain the preceding admitted image.
 The `nb-word-math-*` and `c-word-math-*` reports are the preceding baselines.
@@ -191,9 +198,9 @@ not exhaustive packet timing proofs or physical board measurements.
 `reports/real-speech-{avr,player}.json` retain the earlier NB baseline.
 `node Codecs/Speex/AVR/tests/verify_avr.mjs --frames 8 --profile` also writes `avr-profile.json`
 under the selected output directory. It counts only frame-command intervals,
-excluding boot/reset; the current 88-frame fixture profile spends 55.9% in
-LPC synthesis and 18.4% in the shared pitch/innovation ASM body
-(`reports/iir-cursor-profile.json`). Separate variable-entry/controller costs
+excluding boot/reset; the current 88-frame fixture profile spends 55.5% in
+LPC synthesis and 18.5% in the shared pitch/innovation ASM body
+(`reports/iir-phases-profile.json`). Separate variable-entry/controller costs
 are also recorded there. The common
 body is attributed to its second symbol for both entries. These shares describe
 that sampled workload, not every possible packet.
@@ -239,6 +246,7 @@ The Xiph NB3 adaptation has the following separately measured stages:
 | Round known-zero adaptive gain directly, without a packed vector | 125,338 | 9,578 B | 1,119 B |
 | Send short-pitch zero tails to the bounded variable-count entry | 125,124 | 9,602 B | 1,119 B |
 | Compare IIR cursor low byte against a hoisted end byte | 124,952 | 9,600 B | 1,119 B |
+| Split IIR ageing/steady phases and cache two coefficient words | 124,068 | 10,170 B | 1,119 B |
 
 Through the persistent-history stage, the combined corpus maximum fell from 204,770 to
 133,142 cycles: **34.98% less decoder time**. The latest p1-specific ASM core
