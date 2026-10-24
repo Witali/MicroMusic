@@ -46,6 +46,7 @@ matching optimized kernel is provided yet.
 | Historical pitch write/add | `pitch_add.S` | C block loop in `pitch24.h` |
 | Innovation, scaling and saturation | `innovation.S` | C branch in `innovation.h` and bounded helpers in `nb3_c_math.h` |
 | Known-zero adaptive gain | separate `speex_avr_zero_innovation10` entry | four byte products/carries in `speex_nb3_zero_shape_c` |
+| Zero-tail vectors (0..10) | `speex_avr_zero_innovation_n`, shared fixed-ten body | explicitly selectable helper in `zero_innovation.h`; controller retains the measured faster prior C loop |
 | Fused long-pitch/innovation | second entry in `innovation.S`, shared scaling/clamps | `long_pitch.h`, inlined into the C forty-sample caller |
 | Variable-count fused vectors (0..10) | separate entry in `innovation.S`, same scaling/clamps | `long_pitch.h` with runtime count |
 | One-sample fused vectors | scalar entry in `innovation.S`, same transform with fewer saved registers | same `long_pitch.h` helper with count=1 |

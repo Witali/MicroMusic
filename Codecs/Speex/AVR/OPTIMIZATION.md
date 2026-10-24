@@ -443,13 +443,46 @@ audio. Audit pins four 81-file copies, actual binary hashes and a post-run
 comment clarification that preserves both rebuilt decoder images.
 Reports: zero-transform-*.json, portable-zero-transform-library.json.
 
+### Bounded variable-count zero tails
+
+Pitch 17..19 now sends its final 5/3/1 zero-adaptive samples to a separate
+count 0..10 ASM entry. Keep the fixed-ten body unchanged: count zero returns
+in six cycles without data access; count ten adds four cycles. The controller
+needs no zero gain array or dummy history loads. A bounded portable C block
+helper remains explicitly selectable with ASM disabled on AVR.
+
+Independent tests add 140,471 variable samples per ASM/C backend to the
+existing 280,960 fixed samples in each path; all counts, full signed8 shapes,
+rounding boundaries, tails/guards/ABI/r1 pass. Short-controller ASM/C tests
+cover 1,966,080 samples each, now with per-pitch statistics. ASM means improve
+at every pitch 17..40; minima/maxima 6,950..7,862 -> 6,918..7,531 cycles.
+The direct C replacement improves that isolated test too, but slows the
+31-stream decoder by 0.0062% (worst mean +0.0259%, max +144 cycles). Scale
+rematerialization and an outlined split-scale helper regress 0.0819% / 0.0724%.
+Preserve the faster previous C loop: C decoder and ordinary/+10% demos match
+the admitted zero-transform binaries byte-for-byte. Do not infer decoder
+speed from a standalone kernel/controller. Reports retain all three rejected
+C variants, exact workloads and expressions.
+
+ASM matches 14,278 frames; corpus mean -0.0421%, human speech -0.0431%, no
+stream mean regressions. Corpus max 125,245; pitch coverage max 125,753 cycles.
+Flash 9,602 B (+24), SRAM/stack unchanged at 1,119 / 141 B. Both ordinary and
++40% CPU PWM pass all 31 streams: exact PWM, zero underruns, queues 73 / 31,
+gaps 80,013 / 193,874, 644 B free SRAM. Speech demo is 12,806 B including
+2,940 B audio. Main mailbox/demo match the tested images; two 82-file source
+copies match the main tree. Fresh manifest/CMake C archives each match 9,100
+frames. Reports: short-tail-*.json, portable-short-tail-library.json.
+
 ## Next candidates (not yet admitted)
 
-1. **Use the bounded zero transform for short-pitch tails.** Pitch 17..19 still
-   sends zero-gain tails through the three-MAC ASM kernel; C uses the earlier
-   general shape-scale/finish helper. Add a count 0..10 zero entry and reuse the
-   bounded C transform, avoiding history/gain loads and possibly the three-byte
-   zero-gain staging array. Measure dispatch costs on all other short pitches.
+1. **Replace the redundant IIR cursor with the pointer-end low byte.** The
+   isolated prototype saves exactly 43 cycles/call over 655,360 independent
+   samples, all 256 SRAM low-byte positions and both I/O modes; guards,
+   coefficient ages, wrapping arithmetic, saturation and ABI pass. Twenty
+   bytes contain ten distinct word positions modulo 256, including across a
+   page. The pointer already advances, so compare its low byte to a precomputed
+   end rather than updating a second cursor. Full decoder/PWM admission is
+   still pending; no production IIR change yet.
 
 2. **Revisit synthesis using the current profile.** The fresh 88-frame fixture
    profile attributes 55.966% to IIR and 18.342% to shared pitch/innovation.

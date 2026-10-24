@@ -105,8 +105,8 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
 
 | Build | Flash | Static SRAM | Peak stack | Free SRAM at peak |
 | --- | ---: | ---: | ---: | ---: |
-| Optimized decoder test mailbox, ASM enabled | 9,578 B | 1,119 B | 141 B | 788 B |
-| Full PWM speech demo, including 2,940 B compressed audio | 12,782 B | 1,254 B | 150 B | 644 B |
+| Optimized decoder test mailbox, ASM enabled | 9,602 B | 1,119 B | 141 B | 788 B |
+| Full PWM speech demo, including 2,940 B compressed audio | 12,806 B | 1,254 B | 150 B | 644 B |
 | C fallback decoder test mailbox | 11,836 B | 1,119 B | 153 B | 776 B |
 | Full C PWM speech demo, including 2,940 B audio | 15,036 B | 1,254 B | 162 B | 632 B |
 
@@ -115,7 +115,7 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
   lifetime cases, each backend matches 14,278 frames with one firmware image.
 - Complete player tests on all 31 streams match upstream PCM converted to u8,
   with zero ring underruns and no stack/static-memory collisions.
-- Maximum observed ASM decoder-only corpus frame cost: **125,465 cycles / 7.842 ms**;
+- Maximum observed ASM decoder-only corpus frame cost: **125,245 cycles / 7.828 ms**;
   the 20-ms budget at 16 MHz is 320,000 cycles. ISR and output costs are verified
   separately by the complete-player runs.
 - Primitive tests cover 240,000 complete LSP conversions and 3,670,016 bit fields;
@@ -153,16 +153,21 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
   signed8 shape, scale boundaries and exact rounding ties with +/-1 neighbors.
   Its ASM ten-sample call takes 501 cycles, versus 941..981 for packed zeros;
   the separate O2 C worker takes 549. Production C uses the faster O3 wrapper.
+- The count 0..10 zero entry and explicit C helper add 140,471 samples each,
+  with untouched output tails, all callee-saved registers/r1 and guards checked.
+  Count zero returns in six ASM cycles; count ten adds four cycles to fixed-ten.
+  Short-tail ASM improves every isolated pitch mean; the previous C controller
+  is retained because the faster isolated C alternatives slowed the full decoder.
 - Codebooks reside in Flash, use explicit signed `pgm_read_*` accesses, and no
   malloc/calloc/realloc/free symbols are linked.
 
-Current decoder results: `reports/zero-transform-{asm,c}-{fixtures,speech,means,pitch,lsp,zero}.json`.
-Player results: `reports/zero-transform-{asm,c}-{player,summary,headroom-summary}.json`,
-`reports/zero-transform-asm-headroom40.json` and `reports/zero-transform-c-headroom10.json`.
-Portable results: `reports/portable-zero-transform-library.json`.
-`reports/zero-transform-admission-audit.json` pins the four 81-file source
-copies, matched decoder/unit/player images and a post-run comment clarification
-whose rebuilt C/ASM decoder binaries are unchanged.
+Current ASM decoder/player results: `reports/short-tail-asm-*.json`.
+Explicit C decoder and ordinary/loaded demos are byte-identical to the admitted
+zero-transform images; their complete results remain `reports/zero-transform-c-*.json`.
+Portable results: `reports/portable-short-tail-library.json`.
+`reports/short-tail-admission-audit.json` pins both 82-file player copies,
+the measured ASM image and unchanged C decoder/demo hashes. Rejected C
+experiments and their full-workload regressions remain `reports/short-tail-c-*.json`.
 The earlier `segment-*`, `register-*`, `shared-bias-*` and `fused-long-*` results remain historical.
 The `phase-reuse-*` reports retain the preceding admitted image.
 The `nb-word-math-*` and `c-word-math-*` reports are the preceding baselines.
@@ -221,6 +226,7 @@ The Xiph NB3 adaptation has the following separately measured stages:
 | Reuse one zero vector and reduce scratch to 60 B | 125,613 | 9,306 B | 1,119 B |
 | Use a scalar entry for one-sample pitch segments | 125,373 | 9,460 B | 1,119 B |
 | Round known-zero adaptive gain directly, without a packed vector | 125,338 | 9,578 B | 1,119 B |
+| Send short-pitch zero tails to the bounded variable-count entry | 125,124 | 9,602 B | 1,119 B |
 
 Through the persistent-history stage, the combined corpus maximum fell from 204,770 to
 133,142 cycles: **34.98% less decoder time**. The latest p1-specific ASM core

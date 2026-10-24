@@ -356,6 +356,7 @@ speex_avr_zero_innovation10:
     clr r2
     ldi r20, 10
     mov r3, r20
+.Lzero_innovation_bias_setup:
     ldi r20, 4
     mov r8, r20
 .Lzero_innovation_sample:
@@ -402,3 +403,28 @@ speex_avr_zero_innovation10:
     pop r2
     ret
 .size speex_avr_zero_innovation10, .-speex_avr_zero_innovation10
+
+/* Runtime count in r16, 0..10. Preserve it before scale moves to r19:r16.
+ * Keep the fixed-ten path and its timing unchanged. */
+.global speex_avr_zero_innovation_n
+.type speex_avr_zero_innovation_n, @function
+speex_avr_zero_innovation_n:
+    tst r16
+    brne .Lzero_innovation_n_nonempty
+    ret
+.Lzero_innovation_n_nonempty:
+    push r2
+    push r3
+    push r8
+    push r16
+    push r17
+    push r28
+    push r29
+    mov r3, r16
+    movw r28, r24
+    movw r30, r22
+    movw r16, r18
+    movw r18, r20
+    clr r2
+    rjmp .Lzero_innovation_bias_setup
+.size speex_avr_zero_innovation_n, .-speex_avr_zero_innovation_n

@@ -7,6 +7,7 @@
 #define MICROMUSIC_NB3_SHORT_PITCH_H
 #include "speex/speex_bits.h"
 #include "long_pitch.h"
+#include "zero_innovation.h"
 extern const signed char gain_cdbk_lbr[],exc_10_32_table[];
 #if !SPEEX_NB3_USE_AVR_ASM
 static SPEEX_NB3_ALWAYS_INLINE int16_t speex_nb3_segment_finish_c(int32_t adaptive,
@@ -29,7 +30,6 @@ void speex_nb3_short_innovation(int16_t *out,const int16_t *exc,uint8_t pitch,
 {
     int8_t gains[3];
 #if SPEEX_NB3_USE_AVR_ASM
-    const int8_t zeros[3]={0,0,0};
     int16_t edge[3];
 #else
     const int16_t high=(int16_t)(scale>>12),low=(int16_t)(scale&4095);
@@ -46,9 +46,6 @@ void speex_nb3_short_innovation(int16_t *out,const int16_t *exc,uint8_t pitch,
         while(left) {
             const int16_t *in;
             uint8_t count;
-#if SPEEX_NB3_USE_AVR_ASM
-            const int8_t *g=gains;
-#endif
             if(j<first) {
                 in=exc+(int)j-pitch-1;count=first-j;
             } else if(j>pitch && j<second) {
@@ -68,9 +65,10 @@ void speex_nb3_short_innovation(int16_t *out,const int16_t *exc,uint8_t pitch,
                     edge[0]=exc[-1];edge[1]=0;edge[2]=0;
                     in=edge;count=1;
                 } else {
-                    /* Zero gains make history values irrelevant; still use
-                     * a valid, completed negative history range. */
-                    in=exc-pitch-1;g=zeros;count=left;
+                    /* The original tap rule has no remaining history. */
+                    speex_avr_zero_innovation_n(out,shape,scale,left);
+                    out+=left;shape+=left;j+=left;
+                    break;
                 }
 #else
                 int32_t adaptive;
@@ -83,6 +81,8 @@ void speex_nb3_short_innovation(int16_t *out,const int16_t *exc,uint8_t pitch,
                 else if(j==second+1)
                     adaptive=(int32_t)gains[0]*exc[-1];
                 else {
+                    /* This form is faster in the whole AVR C decoder than
+                     * the bounded byte-product variants (see short-tail reports). */
                     do {
                         *out++=speex_nb3_segment_finish_c(0,AVR_READ_I8(shape),high,low);
                         ++shape;++j;
@@ -97,9 +97,9 @@ void speex_nb3_short_innovation(int16_t *out,const int16_t *exc,uint8_t pitch,
             if(count>left) count=left;
 #if SPEEX_NB3_USE_AVR_ASM
             if (count==1)
-                speex_avr_long_innovation1(out,in,shape,scale,g);
+                speex_avr_long_innovation1(out,in,shape,scale,gains);
             else
-                speex_avr_long_innovation_n(out,in,shape,scale,g,count);
+                speex_avr_long_innovation_n(out,in,shape,scale,gains,count);
 #else
             speex_nb3_long_innovation10_c(out,in,shape,scale,gains,count);
 #endif

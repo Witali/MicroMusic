@@ -14,9 +14,12 @@ const program=new Uint16Array(16384).fill(0xffff);new Uint8Array(program.buffer)
 const cpu=new CPU(program,2048),status=address('zero_status'),command=address('zero_command');
 const out=address('zero_output')+2,packed=address('zero_packed');
 const cEntry=[...symbols].find(([n])=>/^zero_transform_c(?:\.|$)/.test(n))[1];
-const entries=new Set([address('speex_avr_zero_innovation10'),address('speex_avr_innovation10'),cEntry]);
+const cNEntry=[...symbols].find(([n])=>/^zero_transform_c_n(?:\.|$)/.test(n))[1];
+const entries=new Set([address('speex_avr_zero_innovation10'),address('speex_avr_innovation10'),
+  address('speex_avr_zero_innovation_n'),cEntry,cNEntry]);
 const preserved=[...Array.from({length:16},(_,i)=>i+2),28,29];
-const times=[null,...Array.from({length:3},()=>({min:Infinity,max:0,calls:0}))];
+const times=[null,...Array.from({length:5},()=>({min:Infinity,max:0,calls:0}))];
+const counts=Array.from({length:11},(_,count)=>({count,calls:0,samples:0}));
 let active=null,which=0,blocks=0,seed=0x5e70a11,returned=0,pairedSaved=new Set(),largest=0;
 function random(){seed^=seed<<13;seed^=seed>>>17;seed^=seed<<5;return seed>>>0;}
 function until(predicate){const deadline=cpu.cycles+100000;while(!predicate()){
@@ -45,20 +48,26 @@ function check(scale,index){
     expected.push(original);
   }
   cpu.dataView.setInt32(address('zero_scale'),scale,true);cpu.data[address('zero_index')]=index;
+  const count=blocks%11;cpu.data[address('zero_count')]=count;
   cpu.data.fill(0,packed,packed+32);cpu.data[packed]=0x56;cpu.data[packed+31]=0x78;
   cpu.dataView.setUint16(out-2,0x1234,true);cpu.dataView.setUint16(out+20,0xabcd,true);
   let zeroCycles=0;
-  for(which=1;which<=3;which++){
+  for(which=1;which<=5;which++){
     cpu.data.fill(0xa5,out,out+20);cpu.data[status]=1;cpu.data[command]=which;
     until(()=>cpu.data[status]===2);assert.equal(active,null);
-    assert.deepEqual(Array.from({length:10},(_,i)=>cpu.dataView.getInt16(out+2*i,true)),expected);
+    const size=which<=3?10:count;
+    assert.deepEqual(Array.from({length:10},(_,i)=>cpu.dataView.getInt16(out+2*i,true)),
+      expected.map((value,i)=>i<size?value:-23131),'Exact samples and untouched tails');
     assert.equal(cpu.dataView.getUint16(out-2,true),0x1234);assert.equal(cpu.dataView.getUint16(out+20,true),0xabcd);
     assert.equal(cpu.data[packed],0x56);assert.equal(cpu.data[packed+31],0x78);
     assert.ok(cpu.data.subarray(packed+1,packed+31).every(v=>v===0),'Read-only packed zero vector');
     assert.equal(cpu.data[address('zero_r1')],0);
     if(which===1)zeroCycles=returned;
     if(which===3)pairedSaved.add(returned-zeroCycles);
+    if(which===4 && count===10)assert.equal(returned-zeroCycles,4,'Runtime count setup cost');
+    if(which===4 && count===0)assert.equal(returned,6,'Zero returns without data access');
   }
+  counts[count].calls++;counts[count].samples+=count;
   blocks++;
 }
 const upstream=readFileSync(join(root,'vendor/speex-1.2.1/libspeex/nb_celp.c'),'utf8');
@@ -82,6 +91,8 @@ for(let shape=-128;shape<=127;shape++)if(shape){
 const roundingBlocks=blocks-gridBlocks;
 for(let i=0;i<20000;i++)check(random()%121000001,random()&255);
 assert.equal(times[1].calls,blocks);assert.equal(times[2].calls,blocks);assert.equal(times[3].calls,blocks);
+assert.equal(times[4].calls,blocks);assert.equal(times[5].calls,blocks);
+assert.ok(counts.every(r=>r.calls>0));assert.equal(times[1].min,501);assert.equal(times[1].max,501);
 assert.ok(largest<=29542 && Math.min(...pairedSaved)>0);
 const report={mcu:'ATmega328P',compiler:'AVR GCC 7.3.0 mixed Os/O2, LTO, fwrapv',simulator:'avr8js 0.21.1',
   binarySha256:createHash('sha256').update(binary).digest('hex'),blocks,samplesPerBackend:blocks*10,
@@ -90,5 +101,7 @@ const report={mcu:'ATmega328P',compiler:'AVR GCC 7.3.0 mixed Os/O2, LTO, fwrapv'
   zeroIdentityVerified:true,explicitCWorker:true,guardsIntact:true,packedPitchPreserved:true,
   calleeSavedRegistersPreserved:true,zeroRegisterRestored:true,asmKernelCycles:times[1],
   cKernelCycles:times[2],packedZeroKernelCycles:times[3],pairedAsmCyclesSaved:[...pairedSaved].sort((a,b)=>a-b),
+  variableAsmKernelCycles:times[4],variableCKernelCycles:times[5],counts,
+  variableSamplesPerBackend:counts.reduce((s,r)=>s+r.samples,0),
   includesInterrupts:false,physicalBoardTested:false};
 writeFileSync(join(build,'verification.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));

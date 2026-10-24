@@ -18,6 +18,9 @@ const cpu=new CPU(program,2048),command=address('short_command'),status=address(
 const exc=address('short_exc')+84,packet=address('short_packet');
 const preserved=[...Array.from({length:16},(_,i)=>i+2),28,29];
 const cycles=[null,{min:Infinity,max:0,calls:0},{min:Infinity,max:0,calls:0}];
+const pitchCycles=Array.from({length:24},(_,i)=>({pitch:17+i,
+  backends:[null,...Array.from({length:2},()=>({min:Infinity,max:0,total:0,calls:0}))]}));
+let currentPitch=17;
 let active=null,backend=0,seed=0x319e72b1,blocks=0,pitchClipped=0,outputClipped=0;
 function random(){seed^=seed<<13;seed^=seed>>>17;seed^=seed<<5;return seed>>>0;}
 function until(predicate){const deadline=cpu.cycles+100000;while(!predicate()){
@@ -30,7 +33,10 @@ function until(predicate){const deadline=cpu.cycles+100000;while(!predicate()){
     assert.deepEqual(preserved.map(r=>cpu.data[r]),active.regs,'Callee-saved controller registers');
     assert.equal(cpu.data[1],0,'Zero register at controller return');
     const ticks=cpu.cycles-active.ticks;cycles[backend].min=Math.min(cycles[backend].min,ticks);
-    cycles[backend].max=Math.max(cycles[backend].max,ticks);cycles[backend].calls++;active=null;
+    cycles[backend].max=Math.max(cycles[backend].max,ticks);cycles[backend].calls++;
+    const row=pitchCycles[currentPitch-17].backends[backend];
+    row.min=Math.min(row.min,ticks);row.max=Math.max(row.max,ticks);row.total+=ticks;row.calls++;
+    active=null;
   }
 }}
 until(()=>cpu.data[status]===1);
@@ -45,6 +51,7 @@ const pitchTable=table('gain_table_lbr.c','gain_cdbk_lbr',128);
 const shapes=table('exc_10_32_table.c','exc_10_32_table',320);
 const history=new Int16Array(41),expected=new Int16Array(40),edges=[-32768,32767,-32767,0,-1,1,-32000,32000];
 for(let pitch=17;pitch<=40;pitch++)for(let gain=0;gain<32;gain++)for(let s=0;s<64;s++){
+  currentPitch=pitch;
   const scale=scales[s],g=[2,1,0].map(t=>pitchTable[4*gain+t]+32);
   const indices=Array.from({length:4},(_,v)=>(s*3+gain*5+pitch*7+v*11)&31);
   const bits=((indices[0]<<15)|(indices[1]<<10)|(indices[2]<<5)|indices[3])*16+10;
@@ -93,5 +100,8 @@ const report={mcu:'ATmega328P',simulator:'avr8js 0.21.1',compiler:'AVR GCC 7.3.0
   historyMin:-32768,historyMax:32767,pitchClipped,outputClipped,exact:true,
   historyPreserved:true,packetPreserved:true,guardsIntact:true,bitConsumptionExact:true,
   calleeSavedRegistersPreserved:true,zeroRegisterRestored:true,asmControllerCycles:cycles[1],
-  cControllerCycles:cycles[2],includesInterrupts:false,physicalBoardTested:false};
+  cControllerCycles:cycles[2],perPitch:pitchCycles.map(({pitch,backends})=>({pitch,
+    asm:{...backends[1],mean:Number((backends[1].total/backends[1].calls).toFixed(3))},
+    c:{...backends[2],mean:Number((backends[2].total/backends[2].calls).toFixed(3))}})),
+  includesInterrupts:false,physicalBoardTested:false};
 writeFileSync(join(build,'verification.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));
