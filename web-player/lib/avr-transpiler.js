@@ -375,7 +375,9 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     const elapsed=binary(0xa0,stateF('cyc'),float(block.cycles));
     // No IRQ can occur inside an accepted block. Timer state advances by the
     // exact number of original CPU cycles, including the prescaler phase.
-    const blocked=or(or(state('irqDelay'),full?call(PENDING):and(reg(profile.legacy.irqFlags),constant(profile.legacy.irqFlagMask))),or(lt(get(1),constant(block.instructions)),
+    const pending=full?(resumable?conditionValue(and(reg(sreg),constant(128)),call(PENDING),constant(0)):call(PENDING)):
+      and(reg(profile.legacy.irqFlags),constant(profile.legacy.irqFlagMask));
+    const blocked=or(or(state('irqDelay'),pending),or(lt(get(1),constant(block.instructions)),
       or(binary(0x66,elapsed,stateF('overflowAt')),resumable?constant(0):binary(0x64,elapsed,get(0)))));
     const code=bytes(condition(blocked,bytes(constant(0),0x0f)));
     if(resumable){
@@ -425,11 +427,14 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   const emptyBlock=bytes(constant(0));
   const phaseActive=()=>load32(constant(abi.phase.active));
   const retired=()=>load32(constant(abi.phase.retired));
-  // CLKI deliberately exposes no positive block budget. Avoid the wrapper,
-  // repeated ready/deadline calls and indirect dispatch on that common path.
+  // Both internal callers already establish the phase deadline and readiness.
+  // Dispatch directly instead of repeating those native calls in the public
+  // block wrapper. Invalid PCs fall back to STEP's ordinary error reporting.
+  // CLKI deliberately exposes no positive block budget and skips dispatch.
   const tryBlock=(deadline,limit)=>conditionValue(
     and(eqz(phaseActive()),binary(0x64,stateF('cyc'),stateF('overflowAt'))),
-    call(BLOCK,deadline,limit),constant(0));
+    conditionValue(and(ge(state('pc'),constant(0)),lt(state('pc'),constant(flashWords))),
+      bytes(deadline,limit,add(state('pc'),constant(flashWords)),0x11,3,0),constant(0)),constant(0));
   const dispatchPc=resumable?conditionValue(eq(phaseActive(),constant(1)),load32(constant(abi.phase.execPc)),state('pc')):state('pc');
   const step=bytes(condition([0x23,0],[0x0f]),full?condition(eqz(call(READY)),[0x0f]):[],put('error',constant(0)),condition(or(lt(dispatchPc,constant(0)),ge(dispatchPc,constant(flashWords))),fail(1)),dispatchPc,0x11,1,0,full?condition(eq(state('error'),constant(26)),put('error',constant(0))):[]);
   const block=bytes(condition([0x23,0],bytes(constant(0),0x0f)),

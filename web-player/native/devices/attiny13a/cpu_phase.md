@@ -134,6 +134,15 @@ a block. Memory/I/O instructions retain their individual bus phases. CLKI
 continues to expose a zero block budget, retaining every source phase and input
 horizon. No clock edge or peripheral event is omitted by CPU batching.
 
+An IRQ ready level does not reject a register-only block while SREG.I is clear:
+these operations cannot enable I. Peripheral flags and event processing stay
+live, and all exit flags remain exact. This follows DS40002307A section4.3.1;
+global masking does not make arithmetic flags dead. The run/runUntil loops
+already establish the deadline and call native ready before dispatch, so their
+internal block attempt uses the guarded function table directly. The exported
+block entry retains its full deadline/readiness checks for independent callers.
+Invalid PCs still take the ordinary instruction error path.
+
 The block also checks the exact u64 retirement capacity and the physical-time
 capacity: `avr_device_cpu_deadline(Infinity)` returns the rounded-up CPU-half
 position of `UINT64_MAX-1`, rather than converting Infinity to an integer.

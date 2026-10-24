@@ -56,6 +56,25 @@ test('a suspended instruction bypasses blocks and resumes its saved phase exactl
   a.runUntilPs(start+1600001n);oracleUntil(b,start+1600001n);same(a,b,'resumed result');
 });
 
+test('a ready IRQ level permits blocks only with global interrupts masked',()=>{
+  const a=make(),b=make();for(const c of [a,b]){c.writeIO(IO.EECR,8);c.sreg=0;}
+  assert.equal(a._execute('block',Infinity,64),body.length);
+  for(let n=0;n<body.length;n++)b.step();same(a,b,'ready level with I clear');
+  for(const c of [a,b]){c.pc=16;c.sreg=128;}
+  assert.equal(a._execute('block',Infinity,64),0);same(a,b,'pending enabled IRQ rejects block');
+});
+
+test('internal block dispatch preserves PC faults and interrupt-delay boundaries',()=>{
+  for(const pc of [-1,512])for(const bounded of [false,true]){
+    const a=make(),b=make();for(const c of [a,b])c.pc=pc;
+    assert.throws(()=>bounded?a.runUntilPs(a.state().timePs+1000000n):a.run(1),/PC out of Flash/);
+    assert.throws(()=>b.step(),/PC out of Flash/);same(a,b,'invalid PC '+pc);
+  }
+  const a=make(),b=make();for(const c of [a,b])c.irqDelay=1;
+  assert.equal(a._execute('block',Infinity,64),0);same(a,b,'interrupt delay rejects whole block');
+  a.run(body.length);for(let n=0;n<body.length;n++)b.step();same(a,b,'delay expires on first retirement');
+});
+
 for(const kind of ['timer','comparator','pin','reset','eeprom-window','watchdog-window','clkpr','osccal'])
 test(`resumable blocks preserve ${kind} boundaries and all observable CPU/device state`,()=>{
   const instructions=Array.from({length:30},(_,n)=>avr.inc(16+n%8));
