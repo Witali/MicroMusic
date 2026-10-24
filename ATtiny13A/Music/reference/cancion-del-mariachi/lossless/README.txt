@@ -10,8 +10,8 @@ Whole source, including intro     4237           8                1030
 
 These are byte counts of packedData, including the MNC1 header and its
 dictionaries. The surrounding JSON, source metadata and decoder/synthesizer
-code are additional. full-no-intro.json is the complete requested selection;
-excerpt.json is the shorter passage used by the current AVR arrangement.
+code are additional. full-no-intro.json holds the complete no-intro source;
+excerpt.json is the shorter passage used by the eight-voice AVR player.
 
 Preserved exactly: track and channel, program, every pitch (including inner
 chord tones), Note On and Off ticks, repeated attacks, On/Off velocities,
@@ -56,15 +56,37 @@ ordered note groups. Tests cover all 4237 original notes, the two selections,
 random chord sequences, repeated attacks, malformed packets and explicit
 rejection of unsupported input.
 
-ATtiny13A status:
-The current three-tone AVR kernel does not decode MNC1 or play the seven/eight
-simultaneous source notes. The complete no-intro payload alone leaves only
-134 of 1024 Flash bytes for all decoder and audio code. These packets are
-not advertised as fitting firmware, and the existing reduced AVR player
-must not be described as lossless. Playback requires further decoder and
-polyphonic engine work or a target with more resources.
+ATtiny13A complete excerpt player:
+A dedicated compiler now fits all 1027 excerpt notes in a complete 918-byte
+AVR image: 566 code bytes and 352 bytes of tables, including precomputed DDS
+steps. It shares fixed-size two/six-tone guitar shapes, gap/gate pairs and
+binary phrase rules. It does not directly decode the archival MNC1 packets.
+Two source guitar parts use eight independent 16-bit phase/step oscillators;
+the selected excerpt holds at most seven notes simultaneously. Shared plucked
+envelopes preserve the common gates of each source chord. No inner chord
+tones or repeat attacks are removed. Both source programs are GM24.
 
-Eight-voice synthesis feasibility has now been checked separately:
+The independent full-loop AVR audit compares every ordered chord and Note
+Off against the raw source JSON, checks each mixed tone and every physical
+PWM byte, and verifies queue/stack bounds. All 1027 notes and 261 chord attacks
+pass; timing error stays below 14.19 ms at nominal 9.6 MHz, DDS error below
+2.16 cents. No lost timer/work events or underruns occur. Peak SRAM is 61/64
+bytes (32 phase/step, 16 PWM ring, 7 pending phrase symbols, 6 hardware stack).
+This is emulation evidence; short FluidR3 waves approximate the guitar timbre.
+
+Reproduce the complete player:
+  python tools/build-mariachi-lossless.py --output ATtiny13A/Music/variants/cancion-del-mariachi-polyphonic
+  node tools/audit-mariachi-lossless.mjs ATtiny13A/Music/variants/cancion-del-mariachi-polyphonic
+  node tools/render-firmware-preview.mjs ATtiny13A/Music/variants/cancion-del-mariachi-polyphonic 30.9
+Firmware, compiled-score.json and verification.json are in that variant.
+The player ID cancion-del-mariachi now selects this complete excerpt; the
+previous reduced arrangement remains cancion-del-mariachi-ensemble.
+
+The full 122-second no-intro song is not included in this firmware. Its MNC1
+payload alone leaves only 134 of 1024 Flash bytes for code. The excerpt's
+measured fit must not be extrapolated to that longer selection.
+
+Earlier eight-voice synthesis feasibility probe (retained for comparison):
   python tools/probe-eight-guitar-voices.py
   node tools/audit-eight-guitar-voices.mjs
 The static AVR probe has eight independent 16-bit DDS phases and steps,
