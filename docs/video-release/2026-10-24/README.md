@@ -30,8 +30,8 @@ complete decoding, timestamps, chapters, duration, Russian audio metadata,
 per-part AAC loudness and correlation with the normalized PCM reference. The
 phone footage has variable frame timing, retained exactly, so a generated-film
 constant-frame-rate invariant would be inappropriate. Inspect final opening,
-join, technical views and ending separately. No added narration or caption
-transcript was requested; retain the original Russian speech and music.
+join, technical views and ending separately. Retain the original Russian speech
+and music. No added narration is included.
 
 The YouTube title and Russian description accompany the file. The 1 KB headline
 refers specifically to ATtiny13A Flash, as the description explains. Source
@@ -44,6 +44,36 @@ frames, including all 23,618 original frames; 1920 x 1080; -16.08 LUFS overall;
 individual recordings -16.17 and -16.03 LUFS. Encoded AAC true peak: -1.15 dBTP
 (the pre-AAC target was -1.5). Source identities and the measured verification
 receipt are retained beside this document. No original footage is re-encoded.
+
+## English subtitles
+
+The owner subsequently requested English subtitles or an additional Microsoft
+Jenny audio track. This revision provides subtitles and retains Russian audio.
+`transcribe.py` runs faster-whisper 1.2.1 locally with the multilingual small
+model, revision `536b0662742c02347bc0e980a01041f333bce120`, CPU int8 and Russian
+word timestamps. Package wheels and hashes are recorded in the local
+`build/video-asr-install-report.json`; model weights remain outside Git.
+Original speech is not sent to a transcription service.
+
+`subtitles-English.json` is the reviewed translation: 105 cues split at actual
+spoken phrases, with project and chip names corrected against repository files.
+It subtitles the commentary; instrumental music is left uncaptained. Some
+distorted demonstration voice samples are not intelligible in the automatic
+transcript. The translation does not invent their missing words.
+
+Run `python add_subtitles.py` after the base render. This exports the standalone
+UTF-8 `MicroMusic-English.srt` and a selectable English `mov_text` track in
+`MicroMusic-1KB-2026-10-24-preview-en-subs.mp4`. It verifies cue ordering, bounds,
+maximum two lines of 42 characters, reading speed and exact SRT round-trip.
+It also compares encoded video/audio stream SHA-256 values with the completely
+verified base film, proving the subtitle remux preserved both media streams.
+YouTube Studio needs the separate SRT uploaded with timing; embedded MP4 text
+does not replace that step. A small burned-caption preview may be generated for
+players that cannot display MP4 subtitle tracks.
+
+Sources: [faster-whisper](https://github.com/SYSTRAN/faster-whisper),
+[model](https://huggingface.co/Systran/faster-whisper-small),
+[YouTube captions](https://support.google.com/youtube/answer/2734796).
 
 Publication authorization: the owner explicitly requested upload to YouTube.
 The owner subsequently requested a preview before publication. Do not upload
