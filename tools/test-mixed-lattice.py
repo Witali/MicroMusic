@@ -156,8 +156,9 @@ class MixedLatticeTests(unittest.TestCase):
 
     def test_full_teacher_pcm_survives_head_promotion_and_extra_zero_stages(self):
         path=ROOT/'ATtiny13A/Sound/research/q4-lattice/followups/nearest/model.json'
-        for order,profile in ((8,'head7'),(10,'all7')):
+        for order,profile in ((8,'head5'),(8,'head7'),(10,'all7')):
             state,bits,state_bits,mode,_,_,_=fit.load(path,order,profile,4)
+            if profile=='head5':self.assertEqual(bits.tolist(),[5,5,4,4,4,4,4,4])
             pcm,counts=fit.render(state,bits,state_bits,mode)
             self.assertFalse(np.any(counts))
             self.assertEqual(hashlib.sha256(pcm.tobytes()).hexdigest(),

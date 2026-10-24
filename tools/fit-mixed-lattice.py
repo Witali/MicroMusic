@@ -1,6 +1,6 @@
 """Find a higher-quality integer teacher with selectable reflection precision.
 
-Q7 low stages address the sensitivity of low voice resonances. Zero-area pulse
+Q5/Q7 low stages address the sensitivity of low voice resonances. Zero-area pulse
 shapes are optional and fitted with paired tap moves. This is PC research, not
 a complete ATtiny13 decoder, memory fit or timing qualification.
 """
@@ -100,6 +100,7 @@ def load(path,order=None,profile=None,state_bits=None,zero_mean=False,pulse_leng
     if profile is None:profile=m.get('precision_profile','head7')
     bits=np.full(order,7 if profile=='all7' else 4,np.int16)
     if profile=='head7':bits[:2]=7
+    if profile=='head5':bits[:2]=5
     if preserve_bits:bits[:min(order,len(old_bits))]=old_bits[:min(order,len(old_bits))]
     coefficients=np.zeros((len(raw['pitches']),order),np.int16)
     for j in range(min(order,len(old_bits))):
@@ -296,7 +297,7 @@ if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     for key in ('reference','model','output'):p.add_argument('--'+key,type=Path,required=True)
     p.add_argument('--evaluations',type=int,default=24000);p.add_argument('--order',type=int,choices=(6,8,10))
-    p.add_argument('--profile',choices=('q4','head7','all7'));p.add_argument('--state-bits',type=int,choices=(0,4,6,8))
+    p.add_argument('--profile',choices=('q4','head5','head7','all7'));p.add_argument('--state-bits',type=int,choices=(0,4,6,8))
     p.add_argument('--zero-mean',action='store_true');p.add_argument('--pulse-length',type=int,choices=(16,32))
     p.add_argument('--wave-first',action='store_true')
     p.add_argument('--fit-phase',action='store_true')
