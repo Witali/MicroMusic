@@ -315,37 +315,58 @@ binary measurements. Vendor and R4 files remain unmodified.
   673,280 outputs each in the three existing entries. Full segment and PWM
   admission follows with the short-pitch caller. See variable-innovation-kernel.json.
 
+- Fuse short pitch by selecting contiguous ranges outside the sample loop.
+  For pitch 17..40, j<pitch-1 and pitch+1<=j<min(2*pitch-1,40) use the rolling
+  kernel. At the two switches and two possible tail boundaries, ASM stages
+  three history words for a one-sample call; C computes the scalar sum directly.
+  The zero tail uses zero gains in ASM and a scale-only C loop. Four shape
+  indices and all original source positions, clamps and bit consumption remain
+  exact. Test zero gain first in the frame controller; nonzero short pitch no
+  longer needs packed pitch products. Historical pitch_add.S is unreferenced
+  in the production link but remains independently tested with its C fallback.
+  An independent mailbox compiles real AVR ASM-on and ASM-off translation
+  units: 1,966,080 exact samples each, all 24 pitches, 32 gains and 64 scales,
+  full signed16 history, source/output/packet guards, twenty consumed bits,
+  callee-saved registers and r1. Both complete decoders match 13,254 corpus/
+  pitch/reset frames; native primitives, twelve backend configurations and
+  both public C library archives (9,100 frames each) pass.
+  Compared to the admitted register-series ASM and fused-long C images:
+  mean -0.7430% / -1.1065% (human speech -0.7855% / -1.1673%); corpus maxima
+  130,421 -> 125,587 / 269,656 -> 254,742; coverage maxima 130,645 -> 127,734 /
+  270,221 -> 255,307 cycles. ASM has tiny per-stream regressions (worst mean
+  +0.0055%); C improves every stream mean. Flash 9,076 -> 9,300 / 10,316 ->
+  11,316 B, static SRAM 1,199 B and global peak stacks 141 / 153 B unchanged.
+  The smaller shared C edge-staging experiment used 10,868 B but raised fixture
+  maximum to 257,223 and stack to 157; prefer the faster scalar-edge C form.
+  Full ordinary/loaded PWM tests are running from four matching 76-file copies.
+  Reports: segment-{asm,c}-{fixtures,speech,means,pitch-coverage,lsp-reuse}.json,
+  segment-short-kernel.json, portable-segment-library.json.
+
 ## Next candidates (not yet measured/admitted)
 
-1. **Fuse short-pitch contiguous ranges.** For pitch 17..40, the ranges
-   j<pitch-1 and pitch+1<=j<min(2*pitch-1,40) have three adjacent history
-   words. Handle the two switch samples and optional two tail samples
-   separately, then the all-zero tail. A variable-count kernel and tiny
-   boundary staging might avoid the full pitch buffer while speeding the
-   currently slowest frames. Preserve each tap's exact negative source,
-   second segment and zero tail; extra short calls may erase the speed gain.
-   A first isolated C prototype instead makes each tap's segment/tail decision
-   at every sample. It matches 13,254 AVR and 9,100 native frames, including
-   host scratch/API assertions. Corpus mean -0.2238% (human -0.2434%), max
-   269,656 -> 266,183; coverage max 270,221 -> 267,238. Flash +46 B, RAM/stack
-   unchanged; the pitch buffer is still allocated. Some streams regress
-   (worst mean +0.0777%, hard_clipped maximum +1,840 cycles). Do not admit it
-   yet: measure by pitch/gain, hoist the decisions out of the sample loop,
-   verify independent full-scale boundaries, then complete PWM/ISR admission.
-   Reproducible C-only patch: docs/avr-asm-cookbook/examples/nb3-short-pitch-direct.patch;
-   evidence: short-pitch-experiment-*.json.
+1. **Reuse one zero-pitch vector and shrink scratch.** Nonzero excitation now
+   uses no packed buffer. Zero gain still clears/reads 120 B per subframe.
+   Reuse one 30-byte zero vector for all four shape calls, initialize it once
+   per frame when needed, and share the arena with synthesis arrays. qlsp
+   needs 20 B; synthesis needs another 40, so scratch might shrink 140 -> 60 B
+   (80 B saved), while clearing less memory. Measure flag/register overhead,
+   all-zero/no-zero frames, every reinitialization and full PWM before admission.
 
-2. **Ten-sample pitch staging.** Upstream sources always have negative offsets:
-   the first segment stops before j==pp, the second before j==pp+pitch.
-   A completed innovation vector may be written before the next pitch vector.
-   A 30-byte packed buffer could replace 120 B, saving 90 B, but additional
-   segment calls may cost cycles. Compare speed before accepting.
+2. **Specialize the one-sample ASM boundary call.** The runtime kernel still
+   saves rolling-history/gain registers for count=1. A scalar entry might
+   form the three products directly from memory using fewer saved registers,
+   then share the exact scaling/clamp/store body. Account for shared-epilogue
+   mode, shape pointer preservation and code size; no speed claim yet.
 
 No claim of a global speed optimum has been established. Do not mark the
 ongoing optimization goal complete while useful candidates remain untested.
 
 ## Rejected or superseded experiments
 
+- The per-sample direct short-pitch prototype (short-pitch-experiment-*)
+  preserved PCM and reduced mean by 0.2238%, but some streams regressed.
+  It is superseded by the range-selected ASM/C controller above. Its pinned
+  C-only patch remains in docs/avr-asm-cookbook/examples for reproduction.
 - The isolated rolling C40 long-pitch prototype (long-pitch-experiment-*) is
   retained as a reproducible historical patch in docs/avr-asm-cookbook/examples.
   Its O2 variant gained 5.4082% mean at +682 B Flash; O3 gained another ~1,233

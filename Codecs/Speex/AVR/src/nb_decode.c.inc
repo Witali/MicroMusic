@@ -6,6 +6,7 @@
 #include "speex_platform.h"
 #include "pitch24.h"
 #include "long_pitch.h"
+#include "short_pitch.h"
 #if SPEEX_NB3_USE_AVR_ASM
 static SPEEX_NB3_NOINLINE
 #else
@@ -76,14 +77,15 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, voi
        * source reaches exc[0]. No clear of the current excitation is needed. */
       q_energy=speex_bits_unpack_unsigned(bits,1);
       ener=AVR_READ_I32(&nb3_gain_table[(qe<<1)|q_energy]);
-      if (pitch>=41 && index) {
+      if (!index) {
+         memset(pitch24,0,3*NB_SUBFRAME_SIZE);
+         speex_avr_innovation(exc,pitch24,bits,ener);
+      } else if (pitch>=41) {
          /* Even the last tap reads exc[-1] or earlier. No output feeds a
           * source in this block; fuse the three sums with innovation. */
          speex_nb3_long_innovation(exc,exc-pitch-1,bits,ener,index);
       } else {
-         if (!index) memset(pitch24,0,3*NB_SUBFRAME_SIZE);
-         else speex_nb3_pitch24(exc,pitch24,pitch,index);
-         speex_avr_innovation(exc,pitch24,bits,ener);
+         speex_nb3_short_innovation(exc,exc,(uint8_t)pitch,bits,ener,index);
       }
    }
    /* All pitch/innovation samples are complete. Rewind only the dead pitch
