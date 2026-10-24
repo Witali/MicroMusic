@@ -274,13 +274,20 @@ binary measurements. Vendor and R4 files remain unmodified.
   Reports: fused-long-{asm,c}-{fixtures,speech,means,pitch-coverage,lsp-reuse}.json,
   fused-long-kernel.json, fused-long-innovation.json, portable-fused-long-library.json.
 
+- Retire history words before loading the next fused-pitch word. After the
+  first two products, move b into a and load c directly into b, then form its
+  product. Remove the final b=c MOVW and both r8/r9 save/restore pairs. The
+  ten-sample kernel takes 1,442..1,515 vs 1,460..1,533 cycles, including RET;
+  all 673,280 independent outputs per backend and 1,058 fixture/reset frames
+  pass. Decoder Flash 9,078 -> 9,068 B; static SRAM/global peak stack unchanged.
+  Packed pitch and the C fallback are unchanged. Complete corpus and PWM
+  admission will cover the combined register/bias series.
+
 ## Next candidates (not yet measured/admitted)
 
-1. **Retire history words earlier in the fused ASM loop.** After products a
-   and b, move b into a, load the next history word directly into b, then
-   form the third product. This may free r8/r9, remove one rolling MOVW and
-   make a preserved register available for the rounding bias. Compare both
-   entries, callee saves, unit timings and whole-frame/player behavior.
+1. **Hoist the shared innovation bias.** Keep 32 in a newly freed preserved
+   register instead of a repeated LDI. Account for both entry save/restore
+   paths and measure packed as well as fused samples before accepting.
 
 2. **Fuse short-pitch contiguous ranges.** For pitch 17..40, the ranges
    j<pitch-1 and pitch+1<=j<min(2*pitch-1,40) have three adjacent history

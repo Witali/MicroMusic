@@ -38,8 +38,6 @@ speex_avr_long_innovation10:
     push r5
     push r6
     push r7
-    push r8
-    push r9
     push r10
     push r11
     push r12
@@ -68,8 +66,6 @@ speex_avr_long_innovation10:
     ld r6, X+
     ld r7, X+
 .Linnovation_long_sample:
-    ld r8, X+
-    ld r9, X+
     /* A signed8 gain times a signed16 word, in r25:r23. */
     .macro long_product lo, hi, gain
     mov r20, \gain
@@ -90,12 +86,15 @@ speex_avr_long_innovation10:
     add r13, r23
     adc r14, r24
     adc r15, r25
-    long_product r8,r9,r12
+    /* a is dead after its product; b is dead after the second product.
+     * Advance the window before the final MAC and load c directly into b. */
+    movw r4, r6
+    ld r6, X+
+    ld r7, X+
+    long_product r6,r7,r12
     add r13, r23
     adc r14, r24
     adc r15, r25
-    movw r4, r6
-    movw r6, r8
     rjmp .Linnovation_sample
 .Linnovation_packed_setup:
     movw r26, r22
@@ -233,8 +232,6 @@ speex_avr_long_innovation10:
     pop r12
     pop r11
     pop r10
-    pop r9
-    pop r8
     pop r7
     pop r6
     pop r5
