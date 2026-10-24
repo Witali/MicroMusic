@@ -1,0 +1,27 @@
+{
+  "baseCommit": "db4f492",
+  "patch": "docs/avr-asm-cookbook/examples/nb3-scalar-boundary.patch",
+  "patchSha256": "b5e52f416eff937daf65d4c0bf8cea8334dd18865f1ecf5ce55a3e0792404fd8",
+  "asmDecoder": {
+    "binarySha256": "31c10c12663c4e6a9e784693c4b72c19ba91c47feb86385f99a1db636081d4dc",
+    "matchesMeasuredPrototype": true
+  },
+  "reproducedImages": {
+    "cFallback": {
+      "sha256": "420f32b8a63c1c36ba4223fba74c001f1095211100dbd775653e6e342f2ef8a5",
+      "matchesMeasuredImage": true
+    },
+    "vectorUnit": {
+      "sha256": "c9f525156d60df0ccbf6f1b125801faf5e2f271e83020756a1223e2913737b81",
+      "matchesMeasuredImage": true
+    },
+    "shortControllerUnit": {
+      "sha256": "3082a3d98b2c5881735acd9958273201ea522c11d0f3293c0bda5e93feb82a77",
+      "matchesMeasuredImage": true
+    }
+  },
+  "explicitCFallbackBinaryUnchanged": true,
+  "physicalBoardTested": false,
+  "pwmAdmission": false,
+  "scope": "Pinned patch and all five changed files reproduced; ASM decoder and both independently tested unit binaries match. Explicit C decoder binary matches the fully admitted zero-vector baseline. Candidate ASM player has not been admitted."
+}

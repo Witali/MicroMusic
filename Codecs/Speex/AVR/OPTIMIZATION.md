@@ -388,11 +388,21 @@ zero-vector-native.json and portable-zero-vector-library.json.
    scaling/rounding and measure code duplication versus shared-body overhead;
    never slow the common nonzero vector to accelerate a rare zero path.
 
-2. **Specialize the one-sample ASM boundary call.** The runtime kernel still
-   saves rolling-history/gain registers for count=1. A scalar entry might
-   form the three products directly from memory using fewer saved registers,
-   then share the exact scaling/clamp/store body. Account for shared-epilogue
-   mode, shape pointer preservation and code size; no speed claim yet.
+2. **Admit the measured one-sample ASM prototype.** A separate entry now has a
+   reproducible experimental patch, pinned to db4f492, in
+   `docs/avr-asm-cookbook/examples/nb3-scalar-boundary.patch`. It reads three
+   words/gains directly, temporarily keeps the Flash pointer in already-saved
+   r3/r8, and uses the unchanged common transform with T=0. Explicit C remains
+   bit-for-bit the admitted decoder. On 67,328 paired independent inputs the
+   entry saves exactly 37 cycles (227..242 -> 190..205). Short-controller ASM/C
+   tests pass 1,966,080 samples each; ASM minimum can rise by one cycle, so the
+   selection branch is not free. The integrated candidate matches 14,278 AVR
+   frames; over 31 streams mean improves 0.0179% (speech 0.0182%), corpus max
+   125,613 -> 125,500, coverage max 127,760 -> 127,280. Flash +154 B to 9,460;
+   SRAM/stack unchanged. Patch reproduction matches ASM decoder/unit hashes
+   and the explicit C baseline binary. Its ASM PWM/ISR admission remains to
+   be done before promotion; production still uses the admitted N entry.
+   Reports: scalar-boundary-experiment-*.json.
 
 No claim of a global speed optimum has been established. Do not mark the
 ongoing optimization goal complete while useful candidates remain untested.

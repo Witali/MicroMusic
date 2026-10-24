@@ -62,3 +62,43 @@ node Codecs/Speex/AVR/tests/verify_avr.mjs --backend c --verify-reset --firmware
 ```
 
 Полные замеры: `Codecs/Speex/AVR/reports/short-pitch-experiment-*.json`.
+
+## Скалярный ASM-вход для одного сэмпла — ожидает PWM/ISR-допуска
+
+`nb3-scalar-boundary.patch`, база `db4f492`, добавляет отдельный ASM-вход для
+трёх RAM-слов/трёх signed8 gains и одного Flash shape. Он сохраняет восемь
+регистров вместо пятнадцати и использует прежнюю общую scaling/clamp/store
+часть с packed-эпилогом. Код авторский, для ATmega328P hardware MUL / GNU AVR
+ABI; исходные уведомления и Xiph BSD-лицензия сохранены. Действует прежнее
+правило выбора архитектуры и явного разрешения ASM; при `--backend c` новый
+вход не используется и двоичный образ совпадает с принятой C-версией.
+
+AVR GCC 7.3 mixed Os/O2/O3+LTO: по 67 328 независимых пар ядра, ровно -37
+тактов на вызов (227..242→190..205), полный набор guards/ABI/r1/clamp cases.
+Ещё по 1 966 080 сэмплов short-controller ASM/C точны. Минимум контроллера
+ASM +1 такт: ветка выбора тоже имеет цену. В целом ASM-декодере точны 14 278
+кадров, среднее 31 потока -0,0179%, human speech -0,0182%; corpus max
+125 613→125 500, coverage max 127 760→127 280. Flash 9 306→9 460 Б,
+static SRAM 1 119 Б и peak stack 141 Б прежние. **ASM PWM/ISR не проверялся**;
+патч пока не включён в основные исходники. Другие MCU не измерены.
+
+В новой игнорируемой копии воспроизвести pinned базу и применить патч
+(Python 3.12+, Git и toolchain из README кодека):
+
+```powershell
+python -c "from pathlib import Path; import io, subprocess, tarfile; d=Path('Codecs/Speex/AVR/build/scalar-boundary-example'); d.mkdir(); data=subprocess.check_output(['git','archive','db4f492:Codecs/Speex/AVR','src','tools','tests','vendor','handoff','reference']); tarfile.open(fileobj=io.BytesIO(data)).extractall(d,filter='data')"
+git apply --ignore-space-change --directory=Codecs/Speex/AVR/build/scalar-boundary-example docs/avr-asm-cookbook/examples/nb3-scalar-boundary.patch
+python Codecs/Speex/AVR/build/scalar-boundary-example/tools/build_long_pitch_test.py --avr-gcc avr-gcc
+node Codecs/Speex/AVR/build/scalar-boundary-example/tests/verify_long_pitch.mjs
+node Codecs/Speex/AVR/build/scalar-boundary-example/tests/verify_long_pitch.mjs --scalar-only
+python Codecs/Speex/AVR/build/scalar-boundary-example/tools/build_short_pitch_test.py --avr-gcc avr-gcc
+node Codecs/Speex/AVR/build/scalar-boundary-example/tests/verify_short_pitch.mjs
+python Codecs/Speex/AVR/build/scalar-boundary-example/tools/build.py --avr-gcc avr-gcc --backend asm
+node Codecs/Speex/AVR/tests/verify_avr.mjs --backend asm --verify-reset --firmware Codecs/Speex/AVR/build/scalar-boundary-example/build/profile --oracle Codecs/Speex/AVR/build/reference --out Codecs/Speex/AVR/build/scalar-boundary-example/fixtures
+```
+
+Патч воспроизведён в отдельной копии: ASM decoder SHA-256
+`31c10c12663c4e6a9e784693c4b72c19ba91c47feb86385f99a1db636081d4dc`
+и оба unit-образа совпали с измеренными. C-образ также совпал с полностью
+допущенной zero-vector C-версией. Полные замеры и проверка воспроизведения:
+`Codecs/Speex/AVR/reports/scalar-boundary-experiment-*.json`.
