@@ -1,0 +1,62 @@
+{
+  "schema": "micromusic-attiny13a-hardware-probe-v1",
+  "probeId": 1,
+  "status": "pending-hardware",
+  "device": "ATtiny13A",
+  "firmware": "clkpr-probe.S",
+  "expectedRecords": 2,
+  "sequencePolicy": "consecutive",
+  "requiredCsvColumns": ["clock", "data", "clki", "vcc", "oc0a", "marker", "reset"],
+  "fuses": {"low": "0x70", "high": "0xff", "lock": "0xff"},
+  "clock": {"source": "external-CLKI-PB3", "frequencyHz": 1000000},
+  "pins": {"oc0a": "PB0", "marker": "PB1", "clock": "PB2", "clki": "PB3", "data": "PB4", "reset": "PB5"},
+  "observer": {"mode": "CTC-WGM2", "ocr0a": 0, "timerClockDivisor": 1, "compareA": "toggle", "compareB": "disconnected", "interrupts": "disabled"},
+  "fields": ["writeKind", "initialDivCode", "requestedDivCode", "clkprReadback", "tccr0a", "tccr0b"],
+  "fieldDescriptions": {
+    "writeKind": "0 protected write,1 no write,2 write without unlock,3 expired unlock",
+    "initialDivCode": "Requested initial CLKPS exponent0..8; divisor=2^code",
+    "requestedDivCode": "Target CLKPS exponent0..8, including ignored/no-write controls",
+    "clkprReadback": "Raw CLKPR snapshot before or after the marker window; not a timestamp of waveform switching",
+    "tccr0a": "Raw observer TCCR0A; configured COM0A0|WGM01, OC0B disconnected",
+    "tccr0b": "Raw observer TCCR0B; configured CS00 and WGM02=0"
+  },
+  "wire": {
+    "bytes": 14,
+    "syncHex": "a55a",
+    "version": 2,
+    "bitOrder": "MSB-first",
+    "sampleDataAt": "rising clock",
+    "payloadOrder": ["version", "probeId", "profileId", "sequenceLow", "sequenceHigh", "data0", "data1", "data2", "data3", "data4", "data5"],
+    "checksum": "XOR of all11 payload bytes",
+    "records": [{"sequence": 0, "meaning": "pre/boot snapshot after initial divider and CTC observer settle"}, {"sequence": 1, "meaning": "post snapshot after marker pulse and32 NOPs"}]
+  },
+  "stimulus": {
+    "source": "continuous external square wave at measured1MHz, approximately50percent duty,0..VCC",
+    "start": "CLKI present and stable before RESET release",
+    "stop": "Keep CLKI running through the marker pulse, post frame and final observation",
+    "repetitions": "Run each profile from reset; retain repeated independent captures"
+  },
+  "profiles": [
+    {"id": "divide-1-to-2", "profileId": 1, "defines": {"PROBE_PROFILE_ID": 1, "PROBE_INITIAL_DIV": 0, "PROBE_FINAL_DIV": 1, "PROBE_WRITE_KIND": 0}},
+    {"id": "divide-1-to-8", "profileId": 2, "defines": {"PROBE_PROFILE_ID": 2, "PROBE_INITIAL_DIV": 0, "PROBE_FINAL_DIV": 3, "PROBE_WRITE_KIND": 0}},
+    {"id": "divide-1-to-256", "profileId": 3, "defines": {"PROBE_PROFILE_ID": 3, "PROBE_INITIAL_DIV": 0, "PROBE_FINAL_DIV": 8, "PROBE_WRITE_KIND": 0}},
+    {"id": "divide-2-to-1", "profileId": 4, "defines": {"PROBE_PROFILE_ID": 4, "PROBE_INITIAL_DIV": 1, "PROBE_FINAL_DIV": 0, "PROBE_WRITE_KIND": 0}},
+    {"id": "divide-8-to-1", "profileId": 5, "defines": {"PROBE_PROFILE_ID": 5, "PROBE_INITIAL_DIV": 3, "PROBE_FINAL_DIV": 0, "PROBE_WRITE_KIND": 0}},
+    {"id": "divide-256-to-1", "profileId": 6, "defines": {"PROBE_PROFILE_ID": 6, "PROBE_INITIAL_DIV": 8, "PROBE_FINAL_DIV": 0, "PROBE_WRITE_KIND": 0}},
+    {"id": "divide-2-to-8", "profileId": 7, "defines": {"PROBE_PROFILE_ID": 7, "PROBE_INITIAL_DIV": 1, "PROBE_FINAL_DIV": 3, "PROBE_WRITE_KIND": 0}},
+    {"id": "divide-8-to-2", "profileId": 8, "defines": {"PROBE_PROFILE_ID": 8, "PROBE_INITIAL_DIV": 3, "PROBE_FINAL_DIV": 1, "PROBE_WRITE_KIND": 0}},
+    {"id": "same-divisor-8", "profileId": 9, "defines": {"PROBE_PROFILE_ID": 9, "PROBE_INITIAL_DIV": 3, "PROBE_FINAL_DIV": 3, "PROBE_WRITE_KIND": 0}},
+    {"id": "control-no-write", "profileId": 10, "defines": {"PROBE_PROFILE_ID": 10, "PROBE_INITIAL_DIV": 0, "PROBE_FINAL_DIV": 3, "PROBE_WRITE_KIND": 1}},
+    {"id": "control-no-unlock", "profileId": 11, "defines": {"PROBE_PROFILE_ID": 11, "PROBE_INITIAL_DIV": 0, "PROBE_FINAL_DIV": 3, "PROBE_WRITE_KIND": 2}},
+    {"id": "control-expired-unlock", "profileId": 12, "defines": {"PROBE_PROFILE_ID": 12, "PROBE_INITIAL_DIV": 0, "PROBE_FINAL_DIV": 3, "PROBE_WRITE_KIND": 3}}
+  ],
+  "recording": {
+    "csvColumns": ["time_s", "clock", "data", "clki", "vcc", "oc0a", "marker", "reset"],
+    "columnUnits": "time_s seconds; clock/data/clki/oc0a/marker binary; reset/vcc actual measured volts",
+    "frameTimestamps": "Transport timestamps only; infer timing from retained physical marker/OC0A/CLKI waveforms",
+    "conditions": "Record actual fuse readback, chip marking/revision, package, measured VCC/temperature/source frequency and instrument timing uncertainty",
+    "hashes": "Retain SHA256 of firmware source, shared probe-wire.inc, generated definitions, manufacturer provenance, build defines/toolchain, ELF/programmed image and original capture files"
+  },
+  "expectedSiliconTrace": null,
+  "note": "Source-only measurement firmware. CTC observer startup, pad propagation and instrument uncertainty must be distinguished from hidden prescaler/bus phases. No hardware trace has been collected."
+}
