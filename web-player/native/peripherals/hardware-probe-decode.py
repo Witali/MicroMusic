@@ -18,8 +18,9 @@ def finite(value, name):
 
 def decode_rows(rows, config, profile, allow_reset_fragments=False):
     """Preserve six raw bytes, serial timestamps and explicit unframed ranges."""
-    if allow_reset_fragments and config.get("sequencePolicy") != "reset-to-zero":
-        raise ValueError("Fragment recovery is only for the reset-to-zero probe")
+    policy = config.get("sequencePolicy")
+    if allow_reset_fragments and policy not in ("reset-to-zero", "restartable-pairs"):
+        raise ValueError("Fragment recovery is only for reset-to-zero or restartable-pairs probes")
     bits, times, previous_clock, previous_time = [], [], 0, float("-inf")
     for index, row in enumerate(rows):
         at = finite(row["time_s"], "time_s")
@@ -82,15 +83,42 @@ def decode_rows(rows, config, profile, allow_reset_fragments=False):
         previous_end = end
     if fragments and not allow_reset_fragments:
         raise ValueError("Incomplete frame or missing clock edges")
-    for index, record in enumerate(records):
-        expected = 0 if config.get("sequencePolicy") == "reset-to-zero" else index % 65536
-        if record["sequence"] != expected:
-            raise ValueError("Missing/duplicated record or unexpected sequence")
+    sequence_gaps = []
+    if policy == "restartable-pairs":
+        # Boot0/1 is mandatory; optional completion2/3 follows it. A reset can
+        # restart at0 after either complete pair, never silently inside a pair.
+        state = 0
+        for index, record in enumerate(records):
+            allowed = {0: (0,), 1: (1,), 2: (0, 2), 3: (3,), 4: (0,)}[state]
+            sequence = record["sequence"]
+            if sequence not in allowed:
+                if not allow_reset_fragments:
+                    raise ValueError("Missing/duplicated record or incomplete restartable-pairs sequence")
+                sequence_gaps.append({"recordIndex": index, "expectedSequences": list(allowed),
+                                      "observedSequence": sequence})
+            # Retain every complete raw frame, including one whose partner was
+            # interrupted. No missing frame or byte value is manufactured.
+            state = {0: 1, 1: 2, 2: 3, 3: 4}.get(sequence, 0)
+        if state in (1, 3):
+            if not allow_reset_fragments:
+                raise ValueError("Incomplete restartable-pairs sequence at end of capture")
+            sequence_gaps.append({"recordIndex": len(records), "expectedSequences": [state],
+                                  "observedSequence": None})
+    else:
+        for index, record in enumerate(records):
+            expected = 0 if policy == "reset-to-zero" else index % 65536
+            if record["sequence"] != expected:
+                raise ValueError("Missing/duplicated record or unexpected sequence")
     expected = profile.get("expectedRecords", config.get("expectedRecords"))
     if expected is not None and len(records) != expected:
         raise ValueError(f"Expected {expected} records, got {len(records)}")
-    return {"records": records, "fragments": fragments,
-            "transportQuality": "unframed-bits-retained" if fragments else "complete-frames"}
+    quality = "unframed-bits-retained" if fragments else "complete-frames"
+    if sequence_gaps:
+        quality = "unframed-bits-and-sequence-gaps-retained" if fragments else "sequence-gaps-retained"
+    result = {"records": records, "fragments": fragments, "transportQuality": quality}
+    if policy == "restartable-pairs":
+        result["sequenceGaps"] = sequence_gaps
+    return result
 
 
 def measurements(value):

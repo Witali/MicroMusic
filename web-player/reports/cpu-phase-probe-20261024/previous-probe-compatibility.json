@@ -1,0 +1,1475 @@
+{
+  "schema": "micromusic-attiny13a-hardware-probe-verification-v1",
+  "status": "software-verification-only",
+  "verificationScriptSha256": "f781d8fb8fa1dc42220653fa87bf8e37f233b35c338f4f1a9916cd4c354eaa93",
+  "wireSha256": "bf619ef38e77765bbf1bd3f3c18887ada15cf85c59d0ddee657f30bcc410f6ab",
+  "decoderSha256": "e7c567ffab2162ab8535082c0a532691379d58ab9f73b00918ee50090049ba73",
+  "registerDefinitionsSha256": "aaaf7f47e67e1f3b72754c13373ea9aa6d39acf65c8669e43333ffdf51e539e4",
+  "runtimeSha256": "d7be3a7378d14c2896a92106291715ed8fcb0d291359e5153efb639f9c18e0a8",
+  "librarySourceSha256": {
+    "web-player/lib/attiny13a-package.js": "48c18a99932030c02b6eaf64f4856b16e537801f005938dfb58736e94a3871eb",
+    "web-player/lib/attiny13a-registers.js": "2d4f35723abcaf81015d6cf167b1e9a88e77b032846ba18be8e8efe7685f38e4",
+    "web-player/lib/attiny13a-runtime.js": "64e4fb44c2d7fc4039608350eb4535f2b60eece6ac2d2656f6f585e275b243fd",
+    "web-player/lib/attiny13a.js": "c991dbb4c082717893bf34bf5f09f61dc03e15e84bc6e3439847ecba77d2a4cb",
+    "web-player/lib/audio-queue.js": "cdd040a932526796a2eb4ee226b790c5603f0cec257eca439e9c2a68a3a56df1",
+    "web-player/lib/avr-core.js": "53bf4d58501212b09bf838544c48baa3c4832434043206103bc82d9e1a8bcf36",
+    "web-player/lib/avr-reference.js": "8e5cf4485f6d6502402b2390441e1fa7a99cac071187a0ac51529f878d454e22",
+    "web-player/lib/avr-runtime.js": "5a6963f512edb163af28fd6cfd274390b521fe057fc1a8c98b9eaa53b79fa9b1",
+    "web-player/lib/avr-transpiled-runtime.js": "20fa3f33b93b149d56d90651a5a59087daef4b096aedfc879afcc81d07b2116a",
+    "web-player/lib/avr-transpiled.js": "50fe4dbc268b5983b2a0e1a0915427c884e1643ca2ee979bfe249007d5a4476e",
+    "web-player/lib/avr-transpiler.js": "e1d6de093e4204cc8c57e14e40e2b272cb9c640d211f971adb9d3eabe9cd4f46",
+    "web-player/lib/avr-wasm-phases.js": "4fe16317f36ffc3148ed54426481b096e7499241192b184b2931110892133feb",
+    "web-player/lib/avr-wasm.js": "259d7228a8fe3e9c2965a343f2a29517076ee2da0f9f2b292d273c4eb6a51d8e",
+    "web-player/lib/devices/attiny13a-clki-profile.js": "9d8579e108ff2c93823c0b6907e155b34e3fce45498fb6d60170290ba7f7fe75",
+    "web-player/lib/devices/attiny13a-profile.js": "7b356d3ee20e28febf39bf6d912d0b642f1eeb325c042f6b635853df2fe1c891",
+    "web-player/lib/devices/attiny13a-reset-profile.js": "c73e865c939463a6133fc45ffa59da7ed4490105c50272fd8b07b1aa65a50614",
+    "web-player/lib/devices/profiles.js": "837bb85e4c936e2fcd5386bb454d48b2f2e2af1fd2d6f59fa541cfd8a8348d86",
+    "web-player/lib/engines.js": "7954fc1a398e756905bc29f3cbd2c04123f5460641aade7c879356e4f2ede662",
+    "web-player/lib/hex.js": "dfbb9a5158ce9fe306e483e86f747bdafae9ee672d8f0fdc44e34e395beedfca",
+    "web-player/lib/package-entry.js": "ff9273715dcc8df7d1924b3294bccfad7156f09feba7d7466c7c89cf171169ad",
+    "web-player/lib/realtime.js": "04e346da040b7ffb9f5668fc52b0abf45d56fc25cef0fc5a1b388190d397b6b3",
+    "web-player/lib/renderer-device.js": "71f3bba81a26919c085be4f404c050d94750a04faecba37cd426f845d866fddc",
+    "web-player/lib/renderer-js.js": "b7de1ce9b3ddbfdc3557b0e3770a233bdfefee196ffa467e025431dda522de2a",
+    "web-player/lib/renderer-package.js": "6c1cf59cab50347ebb4a105128e280c3ae442a2673b08abd813ad9e8ed9d1de0",
+    "web-player/lib/renderer-transpiled.js": "16d014a9d9ba33f720a737e8ddd5033239fd75480d042784134efc7af48414cd",
+    "web-player/lib/renderer.js": "ec240e68e2a7e46faeb40317a3016e71cdd65d68f8b458860c6fc867753146f4"
+  },
+  "toolchain": "avr-gcc.exe (GCC) 7.3.0",
+  "node": "v22.22.3",
+  "fixture": {
+    "source": "digital-noninverting-zero-seed-v1",
+    "initialLevel": 1,
+    "fuseStartupProfile": 1,
+    "vccMicrovolts": 5000000,
+    "watchdogHz": 128000,
+    "adc1Microvolts": 1000000,
+    "adcFirstSample": 27,
+    "sourceHalfCyclesPerDrain": 128,
+    "resetInput": "prequalified digital; no analog threshold/RC claim"
+  },
+  "probes": [
+    {
+      "name": "clkpr",
+      "sourceSha256": "8c33fed603e876c8bdd11a920f355e4a0c333926aab435a499c796aa28714d08",
+      "configurationSha256": "4d89ae28aedccb61e0f9a080ffaf27746fc47bdfa9995b56fc9f87b7eff7aa6f",
+      "profiles": [
+        {
+          "id": "divide-1-to-2",
+          "profileId": 1,
+          "defines": {
+            "PROBE_PROFILE_ID": 1,
+            "PROBE_INITIAL_DIV": 0,
+            "PROBE_FINAL_DIV": 1,
+            "PROBE_WRITE_KIND": 0
+          },
+          "fuses": {
+            "low": "0x70",
+            "high": "0xff",
+            "lock": "0xff"
+          },
+          "bytes": 602,
+          "imageSha256": "4ff464c7cb48650af36d281cb7d6b29f288f2c02a9cc547ac967490c62910016",
+          "software": {
+            "status": "synthetic-decoder-test",
+            "records": [
+              {
+                "sequence": 0,
+                "data": [
+                  0,
+                  0,
+                  1,
+                  0,
+                  66,
+                  1
+                ]
+              },
+              {
+                "sequence": 1,
+                "data": [
+                  0,
+                  0,
+                  1,
+                  1,
+                  66,
+                  1
+                ]
+              }
+            ],
+            "timePs": "5632000000",
+            "sourceEdges": 11264,
+            "traceSha256": "987e82a7128d627ba231d98503aa8fac775f61444019f7dd45f9cdc701e2e0c5",
+            "waveformSha256": "3c0bf0a4cdc51904667a657769062f134174fd9d4228490810e35ee8c9f777a5",
+            "resetControl": null,
+            "translatedWasmSha256": "a7c164f53ed3192124fbbd1d462dd1ffae96cc504c6b6a828fdd1868ccb8ebaf",
+            "translatedWasmBytes": 315080,
+            "translationManifestSha256": "ecebdae3ef3d8d921c09f546d546855dfb654374683976b6e4a93a6c9f024367"
+          }
+        },
+        {
+          "id": "divide-1-to-8",
+          "profileId": 2,
+          "defines": {
+            "PROBE_PROFILE_ID": 2,
+            "PROBE_INITIAL_DIV": 0,
+            "PROBE_FINAL_DIV": 3,
+            "PROBE_WRITE_KIND": 0
+          },
+          "fuses": {
+            "low": "0x70",
+            "high": "0xff",
+            "lock": "0xff"
+          },
+          "bytes": 602,
+          "imageSha256": "ae70116e05afdc3ad7da61c3649624e644bf1b09b0aa0fcf7498ca40fdcc0ad2",
+          "software": {
+            "status": "synthetic-decoder-test",
+            "records": [
+              {
+                "sequence": 0,
+                "data": [
+                  0,
+                  0,
+                  3,
+                  0,
+                  66,
+                  1
+                ]
+              },
+              {
+                "sequence": 1,
+                "data": [
+                  0,
+                  0,
+                  3,
+                  3,
+                  66,
+                  1
+                ]
+              }
+            ],
+            "timePs": "16448000000",
+            "sourceEdges": 32896,
+            "traceSha256": "273e6f566425a85a8e2d1d77ccdda00d8fac86180434345d1df53afb5330de07",
+            "waveformSha256": "5225deab5539a4d3e9d1f89bb5f87aa8014ce20cc3ec89d08890171abfb0f04a",
+            "resetControl": null,
+            "translatedWasmSha256": "d3c432009f72dab4dc16ab2dad5fb18543ced8ffaf322eda18a5aa6aae01ef3c",
+            "translatedWasmBytes": 315080,
+            "translationManifestSha256": "c0cbf490772d69fc2a9892c286c01dc2fe1a48b3db6668c79ed5f99f124c6493"
+          }
+        },
+        {
+          "id": "divide-1-to-256",
+          "profileId": 3,
+          "defines": {
+            "PROBE_PROFILE_ID": 3,
+            "PROBE_INITIAL_DIV": 0,
+            "PROBE_FINAL_DIV": 8,
+            "PROBE_WRITE_KIND": 0
+          },
+          "fuses": {
+            "low": "0x70",
+            "high": "0xff",
+            "lock": "0xff"
+          },
+          "bytes": 602,
+          "imageSha256": "0578e0836a6067910303bfa89a55271a8d7bc6f21dcf90baf905e0854ffb42f1",
+          "software": {
+            "status": "synthetic-decoder-test",
+            "records": [
+              {
+                "sequence": 0,
+                "data": [
+                  0,
+                  0,
+                  8,
+                  0,
+                  66,
+                  1
+                ]
+              },
+              {
+                "sequence": 1,
+                "data": [
+                  0,
+                  0,
+                  8,
+                  8,
+                  66,
+                  1
+                ]
+              }
+            ],
+            "timePs": "463296000000",
+            "sourceEdges": 926592,
+            "traceSha256": "6b0529d199d9ef672347c01266c4e0ba3f0ec7b0d76549b7e9318710b95c5d0b",
+            "waveformSha256": "9a05ce2c50801424ac292c7ad4473527a21329dd43716632ce71380d18041267",
+            "resetControl": null,
+            "translatedWasmSha256": "935ae31deabae026a390889dae6022b27d09da99ee64e07ebda40d556636d3b5",
+            "translatedWasmBytes": 315080,
+            "translationManifestSha256": "df0e8b071dfb3ed1521f2d0bf2b9b51fb946dc7502010ff1bf64d021ae578fa3"
+          }
+        },
+        {
+          "id": "divide-2-to-1",
+          "profileId": 4,
+          "defines": {
+            "PROBE_PROFILE_ID": 4,
+            "PROBE_INITIAL_DIV": 1,
+            "PROBE_FINAL_DIV": 0,
+            "PROBE_WRITE_KIND": 0
+          },
+          "fuses": {
+            "low": "0x70",
+            "high": "0xff",
+            "lock": "0xff"
+          },
+          "bytes": 602,
+          "imageSha256": "51d9fbb8be0c7377593dc91be139b1c98b5d9cafe4fe3caf16afd325ade50560",
+          "software": {
+            "status": "synthetic-decoder-test",
+            "records": [
+              {
+                "sequence": 0,
+                "data": [
+                  0,
+                  1,
+                  0,
+                  1,
+                  66,
+                  1
+                ]
+              },
+              {
+                "sequence": 1,
+                "data": [
+                  0,
+                  1,
+                  0,
+                  0,
+                  66,
+                  1
+                ]
+              }
+            ],
+            "timePs": "5760000000",
+            "sourceEdges": 11520,
+            "traceSha256": "6f2761eb75cad882003ef97816e01ffe7da818c7c93922e9e56a7d33047376fb",
+            "waveformSha256": "c255e0f1b59e072f29fabdf4ed2841bbadfdd2fbc61a80fc943531522f2d066e",
+            "resetControl": null,
+            "translatedWasmSha256": "407d5685d1620e0335b7fb1381107dcd47ecdd22b1d7a7bf87848094c536815d",
+            "translatedWasmBytes": 315080,
+            "translationManifestSha256": "cc4de3b371f24a77c12fc0a3239ad542453e76eb67f22ad5cba73342407d431f"
+          }
+        },
+        {
+          "id": "divide-8-to-1",
+          "profileId": 5,
+          "defines": {
+            "PROBE_PROFILE_ID": 5,
+            "PROBE_INITIAL_DIV": 3,
+            "PROBE_FINAL_DIV": 0,
+            "PROBE_WRITE_KIND": 0
+          },
+          "fuses": {
+            "low": "0x70",
+            "high": "0xff",
+            "lock": "0xff"
+          },
+          "bytes": 602,
+          "imageSha256": "b49e07edbd3bde0f95ceda0f5b4c55e526d3dbdb13b7f09a5688116bc80deb6e",
+          "software": {
+            "status": "synthetic-decoder-test",
+            "records": [
+              {
+                "sequence": 0,
+                "data": [
+                  0,
+                  3,
+                  0,
+                  3,
+                  66,
+                  1
+                ]
+              },
+              {
+                "sequence": 1,
+                "data": [
+                  0,
+                  3,
+                  0,
+                  0,
+                  66,
+                  1
+                ]
+              }
+            ],
+            "timePs": "17344000000",
+            "sourceEdges": 34688,
+            "traceSha256": "1f525981addc0de09f5e35c50f88440ec694c2096cb7514f8041b39fad5fcbb2",
+            "waveformSha256": "7d5eccaaaf3c278f59f8c0efdad455f835e384bfc8e729a1b841674798df0e81",
+            "resetControl": null,
+            "translatedWasmSha256": "8536426d0705fe923db4fcb9b7dfa72ac48145c638612283fce1b5aa5df5355b",
+            "translatedWasmBytes": 315080,
+            "translationManifestSha256": "a9181a16e6c48b19cdc168b320f0133355b6f9153e71ab9201d040d02132115f"
+          }
+        },
+        {
+          "id": "divide-256-to-1",
+          "profileId": 6,
+          "defines": {
+            "PROBE_PROFILE_ID": 6,
+            "PROBE_INITIAL_DIV": 8,
+            "PROBE_FINAL_DIV": 0,
+            "PROBE_WRITE_KIND": 0
+          },
+          "fuses": {
+            "low": "0x70",
+            "high": "0xff",
+            "lock": "0xff"
+          },
+          "bytes": 602,
+          "imageSha256": "c175d39e5bc83639a64dfb4c98e19cab31996a2be4ba48f5ec53c18fc797006a",
+          "software": {
+            "status": "synthetic-decoder-test",
+            "records": [
+              {
+                "sequence": 0,
+                "data": [
+                  0,
+                  8,
+                  0,
+                  8,
+                  66,
+                  1
+                ]
+              },
+              {
+                "sequence": 1,
+                "data": [
+                  0,
+                  8,
+                  0,
+                  0,
+                  66,
+                  1
+                ]
+              }
+            ],
+            "timePs": "495232000000",
+            "sourceEdges": 990464,
+            "traceSha256": "450085df75d5a85c92d48a347bb4ae6a794a08ac4a38b8f5321e7325da7beae4",
+            "waveformSha256": "0c26d66d7d15a01f7f4e82624e16886826458be030c2bc32dabc30e4b45d1b86",
+            "resetControl": null,
+            "translatedWasmSha256": "46d97c93980e2cd30d002459ab4561c9b3683ad155d6af6b271f5b098f2a2557",
+            "translatedWasmBytes": 315080,
+            "translationManifestSha256": "bc950db85bc9241383b814060d97f6ffd8d771375068f5de5f83e60cc769482f"
+          }
+        },
+        {
+          "id": "divide-2-to-8",
+          "profileId": 7,
+          "defines": {
+            "PROBE_PROFILE_ID": 7,
+            "PROBE_INITIAL_DIV": 1,
+            "PROBE_FINAL_DIV": 3,
+            "PROBE_WRITE_KIND": 0
+          },
+          "fuses": {
+            "low": "0x70",
+            "high": "0xff",
+            "lock": "0xff"
+          },
+          "bytes": 602,
+          "imageSha256": "3fc8e71be8ec4cf20b4de6b78caa869b56666184d49415ad1699487ecd9f4dd0",
+          "software": {
+            "status": "synthetic-decoder-test",
+            "records": [
+              {
+                "sequence": 0,
+                "data": [
+                  0,
+                  1,
+                  3,
+                  1,
+                  66,
+                  1
+                ]
+              },
+              {
+                "sequence": 1,
+                "data": [
+                  0,
+                  1,
+                  3,
+                  3,
+                  66,
+                  1
+                ]
+              }
+            ],
+            "timePs": "18432000000",
+            "sourceEdges": 36864,
+            "traceSha256": "761ce936d9d0b81225e811d076b913a86acc7a4463a7c210adbb66e773349a6c",
+            "waveformSha256": "b9632734818d60d634375c655475a0418d7fe92f8190bf1c136d15f044622160",
+            "resetControl": null,
+            "translatedWasmSha256": "35b94fe495903292f9526631ecc69c303c0e88413eee07a47eef9b4b3894f9bc",
+            "translatedWasmBytes": 315080,
+            "translationManifestSha256": "ec8d01a2a25e55fb2bc74bd9e94d1b24fc37313309c7c59bbb37682c11d44a23"
+          }
+        },
+        {
+          "id": "divide-8-to-2",
+          "profileId": 8,
+          "defines": {
+            "PROBE_PROFILE_ID": 8,
+            "PROBE_INITIAL_DIV": 3,
+            "PROBE_FINAL_DIV": 1,
+            "PROBE_WRITE_KIND": 0
+          },
+          "fuses": {
+            "low": "0x70",
+            "high": "0xff",
+            "lock": "0xff"
+          },
+          "bytes": 602,
+          "imageSha256": "f16e20f7229619969dad5c61dd44c3a8b4730815c2da6e382eca806e4e697793",
+          "software": {
+            "status": "synthetic-decoder-test",
+            "records": [
+              {
+                "sequence": 0,
+                "data": [
+                  0,
+                  3,
+                  1,
+                  3,
+                  66,
+                  1
+                ]
+              },
+              {
+                "sequence": 1,
+                "data": [
+                  0,
+                  3,
+                  1,
+                  1,
+                  66,
+                  1
+                ]
+              }
+            ],
+            "timePs": "19136000000",
+            "sourceEdges": 38272,
+            "traceSha256": "71210851f544f45b9251bc617216b84136f6ee074f4a418d8b7ad559d9c54ac6",
+            "waveformSha256": "961975a2d32a519b9e1d681604cbe18e14dc93d6f0e2e89c37aed1b7fcfc55a0",
+            "resetControl": null,
+            "translatedWasmSha256": "2db9e19f3b93a588f8c7efa094beaac4007a106d7e3ef00d46d42f284b2c99cb",
+            "translatedWasmBytes": 315080,
+            "translationManifestSha256": "97228af9258a474038db5f6e794759ae0e7843550554894e2f978f67177f76be"
+          }
+        },
+        {
+          "id": "same-divisor-8",
+          "profileId": 9,
+          "defines": {
+            "PROBE_PROFILE_ID": 9,
+            "PROBE_INITIAL_DIV": 3,
+            "PROBE_FINAL_DIV": 3,
+            "PROBE_WRITE_KIND": 0
+          },
+          "fuses": {
+            "low": "0x70",
+            "high": "0xff",
+            "lock": "0xff"
+          },
+          "bytes": 602,
+          "imageSha256": "e5297d016d77ab94dd7c68b965885ad2757ca80607c63b6105e6db9a84361966",
+          "software": {
+            "status": "synthetic-decoder-test",
+            "records": [
+              {
+                "sequence": 0,
+                "data": [
+                  0,
+                  3,
+                  3,
+                  3,
+                  66,
+                  1
+                ]
+              },
+              {
+                "sequence": 1,
+                "data": [
+                  0,
+                  3,
+                  3,
+                  3,
+                  66,
+                  1
+                ]
+              }
+            ],
+            "timePs": "30016000000",
+            "sourceEdges": 60032,
+            "traceSha256": "bac6f385ab18e65875743ac697a505e10cc5731c9c71022b94d15e89dcc6f8fb",
+            "waveformSha256": "43f6ea4404a75bc55166668369c662d5d7adc3afae948c3479e4208fdeb51836",
+            "resetControl": null,
+            "translatedWasmSha256": "89e670e009f02d377d8ef706cab33ab138235788e5fb3da90daf628135dab3d6",
+            "translatedWasmBytes": 315080,
+            "translationManifestSha256": "e47b85d85ab475680c53c98242083560a45092197a73a31a2d0d57811b45dd35"
+          }
+        },
+        {
+          "id": "control-no-write",
+          "profileId": 10,
+          "defines": {
+            "PROBE_PROFILE_ID": 10,
+            "PROBE_INITIAL_DIV": 0,
+            "PROBE_FINAL_DIV": 3,
+            "PROBE_WRITE_KIND": 1
+          },
+          "fuses": {
+            "low": "0x70",
+            "high": "0xff",
+            "lock": "0xff"
+          },
+          "bytes": 602,
+          "imageSha256": "7e85d4514760ef2a8492c9e6abb709a19487ddde4d57e8402d057f11ced6016f",
+          "software": {
+            "status": "synthetic-decoder-test",
+            "records": [
+              {
+                "sequence": 0,
+                "data": [
+                  1,
+                  0,
+                  3,
+                  0,
+                  66,
+                  1
+                ]
+              },
+              {
+                "sequence": 1,
+                "data": [
+                  1,
+                  0,
+                  3,
+                  0,
+                  66,
+                  1
+                ]
+              }
+            ],
+            "timePs": "3840000000",
+            "sourceEdges": 7680,
+            "traceSha256": "36cf054979bfc4120cb6e7b841ed5ff3835de2e2fd8cfc96a5a76dd9464b9c46",
+            "waveformSha256": "7f69ee39e00bb920c4ccd68f0a7e99626980e427a4fa626fda31543438c421d0",
+            "resetControl": null,
+            "translatedWasmSha256": "37c507e6b1a5fa208b9f4e6849cd5edeccd33c7a8cd91060544ba6eac7726bf6",
+            "translatedWasmBytes": 315006,
+            "translationManifestSha256": "faa7c7ea336a502b72188fd121c0ddb562662d58b84619405450ea8bc7042366"
+          }
+        },
+        {
+          "id": "control-no-unlock",
+          "profileId": 11,
+          "defines": {
+            "PROBE_PROFILE_ID": 11,
+            "PROBE_INITIAL_DIV": 0,
+            "PROBE_FINAL_DIV": 3,
+            "PROBE_WRITE_KIND": 2
+          },
+          "fuses": {
+            "low": "0x70",
+            "high": "0xff",
+            "lock": "0xff"
+          },
+          "bytes": 602,
+          "imageSha256": "b42c233766952181a45ee4146489019b62d740751d48d69aac21c10fa9db084d",
+          "software": {
+            "status": "synthetic-decoder-test",
+            "records": [
+              {
+                "sequence": 0,
+                "data": [
+                  2,
+                  0,
+                  3,
+                  0,
+                  66,
+                  1
+                ]
+              },
+              {
+                "sequence": 1,
+                "data": [
+                  2,
+                  0,
+                  3,
+                  0,
+                  66,
+                  1
+                ]
+              }
+            ],
+            "timePs": "3840000000",
+            "sourceEdges": 7680,
+            "traceSha256": "8312997a43ce561a5f4178bcb6d81548bf4a38ab83a5b39bd6765c59c8a08019",
+            "waveformSha256": "d9c3cfe1a62eaa60e57937fd37cefdce2eeac33e3160e9ee14652c002bb1cace",
+            "resetControl": null,
+            "translatedWasmSha256": "e8065e9114d6134561e8a831038619baccfe8cf4609424733d9e93a925525aaa",
+            "translatedWasmBytes": 315045,
+            "translationManifestSha256": "32655d8950de211b2bbd86bf75a88176888f628fefaa5e6176bdcf8824122baa"
+          }
+        },
+        {
+          "id": "control-expired-unlock",
+          "profileId": 12,
+          "defines": {
+            "PROBE_PROFILE_ID": 12,
+            "PROBE_INITIAL_DIV": 0,
+            "PROBE_FINAL_DIV": 3,
+            "PROBE_WRITE_KIND": 3
+          },
+          "fuses": {
+            "low": "0x70",
+            "high": "0xff",
+            "lock": "0xff"
+          },
+          "bytes": 614,
+          "imageSha256": "89018de6bad280cae69fe485c05731511d090833b8c4c89f8baaf1989e6a175b",
+          "software": {
+            "status": "synthetic-decoder-test",
+            "records": [
+              {
+                "sequence": 0,
+                "data": [
+                  3,
+                  0,
+                  3,
+                  0,
+                  66,
+                  1
+                ]
+              },
+              {
+                "sequence": 1,
+                "data": [
+                  3,
+                  0,
+                  3,
+                  0,
+                  66,
+                  1
+                ]
+              }
+            ],
+            "timePs": "3840000000",
+            "sourceEdges": 7680,
+            "traceSha256": "9ddece013637698c5b5f03796c422eabb07c8bdd27cdfbe505cb1ecdfe7c57fc",
+            "waveformSha256": "95f911b4c758db544908a96a3250650cf096d906fed8c79152e4f79eeb1c4ed8",
+            "resetControl": null,
+            "translatedWasmSha256": "e8ed11fb80db3b4f570bdfc9c6de9989d9f64d7c20ed42eb46f9d3007f8b8123",
+            "translatedWasmBytes": 316292,
+            "translationManifestSha256": "555088078317673146dcd16b4921bc76c4e7a7b2f1889d74ac19133729bcb91e"
+          }
+        }
+      ]
+    },
+    {
+      "name": "reset",
+      "sourceSha256": "5f7a8000ba56c225e038da7d68ef609d89920bc30c69aeea8da68ece4a41e798",
+      "configurationSha256": "9601d1302d5216dc392603e85f2a5ed0fed23bd1c83b2aa5a423341b19e72122",
+      "profiles": [
+        {
+          "id": "sut00-clki-div1",
+          "profileId": 1,
+          "defines": {
+            "PROBE_PROFILE_ID": 1
+          },
+          "fuses": {
+            "low": "0x70",
+            "high": "0xff",
+            "lock": "0xff"
+          },
+          "bytes": 204,
+          "imageSha256": "d2ad2f517f309aefa13ed5a1f0c19313047c60f26cc79de35f4fc485e996f774",
+          "software": {
+            "status": "synthetic-decoder-test",
+            "records": [
+              {
+                "sequence": 0,
+                "data": [
+                  1,
+                  0,
+                  0,
+                  23,
+                  1,
+                  0
+                ]
+              },
+              {
+                "sequence": 0,
+                "data": [
+                  2,
+                  0,
+                  0,
+                  23,
+                  1,
+                  0
+                ]
+              }
+            ],
+            "timePs": "5845000000",
+            "sourceEdges": 11690,
+            "traceSha256": "2b62cbcd98baaca996cc0e2425a99ced582188eaaf7bda55fe57ee5e19700201",
+            "waveformSha256": "20c05fbfdd18a625601571b90a399866b805d54695fad1a2980baab3a8a6591f",
+            "resetControl": {
+              "assertPs": "3920000000",
+              "releasePs": "3930000000",
+              "kind": "prequalified-digital-software-input"
+            },
+            "translatedWasmSha256": "044943735326001ae3482a522b308ec4432b7a3824fb2fe2c823de51c72dcee2",
+            "translatedWasmBytes": 284469,
+            "translationManifestSha256": "5ad58827fd3cca0411edda03117f433a6463812bd825d361e1e6484866c0632d"
+          }
+        },
+        {
+          "id": "sut01-clki-div1",
+          "profileId": 2,
+          "defines": {
+            "PROBE_PROFILE_ID": 2
+          },
+          "fuses": {
+            "low": "0x74",
+            "high": "0xff",
+            "lock": "0xff"
+          },
+          "bytes": 204,
+          "imageSha256": "d105d13d5303a4596da28392093004ab5ec1e59fa8c6829ef45edbc9ed6d863d",
+          "software": {
+            "status": "synthetic-decoder-test",
+            "records": [
+              {
+                "sequence": 0,
+                "data": [
+                  1,
+                  0,
+                  0,
+                  23,
+                  1,
+                  0
+                ]
+              },
+              {
+                "sequence": 0,
+                "data": [
+                  2,
+                  0,
+                  0,
+                  23,
+                  1,
+                  0
+                ]
+              }
+            ],
+            "timePs": "13845000000",
+            "sourceEdges": 27690,
+            "traceSha256": "2d5fbdbd0faeca09812b2446b02368508a3da5f6d46010121067af1b6dfc4871",
+            "waveformSha256": "5f2f59657e4967d0b57d00f0cc73673da523442084419bd05b92de906755912a",
+            "resetControl": {
+              "assertPs": "7952000000",
+              "releasePs": "7962000000",
+              "kind": "prequalified-digital-software-input"
+            },
+            "translatedWasmSha256": "ce2416a35e872c582f78dcf4e69896a403ace428bba6b4a27329799800a348a7",
+            "translatedWasmBytes": 284469,
+            "translationManifestSha256": "5b1bc27484b02a94566da8ba77d15ed93176d1d423440c04c962b10c2515fbe6"
+          }
+        },
+        {
+          "id": "sut10-clki-div1",
+          "profileId": 3,
+          "defines": {
+            "PROBE_PROFILE_ID": 3
+          },
+          "fuses": {
+            "low": "0x78",
+            "high": "0xff",
+            "lock": "0xff"
+          },
+          "bytes": 204,
+          "imageSha256": "c34d80e13cf53a4e2dccc51831d955d35a67a0b4483701de91f0820b91e8c500",
+          "software": {
+            "status": "synthetic-decoder-test",
+            "records": [
+              {
+                "sequence": 0,
+                "data": [
+                  1,
+                  0,
+                  0,
+                  23,
+                  1,
+                  0
+                ]
+              },
+              {
+                "sequence": 0,
+                "data": [
+                  2,
+                  0,
+                  0,
+                  23,
+                  1,
+                  0
+                ]
+              }
+            ],
+            "timePs": "133845000000",
+            "sourceEdges": 267690,
+            "traceSha256": "f4434972fc78ef5e77dede5953439f90a8944450e36ea960bd51195be7ef7165",
+            "waveformSha256": "333fb0f566bde219ad57b6256c9dc02d0849965203584bdd087e87412a8a766b",
+            "resetControl": {
+              "assertPs": "67920000000",
+              "releasePs": "67930000000",
+              "kind": "prequalified-digital-software-input"
+            },
+            "translatedWasmSha256": "5320e707d24cd97a8fc92a9ef029c278b0512c835bac2a816bea20e46dd5c783",
+            "translatedWasmBytes": 284469,
+            "translationManifestSha256": "077e1940e490848c2da871b9723bfeba5239aa08d243bb5e8c16d384d845a3dc"
+          }
+        },
+        {
+          "id": "sut00-clki-div8",
+          "profileId": 4,
+          "defines": {
+            "PROBE_PROFILE_ID": 4
+          },
+          "fuses": {
+            "low": "0x60",
+            "high": "0xff",
+            "lock": "0xff"
+          },
+          "bytes": 204,
+          "imageSha256": "bdeb152f3588e40190e85365f3741dd80a8c5d9a05912f9c64552d2261d93e33",
+          "software": {
+            "status": "synthetic-decoder-test",
+            "records": [
+              {
+                "sequence": 0,
+                "data": [
+                  1,
+                  3,
+                  0,
+                  23,
+                  1,
+                  0
+                ]
+              },
+              {
+                "sequence": 0,
+                "data": [
+                  2,
+                  3,
+                  0,
+                  23,
+                  1,
+                  0
+                ]
+              }
+            ],
+            "timePs": "45333000000",
+            "sourceEdges": 90666,
+            "traceSha256": "152fa49f750a362315aeb002ff9e962f5e88287464d604338c9cf8dc03d335dd",
+            "waveformSha256": "19ee7f8b87fc685cfe04674245c874cd2d04fd145b38f6bcdd881d397d56ab92",
+            "resetControl": {
+              "assertPs": "30864000000",
+              "releasePs": "30874000000",
+              "kind": "prequalified-digital-software-input"
+            },
+            "translatedWasmSha256": "1457830d625b7de008a584d4e98e19f6e3018dd6f291e39a40cf15faec16ecf1",
+            "translatedWasmBytes": 284469,
+            "translationManifestSha256": "09d8ae9d0595aaad06bdaa7393e71cce21ca096ae026b95a058c5c1313ef0084"
+          }
+        }
+      ]
+    },
+    {
+      "name": "adc",
+      "sourceSha256": "c412f250ec58c8cc3fc3bad80c936939d1a529ccc9b49445c892fa963091f5e4",
+      "configurationSha256": "e97f3d24843f70d8619b51616786d30274d8d4774c72969047ca163836711f42",
+      "profiles": [
+        {
+          "id": "first-conversion",
+          "profileId": 1,
+          "defines": {
+            "PROBE_PROFILE_ID": 1,
+            "PROBE_TRIALS": 2,
+            "PROBE_MODE": 0
+          },
+          "fuses": {
+            "low": "0x70",
+            "high": "0xff",
+            "lock": "0xff"
+          },
+          "bytes": 278,
+          "imageSha256": "c3e3cf9d3a06860de6523f3612372f45ff3f72826b7f11b15ac35b961b7abad7",
+          "software": {
+            "status": "synthetic-decoder-test",
+            "records": [
+              {
+                "sequence": 0,
+                "data": [
+                  214,
+                  1,
+                  0,
+                  4,
+                  2,
+                  0
+                ]
+              },
+              {
+                "sequence": 1,
+                "data": [
+                  204,
+                  0,
+                  0,
+                  150,
+                  2,
+                  1
+                ]
+              },
+              {
+                "sequence": 2,
+                "data": [
+                  204,
+                  0,
+                  0,
+                  150,
+                  34,
+                  1
+                ]
+              }
+            ],
+            "timePs": "9096000000",
+            "sourceEdges": 145536,
+            "traceSha256": "57b84be3692f911dc977fad7e1f16c38c79da7633fca84305bcf7d6ea358f375",
+            "waveformSha256": "dc7ba977e619254db445e03376376cbd6178ba1edae8532361c8e68651ecbe05",
+            "resetControl": null,
+            "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+            "translatedWasmBytes": 292897,
+            "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693"
+          }
+        },
+        {
+          "id": "normal-conversion-control",
+          "profileId": 2,
+          "defines": {
+            "PROBE_PROFILE_ID": 2,
+            "PROBE_TRIALS": 2,
+            "PROBE_MODE": 1
+          },
+          "fuses": {
+            "low": "0x70",
+            "high": "0xff",
+            "lock": "0xff"
+          },
+          "bytes": 284,
+          "imageSha256": "081c253e9c25fa2c6f2b485616af63a018edacb86b9341ff2b999772079350e5",
+          "software": {
+            "status": "synthetic-decoder-test",
+            "records": [
+              {
+                "sequence": 0,
+                "data": [
+                  214,
+                  1,
+                  0,
+                  4,
+                  2,
+                  0
+                ]
+              },
+              {
+                "sequence": 1,
+                "data": [
+                  204,
+                  0,
+                  150,
+                  150,
+                  2,
+                  1
+                ]
+              },
+              {
+                "sequence": 2,
+                "data": [
+                  204,
+                  0,
+                  150,
+                  150,
+                  34,
+                  1
+                ]
+              }
+            ],
+            "timePs": "9320000000",
+            "sourceEdges": 149120,
+            "traceSha256": "6741c33ed2d2dc06799fd30ce742d83cb21f2ae82ec073be11908c456ab53155",
+            "waveformSha256": "4b413f70d546bc471dba7db9822856cb55ef0cd0a7537e3d20846b08c3b3e6bc",
+            "resetControl": null,
+            "translatedWasmSha256": "bb12572cbefaf51f6e6fea513c92071a374e855630d5688a371f13cd21c76b5c",
+            "translatedWasmBytes": 293730,
+            "translationManifestSha256": "afb77471f668eba44546f51dc95db77d2903ad78c4157496b78a043e98ad8fd2"
+          }
+        },
+        {
+          "id": "adif-sbi-adie",
+          "profileId": 3,
+          "defines": {
+            "PROBE_PROFILE_ID": 3,
+            "PROBE_TRIALS": 2,
+            "PROBE_MODE": 2,
+            "PROBE_ADIF_OPERATION": 1
+          },
+          "fuses": {
+            "low": "0x70",
+            "high": "0xff",
+            "lock": "0xff"
+          },
+          "bytes": 282,
+          "imageSha256": "bdf6264ee8625ac01455be6644cc85c9c1c048b6698206bef51c196a29286aea",
+          "software": {
+            "status": "synthetic-decoder-test",
+            "records": [
+              {
+                "sequence": 0,
+                "data": [
+                  214,
+                  1,
+                  0,
+                  4,
+                  2,
+                  0
+                ]
+              },
+              {
+                "sequence": 1,
+                "data": [
+                  204,
+                  0,
+                  150,
+                  142,
+                  2,
+                  2
+                ]
+              },
+              {
+                "sequence": 2,
+                "data": [
+                  204,
+                  0,
+                  150,
+                  142,
+                  34,
+                  2
+                ]
+              }
+            ],
+            "timePs": "9104000000",
+            "sourceEdges": 145664,
+            "traceSha256": "d4ca7c2ea94d47306926be7148aefc0fbb5b202c4a8902b79a02da40137d11d9",
+            "waveformSha256": "05c58199e585b829b011321814d2ed6cf0416755888cb03536a2644fbd2d0ade",
+            "resetControl": null,
+            "translatedWasmSha256": "c2cd661b6e36f49b0cc68eb998a23b390e552e546c28bbce6c6137a0c1df28a7",
+            "translatedWasmBytes": 293392,
+            "translationManifestSha256": "964f9968f3f48c12fc945cd0bb7b8bbb6733b10b72aad90868a5d76ca90fd3de"
+          }
+        },
+        {
+          "id": "adif-cbi-adie",
+          "profileId": 4,
+          "defines": {
+            "PROBE_PROFILE_ID": 4,
+            "PROBE_TRIALS": 2,
+            "PROBE_MODE": 2,
+            "PROBE_ADIF_OPERATION": 2
+          },
+          "fuses": {
+            "low": "0x70",
+            "high": "0xff",
+            "lock": "0xff"
+          },
+          "bytes": 282,
+          "imageSha256": "8e0dba21c212b65cdc030348b3ef1bd79476f0dc035988a0d6d15d83b32b259c",
+          "software": {
+            "status": "synthetic-decoder-test",
+            "records": [
+              {
+                "sequence": 0,
+                "data": [
+                  222,
+                  1,
+                  0,
+                  4,
+                  2,
+                  0
+                ]
+              },
+              {
+                "sequence": 1,
+                "data": [
+                  204,
+                  0,
+                  158,
+                  134,
+                  2,
+                  2
+                ]
+              },
+              {
+                "sequence": 2,
+                "data": [
+                  204,
+                  0,
+                  158,
+                  134,
+                  34,
+                  2
+                ]
+              }
+            ],
+            "timePs": "9096000000",
+            "sourceEdges": 145536,
+            "traceSha256": "a86457c29df6caaff19175fc66be65d469c3b81aa17bbb9084c8037f3965b3ec",
+            "waveformSha256": "02accb1853f328bd91f81c037b1e644635213c0a82916ed695904df6c0781b23",
+            "resetControl": null,
+            "translatedWasmSha256": "9c2933c48adc28982fb6f39b4981fb1b6b5802749fe37a4b2fe59c411939e544",
+            "translatedWasmBytes": 293393,
+            "translationManifestSha256": "662a81fbbf4f1451efe1ca9646093dfb935f2477a1d06b9264ab9ab172e550c4"
+          }
+        },
+        {
+          "id": "adif-cbi-adps0",
+          "profileId": 5,
+          "defines": {
+            "PROBE_PROFILE_ID": 5,
+            "PROBE_TRIALS": 2,
+            "PROBE_MODE": 2,
+            "PROBE_ADIF_OPERATION": 3
+          },
+          "fuses": {
+            "low": "0x70",
+            "high": "0xff",
+            "lock": "0xff"
+          },
+          "bytes": 282,
+          "imageSha256": "30e6a5cd2ec78f125de823e5b7a2a41d28881f58dcb25377306494a6e9780c5e",
+          "software": {
+            "status": "synthetic-decoder-test",
+            "records": [
+              {
+                "sequence": 0,
+                "data": [
+                  214,
+                  1,
+                  0,
+                  4,
+                  2,
+                  0
+                ]
+              },
+              {
+                "sequence": 1,
+                "data": [
+                  204,
+                  0,
+                  150,
+                  134,
+                  2,
+                  2
+                ]
+              },
+              {
+                "sequence": 2,
+                "data": [
+                  204,
+                  0,
+                  150,
+                  134,
+                  34,
+                  2
+                ]
+              }
+            ],
+            "timePs": "9096000000",
+            "sourceEdges": 145536,
+            "traceSha256": "a6378f596298359c4c6d2c0ac0e1975bbc5b202e18fbc560e4264819b15375f4",
+            "waveformSha256": "07661bb3b3415275af048322e87c4328f7a424067738455464fe0218b7b8b420",
+            "resetControl": null,
+            "translatedWasmSha256": "e692325c6c57b7d0f6aebb41b67f8d8fcfcaf91c5a5a9f28fbc055052fdac61e",
+            "translatedWasmBytes": 293391,
+            "translationManifestSha256": "ecc00c8b984b724c0612fb981079793e0430c8caac62e339de559a582fe6c0e7"
+          }
+        },
+        {
+          "id": "adif-no-write-control",
+          "profileId": 6,
+          "defines": {
+            "PROBE_PROFILE_ID": 6,
+            "PROBE_TRIALS": 2,
+            "PROBE_MODE": 2,
+            "PROBE_ADIF_OPERATION": 0
+          },
+          "fuses": {
+            "low": "0x70",
+            "high": "0xff",
+            "lock": "0xff"
+          },
+          "bytes": 284,
+          "imageSha256": "a1945830cfff1e5a81594291ee4da38704dda1525e0c413dc44ea243d0880d70",
+          "software": {
+            "status": "synthetic-decoder-test",
+            "records": [
+              {
+                "sequence": 0,
+                "data": [
+                  214,
+                  1,
+                  0,
+                  4,
+                  2,
+                  0
+                ]
+              },
+              {
+                "sequence": 1,
+                "data": [
+                  204,
+                  0,
+                  150,
+                  150,
+                  2,
+                  3
+                ]
+              },
+              {
+                "sequence": 2,
+                "data": [
+                  204,
+                  0,
+                  150,
+                  150,
+                  34,
+                  3
+                ]
+              }
+            ],
+            "timePs": "9104000000",
+            "sourceEdges": 145664,
+            "traceSha256": "9dcae296c8f24119c19f7d57dc1eb5810a41796a7e3fb8787d6b7cd426d71ded",
+            "waveformSha256": "6409ba5ace12169ae7071e1602b40b329a866737bde081de1142b9704283e755",
+            "resetControl": null,
+            "translatedWasmSha256": "c6f902b22b1a5415055ebc75db0bfe16c7fd54f0ba8ffe1031f48cf8174005e3",
+            "translatedWasmBytes": 293881,
+            "translationManifestSha256": "14957756535ca254983bcd0fd539ae2446e9c3b683a73a8da673d107c8cc90fa"
+          }
+        },
+        {
+          "id": "adif-out-zero-control",
+          "profileId": 7,
+          "defines": {
+            "PROBE_PROFILE_ID": 7,
+            "PROBE_TRIALS": 2,
+            "PROBE_MODE": 2,
+            "PROBE_ADIF_OPERATION": 4
+          },
+          "fuses": {
+            "low": "0x70",
+            "high": "0xff",
+            "lock": "0xff"
+          },
+          "bytes": 284,
+          "imageSha256": "7d9ef097ace5305e49a48f05556b168fc7bbd958f9b43c2e674237cb96ca4c60",
+          "software": {
+            "status": "synthetic-decoder-test",
+            "records": [
+              {
+                "sequence": 0,
+                "data": [
+                  214,
+                  1,
+                  0,
+                  4,
+                  2,
+                  0
+                ]
+              },
+              {
+                "sequence": 1,
+                "data": [
+                  204,
+                  0,
+                  150,
+                  150,
+                  2,
+                  3
+                ]
+              },
+              {
+                "sequence": 2,
+                "data": [
+                  204,
+                  0,
+                  150,
+                  150,
+                  34,
+                  3
+                ]
+              }
+            ],
+            "timePs": "9104000000",
+            "sourceEdges": 145664,
+            "traceSha256": "d2a55ac5433e023f93e9521dc86994a69e24865e9d5985efee39cf42f13548dc",
+            "waveformSha256": "33c2aa64533a842540611bd39cf6d54dd056e88b59b76c7522c3d1b179f03b85",
+            "resetControl": null,
+            "translatedWasmSha256": "ada4bd7c9dcfa6edd23fa622903eb061f5d4fb17bf0d69106ebebb37ac9daa94",
+            "translatedWasmBytes": 293552,
+            "translationManifestSha256": "78fc13ca204c8fa110b8869bae70ea7408c1498304bb30c65604e6239dc06388"
+          }
+        },
+        {
+          "id": "adif-out-one-control",
+          "profileId": 8,
+          "defines": {
+            "PROBE_PROFILE_ID": 8,
+            "PROBE_TRIALS": 2,
+            "PROBE_MODE": 2,
+            "PROBE_ADIF_OPERATION": 5
+          },
+          "fuses": {
+            "low": "0x70",
+            "high": "0xff",
+            "lock": "0xff"
+          },
+          "bytes": 284,
+          "imageSha256": "3d63b0f4903a60e4be5a2c69e8042746b756bcce5728a25f430e17d12cf620fa",
+          "software": {
+            "status": "synthetic-decoder-test",
+            "records": [
+              {
+                "sequence": 0,
+                "data": [
+                  214,
+                  1,
+                  0,
+                  4,
+                  2,
+                  0
+                ]
+              },
+              {
+                "sequence": 1,
+                "data": [
+                  204,
+                  0,
+                  150,
+                  134,
+                  2,
+                  3
+                ]
+              },
+              {
+                "sequence": 2,
+                "data": [
+                  204,
+                  0,
+                  150,
+                  134,
+                  34,
+                  3
+                ]
+              }
+            ],
+            "timePs": "9096000000",
+            "sourceEdges": 145536,
+            "traceSha256": "38443d24c2a94789c6983aa62e4346bab5673113c77922d924b4f2f251bd5afd",
+            "waveformSha256": "530a71efd11cc8d60b53432a2f0214a5c23fb17258f2c737481f84e4532a2129",
+            "resetControl": null,
+            "translatedWasmSha256": "b6d35ddec5aee74ba316d48e9cb16e1391060d0eb3fb6d2423020de85b5031ae",
+            "translatedWasmBytes": 293552,
+            "translationManifestSha256": "2d04d100c17b661a433ef488126911e5cdee9606048f53f123cc473f62cf4feb"
+          }
+        },
+        {
+          "id": "adif-explicit-rmw-control",
+          "profileId": 9,
+          "defines": {
+            "PROBE_PROFILE_ID": 9,
+            "PROBE_TRIALS": 2,
+            "PROBE_MODE": 2,
+            "PROBE_ADIF_OPERATION": 6
+          },
+          "fuses": {
+            "low": "0x70",
+            "high": "0xff",
+            "lock": "0xff"
+          },
+          "bytes": 286,
+          "imageSha256": "cec92e0505ffe8d78df3a3cfe44b4ad7b6c74c3d7a702e732a248ea20b268ea3",
+          "software": {
+            "status": "synthetic-decoder-test",
+            "records": [
+              {
+                "sequence": 0,
+                "data": [
+                  214,
+                  1,
+                  0,
+                  4,
+                  2,
+                  0
+                ]
+              },
+              {
+                "sequence": 1,
+                "data": [
+                  204,
+                  0,
+                  150,
+                  142,
+                  20,
+                  3
+                ]
+              },
+              {
+                "sequence": 2,
+                "data": [
+                  204,
+                  0,
+                  150,
+                  142,
+                  52,
+                  3
+                ]
+              }
+            ],
+            "timePs": "9104000000",
+            "sourceEdges": 145664,
+            "traceSha256": "f3061cd831e51f745ffb771f4594be37e892425f7654def92e5a6968e245342b",
+            "waveformSha256": "ae4725a1fd48f037c2a1528301c00bf273a6a8cfd304cb9add56c77139fae0da",
+            "resetControl": null,
+            "translatedWasmSha256": "3da22ef4e40f4e3b7aecf78519809a5cb715f1703cd5b47ceb0923b658ac0f82",
+            "translatedWasmBytes": 293932,
+            "translationManifestSha256": "b54c985b6547b8a622dc0a7b803ef6503cd9ffdf9c8e0ee5bac03ff6a5bb5bac"
+          }
+        }
+      ]
+    }
+  ],
+  "expectedSiliconTrace": null
+}

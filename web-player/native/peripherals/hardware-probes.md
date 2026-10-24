@@ -73,14 +73,19 @@ shared sender, register definitions and capture. `--source FILE` selects the
 actual source when an alternate build was used.
 
 Strict decoding rejects checksum, version, identity, sequence and framing errors.
-For an intentional RESET reassertion inside serialization, the reset-to-zero
-descriptor accepts `--allow-reset-fragments`. It searches for complete matching
+For an intentional RESET reassertion inside serialization, reset-to-zero and
+restartable-pairs descriptors accept `--allow-reset-fragments`. It searches for complete matching
 frames while recording **every** unframed bit range, its count and timestamps;
 `transportQuality` becomes `unframed-bits-retained`. Partial records are never
 invented. Inspect the raw acquisition: resynchronization does not establish why
 a fragment occurred or prove that no reset/event was missed. Other probe types
-cannot enable this recovery mode. Repeated boot sequence0 is valid only for
-reset-to-zero descriptors.
+cannot enable this recovery mode. Reset-to-zero descriptors repeat sequence0.
+Restartable-pairs descriptors require boot0/1, optionally followed by
+completion2/3; a new reset may restart at0 after either complete pair. Strict
+mode rejects missing partners and interrupted pairs even when all received
+frames have valid checksums. Recovery retains these in `sequenceGaps`, with
+`sequence-gaps-retained` or `unframed-bits-and-sequence-gaps-retained` quality.
+It does not manufacture the missing register/memory record.
 
 The synthetic tests exercise arbitrary observed bytes, wire-v1 rejection,
 corruption, identity/sequence errors, timing/digital input errors, interrupted
@@ -93,10 +98,12 @@ resets, required conditions and alternate-source provenance.
 |[CLKPR](clkpr-probe.md)|12|Continuous CLKI/CTC OC0A, bracketed protected write and negative controls|
 |[RESET](reset-probe.md)|4|MCUSR-first boot, DDR-first witness, SUT/CKDIV8 and reassertion/held-clock cases|
 |[ADC](adc-probe.md)|9|First/normal aperture, ADIF SBI/CBI and whole-byte controls|
+|[CPU phases](cpu-phase-probe.md)|22|Raw memory/GPR snapshots before reinitialization, stack/bus operations, queued RESET cuts and mandatory hardware retention control|
 
 ```text
 node web-player/scripts/verify-hardware-probes.mjs
 node web-player/scripts/verify-adc-aperture.mjs
+node web-player/scripts/verify-cpu-phase-probe.mjs
 ```
 
 The first script locates the prepared AVR GCC7.3.0 toolchain; override it with
@@ -121,6 +128,15 @@ markers/injection times, not private ADC state. In the saved fixture, offsets
 118–124us distinguish the choices;112us does not. These offsets are **software
 sensitivity results**, not silicon aperture predictions or lab delay presets.
 Use `--input DIR`/`--out FILE` for alternate verification/report locations.
+
+The separate CPU-phase script assembles22 profiles, checks uncut marker spans
+and snapshots, then queues resets before/at/after the declared model's effect
+boundaries. Its low-frequency continuous CLKI fixture makes cuts explicit;
+hardware GPR retention must first be established by the NOP control. RET/RETI
+snapshots expose completion, not their individual internal read latches. Raw
+records remain raw and do not select a silicon phase convention. Use its
+`--profile ID`, `--cuts none`, `--out DIR`, `--avr-bin DIR` and `--python FILE`
+options for a bounded reproduction.
 
 The [retained report](../../reports/hardware-probes-20261024.md) separates the
 25-profile controls,80 synthetic conversions and remaining hardware validation.

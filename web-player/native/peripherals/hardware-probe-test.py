@@ -111,6 +111,34 @@ class ProtocolTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Expected 2"):
             decoder.decode_rows(rows(bits(frame())), {**CONFIG, "expectedRecords": 2}, PROFILE)
 
+    def test_restartable_pairs(self):
+        config = {**CONFIG, "sequencePolicy": "restartable-pairs"}
+        for sequences in ([0, 1], [0, 1, 2, 3], [0, 1, 0, 1], [0, 1, 2, 3, 0, 1]):
+            capture = rows([bit for sequence in sequences for bit in bits(frame(sequence))])
+            with self.subTest(sequences=sequences):
+                result = decoder.decode_rows(capture, config, PROFILE)
+                self.assertEqual([record["sequence"] for record in result["records"]], sequences)
+                self.assertEqual(result["sequenceGaps"], [])
+                self.assertEqual(result["transportQuality"], "complete-frames")
+
+    def test_restartable_pairs_reject_missing_partners(self):
+        config = {**CONFIG, "sequencePolicy": "restartable-pairs"}
+        for sequences in ([0], [0, 1, 2], [0, 0, 1], [0, 1, 2, 0, 1], [2, 3], [0, 1, 3]):
+            capture = rows([bit for sequence in sequences for bit in bits(frame(sequence))])
+            with self.subTest(sequences=sequences), self.assertRaisesRegex(ValueError, "sequence"):
+                decoder.decode_rows(capture, config, PROFILE)
+
+    def test_restartable_pairs_recovery_retains_incomplete_pairs_and_bits(self):
+        config = {**CONFIG, "sequencePolicy": "restartable-pairs"}
+        stream = bits(frame()) + bits(frame(1))[:19] + bits(frame()) + bits(frame(1)) + bits(frame(2))
+        result = decoder.decode_rows(rows(stream), config, PROFILE, True)
+        self.assertEqual([record["sequence"] for record in result["records"]], [0, 0, 1, 2])
+        self.assertEqual([gap["bitCount"] for gap in result["fragments"]], [19])
+        self.assertEqual([gap["expectedSequences"] for gap in result["sequenceGaps"]], [[1], [3]])
+        self.assertEqual(result["transportQuality"], "unframed-bits-and-sequence-gaps-retained")
+        tail = decoder.decode_rows(rows(bits(frame())), config, PROFILE, True)
+        self.assertEqual(tail["transportQuality"], "sequence-gaps-retained")
+
     def test_hardware_conditions(self):
         conditions = {"chipMarking": "synthetic test fixture", "chipRevision": None,
                       "vccVolts": 5, "temperatureC": 25, "clockHz": 8000000,

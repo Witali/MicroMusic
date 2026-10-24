@@ -81,10 +81,15 @@ is observable separately from analog supply-threshold behavior.
   [ADC](peripherals/adc-probe.md) now add25 source-only profiles and shared wire-v2
   framing/decoding. All25 execute actual images under continuous external CLKI
   in explicit software fixtures; the ADC probe distinguishes both configured
-  first-sample choices in80 synthetic conversions. These are tooling checks,
-  not silicon evidence. Remaining CPU internal bus/stack-phase conventions
-  still need equivalent acquisition/oracle work before full phase coverage can
-  be claimed. See [the acquisition report](../reports/hardware-probes-20261024.md).
+  first-sample choices in80 synthetic conversions. The
+  [CPU phase probe](peripherals/cpu-phase-probe.md) adds22 actual firmware
+  profiles,114 queued RESET cuts and raw SRAM/GPR snapshots before reboot
+  initialization. NOP qualifies hardware retention separately; RET/RETI's
+  individual read latches remain unobserved. These are tooling/model checks,
+  not silicon evidence or complete internal phase coverage. See the
+  [peripheral acquisition report](../reports/hardware-probes-20261024.md) and
+  [CPU acquisition report](../reports/cpu-phase-probe-20261024.md). Hardware
+  captures, internal read-phase oracles and measured uncertainty remain open.
 - [ ] Record measured chip, clock, fuse configuration and measurement tolerance;
   update the default profile only when the evidence supports it.
 
