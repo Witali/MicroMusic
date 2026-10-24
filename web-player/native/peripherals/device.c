@@ -32,11 +32,12 @@ typedef struct {
  uint8_t *data, *flash, *eeprom;
  uint32_t config[20], calibration[128], oscillator_hz;
  uint64_t base, half, phase, ns, ns_remainder, wdt_ticks, wdt_remainder;
- uint64_t clkpr_until, clkpr_switch_half, dropped;
+ uint64_t clkpr_until, clkpr_switch_half, dropped, audio_dropped;
  uint64_t bod_arm_until, bod_sleep_until, bod_recovery_until;
  uint64_t reset_until;
  uint32_t fault, detail, divisor, pending_divisor;
- uint16_t input_head, input_count, pin_head, pin_count;
+ uint16_t input_head, input_count, pin_head, pin_count, audio_pin_head, audio_pin_count;
+ uint8_t pin_trace_mask, pin_trace_retain, audio_pin_mask;
  uint8_t initialized, clkpr, prr, domains, reset_requested, reset_held, analog_mask;
  uint8_t external_mask, external_levels;
  uint8_t bodcr, bod_armed, bod_committed, bod_disabled;
@@ -70,6 +71,7 @@ typedef struct {
  attiny13a_nvm_t nvm;
  device_pin_event_t pins;
  device_pin_event_t pin_events[PIN_CAPACITY];
+ device_pin_event_t audio_pin_events[PIN_CAPACITY];
  input_t inputs[INPUT_CAPACITY];
 } device_t;
 static device_t board;
@@ -278,21 +280,40 @@ static int same_pins(const device_pin_event_t *a, const device_pin_event_t *b) {
  return a->levels==b->levels && a->driven==b->driven && a->pullups==b->pullups &&
   a->floating==b->floating && a->contention==b->contention;
 }
+static void capture_pin_queue(device_pin_event_t *events,uint16_t *head,uint16_t *count,
+ uint64_t *dropped,const device_pin_event_t *pins,int selected_change) {
+ if (*count) {
+  unsigned last=(*head+*count-1)%PIN_CAPACITY;
+  /* A retained timestamp describes its final full live snapshot, including
+   * unselected changes at that SAME timestamp. Never rewrite an older row. */
+  if (events[last].base_half==pins->base_half) { events[last]=*pins; return; }
+ }
+ if (!selected_change) return;
+ if (*count==PIN_CAPACITY) {
+  if (*dropped!=UINT64_MAX) ++*dropped;
+  fail(DEVICE_FAULT_OUTPUT_OVERFLOW,PIN_CAPACITY);
+  return;
+ }
+ events[(*head+(*count)++)%PIN_CAPACITY]=*pins;
+}
+static int pin_buffer_ready(uint32_t limit) {
+ return limit && (board.audio_pin_count>=limit ||
+  (!board.pin_trace_retain && board.pin_count>=limit));
+}
+int device_pin_buffer_ready(void) { return pin_buffer_ready(PIN_CAPACITY/2); }
 static void capture_pins(void) {
  device_pin_event_t pins={{board.base},board.gpio.pins.levels,board.gpio.pins.driven,
   board.gpio.pins.pullups,board.gpio.pins.floating,board.gpio.pins.contention,{0}};
  if (same_pins(&pins,&board.pins)) return;
+ uint8_t level_changes=(uint8_t)(pins.levels^board.pins.levels);
+ uint8_t changes=(uint8_t)(level_changes | (pins.driven^board.pins.driven) |
+  (pins.pullups^board.pins.pullups) | (pins.floating^board.pins.floating) |
+  (pins.contention^board.pins.contention));
  board.pins=pins;
- if (board.pin_count) {
-  unsigned last=(board.pin_head+board.pin_count-1)%PIN_CAPACITY;
-  if (board.pin_events[last].base_half==board.base) { board.pin_events[last]=pins; return; }
- }
- if (board.pin_count==PIN_CAPACITY) {
-  if (board.dropped!=UINT64_MAX) ++board.dropped;
-  fail(DEVICE_FAULT_OUTPUT_OVERFLOW,PIN_CAPACITY);
-  return;
- }
- board.pin_events[(board.pin_head+board.pin_count++)%PIN_CAPACITY]=pins;
+ capture_pin_queue(board.pin_events,&board.pin_head,&board.pin_count,&board.dropped,
+  &pins,(changes&board.pin_trace_mask)!=0);
+ capture_pin_queue(board.audio_pin_events,&board.audio_pin_head,&board.audio_pin_count,
+  &board.audio_dropped,&pins,(level_changes&board.audio_pin_mask)!=0);
 }
 static void pin_voltages(void) {
  for (unsigned pin=0;pin<6;pin++) {
@@ -655,7 +676,7 @@ void device_clear_osccal_hz(void) {
  calibration_configured=0;
 }
 int device_init(uint8_t *data, uint8_t *flash, uint8_t *eeprom) {
- board=(device_t){0};
+ board=(device_t){.pin_trace_mask=63};
  deadline_invalidate(DEADLINE_INIT);
  for (unsigned i=0;i<20;i++) board.config[i]=configuration[i];
  for (unsigned i=0;i<128;i++) board.calibration[i]=calibration_configuration[i];
@@ -1032,7 +1053,7 @@ static uint64_t wait_until(uint64_t deadline,uint32_t pin_limit) {
  uint64_t before=cpu_cycle();
  if (deadline<board.base) { fail(DEVICE_FAULT_TIME,8); return 0; }
  while (device_halted() && !board.fault && !board.reset_requested && board.base<deadline &&
-        (!pin_limit||board.pin_count<pin_limit)) {
+        !pin_buffer_ready(pin_limit)) {
   uint64_t next=minimum(next_event(),deadline);
   advance_to(next);
  }
@@ -1113,6 +1134,36 @@ void device_consume_pin_events(uint32_t count) {
 }
 void device_clear_pin_events(void) { board.pin_head=board.pin_count=0; board.dropped=0; }
 uint64_t device_dropped_pin_events(void) { return board.dropped; }
+int device_configure_pin_trace(uint32_t mask,uint32_t retain_during_audio) {
+ if (!board.initialized || mask>63 || retain_during_audio>1) return 0;
+ board.pin_trace_mask=(uint8_t)mask;board.pin_trace_retain=(uint8_t)retain_during_audio;
+ return 1;
+}
+uint32_t device_pin_trace_configuration(void) {
+ return board.pin_trace_mask|((uint32_t)board.pin_trace_retain<<8);
+}
+int device_configure_audio_pins(uint8_t mask) {
+ if (!board.initialized || (mask!=0 && mask!=2 && mask!=3)) return 0;
+ board.audio_pin_mask=mask;board.audio_pin_head=board.audio_pin_count=0;board.audio_dropped=0;
+ return 1;
+}
+const device_pin_event_t *device_audio_pin_events(uint32_t *count) {
+ uint32_t contiguous=PIN_CAPACITY-board.audio_pin_head;
+ if (contiguous>board.audio_pin_count) contiguous=board.audio_pin_count;
+ *count=contiguous;
+ return contiguous ? &board.audio_pin_events[board.audio_pin_head] : NULL;
+}
+void device_consume_audio_pin_events(uint32_t count) {
+ if (count>board.audio_pin_count) count=board.audio_pin_count;
+ board.audio_pin_head=(uint16_t)((board.audio_pin_head+count)%PIN_CAPACITY);
+ board.audio_pin_count-=(uint16_t)count;
+}
+void device_discard_audio_trace(uint64_t until) {
+ if (board.pin_trace_retain) return;
+ while (board.pin_count && board.pin_events[board.pin_head].base_half<=until) {
+  board.pin_head=(uint16_t)((board.pin_head+1)%PIN_CAPACITY);--board.pin_count;
+ }
+}
 uint64_t device_base_half(void) { return time_contract(0,1) ? board.base : 0; }
 uint8_t device_physical_mode(void) { return board.physical; }
 uint64_t device_time_ps(void) { return time_contract(1,1) ? board.base : 0; }

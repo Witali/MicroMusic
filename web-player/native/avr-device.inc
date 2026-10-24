@@ -41,9 +41,6 @@ static void full_phase_cancel(void) {
  full_phase_vector=0;
 }
 static uint64_t full_time64(void){return full_ps?device_time_ps():device_base_half();}
-static const void *full_pin_events(uint32_t *count){
- return full_ps?(const void *)device_pin_events_ps(count):(const void *)device_pin_events(count);
-}
 static uint64_t full_pin_time(const void *events,uint32_t n){
  return full_ps?((const device_pin_event_ps_t *)events)[n].time_ps:((const device_pin_event_t *)events)[n].base_half;
 }
@@ -143,13 +140,17 @@ int avr_device_phase_clock(double cycles){
  if(!full_phase.remaining_halves)full_phase.remaining_halves=(uint64_t)(cycles*2);
  if(full_phase.remaining_halves&&full_phase_limit<=device_time_ps())return 0;
  for(;;){
+  uint64_t requested=full_phase.remaining_halves;
   uint64_t consumed=0;
-  int result=full_audio_active?
-   device_advance_half_until_ps_buffered(full_phase.remaining_halves,full_phase_limit,&consumed):
-   device_advance_half_until_ps(full_phase.remaining_halves,full_phase_limit,&consumed);
+  int result;
+  if(full_audio_active){
+   /* Deferred short spans must not consume a long barrier's ring headroom. */
+   if(requested>128)full_audio_collect();
+   result=device_advance_half_until_ps_buffered(full_phase.remaining_halves,full_phase_limit,&consumed);
+  }else result=device_advance_half_until_ps(full_phase.remaining_halves,full_phase_limit,&consumed);
   full_phase.remaining_halves-=consumed;
   S(cyc)=(double)device_virtual_half()/2.0;full_deadline();
-  if(full_audio_active)full_audio_collect();
+  if(full_audio_active&&(requested>128||result==2||device_pin_buffer_ready()))full_audio_collect();
   if(device_reset_requested()){full_interrupt();return -1;}
   if(result<0||ERROR)return -1;
   /* One CPU cycle can require512 source transitions. Drain inside this one
@@ -258,7 +259,7 @@ int avr_device_wait(double deadline){
   else device_wait_until_ps(target);
  }else device_wait_until(target);
  S(cyc)=(double)device_virtual_half()/2.0;
- if(full_audio_active)full_audio_collect();
+ if(full_audio_active&&(!full_phase_enabled||device_pin_buffer_ready()))full_audio_collect();
  full_deadline();
  if(!full_phase_enabled||full_phase.active!=1||device_reset_requested())full_interrupt();
  return full_time64()>before;
@@ -298,6 +299,8 @@ int avr_device_pin_count(void){uint32_t count;device_pin_events(&count);return c
 uintptr_t avr_device_pin_buffer_ps(void){uint32_t count;return (uintptr_t)device_pin_events_ps(&count);}
 int avr_device_pin_count_ps(void){uint32_t count;device_pin_events_ps(&count);return count;}
 void avr_device_pin_consume(int n){device_consume_pin_events(n);}
+int avr_device_pin_trace_config(int mask,int retain){return device_configure_pin_trace((uint32_t)mask,(uint32_t)retain);}
+int avr_device_pin_trace_configuration(void){return (int)device_pin_trace_configuration();}
 int avr_device_divisor(void){return device_clkpr_divisor();}
 int avr_device_reset_count(void){return full_reset_count;}
 int avr_device_halted(void){return device_halted();}
@@ -331,16 +334,16 @@ int avr_device_idle(double deadline){
 /* Physical pin box integration. A CPU instruction may extend beyond an audio
  * deadline; future pin events remain queued for the following sample. */
 void avr_device_audio_config(int rate,int channels){
+ if(rate<8000||rate>192000||(channels!=1&&channels!=2)){ERROR=25;return;}
+ if(!device_configure_audio_pins(channels==1?2:3)){ERROR=25;return;}
  full_audio_rate=rate;full_audio_channels=channels;
  full_audio_start=full_audio_at=full_time64();full_audio_frame=0;
  full_audio_interval=full_audio_at;full_audio_area[0]=full_audio_area[1]=0;
+ /* A new stream starts at the live pins. Host history is a separate observer;
+  * retaining it must never replay old levels into this initial baseline. */
+ device_discard_audio_trace(full_audio_at);
  full_audio_levels=full_ps?device_pin_state_ps()->levels:device_pin_state()->levels;
  full_audio_active=0;
- uint32_t count;const void *events;
- while((events=full_pin_events(&count))&&count){
-  uint32_t n=0;while(n<count&&full_pin_time(events,n)<=full_audio_at){full_audio_levels=full_pin_levels(events,n);n++;}
-  device_consume_pin_events(n);if(n<count)break;
- }
 }
 static uint64_t full_audio_deadline64(void){
  if(full_ps)return device_next_sample_ps(full_audio_start,full_audio_frame+1,full_audio_rate);
@@ -360,17 +363,18 @@ static void full_audio_collect(void){
  if(end>full_time64())end=full_time64();
  uint64_t at=full_audio_at;
  uint32_t count;const void *events;
- while((events=full_pin_events(&count))&&count){
+ while((events=device_audio_pin_events(&count))&&count){
   uint32_t n=0;
   while(n<count&&full_pin_time(events,n)<=end){
    uint64_t time=full_pin_time(events,n);if(time<at)time=at;
    for(int ch=0;ch<2;ch++)if(full_audio_levels&(1<<ch))full_audio_area[ch]+=time-at;
    at=time;full_audio_levels=full_pin_levels(events,n);n++;
   }
-  device_consume_pin_events(n);if(n<count)break;
+  device_consume_audio_pin_events(n);if(n<count)break;
  }
  for(int ch=0;ch<2;ch++)if(full_audio_levels&(1<<ch))full_audio_area[ch]+=end-at;
  full_audio_at=end;
+ device_discard_audio_trace(end);
 }
 void avr_device_audio_begin(void){full_audio_active=1;full_audio_collect();}
 void avr_device_audio_end(void){full_audio_active=0;}

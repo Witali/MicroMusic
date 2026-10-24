@@ -220,7 +220,7 @@ static int clki_advance(uint64_t wanted,uint64_t wall,uint64_t *consumed,uint32_
  if(!wanted){advance_to(board.base);return board.fault||board.reset_requested?-1:1;}
  if(board.reset_held||reset_starting()||power_recovering())return 0;
  while(board.half<target&&board.base<limit&&!board.fault&&!board.reset_requested&&
-       (!pin_limit||board.pin_count<pin_limit)){
+       !pin_buffer_ready(pin_limit)){
   uint64_t previous=board.base;
   advance_to(minimum(next_event(),limit));
   if(previous==board.base&&!board.fault&&!board.reset_requested){fail(DEVICE_FAULT_TIME,13);break;}
@@ -229,7 +229,7 @@ static int clki_advance(uint64_t wanted,uint64_t wall,uint64_t *consumed,uint32_
  if(*consumed>wanted){fail(DEVICE_FAULT_TIME,14);return -1;}
  if(board.fault||board.reset_requested)return -1;
  if(*consumed==wanted)return 1;
- if(pin_limit&&board.pin_count>=pin_limit)return 2;
+ if(pin_buffer_ready(pin_limit))return 2;
  board.clki_status=limit<wall&&board.base==limit?2:1;
  return 0;
 }

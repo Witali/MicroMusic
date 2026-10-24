@@ -127,14 +127,21 @@ periods; `base_half` remains authoritative at an endpoint between clock edges.
 The board captures physical six-pin levels, drive masks, pullups, floating pins
 and contention into1024 fixed16-byte records. Unlike Timer0 OC latch snapshots,
 these records include DDRB and port-mux effects. Timestamps use `base_half`.
-Same-time mutations coalesce. `device_pin_events` exposes a contiguous ring
+Same-time mutations coalesce. `device_pin_events` exposes a contiguous host ring
 batch and `device_consume_pin_events` releases it without allocation or copying.
-A C renderer can integrate intervals into audio and call JavaScript once per
-audio block. No output transition invokes JavaScript.
+Native PCM has a separate1024-record ring, selected by mono/stereo pin levels;
+host consume/clear cannot steal its transitions. The default host mask63 retains
+the former full trace and legacy audio discard. Explicit masks and retained
+history are independent of live GPIO and all internal pin consumers. See the
+[pin observation contract](../devices/attiny13a/pin-observation.md).
+No output transition invokes JavaScript.
 
 Buffer overflow latches `DEVICE_FAULT_OUTPUT_OVERFLOW` and increments a visible
-drop counter; callers must drain the ring during bounded runs. Input queues are
-also bounded and fail explicitly. Fault code/detail identify the first failure.
+host drop counter; private PCM has its own counter. Callers must drain explicitly
+retained host history during bounded runs. Resumable native audio drains its own
+history at sample boundaries and queue pressure; ordinary clocks remain eager.
+Input queues are also bounded and fail
+explicitly. Fault code/detail identify the first failure.
 
 ## Remaining boundaries and validation
 

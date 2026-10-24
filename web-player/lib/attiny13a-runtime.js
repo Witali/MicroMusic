@@ -229,6 +229,25 @@ export class ATtiny13A extends TranslatedCore {
     if(status===1)return true;if(status===-1)return false;
     throw Error('Invalid CLKI periodic segment (native status '+status+')');
   }
+  get pinObservation(){
+    const supported=typeof this._exports.avr_device_pin_trace_config==='function'&&
+      typeof this._exports.avr_device_pin_trace_configuration==='function';
+    const configuration=supported?this._exports.avr_device_pin_trace_configuration():63;
+    return {supported,mask:configuration&63,retainDuringAudio:!!(configuration&256)};
+  }
+  observePins(mask,options={}){
+    if(!options||typeof options!=='object'||Array.isArray(options)||
+      ![Object.prototype,null].includes(Object.getPrototypeOf(options))||
+      Object.keys(options).some(key=>key!=='retainDuringAudio'))throw Error('Invalid pin observation configuration');
+    const {retainDuringAudio=true}=options;
+    if(!Number.isInteger(mask)||mask<0||mask>63||typeof retainDuringAudio!=='boolean')
+      throw Error('Invalid pin observation configuration');
+    if(!this.pinObservation.supported)throw Error('Runtime has no independent pin observation');
+    if(!this._exports.avr_device_pin_trace_config(mask,Number(retainDuringAudio)))
+      throw Error('Invalid pin observation configuration');
+    // This is a current baseline, not a synthetic historical trace event.
+    return {...this.state(),pinObservation:this.pinObservation};
+  }
   drainPins(){
     this._clockDomain(false);return this._drainPins('','baseHalf');
   }

@@ -125,8 +125,9 @@ void device_advance_half(uint64_t cpu_half_cycles);
  * The caller owns remaining instruction work and must cancel it on reset. */
 int device_advance_half_until_ps(uint64_t wanted,uint64_t wall_deadline_ps,
                                  uint64_t *consumed);
-/* In CLKI mode, same continuation contract plus return2 BUFFER_READY when the
- * physical pin ring is half full. The native consumer drains it and retries
+/* In CLKI mode, same continuation contract plus return2 BUFFER_READY when a
+ * PCM or legacy audio-owned host ring is half full. The native consumer drains
+ * these queues and retries
  * the remaining phase before returning to generated code. Fixed internal
  * sources retain the ordinary bounded advance. No effect is repeated. */
 int device_advance_half_until_ps_buffered(uint64_t wanted,uint64_t wall_deadline_ps,
@@ -145,8 +146,10 @@ uint64_t device_virtual_half(void);
  * GPIO/analog register APIs and ring consume remain common to both modes. */
 uint64_t device_time_ps(void);
 uint64_t device_wait_until_ps(uint64_t deadline_ps);
-/* Native streaming consumer variant. May yield early when the pin ring is
- * half full, so C/WASM can drain it before continuing the same wall deadline.
+/* Native streaming consumer variant. May yield early when a PCM or legacy
+ * audio-owned host ring is half full, so C/WASM can drain it before continuing
+ * the same wall deadline. Explicitly retained host history is never a yield
+ * condition: its owner must drain it, otherwise append reports overflow.
  * This neither consumes pins nor invokes a JavaScript callback. */
 uint64_t device_wait_until_ps_buffered(uint64_t deadline_ps);
 uint64_t device_startup_deadline_ps(void);
@@ -212,4 +215,28 @@ const device_pin_event_ps_t *device_pin_state_ps(void);
 void device_consume_pin_events(uint32_t count);
 uint64_t device_dropped_pin_events(void);
 void device_clear_pin_events(void);
+/* Host observation, independent of live GPIO and the native PCM consumer.
+ * Post-init mask0..63 selects changes in all five pin metadata bytes; retain
+ * selects explicit ownership during audio. Default63/0 preserves legacy audio
+ * auto-discard. Changes retain queued rows and create no synthetic snapshot;
+ * read device_pin_state[_ps] for the current unmasked baseline. MCU reset
+ * preserves subscriptions/history; cold init restores defaults. Invalid
+ * requests return0 without changing state. Getter packs mask|(retain<<8). */
+int device_configure_pin_trace(uint32_t mask,uint32_t retain_during_audio);
+uint32_t device_pin_trace_configuration(void);
+/* Internal native-audio subscription. Valid masks0/2/3 mean off/PB1/PB0+PB1.
+ * Starting a new audio timeline clears only its own queue, with no fake initial
+ * event. Capture initial live levels separately. PCM records level changes;
+ * host consume/clear never consumes them. Both time contracts use the same
+ * event layout. A configured subscription persists between capture calls and
+ * across MCU reset; its bounded backlog faults on overflow. */
+int device_configure_audio_pins(uint8_t mask);
+const device_pin_event_t *device_audio_pin_events(uint32_t *count);
+void device_consume_audio_pin_events(uint32_t count);
+/* Preserve the former audio-owned host-history discard only for retain0. */
+void device_discard_audio_trace(uint64_t until);
+/* Native audio pressure query over TOTAL queue occupancy, including wrap.
+ * Ready at512 rows in PCM or legacy auto-discard host history. Explicitly
+ * retained host history is the host consumer's responsibility. No mutation. */
+int device_pin_buffer_ready(void);
 #endif

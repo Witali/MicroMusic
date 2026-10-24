@@ -392,8 +392,20 @@ The generated WASM loop captures up to 4096 samples per host
 call, consuming transitions during instruction execution and halted waits.
 Even maximum-rate pin toggling need not fit a whole audio interval in the
 trace ring. The JS renderer applies the existing
-audio filters to these samples. Direct trace consumers must drain the bounded
-1024-record ring during long runs; overflow is an explicit fault.
+audio filters to these samples. PCM uses a private1024-record ring, independent
+of host `drainPins[Ps]()` calls. Resumable physical capture collects at sample
+boundaries and queue pressure, restoring headroom before long phases. Ordinary
+clock/wait calls retain eager collection to avoid adding per-instruction guards.
+
+`pinObservation` reports optional host trace support. `observePins(mask,
+{retainDuringAudio:true})` selects PB0..PB5 history and returns a live baseline
+without creating past events or clearing queued rows. The cold default remains
+full trace with legacy audio discard. Explicit retained history must be drained
+boundedly by its host; mask0 suppresses new host rows while native PCM and all
+internal pin consumers remain active. Overflow is an explicit fault. Original
+package runtimes without this API retain their prior behavior. See the
+[pin observation contract](devices/attiny13a/pin-observation.md) for queue
+ownership, reset, partial-phase and long-span limits.
 
 All IRQ sources and six ADC auto-trigger sources are routed by
 [`peripherals/device.c`](peripherals/device.c). The full wait accelerator uses
