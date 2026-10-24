@@ -61,5 +61,26 @@ class Product233Tests(unittest.TestCase):
             candidate=fit.apply(s,action);self.assertIsNotNone(candidate);fit.expand(candidate)
             self.assertEqual(s.fields(),before)
 
+    def test_phase_flags_use_reserved_record_bits_without_growing_the_tables(self):
+        books=self.books();attack=(np.arange(16)%2).astype(np.int16);hold=((np.arange(16)//2)%2).astype(np.int16)
+        payload=codec.pack_tables(*books,attack,hold);self.assertEqual(len(payload),96)
+        for expected,actual in zip((*books,attack,hold),codec.unpack_tables(payload,phase_flags=True)):
+            np.testing.assert_array_equal(expected,actual)
+        with self.assertRaises(ValueError):codec.unpack_tables(payload)
+        with self.assertRaises(ValueError):codec.pack_tables(*books,np.full(16,2),hold)
+
+    def test_zero_phase_flags_preserve_legacy_pcm_and_hold_avoids_short_frame_starvation(self):
+        root=np.zeros((16,4),np.int16);book=np.zeros((16,3),np.int16)
+        s=fit.State(np.full(8,90,np.int16),np.full(8,2,np.int16),np.full(8,64,np.int16),
+            np.zeros((8,3),np.int16),np.zeros(8,np.int16),root,book,book.copy(),np.zeros((8,16),np.int16))
+        s.waves_q1[0,0]=4
+        actual,counts=fit.render(s,4,True);old,old_counts=fit.fit.render(fit.expand(s),4,True)
+        np.testing.assert_array_equal(actual,old);np.testing.assert_array_equal(counts,old_counts)
+        np.testing.assert_array_equal(actual,np.full(len(actual),128,np.uint8))
+        s.hold_flags[0]=1;continuous,cc=fit.render(s,4,True)
+        self.assertTrue(np.any(continuous!=128));self.assertFalse(np.any(cc));self.assertEqual(int(continuous[0]),128)
+        s.hold_flags[0]=0;s.attack_flags[0]=1;immediate,ic=fit.render(s,4,True)
+        self.assertNotEqual(int(immediate[0]),128);self.assertFalse(np.any(ic))
+
 
 if __name__=='__main__':unittest.main()

@@ -92,7 +92,7 @@ def render(steps,gains,durations,coefficients,modes,waves,offsets,resets,tilt_sh
 
 
 @njit(cache=True)
-def legacy_excitation(pitches,gains,durations,modes,waves,halves,pitch_bits=1,phase_mode=0):
+def legacy_excitation(pitches,gains,durations,modes,waves,halves,pitch_bits=1,phase_mode=0,phase_modes=None):
     """One-bit legacy or explicitly selected two-bit period fractions."""
     rows=np.empty(int(durations.sum()),np.int32);excitation=np.empty(len(rows),np.int32)
     seed,phase,frame,next_t=0xa7,1,0,int(durations[0])-1
@@ -104,15 +104,18 @@ def legacy_excitation(pitches,gains,durations,modes,waves,halves,pitch_bits=1,ph
                 if frame==len(pitches):frame=0
                 next_t+=int(durations[frame])
             old_period=period;period=int(pitches[frame]);half=int(halves[frame])
-            if phase_mode==0 or n==0 or old_period==0 or period==0:
+            active_mode=phase_mode if phase_modes is None else int(phase_modes[frame])
+            if active_mode==0 or active_mode==3 or n==0 or old_period==0 or period==0:
                 cycle_extra=0;fraction_acc=3;phase=period;cycle_period=period
-                if phase_mode==2 and period:phase=1
+                if (active_mode==2 or active_mode==3) and period:phase=1
             gain=int(gains[frame]);mode=int(modes[frame])
         ex=0
         if period:
             phase=(phase-1)&255
             if not phase:
-                if pitch_bits==1:cycle_extra^=half
+                if pitch_bits==1:
+                    if half:cycle_extra^=1
+                    else:cycle_extra=0
                 else:
                     total=fraction_acc+half;cycle_extra=total>>2;fraction_acc=total&3
                 phase=period+cycle_extra;cycle_period=phase;ex=int(waves[mode,0])*gain

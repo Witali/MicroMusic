@@ -4,7 +4,7 @@ Teacher coefficients initialize the dictionaries; the original PCM decides all
 subsequent choices. Exact serialized size excludes the unimplemented decoder.
 """
 import argparse
-from dataclasses import dataclass
+from dataclasses import dataclass,field
 import hashlib
 import importlib.util
 import json
@@ -33,14 +33,39 @@ class State:
     middle:np.ndarray
     tail:np.ndarray
     waves_q1:np.ndarray
+    attack_flags:np.ndarray=field(default_factory=lambda:np.zeros(16,np.int16))
+    hold_flags:np.ndarray=field(default_factory=lambda:np.zeros(16,np.int16))
 
     def copy(self):return State(*(v.copy() for v in self.__dict__.values()))
     def fields(self):return {k:v.tolist() for k,v in self.__dict__.items()}
 
 
 def expand(s):
+    codec.phase_tables(s.attack_flags,s.hold_flags)
     p,g,d,k,m,h=codec.expand(s.pitches,s.local_gains,s.durations,s.indices,s.halves,s.root,s.middle,s.tail)
     result=fit.State(p,g,d,k,m,s.waves_q1,h);fit.validate(result);return result
+
+
+def render(s,bits,nearest):
+    state=expand(s)
+    flags=(s.attack_flags[s.indices[:,1]]<<1)|s.hold_flags[s.indices[:,2]]
+    modes=flags^(flags>>1) # packed 10 means reset-immediate; 11 continuous-immediate
+    rows,excitation=fit.codec.legacy_excitation(state.pitches,state.gains_q1,state.durations,
+        state.modes,state.waves_q1,state.halves,phase_modes=modes)
+    excitation[state.pitches[rows]==0]*=2
+    return fit.codec.filter_signal(excitation,rows,state.coefficients,state_bits=bits,nearest=nearest,fraction_bits=2)
+
+
+def from_model(model):
+    if model['schema'] not in (codec.SCHEMA,codec.PHASE_SCHEMA):raise ValueError('Expected tagged product model')
+    values={name:np.asarray(model[name],np.int16) for name in State.__annotations__
+        if name not in ('attack_flags','hold_flags')}
+    for name in ('attack_flags','hold_flags'):
+        if model['schema']==codec.PHASE_SCHEMA:values[name]=np.asarray(model[name],np.int16)
+        else:
+            values[name]=np.zeros(16,np.int16)
+            if name in model and np.any(model[name]):raise ValueError('Phase flags require the phase schema')
+    state=State(**values);expand(state);return state
 
 
 def medoids(distance,count=16):
@@ -93,7 +118,11 @@ def initialize(teacher):
     return state
 
 
-def actions(s):
+def actions(s,fit_phase=False):
+    if fit_phase:
+        for row in range(16):
+            yield ('attack',row,0,1-int(s.attack_flags[row]))
+            yield ('hold',row,0,1-int(s.hold_flags[row]))
     for row in range(len(s.pitches)):
         for column in range(3):
             for label in range(16):
@@ -143,6 +172,8 @@ def apply(s,action):
             if not 0<=target<=7:return None
             c.root[row,3]=target
         elif kind=='mode':c.root[row,2]=value
+        elif kind=='attack':c.attack_flags[row]=value
+        elif kind=='hold':c.hold_flags[row]=value
         elif kind=='wave':
             target=int(c.waves_q1[row,column])+value
             if not -7<=target<=7:return None
@@ -157,11 +188,12 @@ def apply(s,action):
     return c
 
 
-def run(reference_path,teacher_path,output,evaluations=12000):
+def run(reference_path,teacher_path,output,evaluations=12000,fit_phase=False):
     if evaluations<0:raise ValueError('Expected nonnegative evaluation budget')
     start=time.perf_counter();meta=json.loads(teacher_path.read_text(encoding='utf-8'))
-    if meta['schema']==codec.SCHEMA:s=State(*(np.asarray(meta[k],np.int16) for k in State.__annotations__))
+    if meta['schema'] in (codec.SCHEMA,codec.PHASE_SCHEMA):s=from_model(meta)
     else:s=initialize(fit.load(teacher_path))
+    fit_phase=fit_phase or meta['schema']==codec.PHASE_SCHEMA
     bits,nearest=meta['state_bits'],meta['nearest'];x,sr=sf.read(reference_path,dtype='float64')
     if sr!=7500 or x.ndim!=1 or len(x)!=int(s.durations.sum()):raise ValueError('Expected complete mono7500 original')
     reference_hash=hashlib.sha256(reference_path.read_bytes()).hexdigest()
@@ -170,7 +202,7 @@ def run(reference_path,teacher_path,output,evaluations=12000):
         for p in (Path(__file__),ROOT/'ATtiny13A/Sound/codec/q4_product233.py',ROOT/'tools/refine-q4-lattice.py',ROOT/'ATtiny13A/Sound/codec/q4_phase_wave.py')}
     spectral=fit.SpectrogramObjective(x);history=[];epochs=[];evaluated=0
     def score(state,detail=False):
-        pcm,counts=fit.render(expand(state),bits,nearest);raw=pcm.astype(np.int16)-128;y=raw.astype(float)/128
+        pcm,counts=render(state,bits,nearest);raw=pcm.astype(np.int16)-128;y=raw.astype(float)/128
         q=dict(stoi=float(fit.stoi(x,y,7500)),**spectral.evaluate(y),raw_mean=float(y.mean()),
             peak=int(abs(raw).max()),maximum_step=int(abs(np.diff(raw)).max()),wrap_counts=counts.tolist(),
             guards_pass=bool(not np.any(counts) and abs(raw).max()<=115 and not np.any(abs(np.diff(raw))>=48)),
@@ -178,13 +210,16 @@ def run(reference_path,teacher_path,output,evaluations=12000):
         if detail:q.update(estoi=fit.deterministic_estoi(x,y,7500),harmonic_metrics=fit.HarmonicTrackObjective(x).evaluate(y))
         return q
     def energy(q):return fit.energy(q)+1000*sum(q['wrap_counts'])+10*max(0,q['peak']-115)+10*max(0,q['maximum_step']-47)
-    def export(state):return dict(schema=codec.SCHEMA,sample_rate=7500,state_bits=bits,nearest=nearest,
-        **state.fields(),reference_sha256=reference_hash,avr_implemented=False,hardware_tested=False)
+    def export(state):
+        fields=state.fields()
+        if not fit_phase:fields.pop('attack_flags');fields.pop('hold_flags')
+        return dict(schema=codec.PHASE_SCHEMA if fit_phase else codec.SCHEMA,sample_rate=7500,state_bits=bits,nearest=nearest,
+            **fields,reference_sha256=reference_hash,avr_implemented=False,hardware_tested=False)
     output.mkdir(parents=True,exist_ok=True);initial=current=score(s,True);fit.save(output/'initial-model.json',export(s))
     print(json.dumps(dict(evaluated=0,score=initial)),flush=True)
     epoch=0
     while evaluated<evaluations:
-        accepted=0;proposals=list(actions(s))
+        accepted=0;proposals=list(actions(s,fit_phase))
         if epoch%2:proposals.reverse()
         for action in proposals:
             if evaluated>=evaluations:break
@@ -198,13 +233,15 @@ def run(reference_path,teacher_path,output,evaluations=12000):
                 print(json.dumps(dict(evaluated=evaluated,accepted=len(history),stoi=current['stoi'],spectrum=current['spectrogram_loss'],guards_pass=current['guards_pass'])),flush=True)
         epochs.append(dict(epoch=epoch,evaluated=evaluated,accepted=accepted));epoch+=1
         if not accepted:break
-    table=codec.pack_tables(s.root,s.middle,s.tail);payload=codec.pack_frames(s.pitches,s.local_gains,s.durations,s.indices,s.halves)
-    for expected,got in zip((s.root,s.middle,s.tail),codec.unpack_tables(table)):np.testing.assert_array_equal(expected,got)
+    table=codec.pack_tables(s.root,s.middle,s.tail,s.attack_flags if fit_phase else None,s.hold_flags if fit_phase else None)
+    payload=codec.pack_frames(s.pitches,s.local_gains,s.durations,s.indices,s.halves)
+    expected_tables=(s.root,s.middle,s.tail,s.attack_flags,s.hold_flags) if fit_phase else (s.root,s.middle,s.tail)
+    for expected,got in zip(expected_tables,codec.unpack_tables(table,phase_flags=fit_phase)):np.testing.assert_array_equal(expected,got)
     for expected,got in zip((s.pitches,s.local_gains,s.durations,s.indices,s.halves),codec.unpack_frames(payload)):np.testing.assert_array_equal(expected,got)
     final=score(s,True);fit.save(output/'model.json',export(s))
-    pcm,_=fit.render(expand(s),bits,nearest);sf.write(output/'decoded.wav',(pcm.astype(float)-128)/128,7500,subtype='PCM_16')
+    pcm,_=render(s,bits,nearest);sf.write(output/'decoded.wav',(pcm.astype(float)-128)/128,7500,subtype='PCM_16')
     report=dict(schema='q4-product233-study-v1',initial=initial,final=final,evaluated=evaluated,accepted=len(history),history=history,epochs=epochs,
-        table_bytes=len(table),stream_bytes=len(payload),data_bytes=len(table)+len(payload),
+        table_bytes=len(table),stream_bytes=len(payload),data_bytes=len(table)+len(payload),fit_phase=fit_phase,
         source_sha256_normalized_lf=source_hashes,reference_sha256=reference_hash,
         seed_sha256=hashlib.sha256(teacher_path.read_bytes()).hexdigest(),elapsed_seconds=time.perf_counter()-start,
         avr_implemented=False,hardware_tested=False,policy='Exact packed PC format; no total decoder-size or timing claim; invalid guard endpoints are not playable candidates')
@@ -215,4 +252,5 @@ if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     for key in ('reference','teacher','output'):p.add_argument('--'+key,type=Path,required=True)
     p.add_argument('--evaluations',type=int,default=12000)
-    a=p.parse_args();run(a.reference,a.teacher,a.output,a.evaluations)
+    p.add_argument('--fit-phase',action='store_true')
+    a=p.parse_args();run(a.reference,a.teacher,a.output,a.evaluations,a.fit_phase)

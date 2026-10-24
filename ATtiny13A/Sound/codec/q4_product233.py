@@ -7,6 +7,7 @@ The 96 table bytes and frame bytes exclude decoder, EOF and waveform storage.
 import numpy as np
 
 SCHEMA='q4-product233-v1'
+PHASE_SCHEMA='q4-product233-phase-v1'
 OFFSETS=np.array([0,2,4,6,8,10,12,16],np.int16)
 
 
@@ -20,20 +21,31 @@ def tables(root,middle,tail):
     return r,a,b
 
 
-def pack_tables(root,middle,tail):
+def phase_tables(attack,hold):
+    a,h=map(np.asarray,(attack,hold))
+    if any(v.dtype.kind not in 'iu' or v.shape!=(16,) or not np.all(np.isin(v,[0,1])) for v in (a,h)):
+        raise ValueError('Expected sixteen binary attack and hold flags')
+    return a,h
+
+
+def pack_tables(root,middle,tail,attack=None,hold=None):
     r,a,b=(v.astype(np.int64) for v in tables(root,middle,tail))
     words=[(r[:,0]+16)|((r[:,1]+16)<<5)|(r[:,2]<<10)|(r[:,3]<<13)]
     for v in (a,b):words.append((v[:,0]+16)|((v[:,1]+16)<<5)|((v[:,2]+16)<<10))
+    if attack is not None or hold is not None:
+        attack,hold=phase_tables(attack,hold)
+        words[1]|=attack.astype(np.int64)<<15;words[2]|=hold.astype(np.int64)<<15
     return np.concatenate(words).astype('<u2').tobytes()
 
 
-def unpack_tables(payload):
+def unpack_tables(payload,phase_flags=False):
     if len(payload)!=96:raise ValueError('Expected exactly 96 table bytes')
     r,a,b=np.frombuffer(payload,dtype='<u2').astype(np.int32).reshape(3,16)
-    if np.any(a&32768) or np.any(b&32768):raise ValueError('Reserved dictionary bits')
+    if not phase_flags and (np.any(a&32768) or np.any(b&32768)):raise ValueError('Reserved dictionary bits')
     root=np.column_stack(((r&31)-16,((r>>5)&31)-16,(r>>10)&7,r>>13)).astype(np.int16)
     decode=lambda x:np.column_stack(((x&31)-16,((x>>5)&31)-16,((x>>10)&31)-16)).astype(np.int16)
     middle,tail=decode(a),decode(b);tables(root,middle,tail)
+    if phase_flags:return root,middle,tail,(a>>15).astype(np.int16),(b>>15).astype(np.int16)
     return root,middle,tail
 
 

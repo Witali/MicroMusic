@@ -68,6 +68,11 @@ class QuarterTests(unittest.TestCase):
         _,signal=fit.base.codec.legacy_excitation(p,g,d,m,b,h,pitch_bits=2,phase_mode=1)
         peaks=np.flatnonzero(signal)
         np.testing.assert_array_equal(np.diff(peaks),np.resize([2,1,1,1],len(peaks)-1))
+        p=np.ones(2,np.int16);g=np.ones(2,np.int16);d=np.full(2,64,np.int16)
+        m=np.zeros(2,np.int16);h=np.array([1,0],np.int16)
+        rows,signal=fit.base.codec.legacy_excitation(p,g,d,m,b,h,phase_mode=1)
+        peaks=np.flatnonzero((signal!=0)&(rows==1))
+        np.testing.assert_array_equal(np.diff(peaks),np.ones(len(peaks)-1,np.int64))
 
 
 if __name__=='__main__':unittest.main()
