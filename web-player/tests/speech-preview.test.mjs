@@ -11,8 +11,11 @@ const previews=JSON.parse(read('web-player/audio/speech-previews/manifest.json')
 
 test('published preview is the measured Q5 output with a paired mobile copy and no firmware-fit claim',()=>{
   const catalog=JSON.parse(read('web-player/hq4-firmware.json'));
-  const entry=previews.entries[0],paired=catalog.entries.find(row=>row.id===entry.firmwareId);
-  assert.deepEqual(paired.qualityPreview,entry);assert.equal(entry.flashQualified,false);
+  const entry=previews.entries[0],paired=catalog.entries.find(row=>row.id===entry.catalogId);
+  assert.equal(paired.playback,'audio');assert.equal(paired.audioUrl,entry.audioUrl);
+  assert.equal(paired.playbackUrl,entry.playbackUrl);assert.equal(paired.flashHex,undefined);
+  assert.equal(paired.flashBytes,undefined);assert.equal(paired.flashQualified,false);
+  assert.equal(entry.flashQualified,false);
   assert.equal(entry.releaseStatus,'pc-prototype');assert.equal(entry.stoi,.893135861645246);
   for(const [url,sha,rate] of [[entry.audioUrl,entry.audioSha256,7500],[entry.playbackUrl,entry.playbackSha256,44100]]){
     const bytes=read('web-player/'+url);assert.equal(hash(bytes),sha);
@@ -27,34 +30,53 @@ test('published preview is the measured Q5 output with a paired mobile copy and 
     }
   }
   assert.equal(hash(read('web-player/audio/speech-previews/vinni-q5-model.json')),entry.modelSha256);
+  const html=read('web-player/index.html').toString();
+  assert.doesNotMatch(html,/id="speech-preview"|id="play-improved"/);
 });
 
-test('improved speech, original and AVR playback stop each other and the preview does not repeat',async()=>{
-  const app=await playerApp({firmware:'hq4-vinni'}),{get,original}=app,improved=get('improved-audio');
-  assert.equal(get('speech-preview').hidden,false);assert.match(improved.src,/vinni-q5-playback\.wav$/);
-  await get('play-improved').onclick();assert.equal(improved.paused,false);assert.equal(app.contexts.length,0);
-  assert.equal(get('run-status').textContent,'Улучшенная запись Q5');assert.match(get('speech-preview-score').textContent,/0,8931/);
+test('Q5 uses the catalog and main transport, supports pause and original, and does not repeat',async()=>{
+  const app=await playerApp({firmware:'hq4-vinni-q5'}),{get,original}=app,improved=get('improved-audio');
+  assert.match(improved.src,/vinni-q5-playback\.wav$/);assert.equal(app.workers.length,0);
+  assert.equal(app.selectors.get('.inspector').hidden,true);assert.equal(get('cutoff-control').hidden,true);
+  assert.equal(get('download').textContent,'↓ WAV');assert.match(get('download').href,/vinni-q5\.wav$/);
+  await get('play').onclick();assert.equal(improved.paused,false);assert.equal(app.contexts.length,0);
+  assert.equal(get('run-status').textContent,'Улучшенная запись Q5');assert.equal(get('play-label').textContent,'Пауза');
+  improved.currentTime=.7;await get('play').onclick();assert.equal(improved.paused,true);assert.equal(improved.currentTime,.7);
+  await get('play').onclick();improved.emit('timeupdate');assert.equal(get('elapsed').textContent,'00:00.7');
   improved.currentTime=.7;await get('play-original').onclick();assert.equal(improved.paused,true);assert.equal(improved.currentTime,0);
-  await get('play-improved').onclick();assert.equal(original.paused,true);
-  await get('play').onclick();assert.equal(improved.paused,true);assert.equal(app.body.dataset.playing,'true');
-  await get('play-improved').onclick();assert.equal(app.body.dataset.playing,'false');
-  improved.finish();assert.equal(get('play-improved').getAttribute('aria-pressed'),'false');
-  assert.equal(improved.plays,3);assert.equal(get('error').hidden,true);
+  await get('play').onclick();assert.equal(original.paused,true);
+  improved.finish();assert.equal(get('play-label').textContent,'Ещё раз');assert.equal(app.body.dataset.playing,'false');
+  await get('play').onclick();assert.equal(improved.currentTime,0);
+  assert.equal(improved.plays,4);assert.equal(get('error').hidden,true);
+  get('catalog').children.map(row=>row.children[0]).find(card=>card.dataset.firmware==='hq4-vinni').onclick();
+  assert.equal(improved.paused,true);assert.equal(app.selectors.get('.inspector').hidden,false);
+  assert.equal(get('download').textContent,'↓ Flash HEX');assert.equal(app.workers.length,1);
 });
 
 test('improved playback cancels a pending AVR audio start',async()=>{
   const app=await playerApp({firmware:'hq4-vinni',holdWorklet:true}),{get}=app;
-  const pending=get('play').onclick();await get('play-improved').onclick();
+  const pending=get('play').onclick();
+  get('catalog').children.map(row=>row.children[0]).find(card=>card.dataset.firmware==='hq4-vinni-q5').onclick();
+  await get('play').onclick();
   app.workletSetup.resolve();await pending;
-  assert.equal(get('improved-audio').paused,false);assert.equal(app.body.dataset.playing,'false');
+  assert.equal(get('improved-audio').paused,false);assert.equal(app.body.dataset.playing,'true');
   assert.ok(app.worklets.every(node=>node.messages.every(message=>message.type!=='playing'||message.value===false)));
 });
 
 test('changing the phrase cancels a preview and ignores its stale play rejection',async()=>{
-  const app=await playerApp({firmware:'hq4-vinni'}),{get}=app,improved=get('improved-audio');
-  improved.pendingPlay=deferred();const pending=get('play-improved').onclick();
+  const app=await playerApp({firmware:'hq4-vinni-q5'}),{get}=app,improved=get('improved-audio');
+  improved.pendingPlay=deferred();const pending=get('play').onclick();
   const next=get('catalog').children.map(row=>row.children[0]).find(card=>card.dataset.firmware==='hq4-chego-tiny');next.onclick();
   improved.pendingPlay.reject(new Error('Canceled old playback'));await pending;
-  assert.equal(get('speech-preview').hidden,true);assert.equal(improved.src,'');assert.equal(improved.paused,true);
+  assert.equal(improved.src,'');assert.equal(improved.paused,true);
   assert.equal(get('error').hidden,true);
+});
+
+test('the previously published preview link now selects Q5 in the catalog',async()=>{
+  const app=await playerApp({firmware:'hq4-vinni',hash:'#speech-preview'});
+  assert.equal(app.location.searchParams.get('firmware'),'hq4-vinni-q5');assert.equal(app.location.hash,'');
+  assert.equal(app.workers.length,0);assert.match(app.get('selected-title').textContent,/Q5/);
+  const cards=app.get('catalog').children.map(row=>row.children[0]);
+  assert.equal(cards.length,4);
+  assert.match(cards.find(card=>card.dataset.firmware==='hq4-vinni-q5').children[1].children[1].textContent,/аудиопример/);
 });

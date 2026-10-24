@@ -77,7 +77,7 @@ test('legacy speech URLs open the selected version of the same phrase',async()=>
     assert.equal(entry.id,current,previous);
     assert.equal(app.location.searchParams.get('firmware'),current);
     assert.equal(app.original.src,`https://example.test/MicroMusic/web-player/audio/originals/playback/${entry.audioReferenceId}.wav`);
-    assert.equal(app.get('catalog').children.length,3);
+    assert.equal(app.get('catalog').children.length,4);
   }
 });
 

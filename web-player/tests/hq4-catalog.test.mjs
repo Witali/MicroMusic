@@ -24,17 +24,18 @@ function wavData(wav){
   return {format,pcm};
 }
 const catalog=JSON.parse(read('web-player/hq4-firmware.json'));
+const firmwareEntries=catalog.entries.filter(entry=>entry.playback!=='audio');
 const archive=JSON.parse(read('ATtiny13A/Sound/research/hq4-catalog-archive.json'));
 const references=JSON.parse(read('ATtiny13A/Sound/audio-references.json')).clips;
 const frozen=JSON.parse(read('ATtiny13A/Sound/research/FROZEN_VERIFICATION.json')).variants;
 const timbre=Object.fromEntries(['chego','chego-auto','chego-spectrum'].map(name=>
   [name,JSON.parse(read(`ATtiny13A/Sound/codec/timbre/${name}/verification.json`))]));
 
-test('public speech catalog contains one selected image per phrase without private build dependencies',()=>{
-  assert.equal(catalog.entries.length,3);assert.equal(catalog.defaultId,'hq4-chego-tiny');
-  assert.deepEqual(catalog.entries.map(e=>e.id),['hq4-chego-tiny','hq4-otvechaesh-tiny','hq4-vinni']);
-  assert.deepEqual(catalog.entries.map(e=>e.audioReferenceId),['chego','otvechaesh','vinni']);
-  for(const e of catalog.entries){
+test('public speech catalog contains three selected images and the improved Q5 audio entry',()=>{
+  assert.equal(catalog.entries.length,4);assert.equal(catalog.defaultId,'hq4-chego-tiny');
+  assert.deepEqual(catalog.entries.map(e=>e.id),['hq4-chego-tiny','hq4-otvechaesh-tiny','hq4-vinni','hq4-vinni-q5']);
+  assert.deepEqual(firmwareEntries.map(e=>e.audioReferenceId),['chego','otvechaesh','vinni']);
+  for(const e of firmwareEntries){
     assert.equal(e.source,undefined);assert.equal(e.preview,undefined);
     assert.equal(e.reference,undefined);assert.equal(e.originalPlayer,undefined);
     assert.equal(e.sampleHz,7500);assert.equal(e.pwmHz,7500);assert.equal(e.carrierHz,37500);
@@ -61,7 +62,7 @@ test('home page offers the three selected speech phrases and the improved Vinni 
   const speech=html.match(/<article class="player player-speech">([\s\S]*?)<\/article>/)[1];
   const linkedIds=[...new Set([...speech.matchAll(/firmware=([^"&#]+)/g)].map(match=>match[1]))];
   assert.deepEqual(linkedIds,catalog.entries.map(entry=>entry.id));
-  assert.match(speech,/firmware=hq4-vinni#speech-preview/);
+  assert.match(speech,/firmware=hq4-vinni-q5/);
 });
 test('speech variants share the exact public canonical WAV for their phrase',()=>{
   const urls=new Set();
@@ -111,7 +112,7 @@ test('original playback uses standard-rate PCM with the canonical timing, sample
   }
   assert.equal(urls.size,3);
 });
-for(const entry of catalog.entries)test(`${entry.id}: selected Flash/EEPROM plays once and then holds two phrase lengths of silence`,()=>{
+for(const entry of firmwareEntries)test(`${entry.id}: selected Flash/EEPROM plays once and then holds two phrase lengths of silence`,()=>{
   const binary=parseHex(entry.flashHex),eeprom=entry.eepromHex?parseHex(entry.eepromHex,64):null;
   const report=JSON.parse(readFileSync(new URL(entry.verification,new URL('web-player/',root))));
   assert.equal(report.status,'verified');assert.equal(report.verifiedLoops,1);
@@ -157,7 +158,7 @@ test('selected speech listening gain matches the frozen HQ4 of each phrase throu
     let sum=0;for(let i=0;i<count;i+=4096)for(const x of renderer.render(Math.min(4096,count-i)))sum+=x*x;
     return sum/count;
   }
-  for(const entry of catalog.entries){
+  for(const entry of firmwareEntries){
     const reference=references.find(clip=>clip.id===entry.audioReferenceId);
     const baseline=archive.entries.find(old=>old.id==='hq4-'+reference.id);
     const count=Math.round(reference.samples/reference.sample_rate*rate);

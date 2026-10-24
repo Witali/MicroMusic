@@ -11,8 +11,8 @@ The download button offers the canonical 7500 Hz file. Metrics refer to that
 canonical output, not to a newly measured score on the listening copy.
 
 This is a PC prototype. Its complete AVR player, timing and 1024-byte Flash
-budget have not been qualified. The page therefore presents an audio preview
-alongside the existing firmware, with no HEX download for the prototype.
+budget have not been qualified. The page lists Q5 beside the existing firmware versions and plays it with
+the main transport controls. It offers a WAV download for the prototype.
 
 The model, source commit, original hash, PCM hash, file hashes and measured
 results are linked in `manifest.json` and `vinni-q5.json`. Reproduce from the

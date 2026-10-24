@@ -8,7 +8,7 @@ const references=JSON.parse(readFileSync(new URL('../../ATtiny13A/Sound/audio-re
 const flush=()=>new Promise(resolve=>setImmediate(resolve));
 const endFrame=entry=>Math.ceil(entry.phraseSamples/entry.sampleHz*48000);
 
-for(const selected of catalog.entries)test(`${selected.id}: speech completes once and later position messages cannot restart it`,async()=>{
+for(const selected of catalog.entries.filter(entry=>entry.playback!=='audio'))test(`${selected.id}: speech completes once and later position messages cannot restart it`,async()=>{
   const entry={...selected,phraseSamples:references.find(clip=>clip.id===selected.audioReferenceId).samples};
   const app=await playerApp({firmware:entry.id,playOnce:true}),{get}=app;
   await get('play').onclick();

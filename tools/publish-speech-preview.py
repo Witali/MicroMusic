@@ -73,7 +73,7 @@ def export(source):
     details=dict(schema=1,sourceCommit=SOURCE_COMMIT,modelPath=MODEL,modelSha256=sha(model),
         referenceSha256=meta['reference_sha256'],metrics=score,fullPlayerImplemented=False,flashQualified=False)
     (OUTPUT/'vinni-q5.json').write_text(json.dumps(details,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
-    entry=dict(id='vinni-q5',firmwareId='hq4-vinni',title='Винни-Пух · улучшенная речь Q5',
+    entry=dict(id='vinni-q5',firmwareId='hq4-vinni',catalogId='hq4-vinni-q5',title='Винни-Пух · улучшенная речь Q5',
         audioUrl='./audio/speech-previews/vinni-q5.wav',audioSha256=sha(OUTPUT/'vinni-q5.wav'),
         playbackUrl='./audio/speech-previews/vinni-q5-playback.wav',playbackSha256=sha(OUTPUT/'vinni-q5-playback.wav'),
         pcmSha256=pcm_hash,samples=len(pcm),sampleRate=7500,stoi=score['stoi'],spectrogramLoss=score['spectrogram_loss'],
