@@ -18,7 +18,7 @@ typedef struct {
     int16_t exc[40],old_lsp[8],lsp[8],den[8];
     int32_t mem[12];
     int16_t low[40],pcm[80];
-    uint8_t qmf[64],gain[4],first,sub,error;
+    uint8_t qmf[64],gain[4],first,sub,error,repeat_lsp;
     speex_wb1_output_fn output;
     void *context;
 } WbState;
@@ -41,10 +41,13 @@ int speex_wb1_decode(const uint8_t *packet,size_t bytes,speex_wb1_output_fn outp
      * Direct byte windows need no generic cursor or cursor stack frame. */
     a=(((unsigned)(packet[20]&15)<<2)|(packet[21]>>6))*8;
     b=(unsigned)(packet[21]&63)*8;
+    wb.repeat_lsp=1;
     for(i=0;i<8;i++) {
         wb.lsp[i]=(int16_t)(6144+2560*i+32*(int16_t)AVR_READ_I8(high_lsp_cdbk+a+i)+16*(int16_t)AVR_READ_I8(high_lsp_cdbk2+b+i));
+        if(wb.lsp[i]!=wb.old_lsp[i])wb.repeat_lsp=0;
         if(wb.first)wb.old_lsp[i]=wb.lsp[i];
     }
+    if(wb.first)wb.repeat_lsp=1;
     wb.gain[0]=packet[22]>>3;
     wb.gain[1]=((packet[22]&7)<<2)|(packet[23]>>6);
     wb.gain[2]=(packet[23]>>1)&31;
@@ -55,14 +58,46 @@ int speex_wb1_decode(const uint8_t *packet,size_t bytes,speex_wb1_output_fn outp
     return wb.error?-2:result;
 }
 int16_t *speex_wb_low_buffer(void){return wb.low;}
+static SPEEX_NB3_NOINLINE void wb_interpolate(int16_t *interp)
+{
+    /* Unquantized HB1 angles are multiples of 16. Quarter/half shifts
+     * therefore match the two separately rounded upstream P14 products.
+     * Keep each result a convex combination within signed16, then apply
+     * the original margin pass. An outlined Os helper avoids four large
+     * O3-unrolled copies in the synthesis function. */
+    unsigned i;
+    for(i=0;i<8;i++) {
+        int16_t a=wb.old_lsp[i],b=wb.lsp[i];
+        switch(wb.sub) {
+        case 0:interp[i]=a+((b>>2)-(a>>2));break;
+        case 1:interp[i]=(a>>1)+(b>>1);break;
+        case 2:interp[i]=b+((a>>2)-(b>>2));break;
+        default:interp[i]=b;break;
+        }
+    }
+    if(interp[0]<410)interp[0]=410;
+    if(interp[7]>25736-410)interp[7]=25736-410;
+    for(i=1;i<7;i++) {
+        if(interp[i]<interp[i-1]+410)interp[i]=interp[i-1]+410;
+        if(interp[i]>interp[i+1]-410)interp[i]=(interp[i]>>1)+((interp[i+1]-410)>>1);
+    }
+}
 SPEEX_NB3_STAGE void speex_wb_low_ready(const int16_t *low,const int16_t *low_den,const uint8_t *indices,int32_t scale)
 {
     int16_t interp[8],ak[8];int32_t rl=8192,rh=8192,g;int16_t ratio;
+    const int16_t *next_den=wb.den;
+    uint8_t update_lpc=!wb.repeat_lsp || (wb.first && !wb.sub);
     unsigned i,vector;
     if(wb.error)return;
-    lsp_interpolate(wb.old_lsp,wb.lsp,interp,8,wb.sub,4,410);
-    speex_wb_lsp8(interp,ak);
-    for(i=0;i<8;i+=2)rh+=(int32_t)ak[i+1]-ak[i];
+    /* HB1 angles are multiples of 16: equal endpoints interpolate exactly
+     * at every quarter. The margin pass is deterministic as well. The last
+     * LPC is reusable; first-frame subframe zero must populate it once. */
+    if(update_lpc) {
+        wb_interpolate(interp);
+        speex_wb_lsp8(interp,ak);
+        next_den=ak;
+    }
+    for(i=0;i<8;i+=2)rh+=(int32_t)next_den[i+1]-next_den[i];
     for(i=0;i<10;i+=2)rl+=(int32_t)low_den[i+1]-low_den[i];
     if(rh+82<=0 || rl+82<=0) {wb.error=1;return;}
     ratio=(int16_t)SATURATE(PDIV32((rl+82)*128,82+rh),32767);
@@ -78,7 +113,7 @@ SPEEX_NB3_STAGE void speex_wb_low_ready(const int16_t *low,const int16_t *low_de
 #endif
     }
     speex_wb_fold40(wb.exc,g);
-    memcpy(wb.den,ak,sizeof(ak));
+    if(update_lpc)memcpy(wb.den,ak,sizeof(ak));
     speex_wb_qmf40(low,wb.pcm+40,wb.pcm,wb.qmf);
     wb.output(wb.pcm,80,wb.context);wb.sub++;
 }
