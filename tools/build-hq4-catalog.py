@@ -47,15 +47,6 @@ def original_audio(clip):
                 originalPlaybackSha256=copy['sha256'])
 
 
-def listening_levels(catalog, node):
-    levels = subprocess.run([node, str(ROOT/'tools/measure-hq4-level.mjs'), '--stdin'],
-                            cwd=ROOT, input=json.dumps(catalog), capture_output=True, text=True, check=True)
-    for entry in catalog['entries']:
-        gain = json.loads(levels.stdout)['monitorGains'].get(entry['id'])
-        if gain is not None:
-            entry['monitorGain'] = gain
-
-
 def retain_report(report, clip, check):
     path = SOUND/'research/speech-showcase'/clip/'build.json'
     if check:
@@ -163,7 +154,7 @@ def main():
             'flashBytes': len(binary), 'eepromBytes': 0, 'sampleHz': 7500,
             'pwmHz': 7500, 'carrierHz': 37500, 'voices': 1,
             'flashSha256': digest(binary), 'flashHex': intel_hex(binary),
-            'sourceInputs': verification['sourceInputs'], **originals['chego'], 'monitorGain': 1,
+            'sourceInputs': verification['sourceInputs'], **originals['chego'],
             'research': '../ATtiny13A/Sound/codec/' + ('timbre/README.md' if variant == 'chego' else 'AUTO_ENCODER.md'),
         })
     for order, (name, expected) in enumerate(frozen.items(), 1):
@@ -184,7 +175,6 @@ def main():
             **originals[clip],
         })
     archive = result
-    listening_levels(archive, args.node)
     selected = [tiny_entry(clip, originals[clip['id']], args.avr_bin, args.node,args.check)
                 for clip in clips if clip['id'] in ('chego','otvechaesh')]
     selected.append(hq4_once_entry(next(clip for clip in clips if clip['id']=='vinni'),originals['vinni'],args.avr_bin,args.node,args.check))
@@ -195,7 +185,6 @@ def main():
                   entries=selected, archive='../ATtiny13A/Sound/research/hq4-catalog-archive.json',
                   aliases={entry['id']:winners[entry['audioReferenceId']] for entry in archive['entries']
                            if entry['id'] != winners[entry['audioReferenceId']]})
-    listening_levels(dict(entries=selected, referenceEntries=archive['entries']), args.node)
     for path, catalog in ((OUTPUT,result),(ARCHIVE,archive)):
         text = json.dumps(catalog, ensure_ascii=False, indent=2)+'\n'
         if args.check:

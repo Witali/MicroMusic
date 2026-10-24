@@ -4,6 +4,7 @@ import {deferred,playerApp} from './helpers/player-app.mjs';
 
 test('public original plays directly, shares the Pages URL and stops on repeat or firmware playback',async()=>{
   const app=await playerApp(),{original,get}=app;
+  assert.equal(app.workers[0].messages[0].controls.volume,.65);
   assert.equal(get('play-original').hidden,false);
   assert.equal(original.src,'https://example.test/MicroMusic/web-player/audio/originals/playback/chego.wav');
   assert.equal(get('reference-wav').href,'./audio/originals/chego.wav');
@@ -21,6 +22,7 @@ test('public original plays directly, shares the Pages URL and stops on repeat o
   assert.equal(original.paused,false);assert.equal(app.body.dataset.playing,'false');
   assert.equal(app.worklets[0].messages.at(-1).value,false);
   get('volume').value='.25';get('volume').oninput();assert.equal(original.volume,.25);
+  assert.equal(app.workers.at(-1).messages.at(-1).controls.volume,.25);
   original.finish();assert.equal(get('play-original').textContent,'Прослушать оригинал');
 });
 
