@@ -7,10 +7,10 @@
 #endif
 
 static DecState decoder;
-/* qlsp (20 B) stays live throughout the frame. Pitch needs the next 120 B
- * only during excitation; LPC then reuses them for distinct ak/interp arrays
- * at offsets 20/40. Peak = 140 B; the host checks every aligned PUSH. */
-_Alignas(4) static uint32_t scratch[35];
+/* qlsp (20 B) stays live throughout the frame. Zero gain needs the next 30 B
+ * only during excitation; LPC reuses that region for distinct ak/interp arrays
+ * at offsets 20/40. Peak = 60 B; the host checks every aligned PUSH. */
+_Alignas(4) static uint32_t scratch[15];
 static size_t scratch_peak;
 
 #if SPEEX_NB3_CHECK_SCRATCH

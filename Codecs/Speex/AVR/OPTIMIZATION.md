@@ -348,15 +348,38 @@ binary measurements. Vendor and R4 files remain unmodified.
   Reports: segment-{asm,c}-{fixtures,speech,means,pitch-coverage,lsp-reuse}.json,
   segment-short-kernel.json, portable-segment-library.json.
 
-## Next candidates (not yet measured/admitted)
+### One zero vector and a 60-byte scratch arena
 
-1. **Reuse one zero-pitch vector and shrink scratch.** Nonzero excitation now
-   uses no packed buffer. Zero gain still clears/reads 120 B per subframe.
-   Reuse one 30-byte zero vector for all four shape calls, initialize it once
-   per frame when needed, and share the arena with synthesis arrays. qlsp
-   needs 20 B; synthesis needs another 40, so scratch might shrink 140 -> 60 B
-   (80 B saved), while clearing less memory. Measure flag/register overhead,
-   all-zero/no-zero frames, every reinitialization and full PWM before admission.
+The gain-zero path now reuses one immutable 30-byte signed24 vector for its
+four ten-sample calls. Clear it at most once per frame, at the first zero-gain
+subframe; nonzero paths never touch it. Synthesis overwrites this region only
+after all excitation is complete, so the readiness flag must reset each frame.
+qlsp occupies bytes 0..19; the zero vector uses 20..49, and the later ak/interp
+arrays use 20..39 / 40..59. Scratch shrinks 140 -> 60 B in both backends.
+
+AVR GCC 7.3.0, same mixed Os/O2/O3+LTO settings: 14,278 exact frames per
+backend (9,100 corpus, 4,096 pitch/gain, 58 LSP/reset, 1,024 new zero-gain
+transition cases). Native scratch tracking reaches exactly 60 B; native
+upstream arithmetic and two exported public C archives also pass. Static SRAM
+is 1,119 B (80 B saved); stack stays 141 / 153 B, leaving 788 / 776 B free.
+Flash is 9,306 / 11,334 B (+6 / +18). Mean over 31 streams improves 0.0558% /
+0.0474%; human speech improves 0.0097% / 0.0261%. ASM stream means can regress
+up to 0.0165%, and corpus maximum rises 125,587 -> 125,613; C maximum falls
+254,742 -> 254,720. Pitch-coverage maxima are 127,760 / 255,285 cycles.
+On the deliberately mixed zero-gain workload means fall 104,592 -> 103,549 /
+212,344 -> 211,255. This is primarily a memory saving with a small aggregate
+speed gain, not a speedup on every packet. Full ordinary/loaded PWM admission
+for this source is pending; earlier segment-series admission is not its proof.
+Reports: zero-vector-{asm,c}-*.json, zero-vector-host.json,
+zero-vector-native.json and portable-zero-vector-library.json.
+
+## Next candidates (not yet admitted)
+
+1. **Specialize known-zero adaptive arithmetic.** The zero-gain C/ASM kernels
+   still read and clamp a proven-zero packed value. A dedicated transform could
+   remove those operations and its buffer/flag entirely. Preserve exact shape
+   scaling/rounding and measure code duplication versus shared-body overhead;
+   never slow the common nonzero vector to accelerate a rare zero path.
 
 2. **Specialize the one-sample ASM boundary call.** The runtime kernel still
    saves rolling-history/gain registers for count=1. A scalar entry might

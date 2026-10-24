@@ -10,7 +10,9 @@ extern void speex_avr_innovation10(int16_t *, const uint8_t *, const int8_t *, i
 #else
 #include "nb3_c_math.h"
 #endif
-static void speex_avr_innovation(spx_word16_t *out, const uint8_t *pitch,
+/* Zero adaptive gain only: reuse the same immutable ten-sample vector for
+ * all four shape calls. The generic assembly primitive remains unchanged. */
+static void speex_nb3_zero_innovation(spx_word16_t *out, const uint8_t *zero_pitch,
                                   SpeexBits *bits, spx_word32_t scale)
 {
     int vector, sample;
@@ -22,10 +24,10 @@ static void speex_avr_innovation(spx_word16_t *out, const uint8_t *pitch,
         unsigned index = speex_bits_unpack_unsigned(bits, 5);
         const signed char *shape = exc_10_32_table + 10*index;
 #if SPEEX_NB3_USE_AVR_ASM
-        speex_avr_innovation10(out,pitch,shape,scale);
+        speex_avr_innovation10(out,zero_pitch,shape,scale);
         out+=10;
-        pitch+=30;
 #else
+        const uint8_t *pitch=zero_pitch;
         for (sample = 0; sample < 10; ++sample) {
             spx_word32_t innovation = speex_nb3_shape_scale_c(
                 AVR_READ_I8(shape + sample),scale_high,scale_low);
