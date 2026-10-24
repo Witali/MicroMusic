@@ -1,0 +1,147 @@
+{
+  "schema": "micromusic-firmware-output-level-v1",
+  "scope": "Constant gain in the actual speech firmware; no player level matching or clipping.",
+  "results": [
+    {
+      "id": "hq4-chego-tiny",
+      "flashBytes": 1024,
+      "eepromBytes": 64,
+      "imageSha256": "a54f8842cc540b6c5fdc3f757180092fd502dec951cef108a16a010f62392427",
+      "outputLevel": {
+        "implementation": "firmware-constant-gain",
+        "numerator": 143,
+        "shift": 7,
+        "gain": 1.1171875,
+        "clippedSamples": 0,
+        "rounding": "error-feedback",
+        "before": {
+          "minimumDuty": 35,
+          "maximumDuty": 241,
+          "peak": 113,
+          "mean": 0.002387152777777778,
+          "pcmSha256": "65f199e202c8544e254cedae67f7389455d57f68ff56c8e170591c1c19316c85"
+        },
+        "after": {
+          "minimumDuty": 24,
+          "maximumDuty": 254,
+          "peak": 126,
+          "mean": 0.002712673611111111,
+          "pcmSha256": "a77c6af8f54fc75407b71bf93ec3cf3879ec1d91d5ccf6929ce397242a1faef1"
+        }
+      },
+      "beforeMetrics": {
+        "stoi": 0.9106671379676519,
+        "estoi": 0.8571547131301246,
+        "loss": 0.3701210939118079,
+        "log_spectral_error": 0.37023183854862185,
+        "relative_spectral_error": 0.36967811536455214
+      },
+      "afterMetrics": {
+        "stoi": 0.9106126882034381,
+        "estoi": 0.8569776626283737,
+        "loss": 0.3745568285304932,
+        "log_spectral_error": 0.3757714791827312,
+        "relative_spectral_error": 0.3696982259215411
+      },
+      "maximumRoundingErrorLsb": 0.9921875,
+      "maximumCompletionCycles": 1168,
+      "minimumSP": 148,
+      "fullPhraseAndSilenceVerified": true,
+      "hardwareTested": false
+    },
+    {
+      "id": "hq4-otvechaesh-tiny",
+      "flashBytes": 1024,
+      "eepromBytes": 64,
+      "imageSha256": "4326001935e618c2231b2d5c5ae73e8a9ca14121b33bd19f5af13acb81a0ec43",
+      "outputLevel": {
+        "implementation": "firmware-constant-gain",
+        "numerator": 142,
+        "shift": 7,
+        "gain": 1.109375,
+        "clippedSamples": 0,
+        "rounding": "error-feedback",
+        "before": {
+          "minimumDuty": 25,
+          "maximumDuty": 242,
+          "peak": 114,
+          "mean": 0.0071824596774193545,
+          "pcmSha256": "5e78ee705708385d0d6d7fd6ec20e3303d06bf4d86eab05e8b56c93a61755293"
+        },
+        "after": {
+          "minimumDuty": 14,
+          "maximumDuty": 255,
+          "peak": 127,
+          "mean": 0.007938508064516129,
+          "pcmSha256": "5418d3231202067e21c38d8c13c20673f9f457c943777629a35470f643b32afa"
+        }
+      },
+      "beforeMetrics": {
+        "stoi": 0.8408967368617384,
+        "estoi": 0.7052556907477538,
+        "loss": 0.4512716748689613,
+        "log_spectral_error": 0.48679506653575894,
+        "relative_spectral_error": 0.3091781082017706
+      },
+      "afterMetrics": {
+        "stoi": 0.8410880010778667,
+        "estoi": 0.7079547224025834,
+        "loss": 0.45701036038622833,
+        "log_spectral_error": 0.49399365541132206,
+        "relative_spectral_error": 0.3090771802858534
+      },
+      "maximumRoundingErrorLsb": 0.984375,
+      "maximumCompletionCycles": 1211,
+      "minimumSP": 148,
+      "fullPhraseAndSilenceVerified": true,
+      "hardwareTested": false
+    },
+    {
+      "id": "hq4-vinni",
+      "flashBytes": 1024,
+      "eepromBytes": 0,
+      "imageSha256": "b40dde7e648af32d920ed98ccf114470142f361532160e1176dfb31daed09a1b",
+      "outputLevel": {
+        "implementation": "firmware-constant-gain",
+        "numerator": 2,
+        "shift": 0,
+        "gain": 2.0,
+        "clippedSamples": 0,
+        "rounding": "nearest",
+        "before": {
+          "minimumDuty": 90,
+          "maximumDuty": 190,
+          "peak": 62,
+          "mean": 5.222386853448276,
+          "pcmSha256": "cd951656212586119b61b6a61d90d0a9a05d14c76a908257e78c4acdf97e712c"
+        },
+        "after": {
+          "minimumDuty": 52,
+          "maximumDuty": 252,
+          "peak": 124,
+          "mean": 10.444773706896552,
+          "pcmSha256": "3920e5d7bdce6d95061cc1d6981dbfdb5e997b12067a59eb597732a57e223437"
+        }
+      },
+      "beforeMetrics": {
+        "stoi": 0.8596022716157532,
+        "estoi": 0.6909859419813376,
+        "loss": 0.8232287703712707,
+        "log_spectral_error": 0.8128841292213537,
+        "relative_spectral_error": 0.8646073349709388
+      },
+      "afterMetrics": {
+        "stoi": 0.8596022716157532,
+        "estoi": 0.6909859419813376,
+        "loss": 0.8232287708402616,
+        "log_spectral_error": 0.812884129688913,
+        "relative_spectral_error": 0.8646073354456557
+      },
+      "maximumRoundingErrorLsb": 0.0,
+      "maximumCompletionCycles": 1065,
+      "minimumSP": 153,
+      "fullPhraseAndSilenceVerified": true,
+      "hardwareTested": false
+    }
+  ]
+}

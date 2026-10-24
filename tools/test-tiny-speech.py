@@ -1,0 +1,125 @@
+#!/usr/bin/env python3
+"""Check audible-word canonicalization and reduced-dictionary search limits."""
+from copy import deepcopy
+import importlib.util
+from pathlib import Path
+import sys
+import unittest
+
+import numpy as np
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT/'ATtiny13A/Sound/codec'))
+spec = importlib.util.spec_from_file_location('train_tiny_speech', ROOT/'tools/train-tiny-speech.py')
+tiny = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(tiny)
+from auto_encoder import SpectralObjective
+from fixed_period import decode_fixed, pack_avr_data
+
+
+def fixture():
+    word = [round(5*np.sin(2*np.pi*n/32)) for n in range(32)]
+    other = [round(5*np.sin(2*np.pi*n/32)+np.sin(6*np.pi*n/32)) for n in range(32)]
+    book = [[0]*32 for _ in range(16)]
+    book[6], book[14] = word, other
+    frames = [[100, 128 | 7 << 4 | (6 if n % 2 else 14), 0] for n in range(64)]
+    frames[0][1] = 15  # An inaudible index must not retain a waveform.
+    return dict(schema='period-fixed-v1', sample_rate=7500, samples=4096, hop=64,
+                phase_bits=4, initial_phase_u16=0, noise_seed_u16=0xace1,
+                noise_filters=[[0]*8 for _ in range(3)], codebook=book, frames=frames)
+
+
+class TinySpeechTests(unittest.TestCase):
+    def test_dense_dictionary_preserves_exact_pcm(self):
+        model = fixture()
+        before = deepcopy(model)
+        reduced = tiny.canonicalize(model)
+        self.assertEqual(model, before)
+        self.assertEqual(tiny.active_words(reduced), [0, 1])
+        self.assertTrue(all(not any(word) for word in reduced['codebook'][2:]))
+        np.testing.assert_array_equal(decode_fixed(model), decode_fixed(reduced))
+        self.assertLess(len(pack_avr_data(reduced, specialize=True)), len(pack_avr_data(model, specialize=True)))
+
+    def test_exact_merge_and_proposals_respect_dictionary(self):
+        model = tiny.canonicalize(fixture())
+        reference = (decode_fixed(model).astype(float)-128)/128
+        objective = SpectralObjective(reference)
+        merged, history = tiny.merge_words(model, objective, 1)
+        self.assertEqual(tiny.active_words(merged), [0])
+        self.assertEqual(history[0]['evaluated'], 2)
+        search = tiny.TinySearch(merged, objective, words=1, stoi_floor=0., spectral_ceiling=1.,
+                                 max_peak=.95, max_data_bytes=65535, dc_choices=(0,),
+                                 voiced_only=True, residual_colors=(0,))
+        for _ in range(400):
+            proposal = search.propose(merged)
+            self.assertTrue(all(index == 0 for index in tiny.active_words(proposal)))
+            self.assertTrue(all(not any(word) for word in proposal['codebook'][1:]))
+        invalid = deepcopy(merged)
+        invalid['frames'][1][1] |= 1
+        self.assertFalse(search.compatible(invalid))
+
+    def test_non_power_gain_removal_evaluates_every_choice(self):
+        model = tiny.canonicalize(fixture())
+        for index in (2, 3):
+            model['frames'][index][1] = (model['frames'][index][1] & 143) | 6 << 4
+        objective = SpectralObjective((decode_fixed(model).astype(float)-128)/128)
+        reduced, report = tiny.remove_gain6(model, objective, spectral_ceiling=1.)
+        self.assertEqual(report['evaluated'], 4)
+        self.assertEqual(report['affected_frames'], 2)
+        self.assertTrue(all((header >> 4) & 7 != 6 for _, header, _ in reduced['frames']))
+
+    def test_flash_limit_measures_eeprom_split_and_survives_resume(self):
+        from tiny_period import pack_tiny
+        model = tiny.canonicalize(fixture())
+        model['dc_block_shift'] = 7
+        objective = SpectralObjective((decode_fixed(model).astype(float)-128)/128)
+        flash = len(pack_tiny(model)['flash_data'])
+        options = dict(words=2, stoi_floor=0., spectral_ceiling=1., max_peak=.95,
+                       max_data_bytes=65535, dc_choices=(7,), voiced_only=True, residual_colors=(0,))
+        search = tiny.TinySearch(model, objective, max_flash_data_bytes=flash, **options)
+        self.assertEqual(search.initial['tiny_flash_data_bytes'], flash)
+        restored = tiny.TinySearch(model, objective, max_flash_data_bytes=flash,
+                                   checkpoint=search.checkpoint(), **options)
+        self.assertEqual(restored.config, search.config)
+        self.assertEqual(restored.best[2], search.best[2])
+        with self.assertRaises(ValueError):
+            tiny.TinySearch(model, objective, max_flash_data_bytes=flash-1, **options)
+
+    def test_rate_target_allows_oversize_start_and_preserves_resume_settings(self):
+        from tiny_period import pack_tiny
+        model = tiny.canonicalize(fixture())
+        model['dc_block_shift'] = 7
+        objective = SpectralObjective((decode_fixed(model).astype(float)-128)/128)
+        flash = len(pack_tiny(model)['flash_data'])
+        options = dict(words=2, stoi_floor=0., spectral_ceiling=1., max_peak=.95,
+                       max_data_bytes=65535, dc_choices=(7,), voiced_only=True,
+                       residual_colors=(0,), compression_level=6, target_flash_data_bytes=flash-4)
+        search = tiny.TinySearch(model, objective, **options)
+        self.assertGreater(search.initial['tiny_flash_data_bytes'], options['target_flash_data_bytes'])
+        restored = tiny.TinySearch(model, objective, checkpoint=search.checkpoint(), **options)
+        self.assertEqual(restored.config, search.config)
+        expensive = dict(search.initial, tiny_flash_data_bytes=flash+20)
+        self.assertGreater(search.energy(expensive), search.energy(search.initial))
+        below = dict(search.initial, tiny_flash_data_bytes=flash-4)
+        smaller = dict(search.initial, tiny_flash_data_bytes=flash-8)
+        self.assertEqual(search.energy(below), search.energy(smaller))
+
+    def test_rate_proposals_remain_valid_at_extreme_pitch_and_wave_indices(self):
+        from fixed_period import validate
+        model = tiny.canonicalize(fixture())
+        model['dc_block_shift'] = 7
+        for index, frame in enumerate(model['frames']):
+            frame[0] = 255 if index % 3 else 254
+        objective = SpectralObjective((decode_fixed(model).astype(float)-128)/128)
+        search = tiny.TinySearch(model, objective, words=2, compression_level=8,
+                                 stoi_floor=0., spectral_ceiling=1., max_peak=.95,
+                                 max_data_bytes=65535, dc_choices=(7,),
+                                 voiced_only=True, residual_colors=(0,))
+        for _ in range(400):
+            proposal = search.propose(model)
+            validate(proposal)
+            self.assertTrue(all(index < 2 for index in tiny.active_words(proposal)))
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -1,0 +1,90 @@
+{
+  "selected": "unchanged C controller",
+  "reason": "All three replacements slow the whole decoder despite a faster isolated controller.",
+  "variants": [
+    {
+      "name": "direct",
+      "flashBytes": 11776,
+      "source": "speex_nb3_zero_innovation_n_c(out,shape,scale,left);",
+      "exactFrames": 9100,
+      "selected": false,
+      "allStreams": {
+        "streams": 31,
+        "frames": 9100,
+        "beforeWeightedMeanCycles": 240912.816,
+        "afterWeightedMeanCycles": 240927.749,
+        "weightedMeanTimeReductionPercent": -0.0062,
+        "beforeMaxCycles": 254619,
+        "afterMaxCycles": 254763,
+        "minimumStreamMeanReductionPercent": -0.0259
+      },
+      "humanSpeech": {
+        "streams": 20,
+        "frames": 8042,
+        "beforeWeightedMeanCycles": 245382.229,
+        "afterWeightedMeanCycles": 245399.578,
+        "weightedMeanTimeReductionPercent": -0.0071,
+        "beforeMaxCycles": 254619,
+        "afterMaxCycles": 254763,
+        "minimumStreamMeanReductionPercent": -0.0259
+      },
+      "pwmAdmitted": false
+    },
+    {
+      "name": "rematerialized",
+      "flashBytes": 11790,
+      "source": "speex_nb3_zero_innovation_n_c(out,shape,((int32_t)high<<12)|low,left);",
+      "exactFrames": 9100,
+      "selected": false,
+      "allStreams": {
+        "streams": 31,
+        "frames": 9100,
+        "beforeWeightedMeanCycles": 240912.816,
+        "afterWeightedMeanCycles": 241110.08,
+        "weightedMeanTimeReductionPercent": -0.0819,
+        "beforeMaxCycles": 254619,
+        "afterMaxCycles": 255743,
+        "minimumStreamMeanReductionPercent": -0.233
+      },
+      "humanSpeech": {
+        "streams": 20,
+        "frames": 8042,
+        "beforeWeightedMeanCycles": 245382.229,
+        "afterWeightedMeanCycles": 245593.924,
+        "weightedMeanTimeReductionPercent": -0.0863,
+        "beforeMaxCycles": 254619,
+        "afterMaxCycles": 255743,
+        "minimumStreamMeanReductionPercent": -0.233
+      },
+      "pwmAdmitted": false
+    },
+    {
+      "name": "outlined",
+      "flashBytes": 11834,
+      "source": "SPEEX_NB3_STAGE_O2 helper receives high/low and calls the rematerialized expression",
+      "exactFrames": 9100,
+      "selected": false,
+      "allStreams": {
+        "streams": 31,
+        "frames": 9100,
+        "beforeWeightedMeanCycles": 240912.816,
+        "afterWeightedMeanCycles": 241087.256,
+        "weightedMeanTimeReductionPercent": -0.0724,
+        "beforeMaxCycles": 254619,
+        "afterMaxCycles": 255615,
+        "minimumStreamMeanReductionPercent": -0.2031
+      },
+      "humanSpeech": {
+        "streams": 20,
+        "frames": 8042,
+        "beforeWeightedMeanCycles": 245382.229,
+        "afterWeightedMeanCycles": 245568.875,
+        "weightedMeanTimeReductionPercent": -0.0761,
+        "beforeMaxCycles": 254619,
+        "afterMaxCycles": 255615,
+        "minimumStreamMeanReductionPercent": -0.2031
+      },
+      "pwmAdmitted": false
+    }
+  ]
+}

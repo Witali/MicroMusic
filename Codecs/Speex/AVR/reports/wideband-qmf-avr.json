@@ -1,0 +1,39 @@
+{
+  "scope": "Isolated QMF synthesis only; excludes NB/HB decoding, packet reads, output and interrupts",
+  "mcu": "ATmega328P",
+  "cpuHz": 16000000,
+  "compiler": "AVR GCC 7.3.0 -O3 -flto",
+  "physicalBoardTested": false,
+  "streams": [
+    {
+      "outputHz": 16000,
+      "frames": 16,
+      "pcmExact": true,
+      "minCycles": 1389700,
+      "maxCycles": 1452772,
+      "frameBudgetCycles": 320000,
+      "fitsQmfAlone": false,
+      "staticSramBytes": 1412,
+      "peakStackBytes": 26,
+      "freeSramAtPeak": 610,
+      "qmfHistoryBytes": 128,
+      "eliminatedTemporaryBytes": 768,
+      "historySavedBytes": 128
+    },
+    {
+      "outputHz": 32000,
+      "frames": 16,
+      "pcmExact": true,
+      "minCycles": 2779019,
+      "maxCycles": 2909131,
+      "frameBudgetCycles": 320000,
+      "fitsQmfAlone": false,
+      "staticSramBytes": 1412,
+      "peakStackBytes": 26,
+      "freeSramAtPeak": 610,
+      "qmfHistoryBytes": 128,
+      "eliminatedTemporaryBytes": 1408,
+      "historySavedBytes": 128
+    }
+  ]
+}

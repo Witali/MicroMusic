@@ -31,7 +31,7 @@ for(const entry of catalog.entries){
 }
 const hash=p=>createHash('sha256').update(readFileSync(new URL(p,import.meta.url))).digest('hex');
 const report={runtime:process.version,platform:platform(),arch:arch(),cpu:cpus()[0].model,
-  sampleRate,controls,compiler:manifest.compilerVersion,wasmBytes:manifest.bytes,memoryBytes:65536,
+  sampleRate,controls,compiler:manifest.compilerVersion,wasmBytes:manifest.bytes,memoryBytes:manifest.memoryPages*65536,
   nativeSourceSha256:manifest.inputs['web-player/native/avr.c'],wasmSha256:manifest.artifacts['avr.wasm'],
   jsReferenceSha256:hash('../lib/avr-reference.js'),
   method:'Median of seven warmed alternating runs of three seconds, normalized to one second. Same firmware, resampling, 35-Hz HPF, 9-kHz LPF (Q=0.5), gain=0.65. JS uses the previous block interpreter and independent Direct Form I filtering; C/WASM uses one call per audio block and transposed Direct Form II. Construction/compilation excluded. Final memory, cycles, IRQs and filtered PCM checksum verified.',results};

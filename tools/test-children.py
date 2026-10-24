@@ -27,7 +27,8 @@ assert score['engine']==report['engine']=='children-native'
 assert score['active_primary_voices']==report['activePrimaryVoices']==4
 assert score['release_tail_slots']==report['releaseChannels']['tailSlots']==2
 assert report['releaseChannels']['voiceAddresses']==[97,102,107,112,117,122]
-assert score['arrangement']['sourceQuarterBeats']==428 and score['arrangement']['firstSourceQuarterBeat']==0
+assert score['arrangement']['sourceQuarterBeats']==560 and score['arrangement']['firstSourceQuarterBeat']==0
+assert score['arrangement']['totalQuarterBeats']==564
 assert score['source_midi']['sha256']==hashlib.sha256(SOURCE.read_bytes()).hexdigest()
 assert score['tempo_bpm']==bpm==140
 assert len(rom)==report['flashBytes']<=1024
@@ -64,22 +65,28 @@ for token in raw:
         current=meta['pitches'][pitch];actual_attacks.append((len(actual_grid),current))
     actual_grid.extend([current]*durations[token&7])
 assert actual_grid[:1712]==[note[0] if note else None for note in source_grid]
-assert actual_attacks==expected_attacks+[(1712,65)]
-assert len(actual_grid)==1728 and actual_grid[1716:]==[None]*12
+assert actual_attacks==expected_attacks+[(2240,65)]
+assert len(actual_grid)==2256 and actual_grid[2244:]==[None]*12
+assert actual_grid[1712:2240]==[None]*528,'The native continuation shares the idle primary slot'
+continuation=sorted((round(n[3]*4/ppqn),round(n[4]*4/ppqn)) for n in notes
+                    if n[0]==15 and n[2]==77 and n[3]>=448*ppqn)
+assert continuation==[(unit,unit+1) for unit in range(1792,2240)]
+assert meta['continuation']['noteOns']==len(continuation)==448
+assert meta['continuation']['program']==50 and meta['continuation']['pitch']==77
 
 # Reconstruct every bass glyph independently; four-quarter and whole-bar gates
 # must reproduce all345 retained source notes, including8-quarter holds.
-bass=sorted((n for n in notes if n[0]==4 and n[3]<428*ppqn),key=lambda n:n[3])
+bass=sorted((n for n in notes if n[0]==4 and n[2]!=41),key=lambda n:n[3])
 expected_bass=[(round(n[3]*4/ppqn),n[2],round(n[4]*4/ppqn)) for n in bass]
 actual_bass=[]
 for bar,glyph in enumerate(meta['bassGlyphs']):
     if glyph==3:continue
     pitch=[37,34,29][glyph&3]
     for offset in ([0,4,8,12] if glyph&4 else [0]):actual_bass.append((bar*16+offset,pitch))
-assert len(actual_bass)==345
+assert len(actual_bass)==458
 assert actual_bass==[(unit,pitch) for unit,pitch,off in expected_bass]
 for index,(unit,pitch,off) in enumerate(expected_bass):
-    assert off==(actual_bass[index+1][0] if index+1<len(actual_bass) else 1712)
+    assert off==(actual_bass[index+1][0] if index+1<len(actual_bass) else 2176)
 
 assert bank.verify_sources()
 assert ep==bank.build_eeprom(score['instruments']) and len(ep)==64
@@ -98,5 +105,5 @@ for index,pitch in enumerate(meta['pitches']):
     assert bool(rom[address+1]&128)==(pitch>=75),'Original high-register piano decay is retained'
 for check in meta['pageLocalProof']['removedCarries']:
     assert labels[check['table']]%256+check['length']<=256
-print(f'Children:256 piano notes,345 source bass notes/gates,1728 grid cells,4 main voices+2 tails; '
+print(f'Children:256 piano notes,458 source bass notes/gates,448 GM50 continuation notes,2256 grid cells,4 main voices+2 tails; '
       f'{len(rom)} Flash bytes; measured GM0/35/50 EEPROM and lossless phrase packing verified.')

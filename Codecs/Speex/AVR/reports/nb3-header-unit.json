@@ -1,0 +1,187 @@
+{
+  "mcu": "ATmega328P",
+  "compiler": "AVR GCC 7.3.0 mixed Os/O3, LTO, fwrapv, fno-strict-aliasing",
+  "simulator": "avr8js 0.21.1",
+  "binarySha256": "a159e027f202c537a9672a5afe9920020ecb8ede5b6f272e9a0e887297fc96ca",
+  "asmEnabled": false,
+  "casesPerImplementation": 109568,
+  "fieldsPerImplementation": 328704,
+  "fieldWidths": [
+    7,
+    5,
+    1
+  ],
+  "all8192Headers": true,
+  "offsets": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "availableBits": [
+    0,
+    20
+  ],
+  "allAdjacentIndexPairs": false,
+  "randomCases": 32768,
+  "stickyOverflowCases": 512,
+  "overflowValues": [
+    1,
+    2,
+    -1,
+    32767,
+    -32768
+  ],
+  "oracle": "Independent bit-by-bit MSB-first reader with partial/sticky overflow",
+  "exact": true,
+  "inputReadAddressesChecked": true,
+  "noReadsOutsideValidInputBytes": true,
+  "inputAndGuardsIntact": true,
+  "metadataPreserved": true,
+  "calleeSavedRegistersPreserved": true,
+  "zeroRegisterRestored": true,
+  "validBlockTiming": [
+    {
+      "offset": 0,
+      "before": {
+        "min": 424,
+        "max": 424,
+        "total": 5407272,
+        "calls": 12753,
+        "mean": 424
+      },
+      "after": {
+        "min": 434,
+        "max": 434,
+        "total": 5534802,
+        "calls": 12753,
+        "mean": 434
+      }
+    },
+    {
+      "offset": 1,
+      "before": {
+        "min": 385,
+        "max": 385,
+        "total": 4920685,
+        "calls": 12781,
+        "mean": 385
+      },
+      "after": {
+        "min": 395,
+        "max": 395,
+        "total": 5048495,
+        "calls": 12781,
+        "mean": 395
+      }
+    },
+    {
+      "offset": 2,
+      "before": {
+        "min": 439,
+        "max": 439,
+        "total": 5641150,
+        "calls": 12850,
+        "mean": 439
+      },
+      "after": {
+        "min": 449,
+        "max": 449,
+        "total": 5769650,
+        "calls": 12850,
+        "mean": 449
+      }
+    },
+    {
+      "offset": 3,
+      "before": {
+        "min": 446,
+        "max": 446,
+        "total": 5703894,
+        "calls": 12789,
+        "mean": 446
+      },
+      "after": {
+        "min": 456,
+        "max": 456,
+        "total": 5831784,
+        "calls": 12789,
+        "mean": 456
+      }
+    },
+    {
+      "offset": 4,
+      "before": {
+        "min": 421,
+        "max": 421,
+        "total": 5396378,
+        "calls": 12818,
+        "mean": 421
+      },
+      "after": {
+        "min": 151,
+        "max": 151,
+        "total": 1935518,
+        "calls": 12818,
+        "mean": 151
+      }
+    },
+    {
+      "offset": 5,
+      "before": {
+        "min": 462,
+        "max": 462,
+        "total": 5941782,
+        "calls": 12861,
+        "mean": 462
+      },
+      "after": {
+        "min": 151,
+        "max": 151,
+        "total": 1942011,
+        "calls": 12861,
+        "mean": 151
+      }
+    },
+    {
+      "offset": 6,
+      "before": {
+        "min": 464,
+        "max": 464,
+        "total": 5915536,
+        "calls": 12749,
+        "mean": 464
+      },
+      "after": {
+        "min": 151,
+        "max": 151,
+        "total": 1925099,
+        "calls": 12749,
+        "mean": 151
+      }
+    },
+    {
+      "offset": 7,
+      "before": {
+        "min": 466,
+        "max": 466,
+        "total": 5964334,
+        "calls": 12799,
+        "mean": 466
+      },
+      "after": {
+        "min": 151,
+        "max": 151,
+        "total": 1932649,
+        "calls": 12799,
+        "mean": 151
+      }
+    }
+  ],
+  "includesInterrupts": false,
+  "physicalBoardTested": false
+}

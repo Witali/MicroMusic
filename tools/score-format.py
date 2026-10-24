@@ -150,9 +150,13 @@ def to_inc(data,validate_size=True):
             root=data.get('chord_roots',{}).get(c, ROOTS.get(c))
             if root is None:raise ValueError(f'Unknown root for {c}')
             note_pairs[c]=(root+KEY_VOICE_OFFSETS['piano'],root+BASS_VOICE_OFFSETS['guitar'])
+    voicings=data.get('chord_voicings',{})
+    chord_pitches={c:tuple(midi(n) if isinstance(n,str) else n for n in voicings.get(c,note_pairs[c])) for c in chords}
+    if voicings and (set(voicings)!=set(chords) or any(len(v)!=4 for v in chord_pitches.values())):
+        raise ValueError('chord_voicings must provide three keys notes and one pluck note for every chord')
     unique_by_pair={}
-    for c in chords:unique_by_pair.setdefault(note_pairs[c],c)
-    chord_index={c:list(unique_by_pair).index(note_pairs[c]) for c in chords}
+    for c in chords:unique_by_pair.setdefault(chord_pitches[c],c)
+    chord_index={c:list(unique_by_pair).index(chord_pitches[c]) for c in chords}
     chords=list(unique_by_pair.values())
     if len(chords)>16:raise ValueError('Too many chord types')
     def disabled(role):
@@ -223,9 +227,11 @@ def to_inc(data,validate_size=True):
         d=delta(midi(p),'lead');lines.append(table_row([d&255,d>>8],f'{p}, {round((d&32767 if "lead" in data.get("dds_fast_decay_roles",{}) else d)*SYNTHESIS_HZ/65536,1)} Hz'))
     lines.append('chord_steps:')
     for ch in chords:
-        keys_note,pluck_note=note_pairs[ch]
-        a=delta(keys_note,'keys');b=delta(pluck_note,'pluck')
-        lines.append(table_row([a&255,a>>8,b&255,b>>8],f'{ch}: keys {pname(keys_note)}, pluck {pname(pluck_note)}'))
+        values=[]
+        for index,note in enumerate(chord_pitches[ch]):
+            step=delta(note,'pluck' if index==len(chord_pitches[ch])-1 else 'keys')
+            values.extend([step&255,step>>8])
+        lines.append(table_row(values,f'{ch}: '+', '.join(pname(n) for n in chord_pitches[ch])))
     lines.append('melody_data:')
     labels_by_offset={}
     for name,offset in offsets.items():labels_by_offset.setdefault(offset,[]).append('section_'+name)
@@ -235,8 +241,8 @@ def to_inc(data,validate_size=True):
         lines.append(table_row([token]))
     meta={"note_count":sum(sum(1 for n in sec if n!=255 and n<0xe0) for sec in song_sections.values()),
           "event_bytes":pos,"maximum_entry_offset":max_offset,"playlist_bytes":len(playlist),"note_table_bytes":sum(p!="R" for p in pitches)*2,
-          "chord_table_bytes":len(chords)*4,"durations":ticks,"pitches":pitches,"chords":chords,"chord_notes":{c:note_pairs[c] for c in chords},
-          "total_data_bytes":pos+len(playlist)+len(ticks)+sum(p!="R" for p in pitches)*2+len(chords)*4,
+          "chord_table_bytes":sum(len(chord_pitches[c])*2 for c in chords),"durations":ticks,"pitches":pitches,"chords":chords,"chord_notes":{c:chord_pitches[c] for c in chords},
+          "total_data_bytes":pos+len(playlist)+len(ticks)+sum(p!="R" for p in pitches)*2+sum(len(chord_pitches[c])*2 for c in chords),
           "section_bars":{k:len(v) for k,v in data['patterns'].items()},
           "playlist":output_playlist,"source_playlist":data['playlist'],"section_offsets":offsets,"compression":packed['report'],"source":data['title'],"rest_index":rest_index,"hold_index":hold_index,"holds":holds,
           "instruments":data.get('instruments',{"lead":"violin","keys":"acoustic-grand-piano","pluck":"acoustic-guitar-nylon"})}

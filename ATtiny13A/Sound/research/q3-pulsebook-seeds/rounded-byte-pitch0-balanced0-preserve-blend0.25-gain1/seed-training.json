@@ -1,0 +1,62 @@
+{
+  "inverse": "byte",
+  "local_pitch": false,
+  "balance": false,
+  "noise_gain": "incumbent",
+  "iterations": 8,
+  "stream_bytes": 611,
+  "history": [
+    {
+      "iteration": 1,
+      "voiced_excitation_mse": 93.74425899621212,
+      "stream_bytes": 611
+    },
+    {
+      "iteration": 2,
+      "voiced_excitation_mse": 91.2477509469697,
+      "stream_bytes": 611
+    },
+    {
+      "iteration": 3,
+      "voiced_excitation_mse": 90.02154356060606,
+      "stream_bytes": 611
+    },
+    {
+      "iteration": 4,
+      "voiced_excitation_mse": 89.31901041666667,
+      "stream_bytes": 611
+    },
+    {
+      "iteration": 5,
+      "voiced_excitation_mse": 87.59913589015152,
+      "stream_bytes": 611
+    },
+    {
+      "iteration": 6,
+      "voiced_excitation_mse": 87.0625,
+      "stream_bytes": 611
+    },
+    {
+      "iteration": 7,
+      "voiced_excitation_mse": 86.90873579545455,
+      "stream_bytes": 611
+    },
+    {
+      "iteration": 8,
+      "voiced_excitation_mse": 86.90873579545455,
+      "stream_bytes": 611
+    }
+  ],
+  "target_analysis_quantization": "Signed8bit rounding only for byte inverse",
+  "alignment": "Exact frame-reset lag windows; first sample lag1, lag0 at period-1; no phase shift/resampling",
+  "table_sums": [
+    3,
+    -5,
+    6,
+    7
+  ],
+  "changed_pitch_frames": 0,
+  "residual_rms_pwm": 8.866684018758408,
+  "preservation_blend": 0.25,
+  "row_matching": "One-to-one absolute-correlation assignment; sign and L2energy aligned to incumbent rows"
+}

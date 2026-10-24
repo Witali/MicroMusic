@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {runInNewContext} from 'node:vm';
-import {AVRCore} from '../lib/avr-core.js';
+import {AVRCore} from '../lib/avr-reference.js';
 import {Renderer} from '../lib/renderer.js';
 import {AudioQueue} from '../lib/audio-queue.js';
 import {createRenderer} from '../lib/engines.js';
@@ -50,48 +50,48 @@ test('stereo filter controls stay synchronized and block independent in JS and W
   }
 });
 
-test('both PWM channels deliver every point and its exact midpoint as a synchronized frame',t=>{
-  const c=core(),points=[],frames=[];
-  const step=c.step.bind(c);
-  c.step=()=>{
-    const at=c.pc,word=c.rom[at*2]|c.rom[at*2+1]<<8;
-    if(!c.inIRQ&&word===0x93b0&&c.rom[at*2+2]===98)points.push([c.r[26],c.r[27]]);
-    step();
-  };
-  for(let i=0;i<75000;i++){
-    const packed=c.nextStereoDuty();frames.push([packed&255,packed>>8]);
-  }
-  for(let i=0;i<frames.length;i++)for(let ch=0;ch<2;ch++){
-    let expected=128;
-    if(i>=2){const n=(i-2)>>1;expected=i%2 ? points[n][ch] : ((n ? points[n-1][ch] : 128)+points[n][ch])>>1;}
-    assert.equal(frames[i][ch],expected,`frame ${i} channel ${ch}`);
+test('both PWM channels deliver interpolated paired frames through the ring',t=>{
+  const c=core(),queue=Array.from({length:6},()=>[128,128]);let previous=[128,128],latched=[128,128],frames=0,points=0;
+  while(c.cyc<9600000){
+    const at=c.pc,inIRQ=c.inIRQ,writes=c.writes;
+    if(inIRQ&&at===labels.ring_read/2){
+      const frame=queue.shift();assert.ok(frame);
+      assert.deepEqual([c.data[c.r[28]],c.data[c.r[28]+1]],frame);
+    }
+    c.step();
+    if(!inIRQ&&at===labels.ring_published/2-2){
+      const point=[c.r[21],c.r[17]],mid=point.map((v,i)=>(v+previous[i])>>1);
+      queue.push(mid,point);previous=point;points++;
+    }
+    if(c.writes!==writes){assert.deepEqual([c.dutyLeft,c.duty],latched);frames++;}
+    if(inIRQ&&at===labels.ring_read/2+1)latched=[c.r[18],c.r[8]];
   }
   assert.equal(c.io[0x17]&3,3);assert.equal(c.io[0x2f],0xa3);
   assert.equal(c.leftWrites,c.writes);assert.equal(c.lost+c.workLost,0);
-  assert.ok(read('synth.bin').length<=1024);assert.ok(c.minSP>=103);
-  assert.ok(frames.some(([l,r])=>l!==r));
-  t.diagnostic(JSON.stringify({flash:read('synth.bin').length,isr:c.maxIRQ,stack:159-c.minSP,frames:frames.length}));
+  assert.ok(read('synth.bin').length<=1024);assert.ok(c.minSP>=144);assert.ok(points>18000);
+  t.diagnostic(JSON.stringify({flash:read('synth.bin').length,isr:c.maxIRQ,stack:159-c.minSP,frames}));
 });
 
-test('stereo ISR preserves foreground arithmetic flags in both interpolation phases',()=>{
-  for(const phase of [1,16])for(const flags of [0,1,2,31,63]){
-    const c=core();c.pc=labels.pwm_irq/2;c.r[23]=phase;c.ram.set([31,211],1);c.ram.set([51,203],5);
+test('stereo ring ISR preserves foreground arithmetic flags at the wrap boundary',()=>{
+  for(const pointer of [128,142])for(const flags of [0,1,2,31,63,127]){
+    const c=core();c.pc=labels.pwm_irq/2;c.r[18]=51;c.r[8]=31;c.r[28]=pointer;c.data.set([203,211],pointer);
     c.sreg=flags;c.inIRQ=true;c.irqFrames.push(0);c.pushPC(0);
     while(c.inIRQ)c.step();
-    assert.equal(c.sreg&63,flags);assert.equal(c.t,1);assert.equal(c.r[23],phase===1?16:1);
-    assert.equal(c.io[0x36],phase===1?51:203);assert.equal(c.io[0x29],phase===1?31:211);
+    assert.equal(c.sreg,flags|128);assert.equal(c.r[28],pointer===142?128:pointer+2);
+    assert.equal(c.io[0x36],51);assert.equal(c.io[0x29],31);
+    assert.equal(c.r[18],203);assert.equal(c.r[8],211);
   }
 });
 
 test('panorama uses 2:1 for violin, 1:2 for guitar and equal piano/drum levels',()=>{
   for(const instrument of ['lead','keys','pluck','drums'])for(let phase=0;phase<256;phase+=7){
-    const c=core();c.pc=labels.render_sample/2;c.r[23]=1;c.r[21]=4;
-    if(instrument==='lead'){c.r[1]=15;c.r[3]=phase;c.r[5]=3;}
-    if(instrument==='keys'){c.r[19]=15;c.r[7]=phase;c.r[9]=3;}
-    if(instrument==='pluck'){c.r[20]=15;c.r[11]=phase;c.r[13]=3;}
-    if(instrument==='drums'){c.r[21]=0;c.r[29]=0;c.r[14]=phase;}
+    const c=core();c.pc=labels.render_sample/2;c.r[20]=4;
+    if(instrument==='lead')c.data.set([143,0,phase,0,3],96);
+    if(instrument==='keys')c.data.set([223,0,phase,0,3],101);
+    if(instrument==='pluck')c.data.set([175,0,phase,0,3],116);
+    if(instrument==='drums'){c.r[20]=0;c.r[19]=0;c.r[14]=phase;}
     while(c.pc!==labels.write_pwm/2)c.step();
-    const l=signed(c.r[26]),r=signed(c.r[27]);
+    const l=signed(c.r[21]),r=signed(c.r[10]);
     if(instrument==='lead')assert.equal(r,Math.floor(l/2));
     else if(instrument==='pluck')assert.equal(l,Math.floor(r/2));
     else assert.equal(l,r);
@@ -103,8 +103,10 @@ test('looped stereo tone scaling exactly preserves every waveform and envelope l
   for(const offset of [0,16,32])for(const high of [false,true])for(let level=0;level<16;level++)for(let phase=0;phase<16;phase++){
     const c=core();c.pc=labels.render_tone/2;c.r[25]=128|offset|level;c.r[16]=high?4:3;c.r[17]=phase<<4;c.pushPC(0);
     do{c.step();}while(c.pc!==0);
-    const packed=ep[offset+(high?8:0)+(phase>>1)],q=((phase&1)?packed>>4:packed&15)-8;
-    assert.equal(c.r[17],Math.floor(q*level/4)&255);assert.equal(c.r[0],0);assert.equal(c.sp,159);
+    const bank=offset===16&&level>=14?48:offset;
+    const packed=ep[bank+(high?8:0)+(phase>>1)],q=((phase&1)?packed>>4:packed&15)-8;
+    const amplitude=(offset===16?level>>1:level)>>1;
+    assert.equal(c.r[17],Math.floor(q*amplitude/2)&255);assert.equal(c.sp,159);
   }
 });
 

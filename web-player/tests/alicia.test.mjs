@@ -3,7 +3,10 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
-import {AVRCore} from '../lib/avr-core.js';
+import {createRequire} from 'node:module';
+import {AVRCore} from '../lib/avr-reference.js';
+import {AVRCore as WasmCore} from '../lib/avr-core.js';
+import {sameCPU} from './helpers/avr-test-state.mjs';
 import {audit} from '../../tools/audit-alicia-native.mjs';
 
 const base=new URL('../../ATtiny13A/Music/variants/alicia/',import.meta.url);
@@ -57,12 +60,16 @@ test('ROM phrases retain every exact native note duration, repeated attack and t
   assert.ok(actual.events.at(-1).end-actual.events.at(-1).start>1,'Source closing rest remains, even when stored in several REST tokens');
 });
 
-test('native harmony uses the written chord bass and first two Z80 accompaniment tones',()=>{
+test('native harmony retains every chord bass and inner tone and restores repeated piano motion',()=>{
   const chords={Cm:[36,[55,60]],Fm:[41,[56,60]],Bb:[46,[58,62]],Eb:[39,[55,58]],C7b9:[36,[58,61]],Gsus4:[43,[55,60]],G7:[43,[55,59]],Abmaj7:[44,[56,60]],Ab:[44,[56,60]],Am7b5:[45,[57,60]],Bb7:[46,[56,62]],'G7/B':[47,[55,59]],'Bb/D':[38,[58,62]],'Cm/Eb':[39,[55,60]],Dm7b5:[38,[53,56]],G7b9:[43,[53,56]],Ddim7:[38,[53,56]],'Cm/G':[43,[55,60]],Fm7:[41,[56,60]],'Fm/Ab':[44,[56,60]],F5:[41,[53,60]],Cmadd9:[36,[55,62]]};
   const expected=[];let seconds=0;
   for(const name of source.playlist){const p=source.patterns[name];for(const bar of p.bars){let beat=0;for(const[chord,duration]of bar.chords){const[bass,[piano,inner]]=chords[chord];expected.push({start:seconds+beat*60/p.tempo_bpm,durationUnits:duration*12,piano:delta(piano),inner:delta(inner),bass:delta(bass)});beat+=duration;}seconds+=(bar.beats??p.beats_per_bar)*60/p.tempo_bpm;}}
   const actual=decoded().chords;assert.equal(actual.length,71);for(let i=0;i<71;i++){assert.ok(Math.abs(actual[i].start-expected[i].start)<1e-10);assert.deepEqual({...actual[i],start:0},{...expected[i],start:0});}
-  assert.equal(score.arrangement.companionNoteOns,213);assert.match(score.arrangement.reduction,/arpeggio is reduced/);
+  assert.equal(score.arrangement.companionNoteOns,488);assert.equal(score.arrangement.pianoNoteOns,346);
+  assert.match(score.arrangement.reduction,/third chord tone remains omitted/);
+  assert.deepEqual(report.pianoArpeggio,score.arrangement.accompaniment);
+  assert.equal(report.pianoArpeggio.pianoStepQuarterBeats,.5);
+  assert.equal(report.pianoArpeggio.pianoTonesPerChord,2);
 });
 
 test('four actual voice assignments share measured piano, violin and cello EEPROM banks',()=>{
@@ -106,8 +113,26 @@ test('native Horner mixing exactly scales all signed nibble/envelope pairs in ev
   }
 });
 
+test('upgraded native arpeggio preserves independent JS and WASM PWM and CPU state',()=>{
+  const js=new AVRCore(rom,ep),wasm=new WasmCore(rom,ep);
+  for(let sample=0;sample<8*37500;sample++)assert.equal(wasm.nextDuty(),js.nextDuty(),`PWM ${sample}`);
+  sameCPU(wasm,js);assert.equal(wasm.lost+wasm.workLost,0);
+});
+
+test('downloadable player includes the current CPU and strict HEX loader',()=>{
+  const require=createRequire(import.meta.url),{AVRCore:Standalone}=require(fileURLToPath(new URL('avr_core.js',base)));
+  const standalone=Standalone.fromHex(read('synth.hex').toString(),read('eeprom.hex').toString()),wasm=new WasmCore(rom,ep);
+  for(let sample=0;sample<2*37500;sample++)assert.equal(standalone.nextDuty(),wasm.nextDuty(),`Standalone PWM ${sample}`);
+  sameCPU(standalone,wasm);assert.ok(read('player.html').includes(read('avr_core.js')));
+  for(const [path,expected] of Object.entries(report.standaloneCoreSources.sha256))
+    assert.equal(hash(readFileSync(new URL('../../'+path,import.meta.url),'utf8').replace(/\r\n/g,'\n')),expected,path);
+  assert.equal(report.standaloneCoreSourceSha256,report.standaloneCoreSources.sha256['web-player/lib/avr-reference.js']);
+  assert.equal(report.standaloneHexParserSourceSha256,report.standaloneCoreSources.sha256['web-player/lib/hex.js']);
+  assert.throws(()=>Standalone.fromHex(read('synth.hex').toString().replace(':100000',':100001'),read('eeprom.hex').toString()),/checksum/);
+});
+
 test('the complete native cycle verifies timing, six envelopes, source Note Off, FIFO and silence before restart',()=>{
   const result=audit(fileURLToPath(base),{writeReport:false,log:false});
-  assert.equal(result.sourceNotes,169);assert.equal(result.sourceCompanionNotes,213);assert.ok(result.maximumMelodyTimingErrorMs<15);
+  assert.equal(result.sourceNotes,169);assert.equal(result.sourceCompanionNotes,488);assert.equal(result.pianoArpeggioNotes,346);assert.ok(result.maximumMelodyTimingErrorMs<15);
   assert.ok(result.allSixVoicesSilentBeforeLoop);assert.ok(result.minQueued>0);assert.ok(result.maxRenderCycles<=512);assert.equal(result.lost,0);
 });

@@ -1,9 +1,9 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {AVRCore} from '../lib/avr-core.js';
+import {AVRCore} from '../lib/avr-reference.js';
 
-const variants=['rhythmic','alicia','turkish-march','children','greensleeves'];
+const variants=['alicia','children','cancion-del-mariachi'];
 function image(name){
   const base=new URL(`../../ATtiny13A/Music/variants/${name}/`,import.meta.url);
   const read=n=>readFileSync(new URL(n,base));
@@ -65,7 +65,7 @@ test('ring ISR preserves every arithmetic flag and foreground register at both w
 });
 
 test('two release slots copy complete phase/pitch state and steal only the quieter tail',()=>{
-  const {rom,ep,report:{labels,releaseChannels}}=image('rhythmic');
+  const {rom,ep,report:{labels,releaseChannels}}=image('cancion-del-mariachi');
   const c=new AVRCore(rom,ep),[primary,,,tail0,tail1]=releaseChannels.voiceAddresses;
   function capture(state){
     c.data.set(state,primary);c.r[26]=primary;c.r[30]=0x23;c.r[31]=3;

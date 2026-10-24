@@ -1,0 +1,129 @@
+{
+  "feasible": true,
+  "failed_guards": [],
+  "initial_stream_bytes": 430,
+  "stream_bytes": 400,
+  "evaluations": 400,
+  "accepted_operations": 13,
+  "history": [
+    {
+      "evaluation": 64,
+      "operation": "share-4-6-rows-53-54-source-54",
+      "stream_bytes": 428
+    },
+    {
+      "evaluation": 65,
+      "operation": "share-2-4-rows-76-78-source-75",
+      "stream_bytes": 426
+    },
+    {
+      "evaluation": 66,
+      "operation": "share-4-6-rows-43-47-source-42",
+      "stream_bytes": 424
+    },
+    {
+      "evaluation": 73,
+      "operation": "share-4-6-rows-75-77-source-74",
+      "stream_bytes": 422
+    },
+    {
+      "evaluation": 84,
+      "operation": "share-4-6-rows-29-31-source-28-refit-k3--1",
+      "stream_bytes": 420
+    },
+    {
+      "evaluation": 89,
+      "operation": "share-2-4-rows-31-32-source-30",
+      "stream_bytes": 418
+    },
+    {
+      "evaluation": 123,
+      "operation": "share-2-6-rows-39-41-source-41-refit-k6-1",
+      "stream_bytes": 414
+    },
+    {
+      "evaluation": 127,
+      "operation": "share-2-4-rows-26-28-source-25",
+      "stream_bytes": 412
+    },
+    {
+      "evaluation": 133,
+      "operation": "share-4-6-rows-49-51-source-51-refit-k1-1",
+      "stream_bytes": 408
+    },
+    {
+      "evaluation": 201,
+      "operation": "share-2-4-rows-46-47-source-45",
+      "stream_bytes": 406
+    },
+    {
+      "evaluation": 219,
+      "operation": "share-4-6-rows-39-43-source-43",
+      "stream_bytes": 404
+    },
+    {
+      "evaluation": 223,
+      "operation": "share-4-6-rows-44-48-source-43",
+      "stream_bytes": 402
+    },
+    {
+      "evaluation": 322,
+      "operation": "share-2-4-rows-44-45-source-45",
+      "stream_bytes": 400
+    }
+  ],
+  "level": 0,
+  "requested_frequency_tolerance": 0.0,
+  "requested_amplitude_tolerance_db": 0.0,
+  "limits": {
+    "frequency_key": "frequency_error_p95_cents",
+    "amplitude_key": "level_error_p95_db",
+    "frequency_cap": 68.06818660400604,
+    "amplitude_cap": 13.880283356289706,
+    "missing_cap": 0.21341688799808775,
+    "extra_cap": 0.31939403439798464,
+    "coverage_floor": 0.7865831120019123,
+    "continuity_cap": 0.34134095894191424,
+    "minimum_stoi": null
+  },
+  "tracking": {
+    "harmonic_track_loss": 0.7634618842987417,
+    "frequency_trajectory_error": 0.7733606391488972,
+    "level_error": 1.8215374864832192,
+    "missing_reference_energy": 0.21200221532970168,
+    "extra_candidate_energy": 0.31888787282035247,
+    "weighted_match_rate": 0.7879977846702986,
+    "frequency_error_cents": 39.62343902002028,
+    "frequency_error_hz": 11.886033025531782,
+    "level_error_db": 5.46461245944965,
+    "frequency_error_p95_cents": 68.06818660400604,
+    "frequency_error_p95_hz": 31.333716743296463,
+    "level_error_p95_db": 13.874682673462083,
+    "continuity_break_rate": 0.34088635556040997
+  },
+  "computed_flash_bytes": 822,
+  "fits_target": true,
+  "firmware_qualified": false,
+  "intermediate_wraps": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "stoi": 0.8308116344572746,
+  "estoi": 0.522640825430625,
+  "spectrum": {
+    "spectrogram_loss": 0.5388024833037208,
+    "fine_log_error": 0.6034092782236691,
+    "envelope_error": 0.5487982091535613,
+    "unsupported_energy": 0.186931668299302,
+    "missing_energy": 0.19007477288535424
+  },
+  "stream_sha256": "37b9aa18e790e6148eb5f734c52572923ecd329a32f36d1855b25c9fe81a6e3b",
+  "pcm_sha256": "54614172a101138cd7aca98d7985c2efc89aaae6836e5fe427ec3416d0837d7c",
+  "status": "feasible",
+  "final_evaluation_verified": true,
+  "computed_complete_bell_flash_bytes": 992,
+  "complete_bell_eeprom_bytes": 64,
+  "complete_bell_firmware_qualified": false
+}

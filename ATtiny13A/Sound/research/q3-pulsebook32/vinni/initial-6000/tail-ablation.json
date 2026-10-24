@@ -1,0 +1,75 @@
+{
+  "schema": "q3-pulsebook32-tail-ablation-v1",
+  "policy": "Same exact frames,durations,arithmetic,gain; onlylags16..31zeroed; no fitting or normalization",
+  "controls": {
+    "balanced": {
+      "new_taps_zeroed_score": {
+        "stoi": 0.8495328543956718,
+        "spectrogram_loss": 0.4911844212014441,
+        "fine_log_error": 0.4744189356403926,
+        "envelope_error": 0.5853448527411389,
+        "unsupported_energy": 0.18811125500139433,
+        "missing_energy": 0.199059621552037,
+        "stream_bytes": 620,
+        "peak_signed": 100,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07720315867456896,
+        "raw_rms": 0.11740926170654521,
+        "target_met": false
+      },
+      "original_score": 0.4911844212014441
+    },
+    "best_stoi": {
+      "new_taps_zeroed_score": {
+        "stoi": 0.8495839901491007,
+        "spectrogram_loss": 0.4920984476189474,
+        "fine_log_error": 0.4748682092468348,
+        "envelope_error": 0.5866902225578012,
+        "unsupported_energy": 0.18929290779868155,
+        "missing_energy": 0.1999841571510766,
+        "stream_bytes": 620,
+        "peak_signed": 100,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07731786267510776,
+        "raw_rms": 0.11752316862920092,
+        "target_met": false
+      },
+      "original_score": 0.4920984476189474
+    },
+    "best_spectrum": {
+      "new_taps_zeroed_score": {
+        "stoi": 0.8386470804468988,
+        "spectrogram_loss": 0.48804781684398396,
+        "fine_log_error": 0.4739153625258594,
+        "envelope_error": 0.5753491397080172,
+        "unsupported_energy": 0.1901810634643582,
+        "missing_energy": 0.1912235148284263,
+        "stream_bytes": 616,
+        "peak_signed": 98,
+        "steps_ge48": 0,
+        "wrap_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "raw_mean": 0.07870623709141523,
+        "raw_rms": 0.1196804378586662,
+        "target_met": false
+      },
+      "original_score": 0.4776744719886154
+    }
+  }
+}

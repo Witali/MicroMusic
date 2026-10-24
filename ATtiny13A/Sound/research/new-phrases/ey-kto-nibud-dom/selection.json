@@ -1,0 +1,105 @@
+{
+  "id": "ey-kto-nibud-dom",
+  "input": {
+    "id": "ey-kto-nibud-dom",
+    "source_file": "ey-kto-nibud-dom.mp3",
+    "source_sha256": "c08415824e78f43841d60d5c3dbf26332062e523cc7fa531d05ab3f24516921f",
+    "source_bytes": 49446,
+    "source_sample_rate": 44100,
+    "source_channels": 1,
+    "source_samples": 134255,
+    "source_seconds": 3.044331065759637,
+    "source_mono_dc_removed": 2.1106451338647735e-06,
+    "mono_policy": "arithmetic mean of channels",
+    "resampling": "scipy.signal.resample_poly default Kaiser anti-alias filter",
+    "normalization_gain": 1.0465470514231219,
+    "sample_rate": 7500,
+    "reference_samples": 22848,
+    "unpadded_samples": 22833,
+    "trailing_zero_padding_samples": 15,
+    "reference_seconds": 3.0464,
+    "speech_cropped": false,
+    "reference_sha256": "f5381e869f63b216e2de0215f0cd66d7995291624cf7006fb57033e88d609eec",
+    "reference_file": "reference.wav",
+    "reference_peak": 0.850006103515625,
+    "reference_rms": 0.2600593551284025,
+    "current_tiny_duration_supported": true,
+    "hq4_minimum_frames": 90,
+    "hq4_minimum_stream_bytes": 184,
+    "hq4_stream_budget_bytes": 617
+  },
+  "selectedFamily": "hq4",
+  "requestedFinalFamily": null,
+  "selectionProvisional": true,
+  "flashBytes": 1024,
+  "eepromUsedBytes": 0,
+  "phraseSamples": 22848,
+  "sampleHz": 7500,
+  "imageSha256": "0216511344cedb711b892c84c46f1b5f787b7cfde918662e87a4717558005f69",
+  "actualPhrasePcmSha256": "be80035519f4d88a7c7ba3b89032d1d4ec4191818679d3314e0d92aec6c2610e",
+  "quality": {
+    "loss": 1.1221441867129596,
+    "log_spectral_error": 1.1500262820220926,
+    "relative_spectral_error": 1.0106158054764274,
+    "stoi": 0.6530939269242931,
+    "estoi": 0.5101551555249457,
+    "balanced_score": 0.5633223919872563,
+    "pcm_sha256": "be80035519f4d88a7c7ba3b89032d1d4ec4191818679d3314e0d92aec6c2610e",
+    "measured_from": "actual AVR recording",
+    "samples": 22848,
+    "sample_rate": 7500
+  },
+  "alternatives": [
+    {
+      "family": "hq4",
+      "flashBytes": 1024,
+      "eepromUsedBytes": 0,
+      "quality": {
+        "loss": 1.1221441867129596,
+        "log_spectral_error": 1.1500262820220926,
+        "relative_spectral_error": 1.0106158054764274,
+        "stoi": 0.6530939269242931,
+        "estoi": 0.5101551555249457,
+        "balanced_score": 0.5633223919872563,
+        "pcm_sha256": "be80035519f4d88a7c7ba3b89032d1d4ec4191818679d3314e0d92aec6c2610e",
+        "measured_from": "actual AVR recording",
+        "samples": 22848,
+        "sample_rate": 7500
+      }
+    },
+    {
+      "family": "tiny",
+      "flashBytes": 1024,
+      "eepromUsedBytes": 32,
+      "quality": {
+        "loss": 1.0607274140166818,
+        "log_spectral_error": 1.1629351590676136,
+        "relative_spectral_error": 0.6518964338129541,
+        "stoi": 0.5706141238613982,
+        "estoi": 0.41881828916711117,
+        "balanced_score": 0.4857559307400636,
+        "pcm_sha256": "140675a094528288ddc3e482d474ad803548f6de5643f949e9818f18af8a9d84",
+        "measured_from": "actual AVR recording",
+        "samples": 22848,
+        "sample_rate": 7500
+      }
+    }
+  ],
+  "originalAudio": "audio/ey-kto-nibud-dom/original.wav",
+  "afterAudio": "audio/ey-kto-nibud-dom/after.wav",
+  "referenceAudio": "audio/ey-kto-nibud-dom/reference.wav",
+  "firmware": "firmware/ey-kto-nibud-dom/firmware.hex",
+  "eeprom": null,
+  "hybridAlternative": null,
+  "verification": {
+    "engines": [
+      "reference",
+      "wasm",
+      "wasm-unoptimized"
+    ],
+    "verifiedSamples": 68544,
+    "silenceSamplesVerified": 45696,
+    "lostOverflows": 0,
+    "missedSamples": 0
+  }
+}

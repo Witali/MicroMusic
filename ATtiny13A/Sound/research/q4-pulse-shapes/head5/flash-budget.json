@@ -1,0 +1,322 @@
+{
+  "schema": "micromusic-q5-flash-budget-v1",
+  "modelSha256": "2b10e6f976602e1ba379f8151ad72cadf61ee9ee378a2f02c26764d752bb2d77",
+  "sourceSha256NormalizedLf": "fbedc4599b1ed92a9e83a747cb2c5879e6e99fc758d7bba6d9e678769065ebf1",
+  "phraseSamples": 22272,
+  "sampleHz": 7500,
+  "source": "tools/pack-q5-stream.py",
+  "candidates": [
+    {
+      "frames": 132,
+      "headerBytes": 36,
+      "frameBits": 8316,
+      "frameBytes": 1040,
+      "pulseBytes": 160,
+      "dataBytes": 1236,
+      "fieldMethods": [
+        {
+          "field": "pitches",
+          "method": "fixed",
+          "parameter": 7,
+          "bits": 924
+        },
+        {
+          "field": "gains_q1",
+          "method": "fixed",
+          "parameter": 5,
+          "bits": 660
+        },
+        {
+          "field": "quarters",
+          "method": "fixed",
+          "parameter": 2,
+          "bits": 264
+        },
+        {
+          "field": "modes",
+          "method": "fixed",
+          "parameter": 3,
+          "bits": 396
+        },
+        {
+          "field": "phase_modes",
+          "method": "fixed",
+          "parameter": 2,
+          "bits": 264
+        },
+        {
+          "field": "durations",
+          "method": "fixed",
+          "parameter": 2,
+          "bits": 264
+        },
+        {
+          "field": "k0",
+          "method": "fixed",
+          "parameter": 6,
+          "bits": 792
+        },
+        {
+          "field": "k1",
+          "method": "fixed",
+          "parameter": 6,
+          "bits": 792
+        },
+        {
+          "field": "k2",
+          "method": "fixed",
+          "parameter": 5,
+          "bits": 660
+        },
+        {
+          "field": "k3",
+          "method": "fixed",
+          "parameter": 5,
+          "bits": 660
+        },
+        {
+          "field": "k4",
+          "method": "fixed",
+          "parameter": 5,
+          "bits": 660
+        },
+        {
+          "field": "k5",
+          "method": "fixed",
+          "parameter": 5,
+          "bits": 660
+        },
+        {
+          "field": "k6",
+          "method": "fixed",
+          "parameter": 5,
+          "bits": 660
+        },
+        {
+          "field": "k7",
+          "method": "fixed",
+          "parameter": 5,
+          "bits": 660
+        }
+      ],
+      "name": "fixed",
+      "sha256": "518f992aeb2d9571bdd3754a66cbc0d6396816e36f7589a70e824ea227d9c12d",
+      "exactRoundTrip": true,
+      "optimisticFlashFloorBytes": 1400
+    },
+    {
+      "frames": 132,
+      "headerBytes": 36,
+      "frameBits": 6972,
+      "frameBytes": 872,
+      "pulseBytes": 160,
+      "dataBytes": 1068,
+      "fieldMethods": [
+        {
+          "field": "pitches",
+          "method": "rice",
+          "parameter": 5,
+          "bits": 874
+        },
+        {
+          "field": "gains_q1",
+          "method": "delta-rice",
+          "parameter": 2,
+          "bits": 528
+        },
+        {
+          "field": "quarters",
+          "method": "rice",
+          "parameter": 0,
+          "bits": 237
+        },
+        {
+          "field": "modes",
+          "method": "rice",
+          "parameter": 1,
+          "bits": 375
+        },
+        {
+          "field": "phase_modes",
+          "method": "rice",
+          "parameter": 0,
+          "bits": 161
+        },
+        {
+          "field": "durations",
+          "method": "fixed",
+          "parameter": 2,
+          "bits": 264
+        },
+        {
+          "field": "k0",
+          "method": "delta-rice",
+          "parameter": 3,
+          "bits": 651
+        },
+        {
+          "field": "k1",
+          "method": "delta-rice",
+          "parameter": 3,
+          "bits": 654
+        },
+        {
+          "field": "k2",
+          "method": "delta-rice",
+          "parameter": 2,
+          "bits": 539
+        },
+        {
+          "field": "k3",
+          "method": "delta-rice",
+          "parameter": 2,
+          "bits": 539
+        },
+        {
+          "field": "k4",
+          "method": "delta-rice",
+          "parameter": 2,
+          "bits": 530
+        },
+        {
+          "field": "k5",
+          "method": "delta-rice",
+          "parameter": 2,
+          "bits": 549
+        },
+        {
+          "field": "k6",
+          "method": "delta-rice",
+          "parameter": 2,
+          "bits": 542
+        },
+        {
+          "field": "k7",
+          "method": "delta-rice",
+          "parameter": 2,
+          "bits": 529
+        }
+      ],
+      "name": "rice-delta",
+      "sha256": "0ce00e3beb21e4fcebaf861e3708312c0af2c9b6bd82d56cd8cf94c1a28239f7",
+      "exactRoundTrip": true,
+      "optimisticFlashFloorBytes": 1232
+    },
+    {
+      "frames": 132,
+      "headerBytes": 36,
+      "frameBits": 6858,
+      "frameBytes": 858,
+      "pulseBytes": 160,
+      "dataBytes": 1054,
+      "fieldMethods": [
+        {
+          "field": "pitches",
+          "method": "zero-delta-rice",
+          "parameter": 5,
+          "bits": 816
+        },
+        {
+          "field": "gains_q1",
+          "method": "zero-delta-rice",
+          "parameter": 2,
+          "bits": 524
+        },
+        {
+          "field": "quarters",
+          "method": "rice",
+          "parameter": 0,
+          "bits": 237
+        },
+        {
+          "field": "modes",
+          "method": "zero-rice",
+          "parameter": 1,
+          "bits": 361
+        },
+        {
+          "field": "phase_modes",
+          "method": "rice",
+          "parameter": 0,
+          "bits": 161
+        },
+        {
+          "field": "durations",
+          "method": "fixed",
+          "parameter": 2,
+          "bits": 264
+        },
+        {
+          "field": "k0",
+          "method": "delta-rice",
+          "parameter": 3,
+          "bits": 651
+        },
+        {
+          "field": "k1",
+          "method": "zero-delta-rice",
+          "parameter": 3,
+          "bits": 623
+        },
+        {
+          "field": "k2",
+          "method": "delta-rice",
+          "parameter": 2,
+          "bits": 539
+        },
+        {
+          "field": "k3",
+          "method": "zero-delta-rice",
+          "parameter": 2,
+          "bits": 532
+        },
+        {
+          "field": "k4",
+          "method": "delta-rice",
+          "parameter": 2,
+          "bits": 530
+        },
+        {
+          "field": "k5",
+          "method": "delta-rice",
+          "parameter": 2,
+          "bits": 549
+        },
+        {
+          "field": "k6",
+          "method": "delta-rice",
+          "parameter": 2,
+          "bits": 542
+        },
+        {
+          "field": "k7",
+          "method": "delta-rice",
+          "parameter": 2,
+          "bits": 529
+        }
+      ],
+      "name": "rice-delta-zero",
+      "sha256": "0f53bb127b2cdb6a65d230779024f25d859e0849f12cb51c8af5e048ab6aa1f6",
+      "exactRoundTrip": true,
+      "optimisticFlashFloorBytes": 1218
+    }
+  ],
+  "best": "rice-delta-zero",
+  "arithmeticBytes": 228,
+  "arithmeticProof": "research/word-q4/filter-head5-best.json",
+  "flashLimitBytes": 1024,
+  "eepromLimitBytes": 64,
+  "optimisticFlashFloorBytes": 1218,
+  "omittedFromFloor": [
+    "startup and vectors",
+    "PWM and sample scheduling",
+    "excitation and gain",
+    "stream unpacker",
+    "EEPROM access"
+  ],
+  "fullFirmwareImplemented": false,
+  "flashQualified": false,
+  "hardwareTested": false,
+  "status": "oversized-even-before-player",
+  "scope": "Exact retained model and three measured lossless formats; no general impossibility claim."
+}

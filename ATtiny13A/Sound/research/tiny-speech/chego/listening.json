@@ -1,0 +1,56 @@
+{
+  "schema": "tiny-speech-listening-v1",
+  "clip": "chego",
+  "sampleRate": 7500,
+  "phraseSamples": 9216,
+  "originalSha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+  "originalFileExact": true,
+  "before": {
+    "id": "hq4-chego-auto",
+    "flashBytes": 1007,
+    "imageSha256": "142f57781462c5437d7d44b8cf7d22c24aff52227b104fddb6e8a0068b719111",
+    "pcmSha256": "4a619c1a7f817764b522886a8a17f115e0eb633fe5ebc0e3a1375848c05e4c5d",
+    "firstLoopPcmSha256": "a7232d70445ee0094f517fb51aa81cfc510565301b0364cef451ffa057bb18cf",
+    "verifiedSamples": 27648,
+    "engines": [
+      "JS",
+      "WASM"
+    ]
+  },
+  "after": {
+    "flashBytes": 978,
+    "eepromBytes": 64,
+    "imageSha256": "5d9d4116a5ff6a6e2ab8fe57c5abe4dd28bba8d5b6e53d15065493cde30b08e7",
+    "eepromSha256": "c327e849b5fd854dac0058e350137a5a4424d9ad5ce760ba6bbccc17e2b92e98",
+    "pcmSha256": "65f199e202c8544e254cedae67f7389455d57f68ff56c8e170591c1c19316c85",
+    "allLoopsPcmSha256": "cce62c6abab29e3c3982d73c7650d1b588db9b555995bc2efa2586bfe3904ea3",
+    "engines": [
+      "reference",
+      "wasm",
+      "wasm-unoptimized"
+    ],
+    "verifiedLoops": 3
+  },
+  "individualProcessing": "Original file copied byte-for-byte; before/after are exact unsigned8 DAC samples.",
+  "comparisonProcessing": "Original, Before, After: common 70Hz highpass, matched RMS, common peak scaling, 0.3s pauses.",
+  "normalizedSourceSha256": "87a3b8eeb57bbc5c738233aa9066491f3f1781d7db121eb8f7f917821615a565",
+  "controlStreamSha256": "16d924e1586a52356a61abbac7b82d421e4eee8404bc2f6d157bcaaa81e99769",
+  "files": {
+    "01-original.wav": {
+      "bytes": 18476,
+      "sha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c"
+    },
+    "02-before-hq4-t-auto.wav": {
+      "bytes": 9260,
+      "sha256": "2e41741750f110d9eef28ea1646bd68a4c4a16a04e6ce24c23a906497e71703f"
+    },
+    "03-after-tiny.wav": {
+      "bytes": 9260,
+      "sha256": "15cc527022a6af14dd523d17166f993e64a4c579a8b132128e53602d027859d6"
+    },
+    "04-comparison-matched.wav": {
+      "bytes": 68840,
+      "sha256": "74a3495d83f71314258dda8c9748b99868872db1a6df70c8c8efc153115e74c9"
+    }
+  }
+}

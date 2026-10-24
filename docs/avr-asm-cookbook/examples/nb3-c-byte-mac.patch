@@ -1,0 +1,136 @@
+--- a/src/nb3_c_math.h
++++ b/src/nb3_c_math.h
+@@ -4,6 +4,20 @@
+ #define MICROMUSIC_NB3_C_MATH_H
+ #include <stdint.h>
+ #include "speex_platform.h"
++
++/* Full signed16 MAC modulo 2^32 using only byte products. Each narrow
++ * product fits its declared type; unsigned shifts/additions define wrapping. */
++static SPEEX_NB3_ALWAYS_INLINE uint32_t speex_nb3_mac16_bytes_c(uint32_t sum,
++                                                               int16_t a,int16_t b)
++{
++    uint8_t al=(uint8_t)a,bl=(uint8_t)b;
++    int8_t ah=(int8_t)(a>>8),bh=(int8_t)(b>>8);
++    sum+=(uint16_t)al*bl;
++    sum+=(uint32_t)((int16_t)ah*bh)<<16;
++    sum+=(uint32_t)((int16_t)ah*bl)<<8;
++    sum+=(uint32_t)((int16_t)bh*al)<<8;
++    return sum;
++}
+
+ /* Exact generic Xiph MULT16_32_Q14, including the signed16 cast of b>>14.
+  * The low product has magnitude <2^29, so its floor >>14 fits signed16.
+--- a/src/iir_direct.c.inc
++++ b/src/iir_direct.c.inc
+@@ -4,6 +4,7 @@
+  * Changing coefficients one tap per sample preserves the original transposed
+  * filter's first ten outputs after each coefficient change. */
+ #include "speex_platform.h"
++#include "nb3_c_math.h"
+ #if SPEEX_NB3_USE_AVR_ASM
+ extern void speex_avr_iir40(const int16_t *, const int16_t *, int16_t *, int32_t *);
+ #else
+@@ -12,7 +13,7 @@
+    uint32_t sum = 0;
+    int j;
+    for (j=0;j<10;j++)
+-      sum += (uint32_t)((int32_t)coef[j] * *--after);
++      sum = speex_nb3_mac16_bytes_c(sum,coef[j],*--after);
+    return (int32_t)sum;
+ }
+ #endif
+--- /dev/null
++++ b/tests/avr_c_mac.c
+@@ -0,0 +1,25 @@
++#include <stdint.h>
++#include "nb3_c_math.h"
++_Static_assert(!SPEEX_NB3_USE_AVR_ASM,"Pure C arithmetic workers");
++volatile uint32_t mac_sum,mac_result;
++volatile int16_t mac_a,mac_b;
++volatile uint8_t mac_command,mac_status,mac_zero;
++static SPEEX_NB3_STAGE uint32_t mac_native(uint32_t s,int16_t a,int16_t b)
++{
++    return s+(uint32_t)((int32_t)a*b);
++}
++static SPEEX_NB3_STAGE uint32_t mac_bytes(uint32_t s,int16_t a,int16_t b)
++{
++    return speex_nb3_mac16_bytes_c(s,a,b);
++}
++int main(void)
++{
++    mac_status=1;
++    for (;;) {
++        while(!mac_command) {}
++        if(mac_command==1)mac_result=mac_native(mac_sum,mac_a,mac_b);
++        else mac_result=mac_bytes(mac_sum,mac_a,mac_b);
++        __asm__("mov %0,r1":"=r"(mac_zero));
++        mac_command=0;mac_status=2;
++    }
++}
+--- /dev/null
++++ b/tests/verify_c_mac.mjs
+@@ -0,0 +1,46 @@
++import assert from 'node:assert/strict';
++import {readFileSync,writeFileSync} from 'node:fs';
++import {fileURLToPath} from 'node:url';
++import {join} from 'node:path';
++import {createHash} from 'node:crypto';
++import {CPU,avrInstruction} from 'avr8js';
++const root=fileURLToPath(new URL('../',import.meta.url)),dir=join(root,'build/c-mac-unit');
++const binary=readFileSync(join(dir,'c-mac.bin')),program=new Uint16Array(16384).fill(0xffff);
++new Uint8Array(program.buffer).set(binary);
++const symbols=new Map(readFileSync(join(dir,'symbols.txt'),'utf8').split(/\r?\n/)
++ .map(l=>l.match(/^([0-9a-f]+)\s+\w\s+(.+)$/)).filter(Boolean).map(m=>[m[2],parseInt(m[1],16)]));
++function addr(n){assert.ok(symbols.has(n),n);return symbols.get(n)&0xffff;}
++const entries=new Set(['mac_native','mac_bytes'].map(n=>[...symbols].find(([s])=>new RegExp('^'+n+'(?:\\.|$)').test(s))[1]));
++const cpu=new CPU(program,2048),status=addr('mac_status'),command=addr('mac_command');
++const regs=[...Array.from({length:16},(_,i)=>i+2),28,29];
++const times=[null,...Array.from({length:2},()=>({min:Infinity,max:0,total:0,calls:0}))];
++let active=null,which=0,cases=0,seed=0x87b57c42;
++function random(){seed^=seed<<13;seed^=seed>>>17;seed^=seed<<5;return seed>>>0;}
++function until(p){const end=cpu.cycles+10000;while(!p()){
++ assert.ok(cpu.cycles<end);if(entries.has(cpu.pc*2)){assert.equal(active,null);active={sp:cpu.SP,c:cpu.cycles,r:regs.map(r=>cpu.data[r])};}
++ avrInstruction(cpu);cpu.tick();assert.ok(cpu.SP>=addr('__bss_end'));
++ if(active&&cpu.SP===active.sp+2){assert.deepEqual(regs.map(r=>cpu.data[r]),active.r);assert.equal(cpu.data[1],0);
++  const n=cpu.cycles-active.c,t=times[which];t.min=Math.min(t.min,n);t.max=Math.max(t.max,n);t.total+=n;t.calls++;active=null;}
++}}
++until(()=>cpu.data[status]===1);
++function check(a,b,s){
++ const expected=Number(BigInt.asUintN(32,BigInt(a)*BigInt(b)+BigInt(s)));
++ cpu.dataView.setInt16(addr('mac_a'),a,true);cpu.dataView.setInt16(addr('mac_b'),b,true);cpu.dataView.setUint32(addr('mac_sum'),s,true);
++ for(which=1;which<=2;which++){
++  cpu.data[status]=1;cpu.data[command]=which;until(()=>cpu.data[status]===2);assert.equal(active,null);
++  assert.equal(cpu.dataView.getUint32(addr('mac_result'),true),expected,`a=${a}, b=${b}, sum=${s}`);
++  assert.equal(cpu.dataView.getInt16(addr('mac_a'),true),a);assert.equal(cpu.dataView.getInt16(addr('mac_b'),true),b);
++  assert.equal(cpu.dataView.getUint32(addr('mac_sum'),true),s);assert.equal(cpu.data[addr('mac_zero')],0);
++ }cases++;
++}
++const edges=[-32768,-32767,-32700,-257,-256,-255,-128,-1,0,1,127,128,255,256,32700,32767];
++for(let a=-32768;a<=32767;a++)for(const b of edges)check(a,b,random());
++for(let i=0;i<262144;i++)check((random()<<16)>>16,(random()<<16)>>16,random());
++assert.equal(cases,1310720);assert.equal(times[1].calls,cases);assert.equal(times[2].calls,cases);
++for(const t of times.slice(1))t.mean=Number((t.total/t.calls).toFixed(4));
++const report={mcu:'ATmega328P',compiler:'AVR GCC 7.3.0 mixed Os/O3, LTO, fwrapv',simulator:'avr8js 0.21.1',
++ binarySha256:createHash('sha256').update(binary).digest('hex'),cases,exact:true,asmEnabled:false,
++ fullFirstOperandRange:true,secondOperandEdges:edges,randomCases:262144,arbitraryAccumulator:true,
++ calleeSavedRegistersPreserved:true,zeroRegisterRestored:true,inputsPreserved:true,
++ nativeCycles:times[1],byteProductCycles:times[2],includesInterrupts:false,physicalBoardTested:false};
++writeFileSync(join(dir,'verification.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));
+--- /dev/null
++++ b/tools/build_c_mac_test.py
+@@ -0,0 +1,14 @@
++"""Build both exact signed16 MAC forms with assembly explicitly disabled."""
++import argparse
++from pathlib import Path
++import subprocess,sys
++sys.path.insert(0,str(Path(__file__).resolve().parent))
++import build
++if __name__=='__main__':
++    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--avr-gcc',required=True);a=p.parse_args()
++    out=build.ROOT/'build/c-mac-unit';out.mkdir(parents=True,exist_ok=True)
++    build.run([a.avr_gcc,'-std=c11','-mmcu=atmega328p','-Os','-flto','-fwrapv',
++        '-DSPEEX_NB3_ENABLE_ASM=0','-I'+str(build.ROOT/'src'),build.ROOT/'tests/avr_c_mac.c','-o',out/'c-mac.elf'])
++    prefix=str(Path(a.avr_gcc).with_name('avr-'));ext='.exe' if a.avr_gcc.endswith('.exe') else ''
++    build.run([prefix+'objcopy'+ext,'-O','binary','-R','.eeprom',out/'c-mac.elf',out/'c-mac.bin'])
++    (out/'symbols.txt').write_text(subprocess.check_output([prefix+'nm'+ext,'-n',out/'c-mac.elf'],text=True))

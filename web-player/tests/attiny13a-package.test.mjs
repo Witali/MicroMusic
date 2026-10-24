@@ -369,7 +369,8 @@ test('runtime imports/start sections and truncated or mismatched WASM are reject
   await assert.rejects(createPackage({...input,runtime:hostImport}),/runtime must not import/);
   await assert.rejects(createPackage({...input,runtime:runtime.subarray(0,30)}),/WASM|WebAssembly/);
   const legacy=new Uint8Array(await readFile(new URL('../wasm/avr.wasm',import.meta.url)));
-  await assert.rejects(createPackage({...input,runtime:legacy}),/ABI memory size mismatch/);
+  // The shared music runtime also has two pages, but no physical-board bus ABI.
+  await assert.rejects(createPackage({...input,runtime:legacy}),/ABI function mismatch: readIO/);
   // Rename one same-length exported bridge without invalidating the WASM binary.
   const altered=runtime.slice(),needle=new TextEncoder().encode('avr_clock');let changed=false;
   for(let i=0;i<altered.length-needle.length;i++)if(needle.every((b,j)=>altered[i+j]===b)){altered[i]='x'.charCodeAt(0);changed=true;break;}

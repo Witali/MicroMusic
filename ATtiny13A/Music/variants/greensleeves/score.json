@@ -1,1171 +1,1715 @@
 {
+  "engine": "compact-four",
   "title": "05 · Greensleeves",
   "composers": [
     "Traditional"
   ],
   "tempo_bpm": 60,
-  "engine": "instrument-bank",
-  "beats_per_bar": 3,
+  "endUnit": 192,
   "meter": "6/8",
   "pickup_beats": 0.5,
   "closing_bar_beats": 2.5,
-  "percussion_grid_units": 6,
-  "percussion_first_unit": 2,
-  "percussion_meter_units": 12,
-  "percussion_initial_counter": 9,
-  "percussion_enabled": false,
-  "instruments": {
-    "lead": {
-      "instrument": "flute",
-      "level": 15
-    },
-    "keys": {
-      "instrument": "violin",
-      "level": 12
-    },
-    "pluck": {
-      "instrument": "cello",
-      "level": 10
-    },
-    "percussion": "off"
-  },
-  "playlist": [
-    "pickup",
-    "bar_01",
-    "bar_02",
-    "bar_03",
-    "bar_04",
-    "bar_05",
-    "bar_06",
-    "bar_07",
-    "bar_08",
-    "bar_09",
-    "bar_10",
-    "bar_11",
-    "bar_12",
-    "bar_13",
-    "bar_14",
-    "bar_15",
-    "bar_16"
-  ],
-  "patterns": {
-    "pickup": [
-      "E4:0.5"
-    ],
-    "bar_01": [
-      "G4:1 A4:0.5 B4:0.75 C5:0.25 B4:0.5"
-    ],
-    "bar_02": [
-      "A4:1 F#4:0.5 D4:0.75 E4:0.25 F#4:0.5"
-    ],
-    "bar_03": [
-      "G4:1 E4:0.5 E4:0.75 D#4:0.25 E4:0.5"
-    ],
-    "bar_04": [
-      "F#4:1.5 B3:1 E4:0.5"
-    ],
-    "bar_05": [
-      "G4:1 A4:0.5 B4:0.75 C5:0.25 B4:0.5"
-    ],
-    "bar_06": [
-      "A4:1 F#4:0.5 D4:0.75 E4:0.25 F#4:0.5"
-    ],
-    "bar_07": [
-      "G4:0.75 F#4:0.25 E4:0.5 D#4:0.75 C#4:0.25 D#4:0.5"
-    ],
-    "bar_08": [
-      "E4:1.5 E4:1 R:0.5"
-    ],
-    "bar_09": [
-      "D5:1.5 D5:0.75 C#5:0.25 B4:0.5"
-    ],
-    "bar_10": [
-      "A4:1 F#4:0.5 D4:0.75 E4:0.25 F#4:0.5"
-    ],
-    "bar_11": [
-      "G4:1 E4:0.5 E4:0.75 D#4:0.25 E4:0.5"
-    ],
-    "bar_12": [
-      "F#4:1 D#4:0.5 B3:1 R:0.5"
-    ],
-    "bar_13": [
-      "D5:1.5 D5:0.75 C5:0.25 B4:0.5"
-    ],
-    "bar_14": [
-      "A4:1 F#4:0.5 D4:0.75 E4:0.25 F#4:0.5"
-    ],
-    "bar_15": [
-      "G4:0.75 F#4:0.25 E4:0.5 D#4:0.75 C#4:0.25 D#4:0.5"
-    ],
-    "bar_16": [
-      "E4:1.5 E4:1 R:0.25"
-    ]
-  },
-  "chord_pairs": [
-    [
-      "B3/E3",
-      "B3/E3"
-    ]
-  ],
-  "chord_overrides": {
-    "pickup": [
-      [
-        "B3/E3",
-        "B3/E3"
-      ]
-    ],
-    "bar_01": [
-      [
-        "E4/E3",
-        "D4/G3"
-      ]
-    ],
-    "bar_02": [
-      [
-        "F#4/D3",
-        "D4/D3"
-      ]
-    ],
-    "bar_03": [
-      [
-        "B3/E3",
-        "A3/C3"
-      ]
-    ],
-    "bar_04": [
-      [
-        "D#4/B2",
-        "B3/B2"
-      ]
-    ],
-    "bar_05": [
-      [
-        "E4/E3",
-        "D4/G3"
-      ]
-    ],
-    "bar_06": [
-      [
-        "F#4/D3",
-        "D4/D3"
-      ]
-    ],
-    "bar_07": [
-      [
-        "B3/E3",
-        "B3/B2"
-      ]
-    ],
-    "bar_08": [
-      [
-        "B3/E3",
-        "B3/E3"
-      ]
-    ],
-    "bar_09": [
-      [
-        "F#4/B3",
-        "B4/G3"
-      ]
-    ],
-    "bar_10": [
-      [
-        "F#4/D3",
-        "D4/D3"
-      ]
-    ],
-    "bar_11": [
-      [
-        "B3/E3",
-        "A3/C3"
-      ]
-    ],
-    "bar_12": [
-      [
-        "D#4/B2",
-        "B3/B2"
-      ]
-    ],
-    "bar_13": [
-      [
-        "F#4/B3",
-        "B4/G3"
-      ]
-    ],
-    "bar_14": [
-      [
-        "F#4/D3",
-        "D4/D3"
-      ]
-    ],
-    "bar_15": [
-      [
-        "B3/E3",
-        "B3/B2"
-      ]
-    ],
-    "bar_16": [
-      [
-        "B3/E3",
-        "B3/E3"
-      ]
-    ]
-  },
-  "chord_notes": {
-    "B3/E3": [
-      59,
-      52
-    ],
-    "E4/E3": [
-      64,
-      52
-    ],
-    "D4/G3": [
-      62,
-      55
-    ],
-    "F#4/D3": [
-      66,
-      50
-    ],
-    "D4/D3": [
-      62,
-      50
-    ],
-    "A3/C3": [
-      57,
-      48
-    ],
-    "D#4/B2": [
-      63,
-      47
-    ],
-    "B3/B2": [
-      59,
-      47
-    ],
-    "F#4/B3": [
-      66,
-      59
-    ],
-    "B4/G3": [
-      71,
-      55
-    ]
-  },
-  "packing_candidates": 4096,
-  "replace_harmony_sections": [
-    "pickup",
-    "bar_01",
-    "bar_02",
-    "bar_03",
-    "bar_04",
-    "bar_05",
-    "bar_06",
-    "bar_07",
-    "bar_08",
-    "bar_09",
-    "bar_10",
-    "bar_11",
-    "bar_12",
-    "bar_13",
-    "bar_14",
-    "bar_15",
-    "bar_16"
-  ],
-  "timed_controls": {
-    "pickup": [
-      {
-        "unit": 0,
-        "chord": "B3/E3"
-      }
-    ],
-    "bar_01": [
-      {
-        "unit": 0,
-        "offMask": 6
-      },
-      {
-        "unit": 0,
-        "chord": "E4/E3"
-      },
-      {
-        "unit": 4,
-        "offMask": 6
-      },
-      {
-        "unit": 6,
-        "chord": "D4/G3"
-      },
-      {
-        "unit": 9,
-        "offMask": 2
-      },
-      {
-        "unit": 10,
-        "offMask": 4
-      }
-    ],
-    "bar_02": [
-      {
-        "unit": 0,
-        "chord": "F#4/D3"
-      },
-      {
-        "unit": 4,
-        "offMask": 6
-      },
-      {
-        "unit": 6,
-        "chord": "D4/D3"
-      },
-      {
-        "unit": 9,
-        "offMask": 2
-      },
-      {
-        "unit": 10,
-        "offMask": 4
-      }
-    ],
-    "bar_03": [
-      {
-        "unit": 0,
-        "chord": "B3/E3"
-      },
-      {
-        "unit": 4,
-        "offMask": 6
-      },
-      {
-        "unit": 6,
-        "chord": "A3/C3"
-      },
-      {
-        "unit": 9,
-        "offMask": 2
-      },
-      {
-        "unit": 10,
-        "offMask": 4
-      }
-    ],
-    "bar_04": [
-      {
-        "unit": 0,
-        "chord": "D#4/B2"
-      },
-      {
-        "unit": 6,
-        "offMask": 6
-      },
-      {
-        "unit": 6,
-        "chord": "B3/B2"
-      },
-      {
-        "unit": 10,
-        "offMask": 6
-      }
-    ],
-    "bar_05": [
-      {
-        "unit": 0,
-        "chord": "E4/E3"
-      },
-      {
-        "unit": 4,
-        "offMask": 6
-      },
-      {
-        "unit": 6,
-        "chord": "D4/G3"
-      },
-      {
-        "unit": 9,
-        "offMask": 2
-      },
-      {
-        "unit": 10,
-        "offMask": 4
-      }
-    ],
-    "bar_06": [
-      {
-        "unit": 0,
-        "chord": "F#4/D3"
-      },
-      {
-        "unit": 2,
-        "offMask": 4
-      },
-      {
-        "unit": 4,
-        "offMask": 2
-      },
-      {
-        "unit": 6,
-        "chord": "D4/D3"
-      },
-      {
-        "unit": 9,
-        "offMask": 2
-      },
-      {
-        "unit": 10,
-        "offMask": 4
-      }
-    ],
-    "bar_07": [
-      {
-        "unit": 0,
-        "chord": "B3/E3"
-      },
-      {
-        "unit": 3,
-        "offMask": 2
-      },
-      {
-        "unit": 4,
-        "offMask": 4
-      },
-      {
-        "unit": 6,
-        "chord": "B3/B2"
-      },
-      {
-        "unit": 9,
-        "offMask": 2
-      },
-      {
-        "unit": 10,
-        "offMask": 4
-      }
-    ],
-    "bar_08": [
-      {
-        "unit": 0,
-        "chord": "B3/E3"
-      },
-      {
-        "unit": 6,
-        "offMask": 6
-      },
-      {
-        "unit": 6,
-        "chord": "B3/E3"
-      },
-      {
-        "unit": 10,
-        "offMask": 6
-      }
-    ],
-    "bar_09": [
-      {
-        "unit": 0,
-        "chord": "F#4/B3"
-      },
-      {
-        "unit": 6,
-        "offMask": 6
-      },
-      {
-        "unit": 6,
-        "chord": "B4/G3"
-      },
-      {
-        "unit": 9,
-        "offMask": 2
-      },
-      {
-        "unit": 10,
-        "offMask": 4
-      }
-    ],
-    "bar_10": [
-      {
-        "unit": 0,
-        "chord": "F#4/D3"
-      },
-      {
-        "unit": 4,
-        "offMask": 6
-      },
-      {
-        "unit": 6,
-        "chord": "D4/D3"
-      },
-      {
-        "unit": 9,
-        "offMask": 2
-      },
-      {
-        "unit": 10,
-        "offMask": 4
-      }
-    ],
-    "bar_11": [
-      {
-        "unit": 0,
-        "chord": "B3/E3"
-      },
-      {
-        "unit": 4,
-        "offMask": 6
-      },
-      {
-        "unit": 6,
-        "chord": "A3/C3"
-      },
-      {
-        "unit": 9,
-        "offMask": 2
-      },
-      {
-        "unit": 10,
-        "offMask": 4
-      }
-    ],
-    "bar_12": [
-      {
-        "unit": 0,
-        "chord": "D#4/B2"
-      },
-      {
-        "unit": 4,
-        "offMask": 6
-      },
-      {
-        "unit": 6,
-        "chord": "B3/B2"
-      },
-      {
-        "unit": 10,
-        "offMask": 6
-      }
-    ],
-    "bar_13": [
-      {
-        "unit": 0,
-        "chord": "F#4/B3"
-      },
-      {
-        "unit": 6,
-        "offMask": 6
-      },
-      {
-        "unit": 6,
-        "chord": "B4/G3"
-      },
-      {
-        "unit": 9,
-        "offMask": 2
-      },
-      {
-        "unit": 10,
-        "offMask": 4
-      }
-    ],
-    "bar_14": [
-      {
-        "unit": 0,
-        "chord": "F#4/D3"
-      },
-      {
-        "unit": 2,
-        "offMask": 4
-      },
-      {
-        "unit": 4,
-        "offMask": 2
-      },
-      {
-        "unit": 6,
-        "chord": "D4/D3"
-      },
-      {
-        "unit": 10,
-        "offMask": 6
-      }
-    ],
-    "bar_15": [
-      {
-        "unit": 0,
-        "chord": "B3/E3"
-      },
-      {
-        "unit": 3,
-        "offMask": 2
-      },
-      {
-        "unit": 4,
-        "offMask": 4
-      },
-      {
-        "unit": 6,
-        "chord": "B3/B2"
-      },
-      {
-        "unit": 9,
-        "offMask": 2
-      },
-      {
-        "unit": 10,
-        "offMask": 4
-      }
-    ],
-    "bar_16": [
-      {
-        "unit": 0,
-        "chord": "B3/E3"
-      },
-      {
-        "unit": 6,
-        "offMask": 6
-      },
-      {
-        "unit": 6,
-        "chord": "B3/E3"
-      },
-      {
-        "unit": 10,
-        "offMask": 7
-      }
-    ]
-  },
   "loop_silence_beats": 0.25,
-  "provenance": {
-    "source": "Z80 player MIDI example",
-    "source_repository": "C:/Work/z80-tester",
-    "midi": "ATtiny13A/Music/reference/greensleeves/greensleeves-events.json",
-    "z80_example": "ATtiny13A/Music/reference/greensleeves/greensleeves-4voices-events.json",
-    "z80_programs_zero_based": {
-      "soprano_flute": 73,
-      "alto_violin": 40,
-      "tenor_clarinet": 71,
-      "bass_cello": 42
+  "description": "Полные партии флейты, скрипки, кларнета и виолончели: все 235 исходных нот.",
+  "parts": [
+    {
+      "name": "soprano",
+      "instrument": "flute",
+      "level": 15,
+      "sourceTrack": 0,
+      "channel": 0,
+      "notes": [
+        {
+          "pitch": 64,
+          "on": 0,
+          "off": 2,
+          "velocity": 90,
+          "sourceIndex": 0
+        },
+        {
+          "pitch": 67,
+          "on": 2,
+          "off": 6,
+          "velocity": 90,
+          "sourceIndex": 1
+        },
+        {
+          "pitch": 69,
+          "on": 6,
+          "off": 8,
+          "velocity": 90,
+          "sourceIndex": 2
+        },
+        {
+          "pitch": 71,
+          "on": 8,
+          "off": 11,
+          "velocity": 90,
+          "sourceIndex": 3
+        },
+        {
+          "pitch": 72,
+          "on": 11,
+          "off": 12,
+          "velocity": 90,
+          "sourceIndex": 4
+        },
+        {
+          "pitch": 71,
+          "on": 12,
+          "off": 14,
+          "velocity": 90,
+          "sourceIndex": 5
+        },
+        {
+          "pitch": 69,
+          "on": 14,
+          "off": 18,
+          "velocity": 90,
+          "sourceIndex": 6
+        },
+        {
+          "pitch": 66,
+          "on": 18,
+          "off": 20,
+          "velocity": 90,
+          "sourceIndex": 7
+        },
+        {
+          "pitch": 62,
+          "on": 20,
+          "off": 23,
+          "velocity": 90,
+          "sourceIndex": 8
+        },
+        {
+          "pitch": 64,
+          "on": 23,
+          "off": 24,
+          "velocity": 90,
+          "sourceIndex": 9
+        },
+        {
+          "pitch": 66,
+          "on": 24,
+          "off": 26,
+          "velocity": 90,
+          "sourceIndex": 10
+        },
+        {
+          "pitch": 67,
+          "on": 26,
+          "off": 30,
+          "velocity": 90,
+          "sourceIndex": 11
+        },
+        {
+          "pitch": 64,
+          "on": 30,
+          "off": 32,
+          "velocity": 90,
+          "sourceIndex": 12
+        },
+        {
+          "pitch": 64,
+          "on": 32,
+          "off": 35,
+          "velocity": 90,
+          "sourceIndex": 13
+        },
+        {
+          "pitch": 63,
+          "on": 35,
+          "off": 36,
+          "velocity": 90,
+          "sourceIndex": 14
+        },
+        {
+          "pitch": 64,
+          "on": 36,
+          "off": 38,
+          "velocity": 90,
+          "sourceIndex": 15
+        },
+        {
+          "pitch": 66,
+          "on": 38,
+          "off": 44,
+          "velocity": 90,
+          "sourceIndex": 16
+        },
+        {
+          "pitch": 59,
+          "on": 44,
+          "off": 48,
+          "velocity": 90,
+          "sourceIndex": 17
+        },
+        {
+          "pitch": 64,
+          "on": 48,
+          "off": 50,
+          "velocity": 90,
+          "sourceIndex": 18
+        },
+        {
+          "pitch": 67,
+          "on": 50,
+          "off": 54,
+          "velocity": 90,
+          "sourceIndex": 19
+        },
+        {
+          "pitch": 69,
+          "on": 54,
+          "off": 56,
+          "velocity": 90,
+          "sourceIndex": 20
+        },
+        {
+          "pitch": 71,
+          "on": 56,
+          "off": 59,
+          "velocity": 90,
+          "sourceIndex": 21
+        },
+        {
+          "pitch": 72,
+          "on": 59,
+          "off": 60,
+          "velocity": 90,
+          "sourceIndex": 22
+        },
+        {
+          "pitch": 71,
+          "on": 60,
+          "off": 62,
+          "velocity": 90,
+          "sourceIndex": 23
+        },
+        {
+          "pitch": 69,
+          "on": 62,
+          "off": 66,
+          "velocity": 90,
+          "sourceIndex": 24
+        },
+        {
+          "pitch": 66,
+          "on": 66,
+          "off": 68,
+          "velocity": 90,
+          "sourceIndex": 25
+        },
+        {
+          "pitch": 62,
+          "on": 68,
+          "off": 71,
+          "velocity": 90,
+          "sourceIndex": 26
+        },
+        {
+          "pitch": 64,
+          "on": 71,
+          "off": 72,
+          "velocity": 90,
+          "sourceIndex": 27
+        },
+        {
+          "pitch": 66,
+          "on": 72,
+          "off": 74,
+          "velocity": 90,
+          "sourceIndex": 28
+        },
+        {
+          "pitch": 67,
+          "on": 74,
+          "off": 77,
+          "velocity": 90,
+          "sourceIndex": 29
+        },
+        {
+          "pitch": 66,
+          "on": 77,
+          "off": 78,
+          "velocity": 90,
+          "sourceIndex": 30
+        },
+        {
+          "pitch": 64,
+          "on": 78,
+          "off": 80,
+          "velocity": 90,
+          "sourceIndex": 31
+        },
+        {
+          "pitch": 63,
+          "on": 80,
+          "off": 83,
+          "velocity": 90,
+          "sourceIndex": 32
+        },
+        {
+          "pitch": 61,
+          "on": 83,
+          "off": 84,
+          "velocity": 90,
+          "sourceIndex": 33
+        },
+        {
+          "pitch": 63,
+          "on": 84,
+          "off": 86,
+          "velocity": 90,
+          "sourceIndex": 34
+        },
+        {
+          "pitch": 64,
+          "on": 86,
+          "off": 92,
+          "velocity": 90,
+          "sourceIndex": 35
+        },
+        {
+          "pitch": 64,
+          "on": 92,
+          "off": 96,
+          "velocity": 90,
+          "sourceIndex": 36
+        },
+        {
+          "pitch": 74,
+          "on": 98,
+          "off": 104,
+          "velocity": 90,
+          "sourceIndex": 37
+        },
+        {
+          "pitch": 74,
+          "on": 104,
+          "off": 107,
+          "velocity": 90,
+          "sourceIndex": 38
+        },
+        {
+          "pitch": 73,
+          "on": 107,
+          "off": 108,
+          "velocity": 90,
+          "sourceIndex": 39
+        },
+        {
+          "pitch": 71,
+          "on": 108,
+          "off": 110,
+          "velocity": 90,
+          "sourceIndex": 40
+        },
+        {
+          "pitch": 69,
+          "on": 110,
+          "off": 114,
+          "velocity": 90,
+          "sourceIndex": 41
+        },
+        {
+          "pitch": 66,
+          "on": 114,
+          "off": 116,
+          "velocity": 90,
+          "sourceIndex": 42
+        },
+        {
+          "pitch": 62,
+          "on": 116,
+          "off": 119,
+          "velocity": 90,
+          "sourceIndex": 43
+        },
+        {
+          "pitch": 64,
+          "on": 119,
+          "off": 120,
+          "velocity": 90,
+          "sourceIndex": 44
+        },
+        {
+          "pitch": 66,
+          "on": 120,
+          "off": 122,
+          "velocity": 90,
+          "sourceIndex": 45
+        },
+        {
+          "pitch": 67,
+          "on": 122,
+          "off": 126,
+          "velocity": 90,
+          "sourceIndex": 46
+        },
+        {
+          "pitch": 64,
+          "on": 126,
+          "off": 128,
+          "velocity": 90,
+          "sourceIndex": 47
+        },
+        {
+          "pitch": 64,
+          "on": 128,
+          "off": 131,
+          "velocity": 90,
+          "sourceIndex": 48
+        },
+        {
+          "pitch": 63,
+          "on": 131,
+          "off": 132,
+          "velocity": 90,
+          "sourceIndex": 49
+        },
+        {
+          "pitch": 64,
+          "on": 132,
+          "off": 134,
+          "velocity": 90,
+          "sourceIndex": 50
+        },
+        {
+          "pitch": 66,
+          "on": 134,
+          "off": 138,
+          "velocity": 90,
+          "sourceIndex": 51
+        },
+        {
+          "pitch": 63,
+          "on": 138,
+          "off": 140,
+          "velocity": 90,
+          "sourceIndex": 52
+        },
+        {
+          "pitch": 59,
+          "on": 140,
+          "off": 144,
+          "velocity": 90,
+          "sourceIndex": 53
+        },
+        {
+          "pitch": 74,
+          "on": 146,
+          "off": 152,
+          "velocity": 90,
+          "sourceIndex": 54
+        },
+        {
+          "pitch": 74,
+          "on": 152,
+          "off": 155,
+          "velocity": 90,
+          "sourceIndex": 55
+        },
+        {
+          "pitch": 72,
+          "on": 155,
+          "off": 156,
+          "velocity": 90,
+          "sourceIndex": 56
+        },
+        {
+          "pitch": 71,
+          "on": 156,
+          "off": 158,
+          "velocity": 90,
+          "sourceIndex": 57
+        },
+        {
+          "pitch": 69,
+          "on": 158,
+          "off": 162,
+          "velocity": 90,
+          "sourceIndex": 58
+        },
+        {
+          "pitch": 66,
+          "on": 162,
+          "off": 164,
+          "velocity": 90,
+          "sourceIndex": 59
+        },
+        {
+          "pitch": 62,
+          "on": 164,
+          "off": 168,
+          "velocity": 90,
+          "sourceIndex": 60
+        },
+        {
+          "pitch": 66,
+          "on": 168,
+          "off": 170,
+          "velocity": 90,
+          "sourceIndex": 61
+        },
+        {
+          "pitch": 67,
+          "on": 170,
+          "off": 173,
+          "velocity": 90,
+          "sourceIndex": 62
+        },
+        {
+          "pitch": 66,
+          "on": 173,
+          "off": 174,
+          "velocity": 90,
+          "sourceIndex": 63
+        },
+        {
+          "pitch": 64,
+          "on": 174,
+          "off": 176,
+          "velocity": 90,
+          "sourceIndex": 64
+        },
+        {
+          "pitch": 63,
+          "on": 176,
+          "off": 179,
+          "velocity": 90,
+          "sourceIndex": 65
+        },
+        {
+          "pitch": 61,
+          "on": 179,
+          "off": 180,
+          "velocity": 90,
+          "sourceIndex": 66
+        },
+        {
+          "pitch": 63,
+          "on": 180,
+          "off": 182,
+          "velocity": 90,
+          "sourceIndex": 67
+        },
+        {
+          "pitch": 64,
+          "on": 182,
+          "off": 188,
+          "velocity": 90,
+          "sourceIndex": 68
+        },
+        {
+          "pitch": 64,
+          "on": 188,
+          "off": 192,
+          "velocity": 90,
+          "sourceIndex": 69
+        }
+      ]
     },
-    "original_midi_program_changes": 0,
-    "lilypond": "ATtiny13A/Music/reference/greensleeves/greensleeves.ly",
+    {
+      "name": "alto",
+      "instrument": "violin",
+      "level": 12,
+      "sourceTrack": 1,
+      "channel": 1,
+      "notes": [
+        {
+          "pitch": 59,
+          "on": 0,
+          "off": 2,
+          "velocity": 90,
+          "sourceIndex": 70
+        },
+        {
+          "pitch": 64,
+          "on": 2,
+          "off": 6,
+          "velocity": 90,
+          "sourceIndex": 71
+        },
+        {
+          "pitch": 62,
+          "on": 6,
+          "off": 8,
+          "velocity": 90,
+          "sourceIndex": 72
+        },
+        {
+          "pitch": 62,
+          "on": 8,
+          "off": 11,
+          "velocity": 90,
+          "sourceIndex": 73
+        },
+        {
+          "pitch": 67,
+          "on": 12,
+          "off": 14,
+          "velocity": 90,
+          "sourceIndex": 74
+        },
+        {
+          "pitch": 66,
+          "on": 14,
+          "off": 18,
+          "velocity": 90,
+          "sourceIndex": 75
+        },
+        {
+          "pitch": 62,
+          "on": 18,
+          "off": 20,
+          "velocity": 90,
+          "sourceIndex": 76
+        },
+        {
+          "pitch": 60,
+          "on": 24,
+          "off": 26,
+          "velocity": 90,
+          "sourceIndex": 77
+        },
+        {
+          "pitch": 59,
+          "on": 26,
+          "off": 30,
+          "velocity": 90,
+          "sourceIndex": 78
+        },
+        {
+          "pitch": 59,
+          "on": 30,
+          "off": 32,
+          "velocity": 90,
+          "sourceIndex": 79
+        },
+        {
+          "pitch": 57,
+          "on": 32,
+          "off": 35,
+          "velocity": 90,
+          "sourceIndex": 80
+        },
+        {
+          "pitch": 63,
+          "on": 38,
+          "off": 44,
+          "velocity": 90,
+          "sourceIndex": 81
+        },
+        {
+          "pitch": 59,
+          "on": 48,
+          "off": 50,
+          "velocity": 90,
+          "sourceIndex": 82
+        },
+        {
+          "pitch": 64,
+          "on": 50,
+          "off": 54,
+          "velocity": 90,
+          "sourceIndex": 83
+        },
+        {
+          "pitch": 62,
+          "on": 54,
+          "off": 56,
+          "velocity": 90,
+          "sourceIndex": 84
+        },
+        {
+          "pitch": 62,
+          "on": 56,
+          "off": 59,
+          "velocity": 90,
+          "sourceIndex": 85
+        },
+        {
+          "pitch": 67,
+          "on": 60,
+          "off": 62,
+          "velocity": 90,
+          "sourceIndex": 86
+        },
+        {
+          "pitch": 66,
+          "on": 62,
+          "off": 66,
+          "velocity": 90,
+          "sourceIndex": 87
+        },
+        {
+          "pitch": 62,
+          "on": 66,
+          "off": 68,
+          "velocity": 90,
+          "sourceIndex": 88
+        },
+        {
+          "pitch": 60,
+          "on": 72,
+          "off": 74,
+          "velocity": 90,
+          "sourceIndex": 89
+        },
+        {
+          "pitch": 59,
+          "on": 74,
+          "off": 77,
+          "velocity": 90,
+          "sourceIndex": 90
+        },
+        {
+          "pitch": 60,
+          "on": 78,
+          "off": 80,
+          "velocity": 90,
+          "sourceIndex": 91
+        },
+        {
+          "pitch": 59,
+          "on": 80,
+          "off": 83,
+          "velocity": 90,
+          "sourceIndex": 92
+        },
+        {
+          "pitch": 59,
+          "on": 84,
+          "off": 86,
+          "velocity": 90,
+          "sourceIndex": 93
+        },
+        {
+          "pitch": 59,
+          "on": 86,
+          "off": 92,
+          "velocity": 90,
+          "sourceIndex": 94
+        },
+        {
+          "pitch": 59,
+          "on": 92,
+          "off": 96,
+          "velocity": 90,
+          "sourceIndex": 95
+        },
+        {
+          "pitch": 66,
+          "on": 98,
+          "off": 104,
+          "velocity": 90,
+          "sourceIndex": 96
+        },
+        {
+          "pitch": 71,
+          "on": 104,
+          "off": 107,
+          "velocity": 90,
+          "sourceIndex": 97
+        },
+        {
+          "pitch": 69,
+          "on": 107,
+          "off": 108,
+          "velocity": 90,
+          "sourceIndex": 98
+        },
+        {
+          "pitch": 67,
+          "on": 108,
+          "off": 110,
+          "velocity": 90,
+          "sourceIndex": 99
+        },
+        {
+          "pitch": 66,
+          "on": 110,
+          "off": 114,
+          "velocity": 90,
+          "sourceIndex": 100
+        },
+        {
+          "pitch": 62,
+          "on": 114,
+          "off": 116,
+          "velocity": 90,
+          "sourceIndex": 101
+        },
+        {
+          "pitch": 60,
+          "on": 120,
+          "off": 122,
+          "velocity": 90,
+          "sourceIndex": 102
+        },
+        {
+          "pitch": 59,
+          "on": 122,
+          "off": 126,
+          "velocity": 90,
+          "sourceIndex": 103
+        },
+        {
+          "pitch": 59,
+          "on": 126,
+          "off": 128,
+          "velocity": 90,
+          "sourceIndex": 104
+        },
+        {
+          "pitch": 57,
+          "on": 128,
+          "off": 131,
+          "velocity": 90,
+          "sourceIndex": 105
+        },
+        {
+          "pitch": 63,
+          "on": 134,
+          "off": 138,
+          "velocity": 90,
+          "sourceIndex": 106
+        },
+        {
+          "pitch": 59,
+          "on": 138,
+          "off": 140,
+          "velocity": 90,
+          "sourceIndex": 107
+        },
+        {
+          "pitch": 66,
+          "on": 146,
+          "off": 152,
+          "velocity": 90,
+          "sourceIndex": 108
+        },
+        {
+          "pitch": 71,
+          "on": 152,
+          "off": 155,
+          "velocity": 90,
+          "sourceIndex": 109
+        },
+        {
+          "pitch": 69,
+          "on": 155,
+          "off": 156,
+          "velocity": 90,
+          "sourceIndex": 110
+        },
+        {
+          "pitch": 67,
+          "on": 156,
+          "off": 158,
+          "velocity": 90,
+          "sourceIndex": 111
+        },
+        {
+          "pitch": 66,
+          "on": 158,
+          "off": 162,
+          "velocity": 90,
+          "sourceIndex": 112
+        },
+        {
+          "pitch": 62,
+          "on": 162,
+          "off": 164,
+          "velocity": 90,
+          "sourceIndex": 113
+        },
+        {
+          "pitch": 64,
+          "on": 167,
+          "off": 168,
+          "velocity": 90,
+          "sourceIndex": 114
+        },
+        {
+          "pitch": 60,
+          "on": 168,
+          "off": 170,
+          "velocity": 90,
+          "sourceIndex": 115
+        },
+        {
+          "pitch": 59,
+          "on": 170,
+          "off": 173,
+          "velocity": 90,
+          "sourceIndex": 116
+        },
+        {
+          "pitch": 60,
+          "on": 174,
+          "off": 176,
+          "velocity": 90,
+          "sourceIndex": 117
+        },
+        {
+          "pitch": 59,
+          "on": 176,
+          "off": 179,
+          "velocity": 90,
+          "sourceIndex": 118
+        },
+        {
+          "pitch": 59,
+          "on": 180,
+          "off": 182,
+          "velocity": 90,
+          "sourceIndex": 119
+        },
+        {
+          "pitch": 59,
+          "on": 182,
+          "off": 188,
+          "velocity": 90,
+          "sourceIndex": 120
+        },
+        {
+          "pitch": 59,
+          "on": 188,
+          "off": 192,
+          "velocity": 90,
+          "sourceIndex": 121
+        }
+      ]
+    },
+    {
+      "name": "tenor",
+      "instrument": "clarinet",
+      "level": 11,
+      "sourceTrack": 2,
+      "channel": 2,
+      "notes": [
+        {
+          "pitch": 55,
+          "on": 0,
+          "off": 2,
+          "velocity": 90,
+          "sourceIndex": 122
+        },
+        {
+          "pitch": 59,
+          "on": 2,
+          "off": 6,
+          "velocity": 90,
+          "sourceIndex": 123
+        },
+        {
+          "pitch": 57,
+          "on": 6,
+          "off": 8,
+          "velocity": 90,
+          "sourceIndex": 124
+        },
+        {
+          "pitch": 55,
+          "on": 8,
+          "off": 12,
+          "velocity": 90,
+          "sourceIndex": 125
+        },
+        {
+          "pitch": 59,
+          "on": 12,
+          "off": 14,
+          "velocity": 90,
+          "sourceIndex": 126
+        },
+        {
+          "pitch": 62,
+          "on": 14,
+          "off": 16,
+          "velocity": 90,
+          "sourceIndex": 127
+        },
+        {
+          "pitch": 62,
+          "on": 16,
+          "off": 18,
+          "velocity": 90,
+          "sourceIndex": 128
+        },
+        {
+          "pitch": 57,
+          "on": 18,
+          "off": 20,
+          "velocity": 90,
+          "sourceIndex": 129
+        },
+        {
+          "pitch": 54,
+          "on": 20,
+          "off": 24,
+          "velocity": 90,
+          "sourceIndex": 130
+        },
+        {
+          "pitch": 57,
+          "on": 24,
+          "off": 26,
+          "velocity": 90,
+          "sourceIndex": 131
+        },
+        {
+          "pitch": 55,
+          "on": 26,
+          "off": 30,
+          "velocity": 90,
+          "sourceIndex": 132
+        },
+        {
+          "pitch": 55,
+          "on": 30,
+          "off": 32,
+          "velocity": 90,
+          "sourceIndex": 133
+        },
+        {
+          "pitch": 57,
+          "on": 32,
+          "off": 36,
+          "velocity": 90,
+          "sourceIndex": 134
+        },
+        {
+          "pitch": 52,
+          "on": 36,
+          "off": 38,
+          "velocity": 90,
+          "sourceIndex": 135
+        },
+        {
+          "pitch": 59,
+          "on": 38,
+          "off": 44,
+          "velocity": 90,
+          "sourceIndex": 136
+        },
+        {
+          "pitch": 59,
+          "on": 44,
+          "off": 48,
+          "velocity": 90,
+          "sourceIndex": 137
+        },
+        {
+          "pitch": 55,
+          "on": 48,
+          "off": 50,
+          "velocity": 90,
+          "sourceIndex": 138
+        },
+        {
+          "pitch": 59,
+          "on": 50,
+          "off": 54,
+          "velocity": 90,
+          "sourceIndex": 139
+        },
+        {
+          "pitch": 57,
+          "on": 54,
+          "off": 56,
+          "velocity": 90,
+          "sourceIndex": 140
+        },
+        {
+          "pitch": 55,
+          "on": 56,
+          "off": 60,
+          "velocity": 90,
+          "sourceIndex": 141
+        },
+        {
+          "pitch": 59,
+          "on": 60,
+          "off": 62,
+          "velocity": 90,
+          "sourceIndex": 142
+        },
+        {
+          "pitch": 62,
+          "on": 62,
+          "off": 66,
+          "velocity": 90,
+          "sourceIndex": 143
+        },
+        {
+          "pitch": 57,
+          "on": 66,
+          "off": 68,
+          "velocity": 90,
+          "sourceIndex": 144
+        },
+        {
+          "pitch": 54,
+          "on": 68,
+          "off": 72,
+          "velocity": 90,
+          "sourceIndex": 145
+        },
+        {
+          "pitch": 57,
+          "on": 72,
+          "off": 74,
+          "velocity": 90,
+          "sourceIndex": 146
+        },
+        {
+          "pitch": 55,
+          "on": 74,
+          "off": 78,
+          "velocity": 90,
+          "sourceIndex": 147
+        },
+        {
+          "pitch": 57,
+          "on": 78,
+          "off": 80,
+          "velocity": 90,
+          "sourceIndex": 148
+        },
+        {
+          "pitch": 54,
+          "on": 80,
+          "off": 84,
+          "velocity": 90,
+          "sourceIndex": 149
+        },
+        {
+          "pitch": 54,
+          "on": 84,
+          "off": 86,
+          "velocity": 90,
+          "sourceIndex": 150
+        },
+        {
+          "pitch": 55,
+          "on": 86,
+          "off": 92,
+          "velocity": 90,
+          "sourceIndex": 151
+        },
+        {
+          "pitch": 55,
+          "on": 92,
+          "off": 96,
+          "velocity": 90,
+          "sourceIndex": 152
+        },
+        {
+          "pitch": 59,
+          "on": 98,
+          "off": 104,
+          "velocity": 90,
+          "sourceIndex": 153
+        },
+        {
+          "pitch": 62,
+          "on": 104,
+          "off": 108,
+          "velocity": 90,
+          "sourceIndex": 154
+        },
+        {
+          "pitch": 62,
+          "on": 108,
+          "off": 110,
+          "velocity": 90,
+          "sourceIndex": 155
+        },
+        {
+          "pitch": 62,
+          "on": 110,
+          "off": 114,
+          "velocity": 90,
+          "sourceIndex": 156
+        },
+        {
+          "pitch": 57,
+          "on": 114,
+          "off": 116,
+          "velocity": 90,
+          "sourceIndex": 157
+        },
+        {
+          "pitch": 54,
+          "on": 116,
+          "off": 120,
+          "velocity": 90,
+          "sourceIndex": 158
+        },
+        {
+          "pitch": 57,
+          "on": 120,
+          "off": 122,
+          "velocity": 90,
+          "sourceIndex": 159
+        },
+        {
+          "pitch": 55,
+          "on": 122,
+          "off": 126,
+          "velocity": 90,
+          "sourceIndex": 160
+        },
+        {
+          "pitch": 55,
+          "on": 126,
+          "off": 128,
+          "velocity": 90,
+          "sourceIndex": 161
+        },
+        {
+          "pitch": 57,
+          "on": 128,
+          "off": 132,
+          "velocity": 90,
+          "sourceIndex": 162
+        },
+        {
+          "pitch": 52,
+          "on": 132,
+          "off": 134,
+          "velocity": 90,
+          "sourceIndex": 163
+        },
+        {
+          "pitch": 59,
+          "on": 134,
+          "off": 138,
+          "velocity": 90,
+          "sourceIndex": 164
+        },
+        {
+          "pitch": 54,
+          "on": 138,
+          "off": 140,
+          "velocity": 90,
+          "sourceIndex": 165
+        },
+        {
+          "pitch": 59,
+          "on": 140,
+          "off": 144,
+          "velocity": 90,
+          "sourceIndex": 166
+        },
+        {
+          "pitch": 59,
+          "on": 146,
+          "off": 152,
+          "velocity": 90,
+          "sourceIndex": 167
+        },
+        {
+          "pitch": 62,
+          "on": 152,
+          "off": 156,
+          "velocity": 90,
+          "sourceIndex": 168
+        },
+        {
+          "pitch": 62,
+          "on": 156,
+          "off": 158,
+          "velocity": 90,
+          "sourceIndex": 169
+        },
+        {
+          "pitch": 62,
+          "on": 158,
+          "off": 162,
+          "velocity": 90,
+          "sourceIndex": 170
+        },
+        {
+          "pitch": 57,
+          "on": 162,
+          "off": 164,
+          "velocity": 90,
+          "sourceIndex": 171
+        },
+        {
+          "pitch": 54,
+          "on": 164,
+          "off": 168,
+          "velocity": 90,
+          "sourceIndex": 172
+        },
+        {
+          "pitch": 57,
+          "on": 168,
+          "off": 170,
+          "velocity": 90,
+          "sourceIndex": 173
+        },
+        {
+          "pitch": 55,
+          "on": 170,
+          "off": 174,
+          "velocity": 90,
+          "sourceIndex": 174
+        },
+        {
+          "pitch": 57,
+          "on": 174,
+          "off": 176,
+          "velocity": 90,
+          "sourceIndex": 175
+        },
+        {
+          "pitch": 54,
+          "on": 176,
+          "off": 180,
+          "velocity": 90,
+          "sourceIndex": 176
+        },
+        {
+          "pitch": 54,
+          "on": 180,
+          "off": 182,
+          "velocity": 90,
+          "sourceIndex": 177
+        },
+        {
+          "pitch": 55,
+          "on": 182,
+          "off": 188,
+          "velocity": 90,
+          "sourceIndex": 178
+        },
+        {
+          "pitch": 55,
+          "on": 188,
+          "off": 192,
+          "velocity": 90,
+          "sourceIndex": 179
+        }
+      ]
+    },
+    {
+      "name": "bass",
+      "instrument": "cello",
+      "level": 10,
+      "sourceTrack": 3,
+      "channel": 3,
+      "notes": [
+        {
+          "pitch": 52,
+          "on": 0,
+          "off": 2,
+          "velocity": 90,
+          "sourceIndex": 180
+        },
+        {
+          "pitch": 52,
+          "on": 2,
+          "off": 6,
+          "velocity": 90,
+          "sourceIndex": 181
+        },
+        {
+          "pitch": 54,
+          "on": 6,
+          "off": 8,
+          "velocity": 90,
+          "sourceIndex": 182
+        },
+        {
+          "pitch": 55,
+          "on": 12,
+          "off": 14,
+          "velocity": 90,
+          "sourceIndex": 183
+        },
+        {
+          "pitch": 50,
+          "on": 14,
+          "off": 18,
+          "velocity": 90,
+          "sourceIndex": 184
+        },
+        {
+          "pitch": 50,
+          "on": 18,
+          "off": 20,
+          "velocity": 90,
+          "sourceIndex": 185
+        },
+        {
+          "pitch": 50,
+          "on": 20,
+          "off": 24,
+          "velocity": 90,
+          "sourceIndex": 186
+        },
+        {
+          "pitch": 51,
+          "on": 24,
+          "off": 26,
+          "velocity": 90,
+          "sourceIndex": 187
+        },
+        {
+          "pitch": 52,
+          "on": 26,
+          "off": 30,
+          "velocity": 90,
+          "sourceIndex": 188
+        },
+        {
+          "pitch": 52,
+          "on": 30,
+          "off": 32,
+          "velocity": 90,
+          "sourceIndex": 189
+        },
+        {
+          "pitch": 48,
+          "on": 32,
+          "off": 36,
+          "velocity": 90,
+          "sourceIndex": 190
+        },
+        {
+          "pitch": 48,
+          "on": 36,
+          "off": 38,
+          "velocity": 90,
+          "sourceIndex": 191
+        },
+        {
+          "pitch": 47,
+          "on": 38,
+          "off": 44,
+          "velocity": 90,
+          "sourceIndex": 192
+        },
+        {
+          "pitch": 47,
+          "on": 44,
+          "off": 48,
+          "velocity": 90,
+          "sourceIndex": 193
+        },
+        {
+          "pitch": 52,
+          "on": 48,
+          "off": 50,
+          "velocity": 90,
+          "sourceIndex": 194
+        },
+        {
+          "pitch": 52,
+          "on": 50,
+          "off": 54,
+          "velocity": 90,
+          "sourceIndex": 195
+        },
+        {
+          "pitch": 54,
+          "on": 54,
+          "off": 56,
+          "velocity": 90,
+          "sourceIndex": 196
+        },
+        {
+          "pitch": 55,
+          "on": 60,
+          "off": 62,
+          "velocity": 90,
+          "sourceIndex": 197
+        },
+        {
+          "pitch": 50,
+          "on": 62,
+          "off": 64,
+          "velocity": 90,
+          "sourceIndex": 198
+        },
+        {
+          "pitch": 50,
+          "on": 64,
+          "off": 66,
+          "velocity": 90,
+          "sourceIndex": 199
+        },
+        {
+          "pitch": 50,
+          "on": 66,
+          "off": 68,
+          "velocity": 90,
+          "sourceIndex": 200
+        },
+        {
+          "pitch": 50,
+          "on": 68,
+          "off": 72,
+          "velocity": 90,
+          "sourceIndex": 201
+        },
+        {
+          "pitch": 54,
+          "on": 72,
+          "off": 74,
+          "velocity": 90,
+          "sourceIndex": 202
+        },
+        {
+          "pitch": 52,
+          "on": 74,
+          "off": 78,
+          "velocity": 90,
+          "sourceIndex": 203
+        },
+        {
+          "pitch": 45,
+          "on": 78,
+          "off": 80,
+          "velocity": 90,
+          "sourceIndex": 204
+        },
+        {
+          "pitch": 47,
+          "on": 80,
+          "off": 84,
+          "velocity": 90,
+          "sourceIndex": 205
+        },
+        {
+          "pitch": 47,
+          "on": 84,
+          "off": 86,
+          "velocity": 90,
+          "sourceIndex": 206
+        },
+        {
+          "pitch": 52,
+          "on": 86,
+          "off": 92,
+          "velocity": 90,
+          "sourceIndex": 207
+        },
+        {
+          "pitch": 52,
+          "on": 92,
+          "off": 96,
+          "velocity": 90,
+          "sourceIndex": 208
+        },
+        {
+          "pitch": 55,
+          "on": 104,
+          "off": 108,
+          "velocity": 90,
+          "sourceIndex": 209
+        },
+        {
+          "pitch": 55,
+          "on": 108,
+          "off": 110,
+          "velocity": 90,
+          "sourceIndex": 210
+        },
+        {
+          "pitch": 50,
+          "on": 110,
+          "off": 114,
+          "velocity": 90,
+          "sourceIndex": 211
+        },
+        {
+          "pitch": 50,
+          "on": 114,
+          "off": 116,
+          "velocity": 90,
+          "sourceIndex": 212
+        },
+        {
+          "pitch": 50,
+          "on": 116,
+          "off": 120,
+          "velocity": 90,
+          "sourceIndex": 213
+        },
+        {
+          "pitch": 51,
+          "on": 120,
+          "off": 122,
+          "velocity": 90,
+          "sourceIndex": 214
+        },
+        {
+          "pitch": 52,
+          "on": 122,
+          "off": 126,
+          "velocity": 90,
+          "sourceIndex": 215
+        },
+        {
+          "pitch": 52,
+          "on": 126,
+          "off": 128,
+          "velocity": 90,
+          "sourceIndex": 216
+        },
+        {
+          "pitch": 48,
+          "on": 128,
+          "off": 132,
+          "velocity": 90,
+          "sourceIndex": 217
+        },
+        {
+          "pitch": 48,
+          "on": 132,
+          "off": 134,
+          "velocity": 90,
+          "sourceIndex": 218
+        },
+        {
+          "pitch": 47,
+          "on": 134,
+          "off": 138,
+          "velocity": 90,
+          "sourceIndex": 219
+        },
+        {
+          "pitch": 47,
+          "on": 138,
+          "off": 140,
+          "velocity": 90,
+          "sourceIndex": 220
+        },
+        {
+          "pitch": 47,
+          "on": 140,
+          "off": 144,
+          "velocity": 90,
+          "sourceIndex": 221
+        },
+        {
+          "pitch": 55,
+          "on": 152,
+          "off": 156,
+          "velocity": 90,
+          "sourceIndex": 222
+        },
+        {
+          "pitch": 55,
+          "on": 156,
+          "off": 158,
+          "velocity": 90,
+          "sourceIndex": 223
+        },
+        {
+          "pitch": 50,
+          "on": 158,
+          "off": 160,
+          "velocity": 90,
+          "sourceIndex": 224
+        },
+        {
+          "pitch": 50,
+          "on": 160,
+          "off": 162,
+          "velocity": 90,
+          "sourceIndex": 225
+        },
+        {
+          "pitch": 50,
+          "on": 162,
+          "off": 164,
+          "velocity": 90,
+          "sourceIndex": 226
+        },
+        {
+          "pitch": 50,
+          "on": 164,
+          "off": 168,
+          "velocity": 90,
+          "sourceIndex": 227
+        },
+        {
+          "pitch": 51,
+          "on": 168,
+          "off": 170,
+          "velocity": 90,
+          "sourceIndex": 228
+        },
+        {
+          "pitch": 52,
+          "on": 170,
+          "off": 174,
+          "velocity": 90,
+          "sourceIndex": 229
+        },
+        {
+          "pitch": 45,
+          "on": 174,
+          "off": 176,
+          "velocity": 90,
+          "sourceIndex": 230
+        },
+        {
+          "pitch": 47,
+          "on": 176,
+          "off": 180,
+          "velocity": 90,
+          "sourceIndex": 231
+        },
+        {
+          "pitch": 47,
+          "on": 180,
+          "off": 182,
+          "velocity": 90,
+          "sourceIndex": 232
+        },
+        {
+          "pitch": 52,
+          "on": 182,
+          "off": 188,
+          "velocity": 90,
+          "sourceIndex": 233
+        },
+        {
+          "pitch": 52,
+          "on": 188,
+          "off": 192,
+          "velocity": 90,
+          "sourceIndex": 234
+        }
+      ]
+    }
+  ],
+  "percussion_enabled": false,
+  "provenance": {
+    "file": "../../reference/greensleeves/greensleeves-4voices-events.json",
+    "sha256": "e50608d1e528fb0708839cebd2e7b5d3c35a91220cb2c580721bfd7ed2b10142",
+    "originalMidiSha256": "5b932ed6f108146089c98448e472fbee977f0b90193cf37fb1ea21bf8af82a72",
+    "ppqn": 4000,
     "license": "Public Domain",
     "edition": "Mutopia-2014/03/30-1247",
-    "credit": "Traditional; typeset by Steve Dunlop",
-    "sha256": {
-      "greensleeves-4voices-events.json": "e50608d1e528fb0708839cebd2e7b5d3c35a91220cb2c580721bfd7ed2b10142",
-      "greensleeves-events.json": "b983a45bec2ed714e8517137496d38e5685a5f6a229f4cc7ffed43bb5507c704",
-      "greensleeves.ly": "e580b31e882580d7f96d52e8aafd79b8e2f4e89ad9b32c360af9f5814a2d7a37",
-      "greensleeves.rdf": "4e8da27cbf1523d7a821be030e84b4ab3a1ea8f1e1ea377aaba99dd4a7ce635e"
-    }
+    "credit": "Traditional; typeset by Steve Dunlop; Z80 four-voice example"
   },
   "adaptation": {
-    "complete_melody": true,
-    "source_melody_events": 73,
-    "source_melody_pitched_notes": 71,
-    "source_midi_legato_overlaps_reduced_to_written_duration": [
-      {
-        "pitch": "D4",
-        "start_unit": 164,
-        "midi_units": 4,
-        "written_units": 3
-      }
-    ],
-    "final_layout_spacer_omitted_beats": 0.5,
-    "total_quarter_beats": 48.0,
-    "playback_quarter_beats": 48.25,
-    "loop_gap_grid_units": 1,
-    "source_midi_tempo_bpm": 60,
-    "selected_accompaniment": {
-      "keys": [
-        {
-          "pitch": 59,
-          "start": 0,
-          "end": 2,
-          "writtenStart": 0,
-          "writtenUnits": 2
-        },
-        {
-          "pitch": 64,
-          "start": 2,
-          "end": 6,
-          "writtenStart": 2,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 62,
-          "start": 8,
-          "end": 11,
-          "writtenStart": 8,
-          "writtenUnits": 3
-        },
-        {
-          "pitch": 66,
-          "start": 14,
-          "end": 18,
-          "writtenStart": 14,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 62,
-          "start": 20,
-          "end": 23,
-          "writtenStart": 20,
-          "writtenUnits": 3
-        },
-        {
-          "pitch": 59,
-          "start": 26,
-          "end": 30,
-          "writtenStart": 26,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 57,
-          "start": 32,
-          "end": 35,
-          "writtenStart": 32,
-          "writtenUnits": 3
-        },
-        {
-          "pitch": 63,
-          "start": 38,
-          "end": 44,
-          "writtenStart": 38,
-          "writtenUnits": 6
-        },
-        {
-          "pitch": 59,
-          "start": 44,
-          "end": 48,
-          "writtenStart": 44,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 64,
-          "start": 50,
-          "end": 54,
-          "writtenStart": 50,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 62,
-          "start": 56,
-          "end": 59,
-          "writtenStart": 56,
-          "writtenUnits": 3
-        },
-        {
-          "pitch": 66,
-          "start": 62,
-          "end": 66,
-          "writtenStart": 62,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 62,
-          "start": 68,
-          "end": 71,
-          "writtenStart": 68,
-          "writtenUnits": 3
-        },
-        {
-          "pitch": 59,
-          "start": 74,
-          "end": 77,
-          "writtenStart": 74,
-          "writtenUnits": 3
-        },
-        {
-          "pitch": 59,
-          "start": 80,
-          "end": 83,
-          "writtenStart": 80,
-          "writtenUnits": 3
-        },
-        {
-          "pitch": 59,
-          "start": 86,
-          "end": 92,
-          "writtenStart": 86,
-          "writtenUnits": 6
-        },
-        {
-          "pitch": 59,
-          "start": 92,
-          "end": 96,
-          "writtenStart": 92,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 66,
-          "start": 98,
-          "end": 104,
-          "writtenStart": 98,
-          "writtenUnits": 6
-        },
-        {
-          "pitch": 71,
-          "start": 104,
-          "end": 107,
-          "writtenStart": 104,
-          "writtenUnits": 3
-        },
-        {
-          "pitch": 66,
-          "start": 110,
-          "end": 114,
-          "writtenStart": 110,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 62,
-          "start": 116,
-          "end": 119,
-          "writtenStart": 116,
-          "writtenUnits": 3
-        },
-        {
-          "pitch": 59,
-          "start": 122,
-          "end": 126,
-          "writtenStart": 122,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 57,
-          "start": 128,
-          "end": 131,
-          "writtenStart": 128,
-          "writtenUnits": 3
-        },
-        {
-          "pitch": 63,
-          "start": 134,
-          "end": 138,
-          "writtenStart": 134,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 59,
-          "start": 140,
-          "end": 144,
-          "writtenStart": 140,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 66,
-          "start": 146,
-          "end": 152,
-          "writtenStart": 146,
-          "writtenUnits": 6
-        },
-        {
-          "pitch": 71,
-          "start": 152,
-          "end": 155,
-          "writtenStart": 152,
-          "writtenUnits": 3
-        },
-        {
-          "pitch": 66,
-          "start": 158,
-          "end": 162,
-          "writtenStart": 158,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 62,
-          "start": 164,
-          "end": 168,
-          "writtenStart": 164,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 59,
-          "start": 170,
-          "end": 173,
-          "writtenStart": 170,
-          "writtenUnits": 3
-        },
-        {
-          "pitch": 59,
-          "start": 176,
-          "end": 179,
-          "writtenStart": 176,
-          "writtenUnits": 3
-        },
-        {
-          "pitch": 59,
-          "start": 182,
-          "end": 188,
-          "writtenStart": 182,
-          "writtenUnits": 6
-        },
-        {
-          "pitch": 59,
-          "start": 188,
-          "end": 192,
-          "writtenStart": 188,
-          "writtenUnits": 4
-        }
-      ],
-      "pluck": [
-        {
-          "pitch": 52,
-          "start": 0,
-          "end": 2,
-          "writtenStart": 0,
-          "writtenUnits": 2
-        },
-        {
-          "pitch": 52,
-          "start": 2,
-          "end": 6,
-          "writtenStart": 2,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 55,
-          "start": 8,
-          "end": 12,
-          "writtenStart": 8,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 50,
-          "start": 14,
-          "end": 18,
-          "writtenStart": 14,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 50,
-          "start": 20,
-          "end": 24,
-          "writtenStart": 20,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 52,
-          "start": 26,
-          "end": 30,
-          "writtenStart": 26,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 48,
-          "start": 32,
-          "end": 36,
-          "writtenStart": 32,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 47,
-          "start": 38,
-          "end": 44,
-          "writtenStart": 38,
-          "writtenUnits": 6
-        },
-        {
-          "pitch": 47,
-          "start": 44,
-          "end": 48,
-          "writtenStart": 44,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 52,
-          "start": 50,
-          "end": 54,
-          "writtenStart": 50,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 55,
-          "start": 56,
-          "end": 60,
-          "writtenStart": 56,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 50,
-          "start": 62,
-          "end": 64,
-          "writtenStart": 62,
-          "writtenUnits": 2
-        },
-        {
-          "pitch": 50,
-          "start": 68,
-          "end": 72,
-          "writtenStart": 68,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 52,
-          "start": 74,
-          "end": 78,
-          "writtenStart": 74,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 47,
-          "start": 80,
-          "end": 84,
-          "writtenStart": 80,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 52,
-          "start": 86,
-          "end": 92,
-          "writtenStart": 86,
-          "writtenUnits": 6
-        },
-        {
-          "pitch": 52,
-          "start": 92,
-          "end": 96,
-          "writtenStart": 92,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 59,
-          "start": 98,
-          "end": 104,
-          "writtenStart": 98,
-          "writtenUnits": 6
-        },
-        {
-          "pitch": 55,
-          "start": 104,
-          "end": 108,
-          "writtenStart": 104,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 50,
-          "start": 110,
-          "end": 114,
-          "writtenStart": 110,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 50,
-          "start": 116,
-          "end": 120,
-          "writtenStart": 116,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 52,
-          "start": 122,
-          "end": 126,
-          "writtenStart": 122,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 48,
-          "start": 128,
-          "end": 132,
-          "writtenStart": 128,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 47,
-          "start": 134,
-          "end": 138,
-          "writtenStart": 134,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 47,
-          "start": 140,
-          "end": 144,
-          "writtenStart": 140,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 59,
-          "start": 146,
-          "end": 152,
-          "writtenStart": 146,
-          "writtenUnits": 6
-        },
-        {
-          "pitch": 55,
-          "start": 152,
-          "end": 156,
-          "writtenStart": 152,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 50,
-          "start": 158,
-          "end": 160,
-          "writtenStart": 158,
-          "writtenUnits": 2
-        },
-        {
-          "pitch": 50,
-          "start": 164,
-          "end": 168,
-          "writtenStart": 164,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 52,
-          "start": 170,
-          "end": 174,
-          "writtenStart": 170,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 47,
-          "start": 176,
-          "end": 180,
-          "writtenStart": 176,
-          "writtenUnits": 4
-        },
-        {
-          "pitch": 52,
-          "start": 182,
-          "end": 188,
-          "writtenStart": 182,
-          "writtenUnits": 6
-        },
-        {
-          "pitch": 52,
-          "start": 188,
-          "end": 192,
-          "writtenStart": 188,
-          "writtenUnits": 4
-        }
-      ]
-    },
-    "accompaniment_note_off": "Every selected written Alto/Bass note is released at its own written end. No automatic harmony command is retained.",
-    "description": "Complete played soprano, written pitches/onsets/durations and eighth-note pickup. Flute73 matches the actual Z80 player example; violin40 and cello42 follow the written Alto/Bass pitches sampled at dotted-quarter boundaries and released at their real written ends. Clarinet71 Tenor is omitted to fit three tonal oscillators. No invented guitar or percussion. The original two-staff MIDI has no ProgramChange; the actual Z80 four-channel example explicitly sets flute/violin/clarinet/cello. Final LilyPond s8 layout spacer is omitted; the 2.5-beat closing bar and 0.5-beat pickup retain the written 6/8. A separate 0.25-beat silent gap follows all final note-offs before the restart."
-  },
-  "note_format": "Quarter-note beats on a sixteenth grid. Three beats = one 6/8 bar; pickup = 0.5 beat. ~ continues a note across a bar boundary.",
-  "lead_envelope_model": "sustain",
-  "accompaniment_envelope_model": "bowed",
-  "pluck_envelope_model": "bowed",
-  "keys_rest_check": false,
-  "pluck_rest_check": false,
-  "dds_fast_decay_roles": {},
-  "lead_max_level": 15,
-  "lead_attack_step": 4,
-  "lead_release_step": 1,
-  "lead_retrigger": "half",
-  "lead_release_model": "linear",
-  "keys_max_level": 12,
-  "keys_attack_step": 4,
-  "keys_release_step": 1,
-  "keys_retrigger": "half",
-  "keys_release_model": "linear",
-  "pluck_max_level": 10,
-  "pluck_attack_step": 4,
-  "pluck_release_step": 1,
-  "pluck_retrigger": "half",
-  "pluck_release_model": "linear",
-  "release_tail_slots": 2
+    "complete_source": true,
+    "source_notes": 235,
+    "played_notes": 235,
+    "note_timing": "Every source NoteOn and NoteOff retained exactly on the sixteenth grid.",
+    "source_velocity": "All source notes use velocity90; each instrument has a fixed musical mix level.",
+    "description": "All four original independent voices retained, including the previously omitted clarinet tenor and unsampled Alto/Bass notes. The soprano follows the retained four-voice example, whose tied D4 is one continuous note. No added percussion."
+  }
 }

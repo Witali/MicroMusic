@@ -1,5 +1,6 @@
 """Build the canonical, self-contained firmware and its embedded HTML player."""
 from pathlib import Path
+from html import escape
 import importlib.util
 import hashlib
 import json
@@ -11,6 +12,9 @@ ROOT=Path(__file__).resolve().parents[1]
 def module(name,path):
     spec=importlib.util.spec_from_file_location(name,path)
     result=importlib.util.module_from_spec(spec);spec.loader.exec_module(result);return result
+
+
+standalone = module('avr_standalone', ROOT/'tools/avr-standalone.py')
 
 assembler=module('assembler',ROOT/'tools/assemble-avr.py')
 compiler=module('score_format',ROOT/'tools/score-format.py')
@@ -34,6 +38,15 @@ def ihex(raw):
 
 def build(folder):
     data=json.loads((folder/'score.json').read_text(encoding='utf-8'))
+    if data.get('engine')=='lumiere-chords':
+        native=module('lumiere_chords',ROOT/'tools/build-lumiere-full.py')
+        return native.build(folder,stereo=folder.name=='lumiere-stereo')
+    if data.get('engine')=='compact-four':
+        native=module('compact_four',ROOT/'tools/build-compact-four.py')
+        return native.build_normalized(folder,data)
+    if data.get('engine')=='turkish-three':
+        native=module('turkish_three',ROOT/'tools/build-turkish-three.py')
+        return native.build(folder,data)
     if data.get('engine')=='alicia-native':
         native=module('alicia_native',ROOT/'tools/arrange-alicia-multi.py')
         return native.build(folder,candidates=data.get('packing_candidates',4096),production=True)
@@ -81,10 +94,14 @@ def build(folder):
     (folder/'synth.bin').write_bytes(rom)
     save_text(folder/'synth.hex',ihex(rom))
     save_text(folder/'eeprom.hex',ihex(ep))
+    standalone.save_core(folder)
     html=(ROOT/'tools/player-template.html').read_text(encoding='utf-8')
     for key,value in [('AVR_CORE',(folder/'avr_core.js').read_text(encoding='utf-8')),('FIRMWARE_HEX',ihex(rom)),('EEPROM_HEX',ihex(ep))]:
         html=html.replace('/*'+key+'*/',value)
     html=html.replace('ATtiny13A — проигрыватель AVR-прошивки','ATtiny13A — '+data['title'])
+    if data.get('player_description'):
+        html=html.replace('ATtiny13A: четырёхголосный плеер — эмулятор HEX','ATtiny13A — '+escape(data['title']))
+        html=html.replace('мелодия, пианино, гитара и ударные.',escape(data['player_description']))
     save_text(folder/'player.html',html)
     report=dict(flashBytes=len(rom),codeBytes=labels['playlist'],tableBytes=len(rom)-labels['playlist'],eepromBytes=64,
                 flashSha256=hashlib.sha256(rom).hexdigest(),eepromSha256=hashlib.sha256(ep).hexdigest(),labels=labels,score=meta,
@@ -101,7 +118,7 @@ def build(folder):
         report['releaseChannels']=dict(primaryVoices=3,tailSlots=2,voiceAddresses=[96,101,106,111,116],
             voiceStateBytes=25,pwmRingBytes=16,tailGain=.5,stealing='Quietest of two release levels',
             phaseContinuous=True,isrCycles=15,requiredFuses=dict(low='0x7A',high='0xFF'))
-    save_text(folder/'build-report.json',json.dumps(report,indent=2,ensure_ascii=False)+'\n')
+    save_text(folder/'build-report.json',json.dumps(standalone.record_sources(report),indent=2,ensure_ascii=False)+'\n')
     print(folder.name+':',len(rom),'Flash;',labels['playlist'],'code;',len(meta['holds']),'unique hold commands; phase step',step)
 
 if __name__=='__main__':

@@ -1,6 +1,6 @@
 code_end:
 playlist:
-  .byte 0,12,7,231,23,0,28,48,77,48,90,101,10,100,160,166,166,166,166,166,189,169,181,169,195,107,224,100,227
+  .byte 0,12,7,241,23,0,28,48,77,48,90,101,10,100,160,164,166,192,172,184,172,198,107,227,100,230,164,166,166,165,165,233
 durations:
   .byte 1,2,3,4,6,8,16
 note_steps:
@@ -144,7 +144,7 @@ section_packed_009:
   .byte 64
   .byte 206
   .byte 86
-section_packed_018:
+section_packed_019:
   .byte 232
   .byte 149
   .byte 131
@@ -202,14 +202,19 @@ section_packed_012:
   .byte 189
   .byte 149
   .byte 141
-  .byte 253
-  .byte 142
   .byte 255
 section_packed_013:
+  .byte 253
+section_packed_022:
+  .byte 142
+section_packed_014:
+  .byte 142
+  .byte 142
+  .byte 142
   .byte 142
   .byte 142
   .byte 255
-section_packed_015:
+section_packed_016:
   .byte 16
   .byte 241
   .byte 1
@@ -222,7 +227,7 @@ section_packed_015:
   .byte 113
   .byte 137
   .byte 255
-section_packed_016:
+section_packed_017:
   .byte 105
   .byte 137
   .byte 113
@@ -231,14 +236,14 @@ section_packed_016:
   .byte 141
   .byte 140
   .byte 240
-section_packed_014:
+section_packed_015:
   .byte 141
   .byte 139
   .byte 24
   .byte 96
   .byte 104
   .byte 255
-section_packed_017:
+section_packed_018:
   .byte 17
   .byte 137
   .byte 105
@@ -268,12 +273,20 @@ section_packed_017:
   .byte 212
   .byte 86
   .byte 255
-section_packed_019:
+section_packed_020:
   .byte 253
   .byte 141
   .byte 255
-section_packed_020:
-  .byte 174
+section_packed_021:
+  .byte 189
+  .byte 142
+  .byte 255
+section_packed_023:
+  .byte 254
+  .byte 142
+  .byte 142
+  .byte 142
+  .byte 142
   .byte 3
   .byte 254
   .byte 141

@@ -1,0 +1,24 @@
+{
+  "schema": "q3-rate-prune-qualification-v1",
+  "qualified_profile": "quality-aware",
+  "raw_pc_captures_unchanged": true,
+  "hardware_tested": false,
+  "actual_flash_bytes": 1022,
+  "actual_code_bytes": 458,
+  "actual_stream_bytes": 562,
+  "eeprom_bytes": 64,
+  "image_sha256": "63f79bb93a4f5b1e6eb0bab94412409e373ae35bb2f80497517f42694ecf5334",
+  "phrase_pcm_sha256": "91354fc3aa5134eaeb6dd3fca0552584e8d7916cfc8522882e832d073ebfc48e",
+  "verified_samples": 66816,
+  "silence_samples": 44544,
+  "engines": [
+    "reference",
+    "wasm",
+    "wasm-unoptimized"
+  ],
+  "minimum_slack_cycles": 135,
+  "missed_samples": 0,
+  "lost_overflows": 0,
+  "pc_oracle_phrase_and_raw_float_wav_equal_actual_avr": true,
+  "legacy_control_avr_qualified": false
+}

@@ -1,0 +1,96 @@
+{
+  "feasible": true,
+  "failed_guards": [],
+  "initial_stream_bytes": 340,
+  "stream_bytes": 327,
+  "evaluations": 300,
+  "accepted_operations": 7,
+  "history": [
+    {
+      "evaluation": 29,
+      "operation": "share-2-4-rows-32-36-source-31",
+      "stream_bytes": 338
+    },
+    {
+      "evaluation": 90,
+      "operation": "merge-rows-75-76-source-75",
+      "stream_bytes": 336
+    },
+    {
+      "evaluation": 172,
+      "operation": "merge-rows-16-17-source-17",
+      "stream_bytes": 334
+    },
+    {
+      "evaluation": 188,
+      "operation": "share-2-4-rows-65-69-source-69",
+      "stream_bytes": 332
+    },
+    {
+      "evaluation": 228,
+      "operation": "share-4-6-rows-65-69-source-64",
+      "stream_bytes": 330
+    },
+    {
+      "evaluation": 269,
+      "operation": "share-2-6-rows-72-76-source-71",
+      "stream_bytes": 328
+    },
+    {
+      "evaluation": 270,
+      "operation": "merge-rows-71-72-source-71",
+      "stream_bytes": 327
+    }
+  ],
+  "level": 2,
+  "requested_frequency_tolerance": 250.0,
+  "requested_amplitude_tolerance_db": 26.0,
+  "limits": {
+    "frequency_key": "frequency_error_p95_cents",
+    "amplitude_key": "level_error_p95_db",
+    "frequency_cap": 250.0,
+    "amplitude_cap": 26.0,
+    "missing_cap": 0.172824129995439,
+    "extra_cap": 0.236220110492199,
+    "coverage_floor": 0.8271758700045616,
+    "continuity_cap": 0.3530560603937906,
+    "minimum_stoi": null
+  },
+  "tracking": {
+    "harmonic_track_loss": 0.8463458985762085,
+    "frequency_trajectory_error": 0.8778404394852227,
+    "level_error": 2.2146041156562455,
+    "missing_reference_energy": 0.17260664418282567,
+    "extra_candidate_energy": 0.22275374173283818,
+    "weighted_match_rate": 0.8273933558171754,
+    "frequency_error_cents": 47.813200729294174,
+    "frequency_error_hz": 11.102842231982816,
+    "level_error_db": 6.643812346968733,
+    "frequency_error_p95_cents": 124.56203340350872,
+    "frequency_error_p95_hz": 44.89980708251096,
+    "level_error_p95_db": 14.296341295279483,
+    "continuity_break_rate": 0.2197173422071592
+  },
+  "computed_flash_bytes": 748,
+  "fits_target": true,
+  "firmware_qualified": true,
+  "intermediate_wraps": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "stoi": 0.6970000049574103,
+  "estoi": 0.42913810377814376,
+  "spectrum": {
+    "spectrogram_loss": 0.5428425420591911,
+    "fine_log_error": 0.523001282402159,
+    "envelope_error": 0.6470585504860966,
+    "unsupported_energy": 0.24286413951295027,
+    "missing_energy": 0.2224521334722041
+  },
+  "stream_sha256": "bb54b9cd26ad3cbed384d2de1661c3c98e8f6f6066a52a485dc7bd5c4183fe5c",
+  "pcm_sha256": "edbad8f6ad037a04f618921e097d09e55bb518ed2cf796007b2a8fa6fb4e23ad",
+  "status": "feasible",
+  "final_evaluation_verified": true
+}

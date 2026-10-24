@@ -1,0 +1,42 @@
+{
+  "pass": true,
+  "scope": "Every Q1 head area -112..112 and every tail position 0..15",
+  "kernelBytes": 28,
+  "checked": 10800,
+  "irqChecked": 10800,
+  "engines": [
+    {
+      "engine": "reference",
+      "checked": 3600,
+      "irqChecked": 3600,
+      "minimumCycles": 17,
+      "maximumCycles": 17,
+      "maximumStack": 6
+    },
+    {
+      "engine": "wasm",
+      "checked": 3600,
+      "irqChecked": 3600,
+      "minimumCycles": 17,
+      "maximumCycles": 17,
+      "maximumStack": 6
+    },
+    {
+      "engine": "wasm-unoptimized",
+      "checked": 3600,
+      "irqChecked": 3600,
+      "minimumCycles": 17,
+      "maximumCycles": 17,
+      "maximumStack": 6
+    }
+  ],
+  "timingScope": "Entry through RET; excludes caller RCALL, descriptor load, head reader, gain and pitch control",
+  "fullDecoderImplemented": false,
+  "hardwareTested": false,
+  "fixture_sha256": "8caa17f68c764af2daf5a84683e80809fe7dd81b0bd710cce9ca38f941dbc796",
+  "source_sha256_normalized_lf": {
+    "tools/probe-balanced-tail.py": "4ababf3cddf731888e69e52a12ddc1b67f13d7d212e562c07fb502d52eac81b8",
+    "ATtiny13A/Sound/codec/word-q4/balanced-tail.S": "cec90b766fed277af17dd915989a161bcabd4f911486c3933a97460960f6fc37",
+    "tools/verify-balanced-tail.mjs": "4be656f1248b92470612c54a06b5ffb0b1165a11d2f1907ce04e3573bcbe8092"
+  }
+}

@@ -1,360 +1,227 @@
 {
-  "flashBytes": 748,
-  "codeBytes": 552,
-  "tableBytes": 196,
+  "engine": "compact-four",
+  "flashBytes": 812,
+  "codeBytes": 438,
+  "tableBytes": 374,
   "eepromBytes": 64,
-  "flashSha256": "f994991ab83161a7d17d33af460006d8f2d4ff7018d2fd22261c35a531f03224",
-  "eepromSha256": "f81755e5b88d7041208ce5e59da3edf864d4c2162dfdaee1ba4f306f64cff60e",
   "labels": {
-    "REST_INDEX": 12,
-    "HOLD_INDEX": 13,
-    "PLAYLIST_LEN": 15,
-    "FIRST_PLAYLIST_INDEX": 1,
-    "GRID_STEP_LOW": 251,
-    "GRID_STEP_HIGH": 13,
-    "GRID_INITIAL_HIGH": 243,
+    "GAIN_MINIMUM": 223,
+    "GRID_LOW": 251,
+    "GRID_HIGH": 13,
     "vectors": 0,
-    "envelope_return": 2,
     "reset": 8,
-    "clear_ram": 22,
-    "fill_ring": 32,
+    "fill_ring": 18,
+    "clear_states": 26,
     "idle": 78,
-    "check_space": 84,
     "audio_step": 88,
-    "render_sample": 94,
-    "voice_loop": 98,
-    "primary_gain": 128,
-    "write_pwm": 134,
-    "ring_published": 152,
-    "pwm_irq": 156,
-    "ring_read": 158,
-    "irq_restore": 164,
-    "music_tick": 166,
-    "envelope_loop": 170,
-    "state_release": 202,
-    "envelope_store": 216,
-    ".L0a8": 226,
-    "grid_step": 238,
-    ".L0ba": 238,
-    "read_event": 244,
-    ".L0c8": 252,
-    "note_off": 260,
-    "note_off_loop": 262,
-    "chord_event": 282,
-    "melodic_event": 314,
-    "lead_commit": 360,
-    "note_rest": 362,
-    "release_lead": 362,
-    "hold_sample": 372,
-    "next_section": 376,
-    ".L15c": 396,
-    "render_tone": 406,
-    ".L216": 422,
-    "eeprom_low_nibble": 440,
-    ".L25c": 444,
-    "voice_silent": 472,
-    "initialize_voice": 476,
-    "voice_initialized": 498,
-    "capture_ram_tail": 500,
-    "ram_tail_destination": 522,
-    "ram_tail_copy": 538,
-    "no_ram_tail": 548,
-    "playlist": 552,
-    "durations": 567,
-    "note_steps": 574,
-    "chord_steps": 598,
-    "melody_data": 638,
-    "section_packed_000": 638,
-    "first_section": 638,
-    "section_packed_001": 650,
-    "section_packed_002": 673,
-    "section_packed_003": 687,
-    "section_packed_004": 700,
-    "section_packed_005": 705,
-    "section_packed_006": 723,
-    "section_packed_007": 731,
-    "section_packed_008": 734,
-    "section_packed_009": 741,
-    "section_packed_010": 745
+    "render_sample": 100,
+    "voice_loop": 106,
+    "wave_register": 138,
+    "wave_nibble": 156,
+    "master_gain": 174,
+    "write_pwm": 192,
+    "ring_published": 204,
+    "pwm_irq": 206,
+    "ring_read": 208,
+    "voice_gain": 216,
+    "gain_loop": 222,
+    "gain_no_add": 226,
+    "music_tick": 240,
+    "envelope_loop": 246,
+    "release_voice": 268,
+    "store_envelope": 274,
+    "read_events": 298,
+    "next_symbol": 298,
+    "read_stream": 312,
+    "restart_song": 322,
+    "classify_symbol": 332,
+    "event_leaf": 364,
+    "music_return": 372,
+    "note_event": 374,
+    "note_off": 400,
+    "note_released": 408,
+    "note_on": 410,
+    "note_committed": 436,
+    "part_levels": 438,
+    "pitch_steps": 442,
+    "song_rules": 486,
+    "song_stream": 572,
+    "output_gain": 747
+  },
+  "flashSha256": "83fb2b748e052f148f0b5f9099188b719e7076461399e24b0103f59e84aa34eb",
+  "eepromSha256": "25a20ace0caeb18735a129564fe453a3870b596a0a8c9c41aa2b196c79532bff",
+  "instrumentBankSha256": "ddf64e6c18950407c002d3c1a3dba9356e566bccba099c08918e7c5d0aa52221",
+  "instrumentAssignments": {
+    "soprano": {
+      "instrument": "flute",
+      "gmProgram": 73,
+      "level": 15,
+      "eepromOffset": 0
+    },
+    "alto": {
+      "instrument": "violin",
+      "gmProgram": 40,
+      "level": 12,
+      "eepromOffset": 16
+    },
+    "tenor": {
+      "instrument": "clarinet",
+      "gmProgram": 71,
+      "level": 11,
+      "eepromOffset": 32
+    },
+    "bass": {
+      "instrument": "cello",
+      "gmProgram": 42,
+      "level": 10,
+      "eepromOffset": 48
+    }
   },
   "score": {
-    "note_count": 48,
-    "event_bytes": 110,
-    "maximum_entry_offset": 107,
-    "playlist_bytes": 15,
-    "note_table_bytes": 24,
-    "chord_table_bytes": 40,
-    "durations": [
-      1,
-      2,
-      3,
-      4,
-      6,
-      8,
-      16
+    "noteCounts": [
+      70,
+      52,
+      58,
+      55
     ],
-    "pitches": [
-      "B3",
-      "C#4",
-      "D4",
-      "D#4",
-      "E4",
-      "F#4",
-      "G4",
-      "A4",
-      "B4",
-      "C5",
-      "C#5",
-      "D5",
-      "R"
-    ],
-    "chords": [
-      "B3/E3",
-      "E4/E3",
-      "D4/G3",
-      "F#4/D3",
-      "D4/D3",
-      "A3/C3",
-      "D#4/B2",
-      "B3/B2",
-      "F#4/B3",
-      "B4/G3"
-    ],
-    "chord_notes": {
-      "B3/E3": [
-        59,
-        52
-      ],
-      "E4/E3": [
-        64,
-        52
-      ],
-      "D4/G3": [
-        62,
-        55
-      ],
-      "F#4/D3": [
-        66,
-        50
-      ],
-      "D4/D3": [
-        62,
-        50
-      ],
-      "A3/C3": [
-        57,
-        48
-      ],
-      "D#4/B2": [
-        63,
-        47
-      ],
-      "B3/B2": [
-        59,
-        47
-      ],
-      "F#4/B3": [
-        66,
-        59
-      ],
-      "B4/G3": [
-        71,
-        55
-      ]
-    },
-    "total_data_bytes": 196,
-    "section_bars": {
-      "pickup": 1,
-      "bar_01": 1,
-      "bar_02": 1,
-      "bar_03": 1,
-      "bar_04": 1,
-      "bar_05": 1,
-      "bar_06": 1,
-      "bar_07": 1,
-      "bar_08": 1,
-      "bar_09": 1,
-      "bar_10": 1,
-      "bar_11": 1,
-      "bar_12": 1,
-      "bar_13": 1,
-      "bar_14": 1,
-      "bar_15": 1,
-      "bar_16": 1
-    },
-    "playlist": [
-      "packed_000",
-      "packed_001",
-      "packed_002",
-      "packed_003",
-      "packed_004",
-      "packed_005",
-      "packed_006",
-      "packed_007",
-      "packed_001",
-      "packed_008",
-      "packed_006",
-      "packed_003",
-      "packed_009",
-      "packed_005",
-      "packed_010"
-    ],
-    "source_playlist": [
-      "pickup",
-      "bar_01",
-      "bar_02",
-      "bar_03",
-      "bar_04",
-      "bar_05",
-      "bar_06",
-      "bar_07",
-      "bar_08",
-      "bar_09",
-      "bar_10",
-      "bar_11",
-      "bar_12",
-      "bar_13",
-      "bar_14",
-      "bar_15",
-      "bar_16"
-    ],
-    "section_offsets": {
-      "packed_000": 0,
-      "packed_001": 12,
-      "packed_002": 35,
-      "packed_003": 49,
-      "packed_004": 62,
-      "packed_005": 67,
-      "packed_006": 85,
-      "packed_007": 93,
-      "packed_008": 96,
-      "packed_009": 103,
-      "packed_010": 107
-    },
-    "compression": {
-      "method": "Repeated command phrases; dynamic-programming parsing; suffix sharing; deterministic dictionary search",
-      "globallyMinimal": false,
-      "candidateLimit": 4096,
-      "candidateCount": 109,
-      "dictionaryTrials": 2777,
-      "originalCommandBytes": 157,
-      "originalStreamSha256": "9f9fdcdc8bf9e00e4232b8212861c4014db22d47b8eb54fcb2add7d31683d16b",
-      "sourceLayoutBytes": 145,
-      "packedEventBytes": 110,
-      "playlistBytes": 15,
-      "packedBytes": 125,
-      "savedAgainstSourceLayoutBytes": 20,
-      "storedSections": 11,
-      "referencedSections": 11,
-      "verifiedLossless": true
-    },
-    "source": "05 · Greensleeves",
-    "rest_index": 12,
-    "hold_index": 13,
-    "holds": [],
-    "instruments": {
-      "lead": {
-        "instrument": "flute",
-        "level": 15
-      },
-      "keys": {
-        "instrument": "violin",
-        "level": 12
-      },
-      "pluck": {
-        "instrument": "cello",
-        "level": 10
-      },
-      "percussion": "off"
-    }
+    "sourceNotes": 235,
+    "endUnit": 192,
+    "playbackUnits": 193,
+    "maximumGrammarDepth": 8,
+    "pendingBytes": 8,
+    "commandBytes": 547,
+    "streamBytes": 175,
+    "ruleBytes": 86,
+    "verifiedLossless": true,
+    "decodedCommandsSha256": "8971d44758d924133e2fbc467aa6ea51e53d60bbbe73c7520751f7eb4f2644c6"
   },
   "timing": {
+    "tempoBpm": 60,
     "phaseStep": 3579,
     "phaseBits": 16,
-    "envelopeTickCycles": 131072,
-    "tempoBpm": 60,
     "actualTempoBpm": 59.99766290187836,
-    "sharedGrid": "One sixteenth grid drives score and half-beat percussion",
-    "initialHighPhase": 243
+    "envelopeTickCycles": 131072
   },
-  "articulation": {
-    "holdIndex": 13,
-    "holds": [],
-    "attack": "sustain",
-    "retrigger": "half",
-    "phaseContinuous": true
-  },
-  "instrumentAssignments": {
-    "lead": {
-      "instrument": "flute",
-      "label": "Флейта",
-      "gmProgram": 73,
-      "eepromOffset": 0,
-      "level": 15,
-      "envelope": {
-        "model": "sustain",
-        "defaultLevel": 15,
-        "attackStep": 4,
-        "retrigger": "half-current-level",
-        "releaseStep": 1
-      }
-    },
-    "keys": {
-      "instrument": "violin",
-      "label": "Скрипка",
-      "gmProgram": 40,
-      "eepromOffset": 16,
-      "level": 12,
-      "envelope": {
-        "model": "bowed",
-        "defaultLevel": 15,
-        "attackStep": 4,
-        "retrigger": "half-current-level",
-        "releaseStep": 1
-      }
-    },
-    "pluck": {
-      "instrument": "cello",
-      "label": "Виолончель",
-      "gmProgram": 42,
-      "eepromOffset": 32,
-      "level": 10,
-      "envelope": {
-        "model": "bowed",
-        "defaultLevel": 10,
-        "attackStep": 4,
-        "retrigger": "half-current-level",
-        "releaseStep": 1
-      }
-    },
-    "percussion": {
-      "instrument": "off",
-      "label": "Выключены",
-      "level": 0,
-      "enabled": false,
-      "notes": []
-    }
-  },
-  "instrumentBankSha256": "ddf64e6c18950407c002d3c1a3dba9356e566bccba099c08918e7c5d0aa52221",
-  "releaseChannels": {
-    "primaryVoices": 3,
-    "tailSlots": 2,
+  "voices": {
+    "primaryVoices": 4,
     "voiceAddresses": [
-      96,
-      101,
-      106,
-      111,
-      116
+      112,
+      117,
+      122,
+      127
     ],
-    "voiceStateBytes": 25,
+    "voiceStateBytes": 20,
     "pwmRingBytes": 16,
-    "tailGain": 0.5,
-    "stealing": "Quietest of two release levels",
-    "phaseContinuous": true,
+    "pendingAddress": 132,
+    "pendingBytes": 8,
     "isrCycles": 15,
-    "requiredFuses": {
-      "low": "0x7A",
-      "high": "0xFF"
+    "envelope": "Independent linear attack/release; phase continuous; no voice stealing"
+  },
+  "outputNormalization": {
+    "minimum": -33,
+    "maximum": 30,
+    "gain": 3.878787878787879,
+    "gainDb": 11.773920595399618,
+    "table": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      19,
+      23,
+      27,
+      31,
+      35,
+      39,
+      43,
+      47,
+      50,
+      54,
+      58,
+      62,
+      66,
+      70,
+      74,
+      78,
+      81,
+      85,
+      89,
+      93,
+      97,
+      101,
+      105,
+      109,
+      112,
+      116,
+      120,
+      124,
+      128,
+      132,
+      136,
+      140,
+      144,
+      147,
+      151,
+      155,
+      159,
+      163,
+      167,
+      171,
+      175,
+      178,
+      182,
+      186,
+      190,
+      194,
+      198,
+      202,
+      206,
+      209,
+      213,
+      217,
+      221,
+      225,
+      229,
+      233,
+      237,
+      240,
+      244
+    ],
+    "seconds": 48.75,
+    "samples": 1828123,
+    "calibrationFlashSha256": "d5aa6c4bda5424f2c2127e72224c6d654ff1787ebdc769f63579970fa3ad2e46",
+    "method": "Linear peak normalization around PWM 128; common gain for both parts; nearest integer output; no limiter or automatic gain changes.",
+    "observedMinimum": -33,
+    "observedMaximum": 28,
+    "domain": "Sum of every instrument low/high-wave extremum at its maximum envelope level, with the exact signed floor division used by AVR. Covers every phase alignment and every playback loop.",
+    "instrumentMixBounds": [
+      [
+        -10,
+        9
+      ],
+      [
+        -9,
+        9
+      ],
+      [
+        -7,
+        6
+      ],
+      [
+        -7,
+        6
+      ]
+    ],
+    "implementation": "linear-flash-table",
+    "midpoint": 128
+  },
+  "standaloneCoreSources": {
+    "normalization": "UTF-8, LF",
+    "sha256": {
+      "web-player/lib/avr-profiles.js": "37583c2bbb1e36c5cc8687e0911ce46c062a97b0df21747ef92535628fa84c2b",
+      "web-player/lib/avr-reference.js": "f62e6f5d46699472d64dd6e49962f4832531ae8cf1b457d92753c6203b9763c6",
+      "web-player/lib/hex.js": "73026ff8e78caab294b86bd32b3588cf92f77e59203531aa3bf3bc7979dd09ab"
     }
   }
 }

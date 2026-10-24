@@ -14,10 +14,11 @@ for(const entry of catalog.entries)test(entry.id+': five minutes retain every PC
   for(let offset=0;offset<rate*seconds;offset+=4096){
     const count=Math.min(4096,rate*seconds-offset),actual=a.render(count),expected=b.render(count);
     assert.deepEqual(a.core.rawSamples,b.rawSamples);
-    for(let n=0;n<count;n++)max=Math.max(max,Math.abs(actual[n]-expected[n]));
+    assert.equal(actual.length,expected.length);
+    for(let n=0;n<actual.length;n++)max=Math.max(max,Math.abs(actual[n]-expected[n]));
     sameCPU(a.core,b.core,entry.id+' block '+blocks++);
     assert.equal(a.core.lost,0);assert.equal(a.core.workLost,0);
-    assert.equal(a.core._exports.memory.buffer,memory);assert.equal(memory.byteLength,65536);
+    assert.equal(a.core._exports.memory.buffer,memory);assert.equal(memory.byteLength,131072);
     renderedFrames+=count;
     const clockOffset=a.core.cyc-renderedFrames/rate*entry.cpuHz;
     if(startupOffset===undefined){
@@ -30,5 +31,6 @@ for(const entry of catalog.entries)test(entry.id+': five minutes retain every PC
   assert.ok(max<2e-7,'Full filtered PCM error '+max);
   assert.equal(a.core.irqCount,seconds*entry.pwmHz+2,'Nominal IRQ count plus two resampler lookahead samples');
   assert.equal(a.core.irqCount,a.core.writes,'Each actual overflow interrupt must produce exactly one PWM write');
+  if(entry.audioChannels===2)assert.equal(a.core.leftWrites,a.core.writes,'Both PWM channels advance synchronously');
   assert.equal(a.frames,rate*seconds);
 });

@@ -37,10 +37,10 @@ fill_ring:
   mov r3, r16
   ldi r30, lo8(first_section)
   ldi r31, hi8(first_section)
-  sbi 23, 1
   out 41, r18
   ldi r16, 35
   out 47, r16
+  sbi 23, 1
   ldi r16, 1
   out 51, r16
   ldi r16, 2
@@ -76,11 +76,9 @@ voice_loop:
   mov r16, r17
   mov r17, r7
   rcall render_tone
-  sbrc r26, 4
-  asr r17
 primary_gain:
   add r21, r17
-  cpi r26, 121
+  cpi r26, 111
   brne voice_loop
 write_pwm:
   subi r21, 128
@@ -148,7 +146,7 @@ envelope_store:
   subi r26, 1
   st X+, r16
   subi r26, 252
-  cpi r26, 121
+  cpi r26, 111
   brne envelope_loop
 .L0a8:
   ldi r17, GRID_STEP_LOW
@@ -198,6 +196,9 @@ chord_event:
   adc r31, r29
   ldi r26, 101
   ldi r25, 218
+  rcall initialize_voice
+  ldi r26, 106
+  ldi r25, 233
   rcall initialize_voice
   movw r30, r12
   rjmp read_event
@@ -266,8 +267,6 @@ render_tone:
   brcs .L216
   ori r16, 8
 .L216:
-  cpi r26, 107
-  brcc piano_attack_done
   cpi r25, 14
   brcs piano_attack_done
   ori r16, 48
@@ -303,7 +302,8 @@ voice_silent:
   clr r17
   rjmp envelope_return
 initialize_voice:
-  rcall capture_ram_tail
+  ld r16, X+
+  andi r16, 15
   mov r16, r25
   subi r26, 1
   st X+, r16
@@ -313,33 +313,12 @@ initialize_voice:
   lpm r16, Z+
   st X+, r16
 voice_initialized:
+  /* All selected nonzero DDS words are >=256. */
+  tst r16
+  brne voice_initialized_return
+  subi r26, 5
+  st X+, r29
+  subi r26, 252
+voice_initialized_return:
   ret
-capture_ram_tail:
-  movw r10, r30
-  lds r16, 111
-  andi r16, 15
-  lds r17, 116
-  andi r17, 15
-  sub r16, r17
-  ldi r30, 111
-  brcs ram_tail_destination
-  ldi r30, 116
-ram_tail_destination:
-  ld r16, X+
-  andi r16, 127
-  mov r17, r16
-  andi r17, 15
-  breq no_ram_tail
-  clr r31
-  st Z+, r16
-  ldi r17, 4
-ram_tail_copy:
-  ld r0, X+
-  st Z+, r0
-  dec r17
-  brne ram_tail_copy
-  subi r26, 4
-no_ram_tail:
-  movw r30, r10
-  rjmp envelope_return
 .include "score.inc"

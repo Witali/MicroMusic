@@ -122,7 +122,7 @@ def main():
     native=module('children_native_arranger',ROOT/'tools/arrange-children-four.py')
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--candidates',type=int,default=4096)
-    parser.add_argument('--bars',type=int,choices=[107],default=107)
+    parser.add_argument('--bars',type=int,choices=[140],default=140)
     parser.add_argument('--bass-capture',type=Path)
     args=parser.parse_args()
     if args.bass_capture:fit_bass(args.bass_capture)

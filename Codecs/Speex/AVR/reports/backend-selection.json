@@ -1,0 +1,71 @@
+{
+  "compilers": [
+    "C:\\Work\\MicroMusic\\build\\toolchains\\emscripten-6.0.12\\upstream\\bin\\clang.exe",
+    "C:\\Work\\MicroMusic\\build\\toolchains\\avr-7.3.0\\bin\\avr-gcc.exe"
+  ],
+  "defaultIsC": true,
+  "unsupportedArchitectureFallsBackToC": true,
+  "platformHeaderOverrideVerified": true,
+  "cases": [
+    {
+      "case": "host-default",
+      "architecture": "GENERIC",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "host-asm-requested",
+      "architecture": "GENERIC",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "host-arm",
+      "architecture": "ARM",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "host-avr-without-avr-abi",
+      "architecture": "AVR",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "host-unknown",
+      "architecture": "99",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "avr-default",
+      "architecture": "AVR",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "avr-enabled",
+      "architecture": "AVR",
+      "avrAsmSelected": true
+    },
+    {
+      "case": "avr-disabled",
+      "architecture": "AVR",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "avr-unknown",
+      "architecture": "99",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "host-platform-header",
+      "architecture": "ARM",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "avr-platform-header",
+      "architecture": "ARM",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "attiny85-no-hardware-mul",
+      "architecture": "AVR",
+      "avrAsmSelected": false
+    }
+  ]
+}

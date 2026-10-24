@@ -1,0 +1,42 @@
+{
+  "schema": "q3-rate-prune-retention-validation-v1",
+  "source_capture_hash_matches_final_source": true,
+  "source_commit": "9f8f5d6",
+  "source_model_retained_byte_exact": true,
+  "profiles": [
+    {
+      "profile": "before",
+      "stream_bytes": 590,
+      "pcm_sha256": "e555b9bd3bbcfa73a349c7fbc0452c1383c9c130593bf9723eceee23b4100030",
+      "pack_unpack_frames_durations_exact": true,
+      "source_pitch_gain_duration_and_tables_unchanged": true,
+      "stoi": 0.8458974452275383,
+      "estoi": 0.6556203212929816,
+      "spectrogram_loss": 0.4929287469680669,
+      "full_arithmetic_peak_step_guards_pass": true
+    },
+    {
+      "profile": "legacy-distance",
+      "stream_bytes": 562,
+      "pcm_sha256": "3822f19223c11214a523ed5bf48d5d08c4e2eaa038e75b6ba2fced10d8fbbc4e",
+      "pack_unpack_frames_durations_exact": true,
+      "source_pitch_gain_duration_and_tables_unchanged": true,
+      "stoi": 0.8330830150596118,
+      "estoi": 0.6395499671090248,
+      "spectrogram_loss": 0.4975593335725607,
+      "full_arithmetic_peak_step_guards_pass": true
+    },
+    {
+      "profile": "quality-aware",
+      "stream_bytes": 562,
+      "pcm_sha256": "91354fc3aa5134eaeb6dd3fca0552584e8d7916cfc8522882e832d073ebfc48e",
+      "pack_unpack_frames_durations_exact": true,
+      "source_pitch_gain_duration_and_tables_unchanged": true,
+      "stoi": 0.8421803999669429,
+      "estoi": 0.6478840280865813,
+      "spectrogram_loss": 0.4893688771207699,
+      "full_arithmetic_peak_step_guards_pass": true
+    }
+  ],
+  "all_passed": true
+}

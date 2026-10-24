@@ -1,0 +1,626 @@
+{
+  "flashBytes": 984,
+  "codeBytes": 732,
+  "tableBytes": 252,
+  "eepromBytes": 64,
+  "flashSha256": "a76ced75829cf9f787c9f4f54225f809cad6ebe86626d954d8e90888ac80c764",
+  "eepromSha256": "b9f3a74d012b9c3c3b7a1944e06a9a7314e4e8ea7413580f6a5931a4c35b85ae",
+  "labels": {
+    "REST_INDEX": 8,
+    "HOLD_INDEX": 9,
+    "PLAYLIST_LEN": 24,
+    "FIRST_PLAYLIST_INDEX": 1,
+    "GRID_STEP_LOW": 10,
+    "GRID_STEP_HIGH": 44,
+    "GRID_INITIAL_HIGH": 212,
+    "vectors": 0,
+    "envelope_return": 2,
+    "reset": 8,
+    "clear_ram": 22,
+    "fill_ring": 32,
+    "idle": 94,
+    "check_space": 100,
+    "audio_step": 104,
+    "render_sample": 110,
+    "voice_loop": 114,
+    "primary_gain": 144,
+    "render_drum": 150,
+    ".L280": 160,
+    ".L28a": 164,
+    ".L298": 178,
+    ".L2a0": 190,
+    ".L2ae": 240,
+    "write_pwm": 256,
+    "ring_published": 274,
+    "pwm_irq": 278,
+    "ring_read": 280,
+    "irq_restore": 286,
+    "music_tick": 288,
+    "envelope_loop": 292,
+    "state_plucked": 302,
+    "state_mask": 320,
+    "state_gate": 324,
+    "state_release": 332,
+    "envelope_store": 346,
+    ".L0a8": 366,
+    "grid_step": 378,
+    "drum_trigger": 390,
+    ".L0ba": 400,
+    "read_event": 406,
+    ".L0c8": 414,
+    "note_off": 422,
+    "note_off_loop": 424,
+    "chord_event": 448,
+    "melodic_event": 482,
+    "lead_commit": 528,
+    "note_rest": 530,
+    "release_lead": 530,
+    "hold_sample": 540,
+    "next_section": 544,
+    "drum_loop_continues": 570,
+    ".L15c": 580,
+    "render_tone": 590,
+    ".L216": 606,
+    "eeprom_low_nibble": 624,
+    ".L25c": 628,
+    "voice_silent": 656,
+    "initialize_voice": 660,
+    "voice_initialized": 678,
+    "capture_ram_tail": 680,
+    "ram_tail_destination": 702,
+    "ram_tail_copy": 718,
+    "no_ram_tail": 728,
+    "playlist": 732,
+    "durations": 756,
+    "note_steps": 763,
+    "chord_steps": 779,
+    "melody_data": 803,
+    "section_packed_000": 803,
+    "first_section": 803,
+    "section_packed_010": 807,
+    "section_packed_001": 810,
+    "section_packed_002": 813,
+    "section_packed_003": 822,
+    "section_packed_004": 854,
+    "section_packed_005": 863,
+    "section_packed_006": 880,
+    "section_packed_007": 885,
+    "section_packed_008": 908,
+    "section_packed_009": 918,
+    "section_packed_011": 925,
+    "section_packed_012": 931,
+    "section_packed_013": 946,
+    "section_packed_014": 965
+  },
+  "score": {
+    "note_count": 121,
+    "event_bytes": 181,
+    "maximum_entry_offset": 162,
+    "playlist_bytes": 24,
+    "note_table_bytes": 16,
+    "chord_table_bytes": 24,
+    "durations": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      8,
+      16
+    ],
+    "pitches": [
+      "B3",
+      "D#4",
+      "E4",
+      "F#4",
+      "G4",
+      "A4",
+      "B4",
+      "C5",
+      "R"
+    ],
+    "chords": [
+      "guitar_55_40",
+      "guitar_59_47",
+      "guitar_60_45",
+      "guitar_51_35",
+      "guitar_59_45",
+      "guitar_59_40"
+    ],
+    "chord_notes": {
+      "guitar_55_40": [
+        55,
+        40
+      ],
+      "guitar_59_47": [
+        59,
+        47
+      ],
+      "guitar_60_45": [
+        60,
+        45
+      ],
+      "guitar_51_35": [
+        51,
+        35
+      ],
+      "guitar_59_45": [
+        59,
+        45
+      ],
+      "guitar_59_40": [
+        59,
+        40
+      ]
+    },
+    "total_data_bytes": 252,
+    "section_bars": {
+      "song": 24,
+      "silence": 1
+    },
+    "playlist": [
+      "packed_000",
+      "packed_001",
+      "packed_002",
+      "packed_002",
+      "packed_003",
+      "packed_004",
+      "packed_004",
+      "packed_004",
+      "packed_004",
+      "packed_005",
+      "packed_006",
+      "packed_007",
+      "packed_004",
+      "packed_008",
+      "packed_009",
+      "packed_006",
+      "packed_006",
+      "packed_010",
+      "packed_009",
+      "packed_011",
+      "packed_012",
+      "packed_013",
+      "packed_012",
+      "packed_014"
+    ],
+    "source_playlist": [
+      "song",
+      "silence"
+    ],
+    "section_offsets": {
+      "packed_000": 0,
+      "packed_010": 4,
+      "packed_001": 7,
+      "packed_002": 10,
+      "packed_003": 19,
+      "packed_004": 51,
+      "packed_005": 60,
+      "packed_006": 77,
+      "packed_007": 82,
+      "packed_008": 105,
+      "packed_009": 115,
+      "packed_011": 122,
+      "packed_012": 128,
+      "packed_013": 143,
+      "packed_014": 162
+    },
+    "compression": {
+      "method": "Repeated command phrases; dynamic-programming parsing; suffix sharing; deterministic dictionary search",
+      "globallyMinimal": false,
+      "candidateLimit": 384,
+      "candidateCount": 104,
+      "dictionaryTrials": 4103,
+      "originalCommandBytes": 237,
+      "originalStreamSha256": "4848faef65cba3dd9281af6152ef0ea74808c19188943a51a16d86d38e63535e",
+      "sourceLayoutBytes": 241,
+      "packedEventBytes": 181,
+      "playlistBytes": 24,
+      "packedBytes": 205,
+      "savedAgainstSourceLayoutBytes": 36,
+      "storedSections": 14,
+      "referencedSections": 15,
+      "verifiedLossless": true
+    },
+    "source": "Canción del Mariachi · Отчаянный",
+    "rest_index": 8,
+    "hold_index": 9,
+    "holds": [
+      {
+        "section": "song",
+        "bar": 2,
+        "pitch": "A4",
+        "beat": 2.0
+      },
+      {
+        "section": "song",
+        "bar": 9,
+        "pitch": "B4",
+        "beat": 2.0
+      },
+      {
+        "section": "song",
+        "bar": 10,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "song",
+        "bar": 12,
+        "pitch": "E4",
+        "beat": 2.0
+      },
+      {
+        "section": "song",
+        "bar": 13,
+        "pitch": "E4",
+        "beat": 0.0
+      },
+      {
+        "section": "song",
+        "bar": 15,
+        "pitch": "C5",
+        "beat": 2.0
+      },
+      {
+        "section": "song",
+        "bar": 17,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "song",
+        "bar": 17,
+        "pitch": "E4",
+        "beat": 2.0
+      },
+      {
+        "section": "song",
+        "bar": 23,
+        "pitch": "E4",
+        "beat": 2.0
+      }
+    ],
+    "instruments": {
+      "lead": {
+        "instrument": "acoustic-guitar-nylon",
+        "level": 15
+      },
+      "keys": {
+        "instrument": "acoustic-guitar-nylon",
+        "level": 10
+      },
+      "pluck": {
+        "instrument": "fretless-bass",
+        "level": 8
+      },
+      "percussion": {
+        "instrument": "natural-kit",
+        "level": 2
+      }
+    }
+  },
+  "timing": {
+    "phaseStep": 11274,
+    "phaseBits": 16,
+    "envelopeTickCycles": 131072,
+    "tempoBpm": 189,
+    "actualTempoBpm": 188.9951527118683,
+    "sharedGrid": "One sixteenth grid drives score and half-beat percussion",
+    "initialHighPhase": 212
+  },
+  "articulation": {
+    "holdIndex": 9,
+    "holds": [
+      {
+        "section": "song",
+        "bar": 2,
+        "pitch": "A4",
+        "beat": 2.0
+      },
+      {
+        "section": "song",
+        "bar": 9,
+        "pitch": "B4",
+        "beat": 2.0
+      },
+      {
+        "section": "song",
+        "bar": 10,
+        "pitch": "B4",
+        "beat": 0.0
+      },
+      {
+        "section": "song",
+        "bar": 12,
+        "pitch": "E4",
+        "beat": 2.0
+      },
+      {
+        "section": "song",
+        "bar": 13,
+        "pitch": "E4",
+        "beat": 0.0
+      },
+      {
+        "section": "song",
+        "bar": 15,
+        "pitch": "C5",
+        "beat": 2.0
+      },
+      {
+        "section": "song",
+        "bar": 17,
+        "pitch": "C5",
+        "beat": 0.0
+      },
+      {
+        "section": "song",
+        "bar": 17,
+        "pitch": "E4",
+        "beat": 2.0
+      },
+      {
+        "section": "song",
+        "bar": 23,
+        "pitch": "E4",
+        "beat": 2.0
+      }
+    ],
+    "attack": "pluck",
+    "retrigger": "full",
+    "phaseContinuous": true
+  },
+  "instrumentAssignments": {
+    "lead": {
+      "instrument": "acoustic-guitar-nylon",
+      "label": "Акустическая гитара с нейлоновыми струнами",
+      "gmProgram": 24,
+      "eepromOffset": 0,
+      "level": 15,
+      "envelope": {
+        "model": "pluck",
+        "defaultLevel": 15,
+        "decayMask": 1,
+        "retrigger": "peak",
+        "releaseStep": 1
+      }
+    },
+    "keys": {
+      "instrument": "acoustic-guitar-nylon",
+      "label": "Акустическая гитара с нейлоновыми струнами",
+      "gmProgram": 24,
+      "eepromOffset": 16,
+      "level": 10,
+      "envelope": {
+        "model": "pluck",
+        "defaultLevel": 15,
+        "decayMask": 1,
+        "retrigger": "peak",
+        "releaseStep": 1
+      }
+    },
+    "pluck": {
+      "instrument": "fretless-bass",
+      "label": "Безладовый бас",
+      "gmProgram": 35,
+      "eepromOffset": 32,
+      "level": 8,
+      "envelope": {
+        "model": "pluck",
+        "defaultLevel": 6,
+        "decayMask": 3,
+        "retrigger": "peak",
+        "releaseStep": 1
+      }
+    },
+    "percussion": {
+      "instrument": "natural-kit",
+      "label": "Естественная ударная установка",
+      "level": 2,
+      "enabled": true,
+      "notes": [
+        {
+          "gmNote": 35,
+          "label": "Басовый барабан"
+        },
+        {
+          "gmNote": 38,
+          "label": "Малый барабан"
+        },
+        {
+          "gmNote": 42,
+          "label": "Закрытый хай-хэт"
+        }
+      ],
+      "generator": "AVR triangle kick, soft noise plus low snare body, existing long-period hi-hat",
+      "profiles": "ATtiny13A/Music/instruments/percussion-profiles.json",
+      "eepromBytes": 0
+    }
+  },
+  "instrumentBankSha256": "ddf64e6c18950407c002d3c1a3dba9356e566bccba099c08918e7c5d0aa52221",
+  "percussionProfile": {
+    "kit": "natural-kit",
+    "attenuationShift": 3,
+    "hits": {
+      "kick": {
+        "gmBank": 128,
+        "gmNote": 35,
+        "label": "FluidR3 GM35 acoustic bass drum, compact triangle",
+        "generator": {
+          "kind": "triangle",
+          "phaseSource": "per-hit R14",
+          "phaseStep": 1,
+          "phaseStart": 168,
+          "phaseOffset": 0,
+          "triangleBias": 61,
+          "triangleShift": 2
+        },
+        "gainShift": 3,
+        "envelope": {
+          "decayShifts": [
+            0,
+            1,
+            1,
+            2
+          ],
+          "ticksPerStep": 2,
+          "firstStageTicks": [
+            1,
+            2
+          ],
+          "attackRampSamples": 0,
+          "schedule": "Existing R21 bit shifts, popcount(stage): levels1,1/2,1/2,1/4; one/two global ticks until first transition."
+        },
+        "limitations": [
+          "Fixed73.242Hz triangle; source body/impact/pitch trajectory and long sample tail are approximated."
+        ],
+        "id": "acoustic-bass-drum",
+        "timing": {
+          "cpuHz": 9600000,
+          "synthesisHz": 18750,
+          "pwmHz": 37500,
+          "envelopeTickCycles": 131072
+        },
+        "noise": {
+          "bits": 16,
+          "feedbackXor": 45,
+          "nonzeroSeed": 167,
+          "period": 65535
+        },
+        "signedDutyRange": [
+          -2,
+          2
+        ]
+      },
+      "snare": {
+        "gmBank": 128,
+        "gmNote": 38,
+        "label": "Selected soft acoustic snare: half noise plus triangle body",
+        "generator": {
+          "kind": "noise+triangle",
+          "noiseMode": "centered",
+          "noiseShift": 2,
+          "phaseSource": "existing PWM counter R15",
+          "phaseStep": 2,
+          "phaseStart": 1,
+          "phaseOffset": -64,
+          "triangleBias": 61,
+          "triangleShift": 2
+        },
+        "gainShift": 3,
+        "envelope": {
+          "decayShifts": [
+            0,
+            1,
+            1,
+            2
+          ],
+          "ticksPerStep": 2,
+          "firstStageTicks": [
+            1,
+            2
+          ],
+          "attackRampSamples": 0,
+          "schedule": "Existing R21 bit shifts, popcount(stage): levels1,1/2,1/2,1/4; one/two global ticks until first transition."
+        },
+        "limitations": [
+          "Measured approximation; body146.484Hz, source body~180Hz. Higher partials and original sample tail are not exact."
+        ],
+        "id": "acoustic-snare-soft-body",
+        "timing": {
+          "cpuHz": 9600000,
+          "synthesisHz": 18750,
+          "pwmHz": 37500,
+          "envelopeTickCycles": 131072
+        },
+        "noise": {
+          "bits": 16,
+          "feedbackXor": 45,
+          "nonzeroSeed": 167,
+          "period": 65535
+        },
+        "signedDutyRange": [
+          -3,
+          2
+        ]
+      },
+      "hat": {
+        "gmBank": 128,
+        "gmNote": 42,
+        "label": "Existing Lumiere natural closed hi-hat",
+        "generator": {
+          "kind": "noise",
+          "noiseMode": "difference",
+          "noiseShift": 2
+        },
+        "gainShift": 3,
+        "envelope": {
+          "decayShifts": [
+            0,
+            1,
+            1,
+            2
+          ],
+          "ticksPerStep": 2,
+          "firstStageTicks": [
+            1,
+            2
+          ],
+          "attackRampSamples": 0,
+          "schedule": "Existing R21 bit shifts, popcount(stage): levels1,1/2,1/2,1/4; one/two global ticks until first transition."
+        },
+        "limitations": [
+          "Preserved unchanged; compact high-pass-like noise, not metallic sample playback; four-step decay remains coarse."
+        ],
+        "id": "closed-hi-hat",
+        "timing": {
+          "cpuHz": 9600000,
+          "synthesisHz": 18750,
+          "pwmHz": 37500,
+          "envelopeTickCycles": 131072
+        },
+        "noise": {
+          "bits": 16,
+          "feedbackXor": 45,
+          "nonzeroSeed": 167,
+          "period": 65535
+        },
+        "signedDutyRange": [
+          -1,
+          1
+        ]
+      }
+    },
+    "bankSha256": "85dec89f9383f2274f7b8f9d9abbd426781e92451c01ddbff61db50f414f593a"
+  },
+  "releaseChannels": {
+    "primaryVoices": 3,
+    "tailSlots": 2,
+    "voiceAddresses": [
+      96,
+      101,
+      106,
+      111,
+      116
+    ],
+    "voiceStateBytes": 25,
+    "pwmRingBytes": 16,
+    "tailGain": 0.5,
+    "stealing": "Quietest of two release levels",
+    "phaseContinuous": true,
+    "isrCycles": 15,
+    "requiredFuses": {
+      "low": "0x7A",
+      "high": "0xFF"
+    }
+  },
+  "standaloneCoreSources": {
+    "normalization": "UTF-8, LF",
+    "sha256": {
+      "web-player/lib/avr-profiles.js": "37583c2bbb1e36c5cc8687e0911ce46c062a97b0df21747ef92535628fa84c2b",
+      "web-player/lib/avr-reference.js": "f62e6f5d46699472d64dd6e49962f4832531ae8cf1b457d92753c6203b9763c6",
+      "web-player/lib/hex.js": "73026ff8e78caab294b86bd32b3588cf92f77e59203531aa3bf3bc7979dd09ab"
+    }
+  }
+}

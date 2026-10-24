@@ -1,0 +1,39 @@
+{
+  "sampleRate": 16000,
+  "bitrate": 9800,
+  "filter": "normalized 16-tap Q7 QMF",
+  "comparison": "Waveform SNR versus full 64-tap Xiph synthesis; not a perceptual quality score",
+  "physicalBoardRecorded": false,
+  "streams": [
+    {
+      "clip": "ru_pushkin_a",
+      "samples": 128000,
+      "fullDelaySamples": 221,
+      "compactDelaySamples": 197,
+      "snrCompactVsFullDb": 31.379812308382157,
+      "peakCompact": 13945,
+      "clippedCompact": 0,
+      "packetSha256": "73b32cf3b4648b69d8685465f02e2c5890b137f259db779b1f1a32044897eba5"
+    },
+    {
+      "clip": "en_letter_a",
+      "samples": 128000,
+      "fullDelaySamples": 223,
+      "compactDelaySamples": 199,
+      "snrCompactVsFullDb": 25.78757826293041,
+      "peakCompact": 4054,
+      "clippedCompact": 0,
+      "packetSha256": "52fbfe841295001278f04fa48f7b061e2c8f59e0611243e86b57f2f881a53b34"
+    },
+    {
+      "clip": "ru_slutskaya_a",
+      "samples": 128052,
+      "fullDelaySamples": 223,
+      "compactDelaySamples": 199,
+      "snrCompactVsFullDb": 26.432692679531193,
+      "peakCompact": 30486,
+      "clippedCompact": 0,
+      "packetSha256": "92bde81a10792aeb72b20946a79e418652d6ddcfe51474150f1b6ec070a53484"
+    }
+  ]
+}

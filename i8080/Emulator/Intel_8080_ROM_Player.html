@@ -20,6 +20,9 @@ main{max-width:1320px;margin:auto;padding:0 40px}.intro{display:flex;align-items
 @media(max-width:800px){.workspace{grid-template-columns:1fr}.library{grid-row:2}.catalog{display:grid;grid-template-columns:1fr 1fr}.intro{padding-top:30px}.machine-spec{display:none}.scope-metrics>div>span{font-size:8px}.source-only{display:none}.panel{padding:20px}.intro h1{letter-spacing:-1px}.rom-hash{display:none}.archive-links span{margin-left:0}.engine-badge{font-size:9px}.brand{font-size:18px;gap:8px}.site-header{height:72px}.brand>span{display:none}.registers{grid-template-columns:repeat(8,1fr)}footer{flex-direction:column;gap:8px}.inspector .panel-heading{align-items:start;flex-direction:column;gap:10px}}
 @media(max-width:460px){main,.site-header{padding-left:16px;padding-right:16px}.panel{padding:17px}.board{gap:25px;padding-left:9px;padding-right:0}.chip{width:160px;padding:16px 13px}.chip strong{font-size:19px}.signal-path>span,.signal-path small{font-size:8px}.signal-path{min-width:70px}.signal-line>span{padding:4px}.transport-links{width:100%}.transport-links a{flex:1}.primary{flex:1}.audio-controls{gap:16px}.audio-controls label{gap:8px}.scope-metrics{gap:9px;grid-template-columns:repeat(2,1fr);row-gap:18px}.catalog{grid-template-columns:1fr}.registers{gap:5px}.register{padding:8px 2px}.register strong{font-size:12px}.elapsed-line>span{font-size:8px;letter-spacing:.4px}.now-playing h2{font-size:19px}.elapsed-line output{font-size:24px}.intro .eyebrow{font-size:9px}.subtitle{font-size:13px}.engine-badge{font-size:8px;gap:6px}.brand{font-size:17px}.brand svg{width:27px;height:27px}}
 .scope-metrics{grid-template-columns:repeat(3,1fr);row-gap:20px}
+.original-play{white-space:nowrap;border-color:#647b45;color:var(--accent)}
+.original-play[aria-pressed=true]{background:#2b3527;border-color:var(--accent)}
+@media(max-width:460px){.transport .original-play{flex:1 1 100%}}
 .loaded-rom #rom-name{display:block;font-size:12px;font-weight:550;color:var(--accent)}
 .loaded-rom #rom-name:hover{color:#dbffa0}
 .fuses{display:flex;flex-wrap:wrap;align-items:center;gap:24px;padding:15px 0 20px;border-top:1px solid var(--border)}
@@ -59,6 +62,10 @@ main{max-width:1320px;margin:auto;padding:0 40px}.intro{display:flex;align-items
 @container chip-board (max-width:380px){.signal-path>span,.signal-line>span{display:none}.signal-path{min-width:0}}
 @container chip-board (max-width:380px){.signal-line>b{display:none}.signal-line{right:auto;width:28px}.signal-line svg{margin-left:4px;flex-shrink:0}}
 
+/* Stereo wires leave the physical pins: PB1/6 at y=78, PB0/5 at y=104. */
+.signal-outputs{flex:1;min-width:0;position:relative;height:124px}.signal-outputs .signal-path{min-width:0}.signal-outputs .stereo-left{position:absolute;left:0;right:0;top:26px}body[data-stereo=true] .chip .p5{background:#99b96b}body[data-stereo=true] .chip .p6{background:#86d9ef}body[data-stereo=true] .right-output .signal-line svg{stroke:#86d9ef}.panorama{font-size:11px;color:var(--muted);line-height:1.7;margin:0 0 20px}.scope-channel{position:absolute;top:8px;left:8px;color:var(--accent);font:9px var(--mono);background:#0e140e;padding:2px 4px}.right-scope{margin-top:10px}.right-scope .scope-channel{color:#86d9ef}body[data-stereo=true] .scope-wrap canvas{height:126px}#average{font-size:15px}[hidden]{display:none!important}
+@container chip-board (max-width:380px){body[data-stereo=true] .signal-path>span{display:block;top:58px;font-size:7px}body[data-stereo=true] .signal-line{right:0;width:auto}body[data-stereo=true] .signal-line>b{display:block}}
+
 .emulator-workspace{grid-template-columns:minmax(0,1.85fr) minmax(280px,1fr)}
 .example-library{position:static;top:auto}
 .emulator-sidebar{display:flex;flex-direction:column;gap:20px;min-width:0}.example-library .catalog{display:flex;flex-direction:column}.example-library .card-meta{line-height:1.5}.example-library .firmware-card strong{line-height:1.4}.example-library .panel-heading{margin-bottom:20px}.example-description{margin-top:10px!important}.rom-links{display:flex;flex-wrap:wrap;gap:15px;margin-top:12px;font-size:11px;color:var(--accent)}.rom-links a[aria-disabled=true]{opacity:.35;pointer-events:none}
@@ -84,13 +91,13 @@ main{max-width:1320px;margin:auto;padding:0 40px}.intro{display:flex;align-items
 <body>
   <header class="site-header">
     <a class="brand" href="../../"><svg viewBox="0 0 36 36" aria-hidden="true"><rect x="7" y="7" width="22" height="22" rx="4"/><path d="M1 12h6m-6 6h6m-6 6h6m22-12h6m-6 6h6m-6 6h6M12 1v6m6-6v6m6-6v6M12 29v6m6-6v6m6-6v6M12 21l4-7 4 8 4-7"/></svg> MicroMusic<span>/ LAB</span></a>
-    <a href="https://github.com/witali/MicroMusic/tree/main/i8080/Emulator" class="header-link">Описание и проверка ↗</a>
+    <a href="https://github.com/Witali/MicroMusic/blob/main/i8080/Emulator/README.md" class="header-link">Описание и проверка ↗</a>
     <span class="engine-badge"><i></i> 8080 → INTE / WR → AUDIO</span>
   </header>
   <main>
     <div class="intro">
       <div><p class="eyebrow">INTEL 8080 / ЗВУК ИЗ МАШИННОГО КОДА</p><h1>Слушайте прошивку<span>.</span></h1><p class="subtitle">Выберите пример или загрузите свой образ ПЗУ.</p></div>
-      <div class="machine-spec"><strong>64 <span>КиБ АДРЕСОВ</span></strong><span>8 бит <i>·</i> 244 инструкции <i>·</i> Intel 8080</span></div>
+      <div class="machine-spec"><strong>64 <span>кБ</span></strong><span>8 бит <i>·</i> 244 инструкции <i>·</i> Intel 8080</span></div>
     </div>
     <div id="error" class="error" role="alert" hidden></div>
     <div class="workspace emulator-workspace">
@@ -153,7 +160,7 @@ main{max-width:1320px;margin:auto;padding:0 40px}.intro{display:flex;align-items
       <p>Плеер принимает собственные прошивки и выполняет документированные команды Intel 8080. Звук получается из уровня INTE или импульсов /WR, включая OUT. Отверстия в HEX и незаполненная память содержат FFh. Начальные адреса из записей HEX 03/05 не меняют вектор сброса 0000h.</p>
       <p>В режиме «ПЗУ без ОЗУ» зеркалируется только образ ровно 32 КиБ. В режиме «ПЗУ снизу · ОЗУ сверху» верхние 32 КиБ доступны для записи; режим «ОЗУ» разрешает запись везде. Для стековых подпрограмм обычно требуется ОЗУ.</p>
       <p>Длительности команд считаются в T-тактах без READY. Импульс /WR приближён к 1 T, INTE меняется при завершении EI/DI; активный INT и внешние контроллеры не моделируются. 3,5 МГц — настройка этой платы. Аналоговый тракт представлен усреднением сигнала и RC-фильтром.</p>
-      <p><a href="https://github.com/witali/MicroMusic/tree/main/i8080/Emulator">Проверки и исправления ↗</a> · <a href="https://github.com/witali/MicroMusic/tree/main/i8080/CRC">Исследования CRC ↗</a> · <a href="https://device.report/m/8985a7044b63dafadf8a713690af2e4d2ef632c256d27343044e212ceaa86a3c" target="_blank" rel="noopener">Руководство Intel ↗</a></p>
+      <p><a href="https://github.com/Witali/MicroMusic/blob/main/i8080/Emulator/README.md">Проверки и исправления ↗</a> · <a href="https://github.com/Witali/MicroMusic/blob/main/i8080/CRC/README.md">Исследования CRC ↗</a> · <a href="https://device.report/m/8985a7044b63dafadf8a713690af2e4d2ef632c256d27343044e212ceaa86a3c" target="_blank" rel="noopener">Руководство Intel ↗</a></p>
     </div></details>
     <footer><span>MICROMUSIC / LAB <i>·</i> Intel 8080</span><span>ROM → Worker → AudioWorklet <i>·</i> Все вычисления в браузере</span></footer>
   </main>
@@ -320,7 +327,7 @@ function createWorker() { const url = URL.createObjectURL(new Blob(["'use strict
 // Replaced by embedded data in the standalone build.
 async function getExampleCatalog() { return EXAMPLE_CATALOG; }
 async function readExample(entry) { return Uint8Array.from(atob(entry.base64), c => c.charCodeAt(0)).buffer; }
-function exampleSourceURL(entry) { return new URL(entry.source, "https://github.com/witali/MicroMusic/blob/main/i8080/Emulator/").href; }
+function exampleSourceURL(entry) { return new URL(entry.source, 'https://github.com/Witali/MicroMusic/blob/main/i8080/Emulator/').href; }
 
 function renderCatalog() {
   if (!catalog) return;

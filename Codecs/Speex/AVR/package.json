@@ -1,0 +1,10 @@
+{
+  "name": "micromusic-speex-avr-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:avr": "node tests/verify_avr.mjs",
+    "test:player": "node tests/verify_player.mjs"
+  },
+  "devDependencies": {"avr8js": "0.21.1"}
+}

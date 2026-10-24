@@ -14,13 +14,13 @@
 <body>
   <header class="site-header">
     <a class="brand" href="../../"><svg viewBox="0 0 36 36" aria-hidden="true"><rect x="7" y="7" width="22" height="22" rx="4"/><path d="M1 12h6m-6 6h6m-6 6h6m22-12h6m-6 6h6m-6 6h6M12 1v6m6-6v6m6-6v6M12 29v6m6-6v6m6-6v6M12 21l4-7 4 8 4-7"/></svg> MicroMusic<span>/ LAB</span></a>
-    <a href="./README.md" class="header-link">Описание и проверка ↗</a>
+    <a href="https://github.com/Witali/MicroMusic/blob/main/i8080/Emulator/README.md" class="header-link">Описание и проверка ↗</a>
     <span class="engine-badge"><i></i> 8080 → INTE / WR → AUDIO</span>
   </header>
   <main>
     <div class="intro">
       <div><p class="eyebrow">INTEL 8080 / ЗВУК ИЗ МАШИННОГО КОДА</p><h1>Слушайте прошивку<span>.</span></h1><p class="subtitle">Выберите пример или загрузите свой образ ПЗУ.</p></div>
-      <div class="machine-spec"><strong>64 <span>КиБ АДРЕСОВ</span></strong><span>8 бит <i>·</i> 244 инструкции <i>·</i> Intel 8080</span></div>
+      <div class="machine-spec"><strong>64 <span>кБ</span></strong><span>8 бит <i>·</i> 244 инструкции <i>·</i> Intel 8080</span></div>
     </div>
     <div id="error" class="error" role="alert" hidden></div>
     <div class="workspace emulator-workspace">
@@ -83,7 +83,7 @@
       <p>Плеер принимает собственные прошивки и выполняет документированные команды Intel 8080. Звук получается из уровня INTE или импульсов /WR, включая OUT. Отверстия в HEX и незаполненная память содержат FFh. Начальные адреса из записей HEX 03/05 не меняют вектор сброса 0000h.</p>
       <p>В режиме «ПЗУ без ОЗУ» зеркалируется только образ ровно 32 КиБ. В режиме «ПЗУ снизу · ОЗУ сверху» верхние 32 КиБ доступны для записи; режим «ОЗУ» разрешает запись везде. Для стековых подпрограмм обычно требуется ОЗУ.</p>
       <p>Длительности команд считаются в T-тактах без READY. Импульс /WR приближён к 1 T, INTE меняется при завершении EI/DI; активный INT и внешние контроллеры не моделируются. 3,5 МГц — настройка этой платы. Аналоговый тракт представлен усреднением сигнала и RC-фильтром.</p>
-      <p><a href="./README.md">Проверки и исправления ↗</a> · <a href="../CRC/README.md">Исследования CRC ↗</a> · <a href="https://device.report/m/8985a7044b63dafadf8a713690af2e4d2ef632c256d27343044e212ceaa86a3c" target="_blank" rel="noopener">Руководство Intel ↗</a></p>
+      <p><a href="https://github.com/Witali/MicroMusic/blob/main/i8080/Emulator/README.md">Проверки и исправления ↗</a> · <a href="https://github.com/Witali/MicroMusic/blob/main/i8080/CRC/README.md">Исследования CRC ↗</a> · <a href="https://device.report/m/8985a7044b63dafadf8a713690af2e4d2ef632c256d27343044e212ceaa86a3c" target="_blank" rel="noopener">Руководство Intel ↗</a></p>
     </div></details>
     <footer><span>MICROMUSIC / LAB <i>·</i> Intel 8080</span><span>ROM → Worker → AudioWorklet <i>·</i> Все вычисления в браузере</span></footer>
   </main>

@@ -6,6 +6,22 @@ import {AVRCore} from '../web-player/lib/avr-core.js';
 const name=process.argv[2]??'rhythmic';
 const folder=`ATtiny13A/Music/variants/${name}`;
 const meta=JSON.parse(fs.readFileSync(folder+'/build-report.json')),{labels}=meta;
+if(meta.engine==='lumiere-chords'){
+ const {audit}=await import('./audit-lumiere-chords.mjs');
+ audit(folder);process.exit(0);
+}
+if(meta.engine==='compact-four'){
+ const {audit}=await import('./audit-compact-four.mjs');
+ audit(folder);process.exit(0);
+}
+if(meta.engine==='turkish-three'){
+ const {audit}=await import('./audit-turkish-three.mjs');
+ audit(folder);process.exit(0);
+}
+if(meta.engine==='mariachi-polyphonic'){
+ const {audit}=await import('./audit-mariachi-lossless.mjs');
+ audit(folder);process.exit(0);
+}
 if(meta.engine==='alicia-native'){
  const {audit}=await import('./audit-alicia-native.mjs');
  audit(folder);process.exit(0);

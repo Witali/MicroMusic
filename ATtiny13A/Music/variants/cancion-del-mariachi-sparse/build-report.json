@@ -1,0 +1,534 @@
+{
+  "engine": "mariachi-polyphonic",
+  "experimental": false,
+  "flashBytes": 1024,
+  "codeBytes": 682,
+  "tableBytes": 342,
+  "eepromBytes": 64,
+  "labels": {
+    "BASE_COUNT": 59,
+    "STREAM_SECOND": 117,
+    "vectors": 0,
+    "gain_finish": 2,
+    "gain_return": 4,
+    "reset": 8,
+    "fill_ring": 18,
+    "clear_voices": 26,
+    "clear_registers": 34,
+    "idle": 82,
+    "audio_step": 92,
+    "render_sample": 104,
+    "voice_loop": 110,
+    "wave_register": 138,
+    "wave_nibble": 156,
+    "rhythm_group": 176,
+    "render_drum": 190,
+    "render_kick": 200,
+    "render_hat": 216,
+    "noise_advanced": 226,
+    "drum_gain": 242,
+    "drum_mixed": 258,
+    "master_gain": 260,
+    "write_pwm": 264,
+    "ring_published": 278,
+    "pwm_irq": 280,
+    "ring_read": 282,
+    "chord_gain": 290,
+    "gain_loop": 296,
+    "gain_no_add": 300,
+    "music_tick": 312,
+    "drum_envelope_done": 322,
+    "pause_count": 354,
+    "restart_song": 358,
+    "song_running": 388,
+    "music_step": 398,
+    "drum_trigger": 414,
+    "drum_count_saved": 416,
+    "music_return": 458,
+    "envelope": 460,
+    "envelope_mask": 484,
+    "envelope_decay": 488,
+    "envelope_return": 490,
+    "part_tick": 492,
+    "next_symbol": 506,
+    "read_stream": 520,
+    "classify_symbol": 536,
+    "symbol_base": 568,
+    "read_base": 570,
+    "part_return": 606,
+    "note_start": 608,
+    "clear_chord": 642,
+    "load_chord": 650,
+    "chord_loaded": 680,
+    "song_shapes": 682,
+    "song_bases": 715,
+    "song_rules": 833,
+    "song_stream": 887,
+    "song_gates": 1017
+  },
+  "scoreBytes": 342,
+  "sourceSha256": "3bdfb9a7756aff5f395199f25aaa9787695d5bffb238dd7cd16bf2cbb842dda9",
+  "flashSha256": "3a85cb1a0b81ccda51da6c643a3313116fce4b0cafb7cc3c4a2b13ed1ed3ea54",
+  "eepromSha256": "438fe422de21239835dc0b6d5f5b5d59903cb4a1c51fbc098ca8a0d4b7c47a4e",
+  "decodedNotesSha256": "7a3239092b1e6de07f108287021ae4554efe17916dc1c6221a5c700aaf16ec63",
+  "sourceNotes": 2215,
+  "sourceParts": 2,
+  "maximumSimultaneousSourceNotes": 8,
+  "oscillators": 6,
+  "cpuHz": 9600000,
+  "pwmHz": 37500,
+  "synthesisHz": 18750,
+  "unitTicks": 80,
+  "ppqn": 480,
+  "tempoMicroseconds": 476190,
+  "gridStep": 11274,
+  "envelopeEverySamples": 256,
+  "voiceAddresses": [
+    112,
+    116,
+    120,
+    124,
+    128,
+    132
+  ],
+  "pendingSymbolAddresses": [
+    [
+      144,
+      145,
+      146,
+      147
+    ],
+    [
+      148,
+      149,
+      150
+    ]
+  ],
+  "waves": {
+    "low": [
+      0,
+      3,
+      4,
+      5,
+      3,
+      2,
+      1,
+      1,
+      0,
+      0,
+      -1,
+      0,
+      -2,
+      -5,
+      -7,
+      -4
+    ],
+    "high": [
+      4,
+      5,
+      3,
+      0,
+      -1,
+      0,
+      3,
+      4,
+      2,
+      0,
+      -3,
+      -5,
+      -5,
+      -4,
+      -3,
+      0
+    ]
+  },
+  "partWaves": [
+    {
+      "low": [
+        0,
+        3,
+        4,
+        5,
+        3,
+        2,
+        1,
+        1,
+        0,
+        0,
+        -1,
+        0,
+        -2,
+        -5,
+        -7,
+        -4
+      ],
+      "high": [
+        4,
+        5,
+        3,
+        0,
+        -1,
+        0,
+        3,
+        4,
+        2,
+        0,
+        -3,
+        -5,
+        -5,
+        -4,
+        -3,
+        0
+      ]
+    },
+    {
+      "low": [
+        0,
+        2,
+        4,
+        4,
+        3,
+        2,
+        1,
+        1,
+        0,
+        0,
+        0,
+        -1,
+        -2,
+        -4,
+        -5,
+        -3
+      ],
+      "high": [
+        0,
+        1,
+        2,
+        3,
+        2,
+        0,
+        -3,
+        -4,
+        -4,
+        -4,
+        -2,
+        0,
+        3,
+        4,
+        3,
+        1
+      ]
+    }
+  ],
+  "partWaveOffsets": [
+    0,
+    16
+  ],
+  "partGainShifts": [
+    0,
+    1
+  ],
+  "sourceSelection": {
+    "firstBeat": 58,
+    "lastBeat": 184.33333333333334
+  },
+  "verifiedLosslessScore": false,
+  "arrangement": {
+    "policy": "sparse-source-voicings-v1",
+    "title": "Canción del Mariachi · редкие аккорды",
+    "sourceFile": "../../reference/cancion-del-mariachi/source-events.json",
+    "sourceSha256": "3bdfb9a7756aff5f395199f25aaa9787695d5bffb238dd7cd16bf2cbb842dda9",
+    "firstBeat": 58,
+    "lastBeat": 184.33333333333334,
+    "lastTick": 88480,
+    "leadSourceNotes": 261,
+    "leadNotesPreserved": true,
+    "sourceNotesByPart": [
+      261,
+      1954
+    ],
+    "sourceMaximumSimultaneousNotes": 8,
+    "playedMaximumSimultaneousNotes": 6,
+    "backingSourceNotes": 1954,
+    "backingNotes": 120,
+    "backingAttacks": 60,
+    "originalBackingAttacks": 357,
+    "attackSpacingQuarterBeats": 2,
+    "gateQuarterBeats": 1,
+    "method": "Keep all Gtr.1 notes and gates. Every two quarters alternate the lowest Gtr.2 source pitch and up to three distinct source chord pitch classes; hold one quarter, rest one quarter. No melody is borrowed from rhythm-guitar top notes.",
+    "references": [
+      {
+        "url": "https://www.gitaartabs.nl/tab/los-lobos-and-antonio-banderas/cancion-del-mariachi",
+        "use": "Sparse sustained support at the start of the Guitar Solo section; arrangement principle only. Notes come from the retained event JSON."
+      },
+      {
+        "url": "https://christianshowtoplays.de/download/PDF/Los_Lobos_Cancin_Del_Mariachi_antonio_banderas_version.pdf",
+        "use": "Compared lead rests and Verse/Interlude sections on pages 1–2; no external note transcription copied."
+      }
+    ],
+    "percussion": {
+      "sourceVariant": "cancion-del-mariachi",
+      "kit": "natural-kit",
+      "instruments": [
+        "acoustic-bass-drum",
+        "closed-hi-hat"
+      ],
+      "gmNotes": [
+        35,
+        42
+      ],
+      "pattern": [
+        "kick",
+        "hat"
+      ],
+      "quarterBeatsPerHit": 0.5,
+      "attenuationShift": 3,
+      "policy": "New alternating kick/hat backing using the retained old kit; no source guitar note is removed. Legacy generator and four-stage decay, rounded to nearest at the final quiet gain."
+    }
+  },
+  "playedNotes": 381,
+  "verifiedCodecRoundTrip": true,
+  "maximumSimultaneousPlayedNotes": 6,
+  "partVoiceCounts": [
+    3,
+    3
+  ],
+  "decoderPartSelectors": [
+    144,
+    148
+  ],
+  "percussionProfile": {
+    "kit": "natural-kit",
+    "hits": {
+      "kick": {
+        "gmBank": 128,
+        "gmNote": 35,
+        "label": "FluidR3 GM35 acoustic bass drum, compact triangle",
+        "generator": {
+          "kind": "triangle",
+          "phaseSource": "per-hit R14",
+          "phaseStep": 1,
+          "phaseStart": 168,
+          "phaseOffset": 0,
+          "triangleBias": 61,
+          "triangleShift": 2
+        },
+        "gainShift": 3,
+        "envelope": {
+          "decayShifts": [
+            0,
+            1,
+            1,
+            2
+          ],
+          "ticksPerStep": 2,
+          "firstStageTicks": [
+            1,
+            2
+          ],
+          "attackRampSamples": 0,
+          "schedule": "Existing R21 bit shifts, popcount(stage): levels1,1/2,1/2,1/4; one/two global ticks until first transition."
+        },
+        "limitations": [
+          "Fixed73.242Hz triangle; source body/impact/pitch trajectory and long sample tail are approximated."
+        ],
+        "id": "acoustic-bass-drum",
+        "timing": {
+          "cpuHz": 9600000,
+          "synthesisHz": 18750,
+          "pwmHz": 37500,
+          "envelopeTickCycles": 131072
+        },
+        "noise": {
+          "bits": 16,
+          "feedbackXor": 45,
+          "nonzeroSeed": 167,
+          "period": 65535
+        },
+        "signedDutyRange": [
+          -2,
+          2
+        ]
+      },
+      "hat": {
+        "gmBank": 128,
+        "gmNote": 42,
+        "label": "Existing Lumiere natural closed hi-hat",
+        "generator": {
+          "kind": "noise",
+          "noiseMode": "difference",
+          "noiseShift": 2
+        },
+        "gainShift": 3,
+        "envelope": {
+          "decayShifts": [
+            0,
+            1,
+            1,
+            2
+          ],
+          "ticksPerStep": 2,
+          "firstStageTicks": [
+            1,
+            2
+          ],
+          "attackRampSamples": 0,
+          "schedule": "Existing R21 bit shifts, popcount(stage): levels1,1/2,1/2,1/4; one/two global ticks until first transition."
+        },
+        "limitations": [
+          "Preserved unchanged; compact high-pass-like noise, not metallic sample playback; four-step decay remains coarse."
+        ],
+        "id": "closed-hi-hat",
+        "timing": {
+          "cpuHz": 9600000,
+          "synthesisHz": 18750,
+          "pwmHz": 37500,
+          "envelopeTickCycles": 131072
+        },
+        "noise": {
+          "bits": 16,
+          "feedbackXor": 45,
+          "nonzeroSeed": 167,
+          "period": 65535
+        },
+        "signedDutyRange": [
+          -1,
+          1
+        ]
+      }
+    },
+    "bankSha256": "85dec89f9383f2274f7b8f9d9abbd426781e92451c01ddbff61db50f414f593a",
+    "attenuationShift": 3,
+    "pattern": [
+      "kick",
+      "hat"
+    ],
+    "gridUnitsPerHit": 3,
+    "quarterBeatsPerHit": 0.5,
+    "stageRegister": 6,
+    "phaseRegister": 22,
+    "noiseHighRegister": 7,
+    "countdownIo": 54,
+    "countdownStorage": "Unused OCR0A compare register; Fast PWM TOP=255, COM0A=0, OCIE0A=0",
+    "attenuationRounding": "Add 4 before final ASR3; nearest integer after the original decay, ties toward positive infinity",
+    "stageEncoding": "kick7..4, hat15..12; descending every two envelope ticks; active bit2; decay shifts 0,1,1,2",
+    "sourceVariant": "cancion-del-mariachi",
+    "independentDrumVoices": 1
+  },
+  "outputNormalization": {
+    "minimum": -32,
+    "maximum": 31,
+    "gain": 4,
+    "gainDb": 12.041199826559248,
+    "table": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32,
+      36,
+      40,
+      44,
+      48,
+      52,
+      56,
+      60,
+      64,
+      68,
+      72,
+      76,
+      80,
+      84,
+      88,
+      92,
+      96,
+      100,
+      104,
+      108,
+      112,
+      116,
+      120,
+      124,
+      128,
+      132,
+      136,
+      140,
+      144,
+      148,
+      152,
+      156,
+      160,
+      164,
+      168,
+      172,
+      176,
+      180,
+      184,
+      188,
+      192,
+      196,
+      200,
+      204,
+      208,
+      212,
+      216,
+      220,
+      224,
+      228,
+      232,
+      236,
+      240,
+      244,
+      248,
+      252
+    ],
+    "seconds": 62.15867,
+    "samples": 2330948,
+    "calibrationFlashSha256": "d3141875b5a513735c58766a741d50998e93baaa202502cb5c197899d4bcf1aa",
+    "method": "Linear peak normalization around PWM 128; common gain for both parts; nearest integer output; no limiter or automatic gain changes.",
+    "implementation": "constant-shifts"
+  },
+  "activePrimaryVoices": 6,
+  "instrumentAssignments": {
+    "leadGuitar": {
+      "instrument": "acoustic-guitar-nylon",
+      "label": "Акустическая гитара с нейлоновыми струнами",
+      "gmProgram": 24,
+      "sourceVelocity": 80,
+      "level": 15
+    },
+    "rhythmGuitar": {
+      "instrument": "acoustic-guitar-nylon",
+      "label": "Мягкая нейлоновая гитара сопровождения",
+      "gmProgram": 24,
+      "sourceVelocity": 80,
+      "level": 15,
+      "mixGain": 0.5,
+      "mixGainDb": -6.020599913,
+      "waveDerivation": "Circular [1,4,6,4,1]/16 smoothing of the measured nylon waves, rounded to 4-bit samples; both registers start at zero."
+    },
+    "percussion": {
+      "instrument": "natural-kit",
+      "gmNotes": [
+        35,
+        42
+      ],
+      "level": 2,
+      "label": "Тихий бас-барабан и закрытый хай-хэт из прежней аранжировки"
+    }
+  },
+  "instrumentBankSha256": "ddf64e6c18950407c002d3c1a3dba9356e566bccba099c08918e7c5d0aa52221",
+  "articulation": "Shared plucked envelope for each common-gate source chord; phases reset on picking; no additional release slots.",
+  "standaloneCoreSources": {
+    "normalization": "UTF-8, LF",
+    "sha256": {
+      "web-player/lib/avr-profiles.js": "37583c2bbb1e36c5cc8687e0911ce46c062a97b0df21747ef92535628fa84c2b",
+      "web-player/lib/avr-reference.js": "f62e6f5d46699472d64dd6e49962f4832531ae8cf1b457d92753c6203b9763c6",
+      "web-player/lib/hex.js": "73026ff8e78caab294b86bd32b3588cf92f77e59203531aa3bf3bc7979dd09ab"
+    }
+  }
+}

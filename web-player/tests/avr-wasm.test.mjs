@@ -27,7 +27,7 @@ test('published WASM matches C/build inputs, has no imports and fixed isolated m
   assert.equal(hash(binary),info.artifacts['avr.wasm']);
   const module=await WebAssembly.compile(binary);assert.deepEqual(WebAssembly.Module.imports(module),[]);
   const a=new AVRCore(Uint8Array.of(0,0)),b=new AVRCore(Uint8Array.of(0,0));
-  assert.equal(a._exports.memory.buffer.byteLength,65536);assert.notEqual(a._exports.memory.buffer,b._exports.memory.buffer);
+  assert.equal(a._exports.memory.buffer.byteLength,131072);assert.notEqual(a._exports.memory.buffer,b._exports.memory.buffer);
   a.r[0]=77;assert.equal(b.r[0],0);
 });
 

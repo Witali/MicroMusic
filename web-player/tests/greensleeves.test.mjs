@@ -3,164 +3,91 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {AVRCore} from '../lib/avr-core.js';
-
 const base=new URL('../../ATtiny13A/Music/variants/greensleeves/',import.meta.url);
-const reference=new URL('../../ATtiny13A/Music/reference/greensleeves/',import.meta.url);
-const read=name=>readFileSync(new URL(name,base));
-const rom=read('synth.bin'),ep=read('eeprom.bin');
-const report=JSON.parse(read('build-report.json')),score=JSON.parse(read('score.json'));
-const {labels}=report;
-const voices=report.releaseChannels.voiceAddresses;
-const units=[1,2,3,4,6,8,16];
+const read=n=>readFileSync(new URL(n,base));
+const score=JSON.parse(read('score.json')),report=JSON.parse(read('build-report.json'));
+const codec=JSON.parse(read('compiled-score.json')),verified=JSON.parse(read('verification.json'));
+const rom=read('synth.bin'),ep=read('eeprom.bin'),hash=b=>createHash('sha256').update(b).digest('hex');
 
-test('Greensleeves retains the complete written melody and familiar opening from the Z80 example',()=>{
-  for(const [name,hash] of Object.entries(score.provenance.sha256))
-    assert.equal(createHash('sha256').update(readFileSync(new URL(name,reference))).digest('hex'),hash);
-  const source=readFileSync(new URL('greensleeves.ly',reference),'utf8')
-    .split('Soprano =')[1].split('Alto =')[0].split('\\key g \\major')[1].split('\\bar')[0];
-  const expected=[];let length=8,position=0;
-  for(const match of source.matchAll(/(?<![a-z])([a-g](?:is|es)?|[rs])([',]*)(\d+)?(\.)?/g)){
-    const [,note,octave,duration,dot]=match;length=duration?Number(duration):length;
-    const count=16/length*(dot?1.5:1);
-    const pitch=(note==='r'||note==='s')?null:48+{c:0,d:2,e:4,f:5,g:7,a:9,b:11}[note[0]]
-      +Number(note.endsWith('is'))-Number(note.endsWith('es'))
-      +12*([...octave].filter(x=>x==="'").length-[...octave].filter(x=>x===',').length);
-    if(note!=='s')expected.push({pitch,start:position,units:count});
-    position+=count;
+test('Greensleeves retains every pitch and NoteOn/Off in all four source parts',()=>{
+ const source=JSON.parse(readFileSync(new URL('../../ATtiny13A/Music/reference/greensleeves/greensleeves-4voices-events.json',import.meta.url)));
+ const expected=[];
+ for(const track of source.tracks){
+  const active=new Map(),notes=[];
+  for(const e of track.events){
+   const key=e.channel*128+e.note;
+   if(e.type==='noteOn'&&e.velocity){assert.ok(!active.has(key));active.set(key,e);}
+   else if(e.type==='noteOff'||(e.type==='noteOn'&&!e.velocity)){
+    const on=active.get(key);assert.ok(on);active.delete(key);
+    notes.push({pitch:e.note,on:on.tick*4/source.ppqn,off:e.tick*4/source.ppqn,velocity:on.velocity});
+   }
   }
-  const midiPitch=name=>{const [,letter,accidental,octave]=name.match(/^([A-G])([#b]?)(-?\d+)$/);
-    return (Number(octave)+1)*12+{C:0,D:2,E:4,F:5,G:7,A:9,B:11}[letter]+(accidental==='#'?1:accidental==='b'?-1:0);};
-  const actual=[];position=0;
-  for(const section of report.score.playlist){
-    let address=labels[`section_${section}`];
-    for(;;){const token=rom[address++];if(token===255)break;if(token>=224)continue;
-      const index=token>>3,count=units[token&7];
-      if(index===report.score.hold_index)actual.at(-1).units+=count;
-      else actual.push({pitch:index===report.score.rest_index?null:midiPitch(report.score.pitches[index]),start:position,units:count});
-      position+=count;
-    }
-  }
-  assert.deepEqual(actual,expected.concat({pitch:null,start:192,units:1}));
-  assert.deepEqual(actual.slice(0,5).map(n=>n.pitch),[64,67,69,71,72]);
-  assert.equal(position,193);assert.equal((position-1)%12,0,'Written closing bar plus pickup remain in 6/8; loop gap is outside the meter');
-  assert.equal(actual.filter(n=>n.pitch!==null).length,71);
-  assert.equal(score.meter,'6/8');assert.equal(score.pickup_beats,.5);
-  assert.equal(score.title,'05 · Greensleeves');assert.equal(score.loop_silence_beats,.25);
-  assert.equal(rom.length,report.flashBytes);assert.ok(rom.length<=1024);
+  assert.equal(active.size,0);expected.push(notes.sort((a,b)=>a.on-b.on));
+ }
+ assert.deepEqual(score.parts.map(p=>p.notes.map(({pitch,on,off,velocity})=>({pitch,on,off,velocity}))),expected);
+ assert.deepEqual(expected.map(p=>p.length),[70,52,58,55]);assert.equal(expected.flat().length,235);
+ assert.equal(score.endUnit,192);assert.equal(score.meter,'6/8');assert.equal(score.pickup_beats,.5);assert.equal(score.loop_silence_beats,.25);
 });
 
-test('selected Alto and Bass notes receive their real written note-offs and no harmony restarts them in rests',()=>{
-  const lily=readFileSync(new URL('greensleeves.ly',reference),'utf8');
-  function part(name,next){
-    const text=lily.split(name+' =')[1].split(next)[0].split('\\key g \\major')[1].split('\\bar')[0];
-    const events=[];let length=8,position=0;
-    for(const match of text.matchAll(/(?<![a-z])([a-g](?:is|es)?|[rs])([',]*)(\d+)?(\.)?/g)){
-      const [,note,octave,duration,dot]=match;length=duration?Number(duration):length;
-      const count=16/length*(dot?1.5:1),pitch=(note==='r'||note==='s')?null:48+{c:0,d:2,e:4,f:5,g:7,a:9,b:11}[note[0]]
-        +Number(note.endsWith('is'))-Number(note.endsWith('es'))+12*([...octave].filter(x=>x==="'").length-[...octave].filter(x=>x===',').length);
-      events.push({pitch,start:position,end:position+count});position+=count;
-    }
-    return events;
-  }
-  const written={keys:part('Alto','Tenor ='),pluck:part('Bass','\\score')};
-  const points=[0];for(let start=2;start<192;start+=12)points.push(start,Math.min(start+6,191));
-  const stream=[];let unit=0;
-  for(const section of report.score.playlist){
-    let address=labels['section_'+section];
-    for(;;){const token=rom[address++];if(token===255)break;stream.push({token,unit});if(token<224)unit+=units[token&7];}
-  }
-  const chords=stream.filter(e=>e.token>=224&&e.token<240);
-  assert.deepEqual(chords.map(e=>e.unit),points,'Only selected source onsets generate harmony commands');
-  for(const [role,index,mask] of [['keys',0,2],['pluck',1,4]]){
-    const expected=points.map(point=>{const note=written[role].find(e=>e.start<=point&&point<e.end);return {pitch:note.pitch,start:point,end:note.end};});
-    assert.equal(expected.length,33);
-    assert.deepEqual(score.adaptation.selected_accompaniment[role].map(({pitch,start,end})=>({pitch,start,end})),expected);
-    assert.deepEqual(chords.map(e=>({pitch:score.chord_notes[report.score.chords[e.token&15]][index],start:e.unit})),expected.map(({pitch,start})=>({pitch,start})));
-    const offs=stream.filter(e=>e.token>=240&&Boolean(e.token&mask));
-    assert.deepEqual(offs.map(e=>e.unit),expected.map(e=>e.end),'Every selected note ends at its own source boundary');
-    for(let i=0;i<expected.length;i++)assert.ok(expected[i].end<=(expected[i+1]?.start??192));
-  }
-  assert.ok(stream.some(e=>e.unit===192&&e.token===247),'All three voices receive final Note Off before the separate gap');
-  assert.equal(unit,193);
+test('compact Flash grammar expands to every original independent event',()=>{
+ const decoded=[];
+ for(let at=report.labels.song_stream;rom[at]!==255;at++){
+  const pending=[rom[at]];
+  while(pending.length){const code=pending.pop();if(code<192)decoded.push(code);else{const a=report.labels.song_rules+2*(code-192);pending.push(rom[a+1],rom[a]);}}
+ }
+ assert.deepEqual(decoded,codec.commands);assert.equal(hash(Buffer.from(decoded)),codec.decodedCommandsSha256);
+ const notes=score.parts.map(()=>[]),active=score.parts.map(()=>null);let unit=0;
+ for(const code of decoded){
+  if(code>=128){unit+=code-127;continue;}
+  const part=code>>5,index=code&31;
+  if(index){assert.equal(active[part],null);active[part]={pitch:codec.pitches[index-1],on:unit};}
+  else{assert.ok(active[part]);notes[part].push({...active[part],off:unit});active[part]=null;}
+ }
+ assert.deepEqual(notes,score.parts.map(p=>p.notes.map(({pitch,on,off})=>({pitch,on,off}))));assert.equal(unit,193);
 });
 
-test('all three envelopes are silent before the first note of the next loop',()=>{
-  const c=new AVRCore(rom,ep);let zeroAtRestart=false,commands=0;
-  const totalCommands=report.score.compression.originalCommandBytes+report.score.playlist.length;
-  const step=c.step.bind(c);
-  c.step=()=>{
-    if(!c.inIRQ&&c.pc===labels.read_event/2){
-      if(commands===totalCommands){
-        assert.deepEqual(voices.map(a=>c.data[a]&143),[0,0,0,0,0],'A new cycle begins after all primary and release envelopes have finished');
-        zeroAtRestart=true;
-      }
-      commands++;
-    }
-    step();
-  };
-  while(!zeroAtRestart&&c.cyc<50*9600000)c.nextDuty();
-  assert.ok(zeroAtRestart,'Ran through a complete cycle and its 250-ms closing silence');
-  assert.equal(c.lost+c.workLost,0);
+test('four measured instrument banks include the restored clarinet',()=>{
+ const raw=readFileSync(new URL('../../ATtiny13A/Music/instruments/bank.json',import.meta.url)),bank=JSON.parse(raw);
+ assert.equal(hash(raw),report.instrumentBankSha256);
+ assert.deepEqual(score.parts.map(p=>p.instrument),['flute','violin','clarinet','cello']);
+ assert.deepEqual(Object.values(report.instrumentAssignments).map(p=>p.gmProgram),[73,40,71,42]);
+ for(let part=0;part<4;part++)for(const [register,offset] of [['low',0],['high',8]])for(let i=0;i<16;i++)
+  assert.equal(((ep[16*part+offset+(i>>1)]>>(i%2?4:0))&15)-8,bank.instruments[score.parts[part].instrument].waves[register][i]);
+ assert.equal(report.labels.render_drum,undefined);
 });
 
-test('the actual Z80 example assigns flute, violin, clarinet and cello, with no percussion',()=>{
-  const source=JSON.parse(readFileSync(new URL('greensleeves-4voices-events.json',reference)));
-  assert.equal(source.schema,'micromusic-midi-events');assert.equal(source.version,1);
-  const programs=source.tracks.flatMap(track=>track.events.filter(e=>e.type==='programChange').map(e=>[e.channel,e.program]));
-  assert.deepEqual(programs,[[0,73],[1,40],[2,71],[3,42]]);
-  assert.deepEqual(score.instruments,{lead:{instrument:'flute',level:15},keys:{instrument:'violin',level:12},pluck:{instrument:'cello',level:10},percussion:'off'});
-  assert.equal(score.percussion_enabled,false);
-  assert.equal(labels.drum_trigger,undefined);assert.equal(labels.render_drum,undefined);
+test('pinned full-loop audit verifies every source note, physical PWM and bounds',()=>{
+ assert.equal(hash(rom),verified.flashSha256);assert.equal(hash(ep),verified.eepromSha256);
+ assert.equal(report.flashBytes,812);assert.equal(rom.length,812);assert.equal(ep.length,64);
+ assert.equal(verified.allSourceNotesRetained,true);assert.equal(verified.playedNotes,235);assert.equal(verified.firstPassEvents,470);
+ assert.equal(verified.musicSeconds,48);assert.ok(verified.loopSeconds>48.25&&verified.loopSeconds<48.28);
+ assert.equal(verified.mixChecks,verified.pwmPairChecks);assert.ok(verified.mixChecks>900000);
+ assert.equal(verified.ringUnderruns+verified.lostTimerEvents+verified.lostWorkEvents,0);
+ assert.ok(verified.sramUsedWorstCase<=64);assert.ok(verified.maxRenderElapsedCycles<512);assert.ok(verified.maxTimingErrorMs<20);
+ assert.deepEqual(verified.pwmRange,[0,237]);
+ const level=JSON.parse(read('preview-level.json'));assert.equal(level.flashSha256,hash(rom));assert.equal(level.wavSha256,hash(read('preview.wav')));assert.equal(level.seconds,49);assert.equal(level.normalized,true);
 });
 
-test('three instrument banks and independent Alto/Bass frequencies match the build-time assignments',()=>{
-  const bankBytes=readFileSync(new URL('../../ATtiny13A/Music/instruments/bank.json',import.meta.url)),bank=JSON.parse(bankBytes);
-  assert.equal(report.instrumentBankSha256,createHash('sha256').update(bankBytes).digest('hex'));
-  assert.equal(score.engine,'instrument-bank');
-  for(const [role,offset] of [['lead',0],['keys',16],['pluck',32]]){
-    const instrument=bank.instruments[score.instruments[role].instrument];
-    const model=role==='lead'?'lead_envelope_model':role==='keys'?'accompaniment_envelope_model':'pluck_envelope_model';
-    assert.equal(score[model],instrument.envelope.model);
-    assert.equal(score[`${role}_attack_step`],instrument.envelope.attackStep);
-    assert.equal(score[`${role}_release_step`],instrument.envelope.releaseStep);
-    assert.equal(score[`${role}_max_level`],score.instruments[role].level);
-    for(const [register,extra] of [['low',0],['high',8]])for(let i=0;i<16;i++)
-      assert.equal(((ep[offset+extra+(i>>1)]>>(i%2?4:0))&15)-8,instrument.waves[register][i]);
-  }
-  assert.equal(score.lead_envelope_model,'sustain');
-  assert.equal(score.lead_release_model,'linear');
-  assert.equal(report.articulation.attack,'sustain');
-  assert.ok(ep.subarray(48).every(v=>v===0x88));
-  const delta=n=>Math.round(440*2**((n-69)/12)*65536/18750);
-  for(let chord=0;chord<report.score.chords.length;chord++){
-    const pitches=score.chord_notes[report.score.chords[chord]],address=labels.chord_steps+chord*4;
-    assert.equal(rom[address]|rom[address+1]<<8,delta(pitches[0]));
-    assert.equal(rom[address+2]|rom[address+3]<<8,delta(pitches[1]));
-  }
+test('the four instruments attack independently in the actual AVR',()=>{
+ const c=new AVRCore(rom,ep);while(c.cyc<.3*9600000)c.nextDuty();
+ assert.deepEqual(report.voices.voiceAddresses.map(a=>c.data[a]&15),[15,12,11,10]);
+ assert.equal(c.lost+c.workLost,0);assert.equal(c.maxIRQ,15);
 });
 
-test('sustained accompaniment retains oscillator phases and attacks softly to its configured levels',()=>{
-  const c=new AVRCore(rom,ep);c.pc=labels.chord_event/2;c.r[16]=224;
-  c.data[voices[1]]=128|16|12;c.data[voices[2]]=128|32|10;
-  c.data[voices[1]+1]=57;c.data[voices[1]+2]=48;c.data[voices[2]+1]=160;c.data[voices[2]+2]=91;
-  while(c.pc!==labels.read_event/2)c.step();
-  assert.equal(c.data[voices[1]+1]|c.data[voices[1]+2]<<8,12345);assert.equal(c.data[voices[2]+1]|c.data[voices[2]+2]<<8,23456);
-  assert.equal(c.data[voices[1]],128|16|6);assert.equal(c.data[voices[2]],128|32|5);
-  const caps=[score.lead_max_level,score.keys_max_level,score.pluck_max_level];
-  for(const a of voices)c.data[a]=0;
-  for(let i=0;i<3;i++)c.data[voices[i]]=128|i*16;
-  for(let tick=0;tick<8;tick++){
-    c.pc=labels.music_tick/2;
-    while(c.pc!==labels['.L0a8']/2)c.step();
-    for(let voice=0;voice<3;voice++)assert.equal(c.data[voices[voice]],128|voice*16|Math.min(caps[voice],(tick+1)*4));
-    assert.equal(c.r[29],0);
-  }
-  // In particular, flute must use the bank's linear sustain release rather
-  // than the historical violin-lead release that skipped levels above8.
-  for(let voice=0;voice<3;voice++)c.data[voices[voice]]=voice*16|caps[voice];
-  for(let tick=1;tick<=16;tick++){
-    c.pc=labels.music_tick/2;
-    while(c.pc!==labels['.L0a8']/2)c.step();
-    for(let voice=0;voice<3;voice++)assert.equal(c.data[voices[voice]],voice*16|Math.max(0,caps[voice]-tick));
-  }
+
+test('normalization covers every waveform/envelope combination in every loop',()=>{
+ let minimum=0,maximum=0;
+ for(let part=0;part<4;part++){
+  const samples=[...ep.subarray(16*part,16*(part+1))].flatMap(b=>[(b&15)-8,(b>>4)-8]);
+  const values=samples.flatMap(value=>Array.from({length:score.parts[part].level+1},(_,level)=>Math.floor(value*level/8)));
+  minimum+=Math.min(...values);maximum+=Math.max(...values);
+ }
+ const norm=report.outputNormalization;
+ assert.deepEqual([minimum,maximum],[-33,30]);assert.equal(norm.minimum,minimum);assert.equal(norm.maximum,maximum);
+ assert.equal(norm.gain,128/33);assert.equal(norm.table.length,64);assert.equal(norm.table[-minimum],128);
+ for(let mix=minimum;mix<=maximum;mix++){
+  const output=Math.round(128+mix*norm.gain);assert.ok(output>=0&&output<=255);
+  assert.equal(rom[report.labels.output_gain+mix-minimum],output);
+ }
+ assert.equal(norm.observedMinimum,-33);assert.equal(norm.observedMaximum,28);
 });

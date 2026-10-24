@@ -114,7 +114,40 @@
       "D#5:2 R:1.5 C#5:0.25 C5:0.25",
       "C#5:1 C5:0.5 G#4:2.5",
       "R:0.5 G4:1.5 G#4:1 C5:0.5 F4:0.5~",
-      "F4:4"
+      "F4:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4",
+      "R:4"
     ],
     "ending": [
       "F4:1 R:3"
@@ -555,6 +588,138 @@
       [
         "F3",
         "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
+      ],
+      [
+        "F3",
+        "F3"
       ]
     ]
   },
@@ -563,7 +728,7 @@
     "A#3": 58,
     "F3": 53
   },
-  "conversion_note": "Melody track 1; 107 bars; quarter-beat quantization; bass-root accompaniment, NOT full MIDI polyphony",
+  "conversion_note": "Melody track 1; 140 bars; quarter-beat quantization; bass-root accompaniment, NOT full MIDI polyphony",
   "engine": "children-native",
   "instruments": {
     "lead": "acoustic-grand-piano",
@@ -587,7 +752,15 @@
       ],
       "program": 0,
       "level": 15,
-      "eeprom": 0
+      "eeprom": 0,
+      "continuation": {
+        "track": 15,
+        "program": 50,
+        "level": 7,
+        "eeprom": 32,
+        "firstQuarterBeat": 448,
+        "lastQuarterBeat": 560
+      }
     },
     {
       "role": "piano-echo",
@@ -1134,16 +1307,17 @@
     ],
     "license": "No permission or license is inferred from embedded MIDI metadata."
   },
-  "bass_source_note_ons": 345,
+  "bass_source_note_ons": 458,
   "arrangement": {
     "firstSourceQuarterBeat": 0,
-    "sourceQuarterBeats": 428,
+    "sourceQuarterBeats": 560,
     "sourceLeadNotes": 256,
-    "sourceBassNotes": 345,
-    "totalQuarterBeats": 432,
-    "durationSeconds": 185.14285714285714,
-    "rhythm": "Nearest-sixteenth source grid; all256 main piano and345 bass attack identities/gates preserved; constant140BPM.",
-    "reduction": "Echo principal pitch sampled from the source once per bar, then quarter pulses with eighth gates. Synth Strings 1 is a new source-inspired F4/Eb4/C4 harmonic pad, not an exact copy of track5. Lead and345 bass attacks retain the nearest-sixteenth source grid.",
+    "sourceBassNotes": 458,
+    "sourceContinuationNotes": 448,
+    "totalQuarterBeats": 564,
+    "durationSeconds": 241.71428571428572,
+    "rhythm": "Nearest-sixteenth source grid; all256 main piano,458 selected bass and448 late GM50 string attack identities/gates preserved; constant140BPM.",
+    "reduction": "Echo principal pitch sampled from the source once per bar, then quarter pulses with eighth gates. The original Synth Strings1 F4/Eb4/C4 harmonic pad is not an exact copy of track5. All256 main piano attacks and all345 previously retained bass attacks remain;113 more bass attacks are restored through beat544. The simultaneous F2 at beat428 is omitted in favor of F1. After the piano ends, its voice plays all448 F5 attacks/gates from GM50 track15 at beats448..560, using the measured strings bank. The12 lower Eb4 notes simultaneously sounding in track15 and the late saw, percussion and other layers remain omitted; this is not a lossless rendering of every source part.",
     "loopSilence": "One-beat cadence followed by three beats rest; all six voice levels zero before every restart."
   }
 }

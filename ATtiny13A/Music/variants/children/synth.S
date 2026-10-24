@@ -3,10 +3,56 @@
 .include "config.inc"
 vectors:
   rjmp reset
+voice_silent:
+  clr r17
 envelope_return:
-  asr r17
   ret
   rjmp pwm_irq
+render_tone:
+  /* Choose a register-dependent 16-step sustain wavetable and apply its amplitude envelope. */
+  mov r0, r25
+  andi r25, 15
+  breq voice_silent
+  cpi r16, 4
+  mov r16, r0
+  andi r16, 48
+  brcs .L216
+  ori r16, 8
+.L216:
+  cpi r26, 108
+  brcc piano_attack_done
+  cpi r25, 14
+  brcs piano_attack_done
+  ori r16, 48
+piano_attack_done:
+  swap r17
+  andi r17, 15
+  lsr r17
+  or r16, r17
+  out 30, r16
+  sbi 28, 0
+  in r17, 29
+  brcc eeprom_low_nibble
+  swap r17
+eeprom_low_nibble:
+  andi r17, 15
+  subi r17, 8
+.L25c:
+  mov r0, r17
+  sbrs r25, 3
+  clr r17
+  lsl r17
+  sbrc r25, 2
+  add r17, r0
+  lsl r17
+  sbrc r25, 1
+  add r17, r0
+  lsl r17
+  sbrc r25, 0
+  add r17, r0
+  asr r17
+  asr r17
+  ret
 reset:
   /* Requiredfuses7A/FF: CLKPRreset0; SPLresetRAMEND(9F). */
   clr r29
@@ -22,10 +68,9 @@ reset:
   clr r31
 clear_ram:
   st Z+, r29
-  cpi r30, 144
+  cpi r30, 128
   brne clear_ram
   ldi r18, 128
-  ldi r30, 128
 fill_ring:
   st Z+, r18
   cpi r30, 144
@@ -35,16 +80,15 @@ fill_ring:
   ldi r22, 142
   ldi r16, 1
   mov r1, r16
-  ldi r16, FIRST_PLAYLIST_INDEX
   mov r4, r16
   ldi r16, GRID_INITIAL_HIGH
   mov r3, r16
   ldi r30, lo8(first_section)
   ldi r31, hi8(first_section)
-  sbi 23, 1
   out 41, r18
   ldi r16, 35
   out 47, r16
+  sbi 23, 1
   ldi r16, 1
   out 51, r16
   ldi r16, 2
@@ -154,18 +198,16 @@ state_release:
   andi r25, 7
   brne envelope_store
 ordinary_release:
-  tst r17
-  breq envelope_store
-  dec r16
-  cpi r17, 1
-  breq envelope_store
+  subi r17, 1
+  brcs envelope_store
+  breq release_last_level
   sbrc r16, 6
   dec r16
+release_last_level:
+  dec r16
 envelope_store:
-
-  subi r26, 1
-  st X+, r16
-  subi r26, 252
+  st -X, r16
+  subi r26, 251
   cpi r26, 127
   brne envelope_loop
 .L0a8:
@@ -177,16 +219,36 @@ envelope_store:
   ret
 grid_step:
   inc r8
+  mov r16, r8
+  andi r16, 15
+  brne bar_clock_done
+  inc r9
+bar_clock_done:
 .L0ba:
   dec r1
   breq read_event
   rjmp companion_grid
+next_section:
+  /* Playlist contains direct section offsets: no second lookup table. */
+  ldi r30, lo8(playlist)
+  ldi r31, hi8(playlist)
+  add r30, r4
+  lpm r16, Z
+  inc r4
+  mov r17, r4
+  cpi r17, PLAYLIST_LEN
+  brne .L15c
+  clr r4
+.L15c:
+  ldi r30, lo8(melody_data)
+  ldi r31, hi8(melody_data)
+  add r30, r16
+  rjmp read_event
 read_event:
   /* Read packed score tokens. F0..FF are control events; E0..EF update accompaniment harmony. */
   lpm r16, Z+
   cpi r16, 255
-  brne .L0c8
-  rjmp next_section
+  breq next_section
 .L0c8:
   cpi r16, 151
   brcs melodic_event
@@ -195,8 +257,7 @@ read_event:
 chord_event:
   sbrs r14, 7
   rjmp macro_already_running
-  ldi r17, 255
-  mov r9, r17
+  clr r9
 macro_already_running:
   subi r16, 142
   mov r14, r16
@@ -204,11 +265,10 @@ macro_already_running:
 all_parts_off:
   ldi r26, 97
 all_parts_off_loop:
-  ld r16, X+
+  ld r16, X
   andi r16, 127
-  subi r26, 1
-  st X+, r16
-  subi r26, 252
+  st X, r16
+  subi r26, 251
   cpi r26, 117
   brne all_parts_off_loop
   ldi r16, 128
@@ -229,8 +289,7 @@ melodic_event:
   lsr r16
   cpi r16, REST_INDEX
   breq note_rest
-  cpi r16, HOLD_INDEX
-  breq hold_sample
+  brcc hold_sample
   ldi r26, 97
   ldi r25, 207
   rcall macro_note
@@ -238,29 +297,22 @@ lead_commit:
   rjmp hold_sample
 note_rest:
 release_lead:
-  lds r17, 97
+  ldi r26, 97
+  ld r17, X
   andi r17, 127
-  sts 97, r17
+  st X, r17
   rjmp companion_grid
-next_section:
-  /* Playlist contains direct section offsets: no second lookup table. */
-  ldi r30, lo8(playlist)
-  ldi r31, hi8(playlist)
-  add r30, r4
-  lpm r16, Z
-  inc r4
-  mov r17, r4
-  cpi r17, PLAYLIST_LEN
-  brne .L15c
-  clr r4
-.L15c:
-  ldi r30, lo8(melody_data)
-  ldi r31, hi8(melody_data)
-  add r30, r16
-  rjmp read_event
 hold_sample:
-  rjmp companion_grid
 companion_grid:
+  mov r16, r9
+  subi r16, 112
+  cpi r16, 28
+  brcc continuation_done
+  ldi r16, 10
+  ldi r26, 97
+  ldi r25, 167
+  rcall macro_note
+continuation_done:
   movw r30, r12
   sbrc r14, 7
   ret
@@ -269,9 +321,10 @@ companion_grid:
   breq companion_quarter
   cpi r16, 2
   brne companion_done
-  lds r16, 102
+  ldi r26, 102
+  ld r16, X
   andi r16, 127
-  sts 102, r16
+  st X, r16
   rjmp companion_done
 companion_quarter:
   mov r16, r14
@@ -301,7 +354,6 @@ companion_strings:
   mov r16, r8
   andi r16, 15
   brne companion_done
-  inc r9
   mov r16, r9
   cpi r16, 8
   brcs companion_done
@@ -325,62 +377,13 @@ macro_note:
   add r30, r16
   adc r31, r29
   rjmp initialize_voice
-render_tone:
-  /* Choose a register-dependent 16-step sustain wavetable and apply its amplitude envelope. */
-  mov r0, r25
-  andi r25, 15
-  breq voice_silent
-  cpi r16, 4
-  mov r16, r0
-  andi r16, 48
-  brcs .L216
-  ori r16, 8
-.L216:
-  cpi r26, 108
-  brcc piano_attack_done
-  cpi r25, 14
-  brcs piano_attack_done
-  ori r16, 48
-piano_attack_done:
-  swap r17
-  andi r17, 15
-  lsr r17
-  or r16, r17
-  out 30, r16
-  sbi 28, 0
-  in r17, 29
-  brcc eeprom_low_nibble
-  swap r17
-eeprom_low_nibble:
-  andi r17, 15
-  subi r17, 8
-.L25c:
-  mov r0, r17
-  sbrs r25, 3
-  clr r17
-  lsl r17
-  sbrc r25, 2
-  add r17, r0
-  lsl r17
-  sbrc r25, 1
-  add r17, r0
-  lsl r17
-  sbrc r25, 0
-  add r17, r0
-  asr r17
-  asr r17
-  ret
-voice_silent:
-  clr r17
-  rjmp envelope_return
 initialize_voice:
   rcall capture_ram_tail
   andi r16, 15
   lsr r16
   or r16, r25
-  subi r26, 1
-  st X+, r16
-  subi r26, 254
+  st -X, r16
+  subi r26, 253
   lpm r16, Z+
   st X+, r16
   lpm r16, Z+

@@ -1,0 +1,201 @@
+--- a/src/innovation.S
++++ b/src/innovation.S
+@@ -20,6 +20,8 @@
+ .global speex_avr_innovation10
+ .type speex_avr_innovation10, @function
+ speex_avr_innovation10:
++    push r9
++    clr r9
+     push r2
+     push r3
+     push r8
+@@ -33,6 +35,8 @@
+ .global speex_avr_long_innovation10
+ .type speex_avr_long_innovation10, @function
+ speex_avr_long_innovation10:
++    push r9
++    clr r9
+     push r2
+     push r3
+     push r8
+@@ -59,7 +63,13 @@
+     ldi r20, 32
+     mov r8, r20
+     brts .Linnovation_long_setup
+-    rjmp .Linnovation_packed_setup
++.Linnovation_packed_setup:
++    movw r26, r22
++.Linnovation_packed_sample:
++    ld r13, X+
++    ld r14, X+
++    ld r15, X+
++    rjmp .Linnovation_sample
+ .Linnovation_long_setup:
+     movw r26, r14
+     ld r10, X+
+@@ -100,13 +110,6 @@
+     add r13, r23
+     adc r14, r24
+     adc r15, r25
+-    rjmp .Linnovation_sample
+-.Linnovation_packed_setup:
+-    movw r26, r22
+-.Linnovation_packed_sample:
+-    ld r13, X+
+-    ld r14, X+
+-    ld r15, X+
+ .Linnovation_sample:
+     lpm r20, Z+
+     mulsu r20, r16
+@@ -221,11 +224,14 @@
+     st Y+, r23
+     dec r3
+     breq .Linnovation_done
+-    brts .Linnovation_long_again
++    brtc .Linnovation_packed_again
++    rjmp .Linnovation_long_sample
++.Linnovation_packed_again:
+     rjmp .Linnovation_packed_sample
+-.Linnovation_long_again:
+-    rjmp .Linnovation_long_sample
+ .Linnovation_done:
++    tst r9
++    brne .Linnovation_vector_done
++.Linnovation_return:
+     clr r1
+     pop r29
+     pop r28
+@@ -244,7 +250,12 @@
+     pop r8
+     pop r3
+     pop r2
++    pop r9
+     ret
++.Linnovation_vector_done:
++    dec r9
++    breq .Linnovation_return
++    rjmp .Llong40_shape
+ .size speex_avr_innovation10, .-speex_avr_innovation10
+ .size speex_avr_long_innovation10, .-speex_avr_long_innovation10
+
+@@ -256,6 +267,8 @@
+     brne .Linnovation_n_nonempty
+     ret
+ .Linnovation_n_nonempty:
++    push r9
++    clr r9
+     push r2
+     push r3
+     push r8
+@@ -286,6 +299,8 @@
+ .global speex_avr_long_innovation1
+ .type speex_avr_long_innovation1, @function
+ speex_avr_long_innovation1:
++    push r9
++    clr r9
+     push r2
+     push r3
+     push r8
+@@ -334,6 +349,67 @@
+     rjmp .Linnovation_sample
+ .size speex_avr_long_innovation1, .-speex_avr_long_innovation1
+
++
++
++/* Four indexed vectors in one ABI call. out/history/indices/scale/gains use
++ * r25:r24/r23:r22/r21:r20/r19:r16/r15:r14. Save the four RAM indices on
++ * the stack, then consume them once. r9 counts remaining vectors, or is zero
++ * for all legacy entries. History/gains/scale survive each common body pass.
++ * indices 0..31; exc_10_32_table has 32 ten-byte signed Flash vectors. */
++.global speex_avr_long_innovation40
++.type speex_avr_long_innovation40,@function
++speex_avr_long_innovation40:
++    push r9
++    push r2
++    push r3
++    push r8
++    push r4
++    push r5
++    push r6
++    push r7
++    push r10
++    push r11
++    push r12
++    push r13
++    push r14
++    push r15
++    push r28
++    push r29
++    movw r28,r24
++    movw r30,r20
++    adiw r30,4
++    .rept 4
++    ld r20,-Z
++    push r20
++    .endr
++    clr r2
++    ldi r20,4
++    mov r9,r20
++    ldi r20,32
++    mov r8,r20
++    movw r26,r14
++    ld r10,X+
++    ld r11,X+
++    ld r12,X
++    movw r26,r22
++    ld r4,X+
++    ld r5,X+
++    ld r6,X+
++    ld r7,X+
++    set
++.Llong40_shape:
++    pop r20
++    ldi r21,10
++    mul r20,r21
++    ldi r30,lo8(exc_10_32_table)
++    ldi r31,hi8(exc_10_32_table)
++    add r30,r0
++    adc r31,r1
++    clr r1
++    ldi r20,10
++    mov r3,r20
++    rjmp .Linnovation_long_sample
++.size speex_avr_long_innovation40,.-speex_avr_long_innovation40
+
+ /* Zero adaptive sum only. ABI out r25:r24, Flash shape r23:r22,
+  * nonnegative scale<=121000000 in r21:r18. Exact rounded output fits s16:
+--- a/src/long_pitch.h
++++ b/src/long_pitch.h
+@@ -32,6 +32,9 @@
+  * Shares the exact transform; no rolling-history registers are needed. */
+ extern void speex_avr_long_innovation1(int16_t *,const int16_t *,const int8_t *,
+                                        int32_t,const int8_t *);
++/* Four RAM indices 0..31, 42 completed history words, 40 outputs. */
++extern void speex_avr_long_innovation40(int16_t *,const int16_t *,const uint8_t *,
++                                        int32_t,const int8_t *);
+ extern void speex_avr_long_innovation10(int16_t *,const int16_t *,const int8_t *,
+                                         int32_t,const int8_t *);
+ /* count 0..10; a nonempty block reads count+2 completed history words.
+--- a/src/nb_decode.c.inc
++++ b/src/nb_decode.c.inc
+@@ -24,16 +24,16 @@
+     gains[0]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index+2));
+     gains[1]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index+1));
+     gains[2]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index));
++#if SPEEX_NB3_USE_AVR_ASM
++    speex_avr_long_innovation40(out,in,indices,scale,gains);
++#else
+     for (vector=0;vector<4;vector++) {
+         unsigned code=indices[vector];
+         const int8_t *shape=exc_10_32_table+10*code;
+-#if SPEEX_NB3_USE_AVR_ASM
+-        speex_avr_long_innovation10(out,in,shape,scale,gains);
+-#else
+         speex_nb3_long_innovation10_c(out,in,shape,scale,gains,10);
+-#endif
+         out+=10;in+=10;
+     }
++#endif
+ }
+ _Static_assert(NB_SUBFRAME_SIZE==40 && NB_PITCH_START==17 && NB_PITCH_END==144,
+                "Packed pitch is specialized for the pinned NB3 frame/pitch bounds");

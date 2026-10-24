@@ -1,0 +1,836 @@
+{
+  "schema": "q3-track-rate-v1",
+  "sample_rate": 7500,
+  "samples": 22272,
+  "seed": 23191,
+  "mode": "additional-error-over-frozen-input",
+  "frequency_unit": "cents",
+  "error_statistic": "p95",
+  "error_definition": "95th percentile weighted by matched original-partial power; not a maximum bound on every partial or a guarantee of full reference coverage",
+  "missing_extra_coverage_continuity": "Hard caps/floor frozen from the original input model; never loosened by the sweep",
+  "baseline_tracking": {
+    "harmonic_track_loss": 0.9276358854741257,
+    "frequency_trajectory_error": 0.944415168725385,
+    "level_error": 2.460787589140449,
+    "missing_reference_energy": 0.172824129995439,
+    "extra_candidate_energy": 0.236220110492199,
+    "weighted_match_rate": 0.8271758700045616,
+    "frequency_error_cents": 48.64126669310046,
+    "frequency_error_hz": 11.03659249896802,
+    "level_error_db": 7.382362767421352,
+    "frequency_error_p95_cents": 111.27547826956649,
+    "frequency_error_p95_hz": 34.06105629694048,
+    "level_error_p95_db": 17.59277251401989,
+    "continuity_break_rate": 0.3530560603937906
+  },
+  "baseline_stream_bytes": 602,
+  "code_bytes": 420,
+  "descriptor_bytes": 0,
+  "end_marker_bytes": 1,
+  "eeprom_bytes": 0,
+  "layout": "standalone",
+  "flash_limit_bytes": 1024,
+  "max_evaluations_per_level": 400,
+  "repair_proposals": 2,
+  "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+  "input_model_sha256": "c6ffc4b7d5f4a4c2fd6a3b0a359a773ba98bb7505c8b89064f7c1032b391b232",
+  "harmonic_config": {
+    "version": "strongest-partial-tracks-v1",
+    "max_tracks": 10,
+    "n_fft": 1024,
+    "hop": 128,
+    "max_gap": 8,
+    "frequency_tolerance_cents": 50.0,
+    "frequency_tolerance_hz": 0.0,
+    "amplitude_tolerance_db": 3.0,
+    "matching_gate_cents": 100.0,
+    "matching_gate_floor_hz": 14.6484375
+  },
+  "hardware_tested": false,
+  "human_listening_verified": false,
+  "levels": [
+    {
+      "feasible": true,
+      "failed_guards": [],
+      "initial_stream_bytes": 602,
+      "stream_bytes": 470,
+      "evaluations": 400,
+      "accepted_operations": 55,
+      "history": [
+        {
+          "evaluation": 6,
+          "operation": "share-2-4-rows-87-91-source-86",
+          "stream_bytes": 598
+        },
+        {
+          "evaluation": 27,
+          "operation": "share-4-6-rows-26-30-source-25",
+          "stream_bytes": 596
+        },
+        {
+          "evaluation": 73,
+          "operation": "share-2-4-rows-130-132-source-129-refit-k0-1",
+          "stream_bytes": 594
+        },
+        {
+          "evaluation": 80,
+          "operation": "share-2-4-rows-122-123-source-121",
+          "stream_bytes": 592
+        },
+        {
+          "evaluation": 81,
+          "operation": "share-2-4-rows-51-52-source-52",
+          "stream_bytes": 590
+        },
+        {
+          "evaluation": 84,
+          "operation": "share-2-4-rows-110-111-source-109-refit-k5--1",
+          "stream_bytes": 588
+        },
+        {
+          "evaluation": 85,
+          "operation": "share-4-6-rows-121-125-source-120",
+          "stream_bytes": 584
+        },
+        {
+          "evaluation": 86,
+          "operation": "share-2-4-rows-128-129-source-129",
+          "stream_bytes": 582
+        },
+        {
+          "evaluation": 91,
+          "operation": "share-4-6-rows-18-20-source-20",
+          "stream_bytes": 580
+        },
+        {
+          "evaluation": 96,
+          "operation": "share-4-6-rows-43-44-source-42",
+          "stream_bytes": 578
+        },
+        {
+          "evaluation": 110,
+          "operation": "share-4-6-rows-49-51-source-51",
+          "stream_bytes": 576
+        },
+        {
+          "evaluation": 111,
+          "operation": "share-2-4-rows-73-74-source-74",
+          "stream_bytes": 574
+        },
+        {
+          "evaluation": 139,
+          "operation": "share-2-4-rows-11-12-source-12",
+          "stream_bytes": 572
+        },
+        {
+          "evaluation": 153,
+          "operation": "share-2-6-rows-111-112-source-112-refit-k1--1",
+          "stream_bytes": 568
+        },
+        {
+          "evaluation": 163,
+          "operation": "share-2-4-rows-48-50-source-47",
+          "stream_bytes": 566
+        },
+        {
+          "evaluation": 167,
+          "operation": "share-2-4-rows-111-113-source-110-refit-k7-1",
+          "stream_bytes": 564
+        },
+        {
+          "evaluation": 168,
+          "operation": "share-4-6-rows-7-8-source-8",
+          "stream_bytes": 562
+        },
+        {
+          "evaluation": 171,
+          "operation": "share-2-4-rows-59-60-source-60-refit-k7-1",
+          "stream_bytes": 560
+        },
+        {
+          "evaluation": 174,
+          "operation": "share-2-4-rows-72-73-source-71-refit-k7-1",
+          "stream_bytes": 558
+        },
+        {
+          "evaluation": 175,
+          "operation": "share-4-6-rows-56-57-source-57",
+          "stream_bytes": 556
+        },
+        {
+          "evaluation": 176,
+          "operation": "share-4-6-rows-34-36-source-36",
+          "stream_bytes": 552
+        },
+        {
+          "evaluation": 177,
+          "operation": "share-2-4-rows-77-78-source-78",
+          "stream_bytes": 550
+        },
+        {
+          "evaluation": 178,
+          "operation": "share-2-4-rows-81-83-source-83",
+          "stream_bytes": 546
+        },
+        {
+          "evaluation": 179,
+          "operation": "share-4-6-rows-88-92-source-87",
+          "stream_bytes": 542
+        },
+        {
+          "evaluation": 180,
+          "operation": "share-2-4-rows-39-41-source-38",
+          "stream_bytes": 540
+        },
+        {
+          "evaluation": 181,
+          "operation": "share-4-6-rows-108-109-source-109",
+          "stream_bytes": 538
+        },
+        {
+          "evaluation": 183,
+          "operation": "share-4-6-rows-43-45-source-42",
+          "stream_bytes": 536
+        },
+        {
+          "evaluation": 189,
+          "operation": "share-2-4-rows-42-46-source-46",
+          "stream_bytes": 530
+        },
+        {
+          "evaluation": 197,
+          "operation": "share-2-4-rows-32-33-source-33",
+          "stream_bytes": 528
+        },
+        {
+          "evaluation": 204,
+          "operation": "share-4-6-rows-109-111-source-108-refit-k4-1",
+          "stream_bytes": 526
+        },
+        {
+          "evaluation": 207,
+          "operation": "share-2-4-rows-36-38-source-35",
+          "stream_bytes": 524
+        },
+        {
+          "evaluation": 213,
+          "operation": "share-4-6-rows-123-127-source-122",
+          "stream_bytes": 522
+        },
+        {
+          "evaluation": 219,
+          "operation": "share-2-4-rows-52-56-source-51-refit-k3--1",
+          "stream_bytes": 520
+        },
+        {
+          "evaluation": 224,
+          "operation": "share-4-6-rows-130-133-source-129",
+          "stream_bytes": 518
+        },
+        {
+          "evaluation": 231,
+          "operation": "share-4-6-rows-38-39-source-39",
+          "stream_bytes": 516
+        },
+        {
+          "evaluation": 239,
+          "operation": "share-4-6-rows-79-80-source-80",
+          "stream_bytes": 514
+        },
+        {
+          "evaluation": 246,
+          "operation": "share-4-6-rows-57-59-source-56",
+          "stream_bytes": 512
+        },
+        {
+          "evaluation": 253,
+          "operation": "share-2-4-rows-12-16-source-11",
+          "stream_bytes": 506
+        },
+        {
+          "evaluation": 261,
+          "operation": "share-2-4-rows-106-107-source-107",
+          "stream_bytes": 504
+        },
+        {
+          "evaluation": 263,
+          "operation": "merge-rows-106-107-source-106-refit-k7--1",
+          "stream_bytes": 502
+        },
+        {
+          "evaluation": 269,
+          "operation": "share-2-4-rows-113-114-source-114",
+          "stream_bytes": 500
+        },
+        {
+          "evaluation": 288,
+          "operation": "share-2-4-rows-107-108-source-106",
+          "stream_bytes": 498
+        },
+        {
+          "evaluation": 302,
+          "operation": "merge-rows-82-83-source-83-refit-k4--1",
+          "stream_bytes": 496
+        },
+        {
+          "evaluation": 323,
+          "operation": "share-2-4-rows-57-58-source-56",
+          "stream_bytes": 494
+        },
+        {
+          "evaluation": 324,
+          "operation": "share-4-6-rows-82-83-source-83",
+          "stream_bytes": 492
+        },
+        {
+          "evaluation": 335,
+          "operation": "share-4-6-rows-21-23-source-23-refit-k5-1",
+          "stream_bytes": 490
+        },
+        {
+          "evaluation": 336,
+          "operation": "share-4-6-rows-23-25-source-22",
+          "stream_bytes": 488
+        },
+        {
+          "evaluation": 351,
+          "operation": "share-4-6-rows-40-42-source-39-refit-k1-1",
+          "stream_bytes": 486
+        },
+        {
+          "evaluation": 365,
+          "operation": "share-4-6-rows-69-70-source-70-refit-k2--1",
+          "stream_bytes": 484
+        },
+        {
+          "evaluation": 366,
+          "operation": "share-2-4-rows-38-39-source-39",
+          "stream_bytes": 482
+        },
+        {
+          "evaluation": 369,
+          "operation": "share-4-6-rows-33-34-source-32-refit-k4-1",
+          "stream_bytes": 480
+        },
+        {
+          "evaluation": 380,
+          "operation": "share-2-4-rows-118-122-source-117",
+          "stream_bytes": 476
+        },
+        {
+          "evaluation": 381,
+          "operation": "merge-rows-118-119-source-118",
+          "stream_bytes": 474
+        },
+        {
+          "evaluation": 394,
+          "operation": "share-2-4-rows-17-21-source-21-refit-k3-1",
+          "stream_bytes": 472
+        },
+        {
+          "evaluation": 399,
+          "operation": "share-4-6-rows-77-78-source-78",
+          "stream_bytes": 470
+        }
+      ],
+      "level": 0,
+      "requested_frequency_tolerance": 0.0,
+      "requested_amplitude_tolerance_db": 0.0,
+      "limits": {
+        "frequency_key": "frequency_error_p95_cents",
+        "amplitude_key": "level_error_p95_db",
+        "frequency_cap": 111.27547826956649,
+        "amplitude_cap": 17.59277251401989,
+        "missing_cap": 0.172824129995439,
+        "extra_cap": 0.236220110492199,
+        "coverage_floor": 0.8271758700045616,
+        "continuity_cap": 0.3530560603937906,
+        "minimum_stoi": null
+      },
+      "tracking": {
+        "harmonic_track_loss": 0.881298409166339,
+        "frequency_trajectory_error": 0.9009028437345201,
+        "level_error": 2.3327545275429262,
+        "missing_reference_energy": 0.17192732589243187,
+        "extra_candidate_energy": 0.23114282380077494,
+        "weighted_match_rate": 0.828072674107569,
+        "frequency_error_cents": 47.3568412973089,
+        "frequency_error_hz": 11.030950700988093,
+        "level_error_db": 6.998263582628765,
+        "frequency_error_p95_cents": 109.99707614761893,
+        "frequency_error_p95_hz": 34.517371251399936,
+        "level_error_p95_db": 15.97348113797227,
+        "continuity_break_rate": 0.2636377402565176
+      },
+      "computed_flash_bytes": 892,
+      "fits_target": true,
+      "firmware_qualified": false,
+      "intermediate_wraps": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "stoi": 0.8026515128256965,
+      "estoi": 0.5817864865198792,
+      "spectrum": {
+        "spectrogram_loss": 0.5150059739458657,
+        "fine_log_error": 0.49430643012325814,
+        "envelope_error": 0.6166419352833106,
+        "unsupported_energy": 0.21450348876329106,
+        "missing_energy": 0.20956759948769713
+      },
+      "stream_sha256": "6a4ed42861a972635a34ac34af1fbf33661228fd9d7e6d1fbf4fbe63bd874640",
+      "pcm_sha256": "61a116ec9966da5639cb2f85a54a9bc120de3a4d31ad62c814d6bc474da74b13",
+      "status": "feasible",
+      "final_evaluation_verified": true
+    },
+    {
+      "feasible": true,
+      "failed_guards": [],
+      "initial_stream_bytes": 470,
+      "stream_bytes": 360,
+      "evaluations": 400,
+      "accepted_operations": 51,
+      "history": [
+        {
+          "evaluation": 3,
+          "operation": "share-2-4-rows-126-130-source-125",
+          "stream_bytes": 468
+        },
+        {
+          "evaluation": 8,
+          "operation": "share-2-4-rows-28-32-source-27",
+          "stream_bytes": 466
+        },
+        {
+          "evaluation": 11,
+          "operation": "share-2-4-rows-47-51-source-46",
+          "stream_bytes": 464
+        },
+        {
+          "evaluation": 14,
+          "operation": "share-4-6-rows-1-3-source-0",
+          "stream_bytes": 462
+        },
+        {
+          "evaluation": 17,
+          "operation": "share-4-6-rows-102-106-source-101",
+          "stream_bytes": 460
+        },
+        {
+          "evaluation": 22,
+          "operation": "share-4-6-rows-58-62-source-57",
+          "stream_bytes": 456
+        },
+        {
+          "evaluation": 26,
+          "operation": "share-4-6-rows-60-64-source-59-refit-k0--1",
+          "stream_bytes": 452
+        },
+        {
+          "evaluation": 32,
+          "operation": "share-2-4-rows-105-107-source-107",
+          "stream_bytes": 450
+        },
+        {
+          "evaluation": 39,
+          "operation": "share-4-6-rows-76-77-source-77",
+          "stream_bytes": 448
+        },
+        {
+          "evaluation": 45,
+          "operation": "share-2-4-rows-79-80-source-80",
+          "stream_bytes": 446
+        },
+        {
+          "evaluation": 50,
+          "operation": "share-2-4-rows-60-64-source-59",
+          "stream_bytes": 444
+        },
+        {
+          "evaluation": 53,
+          "operation": "share-4-6-rows-121-125-source-120",
+          "stream_bytes": 442
+        },
+        {
+          "evaluation": 58,
+          "operation": "share-4-6-rows-55-56-source-56",
+          "stream_bytes": 440
+        },
+        {
+          "evaluation": 63,
+          "operation": "share-2-4-rows-13-17-source-12",
+          "stream_bytes": 438
+        },
+        {
+          "evaluation": 66,
+          "operation": "share-4-6-rows-13-14-source-14",
+          "stream_bytes": 436
+        },
+        {
+          "evaluation": 67,
+          "operation": "merge-rows-13-14-source-13",
+          "stream_bytes": 435
+        },
+        {
+          "evaluation": 72,
+          "operation": "share-4-6-rows-80-81-source-81",
+          "stream_bytes": 433
+        },
+        {
+          "evaluation": 81,
+          "operation": "merge-rows-76-77-source-76-refit-k1--1",
+          "stream_bytes": 432
+        },
+        {
+          "evaluation": 94,
+          "operation": "share-2-4-rows-64-66-source-63-refit-k0-1",
+          "stream_bytes": 430
+        },
+        {
+          "evaluation": 100,
+          "operation": "share-4-6-rows-70-72-source-69-refit-k1-1",
+          "stream_bytes": 428
+        },
+        {
+          "evaluation": 102,
+          "operation": "share-2-4-rows-68-69-source-69-refit-k2--1",
+          "stream_bytes": 426
+        },
+        {
+          "evaluation": 104,
+          "operation": "share-4-6-rows-50-54-source-49",
+          "stream_bytes": 424
+        },
+        {
+          "evaluation": 108,
+          "operation": "share-4-6-rows-105-109-source-104-refit-k5-1",
+          "stream_bytes": 422
+        },
+        {
+          "evaluation": 110,
+          "operation": "share-2-4-rows-7-8-source-6",
+          "stream_bytes": 420
+        },
+        {
+          "evaluation": 112,
+          "operation": "share-4-6-rows-123-124-source-124",
+          "stream_bytes": 418
+        },
+        {
+          "evaluation": 114,
+          "operation": "share-4-6-rows-17-21-source-21",
+          "stream_bytes": 416
+        },
+        {
+          "evaluation": 119,
+          "operation": "share-4-6-rows-44-48-source-48",
+          "stream_bytes": 410
+        },
+        {
+          "evaluation": 125,
+          "operation": "share-2-4-rows-73-77-source-72",
+          "stream_bytes": 408
+        },
+        {
+          "evaluation": 133,
+          "operation": "share-4-6-rows-33-37-source-32",
+          "stream_bytes": 404
+        },
+        {
+          "evaluation": 137,
+          "operation": "share-4-6-rows-29-31-source-31",
+          "stream_bytes": 402
+        },
+        {
+          "evaluation": 141,
+          "operation": "merge-rows-55-56-source-55",
+          "stream_bytes": 400
+        },
+        {
+          "evaluation": 148,
+          "operation": "share-2-4-rows-56-57-source-55-refit-k3--1",
+          "stream_bytes": 398
+        },
+        {
+          "evaluation": 151,
+          "operation": "share-4-6-rows-12-13-source-13",
+          "stream_bytes": 396
+        },
+        {
+          "evaluation": 155,
+          "operation": "share-2-4-rows-10-11-source-11",
+          "stream_bytes": 394
+        },
+        {
+          "evaluation": 161,
+          "operation": "share-4-6-rows-41-45-source-45",
+          "stream_bytes": 392
+        },
+        {
+          "evaluation": 167,
+          "operation": "share-4-6-rows-37-41-source-41",
+          "stream_bytes": 390
+        },
+        {
+          "evaluation": 178,
+          "operation": "share-2-4-rows-98-102-source-97",
+          "stream_bytes": 388
+        },
+        {
+          "evaluation": 188,
+          "operation": "share-4-6-rows-7-9-source-6",
+          "stream_bytes": 386
+        },
+        {
+          "evaluation": 207,
+          "operation": "share-2-4-rows-1-5-source-0-refit-k0-1",
+          "stream_bytes": 384
+        },
+        {
+          "evaluation": 219,
+          "operation": "share-2-4-rows-40-41-source-41",
+          "stream_bytes": 382
+        },
+        {
+          "evaluation": 226,
+          "operation": "share-4-6-rows-72-74-source-71-refit-k6--1",
+          "stream_bytes": 380
+        },
+        {
+          "evaluation": 227,
+          "operation": "merge-rows-10-11-source-10",
+          "stream_bytes": 378
+        },
+        {
+          "evaluation": 234,
+          "operation": "share-2-4-rows-36-40-source-40",
+          "stream_bytes": 376
+        },
+        {
+          "evaluation": 248,
+          "operation": "share-2-4-rows-119-121-source-121",
+          "stream_bytes": 374
+        },
+        {
+          "evaluation": 259,
+          "operation": "share-4-6-rows-62-64-source-61-refit-k1--1",
+          "stream_bytes": 372
+        },
+        {
+          "evaluation": 261,
+          "operation": "share-2-4-rows-104-108-source-103",
+          "stream_bytes": 370
+        },
+        {
+          "evaluation": 276,
+          "operation": "share-4-6-rows-1-5-source-0",
+          "stream_bytes": 368
+        },
+        {
+          "evaluation": 289,
+          "operation": "share-4-6-rows-75-77-source-74",
+          "stream_bytes": 366
+        },
+        {
+          "evaluation": 317,
+          "operation": "share-2-4-rows-108-112-source-107",
+          "stream_bytes": 364
+        },
+        {
+          "evaluation": 346,
+          "operation": "share-2-6-rows-12-16-source-11",
+          "stream_bytes": 362
+        },
+        {
+          "evaluation": 363,
+          "operation": "share-2-4-rows-66-68-source-68",
+          "stream_bytes": 360
+        }
+      ],
+      "level": 1,
+      "requested_frequency_tolerance": 25.0,
+      "requested_amplitude_tolerance_db": 1.0,
+      "limits": {
+        "frequency_key": "frequency_error_p95_cents",
+        "amplitude_key": "level_error_p95_db",
+        "frequency_cap": 136.2754782695665,
+        "amplitude_cap": 18.59277251401989,
+        "missing_cap": 0.172824129995439,
+        "extra_cap": 0.236220110492199,
+        "coverage_floor": 0.8271758700045616,
+        "continuity_cap": 0.3530560603937906,
+        "minimum_stoi": null
+      },
+      "tracking": {
+        "harmonic_track_loss": 0.9307236612519273,
+        "frequency_trajectory_error": 0.8950171307677781,
+        "level_error": 2.613178519454647,
+        "missing_reference_energy": 0.16421858255997418,
+        "extra_candidate_energy": 0.23441719544652784,
+        "weighted_match_rate": 0.8357814174400272,
+        "frequency_error_cents": 47.885726286745374,
+        "frequency_error_hz": 9.43065306584658,
+        "level_error_db": 7.839535558363928,
+        "frequency_error_p95_cents": 135.00716852001182,
+        "frequency_error_p95_hz": 35.95557085262885,
+        "level_error_p95_db": 18.532662282808797,
+        "continuity_break_rate": 0.2080761501460831
+      },
+      "computed_flash_bytes": 782,
+      "fits_target": true,
+      "firmware_qualified": false,
+      "intermediate_wraps": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "stoi": 0.7323979774105512,
+      "estoi": 0.4669075141392439,
+      "spectrum": {
+        "spectrogram_loss": 0.5413448553458672,
+        "fine_log_error": 0.5171587840727959,
+        "envelope_error": 0.6506005710457342,
+        "unsupported_energy": 0.23793767422860218,
+        "missing_energy": 0.23440653641096898
+      },
+      "stream_sha256": "d68d9b940ee51278f657e9b2307a6ee59f19080a25975d5be7757e7534be240d",
+      "pcm_sha256": "beb36be26b29e67c8893ff24ef2365f6b4d248f475a9f043411a3d6ae96cde6c",
+      "status": "feasible",
+      "final_evaluation_verified": true
+    },
+    {
+      "feasible": true,
+      "failed_guards": [],
+      "initial_stream_bytes": 360,
+      "stream_bytes": 341,
+      "evaluations": 400,
+      "accepted_operations": 9,
+      "history": [
+        {
+          "evaluation": 52,
+          "operation": "share-2-6-rows-73-77-source-72",
+          "stream_bytes": 356
+        },
+        {
+          "evaluation": 53,
+          "operation": "share-2-4-rows-16-20-source-20",
+          "stream_bytes": 354
+        },
+        {
+          "evaluation": 54,
+          "operation": "merge-rows-72-73-source-72",
+          "stream_bytes": 353
+        },
+        {
+          "evaluation": 128,
+          "operation": "share-4-6-rows-62-66-source-61-refit-k0-1",
+          "stream_bytes": 351
+        },
+        {
+          "evaluation": 129,
+          "operation": "share-2-4-rows-63-65-source-62",
+          "stream_bytes": 349
+        },
+        {
+          "evaluation": 201,
+          "operation": "share-2-4-rows-66-70-source-70",
+          "stream_bytes": 347
+        },
+        {
+          "evaluation": 321,
+          "operation": "share-4-6-rows-5-9-source-4",
+          "stream_bytes": 345
+        },
+        {
+          "evaluation": 356,
+          "operation": "share-2-4-rows-4-6-source-6",
+          "stream_bytes": 343
+        },
+        {
+          "evaluation": 379,
+          "operation": "share-2-4-rows-114-118-source-113",
+          "stream_bytes": 341
+        }
+      ],
+      "level": 2,
+      "requested_frequency_tolerance": 75.0,
+      "requested_amplitude_tolerance_db": 2.0,
+      "limits": {
+        "frequency_key": "frequency_error_p95_cents",
+        "amplitude_key": "level_error_p95_db",
+        "frequency_cap": 186.2754782695665,
+        "amplitude_cap": 19.59277251401989,
+        "missing_cap": 0.172824129995439,
+        "extra_cap": 0.236220110492199,
+        "coverage_floor": 0.8271758700045616,
+        "continuity_cap": 0.3530560603937906,
+        "minimum_stoi": null
+      },
+      "tracking": {
+        "harmonic_track_loss": 0.9584435611355098,
+        "frequency_trajectory_error": 0.9567049915235583,
+        "level_error": 2.631881172097308,
+        "missing_reference_energy": 0.17250072238014114,
+        "extra_candidate_energy": 0.22832931520963928,
+        "weighted_match_rate": 0.8274992776198601,
+        "frequency_error_cents": 48.207866313915666,
+        "frequency_error_hz": 10.503715281013259,
+        "level_error_db": 7.8956435162919245,
+        "frequency_error_p95_cents": 123.55752466844001,
+        "frequency_error_p95_hz": 38.46733176411317,
+        "level_error_p95_db": 17.55587967384914,
+        "continuity_break_rate": 0.22441931374629023
+      },
+      "computed_flash_bytes": 762,
+      "fits_target": true,
+      "firmware_qualified": false,
+      "intermediate_wraps": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "stoi": 0.7197501947249533,
+      "estoi": 0.44764967269756184,
+      "spectrum": {
+        "spectrogram_loss": 0.5465695133501248,
+        "fine_log_error": 0.5188541339251894,
+        "envelope_error": 0.6586442524104441,
+        "unsupported_energy": 0.2469212250780533,
+        "missing_energy": 0.24050934883209654
+      },
+      "stream_sha256": "09ae37dc08b8083f7473998021bc6738d34a81267abaf56f4b05c4e22b26b40c",
+      "pcm_sha256": "5f6a085218d80a79365b81d695b977015d71a0ec4a5d0881a3c5ac04bd36b5ff",
+      "status": "feasible",
+      "final_evaluation_verified": true
+    }
+  ],
+  "unique_exact_renders": 1177,
+  "baseline_stoi": 0.8383964351890083,
+  "baseline_estoi": 0.6446105144381584,
+  "minimum_stoi": null,
+  "maximum_stoi_drop": null,
+  "training_capture_note": "The bounded p95 searches were captured before optional max/statistic and STOI-guard interfaces were finalized. Active p95/no-STOI-guard search semantics did not change. All exported models have now been independently decoded and rescored under the final frozen sources without additional search.",
+  "capture_completion_source_hashes": {
+    "tools/compress-hq4-q3-tracks.py": "3a0fd48df4abb810d14773820ebb0bb96dcb8e46db90c35596dc54d483c5b854",
+    "ATtiny13A/Sound/codec/q3_track_rate.py": "1a7a8712ecfd7f4e57ae44634ca17f2eb9defca562afaf3b32a729577c8ee826",
+    "ATtiny13A/Sound/codec/harmonic_tracks.py": "b93040a6bfe174c145152f1a9fc03d9039192b81da0b2f8ace3e2a7c70f8b5b5",
+    "ATtiny13A/Sound/codec/hq4_q3.py": "9119a1defb855c38d67d19eb85c333b64c2b843f2cb9a7d3b7345a7ce837c22d",
+    "ATtiny13A/Sound/codec/hq4_core.py": "936c21384042c24be9525ff7cb73b6e1421c852b4a63ea393e318cc60e9bd466",
+    "ATtiny13A/Sound/codec/spectrogram_objective.py": "66fd5c3d5e3a0716d3c18269a261a70ad9165575eaf33acb5c7ee166a8d4e927"
+  },
+  "final_evaluation_source_sha256_normalized_lf": {
+    "tools/compress-hq4-q3-tracks.py": "341c9c0a5dac2ae34dcfbcda4731a01197e12aabda34dd983560c40c05e7f1f0",
+    "ATtiny13A/Sound/codec/q3_track_rate.py": "fa33560507709da8b776545af58df9fc33b4a948dc828d1c1bf0a23b1014a07f",
+    "ATtiny13A/Sound/codec/harmonic_tracks.py": "b93040a6bfe174c145152f1a9fc03d9039192b81da0b2f8ace3e2a7c70f8b5b5",
+    "ATtiny13A/Sound/codec/hq4_q3.py": "9119a1defb855c38d67d19eb85c333b64c2b843f2cb9a7d3b7345a7ce837c22d",
+    "ATtiny13A/Sound/codec/hq4_core.py": "936c21384042c24be9525ff7cb73b6e1421c852b4a63ea393e318cc60e9bd466",
+    "ATtiny13A/Sound/codec/spectrogram_objective.py": "66fd5c3d5e3a0716d3c18269a261a70ad9165575eaf33acb5c7ee166a8d4e927"
+  },
+  "final_evaluation_source_commit": "5db48d4",
+  "retention_note": "Full per-operation tracking trajectories/audio/binaries remain under ignored build; retained operation histories include evaluation, operation and actual byte count only.",
+  "final_evaluation_verified": true
+}

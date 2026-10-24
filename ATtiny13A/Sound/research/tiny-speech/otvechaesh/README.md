@@ -1,0 +1,94 @@
+# «Что ж ты не отвечаешь?» — 978 байт Flash и 64 байта EEPROM
+
+Итоговая модель `model.json`: 7936 отсчётов при 7500 Гц, длительность
+1,05813 с. Используется существующее ассемблерное tiny-ядро: восемь периодов
+по 32 четырёхбитных коэффициента, фазовая интерполяция, плавные переходы кадров,
+белый высокочастотный остаток и целочисленный DC-блокиратор со сдвигом 7.
+
+| Вариант | STOI | eSTOI | Ошибка лог-спектра | Спектральный loss |
+| --- | ---: | ---: | ---: | ---: |
+| Прежний HQ4 | 0,819056 | 0,704127 | 1,192157 | 1,097293 |
+| **Новая tiny-модель** | **0,840897** | **0,705256** | **0,486795** | **0,451272** |
+
+STOI вырос, спектральная ошибка заметно уменьшилась; eSTOI практически сохранился.
+Это объективные измерения одной фразы, а не гарантия субъективной разборчивости
+для любой речи. WAV для сравнения позволяет отдельно оценить результат на слух.
+До и после DC-блокиратора нет отсечения. Среднее отклонение составляет 0,00718
+единицы восьмибитного PCM, максимальное среднее окна 64 отсчёта — 2,5.
+
+## Подбор и происхождение
+
+Начало — сохранённый `period-balanced/otvechaesh/model.json`.
+`prepare.py` проверяет SHA-256 канонического оригинала, переводит модель в точный
+целочисленный декодер, исключает отдельное неголосовое возбуждение основной
+волны и перебирает все 16 уровней белого остатка во всех 124 кадрах. Всего
+1984 предложения. Затем общий `train-tiny-speech.py` автоматически сокращает
+словарь полным перебором замен и выполняет 6000 предложений совместной настройки
+кадров, фазы и коэффициентов периодов. Каждая оценка использует действительный
+целочисленный PCM с насыщением и DC-фильтром. Ручных исправлений отдельных
+фонем или коэффициентов нет.
+
+Ограничения финального поиска: STOI не ниже 0,77; ошибка лог-спектра не выше
+0,60; пик не выше 0,95; отсутствие отсечения; фактические Flash-данные не больше
+296 байт. Минимизировалось `spectral_loss + 8*(1-STOI)`. Контрольный словарь
+из девяти периодов после 4000 предложений дал STOI 0,839916, log-ошибку 0,497765
+и 282 байта Flash-данных. Итоговый вариант с восемью периодами оказался лучше
+по обоим показателям и меньше, поэтому промежуточная девятипериодная модель
+не сохранена. Поиск локальный, глобальный оптимум не заявляется.
+
+`training.json` сохраняет настройки, историю улучшений, исходные хеши,
+подготовительный этап и контрольное сравнение. Во время этой серии общий CLI
+получил необязательные параметры степени сжатия; эта серия выполнялась в прежнем
+режиме с явно заданными `--words` и жёстким размером Flash-данных. Исходный хеш
+CLI сохранён в отчёте обучения; свежие хеши проверяющих исходников находятся
+в `quality.json`.
+
+## Полная проверка AVR
+
+`build.json` подтверждает полный образ **978 байт Flash**: 718 байт машинного
+кода, 64 байта голосового словаря в Flash и 196 байт параметров. Другие 64 байта
+словаря размещены в EEPROM. При воспроизведении EEPROM только читается.
+Остаётся 46 байт Flash. Образы Flash и EEPROM программируются отдельной парой.
+
+Проверены 23808 отсчётов за три повтора в JS, оптимизированном и неоптимизированном
+WASM. Все байты совпали с независимой целочисленной спецификацией; пропусков
+переполнений и отсчётов нет. Полная подготовка отсчёта, включая разбор кадров,
+прерывания и EEPROM, занимает до 1121 такта при бюджете 1280; запас 159 тактов.
+Максимальный измеренный диапазон SRAM со стеком — 22 байта. Это проверка
+эмулятора; физический ATtiny13A пока не проверялся.
+
+## Повторение и прослушивание
+
+```powershell
+python ATtiny13A/Sound/research/tiny-speech/otvechaesh/prepare.py --reference C:/Work/MicroMusic/build/hq4-preview/otvechaesh/original.wav --output build/tiny-replay/otvechaesh/prepare
+python tools/train-tiny-speech.py --model build/tiny-replay/otvechaesh/prepare/prepared-model.json --reference C:/Work/MicroMusic/build/hq4-preview/otvechaesh/original.wav --clip otvechaesh --output build/tiny-replay/otvechaesh/eight --words 8 --proposals 6000 --stoi-floor .77 --spectral-ceiling .60 --max-flash-data-bytes 296 --seed 23109
+python tools/report-tiny-speech.py --clip otvechaesh --model ATtiny13A/Sound/research/tiny-speech/otvechaesh/model.json --reference C:/Work/MicroMusic/build/hq4-preview/otvechaesh/original.wav --output build/tiny-speech/otvechaesh/review
+python tools/build-tiny-speech.py --model ATtiny13A/Sound/research/tiny-speech/otvechaesh/model.json --output build/tiny-speech/otvechaesh/firmware
+python tools/render-tiny-listening.py --clip otvechaesh --reference C:/Work/MicroMusic/build/hq4-preview/otvechaesh/original.wav --firmware build/tiny-speech/otvechaesh/firmware --output build/tiny-speech/listening/otvechaesh
+```
+
+Все бинарники, WAV и контрольные точки остаются в игнорируемом `build/`.
+`listening.json` связывает файлы прослушивания с хешами оригинала и реально
+исполняемых образов AVR:
+
+- `01-original.wav` — канонический оригинал, скопированный побайтно;
+- `02-before-hq4.wav` — точные восьмибитные отсчёты прежней прошивки HQ4;
+- `03-after-tiny.wav` — точные восьмибитные отсчёты новой прошивки;
+- `04-comparison-matched.wav` — оригинал, до, после с одинаковой согласованной
+  громкостью и паузами 0,3 с.
+
+Для прежней прошивки сверены JS и WASM на трёх повторах, а первый повтор совпал
+с численной моделью HQ4. Для новой записи использованы отсчёты полной проверенной
+сборки, включая EEPROM и непрерывное состояние DC между повторами.
+
+## Public one-shot firmware
+
+The retained `build.json` above describes the historical looping image. The public
+player uses the 1024-byte Flash, 64-byte EEPROM one-shot image verified in
+[`speech-showcase/otvechaesh/build.json`](../../speech-showcase/otvechaesh/build.json).
+Its complete first phrase matches the retained model after the constant firmware
+gain, with fractional error feedback; PWM stays at 128 afterward. Measurements
+are in [`output-levels.json`](../../speech-showcase/output-levels.json).
+Build it with `python tools/build-tiny-speech.py --model
+ATtiny13A/Sound/research/tiny-speech/otvechaesh/model.json --output build/otvechaesh
+--play-once --maximize-output`.

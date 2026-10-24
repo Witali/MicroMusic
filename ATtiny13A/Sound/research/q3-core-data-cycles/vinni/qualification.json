@@ -1,0 +1,34 @@
+{
+  "schema": "q3-core-data-post-qualification-v1",
+  "dataopt_report_sha256": "8873dd800646db027be0f45f87897b0a0bedb259a8f7fee442bb8b74f0fa6790",
+  "target_met": false,
+  "cycles": [
+    {
+      "cycle": "cycle-01",
+      "build_report": "cycle-01/avr/build.json",
+      "build_report_sha256": "3b777c83a897bc2ddfa5e2518447f9c1ffedf905b9442e6477cb870b17288096",
+      "model_sha256": "6fe7c3531813755cc82e1b8fcfc9324ff8a0825934e8588d1d43a6f7bd808ead",
+      "stream_sha256": "5eba2ff2a347115ef4642199780d0d40504c7e61fe34875e488f53c1375bff69",
+      "avr_verified": true,
+      "hardware_tested": false,
+      "flash_bytes": 994,
+      "eeprom_bytes": 64,
+      "image_sha256": "b7d53d8fe07410e6b2fb97b7bc834b38b3e73ad5d27701e0086809b718dafda8",
+      "minimum_slack_cycles": 330
+    },
+    {
+      "cycle": "cycle-02",
+      "build_report": "cycle-02/avr/build.json",
+      "build_report_sha256": "0d79e464574a38b4412888c7a04fccee4ce057d91b744c2788ff4f22f177e5ad",
+      "model_sha256": "efb066fa391577821f6b4503391b4382361facf1e0c723c98526ccdd1184df73",
+      "stream_sha256": "f37eed5eaa1d44501b6d80b1fe80cd6edf415be276e21c738e7e95b69d84b6f3",
+      "avr_verified": true,
+      "hardware_tested": false,
+      "flash_bytes": 1024,
+      "eeprom_bytes": 64,
+      "image_sha256": "d66db77d9b80befe34339a372c5a31c3efd64dcb3d577d615bc0d97e5ce82f97",
+      "minimum_slack_cycles": 299
+    }
+  ],
+  "note": "Qualification follows unchanged DATAOPT captures; original capture flags are chronological, not rewritten."
+}

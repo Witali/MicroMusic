@@ -1,0 +1,88 @@
+{
+  "schema": "q4-selective-pattern-study-v1",
+  "initial": {
+    "stoi": 0.7283573623832004,
+    "spectrogram_loss": 0.5442092854432262,
+    "fine_log_error": 0.5152439171468872,
+    "envelope_error": 0.6608555730585055,
+    "unsupported_energy": 0.2415759536087881,
+    "missing_energy": 0.23848451074491747,
+    "peak_signed": 111,
+    "raw_mean": 0.07774335488505747,
+    "wrap_counts": [
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "final": {
+    "stoi": 0.8106116371440416,
+    "spectrogram_loss": 0.5026982510484597,
+    "fine_log_error": 0.48832683434019264,
+    "envelope_error": 0.5960218818366181,
+    "unsupported_energy": 0.20522722746424008,
+    "missing_energy": 0.18785013554879726,
+    "peak_signed": 115,
+    "raw_mean": 0.08628091044809627,
+    "wrap_counts": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "guards_pass": true,
+    "estoi": 0.5860357801646376,
+    "harmonic_metrics": {
+      "harmonic_track_loss": 0.8631649375375955,
+      "frequency_trajectory_error": 0.982412729240622,
+      "level_error": 2.004021795515759,
+      "missing_reference_energy": 0.22595374255139936,
+      "extra_candidate_energy": 0.26279753837852426,
+      "weighted_match_rate": 0.7740462574486017,
+      "frequency_error_cents": 52.88556049002805,
+      "frequency_error_hz": 10.178309704774161,
+      "level_error_db": 6.0120653865472855,
+      "frequency_error_p95_cents": 156.68503165791222,
+      "frequency_error_p95_hz": 32.98179690890538,
+      "level_error_p95_db": 11.442827778726027,
+      "continuity_break_rate": 0.2262073935605487
+    },
+    "pcm_sha256": "e95039b1fb03cf1d444561e6af3333f471a416c41dd84c0de884570e9da43d90",
+    "avr_verified": false,
+    "hardware_tested": false
+  },
+  "table_bytes": 64,
+  "precision_bytes": 33,
+  "stream_bytes": 429,
+  "data_bytes": 526,
+  "accepted": {
+    "labels": 120,
+    "heads": 75,
+    "tails": 6,
+    "gains": 31
+  },
+  "gain_seed_scale": 1.0,
+  "raw_guard_diagnostics": {
+    "wrap_counts": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "peak": 115,
+    "maximum_step": 37
+  },
+  "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+  "control_sha256": "3d030c6eebb9fae1eb94d42a16fbd29b203ae76fc5c4b99b95f8a2b93a110626",
+  "trials": 1500,
+  "exact_evaluations": 4270,
+  "elapsed_seconds": 82.39423879992682,
+  "source_sha256_normalized_lf": {
+    "tools/probe-q4-selective-patterns.py": "3c5e755bc8467142f92eae686801e20bd7ba0b9edd53e25078665dd807ef455e",
+    "tools/probe-q4-voice-patterns.py": "fa8c68be52e67f9eef15d1c2df3dc9fb3af253954300d1a985ff50a00e2d4320",
+    "ATtiny13A/Sound/codec/q4_voice_patterns.py": "33e9af638de14012da2959354885961283020d1d433c548aa8d2eeb0c33d385a"
+  },
+  "avr_verified": false,
+  "policy": "Exact packed PC study; excludes decoder, EOF and waveform storage; no Flash-fit claim"
+}

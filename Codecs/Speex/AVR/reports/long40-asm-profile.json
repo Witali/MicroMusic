@@ -1,0 +1,183 @@
+{
+  "scope": "Measured frame-command intervals; mailbox included, startup/reset/ISR excluded.",
+  "frames": 88,
+  "streams": 11,
+  "binarySha256": "fe3f4c24d682009d663bee6929bc5903fb660f1d39a578ab98067ea202c0de63",
+  "totalFrameCycles": 8915172,
+  "functions": [
+    {
+      "name": "speex_avr_iir40",
+      "cycles": 5122253,
+      "cyclesPerFrame": 58207.42,
+      "percent": 57.455
+    },
+    {
+      "name": "speex_avr_long_innovation40",
+      "cycles": 1421926,
+      "cyclesPerFrame": 16158.25,
+      "percent": 15.95
+    },
+    {
+      "name": "nb_decode.constprop.1",
+      "cycles": 602311,
+      "cyclesPerFrame": 6844.443,
+      "percent": 6.756
+    },
+    {
+      "name": "lsp_angle",
+      "cycles": 420025,
+      "cyclesPerFrame": 4773.011,
+      "percent": 4.711
+    },
+    {
+      "name": "lsp_to_lpc.constprop.5",
+      "cycles": 218790,
+      "cyclesPerFrame": 2486.25,
+      "percent": 2.454
+    },
+    {
+      "name": "speex_avr_long_innovation10",
+      "cycles": 192664,
+      "cyclesPerFrame": 2189.364,
+      "percent": 2.161
+    },
+    {
+      "name": "speex_avr_lsp_mul_q14",
+      "cycles": 152100,
+      "cyclesPerFrame": 1728.409,
+      "percent": 1.706
+    },
+    {
+      "name": "speex_avr_zero_innovation10",
+      "cycles": 116548,
+      "cyclesPerFrame": 1324.409,
+      "percent": 1.307
+    },
+    {
+      "name": "__epilogue_restores__",
+      "cycles": 79884,
+      "cyclesPerFrame": 907.773,
+      "percent": 0.896
+    },
+    {
+      "name": "lsp_stage4",
+      "cycles": 72930,
+      "cyclesPerFrame": 828.75,
+      "percent": 0.818
+    },
+    {
+      "name": "__prologue_saves__",
+      "cycles": 64476,
+      "cyclesPerFrame": 732.682,
+      "percent": 0.723
+    },
+    {
+      "name": "speex_avr_p1_mul_q14",
+      "cycles": 62010,
+      "cyclesPerFrame": 704.659,
+      "percent": 0.696
+    },
+    {
+      "name": "lsp_stage3",
+      "cycles": 61230,
+      "cyclesPerFrame": 695.795,
+      "percent": 0.687
+    },
+    {
+      "name": "speex_nb3_unpack_indices",
+      "cycles": 57024,
+      "cyclesPerFrame": 648,
+      "percent": 0.64
+    },
+    {
+      "name": "lsp_stage2",
+      "cycles": 49530,
+      "cyclesPerFrame": 562.841,
+      "percent": 0.556
+    },
+    {
+      "name": "lsp_unquant_lbr.constprop.2",
+      "cycles": 43320,
+      "cyclesPerFrame": 492.273,
+      "percent": 0.486
+    },
+    {
+      "name": "lsp_first",
+      "cycles": 36270,
+      "cyclesPerFrame": 412.159,
+      "percent": 0.407
+    },
+    {
+      "name": "speex_nb3_long_innovation",
+      "cycles": 34188,
+      "cyclesPerFrame": 388.5,
+      "percent": 0.383
+    },
+    {
+      "name": "speex_nb3_short_innovation",
+      "cycles": 26417,
+      "cyclesPerFrame": 300.193,
+      "percent": 0.296
+    },
+    {
+      "name": "speex_bits_unpack_unsigned",
+      "cycles": 25821,
+      "cyclesPerFrame": 293.42,
+      "percent": 0.29
+    },
+    {
+      "name": "speex_bits_unpack_unsigned.constprop.3",
+      "cycles": 11880,
+      "cyclesPerFrame": 135,
+      "percent": 0.133
+    },
+    {
+      "name": "main",
+      "cycles": 10065,
+      "cyclesPerFrame": 114.375,
+      "percent": 0.113
+    },
+    {
+      "name": "__umulhisi3",
+      "cycles": 8580,
+      "cyclesPerFrame": 97.5,
+      "percent": 0.096
+    },
+    {
+      "name": "speex_avr_long_innovation1",
+      "cycles": 7134,
+      "cyclesPerFrame": 81.068,
+      "percent": 0.08
+    },
+    {
+      "name": "__muluhisi3",
+      "cycles": 7020,
+      "cyclesPerFrame": 79.773,
+      "percent": 0.079
+    },
+    {
+      "name": "speex_avr_long_innovation_n",
+      "cycles": 6160,
+      "cyclesPerFrame": 70,
+      "percent": 0.069
+    },
+    {
+      "name": "__mulohisi3",
+      "cycles": 3510,
+      "cyclesPerFrame": 39.886,
+      "percent": 0.039
+    },
+    {
+      "name": "iir_mem16.constprop.6",
+      "cycles": 1056,
+      "cyclesPerFrame": 12,
+      "percent": 0.012
+    },
+    {
+      "name": "speex_avr_zero_innovation_n",
+      "cycles": 50,
+      "cyclesPerFrame": 0.568,
+      "percent": 0.001
+    }
+  ]
+}

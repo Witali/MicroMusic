@@ -1,0 +1,177 @@
+{
+  "scope": "Measured frame-command intervals; mailbox included, startup/reset/ISR excluded.",
+  "frames": 88,
+  "streams": 11,
+  "binarySha256": "8b2382307d5bada790016c4744d513ec82d17c55471f67024fd8229ed495230d",
+  "totalFrameCycles": 9048102,
+  "functions": [
+    {
+      "name": "speex_avr_iir40",
+      "cycles": 5122253,
+      "cyclesPerFrame": 58207.42,
+      "percent": 56.611
+    },
+    {
+      "name": "speex_avr_long_innovation10",
+      "cycles": 1708245,
+      "cyclesPerFrame": 19411.875,
+      "percent": 18.88
+    },
+    {
+      "name": "nb_decode.constprop.1",
+      "cycles": 602311,
+      "cyclesPerFrame": 6844.443,
+      "percent": 6.657
+    },
+    {
+      "name": "lsp_angle",
+      "cycles": 420025,
+      "cyclesPerFrame": 4773.011,
+      "percent": 4.642
+    },
+    {
+      "name": "lsp_to_lpc.constprop.5",
+      "cycles": 218790,
+      "cyclesPerFrame": 2486.25,
+      "percent": 2.418
+    },
+    {
+      "name": "speex_avr_lsp_mul_q14",
+      "cycles": 152100,
+      "cyclesPerFrame": 1728.409,
+      "percent": 1.681
+    },
+    {
+      "name": "speex_avr_zero_innovation10",
+      "cycles": 116548,
+      "cyclesPerFrame": 1324.409,
+      "percent": 1.288
+    },
+    {
+      "name": "__epilogue_restores__",
+      "cycles": 92316,
+      "cyclesPerFrame": 1049.045,
+      "percent": 1.02
+    },
+    {
+      "name": "__prologue_saves__",
+      "cycles": 76649,
+      "cyclesPerFrame": 871.011,
+      "percent": 0.847
+    },
+    {
+      "name": "lsp_stage4",
+      "cycles": 72930,
+      "cyclesPerFrame": 828.75,
+      "percent": 0.806
+    },
+    {
+      "name": "speex_avr_p1_mul_q14",
+      "cycles": 62010,
+      "cyclesPerFrame": 704.659,
+      "percent": 0.685
+    },
+    {
+      "name": "lsp_stage3",
+      "cycles": 61230,
+      "cyclesPerFrame": 695.795,
+      "percent": 0.677
+    },
+    {
+      "name": "speex_nb3_unpack_indices",
+      "cycles": 57024,
+      "cyclesPerFrame": 648,
+      "percent": 0.63
+    },
+    {
+      "name": "lsp_stage2",
+      "cycles": 49530,
+      "cyclesPerFrame": 562.841,
+      "percent": 0.547
+    },
+    {
+      "name": "speex_nb3_long_innovation",
+      "cycles": 49210,
+      "cyclesPerFrame": 559.205,
+      "percent": 0.544
+    },
+    {
+      "name": "lsp_unquant_lbr.constprop.2",
+      "cycles": 43320,
+      "cyclesPerFrame": 492.273,
+      "percent": 0.479
+    },
+    {
+      "name": "lsp_first",
+      "cycles": 36270,
+      "cyclesPerFrame": 412.159,
+      "percent": 0.401
+    },
+    {
+      "name": "speex_nb3_short_innovation",
+      "cycles": 26417,
+      "cyclesPerFrame": 300.193,
+      "percent": 0.292
+    },
+    {
+      "name": "speex_bits_unpack_unsigned",
+      "cycles": 25821,
+      "cyclesPerFrame": 293.42,
+      "percent": 0.285
+    },
+    {
+      "name": "speex_bits_unpack_unsigned.constprop.3",
+      "cycles": 11880,
+      "cyclesPerFrame": 135,
+      "percent": 0.131
+    },
+    {
+      "name": "main",
+      "cycles": 10065,
+      "cyclesPerFrame": 114.375,
+      "percent": 0.111
+    },
+    {
+      "name": "__umulhisi3",
+      "cycles": 8580,
+      "cyclesPerFrame": 97.5,
+      "percent": 0.095
+    },
+    {
+      "name": "speex_avr_long_innovation1",
+      "cycles": 7134,
+      "cyclesPerFrame": 81.068,
+      "percent": 0.079
+    },
+    {
+      "name": "__muluhisi3",
+      "cycles": 7020,
+      "cyclesPerFrame": 79.773,
+      "percent": 0.078
+    },
+    {
+      "name": "speex_avr_long_innovation_n",
+      "cycles": 6160,
+      "cyclesPerFrame": 70,
+      "percent": 0.068
+    },
+    {
+      "name": "__mulohisi3",
+      "cycles": 3510,
+      "cyclesPerFrame": 39.886,
+      "percent": 0.039
+    },
+    {
+      "name": "iir_mem16.constprop.6",
+      "cycles": 704,
+      "cyclesPerFrame": 8,
+      "percent": 0.008
+    },
+    {
+      "name": "speex_avr_zero_innovation_n",
+      "cycles": 50,
+      "cyclesPerFrame": 0.568,
+      "percent": 0.001
+    }
+  ]
+}

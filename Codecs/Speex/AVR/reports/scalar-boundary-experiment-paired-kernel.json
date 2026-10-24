@@ -1,0 +1,120 @@
+{
+  "mcu": "ATmega328P",
+  "simulator": "avr8js 0.21.1",
+  "compiler": "AVR GCC 7.3.0 mixed Os/O2, LTO, fwrapv",
+  "binarySha256": "c9f525156d60df0ccbf6f1b125801faf5e2f271e83020756a1223e2913737b81",
+  "blocks": 67328,
+  "fullRun": false,
+  "fixedSamplesPerBackend": 0,
+  "scalarSamples": 67328,
+  "tableGainTriples": 32,
+  "scales": 64,
+  "shapeMin": -128,
+  "shapeMax": 127,
+  "historyMin": -32768,
+  "historyMax": 32767,
+  "fullTableShapeScaleCases": 53248,
+  "clampBoundaryBlocks": 9984,
+  "randomGainBlocks": 4096,
+  "outputClippedSamples": 13508,
+  "pitchClippedSamples": 41722,
+  "exact": true,
+  "gainsPreserved": true,
+  "historyPreserved": true,
+  "guardsIntact": true,
+  "calleeSavedRegistersPreserved": true,
+  "zeroRegisterRestored": true,
+  "asmKernelCycles": {
+    "min": null,
+    "max": 0,
+    "calls": 0
+  },
+  "cKernelCycles": {
+    "min": null,
+    "max": 0,
+    "calls": 0
+  },
+  "packedKernelCycles": {
+    "min": null,
+    "max": 0,
+    "calls": 0
+  },
+  "variableAsmKernelCycles": {
+    "min": 227,
+    "max": 242,
+    "calls": 67328
+  },
+  "variableCKernelCycles": {
+    "min": null,
+    "max": 0,
+    "calls": 0
+  },
+  "variableCounts": [
+    {
+      "count": 0,
+      "calls": 0,
+      "samples": 0
+    },
+    {
+      "count": 1,
+      "calls": 67328,
+      "samples": 67328
+    },
+    {
+      "count": 2,
+      "calls": 0,
+      "samples": 0
+    },
+    {
+      "count": 3,
+      "calls": 0,
+      "samples": 0
+    },
+    {
+      "count": 4,
+      "calls": 0,
+      "samples": 0
+    },
+    {
+      "count": 5,
+      "calls": 0,
+      "samples": 0
+    },
+    {
+      "count": 6,
+      "calls": 0,
+      "samples": 0
+    },
+    {
+      "count": 7,
+      "calls": 0,
+      "samples": 0
+    },
+    {
+      "count": 8,
+      "calls": 0,
+      "samples": 0
+    },
+    {
+      "count": 9,
+      "calls": 0,
+      "samples": 0
+    },
+    {
+      "count": 10,
+      "calls": 0,
+      "samples": 0
+    }
+  ],
+  "scalarAsmKernelCycles": {
+    "min": 190,
+    "max": 205,
+    "calls": 67328
+  },
+  "scalarVsRuntimeCyclesSaved": [
+    37
+  ],
+  "variableSamplesPerBackend": 67328,
+  "includesInterrupts": false,
+  "physicalBoardTested": false
+}

@@ -10,9 +10,9 @@ const wasmURL=pathToFileURL(target).href;
 registerHooks({
   load(url,context,nextLoad){
     const loaded=nextLoad(url,context);
-    if(url!==bridgeURL)return loaded;
+    if(url!==bridgeURL&&!url.startsWith(bridgeURL+'?'))return loaded;
     const source=typeof loaded.source==='string'?loaded.source:new TextDecoder().decode(loaded.source);
-    const anchor="const url = new URL('../wasm/avr.wasm?v=20261023-ocr0a', import.meta.url);";
+    const anchor="const url = new URL('../wasm/avr.wasm?v=20261024-common-avr', import.meta.url);";
     if(source.split(anchor).length!==2)throw new Error('Native bridge changed: review candidate test loader');
     return {...loaded,source:source.replace(anchor,'const url = new URL('+JSON.stringify(wasmURL)+');')+
       '\nexport const __testWasmModuleURL = url.href;\n'};

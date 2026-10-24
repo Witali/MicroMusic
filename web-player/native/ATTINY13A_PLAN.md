@@ -14,6 +14,18 @@ the device bus and peripheral scheduler, retranslates modified Flash, and
 captures physical PWM output without JavaScript callbacks per instruction or
 edge. These are the starting point, not a claim of complete silicon fidelity.
 
+Integration checkpoint, 2026-10-24: merged main's common ATtiny13A/ATtiny88
+music core with the generated and physical ATtiny13A paths. All native paths
+share the profile-aware state wrapper; physical board defaults stay in the
+ATtiny13A adapter, using pinned Microchip definitions. Historical package
+layouts and direct native phase fixtures remain covered. The main stereo
+image is byte-identical after symbolic register regeneration. All 1632 Node
+checks pass, including device switching and the two additional tool suites;
+the assembler's two focused Python checks also pass. See the
+[integration record](../reports/main-transpiler-integration-20261024.json).
+ATtiny88 transpilation/full peripherals and performance/hardware acceptance
+remain separate work; this merge does not close another item in the 21/30 plan.
+
 ## 1 Instruction effects within CPU cycles
 
 - [x] Audit the documented access timing of PUSH, POP, RCALL, ICALL, RET,

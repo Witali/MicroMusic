@@ -1,0 +1,42 @@
+{
+  "schema": "micromusic-mobile-original-audio-verification-v1",
+  "scope": "Use standard-rate PCM listening copies for original speech playback; preserve canonical source WAVs and download links.",
+  "finding": {
+    "publishedCanonicalSampleRate": 7500,
+    "publishedFilesAvailable": true,
+    "publishedPlaybackPassedOnDesktop": true,
+    "suspectedMobileCause": "Nonstandard sample rate handled by the mobile platform media decoder.",
+    "physicalMobileReproductionPerformed": false
+  },
+  "assets": {
+    "manifest": "../audio/originals/playback/manifest.json",
+    "sampleRate": 44100,
+    "encoding": "PCM signed 16-bit little endian",
+    "channels": 1,
+    "canonicalHashesUnchanged": true,
+    "maximumDurationDifference": "One output sample (1/44100 second)",
+    "waveformCheck": "Every 25th canonical sample matches every 147th playback sample within one signed PCM unit, excluding boundaries."
+  },
+  "checks": {
+    "command": "node --test tests/original-audio.test.mjs tests/play-once.test.mjs tests/hq4-catalog.test.mjs",
+    "testsPassed": 30,
+    "testsFailed": 0,
+    "assetCheck": "python tools/prepare-original-audio.py --check",
+    "catalogRebuildCheck": "python tools/build-hq4-catalog.py --check --avr-bin <installed-avr-bin>",
+    "assetCheckPassed": true,
+    "catalogRebuildCheckPassed": true
+  },
+  "browser": {
+    "engine": "Microsoft Edge 155.0.4283.62, headless on Windows",
+    "viewport": {"width": 390, "height": 844, "isMobile": true, "hasTouch": true},
+    "physicalMobileDevice": false,
+    "audibleOutputChecked": false,
+    "actualMediaPlaybackChecked": true,
+    "allThreePlaybackUrlsReturned200AndAudioWav": true,
+    "allThreeRecordingsAdvancedMediaTime": true,
+    "repeatAndNaturalCompletionPassed": true,
+    "phraseSelectionPassed": true,
+    "exclusiveFirmwarePlaybackPassed": true,
+    "pageErrors": []
+  }
+}

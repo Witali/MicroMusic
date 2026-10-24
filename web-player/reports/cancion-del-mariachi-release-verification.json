@@ -1,0 +1,49 @@
+{
+  "image": "cancion-del-mariachi",
+  "flashBytes": 984,
+  "emulatedSeconds": 31.846037604166668,
+  "mixes": 597112,
+  "tailCopies": 260,
+  "bothActiveRenderedPoints": 69632,
+  "flashSha256": "a76ced75829cf9f787c9f4f54225f809cad6ebe86626d954d8e90888ac80c764",
+  "eepromSha256": "b9f3a74d012b9c3c3b7a1944e06a9a7314e4e8ea7413580f6a5931a4c35b85ae",
+  "maxElapsedCycles": 944,
+  "maxActiveCycles": 899,
+  "maxBurst": {
+    "cycles": 944,
+    "active": 899,
+    "sample": 259328
+  },
+  "maxStackBytes": 8,
+  "voiceRamBytes": 25,
+  "pwmRingBytes": 16,
+  "maxRenderElapsedCycles": 450,
+  "maxRenderActiveCycles": 420,
+  "globalRamBytes": 0,
+  "sramUsedWorstCase": 49,
+  "sramHighWaterReservedBytes": 56,
+  "isrCycles": 15,
+  "lostTimerEvents": 0,
+  "lostWorkEvents": 0,
+  "ringUnderruns": 0,
+  "minQueuedPwmBytes": 10,
+  "maxQueuedPwmBytes": 14,
+  "mixRange": [
+    -54,
+    47
+  ],
+  "envelopeChecks": 11660,
+  "tailDecayChecks": 1580,
+  "initializerChecks": 275,
+  "commands": 263,
+  "semanticComparison": {
+    "exactCommandBytes": 261,
+    "maximumTimingErrorMs": 14.135163690476475,
+    "allFiveVoicesSilentBeforeRestart": true
+  },
+  "startupEquivalence": {
+    "baselineCommit": "5748f63445e4224d996ac824e0eea2b03a23c9d7",
+    "proof": "web-player/reports/music-startup-verification.json",
+    "method": "Original complete-song audit plus identical CPU/RAM/peripheral state after SEI and identical remaining ROM bytes."
+  }
+}

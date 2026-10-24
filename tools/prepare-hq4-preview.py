@@ -97,6 +97,8 @@ def main():
             'pwmHz': 7500, 'carrierHz': 37500, 'voices': 1,
             'flashSha256': digest(binary), 'flashHex': hex_text, 'source': prefix + 'firmware.hex',
             'preview': prefix + 'hq4.wav', 'reference': prefix + 'original.wav',
+            'audioReferenceId': clip, 'originalAudioUrl': './audio/originals/'+clip+'.wav',
+            'originalAudioSha256': references[clip]['sha256'],
             'originalPlayer': '../build/hq4-preview/chatgpt-player.html',
         })
     (output / 'firmware.json').write_text(json.dumps(catalog, ensure_ascii=False, indent=2) + '\n', encoding='utf-8', newline='\n')

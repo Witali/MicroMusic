@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#101411">
-  <meta name="description" content="Все плееры MicroMusic: музыка ATtiny13A, речь MiniLPC HQ4, Intel 8080 и лаборатории звуковых кодеков.">
+  <meta name="description" content="Все плееры MicroMusic: музыка и речевые кодеки ATtiny13A, Intel 8080 и лаборатории звуковых кодеков.">
   <title>MicroMusic — все плееры</title>
   <link rel="icon" href="web-player/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="site/home.css?v=20261023-stereo">
+  <link rel="stylesheet" href="site/home.css?v=20261023-card">
 </head>
 <body>
   <a class="skip" href="#players">Перейти к плеерам</a>
@@ -31,21 +31,19 @@
           <div class="card-top"><span class="number">01 / МУЗЫКА</span><span class="chip">ATtiny13A</span></div>
           <div class="card-icon" aria-hidden="true"><svg viewBox="0 0 64 48"><path d="M18 34V12l28-5v22M18 18l28-5"/><ellipse cx="12" cy="35" rx="6" ry="4"/><ellipse cx="40" cy="30" rx="6" ry="4"/></svg></div>
           <h3>Музыка в одном<br>килобайте</h3>
-          <p>Пять композиций, моно и стерео, несколько голосов и настоящий AVR-код. Два PWM-выхода, осциллограммы и выбор JS / WASM.</p>
-          <div class="spec"><span>1 КБ Flash</span><span>Моно / стерео</span></div>
+          <p>Шесть композиций, несколько голосов и настоящий AVR-код. Общий плеер с осциллограммой и выбором JS / WASM.</p>
+          <div class="spec"><span>1 КБ Flash</span><span>6 композиций</span></div>
           <a class="open" href="web-player/">Открыть музыкальный плеер <span aria-hidden="true">↗</span></a>
-          <a class="open stereo-open" href="web-player/?firmware=lumiere-stereo">Слушать стерео · Люмьер <span aria-hidden="true">↗</span></a>
-          <div class="examples firmware-downloads" aria-label="Скачать стереопрошивку"><a href="ATtiny13A/Music/variants/lumiere-stereo/synth.hex" download="attiny13a-lumiere-stereo.hex">↓ Стерео Flash HEX</a><a href="ATtiny13A/Music/variants/lumiere-stereo/eeprom.hex" download="attiny13a-lumiere-stereo-eeprom.hex">↓ EEPROM</a></div>
-          <div class="examples" aria-label="Открыть композицию"><a href="web-player/?firmware=rhythmic">Люмьер</a><a href="web-player/?firmware=alicia">Алисия</a><a href="web-player/?firmware=turkish-march">Турецкий марш</a><a href="web-player/?firmware=children">Children</a><a href="web-player/?firmware=greensleeves">Greensleeves</a></div>
+          <div class="examples" aria-label="Открыть композицию"><a href="web-player/?firmware=rhythmic">Люмьер</a><a href="web-player/?firmware=alicia">Алисия</a><a href="web-player/?firmware=turkish-march">Турецкий марш</a><a href="web-player/?firmware=children">Children</a><a href="web-player/?firmware=greensleeves">Greensleeves</a><a href="web-player/?firmware=cancion-del-mariachi-sparse" title="Минута музыки: две гитары, бас-барабан и хай-хэт">Canción del Mariachi</a></div>
         </article>
         <article class="player player-speech">
           <div class="card-top"><span class="number">02 / РЕЧЬ</span><span class="chip">ATtiny13A</span></div>
           <div class="card-icon" aria-hidden="true"><svg viewBox="0 0 64 48"><path d="M5 22v4m7-12v20m8-27v34m8-23v12m8-27v42m8-32v22m8-17v12m7-8v4"/></svg></div>
-          <h3>Голоса<br>MiniLPC HQ4</h3>
-          <p>Три речевые фразы и вариант с максимальным STOI. Те же машинные инструкции, таймер и PWM — теперь для речи.</p>
-          <div class="spec"><span>7,5 кГц</span><span>4 прошивки</span></div>
+          <h3>Речь в одном<br>килобайте</h3>
+          <p>Три речевые фразы, по одному выбранному варианту. Прошивка и оригинальная запись рядом для сравнения.</p>
+          <div class="spec"><span>7,5 кГц</span><span>3 фразы</span></div>
           <a class="open" href="web-player/?collection=hq4">Открыть речевой плеер <span aria-hidden="true">↗</span></a>
-          <div class="examples" aria-label="Открыть речевой пример"><a href="web-player/?collection=hq4&amp;firmware=hq4-chego-auto">Автоподбор</a><a href="web-player/?collection=hq4&amp;firmware=hq4-chego-spectrum">Спектр</a><a href="web-player/?collection=hq4&amp;firmware=hq4-chego-timbre">HQ4-T · новый тембр</a><a href="web-player/?collection=hq4&amp;firmware=hq4-chego">Чего тебе нужно?</a><a href="web-player/?collection=hq4&amp;firmware=hq4-otvechaesh">Что ж ты не отвечаешь?</a><a href="web-player/?collection=hq4&amp;firmware=hq4-vinni">Винни-Пух</a><a href="web-player/?collection=hq4&amp;firmware=hq4-chego_stoi_max">Максимум STOI</a></div>
+          <div class="examples" aria-label="Открыть речевой пример"><a href="web-player/?collection=hq4&amp;firmware=hq4-chego-tiny">Чего тебе нужно?</a><a href="web-player/?collection=hq4&amp;firmware=hq4-otvechaesh-tiny">Что ж ты не отвечаешь?</a><a href="web-player/?collection=hq4&amp;firmware=hq4-vinni">Винни-Пух</a></div>
         </article>
         <article class="player player-intel">
           <div class="card-top"><span class="number">03 / ЭМУЛЯТОР</span><span class="chip">Intel 8080</span></div>
@@ -69,7 +67,7 @@
     </section>
 
     <section class="section" aria-label="Автономные музыкальные плееры">
-      <details class="archive"><summary><span>Автономные музыкальные плееры<small>Моно и стерео: отдельные HTML-версии композиций</small></span><span class="expand" aria-hidden="true">+</span></summary><div class="archive-list"><a href="ATtiny13A/Music/variants/lumiere-stereo/player.html">Люмьер · стерео <span>↗</span></a><a href="ATtiny13A/Music/variants/rhythmic/player.html">Люмьер <span>↗</span></a><a href="ATtiny13A/Music/variants/alicia/player.html">Алисия <span>↗</span></a><a href="ATtiny13A/Music/variants/turkish-march/player.html">Турецкий марш <span>↗</span></a><a href="ATtiny13A/Music/variants/children/player.html">Children <span>↗</span></a><a href="ATtiny13A/Music/variants/greensleeves/player.html">Greensleeves <span>↗</span></a></div></details>
+      <details class="archive"><summary><span>Автономные музыкальные плееры<small>Моно и стерео: отдельные HTML-версии композиций</small></span><span class="expand" aria-hidden="true">+</span></summary><div class="archive-list"><a href="ATtiny13A/Music/variants/lumiere-stereo/player.html">Люмьер · стерео <span>↗</span></a><a href="ATtiny13A/Music/variants/rhythmic/player.html">Люмьер <span>↗</span></a><a href="ATtiny13A/Music/variants/alicia/player.html">Алисия <span>↗</span></a><a href="ATtiny13A/Music/variants/turkish-march/player.html">Турецкий марш <span>↗</span></a><a href="ATtiny13A/Music/variants/children/player.html">Children <span>↗</span></a><a href="ATtiny13A/Music/variants/greensleeves/player.html">Greensleeves <span>↗</span></a><a href="ATtiny13A/Music/variants/cancion-del-mariachi-sparse/player.html">Mariachi · соло и редкие аккорды <span>↗</span></a><a href="ATtiny13A/Music/variants/cancion-del-mariachi-polyphonic/player.html">Canción del Mariachi · все ноты <span>↗</span></a><a href="ATtiny13A/Music/variants/cancion-del-mariachi/player.html">Mariachi · бас и ударные <span>↗</span></a></div></details>
     </section>
 
     <section class="section more-projects" aria-labelledby="more-title">

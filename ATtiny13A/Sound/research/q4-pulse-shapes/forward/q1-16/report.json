@@ -1,0 +1,655 @@
+{
+  "schema": "pulse-output-refit-v1",
+  "initial": {
+    "stoi": 0.8845178815561481,
+    "spectrogram_loss": 0.42921631551503037,
+    "fine_log_error": 0.4268678160451768,
+    "envelope_error": 0.49679975072408306,
+    "unsupported_energy": 0.1434572001548736,
+    "missing_energy": 0.13819339438967837,
+    "raw_mean": 0.018037642555675287,
+    "raw_rms": 0.07693394348939707,
+    "peak": 79,
+    "maximum_step": 42,
+    "wrap_counts": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "pcm_sha256": "4cc6676f5a91995be4189f65ae08745b68cacd254732de7c5e4c4ee3e416058e",
+    "estoi": 0.7360079760875029,
+    "harmonic_metrics": {
+      "harmonic_track_loss": 0.748652579905362,
+      "frequency_trajectory_error": 0.8254220417188395,
+      "level_error": 1.8065905769560144,
+      "missing_reference_energy": 0.1758112908698754,
+      "extra_candidate_energy": 0.22141485199080063,
+      "weighted_match_rate": 0.8241887091301252,
+      "frequency_error_cents": 44.456819698061956,
+      "frequency_error_hz": 8.729742746980165,
+      "level_error_db": 5.4197717308680415,
+      "frequency_error_p95_cents": 127.14748321517683,
+      "frequency_error_p95_hz": 20.594932529097832,
+      "level_error_p95_db": 11.940031031442373,
+      "continuity_break_rate": 0.2496226970596535
+    }
+  },
+  "final": {
+    "stoi": 0.8845178815561481,
+    "spectrogram_loss": 0.42921631551503037,
+    "fine_log_error": 0.4268678160451768,
+    "envelope_error": 0.49679975072408306,
+    "unsupported_energy": 0.1434572001548736,
+    "missing_energy": 0.13819339438967837,
+    "raw_mean": 0.018037642555675287,
+    "raw_rms": 0.07693394348939707,
+    "peak": 79,
+    "maximum_step": 42,
+    "wrap_counts": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "pcm_sha256": "4cc6676f5a91995be4189f65ae08745b68cacd254732de7c5e4c4ee3e416058e",
+    "estoi": 0.7360079760875029,
+    "harmonic_metrics": {
+      "harmonic_track_loss": 0.748652579905362,
+      "frequency_trajectory_error": 0.8254220417188395,
+      "level_error": 1.8065905769560144,
+      "missing_reference_energy": 0.1758112908698754,
+      "extra_candidate_energy": 0.22141485199080063,
+      "weighted_match_rate": 0.8241887091301252,
+      "frequency_error_cents": 44.456819698061956,
+      "frequency_error_hz": 8.729742746980165,
+      "level_error_db": 5.4197717308680415,
+      "frequency_error_p95_cents": 127.14748321517683,
+      "frequency_error_p95_hz": 20.594932529097832,
+      "level_error_p95_db": 11.940031031442373,
+      "continuity_break_rate": 0.2496226970596535
+    }
+  },
+  "evaluated": 1215,
+  "valid": 941,
+  "history": [],
+  "best_configuration": null,
+  "solves": [
+    {
+      "target": "waveform",
+      "amplitude": 0.5,
+      "regularization": 0.0001,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "waveform",
+      "amplitude": 0.5,
+      "regularization": 0.001,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "waveform",
+      "amplitude": 0.5,
+      "regularization": 0.01,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "waveform",
+      "amplitude": 0.5,
+      "regularization": 0.1,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "waveform",
+      "amplitude": 0.5,
+      "regularization": 1.0,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "waveform",
+      "amplitude": 0.625,
+      "regularization": 0.0001,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "waveform",
+      "amplitude": 0.625,
+      "regularization": 0.001,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "waveform",
+      "amplitude": 0.625,
+      "regularization": 0.01,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "waveform",
+      "amplitude": 0.625,
+      "regularization": 0.1,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "waveform",
+      "amplitude": 0.625,
+      "regularization": 1.0,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "waveform",
+      "amplitude": 0.75,
+      "regularization": 0.0001,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "waveform",
+      "amplitude": 0.75,
+      "regularization": 0.001,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "waveform",
+      "amplitude": 0.75,
+      "regularization": 0.01,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "waveform",
+      "amplitude": 0.75,
+      "regularization": 0.1,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "waveform",
+      "amplitude": 0.75,
+      "regularization": 1.0,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "waveform",
+      "amplitude": 1.0,
+      "regularization": 0.0001,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "waveform",
+      "amplitude": 1.0,
+      "regularization": 0.001,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "waveform",
+      "amplitude": 1.0,
+      "regularization": 0.01,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "waveform",
+      "amplitude": 1.0,
+      "regularization": 0.1,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "waveform",
+      "amplitude": 1.0,
+      "regularization": 1.0,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-256",
+      "amplitude": 0.5,
+      "regularization": 0.0001,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-256",
+      "amplitude": 0.5,
+      "regularization": 0.001,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-256",
+      "amplitude": 0.5,
+      "regularization": 0.01,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-256",
+      "amplitude": 0.5,
+      "regularization": 0.1,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-256",
+      "amplitude": 0.5,
+      "regularization": 1.0,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-256",
+      "amplitude": 0.625,
+      "regularization": 0.0001,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-256",
+      "amplitude": 0.625,
+      "regularization": 0.001,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-256",
+      "amplitude": 0.625,
+      "regularization": 0.01,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-256",
+      "amplitude": 0.625,
+      "regularization": 0.1,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-256",
+      "amplitude": 0.625,
+      "regularization": 1.0,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-256",
+      "amplitude": 0.75,
+      "regularization": 0.0001,
+      "success": true,
+      "iterations": 127
+    },
+    {
+      "target": "phase-256",
+      "amplitude": 0.75,
+      "regularization": 0.001,
+      "success": true,
+      "iterations": 113
+    },
+    {
+      "target": "phase-256",
+      "amplitude": 0.75,
+      "regularization": 0.01,
+      "success": true,
+      "iterations": 97
+    },
+    {
+      "target": "phase-256",
+      "amplitude": 0.75,
+      "regularization": 0.1,
+      "success": true,
+      "iterations": 41
+    },
+    {
+      "target": "phase-256",
+      "amplitude": 0.75,
+      "regularization": 1.0,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-256",
+      "amplitude": 1.0,
+      "regularization": 0.0001,
+      "success": true,
+      "iterations": 137
+    },
+    {
+      "target": "phase-256",
+      "amplitude": 1.0,
+      "regularization": 0.001,
+      "success": true,
+      "iterations": 134
+    },
+    {
+      "target": "phase-256",
+      "amplitude": 1.0,
+      "regularization": 0.01,
+      "success": true,
+      "iterations": 101
+    },
+    {
+      "target": "phase-256",
+      "amplitude": 1.0,
+      "regularization": 0.1,
+      "success": true,
+      "iterations": 50
+    },
+    {
+      "target": "phase-256",
+      "amplitude": 1.0,
+      "regularization": 1.0,
+      "success": true,
+      "iterations": 19
+    },
+    {
+      "target": "phase-512",
+      "amplitude": 0.5,
+      "regularization": 0.0001,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-512",
+      "amplitude": 0.5,
+      "regularization": 0.001,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-512",
+      "amplitude": 0.5,
+      "regularization": 0.01,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-512",
+      "amplitude": 0.5,
+      "regularization": 0.1,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-512",
+      "amplitude": 0.5,
+      "regularization": 1.0,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-512",
+      "amplitude": 0.625,
+      "regularization": 0.0001,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-512",
+      "amplitude": 0.625,
+      "regularization": 0.001,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-512",
+      "amplitude": 0.625,
+      "regularization": 0.01,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-512",
+      "amplitude": 0.625,
+      "regularization": 0.1,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-512",
+      "amplitude": 0.625,
+      "regularization": 1.0,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-512",
+      "amplitude": 0.75,
+      "regularization": 0.0001,
+      "success": true,
+      "iterations": 116
+    },
+    {
+      "target": "phase-512",
+      "amplitude": 0.75,
+      "regularization": 0.001,
+      "success": true,
+      "iterations": 110
+    },
+    {
+      "target": "phase-512",
+      "amplitude": 0.75,
+      "regularization": 0.01,
+      "success": true,
+      "iterations": 94
+    },
+    {
+      "target": "phase-512",
+      "amplitude": 0.75,
+      "regularization": 0.1,
+      "success": true,
+      "iterations": 36
+    },
+    {
+      "target": "phase-512",
+      "amplitude": 0.75,
+      "regularization": 1.0,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-512",
+      "amplitude": 1.0,
+      "regularization": 0.0001,
+      "success": true,
+      "iterations": 145
+    },
+    {
+      "target": "phase-512",
+      "amplitude": 1.0,
+      "regularization": 0.001,
+      "success": true,
+      "iterations": 133
+    },
+    {
+      "target": "phase-512",
+      "amplitude": 1.0,
+      "regularization": 0.01,
+      "success": true,
+      "iterations": 111
+    },
+    {
+      "target": "phase-512",
+      "amplitude": 1.0,
+      "regularization": 0.1,
+      "success": true,
+      "iterations": 51
+    },
+    {
+      "target": "phase-512",
+      "amplitude": 1.0,
+      "regularization": 1.0,
+      "success": true,
+      "iterations": 17
+    },
+    {
+      "target": "phase-1024",
+      "amplitude": 0.5,
+      "regularization": 0.0001,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-1024",
+      "amplitude": 0.5,
+      "regularization": 0.001,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-1024",
+      "amplitude": 0.5,
+      "regularization": 0.01,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-1024",
+      "amplitude": 0.5,
+      "regularization": 0.1,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-1024",
+      "amplitude": 0.5,
+      "regularization": 1.0,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-1024",
+      "amplitude": 0.625,
+      "regularization": 0.0001,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-1024",
+      "amplitude": 0.625,
+      "regularization": 0.001,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-1024",
+      "amplitude": 0.625,
+      "regularization": 0.01,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-1024",
+      "amplitude": 0.625,
+      "regularization": 0.1,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-1024",
+      "amplitude": 0.625,
+      "regularization": 1.0,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-1024",
+      "amplitude": 0.75,
+      "regularization": 0.0001,
+      "success": true,
+      "iterations": 90
+    },
+    {
+      "target": "phase-1024",
+      "amplitude": 0.75,
+      "regularization": 0.001,
+      "success": true,
+      "iterations": 91
+    },
+    {
+      "target": "phase-1024",
+      "amplitude": 0.75,
+      "regularization": 0.01,
+      "success": true,
+      "iterations": 71
+    },
+    {
+      "target": "phase-1024",
+      "amplitude": 0.75,
+      "regularization": 0.1,
+      "success": true,
+      "iterations": 34
+    },
+    {
+      "target": "phase-1024",
+      "amplitude": 0.75,
+      "regularization": 1.0,
+      "success": true,
+      "iterations": 0
+    },
+    {
+      "target": "phase-1024",
+      "amplitude": 1.0,
+      "regularization": 0.0001,
+      "success": true,
+      "iterations": 130
+    },
+    {
+      "target": "phase-1024",
+      "amplitude": 1.0,
+      "regularization": 0.001,
+      "success": true,
+      "iterations": 128
+    },
+    {
+      "target": "phase-1024",
+      "amplitude": 1.0,
+      "regularization": 0.01,
+      "success": true,
+      "iterations": 98
+    },
+    {
+      "target": "phase-1024",
+      "amplitude": 1.0,
+      "regularization": 0.1,
+      "success": true,
+      "iterations": 50
+    },
+    {
+      "target": "phase-1024",
+      "amplitude": 1.0,
+      "regularization": 1.0,
+      "success": true,
+      "iterations": 17
+    }
+  ],
+  "linear_reconstruction_error": 2.7755575615628914e-16,
+  "variables": 128,
+  "seed": 20261024,
+  "source_sha256_normalized_lf": {
+    "tools/refit-pulse-output.py": "7829340b406b126b90b24d24ce6cf1cb117ce29f7002a4d40b22e684f6987726",
+    "tools/fit-mixed-lattice.py": "533cdad70e0dc5ba3188cc4a6b4f865f94a9bc293c84fb013be5835c926b0efd",
+    "ATtiny13A/Sound/codec/mixed_lattice.py": "0a45a7ed8a3208948d59ef593d9a148ad968ae65bc4439f99f6e84d362472caa",
+    "ATtiny13A/Sound/codec/q4_phase_wave.py": "a1c1e89c47e2e7d3e1c8a5ea51eaf7018d84c9b43ca887d440592e8eb803c3c1"
+  },
+  "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+  "seed_sha256": "f0d9046a589ed8ca33aa42880b00840c226d62bba292fda1166d29547f4651d9",
+  "elapsed_seconds": 25.30427540000528,
+  "avr_implemented": false,
+  "serialized_format": false,
+  "hardware_tested": false,
+  "policy": "Floating responses propose joint waveform moves; unchanged original and exact integer output select the final model"
+}

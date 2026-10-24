@@ -1,44 +1,60 @@
 {
   "image": "rhythmic",
-  "flashBytes": 1012,
-  "emulatedSeconds": 222.10001072916666,
-  "mixes": 4164374,
-  "tailCopies": 405,
-  "bothActiveRenderedPoints": 39936,
-  "maxElapsedCycles": 908,
-  "maxActiveCycles": 863,
-  "maxBurst": {
-    "cycles": 908,
-    "active": 863,
-    "sample": 647168
+  "engine": "lumiere-chords",
+  "flashSha256": "84ef9f4740d8af3329d9f104e65615c84579529b487639ba80c7ab434d9ffb4d",
+  "flashBytes": 1002,
+  "completeSong": {
+    "quarterNotes": 296,
+    "idealSeconds": 222,
+    "attacks": 773,
+    "leadNotes": 309,
+    "pianoNotes": 348,
+    "guitarNotes": 116,
+    "missingAttacks": 0,
+    "phaseChecks": 773
   },
-  "maxStackBytes": 8,
-  "voiceRamBytes": 25,
-  "pwmRingBytes": 16,
-  "maxRenderElapsedCycles": 464,
-  "maxRenderActiveCycles": 434,
-  "globalRamBytes": 0,
-  "sramUsedWorstCase": 49,
-  "sramHighWaterReservedBytes": 56,
-  "isrCycles": 15,
-  "lostTimerEvents": 0,
-  "lostWorkEvents": 0,
-  "ringUnderruns": 0,
-  "minQueuedPwmBytes": 10,
-  "maxQueuedPwmBytes": 14,
-  "mixRange": [
-    -83,
-    69
-  ],
-  "envelopeChecks": 81335,
-  "tailDecayChecks": 4444,
-  "initializerChecks": 544,
-  "commands": 508,
-  "semanticComparison": {
-    "exactCommandBytes": 506,
-    "maximumTimingErrorMs": 21.17874999999185,
-    "allFiveVoicesSilentBeforeRestart": true
+  "voices": {
+    "tonal": 5,
+    "percussion": 1,
+    "maxActiveTonal": 5,
+    "releaseTails": 0
   },
-  "flashSha256": "6a05b147bac66f4781b75f26b0473a60e057bc9c05d039a2676c0843f151dd0b",
-  "eepromSha256": "45ba4c476cf214ef25d91494c6fa70b2567722b44403bcd25b09326e190fee37"
+  "pwm": {
+    "points": 4163071,
+    "channels": 1,
+    "min": [
+      44
+    ],
+    "max": [
+      191
+    ],
+    "unboundedMixMin": [
+      -84
+    ],
+    "unboundedMixMax": [
+      63
+    ],
+    "checkedMixSamples": 4163071,
+    "fifoUnderruns": 0,
+    "minQueuedBytes": 10,
+    "maxQueuedBytes": 14
+  },
+  "timing": {
+    "isrCycles": 15,
+    "maxRenderCycles": 438,
+    "lostTimerEvents": 0,
+    "lostWorkEvents": 0
+  },
+  "memory": {
+    "voiceStateBytes": 25,
+    "pwmRingBytes": 16,
+    "maxStackBytes": 6,
+    "minimumSP": 153
+  },
+  "sourceLimit": "Saved lead-sheet adaptation; new piano tones realize its chord symbols. No claim of an original orchestral transcription. Stereo uses a noise-only snare to fit the second PWM channel.",
+  "startupEquivalence": {
+    "baselineCommit": "5748f63445e4224d996ac824e0eea2b03a23c9d7",
+    "proof": "web-player/reports/music-startup-verification.json",
+    "method": "Original complete-song audit plus identical CPU/RAM/peripheral state after SEI and identical remaining ROM bytes."
+  }
 }

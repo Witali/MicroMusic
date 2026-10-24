@@ -1,0 +1,41 @@
+{
+  "schema": "micromusic-avr-main-merge-v1",
+  "sourceSha256": "f48a2c6a6e2b53799fcce9ba6face0bc01ead450f868541186ef0b7b6fabf6b0",
+  "wasmSha256": "341697056f0dbc61423a5684289b75b0453f6b9014ea6fe23548556456b19f9a",
+  "wasmBytes": 51028,
+  "fullValidation": {
+    "integratedMain": "0f638824d3a1fc72eddd70290cb4dbd98d11d691",
+    "report": "optimization-verification.json",
+    "normalizedReportSha256": "698179a75a7c80425193a8b5241a9fcbb8e3a13931f5f8e264bfa2121c604f8d",
+    "ordinaryPassed": 442,
+    "endurancePassed": 6,
+    "kernelVariants": 5,
+    "testsPerKernelVariant": 351,
+    "totalPassed": 2203,
+    "deliberateBugsDetected": 2
+  },
+  "supplementalValidation": {
+    "integratedMain": "11261a7cd7b98deda1406f2d847efea0b53915db",
+    "reason": "Subsequent main changes only the speech catalog, its tests and presentation; native C, WASM and all other recorded tests are unchanged.",
+    "command": [
+      "node",
+      "--test",
+      "web-player/tests/hq4-catalog.test.mjs"
+    ],
+    "passed": 9,
+    "failed": 0,
+    "inputChanges": [
+      {
+        "file": "hq4-catalog.test.mjs",
+        "previousSha256": "e68273705ec2dbe907ec384b67cac15abec57914ba42a8323bf71d7bf6a69408",
+        "currentSha256": "a8ce4e19c57c67c5896a089c9f441dc18cdeed55d213d2946d99191bd6b5230f"
+      }
+    ],
+    "catalogSha256": "e2f349d3df8fdd50f25f1bd499b8c00f6e74724ea7b7d3aeb4707eb591582acd"
+  },
+  "browserValidation": {
+    "passed": 32,
+    "scriptSha256": "edc81f4ae05b7008be315692f37bb748b54d45887d52d8e4a26cb025bd4811f2",
+    "coverage": "Real Worker/MessageChannel for mono and stereo in both engines; bit-exact PCM and CPU/IRQ state; filters compared to Web Audio"
+  }
+}

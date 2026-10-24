@@ -1,0 +1,145 @@
+{
+  "schema": "fixed-speech-simplifications-v1",
+  "clip_id": "chego",
+  "source_model_sha256": "0405dcb74c5f4b7f21c6296ee57cc452e1ffeaeeca5715d56ed6bcdc76b7b2b1",
+  "reference_sha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+  "baseline": {
+    "loss": 0.3617791870374462,
+    "log_spectral_error": 0.3721179288142665,
+    "relative_spectral_error": 0.32042421993016523,
+    "stoi": 0.923331672176675,
+    "peak": 0.890625,
+    "clips": 0,
+    "pre_dc_clips": 0,
+    "mean_pcm": 0.0035807291666666665,
+    "max_abs_64_sample_mean": 5.171875,
+    "data_bytes": 510
+  },
+  "sources_sha256_normalized_lf": {
+    "tools/probe-fixed-simplifications.py": "5f68e1e34315bafcc461dac5e25d18020d0ffb3a557cdc3ff4f2ba581a5ff686",
+    "tools/refine_period_helpers.py": "a0aad8182f063a0280b87de4379912d97acc152ccae1d0610a0f13bc47c80a29",
+    "ATtiny13A/Sound/codec/fixed_period.py": "8a095118752746de62071c2472120c0fa272a51de823d95c679ae79cde4ef9aa",
+    "ATtiny13A/Sound/codec/fixed_search.py": "d812218e1232ab37176e70dec8b4172ea8915c633c1fa928c174afe2bc110652",
+    "ATtiny13A/Sound/codec/dc_blocker.py": "fb86b467afa3050b67715c4aed8942c86bbeb4dadfa17054d5f6015c1fc30230",
+    "ATtiny13A/Sound/codec/auto_encoder.py": "ab97a68e00409640531c26cebc43f2fc2fdd3c4cb111e6ffb7c0a7dbcdff2202",
+    "ATtiny13A/Sound/codec/compact_period.py": "0e5e7d7967646a168621b0f28a24cf55678785d55a701583ba8567a4a5afa42f"
+  },
+  "runtime": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "pystoi": "0.4.1",
+    "soundfile": "0.14.0",
+    "numba": "0.68.0",
+    "python": "3.12.14"
+  },
+  "objective": "spectral_loss+8*(1-STOI)",
+  "variants": [
+    {
+      "variant": "baseline",
+      "metrics": {
+        "loss": 0.3617791870374462,
+        "log_spectral_error": 0.3721179288142665,
+        "relative_spectral_error": 0.32042421993016523,
+        "stoi": 0.923331672176675,
+        "peak": 0.890625,
+        "clips": 0,
+        "pre_dc_clips": 0,
+        "mean_pcm": 0.0035807291666666665,
+        "max_abs_64_sample_mean": 5.171875,
+        "data_bytes": 510
+      },
+      "raw_metrics": null,
+      "stoi_change": 0.0,
+      "log_error_change": 0.0
+    },
+    {
+      "variant": "no-unvoiced-base",
+      "metrics": {
+        "loss": 0.36272071611191203,
+        "log_spectral_error": 0.373309397046043,
+        "relative_spectral_error": 0.32036599237538815,
+        "stoi": 0.9241982274898061,
+        "peak": 0.890625,
+        "clips": 0,
+        "pre_dc_clips": 0,
+        "mean_pcm": 0.0035807291666666665,
+        "max_abs_64_sample_mean": 5.171875,
+        "data_bytes": 510
+      },
+      "raw_metrics": {
+        "loss": 0.35934299745958587,
+        "log_spectral_error": 0.3690434948751336,
+        "relative_spectral_error": 0.3205410077973949,
+        "stoi": 0.9157618206180572,
+        "peak": 0.890625,
+        "clips": 0,
+        "pre_dc_clips": 0,
+        "mean_pcm": 0.0035807291666666665,
+        "max_abs_64_sample_mean": 5.171875,
+        "data_bytes": 509
+      },
+      "stoi_change": 0.0008665553131310677,
+      "log_error_change": 0.0011914682317765157
+    },
+    {
+      "variant": "no-unvoiced-single-fir1",
+      "metrics": {
+        "loss": 0.36907608483061477,
+        "log_spectral_error": 0.3812239196509621,
+        "relative_spectral_error": 0.32048474554922546,
+        "stoi": 0.923331068483779,
+        "peak": 0.890625,
+        "clips": 0,
+        "pre_dc_clips": 0,
+        "mean_pcm": 0.00390625,
+        "max_abs_64_sample_mean": 5.171875,
+        "data_bytes": 510
+      },
+      "raw_metrics": {
+        "loss": 0.36705482099847714,
+        "log_spectral_error": 0.3786538312643295,
+        "relative_spectral_error": 0.3206587799350677,
+        "stoi": 0.9002232806505237,
+        "peak": 0.890625,
+        "clips": 0,
+        "pre_dc_clips": 0,
+        "mean_pcm": 0.0035807291666666665,
+        "max_abs_64_sample_mean": 5.171875,
+        "data_bytes": 510
+      },
+      "stoi_change": -6.036928960062582e-07,
+      "log_error_change": 0.00910599083669561
+    },
+    {
+      "variant": "no-unvoiced-white-only",
+      "metrics": {
+        "loss": 0.3727391875191396,
+        "log_spectral_error": 0.385720166056096,
+        "relative_spectral_error": 0.3208152733713136,
+        "stoi": 0.9211744019021797,
+        "peak": 0.8984375,
+        "clips": 0,
+        "pre_dc_clips": 0,
+        "mean_pcm": 0.0035807291666666665,
+        "max_abs_64_sample_mean": 5.171875,
+        "data_bytes": 510
+      },
+      "raw_metrics": {
+        "loss": 0.3644158588514305,
+        "log_spectral_error": 0.37536011399886027,
+        "relative_spectral_error": 0.3206388382617114,
+        "stoi": 0.9176288074477189,
+        "peak": 0.8984375,
+        "clips": 0,
+        "pre_dc_clips": 0,
+        "mean_pcm": 0.0035807291666666665,
+        "max_abs_64_sample_mean": 5.171875,
+        "data_bytes": 507
+      },
+      "stoi_change": -0.0021572702744953043,
+      "log_error_change": 0.013602237241829518
+    }
+  ],
+  "avr_assembled": false,
+  "hardware_verified": false
+}

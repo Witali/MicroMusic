@@ -22,6 +22,9 @@ def module(name, path):
     return result
 
 
+standalone = module('avr_standalone', ROOT/'tools/avr-standalone.py')
+
+
 def compile_score(data):
     compiler = module('score_format', 'tools/score-format.py')
     return compiler.to_inc({**data, 'packing_candidates': 4096})
@@ -31,6 +34,8 @@ def build():
     common = module('build_rhythmic', 'tools/build-rhythmic.py')
     assembler = module('assembler', 'tools/assemble-avr.py')
     data = json.loads((FOLDER / 'score.json').read_text(encoding='utf-8'))
+    if data.get('engine')=='lumiere-chords':
+        return module('lumiere_chords','tools/build-lumiere-full.py').build(FOLDER,stereo=True)
     # These gains are implemented by the two accumulators in synth.S.
     # Reject metadata-only edits instead of claiming an inaudible pan change.
     gains = {name: (data['panorama'][name]['left'], data['panorama'][name]['right'])
@@ -66,13 +71,11 @@ def build():
                   timing=dict(phaseStep=step, phaseBits=16, envelopeTickCycles=131072,
                               tempoBpm=data['tempo_bpm'], actualTempoBpm=step / 65536 * (37500 / 512) * 60 / 4,
                               synthesisHz=18750, pwmHz=37500))
-    (FOLDER / 'build-report.json').write_text(json.dumps(report, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
-    core = (ROOT / 'web-player/lib/avr-reference.js').read_text(encoding='utf-8').replace('export class AVRCore', 'class AVRCore')
-    core += "\nif(typeof module!=='undefined' && module.exports)module.exports={AVRCore};\n"
-    (FOLDER / 'avr_core.js').write_text(core, encoding='utf-8', newline='\n')
+    (FOLDER / 'build-report.json').write_text(json.dumps(standalone.record_sources(report), indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
+    core = standalone.save_core(FOLDER)
     html = (ROOT / 'tools/stereo-player-template.html').read_text(encoding='utf-8')
     for key, value in [('AVR_CORE', core), ('FIRMWARE_HEX', common.ihex(rom)), ('EEPROM_HEX', common.ihex(ep)),
-                       ('HEX_PARSER', (ROOT / 'web-player/lib/hex.js').read_text(encoding='utf-8').replace('export function', 'function')),
+                       ('HEX_PARSER', ''),
                        ('RENDERER', '\n'.join(line for line in (ROOT / 'web-player/lib/renderer-js.js').read_text(encoding='utf-8').splitlines() if not line.startswith('import ')).replace('export class', 'class'))]:
         html = html.replace('/*' + key + '*/', value)
     (FOLDER / 'player.html').write_text(html, encoding='utf-8', newline='\n')

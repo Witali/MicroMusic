@@ -171,6 +171,14 @@ function parity(pair,{conservativeIdle=false}={}){
   assert.deepEqual(newState,oldState);assert.deepEqual(b.data,a.data);
   assert.deepEqual(b.rom,a.rom);assert.deepEqual(b.eeprom,a.eeprom);assert.deepEqual(Array.from(b.irqFrames),Array.from(a.irqFrames));
   const actual=Array.from(b._state),expected=Array.from(a._state),hint=b._fieldIndex.overflowAt;
+  // The shared music executor appends four diagnostics. They are inert in the
+  // physical board, whose timer/watchdog state is checked separately above.
+  // Verify every original field's slot and every added value before comparing
+  // historical arrays; do not hide an arbitrary appended state difference.
+  assert.deepEqual(Object.keys(b._fieldIndex),[...Object.keys(a._fieldIndex),
+    'timerTemp','wdtUntil','watchdogResetAt','watchdogResets']);
+  for(const [name,index] of Object.entries(a._fieldIndex))assert.equal(b._fieldIndex[name],index,name);
+  assert.deepEqual(actual.splice(expected.length),[0,0,NaN,NaN]);
   assert.equal(hint,a._fieldIndex.overflowAt);
   // The historical runtime rounded this private scheduling hint up. The
   // current conservative floor fixes physical RESET endpoint ties. Validate
@@ -180,9 +188,11 @@ function parity(pair,{conservativeIdle=false}={}){
   if(conservativeIdle)actual[b._fieldIndex.idleCycles]=expected[a._fieldIndex.idleCycles];
   assert.deepEqual(actual,expected);assert.equal(b.state().deviceFault,0);
 }
-const catalog=['firmware.json','hq4-firmware.json'].flatMap(path=>JSON.parse(readFileSync(new URL('../'+path,import.meta.url))).entries);
+const catalogs=['firmware.json','hq4-firmware.json'].map(path=>JSON.parse(readFileSync(new URL('../'+path,import.meta.url))));
+const catalog=catalogs.flatMap(row=>row.entries),aliases=Object.assign({},...catalogs.map(row=>row.aliases));
 for(const id of ['rhythmic','lumiere-stereo','hq4-chego-auto'])test(`actual baseline raw PCM/CPU/peripheral parity: ${id}`,()=>{
-  const entry=catalog.find(entry=>entry.id===id),image=parseHex(entry.flashHex),eeprom=entry.eepromHex?parseHex(entry.eepromHex,64):null;
+  const entry=catalog.find(entry=>entry.id===(aliases[id]??id));assert.ok(entry,id);
+  const image=parseHex(entry.flashHex),eeprom=entry.eepromHex?parseHex(entry.eepromHex,64):null;
   const pair=modules.map(runtimeModule=>new ATtiny13A(image,eeprom,{runtimeModule,oscillatorHz:entry.cpuHz||9600000}));
   for(const c of pair){c.injectPins({at:777n,mask:4,levels:4});c.setAnalog({at:1601n,pin:2,microvolts:1234567});}
   for(let frames=0;frames<2048;frames+=128){

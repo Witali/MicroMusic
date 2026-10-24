@@ -1,67 +1,70 @@
+.set GAIN_MINIMUM, 223
+.set GRID_LOW, 251
+.set GRID_HIGH, 13
 .section .text,"ax",@progbits
 .global vectors
-.include "config.inc"
 vectors:
   rjmp reset
-envelope_return:
-  asr r17
-  ret
+  nop
+  nop
   rjmp pwm_irq
 reset:
-  /* Requiredfuses7A/FF: CLKPRreset0; SPLresetRAMEND(9F). */
-  clr r29
   clr r27
-  clr r2
-  clr r15
-  clr r24
-  ldi r30, 96
+  clr r29
   clr r31
-clear_ram:
-  st Z+, r29
-  cpi r30, 144
-  brne clear_ram
+  ldi r30, 96
   ldi r18, 128
-  ldi r30, 128
 fill_ring:
   st Z+, r18
-  cpi r30, 144
+  cpi r30, 112
   brne fill_ring
-  mov r23, r18
-  ldi r28, 128
-  ldi r22, 142
-  ldi r16, 1
-  mov r1, r16
-  ldi r16, FIRST_PLAYLIST_INDEX
-  mov r4, r16
-  ldi r16, GRID_INITIAL_HIGH
+  clr r16
+clear_states:
+  st Z+, r16
+  cpi r30, 140
+  brne clear_states
+  clr r4
+  clr r5
+  clr r8
+  clr r9
+  clr r10
+  ldi r16, lo8(song_stream)
+  mov r2, r16
+  ldi r16, hi8(song_stream)
   mov r3, r16
-  ldi r30, lo8(first_section)
-  ldi r31, hi8(first_section)
-  sbi 23, 1
+  mov r23, r18
+  ldi r28, 96
+  rcall read_events
+  ldi r30, 110
+  clr r31
   out 41, r18
   ldi r16, 35
   out 47, r16
+  sbi 23, 1
   ldi r16, 1
   out 51, r16
   ldi r16, 2
   out 57, r16
   sei
 idle:
-  mov r16, r22
+  mov r16, r30
   sub r16, r28
   andi r16, 15
-check_space:
   cpi r16, 13
   brcc idle
 audio_step:
-  inc r15
+  inc r10
   brne render_sample
+  mov r14, r30
   rcall music_tick
+  mov r30, r14
+  clr r31
 render_sample:
-  ldi r26, 96
-  clr r21
+  ldi r26, 112
+  clr r19
+  clr r22
 voice_loop:
-  ld r25, X+
+  ld r20, X+
   ld r16, X+
   ld r17, X+
   ld r6, X+
@@ -72,259 +75,194 @@ voice_loop:
   st X+, r16
   st X+, r17
   subi r26, 254
-  mov r16, r7
-  rcall render_tone
-  sbrc r26, 4
-  asr r17
-primary_gain:
-  add r21, r17
-  cpi r26, 121
-  brne voice_loop
-write_pwm:
-  subi r21, 128
-  mov r16, r23
-  add r16, r21
-  ror r16
-  mov r26, r22
-  st X+, r16
-  st X+, r21
-  mov r22, r26
-  andi r22, 143
-ring_published:
-  mov r23, r21
-  rjmp idle
-pwm_irq:
-  out 41, r18
-ring_read:
-  ld r18, Y+
-  sbrc r28, 4
-  ldi r28, 128
-irq_restore:
-  reti
-music_tick:
-  inc r24
-  ldi r26, 96
-envelope_loop:
-  ld r16, X+
-  mov r17, r16
-  andi r17, 15
-  sbrs r16, 7
-  rjmp state_release
-  ldi r25, 143
-  sbrc r16, 4
-  ldi r25, 156
-  sbrc r16, 5
-  ldi r25, 170
-  subi r16, 252
-  mov r0, r16
-  sub r0, r25
-  brcs envelope_store
-  mov r16, r25
-  rjmp envelope_store
-state_release:
-  tst r17
-  breq envelope_store
-  dec r16
-  cpi r17, 1
-  breq envelope_store
-  sbrc r16, 6
-  dec r16
-envelope_store:
-
-  subi r26, 1
-  st X+, r16
-  subi r26, 252
-  cpi r26, 121
-  brne envelope_loop
-.L0a8:
-  ldi r17, GRID_STEP_LOW
-  add r2, r17
-  ldi r17, GRID_STEP_HIGH
-  adc r3, r17
-  brcs grid_step
-  ret
-grid_step:
-.L0ba:
-  dec r1
-  breq read_event
-  ret
-read_event:
-  /* Read packed score tokens. F0..FF are control events; E0..EF update accompaniment harmony. */
-  lpm r16, Z+
-  cpi r16, 255
-  brne .L0c8
-  rjmp next_section
-.L0c8:
-  cpi r16, 224
-  brcs melodic_event
-  cpi r16, 240
-  brcs chord_event
-note_off:
-  ldi r26, 96
-note_off_loop:
-  ld r17, X+
-  sbrc r16, 0
-  andi r17, 127
-  subi r26, 1
-  st X+, r17
-  subi r26, 252
-  lsr r16
-  cpi r26, 111
-  brne note_off_loop
-  rjmp read_event
-chord_event:
-
-  movw r12, r30
-  andi r16, 15
-  lsl r16
-  lsl r16
-  ldi r30, lo8(chord_steps)
-  ldi r31, hi8(chord_steps)
-  add r30, r16
-  adc r31, r29
-  ldi r26, 101
-  ldi r25, 144
-  rcall initialize_voice
-  ldi r26, 106
-  ldi r25, 160
-  rcall initialize_voice
-  movw r30, r12
-  rjmp read_event
-melodic_event:
-  /* Decode compact note/duration; load 16-bit DDS increment or signal lead release. */
-  movw r12, r30
-  mov r17, r16
-  andi r17, 7
-  ldi r30, lo8(durations)
-  ldi r31, hi8(durations)
-  add r30, r17
-  adc r31, r29
-  lpm r1, Z
-  /* BEGIN LEAD FREQUENCY */
-  lsr r16
-  lsr r16
-  lsr r16
-  cpi r16, REST_INDEX
-  breq note_rest
-  cpi r16, HOLD_INDEX
-  breq hold_sample
-  lsl r16
-  ldi r30, lo8(note_steps)
-  ldi r31, hi8(note_steps)
-  add r30, r16
-  adc r31, r29
-  ldi r26, 96
-  ldi r25, 128
-  rcall initialize_voice
-lead_commit:
-  rjmp hold_sample
-note_rest:
-release_lead:
-  lds r17, 96
-  andi r17, 127
-  sts 96, r17
-hold_sample:
-  movw r30, r12
-  ret
-next_section:
-  /* Playlist contains direct section offsets: no second lookup table. */
-  ldi r30, lo8(playlist)
-  ldi r31, hi8(playlist)
-  add r30, r4
-  adc r31, r29
-  lpm r16, Z
-  inc r4
-  mov r17, r4
-  cpi r17, PLAYLIST_LEN
-  brne .L15c
-  clr r4
-.L15c:
-  ldi r30, lo8(melody_data)
-  ldi r31, hi8(melody_data)
-  add r30, r16
-  adc r31, r29
-  rjmp read_event
-render_tone:
-  /* Choose a register-dependent 16-step sustain wavetable and apply its amplitude envelope. */
-  mov r0, r25
-  andi r25, 15
-  breq voice_silent
-  cpi r16, 4
-  mov r16, r0
-  andi r16, 48
-  brcs .L216
+  mov r16, r19
+  mov r25, r7
+  cpi r25, 4
+  brcs wave_register
   ori r16, 8
-.L216:
+wave_register:
   swap r17
   andi r17, 15
   lsr r17
   or r16, r17
   out 30, r16
   sbi 28, 0
-  in r17, 29
-  brcc eeprom_low_nibble
-  swap r17
-eeprom_low_nibble:
-  andi r17, 15
-  subi r17, 8
-.L25c:
-  mov r0, r17
-  sbrs r25, 3
-  clr r17
-  lsl r17
-  sbrc r25, 2
-  add r17, r0
-  lsl r17
-  sbrc r25, 1
-  add r17, r0
-  lsl r17
-  sbrc r25, 0
-  add r17, r0
-  asr r17
-  rjmp envelope_return
-voice_silent:
-  clr r17
-  rjmp envelope_return
-initialize_voice:
-  rcall capture_ram_tail
-  andi r16, 15
-  lsr r16
-  or r16, r25
-  subi r26, 1
-  st X+, r16
-  subi r26, 254
-  lpm r16, Z+
-  st X+, r16
-  lpm r16, Z+
-  st X+, r16
-voice_initialized:
-  ret
-capture_ram_tail:
-  movw r10, r30
-  lds r16, 111
-  andi r16, 15
-  lds r17, 116
-  andi r17, 15
-  sub r16, r17
-  ldi r30, 111
-  brcs ram_tail_destination
-  ldi r30, 116
-ram_tail_destination:
-  ld r16, X+
-  andi r16, 127
-  mov r17, r16
-  andi r17, 15
-  breq no_ram_tail
+  in r21, 29
+  brcc wave_nibble
+  swap r21
+wave_nibble:
+  andi r21, 15
+  subi r21, 8
+  mov r25, r20
+  andi r25, 15
+  rcall voice_gain
+  add r22, r17
+  subi r19, 240
+  cpi r26, 132
+  brne voice_loop
+master_gain:
+  mov r12, r30
+  ldi r30, lo8(output_gain)
+  ldi r31, hi8(output_gain)
+  subi r22, GAIN_MINIMUM
+  add r30, r22
+  adc r31, r29
+  lpm r17, Z
+  mov r30, r12
   clr r31
-  st Z+, r16
-  ldi r17, 4
-ram_tail_copy:
-  ld r0, X+
-  st Z+, r0
-  dec r17
-  brne ram_tail_copy
-  subi r26, 4
-no_ram_tail:
-  movw r30, r10
-  rjmp envelope_return
-.include "score.inc"
+write_pwm:
+  add r23, r17
+  ror r23
+  st Z+, r23
+  st Z+, r17
+  andi r30, 111
+  mov r23, r17
+ring_published:
+  rjmp idle
+pwm_irq:
+  out 41, r18
+ring_read:
+  ld r18, Y+
+  sbrc r28, 4
+  ldi r28, 96
+  reti
+voice_gain:
+  clr r17
+  ldi r24, 4
+  lsr r25
+gain_loop:
+  brcc gain_no_add
+  add r17, r21
+gain_no_add:
+  asr r17
+  ror r25
+  dec r24
+  brne gain_loop
+  lsl r25
+  adc r17, r17
+  ret
+music_tick:
+  ldi r26, 112
+  ldi r30, lo8(part_levels)
+  ldi r31, hi8(part_levels)
+envelope_loop:
+  ld r20, X+
+  mov r21, r20
+  andi r21, 15
+  lpm r16, Z+
+  sbrs r20, 7
+  rjmp release_voice
+  mov r25, r21
+  sub r25, r16
+  brcc store_envelope
+  inc r20
+  rjmp store_envelope
+release_voice:
+  tst r21
+  breq store_envelope
+  dec r20
+store_envelope:
+  subi r26, 1
+  st X+, r20
+  subi r26, 252
+  cpi r26, 132
+  brne envelope_loop
+  ldi r16, GRID_LOW
+  add r8, r16
+  ldi r16, GRID_HIGH
+  adc r9, r16
+  brcc music_return
+  dec r4
+  brne music_return
+read_events:
+next_symbol:
+  tst r5
+  breq read_stream
+  dec r5
+  mov r26, r5
+  subi r26, 124
+  ld r21, X+
+  rjmp classify_symbol
+read_stream:
+  movw r30, r2
+  lpm r21, Z+
+  movw r2, r30
+  cpi r21, 255
+  brne classify_symbol
+restart_song:
+  ldi r16, lo8(song_stream)
+  mov r2, r16
+  ldi r16, hi8(song_stream)
+  mov r3, r16
+  rjmp read_stream
+classify_symbol:
+  cpi r21, 192
+  brcs event_leaf
+  subi r21, 192
+  lsl r21
+  ldi r30, lo8(song_rules)
+  ldi r31, hi8(song_rules)
+  add r30, r21
+  adc r31, r29
+  lpm r6, Z+
+  lpm r7, Z
+  mov r26, r5
+  subi r26, 124
+  st X+, r7
+  inc r5
+  mov r21, r6
+  rjmp classify_symbol
+event_leaf:
+  cpi r21, 128
+  brcs note_event
+  subi r21, 127
+  mov r4, r21
+music_return:
+  ret
+note_event:
+  mov r16, r21
+  lsr r16
+  lsr r16
+  lsr r16
+  lsr r16
+  lsr r16
+  mov r26, r16
+  lsl r26
+  lsl r26
+  add r26, r16
+  subi r26, 144
+  andi r21, 31
+  brne note_on
+note_off:
+  ld r20, X+
+  andi r20, 127
+  subi r26, 1
+  st X+, r20
+note_released:
+  rjmp next_symbol
+note_on:
+  ldi r20, 129
+  st X+, r20
+  subi r26, 254
+  dec r21
+  lsl r21
+  ldi r30, lo8(pitch_steps)
+  ldi r31, hi8(pitch_steps)
+  add r30, r21
+  adc r31, r29
+  lpm r6, Z+
+  lpm r7, Z
+  st X+, r6
+  st X+, r7
+note_committed:
+  rjmp next_symbol
+part_levels:
+.byte 15,12,11,10
+pitch_steps:
+.byte 128,1,176,1,201,1,1,2,32,2,64,2,135,2,173,2,1,3,95,3,146,3,201,3,2,4,63,4,128,4,13,5,90,5,2,6,190,6,37,7,146,7,5,8
+song_rules:
+.byte 64,96,0,32,193,192,129,194,0,192,42,72,197,102,130,193,128,196,15,198,131,194,43,73,45,73,100,195,195,17,14,42,71,98,207,208,13,71,16,203,16,204,18,48,19,49,74,98,77,100,77,104,100,130,195,213,200,15,205,210,206,198,212,221,219,216,223,218,0,15,101,222,128,194,133,194,199,20,200,211,209,195,224,129,225,226
+song_stream:
+.byte 201,206,47,74,102,202,18,204,103,195,19,45,72,230,128,0,64,214,74,104,233,64,77,195,234,231,227,202,201,195,15,41,73,99,199,14,220,70,99,129,196,16,46,215,229,10,215,131,196,201,206,47,74,102,202,18,204,103,195,19,45,72,230,128,0,64,214,74,104,233,96,205,234,231,103,222,199,16,220,203,97,195,209,199,12,200,232,201,229,201,202,129,22,48,74,133,193,64,22,51,217,199,21,50,228,214,217,224,202,234,231,227,202,201,195,15,41,73,99,199,14,220,70,99,129,196,16,46,215,202,232,10,215,131,196,129,22,48,74,133,193,64,22,51,217,230,50,228,214,217,233,96,205,225,47,228,211,227,199,16,220,203,97,195,209,199,12,200,232,201,229,201,202,128,255
+output_gain:
+.byte 0,4,8,12,16,19,23,27,31,35,39,43,47,50,54,58,62,66,70,74,78,81,85,89,93,97,101,105,109,112,116,120,124,128,132,136,140,144,147,151,155,159,163,167,171,175,178,182,186,190,194,198,202,206,209,213,217,221,225,229,233,237,240,244

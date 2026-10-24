@@ -1,0 +1,594 @@
+{
+  "schema": "lpc2-quality-corpus-v1",
+  "manifest_sha256": "4b6c7b7a039cba2794465e4b4c7412c5b7e49b60894b4132ae87615116cab982",
+  "clips": [
+    {
+      "id": "ru_pushkin_b-center2048",
+      "status": "complete",
+      "report": "ru_pushkin_b-center2048/report.json",
+      "metrics": {
+        "lpc2-improved": {
+          "container_bytes": 354,
+          "stoi": 0.6653494794223918,
+          "estoi": 0.41112087528810465,
+          "spectrogram_loss": 0.30969852974361367,
+          "raw_mse": 0.012218611183032023
+        },
+        "lpx3-2bit": {
+          "container_bytes": 4423,
+          "stoi": 0.903948009078581,
+          "estoi": 0.8062730884700421,
+          "spectrogram_loss": 0.0703191378418482,
+          "raw_mse": 0.00022427586850359767
+        },
+        "lpx3-3bit": {
+          "container_bytes": 6343,
+          "stoi": 0.9588460281526648,
+          "estoi": 0.9204961265650545,
+          "spectrogram_loss": 0.03301174609421509,
+          "raw_mse": 3.543645354361578e-05
+        },
+        "lpx3-4bit": {
+          "container_bytes": 8263,
+          "stoi": 0.9873184991102476,
+          "estoi": 0.9767876508315508,
+          "spectrogram_loss": 0.017530993417215524,
+          "raw_mse": 1.176230892495134e-05
+        },
+        "lpx4-6bit": {
+          "container_bytes": 12103,
+          "stoi": 0.9963220465642488,
+          "estoi": 0.9937580038976777,
+          "spectrogram_loss": 0.009431883348023692,
+          "raw_mse": 4.185398310840358e-06
+        },
+        "lpx4-8bit": {
+          "container_bytes": 15943,
+          "stoi": 0.997130858432084,
+          "estoi": 0.9951922133135885,
+          "spectrogram_loss": 0.00849626869654988,
+          "raw_mse": 3.4613918763391323e-06
+        }
+      }
+    },
+    {
+      "id": "ru_square_b-center2048",
+      "status": "complete",
+      "report": "ru_square_b-center2048/report.json",
+      "metrics": {
+        "lpc2-improved": {
+          "container_bytes": 393,
+          "stoi": 0.6442866779252384,
+          "estoi": 0.41527078615422297,
+          "spectrogram_loss": 0.39172524656532304,
+          "raw_mse": 0.0025094746857683933
+        },
+        "lpx3-2bit": {
+          "container_bytes": 4462,
+          "stoi": 0.9388574324103003,
+          "estoi": 0.9086232961997289,
+          "spectrogram_loss": 0.0912903386713707,
+          "raw_mse": 6.285143436343807e-05
+        },
+        "lpx3-3bit": {
+          "container_bytes": 6382,
+          "stoi": 0.9844948719014037,
+          "estoi": 0.9720107641805282,
+          "spectrogram_loss": 0.035448194625656626,
+          "raw_mse": 9.041839061603892e-06
+        },
+        "lpx3-4bit": {
+          "container_bytes": 8302,
+          "stoi": 0.9948902869431405,
+          "estoi": 0.9922714305230582,
+          "spectrogram_loss": 0.019454016394056535,
+          "raw_mse": 3.104766177649558e-06
+        },
+        "lpx4-6bit": {
+          "container_bytes": 12142,
+          "stoi": 0.9989685304769945,
+          "estoi": 0.9986703140127546,
+          "spectrogram_loss": 0.008889250887668098,
+          "raw_mse": 7.653098283623854e-07
+        },
+        "lpx4-8bit": {
+          "container_bytes": 15982,
+          "stoi": 0.9991123910273703,
+          "estoi": 0.9990340200119925,
+          "spectrogram_loss": 0.00754993179036983,
+          "raw_mse": 5.882941148511538e-07
+        }
+      }
+    },
+    {
+      "id": "ru_slutskaya_b-center2048",
+      "status": "complete",
+      "report": "ru_slutskaya_b-center2048/report.json",
+      "metrics": {
+        "lpc2-improved": {
+          "container_bytes": 427,
+          "stoi": 0.7418352518277,
+          "estoi": 0.5650821171697181,
+          "spectrogram_loss": 0.44971520396783765,
+          "raw_mse": 0.01926656118412442
+        },
+        "lpx3-2bit": {
+          "container_bytes": 4496,
+          "stoi": 0.9499926524879185,
+          "estoi": 0.8967918113367211,
+          "spectrogram_loss": 0.17159732532850694,
+          "raw_mse": 0.0013530273110613708
+        },
+        "lpx3-3bit": {
+          "container_bytes": 6416,
+          "stoi": 0.9721938104730806,
+          "estoi": 0.951576521872644,
+          "spectrogram_loss": 0.12104880056339912,
+          "raw_mse": 0.000664667906064956
+        },
+        "lpx3-4bit": {
+          "container_bytes": 8336,
+          "stoi": 0.9792744399161757,
+          "estoi": 0.9674306752469541,
+          "spectrogram_loss": 0.08097730783710264,
+          "raw_mse": 0.000361648013243282
+        },
+        "lpx4-6bit": {
+          "container_bytes": 12176,
+          "stoi": 0.9792050812306589,
+          "estoi": 0.9702456221827841,
+          "spectrogram_loss": 0.0699497650548495,
+          "raw_mse": 0.00033555533870875925
+        },
+        "lpx4-8bit": {
+          "container_bytes": 16016,
+          "stoi": 0.9793446231578875,
+          "estoi": 0.9710210409965757,
+          "spectrogram_loss": 0.07054795566736624,
+          "raw_mse": 0.00033828121667880067
+        }
+      }
+    },
+    {
+      "id": "ru_russia_b-center2048",
+      "status": "complete",
+      "report": "ru_russia_b-center2048/report.json",
+      "metrics": {
+        "lpc2-improved": {
+          "container_bytes": 335,
+          "stoi": 0.7345808352692412,
+          "estoi": 0.5221903476925419,
+          "spectrogram_loss": 0.3788406802392658,
+          "raw_mse": 0.012698158869448466
+        },
+        "lpx3-2bit": {
+          "container_bytes": 4404,
+          "stoi": 0.9481039481955641,
+          "estoi": 0.8762323610024416,
+          "spectrogram_loss": 0.11964992075740881,
+          "raw_mse": 0.0006484838882629221
+        },
+        "lpx3-3bit": {
+          "container_bytes": 6324,
+          "stoi": 0.977241048781677,
+          "estoi": 0.9441281697764805,
+          "spectrogram_loss": 0.06630893227853996,
+          "raw_mse": 0.00020745965917304943
+        },
+        "lpx3-4bit": {
+          "container_bytes": 8244,
+          "stoi": 0.9856000853734392,
+          "estoi": 0.9644408556406044,
+          "spectrogram_loss": 0.04658749476800024,
+          "raw_mse": 0.00012404883197077719
+        },
+        "lpx4-6bit": {
+          "container_bytes": 12084,
+          "stoi": 0.9881327579032928,
+          "estoi": 0.970664897935362,
+          "spectrogram_loss": 0.04206194858221005,
+          "raw_mse": 0.00010689083110110334
+        },
+        "lpx4-8bit": {
+          "container_bytes": 15924,
+          "stoi": 0.9881997702902565,
+          "estoi": 0.9713026656259673,
+          "spectrogram_loss": 0.04177074187744395,
+          "raw_mse": 0.00010839083770385104
+        }
+      }
+    },
+    {
+      "id": "en_sense_b-center2048",
+      "status": "complete",
+      "report": "en_sense_b-center2048/report.json",
+      "metrics": {
+        "lpc2-improved": {
+          "container_bytes": 415,
+          "stoi": 0.6938535148856357,
+          "estoi": 0.602201942241557,
+          "spectrogram_loss": 0.4047349062201796,
+          "raw_mse": 0.010408310646318886
+        },
+        "lpx3-2bit": {
+          "container_bytes": 4484,
+          "stoi": 0.9305467695588849,
+          "estoi": 0.8753848944944016,
+          "spectrogram_loss": 0.12592194151563016,
+          "raw_mse": 0.00043552277334374487
+        },
+        "lpx3-3bit": {
+          "container_bytes": 6404,
+          "stoi": 0.9686986069420649,
+          "estoi": 0.9412776482303715,
+          "spectrogram_loss": 0.07289848983652296,
+          "raw_mse": 0.00012199870341893851
+        },
+        "lpx3-4bit": {
+          "container_bytes": 8324,
+          "stoi": 0.9800471114899966,
+          "estoi": 0.9685210738802499,
+          "spectrogram_loss": 0.05809461464710233,
+          "raw_mse": 8.67709348408228e-05
+        },
+        "lpx4-6bit": {
+          "container_bytes": 12164,
+          "stoi": 0.9833577033292689,
+          "estoi": 0.9744692088929832,
+          "spectrogram_loss": 0.055436915676026946,
+          "raw_mse": 8.705079510968403e-05
+        },
+        "lpx4-8bit": {
+          "container_bytes": 16004,
+          "stoi": 0.9830136080286765,
+          "estoi": 0.974468002379346,
+          "spectrogram_loss": 0.05670358332893969,
+          "raw_mse": 9.196884052431642e-05
+        }
+      }
+    },
+    {
+      "id": "en_portrait_b-center2048",
+      "status": "complete",
+      "report": "en_portrait_b-center2048/report.json",
+      "metrics": {
+        "lpc2-improved": {
+          "container_bytes": 269,
+          "stoi": 0.6239624167774683,
+          "estoi": 0.2410073601323903,
+          "spectrogram_loss": 0.504824546531885,
+          "raw_mse": 0.0005704751169690999
+        },
+        "lpx3-2bit": {
+          "container_bytes": 4338,
+          "stoi": 0.9341706429175926,
+          "estoi": 0.8653092684950712,
+          "spectrogram_loss": 0.10205493753319106,
+          "raw_mse": 2.1433805560058688e-05
+        },
+        "lpx3-3bit": {
+          "container_bytes": 6258,
+          "stoi": 0.9807365461273376,
+          "estoi": 0.9601509111747701,
+          "spectrogram_loss": 0.035859971540713784,
+          "raw_mse": 2.001901661060928e-06
+        },
+        "lpx3-4bit": {
+          "container_bytes": 8178,
+          "stoi": 0.9953251665976846,
+          "estoi": 0.9898579110740107,
+          "spectrogram_loss": 0.017612778842357985,
+          "raw_mse": 4.6957098558134673e-07
+        },
+        "lpx4-6bit": {
+          "container_bytes": 12018,
+          "stoi": 0.9992742738238403,
+          "estoi": 0.9988337195823014,
+          "spectrogram_loss": 0.006627605431820712,
+          "raw_mse": 8.31556966160209e-08
+        },
+        "lpx4-8bit": {
+          "container_bytes": 15858,
+          "stoi": 0.9996093917982294,
+          "estoi": 0.9995324139921732,
+          "spectrogram_loss": 0.004636537745806319,
+          "raw_mse": 5.45830125427932e-08
+        }
+      }
+    },
+    {
+      "id": "en_letter_b-center2048",
+      "status": "complete",
+      "report": "en_letter_b-center2048/report.json",
+      "metrics": {
+        "lpc2-improved": {
+          "container_bytes": 271,
+          "stoi": 0.6003287194431748,
+          "estoi": 0.32310190780571346,
+          "spectrogram_loss": 0.4329615761619254,
+          "raw_mse": 0.00027653355265934177
+        },
+        "lpx3-2bit": {
+          "container_bytes": 4340,
+          "stoi": 0.9069626746638879,
+          "estoi": 0.8448449543283961,
+          "spectrogram_loss": 0.14249625056372267,
+          "raw_mse": 2.7824662881035066e-05
+        },
+        "lpx3-3bit": {
+          "container_bytes": 6260,
+          "stoi": 0.9630302652988334,
+          "estoi": 0.9371678140176068,
+          "spectrogram_loss": 0.05634318140560145,
+          "raw_mse": 3.070348792037801e-06
+        },
+        "lpx3-4bit": {
+          "container_bytes": 8180,
+          "stoi": 0.9842037228749893,
+          "estoi": 0.973219376820673,
+          "spectrogram_loss": 0.03319339475752638,
+          "raw_mse": 1.2468338367656756e-06
+        },
+        "lpx4-6bit": {
+          "container_bytes": 12020,
+          "stoi": 0.9879083441967812,
+          "estoi": 0.9847752902413118,
+          "spectrogram_loss": 0.028870778797535752,
+          "raw_mse": 1.2383093055678761e-06
+        },
+        "lpx4-8bit": {
+          "container_bytes": 15860,
+          "stoi": 0.9882873183360494,
+          "estoi": 0.9855283127346892,
+          "spectrogram_loss": 0.028440644008203845,
+          "raw_mse": 1.3080654734464448e-06
+        }
+      }
+    },
+    {
+      "id": "en_normcore_b-center2048",
+      "status": "complete",
+      "report": "en_normcore_b-center2048/report.json",
+      "metrics": {
+        "lpc2-improved": {
+          "container_bytes": 216,
+          "stoi": 0.36433454979987673,
+          "estoi": 0.07909125035525141,
+          "spectrogram_loss": 0.5490392555251796,
+          "raw_mse": 0.0005937003512588313
+        },
+        "lpx3-2bit": {
+          "container_bytes": 4285,
+          "stoi": 0.8119561198939045,
+          "estoi": 0.6492004293120255,
+          "spectrogram_loss": 0.16337667648164425,
+          "raw_mse": 3.992992043329271e-05
+        },
+        "lpx3-3bit": {
+          "container_bytes": 6205,
+          "stoi": 0.8987364623446608,
+          "estoi": 0.803172573408043,
+          "spectrogram_loss": 0.07175120033561316,
+          "raw_mse": 7.836719948812824e-06
+        },
+        "lpx3-4bit": {
+          "container_bytes": 8125,
+          "stoi": 0.9490829556360667,
+          "estoi": 0.9035234194003072,
+          "spectrogram_loss": 0.03049598004536764,
+          "raw_mse": 1.7537925492068317e-06
+        },
+        "lpx4-6bit": {
+          "container_bytes": 11965,
+          "stoi": 0.9729547775121691,
+          "estoi": 0.9656433881143476,
+          "spectrogram_loss": 0.056805236153180734,
+          "raw_mse": 8.265696707412987e-06
+        },
+        "lpx4-8bit": {
+          "container_bytes": 15805,
+          "stoi": 0.9856086111752429,
+          "estoi": 0.9849095411477082,
+          "spectrogram_loss": 0.03592066857200025,
+          "raw_mse": 3.859294423258819e-06
+        }
+      }
+    },
+    {
+      "id": "ru_square_a_quiet_minus24dB-center2048",
+      "status": "complete",
+      "report": "ru_square_a_quiet_minus24dB-center2048/report.json",
+      "metrics": {
+        "lpc2-improved": {
+          "container_bytes": 101,
+          "stoi": 0.25408188004888504,
+          "estoi": 0.02904251383147285,
+          "spectrogram_loss": 1.1305458111637274,
+          "raw_mse": 9.738801514664065e-06
+        },
+        "lpx3-2bit": {
+          "container_bytes": 4170,
+          "stoi": 0.7765520594140026,
+          "estoi": 0.6813679488902794,
+          "spectrogram_loss": 0.13614047720375394,
+          "raw_mse": 6.836936908393334e-07
+        },
+        "lpx3-3bit": {
+          "container_bytes": 6090,
+          "stoi": 0.8966686747675772,
+          "estoi": 0.8556524943632926,
+          "spectrogram_loss": 0.05526437940979607,
+          "raw_mse": 9.885146416275769e-08
+        },
+        "lpx3-4bit": {
+          "container_bytes": 8010,
+          "stoi": 0.9628375705727812,
+          "estoi": 0.9501549058842906,
+          "spectrogram_loss": 0.02443816721916809,
+          "raw_mse": 2.554715195414882e-08
+        },
+        "lpx4-6bit": {
+          "container_bytes": 11850,
+          "stoi": 0.9969809440230836,
+          "estoi": 0.9956653101607197,
+          "spectrogram_loss": 0.005230810647162084,
+          "raw_mse": 1.8220689889518552e-09
+        },
+        "lpx4-8bit": {
+          "container_bytes": 15690,
+          "stoi": 0.9994035473867611,
+          "estoi": 0.9990335863602381,
+          "spectrogram_loss": 0.0022313749832426144,
+          "raw_mse": 4.0568386219025967e-10
+        }
+      }
+    },
+    {
+      "id": "ru_russia_a_white_noise_15dB-center2048",
+      "status": "complete",
+      "report": "ru_russia_a_white_noise_15dB-center2048/report.json",
+      "metrics": {
+        "lpc2-improved": {
+          "container_bytes": 312,
+          "stoi": 0.5398116980971478,
+          "estoi": 0.359922381965727,
+          "spectrogram_loss": 0.5971138642640742,
+          "raw_mse": 0.007374986315785797
+        },
+        "lpx3-2bit": {
+          "container_bytes": 4381,
+          "stoi": 0.9201694707701811,
+          "estoi": 0.8429672422110313,
+          "spectrogram_loss": 0.1842295710382726,
+          "raw_mse": 0.0006086620292136747
+        },
+        "lpx3-3bit": {
+          "container_bytes": 6301,
+          "stoi": 0.9737512774661373,
+          "estoi": 0.9537171075654172,
+          "spectrogram_loss": 0.100313208734143,
+          "raw_mse": 0.00017517765206360834
+        },
+        "lpx3-4bit": {
+          "container_bytes": 8221,
+          "stoi": 0.9888236661215198,
+          "estoi": 0.9819846270619024,
+          "spectrogram_loss": 0.05954046448178115,
+          "raw_mse": 7.45999920475494e-05
+        },
+        "lpx4-6bit": {
+          "container_bytes": 12061,
+          "stoi": 0.9944880810932197,
+          "estoi": 0.994127506114296,
+          "spectrogram_loss": 0.03798440832729536,
+          "raw_mse": 4.389488927315043e-05
+        },
+        "lpx4-8bit": {
+          "container_bytes": 15901,
+          "stoi": 0.9948955057755702,
+          "estoi": 0.9952493485838929,
+          "spectrogram_loss": 0.03646963706943011,
+          "raw_mse": 4.540595305723826e-05
+        }
+      }
+    },
+    {
+      "id": "en_normcore_a_quiet_minus24dB-center2048",
+      "status": "complete",
+      "report": "en_normcore_a_quiet_minus24dB-center2048/report.json",
+      "metrics": {
+        "lpc2-improved": {
+          "container_bytes": 101,
+          "stoi": 0.36655911383115164,
+          "estoi": 0.02577262509404424,
+          "spectrogram_loss": 1.0835043753667855,
+          "raw_mse": 6.311331626501996e-07
+        },
+        "lpx3-2bit": {
+          "container_bytes": 4170,
+          "stoi": 0.8632141289293924,
+          "estoi": 0.7126645640914193,
+          "spectrogram_loss": 0.17020969157806137,
+          "raw_mse": 5.1835797086370024e-08
+        },
+        "lpx3-3bit": {
+          "container_bytes": 6090,
+          "stoi": 0.9296876289939294,
+          "estoi": 0.8529566949912252,
+          "spectrogram_loss": 0.086905604979268,
+          "raw_mse": 1.3417835546948487e-08
+        },
+        "lpx3-4bit": {
+          "container_bytes": 8010,
+          "stoi": 0.9655682436641261,
+          "estoi": 0.9265011696304108,
+          "spectrogram_loss": 0.043577154409421,
+          "raw_mse": 4.1358650781975785e-09
+        },
+        "lpx4-6bit": {
+          "container_bytes": 11850,
+          "stoi": 0.9921850661073149,
+          "estoi": 0.9879733595461176,
+          "spectrogram_loss": 0.013443158387875496,
+          "raw_mse": 5.977309156181703e-10
+        },
+        "lpx4-8bit": {
+          "container_bytes": 15690,
+          "stoi": 0.993680062153224,
+          "estoi": 0.9926474290495751,
+          "spectrogram_loss": 0.008998261474400174,
+          "raw_mse": 3.433326126481527e-10
+        }
+      }
+    },
+    {
+      "id": "en_sense_a_white_noise_15dB-center2048",
+      "status": "complete",
+      "report": "en_sense_a_white_noise_15dB-center2048/report.json",
+      "metrics": {
+        "lpc2-improved": {
+          "container_bytes": 273,
+          "stoi": 0.39646610787173936,
+          "estoi": 0.3201056650388767,
+          "spectrogram_loss": 0.5733369240743932,
+          "raw_mse": 0.002065814889893995
+        },
+        "lpx3-2bit": {
+          "container_bytes": 4342,
+          "stoi": 0.7556272019306995,
+          "estoi": 0.7048431140565778,
+          "spectrogram_loss": 0.17740794651364997,
+          "raw_mse": 0.00015266587098449296
+        },
+        "lpx3-3bit": {
+          "container_bytes": 6262,
+          "stoi": 0.8828881169205925,
+          "estoi": 0.8629900878352504,
+          "spectrogram_loss": 0.1058472509869003,
+          "raw_mse": 3.5790351123258535e-05
+        },
+        "lpx3-4bit": {
+          "container_bytes": 8182,
+          "stoi": 0.9513803571957307,
+          "estoi": 0.9425734593633013,
+          "spectrogram_loss": 0.06036767957593976,
+          "raw_mse": 1.2679815938828323e-05
+        },
+        "lpx4-6bit": {
+          "container_bytes": 12022,
+          "stoi": 0.9937261398728516,
+          "estoi": 0.9935069834945078,
+          "spectrogram_loss": 0.031004634466332406,
+          "raw_mse": 4.760373263706525e-06
+        },
+        "lpx4-8bit": {
+          "container_bytes": 15862,
+          "stoi": 0.9965529352441712,
+          "estoi": 0.9966451354483269,
+          "spectrogram_loss": 0.026993852101632163,
+          "raw_mse": 4.595289973473661e-06
+        }
+      }
+    }
+  ]
+}

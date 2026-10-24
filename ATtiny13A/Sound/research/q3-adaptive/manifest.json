@@ -1,0 +1,39 @@
+{
+  "schema": "q3-adaptive-study-v1",
+  "selected_model": "half-pitch/model.json",
+  "selected_builder_source_commit": "def3da1",
+  "half_pitch_fit_source_commit": "457b462",
+  "coordinate_source_commit": "d435a0f",
+  "joint_runs": {
+    "joint4": {
+      "source_commit": "d435a0f",
+      "models": {
+        "before": "before/model.json",
+        "after": "before/model.json",
+        "exploratory_best": "exploratory_best/model.json"
+      },
+      "report": "report.json"
+    },
+    "joint8": {
+      "source_commit": "d435a0f",
+      "models": {
+        "before": "before/model.json",
+        "after": "before/model.json",
+        "exploratory_best": "exploratory_best/model.json"
+      },
+      "report": "report.json"
+    },
+    "joint-ablation8": {
+      "source_commit": "d435a0f",
+      "models": {
+        "before": "before/model.json",
+        "after": "before/model.json",
+        "exploratory_best": "exploratory_best/model.json"
+      },
+      "report": "report.json"
+    }
+  },
+  "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+  "public_firmware_changed": false,
+  "hardware_tested": false
+}

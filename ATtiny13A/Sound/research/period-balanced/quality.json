@@ -1,0 +1,182 @@
+{
+  "schema": "speech-quality-review-v1",
+  "sources_sha256_normalized_lf": {
+    "ATtiny13A/Sound/codec/compact_period.py": "0e5e7d7967646a168621b0f28a24cf55678785d55a701583ba8567a4a5afa42f",
+    "ATtiny13A/Sound/codec/colored_period.py": "db02620b67c3a0574b5f24c99cbaa9d0c25048cafc1a94e3ce83026e8095e27b",
+    "ATtiny13A/Sound/codec/period_wave.py": "ad0aa3f5db96d0e6a9573c1df660ea71417fc9dc3280aa81e559a440fe7118cd",
+    "ATtiny13A/Sound/codec/period_residual.py": "f84b16a478e7c10631f5d271acf5fb48de9716cd6cdacd2342b25341c07efc49",
+    "ATtiny13A/Sound/codec/auto_encoder.py": "ab97a68e00409640531c26cebc43f2fc2fdd3c4cb111e6ffb7c0a7dbcdff2202",
+    "ATtiny13A/Sound/codec/hq4_core.py": "936c21384042c24be9525ff7cb73b6e1421c852b4a63ea393e318cc60e9bd466",
+    "ATtiny13A/Sound/codec/hq4_timbre.py": "ff22427010ddb169bafbc8a35502dcd413980299fd36d292fdf99eae7ffb371b",
+    "ATtiny13A/Sound/codec/model.py": "d9c3449ddd2da1929e71da99ef3b040d46d95988d2f5ea704f9416e30c1ba71e",
+    "tools/report-period-quality.py": "e42d9562d5e8197f7e57ebf76c70a74381adda1ec12c7da473f127b1cc8b9249",
+    "tools/refine_period_helpers.py": "a0aad8182f063a0280b87de4379912d97acc152ccae1d0610a0f13bc47c80a29"
+  },
+  "manifest_sha256": "2a7895820934e0d53cf6acba0e4f93da238eb297ba8ad05af5d9afc7eb320f26",
+  "runtime": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "numba": "0.68.0",
+    "pystoi": "0.4.1",
+    "soundfile": "0.14.0",
+    "python": "3.12.14"
+  },
+  "clips": [
+    {
+      "clip_id": "chego",
+      "title": "Чего тебе нужно?",
+      "reference_sha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+      "model_sha256": "d4a49221aa3fd29adbf601d2340c952caa2e82ca839ebd6b5dcd4f232359ed56",
+      "previous_model_sha256": "8cb995e0567550ab5ff1696f912de07f7bfd6ed432c205888789eafcfc74ad2e",
+      "control_name": "HQ4-T Auto",
+      "control_stream_sha256": "16d924e1586a52356a61abbac7b82d421e4eee8404bc2f6d157bcaaa81e99769",
+      "control_assembled_flash_bytes": 1007,
+      "native_data_bytes": 680,
+      "compact_data_bytes": 512,
+      "compact_payload_sha256": "8695e56d42a11ff5316cdf84e7197305f80184c8d8ecd4a4f89a682fc9367f54",
+      "available_flash_after_compact_data": 512,
+      "compact_pcm_exact": true,
+      "output_rounding": "round(x*128), clip [-128,127], divide by 128",
+      "avr_assembled": false,
+      "hardware_verified": false,
+      "metrics": {
+        "Control": {
+          "loss": 0.9101479560514576,
+          "log_spectral_error": 0.9359480734784557,
+          "relative_spectral_error": 0.8069474863434652,
+          "stoi": 0.9005000749339589,
+          "estoi": 0.7946063824122162,
+          "peak": 0.6953125
+        },
+        "Before": {
+          "loss": 0.3285119276543316,
+          "log_spectral_error": 0.32982045605509785,
+          "relative_spectral_error": 0.32327781405126643,
+          "stoi": 0.8633787141509307,
+          "estoi": 0.7717345950334449,
+          "peak": 0.8475251758449518
+        },
+        "NewFloat": {
+          "loss": 0.34072552333247913,
+          "log_spectral_error": 0.34704749568770915,
+          "relative_spectral_error": 0.31543763391155893,
+          "stoi": 0.9118919691519786,
+          "estoi": 0.8428263609823406,
+          "peak": 0.872364814585772
+        },
+        "New8bit": {
+          "loss": 0.3429934084067485,
+          "log_spectral_error": 0.34988298771496,
+          "relative_spectral_error": 0.31543509117390256,
+          "stoi": 0.9086281746925705,
+          "estoi": 0.8384856842346815,
+          "peak": 0.875
+        }
+      }
+    },
+    {
+      "clip_id": "otvechaesh",
+      "title": "Что ж ты не отвечаешь?",
+      "reference_sha256": "96c09f80396643dd80efb9c5c8557d83359eeb829a0b855a7f8f5c32bbff0b96",
+      "model_sha256": "6323d1444b629c10ae9b00a14dae266f258541b8e18614619bfeabc5266326a8",
+      "previous_model_sha256": "4ab25f6ebe93fc0814dff87c7e6ce46237322bff8ba3d2eb7dc9d93ef3a15341",
+      "control_name": "HQ4",
+      "control_stream_sha256": "6e44fbc2b548627cd71c7329ed5683ec9ce40ee51a1fa61f8f24039d55810d2d",
+      "control_assembled_flash_bytes": 885,
+      "native_data_bytes": 625,
+      "compact_data_bytes": 509,
+      "compact_payload_sha256": "004a5bfcb0eca0fe88ee34353e48890d9197a714541ecc020c7470e573b49a89",
+      "available_flash_after_compact_data": 515,
+      "compact_pcm_exact": true,
+      "output_rounding": "round(x*128), clip [-128,127], divide by 128",
+      "avr_assembled": false,
+      "hardware_verified": false,
+      "metrics": {
+        "Control": {
+          "loss": 1.0972926452380038,
+          "log_spectral_error": 1.1921568705663546,
+          "relative_spectral_error": 0.7178357439246009,
+          "stoi": 0.8190556436552531,
+          "estoi": 0.7041273428696612,
+          "peak": 0.5859375
+        },
+        "Before": {
+          "loss": 0.40235494380192477,
+          "log_spectral_error": 0.4319451827549619,
+          "relative_spectral_error": 0.2839939879897759,
+          "stoi": 0.8002961280562113,
+          "estoi": 0.6237826752979846,
+          "peak": 0.8654764629587244
+        },
+        "NewFloat": {
+          "loss": 0.42196813894020785,
+          "log_spectral_error": 0.4533678528091054,
+          "relative_spectral_error": 0.29636928346461744,
+          "stoi": 0.8596998944742044,
+          "estoi": 0.730996599804667,
+          "peak": 0.8706710485365942
+        },
+        "New8bit": {
+          "loss": 0.42485226646185087,
+          "log_spectral_error": 0.4570179613386432,
+          "relative_spectral_error": 0.2961894869546812,
+          "stoi": 0.8517473146637892,
+          "estoi": 0.7130635320509537,
+          "peak": 0.8671875
+        }
+      }
+    },
+    {
+      "clip_id": "vinni",
+      "title": "Сова! Открывай! Медведь пришёл!",
+      "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+      "model_sha256": "294a76f45b5a5ec8966730fb19b9f94cd40508bb923d09fef8a174b60ce16dfa",
+      "previous_model_sha256": "0d0ae9e649193bb726c3ad220ee350e3b4705e9e33c40f88efa1813bef62b764",
+      "control_name": "HQ4",
+      "control_stream_sha256": "fe24fbdaf5260266d7b29b04f7e4d3926c48ce13c5697b214e0728b431433d03",
+      "control_assembled_flash_bytes": 1024,
+      "native_data_bytes": 1241,
+      "compact_data_bytes": 881,
+      "compact_payload_sha256": "5ad4883281124315f73e8d2776c526d679512f60b743c546556a9e1a524977c4",
+      "available_flash_after_compact_data": 143,
+      "compact_pcm_exact": true,
+      "output_rounding": "round(x*128), clip [-128,127], divide by 128",
+      "avr_assembled": false,
+      "hardware_verified": false,
+      "metrics": {
+        "Control": {
+          "loss": 0.8232287703712707,
+          "log_spectral_error": 0.8128841292213537,
+          "relative_spectral_error": 0.8646073349709388,
+          "stoi": 0.8596022716157532,
+          "estoi": 0.6909859419813376,
+          "peak": 0.484375
+        },
+        "Before": {
+          "loss": 0.550032376462484,
+          "log_spectral_error": 0.5229338217949766,
+          "relative_spectral_error": 0.6584265951325136,
+          "stoi": 0.7500000688661863,
+          "estoi": 0.5418337830642228,
+          "peak": 0.7847179977609308
+        },
+        "NewFloat": {
+          "loss": 0.5605682268421581,
+          "log_spectral_error": 0.539871728502103,
+          "relative_spectral_error": 0.6433542202023788,
+          "stoi": 0.8555530191856776,
+          "estoi": 0.6957656729860942,
+          "peak": 0.7966428555807324
+        },
+        "New8bit": {
+          "loss": 0.5621397269020617,
+          "log_spectral_error": 0.5418018712804634,
+          "relative_spectral_error": 0.6434911493884549,
+          "stoi": 0.8548538566227963,
+          "estoi": 0.6942765603673143,
+          "peak": 0.796875
+        }
+      }
+    }
+  ]
+}

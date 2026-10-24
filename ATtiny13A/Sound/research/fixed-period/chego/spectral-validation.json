@@ -1,0 +1,45 @@
+{
+  "schema": "fixed-speech-fresh-rescore-v1",
+  "model_sha256": "36ad6f2acaeabb4276b35916c8fc97f1f9c5280f1939fbf6c09999837d973dd3",
+  "pcm_sha256": "9157f99921b00664deb1977508d1a04e38d28c3991a813ed044f3c14254ab27f",
+  "payload_sha256": "2cd3e739dfefb75e4e164f57d50a355a74c98b701d5f1e81a2bb653a3ca0df09",
+  "current_metrics": {
+    "loss": 0.33992943796893005,
+    "log_spectral_error": 0.34542221154033365,
+    "relative_spectral_error": 0.3179583436833154,
+    "stoi": 0.9126439120996263,
+    "peak": 0.890625,
+    "clips": 0,
+    "pre_dc_clips": 0,
+    "mean_pcm": 0.003689236111111111,
+    "max_abs_64_sample_mean": 4.859375,
+    "data_bytes": 509
+  },
+  "training_metrics_equal": true,
+  "training_pcm_equal": true,
+  "packed_roundtrip_pcm_equal": true,
+  "source_changes_during_training": [
+    "ATtiny13A/Sound/codec/fixed_period.py"
+  ],
+  "sources_sha256_normalized_lf_current": {
+    "ATtiny13A/Sound/codec/fixed_search.py": "585953aeeddd9f1914dfdf8245be1db2cb87b0251b5869b108287c68ddf2b68c",
+    "ATtiny13A/Sound/codec/fixed_period.py": "eadfcdf132d3dfb031b78253f9b8fa159ae711e17b2caba34d2cfdf804d7e40e",
+    "ATtiny13A/Sound/codec/dc_blocker.py": "fb86b467afa3050b67715c4aed8942c86bbeb4dadfa17054d5f6015c1fc30230",
+    "ATtiny13A/Sound/codec/compact_period.py": "0e5e7d7967646a168621b0f28a24cf55678785d55a701583ba8567a4a5afa42f",
+    "ATtiny13A/Sound/codec/colored_period.py": "db02620b67c3a0574b5f24c99cbaa9d0c25048cafc1a94e3ce83026e8095e27b",
+    "ATtiny13A/Sound/codec/period_wave.py": "ad0aa3f5db96d0e6a9573c1df660ea71417fc9dc3280aa81e559a440fe7118cd",
+    "ATtiny13A/Sound/codec/auto_encoder.py": "ab97a68e00409640531c26cebc43f2fc2fdd3c4cb111e6ffb7c0a7dbcdff2202",
+    "tools/train-fixed-speech.py": "40ace957c20ea49238ce907ae2a0a2e310b6a21f2950e5b4e6d3ce2128c460e3",
+    "tools/refine_period_helpers.py": "a0aad8182f063a0280b87de4379912d97acc152ccae1d0610a0f13bc47c80a29"
+  },
+  "avr_features": {
+    "ENABLE_FIR": 1,
+    "ENABLE_UNVOICED": 0,
+    "SINGLE_FIR": 1,
+    "FIR_BYTES": 8,
+    "HISTORY_LENGTH": 16,
+    "WAVE_BYTES": 256
+  },
+  "specialized_avr_data_bytes": 493,
+  "firmware_checked_by_this_report": false
+}

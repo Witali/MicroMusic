@@ -46,7 +46,7 @@ const deviceFiles=['web-player/native/devices/attiny13a/reset_input.c',
   'web-player/native/devices/attiny13a/clki_clock.c','web-player/native/devices/attiny13a/clki_clock.h',
   'web-player/native/devices/attiny13a/clki_validation.c','web-player/native/devices/attiny13a/clki_validation.h',
   'web-player/native/devices/attiny13a/clki_periodic.c','web-player/native/devices/attiny13a/clki_periodic.h',
-  'web-player/native/devices/attiny13a/clki_board.inc'];
+  'web-player/native/devices/attiny13a/clki_board.inc','web-player/native/devices/attiny13a/avr-profile.inc'];
 const sources = ['web-player/native/avr.c', ...nativeFiles.filter(name => name.endsWith('.c')),
   ...deviceFiles.filter(name=>name.endsWith('.c'))];
 const runtimeSource = readFileSync(join(root, sources[0]), 'utf8');
@@ -63,7 +63,7 @@ if (!runtimeSource.includes('AVR_FULL_DEVICE') || !nativeFiles.includes(peripher
 // when the full runtime adds board configuration and diagnostic bridges.
 const originalExports = ['layout', 'field_name', 'error_message', 'reset', 'decode', 'decode_idle',
   'step', 'next', 'block', 'idle', 'clock', 'interrupt', 'write_io', 'update_timer', 'timer_mode',
-  'push', 'pop', 'push_pc', 'pop_pc', 'nzvs', 'arithmetic', 'audio_init', 'audio_channels',
+  'push', 'pop', 'push_pc', 'pop_pc', 'nzvs', 'arithmetic', 'read_data', 'write_data', 'timer_top', 'timer_counter', 'audio_init', 'audio_channels',
   'audio_controls', 'render', 'filter', 'average'].map(name => 'avr_' + name);
 const publicDefinitions = [...bridgeSource.matchAll(
   /^\s*(?!static\b)(?:const\s+)?\w+[\s*]+(avr_\w+)\s*\([^;{}]*\)\s*\{/gm,

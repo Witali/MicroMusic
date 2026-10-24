@@ -1,0 +1,72 @@
+{
+  "schema": "vinni-voice-priority-comparison-v1",
+  "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+  "sample_rate": 7500,
+  "samples": 22272,
+  "seed": 23065,
+  "starts": 8,
+  "refinement_proposals": 0,
+  "runtime": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "pystoi": "0.4.1",
+    "soundfile": "0.14.0"
+  },
+  "source_sha256_normalized_lf": {
+    "ATtiny13A/Sound/research/tiny-speech/vinni/pitch-study.py": "9ec157759401cbd8ed0fe7a8927b7335512d9ebeada59070abf500d0d4bfba73",
+    "tools/refine_period_helpers.py": "a0aad8182f063a0280b87de4379912d97acc152ccae1d0610a0f13bc47c80a29",
+    "ATtiny13A/Sound/codec/period_wave.py": "d6d92cdd2e8d910a9e4085f939e193553fac53e5cd8b0d892b29e76b3709587f",
+    "ATtiny13A/Sound/codec/speech_pitch.py": "dfff32c46a8709c7959088a9b2cf1abecef9d792834841a00f669c5f3695020b",
+    "ATtiny13A/Sound/codec/auto_encoder.py": "ab97a68e00409640531c26cebc43f2fc2fdd3c4cb111e6ffb7c0a7dbcdff2202"
+  },
+  "metrics": {
+    "legacy": {
+      "stoi": 0.5890759414117428,
+      "loss": 0.633340932845892,
+      "log_spectral_error": 0.6191381650953289,
+      "relative_spectral_error": 0.690152003848144,
+      "voice_mask_concatenated_stoi": 0.6858134305797212,
+      "voice_mask_mse": 0.011845138066200253,
+      "voiced_frames": 147,
+      "book_frames": 147,
+      "f0_voiced_percentiles_hz": [
+        116.9519010251006,
+        126.59928226341876,
+        132.8983696986113,
+        300.1969199890673,
+        828.5137988707668
+      ],
+      "phase_code_frequency_median_hz": 227.05078125,
+      "data_bytes": 962,
+      "model_sha256": "25e34ebb2942da8af055f562b7d2dd8680f4f85265ed31b5bbbc7a440bb186d5"
+    },
+    "voice-priority": {
+      "stoi": 0.5113523165420849,
+      "loss": 0.7321463081516478,
+      "log_spectral_error": 0.7119673611323226,
+      "relative_spectral_error": 0.8128620962289483,
+      "voice_mask_concatenated_stoi": 0.7200254700437061,
+      "voice_mask_mse": 0.013688989309231,
+      "voiced_frames": 106,
+      "book_frames": 102,
+      "f0_voiced_percentiles_hz": [
+        114.69266223986052,
+        124.09185626674306,
+        128.61256876532127,
+        132.03360924989954,
+        147.33948686851704
+      ],
+      "phase_code_frequency_median_hz": 128.173828125,
+      "data_bytes": 962,
+      "model_sha256": "f62537e6f121238dcae59ce6ad0400172a3d2b7e917fef43712d9d7d5c8cd365"
+    }
+  },
+  "voice_mask_samples": 6784,
+  "voice_mask_metric_caveat": "Identical automatically accepted 64-sample blocks are concatenated for both candidates; artificial joins alter STOI context. This diagnostic is not full-record STOI or independently annotated speech ground truth.",
+  "interpretation": "Persistent voice F0 is protected from isolated resonances. Full-record initialization quality regresses, while the common accepted-voice diagnostic improves. No public firmware or quality promotion follows from these measurements.",
+  "recording_trimmed": false,
+  "transients_discarded": false,
+  "transient_path": "Existing unvoiced colored-noise frames; later residual refinement may fit the full source. No reference samples are read during decoding.",
+  "avr_assembled": false,
+  "hardware_verified": false
+}

@@ -1,0 +1,318 @@
+{
+  "schema": "q3-shaped-noise-study-summary-v1",
+  "pc_only": true,
+  "reference": "web-player/audio/originals/vinni.wav",
+  "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+  "samples": 22272,
+  "sample_rate": 7500,
+  "conditions": 1536,
+  "valid_conditions": 1350,
+  "guard_rejections": {
+    "layout": 0,
+    "wrap": 12,
+    "peak": 48,
+    "steps": 126
+  },
+  "strict_paired_wins": 0,
+  "joint_proposals": 0,
+  "target_met": false,
+  "stream_cap_bytes": 600,
+  "book_bytes": 64,
+  "avr_code_bytes": null,
+  "full_flash_bytes": null,
+  "avr_qualified": false,
+  "public_firmware_changed": false,
+  "source_groups": [
+    {
+      "source_index": 0,
+      "gain_scale": 0.8,
+      "valid_nonzero_modes": 255,
+      "control": {
+        "mode_code": 0,
+        "noise_modes": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stoi": 0.819032727741444,
+        "spectrogram_loss": 0.5094471041094549
+      },
+      "best_noise_stoi": {
+        "mode_code": 128,
+        "noise_modes": [
+          0,
+          0,
+          0,
+          2
+        ],
+        "stoi": 0.8137495730457991,
+        "spectrogram_loss": 0.518074408749858
+      },
+      "best_noise_spectrum": {
+        "mode_code": 16,
+        "noise_modes": [
+          0,
+          0,
+          1,
+          0
+        ],
+        "stoi": 0.8060501884535745,
+        "spectrogram_loss": 0.5146464403630827
+      },
+      "stoi_only_wins": 0,
+      "spectrum_only_wins": 0,
+      "minimum_stoi_degradation": 0.005283154695644887,
+      "minimum_spectrum_degradation": 0.005199336253627784
+    },
+    {
+      "source_index": 0,
+      "gain_scale": 1.0,
+      "valid_nonzero_modes": 148,
+      "control": {
+        "mode_code": 0,
+        "noise_modes": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stoi": 0.8466769464532562,
+        "spectrogram_loss": 0.4927476970021559
+      },
+      "best_noise_stoi": {
+        "mode_code": 64,
+        "noise_modes": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "stoi": 0.8324471804595738,
+        "spectrogram_loss": 0.49898895944423033
+      },
+      "best_noise_spectrum": {
+        "mode_code": 64,
+        "noise_modes": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "stoi": 0.8324471804595738,
+        "spectrogram_loss": 0.49898895944423033
+      },
+      "stoi_only_wins": 0,
+      "spectrum_only_wins": 0,
+      "minimum_stoi_degradation": 0.01422976599368242,
+      "minimum_spectrum_degradation": 0.006241262442074402
+    },
+    {
+      "source_index": 1,
+      "gain_scale": 0.8,
+      "valid_nonzero_modes": 255,
+      "control": {
+        "mode_code": 0,
+        "noise_modes": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stoi": 0.8103286568295769,
+        "spectrogram_loss": 0.5199802849572187
+      },
+      "best_noise_stoi": {
+        "mode_code": 4,
+        "noise_modes": [
+          0,
+          1,
+          0,
+          0
+        ],
+        "stoi": 0.8017616197309312,
+        "spectrogram_loss": 0.5269390417114412
+      },
+      "best_noise_spectrum": {
+        "mode_code": 16,
+        "noise_modes": [
+          0,
+          0,
+          1,
+          0
+        ],
+        "stoi": 0.800613361742592,
+        "spectrogram_loss": 0.5228173503741234
+      },
+      "stoi_only_wins": 0,
+      "spectrum_only_wins": 0,
+      "minimum_stoi_degradation": 0.008567037098645702,
+      "minimum_spectrum_degradation": 0.0028370654169046494
+    },
+    {
+      "source_index": 1,
+      "gain_scale": 1.0,
+      "valid_nonzero_modes": 224,
+      "control": {
+        "mode_code": 0,
+        "noise_modes": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stoi": 0.8383964351890083,
+        "spectrogram_loss": 0.5043571420994826
+      },
+      "best_noise_stoi": {
+        "mode_code": 16,
+        "noise_modes": [
+          0,
+          0,
+          1,
+          0
+        ],
+        "stoi": 0.8200590600838275,
+        "spectrogram_loss": 0.511669270511135
+      },
+      "best_noise_spectrum": {
+        "mode_code": 128,
+        "noise_modes": [
+          0,
+          0,
+          0,
+          2
+        ],
+        "stoi": 0.8186858702508003,
+        "spectrogram_loss": 0.5116248797368752
+      },
+      "stoi_only_wins": 0,
+      "spectrum_only_wins": 0,
+      "minimum_stoi_degradation": 0.018337375105180853,
+      "minimum_spectrum_degradation": 0.007267737637392635
+    },
+    {
+      "source_index": 2,
+      "gain_scale": 0.8,
+      "valid_nonzero_modes": 255,
+      "control": {
+        "mode_code": 0,
+        "noise_modes": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stoi": 0.8075568109804795,
+        "spectrogram_loss": 0.5074248959175418
+      },
+      "best_noise_stoi": {
+        "mode_code": 128,
+        "noise_modes": [
+          0,
+          0,
+          0,
+          2
+        ],
+        "stoi": 0.8068957448860947,
+        "spectrogram_loss": 0.5103287458456576
+      },
+      "best_noise_spectrum": {
+        "mode_code": 68,
+        "noise_modes": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "stoi": 0.7984840320964458,
+        "spectrogram_loss": 0.508267211173056
+      },
+      "stoi_only_wins": 0,
+      "spectrum_only_wins": 0,
+      "minimum_stoi_degradation": 0.0006610660943847657,
+      "minimum_spectrum_degradation": 0.0008423152555141478
+    },
+    {
+      "source_index": 2,
+      "gain_scale": 1.0,
+      "valid_nonzero_modes": 207,
+      "control": {
+        "mode_code": 0,
+        "noise_modes": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stoi": 0.8246412516680567,
+        "spectrogram_loss": 0.49479497303335535
+      },
+      "best_noise_stoi": {
+        "mode_code": 128,
+        "noise_modes": [
+          0,
+          0,
+          0,
+          2
+        ],
+        "stoi": 0.8173206117323375,
+        "spectrogram_loss": 0.49929432899921294
+      },
+      "best_noise_spectrum": {
+        "mode_code": 128,
+        "noise_modes": [
+          0,
+          0,
+          0,
+          2
+        ],
+        "stoi": 0.8173206117323375,
+        "spectrogram_loss": 0.49929432899921294
+      },
+      "stoi_only_wins": 0,
+      "spectrum_only_wins": 0,
+      "minimum_stoi_degradation": 0.0073206399357191865,
+      "minimum_spectrum_degradation": 0.004499355965857599
+    }
+  ],
+  "example_pair": {
+    "same_frames": true,
+    "same_durations": true,
+    "same_signed_coefficients": true,
+    "all_off_noise_modes": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "least_bad_noise_modes": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "all_off_metrics": {
+      "stoi": 0.8466769464532562,
+      "estoi": 0.6501421117818907,
+      "spectrogram_loss": 0.4927476970021559,
+      "raw_mean": 0.07735504501167385,
+      "raw_rms": 0.11746709800023979,
+      "raw_peak": 0.78125,
+      "stream_bytes": 598,
+      "pcm_sha256": "61bc43b84d4e241dc0e67353b2399d0c1eb4722a3daecd1aa5514dbe4aafa417"
+    },
+    "least_bad_noise_metrics": {
+      "stoi": 0.8324471804595738,
+      "estoi": 0.6248219456650683,
+      "spectrogram_loss": 0.49898895944423033,
+      "raw_mean": 0.07723858712733477,
+      "raw_rms": 0.1174541494387568,
+      "raw_peak": 0.78125,
+      "stream_bytes": 598,
+      "pcm_sha256": "8a073660407945fde842e520dff018ec0bbc02cebeb906eee8cf311ab05a5f69"
+    }
+  },
+  "screen_sha256_normalized_lf": "26039ed1666553b78414177e89fa8b56ad18e713edcfd21bfbfcf225343c5ba3",
+  "scope": "Only this fixed gain/2 two-tap source on one complete recording, three existing seeds, both arithmetic roundings and two gain scales; not a universal impossibility claim"
+}

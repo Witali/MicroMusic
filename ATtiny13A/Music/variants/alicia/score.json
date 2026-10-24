@@ -593,7 +593,7 @@
     },
     {
       "state": 102,
-      "role": "piano-chord-tone",
+      "role": "piano-arpeggio",
       "instrument": "acoustic-grand-piano-soft",
       "level": 5,
       "gain": 1
@@ -662,8 +662,16 @@
     ],
     "durationSeconds": 157.6392572944297,
     "rhythm": "Native 12-units/quarter retains every rational source duration, including triplets; runtime switches tempo rather than flattening bars.",
-    "reduction": "All 169 source melody attacks, 55 written bars, source octave/program changes and native rational note lengths retained. The Z80 repeated piano arpeggio is reduced to its first chord tone; bass root and bowed inner second chord tone remain. Companion gates close one native unit before the chord boundary.",
-    "companionNoteOns": 213,
+    "reduction": "All 169 source melody attacks, 55 written bars, source octave/program changes and native rational note lengths retained. Repeated eighth-note piano motion is restored using the first two source chord tones; the third chord tone remains omitted. Bass root and bowed inner second chord tone remain. Companion gates close one native unit before the chord boundary.",
+    "companionNoteOns": 488,
+    "pianoNoteOns": 346,
+    "accompaniment": {
+      "chords": 71,
+      "pianoTonesPerChord": 2,
+      "pianoStepQuarterBeats": 0.5,
+      "pianoMotion": "Alternating first and second source chord tones; third tone omitted",
+      "retainedOriginalDuration": true
+    },
     "loopSilence": "The original final four-quarter rest; all six envelopes finish before restart."
   }
 }

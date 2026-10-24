@@ -1,0 +1,105 @@
+{
+  "id": "vinni-pux-3543",
+  "input": {
+    "id": "vinni-pux-3543",
+    "source_file": "vinni-pux-3543.mp3",
+    "source_sha256": "77ad4227bc4c43b10b501306ad9b5ea40b22d87c593b7cdcc0f99bcdd3771cdd",
+    "source_bytes": 64504,
+    "source_sample_rate": 44100,
+    "source_channels": 2,
+    "source_samples": 174080,
+    "source_seconds": 3.947392290249433,
+    "source_mono_dc_removed": -3.56812280663251e-05,
+    "mono_policy": "arithmetic mean of channels",
+    "resampling": "scipy.signal.resample_poly default Kaiser anti-alias filter",
+    "normalization_gain": 2.407976379974936,
+    "sample_rate": 7500,
+    "reference_samples": 29632,
+    "unpadded_samples": 29606,
+    "trailing_zero_padding_samples": 26,
+    "reference_seconds": 3.9509333333333334,
+    "speech_cropped": false,
+    "reference_sha256": "4513b20bba841348d095fbd3a24eb826b4d6a0605944e1224da25df9ca4b0889",
+    "reference_file": "reference.wav",
+    "reference_peak": 0.8499755859375,
+    "reference_rms": 0.14398149498350601,
+    "current_tiny_duration_supported": true,
+    "hq4_minimum_frames": 116,
+    "hq4_minimum_stream_bytes": 236,
+    "hq4_stream_budget_bytes": 617
+  },
+  "selectedFamily": "hq4",
+  "requestedFinalFamily": null,
+  "selectionProvisional": true,
+  "flashBytes": 1024,
+  "eepromUsedBytes": 0,
+  "phraseSamples": 29632,
+  "sampleHz": 7500,
+  "imageSha256": "be84f69a2437f5a30bd24a19326f0e1d0343190c02c9723162bb5236849b18ca",
+  "actualPhrasePcmSha256": "d4876e491aa5360a76be3528f21f938875365e2d917cf35c99b7b3ef6baf20d2",
+  "quality": {
+    "loss": 0.7966659990435856,
+    "log_spectral_error": 0.7864048007897453,
+    "relative_spectral_error": 0.8377107920589465,
+    "stoi": 0.7055615214767944,
+    "estoi": 0.511680526556785,
+    "balanced_score": 0.6418282415533075,
+    "pcm_sha256": "d4876e491aa5360a76be3528f21f938875365e2d917cf35c99b7b3ef6baf20d2",
+    "measured_from": "actual AVR recording",
+    "samples": 29632,
+    "sample_rate": 7500
+  },
+  "alternatives": [
+    {
+      "family": "hq4",
+      "flashBytes": 1024,
+      "eepromUsedBytes": 0,
+      "quality": {
+        "loss": 0.7966659990435856,
+        "log_spectral_error": 0.7864048007897453,
+        "relative_spectral_error": 0.8377107920589465,
+        "stoi": 0.7055615214767944,
+        "estoi": 0.511680526556785,
+        "balanced_score": 0.6418282415533075,
+        "pcm_sha256": "d4876e491aa5360a76be3528f21f938875365e2d917cf35c99b7b3ef6baf20d2",
+        "measured_from": "actual AVR recording",
+        "samples": 29632,
+        "sample_rate": 7500
+      }
+    },
+    {
+      "family": "tiny",
+      "flashBytes": 1024,
+      "eepromUsedBytes": 64,
+      "quality": {
+        "loss": 1.0171308738852012,
+        "log_spectral_error": 1.0488510571963177,
+        "relative_spectral_error": 0.8902501406407346,
+        "stoi": 0.5414089842387193,
+        "estoi": 0.22249604787527388,
+        "balanced_score": 0.4600385143279032,
+        "pcm_sha256": "5f10a5ef86400d49d2ddc82723d642b632d3cf6b15c32e492fa93b8d51b4085e",
+        "measured_from": "actual AVR recording",
+        "samples": 29632,
+        "sample_rate": 7500
+      }
+    }
+  ],
+  "originalAudio": "audio/vinni-pux-3543/original.wav",
+  "afterAudio": "audio/vinni-pux-3543/after.wav",
+  "referenceAudio": "audio/vinni-pux-3543/reference.wav",
+  "firmware": "firmware/vinni-pux-3543/firmware.hex",
+  "eeprom": null,
+  "hybridAlternative": null,
+  "verification": {
+    "engines": [
+      "reference",
+      "wasm",
+      "wasm-unoptimized"
+    ],
+    "verifiedSamples": 88896,
+    "silenceSamplesVerified": 59264,
+    "lostOverflows": 0,
+    "missedSamples": 0
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "schema": "q3-eeprom-raw-level-comparison-v1",
+  "sample_rate": 7500,
+  "samples": 22272,
+  "normalization": false,
+  "dc_removal": false,
+  "recordings": [
+    {
+      "label": "Original",
+      "source": "web-player/audio/originals/vinni.wav",
+      "source_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+      "mean": -5.8897610368399786e-05,
+      "rms": 0.12985253948480677,
+      "peak": 0.545928955078125,
+      "samples": 22272
+    },
+    {
+      "label": "Previous Q3",
+      "source": "build/lpc2-quality/vinni/before-0.wav",
+      "source_sha256": "c74cb755a7c1324ec5c008cc8dce5aba6ffef38a2469f8e161ced0c64b84d234",
+      "mean": 0.07399530520384338,
+      "rms": 0.11090971747201675,
+      "peak": 0.6484375,
+      "samples": 22272
+    },
+    {
+      "label": "Q3 + EEPROM",
+      "source": "build/hq4-q3-lpc2-prior/vinni/avr/actual.raw",
+      "source_sha256": "f7931d18c9e5ce29daf4631ee92e42d610662dbbd3ceecfc90b15bddd37c346e",
+      "mean": 0.07423172874012213,
+      "rms": 0.11111601685330723,
+      "peak": 0.6484375,
+      "samples": 22272
+    },
+    {
+      "label": "Rounded Q3",
+      "source": "build/q3-rounded-1kb/vinni-eeprom-qualified/avr/actual.raw",
+      "source_sha256": "238877f24581e71c1c783723e9e619e72538f2752a15a77fd128b2e02dc32744",
+      "mean": -0.00022660178699712642,
+      "rms": 0.06064912495240166,
+      "peak": 0.4609375,
+      "samples": 22272
+    }
+  ]
+}

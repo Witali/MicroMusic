@@ -1,0 +1,130 @@
+{
+  "vinni": {
+    "version": "strongest-partial-tracks-v1",
+    "config": {
+      "version": "strongest-partial-tracks-v1",
+      "max_tracks": 10,
+      "n_fft": 1024,
+      "hop": 128,
+      "max_gap": 8,
+      "frequency_tolerance_cents": 50.0,
+      "frequency_tolerance_hz": 0.0,
+      "amplitude_tolerance_db": 3.0,
+      "matching_gate_cents": 100.0,
+      "matching_gate_floor_hz": 14.6484375
+    },
+    "reference_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+    "samples": 22272,
+    "sample_rate": 7500,
+    "processing": "Same 70 Hz highpass, one global RMS match; unchanged timing; strongest local peaks, not F0 multiples",
+    "missing_extra_note": "Absolute errors describe matched partials only; missing/extra energy and coverage are mandatory companion metrics",
+    "source_sha256_normalized_lf": {
+      "tools/compare-harmonic-tracks.py": "3f86ecf0dd1aec37e343bb179f8e15d75181c48cc74ad751f1736a1e24fb212d",
+      "ATtiny13A/Sound/codec/harmonic_tracks.py": "b93040a6bfe174c145152f1a9fc03d9039192b81da0b2f8ace3e2a7c70f8b5b5"
+    },
+    "candidates": {
+      "Previous-T1": {
+        "sha256": "425b6c2a86d02edf51542cc845726eecf7e81296527ba0a9ae9faa192fcd81c4",
+        "metrics": {
+          "harmonic_track_loss": 1.0102114412631698,
+          "frequency_trajectory_error": 1.065593881105062,
+          "level_error": 2.5710828060921243,
+          "missing_reference_energy": 0.22113363352533563,
+          "extra_candidate_energy": 0.252541154663229,
+          "weighted_match_rate": 0.7788663664746648,
+          "frequency_error_cents": 57.64298843655569,
+          "frequency_error_hz": 11.926601873709858,
+          "level_error_db": 7.713248418276352,
+          "frequency_error_p95_cents": 152.1718099246836,
+          "frequency_error_p95_hz": 36.015505141938775,
+          "level_error_p95_db": 16.408552023989408,
+          "continuity_break_rate": 0.3763151680177655
+        }
+      },
+      "Q3-tracks": {
+        "sha256": "0ac450223c495a2ad549a3a9ac3815d5d37dcf6a5e2b0697917751f7c0257d02",
+        "metrics": {
+          "harmonic_track_loss": 0.9276358854741257,
+          "frequency_trajectory_error": 0.944415168725385,
+          "level_error": 2.460787589140449,
+          "missing_reference_energy": 0.172824129995439,
+          "extra_candidate_energy": 0.236220110492199,
+          "weighted_match_rate": 0.8271758700045616,
+          "frequency_error_cents": 48.64126669310046,
+          "frequency_error_hz": 11.03659249896802,
+          "level_error_db": 7.382362767421352,
+          "frequency_error_p95_cents": 111.27547826956649,
+          "frequency_error_p95_hz": 34.06105629694048,
+          "level_error_p95_db": 17.59277251401989,
+          "continuity_break_rate": 0.3530560603937906
+        }
+      }
+    },
+    "reference_max_tracks_at_any_time": 10,
+    "original_reference_track_ids": 172
+  },
+  "tail": {
+    "version": "strongest-partial-tracks-v1",
+    "config": {
+      "version": "strongest-partial-tracks-v1",
+      "max_tracks": 10,
+      "n_fft": 1024,
+      "hop": 128,
+      "max_gap": 8,
+      "frequency_tolerance_cents": 50.0,
+      "frequency_tolerance_hz": 0.0,
+      "amplitude_tolerance_db": 3.0,
+      "matching_gate_cents": 100.0,
+      "matching_gate_floor_hz": 14.6484375
+    },
+    "reference_sha256": "4914d2c349e1f2e9e102ec23949a2bb96b95b7145aa252b54a6a8341ba5ce55d",
+    "samples": 19328,
+    "sample_rate": 7500,
+    "processing": "Same 70 Hz highpass, one global RMS match; unchanged timing; strongest local peaks, not F0 multiples",
+    "missing_extra_note": "Absolute errors describe matched partials only; missing/extra energy and coverage are mandatory companion metrics",
+    "source_sha256_normalized_lf": {
+      "tools/compare-harmonic-tracks.py": "3f86ecf0dd1aec37e343bb179f8e15d75181c48cc74ad751f1736a1e24fb212d",
+      "ATtiny13A/Sound/codec/harmonic_tracks.py": "b93040a6bfe174c145152f1a9fc03d9039192b81da0b2f8ace3e2a7c70f8b5b5"
+    },
+    "candidates": {
+      "Previous-T1": {
+        "sha256": "f734667402e446ba62cd1066c43c021e84064a6953092d1c19e33581ac720377",
+        "metrics": {
+          "harmonic_track_loss": 0.4670896109899079,
+          "frequency_trajectory_error": 0.34526340813551226,
+          "level_error": 1.4610810900323803,
+          "missing_reference_energy": 0.11855065063750195,
+          "extra_candidate_energy": 0.08155589922086183,
+          "weighted_match_rate": 0.8814493493624965,
+          "frequency_error_cents": 19.755676816626053,
+          "frequency_error_hz": 7.727141498248841,
+          "level_error_db": 4.383243270097139,
+          "frequency_error_p95_cents": 66.46524263344986,
+          "frequency_error_p95_hz": 29.27854457224771,
+          "level_error_p95_db": 14.823809027568771,
+          "continuity_break_rate": 0.12465240123245466
+        }
+      },
+      "Q3-tracks": {
+        "sha256": "44bb984b9ea52ad0b6df2024588880fdd653add27c301785db61eb7ae7d49570",
+        "metrics": {
+          "harmonic_track_loss": 0.4142194479383806,
+          "frequency_trajectory_error": 0.33161014511231146,
+          "level_error": 1.237168408377465,
+          "missing_reference_energy": 0.10438754603939761,
+          "extra_candidate_energy": 0.08852432461128576,
+          "weighted_match_rate": 0.8956124539606004,
+          "frequency_error_cents": 17.74632796458192,
+          "frequency_error_hz": 6.713741576659283,
+          "level_error_db": 3.7115052251323934,
+          "frequency_error_p95_cents": 51.71943198059742,
+          "frequency_error_p95_hz": 16.730389230859032,
+          "level_error_p95_db": 14.94921605312372,
+          "continuity_break_rate": 0.12254605940132803
+        }
+      }
+    },
+    "reference_max_tracks_at_any_time": 10,
+    "original_reference_track_ids": 143
+  }
+}

@@ -1,5 +1,6 @@
 /* Full-device bridges. Included after the legacy ABI definitions in avr.c. */
 #include "attiny13a-registers.h"
+#include "devices/attiny13a/avr-profile.inc"
 static uint64_t full_generation;
 static uint32_t full_reset_count;
 static uint32_t full_audio_rate, full_audio_channels;
@@ -81,7 +82,7 @@ static void full_interrupt(void) {
  uint8_t reset=device_reset_requested();
  if(reset){
   if(full_phase_enabled)full_phase_cancel();
-  device_reset(reset);S(pc)=0;FLAGS=0;SP=AT13_MEMORY_RAMEND;S(irqDelay)=0;
+  device_reset(reset);S(pc)=0;FLAGS=0;set_sp(AT13_MEMORY_RAMEND);S(irqDelay)=0;
   S(frameCount)=0;S(inIRQ)=0;S(irqStart)=0;full_reset_count++;full_deadline();return;
  }
  if(full_phase_enabled){
