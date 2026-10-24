@@ -10,9 +10,9 @@ ROOT=Path(__file__).resolve().parents[1]
 
 
 def run(avr_bin,node,output,quick=False,profile='compact'):
-    if profile not in ('compact','factored'):raise ValueError('Unknown word multiply profile')
+    if profile not in ('compact','factored','adaptive','unrolled'):raise ValueError('Unknown word multiply profile')
     output=output.resolve();output.mkdir(parents=True,exist_ok=True)
-    source=ROOT/'ATtiny13A/Sound/codec/word-q4'/('multiply.S' if profile=='compact' else 'multiply-factored.S')
+    source=ROOT/'ATtiny13A/Sound/codec/word-q4'/('multiply.S' if profile in ('compact','unrolled') else 'multiply-factored.S')
     fixture='''.section .text
 .global __vectors
 __vectors:
@@ -21,7 +21,7 @@ __vectors:
  rjmp irq
 halt:
  rjmp halt
-'''+'.include '+json.dumps(source.as_posix())+'''
+'''+('.equ WORD_MUL_ADAPTIVE,1\n' if profile=='adaptive' else '.equ WORD_MUL_UNROLLED,1\n' if profile=='unrolled' else '')+'.include '+json.dumps(source.as_posix())+'''
 irq:
  push r16
  in r16,0x3f
@@ -62,5 +62,5 @@ irq:
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     for key in ('avr-bin','node','output'):p.add_argument('--'+key,type=Path,required=True)
-    p.add_argument('--quick',action='store_true');p.add_argument('--profile',choices=('compact','factored'),default='compact')
+    p.add_argument('--quick',action='store_true');p.add_argument('--profile',choices=('compact','factored','adaptive','unrolled'),default='compact')
     a=p.parse_args();run(a.avr_bin,a.node,a.output,a.quick,a.profile)

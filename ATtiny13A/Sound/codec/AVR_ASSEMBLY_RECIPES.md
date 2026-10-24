@@ -382,6 +382,29 @@ bytes**. This remains an optional tradeoff, not a complete-player deadline
 or a proven total-size win. Reports: [scalar](../research/word-q4/multiplier-factored.json),
 [full filter](../research/word-q4/filter-six-factored.json).
 
+## Share four unrolled stages between Q4 and Q5
+
+`WORD_MUL_UNROLLED=1` in [`word-q4/multiply.S`](word-q4/multiply.S) emits four
+common shift/add stages. Q5 executes one extra stage **before** them, so the
+last ROR always leaves the correct rounding bit. No DEC/BRNE is needed within
+the four common stages. The ordinary 72-byte build remains byte-identical.
+
+The unrolled profile takes **120 bytes**, worst Q4 **58 cycles**, Q5 **61**.
+On the complete six-bit-state teacher, arithmetic is **228 bytes** and the
+worst filter call is **1098 rather than 1218 cycles**, with identical PCM,
+states and IRQ behavior. [Exhaustive scalar proof](../research/word-q4/multiplier-unrolled.json)
+and [whole-filter proof](../research/word-q4/filter-six-unrolled.json) retain
+the exact source hashes and three-engine results.
+
+An alternative `WORD_MUL_ADAPTIVE` exits the bit loop as soon as the last
+coefficient bit is consumed. It costs **108 bytes** and lowers the observed
+minimum time, but worsens scalar worst cases to **70 / 79 cycles** and the
+teacher's worst filter to **1182**, compared with 1178 for ordinary factoring.
+Keep it as a measured control; it is not the preferred deadline profile.
+It also passes the exhaustive Q4 and boundary/strided Q5 proof:
+[scalar](../research/word-q4/multiplier-adaptive.json),
+[filter](../research/word-q4/filter-six-adaptive.json).
+
 ## A word lattice with descending Flash coefficients
 
 [`word-q4/filter.S`](word-q4/filter.S) keeps eight little-endian word states

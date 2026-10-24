@@ -19,10 +19,10 @@ fit=importlib.util.module_from_spec(spec);sys.modules[spec.name]=fit;spec.loader
 
 def run(avr_bin,node,output,state_bits=4,profile='compact'):
     if state_bits not in (4,6):raise ValueError('Expected four or six fractional state bits')
-    if profile not in ('compact','factored'):raise ValueError('Unknown word multiply profile')
+    if profile not in ('compact','factored','adaptive','unrolled'):raise ValueError('Unknown word multiply profile')
     output=output.resolve();output.mkdir(parents=True,exist_ok=True)
     source=ROOT/'ATtiny13A/Sound/codec/word-q4/filter.S'
-    multiply=source.with_name('multiply.S' if profile=='compact' else 'multiply-factored.S')
+    multiply=source.with_name('multiply.S' if profile in ('compact','unrolled') else 'multiply-factored.S')
     fixture='''.section .text
 .global __vectors
 __vectors:
@@ -31,7 +31,7 @@ __vectors:
  rjmp irq
 halt:
  rjmp halt
-'''+f'.equ WORD_STATE_BITS,{state_bits}\n'+''.join('.include '+json.dumps(p.as_posix())+'\n' for p in (source,multiply))+'''
+'''+f'.equ WORD_STATE_BITS,{state_bits}\n'+('.equ WORD_MUL_ADAPTIVE,1\n' if profile=='adaptive' else '.equ WORD_MUL_UNROLLED,1\n' if profile=='unrolled' else '')+''.join('.include '+json.dumps(p.as_posix())+'\n' for p in (source,multiply))+'''
 irq:
  push r16
  in r16,0x3f
@@ -106,5 +106,5 @@ if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     for key in ('avr-bin','node','output'):p.add_argument('--'+key,type=Path,required=True)
     p.add_argument('--state-bits',type=int,choices=(4,6),default=4)
-    p.add_argument('--profile',choices=('compact','factored'),default='compact')
+    p.add_argument('--profile',choices=('compact','factored','adaptive','unrolled'),default='compact')
     a=p.parse_args();run(a.avr_bin,a.node,a.output,a.state_bits,a.profile)

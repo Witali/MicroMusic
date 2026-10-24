@@ -48,7 +48,18 @@ word_mul_no_add:
  lsr r25
  ror r24
  dec r23
+.ifdef WORD_MUL_ADAPTIVE
+ breq word_mul_round
+ tst r21
  brne word_mul_magnitude
+word_mul_shift_only:
+ lsr r25
+ ror r24
+ dec r23
+ brne word_mul_shift_only
+.else
+ brne word_mul_magnitude
+.endif
 word_mul_round:
  adc r24,r27
  adc r25,r27
@@ -58,12 +69,14 @@ word_mul_round:
  neg r24
  sbci r25,0xff
  ret
+.ifndef WORD_MUL_ADAPTIVE
 word_mul_shift_only:
  lsr r25
  ror r24
  dec r23
  brne word_mul_shift_only
  rjmp word_mul_round
+.endif
 word_mul_zero:
  clr r24
  clr r25

@@ -34,6 +34,27 @@ word_mul_positive_coefficient:
  neg r18
  sbci r19,0xff
 word_mul_magnitude:
+.ifdef WORD_MUL_UNROLLED
+ sbrs r23,0
+ rjmp word_mul_four
+ lsr r21
+ brcc 1f
+ add r24,r18
+ adc r25,r19
+1:
+ lsr r25
+ ror r24
+word_mul_four:
+.rept 4
+ lsr r21
+ brcc 1f
+ add r24,r18
+ adc r25,r19
+1:
+ lsr r25
+ ror r24
+.endr
+.else
  lsr r21
  brcc word_mul_no_add
  add r24,r18
@@ -43,6 +64,7 @@ word_mul_no_add:
  ror r24
  dec r23
  brne word_mul_magnitude
+.endif
 word_mul_round:
  adc r24,r27
  adc r25,r27
