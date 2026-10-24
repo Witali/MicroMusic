@@ -211,6 +211,12 @@ deadlines, half-cycle starts, IRQ/input/reset boundaries, protected windows,
 CLKPR/OSCCAL, register/I/O aliases and both64-bit counter limits. The physical
 timestamp regression first reproduced an early fault with zero retirements;
 the guarded path now retains the same four successful instructions as stepping.
+Native WASM phase probes also require `run` and `runUntil` to deliver one actual
+14-cycle span for an eligible12-instruction block. The regressions first saw
+individual one-cycle calls because the dispatch budget comparison used f64.gt
+(`0x64`) instead of f64.lt (`0x63`). These checks prove block activation as well
+as state parity; equal final state alone cannot establish that an optimization
+ran. Probe calls remain entirely within WASM.
 
 `attiny13a-clki-runtime.test.mjs` and
 `attiny13a-clki-periodic-runtime.test.mjs` exercise the connected external source

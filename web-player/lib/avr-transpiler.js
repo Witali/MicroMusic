@@ -432,7 +432,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   // block wrapper. Invalid PCs fall back to STEP's ordinary error reporting.
   // CLKI deliberately exposes no positive block budget and skips dispatch.
   const tryBlock=(deadline,limit)=>conditionValue(
-    and(eqz(phaseActive()),binary(0x64,stateF('cyc'),stateF('overflowAt'))),
+    and(eqz(phaseActive()),binary(0x63,stateF('cyc'),stateF('overflowAt'))),
     conditionValue(and(ge(state('pc'),constant(0)),lt(state('pc'),constant(flashWords))),
       bytes(deadline,limit,add(state('pc'),constant(flashWords)),0x11,3,0),constant(0)),constant(0));
   const dispatchPc=resumable?conditionValue(eq(phaseActive(),constant(1)),load32(constant(abi.phase.execPc)),state('pc')):state('pc');

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {ATtiny13A} from '../lib/attiny13a.js';
 import {avr,IO,flash} from './fixtures/attiny13a-system-firmware.mjs';
 import {rr,immediate} from './helpers/avr-test-state.mjs';
+import {makePhaseProbe,phaseTrace,clearPhaseProbe,PHASE_EVENT as E} from './helpers/avr-phase-probe.mjs';
 
 const hz=10000000,osccalHz=Array(128).fill(0);osccalHz[0]=hz;osccalHz[1]=9000000;
 const body=[avr.ldi(16,255),avr.ldi(17,1),avr.add(16,17),[rr(0x1c00,18,19)],
@@ -36,6 +37,18 @@ test('resumable ALU blocks execute and retain every live flag/register and full 
     assert.equal(a.state().cpuPhase.retired,BigInt(count));
     assert.equal(a.state().cpuPhase.execPc,16+count-1);
   }
+});
+
+for(const bounded of [false,true])
+test(`${bounded?'runUntil':'run'} actually executes a complete block through the native clock bridge`,()=>{
+  const a=makePhaseProbe(image(),{resumable:true,osccalHz,oscillatorHz:hz,fuseLow:0x72,fastIdle:false}),b=make();
+  a.clock(8);a.pc=16;clearPhaseProbe(a);
+  if(bounded){const end=a.state().timePs+1400001n;a.runUntilPs(end);oracleUntil(b,end);}
+  else{assert.equal(a.run(body.length),body.length);for(let n=0;n<body.length;n++)b.step();}
+  same(a,b,'public runner full state');
+  const calls=phaseTrace(a).filter(event=>event.kind===E.PHASE_ENTER);
+  assert.equal(calls[0].argument,28,'one actual14-cycle block clock call must replace the individual phases');
+  assert.equal(calls.filter(event=>event.argument===28).length,1);
 });
 
 test('instruction limits and exact or fractional physical deadlines reject whole-block overrun',()=>{
