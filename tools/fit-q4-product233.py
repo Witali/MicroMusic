@@ -65,7 +65,10 @@ def from_model(model):
         else:
             values[name]=np.zeros(16,np.int16)
             if name in model and np.any(model[name]):raise ValueError('Phase flags require the phase schema')
-    state=State(**values);expand(state);return state
+    state=State(**values);expand(state)
+    maximum=int(model.get('maximum_forms',8))
+    if not 1<=maximum<=8 or np.any(state.root[:,2]>=maximum):raise ValueError('Waveform selectors exceed the declared form capacity')
+    return state
 
 
 def medoids(distance,count=16):
@@ -118,7 +121,7 @@ def initialize(teacher):
     return state
 
 
-def actions(s,fit_phase=False):
+def actions(s,fit_phase=False,maximum_forms=8):
     if fit_phase:
         for row in range(16):
             yield ('attack',row,0,1-int(s.attack_flags[row]))
@@ -136,9 +139,9 @@ def actions(s,fit_phase=False):
                 for delta in (-1,1):yield ('coefficient',group,row,column,delta)
     for row in range(16):
         for delta in (-1,1):yield ('window',row,0,delta)
-        for mode in range(8):
+        for mode in range(maximum_forms):
             if mode!=s.root[row,2]:yield ('mode',row,0,mode)
-    for mode in range(8):
+    for mode in range(maximum_forms):
         for tap in range(16):
             for delta in (-1,1):yield ('wave',mode,tap,delta)
     for row in range(len(s.pitches)-1):
@@ -188,12 +191,14 @@ def apply(s,action):
     return c
 
 
-def run(reference_path,teacher_path,output,evaluations=12000,fit_phase=False):
+def run(reference_path,teacher_path,output,evaluations=12000,fit_phase=False,maximum_forms=None):
     if evaluations<0:raise ValueError('Expected nonnegative evaluation budget')
     start=time.perf_counter();meta=json.loads(teacher_path.read_text(encoding='utf-8'))
     if meta['schema'] in (codec.SCHEMA,codec.PHASE_SCHEMA):s=from_model(meta)
     else:s=initialize(fit.load(teacher_path))
     fit_phase=fit_phase or meta['schema']==codec.PHASE_SCHEMA
+    maximum_forms=int(meta.get('maximum_forms',8)) if maximum_forms is None else maximum_forms
+    if not 1<=maximum_forms<=8 or np.any(s.root[:,2]>=maximum_forms):raise ValueError('Prune/remap waveforms before imposing a smaller capacity')
     bits,nearest=meta['state_bits'],meta['nearest'];x,sr=sf.read(reference_path,dtype='float64')
     if sr!=7500 or x.ndim!=1 or len(x)!=int(s.durations.sum()):raise ValueError('Expected complete mono7500 original')
     reference_hash=hashlib.sha256(reference_path.read_bytes()).hexdigest()
@@ -213,13 +218,13 @@ def run(reference_path,teacher_path,output,evaluations=12000,fit_phase=False):
     def export(state):
         fields=state.fields()
         if not fit_phase:fields.pop('attack_flags');fields.pop('hold_flags')
-        return dict(schema=codec.PHASE_SCHEMA if fit_phase else codec.SCHEMA,sample_rate=7500,state_bits=bits,nearest=nearest,
+        return dict(schema=codec.PHASE_SCHEMA if fit_phase else codec.SCHEMA,sample_rate=7500,state_bits=bits,nearest=nearest,maximum_forms=maximum_forms,
             **fields,reference_sha256=reference_hash,avr_implemented=False,hardware_tested=False)
     output.mkdir(parents=True,exist_ok=True);initial=current=score(s,True);fit.save(output/'initial-model.json',export(s))
     print(json.dumps(dict(evaluated=0,score=initial)),flush=True)
     epoch=0
     while evaluated<evaluations:
-        accepted=0;proposals=list(actions(s,fit_phase))
+        accepted=0;proposals=list(actions(s,fit_phase,maximum_forms))
         if epoch%2:proposals.reverse()
         for action in proposals:
             if evaluated>=evaluations:break
@@ -241,7 +246,7 @@ def run(reference_path,teacher_path,output,evaluations=12000,fit_phase=False):
     final=score(s,True);fit.save(output/'model.json',export(s))
     pcm,_=render(s,bits,nearest);sf.write(output/'decoded.wav',(pcm.astype(float)-128)/128,7500,subtype='PCM_16')
     report=dict(schema='q4-product233-study-v1',initial=initial,final=final,evaluated=evaluated,accepted=len(history),history=history,epochs=epochs,
-        table_bytes=len(table),stream_bytes=len(payload),data_bytes=len(table)+len(payload),fit_phase=fit_phase,
+        table_bytes=len(table),stream_bytes=len(payload),data_bytes=len(table)+len(payload),fit_phase=fit_phase,maximum_forms=maximum_forms,
         source_sha256_normalized_lf=source_hashes,reference_sha256=reference_hash,
         seed_sha256=hashlib.sha256(teacher_path.read_bytes()).hexdigest(),elapsed_seconds=time.perf_counter()-start,
         avr_implemented=False,hardware_tested=False,policy='Exact packed PC format; no total decoder-size or timing claim; invalid guard endpoints are not playable candidates')
@@ -253,4 +258,5 @@ if __name__=='__main__':
     for key in ('reference','teacher','output'):p.add_argument('--'+key,type=Path,required=True)
     p.add_argument('--evaluations',type=int,default=12000)
     p.add_argument('--fit-phase',action='store_true')
-    a=p.parse_args();run(a.reference,a.teacher,a.output,a.evaluations,a.fit_phase)
+    p.add_argument('--maximum-forms',type=int,choices=range(1,9))
+    a=p.parse_args();run(a.reference,a.teacher,a.output,a.evaluations,a.fit_phase,a.maximum_forms)

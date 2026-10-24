@@ -82,5 +82,26 @@ class Product233Tests(unittest.TestCase):
         s.hold_flags[0]=0;s.attack_flags[0]=1;immediate,ic=fit.render(s,4,True)
         self.assertNotEqual(int(immediate[0]),128);self.assertFalse(np.any(ic))
 
+    def test_physical_compaction_preserves_pcm_and_restricted_fit_cannot_restore_removed_forms(self):
+        spec=importlib.util.spec_from_file_location('product_form_pruner_contracts',ROOT/'tools/prune-q4-product-forms.py')
+        prune=importlib.util.module_from_spec(spec);sys.modules[spec.name]=prune;spec.loader.exec_module(prune)
+        root=np.zeros((16,4),np.int16);root[:,2]=7;root[1,2]=3
+        book=np.zeros((16,3),np.int16)
+        s=fit.State(np.full(4,40,np.int16),np.full(4,2,np.int16),np.full(4,128,np.int16),
+            np.array([[0,0,0],[1,0,0],[0,0,0],[1,0,0]],np.int16),np.zeros(4,np.int16),
+            root,book,book.copy(),np.zeros((8,16),np.int16))
+        s.waves_q1[7,:2]=[4,-2];s.waves_q1[3,:2]=[2,-4]
+        before=s.fields();reduced=prune.compact(s,4,True)
+        self.assertEqual(s.fields(),before);np.testing.assert_array_equal(prune.active(reduced),[0,1])
+        self.assertFalse(np.any(reduced.waves_q1[2:]));self.assertTrue(np.all(reduced.root[:,2]<2))
+        for a,b in zip(fit.render(s,4,True),fit.render(reduced,4,True)):np.testing.assert_array_equal(a,b)
+        model=dict(schema=codec.PHASE_SCHEMA,maximum_forms=2,**reduced.fields())
+        fit.from_model(model)
+        for action in fit.actions(reduced,True,2):
+            if action[0]=='mode':self.assertLess(action[3],2)
+            if action[0]=='wave':self.assertLess(action[1],2)
+        for maximum in (0,1,9):
+            with self.assertRaises(ValueError):fit.from_model(dict(model,maximum_forms=maximum))
+
 
 if __name__=='__main__':unittest.main()
