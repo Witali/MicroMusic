@@ -86,6 +86,45 @@ The synthetic tests exercise arbitrary observed bytes, wire-v1 rejection,
 corruption, identity/sequence errors, timing/digital input errors, interrupted
 resets, required conditions and alternate-source provenance.
 
+## Acquisition programs and software verification
+
+| Probe | Profiles | Measurement contract |
+|---|---|---|
+|[CLKPR](clkpr-probe.md)|12|Continuous CLKI/CTC OC0A, bracketed protected write and negative controls|
+|[RESET](reset-probe.md)|4|MCUSR-first boot, DDR-first witness, SUT/CKDIV8 and reassertion/held-clock cases|
+|[ADC](adc-probe.md)|9|First/normal aperture, ADIF SBI/CBI and whole-byte controls|
+
+```text
+node web-player/scripts/verify-hardware-probes.mjs
+node web-player/scripts/verify-adc-aperture.mjs
+```
+
+The first script locates the prepared AVR GCC7.3.0 toolchain; override it with
+`--avr-bin DIR`. Select Python with `--python FILE` or `PYTHON`. `--probe` selects
+clkpr/reset/adc; otherwise all25 profiles run. ELF/binaries, synthetic CSV and
+decoded JSON stay under ignored `build/hardware-probe-verification/`; `--out DIR`
+selects another output directory. The sender executes as actual assembled AVR
+through the generated CPU and native device with continuous periodic CLKI.
+Native pin events are drained in bounded128-source-half-cycle slices.
+
+These controls check steady OC0A divisors and source continuity; reset's released
+driver, post-frame heartbeat and new boot; and ADC1 constant-input results/raw
+status. RESET injection is explicitly prequalified digital software input, not
+an analog receiver experiment. Whole-byte ADIF controls have independent expected
+values; disputed SBI/CBI ADIF values are recorded under the configured model.
+The verifier waits enough **CPU** cycles to finish the serializer even at /256.
+
+The aperture script requires those verified ADC binaries. It sweeps ideal
+instantaneous1V↔4V steps under both configured first-sample choices, plus warmed
+normal controls. It validates actual serialized conversion results and records
+markers/injection times, not private ADC state. In the saved fixture, offsets
+118–124us distinguish the choices;112us does not. These offsets are **software
+sensitivity results**, not silicon aperture predictions or lab delay presets.
+Use `--input DIR`/`--out FILE` for alternate verification/report locations.
+
+The [retained report](../../reports/hardware-probes-20261024.md) separates the
+25-profile controls,80 synthetic conversions and remaining hardware validation.
+
 ## Manufacturer definitions
 
 Register offsets, bit positions and memory constants come from pinned official

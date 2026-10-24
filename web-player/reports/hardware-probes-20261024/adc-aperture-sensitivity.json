@@ -1,0 +1,5695 @@
+{
+  "schema": "micromusic-adc-aperture-sensitivity-v1",
+  "status": "synthetic-fixture",
+  "siliconResults": false,
+  "rootHead": "f0e2841188f6bde61b462fcf740dec3406a06e8e",
+  "inputs": {
+    "runtimeSha256": "4adb36626e3151b91147b14a49c7a36ee9709b0da173db9531ed1aa39b5b1210",
+    "harnessSha256": "aad184bccb1e6b5f3fd4b4071ad730289098019462d065f8d1552b9f2c4da6c3",
+    "descriptorSha256": "e97f3d24843f70d8619b51616786d30274d8d4774c72969047ca163836711f42",
+    "sourceSha256": "c412f250ec58c8cc3fc3bad80c936939d1a529ccc9b49445c892fa963091f5e4",
+    "wireSha256": "bf619ef38e77765bbf1bd3f3c18887ada15cf85c59d0ddee657f30bcc410f6ab",
+    "registerDefinitionsSha256": "aaaf7f47e67e1f3b72754c13373ea9aa6d39acf65c8669e43333ffdf51e539e4",
+    "librarySourceSha256": {
+      "web-player/lib/attiny13a-package.js": "99617c80e6cae01fcae3dab3e4023d7472d56d5644f8bacc43d40ec97da8672a",
+      "web-player/lib/attiny13a-registers.js": "2d4f35723abcaf81015d6cf167b1e9a88e77b032846ba18be8e8efe7685f38e4",
+      "web-player/lib/attiny13a-runtime.js": "23a2c10af1b332383bf4a27f141a9ec2497b1cfaa4d3b0cac8dcfb15cc642b90",
+      "web-player/lib/attiny13a.js": "c991dbb4c082717893bf34bf5f09f61dc03e15e84bc6e3439847ecba77d2a4cb",
+      "web-player/lib/audio-queue.js": "cdd040a932526796a2eb4ee226b790c5603f0cec257eca439e9c2a68a3a56df1",
+      "web-player/lib/avr-core.js": "53bf4d58501212b09bf838544c48baa3c4832434043206103bc82d9e1a8bcf36",
+      "web-player/lib/avr-reference.js": "8e5cf4485f6d6502402b2390441e1fa7a99cac071187a0ac51529f878d454e22",
+      "web-player/lib/avr-runtime.js": "5a6963f512edb163af28fd6cfd274390b521fe057fc1a8c98b9eaa53b79fa9b1",
+      "web-player/lib/avr-transpiled-runtime.js": "20fa3f33b93b149d56d90651a5a59087daef4b096aedfc879afcc81d07b2116a",
+      "web-player/lib/avr-transpiled.js": "50fe4dbc268b5983b2a0e1a0915427c884e1643ca2ee979bfe249007d5a4476e",
+      "web-player/lib/avr-transpiler.js": "e1d6de093e4204cc8c57e14e40e2b272cb9c640d211f971adb9d3eabe9cd4f46",
+      "web-player/lib/avr-wasm-phases.js": "4fe16317f36ffc3148ed54426481b096e7499241192b184b2931110892133feb",
+      "web-player/lib/avr-wasm.js": "259d7228a8fe3e9c2965a343f2a29517076ee2da0f9f2b292d273c4eb6a51d8e",
+      "web-player/lib/devices/attiny13a-clki-profile.js": "9d8579e108ff2c93823c0b6907e155b34e3fce45498fb6d60170290ba7f7fe75",
+      "web-player/lib/devices/attiny13a-profile.js": "7b356d3ee20e28febf39bf6d912d0b642f1eeb325c042f6b635853df2fe1c891",
+      "web-player/lib/devices/attiny13a-reset-profile.js": "c73e865c939463a6133fc45ffa59da7ed4490105c50272fd8b07b1aa65a50614",
+      "web-player/lib/devices/profiles.js": "837bb85e4c936e2fcd5386bb454d48b2f2e2af1fd2d6f59fa541cfd8a8348d86",
+      "web-player/lib/engines.js": "7954fc1a398e756905bc29f3cbd2c04123f5460641aade7c879356e4f2ede662",
+      "web-player/lib/hex.js": "dfbb9a5158ce9fe306e483e86f747bdafae9ee672d8f0fdc44e34e395beedfca",
+      "web-player/lib/package-entry.js": "ff9273715dcc8df7d1924b3294bccfad7156f09feba7d7466c7c89cf171169ad",
+      "web-player/lib/realtime.js": "04e346da040b7ffb9f5668fc52b0abf45d56fc25cef0fc5a1b388190d397b6b3",
+      "web-player/lib/renderer-device.js": "71f3bba81a26919c085be4f404c050d94750a04faecba37cd426f845d866fddc",
+      "web-player/lib/renderer-js.js": "b7de1ce9b3ddbfdc3557b0e3770a233bdfefee196ffa467e025431dda522de2a",
+      "web-player/lib/renderer-package.js": "6c1cf59cab50347ebb4a105128e280c3ae442a2673b08abd813ad9e8ed9d1de0",
+      "web-player/lib/renderer-transpiled.js": "16d014a9d9ba33f720a737e8ddd5033239fd75480d042784134efc7af48414cd",
+      "web-player/lib/renderer.js": "ec240e68e2a7e46faeb40317a3016e71cdd65d68f8b458860c6fc867753146f4"
+    },
+    "firmware": {
+      "first-conversion": {
+        "path": "build/hardware-probe-verification/adc/first-conversion.bin",
+        "sha256": "c3e3cf9d3a06860de6523f3612372f45ff3f72826b7f11b15ac35b961b7abad7"
+      },
+      "normal-conversion-control": {
+        "path": "build/hardware-probe-verification/adc/normal-conversion-control.bin",
+        "sha256": "081c253e9c25fa2c6f2b485616af63a018edacb86b9341ff2b999772079350e5"
+      }
+    },
+    "options": {
+      "resumable": true,
+      "fastIdle": false,
+      "oscillatorHz": 8000000,
+      "vccMicrovolts": 5000000,
+      "watchdogHz": 128000,
+      "fuseLow": 112,
+      "fuseHigh": 255,
+      "lock": 255,
+      "fuseStartupProfile": 1,
+      "clkiProfile": {
+        "phasePolicy": "digital-noninverting-zero-seed-v1",
+        "initialLevel": 1
+      }
+    },
+    "clock": {
+      "frequencyHz": 8000000,
+      "highPs": "62500",
+      "lowPs": "62500",
+      "cpuPeriodPs": "125000"
+    },
+    "analog": {
+      "channel": 1,
+      "pin": "PB2",
+      "levelsMicrovolts": [
+        1000000,
+        4000000
+      ],
+      "directions": [
+        "rising",
+        "falling"
+      ],
+      "model": "ideal instantaneous voltage injection; no analog settling/noise model",
+      "restoreAfterPs": "1000000000"
+    },
+    "quantumPs": "8000000",
+    "limitPs": "25000000000",
+    "trialsPerRun": 2
+  },
+  "comparisons": [
+    {
+      "offsetUs": 110,
+      "direction": "rising",
+      "codes27": [
+        819,
+        819
+      ],
+      "codes29": [
+        819,
+        819
+      ],
+      "distinguishes": false
+    },
+    {
+      "offsetUs": 112,
+      "direction": "rising",
+      "codes27": [
+        819,
+        819
+      ],
+      "codes29": [
+        819,
+        819
+      ],
+      "distinguishes": false
+    },
+    {
+      "offsetUs": 114,
+      "direction": "rising",
+      "codes27": [
+        819,
+        819
+      ],
+      "codes29": [
+        819,
+        819
+      ],
+      "distinguishes": false
+    },
+    {
+      "offsetUs": 116,
+      "direction": "rising",
+      "codes27": [
+        819,
+        819
+      ],
+      "codes29": [
+        819,
+        819
+      ],
+      "distinguishes": false
+    },
+    {
+      "offsetUs": 118,
+      "direction": "rising",
+      "codes27": [
+        204,
+        204
+      ],
+      "codes29": [
+        819,
+        819
+      ],
+      "distinguishes": true
+    },
+    {
+      "offsetUs": 120,
+      "direction": "rising",
+      "codes27": [
+        204,
+        204
+      ],
+      "codes29": [
+        819,
+        819
+      ],
+      "distinguishes": true
+    },
+    {
+      "offsetUs": 122,
+      "direction": "rising",
+      "codes27": [
+        204,
+        204
+      ],
+      "codes29": [
+        819,
+        819
+      ],
+      "distinguishes": true
+    },
+    {
+      "offsetUs": 124,
+      "direction": "rising",
+      "codes27": [
+        204,
+        204
+      ],
+      "codes29": [
+        819,
+        819
+      ],
+      "distinguishes": true
+    },
+    {
+      "offsetUs": 126,
+      "direction": "rising",
+      "codes27": [
+        204,
+        204
+      ],
+      "codes29": [
+        204,
+        204
+      ],
+      "distinguishes": false
+    },
+    {
+      "offsetUs": 110,
+      "direction": "falling",
+      "codes27": [
+        204,
+        204
+      ],
+      "codes29": [
+        204,
+        204
+      ],
+      "distinguishes": false
+    },
+    {
+      "offsetUs": 112,
+      "direction": "falling",
+      "codes27": [
+        204,
+        204
+      ],
+      "codes29": [
+        204,
+        204
+      ],
+      "distinguishes": false
+    },
+    {
+      "offsetUs": 114,
+      "direction": "falling",
+      "codes27": [
+        204,
+        204
+      ],
+      "codes29": [
+        204,
+        204
+      ],
+      "distinguishes": false
+    },
+    {
+      "offsetUs": 116,
+      "direction": "falling",
+      "codes27": [
+        204,
+        204
+      ],
+      "codes29": [
+        204,
+        204
+      ],
+      "distinguishes": false
+    },
+    {
+      "offsetUs": 118,
+      "direction": "falling",
+      "codes27": [
+        819,
+        819
+      ],
+      "codes29": [
+        204,
+        204
+      ],
+      "distinguishes": true
+    },
+    {
+      "offsetUs": 120,
+      "direction": "falling",
+      "codes27": [
+        819,
+        819
+      ],
+      "codes29": [
+        204,
+        204
+      ],
+      "distinguishes": true
+    },
+    {
+      "offsetUs": 122,
+      "direction": "falling",
+      "codes27": [
+        819,
+        819
+      ],
+      "codes29": [
+        204,
+        204
+      ],
+      "distinguishes": true
+    },
+    {
+      "offsetUs": 124,
+      "direction": "falling",
+      "codes27": [
+        819,
+        819
+      ],
+      "codes29": [
+        204,
+        204
+      ],
+      "distinguishes": true
+    },
+    {
+      "offsetUs": 126,
+      "direction": "falling",
+      "codes27": [
+        819,
+        819
+      ],
+      "codes29": [
+        819,
+        819
+      ],
+      "distinguishes": false
+    }
+  ],
+  "normalInsensitive": true,
+  "runs": [
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 27,
+      "offsetUs": 110,
+      "direction": "rising",
+      "initialUv": 1000000,
+      "steppedUv": 4000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654875000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            51,
+            3,
+            0,
+            150,
+            2,
+            1,
+            164
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 819
+        },
+        {
+          "frameEndPs": "9086000000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            51,
+            3,
+            0,
+            150,
+            34,
+            1,
+            135
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 819
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659500000",
+          "fallPs": "8868125000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4338625000",
+          "restoreBaselinePs": "5338625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659500000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8769500000",
+          "restoreBaselinePs": "9769500000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        819,
+        819
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 29,
+      "offsetUs": 110,
+      "direction": "rising",
+      "initialUv": 1000000,
+      "steppedUv": 4000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654875000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            51,
+            3,
+            0,
+            150,
+            2,
+            1,
+            164
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 819
+        },
+        {
+          "frameEndPs": "9086000000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            51,
+            3,
+            0,
+            150,
+            34,
+            1,
+            135
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 819
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659500000",
+          "fallPs": "8868125000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4338625000",
+          "restoreBaselinePs": "5338625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659500000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8769500000",
+          "restoreBaselinePs": "9769500000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        819,
+        819
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 27,
+      "offsetUs": 112,
+      "direction": "rising",
+      "initialUv": 1000000,
+      "steppedUv": 4000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654875000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            51,
+            3,
+            0,
+            150,
+            2,
+            1,
+            164
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 819
+        },
+        {
+          "frameEndPs": "9086000000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            51,
+            3,
+            0,
+            150,
+            34,
+            1,
+            135
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 819
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659500000",
+          "fallPs": "8868125000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4340625000",
+          "restoreBaselinePs": "5340625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659500000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8771500000",
+          "restoreBaselinePs": "9771500000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        819,
+        819
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 29,
+      "offsetUs": 112,
+      "direction": "rising",
+      "initialUv": 1000000,
+      "steppedUv": 4000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654875000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            51,
+            3,
+            0,
+            150,
+            2,
+            1,
+            164
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 819
+        },
+        {
+          "frameEndPs": "9086000000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            51,
+            3,
+            0,
+            150,
+            34,
+            1,
+            135
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 819
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659500000",
+          "fallPs": "8868125000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4340625000",
+          "restoreBaselinePs": "5340625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659500000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8771500000",
+          "restoreBaselinePs": "9771500000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        819,
+        819
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 27,
+      "offsetUs": 114,
+      "direction": "rising",
+      "initialUv": 1000000,
+      "steppedUv": 4000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654875000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            51,
+            3,
+            0,
+            150,
+            2,
+            1,
+            164
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 819
+        },
+        {
+          "frameEndPs": "9086000000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            51,
+            3,
+            0,
+            150,
+            34,
+            1,
+            135
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 819
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659500000",
+          "fallPs": "8868125000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4342625000",
+          "restoreBaselinePs": "5342625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659500000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8773500000",
+          "restoreBaselinePs": "9773500000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        819,
+        819
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 29,
+      "offsetUs": 114,
+      "direction": "rising",
+      "initialUv": 1000000,
+      "steppedUv": 4000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654875000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            51,
+            3,
+            0,
+            150,
+            2,
+            1,
+            164
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 819
+        },
+        {
+          "frameEndPs": "9086000000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            51,
+            3,
+            0,
+            150,
+            34,
+            1,
+            135
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 819
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659500000",
+          "fallPs": "8868125000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4342625000",
+          "restoreBaselinePs": "5342625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659500000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8773500000",
+          "restoreBaselinePs": "9773500000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        819,
+        819
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 27,
+      "offsetUs": 116,
+      "direction": "rising",
+      "initialUv": 1000000,
+      "steppedUv": 4000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654875000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            51,
+            3,
+            0,
+            150,
+            2,
+            1,
+            164
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 819
+        },
+        {
+          "frameEndPs": "9086000000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            51,
+            3,
+            0,
+            150,
+            34,
+            1,
+            135
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 819
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659500000",
+          "fallPs": "8868125000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4344625000",
+          "restoreBaselinePs": "5344625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659500000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8775500000",
+          "restoreBaselinePs": "9775500000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        819,
+        819
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 29,
+      "offsetUs": 116,
+      "direction": "rising",
+      "initialUv": 1000000,
+      "steppedUv": 4000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654875000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            51,
+            3,
+            0,
+            150,
+            2,
+            1,
+            164
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 819
+        },
+        {
+          "frameEndPs": "9086000000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            51,
+            3,
+            0,
+            150,
+            34,
+            1,
+            135
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 819
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659500000",
+          "fallPs": "8868125000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4344625000",
+          "restoreBaselinePs": "5344625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659500000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8775500000",
+          "restoreBaselinePs": "9775500000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        819,
+        819
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 27,
+      "offsetUs": 118,
+      "direction": "rising",
+      "initialUv": 1000000,
+      "steppedUv": 4000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            204,
+            0,
+            0,
+            150,
+            2,
+            1,
+            88
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 204
+        },
+        {
+          "frameEndPs": "9085750000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            204,
+            0,
+            0,
+            150,
+            34,
+            1,
+            123
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 204
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659250000",
+          "fallPs": "8867875000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4346625000",
+          "restoreBaselinePs": "5346625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659250000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8777250000",
+          "restoreBaselinePs": "9777250000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        204,
+        204
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 29,
+      "offsetUs": 118,
+      "direction": "rising",
+      "initialUv": 1000000,
+      "steppedUv": 4000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654875000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            51,
+            3,
+            0,
+            150,
+            2,
+            1,
+            164
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 819
+        },
+        {
+          "frameEndPs": "9086000000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            51,
+            3,
+            0,
+            150,
+            34,
+            1,
+            135
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 819
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659500000",
+          "fallPs": "8868125000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4346625000",
+          "restoreBaselinePs": "5346625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659500000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8777500000",
+          "restoreBaselinePs": "9777500000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        819,
+        819
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 27,
+      "offsetUs": 120,
+      "direction": "rising",
+      "initialUv": 1000000,
+      "steppedUv": 4000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            204,
+            0,
+            0,
+            150,
+            2,
+            1,
+            88
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 204
+        },
+        {
+          "frameEndPs": "9085750000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            204,
+            0,
+            0,
+            150,
+            34,
+            1,
+            123
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 204
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659250000",
+          "fallPs": "8867875000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4348625000",
+          "restoreBaselinePs": "5348625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659250000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8779250000",
+          "restoreBaselinePs": "9779250000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        204,
+        204
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 29,
+      "offsetUs": 120,
+      "direction": "rising",
+      "initialUv": 1000000,
+      "steppedUv": 4000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654875000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            51,
+            3,
+            0,
+            150,
+            2,
+            1,
+            164
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 819
+        },
+        {
+          "frameEndPs": "9086000000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            51,
+            3,
+            0,
+            150,
+            34,
+            1,
+            135
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 819
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659500000",
+          "fallPs": "8868125000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4348625000",
+          "restoreBaselinePs": "5348625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659500000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8779500000",
+          "restoreBaselinePs": "9779500000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        819,
+        819
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 27,
+      "offsetUs": 122,
+      "direction": "rising",
+      "initialUv": 1000000,
+      "steppedUv": 4000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            204,
+            0,
+            0,
+            150,
+            2,
+            1,
+            88
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 204
+        },
+        {
+          "frameEndPs": "9085750000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            204,
+            0,
+            0,
+            150,
+            34,
+            1,
+            123
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 204
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659250000",
+          "fallPs": "8867875000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4350625000",
+          "restoreBaselinePs": "5350625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659250000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8781250000",
+          "restoreBaselinePs": "9781250000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        204,
+        204
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 29,
+      "offsetUs": 122,
+      "direction": "rising",
+      "initialUv": 1000000,
+      "steppedUv": 4000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654875000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            51,
+            3,
+            0,
+            150,
+            2,
+            1,
+            164
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 819
+        },
+        {
+          "frameEndPs": "9086000000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            51,
+            3,
+            0,
+            150,
+            34,
+            1,
+            135
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 819
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659500000",
+          "fallPs": "8868125000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4350625000",
+          "restoreBaselinePs": "5350625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659500000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8781500000",
+          "restoreBaselinePs": "9781500000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        819,
+        819
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 27,
+      "offsetUs": 124,
+      "direction": "rising",
+      "initialUv": 1000000,
+      "steppedUv": 4000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            204,
+            0,
+            0,
+            150,
+            2,
+            1,
+            88
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 204
+        },
+        {
+          "frameEndPs": "9085750000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            204,
+            0,
+            0,
+            150,
+            34,
+            1,
+            123
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 204
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659250000",
+          "fallPs": "8867875000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4352625000",
+          "restoreBaselinePs": "5352625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659250000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8783250000",
+          "restoreBaselinePs": "9783250000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        204,
+        204
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 29,
+      "offsetUs": 124,
+      "direction": "rising",
+      "initialUv": 1000000,
+      "steppedUv": 4000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654875000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            51,
+            3,
+            0,
+            150,
+            2,
+            1,
+            164
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 819
+        },
+        {
+          "frameEndPs": "9086000000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            51,
+            3,
+            0,
+            150,
+            34,
+            1,
+            135
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 819
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659500000",
+          "fallPs": "8868125000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4352625000",
+          "restoreBaselinePs": "5352625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659500000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8783500000",
+          "restoreBaselinePs": "9783500000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        819,
+        819
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 27,
+      "offsetUs": 126,
+      "direction": "rising",
+      "initialUv": 1000000,
+      "steppedUv": 4000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            204,
+            0,
+            0,
+            150,
+            2,
+            1,
+            88
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 204
+        },
+        {
+          "frameEndPs": "9085750000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            204,
+            0,
+            0,
+            150,
+            34,
+            1,
+            123
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 204
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659250000",
+          "fallPs": "8867875000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4354625000",
+          "restoreBaselinePs": "5354625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659250000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8785250000",
+          "restoreBaselinePs": "9785250000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        204,
+        204
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 29,
+      "offsetUs": 126,
+      "direction": "rising",
+      "initialUv": 1000000,
+      "steppedUv": 4000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            204,
+            0,
+            0,
+            150,
+            2,
+            1,
+            88
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 204
+        },
+        {
+          "frameEndPs": "9085750000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            204,
+            0,
+            0,
+            150,
+            34,
+            1,
+            123
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 204
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659250000",
+          "fallPs": "8867875000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4354625000",
+          "restoreBaselinePs": "5354625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659250000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8785250000",
+          "restoreBaselinePs": "9785250000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        204,
+        204
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 27,
+      "offsetUs": 110,
+      "direction": "falling",
+      "initialUv": 4000000,
+      "steppedUv": 1000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            204,
+            0,
+            0,
+            150,
+            2,
+            1,
+            88
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 204
+        },
+        {
+          "frameEndPs": "9085750000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            204,
+            0,
+            0,
+            150,
+            34,
+            1,
+            123
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 204
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659250000",
+          "fallPs": "8867875000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4338625000",
+          "restoreBaselinePs": "5338625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659250000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8769250000",
+          "restoreBaselinePs": "9769250000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        204,
+        204
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 29,
+      "offsetUs": 110,
+      "direction": "falling",
+      "initialUv": 4000000,
+      "steppedUv": 1000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            204,
+            0,
+            0,
+            150,
+            2,
+            1,
+            88
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 204
+        },
+        {
+          "frameEndPs": "9085750000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            204,
+            0,
+            0,
+            150,
+            34,
+            1,
+            123
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 204
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659250000",
+          "fallPs": "8867875000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4338625000",
+          "restoreBaselinePs": "5338625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659250000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8769250000",
+          "restoreBaselinePs": "9769250000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        204,
+        204
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 27,
+      "offsetUs": 112,
+      "direction": "falling",
+      "initialUv": 4000000,
+      "steppedUv": 1000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            204,
+            0,
+            0,
+            150,
+            2,
+            1,
+            88
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 204
+        },
+        {
+          "frameEndPs": "9085750000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            204,
+            0,
+            0,
+            150,
+            34,
+            1,
+            123
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 204
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659250000",
+          "fallPs": "8867875000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4340625000",
+          "restoreBaselinePs": "5340625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659250000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8771250000",
+          "restoreBaselinePs": "9771250000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        204,
+        204
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 29,
+      "offsetUs": 112,
+      "direction": "falling",
+      "initialUv": 4000000,
+      "steppedUv": 1000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            204,
+            0,
+            0,
+            150,
+            2,
+            1,
+            88
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 204
+        },
+        {
+          "frameEndPs": "9085750000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            204,
+            0,
+            0,
+            150,
+            34,
+            1,
+            123
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 204
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659250000",
+          "fallPs": "8867875000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4340625000",
+          "restoreBaselinePs": "5340625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659250000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8771250000",
+          "restoreBaselinePs": "9771250000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        204,
+        204
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 27,
+      "offsetUs": 114,
+      "direction": "falling",
+      "initialUv": 4000000,
+      "steppedUv": 1000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            204,
+            0,
+            0,
+            150,
+            2,
+            1,
+            88
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 204
+        },
+        {
+          "frameEndPs": "9085750000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            204,
+            0,
+            0,
+            150,
+            34,
+            1,
+            123
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 204
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659250000",
+          "fallPs": "8867875000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4342625000",
+          "restoreBaselinePs": "5342625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659250000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8773250000",
+          "restoreBaselinePs": "9773250000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        204,
+        204
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 29,
+      "offsetUs": 114,
+      "direction": "falling",
+      "initialUv": 4000000,
+      "steppedUv": 1000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            204,
+            0,
+            0,
+            150,
+            2,
+            1,
+            88
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 204
+        },
+        {
+          "frameEndPs": "9085750000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            204,
+            0,
+            0,
+            150,
+            34,
+            1,
+            123
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 204
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659250000",
+          "fallPs": "8867875000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4342625000",
+          "restoreBaselinePs": "5342625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659250000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8773250000",
+          "restoreBaselinePs": "9773250000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        204,
+        204
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 27,
+      "offsetUs": 116,
+      "direction": "falling",
+      "initialUv": 4000000,
+      "steppedUv": 1000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            204,
+            0,
+            0,
+            150,
+            2,
+            1,
+            88
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 204
+        },
+        {
+          "frameEndPs": "9085750000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            204,
+            0,
+            0,
+            150,
+            34,
+            1,
+            123
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 204
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659250000",
+          "fallPs": "8867875000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4344625000",
+          "restoreBaselinePs": "5344625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659250000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8775250000",
+          "restoreBaselinePs": "9775250000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        204,
+        204
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 29,
+      "offsetUs": 116,
+      "direction": "falling",
+      "initialUv": 4000000,
+      "steppedUv": 1000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            204,
+            0,
+            0,
+            150,
+            2,
+            1,
+            88
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 204
+        },
+        {
+          "frameEndPs": "9085750000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            204,
+            0,
+            0,
+            150,
+            34,
+            1,
+            123
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 204
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659250000",
+          "fallPs": "8867875000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4344625000",
+          "restoreBaselinePs": "5344625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659250000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8775250000",
+          "restoreBaselinePs": "9775250000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        204,
+        204
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 27,
+      "offsetUs": 118,
+      "direction": "falling",
+      "initialUv": 4000000,
+      "steppedUv": 1000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654875000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            51,
+            3,
+            0,
+            150,
+            2,
+            1,
+            164
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 819
+        },
+        {
+          "frameEndPs": "9086000000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            51,
+            3,
+            0,
+            150,
+            34,
+            1,
+            135
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 819
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659500000",
+          "fallPs": "8868125000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4346625000",
+          "restoreBaselinePs": "5346625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659500000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8777500000",
+          "restoreBaselinePs": "9777500000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        819,
+        819
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 29,
+      "offsetUs": 118,
+      "direction": "falling",
+      "initialUv": 4000000,
+      "steppedUv": 1000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            204,
+            0,
+            0,
+            150,
+            2,
+            1,
+            88
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 204
+        },
+        {
+          "frameEndPs": "9085750000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            204,
+            0,
+            0,
+            150,
+            34,
+            1,
+            123
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 204
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659250000",
+          "fallPs": "8867875000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4346625000",
+          "restoreBaselinePs": "5346625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659250000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8777250000",
+          "restoreBaselinePs": "9777250000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        204,
+        204
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 27,
+      "offsetUs": 120,
+      "direction": "falling",
+      "initialUv": 4000000,
+      "steppedUv": 1000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654875000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            51,
+            3,
+            0,
+            150,
+            2,
+            1,
+            164
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 819
+        },
+        {
+          "frameEndPs": "9086000000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            51,
+            3,
+            0,
+            150,
+            34,
+            1,
+            135
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 819
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659500000",
+          "fallPs": "8868125000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4348625000",
+          "restoreBaselinePs": "5348625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659500000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8779500000",
+          "restoreBaselinePs": "9779500000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        819,
+        819
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 29,
+      "offsetUs": 120,
+      "direction": "falling",
+      "initialUv": 4000000,
+      "steppedUv": 1000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            204,
+            0,
+            0,
+            150,
+            2,
+            1,
+            88
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 204
+        },
+        {
+          "frameEndPs": "9085750000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            204,
+            0,
+            0,
+            150,
+            34,
+            1,
+            123
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 204
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659250000",
+          "fallPs": "8867875000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4348625000",
+          "restoreBaselinePs": "5348625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659250000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8779250000",
+          "restoreBaselinePs": "9779250000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        204,
+        204
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 27,
+      "offsetUs": 122,
+      "direction": "falling",
+      "initialUv": 4000000,
+      "steppedUv": 1000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654875000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            51,
+            3,
+            0,
+            150,
+            2,
+            1,
+            164
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 819
+        },
+        {
+          "frameEndPs": "9086000000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            51,
+            3,
+            0,
+            150,
+            34,
+            1,
+            135
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 819
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659500000",
+          "fallPs": "8868125000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4350625000",
+          "restoreBaselinePs": "5350625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659500000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8781500000",
+          "restoreBaselinePs": "9781500000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        819,
+        819
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 29,
+      "offsetUs": 122,
+      "direction": "falling",
+      "initialUv": 4000000,
+      "steppedUv": 1000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            204,
+            0,
+            0,
+            150,
+            2,
+            1,
+            88
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 204
+        },
+        {
+          "frameEndPs": "9085750000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            204,
+            0,
+            0,
+            150,
+            34,
+            1,
+            123
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 204
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659250000",
+          "fallPs": "8867875000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4350625000",
+          "restoreBaselinePs": "5350625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659250000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8781250000",
+          "restoreBaselinePs": "9781250000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        204,
+        204
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 27,
+      "offsetUs": 124,
+      "direction": "falling",
+      "initialUv": 4000000,
+      "steppedUv": 1000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654875000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            51,
+            3,
+            0,
+            150,
+            2,
+            1,
+            164
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 819
+        },
+        {
+          "frameEndPs": "9086000000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            51,
+            3,
+            0,
+            150,
+            34,
+            1,
+            135
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 819
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659500000",
+          "fallPs": "8868125000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4352625000",
+          "restoreBaselinePs": "5352625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659500000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8783500000",
+          "restoreBaselinePs": "9783500000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        819,
+        819
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 29,
+      "offsetUs": 124,
+      "direction": "falling",
+      "initialUv": 4000000,
+      "steppedUv": 1000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            204,
+            0,
+            0,
+            150,
+            2,
+            1,
+            88
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 204
+        },
+        {
+          "frameEndPs": "9085750000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            204,
+            0,
+            0,
+            150,
+            34,
+            1,
+            123
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            204,
+            0,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 204
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659250000",
+          "fallPs": "8867875000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4352625000",
+          "restoreBaselinePs": "5352625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659250000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8783250000",
+          "restoreBaselinePs": "9783250000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        204,
+        204
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 27,
+      "offsetUs": 126,
+      "direction": "falling",
+      "initialUv": 4000000,
+      "steppedUv": 1000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654875000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            51,
+            3,
+            0,
+            150,
+            2,
+            1,
+            164
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 819
+        },
+        {
+          "frameEndPs": "9086000000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            51,
+            3,
+            0,
+            150,
+            34,
+            1,
+            135
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 819
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659500000",
+          "fallPs": "8868125000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4354625000",
+          "restoreBaselinePs": "5354625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659500000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8785500000",
+          "restoreBaselinePs": "9785500000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        819,
+        819
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "first-conversion",
+      "adcFirstSample": 29,
+      "offsetUs": 126,
+      "direction": "falling",
+      "initialUv": 4000000,
+      "steppedUv": 1000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            209
+          ],
+          "sequence": 0,
+          "profileId": 1,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4654875000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            1,
+            0,
+            51,
+            3,
+            0,
+            150,
+            2,
+            1,
+            164
+          ],
+          "sequence": 1,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 819
+        },
+        {
+          "frameEndPs": "9086000000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            1,
+            2,
+            0,
+            51,
+            3,
+            0,
+            150,
+            34,
+            1,
+            135
+          ],
+          "sequence": 2,
+          "profileId": 1,
+          "data": [
+            51,
+            3,
+            0,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 819
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4228625000",
+          "fallPs": "4437250000"
+        },
+        {
+          "risePs": "8659500000",
+          "fallPs": "8868125000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4228625000",
+          "markerObservedAtPs": "4232000000",
+          "stepPs": "4354625000",
+          "restoreBaselinePs": "5354625000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8659500000",
+          "markerObservedAtPs": "8664000000",
+          "stepPs": "8785500000",
+          "restoreBaselinePs": "9785500000"
+        }
+      ],
+      "translatedWasmSha256": "b0c28ea8b600040fd00724b99c803001590837be5c34398365ad525d6bb64fbb",
+      "translationManifestSha256": "88b7b5f2c32a5bfc5f0ac03496ce58e42a9fd038b73cf3d815981b0b7820f693",
+      "measuredCodes": [
+        819,
+        819
+      ],
+      "finishedAtPs": "9088000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "normal-conversion-control",
+      "adcFirstSample": 27,
+      "offsetUs": 120,
+      "direction": "rising",
+      "initialUv": 1000000,
+      "steppedUv": 4000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            2,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            210
+          ],
+          "sequence": 0,
+          "profileId": 2,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4766875000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            2,
+            1,
+            0,
+            204,
+            0,
+            150,
+            150,
+            2,
+            1,
+            205
+          ],
+          "sequence": 1,
+          "profileId": 2,
+          "data": [
+            204,
+            0,
+            150,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 204
+        },
+        {
+          "frameEndPs": "9310000000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            2,
+            2,
+            0,
+            204,
+            0,
+            150,
+            150,
+            34,
+            1,
+            238
+          ],
+          "sequence": 2,
+          "profileId": 2,
+          "data": [
+            204,
+            0,
+            150,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 204
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4438125000",
+          "fallPs": "4548750000"
+        },
+        {
+          "risePs": "8981000000",
+          "fallPs": "9091625000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4438125000",
+          "markerObservedAtPs": "4440000000",
+          "stepPs": "4558125000",
+          "restoreBaselinePs": "5558125000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8981000000",
+          "markerObservedAtPs": "8984000000",
+          "stepPs": "9101000000",
+          "restoreBaselinePs": "10101000000"
+        }
+      ],
+      "translatedWasmSha256": "bb12572cbefaf51f6e6fea513c92071a374e855630d5688a371f13cd21c76b5c",
+      "translationManifestSha256": "afb77471f668eba44546f51dc95db77d2903ad78c4157496b78a043e98ad8fd2",
+      "measuredCodes": [
+        204,
+        204
+      ],
+      "finishedAtPs": "9312000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "normal-conversion-control",
+      "adcFirstSample": 29,
+      "offsetUs": 120,
+      "direction": "rising",
+      "initialUv": 1000000,
+      "steppedUv": 4000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            2,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            210
+          ],
+          "sequence": 0,
+          "profileId": 2,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4766875000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            2,
+            1,
+            0,
+            204,
+            0,
+            150,
+            150,
+            2,
+            1,
+            205
+          ],
+          "sequence": 1,
+          "profileId": 2,
+          "data": [
+            204,
+            0,
+            150,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 204
+        },
+        {
+          "frameEndPs": "9310000000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            2,
+            2,
+            0,
+            204,
+            0,
+            150,
+            150,
+            34,
+            1,
+            238
+          ],
+          "sequence": 2,
+          "profileId": 2,
+          "data": [
+            204,
+            0,
+            150,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 204
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4438125000",
+          "fallPs": "4548750000"
+        },
+        {
+          "risePs": "8981000000",
+          "fallPs": "9091625000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4438125000",
+          "markerObservedAtPs": "4440000000",
+          "stepPs": "4558125000",
+          "restoreBaselinePs": "5558125000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8981000000",
+          "markerObservedAtPs": "8984000000",
+          "stepPs": "9101000000",
+          "restoreBaselinePs": "10101000000"
+        }
+      ],
+      "translatedWasmSha256": "bb12572cbefaf51f6e6fea513c92071a374e855630d5688a371f13cd21c76b5c",
+      "translationManifestSha256": "afb77471f668eba44546f51dc95db77d2903ad78c4157496b78a043e98ad8fd2",
+      "measuredCodes": [
+        204,
+        204
+      ],
+      "finishedAtPs": "9312000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "normal-conversion-control",
+      "adcFirstSample": 27,
+      "offsetUs": 120,
+      "direction": "falling",
+      "initialUv": 4000000,
+      "steppedUv": 1000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            2,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            210
+          ],
+          "sequence": 0,
+          "profileId": 2,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4766875000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            2,
+            1,
+            0,
+            51,
+            3,
+            150,
+            150,
+            2,
+            1,
+            49
+          ],
+          "sequence": 1,
+          "profileId": 2,
+          "data": [
+            51,
+            3,
+            150,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 819
+        },
+        {
+          "frameEndPs": "9309750000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            2,
+            2,
+            0,
+            51,
+            3,
+            150,
+            150,
+            34,
+            1,
+            18
+          ],
+          "sequence": 2,
+          "profileId": 2,
+          "data": [
+            51,
+            3,
+            150,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 819
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4438125000",
+          "fallPs": "4548750000"
+        },
+        {
+          "risePs": "8981000000",
+          "fallPs": "9091625000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4438125000",
+          "markerObservedAtPs": "4440000000",
+          "stepPs": "4558125000",
+          "restoreBaselinePs": "5558125000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8981000000",
+          "markerObservedAtPs": "8984000000",
+          "stepPs": "9101000000",
+          "restoreBaselinePs": "10101000000"
+        }
+      ],
+      "translatedWasmSha256": "bb12572cbefaf51f6e6fea513c92071a374e855630d5688a371f13cd21c76b5c",
+      "translationManifestSha256": "afb77471f668eba44546f51dc95db77d2903ad78c4157496b78a043e98ad8fd2",
+      "measuredCodes": [
+        819,
+        819
+      ],
+      "finishedAtPs": "9312000000",
+      "deviceFault": 0
+    },
+    {
+      "profile": "normal-conversion-control",
+      "adcFirstSample": 29,
+      "offsetUs": 120,
+      "direction": "falling",
+      "initialUv": 4000000,
+      "steppedUv": 1000000,
+      "frames": [
+        {
+          "frameEndPs": "224625000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            2,
+            0,
+            0,
+            214,
+            1,
+            0,
+            4,
+            2,
+            0,
+            210
+          ],
+          "sequence": 0,
+          "profileId": 2,
+          "data": [
+            214,
+            1,
+            0,
+            4,
+            2,
+            0
+          ],
+          "adcCode": null
+        },
+        {
+          "frameEndPs": "4766875000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            2,
+            1,
+            0,
+            51,
+            3,
+            150,
+            150,
+            2,
+            1,
+            49
+          ],
+          "sequence": 1,
+          "profileId": 2,
+          "data": [
+            51,
+            3,
+            150,
+            150,
+            2,
+            1
+          ],
+          "adcCode": 819
+        },
+        {
+          "frameEndPs": "9309750000",
+          "bytes": [
+            165,
+            90,
+            2,
+            3,
+            2,
+            2,
+            0,
+            51,
+            3,
+            150,
+            150,
+            34,
+            1,
+            18
+          ],
+          "sequence": 2,
+          "profileId": 2,
+          "data": [
+            51,
+            3,
+            150,
+            150,
+            34,
+            1
+          ],
+          "adcCode": 819
+        }
+      ],
+      "markers": [
+        {
+          "risePs": "4438125000",
+          "fallPs": "4548750000"
+        },
+        {
+          "risePs": "8981000000",
+          "fallPs": "9091625000"
+        }
+      ],
+      "injections": [
+        {
+          "trial": 1,
+          "markerRisePs": "4438125000",
+          "markerObservedAtPs": "4440000000",
+          "stepPs": "4558125000",
+          "restoreBaselinePs": "5558125000"
+        },
+        {
+          "trial": 2,
+          "markerRisePs": "8981000000",
+          "markerObservedAtPs": "8984000000",
+          "stepPs": "9101000000",
+          "restoreBaselinePs": "10101000000"
+        }
+      ],
+      "translatedWasmSha256": "bb12572cbefaf51f6e6fea513c92071a374e855630d5688a371f13cd21c76b5c",
+      "translationManifestSha256": "afb77471f668eba44546f51dc95db77d2903ad78c4157496b78a043e98ad8fd2",
+      "measuredCodes": [
+        819,
+        819
+      ],
+      "finishedAtPs": "9312000000",
+      "deviceFault": 0
+    }
+  ],
+  "interpretation": {
+    "firstFirmwareSensitive": true,
+    "nominal112UsDistinguishes": false,
+    "proven": "Actual assembled ADC probe records distinguish configured digital sample phases at the listed ideal stimulus offsets. Normal warmed control is compared separately.",
+    "notProven": "No silicon aperture, actual analog settling, clock-to-pad timing, ADIF bit-operation outcome or preferred default is established. Wire frame times are transport times, not sample times."
+  }
+}

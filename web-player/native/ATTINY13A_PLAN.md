@@ -77,8 +77,14 @@ is observable separately from analog supply-threshold behavior.
   `peripherals/timer0-top-zero-probe.md`. The corrected PB2/T0 and PB4 trace-clock
   mapping matches the manufacturer ATDF; all12 profiles assemble and the four
   nonzero controls execute through the generated CPU/native board/decoder.
-  These are software checks; silicon results remain pending. CLKPR, RESET and
-  ADC measurement probes remain to be completed.
+  [CLKPR](peripherals/clkpr-probe.md), [RESET](peripherals/reset-probe.md) and
+  [ADC](peripherals/adc-probe.md) now add25 source-only profiles and shared wire-v2
+  framing/decoding. All25 execute actual images under continuous external CLKI
+  in explicit software fixtures; the ADC probe distinguishes both configured
+  first-sample choices in80 synthetic conversions. These are tooling checks,
+  not silicon evidence. Remaining CPU internal bus/stack-phase conventions
+  still need equivalent acquisition/oracle work before full phase coverage can
+  be claimed. See [the acquisition report](../reports/hardware-probes-20261024.md).
 - [ ] Record measured chip, clock, fuse configuration and measurement tolerance;
   update the default profile only when the evidence supports it.
 
@@ -587,8 +593,19 @@ The112642-byte native runtime has103 function exports plus memory, no imports
 and fixed two-page memory. The [integration report](../reports/timer0-integration-20261024.md)
 retains before/after evidence, commands and the software-only probe identities.
 The checklist remains21/30 complete with nine open; no hardware measurement or
-TOP=0 implementation is claimed. CLKPR, RESET and ADC probes are the next
-hardware-validation tooling work.
+TOP=0 implementation is claimed.
+
+Acquisition tooling checkpoint, 2026-10-24: CLKPR12/RESET4/ADC9 new profiles
+compile to204–614 Flash bytes, with zero data/BSS. All25 actual firmware images
+produce59 decoded frames through the full generated CPU/native board. Protocol
+checks pass15/15 plus the existing Timer0's5/5. 40 additional ADC runs retain80
+trial results with both ideal step directions; first-sample27/29 choices differ
+at tested118–124us marker offsets while warmed controls agree. These establish
+probe sensitivity, not an observed silicon aperture. Native runtime and library
+bytes are unchanged from the preceding1194-test checkpoint. The checklist
+remains21/30 complete with nine open. Next hardware work is actual acquisition
+and the remaining internal bus/stack-phase audit; independent performance and
+cache work can proceed while physical measurements are unavailable.
 
 ## Primary references
 
