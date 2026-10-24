@@ -249,8 +249,19 @@ binary measurements. Vendor and R4 files remain unmodified.
    rereading the 120-byte pitch array. Adjacent samples share two source words,
    so a rolling three-word window may also remove redundant history reads.
    Retain the existing segmented path for shorter pitch, exact signed sums,
-   deferred scaling and clamps. Prototype C first; compare zero-gain paths,
-   whole-frame speed and stack before implementing ASM. Not yet measured.
+   deferred scaling and clamps. The isolated C prototype now matches all
+   13,254 AVR frames/reset and 9,100 native frames with scratch bounds and
+   invalid-call assertions. Its corpus mean improves 5.4082% (human speech
+   5.4437%); corpus/coverage maxima improve only 61 cycles because the slowest
+   frames still use short pitch. The selected O2 function adds 682 B Flash,
+   leaving SRAM/observed stack unchanged. O3 adds 3,426 B and saves another
+   ~1,233 cycles on the 1,058-frame fixture mean; a flat O3 loop saves 38 B
+   versus O2 but costs ~551 fixture-mean cycles. Keep this experiment separate
+   from admitted firmware. Next verify independent full-scale history/clamps,
+   try a shared-vector/ASM form with its C fallback, then complete timer/ISR
+   admission. Retained reproducible patch:
+   `docs/avr-asm-cookbook/examples/nb3-long-pitch-fusion.patch`;
+   reports `long-pitch-experiment-{summary,c-means,c-fixtures,c-speech,c-pitch-coverage,c-lsp-reuse,host}.json`.
 
 2. **Ten-sample pitch staging.** Upstream pitch sources always have negative
    offsets: the first segment stops before `j==pp`, the second before
