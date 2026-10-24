@@ -1,0 +1,40 @@
+--- a/src/iir_direct.c.inc
++++ b/src/iir_direct.c.inc
+@@ -32,16 +32,34 @@
+    int16_t *coef = history+20;
+    uint8_t i, pos=0;
+    (void)N; (void)ord; (void)stack;
+-   for (i=0;i<40;i++)
++   /* Preserve the ten coefficient ages, one update after each output. */
++   for (i=0;i<10;i++)
+    {
+-      int32_t sum = speex_avr_lpc_dot10(coef, history+pos+10);
++      int32_t sum = speex_avr_lpc_dot10(coef, history+i+10);
++      spx_word16_t yi = EXTRACT16(SATURATE(ADD32(EXTEND32(x[i]),
++                            PSHR32(sum,LPC_SHIFT)),32767));
++      spx_word16_t nyi = NEG16(yi);
++      y[i] = yi;
++      history[i] = history[i+10] = nyi;
++      coef[i]=den[i];
++   }
++   /* Reuse two invariant coefficient words for this phase. */
++   const int16_t c0=coef[0],c1=coef[1];
++   /* All coefficients are stable for the remaining thirty outputs. */
++   for (i=10;i<40;i++)
++   {
++      const int16_t *after=history+pos+10;
++      uint32_t accum=(uint32_t)((int32_t)c0 * *--after);
++      accum+=(uint32_t)((int32_t)c1 * *--after);
++      for (uint8_t j=2;j<10;j++)
++         accum+=(uint32_t)((int32_t)coef[j] * *--after);
++      int32_t sum=(int32_t)accum;
+       spx_word16_t yi = EXTRACT16(SATURATE(ADD32(EXTEND32(x[i]),
+                             PSHR32(sum,LPC_SHIFT)),32767));
+       spx_word16_t nyi = NEG16(yi);
+       y[i] = yi;
+       history[pos] = history[pos+10] = nyi;
+       if (++pos == 10) pos=0;
+-      if (i<10) coef[i]=den[i];
+    }
+ #endif
+ }

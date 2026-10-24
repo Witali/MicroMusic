@@ -1,0 +1,50 @@
+--- a/src/nb_decode.c.inc
++++ b/src/nb_decode.c.inc
+@@ -6,6 +6,34 @@
+ #include "speex_platform.h"
+ #include "pitch24.h"
+ #include "long_pitch.h"
++/* Experimental direct short-pitch fallback: independent segment decisions. */
++static SPEEX_NB3_STAGE_O2 void short_pitch_direct(int16_t *out,const int16_t *exc,
++    unsigned pitch,SpeexBits *bits,int32_t scale,unsigned index)
++{
++    int8_t gains[3];
++    const int16_t high=(int16_t)(scale>>12),low=(int16_t)(scale&4095);
++    unsigned vector,sample,tap,j=0;
++    gains[0]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index+2));
++    gains[1]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index+1));
++    gains[2]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index));
++    for(vector=0;vector<4;vector++) {
++        unsigned code=speex_bits_unpack_unsigned(bits,5);
++        const int8_t *shape=exc_10_32_table+10*code;
++        for(sample=0;sample<10;sample++,j++) {
++            int32_t adaptive=0;
++            int offset=(int)j-(int)pitch-1;
++            for(tap=0;tap<3;tap++) {
++                int pos=offset+(int)tap;
++                if(pos>=0) pos-=(int)pitch;
++                if(pos<0) adaptive+=(int32_t)gains[tap]*exc[pos];
++            }
++            int32_t innovation=speex_nb3_shape_scale_c(AVR_READ_I8(shape+sample),high,low);
++            if(adaptive>2048000) adaptive=2048000;
++            if(adaptive<-2048000) adaptive=-2048000;
++            *out++=speex_nb3_saturating_q14_c((int32_t)(((uint32_t)adaptive<<8)+(uint32_t)innovation+8192));
++        }
++    }
++}
+ #if SPEEX_NB3_USE_AVR_ASM
+ static SPEEX_NB3_NOINLINE
+ #else
+@@ -80,9 +108,10 @@
+          /* Even the last tap reads exc[-1] or earlier. No output feeds a
+           * source in this block; fuse the three sums with innovation. */
+          speex_nb3_long_innovation(exc,exc-pitch-1,bits,ener,index);
++      } else if(index) {
++         short_pitch_direct(exc,exc,pitch,bits,ener,index);
+       } else {
+-         if (!index) memset(pitch24,0,3*NB_SUBFRAME_SIZE);
+-         else speex_nb3_pitch24(exc,pitch24,pitch,index);
++         memset(pitch24,0,3*NB_SUBFRAME_SIZE);
+          speex_avr_innovation(exc,pitch24,bits,ener);
+       }
+    }

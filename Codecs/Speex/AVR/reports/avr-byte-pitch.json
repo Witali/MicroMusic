@@ -1,0 +1,23 @@
+{
+  "mcu": "ATmega328P",
+  "simulator": "avr8js 0.21.1",
+  "compiler": "AVR GCC 7.3.0 -O3 -flto -fwrapv",
+  "gains": 256,
+  "gainUnscaledMin": -128,
+  "gainUnscaledMax": 127,
+  "vectors": 24576,
+  "samplesChecked": 983040,
+  "counts": [
+    0,
+    40
+  ],
+  "everyCountVerified": true,
+  "exact": true,
+  "emptyAndZeroPaths": true,
+  "tailSentinelsIntact": true,
+  "zeroRegisterRestored": true,
+  "minMailboxCycles": 34,
+  "maxMailboxCycles": 1781,
+  "includesInterrupts": false,
+  "physicalBoardTested": false
+}

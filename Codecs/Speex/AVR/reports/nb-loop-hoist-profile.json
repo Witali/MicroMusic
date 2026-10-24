@@ -1,0 +1,135 @@
+{
+  "scope": "Measured frame-command intervals; mailbox included, startup/reset/ISR excluded.",
+  "frames": 88,
+  "streams": 11,
+  "binarySha256": "d884b63633f7171de18399ec6ae51bf130e7bc7daf2315e4dab5ecfb7edeecf5",
+  "totalFrameCycles": 10260556,
+  "functions": [
+    {
+      "name": "speex_avr_iir40",
+      "cycles": 5267629,
+      "cyclesPerFrame": 59859.42,
+      "percent": 51.339
+    },
+    {
+      "name": "speex_avr_innovation10",
+      "cycles": 1336443,
+      "cyclesPerFrame": 15186.852,
+      "percent": 13.025
+    },
+    {
+      "name": "speex_avr_pitch_add24",
+      "cycles": 1075171,
+      "cyclesPerFrame": 12217.852,
+      "percent": 10.479
+    },
+    {
+      "name": "nb_decode.constprop.1",
+      "cycles": 841379,
+      "cyclesPerFrame": 9561.125,
+      "percent": 8.2
+    },
+    {
+      "name": "lsp_angle",
+      "cycles": 420025,
+      "cyclesPerFrame": 4773.011,
+      "percent": 4.094
+    },
+    {
+      "name": "lsp_to_lpc.constprop.5",
+      "cycles": 236535,
+      "cyclesPerFrame": 2687.898,
+      "percent": 2.305
+    },
+    {
+      "name": "speex_avr_lsp_mul_q14",
+      "cycles": 228150,
+      "cyclesPerFrame": 2592.614,
+      "percent": 2.224
+    },
+    {
+      "name": "speex_bits_unpack_unsigned.constprop.3",
+      "cycles": 214016,
+      "cyclesPerFrame": 2432,
+      "percent": 2.086
+    },
+    {
+      "name": "speex_bits_unpack_unsigned",
+      "cycles": 139368,
+      "cyclesPerFrame": 1583.727,
+      "percent": 1.358
+    },
+    {
+      "name": "speex_nb3_pitch24",
+      "cycles": 130902,
+      "cyclesPerFrame": 1487.523,
+      "percent": 1.276
+    },
+    {
+      "name": "lsp_stage4",
+      "cycles": 96720,
+      "cyclesPerFrame": 1099.091,
+      "percent": 0.943
+    },
+    {
+      "name": "lsp_stage3",
+      "cycles": 84630,
+      "cyclesPerFrame": 961.705,
+      "percent": 0.825
+    },
+    {
+      "name": "lsp_stage2",
+      "cycles": 72540,
+      "cyclesPerFrame": 824.318,
+      "percent": 0.707
+    },
+    {
+      "name": "lsp_unquant_lbr.constprop.2",
+      "cycles": 44061,
+      "cyclesPerFrame": 500.693,
+      "percent": 0.429
+    },
+    {
+      "name": "lsp_first",
+      "cycles": 36270,
+      "cyclesPerFrame": 412.159,
+      "percent": 0.353
+    },
+    {
+      "name": "main",
+      "cycles": 10153,
+      "cyclesPerFrame": 115.375,
+      "percent": 0.099
+    },
+    {
+      "name": "__umulhisi3",
+      "cycles": 8580,
+      "cyclesPerFrame": 97.5,
+      "percent": 0.084
+    },
+    {
+      "name": "__muluhisi3",
+      "cycles": 7410,
+      "cyclesPerFrame": 84.205,
+      "percent": 0.072
+    },
+    {
+      "name": "memset",
+      "cycles": 5618,
+      "cyclesPerFrame": 63.841,
+      "percent": 0.055
+    },
+    {
+      "name": "__mulohisi3",
+      "cycles": 3900,
+      "cyclesPerFrame": 44.318,
+      "percent": 0.038
+    },
+    {
+      "name": "iir_mem16.constprop.6",
+      "cycles": 1056,
+      "cyclesPerFrame": 12,
+      "percent": 0.01
+    }
+  ]
+}

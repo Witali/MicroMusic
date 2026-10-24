@@ -1,0 +1,19 @@
+{
+  "clip_seconds": 8,
+  "sources": [
+    {"id":"ru_pushkin","language":"ru","voice":"male","speaker":"Шантопик","file":"Ru-Л_Пушкину.ogg","title":"Л. Пушкину","license":"CC BY-SA 4.0","license_url":"https://creativecommons.org/licenses/by-sa/4.0/","starts":[2,16]},
+    {"id":"ru_square","language":"ru","voice":"female","speaker":"Александра Анучина","file":"Ru-Black-square-_intro.ogg","title":"Чёрный квадрат","license":"CC BY-SA 4.0","license_url":"https://creativecommons.org/licenses/by-sa/4.0/","starts":[2,16]},
+    {"id":"ru_slutskaya","language":"ru","voice":"female","speaker":"Elena Krizhanovsky","file":"Ru-Slutskaya_Vera.ogg","title":"Вера Слуцкая","license":"Public domain (recording); article text CC BY-SA","license_url":"https://commons.wikimedia.org/wiki/File:Ru-Slutskaya_Vera.ogg","starts":[20,45]},
+    {"id":"ru_russia","language":"ru","voice":"male","speaker":"Andrew Krizhanovsky","file":"Ru-Russia_part_1_Intro.ogg","title":"Россия, вступление","license":"CC BY-SA 3.0","license_url":"https://creativecommons.org/licenses/by-sa/3.0/","additional_credits":"Article authors; incorporated anthem/template/music credits on source page. Noise reduction: Andrei Rybak. Selected excerpts start after intro.","starts":[45,75]},
+    {"id":"en_sense","language":"en","voice":"male","speaker":"Thorpe","file":"Use_common_sense.ogg","title":"Use common sense","license":"CC BY-SA 3.0","license_url":"https://creativecommons.org/licenses/by-sa/3.0/","accent":"British RP","starts":[5,30]},
+    {"id":"en_portrait","language":"en","voice":"female","speaker":"eleshamc","file":"Portrait_of_a_lady_1_voice.ogg","title":"Portrait of a Lady","license":"CC BY-SA 3.0","license_url":"https://creativecommons.org/licenses/by-sa/3.0/","accent":"Oregon English","starts":[8,35]},
+    {"id":"en_letter","language":"en","voice":"male","speaker":"Persent101","file":"En-A-article.ogg","title":"The letter A","license":"CC BY-SA 3.0","license_url":"https://creativecommons.org/licenses/by-sa/3.0/","accent":"American English","starts":[15,45]},
+    {"id":"en_normcore","language":"en","voice":"female","speaker":"Emmiecc","file":"En-normcore-article.ogg","title":"Normcore","license":"CC BY-SA 3.0","license_url":"https://creativecommons.org/licenses/by-sa/3.0/","accent":"East Coast American","starts":[8,35]}
+  ],
+  "stress": [
+    {"base":"ru_square_a","condition":"quiet_minus24dB"},
+    {"base":"ru_russia_a","condition":"white_noise_15dB"},
+    {"base":"en_normcore_a","condition":"quiet_minus24dB"},
+    {"base":"en_sense_a","condition":"white_noise_15dB"}
+  ]
+}

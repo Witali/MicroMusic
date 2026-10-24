@@ -1,0 +1,83 @@
+{
+  "scope": "AVR machine code; independent mathematical/Xiph equations, both backends",
+  "streams": [
+    {
+      "kernel": "speex_wb_qmf40_avr",
+      "blocks": 512,
+      "samples": 40960,
+      "pcmExact": true,
+      "minCycles": 14773,
+      "maxCycles": 15600,
+      "calleeSavedAndR1Returns": 512,
+      "guards": true,
+      "readOnlyInputs": true,
+      "aliasQmf": true,
+      "peakStackBytes": 22
+    },
+    {
+      "kernel": "speex_wb_qmf40_c",
+      "blocks": 512,
+      "samples": 40960,
+      "pcmExact": true,
+      "minCycles": 57521,
+      "maxCycles": 59263,
+      "calleeSavedAndR1Returns": null,
+      "guards": true,
+      "readOnlyInputs": true,
+      "aliasQmf": true,
+      "peakStackBytes": 54
+    },
+    {
+      "kernel": "speex_wb_fold40_avr",
+      "blocks": 1640,
+      "samples": 65600,
+      "pcmExact": true,
+      "minCycles": 3353,
+      "maxCycles": 3958,
+      "calleeSavedAndR1Returns": 1640,
+      "guards": true,
+      "readOnlyInputs": true,
+      "aliasQmf": false,
+      "peakStackBytes": 14
+    },
+    {
+      "kernel": "speex_wb_fold40_c",
+      "blocks": 1640,
+      "samples": 65600,
+      "pcmExact": true,
+      "minCycles": 12120,
+      "maxCycles": 12805,
+      "calleeSavedAndR1Returns": null,
+      "guards": true,
+      "readOnlyInputs": true,
+      "aliasQmf": false,
+      "peakStackBytes": 18
+    },
+    {
+      "kernel": "speex_wb_iir40_avr",
+      "blocks": 512,
+      "samples": 20480,
+      "pcmExact": true,
+      "minCycles": 12178,
+      "maxCycles": 12854,
+      "calleeSavedAndR1Returns": 512,
+      "guards": true,
+      "readOnlyInputs": true,
+      "aliasQmf": false,
+      "peakStackBytes": 22
+    },
+    {
+      "kernel": "speex_wb_iir40_c",
+      "blocks": 512,
+      "samples": 20480,
+      "pcmExact": true,
+      "minCycles": 24219,
+      "maxCycles": 25541,
+      "calleeSavedAndR1Returns": null,
+      "guards": true,
+      "readOnlyInputs": true,
+      "aliasQmf": false,
+      "peakStackBytes": 24
+    }
+  ]
+}

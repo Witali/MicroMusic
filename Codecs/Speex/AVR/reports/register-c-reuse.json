@@ -1,0 +1,11 @@
+{
+  "backend": "c",
+  "binarySha256": "c63c9738632ed4c1e4812e24f261ec2f38e629112b1dc85a71a06af515a004bf",
+  "byteIdenticalToAdmittedImage": true,
+  "decoderReports": "fused-long-c-{fixtures,speech,pitch-coverage,lsp-reuse}.json",
+  "exactDecoderFrames": 13254,
+  "playerReports": "fused-long-c-{player,headroom10,headroom-summary}.json",
+  "playerFramesPerScenario": 9100,
+  "nativeExportReport": "portable-fused-long-library.json",
+  "reason": "Only handwritten innovation.S changes decoder implementation; the C sources/flags are unchanged and the freshly rebuilt C mailbox hash matches its admitted image. New independent fused/packed/C arithmetic tests also pass."
+}

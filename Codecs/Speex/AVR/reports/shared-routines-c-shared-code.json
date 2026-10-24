@@ -1,0 +1,122 @@
+{
+  "binarySha256": "46a3f066f72a32de1496f9969bc27c8f182d83abacb4c4b275cfd3f9bce55faa",
+  "source": "Actual rebuilt main decoder ELF disassembly, not a source macro count.",
+  "uniqueHelpers": 2,
+  "staticTransferSites": 19,
+  "sites": [
+    {
+      "caller": "iir_mem16.constprop.6",
+      "instruction": "jmp",
+      "helper": "__prologue_saves__",
+      "entryOffset": "+0x4"
+    },
+    {
+      "caller": "iir_mem16.constprop.6",
+      "instruction": "jmp",
+      "helper": "__epilogue_restores__",
+      "entryOffset": "+0x4"
+    },
+    {
+      "caller": "speex_bits_unpack_unsigned",
+      "instruction": "jmp",
+      "helper": "__epilogue_restores__",
+      "entryOffset": "+0x18"
+    },
+    {
+      "caller": "speex_bits_unpack_unsigned",
+      "instruction": "jmp",
+      "helper": "__epilogue_restores__",
+      "entryOffset": "+0x18"
+    },
+    {
+      "caller": "lsp_unquant_lbr.constprop.2",
+      "instruction": "jmp",
+      "helper": "__epilogue_restores__",
+      "entryOffset": "+0x18"
+    },
+    {
+      "caller": "speex_nb3_unpack_indices",
+      "instruction": "jmp",
+      "helper": "__epilogue_restores__",
+      "entryOffset": "+0x18"
+    },
+    {
+      "caller": "speex_nb3_unpack_indices",
+      "instruction": "jmp",
+      "helper": "__epilogue_restores__",
+      "entryOffset": "+0x18"
+    },
+    {
+      "caller": "speex_nb3_long_innovation",
+      "instruction": "jmp",
+      "helper": "__prologue_saves__",
+      "entryOffset": "0"
+    },
+    {
+      "caller": "speex_nb3_long_innovation",
+      "instruction": "jmp",
+      "helper": "__epilogue_restores__",
+      "entryOffset": "0"
+    },
+    {
+      "caller": "speex_nb3_short_innovation",
+      "instruction": "jmp",
+      "helper": "__prologue_saves__",
+      "entryOffset": "0"
+    },
+    {
+      "caller": "speex_nb3_short_innovation",
+      "instruction": "jmp",
+      "helper": "__epilogue_restores__",
+      "entryOffset": "0"
+    },
+    {
+      "caller": "speex_nb3_zero_innovation",
+      "instruction": "jmp",
+      "helper": "__prologue_saves__",
+      "entryOffset": "+0x12"
+    },
+    {
+      "caller": "speex_nb3_zero_innovation",
+      "instruction": "jmp",
+      "helper": "__epilogue_restores__",
+      "entryOffset": "+0x12"
+    },
+    {
+      "caller": "lsp_to_lpc.constprop.5",
+      "instruction": "rjmp",
+      "helper": "__prologue_saves__",
+      "entryOffset": "+0x4"
+    },
+    {
+      "caller": "lsp_to_lpc.constprop.5",
+      "instruction": "rjmp",
+      "helper": "__epilogue_restores__",
+      "entryOffset": "+0x4"
+    },
+    {
+      "caller": "nb_decode.constprop.1",
+      "instruction": "rjmp",
+      "helper": "__prologue_saves__",
+      "entryOffset": "0"
+    },
+    {
+      "caller": "nb_decode.constprop.1",
+      "instruction": "rjmp",
+      "helper": "__epilogue_restores__",
+      "entryOffset": "0"
+    },
+    {
+      "caller": "nb_decode.constprop.1",
+      "instruction": "rjmp",
+      "helper": "__epilogue_restores__",
+      "entryOffset": "0"
+    },
+    {
+      "caller": "main",
+      "instruction": "rjmp",
+      "helper": "__prologue_saves__",
+      "entryOffset": "+0x6"
+    }
+  ]
+}

@@ -1,0 +1,212 @@
+{
+  "profile": "WB1-Q7-16",
+  "physicalBoardTested": false,
+  "images": [
+    {
+      "image": "decoder-asm",
+      "sha256": "78208c8e465530e9f6b8107a8dbd8d522af891ddc7133ce153a609f44d9b3f13",
+      "frames": 10563
+    },
+    {
+      "image": "decoder-c",
+      "sha256": "255beb08efb807582cd44c761a3a4b8cf1cf32c4b6f2808e51c782c8b064fc2d",
+      "frames": 10563
+    },
+    {
+      "image": "wb-pwm/en_letter_a",
+      "sha256": "43c0a092206d0ec7baedf0e5f5d1e3ea883d68f30921d40b860a24510f8e0096",
+      "frames": 404,
+      "pwmExact": true
+    },
+    {
+      "image": "wb-pwm/en_letter_b",
+      "sha256": "6ad088f3a2805a91c3b6e0375779a47b9cb61f3b8dec8a6717a48468949db61b",
+      "frames": 405,
+      "pwmExact": true
+    },
+    {
+      "image": "wb-pwm/en_normcore_a",
+      "sha256": "894b4fa991ef65f82ddd1cfb3bef4bbd831e29d072c30ff68b588e99755a1f1d",
+      "frames": 404,
+      "pwmExact": true
+    },
+    {
+      "image": "wb-pwm/en_normcore_b",
+      "sha256": "fb7db77d3b43e094ac7826554c09143b34713780f90f4b27be6ef01047c28108",
+      "frames": 404,
+      "pwmExact": true
+    },
+    {
+      "image": "wb-pwm/en_portrait_a",
+      "sha256": "da917205be34d0e15f19ac55dbb76554073c929efe93f39cc5c086fe8e63d920",
+      "frames": 404,
+      "pwmExact": true
+    },
+    {
+      "image": "wb-pwm/en_portrait_b",
+      "sha256": "b0aeb7804fd21caaa0502ff5c9bdf25564255ed704e80528c2995271d5d3a98d",
+      "frames": 404,
+      "pwmExact": true
+    },
+    {
+      "image": "wb-pwm/en_sense_a",
+      "sha256": "9e876138668891589874a7a0fce6cb58e7de280fc34dbdfc0b421c1159d4871d",
+      "frames": 404,
+      "pwmExact": true
+    },
+    {
+      "image": "wb-pwm/en_sense_b",
+      "sha256": "0e057de6a821c06cc74a087ac057f3f95add83a7c6d40961f5f95dc28e433b65",
+      "frames": 404,
+      "pwmExact": true
+    },
+    {
+      "image": "wb-pwm/ru_pushkin_a",
+      "sha256": "4c11241b3e7ff4b88c017a71f1a47a0baddead8f3d34ffc9d5f74a20ead58702",
+      "frames": 404,
+      "pwmExact": true
+    },
+    {
+      "image": "wb-pwm/ru_pushkin_b",
+      "sha256": "562e35567f07de3a69abe8aad48cb9365986b428e2eba81073a857c78bf7818a",
+      "frames": 404,
+      "pwmExact": true
+    },
+    {
+      "image": "wb-pwm/ru_russia_a",
+      "sha256": "5d9f299305a46d8727321cd8f33ac213616766a2763e2798aa126afcdd0783d2",
+      "frames": 405,
+      "pwmExact": true
+    },
+    {
+      "image": "wb-pwm/ru_russia_b",
+      "sha256": "84732bae404a80669d8a99d460645eae42fa7085f6f8589dc96b283dd0b1a003",
+      "frames": 404,
+      "pwmExact": true
+    },
+    {
+      "image": "wb-pwm/ru_slutskaya_a",
+      "sha256": "bdefb9e2e0ded04e42b1865de458da2394b612588e366edfd5b09c05e38bf338",
+      "frames": 405,
+      "pwmExact": true
+    },
+    {
+      "image": "wb-pwm/ru_slutskaya_b",
+      "sha256": "fb4ea8d9a2a769f2f2cfe1851c6596365dfa58bfe475b09a422a2f4e374e0383",
+      "frames": 404,
+      "pwmExact": true
+    },
+    {
+      "image": "wb-pwm/ru_square_a",
+      "sha256": "5d18e93485d8ebebc8144b2ad4132a68c9738af027c9776168828c819d851374",
+      "frames": 404,
+      "pwmExact": true
+    },
+    {
+      "image": "wb-pwm/ru_square_b",
+      "sha256": "c2d01f8bd95104b6a642c4678a536d7b1b1b2e1732f4a2b09340f263b0e1e876",
+      "frames": 404,
+      "pwmExact": true
+    },
+    {
+      "image": "wb-pwm-load2/en_letter_a",
+      "sha256": "d07543e527e358ee111cc9f3b8484ebb8d5af742b61a52dbee0c501297c30ae9",
+      "frames": 404,
+      "pwmExact": true
+    },
+    {
+      "image": "wb-pwm-load2/ru_pushkin_a",
+      "sha256": "510d58a29615f4c5dad908a33e37b4ccd96ce0abf5a555f6c24d88081a19cf4f",
+      "frames": 404,
+      "pwmExact": true
+    }
+  ],
+  "allImagesRebuiltByteIdenticalToExecuted": true,
+  "sourceSha256": {
+    "src/avr_fixed.h": "3878d9da964234419a1b246ef5dde990b199b96a88c3476f21605f71c9049b67",
+    "src/avr_multiply.h": "36de5d16f5332c4c2924d45a4bc2f6cbea78607c6f1861e24800d72a9c48e81f",
+    "src/avr_shift.h": "61eaad2aa0494f7bddb286411b53ec73c5fe936a4924860c10f50ac54da2aa38",
+    "src/avr_tables.h": "4e0e67e692b8093752cb2a02f4b359d710304341dd0d46d18e73c3b35598c3d9",
+    "src/bits.c": "745b06111e3ec46ec42be8bd598f7f730ffc87af2e13d474dcfaf125c2ca3b4a",
+    "src/compact_lsp.c.inc": "f788f2ce58129a58b493d3632f9c94fb4430db9373e2b64456c2430c12646382",
+    "src/compact_lsp_rates.c.inc": "60146af14dc2b86b253e87a9411e793406c04b0f72eaf982e61240262c085d65",
+    "src/iir_direct.c.inc": "584cc9fb7f1cf34cf51b7c1b708df5f4981fbaf2d653b73c9c6e9e4a5634acc5",
+    "src/iir_kernel.inc": "86e00634b3ad6cc5916c090f608575798033be9c29b352bfe32a5de20ad5be7d",
+    "src/innovation.h": "dda54ecd933176546d79ce57403d3609e79276b15925fb0571901c3a29a8eb43",
+    "src/innovation.S": "1bb27789412922d1b8b4d13ca0b986ac24a3e358b6d1a139a68665d673e45451",
+    "src/innovation_core.inc": "6f8871782ee40a0f76d9d649826f91573259210da400bee619eb185a2174eb37",
+    "src/long_pitch.h": "2e0e1a24ca3ea315c84cd8a4745052b66ac256a2a0e1747573b4639cf1bc56f0",
+    "src/lpc_dot.S": "6cd683217571b06ac4542e1488c4c8e381f46cc1cfa3d8ca7e0ea10095a3e336",
+    "src/lpc_update.S": "00bb267faac8ed005a51893c8572e48b1fa4bfc30f3cb734ac13c0a4f3d49d20",
+    "src/nb3_c_math.h": "770bade4d78071df923167bb848b324607151879c475a802a8f96dd58290f4d7",
+    "src/nb3_header.h": "73664dfcb3dd0e317336d54dda3cbbca52f26feaaae7fecd49441e175dde6558",
+    "src/nb3_indices.h": "24f9c668d4d03fec89c0f5dc39f58f7e901c93420b5166bb9b120ea4fa64963e",
+    "src/nb_decode.c.inc": "db8940685907550bd912e8d5078c5c079dd8b7fc1e06512d96b2645f73bb7412",
+    "src/packed24.h": "cd3d6cd54064fc9841aef7ff13abc801bff43cf79c3318b8175e52b9695dda73",
+    "src/pitch24.h": "530dbbd915a2f032067e756772eb81b29b5a8bdb429b92d22185701e09deff81",
+    "src/pitch_add.S": "e6932ab48dae000ed68f9cde2eedce2b7b0fd2691915d1e37c83b5abf690f174",
+    "src/player.c": "05b5b06c611837cc1c3ffdc4ec54c264aa62a13a2f68402b3a8ad770a3f85750",
+    "src/profile_mode.h": "0052bc51ba4013ddc6e758a59a03fd3ecd1030c5ad07540008817180caa36d5b",
+    "src/profile_state.h": "74139b93739e61b6a0b86169f3461ec27a08640e462a04d56ba0aaccf36c735b",
+    "src/q14.S": "5688a0b99f570df15335227eb6c7eaded7c3ac593eeed7993dfd0bcad17df51a",
+    "src/qmf_memory.c": "a1232858f274e30f7050334fc5b608edcd3d422fccda75de77430bc7831d08c3",
+    "src/qmf_memory.h": "ef340baf7353191f5c8294fb21b0f25bd46390186573a9ce8b3ef8033bc5f7e0",
+    "src/short_pitch.h": "814371a6abfc1652cb15eebcad89c08b468b7dba93a37d057ad53e934d9ad6ed",
+    "src/speex_avr.c": "73a2f3841d6ff26b4650c56e599f5b3358de9c61f244f9a11760dbf30b99a2d7",
+    "src/speex_avr.h": "9ca142747c625230c30ea1cafddbf452da80bc45b25b5ee2ddeea754719e3566",
+    "src/speex_nb3.h": "bc10482cb22cc7dd762ecb43b76a23f680f9938fb2192bd7d0dd41b5cf16ae1b",
+    "src/speex_platform.h": "10f7db1e4915c17c9bc2c2b2d4b4911cece874ee72e18adf65c3a7ea4bcb906f",
+    "src/speex_wb1.c": "f48503c91eb5202b96fb8367e1e6770b8e73e52b216b496d8a8db838b06955c3",
+    "src/speex_wb1.h": "72ddf3645ae728d34b7b3333f9d7e99639500d95d8e51107838272439d9aac00",
+    "src/wb_fold.c": "8a9c66280fbef26a04b4551fa11d6f753be7ffdc9a5dd56342237a429fdc2f6a",
+    "src/wb_fold.h": "2ba06207a65a10e6f1f9ffd8f39f3801f243b8e59136f020af389b4a137d1eab",
+    "src/wb_fold.S": "ee45b53041f403042ffc9b5f89872d1fa0e9733cd2b30bb8875cef3a6bc834b4",
+    "src/wb_iir.c": "7ce0ddaca8da575efca564660cb79337d6747e698de709b57ab74b4c5099870c",
+    "src/wb_iir.h": "cc268430e595b5a8edd14c47155028e0357a0830cd3cb8eb864a5b463020a4c2",
+    "src/wb_iir.S": "73828fe3f41ff3ee5bc81e264e88a2244f6960ff02b0b4cc8ffd3a537e60c4d0",
+    "src/wb_internal.h": "048e85f319f25d311f166fe59f25902194e4b68c7636613147a5cf1fa15f965b",
+    "src/wb_player.c": "b5420260860385ebbe9e4d711bc7adde6b0ec7c5f8707c3cf2c22511a7a7d548",
+    "src/wb_qmf.c": "a0b669839d8d6cb942f2bc8445d78b3b1a58a8839f72cfdd8f9221c6c379dd7b",
+    "src/wb_qmf.h": "e1bbfcbcd68960460bdcee9f2e33099fa0c8b5793d0d8af26f04f8d11c3ea4d9",
+    "src/wb_qmf.S": "e642aec8f2c52c9c2ab191e5029c25b6ca3bcdbec2fa72300abc7f74256c0aae",
+    "src/zero_innovation.h": "1e956c7dcb1ad6cd7c49d58be21311d98d589f90920272494bb0f34f40e920de",
+    "tests/audit_wb.py": "3cfb4b30dcc58f493cada51a80fa8086c2757b5478e06da48e5cf3d97de458e6",
+    "tests/avr_tick.mjs": "7fb11c61a22e00650fdc23ce4093231e574f478a9d6183423808abbfab8fda5f",
+    "tests/prepare_wb.py": "a3dc22bf6d65089b3eb80780f54b43587dc674195843172de2a713b5aa991b7a",
+    "tests/verify_avr_tick.mjs": "5046d48f674c204ba37e82b0eeea23011a6547343b2bf601adef510ffc4f8482",
+    "tests/verify_backend_selection.py": "3c7fdce7925feaf8d20f118e2d1d59c2cb5a10401284416522e30f297be796e3",
+    "tests/verify_portable.py": "fbf22d53468c9d8663d566b102fe4210c02ccc5f2a8a91dde950e2749ccbfc23",
+    "tests/verify_wb.mjs": "333a02a79a5f8731cb2df19c4ac94ad8556616c0a565cff67cefe821fe08537c",
+    "tests/verify_wb_kernels.mjs": "c234c9ae81460597bbb3a34d0329d373fb0ad1ccdebfc4808805e72338a023c6",
+    "tests/verify_wb_player.mjs": "7b3c6415a4e5ebf743669b466c3f5fdf2e9b9c65222c8e65e0de4ea222ca5aff",
+    "tests/verify_wb_players.py": "3d60890da329371bf05f184cd23b2c174c99fc3e70790cbaceb6a12d1aa1be3d",
+    "tests/wb_api.c": "82cd2449dbbbef1bbc9054a2076699508b8c5847ce4a7132489648fae99f584f",
+    "tests/wb_decode.c": "1dbbd427ed3080fdf640632f037ede24b38278938e3af223eb1e5c497959453f",
+    "tests/wb_kernels.c": "ef11a45ec0a2b1c60046e41e7d1766f911d524ffe37db5c12d32ce400625bb87",
+    "tests/wb_oracle_qmf.c": "1f15093894f138b7a5bd5900cf8f725c3ed3de5e68eefc7fe3fab216dbc01db9",
+    "tests/wb_oracle_qmf.h": "f665546dbb145e5bac0f521da4ae74fb1bef3b28b915b1b5c31ce70a4ca68312",
+    "tools/apply_profile.py": "b9b15eef795e355365f3e5cfa654fb3e522a3d6d8014adf5384724ce68141e09",
+    "tools/build.py": "74a705aee6844d7a9120fefaf7e17b16f213ab034cb0efff24c69947e0a4893b",
+    "tools/build_wb.py": "03c88915e7b2f05240272acf1b303a68ccabc4efb7812fcb2521e3a5e7c8df4f",
+    "tools/compare_wb.py": "1865e53644edfcfb6b27dbcca3c54dbe2ff0e5e1d6660237cfa7fbc07c057708"
+  },
+  "nbOnlyBinaryUnchanged": {
+    "asm": "fe3f4c24d682009d663bee6929bc5903fb660f1d39a578ab98067ea202c0de63",
+    "c": "46a3f066f72a32de1496f9969bc27c8f182d83abacb4c4b275cfd3f9bce55faa"
+  },
+  "decoderFramesPerBackend": 10563,
+  "fullPwmFrames": 6467,
+  "fullPwmSamples": 2069440,
+  "loadedPwmFrames": 808,
+  "additionalCpuCyclesPerLoadedFrame": 6400,
+  "underruns": 0,
+  "scope": "Exact compact-profile PCM; final QMF intentionally differs from full Xiph synthesis",
+  "sourceFormattingOnlyChanges": [
+    {
+      "path": "tests/verify_wb_player.mjs",
+      "beforeSha256": "aa502298afba78c7cf598f2ab16857cfa748da2d0b9512c6f56ccb98adfdc525",
+      "afterSha256": "7b3c6415a4e5ebf743669b466c3f5fdf2e9b9c65222c8e65e0de4ea222ca5aff",
+      "change": "Remove blank line at EOF; normalized verifier text unchanged"
+    }
+  ]
+}

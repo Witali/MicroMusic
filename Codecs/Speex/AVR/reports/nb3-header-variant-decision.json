@@ -1,0 +1,34 @@
+{
+  "baseCommit": "30f2a58",
+  "decision": "inline is faster and smaller in both backends",
+  "variants": [
+    {
+      "backend": "asm",
+      "selected": "inline",
+      "eachVariantExactFrames": 9100,
+      "noinlineFlashBytes": 10662,
+      "inlineFlashBytes": 10622,
+      "noinlineSha256": "2a783d10708bd1ce66f05222602cffd6331565376030990631514902602eb8f9",
+      "inlineSha256": "930076d1d7e1d74651d21e2faf58c8ac832bcc80eb944ba02007da09684568cf",
+      "noinlineWeightedMeanCycles": 114791.365,
+      "inlineWeightedMeanCycles": 114665.785,
+      "allInlineStreamMeansLowerThanNoinline": true,
+      "noSeparateUnitOrPwmAdmissionForNoinline": true
+    },
+    {
+      "backend": "c",
+      "selected": "inline",
+      "eachVariantExactFrames": 9100,
+      "noinlineFlashBytes": 12336,
+      "inlineFlashBytes": 12308,
+      "noinlineSha256": "58d630e8277c4a370b4ce1e7834cda9a3377c2e7400eb24920bb1ab8eee885f5",
+      "inlineSha256": "61bf66a8610edfb0cc6d7e1d23e3c58bd64a1bf25dc60f842277a3c1a63b6f0a",
+      "noinlineWeightedMeanCycles": 237774.308,
+      "inlineWeightedMeanCycles": 237676.141,
+      "allInlineStreamMeansLowerThanNoinline": true,
+      "noSeparateUnitOrPwmAdmissionForNoinline": true
+    }
+  ],
+  "scope": "Matched whole corpus; noinline retained as a superseded alternative, not a global compiler performance claim.",
+  "noinlinePatchAppliesToPinnedBase": true
+}

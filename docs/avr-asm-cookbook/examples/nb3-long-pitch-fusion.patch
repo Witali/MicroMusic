@@ -1,0 +1,71 @@
+--- a/src/nb_decode.c.inc
++++ b/src/nb_decode.c.inc
+@@ -5,6 +5,32 @@
+  * and general ctl APIs. The vendored release remains the independent oracle. */
+ #include "speex_platform.h"
+ #include "pitch24.h"
++#include "nb3_c_math.h"
++/* Experimental long-pitch fusion; source is all negative history. */
++static __attribute__((optimize("O2"))) SPEEX_NB3_NOINLINE void long_pitch_innovation(
++    int16_t *out,const int16_t *in,SpeexBits *bits,int32_t scale,unsigned index)
++{
++    const int8_t g0=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index+2));
++    const int8_t g1=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index+1));
++    const int8_t g2=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index));
++    const int16_t scale_high=(int16_t)(scale>>12);
++    const int16_t scale_low=(int16_t)(scale&4095);
++    int16_t a=*in++,b=*in++;
++    unsigned vector,sample;
++    for(vector=0;vector<4;vector++) {
++        unsigned code=speex_bits_unpack_unsigned(bits,5);
++        const int8_t *shape=exc_10_32_table+10*code;
++        for(sample=0;sample<10;sample++) {
++            int16_t c=*in++;
++            int32_t adaptive=(int32_t)g0*a+(int32_t)g1*b+(int32_t)g2*c;
++            int32_t innovation=speex_nb3_shape_scale_c(AVR_READ_I8(shape++),scale_high,scale_low);
++            a=b;b=c;
++            adaptive=SATURATE32(adaptive,2048000);
++            *out++=speex_nb3_saturating_q14_c(ADD32(ADD32(SHL32(adaptive,8),innovation),8192));
++        }
++    }
++}
++
+ _Static_assert(NB_SUBFRAME_SIZE==40 && NB_PITCH_START==17 && NB_PITCH_END==144,
+                "Packed pitch is specialized for the pinned NB3 frame/pitch bounds");
+ _Static_assert(NB_ORDER*(sizeof(spx_coef_t)+sizeof(spx_lsp_t))<=3*NB_SUBFRAME_SIZE,
+@@ -43,14 +69,19 @@
+    for (sub=0;sub<NB_NB_SUBFRAMES;sub++)
+    {
+       spx_word16_t *exc=frame_exc+NB_SUBFRAME_SIZE*sub;
++      unsigned pitch=speex_bits_unpack_unsigned(bits,7)+17;
++      unsigned index=speex_bits_unpack_unsigned(bits,5)*4;
+       int q_energy;
+       spx_word32_t ener;
+       /* Every pitch source index is negative: each segment ends before its
+        * source reaches exc[0]. No clear of the current excitation is needed. */
+-      speex_nb3_pitch24(exc,pitch24,bits);
+       q_energy=speex_bits_unpack_unsigned(bits,1);
+       ener=AVR_READ_I32(&nb3_gain_table[(qe<<1)|q_energy]);
+-      speex_avr_innovation(exc,pitch24,bits,ener);
++      if (pitch>=41) long_pitch_innovation(exc,exc-pitch-1,bits,ener,index);
++      else {
++          speex_nb3_pitch24(exc,pitch24,pitch,index);
++          speex_avr_innovation(exc,pitch24,bits,ener);
++      }
+    }
+    /* All pitch/innovation samples are complete. Rewind only the dead pitch
+     * workspace: keep qlsp live, and allocate distinct LPC/frequency arrays
+--- a/src/pitch24.h
++++ b/src/pitch24.h
+@@ -33,10 +33,8 @@
+ #define PITCH_ADD24 speex_nb3_pitch_add24_c
+ #endif
+ static SPEEX_NB3_NOINLINE void speex_nb3_pitch24(const int16_t *exc,
+-                                               uint8_t *out,SpeexBits *bits)
++                                               uint8_t *out,unsigned pitch,unsigned index)
+ {
+-    unsigned pitch=speex_bits_unpack_unsigned(bits,7)+17;
+-    unsigned index=speex_bits_unpack_unsigned(bits,5)*4;
+     uint8_t tap;
+     /* pitch>=41 makes pp>=40 for every tap: all segments are full and
+      * no repeated segment or zero tail exists. Decide once per subframe. */

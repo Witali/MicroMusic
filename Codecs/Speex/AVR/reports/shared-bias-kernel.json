@@ -1,0 +1,42 @@
+{
+  "mcu": "ATmega328P",
+  "simulator": "avr8js 0.21.1",
+  "compiler": "AVR GCC 7.3.0 mixed Os/O2, LTO, fwrapv",
+  "binarySha256": "163fdee152c8509f1c227764c2a464e8301d23f5b3808a912957e4da31c37e90",
+  "blocks": 67328,
+  "samplesPerBackend": 673280,
+  "tableGainTriples": 32,
+  "scales": 64,
+  "shapeMin": -128,
+  "shapeMax": 127,
+  "historyMin": -32768,
+  "historyMax": 32767,
+  "fullTableShapeScaleCases": 53248,
+  "clampBoundaryBlocks": 9984,
+  "randomGainBlocks": 4096,
+  "outputClippedSamples": 13508,
+  "pitchClippedSamples": 41722,
+  "exact": true,
+  "gainsPreserved": true,
+  "historyPreserved": true,
+  "guardsIntact": true,
+  "calleeSavedRegistersPreserved": true,
+  "zeroRegisterRestored": true,
+  "asmKernelCycles": {
+    "min": 1438,
+    "max": 1511,
+    "calls": 67328
+  },
+  "cKernelCycles": {
+    "min": 3792,
+    "max": 4081,
+    "calls": 67328
+  },
+  "packedKernelCycles": {
+    "min": 940,
+    "max": 1013,
+    "calls": 67328
+  },
+  "includesInterrupts": false,
+  "physicalBoardTested": false
+}

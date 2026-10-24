@@ -1,0 +1,290 @@
+{
+  "scope": "Sample self-cycle profile of the preceding decoder; not a full-corpus or IRQ timing claim",
+  "binarySha256": "d90da78937fe86441397f0ff9d472d1343b5a5cdd6da8f3c3d098a23a4bd8560",
+  "stream": "ru_square_b.spxraw",
+  "sequentialFrames": 20,
+  "resetFirstFrames": 1,
+  "includesBootAndInit": true,
+  "method": "Sum CPU.cycles deltas for each avrInstruction+tick, grouped by avr-nm text symbols",
+  "includesInterrupts": false,
+  "physicalBoardTested": false,
+  "totalObservedCycles": 5674764,
+  "functions": [
+    {
+      "symbol": "speex_avr_iir40",
+      "totalSelfCycles": 1222912,
+      "meanSelfCyclesPerDecode": 58233.90476190476,
+      "observedCyclePercent": 21.550006308632394
+    },
+    {
+      "symbol": "speex_wb_qmf40_avr",
+      "totalSelfCycles": 1137975,
+      "meanSelfCyclesPerDecode": 54189.28571428572,
+      "observedCyclePercent": 20.053256840284458
+    },
+    {
+      "symbol": "speex_wb_iir40_avr",
+      "totalSelfCycles": 1024956,
+      "meanSelfCyclesPerDecode": 48807.42857142857,
+      "observedCyclePercent": 18.06164978843173
+    },
+    {
+      "symbol": "lsp_angle",
+      "totalSelfCycles": 295511,
+      "meanSelfCyclesPerDecode": 14071.952380952382,
+      "observedCyclePercent": 5.207458847627849
+    },
+    {
+      "symbol": "speex_wb_fold40_avr",
+      "totalSelfCycles": 279432,
+      "meanSelfCyclesPerDecode": 13306.285714285714,
+      "observedCyclePercent": 4.924116668111661
+    },
+    {
+      "symbol": "speex_avr_long_innovation10",
+      "totalSelfCycles": 254810,
+      "meanSelfCyclesPerDecode": 12133.809523809523,
+      "observedCyclePercent": 4.490230783165608
+    },
+    {
+      "symbol": "nb_decode.constprop.2",
+      "totalSelfCycles": 210075,
+      "meanSelfCyclesPerDecode": 10003.57142857143,
+      "observedCyclePercent": 3.7019160620600258
+    },
+    {
+      "symbol": "speex_avr_zero_innovation10",
+      "totalSelfCycles": 182430,
+      "meanSelfCyclesPerDecode": 8687.142857142857,
+      "observedCyclePercent": 3.214759239326957
+    },
+    {
+      "symbol": "speex_avr_long_innovation40",
+      "totalSelfCycles": 170267,
+      "meanSelfCyclesPerDecode": 8107.952380952381,
+      "observedCyclePercent": 3.0004243348269637
+    },
+    {
+      "symbol": "speex_wb_low_ready",
+      "totalSelfCycles": 120744,
+      "meanSelfCyclesPerDecode": 5749.714285714285,
+      "observedCyclePercent": 2.127736060918128
+    },
+    {
+      "symbol": "speex_avr_lsp_mul_q14",
+      "totalSelfCycles": 89700,
+      "meanSelfCyclesPerDecode": 4271.428571428572,
+      "observedCyclePercent": 1.5806824741962837
+    },
+    {
+      "symbol": "lsp_to_lpc.constprop.6",
+      "totalSelfCycles": 87672,
+      "meanSelfCyclesPerDecode": 4174.857142857143,
+      "observedCyclePercent": 1.5449453052144548
+    },
+    {
+      "symbol": "__udivmodsi4_loop",
+      "totalSelfCycles": 56145,
+      "meanSelfCyclesPerDecode": 2673.5714285714284,
+      "observedCyclePercent": 0.9893803513238613
+    },
+    {
+      "symbol": "__epilogue_restores__",
+      "totalSelfCycles": 52120,
+      "meanSelfCyclesPerDecode": 2481.904761904762,
+      "observedCyclePercent": 0.9184522915842844
+    },
+    {
+      "symbol": "lsp_stage3",
+      "totalSelfCycles": 49248,
+      "meanSelfCyclesPerDecode": 2345.1428571428573,
+      "observedCyclePercent": 0.8678422574048894
+    },
+    {
+      "symbol": "wb_interpolate",
+      "totalSelfCycles": 44880,
+      "meanSelfCyclesPerDecode": 2137.1428571428573,
+      "observedCyclePercent": 0.7908698934440269
+    },
+    {
+      "symbol": "__prologue_saves__",
+      "totalSelfCycles": 43350,
+      "meanSelfCyclesPerDecode": 2064.285714285714,
+      "observedCyclePercent": 0.7639084198038897
+    },
+    {
+      "symbol": "__udivmodsi4_ep",
+      "totalSelfCycles": 40656,
+      "meanSelfCyclesPerDecode": 1936.0,
+      "observedCyclePercent": 0.7164350799434126
+    },
+    {
+      "symbol": "speex_avr_p1_mul_q14",
+      "totalSelfCycles": 40492,
+      "meanSelfCyclesPerDecode": 1928.1904761904761,
+      "observedCyclePercent": 0.7135450919192411
+    },
+    {
+      "symbol": "lsp_stage2",
+      "totalSelfCycles": 39824,
+      "meanSelfCyclesPerDecode": 1896.3809523809523,
+      "observedCyclePercent": 0.7017736772842007
+    },
+    {
+      "symbol": "speex_nb3_short_innovation",
+      "totalSelfCycles": 34270,
+      "meanSelfCyclesPerDecode": 1631.904761904762,
+      "observedCyclePercent": 0.6039017657826827
+    },
+    {
+      "symbol": "lsp_stage4",
+      "totalSelfCycles": 30108,
+      "meanSelfCyclesPerDecode": 1433.7142857142858,
+      "observedCyclePercent": 0.5305595087302309
+    },
+    {
+      "symbol": "lsp_first",
+      "totalSelfCycles": 28272,
+      "meanSelfCyclesPerDecode": 1346.2857142857142,
+      "observedCyclePercent": 0.49820574036206616
+    },
+    {
+      "symbol": "speex_nb3_unpack_indices",
+      "totalSelfCycles": 27216,
+      "meanSelfCyclesPerDecode": 1296.0,
+      "observedCyclePercent": 0.4795970369869126
+    },
+    {
+      "symbol": "main",
+      "totalSelfCycles": 19267,
+      "meanSelfCyclesPerDecode": 917.4761904761905,
+      "observedCyclePercent": 0.3395207272055719
+    },
+    {
+      "symbol": "lsp_unquant_lbr.constprop.3",
+      "totalSelfCycles": 15960,
+      "meanSelfCyclesPerDecode": 760.0,
+      "observedCyclePercent": 0.2812451760108438
+    },
+    {
+      "symbol": "speex_wb1_init",
+      "totalSelfCycles": 15164,
+      "meanSelfCyclesPerDecode": 722.0952380952381,
+      "observedCyclePercent": 0.26721816096669393
+    },
+    {
+      "symbol": "speex_bits_unpack_unsigned",
+      "totalSelfCycles": 9513,
+      "meanSelfCyclesPerDecode": 453.0,
+      "observedCyclePercent": 0.16763692728014767
+    },
+    {
+      "symbol": "speex_avr_long_innovation1",
+      "totalSelfCycles": 8526,
+      "meanSelfCyclesPerDecode": 406.0,
+      "observedCyclePercent": 0.1502441335005297
+    },
+    {
+      "symbol": "speex_avr_long_innovation_n",
+      "totalSelfCycles": 8200,
+      "meanSelfCyclesPerDecode": 390.4761904761905,
+      "observedCyclePercent": 0.1444994012085789
+    },
+    {
+      "symbol": "__umulhisi3",
+      "totalSelfCycles": 6688,
+      "meanSelfCyclesPerDecode": 318.4761904761905,
+      "observedCyclePercent": 0.11785512137597264
+    },
+    {
+      "symbol": "__muluhisi3",
+      "totalSelfCycles": 5472,
+      "meanSelfCyclesPerDecode": 260.57142857142856,
+      "observedCyclePercent": 0.09642691748943216
+    },
+    {
+      "symbol": ".do_clear_bss_start",
+      "totalSelfCycles": 5203,
+      "meanSelfCyclesPerDecode": 247.76190476190476,
+      "observedCyclePercent": 0.09168663225466292
+    },
+    {
+      "symbol": "speex_nb3_long_innovation",
+      "totalSelfCycles": 4123,
+      "meanSelfCyclesPerDecode": 196.33333333333334,
+      "observedCyclePercent": 0.07265500380280132
+    },
+    {
+      "symbol": "speex_bits_unpack_unsigned.constprop.4",
+      "totalSelfCycles": 2835,
+      "meanSelfCyclesPerDecode": 135.0,
+      "observedCyclePercent": 0.04995802468613673
+    },
+    {
+      "symbol": "__mulohisi3",
+      "totalSelfCycles": 2736,
+      "meanSelfCyclesPerDecode": 130.28571428571428,
+      "observedCyclePercent": 0.04821345874471608
+    },
+    {
+      "symbol": ".do_clear_bss_loop",
+      "totalSelfCycles": 2598,
+      "meanSelfCyclesPerDecode": 123.71428571428571,
+      "observedCyclePercent": 0.04578163955364487
+    },
+    {
+      "symbol": "__divmodsi4",
+      "totalSelfCycles": 2184,
+      "meanSelfCyclesPerDecode": 104.0,
+      "observedCyclePercent": 0.03848618198043126
+    },
+    {
+      "symbol": "__udivmodsi4",
+      "totalSelfCycles": 1176,
+      "meanSelfCyclesPerDecode": 56.0,
+      "observedCyclePercent": 0.020723328758693753
+    },
+    {
+      "symbol": "output",
+      "totalSelfCycles": 1092,
+      "meanSelfCyclesPerDecode": 52.0,
+      "observedCyclePercent": 0.01924309099021563
+    },
+    {
+      "symbol": "__divmodsi4_exit",
+      "totalSelfCycles": 672,
+      "meanSelfCyclesPerDecode": 32.0,
+      "observedCyclePercent": 0.011841902147825002
+    },
+    {
+      "symbol": "iir_mem16.constprop.7",
+      "totalSelfCycles": 252,
+      "meanSelfCyclesPerDecode": 12.0,
+      "observedCyclePercent": 0.0044407133054343755
+    },
+    {
+      "symbol": "speex_avr_zero_innovation_n",
+      "totalSelfCycles": 25,
+      "meanSelfCyclesPerDecode": 1.1904761904761905,
+      "observedCyclePercent": 0.00044054695490420393
+    },
+    {
+      "symbol": "__dtors_start",
+      "totalSelfCycles": 6,
+      "meanSelfCyclesPerDecode": 0.2857142857142857,
+      "observedCyclePercent": 0.00010573126917700895
+    },
+    {
+      "symbol": "__do_clear_bss",
+      "totalSelfCycles": 5,
+      "meanSelfCyclesPerDecode": 0.23809523809523808,
+      "observedCyclePercent": 8.81093909808408e-05
+    },
+    {
+      "symbol": "__vectors",
+      "totalSelfCycles": 2,
+      "meanSelfCyclesPerDecode": 0.09523809523809523,
+      "observedCyclePercent": 3.524375639233631e-05
+    }
+  ]
+}

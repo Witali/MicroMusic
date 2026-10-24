@@ -1,0 +1,70 @@
+--- a/src/nb3_c_math.h
++++ b/src/nb3_c_math.h
+@@ -54,4 +54,15 @@
+     if (rounded<=-536854528) return -32767;
+     return (int16_t)(((uint32_t)rounded<<2)>>16);
+ }
++#if !SPEEX_NB3_USE_AVR_ASM
++static SPEEX_NB3_STAGE_O2 int16_t speex_nb3_excitation_finish_c(int32_t adaptive,
++    int8_t shape,int16_t high,int16_t low)
++{
++    int32_t innovation=speex_nb3_shape_scale_c(shape,high,low);
++    if(adaptive>2048000) adaptive=2048000;
++    if(adaptive<-2048000) adaptive=-2048000;
++    return speex_nb3_saturating_q14_c(
++        (int32_t)(((uint32_t)adaptive<<8)+(uint32_t)innovation+8192));
++}
+ #endif
++#endif
+--- a/src/long_pitch.h
++++ b/src/long_pitch.h
+@@ -19,12 +19,9 @@
+     while (count--) {
+         int16_t c=*in++;
+         int32_t adaptive=(int32_t)g0*a+(int32_t)g1*b+(int32_t)g2*c;
+-        int32_t innovation=speex_nb3_shape_scale_c(AVR_READ_I8(shape++),high,low);
++        int8_t code=AVR_READ_I8(shape++);
+         a=b;b=c;
+-        if (adaptive>2048000) adaptive=2048000;
+-        if (adaptive<-2048000) adaptive=-2048000;
+-        *out++=speex_nb3_saturating_q14_c(
+-            (int32_t)(((uint32_t)adaptive<<8)+(uint32_t)innovation+8192));
++        *out++=speex_nb3_excitation_finish_c(adaptive,code,high,low);
+     }
+ }
+ #if SPEEX_NB3_USE_AVR_ASM
+--- a/src/short_pitch.h
++++ b/src/short_pitch.h
+@@ -10,17 +10,6 @@
+ #include "long_pitch.h"
+ #include "zero_innovation.h"
+ extern const signed char gain_cdbk_lbr[],exc_10_32_table[];
+-#if !SPEEX_NB3_USE_AVR_ASM
+-static SPEEX_NB3_ALWAYS_INLINE int16_t speex_nb3_segment_finish_c(int32_t adaptive,
+-    int8_t shape,int16_t high,int16_t low)
+-{
+-    int32_t innovation=speex_nb3_shape_scale_c(shape,high,low);
+-    if(adaptive>2048000) adaptive=2048000;
+-    if(adaptive<-2048000) adaptive=-2048000;
+-    return speex_nb3_saturating_q14_c(
+-        (int32_t)(((uint32_t)adaptive<<8)+(uint32_t)innovation+8192));
+-}
+-#endif
+ #if SPEEX_NB3_USE_AVR_ASM
+ static SPEEX_NB3_HOT SPEEX_NB3_NOINLINE
+ #else
+@@ -87,12 +76,12 @@
+                     /* This form is faster in the whole AVR C decoder than
+                      * the bounded byte-product variants (see short-tail reports). */
+                     do {
+-                        *out++=speex_nb3_segment_finish_c(0,AVR_READ_I8(shape),high,low);
++                        *out++=speex_nb3_excitation_finish_c(0,AVR_READ_I8(shape),high,low);
+                         ++shape;++j;
+                     } while(--left);
+                     break;
+                 }
+-                *out++=speex_nb3_segment_finish_c(adaptive,AVR_READ_I8(shape),high,low);
++                *out++=speex_nb3_excitation_finish_c(adaptive,AVR_READ_I8(shape),high,low);
+                 ++shape;++j;--left;
+                 continue;
+ #endif
