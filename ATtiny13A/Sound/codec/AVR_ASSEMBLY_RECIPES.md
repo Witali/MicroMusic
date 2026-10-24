@@ -556,3 +556,32 @@ experiments separate from instruction substitutions that preserve every byte.
 The complete fixed decoder still exceeds ATtiny13 Flash. The builder reports
 oversize explicitly and enforces the 1024-byte limit independently and in the
 linker. A successful isolated arithmetic fixture is not a playable full image.
+
+## Q7 output gain with a doubled fractional remainder
+
+For a post-decoder constant gain, reuse the tiny core's existing signed-word
+multiply. A second independent rounding step can hurt quiet speech envelopes.
+Carry its discarded fraction to the next sample instead:
+
+`q = floor((sample * gain + remainder) / 128)`,
+`remainder = (sample * gain + remainder) mod 128`, initially 64.
+
+The AVR stores **twice** the remainder. After adding the old remainder to the
+product, `LSL low; ROL high` exposes the output in the high byte and leaves
+twice the new remainder in the low byte. Store that byte directly; halve it
+when loading it next time. This saves a move/mask pair at the cost of one LSR.
+The initial doubled remainder is 128, which can reuse the register holding
+CLKPR's unlock value immediately after the two clock writes.
+
+Sign-extend a preserved byte with `MOV low,sample; LSL sample; SBC high,high`.
+The shifted temporary supplies the original sign in carry, avoiding a
+conditional SER. Keep r0 zero for carry propagation and preserve SREG.T for
+one-shot playback. The residual byte occupies an unused byte inside the
+existing static SRAM span; it is initialized explicitly.
+
+The complete optional gain path costs 34 Flash bytes, including initialization.
+The two published tiny speech images fit exactly 1024 bytes with it. Select the
+largest gain by simulating every sample: error feedback can overflow a peak
+that independent nearest rounding would accept. Full AVR timing, stack, PCM
+and speech-quality measurements are required; see
+[`speech-showcase/output-levels.json`](../research/speech-showcase/output-levels.json).

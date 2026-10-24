@@ -47,15 +47,6 @@ def original_audio(clip):
                 originalPlaybackSha256=copy['sha256'])
 
 
-def listening_levels(catalog, node):
-    levels = subprocess.run([node, str(ROOT/'tools/measure-hq4-level.mjs'), '--stdin'],
-                            cwd=ROOT, input=json.dumps(catalog), capture_output=True, text=True, check=True)
-    for entry in catalog['entries']:
-        gain = json.loads(levels.stdout)['monitorGains'].get(entry['id'])
-        if gain is not None:
-            entry['monitorGain'] = gain
-
-
 def retain_report(report, clip, check):
     path = SOUND/'research/speech-showcase'/clip/'build.json'
     if check:
@@ -66,6 +57,8 @@ def retain_report(report, clip, check):
         for key in ('actualPcmSha256','verifiedSamples','silenceSamplesVerified','pass'):
             if retained['verification'][key] != report['verification'][key]:
                 raise ValueError('Stale selected speech PCM verification: '+clip+' / '+key)
+        if retained.get('outputLevel') != report.get('outputLevel'):
+            raise ValueError('Stale firmware output level: '+clip)
     else:
         path.parent.mkdir(parents=True,exist_ok=True)
         path.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
@@ -81,21 +74,23 @@ def tiny_entry(clip, original, avr_bin, node, check):
     builder = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(builder)
     output = ROOT/'build/speech-showcase'/clip['id']
-    report = builder.build(model, output, avr_bin, node, play_once=True)
+    report = builder.build(model, output, avr_bin, node, play_once=True, maximize_output=True)
     if (report['status'] != 'verified' or report['verifiedLoops'] != 1 or
             report['modelSha256'] != quality['model_sha256'] or
             report['eepromSha256'] != retained['eepromSha256'] or
-            digest((output/'actual.raw').read_bytes()[:clip['samples']]) != quality['pcm_sha256']):
+            report['outputLevel']['before']['pcmSha256'] != quality['pcm_sha256'] or
+            digest((output/'actual.raw').read_bytes()[:clip['samples']]) != report['outputLevel']['after']['pcmSha256']):
         raise ValueError('Selected speech does not match its retained model, quality or AVR verification: '+clip['id'])
     sources = [SOUND/'codec/tiny/firmware.S', SOUND/'codec/tiny_period.py',
                SOUND/'codec/fixed_period.py', SOUND/'codec/dc_blocker.py',
-               model]
+               SOUND/'codec/output_level.py', model]
     binary, eeprom = (output/'firmware.bin').read_bytes(), (output/'eeprom.bin').read_bytes()
     return dict(id='hq4-'+clip['id']+'-tiny', kind='speech', codec='tiny-period',
                 title=clip['title'], description=f"Tiny Speech · {clip['samples']/7500:.3f} с",
                 flashBytes=len(binary), eepromBytes=len(eeprom), sampleHz=7500, pwmHz=7500,
                 carrierHz=37500, voices=1, phraseSamples=clip['samples'],
                 playOnce=True,
+                outputLevel=report['outputLevel'],
                 flashSha256=digest(binary), flashHex=intel_hex(binary),
                 eepromSha256=digest(eeprom), eepromHex=intel_hex(eeprom),
                 sourceInputs={str(path.relative_to(ROOT)).replace('\\','/'):digest(path.read_bytes()) for path in sources},
@@ -108,15 +103,17 @@ def hq4_once_entry(clip, original, avr_bin, node, check):
     builder = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(builder)
     output = ROOT/'build/speech-showcase'/clip['id']
-    report = builder.build(clip['id'],output,avr_bin,node)
+    report = builder.build(clip['id'],output,avr_bin,node,maximize_output=True)
     if report['status']!='verified' or report['verifiedLoops']!=1:
         raise ValueError('One-shot HQ4 verification failed: '+clip['id'])
     binary = (output/'firmware.bin').read_bytes()
-    sources = [SOUND/'codec/oneshot/hq4.S',SOUND/'codec/release'/clip['id']/'speech.hq']
+    sources = [SOUND/'codec/oneshot/hq4.S',SOUND/'codec/release'/clip['id']/'speech.hq',
+               SOUND/'codec/output_level.py']
     return dict(id='hq4-'+clip['id'],kind='speech',codec='hq4',title=clip['title'],
                 description=f"MiniLPC HQ4 · {clip['samples']/7500:.3f} с",order='03',
                 flashBytes=len(binary),eepromBytes=0,sampleHz=7500,pwmHz=7500,carrierHz=37500,
                 voices=1,phraseSamples=clip['samples'],playOnce=True,
+                outputLevel=report['outputLevel'],
                 flashSha256=digest(binary),flashHex=intel_hex(binary),
                 sourceInputs={str(path.relative_to(ROOT)).replace('\\','/'):digest(path.read_bytes()) for path in sources},
                 verification=retain_report(report,clip['id'],check),
@@ -163,7 +160,7 @@ def main():
             'flashBytes': len(binary), 'eepromBytes': 0, 'sampleHz': 7500,
             'pwmHz': 7500, 'carrierHz': 37500, 'voices': 1,
             'flashSha256': digest(binary), 'flashHex': intel_hex(binary),
-            'sourceInputs': verification['sourceInputs'], **originals['chego'], 'monitorGain': 1,
+            'sourceInputs': verification['sourceInputs'], **originals['chego'],
             'research': '../ATtiny13A/Sound/codec/' + ('timbre/README.md' if variant == 'chego' else 'AUTO_ENCODER.md'),
         })
     for order, (name, expected) in enumerate(frozen.items(), 1):
@@ -184,7 +181,6 @@ def main():
             **originals[clip],
         })
     archive = result
-    listening_levels(archive, args.node)
     selected = [tiny_entry(clip, originals[clip['id']], args.avr_bin, args.node,args.check)
                 for clip in clips if clip['id'] in ('chego','otvechaesh')]
     selected.append(hq4_once_entry(next(clip for clip in clips if clip['id']=='vinni'),originals['vinni'],args.avr_bin,args.node,args.check))
@@ -195,7 +191,6 @@ def main():
                   entries=selected, archive='../ATtiny13A/Sound/research/hq4-catalog-archive.json',
                   aliases={entry['id']:winners[entry['audioReferenceId']] for entry in archive['entries']
                            if entry['id'] != winners[entry['audioReferenceId']]})
-    listening_levels(dict(entries=selected, referenceEntries=archive['entries']), args.node)
     for path, catalog in ((OUTPUT,result),(ARCHIVE,archive)):
         text = json.dumps(catalog, ensure_ascii=False, indent=2)+'\n'
         if args.check:

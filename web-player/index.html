@@ -8,7 +8,7 @@
   <meta name="description" content="Музыкальные прошивки ATtiny13A и ATtiny88: исполнение AVR-кода, звук PWM и осциллограмма в браузере.">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css?v=20261024-attiny88">
-  <script type="module" src="./app.js?v=20261024-common-avr"></script>
+  <script type="module" src="./app.js?v=20261024-common-avr-native-volume"></script>
 </head>
 <body>
   <header class="site-header">
@@ -46,7 +46,6 @@
           <audio id="original-audio" preload="none" playsinline hidden></audio>
           <div class="engine-controls"><fieldset class="engine-selector"><legend>Движок эмуляции</legend><div class="engine-options"><label><input type="radio" name="engine" value="js"><span>JS</span></label><label><input type="radio" name="engine" value="wasm" checked><span>WASM</span></label></div></fieldset><p id="engine-note">При смене — сброс на начало.</p></div>
           <div class="audio-controls"><label class="volume-label">Громкость <input id="volume" type="range" min="0" max="1" step="0.01" value="0.65"></label><label>RC-фильтр <select id="cutoff" aria-label="Частота среза фильтра"><option value="4000">4 кГц</option><option value="6000">6 кГц</option><option value="9000" selected>9 кГц</option><option value="12000">12 кГц</option></select></label></div>
-          <label id="speech-level-control" class="technical-note" hidden><input id="match-speech-level" type="checkbox" checked> Выровнять громкость для сравнения</label>
         </section>
         <section class="panel scope-panel" aria-label="Осциллограмма PWM">
           <div class="panel-heading"><span class="eyebrow">02 / СИГНАЛ</span><span class="technical-note" id="audio-mode">МОНО · 1 PWM-ВЫХОД</span></div>

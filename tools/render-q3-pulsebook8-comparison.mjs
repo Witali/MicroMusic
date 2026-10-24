@@ -38,7 +38,7 @@ for(const [name,folder] of records){
   flashHex:read(folder+'/firmware.hex').toString(),eepromHex:read(folder+'/eeprom.hex').toString()};
  assert.equal(hash(parseHex(entry.flashHex)),report.firmware_sha256);
  assert.equal(hash(parseHex(entry.eepromHex,64)),report.eeprom_sha256);
- const controls={cutoff:9000,volume:.65*(entry.monitorGain??1)};
+ const controls={cutoff:9000,volume:.65};
  const renderer=await createRenderer(entry,48000,controls,'wasm');
  const frames=Math.round((n/7500+.15)*48000),samples=new Float32Array(frames);
  for(let at=0;at<frames;at+=4096)samples.set(renderer.render(Math.min(4096,frames-at)),at);
@@ -52,6 +52,6 @@ const pause=14400,comparison=new Float32Array(audio[0].length+pause+audio[1].len
 comparison.set(audio[0]);comparison.set(audio[1],audio[0].length+pause);wavFloat('before-then-after.wav',comparison);
 fs.copyFileSync(path.join(root,'web-player/audio/originals/vinni.wav'),path.join(output,'original.wav'));
 fs.writeFileSync(path.join(output,'listening.json'),JSON.stringify({schema:'q3-pulsebook8-listening-v1',sampleRate:48000,
- description:'Actual paired Flash/EEPROM images through unmodified site WASM renderer; same 9 kHz filter and 0.65 volume with catalog monitorGain; no extra normalization.',
+ description:'Actual paired Flash/EEPROM images through unmodified site WASM renderer; same 9 kHz filter and 0.65 volume; native firmware level without extra normalization.',
  results,comparison:`${options['before-name']}, 0.3 seconds pause, ${options['after-name']}`},null,2)+'\n');
 console.log(JSON.stringify(results.map(r=>({file:r.file,flash:r.flashBytes,eeprom:r.eepromBytes}))));

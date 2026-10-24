@@ -5,7 +5,6 @@ import {createHash} from 'node:crypto';
 import {AVRCore as Wasm} from '../lib/avr-core.js';
 import {AVRCore as JS} from '../lib/avr-reference.js';
 import {parseHex} from '../lib/hex.js';
-import {Renderer} from '../lib/renderer-js.js';
 const root=new URL('../../',import.meta.url);
 const read=path=>readFileSync(new URL(path,root));
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
@@ -118,6 +117,10 @@ for(const entry of catalog.entries)test(`${entry.id}: selected Flash/EEPROM play
   const samples=report.verification.verifiedSamples,expectedHash=report.verification.actualPcmSha256,imageHash=report.imageSha256;
   assert.equal(samples,entry.phraseSamples*3);assert.equal(report.phraseSamples,entry.phraseSamples);
   assert.equal(binary.length,report.flashBytes);
+  assert.deepEqual(entry.outputLevel,report.outputLevel);
+  assert.equal(entry.outputLevel.clippedSamples,0);
+  assert.ok(entry.outputLevel.after.peak>=124&&entry.outputLevel.after.peak<=128);
+  assert.equal(binary.length,1024);
   if(eeprom){
     assert.equal(eeprom.length,64);
     assert.equal(hash(eeprom),report.eepromSha256);assert.equal(entry.eepromSha256,report.eepromSha256);
@@ -131,6 +134,9 @@ for(const entry of catalog.entries)test(`${entry.id}: selected Flash/EEPROM play
     assert.equal(hash(pcm),expectedHash);assert.equal(core.lost,0);assert.equal(core.workLost,0);
     assert.equal(core.irqCount,samples*5);
     assert.ok(pcm.subarray(0,entry.phraseSamples).some(value=>value!==128),'speech is present before EOS');
+    const phrase=pcm.subarray(0,entry.phraseSamples);
+    assert.equal(Math.min(...phrase),entry.outputLevel.after.minimumDuty);
+    assert.equal(Math.max(...phrase),entry.outputLevel.after.maximumDuty);
     assert.ok(pcm.subarray(entry.phraseSamples).every(value=>value===128),'neutral PWM persists after EOS');
   }
 });
@@ -149,18 +155,6 @@ for(const entry of archive.entries)test(`${entry.id}: archived HEX, retained sou
   }
 });
 
-test('selected speech listening gain matches the frozen HQ4 of each phrase through the default audio chain',()=>{
-  const rate=48000;
-  function power(entry,count,volume){
-    const renderer=new Renderer(entry,rate,{cutoff:9000,volume});
-    let sum=0;for(let i=0;i<count;i+=4096)for(const x of renderer.render(Math.min(4096,count-i)))sum+=x*x;
-    return sum/count;
-  }
-  for(const entry of catalog.entries){
-    const reference=references.find(clip=>clip.id===entry.audioReferenceId);
-    const baseline=archive.entries.find(old=>old.id==='hq4-'+reference.id);
-    const count=Math.round(reference.samples/reference.sample_rate*rate);
-    const before=power(baseline,count,1),after=power(entry,count,entry.monitorGain??1);
-    assert.ok(Math.abs(10*Math.log10(after/before))<.001,entry.id);
-  }
+test('public and archived speech catalogs preserve the firmware output level',()=>{
+  for(const entry of [...catalog.entries,...archive.entries])assert.equal(entry.monitorGain,undefined,entry.id);
 });

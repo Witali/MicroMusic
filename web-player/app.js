@@ -15,8 +15,7 @@ let currentDevice='attiny13a', deviceRequest=0;
 
 function showError(message) { $('error').textContent = message; $('error').hidden = !message; }
 function audioControls() {
-  const trim=$('match-speech-level').checked ? (selected?.monitorGain??1) : 1;
-  return {cutoff:+$('cutoff').value,volume:+$('volume').value*trim};
+  return {cutoff:+$('cutoff').value,volume:+$('volume').value};
 }
 function selectedEngine() { return document.querySelector('input[name="engine"]:checked').value; }
 function deviceUI(device) {
@@ -286,7 +285,6 @@ async function toggle() {
 $('play').onclick=toggle; $('play-original').onclick=toggleOriginal; $('reset').onclick=()=>load(selected); $('search').oninput=renderCatalog;
 $('volume').oninput=()=>{originalAudio.volume=+$('volume').value;runtime?.postMessage({type:'controls',controls:audioControls()});};
 $('cutoff').onchange=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
-$('match-speech-level').onchange=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
 for (const choice of document.querySelectorAll('input[name="engine"]')) choice.onchange=()=>{
   if (selected) load(selected);
 };
@@ -303,7 +301,6 @@ try {
     document.querySelector('.subtitle').textContent='Три фразы — три выбранных варианта. Сравните прошивку с оригиналом.';
     document.querySelector('.library h2').textContent='Выберите фразу';
     document.querySelector('.library-caption').textContent='Слушайте речь из прошивки и сравнивайте с исходной записью.';
-    $('speech-level-control').hidden=false;
     document.querySelector('.source-only').hidden=true;
     const history=document.querySelector('.header-link');history.href='https://github.com/Witali/MicroMusic/blob/main/ATtiny13A/Sound/AUDIO_REFERENCES.md';history.textContent='Звуковые эталоны ↗';
     $('original-player').textContent='Плеер из ChatGPT ↗';
