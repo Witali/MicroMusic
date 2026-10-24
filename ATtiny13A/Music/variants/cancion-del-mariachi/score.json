@@ -3,7 +3,7 @@
   "composers": [
     "César Rosas"
   ],
-  "player_description": "нейлоновая гитара, тихое пиано, безладовый бас и лёгкие ударные FluidR3; два резервных канала затухания.",
+  "player_description": "ведущая и ритмическая нейлоновые гитары, бас и тихие ударные FluidR3; в паузах ведущей партии звучит перебор второй гитары.",
   "performers": [
     "Los Lobos",
     "Antonio Banderas"
@@ -21,37 +21,37 @@
       "level": 15
     },
     "keys": {
-      "instrument": "acoustic-grand-piano-soft",
-      "level": 7
+      "instrument": "acoustic-guitar-nylon",
+      "level": 10
     },
     "pluck": {
       "instrument": "fretless-bass",
-      "level": 10
+      "level": 8
     },
     "percussion": {
       "instrument": "natural-kit",
-      "level": 4
+      "level": 2
     }
   },
   "patterns": {
     "song": [
       "B4:0.5 B4:0.5 R:0.5 B4:0.5 B4:0.5 R:0.5 C5:0.5 B4:0.5",
       "R:0.5 B4:0.5 E4:0.5 R:0.5 C5:0.5 B4:0.5 R:0.5 B4:0.5",
-      "E4:0.5 R:0.5 A4:1.5 R:1 D#4:0.5",
-      "A4:0.5 A4:0.5 R:0.5 A4:0.5 A4:0.5 R:0.5 B4:0.5 A4:0.5",
-      "R:0.5 A4:0.5 A4:0.5 B4:0.5 R:0.5 A4:0.5 A4:0.5 R:0.5",
-      "F#4:0.5 G4:0.5 R:3",
-      "R:4",
-      "R:4",
-      "R:1 B3:1 D#4:1 F#4:1",
+      "E4:0.5 R:0.5 A4:1.5 F#4:0.5 F#4:0.5 D#4:0.5",
+      "A4:0.5 A4:0.5 F#4:0.5 A4:0.5 A4:0.5 F#4:0.5 B4:0.5 A4:0.5",
+      "F#4:0.5 A4:0.5 A4:0.5 B4:0.5 F#4:0.5 A4:0.5 A4:0.5 E4:0.5",
+      "F#4:0.5 G4:0.5 E4:0.5 E4:0.5 E4:0.5 E4:0.5 E4:0.5 E4:0.5",
+      "E4:0.5 E4:0.5 E4:0.5 E4:0.5 E4:0.5 E4:0.5 E4:0.5 E4:0.5",
+      "E4:0.5 E4:0.5 E4:0.5 E4:0.5 E4:0.5 E4:0.5 E4:0.5 E4:0.5",
+      "E4:0.5 E4:0.5 B3:1 D#4:1 F#4:1",
       "B4:4~",
-      "B4:2 R:2",
-      "R:1.5 C5:0.5 B4:0.5 A4:0.5 G4:0.5 F#4:0.5",
+      "B4:2 F#4:0.5 F#4:0.5 F#4:0.5 E4:0.5",
+      "F#4:0.5 F#4:0.5 E4:0.5 C5:0.5 B4:0.5 A4:0.5 G4:0.5 F#4:0.5",
       "E4:4~",
-      "E4:2 R:2",
-      "R:1.5 F#4:0.5 A4:0.5 C5:1 B4:0.5",
-      "R:0.5 F#4:0.5 A4:0.5 C5:1 B4:0.5 R:1",
-      "R:2 B4:0.5 F#4:0.5 A4:0.5 C5:0.5~",
+      "E4:2 E4:0.5 E4:0.5 E4:0.5 E4:0.5",
+      "E4:0.5 E4:0.5 F#4:0.5 F#4:0.5 A4:0.5 C5:1 B4:0.5",
+      "F#4:0.5 F#4:0.5 A4:0.5 C5:1 B4:0.5 F#4:0.5 F#4:0.5",
+      "F#4:0.5 F#4:0.5 F#4:0.5 F#4:0.5 B4:0.5 F#4:0.5 A4:0.5 C5:0.5~",
       "C5:0.5 B4:0.5 E4:3",
       "C5:0.5 A4:0.5 E4:0.5 C5:0.5 A4:0.5 C5:0.5 B4:0.5 G4:0.5",
       "B4:0.5 B4:0.5 G4:0.5 B4:0.5 A4:0.5 F#4:0.5 A4:0.5 A4:0.5",
@@ -70,30 +70,34 @@
   ],
   "chord_pairs": [
     [
-      "Em_0",
-      "Em_0"
+      "guitar_55_40",
+      "guitar_55_40"
     ]
   ],
   "chord_notes": {
-    "Em_0": [
+    "guitar_55_40": [
       55,
       40
     ],
-    "Em_1": [
+    "guitar_59_47": [
       59,
       47
     ],
-    "Am_0": [
+    "guitar_60_45": [
       60,
       45
     ],
-    "B7_0": [
+    "guitar_51_35": [
       51,
       35
     ],
-    "B7_1": [
-      57,
-      42
+    "guitar_59_45": [
+      59,
+      45
+    ],
+    "guitar_59_40": [
+      59,
+      40
     ]
   },
   "replace_harmony_sections": [
@@ -104,315 +108,255 @@
     "song": [
       {
         "unit": 0,
-        "chord": "Em_0"
+        "chord": "guitar_55_40"
       },
       {
         "unit": 6,
-        "chord": "Em_1"
+        "chord": "guitar_59_47"
       },
       {
         "unit": 12,
-        "chord": "Am_0"
+        "chord": "guitar_60_45"
       },
       {
         "unit": 18,
-        "chord": "Em_1"
-      },
-      {
-        "unit": 21,
-        "offMask": 2
+        "chord": "guitar_59_47"
       },
       {
         "unit": 24,
-        "chord": "Am_0"
+        "chord": "guitar_60_45"
       },
       {
         "unit": 30,
-        "chord": "Em_1"
+        "chord": "guitar_59_47"
       },
       {
         "unit": 36,
-        "chord": "B7_0"
+        "chord": "guitar_51_35"
       },
       {
         "unit": 42,
-        "chord": "B7_1"
-      },
-      {
-        "unit": 45,
-        "offMask": 2
+        "chord": "guitar_59_47"
       },
       {
         "unit": 48,
-        "chord": "B7_0"
+        "chord": "guitar_59_47"
       },
       {
         "unit": 54,
-        "chord": "Em_1"
+        "chord": "guitar_59_45"
       },
       {
         "unit": 60,
-        "chord": "B7_0"
+        "chord": "guitar_59_47"
       },
       {
         "unit": 66,
-        "chord": "B7_1"
-      },
-      {
-        "unit": 69,
-        "offMask": 2
+        "chord": "guitar_59_47"
       },
       {
         "unit": 72,
-        "chord": "B7_0"
+        "chord": "guitar_59_47"
       },
       {
         "unit": 78,
-        "chord": "Em_1"
+        "chord": "guitar_59_45"
       },
       {
         "unit": 84,
-        "chord": "Em_0"
+        "chord": "guitar_59_40"
       },
       {
         "unit": 90,
-        "chord": "Em_1"
-      },
-      {
-        "unit": 93,
-        "offMask": 2
+        "chord": "guitar_59_40"
       },
       {
         "unit": 96,
-        "chord": "Em_0"
+        "chord": "guitar_59_40"
       },
       {
         "unit": 102,
-        "chord": "Em_1"
+        "chord": "guitar_59_40"
       },
       {
         "unit": 108,
-        "chord": "Em_0"
+        "chord": "guitar_59_40"
       },
       {
         "unit": 114,
-        "chord": "Em_1"
-      },
-      {
-        "unit": 117,
-        "offMask": 2
+        "chord": "guitar_59_40"
       },
       {
         "unit": 120,
-        "chord": "Em_0"
+        "chord": "guitar_59_40"
       },
       {
         "unit": 126,
-        "chord": "Em_1"
+        "chord": "guitar_59_40"
       },
       {
         "unit": 132,
-        "chord": "B7_0"
+        "chord": "guitar_59_47"
       },
       {
         "unit": 138,
-        "chord": "Em_1"
-      },
-      {
-        "unit": 141,
-        "offMask": 2
+        "chord": "guitar_59_47"
       },
       {
         "unit": 144,
-        "chord": "B7_0"
+        "chord": "guitar_59_47"
       },
       {
         "unit": 150,
-        "chord": "Em_1"
+        "chord": "guitar_59_45"
       },
       {
         "unit": 156,
-        "chord": "B7_0"
+        "chord": "guitar_59_47"
       },
       {
         "unit": 162,
-        "chord": "B7_1"
-      },
-      {
-        "unit": 165,
-        "offMask": 2
+        "chord": "guitar_59_47"
       },
       {
         "unit": 168,
-        "chord": "B7_0"
+        "chord": "guitar_59_47"
       },
       {
         "unit": 174,
-        "chord": "Em_1"
+        "chord": "guitar_59_45"
       },
       {
         "unit": 180,
-        "chord": "Em_0"
+        "chord": "guitar_59_40"
       },
       {
         "unit": 186,
-        "chord": "Em_1"
-      },
-      {
-        "unit": 189,
-        "offMask": 2
+        "chord": "guitar_59_40"
       },
       {
         "unit": 192,
-        "chord": "Em_0"
+        "chord": "guitar_59_40"
       },
       {
         "unit": 198,
-        "chord": "Em_1"
+        "chord": "guitar_59_40"
       },
       {
         "unit": 204,
-        "chord": "Em_0"
+        "chord": "guitar_59_40"
       },
       {
         "unit": 210,
-        "chord": "Em_1"
-      },
-      {
-        "unit": 213,
-        "offMask": 2
+        "chord": "guitar_59_40"
       },
       {
         "unit": 216,
-        "chord": "Em_0"
+        "chord": "guitar_59_40"
       },
       {
         "unit": 222,
-        "chord": "Em_1"
+        "chord": "guitar_59_40"
       },
       {
         "unit": 228,
-        "chord": "B7_0"
+        "chord": "guitar_59_47"
       },
       {
         "unit": 234,
-        "chord": "Em_1"
-      },
-      {
-        "unit": 237,
-        "offMask": 2
+        "chord": "guitar_59_47"
       },
       {
         "unit": 240,
-        "chord": "B7_0"
+        "chord": "guitar_59_47"
       },
       {
         "unit": 246,
-        "chord": "Em_1"
+        "chord": "guitar_59_45"
       },
       {
         "unit": 252,
-        "chord": "B7_0"
+        "chord": "guitar_59_47"
       },
       {
         "unit": 258,
-        "chord": "B7_1"
-      },
-      {
-        "unit": 261,
-        "offMask": 2
+        "chord": "guitar_59_47"
       },
       {
         "unit": 264,
-        "chord": "B7_0"
+        "chord": "guitar_59_47"
       },
       {
         "unit": 270,
-        "chord": "Em_1"
+        "chord": "guitar_59_45"
       },
       {
         "unit": 276,
-        "chord": "Em_0"
+        "chord": "guitar_59_40"
       },
       {
         "unit": 282,
-        "chord": "Em_1"
-      },
-      {
-        "unit": 285,
-        "offMask": 2
+        "chord": "guitar_59_40"
       },
       {
         "unit": 288,
-        "chord": "Am_0"
+        "chord": "guitar_60_45"
       },
       {
         "unit": 294,
-        "chord": "Em_1"
+        "chord": "guitar_59_45"
       },
       {
         "unit": 300,
-        "chord": "Em_0"
+        "chord": "guitar_59_40"
       },
       {
         "unit": 306,
-        "chord": "Em_1"
-      },
-      {
-        "unit": 309,
-        "offMask": 2
+        "chord": "guitar_59_40"
       },
       {
         "unit": 312,
-        "chord": "B7_0"
+        "chord": "guitar_59_47"
       },
       {
         "unit": 318,
-        "chord": "Em_1"
+        "chord": "guitar_59_45"
       },
       {
         "unit": 324,
-        "chord": "Em_0"
+        "chord": "guitar_59_40"
       },
       {
         "unit": 330,
-        "chord": "Em_1"
-      },
-      {
-        "unit": 333,
-        "offMask": 2
+        "chord": "guitar_59_40"
       },
       {
         "unit": 336,
-        "chord": "Am_0"
+        "chord": "guitar_60_45"
       },
       {
         "unit": 342,
-        "chord": "Em_1"
+        "chord": "guitar_59_45"
       },
       {
         "unit": 348,
-        "chord": "Em_0"
+        "chord": "guitar_59_40"
       },
       {
         "unit": 354,
-        "chord": "Em_1"
-      },
-      {
-        "unit": 357,
-        "offMask": 2
+        "chord": "guitar_59_40"
       },
       {
         "unit": 360,
-        "chord": "B7_0"
+        "chord": "guitar_59_47"
       },
       {
         "unit": 366,
-        "chord": "Em_1"
+        "chord": "guitar_59_45"
       },
       {
         "unit": 372,
-        "chord": "Em_0"
+        "chord": "guitar_59_40"
       },
       {
         "unit": 378,
@@ -743,6 +687,19 @@
       "phase": 0
     }
   ],
+  "sourceNoteCoverage": {
+    "sourceSelectedAttacks": {
+      "0": 117,
+      "1": 910
+    },
+    "leadSelectedAttacks": {
+      "0": 94,
+      "1": 52
+    },
+    "longestMelodicRestSeconds": 0.15873015873015872,
+    "fullMidiPolyphonyPreserved": false,
+    "policy": "The first guitar has priority; the second supplies its real note attacks during first-guitar rests. Rhythm voicing and bass remain reduced."
+  },
   "packing_candidates": 384,
   "packing_max_entry_offset": 255,
   "source": {
@@ -756,11 +713,11 @@
     "gridUnitsPerQuarter": 6,
     "completeSource": false,
     "excerpt": "Source beats 58..121; introduction omitted at the user's request. Main theme starts immediately; final source E4 cadence releases before the loop.",
-    "reduction": "Highest active source note in Gtr.1 Antonio. Newly arranged piano voicings and alternating root/fifth fretless bass follow Em/B7/Am inferred from source chord tones; piano releases halfway through every fourth quarter. New quiet kick/hat/snare/hat backing plays two hits per musical quarter.",
+    "reduction": "Highest active source note in Gtr.1 Antonio, switching to the highest Gtr.2 Meysam source note during rests. Rhythm guitar samples the second-highest source Gtr.2 note once per quarter, and bass samples its lowest note; before Gtr.2 enters, Em/B7/Am accompaniment is arranged from source chord tones. Middle chord tones remain omitted. Quiet new kick/hat/snare/hat plays two hits per musical quarter.",
     "timing": "Exact selected source ticks on a 1/6-quarter grid, encoded as sixteenths at 1.5x BPM. Source tempo 126 quarter BPM; drums use their own three-grid-unit countdown on this same grid."
   },
   "lead_envelope_model": "pluck",
-  "accompaniment_envelope_model": "piano",
+  "accompaniment_envelope_model": "pluck",
   "pluck_envelope_model": "pluck",
   "percussion_enabled": true,
   "keys_rest_check": false,
@@ -773,14 +730,14 @@
   "lead_decay_mask": 1,
   "lead_fast_decay_mask": null,
   "lead_release_model": "shared-decay",
-  "keys_max_level": 7,
+  "keys_max_level": 10,
   "keys_attack_step": 0,
-  "keys_release_step": 2,
+  "keys_release_step": 1,
   "keys_retrigger": "full",
-  "keys_decay_mask": 3,
+  "keys_decay_mask": 1,
   "keys_fast_decay_mask": null,
   "keys_release_model": "shared-decay",
-  "pluck_max_level": 10,
+  "pluck_max_level": 8,
   "pluck_attack_step": 0,
   "pluck_release_step": 1,
   "pluck_retrigger": "full",

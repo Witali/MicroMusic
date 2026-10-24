@@ -2,8 +2,8 @@
 
 The requested edit skips the introduction and starts at source beat 58.
 The selected passage contains only eighths and triplets: six grid units per
-quarter preserve both exactly. Piano, alternating bass and measured drums are
-new accompaniment, explicitly distinguished from the retained transcription.
+quarter preserve both exactly. The second source guitar takes over during
+rests in the first. Rhythm guitar, bass and quiet drums support both parts.
 """
 from pathlib import Path
 import argparse
@@ -19,9 +19,9 @@ FIRST_BEAT = 58
 LAST_BEAT = 121
 GRID_UNITS = 6
 HARMONY = {
-    'Em': dict(classes={4, 7, 11}, piano=[55, 59], bass=[40, 47]),
-    'B7': dict(classes={11, 3, 6, 9}, piano=[51, 57], bass=[35, 42]),
-    'Am': dict(classes={9, 0, 4}, piano=[60, 64], bass=[45, 40]),
+    'Em': dict(classes={4, 7, 11}, rhythm=[55, 59], bass=[40, 47]),
+    'B7': dict(classes={11, 3, 6, 9}, rhythm=[51, 57], bass=[35, 42]),
+    'Am': dict(classes={9, 0, 4}, rhythm=[60, 64], bass=[45, 40]),
 }
 
 
@@ -51,11 +51,14 @@ def arrange(candidates=384):
     chord_notes = {}
     previous_harmony = 'Em'
     harmony_events = []
+    selected_lead = []
     for unit in range(stop):
         lead = [n for n in quantized if n['track'] == 0 and n['start'] <= unit < n['end']]
-        chosen = max(lead, key=lambda n:(n['pitch'], n['start'])) if lead else None
-        grid.append((compiler.pname(chosen['pitch']), chosen['identity']) if chosen else ('R', None))
         guitar = [n for n in quantized if n['track'] == 1 and n['start'] <= unit < n['end']]
+        active = lead or guitar
+        chosen = max(active, key=lambda n:(n['pitch'], n['start'])) if active else None
+        selected_lead.append(chosen)
+        grid.append((compiler.pname(chosen['pitch']), chosen['identity']) if chosen else ('R', None))
         if unit % GRID_UNITS:
             continue
         # Infer the three familiar harmonies from full source voicings. Before
@@ -66,11 +69,14 @@ def arrange(candidates=384):
         harmony = max(ranked)[2] if classes else previous_harmony
         quarter = unit // GRID_UNITS
         phase = quarter % 2
-        name = f'{harmony}_{phase}'
-        chord_notes[name] = [HARMONY[harmony]['piano'][phase], HARMONY[harmony]['bass'][phase]]
+        if guitar:
+            voicing = sorted({n['pitch'] for n in guitar})
+            rhythm, bass = voicing[-2] if len(voicing)>1 else voicing[-1], voicing[0]
+        else:
+            rhythm, bass = HARMONY[harmony]['rhythm'][phase], HARMONY[harmony]['bass'][phase]
+        name = f'guitar_{rhythm}_{bass}'
+        chord_notes[name] = [rhythm, bass]
         controls.append(dict(unit=unit, chord=name))
-        if quarter % 4 == 3:
-            controls.append(dict(unit=unit + 3, offMask=2))
         harmony_events.append(dict(unit=unit, harmony=harmony, phase=phase))
         previous_harmony = harmony
     first = next(c['chord'] for c in controls if 'chord' in c)
@@ -91,21 +97,32 @@ def arrange(candidates=384):
             unit = end
         bars.append(' '.join(tokens))
     controls.append(dict(unit=stop, offMask=14))
+    played = {n['identity']: n for n in selected_lead if n is not None}
+    longest_rest = current_rest = 0
+    for n in selected_lead:
+        current_rest = 0 if n is not None else current_rest + 1
+        longest_rest = max(longest_rest, current_rest)
+    coverage = dict(sourceSelectedAttacks={str(track):sum(n[0]==track for _,n in selected) for track in (0,1)},
+                    leadSelectedAttacks={str(track):sum(n['track']==track for n in played.values()) for track in (0,1)},
+                    longestMelodicRestSeconds=longest_rest/GRID_UNITS*60/bpm,
+                    fullMidiPolyphonyPreserved=False,
+                    policy='The first guitar has priority; the second supplies its real note attacks during first-guitar rests. Rhythm voicing and bass remain reduced.')
     return dict(title='Canción del Mariachi · Отчаянный', composers=['César Rosas'],
-        player_description='нейлоновая гитара, тихое пиано, безладовый бас и лёгкие ударные FluidR3; два резервных канала затухания.',
+        player_description='ведущая и ритмическая нейлоновые гитары, бас и тихие ударные FluidR3; в паузах ведущей партии звучит перебор второй гитары.',
         performers=['Los Lobos', 'Antonio Banderas'], engine='instrument-bank',
         tempo_bpm=bpm * GRID_UNITS // 4, musicalTempoBpm=bpm, sourceMeters='4/4',
         beats_per_bar=4, release_tail_slots=2,
         percussion_half_beat_units=3,
         instruments=dict(lead=dict(instrument='acoustic-guitar-nylon', level=15),
-                         keys=dict(instrument='acoustic-grand-piano-soft', level=7),
-                         pluck=dict(instrument='fretless-bass', level=10),
-                         percussion=dict(instrument='natural-kit', level=4)),
+                         keys=dict(instrument='acoustic-guitar-nylon', level=10),
+                         pluck=dict(instrument='fretless-bass', level=8),
+                         percussion=dict(instrument='natural-kit', level=2)),
         patterns=dict(song=bars, silence=['R:4']), playlist=['song', 'silence'],
         chord_pairs=[[first, first]], chord_notes=chord_notes,
         replace_harmony_sections=['song', 'silence'],
         timed_controls=dict(song=controls, silence=[dict(unit=0, offMask=14)]),
         arrangementHarmony=harmony_events,
+        sourceNoteCoverage=coverage,
         packing_candidates=candidates, packing_max_entry_offset=255,
         source=dict(file='../../reference/cancion-del-mariachi/source-events.json',
                     sha256=hashlib.sha256(SOURCE.read_bytes()).hexdigest(),
@@ -113,7 +130,7 @@ def arrange(candidates=384):
                     firstSourceQuarterBeat=FIRST_BEAT, lastSourceQuarterBeat=LAST_BEAT,
                     arrangedQuarterBeats=stop/GRID_UNITS, gridUnitsPerQuarter=GRID_UNITS, completeSource=False,
                     excerpt='Source beats 58..121; introduction omitted at the user\'s request. Main theme starts immediately; final source E4 cadence releases before the loop.',
-                    reduction='Highest active source note in Gtr.1 Antonio. Newly arranged piano voicings and alternating root/fifth fretless bass follow Em/B7/Am inferred from source chord tones; piano releases halfway through every fourth quarter. New quiet kick/hat/snare/hat backing plays two hits per musical quarter.',
+                    reduction='Highest active source note in Gtr.1 Antonio, switching to the highest Gtr.2 Meysam source note during rests. Rhythm guitar samples the second-highest source Gtr.2 note once per quarter, and bass samples its lowest note; before Gtr.2 enters, Em/B7/Am accompaniment is arranged from source chord tones. Middle chord tones remain omitted. Quiet new kick/hat/snare/hat plays two hits per musical quarter.',
                     timing='Exact selected source ticks on a 1/6-quarter grid, encoded as sixteenths at 1.5x BPM. Source tempo 126 quarter BPM; drums use their own three-grid-unit countdown on this same grid.'))
 
 

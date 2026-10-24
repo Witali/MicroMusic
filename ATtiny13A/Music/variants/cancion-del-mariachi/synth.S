@@ -146,6 +146,7 @@ render_drum:
   asr r17
   asr r17
   asr r17
+  asr r17
   add r21, r17
 write_pwm:
   subi r21, 128
@@ -188,9 +189,7 @@ state_plucked:
   brcs state_mask
   ldi r25, 3
 state_mask:
-  mov r17, r16
-  andi r17, 48
-  brne state_gate
+  sbrs r16, 5
   lsr r25
 state_gate:
   and r25, r24
@@ -279,10 +278,10 @@ chord_event:
   add r30, r16
   adc r31, r29
   ldi r26, 101
-  ldi r25, 215
+  ldi r25, 154
   rcall initialize_voice
   ldi r26, 106
-  ldi r25, 170
+  ldi r25, 168
   rcall initialize_voice
   movw r30, r12
   rjmp read_event
@@ -360,12 +359,6 @@ render_tone:
   brcs .L216
   ori r16, 8
 .L216:
-  cpi r26, 106
-  brne piano_attack_done
-  cpi r25, 14
-  brcs piano_attack_done
-  ori r16, 48
-piano_attack_done:
   swap r17
   andi r17, 15
   lsr r17
