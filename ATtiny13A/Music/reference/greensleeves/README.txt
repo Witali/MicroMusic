@@ -20,14 +20,16 @@ the Z80 examples.json registry, explicitly assigns zero-based GM programs
 73 (flute), 40 (violin), 71 (clarinet), and 42 (cello). These assignments are
 also visible in audio/lib/midi-firmware/src/build_examples.mjs in that repo.
 
-The ATtiny13A adaptation uses the complete written soprano on flute, with
-independent Alto/Violin and Bass/Cello pitches sampled at dotted-quarter
-boundaries. Tenor/Clarinet is explicitly omitted to fit three tonal voices;
-no synthetic guitar or percussion is added. Its score.json records hashes,
-conversion details and the
-single MIDI legato overlap reduced to the written monophonic duration.
-The original files in this directory remain unchanged. Rebuild using
-tools/arrange-greensleeves.py; details in variants/greensleeves/README.txt.
+The ATtiny13A adaptation now retains all235 notes from the complete actual
+four-channel Z80 example:70 flute,52 violin,58 clarinet and55 cello notes.
+Every NoteOn/Off survives exactly on the source sixteenth grid. Tenor and
+unsampled accompaniment notes have been restored, using four independent
+DDS oscillators and all four measured instrument banks. No percussion is
+added. The tune lasts48seconds plus a separate0.25-beat release gap.
+The four-channel source has one continuous tied D4 where the written edition
+has two attacks; the firmware follows the actual example's70-note soprano.
+Source files remain unchanged. Rebuild using tools/arrange-greensleeves.py;
+details and physical-PWM verification are in variants/greensleeves/README.txt.
 
 flute-measurements.json and cello-measurements.json retain measured harmonic
 frames/envelopes used by the shared build-time instrument bank. Each records

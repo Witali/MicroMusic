@@ -1,35 +1,43 @@
-05 · GREENSLEEVES
-Полная мелодия:71нота сопрано,6/8 с исходным затактом,60 четвертей/мин.
-ФлейтаGM73/уровень 15, скрипкаGM40/12, виолончельGM42/10.
-Тенор-кларнетGM71 опущен. Альт и бас выбираются на границах пунктирных
-четвертей;33 выбранных ноты каждой партии получают собственные NoteOff.
-Исходные ноты и письменные длительности проверены по LilyPond и JSON
-событиям. Финальный s8 — элемент вёрстки, не звучащая пауза. Сохранены
-неполный последний такт и затакт; затем отдельная пауза250 мс до повтора.
-Итог48,25с. Исходная редакция Mutopia2014/03/30-1247,PublicDomain,
-Traditional;typesetSteveDunlop. Полные исходники, описание редукции и
-происхождение инструментальных назначений:../../reference/greensleeves/.
+05 · GREENSLEEVES — FOUR COMPLETE SOURCE PARTS
 
-ПАМЯТЬ И ВОСПРОИЗВЕДЕНИЕ
-Flash 748/1024 Б: код 552 Б, данные 196 Б. EEPROM 64 Б.
-Помимо основных партий есть ДВА резервных канала: новая нота
-сохраняет старую частоту,фазу и огибающую. Резервный канал смешивается с половинным
-уровнем. Когда оба слота заняты, вытесняется самый тихий. Все основные
-и резервных каналовые ноты завершаются до следующего прохода мелодии.
-Синтез 18,75 кГц; PWM 37,5 кГц выводит точки и точные промежуточные средние.
-Основной цикл заполняет16-байтовую очередь; ISR 15 тактов сохраняет флаги.
-Пять тональных состояний 25 Б, очередь 16 Б; измеренный стек до 8 Б SRAM.
-Программа находит повторные команды автоматически, упаковывает без потерь
-после явно описанной музыкальной редукции. Глобальный минимум не заявляется.
-Полный отчёт исполнения:../../../../web-player/reports/greensleeves-release-verification.json.
+All 235 notes from the retained Z80 four-voice example are now played:
+70 soprano/flute (GM73), 52 alto/violin (GM40), 58 tenor/clarinet (GM71),
+55 bass/cello (GM42). The earlier three-voice version omitted the clarinet
+and sampled only33 alto and33 bass notes. Every source pitch, attack and
+NoteOff is retained exactly on the sixteenth grid. The four-voice source
+has one tied D4 instead of two written attacks in the other retained edition.
+All source notes use velocity90; instrument mix levels are15/12/11/10.
 
-СБОРКА И ПРОШИВКА
-  python tools/build-rhythmic.py ATtiny13A/Music/variants/greensleeves
-  node tools/audit-release-engine.mjs greensleeves
-Прошитьsynth.hex воFlash иeeprom.hex вEEPROM. Фьюзы 7A/FF обязательны,
-внутренний RC 9,6МГц без CKDIV8. PWM:PB1/OC0B,вывод6; VCC 8, GND 4.
-EEPROMтолько читается, партитура находится воFlash. SoundFont не нужен
-для обычной сборки; сохранены компактные измеренные формы, а не SF2.
-FluidR3-MIT.txt относится к данным тембров. preview.wav — первые14 с
-реального исполнения AVR через RC-приближение9 кГц, Q 0,5, highpass 35 Гц.
-Размеры,SHA256,назначениябанка:build-report.json;музыкальныйисточник:score.json.
+The complete48-quarter-beat tune lasts48 seconds at60 BPM, with its original
+6/8 meter, half-beat pickup and2.5-beat closing bar. A separate0.25-beat
+silent gap allows all releases to finish; measured loop48.26457875 seconds.
+There is no percussion in the source or firmware. No music is removed.
+
+ENGINE AND MEMORY
+Flash812/1024bytes:438code +374tables. EEPROM64bytes contains all four
+measured low/high wave pairs. Four independent16-bit DDS oscillators retain
+phase across attacks. Each part has a linear soft attack and release; no
+voice stealing or extra release channels. Shared commands and bounded
+Re-Pair rules retain every NoteOn/Off and wait without dropping events.
+The generic builder, source arranger, calibration, audit and WAV exporter
+are retained in tools/. No SoundFont or MIDI binary is needed for rebuilding.
+
+Real PWM is calibrated over the complete loop: one fixed linear gain128/33,
+center128, measured PWM0..237, no clipping or independent half-wave scaling.
+The gain lookup covers the proven full mix bounds-33..30 from all measured
+waveforms and envelope levels, including every later loop/phase alignment.
+The preview has separate post-filter peak normalization to0dBFS.
+Full-loop audit:235notes/470events,904959mix and PWM-pair checks, no lost
+IRQs or FIFO underruns,393maximum elapsed render cycles (<512),48bytes
+worst-case SRAM including stack. See verification.json for pinned hashes.
+
+REPRODUCE FROM THE REPOSITORY ROOT
+  python tools/arrange-greensleeves.py
+  node tools/audit-compact-four.mjs ATtiny13A/Music/variants/greensleeves
+  node tools/render-firmware-preview.mjs ATtiny13A/Music/variants/greensleeves 49 9000 0.5 --normalize
+
+Flash synth.hex and eeprom.hex. ATtiny13A fuses7A/FF, internal9.6MHz RC
+without CKDIV8. PWM PB1/OC0B (pin6); VCC8, GND4. Synthesis18.75kHz,
+PWM37.5kHz with midpoint interpolation,16-byte FIFO and15-cycle ISR.
+FluidR3-MIT.txt covers measured instrument data; the tune/Mutopia edition
+is Public Domain. Source provenance is recorded in score.json.

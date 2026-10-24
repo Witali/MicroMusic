@@ -79,150 +79,43 @@ def pack_bar_6_8(compiler, bar, chords, note_index, chord_index, hold_index,
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--prepare-only', action='store_true', help='Write score settings without assembling the firmware')
+    parser = argparse.ArgumentParser(description='Retain all four complete Greensleeves source parts')
+    parser.add_argument('--output', type=Path, default=OUT)
     args = parser.parse_args()
-    midi = module('greensleeves_midi', ROOT / 'tools/midi-reader.py')
-    builder = module('greensleeves_build', ROOT / 'tools/build-rhythmic.py')
-    bank = module('greensleeves_bank', ROOT / 'tools/instrument-bank.py')
-    compiler = builder.compiler
-    source = (REFERENCE / 'greensleeves.ly').read_text(encoding='utf-8')
-    melody = voice(source, 'Soprano', 'Alto =')
-    alto = voice(source, 'Alto', 'Tenor =')
-    bass = voice(source, 'Bass', r'\score')
-    # A final s8 is a LilyPond layout spacer, not a played note. The closing
-    # incomplete bar and opening pickup together make one full 6/8 measure.
-    assert melody[-1]['spacer'] and melody[-1]['units'] == 2
-    melody = melody[:-1]
-    notes, ppqn, tempo = midi.read_midi(REFERENCE / 'greensleeves-events.json')
-    source_notes = {(n[2], round(n[3] * 4 / ppqn), round((n[4] - n[3]) * 4 / ppqn)) for n in notes}
-    legato_overlaps = []
-    for note in melody:
-        if note['pitch'] is not None:
-            signature = (note['pitch'], note['start'], note['units'])
-            if signature not in source_notes:
-                # LilyPond's parenthesized D4/E4 legato extends D4 under E4 in
-                # the MIDI. Keep the written monophonic durations on one DDS.
-                assert signature == (62, 164, 3) and (62, 164, 4) in source_notes, note
-                legato_overlaps.append(dict(pitch='D4', start_unit=164,
-                                           midi_units=4, written_units=3))
-    end = melody[-1]['start'] + melody[-1]['units']
-    assert end == 192 and tempo == 60
-    boundaries = [(0, 2)] + [(start, min(start + 12, end)) for start in range(2, end, 12)]
-    patterns, pairs, chord_notes = {}, {}, {}
-    selected = dict(keys=[], pluck=[])
-    onset_controls = {}
-    for bar_index, (start, stop) in enumerate(boundaries):
-        name = 'pickup' if bar_index == 0 else f'bar_{bar_index:02d}'
-        pieces = []
-        for note in melody:
-            left, right = max(start, note['start']), min(stop, note['start'] + note['units'])
-            if left >= right:
+    reader = module('greensleeves_four_reader', ROOT / 'tools/midi-reader.py')
+    engine = module('greensleeves_four_engine', ROOT / 'tools/build-compact-four.py')
+    path = REFERENCE / 'greensleeves-4voices-events.json'
+    notes, ppqn, tempo = reader.read_midi(path)
+    assignments = [('soprano', 'flute', 15), ('alto', 'violin', 12),
+                   ('tenor', 'clarinet', 11), ('bass', 'cello', 10)]
+    parts = []
+    for track, (name, instrument, level) in enumerate(assignments):
+        selected = []
+        for source_index, note in enumerate(notes):
+            index, channel, pitch, on, off, velocity = note
+            if index != track:
                 continue
-            pitch = compiler.pname(note['pitch'])
-            tie = '~' if right < note['start'] + note['units'] and pitch != 'R' else ''
-            pieces.append(f'{pitch}:{(right - left) / 4:g}{tie}')
-        patterns[name] = [' '.join(pieces)]
-        harmony = []
-        for half, point in enumerate((start, min(start + 6, stop - 1))):
-            violin_note = next(n for n in alto if n['start'] <= point < n['start'] + n['units'])
-            cello_note = next(n for n in bass if n['start'] <= point < n['start'] + n['units'])
-            violin, cello = violin_note['pitch'], cello_note['pitch']
-            assert violin is not None and cello is not None
-            chord = compiler.pname(violin) + '/' + compiler.pname(cello)
-            harmony.append(chord)
-            chord_notes[chord] = [violin, cello]
-            # The pickup has just one emitted harmony; its second pair entry
-            # exists only to satisfy the common source schema.
-            if half == 0 or stop - start > 6:
-                onset_controls[point] = chord
-                for role, note in (('keys', violin_note), ('pluck', cello_note)):
-                    selected[role].append(dict(pitch=note['pitch'], start=point,
-                                               end=note['start'] + note['units'],
-                                               writtenStart=note['start'], writtenUnits=note['units']))
-        pairs[name] = [harmony]
-    # Release each actually selected source note at its written end, including
-    # short notes that finish before the next dotted-quarter sampling point.
-    off_masks = {}
-    for role, mask in (('keys', 2), ('pluck', 4)):
-        for i, event in enumerate(selected[role]):
-            next_start = selected[role][i+1]['start'] if i+1 < len(selected[role]) else end
-            assert event['end'] <= next_start, (role, event, next_start)
-            off_masks[event['end']] = off_masks.get(event['end'], 0) | mask
-    off_masks[end] = off_masks.get(end, 0) | 1
-    controls = {}
-    final_section = next(reversed(patterns))
-    for name, (start, stop) in zip(patterns, boundaries):
-        section = []
-        control_stop = stop + (1 if name == final_section else 0)
-        for unit in sorted(set(off_masks) | set(onset_controls)):
-            # At a section boundary OFF precedes ON in the new section.
-            # Sections therefore end in a timed token, as the phrase codec
-            # requires. The final OFF precedes the added silent gap.
-            if start <= unit < control_stop and unit in off_masks:
-                section.append(dict(unit=unit-start, offMask=off_masks[unit]))
-            if start <= unit < stop and unit in onset_controls:
-                section.append(dict(unit=unit-start, chord=onset_controls[unit]))
-        controls[name] = section
-    patterns[final_section][0] += ' R:0.25'
-    levels = dict(lead=15, keys=12, pluck=10)
-    assignments = {role: dict(instrument=instrument, level=levels[role])
-                   for role, instrument in dict(lead='flute', keys='violin', pluck='cello').items()}
-    builder.save_text(OUT / 'waveforms.json', json.dumps(bank.describe_assignments(assignments), indent=2,
-                                                        ensure_ascii=False) + '\n')
-    data = dict(title='05 · Greensleeves', composers=['Traditional'], tempo_bpm=tempo,
-                engine='instrument-bank', release_tail_slots=2,
-                beats_per_bar=3, meter='6/8', pickup_beats=0.5, closing_bar_beats=2.5,
-                percussion_grid_units=6, percussion_first_unit=2,
-                percussion_meter_units=12, percussion_initial_counter=9,
-                percussion_enabled=False,
-                instruments=dict(**assignments, percussion='off'),
-                playlist=list(patterns), patterns=patterns,
-                chord_pairs=[pairs['pickup'][0]], chord_overrides=pairs,
-                chord_notes=chord_notes, packing_candidates=4096,
-                replace_harmony_sections=list(patterns), timed_controls=controls,
-                loop_silence_beats=0.25,
-                provenance=dict(source='Z80 player MIDI example',
-                    source_repository='C:/Work/z80-tester',
-                    midi='ATtiny13A/Music/reference/greensleeves/greensleeves-events.json',
-                    z80_example='ATtiny13A/Music/reference/greensleeves/greensleeves-4voices-events.json',
-                    z80_programs_zero_based=dict(soprano_flute=73, alto_violin=40,
-                                                tenor_clarinet=71, bass_cello=42),
-                    original_midi_program_changes=0,
-                    lilypond='ATtiny13A/Music/reference/greensleeves/greensleeves.ly',
-                    license='Public Domain', edition='Mutopia-2014/03/30-1247',
-                    credit='Traditional; typeset by Steve Dunlop',
-                    sha256={p.name: hashlib.sha256(p.read_bytes()).hexdigest()
-                            for p in sorted(REFERENCE.glob('greensleeves*')) if p.suffix.lower() not in ('.mid', '.midi', '.smf')}),
-                adaptation=dict(complete_melody=True, source_melody_events=len(melody),
-                    source_melody_pitched_notes=sum(n['pitch'] is not None for n in melody),
-                    source_midi_legato_overlaps_reduced_to_written_duration=legato_overlaps,
-                    final_layout_spacer_omitted_beats=0.5,
-                    total_quarter_beats=end / 4, playback_quarter_beats=(end+1) / 4,
-                    loop_gap_grid_units=1, source_midi_tempo_bpm=tempo,
-                    selected_accompaniment=selected,
-                    accompaniment_note_off='Every selected written Alto/Bass note is released at its own written end. No automatic harmony command is retained.',
-                    description='Complete played soprano, written pitches/onsets/durations and eighth-note pickup. '
-                    'Flute73 matches the actual Z80 player example; violin40 and cello42 follow '
-                    'the written Alto/Bass pitches sampled at dotted-quarter boundaries and released at their real written ends. Clarinet71 '
-                    'Tenor is omitted to fit three tonal oscillators. No invented guitar or percussion. '
-                    'The original two-staff MIDI has no ProgramChange; the actual Z80 four-channel '
-                    'example explicitly sets flute/violin/clarinet/cello. Final LilyPond s8 '
-                    'layout spacer is omitted; the 2.5-beat closing bar and 0.5-beat pickup retain the written 6/8. A separate 0.25-beat silent gap follows all final note-offs before the restart.'),
-                note_format='Quarter-note beats on a sixteenth grid. Three beats = one 6/8 bar; '
-                            'pickup = 0.5 beat. ~ continues a note across a bar boundary.')
-    builder.save_text(OUT / 'score.json', json.dumps(data, ensure_ascii=False, indent=2) + '\n')
-    if args.prepare_only:
-        return
-    builder.build(OUT)
-    report_path = OUT / 'build-report.json'
-    report = json.loads(report_path.read_text())
-    report['timing']['sharedGrid'] = 'One sixteenth grid; 6/8 bars and dotted-quarter accompaniment after an eighth-note pickup'
-    report['timing']['percussionEnabled'] = False
-    report['timing']['meter'] = '6/8'
-    report['instruments'] = data['instruments']
-    report['score']['instruments'] = data['instruments']
-    report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8', newline='\n')
+            assert on * 4 % ppqn == off * 4 % ppqn == 0
+            selected.append(dict(pitch=pitch, on=on*4//ppqn, off=off*4//ppqn,
+                                 velocity=velocity, sourceIndex=source_index))
+        parts.append(dict(name=name, instrument=instrument, level=level,
+                          sourceTrack=track, channel=track, notes=selected))
+    assert [len(part['notes']) for part in parts] == [70, 52, 58, 55]
+    score = dict(engine='compact-four', title='05 · Greensleeves', composers=['Traditional'],
+                 tempo_bpm=tempo, endUnit=192, meter='6/8', pickup_beats=.5,
+                 closing_bar_beats=2.5, loop_silence_beats=.25,
+                 description='Полные партии флейты, скрипки, кларнета и виолончели: все 235 исходных нот.',
+                 parts=parts, percussion_enabled=False,
+                 provenance=dict(file='../../reference/greensleeves/greensleeves-4voices-events.json',
+                     sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
+                     originalMidiSha256=json.loads(path.read_text(encoding='utf-8'))['source']['sha256'],
+                     ppqn=ppqn, license='Public Domain', edition='Mutopia-2014/03/30-1247',
+                     credit='Traditional; typeset by Steve Dunlop; Z80 four-voice example'),
+                 adaptation=dict(complete_source=True, source_notes=235, played_notes=235,
+                     note_timing='Every source NoteOn and NoteOff retained exactly on the sixteenth grid.',
+                     source_velocity='All source notes use velocity90; each instrument has a fixed musical mix level.',
+                     description='All four original independent voices retained, including the previously omitted clarinet tenor and unsampled Alto/Bass notes. The soprano follows the retained four-voice example, whose tied D4 is one continuous note. No added percussion.'))
+    engine.build_normalized(args.output, score)
 
 
 if __name__ == '__main__':
