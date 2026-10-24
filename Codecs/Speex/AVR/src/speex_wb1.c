@@ -5,15 +5,15 @@
  * deliberately shorter 16-tap approximation; HB excitation/LPC remain exact. */
 #include "speex_wb1.h"
 #include "speex_avr.h"
+#include "avr_tables.h"
 #include "wb_internal.h"
 #include "arch.h"
 #include "lsp.h"
 #include "wb_iir.h"
 #include "wb_fold.h"
-#include "zero_innovation.h"
 #include "wb_qmf.h"
 #include <string.h>
-extern const int8_t high_lsp_cdbk[512],high_lsp_cdbk2[512],exc_10_32_table[320];
+extern const int8_t high_lsp_cdbk[512],high_lsp_cdbk2[512];
 typedef struct {
     int16_t exc[40],old_lsp[8],lsp[8],den[8];
     int32_t mem[12];
@@ -87,7 +87,7 @@ SPEEX_NB3_STAGE void speex_wb_low_ready(const int16_t *low,const int16_t *low_de
     int16_t interp[8],ak[8];int32_t rl=8192,rh=8192,g;int16_t ratio;
     const int16_t *next_den=wb.den;
     uint8_t update_lpc=!wb.repeat_lsp || (wb.first && !wb.sub);
-    unsigned i,vector;
+    unsigned i;
     if(wb.error)return;
     /* HB1 angles are multiples of 16: equal endpoints interpolate exactly
      * at every quarter. The margin pass is deterministic as well. The last
@@ -104,15 +104,7 @@ SPEEX_NB3_STAGE void speex_wb_low_ready(const int16_t *low,const int16_t *low_de
     if(ratio<=0) {wb.error=1;return;}
     g=PDIV32(AVR_READ_I32(exp_gain+wb.gain[wb.sub]),ratio);
     speex_wb_iir40(wb.exc,wb.den,wb.pcm+40,wb.mem);
-    for(vector=0;vector<4;vector++) {
-        const int8_t *shape=exc_10_32_table+10*indices[vector];
-#if SPEEX_NB3_USE_AVR_ASM
-        speex_avr_zero_innovation10(wb.exc+10*vector,shape,scale);
-#else
-        speex_nb3_zero_innovation_n_c(wb.exc+10*vector,shape,scale,10);
-#endif
-    }
-    speex_wb_fold40(wb.exc,g);
+    speex_wb_excitation40(wb.exc,indices,scale,g);
     if(update_lpc)memcpy(wb.den,ak,sizeof(ak));
     speex_wb_qmf40(low,wb.pcm+40,wb.pcm,wb.qmf);
     wb.output(wb.pcm,80,wb.context);wb.sub++;

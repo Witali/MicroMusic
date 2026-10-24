@@ -1,6 +1,8 @@
 /* in-place 40 samples: t=floor(.9*x), v=low16((t*g+256)>>9),
  * alternating sign. Exact rounded HB1 excitation without a 32-bit buffer. */
-.text
+#include "wb_fold_kernel.inc"
+#include "zero_shape_kernel.inc"
+.section .text.speex_wb_fold40_avr,"ax",@progbits
 .global speex_wb_fold40_avr
 .type speex_wb_fold40_avr,@function
 speex_wb_fold40_avr:
@@ -16,67 +18,8 @@ speex_wb_fold40_avr:
     ld r20,X+
     ld r21,X
     sbiw r26,1
-    ldi r18,51
-    ldi r19,115
-    muls r19,r21
-    movw r10,r0
-    mul r18,r20
-    movw r8,r0
-    mulsu r19,r20
-    sbc r11,r2
-    add r9,r0
-    adc r10,r1
-    adc r11,r2
-    mulsu r21,r18
-    sbc r11,r2
-    add r9,r0
-    adc r10,r1
-    adc r11,r2
-    lsl r9
-    rol r10
-    rol r11
-    movw r20,r10
-    mul r20,r4
-    movw r8,r0
-    clr r10
-    clr r11
-    mul r21,r4
-    add r9,r0
-    adc r10,r1
-    adc r11,r2
-    mul r20,r5
-    add r9,r0
-    adc r10,r1
-    adc r11,r2
-    mul r21,r5
-    add r10,r0
-    adc r11,r1
-    mul r20,r6
-    add r10,r0
-    adc r11,r1
-    mul r21,r6
-    add r11,r0
-    mul r20,r7
-    add r11,r0
-    sbrs r21,7
-    rjmp .Lpositive
-    sub r10,r4
-    sbc r11,r5
-.Lpositive:
-    ldi r18,1
-    add r9,r18
-    adc r10,r2
-    adc r11,r2
-    lsr r11
-    ror r10
-    ror r9
-    sbrs r16,0
-    rjmp .Lstore
-    com r9
-    com r10
-    add r9,r18
-    adc r10,r2
-.Lstore:
+    WB_FOLD_Q15 r8,r9,r10,r11
+    WB_FOLD_SCALE r8,r9,r10,r11,r4,r5,r6,r7,r16
     st X+,r9
     st X+,r10
     dec r16
@@ -89,3 +32,59 @@ speex_wb_fold40_avr:
     .endr
     ret
 .size speex_wb_fold40_avr,.-speex_wb_fold40_avr
+
+/* Fuse four ten-sample vectors with folding. ABI: out r24, indices r22,
+ * scale r21:r18, g r17:r14. Indices 0..31, 0<=scale<=121000000;
+ * g may be any signed32. No intermediate PCM loads/stores, same rounding.
+ * All callee-saved registers and r1 restored, interrupts stay enabled. */
+.section .text.speex_wb_excitation40_avr,"ax",@progbits
+.global speex_wb_excitation40_avr
+.type speex_wb_excitation40_avr,@function
+speex_wb_excitation40_avr:
+    .irp reg,2,3,4,5,6,7,8,9,10,11,12,13,16,17,28,29
+    push r\reg
+    .endr
+    movw r28,r24
+    movw r26,r22
+    movw r4,r18
+    movw r6,r20
+    movw r8,r14
+    movw r10,r16
+    clr r2
+    ldi r18,4
+    mov r12,r18
+    mov r13,r18
+.Lfused_vector:
+    ld r20,X+
+    ldi r21,10
+    mul r20,r21
+    movw r30,r0
+    subi r30,lo8(-(exc_10_32_table))
+    sbci r31,hi8(-(exc_10_32_table))
+    ldi r18,10
+    mov r3,r18
+.Lfused_sample:
+    movw r16,r4
+    movw r18,r6
+
+    SPEEX_ZERO_SHAPE r13
+    mov r20,r23
+    mov r21,r24
+    WB_FOLD_Q15 r22,r23,r24,r25
+    WB_FOLD_SCALE r22,r23,r24,r25,r8,r9,r10,r11,r3
+    st Y+,r23
+    st Y+,r24
+    dec r3
+    breq .Lfused_next
+    rjmp .Lfused_sample
+.Lfused_next:
+    dec r12
+    breq .Lfused_done
+    rjmp .Lfused_vector
+.Lfused_done:
+    clr r1
+    .irp reg,29,28,17,16,13,12,11,10,9,8,7,6,5,4,3,2
+    pop r\reg
+    .endr
+    ret
+.size speex_wb_excitation40_avr,.-speex_wb_excitation40_avr

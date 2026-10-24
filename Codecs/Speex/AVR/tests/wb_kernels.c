@@ -7,6 +7,8 @@
 uint8_t wb_unit_buffer[400];
 int16_t wb_unit_den[8];
 volatile int32_t wb_unit_gain;
+volatile int32_t wb_unit_scale;
+uint8_t wb_unit_indices[4];
 volatile uint8_t wb_unit_command,wb_unit_kind,wb_unit_status,wb_unit_alias;
 int main(void)
 {
@@ -30,6 +32,8 @@ int main(void)
             case 3:speex_wb_fold40_c(in,wb_unit_gain);break;
             case 4:speex_wb_iir40_avr(in,wb_unit_den,out,(int32_t *)state);break;
             case 5:speex_wb_iir40_c(in,wb_unit_den,out,(int32_t *)state);break;
+            case 6:speex_wb_excitation40_avr(in,wb_unit_indices,wb_unit_scale,wb_unit_gain);break;
+            case 7:speex_wb_excitation40_c(in,wb_unit_indices,wb_unit_scale,wb_unit_gain);break;
             }
             wb_unit_command=0;wb_unit_status=3;
         }

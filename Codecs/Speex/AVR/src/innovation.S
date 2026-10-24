@@ -1,3 +1,4 @@
+#include "zero_shape_kernel.inc"
 /* Original ATmega328P NB3 vector kernel, 10 signed Flash shapes.
  * void speex_avr_innovation10(int16_t *out, const uint8_t *pitch24,
  *                            const int8_t *shape_flash, int32_t scale);
@@ -311,35 +312,7 @@ speex_avr_zero_innovation10:
     ldi r20, 4
     mov r8, r20
 .Lzero_innovation_sample:
-    lpm r20, Z+
-    mulsu r20, r16
-    mov r22, r1
-    sbc r23, r23
-    mov r24, r23
-    mov r25, r23
-    mulsu r20, r17
-    sbc r24, r2
-    sbc r25, r2
-    add r22, r0
-    adc r23, r1
-    adc r24, r2
-    adc r25, r2
-    mulsu r20, r18
-    sbc r25, r2
-    add r23, r0
-    adc r24, r1
-    adc r25, r2
-    mulsu r20, r19
-    add r24, r0
-    adc r25, r1
-    add r23, r8
-    adc r24, r2
-    adc r25, r2
-    .rept 3
-    asr r25
-    ror r24
-    ror r23
-    .endr
+    SPEEX_ZERO_SHAPE r8
     st Y+, r23
     st Y+, r24
     dec r3
