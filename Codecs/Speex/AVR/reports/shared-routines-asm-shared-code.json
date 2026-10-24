@@ -1,0 +1,134 @@
+{
+  "binarySha256": "8b2382307d5bada790016c4744d513ec82d17c55471f67024fd8229ed495230d",
+  "source": "Actual rebuilt main decoder ELF disassembly, not a source macro count.",
+  "uniqueHelpers": 2,
+  "staticTransferSites": 21,
+  "sites": [
+    {
+      "caller": "speex_bits_unpack_unsigned",
+      "instruction": "jmp",
+      "helper": "__epilogue_restores__",
+      "entryOffset": "+0x18"
+    },
+    {
+      "caller": "speex_bits_unpack_unsigned",
+      "instruction": "jmp",
+      "helper": "__epilogue_restores__",
+      "entryOffset": "+0x18"
+    },
+    {
+      "caller": "lsp_unquant_lbr.constprop.2",
+      "instruction": "jmp",
+      "helper": "__epilogue_restores__",
+      "entryOffset": "+0x18"
+    },
+    {
+      "caller": "speex_nb3_unpack_indices",
+      "instruction": "jmp",
+      "helper": "__epilogue_restores__",
+      "entryOffset": "+0x18"
+    },
+    {
+      "caller": "speex_nb3_unpack_indices",
+      "instruction": "jmp",
+      "helper": "__epilogue_restores__",
+      "entryOffset": "+0x18"
+    },
+    {
+      "caller": "speex_nb3_long_innovation",
+      "instruction": "rjmp",
+      "helper": "__prologue_saves__",
+      "entryOffset": "0"
+    },
+    {
+      "caller": "speex_nb3_long_innovation",
+      "instruction": "rjmp",
+      "helper": "__epilogue_restores__",
+      "entryOffset": "0"
+    },
+    {
+      "caller": "speex_nb3_short_innovation",
+      "instruction": "rjmp",
+      "helper": "__prologue_saves__",
+      "entryOffset": "0"
+    },
+    {
+      "caller": "speex_nb3_short_innovation",
+      "instruction": "rjmp",
+      "helper": "__epilogue_restores__",
+      "entryOffset": "0"
+    },
+    {
+      "caller": "lsp_stage4",
+      "instruction": "rjmp",
+      "helper": "__prologue_saves__",
+      "entryOffset": "+0x4"
+    },
+    {
+      "caller": "lsp_stage4",
+      "instruction": "rjmp",
+      "helper": "__epilogue_restores__",
+      "entryOffset": "+0x4"
+    },
+    {
+      "caller": "lsp_stage3",
+      "instruction": "rjmp",
+      "helper": "__prologue_saves__",
+      "entryOffset": "+0x4"
+    },
+    {
+      "caller": "lsp_stage3",
+      "instruction": "rjmp",
+      "helper": "__epilogue_restores__",
+      "entryOffset": "+0x4"
+    },
+    {
+      "caller": "lsp_stage2",
+      "instruction": "rjmp",
+      "helper": "__prologue_saves__",
+      "entryOffset": "+0x4"
+    },
+    {
+      "caller": "lsp_stage2",
+      "instruction": "rjmp",
+      "helper": "__epilogue_restores__",
+      "entryOffset": "+0x4"
+    },
+    {
+      "caller": "lsp_to_lpc.constprop.5",
+      "instruction": "rjmp",
+      "helper": "__prologue_saves__",
+      "entryOffset": "+0x4"
+    },
+    {
+      "caller": "lsp_to_lpc.constprop.5",
+      "instruction": "rjmp",
+      "helper": "__epilogue_restores__",
+      "entryOffset": "+0x4"
+    },
+    {
+      "caller": "nb_decode.constprop.1",
+      "instruction": "rjmp",
+      "helper": "__prologue_saves__",
+      "entryOffset": "0"
+    },
+    {
+      "caller": "nb_decode.constprop.1",
+      "instruction": "rjmp",
+      "helper": "__epilogue_restores__",
+      "entryOffset": "0"
+    },
+    {
+      "caller": "nb_decode.constprop.1",
+      "instruction": "rjmp",
+      "helper": "__epilogue_restores__",
+      "entryOffset": "0"
+    },
+    {
+      "caller": "main",
+      "instruction": "rjmp",
+      "helper": "__prologue_saves__",
+      "entryOffset": "+0x6"
+    }
+  ]
+}

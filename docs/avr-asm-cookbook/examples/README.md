@@ -1,5 +1,42 @@
 # Эксперименты NB3
 
+## Общая обработка сэмпла C — отклонённые эксперименты
+
+`nb3-shared-finish.patch` и `nb3-shared-shape-finish.patch`, база `a4c3b39`,
+пути относительно `Codecs/Speex/AVR/`. Первый выносит adaptive-clamp,
+сложение innovation и Q14 saturation в одну `noinline/noclone` C-подпрограмму
+для long/short pitch. Второй включает в неё и масштабирование shape.
+Авторские C-прототипы сохраняют точные floors, modulo-32 и Xiph BSD notices.
+Для AVR helper собирается O2; C backend выбран явно.
+
+На 88 fixture-кадрах ATmega328P / AVR GCC 7.3 mixed Os/O2/O3+LTO:
+
+| Вариант | Decoder Flash | Среднее время относительно базы | Peak stack |
+| --- | ---: | ---: | ---: |
+| Исходный C | 12 308 Б | база | 153 Б |
+| Общий finish | 12 022 Б | +2,0863% | 153 Б |
+| Общий shape + finish | 11 784 Б | +3,2449% | 153 Б |
+
+Оба точны на этих кадрах, static SRAM 1 119 Б. Кандидаты остановлены по
+скорости после короткого отбора; полного corpus/component/PWM admission
+не было. Эти результаты не относятся к другим MCU или компиляторам.
+В production оставлена обработка сэмплов внутри циклов; там объединены
+прологи/эпилоги функций (см. основной cookbook).
+
+В новой игнорируемой копии pinned базы применить **один** patch и собрать C
+(Python 3.12+, Git, AVR GCC/Node и oracle из README кодека):
+
+```powershell
+python -c "from pathlib import Path; import io, subprocess, tarfile; d=Path('Codecs/Speex/AVR/build/shared-finish-example'); d.mkdir(); data=subprocess.check_output(['git','archive','a4c3b39:Codecs/Speex/AVR','src','tools','tests','vendor','handoff','reference']); tarfile.open(fileobj=io.BytesIO(data)).extractall(d,filter='data')"
+git apply --ignore-space-change --directory=Codecs/Speex/AVR/build/shared-finish-example docs/avr-asm-cookbook/examples/nb3-shared-finish.patch
+python Codecs/Speex/AVR/build/shared-finish-example/tools/build.py --avr-gcc avr-gcc --backend c
+node Codecs/Speex/AVR/tests/verify_avr.mjs --backend c --frames 8 --firmware Codecs/Speex/AVR/build/shared-finish-example/build/profile --oracle Codecs/Speex/AVR/build/reference --out Codecs/Speex/AVR/build/shared-finish-example/smoke
+```
+
+Для второго заменить имя patch. `git apply --check` проверен для обоих.
+Измеренные binary SHA-256 и точная область проверки сохранены в
+`Codecs/Speex/AVR/reports/shared-routines-variant-decision.json` и `*-smoke.json`.
+
 ## Исторический long-pitch fusion
 
 `nb3-long-pitch-fusion.patch` — исходный C-прототип для ATmega328P / AVR GCC

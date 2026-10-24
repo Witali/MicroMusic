@@ -3,7 +3,7 @@
 An adaptation of the **original Xiph Speex 1.2.1 fixed-point decoder** for
 ATmega328P at 16 MHz, with a linked PWM player and reproducible host/AVR tests.
 The ASM player passes ISA simulation on all 31 streams: **9,100
-frames / 1,456,000 samples, zero underruns, 640 bytes SRAM free at the observed
+frames / 1,456,000 samples, zero underruns, 629 bytes SRAM free at the observed
 peak**, including a separate 40% extra-CPU admission test. A physical board
 and its analog output have not been tested.
 
@@ -13,7 +13,7 @@ enable control selection; without a matching enabled backend it uses C.
 See [PORTING.md](PORTING.md) for C fallbacks, platform headers and an exportable
 CMake/static-library package for other microcontrollers. The C player now
 also passes all 31 streams with timers/ISR and 10% extra CPU work: zero
-underruns and 632 B free SRAM at peak. Both retain exact upstream s16 PCM.
+underruns and 621 B free SRAM at peak. Both retain exact upstream s16 PCM.
 
 ## Supported profile
 
@@ -114,7 +114,8 @@ captured unsigned PCM as `build/player/player-pwm.u8`.
 
 ## Verified results
 
-AVR GCC 7.3.0, `-Os -flto -fwrapv -fno-strict-aliasing`, with function-specific
+AVR GCC 7.3.0, `-Os -flto -fwrapv -fno-strict-aliasing`,
+`-mcall-prologues -mrelax`, with function-specific
 `-O3` for the controller, bit reader, cosine and polynomial stages (also C
 pitch/LPC block loops), and `-O2` for the fused C excitation routines;
 ATmega328P, AVR8js 0.21.1. Static SRAM includes the packet, s16 PCM, decoder state, scratch and,
@@ -122,17 +123,17 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
 
 | Build | Flash | Static SRAM | Peak stack | Free SRAM at peak |
 | --- | ---: | ---: | ---: | ---: |
-| Optimized decoder test mailbox, ASM enabled | 10,622 B | 1,119 B | 145 B | 784 B |
-| Full PWM speech demo, including 2,940 B compressed audio | 13,890 B | 1,254 B | 154 B | 640 B |
-| C fallback decoder test mailbox | 12,308 B | 1,119 B | 153 B | 776 B |
-| Full C PWM speech demo, including 2,940 B audio | 15,512 B | 1,254 B | 162 B | 632 B |
+| Optimized decoder test mailbox, ASM enabled | 10,150 B | 1,119 B | 158 B | 771 B |
+| Full PWM speech demo, including 2,940 B compressed audio | 13,430 B | 1,254 B | 165 B | 629 B |
+| C fallback decoder test mailbox | 11,870 B | 1,119 B | 166 B | 763 B |
+| Full C PWM speech demo, including 2,940 B audio | 15,088 B | 1,254 B | 173 B | 621 B |
 
 - All 9,100 corpus frames and 4,096 additional pitch/gain coverage frames match
   unmodified upstream s16 PCM. Including 58 LSP/reset and 1,024 zero-gain
   lifetime cases, each backend matches 14,278 frames with one firmware image.
 - Complete player tests on all 31 streams match upstream PCM converted to u8,
   with zero ring underruns and no stack/static-memory collisions.
-- Maximum observed ASM decoder-only corpus frame cost: **121,741 cycles / 7.609 ms**;
+- Maximum observed ASM decoder-only corpus frame cost: **122,498 cycles / 7.656 ms**;
   the 20-ms budget at 16 MHz is 320,000 cycles. ISR and output costs are verified
   separately by the complete-player runs.
 - Primitive tests cover 240,000 complete LSP conversions and 3,670,016 bit fields;
@@ -143,9 +144,9 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
   cases; the portable C Q14 helper independently passes another 917,504
   cases. The aligned p1 core adds 655,360 independent exact cases.
   The C fallback matches the same 14,278 AVR frames. Its corpus maximum is
-  251,823 cycles (252,388 with pitch coverage), excluding ISR. Complete C PWM playback now
+  246,334 cycles (246,901 with pitch coverage), excluding ISR. Complete C PWM playback now
   passes all 31 streams with 32,000 extra cycles/frame (10%), zero underruns
-  and at least 50 queued samples. ASM retains the stronger 40% reserve gate.
+  and at least 52 queued samples. ASM retains the stronger 40% reserve gate.
 - The historical pitch ASM independently checks 1,966,080 outputs, all signed8 gains,
   every count 0..40, write/add flags 0/1/2/255, zero gains and intact tails.
   Independent LPC tests cover 327,680 samples across in-place and separate
@@ -197,14 +198,28 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
   its single production call site is faster and smaller than an outlined
   function in both measured backends. Corpus means fall another 1.0891% ASM /
   0.5391% C, Flash grows 220/224 B, static SRAM and peak stacks are unchanged.
+- Shared compiler prologues/epilogues and linker relaxation then save 472 B
+  ASM / 438 B C decoder Flash. On the complete 31-stream corpus, ASM mean
+  time increases 0.5860% (about 42 microseconds/frame); C mean time falls
+  2.2345%. Every measured ASM stream-mean increase is below 0.633%.
+  Static SRAM is unchanged; decoder stack grows 13 B, player stack 11 B.
+  Normal and loaded PWM retain exact output and zero underruns, including
+  +40% ASM / +10% C CPU load. These AVR-only build flags leave the C sources,
+  manual ASM kernels, backend selection and portable export unchanged.
 - Codebooks reside in Flash, use explicit signed `pgm_read_*` accesses, and no
   malloc/calloc/realloc/free symbols are linked.
 
-Current ASM/C decoder/player results: `reports/nb3-header-{asm,c}-*.json`.
+Current ASM/C decoder/player results: `reports/shared-routines-{asm,c}-*.json`.
 Portable results: `reports/portable-nb3-header-library.json`.
-`reports/nb3-header-admission-audit.json` pins four 88-file player copies,
-both measured decoder images, both C-only reader pairs, read-address checks
-and complete normal/loaded PWM evidence. The `nb3-indices-*` reports retain
+`reports/shared-routines-admission-audit.json` pins four 88-file player copies,
+both measured decoder images and complete normal/loaded PWM evidence. It
+verifies that only AVR build flags changed; native C evidence is reused from
+the source-identical preceding build. `shared-routines-variant-decision.json`
+records the comparisons: outlining the sample finish was rejected after
+88-frame screening (+2.0863% / +3.2449% C mean time). Those prototypes have
+no full-corpus/component/PWM admission. Their patches are in the AVR cookbook.
+`reports/nb3-header-admission-audit.json` retains the preceding image, both
+C-only reader pairs and read-address checks. The `nb3-indices-*` reports retain
 the preceding admitted image. Rejected C
 experiments and their full-workload regressions remain `reports/short-tail-c-*.json`
 and `reports/c-byte-mac-*.json`, `reports/c-iir-phase-*.json`. The byte-product
@@ -223,9 +238,9 @@ not exhaustive packet timing proofs or physical board measurements.
 `reports/real-speech-{avr,player}.json` retain the earlier NB baseline.
 `node Codecs/Speex/AVR/tests/verify_avr.mjs --frames 8 --profile` also writes `avr-profile.json`
 under the selected output directory. It counts only frame-command intervals,
-excluding boot/reset; the current 88-frame fixture profile spends 56.9% in
-LPC synthesis and 19.0% in the shared pitch/innovation ASM body
-(`reports/nb3-header-asm-profile.json`). Separate variable-entry/controller costs
+excluding boot/reset; the current 88-frame fixture profile spends 56.6% in
+LPC synthesis and 18.9% in the shared pitch/innovation ASM body
+(`reports/shared-routines-asm-profile.json`). Separate variable-entry/controller costs
 are also recorded there. The common
 body is attributed to its second symbol for both entries. These shares describe
 that sampled workload, not every possible packet.
@@ -274,6 +289,7 @@ The Xiph NB3 adaptation has the following separately measured stages:
 | Split IIR ageing/steady phases and cache two coefficient words | 124,068 | 10,170 B | 1,119 B |
 | Read four innovation indices as one bounded group | 122,875 | 10,402 B | 1,119 B |
 | Read pitch/gain/energy together through one inline C helper | 121,608 | 10,622 B | 1,119 B |
+| Share register saves/restores and relax AVR transfers | 122,365 | 10,150 B | 1,119 B |
 
 Through the persistent-history stage, the combined corpus maximum fell from 204,770 to
 133,142 cycles: **34.98% less decoder time**. The latest p1-specific ASM core

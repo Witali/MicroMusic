@@ -174,7 +174,9 @@ def avr(compiler, packet_file=None, frame_load_cycles=0, backend='c'):
         definitions.append('SPEEX_AVR_OUTPUT_HOOK')
         if frame_load_cycles:
             definitions.append('SPEEX_AVR_FRAME_LOAD_CYCLES=' + str(frame_load_cycles))
-    flags = ['-std=c11', '-mmcu=atmega328p', '-Os', '-flto', '-fwrapv', '-fno-strict-aliasing',
+    # Share repeated register saves/restores; shorten in-range calls and jumps.
+    flags = ['-std=c11', '-mmcu=atmega328p', '-mcall-prologues', '-mrelax',
+             '-Os', '-flto', '-fwrapv', '-fno-strict-aliasing',
              '-ffunction-sections', '-fdata-sections', '-fstack-usage',
              *['-D' + d for d in definitions],
              '-I' + str(source / 'include'), '-I' + str(source / 'libspeex'),
