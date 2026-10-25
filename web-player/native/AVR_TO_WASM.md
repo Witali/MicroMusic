@@ -5,6 +5,60 @@ Intel HEX. It emits a real WebAssembly binary directly, without AVR sources,
 Clang, Emscripten, WAT assembly or runtime opcode interpretation. The browser
 can translate a firmware image when it is loaded; the CLI can do it in advance.
 
+An optional offline Binaryen pass can optimize the emitted CPU module:
+
+```sh
+node web-player/scripts/transpile-avr.mjs firmware.hex cpu.wasm --device --optimize Oz
+node web-player/scripts/package-attiny13a.mjs pack firmware.hex device.json --optimize Oz
+```
+
+`--optimize O2|O3|Os|Oz` uses the pinned local Emscripten6.0.12 SDK, or
+`--wasm-opt /absolute/path/to/wasm-opt` / `MICROMUSIC_WASM_OPT`. The helper records
+the tool version, executable hash, exact flags and input/output hashes. The
+standalone sidecar retains this record; the pack command prints it to stdout.
+Package bytes and their integrity hashes include the optimized CPU module.
+The browser loader needs no optimizer dependency. Default generation is unchanged;
+Flash modified by SPM still uses the existing fresh-translation/cache path.
+
+### What automatic optimization can change
+
+The emitter decodes Flash, emits one callable body per word, adds guarded basic
+blocks and then emits dispatch/capture loops. AVR registers live in shared
+linear memory; temporary arithmetic values use i32 locals. SREG liveness removes
+unneeded flags inside a proven block; flags remain visible at its exit and all
+observable boundaries. Resumable code additionally emits phase state machines.
+
+| AVR operation | Principal emitted WASM operations | Remaining constraints |
+| --- | --- | --- |
+| LDI / MOV | `i32.const` / `i32.load8_u`, `i32.store8` | Preserve visible register bytes. |
+| ADD / ADC / SUB / SBC | byte loads, i32 arithmetic, byte mask/store, live SREG equations | Carry and chained zero; final 8-bit wrap. |
+| AND / OR / EOR / shifts | i32 bit operations and byte stores, live flags | WASM uses 32-bit operands; AVR has 8-bit results and flags. |
+| CP / CPI / CPC | subtraction and SREG only | A comparison with no live result can disappear in a guarded block. |
+| RJMP / BRxx / calls | PC/AVR-stack updates and table dispatch | AVR return addresses, original cycles and IRQ boundaries. |
+| IN / OUT / memory-I/O | calls to native WASM bridges and memory effects | Bus sampling/commit phases and side effects. |
+| SLEEP / WDR / SPM | device-control bridge | Wake, reset, stalls and changed-Flash invalidation. |
+
+Binaryen can simplify constants/control flow, remove dead temporary work,
+coalesce locals and merge equivalent function bodies. It cannot infer the AVR
+meaning of an opaque peripheral call or safely delete clock barriers merely
+because the arithmetic results match. Larger regions, cross-block SREG liveness
+and per-phase context liveness remain translator-specific work.
+
+The helper uses `--mvp-features --enable-mutable-globals` (exported mutable globals
+are part of this ABI) and skips `remove-unused-module-elements` to retain every
+bridge import required by existing packages. It verifies imports, exports and
+the exact embedded `micromusic.avr` section; package validation additionally
+checks dispatch-table geometry and function/memory signatures. Do not add trap,
+fast-math, imported-zero-memory or closed-world assumptions to this path.
+Function indices can change, so raw-emitter diagnostic index maps must not be
+applied to an optimized module. The embedded mapping describes AVR addresses,
+not optimized function indices. Native peripheral builds currently use direct
+Clang `-O3`; this optional pass only handles the generated CPU binary.
+
+References: [Binaryen optimizer cookbook](https://github.com/WebAssembly/binaryen/wiki/Optimizer-Cookbook),
+[Binaryen133 optimization options](https://github.com/WebAssembly/binaryen/blob/version_133/src/tools/optimization-options.h),
+[WASM custom-section semantics](https://webassembly.github.io/spec/core/binary/modules.html#custom-section).
+
 The translator now lowers all 123 ATtiny13A instruction-summary forms.
 Forms include aliases and addressing variants, not 123 distinct opcodes.
 119 forms execute their CPU semantics directly; SLEEP, WDR, BREAK and SPM

@@ -309,6 +309,19 @@ directory. JSON status goes to stdout, errors to stderr with exit status 1.
 Unpack emits Flash, EEPROM, both WASM binaries, configuration, manifest and a
 small package metadata report.
 
+Optional offline CPU optimization:
+
+```sh
+node web-player/scripts/package-attiny13a.mjs pack firmware.hex optimized.json --optimize Oz
+```
+
+Levels `O2`, `O3`, `Os` and `Oz` are supported. The tool uses the local pinned
+SDK or `--wasm-opt /absolute/path/to/wasm-opt` / `MICROMUSIC_WASM_OPT`.
+Stdout additionally records optimizer version/hash, flags and before/after hashes
+and sizes. The existing package schema, runtime and loader remain unchanged;
+the complete import set and embedded AVR manifest are preserved. Optimization
+runs during packaging only. See [translator details](../native/AVR_TO_WASM.md).
+
 Primary format references: [WASM binary module grammar](https://webassembly.github.io/spec/core/binary/modules.html)
 and [WebCrypto digest / SHA-256](https://www.w3.org/TR/2017/REC-WebCryptoAPI-20170126/#SubtleCrypto-method-digest).
 The device configuration follows the repository's documented ATtiny13A runtime

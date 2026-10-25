@@ -5,9 +5,10 @@ import {createHash} from 'node:crypto';
 import {createPackage,decodePackage,PACKAGE_FORMAT,PACKAGE_VERSION,PACKAGE_LIMITS} from '../lib/attiny13a-package.js';
 import {runtimeABI,transpileAVR} from '../lib/avr-transpiler.js';
 import {parseHex} from '../lib/hex.js';
+import {optimizeAVRWasm} from './lib/optimize-avr-wasm.mjs';
 
 const usage=`Usage:
-  node web-player/scripts/package-attiny13a.mjs pack input.hex|bin output.json [--eeprom image.bin] [--configuration config.json] [--no-flag-dce]
+  node web-player/scripts/package-attiny13a.mjs pack input.hex|bin output.json [--eeprom image.bin] [--configuration config.json] [--no-flag-dce] [--optimize O2|O3|Os|Oz] [--wasm-opt path]
   node web-player/scripts/package-attiny13a.mjs pack input.hex|bin output.json --translated firmware.wasm --runtime runtime.wasm [--eeprom image.bin] [--configuration config.json]
   node web-player/scripts/package-attiny13a.mjs verify package.json
   node web-player/scripts/package-attiny13a.mjs unpack package.json new-directory
@@ -25,7 +26,7 @@ const summary=decoded=>({format:PACKAGE_FORMAT,version:decoded.version??PACKAGE_
   integrity:decoded.integrity,configuration:decoded.configuration});
 async function main(){
   const {values,positionals}=parseArgs({allowPositionals:true,options:{help:{type:'boolean'},
-    eeprom:{type:'string'},configuration:{type:'string'},translated:{type:'string'},runtime:{type:'string'},'no-flag-dce':{type:'boolean'}}});
+    eeprom:{type:'string'},configuration:{type:'string'},translated:{type:'string'},runtime:{type:'string'},'no-flag-dce':{type:'boolean'},optimize:{type:'string'},'wasm-opt':{type:'string'}}});
   if(values.help){console.log(usage);return;}
   const [command,...args]=positionals;
   if(!['pack','verify','unpack'].includes(command)||args.length!==(command==='verify'?1:2))throw new Error(usage);
@@ -35,6 +36,7 @@ async function main(){
     if(input===output)throw new Error('Input and output paths must differ');
     if(!!values.translated!==!!values.runtime)throw new Error('--translated and --runtime must be used together');
     if(values.translated&&values['no-flag-dce'])throw new Error('--no-flag-dce only applies to newly generated translations');
+    if(values['wasm-opt']&&!values.optimize)throw Error('--wasm-opt requires --optimize');
     const source=await read(input,65536),flash=extname(input).toLowerCase()==='.hex'?parseHex(source.toString('utf8')):new Uint8Array(source);
     const eeprom=values.eeprom?await read(resolve(values.eeprom),64):undefined;
     const configuration=values.configuration?JSON.parse((await read(resolve(values.configuration),65536)).toString('utf8')):{};
@@ -50,12 +52,20 @@ async function main(){
       translated=transpileAVR(flash,runtimeABI(exports,{resumable:!!configuration.resumable}),
         {optimizeFlags:!values['no-flag-dce'],resumable:!!configuration.resumable}).bytes;
     }
+    let optimization;
+    if(values.optimize){
+      const sections=WebAssembly.Module.customSections(new WebAssembly.Module(translated),'micromusic.avr');
+      if(sections.length!==1)throw Error('Exactly one AVR manifest is required');
+      const generated=optimizeAVRWasm({bytes:translated,manifest:JSON.parse(new TextDecoder().decode(sections[0]))},
+        {level:values.optimize,wasmOpt:values['wasm-opt']});
+      translated=generated.bytes;optimization=generated.optimization;
+    }
     const pkg=await createPackage({flash,eeprom,configuration,translated,runtime});
     const json=JSON.stringify(pkg,null,2)+'\n';
     // Also exercise the public loader before publishing a package file.
     const decoded=await decodePackage(json);
     await writeFile(output,json,{flag:'wx'});
-    console.log(JSON.stringify({output,...summary(decoded)},null,2));
+    console.log(JSON.stringify({output,...summary(decoded),...(optimization?{optimization}:{})},null,2));
     return;
   }
   const input=resolve(args[0]),decoded=await decodePackage((await read(input,PACKAGE_LIMITS.json)).toString('utf8'));

@@ -5,22 +5,25 @@ import {createHash} from 'node:crypto';
 import {AVRCore as Runtime} from '../lib/avr-wasm.js';
 import {runtimeABI,transpileAVR} from '../lib/avr-transpiler.js';
 import {parseHex} from '../lib/hex.js';
+import {optimizeAVRWasm} from './lib/optimize-avr-wasm.mjs';
 
-const {values,positionals}=parseArgs({allowPositionals:true,options:{'no-flag-dce':{type:'boolean'},device:{type:'boolean'},help:{type:'boolean'}}});
+const {values,positionals}=parseArgs({allowPositionals:true,options:{'no-flag-dce':{type:'boolean'},device:{type:'boolean'},help:{type:'boolean'},optimize:{type:'string'},'wasm-opt':{type:'string'}}});
 if(values.help||positionals.length!==2){
-  console.log('Usage: node web-player/scripts/transpile-avr.mjs input.hex|input.bin output.wasm [--no-flag-dce] [--device]');
+  console.log('Usage: node web-player/scripts/transpile-avr.mjs input.hex|input.bin output.wasm [--no-flag-dce] [--device] [--optimize O2|O3|Os|Oz] [--wasm-opt path]');
   console.log('Target: ATtiny13A. Output imports the existing AVR peripheral WASM runtime.');
   if(!values.help)process.exitCode=1;
 }else{
+  if(values['wasm-opt']&&!values.optimize)throw Error('--wasm-opt requires --optimize');
   const [input,output]=positionals.map(p=>resolve(p));
   if(input===output||extname(output).toLowerCase()!=='.wasm')throw new Error('Use a separate .wasm output path');
   const source=readFileSync(input),flash=extname(input).toLowerCase()==='.hex'?parseHex(source.toString('utf8')):new Uint8Array(source);
   const Core=values.device?(await import('../lib/attiny13a.js')).ATtiny13A:Runtime;
   const runtime=new Core(flash);
-  const generated=transpileAVR(flash,runtimeABI(runtime._exports),{optimizeFlags:!values['no-flag-dce']});
+  let generated=transpileAVR(flash,runtimeABI(runtime._exports),{optimizeFlags:!values['no-flag-dce']});
+  if(values.optimize)generated=optimizeAVRWasm(generated,{level:values.optimize,wasmOpt:values['wasm-opt']});
   if(!WebAssembly.validate(generated.bytes))throw new Error('Generated WebAssembly failed validation');
   const hash=data=>createHash('sha256').update(data).digest('hex');
-  const report={...generated.manifest,sourceSha256:hash(source),flashSha256:hash(flash),wasmSha256:hash(generated.bytes),wasmBytes:generated.bytes.length,
+  const report={...generated.manifest,...(generated.optimization?{optimization:generated.optimization}:{}),sourceSha256:hash(source),flashSha256:hash(flash),wasmSha256:hash(generated.bytes),wasmBytes:generated.bytes.length,
     runtimeFile:values.device?'attiny13a.wasm':'avr.wasm',
     runtimeSha256:hash(readFileSync(new URL(values.device?'../wasm/attiny13a.wasm':'../wasm/avr.wasm',import.meta.url)))};
   mkdirSync(dirname(output),{recursive:true});
