@@ -14,6 +14,7 @@ from batch_decoder import BatchSession
 from tune_pcm16 import read_wav16,metrics,tune
 from refine_lsf_pcm16 import optimize as lsf_opt
 from refine_excitation_pcm16 import optimize as excitation_opt
+from output_paths import protect_outputs
 
 
 def probe(probe_path,blob,work:Path):
@@ -25,6 +26,8 @@ def probe(probe_path,blob,work:Path):
 
 def run(source:Path,wav:Path,out:Path,lsf_trials=3000,excitation_trials=5000,
         stoi_tolerance=0.0,header_trials=120,probe_path=None):
+    protect_outputs([source,wav], [out,out.with_suffix('.wav'),out.with_suffix('.pcm16le'),out.with_suffix('.json')],
+                    replace=(source,out))
     if lsf_trials<0 or excitation_trials<0 or header_trials<0:raise ValueError('Negative trial count')
     data=source.read_bytes();ref=read_wav16(wav)
     if int.from_bytes(data[8:12],'little')!=len(ref):

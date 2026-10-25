@@ -23,6 +23,7 @@ from beam_excitation_pcm16 import optimize as beam_opt
 from refine_lsf_pcm16 import optimize as lsf_opt
 from tune_pcm16 import read_wav16, tune
 from wav_to_lpx4 import quality
+from output_paths import protect_outputs
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -115,6 +116,8 @@ def optimize(blob, ref, decoder, rounds=2, lsf_trials=500, beam_trials=2500,
 
 def run(source, reference_wav, output, **kwargs):
     source, reference_wav, output = Path(source), Path(reference_wav), Path(output)
+    protect_outputs([source, reference_wav],
+        [output, output.with_suffix('.wav'), output.with_suffix('.json')], replace=(source, output))
     ref = read_wav16(reference_wav)
     t0 = time.perf_counter()
     with BatchSession('batch') as decoder:

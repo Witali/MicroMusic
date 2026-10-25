@@ -19,9 +19,10 @@ from numba import njit
 from scipy.signal import stft
 from batch_decoder import BatchSession
 from lpx4 import encode, decode
-from q0_model import coefficient_trace, table, clamp, decode_pcm16
+from q0_model import coefficient_trace, table, clamp, decode_pcm16, filter_stability
 from wav_lpc import analyze, load_wav, pack_frames
 from tune_pcm16 import metrics
+from output_paths import protect_outputs
 
 
 @njit(cache=True)
@@ -29,7 +30,7 @@ def quantize_trial(target, co, history, previous, previous_clip, pre, bright, st
     hist = history.copy()
     codes = np.empty(len(target), np.int64)
     loss = 0.
-    lo, hi = -(1 << (bits - 1)), (1 << (bits - 1)) - 1
+    lo, hi = (-(1 << (bits - 1)), (1 << (bits - 1)) - 1) if bits else (0, 0)
     for j in range(len(target)):
         acc = 0
         for k in range(10):
@@ -37,7 +38,7 @@ def quantize_trial(target, co, history, previous, previous_clip, pre, bright, st
         preterm = (pre * previous) >> 14
         postterm = (bright * previous_clip) >> 14
         needed = target[j] / 2 + postterm - preterm + acc
-        center = int(np.floor(needed / step + .5))
+        center = int(np.floor(needed / step + .5)) if bits else 0
         best = float('inf')
         selected = selected_pred = selected_deemph = selected_clip = 0
         for q in range(max(lo, min(hi, center - 1)), min(hi, max(lo, center + 1)) + 1):
@@ -150,11 +151,8 @@ def encode_segment(pcm, decoder, max_bytes=65535, lambdas=(0., .0002, .001, .005
         co = coefficient_trace(frames, len(pcm))
         # Test the *quantized/interpolated* coefficients used by Q0, not only
         # the stable floating-point analysis filter. No changes to firmware.
-        rows, counts = np.unique(co[::20], axis=0, return_counts=True)
-        radii = [float(np.max(abs(np.roots(np.r_[1., row / 4096])))) for row in rows]
         analysis.update(profile=profile, preQ14=local_pre,
-                        max_interpolated_pole_radius=max(radii),
-                        unstable_subframes=int(sum(c for c, r in zip(counts, radii) if r >= 1.)))
+                        **filter_stability(co))
         analyses.append(analysis)
         if analysis['unstable_subframes']:
             analysis['rejected'] = 'Unstable quantized/interpolated LPC filter'
@@ -200,6 +198,7 @@ def encode_segment(pcm, decoder, max_bytes=65535, lambdas=(0., .0002, .001, .005
 
 def run(source, output, max_bytes=65535, segment_samples=64000, kind='speech', lambdas=None):
     source, output = Path(source), Path(output)
+    protect_outputs([source], [output/'decoded.wav', output/'manifest.json'])
     if not 160 <= segment_samples <= 64000 or segment_samples % 160:
         raise ValueError('segment_samples must be a multiple of 160 in 160..64000')
     if not 32 <= max_bytes <= 65535:
@@ -228,6 +227,7 @@ def run(source, output, max_bytes=65535, segment_samples=64000, kind='speech', l
               'decoder_sha256': hashlib.sha256((Path(__file__).resolve().parents[1] / 'src/Lpx4HybridCore.cpp').read_bytes()).hexdigest(),
               'avr_real_time_verified': False}
     # No partial outputs on encoding/budget/decoder failure.
+    protect_outputs([source], [output/name for name, _ in encoded] + [output/'decoded.wav', output/'manifest.json'])
     output.mkdir(parents=True, exist_ok=True)
     for name, blob in encoded:
         (output / name).write_bytes(blob)

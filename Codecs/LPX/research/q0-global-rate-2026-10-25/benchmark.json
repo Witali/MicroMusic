@@ -1,0 +1,3527 @@
+{
+  "previous_report_sha256": "21f1bea9e50f0af6ba6272e621a13ee4738f51a93aa1ca0c8ad9659c214306a4",
+  "limits": {
+    "states": 1024,
+    "candidates": 64,
+    "rounds": 2,
+    "max_cost_growth": 0.0,
+    "size_growth": 0.0,
+    "stoi_drop": 0.0
+  },
+  "cases": [
+    {
+      "before": {
+        "ser_db": 32.57019706949562,
+        "rmse": 0.0031214344063656497,
+        "stoi": 0.9793499085298808,
+        "spectral_rmse_db": 3.759674475777554,
+        "reference_rms": 0.13269790506406065,
+        "decoded_rms": 0.13271317270919725,
+        "clip_count": 0,
+        "pcm16_sha256": "1d623a6f4a7ce800f458b057a4c5d686b3267eef8e44cffec920441b83a4dcd9"
+      },
+      "after": {
+        "ser_db": 32.57019706949562,
+        "rmse": 0.0031214344063656497,
+        "stoi": 0.9793499085298808,
+        "spectral_rmse_db": 3.759674475777554,
+        "reference_rms": 0.13269790506406065,
+        "decoded_rms": 0.13271317270919725,
+        "clip_count": 0,
+        "pcm16_sha256": "1d623a6f4a7ce800f458b057a4c5d686b3267eef8e44cffec920441b83a4dcd9"
+      },
+      "input_bytes": 4146,
+      "output_bytes": 4146,
+      "input_sha256": "b42a01093971a4a9d9ddcec4d0b4876ce2cfc871435df8a120ef69f226bd45e7",
+      "output_sha256": "b42a01093971a4a9d9ddcec4d0b4876ce2cfc871435df8a120ef69f226bd45e7",
+      "decoder_cost_before": {
+        "samples": 11200,
+        "bit_calls": 20663,
+        "max_bit_calls_sample": 55,
+        "max_bit_calls_80": 301,
+        "max_bit_calls_160": 544,
+        "rom_reads": 4146,
+        "lsf_converts": 141
+      },
+      "decoder_cost_after": {
+        "samples": 11200,
+        "bit_calls": 20663,
+        "max_bit_calls_sample": 55,
+        "max_bit_calls_80": 301,
+        "max_bit_calls_160": 544,
+        "rom_reads": 4146,
+        "lsf_converts": 141
+      },
+      "max_cost_growth": 0.0,
+      "trials": [
+        {
+          "source": "1:absolute:1023:refit=True",
+          "bytes": 4133,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 11200,
+            "bit_calls": 22747,
+            "max_bit_calls_sample": 55,
+            "max_bit_calls_80": 342,
+            "max_bit_calls_160": 602,
+            "rom_reads": 4133,
+            "lsf_converts": 141
+          }
+        },
+        {
+          "source": "1:absolute:1023:refit=True:raw_slack=4",
+          "bytes": 4136,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 11200,
+            "bit_calls": 22451,
+            "max_bit_calls_sample": 55,
+            "max_bit_calls_80": 342,
+            "max_bit_calls_160": 602,
+            "rom_reads": 4136,
+            "lsf_converts": 141
+          }
+        },
+        {
+          "source": "1:absolute:1023:refit=True:raw_slack=16",
+          "bytes": 4245,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:absolute:1023:refit=True:raw_slack=40",
+          "bytes": 4427,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:absolute:1023:refit=False",
+          "bytes": 4107,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:876:refit=True",
+          "bytes": 3962,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 11200,
+            "bit_calls": 22208,
+            "max_bit_calls_sample": 56,
+            "max_bit_calls_80": 337,
+            "max_bit_calls_160": 605,
+            "rom_reads": 3962,
+            "lsf_converts": 141
+          }
+        },
+        {
+          "source": "1:absolute:876:refit=True:raw_slack=4",
+          "bytes": 3968,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 11200,
+            "bit_calls": 21683,
+            "max_bit_calls_sample": 56,
+            "max_bit_calls_80": 337,
+            "max_bit_calls_160": 605,
+            "rom_reads": 3968,
+            "lsf_converts": 141
+          }
+        },
+        {
+          "source": "1:absolute:876:refit=True:raw_slack=16",
+          "bytes": 4080,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 11200,
+            "bit_calls": 19593,
+            "max_bit_calls_sample": 56,
+            "max_bit_calls_80": 337,
+            "max_bit_calls_160": 605,
+            "rom_reads": 4080,
+            "lsf_converts": 141
+          }
+        },
+        {
+          "source": "1:absolute:876:refit=True:raw_slack=40",
+          "bytes": 4221,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:absolute:876:refit=False",
+          "bytes": 3950,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:730:refit=True",
+          "bytes": 3802,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 11200,
+            "bit_calls": 21177,
+            "max_bit_calls_sample": 57,
+            "max_bit_calls_80": 344,
+            "max_bit_calls_160": 593,
+            "rom_reads": 3802,
+            "lsf_converts": 141
+          }
+        },
+        {
+          "source": "1:absolute:730:refit=True:raw_slack=4",
+          "bytes": 3806,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 11200,
+            "bit_calls": 20789,
+            "max_bit_calls_sample": 57,
+            "max_bit_calls_80": 344,
+            "max_bit_calls_160": 593,
+            "rom_reads": 3806,
+            "lsf_converts": 141
+          }
+        },
+        {
+          "source": "1:absolute:730:refit=True:raw_slack=16",
+          "bytes": 3902,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 11200,
+            "bit_calls": 19091,
+            "max_bit_calls_sample": 57,
+            "max_bit_calls_80": 344,
+            "max_bit_calls_160": 593,
+            "rom_reads": 3902,
+            "lsf_converts": 141
+          }
+        },
+        {
+          "source": "1:absolute:730:refit=True:raw_slack=40",
+          "bytes": 4044,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 11200,
+            "bit_calls": 16921,
+            "max_bit_calls_sample": 53,
+            "max_bit_calls_80": 344,
+            "max_bit_calls_160": 593,
+            "rom_reads": 4044,
+            "lsf_converts": 141
+          }
+        },
+        {
+          "source": "1:absolute:730:refit=False",
+          "bytes": 3769,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:584:refit=True",
+          "bytes": 3562,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 11200,
+            "bit_calls": 19880,
+            "max_bit_calls_sample": 56,
+            "max_bit_calls_80": 342,
+            "max_bit_calls_160": 609,
+            "rom_reads": 3562,
+            "lsf_converts": 141
+          }
+        },
+        {
+          "source": "1:absolute:584:refit=True:raw_slack=4",
+          "bytes": 3565,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 11200,
+            "bit_calls": 19466,
+            "max_bit_calls_sample": 56,
+            "max_bit_calls_80": 342,
+            "max_bit_calls_160": 609,
+            "rom_reads": 3565,
+            "lsf_converts": 141
+          }
+        },
+        {
+          "source": "1:absolute:584:refit=True:raw_slack=16",
+          "bytes": 3659,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 11200,
+            "bit_calls": 17876,
+            "max_bit_calls_sample": 54,
+            "max_bit_calls_80": 342,
+            "max_bit_calls_160": 609,
+            "rom_reads": 3659,
+            "lsf_converts": 141
+          }
+        },
+        {
+          "source": "1:absolute:584:refit=True:raw_slack=40",
+          "bytes": 3842,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 11200,
+            "bit_calls": 15431,
+            "max_bit_calls_sample": 52,
+            "max_bit_calls_80": 342,
+            "max_bit_calls_160": 598,
+            "rom_reads": 3842,
+            "lsf_converts": 141
+          }
+        },
+        {
+          "source": "1:absolute:584:refit=False",
+          "bytes": 3549,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:438:refit=True",
+          "bytes": 3134,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 11200,
+            "bit_calls": 17555,
+            "max_bit_calls_sample": 56,
+            "max_bit_calls_80": 327,
+            "max_bit_calls_160": 593,
+            "rom_reads": 3134,
+            "lsf_converts": 141
+          }
+        },
+        {
+          "source": "1:absolute:438:refit=True:raw_slack=4",
+          "bytes": 3138,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 11200,
+            "bit_calls": 17117,
+            "max_bit_calls_sample": 56,
+            "max_bit_calls_80": 327,
+            "max_bit_calls_160": 593,
+            "rom_reads": 3138,
+            "lsf_converts": 141
+          }
+        },
+        {
+          "source": "1:absolute:438:refit=True:raw_slack=16",
+          "bytes": 3213,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 11200,
+            "bit_calls": 15575,
+            "max_bit_calls_sample": 56,
+            "max_bit_calls_80": 327,
+            "max_bit_calls_160": 593,
+            "rom_reads": 3213,
+            "lsf_converts": 141
+          }
+        },
+        {
+          "source": "1:absolute:438:refit=True:raw_slack=40",
+          "bytes": 3376,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 11200,
+            "bit_calls": 13449,
+            "max_bit_calls_sample": 52,
+            "max_bit_calls_80": 327,
+            "max_bit_calls_160": 593,
+            "rom_reads": 3376,
+            "lsf_converts": 141
+          }
+        },
+        {
+          "source": "1:absolute:438:refit=False",
+          "bytes": 3112,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:292:refit=True",
+          "bytes": 2363,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:292:refit=False",
+          "bytes": 2307,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:146:refit=True",
+          "bytes": 1771,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:146:refit=False",
+          "bytes": 1735,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:0:refit=True",
+          "bytes": 1018,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:1023:refit=True",
+          "bytes": 4204,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:normalized:1023:refit=False",
+          "bytes": 4146,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:876:refit=True",
+          "bytes": 4045,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:876:refit=False",
+          "bytes": 3991,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:730:refit=True",
+          "bytes": 3905,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:730:refit=False",
+          "bytes": 3846,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:584:refit=True",
+          "bytes": 3737,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:584:refit=False",
+          "bytes": 3710,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:438:refit=True",
+          "bytes": 3511,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:438:refit=False",
+          "bytes": 3458,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:292:refit=True",
+          "bytes": 3007,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:292:refit=False",
+          "bytes": 2988,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:146:refit=True",
+          "bytes": 1967,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:146:refit=False",
+          "bytes": 1939,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        }
+      ],
+      "accepted_trials": [],
+      "searches": [
+        {
+          "round": 1,
+          "objective": "absolute",
+          "pruned_states": 107124,
+          "peak_frontier_states": 4031,
+          "retained_states": 1024,
+          "state_cap": 1024,
+          "blocks": 140,
+          "options": 2183
+        },
+        {
+          "round": 1,
+          "objective": "normalized",
+          "pruned_states": 124600,
+          "peak_frontier_states": 3834,
+          "retained_states": 1024,
+          "state_cap": 1024,
+          "blocks": 140,
+          "options": 2183
+        }
+      ],
+      "decoder_source_sha256": "5bdc387aaa0f83af667bfd64d34e2892ae0814268881d48ad5fc632fc291cb67",
+      "elapsed_seconds": 15.468935300013982,
+      "contract": "Original byte/SSE/STOI floors; native cost caps; unchanged LPC/header/decoder",
+      "surrogate_note": "Local state/pitch/scale costs are estimates; full regenerated streams decide acceptance.",
+      "avr_cycles_measured": false,
+      "id": "en_simple",
+      "kind": "speech",
+      "samples": 11200,
+      "reference_pcm_sha256": "20fde9906bf1cd6506adaf56e28dcb4783cc68033f05aa92e017bee80dc5337c"
+    },
+    {
+      "before": {
+        "ser_db": 25.799374785680016,
+        "rmse": 0.0033574956423404268,
+        "stoi": 0.9932622247688229,
+        "spectral_rmse_db": 4.2617027836195795,
+        "reference_rms": 0.06546123536995288,
+        "decoded_rms": 0.06556550297400428,
+        "clip_count": 0,
+        "pcm16_sha256": "dc1f4e12ca01f6e89abf60f7fda25ed57d953f7bbf75a3541509f2ab95b34d72"
+      },
+      "after": {
+        "ser_db": 27.920907085598046,
+        "rmse": 0.0026298976238030547,
+        "stoi": 0.9960751378873363,
+        "spectral_rmse_db": 3.473271819879622,
+        "reference_rms": 0.06546123536995288,
+        "decoded_rms": 0.06555519397616319,
+        "clip_count": 0,
+        "pcm16_sha256": "24e45d1f6cce7b49cbbabd09cb8e8b7a7ef03559ba46d5b9129a616afb190c3d"
+      },
+      "input_bytes": 2895,
+      "output_bytes": 2825,
+      "input_sha256": "e6792ac64662da4a353b581fac901af924e862cc386168075f4a70bae6932ae6",
+      "output_sha256": "5b529e5e843a1c34e37e1bec457d349a49b17c8793b811db3fb163c2b5936e14",
+      "decoder_cost_before": {
+        "samples": 8000,
+        "bit_calls": 15787,
+        "max_bit_calls_sample": 33,
+        "max_bit_calls_80": 286,
+        "max_bit_calls_160": 537,
+        "rom_reads": 2895,
+        "lsf_converts": 101
+      },
+      "decoder_cost_after": {
+        "samples": 8000,
+        "bit_calls": 13349,
+        "max_bit_calls_sample": 27,
+        "max_bit_calls_80": 286,
+        "max_bit_calls_160": 535,
+        "rom_reads": 2825,
+        "lsf_converts": 101
+      },
+      "max_cost_growth": 0.0,
+      "trials": [
+        {
+          "source": "1:absolute:1023:refit=True",
+          "bytes": 2888,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 15368,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 287,
+            "max_bit_calls_160": 545,
+            "rom_reads": 2888,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "1:absolute:1023:refit=True:raw_slack=4",
+          "bytes": 2890,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 15260,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 287,
+            "max_bit_calls_160": 545,
+            "rom_reads": 2890,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "1:absolute:1023:refit=True:raw_slack=16",
+          "bytes": 2923,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:absolute:1023:refit=True:raw_slack=40",
+          "bytes": 3096,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:absolute:1023:refit=False",
+          "bytes": 2888,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 15365,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 287,
+            "max_bit_calls_160": 545,
+            "rom_reads": 2888,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "1:absolute:1023:refit=False:raw_slack=4",
+          "bytes": 2889,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 15257,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 287,
+            "max_bit_calls_160": 545,
+            "rom_reads": 2889,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "1:absolute:1023:refit=False:raw_slack=16",
+          "bytes": 2923,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:absolute:1023:refit=False:raw_slack=40",
+          "bytes": 3096,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:absolute:876:refit=True",
+          "bytes": 2795,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 14892,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 287,
+            "max_bit_calls_160": 545,
+            "rom_reads": 2795,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "1:absolute:876:refit=True:raw_slack=4",
+          "bytes": 2797,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 14648,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 287,
+            "max_bit_calls_160": 545,
+            "rom_reads": 2797,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "1:absolute:876:refit=True:raw_slack=16",
+          "bytes": 2828,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 13705,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 287,
+            "max_bit_calls_160": 545,
+            "rom_reads": 2828,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "1:absolute:876:refit=True:raw_slack=40",
+          "bytes": 2998,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:absolute:876:refit=False",
+          "bytes": 2795,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 14920,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 287,
+            "max_bit_calls_160": 545,
+            "rom_reads": 2795,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "1:absolute:876:refit=False:raw_slack=4",
+          "bytes": 2797,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 14622,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 287,
+            "max_bit_calls_160": 545,
+            "rom_reads": 2797,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "1:absolute:876:refit=False:raw_slack=16",
+          "bytes": 2828,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 13705,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 287,
+            "max_bit_calls_160": 545,
+            "rom_reads": 2828,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "1:absolute:876:refit=False:raw_slack=40",
+          "bytes": 2998,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:absolute:730:refit=True",
+          "bytes": 2661,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 14039,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 298,
+            "max_bit_calls_160": 556,
+            "rom_reads": 2661,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "1:absolute:730:refit=True:raw_slack=4",
+          "bytes": 2662,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 13861,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 298,
+            "max_bit_calls_160": 556,
+            "rom_reads": 2662,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "1:absolute:730:refit=True:raw_slack=16",
+          "bytes": 2694,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 12627,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 286,
+            "max_bit_calls_160": 548,
+            "rom_reads": 2694,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "1:absolute:730:refit=True:raw_slack=40",
+          "bytes": 2854,
+          "accepted": true,
+          "quality": {
+            "ser_db": 27.884650132885426,
+            "rmse": 0.0026408983808917474,
+            "stoi": 0.9960980939835737,
+            "spectral_rmse_db": 3.7242807848250945,
+            "reference_rms": 0.06546123536995288,
+            "decoded_rms": 0.0655553325978324,
+            "clip_count": 0,
+            "pcm16_sha256": "c2033db392622e2c4c695ea9f88fcdf9ed894f7e1668d8f07d34237265bf095f"
+          },
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 9521,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 276,
+            "max_bit_calls_160": 522,
+            "rom_reads": 2854,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "1:absolute:730:refit=False",
+          "bytes": 2661,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:584:refit=True",
+          "bytes": 2429,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:584:refit=False",
+          "bytes": 2429,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:438:refit=True",
+          "bytes": 1959,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:292:refit=True",
+          "bytes": 1389,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:292:refit=False",
+          "bytes": 1389,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:146:refit=True",
+          "bytes": 839,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:146:refit=False",
+          "bytes": 839,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:0:refit=True",
+          "bytes": 270,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:1023:refit=True",
+          "bytes": 2888,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 15233,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 289,
+            "max_bit_calls_160": 553,
+            "rom_reads": 2888,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "1:normalized:1023:refit=True:raw_slack=4",
+          "bytes": 2889,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 15056,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 289,
+            "max_bit_calls_160": 553,
+            "rom_reads": 2889,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "1:normalized:1023:refit=True:raw_slack=16",
+          "bytes": 2923,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:normalized:1023:refit=True:raw_slack=40",
+          "bytes": 3099,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:normalized:1023:refit=False",
+          "bytes": 2887,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 15255,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 289,
+            "max_bit_calls_160": 553,
+            "rom_reads": 2887,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "1:normalized:1023:refit=False:raw_slack=4",
+          "bytes": 2888,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 15050,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 289,
+            "max_bit_calls_160": 553,
+            "rom_reads": 2888,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "1:normalized:1023:refit=False:raw_slack=16",
+          "bytes": 2922,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:normalized:1023:refit=False:raw_slack=40",
+          "bytes": 3099,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:normalized:876:refit=True",
+          "bytes": 2791,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 14730,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 298,
+            "max_bit_calls_160": 544,
+            "rom_reads": 2791,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "1:normalized:876:refit=True:raw_slack=4",
+          "bytes": 2793,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 14557,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 298,
+            "max_bit_calls_160": 544,
+            "rom_reads": 2793,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "1:normalized:876:refit=True:raw_slack=16",
+          "bytes": 2828,
+          "accepted": true,
+          "quality": {
+            "ser_db": 27.920907085598046,
+            "rmse": 0.0026298976238030547,
+            "stoi": 0.9960751378873363,
+            "spectral_rmse_db": 3.473271819879622,
+            "reference_rms": 0.06546123536995288,
+            "decoded_rms": 0.06555519397616319,
+            "clip_count": 0,
+            "pcm16_sha256": "24e45d1f6cce7b49cbbabd09cb8e8b7a7ef03559ba46d5b9129a616afb190c3d"
+          },
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 13376,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 286,
+            "max_bit_calls_160": 535,
+            "rom_reads": 2828,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "1:normalized:876:refit=True:raw_slack=40",
+          "bytes": 2985,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:normalized:876:refit=False",
+          "bytes": 2787,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:730:refit=True",
+          "bytes": 2675,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:730:refit=False",
+          "bytes": 2675,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:584:refit=True",
+          "bytes": 2455,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:584:refit=False",
+          "bytes": 2455,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:438:refit=True",
+          "bytes": 1872,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:438:refit=False",
+          "bytes": 1872,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:292:refit=True",
+          "bytes": 1292,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:292:refit=False",
+          "bytes": 1291,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:146:refit=True",
+          "bytes": 787,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:146:refit=False",
+          "bytes": 786,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "2:zero:previous",
+          "bytes": 2788,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 14703,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 298,
+            "max_bit_calls_160": 544,
+            "rom_reads": 2788,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "2:zero:previous:raw_slack=4",
+          "bytes": 2790,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 14530,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 298,
+            "max_bit_calls_160": 544,
+            "rom_reads": 2790,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "2:zero:previous:raw_slack=16",
+          "bytes": 2825,
+          "accepted": true,
+          "quality": {
+            "ser_db": 27.920907085598046,
+            "rmse": 0.0026298976238030547,
+            "stoi": 0.9960751378873363,
+            "spectral_rmse_db": 3.473271819879622,
+            "reference_rms": 0.06546123536995288,
+            "decoded_rms": 0.06555519397616319,
+            "clip_count": 0,
+            "pcm16_sha256": "24e45d1f6cce7b49cbbabd09cb8e8b7a7ef03559ba46d5b9129a616afb190c3d"
+          },
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 13349,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 286,
+            "max_bit_calls_160": 535,
+            "rom_reads": 2825,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "2:zero:previous:raw_slack=40",
+          "bytes": 2982,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "2:zero:zero",
+          "bytes": 2813,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 14813,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 298,
+            "max_bit_calls_160": 544,
+            "rom_reads": 2813,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "2:zero:zero:raw_slack=4",
+          "bytes": 2815,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 14640,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 298,
+            "max_bit_calls_160": 544,
+            "rom_reads": 2815,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "2:zero:zero:raw_slack=16",
+          "bytes": 2850,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "2:zero:zero:raw_slack=40",
+          "bytes": 3007,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "2:absolute:1023:refit=True",
+          "bytes": 2894,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8000,
+            "bit_calls": 15741,
+            "max_bit_calls_sample": 27,
+            "max_bit_calls_80": 289,
+            "max_bit_calls_160": 553,
+            "rom_reads": 2894,
+            "lsf_converts": 101
+          }
+        },
+        {
+          "source": "2:absolute:1023:refit=True:raw_slack=4",
+          "bytes": 2897,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "2:absolute:1023:refit=True:raw_slack=16",
+          "bytes": 2934,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "2:absolute:1023:refit=True:raw_slack=40",
+          "bytes": 3129,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        }
+      ],
+      "accepted_trials": [
+        19,
+        39,
+        54
+      ],
+      "searches": [
+        {
+          "round": 1,
+          "objective": "absolute",
+          "pruned_states": 35579,
+          "peak_frontier_states": 2099,
+          "retained_states": 1024,
+          "state_cap": 1024,
+          "blocks": 100,
+          "options": 1546
+        },
+        {
+          "round": 1,
+          "objective": "normalized",
+          "pruned_states": 40055,
+          "peak_frontier_states": 2138,
+          "retained_states": 1024,
+          "state_cap": 1024,
+          "blocks": 100,
+          "options": 1546
+        },
+        {
+          "round": 2,
+          "objective": "absolute",
+          "pruned_states": 36744,
+          "peak_frontier_states": 2211,
+          "retained_states": 1024,
+          "state_cap": 1024,
+          "blocks": 100,
+          "options": 1519
+        }
+      ],
+      "decoder_source_sha256": "5bdc387aaa0f83af667bfd64d34e2892ae0814268881d48ad5fc632fc291cb67",
+      "elapsed_seconds": 15.691569000016898,
+      "contract": "Original byte/SSE/STOI floors; native cost caps; unchanged LPC/header/decoder",
+      "surrogate_note": "Local state/pitch/scale costs are estimates; full regenerated streams decide acceptance.",
+      "avr_cycles_measured": false,
+      "id": "ru_kak",
+      "kind": "speech",
+      "samples": 8000,
+      "reference_pcm_sha256": "d0ba1c747158e17fd49b7bf655e0baa7601a0e6c851f1edfd7a69efb16a48a4f"
+    },
+    {
+      "before": {
+        "ser_db": 13.070047154855477,
+        "rmse": 0.026130549065867346,
+        "stoi": 0.9662053617948353,
+        "spectral_rmse_db": 7.272529962289372,
+        "reference_rms": 0.11766597373856098,
+        "decoded_rms": 0.11703175246455154,
+        "clip_count": 4,
+        "pcm16_sha256": "91943cdea9dcbb5c5c1718e49e923ef14960b9652c43e449c403179798c9d15b"
+      },
+      "after": {
+        "ser_db": 13.070047154855477,
+        "rmse": 0.026130549065867346,
+        "stoi": 0.9662053617948353,
+        "spectral_rmse_db": 7.272529962289372,
+        "reference_rms": 0.11766597373856098,
+        "decoded_rms": 0.11703175246455154,
+        "clip_count": 4,
+        "pcm16_sha256": "91943cdea9dcbb5c5c1718e49e923ef14960b9652c43e449c403179798c9d15b"
+      },
+      "input_bytes": 8616,
+      "output_bytes": 8616,
+      "input_sha256": "3e60180fa8025c3889156e14a1cd2fb758f6d126163868fd3c399680fbfb389f",
+      "output_sha256": "3e60180fa8025c3889156e14a1cd2fb758f6d126163868fd3c399680fbfb389f",
+      "decoder_cost_before": {
+        "samples": 24000,
+        "bit_calls": 38535,
+        "max_bit_calls_sample": 56,
+        "max_bit_calls_80": 314,
+        "max_bit_calls_160": 582,
+        "rom_reads": 8616,
+        "lsf_converts": 301
+      },
+      "decoder_cost_after": {
+        "samples": 24000,
+        "bit_calls": 38535,
+        "max_bit_calls_sample": 56,
+        "max_bit_calls_80": 314,
+        "max_bit_calls_160": 582,
+        "rom_reads": 8616,
+        "lsf_converts": 301
+      },
+      "max_cost_growth": 0.0,
+      "trials": [
+        {
+          "source": "1:absolute:1023:refit=True",
+          "bytes": 8612,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:1023:refit=False",
+          "bytes": 8544,
+          "accepted": false,
+          "rejected": "original STOI floor"
+        },
+        {
+          "source": "1:absolute:876:refit=True",
+          "bytes": 7983,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:876:refit=False",
+          "bytes": 7908,
+          "accepted": false,
+          "rejected": "original STOI floor"
+        },
+        {
+          "source": "1:absolute:730:refit=True",
+          "bytes": 7348,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:730:refit=False",
+          "bytes": 7210,
+          "accepted": false,
+          "rejected": "original STOI floor"
+        },
+        {
+          "source": "1:absolute:584:refit=True",
+          "bytes": 6699,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:584:refit=False",
+          "bytes": 6530,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:438:refit=True",
+          "bytes": 5790,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:438:refit=False",
+          "bytes": 5699,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:292:refit=True",
+          "bytes": 4654,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:292:refit=False",
+          "bytes": 4568,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:146:refit=True",
+          "bytes": 3310,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:146:refit=False",
+          "bytes": 3301,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:0:refit=True",
+          "bytes": 2216,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:1023:refit=True",
+          "bytes": 8796,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:normalized:1023:refit=False",
+          "bytes": 8597,
+          "accepted": false,
+          "rejected": "original STOI floor"
+        },
+        {
+          "source": "1:normalized:876:refit=True",
+          "bytes": 7861,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:876:refit=False",
+          "bytes": 7736,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:730:refit=True",
+          "bytes": 7028,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:730:refit=False",
+          "bytes": 6900,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:584:refit=True",
+          "bytes": 6109,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:584:refit=False",
+          "bytes": 6054,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:438:refit=True",
+          "bytes": 5209,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:438:refit=False",
+          "bytes": 5168,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:292:refit=True",
+          "bytes": 4268,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:292:refit=False",
+          "bytes": 4224,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:146:refit=True",
+          "bytes": 3190,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:146:refit=False",
+          "bytes": 3180,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        }
+      ],
+      "accepted_trials": [],
+      "searches": [
+        {
+          "round": 1,
+          "objective": "absolute",
+          "pruned_states": 365359,
+          "peak_frontier_states": 4982,
+          "retained_states": 1024,
+          "state_cap": 1024,
+          "blocks": 300,
+          "options": 4526
+        },
+        {
+          "round": 1,
+          "objective": "normalized",
+          "pruned_states": 430529,
+          "peak_frontier_states": 5604,
+          "retained_states": 1024,
+          "state_cap": 1024,
+          "blocks": 300,
+          "options": 4526
+        }
+      ],
+      "decoder_source_sha256": "5bdc387aaa0f83af667bfd64d34e2892ae0814268881d48ad5fc632fc291cb67",
+      "elapsed_seconds": 26.457828099955805,
+      "contract": "Original byte/SSE/STOI floors; native cost caps; unchanged LPC/header/decoder",
+      "surrogate_note": "Local state/pitch/scale costs are estimates; full regenerated streams decide acceptance.",
+      "avr_cycles_measured": false,
+      "id": "en_intro",
+      "kind": "speech",
+      "samples": 24000,
+      "reference_pcm_sha256": "1d4faf7f904f8ddc47e7e0fa55b85b50890ff25ba05e9ee7e1209e6946420c94"
+    },
+    {
+      "before": {
+        "ser_db": 26.073049304828494,
+        "rmse": 0.001734892185867609,
+        "stoi": 0.9113927243418015,
+        "spectral_rmse_db": 3.7273726440642463,
+        "reference_rms": 0.03490799910518492,
+        "decoded_rms": 0.03492049655560199,
+        "clip_count": 0,
+        "pcm16_sha256": "e6626d31937d9f6ef742299eb129f452235f522378aefc1f18204f7a8f41098d"
+      },
+      "after": {
+        "ser_db": 26.073049304828494,
+        "rmse": 0.001734892185867609,
+        "stoi": 0.9113927243418015,
+        "spectral_rmse_db": 3.7273726440642463,
+        "reference_rms": 0.03490799910518492,
+        "decoded_rms": 0.03492049655560199,
+        "clip_count": 0,
+        "pcm16_sha256": "e6626d31937d9f6ef742299eb129f452235f522378aefc1f18204f7a8f41098d"
+      },
+      "input_bytes": 8213,
+      "output_bytes": 8213,
+      "input_sha256": "fcc53c13da7f80f6d025e8efd1823a630dd58012812b03cd27c2d85aa2dcc6ba",
+      "output_sha256": "fcc53c13da7f80f6d025e8efd1823a630dd58012812b03cd27c2d85aa2dcc6ba",
+      "decoder_cost_before": {
+        "samples": 24000,
+        "bit_calls": 41862,
+        "max_bit_calls_sample": 55,
+        "max_bit_calls_80": 305,
+        "max_bit_calls_160": 518,
+        "rom_reads": 8213,
+        "lsf_converts": 301
+      },
+      "decoder_cost_after": {
+        "samples": 24000,
+        "bit_calls": 41862,
+        "max_bit_calls_sample": 55,
+        "max_bit_calls_80": 305,
+        "max_bit_calls_160": 518,
+        "rom_reads": 8213,
+        "lsf_converts": 301
+      },
+      "max_cost_growth": 0.0,
+      "trials": [
+        {
+          "source": "1:absolute:1023:refit=True",
+          "bytes": 8204,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 24000,
+            "bit_calls": 46831,
+            "max_bit_calls_sample": 58,
+            "max_bit_calls_80": 320,
+            "max_bit_calls_160": 590,
+            "rom_reads": 8204,
+            "lsf_converts": 301
+          }
+        },
+        {
+          "source": "1:absolute:1023:refit=True:raw_slack=4",
+          "bytes": 8219,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:absolute:1023:refit=True:raw_slack=16",
+          "bytes": 8351,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:absolute:1023:refit=True:raw_slack=40",
+          "bytes": 8742,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:absolute:1023:refit=False",
+          "bytes": 8156,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 24000,
+            "bit_calls": 46454,
+            "max_bit_calls_sample": 58,
+            "max_bit_calls_80": 321,
+            "max_bit_calls_160": 571,
+            "rom_reads": 8156,
+            "lsf_converts": 301
+          }
+        },
+        {
+          "source": "1:absolute:1023:refit=False:raw_slack=4",
+          "bytes": 8164,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 24000,
+            "bit_calls": 45748,
+            "max_bit_calls_sample": 58,
+            "max_bit_calls_80": 321,
+            "max_bit_calls_160": 571,
+            "rom_reads": 8164,
+            "lsf_converts": 301
+          }
+        },
+        {
+          "source": "1:absolute:1023:refit=False:raw_slack=16",
+          "bytes": 8330,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:absolute:1023:refit=False:raw_slack=40",
+          "bytes": 8735,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:absolute:876:refit=True",
+          "bytes": 7475,
+          "accepted": false,
+          "rejected": "original STOI floor"
+        },
+        {
+          "source": "1:absolute:876:refit=False",
+          "bytes": 7430,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:730:refit=True",
+          "bytes": 6772,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:730:refit=False",
+          "bytes": 6701,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:584:refit=True",
+          "bytes": 6127,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:584:refit=False",
+          "bytes": 6048,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:438:refit=True",
+          "bytes": 5434,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:438:refit=False",
+          "bytes": 5371,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:292:refit=True",
+          "bytes": 4237,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:292:refit=False",
+          "bytes": 4194,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:146:refit=True",
+          "bytes": 3129,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:146:refit=False",
+          "bytes": 3103,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:0:refit=True",
+          "bytes": 2211,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:1023:refit=True",
+          "bytes": 8248,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:normalized:1023:refit=False",
+          "bytes": 8180,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:876:refit=True",
+          "bytes": 7437,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:876:refit=False",
+          "bytes": 7387,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:730:refit=True",
+          "bytes": 6647,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:730:refit=False",
+          "bytes": 6578,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:584:refit=True",
+          "bytes": 5889,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:584:refit=False",
+          "bytes": 5827,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:438:refit=True",
+          "bytes": 5099,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:438:refit=False",
+          "bytes": 5006,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:292:refit=True",
+          "bytes": 4098,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:292:refit=False",
+          "bytes": 4052,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:146:refit=True",
+          "bytes": 3135,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:146:refit=False",
+          "bytes": 3118,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        }
+      ],
+      "accepted_trials": [],
+      "searches": [
+        {
+          "round": 1,
+          "objective": "absolute",
+          "pruned_states": 488343,
+          "peak_frontier_states": 5231,
+          "retained_states": 1024,
+          "state_cap": 1024,
+          "blocks": 300,
+          "options": 4894
+        },
+        {
+          "round": 1,
+          "objective": "normalized",
+          "pruned_states": 512087,
+          "peak_frontier_states": 5997,
+          "retained_states": 1024,
+          "state_cap": 1024,
+          "blocks": 300,
+          "options": 4894
+        }
+      ],
+      "decoder_source_sha256": "5bdc387aaa0f83af667bfd64d34e2892ae0814268881d48ad5fc632fc291cb67",
+      "elapsed_seconds": 33.66511800000444,
+      "contract": "Original byte/SSE/STOI floors; native cost caps; unchanged LPC/header/decoder",
+      "surrogate_note": "Local state/pitch/scale costs are estimates; full regenerated streams decide acceptance.",
+      "avr_cycles_measured": false,
+      "id": "ru_sayings",
+      "kind": "speech",
+      "samples": 24000,
+      "reference_pcm_sha256": "2ac039d8e544d00210292a01341eb9605678d447a300338f9c65f31e770db8b6"
+    },
+    {
+      "before": {
+        "ser_db": 11.230071018700158,
+        "rmse": 0.013193414991766513,
+        "stoi": null,
+        "spectral_rmse_db": 21.31651620021561,
+        "reference_rms": 0.04806852259117447,
+        "decoded_rms": 0.04549432519179722,
+        "clip_count": 0,
+        "pcm16_sha256": "1b675f826bd8ae1fabdb7dcd4a95249615a8a3a2b170d3e2d44b165f9ebeec5a"
+      },
+      "after": {
+        "ser_db": 13.482637273120135,
+        "rmse": 0.010179557747805637,
+        "stoi": null,
+        "spectral_rmse_db": 20.68598783673201,
+        "reference_rms": 0.04806852259117447,
+        "decoded_rms": 0.048410544574817825,
+        "clip_count": 0,
+        "pcm16_sha256": "aa48fe8d71f0026aa2cd12797d21cbe2ca67a19b6703934b79e16a97ab436ed6"
+      },
+      "input_bytes": 6410,
+      "output_bytes": 6399,
+      "input_sha256": "fe04770cd4450ead6f9589adadea9375f3ff1eae5e6ee78f7dd3da2d56646604",
+      "output_sha256": "782af14ea2d5db0c2e883580a73c76e31a0c43aa0babf56fbdbae55d80cd69f7",
+      "decoder_cost_before": {
+        "samples": 24000,
+        "bit_calls": 40225,
+        "max_bit_calls_sample": 33,
+        "max_bit_calls_80": 225,
+        "max_bit_calls_160": 402,
+        "rom_reads": 6410,
+        "lsf_converts": 301
+      },
+      "decoder_cost_after": {
+        "samples": 24000,
+        "bit_calls": 39327,
+        "max_bit_calls_sample": 33,
+        "max_bit_calls_80": 210,
+        "max_bit_calls_160": 382,
+        "rom_reads": 6399,
+        "lsf_converts": 301
+      },
+      "max_cost_growth": 0.0,
+      "trials": [
+        {
+          "source": "1:absolute:1023:refit=True",
+          "bytes": 6228,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 24000,
+            "bit_calls": 40334,
+            "max_bit_calls_sample": 33,
+            "max_bit_calls_80": 243,
+            "max_bit_calls_160": 400,
+            "rom_reads": 6228,
+            "lsf_converts": 301
+          }
+        },
+        {
+          "source": "1:absolute:1023:refit=True:raw_slack=4",
+          "bytes": 6230,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 24000,
+            "bit_calls": 40082,
+            "max_bit_calls_sample": 33,
+            "max_bit_calls_80": 243,
+            "max_bit_calls_160": 397,
+            "rom_reads": 6230,
+            "lsf_converts": 301
+          }
+        },
+        {
+          "source": "1:absolute:1023:refit=True:raw_slack=16",
+          "bytes": 6279,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 24000,
+            "bit_calls": 39027,
+            "max_bit_calls_sample": 33,
+            "max_bit_calls_80": 229,
+            "max_bit_calls_160": 389,
+            "rom_reads": 6279,
+            "lsf_converts": 301
+          }
+        },
+        {
+          "source": "1:absolute:1023:refit=True:raw_slack=40",
+          "bytes": 6909,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:absolute:1023:refit=False",
+          "bytes": 6229,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 24000,
+            "bit_calls": 40347,
+            "max_bit_calls_sample": 33,
+            "max_bit_calls_80": 243,
+            "max_bit_calls_160": 400,
+            "rom_reads": 6229,
+            "lsf_converts": 301
+          }
+        },
+        {
+          "source": "1:absolute:1023:refit=False:raw_slack=4",
+          "bytes": 6232,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 24000,
+            "bit_calls": 40095,
+            "max_bit_calls_sample": 33,
+            "max_bit_calls_80": 243,
+            "max_bit_calls_160": 397,
+            "rom_reads": 6232,
+            "lsf_converts": 301
+          }
+        },
+        {
+          "source": "1:absolute:1023:refit=False:raw_slack=16",
+          "bytes": 6281,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 24000,
+            "bit_calls": 39038,
+            "max_bit_calls_sample": 33,
+            "max_bit_calls_80": 229,
+            "max_bit_calls_160": 389,
+            "rom_reads": 6281,
+            "lsf_converts": 301
+          }
+        },
+        {
+          "source": "1:absolute:1023:refit=False:raw_slack=40",
+          "bytes": 6910,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:absolute:876:refit=True",
+          "bytes": 5796,
+          "accepted": true,
+          "quality": {
+            "ser_db": 12.492331073115908,
+            "rmse": 0.01140891174037248,
+            "stoi": null,
+            "spectral_rmse_db": 20.897634089222233,
+            "reference_rms": 0.04806852259117447,
+            "decoded_rms": 0.04806837722757632,
+            "clip_count": 0,
+            "pcm16_sha256": "ce83ed3749dca4fd145c0808ac3f9107fe38be0e020a86bd2890fcb58ba9bc44"
+          },
+          "decode_cost": {
+            "samples": 24000,
+            "bit_calls": 36654,
+            "max_bit_calls_sample": 33,
+            "max_bit_calls_80": 204,
+            "max_bit_calls_160": 352,
+            "rom_reads": 5796,
+            "lsf_converts": 301
+          }
+        },
+        {
+          "source": "1:absolute:876:refit=False",
+          "bytes": 5796,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:730:refit=True",
+          "bytes": 5403,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:730:refit=False",
+          "bytes": 5403,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:584:refit=True",
+          "bytes": 4969,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:584:refit=False",
+          "bytes": 4969,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:438:refit=True",
+          "bytes": 4309,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:438:refit=False",
+          "bytes": 4308,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:292:refit=True",
+          "bytes": 3053,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:292:refit=False",
+          "bytes": 3053,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:146:refit=True",
+          "bytes": 1792,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:146:refit=False",
+          "bytes": 1792,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:0:refit=True",
+          "bytes": 748,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:1023:refit=True",
+          "bytes": 6334,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 24000,
+            "bit_calls": 40828,
+            "max_bit_calls_sample": 33,
+            "max_bit_calls_80": 210,
+            "max_bit_calls_160": 391,
+            "rom_reads": 6334,
+            "lsf_converts": 301
+          }
+        },
+        {
+          "source": "1:normalized:1023:refit=True:raw_slack=4",
+          "bytes": 6337,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 24000,
+            "bit_calls": 40640,
+            "max_bit_calls_sample": 33,
+            "max_bit_calls_80": 210,
+            "max_bit_calls_160": 391,
+            "rom_reads": 6337,
+            "lsf_converts": 301
+          }
+        },
+        {
+          "source": "1:normalized:1023:refit=True:raw_slack=16",
+          "bytes": 6400,
+          "accepted": true,
+          "quality": {
+            "ser_db": 13.482637273120135,
+            "rmse": 0.010179557747805637,
+            "stoi": null,
+            "spectral_rmse_db": 20.68598783673201,
+            "reference_rms": 0.04806852259117447,
+            "decoded_rms": 0.048410544574817825,
+            "clip_count": 0,
+            "pcm16_sha256": "aa48fe8d71f0026aa2cd12797d21cbe2ca67a19b6703934b79e16a97ab436ed6"
+          },
+          "decode_cost": {
+            "samples": 24000,
+            "bit_calls": 39330,
+            "max_bit_calls_sample": 33,
+            "max_bit_calls_80": 210,
+            "max_bit_calls_160": 382,
+            "rom_reads": 6400,
+            "lsf_converts": 301
+          }
+        },
+        {
+          "source": "1:normalized:1023:refit=True:raw_slack=40",
+          "bytes": 7137,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:normalized:1023:refit=False",
+          "bytes": 6335,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:876:refit=True",
+          "bytes": 5689,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:876:refit=False",
+          "bytes": 5689,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:730:refit=True",
+          "bytes": 4996,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:730:refit=False",
+          "bytes": 4997,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:584:refit=True",
+          "bytes": 4292,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:584:refit=False",
+          "bytes": 4292,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:438:refit=True",
+          "bytes": 3383,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:438:refit=False",
+          "bytes": 3383,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:292:refit=True",
+          "bytes": 2550,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:292:refit=False",
+          "bytes": 2550,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:146:refit=True",
+          "bytes": 1657,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:146:refit=False",
+          "bytes": 1657,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "2:zero:previous",
+          "bytes": 6334,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 24000,
+            "bit_calls": 40825,
+            "max_bit_calls_sample": 33,
+            "max_bit_calls_80": 210,
+            "max_bit_calls_160": 391,
+            "rom_reads": 6334,
+            "lsf_converts": 301
+          }
+        },
+        {
+          "source": "2:zero:previous:raw_slack=4",
+          "bytes": 6337,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 24000,
+            "bit_calls": 40637,
+            "max_bit_calls_sample": 33,
+            "max_bit_calls_80": 210,
+            "max_bit_calls_160": 391,
+            "rom_reads": 6337,
+            "lsf_converts": 301
+          }
+        },
+        {
+          "source": "2:zero:previous:raw_slack=16",
+          "bytes": 6399,
+          "accepted": true,
+          "quality": {
+            "ser_db": 13.482637273120135,
+            "rmse": 0.010179557747805637,
+            "stoi": null,
+            "spectral_rmse_db": 20.68598783673201,
+            "reference_rms": 0.04806852259117447,
+            "decoded_rms": 0.048410544574817825,
+            "clip_count": 0,
+            "pcm16_sha256": "aa48fe8d71f0026aa2cd12797d21cbe2ca67a19b6703934b79e16a97ab436ed6"
+          },
+          "decode_cost": {
+            "samples": 24000,
+            "bit_calls": 39327,
+            "max_bit_calls_sample": 33,
+            "max_bit_calls_80": 210,
+            "max_bit_calls_160": 382,
+            "rom_reads": 6399,
+            "lsf_converts": 301
+          }
+        },
+        {
+          "source": "2:zero:previous:raw_slack=40",
+          "bytes": 7137,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "2:zero:zero",
+          "bytes": 6350,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 24000,
+            "bit_calls": 40895,
+            "max_bit_calls_sample": 33,
+            "max_bit_calls_80": 210,
+            "max_bit_calls_160": 391,
+            "rom_reads": 6350,
+            "lsf_converts": 301
+          }
+        },
+        {
+          "source": "2:zero:zero:raw_slack=4",
+          "bytes": 6353,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 24000,
+            "bit_calls": 40707,
+            "max_bit_calls_sample": 33,
+            "max_bit_calls_80": 210,
+            "max_bit_calls_160": 391,
+            "rom_reads": 6353,
+            "lsf_converts": 301
+          }
+        },
+        {
+          "source": "2:zero:zero:raw_slack=16",
+          "bytes": 6415,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "2:zero:zero:raw_slack=40",
+          "bytes": 7153,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "2:absolute:1023:refit=True",
+          "bytes": 6377,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 24000,
+            "bit_calls": 41252,
+            "max_bit_calls_sample": 33,
+            "max_bit_calls_80": 234,
+            "max_bit_calls_160": 426,
+            "rom_reads": 6377,
+            "lsf_converts": 301
+          }
+        },
+        {
+          "source": "2:absolute:1023:refit=True:raw_slack=4",
+          "bytes": 6379,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 24000,
+            "bit_calls": 41145,
+            "max_bit_calls_sample": 33,
+            "max_bit_calls_80": 234,
+            "max_bit_calls_160": 426,
+            "rom_reads": 6379,
+            "lsf_converts": 301
+          }
+        },
+        {
+          "source": "2:absolute:1023:refit=True:raw_slack=16",
+          "bytes": 6426,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "2:absolute:1023:refit=True:raw_slack=40",
+          "bytes": 6903,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "2:absolute:1023:refit=False",
+          "bytes": 6377,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 24000,
+            "bit_calls": 41252,
+            "max_bit_calls_sample": 33,
+            "max_bit_calls_80": 234,
+            "max_bit_calls_160": 426,
+            "rom_reads": 6377,
+            "lsf_converts": 301
+          }
+        },
+        {
+          "source": "2:absolute:1023:refit=False:raw_slack=4",
+          "bytes": 6379,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 24000,
+            "bit_calls": 41145,
+            "max_bit_calls_sample": 33,
+            "max_bit_calls_80": 234,
+            "max_bit_calls_160": 426,
+            "rom_reads": 6379,
+            "lsf_converts": 301
+          }
+        },
+        {
+          "source": "2:absolute:1023:refit=False:raw_slack=16",
+          "bytes": 6426,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "2:absolute:1023:refit=False:raw_slack=40",
+          "bytes": 6903,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "2:absolute:876:refit=True",
+          "bytes": 5733,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "2:absolute:876:refit=False",
+          "bytes": 5732,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "2:absolute:730:refit=True",
+          "bytes": 5247,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "2:absolute:730:refit=False",
+          "bytes": 5246,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "2:absolute:584:refit=True",
+          "bytes": 4697,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "2:absolute:584:refit=False",
+          "bytes": 4693,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "2:absolute:438:refit=True",
+          "bytes": 3748,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "2:absolute:438:refit=False",
+          "bytes": 3748,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "2:absolute:292:refit=True",
+          "bytes": 2736,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "2:absolute:292:refit=False",
+          "bytes": 2737,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        }
+      ],
+      "accepted_trials": [
+        8,
+        23,
+        40
+      ],
+      "searches": [
+        {
+          "round": 1,
+          "objective": "absolute",
+          "pruned_states": 542215,
+          "peak_frontier_states": 5850,
+          "retained_states": 1024,
+          "state_cap": 1024,
+          "blocks": 300,
+          "options": 5219
+        },
+        {
+          "round": 1,
+          "objective": "normalized",
+          "pruned_states": 632014,
+          "peak_frontier_states": 6334,
+          "retained_states": 1024,
+          "state_cap": 1024,
+          "blocks": 300,
+          "options": 5219
+        },
+        {
+          "round": 2,
+          "objective": "absolute",
+          "pruned_states": 705639,
+          "peak_frontier_states": 7615,
+          "retained_states": 1024,
+          "state_cap": 1024,
+          "blocks": 300,
+          "options": 6140
+        }
+      ],
+      "decoder_source_sha256": "5bdc387aaa0f83af667bfd64d34e2892ae0814268881d48ad5fc632fc291cb67",
+      "elapsed_seconds": 56.45572660001926,
+      "contract": "Original byte/SSE/STOI floors; native cost caps; unchanged LPC/header/decoder",
+      "surrogate_note": "Local state/pitch/scale costs are estimates; full regenerated streams decide acceptance.",
+      "avr_cycles_measured": false,
+      "id": "synthetic_music",
+      "kind": "music",
+      "samples": 24000,
+      "reference_pcm_sha256": "f8a8bfe238ba913be36651504a15b8c818e4ca0555a80826ad4f95dfbaa46c09"
+    },
+    {
+      "before": {
+        "ser_db": 32.36695882425461,
+        "rmse": 0.0033268544695392813,
+        "stoi": 0.9714816148128829,
+        "spectral_rmse_db": 5.267187242827381,
+        "reference_rms": 0.13815981551600723,
+        "decoded_rms": 0.13812562814840304,
+        "clip_count": 0,
+        "pcm16_sha256": "475a3b0a08f26cea5d8ce642258fd22cbac72f521098f521608f5046a351d413"
+      },
+      "after": {
+        "ser_db": 32.36695882425461,
+        "rmse": 0.0033268544695392813,
+        "stoi": 0.9714816148128829,
+        "spectral_rmse_db": 5.267187242827381,
+        "reference_rms": 0.13815981551600723,
+        "decoded_rms": 0.13812562814840304,
+        "clip_count": 0,
+        "pcm16_sha256": "475a3b0a08f26cea5d8ce642258fd22cbac72f521098f521608f5046a351d413"
+      },
+      "input_bytes": 4931,
+      "output_bytes": 4931,
+      "input_sha256": "edbc88261dcfe5aed0b0f59906b694f2ad0f5755b88aedb524a5b4b888de2581",
+      "output_sha256": "edbc88261dcfe5aed0b0f59906b694f2ad0f5755b88aedb524a5b4b888de2581",
+      "decoder_cost_before": {
+        "samples": 9768,
+        "bit_calls": 27130,
+        "max_bit_calls_sample": 63,
+        "max_bit_calls_80": 324,
+        "max_bit_calls_160": 604,
+        "rom_reads": 4931,
+        "lsf_converts": 124
+      },
+      "decoder_cost_after": {
+        "samples": 9768,
+        "bit_calls": 27130,
+        "max_bit_calls_sample": 63,
+        "max_bit_calls_80": 324,
+        "max_bit_calls_160": 604,
+        "rom_reads": 4931,
+        "lsf_converts": 124
+      },
+      "max_cost_growth": 0.0,
+      "trials": [
+        {
+          "source": "1:absolute:1023:refit=True",
+          "bytes": 4999,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:absolute:1023:refit=False",
+          "bytes": 4888,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:876:refit=True",
+          "bytes": 4597,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:876:refit=False",
+          "bytes": 4548,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:730:refit=True",
+          "bytes": 4193,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:730:refit=False",
+          "bytes": 4121,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:584:refit=True",
+          "bytes": 3770,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:584:refit=False",
+          "bytes": 3688,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:438:refit=True",
+          "bytes": 3312,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:438:refit=False",
+          "bytes": 3235,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:292:refit=True",
+          "bytes": 2419,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:292:refit=False",
+          "bytes": 2413,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:146:refit=True",
+          "bytes": 1483,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:146:refit=False",
+          "bytes": 1471,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:0:refit=True",
+          "bytes": 607,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:1023:refit=True",
+          "bytes": 5051,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:normalized:1023:refit=False",
+          "bytes": 4929,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:876:refit=True",
+          "bytes": 4643,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:876:refit=False",
+          "bytes": 4574,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:730:refit=True",
+          "bytes": 4294,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:730:refit=False",
+          "bytes": 4275,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:584:refit=True",
+          "bytes": 3856,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:584:refit=False",
+          "bytes": 3877,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:438:refit=True",
+          "bytes": 3225,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:438:refit=False",
+          "bytes": 3351,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:292:refit=True",
+          "bytes": 2700,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:292:refit=False",
+          "bytes": 2749,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:146:refit=True",
+          "bytes": 1675,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:146:refit=False",
+          "bytes": 1654,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        }
+      ],
+      "accepted_trials": [],
+      "searches": [
+        {
+          "round": 1,
+          "objective": "absolute",
+          "pruned_states": 95012,
+          "peak_frontier_states": 3974,
+          "retained_states": 1024,
+          "state_cap": 1024,
+          "blocks": 123,
+          "options": 2034
+        },
+        {
+          "round": 1,
+          "objective": "normalized",
+          "pruned_states": 111053,
+          "peak_frontier_states": 4886,
+          "retained_states": 1024,
+          "state_cap": 1024,
+          "blocks": 123,
+          "options": 2034
+        }
+      ],
+      "decoder_source_sha256": "5bdc387aaa0f83af667bfd64d34e2892ae0814268881d48ad5fc632fc291cb67",
+      "elapsed_seconds": 10.303966299979948,
+      "contract": "Original byte/SSE/STOI floors; native cost caps; unchanged LPC/header/decoder",
+      "surrogate_note": "Local state/pitch/scale costs are estimates; full regenerated streams decide acceptance.",
+      "avr_cycles_measured": false,
+      "id": "chego",
+      "kind": "speech",
+      "samples": 9768,
+      "reference_pcm_sha256": "7818563e4c0c79b81e8a8388ba51f66fe7a52a7ff0d2b94b971b5a884f8605f1"
+    },
+    {
+      "before": {
+        "ser_db": 30.590918709677766,
+        "rmse": 0.0056342194340162815,
+        "stoi": 0.9356850228009429,
+        "spectral_rmse_db": 4.848354842692268,
+        "reference_rms": 0.19071273429539667,
+        "decoded_rms": 0.19052518685967762,
+        "clip_count": 0,
+        "pcm16_sha256": "6ba00f8d6eea7364bab062e064508691e0cc00b1d3f48b905fe9ff19d8ee85dc"
+      },
+      "after": {
+        "ser_db": 35.23762381025108,
+        "rmse": 0.0032998826989384744,
+        "stoi": 0.9546210613031306,
+        "spectral_rmse_db": 5.371108838560757,
+        "reference_rms": 0.19071273429539667,
+        "decoded_rms": 0.1907373969458631,
+        "clip_count": 0,
+        "pcm16_sha256": "d4f000c07f9a1abce0c9f193cf6bfac0de696603b13910f7be113346505a7e6c"
+      },
+      "input_bytes": 4047,
+      "output_bytes": 3983,
+      "input_sha256": "fe318bc2f4e3444fa9a0996cc78578e0577fa489fef1ab7feda658768a2b4749",
+      "output_sha256": "4d776b7a132b86f57ca8626f49797f309a2cb0737d0c5d7178ac6245c85e4124",
+      "decoder_cost_before": {
+        "samples": 8232,
+        "bit_calls": 23594,
+        "max_bit_calls_sample": 58,
+        "max_bit_calls_80": 321,
+        "max_bit_calls_160": 577,
+        "rom_reads": 4047,
+        "lsf_converts": 104
+      },
+      "decoder_cost_after": {
+        "samples": 8232,
+        "bit_calls": 14833,
+        "max_bit_calls_sample": 55,
+        "max_bit_calls_80": 318,
+        "max_bit_calls_160": 573,
+        "rom_reads": 3983,
+        "lsf_converts": 104
+      },
+      "max_cost_growth": 0.0,
+      "trials": [
+        {
+          "source": "1:absolute:1023:refit=True",
+          "bytes": 4016,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 22767,
+            "max_bit_calls_sample": 55,
+            "max_bit_calls_80": 341,
+            "max_bit_calls_160": 612,
+            "rom_reads": 4016,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "1:absolute:1023:refit=True:raw_slack=4",
+          "bytes": 4017,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 22616,
+            "max_bit_calls_sample": 55,
+            "max_bit_calls_80": 341,
+            "max_bit_calls_160": 612,
+            "rom_reads": 4017,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "1:absolute:1023:refit=True:raw_slack=16",
+          "bytes": 4063,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:absolute:1023:refit=True:raw_slack=40",
+          "bytes": 4387,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:absolute:1023:refit=False",
+          "bytes": 3992,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 23002,
+            "max_bit_calls_sample": 56,
+            "max_bit_calls_80": 320,
+            "max_bit_calls_160": 591,
+            "rom_reads": 3992,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "1:absolute:1023:refit=False:raw_slack=4",
+          "bytes": 3993,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 22664,
+            "max_bit_calls_sample": 56,
+            "max_bit_calls_80": 320,
+            "max_bit_calls_160": 591,
+            "rom_reads": 3993,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "1:absolute:1023:refit=False:raw_slack=16",
+          "bytes": 4043,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 20355,
+            "max_bit_calls_sample": 54,
+            "max_bit_calls_80": 320,
+            "max_bit_calls_160": 591,
+            "rom_reads": 4043,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "1:absolute:1023:refit=False:raw_slack=40",
+          "bytes": 4372,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:absolute:876:refit=True",
+          "bytes": 3691,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 22091,
+            "max_bit_calls_sample": 56,
+            "max_bit_calls_80": 330,
+            "max_bit_calls_160": 592,
+            "rom_reads": 3691,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "1:absolute:876:refit=True:raw_slack=4",
+          "bytes": 3694,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 21564,
+            "max_bit_calls_sample": 56,
+            "max_bit_calls_80": 330,
+            "max_bit_calls_160": 592,
+            "rom_reads": 3694,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "1:absolute:876:refit=True:raw_slack=16",
+          "bytes": 3752,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 18906,
+            "max_bit_calls_sample": 56,
+            "max_bit_calls_80": 330,
+            "max_bit_calls_160": 581,
+            "rom_reads": 3752,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "1:absolute:876:refit=True:raw_slack=40",
+          "bytes": 3996,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 14018,
+            "max_bit_calls_sample": 55,
+            "max_bit_calls_80": 330,
+            "max_bit_calls_160": 554,
+            "rom_reads": 3996,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "1:absolute:876:refit=False",
+          "bytes": 3652,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 21863,
+            "max_bit_calls_sample": 57,
+            "max_bit_calls_80": 322,
+            "max_bit_calls_160": 588,
+            "rom_reads": 3652,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "1:absolute:876:refit=False:raw_slack=4",
+          "bytes": 3655,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 21430,
+            "max_bit_calls_sample": 57,
+            "max_bit_calls_80": 322,
+            "max_bit_calls_160": 588,
+            "rom_reads": 3655,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "1:absolute:876:refit=False:raw_slack=16",
+          "bytes": 3704,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 19450,
+            "max_bit_calls_sample": 55,
+            "max_bit_calls_80": 322,
+            "max_bit_calls_160": 588,
+            "rom_reads": 3704,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "1:absolute:876:refit=False:raw_slack=40",
+          "bytes": 3971,
+          "accepted": true,
+          "quality": {
+            "ser_db": 32.02284510802576,
+            "rmse": 0.004777904197338705,
+            "stoi": 0.9526491676060922,
+            "spectral_rmse_db": 5.253776621573276,
+            "reference_rms": 0.19071273429539667,
+            "decoded_rms": 0.19152613674222738,
+            "clip_count": 0,
+            "pcm16_sha256": "02a04a17568a3046f4d59f2559d56fab83baa286b55c14f99c5882f50fa2ad7c"
+          },
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 14388,
+            "max_bit_calls_sample": 55,
+            "max_bit_calls_80": 318,
+            "max_bit_calls_160": 543,
+            "rom_reads": 3971,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "1:absolute:730:refit=True",
+          "bytes": 3368,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 20511,
+            "max_bit_calls_sample": 55,
+            "max_bit_calls_80": 332,
+            "max_bit_calls_160": 596,
+            "rom_reads": 3368,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "1:absolute:730:refit=True:raw_slack=4",
+          "bytes": 3370,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 20021,
+            "max_bit_calls_sample": 55,
+            "max_bit_calls_80": 332,
+            "max_bit_calls_160": 596,
+            "rom_reads": 3370,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "1:absolute:730:refit=True:raw_slack=16",
+          "bytes": 3417,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 17996,
+            "max_bit_calls_sample": 55,
+            "max_bit_calls_80": 332,
+            "max_bit_calls_160": 596,
+            "rom_reads": 3417,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "1:absolute:730:refit=True:raw_slack=40",
+          "bytes": 3653,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 13747,
+            "max_bit_calls_sample": 55,
+            "max_bit_calls_80": 332,
+            "max_bit_calls_160": 593,
+            "rom_reads": 3653,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "1:absolute:730:refit=False",
+          "bytes": 3338,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:584:refit=True",
+          "bytes": 3103,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:584:refit=False",
+          "bytes": 3067,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:438:refit=True",
+          "bytes": 2829,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:438:refit=False",
+          "bytes": 2797,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:292:refit=True",
+          "bytes": 2498,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:292:refit=False",
+          "bytes": 2455,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:146:refit=True",
+          "bytes": 1555,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:146:refit=False",
+          "bytes": 1517,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:absolute:0:refit=True",
+          "bytes": 521,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:1023:refit=True",
+          "bytes": 4094,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:normalized:1023:refit=False",
+          "bytes": 4052,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "1:normalized:876:refit=True",
+          "bytes": 3880,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:876:refit=False",
+          "bytes": 3832,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:730:refit=True",
+          "bytes": 3655,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:730:refit=False",
+          "bytes": 3605,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:584:refit=True",
+          "bytes": 3398,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:584:refit=False",
+          "bytes": 3357,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:438:refit=True",
+          "bytes": 2943,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:438:refit=False",
+          "bytes": 2891,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:292:refit=True",
+          "bytes": 2440,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:292:refit=False",
+          "bytes": 2418,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:146:refit=True",
+          "bytes": 1904,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "1:normalized:146:refit=False",
+          "bytes": 1879,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "2:zero:previous",
+          "bytes": 3651,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 21855,
+            "max_bit_calls_sample": 55,
+            "max_bit_calls_80": 322,
+            "max_bit_calls_160": 588,
+            "rom_reads": 3651,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "2:zero:previous:raw_slack=4",
+          "bytes": 3654,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 21422,
+            "max_bit_calls_sample": 55,
+            "max_bit_calls_80": 322,
+            "max_bit_calls_160": 588,
+            "rom_reads": 3654,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "2:zero:previous:raw_slack=16",
+          "bytes": 3703,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 19442,
+            "max_bit_calls_sample": 55,
+            "max_bit_calls_80": 322,
+            "max_bit_calls_160": 588,
+            "rom_reads": 3703,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "2:zero:previous:raw_slack=40",
+          "bytes": 3970,
+          "accepted": true,
+          "quality": {
+            "ser_db": 32.02284510802576,
+            "rmse": 0.004777904197338705,
+            "stoi": 0.9526491676060922,
+            "spectral_rmse_db": 5.253776621573276,
+            "reference_rms": 0.19071273429539667,
+            "decoded_rms": 0.19152613674222738,
+            "clip_count": 0,
+            "pcm16_sha256": "02a04a17568a3046f4d59f2559d56fab83baa286b55c14f99c5882f50fa2ad7c"
+          },
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 14380,
+            "max_bit_calls_sample": 54,
+            "max_bit_calls_80": 318,
+            "max_bit_calls_160": 543,
+            "rom_reads": 3970,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "2:zero:zero",
+          "bytes": 3655,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 21873,
+            "max_bit_calls_sample": 59,
+            "max_bit_calls_80": 322,
+            "max_bit_calls_160": 588,
+            "rom_reads": 3655,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "2:zero:zero:raw_slack=4",
+          "bytes": 3658,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 21440,
+            "max_bit_calls_sample": 59,
+            "max_bit_calls_80": 322,
+            "max_bit_calls_160": 588,
+            "rom_reads": 3658,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "2:zero:zero:raw_slack=16",
+          "bytes": 3707,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 19460,
+            "max_bit_calls_sample": 57,
+            "max_bit_calls_80": 322,
+            "max_bit_calls_160": 588,
+            "rom_reads": 3707,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "2:zero:zero:raw_slack=40",
+          "bytes": 3974,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "2:absolute:1023:refit=True",
+          "bytes": 4050,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "2:absolute:1023:refit=False",
+          "bytes": 4035,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 23328,
+            "max_bit_calls_sample": 54,
+            "max_bit_calls_80": 324,
+            "max_bit_calls_160": 575,
+            "rom_reads": 4035,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "2:absolute:1023:refit=False:raw_slack=4",
+          "bytes": 4037,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 23114,
+            "max_bit_calls_sample": 54,
+            "max_bit_calls_80": 324,
+            "max_bit_calls_160": 575,
+            "rom_reads": 4037,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "2:absolute:1023:refit=False:raw_slack=16",
+          "bytes": 4074,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "2:absolute:1023:refit=False:raw_slack=40",
+          "bytes": 4400,
+          "accepted": false,
+          "rejected": "actual byte cap"
+        },
+        {
+          "source": "2:absolute:876:refit=True",
+          "bytes": 3659,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 22178,
+            "max_bit_calls_sample": 56,
+            "max_bit_calls_80": 320,
+            "max_bit_calls_160": 595,
+            "rom_reads": 3659,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "2:absolute:876:refit=True:raw_slack=4",
+          "bytes": 3662,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 21643,
+            "max_bit_calls_sample": 56,
+            "max_bit_calls_80": 320,
+            "max_bit_calls_160": 595,
+            "rom_reads": 3662,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "2:absolute:876:refit=True:raw_slack=16",
+          "bytes": 3703,
+          "accepted": false,
+          "rejected": "native decode-cost proxy cap",
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 19946,
+            "max_bit_calls_sample": 55,
+            "max_bit_calls_80": 320,
+            "max_bit_calls_160": 580,
+            "rom_reads": 3703,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "2:absolute:876:refit=True:raw_slack=40",
+          "bytes": 3983,
+          "accepted": true,
+          "quality": {
+            "ser_db": 35.23762381025108,
+            "rmse": 0.0032998826989384744,
+            "stoi": 0.9546210613031306,
+            "spectral_rmse_db": 5.371108838560757,
+            "reference_rms": 0.19071273429539667,
+            "decoded_rms": 0.1907373969458631,
+            "clip_count": 0,
+            "pcm16_sha256": "d4f000c07f9a1abce0c9f193cf6bfac0de696603b13910f7be113346505a7e6c"
+          },
+          "decode_cost": {
+            "samples": 8232,
+            "bit_calls": 14833,
+            "max_bit_calls_sample": 55,
+            "max_bit_calls_80": 318,
+            "max_bit_calls_160": 573,
+            "rom_reads": 3983,
+            "lsf_converts": 104
+          }
+        },
+        {
+          "source": "2:absolute:876:refit=False",
+          "bytes": 3632,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "2:absolute:730:refit=True",
+          "bytes": 3356,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        },
+        {
+          "source": "2:absolute:730:refit=False",
+          "bytes": 3326,
+          "accepted": false,
+          "rejected": "complete waveform objective"
+        }
+      ],
+      "accepted_trials": [
+        15,
+        47,
+        60
+      ],
+      "searches": [
+        {
+          "round": 1,
+          "objective": "absolute",
+          "pruned_states": 84794,
+          "peak_frontier_states": 3143,
+          "retained_states": 1024,
+          "state_cap": 1024,
+          "blocks": 103,
+          "options": 1938
+        },
+        {
+          "round": 1,
+          "objective": "normalized",
+          "pruned_states": 103501,
+          "peak_frontier_states": 3522,
+          "retained_states": 1024,
+          "state_cap": 1024,
+          "blocks": 103,
+          "options": 1938
+        },
+        {
+          "round": 2,
+          "objective": "absolute",
+          "pruned_states": 92831,
+          "peak_frontier_states": 3423,
+          "retained_states": 1024,
+          "state_cap": 1024,
+          "blocks": 103,
+          "options": 2104
+        }
+      ],
+      "decoder_source_sha256": "5bdc387aaa0f83af667bfd64d34e2892ae0814268881d48ad5fc632fc291cb67",
+      "elapsed_seconds": 19.22199270001147,
+      "contract": "Original byte/SSE/STOI floors; native cost caps; unchanged LPC/header/decoder",
+      "surrogate_note": "Local state/pitch/scale costs are estimates; full regenerated streams decide acceptance.",
+      "avr_cycles_measured": false,
+      "id": "otvechaesh",
+      "kind": "speech",
+      "samples": 8232,
+      "reference_pcm_sha256": "d515b4c30cdf365fe4809cfceb5fdf686469e3214af6f52f047ccbca494180d6"
+    }
+  ]
+}

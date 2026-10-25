@@ -106,3 +106,55 @@ def decode_pcm16(blob):
                       np.asarray([b['scale'] for b in blocks], dtype=np.int64),
                       coefficient_trace(frames, len(q)), table('scale_table.inc'),
                       int.from_bytes(blob[12:14], 'little'), int.from_bytes(blob[14:16], 'little'))
+
+
+def filter_stability(co, cache=None):
+    """Audit actual Q12 subframe filters; does not prove switched stability."""
+    cache = {} if cache is None else cache
+    rows, counts = np.unique(co[::20], axis=0, return_counts=True)
+    radii = []
+    for row in rows:
+        key = tuple(int(v) for v in row)
+        if key not in cache:
+            cache[key] = float(np.max(abs(np.roots(np.r_[1., row / 4096]))))
+        radii.append(cache[key])
+    return {'max_interpolated_pole_radius': max(radii),
+            'unstable_subframes': int(sum(c for c, r in zip(counts, radii) if r >= 1.))}
+
+
+def stream_stability(blob, cache=None):
+    from lpx4 import decode
+    frames, _, q = decode(blob)
+    return filter_stability(coefficient_trace(frames, len(q)), cache)
+
+
+@njit(cache=True)
+def trace_states(q, scales, co, steps, pre, bright):
+    """Exact states before each 80-sample block, plus the final state/PCM16."""
+    blocks = (len(q) + 79) // 80
+    histories = np.zeros((blocks + 1, 10), np.int64)
+    deemphs = np.zeros(blocks + 1, np.int64)
+    clips = np.zeros(blocks + 1, np.int64)
+    history = np.zeros(10, np.int64)
+    out = np.empty(len(q), np.int16)
+    deemph = previous_clip = 0
+    for j in range(len(q)):
+        if j % 80 == 0:
+            bi = j // 80
+            histories[bi] = history
+            deemphs[bi], clips[bi] = deemph, previous_clip
+        acc = 0
+        for k in range(10):
+            acc += (co[j, k] * history[k]) >> 12
+        pred = clamp(q[j] * steps[scales[j // 80]] - acc)
+        for k in range(9, 0, -1):
+            history[k] = history[k - 1]
+        history[0] = pred
+        deemph = clamp(pred + ((pre * deemph) >> 14))
+        clipped = clamp(deemph, -16384, 16384)
+        b = clamp(clipped - ((bright * previous_clip) >> 14), -16384, 16384)
+        previous_clip = clipped
+        out[j] = clamp(b * 2, -32768, 32767)
+    histories[blocks] = history
+    deemphs[blocks], clips[blocks] = deemph, previous_clip
+    return out, histories, deemphs, clips
