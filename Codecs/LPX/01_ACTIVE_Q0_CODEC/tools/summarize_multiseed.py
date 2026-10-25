@@ -53,6 +53,8 @@ def audit(report,corpus,avr,old_avr,image_roots):
     manifest=json.loads((corpus/'corpus.json').read_text(encoding='utf-8'))
     expected={c['id'] for c in manifest['cases']}
     assert report['revision']==revision() and report['config']==CONFIG
+    checkout=Path(__file__).resolve().parents[4]
+    assert file_sha(checkout/'Codecs/LPX/research/q0-lowrate-2026-10-25/measurements.json')==report['baseline_sha256']
     assert file_sha(corpus/'corpus.json')==report['corpus_sha256']
     assert len(report['cases'])==len(expected)==27 and {c['id'] for c in report['cases']}==expected
     counts={'cases':27,'selected_points':0,'metric_records':0,'unique_streams':0,'elf_hex_pairs':0}
@@ -70,8 +72,11 @@ def audit(report,corpus,avr,old_avr,image_roots):
             assert {r['ceiling_bps'] for r in c['rates']}==set(CONFIG['rates'])
             for row in c['rates']:
                 seed=next(s for s in c['seed_info'] if s['ceiling_bps']==row['ceiling_bps'])
-                assert file_sha(seed['path'])==row['baseline']['stream_sha256']==seed['stream_sha256']
-                baseline=decoder.decode_one_s16(Path(seed['path']).read_bytes(),32000)
+                seed_raw=Path(seed['path']).read_bytes()
+                assert sha(seed_raw)==row['baseline']['stream_sha256']==seed['stream_sha256']
+                assert len(seed_raw)==seed['file_bytes']==row['baseline']['file_bytes']<=row['ceiling_bps']//2+20
+                assert row['baseline']['audio_packet_bytes']==len(seed_raw)-20
+                baseline=decoder.decode_one_s16(seed_raw,32000)
                 for stage in ('baseline',)+STAGES:
                     item=row[stage]
                     if stage=='baseline':pcm=baseline
@@ -134,6 +139,9 @@ def run(parts,corpus,output,avr_path=None,old_avr_path=None,image_roots=()):
     report['cases'].sort(key=lambda c:c['id'])
     avr=json.loads(Path(avr_path).read_text(encoding='utf-8')) if avr_path else None
     old_avr=json.loads(Path(old_avr_path).read_text(encoding='utf-8')) if old_avr_path else None
+    if old_avr_path:
+        retained=Path(__file__).resolve().parents[4]/'Codecs/LPX/research/q0-lowrate-2026-10-25/avr.json'
+        assert file_sha(old_avr_path)==file_sha(retained)
     consistency=audit(report,corpus,avr,old_avr,list(map(Path,image_roots)))
     summary={'cases':27,'groups':[],'timing':{'case_seconds_sum':sum(c['seconds'] for c in report['cases']),
         'cache_evaluations':sum(c['cache']['new_evaluations'] for c in report['cases']),
