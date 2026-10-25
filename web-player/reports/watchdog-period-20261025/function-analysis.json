@@ -1,0 +1,197 @@
+{
+  "schema": "micromusic-device-function-comparison-v1",
+  "scriptSha256": "8e53ef6424a7c2042856d8cd32f144223bb8c92a821f47c0e1a94ec9d1c1c166",
+  "tools": {
+    "clang": {
+      "path": "C:\\Work\\MicroMusic\\build\\toolchains\\emscripten-6.0.12\\upstream\\bin\\clang.exe",
+      "sha256": "79921ba704246e961c2160eee475726210863e19b55f244830ec91ff26b7648f",
+      "version": "clang version 24.0.0git (https:/github.com/llvm/llvm-project 55ea1f4ebea23d0355d5cdb075f1e12f28ab82d0)\nTarget: x86_64-pc-windows-msvc\nThread model: posix\nInstalledDir: C:\\Work\\MicroMusic\\build\\toolchains\\emscripten-6.0.12\\upstream\\bin"
+    },
+    "wasm-opt": {
+      "path": "C:\\Work\\MicroMusic\\build\\toolchains\\emscripten-6.0.12\\upstream\\bin\\wasm-opt.exe",
+      "sha256": "ece3a130458778d485ede67297ac139bb6b66a008bb84292b7f0e10f4af2cd95",
+      "version": "wasm-opt version 133 (version_133-60-g93d6e9de7)"
+    },
+    "wasm-dis": {
+      "path": "C:\\Work\\MicroMusic\\build\\toolchains\\emscripten-6.0.12\\upstream\\bin\\wasm-dis.exe",
+      "sha256": "09eda1badc865853f18b8bc530cfedf2711e6056fa957a97af3fd1df00ec983b",
+      "version": "wasm-dis version 133 (version_133-60-g93d6e9de7)"
+    }
+  },
+  "canonicalizerChecks": {
+    "typeLocalLabelCollision": true,
+    "typeIndexPermutation": true,
+    "changedOperand": true,
+    "changedType": true,
+    "preservedNesting": true
+  },
+  "counts": {
+    "identical": 195,
+    "relocation-only": 0,
+    "body-changed": 8,
+    "added": 0,
+    "removed": 0
+  },
+  "changed": [
+    {
+      "symbol": "avr_device_configure_clki",
+      "status": "body-changed",
+      "rawEqual": false,
+      "normalizedEqual": false,
+      "before": {
+        "index": 59,
+        "bytes": 61,
+        "rawSha256": "bc98028b4a17f06684b7851f66d536e9a52de2d9fd6f3040a585fed62c0bb3e2",
+        "normalizedSha256": "4c4eba45eaa900fe742f8b0259a2f094ce993d3ee14a6301a5b5a7e10a05063f"
+      },
+      "after": {
+        "index": 59,
+        "bytes": 61,
+        "rawSha256": "c178287a82a3357cfa981288bf607121c88801797a0e6244de943079d3a623c2",
+        "normalizedSha256": "9ef79470fe444abb7cba43f6be9eeb516495ac44b0c233f423716351682fbf22"
+      },
+      "historicalProfiles": [],
+      "diff": "function-diffs-TMxE7U\\avr_device_configure_clki.diff"
+    },
+    {
+      "symbol": "avr_device_configure_osccal_hz",
+      "status": "body-changed",
+      "rawEqual": false,
+      "normalizedEqual": false,
+      "before": {
+        "index": 56,
+        "bytes": 53,
+        "rawSha256": "1c4df53664b8fd583cc62d6127a62a0aa8ba3329255858444e0396623822c01b",
+        "normalizedSha256": "351b2da93dfa35f5052007265527911a12a311b61d1339a6103f727933199c26"
+      },
+      "after": {
+        "index": 56,
+        "bytes": 53,
+        "rawSha256": "220dcb302353187cd7ef0c545bbeaea1ee4c96570c6470be5bf98be602139c57",
+        "normalizedSha256": "80369a1d147c965ada6497afd10cf5a0f18a443c1d8bd70d2a668fc0bc317dfd"
+      },
+      "historicalProfiles": [],
+      "diff": "function-diffs-TMxE7U\\avr_device_configure_osccal_hz.diff"
+    },
+    {
+      "symbol": "avr_device_configure_power",
+      "status": "body-changed",
+      "rawEqual": false,
+      "normalizedEqual": false,
+      "before": {
+        "index": 57,
+        "bytes": 188,
+        "rawSha256": "36c387432a91a27a6d66265b94aab4f4f67844f5384afafdbc6b4a67166357bb",
+        "normalizedSha256": "00c15fb882d49033000d607cc9575b4e4c1f41f2ae97d84bf9ae0e777857fbad"
+      },
+      "after": {
+        "index": 57,
+        "bytes": 188,
+        "rawSha256": "6fffd796f4f1d0dc197f7ea62e9cadfe369e6ca210ba21417273a79be3db05c6",
+        "normalizedSha256": "d954b8eb742ee28a857374858b19797be25e265edf041cfeed485f7f3d95836d"
+      },
+      "historicalProfiles": [],
+      "diff": "function-diffs-TMxE7U\\avr_device_configure_power.diff"
+    },
+    {
+      "symbol": "avr_device_configure_reset_input",
+      "status": "body-changed",
+      "rawEqual": false,
+      "normalizedEqual": false,
+      "before": {
+        "index": 58,
+        "bytes": 139,
+        "rawSha256": "b429ebcf2005a96bcd1dd6fbb9e5c665e3c6049b4e4e3c32fb3dc1d9541bd678",
+        "normalizedSha256": "c562a78c07966d148b2002c5f9134277554a6ab3464e4707ad7d0e0e2fd3e421"
+      },
+      "after": {
+        "index": 58,
+        "bytes": 139,
+        "rawSha256": "f8fe1c05c96093cf3366791cf42ef75417d9b4efea4efc927207062e24cd9e4d",
+        "normalizedSha256": "fde9cebc89dacc2edfd11bfed33a53db6544672297a9abb07bad1b5dda9154ba"
+      },
+      "historicalProfiles": [],
+      "diff": "function-diffs-TMxE7U\\avr_device_configure_reset_input.diff"
+    },
+    {
+      "symbol": "avr_reset",
+      "status": "body-changed",
+      "rawEqual": false,
+      "normalizedEqual": false,
+      "before": {
+        "index": 12,
+        "bytes": 4525,
+        "rawSha256": "672cb34e91cbb8f336eacbe5d6bd0ac9f7934608fd96c7d78f51f23866c8e506",
+        "normalizedSha256": "7329365c87575bbd5d2034490265174a0caf3d3d150e743d8da19a208f3347b0"
+      },
+      "after": {
+        "index": 12,
+        "bytes": 4601,
+        "rawSha256": "78d8ab4b88c68a5fbf1a487f44d7a8439e3e89a620872aef6c541cce1fc837b7",
+        "normalizedSha256": "7640bd332ee68f267bc7bd1e02e1eb066007a706cf7bf4c7c3a77c23ab1b16bc"
+      },
+      "historicalProfiles": [],
+      "diff": "function-diffs-TMxE7U\\avr_reset.diff"
+    },
+    {
+      "symbol": "elapse",
+      "status": "body-changed",
+      "rawEqual": false,
+      "normalizedEqual": false,
+      "before": {
+        "index": 150,
+        "bytes": 489,
+        "rawSha256": "ac75470cbe04189fd9a5902cc16f3183a36518761dfbde9df3e83c17a9a9181d",
+        "normalizedSha256": "1b7e415b544642e9642590968703702dbdaa376e8893be01cd48d4a0c3a1a7e7"
+      },
+      "after": {
+        "index": 150,
+        "bytes": 575,
+        "rawSha256": "275b9c724b53d509359f8a78bf339a927f964c17c8a457eb7176acd4c0d1c8af",
+        "normalizedSha256": "d35596a9e21cb7cbd90c351b05a4afc8f422bc5ac605747d62b38b4f6aecd1a4"
+      },
+      "historicalProfiles": [],
+      "diff": "function-diffs-TMxE7U\\elapse.diff"
+    },
+    {
+      "symbol": "next_event",
+      "status": "body-changed",
+      "rawEqual": false,
+      "normalizedEqual": false,
+      "before": {
+        "index": 152,
+        "bytes": 3351,
+        "rawSha256": "42b6668738454bd6f40a51ff5e5b3ba71322d8dbe66a71b13e2d171027619db9",
+        "normalizedSha256": "0f12ed5157b09583a578bb78bd11de5d55aa7983d3a1f7c41c4243d5d21d97b5"
+      },
+      "after": {
+        "index": 152,
+        "bytes": 3367,
+        "rawSha256": "e6f00882c87999ee526787caa3f9903476b316a8924aeb8c5c9419f72faf872c",
+        "normalizedSha256": "c3afdb3d8ea05a57058e9b460e4835de53fdc8c60b5b60dfb96bb5e20e245df0"
+      },
+      "historicalProfiles": [],
+      "diff": "function-diffs-TMxE7U\\next_event.diff"
+    },
+    {
+      "symbol": "reset_startup",
+      "status": "body-changed",
+      "rawEqual": false,
+      "normalizedEqual": false,
+      "before": {
+        "index": 139,
+        "bytes": 778,
+        "rawSha256": "433d80b2a9f4b80500bb3c018aee0c26cd9085670c69de150a0bcefa342b02ab",
+        "normalizedSha256": "f1ebc65a9adeb43cb4f64339b0f45d4a1912734aaf4aa6c1103127304b2ac96e"
+      },
+      "after": {
+        "index": 139,
+        "bytes": 808,
+        "rawSha256": "041539fc1e53eeb3df9177aaa32877dfbff3cf32a66fc9e9380008e659990f81",
+        "normalizedSha256": "348c7254e6e24bf471a73b727d231963aaef5dc8961accfca9815dfa964b9d0b"
+      },
+      "historicalProfiles": [],
+      "diff": "function-diffs-TMxE7U\\reset_startup.diff"
+    }
+  ]
+}

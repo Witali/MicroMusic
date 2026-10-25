@@ -492,7 +492,7 @@ No new hardware checklist item closes;21/30 remain complete.
 
 | Priority | Candidate | Evidence required before keeping it |
 | --- | --- | --- |
-| 1 | Physical ns remainder reduction is retained. Next evaluate exact watchdog-period reduction for divisible rates, then fewer repeated event scans/conversions. Equal-rate, bounded-multiply and native-delay guards are rejected. Broader peripheral activity gating remains open. | Preserve numerator/period units in every deadline and startup/reset consumer, with the general path for other rates. Keep integer residues, event/pin/PCM parity, enabled-ADC and CLKI controls. Require balanced identical-runtime timing; inspect exact WASM without assigning a cause from static code alone. Repeat IRQ-active browser audio/underrun checks before default activation. |
+| 1 | Physical ns remainder reduction is retained. Watchdog-period caching is rejected. Next prototype lazy watchdog clock synchronization using the completed consumer audit, then fewer repeated event scans/conversions. Equal-rate, bounded-multiply and native-delay guards are rejected. Broader peripheral activity gating remains open. | Preserve the off-state free-running phase, discard inactive history before enabling, keep CPU write-window expiry and eager fault-sensitive paths. Keep integer residues, event/pin/PCM parity, enabled-watchdog/ADC and CLKI controls. Require balanced identical-runtime timing; inspect exact WASM without assigning a cause from static code alone. Repeat IRQ-active browser audio/underrun checks before default activation. |
 | 2 | Evaluate adaptive bounded-region instruction budgets near deadlines. Separate inter-block fusion and constant folding are rejected. | Keep full flags, clock-before-commit, external entries and original fallback. Node HQ4 gains1.448x, but browser live audio still underruns; other firmware/event-heavy gains remain unproven. Measure budget changes separately from native scheduler changes. |
 | 3 | Validate optional phase-local liveness for default activation when stable performance measurements are available. | The full-context path remains an oracle. Size/parity are established; do not treat noisy median gains as speed evidence. Keep partial execution, reset/faults, SPM and IRQ effects exactly once. |
 | 4 | Extend proven direct WASM regions only where measured coverage justifies it; evaluate region SREG liveness independently. | The bounded cyclic register-local path is implemented. Preserve all observable SREG exits, indirect/external-entry fallback, aliases and visible AVR stack state; require real-firmware gains for extensions. |
@@ -526,9 +526,22 @@ Runtime grows74 bytes to117975, with fixed two-page memory and no host imports.
 The browser gate is not rerun for this native revision; default engine stays
 `wasm`. The model/hardware checklist stays21/30 with nine open. See
 [exact sources, measurements and caveats](../reports/physical-ns-remainder-20261025.md).
-Next investigate watchdog-period remainder reduction independently. Audit
-reset/startup pulse arithmetic and every deadline consumer before changing units;
-retain general arithmetic when the rate does not divide the fixed base frequency.
+The separate watchdog-period experiment below did not establish a gain.
+
+#### Watchdog clock checkpoint (period cache rejected; lazy sync audited)
+
+Exact period reduction passes1681 tests and15 parity cases, but four screened
+medians0.997x/0.993x/0.976x/0.961x do not establish a gain. Production returns
+to the retained117975-byte ps→ns runtime. Four new fraction/reset regressions
+and two real watchdog ISR benchmark cases remain;128 timings/64 warmups retain
+1824 exact snapshots. See [rejected candidate and reproduction](../reports/watchdog-period-20261025.md).
+
+The next lazy-clock experiment has a [consumer and boundary audit](watchdog-lazy-clock-audit.md).
+Do not simply gate `elapse` or the whole watchdog service: enabling must first
+discard inactive history, CPU write windows still expire while off, and both
+reset/startup implementations consume the oscillator phase. Keep the current
+numerator units and eager fault-sensitive arithmetic. Implementation/performance
+validation remains open. No hardware item closes:21/30 complete, nine open.
 
 #### Native-delay checkpoint (rejected)
 
