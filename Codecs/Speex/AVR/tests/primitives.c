@@ -5,11 +5,40 @@
 #include "lsp.h"
 #include "quant_lsp.h"
 #include "speex/speex_bits.h"
+#include "nb3_interpolate.h"
 
 void reference_lsp(const spx_lsp_t *, spx_coef_t *, int, char *);
 void reference_interpolate(spx_lsp_t *, spx_lsp_t *, spx_lsp_t *, int, int, int, spx_word16_t);
 static uint32_t seed = 0x31415926;
 static uint32_t random32(void) { seed ^= seed<<13; seed ^= seed>>17; seed ^= seed<<5; return seed; }
+
+static void check_quarters(const spx_lsp_t *old, const spx_lsp_t *next, unsigned count)
+{
+    struct guarded { int16_t before, value[10], after; } raw, delta, out;
+    spx_lsp_t a[10], b[10], expected[10];
+    unsigned sub, i;
+    raw.before=delta.before=out.before=0x1357;
+    raw.after=delta.after=out.after=0x2468;
+    for (i=0;i<10;i++) {
+        assert(!(old[i]&15) && !(next[i]&15));
+        a[i]=raw.value[i]=old[i]; b[i]=next[i];
+        delta.value[i]=(next[i]>>2)-(old[i]>>2);
+    }
+    for (sub=0;sub<count;sub++) {
+        reference_interpolate(a,b,expected,10,sub,4,16);
+        speex_nb3_interpolate(raw.value,delta.value,out.value);
+        assert(!memcmp(out.value,expected,sizeof(expected)));
+        for (i=0;i<10;i++) {
+            const int32_t step=((int32_t)next[i]-old[i])/4;
+            assert(raw.value[i]==old[i]+(int32_t)(sub+1)*step);
+            assert(delta.value[i]==step && a[i]==old[i] && b[i]==next[i]);
+        }
+        assert(raw.before==0x1357 && delta.before==0x1357 && out.before==0x1357);
+        assert(raw.after==0x2468 && delta.after==0x2468 && out.after==0x2468);
+    }
+    if (count==4 || !memcmp(old,next,sizeof(a)))
+        assert(!memcmp(raw.value,next,sizeof(a)));
+}
 
 int main(void)
 {
@@ -59,8 +88,9 @@ int main(void)
      * odd angles do NOT interpolate identically at all four steps. NB3 angles
      * are multiples of 16; exhaust every 6+6+6-bit code triple to prove the
      * frame-cache invariant using untouched upstream interpolation. */
+    spx_lsp_t previous[10]={0};
     for (test=0;test<(1u<<18);test++) {
-        spx_lsp_t angles[10], final[10], current[10], previous[10]={0};
+        spx_lsp_t angles[10], final[10], current[10];
         unsigned sub,i;
         bytes[0]=test>>10;bytes[1]=test>>2;bytes[2]=test<<6;
         memset(&bits,0,sizeof(bits));bits.chars=bytes;bits.nbBits=18;
@@ -71,7 +101,27 @@ int main(void)
             reference_interpolate(angles,angles,current,10,sub,4,16);
             assert(memcmp(final,current,sizeof(final))==0);
         }
+        check_quarters(previous,angles,4);
+        check_quarters(angles,angles,1); /* reset uses one zero-delta step */
+        memcpy(previous,angles,sizeof(previous));
     }
     puts("PASS: all 262144 NB3 LSP code triples preserve exact repeated-frame interpolation");
+    for (test=0;test<65536;test++) {
+        spx_lsp_t a[10], b[10];
+        unsigned i;
+        for (i=0;i<10;i++) {
+            a[i]=(int16_t)(random32()&0xfff0);
+            b[i]=(int16_t)(random32()&0xfff0);
+        }
+        check_quarters(a,b,4);
+    }
+    for (test=0;test<64;test++) {
+        static const int16_t edge[8]={-32768,-32752,-16,0,16,25712,25728,32752};
+        spx_lsp_t a[10], b[10];
+        unsigned i;
+        for (i=0;i<10;i++) { a[i]=edge[(test/8+i)%8]; b[i]=edge[(test%8+9-i)%8]; }
+        check_quarters(a,b,4);
+    }
+    puts("PASS: 589888 quarter-interpolation cases / 1573120 calls; raw state, guards and original margin exact");
     return 0;
 }

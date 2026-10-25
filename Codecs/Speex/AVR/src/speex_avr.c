@@ -7,8 +7,8 @@
 #endif
 
 static DecState decoder;
-/* Excitation needs only qlsp (20 B). Synthesis appends distinct ak/interp
- * arrays at offsets 20/40. Peak = 60 B; host checks every aligned PUSH. */
+/* Excitation uses qlsp (20 B) and four indices. Synthesis reuses offset 20
+ * for ak, then appends interp at 40. Peak = 60 B; host checks each PUSH. */
 _Alignas(4) static uint32_t scratch[15];
 static size_t scratch_peak;
 

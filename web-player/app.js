@@ -80,8 +80,8 @@ async function switchDevice(device,board=currentBoard) {
     const id=next.aliases?.[requested]??requested;
     const entry=next.entries.find(e=>e.id===id)||next.entries.find(e=>e.id===next.defaultId);
     if(!entry)throw new Error('В каталоге нет доступных прошивок.');
-    parseHex(entry.flashHex,device==='attiny88'?(board==='mh-et-live-16mhz'?6012:8192):1024);
     if(entry.cpuHz!==(device==='attiny88'?tiny88Boards[board].cpuHz:9600000))throw new Error('Частота прошивки не соответствует выбранной плате.');
+    parseHex(entry.flashHex,device==='attiny88'?(board==='mh-et-live-16mhz'?6012:8192):1024);
     catalog=next; currentDevice=device;if(device==='attiny88')currentBoard=board;deviceUI(device);load(entry);
   } catch(error) {
     if(request!==deviceRequest)return;
@@ -269,7 +269,7 @@ function load(entry,{autoplay=false}={}) {
   if(micronucleus)url.searchParams.set('board',currentBoard);else url.searchParams.delete('board');
   history.replaceState(null,'',url);
   renderCatalog(); transport();
-  const worker=new Worker(new URL('./worker.js?v=20261025-attiny88-board',import.meta.url),{type:'module'}); runtime=worker;
+  const worker=new Worker(new URL('./worker.js?v=20261025-board-um88',import.meta.url),{type:'module'}); runtime=worker;
   worker.onmessage=({data})=>{
     if (runtime!==worker) return;
     if (data.type==='ready') {

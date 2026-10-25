@@ -1,0 +1,46 @@
+{
+  "date": "2026-10-25",
+  "baseline_commit": "f40216b",
+  "implementation_commit": "1d62998",
+  "validation_commit": "2de13ee",
+  "python": "3.12.14",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "numpy": "2.5.4",
+  "scipy": "1.18.1",
+  "numba": "0.68.0",
+  "soundfile": "0.14.0",
+  "pystoi": "0.4.1",
+  "host_native_compiler": "Clang 24.0.0git 55ea1f4ebea23d0355d5cdb075f1e12f28ab82d0 + MSVC STL 14.51.36231; ignored g++ command adapter; C++14 for host, no fake AVR macros",
+  "avr_compiler": "AVR GCC 7.3.0 -Os -std=gnu++11 -mmcu=atmega328p",
+  "simavr_package": "Ubuntu noble 1.6+dfsg-3build2",
+  "sim_runner_host_compiler": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 -O2 -std=c11",
+  "unit_tests": {
+    "passed": 46,
+    "skipped": 0,
+    "seconds": 31.994,
+    "command": "python -m unittest discover -s tests -p 'test_*.py' -v"
+  },
+  "arithmetic_source": "Microchip AVR201 / AN1631-1 signed 16x16 carry scheme; adapted repository Speex AVR avr_multiply.h constraints; LPX per-product shift and fused reverse history traversal",
+  "source_url": "https://www.microchip.com/en-us/application-notes/an1631-1",
+  "baseline_timing_report_sha256": "67b75579e73a84fdc535f9009abdacd8b92ecd52bd25c557003678c8240fb352",
+  "source_sha256": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "7a2d811a7be79c2d2cd14666222734d881f5ca5ca10870a86e4eac975288d634",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "a3ad23ce67403dbac11acee6c718b08f7572d37aecbbe4cfe6f619973beb0b0c",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": "462a32495076d5e027a065bcf5e2e6ce0584cac43f8cf9b5c7d3c7a12de3c22b",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/math_backend.cpp": "044f60a1d7fe6bc5a3aba691dad54898cb482a13ab7d4f6c7794f25300590bd8",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/test_math_backend.py": "b5abf27876f5201bba7787ab611d52857a35ac620d0f32eb094b16e8a2ca6294",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/verify_avr_math.py": "9338e98a1e1903884f01d4fc3eaac6ba7cf1fe795a088149b20572258f4d16fc",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/batch_decoder.py": "e533aae4ec0b486e246c4c7b7b722279861bd6d62c783fbda82c82ff53159d42",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_avr_profile.py": "218a54b41ac20b08687abdda59542c6cd3daec55cd19005935bc7639d598b856",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/optimize_q0.py": "fc9153ebb5f7dca7d7045d15cc64a650e0fcd3735a78594d4ebdf37dbbfaaf8c",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/profile_avr.py": "62cd6406efcf70ae85d035cc0a03219057c8a9d7b5d4e7ff7b78aac3a0061111",
+    "Codecs/LPX/validation/atmega328p/profile.cpp": "f59a83fe83b40a3332eeaa87ba3e95b253baf37c2a16d733146b968a62072e92",
+    "Codecs/LPX/validation/atmega328p/sim_math.c": "06cd94128b1db14f140ff280aecf6965e9276d10eeaf7b9a99bbf92292e1a1ba",
+    "Codecs/LPX/validation/atmega328p/sim_profile.c": "c35b6adbb401978e96973d2a919ebca0bbd2879c5b4d47110c70233bf2516b52"
+  },
+  "report_sha256": {
+    "avr-profiles.json": "769ca7ed59e0d9fcbed0d7abc09b377d34cd37ae96a237300e86f4353d78bfed",
+    "math-verification.json": "670dad2dc16d1bcef386c9fc9cdc17f579ea555fb6a5b626d3a3c81b722f3974",
+    "release-verification.json": "46d768a39d5b5cebc6ff420341885f705f789218cc3f22a18ef536052e514831"
+  }
+}

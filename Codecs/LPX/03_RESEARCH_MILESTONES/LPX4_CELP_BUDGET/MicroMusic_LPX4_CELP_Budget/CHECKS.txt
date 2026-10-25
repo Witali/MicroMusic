@@ -1,0 +1,5 @@
+Runs after extraction:
+  python3 tools/make_synthetic.py
+  python3 tests/verify_release.py 25
+  python3 tests/verify_budget.py
+AVR Clang compile requires AVR stdint/pgmspace test stubs from tests/avr_stub; they are NOT production avr-libc.

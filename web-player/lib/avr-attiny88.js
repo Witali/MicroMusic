@@ -1,5 +1,5 @@
 // Compatibility entry point; the CPU and peripheral implementation are shared.
-import {AVRCore, AVR_PROFILES} from './avr-reference.js?v=20261025-attiny88-board';
+import {AVRCore, AVR_PROFILES} from './avr-reference.js?v=20261025-board-um88';
 export const TARGET_PROFILES = Object.freeze({tiny88:AVR_PROFILES.attiny88});
 export class AVRMusicTargetCore extends AVRCore {
   constructor(binary,eeprom,options={}) {

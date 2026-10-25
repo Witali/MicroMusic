@@ -2,17 +2,17 @@
 // Device memory, timer and peripheral registers live in avr-profiles.js.
 // ROM bytes are immutable; decode once, execute integer op IDs. Observed OCR
 // write streams preserve music timing; electrical PWM edges are not rendered.
-import {AVR_PROFILES, resolveAVRProfile} from './avr-profiles.js?v=20261025-attiny88-board';
+import {AVR_PROFILES, resolveAVRProfile} from './avr-profiles.js?v=20261025-board-um88';
 export {AVR_PROFILES, resolveAVRProfile};
 const OP = { NOP:1, CLI:2, SEI:3, RETI:4, RET:5, CALL:6, JUMP:7, BRANCH:8,
   SKIP:9, LDI:10, CPI:11, SUBI:12, ORI:13, ANDI:14, MOVW:15, ADD:16,
   ADC:17, SUB:18, AND:19, EOR:20, MOV:21, INC:22, DEC:23, COM:24,
   LSR:25, ASR:26, SWAP:27, IN:28, OUT:29, SBI:30, PUSH:31, POP:32, ST:33, LPM:34, FLAG:35,
-  ROR:36, LDS:37, STS:38, OR:39, LD:40, CP:41, NEG:42, SBC:43, SBCI:44, ADIW:45, SBIW:46, WDR:47 };
+  ROR:36, LDS:37, STS:38, OR:39, LD:40, CP:41, NEG:42, SBC:43, SBCI:44, ADIW:45, SBIW:46, WDR:47, CPC:48, CPSE:49 };
 const sign = (v, bit) => v & bit ? v - bit * 2 : v;
 // Maximum cycles for instructions that can execute without observing I/O.
 // Everything else remains in step(), including all peripheral and stack access.
-const BATCH_CYCLES = new Uint8Array(48);
+const BATCH_CYCLES = new Uint8Array(50);
 for (const op of [OP.NOP, OP.LDI, OP.CPI, OP.SUBI, OP.ORI, OP.ANDI, OP.MOVW,
   OP.ADD, OP.ADC, OP.SUB, OP.AND, OP.EOR, OP.OR, OP.MOV, OP.INC, OP.DEC,
   OP.COM, OP.LSR, OP.ASR, OP.ROR, OP.SWAP, OP.SBC, OP.SBCI]) BATCH_CYCLES[op] = 1;
@@ -128,6 +128,8 @@ export class AVRCore {
       o = ({3072:OP.ADD,7168:OP.ADC,6144:OP.SUB,8192:OP.AND,9216:OP.EOR,10240:OP.OR,11264:OP.MOV})[w & 0xfc00];
     else if ((w & 0xfc00) === 0x0800) o = OP.SBC;
     else if ((w & 0xfc00) === 0x1400) o = OP.CP;
+    else if ((w & 0xfc00) === 0x0400) o = OP.CPC;
+    else if ((w & 0xfc00) === 0x1000) o = OP.CPSE;
     else if ((w & 0xfe0f) === 0x9401) o = OP.NEG;
     else if ([0x9403,0x940a,0x9400,0x9406,0x9405,0x9407,0x9402].includes(w & 0xfe0f))
       o = ({37891:OP.INC,37898:OP.DEC,37888:OP.COM,37894:OP.LSR,37893:OP.ASR,37895:OP.ROR,37890:OP.SWAP})[w & 0xfe0f];
@@ -364,8 +366,9 @@ export class AVRCore {
       case OP.JUMP: this.pc += k; n = 2; break;
       case OP.BRANCH:
         if (((this.sreg >> d) & 1) === s) { this.pc += k; n = 2; } break;
+      case OP.CPSE:
       case OP.SKIP:
-        if (((r[d] >> s) & 1) === k) {
+        if (this.op[p] === OP.CPSE ? r[d] === r[s] : ((r[d] >> s) & 1) === k) {
           const w = this.rom[this.pc * 2] | this.rom[this.pc * 2 + 1] << 8;
           const words = (w & 0xfe0f) === 0x9000 || (w & 0xfe0f) === 0x9200 ||
             (w & 0xfe0e) === 0x940c || (w & 0xfe0e) === 0x940e ? 2 : 1;
@@ -392,6 +395,12 @@ export class AVRCore {
         break;
       }
       case OP.CP: this.arithmetic(r[d], r[s], 0, true); break;
+      case OP.CPC: {
+        const previous=this.sreg;
+        this.arithmetic(r[d],r[s],previous&1,true);
+        if(!(previous&2))this.z=0;
+        break;
+      }
       case OP.NEG: r[d] = this.arithmetic(0, r[d], 0, true); break;
       case OP.AND: r[d] &= r[s]; this.nzvs(r[d]); break;
       case OP.EOR: r[d] ^= r[s]; this.nzvs(r[d]); break;

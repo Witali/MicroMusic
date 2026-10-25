@@ -18,6 +18,8 @@ test('board selection is shown only for music on ATtiny88 and defaults to the ex
   assert.equal(app.get('board-control').hidden,false);
   assert.equal(app.get('board-select').value,'bare-8mhz');
   assert.equal(init(app).entry.cpuHz,8000000);
+  assert.equal(init(app).entry.firmwareEngine,'UM88');
+  assert.equal(init(app).entry.synthesisHz,7812.5);
   assert.equal(init(app).entry.flashHex,eight.entries.find(e=>e.id===eight.defaultId).flashHex);
   assert.equal(app.get('board-upload').hidden,true);
   assert.equal(app.location.searchParams.has('board'),false);
@@ -31,6 +33,9 @@ test('a 16-MHz board link loads the actual USB firmware, clock, board pins and o
   assert.equal(message.entry.flashHex,expected.flashHex);
   assert.notEqual(message.entry.flashHex,eight.entries.find(e=>e.id==='children').flashHex);
   assert.equal(message.entry.eepromHex,null);
+  assert.notEqual(message.entry.firmwareEngine,'UM88');
+  assert.equal(message.entry.synthesisHz,31250);
+  assert.match(message.entry.source,/variants-micronucleus/);
   assert.match(app.get('machine-details').textContent,/16 МГц/);
   assert.match(app.get('tiny88-clock').textContent,/16 MHz.*MH-ET LIVE/);
   assert.match(app.get('right-output-label').textContent,/PB2.*D10/);
@@ -64,6 +69,7 @@ test('changing frequency resets a playing transport, keeps its song and engine, 
   assert.equal(app.get('board-select').value,board);assert.equal(init(app).entry.cpuHz,16000000);
   await change(app,'board-select','bare-8mhz');
   assert.equal(init(app).entry.cpuHz,8000000);assert.equal(init(app).entry.id,'alicia');
+  assert.equal(init(app).entry.firmwareEngine,'UM88');
   assert.equal(app.get('download').download,'attiny88-alicia.hex');
   assert.equal(app.get('download-eeprom').hidden,false);
   assert.equal(app.get('fuse-low').textContent,'0xEE');assert.equal(app.get('board-upload').hidden,true);

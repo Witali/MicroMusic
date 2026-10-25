@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-25",
+  "baseline_commit": "8ed8a8f",
+  "encoder_commits": [
+    "df2b28a",
+    "d134d18",
+    "bb75a4a"
+  ],
+  "profiling_commit": "bc607e4",
+  "benchmark_commit": "8e3e564",
+  "python": "3.12.14",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "numpy": "2.5.4",
+  "scipy": "1.18.1",
+  "numba": "0.68.0",
+  "soundfile": "0.14.0",
+  "pystoi": "0.4.1",
+  "host_native_compiler": "Clang 24.0.0git 55ea1f4ebea23d0355d5cdb075f1e12f28ab82d0 + MSVC STL 14.51.36231; local g++ command adapter uses C++14, exports C batch symbols; no codec source edits",
+  "avr_compiler": "avr-g++ 7.3.0, repository toolchain",
+  "sim_runner_host_compiler": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0 -O2 -std=c11",
+  "unit_tests": {
+    "passed": 32,
+    "seconds": 36.22,
+    "command": "python -m unittest discover -s tests -p 'test_*.py' -v"
+  },
+  "source_sha256": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/beam_excitation_pcm16.py": "97ccd54e45712317ed9d9c15604f772c2f5267e9137a42eaa911c0f2151c48c4",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_q0_encoder.py": "9e16469252847ef590e91838c3a463879a260fa107caae0354a9e9ee8b8f0d76",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/compare_codecs.py": "c83924e768aefb43b1d771f76a39e4f10c1defd25c667b3ae301d3214c29fbb7",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/optimize_q0.py": "7bf5fd75de9d30ba974fbb8d50de18db354db7fd5413df61359c51d97983adab",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/profile_avr.py": "b2940ccc77981d99c20a305a8573cf922062c0365a27a862b53926c59213e2d8",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/q0_model.py": "b9d5ef44baf60f663bc950c16603aa69b280dfa056d4e0004f0190bf56373229",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/wav_lpc.py": "97f4a7997250b1053a95dc4737e85166247b0051d643861a7df03ae1b644c86c",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/wav_to_lpx4.py": "ccf8613d9c10891454cbfaebb9b0c68be97f09ba719237bfc7a079988d406750"
+  }
+}

@@ -225,6 +225,14 @@ PDF хранится в Git LFS. Скрипт: tools/build-music-format-guide.py
 Пересоздание и проверяемый срез: ATtiny13A/Music/docs/README.txt.
 
 МУЗЫКАЛЬНЫЕ ВАРИАНТЫ ДЛЯ ATTINY88
+Текущий общий движок UM88 и описание его формата:
+  ATtiny88/Music/universal/README.md
+  ATtiny88/Music/universal/FORMAT_RU.md
+Один код для девяти композиций; F_CPU берётся из конфигурации платформы.
+Сборщик: tools/build-universal-music.py --backend avr-asm.
+Данные: ATtiny88/Music/universal/songs/<имя>/score.json.
+
+Сохранённые специализированные версии для сравнения:
 Девять адаптированных прошивок, включая Люмьер стерео и три Mariachi:
   ATtiny88/Music/variants/<имя>/synth.hex и eeprom.hex
 Внутренние 8 МГц; Timer1 PWM, моно PB2/OC1B, стерео также PB1/OC1A.

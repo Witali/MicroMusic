@@ -1,0 +1,59 @@
+{
+  "rice_v4_general": {
+    "object_file": "rice_v4_general.avr.o",
+    "text_sections_bytes": 8604,
+    "progmem_tables_bytes": 1042,
+    "unlinked_not_final_flash": true,
+    "functions": {
+      "C2Ev": 194,
+      "5clampElii": 96,
+      "3q12Eih": 134,
+      "8readByteEv": 68,
+      "6read16Ev": 168,
+      "6read32Ev": 34,
+      "5beginEPFhPvjES0_j": 838,
+      "9readFrameEv": 1728,
+      "8readBitsEh": 212,
+      "9readBlockEv": 294,
+      "10decodeCodeERa": 464,
+      "11interpolateEh": 378,
+      "14interpolateLsfEh": 466,
+      "10polyFactorEPlih": 1142,
+      "12convertLsfAtEhPi": 780,
+      "4nextERh": 1608
+    },
+    "sram_core_bytes": 278
+  },
+  "rice_v5": {
+    "object_file": "rice_v5.avr.o",
+    "text_sections_bytes": 6680,
+    "progmem_tables_bytes": 1042,
+    "unlinked_not_final_flash": true,
+    "functions": {
+      "C2Ev": 150,
+      "5clampElii": 96,
+      "8readByteEv": 68,
+      "6read16Ev": 148,
+      "6read32Ev": 34,
+      "5beginEPKhj": 756,
+      "7readOneEv": 120,
+      "8readBitsEh": 222,
+      "9readFrameEv": 656,
+      "9readBlockEv": 214,
+      "10decodeCodeERa": 288,
+      "11interpolateEh": 6,
+      "14interpolateLsfEh": 466,
+      "10polyFactorEPlih": 1142,
+      "12convertLsfAtEhPi": 706,
+      "4nextERh": 1608
+    },
+    "sram_core_bytes": 272
+  },
+  "comparison": {
+    "delta_text_bytes": -1924,
+    "savings_text_percent": 22.362,
+    "no_avr_elf_or_cycle_measurement": true,
+    "compile_target": "avr-atmega328p",
+    "compiler": "clang version 17.0.0 (https://github.com/swiftlang/llvm-project.git 10999b6d034fe318f3d56c83bddb6572593a8bb0)"
+  }
+}

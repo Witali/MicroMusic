@@ -99,6 +99,7 @@ const report={mcu:'ATmega328P',simulator:'avr8js 0.21.1',compiler:'AVR GCC 7.3.0
   pitches:24,pitchMin:17,pitchMax:40,gainCodes:32,scales:64,shapeCodes:32,
   historyMin:-32768,historyMax:32767,pitchClipped,outputClipped,exact:true,
   historyPreserved:true,packetPreserved:true,guardsIntact:true,bitConsumptionExact:true,
+  indexParsingOutsideMeasuredController:true,
   calleeSavedRegistersPreserved:true,zeroRegisterRestored:true,asmControllerCycles:cycles[1],
   cControllerCycles:cycles[2],perPitch:pitchCycles.map(({pitch,backends})=>({pitch,
     asm:{...backends[1],mean:Number((backends[1].total/backends[1].calls).toFixed(3))},

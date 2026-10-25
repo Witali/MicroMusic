@@ -1,5 +1,5 @@
-import { AVRCore } from './avr-reference.js?v=20261025-attiny88-board';
-import { resolveAVRProfile } from './avr-profiles.js?v=20261025-attiny88-board';
+import { AVRCore } from './avr-reference.js?v=20261025-board-um88';
+import { resolveAVRProfile } from './avr-profiles.js?v=20261025-board-um88';
 import { parseHex } from './hex.js';
 
 // Same resampling, Q=0.5 biquads and 15-ms control smoothing as the C engine.
