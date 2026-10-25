@@ -35,6 +35,9 @@ No subjective-quality or MOS claim follows from waveform metrics.
 - Opus: libopus complexity10, VBR, 20-ms frames; test audio and voip modes.
   Vorbis: libvorbis bitrate control. Speex: libspeex complexity10, ABR;
   additionally retain native CBR mode points to expose bitrate granularity.
+  Native CBR requests: 2150/3950/5950/8000/11000/15000/18200/24600 bit/s.
+  The summary picks the highest CBR operating point under the byte cap;
+  it does not choose a mode by measured quality.
 - Fit standard-codec audio-packet bytes to the same ceiling; preserve the
   actual achieved rate and any underspend. Approximate matches are not
   called equal. Separately compare under complete-container LPX byte caps
@@ -70,6 +73,12 @@ No subjective-quality or MOS claim follows from waveform metrics.
 - [x] Protocol recorded before measuring the new corpus.
 - [x] Shared metric/container tests, including cache input/binary invalidation.
 - [x] Corpus preparation and source verification: 27 four-second cases.
-- [ ] Rate/quality matrix and actual-byte comparison.
-- [ ] LPX native/PWM/AVR validation.
-- [ ] Retained results, limits and listening shortlist.
+- [x] Rate/quality matrix and actual-byte comparison.
+- [x] LPX native/PWM/AVR validation: 56 points / 50 unique full ELF images.
+- [x] Retained results, limits and listening shortlist; no human scores.
+
+The result and limitations are in [README.md](README.md). Additional
+diagnostics retain a fractional-delay sensitivity experiment and an
+eight-second repeat of the heaviest new stream. They do not replace the
+primary full-reference metrics. The ordinary queue512 profile passes this
+matrix; the compact queue256 profile fails the long stress workload.
