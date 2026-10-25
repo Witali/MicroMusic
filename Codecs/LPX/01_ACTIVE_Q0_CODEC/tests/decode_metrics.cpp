@@ -15,7 +15,7 @@ int main(int argc,char **argv) {
  Lpx4HybridCore dec;
  if(!dec.begin(bin.data(),(uint16_t)bin.size()))return 3;
  uint32_t max_one=0,max_w80=0,max_w160=0;
- uint32_t s80=0,s160=0;uint16_t n=0;
+ uint32_t s80=0,s160=0,n=0;
  uint16_t hist[160]={0};uint8_t x;
  // Evaluate rolling activity without any dependency on PWM or host timing.
  n=0;uint32_t prev=0;std::fill(hist,hist+160,0);
