@@ -1742,3 +1742,19 @@ ATtiny88 / AVR25 без MUL, GNU AVR GCC 7.3.0, `-Os -fno-jump-tables`, GNU ABI.
 и ISR с ненулевым r1. Стерео сейчас только в архивных образах. Физическая
 плата не измерялась. Табличная диспетчеризация команд этим изменением
 не вводится: грамматика и огибающие табличные, opcode-dispatch — ветвления.
+
+### LPX: scale aliases, payload size and IRQ alignment
+
+ATmega328P / AVR5, GNU AVR GCC 7.3.0 ABI, `-Os`, explicit ASM opt-in;
+the arithmetic backend and C fallback are unchanged. An offline dynamic
+program can choose identical-valued scale-table indices using their actual
+delta-code lengths. Zero-q blocks may use any index without changing the
+pitch ring. Copy existing LSF/excitation bitfields to isolate this pass.
+
+Measured on 24 two-second streams: 120691 → 120637 payload bytes, exact
+PCM16/PWM, no underruns with active IRQ, queue512/prefill384 at 16MHz/8kHz.
+Some smaller streams nevertheless take up to 0.081625 more mean cycles per
+sample or 491 more cycles in a 160-sample window: changed bit alignment and
+IRQ phase matter. Only four size-reduced cases pass a strict no-cycle-growth
+gate. No decoder Flash/SRAM is added; this is not an assembly speedup.
+[Paired workloads, hashes and measurements](../../Codecs/LPX/research/q0-lossless-2026-10-25/scale.json).
