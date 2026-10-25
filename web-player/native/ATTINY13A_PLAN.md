@@ -492,7 +492,7 @@ No new hardware checklist item closes;21/30 remain complete.
 
 | Priority | Candidate | Evidence required before keeping it |
 | --- | --- | --- |
-| 1 | Physical ns and running-idle ADC aggregator shortcuts are retained. Matched kernel/HQ4 profiles are recorded; the synthetic kernel loss remains unexplained. Next prototype scoped I/O publication using the ownership audit below. The compiler already caches the mirror pointer. Watchdog-period caching, lazy watchdog conversion, equal-rate, bounded-multiply and native-delay guards are rejected. | Preserve public shadow restoration and zero-work/partial/fault/reset behavior before skipping configuration stores inside an explicitly owned execution scope. Keep full mutation publication, old-runtime fallback, ADC/domain phase, canonical state, enabled-watchdog/ADC and CLKI controls. Require balanced identical-runtime timing; retain the documented 0.942x kernel limitation. Repeat IRQ-active browser audio/underrun checks before default activation. |
+| 1 | Physical ns and running-idle ADC aggregator shortcuts are retained. Scoped I/O publication is tested and rejected; the compiler already caches the mirror pointer. Next audit repeated event/deadline scans and their invalidation owners before implementing reuse. Watchdog-period caching, lazy watchdog conversion, equal-rate, bounded-multiply and native-delay guards are also rejected. | Preserve public shadow restoration and zero-work/partial/fault/reset behavior. Cover writes, inputs, domain/source transitions, IRQ/wake, asynchronous NVM/watchdog and same-time mutations before reusing a deadline. Require complete state/pin/PCM parity, enabled-watchdog/ADC and CLKI controls and balanced identical-runtime timing. Retain the documented 0.942x ADC kernel limitation. Repeat IRQ-active browser audio/underrun checks before default activation. |
 | 2 | Evaluate adaptive bounded-region instruction budgets near deadlines. Separate inter-block fusion and constant folding are rejected. | Keep full flags, clock-before-commit, external entries and original fallback. Node HQ4 gains1.448x, but browser live audio still underruns; other firmware/event-heavy gains remain unproven. Measure budget changes separately from native scheduler changes. |
 | 3 | Validate optional phase-local liveness for default activation when stable performance measurements are available. | The full-context path remains an oracle. Size/parity are established; do not treat noisy median gains as speed evidence. Keep partial execution, reset/faults, SPM and IRQ effects exactly once. |
 | 4 | Extend proven direct WASM regions only where measured coverage justifies it; evaluate region SREG liveness independently. | The bounded cyclic register-local path is implemented. Preserve all observable SREG exits, indirect/external-entry fallback, aliases and visible AVR stack state; require real-firmware gains for extensions. |
@@ -560,13 +560,29 @@ The exact mirror body has one pointer load and 31 byte stores: pointer caching
 is already performed by the compiler. The [ownership audit](io-publication-audit.md)
 identifies 16 configuration bytes, but three new clock-service tests prove that
 their public memory shadows are restored even after direct host mutation.
-Do not remove these stores unconditionally. The next prototype must establish
+Do not remove these stores unconditionally. The prototype evaluated below had to establish
 an explicit execution scope, retain full publication outside it and at every
 configuration/reset mutation, and preserve zero-work, partial/fault, package and
 direct-native behavior. Do not eagerly normalize memory at scope entry/exit.
 No native code changes at this checkpoint; the runtime remains 118,071 bytes.
 The focused tests pass 3/3; the previous full 1,693-test result is not a new
 complete-suite run. Hardware/default-engine gates and the 21/30 count are unchanged.
+
+#### Scoped I/O publication checkpoint (rejected)
+
+The prototype keeps the first ordinary publication full, skips unchanged
+configuration inside one synchronous execution scope and retains full mutation
+and public API publication. All 1,711 candidate tests and the 15-case parity
+matrix pass. Seven paired counter traces confirm configuration publication falls
+2.27M to 25.6K for HQ4 without changing service/dynamic counts, state or PCM/pins.
+However, 320 timings/160 warmups do not justify keeping it: longer music gains
+are noisy, CLKI's initial 1.076x disappears (1.001x), and the watchdog-active
+kernel is 0.920x, slower in seven of eight pairs. Native/host/package changes are
+restored; eight public I/O boundary tests and diagnostic controls remain.
+See [sources, replay and results](../reports/io-publication-scope-20261025.md).
+Do not retry the same scope implementation as an untested pending task. Next
+audit repeated event/deadline scanning independently. The 118,071-byte runtime,
+default engine, unresolved ADC penalty and 21/30 checklist are unchanged.
 
 #### Watchdog clock checkpoint (period cache rejected; lazy sync audited)
 

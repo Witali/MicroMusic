@@ -1,0 +1,58 @@
+TAP version 13
+# Subtest: I/O publication across zero-work, batch and direct entries: compatible
+ok 1 - I/O publication across zero-work, batch and direct entries: compatible
+  ---
+  duration_ms: 59.263
+  type: 'test'
+  ...
+# Subtest: I/O publication across zero-work, batch and direct entries: physical
+ok 2 - I/O publication across zero-work, batch and direct entries: physical
+  ---
+  duration_ms: 79.0966
+  type: 'test'
+  ...
+# Subtest: I/O publication across zero-work, batch and direct entries: clki
+ok 3 - I/O publication across zero-work, batch and direct entries: clki
+  ---
+  duration_ms: 4.1294
+  type: 'test'
+  ...
+# Subtest: unknown CLKI WAIT and a zero physical deadline do not eagerly normalize I/O
+ok 4 - unknown CLKI WAIT and a zero physical deadline do not eagerly normalize I/O
+  ---
+  duration_ms: 4.7468
+  type: 'test'
+  ...
+# Subtest: reset cancels a partial store and restores I/O shadows: power=false
+ok 5 - reset cancels a partial store and restores I/O shadows: power=false
+  ---
+  duration_ms: 71.5924
+  type: 'test'
+  ...
+# Subtest: reset cancels a partial store and restores I/O shadows: power=true
+ok 6 - reset cancels a partial store and restores I/O shadows: power=true
+  ---
+  duration_ms: 2.7223
+  type: 'test'
+  ...
+# Subtest: faults preserve publication at their original boundary
+ok 7 - faults preserve publication at their original boundary
+  ---
+  duration_ms: 83.6783
+  type: 'test'
+  ...
+# Subtest: a WASM trap restores native exports without eagerly publishing memory
+ok 8 - a WASM trap restores native exports without eagerly publishing memory
+  ---
+  duration_ms: 2.9267
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 454.6699

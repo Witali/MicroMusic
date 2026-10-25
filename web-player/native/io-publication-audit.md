@@ -2,8 +2,10 @@
 
 Audited against device.c at `9583026` and native SHA
 `b6a678437b62fac3e6be1f90d90cc0bc76b9c71c0752c438504c2cda858643b4`.
-No publication optimization is implemented. [Matched profiling and raw evidence](../reports/adc-regression-profile-20261025.md)
-select this next candidate while leaving the internal-kernel regression unresolved.
+No publication optimization is retained. The scoped prototype passed correctness
+checks but was [rejected after measurement](../reports/io-publication-scope-20261025.md).
+The earlier [matched profiles](../reports/adc-regression-profile-20261025.md) leave
+the idle-ADC internal-kernel regression unresolved.
 
 ## Current behavior
 
@@ -56,10 +58,11 @@ An unconditional dynamic-only clock mirror would fail these tests. Source writes
 alone cannot detect direct mutation of a typed-array view. Merely labeling the
 registers software-owned, or only checking normal firmware, is insufficient.
 
-## Next implementation contract
+## Evaluated scope contract
 
-Prototype an explicit scope owned by one synchronous native/generated execution
-call. Outside that scope retain full publication. Within it, configuration can
+The rejected prototype used an explicit scope owned by one synchronous
+native/generated execution call. Outside that scope retain full publication.
+Within it, configuration can
 be reused only after the shadow has been made canonical at the publication point
 where the old implementation would do so. All actual mutations/reset stages
 still publish their complete effects. Dynamic bytes retain original phase timing.
@@ -83,6 +86,14 @@ watchdog, internal/CLKI/divisor controls, SPM/packages and balanced native timin
 The expected benefit is fewer stores; no speed/size/memory claim follows until
 actual code and measurements verify it. Browser underrun/default-engine gates
 remain separate. The full-device checklist stays 21/30.
+
+The experiment passes 1,711 tests and 15 parity cases and reduces configuration
+publication entries, but the longer watchdog-active row is 0.920x (seven of eight
+pairs slower). The implementation, optional native exports and host/package
+changes are removed. Eight independent publication-boundary regressions remain.
+This protocol is historical evidence, not the next implementation task. Revisit
+it only with a materially different design; audit repeated event/deadline scans
+next. The current mirror still publishes all 31 bytes.
 
 Manufacturer reference: [ATtiny13A DS40002307A](https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf),
 sections 5.4 and10–14. It defines register/bus behavior; public host-memory
