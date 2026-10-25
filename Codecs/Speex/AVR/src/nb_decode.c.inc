@@ -1,5 +1,6 @@
 #include "nb3_header.h"
 #include "nb3_subframe.h"
+#include "nb3_lsp.h"
 #if SPEEX_ENABLE_WB1
 #include "wb_internal.h"
 #endif
@@ -48,7 +49,7 @@ _Static_assert(NB_SUBFRAME_SIZE==40 && NB_PITCH_START==17 && NB_PITCH_END==144,
                "Packed pitch is specialized for the pinned NB3 frame/pitch bounds");
 _Static_assert(NB_ORDER==10 && NB_NB_SUBFRAMES==4 && LSP_MARGIN==16,
                "Quarter-step LSP interpolation requires the pinned NB3 geometry");
-SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, void *vout)
+SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packet, void *vout)
 {
    DecState *st=(DecState *)state;
    spx_word16_t *out=(spx_word16_t *)vout;
@@ -56,31 +57,25 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, voi
    char *stack=st->stack;
    int qe,sub,i;
    uint8_t repeat_lsp;
-   const uint8_t *packet;
-   VARDECL(spx_lsp_t *qlsp);
+   VARDECL(spx_lsp_t *lsp_delta);
    VARDECL(spx_coef_t *ak);
    VARDECL(spx_lsp_t *interp_qlsp);
    VARDECL(uint8_t *indices);
-   if (!bits) return -2;
-   packet=(const uint8_t *)bits->chars;
+   if (!packet) return -2;
    SPEEX_MOVE(st->excBuf,st->excBuf+NB_FRAME_SIZE,NB_DEC_SHIFT_COUNT);
-   ALLOC(qlsp,NB_ORDER,spx_lsp_t);
+   ALLOC(lsp_delta,NB_ORDER,spx_lsp_t);
    repeat_lsp=st->first || (st->lsp_key[0]==(packet[0]&7) &&
                   st->lsp_key[1]==packet[1] && st->lsp_key[2]==(packet[2]&254));
-   if (!st->first && repeat_lsp) {
-      /* Validated raw NB3 packets start at bit 5. Three 6-bit LSP fields
-       * finish at bit 23. Gain bit 23 is deliberately excluded from the key. */
-      bits->charPtr=2;bits->bitPtr=7;
-      SPEEX_COPY(qlsp,st->old_qlsp,NB_ORDER);
-   } else {
-      lsp_unquant_lbr(qlsp,NB_ORDER,bits);
+   if (st->first || !repeat_lsp) {
+      /* Decode directly in quarter units. The original two P14 products
+       * are integral for NB3's multiple-of-16 endpoints. Prepare the same
+       * delta before excitation, avoiding a raw-angle temporary round trip. */
+      speex_nb3_lsp_quarters(packet,lsp_delta);
+      if(st->first) for(i=0;i<NB_ORDER;i++) {st->old_qlsp[i]=4*lsp_delta[i];lsp_delta[i]=0;}
+      else for(i=0;i<NB_ORDER;i++)lsp_delta[i]-=st->old_qlsp[i]>>2;
       st->lsp_key[0]=packet[0]&7;st->lsp_key[1]=packet[1];st->lsp_key[2]=packet[2]&254;
    }
-   if (st->first) SPEEX_COPY(st->old_qlsp,qlsp,NB_ORDER);
-   qe=speex_bits_unpack_unsigned(bits,5);
-   /* The remaining fields use the immutable packet map. Retain the final
-    * cursor while releasing its pointer before the excitation loop. */
-   bits->charPtr=20;bits->bitPtr=0;
+   qe=speex_nb3_frame_gain(packet);
    /* The validated packet map supplies the complete 33-bit group once.
     * This four-byte slot is dead when LPC synthesis reuses offset 20. */
    ALLOC(indices,4,uint8_t);
@@ -107,15 +102,12 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, voi
       }
    }
    /* Release the excitation indices; synthesis appends distinct ak/interp
-    * arrays after qlsp, retaining the four original interpolation steps. */
-   stack=(char *)(qlsp+NB_ORDER);
+    * arrays after lsp_delta, retaining the four original interpolation steps. */
+   stack=(char *)(lsp_delta+NB_ORDER);
    ALLOC(ak,NB_ORDER,spx_coef_t);
    ALLOC(interp_qlsp,NB_ORDER,spx_lsp_t);
-   /* Reuse the raw-endpoint scratch for a constant quarter-frame delta.
-    * On reset old_qlsp already equals qlsp, giving zero deltas. A changed
-    * frame advances old_qlsp four times; margin corrections touch only out. */
-   if (!repeat_lsp || st->first) for(i=0;i<NB_ORDER;i++)
-      qlsp[i]=(qlsp[i]>>2)-(st->old_qlsp[i]>>2);
+   /* The delta was prepared before excitation. Cache hits do not read it;
+    * changed frames advance raw state four times, with margin only on out. */
    for (sub=0;sub<NB_NB_SUBFRAMES;sub++)
    {
       spx_word16_t *sp;
@@ -132,7 +124,7 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, voi
        * On reset, compute it after the first synthesis step as upstream does.
        * IIR always runs, including its coefficient-age transition. */
       if (update_lpc) {
-         speex_nb3_interpolate(st->old_qlsp,qlsp,interp_qlsp);
+         speex_nb3_interpolate(st->old_qlsp,lsp_delta,interp_qlsp);
          lsp_to_lpc(interp_qlsp,ak,NB_ORDER,stack);
       }
       /* Excitation is complete and remains read-only during synthesis.

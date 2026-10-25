@@ -1,0 +1,15 @@
+{
+  "cases": 8388608,
+  "all18BitLspAnd5BitGainCombinations": true,
+  "quartersAndGainExact": true,
+  "oracle": "Untouched Xiph quant_lsp.c, bits.c and original tables; separately compiled non-LTO objects",
+  "compiler": "Clang 24 -std=c11 -O2 -fwrapv -fno-strict-aliasing",
+  "minRaw": 96,
+  "maxRaw": 24880,
+  "binarySha256": "48a28494561bfe7832b11415b1f6f6fd4ac984fb6702867445f505339fe09342",
+  "sourceSha256": {
+    "src/nb3_lsp.h": "3782d31d1c9f5b9cf84a1e7e8393c9c55d61efc7cc0adaadac2ee136668a471a",
+    "tests/prefix.c": "6f969d7641079b1d247d535866c0aaba9bb3ccab74fac17455e5f36416a6db70",
+    "tools/build_prefix_test.py": "c5a4137d4bb7bd4aa7325f20e7bc28ee3916a1161e90e969fd6ce0bc3ccbbbc2"
+  }
+}
