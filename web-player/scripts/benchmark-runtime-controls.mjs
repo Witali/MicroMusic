@@ -41,17 +41,26 @@ for(const [kind,version] of Object.entries({old,current})){
   version.module=new WebAssembly.Module(version.binary);assert.deepEqual(WebAssembly.Module.imports(version.module),[]);
   assert.equal(new WebAssembly.Instance(version.module).exports.memory.buffer.byteLength,131072);
 }
-for(const key of ['exports','flags','compilerVersion','sources'])assert.deepEqual(old.manifest[key],current.manifest[key],key);
+const scopeChange=values['change-set']==='io-publication-scope';
+const scopeExports=['avr_device_io_scope_begin','avr_device_io_scope_end'];
+for(const key of ['exports','flags','compilerVersion','sources']){
+  const actual=scopeChange&&['exports','flags'].includes(key)?current.manifest[key].filter(value=>
+    !scopeExports.some(name=>value===(key==='exports'?name:'-Wl,--export='+name))):current.manifest[key];
+  assert.deepEqual(old.manifest[key],actual,key);
+}
+if(scopeChange)for(const name of scopeExports){assert.ok(current.manifest.exports.includes(name));assert.ok(!old.manifest.exports.includes(name));}
 const changedInputs=Object.keys(current.manifest.inputs).filter(path=>old.manifest.inputs[path]!==current.manifest.inputs[path]);
-const changeSet=values['change-set'];assert.ok(['long-internal-span','service-inlining','clock-identity','clock-multiply','clock-delay','ns-remainder','watchdog-period','watchdog-lazy','adc-idle'].includes(changeSet));
-assert.deepEqual(changedInputs,changeSet==='long-internal-span'?
+const changeSet=values['change-set'];assert.ok(['long-internal-span','service-inlining','clock-identity','clock-multiply','clock-delay','ns-remainder','watchdog-period','watchdog-lazy','adc-idle','io-publication-scope'].includes(changeSet));
+assert.deepEqual(changedInputs,scopeChange?
+  ['web-player/native/avr-device.inc','web-player/native/peripherals/device.c','web-player/native/peripherals/device.h']:changeSet==='long-internal-span'?
   ['web-player/native/peripherals/device.c','web-player/native/peripherals/device.h']:
   changeSet.startsWith('clock-')?['web-player/native/peripherals/device_clock.h']:
   changeSet.startsWith('watchdog-')?['web-player/native/peripherals/device.c','web-player/native/devices/attiny13a/clki_board.inc']:
   changeSet==='adc-idle'?['web-player/native/peripherals/analog.c','web-player/native/peripherals/analog_adc.c','web-player/native/peripherals/analog_adc.h']:['web-player/native/peripherals/device.c']);
 const hostSources=['web-player/lib/avr-transpiler.js','web-player/lib/avr-wasm-phases.js',
   'web-player/lib/avr-transpiled-runtime.js','web-player/lib/avr-runtime.js','web-player/lib/attiny13a-runtime.js'];
-for(const path of hostSources)assert.equal(text(path),git(['show',baseline+':'+path]).toString().replaceAll('\r\n','\n'),path+' unchanged');
+for(const path of hostSources)if(!scopeChange||path!=='web-player/lib/avr-transpiled-runtime.js')
+  assert.equal(text(path),git(['show',baseline+':'+path]).toString().replaceAll('\r\n','\n'),path+' unchanged');
 const variants=controlLabels.map(id=>({id,...id.startsWith('old')?old:current}));
 assert.equal(variants[0].module,variants[1].module);assert.equal(variants[2].module,variants[3].module);
 assert.notEqual(old.module,current.module);
@@ -135,9 +144,11 @@ const report={schema:'micromusic-runtime-identical-controls-v1',createdAt:new Da
   host:{node:process.version,v8:process.versions.v8,flags:process.execArgv,platform:platform(),release:release(),cpu:cpus()[0]?.model},
   parameters:{trials,warmups,frames,kernelFrames,instructions,rate,block,schedule,changeSet},
   provenance:{changedInputs,runtimes:Object.fromEntries(variants.map(v=>[v.id,{sha256:sha(v.binary),bytes:v.binary.length,inputs:v.manifest.inputs}])),
-    sourceSha256:Object.fromEntries(support.map(path=>[path,sha(text(path))]))},
+    sourceSha256:Object.fromEntries(support.map(path=>[path,sha(text(path))])),
+    ...(scopeChange?{baselineHostSha256:Object.fromEntries(hostSources.map(path=>[path,sha(git(['show',baseline+':'+path]).toString().replaceAll('\r\n','\n'))]))}:{})},
   method:{identity:'oldA/oldB use one native Module object; newA/newB use another. All labels use identical options, full default trace, generated CPU bytes and ABI. Fresh instances and memories for every run.',
-    compilation:'CPU lowering happens once per case; the unmodified precompiled loader creates a fresh CPU Module on each construction, asserted by object identity. Construction/compilation, input setup, snapshots, hashing and checks are outside execution timers.',
+    compilation:'CPU lowering happens once per case; the precompiled loader creates a fresh CPU Module on each construction, asserted by object identity. Construction/compilation, input setup, snapshots, hashing and checks are outside execution timers.',
+    ...(scopeChange?{ioPublication:'The current host wrapper is shared by all four labels. Only the candidate native runtime supplies the two validated optional scope exports; historical runtimes retain full publication. Scope begin/end run once per synchronous generated batch, inside execution timers. Native flags differ only by these two exports; the CPU ABI and generated bytes must remain equal.'}:{}),
     warmup:'Each label receives the same number of discarded full-workload warmups in recorded Williams order (position-balanced when warmups is4 or8). Warmups are retained and checked against the same exact reference; no stable-tiering guarantee is inferred.',
     order:'Williams four-label design and reversed rows; every label occupies every position equally and every directed adjacent pair occurs equally often. Runs are serial. No affinity, GC or CPU-frequency control.',
     comparison:'Exact PCM bytes, all CPU/device state and diagnostics, SRAM/Flash/EEPROM/IRQ and complete host tail after every batch. No observer omission or diagnostic normalization.',

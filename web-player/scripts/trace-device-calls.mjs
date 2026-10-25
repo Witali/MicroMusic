@@ -14,7 +14,8 @@ import {AT13_MASK as MASK} from '../lib/attiny13a-registers.js';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const {values}=parseArgs({options:{'out-dir':{type:'string',default:'build/traces/current'},emsdk:{type:'string'},
-  'physical-firmware':{type:'boolean',default:false},'eager-collector':{type:'boolean',default:false}}});
+  'physical-firmware':{type:'boolean',default:false},'eager-collector':{type:'boolean',default:false},
+  'full-publication':{type:'boolean',default:false}}});
 const out=resolve(root,values['out-dir']),native=join(out,'native');mkdirSync(out,{recursive:true});
 const sha=b=>createHash('sha256').update(b).digest('hex');
 const source=p=>readFileSync(resolve(root,p),'utf8').replaceAll('\r\n','\n');
@@ -46,6 +47,9 @@ const selected={
 // Optional candidate helper: the function table records its presence explicitly.
 if(source('web-player/native/peripherals/device.c').includes('static void watchdog_sync('))
   selected['peripherals/device.c'].push('watchdog_sync');
+for(const helper of ['mirror_configuration','mirror_dynamic'])
+  if(source('web-player/native/peripherals/device.c').includes('static void '+helper+'('))
+    selected['peripherals/device.c'].push(helper);
 const functions=[];
 for(const [file,names] of Object.entries(selected)){
   let text=readFileSync(join(native,file),'utf8');
@@ -141,7 +145,8 @@ for(const divisor of [1,256])cases.push({id:'kernel-clki-20m-div'+divisor,binary
 for(const adcState of ['enabled-idle','converting'])cases.push({
   ...cases.find(row=>row.id==='kernel-clki-20m-div1'),id:'kernel-clki-20m-div1-adc-'+adcState,adcState});
 function make(entry,runtimeModule){
-  const c=new ATtiny13A(entry.binary,entry.eeprom,{...entry.options,runtimeModule});
+  const c=new ATtiny13A(entry.binary,entry.eeprom,{...entry.options,runtimeModule,
+    optimizeIOPublication:!values['full-publication']});
   if(entry.adcState){c.writeIO(IO.ADMUX,3);c.writeIO(IO.ADCSRA,entry.adcState==='converting'?0xe7:MASK.ADEN);}
   if(entry.divisor){
     c.writeIO(IO.CLKPR,128);c.writeIO(IO.CLKPR,Math.log2(entry.divisor));
@@ -161,13 +166,13 @@ function capture(c,entry){
 }
 const stringify=v=>JSON.stringify(v,(_,v)=>typeof v==='bigint'?v.toString():v,2)+'\n';
 const report={schema:'micromusic-native-call-trace-v1',createdAt:new Date().toISOString(),
-  policy:{physicalFirmware:values['physical-firmware'],eagerCollector:values['eager-collector'],
+  policy:{physicalFirmware:values['physical-firmware'],eagerCollector:values['eager-collector'],fullPublication:values['full-publication'],
     description:'Optional eager collector forces only the copied public PCM pressure query true; ordinary scheduling/CPU semantics stay unchanged. Counters never establish production elapsed time.'},
   git:{head:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim()},
   productionRuntimeSha256:sha(production),countedRuntimeSha256:sha(countedBytes),
   sourceSha256NormalizedLF:{...Object.fromEntries(Object.keys(manifest.inputs).map(p=>[p,sha(source(p))])),
     ...Object.fromEntries([...catalogPaths,'web-player/scripts/trace-device-calls.mjs',
-      'web-player/lib/attiny13a-runtime.js','web-player/lib/avr-transpiler.js','web-player/lib/attiny13a-registers.js',
+      'web-player/lib/attiny13a-runtime.js','web-player/lib/avr-transpiled-runtime.js','web-player/lib/avr-transpiler.js','web-player/lib/attiny13a-registers.js',
       'web-player/tests/fixtures/attiny13a-system-firmware.mjs'].map(p=>[p,sha(source(p))]))},
   functions,method:'Counters and first256 chronological source-level function entries in an ignored diagnostic build. Includes entries later inlined by O3, not a WASM call count. Constructors and input submission are excluded; counters reset immediately before capture. Integer board time is ps for CLKI and oscillator half ticks for compatible firmware. No host timestamps or per-edge JS callbacks. Instrumentation changes executable code, layout and performance: its times are never used as production performance or sampling percentages. Final full public/data/Flash/EEPROM/IRQ state and raw PCM must match an uninstrumented production reference.',results:[]};
 for(const entry of cases){
