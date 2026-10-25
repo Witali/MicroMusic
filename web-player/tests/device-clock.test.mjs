@@ -71,3 +71,23 @@ test('clock deadline calculation preserves phase before rounding and detects ove
         }
   assert.equal(c.delay(1n,0n,1n,0n),0);assert.equal(c.delay(1n,10n,1n,10n),0);
 });
+
+test('deadline rounding retains every small fraction and native-product boundary',()=>{
+  const c=create();
+  const check=(units,denominator,rate,phase)=>{
+    const product=units*denominator,expected=units?(product-phase+rate-1n)/rate:0n;
+    // Preserve the original wide-path admission: its intermediate quotient
+    // must fit too, even if later phase subtraction could reduce the result.
+    const accepted=product/rate<=U64&&expected<=U64;
+    const before=unsigned(c.q());assert.equal(c.delay(units,denominator,rate,phase),Number(accepted));
+    if(accepted)assert.equal(unsigned(c.q()),expected);else assert.equal(unsigned(c.q()),before);
+  };
+  for(let d=1n;d<=24n;d++)for(let rate=1n;rate<=32n;rate++)
+    for(let units=0n;units<=6n;units++)for(let phase=0n;phase<d;phase++)check(units,d,rate,phase);
+  for(const d of [1n,2n,19200000n,1000000000000n,256000000000000n,U64]){
+    const edge=U64/d;
+    for(const units of new Set([0n,1n,edge,edge?edge-1n:0n,edge<U64?edge+1n:U64,U64]))
+      for(const rate of [1n,2n,128000n,19200000n,2000000000n,U64])
+        for(const phase of new Set([0n,d/2n,d-1n]))check(units,d,rate,phase);
+  }
+});
