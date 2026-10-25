@@ -492,7 +492,7 @@ No new hardware checklist item closes;21/30 remain complete.
 
 | Priority | Candidate | Evidence required before keeping it |
 | --- | --- | --- |
-| 1 | Physical ns and running-idle ADC aggregator shortcuts are retained. Scoped I/O publication is tested and rejected; the compiler already caches the mirror pointer. Deadline lookup inlining is retained for the measured rhythmic workload. Next audit recurring GPIO synchronizer/settled queries and their activation owners. Watchdog-period caching, lazy watchdog conversion, equal-rate, bounded-multiply and native-delay guards are also rejected. | Preserve public shadow restoration and zero-work/partial/fault/reset behavior. Retain same-base cache invalidation. Audit GPIO phase, PINB/INT0/PCINT/T0/CLKI consumers, sleep/PRR and reactivation before suppressing recurring service. Require complete state/pin/PCM parity, enabled-watchdog/ADC and CLKI controls and balanced identical-runtime timing. Retain the documented 0.942x ADC kernel limitation. Repeat IRQ-active browser audio/underrun checks before default activation. |
+| 1 | Physical ns and running-idle ADC aggregator shortcuts are retained. Scoped I/O publication is tested and rejected; the compiler already caches the mirror pointer. Deadline lookup inlining is retained for the measured rhythmic workload. Settled internal GPIO now suppresses proven redundant dispatch; its elapsed-time gain remains unproven. Reprofile remaining board service before selecting another scheduler change. Watchdog-period caching, lazy watchdog conversion, equal-rate, bounded-multiply and native-delay guards are also rejected. | Preserve public shadow restoration and zero-work/partial/fault/reset behavior. Retain same-base cache invalidation and every GPIO dependency-owner hook. Keep phase, PINB/INT0/PCINT/T0/CLKI, sleep/PRR and reactivation correct. Require complete state/pin/PCM parity, enabled-watchdog/ADC and CLKI controls and balanced identical-runtime timing. Do not turn source-entry reductions into elapsed-speed claims. Retain the documented 0.942x ADC kernel limitation. Repeat IRQ-active browser audio/underrun checks before default activation. |
 | 2 | Evaluate adaptive bounded-region instruction budgets near deadlines. Separate inter-block fusion and constant folding are rejected. | Keep full flags, clock-before-commit, external entries and original fallback. Node HQ4 gains1.448x, but browser live audio still underruns; other firmware/event-heavy gains remain unproven. Measure budget changes separately from native scheduler changes. |
 | 3 | Validate optional phase-local liveness for default activation when stable performance measurements are available. | The full-context path remains an oracle. Size/parity are established; do not treat noisy median gains as speed evidence. Keep partial execution, reset/faults, SPM and IRQ effects exactly once. |
 | 4 | Extend proven direct WASM regions only where measured coverage justifies it; evaluate region SREG liveness independently. | The bounded cyclic register-local path is implemented. Preserve all observable SREG exits, indirect/external-entry fallback, aliases and visible AVR stack state; require real-firmware gains for extensions. |
@@ -600,8 +600,34 @@ are possible within the large controls. Keep the narrow workload evidence;
 browser IRQ/underrun/default-engine gates and the old ADC penalty remain open.
 Native/tools: `741a1301`. See the [audit](deadline-dispatch-audit.md) and
 [measurements with isolated replay](../reports/deadline-dispatch-20261025.md).
-Next audit repeated GPIO settled/synchronizer queries before activity changes,
-independently of this compiler hint. Checklist remains 21/30, nine open.
+The subsequent GPIO audit is recorded below, independently of this compiler
+hint. Checklist remains 21/30, nine open.
+
+#### Settled GPIO checkpoint (redundant work removed; elapsed gain unproven)
+
+`df1c264e` adds a private board certificate, using existing padding, for the full
+original GPIO predicate. Reuse the raw infinite-deadline proof only with clkI/O
+running, an internal source and half!=UINT64_MAX. Reset, domains, GPIO writes,
+Timer0 overrides and external-input delivery invalidate it. Preserve final
+clock_high, zero/reverse spans and all existing bus/publication boundaries.
+Low-level GPIO/API remain unchanged; CLKI always takes the original edge path.
+See the [dependency audit](gpio-activity-audit.md).
+
+All 1,722 default/shared-tool tests pass, including 18 private-state differential
+cases and the sentinel guards. Isolated rebuild and 15 generated-CPU cases pass;
+CPU bytes/ABI remain identical. Native is 118,946 bytes (+204), with original
+109 function exports, no imports and fixed two-page memory. HQ4 traces remove
+2.16 million recurring advances and 3.68 million settled queries, preserving
+state, PCM and pins; all CLKI entry counts remain equal. These are work-removal
+claims. Final balanced 192 timings / 96 warmups measure 0.992–1.069x medians with
+large identity controls, so sustained elapsed gains remain unproven. The first
+variant is archived separately, not pooled as the final candidate.
+
+[Sources, measurements and replay](../reports/gpio-idle-20261025.md) retain both
+variants and the original-dispatch oracle. Next reprofile remaining recurring
+board service, then choose a distinct scheduler or instruction-budget change.
+No real-time/browser/default-engine acceptance closes; `wasm` remains default,
+the old ADC penalty is unresolved and the hardware count stays 21/30, nine open.
 
 #### Watchdog clock checkpoint (period cache rejected; lazy sync audited)
 

@@ -1,0 +1,106 @@
+TAP version 13
+# Subtest: settled internal GPIO suppresses recurring calls and preserves every phase: mode=0
+ok 1 - settled internal GPIO suppresses recurring calls and preserves every phase: mode=0
+  ---
+  duration_ms: 38.7819
+  type: 'test'
+  ...
+# Subtest: settled internal GPIO suppresses recurring calls and preserves every phase: mode=1
+ok 2 - settled internal GPIO suppresses recurring calls and preserves every phase: mode=1
+  ---
+  duration_ms: 19.3558
+  type: 'test'
+  ...
+# Subtest: GPIO mutations, Timer0 overrides and T0 preserve full canonical state: mode=0
+ok 3 - GPIO mutations, Timer0 overrides and T0 preserve full canonical state: mode=0
+  ---
+  duration_ms: 44.2804
+  type: 'test'
+  ...
+# Subtest: GPIO mutations, Timer0 overrides and T0 preserve full canonical state: mode=1
+ok 4 - GPIO mutations, Timer0 overrides and T0 preserve full canonical state: mode=1
+  ---
+  duration_ms: 14.9744
+  type: 'test'
+  ...
+# Subtest: GPIO mutations, Timer0 overrides and T0 preserve full canonical state: mode=2
+ok 5 - GPIO mutations, Timer0 overrides and T0 preserve full canonical state: mode=2
+  ---
+  duration_ms: 28.6332
+  type: 'test'
+  ...
+# Subtest: same-time inputs, clock gating and IRQ acknowledgement refresh GPIO: mode=0
+ok 6 - same-time inputs, clock gating and IRQ acknowledgement refresh GPIO: mode=0
+  ---
+  duration_ms: 3.5358
+  type: 'test'
+  ...
+# Subtest: same-time inputs, clock gating and IRQ acknowledgement refresh GPIO: mode=1
+ok 7 - same-time inputs, clock gating and IRQ acknowledgement refresh GPIO: mode=1
+  ---
+  duration_ms: 3.2012
+  type: 'test'
+  ...
+# Subtest: same-time inputs, clock gating and IRQ acknowledgement refresh GPIO: mode=2
+ok 8 - same-time inputs, clock gating and IRQ acknowledgement refresh GPIO: mode=2
+  ---
+  duration_ms: 7.0116
+  type: 'test'
+  ...
+# Subtest: power reset assertion and preapplied acknowledgement clear settled ownership
+ok 9 - power reset assertion and preapplied acknowledgement clear settled ownership
+  ---
+  duration_ms: 3.1657
+  type: 'test'
+  ...
+# Subtest: CLKI keeps its original GPIO path and all source-edge observations
+ok 10 - CLKI keeps its original GPIO path and all source-edge observations
+  ---
+  duration_ms: 46.6379
+  type: 'test'
+  ...
+# Subtest: queued input before/at/after a falling edge retains PINB latency: mode=0
+ok 11 - queued input before/at/after a falling edge retains PINB latency: mode=0
+  ---
+  duration_ms: 5.983
+  type: 'test'
+  ...
+# Subtest: queued input before/at/after a falling edge retains PINB latency: mode=1
+ok 12 - queued input before/at/after a falling edge retains PINB latency: mode=1
+  ---
+  duration_ms: 7.332
+  type: 'test'
+  ...
+# Subtest: queued input before/at/after a falling edge retains PINB latency: mode=2
+ok 13 - queued input before/at/after a falling edge retains PINB latency: mode=2
+  ---
+  duration_ms: 10.2817
+  type: 'test'
+  ...
+# Subtest: a settled certificate cannot hide reversed GPIO time
+ok 14 - a settled certificate cannot hide reversed GPIO time
+  ---
+  duration_ms: 1.3685
+  type: 'test'
+  ...
+# Subtest: stable and pending GPIO pipelines retain phase across CLKPR and OSCCAL changes
+ok 15 - stable and pending GPIO pipelines retain phase across CLKPR and OSCCAL changes
+  ---
+  duration_ms: 28.9381
+  type: 'test'
+  ...
+# Subtest: seeded GPIO register/input changes match original dispatch at odd, even and zero spans
+ok 16 - seeded GPIO register/input changes match original dispatch at odd, even and zero spans
+  ---
+  duration_ms: 257.7069
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 25250.2162
