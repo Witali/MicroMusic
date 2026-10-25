@@ -16,7 +16,9 @@ SOURCE={'core_sha256':ROOT/'src/Lpx4HybridCore.cpp','core_header_sha256':ROOT/'s
  'runner_sha256':ROOT.parent/'validation/atmega328p/sim_profile.c'}
 
 
-def run(corpus,results,output,baseline_avr,avr_bin,runner,lib=None,wsl=None,watch=False):
+def run(corpus,results,output,baseline_avr,avr_bin,runner,lib=None,wsl=None,watch=False,stages=None):
+    stages=tuple(STAGES if stages is None else stages)
+    if not stages or len(stages)!=len(set(stages)):raise ValueError('Expected distinct benchmark stages')
     corpus,results,output=map(Path,(corpus,results,output));output.mkdir(parents=True,exist_ok=True)
     manifest=json.loads((corpus/'corpus.json').read_text(encoding='utf-8'))
     old=json.loads(Path(baseline_avr).read_text(encoding='utf-8'))
@@ -26,6 +28,8 @@ def run(corpus,results,output,baseline_avr,avr_bin,runner,lib=None,wsl=None,watc
         'profile':'ATmega328P 16MHz / 8kHz; ASM enabled; queue512/prefill384/unroll9; v3 mask24',
         'source_sha256':source_hashes,'expected_cases':len(manifest['cases'])}
     if report['source_sha256']!=source_hashes:raise ValueError('AVR source changed since previous measurement')
+    if tuple(report.get('stages',STAGES))!=stages and report['cases']:raise ValueError('AVR benchmark stages changed')
+    report['stages']=list(stages)
     done={r['id']:r['benchmark_fingerprint'] for r in report['cases']}
     with BatchSession('batch',v3_features=24) as decoder:
         while True:
@@ -38,7 +42,7 @@ def run(corpus,results,output,baseline_avr,avr_bin,runner,lib=None,wsl=None,watc
                 if rate!=8000 or ref.shape!=(32000,) or sha(ref.astype('<i2').tobytes())!=case['reference_sha256']:raise ValueError('Reference changed')
                 points=[]
                 for row in data['rates']:
-                    for stage in STAGES:
+                    for stage in stages:
                         item=row[stage]
                         if item['status']!='ok':continue
                         blob=Path(item['path']).read_bytes();digest=sha(blob)
@@ -79,4 +83,5 @@ if __name__=='__main__':
     for name in ('corpus','results','output','baseline_avr'):ap.add_argument(name,type=Path)
     ap.add_argument('--avr-bin',type=Path,required=True);ap.add_argument('--sim-runner',type=Path,required=True)
     ap.add_argument('--sim-lib-dir',type=Path);ap.add_argument('--wsl');ap.add_argument('--watch',action='store_true')
-    a=ap.parse_args();run(a.corpus,a.results,a.output,a.baseline_avr,a.avr_bin,a.sim_runner,a.sim_lib_dir,a.wsl,a.watch)
+    ap.add_argument('--stages',nargs='+',help='Selected benchmark stages; defaults to the original four ablations')
+    a=ap.parse_args();run(a.corpus,a.results,a.output,a.baseline_avr,a.avr_bin,a.sim_runner,a.sim_lib_dir,a.wsl,a.watch,a.stages)
