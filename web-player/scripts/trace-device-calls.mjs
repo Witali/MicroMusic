@@ -10,6 +10,7 @@ import {parseArgs} from 'node:util';
 import {ATtiny13A} from '../lib/attiny13a-runtime.js';
 import {parseHex} from '../lib/hex.js';
 import {avr,IO,flash} from '../tests/fixtures/attiny13a-system-firmware.mjs';
+import {AT13_MASK as MASK} from '../lib/attiny13a-registers.js';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const {values}=parseArgs({options:{'out-dir':{type:'string',default:'build/traces/current'},emsdk:{type:'string'},
@@ -51,7 +52,21 @@ for(const [file,names] of Object.entries(selected)){
   for(const name of names){
     const id=functions.length,pattern=new RegExp('(^[^(){};]*\\b'+name+'\\s*\\([^;{}]*\\)\\s*\\{)','gm');
     const matches=[...text.matchAll(pattern)];assert.equal(matches.length,1,file+': '+name+' definition');
-    text=text.replace(pattern,'$1 MM_TRACE_HIT('+id+');');functions.push({id,name,source:'web-player/native/'+file});
+    functions.push({id,name,source:'web-player/native/'+file,kind:'function-entry'});
+    let hits=' MM_TRACE_HIT('+id+');';
+    if(name==='analog_adc_advance'){
+      const states=['disabled','enabled-idle','converting','clock-gated'];
+      const ids=states.map(state=>{
+        const next=functions.length;
+        functions.push({id:next,name:name+':'+state,source:'web-player/native/'+file,kind:'adc-state-entry'});
+        return next;
+      });
+      hits+=` if(!(adc->adcsra&ANALOG_ADEN)) { MM_TRACE_HIT(${ids[0]}); }
+        else if(adc->phase==IDLE) { MM_TRACE_HIT(${ids[1]}); }
+        else { MM_TRACE_HIT(${ids[2]}); }
+        if(!adc->clock_running) { MM_TRACE_HIT(${ids[3]}); }`;
+    }
+    text=text.replace(pattern,'$1'+hits);
   }
   writeFileSync(join(native,file),text);
 }
@@ -123,8 +138,11 @@ assert.equal(new Set(cases.map(entry=>entry.firmwareId)).size,cases.length,'Dupl
 for(const divisor of [1,256])cases.push({id:'kernel-clki-20m-div'+divisor,binary:program,frames:1200,channels:1,divisor,
   options:{oscillatorHz:20000000,resumable:true,fastIdle:false,fuseLow:0x70,
     clkiProfile:{phasePolicy:'digital-noninverting-zero-seed-v1',initialLevel:1}}});
+for(const adcState of ['enabled-idle','converting'])cases.push({
+  ...cases.find(row=>row.id==='kernel-clki-20m-div1'),id:'kernel-clki-20m-div1-adc-'+adcState,adcState});
 function make(entry,runtimeModule){
   const c=new ATtiny13A(entry.binary,entry.eeprom,{...entry.options,runtimeModule});
+  if(entry.adcState){c.writeIO(IO.ADMUX,3);c.writeIO(IO.ADCSRA,entry.adcState==='converting'?0xe7:MASK.ADEN);}
   if(entry.divisor){
     c.writeIO(IO.CLKPR,128);c.writeIO(IO.CLKPR,Math.log2(entry.divisor));
     const end=BigInt(entry.frames)*1000000000000n/48000n;
@@ -149,7 +167,7 @@ const report={schema:'micromusic-native-call-trace-v1',createdAt:new Date().toIS
   productionRuntimeSha256:sha(production),countedRuntimeSha256:sha(countedBytes),
   sourceSha256NormalizedLF:{...Object.fromEntries(Object.keys(manifest.inputs).map(p=>[p,sha(source(p))])),
     ...Object.fromEntries([...catalogPaths,'web-player/scripts/trace-device-calls.mjs',
-      'web-player/lib/attiny13a-runtime.js','web-player/lib/avr-transpiler.js',
+      'web-player/lib/attiny13a-runtime.js','web-player/lib/avr-transpiler.js','web-player/lib/attiny13a-registers.js',
       'web-player/tests/fixtures/attiny13a-system-firmware.mjs'].map(p=>[p,sha(source(p))]))},
   functions,method:'Counters and first256 chronological source-level function entries in an ignored diagnostic build. Includes entries later inlined by O3, not a WASM call count. Constructors and input submission are excluded; counters reset immediately before capture. Integer board time is ps for CLKI and oscillator half ticks for compatible firmware. No host timestamps or per-edge JS callbacks. Instrumentation changes executable code, layout and performance: its times are never used as production performance or sampling percentages. Final full public/data/Flash/EEPROM/IRQ state and raw PCM must match an uninstrumented production reference.',results:[]};
 for(const entry of cases){
@@ -170,7 +188,14 @@ for(const entry of cases){
   const expectedPins=physical?original.drainPinsPs():original.drainPins(),
     actualPins=physical?counted.drainPinsPs():counted.drainPins();
   assert.deepEqual(actualPins,expectedPins,entry.id+' pin history');
-  const row={id:entry.id,frames:entry.frames,sampleRate:48000,channels:entry.channels,
+  const entries=name=>BigInt(counts.find(row=>row.name===name).count);
+  const adcActivity=Object.fromEntries(['disabled','enabled-idle','converting','clock-gated']
+    .map(state=>[state,entries('analog_adc_advance:'+state).toString()]));
+  assert.equal(BigInt(adcActivity.disabled)+BigInt(adcActivity['enabled-idle'])+BigInt(adcActivity.converting),entries('analog_adc_advance'));
+  assert.ok(BigInt(adcActivity['clock-gated'])<=entries('analog_adc_advance'));
+  if(entry.adcState==='enabled-idle'){assert.ok(BigInt(adcActivity['enabled-idle'])>0n);assert.equal(adcActivity.converting,'0');}
+  if(entry.adcState==='converting'){assert.ok(BigInt(adcActivity.converting)>0n);assert.ok(counted.data[32+IO.ADCSRA]&MASK.ADIF);}
+  const row={id:entry.id,frames:entry.frames,sampleRate:48000,channels:entry.channels,adcActivity,adcState:entry.adcState,
     requestedFirmwareId:entry.requestedFirmwareId,firmwareId:entry.firmwareId,flashSha256:sha(entry.binary),
     timeUnits:physical?'picoseconds':'oscillator half ticks',divisor:entry.divisor??1,
     cycles:counted.cyc,productionEquality:true,rawPcmSha256:sha(actual),pinSha256:sha(stringify(actualPins)),counts,prefix};
