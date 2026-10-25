@@ -118,14 +118,17 @@ for(const backend of ['c','avr-asm']){
   results.push({backend,configuration,format:fixture.format,fixture:fixture.name,decodedBytes:fixture.expected.length,maxPending,maxCommandCycles,
    minSP:core.minSP,engineSha256:meta.engineSha256});
  }
- controlOrdering.push(checkControlOrdering({meta,engine,python,backend,configuration}));
+ for(const mode of ['normal','raw-terminal','raw-interior'])
+  controlOrdering.push(checkControlOrdering({meta,engine,python,backend,configuration,mode}));
 }
 }
 const report={method:'Actual AVR C command() routines from isolated C/ASM engine builds; serialized fields generated in Python and checked byte for byte. Clock/IRQ admission is a separate full firmware audit.',
  cpuHz,
  sourceCodecSha256:sha(fs.readFileSync('tools/universal-music.py','utf8').replace(/\r\n/g,'\n')),
+ sourceControlFixtureSha256:sha(fs.readFileSync('tools/universal-control-order-fixture.mjs','utf8').replace(/\r\n/g,'\n')),
  exactDecodedBytes:true,all512Codes:true,all256Terminals:true,maximumGrammarDepth:12,allStackSentinelsPreserved:true,
  formatsTested:[...new Set(results.map(row=>row.format))].sort((a,b)=>a-b),pendingGuardSlotPreserved:true,
- allControlOrderingMatches:true,controlOrdering,results};
+ allControlOrderingMatches:true,controlModesTested:['normal','raw-terminal','raw-interior'],
+ rawLevelOnlyCacheReuseChecked:true,rawContextDirtyRefreshChecked:true,controlOrdering,results};
 fs.mkdirSync(path.dirname(reportFile),{recursive:true});fs.writeFileSync(reportFile,JSON.stringify(report,null,2)+'\n');
-console.log(results.length+' compiled C/ASM decoder boundary cases: exact bytes, code 511, 256 terminals, depth 12, stack sentinels and stream positions');
+console.log(results.length+' compiled C/ASM decoder boundary cases: exact bytes, code 511, 256 terminals, depth 12, stack sentinels and stream positions; '+controlOrdering.length+' normal/raw control-order variants');

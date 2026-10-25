@@ -77,32 +77,18 @@ um_render:
     com r25
     clr r22
     clr r23
-    sbrs r21,0
-    rjmp .Lgain_next_0
+    /* Four level bits; Z is caller-clobbered and dead after the wave read. */
+    ldi r30,4
+.Lgain_loop:
+    lsr r21
+    brcc .Lgain_skip
     add r22,r24
     adc r23,r25
-.Lgain_next_0:
+.Lgain_skip:
     lsl r24
     rol r25
-    sbrs r21,1
-    rjmp .Lgain_next_1
-    add r22,r24
-    adc r23,r25
-.Lgain_next_1:
-    lsl r24
-    rol r25
-    sbrs r21,2
-    rjmp .Lgain_next_2
-    add r22,r24
-    adc r23,r25
-.Lgain_next_2:
-    lsl r24
-    rol r25
-    sbrs r21,3
-    rjmp .Lgain_next_3
-    add r22,r24
-    adc r23,r25
-.Lgain_next_3:
+    dec r30
+    brne .Lgain_loop
     asr r23
     ror r22
     asr r23
@@ -144,17 +130,17 @@ um_render:
     rjmp 2f
     mov r23,r22
     clr r22
-    sbrc r20,0
+    /* Preserve level in r20 and the Flash cursor in r25:r24. */
+    mov r30,r20
+    ldi r31,4
+7:
+    lsr r30
+    brcc 8f
     add r22,r23
+8:
     lsl r23
-    sbrc r20,1
-    add r22,r23
-    lsl r23
-    sbrc r20,2
-    add r22,r23
-    lsl r23
-    sbrc r20,3
-    add r22,r23
+    dec r31
+    brne 7b
 2:
     sbrs r18,2
     rjmp 3f

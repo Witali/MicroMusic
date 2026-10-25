@@ -113,3 +113,63 @@ Final combined firmware still requires its own complete admission and song audit
 References: [Microchip ATtiny48/88 datasheet](https://ww1.microchip.com/downloads/en/DeviceDoc/doc8008.pdf),
 [AVR instruction set](https://ww1.microchip.com/downloads/en/DeviceDoc/AVR-Instruction-Set-Manual-DS40002198A.pdf),
 and the project's retained Microchip ATtiny_DFP 3.4.278 definitions.
+
+## Second pass: bounded product loops
+
+This second measurement is isolated against `565e8958`, after the first-pass
+and intervening core optimizations above. Final combined core totals are
+recorded separately; the following deltas must not be counted twice.
+
+| Compact ASM core | Before | Product loops | Change |
+|---|---:|---:|---:|
+| 8 MHz | 2540 B | 2502 B | -38 B |
+| 16 MHz | 2594 B | 2554 B | -40 B |
+
+The grouped-product loop saves 26 bytes and the two cached-nibble expansions
+save another 12. The 16-MHz result includes a further two-byte compiler effect
+when the song address changes. The measured C/fast binary is byte-identical
+to its baseline; the C implementation, default backend, actual-target check,
+and explicit ASM-enable requirement are unchanged.
+
+Both products consume exactly four level bits. The core idea, with a local
+copy of the multiplier, is:
+
+```c
+for (uint8_t bit = 0; bit < 4; ++bit) {
+    if (level & 1) product += term;
+    level >>= 1;
+    term += term;
+}
+```
+
+The assembly keeps the grouped result signed 16-bit, and the cached-nibble
+result signed eight-bit within the existing bounds. Gain shifts and their
+negative-value rounding stay after the product. The group loop uses the dead r30
+scratch register; the cache loop preserves the level in r20 and Flash cursor
+in r25:r24. Packed L/R results, callee-saved registers, r1, phases, raw-wave
+bypass, and both dictionary layouts retain their existing ABI and behavior.
+No device-memory access or hardware initialization changes.
+
+This trades execution time for Flash: the grouped path adds 14 cycles per
+completed group, and the cache path adds 18 cycles per non-raw nibble, or
+288 cycles per refreshed waveform. The full grouped Mariachi render maximum
+therefore rises from 494 to 522 cycles for its two groups.
+
+Validation used the same compiler/options and instruction/IRQ model as above:
+
+- Exhaustive conformance passed 16,992 signed mix cases and 34,816 cached-wave
+  cases per backend, plus FIFO wrap/empty, IRQ-register, nonzero-r1, and ABI
+  checks against the explicitly selected C fallback.
+- Complete dense-eight-voice and polyphony-study restart audits passed with
+  both 128-byte/fast and 192-byte/compact dictionaries. Their minimum queued
+  frames were respectively 31/35 and 80/75. C four-voice playback also passed.
+- One-second stereo runs passed on both boards with exact mix and PWM bytes,
+  at least 31 queued frames, and 21 bytes of stack margin.
+- The actual grouped eight-voice Mariachi completed its full approximately
+  31.16-second loop and restart on both boards, with at least 130 queued
+  frames. Every expected control state, tonal mix, PWM frame, and percussion
+  state matched; FIFO underruns and lost interrupts remained zero.
+
+These measurements establish the recorded workloads, not a general speedup
+or a physical-hardware qualification. Final combined firmware still requires
+its own admission and complete-song verification.

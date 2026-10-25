@@ -30,17 +30,8 @@ static uint8_t packedSymbols;
 static UM_NOINLINE void bind_pointer(uint16_t *target,uint8_t offset) {
     *target=POINTER(offset);
 }
-static uint16_t shift9(uint16_t value,uint8_t shift) {
-    switch(shift) {
-    case 7:value>>=1;
-    case 6:value>>=1;
-    case 5:value>>=1;
-    case 4:value>>=1;
-    case 3:value>>=1;
-    case 2:value>>=1;
-    case 1:value>>=1;
-    }
-    return value&511;
+static UM_NOINLINE uint16_t read9(uint16_t at,uint8_t shift) {
+    return (um_word(at)>>shift)&511;
 }
 
 static uint16_t symbol(void) {
@@ -56,7 +47,7 @@ static uint16_t symbol(void) {
 #endif
     uint16_t stream=um.stream;
     uint8_t bit=streamBit;
-    uint16_t code=shift9(um_word(stream),bit);
+    uint16_t code=read9(stream,bit);
     bit++;
     um.stream=stream+1+(bit>>3);streamBit=bit&7;
     return code;
@@ -78,15 +69,14 @@ static uint8_t command(void) {
             uint16_t index=code-literalCount;
             uint16_t at=ruleTable+(index<<1)+(index>>2);
             uint8_t shift=(index&3)<<1;
-            uint8_t lo=UM_READ(at),middle=UM_READ(at+1),hi=UM_READ(at+2);
-            *pending++=shift9(middle|((uint16_t)hi<<8),shift+1);
-            code=shift9(lo|((uint16_t)middle<<8),shift);
+            *pending++=read9(at+1,shift+1);
+            code=read9(at,shift);
         }
     }
-#if !UM_COMPACT_SCORE_ONLY
-    if(!packedSymbols){um.depth=pending-um.pending;return (uint8_t)code;}
-#endif
     um.depth=pending-um.pending;
+#if !UM_COMPACT_SCORE_ONLY
+    if(!packedSymbols)return (uint8_t)code;
+#endif
     return UM_READ(ruleTable-literalCount+code);
 }
 /* Pure arithmetic: signed sample times a four-bit level. The intermediate
@@ -137,44 +127,48 @@ static UM_NOINLINE UMVoice *voice_at(uint8_t index) {
         return (UMVoice *)((uint8_t *)um.voice+UM_VALUE(voice_offsets,index));
     return &um.voice[index];
 }
+static UM_NOINLINE void restart_stream(void) {
+    bind_pointer(&um.stream,16);streamBit=0;um.depth=0;um.ticks=0;um.tickPhase=0;
+    um.drumMode=0;um.drumPhase=0;um.noiseHigh=1;
+    contextDirty=255;
+}
+static UM_NOINLINE void mark_dirty(uint8_t *flags,uint8_t index) {*flags|=(uint8_t)1<<index;}
 static void read_events(void) {
     for(;;){
         uint8_t op=command(),index=op&7;
-        UMVoice *v=voice_at(index);
         if(op==0){
             for(uint8_t i=0;i<um.count;i++){
                 um.voice[i].phase=0;um.voice[i].step=0;um.voice[i].level=0;
             }
-            bind_pointer(&um.stream,16);streamBit=0;um.depth=0;um.ticks=0;um.tickPhase=0;
-            um.drumMode=0;um.drumPhase=0;um.noiseHigh=1;
-            contextDirty=255;
+            restart_stream();
             continue;
         }
         if(op<64){um.wait=op;return;}
-        if(op<72){uint8_t context=command();if(v->context!=context)contextDirty|=(uint8_t)1<<index;v->context=context;}
+        if(op>=128)index=(op>>4)&7;
+        UMVoice *v=voice_at(index);
+        if(op<72){uint8_t context=command();if(v->context!=context)mark_dirty(&contextDirty,index);v->context=context;}
         else if(op<80)v->step=um_word(pitchTable+((uint16_t)command()<<1));
         else if(op<88)v->phase=0;
         else if(op<96)v->phase=voice_at(command())->phase;
         else if(op==96)um.drumMode=command();
         else if(op==97)um.drumPhase=command();
         else if(op==98)um.noiseHigh=command();
-        else if(op>=128){index=(op>>4)&7;v=voice_at(index);uint8_t level=op&15;
-            if(v->level!=level)levelDirty|=(uint8_t)1<<index;
+        else if(op>=128){uint8_t level=op&15;
+            if(v->level!=level)mark_dirty(&levelDirty,index);
             v->level=level;}
     }
 }
 void um_init(void) {
     memset(&um,0,sizeof um);
-    um.count=FIELD(4);um_channels=FIELD(5);bind_pointer(&um.stream,16);um.noiseHigh=1;
+    um.count=FIELD(4);um_channels=FIELD(5);
     bind_pointer(&waveTable,8);bind_pointer(&contextTable,10);bind_pointer(&envelopeTable,12);
     bind_pointer(&ruleTable,14);bind_pointer(&rowTable,18);bind_pointer(&pitchTable,24);
     literalCount=FIELD(23);if(!literalCount)literalCount=256;
-    streamBit=0;
 #if !UM_COMPACT_SCORE_ONLY
     packedSymbols=FIELD(22);
 #endif
     bind_pointer(&um_normalizer,20);um_normalizerMin=FIELD(7);um_masterShift=FIELD(6);
-    read_events();
+    restart_stream();read_events();
     UMVoice *voice=um.voice;
     for(uint8_t left=um.count;left;left--,voice++)refresh(voice);
 }
@@ -198,7 +192,7 @@ void um_tick(void) {
     if(!--um.wait)read_events();
     bit=1;v=um.voice;
     for(uint8_t remaining=um.count;remaining;remaining--,v++,bit<<=1){
-        if((contextDirty&bit) || ((levelDirty&bit) && !(UM_READ(contextTable+((uint16_t)v->context<<2)+2)&32)))refresh(v);
+        if((contextDirty&bit) || ((levelDirty&bit) && (v->mix&160)==128))refresh(v);
     }
 }
 
