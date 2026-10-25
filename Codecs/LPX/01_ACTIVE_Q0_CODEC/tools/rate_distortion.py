@@ -145,7 +145,7 @@ def quantize_rate(pcm,co,steps,pre,bright,lam,allow_zero=False):
     return all_q,scales,widths,total_bits,total_loss
 
 
-def serialize(header,frames,q,scales,widths,compact_features=0):
+def serialize(header,frames,q,scales,widths,compact_features=0,mode_hints=None):
     """Write exactly the coding policy used in block_bits, with zero initial q."""
     writer=BitWriter();previous_scale=0;qh=np.zeros(145,np.int64);history=[]
     for bi,(scale,bits) in enumerate(zip(scales,widths)):
@@ -164,8 +164,23 @@ def serialize(header,frames,q,scales,widths,compact_features=0):
         writer.put(int(bits),3);write_scale(writer,previous_scale,int(scale));previous_scale=int(scale)
         block=q[bi*80:min(bi*80+80,len(q))]
         for start in range(0,len(block),40):
-            chunk=block[start:start+40];_,typ,lag,gain,k=chunk_mode(chunk,qh,int(bits))
-            mode=('direct',int(k)) if typ==0 else ('exact',int(lag),int(gain),int(k))
+            chunk=block[start:start+40]
+            if mode_hints is None:_,typ,lag,gain,k=chunk_mode(chunk,qh,int(bits))
+            else:typ,lag,gain,k=map(int,mode_hints[(bi*80+start)//40])
+            if typ==0:mode=('direct',int(k))
+            elif typ==1:mode=('exact',int(lag),int(gain),int(k))
+            elif typ==2:
+                from lpx4 import calc_pred
+                hh=list(history);pulses=[]
+                for i,value in enumerate(chunk):
+                    d=int(value)-calc_pred(hh,int(lag),int(gain),int(bits))
+                    if d:
+                        if not -16<=d<=15:raise ValueError('Sparse hint exceeds existing amplitude range')
+                        pulses.append((i,d))
+                    hh.append(int(value))
+                if len(pulses)>10:raise ValueError('Sparse hint exceeds existing pulse limit')
+                mode=('sparse',int(lag),int(gain),pulses)
+            else:raise ValueError('Invalid existing-mode hint')
             put_chunk(writer,chunk.tolist(),history,int(bits),mode)
             qh=advance_history(qh,chunk);history.extend(map(int,chunk))
     payload_bits=writer.total;writer.aligned();head=bytearray(header[:20]);head[:6]=b'L4HY\x02\x03'
