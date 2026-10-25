@@ -11,6 +11,7 @@ import {ATtiny13A} from '../lib/attiny13a-runtime.js';
 import {runtimeABI,transpileAVR} from '../lib/avr-transpiler.js';
 import {parseHex} from '../lib/hex.js';
 import {avr,IO,flash} from '../tests/fixtures/attiny13a-system-firmware.mjs';
+import {AT13_MASK as MASK,AT13_VECTOR as VECTOR} from '../lib/attiny13a-registers.js';
 import {controlLabels,controlSchedule,controlRatios,statistics} from './lib/runtime-control-design.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
@@ -42,10 +43,11 @@ for(const [kind,version] of Object.entries({old,current})){
 }
 for(const key of ['exports','flags','compilerVersion','sources'])assert.deepEqual(old.manifest[key],current.manifest[key],key);
 const changedInputs=Object.keys(current.manifest.inputs).filter(path=>old.manifest.inputs[path]!==current.manifest.inputs[path]);
-const changeSet=values['change-set'];assert.ok(['long-internal-span','service-inlining','clock-identity','clock-multiply','clock-delay','ns-remainder'].includes(changeSet));
+const changeSet=values['change-set'];assert.ok(['long-internal-span','service-inlining','clock-identity','clock-multiply','clock-delay','ns-remainder','watchdog-period'].includes(changeSet));
 assert.deepEqual(changedInputs,changeSet==='long-internal-span'?
   ['web-player/native/peripherals/device.c','web-player/native/peripherals/device.h']:
-  changeSet.startsWith('clock-')?['web-player/native/peripherals/device_clock.h']:['web-player/native/peripherals/device.c']);
+  changeSet.startsWith('clock-')?['web-player/native/peripherals/device_clock.h']:
+  changeSet==='watchdog-period'?['web-player/native/peripherals/device.c','web-player/native/devices/attiny13a/clki_board.inc']:['web-player/native/peripherals/device.c']);
 const hostSources=['web-player/lib/avr-transpiler.js','web-player/lib/avr-wasm-phases.js',
   'web-player/lib/avr-transpiled-runtime.js','web-player/lib/avr-runtime.js','web-player/lib/attiny13a-runtime.js'];
 for(const path of hostSources)assert.equal(text(path),git(['show',baseline+':'+path]).toString().replaceAll('\r\n','\n'),path+' unchanged');
@@ -72,6 +74,13 @@ cases.push({id:'kernel-internal-20m-div1',binary:kernel,frames:kernelFrames,chan
   options:{oscillatorHz:20000000,resumable:true,fuseLow:0x72,osccalHz:table(20000000)}});
 for(const id of ['kernel-internal-20m-div1','kernel-clki-20m-div1'])
   cases.push({...cases.find(row=>row.id===id),id:id+'-adc-active',adcEnabled:true});
+const wdtVector=VECTOR.WDT; // ATtiny13A vector indices already equal AVR word PCs.
+const watchdogKernel=flash({instructions:[avr.rjmp(0,16)]},
+  {at:wdtVector,instructions:[avr.rjmp(wdtVector,64)]},
+  {at:16,instructions:[avr.sei(),avr.ldi(16,1),avr.ldi(17,0x55),avr.add(18,16),avr.eor(19,17),avr.inc(20),avr.rjmp(22,19)]},
+  {at:64,instructions:[avr.reti()]});
+for(const id of ['kernel-internal-20m-div1','kernel-clki-20m-div1'])
+  cases.push({...cases.find(row=>row.id===id),id:id+'-watchdog-active',binary:watchdogKernel,watchdogEnabled:true});
 const selected=values.case?cases.filter(row=>values.case.includes(row.id)):cases;
 if(values.case)assert.equal(selected.length,values.case.length,'unknown or duplicate case');assert.ok(selected.length);
 const snapshot=c=>({state:c.state(),diagnostics:Array.from(c._state),data:c.data.slice(),flash:c.rom.slice(),eeprom:c.eeprom.slice(),irq:Array.from(c.irqFrames)});
@@ -83,6 +92,7 @@ function construct(item,variant){
   item.previousCPUmodule=c._translatedModule;
   if(item.divisor){c.writeIO(IO.CLKPR,128);c.writeIO(IO.CLKPR,Math.log2(item.divisor));}
   if(item.adcEnabled){c.writeIO(IO.ADMUX,3);c.writeIO(IO.ADCSRA,0xe7);}
+  if(item.watchdogEnabled)c.writeIO(IO.WDTCR,MASK.WDTIE);
   if(item.external){
     const end=BigInt(item.frames)*1000000000000n/BigInt(rate);
     assert.equal(c.injectClkiPeriodicPs({startPs:0n,initialLevel:1,highPs:25000n,lowPs:25000n,transitionCount:end/25000n,knownUntilPs:end}),true);
@@ -107,6 +117,7 @@ function execute(c,item){
   snapshots.forEach(row=>assert.equal(row.state.deviceFault,0));
   if(item.divisor)assert.equal(snapshots.at(-1).state.clockDivisor,item.divisor,'actual completed CPU divisor must match the case label');
   if(item.adcEnabled)assert.equal(c.data[32+IO.ADCSRA]&0x90,0x90,'active ADC completes conversions');
+  if(item.watchdogEnabled){assert.ok(c.irqCount>0,'active watchdog executes its ISR');assert.equal(c.data[32+IO.WDTCR]&MASK.WDTIE,MASK.WDTIE);}
   const raw=Buffer.concat(pcm),pins=item.physical?c.drainPinsPs():c.drainPins();
   return {raw,snapshots,pins,record:{ms,rawSha256:sha(raw),architectureSha256:sha(stringify(snapshots)),
     pinSha256:sha(stringify(pins)),checkpoints:snapshots.length,finalState:c.state()}};
@@ -137,6 +148,7 @@ for(const item of selected){
   item.generated=transpileAVR(item.binary,abi,item.options);item.translationSha256=sha(item.generated.bytes);
   const other=transpileAVR(item.binary,abi,item.options);assert.deepEqual(item.generated.bytes,other.bytes);
   const row={id:item.id,options:item.options,frames:item.frames,instructions:item.instructions,channels:item.channels,
+    ...(item.watchdogEnabled?{watchdogEnabled:true}:{}),
     flashSha256:sha(item.binary),translationSha256:item.translationSha256,translationBytes:item.generated.bytes.length,warmups:[],runs:[]};
   let reference;
   if(values['validate-only']){

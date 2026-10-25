@@ -81,6 +81,12 @@ hashes, all 123 forms, opcode patterns, cycle counts and flag-write masks.
 Tests compare the new independent decoder against all 65,536 possible first
 words and that official-document fixture, rather than the interpreter decoder.
 
+For ATtiny13A test firmware, generated `AT13_VECTOR` values are vector indices
+and already equal word PCs: `WDT` is8 (Flash byte offset16). Pass them directly
+to the word-addressed `flash({at:...})` fixture; do not divide by two. This
+relationship relies on this device's single-word vector slots. Register I/O
+offsets and data-memory addresses have separate units.
+
 ## Instruction effect timing
 
 The full-device profile commits OUT after its clock cycle and data-memory
