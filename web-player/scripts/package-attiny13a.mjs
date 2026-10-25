@@ -8,7 +8,7 @@ import {parseHex} from '../lib/hex.js';
 import {optimizeAVRWasm} from './lib/optimize-avr-wasm.mjs';
 
 const usage=`Usage:
-  node web-player/scripts/package-attiny13a.mjs pack input.hex|bin output.json [--eeprom image.bin] [--configuration config.json] [--no-flag-dce] [--optimize O2|O3|Os|Oz] [--wasm-opt path]
+  node web-player/scripts/package-attiny13a.mjs pack input.hex|bin output.json [--eeprom image.bin] [--configuration config.json] [--no-flag-dce] [--bounded-regions] [--optimize O2|O3|Os|Oz] [--wasm-opt path]
   node web-player/scripts/package-attiny13a.mjs pack input.hex|bin output.json --translated firmware.wasm --runtime runtime.wasm [--eeprom image.bin] [--configuration config.json]
   node web-player/scripts/package-attiny13a.mjs verify package.json
   node web-player/scripts/package-attiny13a.mjs unpack package.json new-directory
@@ -26,7 +26,7 @@ const summary=decoded=>({format:PACKAGE_FORMAT,version:decoded.version??PACKAGE_
   integrity:decoded.integrity,configuration:decoded.configuration});
 async function main(){
   const {values,positionals}=parseArgs({allowPositionals:true,options:{help:{type:'boolean'},
-    eeprom:{type:'string'},configuration:{type:'string'},translated:{type:'string'},runtime:{type:'string'},'no-flag-dce':{type:'boolean'},optimize:{type:'string'},'wasm-opt':{type:'string'}}});
+    eeprom:{type:'string'},configuration:{type:'string'},translated:{type:'string'},runtime:{type:'string'},'no-flag-dce':{type:'boolean'},optimize:{type:'string'},'wasm-opt':{type:'string'},'bounded-regions':{type:'boolean'}}});
   if(values.help){console.log(usage);return;}
   const [command,...args]=positionals;
   if(!['pack','verify','unpack'].includes(command)||args.length!==(command==='verify'?1:2))throw new Error(usage);
@@ -36,10 +36,12 @@ async function main(){
     if(input===output)throw new Error('Input and output paths must differ');
     if(!!values.translated!==!!values.runtime)throw new Error('--translated and --runtime must be used together');
     if(values.translated&&values['no-flag-dce'])throw new Error('--no-flag-dce only applies to newly generated translations');
+    if(values.translated&&values['bounded-regions'])throw Error('--bounded-regions only applies to newly generated translations');
     if(values['wasm-opt']&&!values.optimize)throw Error('--wasm-opt requires --optimize');
     const source=await read(input,65536),flash=extname(input).toLowerCase()==='.hex'?parseHex(source.toString('utf8')):new Uint8Array(source);
     const eeprom=values.eeprom?await read(resolve(values.eeprom),64):undefined;
     const configuration=values.configuration?JSON.parse((await read(resolve(values.configuration),65536)).toString('utf8')):{};
+    if(values['bounded-regions']&&configuration.resumable!==true)throw Error('--bounded-regions requires configuration.resumable:true');
     let runtime,translated;
     if(values.translated){
       [runtime,translated]=await Promise.all([read(resolve(values.runtime),PACKAGE_LIMITS.runtime),read(resolve(values.translated),PACKAGE_LIMITS.translated)]);
@@ -50,7 +52,7 @@ async function main(){
       if(build.schema!=='micromusic-attiny13a-device-wasm-v1'||build.artifacts?.['attiny13a.wasm']!==hash(runtime))throw new Error('Bundled runtime build integrity mismatch');
       const exports=new WebAssembly.Instance(await WebAssembly.compile(runtime)).exports;
       translated=transpileAVR(flash,runtimeABI(exports,{resumable:!!configuration.resumable}),
-        {optimizeFlags:!values['no-flag-dce'],resumable:!!configuration.resumable}).bytes;
+        {optimizeFlags:!values['no-flag-dce'],resumable:!!configuration.resumable,boundedRegions:!!values['bounded-regions']}).bytes;
     }
     let optimization;
     if(values.optimize){

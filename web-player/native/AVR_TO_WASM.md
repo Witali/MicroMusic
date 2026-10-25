@@ -41,8 +41,8 @@ observable boundaries. Resumable code additionally emits phase state machines.
 Binaryen can simplify constants/control flow, remove dead temporary work,
 coalesce locals and merge equivalent function bodies. It cannot infer the AVR
 meaning of an opaque peripheral call or safely delete clock barriers merely
-because the arithmetic results match. Larger regions, cross-block SREG liveness
-and per-phase context liveness remain translator-specific work.
+because the arithmetic results match. Bounded regions and per-phase context
+liveness are explicit translator options; cross-block SREG liveness remains open.
 
 The helper uses `--mvp-features --enable-mutable-globals` (exported mutable globals
 are part of this ABI) and skips `remove-unused-module-elements` to retain every
@@ -135,6 +135,54 @@ The 80-byte native context layout is unchanged, and unused temporary slots are
 unspecified scratch rather than architectural AVR state. Observable registers,
 bus effects, flags, counters and phase boundaries retain their existing contract.
 The translation cache includes the setting, and SPM recompilation preserves it.
+
+### Optional bounded control-flow regions
+
+`boundedRegions:true` requires `resumable:true` and is disabled by default.
+`lib/avr-wasm-regions.js` finds cyclic strongly connected components of at most64
+decoded words containing register-only ALU operations, RJMP, BRxx, SBRC/SBRS and
+CPSE. It emits each accepted PC as arithmetic plus WASM `block`/`loop`/`br_table`
+control flow. AVR words are never interpreted at execution time. Memory/I/O,
+stack, indirect transfers, system operations and SREG bit-set/clear instructions
+leave the region before their effects. Every original instruction entry and
+basic block remains available as a fallback.
+
+An invocation admits at most32 source instructions, reduced by the caller's
+instruction limit. The entire worst-case span must lie strictly before the
+native event/deadline, overflow and numeric capacity limits, with no pending
+enabled IRQ, IRQ delay or active continuation and enough64-bit retirement
+headroom. CLKI retains its zero batching budget and all source transitions.
+The region preloads the statically used GPR union once, avoiding a validity
+branch on every read. It stages byte-masked GPR writes, full SREG, PC and actual
+instruction/cycle totals in WASM locals. ASR sign-extends the cached byte; pair
+operations use the same cached registers. Full flags are computed initially;
+this option does not add cross-block flag elimination.
+
+The native phase clock sees the incoming architectural registers and advances
+by the exact actual path's AVR cycles. Only successful completion commits the
+staged state and retirement count. Reset/fault or unexpected WAIT discards the
+staged writes and cannot replay that clock span through a basic-block fallback.
+Rejected guards retain the original phase path for partial observations. Explicit
+runtime options enter cache identity and survive SPM recompilation; packages
+load the embedded region code, but changed Flash is regenerated using runtime
+options, as with other optional offline transforms.
+
+```sh
+node web-player/scripts/transpile-avr.mjs firmware.hex cpu.wasm --device --resumable --bounded-regions
+node web-player/scripts/package-attiny13a.mjs pack firmware.hex device.json --configuration physical.json --bounded-regions
+```
+
+The package configuration must enable `resumable:true` and provide physical
+clock configuration (an OSCCAL table or CLKI profile). The standalone command
+selects a resumable ABI; its loader must configure that physical clock as well.
+`--bounded-regions` applies to newly generated translations. Optional offline
+`--optimize` remains a separate preparation step.
+
+Measured Node22/V8 results: HQ4 physical execution1.45x; a synthetic direct
+loop11.27x; no established speed gain for rhythmic/Lumière, CLKI or active ADC.
+Physical firmware CPU modules grow1.36–1.67%. Browser real-time audio and
+underruns have not been validated for this option. See the
+[conditions, exact sources and evidence](../reports/bounded-regions-20261025.md).
 
 This optional path keeps SREG exact at every observable boundary. Register-only
 blocks can execute when their complete original cycle span lies strictly before
