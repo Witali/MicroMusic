@@ -29,7 +29,7 @@ def linux_path(path):
     return '/mnt/' + path.drive[0].lower() + '/' + '/'.join(path.parts[1:])
 
 
-def run(source, output, avr_bin, sim_runner, sim_lib_dir=None, wsl=None):
+def run(source, output, avr_bin, sim_runner, sim_lib_dir=None, wsl=None, enable_asm=False):
     source, output, avr_bin = Path(source), Path(output).resolve(), Path(avr_bin)
     blob = source.read_bytes()
     if blob[:6] != b'L4HY\x02\x03' or not 20 <= len(blob) <= 65535:
@@ -48,6 +48,9 @@ def run(source, output, avr_bin, sim_runner, sim_lib_dir=None, wsl=None):
                '-fno-exceptions', '-fno-rtti', '-I' + str(ROOT / 'src'), '-I' + str(output),
                str(HARNESS / 'profile.cpp'), str(ROOT / 'src/Lpx4HybridCore.cpp'),
                '-Wl,-Map=' + str(output / 'profile.map'), '-o', str(elf)]
+    if enable_asm:
+        command.insert(1, '-DLPX4_ENABLE_ASM=1')
+    compiler_options = command[1:7] if not enable_asm else command[1:8]
     subprocess.run(command, check=True, capture_output=True)
     subprocess.run([str(avr_bin / ('avr-objcopy' + suffix)), '-O', 'ihex', '-R', '.eeprom', str(elf), str(hexfile)], check=True)
     sizes = subprocess.check_output([str(avr_bin / ('avr-size' + suffix)), str(elf)], text=True)
@@ -80,12 +83,15 @@ def run(source, output, avr_bin, sim_runner, sim_lib_dir=None, wsl=None):
     report.update(input_sha256=hashlib.sha256(blob).hexdigest(), input_bytes=len(blob), input_samples=samples,
                   pwm_sha256=hashlib.sha256(actual).hexdigest(), pwm_native_exact=True,
                   core_sha256=hashlib.sha256((ROOT / 'src/Lpx4HybridCore.cpp').read_bytes()).hexdigest(),
+                  core_header_sha256=hashlib.sha256((ROOT / 'src/Lpx4HybridCore.h').read_bytes()).hexdigest(),
+                  math_header_sha256=hashlib.sha256((ROOT / 'src/Lpx4Math.h').read_bytes()).hexdigest(),
                   harness_sha256=hashlib.sha256((HARNESS / 'profile.cpp').read_bytes()).hexdigest(),
                   runner_sha256=hashlib.sha256((HARNESS / 'sim_profile.c').read_bytes()).hexdigest(),
                   elf_sha256=hashlib.sha256(elf.read_bytes()).hexdigest(), hex_sha256=hashlib.sha256(hexfile.read_bytes()).hexdigest(),
                   flash_bytes=text + data, static_sram_bytes=data + bss,
                   compiler=subprocess.check_output([str(compiler), '--version'], text=True).splitlines()[0],
-                  compiler_options=['-mmcu=atmega328p', '-DF_CPU=16000000UL', '-Os', '-std=gnu++11', '-fno-exceptions', '-fno-rtti'],
+                  compiler_options=compiler_options,
+                  arithmetic_backend='avr5-asm' if enable_asm else 'c',
                   simavr_no_underrun=report['underruns'] == 0,
                   physical_hardware_measured=False,
                   instrumentation='Decode wall intervals include active IRQ and flag stores; PB0 marks OCR2B writes; queue sampled every 160 ticks.')
@@ -102,7 +108,8 @@ if __name__ == '__main__':
     ap.add_argument('--sim-runner', type=Path, required=True)
     ap.add_argument('--sim-lib-dir', type=Path)
     ap.add_argument('--wsl')
+    ap.add_argument('--enable-asm', action='store_true')
     a = ap.parse_args()
-    r = run(a.input, a.output_directory, a.avr_bin, a.sim_runner, a.sim_lib_dir, a.wsl)
+    r = run(a.input, a.output_directory, a.avr_bin, a.sim_runner, a.sim_lib_dir, a.wsl, a.enable_asm)
     print(json.dumps({k: r[k] for k in ('input_samples', 'underruns', 'mean_decode_wall_cycles', 'decode_wall_cycles_max',
                                        'flash_bytes', 'static_sram_bytes', 'pwm_native_exact')}, indent=2))
