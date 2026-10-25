@@ -5,7 +5,7 @@ import {createHash} from 'node:crypto';
 import {execFileSync,spawnSync} from 'node:child_process';
 import {readFileSync,writeFileSync,mkdirSync,existsSync} from 'node:fs';
 import {cpus,platform,release,arch} from 'node:os';
-import {basename,dirname,join,parse,resolve,relative} from 'node:path';
+import {basename,dirname,join,parse,resolve,relative,isAbsolute,sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {parseArgs} from 'node:util';
 import {ATtiny13A} from '../lib/attiny13a-runtime.js';
@@ -20,8 +20,9 @@ const {values}=parseArgs({options:{frames:{type:'string',default:'48000'},
   kernel:{type:'boolean'},clock:{type:'string',default:'compatible'},
   frequency:{type:'string',default:'20000000'},divisor:{type:'string',default:'1'},
   operation:{type:'string',default:'capture'},instructions:{type:'string',default:'1000000'},
+  'runtime-ref':{type:'string',default:'working-tree'},'benchmark-controls':{type:'boolean'},
   help:{type:'boolean'}}});
-if(values.help){console.log('node web-player/scripts/profile-device.mjs [--frames 48000] [--rate 48000] [--repeats 3] [--interval-us 1000] [--firmware id,id] [--kernel --clock compatible|physical|clki --frequency 20000000 --divisor 1 --operation capture|direct --instructions 1000000] [--out-dir build/profiles/device] [--emsdk path]');process.exit(0);}
+if(values.help){console.log('node web-player/scripts/profile-device.mjs [--frames 48000] [--rate 48000] [--repeats 3] [--interval-us 1000] [--firmware id,id] [--kernel --clock compatible|physical|clki --frequency 20000000 --divisor 1 --operation capture|direct --instructions 1000000] [--runtime-ref working-tree|git-ref] [--benchmark-controls] [--out-dir build/profiles/device] [--emsdk path]');process.exit(0);}
 function integer(value,name,low,high){const n=Number(value);assert.ok(Number.isInteger(n)&&n>=low&&n<=high,`${name}: integer ${low}..${high} required`);return n;}
 const frames=integer(values.frames,'frames',1,1048576),rate=integer(values.rate,'rate',8000,192000);
 const repeats=integer(values.repeats,'repeats',1,16),intervalUs=integer(values['interval-us'],'interval-us',100,100000);
@@ -38,16 +39,31 @@ if(clock==='clki')assert.equal(1000000000000n%BigInt(2*frequency),0n,'CLKI frequ
 const instructions=integer(values.instructions,'instructions',1,100000000);
 const blockFrames=1024,out=resolve(root,values['out-dir']);mkdirSync(out,{recursive:true});
 const read=path=>readFileSync(resolve(root,path));
-const source=path=>read(path).toString('utf8').replaceAll('\r\n','\n');
+const nativeSources=new Map();
+const source=path=>nativeSources.get(path)??read(path).toString('utf8').replaceAll('\r\n','\n');
 const hash=value=>createHash('sha256').update(value).digest('hex');
 const json=path=>JSON.parse(read(path));
 const bytes=array=>Buffer.from(array.buffer,array.byteOffset,array.byteLength);
 const stringify=value=>JSON.stringify(value,(_,v)=>typeof v==='bigint'?v.toString():v,2)+'\n';
 const save=(path,value)=>writeFileSync(join(out,path),stringify(value));
 const git=args=>execFileSync('git',args,{cwd:root,encoding:'utf8'}).trim();
-const manifest=json('web-player/wasm/device-build.json'),production=read('web-player/wasm/attiny13a.wasm');
+const runtimeRef=values['runtime-ref'],benchmarkControls=!!values['benchmark-controls'];
+const runtimeCommit=runtimeRef==='working-tree'?null:git(['rev-parse','--verify',runtimeRef+'^{commit}']);
+const historical=path=>execFileSync('git',['show',runtimeCommit+':'+path],{cwd:root,maxBuffer:16*1024*1024});
+const manifest=runtimeCommit?JSON.parse(historical('web-player/wasm/device-build.json')):json('web-player/wasm/device-build.json'),
+  production=runtimeCommit?historical('web-player/wasm/attiny13a.wasm'):read('web-player/wasm/attiny13a.wasm');
 assert.equal(hash(production),manifest.artifacts['attiny13a.wasm'],'Runtime hash mismatch');
-for(const [path,expected] of Object.entries(manifest.inputs))assert.equal(hash(source(path)),expected,`Stale runtime: ${path}`);
+const compileRoot=runtimeCommit?join(out,'runtime-sources'):root;
+for(const [path,expected] of Object.entries(manifest.inputs)){
+  if(runtimeCommit){
+    const text=historical(path).toString('utf8').replaceAll('\r\n','\n');
+    assert.equal(hash(text),expected,`Stale historical runtime: ${path}`);
+    const target=resolve(compileRoot,path),rel=relative(compileRoot,target);
+    assert.ok(rel&&!isAbsolute(rel)&&rel!=='..'&&!rel.startsWith('..'+sep),'Input outside isolated sources');
+    mkdirSync(dirname(target),{recursive:true});writeFileSync(target,text);nativeSources.set(path,text);
+  }
+  assert.equal(hash(source(path)),expected,`Stale runtime: ${path}`);
+}
 
 class Reader{
   constructor(data,start=0,end=data.length){this.data=data;this.at=start;this.end=end;}
@@ -114,7 +130,7 @@ const rebuilt=join(out,'runtime-preopt.wasm'),symbolic=join(out,'runtime-symbols
 const compiler=join(sdk,'upstream/bin',process.platform==='win32'?'clang.exe':'clang');
 const compileArgs=[...manifest.flags.map(flag=>flag.replaceAll('<emsdk>',sdk)),'--no-wasm-opt',`-Wl,-Map=${mapPath}`,
   ...manifest.sources,'-lc','-lclang_rt.builtins','-o',rebuilt];
-const compiled=spawnSync(compiler,compileArgs,{cwd:root,encoding:'utf8'});
+const compiled=spawnSync(compiler,compileArgs,{cwd:compileRoot,encoding:'utf8'});
 if(compiled.error)throw compiled.error;assert.equal(compiled.status,0,compiled.stderr);
 // This SDK's clang driver normally invokes wasm-opt -O3 after linking. Run the
 // same pass explicitly, printing its final index/name map before names disappear.
@@ -168,10 +184,10 @@ const report={schema:'micromusic-device-sampling-profile-v1',createdAt:new Date(
   git:{head:git(['rev-parse','HEAD']),status:git(['status','--short'])},
   node:{version:process.version,versions:process.versions,flags:process.execArgv,executable:process.execPath},
   host:{platform:platform(),release:release(),arch:arch(),cpu:cpus()[0]?.model,logicalCpus:cpus().length},
-  parameters:{frames,rate,repeats,intervalUs,blockFrames,fastIdle:!values.kernel,optimizeFlags:true,
+  parameters:{frames,rate,repeats,intervalUs,blockFrames,fastIdle:benchmarkControls||!values.kernel,optimizeFlags:true,benchmarkControls,
     requestedFirmware:ids,firmwareOrder:selected.map(entry=>entry.id),
     kernel:!!values.kernel,clock,frequency:values.kernel?frequency:null,divisor,operation,instructions},
-  provenance:{runtimeSha256:hash(production),namedRuntimeSha256:hash(namedRuntime),
+  provenance:{runtimeRef,runtimeCommit,compileRoot,runtimeSha256:hash(production),namedRuntimeSha256:hash(namedRuntime),
     executableSectionsSha256:hash(executable(production)),runtimeRebuildByteEqual:true,
     diagnosticCompiler:compiler,compilerVersion:manifest.compilerVersion,compileArgs,optimizer,optimizeArgs,
     sourceSha256NormalizedLF:Object.fromEntries(sourcePaths.map(path=>[path,hash(source(path))]))},
@@ -194,7 +210,7 @@ function generatedFunctions(core){
   return {layout,functions};
 }
 function snapshot(core){
-  return {state:core.state(),data:core.data.slice(),eeprom:core.eeprom.slice(),flash:core.rom.slice(),irqFrames:Array.from(core.irqFrames)};
+  return {state:core.state(),diagnostics:Array.from(core._state),data:core.data.slice(),eeprom:core.eeprom.slice(),flash:core.rom.slice(),irqFrames:Array.from(core.irqFrames)};
 }
 function capture(core,entry){
   if(operation==='direct'){assert.equal(core.run(instructions),instructions);return[];}
@@ -251,11 +267,17 @@ for(const entry of selected){
   console.log(`Profile ${entry.id}: ${operation==='capture'?frames+' frames @ '+rate+' Hz':instructions+' instructions'}, ${repeats} sequential profiles`);
   const binary=entry.binary??parseHex(entry.flashHex),eeprom=entry.eepromHex?parseHex(entry.eepromHex,64):null;
   assert.equal(hash(binary),entry.flashSha256);
-  const hz=entry.cpuHz||9600000,options={oscillatorHz:hz,fastIdle:!values.kernel,optimizeFlags:true,runtimeModule};
+  const hz=entry.cpuHz||9600000,options={oscillatorHz:hz,fastIdle:benchmarkControls||!values.kernel,optimizeFlags:true,runtimeModule};
   if(clock!=='compatible'){
     options.resumable=true;options.fuseLow=clock==='clki'?0x70:0x72;
     if(clock==='clki')options.clkiProfile={phasePolicy:'digital-noninverting-zero-seed-v1',initialLevel:1};
     else{options.osccalHz=Array(128).fill(0);options.osccalHz[0]=hz;}
+  }
+  if(benchmarkControls){
+    if(values.kernel&&clock==='compatible')options.fuseLow=0x72;
+    if(!values.kernel&&clock==='physical'){
+      delete options.fuseLow;options.nvmClockProfile=1;options.nvmCalibrationReferenceHz=hz;
+    }
   }
   function prepare(core){
     if(values.kernel){core.writeIO(IO.CLKPR,128);core.writeIO(IO.CLKPR,Math.log2(divisor));}
@@ -263,6 +285,12 @@ for(const entry of selected){
       const endPs=BigInt(frames)*1000000000000n/BigInt(rate),width=1000000000000n/BigInt(2*hz);
       assert.equal(core.injectClkiPeriodicPs({startPs:0n,initialLevel:1,highPs:width,lowPs:width,
         transitionCount:endPs/width,knownUntilPs:endPs}),true);
+    }else if(benchmarkControls&&operation==='capture'){
+      if(clock==='physical'){
+        core.injectPinsPs({at:777777n,mask:4,levels:4});core.setAnalogPs({at:1601601n,pin:2,microvolts:1234567});
+      }else{
+        core.injectPins({at:777n,mask:4,levels:4});core.setAnalog({at:1601n,pin:2,microvolts:1234567});
+      }
     }
     return core;
   }
@@ -275,6 +303,7 @@ for(const entry of selected){
   const expected=combined(capture(reference,entry)),expectedState=snapshot(reference);
   capture(make(),entry); // Unprofiled named-module warmup, same interval.
   const result={id:entry.id,channels:entry.audioChannels||1,flashSha256:hash(binary),
+    finalState:expectedState.state,referenceArchitectureSha256:hash(stringify(expectedState)),
     generatedOriginalSha256:hash(seed.transpiledBytes),generatedNamedSha256:hash(namedCpu),
     generatedExecutableSectionsSha256:hash(executable(Buffer.from(seed.transpiledBytes))),runs:[]};
   for(let repeat=0;repeat<repeats;repeat++){
