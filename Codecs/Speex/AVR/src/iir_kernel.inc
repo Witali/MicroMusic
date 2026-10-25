@@ -112,7 +112,11 @@
     .endif
     cp r28,r16
     brne .Lcursor_done\@
+    .if \age
     movw r28,r12
+    .else
+    sbiw r28,2*IIR_ORDER
+    .endif
 .Lcursor_done\@:
 .endm
 .global IIR_ENTRY
@@ -170,17 +174,21 @@ IIR_ENTRY:
     breq .Lsteady_setup
     rjmp .Lwarm_sample
 .Lsteady_setup:
-    /* Age updates are complete. Reuse dead den/base registers for two LPC
-     * words; history writes stay in the mirrored history. No extra SRAM. */
+    /* Age updates are complete. X ends every steady dot product at the
+     * coefficient-table end, so rewind it by a fixed displacement instead
+     * of rebuilding it from the state base. Reuse that now-dead base pair
+     * for a third LPC word; rewind Y at wrap as well. No extra SRAM. */
     movw r26, r14
     ld r10, X+
     ld r11, X+
     ld r14, X+
     ld r15, X+
+    ld r12, X+
+    ld r13, X+
+    adiw r26,2*(IIR_ORDER-3)
     ldi r17, 40-IIR_ORDER
 .Lsteady_sample:
-    movw r26, r12
-    adiw r26, 4*IIR_ORDER+4
+    sbiw r26,2*(IIR_ORDER-3)
     movw r30, r28
     adiw r30, 2*IIR_ORDER
     clr r22
@@ -189,7 +197,8 @@ IIR_ENTRY:
     clr r25
     IIR_MAC r10
     IIR_MAC r14
-    .rept IIR_ORDER-2
+    IIR_MAC r12
+    .rept IIR_ORDER-3
     IIR_MAC memory
     .endr
     IIR_FINISH 0

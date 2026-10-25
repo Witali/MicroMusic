@@ -616,15 +616,55 @@ twelve backend-selection cases pass. Reports nb3-header-* and
 portable-nb3-header-library.json retain hashes and evidence. The sampled
 88-frame ASM profile now spends 0.431% in generic/constant reader functions.
 
+## Third IIR coefficient cache (2026-10-25)
+
+Once the first ten coefficient-age samples complete, the state-base pointer
+is dead if X rewinds from the coefficient-table end and Y rewinds at ring wrap.
+Reuse r12:r13 for a third LPC word. The steady dot product uses three MOVW
+coefficient reads and seven SRAM reads instead of two/eight. State format,
+rounding, clipping, coefficient ages, ABI and the selectable C path are unchanged.
+
+ATmega328P / AVR GCC 7.3.0 / existing mixed Os/O3+LTO flags: 111 cycles saved
+per 40-sample NB block, 444/frame; Flash 10,608 -> 10,610 B, SRAM/stack unchanged.
+All 512 address/mode rows (256 low bytes, both input/output modes) save exactly
+111 in their minima/maxima and 32*111 total. Independent recurrence checks cover
+655,360 address-sweep samples plus 327,680 broader samples and wrap/clipping.
+Every matched stream min/mean/max over 14,278 exact NB frames saves 444.
+The 31-stream mean falls 0.3905%, corpus maximum 122,066 -> 121,622 cycles.
+Normal/+40% PWM passes all 31 streams, queues 74/33, free SRAM 629 B.
+
+The same change saves 118 cycles/block for order eight, or 916 cycles/frame
+across both WB bands. All 10,563 WB frames and 744 repeat cases remain exact;
+all 16 WB PWM streams and the two +5% streams pass. Both C decoder images stay
+byte-identical; two fresh portable C archives each pass 9,100 NB and 10,563 WB
+frames. Reports `iir-cache3-*` bind sources, images and upstream PCM/PWM.
+These are ISA/peripheral measurements, not physical-board or other-CPU claims.
+
+The preceding kernel is pinned to 61a51e6. Restore and build the original unit
+without relying on an archived worktree (use a new output directory):
+
+```sh
+python Codecs/Speex/AVR/tools/prepare_iir_baseline.py --ref 61a51e6 --out Codecs/Speex/AVR/build/cache3-unit-baseline
+python Codecs/Speex/AVR/build/cache3-unit-baseline/tools/build_iir_test.py --avr-gcc avr-gcc
+node Codecs/Speex/AVR/build/cache3-unit-baseline/tests/verify_iir_cursor.mjs
+```
+
+The baseline reproduction was rebuilt byte-identically to the executed unit.
+`tests/audit_iir_cache3.py --rebuild --avr-gcc avr-gcc` binds the retained
+`build/cache3-*` qualification artifacts and rebuilds representative player
+images; it does not claim to rerun or recompile all 80 frozen player images.
+
 ## Next candidates (not yet measured/admitted)
 
-1. **One long-pitch ASM entry for forty outputs.** The C controller already
-   has four indices available, but calls the ten-sample kernel four times,
-   saving fifteen registers and reloading gains/history each time. A fixed
-   forty-sample entry might retain those invariants and avoid per-sample
-   packed/rolling dispatch. Register pressure, index storage and extra code
-   need measurement. Retain the selectable C controller, existing ten/count
-   entries, all exact clamps and GNU ABI/ISR behavior; no speedup is established.
+The previously listed C40 long-pitch entry shipped in commit 9813583 and is
+no longer an outstanding candidate.
+
+1. **Specialize NB quarter-step LSP interpolation.** Raw NB3 angles are
+   multiples of sixteen; the same exact shifts/additions used by compact WB
+   may replace the two separately rounded Q14 products. Keep the ten-angle
+   sequential margin pass, signed widths and all four subframe results.
+   Inlining versus an outlined helper needs measurement in both backends;
+   no NB interpolation speed/size gain has yet been established.
 
 2. **Return grouped indices as a value.** Four explicit byte lanes in a uint32
    return could avoid the local four-byte array. Extra live registers, shifts
