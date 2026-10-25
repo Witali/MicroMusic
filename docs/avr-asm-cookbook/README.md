@@ -2234,3 +2234,23 @@ cycles per audio IRQ, both zero underruns. Selectable C fallback remains
 PWM-exact but costs 3175.445 cycles/sample and 40157 underruns at these clocks.
 These are measured simavr workloads, not physical-board or indefinite-stream
 claims. [Full paired matrix, corpus, unchanged-source proof and limitations](../../Codecs/LPX/research/q0-multiseed-2026-10-25/README.md).
+
+At an 8 kbit/s payload ceiling, a three-example listening trial (male/female
+speech and piano, four seconds each) retains the existing CLI8 candidate and
+searches it alongside the previous enhanced12/16 seeds. Beam4, lambdas
+.003/.01/.03/.1/.3/1/3, eight boundary refinements per seed; actual written
+sizes and full native SSE/STOI decide the result. A feasible low-rate result
+can underspend badly: the existing CLI speech examples use only 5.224/5.174
+kbit/s and STOI .0463/.4731; the trial spends 7.990/7.962 and reaches
+.6894/.8913. This is a same-ceiling comparison with extra actual bits and a
+broader search, not proof at equal actual size or unchanged 12/16 quality.
+Piano uses 7.978 kbit/s, SER 16.086 dB; its peak rises 1319 to 1346 versus CLI8.
+
+All six baseline/selected full AVR images pass native/model/PWM with active
+IRQ on the same AVR5/GCC7.3.0/16MHz/8kHz/ASM/queue512 configuration. Selected
+decode wall budgets are 65.58–71.55%; Flash 12686–12700, static SRAM 1102 B.
+The heaviest male stream repeated continuously for eight seconds uses 71.415%
+normally and 73.308% with 100 extra cycles/audio IRQ, both zero underruns.
+C fallback remains exact but 146.538% and 32390 underruns. Sources/tables and
+backend selectors are unchanged; this is not an arithmetic speedup or a
+27-case/hardware admission claim. [Three-case measurements and listening provenance](../../Codecs/LPX/research/q0-8kbps-2026-10-25/README.md).
