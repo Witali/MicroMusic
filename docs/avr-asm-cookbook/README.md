@@ -1876,3 +1876,29 @@ within the same ceiling; it is not a same-size or corpus-wide improvement.
 The unchanged AVR decoder costs 68.105 → 76.772% mean decode budget, zero
 underruns, SRAM 1102 bytes. A denser spectral model can cost more even with
 identical decoder code. [Single-clip inputs, measurements and scope](../../Codecs/LPX/research/q0-listening-2026-10-25/README.md).
+
+The frozen follow-up now covers all 27 four-second references, 12/16 kbit/s,
+with both the original payload ceiling and a cap at each original file's
+actual length. Keep both old spectral seeds through joint excitation search
+and refine the byte boundary ten times per seed (beam4, lambdas .003/.01/.03/.1).
+Retain the feasible old result and require full SSE and speech STOI no worse
+than that target baseline. This evaluates the combined seed/refinement recipe;
+it does not isolate either change. Before PWM, error decreases in 21/27 and
+16/27 cases at the original 12/16 ceilings; without larger files, 16/27 and
+13/27. Excluding the previously heard clip, 20/26 improve at cap12. Clean
+speech16 SER improves 15.201 to 16.404 dB at cap12, or 16.138 dB without
+larger files; STOI .8361 to .8568 or .8505. Cap16 gains are smaller.
+Some peak errors and post-PWM STOI values worsen despite the PCM16 guards;
+objective average gains are not a listening guarantee.
+
+With the same AVR5/GCC7.3.0 `-Os` configuration above, all 108 selected points
+map to 88 source/settings/ELF/HEX-checked full images with active IRQ and zero
+underruns. Mean decode wall budget is 58.06–78.23%; average paired increase
+.49 percentage points, largest +8.67. Maximum Flash 16706, static SRAM 1102
+bytes. No decoder source/table or assembly changed. The heaviest selected
+stream, `en_sense_a4` at cap16, repeated continuously for eight seconds:
+1569.669 cycles/sample (78.483%) normally, 1633.230 (81.662%) with 100 extra
+cycles per audio IRQ, both zero underruns. Selectable C fallback remains
+PWM-exact but costs 3175.445 cycles/sample and 40157 underruns at these clocks.
+These are measured simavr workloads, not physical-board or indefinite-stream
+claims. [Full paired matrix, corpus, unchanged-source proof and limitations](../../Codecs/LPX/research/q0-multiseed-2026-10-25/README.md).

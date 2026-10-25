@@ -1,0 +1,63 @@
+{
+  "recorded_utc": "2026-10-25T19:37:35.553117+00:00",
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "packages": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "numba": "0.68.0",
+    "pystoi": "0.4.1",
+    "soundfile": "0.14.0",
+    "matplotlib": "3.11.2"
+  },
+  "base_commit": "f5995f13",
+  "protocol_commit": "cce10e1d",
+  "harness_commit": "c5bbaa04",
+  "git_head_before_result_commit": "7fef52fc88e505f2d86222cbe5ffcef8374b950d",
+  "benchmark_revision": "92c1ae523ac8854509310087c5436ffbb0ef8f0515e91e8b96e41b6893b50e5e",
+  "config": {
+    "rates": [
+      12000,
+      16000
+    ],
+    "seed_rates": [
+      12000,
+      16000
+    ],
+    "lambdas": [
+      0.003,
+      0.01,
+      0.03,
+      0.1
+    ],
+    "refinement_trials": 10,
+    "beam": 4,
+    "compact_features": 24,
+    "controls": [
+      "equal_ceiling",
+      "old_file_cap"
+    ],
+    "baseline_stage": "joint",
+    "stimulus_case": "ru_pushkin_a4",
+    "reference_samples": 32000,
+    "selection": "Full SSE and speech STOI no worse than the corresponding original joint; then SSE/bytes/hash.",
+    "protocol": "q0-multiseed-2026-10-25/PROTOCOL.md"
+  },
+  "source_sha256": {
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\benchmark_multiseed.py": "0e4f59c43c8be9c20dbd38135eeca5aca2fcf1492945183633b59e0647b0588a",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\budget_search.py": "3f4934d0444842de9e088b8a978a1b39251c479df1c36622777dd3adf33e8a6d",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\joint_rate.py": "9b0cdedf2d58d00536c149e73b9ac23fe7cc0a4dbaea4f07ff735473823c48bf",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\rate_distortion.py": "fa9dcffaba163e96dd29e3626f6cee729ec4e4166146d3d44ceead52ea6733d8",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\validate_lowrate_avr.py": "5ca48d3af0c745bca84c61bf14054d80be68cc17a0a660bf904888ecff0a4880",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\summarize_multiseed.py": "9b4b7329305fdfd425747c78805171e3259fff5213d90db462c9fa3a6fdc5710",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\stress_lowrate.py": "c15e11d9e8abf3f398b6a6b2bf65c627b0d7f4af1e4f88f4050a16e1610b6f23",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\plot_multiseed.py": "bfaa2388223293e875d9e755a11e9b451e050c474f5bb065cb745745113db3ce",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tests\\test_multiseed.py": "71b38bd865f9745eafec699bf779dee81dd34e4463038aa7beabef17386d4e94",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tests\\test_multiseed_summary.py": "21936d4f86783e6f730cd044cfaf1d807f4245abec78ab5bb287587e5127de6b"
+  },
+  "baseline_measurements_sha256": "31ec58f508dc695f3e23b801b4020657527da06f196dcfdf6f13406e4b3458c1",
+  "runtime": "Native C: Clang24/MSVC C++14 adapter. AVR: GNU GCC7.3.0 -Os / simavr1.6 / WSL Ubuntu; full options and ELF hashes in avr.json.",
+  "parallel_processes": 5,
+  "physical_hardware_measured": false,
+  "human_scores_collected": false
+}
