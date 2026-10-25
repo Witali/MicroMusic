@@ -57,6 +57,16 @@ class Buffer(unittest.TestCase):
                 build=json.loads((folder/name/'build-report.json').read_text())
                 self.assertEqual(build['packingMode'],'compact' if size==192 else 'fast')
                 self.assertEqual(build['grammarFormat'],9 if size==192 else 0)
+                self.assertEqual(build['configuredChannels'],1)
+                self.assertEqual(build['renderABI'],'mono-s16')
+                self.assertNotIn('um_channels',build['labels'])
+                # Parse the actual linked image, including small custom rings.
+                # No fixed 2560-byte floor or 32-byte music padding is needed.
+                image=(folder/name/'synth.bin').read_bytes()
+                self.assertGreaterEqual(build['songAddress'],build['engineBytes'])
+                self.assertLessEqual(build['songAddress']-build['engineBytes'],2)
+                self.assertEqual(build['songPaddingBytes'],build['songAddress']-build['engineBytes'])
+                self.assertEqual(image[build['songAddress']:build['songAddress']+4],b'UM88')
                 self.assertEqual(measured['fifoCapacityFrames'],size)
                 self.assertEqual(measured['passed'],passed,measured)
                 self.assertEqual(result.returncode==0,passed)

@@ -1,4 +1,4 @@
-/* UM88 v1. The compiled code is identical for every composition. */
+/* UM88 v1. The compiled code is shared by compositions of one output mode. */
 #include "engine.h"
 #include "storage.h"
 #include <string.h>
@@ -11,7 +11,6 @@ UMState um;
 uint16_t um_normalizer;
 int8_t um_normalizerMin;
 uint8_t um_masterShift;
-uint8_t um_channels;
 static uint16_t waveTable,contextTable,envelopeTable,ruleTable,rowTable,pitchTable;
 static uint8_t levelDirty,contextDirty;
 #ifndef UM_COMPACT_SCORE_ONLY
@@ -160,7 +159,7 @@ static void read_events(void) {
 }
 void um_init(void) {
     memset(&um,0,sizeof um);
-    um.count=FIELD(4);um_channels=FIELD(5);
+    um.count=FIELD(4);
     bind_pointer(&waveTable,8);bind_pointer(&contextTable,10);bind_pointer(&envelopeTable,12);
     bind_pointer(&ruleTable,14);bind_pointer(&rowTable,18);bind_pointer(&pitchTable,24);
     literalCount=FIELD(23);if(!literalCount)literalCount=256;
@@ -197,8 +196,11 @@ void um_tick(void) {
 }
 
 #if !defined(__AVR_ATtiny88__) || !defined(UM_ENABLE_AVR_ASM) || !UM_ENABLE_AVR_ASM
-uint32_t um_render(void) {
-    int16_t l=0,r=0,group=0;
+UMSample um_render(void) {
+    int16_t l=0,group=0;
+#if UM_OUTPUT_CHANNELS == 2
+    int16_t r=0;
+#endif
     UMVoice *v=um.voice;
     for(uint8_t remaining=um.count;remaining;remaining--,v++){
         v->phase+=v->step;
@@ -212,10 +214,16 @@ uint32_t um_render(void) {
             }else value=group>>(mix&7);
             group=0;
             l+=(mix&8)?value>>1:value;
+#if UM_OUTPUT_CHANNELS == 2
             r+=(mix&16)?value>>1:value;
+#endif
         }
     }
+#if UM_OUTPUT_CHANNELS == 1
+    return l;
+#else
     return (uint16_t)l|((uint32_t)(uint16_t)r<<16);
+#endif
 }
 #endif
 uint8_t um_output(int16_t value) {

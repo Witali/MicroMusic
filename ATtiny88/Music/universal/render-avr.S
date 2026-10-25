@@ -1,19 +1,24 @@
 /* UM88 AVR25 kernel. Equivalent selectable C in engine.c, no hardware I/O. */
+#include "audio-channels.h"
 #if defined(__AVR_ATtiny88__) && defined(UM_ENABLE_AVR_ASM) && UM_ENABLE_AVR_ASM
 .text
-/* GNU uint32_t result: signed left in r23:r22, right in r25:r24.
-   Both pans are live even for mono so one kernel serves every composition. */
+/* GNU ABI: mono int16_t left in r25:r24; stereo uint32_t packs signed left
+   in r23:r22 and right in r25:r24. Only the selected accumulators are live. */
 .global um_render
 .type um_render,@function
 um_render:
     push r14
     push r15
+#if UM_OUTPUT_CHANNELS == 2
     push r16
     push r17
+#endif
     clr r14
     clr r15
+#if UM_OUTPUT_CHANNELS == 2
     clr r16
     clr r17
+#endif
     clr r20
     ldi r26,lo8(um)
     ldi r27,hi8(um)
@@ -45,17 +50,23 @@ um_render:
     com r25
     add r14,r24
     adc r15,r25
+#if UM_OUTPUT_CHANNELS == 2
     add r16,r24
     adc r17,r25
+#endif
 .Lmix_next:
     dec r18
     breq 9f
     rjmp 1b
 9:
+#if UM_OUTPUT_CHANNELS == 1
+    movw r24,r14
+#else
     movw r22,r14
     movw r24,r16
     pop r17
     pop r16
+#endif
     pop r15
     pop r14
     ret
@@ -103,6 +114,15 @@ um_render:
     clr r25
     sbrc r24,7
     com r25
+#if UM_OUTPUT_CHANNELS == 1
+    sbrs r19,3
+    rjmp .Lleft_ready
+    asr r25
+    ror r24
+.Lleft_ready:
+    add r14,r24
+    adc r15,r25
+#else
     movw r22,r24
     sbrs r19,3
     rjmp .Lleft_ready
@@ -118,6 +138,7 @@ um_render:
 .Lright_ready:
     add r16,r24
     adc r17,r25
+#endif
     rjmp .Lmix_next
 .size um_render,.-um_render
 

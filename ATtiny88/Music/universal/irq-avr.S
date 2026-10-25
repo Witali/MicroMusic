@@ -1,6 +1,7 @@
 /* Optional hardware FIFO driver. Same behavior as the C ISR in platform.c. */
 #include <avr/io.h>
 #include "audio-buffer.h"
+#include "audio-channels.h"
 #if defined(__AVR_ATtiny88__) && defined(UM_ENABLE_AVR_ASM) && UM_ENABLE_AVR_ASM
 .text
 .global TIMER1_OVF_vect
@@ -17,13 +18,11 @@ TIMER1_OVF_vect:
     breq 1f
     /* platform.c guarantees a 256-byte-aligned FIFO, shorter than a page. */
     ldi r27,hi8(um_ring)
-    lds r16,um_channels
-    cpi r16,2
     ld r16,X+
-    brne .Lmono_frame
+#if UM_OUTPUT_CHANNELS == 2
     sts _SFR_MEM_ADDR(OCR1AL),r16
     ld r16,X+
-.Lmono_frame:
+#endif
     sts _SFR_MEM_ADDR(OCR1BL),r16
     cpi r26,UM_PWM_BUFFER_FRAMES
     brcs 3f
