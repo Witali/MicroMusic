@@ -7,9 +7,10 @@
 #endif
 
 static DecState decoder;
-/* Excitation uses qlsp (20 B) and four indices. Synthesis reuses offset 20
- * for ak, then appends interp at 40. Peak = 60 B; host checks each PUSH. */
-_Alignas(4) static uint32_t scratch[15];
+/* Delta occupies 20 B. Excitation indices, interpolated angles and LPC
+ * coefficients reuse offset 20 in that order. The converter consumes every
+ * angle before writing coefficients. Peak = 40 B; host checks each PUSH. */
+_Alignas(4) static uint32_t scratch[10];
 static size_t scratch_peak;
 
 #if SPEEX_NB3_CHECK_SCRATCH

@@ -1,0 +1,307 @@
+{
+  "baselineGitCommit": "928d18e",
+  "scope": "ATmega328P AVR GCC 7.3.0 mixed Os/O2/O3 with LTO; ISR excluded",
+  "provenance": "Sequential margins derived from Xiph Speex 1.2.1 lsp.c, Jean-Marc Valin 2002-2006; vendor/speex-1.2.1/COPYING",
+  "selected": {
+    "asm": "alias-bounded-inline",
+    "c": "alias-bounded-inline-c"
+  },
+  "reason": "Lowest measured fixture mean on both backends; saves 20 B static SRAM. O2/outlined variants retained for code-size comparison.",
+  "baseline": {
+    "asm": {
+      "binarySha256": "3aef7ffc6c10b94e3518204a98a3f604c51cd52eda55a6f81a83891d68f77dd2",
+      "fullCorpusMeanCycles": 107802.98340659341,
+      "maxCycles": 115817,
+      "flashBytes": 10610,
+      "staticSramBytes": 1119,
+      "peakStack": 114
+    },
+    "c": {
+      "binarySha256": "620e8cf8d3b48ca1090e48a52a9d2f051a08d48ef45ab2e339c06778f4c0a57c",
+      "fullCorpusMeanCycles": 219567.1678021978,
+      "maxCycles": 231834,
+      "flashBytes": 11078,
+      "staticSramBytes": 1119,
+      "peakStack": 105
+    }
+  },
+  "sourceText": {
+    "f980c4cae388133407dc29fcd77dff38a25c45d402cec26ffe56a2867ce4d5b2": "/* Four-quarter NB3 LSP interpolation, specialized for order 10 / margin 16.\n * The sequential margin pass follows Xiph Speex 1.2.1 lsp.c:\n * Copyright (C) 2002-2006 Jean-Marc Valin; BSD terms in vendor/.../COPYING.\n * Raw endpoint angles from the pinned NB3 codebooks are multiples of 16.\n * Thus each separately rounded upstream Q14 product is already integral:\n * old + (sub+1) * ((next>>2) - (old>>2)) gives the same raw interpolation.\n * The caller computes delta once and calls four times on a changed frame.\n * On reset it uses zero deltas and calls once; cached frames need no call.\n * raw, delta and out must be distinct arrays of ten int16_t elements.\n * raw advances in place, remaining separate from the margin-adjusted output;\n * after four calls it equals the new endpoint, without a final frame copy.\n * C implementation for every arithmetic backend, including AVR ASM builds. */\n#ifndef SPEEX_NB3_INTERPOLATE_H\n#define SPEEX_NB3_INTERPOLATE_H\n#include \"speex_platform.h\"\n\nstatic SPEEX_NB3_STAGE void speex_nb3_interpolate(\n    int16_t *restrict raw, const int16_t *restrict delta, int16_t *restrict out)\n{\n    unsigned i;\n    int16_t previous, current, following;\n    raw[0] += delta[0];\n    previous = raw[0] < 16 ? 16 : raw[0];\n    out[0] = previous;\n    current = raw[1] + delta[1];\n    for (i = 1; i < 9; i++) {\n        int next;\n        raw[i] = current;\n        following = raw[i+1] + delta[i+1];\n        /* Upstream clamps element 9 before adjusting elements 1..8. */\n        next = (i == 8 && following > 25720) ? 25720 : following;\n        if (current < previous + 16) current = previous + 16;\n        /* Retain both shifts: combining them into one average can round\n         * differently after an earlier margin correction made an odd angle.\n         * Keep next as int to retain the upstream integer promotions. */\n        if (current > next - 16) current = (current >> 1) + ((next - 16) >> 1);\n        out[i] = current;\n        previous = current;\n        current = following;\n    }\n    raw[9] = current;\n    out[9] = current > 25720 ? 25720 : current;\n}\n#endif\n",
+    "32776acf719bb4206469d0161008dc4e553639c2d90f3433b51fda43cbb06d01": "#include \"nb3_header.h\"\n#include \"nb3_subframe.h\"\n#include \"nb3_lsp.h\"\n#if SPEEX_ENABLE_WB1\n#include \"wb_internal.h\"\n#endif\n#include \"nb3_indices.h\"\n#include \"nb3_interpolate.h\"\n/* Restricted NB3 body adapted from Xiph Speex 1.2.1 nb_celp.c.\n * Copyright (C) 2002-2006 Jean-Marc Valin; BSD terms in vendor/speex-1.2.1/COPYING.\n * Preserve the original excitation, interpolation, rounding and 40-sample\n * synthesis delay. Remove bookkeeping used only by unsupported PLC/enhancer\n * and general ctl APIs. The vendored release remains the independent oracle. */\n#include \"speex_platform.h\"\n#include \"pitch24.h\"\n#include \"long_pitch.h\"\n#include \"short_pitch.h\"\n#if SPEEX_NB3_USE_AVR_ASM\nstatic SPEEX_NB3_NOINLINE\n#else\nstatic SPEEX_NB3_STAGE_O2\n#endif\nvoid speex_nb3_long_innovation(int16_t *out,\n    const int16_t *in,const uint8_t *input_indices,int32_t scale,unsigned index)\n{\n#if SPEEX_NB3_USE_AVR_ASM\n    const uint8_t *indices=input_indices;\n#else\n    uint8_t indices[4];\n    for(unsigned k=0;k<4;k++)indices[k]=input_indices[k];\n#endif\n    int8_t gains[3];\n    uint8_t vector;\n    gains[0]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index+2));\n    gains[1]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index+1));\n    gains[2]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index));\n#if SPEEX_NB3_USE_AVR_ASM\n    speex_avr_long_innovation40(out,in,indices,scale,gains);\n#else\n    for (vector=0;vector<4;vector++) {\n        unsigned code=indices[vector];\n        const int8_t *shape=exc_10_32_table+10*code;\n        speex_nb3_long_innovation10_c(out,in,shape,scale,gains,10);\n        out+=10;in+=10;\n    }\n#endif\n}\n_Static_assert(NB_SUBFRAME_SIZE==40 && NB_PITCH_START==17 && NB_PITCH_END==144,\n               \"Packed pitch is specialized for the pinned NB3 frame/pitch bounds\");\n_Static_assert(NB_ORDER==10 && NB_NB_SUBFRAMES==4 && LSP_MARGIN==16,\n               \"Quarter-step LSP interpolation requires the pinned NB3 geometry\");\nSPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packet, void *vout)\n{\n   DecState *st=(DecState *)state;\n   spx_word16_t *out=(spx_word16_t *)vout;\n   spx_word16_t *frame_exc=st->excBuf+NB_DEC_EXC_OFFSET;\n   char *stack=st->stack;\n   int qe,sub,i;\n   uint8_t repeat_lsp;\n   VARDECL(spx_lsp_t *lsp_delta);\n   VARDECL(spx_coef_t *ak);\n   VARDECL(spx_lsp_t *interp_qlsp);\n   VARDECL(uint8_t *indices);\n   if (!packet) return -2;\n   SPEEX_MOVE(st->excBuf,st->excBuf+NB_FRAME_SIZE,NB_DEC_SHIFT_COUNT);\n   ALLOC(lsp_delta,NB_ORDER,spx_lsp_t);\n   repeat_lsp=st->first || (st->lsp_key[0]==(packet[0]&7) &&\n                  st->lsp_key[1]==packet[1] && st->lsp_key[2]==(packet[2]&254));\n   if (st->first || !repeat_lsp) {\n      /* Decode directly in quarter units. The original two P14 products\n       * are integral for NB3's multiple-of-16 endpoints. Prepare the same\n       * delta before excitation, avoiding a raw-angle temporary round trip. */\n      speex_nb3_lsp_quarters(packet,lsp_delta);\n      if(st->first) for(i=0;i<NB_ORDER;i++) {st->old_qlsp[i]=4*lsp_delta[i];lsp_delta[i]=0;}\n      else for(i=0;i<NB_ORDER;i++)lsp_delta[i]-=st->old_qlsp[i]>>2;\n      st->lsp_key[0]=packet[0]&7;st->lsp_key[1]=packet[1];st->lsp_key[2]=packet[2]&254;\n   }\n   qe=speex_nb3_frame_gain(packet);\n   /* The validated packet map supplies the complete 33-bit group once.\n    * This four-byte slot is dead when LPC synthesis reuses offset 20. */\n   ALLOC(indices,4,uint8_t);\n   for (sub=0;sub<NB_NB_SUBFRAMES;sub++)\n   {\n      spx_word16_t *exc=frame_exc+NB_SUBFRAME_SIZE*sub;\n      uint16_t header=speex_nb3_unpack_subframe(packet,(uint8_t)sub,indices);\n      unsigned pitch=(header>>6)+17;\n      unsigned index=((header>>1)&31)*4;\n      int q_energy;\n      spx_word32_t ener;\n      /* Every pitch source index is negative: each segment ends before its\n       * source reaches exc[0]. No clear of the current excitation is needed. */\n      q_energy=header&1;\n      ener=AVR_READ_I32(&nb3_gain_table[(qe<<1)|q_energy]);\n      if (!index) {\n         speex_nb3_zero_innovation(exc,indices,ener);\n      } else if (pitch>=41) {\n         /* Even the last tap reads exc[-1] or earlier. No output feeds a\n          * source in this block; fuse the three sums with innovation. */\n         speex_nb3_long_innovation(exc,exc-pitch-1,indices,ener,index);\n      } else {\n         speex_nb3_short_innovation(exc,exc,(uint8_t)pitch,indices,ener,index);\n      }\n   }\n   /* Release the excitation indices; synthesis appends distinct ak/interp\n    * arrays after lsp_delta, retaining the four original interpolation steps. */\n   stack=(char *)(lsp_delta+NB_ORDER);\n   ALLOC(ak,NB_ORDER,spx_coef_t);\n   interp_qlsp=ak;\n   /* The delta was prepared before excitation. Cache hits do not read it;\n    * changed frames advance raw state four times, with margin only on out. */\n   for (sub=0;sub<NB_NB_SUBFRAMES;sub++)\n   {\n      spx_word16_t *sp;\n#if SPEEX_ENABLE_WB1\n      sp=out?out+NB_SUBFRAME_SIZE*sub:speex_wb_low_buffer();\n#else\n      sp=out+NB_SUBFRAME_SIZE*sub;\n#endif\n      uint8_t update_lpc=!repeat_lsp || (st->first && !sub);\n      /* NB3 unquantized angles are multiples of 16. Its quarter-step P14\n       * products are exact even though upstream rounds the two products\n       * separately. Equal endpoints therefore produce identical margin-\n       * adjusted angles in all four steps. The last LPC is already cached.\n       * On reset, compute it after the first synthesis step as upstream does.\n       * IIR always runs, including its coefficient-age transition. */\n      if (update_lpc) {\n         speex_nb3_interpolate(st->old_qlsp,lsp_delta,interp_qlsp);\n         lsp_to_lpc(interp_qlsp,ak,NB_ORDER,stack);\n      }\n      /* Excitation is complete and remains read-only during synthesis.\n       * Filter from its delayed history directly, retaining the original\n       * 40-sample delay without copying a whole frame into the PCM output. */\n      iir_mem16(frame_exc-NB_SUBFRAME_SIZE+NB_SUBFRAME_SIZE*sub,\n                st->interp_qlpc,sp,NB_SUBFRAME_SIZE,NB_ORDER,st->mem_sp,stack);\n      if (update_lpc) for (i=0;i<NB_ORDER;i++) st->interp_qlpc[i]=ak[i];\n#if SPEEX_ENABLE_WB1\n      if (!out) {\n         uint16_t header;\n         /* Interpolated angles are dead after lsp_to_lpc. HB consumes the\n          * reconstructed indices synchronously, before the next quarter. */\n         indices=(uint8_t *)interp_qlsp;\n         header=speex_nb3_unpack_subframe(packet,(uint8_t)sub,indices);\n         speex_wb_low_ready(sp,st->interp_qlpc,indices,\n             AVR_READ_I32(nb3_gain_table+(qe<<1)+(header&1)));\n      }\n#endif\n#ifdef SPEEX_AVR_OUTPUT_HOOK\n      {\n         extern void speex_avr_output(const spx_word16_t *,uint8_t);\n#if SPEEX_ENABLE_WB1\n         if (out)\n#endif\n         speex_avr_output(sp,NB_SUBFRAME_SIZE);\n      }\n#endif\n   }\n   st->first=0;\n   return 0;\n}\n",
+    "0de948a1d5827d5294feccfd2aa50ad77168dfd6095db7c88e26150b61365ee5": "#include \"speex_avr.h\"\n#include \"speex_platform.h\"\n#include \"nb_celp.h\"\n#include <string.h>\n#if SPEEX_NB3_CHECK_SCRATCH\n#include <stdlib.h>\n#endif\n\nstatic DecState decoder;\n/* Excitation uses qlsp (20 B) and four indices. Synthesis reuses offset 20\n * for ak, then appends interp at 40. Peak = 60 B; host checks each PUSH. */\n_Alignas(4) static uint32_t scratch[10];\nstatic size_t scratch_peak;\n\n#if SPEEX_NB3_CHECK_SCRATCH\nvoid *speex_avr_push(char **position, size_t bytes, size_t alignment)\n{\n    uintptr_t p = (uintptr_t)*position;\n    uintptr_t aligned = (p + alignment - 1) & ~(uintptr_t)(alignment - 1);\n    uintptr_t end = aligned + bytes;\n    size_t used = end - (uintptr_t)scratch;\n    if (p < (uintptr_t)scratch || used > sizeof(scratch)) abort();\n    if (used > scratch_peak) scratch_peak = used;\n    *position = (char *)end;\n    return (void *)aligned;\n}\n#endif\n\nvoid speex_avr_init(void)\n{\n    memset(&decoder, 0, sizeof(decoder));\n    memset(scratch, 0, sizeof(scratch));\n    decoder.first = 1;\n    decoder.stack = (char *)scratch;\n    scratch_peak = 0;\n}\n\nint speex_avr_decode(const uint8_t *packet, size_t bytes, int16_t *pcm)\n{\n    if (!packet || !pcm || bytes != 20 || (packet[0] >> 3) != 3) return -1;\n    return nb_decode(&decoder, packet, pcm);\n}\n\nsize_t speex_avr_state_bytes(void) { return sizeof(decoder) + sizeof(scratch); }\nsize_t speex_avr_scratch_peak(void) { return scratch_peak; }\n\n#if SPEEX_ENABLE_WB1\nint speex_wb_decode_low(const uint8_t *packet)\n{\n    return nb_decode(&decoder,packet,0);\n}\n#endif\n",
+    "82209581ba02b1a681c1c29f4bef3835736b7e04ebe8d24e4456437226b40f95": "/* Four-quarter NB3 LSP interpolation, specialized for order 10 / margin 16.\n * The sequential margin pass follows Xiph Speex 1.2.1 lsp.c:\n * Copyright (C) 2002-2006 Jean-Marc Valin; BSD terms in vendor/.../COPYING.\n * Raw endpoint angles from the pinned NB3 codebooks are multiples of 16.\n * Thus each separately rounded upstream Q14 product is already integral:\n * old + (sub+1) * ((next>>2) - (old>>2)) gives the same raw interpolation.\n * The caller computes delta once and calls four times on a changed frame.\n * On reset it uses zero deltas and calls once; cached frames need no call.\n * raw, delta and out must be distinct arrays of ten int16_t elements.\n * raw advances in place, remaining separate from the margin-adjusted output;\n * after four calls it equals the new endpoint, without a final frame copy.\n * C implementation for every arithmetic backend, including AVR ASM builds. */\n#ifndef SPEEX_NB3_INTERPOLATE_H\n#define SPEEX_NB3_INTERPOLATE_H\n#include \"speex_platform.h\"\n\nstatic SPEEX_NB3_ALWAYS_INLINE void speex_nb3_interpolate_core(\n    int16_t *restrict raw, const int16_t *restrict delta, int16_t *restrict out, uint8_t bounded)\n{\n    unsigned i;\n    int16_t previous, current, following;\n    raw[0] += delta[0];\n    previous = bounded ? raw[0] : (raw[0] < 16 ? 16 : raw[0]);\n    out[0] = previous;\n    current = raw[1] + delta[1];\n    for (i = 1; i < 9; i++) {\n        int next;\n        raw[i] = current;\n        following = raw[i+1] + delta[i+1];\n        /* Upstream clamps element 9 before adjusting elements 1..8. */\n        next = (!bounded && i == 8 && following > 25720) ? 25720 : following;\n        if (current < previous + 16) current = previous + 16;\n        /* Retain both shifts: combining them into one average can round\n         * differently after an earlier margin correction made an odd angle.\n         * Keep next as int to retain the upstream integer promotions. */\n        if (current > next - 16) current = (current >> 1) + ((next - 16) >> 1);\n        out[i] = current;\n        previous = current;\n        current = following;\n    }\n    raw[9] = current;\n    out[9] = bounded ? current : (current > 25720 ? 25720 : current);\n}\nstatic SPEEX_NB3_STAGE void speex_nb3_interpolate(\n    int16_t *restrict raw, const int16_t *restrict delta, int16_t *restrict out)\n{\n    speex_nb3_interpolate_core(raw,delta,out,0);\n}\n\n/* Updated first/last raw angles must be within [16,25720]. */\nstatic SPEEX_NB3_ALWAYS_INLINE void speex_nb3_interpolate_validated(\n    int16_t *restrict raw, const int16_t *restrict delta, int16_t *restrict out)\n{\n    speex_nb3_interpolate_core(raw,delta,out,1);\n}\n\n#endif\n",
+    "63117cbb18dedf11e85f88a52d466dbdf0d9b2fdf8e4e75a25e249c2b6202d88": "#include \"nb3_header.h\"\n#include \"nb3_subframe.h\"\n#include \"nb3_lsp.h\"\n#if SPEEX_ENABLE_WB1\n#include \"wb_internal.h\"\n#endif\n#include \"nb3_indices.h\"\n#include \"nb3_interpolate.h\"\n/* Restricted NB3 body adapted from Xiph Speex 1.2.1 nb_celp.c.\n * Copyright (C) 2002-2006 Jean-Marc Valin; BSD terms in vendor/speex-1.2.1/COPYING.\n * Preserve the original excitation, interpolation, rounding and 40-sample\n * synthesis delay. Remove bookkeeping used only by unsupported PLC/enhancer\n * and general ctl APIs. The vendored release remains the independent oracle. */\n#include \"speex_platform.h\"\n#include \"pitch24.h\"\n#include \"long_pitch.h\"\n#include \"short_pitch.h\"\n#if SPEEX_NB3_USE_AVR_ASM\nstatic SPEEX_NB3_NOINLINE\n#else\nstatic SPEEX_NB3_STAGE_O2\n#endif\nvoid speex_nb3_long_innovation(int16_t *out,\n    const int16_t *in,const uint8_t *input_indices,int32_t scale,unsigned index)\n{\n#if SPEEX_NB3_USE_AVR_ASM\n    const uint8_t *indices=input_indices;\n#else\n    uint8_t indices[4];\n    for(unsigned k=0;k<4;k++)indices[k]=input_indices[k];\n#endif\n    int8_t gains[3];\n    uint8_t vector;\n    gains[0]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index+2));\n    gains[1]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index+1));\n    gains[2]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index));\n#if SPEEX_NB3_USE_AVR_ASM\n    speex_avr_long_innovation40(out,in,indices,scale,gains);\n#else\n    for (vector=0;vector<4;vector++) {\n        unsigned code=indices[vector];\n        const int8_t *shape=exc_10_32_table+10*code;\n        speex_nb3_long_innovation10_c(out,in,shape,scale,gains,10);\n        out+=10;in+=10;\n    }\n#endif\n}\n_Static_assert(NB_SUBFRAME_SIZE==40 && NB_PITCH_START==17 && NB_PITCH_END==144,\n               \"Packed pitch is specialized for the pinned NB3 frame/pitch bounds\");\n_Static_assert(NB_ORDER==10 && NB_NB_SUBFRAMES==4 && LSP_MARGIN==16,\n               \"Quarter-step LSP interpolation requires the pinned NB3 geometry\");\nSPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packet, void *vout)\n{\n   DecState *st=(DecState *)state;\n   spx_word16_t *out=(spx_word16_t *)vout;\n   spx_word16_t *frame_exc=st->excBuf+NB_DEC_EXC_OFFSET;\n   char *stack=st->stack;\n   int qe,sub,i;\n   uint8_t repeat_lsp;\n   VARDECL(spx_lsp_t *lsp_delta);\n   VARDECL(spx_coef_t *ak);\n   VARDECL(spx_lsp_t *interp_qlsp);\n   VARDECL(uint8_t *indices);\n   if (!packet) return -2;\n   SPEEX_MOVE(st->excBuf,st->excBuf+NB_FRAME_SIZE,NB_DEC_SHIFT_COUNT);\n   ALLOC(lsp_delta,NB_ORDER,spx_lsp_t);\n   repeat_lsp=st->first || (st->lsp_key[0]==(packet[0]&7) &&\n                  st->lsp_key[1]==packet[1] && st->lsp_key[2]==(packet[2]&254));\n   if (st->first || !repeat_lsp) {\n      /* Decode directly in quarter units. The original two P14 products\n       * are integral for NB3's multiple-of-16 endpoints. Prepare the same\n       * delta before excitation, avoiding a raw-angle temporary round trip. */\n      speex_nb3_lsp_quarters(packet,lsp_delta);\n      if(st->first) for(i=0;i<NB_ORDER;i++) {st->old_qlsp[i]=4*lsp_delta[i];lsp_delta[i]=0;}\n      else for(i=0;i<NB_ORDER;i++)lsp_delta[i]-=st->old_qlsp[i]>>2;\n      st->lsp_key[0]=packet[0]&7;st->lsp_key[1]=packet[1];st->lsp_key[2]=packet[2]&254;\n   }\n   qe=speex_nb3_frame_gain(packet);\n   /* The validated packet map supplies the complete 33-bit group once.\n    * This four-byte slot is dead when LPC synthesis reuses offset 20. */\n   ALLOC(indices,4,uint8_t);\n   for (sub=0;sub<NB_NB_SUBFRAMES;sub++)\n   {\n      spx_word16_t *exc=frame_exc+NB_SUBFRAME_SIZE*sub;\n      uint16_t header=speex_nb3_unpack_subframe(packet,(uint8_t)sub,indices);\n      unsigned pitch=(header>>6)+17;\n      unsigned index=((header>>1)&31)*4;\n      int q_energy;\n      spx_word32_t ener;\n      /* Every pitch source index is negative: each segment ends before its\n       * source reaches exc[0]. No clear of the current excitation is needed. */\n      q_energy=header&1;\n      ener=AVR_READ_I32(&nb3_gain_table[(qe<<1)|q_energy]);\n      if (!index) {\n         speex_nb3_zero_innovation(exc,indices,ener);\n      } else if (pitch>=41) {\n         /* Even the last tap reads exc[-1] or earlier. No output feeds a\n          * source in this block; fuse the three sums with innovation. */\n         speex_nb3_long_innovation(exc,exc-pitch-1,indices,ener,index);\n      } else {\n         speex_nb3_short_innovation(exc,exc,(uint8_t)pitch,indices,ener,index);\n      }\n   }\n   /* Release the excitation indices; synthesis appends distinct ak/interp\n    * arrays after lsp_delta, retaining the four original interpolation steps. */\n   stack=(char *)(lsp_delta+NB_ORDER);\n   ALLOC(ak,NB_ORDER,spx_coef_t);\n   interp_qlsp=ak;\n   /* The delta was prepared before excitation. Cache hits do not read it;\n    * changed frames advance raw state four times, with margin only on out. */\n   for (sub=0;sub<NB_NB_SUBFRAMES;sub++)\n   {\n      spx_word16_t *sp;\n#if SPEEX_ENABLE_WB1\n      sp=out?out+NB_SUBFRAME_SIZE*sub:speex_wb_low_buffer();\n#else\n      sp=out+NB_SUBFRAME_SIZE*sub;\n#endif\n      uint8_t update_lpc=!repeat_lsp || (st->first && !sub);\n      /* NB3 unquantized angles are multiples of 16. Its quarter-step P14\n       * products are exact even though upstream rounds the two products\n       * separately. Equal endpoints therefore produce identical margin-\n       * adjusted angles in all four steps. The last LPC is already cached.\n       * On reset, compute it after the first synthesis step as upstream does.\n       * IIR always runs, including its coefficient-age transition. */\n      if (update_lpc) {\n         speex_nb3_interpolate_validated(st->old_qlsp,lsp_delta,interp_qlsp);\n         lsp_to_lpc(interp_qlsp,ak,NB_ORDER,stack);\n      }\n      /* Excitation is complete and remains read-only during synthesis.\n       * Filter from its delayed history directly, retaining the original\n       * 40-sample delay without copying a whole frame into the PCM output. */\n      iir_mem16(frame_exc-NB_SUBFRAME_SIZE+NB_SUBFRAME_SIZE*sub,\n                st->interp_qlpc,sp,NB_SUBFRAME_SIZE,NB_ORDER,st->mem_sp,stack);\n      if (update_lpc) for (i=0;i<NB_ORDER;i++) st->interp_qlpc[i]=ak[i];\n#if SPEEX_ENABLE_WB1\n      if (!out) {\n         uint16_t header;\n         /* Interpolated angles are dead after lsp_to_lpc. HB consumes the\n          * reconstructed indices synchronously, before the next quarter. */\n         indices=(uint8_t *)interp_qlsp;\n         header=speex_nb3_unpack_subframe(packet,(uint8_t)sub,indices);\n         speex_wb_low_ready(sp,st->interp_qlpc,indices,\n             AVR_READ_I32(nb3_gain_table+(qe<<1)+(header&1)));\n      }\n#endif\n#ifdef SPEEX_AVR_OUTPUT_HOOK\n      {\n         extern void speex_avr_output(const spx_word16_t *,uint8_t);\n#if SPEEX_ENABLE_WB1\n         if (out)\n#endif\n         speex_avr_output(sp,NB_SUBFRAME_SIZE);\n      }\n#endif\n   }\n   st->first=0;\n   return 0;\n}\n",
+    "cbc3285b36cd70105962c5487ff419ab2c0835cb1f8cbc310b9e3f4a3e58aade": "/* Four-quarter NB3 LSP interpolation, specialized for order 10 / margin 16.\n * The sequential margin pass follows Xiph Speex 1.2.1 lsp.c:\n * Copyright (C) 2002-2006 Jean-Marc Valin; BSD terms in vendor/.../COPYING.\n * Raw endpoint angles from the pinned NB3 codebooks are multiples of 16.\n * Thus each separately rounded upstream Q14 product is already integral:\n * old + (sub+1) * ((next>>2) - (old>>2)) gives the same raw interpolation.\n * The caller computes delta once and calls four times on a changed frame.\n * On reset it uses zero deltas and calls once; cached frames need no call.\n * raw, delta and out must be distinct arrays of ten int16_t elements.\n * raw advances in place, remaining separate from the margin-adjusted output;\n * after four calls it equals the new endpoint, without a final frame copy.\n * C implementation for every arithmetic backend, including AVR ASM builds. */\n#ifndef SPEEX_NB3_INTERPOLATE_H\n#define SPEEX_NB3_INTERPOLATE_H\n#include \"speex_platform.h\"\n\nstatic SPEEX_NB3_ALWAYS_INLINE void speex_nb3_interpolate_core(\n    int16_t *restrict raw, const int16_t *restrict delta, int16_t *restrict out, uint8_t bounded)\n{\n    unsigned i;\n    int16_t previous, current, following;\n    raw[0] += delta[0];\n    previous = bounded ? raw[0] : (raw[0] < 16 ? 16 : raw[0]);\n    out[0] = previous;\n    current = raw[1] + delta[1];\n    for (i = 1; i < 9; i++) {\n        int next;\n        raw[i] = current;\n        following = raw[i+1] + delta[i+1];\n        /* Upstream clamps element 9 before adjusting elements 1..8. */\n        next = (!bounded && i == 8 && following > 25720) ? 25720 : following;\n        if (current < previous + 16) current = previous + 16;\n        /* Retain both shifts: combining them into one average can round\n         * differently after an earlier margin correction made an odd angle.\n         * Keep next as int to retain the upstream integer promotions. */\n        if (current > next - 16) current = (current >> 1) + ((next - 16) >> 1);\n        out[i] = current;\n        previous = current;\n        current = following;\n    }\n    raw[9] = current;\n    out[9] = bounded ? current : (current > 25720 ? 25720 : current);\n}\nstatic SPEEX_NB3_STAGE void speex_nb3_interpolate(\n    int16_t *restrict raw, const int16_t *restrict delta, int16_t *restrict out)\n{\n    speex_nb3_interpolate_core(raw,delta,out,0);\n}\n\n/* Updated first/last raw angles must be within [16,25720]. */\nstatic SPEEX_NB3_STAGE_O2 void speex_nb3_interpolate_validated(\n    int16_t *restrict raw, const int16_t *restrict delta, int16_t *restrict out)\n{\n    speex_nb3_interpolate_core(raw,delta,out,1);\n}\n\n#endif\n",
+    "db935fe8b144f0f1ee2c7a4a219405639e22008bb7deb0bad159e1907944ef7d": "/* Four-quarter NB3 LSP interpolation, specialized for order 10 / margin 16.\n * The sequential margin pass follows Xiph Speex 1.2.1 lsp.c:\n * Copyright (C) 2002-2006 Jean-Marc Valin; BSD terms in vendor/.../COPYING.\n * Raw endpoint angles from the pinned NB3 codebooks are multiples of 16.\n * Thus each separately rounded upstream Q14 product is already integral:\n * old + (sub+1) * ((next>>2) - (old>>2)) gives the same raw interpolation.\n * The caller computes delta once and calls four times on a changed frame.\n * On reset it uses zero deltas and calls once; cached frames need no call.\n * raw, delta and out must be distinct arrays of ten int16_t elements.\n * raw advances in place, remaining separate from the margin-adjusted output;\n * after four calls it equals the new endpoint, without a final frame copy.\n * C implementation for every arithmetic backend, including AVR ASM builds. */\n#ifndef SPEEX_NB3_INTERPOLATE_H\n#define SPEEX_NB3_INTERPOLATE_H\n#include \"speex_platform.h\"\n\nstatic SPEEX_NB3_ALWAYS_INLINE void speex_nb3_interpolate_core(\n    int16_t *restrict raw, const int16_t *restrict delta, int16_t *restrict out, uint8_t bounded)\n{\n    unsigned i;\n    int16_t previous, current, following;\n    raw[0] += delta[0];\n    previous = bounded ? raw[0] : (raw[0] < 16 ? 16 : raw[0]);\n    out[0] = previous;\n    current = raw[1] + delta[1];\n    for (i = 1; i < 9; i++) {\n        int next;\n        raw[i] = current;\n        following = raw[i+1] + delta[i+1];\n        /* Upstream clamps element 9 before adjusting elements 1..8. */\n        next = (!bounded && i == 8 && following > 25720) ? 25720 : following;\n        if (current < previous + 16) current = previous + 16;\n        /* Retain both shifts: combining them into one average can round\n         * differently after an earlier margin correction made an odd angle.\n         * Keep next as int to retain the upstream integer promotions. */\n        if (current > next - 16) current = (current >> 1) + ((next - 16) >> 1);\n        out[i] = current;\n        previous = current;\n        current = following;\n    }\n    raw[9] = current;\n    out[9] = bounded ? current : (current > 25720 ? 25720 : current);\n}\nstatic SPEEX_NB3_STAGE void speex_nb3_interpolate(\n    int16_t *restrict raw, const int16_t *restrict delta, int16_t *restrict out)\n{\n    speex_nb3_interpolate_core(raw,delta,out,0);\n}\n\n/* Updated first/last raw angles must be within [16,25720]. */\nstatic SPEEX_NB3_STAGE void speex_nb3_interpolate_validated(\n    int16_t *restrict raw, const int16_t *restrict delta, int16_t *restrict out)\n{\n    speex_nb3_interpolate_core(raw,delta,out,1);\n}\n\n#endif\n",
+    "cc82d2ca9daa1b3986fb2c2110306f4cf7a95cc260e26481a4a522a37b740b96": "#include \"nb3_header.h\"\n#include \"nb3_subframe.h\"\n#include \"nb3_lsp.h\"\n#if SPEEX_ENABLE_WB1\n#include \"wb_internal.h\"\n#endif\n#include \"nb3_indices.h\"\n#include \"nb3_interpolate.h\"\n/* Restricted NB3 body adapted from Xiph Speex 1.2.1 nb_celp.c.\n * Copyright (C) 2002-2006 Jean-Marc Valin; BSD terms in vendor/speex-1.2.1/COPYING.\n * Preserve the original excitation, interpolation, rounding and 40-sample\n * synthesis delay. Remove bookkeeping used only by unsupported PLC/enhancer\n * and general ctl APIs. The vendored release remains the independent oracle. */\n#include \"speex_platform.h\"\n#include \"pitch24.h\"\n#include \"long_pitch.h\"\n#include \"short_pitch.h\"\n#if SPEEX_NB3_USE_AVR_ASM\nstatic SPEEX_NB3_NOINLINE\n#else\nstatic SPEEX_NB3_STAGE_O2\n#endif\nvoid speex_nb3_long_innovation(int16_t *out,\n    const int16_t *in,const uint8_t *input_indices,int32_t scale,unsigned index)\n{\n#if SPEEX_NB3_USE_AVR_ASM\n    const uint8_t *indices=input_indices;\n#else\n    uint8_t indices[4];\n    for(unsigned k=0;k<4;k++)indices[k]=input_indices[k];\n#endif\n    int8_t gains[3];\n    uint8_t vector;\n    gains[0]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index+2));\n    gains[1]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index+1));\n    gains[2]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index));\n#if SPEEX_NB3_USE_AVR_ASM\n    speex_avr_long_innovation40(out,in,indices,scale,gains);\n#else\n    for (vector=0;vector<4;vector++) {\n        unsigned code=indices[vector];\n        const int8_t *shape=exc_10_32_table+10*code;\n        speex_nb3_long_innovation10_c(out,in,shape,scale,gains,10);\n        out+=10;in+=10;\n    }\n#endif\n}\n_Static_assert(NB_SUBFRAME_SIZE==40 && NB_PITCH_START==17 && NB_PITCH_END==144,\n               \"Packed pitch is specialized for the pinned NB3 frame/pitch bounds\");\n_Static_assert(NB_ORDER==10 && NB_NB_SUBFRAMES==4 && LSP_MARGIN==16,\n               \"Quarter-step LSP interpolation requires the pinned NB3 geometry\");\nSPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packet, void *vout)\n{\n   DecState *st=(DecState *)state;\n   spx_word16_t *out=(spx_word16_t *)vout;\n   spx_word16_t *frame_exc=st->excBuf+NB_DEC_EXC_OFFSET;\n   char *stack=st->stack;\n   int qe,sub,i;\n   uint8_t repeat_lsp;\n   VARDECL(spx_lsp_t *lsp_delta);\n   VARDECL(spx_coef_t *ak);\n   VARDECL(spx_lsp_t *interp_qlsp);\n   VARDECL(uint8_t *indices);\n   if (!packet) return -2;\n   SPEEX_MOVE(st->excBuf,st->excBuf+NB_FRAME_SIZE,NB_DEC_SHIFT_COUNT);\n   ALLOC(lsp_delta,NB_ORDER,spx_lsp_t);\n   repeat_lsp=st->first || (st->lsp_key[0]==(packet[0]&7) &&\n                  st->lsp_key[1]==packet[1] && st->lsp_key[2]==(packet[2]&254));\n   if (st->first || !repeat_lsp) {\n      /* Decode directly in quarter units. The original two P14 products\n       * are integral for NB3's multiple-of-16 endpoints. Prepare the same\n       * delta before excitation, avoiding a raw-angle temporary round trip. */\n      speex_nb3_lsp_quarters(packet,lsp_delta);\n      if(st->first) for(i=0;i<NB_ORDER;i++) {st->old_qlsp[i]=4*lsp_delta[i];lsp_delta[i]=0;}\n      else for(i=0;i<NB_ORDER;i++)lsp_delta[i]-=st->old_qlsp[i]>>2;\n      st->lsp_key[0]=packet[0]&7;st->lsp_key[1]=packet[1];st->lsp_key[2]=packet[2]&254;\n   }\n   qe=speex_nb3_frame_gain(packet);\n   /* The validated packet map supplies the complete 33-bit group once.\n    * This four-byte slot is dead when LPC synthesis reuses offset 20. */\n   ALLOC(indices,4,uint8_t);\n   for (sub=0;sub<NB_NB_SUBFRAMES;sub++)\n   {\n      spx_word16_t *exc=frame_exc+NB_SUBFRAME_SIZE*sub;\n      uint16_t header=speex_nb3_unpack_subframe(packet,(uint8_t)sub,indices);\n      unsigned pitch=(header>>6)+17;\n      unsigned index=((header>>1)&31)*4;\n      int q_energy;\n      spx_word32_t ener;\n      /* Every pitch source index is negative: each segment ends before its\n       * source reaches exc[0]. No clear of the current excitation is needed. */\n      q_energy=header&1;\n      ener=AVR_READ_I32(&nb3_gain_table[(qe<<1)|q_energy]);\n      if (!index) {\n         speex_nb3_zero_innovation(exc,indices,ener);\n      } else if (pitch>=41) {\n         /* Even the last tap reads exc[-1] or earlier. No output feeds a\n          * source in this block; fuse the three sums with innovation. */\n         speex_nb3_long_innovation(exc,exc-pitch-1,indices,ener,index);\n      } else {\n         speex_nb3_short_innovation(exc,exc,(uint8_t)pitch,indices,ener,index);\n      }\n   }\n   /* Release the excitation indices; synthesis appends distinct ak/interp\n    * arrays after lsp_delta, retaining the four original interpolation steps. */\n   stack=(char *)(lsp_delta+NB_ORDER);\n   ALLOC(ak,NB_ORDER,spx_coef_t);\n   ALLOC(interp_qlsp,NB_ORDER,spx_lsp_t);\n   /* The delta was prepared before excitation. Cache hits do not read it;\n    * changed frames advance raw state four times, with margin only on out. */\n   for (sub=0;sub<NB_NB_SUBFRAMES;sub++)\n   {\n      spx_word16_t *sp;\n#if SPEEX_ENABLE_WB1\n      sp=out?out+NB_SUBFRAME_SIZE*sub:speex_wb_low_buffer();\n#else\n      sp=out+NB_SUBFRAME_SIZE*sub;\n#endif\n      uint8_t update_lpc=!repeat_lsp || (st->first && !sub);\n      /* NB3 unquantized angles are multiples of 16. Its quarter-step P14\n       * products are exact even though upstream rounds the two products\n       * separately. Equal endpoints therefore produce identical margin-\n       * adjusted angles in all four steps. The last LPC is already cached.\n       * On reset, compute it after the first synthesis step as upstream does.\n       * IIR always runs, including its coefficient-age transition. */\n      if (update_lpc) {\n         speex_nb3_interpolate_validated(st->old_qlsp,lsp_delta,interp_qlsp);\n         lsp_to_lpc(interp_qlsp,ak,NB_ORDER,stack);\n      }\n      /* Excitation is complete and remains read-only during synthesis.\n       * Filter from its delayed history directly, retaining the original\n       * 40-sample delay without copying a whole frame into the PCM output. */\n      iir_mem16(frame_exc-NB_SUBFRAME_SIZE+NB_SUBFRAME_SIZE*sub,\n                st->interp_qlpc,sp,NB_SUBFRAME_SIZE,NB_ORDER,st->mem_sp,stack);\n      if (update_lpc) for (i=0;i<NB_ORDER;i++) st->interp_qlpc[i]=ak[i];\n#if SPEEX_ENABLE_WB1\n      if (!out) {\n         uint16_t header;\n         /* Interpolated angles are dead after lsp_to_lpc. HB consumes the\n          * reconstructed indices synchronously, before the next quarter. */\n         indices=(uint8_t *)interp_qlsp;\n         header=speex_nb3_unpack_subframe(packet,(uint8_t)sub,indices);\n         speex_wb_low_ready(sp,st->interp_qlpc,indices,\n             AVR_READ_I32(nb3_gain_table+(qe<<1)+(header&1)));\n      }\n#endif\n#ifdef SPEEX_AVR_OUTPUT_HOOK\n      {\n         extern void speex_avr_output(const spx_word16_t *,uint8_t);\n#if SPEEX_ENABLE_WB1\n         if (out)\n#endif\n         speex_avr_output(sp,NB_SUBFRAME_SIZE);\n      }\n#endif\n   }\n   st->first=0;\n   return 0;\n}\n",
+    "fc510f6577dc0f76e0b125946ffdca0f2a9f07c93142e90a54394cffa944a865": "#include \"speex_avr.h\"\n#include \"speex_platform.h\"\n#include \"nb_celp.h\"\n#include <string.h>\n#if SPEEX_NB3_CHECK_SCRATCH\n#include <stdlib.h>\n#endif\n\nstatic DecState decoder;\n/* Excitation uses qlsp (20 B) and four indices. Synthesis reuses offset 20\n * for ak, then appends interp at 40. Peak = 60 B; host checks each PUSH. */\n_Alignas(4) static uint32_t scratch[15];\nstatic size_t scratch_peak;\n\n#if SPEEX_NB3_CHECK_SCRATCH\nvoid *speex_avr_push(char **position, size_t bytes, size_t alignment)\n{\n    uintptr_t p = (uintptr_t)*position;\n    uintptr_t aligned = (p + alignment - 1) & ~(uintptr_t)(alignment - 1);\n    uintptr_t end = aligned + bytes;\n    size_t used = end - (uintptr_t)scratch;\n    if (p < (uintptr_t)scratch || used > sizeof(scratch)) abort();\n    if (used > scratch_peak) scratch_peak = used;\n    *position = (char *)end;\n    return (void *)aligned;\n}\n#endif\n\nvoid speex_avr_init(void)\n{\n    memset(&decoder, 0, sizeof(decoder));\n    memset(scratch, 0, sizeof(scratch));\n    decoder.first = 1;\n    decoder.stack = (char *)scratch;\n    scratch_peak = 0;\n}\n\nint speex_avr_decode(const uint8_t *packet, size_t bytes, int16_t *pcm)\n{\n    if (!packet || !pcm || bytes != 20 || (packet[0] >> 3) != 3) return -1;\n    return nb_decode(&decoder, packet, pcm);\n}\n\nsize_t speex_avr_state_bytes(void) { return sizeof(decoder) + sizeof(scratch); }\nsize_t speex_avr_scratch_peak(void) { return scratch_peak; }\n\n#if SPEEX_ENABLE_WB1\nint speex_wb_decode_low(const uint8_t *packet)\n{\n    return nb_decode(&decoder,packet,0);\n}\n#endif\n"
+  },
+  "candidates": [
+    {
+      "name": "alias",
+      "backend": "asm",
+      "binarySha256": "6d6f22a6df17125334838c5bf44bf13a2127e0df81917377e1bd3cd3b832668a",
+      "exactPcmAndReset": true,
+      "flashBytes": 10592,
+      "staticSramBytes": 1099,
+      "peakStack": 114,
+      "fixture": {
+        "frames": 1058,
+        "maxCycles": 115693,
+        "meanCycles": 93698.19565217392
+      },
+      "sources": {
+        "src/nb3_interpolate.h": "f980c4cae388133407dc29fcd77dff38a25c45d402cec26ffe56a2867ce4d5b2",
+        "src/nb_decode.c.inc": "32776acf719bb4206469d0161008dc4e553639c2d90f3433b51fda43cbb06d01",
+        "src/speex_avr.c": "0de948a1d5827d5294feccfd2aa50ad77168dfd6095db7c88e26150b61365ee5"
+      }
+    },
+    {
+      "name": "alias-bounded-inline",
+      "backend": "asm",
+      "binarySha256": "bc99c42fb47756d35851310b28047c57ed86b7adba8d3bce1921aadd190f9aa4",
+      "exactPcmAndReset": true,
+      "flashBytes": 10470,
+      "staticSramBytes": 1099,
+      "peakStack": 114,
+      "fixture": {
+        "frames": 1058,
+        "maxCycles": 115489,
+        "meanCycles": 93604.13799621929
+      },
+      "sources": {
+        "src/nb3_interpolate.h": "82209581ba02b1a681c1c29f4bef3835736b7e04ebe8d24e4456437226b40f95",
+        "src/nb_decode.c.inc": "63117cbb18dedf11e85f88a52d466dbdf0d9b2fdf8e4e75a25e249c2b6202d88",
+        "src/speex_avr.c": "0de948a1d5827d5294feccfd2aa50ad77168dfd6095db7c88e26150b61365ee5"
+      }
+    },
+    {
+      "name": "alias-bounded-inline-c",
+      "backend": "c",
+      "binarySha256": "5cb3ac209754ccda0ecaf8220eb7a56529f1444d12eca884e7048654d0c52077",
+      "exactPcmAndReset": true,
+      "flashBytes": 10898,
+      "staticSramBytes": 1099,
+      "peakStack": 105,
+      "fixture": {
+        "frames": 1058,
+        "maxCycles": 230704,
+        "meanCycles": 191640.2145557656
+      },
+      "sources": {
+        "src/nb3_interpolate.h": "82209581ba02b1a681c1c29f4bef3835736b7e04ebe8d24e4456437226b40f95",
+        "src/nb_decode.c.inc": "63117cbb18dedf11e85f88a52d466dbdf0d9b2fdf8e4e75a25e249c2b6202d88",
+        "src/speex_avr.c": "0de948a1d5827d5294feccfd2aa50ad77168dfd6095db7c88e26150b61365ee5"
+      }
+    },
+    {
+      "name": "alias-bounded-o2",
+      "backend": "asm",
+      "binarySha256": "70801aacf409ae497db9a223e8a9678c9091dc74b1c87d00578854958818a01f",
+      "exactPcmAndReset": true,
+      "flashBytes": 10040,
+      "staticSramBytes": 1099,
+      "peakStack": 114,
+      "fixture": {
+        "frames": 1058,
+        "maxCycles": 116081,
+        "meanCycles": 93878.14555765595
+      },
+      "sources": {
+        "src/nb3_interpolate.h": "cbc3285b36cd70105962c5487ff419ab2c0835cb1f8cbc310b9e3f4a3e58aade",
+        "src/nb_decode.c.inc": "63117cbb18dedf11e85f88a52d466dbdf0d9b2fdf8e4e75a25e249c2b6202d88",
+        "src/speex_avr.c": "0de948a1d5827d5294feccfd2aa50ad77168dfd6095db7c88e26150b61365ee5"
+      }
+    },
+    {
+      "name": "alias-bounded-o2-c",
+      "backend": "c",
+      "binarySha256": "36b0fe982eddd75054f2bb15dc0ac1fb4384f0a6c079f040cc5d17496caae079",
+      "exactPcmAndReset": true,
+      "flashBytes": 10512,
+      "staticSramBytes": 1099,
+      "peakStack": 105,
+      "fixture": {
+        "frames": 1058,
+        "maxCycles": 231373,
+        "meanCycles": 191954.04347826086
+      },
+      "sources": {
+        "src/nb3_interpolate.h": "cbc3285b36cd70105962c5487ff419ab2c0835cb1f8cbc310b9e3f4a3e58aade",
+        "src/nb_decode.c.inc": "63117cbb18dedf11e85f88a52d466dbdf0d9b2fdf8e4e75a25e249c2b6202d88",
+        "src/speex_avr.c": "0de948a1d5827d5294feccfd2aa50ad77168dfd6095db7c88e26150b61365ee5"
+      }
+    },
+    {
+      "name": "alias-bounded-o3",
+      "backend": "asm",
+      "binarySha256": "29592ac236ffa8c1eccd8dc66a6e65d7d4110e61100b5a3d9288eeb078e8a840",
+      "exactPcmAndReset": true,
+      "flashBytes": 10396,
+      "staticSramBytes": 1099,
+      "peakStack": 114,
+      "fixture": {
+        "frames": 1058,
+        "maxCycles": 115565,
+        "meanCycles": 93637.99905482042
+      },
+      "sources": {
+        "src/nb3_interpolate.h": "db935fe8b144f0f1ee2c7a4a219405639e22008bb7deb0bad159e1907944ef7d",
+        "src/nb_decode.c.inc": "63117cbb18dedf11e85f88a52d466dbdf0d9b2fdf8e4e75a25e249c2b6202d88",
+        "src/speex_avr.c": "0de948a1d5827d5294feccfd2aa50ad77168dfd6095db7c88e26150b61365ee5"
+      }
+    },
+    {
+      "name": "alias-bounded-o3-c",
+      "backend": "c",
+      "binarySha256": "b81f03db4a09bc412ebcc94254a9f8401a379d4e43f9197e1cf64381710f7c83",
+      "exactPcmAndReset": true,
+      "flashBytes": 10866,
+      "staticSramBytes": 1099,
+      "peakStack": 105,
+      "fixture": {
+        "frames": 1058,
+        "maxCycles": 230853,
+        "meanCycles": 191710.01417769375
+      },
+      "sources": {
+        "src/nb3_interpolate.h": "db935fe8b144f0f1ee2c7a4a219405639e22008bb7deb0bad159e1907944ef7d",
+        "src/nb_decode.c.inc": "63117cbb18dedf11e85f88a52d466dbdf0d9b2fdf8e4e75a25e249c2b6202d88",
+        "src/speex_avr.c": "0de948a1d5827d5294feccfd2aa50ad77168dfd6095db7c88e26150b61365ee5"
+      }
+    },
+    {
+      "name": "alias-c",
+      "backend": "c",
+      "binarySha256": "a69e48ae4e82c43575bea0317f5e69bf170eb51e120259dabe3a544a551867ee",
+      "exactPcmAndReset": true,
+      "flashBytes": 11062,
+      "staticSramBytes": 1099,
+      "peakStack": 105,
+      "fixture": {
+        "frames": 1058,
+        "maxCycles": 230981,
+        "meanCycles": 191769.98393194706
+      },
+      "sources": {
+        "src/nb3_interpolate.h": "f980c4cae388133407dc29fcd77dff38a25c45d402cec26ffe56a2867ce4d5b2",
+        "src/nb_decode.c.inc": "32776acf719bb4206469d0161008dc4e553639c2d90f3433b51fda43cbb06d01",
+        "src/speex_avr.c": "0de948a1d5827d5294feccfd2aa50ad77168dfd6095db7c88e26150b61365ee5"
+      }
+    },
+    {
+      "name": "bounded-inline",
+      "backend": "asm",
+      "binarySha256": "4efbfcebea21e5181935ebca0fead46ef3b2036101b295b393a1e06e55ae00da",
+      "exactPcmAndReset": true,
+      "flashBytes": 10490,
+      "staticSramBytes": 1119,
+      "peakStack": 114,
+      "fixture": {
+        "frames": 1058,
+        "maxCycles": 115505,
+        "meanCycles": 93620.13799621929
+      },
+      "sources": {
+        "src/nb3_interpolate.h": "82209581ba02b1a681c1c29f4bef3835736b7e04ebe8d24e4456437226b40f95",
+        "src/nb_decode.c.inc": "cc82d2ca9daa1b3986fb2c2110306f4cf7a95cc260e26481a4a522a37b740b96",
+        "src/speex_avr.c": "fc510f6577dc0f76e0b125946ffdca0f2a9f07c93142e90a54394cffa944a865"
+      }
+    },
+    {
+      "name": "bounded-inline-c",
+      "backend": "c",
+      "binarySha256": "82112ea0f759a6a8d57e0ab25f1080074ced932c31bb26a5fd7488cf89465353",
+      "exactPcmAndReset": true,
+      "flashBytes": 10920,
+      "staticSramBytes": 1119,
+      "peakStack": 105,
+      "fixture": {
+        "frames": 1058,
+        "maxCycles": 230722,
+        "meanCycles": 191657.83648393195
+      },
+      "sources": {
+        "src/nb3_interpolate.h": "82209581ba02b1a681c1c29f4bef3835736b7e04ebe8d24e4456437226b40f95",
+        "src/nb_decode.c.inc": "cc82d2ca9daa1b3986fb2c2110306f4cf7a95cc260e26481a4a522a37b740b96",
+        "src/speex_avr.c": "fc510f6577dc0f76e0b125946ffdca0f2a9f07c93142e90a54394cffa944a865"
+      }
+    },
+    {
+      "name": "bounded-o2",
+      "backend": "asm",
+      "binarySha256": "fca7a9e720991ed5bbf88a84c2453d6837ea5d0d2053485beeac9cf2275c8bb3",
+      "exactPcmAndReset": true,
+      "flashBytes": 10058,
+      "staticSramBytes": 1119,
+      "peakStack": 114,
+      "fixture": {
+        "frames": 1058,
+        "maxCycles": 116090,
+        "meanCycles": 93887.14555765595
+      },
+      "sources": {
+        "src/nb3_interpolate.h": "cbc3285b36cd70105962c5487ff419ab2c0835cb1f8cbc310b9e3f4a3e58aade",
+        "src/nb_decode.c.inc": "cc82d2ca9daa1b3986fb2c2110306f4cf7a95cc260e26481a4a522a37b740b96",
+        "src/speex_avr.c": "fc510f6577dc0f76e0b125946ffdca0f2a9f07c93142e90a54394cffa944a865"
+      }
+    },
+    {
+      "name": "bounded-o2-c",
+      "backend": "c",
+      "binarySha256": "444a4746fce4de81de6c6664702291657938c0b06c0d07d6b7d204da5168fdb1",
+      "exactPcmAndReset": true,
+      "flashBytes": 10528,
+      "staticSramBytes": 1119,
+      "peakStack": 105,
+      "fixture": {
+        "frames": 1058,
+        "maxCycles": 231385,
+        "meanCycles": 191965.47637051038
+      },
+      "sources": {
+        "src/nb3_interpolate.h": "cbc3285b36cd70105962c5487ff419ab2c0835cb1f8cbc310b9e3f4a3e58aade",
+        "src/nb_decode.c.inc": "cc82d2ca9daa1b3986fb2c2110306f4cf7a95cc260e26481a4a522a37b740b96",
+        "src/speex_avr.c": "fc510f6577dc0f76e0b125946ffdca0f2a9f07c93142e90a54394cffa944a865"
+      }
+    },
+    {
+      "name": "bounded-o3",
+      "backend": "asm",
+      "binarySha256": "f3a331ff7d3e88c5948eaec1e72ae41f6ecf4b7c77d9f1f17d334bf540d9910a",
+      "exactPcmAndReset": true,
+      "flashBytes": 10414,
+      "staticSramBytes": 1119,
+      "peakStack": 114,
+      "fixture": {
+        "frames": 1058,
+        "maxCycles": 115574,
+        "meanCycles": 93646.99905482042
+      },
+      "sources": {
+        "src/nb3_interpolate.h": "db935fe8b144f0f1ee2c7a4a219405639e22008bb7deb0bad159e1907944ef7d",
+        "src/nb_decode.c.inc": "cc82d2ca9daa1b3986fb2c2110306f4cf7a95cc260e26481a4a522a37b740b96",
+        "src/speex_avr.c": "fc510f6577dc0f76e0b125946ffdca0f2a9f07c93142e90a54394cffa944a865"
+      }
+    },
+    {
+      "name": "bounded-o3-c",
+      "backend": "c",
+      "binarySha256": "42c51041679562683b494cfe756e2697b34a3e5dc0b0a9313b3005496465cb08",
+      "exactPcmAndReset": true,
+      "flashBytes": 10882,
+      "staticSramBytes": 1119,
+      "peakStack": 105,
+      "fixture": {
+        "frames": 1058,
+        "maxCycles": 230865,
+        "meanCycles": 191721.30812854442
+      },
+      "sources": {
+        "src/nb3_interpolate.h": "db935fe8b144f0f1ee2c7a4a219405639e22008bb7deb0bad159e1907944ef7d",
+        "src/nb_decode.c.inc": "cc82d2ca9daa1b3986fb2c2110306f4cf7a95cc260e26481a4a522a37b740b96",
+        "src/speex_avr.c": "fc510f6577dc0f76e0b125946ffdca0f2a9f07c93142e90a54394cffa944a865"
+      }
+    }
+  ]
+}
