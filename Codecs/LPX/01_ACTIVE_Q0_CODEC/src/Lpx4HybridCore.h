@@ -57,7 +57,7 @@ private:
     uint16_t sampleRate_,preQ14_,brightQ14_;
     int16_t prev_[10],cur_[10],a_[10],hist_[10];
     int16_t prevLpc_[10],curLpc_[10];
-    bool lsfCached_;
+    bool lsfCached_,staticSpectrum_;
     int32_t polyP_[12],polyQ_[12];
     int16_t previousQuant_[10];
     int16_t prevDeemph_,prevBright_;

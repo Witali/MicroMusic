@@ -1,4 +1,4 @@
-// Complete, standalone profiling firmware. Frozen decoder remains in src/.
+// Complete, standalone profiling firmware; arithmetic stays in src/.
 // Registers and interrupt vectors come from the installed AVR-LibC headers.
 // Test output: OC2B (PD3); PB0 toggles after every Timer1 output tick.
 #include <avr/io.h>
@@ -7,15 +7,33 @@
 #include <stdint.h>
 #include "Lpx4HybridCore.h"
 #include "voice_data.h"
+#ifndef LPX4_PROFILE_QUEUE
+#define LPX4_PROFILE_QUEUE 512
+#endif
+#ifndef LPX4_PROFILE_PREFILL
+#define LPX4_PROFILE_PREFILL 384
+#endif
+#ifndef LPX4_PROFILE_IRQ_LOAD
+#define LPX4_PROFILE_IRQ_LOAD 0
+#endif
+#if (LPX4_PROFILE_QUEUE & (LPX4_PROFILE_QUEUE-1)) || LPX4_PROFILE_QUEUE<64 || LPX4_PROFILE_QUEUE>512
+#error Profile queue must be a power of two in 64..512
+#endif
+#if LPX4_PROFILE_PREFILL<1 || LPX4_PROFILE_PREFILL>=LPX4_PROFILE_QUEUE
+#error Profile prefill must fit the queue
+#endif
+#if LPX4_PROFILE_IRQ_LOAD<0 || LPX4_PROFILE_IRQ_LOAD>600
+#error Profile IRQ load must be 0..600 cycles per audio tick
+#endif
 
 static Lpx4HybridCore decoder;
-static uint8_t queue[512];
+static uint8_t queue[LPX4_PROFILE_QUEUE];
 static volatile uint16_t head, tail;
 extern "C" {
 volatile uint8_t profile_ready, profile_running, profile_done, profile_error;
 volatile uint8_t profile_decode_active, profile_output_valid, profile_producer_done;
 volatile uint32_t profile_produced, profile_played, profile_underruns;
-volatile uint16_t profile_min_occupancy = 511;
+volatile uint16_t profile_min_occupancy = LPX4_PROFILE_QUEUE-1;
 volatile uint16_t profile_occupancy;
 volatile const uint16_t profile_pwm_address = _SFR_MEM_ADDR(OCR2B);
 volatile const uint16_t profile_spl_address = _SFR_MEM_ADDR(SPL);
@@ -23,7 +41,7 @@ volatile const uint16_t profile_sph_address = _SFR_MEM_ADDR(SPH);
 }
 
 ISR(TIMER1_COMPA_vect) {
-    const uint16_t available = (head - tail) & 511;
+    const uint16_t available = (head - tail) & (LPX4_PROFILE_QUEUE-1);
     profile_occupancy = available;
     if (!profile_producer_done && available < profile_min_occupancy)
         profile_min_occupancy = available;
@@ -31,13 +49,17 @@ ISR(TIMER1_COMPA_vect) {
     profile_output_valid = available != 0;
     if (available) {
         sample = queue[tail];
-        tail = (tail + 1) & 511;
+        tail = (tail + 1) & (LPX4_PROFILE_QUEUE-1);
         ++profile_played;
     } else {
         ++profile_underruns;
     }
     OCR2B = sample;
     PINB = _BV(PINB0); // C hardware access; one observable edge per output tick.
+#if LPX4_PROFILE_IRQ_LOAD
+    // Compiler builtin emits a known cycle delay; this is deliberate test load.
+    __builtin_avr_delay_cycles(LPX4_PROFILE_IRQ_LOAD);
+#endif
     if (profile_producer_done && head == tail) {
         TCCR1B = 0;
         TIMSK1 = 0;
@@ -56,7 +78,7 @@ static bool produce() {
         profile_error = 1;
         return false;
     }
-    const uint16_t next = (head + 1) & 511;
+    const uint16_t next = (head + 1) & (LPX4_PROFILE_QUEUE-1);
     queue[head] = value;
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) { head = next; }
     return true;
@@ -69,7 +91,7 @@ int main() {
     }
     profile_ready = 1;
     const uint32_t total = decoder.samples();
-    const uint16_t prefill = total < 384 ? (uint16_t)total : 384;
+    const uint16_t prefill = total < LPX4_PROFILE_PREFILL ? (uint16_t)total : LPX4_PROFILE_PREFILL;
     while (profile_produced < prefill) if (!produce()) break;
     if (profile_error) {
         profile_done = 1;
@@ -91,7 +113,7 @@ int main() {
     while (profile_produced < total && !profile_error) {
         uint16_t consumer;
         ATOMIC_BLOCK(ATOMIC_RESTORESTATE) { consumer = tail; }
-        if (((head + 1) & 511) != consumer) produce();
+        if (((head + 1) & (LPX4_PROFILE_QUEUE-1)) != consumer) produce();
     }
     profile_producer_done = 1;
     if (!decoder.finished()) profile_error = 1;

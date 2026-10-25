@@ -54,17 +54,22 @@ def probe(blob, executable):
 
 
 def optimize(blob, ref, decoder, rounds=2, lsf_trials=500, beam_trials=2500,
-             header_trials=80, beam_width=4, window=20, probe_executable=None):
-    if not 1 <= rounds <= 4 or min(lsf_trials, beam_trials, header_trials) < 0:
+             header_trials=80, beam_width=4, window=20, probe_executable=None,
+             global_candidates=0, global_states=1024, kind='speech', timing_gate=None):
+    if not 1 <= rounds <= 4 or min(lsf_trials, beam_trials, header_trials,global_candidates) < 0 or global_states<2:
         raise ValueError('Expected 1..4 rounds and nonnegative trial counts')
     if not 20 <= len(blob) <= 65535 or len(ref) > 64000:
         raise ValueError('Optimize independently decoded segments of <=64000 samples')
-    if len(ref) < 4000:
+    if kind not in ('speech','music'):raise ValueError('Invalid content kind')
+    if len(ref) < 4000 and (kind=='speech' or lsf_trials or header_trials):
         raise ValueError('Joint speech optimization requires at least 0.5 s for its STOI gate')
     first = decoder.decode_one_s16(blob, len(ref))
     if first is None:
         raise ValueError('Native decoder rejected baseline')
-    initial = quality(ref, first)
+    initial = quality(ref, first,kind)
+    executable = Path(probe_executable) if probe_executable else cost_probe()
+    old_cost=probe(blob,executable)
+    cost_fields=('bit_calls','rom_reads','lsf_converts','max_bit_calls_sample','max_bit_calls_80','max_bit_calls_160')
     cur, pcm = blob, first
     target = ref.astype(np.float64)
     def error(p):
@@ -74,7 +79,7 @@ def optimize(blob, ref, decoder, rounds=2, lsf_trials=500, beam_trials=2500,
     stages = []
     for iteration in range(rounds):
         begin = cur
-        for name, budget in (('LSF', lsf_trials), ('beam', beam_trials), ('header', header_trials)):
+        for name, budget in (('LSF', lsf_trials), ('beam', beam_trials), ('header', header_trials),('global',global_candidates)):
             if not budget:
                 continue
             if name == 'LSF':
@@ -83,43 +88,57 @@ def optimize(blob, ref, decoder, rounds=2, lsf_trials=500, beam_trials=2500,
                 count = r['meta']['trials']
             elif name == 'beam':
                 candidate, pp, r = beam_opt(cur, ref, decoder, beam_width=beam_width,
-                    window=window, tail=80, max_trials=budget, stoi_drop=0.)
+                    window=window, tail=80, max_trials=budget, stoi_drop=0.,kind=kind)
                 count = r['trials']
+            elif name=='global':
+                from global_rate_pcm16 import optimize as global_opt
+                candidate,pp,r=global_opt(cur,ref,decoder,rounds=1,max_states=global_states,
+                    max_candidates=budget,kind=kind,probe_executable=executable,timing_gate=timing_gate)
+                count=len(r['trials'])
             else:
                 candidate, pp, r = tune(cur, ref, decoder, trial_limit=budget, stoi_tolerance=0.)
                 count = r['trials']
-            met = quality(ref, pp)
-            accepted = (len(candidate) == len(blob) and error(pp) < best - 1e-9 and
+            met = quality(ref, pp,kind)
+            accepted = (len(candidate) <= len(blob) and (error(pp),len(candidate)) < (best,len(cur)) and
                         (initial['stoi'] is None or met['stoi'] >= initial['stoi'] - 1e-12))
+            candidate_cost=None;timing=None
+            if accepted:
+                candidate_cost=probe(candidate,executable)
+                if timing_gate:
+                    timing=timing_gate(candidate);accepted=timing['accepted']
+                else:accepted=all(candidate_cost[k]<=old_cost[k] for k in cost_fields)
             if accepted:
                 cur, pcm, best = candidate, pp, error(pp)
             stages.append({'round': iteration + 1, 'stage': name, 'trials': count,
-                           'accepted': accepted, 'quality': quality(ref, pcm)})
+                           'accepted': accepted,'candidate_cost':candidate_cost,'timing':timing, 'quality': quality(ref, pcm,kind)})
         if cur == begin:
             break
-    executable = Path(probe_executable) if probe_executable else cost_probe()
-    old_cost, new_cost = probe(blob, executable), probe(cur, executable)
-    # Same syntax structure must also preserve actual native read-bit activity.
-    if old_cost != new_cost:
+    new_cost = probe(cur, executable)
+    # Cached polynomial work may depend on LSF values even with fixed syntax.
+    if not timing_gate and any(new_cost[k]>old_cost[k] for k in cost_fields):
         raise AssertionError('Native read-bit/ROM/LSF proxy changed; output rejected')
     check = decoder.decode_one_s16(cur, len(ref))
     if check is None or not np.array_equal(pcm, check):
         raise AssertionError('Independent native decode mismatch')
-    return cur, pcm, {'before': initial, 'after': quality(ref, pcm), 'stages': stages,
+    return cur, pcm, {'before': initial, 'after': quality(ref, pcm,kind), 'stages': stages,
                      'input_bytes': len(blob), 'output_bytes': len(cur),
                      'input_sha256': hashlib.sha256(blob).hexdigest(),
                      'output_sha256': hashlib.sha256(cur).hexdigest(),
                      'decoder_cost_before': old_cost, 'decoder_cost_after': new_cost,
                      'decoder_source_sha256': hashlib.sha256((ROOT / 'src/Lpx4HybridCore.cpp').read_bytes()).hexdigest(),
-                     'avr_cycles_measured': False}
+                     'avr_cycles_measured':bool(getattr(timing_gate,'avr_cycles_measured',False)),
+                     'timing':timing_gate(cur) if timing_gate else None}
 
 
-def run(source, reference_wav, output, **kwargs):
+def run(source, reference_wav, output, avr_config=None,**kwargs):
     source, reference_wav, output = Path(source), Path(reference_wav), Path(output)
     protect_outputs([source, reference_wav],
         [output, output.with_suffix('.wav'), output.with_suffix('.json')], replace=(source, output))
     ref = read_wav16(reference_wav)
     t0 = time.perf_counter()
+    if avr_config:
+        from avr_timing_gate import AvrTimingGate
+        kwargs['timing_gate']=AvrTimingGate(source.read_bytes(),**avr_config)
     with BatchSession('batch') as decoder:
         blob, pcm, report = optimize(source.read_bytes(), ref, decoder, **kwargs)
     report['elapsed_seconds'] = time.perf_counter() - t0
@@ -135,15 +154,25 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('input', type=Path);ap.add_argument('reference_wav', type=Path);ap.add_argument('output', type=Path)
     ap.add_argument('--rounds', type=int, default=2)
+    ap.add_argument('--global-candidates',type=int,default=32)
+    ap.add_argument('--global-states',type=int,default=1024)
+    ap.add_argument('--kind',choices=('speech','music'),default='speech')
+    ap.add_argument('--avr-bin',type=Path);ap.add_argument('--sim-runner',type=Path)
+    ap.add_argument('--sim-lib-dir',type=Path);ap.add_argument('--wsl');ap.add_argument('--timing-work',type=Path)
     ap.add_argument('--lsf-trials', type=int, default=500)
     ap.add_argument('--beam-trials', type=int, default=2500)
     ap.add_argument('--header-trials', type=int, default=80)
     ap.add_argument('--beam', type=int, choices=(1, 4, 8, 16), default=4)
     ap.add_argument('--window', type=int, choices=(20, 40), default=20)
     a = ap.parse_args()
+    if a.avr_bin and (not a.sim_runner or not a.timing_work):
+        ap.error('--avr-bin requires --sim-runner and --timing-work in an ignored build directory')
+    avr_config=None if not a.avr_bin else dict(output=a.timing_work,avr_bin=a.avr_bin,
+        runner=a.sim_runner,lib=a.sim_lib_dir,wsl=a.wsl)
     print(json.dumps(run(a.input, a.reference_wav, a.output, rounds=a.rounds,
         lsf_trials=a.lsf_trials, beam_trials=a.beam_trials, header_trials=a.header_trials,
-        beam_width=a.beam, window=a.window), indent=2))
+        beam_width=a.beam, window=a.window,global_candidates=a.global_candidates,
+        global_states=a.global_states,kind=a.kind,avr_config=avr_config), indent=2))
 
 
 if __name__ == '__main__':

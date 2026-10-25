@@ -1,0 +1,547 @@
+[
+  {
+    "before": {
+      "ser_db": 27.920907085598046,
+      "rmse": 0.0026298976238030547,
+      "stoi": 0.9960751378873363,
+      "spectral_rmse_db": 3.473271819879622,
+      "reference_rms": 0.06546123536995288,
+      "decoded_rms": 0.06555519397616319,
+      "clip_count": 0,
+      "pcm16_sha256": "24e45d1f6cce7b49cbbabd09cb8e8b7a7ef03559ba46d5b9129a616afb190c3d"
+    },
+    "after": {
+      "ser_db": 27.920907085598046,
+      "rmse": 0.0026298976238030547,
+      "stoi": 0.9960751378873363,
+      "spectral_rmse_db": 3.473271819879622,
+      "reference_rms": 0.06546123536995288,
+      "decoded_rms": 0.06555519397616319,
+      "clip_count": 0,
+      "pcm16_sha256": "24e45d1f6cce7b49cbbabd09cb8e8b7a7ef03559ba46d5b9129a616afb190c3d"
+    },
+    "stages": [
+      {
+        "round": 1,
+        "stage": "LSF",
+        "trials": 40,
+        "accepted": false,
+        "candidate_cost": null,
+        "timing": null,
+        "quality": {
+          "ser_db": 27.920907085598046,
+          "rmse": 0.0026298976238030547,
+          "stoi": 0.9960751378873363,
+          "spectral_rmse_db": 3.473271819879622,
+          "reference_rms": 0.06546123536995288,
+          "decoded_rms": 0.06555519397616319,
+          "clip_count": 0,
+          "pcm16_sha256": "24e45d1f6cce7b49cbbabd09cb8e8b7a7ef03559ba46d5b9129a616afb190c3d"
+        }
+      },
+      {
+        "round": 1,
+        "stage": "beam",
+        "trials": 128,
+        "accepted": false,
+        "candidate_cost": null,
+        "timing": null,
+        "quality": {
+          "ser_db": 27.920907085598046,
+          "rmse": 0.0026298976238030547,
+          "stoi": 0.9960751378873363,
+          "spectral_rmse_db": 3.473271819879622,
+          "reference_rms": 0.06546123536995288,
+          "decoded_rms": 0.06555519397616319,
+          "clip_count": 0,
+          "pcm16_sha256": "24e45d1f6cce7b49cbbabd09cb8e8b7a7ef03559ba46d5b9129a616afb190c3d"
+        }
+      },
+      {
+        "round": 1,
+        "stage": "header",
+        "trials": 24,
+        "accepted": false,
+        "candidate_cost": null,
+        "timing": null,
+        "quality": {
+          "ser_db": 27.920907085598046,
+          "rmse": 0.0026298976238030547,
+          "stoi": 0.9960751378873363,
+          "spectral_rmse_db": 3.473271819879622,
+          "reference_rms": 0.06546123536995288,
+          "decoded_rms": 0.06555519397616319,
+          "clip_count": 0,
+          "pcm16_sha256": "24e45d1f6cce7b49cbbabd09cb8e8b7a7ef03559ba46d5b9129a616afb190c3d"
+        }
+      },
+      {
+        "round": 1,
+        "stage": "global",
+        "trials": 12,
+        "accepted": false,
+        "candidate_cost": null,
+        "timing": null,
+        "quality": {
+          "ser_db": 27.920907085598046,
+          "rmse": 0.0026298976238030547,
+          "stoi": 0.9960751378873363,
+          "spectral_rmse_db": 3.473271819879622,
+          "reference_rms": 0.06546123536995288,
+          "decoded_rms": 0.06555519397616319,
+          "clip_count": 0,
+          "pcm16_sha256": "24e45d1f6cce7b49cbbabd09cb8e8b7a7ef03559ba46d5b9129a616afb190c3d"
+        }
+      }
+    ],
+    "input_bytes": 2825,
+    "output_bytes": 2825,
+    "input_sha256": "5b529e5e843a1c34e37e1bec457d349a49b17c8793b811db3fb163c2b5936e14",
+    "output_sha256": "5b529e5e843a1c34e37e1bec457d349a49b17c8793b811db3fb163c2b5936e14",
+    "decoder_cost_before": {
+      "samples": 8000,
+      "bit_calls": 13349,
+      "max_bit_calls_sample": 27,
+      "max_bit_calls_80": 286,
+      "max_bit_calls_160": 535,
+      "rom_reads": 2825,
+      "lsf_converts": 1
+    },
+    "decoder_cost_after": {
+      "samples": 8000,
+      "bit_calls": 13349,
+      "max_bit_calls_sample": 27,
+      "max_bit_calls_80": 286,
+      "max_bit_calls_160": 535,
+      "rom_reads": 2825,
+      "lsf_converts": 1
+    },
+    "decoder_source_sha256": "abd9b7e1fdf0f5c3b77ff2a45774ab9e976599105aa2da7ea645bcc17b266df5",
+    "avr_cycles_measured": true,
+    "timing": {
+      "accepted": true,
+      "mean_decode_wall_cycles": 1301.78,
+      "decode_wall_cycles_max_160": 239483,
+      "underruns": 0,
+      "min_queue_before_producer_eos": 385,
+      "flash_bytes": 11356,
+      "pwm_native_exact": true,
+      "input_sha256": "5b529e5e843a1c34e37e1bec457d349a49b17c8793b811db3fb163c2b5936e14"
+    },
+    "id": "ru_kak",
+    "timing_probes": 5
+  },
+  {
+    "before": {
+      "ser_db": 13.482637273120135,
+      "rmse": 0.010179557747805637,
+      "stoi": null,
+      "spectral_rmse_db": 20.68598783673201,
+      "reference_rms": 0.04806852259117447,
+      "decoded_rms": 0.048410544574817825,
+      "clip_count": 0,
+      "pcm16_sha256": "aa48fe8d71f0026aa2cd12797d21cbe2ca67a19b6703934b79e16a97ab436ed6"
+    },
+    "after": {
+      "ser_db": 13.482637273120135,
+      "rmse": 0.010179557747805637,
+      "stoi": null,
+      "spectral_rmse_db": 20.68598783673201,
+      "reference_rms": 0.04806852259117447,
+      "decoded_rms": 0.048410544574817825,
+      "clip_count": 0,
+      "pcm16_sha256": "aa48fe8d71f0026aa2cd12797d21cbe2ca67a19b6703934b79e16a97ab436ed6"
+    },
+    "stages": [
+      {
+        "round": 1,
+        "stage": "LSF",
+        "trials": 40,
+        "accepted": false,
+        "candidate_cost": null,
+        "timing": null,
+        "quality": {
+          "ser_db": 13.482637273120135,
+          "rmse": 0.010179557747805637,
+          "stoi": null,
+          "spectral_rmse_db": 20.68598783673201,
+          "reference_rms": 0.04806852259117447,
+          "decoded_rms": 0.048410544574817825,
+          "clip_count": 0,
+          "pcm16_sha256": "aa48fe8d71f0026aa2cd12797d21cbe2ca67a19b6703934b79e16a97ab436ed6"
+        }
+      },
+      {
+        "round": 1,
+        "stage": "beam",
+        "trials": 128,
+        "accepted": false,
+        "candidate_cost": null,
+        "timing": null,
+        "quality": {
+          "ser_db": 13.482637273120135,
+          "rmse": 0.010179557747805637,
+          "stoi": null,
+          "spectral_rmse_db": 20.68598783673201,
+          "reference_rms": 0.04806852259117447,
+          "decoded_rms": 0.048410544574817825,
+          "clip_count": 0,
+          "pcm16_sha256": "aa48fe8d71f0026aa2cd12797d21cbe2ca67a19b6703934b79e16a97ab436ed6"
+        }
+      },
+      {
+        "round": 1,
+        "stage": "header",
+        "trials": 24,
+        "accepted": false,
+        "candidate_cost": {
+          "samples": 24000,
+          "bit_calls": 39327,
+          "max_bit_calls_sample": 33,
+          "max_bit_calls_80": 210,
+          "max_bit_calls_160": 382,
+          "rom_reads": 6399,
+          "lsf_converts": 1
+        },
+        "timing": {
+          "accepted": false,
+          "mean_decode_wall_cycles": 1470.3985833333334,
+          "decode_wall_cycles_max_160": 258494,
+          "underruns": 0,
+          "min_queue_before_producer_eos": 385,
+          "flash_bytes": 14930,
+          "pwm_native_exact": true,
+          "input_sha256": "f0200ffd955f23a9b5c8a421c21dd199a8bb520006ac01eba5a49627e93c0638"
+        },
+        "quality": {
+          "ser_db": 13.482637273120135,
+          "rmse": 0.010179557747805637,
+          "stoi": null,
+          "spectral_rmse_db": 20.68598783673201,
+          "reference_rms": 0.04806852259117447,
+          "decoded_rms": 0.048410544574817825,
+          "clip_count": 0,
+          "pcm16_sha256": "aa48fe8d71f0026aa2cd12797d21cbe2ca67a19b6703934b79e16a97ab436ed6"
+        }
+      },
+      {
+        "round": 1,
+        "stage": "global",
+        "trials": 12,
+        "accepted": false,
+        "candidate_cost": null,
+        "timing": null,
+        "quality": {
+          "ser_db": 13.482637273120135,
+          "rmse": 0.010179557747805637,
+          "stoi": null,
+          "spectral_rmse_db": 20.68598783673201,
+          "reference_rms": 0.04806852259117447,
+          "decoded_rms": 0.048410544574817825,
+          "clip_count": 0,
+          "pcm16_sha256": "aa48fe8d71f0026aa2cd12797d21cbe2ca67a19b6703934b79e16a97ab436ed6"
+        }
+      }
+    ],
+    "input_bytes": 6399,
+    "output_bytes": 6399,
+    "input_sha256": "782af14ea2d5db0c2e883580a73c76e31a0c43aa0babf56fbdbae55d80cd69f7",
+    "output_sha256": "782af14ea2d5db0c2e883580a73c76e31a0c43aa0babf56fbdbae55d80cd69f7",
+    "decoder_cost_before": {
+      "samples": 24000,
+      "bit_calls": 39327,
+      "max_bit_calls_sample": 33,
+      "max_bit_calls_80": 210,
+      "max_bit_calls_160": 382,
+      "rom_reads": 6399,
+      "lsf_converts": 1
+    },
+    "decoder_cost_after": {
+      "samples": 24000,
+      "bit_calls": 39327,
+      "max_bit_calls_sample": 33,
+      "max_bit_calls_80": 210,
+      "max_bit_calls_160": 382,
+      "rom_reads": 6399,
+      "lsf_converts": 1
+    },
+    "decoder_source_sha256": "abd9b7e1fdf0f5c3b77ff2a45774ab9e976599105aa2da7ea645bcc17b266df5",
+    "avr_cycles_measured": true,
+    "timing": {
+      "accepted": true,
+      "mean_decode_wall_cycles": 1323.7698333333333,
+      "decode_wall_cycles_max_160": 231638,
+      "underruns": 0,
+      "min_queue_before_producer_eos": 385,
+      "flash_bytes": 14930,
+      "pwm_native_exact": true,
+      "input_sha256": "782af14ea2d5db0c2e883580a73c76e31a0c43aa0babf56fbdbae55d80cd69f7"
+    },
+    "id": "synthetic_music",
+    "timing_probes": 6
+  },
+  {
+    "before": {
+      "ser_db": 32.36695882425461,
+      "rmse": 0.0033268544695392813,
+      "stoi": 0.9714816148128829,
+      "spectral_rmse_db": 5.267187242827381,
+      "reference_rms": 0.13815981551600723,
+      "decoded_rms": 0.13812562814840304,
+      "clip_count": 0,
+      "pcm16_sha256": "475a3b0a08f26cea5d8ce642258fd22cbac72f521098f521608f5046a351d413"
+    },
+    "after": {
+      "ser_db": 32.36695882425461,
+      "rmse": 0.0033268544695392813,
+      "stoi": 0.9714816148128829,
+      "spectral_rmse_db": 5.267187242827381,
+      "reference_rms": 0.13815981551600723,
+      "decoded_rms": 0.13812562814840304,
+      "clip_count": 0,
+      "pcm16_sha256": "475a3b0a08f26cea5d8ce642258fd22cbac72f521098f521608f5046a351d413"
+    },
+    "stages": [
+      {
+        "round": 1,
+        "stage": "LSF",
+        "trials": 40,
+        "accepted": false,
+        "candidate_cost": null,
+        "timing": null,
+        "quality": {
+          "ser_db": 32.36695882425461,
+          "rmse": 0.0033268544695392813,
+          "stoi": 0.9714816148128829,
+          "spectral_rmse_db": 5.267187242827381,
+          "reference_rms": 0.13815981551600723,
+          "decoded_rms": 0.13812562814840304,
+          "clip_count": 0,
+          "pcm16_sha256": "475a3b0a08f26cea5d8ce642258fd22cbac72f521098f521608f5046a351d413"
+        }
+      },
+      {
+        "round": 1,
+        "stage": "beam",
+        "trials": 128,
+        "accepted": false,
+        "candidate_cost": null,
+        "timing": null,
+        "quality": {
+          "ser_db": 32.36695882425461,
+          "rmse": 0.0033268544695392813,
+          "stoi": 0.9714816148128829,
+          "spectral_rmse_db": 5.267187242827381,
+          "reference_rms": 0.13815981551600723,
+          "decoded_rms": 0.13812562814840304,
+          "clip_count": 0,
+          "pcm16_sha256": "475a3b0a08f26cea5d8ce642258fd22cbac72f521098f521608f5046a351d413"
+        }
+      },
+      {
+        "round": 1,
+        "stage": "header",
+        "trials": 24,
+        "accepted": false,
+        "candidate_cost": null,
+        "timing": null,
+        "quality": {
+          "ser_db": 32.36695882425461,
+          "rmse": 0.0033268544695392813,
+          "stoi": 0.9714816148128829,
+          "spectral_rmse_db": 5.267187242827381,
+          "reference_rms": 0.13815981551600723,
+          "decoded_rms": 0.13812562814840304,
+          "clip_count": 0,
+          "pcm16_sha256": "475a3b0a08f26cea5d8ce642258fd22cbac72f521098f521608f5046a351d413"
+        }
+      },
+      {
+        "round": 1,
+        "stage": "global",
+        "trials": 12,
+        "accepted": false,
+        "candidate_cost": null,
+        "timing": null,
+        "quality": {
+          "ser_db": 32.36695882425461,
+          "rmse": 0.0033268544695392813,
+          "stoi": 0.9714816148128829,
+          "spectral_rmse_db": 5.267187242827381,
+          "reference_rms": 0.13815981551600723,
+          "decoded_rms": 0.13812562814840304,
+          "clip_count": 0,
+          "pcm16_sha256": "475a3b0a08f26cea5d8ce642258fd22cbac72f521098f521608f5046a351d413"
+        }
+      }
+    ],
+    "input_bytes": 4931,
+    "output_bytes": 4931,
+    "input_sha256": "edbc88261dcfe5aed0b0f59906b694f2ad0f5755b88aedb524a5b4b888de2581",
+    "output_sha256": "edbc88261dcfe5aed0b0f59906b694f2ad0f5755b88aedb524a5b4b888de2581",
+    "decoder_cost_before": {
+      "samples": 9768,
+      "bit_calls": 27130,
+      "max_bit_calls_sample": 63,
+      "max_bit_calls_80": 324,
+      "max_bit_calls_160": 604,
+      "rom_reads": 4931,
+      "lsf_converts": 68
+    },
+    "decoder_cost_after": {
+      "samples": 9768,
+      "bit_calls": 27130,
+      "max_bit_calls_sample": 63,
+      "max_bit_calls_80": 324,
+      "max_bit_calls_160": 604,
+      "rom_reads": 4931,
+      "lsf_converts": 68
+    },
+    "decoder_source_sha256": "abd9b7e1fdf0f5c3b77ff2a45774ab9e976599105aa2da7ea645bcc17b266df5",
+    "avr_cycles_measured": true,
+    "timing": {
+      "accepted": true,
+      "mean_decode_wall_cycles": 1702.2820434070434,
+      "decode_wall_cycles_max_160": 323697,
+      "underruns": 0,
+      "min_queue_before_producer_eos": 323,
+      "flash_bytes": 13462,
+      "pwm_native_exact": true,
+      "input_sha256": "edbc88261dcfe5aed0b0f59906b694f2ad0f5755b88aedb524a5b4b888de2581"
+    },
+    "id": "chego",
+    "timing_probes": 1
+  },
+  {
+    "before": {
+      "ser_db": 35.23762381025108,
+      "rmse": 0.0032998826989384744,
+      "stoi": 0.9546210613031306,
+      "spectral_rmse_db": 5.371108838560757,
+      "reference_rms": 0.19071273429539667,
+      "decoded_rms": 0.1907373969458631,
+      "clip_count": 0,
+      "pcm16_sha256": "d4f000c07f9a1abce0c9f193cf6bfac0de696603b13910f7be113346505a7e6c"
+    },
+    "after": {
+      "ser_db": 35.23762381025108,
+      "rmse": 0.0032998826989384744,
+      "stoi": 0.9546210613031306,
+      "spectral_rmse_db": 5.371108838560757,
+      "reference_rms": 0.19071273429539667,
+      "decoded_rms": 0.1907373969458631,
+      "clip_count": 0,
+      "pcm16_sha256": "d4f000c07f9a1abce0c9f193cf6bfac0de696603b13910f7be113346505a7e6c"
+    },
+    "stages": [
+      {
+        "round": 1,
+        "stage": "LSF",
+        "trials": 40,
+        "accepted": false,
+        "candidate_cost": null,
+        "timing": null,
+        "quality": {
+          "ser_db": 35.23762381025108,
+          "rmse": 0.0032998826989384744,
+          "stoi": 0.9546210613031306,
+          "spectral_rmse_db": 5.371108838560757,
+          "reference_rms": 0.19071273429539667,
+          "decoded_rms": 0.1907373969458631,
+          "clip_count": 0,
+          "pcm16_sha256": "d4f000c07f9a1abce0c9f193cf6bfac0de696603b13910f7be113346505a7e6c"
+        }
+      },
+      {
+        "round": 1,
+        "stage": "beam",
+        "trials": 128,
+        "accepted": false,
+        "candidate_cost": null,
+        "timing": null,
+        "quality": {
+          "ser_db": 35.23762381025108,
+          "rmse": 0.0032998826989384744,
+          "stoi": 0.9546210613031306,
+          "spectral_rmse_db": 5.371108838560757,
+          "reference_rms": 0.19071273429539667,
+          "decoded_rms": 0.1907373969458631,
+          "clip_count": 0,
+          "pcm16_sha256": "d4f000c07f9a1abce0c9f193cf6bfac0de696603b13910f7be113346505a7e6c"
+        }
+      },
+      {
+        "round": 1,
+        "stage": "header",
+        "trials": 24,
+        "accepted": false,
+        "candidate_cost": null,
+        "timing": null,
+        "quality": {
+          "ser_db": 35.23762381025108,
+          "rmse": 0.0032998826989384744,
+          "stoi": 0.9546210613031306,
+          "spectral_rmse_db": 5.371108838560757,
+          "reference_rms": 0.19071273429539667,
+          "decoded_rms": 0.1907373969458631,
+          "clip_count": 0,
+          "pcm16_sha256": "d4f000c07f9a1abce0c9f193cf6bfac0de696603b13910f7be113346505a7e6c"
+        }
+      },
+      {
+        "round": 1,
+        "stage": "global",
+        "trials": 12,
+        "accepted": false,
+        "candidate_cost": null,
+        "timing": null,
+        "quality": {
+          "ser_db": 35.23762381025108,
+          "rmse": 0.0032998826989384744,
+          "stoi": 0.9546210613031306,
+          "spectral_rmse_db": 5.371108838560757,
+          "reference_rms": 0.19071273429539667,
+          "decoded_rms": 0.1907373969458631,
+          "clip_count": 0,
+          "pcm16_sha256": "d4f000c07f9a1abce0c9f193cf6bfac0de696603b13910f7be113346505a7e6c"
+        }
+      }
+    ],
+    "input_bytes": 3983,
+    "output_bytes": 3983,
+    "input_sha256": "4d776b7a132b86f57ca8626f49797f309a2cb0737d0c5d7178ac6245c85e4124",
+    "output_sha256": "4d776b7a132b86f57ca8626f49797f309a2cb0737d0c5d7178ac6245c85e4124",
+    "decoder_cost_before": {
+      "samples": 8232,
+      "bit_calls": 14833,
+      "max_bit_calls_sample": 55,
+      "max_bit_calls_80": 318,
+      "max_bit_calls_160": 573,
+      "rom_reads": 3983,
+      "lsf_converts": 59
+    },
+    "decoder_cost_after": {
+      "samples": 8232,
+      "bit_calls": 14833,
+      "max_bit_calls_sample": 55,
+      "max_bit_calls_80": 318,
+      "max_bit_calls_160": 573,
+      "rom_reads": 3983,
+      "lsf_converts": 59
+    },
+    "decoder_source_sha256": "abd9b7e1fdf0f5c3b77ff2a45774ab9e976599105aa2da7ea645bcc17b266df5",
+    "avr_cycles_measured": true,
+    "timing": {
+      "accepted": true,
+      "mean_decode_wall_cycles": 1618.0427599611273,
+      "decode_wall_cycles_max_160": 320116,
+      "underruns": 0,
+      "min_queue_before_producer_eos": 385,
+      "flash_bytes": 12514,
+      "pwm_native_exact": true,
+      "input_sha256": "4d776b7a132b86f57ca8626f49797f309a2cb0737d0c5d7178ac6245c85e4124"
+    },
+    "id": "otvechaesh",
+    "timing_probes": 10
+  }
+]

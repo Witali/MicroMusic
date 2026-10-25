@@ -170,7 +170,7 @@ def _materialize(header, frames, options, choices, ref, co, steps, pre, bright, 
 
 
 def optimize(blob, ref, decoder, rounds=2, max_states=1024, max_candidates=32,
-             kind='speech', max_cost_growth=0., probe_executable=None):
+             kind='speech', max_cost_growth=0., probe_executable=None,timing_gate=None):
     ref = np.asarray(ref)
     if ref.ndim != 1 or ref.dtype.kind not in 'iu' or np.any(ref < -32768) or np.any(ref > 32767):
         raise ValueError('Expected mono integer PCM16 reference')
@@ -225,9 +225,12 @@ def optimize(blob, ref, decoder, rounds=2, max_states=1024, max_candidates=32,
             return
         cost = probe(candidate, executable)
         fields = ('bit_calls', 'rom_reads', 'max_bit_calls_sample', 'max_bit_calls_80', 'max_bit_calls_160')
-        if (cost['samples'] != old_cost['samples'] or cost['lsf_converts'] != old_cost['lsf_converts'] or
-                any(cost[k] > old_cost[k] * (1 + max_cost_growth) for k in fields)):
-            record['rejected'] = 'native decode-cost proxy cap'
+        timing=timing_gate(candidate) if timing_gate else None
+        proxy_bad=(cost['samples'] != old_cost['samples'] or cost['lsf_converts'] != old_cost['lsf_converts'] or
+                any(cost[k] > old_cost[k] * (1 + max_cost_growth) for k in fields))
+        if (timing is not None and not timing['accepted']) or (timing is None and proxy_bad):
+            record['rejected'] = 'AVR cycle cap' if timing is not None else 'native decode-cost proxy cap'
+            record['timing']=timing
             record['decode_cost'] = cost
             if allow_repack:
                 for slack in (4, 16, 40):
@@ -236,7 +239,7 @@ def optimize(blob, ref, decoder, rounds=2, max_states=1024, max_candidates=32,
                     repacked=encode(_document(blob[:20],ff,bb),fast=True,raw_slack_bits=slack)[0]
                     consider(repacked,label+f':raw_slack={slack}',allow_repack=False)
             return
-        record.update(accepted=True, quality=met, decode_cost=cost)
+        record.update(accepted=True, quality=met, decode_cost=cost,timing=timing)
         cur, pcm, best_error = candidate, decoded, sse
         accepted.append(len(trials) - 1)
 
@@ -293,9 +296,10 @@ def optimize(blob, ref, decoder, rounds=2, max_states=1024, max_candidates=32,
         'max_cost_growth': max_cost_growth, 'trials': trials, 'accepted_trials': accepted, 'searches': searches,
         'decoder_source_sha256': hashlib.sha256((Path(__file__).resolve().parents[1]/'src/Lpx4HybridCore.cpp').read_bytes()).hexdigest(),
         'elapsed_seconds': time.perf_counter() - started,
-        'contract': 'Original byte/SSE/STOI floors; native cost caps; unchanged LPC/header/decoder',
+        'contract': 'Original byte/SSE/STOI floors; '+('full AVR cycle caps' if timing_gate else 'native cost caps')+'; unchanged LPC/header/decoder',
+        'native_proxy_caps_enforced':timing_gate is None,
         'surrogate_note': 'Local state/pitch/scale costs are estimates; full regenerated streams decide acceptance.',
-        'avr_cycles_measured': False}
+        'avr_cycles_measured':bool(getattr(timing_gate,'avr_cycles_measured',False))}
 
 
 def run(source, reference_wav, output, **kwargs):

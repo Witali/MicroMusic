@@ -29,7 +29,10 @@ def linux_path(path):
     return '/mnt/' + path.drive[0].lower() + '/' + '/'.join(path.parts[1:])
 
 
-def run(source, output, avr_bin, sim_runner, sim_lib_dir=None, wsl=None, enable_asm=False):
+def run(source, output, avr_bin, sim_runner, sim_lib_dir=None, wsl=None, enable_asm=False,
+        queue=512,prefill=384,irq_load=0,dot_unroll=9):
+    if queue not in (64,128,256,512) or not 1<=prefill<queue or not 0<=irq_load<=600 or dot_unroll not in (1,3,9):
+        raise ValueError('Invalid queue, prefill, IRQ load or dot unroll')
     source, output, avr_bin = Path(source), Path(output).resolve(), Path(avr_bin)
     blob = source.read_bytes()
     if blob[:6] != b'L4HY\x02\x03' or not 20 <= len(blob) <= 65535:
@@ -51,6 +54,10 @@ def run(source, output, avr_bin, sim_runner, sim_lib_dir=None, wsl=None, enable_
     if enable_asm:
         command.insert(1, '-DLPX4_ENABLE_ASM=1')
     compiler_options = command[1:7] if not enable_asm else command[1:8]
+    definitions=[f'-DLPX4_PROFILE_QUEUE={queue}',f'-DLPX4_PROFILE_PREFILL={prefill}',
+                 f'-DLPX4_PROFILE_IRQ_LOAD={irq_load}',f'-DLPX4_AVR_DOT_UNROLL={dot_unroll}']
+    command[1:1]=definitions
+    compiler_options=definitions+compiler_options
     subprocess.run(command, check=True, capture_output=True)
     subprocess.run([str(avr_bin / ('avr-objcopy' + suffix)), '-O', 'ihex', '-R', '.eeprom', str(elf), str(hexfile)], check=True)
     sizes = subprocess.check_output([str(avr_bin / ('avr-size' + suffix)), str(elf)], text=True)
@@ -92,6 +99,7 @@ def run(source, output, avr_bin, sim_runner, sim_lib_dir=None, wsl=None, enable_
                   compiler=subprocess.check_output([str(compiler), '--version'], text=True).splitlines()[0],
                   compiler_options=compiler_options,
                   arithmetic_backend='avr5-asm' if enable_asm else 'c',
+                  queue_bytes=queue,prefill_samples=prefill,extra_irq_cycles=irq_load,dot_unroll=dot_unroll,
                   simavr_no_underrun=report['underruns'] == 0,
                   physical_hardware_measured=False,
                   instrumentation='Decode wall intervals include active IRQ and flag stores; PB0 marks OCR2B writes; queue sampled every 160 ticks.')
@@ -109,7 +117,10 @@ if __name__ == '__main__':
     ap.add_argument('--sim-lib-dir', type=Path)
     ap.add_argument('--wsl')
     ap.add_argument('--enable-asm', action='store_true')
+    ap.add_argument('--queue',type=int,default=512);ap.add_argument('--prefill',type=int,default=384)
+    ap.add_argument('--irq-load',type=int,default=0);ap.add_argument('--dot-unroll',type=int,default=9)
     a = ap.parse_args()
-    r = run(a.input, a.output_directory, a.avr_bin, a.sim_runner, a.sim_lib_dir, a.wsl, a.enable_asm)
+    r = run(a.input, a.output_directory, a.avr_bin, a.sim_runner, a.sim_lib_dir, a.wsl, a.enable_asm,
+            a.queue,a.prefill,a.irq_load,a.dot_unroll)
     print(json.dumps({k: r[k] for k in ('input_samples', 'underruns', 'mean_decode_wall_cycles', 'decode_wall_cycles_max',
                                        'flash_bytes', 'static_sram_bytes', 'pwm_native_exact')}, indent=2))

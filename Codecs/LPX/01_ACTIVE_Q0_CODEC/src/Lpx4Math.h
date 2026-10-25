@@ -31,6 +31,12 @@
 #else
 #define LPX4_USE_AVR_ASM 0
 #endif
+#ifndef LPX4_AVR_DOT_UNROLL
+#define LPX4_AVR_DOT_UNROLL 9
+#endif
+#if LPX4_AVR_DOT_UNROLL!=1 && LPX4_AVR_DOT_UNROLL!=3 && LPX4_AVR_DOT_UNROLL!=9
+#error LPX4_AVR_DOT_UNROLL must be 1, 3 or 9
+#endif
 
 // Byte-aligned shifts avoid a 12/14-iteration 32-bit shift loop at AVR -Os.
 // The low byte cannot affect a floor right shift. Restore sign after 24 bits.
@@ -88,6 +94,8 @@ static inline __attribute__((always_inline)) int32_t lpx4Mul16(int16_t x,int16_t
     "add r23,r0\n\tadc r24,r1\n\tadc r25,r16\n\t" \
     ".rept 4\n\tasr r25\n\tror r24\n\tror r23\n\t.endr\n\t" \
     "add %A0,r23\n\tadc %B0,r24\n\tadc %C0,r25\n\t"
+#define LPX4_STRING_(V) #V
+#define LPX4_STRING(V) LPX4_STRING_(V)
 static inline int32_t lpx4DotQ12(const int16_t* a,int16_t* h){
 #if LPX4_USE_AVR_ASM
     int32_t result;
@@ -96,16 +104,25 @@ static inline int32_t lpx4DotQ12(const int16_t* a,int16_t* h){
         "clr %A0\n\tclr %B0\n\tclr %C0\n\tclr r16\n\t"
         "ld r19,-X\n\tld r18,-X\n\tld r21,-Z\n\tld r20,-Z\n\t"
         LPX4_DOT_MUL
-        ".rept 9\n\t"
+#if LPX4_AVR_DOT_UNROLL!=9
+        "ldi r17," LPX4_STRING(9/LPX4_AVR_DOT_UNROLL) "\n\t1:\n\t"
+#endif
+        ".rept " LPX4_STRING(LPX4_AVR_DOT_UNROLL) "\n\t"
         "ld r19,-X\n\tld r18,-X\n\tld r21,-Z\n\tld r20,-Z\n\t"
         "std Z+2,r20\n\tstd Z+3,r21\n\t"
         LPX4_DOT_MUL
         ".endr\n\t"
+#if LPX4_AVR_DOT_UNROLL!=9
+        "dec r17\n\tbreq 2f\n\trjmp 1b\n\t2:\n\t"
+#endif
         "mov %D0,%C0\n\tlsl %D0\n\tsbc %D0,%D0\n\t"
         "clr __zero_reg__\n\t"
         : "=&r" (result), "+z" (h), "+x" (a)
         :
         : "r0","r1","r16","r18","r19","r20","r21",
+#if LPX4_AVR_DOT_UNROLL!=9
+          "r17",
+#endif
           "r22","r23","r24","r25","cc","memory"
     );
     return result;
@@ -119,6 +136,8 @@ static inline int32_t lpx4DotQ12(const int16_t* a,int16_t* h){
 #endif
 }
 #undef LPX4_DOT_MUL
+#undef LPX4_STRING
+#undef LPX4_STRING_
 
 static inline __attribute__((always_inline)) int32_t lpx4MulQ14(int16_t x,int16_t y){
 #if LPX4_USE_AVR_ASM
