@@ -1,0 +1,1228 @@
+{
+  "schema": "micromusic-generated-wasm-benchmark-v1",
+  "complete": true,
+  "revision": "106d92a1dff4a02980c1058b2262d45ecbb18a93",
+  "mode": "timing",
+  "transform": "block-constants",
+  "baseline": {
+    "revision": "106d92a1dff4a02980c1058b2262d45ecbb18a93",
+    "sourceSha256": {
+      "web-player/lib/avr-transpiler.js": "febb8abbaaae2a25b874ff9a2e33b4e711dd9a35865da9fd42201dfb9fde1f65",
+      "web-player/lib/avr-wasm-phases.js": "dfe3f6f59808da0ba2b27e20bdf835b7e0229acb91ecd8eff8eeefaccf3b03e1",
+      "web-player/lib/avr-phase-locals.js": "3b2d94294149c4e376a8857420d277f2248343dd0fefa7f0553e96fe5feeeab7"
+    },
+    "adaptation": "Only import URLs are redirected: historical phase module as data URL, unchanged device profiles/phase-local dependency as file URLs."
+  },
+  "cpuModulePolicy": "production-translation-cache",
+  "gcBeforeRun": true,
+  "node": "v22.22.3",
+  "platform": "win32",
+  "cpu": "AMD Ryzen 5 5600X 6-Core Processor             ",
+  "trials": 8,
+  "warmups": 4,
+  "rate": 48000,
+  "frames": 12000,
+  "instructions": 1000000,
+  "levels": [
+    "block-constants"
+  ],
+  "sourceSha256": {
+    "web-player/lib/avr-transpiler.js": "8867470f7bfe065fe20ad6824093e5a0e19bc6116db9152d272d0ae7902632db",
+    "web-player/lib/avr-wasm-phases.js": "dfe3f6f59808da0ba2b27e20bdf835b7e0229acb91ecd8eff8eeefaccf3b03e1",
+    "web-player/lib/avr-phase-locals.js": "3b2d94294149c4e376a8857420d277f2248343dd0fefa7f0553e96fe5feeeab7",
+    "web-player/lib/avr-block-constants.js": "dede6124f837b084ff35220687ccb0e637e32c1724ed331fd952392896c8bef2",
+    "web-player/lib/avr-transpiled-runtime.js": "e2bb8186c1264beab26ddefea0e07ea9c067d2ab366511136047690f270074f9",
+    "web-player/lib/attiny13a-runtime.js": "5c79fdcfcacac149ec535ebc0b9d173d12f7fe75a5bea27f9997b5e214681869",
+    "web-player/scripts/benchmark-generated-wasm.mjs": "9af255bd8c6648fc44fcbdc97abbad7f57b482db6e03ecdc9104498ca4108658",
+    "web-player/scripts/lib/optimize-avr-wasm.mjs": "144c2c0c0740b0cdd4203c8ff2a5dc186f4dcb0e668f74244c83d18025de2951",
+    "web-player/scripts/lib/runtime-control-design.mjs": "9a52ba1ab6bf6c1e9864bddf5413eacaae81899f73dfb859617777e8d7d59e43"
+  },
+  "runtimeSha256": "111f314fdbab5bd7a8f1c0c4d8891811676e436bd7aa78681d6c62728ef0fba6",
+  "method": "Timing mode: balanced four-label trials; oldA/oldB identical raw CPU bytes, newA/newB identical optimized bytes; one unchanged native Module. Phase-local runs use the production translation cache and assert CPU Module sharing within identity pairs; Binaryen runs use fresh precompiled CPU Modules. Instances/memories are always fresh. Equal warmups; construction, optimization and snapshots excluded from execution timing. Validation mode: one raw and one optimized run; no speed inference. Exact PCM, full architectural/diagnostic state and pins checked after every audio block or direct run. Ratios above1 favor optimized CPU. Generation/optimizer-process and compile observations are single observations, not cold-start medians or browser guarantees.",
+  "cases": [
+    {
+      "id": "lumiere-stereo-physical",
+      "actualId": "lumiere-stereo",
+      "level": "block-constants",
+      "flashSha256": "387c12bdaff34211a450cfa6ad69ff2dcd73d539b34349cb13a8c53a4706b236",
+      "eepromSha256": "45ba4c476cf214ef25d91494c6fa70b2567722b44403bcd25b09326e190fee37",
+      "generationMs": 166.38740000000007,
+      "compileAfterValidationMs": {
+        "raw": 0.772199999999998,
+        "optimized": 0.7939999999999827
+      },
+      "optimization": {
+        "tool": "generation-time block-constants",
+        "flags": [
+          "foldBlockConstants=true"
+        ],
+        "inputSha256": "eb7ce66b587152d9945fd5c94082d8c5fc378033a5ccd35d1a88a1d8389ff5f2",
+        "outputSha256": "d6c7d93a021efc5f2068d3f2a07b69cf75916855597a512508e1ace294d843ce",
+        "inputBytes": 391150,
+        "outputBytes": 390015,
+        "elapsedMs": 127.89620000000002,
+        "phaseLocals": null,
+        "constantFolding": {
+          "constantExpressions": 184,
+          "localReads": 266,
+          "registerReads": 26,
+          "constantLocalSets": 136,
+          "unsupported": 0
+        }
+      },
+      "rawLayout": {
+        "codeSectionBytes": 338039,
+        "functions": 574,
+        "customSectionBytes": 50018
+      },
+      "optimizedLayout": {
+        "codeSectionBytes": 336756,
+        "functions": 574,
+        "customSectionBytes": 50166
+      },
+      "runs": [
+        {
+          "variant": "oldA",
+          "trial": 0,
+          "position": 0,
+          "ms": 915.9218000000019,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldB",
+          "trial": 0,
+          "position": 1,
+          "ms": 978.0644999999968,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newB",
+          "trial": 0,
+          "position": 2,
+          "ms": 885.1217999999935,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 0,
+          "position": 3,
+          "ms": 902.4962000000014,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldB",
+          "trial": 1,
+          "position": 0,
+          "ms": 877.5401999999922,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 1,
+          "position": 1,
+          "ms": 945.1725999999944,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldA",
+          "trial": 1,
+          "position": 2,
+          "ms": 922.8138000000072,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newB",
+          "trial": 1,
+          "position": 3,
+          "ms": 930.9190999999992,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 2,
+          "position": 0,
+          "ms": 862.1764000000076,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newB",
+          "trial": 2,
+          "position": 1,
+          "ms": 887.1814000000013,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldB",
+          "trial": 2,
+          "position": 2,
+          "ms": 925.5705000000016,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldA",
+          "trial": 2,
+          "position": 3,
+          "ms": 961.0916000000034,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newB",
+          "trial": 3,
+          "position": 0,
+          "ms": 929.3564000000006,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldA",
+          "trial": 3,
+          "position": 1,
+          "ms": 886.812699999995,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 3,
+          "position": 2,
+          "ms": 875.0136999999922,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldB",
+          "trial": 3,
+          "position": 3,
+          "ms": 922.7475999999988,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 4,
+          "position": 0,
+          "ms": 943.4979000000094,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newB",
+          "trial": 4,
+          "position": 1,
+          "ms": 1132.6747000000032,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldB",
+          "trial": 4,
+          "position": 2,
+          "ms": 981.8402999999962,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldA",
+          "trial": 4,
+          "position": 3,
+          "ms": 1138.3461999999854,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newB",
+          "trial": 5,
+          "position": 0,
+          "ms": 956.978099999993,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldA",
+          "trial": 5,
+          "position": 1,
+          "ms": 888.0664999999935,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 5,
+          "position": 2,
+          "ms": 889.9738999999972,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldB",
+          "trial": 5,
+          "position": 3,
+          "ms": 1002.2349000000031,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldA",
+          "trial": 6,
+          "position": 0,
+          "ms": 1074.4464999999836,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldB",
+          "trial": 6,
+          "position": 1,
+          "ms": 1124.7613000000129,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newB",
+          "trial": 6,
+          "position": 2,
+          "ms": 1019.4127999999837,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 6,
+          "position": 3,
+          "ms": 915.5119999999952,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldB",
+          "trial": 7,
+          "position": 0,
+          "ms": 875.6270999999979,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 7,
+          "position": 1,
+          "ms": 864.7511000000086,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldA",
+          "trial": 7,
+          "position": 2,
+          "ms": 838.64390000001,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newB",
+          "trial": 7,
+          "position": 3,
+          "ms": 820.2688999999882,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        }
+      ],
+      "warmups": [
+        {
+          "variant": "oldA",
+          "trial": 0,
+          "position": 0,
+          "ms": 948.9137000000005,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldB",
+          "trial": 0,
+          "position": 1,
+          "ms": 854.4477999999995,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 0,
+          "position": 2,
+          "ms": 895.0394999999985,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newB",
+          "trial": 0,
+          "position": 3,
+          "ms": 838.8544999999981,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldA",
+          "trial": 1,
+          "position": 0,
+          "ms": 929.2255999999998,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldB",
+          "trial": 1,
+          "position": 1,
+          "ms": 941.8847999999989,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 1,
+          "position": 2,
+          "ms": 899.6381999999994,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newB",
+          "trial": 1,
+          "position": 3,
+          "ms": 868.8186999999989,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldA",
+          "trial": 2,
+          "position": 0,
+          "ms": 924.213099999999,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldB",
+          "trial": 2,
+          "position": 1,
+          "ms": 822.1529999999984,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 2,
+          "position": 2,
+          "ms": 920.6732999999967,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newB",
+          "trial": 2,
+          "position": 3,
+          "ms": 910.7965999999979,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldA",
+          "trial": 3,
+          "position": 0,
+          "ms": 930.0513999999985,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldB",
+          "trial": 3,
+          "position": 1,
+          "ms": 879.4396000000015,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 3,
+          "position": 2,
+          "ms": 938.7149999999983,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newB",
+          "trial": 3,
+          "position": 3,
+          "ms": 930.4099999999999,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        }
+      ],
+      "ratios": {
+        "pairs": [
+          {
+            "trial": 0,
+            "oldIdentity": 0.9364635972372015,
+            "newIdentity": 1.0196293888592598,
+            "crossVersion": 1.0589823853038534
+          },
+          {
+            "trial": 1,
+            "oldIdentity": 1.0515914826466246,
+            "newIdentity": 1.0153112123276826,
+            "crossVersion": 0.9593542822013953
+          },
+          {
+            "trial": 2,
+            "oldIdentity": 1.0383775195946734,
+            "newIdentity": 0.9718152341787218,
+            "crossVersion": 1.078407409994694
+          },
+          {
+            "trial": 3,
+            "oldIdentity": 0.9610566313041574,
+            "newIdentity": 0.9415265230862904,
+            "crossVersion": 1.0031337463678907
+          },
+          {
+            "trial": 4,
+            "oldIdentity": 1.159400566466858,
+            "newIdentity": 0.832982232233144,
+            "crossVersion": 1.022667699312442
+          },
+          {
+            "trial": 5,
+            "oldIdentity": 0.8860861859829375,
+            "newIdentity": 0.9299835597073787,
+            "crossVersion": 1.0222753054608948
+          },
+          {
+            "trial": 6,
+            "oldIdentity": 0.9552662418239064,
+            "newIdentity": 0.8980777953739739,
+            "crossVersion": 1.1379299248739863
+          },
+          {
+            "trial": 7,
+            "oldIdentity": 0.9577637558271233,
+            "newIdentity": 1.0542288022866904,
+            "crossVersion": 1.0174772530416842
+          }
+        ],
+        "oldIdentity": {
+          "median": 0.9594101935656403,
+          "min": 0.8860861859829375,
+          "max": 1.159400566466858
+        },
+        "newIdentity": {
+          "median": 0.9566708786325061,
+          "min": 0.832982232233144,
+          "max": 1.0542288022866904
+        },
+        "crossVersion": {
+          "median": 1.0224715023866684,
+          "min": 0.9593542822013953,
+          "max": 1.1379299248739863
+        }
+      }
+    },
+    {
+      "id": "hq4-chego-auto-physical",
+      "actualId": "hq4-chego-tiny",
+      "level": "block-constants",
+      "flashSha256": "a54f8842cc540b6c5fdc3f757180092fd502dec951cef108a16a010f62392427",
+      "eepromSha256": "c327e849b5fd854dac0058e350137a5a4424d9ad5ce760ba6bbccc17e2b92e98",
+      "generationMs": 137.8790999999983,
+      "compileAfterValidationMs": {
+        "raw": 0.9170000000012806,
+        "optimized": 0.741199999996752
+      },
+      "optimization": {
+        "tool": "generation-time block-constants",
+        "flags": [
+          "foldBlockConstants=true"
+        ],
+        "inputSha256": "2f4b6277b898222d39663dafc5a4f7a95144c4043f76d9fd294e99f4a2c15677",
+        "outputSha256": "e558c67796a85ad7e498383e81fb521ee52db7aa8fcaf785c99c84a71e947658",
+        "inputBytes": 406944,
+        "outputBytes": 406153,
+        "elapsedMs": 152.1808000000019,
+        "phaseLocals": null,
+        "constantFolding": {
+          "constantExpressions": 161,
+          "localReads": 168,
+          "registerReads": 13,
+          "constantLocalSets": 84,
+          "unsupported": 0
+        }
+      },
+      "rawLayout": {
+        "codeSectionBytes": 352935,
+        "functions": 586,
+        "customSectionBytes": 50904
+      },
+      "optimizedLayout": {
+        "codeSectionBytes": 351997,
+        "functions": 586,
+        "customSectionBytes": 51051
+      },
+      "runs": [
+        {
+          "variant": "oldA",
+          "trial": 0,
+          "position": 0,
+          "ms": 704.7177999999913,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldB",
+          "trial": 0,
+          "position": 1,
+          "ms": 670.7363999999943,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newB",
+          "trial": 0,
+          "position": 2,
+          "ms": 636.6308999999892,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 0,
+          "position": 3,
+          "ms": 678.2749000000113,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldB",
+          "trial": 1,
+          "position": 0,
+          "ms": 743.6637999999948,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 1,
+          "position": 1,
+          "ms": 737.6054999999906,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldA",
+          "trial": 1,
+          "position": 2,
+          "ms": 797.5516999999963,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newB",
+          "trial": 1,
+          "position": 3,
+          "ms": 844.7200000000157,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 2,
+          "position": 0,
+          "ms": 788.663000000015,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newB",
+          "trial": 2,
+          "position": 1,
+          "ms": 714.6042999999918,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldB",
+          "trial": 2,
+          "position": 2,
+          "ms": 713.9268999999913,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldA",
+          "trial": 2,
+          "position": 3,
+          "ms": 611.4051999999938,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newB",
+          "trial": 3,
+          "position": 0,
+          "ms": 720.3423000000039,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldA",
+          "trial": 3,
+          "position": 1,
+          "ms": 669.0727000000188,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 3,
+          "position": 2,
+          "ms": 722.7097000000213,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldB",
+          "trial": 3,
+          "position": 3,
+          "ms": 789.1355000000185,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 4,
+          "position": 0,
+          "ms": 574.8426999999938,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newB",
+          "trial": 4,
+          "position": 1,
+          "ms": 747.3003000000026,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldB",
+          "trial": 4,
+          "position": 2,
+          "ms": 610.5475999999908,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldA",
+          "trial": 4,
+          "position": 3,
+          "ms": 729.0411000000022,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newB",
+          "trial": 5,
+          "position": 0,
+          "ms": 747.7054000000062,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldA",
+          "trial": 5,
+          "position": 1,
+          "ms": 689.8267999999807,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 5,
+          "position": 2,
+          "ms": 648.6543000000238,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldB",
+          "trial": 5,
+          "position": 3,
+          "ms": 723.4014000000316,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldA",
+          "trial": 6,
+          "position": 0,
+          "ms": 814.3167000000103,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldB",
+          "trial": 6,
+          "position": 1,
+          "ms": 774.8147000000026,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newB",
+          "trial": 6,
+          "position": 2,
+          "ms": 788.0450999999885,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 6,
+          "position": 3,
+          "ms": 663.1437999999762,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldB",
+          "trial": 7,
+          "position": 0,
+          "ms": 768.6321000000025,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 7,
+          "position": 1,
+          "ms": 791.2794999999751,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldA",
+          "trial": 7,
+          "position": 2,
+          "ms": 707.351100000029,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newB",
+          "trial": 7,
+          "position": 3,
+          "ms": 830.6169000000082,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        }
+      ],
+      "warmups": [
+        {
+          "variant": "oldA",
+          "trial": 0,
+          "position": 0,
+          "ms": 817.9418000000005,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldB",
+          "trial": 0,
+          "position": 1,
+          "ms": 913.0551000000196,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 0,
+          "position": 2,
+          "ms": 845.1364999999932,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newB",
+          "trial": 0,
+          "position": 3,
+          "ms": 761.5797999999922,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldA",
+          "trial": 1,
+          "position": 0,
+          "ms": 836.3966999999975,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldB",
+          "trial": 1,
+          "position": 1,
+          "ms": 829.7862999999998,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 1,
+          "position": 2,
+          "ms": 860.5159000000203,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newB",
+          "trial": 1,
+          "position": 3,
+          "ms": 884.6101999999955,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldA",
+          "trial": 2,
+          "position": 0,
+          "ms": 863.7309999999925,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldB",
+          "trial": 2,
+          "position": 1,
+          "ms": 921.3780999999944,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 2,
+          "position": 2,
+          "ms": 738.3988999999929,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newB",
+          "trial": 2,
+          "position": 3,
+          "ms": 750.1497999999847,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldA",
+          "trial": 3,
+          "position": 0,
+          "ms": 732.787900000003,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "oldB",
+          "trial": 3,
+          "position": 1,
+          "ms": 779.1996000000072,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 3,
+          "position": 2,
+          "ms": 815.440800000004,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newB",
+          "trial": 3,
+          "position": 3,
+          "ms": 633.5669000000053,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        }
+      ],
+      "ratios": {
+        "pairs": [
+          {
+            "trial": 0,
+            "oldIdentity": 1.0506628237262765,
+            "newIdentity": 1.0654130988615582,
+            "crossVersion": 1.046253269986148
+          },
+          {
+            "trial": 1,
+            "oldIdentity": 1.0724627176958215,
+            "newIdentity": 0.8731952599677726,
+            "crossVersion": 0.9756617555219003
+          },
+          {
+            "trial": 2,
+            "oldIdentity": 0.856397482711467,
+            "newIdentity": 1.103635956290809,
+            "crossVersion": 0.8800612343214104
+          },
+          {
+            "trial": 3,
+            "oldIdentity": 0.8478552796066114,
+            "newIdentity": 1.003286493101984,
+            "crossVersion": 1.0070732131183657
+          },
+          {
+            "trial": 4,
+            "oldIdentity": 1.1940774150942748,
+            "newIdentity": 0.7692258386621708,
+            "crossVersion": 1.0179200807804831
+          },
+          {
+            "trial": 5,
+            "oldIdentity": 0.9535878697497,
+            "newIdentity": 0.8675265686191626,
+            "crossVersion": 1.014349909015203
+          },
+          {
+            "trial": 6,
+            "oldIdentity": 1.0509825123348944,
+            "newIdentity": 0.8415048834133807,
+            "crossVersion": 1.0987938076676045
+          },
+          {
+            "trial": 7,
+            "oldIdentity": 0.9202726505958139,
+            "newIdentity": 0.9526407420797329,
+            "crossVersion": 0.9095182894495846
+          }
+        ],
+        "oldIdentity": {
+          "median": 1.0021253467379883,
+          "min": 0.8478552796066114,
+          "max": 1.1940774150942748
+        },
+        "newIdentity": {
+          "median": 0.9129180010237528,
+          "min": 0.7692258386621708,
+          "max": 1.103635956290809
+        },
+        "crossVersion": {
+          "median": 1.0107115610667843,
+          "min": 0.8800612343214104,
+          "max": 1.0987938076676045
+        }
+      }
+    }
+  ]
+}

@@ -479,9 +479,20 @@ Next compiler experiment: constant/short-sequence folding within the existing
 guards, preserving original cycles and all observable register/SREG exits.
 Default activation, hardware evidence and the full performance gate remain open.
 
+Constant-fold checkpoint: [the straight-line symbolic pass](../reports/block-constants-20261025.md)
+passes1660 tests and all13 PCM/state/pin workloads, including fixed-width numeric
+oracles and200 mixed expression trees against actual WASM. Whole physical modules
+shrink only0.19–0.29%; after Binaryen Oz, additional savings are52–471 bytes.
+The64-run timing screen gives1.022x/1.011x with identity variation larger than
+those gains. The dedicated pass/dependency is rejected and archived. Compiler,
+runtime and loader inventory are restored to `106d92a`; three constant-chain
+regressions remain and all1655 restored tests pass. Next investigate bounded
+direct-flow regions with staged register writes to amortize native calls.
+No new hardware checklist item closes;21/30 remain complete.
+
 | Priority | Candidate | Evidence required before keeping it |
 | --- | --- | --- |
-| 1 | Try constant and short-sequence folding inside existing guarded blocks. Guarded inter-block fusion is rejected; a future cross-block design needs distinct evidence. | Exact C/chained-Z dependencies, all observable register/SREG values and original AVR cycle/phase boundaries; compare with full flags and the unchanged generated instruction path. Avoid new guard/entry overhead without measured benefit. |
+| 1 | Prototype bounded direct-flow regions with staged register state. Separate inter-block fusion and constant folding are rejected. | Preserve all flags initially, clock-before-commit, external entries, exact instruction budgets and event/phase guards. Prove activation and compare real firmware against the unchanged instruction path before timing. |
 | 2 | Use the refreshed profile to test fewer repeated event/time conversions in `next_event`, `ratio` and `duration`; equal-rate and bounded-multiply guards are rejected. Broader peripheral activity gating remains open. | Exact integer residues, clock/input/event boundaries and pin/PCM parity; enabled-ADC and CLKI controls. Use balanced identical-runtime controls and uninstrumented paired timings. Inspect the exact optimized WASM for an inlining/layout hypothesis; reduced entries alone do not prove speed. |
 | 3 | Validate optional phase-local liveness for default activation when stable performance measurements are available. | The full-context path remains an oracle. Size/parity are established; do not treat noisy median gains as speed evidence. Keep partial execution, reset/faults, SPM and IRQ effects exactly once. |
 | 4 | Generate direct WASM control flow for proven regions and loops; reconsider register locals only when these larger regions can amortize their cost. | Safe indirect/external-entry fallback, coherent register aliases and visible AVR stack state; real-firmware gains in addition to synthetic-loop results. |
@@ -501,6 +512,35 @@ internal/CLKI and enabled-ADC controls. Sampling/instrumented runs remain
 separate from speed measurements. The rejected single-service inline hint in
 `reports/runtime-controls-20261024.md` is recorded evidence, not a pending
 production change or an implemented optimization.
+
+#### Next bounded-region experiment (not implemented)
+
+Use the unchanged generated instruction path as oracle. The purpose is to
+amortize register caching and native calls across control flow, rather than add
+another small peephole pass. Keep this independent of peripheral activity work.
+
+- Start with a bounded number of register-only instructions and direct
+  RJMP/conditional/skip edges. Memory/I/O, stack, system operations and I-bit
+  changes terminate a region before their effects. Unknown targets use the
+  original per-PC entry. Do not interpret AVR opcodes at runtime.
+- Guard the whole worst-case cycle/instruction span before staging anything:
+  caller budget/deadline, earliest native event, pending IRQ/delay, inactive
+  continuation, f64 capacity and retired-counter headroom. A zero-length result
+  must return without native clock work. CLKI keeps its existing zero budget.
+- Stage dirty GPRs, full SREG, next PC and actual cycle/count totals in WASM
+  locals. Load incoming registers lazily on each entry; ASR must sign-extend
+  the current cached byte. Preserve8-bit writes and register-pair aliasing.
+- Advance the native clock by the actual original-cycle total, then commit
+  staged state/retirement exactly once. Keep clock-before-commit. Reset/fault
+  or an unexpected WAIT must discard staged writes and retain fail-closed
+  behavior; do not replay native work through a fallback.
+- Materialize every architectural register/flag at all external exits. Keep
+  original callable instruction entries and observe partial deadlines through
+  their existing phase path. Do not combine cross-block flag elimination yet.
+- Prove actual region activation and test loops, external entries, short limits,
+  all SREG inputs, host edits, bus barriers, IRQ/reset/protected windows, SPM and
+  retirement limits. Complete the13-workload parity matrix before timing.
+  Keep default bytes unchanged until correctness and performance gates pass.
 
 #### Register-local experiment contract
 
