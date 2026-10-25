@@ -853,21 +853,99 @@ node Codecs/Speex/AVR/tests/verify_prefix.mjs
 Selected candidate replay reproduces both production binaries byte-identically.
 Run the preceding source-bound subframe audit at 03fad82.
 
+## Reuse LSP storage and validate endpoint bounds (2026-10-25)
+
+The compact converter reads all ten frequencies while building its local
+polynomials; its coefficient stores follow those reads. Its compatible
+int16 pointer types have no restrict contract. The interpolated-angle and
+new-LPC arrays can therefore share storage, reducing scratch from 60 to
+40 B. The interpolation function's raw/delta/out arrays remain disjoint.
+Copy LPC to decoder state before WB reuses the dead shared slot for indices.
+No polynomial arithmetic, rounding, saturation or filter-age step changes.
+
+The exhaustive original-codebook range is 96..24,880. With multiple-of-16
+endpoints, each raw quarter is exactly `((4-k)*old+k*next)/4`. Reset starts
+from a real endpoint and cache hits preserve it. Raw state is separate from
+margin output, so all successive quarters stay inside that convex range.
+The clamps at 16/25,720 and the final lookahead clamp are redundant on this
+validated domain. A constant-flag C core keeps both the general helper and
+an explicitly named validated path. The latter is inlined at its sole source
+callsite; the flag adds no runtime check. Both half-shifts and the interior
+sequential margin pass remain exactly as upstream.
+
+Fourteen fixture candidates measure aliasing separately and together with
+O2/O3/inline bounded paths on both arithmetic backends. The selected means
+are 93,604.138 ASM / 191,640.215 C on 1,058 exact/reset frames. Alias alone
+uses 10,592/11,062 B and means 93,698.196/191,769.984. Combined outlined O3
+uses 10,396/10,866 B with means 93,637.999/191,710.014. O2 saves more Flash
+but is slower than the previous decoder. Choose combined inline for speed.
+No new assembly is introduced; original architecture/ASM opt-in and C fallback
+selection remain unchanged.
+
+| Full 31-stream NB corpus | Before (928d18e) | After |
+| --- | ---: | ---: |
+| ASM mean cycles | 107,802.983 | 107,616.507 (-0.1730%) |
+| ASM maximum cycles | 115,817 | 115,604 |
+| ASM Flash / static SRAM | 10,610 / 1,119 B | 10,470 / 1,099 B |
+| C mean cycles | 219,567.168 | 219,310.511 (-0.1169%) |
+| C maximum cycles | 231,834 | 231,545 |
+| C Flash / static SRAM | 11,078 / 1,119 B | 10,898 / 1,099 B |
+
+Each stream min/mean/max improves. Stack stays 114/105 B in the decoder-only
+harness. Quality requires exact original NB PCM and unchanged compact WB PCM.
+Native unit tests cover every code triple and reset, 65,536 transitions with
+signed16 interior values and bounded endpoints, exact endpoint boundaries,
+1,572,880 bounded calls, and 240,000 LPC inputs / 720,000 overlapping outputs.
+Overlap offsets -1/0/+1 cover exact and partial aliasing with output guards;
+inputs include sorted/unordered angles and the full signed16 range. Both AVR
+backends execute 49,680 bounded calls and 12,288 overlapping outputs, checking
+real RET callee-saved registers/r1, raw state and original Xiph results.
+The untouched oracle uses its own guarded 704-byte AVR workspace; production
+does not access that workspace. General interpolation retains its independent
+1,573,120 native / 82,688 AVR broad-domain calls. Those tests are not weakened
+to fit the new private fast path.
+
+Final admission covers 14,278 NB frames per backend, WB/reset/cache cases,
+two portable archives and 142 frozen IRQ/PWM images. Timing/memory evidence
+also includes all 9,100 native NB frames with every scratch PUSH checked;
+the reduced arena peaks at 40 B and PCM remains exact. All four NB PWM
+matrices pass with free SRAM 691/700 B and unchanged queues 74/34, 66/55.
+The timing/memory measurements use ATmega328P, AVR GCC 7.3.0 mixed Os/O2/O3
+with LTO, GNU ABI, AVR8js 0.21.1.
+No physical-board or other-architecture timing is claimed. The original
+Xiph oracle objects in the new units are compiled separately without LTO.
+See `reports/lifetime-*` and `tests/audit_lsp_lifetime.py`. Decoder-only replay:
+
+```sh
+python Codecs/Speex/AVR/tools/prepare_lsp_lifetime_candidate.py --candidate alias-bounded-inline --out Codecs/Speex/AVR/build/lifetime-replay
+python Codecs/Speex/AVR/build/lifetime-replay/tools/build.py --avr-gcc avr-gcc --backend asm
+python Codecs/Speex/AVR/build/lifetime-replay/tools/build.py --avr-gcc avr-gcc --backend c
+python Codecs/Speex/AVR/tools/build_lsp_lifetime_test.py --cc clang --avr-gcc avr-gcc --backend c
+python Codecs/Speex/AVR/tools/build_lsp_lifetime_test.py --avr-gcc avr-gcc --backend asm
+node Codecs/Speex/AVR/tests/verify_lsp_lifetime.mjs --backend c
+node Codecs/Speex/AVR/tests/verify_lsp_lifetime.mjs --backend asm
+python Codecs/Speex/AVR/tools/build.py --cc clang --variant profile
+python Codecs/Speex/AVR/tests/verify_scratch.py
+```
+
+Selected source replay from 928d18e reproduces both production binaries exactly.
+Run the previous source-bound prefix audit at 928d18e.
+
 ## Next candidates (not yet measured/admitted)
 
 The previously listed C40 long-pitch entry shipped in commit 9813583 and is
 no longer an outstanding candidate.
 
-1. **Share interpolated-LSP and new-LPC scratch by lifetime.** The compact
-   converter appears to consume every angle before storing its LPC result.
-   Inspect and test aliasing, polynomial scratch and WB callbacks before
-   reusing the two twenty-byte arrays. No memory or timing gain is admitted.
+1. **Shorten the margin loop's final lookahead.** A validated endpoint removes
+   its clamp, but the loop still reloads/stores the final raw value separately.
+   Compare peeled, fixed-count and pointer-walk forms with the current inline
+   loop. Preserve both original half-shifts, raw/output separation and ABI;
+   count real decoder cycles, not only a wrapper microbenchmark.
 
-2. **Specialize endpoint margin handling for validated NB3 state.** Exhaustive
-   raw codebook angles stay in 96..24,880; convex quarter steps appear to make
-   the endpoint clamps redundant. Preserve the general helper's signed16
-   contract and test a separate bounded path, transitions/reset/cache and
-   full PCM before admitting any benefit. Interior sequential margins remain.
+2. **Share repeated NB LPC-copy/control work.** Inspect the four coefficient
+   updates and the synchronous WB callback for redundant address arithmetic
+   and repeated loads. Keep the one-subframe coefficient age and every IIR
+   update. No timing or memory benefit is admitted without measurement.
 
 No claim of a global speed optimum has been established. Do not mark the
 ongoing optimization goal complete while useful candidates remain untested.
