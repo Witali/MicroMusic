@@ -1,5 +1,5 @@
-import { AVRCore } from './avr-reference.js?v=20261024-common-avr';
-import { resolveAVRProfile } from './avr-profiles.js?v=20261024-common-avr';
+import { AVRCore } from './avr-reference.js?v=20261025-attiny88-board';
+import { resolveAVRProfile } from './avr-profiles.js?v=20261025-attiny88-board';
 import { parseHex } from './hex.js';
 
 // Same resampling, Q=0.5 biquads and 15-ms control smoothing as the C engine.
@@ -26,9 +26,9 @@ export class Renderer {
     if (!Number.isFinite(sampleRate) || sampleRate < 8000 || sampleRate > 192000) throw new Error('Invalid audio sample rate');
     validateControls(cutoff, volume);
     if (!Number.isFinite(entry.pwmHz) || entry.pwmHz <= 0) throw new Error('Invalid audio configuration');
-    const profile = resolveAVRProfile(entry.device);
+    const profile = resolveAVRProfile(entry.device,{cpuHz:entry.cpuHz});
     this.core = typeof Core==='function'
-      ? new Core(parseHex(entry.flashHex, profile.flashBytes), entry.eepromHex ? parseHex(entry.eepromHex, profile.eepromBytes) : null, {target:profile.id}) : Core;
+      ? new Core(parseHex(entry.flashHex, profile.flashBytes), entry.eepromHex ? parseHex(entry.eepromHex, profile.eepromBytes) : null, {target:profile.id,cpuHz:profile.cpuHz}) : Core;
     this.channels=entry.audioChannels||1;
     if(![1,2].includes(this.channels))throw new Error('Unsupported audio channel count');
     this.nextValue=this.channels===2?()=>this.core.nextStereoDuty():()=>this.core.nextDuty();

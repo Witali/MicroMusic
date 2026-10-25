@@ -1,4 +1,4 @@
-import {resolveAVRProfile} from './avr-profiles.js?v=20261024-common-avr';
+import {resolveAVRProfile} from './avr-profiles.js?v=20261025-attiny88-board';
 // Shared state/ABI wrapper. Runtime modules are supplied by the caller.
 const decoder = new TextDecoder();
 function cstring(memory,address) {
@@ -29,8 +29,8 @@ function bindStateFields(core,names){
 }
 
 export class AVRCore {
-  constructor(binary,eeprom,{target='attiny13a',fastIdle=true,fastBlocks=fastIdle,runtimeModule,configureRuntime}={}) {
-    this.profile=resolveAVRProfile(target);this.target=this.profile.id;this.cpuHz=this.profile.cpuHz;
+  constructor(binary,eeprom,{target='attiny13a',cpuHz,fastIdle=true,fastBlocks=fastIdle,runtimeModule,configureRuntime}={}) {
+    this.profile=resolveAVRProfile(target,{cpuHz});this.target=this.profile.id;this.cpuHz=this.profile.cpuHz;
     const p=this.profile,t=p.timer,system=p.system;
     this.words=p.flashBytes/2;this.pcMask=this.words-1;
     if(!binary?.length||binary.length>p.flashBytes)throw new Error('Flash must contain 1\u2013'+p.flashBytes+' bytes');
