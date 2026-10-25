@@ -8,7 +8,12 @@ import { CPU8080, AudioBus } from '../core8080.mjs';
 const source = readFileSync(new URL('../worker.mjs', import.meta.url), 'utf8').replace(/^import .*\n/, '');
 function run(rom, overrides = {}) {
   return new Promise(resolve => {
-    const messages = [], self = { postMessage: message => { messages.push(message); if (message.kind === 'done' || message.kind === 'error') resolve({ result: message, messages }); } };
+    const messages = [], self = { postMessage: message => {
+      messages.push(message);
+      // Acknowledge consumed chunks to exercise live backpressure without a browser.
+      if (message.kind === 'progress' && overrides.realtime) self.onmessage({ data: { kind: 'played', seconds: message.seconds } });
+      if (message.kind === 'done' || message.kind === 'error') resolve({ result: message, messages });
+    } };
     vm.runInNewContext(source, { self, CPU8080, AudioBus, Uint8Array, setTimeout });
     self.onmessage({ data: { rom: rom.buffer, hz: 3500000, rate: 96000, output: 'inte', seconds: 0.1, memoryMode: 'rom', inputByte: 255, ...overrides } });
   });
@@ -33,4 +38,21 @@ test('Live worker streams ordered audio chunks before final WAV data', async () 
   const streamed = messages.filter(m => m.kind === 'audio').flatMap(m => [...new Float32Array(m.audio)]);
   assert.deepEqual(streamed, [...new Float32Array(result.audio)]);
   assert.equal(messages[0].kind, 'audio'); assert.equal(result.t, 19);
+});
+
+test('Selected 32kHz voice: full live Worker audio matches the complete buffer through HLT', async () => {
+  const rom = Uint8Array.from(readFileSync(new URL('../../Sound/voice32/dualcrc-voice32.bin', import.meta.url)));
+  const audit = JSON.parse(readFileSync(new URL('../../Sound/voice32/AUDIT.json', import.meta.url)));
+  const { result, messages } = await run(rom, { seconds: 10, realtime: true });
+  assert.equal(result.kind, 'done'); assert.equal(result.stopReason, 'HLT');
+  assert.equal(result.t, audit.result.t_states); assert.equal(result.steps, audit.result.instructions);
+  assert.equal(result.memWrites, 0); assert.equal(result.inte, 0); assert.equal(result.edges, 203288);
+  assert.ok(messages.filter(m => m.kind === 'progress').length > 1);
+  const chunks = messages.filter(m => m.kind === 'audio').map(m => new Float32Array(m.audio));
+  const joined = new Float32Array(chunks.reduce((sum, part) => sum+part.length, 0));
+  let offset = 0;
+  for (const part of chunks) { joined.set(part, offset); offset += part.length; }
+  assert.equal(joined.length, Math.ceil(result.t/3500000*96000));
+  assert.deepEqual(joined, new Float32Array(result.audio));
+  assert.ok(joined.every(sample => Number.isFinite(sample) && sample >= 0 && sample <= 1));
 });

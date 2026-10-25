@@ -25,7 +25,7 @@ async function suite(target) {
   const doc = await ready(), errors = [];
     frame.contentWindow.addEventListener('error', event => errors.push(event.message));
   await wait(() => !doc.getElementById('run').disabled && doc.querySelectorAll('[data-example]').length === 2);
-  check(doc.getElementById('file-name').textContent.includes('159 T'), '159T tempo-preserving default');
+  check(doc.getElementById('file-name').textContent.includes('32,11 кГц'), '109T / two pulses per sample tempo-preserving default');
   check(!doc.querySelector('audio'), 'no separate audio player');
   check(!doc.getElementById('download'), 'no WAV download control');
   check(doc.querySelector('.machine-spec').textContent.includes('244 инструкции'), 'instruction wording');
@@ -71,13 +71,13 @@ async function suite(target) {
   }
   set(doc, 'seconds', '90');
   log(`PASS ${target}: selected 108T music streams two seconds; live scope advances, freezes on pause/end, resumes and resets; no RAM writes`);
-  const search = doc.getElementById('search'); search.value = '159 T'; search.dispatchEvent(new Event('input', { bubbles: true }));
+  const search = doc.getElementById('search'); search.value = '32,11 кГц'; search.dispatchEvent(new Event('input', { bubbles: true }));
   check(doc.querySelectorAll('[data-example]').length === 1, 'example search');
-  doc.querySelector('[data-example="voice159"]').click();
-  await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent.includes('159 T'));
+  doc.querySelector('[data-example="voice32"]').click();
+  await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent.includes('32,11 кГц'));
   search.value = ''; search.dispatchEvent(new Event('input', { bubbles: true }));
   await run(doc);
-  check(Number(doc.getElementById('cycles').textContent.replace(/\D/g, '')) === 19814634, '159T full firmware and diagnostics');
+  check(Number(doc.getElementById('cycles').textContent.replace(/\D/g, '')) === 19700539, '109T / two pulses per sample full firmware and diagnostics');
   check(doc.getElementById('writes').textContent === '0', 'ROM-only voice');
   check(doc.getElementById('download-rom').hasAttribute('href'), 'example firmware download');
   doc.querySelector('[data-example="uniform26-pwm108"]').click();
@@ -87,7 +87,7 @@ async function suite(target) {
     const resources = frame.contentWindow.performance.getEntriesByType('resource');
     check(!resources.some(resource => /\.(bin|json|mjs)(\?|$)/.test(resource.name)), 'standalone examples and engines stay embedded');
   }
-  log(`PASS ${target}: two selected examples and ROM hashes; 159T default → HLT; search; source switching; embedded standalone library`);
+  log(`PASS ${target}: two selected examples and ROM hashes; 109T / two pulses per sample default → HLT; search; source switching; embedded standalone library`);
   await load(doc, Uint8Array.of(0xfb, 0x00, 0xf3, 0x76), 'inte.bin'); await run(doc);
   check(!doc.querySelector('[data-example][aria-pressed="true"]'), 'upload deselects examples');
   check(doc.getElementById('cycles').textContent === '19', 'EI/NOP/DI/HLT must be 19 T');
@@ -128,8 +128,8 @@ async function suite(target) {
   check(doc.getElementById('steps').textContent === pausedSteps, 'paused CPU');
   check(Number(doc.getElementById('cycles').textContent.replace(/\D/g, '')) / 3500000 < 3, 'bounded live lookahead');
   doc.getElementById('run').click(); await wait(() => doc.getElementById('run').textContent.includes('Пауза'));
-  doc.querySelector('[data-example="voice159"]').click();
-  await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent.includes('159 T'));
+  doc.querySelector('[data-example="voice32"]').click();
+  await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent.includes('32,11 кГц'));
   check(doc.getElementById('elapsed').textContent === '00:00.0' && doc.getElementById('cycles').textContent === '0', 'switching a live example resets CPU and audio');
   check(doc.getElementById('memory').value === 'rom' && doc.getElementById('output').value === 'inte', 'example machine configuration');
   doc.getElementById('cancel').click();

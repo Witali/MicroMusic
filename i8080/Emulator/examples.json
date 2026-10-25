@@ -1,16 +1,16 @@
 {
-  "defaultId": "voice159",
+  "defaultId": "voice32",
   "entries": [
     {
-      "id": "voice159",
-      "title": "Голос · ровный PWM 159 T",
-      "rom": "../Sound/dual-crc-voice/dualcrc-uniform159.bin",
-      "description": "Исходный темп с отклонением всего +0,13%. Постоянный период речи, все 16 уровней и 63 085 отсчётов сохранены. Диагностика, Dual CRC и плавный старт.",
-      "meta": "32 КиБ · 22,01 кГц · 16 уровней",
-      "source": "../Sound/dual-crc-voice/README.md",
-      "filename": "dualcrc-uniform159.bin",
+      "id": "voice32",
+      "title": "Голос · ровный PWM 32,11 кГц",
+      "rom": "../Sound/voice32/dualcrc-voice32.bin",
+      "description": "Голос из исходного MP3 пересчитан на 16,06 кГц без изменения темпа. Два импульса на отсчёт, все периоды речи — 109 T, 16 линейных уровней. Диагностика, Dual CRC и плавный старт.",
+      "meta": "32 КиБ · PWM 32,11 кГц · звук 16,06 кГц",
+      "source": "../Sound/voice32/README.md",
+      "filename": "dualcrc-voice32.bin",
       "bytes": 32768,
-      "sha256": "34f3d46ab764bdc16e609589fd89fe23a16a2f6609207bdf59f3408eeedc5175",
+      "sha256": "570c019a7ce0fdd2897dadce67b5fa4967b339748ea39b0914648d14b4cf0d2f",
       "hz": 3500000,
       "memory": "rom",
       "output": "inte"
