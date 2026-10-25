@@ -128,8 +128,10 @@ def get_rice(r,k):
         if hi>8:raise ValueError('Rice unary overflow')
     return signed_from_z((hi<<k)|(r.get(k) if k else 0))
 
-def encode(doc,min_snr=float('inf'),allowed_sparse=None,fast=False):
+def encode(doc,min_snr=float('inf'),allowed_sparse=None,fast=False,raw_slack_bits=None):
     if doc['raw'][:4]!=b'L3AV' or doc['raw'][5]!=3:raise ValueError('require 10-bit LSF LPX3 v1')
+    if raw_slack_bits is not None and (raw_slack_bits<0 or int(raw_slack_bits)!=raw_slack_bits):
+        raise ValueError('raw_slack_bits must be a nonnegative integer')
     if fast:
         from fast_lpx4 import select_chunk_fast
     header=bytearray(doc['raw'][:20]);header[0:4]=b'L4HY';header[4]=2
@@ -158,6 +160,11 @@ def encode(doc,min_snr=float('inf'),allowed_sparse=None,fast=False):
                 y=q[start:start+40]
                 threshold=min_snr if (allowed_sparse is None or p in allowed_sparse) else float('inf')
                 numbits,mode,decoded=(select_chunk_fast(y,outQ,b,threshold) if fast else select_chunk(y,outQ,b,threshold))
+                # Host-only policy: trade a bounded number of bits for the
+                # existing single-read RAW path. Default output is unchanged.
+                raw_cost=5+len(y)*b
+                if raw_slack_bits is not None and raw_cost<=numbits+raw_slack_bits:
+                    numbits,mode,decoded=raw_cost,('direct',0),list(y)
                 if mode[0]=='direct':
                     w.put(0,2);k=mode[1];w.put(k,3)
                     if k==0:

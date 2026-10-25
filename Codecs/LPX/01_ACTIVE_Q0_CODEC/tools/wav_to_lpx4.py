@@ -29,7 +29,7 @@ def quantize_trial(target, co, history, previous, previous_clip, pre, bright, st
     hist = history.copy()
     codes = np.empty(len(target), np.int64)
     loss = 0.
-    lo, hi = -(1 << (bits - 1)), (1 << (bits - 1)) - 1
+    lo, hi = (-(1 << (bits - 1)), (1 << (bits - 1)) - 1) if bits else (0, 0)
     for j in range(len(target)):
         acc = 0
         for k in range(10):
@@ -37,7 +37,7 @@ def quantize_trial(target, co, history, previous, previous_clip, pre, bright, st
         preterm = (pre * previous) >> 14
         postterm = (bright * previous_clip) >> 14
         needed = target[j] / 2 + postterm - preterm + acc
-        center = int(np.floor(needed / step + .5))
+        center = int(np.floor(needed / step + .5)) if bits else 0
         best = float('inf')
         selected = selected_pred = selected_deemph = selected_clip = 0
         for q in range(max(lo, min(hi, center - 1)), min(hi, max(lo, center + 1)) + 1):
