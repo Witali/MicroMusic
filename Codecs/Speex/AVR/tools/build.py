@@ -101,7 +101,7 @@ def verify_primitives(compiler):
     run([executable])
 
 
-ASM_SOURCES = ['lpc_dot.S', 'pitch_add.S', 'innovation.S', 'q14.S', 'lsp_advance.S']
+ASM_SOURCES = ['lpc_dot.S', 'pitch_add.S', 'innovation.S', 'q14.S', 'lsp_advance.S', 'lsp_finish.S']
 
 
 def export_c(destination):

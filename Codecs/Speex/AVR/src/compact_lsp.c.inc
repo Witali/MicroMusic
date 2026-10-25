@@ -47,27 +47,19 @@ DEFINE_STAGE(3)
 DEFINE_STAGE(4)
 #undef DEFINE_STAGE
 #undef STAGE_ATTR
-/* A common source body supplies the standalone C converter and an outlined
- * output stage for the ASM pipeline. No arithmetic or saturation changes. */
+#include "nb3_lsp_finish.h"
+/* The generic converter retains the explicitly selectable C body. The fused
+ * decoder uses the architecture-selected kernel through its shared stage. */
 static SPEEX_NB3_ALWAYS_INLINE void lsp_finish10_c(const spx_word32_t *restrict p,
     const spx_word32_t *restrict q,spx_coef_t *restrict ak)
 {
-    spx_word32_t previous_p=0,previous_q=0;int j;
-    for (j = 1; j <= 10; ++j) {
-        int index = j <= 5 ? j : 10-j;
-        spx_word32_t a = PSHR32(p[index] + previous_p + q[index] - previous_q, 8);
-        previous_p = p[index];
-        previous_q = q[index];
-        if (a < -32767) a = -32767;
-        if (a > 32767) a = 32767;
-        ak[j-1] = (spx_coef_t)a;
-    }
+    speex_nb3_lsp_finish10_c(p,q,ak);
 }
 
 static SPEEX_NB3_STAGE void lsp_finish10(const spx_word32_t *restrict p,
     const spx_word32_t *restrict q,spx_coef_t *restrict ak)
 {
-    lsp_finish10_c(p,q,ak);
+    speex_nb3_lsp_finish10(p,q,ak);
 }
 
 SPEEX_NB3_HOT void lsp_to_lpc(const spx_lsp_t *freq, spx_coef_t *ak, int lpcrdr, char *stack)
