@@ -11,10 +11,12 @@ from q0_model import decode_pcm16
 from profile_avr import run as profile
 
 
-def run(results,verification,output,avr_bin,runner,lib=None,wsl=None):
+def run(results,verification,output,avr_bin,runner,lib=None,wsl=None,stages=None):
     results,output=Path(results),Path(output);output.mkdir(parents=True,exist_ok=True)
     previous=json.loads(Path(verification).read_text(encoding='utf-8'))
-    points=[(c,p) for c in previous['cases'] for p in c['points'] if p['stage'] in ('joint','perceptual') and p['avr_admitted']]
+    stages=tuple(('joint','perceptual') if stages is None else stages)
+    points=[(c,p) for c in previous['cases'] for p in c['points'] if p['stage'] in stages and p['avr_admitted']]
+    if not points:raise ValueError('No admitted point in the requested stages')
     case,point=max(points,key=lambda cp:previous['images'][cp[1]['stream_sha256']]['mean_decode_wall_cycles'])
     digest=point['stream_sha256'];source=json.loads((results/case['id']/'complete.json').read_text(encoding='utf-8'))
     item=next(r for r in source['rates'] if r['ceiling_bps']==point['ceiling_bps'])[point['stage']]
@@ -46,4 +48,5 @@ if __name__=='__main__':
     for name in ('results','verification','output'):ap.add_argument(name,type=Path)
     ap.add_argument('--avr-bin',type=Path,required=True);ap.add_argument('--sim-runner',type=Path,required=True)
     ap.add_argument('--sim-lib-dir',type=Path);ap.add_argument('--wsl')
-    a=ap.parse_args();run(a.results,a.verification,a.output,a.avr_bin,a.sim_runner,a.sim_lib_dir,a.wsl)
+    ap.add_argument('--stages',nargs='+',help='Selected stages; defaults to joint and perceptual')
+    a=ap.parse_args();run(a.results,a.verification,a.output,a.avr_bin,a.sim_runner,a.sim_lib_dir,a.wsl,a.stages)
