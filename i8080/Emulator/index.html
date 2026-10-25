@@ -57,7 +57,8 @@
       </aside>
       <aside class="panel settings-panel" aria-label="Настройки эмулятора">
         <div class="panel-heading"><span class="eyebrow">ПАРАМЕТРЫ МАШИНЫ</span><span class="count">8080</span></div>
-        <label for="hz">Частота процессора, Гц</label><input id="hz" data-machine type="number" min="100000" max="10000000" step="1000" value="3500000">
+          <label for="hz">Частота процессора</label><select id="hz" aria-describedby="clock-note"><option value="2000000">2 МГц</option><option value="2500000">2,5 МГц</option><option value="3500000" selected>3,5 МГц</option></select>
+          <p id="clock-note" class="setting-note">Для примеров автоматически загружается прошивка с пересчитанным звуком. Для своего ROM выберите частоту, под которую он собран.</p>
         <label for="output">Звуковой выход</label><select id="output" data-machine><option value="inte">INTE · уровень EI / DI</option><option value="wr">/WR · импульсы записи</option></select>
         <label for="memory">Карта памяти</label><select id="memory" data-machine><option value="rom">ПЗУ без ОЗУ</option><option value="ramupper">ПЗУ снизу · ОЗУ 8000–FFFF</option><option value="allram">ОЗУ 0000–FFFF</option></select>
         <p id="memory-note" class="setting-note">32-КиБ образ зеркалируется по A15. Записи дают /WR, содержимое ПЗУ сохраняется.</p>

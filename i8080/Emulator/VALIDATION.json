@@ -176,7 +176,7 @@
     "node_passed": 31,
     "node_failed": 0
   },
-  "current_validation": "fluid_music_and_normalized_voice_validation",
+  "current_validation": "clock_variant_validation",
   "voice32_validation": {
     "date": "2026-10-25",
     "engine_commit": "66709bc",
@@ -505,5 +505,174 @@
       "seconds": 12,
       "source": "Actual ROM emulation, 96kHz area integration -> 48kHz device rendering, 4.5kHz / four RC poles, volume .65, normalize false, 10ms excerpt fade; ignored build artifacts"
     }
+  },
+  "clock_variant_validation": {
+    "date": "2026-10-25",
+    "cpu_hz": [
+      2000000,
+      2500000,
+      3500000
+    ],
+    "catalog_families": 3,
+    "selected_rom_variants": 9,
+    "default_hz": 3500000,
+    "voice_variants": [
+      {
+        "profile": "balloon",
+        "cpu_hz": 2000000,
+        "report": "Sound/voice32/clocks/2000000/AUDIT.json",
+        "sha256": "acd58fb291d750caba3407f8dc29ad1f0e897dfbc1cbd838820478a11256c5ca",
+        "samples": 25992,
+        "pulses": 51984,
+        "t_states": 14121251,
+        "duration_error_seconds": -0.0001011666666661526,
+        "maximum_grid_error_t": 0,
+        "maximum_width_error_t": 0,
+        "transition_cases": 1552,
+        "exact_c_reference": true,
+        "crc_corruption_cases": 8
+      },
+      {
+        "profile": "owl",
+        "cpu_hz": 2000000,
+        "report": "Sound/voice32/owl/clocks/2000000/AUDIT.json",
+        "sha256": "465d63eb6cddff99747617acf5b38bade01de11282104868983d9a6e30db9372",
+        "samples": 31008,
+        "pulses": 62016,
+        "t_states": 6759835,
+        "duration_error_seconds": -0.00012799999999968392,
+        "maximum_grid_error_t": 0,
+        "maximum_width_error_t": 0,
+        "transition_cases": 1552,
+        "exact_c_reference": true,
+        "crc_corruption_cases": 0
+      },
+      {
+        "profile": "balloon",
+        "cpu_hz": 2500000,
+        "report": "Sound/voice32/clocks/2500000/AUDIT.json",
+        "sha256": "7fb1ec19d080b69883d0fcd7dcca006f3f60af6018bde956dc93a96b2846a01a",
+        "samples": 32492,
+        "pulses": 64984,
+        "t_states": 15979131,
+        "duration_error_seconds": 7.323333333353332e-05,
+        "maximum_grid_error_t": 0,
+        "maximum_width_error_t": 0,
+        "transition_cases": 1552,
+        "exact_c_reference": true,
+        "crc_corruption_cases": 8
+      },
+      {
+        "profile": "owl",
+        "cpu_hz": 2500000,
+        "report": "Sound/voice32/owl/clocks/2500000/AUDIT.json",
+        "sha256": "afac37972738cf80e4a7204d538299b5c68ec7c59398224a80c08cc7ac53d4e1",
+        "samples": 38764,
+        "pulses": 77528,
+        "t_states": 8450643,
+        "duration_error_seconds": 0.000220800000000132,
+        "maximum_grid_error_t": 0,
+        "maximum_width_error_t": 0,
+        "transition_cases": 1552,
+        "exact_c_reference": true,
+        "crc_corruption_cases": 0
+      }
+    ],
+    "music_variants": [
+      {
+        "name": "uniform26-fluid-pwm108",
+        "cpu_hz": 2000000,
+        "sha256": "f02afd1b243371ec95c391d8e2a4ebd8236413a7e2f30f61bcab1da13f72271d",
+        "frames": 352521,
+        "pwm_slots": 1410084,
+        "period_t": 108,
+        "exact_c_reference": true,
+        "maximum_pitch_error_cents": 0.6183388226143979,
+        "maximum_note_boundary_error_seconds": 0.0001074285714328289,
+        "minimum_level": 0,
+        "maximum_level": 15,
+        "used_bytes": 25344
+      },
+      {
+        "name": "balanced27-fluid-pwm108",
+        "cpu_hz": 2000000,
+        "sha256": "19ae907eed5b71ada85e6fc8526e9d31a8ed3cf0ca4f4861ee7ca55290bc0818",
+        "frames": 345239,
+        "pwm_slots": 1380956,
+        "period_t": 108,
+        "exact_c_reference": true,
+        "maximum_pitch_error_cents": 0.6163399274771849,
+        "maximum_note_boundary_error_seconds": 0.0001074285714328289,
+        "minimum_level": 0,
+        "maximum_level": 15,
+        "used_bytes": 24832
+      },
+      {
+        "name": "uniform26-fluid-pwm108",
+        "cpu_hz": 2500000,
+        "sha256": "d74a9f92e6cfc7e12c9449d2472aa04c8960f3fa00b6b1e3329f63e0f3908efe",
+        "frames": 440652,
+        "pwm_slots": 1762608,
+        "period_t": 108,
+        "exact_c_reference": true,
+        "maximum_pitch_error_cents": 0.5986282819320091,
+        "maximum_note_boundary_error_seconds": 8.594285714626312e-05,
+        "minimum_level": 0,
+        "maximum_level": 15,
+        "used_bytes": 27136
+      },
+      {
+        "name": "balanced27-fluid-pwm108",
+        "cpu_hz": 2500000,
+        "sha256": "338082ced71b36d4ac6bc7bf4f9caadf0a6a20fb898f226116a37ae258316b08",
+        "frames": 431549,
+        "pwm_slots": 1726196,
+        "period_t": 108,
+        "exact_c_reference": true,
+        "maximum_pitch_error_cents": 0.7074644870608222,
+        "maximum_note_boundary_error_seconds": 8.594285714626312e-05,
+        "minimum_level": 0,
+        "maximum_level": 15,
+        "used_bytes": 27136
+      }
+    ],
+    "new_voice_pwm_pulses_verified": 256512,
+    "new_voice_transition_cases": 6208,
+    "new_music_pwm_slots_verified": 6279844,
+    "lower_clock_source_harmonic_limits": {
+      "2000000": [
+        4,
+        1,
+        5
+      ],
+      "2500000": [
+        5,
+        2,
+        6
+      ]
+    },
+    "harmonic_limit_scope": "Before PCM4 quantization; each score register stays below synthesis Nyquist. Quantization adds distortion.",
+    "all_six_voice_preparations_and_builds_reproduced": true,
+    "all_three_music_banks_and_six_music_builds_reproduced": true,
+    "node_test_groups": 61,
+    "node_passed": 61,
+    "node_failed": 0,
+    "browser": "Chromium / Codex in-app browser",
+    "builds": [
+      "index.html",
+      "Intel_8080_ROM_Player.html"
+    ],
+    "browser_clock_rom_pairs_per_build": 9,
+    "browser_clock_execution_seconds_per_pair": 0.2,
+    "rom_hashes_match_in_both_builds": true,
+    "live_clock_change_resets_cpu_and_audio": true,
+    "rapid_clock_changes_keep_latest_rom": true,
+    "user_rom_bytes_preserved_on_clock_change": true,
+    "live_scope_pause_resume_reset_passed": true,
+    "mobile_width_px": 390,
+    "browser_suite": "ALL BROWSER SMOKE TESTS PASSED",
+    "standalone_build_check": true,
+    "hardware_tested": false,
+    "active_interrupts_supported": false
   }
 }

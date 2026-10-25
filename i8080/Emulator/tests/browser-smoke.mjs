@@ -31,14 +31,36 @@ async function suite(target) {
   check(doc.querySelector('.machine-spec').textContent.includes('244 инструкции'), 'instruction wording');
   check(doc.querySelector('.cpu-wire svg') && !doc.querySelector('.cpu-wire b'), 'speaker symbol');
   const catalog = await (await fetch('../examples.json')).json();
-  for (const entry of catalog.entries) {
+  check(doc.getElementById('hz').tagName === 'SELECT', 'CPU clock dropdown');
+  check([...doc.getElementById('hz').options].map(o=>o.value).join(',') === '2000000,2500000,3500000', 'three CPU frequencies');
+  for (const hz of [2000000,2500000,3500000]) for (const entry of catalog.entries) {
+    const variant=entry.variants.find(v=>v.hz===hz);
+    set(doc,'hz',String(hz));
     doc.querySelector(`[data-example="${entry.id}"]`).click();
-    await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent === entry.title);
+    await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-hash').textContent.includes(variant.sha256));
     const bytes = await (await fetch(doc.getElementById('download-rom').href)).arrayBuffer();
     const digest = [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map(n => n.toString(16).padStart(2, '0')).join('');
-    check(digest === entry.sha256, entry.id + ' ROM hash');
+    check(digest === variant.sha256, `${entry.id} / ${hz} ROM hash`);
+    check(Number(doc.getElementById('hz').value)===hz,'example preserves selected clock');
     check(doc.querySelector(`[data-example="${entry.id}"]`).getAttribute('aria-pressed') === 'true', 'selected example');
+    check(doc.querySelectorAll('[data-example]').length===3,'frequency variants stay grouped in three cards');
+    set(doc,'seconds','0.2'); await run(doc);
+    const cycles=Number(doc.getElementById('cycles').textContent.replace(/\D/g,''));
+    check(cycles>=hz*.2 && cycles<=hz*.2+18,'worker executes at selected CPU frequency');
   }
+  // A live clock switch stops both CPU and audio and loads the matching build.
+  set(doc,'seconds','90');doc.getElementById('run').click();
+  await wait(()=>doc.getElementById('run').textContent.includes('Пауза'));
+  check(!doc.getElementById('hz').disabled,'clock selector available during playback');
+  set(doc,'hz','2000000');
+  const music=catalog.entries.find(e=>e.id==='uniform26-fluid-pwm108');
+  await wait(()=>!doc.getElementById('run').disabled && doc.getElementById('file-hash').textContent.includes(music.variants[0].sha256));
+  check(doc.getElementById('elapsed').textContent==='00:00.0' && doc.getElementById('cycles').textContent==='0','clock switch resets CPU and audio');
+  // Last selection wins even with several ROM fetches in flight.
+  for (const hz of [2500000,2000000,3500000]) set(doc,'hz',String(hz));
+  await wait(()=>!doc.getElementById('run').disabled && doc.getElementById('file-hash').textContent.includes(music.sha256));
+  check(doc.getElementById('hz').value==='3500000','clock race keeps the latest selection');
+  log(`PASS ${target}: all nine clock/ROM pairs, selected-clock execution, grouped cards, live clock reset and rapid clock changes`);
   for (const id of ['uniform26-fluid-pwm108']) {
     const entry = catalog.entries.find(entry => entry.id === id);
     doc.querySelector(`[data-example="${id}"]`).click();
@@ -101,6 +123,10 @@ async function suite(target) {
   check(doc.getElementById('edges').textContent === '2', 'two INTE edges');
   const savedFirmware = new Uint8Array(await (await fetch(doc.getElementById('download-rom').href)).arrayBuffer());
   check(savedFirmware.join(',') === '251,0,243,118', 'downloaded BIN matches the loaded image');
+  set(doc,'hz','2000000');await run(doc);
+  check(doc.getElementById('cycles').textContent==='19','uploaded ROM uses selected clock without code changes');
+  check(new Uint8Array(await (await fetch(doc.getElementById('download-rom').href)).arrayBuffer()).join(',')==='251,0,243,118','clock switch preserves user ROM bytes');
+  set(doc,'hz','3500000');await run(doc);
   set(doc, 'filter', '0-1');
   check(doc.getElementById('cycles').textContent === '19', 'filter preserves CPU result');
   log(`PASS ${target}: BIN → INTE → HLT; firmware download; filter; no WAV export`);

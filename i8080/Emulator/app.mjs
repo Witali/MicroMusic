@@ -25,11 +25,16 @@ function createWorker() { return new Worker(new URL('./worker.mjs', import.meta.
 async function getExampleCatalog() { const response = await fetch(new URL('./examples.json', import.meta.url)); if (!response.ok) throw Error('Не удалось загрузить список примеров'); return response.json(); }
 async function readExample(entry) { const response = await fetch(new URL(entry.rom, import.meta.url)); if (!response.ok) throw Error('Не удалось загрузить ROM примера'); return response.arrayBuffer(); }
 function exampleSourceURL(entry) { return new URL(entry.source, 'https://github.com/Witali/MicroMusic/blob/main/i8080/Emulator/').href; }
+function atSelectedClock(entry) {
+  const variant = entry.variants.find(item => item.hz === Number($('hz').value));
+  if (!variant) throw Error('Для выбранной частоты нет прошивки');
+  return { ...entry, ...variant };
+}
 
 function renderCatalog() {
   if (!catalog) return;
   const query = $('search').value.toLocaleLowerCase('ru').trim();
-  const entries = catalog.entries.filter(entry => `${entry.title} ${entry.description} ${entry.meta}`.toLocaleLowerCase('ru').includes(query));
+  const entries = catalog.entries.map(atSelectedClock).filter(entry => `${entry.title} ${entry.description} ${entry.meta}`.toLocaleLowerCase('ru').includes(query));
   $('catalog-count').textContent = query ? `${entries.length} / ${catalog.entries.length}` : catalog.entries.length;
   $('catalog').replaceChildren(...entries.map(entry => {
     const item = document.createElement('div'), button = document.createElement('button');
@@ -37,7 +42,7 @@ function renderCatalog() {
     button.dataset.example = entry.id; button.setAttribute('aria-pressed', String(selectedExample === entry.id));
     const order = document.createElement('span'), body = document.createElement('span'), title = document.createElement('strong');
     const meta = document.createElement('span'), arrow = document.createElement('span');
-    order.className = 'card-number'; order.textContent = String(catalog.entries.indexOf(entry) + 1).padStart(2, '0');
+    order.className = 'card-number'; order.textContent = String(catalog.entries.findIndex(item => item.id === entry.id) + 1).padStart(2, '0');
     body.className = 'card-body'; title.textContent = entry.title; meta.className = 'card-meta'; meta.textContent = entry.meta;
     arrow.className = 'card-arrow'; arrow.textContent = selectedExample === entry.id ? '●' : '↗'; arrow.setAttribute('aria-hidden', 'true');
     body.append(title, meta); button.append(order, body, arrow);
@@ -46,6 +51,7 @@ function renderCatalog() {
   if (!entries.length) { const empty = document.createElement('p'); empty.className = 'empty'; empty.textContent = 'Примеры не найдены.'; $('catalog').append(empty); }
 }
 function loadExample(entry) {
+  entry = atSelectedClock(entry);
   return loadFile({ name: entry.filename, size: entry.bytes, arrayBuffer: () => readExample(entry) }, entry);
 }
 async function initializeExamples() {
@@ -229,6 +235,15 @@ async function run() {
 
 $('load').addEventListener('click', () => $('file').click());
 $('file').addEventListener('change', () => loadFile($('file').files[0]));
+$('hz').addEventListener('change', () => {
+  renderCatalog();
+  const entry = catalog?.entries.find(item => item.id === selectedExample);
+  if (entry) loadExample(entry);
+  else {
+    resetPlayback();
+    report(firmware ? 'Частота изменена. Ваш ROM будет исполняться с выбранной частотой процессора.' : 'Загрузите образ прошивки.');
+  }
+});
 $('run').addEventListener('click', run);
 $('cancel').addEventListener('click', () => { resetPlayback(); report('Сброс на начало. Нажмите «Эмулировать», чтобы запустить прошивку.'); });
 for (const id of ['filter', 'normalize']) $(id).addEventListener('change', () => { speaker.configure(soundOptions()); redrawScope(); });
