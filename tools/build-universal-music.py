@@ -278,6 +278,8 @@ def main():
     parser.add_argument('--backend',choices=('c','avr-asm'),default='c')
     parser.add_argument('--channels',choices=('auto','mono','stereo'),default='auto',
                         help='Compile only the selected output channels; auto follows each source score')
+    parser.add_argument('--irq-scratch',choices=('stack','gpior'),default='stack',
+                        help='ASM hardware driver: stack backup, or explicitly reserve GPIOR0/1/2 for faster IRQs')
     parser.add_argument('--board',choices=tuple(legacy.BOARDS),default='bare-8mhz')
     parser.add_argument('--cpu-hz',type=int)
     parser.add_argument('--buffer-frames',type=int,help='Legacy name: ring byte budget, shared by mono or stereo')
@@ -302,12 +304,13 @@ def main():
     temporary=tempfile.TemporaryDirectory(prefix='compile-',dir=scratch_root)
     scratch=Path(temporary.name)
     defines=['-DUM_REQUESTED_CPU_HZ='+str(args.cpu_hz)+'UL'] if args.cpu_hz is not None else []
+    defines+=['-DUM_REQUESTED_IRQ_GPIOR_SCRATCH='+('1' if args.irq_scratch=='gpior' else '0')]
     if usb:defines+=['-DUM_BOARD_MH_ET_LIVE_16MHZ=1']
     if args.buffer_frames is not None:defines+=['-DUM_REQUESTED_BUFFER_FRAMES='+str(args.buffer_frames)]
     if args.platform_header:defines+=['-include',str(args.platform_header.resolve())]
     # Read the compiler's evaluated constant, including expressions and UL suffixes.
     probe=scratch/'clock-probe.c';probe_obj=scratch/'clock-probe.o';probe_bin=scratch/'clock-probe.bin'
-    legacy.save(probe,'#include <avr/io.h>\n#include <stdint.h>\n#include "clock.h"\n#include "audio-buffer.h"\n#include "audio-channels.h"\nconst uint32_t um_clock[2] __attribute__((section(".umclock")))={F_CPU,UM_PWM_BUFFER_FRAMES};\n')
+    legacy.save(probe,'#include <avr/io.h>\n#include <stdint.h>\n#include "clock.h"\n#include "audio-buffer.h"\n#include "audio-channels.h"\n#include "irq-scratch.h"\nconst uint32_t um_clock[2] __attribute__((section(".umclock")))={F_CPU,UM_PWM_BUFFER_FRAMES};\n')
     legacy.run(tools['avr-gcc'],'-mmcu=attiny88','-I'+str(source),'-I'+str(source/'vendor/ATtiny_DFP/3.4.278/include'),*defines,'-c',probe,'-o',probe_obj)
     legacy.run(tools['avr-objcopy'],'-O','binary','-j','.umclock',probe_obj,probe_bin)
     clock_config=probe_bin.read_bytes();assert len(clock_config)==8
@@ -349,7 +352,7 @@ def main():
                        '-I'+str(source/'vendor/ATtiny_DFP/3.4.278/include'),*defines,
                        '-DUM_REQUESTED_OUTPUT_CHANNELS='+str(channels),
                        '-c',probe,'-o',scratch/('channel-check-'+str(channels)+'.o'))
-    source_names=('engine.c','engine.h','platform.c','storage.h','clock.h','rational-clocks.h','audio-buffer.h','audio-channels.h',
+    source_names=('engine.c','engine.h','platform.c','storage.h','clock.h','rational-clocks.h','audio-buffer.h','audio-channels.h','irq-scratch.h',
                   'render-avr.S','irq-avr.S','vendor/ATtiny_DFP/3.4.278/include/avr/iotn88.h')
     inputs=[source/name for name in source_names]+[Path(__file__),ROOT/'tools/universal-music.py']
     profiles=[]
@@ -377,6 +380,9 @@ def main():
         legacy.save(profile_scratch/'disassembly.txt',legacy.run(tools['avr-objdump'],'-d',elf))
         common=dict(engine='UM88',backend=args.backend,packingMode=packing,packingPolicy=args.packing,
                     configuredChannels=channels,channelSelection=args.channels,
+                    irqScratch=args.irq_scratch if args.backend=='avr-asm' else 'compiler',
+                    irqScratchSelection=args.irq_scratch,
+                    reservedIORegisters=['GPIOR0','GPIOR1','GPIOR2'] if args.backend=='avr-asm' and args.irq_scratch=='gpior' else [],
                     renderABI='mono-s16' if channels==1 else 'packed-stereo-u32',pwmBufferBytes=buffer_bytes,
                     engineBytes=len(engine),songAddress=BASE,songPaddingBytes=BASE-len(engine),engineSha256=digest(engine),labels=labels,
                     cpuHz=cpu_hz,synthesisHz=cpu_hz/1024,pwmHz=cpu_hz/256,controlHz=18750/256,
@@ -424,7 +430,7 @@ def main():
             legacy.save(folder/'build-report.json',json.dumps(report,ensure_ascii=False,indent=2)+'\n')
             print(f'{name}: {profile_name}, engine {len(engine)}, data {len(data)}, Flash {len(binary)}/{flash_limit}; {report["controlTicks"]} control ticks; playback audit is separate')
     summary=profiles[0] if len(profiles)==1 else dict(engine='UM88',backend=args.backend,channelSelection=args.channels,
-                cpuHz=cpu_hz,board=args.board,applicationFlashLimit=flash_limit,profiles=profiles)
+                irqScratchSelection=args.irq_scratch,cpuHz=cpu_hz,board=args.board,applicationFlashLimit=flash_limit,profiles=profiles)
     legacy.save((args.output_dir or (retained_output if usb else source))/'build-report.json',json.dumps(summary,indent=2)+'\n')
     temporary.cleanup()
 if __name__=='__main__':main()

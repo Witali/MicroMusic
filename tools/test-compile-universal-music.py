@@ -42,7 +42,7 @@ class Pipeline(unittest.TestCase):
                           fixtures.track(fixtures.note_events(60,0,240)+[(120,b'\xd0\x30')],end_tick=480)])
         source=Path(self.external.name)/'external.mid';source.write_bytes(raw)
         with contextlib.redirect_stdout(io.StringIO()):
-            result=pipeline.compile_music(source,self.config,self.folder/'result',backend='avr-asm')
+            result=pipeline.compile_music(source,self.config,self.folder/'result',backend='avr-asm',irq_scratch='gpior')
         retained=json.loads((result/'source-events.json').read_text(encoding='utf-8'))
         self.assertEqual(retained['source']['sha256'],hashlib.sha256(raw).hexdigest())
         self.assertEqual(len(retained['tracks']),2)
@@ -51,6 +51,9 @@ class Pipeline(unittest.TestCase):
         self.assertFalse(any(p.suffix.lower() in ('.mid','.midi','.smf') for p in result.rglob('*')))
         package=json.loads((result/'player-package.json').read_text(encoding='utf-8'))
         self.assertTrue(package['verification']['allPwmFramesMatch']);self.assertEqual(package['score']['channels'],1)
+        self.assertEqual(package['build']['irqScratch'],'gpior')
+        self.assertEqual(package['build']['reservedIORegisters'],['GPIOR0','GPIOR1','GPIOR2'])
+        self.assertEqual(json.loads((result/'provenance.json').read_text())['irqScratchSelection'],'gpior')
         self.assertEqual(package['arrangementReport']['ignoredEvents'],{'channelPressure':1})
         self.assertTrue((result/'FluidR3-MIT.txt').exists())
 

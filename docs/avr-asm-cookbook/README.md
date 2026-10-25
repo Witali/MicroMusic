@@ -1947,3 +1947,7 @@ MUL не нужно. Однако адреса `voice[i]` действитель
 ## UM88: output channels selected at build time
 
 [Compile only mono or stereo](um88-configured-channels.md): conditional ABI and PWM code, tight music placement, fixed FIFO stride, and a test-only proof that mono never writes the inactive compare register.
+
+## UM88: flag-neutral PWM interrupt
+
+[Flag-neutral IRQ and explicit GPIOR backup](um88-flag-neutral-irq.md): preserve SREG without saving it on the normal path, use a balanced power-of-two wrap, and optionally reserve three GPIOR registers to replace stack backup.
