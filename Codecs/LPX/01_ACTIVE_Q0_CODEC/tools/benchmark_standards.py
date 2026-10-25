@@ -30,6 +30,7 @@ LAMBDAS=(0.,.001,.003,.01,.03,.1,1.,10.)
 SEARCH={'rounds':1,'lsf_trials':80,'beam_trials':128,'header_trials':40,
         'global_candidates':8,'global_states':128,'beam_width':4}
 STANDARD=('opus_audio','opus_voip','vorbis','speex_abr')
+SPEEX_CBR_RATES=(2150,3950,5950,8000,11000,15000,18200,24600)
 
 
 def sha(blob):return hashlib.sha256(blob).hexdigest()
@@ -266,6 +267,7 @@ def run(corpus,output,report_path,ids=None,shard=0,shards=1):
     selected=[c for i,c in enumerate(selected) if i%shards==shard]
     report={'protocol':'PROTOCOL.md; common mono PCM16 8kHz; actual audio-packet ceilings and separate complete-file ceilings',
             'rates':RATES,'lambdas':LAMBDAS,'search':SEARCH,'sources':manifest['sources'],
+            'speex_cbr_operating_points':SPEEX_CBR_RATES,
             'ffmpeg':subprocess.check_output(['ffmpeg','-version'],text=True).splitlines()[0],
             'ffmpeg_sha256':encoder_revision(),'lpx_revision':lpx_revision(),'shard':shard,'shards':shards,
             'cases':[],'physical_hardware_measured':False,'subjective_listening_scores_collected':False}
@@ -295,7 +297,7 @@ def run(corpus,output,report_path,ids=None,shard=0,shards=1):
                       'standards',[row[c]['status'] for c in STANDARD],flush=True)
                 report['cases']=[c for c in report['cases'] if c['id']!=key]+[item];save(report_path,report)
             # Genuine CBR operating points, not an assumed continuous Speex rate.
-            for bitrate in (8000,11000,15000,18200,24600):
+            for bitrate in SPEEX_CBR_RATES:
                 encoded=external_encoder(corpus/key/'encoder-tail.wav',folder/'external','speex_cbr',bitrate)
                 item['speex_cbr_points'].append(score_external(reference,encoded,case['kind'],folder/f'speex-cbr-{bitrate}.wav'))
             high=item['rates'][-1]['LPX']
