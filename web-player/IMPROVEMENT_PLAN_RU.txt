@@ -343,7 +343,7 @@ CPU-WASM, конечное состояние и PCM совпадают с дл�
 CLKI/watchdog возможна. Это результат одной нагрузки/хоста, не real-time профиль.
 Код: 741a1301; отчёт: reports/deadline-dispatch-20261025.md.
 Следующий аудит — повторные проверки GPIO synchronizer/settled и условия
-активации; сохранить фазу, PINB, INT0/PCINT/T0/CLKOUT, sleep/PRR и полный CLK.
+активации; сохранить фазу, PINB, INT0/PCINT/T0/CLKI, sleep/PRR и полный CLK.
 Движок по умолчанию остаётся wasm, общий план — 21/30.
 
 БУДУЩАЯ ПОДДЕРЖКА ATtiny88 И ATmega328
