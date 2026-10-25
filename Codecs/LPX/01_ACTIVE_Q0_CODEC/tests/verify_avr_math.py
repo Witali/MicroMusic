@@ -19,7 +19,7 @@ def linux_path(path):
     return '/mnt/' + p.drive[0].lower() + '/' + '/'.join(p.parts[1:]) if os.name == 'nt' else str(p)
 
 
-def run(output, avr_bin, runner, lib=None, wsl=None):
+def run(output, avr_bin, runner, lib=None, wsl=None,dot_unroll=9):
     output, avr_bin, runner = map(Path, (output, avr_bin, runner))
     output.mkdir(parents=True, exist_ok=True)
     compiler = avr_bin / ('avr-g++.exe' if os.name == 'nt' else 'avr-g++')
@@ -28,7 +28,8 @@ def run(output, avr_bin, runner, lib=None, wsl=None):
             ('avr5', ['-DLPX4_ENABLE_ASM=1'], 1),
             ('forced-generic', ['-DLPX4_ENABLE_ASM=1','-DLPX4_ARCH=LPX4_ARCH_GENERIC'], 0)]:
         target = output / (name + '.elf')
-        options = ['-mmcu=atmega328p','-DF_CPU=16000000UL','-Os','-std=gnu++11', *flags]
+        options = ['-mmcu=atmega328p','-DF_CPU=16000000UL','-Os','-std=gnu++11',
+                   f'-DLPX4_AVR_DOT_UNROLL={dot_unroll}', *flags]
         subprocess.run([str(compiler),*options,'-I'+str(ROOT/'src'),
             str(ROOT/'tests/math_backend.cpp'),'-o',str(target)], check=True, capture_output=True)
         if wsl:
@@ -49,7 +50,7 @@ def run(output, avr_bin, runner, lib=None, wsl=None):
                       elf_sha256=hashlib.sha256(target.read_bytes()).hexdigest())
         results.append(report)
         print(name,report,flush=True)
-    result = {'cpu':'ATmega328P / AVR5', 'simulator':'simavr 1.6',
+    result = {'cpu':'ATmega328P / AVR5', 'simulator':'simavr 1.6','dot_unroll':dot_unroll,
               'compiler':subprocess.check_output([str(compiler),'--version'],text=True).splitlines()[0],
               'fixture_sha256':hashlib.sha256((ROOT/'tests/math_backend.cpp').read_bytes()).hexdigest(),
               'math_header_sha256':hashlib.sha256((ROOT/'src/Lpx4Math.h').read_bytes()).hexdigest(),
@@ -64,4 +65,5 @@ if __name__ == '__main__':
     ap.add_argument('output',type=Path);ap.add_argument('--avr-bin',type=Path,required=True)
     ap.add_argument('--sim-runner',type=Path,required=True);ap.add_argument('--sim-lib-dir',type=Path)
     ap.add_argument('--wsl')
-    a=ap.parse_args();run(a.output,a.avr_bin,a.sim_runner,a.sim_lib_dir,a.wsl)
+    ap.add_argument('--dot-unroll',type=int,choices=(1,3,9),default=9)
+    a=ap.parse_args();run(a.output,a.avr_bin,a.sim_runner,a.sim_lib_dir,a.wsl,a.dot_unroll)

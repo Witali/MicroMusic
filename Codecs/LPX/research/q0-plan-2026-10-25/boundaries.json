@@ -1,0 +1,56 @@
+[
+  {
+    "search": 0,
+    "samples": 16001,
+    "cuts": [
+      3200,
+      6400,
+      9600,
+      12800,
+      16000
+    ],
+    "codec_bytes": 4766,
+    "ser_db": 36.802684124143774,
+    "error_jump_max": 3834,
+    "error_jump_rms": 2781.3978140496192,
+    "reference_sha256": "e3ca7f9ed60223152ebe0169a0095ef5efd6c7248aca44bc190cc195b0a162a1",
+    "recipe": {
+      "tone_hz": 233,
+      "amplitude": 8000,
+      "envelope_period_samples": 2880,
+      "envelope_ramp_samples": 160,
+      "segment_limit": 3200,
+      "max_segment_bytes": 1200,
+      "lambdas": [
+        0.01
+      ]
+    }
+  },
+  {
+    "search": 640,
+    "samples": 16001,
+    "cuts": [
+      2880,
+      5760,
+      8640,
+      11520,
+      14400
+    ],
+    "codec_bytes": 4720,
+    "ser_db": 47.96562608422568,
+    "error_jump_max": 4,
+    "error_jump_rms": 3.1304951684997055,
+    "reference_sha256": "e3ca7f9ed60223152ebe0169a0095ef5efd6c7248aca44bc190cc195b0a162a1",
+    "recipe": {
+      "tone_hz": 233,
+      "amplitude": 8000,
+      "envelope_period_samples": 2880,
+      "envelope_ramp_samples": 160,
+      "segment_limit": 3200,
+      "max_segment_bytes": 1200,
+      "lambdas": [
+        0.01
+      ]
+    }
+  }
+]

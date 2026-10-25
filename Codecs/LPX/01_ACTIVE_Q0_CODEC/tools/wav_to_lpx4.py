@@ -122,9 +122,24 @@ def quality(ref, pcm, kind='speech'):
             'clip_count': met['clip_count'], 'pcm16_sha256': met['pcm16_sha256']}
 
 
+def compact_zero_blocks(blob,decoder):
+    """Lossless post-pack: a zero excitation block needs no source bit width."""
+    frames,blocks,q=decode(blob);changed=0
+    for block in blocks:
+        if block['bits'] and not any(block['q']):block['bits']=0;changed+=1
+    if not changed:return blob,0
+    raw=bytearray(blob[:20]);raw[:5]=b'L3AV\x01'
+    packed=encode({'raw':bytes(raw),'sampleCount':len(q),'frames':frames,'blocks':blocks},fast=True)[0]
+    if len(packed)>len(blob):raise AssertionError('Zero-block repack grew the stream')
+    first=decoder.decode_one_s16(blob,len(q));second=decoder.decode_one_s16(packed,len(q))
+    if first is None or second is None or not np.array_equal(first,second):
+        raise AssertionError('Zero-block repack changed native PCM')
+    return packed,changed
+
+
 def encode_segment(pcm, decoder, max_bytes=65535, lambdas=(0., .0002, .001, .005, .02),
                    pre=13926, bright=0, kind='speech', fixed_bits=0,
-                   analysis_profiles=('legacy', 'regularized', 'flat'), stoi_drop=0.):
+                   analysis_profiles=('legacy', 'regularized', 'flat'), stoi_drop=0.,canonical_zero=True):
     import struct
     if not 1 <= len(pcm) <= 64000 or not 32 <= max_bytes <= 65535:
         raise ValueError('Expected 1..64000 samples and a 32..65535-byte segment budget')
@@ -192,11 +207,33 @@ def encode_segment(pcm, decoder, max_bytes=65535, lambdas=(0., .0002, .001, .005
         floor = baseline[5]['quality']['stoi'] - stoi_drop
         candidates = [c for c in candidates if c[5]['quality']['stoi'] >= floor - 1e-12]
     winner = min(candidates, key=lambda x: x[:3])
-    return winner[3], winner[4], {'analysis': analyses, 'selected': winner[5], 'candidates': reports,
+    blob=winner[3];selected=winner[5]
+    if canonical_zero and not fixed_bits:
+        blob,count=compact_zero_blocks(blob,decoder)
+        selected={**selected,'pre_repack_bytes':winner[1],'zero_blocks_repacked':count,
+                  'bytes':len(blob),'sha256':hashlib.sha256(blob).hexdigest()}
+        packed_blocks=decode(blob)[1]
+        selected['mode_counts']={str(i):sum(b['bits']==i for b in packed_blocks) for i in (0,2,3,4,5,6)}
+    return blob, winner[4], {'analysis': analyses, 'selected': selected, 'candidates': reports,
                                 'legacy_quality_floor': baseline[5]['quality'] if baseline else None}
 
 
-def run(source, output, max_bytes=65535, segment_samples=64000, kind='speech', lambdas=None):
+def segment_ranges(pcm,limit,search=0):
+    """Optional frame-aligned quiet cuts; complete coverage, no inserted samples."""
+    if search<0 or search%160 or search>limit-160:raise ValueError('Invalid boundary search span')
+    start=0;ranges=[]
+    while start<len(pcm):
+        end=min(start+limit,len(pcm))
+        if search and end<len(pcm):
+            def score(cut):
+                neighborhood=pcm[max(0,cut-40):min(len(pcm),cut+40)].astype(np.float64)
+                return float(np.mean(neighborhood**2)),-cut
+            end=min(range(end-search,end+1,160),key=score)
+        ranges.append((start,end));start=end
+    return ranges
+
+
+def run(source, output, max_bytes=65535, segment_samples=64000, kind='speech', lambdas=None,boundary_search=0):
     source, output = Path(source), Path(output)
     protect_outputs([source], [output/'decoded.wav', output/'manifest.json'])
     if not 160 <= segment_samples <= 64000 or segment_samples % 160:
@@ -204,11 +241,12 @@ def run(source, output, max_bytes=65535, segment_samples=64000, kind='speech', l
     if not 32 <= max_bytes <= 65535:
         raise ValueError('max_bytes must be in 32..65535')
     pcm, input_info = load_wav(source)
+    ranges=segment_ranges(pcm,segment_samples,boundary_search)
     start = time.perf_counter()
     encoded, reconstructions, entries = [], [], []
     with BatchSession('batch') as decoder:
-        for offset in range(0, len(pcm), segment_samples):
-            part = pcm[offset:offset + segment_samples]
+        for offset,end in ranges:
+            part = pcm[offset:end]
             blob, decoded, report = encode_segment(part, decoder, max_bytes=max_bytes,
                 kind=kind, **({'lambdas': lambdas} if lambdas is not None else {}))
             name = 'audio.l4hy' if len(pcm) <= segment_samples else f'audio-{len(entries) + 1:04d}.l4hy'
@@ -223,6 +261,7 @@ def run(source, output, max_bytes=65535, segment_samples=64000, kind='speech', l
               'codec_bitrate_bps': sum(len(b) for _, b in encoded) * 8 * 8000 / len(pcm),
               'quality': quality(pcm, decoded, kind), 'segments': entries,
               'segment_boundary': 'Each file resets the unchanged decoder; concatenated PCM is a host preview.',
+              'boundary_search_samples':boundary_search,
               'elapsed_seconds': time.perf_counter() - start,
               'decoder_sha256': hashlib.sha256((Path(__file__).resolve().parents[1] / 'src/Lpx4HybridCore.cpp').read_bytes()).hexdigest(),
               'avr_real_time_verified': False}
@@ -242,11 +281,12 @@ def main():
     ap.add_argument('output_directory', type=Path)
     ap.add_argument('--max-bytes', type=int, default=65535, help='Strict byte cap per L4HY file, including its header')
     ap.add_argument('--segment-samples', type=int, default=64000)
+    ap.add_argument('--boundary-search',type=int,default=0,help='Search this many samples before each limit for a quiet 160-aligned boundary')
     ap.add_argument('--kind', choices=('speech', 'music'), default='speech')
     ap.add_argument('--lambdas', default='0,.0002,.001,.005,.02')
     a = ap.parse_args()
     report = run(a.input, a.output_directory, a.max_bytes, a.segment_samples, a.kind,
-                 tuple(float(v) for v in a.lambdas.split(',')))
+                 tuple(float(v) for v in a.lambdas.split(',')),a.boundary_search)
     print(json.dumps({k: report[k] for k in ('samples', 'codec_bytes', 'codec_bitrate_bps', 'quality')}, indent=2))
 
 

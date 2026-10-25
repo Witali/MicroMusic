@@ -27,6 +27,8 @@ static inline __attribute__((always_inline)) int32_t truncShift(int32_t v,uint8_
     return (v+(v<0?((1L<<bits)-1):0))>>bits;
 }
 
+static const uint8_t LP_PROGMEM bitMasks[9]={0,1,3,7,15,31,63,127,255};
+
 static const int16_t LP_PROGMEM cosineQ13[257]={
 #include "cos_table.inc"
 };
@@ -46,7 +48,7 @@ Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),cursor_(0),sampleCount_(0),
 #ifdef LPX3_COST_INSTRUMENT
  lsfConverts_=bitCalls_=romByteCalls_=0;
 #endif
- lsfCached_=false;
+ lsfCached_=false;staticSpectrum_=false;
  for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i]=a_[i]=hist_[i]=previousQuant_[i]=0;
  for(uint16_t i=0;i<256;i++)ringQ_[i]=0;
 }
@@ -75,7 +77,7 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #if LPX4_ALLOW_SPARSE
  pulseCount_=pulseIndex_=0;
 #endif
- lsfCached_=false;prevDeemph_=prevBright_=0;
+ lsfCached_=false;staticSpectrum_=false;prevDeemph_=prevBright_=0;
 #ifdef LPX3_COST_INSTRUMENT
  lsfConverts_=bitCalls_=romByteCalls_=0;
 #endif
@@ -107,16 +109,23 @@ uint8_t Lpx4HybridCore::readBits(uint8_t n){
 #ifdef LPX3_COST_INSTRUMENT
  ++bitCalls_;
 #endif
- uint16_t b=bitBuffer_;uint8_t avail=bitsLeft_;
- if(avail<n){b|=(uint16_t)readByte()<<avail;avail+=8;}
- const uint8_t out=(uint8_t)(b&((1u<<n)-1u));
- bitBuffer_=(uint8_t)(b>>n);bitsLeft_=avail-n;
+ const uint8_t available=bitsLeft_;
+ uint8_t out;
+ if(available>=n){
+  out=bitBuffer_&LP_READ_U8(&bitMasks[n]);
+  bitBuffer_>>=n;bitsLeft_=available-n;
+ }else{
+  const uint8_t extra=readByte(),need=n-available;
+  out=bitBuffer_|((extra&LP_READ_U8(&bitMasks[need]))<<available);
+  bitBuffer_=extra>>need;bitsLeft_=8-need;
+ }
  return out;
 }
 bool Lpx4HybridCore::readFrame(){
  for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
  if(!readOne()){
   if(!initializedFrame_){error_=CORRUPT_STREAM;return false;}
+  staticSpectrum_=true;
   return !error_;
  }
  int16_t v[10];
@@ -142,8 +151,10 @@ bool Lpx4HybridCore::readFrame(){
   }
  }
  if(error_)return false;
+ staticSpectrum_=true;
  for(uint8_t i=0;i<10;i++){
   if(v[i]<0||v[i]>1023){error_=CORRUPT_STREAM;return false;}
+  if(initializedFrame_ && v[i]!=prev_[i])staticSpectrum_=false;
   previousQuant_[i]=v[i];cur_[i]=v[i];
  }
  if(!initializedFrame_)for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
@@ -328,6 +339,13 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,int16_t* out){
 #endif
 void Lpx4HybridCore::interpolateLsf(uint8_t sub){
 #ifdef LPX3_FAST_LPC_INTERP
+    // An unchanged LSF vector has identical polynomial anchors and no LPC
+    // interpolation. The cached endpoint is valid across repeated frames.
+    if(staticSpectrum_){
+        if(!lsfCached_){convertLsfAt(0,curLpc_);lsfCached_=true;}
+        for(uint8_t i=0;i<10;i++)a_[i]=prevLpc_[i]=curLpc_[i];
+        return;
+    }
     // Segment width in t=0..16; at most one polynomial conversion per
     // 20-sample subframe after the initial frame (two at startup).
     const uint8_t width=(uint8_t)(16/LPX3_LPC_SEGMENTS);

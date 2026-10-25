@@ -46,6 +46,8 @@ class WavEncoderTests(unittest.TestCase):
         blob, pcm, report = encode_segment(np.zeros(321, np.int16), self.decoder, lambdas=(0.,))
         self.assertEqual(pcm.tolist(), [0] * 321)
         self.assertEqual(len(decode(blob)[2]), 321)
+        self.assertTrue(all(b['bits']==0 for b in decode(blob)[1]))
+        self.assertEqual(report['selected']['zero_blocks_repacked'],5)
 
     def test_wav_only_partial_tail_and_byte_cap(self):
         t = np.arange(1601) / 8000

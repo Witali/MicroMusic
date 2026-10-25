@@ -19,16 +19,17 @@ from fuzzer import gen
 from l3av_parse import unpack
 
 
-def run(previous_report,media,output,report_path,avr_bin,runner,lib=None,wsl=None):
+def run(previous_report,media,output,report_path,avr_bin,runner,lib=None,wsl=None,**settings):
     previous_report,media,output,report_path=map(Path,(previous_report,media,output,report_path))
     previous=json.loads(previous_report.read_text(encoding='utf-8'))
     output.mkdir(parents=True,exist_ok=True);report_path.parent.mkdir(parents=True,exist_ok=True)
     report={'baseline_report_sha256':hashlib.sha256(previous_report.read_bytes()).hexdigest(),
             'profile':'ATmega328P 16 MHz / 8 kHz, -Os, explicit AVR5 ASM, 512-byte queue, 384-sample prefill',
-            'cases':[],'fallback_cases':[]}
+            'settings':settings,'cases':[],'fallback_cases':[]}
+    report['profile']='ATmega328P 16 MHz / 8 kHz, -Os, explicit AVR5 ASM; see settings for queue/prefill/load/unroll'
 
     def measure(key,source,category,asm=True,recipe=None):
-        result=profile(source,output/key,avr_bin,runner,lib,wsl,enable_asm=asm)
+        result=profile(source,output/key,avr_bin,runner,lib,wsl,enable_asm=asm,**settings)
         result.update(id=key,category=category)
         if recipe:result['recipe']=recipe
         report['cases' if asm else 'fallback_cases'].append(result)
@@ -78,4 +79,7 @@ if __name__=='__main__':
     ap.add_argument('output',type=Path);ap.add_argument('report',type=Path)
     ap.add_argument('--avr-bin',type=Path,required=True);ap.add_argument('--sim-runner',type=Path,required=True)
     ap.add_argument('--sim-lib-dir',type=Path);ap.add_argument('--wsl')
-    a=ap.parse_args();run(a.previous_report,a.media,a.output,a.report,a.avr_bin,a.sim_runner,a.sim_lib_dir,a.wsl)
+    ap.add_argument('--queue',type=int,default=512);ap.add_argument('--prefill',type=int,default=384)
+    ap.add_argument('--irq-load',type=int,default=0);ap.add_argument('--dot-unroll',type=int,default=9)
+    a=ap.parse_args();run(a.previous_report,a.media,a.output,a.report,a.avr_bin,a.sim_runner,a.sim_lib_dir,a.wsl,
+        queue=a.queue,prefill=a.prefill,irq_load=a.irq_load,dot_unroll=a.dot_unroll)

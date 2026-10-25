@@ -1,0 +1,22 @@
+{
+  "mcu": "ATmega328P",
+  "simulator": "avr8js 0.21.1",
+  "arithmeticAsmEnabled": false,
+  "compiler": "AVR GCC 7.3.0 -O2 -mcall-prologues -mrelax -fwrapv; separate non-LTO oracle objects",
+  "binarySha256": "3cb1631a631f5c51f57bdb3328dc24426274abed609363bbaf2e4e1d8f6e9670",
+  "cases": 270336,
+  "all262144CodeTriples": true,
+  "randomCases": 8192,
+  "angleComparisons": 2703360,
+  "minRaw": 96,
+  "maxRaw": 24880,
+  "oracle": "Untouched Xiph quant_lsp.c/bits.c and original RAM tables; production Flash tables separate",
+  "quartersAndGainExact": true,
+  "onlyFirstFourPacketBytesRead": true,
+  "inputAndGuardsPreserved": true,
+  "originalTablesPreserved": true,
+  "calleeSavedRegistersAtRet": true,
+  "zeroRegisterAtRet": true,
+  "includesInterrupts": false,
+  "physicalBoardTested": false
+}
