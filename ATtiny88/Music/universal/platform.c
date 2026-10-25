@@ -6,6 +6,7 @@
 #include "engine.h"
 #include "storage.h"
 #include "clock.h"
+#include "rational-clocks.h"
 #include "audio-buffer.h"
 #ifndef __AVR_ATtiny88__
 #error "This hardware driver requires ATtiny88 (-mmcu=attiny88)"
@@ -88,7 +89,7 @@ int main(void) {
     TCCR1A=_BV(COM1B1)|_BV(WGM10)|(channels==2?_BV(COM1A1):0);
     DDRB|=_BV(PB2)|(channels==2?_BV(PB1):0);
     TIFR1=_BV(TOV1);TIMSK1=_BV(TOIE1);TCCR1B=_BV(WGM12)|_BV(CS10);sei();
-    uint32_t fraction=0,musicClock=0;
+    UMFraction fraction=0;UMMusicClock musicClock=0;
     uint8_t previousL=128,previousR=128;
     const uint8_t maximumQueued=UM_PWM_BUFFER_FRAMES-reserve-1;
     for(;;){
@@ -97,16 +98,25 @@ int main(void) {
         uint8_t queued=producer>=consumer?producer-consumer:producer-consumer+UM_PWM_BUFFER_FRAMES;
         if(queued>maximumQueued)continue;
         uint8_t advance=VIRTUAL_NUMERATOR/F_CPU;
-        fraction+=VIRTUAL_NUMERATOR%F_CPU;
-        if(fraction>=F_CPU){fraction-=F_CPU;advance++;}
-        musicClock+=75000UL;
-        if(musicClock>=F_CPU){musicClock-=F_CPU;um_tick();}
+        fraction+=UM_DRUM_FRACTION_INCREMENT;
+        if(fraction>=UM_DRUM_FRACTION_PERIOD){fraction-=UM_DRUM_FRACTION_PERIOD;advance++;}
+        musicClock+=UM_CONTROL_INCREMENT;
+        if(musicClock>=UM_CONTROL_PERIOD){musicClock-=UM_CONTROL_PERIOD;um_tick();}
         uint32_t mixed=um_render();int8_t drum=percussion(advance);
         uint8_t targetL=um_output((int16_t)mixed+drum),targetR=targetL,at=um_write;
-        if(channels==2)targetR=um_output((int16_t)(mixed>>16)+drum);
-        uint8_t next=interpolate(at,channels,previousL,targetL);
-        if(channels==2)interpolate(at+1,channels,previousR,targetR);
-        at=next;
+        if(channels==1){
+            /* Producer is aligned to four bytes; capacity is divisible by four.
+             * The complete mono batch is contiguous, including at wrap. */
+            uint8_t mid=(previousL+targetL)>>1;
+            volatile uint8_t *output=um_ring+at;
+            output[0]=(previousL+mid)>>1;output[1]=mid;
+            output[2]=(mid+targetL)>>1;output[3]=targetL;
+            at+=4;if(at==UM_PWM_BUFFER_FRAMES)at=0;
+        }else{
+            targetR=um_output((int16_t)(mixed>>16)+drum);
+            uint8_t next=interpolate(at,channels,previousL,targetL);
+            interpolate(at+1,channels,previousR,targetR);at=next;
+        }
         um_write=at;previousL=targetL;previousR=targetR;um_samples++;
     }
 }

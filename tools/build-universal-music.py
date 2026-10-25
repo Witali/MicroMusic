@@ -40,7 +40,7 @@ def context_settings(song,k):
     elif name=='cancion-del-mariachi':gain=2 if i>=3 else 1
     return bank|(8 if high else 0),gain,mix
 
-def compile_song(song,cpu_hz=8000000):
+def compile_song(song,cpu_hz=8000000,packing='compact'):
     # Learn exactly the original per-tick envelope transition, before note events.
     observations=defaultdict(lambda:defaultdict(dict))
     frames=song['frames'][:-1]  # the last frame is the first legacy restart
@@ -167,7 +167,7 @@ def compile_song(song,cpu_hz=8000000):
                   source=song['source'],importedControlFramesVerified=True)
     destination=ROOT/'ATtiny88/Music/universal/songs'/song['name']/'score.json'
     legacy.save(destination,json.dumps(document,ensure_ascii=False,indent=2)+'\n')
-    return encode_score(document,cpu_hz)
+    return encode_score(document,cpu_hz,packing)
 
 def validate_score(score):
     if score.get('schema')!='micromusic-um88-score' or score.get('version')!=1:raise ValueError('Expected UM88 score v1')
@@ -215,10 +215,11 @@ def validate_score(score):
     if score['masterShift'] not in (0,1,2,3):raise ValueError('Invalid master gain')
     if score['normalizer'] and (len(score['normalizer'])>256 or not octets(score['normalizer'])):raise ValueError('Invalid normalizer')
 
-def encode_score(score,cpu_hz):
+def encode_score(score,cpu_hz,packing='compact'):
     validate_score(score)
+    if packing not in ('compact','fast'):raise ValueError('Expected compact or fast dictionary packing')
     raw=score['commands'];contexts=score['contexts'];models=score['envelopes'];pitches=score['pitches']
-    packed=codec.pack_grammar(raw)
+    packed=codec.pack_grammar(raw) if packing=='compact' else codec.pack_fast_grammar(raw)
     if codec.unpack_grammar(packed)!=raw:raise ValueError('Grammar changed musical commands')
     data=bytearray(b'UM88'+bytes([score['voices'],score['channels'],score['masterShift'],score['normalizerMinimum']&255])+bytes(18))
     def add(payload):
@@ -249,8 +250,8 @@ def encode_score(score,cpu_hz):
     return data,dict(schema='UM88',version=1,variant=score['name'],source=score.get('source',{}),controlTicks=score['controlTicks'],
                      voices=score['voices'],channels=score['channels'],contexts=contexts,envelopeModels=models,
                      commands=len(raw),grammarRules=len(packed['rules']),grammarDepth=packed['depth'],dataBytes=len(data),
-                     grammarBytes=packed['grammarBytes'],grammarFormat=packed['format'],grammarAlphabetSize=len(packed['alphabet']),rawSymbolBytes=sum(1 if x<128 else 2 for x in raw),
-                     packing='bounded Re-Pair with a dense terminal alphabet and packed symbols',
+                     grammarBytes=packed['grammarBytes'],grammarFormat=packed['format'],grammarAlphabetSize=len(packed['alphabet']) if packing=='compact' else 256,rawSymbolBytes=sum(1 if x<128 else 2 for x in raw),
+                     packing='bounded Re-Pair with dense nine-bit symbols' if packing=='compact' else 'bounded Re-Pair with byte-aligned sixteen-bit rule pairs',
                      decodedCommandsSha256=digest(bytes(raw)),allControlFramesVerified=score.get('importedControlFramesVerified',False))
 
 def main():
@@ -262,6 +263,8 @@ def main():
     parser.add_argument('--board',choices=tuple(legacy.BOARDS),default='bare-8mhz')
     parser.add_argument('--cpu-hz',type=int)
     parser.add_argument('--buffer-frames',type=int,help='Legacy name: ring byte budget, shared by mono or stereo')
+    parser.add_argument('--packing',choices=('auto','compact','fast'),default='auto',
+                        help='Lossless dictionary layout: auto selects compact at 192 ring bytes, fast for smaller rings')
     parser.add_argument('--platform-header',type=Path)
     parser.add_argument('--score',type=Path)
     parser.add_argument('--reimport',action='store_true')
@@ -293,8 +296,9 @@ def main():
     cpu_hz=int.from_bytes(clock_config[:4],'little')
     assert cpu_hz==16000000 if usb else 75000<=cpu_hz<=12000000
     buffer_bytes=int.from_bytes(clock_config[4:],'little')
+    packing=('compact' if buffer_bytes==192 else 'fast') if args.packing=='auto' else args.packing
     defines+=['-DUM_ENABLE_AVR_ASM='+('1' if args.backend=='avr-asm' else '0'),
-              '-DUM_COMPACT_SCORE_ONLY=1']
+              '-DUM_COMPACT_SCORE_ONLY='+('1' if packing=='compact' else '0')]
     for attempt in range(3):
         legacy.run(tools['avr-gcc'],'-mmcu=attiny88','-Os','-fno-jump-tables','-ffunction-sections','-fdata-sections',
                    '-I'+str(source/'vendor/ATtiny_DFP/3.4.278/include'),*defines,'-DUM_SONG_ADDRESS='+str(BASE),
@@ -309,10 +313,10 @@ def main():
     labels={m[3]:int(m[1],16) for m in re.finditer(r'^([0-9a-fA-F]+)\s+([tTbBdD])\s+(\S+)$',symbols,re.M)}
     assert labels['um_ring']-0x800000+buffer_bytes+48<=768,'Need 48 bytes of stack above the FIFO'
     legacy.save(scratch/'disassembly.txt',legacy.run(tools['avr-objdump'],'-d',elf))
-    source_names=('engine.c','engine.h','platform.c','storage.h','clock.h','audio-buffer.h',
+    source_names=('engine.c','engine.h','platform.c','storage.h','clock.h','rational-clocks.h','audio-buffer.h',
                   'render-avr.S','irq-avr.S','gain-table.inc','vendor/ATtiny_DFP/3.4.278/include/avr/iotn88.h')
     inputs=[source/name for name in source_names]+[Path(__file__),ROOT/'tools/universal-music.py']
-    common=dict(engine='UM88',backend=args.backend,renderABI='packed-stereo-u32',pwmBufferBytes=buffer_bytes,
+    common=dict(engine='UM88',backend=args.backend,packingMode=packing,packingPolicy=args.packing,renderABI='packed-stereo-u32',pwmBufferBytes=buffer_bytes,
                 engineBytes=len(engine),songAddress=BASE,engineSha256=digest(engine),labels=labels,
                 cpuHz=cpu_hz,synthesisHz=cpu_hz/1024,pwmHz=cpu_hz/256,controlHz=18750/256,
                 board=args.board,applicationFlashLimit=flash_limit,eepromRequired=False,
@@ -337,9 +341,9 @@ def main():
         score_path=args.score or source/'songs'/name/'score.json'
         if score_path.exists() and not args.reimport:
             score=json.loads(score_path.read_text(encoding='utf-8'))
-            data,report=encode_score(score,cpu_hz)
+            data,report=encode_score(score,cpu_hz,packing)
         else:
-            song=json.loads((scratch_root/(name+'.tape.json')).read_text(encoding='utf-8'));data,report=compile_song(song,cpu_hz)
+            song=json.loads((scratch_root/(name+'.tape.json')).read_text(encoding='utf-8'));data,report=compile_song(song,cpu_hz,packing)
             score=json.loads((source/'songs'/name/'score.json').read_text(encoding='utf-8'))
         if buffer_bytes<=4*score['channels']:
             raise ValueError('Ring byte budget must leave a spare frame beyond four generated mono/stereo frames')

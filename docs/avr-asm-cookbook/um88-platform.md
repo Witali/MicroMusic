@@ -95,5 +95,33 @@ necessary. None of these candidates was applied to the retained firmware.
 The capacity/alignment proof is essential: dropping per-store wrap checks for
 a stereo capacity such as 12 or 20 bytes corrupts the ring. Do not use this
 optimization solely because a ring happens to be a power of two in one build.
-The portable helper and C arithmetic backend remain independently selectable;
-this experiment introduces no handwritten assembly or new ISA assumptions.
+These output changes are C and do not alter the explicit C/AVR-ASM arithmetic
+backend selection. The experiment adds no handwritten assembly or new ISA assumptions.
+
+## Integrated clock and packing configuration
+
+The production integration combines the exact rational counters and pointer-based
+control loop from candidate `d7c003d`, a portable fallthrough nine-bit extractor,
+and the contiguous four-byte mono producer. The latter is safe because the
+producer cursor and ring capacity are multiples of four; stereo retains the
+shared interpolation helper. No new assembly was selected for these changes.
+
+The assembled common code is 2930 bytes at 8 MHz and 2982 bytes for the
+16-MHz USB profile, versus 3026/3078 bytes in migration baseline `17dfe289`.
+The default compact USB Children image is 5851/6012 bytes. Size savings and
+real-time admission are separate results: output or decoder changes alone did
+not restore every small-buffer workload.
+
+`--packing auto` retains compact format 9 for the 192-byte ring and selects the
+original byte-aligned dictionary format 0 for smaller rings. `--packing compact`
+and `--packing fast` explicitly select either lossless layout. Both layouts share
+phrases/chords and reproduce the same source command bytes; this is a storage
+and decoding-time tradeoff, not note reduction. The compiler keeps the format-0
+decoder when needed. A space-constrained USB custom image must still fit 6012
+bytes and pass its own complete playback audit.
+
+The complete buffer test covers the former dense-eight 128/192 positive cases,
+64-byte and 8-byte negative cases, the C one-voice case, and explicit compact/fast
+polyphony-study profiles with the same source score and command hash. The final
+image and workload results are linked from
+[the universal engine guide](../../ATtiny88/Music/universal/README.md).

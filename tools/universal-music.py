@@ -113,11 +113,31 @@ def pack_grammar(data,limit=512):
     return result
 
 
+def pack_fast_grammar(data,limit=512):
+    """Original byte/uint16 dictionary layout, with the compact API shape.
+
+    This representation trades Flash for cheaper rule lookup and symbol reads.
+    It preserves the same bounded phrase dictionary and exact command bytes.
+    """
+    data=list(data)
+    if not data or any(type(x) is not int or not 0<=x<=255 for x in data):raise ValueError('Expected nonempty command bytes')
+    stream,rules,depth=grammar(data,limit)
+    rule_data=bytes(byte for pair in rules for symbol in pair for byte in (symbol&255,symbol>>8))
+    stream_data=bytearray()
+    for symbol in stream:
+        if symbol<128:stream_data.append(symbol)
+        else:stream_data.extend((128|(symbol>>8),symbol&255))
+    result=dict(format=0,alphabet=b'',rules=rules,stream=stream,ruleData=rule_data,
+                streamData=bytes(stream_data),depth=depth,grammarBytes=len(rule_data)+len(stream_data))
+    if unpack_grammar(result)!=data:raise AssertionError('Fast grammar changed command bytes')
+    return result
+
+
 def unpack_grammar(packed):
-    """Decode serialized fields independently of the encoder's rule objects."""
-    if packed['format']!=9:raise ValueError('Expected compact UM88 grammar format 9')
-    alphabet=bytes(packed['alphabet']);count=len(alphabet);rules_count=len(packed['rules']);stream_count=len(packed['stream'])
-    if not 1<=count<=256 or len(set(alphabet))!=count or count+rules_count>512:raise ValueError('Invalid compact alphabet')
+    """Independently decode serialized fast-0 or compact-9 dictionary fields."""
+    format_=packed['format']
+    if type(format_) is not int or format_ not in (0,9):raise ValueError('Expected UM88 grammar format 0 or 9')
+    alphabet=bytes(packed['alphabet']);rules_count=len(packed['rules']);stream_count=len(packed['stream'])
     def fields(data,number):
         data=bytes(data)
         if len(data)!=(number*9+7)//8:raise ValueError('Invalid packed symbol length')
@@ -127,17 +147,41 @@ def unpack_grammar(packed):
             bit=index*9;at=bit>>3
             values.append(((data[at]|data[at+1]<<8)>>(bit&7))&511)
         return values
-    pairs=fields(packed['ruleData'],rules_count*2)
+    if format_==9:
+        count=len(alphabet)
+        if not 1<=count<=256 or len(set(alphabet))!=count or count+rules_count>512:raise ValueError('Invalid compact alphabet')
+        pairs=fields(packed['ruleData'],rules_count*2)
+        symbols=fields(packed['streamData'],stream_count)
+    else:
+        count=256
+        if alphabet or not 0<=rules_count<=512:raise ValueError('Invalid fast dictionary')
+        data=bytes(packed['ruleData'])
+        if len(data)!=rules_count*4:raise ValueError('Invalid fast rule length')
+        pairs=[data[at]|data[at+1]<<8 for at in range(0,len(data),2)]
+        data=bytes(packed['streamData']);symbols=[];at=0
+        while at<len(data):
+            first=data[at];at+=1
+            if first<128:symbols.append(first)
+            else:
+                if at>=len(data):raise ValueError('Truncated fast symbol')
+                value=((first&127)<<8)|data[at];at+=1
+                if value<128:raise ValueError('Noncanonical fast symbol')
+                symbols.append(value)
+        if len(symbols)!=stream_count:raise ValueError('Invalid fast stream length')
     rules=[tuple(pairs[i:i+2]) for i in range(0,len(pairs),2)]
+    depths=[0]*count
     for index,pair in enumerate(rules):
         if any(symbol>=count+index for symbol in pair):raise ValueError('Rule must refer to an earlier symbol')
+        depth=1+max(depths[pair[0]],depths[pair[1]])
+        if depth>12:raise ValueError('Grammar depth exceeds 12')
+        depths.append(depth)
     output=[]
-    for symbol in fields(packed['streamData'],stream_count):
+    for symbol in symbols:
         pending=[symbol]
         while pending:
             if len(pending)>13:raise ValueError('Grammar exceeds pending-symbol budget')
             code=pending.pop()
-            if code<count:output.append(alphabet[code])
+            if code<count:output.append(alphabet[code] if format_==9 else code)
             elif code<count+rules_count:
                 a,b=rules[code-count];pending.extend((b,a))
             else:raise ValueError('Rule reference out of range')

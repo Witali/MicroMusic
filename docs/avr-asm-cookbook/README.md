@@ -1774,6 +1774,7 @@ PHASE_RESET/PHASE_COPY, WAIT и ударных. Пары выбираются п
 ## UM88: shared platform code
 
 [Four-point interpolation and bootloader entry](um88-platform.md): portable C sharing saves Flash in the common ATtiny88 stereo producer; includes exact rounding constraints, measured size results, C fallback timing limits, and the official PRR-before-cleanup rule.
+
 ### UM88: профиль всего тракта и следующие точные оптимизации
 
 Исследование готового моно-профиля `0c306b1` (код2676Б, AVR25/ATtiny88,

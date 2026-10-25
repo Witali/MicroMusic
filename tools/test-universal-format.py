@@ -17,11 +17,14 @@ class Format(unittest.TestCase):
 
     def test_every_retained_score_round_trips_and_fits(self):
         for name in builder.NAMES:
-            with self.subTest(song=name):
+            for packing,format_ in [('compact',9),('fast',0)]:
+              with self.subTest(song=name,packing=packing):
                 score=json.loads((ROOT/'ATtiny88/Music/universal/songs'/name/'score.json').read_text(encoding='utf-8'))
-                data,report=builder.encode_score(score,8000000)
+                data,report=builder.encode_score(score,8000000,packing)
                 self.assertLessEqual(len(data)+3000,8192)
                 self.assertEqual(data[:4],b'UM88')
+                self.assertEqual(data[22],format_)
+                if format_==0:self.assertEqual(data[23],0)
                 self.assertLessEqual(report['grammarDepth'],12)
                 self.assertEqual(report['controlTicks'],score['controlTicks'])
                 self.assertTrue(report['allControlFramesVerified'])
@@ -44,16 +47,19 @@ class Format(unittest.TestCase):
         # preserve the chord rhythm; the next chord and the whole phrase repeat.
         phrase=[64,0,65,1,66,2,72,0,73,4,74,7,143,156,172,80,81,82,12,
                 72,2,73,5,74,9,143,156,172,80,81,82,6,88,1,89,2,6]
-        raw=phrase*48+[0];packed=codec.pack_grammar(raw);count=len(packed['alphabet'])
-        self.assertTrue(packed['rules'])
-        self.assertTrue(any(symbol>=count for symbol in packed['stream']))
-        self.assertLess(packed['grammarBytes'],len(raw)//2)
-        self.assertEqual(codec.unpack_grammar(packed),raw)
-        self.assertLessEqual(packed['depth'],12)
-        expanded=[bytes([value]) for value in packed['alphabet']]
-        for a,b in packed['rules']:expanded.append(expanded[a]+expanded[b])
-        self.assertTrue(any(bytes(phrase) in value for value in expanded[count:]),
-                        'A dictionary entry must reuse a complete multi-voice phrase, not just individual notes')
+        raw=phrase*48+[0]
+        for encode in [codec.pack_grammar,codec.pack_fast_grammar]:
+          with self.subTest(encoder=encode.__name__):
+            packed=encode(raw);count=len(packed['alphabet']) if packed['format']==9 else 256
+            self.assertTrue(packed['rules'])
+            self.assertTrue(any(symbol>=count for symbol in packed['stream']))
+            self.assertLess(packed['grammarBytes'],len(raw)//2)
+            self.assertEqual(codec.unpack_grammar(packed),raw)
+            self.assertLessEqual(packed['depth'],12)
+            expanded=[bytes([value]) for value in (packed['alphabet'] if packed['format']==9 else range(256))]
+            for a,b in packed['rules']:expanded.append(expanded[a]+expanded[b])
+            self.assertTrue(any(bytes(phrase) in value for value in expanded[count:]),
+                            'A dictionary entry must reuse a complete multi-voice phrase, not just individual notes')
 
     def test_nine_bit_serialization_has_a_fixed_independent_vector(self):
         self.assertEqual(codec._pack9([0,1,255,256,511]),bytes([0,2,252,3,248,31]))
