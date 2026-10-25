@@ -26,6 +26,7 @@ def paired(cases,rate,stage,phase):
     deltas=[(name,r,r[stage]['metrics'][phase],r['baseline']['metrics'][phase]) for name,r in rows]
     def ids(test):return [name for name,r,new,old in deltas if test(r,new,old)]
     stoi=[new['stoi']-old['stoi'] for _,_,new,old in deltas if old['stoi'] is not None]
+    ser=[new['ser_db']-old['ser_db'] for _,_,new,old in deltas if old['ser_db'] is not None and new['ser_db'] is not None]
     return {'case_ids':[name for name,_ in rows],
         'baseline':aggregate([(name,r['baseline']) for name,r in rows],phase),
         'new':aggregate([(name,r[stage]) for name,r in rows],phase),
@@ -39,6 +40,10 @@ def paired(cases,rate,stage,phase):
         'spectrum_changed':ids(lambda r,n,o:r[stage]['spectrum_changed']),
         'peak_worse':ids(lambda r,n,o:n['max_abs_error_pcm16']>o['max_abs_error_pcm16']),
         'stoi_delta_mean':statistics.mean(stoi) if stoi else None,
+        'ser_gain_median_db':statistics.median(ser) if ser else None,
+        'ser_gain_min_db':min(ser) if ser else None,'ser_gain_max_db':max(ser) if ser else None,
+        'ser_gain_at_least_0_1db':ids(lambda r,n,o:o['ser_db'] is not None and n['ser_db'] is not None and n['ser_db']-o['ser_db']>=.1),
+        'ser_gain_at_least_0_5db':ids(lambda r,n,o:o['ser_db'] is not None and n['ser_db'] is not None and n['ser_db']-o['ser_db']>=.5),
         'stoi_improved':ids(lambda r,n,o:o['stoi'] is not None and n['stoi']>o['stoi']+1e-9),
         'stoi_worse':ids(lambda r,n,o:o['stoi'] is not None and n['stoi']<o['stoi']-1e-9),
         'raw_best_rejected_by_stoi':ids(lambda r,n,o:r[stage]['raw_best_rejected_by_stoi'])}
