@@ -48,12 +48,20 @@ export function emitRegion(region,{abi,pcMask,width,decoded,pure,cycles,emitALU,
     return code;
   });
   const cached=registers(),dirty=written();
+  const TIME=cacheBase+cached.length; // One f64 local follows the i32 register cache.
   const bound=binary(0x6c,g(LIMIT),c(region.maxCost)),elapsed=binary(0xa0,stateF('cyc'),asFloat(bound));
   const pending=select(and(load8(flagsAddress),c(128)),call(13),c(0));
   const code=bytes(s(LIMIT,select(lt(g(1),c(32)),g(1),c(32))),
     iff(lt(g(LIMIT),c(2)),stop),iff(state('irqDelay'),stop),iff(pending,stop),
-    iff(binary(0x66,elapsed,stateF('overflowAt')),stop),iff(binary(0x66,elapsed,float(4503599627370496)),stop),
-    iff(binary(0x66,elapsed,call(14,g(0))),stop),
+    s(TIME,binary(0xa4,stateF('overflowAt'),float(4503599627370496))),
+    s(TIME,binary(0xa4,g(TIME),call(14,g(0)))),
+    iff(binary(0x66,elapsed,g(TIME)),bytes(
+      iff(binary(0x65,g(TIME),stateF('cyc')),stop),
+      // Largest integer budget with budget*maxCost strictly below the span.
+      // Enter only when 0 < span <= oldLimit*maxCost (at most 96), so ceil,
+      // subtraction/division and trapping i32.trunc_f64_s remain in range.
+      s(LIMIT,bytes(binary(0xa3,binary(0xa1,bytes(binary(0xa1,g(TIME),stateF('cyc')),0x9b),float(1)),float(region.maxCost)),0xaa)),
+      iff(lt(g(LIMIT),c(2)),stop))),
     iff(binary(0x56,loadI64(c(abi.phase.retired)),binary(0x7d,constantI64(0xffffffffffffffffn),bytes(g(LIMIT),0xad))),stop),
     s(PC,state('pc')),s(7,load8(flagsAddress)),
     ...cached.map((n,index)=>s(cacheBase+index,load8(c(abi.data+n)))));
@@ -75,5 +83,5 @@ export function emitRegion(region,{abi,pcMask,width,decoded,pure,cycles,emitALU,
     ...store8(flagsAddress,g(7)),...put('pc',g(PC)),...put('errorPC',g(LAST)),
     ...storeI64(c(abi.phase.retired),binary(0x7c,loadI64(c(abi.phase.retired)),binary(0x7d,bytes(g(COUNT),0xad),constantI64(1)))),
     ...call(18),...g(COUNT));
-  return {code,locals:16+cached.length,registers:cached,written:dirty};
+  return {code,locals:16+cached.length,floatLocals:1,registers:cached,written:dirty};
 }

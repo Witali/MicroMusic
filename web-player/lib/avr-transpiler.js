@@ -564,7 +564,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   for(let p=0;p<flashWords;p++)table.push(blockIndex.get(p)??firstFunction+flashWords+blocks.length+extraFunctions);
   const body=(code,locals)=>{const content=bytes(vector(locals),optimizePhaseLocals?stripLocalEffects(code):code,0x0b);return bytes(uleb(content.length),content);};
   const codes=[...instructionBodies.map(code=>body(code,[[9,0x7f],[1,0x7c],...(resumable?[[1,0x7f]]:[])])),
-    ...blockBodies.map(code=>body(code,[[9,0x7f]])),...regionBodies.map(item=>body(item.code,[[item.locals,0x7f]])),
+    ...blockBodies.map(code=>body(code,[[9,0x7f]])),...regionBodies.map(item=>body(item.code,[[item.locals,0x7f],[item.floatLocals,0x7c]])),
     ...[...regionWrappers,...baseRegionBodies].map(code=>body(code,[[1,0x7f]])),
     body(emptyBlock,[]),body(step,[]),body(block,[]),body(run,[[resumable?3:2,0x7f]]),body(resumable?fail(24,true):next,[[2,0x7c]]),body(resumable?fail(24,true):capture,[[3,0x7f],[1,0x7c]]),...(full?[body(until,[[resumable?3:2,0x7f]]),body(physical,[[1,0x7f]])]:[])];
   const exports=vector([...['controlRequest','watchdogResetCycle','debugEnabled','captureFault'].map((name,index)=>bytes(string(name),3,index)),

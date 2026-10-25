@@ -36,6 +36,93 @@ test('native clock sees old registers/flags and the region commits after complet
   for(const row of calls){assert.equal(row.r16,17);assert.equal(row.sreg,0x73);}
   assert.equal(c.r[16],192);assert.equal(c.state().cpuPhase.retired,32n);
 });
+
+test('short physical deadlines admit smaller real regions, including exact and adjacent1ps ties',()=>{
+  const loop=flash({instructions:[avr.inc(16),avr.rjmp(1,0)]});
+  // maxCost=2: these endpoints distinguish a strict bound from a rounded-up
+  // endpoint tie. Returns >0 are real region execution, not public run fallback.
+  const cases=[[0n,0],[1n,0],[399999n,0],[400000n,0],[400001n,2],
+    [599999n,2],[600000n,2],[600001n,3],[6400000n,31],[6400001n,32]];
+  for(const optimizePhaseLocals of [false,true])for(const [span,count]of cases){
+    const [a,b]=pair(loop,{fuseLow:0xf2,optimizePhaseLocals});
+    for(const c of [a,b]){c.pc=0;c.r[16]=0xfe;c.sreg=0x73;}
+    const start=a.state().timePs;
+    assert.equal(a._execute('block',Number(start+span),64),count,'span '+span);
+    for(let n=0;n<count;n++)b.step();same(a,b,'adaptive deadline '+span);
+    if(count)assert.ok(a.state().timePs<start+span,'actual clock ends before the physical deadline');
+  }
+});
+
+test('smaller regions retain clock-before-commit and stop before queued input or RESET',()=>{
+  const loop=flash({instructions:[avr.inc(16),avr.rjmp(1,0)]});
+  for(const reset of [false,true]){
+    const config={...options,fuseLow:0xf2,boundedRegions:true};
+    const a=makePhaseProbe(loop,config),b=makePhaseProbe(loop,{...config,boundedRegions:false});
+    for(const c of [a,b]){c.clock(8);c.pc=0;c.r[16]=17;c.sreg=0x73;
+      c.injectPinsPs({at:c.state().timePs+900000n,mask:reset?32:1,levels:reset?0:1});}
+    const start=a.state().timePs;clearPhaseProbe(a);
+    assert.equal(a._execute('block',Infinity,64),4);
+    const clocks=phaseTrace(a).filter(row=>row.kind===E.PHASE_ENTER||row.kind===E.PHASE_EXIT);
+    assert.equal(clocks.length,2);assert.equal(clocks[0].argument,12);
+    for(const row of clocks){assert.equal(row.r16,17);assert.equal(row.sreg,0x73);}
+    for(let n=0;n<4;n++)b.step();same(a,b,'before event');
+    for(const offset of [899999n,900000n,900001n,1200001n]){
+      a.runUntilPs(start+offset);oracleUntil(b,start+offset);same(a,b,'after event '+offset);
+      assert.deepEqual(a.drainPinsPs(),b.drainPinsPs());
+    }
+  }
+});
+
+test('adaptive regions account for three-cycle skips and an early path exit',()=>{
+  const loop=flash({instructions:[[rr(0x1000,0,1)],avr.lds(17,0x60),avr.inc(16),avr.rjmp(4,0)]});
+  for(const equal of [false,true]){
+    const [a,b]=pair(loop,{fuseLow:0xf2});
+    for(const c of [a,b]){c.pc=0;c.r[0]=1;c.r[1]=equal?1:0;c.data[0x60]=0x5a;}
+    const deadline=a.state().timePs+1000000n,count=equal?3:1;
+    assert.equal(a.transpilation.regions.find(r=>r.pcs.includes(0)).maxCost,3);
+    assert.equal(a._execute('block',Number(deadline),64),count);
+    for(let n=0;n<count;n++)b.step();same(a,b,'three-cycle skip '+equal);
+    assert.ok(a.state().timePs<deadline);
+  }
+});
+
+test('exhausted or past cycle bounds decline without a float conversion trap or effects',()=>{
+  const loop=flash({instructions:[avr.inc(16),avr.rjmp(1,0)]});
+  for(const [cycles,bound]of [[8,8],[8,7.5],[8,-Infinity],
+    [2**52-0.5,Infinity],[2**52-1,Infinity],[2**52,Infinity],[2**52+1,Infinity]]){
+    const [a,b]=pair(loop,{fuseLow:0xf2});
+    for(const c of [a,b]){c.pc=0;c.cyc=cycles;c.overflowAt=bound;}
+    assert.equal(a._execute('block',Infinity,64),0);same(a,b,'bound '+cycles+'/'+bound);
+  }
+});
+
+test('retirement headroom uses the smaller admitted budget without wrapping uint64',()=>{
+  const loop=flash({instructions:[avr.inc(16),avr.rjmp(1,0)]});
+  const [a,b]=pair(loop,{fuseLow:0xf2});
+  for(const c of [a,b]){c.pc=0;new DataView(c._exports.memory.buffer).setBigUint64(c._phaseABI.retired,0xfffffffffffffffdn,true);}
+  assert.equal(a._execute('block',Number(a.state().timePs+500000n),64),2);
+  b.step();b.step();same(a,b,'last two retirements');
+  assert.equal(a.state().cpuPhase.retired,0xffffffffffffffffn);
+});
+
+for(const peripheral of ['adc','watchdog'])test('adaptive regions preserve active '+peripheral+' across physical audio boundaries',()=>{
+  const loop=flash({instructions:[avr.rjmp(0,16)]},
+    ...Array.from({length:9},(_,n)=>({at:n+1,instructions:[avr.rjmp(n+1,64)]})),
+    {at:16,instructions:[avr.inc(16),avr.eor(17,18),avr.add(19,20),avr.rjmp(19,16)]},
+    {at:64,instructions:[avr.inc(30),avr.reti()]});
+  const [a,b]=pair(loop,{fuseLow:0xf2});
+  for(const c of [a,b]){
+    c.sreg=128;
+    if(peripheral==='adc'){c.writeIO(IO.ADMUX,3);c.writeIO(IO.ADCSRA,0xe7);}
+    else c.writeIO(IO.WDTCR,0x40);
+  }
+  for(let n=0;n<32;n++){
+    assert.deepEqual(a.capturePhysical(64,48000,1),b.capturePhysical(64,48000,1));
+    same(a,b,peripheral+' sample batch '+n);assert.deepEqual(a.drainPinsPs(),b.drainPinsPs());
+  }
+  if(peripheral==='adc')assert.equal(a.data[32+IO.ADCSRA]&0x90,0x90,'enabled ADC actually completes conversions');
+  else{assert.ok(a.irqCount>0,'watchdog actually enters its ISR');assert.ok(a.r[30]>0);}
+});
 test('every entry, short budget and path exit agrees with individual instructions',()=>{
   for(const pc of [16,18,23,28,31,32,33])for(const count of [1,2,3,7,16,31,32,33,64]){
     const [a,b]=pair();for(const c of [a,b]){c.pc=pc;c.r[31]=3;c.r[16]=0x80;c.sreg=0x73;}
