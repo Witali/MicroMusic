@@ -2016,3 +2016,61 @@ MUL не нужно. Однако адреса `voice[i]` действитель
 частоты синтеза/PWM, разрядности фаз или уровней, пропуск нот/хвостов и
 грубое прореживание огибающих не являются точными оптимизациями. Ускорение
 принимается только при неизменном конечном PWM и расписании событий.
+
+## Speex: signed17 sum from ADC S (measured 2026-10-25)
+
+Enhanced AVR5 / ATmega328P, GNU ABI, AVR GCC 7.3.0, mixed Os/O2/O3 + LTO,
+mcall-prologues/mrelax. This is an original project transformation using
+the documented flag semantics, not copied vendor code.
+
+For signed16 a+b, low ADD / high ADC produce a low16 result while S=N xor V
+still identifies the true signed17 sum sign. LDI preserves S. A balanced
+BRGE/CLR sequence can construct the complement of its sign-extension byte:
+
+```asm
+add r24,r20
+adc r25,r21
+ldi r26,0xff
+brge 1f
+clr r26
+1:
+; r26 complements the true sign byte; retain it through wide negation.
+```
+
+Both branch paths take two cycles. Negation needs signed18 at a=b=-32768;
+truncating to signed16 first is wrong. Byte-align the negated wide sum and
+shift right twice for *64. Separately retain the full signed16 product until
+adding 0x200000ff and dropping a byte: p2=2^21+ceil(a*b/256). The four-MUL
+scheduling follows the project's existing AVR201-derived recipe, with a
+caller-clobbered zero register instead of saving r2. The existing adaptation
+is [avr_multiply.h](../../Codecs/Speex/AVR/src/avr_multiply.h); the official
+[AVR201 application note](https://www.microchip.com/en-us/application-notes/an1631-1)
+and [original source archive](https://ww1.microchip.com/downloads/en/AppNotes/avr201.zip)
+retain the upstream provenance. No vendor file is modified by this stage.
+
+Reusable complete example: [lsp_first.S](../../Codecs/Speex/AVR/src/lsp_first.S),
+with [explicit C fallback/selector](../../Codecs/Speex/AVR/src/nb3_lsp_first.h).
+It touches only p1/p2, has zero input-data loads, eight stores, no own saved stack,
+no IO/CLI and restores GNU ABI r1. Architecture plus explicit ASM enable
+select it; unknown/disabled targets use C. C's exact byte-aligned expression
+also outperforms its six-shift alternative on this compiler; other targets
+require their own measurement.
+
+Direct tests cover 1,376,255 native / 1,380,351 AVR pairs per backend,
+all signed17 sums and all 131,072 high-byte/carry partitions, signed64/BigInt
+equations, all pointer low bytes, guards, exact accesses and ABI. ASM takes
+66 cycles including RET/excluding CALL for every tested sign, without IRQ.
+Full NB mean 103,094.832→102,578.762 cycles (-0.5006%), Flash 11,084→10,998 B;
+static 1,099 B/stack 103 B unchanged. C mean 217,506.241→217,244.820 (-0.1202%)
+at +28 B Flash, unchanged SRAM/stack. NB matches original Xiph PCM; WB matches
+the existing compact QMF profile. All 142 fresh active-IRQ PWM images pass,
+including +40% ASM/+10% C NB CPU and +5% WB CPU, with no underrun.
+These simulation results establish neither physical analog quality nor
+performance on another core. [Admission](../../Codecs/Speex/AVR/reports/first-admission.json)
+binds sources, binaries, output, timing and reproducibility.
+
+Primary flag definitions: [Microchip ADC SREG](https://onlinedocs.microchip.com/oxy/GUID-0B644D8F-67E7-49E6-82C9-1B2B9ABE6A0D-en-US-23/GUID-EB080A19-A788-4F24-8DC1-287A506AB186.html),
+[BRGE/LDI instruction summary](https://onlinedocs.microchip.com/oxy/GUID-0B644D8F-67E7-49E6-82C9-1B2B9ABE6A0D-en-US-23/GUID-BA59618D-4850-490B-B176-0BCC3D9438A1.html),
+[MULSU signed16 example](https://onlinedocs.microchip.com/oxy/GUID-0B644D8F-67E7-49E6-82C9-1B2B9ABE6A0D-en-US-23/GUID-FA865CD0-BF70-4D7F-9F8C-760FEF99F2D6.html).
+The signed17 extension and byte-aligned constructor are derived here from
+those semantics; the measured bounds and ABI restrictions are essential.
