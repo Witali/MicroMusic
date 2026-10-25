@@ -1,0 +1,1665 @@
+{
+  "stage": "1: real selected v2 coding costs; unchanged 24k seed spectrum",
+  "scope": "Four tuning excerpts only; no validation or AVR admission claim yet.",
+  "decoder_modified": false,
+  "allow_zero": false,
+  "compact_features": 24,
+  "lambdas": [
+    0,
+    0.0003,
+    0.001,
+    0.003,
+    0.01,
+    0.03,
+    0.1,
+    0.3
+  ],
+  "tests": {
+    "passed": 4,
+    "seconds": 28.614,
+    "command": "python tests/test_rate_distortion.py -v"
+  },
+  "cases": [
+    {
+      "id": "ru_pushkin_a4",
+      "candidates": [
+        {
+          "lambda": 0.0,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 185548,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 23015,
+          "file_bytes": 23035,
+          "quality": {
+            "ser_db": 45.10691479676786,
+            "rmse": 0.00037912702273484205,
+            "stoi": 0.9994457672777267,
+            "spectral_rmse_db": 1.0707482704810725,
+            "reference_rms": 0.06825437280280897,
+            "decoded_rms": 0.06825127975020755,
+            "clip_count": 0,
+            "pcm16_sha256": "3170facb98ffd0449515bb77c81421ceb8ef35a7ba723f342f6a187bc45f13dc"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "1b7892771ee9f887f19bd9d3ddabdfa4cad60b0466a6bb93e9146439948bc79f",
+          "width_counts": {
+            "0": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 400
+          },
+          "seconds": 5.237181599950418,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\ru_pushkin_a4-0.l4hy"
+        },
+        {
+          "lambda": 0.0003,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 131351,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 16308,
+          "file_bytes": 16328,
+          "quality": {
+            "ser_db": 37.61580757460553,
+            "rmse": 0.0008981318575889939,
+            "stoi": 0.9937787472932347,
+            "spectral_rmse_db": 2.726520716841159,
+            "reference_rms": 0.06825437280280897,
+            "decoded_rms": 0.06824928427702509,
+            "clip_count": 0,
+            "pcm16_sha256": "5624b99355219e0a09100b18e853e11c29029d22e94b16b48aefcf7b0daebac4"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "232cf9b3810be0ff055edcdaf2673315cbaf5873f6c923bf05759099858ca40e",
+          "width_counts": {
+            "0": 0,
+            "2": 0,
+            "3": 37,
+            "4": 120,
+            "5": 185,
+            "6": 58
+          },
+          "seconds": 4.097808900056407,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\ru_pushkin_a4-0.0003.l4hy"
+        },
+        {
+          "lambda": 0.001,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 113298,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 14117,
+          "file_bytes": 14137,
+          "quality": {
+            "ser_db": 32.922840744438716,
+            "rmse": 0.0015416594273702233,
+            "stoi": 0.9850166935841999,
+            "spectral_rmse_db": 3.91135604429847,
+            "reference_rms": 0.06825437280280897,
+            "decoded_rms": 0.06824037339658243,
+            "clip_count": 0,
+            "pcm16_sha256": "09afa0937edcb72052385a3d9f55c4af5d85b603e13b3a8de8357f6263389426"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "76d9e97545c94a11cb8109a767ab47c30400e1067eb09ba8dda685d95880f7ff",
+          "width_counts": {
+            "0": 0,
+            "2": 6,
+            "3": 129,
+            "4": 177,
+            "5": 79,
+            "6": 9
+          },
+          "seconds": 3.689148199977353,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\ru_pushkin_a4-0.001.l4hy"
+        },
+        {
+          "lambda": 0.003,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 100695,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 12563,
+          "file_bytes": 12583,
+          "quality": {
+            "ser_db": 29.25427140027811,
+            "rmse": 0.002351889483793479,
+            "stoi": 0.9679711948128787,
+            "spectral_rmse_db": 5.138238077837778,
+            "reference_rms": 0.06825437280280897,
+            "decoded_rms": 0.0682975143053754,
+            "clip_count": 0,
+            "pcm16_sha256": "7380fbb849f872bf60246f2dabe11bdfc81ceb8c17736f8fe6baf0243769d5a6"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "2ea55075a841e2f7ee2afd32b5aa766e4fd81940ab55230e37e1a6572648ee1b",
+          "width_counts": {
+            "0": 0,
+            "2": 66,
+            "3": 187,
+            "4": 128,
+            "5": 17,
+            "6": 2
+          },
+          "seconds": 3.572396699921228,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\ru_pushkin_a4-0.003.l4hy"
+        },
+        {
+          "lambda": 0.01,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 91421,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 11379,
+          "file_bytes": 11399,
+          "quality": {
+            "ser_db": 25.18884641905735,
+            "rmse": 0.0037556763493799493,
+            "stoi": 0.943788917279273,
+            "spectral_rmse_db": 6.29977675126609,
+            "reference_rms": 0.06825437280280897,
+            "decoded_rms": 0.06822997498001233,
+            "clip_count": 0,
+            "pcm16_sha256": "3c12c8cd24ac0cd461ce51ebb6c9e761a88a1e857d11cffd0cb9544ac632247d"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "892aa95b5c0498bb656d8dc53d2b42b9fcad1da3aaaaa9ad21a9f537e22bf92d",
+          "width_counts": {
+            "0": 0,
+            "2": 172,
+            "3": 185,
+            "4": 41,
+            "5": 2,
+            "6": 0
+          },
+          "seconds": 3.4091575000202283,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\ru_pushkin_a4-0.01.l4hy"
+        },
+        {
+          "lambda": 0.03,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 85949,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 10695,
+          "file_bytes": 10715,
+          "quality": {
+            "ser_db": 22.19773392838193,
+            "rmse": 0.005299608449077546,
+            "stoi": 0.9112173075681035,
+            "spectral_rmse_db": 7.3971296258457215,
+            "reference_rms": 0.06825437280280897,
+            "decoded_rms": 0.0681010602949709,
+            "clip_count": 0,
+            "pcm16_sha256": "3a827be2320c19150d2f746c27bd5902d973c2eee3e51edd84a3b39a911db50a"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "177ed1f0d8ddd0c7b1925074e0a64ca184a5e0b2e5a343269d25fced99f46b35",
+          "width_counts": {
+            "0": 0,
+            "2": 285,
+            "3": 105,
+            "4": 9,
+            "5": 1,
+            "6": 0
+          },
+          "seconds": 3.6858630999922752,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\ru_pushkin_a4-0.03.l4hy"
+        },
+        {
+          "lambda": 0.1,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 82264,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 10233,
+          "file_bytes": 10253,
+          "quality": {
+            "ser_db": 19.40386247623804,
+            "rmse": 0.007310336299952058,
+            "stoi": 0.8821062930258056,
+            "spectral_rmse_db": 8.636276742142718,
+            "reference_rms": 0.06825437280280897,
+            "decoded_rms": 0.06809663172980013,
+            "clip_count": 0,
+            "pcm16_sha256": "3fc1b1aa38e39a0fc5bca495d64b439b7860f429cdf77ffbb1b66f141ecd6a02"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "a1abee4e396cada14e9c9bb796f90c2ac56a56d9201cee2236e0bed95804e259",
+          "width_counts": {
+            "0": 0,
+            "2": 351,
+            "3": 48,
+            "4": 1,
+            "5": 0,
+            "6": 0
+          },
+          "seconds": 3.2592458999715745,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\ru_pushkin_a4-0.1.l4hy"
+        },
+        {
+          "lambda": 0.3,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 81065,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 10108,
+          "file_bytes": 10128,
+          "quality": {
+            "ser_db": 16.847620528983068,
+            "rmse": 0.009811817320553992,
+            "stoi": 0.8555472079994558,
+            "spectral_rmse_db": 10.018992213004172,
+            "reference_rms": 0.06825437280280897,
+            "decoded_rms": 0.06855843510158935,
+            "clip_count": 0,
+            "pcm16_sha256": "b04286dc7384a733b81140bb23dd9293459c8a2970aa8e74e9fd865498c5e35f"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "ac212625602b6c7e87cc05b1e9ef7c96d05e3e86141a7ed3d8d144f241bdd5f0",
+          "width_counts": {
+            "0": 0,
+            "2": 378,
+            "3": 21,
+            "4": 1,
+            "5": 0,
+            "6": 0
+          },
+          "seconds": 2.7253496000776067,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\ru_pushkin_a4-0.3.l4hy"
+        }
+      ],
+      "baseline": [
+        {
+          "ceiling_bps": 8000,
+          "LPX": {
+            "status": "no_fit"
+          }
+        },
+        {
+          "ceiling_bps": 12000,
+          "LPX": {
+            "status": "no_fit"
+          }
+        },
+        {
+          "ceiling_bps": 16000,
+          "LPX": {
+            "status": "ok",
+            "file_bytes": 6548,
+            "audio_packet_bytes": 6528,
+            "stream_sha256": "bbce6af1185dd1fbae3bd49c767ac71998a24102e2899e5c757ea5bc6bba0edc",
+            "metrics": {
+              "delay_samples": 0,
+              "delay_ms": 0.0,
+              "unaligned_pcm16": {
+                "samples": 32000,
+                "reference_energy": 160070318360.0,
+                "error_energy": 17798653588.0,
+                "ser_db": 9.53923658155405,
+                "ser_status": "finite",
+                "rmse_pcm16": 745.7934865798976,
+                "max_abs_error_pcm16": 4741,
+                "max_abs_error_percent_fs": 14.4683837890625,
+                "max_error_signed_pcm16": -4741,
+                "max_error_sample": 30699,
+                "max_error_seconds": 3.837375,
+                "stoi": 0.6662862957568731
+              },
+              "aligned_pcm16": {
+                "samples": 32000,
+                "reference_energy": 160070318360.0,
+                "error_energy": 17798653588.0,
+                "ser_db": 9.53923658155405,
+                "ser_status": "finite",
+                "rmse_pcm16": 745.7934865798976,
+                "max_abs_error_pcm16": 4741,
+                "max_abs_error_percent_fs": 14.4683837890625,
+                "max_error_signed_pcm16": -4741,
+                "max_error_sample": 30699,
+                "max_error_seconds": 3.837375,
+                "stoi": 0.6662862957568731
+              },
+              "aligned_pwm8": {
+                "samples": 32000,
+                "reference_energy": 160070318360.0,
+                "error_energy": 18288938264.0,
+                "ser_db": 9.421223147848774,
+                "ser_status": "finite",
+                "rmse_pcm16": 755.9955824937074,
+                "max_abs_error_pcm16": 4877,
+                "max_abs_error_percent_fs": 14.8834228515625,
+                "max_error_signed_pcm16": -4877,
+                "max_error_sample": 30699,
+                "max_error_seconds": 3.837375,
+                "stoi": 0.6652983061344651
+              }
+            },
+            "selection": {
+              "profile": "flat",
+              "lambda": 1.0,
+              "preQ14": 0,
+              "bytes": 7434,
+              "v2_bytes": 7456,
+              "audio_packet_bytes": 7414
+            }
+          }
+        },
+        {
+          "ceiling_bps": 24000,
+          "LPX": {
+            "status": "ok",
+            "file_bytes": 11114,
+            "audio_packet_bytes": 11094,
+            "stream_sha256": "faf3b41c4967e0bdd1704b77884f708153850e424d997a6bcb21e16963006001",
+            "metrics": {
+              "delay_samples": 0,
+              "delay_ms": 0.0,
+              "unaligned_pcm16": {
+                "samples": 32000,
+                "reference_energy": 160070318360.0,
+                "error_energy": 763391492.0,
+                "ser_db": 23.21563493272214,
+                "ser_status": "finite",
+                "rmse_pcm16": 154.45382521970765,
+                "max_abs_error_pcm16": 2845,
+                "max_abs_error_percent_fs": 8.6822509765625,
+                "max_error_signed_pcm16": -2845,
+                "max_error_sample": 30785,
+                "max_error_seconds": 3.848125,
+                "stoi": 0.9303443173985658
+              },
+              "aligned_pcm16": {
+                "samples": 32000,
+                "reference_energy": 160070318360.0,
+                "error_energy": 763391492.0,
+                "ser_db": 23.21563493272214,
+                "ser_status": "finite",
+                "rmse_pcm16": 154.45382521970765,
+                "max_abs_error_pcm16": 2845,
+                "max_abs_error_percent_fs": 8.6822509765625,
+                "max_error_signed_pcm16": -2845,
+                "max_error_sample": 30785,
+                "max_error_seconds": 3.848125,
+                "stoi": 0.9303443173985658
+              },
+              "aligned_pwm8": {
+                "samples": 32000,
+                "reference_energy": 160070318360.0,
+                "error_energy": 971724056.0,
+                "ser_db": 22.167678544424383,
+                "ser_status": "finite",
+                "rmse_pcm16": 174.25950978354095,
+                "max_abs_error_pcm16": 2879,
+                "max_abs_error_percent_fs": 8.7860107421875,
+                "max_error_signed_pcm16": -2879,
+                "max_error_sample": 30785,
+                "max_error_seconds": 3.848125,
+                "stoi": 0.9028256154802125
+              }
+            },
+            "selection": {
+              "profile": "legacy",
+              "lambda": 0.01,
+              "preQ14": 13926,
+              "bytes": 11117,
+              "v2_bytes": 11359,
+              "audio_packet_bytes": 11097
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "ru_square_a4",
+      "candidates": [
+        {
+          "lambda": 0.0,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 187669,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 23372,
+          "file_bytes": 23392,
+          "quality": {
+            "ser_db": 49.62778009642268,
+            "rmse": 0.00016388118821055795,
+            "stoi": 0.9997607647455958,
+            "spectral_rmse_db": 0.7270082036941082,
+            "reference_rms": 0.04964986922659572,
+            "decoded_rms": 0.04964832832372631,
+            "clip_count": 0,
+            "pcm16_sha256": "66639762628ac3ed43b829dc2a3a65e796bd77e76fcd34dfc9870719d693f13a"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "bb5db611155792099153ec77a7623937da78b12728eb2798c93fcc50da19e16c",
+          "width_counts": {
+            "0": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 16,
+            "6": 384
+          },
+          "seconds": 2.7603151999646798,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\ru_square_a4-0.l4hy"
+        },
+        {
+          "lambda": 0.0003,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 113036,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 14080,
+          "file_bytes": 14100,
+          "quality": {
+            "ser_db": 38.11026152603263,
+            "rmse": 0.0006171703202310175,
+            "stoi": 0.9945953668821063,
+            "spectral_rmse_db": 2.7464829432257822,
+            "reference_rms": 0.04964986922659572,
+            "decoded_rms": 0.04964881306622695,
+            "clip_count": 0,
+            "pcm16_sha256": "0c9ab22860684e39ad5d69c4ab3e24b275de883cb18d4c6cd3514510810f099d"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "3e733888ac231d7b0ac42f96a8029dfcd3f618ed91b23245640c349fe79d2a85",
+          "width_counts": {
+            "0": 0,
+            "2": 68,
+            "3": 86,
+            "4": 114,
+            "5": 105,
+            "6": 27
+          },
+          "seconds": 2.50048299995251,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\ru_square_a4-0.0003.l4hy"
+        },
+        {
+          "lambda": 0.001,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 99958,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 12437,
+          "file_bytes": 12457,
+          "quality": {
+            "ser_db": 34.27809598709724,
+            "rmse": 0.0009594300341906549,
+            "stoi": 0.9877404146211387,
+            "spectral_rmse_db": 3.837420257999781,
+            "reference_rms": 0.04964986922659572,
+            "decoded_rms": 0.04965321800411959,
+            "clip_count": 0,
+            "pcm16_sha256": "4995f1b6be33174a20415f08215d24879c90c9dcdb98d4cca3d95c85704c90c1"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "dbe0f6c0ac22fca404c68068bb633ad77ddc9a4a88598674bc274931518436d9",
+          "width_counts": {
+            "0": 0,
+            "2": 126,
+            "3": 116,
+            "4": 120,
+            "5": 35,
+            "6": 3
+          },
+          "seconds": 2.6994035999523476,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\ru_square_a4-0.001.l4hy"
+        },
+        {
+          "lambda": 0.003,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 92414,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 11487,
+          "file_bytes": 11507,
+          "quality": {
+            "ser_db": 31.040073033848756,
+            "rmse": 0.0013928824206140883,
+            "stoi": 0.9743511251390347,
+            "spectral_rmse_db": 4.993230105478446,
+            "reference_rms": 0.04964986922659572,
+            "decoded_rms": 0.049664172942033284,
+            "clip_count": 0,
+            "pcm16_sha256": "86c11aca02bd62b293cc13359e8dd150d3007806605433d80b4acb311147c438"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "5dd0725eddd08b760fc1bf19ee27aaf94946b86894e4377d1f7e0f792f445b6b",
+          "width_counts": {
+            "0": 0,
+            "2": 177,
+            "3": 135,
+            "4": 82,
+            "5": 6,
+            "6": 0
+          },
+          "seconds": 2.3751456999452785,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\ru_square_a4-0.003.l4hy"
+        },
+        {
+          "lambda": 0.01,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 86799,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 10807,
+          "file_bytes": 10827,
+          "quality": {
+            "ser_db": 27.57088676729458,
+            "rmse": 0.0020767000366860027,
+            "stoi": 0.9471872884702357,
+            "spectral_rmse_db": 6.339002995270087,
+            "reference_rms": 0.04964986922659572,
+            "decoded_rms": 0.04967093746573842,
+            "clip_count": 0,
+            "pcm16_sha256": "709f9ce7e0d015345e314021952b8017b99b03a5a3bc0f5525c7d7bf3fb00124"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "524d7b22dca5353d68a402f30c3e7e74e3f7addd4081ec0baf0434ceb9801c59",
+          "width_counts": {
+            "0": 0,
+            "2": 240,
+            "3": 135,
+            "4": 25,
+            "5": 0,
+            "6": 0
+          },
+          "seconds": 2.2327007999410853,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\ru_square_a4-0.01.l4hy"
+        },
+        {
+          "lambda": 0.03,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 83974,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 10456,
+          "file_bytes": 10476,
+          "quality": {
+            "ser_db": 25.000148245675142,
+            "rmse": 0.0027919696735319607,
+            "stoi": 0.9253463525418475,
+            "spectral_rmse_db": 7.639466645961027,
+            "reference_rms": 0.04964986922659572,
+            "decoded_rms": 0.049727833797679026,
+            "clip_count": 0,
+            "pcm16_sha256": "d50037fad9bd71d9703f962a9ed8e9804883a4814d1ebf2112e480b30d4eabfb"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "2cdc0ee28f1bbdf17e1e314ab018da19d60fc381b24b0ffa0e3a2cb48819f4cd",
+          "width_counts": {
+            "0": 0,
+            "2": 305,
+            "3": 86,
+            "4": 9,
+            "5": 0,
+            "6": 0
+          },
+          "seconds": 2.3654397000791505,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\ru_square_a4-0.03.l4hy"
+        },
+        {
+          "lambda": 0.1,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 82113,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 10208,
+          "file_bytes": 10228,
+          "quality": {
+            "ser_db": 22.151955183223002,
+            "rmse": 0.003875434041740118,
+            "stoi": 0.9066025728550681,
+            "spectral_rmse_db": 8.743116722711594,
+            "reference_rms": 0.04964986922659572,
+            "decoded_rms": 0.049700840703172926,
+            "clip_count": 0,
+            "pcm16_sha256": "5312370555ba258845413a4d6c1da3012314055aad0bb89ce7871de61f520463"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "77a0ef0e00665645e757412c8338b53ca25bacc8e0a231bfc7f8705285688098",
+          "width_counts": {
+            "0": 0,
+            "2": 353,
+            "3": 47,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "seconds": 2.4184741000644863,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\ru_square_a4-0.1.l4hy"
+        },
+        {
+          "lambda": 0.3,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 81347,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 10099,
+          "file_bytes": 10119,
+          "quality": {
+            "ser_db": 18.812865224986606,
+            "rmse": 0.005692130491601382,
+            "stoi": 0.8877236120224861,
+            "spectral_rmse_db": 9.754364738950752,
+            "reference_rms": 0.04964986922659572,
+            "decoded_rms": 0.049694699083684665,
+            "clip_count": 0,
+            "pcm16_sha256": "6ee18aeccdb1da50bd5f28b652ec7b08f8d5a1bfa9d147cca5b4d2435d18811b"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "59980e435faff443c66158903c401f5a8707c40640025e428da96fe29f8c1a25",
+          "width_counts": {
+            "0": 0,
+            "2": 384,
+            "3": 16,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "seconds": 2.4737338999984786,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\ru_square_a4-0.3.l4hy"
+        }
+      ],
+      "baseline": [
+        {
+          "ceiling_bps": 8000,
+          "LPX": {
+            "status": "no_fit"
+          }
+        },
+        {
+          "ceiling_bps": 12000,
+          "LPX": {
+            "status": "no_fit"
+          }
+        },
+        {
+          "ceiling_bps": 16000,
+          "LPX": {
+            "status": "ok",
+            "file_bytes": 7514,
+            "audio_packet_bytes": 7494,
+            "stream_sha256": "c7c14f686beb430a2fec0334dd5f4d972f2c76a71ab33193b878f7bd9a6fe3e0",
+            "metrics": {
+              "delay_samples": 0,
+              "delay_ms": 0.0,
+              "unaligned_pcm16": {
+                "samples": 32000,
+                "reference_energy": 84700517957.0,
+                "error_energy": 1893927225.0,
+                "ser_db": 16.50522779089628,
+                "ser_status": "finite",
+                "rmse_pcm16": 243.28013848493674,
+                "max_abs_error_pcm16": 1501,
+                "max_abs_error_percent_fs": 4.5806884765625,
+                "max_error_signed_pcm16": -1501,
+                "max_error_sample": 15893,
+                "max_error_seconds": 1.986625,
+                "stoi": 0.7740696954231946
+              },
+              "aligned_pcm16": {
+                "samples": 32000,
+                "reference_energy": 84700517957.0,
+                "error_energy": 1893927225.0,
+                "ser_db": 16.50522779089628,
+                "ser_status": "finite",
+                "rmse_pcm16": 243.28013848493674,
+                "max_abs_error_pcm16": 1501,
+                "max_abs_error_percent_fs": 4.5806884765625,
+                "max_error_signed_pcm16": -1501,
+                "max_error_sample": 15893,
+                "max_error_seconds": 1.986625,
+                "stoi": 0.7740696954231946
+              },
+              "aligned_pwm8": {
+                "samples": 32000,
+                "reference_energy": 84700517957.0,
+                "error_energy": 2107737669.0,
+                "ser_db": 16.04069508911065,
+                "ser_status": "finite",
+                "rmse_pcm16": 256.6452846951411,
+                "max_abs_error_pcm16": 1430,
+                "max_abs_error_percent_fs": 4.364013671875,
+                "max_error_signed_pcm16": -1430,
+                "max_error_sample": 18715,
+                "max_error_seconds": 2.339375,
+                "stoi": 0.7665664186449855
+              }
+            },
+            "selection": {
+              "profile": "flat",
+              "lambda": 0.03,
+              "preQ14": 0,
+              "bytes": 7755,
+              "v2_bytes": 7885,
+              "audio_packet_bytes": 7735
+            }
+          }
+        },
+        {
+          "ceiling_bps": 24000,
+          "LPX": {
+            "status": "ok",
+            "file_bytes": 11504,
+            "audio_packet_bytes": 11484,
+            "stream_sha256": "88a567384ceb234254e3da8cfac7d99072b5365ae9863e99f563680dbb685056",
+            "metrics": {
+              "delay_samples": 0,
+              "delay_ms": 0.0,
+              "unaligned_pcm16": {
+                "samples": 32000,
+                "reference_energy": 84700517957.0,
+                "error_energy": 88296065.0,
+                "ser_db": 29.819447168650232,
+                "ser_status": "finite",
+                "rmse_pcm16": 52.52858299297631,
+                "max_abs_error_pcm16": 837,
+                "max_abs_error_percent_fs": 2.5543212890625,
+                "max_error_signed_pcm16": -837,
+                "max_error_sample": 16334,
+                "max_error_seconds": 2.04175,
+                "stoi": 0.9642368456324723
+              },
+              "aligned_pcm16": {
+                "samples": 32000,
+                "reference_energy": 84700517957.0,
+                "error_energy": 88296065.0,
+                "ser_db": 29.819447168650232,
+                "ser_status": "finite",
+                "rmse_pcm16": 52.52858299297631,
+                "max_abs_error_pcm16": 837,
+                "max_abs_error_percent_fs": 2.5543212890625,
+                "max_error_signed_pcm16": -837,
+                "max_error_sample": 16334,
+                "max_error_seconds": 2.04175,
+                "stoi": 0.9642368456324723
+              },
+              "aligned_pwm8": {
+                "samples": 32000,
+                "reference_energy": 84700517957.0,
+                "error_energy": 270941765.0,
+                "ser_db": 24.950101105090038,
+                "ser_status": "finite",
+                "rmse_pcm16": 92.01592338421649,
+                "max_abs_error_pcm16": 934,
+                "max_abs_error_percent_fs": 2.850341796875,
+                "max_error_signed_pcm16": -934,
+                "max_error_sample": 16333,
+                "max_error_seconds": 2.041625,
+                "stoi": 0.9028145920684657
+              }
+            },
+            "selection": {
+              "profile": "legacy",
+              "lambda": 0.003,
+              "preQ14": 13926,
+              "bytes": 11520,
+              "v2_bytes": 11782,
+              "audio_packet_bytes": 11500
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "en_sense_a4",
+      "candidates": [
+        {
+          "lambda": 0.0,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 181180,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 22601,
+          "file_bytes": 22621,
+          "quality": {
+            "ser_db": 41.07773347187299,
+            "rmse": 0.0003966847909160514,
+            "stoi": 0.9993049436221176,
+            "spectral_rmse_db": 0.8789926495204515,
+            "reference_rms": 0.04490887991422982,
+            "decoded_rms": 0.044903947549346956,
+            "clip_count": 0,
+            "pcm16_sha256": "a30803e63c9607a217804a6161d1792b21434ec6dc7d35af0047965a7e2c2ee5"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "ef4309af5aa8599af793b70a988204dd9b4b42035bbd06509819c2469ba31e08",
+          "width_counts": {
+            "0": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 4,
+            "6": 396
+          },
+          "seconds": 3.2089596999576315,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\en_sense_a4-0.l4hy"
+        },
+        {
+          "lambda": 0.0003,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 118479,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 14810,
+          "file_bytes": 14830,
+          "quality": {
+            "ser_db": 36.865920893127566,
+            "rmse": 0.0006442229299319474,
+            "stoi": 0.9824579427532552,
+            "spectral_rmse_db": 2.01073222558117,
+            "reference_rms": 0.04490887991422982,
+            "decoded_rms": 0.044912965514271326,
+            "clip_count": 0,
+            "pcm16_sha256": "8d00e5c7931e2442e9ead83cddbe6402edca198ba1b39f48f775b6f0dedd174e"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "7d8732340bd4fd1aebdac98610db2021760b03f34701fd9db21f0ffde5f79ff0",
+          "width_counts": {
+            "0": 0,
+            "2": 7,
+            "3": 85,
+            "4": 122,
+            "5": 105,
+            "6": 81
+          },
+          "seconds": 4.076701599988155,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\en_sense_a4-0.0003.l4hy"
+        },
+        {
+          "lambda": 0.001,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 103291,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 12912,
+          "file_bytes": 12932,
+          "quality": {
+            "ser_db": 32.48501418143898,
+            "rmse": 0.0010667963331934232,
+            "stoi": 0.9632908823865736,
+            "spectral_rmse_db": 2.9962411326334384,
+            "reference_rms": 0.04490887991422982,
+            "decoded_rms": 0.04490974629103189,
+            "clip_count": 0,
+            "pcm16_sha256": "f47bed8986bb9cef7d835e273d0a2a091248b4ff93830e2525cb7834b8bd66ee"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "0afeaa7f9f8698ded8bd2829e208b8d0cda321ea77cba8941944c20cae5e92ac",
+          "width_counts": {
+            "0": 0,
+            "2": 45,
+            "3": 137,
+            "4": 121,
+            "5": 84,
+            "6": 13
+          },
+          "seconds": 4.516373599995859,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\en_sense_a4-0.001.l4hy"
+        },
+        {
+          "lambda": 0.003,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 93485,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 11686,
+          "file_bytes": 11706,
+          "quality": {
+            "ser_db": 28.816862847805673,
+            "rmse": 0.001627380399421772,
+            "stoi": 0.9402886764414341,
+            "spectral_rmse_db": 4.013819047582565,
+            "reference_rms": 0.04490887991422982,
+            "decoded_rms": 0.04491579922632334,
+            "clip_count": 0,
+            "pcm16_sha256": "20becbe3bd1f5b42e3dd7aee3fea2811a1b9ef3c4b5de36d1f5b36567dcd57b1"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "f8fdf0ffb683383090748d238e62596eada44e64c5e743f86e1af279d4e3965a",
+          "width_counts": {
+            "0": 0,
+            "2": 117,
+            "3": 149,
+            "4": 101,
+            "5": 33,
+            "6": 0
+          },
+          "seconds": 4.328399099991657,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\en_sense_a4-0.003.l4hy"
+        },
+        {
+          "lambda": 0.01,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 87084,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 10886,
+          "file_bytes": 10906,
+          "quality": {
+            "ser_db": 25.380140914965462,
+            "rmse": 0.002417270085706171,
+            "stoi": 0.9199275682316898,
+            "spectral_rmse_db": 5.156228657301974,
+            "reference_rms": 0.04490887991422982,
+            "decoded_rms": 0.04493946893968527,
+            "clip_count": 0,
+            "pcm16_sha256": "0e20f5dcbe1f4939b6811200f580b270683484ccb34358039d3fc1e6b7bd878c"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "29dca156713dcf9d896173a330eef55e4365d39732b9334bef2de5d6e9ac22c0",
+          "width_counts": {
+            "0": 0,
+            "2": 163,
+            "3": 167,
+            "4": 68,
+            "5": 2,
+            "6": 0
+          },
+          "seconds": 4.233416200033389,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\en_sense_a4-0.01.l4hy"
+        },
+        {
+          "lambda": 0.03,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 81849,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 10232,
+          "file_bytes": 10252,
+          "quality": {
+            "ser_db": 21.769771314543082,
+            "rmse": 0.00366305683913098,
+            "stoi": 0.8668179617349534,
+            "spectral_rmse_db": 6.640658617173728,
+            "reference_rms": 0.04490887991422982,
+            "decoded_rms": 0.04495691006499159,
+            "clip_count": 0,
+            "pcm16_sha256": "ec7b74b2e541fb4c4e93a84a0c51de39cfbc970caeb940bf9261baa80ee37411"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "1aa004b5d053b672a3346342b8040b1b52a81f205b02adcf182b5d77615c810d",
+          "width_counts": {
+            "0": 0,
+            "2": 276,
+            "3": 108,
+            "4": 16,
+            "5": 0,
+            "6": 0
+          },
+          "seconds": 4.350890600006096,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\en_sense_a4-0.03.l4hy"
+        },
+        {
+          "lambda": 0.1,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 79057,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 9858,
+          "file_bytes": 9878,
+          "quality": {
+            "ser_db": 17.963343639000225,
+            "rmse": 0.005677603257292145,
+            "stoi": 0.8227254089581554,
+            "spectral_rmse_db": 7.7393596918435215,
+            "reference_rms": 0.04490887991422982,
+            "decoded_rms": 0.0449291976462212,
+            "clip_count": 0,
+            "pcm16_sha256": "beed8cc0131c19c2f5705b5e0e30450314a302c7319585193fa6dcf8e9007843"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "a9cadc892572b8e22937d235680115bff1a8130c6ce57c0e437251f95138ca7c",
+          "width_counts": {
+            "0": 0,
+            "2": 358,
+            "3": 41,
+            "4": 1,
+            "5": 0,
+            "6": 0
+          },
+          "seconds": 4.4800737999612466,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\en_sense_a4-0.1.l4hy"
+        },
+        {
+          "lambda": 0.3,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 77923,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 9717,
+          "file_bytes": 9737,
+          "quality": {
+            "ser_db": 15.395795522210909,
+            "rmse": 0.0076303146494111,
+            "stoi": 0.8170097188226683,
+            "spectral_rmse_db": 8.746703392228307,
+            "reference_rms": 0.04490887991422982,
+            "decoded_rms": 0.04532227449672861,
+            "clip_count": 0,
+            "pcm16_sha256": "849100bdf849ff3cc611b4695057a464953e922f5ab84b9fffce422ba98bea04"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "b377b0ab424145fa0fde94a34e2c5a756275659ad34433ca46315dcb2da6157b",
+          "width_counts": {
+            "0": 0,
+            "2": 384,
+            "3": 16,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "seconds": 4.738525400054641,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\en_sense_a4-0.3.l4hy"
+        }
+      ],
+      "baseline": [
+        {
+          "ceiling_bps": 8000,
+          "LPX": {
+            "status": "no_fit"
+          }
+        },
+        {
+          "ceiling_bps": 12000,
+          "LPX": {
+            "status": "no_fit"
+          }
+        },
+        {
+          "ceiling_bps": 16000,
+          "LPX": {
+            "status": "ok",
+            "file_bytes": 5750,
+            "audio_packet_bytes": 5730,
+            "stream_sha256": "45113817c828e7d196837b592e4f4987021bceeb5b1c999b61aa7ec31751ce1e",
+            "metrics": {
+              "delay_samples": 0,
+              "delay_ms": 0.0,
+              "unaligned_pcm16": {
+                "samples": 32000,
+                "reference_energy": 69296977872.0,
+                "error_energy": 1642747432.0,
+                "ser_db": 16.251434979396592,
+                "ser_status": "finite",
+                "rmse_pcm16": 226.5741760439614,
+                "max_abs_error_pcm16": 3836,
+                "max_abs_error_percent_fs": 11.70654296875,
+                "max_error_signed_pcm16": -3836,
+                "max_error_sample": 31439,
+                "max_error_seconds": 3.929875,
+                "stoi": 0.7171566835571852
+              },
+              "aligned_pcm16": {
+                "samples": 32000,
+                "reference_energy": 69296977872.0,
+                "error_energy": 1642747432.0,
+                "ser_db": 16.251434979396592,
+                "ser_status": "finite",
+                "rmse_pcm16": 226.5741760439614,
+                "max_abs_error_pcm16": 3836,
+                "max_abs_error_percent_fs": 11.70654296875,
+                "max_error_signed_pcm16": -3836,
+                "max_error_sample": 31439,
+                "max_error_seconds": 3.929875,
+                "stoi": 0.7171566835571852
+              },
+              "aligned_pwm8": {
+                "samples": 32000,
+                "reference_energy": 69296977872.0,
+                "error_energy": 1840864720.0,
+                "ser_db": 15.756924203087516,
+                "ser_status": "finite",
+                "rmse_pcm16": 239.84791535470973,
+                "max_abs_error_pcm16": 3624,
+                "max_abs_error_percent_fs": 11.0595703125,
+                "max_error_signed_pcm16": -3624,
+                "max_error_sample": 31439,
+                "max_error_seconds": 3.929875,
+                "stoi": 0.7190692672191884
+              }
+            },
+            "selection": {
+              "profile": "flat",
+              "lambda": 0.03,
+              "preQ14": 0,
+              "bytes": 7442,
+              "v2_bytes": 8072,
+              "audio_packet_bytes": 7422
+            }
+          }
+        },
+        {
+          "ceiling_bps": 24000,
+          "LPX": {
+            "status": "ok",
+            "file_bytes": 11618,
+            "audio_packet_bytes": 11598,
+            "stream_sha256": "490c12cf1a74a3e538a2f68052cd64cc582382850f60beb6d18e4f653ddd2a48",
+            "metrics": {
+              "delay_samples": 0,
+              "delay_ms": 0.0,
+              "unaligned_pcm16": {
+                "samples": 32000,
+                "reference_energy": 69296977872.0,
+                "error_energy": 154467984.0,
+                "ser_db": 26.51875816399679,
+                "ser_status": "finite",
+                "rmse_pcm16": 69.47751074988223,
+                "max_abs_error_pcm16": 1320,
+                "max_abs_error_percent_fs": 4.0283203125,
+                "max_error_signed_pcm16": 1320,
+                "max_error_sample": 28337,
+                "max_error_seconds": 3.542125,
+                "stoi": 0.9330835450470599
+              },
+              "aligned_pcm16": {
+                "samples": 32000,
+                "reference_energy": 69296977872.0,
+                "error_energy": 154467984.0,
+                "ser_db": 26.51875816399679,
+                "ser_status": "finite",
+                "rmse_pcm16": 69.47751074988223,
+                "max_abs_error_pcm16": 1320,
+                "max_abs_error_percent_fs": 4.0283203125,
+                "max_error_signed_pcm16": 1320,
+                "max_error_sample": 28337,
+                "max_error_seconds": 3.542125,
+                "stoi": 0.9330835450470599
+              },
+              "aligned_pwm8": {
+                "samples": 32000,
+                "reference_energy": 69296977872.0,
+                "error_energy": 345810896.0,
+                "ser_db": 23.018756217554788,
+                "ser_status": "finite",
+                "rmse_pcm16": 103.95475217612709,
+                "max_abs_error_pcm16": 1510,
+                "max_abs_error_percent_fs": 4.608154296875,
+                "max_error_signed_pcm16": 1510,
+                "max_error_sample": 28337,
+                "max_error_seconds": 3.542125,
+                "stoi": 0.7946298099076724
+              }
+            },
+            "selection": {
+              "profile": "legacy",
+              "lambda": 0.003,
+              "preQ14": 13926,
+              "bytes": 11701,
+              "v2_bytes": 11756,
+              "audio_packet_bytes": 11681
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "en_portrait_a4",
+      "candidates": [
+        {
+          "lambda": 0.0,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 193321,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 23993,
+          "file_bytes": 24013,
+          "quality": {
+            "ser_db": 45.16021265015805,
+            "rmse": 8.917763607616509e-05,
+            "stoi": 0.9994461067808151,
+            "spectral_rmse_db": 0.4410167937595577,
+            "reference_rms": 0.0161534982281886,
+            "decoded_rms": 0.01615293369475704,
+            "clip_count": 0,
+            "pcm16_sha256": "ce7d922c05e4809c50fddf4903040b4ad07574f7cdab713ddcc9be4a62173c52"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "e2a4dba944c2a4feda1e3b7a44d8d0dbd5ea8991775bea4e36e7dc1156ade7f0",
+          "width_counts": {
+            "0": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 7,
+            "6": 393
+          },
+          "seconds": 4.326395499985665,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\en_portrait_a4-0.l4hy"
+        },
+        {
+          "lambda": 0.0003,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 114985,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 14259,
+          "file_bytes": 14279,
+          "quality": {
+            "ser_db": 33.84730872577651,
+            "rmse": 0.00032802062524579914,
+            "stoi": 0.9849192055768546,
+            "spectral_rmse_db": 1.7235174543452343,
+            "reference_rms": 0.0161534982281886,
+            "decoded_rms": 0.016156135013814913,
+            "clip_count": 0,
+            "pcm16_sha256": "fbdf19735ff629317b80efa61185c4118b12d2ef1f2a734ed2e5ddfd87c93938"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "d2d0dd6e9fe4e0e254ee476c45fdbd0d8fe05b5ccd8074f58f73507e80d077f8",
+          "width_counts": {
+            "0": 0,
+            "2": 69,
+            "3": 86,
+            "4": 131,
+            "5": 94,
+            "6": 20
+          },
+          "seconds": 4.839852799894288,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\en_portrait_a4-0.0003.l4hy"
+        },
+        {
+          "lambda": 0.001,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 100376,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 12410,
+          "file_bytes": 12430,
+          "quality": {
+            "ser_db": 29.820143618392947,
+            "rmse": 0.000521506117740724,
+            "stoi": 0.975232890219981,
+            "spectral_rmse_db": 2.6495275193964067,
+            "reference_rms": 0.0161534982281886,
+            "decoded_rms": 0.016162920986207592,
+            "clip_count": 0,
+            "pcm16_sha256": "1fdb81369efd0c18e80c9a6ab7a223fa07dd550e76569f4f31f6c1bbd95f4a43"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "4d37327ecaa19791b1415d0e662c2ee247c478936175c16c331fd3c9bdb82dd2",
+          "width_counts": {
+            "0": 0,
+            "2": 133,
+            "3": 120,
+            "4": 113,
+            "5": 30,
+            "6": 4
+          },
+          "seconds": 3.871013200026937,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\en_portrait_a4-0.001.l4hy"
+        },
+        {
+          "lambda": 0.003,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 93220,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 11599,
+          "file_bytes": 11619,
+          "quality": {
+            "ser_db": 26.831489380749296,
+            "rmse": 0.0007356853694751544,
+            "stoi": 0.9628299711614293,
+            "spectral_rmse_db": 3.5470533019702333,
+            "reference_rms": 0.0161534982281886,
+            "decoded_rms": 0.016164051915894036,
+            "clip_count": 0,
+            "pcm16_sha256": "00d5ae7415bd58529b2eab415d8139bd40eb8e99f97708613e384e560f1ccdaa"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "829093fad46a11e480e7e791836f26bce58c8d689fd3c83ae90f7a7ed8593465",
+          "width_counts": {
+            "0": 0,
+            "2": 162,
+            "3": 160,
+            "4": 71,
+            "5": 7,
+            "6": 0
+          },
+          "seconds": 4.063315299921669,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\en_portrait_a4-0.003.l4hy"
+        },
+        {
+          "lambda": 0.01,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 86569,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 10793,
+          "file_bytes": 10813,
+          "quality": {
+            "ser_db": 22.976983326340957,
+            "rmse": 0.0011466144802925154,
+            "stoi": 0.9315559630193705,
+            "spectral_rmse_db": 5.031268063951048,
+            "reference_rms": 0.0161534982281886,
+            "decoded_rms": 0.016172732941472524,
+            "clip_count": 0,
+            "pcm16_sha256": "af0ba39d7a5582cd9ed42af44c56b539b74ce189d091d9afb6ea3d1f2337742e"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "7bb210587229eff310f0e8796b2bfb152b8e71cf1030f048161a018e9b7e821b",
+          "width_counts": {
+            "0": 0,
+            "2": 236,
+            "3": 141,
+            "4": 23,
+            "5": 0,
+            "6": 0
+          },
+          "seconds": 4.36052619991824,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\en_portrait_a4-0.01.l4hy"
+        },
+        {
+          "lambda": 0.03,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 83398,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 10337,
+          "file_bytes": 10357,
+          "quality": {
+            "ser_db": 20.207297754700242,
+            "rmse": 0.0015772542294283044,
+            "stoi": 0.9058977682069136,
+            "spectral_rmse_db": 6.348046714648385,
+            "reference_rms": 0.0161534982281886,
+            "decoded_rms": 0.016167257964064624,
+            "clip_count": 0,
+            "pcm16_sha256": "9b1dfdf0baa72495f507dbc4b925edc10c6ded13a5e5f2ede5b923fb5ab42d31"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "4f140ca6135e8855f1ba3f1a79641d6711e27943419fa3b24172a131f11ed9e5",
+          "width_counts": {
+            "0": 0,
+            "2": 323,
+            "3": 72,
+            "4": 5,
+            "5": 0,
+            "6": 0
+          },
+          "seconds": 3.9025343999965116,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\en_portrait_a4-0.03.l4hy"
+        },
+        {
+          "lambda": 0.1,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 81941,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 10141,
+          "file_bytes": 10161,
+          "quality": {
+            "ser_db": 18.027074505497577,
+            "rmse": 0.0020272759258427057,
+            "stoi": 0.8806354347470615,
+            "spectral_rmse_db": 7.320232556850254,
+            "reference_rms": 0.0161534982281886,
+            "decoded_rms": 0.01619267908699739,
+            "clip_count": 0,
+            "pcm16_sha256": "d8756b21c0456aaa7a66096f908e66fd58fc47042c10587b60ba3ca0f77a5f0a"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "9d86fc2f91062c718916a191572318a474c19f037844e33c6d6b6aefb89a7e1a",
+          "width_counts": {
+            "0": 0,
+            "2": 371,
+            "3": 29,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "seconds": 4.071345699951053,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\en_portrait_a4-0.1.l4hy"
+        },
+        {
+          "lambda": 0.3,
+          "allow_zero": false,
+          "compact_features": 24,
+          "v2_payload_bits": 81024,
+          "local_cost_exact_for_selected_v2_codes": true,
+          "audio_packet_bytes": 10041,
+          "file_bytes": 10061,
+          "quality": {
+            "ser_db": 14.881145474714758,
+            "rmse": 0.0029121203193276605,
+            "stoi": 0.873723678667926,
+            "spectral_rmse_db": 8.489049264301594,
+            "reference_rms": 0.0161534982281886,
+            "decoded_rms": 0.01632657087110371,
+            "clip_count": 0,
+            "pcm16_sha256": "ae2ca1f7f3e227da92f200b86e999a0c94c8bce3b65f8ef29254df26aadd5c99"
+          },
+          "native_model_pcm_exact": true,
+          "stream_sha256": "cfe2801a49f14fd08ce503fab1763e0e52372cdad8feca7bee628f0441cc720a",
+          "width_counts": {
+            "0": 0,
+            "2": 384,
+            "3": 16,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "seconds": 4.158517900039442,
+          "decoder_modified": false,
+          "avr_cycles_measured": false,
+          "path": "build\\lpx-lowrate\\pilot1\\en_portrait_a4-0.3.l4hy"
+        }
+      ],
+      "baseline": [
+        {
+          "ceiling_bps": 8000,
+          "LPX": {
+            "status": "no_fit"
+          }
+        },
+        {
+          "ceiling_bps": 12000,
+          "LPX": {
+            "status": "no_fit"
+          }
+        },
+        {
+          "ceiling_bps": 16000,
+          "LPX": {
+            "status": "ok",
+            "file_bytes": 7574,
+            "audio_packet_bytes": 7554,
+            "stream_sha256": "21a61e067a485fdf69a4b640b2a1a314c9965963696497d105e7dc8ceeb90520",
+            "metrics": {
+              "delay_samples": 0,
+              "delay_ms": 0.0,
+              "unaligned_pcm16": {
+                "samples": 32000,
+                "reference_energy": 8965675683.0,
+                "error_energy": 916456259.0,
+                "ser_db": 9.904712833936262,
+                "ser_status": "finite",
+                "rmse_pcm16": 169.23137443674563,
+                "max_abs_error_pcm16": 1275,
+                "max_abs_error_percent_fs": 3.8909912109375,
+                "max_error_signed_pcm16": -1275,
+                "max_error_sample": 13011,
+                "max_error_seconds": 1.626375,
+                "stoi": 0.7745885885410089
+              },
+              "aligned_pcm16": {
+                "samples": 32000,
+                "reference_energy": 8965675683.0,
+                "error_energy": 916456259.0,
+                "ser_db": 9.904712833936262,
+                "ser_status": "finite",
+                "rmse_pcm16": 169.23137443674563,
+                "max_abs_error_pcm16": 1275,
+                "max_abs_error_percent_fs": 3.8909912109375,
+                "max_error_signed_pcm16": -1275,
+                "max_error_sample": 13011,
+                "max_error_seconds": 1.626375,
+                "stoi": 0.7745885885410089
+              },
+              "aligned_pwm8": {
+                "samples": 32000,
+                "reference_energy": 8965675683.0,
+                "error_energy": 1085562531.0,
+                "ser_db": 9.169281800888724,
+                "ser_status": "finite",
+                "rmse_pcm16": 184.18422596343586,
+                "max_abs_error_pcm16": 1361,
+                "max_abs_error_percent_fs": 4.1534423828125,
+                "max_error_signed_pcm16": -1361,
+                "max_error_sample": 13011,
+                "max_error_seconds": 1.626375,
+                "stoi": 0.7649136970553505
+              }
+            },
+            "selection": {
+              "profile": "flat",
+              "lambda": 0.1,
+              "preQ14": 0,
+              "bytes": 7786,
+              "v2_bytes": 7804,
+              "audio_packet_bytes": 7766
+            }
+          }
+        },
+        {
+          "ceiling_bps": 24000,
+          "LPX": {
+            "status": "ok",
+            "file_bytes": 11585,
+            "audio_packet_bytes": 11565,
+            "stream_sha256": "23c4690acade02a67b5f92a260b255eba780d274a6a9a35960f6ea5fb0de2bf3",
+            "metrics": {
+              "delay_samples": 0,
+              "delay_ms": 0.0,
+              "unaligned_pcm16": {
+                "samples": 32000,
+                "reference_energy": 8965675683.0,
+                "error_energy": 22299331.0,
+                "ser_db": 26.042911909831837,
+                "ser_status": "finite",
+                "rmse_pcm16": 26.397994123607194,
+                "max_abs_error_pcm16": 282,
+                "max_abs_error_percent_fs": 0.860595703125,
+                "max_error_signed_pcm16": 282,
+                "max_error_sample": 18376,
+                "max_error_seconds": 2.297,
+                "stoi": 0.9560789832613622
+              },
+              "aligned_pcm16": {
+                "samples": 32000,
+                "reference_energy": 8965675683.0,
+                "error_energy": 22299331.0,
+                "ser_db": 26.042911909831837,
+                "ser_status": "finite",
+                "rmse_pcm16": 26.397994123607194,
+                "max_abs_error_pcm16": 282,
+                "max_abs_error_percent_fs": 0.860595703125,
+                "max_error_signed_pcm16": 282,
+                "max_error_sample": 18376,
+                "max_error_seconds": 2.297,
+                "stoi": 0.9560789832613622
+              },
+              "aligned_pwm8": {
+                "samples": 32000,
+                "reference_energy": 8965675683.0,
+                "error_energy": 200567971.0,
+                "ser_db": 16.503214439170396,
+                "ser_status": "finite",
+                "rmse_pcm16": 79.16911704541108,
+                "max_abs_error_pcm16": 342,
+                "max_abs_error_percent_fs": 1.043701171875,
+                "max_error_signed_pcm16": -342,
+                "max_error_sample": 29248,
+                "max_error_seconds": 3.656,
+                "stoi": 0.8552915834262774
+              }
+            },
+            "selection": {
+              "profile": "legacy",
+              "lambda": 0.003,
+              "preQ14": 13926,
+              "bytes": 11577,
+              "v2_bytes": 11910,
+              "audio_packet_bytes": 11557
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "conclusion": "Real-bit scoring alone, using the unchanged dense-LSF 24k seed, did not produce a 16k fit on these four clips. Dense LSF is about 15804..16163 bits per four seconds; the target-budget stage will also explore existing repeated-LSF syntax. No gain is claimed for this pilot.",
+  "source_sha256": {
+    "rate_distortion.py": "4829732474eaeaa834f670f77a16918fed9f4a6043e5aeb7489a1351272fc40f",
+    "test_rate_distortion.py": "8e72fc57c14a7a444a4c800c6d285e99db052104f1a22c66dd9a3ad0d60527bd"
+  }
+}
