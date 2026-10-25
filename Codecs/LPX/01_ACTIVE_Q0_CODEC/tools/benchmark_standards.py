@@ -6,6 +6,7 @@ without delay compensation, before and after common 8-bit PWM conversion.
 All audio/build files must be kept in ignored or external output directories.
 """
 import argparse
+from functools import lru_cache
 import hashlib
 import json
 from pathlib import Path
@@ -34,9 +35,38 @@ STANDARD=('opus_audio','opus_voip','vorbis','speex_abr')
 def sha(blob):return hashlib.sha256(blob).hexdigest()
 
 
+def file_sha(path):
+    h=hashlib.sha256()
+    with Path(path).open('rb') as stream:
+        for block in iter(lambda:stream.read(1024*1024),b''):h.update(block)
+    return h.hexdigest()
+
+
+@lru_cache(None)
+def encoder_revision():return file_sha(shutil.which('ffmpeg'))
+
+
+@lru_cache(None)
+def lpx_revision():
+    root=Path(__file__).resolve().parents[1]
+    files=list((root/'src').glob('*.h'))+list((root/'src').glob('*.cpp'))+list((root/'src').glob('*.inc'))
+    names=('wav_to_lpx4','wav_lpc','lpx4','fast_lpx4','q0_model','optimize_q0',
+           'beam_excitation_pcm16','global_rate_pcm16','refine_lsf_pcm16','refine_excitation_pcm16',
+           'tune_pcm16','lossless_repack','compact_format')
+    files.extend(root/'tools'/(name+'.py') for name in names)
+    return sha(b''.join(p.read_bytes() for p in sorted(files))+repr((LAMBDAS,SEARCH,'zero-scale-exact-compact24-v1')).encode())
+
+
+def cached_json(path):
+    try:return json.loads(Path(path).read_text(encoding='utf-8'))
+    except (FileNotFoundError,json.JSONDecodeError):return None
+
+
 def save(path,data):
     path=Path(path);path.parent.mkdir(parents=True,exist_ok=True)
-    path.write_bytes((json.dumps(data,ensure_ascii=False,indent=2,allow_nan=False)+'\n').encode())
+    temporary=path.with_name(path.name+'.writing')
+    temporary.write_bytes((json.dumps(data,ensure_ascii=False,indent=2,allow_nan=False)+'\n').encode())
+    temporary.replace(path)
 
 
 def prepare(corpus,music_sources,output):
@@ -99,9 +129,9 @@ def compact(v2):
 def lpx_pool(reference,folder,decoder,kind):
     folder=Path(folder);folder.mkdir(parents=True,exist_ok=True)
     manifest=folder/'pool.json'
-    if manifest.exists():
-        data=json.loads(manifest.read_text(encoding='utf-8'))
-        if data['reference_sha256']!=sha(reference.astype('<i2').tobytes()):raise ValueError('Stale LPX pool')
+    fingerprint=sha(reference.astype('<i2').tobytes()+lpx_revision().encode()+kind.encode())
+    data=cached_json(manifest)
+    if data and data.get('fingerprint')==fingerprint:
         return data
     captured=[];started=time.perf_counter()
     _,_,generation=encode_segment(reference,decoder,max_bytes=65535,lambdas=LAMBDAS,kind=kind,
@@ -117,7 +147,7 @@ def lpx_pool(reference,folder,decoder,kind):
             'zero_blocks':zeros,'scales':scales,'packing':packing,**metadata})
         # Avoid a pre-repack metadata byte count overwriting actual sizes.
         records[-1].update(v2_bytes=len(blob),bytes=len(result),audio_packet_bytes=len(result)-20)
-    data={'reference_sha256':sha(reference.astype('<i2').tobytes()),'lambdas':LAMBDAS,
+    data={'fingerprint':fingerprint,'reference_sha256':sha(reference.astype('<i2').tobytes()),'lambdas':LAMBDAS,
           'analysis':generation['analysis'],'candidates':records,'seconds':time.perf_counter()-started}
     save(manifest,data);return data
 
@@ -135,11 +165,13 @@ def select_lpx(pool,cap):
 def encode_lpx(reference,folder,decoder,kind,cap):
     folder=Path(folder);folder.mkdir(parents=True,exist_ok=True)
     cache=folder/'result.json'
-    if cache.exists():return json.loads(cache.read_text(encoding='utf-8'))
+    fingerprint=sha(reference.astype('<i2').tobytes()+repr((lpx_revision(),cap,kind)).encode())
+    previous=cached_json(cache)
+    if previous and previous.get('fingerprint')==fingerprint:return previous
     pool_folder=folder.parent/'lpx-pool';pool=lpx_pool(reference,pool_folder,decoder,kind)
     choice=select_lpx(pool,cap)
     if choice is None:
-        result={'status':'no_fit','cap_audio_bytes':cap,
+        result={'status':'no_fit','fingerprint':fingerprint,'cap_audio_bytes':cap,
                 'minimum_candidate_audio_bytes':min(r['audio_packet_bytes'] for r in pool['candidates'])}
         save(cache,result);return result
     source=(pool_folder/choice['file']).read_bytes();baseline=source
@@ -159,7 +191,7 @@ def encode_lpx(reference,folder,decoder,kind,cap):
     if not np.array_equal(pwm_duties(pcm),decoder.decode_one(blob,len(reference))):raise AssertionError('Common PWM differs from LPX')
     path=folder/'selected.l4hy';path.write_bytes(blob)
     sf.write(folder/'decoded.wav',pcm,8000,subtype='PCM_16')
-    result={'status':'ok','path':str(path),'cap_audio_bytes':cap,
+    result={'status':'ok','fingerprint':fingerprint,'path':str(path),'cap_audio_bytes':cap,
         'file_bytes':len(blob),'audio_packet_bytes':len(blob)-20,'codec_setup_bytes':20,
         'comment_bytes':0,'container_overhead_bytes':0,'version':blob[4],
         'input_sha256':sha(reference.astype('<i2').tobytes()),'stream_sha256':sha(blob),
@@ -173,7 +205,6 @@ def encode_lpx(reference,folder,decoder,kind,cap):
 def external_encoder(reference_path,folder,codec,bitrate):
     folder=Path(folder);folder.mkdir(parents=True,exist_ok=True)
     path=folder/f'{codec}-{bitrate}.ogg';record=path.with_suffix('.json')
-    if record.exists():return json.loads(record.read_text(encoding='utf-8'))
     library={'opus_audio':'libopus','opus_voip':'libopus','vorbis':'libvorbis','speex_abr':'libspeex','speex_cbr':'libspeex'}[codec]
     options=[]
     if codec.startswith('opus'):
@@ -182,8 +213,12 @@ def external_encoder(reference_path,folder,codec,bitrate):
         options=['-compression_level','10','-abr','1' if codec=='speex_abr' else '0','-vad','0','-dtx','0','-frames_per_packet','1']
     cmd=['ffmpeg','-nostdin','-y','-v','error','-i',str(reference_path),'-map_metadata','-1',
          '-ac','1','-ar','8000','-c:a',library,'-b:a',str(bitrate),*options,'-fflags','+bitexact',str(path)]
+    fingerprint=sha((encoder_revision()+file_sha(reference_path)+repr(cmd[:-1])).encode())
+    previous=cached_json(record)
+    if previous and previous.get('fingerprint')==fingerprint:
+        if previous['status']!='ok' or (path.exists() and file_sha(path)==previous['stream_sha256']):return previous
     started=time.perf_counter();p=subprocess.run(cmd,capture_output=True)
-    result={'requested_bitrate':bitrate,'command':cmd,'seconds':time.perf_counter()-started}
+    result={'fingerprint':fingerprint,'requested_bitrate':bitrate,'command':cmd,'seconds':time.perf_counter()-started}
     if p.returncode:result.update(status='encoder_error',error=p.stderr.decode(errors='replace')[-800:])
     else:result.update(status='ok',path=str(path),stream_sha256=sha(path.read_bytes()),**ogg_accounting(path.read_bytes()))
     save(record,result);return result
@@ -223,20 +258,28 @@ def score_external(reference,item,kind,output):
             'decoder_command':cmd,'decoder_warnings':decoded.stderr.decode(errors='replace')}
 
 
-def run(corpus,output,report_path,ids=None):
+def run(corpus,output,report_path,ids=None,shard=0,shards=1):
+    if not 0<=shard<shards:raise ValueError('Invalid shard')
     corpus,output,report_path=Path(corpus),Path(output),Path(report_path)
     manifest=json.loads((corpus/'corpus.json').read_text(encoding='utf-8'))
     selected=[c for c in manifest['cases'] if ids is None or c['id'] in ids]
+    selected=[c for i,c in enumerate(selected) if i%shards==shard]
     report={'protocol':'PROTOCOL.md; common mono PCM16 8kHz; actual audio-packet ceilings and separate complete-file ceilings',
             'rates':RATES,'lambdas':LAMBDAS,'search':SEARCH,'sources':manifest['sources'],
             'ffmpeg':subprocess.check_output(['ffmpeg','-version'],text=True).splitlines()[0],
+            'ffmpeg_sha256':encoder_revision(),'lpx_revision':lpx_revision(),'shard':shard,'shards':shards,
             'cases':[],'physical_hardware_measured':False,'subjective_listening_scores_collected':False}
     with BatchSession('batch',v3_features=124) as decoder:
         for case in selected:
             key=case['id'];folder=output/key;folder.mkdir(parents=True,exist_ok=True)
             reference=load_wav(corpus/key/'reference.wav')[0]
             if sha(reference.astype('<i2').tobytes())!=case['reference_sha256']:raise ValueError('Reference hash changed')
+            fingerprint=sha((case['reference_sha256']+file_sha(__file__)+lpx_revision()+encoder_revision()).encode())
+            completed=cached_json(folder/'complete.json')
+            if completed and completed.get('fingerprint')==fingerprint:
+                report['cases'].append(completed);save(report_path,report);continue
             item={**case,'rates':[],'matched_file':{},'speex_cbr_points':[]}
+            item['fingerprint']=fingerprint
             for rate in RATES:
                 cap=int(rate*len(reference)/8000/8)
                 rate_folder=folder/str(rate);rate_folder.mkdir(exist_ok=True)
@@ -261,6 +304,7 @@ def run(corpus,output,report_path,ids=None):
                     fit=fit_external(corpus/key/'encoder-tail.wav',folder/'external',codec,high['file_bytes'],'file_bytes')
                     item['matched_file'][codec]=score_external(reference,fit,case['kind'],folder/(codec+'-matched-file.wav'))
             report['cases']=[c for c in report['cases'] if c['id']!=key]+[item];save(report_path,report)
+            save(folder/'complete.json',item)
     return report
 
 
@@ -270,6 +314,7 @@ if __name__=='__main__':
     p=sub.add_parser('prepare');p.add_argument('corpus',type=Path);p.add_argument('music_sources',type=Path);p.add_argument('output',type=Path)
     p=sub.add_parser('run');p.add_argument('corpus',type=Path);p.add_argument('output',type=Path);p.add_argument('report',type=Path)
     p.add_argument('--ids',nargs='+')
+    p.add_argument('--shard',type=int,default=0);p.add_argument('--shards',type=int,default=1)
     a=ap.parse_args()
     if a.mode=='prepare':prepare(a.corpus,a.music_sources,a.output)
-    else:run(a.corpus,a.output,a.report,a.ids)
+    else:run(a.corpus,a.output,a.report,a.ids,a.shard,a.shards)
