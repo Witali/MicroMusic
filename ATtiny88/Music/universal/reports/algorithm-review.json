@@ -1,0 +1,1807 @@
+{
+  "schema": "micromusic-um88-algorithm-review",
+  "version": 1,
+  "baselineCommit": "0c306b1",
+  "hardwareTested": false,
+  "productionFirmwareChanged": false,
+  "cases": [
+    {
+      "candidate": "baseline",
+      "verification": {
+        "variant": "dense-eight-review",
+        "cpuHz": 8000000,
+        "backend": "avr-asm",
+        "engineSha256": "cb5564dd5fcad2a8dad33bb09f2f30fe1aeb5d585c912c6acab43fa6df2240bb",
+        "flashSha256": "cddb63b989c96961cdade91aae4304fa4110f3b3ee961b2ea7fb7432399ca630",
+        "eepromSha256": "4a5c1192902f7a582634ada90a1d4db0cb9d65ffb8c2a6c24fa04a6009d74d65",
+        "scoreSha256": "4f62faba097394a6166eac2e41a89723fee0ebb9c435072ef095fbeb8c7df6a4",
+        "reference": "Independent uncompressed UM88 JSON, exact tonal/percussion/interpolation arithmetic",
+        "passed": true,
+        "simulatedSeconds": 0.6883705,
+        "controlFrames": 48,
+        "completeLoops": 1,
+        "samples": 5334,
+        "observedIRQs": 21425,
+        "checkedIRQOutputs": 21425,
+        "checkedGeneratedFrames": 21336,
+        "checkedPhases": 85344,
+        "checkedWaveSamples": 6528,
+        "pwmBufferLayout": "mono",
+        "fifoCapacityFrames": 192,
+        "minimumQueuedFrames": 94,
+        "maxRenderActiveCycles": 339,
+        "maxControlActiveCycles": 19246,
+        "controlCalls": 50,
+        "maxISRCycles": 47,
+        "fifoUnderruns": 0,
+        "lostInterrupts": 0,
+        "minimumStackPointer": 731,
+        "stackBytes": 36,
+        "staticStateEnd": 500,
+        "fifoEnd": 704,
+        "stackMarginBytes": 27,
+        "allControlFramesMatch": true,
+        "allTonalMixesMatch": true,
+        "allPwmFramesMatch": true,
+        "allPercussionStatesMatch": true,
+        "clippedChannelSamples": 0,
+        "peakTonalMix": 118,
+        "monoMeanPwm": 109.87232845894263,
+        "monoRmsPwm": 35.28609037536254,
+        "hardwareTested": false,
+        "wallSeconds": 1.1515307
+      },
+      "profile": {
+        "schema": "micromusic-um88-cycle-profile",
+        "version": 1,
+        "variant": "dense-eight-review",
+        "cpuHz": 8000000,
+        "flashSha256": "cddb63b989c96961cdade91aae4304fa4110f3b3ee961b2ea7fb7432399ca630",
+        "engineSha256": "cb5564dd5fcad2a8dad33bb09f2f30fe1aeb5d585c912c6acab43fa6df2240bb",
+        "engineBytes": 2676,
+        "samples": 5334,
+        "profileSeconds": 0.68558125,
+        "hardwareTested": false,
+        "method": "AVR instruction stepping with IRQ active; exclusive function cycles; IRQ entry attributed separately; rejected FIFO polls separated",
+        "measuredCycles": 5484650,
+        "busyCyclesPerSample": 924.9962504686914,
+        "idlePercent": 10.04111474752263,
+        "exclusive": {
+          "um_render": {
+            "cycles": 1808226,
+            "perSample": 339,
+            "percent": 32.968849425214,
+            "calls": 5334
+          },
+          "PWM_IRQ": {
+            "cycles": 1006928,
+            "perSample": 188.77540307461567,
+            "percent": 18.35902017448698,
+            "calls": 0
+          },
+          "main": {
+            "cycles": 1031781,
+            "perSample": 193.43475815523058,
+            "percent": 18.812157567027977,
+            "calls": 0
+          },
+          "um_output": {
+            "cycles": 138684,
+            "perSample": 26,
+            "percent": 2.528584321697829,
+            "calls": 5334
+          },
+          "um_tick": {
+            "cycles": 71470,
+            "perSample": 13.398950131233596,
+            "percent": 1.3030913549633978,
+            "calls": 50
+          },
+          "__mulhi3": {
+            "cycles": 226000,
+            "perSample": 42.36970378702662,
+            "percent": 4.120591104263718,
+            "calls": 3600
+          },
+          "um_word": {
+            "cycles": 92752,
+            "perSample": 17.388826396700413,
+            "percent": 1.6911197615162317,
+            "calls": 5797
+          },
+          "read_events": {
+            "cycles": 117667,
+            "perSample": 22.059805024371954,
+            "percent": 2.1453875817053047,
+            "calls": 50
+          },
+          "command": {
+            "cycles": 214422,
+            "perSample": 40.19910011248594,
+            "percent": 3.9094928573382077,
+            "calls": 2751
+          },
+          "refresh": {
+            "cycles": 24800,
+            "perSample": 4.649418822647169,
+            "percent": 0.45217105922893897,
+            "calls": 400
+          },
+          "um_scale_wave": {
+            "cycles": 201200,
+            "perSample": 37.72028496437945,
+            "percent": 3.668420045034779,
+            "calls": 400
+          },
+          "idle_poll": {
+            "cycles": 550720,
+            "perSample": 103.24709411323585,
+            "percent": 10.04111474752263,
+            "calls": 0
+          }
+        },
+        "multiplyCallers": {
+          "um_tick": 1200,
+          "read_events": 2400
+        },
+        "minimumQueuedFrames": 94,
+        "maxISRCycles": 47,
+        "minimumStackPointer": 731,
+        "fifoUnderruns": 0,
+        "lostInterrupts": 0,
+        "wallSeconds": 0.8644918000000001
+      }
+    },
+    {
+      "candidate": "clocks",
+      "verification": {
+        "variant": "dense-eight-review",
+        "cpuHz": 8000000,
+        "backend": "avr-asm",
+        "engineSha256": "92cf1f6b88bfc2c9ee11aecfcb379685005d785d81a9c4174cdb16793848a622",
+        "flashSha256": "d595194eaacf00ac1ea0b96a0f3acbca490d4f26f39f960acb1c2b966f3ed87a",
+        "eepromSha256": "4a5c1192902f7a582634ada90a1d4db0cb9d65ffb8c2a6c24fa04a6009d74d65",
+        "scoreSha256": "4f62faba097394a6166eac2e41a89723fee0ebb9c435072ef095fbeb8c7df6a4",
+        "reference": "Independent uncompressed UM88 JSON, exact tonal/percussion/interpolation arithmetic",
+        "passed": true,
+        "simulatedSeconds": 0.688363375,
+        "controlFrames": 48,
+        "completeLoops": 1,
+        "samples": 5334,
+        "observedIRQs": 21425,
+        "checkedIRQOutputs": 21425,
+        "checkedGeneratedFrames": 21336,
+        "checkedPhases": 85344,
+        "checkedWaveSamples": 6528,
+        "pwmBufferLayout": "mono",
+        "fifoCapacityFrames": 192,
+        "minimumQueuedFrames": 94,
+        "maxRenderActiveCycles": 339,
+        "maxControlActiveCycles": 19246,
+        "controlCalls": 50,
+        "maxISRCycles": 47,
+        "fifoUnderruns": 0,
+        "lostInterrupts": 0,
+        "minimumStackPointer": 731,
+        "stackBytes": 36,
+        "staticStateEnd": 500,
+        "fifoEnd": 704,
+        "stackMarginBytes": 27,
+        "allControlFramesMatch": true,
+        "allTonalMixesMatch": true,
+        "allPwmFramesMatch": true,
+        "allPercussionStatesMatch": true,
+        "clippedChannelSamples": 0,
+        "peakTonalMix": 118,
+        "monoMeanPwm": 109.87232845894263,
+        "monoRmsPwm": 35.28609037536254,
+        "hardwareTested": false,
+        "wallSeconds": 1.1833946999999998
+      },
+      "profile": {
+        "schema": "micromusic-um88-cycle-profile",
+        "version": 1,
+        "variant": "dense-eight-review",
+        "cpuHz": 8000000,
+        "flashSha256": "d595194eaacf00ac1ea0b96a0f3acbca490d4f26f39f960acb1c2b966f3ed87a",
+        "engineSha256": "92cf1f6b88bfc2c9ee11aecfcb379685005d785d81a9c4174cdb16793848a622",
+        "engineBytes": 2604,
+        "samples": 5334,
+        "profileSeconds": 0.685576625,
+        "hardwareTested": false,
+        "method": "AVR instruction stepping with IRQ active; exclusive function cycles; IRQ entry attributed separately; rejected FIFO polls separated",
+        "measuredCycles": 5484613,
+        "busyCyclesPerSample": 902.3655793025872,
+        "idlePercent": 12.241428884772727,
+        "exclusive": {
+          "um_render": {
+            "cycles": 1808226,
+            "perSample": 339,
+            "percent": 32.96907183788537,
+            "calls": 5334
+          },
+          "PWM_IRQ": {
+            "cycles": 1006928,
+            "perSample": 188.77540307461567,
+            "percent": 18.35914402711732,
+            "calls": 0
+          },
+          "main": {
+            "cycles": 911069,
+            "perSample": 170.80408698912635,
+            "percent": 16.611363463566164,
+            "calls": 0
+          },
+          "um_output": {
+            "cycles": 138684,
+            "perSample": 26,
+            "percent": 2.528601379896813,
+            "calls": 5334
+          },
+          "um_tick": {
+            "cycles": 71470,
+            "perSample": 13.398950131233596,
+            "percent": 1.3031001458079174,
+            "calls": 50
+          },
+          "__mulhi3": {
+            "cycles": 226000,
+            "perSample": 42.36970378702662,
+            "percent": 4.1206189023728745,
+            "calls": 3600
+          },
+          "um_word": {
+            "cycles": 92752,
+            "perSample": 17.388826396700413,
+            "percent": 1.6911311700570304,
+            "calls": 5797
+          },
+          "read_events": {
+            "cycles": 117667,
+            "perSample": 22.059805024371954,
+            "percent": 2.1454020548031374,
+            "calls": 50
+          },
+          "command": {
+            "cycles": 214422,
+            "perSample": 40.19910011248594,
+            "percent": 3.9095192313477725,
+            "calls": 2751
+          },
+          "refresh": {
+            "cycles": 24800,
+            "perSample": 4.649418822647169,
+            "percent": 0.45217410964091725,
+            "calls": 400
+          },
+          "um_scale_wave": {
+            "cycles": 201200,
+            "perSample": 37.72028496437945,
+            "percent": 3.6684447927319574,
+            "calls": 400
+          },
+          "idle_poll": {
+            "cycles": 671395,
+            "perSample": 125.8708286464192,
+            "percent": 12.241428884772727,
+            "calls": 0
+          }
+        },
+        "multiplyCallers": {
+          "um_tick": 1200,
+          "read_events": 2400
+        },
+        "minimumQueuedFrames": 94,
+        "maxISRCycles": 47,
+        "minimumStackPointer": 731,
+        "fifoUnderruns": 0,
+        "lostInterrupts": 0,
+        "wallSeconds": 0.9812548
+      }
+    },
+    {
+      "candidate": "clocks-tick",
+      "verification": {
+        "variant": "dense-eight-review",
+        "cpuHz": 8000000,
+        "backend": "avr-asm",
+        "engineSha256": "83f9a9caa7986a906a5e3c3a9eeb29b06f05e40cdfa5cc76f664e5d6a8a189e9",
+        "flashSha256": "c70db930ee8b1c364e5650db20bf8b6693848d46daef8be7bc88e79ce393a7fc",
+        "eepromSha256": "4a5c1192902f7a582634ada90a1d4db0cb9d65ffb8c2a6c24fa04a6009d74d65",
+        "scoreSha256": "4f62faba097394a6166eac2e41a89723fee0ebb9c435072ef095fbeb8c7df6a4",
+        "reference": "Independent uncompressed UM88 JSON, exact tonal/percussion/interpolation arithmetic",
+        "passed": true,
+        "simulatedSeconds": 0.688159375,
+        "controlFrames": 48,
+        "completeLoops": 1,
+        "samples": 5334,
+        "observedIRQs": 21419,
+        "checkedIRQOutputs": 21419,
+        "checkedGeneratedFrames": 21336,
+        "checkedPhases": 85344,
+        "checkedWaveSamples": 6528,
+        "pwmBufferLayout": "mono",
+        "fifoCapacityFrames": 192,
+        "minimumQueuedFrames": 101,
+        "maxRenderActiveCycles": 339,
+        "maxControlActiveCycles": 17854,
+        "controlCalls": 50,
+        "maxISRCycles": 47,
+        "fifoUnderruns": 0,
+        "lostInterrupts": 0,
+        "minimumStackPointer": 733,
+        "stackBytes": 34,
+        "staticStateEnd": 500,
+        "fifoEnd": 704,
+        "stackMarginBytes": 29,
+        "allControlFramesMatch": true,
+        "allTonalMixesMatch": true,
+        "allPwmFramesMatch": true,
+        "allPercussionStatesMatch": true,
+        "clippedChannelSamples": 0,
+        "peakTonalMix": 118,
+        "monoMeanPwm": 109.87232845894263,
+        "monoRmsPwm": 35.28609037536254,
+        "hardwareTested": false,
+        "wallSeconds": 1.6304510999999997
+      },
+      "profile": {
+        "schema": "micromusic-um88-cycle-profile",
+        "version": 1,
+        "variant": "dense-eight-review",
+        "cpuHz": 8000000,
+        "flashSha256": "c70db930ee8b1c364e5650db20bf8b6693848d46daef8be7bc88e79ce393a7fc",
+        "engineSha256": "83f9a9caa7986a906a5e3c3a9eeb29b06f05e40cdfa5cc76f664e5d6a8a189e9",
+        "engineBytes": 2534,
+        "samples": 5334,
+        "profileSeconds": 0.685372625,
+        "hardwareTested": false,
+        "method": "AVR instruction stepping with IRQ active; exclusive function cycles; IRQ entry attributed separately; rejected FIFO polls separated",
+        "measuredCycles": 5482981,
+        "busyCyclesPerSample": 887.9645669291339,
+        "idlePercent": 13.616279173683075,
+        "exclusive": {
+          "um_render": {
+            "cycles": 1808226,
+            "perSample": 339,
+            "percent": 32.97888502622934,
+            "calls": 5334
+          },
+          "PWM_IRQ": {
+            "cycles": 1006646,
+            "perSample": 188.7225346831646,
+            "percent": 18.359465407594882,
+            "calls": 0
+          },
+          "main": {
+            "cycles": 911541,
+            "perSample": 170.892575928009,
+            "percent": 16.624916263616452,
+            "calls": 0
+          },
+          "um_output": {
+            "cycles": 138684,
+            "perSample": 26,
+            "percent": 2.5293540138111004,
+            "calls": 5334
+          },
+          "um_tick": {
+            "cycles": 46965,
+            "perSample": 8.804836895388076,
+            "percent": 0.8565595977808422,
+            "calls": 50
+          },
+          "__mulhi3": {
+            "cycles": 173500,
+            "perSample": 32.52718410198725,
+            "percent": 3.1643370640897714,
+            "calls": 2800
+          },
+          "um_word": {
+            "cycles": 92752,
+            "perSample": 17.388826396700413,
+            "percent": 1.691634532383023,
+            "calls": 5797
+          },
+          "read_events": {
+            "cycles": 117667,
+            "perSample": 22.059805024371954,
+            "percent": 2.146040630087903,
+            "calls": 50
+          },
+          "command": {
+            "cycles": 214422,
+            "perSample": 40.19910011248594,
+            "percent": 3.910682893119637,
+            "calls": 2751
+          },
+          "refresh": {
+            "cycles": 24800,
+            "perSample": 4.649418822647169,
+            "percent": 0.4523086984981345,
+            "calls": 400
+          },
+          "um_scale_wave": {
+            "cycles": 201200,
+            "perSample": 37.72028496437945,
+            "percent": 3.669536699105833,
+            "calls": 400
+          },
+          "idle_poll": {
+            "cycles": 746578,
+            "perSample": 139.96587926509187,
+            "percent": 13.616279173683075,
+            "calls": 0
+          }
+        },
+        "multiplyCallers": {
+          "um_tick": 400,
+          "read_events": 2400
+        },
+        "minimumQueuedFrames": 101,
+        "maxISRCycles": 47,
+        "minimumStackPointer": 733,
+        "fifoUnderruns": 0,
+        "lostInterrupts": 0,
+        "wallSeconds": 1.0298647
+      }
+    },
+    {
+      "candidate": "clocks-tick-alignment",
+      "verification": {
+        "variant": "dense-eight-review",
+        "cpuHz": 8000000,
+        "backend": "avr-asm",
+        "engineSha256": "9c5c179972028191c6a83f270e03d8617df705d09ef4416f9bf5c9dbc612677e",
+        "flashSha256": "4c81cbe8efd074216d306ee6c2fd10290a9026adb7228d351eaee7c7b1013b75",
+        "eepromSha256": "4a5c1192902f7a582634ada90a1d4db0cb9d65ffb8c2a6c24fa04a6009d74d65",
+        "scoreSha256": "4f62faba097394a6166eac2e41a89723fee0ebb9c435072ef095fbeb8c7df6a4",
+        "reference": "Independent uncompressed UM88 JSON, exact tonal/percussion/interpolation arithmetic",
+        "passed": true,
+        "simulatedSeconds": 0.688159375,
+        "controlFrames": 48,
+        "completeLoops": 1,
+        "samples": 5334,
+        "observedIRQs": 21419,
+        "checkedIRQOutputs": 21419,
+        "checkedGeneratedFrames": 21336,
+        "checkedPhases": 85344,
+        "checkedWaveSamples": 6528,
+        "pwmBufferLayout": "mono",
+        "fifoCapacityFrames": 192,
+        "minimumQueuedFrames": 101,
+        "maxRenderActiveCycles": 339,
+        "maxControlActiveCycles": 17854,
+        "controlCalls": 50,
+        "maxISRCycles": 47,
+        "fifoUnderruns": 0,
+        "lostInterrupts": 0,
+        "minimumStackPointer": 733,
+        "stackBytes": 34,
+        "staticStateEnd": 500,
+        "fifoEnd": 692,
+        "stackMarginBytes": 41,
+        "allControlFramesMatch": true,
+        "allTonalMixesMatch": true,
+        "allPwmFramesMatch": true,
+        "allPercussionStatesMatch": true,
+        "clippedChannelSamples": 0,
+        "peakTonalMix": 118,
+        "monoMeanPwm": 109.87232845894263,
+        "monoRmsPwm": 35.28609037536254,
+        "hardwareTested": false,
+        "wallSeconds": 1.5297360999999998
+      },
+      "profile": {
+        "schema": "micromusic-um88-cycle-profile",
+        "version": 1,
+        "variant": "dense-eight-review",
+        "cpuHz": 8000000,
+        "flashSha256": "4c81cbe8efd074216d306ee6c2fd10290a9026adb7228d351eaee7c7b1013b75",
+        "engineSha256": "9c5c179972028191c6a83f270e03d8617df705d09ef4416f9bf5c9dbc612677e",
+        "engineBytes": 2534,
+        "samples": 5334,
+        "profileSeconds": 0.685372625,
+        "hardwareTested": false,
+        "method": "AVR instruction stepping with IRQ active; exclusive function cycles; IRQ entry attributed separately; rejected FIFO polls separated",
+        "measuredCycles": 5482981,
+        "busyCyclesPerSample": 887.9645669291339,
+        "idlePercent": 13.616279173683075,
+        "exclusive": {
+          "um_render": {
+            "cycles": 1808226,
+            "perSample": 339,
+            "percent": 32.97888502622934,
+            "calls": 5334
+          },
+          "PWM_IRQ": {
+            "cycles": 1006646,
+            "perSample": 188.7225346831646,
+            "percent": 18.359465407594882,
+            "calls": 0
+          },
+          "main": {
+            "cycles": 911541,
+            "perSample": 170.892575928009,
+            "percent": 16.624916263616452,
+            "calls": 0
+          },
+          "um_output": {
+            "cycles": 138684,
+            "perSample": 26,
+            "percent": 2.5293540138111004,
+            "calls": 5334
+          },
+          "um_tick": {
+            "cycles": 46965,
+            "perSample": 8.804836895388076,
+            "percent": 0.8565595977808422,
+            "calls": 50
+          },
+          "__mulhi3": {
+            "cycles": 173500,
+            "perSample": 32.52718410198725,
+            "percent": 3.1643370640897714,
+            "calls": 2800
+          },
+          "um_word": {
+            "cycles": 92752,
+            "perSample": 17.388826396700413,
+            "percent": 1.691634532383023,
+            "calls": 5797
+          },
+          "read_events": {
+            "cycles": 117667,
+            "perSample": 22.059805024371954,
+            "percent": 2.146040630087903,
+            "calls": 50
+          },
+          "command": {
+            "cycles": 214422,
+            "perSample": 40.19910011248594,
+            "percent": 3.910682893119637,
+            "calls": 2751
+          },
+          "refresh": {
+            "cycles": 24800,
+            "perSample": 4.649418822647169,
+            "percent": 0.4523086984981345,
+            "calls": 400
+          },
+          "um_scale_wave": {
+            "cycles": 201200,
+            "perSample": 37.72028496437945,
+            "percent": 3.669536699105833,
+            "calls": 400
+          },
+          "idle_poll": {
+            "cycles": 746578,
+            "perSample": 139.96587926509187,
+            "percent": 13.616279173683075,
+            "calls": 0
+          }
+        },
+        "multiplyCallers": {
+          "um_tick": 400,
+          "read_events": 2400
+        },
+        "minimumQueuedFrames": 101,
+        "maxISRCycles": 47,
+        "minimumStackPointer": 733,
+        "fifoUnderruns": 0,
+        "lostInterrupts": 0,
+        "wallSeconds": 1.0600233000000001
+      }
+    },
+    {
+      "candidate": "baseline",
+      "verification": {
+        "variant": "polyphony-study",
+        "cpuHz": 8000000,
+        "backend": "avr-asm",
+        "engineSha256": "cb5564dd5fcad2a8dad33bb09f2f30fe1aeb5d585c912c6acab43fa6df2240bb",
+        "flashSha256": "5628706a956a7930ec928ed40c8a9edbb3d0f8c2a24ee2ae74803c3f77c2fa3e",
+        "eepromSha256": "c3bd33053643413c0876b17ba5960758230cf3d0cc74c27680810640d5e75f53",
+        "scoreSha256": "572b77c4d74f0135465af9e7c79fa798b03c83237f3c901a62dfb4cd2f99fa9a",
+        "reference": "Independent uncompressed UM88 JSON, exact tonal/percussion/interpolation arithmetic",
+        "passed": true,
+        "simulatedSeconds": 3.56713125,
+        "controlFrames": 259,
+        "completeLoops": 1,
+        "samples": 27840,
+        "observedIRQs": 111393,
+        "checkedIRQOutputs": 111393,
+        "checkedGeneratedFrames": 111360,
+        "checkedPhases": 445440,
+        "checkedWaveSamples": 33536,
+        "pwmBufferLayout": "mono",
+        "fifoCapacityFrames": 192,
+        "minimumQueuedFrames": 98,
+        "maxRenderActiveCycles": 339,
+        "maxControlActiveCycles": 18410,
+        "controlCalls": 261,
+        "maxISRCycles": 47,
+        "fifoUnderruns": 0,
+        "lostInterrupts": 0,
+        "minimumStackPointer": 733,
+        "stackBytes": 34,
+        "staticStateEnd": 500,
+        "fifoEnd": 704,
+        "stackMarginBytes": 29,
+        "allControlFramesMatch": true,
+        "allTonalMixesMatch": true,
+        "allPwmFramesMatch": true,
+        "allPercussionStatesMatch": true,
+        "clippedChannelSamples": 0,
+        "peakTonalMix": 64,
+        "monoMeanPwm": 126.97528735632184,
+        "monoRmsPwm": 9.186790867151684,
+        "hardwareTested": false,
+        "wallSeconds": 4.781560000000001
+      },
+      "profile": {
+        "schema": "micromusic-um88-cycle-profile",
+        "version": 1,
+        "variant": "polyphony-study",
+        "cpuHz": 8000000,
+        "flashSha256": "5628706a956a7930ec928ed40c8a9edbb3d0f8c2a24ee2ae74803c3f77c2fa3e",
+        "engineSha256": "cb5564dd5fcad2a8dad33bb09f2f30fe1aeb5d585c912c6acab43fa6df2240bb",
+        "engineBytes": 2676,
+        "samples": 27840,
+        "profileSeconds": 3.56455675,
+        "hardwareTested": false,
+        "method": "AVR instruction stepping with IRQ active; exclusive function cycles; IRQ entry attributed separately; rejected FIFO polls separated",
+        "measuredCycles": 28516454,
+        "busyCyclesPerSample": 738.1900862068966,
+        "idlePercent": 27.93209141641524,
+        "exclusive": {
+          "um_render": {
+            "cycles": 9437760,
+            "perSample": 339,
+            "percent": 33.095840036773154,
+            "calls": 27840
+          },
+          "PWM_IRQ": {
+            "cycles": 5235424,
+            "perSample": 188.05402298850575,
+            "percent": 18.359309330676247,
+            "calls": 0
+          },
+          "main": {
+            "cycles": 4142453,
+            "perSample": 148.79500718390804,
+            "percent": 14.526536153478268,
+            "calls": 0
+          },
+          "um_output": {
+            "cycles": 723840,
+            "perSample": 26,
+            "percent": 2.53832401461977,
+            "calls": 27840
+          },
+          "um_tick": {
+            "cycles": 407006,
+            "perSample": 14.619468390804597,
+            "percent": 1.4272672191289983,
+            "calls": 261
+          },
+          "__mulhi3": {
+            "cycles": 394652,
+            "perSample": 14.175718390804597,
+            "percent": 1.383944862148709,
+            "calls": 6873
+          },
+          "um_word": {
+            "cycles": 34064,
+            "perSample": 1.2235632183908045,
+            "percent": 0.11945384233257052,
+            "calls": 2129
+          },
+          "refresh": {
+            "cycles": 14942,
+            "perSample": 0.5367097701149425,
+            "percent": 0.05239781916783903,
+            "calls": 241
+          },
+          "um_scale_wave": {
+            "cycles": 121223,
+            "perSample": 4.354274425287357,
+            "percent": 0.4250984361519844,
+            "calls": 241
+          },
+          "read_events": {
+            "cycles": 21555,
+            "perSample": 0.7742456896551724,
+            "percent": 0.07558793951029115,
+            "calls": 38
+          },
+          "command": {
+            "cycles": 18293,
+            "perSample": 0.6570761494252874,
+            "percent": 0.06414892959692674,
+            "calls": 414
+          },
+          "idle_poll": {
+            "cycles": 7965242,
+            "perSample": 286.1078304597701,
+            "percent": 27.93209141641524,
+            "calls": 0
+          }
+        },
+        "multiplyCallers": {
+          "um_tick": 6461,
+          "read_events": 412
+        },
+        "minimumQueuedFrames": 98,
+        "maxISRCycles": 47,
+        "minimumStackPointer": 733,
+        "fifoUnderruns": 0,
+        "lostInterrupts": 0,
+        "wallSeconds": 4.2299698
+      }
+    },
+    {
+      "candidate": "clocks",
+      "verification": {
+        "variant": "polyphony-study",
+        "cpuHz": 8000000,
+        "backend": "avr-asm",
+        "engineSha256": "92cf1f6b88bfc2c9ee11aecfcb379685005d785d81a9c4174cdb16793848a622",
+        "flashSha256": "11321029fb7087bfd131fdf537aebdfc5dde73c68b7258222371c3728ce8298c",
+        "eepromSha256": "c3bd33053643413c0876b17ba5960758230cf3d0cc74c27680810640d5e75f53",
+        "scoreSha256": "572b77c4d74f0135465af9e7c79fa798b03c83237f3c901a62dfb4cd2f99fa9a",
+        "reference": "Independent uncompressed UM88 JSON, exact tonal/percussion/interpolation arithmetic",
+        "passed": true,
+        "simulatedSeconds": 3.567125,
+        "controlFrames": 259,
+        "completeLoops": 1,
+        "samples": 27840,
+        "observedIRQs": 111393,
+        "checkedIRQOutputs": 111393,
+        "checkedGeneratedFrames": 111360,
+        "checkedPhases": 445440,
+        "checkedWaveSamples": 33536,
+        "pwmBufferLayout": "mono",
+        "fifoCapacityFrames": 192,
+        "minimumQueuedFrames": 98,
+        "maxRenderActiveCycles": 339,
+        "maxControlActiveCycles": 18410,
+        "controlCalls": 261,
+        "maxISRCycles": 47,
+        "fifoUnderruns": 0,
+        "lostInterrupts": 0,
+        "minimumStackPointer": 733,
+        "stackBytes": 34,
+        "staticStateEnd": 500,
+        "fifoEnd": 704,
+        "stackMarginBytes": 29,
+        "allControlFramesMatch": true,
+        "allTonalMixesMatch": true,
+        "allPwmFramesMatch": true,
+        "allPercussionStatesMatch": true,
+        "clippedChannelSamples": 0,
+        "peakTonalMix": 64,
+        "monoMeanPwm": 126.97528735632184,
+        "monoRmsPwm": 9.186790867151684,
+        "hardwareTested": false,
+        "wallSeconds": 4.8884006
+      },
+      "profile": {
+        "schema": "micromusic-um88-cycle-profile",
+        "version": 1,
+        "variant": "polyphony-study",
+        "cpuHz": 8000000,
+        "flashSha256": "11321029fb7087bfd131fdf537aebdfc5dde73c68b7258222371c3728ce8298c",
+        "engineSha256": "92cf1f6b88bfc2c9ee11aecfcb379685005d785d81a9c4174cdb16793848a622",
+        "engineBytes": 2604,
+        "samples": 27840,
+        "profileSeconds": 3.564553,
+        "hardwareTested": false,
+        "method": "AVR instruction stepping with IRQ active; exclusive function cycles; IRQ entry attributed separately; rejected FIFO polls separated",
+        "measuredCycles": 28516424,
+        "busyCyclesPerSample": 715.5263290229885,
+        "idlePercent": 30.144631739239113,
+        "exclusive": {
+          "um_render": {
+            "cycles": 9437760,
+            "perSample": 339,
+            "percent": 33.09587485443476,
+            "calls": 27840
+          },
+          "PWM_IRQ": {
+            "cycles": 5235424,
+            "perSample": 188.05402298850575,
+            "percent": 18.359328645134468,
+            "calls": 0
+          },
+          "main": {
+            "cycles": 3511494,
+            "perSample": 126.13125,
+            "percent": 12.313935295673819,
+            "calls": 0
+          },
+          "um_output": {
+            "cycles": 723840,
+            "perSample": 26,
+            "percent": 2.5383266850008965,
+            "calls": 27840
+          },
+          "um_tick": {
+            "cycles": 407006,
+            "perSample": 14.619468390804597,
+            "percent": 1.427268720650247,
+            "calls": 261
+          },
+          "__mulhi3": {
+            "cycles": 394652,
+            "perSample": 14.175718390804597,
+            "percent": 1.3839463180937412,
+            "calls": 6873
+          },
+          "um_word": {
+            "cycles": 34064,
+            "perSample": 1.2235632183908045,
+            "percent": 0.11945396800103687,
+            "calls": 2129
+          },
+          "refresh": {
+            "cycles": 14942,
+            "perSample": 0.5367097701149425,
+            "percent": 0.05239787429167135,
+            "calls": 241
+          },
+          "um_scale_wave": {
+            "cycles": 121223,
+            "perSample": 4.354274425287357,
+            "percent": 0.42509888336630147,
+            "calls": 241
+          },
+          "read_events": {
+            "cycles": 21555,
+            "perSample": 0.7742456896551724,
+            "percent": 0.07558801903071717,
+            "calls": 38
+          },
+          "command": {
+            "cycles": 18293,
+            "perSample": 0.6570761494252874,
+            "percent": 0.06414899708322475,
+            "calls": 414
+          },
+          "idle_poll": {
+            "cycles": 8596171,
+            "perSample": 308.77051005747126,
+            "percent": 30.144631739239113,
+            "calls": 0
+          }
+        },
+        "multiplyCallers": {
+          "um_tick": 6461,
+          "read_events": 412
+        },
+        "minimumQueuedFrames": 98,
+        "maxISRCycles": 47,
+        "minimumStackPointer": 733,
+        "fifoUnderruns": 0,
+        "lostInterrupts": 0,
+        "wallSeconds": 3.5879116
+      }
+    },
+    {
+      "candidate": "clocks-tick",
+      "verification": {
+        "variant": "polyphony-study",
+        "cpuHz": 8000000,
+        "backend": "avr-asm",
+        "engineSha256": "83f9a9caa7986a906a5e3c3a9eeb29b06f05e40cdfa5cc76f664e5d6a8a189e9",
+        "flashSha256": "962dd9897a6ddbd6dea8377543376544c17c3875c7c0b1b4da5eab0f31a0849c",
+        "eepromSha256": "c3bd33053643413c0876b17ba5960758230cf3d0cc74c27680810640d5e75f53",
+        "scoreSha256": "572b77c4d74f0135465af9e7c79fa798b03c83237f3c901a62dfb4cd2f99fa9a",
+        "reference": "Independent uncompressed UM88 JSON, exact tonal/percussion/interpolation arithmetic",
+        "passed": true,
+        "simulatedSeconds": 3.56680775,
+        "controlFrames": 259,
+        "completeLoops": 1,
+        "samples": 27840,
+        "observedIRQs": 111383,
+        "checkedIRQOutputs": 111383,
+        "checkedGeneratedFrames": 111360,
+        "checkedPhases": 445440,
+        "checkedWaveSamples": 33536,
+        "pwmBufferLayout": "mono",
+        "fifoCapacityFrames": 192,
+        "minimumQueuedFrames": 108,
+        "maxRenderActiveCycles": 339,
+        "maxControlActiveCycles": 16406,
+        "controlCalls": 261,
+        "maxISRCycles": 47,
+        "fifoUnderruns": 0,
+        "lostInterrupts": 0,
+        "minimumStackPointer": 735,
+        "stackBytes": 32,
+        "staticStateEnd": 500,
+        "fifoEnd": 704,
+        "stackMarginBytes": 31,
+        "allControlFramesMatch": true,
+        "allTonalMixesMatch": true,
+        "allPwmFramesMatch": true,
+        "allPercussionStatesMatch": true,
+        "clippedChannelSamples": 0,
+        "peakTonalMix": 64,
+        "monoMeanPwm": 126.97528735632184,
+        "monoRmsPwm": 9.186790867151684,
+        "hardwareTested": false,
+        "wallSeconds": 4.6579689
+      },
+      "profile": {
+        "schema": "micromusic-um88-cycle-profile",
+        "version": 1,
+        "variant": "polyphony-study",
+        "cpuHz": 8000000,
+        "flashSha256": "962dd9897a6ddbd6dea8377543376544c17c3875c7c0b1b4da5eab0f31a0849c",
+        "engineSha256": "83f9a9caa7986a906a5e3c3a9eeb29b06f05e40cdfa5cc76f664e5d6a8a189e9",
+        "engineBytes": 2534,
+        "samples": 27840,
+        "profileSeconds": 3.56423575,
+        "hardwareTested": false,
+        "method": "AVR instruction stepping with IRQ active; exclusive function cycles; IRQ entry attributed separately; rejected FIFO polls separated",
+        "measuredCycles": 28513886,
+        "busyCyclesPerSample": 700.3323994252873,
+        "idlePercent": 31.62189818672909,
+        "exclusive": {
+          "um_render": {
+            "cycles": 9437760,
+            "perSample": 339,
+            "percent": 33.09882069388929,
+            "calls": 27840
+          },
+          "PWM_IRQ": {
+            "cycles": 5234954,
+            "perSample": 188.0371408045977,
+            "percent": 18.35931447576104,
+            "calls": 0
+          },
+          "main": {
+            "cycles": 3511870,
+            "perSample": 126.14475574712644,
+            "percent": 12.316350005748076,
+            "calls": 0
+          },
+          "um_output": {
+            "cycles": 723840,
+            "perSample": 26,
+            "percent": 2.5385526195903285,
+            "calls": 27840
+          },
+          "um_tick": {
+            "cycles": 268874,
+            "perSample": 9.657830459770114,
+            "percent": 0.9429581082003344,
+            "calls": 261
+          },
+          "__mulhi3": {
+            "cycles": 109879,
+            "perSample": 3.9468031609195404,
+            "percent": 0.38535259627537266,
+            "calls": 2500
+          },
+          "um_word": {
+            "cycles": 34064,
+            "perSample": 1.2235632183908045,
+            "percent": 0.11946460051078271,
+            "calls": 2129
+          },
+          "refresh": {
+            "cycles": 14942,
+            "perSample": 0.5367097701149425,
+            "percent": 0.05240253818788502,
+            "calls": 241
+          },
+          "um_scale_wave": {
+            "cycles": 121223,
+            "perSample": 4.354274425287357,
+            "percent": 0.4251367211049381,
+            "calls": 241
+          },
+          "read_events": {
+            "cycles": 21555,
+            "perSample": 0.7742456896551724,
+            "percent": 0.07559474706464071,
+            "calls": 38
+          },
+          "command": {
+            "cycles": 18293,
+            "perSample": 0.6570761494252874,
+            "percent": 0.06415470693822652,
+            "calls": 414
+          },
+          "idle_poll": {
+            "cycles": 9016632,
+            "perSample": 323.87327586206897,
+            "percent": 31.62189818672909,
+            "calls": 0
+          }
+        },
+        "multiplyCallers": {
+          "um_tick": 2088,
+          "read_events": 412
+        },
+        "minimumQueuedFrames": 108,
+        "maxISRCycles": 47,
+        "minimumStackPointer": 735,
+        "fifoUnderruns": 0,
+        "lostInterrupts": 0,
+        "wallSeconds": 2.9479542999999997
+      }
+    },
+    {
+      "candidate": "clocks-tick-alignment",
+      "verification": {
+        "variant": "polyphony-study",
+        "cpuHz": 8000000,
+        "backend": "avr-asm",
+        "engineSha256": "9c5c179972028191c6a83f270e03d8617df705d09ef4416f9bf5c9dbc612677e",
+        "flashSha256": "38f68c6cab5f2014c20153c043ce4f4a712997a44c247c11ca0f8a612650d69c",
+        "eepromSha256": "c3bd33053643413c0876b17ba5960758230cf3d0cc74c27680810640d5e75f53",
+        "scoreSha256": "572b77c4d74f0135465af9e7c79fa798b03c83237f3c901a62dfb4cd2f99fa9a",
+        "reference": "Independent uncompressed UM88 JSON, exact tonal/percussion/interpolation arithmetic",
+        "passed": true,
+        "simulatedSeconds": 3.56680775,
+        "controlFrames": 259,
+        "completeLoops": 1,
+        "samples": 27840,
+        "observedIRQs": 111383,
+        "checkedIRQOutputs": 111383,
+        "checkedGeneratedFrames": 111360,
+        "checkedPhases": 445440,
+        "checkedWaveSamples": 33536,
+        "pwmBufferLayout": "mono",
+        "fifoCapacityFrames": 192,
+        "minimumQueuedFrames": 108,
+        "maxRenderActiveCycles": 339,
+        "maxControlActiveCycles": 16406,
+        "controlCalls": 261,
+        "maxISRCycles": 47,
+        "fifoUnderruns": 0,
+        "lostInterrupts": 0,
+        "minimumStackPointer": 735,
+        "stackBytes": 32,
+        "staticStateEnd": 500,
+        "fifoEnd": 692,
+        "stackMarginBytes": 43,
+        "allControlFramesMatch": true,
+        "allTonalMixesMatch": true,
+        "allPwmFramesMatch": true,
+        "allPercussionStatesMatch": true,
+        "clippedChannelSamples": 0,
+        "peakTonalMix": 64,
+        "monoMeanPwm": 126.97528735632184,
+        "monoRmsPwm": 9.186790867151684,
+        "hardwareTested": false,
+        "wallSeconds": 3.5316235
+      },
+      "profile": {
+        "schema": "micromusic-um88-cycle-profile",
+        "version": 1,
+        "variant": "polyphony-study",
+        "cpuHz": 8000000,
+        "flashSha256": "38f68c6cab5f2014c20153c043ce4f4a712997a44c247c11ca0f8a612650d69c",
+        "engineSha256": "9c5c179972028191c6a83f270e03d8617df705d09ef4416f9bf5c9dbc612677e",
+        "engineBytes": 2534,
+        "samples": 27840,
+        "profileSeconds": 3.56423575,
+        "hardwareTested": false,
+        "method": "AVR instruction stepping with IRQ active; exclusive function cycles; IRQ entry attributed separately; rejected FIFO polls separated",
+        "measuredCycles": 28513886,
+        "busyCyclesPerSample": 700.3323994252873,
+        "idlePercent": 31.62189818672909,
+        "exclusive": {
+          "um_render": {
+            "cycles": 9437760,
+            "perSample": 339,
+            "percent": 33.09882069388929,
+            "calls": 27840
+          },
+          "PWM_IRQ": {
+            "cycles": 5234954,
+            "perSample": 188.0371408045977,
+            "percent": 18.35931447576104,
+            "calls": 0
+          },
+          "main": {
+            "cycles": 3511870,
+            "perSample": 126.14475574712644,
+            "percent": 12.316350005748076,
+            "calls": 0
+          },
+          "um_output": {
+            "cycles": 723840,
+            "perSample": 26,
+            "percent": 2.5385526195903285,
+            "calls": 27840
+          },
+          "um_tick": {
+            "cycles": 268874,
+            "perSample": 9.657830459770114,
+            "percent": 0.9429581082003344,
+            "calls": 261
+          },
+          "__mulhi3": {
+            "cycles": 109879,
+            "perSample": 3.9468031609195404,
+            "percent": 0.38535259627537266,
+            "calls": 2500
+          },
+          "um_word": {
+            "cycles": 34064,
+            "perSample": 1.2235632183908045,
+            "percent": 0.11946460051078271,
+            "calls": 2129
+          },
+          "refresh": {
+            "cycles": 14942,
+            "perSample": 0.5367097701149425,
+            "percent": 0.05240253818788502,
+            "calls": 241
+          },
+          "um_scale_wave": {
+            "cycles": 121223,
+            "perSample": 4.354274425287357,
+            "percent": 0.4251367211049381,
+            "calls": 241
+          },
+          "read_events": {
+            "cycles": 21555,
+            "perSample": 0.7742456896551724,
+            "percent": 0.07559474706464071,
+            "calls": 38
+          },
+          "command": {
+            "cycles": 18293,
+            "perSample": 0.6570761494252874,
+            "percent": 0.06415470693822652,
+            "calls": 414
+          },
+          "idle_poll": {
+            "cycles": 9016632,
+            "perSample": 323.87327586206897,
+            "percent": 31.62189818672909,
+            "calls": 0
+          }
+        },
+        "multiplyCallers": {
+          "um_tick": 2088,
+          "read_events": 412
+        },
+        "minimumQueuedFrames": 108,
+        "maxISRCycles": 47,
+        "minimumStackPointer": 735,
+        "fifoUnderruns": 0,
+        "lostInterrupts": 0,
+        "wallSeconds": 2.5222338
+      }
+    },
+    {
+      "candidate": "baseline",
+      "verification": {
+        "variant": "polyphony-study",
+        "cpuHz": 12000000,
+        "backend": "avr-asm",
+        "engineSha256": "b4b6d47bfa6490dddbb2b37b15a5914f18486e63a50a2fabd78a0272f12c94d6",
+        "flashSha256": "651317dd176f9b4489af7a06001b5ff76e63250757c032626123f10d2b547256",
+        "eepromSha256": "c3bd33053643413c0876b17ba5960758230cf3d0cc74c27680810640d5e75f53",
+        "scoreSha256": "572b77c4d74f0135465af9e7c79fa798b03c83237f3c901a62dfb4cd2f99fa9a",
+        "reference": "Independent uncompressed UM88 JSON, exact tonal/percussion/interpolation arithmetic",
+        "passed": true,
+        "simulatedSeconds": 3.565926833333333,
+        "controlFrames": 259,
+        "completeLoops": 1,
+        "samples": 41760,
+        "observedIRQs": 167073,
+        "checkedIRQOutputs": 167073,
+        "checkedGeneratedFrames": 167040,
+        "checkedPhases": 668160,
+        "checkedWaveSamples": 33536,
+        "pwmBufferLayout": "mono",
+        "fifoCapacityFrames": 192,
+        "minimumQueuedFrames": 98,
+        "maxRenderActiveCycles": 339,
+        "maxControlActiveCycles": 18410,
+        "controlCalls": 261,
+        "maxISRCycles": 47,
+        "fifoUnderruns": 0,
+        "lostInterrupts": 0,
+        "minimumStackPointer": 733,
+        "stackBytes": 34,
+        "staticStateEnd": 500,
+        "fifoEnd": 704,
+        "stackMarginBytes": 29,
+        "allControlFramesMatch": true,
+        "allTonalMixesMatch": true,
+        "allPwmFramesMatch": true,
+        "allPercussionStatesMatch": true,
+        "clippedChannelSamples": 0,
+        "peakTonalMix": 63,
+        "monoMeanPwm": 126.97816091954023,
+        "monoRmsPwm": 9.232055183537272,
+        "hardwareTested": false,
+        "wallSeconds": 5.1821695
+      },
+      "profile": {
+        "schema": "micromusic-um88-cycle-profile",
+        "version": 1,
+        "variant": "polyphony-study",
+        "cpuHz": 12000000,
+        "flashSha256": "651317dd176f9b4489af7a06001b5ff76e63250757c032626123f10d2b547256",
+        "engineSha256": "b4b6d47bfa6490dddbb2b37b15a5914f18486e63a50a2fabd78a0272f12c94d6",
+        "engineBytes": 2676,
+        "samples": 41760,
+        "profileSeconds": 3.5642105,
+        "hardwareTested": false,
+        "method": "AVR instruction stepping with IRQ active; exclusive function cycles; IRQ entry attributed separately; rejected FIFO polls separated",
+        "measuredCycles": 42770526,
+        "busyCyclesPerSample": 727.4408285440613,
+        "idlePercent": 28.97461911036586,
+        "exclusive": {
+          "um_render": {
+            "cycles": 14156640,
+            "perSample": 339,
+            "percent": 33.099055176454925,
+            "calls": 41760
+          },
+          "PWM_IRQ": {
+            "cycles": 7852384,
+            "perSample": 188.0360153256705,
+            "percent": 18.35933465022151,
+            "calls": 0
+          },
+          "main": {
+            "cycles": 6271410,
+            "perSample": 150.17744252873564,
+            "percent": 14.662924650494128,
+            "calls": 0
+          },
+          "um_output": {
+            "cycles": 1085760,
+            "perSample": 26,
+            "percent": 2.5385706035039175,
+            "calls": 41760
+          },
+          "um_tick": {
+            "cycles": 407006,
+            "perSample": 9.7463122605364,
+            "percent": 0.9516039152756737,
+            "calls": 261
+          },
+          "__mulhi3": {
+            "cycles": 394652,
+            "perSample": 9.450478927203065,
+            "percent": 0.9227195382165747,
+            "calls": 6873
+          },
+          "um_word": {
+            "cycles": 34064,
+            "perSample": 0.8157088122605364,
+            "percent": 0.07964363122398822,
+            "calls": 2129
+          },
+          "refresh": {
+            "cycles": 14942,
+            "perSample": 0.35780651340996167,
+            "percent": 0.03493527294941381,
+            "calls": 241
+          },
+          "um_scale_wave": {
+            "cycles": 121223,
+            "perSample": 2.9028496168582376,
+            "percent": 0.28342648860572817,
+            "calls": 241
+          },
+          "read_events": {
+            "cycles": 21555,
+            "perSample": 0.5161637931034483,
+            "percent": 0.050396855067903534,
+            "calls": 38
+          },
+          "command": {
+            "cycles": 18293,
+            "perSample": 0.4380507662835249,
+            "percent": 0.0427701076203739,
+            "calls": 414
+          },
+          "idle_poll": {
+            "cycles": 12392597,
+            "perSample": 296.7575909961686,
+            "percent": 28.97461911036586,
+            "calls": 0
+          }
+        },
+        "multiplyCallers": {
+          "um_tick": 6461,
+          "read_events": 412
+        },
+        "minimumQueuedFrames": 98,
+        "maxISRCycles": 47,
+        "minimumStackPointer": 733,
+        "fifoUnderruns": 0,
+        "lostInterrupts": 0,
+        "wallSeconds": 3.6352833999999996
+      }
+    },
+    {
+      "candidate": "clocks-tick-alignment",
+      "verification": {
+        "variant": "polyphony-study",
+        "cpuHz": 12000000,
+        "backend": "avr-asm",
+        "engineSha256": "dfacc70f65c302927204df3ffdc4c2ebdb8b8b8da327b9c8902db38156b48cbc",
+        "flashSha256": "0dc0dc23def10d7a63743a3fe28261e44bf464b83cef5486f14e3fcab19795c5",
+        "eepromSha256": "c3bd33053643413c0876b17ba5960758230cf3d0cc74c27680810640d5e75f53",
+        "scoreSha256": "572b77c4d74f0135465af9e7c79fa798b03c83237f3c901a62dfb4cd2f99fa9a",
+        "reference": "Independent uncompressed UM88 JSON, exact tonal/percussion/interpolation arithmetic",
+        "passed": true,
+        "simulatedSeconds": 3.56571075,
+        "controlFrames": 259,
+        "completeLoops": 1,
+        "samples": 41760,
+        "observedIRQs": 167063,
+        "checkedIRQOutputs": 167063,
+        "checkedGeneratedFrames": 167040,
+        "checkedPhases": 668160,
+        "checkedWaveSamples": 33536,
+        "pwmBufferLayout": "mono",
+        "fifoCapacityFrames": 192,
+        "minimumQueuedFrames": 108,
+        "maxRenderActiveCycles": 339,
+        "maxControlActiveCycles": 16406,
+        "controlCalls": 261,
+        "maxISRCycles": 47,
+        "fifoUnderruns": 0,
+        "lostInterrupts": 0,
+        "minimumStackPointer": 735,
+        "stackBytes": 32,
+        "staticStateEnd": 500,
+        "fifoEnd": 692,
+        "stackMarginBytes": 43,
+        "allControlFramesMatch": true,
+        "allTonalMixesMatch": true,
+        "allPwmFramesMatch": true,
+        "allPercussionStatesMatch": true,
+        "clippedChannelSamples": 0,
+        "peakTonalMix": 63,
+        "monoMeanPwm": 126.97816091954023,
+        "monoRmsPwm": 9.232055183537272,
+        "hardwareTested": false,
+        "wallSeconds": 4.6464003
+      },
+      "profile": {
+        "schema": "micromusic-um88-cycle-profile",
+        "version": 1,
+        "variant": "polyphony-study",
+        "cpuHz": 12000000,
+        "flashSha256": "0dc0dc23def10d7a63743a3fe28261e44bf464b83cef5486f14e3fcab19795c5",
+        "engineSha256": "dfacc70f65c302927204df3ffdc4c2ebdb8b8b8da327b9c8902db38156b48cbc",
+        "engineBytes": 2524,
+        "samples": 41760,
+        "profileSeconds": 3.563996583333333,
+        "hardwareTested": false,
+        "method": "AVR instruction stepping with IRQ active; exclusive function cycles; IRQ entry attributed separately; rejected FIFO polls separated",
+        "measuredCycles": 42767959,
+        "busyCyclesPerSample": 689.2647270114943,
+        "idlePercent": 32.69799243868523,
+        "exclusive": {
+          "um_render": {
+            "cycles": 14156640,
+            "perSample": 339,
+            "percent": 33.10104183367741,
+            "calls": 41760
+          },
+          "PWM_IRQ": {
+            "cycles": 7851914,
+            "perSample": 188.02476053639847,
+            "percent": 18.359337652750742,
+            "calls": 0
+          },
+          "main": {
+            "cycles": 5100551,
+            "perSample": 122.13963122605364,
+            "percent": 11.92610337098387,
+            "calls": 0
+          },
+          "um_output": {
+            "cycles": 1085760,
+            "perSample": 26,
+            "percent": 2.538722972494432,
+            "calls": 41760
+          },
+          "um_tick": {
+            "cycles": 268874,
+            "perSample": 6.438553639846743,
+            "percent": 0.6286809244275604,
+            "calls": 261
+          },
+          "__mulhi3": {
+            "cycles": 109879,
+            "perSample": 2.6312021072796936,
+            "percent": 0.25691897057795066,
+            "calls": 2500
+          },
+          "um_word": {
+            "cycles": 34064,
+            "perSample": 0.8157088122605364,
+            "percent": 0.07964841155969121,
+            "calls": 2129
+          },
+          "refresh": {
+            "cycles": 14942,
+            "perSample": 0.35780651340996167,
+            "percent": 0.03493736981930796,
+            "calls": 241
+          },
+          "um_scale_wave": {
+            "cycles": 121223,
+            "perSample": 2.9028496168582376,
+            "percent": 0.2834435003082565,
+            "calls": 241
+          },
+          "read_events": {
+            "cycles": 21555,
+            "perSample": 0.5161637931034483,
+            "percent": 0.050399879966214894,
+            "calls": 38
+          },
+          "command": {
+            "cycles": 18293,
+            "perSample": 0.4380507662835249,
+            "percent": 0.042772674749337464,
+            "calls": 414
+          },
+          "idle_poll": {
+            "cycles": 13984264,
+            "perSample": 334.8722222222222,
+            "percent": 32.69799243868523,
+            "calls": 0
+          }
+        },
+        "multiplyCallers": {
+          "um_tick": 2088,
+          "read_events": 412
+        },
+        "minimumQueuedFrames": 108,
+        "maxISRCycles": 47,
+        "minimumStackPointer": 735,
+        "fifoUnderruns": 0,
+        "lostInterrupts": 0,
+        "wallSeconds": 3.4444587
+      }
+    },
+    {
+      "candidate": "baseline",
+      "verification": {
+        "variant": "polyphony-study",
+        "cpuHz": 8388608,
+        "backend": "avr-asm",
+        "engineSha256": "565e0caeb60d13de53955b13b0b2ce99d8ea9769bd3e5a1e4186aee26e0649c3",
+        "flashSha256": "b7c54913e8a772ae22487299348213b3280c48816c5be8291d52ce0525e73466",
+        "eepromSha256": "c3bd33053643413c0876b17ba5960758230cf3d0cc74c27680810640d5e75f53",
+        "scoreSha256": "572b77c4d74f0135465af9e7c79fa798b03c83237f3c901a62dfb4cd2f99fa9a",
+        "reference": "Independent uncompressed UM88 JSON, exact tonal/percussion/interpolation arithmetic",
+        "passed": true,
+        "simulatedSeconds": 3.567040801048279,
+        "controlFrames": 259,
+        "completeLoops": 1,
+        "samples": 29193,
+        "observedIRQs": 116805,
+        "checkedIRQOutputs": 116805,
+        "checkedGeneratedFrames": 116772,
+        "checkedPhases": 467088,
+        "checkedWaveSamples": 33536,
+        "pwmBufferLayout": "mono",
+        "fifoCapacityFrames": 192,
+        "minimumQueuedFrames": 98,
+        "maxRenderActiveCycles": 339,
+        "maxControlActiveCycles": 18410,
+        "controlCalls": 261,
+        "maxISRCycles": 47,
+        "fifoUnderruns": 0,
+        "lostInterrupts": 0,
+        "minimumStackPointer": 733,
+        "stackBytes": 34,
+        "staticStateEnd": 500,
+        "fifoEnd": 704,
+        "stackMarginBytes": 29,
+        "allControlFramesMatch": true,
+        "allTonalMixesMatch": true,
+        "allPwmFramesMatch": true,
+        "allPercussionStatesMatch": true,
+        "clippedChannelSamples": 0,
+        "peakTonalMix": 71,
+        "monoMeanPwm": 126.97831671976158,
+        "monoRmsPwm": 9.157684553439076,
+        "hardwareTested": false,
+        "wallSeconds": 2.9213388
+      },
+      "profile": {
+        "schema": "micromusic-um88-cycle-profile",
+        "version": 1,
+        "variant": "polyphony-study",
+        "cpuHz": 8388608,
+        "flashSha256": "b7c54913e8a772ae22487299348213b3280c48816c5be8291d52ce0525e73466",
+        "engineSha256": "565e0caeb60d13de53955b13b0b2ce99d8ea9769bd3e5a1e4186aee26e0649c3",
+        "engineBytes": 2672,
+        "samples": 29193,
+        "profileSeconds": 3.56458580493927,
+        "hardwareTested": false,
+        "method": "AVR instruction stepping with IRQ active; exclusive function cycles; IRQ entry attributed separately; rejected FIFO polls separated",
+        "measuredCycles": 29901913,
+        "busyCyclesPerSample": 733.7199671154044,
+        "idlePercent": 28.367502774822466,
+        "exclusive": {
+          "um_render": {
+            "cycles": 9896427,
+            "perSample": 339,
+            "percent": 33.09630056110457,
+            "calls": 29193
+          },
+          "PWM_IRQ": {
+            "cycles": 5489788,
+            "perSample": 188.05151919980818,
+            "percent": 18.359320355189315,
+            "calls": 0
+          },
+          "main": {
+            "cycles": 4262519,
+            "perSample": 146.0116808824033,
+            "percent": 14.255004353734826,
+            "calls": 0
+          },
+          "um_output": {
+            "cycles": 759018,
+            "perSample": 26,
+            "percent": 2.538359335069967,
+            "calls": 29193
+          },
+          "um_tick": {
+            "cycles": 407006,
+            "perSample": 13.941903881067379,
+            "percent": 1.3611369948136762,
+            "calls": 261
+          },
+          "__mulhi3": {
+            "cycles": 394652,
+            "perSample": 13.518720241153702,
+            "percent": 1.3198219123973773,
+            "calls": 6873
+          },
+          "um_word": {
+            "cycles": 34064,
+            "perSample": 1.1668550679957523,
+            "percent": 0.11391913286618151,
+            "calls": 2129
+          },
+          "refresh": {
+            "cycles": 14942,
+            "perSample": 0.5118350289452951,
+            "percent": 0.04997004706688833,
+            "calls": 241
+          },
+          "um_scale_wave": {
+            "cycles": 121223,
+            "perSample": 4.152468057411023,
+            "percent": 0.40540215604265856,
+            "calls": 241
+          },
+          "read_events": {
+            "cycles": 21555,
+            "perSample": 0.7383619360805672,
+            "percent": 0.07208568896578624,
+            "calls": 38
+          },
+          "command": {
+            "cycles": 18293,
+            "perSample": 0.6266228205391704,
+            "percent": 0.061176687926287526,
+            "calls": 414
+          },
+          "idle_poll": {
+            "cycles": 8482426,
+            "perSample": 290.5636967766245,
+            "percent": 28.367502774822466,
+            "calls": 0
+          }
+        },
+        "multiplyCallers": {
+          "um_tick": 6461,
+          "read_events": 412
+        },
+        "minimumQueuedFrames": 98,
+        "maxISRCycles": 47,
+        "minimumStackPointer": 733,
+        "fifoUnderruns": 0,
+        "lostInterrupts": 0,
+        "wallSeconds": 2.0884074
+      }
+    },
+    {
+      "candidate": "clocks-tick-alignment",
+      "verification": {
+        "variant": "polyphony-study",
+        "cpuHz": 8388608,
+        "backend": "avr-asm",
+        "engineSha256": "422863f35623aa8a42a7c51c6de4d9d7455aacc06cc4b2ebdb659c92aff7b327",
+        "flashSha256": "b8a7fe691958acfb2d8aefa2dd6910f98b0e97245e1fa2fe2e5ffd2a5838330b",
+        "eepromSha256": "c3bd33053643413c0876b17ba5960758230cf3d0cc74c27680810640d5e75f53",
+        "scoreSha256": "572b77c4d74f0135465af9e7c79fa798b03c83237f3c901a62dfb4cd2f99fa9a",
+        "reference": "Independent uncompressed UM88 JSON, exact tonal/percussion/interpolation arithmetic",
+        "passed": true,
+        "simulatedSeconds": 3.566738486289978,
+        "controlFrames": 259,
+        "completeLoops": 1,
+        "samples": 29193,
+        "observedIRQs": 116795,
+        "checkedIRQOutputs": 116795,
+        "checkedGeneratedFrames": 116772,
+        "checkedPhases": 467088,
+        "checkedWaveSamples": 33536,
+        "pwmBufferLayout": "mono",
+        "fifoCapacityFrames": 192,
+        "minimumQueuedFrames": 107,
+        "maxRenderActiveCycles": 339,
+        "maxControlActiveCycles": 16406,
+        "controlCalls": 261,
+        "maxISRCycles": 47,
+        "fifoUnderruns": 0,
+        "lostInterrupts": 0,
+        "minimumStackPointer": 735,
+        "stackBytes": 32,
+        "staticStateEnd": 500,
+        "fifoEnd": 692,
+        "stackMarginBytes": 43,
+        "allControlFramesMatch": true,
+        "allTonalMixesMatch": true,
+        "allPwmFramesMatch": true,
+        "allPercussionStatesMatch": true,
+        "clippedChannelSamples": 0,
+        "peakTonalMix": 71,
+        "monoMeanPwm": 126.97831671976158,
+        "monoRmsPwm": 9.157684553439076,
+        "hardwareTested": false,
+        "wallSeconds": 3.6533870999999998
+      },
+      "profile": {
+        "schema": "micromusic-um88-cycle-profile",
+        "version": 1,
+        "variant": "polyphony-study",
+        "cpuHz": 8388608,
+        "flashSha256": "b8a7fe691958acfb2d8aefa2dd6910f98b0e97245e1fa2fe2e5ffd2a5838330b",
+        "engineSha256": "422863f35623aa8a42a7c51c6de4d9d7455aacc06cc4b2ebdb659c92aff7b327",
+        "engineBytes": 2602,
+        "samples": 29193,
+        "profileSeconds": 3.5642834901809692,
+        "hardwareTested": false,
+        "method": "AVR instruction stepping with IRQ active; exclusive function cycles; IRQ entry attributed separately; rejected FIFO polls separated",
+        "measuredCycles": 29899377,
+        "busyCyclesPerSample": 719.2325557496661,
+        "idlePercent": 29.775941485335967,
+        "exclusive": {
+          "um_render": {
+            "cycles": 9896427,
+            "perSample": 339,
+            "percent": 33.099107717194244,
+            "calls": 29193
+          },
+          "PWM_IRQ": {
+            "cycles": 5489318,
+            "perSample": 188.03541944986813,
+            "percent": 18.359305613625327,
+            "calls": 0
+          },
+          "main": {
+            "cycles": 4262963,
+            "perSample": 146.0268900078786,
+            "percent": 14.25769841291342,
+            "calls": 0
+          },
+          "um_output": {
+            "cycles": 759018,
+            "perSample": 26,
+            "percent": 2.5385746331771393,
+            "calls": 29193
+          },
+          "um_tick": {
+            "cycles": 268874,
+            "perSample": 9.21022162847258,
+            "percent": 0.8992628843069205,
+            "calls": 261
+          },
+          "__mulhi3": {
+            "cycles": 109879,
+            "perSample": 3.763881752474908,
+            "percent": 0.36749595150427383,
+            "calls": 2500
+          },
+          "um_word": {
+            "cycles": 34064,
+            "perSample": 1.1668550679957523,
+            "percent": 0.11392879523877705,
+            "calls": 2129
+          },
+          "refresh": {
+            "cycles": 14942,
+            "perSample": 0.5118350289452951,
+            "percent": 0.04997428541738512,
+            "calls": 241
+          },
+          "um_scale_wave": {
+            "cycles": 121223,
+            "perSample": 4.152468057411023,
+            "percent": 0.40543654137007606,
+            "calls": 241
+          },
+          "read_events": {
+            "cycles": 21555,
+            "perSample": 0.7383619360805672,
+            "percent": 0.07209180311683418,
+            "calls": 38
+          },
+          "command": {
+            "cycles": 18293,
+            "perSample": 0.6266228205391704,
+            "percent": 0.06118187679964034,
+            "calls": 414
+          },
+          "idle_poll": {
+            "cycles": 8902821,
+            "perSample": 304.9642380022608,
+            "percent": 29.775941485335967,
+            "calls": 0
+          }
+        },
+        "multiplyCallers": {
+          "um_tick": 2088,
+          "read_events": 412
+        },
+        "minimumQueuedFrames": 107,
+        "maxISRCycles": 47,
+        "minimumStackPointer": 735,
+        "fifoUnderruns": 0,
+        "lostInterrupts": 0,
+        "wallSeconds": 2.2500839
+      }
+    }
+  ],
+  "sourceHashes": {
+    "engine.c": "f38040b86c70b4859a229ac9451da04d1d42132a47ca368daed6c8bc35607aed",
+    "platform.c": "bb7036630f6eb02cabf2a71b0f34c295c1d35f04c0dd9ea6e9049ac6dc9c8415",
+    "render-avr.S": "656068eeffb4266dc9b248326e1aed3a9536d2e36a3278d84b1271ef0b3273e0",
+    "irq-avr.S": "fbf636f41ad9d87b101915a18a8e7c58555cf96124f266682e193a1e8d9d9272"
+  },
+  "constraints": "ATtiny88, AVR25, GNU AVR 7.3.0 -Os; explicit ASM backend; C-only clock/control candidates; complete specified loops plus restart with IRQ active",
+  "candidateSourceCommit": "d7c003d",
+  "sourceHashNormalization": "Raw source bytes read at experiment time",
+  "compiledClockRatioChecks": {
+    "passed": 2,
+    "frequencies": [
+      75000,
+      80000,
+      1000000,
+      4800000,
+      8000000,
+      9600000,
+      12000000,
+      8388608,
+      16000000
+    ],
+    "comparedSamplesPerFrequency": 10000,
+    "includes16MHzFirmwareAudit": false
+  },
+  "unmeasuredOpportunities": [
+    "Choose independent/grouped mix strategy on context change instead of per-voice dispatch every sample",
+    "Process envelopes at exact next transition, invalidating on LEVEL/context changes",
+    "Reuse identical effective waveform caches where CPU/RAM bounds improve",
+    "Remove repeated voice-index multiplication and consider decode-cost-aware grammar selection",
+    "Evaluate GPIOR cursor storage or ISR address setup using vendor definitions",
+    "Hoist the amplitude row base inside waveform expansion"
+  ],
+  "qualityGate": "Exact same score, control timing, every DDS phase, cached waveform, percussion state, interpolated PWM byte and OCR after IRQ; published images were not replaced"
+}
