@@ -73,4 +73,5 @@ References:
 [WASM numeric semantics](https://webassembly.github.io/spec/core/exec/numerics.html).
 The new MVP operations are f64.min (0xa4), f64.ceil (0x9b), f64.div (0xa3) and
 i32.trunc_f64_s (0xaa); the supported source range is part of the proof above.
-See the measurement report for toolchain, workload, limitations and validation.
+See the [measurement report](../reports/adaptive-region-budget-20261025.md)
+for toolchain, workload, limitations and validation.

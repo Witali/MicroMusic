@@ -492,8 +492,8 @@ No new hardware checklist item closes;21/30 remain complete.
 
 | Priority | Candidate | Evidence required before keeping it |
 | --- | --- | --- |
-| 1 | Physical ns and running-idle ADC aggregator shortcuts are retained. Scoped I/O publication is tested and rejected; the compiler already caches the mirror pointer. Deadline lookup inlining is retained for the measured rhythmic workload. Settled internal GPIO now suppresses proven redundant dispatch; its elapsed-time gain remains unproven. Reprofile remaining board service before selecting another scheduler change. Watchdog-period caching, lazy watchdog conversion, equal-rate, bounded-multiply and native-delay guards are also rejected. | Preserve public shadow restoration and zero-work/partial/fault/reset behavior. Retain same-base cache invalidation and every GPIO dependency-owner hook. Keep phase, PINB/INT0/PCINT/T0/CLKI, sleep/PRR and reactivation correct. Require complete state/pin/PCM parity, enabled-watchdog/ADC and CLKI controls and balanced identical-runtime timing. Do not turn source-entry reductions into elapsed-speed claims. Retain the documented 0.942x ADC kernel limitation. Repeat IRQ-active browser audio/underrun checks before default activation. |
-| 2 | Evaluate adaptive bounded-region instruction budgets near deadlines. Separate inter-block fusion and constant folding are rejected. | Keep full flags, clock-before-commit, external entries and original fallback. Node HQ4 gains1.448x, but browser live audio still underruns; other firmware/event-heavy gains remain unproven. Measure budget changes separately from native scheduler changes. |
+| 1 | Physical ns and running-idle ADC aggregator shortcuts are retained. Scoped I/O publication is tested and rejected; the compiler already caches the mirror pointer. Deadline lookup inlining is retained for the measured rhythmic workload. Settled internal GPIO suppresses proven redundant dispatch; its elapsed-time gain remains unproven. The post-GPIO profile still identifies the clock bridge/scanner/time conversion as substantial work. Profile the updated optional region policy before another native scheduler change. Watchdog-period caching, lazy watchdog conversion, equal-rate, bounded-multiply and native-delay guards are also rejected. | Preserve public shadow restoration and zero-work/partial/fault/reset behavior. Retain same-base cache invalidation and every GPIO dependency-owner hook. Keep phase, PINB/INT0/PCINT/T0/CLKI, sleep/PRR and reactivation correct. Require complete state/pin/PCM parity, enabled-watchdog/ADC and CLKI controls and balanced identical-runtime timing. Do not turn source-entry reductions into elapsed-speed claims. Retain the documented 0.942x ADC kernel limitation. Repeat IRQ-active browser audio/underrun checks before default activation. |
+| 2 | Adaptive bounded-region instruction budgets are retained for measured HQ4 improvement. Next evaluate remaining bridge/region coverage and interactions with phase-local optimization independently. Separate inter-block fusion and constant folding are rejected. | Keep full flags, strict event bounds, clock-before-commit, external entries and original fallback. Against the same native, adaptive HQ4 gains1.764x/1.628x in two intervals; other real-firmware gains are unproven. CLKI's possible small loss remains recorded. All six new browser audio cases still underrun. Measure further generator changes separately from native scheduling. |
 | 3 | Validate optional phase-local liveness for default activation when stable performance measurements are available. | The full-context path remains an oracle. Size/parity are established; do not treat noisy median gains as speed evidence. Keep partial execution, reset/faults, SPM and IRQ effects exactly once. |
 | 4 | Extend proven direct WASM regions only where measured coverage justifies it; evaluate region SREG liveness independently. | The bounded cyclic register-local path is implemented. Preserve all observable SREG exits, indirect/external-entry fallback, aliases and visible AVR stack state; require real-firmware gains for extensions. |
 | 5 | Evaluate reachable-code generation, Flash-region replacement and persistent caching separately from execution optimizations. | Correct dynamic targets and code/data handling, complete SPM dependency invalidation, exact cache identities and independent cold-start/compilation measurements. |
@@ -624,10 +624,42 @@ large identity controls, so sustained elapsed gains remain unproven. The first
 variant is archived separately, not pooled as the final candidate.
 
 [Sources, measurements and replay](../reports/gpio-idle-20261025.md) retain both
-variants and the original-dispatch oracle. Next reprofile remaining recurring
-board service, then choose a distinct scheduler or instruction-budget change.
+variants and the original-dispatch oracle. The subsequent profile and separate
+instruction-budget change are recorded below.
 No real-time/browser/default-engine acceptance closes; `wasm` remains default,
 the old ADC penalty is unresolved and the hardware count stays 21/30, nine open.
+
+#### Post-GPIO profile and adaptive region budget checkpoint
+
+`61e435d6` retains 12 profiles / 12,383 work samples with exact production equality.
+The phase-clock bridge and descendants contain 72–73% of music work samples;
+scanner and time conversions remain substantial. These are surviving-body
+sampling observations, not exclusive subsystem times. See the
+[profile and raw-sample replay](../reports/post-gpio-profile-20261025.md).
+
+`01ed0b38` implements adaptive worst-case instruction budgets only inside the
+optional bounded register regions. A smaller budget must end strictly before
+native/caller deadlines and 2^52, with full flags, clock-before-commit and uint64
+retirement capacity. Memory/I/O and CLKI retain their original fallback paths.
+One f64 local is added per region; native memory/ABI/image remain unchanged.
+Ordinary CPU bytes match with boundedRegions=false in all five control cases.
+
+All 1,729 default/shared-tool tests pass, including seven new admission/ADC/WDT
+and boundary cases; isolated reconstruction passes 24 region tests and five
+generated-CPU parity cases. 320 timings / 160 warmups retain 9,248 exact snapshots.
+HQ4 physical gains 1.764x/1.628x, eight of eight pairs faster in both intervals;
+the internal kernel gains 1.614x/2.086x. Rhythmic/Lumière gains remain unproven;
+CLKI is inactive for regions and measures 0.985x/0.953x, with control variation
+large enough that a small loss cannot be excluded. Keep the narrow evidence.
+
+The new browser run passes 12 exact checkpoints with active IRQs. All six
+10-second Worker/AudioWorklet cases stay visible but still underrun: false/true
+episode counts are 12/18 Rhythmic, 16/16 Lumière and 17/4 HQ4. This does not pass
+real-time or default activation. See the
+[measurements, browser record and replay](../reports/adaptive-region-budget-20261025.md)
+and [budget proof](region-budget-audit.md). Next profile the updated opt-in
+policy/remaining bridge paths before choosing another native or generator
+optimization. The main count remains 21/30 with nine open; default stays wasm.
 
 #### Watchdog clock checkpoint (period cache rejected; lazy sync audited)
 
