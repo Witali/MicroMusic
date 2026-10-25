@@ -19,10 +19,12 @@ const {values}=parseArgs({options:{'baseline-ref':{type:'string',default:'4f0955
   'validate-only':{type:'boolean'},
   trials:{type:'string',default:'8'},warmups:{type:'string',default:'4'},
   frames:{type:'string',default:'12000'},instructions:{type:'string',default:'1000000'},
+  'kernel-frames':{type:'string',default:'1200'},
   case:{type:'string',multiple:true},out:{type:'string',default:'build/benchmarks/runtime-controls.json'}}});
 const integer=(v,min,max)=>{const n=Number(v);assert.ok(Number.isInteger(n)&&n>=min&&n<=max);return n;};
 const trials=integer(values.trials,8,32),schedule=controlSchedule(trials),warmups=integer(values.warmups,1,8),
-  frames=integer(values.frames,1024,48000),instructions=integer(values.instructions,1000,10000000),rate=48000,block=1024;
+  frames=integer(values.frames,1024,48000),kernelFrames=integer(values['kernel-frames'],1200,48000),
+  instructions=integer(values.instructions,1000,10000000),rate=48000,block=1024;
 const sha=v=>createHash('sha256').update(v).digest('hex');
 const stringify=v=>JSON.stringify(v,(_,n)=>typeof n==='bigint'?n.toString():n,2)+'\n';
 const text=path=>readFileSync(resolve(root,path),'utf8').replaceAll('\r\n','\n');
@@ -40,7 +42,7 @@ for(const [kind,version] of Object.entries({old,current})){
 }
 for(const key of ['exports','flags','compilerVersion','sources'])assert.deepEqual(old.manifest[key],current.manifest[key],key);
 const changedInputs=Object.keys(current.manifest.inputs).filter(path=>old.manifest.inputs[path]!==current.manifest.inputs[path]);
-const changeSet=values['change-set'];assert.ok(['long-internal-span','service-inlining','clock-identity','clock-multiply','clock-delay'].includes(changeSet));
+const changeSet=values['change-set'];assert.ok(['long-internal-span','service-inlining','clock-identity','clock-multiply','clock-delay','ns-remainder'].includes(changeSet));
 assert.deepEqual(changedInputs,changeSet==='long-internal-span'?
   ['web-player/native/peripherals/device.c','web-player/native/peripherals/device.h']:
   changeSet.startsWith('clock-')?['web-player/native/peripherals/device_clock.h']:['web-player/native/peripherals/device.c']);
@@ -64,9 +66,9 @@ for(const id of ['rhythmic','lumiere-stereo','hq4-chego-auto']){
 }
 for(const physical of [false,true])cases.push({id:'kernel-'+(physical?'physical':'compatible')+'-direct',binary:kernel,instructions,physical,
   options:{oscillatorHz:9600000,fuseLow:0x72,...physical?{resumable:true,osccalHz:table(9600000)}:{}}});
-for(const divisor of [1,256])cases.push({id:'kernel-clki-20m-div'+divisor,binary:kernel,frames:1200,channels:1,physical:true,external:true,divisor,
+for(const divisor of [1,256])cases.push({id:'kernel-clki-20m-div'+divisor,binary:kernel,frames:kernelFrames,channels:1,physical:true,external:true,divisor,
   options:{oscillatorHz:20000000,resumable:true,fuseLow:0x70,clkiProfile:{phasePolicy:'digital-noninverting-zero-seed-v1',initialLevel:1}}});
-cases.push({id:'kernel-internal-20m-div1',binary:kernel,frames:1200,channels:1,physical:true,divisor:1,
+cases.push({id:'kernel-internal-20m-div1',binary:kernel,frames:kernelFrames,channels:1,physical:true,divisor:1,
   options:{oscillatorHz:20000000,resumable:true,fuseLow:0x72,osccalHz:table(20000000)}});
 for(const id of ['kernel-internal-20m-div1','kernel-clki-20m-div1'])
   cases.push({...cases.find(row=>row.id===id),id:id+'-adc-active',adcEnabled:true});
@@ -119,7 +121,7 @@ const report={schema:'micromusic-runtime-identical-controls-v1',createdAt:new Da
   mode:values['validate-only']?'validation':'timing',
   git:{head:git(['rev-parse','HEAD']).toString().trim(),baseline:git(['rev-parse',baseline]).toString().trim(),status:git(['status','--short']).toString().trim()},
   host:{node:process.version,v8:process.versions.v8,flags:process.execArgv,platform:platform(),release:release(),cpu:cpus()[0]?.model},
-  parameters:{trials,warmups,frames,instructions,rate,block,schedule,changeSet},
+  parameters:{trials,warmups,frames,kernelFrames,instructions,rate,block,schedule,changeSet},
   provenance:{changedInputs,runtimes:Object.fromEntries(variants.map(v=>[v.id,{sha256:sha(v.binary),bytes:v.binary.length,inputs:v.manifest.inputs}])),
     sourceSha256:Object.fromEntries(support.map(path=>[path,sha(text(path))]))},
   method:{identity:'oldA/oldB use one native Module object; newA/newB use another. All labels use identical options, full default trace, generated CPU bytes and ABI. Fresh instances and memories for every run.',
