@@ -1758,3 +1758,31 @@ sample or 491 more cycles in a 160-sample window: changed bit alignment and
 IRQ phase matter. Only four size-reduced cases pass a strict no-cycle-growth
 gate. No decoder Flash/SRAM is added; this is not an assembly speedup.
 [Paired workloads, hashes and measurements](../../Codecs/LPX/research/q0-lossless-2026-10-25/scale.json).
+
+### LPX: choose metadata coding by total Flash and active-IRQ timing
+
+ATmega328P / AVR5, AVR-GCC 7.3.0 ABI, `-Os`, 16MHz/8kHz. Optional L4HY v3
+reuses width/type/k/lag/gain state; only the format mask adds one SRAM byte.
+Compile `LPX4_V3_FEATURES` consistently in every translation unit. Arithmetic
+backend selection, real device macros/Flash I/O and explicit C fallback are
+independent and unchanged. No new assembly was introduced.
+
+Measured mask24 (width/subheader repeat) on 24 two-second streams: payload
+120691 → 117245 bytes, exact native PCM16 / AVR PWM, no underruns with IRQ
+active, queue512/prefill384. Parser cost is about154 bytes; only9/24 complete
+ELFs shrink, and only4 also pass the strict no-growth mean/160-window gate.
+Static SRAM1101 →1102. The eight-second repeated English workload saves
+416 total Flash bytes and averages1737.15 →1735.25 wall cycles/sample.
+An eight-second Russian workload saves18 bytes but costs1.36 more mean cycles.
+
+Mask40 (width/implicit zero headers) reduces a two-second zero-excitation
+stream497 →71 bytes; total ELF9028 →8758, mean1166.82 →1157.61 cycles.
+Continue LPC/postfilter updates and q-ring writes: zero q is not an audio
+state reset. Compact queue256/prefill160/unroll3 passes six selected streams
+including both long repeats; SRAM845 →846. Three explicit C AVR controls
+retain valid PWM parity but underrun. Do not infer C real-time support.
+
+Default mask0 reproduces all24 original v2 ELF hashes exactly. New options
+are opt-in, with a full-ELF/timing rollback tool. Scale-repeat and small LSF
+Rice have insufficient net Flash benefit on this corpus and stay experiments.
+[Measurements, source hashes, constraints and recipes](../../Codecs/LPX/research/q0-lossless-2026-10-25/README.md).

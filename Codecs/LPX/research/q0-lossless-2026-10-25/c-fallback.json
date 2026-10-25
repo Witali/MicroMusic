@@ -1,0 +1,1840 @@
+[
+  {
+    "id": "ru_square_a_quiet",
+    "simulator": "simavr 1.6",
+    "cpu_hz": 16000000,
+    "audio_hz": 8000,
+    "done": 1,
+    "decoder_error": 0,
+    "produced": 16000,
+    "played": 16000,
+    "underruns": 10267,
+    "timer_ticks": 26267,
+    "tick_interval_min_cycles": 1976,
+    "tick_interval_max_cycles": 2024,
+    "min_queue_before_producer_eos": 0,
+    "decode_calls": 16000,
+    "decode_wall_cycles_total": 52123615,
+    "decode_wall_cycles_max": 33926,
+    "decode_wall_cycles_max_40": 148933,
+    "decode_wall_cycles_max_80": 269247,
+    "decode_wall_cycles_max_160": 532555,
+    "minimum_stack_pointer": 2168,
+    "bss_end": 1358,
+    "stack_margin_bytes": 810,
+    "total_cycles": 53700338,
+    "occupancy_trace": [
+      {
+        "cycle": 1168324,
+        "queued": 384,
+        "underruns": 0
+      },
+      {
+        "cycle": 1488325,
+        "queued": 320,
+        "underruns": 0
+      },
+      {
+        "cycle": 1808321,
+        "queued": 252,
+        "underruns": 0
+      },
+      {
+        "cycle": 2128325,
+        "queued": 188,
+        "underruns": 0
+      },
+      {
+        "cycle": 2448324,
+        "queued": 127,
+        "underruns": 0
+      },
+      {
+        "cycle": 2768322,
+        "queued": 65,
+        "underruns": 0
+      },
+      {
+        "cycle": 3088310,
+        "queued": 0,
+        "underruns": 1
+      },
+      {
+        "cycle": 3408321,
+        "queued": 1,
+        "underruns": 70
+      },
+      {
+        "cycle": 3728322,
+        "queued": 1,
+        "underruns": 133
+      },
+      {
+        "cycle": 4048322,
+        "queued": 1,
+        "underruns": 195
+      },
+      {
+        "cycle": 4368306,
+        "queued": 0,
+        "underruns": 260
+      },
+      {
+        "cycle": 4688306,
+        "queued": 0,
+        "underruns": 324
+      },
+      {
+        "cycle": 5008321,
+        "queued": 1,
+        "underruns": 394
+      },
+      {
+        "cycle": 5328308,
+        "queued": 0,
+        "underruns": 460
+      },
+      {
+        "cycle": 5648307,
+        "queued": 0,
+        "underruns": 523
+      },
+      {
+        "cycle": 5968306,
+        "queued": 0,
+        "underruns": 587
+      },
+      {
+        "cycle": 6288307,
+        "queued": 0,
+        "underruns": 651
+      },
+      {
+        "cycle": 6608306,
+        "queued": 0,
+        "underruns": 721
+      },
+      {
+        "cycle": 6928324,
+        "queued": 1,
+        "underruns": 787
+      },
+      {
+        "cycle": 7248321,
+        "queued": 1,
+        "underruns": 847
+      },
+      {
+        "cycle": 7568306,
+        "queued": 0,
+        "underruns": 913
+      },
+      {
+        "cycle": 7888321,
+        "queued": 1,
+        "underruns": 976
+      },
+      {
+        "cycle": 8208322,
+        "queued": 1,
+        "underruns": 1041
+      },
+      {
+        "cycle": 8528321,
+        "queued": 1,
+        "underruns": 1115
+      },
+      {
+        "cycle": 8848321,
+        "queued": 1,
+        "underruns": 1178
+      },
+      {
+        "cycle": 9168321,
+        "queued": 1,
+        "underruns": 1242
+      },
+      {
+        "cycle": 9488321,
+        "queued": 1,
+        "underruns": 1306
+      },
+      {
+        "cycle": 9808307,
+        "queued": 0,
+        "underruns": 1369
+      },
+      {
+        "cycle": 10128306,
+        "queued": 0,
+        "underruns": 1441
+      },
+      {
+        "cycle": 10448306,
+        "queued": 0,
+        "underruns": 1502
+      },
+      {
+        "cycle": 10768321,
+        "queued": 1,
+        "underruns": 1563
+      },
+      {
+        "cycle": 11088306,
+        "queued": 0,
+        "underruns": 1624
+      },
+      {
+        "cycle": 11408321,
+        "queued": 1,
+        "underruns": 1687
+      },
+      {
+        "cycle": 11728306,
+        "queued": 0,
+        "underruns": 1759
+      },
+      {
+        "cycle": 12048321,
+        "queued": 1,
+        "underruns": 1821
+      },
+      {
+        "cycle": 12368306,
+        "queued": 0,
+        "underruns": 1884
+      },
+      {
+        "cycle": 12688322,
+        "queued": 1,
+        "underruns": 1947
+      },
+      {
+        "cycle": 13008322,
+        "queued": 1,
+        "underruns": 2011
+      },
+      {
+        "cycle": 13328306,
+        "queued": 0,
+        "underruns": 2081
+      },
+      {
+        "cycle": 13648306,
+        "queued": 0,
+        "underruns": 2141
+      },
+      {
+        "cycle": 13968328,
+        "queued": 1,
+        "underruns": 2202
+      },
+      {
+        "cycle": 14288306,
+        "queued": 0,
+        "underruns": 2263
+      },
+      {
+        "cycle": 14608322,
+        "queued": 1,
+        "underruns": 2324
+      },
+      {
+        "cycle": 14928306,
+        "queued": 0,
+        "underruns": 2395
+      },
+      {
+        "cycle": 15248323,
+        "queued": 1,
+        "underruns": 2455
+      },
+      {
+        "cycle": 15568306,
+        "queued": 0,
+        "underruns": 2519
+      },
+      {
+        "cycle": 15888321,
+        "queued": 1,
+        "underruns": 2582
+      },
+      {
+        "cycle": 16208321,
+        "queued": 1,
+        "underruns": 2645
+      },
+      {
+        "cycle": 16528322,
+        "queued": 1,
+        "underruns": 2718
+      },
+      {
+        "cycle": 16848322,
+        "queued": 1,
+        "underruns": 2782
+      },
+      {
+        "cycle": 17168306,
+        "queued": 0,
+        "underruns": 2847
+      },
+      {
+        "cycle": 17488322,
+        "queued": 1,
+        "underruns": 2911
+      },
+      {
+        "cycle": 17808324,
+        "queued": 1,
+        "underruns": 2976
+      },
+      {
+        "cycle": 18128306,
+        "queued": 0,
+        "underruns": 3041
+      },
+      {
+        "cycle": 18448321,
+        "queued": 1,
+        "underruns": 3112
+      },
+      {
+        "cycle": 18768322,
+        "queued": 1,
+        "underruns": 3177
+      },
+      {
+        "cycle": 19088306,
+        "queued": 0,
+        "underruns": 3241
+      },
+      {
+        "cycle": 19408321,
+        "queued": 1,
+        "underruns": 3305
+      },
+      {
+        "cycle": 19728321,
+        "queued": 1,
+        "underruns": 3369
+      },
+      {
+        "cycle": 20048306,
+        "queued": 0,
+        "underruns": 3441
+      },
+      {
+        "cycle": 20368321,
+        "queued": 1,
+        "underruns": 3507
+      },
+      {
+        "cycle": 20688321,
+        "queued": 1,
+        "underruns": 3571
+      },
+      {
+        "cycle": 21008306,
+        "queued": 0,
+        "underruns": 3635
+      },
+      {
+        "cycle": 21328322,
+        "queued": 1,
+        "underruns": 3697
+      },
+      {
+        "cycle": 21648306,
+        "queued": 0,
+        "underruns": 3762
+      },
+      {
+        "cycle": 21968321,
+        "queued": 1,
+        "underruns": 3833
+      },
+      {
+        "cycle": 22288306,
+        "queued": 0,
+        "underruns": 3896
+      },
+      {
+        "cycle": 22608321,
+        "queued": 1,
+        "underruns": 3961
+      },
+      {
+        "cycle": 22928306,
+        "queued": 0,
+        "underruns": 4026
+      },
+      {
+        "cycle": 23248306,
+        "queued": 0,
+        "underruns": 4091
+      },
+      {
+        "cycle": 23568306,
+        "queued": 0,
+        "underruns": 4161
+      },
+      {
+        "cycle": 23888321,
+        "queued": 1,
+        "underruns": 4228
+      },
+      {
+        "cycle": 24208321,
+        "queued": 1,
+        "underruns": 4293
+      },
+      {
+        "cycle": 24528306,
+        "queued": 0,
+        "underruns": 4358
+      },
+      {
+        "cycle": 24848306,
+        "queued": 0,
+        "underruns": 4423
+      },
+      {
+        "cycle": 25168321,
+        "queued": 1,
+        "underruns": 4486
+      },
+      {
+        "cycle": 25488322,
+        "queued": 1,
+        "underruns": 4559
+      },
+      {
+        "cycle": 25808322,
+        "queued": 1,
+        "underruns": 4623
+      },
+      {
+        "cycle": 26128322,
+        "queued": 1,
+        "underruns": 4685
+      },
+      {
+        "cycle": 26448306,
+        "queued": 0,
+        "underruns": 4748
+      },
+      {
+        "cycle": 26768322,
+        "queued": 1,
+        "underruns": 4809
+      },
+      {
+        "cycle": 27088306,
+        "queued": 0,
+        "underruns": 4881
+      },
+      {
+        "cycle": 27408321,
+        "queued": 1,
+        "underruns": 4947
+      },
+      {
+        "cycle": 27728322,
+        "queued": 1,
+        "underruns": 5010
+      },
+      {
+        "cycle": 28048321,
+        "queued": 1,
+        "underruns": 5072
+      },
+      {
+        "cycle": 28368306,
+        "queued": 0,
+        "underruns": 5134
+      },
+      {
+        "cycle": 28688306,
+        "queued": 0,
+        "underruns": 5201
+      },
+      {
+        "cycle": 29008321,
+        "queued": 1,
+        "underruns": 5270
+      },
+      {
+        "cycle": 29328321,
+        "queued": 1,
+        "underruns": 5334
+      },
+      {
+        "cycle": 29648322,
+        "queued": 1,
+        "underruns": 5399
+      },
+      {
+        "cycle": 29968306,
+        "queued": 0,
+        "underruns": 5461
+      },
+      {
+        "cycle": 30288321,
+        "queued": 1,
+        "underruns": 5526
+      },
+      {
+        "cycle": 30608306,
+        "queued": 0,
+        "underruns": 5598
+      },
+      {
+        "cycle": 30928307,
+        "queued": 0,
+        "underruns": 5661
+      },
+      {
+        "cycle": 31248321,
+        "queued": 1,
+        "underruns": 5724
+      },
+      {
+        "cycle": 31568306,
+        "queued": 0,
+        "underruns": 5785
+      },
+      {
+        "cycle": 31888322,
+        "queued": 1,
+        "underruns": 5846
+      },
+      {
+        "cycle": 32208321,
+        "queued": 1,
+        "underruns": 5918
+      },
+      {
+        "cycle": 32528322,
+        "queued": 1,
+        "underruns": 5978
+      },
+      {
+        "cycle": 32848321,
+        "queued": 1,
+        "underruns": 6041
+      },
+      {
+        "cycle": 33168306,
+        "queued": 0,
+        "underruns": 6102
+      },
+      {
+        "cycle": 33488322,
+        "queued": 1,
+        "underruns": 6165
+      },
+      {
+        "cycle": 33808321,
+        "queued": 1,
+        "underruns": 6235
+      },
+      {
+        "cycle": 34128322,
+        "queued": 1,
+        "underruns": 6298
+      },
+      {
+        "cycle": 34448321,
+        "queued": 1,
+        "underruns": 6363
+      },
+      {
+        "cycle": 34768321,
+        "queued": 1,
+        "underruns": 6427
+      },
+      {
+        "cycle": 35088306,
+        "queued": 0,
+        "underruns": 6493
+      },
+      {
+        "cycle": 35408306,
+        "queued": 0,
+        "underruns": 6561
+      },
+      {
+        "cycle": 35728321,
+        "queued": 1,
+        "underruns": 6628
+      },
+      {
+        "cycle": 36048322,
+        "queued": 1,
+        "underruns": 6692
+      },
+      {
+        "cycle": 36368306,
+        "queued": 0,
+        "underruns": 6757
+      },
+      {
+        "cycle": 36688321,
+        "queued": 1,
+        "underruns": 6820
+      },
+      {
+        "cycle": 37008306,
+        "queued": 0,
+        "underruns": 6882
+      },
+      {
+        "cycle": 37328322,
+        "queued": 1,
+        "underruns": 6955
+      },
+      {
+        "cycle": 37648306,
+        "queued": 0,
+        "underruns": 7017
+      },
+      {
+        "cycle": 37968322,
+        "queued": 1,
+        "underruns": 7077
+      },
+      {
+        "cycle": 38288306,
+        "queued": 0,
+        "underruns": 7139
+      },
+      {
+        "cycle": 38608307,
+        "queued": 0,
+        "underruns": 7201
+      },
+      {
+        "cycle": 38928324,
+        "queued": 1,
+        "underruns": 7270
+      },
+      {
+        "cycle": 39248306,
+        "queued": 0,
+        "underruns": 7332
+      },
+      {
+        "cycle": 39568322,
+        "queued": 1,
+        "underruns": 7394
+      },
+      {
+        "cycle": 39888306,
+        "queued": 0,
+        "underruns": 7456
+      },
+      {
+        "cycle": 40208306,
+        "queued": 0,
+        "underruns": 7521
+      },
+      {
+        "cycle": 40528321,
+        "queued": 1,
+        "underruns": 7589
+      },
+      {
+        "cycle": 40848306,
+        "queued": 0,
+        "underruns": 7653
+      },
+      {
+        "cycle": 41168321,
+        "queued": 1,
+        "underruns": 7715
+      },
+      {
+        "cycle": 41488321,
+        "queued": 1,
+        "underruns": 7780
+      },
+      {
+        "cycle": 41808306,
+        "queued": 0,
+        "underruns": 7844
+      },
+      {
+        "cycle": 42128321,
+        "queued": 1,
+        "underruns": 7917
+      },
+      {
+        "cycle": 42448306,
+        "queued": 0,
+        "underruns": 7981
+      },
+      {
+        "cycle": 42768306,
+        "queued": 0,
+        "underruns": 8043
+      },
+      {
+        "cycle": 43088321,
+        "queued": 1,
+        "underruns": 8108
+      },
+      {
+        "cycle": 43408322,
+        "queued": 1,
+        "underruns": 8169
+      },
+      {
+        "cycle": 43728306,
+        "queued": 0,
+        "underruns": 8241
+      },
+      {
+        "cycle": 44048321,
+        "queued": 1,
+        "underruns": 8307
+      },
+      {
+        "cycle": 44368321,
+        "queued": 1,
+        "underruns": 8371
+      },
+      {
+        "cycle": 44688322,
+        "queued": 1,
+        "underruns": 8436
+      },
+      {
+        "cycle": 45008322,
+        "queued": 1,
+        "underruns": 8500
+      },
+      {
+        "cycle": 45328306,
+        "queued": 0,
+        "underruns": 8565
+      },
+      {
+        "cycle": 45648321,
+        "queued": 1,
+        "underruns": 8637
+      },
+      {
+        "cycle": 45968307,
+        "queued": 0,
+        "underruns": 8701
+      },
+      {
+        "cycle": 46288322,
+        "queued": 1,
+        "underruns": 8766
+      },
+      {
+        "cycle": 46608306,
+        "queued": 0,
+        "underruns": 8831
+      },
+      {
+        "cycle": 46928309,
+        "queued": 0,
+        "underruns": 8896
+      },
+      {
+        "cycle": 47248306,
+        "queued": 0,
+        "underruns": 8961
+      },
+      {
+        "cycle": 47568324,
+        "queued": 1,
+        "underruns": 9030
+      },
+      {
+        "cycle": 47888321,
+        "queued": 1,
+        "underruns": 9095
+      },
+      {
+        "cycle": 48208321,
+        "queued": 1,
+        "underruns": 9159
+      },
+      {
+        "cycle": 48528321,
+        "queued": 1,
+        "underruns": 9224
+      },
+      {
+        "cycle": 48848306,
+        "queued": 0,
+        "underruns": 9288
+      },
+      {
+        "cycle": 49168321,
+        "queued": 1,
+        "underruns": 9357
+      },
+      {
+        "cycle": 49488322,
+        "queued": 1,
+        "underruns": 9422
+      },
+      {
+        "cycle": 49808322,
+        "queued": 1,
+        "underruns": 9486
+      },
+      {
+        "cycle": 50128322,
+        "queued": 1,
+        "underruns": 9551
+      },
+      {
+        "cycle": 50448306,
+        "queued": 0,
+        "underruns": 9614
+      },
+      {
+        "cycle": 50768306,
+        "queued": 0,
+        "underruns": 9681
+      },
+      {
+        "cycle": 51088306,
+        "queued": 0,
+        "underruns": 9752
+      },
+      {
+        "cycle": 51408321,
+        "queued": 1,
+        "underruns": 9815
+      },
+      {
+        "cycle": 51728321,
+        "queued": 1,
+        "underruns": 9879
+      },
+      {
+        "cycle": 52048306,
+        "queued": 0,
+        "underruns": 9943
+      },
+      {
+        "cycle": 52368306,
+        "queued": 0,
+        "underruns": 10007
+      },
+      {
+        "cycle": 52688307,
+        "queued": 0,
+        "underruns": 10077
+      },
+      {
+        "cycle": 53008321,
+        "queued": 1,
+        "underruns": 10137
+      },
+      {
+        "cycle": 53328306,
+        "queued": 0,
+        "underruns": 10199
+      },
+      {
+        "cycle": 53648322,
+        "queued": 1,
+        "underruns": 10259
+      }
+    ],
+    "input_sha256": "9b1e18f922630d2f4175029ae055a5bc003b081ff5a8468c3bd270846efc58e3",
+    "input_bytes": 5178,
+    "input_samples": 16000,
+    "pwm_sha256": "2f105a49b7f166a5d2d34e593971597555f466a457325ac218f0387b7ef8e8dc",
+    "pwm_native_exact": true,
+    "core_sha256": "cf4b1e663be0c503d95ca101e5f1b37fcfcf4d3b8d57250f8ec4d8dbb076f8a7",
+    "core_header_sha256": "c5016338b4eae56af5013ce4ed8f24afe9a9e5071b226b569942431100a88558",
+    "math_header_sha256": "46bd8d82e7c85ccf3883916a48b194773d8505e0ffb4a9ba5aecec6ca37edd0d",
+    "harness_sha256": "5c0179ae73a153285826dfc1d608c4c65171f257901399efc9bb0e1488039e4a",
+    "runner_sha256": "c35b6adbb401978e96973d2a919ebca0bbd2879c5b4d47110c70233bf2516b52",
+    "elf_sha256": "bd739bd020776e6c155659cadb8fd8ed42b39dc6be94b602accc95c078918e0f",
+    "hex_sha256": "74a2f7eddd89a7f9c8565e1e3212de26fab6ea5f51d670388e4abe5f2f008dc6",
+    "flash_bytes": 13050,
+    "static_sram_bytes": 1102,
+    "compiler": "avr-g++.exe (GCC) 7.3.0",
+    "compiler_options": [
+      "-DLPX4_PROFILE_QUEUE=512",
+      "-DLPX4_PROFILE_PREFILL=384",
+      "-DLPX4_PROFILE_IRQ_LOAD=0",
+      "-DLPX4_AVR_DOT_UNROLL=9",
+      "-DLPX4_V3_FEATURES=24",
+      "-mmcu=atmega328p",
+      "-DF_CPU=16000000UL",
+      "-Os",
+      "-std=gnu++11",
+      "-fno-exceptions",
+      "-fno-rtti"
+    ],
+    "arithmetic_backend": "c",
+    "queue_bytes": 512,
+    "prefill_samples": 384,
+    "extra_irq_cycles": 0,
+    "dot_unroll": 9,
+    "v3_compiled_features": 24,
+    "simavr_no_underrun": false,
+    "physical_hardware_measured": false,
+    "instrumentation": "Decode wall intervals include active IRQ and flag stores; PB0 marks OCR2B writes; queue sampled every 160 ticks.",
+    "mean_decode_wall_cycles": 3257.7259375,
+    "mean_160_sample_max_cycles_per_sample": 3328.46875
+  },
+  {
+    "id": "silence",
+    "simulator": "simavr 1.6",
+    "cpu_hz": 16000000,
+    "audio_hz": 8000,
+    "done": 1,
+    "decoder_error": 0,
+    "produced": 16000,
+    "played": 16000,
+    "underruns": 5557,
+    "timer_ticks": 21557,
+    "tick_interval_min_cycles": 1976,
+    "tick_interval_max_cycles": 2018,
+    "min_queue_before_producer_eos": 0,
+    "decode_calls": 16000,
+    "decode_wall_cycles_total": 42558713,
+    "decode_wall_cycles_max": 28139,
+    "decode_wall_cycles_max_40": 124079,
+    "decode_wall_cycles_max_80": 222806,
+    "decode_wall_cycles_max_160": 428119,
+    "minimum_stack_pointer": 2183,
+    "bss_end": 1358,
+    "stack_margin_bytes": 825,
+    "total_cycles": 44128535,
+    "occupancy_trace": [
+      {
+        "cycle": 1016521,
+        "queued": 384,
+        "underruns": 0
+      },
+      {
+        "cycle": 1336518,
+        "queued": 340,
+        "underruns": 0
+      },
+      {
+        "cycle": 1656518,
+        "queued": 296,
+        "underruns": 0
+      },
+      {
+        "cycle": 1976518,
+        "queued": 251,
+        "underruns": 0
+      },
+      {
+        "cycle": 2296518,
+        "queued": 207,
+        "underruns": 0
+      },
+      {
+        "cycle": 2616518,
+        "queued": 162,
+        "underruns": 0
+      },
+      {
+        "cycle": 2936518,
+        "queued": 118,
+        "underruns": 0
+      },
+      {
+        "cycle": 3256518,
+        "queued": 74,
+        "underruns": 0
+      },
+      {
+        "cycle": 3576518,
+        "queued": 29,
+        "underruns": 0
+      },
+      {
+        "cycle": 3896518,
+        "queued": 1,
+        "underruns": 16
+      },
+      {
+        "cycle": 4216518,
+        "queued": 1,
+        "underruns": 60
+      },
+      {
+        "cycle": 4536518,
+        "queued": 1,
+        "underruns": 104
+      },
+      {
+        "cycle": 4856519,
+        "queued": 1,
+        "underruns": 148
+      },
+      {
+        "cycle": 5176518,
+        "queued": 1,
+        "underruns": 192
+      },
+      {
+        "cycle": 5496523,
+        "queued": 1,
+        "underruns": 236
+      },
+      {
+        "cycle": 5816503,
+        "queued": 0,
+        "underruns": 281
+      },
+      {
+        "cycle": 6136518,
+        "queued": 1,
+        "underruns": 324
+      },
+      {
+        "cycle": 6456503,
+        "queued": 0,
+        "underruns": 369
+      },
+      {
+        "cycle": 6776504,
+        "queued": 0,
+        "underruns": 413
+      },
+      {
+        "cycle": 7096518,
+        "queued": 1,
+        "underruns": 457
+      },
+      {
+        "cycle": 7416503,
+        "queued": 0,
+        "underruns": 501
+      },
+      {
+        "cycle": 7736518,
+        "queued": 1,
+        "underruns": 545
+      },
+      {
+        "cycle": 8056518,
+        "queued": 1,
+        "underruns": 589
+      },
+      {
+        "cycle": 8376518,
+        "queued": 1,
+        "underruns": 633
+      },
+      {
+        "cycle": 8696518,
+        "queued": 1,
+        "underruns": 677
+      },
+      {
+        "cycle": 9016519,
+        "queued": 1,
+        "underruns": 721
+      },
+      {
+        "cycle": 9336518,
+        "queued": 1,
+        "underruns": 765
+      },
+      {
+        "cycle": 9656518,
+        "queued": 1,
+        "underruns": 809
+      },
+      {
+        "cycle": 9976503,
+        "queued": 0,
+        "underruns": 854
+      },
+      {
+        "cycle": 10296503,
+        "queued": 0,
+        "underruns": 898
+      },
+      {
+        "cycle": 10616503,
+        "queued": 0,
+        "underruns": 942
+      },
+      {
+        "cycle": 10936503,
+        "queued": 0,
+        "underruns": 986
+      },
+      {
+        "cycle": 11256518,
+        "queued": 1,
+        "underruns": 1030
+      },
+      {
+        "cycle": 11576519,
+        "queued": 1,
+        "underruns": 1074
+      },
+      {
+        "cycle": 11896518,
+        "queued": 1,
+        "underruns": 1118
+      },
+      {
+        "cycle": 12216518,
+        "queued": 1,
+        "underruns": 1162
+      },
+      {
+        "cycle": 12536518,
+        "queued": 1,
+        "underruns": 1206
+      },
+      {
+        "cycle": 12856518,
+        "queued": 1,
+        "underruns": 1250
+      },
+      {
+        "cycle": 13176518,
+        "queued": 1,
+        "underruns": 1294
+      },
+      {
+        "cycle": 13496519,
+        "queued": 1,
+        "underruns": 1338
+      },
+      {
+        "cycle": 13816519,
+        "queued": 1,
+        "underruns": 1382
+      },
+      {
+        "cycle": 14136504,
+        "queued": 0,
+        "underruns": 1427
+      },
+      {
+        "cycle": 14456504,
+        "queued": 0,
+        "underruns": 1471
+      },
+      {
+        "cycle": 14776503,
+        "queued": 0,
+        "underruns": 1515
+      },
+      {
+        "cycle": 15096519,
+        "queued": 1,
+        "underruns": 1559
+      },
+      {
+        "cycle": 15416503,
+        "queued": 0,
+        "underruns": 1603
+      },
+      {
+        "cycle": 15736518,
+        "queued": 1,
+        "underruns": 1647
+      },
+      {
+        "cycle": 16056519,
+        "queued": 1,
+        "underruns": 1691
+      },
+      {
+        "cycle": 16376519,
+        "queued": 1,
+        "underruns": 1735
+      },
+      {
+        "cycle": 16696518,
+        "queued": 1,
+        "underruns": 1779
+      },
+      {
+        "cycle": 17016518,
+        "queued": 1,
+        "underruns": 1823
+      },
+      {
+        "cycle": 17336519,
+        "queued": 1,
+        "underruns": 1867
+      },
+      {
+        "cycle": 17656518,
+        "queued": 1,
+        "underruns": 1911
+      },
+      {
+        "cycle": 17976519,
+        "queued": 1,
+        "underruns": 1955
+      },
+      {
+        "cycle": 18296503,
+        "queued": 0,
+        "underruns": 2000
+      },
+      {
+        "cycle": 18616503,
+        "queued": 0,
+        "underruns": 2044
+      },
+      {
+        "cycle": 18936503,
+        "queued": 0,
+        "underruns": 2088
+      },
+      {
+        "cycle": 19256503,
+        "queued": 0,
+        "underruns": 2132
+      },
+      {
+        "cycle": 19576519,
+        "queued": 1,
+        "underruns": 2176
+      },
+      {
+        "cycle": 19896518,
+        "queued": 1,
+        "underruns": 2220
+      },
+      {
+        "cycle": 20216518,
+        "queued": 1,
+        "underruns": 2264
+      },
+      {
+        "cycle": 20536518,
+        "queued": 1,
+        "underruns": 2308
+      },
+      {
+        "cycle": 20856518,
+        "queued": 1,
+        "underruns": 2352
+      },
+      {
+        "cycle": 21176518,
+        "queued": 1,
+        "underruns": 2396
+      },
+      {
+        "cycle": 21496519,
+        "queued": 1,
+        "underruns": 2440
+      },
+      {
+        "cycle": 21816518,
+        "queued": 1,
+        "underruns": 2484
+      },
+      {
+        "cycle": 22136518,
+        "queued": 1,
+        "underruns": 2528
+      },
+      {
+        "cycle": 22456519,
+        "queued": 1,
+        "underruns": 2572
+      },
+      {
+        "cycle": 22776503,
+        "queued": 0,
+        "underruns": 2617
+      },
+      {
+        "cycle": 23096503,
+        "queued": 0,
+        "underruns": 2661
+      },
+      {
+        "cycle": 23416503,
+        "queued": 0,
+        "underruns": 2705
+      },
+      {
+        "cycle": 23736503,
+        "queued": 0,
+        "underruns": 2749
+      },
+      {
+        "cycle": 24056518,
+        "queued": 1,
+        "underruns": 2793
+      },
+      {
+        "cycle": 24376519,
+        "queued": 1,
+        "underruns": 2837
+      },
+      {
+        "cycle": 24696518,
+        "queued": 1,
+        "underruns": 2881
+      },
+      {
+        "cycle": 25016518,
+        "queued": 1,
+        "underruns": 2925
+      },
+      {
+        "cycle": 25336518,
+        "queued": 1,
+        "underruns": 2969
+      },
+      {
+        "cycle": 25656518,
+        "queued": 1,
+        "underruns": 3013
+      },
+      {
+        "cycle": 25976520,
+        "queued": 1,
+        "underruns": 3057
+      },
+      {
+        "cycle": 26296518,
+        "queued": 1,
+        "underruns": 3101
+      },
+      {
+        "cycle": 26616519,
+        "queued": 1,
+        "underruns": 3145
+      },
+      {
+        "cycle": 26936503,
+        "queued": 0,
+        "underruns": 3190
+      },
+      {
+        "cycle": 27256503,
+        "queued": 0,
+        "underruns": 3234
+      },
+      {
+        "cycle": 27576521,
+        "queued": 1,
+        "underruns": 3278
+      },
+      {
+        "cycle": 27896503,
+        "queued": 0,
+        "underruns": 3322
+      },
+      {
+        "cycle": 28216503,
+        "queued": 0,
+        "underruns": 3366
+      },
+      {
+        "cycle": 28536518,
+        "queued": 1,
+        "underruns": 3410
+      },
+      {
+        "cycle": 28856518,
+        "queued": 1,
+        "underruns": 3454
+      },
+      {
+        "cycle": 29176518,
+        "queued": 1,
+        "underruns": 3498
+      },
+      {
+        "cycle": 29496519,
+        "queued": 1,
+        "underruns": 3542
+      },
+      {
+        "cycle": 29816519,
+        "queued": 1,
+        "underruns": 3586
+      },
+      {
+        "cycle": 30136518,
+        "queued": 1,
+        "underruns": 3630
+      },
+      {
+        "cycle": 30456503,
+        "queued": 0,
+        "underruns": 3675
+      },
+      {
+        "cycle": 30776519,
+        "queued": 1,
+        "underruns": 3718
+      },
+      {
+        "cycle": 31096518,
+        "queued": 1,
+        "underruns": 3762
+      },
+      {
+        "cycle": 31416503,
+        "queued": 0,
+        "underruns": 3807
+      },
+      {
+        "cycle": 31736503,
+        "queued": 0,
+        "underruns": 3851
+      },
+      {
+        "cycle": 32056505,
+        "queued": 0,
+        "underruns": 3895
+      },
+      {
+        "cycle": 32376518,
+        "queued": 1,
+        "underruns": 3939
+      },
+      {
+        "cycle": 32696518,
+        "queued": 1,
+        "underruns": 3983
+      },
+      {
+        "cycle": 33016518,
+        "queued": 1,
+        "underruns": 4027
+      },
+      {
+        "cycle": 33336518,
+        "queued": 1,
+        "underruns": 4071
+      },
+      {
+        "cycle": 33656518,
+        "queued": 1,
+        "underruns": 4115
+      },
+      {
+        "cycle": 33976519,
+        "queued": 1,
+        "underruns": 4159
+      },
+      {
+        "cycle": 34296518,
+        "queued": 1,
+        "underruns": 4203
+      },
+      {
+        "cycle": 34616519,
+        "queued": 1,
+        "underruns": 4247
+      },
+      {
+        "cycle": 34936504,
+        "queued": 0,
+        "underruns": 4292
+      },
+      {
+        "cycle": 35256518,
+        "queued": 1,
+        "underruns": 4335
+      },
+      {
+        "cycle": 35576503,
+        "queued": 0,
+        "underruns": 4380
+      },
+      {
+        "cycle": 35896503,
+        "queued": 0,
+        "underruns": 4424
+      },
+      {
+        "cycle": 36216518,
+        "queued": 1,
+        "underruns": 4468
+      },
+      {
+        "cycle": 36536518,
+        "queued": 1,
+        "underruns": 4512
+      },
+      {
+        "cycle": 36856518,
+        "queued": 1,
+        "underruns": 4556
+      },
+      {
+        "cycle": 37176518,
+        "queued": 1,
+        "underruns": 4600
+      },
+      {
+        "cycle": 37496518,
+        "queued": 1,
+        "underruns": 4644
+      },
+      {
+        "cycle": 37816519,
+        "queued": 1,
+        "underruns": 4688
+      },
+      {
+        "cycle": 38136518,
+        "queued": 1,
+        "underruns": 4732
+      },
+      {
+        "cycle": 38456518,
+        "queued": 1,
+        "underruns": 4776
+      },
+      {
+        "cycle": 38776518,
+        "queued": 1,
+        "underruns": 4820
+      },
+      {
+        "cycle": 39096518,
+        "queued": 1,
+        "underruns": 4864
+      },
+      {
+        "cycle": 39416504,
+        "queued": 0,
+        "underruns": 4909
+      },
+      {
+        "cycle": 39736503,
+        "queued": 0,
+        "underruns": 4953
+      },
+      {
+        "cycle": 40056504,
+        "queued": 0,
+        "underruns": 4997
+      },
+      {
+        "cycle": 40376503,
+        "queued": 0,
+        "underruns": 5041
+      },
+      {
+        "cycle": 40696518,
+        "queued": 1,
+        "underruns": 5085
+      },
+      {
+        "cycle": 41016518,
+        "queued": 1,
+        "underruns": 5129
+      },
+      {
+        "cycle": 41336519,
+        "queued": 1,
+        "underruns": 5173
+      },
+      {
+        "cycle": 41656519,
+        "queued": 1,
+        "underruns": 5217
+      },
+      {
+        "cycle": 41976519,
+        "queued": 1,
+        "underruns": 5261
+      },
+      {
+        "cycle": 42296518,
+        "queued": 1,
+        "underruns": 5305
+      },
+      {
+        "cycle": 42616518,
+        "queued": 1,
+        "underruns": 5349
+      },
+      {
+        "cycle": 42936518,
+        "queued": 1,
+        "underruns": 5393
+      },
+      {
+        "cycle": 43256503,
+        "queued": 0,
+        "underruns": 5438
+      },
+      {
+        "cycle": 43576519,
+        "queued": 1,
+        "underruns": 5481
+      },
+      {
+        "cycle": 43896504,
+        "queued": 0,
+        "underruns": 5526
+      }
+    ],
+    "input_sha256": "0d3175c612fbe0f2a57f93b66a0713e5fc94787feefb8f1347df8523dbd21866",
+    "input_bytes": 71,
+    "input_samples": 16000,
+    "pwm_sha256": "cc151bdca8ffb36bed337a716da36e35065095569c61df278f5e550f83340708",
+    "pwm_native_exact": true,
+    "core_sha256": "cf4b1e663be0c503d95ca101e5f1b37fcfcf4d3b8d57250f8ec4d8dbb076f8a7",
+    "core_header_sha256": "c5016338b4eae56af5013ce4ed8f24afe9a9e5071b226b569942431100a88558",
+    "math_header_sha256": "46bd8d82e7c85ccf3883916a48b194773d8505e0ffb4a9ba5aecec6ca37edd0d",
+    "harness_sha256": "5c0179ae73a153285826dfc1d608c4c65171f257901399efc9bb0e1488039e4a",
+    "runner_sha256": "c35b6adbb401978e96973d2a919ebca0bbd2879c5b4d47110c70233bf2516b52",
+    "elf_sha256": "2b029c5c92ec6a18b6c9c9fa979598eb174c4f77534f7ff4c0af863ab5d485ac",
+    "hex_sha256": "b35818c97ee5b7c4c67add4e202d34bad1660f394fd8b5f973dea0faeb429172",
+    "flash_bytes": 7944,
+    "static_sram_bytes": 1102,
+    "compiler": "avr-g++.exe (GCC) 7.3.0",
+    "compiler_options": [
+      "-DLPX4_PROFILE_QUEUE=512",
+      "-DLPX4_PROFILE_PREFILL=384",
+      "-DLPX4_PROFILE_IRQ_LOAD=0",
+      "-DLPX4_AVR_DOT_UNROLL=9",
+      "-DLPX4_V3_FEATURES=40",
+      "-mmcu=atmega328p",
+      "-DF_CPU=16000000UL",
+      "-Os",
+      "-std=gnu++11",
+      "-fno-exceptions",
+      "-fno-rtti"
+    ],
+    "arithmetic_backend": "c",
+    "queue_bytes": 512,
+    "prefill_samples": 384,
+    "extra_irq_cycles": 0,
+    "dot_unroll": 9,
+    "v3_compiled_features": 40,
+    "simavr_no_underrun": false,
+    "physical_hardware_measured": false,
+    "instrumentation": "Decode wall intervals include active IRQ and flag stores; PB0 marks OCR2B writes; queue sampled every 160 ticks.",
+    "mean_decode_wall_cycles": 2659.9195625,
+    "mean_160_sample_max_cycles_per_sample": 2675.74375
+  },
+  {
+    "id": "sparse-synthetic",
+    "simulator": "simavr 1.6",
+    "cpu_hz": 16000000,
+    "audio_hz": 8000,
+    "done": 1,
+    "decoder_error": 0,
+    "produced": 3200,
+    "played": 3200,
+    "underruns": 1176,
+    "timer_ticks": 4376,
+    "tick_interval_min_cycles": 1976,
+    "tick_interval_max_cycles": 2018,
+    "min_queue_before_producer_eos": 0,
+    "decode_calls": 3200,
+    "decode_wall_cycles_total": 9592765,
+    "decode_wall_cycles_max": 29449,
+    "decode_wall_cycles_max_40": 141837,
+    "decode_wall_cycles_max_80": 258197,
+    "decode_wall_cycles_max_160": 490537,
+    "minimum_stack_pointer": 2183,
+    "bss_end": 1358,
+    "stack_margin_bytes": 825,
+    "total_cycles": 9908638,
+    "occupancy_trace": [
+      {
+        "cycle": 1158624,
+        "queued": 384,
+        "underruns": 0
+      },
+      {
+        "cycle": 1478625,
+        "queued": 326,
+        "underruns": 0
+      },
+      {
+        "cycle": 1798627,
+        "queued": 269,
+        "underruns": 0
+      },
+      {
+        "cycle": 2118621,
+        "queued": 212,
+        "underruns": 0
+      },
+      {
+        "cycle": 2438625,
+        "queued": 154,
+        "underruns": 0
+      },
+      {
+        "cycle": 2758622,
+        "queued": 97,
+        "underruns": 0
+      },
+      {
+        "cycle": 3078621,
+        "queued": 40,
+        "underruns": 0
+      },
+      {
+        "cycle": 3398621,
+        "queued": 1,
+        "underruns": 18
+      },
+      {
+        "cycle": 3718621,
+        "queued": 1,
+        "underruns": 76
+      },
+      {
+        "cycle": 4038621,
+        "queued": 1,
+        "underruns": 133
+      },
+      {
+        "cycle": 4358621,
+        "queued": 1,
+        "underruns": 190
+      },
+      {
+        "cycle": 4678621,
+        "queued": 1,
+        "underruns": 247
+      },
+      {
+        "cycle": 4998621,
+        "queued": 1,
+        "underruns": 304
+      },
+      {
+        "cycle": 5318623,
+        "queued": 1,
+        "underruns": 360
+      },
+      {
+        "cycle": 5638621,
+        "queued": 1,
+        "underruns": 417
+      },
+      {
+        "cycle": 5958624,
+        "queued": 1,
+        "underruns": 474
+      },
+      {
+        "cycle": 6278621,
+        "queued": 1,
+        "underruns": 530
+      },
+      {
+        "cycle": 6598621,
+        "queued": 1,
+        "underruns": 587
+      },
+      {
+        "cycle": 6918606,
+        "queued": 0,
+        "underruns": 644
+      },
+      {
+        "cycle": 7238606,
+        "queued": 0,
+        "underruns": 701
+      },
+      {
+        "cycle": 7558622,
+        "queued": 1,
+        "underruns": 758
+      },
+      {
+        "cycle": 7878606,
+        "queued": 0,
+        "underruns": 815
+      },
+      {
+        "cycle": 8198621,
+        "queued": 1,
+        "underruns": 872
+      },
+      {
+        "cycle": 8518606,
+        "queued": 0,
+        "underruns": 930
+      },
+      {
+        "cycle": 8838621,
+        "queued": 1,
+        "underruns": 986
+      },
+      {
+        "cycle": 9158606,
+        "queued": 0,
+        "underruns": 1044
+      },
+      {
+        "cycle": 9478621,
+        "queued": 1,
+        "underruns": 1100
+      },
+      {
+        "cycle": 9798622,
+        "queued": 1,
+        "underruns": 1157
+      }
+    ],
+    "input_sha256": "9c85a6c9cd33ee8bcb1d660aed4947848181cecfc1ece64b495e1b4c9976837f",
+    "input_bytes": 324,
+    "input_samples": 3200,
+    "pwm_sha256": "5a36500f36e88429de575c9c0e68e11d621389a51fc055646b62f5487ace965a",
+    "pwm_native_exact": true,
+    "core_sha256": "cf4b1e663be0c503d95ca101e5f1b37fcfcf4d3b8d57250f8ec4d8dbb076f8a7",
+    "core_header_sha256": "c5016338b4eae56af5013ce4ed8f24afe9a9e5071b226b569942431100a88558",
+    "math_header_sha256": "46bd8d82e7c85ccf3883916a48b194773d8505e0ffb4a9ba5aecec6ca37edd0d",
+    "harness_sha256": "5c0179ae73a153285826dfc1d608c4c65171f257901399efc9bb0e1488039e4a",
+    "runner_sha256": "c35b6adbb401978e96973d2a919ebca0bbd2879c5b4d47110c70233bf2516b52",
+    "elf_sha256": "9a58ef08dc0757654b50caee630cbf025e293f1c496e2472264cb166c5997d3f",
+    "hex_sha256": "90834a45f2aa45fc00ee0ec4b364686f57816a50e58695871db06e366084ce88",
+    "flash_bytes": 8196,
+    "static_sram_bytes": 1102,
+    "compiler": "avr-g++.exe (GCC) 7.3.0",
+    "compiler_options": [
+      "-DLPX4_PROFILE_QUEUE=512",
+      "-DLPX4_PROFILE_PREFILL=384",
+      "-DLPX4_PROFILE_IRQ_LOAD=0",
+      "-DLPX4_AVR_DOT_UNROLL=9",
+      "-DLPX4_V3_FEATURES=24",
+      "-mmcu=atmega328p",
+      "-DF_CPU=16000000UL",
+      "-Os",
+      "-std=gnu++11",
+      "-fno-exceptions",
+      "-fno-rtti"
+    ],
+    "arithmetic_backend": "c",
+    "queue_bytes": 512,
+    "prefill_samples": 384,
+    "extra_irq_cycles": 0,
+    "dot_unroll": 9,
+    "v3_compiled_features": 24,
+    "simavr_no_underrun": false,
+    "physical_hardware_measured": false,
+    "instrumentation": "Decode wall intervals include active IRQ and flag stores; PB0 marks OCR2B writes; queue sampled every 160 ticks.",
+    "mean_decode_wall_cycles": 2997.7390625,
+    "mean_160_sample_max_cycles_per_sample": 3065.85625
+  }
+]
