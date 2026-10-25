@@ -492,7 +492,7 @@ No new hardware checklist item closes;21/30 remain complete.
 
 | Priority | Candidate | Evidence required before keeping it |
 | --- | --- | --- |
-| 1 | Use the refreshed profile to test fewer repeated event/time conversions in `next_event`, `ratio` and `duration`; equal-rate and bounded-multiply guards are rejected. Broader peripheral activity gating remains open. The bounded-region browser audio gate still fails. | Exact integer residues, clock/input/event boundaries and pin/PCM parity; enabled-ADC and CLKI controls. Use balanced identical-runtime controls and uninstrumented paired timings. Inspect exact optimized WASM for an inlining/layout hypothesis; reduced entries alone do not prove speed. Repeat IRQ-active browser audio/underrun checks before default activation. |
+| 1 | Physical ns remainder reduction is retained. Next evaluate exact watchdog-period reduction for divisible rates, then fewer repeated event scans/conversions. Equal-rate, bounded-multiply and native-delay guards are rejected. Broader peripheral activity gating remains open. | Preserve numerator/period units in every deadline and startup/reset consumer, with the general path for other rates. Keep integer residues, event/pin/PCM parity, enabled-ADC and CLKI controls. Require balanced identical-runtime timing; inspect exact WASM without assigning a cause from static code alone. Repeat IRQ-active browser audio/underrun checks before default activation. |
 | 2 | Evaluate adaptive bounded-region instruction budgets near deadlines. Separate inter-block fusion and constant folding are rejected. | Keep full flags, clock-before-commit, external entries and original fallback. Node HQ4 gains1.448x, but browser live audio still underruns; other firmware/event-heavy gains remain unproven. Measure budget changes separately from native scheduler changes. |
 | 3 | Validate optional phase-local liveness for default activation when stable performance measurements are available. | The full-context path remains an oracle. Size/parity are established; do not treat noisy median gains as speed evidence. Keep partial execution, reset/faults, SPM and IRQ effects exactly once. |
 | 4 | Extend proven direct WASM regions only where measured coverage justifies it; evaluate region SREG liveness independently. | The bounded cyclic register-local path is implemented. Preserve all observable SREG exits, indirect/external-entry fallback, aliases and visible AVR stack state; require real-firmware gains for extensions. |
@@ -513,15 +513,32 @@ separate from speed measurements. The rejected single-service inline hint in
 `reports/runtime-controls-20261024.md` is recorded evidence, not a pending
 production change or an implemented optimization.
 
+#### Physical nanosecond clock checkpoint (retained)
+
+Physical mode now retains the nanosecond fractional remainder as0..999ps,
+denormalizing it for the existing NVM deadline formula. Legacy and watchdog
+remainders retain their previous units. All1677 tests and13 parity cases pass;
+608 timing runs/304 warmups retain5952 exact snapshots. HQ4 physical gains
+1.103x/1.164x across two screens, faster in all16 pairs. Other gains are not
+established; a small internal20MHz-kernel loss remains possible under noisy
+controls. The longer negative kernel median weakens to0.987x.
+Runtime grows74 bytes to117975, with fixed two-page memory and no host imports.
+The browser gate is not rerun for this native revision; default engine stays
+`wasm`. The model/hardware checklist stays21/30 with nine open. See
+[exact sources, measurements and caveats](../reports/physical-ns-remainder-20261025.md).
+Next investigate watchdog-period remainder reduction independently. Audit
+reset/startup pulse arithmetic and every deadline consumer before changing units;
+retain general arithmetic when the rate does not divide the fixed base frequency.
+
 #### Native-delay checkpoint (rejected)
 
 Native-delay checkpoint: native-width phase subtraction passes1674 tests and
 the13-case parity matrix, but three paired timing rows1.004x/1.002x/0.993x do
 not establish speed gains. The header/runtime are restored and the independent
 fraction/product-boundary regression remains. See
-[clock-delay evidence](../reports/clock-delay-20261025.md). Next investigate
-lossless physical ps→ns remainder reduction separately; preserve NVM deadline
-conversion and all legacy/CLKI/ADC controls. No hardware checklist item closes.
+[clock-delay evidence](../reports/clock-delay-20261025.md). Its physical ps→ns
+follow-up is retained above with NVM/legacy/CLKI/ADC parity. No hardware
+checklist item closes.
 
 #### Bounded-region checkpoint (optional implementation)
 
