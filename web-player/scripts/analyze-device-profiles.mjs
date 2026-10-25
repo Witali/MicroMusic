@@ -37,7 +37,7 @@ for(const input of inputs){
       assert.equal(run.productionEquality,true,result.id);
       sampleCount+=run.workStackSamples;allSamples+=run.samples;profileCount++;
       for(const f of run.workFrames){
-        const key=f.key??f.name,row=frames.get(key)??{name:f.name,category:f.category,selfSamples:0,inclusiveSamples:0};
+        const key=f.key??f.name,row=frames.get(key)??{key,name:f.name,category:f.category,selfSamples:0,inclusiveSamples:0};
         row.selfSamples+=f.selfSamples;row.inclusiveSamples+=f.inclusiveSamples;frames.set(key,row);
       }
       for(const c of run.workLeafCategories)categories.set(c.category,(categories.get(c.category)||0)+c.samples);
