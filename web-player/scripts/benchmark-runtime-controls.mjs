@@ -50,7 +50,7 @@ for(const key of ['exports','flags','compilerVersion','sources']){
 }
 if(scopeChange)for(const name of scopeExports){assert.ok(current.manifest.exports.includes(name));assert.ok(!old.manifest.exports.includes(name));}
 const changedInputs=Object.keys(current.manifest.inputs).filter(path=>old.manifest.inputs[path]!==current.manifest.inputs[path]);
-const changeSet=values['change-set'];assert.ok(['long-internal-span','service-inlining','clock-identity','clock-multiply','clock-delay','ns-remainder','watchdog-period','watchdog-lazy','adc-idle','io-publication-scope'].includes(changeSet));
+const changeSet=values['change-set'];assert.ok(['long-internal-span','service-inlining','clock-identity','clock-multiply','clock-delay','ns-remainder','watchdog-period','watchdog-lazy','adc-idle','io-publication-scope','deadline-dispatch'].includes(changeSet));
 assert.deepEqual(changedInputs,scopeChange?
   ['web-player/native/avr-device.inc','web-player/native/peripherals/device.c','web-player/native/peripherals/device.h']:changeSet==='long-internal-span'?
   ['web-player/native/peripherals/device.c','web-player/native/peripherals/device.h']:

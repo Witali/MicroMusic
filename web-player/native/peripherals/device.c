@@ -559,6 +559,8 @@ static void service(uint64_t previous_half) {
  if(board.clki_enabled){clki_service(previous_half);return;}
  service_clocks(previous_half);service_async();service_end();
 }
+/* Keep the large miss path out of the frequently reused same-state lookup. */
+static uint64_t next_event_scan(void) __attribute__((noinline));
 static uint64_t next_event_scan(void) {
  int nvm_running=nvm_active();
  uint64_t next=at_cycle(timer0_next_event(&board.timer));
@@ -594,7 +596,8 @@ static uint64_t next_event_scan(void) {
  if (board.input_count) next=minimum(next,board.inputs[board.input_head].at);
  return next;
 }
-static uint64_t next_event(void) {
+static inline uint64_t next_event(void) __attribute__((always_inline));
+static inline uint64_t next_event(void) {
  if (board.deadline.valid && board.deadline.base==board.base)
   return board.deadline.at;
  board.deadline.valid=0;
