@@ -6,8 +6,9 @@ import {createRenderer} from '../lib/engines.js';
 const read=p=>readFileSync(new URL(p,import.meta.url));
 const catalog=JSON.parse(read('../firmware-attiny88.json'));
 const hash=b=>createHash('sha256').update(b).digest('hex');
-test('all nine UM88 compositions share identical executable bytes and verified playback',()=>{
- let code;
+test('eight mono compositions share executable bytes; stereo remains a pinned archive',()=>{
+ let code,monoCount=0;
+ const archive=JSON.parse(read('../../ATtiny88/Music/universal/archive/stereo-v1/provenance.json'));
  assert.equal(catalog.entries.length,9);
  for(const entry of catalog.entries){
   assert.equal(entry.firmwareEngine,'UM88');
@@ -15,11 +16,19 @@ test('all nine UM88 compositions share identical executable bytes and verified p
   const verification=JSON.parse(read('../'+entry.verificationSource));
   const binary=read('../'+entry.source.replace(/\.hex$/,'.bin'));
   const prefix=binary.subarray(0,meta.engineBytes);
-  if(code)assert.deepEqual(prefix,code);else code=prefix;
+  if(entry.archivedFirmware){
+   assert.equal(meta.channels,2);assert.equal(entry.id,archive.variant);
+   assert.equal(meta.engineSha256,archive.engineSha256);assert.equal(hash(binary),archive.flashSha256);
+   assert.match(entry.sourceAssembly,/archive\/stereo-v1/);
+  }else{
+   monoCount++;assert.equal(meta.channels,1);assert.equal(meta.pwmBufferFrames,192);
+   if(code)assert.deepEqual(prefix,code);else code=prefix;
+  }
   assert.equal(hash(prefix),meta.engineSha256);assert.equal(hash(binary),verification.flashSha256);
   assert.equal(verification.fifoUnderruns,0);assert.equal(verification.completeLoops,1);
   assert.equal(meta.cpuHz,8000000);assert.equal(meta.synthesisHz,meta.cpuHz/1024);
  }
+ assert.equal(monoCount,8);
 });
 for(const engine of ['js','wasm'])for(const id of ['lumiere-stereo','cancion-del-mariachi-ensemble']){
  test(engine+' browser rendering of UM88 '+id,async()=>{

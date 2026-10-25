@@ -135,8 +135,9 @@ def build_attiny88_legacy():
 
 
 def build_attiny88():
-    """Publish only fully audited UM88 images, with one code image for all songs."""
+    """One current mono image, plus the explicitly pinned stereo archive."""
     catalog=build_attiny88_legacy()
+    archive=json.loads((ROOT/'ATtiny88/Music/universal/archive/stereo-v1/provenance.json').read_text(encoding='utf-8'))
     common_hash=None
     for entry in catalog['entries']:
         directory=ROOT/'ATtiny88/Music/universal/songs'/Path(entry['source']).parent.name
@@ -152,12 +153,21 @@ def build_attiny88():
         assert verification['allControlFramesMatch'] and verification['allTonalMixesMatch']
         assert verification['fifoUnderruns']==verification['lostInterrupts']==0
         assert report['engineSha256']==verification['engineSha256']==digest(binary[:report['engineBytes']])
-        common_hash=common_hash or report['engineSha256'];assert common_hash==report['engineSha256']
+        archived=report['channels']==2
+        if archived:
+            assert directory.name==archive['variant']
+            for field in ('engineSha256','flashSha256','cpuHz','engineBytes','songAddress'):
+                assert report[field]==archive[field],f'Changed stereo archive: {field}'
+        else:
+            assert report['channels']==1 and report['pwmBufferLayout']=='mono' and report['pwmBufferFrames']==192
+            assert verification['fifoCapacityFrames']==192
+            common_hash=common_hash or report['engineSha256'];assert common_hash==report['engineSha256']
         relative=directory.relative_to(ROOT).as_posix()
         entry.update(firmwareEngine='UM88',eepromRequired=False,eepromBytes=0,flashBytes=len(binary),flashSha256=digest(binary),eepromSha256=digest(ep),
                      cpuHz=report['cpuHz'],pwmHz=report['pwmHz'],sampleHz=report['pwmHz'],synthesisHz=report['synthesisHz'],
                      flashHex=flash,eepromHex=eeprom,source=f'../{relative}/synth.hex',eepromSource=f'../{relative}/eeprom.hex',
-                     sourceAssembly='../ATtiny88/Music/universal/render-avr.S',buildReport=f'../{relative}/build-report.json',
+                     archivedFirmware=archived,
+                     sourceAssembly='../ATtiny88/Music/universal/'+('archive/stereo-v1/' if archived else '')+'render-avr.S',buildReport=f'../{relative}/build-report.json',
                      verificationSource=f'../{relative}/verification.json',
                      sources=[f'{relative}/{name}' for name in ('synth.hex','synth.bin','eeprom.hex','eeprom.bin','score.json')])
     catalog['hardwareProfile'].update(firmwareEngine='UM88',cpuHz=catalog['entries'][0]['cpuHz'],

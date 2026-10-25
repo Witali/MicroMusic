@@ -1,0 +1,116 @@
+{
+  "voiceSteals": [],
+  "ignoredEvents": {},
+  "omittedNotes": [],
+  "percussionReplacements": [],
+  "forcedReleases": [],
+  "collapsedNotes": [],
+  "quantization": {
+    "controlHz": 73.2421875,
+    "rule": "nearest; ties later",
+    "maximumErrorSeconds": 0.00636
+  },
+  "tempoMap": [
+    {
+      "sourceTick": 0,
+      "controlTick": 0,
+      "microsecondsPerQuarter": 500000
+    },
+    {
+      "sourceTick": 960,
+      "controlTick": 73,
+      "microsecondsPerQuarter": 650000
+    },
+    {
+      "sourceTick": 1920,
+      "controlTick": 168,
+      "microsecondsPerQuarter": 400000
+    }
+  ],
+  "noteAttacks": 16,
+  "drumAttacks": 3,
+  "schema": "micromusic-um88-arrangement-report",
+  "version": 1,
+  "channels": 1,
+  "sourceSeconds": 3.5,
+  "playbackSeconds": 3.5362133333333334,
+  "voices": 8,
+  "voiceLimit": 8,
+  "gainShift": 2,
+  "sourceTracks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "conservativePwmMixRange": [
+    -98,
+    88
+  ],
+  "wavePairs": 3,
+  "instrumentAssignments": [
+    {
+      "instrument": "flute",
+      "level": 15,
+      "envelope": {
+        "model": "sustain",
+        "defaultLevel": 15,
+        "attackStep": 4,
+        "retrigger": "half-current-level",
+        "releaseStep": 1
+      },
+      "source": {
+        "soundfontSha256": "74594e8f4250680adf590507a306655a299935343583256f3b722c48a1bc1cb0",
+        "measurement": "ATtiny13A/Music/reference/greensleeves/flute-measurements.json",
+        "measurementSha256": "5aa893e9e3e918a62a5e21249770fef4a3c5960e91dc8f6ea81df4eeeec56906",
+        "note": "Direct original FluidR3 preset capture. Low register MIDI <63, high >=63; no sample audio is embedded into firmware."
+      }
+    },
+    {
+      "instrument": "fretless-bass",
+      "level": 6,
+      "envelope": {
+        "model": "pluck",
+        "defaultLevel": 6,
+        "decayMask": 3,
+        "retrigger": "peak",
+        "releaseStep": 1
+      },
+      "source": {
+        "soundfontSha256": "74594e8f4250680adf590507a306655a299935343583256f3b722c48a1bc1cb0",
+        "measurement": "ATtiny13A/Music/reference/children/fretless-measurements.json",
+        "measurementSha256": "d9af3fe34b842f94bbd9ae9a75724ad98870ecc2e363fa979d5830774816ac88",
+        "note": "Original GM35; measured low-register profile retained byte-for-byte. Same compact wave is used in both registers; high-register realism was not measured."
+      }
+    },
+    {
+      "instrument": "cello",
+      "level": 10,
+      "envelope": {
+        "model": "bowed",
+        "defaultLevel": 10,
+        "attackStep": 4,
+        "retrigger": "half-current-level",
+        "releaseStep": 1
+      },
+      "source": {
+        "soundfontSha256": "74594e8f4250680adf590507a306655a299935343583256f3b722c48a1bc1cb0",
+        "measurement": "ATtiny13A/Music/reference/greensleeves/cello-measurements.json",
+        "measurementSha256": "83392e6920bada52a4f2c3c93a017cf0b1b4c9c8e2113d79d15064f938c63c2f",
+        "note": "Direct original FluidR3 preset capture. Low register MIDI <63, high >=63; no sample audio is embedded into firmware."
+      }
+    }
+  ],
+  "controls": "CC7 volume, CC11 expression, CC64 pedal, CC120 sound off, CC123 notes off; fixed-range pitch bend",
+  "limitations": [
+    "Mono output; CC10 pan is reported and not rendered",
+    "One procedural percussion generator; a new hit replaces its previous sound",
+    "7-bit velocity/volume/expression are quantized to 16 envelope levels"
+  ]
+}

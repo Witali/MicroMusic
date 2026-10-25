@@ -40,6 +40,22 @@ test('JS and WASM execute the same imported mono package without EEPROM',async()
  }
  assert.ok(energy>1);assert.equal(js.core.lost,0);assert.equal(wasm.core.lost,0);
 });
+test('eight independent voices execute identically with configurable mono rings',async()=>{
+ for(const folder of ['generated','profiles/buffer-128']){
+  const pkg=JSON.parse(readFileSync(new URL('../../ATtiny88/Music/universal/examples/polyphony-study/'+folder+'/player-package.json',import.meta.url),'utf8'));
+  const entry=await universalPackageEntry(pkg);
+  assert.equal(entry.voices,8);assert.equal(entry.audioChannels,1);
+  assert.equal(pkg.build.pwmBufferFrames,pkg.verification.fifoCapacityFrames);
+  for(const key of ['voiceSteals','omittedNotes','collapsedNotes'])assert.deepEqual(pkg.arrangementReport[key],[]);
+  const js=await createRenderer(entry,48000,{},'js'),wasm=await createRenderer(entry,48000,{},'wasm');
+  let energy=0;
+  for(let block=0;block<8;block++){
+   const a=js.render(8192),b=wasm.render(8192);
+   for(let i=0;i<a.length;i++){assert.ok(Math.abs(a[i]-b[i])<1e-6);energy+=a[i]*a[i];}
+  }
+  assert.ok(energy>1);assert.equal(js.core.lost,0);assert.equal(wasm.core.lost,0);
+ }
+});
 test('imported description exposes arrangement omissions and unsupported events',async()=>{
  const pkg=structuredClone(original);
  pkg.arrangementReport.ignoredEvents={CC10:2};pkg.arrangementReport.omittedNotes=[{note:60}];
