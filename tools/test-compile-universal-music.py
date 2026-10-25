@@ -97,10 +97,15 @@ class Pipeline(unittest.TestCase):
         self.config.write_text(json.dumps(dict(schema='micromusic-um88-arrangement',version=1,name='pipeline-test-c-fail',
                                 voices=5,instruments={'0':'flute'})),encoding='utf-8')
         with contextlib.redirect_stdout(io.StringIO()),self.assertRaisesRegex(ValueError,'FIFO underrun.*diagnostic report'):
-            pipeline.compile_music(source,self.config,self.folder/'not-published',backend='c')
+            # Five held voices now meet the C deadline; an eight-byte FIFO
+            # deliberately cannot absorb this score's control burst.
+            pipeline.compile_music(source,self.config,self.folder/'not-published',backend='c',buffer_frames=8)
         self.assertFalse((self.folder/'not-published').exists())
         diagnostic=ROOT/'build/universal/failures/pipeline-test-c-fail-c-8000000.json'
-        self.assertFalse(json.loads(diagnostic.read_text(encoding='utf-8'))['passed'])
+        measured=json.loads(diagnostic.read_text(encoding='utf-8'))
+        self.assertFalse(measured['passed'])
+        self.assertEqual(measured['fifoCapacityFrames'],8)
+        self.assertGreater(measured['fifoUnderruns'],0)
 
     def test_excessive_explicit_gain_is_rejected_without_publishing(self):
         events=[]
