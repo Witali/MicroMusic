@@ -31,6 +31,7 @@ enum deadline_reason {
 typedef struct {
  uint8_t *data, *flash, *eeprom;
  uint32_t config[20], calibration[128], oscillator_hz;
+ /* ns_remainder is ps in physical mode, numerator units in legacy mode. */
  uint64_t base, half, phase, ns, ns_remainder, wdt_ticks, wdt_remainder;
  uint64_t clkpr_until, clkpr_switch_half, dropped, audio_dropped;
  uint64_t bod_arm_until, bod_sleep_until, bod_recovery_until;
@@ -183,6 +184,18 @@ static int external_reset_asserted(void) {
  * multiplying a long absolute timestamp by a frequency. */
 static uint64_t rational(uint64_t delta, uint64_t rate, uint64_t *remainder) {
  return ratio(delta,rate,*remainder,base_frequency(),remainder);
+}
+static uint64_t nanoseconds_elapsed(uint64_t delta) {
+ if (!board.physical) return rational(delta,1000000000,&board.ns_remainder);
+ /* floor((delta*1e9+phase)/1e12) reduces exactly to ps/1000.
+  * The mode is fixed at init, so the remainder starts at0 and stays <1000.
+  * Split first: delta+remainder could overflow at the uint64 boundary. */
+ _Static_assert(DEVICE_PS_PER_SECOND==UINT64_C(1000000000000),"ps clock required");
+ uint64_t whole=delta/1000;
+ uint32_t tail=(uint32_t)(delta%1000)+(uint32_t)board.ns_remainder;
+ if (tail>=1000) { tail-=1000; ++whole; }
+ board.ns_remainder=tail;
+ return whole;
 }
 static uint64_t after_units(uint64_t units, uint64_t rate, uint64_t remainder) {
  if (!units) return board.base;
@@ -562,7 +575,8 @@ static uint64_t next_event_scan(void) {
  if (board.bod_sleep_until) next=minimum(next,at_cycle(board.bod_sleep_until));
  if(nvm_running) {
   uint64_t ns=nvm_next_event_ns(&board.nvm);
-  if (ns!=UINT64_MAX) next=minimum(next,after_units(ns>board.ns?ns-board.ns:0,1000000000,board.ns_remainder));
+  if (ns!=UINT64_MAX) next=minimum(next,after_units(ns>board.ns?ns-board.ns:0,1000000000,
+   board.physical?board.ns_remainder*UINT64_C(1000000000):board.ns_remainder));
  }
  if (!board.reset_requested && !board.reset_held && !reset_starting()) {
   uint32_t left=system_watchdog_until_timeout(&board.watchdog);
@@ -600,7 +614,7 @@ static void elapse(uint64_t target) {
    base_frequency()*board.divisor,&board.phase);
   board.half=add(board.half,halves);
  }
- board.ns=add(board.ns,rational(delta,1000000000,&board.ns_remainder));
+ board.ns=add(board.ns,nanoseconds_elapsed(delta));
  board.wdt_ticks=add(board.wdt_ticks,rational(delta,board.config[DEVICE_CFG_WATCHDOG_HZ],&board.wdt_remainder));
  board.base=target;
 }
