@@ -492,7 +492,7 @@ No new hardware checklist item closes;21/30 remain complete.
 
 | Priority | Candidate | Evidence required before keeping it |
 | --- | --- | --- |
-| 1 | Physical ns and running-idle ADC aggregator shortcuts are retained. Next profile the negative synthetic internal20MHz kernel and audit dirty register publication/repeated event scanning. Watchdog-period caching, lazy watchdog conversion, equal-rate, bounded-multiply and native-delay guards are rejected. | Preserve ADC prescaler/domain phase, canonical observer state, ACME, trigger/IRQ and sampled-before-input endpoints. Keep integer residues and event/pin/PCM parity, enabled-watchdog/ADC and CLKI controls. Require balanced identical-runtime timing; retain the documented0.942x kernel limitation and do not infer a speedup from counts. Repeat IRQ-active browser audio/underrun checks before default activation. |
+| 1 | Physical ns and running-idle ADC aggregator shortcuts are retained. Matched kernel/HQ4 profiles are recorded; the synthetic kernel loss remains unexplained. Next prototype scoped I/O publication using the ownership audit below. The compiler already caches the mirror pointer. Watchdog-period caching, lazy watchdog conversion, equal-rate, bounded-multiply and native-delay guards are rejected. | Preserve public shadow restoration and zero-work/partial/fault/reset behavior before skipping configuration stores inside an explicitly owned execution scope. Keep full mutation publication, old-runtime fallback, ADC/domain phase, canonical state, enabled-watchdog/ADC and CLKI controls. Require balanced identical-runtime timing; retain the documented 0.942x kernel limitation. Repeat IRQ-active browser audio/underrun checks before default activation. |
 | 2 | Evaluate adaptive bounded-region instruction budgets near deadlines. Separate inter-block fusion and constant folding are rejected. | Keep full flags, clock-before-commit, external entries and original fallback. Node HQ4 gains1.448x, but browser live audio still underruns; other firmware/event-heavy gains remain unproven. Measure budget changes separately from native scheduler changes. |
 | 3 | Validate optional phase-local liveness for default activation when stable performance measurements are available. | The full-context path remains an oracle. Size/parity are established; do not treat noisy median gains as speed evidence. Keep partial execution, reset/faults, SPM and IRQ effects exactly once. |
 | 4 | Extend proven direct WASM regions only where measured coverage justifies it; evaluate region SREG liveness independently. | The bounded cyclic register-local path is implemented. Preserve all observable SREG exits, indirect/external-entry fallback, aliases and visible AVR stack state; require real-firmware gains for extensions. |
@@ -546,6 +546,27 @@ and browser underrun gates remain open. Native/tests:14da787; tools:befa0d7.
 See [exact evidence and controls](../reports/adc-idle-20261025.md) and the
 [updated ADC audit](adc-activity-audit.md). No hardware checklist item closes:
 21/30 complete, nine open.
+
+#### Matched ADC profiling and I/O publication audit
+
+Twelve profiles retain 13,723 work samples across the old/new kernel and HQ4
+workloads. Both cases match the longer benchmark's generated CPU hash, final
+state and PCM. The profiler now supports pinned historical runtimes and matching
+benchmark inputs/configuration; pooled output retains exact frame identities.
+Sampling does not explain the synthetic 0.942x result or establish another gain.
+See [raw profiles, verification and replay](../reports/adc-regression-profile-20261025.md).
+
+The exact mirror body has one pointer load and 31 byte stores: pointer caching
+is already performed by the compiler. The [ownership audit](io-publication-audit.md)
+identifies 16 configuration bytes, but three new clock-service tests prove that
+their public memory shadows are restored even after direct host mutation.
+Do not remove these stores unconditionally. The next prototype must establish
+an explicit execution scope, retain full publication outside it and at every
+configuration/reset mutation, and preserve zero-work, partial/fault, package and
+direct-native behavior. Do not eagerly normalize memory at scope entry/exit.
+No native code changes at this checkpoint; the runtime remains 118,071 bytes.
+The focused tests pass 3/3; the previous full 1,693-test result is not a new
+complete-suite run. Hardware/default-engine gates and the 21/30 count are unchanged.
 
 #### Watchdog clock checkpoint (period cache rejected; lazy sync audited)
 

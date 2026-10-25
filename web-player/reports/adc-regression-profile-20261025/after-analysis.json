@@ -1,0 +1,4071 @@
+{
+  "schema": "micromusic-device-profile-analysis-v1",
+  "createdAt": "2026-10-25T16:49:00.682Z",
+  "method": "Pool self/inclusive sample counts across all recorded fresh-state profiles per case, divided by samples with the relevant public run/capturePhysical ancestor. Self samples are disjoint leaf-frame observations. Inclusive samples overlap and must not be added. O3/V8 inlining remains attributed to containing frames. Optional source-entry counts come from a separate diagnostic binary and never assign production cost. Raw first-repeat profiles are copied as representatives; all-repeat hashes and original paths are retained. All percentages and wall times are profiling observations, not exact exclusive time or unprofiled benchmark timings.",
+  "results": [
+    {
+      "id": "kernel-physical-div1-capture",
+      "parameters": {
+        "frames": 4800,
+        "rate": 48000,
+        "repeats": 3,
+        "intervalUs": 1000,
+        "blockFrames": 1024,
+        "fastIdle": true,
+        "optimizeFlags": true,
+        "benchmarkControls": true,
+        "requestedFirmware": [
+          "kernel-physical-div1-capture"
+        ],
+        "firmwareOrder": [
+          "kernel-physical-div1-capture"
+        ],
+        "kernel": true,
+        "clock": "physical",
+        "frequency": 20000000,
+        "divisor": 1,
+        "operation": "capture",
+        "instructions": 1000000
+      },
+      "profiles": 3,
+      "samples": 680,
+      "allSamples": 686,
+      "workWallMs": {
+        "median": 605.6136999999999,
+        "min": 308.3913999999986,
+        "max": 640.5995999999996
+      },
+      "categories": [
+        {
+          "category": "native_board_body",
+          "samples": 358,
+          "percent": 52.64705882352941
+        },
+        {
+          "category": "native_bridge_body",
+          "samples": 131,
+          "percent": 19.264705882352942
+        },
+        {
+          "category": "generated_cpu_body",
+          "samples": 124,
+          "percent": 18.235294117647058
+        },
+        {
+          "category": "native_analog_body",
+          "samples": 54,
+          "percent": 7.9411764705882355
+        },
+        {
+          "category": "native_timer0_body",
+          "samples": 7,
+          "percent": 1.0294117647058822
+        },
+        {
+          "category": "native_other_peripheral_body",
+          "samples": 5,
+          "percent": 0.7352941176470589
+        },
+        {
+          "category": "unresolved_wasm",
+          "samples": 1,
+          "percent": 0.14705882352941177
+        }
+      ],
+      "frames": [
+        {
+          "key": "native.avr.avr_device_phase_clock",
+          "name": "native.avr.avr_device_phase_clock",
+          "category": "native_bridge_body",
+          "selfSamples": 69,
+          "inclusiveSamples": 465,
+          "selfPercent": 10.147058823529411,
+          "inclusivePercent": 68.38235294117646
+        },
+        {
+          "key": "native.device.next_event",
+          "name": "native.device.next_event",
+          "category": "native_board_body",
+          "selfSamples": 58,
+          "inclusiveSamples": 58,
+          "selfPercent": 8.529411764705882,
+          "inclusivePercent": 8.529411764705882
+        },
+        {
+          "key": "cpu.runUntil",
+          "name": "cpu.runUntil",
+          "category": "generated_cpu_body",
+          "selfSamples": 50,
+          "inclusiveSamples": 671,
+          "selfPercent": 7.352941176470588,
+          "inclusivePercent": 98.67647058823529
+        },
+        {
+          "key": "native.device.duration",
+          "name": "native.device.duration",
+          "category": "native_board_body",
+          "selfSamples": 33,
+          "inclusiveSamples": 33,
+          "selfPercent": 4.852941176470588,
+          "inclusivePercent": 4.852941176470588
+        },
+        {
+          "key": "native.device.elapse",
+          "name": "native.device.elapse",
+          "category": "native_board_body",
+          "selfSamples": 28,
+          "inclusiveSamples": 50,
+          "selfPercent": 4.117647058823529,
+          "inclusivePercent": 7.352941176470588
+        },
+        {
+          "key": "native.device.ratio",
+          "name": "native.device.ratio",
+          "category": "native_board_body",
+          "selfSamples": 28,
+          "inclusiveSamples": 28,
+          "selfPercent": 4.117647058823529,
+          "inclusivePercent": 4.117647058823529
+        },
+        {
+          "key": "native.device.service_clocks",
+          "name": "native.device.service_clocks",
+          "category": "native_board_body",
+          "selfSamples": 26,
+          "inclusiveSamples": 55,
+          "selfPercent": 3.823529411764706,
+          "inclusivePercent": 8.088235294117647
+        },
+        {
+          "key": "native.analog.analog_advance",
+          "name": "native.analog.analog_advance",
+          "category": "native_analog_body",
+          "selfSamples": 26,
+          "inclusiveSamples": 39,
+          "selfPercent": 3.823529411764706,
+          "inclusivePercent": 5.735294117647059
+        },
+        {
+          "key": "cpu.block_0x0004",
+          "name": "cpu.block_0x0004",
+          "category": "generated_cpu_body",
+          "selfSamples": 24,
+          "inclusiveSamples": 273,
+          "selfPercent": 3.5294117647058822,
+          "inclusivePercent": 40.14705882352941
+        },
+        {
+          "key": "cpu.insn_0x000a_RJMP",
+          "name": "cpu.insn_0x000a_RJMP",
+          "category": "generated_cpu_body",
+          "selfSamples": 24,
+          "inclusiveSamples": 259,
+          "selfPercent": 3.5294117647058822,
+          "inclusivePercent": 38.088235294117645
+        },
+        {
+          "key": "native.device.mirror",
+          "name": "native.device.mirror",
+          "category": "native_board_body",
+          "selfSamples": 24,
+          "inclusiveSamples": 24,
+          "selfPercent": 3.5294117647058822,
+          "inclusivePercent": 3.5294117647058822
+        },
+        {
+          "key": "native.device.device_halted",
+          "name": "native.device.device_halted",
+          "category": "native_board_body",
+          "selfSamples": 21,
+          "inclusiveSamples": 21,
+          "selfPercent": 3.088235294117647,
+          "inclusivePercent": 3.088235294117647
+        },
+        {
+          "key": "native.device.service_async",
+          "name": "native.device.service_async",
+          "category": "native_board_body",
+          "selfSamples": 20,
+          "inclusiveSamples": 24,
+          "selfPercent": 2.9411764705882355,
+          "inclusivePercent": 3.5294117647058822
+        },
+        {
+          "key": "native.avr.avr_device_time",
+          "name": "native.avr.avr_device_time",
+          "category": "native_bridge_body",
+          "selfSamples": 20,
+          "inclusiveSamples": 20,
+          "selfPercent": 2.9411764705882355,
+          "inclusivePercent": 2.9411764705882355
+        },
+        {
+          "key": "native.device.service_end",
+          "name": "native.device.service_end",
+          "category": "native_board_body",
+          "selfSamples": 19,
+          "inclusiveSamples": 95,
+          "selfPercent": 2.7941176470588234,
+          "inclusivePercent": 13.970588235294118
+        },
+        {
+          "key": "native.device.advance_to",
+          "name": "native.device.advance_to",
+          "category": "native_board_body",
+          "selfSamples": 18,
+          "inclusiveSamples": 323,
+          "selfPercent": 2.6470588235294117,
+          "inclusivePercent": 47.5
+        },
+        {
+          "key": "cpu.step",
+          "name": "cpu.step",
+          "category": "generated_cpu_body",
+          "selfSamples": 18,
+          "inclusiveSamples": 303,
+          "selfPercent": 2.6470588235294117,
+          "inclusivePercent": 44.55882352941177
+        },
+        {
+          "key": "native.avr.avr_device_ready",
+          "name": "native.avr.avr_device_ready",
+          "category": "native_bridge_body",
+          "selfSamples": 17,
+          "inclusiveSamples": 34,
+          "selfPercent": 2.5,
+          "inclusivePercent": 5
+        },
+        {
+          "key": "native.device.advance_half_until_ps",
+          "name": "native.device.advance_half_until_ps",
+          "category": "native_board_body",
+          "selfSamples": 15,
+          "inclusiveSamples": 381,
+          "selfPercent": 2.2058823529411766,
+          "inclusivePercent": 56.029411764705884
+        },
+        {
+          "key": "native.analog.analog_sources",
+          "name": "native.analog.analog_sources",
+          "category": "native_analog_body",
+          "selfSamples": 15,
+          "inclusiveSamples": 29,
+          "selfPercent": 2.2058823529411766,
+          "inclusivePercent": 4.264705882352941
+        },
+        {
+          "key": "native.device.service",
+          "name": "native.device.service",
+          "category": "native_board_body",
+          "selfSamples": 14,
+          "inclusiveSamples": 198,
+          "selfPercent": 2.0588235294117645,
+          "inclusivePercent": 29.11764705882353
+        },
+        {
+          "key": "native.analog_comparator.analog_comparator_advance",
+          "name": "native.analog_comparator.analog_comparator_advance",
+          "category": "native_analog_body",
+          "selfSamples": 13,
+          "inclusiveSamples": 13,
+          "selfPercent": 1.911764705882353,
+          "inclusivePercent": 1.911764705882353
+        },
+        {
+          "key": "native.device.device_next_cpu_event",
+          "name": "native.device.device_next_cpu_event",
+          "category": "native_board_body",
+          "selfSamples": 11,
+          "inclusiveSamples": 12,
+          "selfPercent": 1.6176470588235294,
+          "inclusivePercent": 1.7647058823529411
+        },
+        {
+          "key": "native.device.wake",
+          "name": "native.device.wake",
+          "category": "native_board_body",
+          "selfSamples": 10,
+          "inclusiveSamples": 18,
+          "selfPercent": 1.4705882352941178,
+          "inclusivePercent": 2.6470588235294117
+        },
+        {
+          "key": "native.device.at_half",
+          "name": "native.device.at_half",
+          "category": "native_board_body",
+          "selfSamples": 9,
+          "inclusiveSamples": 42,
+          "selfPercent": 1.3235294117647058,
+          "inclusivePercent": 6.176470588235294
+        },
+        {
+          "key": "native.avr.avr_device_phase_retire",
+          "name": "native.avr.avr_device_phase_retire",
+          "category": "native_bridge_body",
+          "selfSamples": 9,
+          "inclusiveSamples": 20,
+          "selfPercent": 1.3235294117647058,
+          "inclusivePercent": 2.9411764705882355
+        },
+        {
+          "key": "native.avr.full_interrupt",
+          "name": "native.avr.full_interrupt",
+          "category": "native_bridge_body",
+          "selfSamples": 9,
+          "inclusiveSamples": 13,
+          "selfPercent": 1.3235294117647058,
+          "inclusivePercent": 1.911764705882353
+        },
+        {
+          "key": "native.device.inputs_at_current_time",
+          "name": "native.device.inputs_at_current_time",
+          "category": "native_board_body",
+          "selfSamples": 8,
+          "inclusiveSamples": 8,
+          "selfPercent": 1.1764705882352942,
+          "inclusivePercent": 1.1764705882352942
+        },
+        {
+          "key": "native.device.clock_domains",
+          "name": "native.device.clock_domains",
+          "category": "native_board_body",
+          "selfSamples": 8,
+          "inclusiveSamples": 8,
+          "selfPercent": 1.1764705882352942,
+          "inclusivePercent": 1.1764705882352942
+        },
+        {
+          "key": "native.avr.avr_device_cpu_deadline",
+          "name": "native.avr.avr_device_cpu_deadline",
+          "category": "native_bridge_body",
+          "selfSamples": 7,
+          "inclusiveSamples": 12,
+          "selfPercent": 1.0294117647058822,
+          "inclusivePercent": 1.7647058823529411
+        },
+        {
+          "key": "native.timer0.timer0_advance",
+          "name": "native.timer0.timer0_advance",
+          "category": "native_timer0_body",
+          "selfSamples": 7,
+          "inclusiveSamples": 7,
+          "selfPercent": 1.0294117647058822,
+          "inclusivePercent": 1.0294117647058822
+        },
+        {
+          "key": "native.device.check_faults",
+          "name": "native.device.check_faults",
+          "category": "native_board_body",
+          "selfSamples": 6,
+          "inclusiveSamples": 6,
+          "selfPercent": 0.8823529411764706,
+          "inclusivePercent": 0.8823529411764706
+        },
+        {
+          "key": "cpu.emptyBlock",
+          "name": "cpu.emptyBlock",
+          "category": "generated_cpu_body",
+          "selfSamples": 5,
+          "inclusiveSamples": 5,
+          "selfPercent": 0.7352941176470589,
+          "inclusivePercent": 0.7352941176470589
+        },
+        {
+          "key": "native.nvm.nvm_voltage_uncertain",
+          "name": "native.nvm.nvm_voltage_uncertain",
+          "category": "native_other_peripheral_body",
+          "selfSamples": 3,
+          "inclusiveSamples": 3,
+          "selfPercent": 0.4411764705882353,
+          "inclusivePercent": 0.4411764705882353
+        },
+        {
+          "key": "cpu.insn_0x0008_INC",
+          "name": "cpu.insn_0x0008_INC",
+          "category": "generated_cpu_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 6,
+          "selfPercent": 0.29411764705882354,
+          "inclusivePercent": 0.8823529411764706
+        },
+        {
+          "key": "native.system_watchdog.system_watchdog_advance",
+          "name": "native.system_watchdog.system_watchdog_advance",
+          "category": "native_other_peripheral_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 2,
+          "selfPercent": 0.29411764705882354,
+          "inclusivePercent": 0.29411764705882354
+        },
+        {
+          "key": "cpu.capturePhysical",
+          "name": "cpu.capturePhysical",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 679,
+          "selfPercent": 0.14705882352941177,
+          "inclusivePercent": 99.8529411764706
+        },
+        {
+          "key": "js-to-wasm::i@wasm://wasm/micromusic.profile.native-00079b2a",
+          "name": "js-to-wasm::i",
+          "category": "unresolved_wasm",
+          "selfSamples": 1,
+          "inclusiveSamples": 474,
+          "selfPercent": 0.14705882352941177,
+          "inclusivePercent": 69.70588235294117
+        },
+        {
+          "key": "native.device.device_time_ps",
+          "name": "native.device.device_time_ps",
+          "category": "native_board_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 1,
+          "selfPercent": 0.14705882352941177,
+          "inclusivePercent": 0.14705882352941177
+        },
+        {
+          "key": "native.device.device_discard_audio_trace",
+          "name": "native.device.device_discard_audio_trace",
+          "category": "native_board_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 1,
+          "selfPercent": 0.14705882352941177,
+          "inclusivePercent": 0.14705882352941177
+        },
+        {
+          "key": "_call@file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/avr-runtime.js:77",
+          "name": "_call",
+          "category": "javascript_bridge",
+          "selfSamples": 0,
+          "inclusiveSamples": 680,
+          "selfPercent": 0,
+          "inclusivePercent": 100
+        },
+        {
+          "key": "_call@file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/attiny13a-runtime.js:30",
+          "name": "_call",
+          "category": "javascript_bridge",
+          "selfSamples": 0,
+          "inclusiveSamples": 680,
+          "selfPercent": 0,
+          "inclusivePercent": 100
+        },
+        {
+          "key": "_execute@file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/avr-transpiled-runtime.js:81",
+          "name": "_execute",
+          "category": "javascript_bridge",
+          "selfSamples": 0,
+          "inclusiveSamples": 680,
+          "selfPercent": 0,
+          "inclusivePercent": 100
+        },
+        {
+          "key": "capturePhysical@file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/attiny13a-runtime.js:265",
+          "name": "capturePhysical",
+          "category": "javascript_bridge",
+          "selfSamples": 0,
+          "inclusiveSamples": 680,
+          "selfPercent": 0,
+          "inclusivePercent": 100
+        },
+        {
+          "key": "capture@file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/scripts/profile-device.mjs:214",
+          "name": "capture",
+          "category": "profiler_harness",
+          "selfSamples": 0,
+          "inclusiveSamples": 680,
+          "selfPercent": 0,
+          "inclusivePercent": 100
+        },
+        {
+          "key": "@file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/scripts/profile-device.mjs:-1",
+          "name": "(anonymous)",
+          "category": "profiler_harness",
+          "selfSamples": 0,
+          "inclusiveSamples": 680,
+          "selfPercent": 0,
+          "inclusivePercent": 100
+        },
+        {
+          "key": "(root)@:-1",
+          "name": "(root)",
+          "category": "other_js_vm",
+          "selfSamples": 0,
+          "inclusiveSamples": 680,
+          "selfPercent": 0,
+          "inclusivePercent": 100
+        },
+        {
+          "key": "js-to-wasm:i:i@wasm://wasm/micromusic.profile.cpu.kernel-physical-div1-capture-0010f78a",
+          "name": "js-to-wasm:i:i",
+          "category": "unresolved_wasm",
+          "selfSamples": 0,
+          "inclusiveSamples": 206,
+          "selfPercent": 0,
+          "inclusivePercent": 30.294117647058822
+        },
+        {
+          "key": "cpu.insn_0x0006_EOR",
+          "name": "cpu.insn_0x0006_EOR",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 5,
+          "selfPercent": 0,
+          "inclusivePercent": 0.7352941176470589
+        },
+        {
+          "key": "cpu.insn_0x0004_ADD",
+          "name": "cpu.insn_0x0004_ADD",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 5,
+          "selfPercent": 0,
+          "inclusivePercent": 0.7352941176470589
+        },
+        {
+          "key": "native.avr.full_audio_collect",
+          "name": "native.avr.full_audio_collect",
+          "category": "native_audio_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.14705882352941177
+        },
+        {
+          "key": "native.avr.avr_device_audio_sample",
+          "name": "native.avr.avr_device_audio_sample",
+          "category": "native_audio_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.14705882352941177
+        }
+      ],
+      "representativeProfile": "kernel-physical-div1-capture.cpuprofile",
+      "evidence": [
+        {
+          "repeat": 0,
+          "path": "build/profiles/adc-kernel-current/kernel-physical-div1-capture-0.cpuprofile",
+          "sha256": "98c4e3fbc4bf185152f99ad7436faeeddbdae2b8a4f64aacab7a3410bbd63085",
+          "workWallMs": 640.5995999999996,
+          "workSamples": 206,
+          "allSamples": 208,
+          "sampleDeltasUs": {
+            "min": 1053,
+            "median": 1565,
+            "max": 47186
+          },
+          "productionEquality": true,
+          "rawPcmSha256": "37e3fe3ba1a0b49fa498cab1b8cce7fc4812bc986913ac4281d3736df29fc3f4",
+          "architectureSha256": "3a6eccee2f18c5164c45cf5b3856fc1ed79111b2c2a9a553208b86fb3b4028e7"
+        },
+        {
+          "repeat": 1,
+          "path": "build/profiles/adc-kernel-current/kernel-physical-div1-capture-1.cpuprofile",
+          "sha256": "d14a6f6939e4abd9afe15ac43b2708b0f49ccbaf313af2bfd651b2c077d90721",
+          "workWallMs": 308.3913999999986,
+          "workSamples": 197,
+          "allSamples": 199,
+          "sampleDeltasUs": {
+            "min": 1055,
+            "median": 1562,
+            "max": 38003
+          },
+          "productionEquality": true,
+          "rawPcmSha256": "37e3fe3ba1a0b49fa498cab1b8cce7fc4812bc986913ac4281d3736df29fc3f4",
+          "architectureSha256": "3a6eccee2f18c5164c45cf5b3856fc1ed79111b2c2a9a553208b86fb3b4028e7"
+        },
+        {
+          "repeat": 2,
+          "path": "build/profiles/adc-kernel-current/kernel-physical-div1-capture-2.cpuprofile",
+          "sha256": "25027df6c82eaa8b0ca50fd47feb9f9b465b2e6b5f04d39f3442cdbe88996e28",
+          "workWallMs": 605.6136999999999,
+          "workSamples": 277,
+          "allSamples": 279,
+          "sampleDeltasUs": {
+            "min": 1044,
+            "median": 1565,
+            "max": 36538
+          },
+          "productionEquality": true,
+          "rawPcmSha256": "37e3fe3ba1a0b49fa498cab1b8cce7fc4812bc986913ac4281d3736df29fc3f4",
+          "architectureSha256": "3a6eccee2f18c5164c45cf5b3856fc1ed79111b2c2a9a553208b86fb3b4028e7"
+        }
+      ],
+      "inputSummary": {
+        "path": "build/profiles/adc-kernel-current/summary.json",
+        "sha256": "bdf665add5c293dd406c6a2336e23b43ebe4691ed32ae8f5e7b9afea7bfca97e",
+        "parameters": {
+          "frames": 4800,
+          "rate": 48000,
+          "repeats": 3,
+          "intervalUs": 1000,
+          "blockFrames": 1024,
+          "fastIdle": true,
+          "optimizeFlags": true,
+          "benchmarkControls": true,
+          "requestedFirmware": [
+            "kernel-physical-div1-capture"
+          ],
+          "firmwareOrder": [
+            "kernel-physical-div1-capture"
+          ],
+          "kernel": true,
+          "clock": "physical",
+          "frequency": 20000000,
+          "divisor": 1,
+          "operation": "capture",
+          "instructions": 1000000
+        },
+        "provenance": {
+          "runtimeRef": "working-tree",
+          "runtimeCommit": null,
+          "compileRoot": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\",
+          "runtimeSha256": "b6a678437b62fac3e6be1f90d90cc0bc76b9c71c0752c438504c2cda858643b4",
+          "namedRuntimeSha256": "f8d1e5849c4ddb6905f6689ea6550ae24a8ac80093521bd31b99e406566b7f14",
+          "executableSectionsSha256": "e034f0f7691b7d3954387a73bcf9096f4e1b396b2f06db58805bf14d2dceeba8",
+          "runtimeRebuildByteEqual": true,
+          "diagnosticCompiler": "C:\\Work\\MicroMusic\\build\\toolchains\\emscripten-6.0.12\\upstream\\bin\\clang.exe",
+          "compilerVersion": "clang version 24.0.0git (https:/github.com/llvm/llvm-project 55ea1f4ebea23d0355d5cdb075f1e12f28ab82d0)",
+          "compileArgs": [
+            "--target=wasm32-unknown-unknown",
+            "-O3",
+            "-std=c11",
+            "-ffreestanding",
+            "-nostdlib",
+            "-DAVR_FULL_DEVICE",
+            "--sysroot=C:\\Work\\MicroMusic\\build\\toolchains\\emscripten-6.0.12\\upstream\\emscripten\\cache\\sysroot",
+            "-isystem",
+            "C:\\Work\\MicroMusic\\build\\toolchains\\emscripten-6.0.12\\upstream\\emscripten\\cache\\sysroot\\include",
+            "-LC:\\Work\\MicroMusic\\build\\toolchains\\emscripten-6.0.12\\upstream\\emscripten\\cache\\sysroot\\lib\\wasm32-emscripten",
+            "-Wl,--no-entry",
+            "-Wl,--export-memory",
+            "-Wl,--initial-memory=131072",
+            "-Wl,--max-memory=131072",
+            "-Wl,-z,stack-size=8192",
+            "-Wl,--export=avr_arithmetic",
+            "-Wl,--export=avr_audio_channels",
+            "-Wl,--export=avr_audio_controls",
+            "-Wl,--export=avr_audio_init",
+            "-Wl,--export=avr_average",
+            "-Wl,--export=avr_block",
+            "-Wl,--export=avr_clock",
+            "-Wl,--export=avr_decode",
+            "-Wl,--export=avr_decode_idle",
+            "-Wl,--export=avr_device_audio_begin",
+            "-Wl,--export=avr_device_audio_config",
+            "-Wl,--export=avr_device_audio_deadline",
+            "-Wl,--export=avr_device_audio_end",
+            "-Wl,--export=avr_device_audio_sample",
+            "-Wl,--export=avr_device_bind_generation",
+            "-Wl,--export=avr_device_bod_disabled",
+            "-Wl,--export=avr_device_bod_recovering",
+            "-Wl,--export=avr_device_clki_aligned",
+            "-Wl,--export=avr_device_clki_buffer",
+            "-Wl,--export=avr_device_clki_capacity",
+            "-Wl,--export=avr_device_clki_commit",
+            "-Wl,--export=avr_device_clki_count",
+            "-Wl,--export=avr_device_clki_enabled",
+            "-Wl,--export=avr_device_clki_free",
+            "-Wl,--export=avr_device_clki_horizon_ps",
+            "-Wl,--export=avr_device_clki_level",
+            "-Wl,--export=avr_device_clki_periodic_ps",
+            "-Wl,--export=avr_device_clki_periodic_remaining",
+            "-Wl,--export=avr_device_clki_startup_ck",
+            "-Wl,--export=avr_device_clki_status",
+            "-Wl,--export=avr_device_clki_validation_enabled",
+            "-Wl,--export=avr_device_configure",
+            "-Wl,--export=avr_device_configure_clki",
+            "-Wl,--export=avr_device_configure_osccal_hz",
+            "-Wl,--export=avr_device_configure_power",
+            "-Wl,--export=avr_device_configure_reset_input",
+            "-Wl,--export=avr_device_control",
+            "-Wl,--export=avr_device_cpu_deadline",
+            "-Wl,--export=avr_device_divisor",
+            "-Wl,--export=avr_device_fault",
+            "-Wl,--export=avr_device_fault_detail",
+            "-Wl,--export=avr_device_generation",
+            "-Wl,--export=avr_device_halted",
+            "-Wl,--export=avr_device_idle",
+            "-Wl,--export=avr_device_inject_analog",
+            "-Wl,--export=avr_device_inject_analog_ps",
+            "-Wl,--export=avr_device_inject_pins",
+            "-Wl,--export=avr_device_inject_pins_ps",
+            "-Wl,--export=avr_device_inject_vcc_ps",
+            "-Wl,--export=avr_device_lpm",
+            "-Wl,--export=avr_device_oscillator_hz",
+            "-Wl,--export=avr_device_pending",
+            "-Wl,--export=avr_device_phase_active",
+            "-Wl,--export=avr_device_phase_clock",
+            "-Wl,--export=avr_device_phase_deadline",
+            "-Wl,--export=avr_device_phase_enable",
+            "-Wl,--export=avr_device_phase_layout",
+            "-Wl,--export=avr_device_phase_retire",
+            "-Wl,--export=avr_device_physical_mode",
+            "-Wl,--export=avr_device_pin_buffer",
+            "-Wl,--export=avr_device_pin_buffer_ps",
+            "-Wl,--export=avr_device_pin_consume",
+            "-Wl,--export=avr_device_pin_count",
+            "-Wl,--export=avr_device_pin_count_ps",
+            "-Wl,--export=avr_device_pin_trace_config",
+            "-Wl,--export=avr_device_pin_trace_configuration",
+            "-Wl,--export=avr_device_pins",
+            "-Wl,--export=avr_device_pins_ps",
+            "-Wl,--export=avr_device_power_enabled",
+            "-Wl,--export=avr_device_ready",
+            "-Wl,--export=avr_device_rebase_time",
+            "-Wl,--export=avr_device_reset_count",
+            "-Wl,--export=avr_device_reset_held",
+            "-Wl,--export=avr_device_reset_input_asserted",
+            "-Wl,--export=avr_device_reset_input_deadline_ps",
+            "-Wl,--export=avr_device_reset_input_enabled",
+            "-Wl,--export=avr_device_sleep_phase",
+            "-Wl,--export=avr_device_starting",
+            "-Wl,--export=avr_device_startup_deadline",
+            "-Wl,--export=avr_device_startup_deadline_ps",
+            "-Wl,--export=avr_device_time",
+            "-Wl,--export=avr_device_time64",
+            "-Wl,--export=avr_device_time_ps",
+            "-Wl,--export=avr_device_vcc_microvolts",
+            "-Wl,--export=avr_device_wait",
+            "-Wl,--export=avr_error_message",
+            "-Wl,--export=avr_field_name",
+            "-Wl,--export=avr_filter",
+            "-Wl,--export=avr_idle",
+            "-Wl,--export=avr_interrupt",
+            "-Wl,--export=avr_layout",
+            "-Wl,--export=avr_next",
+            "-Wl,--export=avr_nzvs",
+            "-Wl,--export=avr_pop",
+            "-Wl,--export=avr_pop_pc",
+            "-Wl,--export=avr_push",
+            "-Wl,--export=avr_push_pc",
+            "-Wl,--export=avr_read_data",
+            "-Wl,--export=avr_read_io",
+            "-Wl,--export=avr_render",
+            "-Wl,--export=avr_reset",
+            "-Wl,--export=avr_step",
+            "-Wl,--export=avr_timer_counter",
+            "-Wl,--export=avr_timer_mode",
+            "-Wl,--export=avr_timer_top",
+            "-Wl,--export=avr_update_timer",
+            "-Wl,--export=avr_write_data",
+            "-Wl,--export=avr_write_io",
+            "-Wl,--export=avr_write_io_masked",
+            "--no-wasm-opt",
+            "-Wl,-Map=C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\profiles\\adc-kernel-current\\runtime-link.map",
+            "web-player/native/avr.c",
+            "web-player/native/peripherals/analog.c",
+            "web-player/native/peripherals/analog_adc.c",
+            "web-player/native/peripherals/analog_comparator.c",
+            "web-player/native/peripherals/device.c",
+            "web-player/native/peripherals/nvm.c",
+            "web-player/native/peripherals/power_reset.c",
+            "web-player/native/peripherals/system_gpio.c",
+            "web-player/native/peripherals/system_sleep.c",
+            "web-player/native/peripherals/system_watchdog.c",
+            "web-player/native/peripherals/timer0.c",
+            "web-player/native/devices/attiny13a/reset_input.c",
+            "web-player/native/devices/attiny13a/clki_input.c",
+            "web-player/native/devices/attiny13a/clki_clock.c",
+            "web-player/native/devices/attiny13a/clki_validation.c",
+            "web-player/native/devices/attiny13a/clki_periodic.c",
+            "-lc",
+            "-lclang_rt.builtins",
+            "-o",
+            "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\profiles\\adc-kernel-current\\runtime-preopt.wasm"
+          ],
+          "optimizer": "C:\\Work\\MicroMusic\\build\\toolchains\\emscripten-6.0.12\\upstream\\bin\\wasm-opt.exe",
+          "optimizeArgs": [
+            "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\profiles\\adc-kernel-current\\runtime-preopt.wasm",
+            "-O3",
+            "--print-function-map",
+            "-o",
+            "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\profiles\\adc-kernel-current\\runtime-symbols.wasm"
+          ],
+          "sourceSha256NormalizedLF": {
+            "web-player/native/avr.c": "397be46fef05026cd97d567c72682b54fe656fddc53fe69b6e9ccfecdb1e27b9",
+            "web-player/native/attiny13a-registers.generated.h": "9b790283f9cc84e144c5dd138636e8646ba2b00175c2d09b8152eaefd700d8b7",
+            "web-player/native/attiny13a-registers.generated.inc": "aaaf7f47e67e1f3b72754c13373ea9aa6d39acf65c8669e43333ffdf51e539e4",
+            "web-player/native/attiny13a-registers.h": "67cc37f8c312e405f3eb136208d870cd615419471435308a6c4e1f3721fb5a48",
+            "web-player/native/avr-device.inc": "4b9d41ddeee6894313ee0f1cea5742bf9337bfa47dbd136c9f4e3c8deeb9cdc8",
+            "web-player/native/peripherals/analog.c": "a346b6edaa6116ed9aff059513ead3126d61e740887d95ae4d5143082fc2dff9",
+            "web-player/native/peripherals/analog.h": "3784b94d275c540518f2429e6b53a5a16b60e471f274c4e4f831b11a9421196d",
+            "web-player/native/peripherals/analog_adc.c": "ddb769c4af9239df80cfadf2944fc4d7ca61b1c701249538ca4576d1dfe5827b",
+            "web-player/native/peripherals/analog_adc.h": "14f1dc000c5adcafdd8cf5e8d225f51805224a47eefae562e1957383970b2220",
+            "web-player/native/peripherals/analog_comparator.c": "fbdc17028ee6998c857ef6911af5f05407cce524322697e3b9fd1da914d87a48",
+            "web-player/native/peripherals/analog_comparator.h": "17a2c132554c5dfae031d9c23650c1bf3b9cb41f1c14e3d1c0cd6bdaa3b393b4",
+            "web-player/native/peripherals/device.c": "9e2c4a6e61647d73fd4a572e115cb598235ad0f8709158b0b8d198b540984569",
+            "web-player/native/peripherals/device.h": "e8d46546cd4ff889f13426dc36f49c88fcd0427599fa26c24442f3844ecc3c40",
+            "web-player/native/peripherals/device_clock.h": "a48e791a59639292f7ac03b0be99ad7a1d31bd976c91b7adb2a9cd0932fdce93",
+            "web-player/native/peripherals/nvm.c": "51880a51fd61c009ce7d0fa47d205d9c93aa7a0ebd5fc4e0f80064927a9bd096",
+            "web-player/native/peripherals/nvm.h": "56e2934423d6ec150d05a531ce85c052c3ac56ca3222ec16d7ca63083bce0e7d",
+            "web-player/native/peripherals/power_reset.c": "d09d0f8b3a417e7823918a76652f21dc078884f4b0945abf5c5732d18850170c",
+            "web-player/native/peripherals/power_reset.h": "0518e767fd2a4741b32425af26d93b8ad3f6b6d3cc22d406983a9f83fbe6bc02",
+            "web-player/native/peripherals/system_gpio.c": "bd62a5bd9c7bd8c523f674312b9971d08d568477174f33178b69fd5d90f90428",
+            "web-player/native/peripherals/system_gpio.h": "fbb1378945df4446272d40697b12d98d95c335035adc977a902e8ce3420bbea3",
+            "web-player/native/peripherals/system_sleep.c": "ed4a0f8b3cbcd0149793e9633b4967d354e2edbcad02c5859b39caa98a61ccbd",
+            "web-player/native/peripherals/system_sleep.h": "87c01f37f7b922a0dc7f3f9661546e7b99a514cb8beba0be1b3eb61b18032ec8",
+            "web-player/native/peripherals/system_watchdog.c": "22134559c5bb1c555825de27d2c9efa8d3d5aa527dd55d9a8a735ba3964df8b7",
+            "web-player/native/peripherals/system_watchdog.h": "ec432e27956672069a5608b2df5561df04f705de73cd2a2e1579b27224ee1720",
+            "web-player/native/peripherals/timer0.c": "2d4ba55706be643e2935aaa86e2e38e852c88378f47d4312085ec09837f7cac4",
+            "web-player/native/peripherals/timer0.h": "6de13614a6a22046b95fb60179a0729efbda9b5b6e693aa27c3f20853482a90e",
+            "web-player/native/devices/attiny13a/reset_input.c": "7ac97541133ecdccec25de9721bf787742a9b375572409bed90c03adec0d7519",
+            "web-player/native/devices/attiny13a/reset_input.h": "c5f0d3d02a1053defae289736bac40c247032c854e25a80e211b1d43458a979b",
+            "web-player/native/devices/attiny13a/clki_input.c": "350fe7c08153d7ec929c737569196502d3886de4984c4206350aea44e07be042",
+            "web-player/native/devices/attiny13a/clki_input.h": "0831f7fb5af1c8ad2c9da72f20347226c1129e2dd1c81deb9c0bd73b231d81d1",
+            "web-player/native/devices/attiny13a/clki_clock.c": "360c2526a3f6b1abf6a7a9b30c05695bbcce691cea962631ac97a0f4b1c06b78",
+            "web-player/native/devices/attiny13a/clki_clock.h": "8d18a98e7822f3b7d6325fc0f489ce39fd588a1bf8feae280e65dfbf120314a7",
+            "web-player/native/devices/attiny13a/clki_validation.c": "778fe9adf815e21b17b4010cb57b25f1345ca802d33b48b7e8bcb933ad550d73",
+            "web-player/native/devices/attiny13a/clki_validation.h": "c303e5b2c0b6505be5d871e19f070bf129aff5a078a6717cacd04b28e6c32bdc",
+            "web-player/native/devices/attiny13a/clki_periodic.c": "5d3c68f83ce91186ca183fe8f9ee6b6b05ab10e601891fcd1821c00bf54fb20f",
+            "web-player/native/devices/attiny13a/clki_periodic.h": "18c545932c33a601cc3ebbbb9beb63b17772f612cb36a15c0c2d4e85b829fcb4",
+            "web-player/native/devices/attiny13a/clki_board.inc": "d5646d9bcaf0b65c8995aff6c661ec8d63fb8577dad94b62abe55a6fe18d9b14",
+            "web-player/native/devices/attiny13a/avr-profile.inc": "ab3c5e2415124568aa17b4783d8117e0219f55fbb5b4b7198a99e0f94e9baa27",
+            "web-player/vendor/microchip/ATtiny_DFP/3.4.278/atdf/ATtiny13A.atdf": "e12ee48543baf46bc5bc5bf9c6ef2e9e57e46e39c34b3c619bdc8280276e82ed",
+            "web-player/vendor/microchip/ATtiny_DFP/3.4.278/avrasm/inc/tn13Adef.inc": "31545ecfbf2e13d4bbca2ec3f86c9001ac72d1351a3b4f90495463df73cd9362",
+            "web-player/vendor/microchip/ATtiny_DFP/3.4.278/include/avr/iotn13a.h": "72c0824173a3f720f88c104fd8fbc253690d634b842df7c090bd7883daf951be",
+            "web-player/vendor/microchip/ATtiny_DFP/3.4.278/LICENSE.Apache-2.0.txt": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+            "web-player/vendor/microchip/ATtiny_DFP/3.4.278/LICENSE.txt": "3bf0a101f2b2e44eda3b477f866bd24204c35fa1f841c865933028adf155336a",
+            "web-player/vendor/microchip/ATtiny_DFP/3.4.278/provenance.json": "fdc444d04839445ede080599bf46557cddef7478414c8e164573f5b22b5318a7",
+            "web-player/vendor/microchip/ATtiny_DFP/3.4.278/README.md": "f4d2f3b77d825a47650646a0b6323e2bc87e913114fe54b43fdca7b82347e8a0",
+            "web-player/scripts/generate-attiny13a-registers.mjs": "162f9d0770fe5288eacbe2fabcebabd1ab578bb8db058ec4a7847d77f85d94e4",
+            "web-player/scripts/build-device-wasm.mjs": "92d8f2e01aa72c8ac98fd45b4cc5333fb31ce068c36d4137b636df27d95736eb",
+            "web-player/lib/avr-transpiler.js": "4c78f51dd22f08ce28814a3b97f84057c52c16bb103c01dd15d396f92bc99430",
+            "web-player/lib/avr-transpiled-runtime.js": "17c345f568cd5b4fa793e59688e4326acdde567455380dca7625ce1fc5447b1a",
+            "web-player/lib/avr-runtime.js": "cef29cfc93e028b3a2f25974e5db6a26b3e055ae6bb014a1ba1f159230e93467",
+            "web-player/lib/attiny13a-runtime.js": "5c79fdcfcacac149ec535ebc0b9d173d12f7fe75a5bea27f9997b5e214681869",
+            "web-player/lib/avr-wasm-phases.js": "dfe3f6f59808da0ba2b27e20bdf835b7e0229acb91ecd8eff8eeefaccf3b03e1",
+            "web-player/tests/fixtures/attiny13a-system-firmware.mjs": "1d75e9a7186337b3de601f29abe5b23450e0cd955926e88257b9049c016e366e",
+            "web-player/lib/hex.js": "73026ff8e78caab294b86bd32b3588cf92f77e59203531aa3bf3bc7979dd09ab",
+            "web-player/scripts/profile-device.mjs": "3b7dcddf4f4360082e35ff262af32383560080a77bcc98e253fdf15f1b39696b",
+            "web-player/lib/avr-profiles.js": "37583c2bbb1e36c5cc8687e0911ce46c062a97b0df21747ef92535628fa84c2b",
+            "web-player/firmware.json": "84ebe8568a2e9ca714f4c413dbbf33ffa050c3ec80a4ad0abd4ab15d96a83c80",
+            "web-player/hq4-firmware.json": "f7486eda26acf9ec8d6fd469f8b2798d1e5e5eb40d5396edbbe8a6fdde223a60"
+          }
+        }
+      }
+    },
+    {
+      "id": "hq4-chego-tiny",
+      "parameters": {
+        "frames": 48000,
+        "rate": 48000,
+        "repeats": 3,
+        "intervalUs": 1000,
+        "blockFrames": 1024,
+        "fastIdle": true,
+        "optimizeFlags": true,
+        "benchmarkControls": true,
+        "requestedFirmware": [
+          "hq4-chego-auto"
+        ],
+        "firmwareOrder": [
+          "hq4-chego-tiny"
+        ],
+        "kernel": false,
+        "clock": "physical",
+        "frequency": null,
+        "divisor": 1,
+        "operation": "capture",
+        "instructions": 1000000
+      },
+      "profiles": 3,
+      "samples": 5365,
+      "allSamples": 5374,
+      "workWallMs": {
+        "median": 2833.262999999999,
+        "min": 2254.862799999999,
+        "max": 3613.1527000000006
+      },
+      "categories": [
+        {
+          "category": "native_board_body",
+          "samples": 3069,
+          "percent": 57.20410065237652
+        },
+        {
+          "category": "generated_cpu_body",
+          "samples": 794,
+          "percent": 14.799627213420317
+        },
+        {
+          "category": "native_bridge_body",
+          "samples": 722,
+          "percent": 13.457595526561043
+        },
+        {
+          "category": "native_analog_body",
+          "samples": 370,
+          "percent": 6.896551724137931
+        },
+        {
+          "category": "native_timer0_body",
+          "samples": 285,
+          "percent": 5.312208760484623
+        },
+        {
+          "category": "native_other_peripheral_body",
+          "samples": 67,
+          "percent": 1.2488350419384902
+        },
+        {
+          "category": "native_gpio_body",
+          "samples": 37,
+          "percent": 0.6896551724137931
+        },
+        {
+          "category": "native_pin_body",
+          "samples": 9,
+          "percent": 0.16775396085740912
+        },
+        {
+          "category": "native_audio_body",
+          "samples": 8,
+          "percent": 0.14911463187325255
+        },
+        {
+          "category": "javascript_bridge",
+          "samples": 4,
+          "percent": 0.07455731593662628
+        }
+      ],
+      "frames": [
+        {
+          "key": "native.device.next_event",
+          "name": "native.device.next_event",
+          "category": "native_board_body",
+          "selfSamples": 671,
+          "inclusiveSamples": 923,
+          "selfPercent": 12.506989748369058,
+          "inclusivePercent": 17.204100652376514
+        },
+        {
+          "key": "native.device.duration",
+          "name": "native.device.duration",
+          "category": "native_board_body",
+          "selfSamples": 346,
+          "inclusiveSamples": 346,
+          "selfPercent": 6.4492078285181735,
+          "inclusivePercent": 6.4492078285181735
+        },
+        {
+          "key": "native.avr.avr_device_phase_clock",
+          "name": "native.avr.avr_device_phase_clock",
+          "category": "native_bridge_body",
+          "selfSamples": 345,
+          "inclusiveSamples": 4006,
+          "selfPercent": 6.430568499534017,
+          "inclusivePercent": 74.66915191053123
+        },
+        {
+          "key": "native.device.ratio",
+          "name": "native.device.ratio",
+          "category": "native_board_body",
+          "selfSamples": 324,
+          "inclusiveSamples": 324,
+          "selfPercent": 6.039142590866729,
+          "inclusivePercent": 6.039142590866729
+        },
+        {
+          "key": "cpu.runUntil",
+          "name": "cpu.runUntil",
+          "category": "generated_cpu_body",
+          "selfSamples": 256,
+          "inclusiveSamples": 5315,
+          "selfPercent": 4.771668219944082,
+          "inclusivePercent": 99.06803355079217
+        },
+        {
+          "key": "native.timer0.timer0_advance",
+          "name": "native.timer0.timer0_advance",
+          "category": "native_timer0_body",
+          "selfSamples": 200,
+          "inclusiveSamples": 232,
+          "selfPercent": 3.7278657968313142,
+          "inclusivePercent": 4.324324324324325
+        },
+        {
+          "key": "native.analog.analog_advance",
+          "name": "native.analog.analog_advance",
+          "category": "native_analog_body",
+          "selfSamples": 190,
+          "inclusiveSamples": 264,
+          "selfPercent": 3.5414725069897486,
+          "inclusivePercent": 4.920782851817335
+        },
+        {
+          "key": "native.device.advance_half_until_ps",
+          "name": "native.device.advance_half_until_ps",
+          "category": "native_board_body",
+          "selfSamples": 188,
+          "inclusiveSamples": 3419,
+          "selfPercent": 3.5041938490214353,
+          "inclusivePercent": 63.72786579683132
+        },
+        {
+          "key": "cpu.step",
+          "name": "cpu.step",
+          "category": "generated_cpu_body",
+          "selfSamples": 185,
+          "inclusiveSamples": 4517,
+          "selfPercent": 3.4482758620689653,
+          "inclusivePercent": 84.19384902143523
+        },
+        {
+          "key": "native.device.service_clocks",
+          "name": "native.device.service_clocks",
+          "category": "native_board_body",
+          "selfSamples": 174,
+          "inclusiveSamples": 549,
+          "selfPercent": 3.2432432432432434,
+          "inclusivePercent": 10.232991612301957
+        },
+        {
+          "key": "native.device.service_async",
+          "name": "native.device.service_async",
+          "category": "native_board_body",
+          "selfSamples": 174,
+          "inclusiveSamples": 218,
+          "selfPercent": 3.2432432432432434,
+          "inclusivePercent": 4.063373718546132
+        },
+        {
+          "key": "native.device.mirror",
+          "name": "native.device.mirror",
+          "category": "native_board_body",
+          "selfSamples": 169,
+          "inclusiveSamples": 169,
+          "selfPercent": 3.1500465983224606,
+          "inclusivePercent": 3.1500465983224606
+        },
+        {
+          "key": "native.device.service_end",
+          "name": "native.device.service_end",
+          "category": "native_board_body",
+          "selfSamples": 149,
+          "inclusiveSamples": 754,
+          "selfPercent": 2.777260018639329,
+          "inclusivePercent": 14.054054054054054
+        },
+        {
+          "key": "native.device.advance_to",
+          "name": "native.device.advance_to",
+          "category": "native_board_body",
+          "selfSamples": 132,
+          "inclusiveSamples": 3055,
+          "selfPercent": 2.4603914259086674,
+          "inclusivePercent": 56.94315004659832
+        },
+        {
+          "key": "native.avr.full_interrupt",
+          "name": "native.avr.full_interrupt",
+          "category": "native_bridge_body",
+          "selfSamples": 121,
+          "inclusiveSamples": 293,
+          "selfPercent": 2.255358807082945,
+          "inclusivePercent": 5.461323392357875
+        },
+        {
+          "key": "native.avr.avr_device_ready",
+          "name": "native.avr.avr_device_ready",
+          "category": "native_bridge_body",
+          "selfSamples": 102,
+          "inclusiveSamples": 137,
+          "selfPercent": 1.9012115563839702,
+          "inclusivePercent": 2.5535880708294503
+        },
+        {
+          "key": "native.device.service",
+          "name": "native.device.service",
+          "category": "native_board_body",
+          "selfSamples": 99,
+          "inclusiveSamples": 1720,
+          "selfPercent": 1.8452935694315005,
+          "inclusivePercent": 32.0596458527493
+        },
+        {
+          "key": "native.device.elapse",
+          "name": "native.device.elapse",
+          "category": "native_board_body",
+          "selfSamples": 98,
+          "inclusiveSamples": 285,
+          "selfPercent": 1.8266542404473438,
+          "inclusivePercent": 5.312208760484623
+        },
+        {
+          "key": "native.analog.analog_sources",
+          "name": "native.analog.analog_sources",
+          "category": "native_analog_body",
+          "selfSamples": 94,
+          "inclusiveSamples": 209,
+          "selfPercent": 1.7520969245107176,
+          "inclusivePercent": 3.8956197576887233
+        },
+        {
+          "key": "native.device.check_faults",
+          "name": "native.device.check_faults",
+          "category": "native_board_body",
+          "selfSamples": 86,
+          "inclusiveSamples": 86,
+          "selfPercent": 1.602982292637465,
+          "inclusivePercent": 1.602982292637465
+        },
+        {
+          "key": "native.avr.avr_device_time",
+          "name": "native.avr.avr_device_time",
+          "category": "native_bridge_body",
+          "selfSamples": 85,
+          "inclusiveSamples": 96,
+          "selfPercent": 1.5843429636533084,
+          "inclusivePercent": 1.7893755824790307
+        },
+        {
+          "key": "native.device.clock_domains",
+          "name": "native.device.clock_domains",
+          "category": "native_board_body",
+          "selfSamples": 84,
+          "inclusiveSamples": 84,
+          "selfPercent": 1.565703634669152,
+          "inclusivePercent": 1.565703634669152
+        },
+        {
+          "key": "native.device.device_next_cpu_event",
+          "name": "native.device.device_next_cpu_event",
+          "category": "native_board_body",
+          "selfSamples": 78,
+          "inclusiveSamples": 214,
+          "selfPercent": 1.4538676607642125,
+          "inclusivePercent": 3.988816402609506
+        },
+        {
+          "key": "native.timer0.event_distance",
+          "name": "native.timer0.event_distance",
+          "category": "native_timer0_body",
+          "selfSamples": 77,
+          "inclusiveSamples": 77,
+          "selfPercent": 1.4352283317800558,
+          "inclusivePercent": 1.4352283317800558
+        },
+        {
+          "key": "native.analog_comparator.analog_comparator_advance",
+          "name": "native.analog_comparator.analog_comparator_advance",
+          "category": "native_analog_body",
+          "selfSamples": 77,
+          "inclusiveSamples": 77,
+          "selfPercent": 1.4352283317800558,
+          "inclusivePercent": 1.4352283317800558
+        },
+        {
+          "key": "native.device.device_halted",
+          "name": "native.device.device_halted",
+          "category": "native_board_body",
+          "selfSamples": 76,
+          "inclusiveSamples": 76,
+          "selfPercent": 1.4165890027958994,
+          "inclusivePercent": 1.4165890027958994
+        },
+        {
+          "key": "cpu.insn_0x003c_AND",
+          "name": "cpu.insn_0x003c_AND",
+          "category": "generated_cpu_body",
+          "selfSamples": 74,
+          "inclusiveSamples": 1548,
+          "selfPercent": 1.3793103448275863,
+          "inclusivePercent": 28.85368126747437
+        },
+        {
+          "key": "native.device.wake",
+          "name": "native.device.wake",
+          "category": "native_board_body",
+          "selfSamples": 68,
+          "inclusiveSamples": 145,
+          "selfPercent": 1.2674743709226468,
+          "inclusivePercent": 2.7027027027027026
+        },
+        {
+          "key": "cpu.insn_0x003e_BRANCH",
+          "name": "cpu.insn_0x003e_BRANCH",
+          "category": "generated_cpu_body",
+          "selfSamples": 63,
+          "inclusiveSamples": 954,
+          "selfPercent": 1.174277726001864,
+          "inclusivePercent": 17.78191985088537
+        },
+        {
+          "key": "native.device.at_half",
+          "name": "native.device.at_half",
+          "category": "native_board_body",
+          "selfSamples": 53,
+          "inclusiveSamples": 181,
+          "selfPercent": 0.9878844361602982,
+          "inclusivePercent": 3.373718546132339
+        },
+        {
+          "key": "native.device.inputs_at_current_time",
+          "name": "native.device.inputs_at_current_time",
+          "category": "native_board_body",
+          "selfSamples": 51,
+          "inclusiveSamples": 51,
+          "selfPercent": 0.9506057781919851,
+          "inclusivePercent": 0.9506057781919851
+        },
+        {
+          "key": "native.system_watchdog.system_watchdog_advance",
+          "name": "native.system_watchdog.system_watchdog_advance",
+          "category": "native_other_peripheral_body",
+          "selfSamples": 46,
+          "inclusiveSamples": 46,
+          "selfPercent": 0.8574091332712023,
+          "inclusivePercent": 0.8574091332712023
+        },
+        {
+          "key": "native.avr.avr_device_phase_retire",
+          "name": "native.avr.avr_device_phase_retire",
+          "category": "native_bridge_body",
+          "selfSamples": 43,
+          "inclusiveSamples": 342,
+          "selfPercent": 0.8014911463187325,
+          "inclusivePercent": 6.374650512581547
+        },
+        {
+          "key": "native.device.device_time_ps",
+          "name": "native.device.device_time_ps",
+          "category": "native_board_body",
+          "selfSamples": 34,
+          "inclusiveSamples": 34,
+          "selfPercent": 0.6337371854613234,
+          "inclusivePercent": 0.6337371854613234
+        },
+        {
+          "key": "native.system_gpio.system_gpio_pending",
+          "name": "native.system_gpio.system_gpio_pending",
+          "category": "native_gpio_body",
+          "selfSamples": 27,
+          "inclusiveSamples": 27,
+          "selfPercent": 0.5032618825722274,
+          "inclusivePercent": 0.5032618825722274
+        },
+        {
+          "key": "native.nvm.nvm_voltage_uncertain",
+          "name": "native.nvm.nvm_voltage_uncertain",
+          "category": "native_other_peripheral_body",
+          "selfSamples": 20,
+          "inclusiveSamples": 20,
+          "selfPercent": 0.3727865796831314,
+          "inclusivePercent": 0.3727865796831314
+        },
+        {
+          "key": "native.avr.avr_device_cpu_deadline",
+          "name": "native.avr.avr_device_cpu_deadline",
+          "category": "native_bridge_body",
+          "selfSamples": 13,
+          "inclusiveSamples": 21,
+          "selfPercent": 0.2423112767940354,
+          "inclusivePercent": 0.391425908667288
+        },
+        {
+          "key": "cpu.capturePhysical",
+          "name": "cpu.capturePhysical",
+          "category": "generated_cpu_body",
+          "selfSamples": 11,
+          "inclusiveSamples": 5360,
+          "selfPercent": 0.20503261882572227,
+          "inclusivePercent": 99.90680335507922
+        },
+        {
+          "key": "cpu.block_0x0160",
+          "name": "cpu.block_0x0160",
+          "category": "generated_cpu_body",
+          "selfSamples": 11,
+          "inclusiveSamples": 92,
+          "selfPercent": 0.20503261882572227,
+          "inclusivePercent": 1.7148182665424045
+        },
+        {
+          "key": "cpu.insn_0x02de_PUSH",
+          "name": "cpu.insn_0x02de_PUSH",
+          "category": "generated_cpu_body",
+          "selfSamples": 9,
+          "inclusiveSamples": 40,
+          "selfPercent": 0.16775396085740912,
+          "inclusivePercent": 0.7455731593662628
+        },
+        {
+          "key": "cpu.insn_0x0158_LSR",
+          "name": "cpu.insn_0x0158_LSR",
+          "category": "generated_cpu_body",
+          "selfSamples": 8,
+          "inclusiveSamples": 134,
+          "selfPercent": 0.14911463187325255,
+          "inclusivePercent": 2.4976700838769803
+        },
+        {
+          "key": "cpu.insn_0x005e_DEC",
+          "name": "cpu.insn_0x005e_DEC",
+          "category": "generated_cpu_body",
+          "selfSamples": 7,
+          "inclusiveSamples": 61,
+          "selfPercent": 0.13047530288909598,
+          "inclusivePercent": 1.1369990680335509
+        },
+        {
+          "key": "cpu.block_0x015c",
+          "name": "cpu.block_0x015c",
+          "category": "generated_cpu_body",
+          "selfSamples": 7,
+          "inclusiveSamples": 57,
+          "selfPercent": 0.13047530288909598,
+          "inclusivePercent": 1.0624417520969245
+        },
+        {
+          "key": "native.device.device_pending_irqs",
+          "name": "native.device.device_pending_irqs",
+          "category": "native_board_body",
+          "selfSamples": 7,
+          "inclusiveSamples": 8,
+          "selfPercent": 0.13047530288909598,
+          "inclusivePercent": 0.14911463187325255
+        },
+        {
+          "key": "cpu.insn_0x02f4_POP",
+          "name": "cpu.insn_0x02f4_POP",
+          "category": "generated_cpu_body",
+          "selfSamples": 6,
+          "inclusiveSamples": 43,
+          "selfPercent": 0.11183597390493942,
+          "inclusivePercent": 0.8014911463187325
+        },
+        {
+          "key": "native.device.pin_voltages",
+          "name": "native.device.pin_voltages",
+          "category": "native_pin_body",
+          "selfSamples": 6,
+          "inclusiveSamples": 12,
+          "selfPercent": 0.11183597390493942,
+          "inclusivePercent": 0.22367194780987884
+        },
+        {
+          "key": "native.timer0.pulse",
+          "name": "native.timer0.pulse",
+          "category": "native_timer0_body",
+          "selfSamples": 6,
+          "inclusiveSamples": 7,
+          "selfPercent": 0.11183597390493942,
+          "inclusivePercent": 0.13047530288909598
+        },
+        {
+          "key": "native.system_gpio.system_gpio_clock",
+          "name": "native.system_gpio.system_gpio_clock",
+          "category": "native_gpio_body",
+          "selfSamples": 6,
+          "inclusiveSamples": 6,
+          "selfPercent": 0.11183597390493942,
+          "inclusivePercent": 0.11183597390493942
+        },
+        {
+          "key": "cpu.emptyBlock",
+          "name": "cpu.emptyBlock",
+          "category": "generated_cpu_body",
+          "selfSamples": 6,
+          "inclusiveSamples": 6,
+          "selfPercent": 0.11183597390493942,
+          "inclusivePercent": 0.11183597390493942
+        },
+        {
+          "key": "cpu.insn_0x02fa_RETI",
+          "name": "cpu.insn_0x02fa_RETI",
+          "category": "generated_cpu_body",
+          "selfSamples": 5,
+          "inclusiveSamples": 87,
+          "selfPercent": 0.09319664492078285,
+          "inclusivePercent": 1.6216216216216217
+        },
+        {
+          "key": "cpu.insn_0x0166_BRANCH",
+          "name": "cpu.insn_0x0166_BRANCH",
+          "category": "generated_cpu_body",
+          "selfSamples": 5,
+          "inclusiveSamples": 83,
+          "selfPercent": 0.09319664492078285,
+          "inclusivePercent": 1.5470643056849953
+        },
+        {
+          "key": "cpu.block_0x0054",
+          "name": "cpu.block_0x0054",
+          "category": "generated_cpu_body",
+          "selfSamples": 5,
+          "inclusiveSamples": 44,
+          "selfPercent": 0.09319664492078285,
+          "inclusivePercent": 0.8201304753028891
+        },
+        {
+          "key": "cpu.insn_0x0060_BRANCH",
+          "name": "cpu.insn_0x0060_BRANCH",
+          "category": "generated_cpu_body",
+          "selfSamples": 5,
+          "inclusiveSamples": 33,
+          "selfPercent": 0.09319664492078285,
+          "inclusivePercent": 0.6150978564771669
+        },
+        {
+          "key": "native.avr.avr_write_io_masked",
+          "name": "native.avr.avr_write_io_masked",
+          "category": "native_bridge_body",
+          "selfSamples": 5,
+          "inclusiveSamples": 17,
+          "selfPercent": 0.09319664492078285,
+          "inclusivePercent": 0.3168685927306617
+        },
+        {
+          "key": "cpu.insn_0x007c_SKIP",
+          "name": "cpu.insn_0x007c_SKIP",
+          "category": "generated_cpu_body",
+          "selfSamples": 5,
+          "inclusiveSamples": 12,
+          "selfPercent": 0.09319664492078285,
+          "inclusivePercent": 0.22367194780987884
+        },
+        {
+          "key": "cpu.insn_0x015a_BRANCH",
+          "name": "cpu.insn_0x015a_BRANCH",
+          "category": "generated_cpu_body",
+          "selfSamples": 4,
+          "inclusiveSamples": 71,
+          "selfPercent": 0.07455731593662628,
+          "inclusivePercent": 1.3233923578751166
+        },
+        {
+          "key": "cpu.insn_0x02e0_IN",
+          "name": "cpu.insn_0x02e0_IN",
+          "category": "generated_cpu_body",
+          "selfSamples": 4,
+          "inclusiveSamples": 51,
+          "selfPercent": 0.07455731593662628,
+          "inclusivePercent": 0.9506057781919851
+        },
+        {
+          "key": "cpu.insn_0x02e2_PUSH",
+          "name": "cpu.insn_0x02e2_PUSH",
+          "category": "generated_cpu_body",
+          "selfSamples": 4,
+          "inclusiveSamples": 40,
+          "selfPercent": 0.07455731593662628,
+          "inclusivePercent": 0.7455731593662628
+        },
+        {
+          "key": "native.avr.avr_device_audio_sample",
+          "name": "native.avr.avr_device_audio_sample",
+          "category": "native_audio_body",
+          "selfSamples": 4,
+          "inclusiveSamples": 11,
+          "selfPercent": 0.07455731593662628,
+          "inclusivePercent": 0.20503261882572227
+        },
+        {
+          "key": "native.analog_adc.analog_adc_sources",
+          "name": "native.analog_adc.analog_adc_sources",
+          "category": "native_analog_body",
+          "selfSamples": 4,
+          "inclusiveSamples": 6,
+          "selfPercent": 0.07455731593662628,
+          "inclusivePercent": 0.11183597390493942
+        },
+        {
+          "key": "cpu.insn_0x0244_RET",
+          "name": "cpu.insn_0x0244_RET",
+          "category": "generated_cpu_body",
+          "selfSamples": 3,
+          "inclusiveSamples": 23,
+          "selfPercent": 0.05591798695246971,
+          "inclusivePercent": 0.42870456663560114
+        },
+        {
+          "key": "cpu.insn_0x02e6_BRANCH",
+          "name": "cpu.insn_0x02e6_BRANCH",
+          "category": "generated_cpu_body",
+          "selfSamples": 3,
+          "inclusiveSamples": 21,
+          "selfPercent": 0.05591798695246971,
+          "inclusivePercent": 0.391425908667288
+        },
+        {
+          "key": "cpu.insn_0x0242_POP",
+          "name": "cpu.insn_0x0242_POP",
+          "category": "generated_cpu_body",
+          "selfSamples": 3,
+          "inclusiveSamples": 17,
+          "selfPercent": 0.05591798695246971,
+          "inclusivePercent": 0.3168685927306617
+        },
+        {
+          "key": "cpu.insn_0x0074_RCALL",
+          "name": "cpu.insn_0x0074_RCALL",
+          "category": "generated_cpu_body",
+          "selfSamples": 3,
+          "inclusiveSamples": 16,
+          "selfPercent": 0.05591798695246971,
+          "inclusivePercent": 0.2982292637465051
+        },
+        {
+          "key": "cpu.insn_0x01d4_BRANCH",
+          "name": "cpu.insn_0x01d4_BRANCH",
+          "category": "generated_cpu_body",
+          "selfSamples": 3,
+          "inclusiveSamples": 12,
+          "selfPercent": 0.05591798695246971,
+          "inclusivePercent": 0.22367194780987884
+        },
+        {
+          "key": "native.avr.full_write_io",
+          "name": "native.avr.full_write_io",
+          "category": "native_bridge_body",
+          "selfSamples": 3,
+          "inclusiveSamples": 12,
+          "selfPercent": 0.05591798695246971,
+          "inclusivePercent": 0.22367194780987884
+        },
+        {
+          "key": "cpu.insn_0x0040_BRANCH",
+          "name": "cpu.insn_0x0040_BRANCH",
+          "category": "generated_cpu_body",
+          "selfSamples": 3,
+          "inclusiveSamples": 6,
+          "selfPercent": 0.05591798695246971,
+          "inclusivePercent": 0.11183597390493942
+        },
+        {
+          "key": "native.analog.analog_input",
+          "name": "native.analog.analog_input",
+          "category": "native_analog_body",
+          "selfSamples": 3,
+          "inclusiveSamples": 6,
+          "selfPercent": 0.05591798695246971,
+          "inclusivePercent": 0.11183597390493942
+        },
+        {
+          "key": "native.device.device_ack_irq",
+          "name": "native.device.device_ack_irq",
+          "category": "native_board_body",
+          "selfSamples": 3,
+          "inclusiveSamples": 5,
+          "selfPercent": 0.05591798695246971,
+          "inclusivePercent": 0.09319664492078285
+        },
+        {
+          "key": "native.avr.full_audio_collect",
+          "name": "native.avr.full_audio_collect",
+          "category": "native_audio_body",
+          "selfSamples": 3,
+          "inclusiveSamples": 4,
+          "selfPercent": 0.05591798695246971,
+          "inclusivePercent": 0.07455731593662628
+        },
+        {
+          "key": "native.device.capture_pins",
+          "name": "native.device.capture_pins",
+          "category": "native_pin_body",
+          "selfSamples": 3,
+          "inclusiveSamples": 3,
+          "selfPercent": 0.05591798695246971,
+          "inclusivePercent": 0.05591798695246971
+        },
+        {
+          "key": "native.device.device_read",
+          "name": "native.device.device_read",
+          "category": "native_board_body",
+          "selfSamples": 3,
+          "inclusiveSamples": 3,
+          "selfPercent": 0.05591798695246971,
+          "inclusivePercent": 0.05591798695246971
+        },
+        {
+          "key": "_call@file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/attiny13a-runtime.js:30",
+          "name": "_call",
+          "category": "javascript_bridge",
+          "selfSamples": 2,
+          "inclusiveSamples": 5363,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 99.96272134203168
+        },
+        {
+          "key": "cpu.insn_0x02f6_OUT",
+          "name": "cpu.insn_0x02f6_OUT",
+          "category": "generated_cpu_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 58,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 1.0810810810810811
+        },
+        {
+          "key": "cpu.insn_0x0168_RET",
+          "name": "cpu.insn_0x0168_RET",
+          "category": "generated_cpu_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 49,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 0.9133271202236719
+        },
+        {
+          "key": "cpu.insn_0x02f8_POP",
+          "name": "cpu.insn_0x02f8_POP",
+          "category": "generated_cpu_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 45,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 0.8387698042870456
+        },
+        {
+          "key": "cpu.insn_0x0058_BRANCH",
+          "name": "cpu.insn_0x0058_BRANCH",
+          "category": "generated_cpu_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 30,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 0.5591798695246971
+        },
+        {
+          "key": "cpu.insn_0x0234_CPI",
+          "name": "cpu.insn_0x0234_CPI",
+          "category": "generated_cpu_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 19,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 0.35414725069897485
+        },
+        {
+          "key": "cpu.block_0x0154",
+          "name": "cpu.block_0x0154",
+          "category": "generated_cpu_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 18,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 0.33550792171481825
+        },
+        {
+          "key": "cpu.insn_0x016a_PUSH",
+          "name": "cpu.insn_0x016a_PUSH",
+          "category": "generated_cpu_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 18,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 0.33550792171481825
+        },
+        {
+          "key": "cpu.insn_0x0236_BRANCH",
+          "name": "cpu.insn_0x0236_BRANCH",
+          "category": "generated_cpu_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 17,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 0.3168685927306617
+        },
+        {
+          "key": "cpu.insn_0x00bc_RCALL",
+          "name": "cpu.insn_0x00bc_RCALL",
+          "category": "generated_cpu_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 13,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 0.2423112767940354
+        },
+        {
+          "key": "cpu.insn_0x0100_CPI",
+          "name": "cpu.insn_0x0100_CPI",
+          "category": "generated_cpu_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 12,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 0.22367194780987884
+        },
+        {
+          "key": "cpu.insn_0x015c_ADD",
+          "name": "cpu.insn_0x015c_ADD",
+          "category": "generated_cpu_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 11,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 0.20503261882572227
+        },
+        {
+          "key": "native.avr.avr_device_pending",
+          "name": "native.avr.avr_device_pending",
+          "category": "native_bridge_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 10,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 0.1863932898415657
+        },
+        {
+          "key": "cpu.insn_0x01c8_CPI",
+          "name": "cpu.insn_0x01c8_CPI",
+          "category": "generated_cpu_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 10,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 0.1863932898415657
+        },
+        {
+          "key": "cpu.insn_0x01d8_RJMP",
+          "name": "cpu.insn_0x01d8_RJMP",
+          "category": "generated_cpu_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 8,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 0.14911463187325255
+        },
+        {
+          "key": "cpu.insn_0x0102_BRANCH",
+          "name": "cpu.insn_0x0102_BRANCH",
+          "category": "generated_cpu_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 7,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 0.13047530288909598
+        },
+        {
+          "key": "cpu.block_0x00da",
+          "name": "cpu.block_0x00da",
+          "category": "generated_cpu_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 7,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 0.13047530288909598
+        },
+        {
+          "key": "cpu.insn_0x019a_SKIP",
+          "name": "cpu.insn_0x019a_SKIP",
+          "category": "generated_cpu_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 6,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 0.11183597390493942
+        },
+        {
+          "key": "cpu.insn_0x00ac_SKIP",
+          "name": "cpu.insn_0x00ac_SKIP",
+          "category": "generated_cpu_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 5,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 0.09319664492078285
+        },
+        {
+          "key": "native.device.device_next_sample_ps",
+          "name": "native.device.device_next_sample_ps",
+          "category": "native_board_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 5,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 0.09319664492078285
+        },
+        {
+          "key": "cpu.insn_0x0190_RJMP",
+          "name": "cpu.insn_0x0190_RJMP",
+          "category": "generated_cpu_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 5,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 0.09319664492078285
+        },
+        {
+          "key": "cpu.insn_0x0078_MOV",
+          "name": "cpu.insn_0x0078_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 5,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 0.09319664492078285
+        },
+        {
+          "key": "native.system_gpio.system_gpio_timer_outputs",
+          "name": "native.system_gpio.system_gpio_timer_outputs",
+          "category": "native_gpio_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 4,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 0.07455731593662628
+        },
+        {
+          "key": "cpu.insn_0x01ac_MOV",
+          "name": "cpu.insn_0x01ac_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 4,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 0.07455731593662628
+        },
+        {
+          "key": "native.system_gpio.resolve",
+          "name": "native.system_gpio.resolve",
+          "category": "native_gpio_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 2,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "native.analog_adc.analog_adc_advance",
+          "name": "native.analog_adc.analog_adc_advance",
+          "category": "native_analog_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 2,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "native.timer0.compare_output",
+          "name": "native.timer0.compare_output",
+          "category": "native_timer0_body",
+          "selfSamples": 2,
+          "inclusiveSamples": 2,
+          "selfPercent": 0.03727865796831314,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "capturePhysical@file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/attiny13a-runtime.js:265",
+          "name": "capturePhysical",
+          "category": "javascript_bridge",
+          "selfSamples": 1,
+          "inclusiveSamples": 5365,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 100
+        },
+        {
+          "key": "_execute@file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/avr-transpiled-runtime.js:81",
+          "name": "_execute",
+          "category": "javascript_bridge",
+          "selfSamples": 1,
+          "inclusiveSamples": 5364,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 99.98136067101585
+        },
+        {
+          "key": "native.avr.full_phase_irq_resume",
+          "name": "native.avr.full_phase_irq_resume",
+          "category": "native_bridge_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 115,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 2.1435228331780056
+        },
+        {
+          "key": "cpu.insn_0x0210_RET",
+          "name": "cpu.insn_0x0210_RET",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 27,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.5032618825722274
+        },
+        {
+          "key": "cpu.insn_0x0184_RCALL",
+          "name": "cpu.insn_0x0184_RCALL",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 23,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.42870456663560114
+        },
+        {
+          "key": "cpu.block_0x005a",
+          "name": "cpu.block_0x005a",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 18,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.33550792171481825
+        },
+        {
+          "key": "cpu.insn_0x02f0_OUT",
+          "name": "cpu.insn_0x02f0_OUT",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 14,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.26095060577819196
+        },
+        {
+          "key": "cpu.insn_0x01d6_ADC",
+          "name": "cpu.insn_0x01d6_ADC",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 12,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.22367194780987884
+        },
+        {
+          "key": "cpu.insn_0x0080_EOR",
+          "name": "cpu.insn_0x0080_EOR",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 11,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.20503261882572227
+        },
+        {
+          "key": "cpu.insn_0x006c_RCALL",
+          "name": "cpu.insn_0x006c_RCALL",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 10,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.1863932898415657
+        },
+        {
+          "key": "cpu.insn_0x01f6_RCALL",
+          "name": "cpu.insn_0x01f6_RCALL",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 10,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.1863932898415657
+        },
+        {
+          "key": "cpu.block_0x00ec",
+          "name": "cpu.block_0x00ec",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 9,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.16775396085740912
+        },
+        {
+          "key": "cpu.insn_0x024e_IN",
+          "name": "cpu.insn_0x024e_IN",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 9,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.16775396085740912
+        },
+        {
+          "key": "cpu.insn_0x00c8_LDS",
+          "name": "cpu.insn_0x00c8_LDS",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 9,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.16775396085740912
+        },
+        {
+          "key": "cpu.insn_0x004a_LDS",
+          "name": "cpu.insn_0x004a_LDS",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 9,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.16775396085740912
+        },
+        {
+          "key": "cpu.block_0x023a",
+          "name": "cpu.block_0x023a",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 8,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.14911463187325255
+        },
+        {
+          "key": "cpu.insn_0x0250_RET",
+          "name": "cpu.insn_0x0250_RET",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 8,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.14911463187325255
+        },
+        {
+          "key": "cpu.insn_0x006e_PUSH",
+          "name": "cpu.insn_0x006e_PUSH",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 8,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.14911463187325255
+        },
+        {
+          "key": "cpu.insn_0x0160_ADD",
+          "name": "cpu.insn_0x0160_ADD",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 7,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.13047530288909598
+        },
+        {
+          "key": "cpu.insn_0x0188_SKIP",
+          "name": "cpu.insn_0x0188_SKIP",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 7,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.13047530288909598
+        },
+        {
+          "key": "cpu.insn_0x018a_SWAP",
+          "name": "cpu.insn_0x018a_SWAP",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 7,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.13047530288909598
+        },
+        {
+          "key": "cpu.insn_0x008c_RCALL",
+          "name": "cpu.insn_0x008c_RCALL",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 7,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.13047530288909598
+        },
+        {
+          "key": "cpu.block_0x01b8",
+          "name": "cpu.block_0x01b8",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 7,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.13047530288909598
+        },
+        {
+          "key": "cpu.block_0x019e",
+          "name": "cpu.block_0x019e",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 7,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.13047530288909598
+        },
+        {
+          "key": "cpu.insn_0x004e_STS",
+          "name": "cpu.insn_0x004e_STS",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 6,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.11183597390493942
+        },
+        {
+          "key": "cpu.insn_0x0228_LDS",
+          "name": "cpu.insn_0x0228_LDS",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 6,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.11183597390493942
+        },
+        {
+          "key": "cpu.block_0x01ac",
+          "name": "cpu.block_0x01ac",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 6,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.11183597390493942
+        },
+        {
+          "key": "cpu.insn_0x01c6_BRANCH",
+          "name": "cpu.insn_0x01c6_BRANCH",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 5,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.09319664492078285
+        },
+        {
+          "key": "cpu.insn_0x0204_POP",
+          "name": "cpu.insn_0x0204_POP",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 4,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.07455731593662628
+        },
+        {
+          "key": "cpu.insn_0x0062_MOV",
+          "name": "cpu.insn_0x0062_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 4,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.07455731593662628
+        },
+        {
+          "key": "cpu.block_0x022c",
+          "name": "cpu.block_0x022c",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 4,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.07455731593662628
+        },
+        {
+          "key": "cpu.insn_0x007e_LDI",
+          "name": "cpu.insn_0x007e_LDI",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 4,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.07455731593662628
+        },
+        {
+          "key": "cpu.insn_0x016c_MOV",
+          "name": "cpu.insn_0x016c_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 4,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.07455731593662628
+        },
+        {
+          "key": "cpu.insn_0x0104_RJMP",
+          "name": "cpu.insn_0x0104_RJMP",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 4,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.07455731593662628
+        },
+        {
+          "key": "cpu.block_0x00cc",
+          "name": "cpu.block_0x00cc",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 4,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.07455731593662628
+        },
+        {
+          "key": "cpu.insn_0x00ae_LDI",
+          "name": "cpu.insn_0x00ae_LDI",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 3,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.05591798695246971
+        },
+        {
+          "key": "cpu.block_0x00c2",
+          "name": "cpu.block_0x00c2",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 3,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.05591798695246971
+        },
+        {
+          "key": "cpu.insn_0x0082_SKIP",
+          "name": "cpu.insn_0x0082_SKIP",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 3,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.05591798695246971
+        },
+        {
+          "key": "cpu.insn_0x0176_MOV",
+          "name": "cpu.insn_0x0176_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 3,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.05591798695246971
+        },
+        {
+          "key": "cpu.block_0x0086",
+          "name": "cpu.block_0x0086",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 3,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.05591798695246971
+        },
+        {
+          "key": "cpu.insn_0x02dc_RET",
+          "name": "cpu.insn_0x02dc_RET",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 3,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.05591798695246971
+        },
+        {
+          "key": "cpu.insn_0x01ec_PUSH",
+          "name": "cpu.insn_0x01ec_PUSH",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 3,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.05591798695246971
+        },
+        {
+          "key": "cpu.block_0x00be",
+          "name": "cpu.block_0x00be",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 3,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.05591798695246971
+        },
+        {
+          "key": "cpu.block_0x02e8",
+          "name": "cpu.block_0x02e8",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 3,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.05591798695246971
+        },
+        {
+          "key": "cpu.insn_0x0092_ADC",
+          "name": "cpu.insn_0x0092_ADC",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 2,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.insn_0x006a_MOV",
+          "name": "cpu.insn_0x006a_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 2,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.insn_0x01fe_ADD",
+          "name": "cpu.insn_0x01fe_ADD",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 2,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.insn_0x00ba_MOVW",
+          "name": "cpu.insn_0x00ba_MOVW",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 2,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.insn_0x024a_OUT",
+          "name": "cpu.insn_0x024a_OUT",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 2,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "native.avr.avr_device_lpm",
+          "name": "native.avr.avr_device_lpm",
+          "category": "native_bridge_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 2,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.insn_0x008e_ADIW",
+          "name": "cpu.insn_0x008e_ADIW",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 2,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.insn_0x01cc_NEG",
+          "name": "cpu.insn_0x01cc_NEG",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 2,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.insn_0x00a4_SBCI",
+          "name": "cpu.insn_0x00a4_SBCI",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 2,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.insn_0x00f0_LSR",
+          "name": "cpu.insn_0x00f0_LSR",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 2,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.insn_0x0096_ADC",
+          "name": "cpu.insn_0x0096_ADC",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 1,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "native.avr.avr_device_phase_deadline",
+          "name": "native.avr.avr_device_phase_deadline",
+          "category": "native_bridge_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 1,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "native.nvm.nvm_advance",
+          "name": "native.nvm.nvm_advance",
+          "category": "native_other_peripheral_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 1,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "native.avr.avr_device_audio_deadline",
+          "name": "native.avr.avr_device_audio_deadline",
+          "category": "native_audio_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 1,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x02bc_RET",
+          "name": "cpu.insn_0x02bc_RET",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 1,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x0208_BRANCH",
+          "name": "cpu.insn_0x0208_BRANCH",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 1,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x01a4_MOV",
+          "name": "cpu.insn_0x01a4_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 1,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x01bc_SUBI",
+          "name": "cpu.insn_0x01bc_SUBI",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 1,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x01b4_ADC",
+          "name": "cpu.insn_0x01b4_ADC",
+          "category": "generated_cpu_body",
+          "selfSamples": 1,
+          "inclusiveSamples": 1,
+          "selfPercent": 0.01863932898415657,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "capture@file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/scripts/profile-device.mjs:214",
+          "name": "capture",
+          "category": "profiler_harness",
+          "selfSamples": 0,
+          "inclusiveSamples": 5365,
+          "selfPercent": 0,
+          "inclusivePercent": 100
+        },
+        {
+          "key": "@file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/scripts/profile-device.mjs:-1",
+          "name": "(anonymous)",
+          "category": "profiler_harness",
+          "selfSamples": 0,
+          "inclusiveSamples": 5365,
+          "selfPercent": 0,
+          "inclusivePercent": 100
+        },
+        {
+          "key": "(root)@:-1",
+          "name": "(root)",
+          "category": "other_js_vm",
+          "selfSamples": 0,
+          "inclusiveSamples": 5365,
+          "selfPercent": 0,
+          "inclusivePercent": 100
+        },
+        {
+          "key": "_call@file:///C:/Work/MicroMusic/.worktree/avr-to-wasm/web-player/lib/avr-runtime.js:77",
+          "name": "_call",
+          "category": "javascript_bridge",
+          "selfSamples": 0,
+          "inclusiveSamples": 5361,
+          "selfPercent": 0,
+          "inclusivePercent": 99.92544268406337
+        },
+        {
+          "key": "js-to-wasm:i:i@wasm://wasm/micromusic.profile.cpu.hq4-chego-tiny-00199ffa",
+          "name": "js-to-wasm:i:i",
+          "category": "unresolved_wasm",
+          "selfSamples": 0,
+          "inclusiveSamples": 3572,
+          "selfPercent": 0,
+          "inclusivePercent": 66.57968313140726
+        },
+        {
+          "key": "js-to-wasm::@wasm://wasm/micromusic.profile.cpu.hq4-chego-tiny-00199ffa",
+          "name": "js-to-wasm::",
+          "category": "unresolved_wasm",
+          "selfSamples": 0,
+          "inclusiveSamples": 1789,
+          "selfPercent": 0,
+          "inclusivePercent": 33.345759552656105
+        },
+        {
+          "key": "cpu.insn_0x02e4_DEC",
+          "name": "cpu.insn_0x02e4_DEC",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 42,
+          "selfPercent": 0,
+          "inclusivePercent": 0.782851817334576
+        },
+        {
+          "key": "cpu.insn_0x0006_RJMP",
+          "name": "cpu.insn_0x0006_RJMP",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 22,
+          "selfPercent": 0,
+          "inclusivePercent": 0.41006523765144454
+        },
+        {
+          "key": "cpu.insn_0x01e8_AND",
+          "name": "cpu.insn_0x01e8_AND",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 19,
+          "selfPercent": 0,
+          "inclusivePercent": 0.35414725069897485
+        },
+        {
+          "key": "cpu.insn_0x01b6_RCALL",
+          "name": "cpu.insn_0x01b6_RCALL",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 18,
+          "selfPercent": 0,
+          "inclusivePercent": 0.33550792171481825
+        },
+        {
+          "key": "cpu.block_0x01d0",
+          "name": "cpu.block_0x01d0",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 15,
+          "selfPercent": 0,
+          "inclusivePercent": 0.27958993476234856
+        },
+        {
+          "key": "cpu.insn_0x018c_ANDI",
+          "name": "cpu.insn_0x018c_ANDI",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 14,
+          "selfPercent": 0,
+          "inclusivePercent": 0.26095060577819196
+        },
+        {
+          "key": "cpu.insn_0x00c6_RCALL",
+          "name": "cpu.insn_0x00c6_RCALL",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 14,
+          "selfPercent": 0,
+          "inclusivePercent": 0.26095060577819196
+        },
+        {
+          "key": "cpu.insn_0x01a8_SKIP",
+          "name": "cpu.insn_0x01a8_SKIP",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 12,
+          "selfPercent": 0,
+          "inclusivePercent": 0.22367194780987884
+        },
+        {
+          "key": "cpu.insn_0x0222_RET",
+          "name": "cpu.insn_0x0222_RET",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 12,
+          "selfPercent": 0,
+          "inclusivePercent": 0.22367194780987884
+        },
+        {
+          "key": "cpu.insn_0x0238_PUSH",
+          "name": "cpu.insn_0x0238_PUSH",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 12,
+          "selfPercent": 0,
+          "inclusivePercent": 0.22367194780987884
+        },
+        {
+          "key": "cpu.insn_0x0076_POP",
+          "name": "cpu.insn_0x0076_POP",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 10,
+          "selfPercent": 0,
+          "inclusivePercent": 0.1863932898415657
+        },
+        {
+          "key": "cpu.insn_0x0198_RCALL",
+          "name": "cpu.insn_0x0198_RCALL",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 10,
+          "selfPercent": 0,
+          "inclusivePercent": 0.1863932898415657
+        },
+        {
+          "key": "cpu.insn_0x0162_ADC",
+          "name": "cpu.insn_0x0162_ADC",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 10,
+          "selfPercent": 0,
+          "inclusivePercent": 0.1863932898415657
+        },
+        {
+          "key": "cpu.insn_0x0240_LPM",
+          "name": "cpu.insn_0x0240_LPM",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 10,
+          "selfPercent": 0,
+          "inclusivePercent": 0.1863932898415657
+        },
+        {
+          "key": "cpu.insn_0x0212_EOR",
+          "name": "cpu.insn_0x0212_EOR",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 9,
+          "selfPercent": 0,
+          "inclusivePercent": 0.16775396085740912
+        },
+        {
+          "key": "cpu.insn_0x018e_SKIP",
+          "name": "cpu.insn_0x018e_SKIP",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 9,
+          "selfPercent": 0,
+          "inclusivePercent": 0.16775396085740912
+        },
+        {
+          "key": "cpu.insn_0x0164_AND",
+          "name": "cpu.insn_0x0164_AND",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 9,
+          "selfPercent": 0,
+          "inclusivePercent": 0.16775396085740912
+        },
+        {
+          "key": "cpu.insn_0x015e_ADC",
+          "name": "cpu.insn_0x015e_ADC",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 9,
+          "selfPercent": 0,
+          "inclusivePercent": 0.16775396085740912
+        },
+        {
+          "key": "cpu.block_0x01bc",
+          "name": "cpu.block_0x01bc",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 9,
+          "selfPercent": 0,
+          "inclusivePercent": 0.16775396085740912
+        },
+        {
+          "key": "cpu.insn_0x0186_MOV",
+          "name": "cpu.insn_0x0186_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 9,
+          "selfPercent": 0,
+          "inclusivePercent": 0.16775396085740912
+        },
+        {
+          "key": "cpu.insn_0x01e6_POP",
+          "name": "cpu.insn_0x01e6_POP",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 8,
+          "selfPercent": 0,
+          "inclusivePercent": 0.14911463187325255
+        },
+        {
+          "key": "cpu.insn_0x007a_EOR",
+          "name": "cpu.insn_0x007a_EOR",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 7,
+          "selfPercent": 0,
+          "inclusivePercent": 0.13047530288909598
+        },
+        {
+          "key": "cpu.insn_0x0170_BRANCH",
+          "name": "cpu.insn_0x0170_BRANCH",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 7,
+          "selfPercent": 0,
+          "inclusivePercent": 0.13047530288909598
+        },
+        {
+          "key": "cpu.insn_0x0214_SKIP",
+          "name": "cpu.insn_0x0214_SKIP",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 7,
+          "selfPercent": 0,
+          "inclusivePercent": 0.13047530288909598
+        },
+        {
+          "key": "cpu.block_0x0176",
+          "name": "cpu.block_0x0176",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 7,
+          "selfPercent": 0,
+          "inclusivePercent": 0.13047530288909598
+        },
+        {
+          "key": "cpu.insn_0x024c_SBI",
+          "name": "cpu.insn_0x024c_SBI",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 7,
+          "selfPercent": 0,
+          "inclusivePercent": 0.13047530288909598
+        },
+        {
+          "key": "cpu.insn_0x00fe_BRANCH",
+          "name": "cpu.insn_0x00fe_BRANCH",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 6,
+          "selfPercent": 0,
+          "inclusivePercent": 0.11183597390493942
+        },
+        {
+          "key": "cpu.insn_0x01ca_BRANCH",
+          "name": "cpu.insn_0x01ca_BRANCH",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 6,
+          "selfPercent": 0,
+          "inclusivePercent": 0.11183597390493942
+        },
+        {
+          "key": "cpu.insn_0x01aa_LDI",
+          "name": "cpu.insn_0x01aa_LDI",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 6,
+          "selfPercent": 0,
+          "inclusivePercent": 0.11183597390493942
+        },
+        {
+          "key": "cpu.insn_0x01ea_BRANCH",
+          "name": "cpu.insn_0x01ea_BRANCH",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 6,
+          "selfPercent": 0,
+          "inclusivePercent": 0.11183597390493942
+        },
+        {
+          "key": "cpu.insn_0x019c_SWAP",
+          "name": "cpu.insn_0x019c_SWAP",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 5,
+          "selfPercent": 0,
+          "inclusivePercent": 0.09319664492078285
+        },
+        {
+          "key": "cpu.insn_0x017c_MOV",
+          "name": "cpu.insn_0x017c_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 5,
+          "selfPercent": 0,
+          "inclusivePercent": 0.09319664492078285
+        },
+        {
+          "key": "cpu.insn_0x0206_ADD",
+          "name": "cpu.insn_0x0206_ADD",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 5,
+          "selfPercent": 0,
+          "inclusivePercent": 0.09319664492078285
+        },
+        {
+          "key": "cpu.insn_0x00d6_STS",
+          "name": "cpu.insn_0x00d6_STS",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 5,
+          "selfPercent": 0,
+          "inclusivePercent": 0.09319664492078285
+        },
+        {
+          "key": "cpu.insn_0x0052_LDI",
+          "name": "cpu.insn_0x0052_LDI",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 5,
+          "selfPercent": 0,
+          "inclusivePercent": 0.09319664492078285
+        },
+        {
+          "key": "cpu.insn_0x0218_CP",
+          "name": "cpu.insn_0x0218_CP",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 5,
+          "selfPercent": 0,
+          "inclusivePercent": 0.09319664492078285
+        },
+        {
+          "key": "cpu.insn_0x01ee_RCALL",
+          "name": "cpu.insn_0x01ee_RCALL",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 5,
+          "selfPercent": 0,
+          "inclusivePercent": 0.09319664492078285
+        },
+        {
+          "key": "cpu.block_0x016c",
+          "name": "cpu.block_0x016c",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 4,
+          "selfPercent": 0,
+          "inclusivePercent": 0.07455731593662628
+        },
+        {
+          "key": "cpu.insn_0x02ee_BRANCH",
+          "name": "cpu.insn_0x02ee_BRANCH",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 4,
+          "selfPercent": 0,
+          "inclusivePercent": 0.07455731593662628
+        },
+        {
+          "key": "cpu.insn_0x0232_RET",
+          "name": "cpu.insn_0x0232_RET",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 4,
+          "selfPercent": 0,
+          "inclusivePercent": 0.07455731593662628
+        },
+        {
+          "key": "cpu.insn_0x0172_EOR",
+          "name": "cpu.insn_0x0172_EOR",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 4,
+          "selfPercent": 0,
+          "inclusivePercent": 0.07455731593662628
+        },
+        {
+          "key": "cpu.insn_0x02f2_EOR",
+          "name": "cpu.insn_0x02f2_EOR",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 4,
+          "selfPercent": 0,
+          "inclusivePercent": 0.07455731593662628
+        },
+        {
+          "key": "cpu.block_0x0070",
+          "name": "cpu.block_0x0070",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 4,
+          "selfPercent": 0,
+          "inclusivePercent": 0.07455731593662628
+        },
+        {
+          "key": "native.avr.avr_read_io",
+          "name": "native.avr.avr_read_io",
+          "category": "native_bridge_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 4,
+          "selfPercent": 0,
+          "inclusivePercent": 0.07455731593662628
+        },
+        {
+          "key": "cpu.block_0x008e",
+          "name": "cpu.block_0x008e",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 4,
+          "selfPercent": 0,
+          "inclusivePercent": 0.07455731593662628
+        },
+        {
+          "key": "cpu.insn_0x01c4_CPI",
+          "name": "cpu.insn_0x01c4_CPI",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 3,
+          "selfPercent": 0,
+          "inclusivePercent": 0.05591798695246971
+        },
+        {
+          "key": "cpu.insn_0x0068_MOV",
+          "name": "cpu.insn_0x0068_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 3,
+          "selfPercent": 0,
+          "inclusivePercent": 0.05591798695246971
+        },
+        {
+          "key": "cpu.insn_0x00b2_SUB",
+          "name": "cpu.insn_0x00b2_SUB",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 3,
+          "selfPercent": 0,
+          "inclusivePercent": 0.05591798695246971
+        },
+        {
+          "key": "cpu.insn_0x0224_LDS",
+          "name": "cpu.insn_0x0224_LDS",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 3,
+          "selfPercent": 0,
+          "inclusivePercent": 0.05591798695246971
+        },
+        {
+          "key": "cpu.insn_0x0090_ADD",
+          "name": "cpu.insn_0x0090_ADD",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 3,
+          "selfPercent": 0,
+          "inclusivePercent": 0.05591798695246971
+        },
+        {
+          "key": "cpu.insn_0x0180_ANDI",
+          "name": "cpu.insn_0x0180_ANDI",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 3,
+          "selfPercent": 0,
+          "inclusivePercent": 0.05591798695246971
+        },
+        {
+          "key": "cpu.insn_0x0094_ADD",
+          "name": "cpu.insn_0x0094_ADD",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 3,
+          "selfPercent": 0,
+          "inclusivePercent": 0.05591798695246971
+        },
+        {
+          "key": "cpu.insn_0x01a0_MOV",
+          "name": "cpu.insn_0x01a0_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 3,
+          "selfPercent": 0,
+          "inclusivePercent": 0.05591798695246971
+        },
+        {
+          "key": "cpu.insn_0x00f2_ADD",
+          "name": "cpu.insn_0x00f2_ADD",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 3,
+          "selfPercent": 0,
+          "inclusivePercent": 0.05591798695246971
+        },
+        {
+          "key": "cpu.insn_0x0064_STS",
+          "name": "cpu.insn_0x0064_STS",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 3,
+          "selfPercent": 0,
+          "inclusivePercent": 0.05591798695246971
+        },
+        {
+          "key": "cpu.insn_0x0174_RJMP",
+          "name": "cpu.insn_0x0174_RJMP",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 2,
+          "selfPercent": 0,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.insn_0x017e_SWAP",
+          "name": "cpu.insn_0x017e_SWAP",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 2,
+          "selfPercent": 0,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.insn_0x01b0_MOV",
+          "name": "cpu.insn_0x01b0_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 2,
+          "selfPercent": 0,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.insn_0x0056_ROR",
+          "name": "cpu.insn_0x0056_ROR",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 2,
+          "selfPercent": 0,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.insn_0x01f2_MOV",
+          "name": "cpu.insn_0x01f2_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 2,
+          "selfPercent": 0,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.insn_0x0216_LDI",
+          "name": "cpu.insn_0x0216_LDI",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 2,
+          "selfPercent": 0,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.insn_0x0084_LDI",
+          "name": "cpu.insn_0x0084_LDI",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 2,
+          "selfPercent": 0,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.insn_0x017a_SWAP",
+          "name": "cpu.insn_0x017a_SWAP",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 2,
+          "selfPercent": 0,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.insn_0x00e6_SWAP",
+          "name": "cpu.insn_0x00e6_SWAP",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 2,
+          "selfPercent": 0,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.block_0x01cc",
+          "name": "cpu.block_0x01cc",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 2,
+          "selfPercent": 0,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.insn_0x00fc_MOV",
+          "name": "cpu.insn_0x00fc_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 2,
+          "selfPercent": 0,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.insn_0x00aa_EOR",
+          "name": "cpu.insn_0x00aa_EOR",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 2,
+          "selfPercent": 0,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.insn_0x0070_MOV",
+          "name": "cpu.insn_0x0070_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 2,
+          "selfPercent": 0,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.block_0x0068",
+          "name": "cpu.block_0x0068",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 2,
+          "selfPercent": 0,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.insn_0x021a_BRANCH",
+          "name": "cpu.insn_0x021a_BRANCH",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 2,
+          "selfPercent": 0,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.block_0x0192",
+          "name": "cpu.block_0x0192",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 2,
+          "selfPercent": 0,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.block_0x01f0",
+          "name": "cpu.block_0x01f0",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 2,
+          "selfPercent": 0,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.insn_0x0098_ADD",
+          "name": "cpu.insn_0x0098_ADD",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 2,
+          "selfPercent": 0,
+          "inclusivePercent": 0.03727865796831314
+        },
+        {
+          "key": "cpu.insn_0x02b4_MOV",
+          "name": "cpu.insn_0x02b4_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.block_0x01f8",
+          "name": "cpu.block_0x01f8",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x00be_MOV",
+          "name": "cpu.insn_0x00be_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x0156_EOR",
+          "name": "cpu.insn_0x0156_EOR",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x02d2_BRANCH",
+          "name": "cpu.insn_0x02d2_BRANCH",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x00ee_LSR",
+          "name": "cpu.insn_0x00ee_LSR",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x02d0_LSR",
+          "name": "cpu.insn_0x02d0_LSR",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x009a_MOV",
+          "name": "cpu.insn_0x009a_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x01ae_ANDI",
+          "name": "cpu.insn_0x01ae_ANDI",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x00e2_MOV",
+          "name": "cpu.insn_0x00e2_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x01b2_ADD",
+          "name": "cpu.insn_0x01b2_ADD",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x023a_EOR",
+          "name": "cpu.insn_0x023a_EOR",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x0054_LSR",
+          "name": "cpu.insn_0x0054_LSR",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x00d4_ADC",
+          "name": "cpu.insn_0x00d4_ADC",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x00c0_ADD",
+          "name": "cpu.insn_0x00c0_ADD",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x00a6_ADD",
+          "name": "cpu.insn_0x00a6_ADD",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x0196_SWAP",
+          "name": "cpu.insn_0x0196_SWAP",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x01f4_MOV",
+          "name": "cpu.insn_0x01f4_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x00ce_ADD",
+          "name": "cpu.insn_0x00ce_ADD",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x009e_MOV",
+          "name": "cpu.insn_0x009e_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x022c_EOR",
+          "name": "cpu.insn_0x022c_EOR",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x0182_OR",
+          "name": "cpu.insn_0x0182_OR",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x016e_ANDI",
+          "name": "cpu.insn_0x016e_ANDI",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x0192_SWAP",
+          "name": "cpu.insn_0x0192_SWAP",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x008a_MOV",
+          "name": "cpu.insn_0x008a_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x023e_SBCI",
+          "name": "cpu.insn_0x023e_SBCI",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x0154_EOR",
+          "name": "cpu.insn_0x0154_EOR",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x02c4_BRANCH",
+          "name": "cpu.insn_0x02c4_BRANCH",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x00da_MOV",
+          "name": "cpu.insn_0x00da_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x02b8_RCALL",
+          "name": "cpu.insn_0x02b8_RCALL",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x00e4_MOV",
+          "name": "cpu.insn_0x00e4_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x01be_MOV",
+          "name": "cpu.insn_0x01be_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x011c_RCALL",
+          "name": "cpu.insn_0x011c_RCALL",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x01a2_SUB",
+          "name": "cpu.insn_0x01a2_SUB",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x00b6_ADD",
+          "name": "cpu.insn_0x00b6_ADD",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x00f4_ADC",
+          "name": "cpu.insn_0x00f4_ADC",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x00a0_MOV",
+          "name": "cpu.insn_0x00a0_MOV",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x005a_LDI",
+          "name": "cpu.insn_0x005a_LDI",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.block_0x0246",
+          "name": "cpu.block_0x0246",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x00fa_ANDI",
+          "name": "cpu.insn_0x00fa_ANDI",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x00c4_LDI",
+          "name": "cpu.insn_0x00c4_LDI",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x00a8_ADC",
+          "name": "cpu.insn_0x00a8_ADC",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        },
+        {
+          "key": "cpu.insn_0x019e_ANDI",
+          "name": "cpu.insn_0x019e_ANDI",
+          "category": "generated_cpu_body",
+          "selfSamples": 0,
+          "inclusiveSamples": 1,
+          "selfPercent": 0,
+          "inclusivePercent": 0.01863932898415657
+        }
+      ],
+      "representativeProfile": "hq4-chego-tiny.cpuprofile",
+      "evidence": [
+        {
+          "repeat": 0,
+          "path": "build/profiles/adc-hq4-current/hq4-chego-tiny-0.cpuprofile",
+          "sha256": "1df35479098aea745a34a11636e476bdd0a4dccd15dcd02f7f9b515ed12c9543",
+          "workWallMs": 3613.1527000000006,
+          "workSamples": 2141,
+          "allSamples": 2144,
+          "sampleDeltasUs": {
+            "min": 1051,
+            "median": 1568,
+            "max": 40212
+          },
+          "productionEquality": true,
+          "rawPcmSha256": "9b14bf0334377d77fafae45784969aab790f072a84d725d0f4a38370489360c9",
+          "architectureSha256": "a90d1fd972860b1adf18a46c77a59d2be30ee4afa86a69a6178ddf35c44b96b1"
+        },
+        {
+          "repeat": 1,
+          "path": "build/profiles/adc-hq4-current/hq4-chego-tiny-1.cpuprofile",
+          "sha256": "d0566762f2322f2e0ee65fe4e0f5f25f0921c0bec62059d5106f9e01368f7077",
+          "workWallMs": 2833.262999999999,
+          "workSamples": 1790,
+          "allSamples": 1792,
+          "sampleDeltasUs": {
+            "min": 1046,
+            "median": 1564,
+            "max": 31135
+          },
+          "productionEquality": true,
+          "rawPcmSha256": "9b14bf0334377d77fafae45784969aab790f072a84d725d0f4a38370489360c9",
+          "architectureSha256": "a90d1fd972860b1adf18a46c77a59d2be30ee4afa86a69a6178ddf35c44b96b1"
+        },
+        {
+          "repeat": 2,
+          "path": "build/profiles/adc-hq4-current/hq4-chego-tiny-2.cpuprofile",
+          "sha256": "f900c3ec2de9c3109a555bacfa5cba16968e11f97ad0b34e5a41ace48767c4bc",
+          "workWallMs": 2254.862799999999,
+          "workSamples": 1434,
+          "allSamples": 1438,
+          "sampleDeltasUs": {
+            "min": 1066,
+            "median": 1561,
+            "max": 44074
+          },
+          "productionEquality": true,
+          "rawPcmSha256": "9b14bf0334377d77fafae45784969aab790f072a84d725d0f4a38370489360c9",
+          "architectureSha256": "a90d1fd972860b1adf18a46c77a59d2be30ee4afa86a69a6178ddf35c44b96b1"
+        }
+      ],
+      "inputSummary": {
+        "path": "build/profiles/adc-hq4-current/summary.json",
+        "sha256": "160d96abba52c2969d629c72038addbb75b9e93465075c81c406f37afd25f04a",
+        "parameters": {
+          "frames": 48000,
+          "rate": 48000,
+          "repeats": 3,
+          "intervalUs": 1000,
+          "blockFrames": 1024,
+          "fastIdle": true,
+          "optimizeFlags": true,
+          "benchmarkControls": true,
+          "requestedFirmware": [
+            "hq4-chego-auto"
+          ],
+          "firmwareOrder": [
+            "hq4-chego-tiny"
+          ],
+          "kernel": false,
+          "clock": "physical",
+          "frequency": null,
+          "divisor": 1,
+          "operation": "capture",
+          "instructions": 1000000
+        },
+        "provenance": {
+          "runtimeRef": "working-tree",
+          "runtimeCommit": null,
+          "compileRoot": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\",
+          "runtimeSha256": "b6a678437b62fac3e6be1f90d90cc0bc76b9c71c0752c438504c2cda858643b4",
+          "namedRuntimeSha256": "f8d1e5849c4ddb6905f6689ea6550ae24a8ac80093521bd31b99e406566b7f14",
+          "executableSectionsSha256": "e034f0f7691b7d3954387a73bcf9096f4e1b396b2f06db58805bf14d2dceeba8",
+          "runtimeRebuildByteEqual": true,
+          "diagnosticCompiler": "C:\\Work\\MicroMusic\\build\\toolchains\\emscripten-6.0.12\\upstream\\bin\\clang.exe",
+          "compilerVersion": "clang version 24.0.0git (https:/github.com/llvm/llvm-project 55ea1f4ebea23d0355d5cdb075f1e12f28ab82d0)",
+          "compileArgs": [
+            "--target=wasm32-unknown-unknown",
+            "-O3",
+            "-std=c11",
+            "-ffreestanding",
+            "-nostdlib",
+            "-DAVR_FULL_DEVICE",
+            "--sysroot=C:\\Work\\MicroMusic\\build\\toolchains\\emscripten-6.0.12\\upstream\\emscripten\\cache\\sysroot",
+            "-isystem",
+            "C:\\Work\\MicroMusic\\build\\toolchains\\emscripten-6.0.12\\upstream\\emscripten\\cache\\sysroot\\include",
+            "-LC:\\Work\\MicroMusic\\build\\toolchains\\emscripten-6.0.12\\upstream\\emscripten\\cache\\sysroot\\lib\\wasm32-emscripten",
+            "-Wl,--no-entry",
+            "-Wl,--export-memory",
+            "-Wl,--initial-memory=131072",
+            "-Wl,--max-memory=131072",
+            "-Wl,-z,stack-size=8192",
+            "-Wl,--export=avr_arithmetic",
+            "-Wl,--export=avr_audio_channels",
+            "-Wl,--export=avr_audio_controls",
+            "-Wl,--export=avr_audio_init",
+            "-Wl,--export=avr_average",
+            "-Wl,--export=avr_block",
+            "-Wl,--export=avr_clock",
+            "-Wl,--export=avr_decode",
+            "-Wl,--export=avr_decode_idle",
+            "-Wl,--export=avr_device_audio_begin",
+            "-Wl,--export=avr_device_audio_config",
+            "-Wl,--export=avr_device_audio_deadline",
+            "-Wl,--export=avr_device_audio_end",
+            "-Wl,--export=avr_device_audio_sample",
+            "-Wl,--export=avr_device_bind_generation",
+            "-Wl,--export=avr_device_bod_disabled",
+            "-Wl,--export=avr_device_bod_recovering",
+            "-Wl,--export=avr_device_clki_aligned",
+            "-Wl,--export=avr_device_clki_buffer",
+            "-Wl,--export=avr_device_clki_capacity",
+            "-Wl,--export=avr_device_clki_commit",
+            "-Wl,--export=avr_device_clki_count",
+            "-Wl,--export=avr_device_clki_enabled",
+            "-Wl,--export=avr_device_clki_free",
+            "-Wl,--export=avr_device_clki_horizon_ps",
+            "-Wl,--export=avr_device_clki_level",
+            "-Wl,--export=avr_device_clki_periodic_ps",
+            "-Wl,--export=avr_device_clki_periodic_remaining",
+            "-Wl,--export=avr_device_clki_startup_ck",
+            "-Wl,--export=avr_device_clki_status",
+            "-Wl,--export=avr_device_clki_validation_enabled",
+            "-Wl,--export=avr_device_configure",
+            "-Wl,--export=avr_device_configure_clki",
+            "-Wl,--export=avr_device_configure_osccal_hz",
+            "-Wl,--export=avr_device_configure_power",
+            "-Wl,--export=avr_device_configure_reset_input",
+            "-Wl,--export=avr_device_control",
+            "-Wl,--export=avr_device_cpu_deadline",
+            "-Wl,--export=avr_device_divisor",
+            "-Wl,--export=avr_device_fault",
+            "-Wl,--export=avr_device_fault_detail",
+            "-Wl,--export=avr_device_generation",
+            "-Wl,--export=avr_device_halted",
+            "-Wl,--export=avr_device_idle",
+            "-Wl,--export=avr_device_inject_analog",
+            "-Wl,--export=avr_device_inject_analog_ps",
+            "-Wl,--export=avr_device_inject_pins",
+            "-Wl,--export=avr_device_inject_pins_ps",
+            "-Wl,--export=avr_device_inject_vcc_ps",
+            "-Wl,--export=avr_device_lpm",
+            "-Wl,--export=avr_device_oscillator_hz",
+            "-Wl,--export=avr_device_pending",
+            "-Wl,--export=avr_device_phase_active",
+            "-Wl,--export=avr_device_phase_clock",
+            "-Wl,--export=avr_device_phase_deadline",
+            "-Wl,--export=avr_device_phase_enable",
+            "-Wl,--export=avr_device_phase_layout",
+            "-Wl,--export=avr_device_phase_retire",
+            "-Wl,--export=avr_device_physical_mode",
+            "-Wl,--export=avr_device_pin_buffer",
+            "-Wl,--export=avr_device_pin_buffer_ps",
+            "-Wl,--export=avr_device_pin_consume",
+            "-Wl,--export=avr_device_pin_count",
+            "-Wl,--export=avr_device_pin_count_ps",
+            "-Wl,--export=avr_device_pin_trace_config",
+            "-Wl,--export=avr_device_pin_trace_configuration",
+            "-Wl,--export=avr_device_pins",
+            "-Wl,--export=avr_device_pins_ps",
+            "-Wl,--export=avr_device_power_enabled",
+            "-Wl,--export=avr_device_ready",
+            "-Wl,--export=avr_device_rebase_time",
+            "-Wl,--export=avr_device_reset_count",
+            "-Wl,--export=avr_device_reset_held",
+            "-Wl,--export=avr_device_reset_input_asserted",
+            "-Wl,--export=avr_device_reset_input_deadline_ps",
+            "-Wl,--export=avr_device_reset_input_enabled",
+            "-Wl,--export=avr_device_sleep_phase",
+            "-Wl,--export=avr_device_starting",
+            "-Wl,--export=avr_device_startup_deadline",
+            "-Wl,--export=avr_device_startup_deadline_ps",
+            "-Wl,--export=avr_device_time",
+            "-Wl,--export=avr_device_time64",
+            "-Wl,--export=avr_device_time_ps",
+            "-Wl,--export=avr_device_vcc_microvolts",
+            "-Wl,--export=avr_device_wait",
+            "-Wl,--export=avr_error_message",
+            "-Wl,--export=avr_field_name",
+            "-Wl,--export=avr_filter",
+            "-Wl,--export=avr_idle",
+            "-Wl,--export=avr_interrupt",
+            "-Wl,--export=avr_layout",
+            "-Wl,--export=avr_next",
+            "-Wl,--export=avr_nzvs",
+            "-Wl,--export=avr_pop",
+            "-Wl,--export=avr_pop_pc",
+            "-Wl,--export=avr_push",
+            "-Wl,--export=avr_push_pc",
+            "-Wl,--export=avr_read_data",
+            "-Wl,--export=avr_read_io",
+            "-Wl,--export=avr_render",
+            "-Wl,--export=avr_reset",
+            "-Wl,--export=avr_step",
+            "-Wl,--export=avr_timer_counter",
+            "-Wl,--export=avr_timer_mode",
+            "-Wl,--export=avr_timer_top",
+            "-Wl,--export=avr_update_timer",
+            "-Wl,--export=avr_write_data",
+            "-Wl,--export=avr_write_io",
+            "-Wl,--export=avr_write_io_masked",
+            "--no-wasm-opt",
+            "-Wl,-Map=C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\profiles\\adc-hq4-current\\runtime-link.map",
+            "web-player/native/avr.c",
+            "web-player/native/peripherals/analog.c",
+            "web-player/native/peripherals/analog_adc.c",
+            "web-player/native/peripherals/analog_comparator.c",
+            "web-player/native/peripherals/device.c",
+            "web-player/native/peripherals/nvm.c",
+            "web-player/native/peripherals/power_reset.c",
+            "web-player/native/peripherals/system_gpio.c",
+            "web-player/native/peripherals/system_sleep.c",
+            "web-player/native/peripherals/system_watchdog.c",
+            "web-player/native/peripherals/timer0.c",
+            "web-player/native/devices/attiny13a/reset_input.c",
+            "web-player/native/devices/attiny13a/clki_input.c",
+            "web-player/native/devices/attiny13a/clki_clock.c",
+            "web-player/native/devices/attiny13a/clki_validation.c",
+            "web-player/native/devices/attiny13a/clki_periodic.c",
+            "-lc",
+            "-lclang_rt.builtins",
+            "-o",
+            "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\profiles\\adc-hq4-current\\runtime-preopt.wasm"
+          ],
+          "optimizer": "C:\\Work\\MicroMusic\\build\\toolchains\\emscripten-6.0.12\\upstream\\bin\\wasm-opt.exe",
+          "optimizeArgs": [
+            "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\profiles\\adc-hq4-current\\runtime-preopt.wasm",
+            "-O3",
+            "--print-function-map",
+            "-o",
+            "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\profiles\\adc-hq4-current\\runtime-symbols.wasm"
+          ],
+          "sourceSha256NormalizedLF": {
+            "web-player/native/avr.c": "397be46fef05026cd97d567c72682b54fe656fddc53fe69b6e9ccfecdb1e27b9",
+            "web-player/native/attiny13a-registers.generated.h": "9b790283f9cc84e144c5dd138636e8646ba2b00175c2d09b8152eaefd700d8b7",
+            "web-player/native/attiny13a-registers.generated.inc": "aaaf7f47e67e1f3b72754c13373ea9aa6d39acf65c8669e43333ffdf51e539e4",
+            "web-player/native/attiny13a-registers.h": "67cc37f8c312e405f3eb136208d870cd615419471435308a6c4e1f3721fb5a48",
+            "web-player/native/avr-device.inc": "4b9d41ddeee6894313ee0f1cea5742bf9337bfa47dbd136c9f4e3c8deeb9cdc8",
+            "web-player/native/peripherals/analog.c": "a346b6edaa6116ed9aff059513ead3126d61e740887d95ae4d5143082fc2dff9",
+            "web-player/native/peripherals/analog.h": "3784b94d275c540518f2429e6b53a5a16b60e471f274c4e4f831b11a9421196d",
+            "web-player/native/peripherals/analog_adc.c": "ddb769c4af9239df80cfadf2944fc4d7ca61b1c701249538ca4576d1dfe5827b",
+            "web-player/native/peripherals/analog_adc.h": "14f1dc000c5adcafdd8cf5e8d225f51805224a47eefae562e1957383970b2220",
+            "web-player/native/peripherals/analog_comparator.c": "fbdc17028ee6998c857ef6911af5f05407cce524322697e3b9fd1da914d87a48",
+            "web-player/native/peripherals/analog_comparator.h": "17a2c132554c5dfae031d9c23650c1bf3b9cb41f1c14e3d1c0cd6bdaa3b393b4",
+            "web-player/native/peripherals/device.c": "9e2c4a6e61647d73fd4a572e115cb598235ad0f8709158b0b8d198b540984569",
+            "web-player/native/peripherals/device.h": "e8d46546cd4ff889f13426dc36f49c88fcd0427599fa26c24442f3844ecc3c40",
+            "web-player/native/peripherals/device_clock.h": "a48e791a59639292f7ac03b0be99ad7a1d31bd976c91b7adb2a9cd0932fdce93",
+            "web-player/native/peripherals/nvm.c": "51880a51fd61c009ce7d0fa47d205d9c93aa7a0ebd5fc4e0f80064927a9bd096",
+            "web-player/native/peripherals/nvm.h": "56e2934423d6ec150d05a531ce85c052c3ac56ca3222ec16d7ca63083bce0e7d",
+            "web-player/native/peripherals/power_reset.c": "d09d0f8b3a417e7823918a76652f21dc078884f4b0945abf5c5732d18850170c",
+            "web-player/native/peripherals/power_reset.h": "0518e767fd2a4741b32425af26d93b8ad3f6b6d3cc22d406983a9f83fbe6bc02",
+            "web-player/native/peripherals/system_gpio.c": "bd62a5bd9c7bd8c523f674312b9971d08d568477174f33178b69fd5d90f90428",
+            "web-player/native/peripherals/system_gpio.h": "fbb1378945df4446272d40697b12d98d95c335035adc977a902e8ce3420bbea3",
+            "web-player/native/peripherals/system_sleep.c": "ed4a0f8b3cbcd0149793e9633b4967d354e2edbcad02c5859b39caa98a61ccbd",
+            "web-player/native/peripherals/system_sleep.h": "87c01f37f7b922a0dc7f3f9661546e7b99a514cb8beba0be1b3eb61b18032ec8",
+            "web-player/native/peripherals/system_watchdog.c": "22134559c5bb1c555825de27d2c9efa8d3d5aa527dd55d9a8a735ba3964df8b7",
+            "web-player/native/peripherals/system_watchdog.h": "ec432e27956672069a5608b2df5561df04f705de73cd2a2e1579b27224ee1720",
+            "web-player/native/peripherals/timer0.c": "2d4ba55706be643e2935aaa86e2e38e852c88378f47d4312085ec09837f7cac4",
+            "web-player/native/peripherals/timer0.h": "6de13614a6a22046b95fb60179a0729efbda9b5b6e693aa27c3f20853482a90e",
+            "web-player/native/devices/attiny13a/reset_input.c": "7ac97541133ecdccec25de9721bf787742a9b375572409bed90c03adec0d7519",
+            "web-player/native/devices/attiny13a/reset_input.h": "c5f0d3d02a1053defae289736bac40c247032c854e25a80e211b1d43458a979b",
+            "web-player/native/devices/attiny13a/clki_input.c": "350fe7c08153d7ec929c737569196502d3886de4984c4206350aea44e07be042",
+            "web-player/native/devices/attiny13a/clki_input.h": "0831f7fb5af1c8ad2c9da72f20347226c1129e2dd1c81deb9c0bd73b231d81d1",
+            "web-player/native/devices/attiny13a/clki_clock.c": "360c2526a3f6b1abf6a7a9b30c05695bbcce691cea962631ac97a0f4b1c06b78",
+            "web-player/native/devices/attiny13a/clki_clock.h": "8d18a98e7822f3b7d6325fc0f489ce39fd588a1bf8feae280e65dfbf120314a7",
+            "web-player/native/devices/attiny13a/clki_validation.c": "778fe9adf815e21b17b4010cb57b25f1345ca802d33b48b7e8bcb933ad550d73",
+            "web-player/native/devices/attiny13a/clki_validation.h": "c303e5b2c0b6505be5d871e19f070bf129aff5a078a6717cacd04b28e6c32bdc",
+            "web-player/native/devices/attiny13a/clki_periodic.c": "5d3c68f83ce91186ca183fe8f9ee6b6b05ab10e601891fcd1821c00bf54fb20f",
+            "web-player/native/devices/attiny13a/clki_periodic.h": "18c545932c33a601cc3ebbbb9beb63b17772f612cb36a15c0c2d4e85b829fcb4",
+            "web-player/native/devices/attiny13a/clki_board.inc": "d5646d9bcaf0b65c8995aff6c661ec8d63fb8577dad94b62abe55a6fe18d9b14",
+            "web-player/native/devices/attiny13a/avr-profile.inc": "ab3c5e2415124568aa17b4783d8117e0219f55fbb5b4b7198a99e0f94e9baa27",
+            "web-player/vendor/microchip/ATtiny_DFP/3.4.278/atdf/ATtiny13A.atdf": "e12ee48543baf46bc5bc5bf9c6ef2e9e57e46e39c34b3c619bdc8280276e82ed",
+            "web-player/vendor/microchip/ATtiny_DFP/3.4.278/avrasm/inc/tn13Adef.inc": "31545ecfbf2e13d4bbca2ec3f86c9001ac72d1351a3b4f90495463df73cd9362",
+            "web-player/vendor/microchip/ATtiny_DFP/3.4.278/include/avr/iotn13a.h": "72c0824173a3f720f88c104fd8fbc253690d634b842df7c090bd7883daf951be",
+            "web-player/vendor/microchip/ATtiny_DFP/3.4.278/LICENSE.Apache-2.0.txt": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+            "web-player/vendor/microchip/ATtiny_DFP/3.4.278/LICENSE.txt": "3bf0a101f2b2e44eda3b477f866bd24204c35fa1f841c865933028adf155336a",
+            "web-player/vendor/microchip/ATtiny_DFP/3.4.278/provenance.json": "fdc444d04839445ede080599bf46557cddef7478414c8e164573f5b22b5318a7",
+            "web-player/vendor/microchip/ATtiny_DFP/3.4.278/README.md": "f4d2f3b77d825a47650646a0b6323e2bc87e913114fe54b43fdca7b82347e8a0",
+            "web-player/scripts/generate-attiny13a-registers.mjs": "162f9d0770fe5288eacbe2fabcebabd1ab578bb8db058ec4a7847d77f85d94e4",
+            "web-player/scripts/build-device-wasm.mjs": "92d8f2e01aa72c8ac98fd45b4cc5333fb31ce068c36d4137b636df27d95736eb",
+            "web-player/lib/avr-transpiler.js": "4c78f51dd22f08ce28814a3b97f84057c52c16bb103c01dd15d396f92bc99430",
+            "web-player/lib/avr-transpiled-runtime.js": "17c345f568cd5b4fa793e59688e4326acdde567455380dca7625ce1fc5447b1a",
+            "web-player/lib/avr-runtime.js": "cef29cfc93e028b3a2f25974e5db6a26b3e055ae6bb014a1ba1f159230e93467",
+            "web-player/lib/attiny13a-runtime.js": "5c79fdcfcacac149ec535ebc0b9d173d12f7fe75a5bea27f9997b5e214681869",
+            "web-player/lib/avr-wasm-phases.js": "dfe3f6f59808da0ba2b27e20bdf835b7e0229acb91ecd8eff8eeefaccf3b03e1",
+            "web-player/tests/fixtures/attiny13a-system-firmware.mjs": "1d75e9a7186337b3de601f29abe5b23450e0cd955926e88257b9049c016e366e",
+            "web-player/lib/hex.js": "73026ff8e78caab294b86bd32b3588cf92f77e59203531aa3bf3bc7979dd09ab",
+            "web-player/scripts/profile-device.mjs": "3b7dcddf4f4360082e35ff262af32383560080a77bcc98e253fdf15f1b39696b",
+            "web-player/lib/avr-profiles.js": "37583c2bbb1e36c5cc8687e0911ce46c062a97b0df21747ef92535628fa84c2b",
+            "web-player/firmware.json": "84ebe8568a2e9ca714f4c413dbbf33ffa050c3ec80a4ad0abd4ab15d96a83c80",
+            "web-player/hq4-firmware.json": "f7486eda26acf9ec8d6fd469f8b2798d1e5e5eb40d5396edbbe8a6fdde223a60"
+          }
+        }
+      }
+    }
+  ],
+  "runtimeSha256": "b6a678437b62fac3e6be1f90d90cc0bc76b9c71c0752c438504c2cda858643b4",
+  "host": {
+    "platform": "win32",
+    "release": "10.0.26300",
+    "arch": "x64",
+    "cpu": "AMD Ryzen 5 5600X 6-Core Processor             ",
+    "logicalCpus": 12
+  },
+  "node": {
+    "version": "v22.22.3",
+    "versions": {
+      "node": "22.22.3",
+      "acorn": "8.16.0",
+      "ada": "2.9.2",
+      "amaro": "1.1.8",
+      "ares": "1.34.6",
+      "brotli": "1.1.0",
+      "cjs_module_lexer": "2.2.0",
+      "cldr": "48.0",
+      "icu": "78.2",
+      "llhttp": "9.3.1",
+      "modules": "127",
+      "napi": "10",
+      "nbytes": "0.1.3",
+      "ncrypto": "0.0.1",
+      "nghttp2": "1.64.0",
+      "openssl": "3.5.6",
+      "simdjson": "4.5.0",
+      "simdutf": "6.4.2",
+      "sqlite": "3.51.3",
+      "tz": "2026a",
+      "undici": "6.24.1",
+      "unicode": "17.0",
+      "uv": "1.51.0",
+      "uvwasi": "0.0.23",
+      "v8": "12.4.254.21-node.56",
+      "zlib": "1.3.1-e00f703",
+      "zstd": "1.5.7"
+    },
+    "flags": [],
+    "executable": "C:\\Program Files\\nodejs\\node.exe"
+  },
+  "nativeProvenance": {
+    "runtimeRef": "working-tree",
+    "runtimeCommit": null,
+    "compileRoot": "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\",
+    "runtimeSha256": "b6a678437b62fac3e6be1f90d90cc0bc76b9c71c0752c438504c2cda858643b4",
+    "namedRuntimeSha256": "f8d1e5849c4ddb6905f6689ea6550ae24a8ac80093521bd31b99e406566b7f14",
+    "executableSectionsSha256": "e034f0f7691b7d3954387a73bcf9096f4e1b396b2f06db58805bf14d2dceeba8",
+    "runtimeRebuildByteEqual": true,
+    "diagnosticCompiler": "C:\\Work\\MicroMusic\\build\\toolchains\\emscripten-6.0.12\\upstream\\bin\\clang.exe",
+    "compilerVersion": "clang version 24.0.0git (https:/github.com/llvm/llvm-project 55ea1f4ebea23d0355d5cdb075f1e12f28ab82d0)",
+    "compileArgs": [
+      "--target=wasm32-unknown-unknown",
+      "-O3",
+      "-std=c11",
+      "-ffreestanding",
+      "-nostdlib",
+      "-DAVR_FULL_DEVICE",
+      "--sysroot=C:\\Work\\MicroMusic\\build\\toolchains\\emscripten-6.0.12\\upstream\\emscripten\\cache\\sysroot",
+      "-isystem",
+      "C:\\Work\\MicroMusic\\build\\toolchains\\emscripten-6.0.12\\upstream\\emscripten\\cache\\sysroot\\include",
+      "-LC:\\Work\\MicroMusic\\build\\toolchains\\emscripten-6.0.12\\upstream\\emscripten\\cache\\sysroot\\lib\\wasm32-emscripten",
+      "-Wl,--no-entry",
+      "-Wl,--export-memory",
+      "-Wl,--initial-memory=131072",
+      "-Wl,--max-memory=131072",
+      "-Wl,-z,stack-size=8192",
+      "-Wl,--export=avr_arithmetic",
+      "-Wl,--export=avr_audio_channels",
+      "-Wl,--export=avr_audio_controls",
+      "-Wl,--export=avr_audio_init",
+      "-Wl,--export=avr_average",
+      "-Wl,--export=avr_block",
+      "-Wl,--export=avr_clock",
+      "-Wl,--export=avr_decode",
+      "-Wl,--export=avr_decode_idle",
+      "-Wl,--export=avr_device_audio_begin",
+      "-Wl,--export=avr_device_audio_config",
+      "-Wl,--export=avr_device_audio_deadline",
+      "-Wl,--export=avr_device_audio_end",
+      "-Wl,--export=avr_device_audio_sample",
+      "-Wl,--export=avr_device_bind_generation",
+      "-Wl,--export=avr_device_bod_disabled",
+      "-Wl,--export=avr_device_bod_recovering",
+      "-Wl,--export=avr_device_clki_aligned",
+      "-Wl,--export=avr_device_clki_buffer",
+      "-Wl,--export=avr_device_clki_capacity",
+      "-Wl,--export=avr_device_clki_commit",
+      "-Wl,--export=avr_device_clki_count",
+      "-Wl,--export=avr_device_clki_enabled",
+      "-Wl,--export=avr_device_clki_free",
+      "-Wl,--export=avr_device_clki_horizon_ps",
+      "-Wl,--export=avr_device_clki_level",
+      "-Wl,--export=avr_device_clki_periodic_ps",
+      "-Wl,--export=avr_device_clki_periodic_remaining",
+      "-Wl,--export=avr_device_clki_startup_ck",
+      "-Wl,--export=avr_device_clki_status",
+      "-Wl,--export=avr_device_clki_validation_enabled",
+      "-Wl,--export=avr_device_configure",
+      "-Wl,--export=avr_device_configure_clki",
+      "-Wl,--export=avr_device_configure_osccal_hz",
+      "-Wl,--export=avr_device_configure_power",
+      "-Wl,--export=avr_device_configure_reset_input",
+      "-Wl,--export=avr_device_control",
+      "-Wl,--export=avr_device_cpu_deadline",
+      "-Wl,--export=avr_device_divisor",
+      "-Wl,--export=avr_device_fault",
+      "-Wl,--export=avr_device_fault_detail",
+      "-Wl,--export=avr_device_generation",
+      "-Wl,--export=avr_device_halted",
+      "-Wl,--export=avr_device_idle",
+      "-Wl,--export=avr_device_inject_analog",
+      "-Wl,--export=avr_device_inject_analog_ps",
+      "-Wl,--export=avr_device_inject_pins",
+      "-Wl,--export=avr_device_inject_pins_ps",
+      "-Wl,--export=avr_device_inject_vcc_ps",
+      "-Wl,--export=avr_device_lpm",
+      "-Wl,--export=avr_device_oscillator_hz",
+      "-Wl,--export=avr_device_pending",
+      "-Wl,--export=avr_device_phase_active",
+      "-Wl,--export=avr_device_phase_clock",
+      "-Wl,--export=avr_device_phase_deadline",
+      "-Wl,--export=avr_device_phase_enable",
+      "-Wl,--export=avr_device_phase_layout",
+      "-Wl,--export=avr_device_phase_retire",
+      "-Wl,--export=avr_device_physical_mode",
+      "-Wl,--export=avr_device_pin_buffer",
+      "-Wl,--export=avr_device_pin_buffer_ps",
+      "-Wl,--export=avr_device_pin_consume",
+      "-Wl,--export=avr_device_pin_count",
+      "-Wl,--export=avr_device_pin_count_ps",
+      "-Wl,--export=avr_device_pin_trace_config",
+      "-Wl,--export=avr_device_pin_trace_configuration",
+      "-Wl,--export=avr_device_pins",
+      "-Wl,--export=avr_device_pins_ps",
+      "-Wl,--export=avr_device_power_enabled",
+      "-Wl,--export=avr_device_ready",
+      "-Wl,--export=avr_device_rebase_time",
+      "-Wl,--export=avr_device_reset_count",
+      "-Wl,--export=avr_device_reset_held",
+      "-Wl,--export=avr_device_reset_input_asserted",
+      "-Wl,--export=avr_device_reset_input_deadline_ps",
+      "-Wl,--export=avr_device_reset_input_enabled",
+      "-Wl,--export=avr_device_sleep_phase",
+      "-Wl,--export=avr_device_starting",
+      "-Wl,--export=avr_device_startup_deadline",
+      "-Wl,--export=avr_device_startup_deadline_ps",
+      "-Wl,--export=avr_device_time",
+      "-Wl,--export=avr_device_time64",
+      "-Wl,--export=avr_device_time_ps",
+      "-Wl,--export=avr_device_vcc_microvolts",
+      "-Wl,--export=avr_device_wait",
+      "-Wl,--export=avr_error_message",
+      "-Wl,--export=avr_field_name",
+      "-Wl,--export=avr_filter",
+      "-Wl,--export=avr_idle",
+      "-Wl,--export=avr_interrupt",
+      "-Wl,--export=avr_layout",
+      "-Wl,--export=avr_next",
+      "-Wl,--export=avr_nzvs",
+      "-Wl,--export=avr_pop",
+      "-Wl,--export=avr_pop_pc",
+      "-Wl,--export=avr_push",
+      "-Wl,--export=avr_push_pc",
+      "-Wl,--export=avr_read_data",
+      "-Wl,--export=avr_read_io",
+      "-Wl,--export=avr_render",
+      "-Wl,--export=avr_reset",
+      "-Wl,--export=avr_step",
+      "-Wl,--export=avr_timer_counter",
+      "-Wl,--export=avr_timer_mode",
+      "-Wl,--export=avr_timer_top",
+      "-Wl,--export=avr_update_timer",
+      "-Wl,--export=avr_write_data",
+      "-Wl,--export=avr_write_io",
+      "-Wl,--export=avr_write_io_masked",
+      "--no-wasm-opt",
+      "-Wl,-Map=C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\profiles\\adc-kernel-current\\runtime-link.map",
+      "web-player/native/avr.c",
+      "web-player/native/peripherals/analog.c",
+      "web-player/native/peripherals/analog_adc.c",
+      "web-player/native/peripherals/analog_comparator.c",
+      "web-player/native/peripherals/device.c",
+      "web-player/native/peripherals/nvm.c",
+      "web-player/native/peripherals/power_reset.c",
+      "web-player/native/peripherals/system_gpio.c",
+      "web-player/native/peripherals/system_sleep.c",
+      "web-player/native/peripherals/system_watchdog.c",
+      "web-player/native/peripherals/timer0.c",
+      "web-player/native/devices/attiny13a/reset_input.c",
+      "web-player/native/devices/attiny13a/clki_input.c",
+      "web-player/native/devices/attiny13a/clki_clock.c",
+      "web-player/native/devices/attiny13a/clki_validation.c",
+      "web-player/native/devices/attiny13a/clki_periodic.c",
+      "-lc",
+      "-lclang_rt.builtins",
+      "-o",
+      "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\profiles\\adc-kernel-current\\runtime-preopt.wasm"
+    ],
+    "optimizer": "C:\\Work\\MicroMusic\\build\\toolchains\\emscripten-6.0.12\\upstream\\bin\\wasm-opt.exe",
+    "optimizeArgs": [
+      "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\profiles\\adc-kernel-current\\runtime-preopt.wasm",
+      "-O3",
+      "--print-function-map",
+      "-o",
+      "C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\profiles\\adc-kernel-current\\runtime-symbols.wasm"
+    ],
+    "sourceSha256NormalizedLF": {
+      "web-player/native/avr.c": "397be46fef05026cd97d567c72682b54fe656fddc53fe69b6e9ccfecdb1e27b9",
+      "web-player/native/attiny13a-registers.generated.h": "9b790283f9cc84e144c5dd138636e8646ba2b00175c2d09b8152eaefd700d8b7",
+      "web-player/native/attiny13a-registers.generated.inc": "aaaf7f47e67e1f3b72754c13373ea9aa6d39acf65c8669e43333ffdf51e539e4",
+      "web-player/native/attiny13a-registers.h": "67cc37f8c312e405f3eb136208d870cd615419471435308a6c4e1f3721fb5a48",
+      "web-player/native/avr-device.inc": "4b9d41ddeee6894313ee0f1cea5742bf9337bfa47dbd136c9f4e3c8deeb9cdc8",
+      "web-player/native/peripherals/analog.c": "a346b6edaa6116ed9aff059513ead3126d61e740887d95ae4d5143082fc2dff9",
+      "web-player/native/peripherals/analog.h": "3784b94d275c540518f2429e6b53a5a16b60e471f274c4e4f831b11a9421196d",
+      "web-player/native/peripherals/analog_adc.c": "ddb769c4af9239df80cfadf2944fc4d7ca61b1c701249538ca4576d1dfe5827b",
+      "web-player/native/peripherals/analog_adc.h": "14f1dc000c5adcafdd8cf5e8d225f51805224a47eefae562e1957383970b2220",
+      "web-player/native/peripherals/analog_comparator.c": "fbdc17028ee6998c857ef6911af5f05407cce524322697e3b9fd1da914d87a48",
+      "web-player/native/peripherals/analog_comparator.h": "17a2c132554c5dfae031d9c23650c1bf3b9cb41f1c14e3d1c0cd6bdaa3b393b4",
+      "web-player/native/peripherals/device.c": "9e2c4a6e61647d73fd4a572e115cb598235ad0f8709158b0b8d198b540984569",
+      "web-player/native/peripherals/device.h": "e8d46546cd4ff889f13426dc36f49c88fcd0427599fa26c24442f3844ecc3c40",
+      "web-player/native/peripherals/device_clock.h": "a48e791a59639292f7ac03b0be99ad7a1d31bd976c91b7adb2a9cd0932fdce93",
+      "web-player/native/peripherals/nvm.c": "51880a51fd61c009ce7d0fa47d205d9c93aa7a0ebd5fc4e0f80064927a9bd096",
+      "web-player/native/peripherals/nvm.h": "56e2934423d6ec150d05a531ce85c052c3ac56ca3222ec16d7ca63083bce0e7d",
+      "web-player/native/peripherals/power_reset.c": "d09d0f8b3a417e7823918a76652f21dc078884f4b0945abf5c5732d18850170c",
+      "web-player/native/peripherals/power_reset.h": "0518e767fd2a4741b32425af26d93b8ad3f6b6d3cc22d406983a9f83fbe6bc02",
+      "web-player/native/peripherals/system_gpio.c": "bd62a5bd9c7bd8c523f674312b9971d08d568477174f33178b69fd5d90f90428",
+      "web-player/native/peripherals/system_gpio.h": "fbb1378945df4446272d40697b12d98d95c335035adc977a902e8ce3420bbea3",
+      "web-player/native/peripherals/system_sleep.c": "ed4a0f8b3cbcd0149793e9633b4967d354e2edbcad02c5859b39caa98a61ccbd",
+      "web-player/native/peripherals/system_sleep.h": "87c01f37f7b922a0dc7f3f9661546e7b99a514cb8beba0be1b3eb61b18032ec8",
+      "web-player/native/peripherals/system_watchdog.c": "22134559c5bb1c555825de27d2c9efa8d3d5aa527dd55d9a8a735ba3964df8b7",
+      "web-player/native/peripherals/system_watchdog.h": "ec432e27956672069a5608b2df5561df04f705de73cd2a2e1579b27224ee1720",
+      "web-player/native/peripherals/timer0.c": "2d4ba55706be643e2935aaa86e2e38e852c88378f47d4312085ec09837f7cac4",
+      "web-player/native/peripherals/timer0.h": "6de13614a6a22046b95fb60179a0729efbda9b5b6e693aa27c3f20853482a90e",
+      "web-player/native/devices/attiny13a/reset_input.c": "7ac97541133ecdccec25de9721bf787742a9b375572409bed90c03adec0d7519",
+      "web-player/native/devices/attiny13a/reset_input.h": "c5f0d3d02a1053defae289736bac40c247032c854e25a80e211b1d43458a979b",
+      "web-player/native/devices/attiny13a/clki_input.c": "350fe7c08153d7ec929c737569196502d3886de4984c4206350aea44e07be042",
+      "web-player/native/devices/attiny13a/clki_input.h": "0831f7fb5af1c8ad2c9da72f20347226c1129e2dd1c81deb9c0bd73b231d81d1",
+      "web-player/native/devices/attiny13a/clki_clock.c": "360c2526a3f6b1abf6a7a9b30c05695bbcce691cea962631ac97a0f4b1c06b78",
+      "web-player/native/devices/attiny13a/clki_clock.h": "8d18a98e7822f3b7d6325fc0f489ce39fd588a1bf8feae280e65dfbf120314a7",
+      "web-player/native/devices/attiny13a/clki_validation.c": "778fe9adf815e21b17b4010cb57b25f1345ca802d33b48b7e8bcb933ad550d73",
+      "web-player/native/devices/attiny13a/clki_validation.h": "c303e5b2c0b6505be5d871e19f070bf129aff5a078a6717cacd04b28e6c32bdc",
+      "web-player/native/devices/attiny13a/clki_periodic.c": "5d3c68f83ce91186ca183fe8f9ee6b6b05ab10e601891fcd1821c00bf54fb20f",
+      "web-player/native/devices/attiny13a/clki_periodic.h": "18c545932c33a601cc3ebbbb9beb63b17772f612cb36a15c0c2d4e85b829fcb4",
+      "web-player/native/devices/attiny13a/clki_board.inc": "d5646d9bcaf0b65c8995aff6c661ec8d63fb8577dad94b62abe55a6fe18d9b14",
+      "web-player/native/devices/attiny13a/avr-profile.inc": "ab3c5e2415124568aa17b4783d8117e0219f55fbb5b4b7198a99e0f94e9baa27",
+      "web-player/vendor/microchip/ATtiny_DFP/3.4.278/atdf/ATtiny13A.atdf": "e12ee48543baf46bc5bc5bf9c6ef2e9e57e46e39c34b3c619bdc8280276e82ed",
+      "web-player/vendor/microchip/ATtiny_DFP/3.4.278/avrasm/inc/tn13Adef.inc": "31545ecfbf2e13d4bbca2ec3f86c9001ac72d1351a3b4f90495463df73cd9362",
+      "web-player/vendor/microchip/ATtiny_DFP/3.4.278/include/avr/iotn13a.h": "72c0824173a3f720f88c104fd8fbc253690d634b842df7c090bd7883daf951be",
+      "web-player/vendor/microchip/ATtiny_DFP/3.4.278/LICENSE.Apache-2.0.txt": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "web-player/vendor/microchip/ATtiny_DFP/3.4.278/LICENSE.txt": "3bf0a101f2b2e44eda3b477f866bd24204c35fa1f841c865933028adf155336a",
+      "web-player/vendor/microchip/ATtiny_DFP/3.4.278/provenance.json": "fdc444d04839445ede080599bf46557cddef7478414c8e164573f5b22b5318a7",
+      "web-player/vendor/microchip/ATtiny_DFP/3.4.278/README.md": "f4d2f3b77d825a47650646a0b6323e2bc87e913114fe54b43fdca7b82347e8a0",
+      "web-player/scripts/generate-attiny13a-registers.mjs": "162f9d0770fe5288eacbe2fabcebabd1ab578bb8db058ec4a7847d77f85d94e4",
+      "web-player/scripts/build-device-wasm.mjs": "92d8f2e01aa72c8ac98fd45b4cc5333fb31ce068c36d4137b636df27d95736eb",
+      "web-player/lib/avr-transpiler.js": "4c78f51dd22f08ce28814a3b97f84057c52c16bb103c01dd15d396f92bc99430",
+      "web-player/lib/avr-transpiled-runtime.js": "17c345f568cd5b4fa793e59688e4326acdde567455380dca7625ce1fc5447b1a",
+      "web-player/lib/avr-runtime.js": "cef29cfc93e028b3a2f25974e5db6a26b3e055ae6bb014a1ba1f159230e93467",
+      "web-player/lib/attiny13a-runtime.js": "5c79fdcfcacac149ec535ebc0b9d173d12f7fe75a5bea27f9997b5e214681869",
+      "web-player/lib/avr-wasm-phases.js": "dfe3f6f59808da0ba2b27e20bdf835b7e0229acb91ecd8eff8eeefaccf3b03e1",
+      "web-player/tests/fixtures/attiny13a-system-firmware.mjs": "1d75e9a7186337b3de601f29abe5b23450e0cd955926e88257b9049c016e366e",
+      "web-player/lib/hex.js": "73026ff8e78caab294b86bd32b3588cf92f77e59203531aa3bf3bc7979dd09ab",
+      "web-player/scripts/profile-device.mjs": "3b7dcddf4f4360082e35ff262af32383560080a77bcc98e253fdf15f1b39696b",
+      "web-player/lib/avr-profiles.js": "37583c2bbb1e36c5cc8687e0911ce46c062a97b0df21747ef92535628fa84c2b",
+      "web-player/firmware.json": "84ebe8568a2e9ca714f4c413dbbf33ffa050c3ec80a4ad0abd4ab15d96a83c80",
+      "web-player/hq4-firmware.json": "f7486eda26acf9ec8d6fd469f8b2798d1e5e5eb40d5396edbbe8a6fdde223a60"
+    }
+  },
+  "callTrace": null,
+  "profiles": 6,
+  "samples": 6045,
+  "complete": true
+}

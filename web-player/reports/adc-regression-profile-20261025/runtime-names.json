@@ -1,0 +1,1630 @@
+{
+  "before": [
+    {
+      "index": 0,
+      "name": "native.avr.avr_audio_init"
+    },
+    {
+      "index": 1,
+      "name": "native.avr.avr_audio_channels"
+    },
+    {
+      "index": 2,
+      "name": "native.avr.avr_audio_controls"
+    },
+    {
+      "index": 3,
+      "name": "native.avr.avr_render"
+    },
+    {
+      "index": 4,
+      "name": "native.avr.next_audio_value"
+    },
+    {
+      "index": 5,
+      "name": "native.avr.run_block"
+    },
+    {
+      "index": 6,
+      "name": "native.avr.step_cpu"
+    },
+    {
+      "index": 7,
+      "name": "native.avr.avr_filter"
+    },
+    {
+      "index": 8,
+      "name": "native.avr.avr_average"
+    },
+    {
+      "index": 9,
+      "name": "native.avr.avr_layout"
+    },
+    {
+      "index": 10,
+      "name": "native.avr.avr_field_name"
+    },
+    {
+      "index": 11,
+      "name": "native.avr.avr_error_message"
+    },
+    {
+      "index": 12,
+      "name": "native.avr.avr_reset"
+    },
+    {
+      "index": 13,
+      "name": "native.avr.decode"
+    },
+    {
+      "index": 14,
+      "name": "native.avr.decode_idle"
+    },
+    {
+      "index": 15,
+      "name": "native.avr.avr_decode"
+    },
+    {
+      "index": 16,
+      "name": "native.avr.avr_decode_idle"
+    },
+    {
+      "index": 17,
+      "name": "native.avr.avr_step"
+    },
+    {
+      "index": 18,
+      "name": "native.avr.pop_pc"
+    },
+    {
+      "index": 19,
+      "name": "native.avr.push_pc"
+    },
+    {
+      "index": 20,
+      "name": "native.avr.arithmetic"
+    },
+    {
+      "index": 21,
+      "name": "native.avr.full_clock"
+    },
+    {
+      "index": 22,
+      "name": "native.avr.read_data"
+    },
+    {
+      "index": 23,
+      "name": "native.avr.write_data"
+    },
+    {
+      "index": 24,
+      "name": "native.avr.full_write_io"
+    },
+    {
+      "index": 25,
+      "name": "native.avr.push"
+    },
+    {
+      "index": 26,
+      "name": "native.avr.full_interrupt"
+    },
+    {
+      "index": 27,
+      "name": "native.avr.avr_next"
+    },
+    {
+      "index": 28,
+      "name": "native.avr.avr_block"
+    },
+    {
+      "index": 29,
+      "name": "native.avr.avr_idle"
+    },
+    {
+      "index": 30,
+      "name": "native.avr.avr_clock"
+    },
+    {
+      "index": 31,
+      "name": "native.avr.avr_interrupt"
+    },
+    {
+      "index": 32,
+      "name": "native.avr.avr_write_io"
+    },
+    {
+      "index": 33,
+      "name": "native.avr.avr_update_timer"
+    },
+    {
+      "index": 34,
+      "name": "native.avr.avr_timer_mode"
+    },
+    {
+      "index": 35,
+      "name": "native.avr.avr_push"
+    },
+    {
+      "index": 36,
+      "name": "native.avr.avr_pop"
+    },
+    {
+      "index": 37,
+      "name": "native.avr.avr_push_pc"
+    },
+    {
+      "index": 38,
+      "name": "native.avr.avr_pop_pc"
+    },
+    {
+      "index": 39,
+      "name": "native.avr.avr_nzvs"
+    },
+    {
+      "index": 40,
+      "name": "native.avr.avr_arithmetic"
+    },
+    {
+      "index": 41,
+      "name": "native.avr.avr_read_data"
+    },
+    {
+      "index": 42,
+      "name": "native.avr.avr_write_data"
+    },
+    {
+      "index": 43,
+      "name": "native.avr.avr_timer_top"
+    },
+    {
+      "index": 44,
+      "name": "native.avr.avr_timer_counter"
+    },
+    {
+      "index": 45,
+      "name": "native.avr.avr_device_phase_enable"
+    },
+    {
+      "index": 46,
+      "name": "native.avr.avr_device_phase_layout"
+    },
+    {
+      "index": 47,
+      "name": "native.avr.avr_device_phase_active"
+    },
+    {
+      "index": 48,
+      "name": "native.avr.avr_device_phase_deadline"
+    },
+    {
+      "index": 49,
+      "name": "native.avr.avr_device_phase_clock"
+    },
+    {
+      "index": 50,
+      "name": "native.avr.full_audio_collect"
+    },
+    {
+      "index": 51,
+      "name": "native.avr.full_phase_irq_resume"
+    },
+    {
+      "index": 52,
+      "name": "native.avr.avr_device_phase_retire"
+    },
+    {
+      "index": 53,
+      "name": "native.avr.avr_read_io"
+    },
+    {
+      "index": 54,
+      "name": "native.avr.avr_write_io_masked"
+    },
+    {
+      "index": 55,
+      "name": "native.avr.avr_device_configure"
+    },
+    {
+      "index": 56,
+      "name": "native.avr.avr_device_configure_osccal_hz"
+    },
+    {
+      "index": 57,
+      "name": "native.avr.avr_device_configure_power"
+    },
+    {
+      "index": 58,
+      "name": "native.avr.avr_device_configure_reset_input"
+    },
+    {
+      "index": 59,
+      "name": "native.avr.avr_device_configure_clki"
+    },
+    {
+      "index": 60,
+      "name": "native.avr.avr_device_clki_enabled"
+    },
+    {
+      "index": 61,
+      "name": "native.avr.avr_device_clki_validation_enabled"
+    },
+    {
+      "index": 62,
+      "name": "native.avr.avr_device_clki_periodic_ps"
+    },
+    {
+      "index": 63,
+      "name": "native.avr.avr_device_clki_periodic_remaining"
+    },
+    {
+      "index": 64,
+      "name": "native.avr.avr_device_clki_buffer"
+    },
+    {
+      "index": 65,
+      "name": "native.avr.avr_device_clki_capacity"
+    },
+    {
+      "index": 66,
+      "name": "native.avr.avr_device_clki_commit"
+    },
+    {
+      "index": 67,
+      "name": "native.avr.avr_device_clki_horizon_ps"
+    },
+    {
+      "index": 68,
+      "name": "native.avr.avr_device_clki_count"
+    },
+    {
+      "index": 69,
+      "name": "native.avr.avr_device_clki_free"
+    },
+    {
+      "index": 70,
+      "name": "native.avr.avr_device_clki_level"
+    },
+    {
+      "index": 71,
+      "name": "native.avr.avr_device_clki_status"
+    },
+    {
+      "index": 72,
+      "name": "native.avr.avr_device_clki_aligned"
+    },
+    {
+      "index": 73,
+      "name": "native.avr.avr_device_clki_startup_ck"
+    },
+    {
+      "index": 74,
+      "name": "native.avr.avr_device_reset_input_enabled"
+    },
+    {
+      "index": 75,
+      "name": "native.avr.avr_device_reset_input_asserted"
+    },
+    {
+      "index": 76,
+      "name": "native.avr.avr_device_reset_input_deadline_ps"
+    },
+    {
+      "index": 77,
+      "name": "native.avr.avr_device_ready"
+    },
+    {
+      "index": 78,
+      "name": "native.avr.avr_device_time"
+    },
+    {
+      "index": 79,
+      "name": "native.avr.avr_device_cpu_deadline"
+    },
+    {
+      "index": 80,
+      "name": "native.avr.avr_device_time64"
+    },
+    {
+      "index": 81,
+      "name": "native.avr.avr_device_time_ps"
+    },
+    {
+      "index": 82,
+      "name": "native.avr.avr_device_rebase_time"
+    },
+    {
+      "index": 83,
+      "name": "native.avr.avr_device_physical_mode"
+    },
+    {
+      "index": 84,
+      "name": "native.avr.avr_device_oscillator_hz"
+    },
+    {
+      "index": 85,
+      "name": "native.avr.avr_device_control"
+    },
+    {
+      "index": 86,
+      "name": "native.avr.avr_device_lpm"
+    },
+    {
+      "index": 87,
+      "name": "native.avr.avr_device_wait"
+    },
+    {
+      "index": 88,
+      "name": "native.avr.avr_device_generation"
+    },
+    {
+      "index": 89,
+      "name": "native.avr.avr_device_bind_generation"
+    },
+    {
+      "index": 90,
+      "name": "native.avr.avr_device_fault"
+    },
+    {
+      "index": 91,
+      "name": "native.avr.avr_device_fault_detail"
+    },
+    {
+      "index": 92,
+      "name": "native.avr.avr_device_inject_pins"
+    },
+    {
+      "index": 93,
+      "name": "native.avr.avr_device_inject_analog"
+    },
+    {
+      "index": 94,
+      "name": "native.avr.avr_device_inject_pins_ps"
+    },
+    {
+      "index": 95,
+      "name": "native.avr.avr_device_inject_analog_ps"
+    },
+    {
+      "index": 96,
+      "name": "native.avr.avr_device_inject_vcc_ps"
+    },
+    {
+      "index": 97,
+      "name": "native.avr.avr_device_power_enabled"
+    },
+    {
+      "index": 98,
+      "name": "native.avr.avr_device_vcc_microvolts"
+    },
+    {
+      "index": 99,
+      "name": "native.avr.avr_device_pin_buffer"
+    },
+    {
+      "index": 100,
+      "name": "native.avr.avr_device_pin_count"
+    },
+    {
+      "index": 101,
+      "name": "native.avr.avr_device_pin_buffer_ps"
+    },
+    {
+      "index": 102,
+      "name": "native.avr.avr_device_pin_count_ps"
+    },
+    {
+      "index": 103,
+      "name": "native.avr.avr_device_pin_consume"
+    },
+    {
+      "index": 104,
+      "name": "native.avr.avr_device_pin_trace_config"
+    },
+    {
+      "index": 105,
+      "name": "native.avr.avr_device_pin_trace_configuration"
+    },
+    {
+      "index": 106,
+      "name": "native.avr.avr_device_divisor"
+    },
+    {
+      "index": 107,
+      "name": "native.avr.avr_device_reset_count"
+    },
+    {
+      "index": 108,
+      "name": "native.avr.avr_device_halted"
+    },
+    {
+      "index": 109,
+      "name": "native.avr.avr_device_sleep_phase"
+    },
+    {
+      "index": 110,
+      "name": "native.avr.avr_device_starting"
+    },
+    {
+      "index": 111,
+      "name": "native.avr.avr_device_startup_deadline"
+    },
+    {
+      "index": 112,
+      "name": "native.avr.avr_device_startup_deadline_ps"
+    },
+    {
+      "index": 113,
+      "name": "native.avr.avr_device_bod_disabled"
+    },
+    {
+      "index": 114,
+      "name": "native.avr.avr_device_bod_recovering"
+    },
+    {
+      "index": 115,
+      "name": "native.avr.avr_device_reset_held"
+    },
+    {
+      "index": 116,
+      "name": "native.avr.avr_device_pins"
+    },
+    {
+      "index": 117,
+      "name": "native.avr.avr_device_pins_ps"
+    },
+    {
+      "index": 118,
+      "name": "native.avr.avr_device_pending"
+    },
+    {
+      "index": 119,
+      "name": "native.avr.avr_device_idle"
+    },
+    {
+      "index": 120,
+      "name": "native.avr.avr_device_audio_config"
+    },
+    {
+      "index": 121,
+      "name": "native.avr.avr_device_audio_deadline"
+    },
+    {
+      "index": 122,
+      "name": "native.avr.avr_device_audio_begin"
+    },
+    {
+      "index": 123,
+      "name": "native.avr.avr_device_audio_end"
+    },
+    {
+      "index": 124,
+      "name": "native.avr.avr_device_audio_sample"
+    },
+    {
+      "index": 125,
+      "name": "native.analog.analog_advance"
+    },
+    {
+      "index": 126,
+      "name": "native.analog.analog_input"
+    },
+    {
+      "index": 127,
+      "name": "native.analog.analog_reference"
+    },
+    {
+      "index": 128,
+      "name": "native.analog.analog_sources"
+    },
+    {
+      "index": 129,
+      "name": "native.analog_adc.analog_adc_advance"
+    },
+    {
+      "index": 130,
+      "name": "native.analog_adc.analog_adc_sources"
+    },
+    {
+      "index": 131,
+      "name": "native.analog_comparator.analog_comparator_advance"
+    },
+    {
+      "index": 132,
+      "name": "native.analog_comparator.activate"
+    },
+    {
+      "index": 133,
+      "name": "native.device.device_pending_irqs"
+    },
+    {
+      "index": 134,
+      "name": "native.device.power_sync"
+    },
+    {
+      "index": 135,
+      "name": "native.device.device_reset"
+    },
+    {
+      "index": 136,
+      "name": "native.device.pin_voltages"
+    },
+    {
+      "index": 137,
+      "name": "native.device.mirror"
+    },
+    {
+      "index": 138,
+      "name": "native.device.reset_state"
+    },
+    {
+      "index": 139,
+      "name": "native.device.reset_startup"
+    },
+    {
+      "index": 140,
+      "name": "native.device.clock_domains"
+    },
+    {
+      "index": 141,
+      "name": "native.device.capture_pins"
+    },
+    {
+      "index": 142,
+      "name": "native.device.duration"
+    },
+    {
+      "index": 143,
+      "name": "native.device.ratio"
+    },
+    {
+      "index": 144,
+      "name": "native.device.device_read"
+    },
+    {
+      "index": 145,
+      "name": "native.device.programming_clock_known"
+    },
+    {
+      "index": 146,
+      "name": "native.device.supply_guard"
+    },
+    {
+      "index": 147,
+      "name": "native.device.wake"
+    },
+    {
+      "index": 148,
+      "name": "native.device.check_faults"
+    },
+    {
+      "index": 149,
+      "name": "native.device.at_half"
+    },
+    {
+      "index": 150,
+      "name": "native.device.elapse"
+    },
+    {
+      "index": 151,
+      "name": "native.device.advance_to"
+    },
+    {
+      "index": 152,
+      "name": "native.device.next_event"
+    },
+    {
+      "index": 153,
+      "name": "native.device.service"
+    },
+    {
+      "index": 154,
+      "name": "native.device.advance_half_until_ps"
+    },
+    {
+      "index": 155,
+      "name": "native.device.device_next_cpu_event"
+    },
+    {
+      "index": 156,
+      "name": "native.device.device_ack_irq"
+    },
+    {
+      "index": 157,
+      "name": "native.device.device_halted"
+    },
+    {
+      "index": 158,
+      "name": "native.device.wait_until"
+    },
+    {
+      "index": 159,
+      "name": "native.device.queue_input"
+    },
+    {
+      "index": 160,
+      "name": "native.device.inputs_at_current_time"
+    },
+    {
+      "index": 161,
+      "name": "native.device.device_pin_events"
+    },
+    {
+      "index": 162,
+      "name": "native.device.device_pin_events_ps"
+    },
+    {
+      "index": 163,
+      "name": "native.device.device_discard_audio_trace"
+    },
+    {
+      "index": 164,
+      "name": "native.device.device_time_ps"
+    },
+    {
+      "index": 165,
+      "name": "native.device.device_next_sample_ps"
+    },
+    {
+      "index": 166,
+      "name": "native.device.clki_refill"
+    },
+    {
+      "index": 167,
+      "name": "native.device.external_reset_sync"
+    },
+    {
+      "index": 168,
+      "name": "native.device.service_async"
+    },
+    {
+      "index": 169,
+      "name": "native.device.service_clocks"
+    },
+    {
+      "index": 170,
+      "name": "native.device.service_end"
+    },
+    {
+      "index": 171,
+      "name": "native.nvm.nvm_advance"
+    },
+    {
+      "index": 172,
+      "name": "native.nvm.nvm_voltage_uncertain"
+    },
+    {
+      "index": 173,
+      "name": "native.power_reset.power_reset_advance"
+    },
+    {
+      "index": 174,
+      "name": "native.power_reset.evaluate"
+    },
+    {
+      "index": 175,
+      "name": "native.power_reset.power_reset_set_inputs"
+    },
+    {
+      "index": 176,
+      "name": "native.power_reset.power_reset_set_other_sources"
+    },
+    {
+      "index": 177,
+      "name": "native.power_reset.power_reset_wake"
+    },
+    {
+      "index": 178,
+      "name": "native.power_reset.power_reset_pop_event"
+    },
+    {
+      "index": 179,
+      "name": "native.system_gpio.resolve"
+    },
+    {
+      "index": 180,
+      "name": "native.system_gpio.system_gpio_external"
+    },
+    {
+      "index": 181,
+      "name": "native.system_gpio.system_gpio_timer_outputs"
+    },
+    {
+      "index": 182,
+      "name": "native.system_gpio.system_gpio_clock"
+    },
+    {
+      "index": 183,
+      "name": "native.system_gpio.system_gpio_pending"
+    },
+    {
+      "index": 184,
+      "name": "native.system_sleep.system_sleep_clock_edge"
+    },
+    {
+      "index": 185,
+      "name": "native.system_watchdog.system_watchdog_reset"
+    },
+    {
+      "index": 186,
+      "name": "native.system_watchdog.system_watchdog_advance"
+    },
+    {
+      "index": 187,
+      "name": "native.timer0.event_distance"
+    },
+    {
+      "index": 188,
+      "name": "native.timer0.timer0_advance"
+    },
+    {
+      "index": 189,
+      "name": "native.timer0.pulse"
+    },
+    {
+      "index": 190,
+      "name": "native.timer0.compare_output"
+    },
+    {
+      "index": 191,
+      "name": "native.timer0.timer0_write"
+    },
+    {
+      "index": 192,
+      "name": "native.timer0.non_pwm_compare"
+    },
+    {
+      "index": 193,
+      "name": "native.reset_input.attiny13a_reset_input_set_voltage"
+    },
+    {
+      "index": 194,
+      "name": "native.clki_input.attiny13a_clki_enqueue"
+    },
+    {
+      "index": 195,
+      "name": "native.clki_input.attiny13a_clki_peek"
+    },
+    {
+      "index": 196,
+      "name": "native.support.__cos"
+    },
+    {
+      "index": 197,
+      "name": "native.support.__rem_pio2"
+    },
+    {
+      "index": 198,
+      "name": "native.support.__sin"
+    },
+    {
+      "index": 199,
+      "name": "native.support.cos"
+    },
+    {
+      "index": 200,
+      "name": "native.support.scalbn"
+    },
+    {
+      "index": 201,
+      "name": "native.support.sin"
+    },
+    {
+      "index": 202,
+      "name": "native.support.__multi3"
+    }
+  ],
+  "after": [
+    {
+      "index": 0,
+      "name": "native.avr.avr_audio_init"
+    },
+    {
+      "index": 1,
+      "name": "native.avr.avr_audio_channels"
+    },
+    {
+      "index": 2,
+      "name": "native.avr.avr_audio_controls"
+    },
+    {
+      "index": 3,
+      "name": "native.avr.avr_render"
+    },
+    {
+      "index": 4,
+      "name": "native.avr.next_audio_value"
+    },
+    {
+      "index": 5,
+      "name": "native.avr.run_block"
+    },
+    {
+      "index": 6,
+      "name": "native.avr.step_cpu"
+    },
+    {
+      "index": 7,
+      "name": "native.avr.avr_filter"
+    },
+    {
+      "index": 8,
+      "name": "native.avr.avr_average"
+    },
+    {
+      "index": 9,
+      "name": "native.avr.avr_layout"
+    },
+    {
+      "index": 10,
+      "name": "native.avr.avr_field_name"
+    },
+    {
+      "index": 11,
+      "name": "native.avr.avr_error_message"
+    },
+    {
+      "index": 12,
+      "name": "native.avr.avr_reset"
+    },
+    {
+      "index": 13,
+      "name": "native.avr.decode"
+    },
+    {
+      "index": 14,
+      "name": "native.avr.decode_idle"
+    },
+    {
+      "index": 15,
+      "name": "native.avr.avr_decode"
+    },
+    {
+      "index": 16,
+      "name": "native.avr.avr_decode_idle"
+    },
+    {
+      "index": 17,
+      "name": "native.avr.avr_step"
+    },
+    {
+      "index": 18,
+      "name": "native.avr.pop_pc"
+    },
+    {
+      "index": 19,
+      "name": "native.avr.push_pc"
+    },
+    {
+      "index": 20,
+      "name": "native.avr.arithmetic"
+    },
+    {
+      "index": 21,
+      "name": "native.avr.full_clock"
+    },
+    {
+      "index": 22,
+      "name": "native.avr.read_data"
+    },
+    {
+      "index": 23,
+      "name": "native.avr.write_data"
+    },
+    {
+      "index": 24,
+      "name": "native.avr.full_write_io"
+    },
+    {
+      "index": 25,
+      "name": "native.avr.push"
+    },
+    {
+      "index": 26,
+      "name": "native.avr.full_interrupt"
+    },
+    {
+      "index": 27,
+      "name": "native.avr.avr_next"
+    },
+    {
+      "index": 28,
+      "name": "native.avr.avr_block"
+    },
+    {
+      "index": 29,
+      "name": "native.avr.avr_idle"
+    },
+    {
+      "index": 30,
+      "name": "native.avr.avr_clock"
+    },
+    {
+      "index": 31,
+      "name": "native.avr.avr_interrupt"
+    },
+    {
+      "index": 32,
+      "name": "native.avr.avr_write_io"
+    },
+    {
+      "index": 33,
+      "name": "native.avr.avr_update_timer"
+    },
+    {
+      "index": 34,
+      "name": "native.avr.avr_timer_mode"
+    },
+    {
+      "index": 35,
+      "name": "native.avr.avr_push"
+    },
+    {
+      "index": 36,
+      "name": "native.avr.avr_pop"
+    },
+    {
+      "index": 37,
+      "name": "native.avr.avr_push_pc"
+    },
+    {
+      "index": 38,
+      "name": "native.avr.avr_pop_pc"
+    },
+    {
+      "index": 39,
+      "name": "native.avr.avr_nzvs"
+    },
+    {
+      "index": 40,
+      "name": "native.avr.avr_arithmetic"
+    },
+    {
+      "index": 41,
+      "name": "native.avr.avr_read_data"
+    },
+    {
+      "index": 42,
+      "name": "native.avr.avr_write_data"
+    },
+    {
+      "index": 43,
+      "name": "native.avr.avr_timer_top"
+    },
+    {
+      "index": 44,
+      "name": "native.avr.avr_timer_counter"
+    },
+    {
+      "index": 45,
+      "name": "native.avr.avr_device_phase_enable"
+    },
+    {
+      "index": 46,
+      "name": "native.avr.avr_device_phase_layout"
+    },
+    {
+      "index": 47,
+      "name": "native.avr.avr_device_phase_active"
+    },
+    {
+      "index": 48,
+      "name": "native.avr.avr_device_phase_deadline"
+    },
+    {
+      "index": 49,
+      "name": "native.avr.avr_device_phase_clock"
+    },
+    {
+      "index": 50,
+      "name": "native.avr.full_audio_collect"
+    },
+    {
+      "index": 51,
+      "name": "native.avr.full_phase_irq_resume"
+    },
+    {
+      "index": 52,
+      "name": "native.avr.avr_device_phase_retire"
+    },
+    {
+      "index": 53,
+      "name": "native.avr.avr_read_io"
+    },
+    {
+      "index": 54,
+      "name": "native.avr.avr_write_io_masked"
+    },
+    {
+      "index": 55,
+      "name": "native.avr.avr_device_configure"
+    },
+    {
+      "index": 56,
+      "name": "native.avr.avr_device_configure_osccal_hz"
+    },
+    {
+      "index": 57,
+      "name": "native.avr.avr_device_configure_power"
+    },
+    {
+      "index": 58,
+      "name": "native.avr.avr_device_configure_reset_input"
+    },
+    {
+      "index": 59,
+      "name": "native.avr.avr_device_configure_clki"
+    },
+    {
+      "index": 60,
+      "name": "native.avr.avr_device_clki_enabled"
+    },
+    {
+      "index": 61,
+      "name": "native.avr.avr_device_clki_validation_enabled"
+    },
+    {
+      "index": 62,
+      "name": "native.avr.avr_device_clki_periodic_ps"
+    },
+    {
+      "index": 63,
+      "name": "native.avr.avr_device_clki_periodic_remaining"
+    },
+    {
+      "index": 64,
+      "name": "native.avr.avr_device_clki_buffer"
+    },
+    {
+      "index": 65,
+      "name": "native.avr.avr_device_clki_capacity"
+    },
+    {
+      "index": 66,
+      "name": "native.avr.avr_device_clki_commit"
+    },
+    {
+      "index": 67,
+      "name": "native.avr.avr_device_clki_horizon_ps"
+    },
+    {
+      "index": 68,
+      "name": "native.avr.avr_device_clki_count"
+    },
+    {
+      "index": 69,
+      "name": "native.avr.avr_device_clki_free"
+    },
+    {
+      "index": 70,
+      "name": "native.avr.avr_device_clki_level"
+    },
+    {
+      "index": 71,
+      "name": "native.avr.avr_device_clki_status"
+    },
+    {
+      "index": 72,
+      "name": "native.avr.avr_device_clki_aligned"
+    },
+    {
+      "index": 73,
+      "name": "native.avr.avr_device_clki_startup_ck"
+    },
+    {
+      "index": 74,
+      "name": "native.avr.avr_device_reset_input_enabled"
+    },
+    {
+      "index": 75,
+      "name": "native.avr.avr_device_reset_input_asserted"
+    },
+    {
+      "index": 76,
+      "name": "native.avr.avr_device_reset_input_deadline_ps"
+    },
+    {
+      "index": 77,
+      "name": "native.avr.avr_device_ready"
+    },
+    {
+      "index": 78,
+      "name": "native.avr.avr_device_time"
+    },
+    {
+      "index": 79,
+      "name": "native.avr.avr_device_cpu_deadline"
+    },
+    {
+      "index": 80,
+      "name": "native.avr.avr_device_time64"
+    },
+    {
+      "index": 81,
+      "name": "native.avr.avr_device_time_ps"
+    },
+    {
+      "index": 82,
+      "name": "native.avr.avr_device_rebase_time"
+    },
+    {
+      "index": 83,
+      "name": "native.avr.avr_device_physical_mode"
+    },
+    {
+      "index": 84,
+      "name": "native.avr.avr_device_oscillator_hz"
+    },
+    {
+      "index": 85,
+      "name": "native.avr.avr_device_control"
+    },
+    {
+      "index": 86,
+      "name": "native.avr.avr_device_lpm"
+    },
+    {
+      "index": 87,
+      "name": "native.avr.avr_device_wait"
+    },
+    {
+      "index": 88,
+      "name": "native.avr.avr_device_generation"
+    },
+    {
+      "index": 89,
+      "name": "native.avr.avr_device_bind_generation"
+    },
+    {
+      "index": 90,
+      "name": "native.avr.avr_device_fault"
+    },
+    {
+      "index": 91,
+      "name": "native.avr.avr_device_fault_detail"
+    },
+    {
+      "index": 92,
+      "name": "native.avr.avr_device_inject_pins"
+    },
+    {
+      "index": 93,
+      "name": "native.avr.avr_device_inject_analog"
+    },
+    {
+      "index": 94,
+      "name": "native.avr.avr_device_inject_pins_ps"
+    },
+    {
+      "index": 95,
+      "name": "native.avr.avr_device_inject_analog_ps"
+    },
+    {
+      "index": 96,
+      "name": "native.avr.avr_device_inject_vcc_ps"
+    },
+    {
+      "index": 97,
+      "name": "native.avr.avr_device_power_enabled"
+    },
+    {
+      "index": 98,
+      "name": "native.avr.avr_device_vcc_microvolts"
+    },
+    {
+      "index": 99,
+      "name": "native.avr.avr_device_pin_buffer"
+    },
+    {
+      "index": 100,
+      "name": "native.avr.avr_device_pin_count"
+    },
+    {
+      "index": 101,
+      "name": "native.avr.avr_device_pin_buffer_ps"
+    },
+    {
+      "index": 102,
+      "name": "native.avr.avr_device_pin_count_ps"
+    },
+    {
+      "index": 103,
+      "name": "native.avr.avr_device_pin_consume"
+    },
+    {
+      "index": 104,
+      "name": "native.avr.avr_device_pin_trace_config"
+    },
+    {
+      "index": 105,
+      "name": "native.avr.avr_device_pin_trace_configuration"
+    },
+    {
+      "index": 106,
+      "name": "native.avr.avr_device_divisor"
+    },
+    {
+      "index": 107,
+      "name": "native.avr.avr_device_reset_count"
+    },
+    {
+      "index": 108,
+      "name": "native.avr.avr_device_halted"
+    },
+    {
+      "index": 109,
+      "name": "native.avr.avr_device_sleep_phase"
+    },
+    {
+      "index": 110,
+      "name": "native.avr.avr_device_starting"
+    },
+    {
+      "index": 111,
+      "name": "native.avr.avr_device_startup_deadline"
+    },
+    {
+      "index": 112,
+      "name": "native.avr.avr_device_startup_deadline_ps"
+    },
+    {
+      "index": 113,
+      "name": "native.avr.avr_device_bod_disabled"
+    },
+    {
+      "index": 114,
+      "name": "native.avr.avr_device_bod_recovering"
+    },
+    {
+      "index": 115,
+      "name": "native.avr.avr_device_reset_held"
+    },
+    {
+      "index": 116,
+      "name": "native.avr.avr_device_pins"
+    },
+    {
+      "index": 117,
+      "name": "native.avr.avr_device_pins_ps"
+    },
+    {
+      "index": 118,
+      "name": "native.avr.avr_device_pending"
+    },
+    {
+      "index": 119,
+      "name": "native.avr.avr_device_idle"
+    },
+    {
+      "index": 120,
+      "name": "native.avr.avr_device_audio_config"
+    },
+    {
+      "index": 121,
+      "name": "native.avr.avr_device_audio_deadline"
+    },
+    {
+      "index": 122,
+      "name": "native.avr.avr_device_audio_begin"
+    },
+    {
+      "index": 123,
+      "name": "native.avr.avr_device_audio_end"
+    },
+    {
+      "index": 124,
+      "name": "native.avr.avr_device_audio_sample"
+    },
+    {
+      "index": 125,
+      "name": "native.analog.analog_advance"
+    },
+    {
+      "index": 126,
+      "name": "native.analog.analog_input"
+    },
+    {
+      "index": 127,
+      "name": "native.analog.analog_reference"
+    },
+    {
+      "index": 128,
+      "name": "native.analog.analog_sources"
+    },
+    {
+      "index": 129,
+      "name": "native.analog_adc.analog_adc_advance"
+    },
+    {
+      "index": 130,
+      "name": "native.analog_adc.analog_adc_sources"
+    },
+    {
+      "index": 131,
+      "name": "native.analog_comparator.analog_comparator_advance"
+    },
+    {
+      "index": 132,
+      "name": "native.analog_comparator.activate"
+    },
+    {
+      "index": 133,
+      "name": "native.device.device_pending_irqs"
+    },
+    {
+      "index": 134,
+      "name": "native.device.power_sync"
+    },
+    {
+      "index": 135,
+      "name": "native.device.device_reset"
+    },
+    {
+      "index": 136,
+      "name": "native.device.pin_voltages"
+    },
+    {
+      "index": 137,
+      "name": "native.device.mirror"
+    },
+    {
+      "index": 138,
+      "name": "native.device.reset_state"
+    },
+    {
+      "index": 139,
+      "name": "native.device.reset_startup"
+    },
+    {
+      "index": 140,
+      "name": "native.device.clock_domains"
+    },
+    {
+      "index": 141,
+      "name": "native.device.capture_pins"
+    },
+    {
+      "index": 142,
+      "name": "native.device.duration"
+    },
+    {
+      "index": 143,
+      "name": "native.device.ratio"
+    },
+    {
+      "index": 144,
+      "name": "native.device.device_read"
+    },
+    {
+      "index": 145,
+      "name": "native.device.programming_clock_known"
+    },
+    {
+      "index": 146,
+      "name": "native.device.supply_guard"
+    },
+    {
+      "index": 147,
+      "name": "native.device.wake"
+    },
+    {
+      "index": 148,
+      "name": "native.device.check_faults"
+    },
+    {
+      "index": 149,
+      "name": "native.device.at_half"
+    },
+    {
+      "index": 150,
+      "name": "native.device.elapse"
+    },
+    {
+      "index": 151,
+      "name": "native.device.advance_to"
+    },
+    {
+      "index": 152,
+      "name": "native.device.next_event"
+    },
+    {
+      "index": 153,
+      "name": "native.device.service"
+    },
+    {
+      "index": 154,
+      "name": "native.device.advance_half_until_ps"
+    },
+    {
+      "index": 155,
+      "name": "native.device.device_next_cpu_event"
+    },
+    {
+      "index": 156,
+      "name": "native.device.device_ack_irq"
+    },
+    {
+      "index": 157,
+      "name": "native.device.device_halted"
+    },
+    {
+      "index": 158,
+      "name": "native.device.wait_until"
+    },
+    {
+      "index": 159,
+      "name": "native.device.queue_input"
+    },
+    {
+      "index": 160,
+      "name": "native.device.inputs_at_current_time"
+    },
+    {
+      "index": 161,
+      "name": "native.device.device_pin_events"
+    },
+    {
+      "index": 162,
+      "name": "native.device.device_pin_events_ps"
+    },
+    {
+      "index": 163,
+      "name": "native.device.device_discard_audio_trace"
+    },
+    {
+      "index": 164,
+      "name": "native.device.device_time_ps"
+    },
+    {
+      "index": 165,
+      "name": "native.device.device_next_sample_ps"
+    },
+    {
+      "index": 166,
+      "name": "native.device.clki_refill"
+    },
+    {
+      "index": 167,
+      "name": "native.device.external_reset_sync"
+    },
+    {
+      "index": 168,
+      "name": "native.device.service_async"
+    },
+    {
+      "index": 169,
+      "name": "native.device.service_clocks"
+    },
+    {
+      "index": 170,
+      "name": "native.device.service_end"
+    },
+    {
+      "index": 171,
+      "name": "native.nvm.nvm_advance"
+    },
+    {
+      "index": 172,
+      "name": "native.nvm.nvm_voltage_uncertain"
+    },
+    {
+      "index": 173,
+      "name": "native.power_reset.power_reset_advance"
+    },
+    {
+      "index": 174,
+      "name": "native.power_reset.evaluate"
+    },
+    {
+      "index": 175,
+      "name": "native.power_reset.power_reset_set_inputs"
+    },
+    {
+      "index": 176,
+      "name": "native.power_reset.power_reset_set_other_sources"
+    },
+    {
+      "index": 177,
+      "name": "native.power_reset.power_reset_wake"
+    },
+    {
+      "index": 178,
+      "name": "native.power_reset.power_reset_pop_event"
+    },
+    {
+      "index": 179,
+      "name": "native.system_gpio.resolve"
+    },
+    {
+      "index": 180,
+      "name": "native.system_gpio.system_gpio_external"
+    },
+    {
+      "index": 181,
+      "name": "native.system_gpio.system_gpio_timer_outputs"
+    },
+    {
+      "index": 182,
+      "name": "native.system_gpio.system_gpio_clock"
+    },
+    {
+      "index": 183,
+      "name": "native.system_gpio.system_gpio_pending"
+    },
+    {
+      "index": 184,
+      "name": "native.system_sleep.system_sleep_clock_edge"
+    },
+    {
+      "index": 185,
+      "name": "native.system_watchdog.system_watchdog_reset"
+    },
+    {
+      "index": 186,
+      "name": "native.system_watchdog.system_watchdog_advance"
+    },
+    {
+      "index": 187,
+      "name": "native.timer0.event_distance"
+    },
+    {
+      "index": 188,
+      "name": "native.timer0.timer0_advance"
+    },
+    {
+      "index": 189,
+      "name": "native.timer0.pulse"
+    },
+    {
+      "index": 190,
+      "name": "native.timer0.compare_output"
+    },
+    {
+      "index": 191,
+      "name": "native.timer0.timer0_write"
+    },
+    {
+      "index": 192,
+      "name": "native.timer0.non_pwm_compare"
+    },
+    {
+      "index": 193,
+      "name": "native.reset_input.attiny13a_reset_input_set_voltage"
+    },
+    {
+      "index": 194,
+      "name": "native.clki_input.attiny13a_clki_enqueue"
+    },
+    {
+      "index": 195,
+      "name": "native.clki_input.attiny13a_clki_peek"
+    },
+    {
+      "index": 196,
+      "name": "native.support.__cos"
+    },
+    {
+      "index": 197,
+      "name": "native.support.__rem_pio2"
+    },
+    {
+      "index": 198,
+      "name": "native.support.__sin"
+    },
+    {
+      "index": 199,
+      "name": "native.support.cos"
+    },
+    {
+      "index": 200,
+      "name": "native.support.scalbn"
+    },
+    {
+      "index": 201,
+      "name": "native.support.sin"
+    },
+    {
+      "index": 202,
+      "name": "native.support.__multi3"
+    }
+  ]
+}
