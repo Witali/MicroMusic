@@ -7,132 +7,562 @@
   "all256Terminals": true,
   "maximumGrammarDepth": 12,
   "allStackSentinelsPreserved": true,
+  "formatsTested": [
+    0,
+    9
+  ],
+  "pendingGuardSlotPreserved": true,
+  "allControlOrderingMatches": true,
+  "controlOrdering": [
+    {
+      "backend": "c",
+      "configuration": "primary",
+      "format": 9,
+      "cpuHz": 16000000,
+      "engineSha256": "ae0dd880231146518e2791dbd9e75c574021ccb70fc0840442b48c9a5b165ba4",
+      "controlTicks": 21,
+      "completeLoops": 1,
+      "checkedVoices": 176,
+      "checkedWaveSamples": 2816,
+      "maxCallCycles": 23447,
+      "minSP": 733,
+      "allControlOrderingMatches": true,
+      "phaseCopyAndReset": true,
+      "envelopeBeforeEvents": true
+    },
+    {
+      "backend": "avr-asm",
+      "configuration": "primary",
+      "format": 9,
+      "cpuHz": 16000000,
+      "engineSha256": "c0ba4421e6b31c2a4a3476e91589543d9c44b98e6987e2c6aff7d984a216166a",
+      "controlTicks": 21,
+      "completeLoops": 1,
+      "checkedVoices": 176,
+      "checkedWaveSamples": 2816,
+      "maxCallCycles": 19103,
+      "minSP": 733,
+      "allControlOrderingMatches": true,
+      "phaseCopyAndReset": true,
+      "envelopeBeforeEvents": true
+    },
+    {
+      "backend": "c",
+      "configuration": "fast",
+      "format": 0,
+      "cpuHz": 16000000,
+      "engineSha256": "cb6898a19ed9b8014c1fddc293223e415bb883a969d122a541253780018a20e1",
+      "controlTicks": 21,
+      "completeLoops": 1,
+      "checkedVoices": 176,
+      "checkedWaveSamples": 2816,
+      "maxCallCycles": 18706,
+      "minSP": 739,
+      "allControlOrderingMatches": true,
+      "phaseCopyAndReset": true,
+      "envelopeBeforeEvents": true
+    },
+    {
+      "backend": "avr-asm",
+      "configuration": "fast",
+      "format": 0,
+      "cpuHz": 16000000,
+      "engineSha256": "1d6cb816d15ed5b11f3681a7376698f755a5b87368d6d64c173101d4a67f415c",
+      "controlTicks": 21,
+      "completeLoops": 1,
+      "checkedVoices": 176,
+      "checkedWaveSamples": 2816,
+      "maxCallCycles": 14362,
+      "minSP": 739,
+      "allControlOrderingMatches": true,
+      "phaseCopyAndReset": true,
+      "envelopeBeforeEvents": true
+    }
+  ],
   "results": [
     {
       "backend": "c",
+      "configuration": "primary",
+      "format": 9,
       "fixture": "alphabet-256",
       "decodedBytes": 256,
       "maxPending": 0,
-      "maxCommandCycles": 158,
+      "maxCommandCycles": 161,
       "minSP": 753,
-      "engineSha256": "df349987ffba79a269bf9e35f60a36704691656d0f712b8d768eadbf414b38c3"
+      "engineSha256": "ae0dd880231146518e2791dbd9e75c574021ccb70fc0840442b48c9a5b165ba4"
     },
     {
       "backend": "c",
+      "configuration": "primary",
+      "format": 9,
       "fixture": "alphabet-31",
       "decodedBytes": 31,
       "maxPending": 3,
-      "maxCommandCycles": 586,
+      "maxCommandCycles": 431,
       "minSP": 753,
-      "engineSha256": "df349987ffba79a269bf9e35f60a36704691656d0f712b8d768eadbf414b38c3"
+      "engineSha256": "ae0dd880231146518e2791dbd9e75c574021ccb70fc0840442b48c9a5b165ba4"
     },
     {
       "backend": "c",
+      "configuration": "primary",
+      "format": 9,
       "fixture": "alphabet-1",
       "decodedBytes": 1,
       "maxPending": 0,
-      "maxCommandCycles": 134,
+      "maxCommandCycles": 144,
       "minSP": 753,
-      "engineSha256": "df349987ffba79a269bf9e35f60a36704691656d0f712b8d768eadbf414b38c3"
+      "engineSha256": "ae0dd880231146518e2791dbd9e75c574021ccb70fc0840442b48c9a5b165ba4"
     },
     {
       "backend": "c",
+      "configuration": "primary",
+      "format": 9,
       "fixture": "alphabet-768",
       "decodedBytes": 768,
       "maxPending": 8,
-      "maxCommandCycles": 1375,
+      "maxCommandCycles": 865,
       "minSP": 753,
-      "engineSha256": "df349987ffba79a269bf9e35f60a36704691656d0f712b8d768eadbf414b38c3"
+      "engineSha256": "ae0dd880231146518e2791dbd9e75c574021ccb70fc0840442b48c9a5b165ba4"
     },
     {
       "backend": "c",
+      "configuration": "primary",
+      "format": 9,
       "fixture": "random-byte-boundaries",
       "decodedBytes": 1024,
       "maxPending": 0,
-      "maxCommandCycles": 158,
+      "maxCommandCycles": 161,
       "minSP": 753,
-      "engineSha256": "df349987ffba79a269bf9e35f60a36704691656d0f712b8d768eadbf414b38c3"
+      "engineSha256": "ae0dd880231146518e2791dbd9e75c574021ccb70fc0840442b48c9a5b165ba4"
     },
     {
       "backend": "c",
+      "configuration": "primary",
+      "format": 9,
       "fixture": "code-511-and-256-terminals",
-      "decodedBytes": 264,
+      "decodedBytes": 768,
       "maxPending": 1,
-      "maxCommandCycles": 325,
+      "maxCommandCycles": 274,
       "minSP": 753,
-      "engineSha256": "df349987ffba79a269bf9e35f60a36704691656d0f712b8d768eadbf414b38c3"
+      "engineSha256": "ae0dd880231146518e2791dbd9e75c574021ccb70fc0840442b48c9a5b165ba4"
     },
     {
       "backend": "c",
+      "configuration": "primary",
+      "format": 9,
       "fixture": "maximum-depth-12",
       "decodedBytes": 4096,
       "maxPending": 12,
-      "maxCommandCycles": 2123,
+      "maxCommandCycles": 1329,
       "minSP": 753,
-      "engineSha256": "df349987ffba79a269bf9e35f60a36704691656d0f712b8d768eadbf414b38c3"
+      "engineSha256": "ae0dd880231146518e2791dbd9e75c574021ccb70fc0840442b48c9a5b165ba4"
+    },
+    {
+      "backend": "c",
+      "configuration": "primary",
+      "format": 9,
+      "fixture": "rule-index-510",
+      "decodedBytes": 1023,
+      "maxPending": 1,
+      "maxCommandCycles": 262,
+      "minSP": 753,
+      "engineSha256": "ae0dd880231146518e2791dbd9e75c574021ccb70fc0840442b48c9a5b165ba4"
     },
     {
       "backend": "avr-asm",
+      "configuration": "primary",
+      "format": 9,
       "fixture": "alphabet-256",
       "decodedBytes": 256,
       "maxPending": 0,
-      "maxCommandCycles": 158,
+      "maxCommandCycles": 161,
       "minSP": 753,
-      "engineSha256": "5cc0b6dc32bb378dc9021807c81a947c5fbfb3ea9344309ca63b94575bc1d7c5"
+      "engineSha256": "c0ba4421e6b31c2a4a3476e91589543d9c44b98e6987e2c6aff7d984a216166a"
     },
     {
       "backend": "avr-asm",
+      "configuration": "primary",
+      "format": 9,
       "fixture": "alphabet-31",
       "decodedBytes": 31,
       "maxPending": 3,
-      "maxCommandCycles": 586,
+      "maxCommandCycles": 431,
       "minSP": 753,
-      "engineSha256": "5cc0b6dc32bb378dc9021807c81a947c5fbfb3ea9344309ca63b94575bc1d7c5"
+      "engineSha256": "c0ba4421e6b31c2a4a3476e91589543d9c44b98e6987e2c6aff7d984a216166a"
     },
     {
       "backend": "avr-asm",
+      "configuration": "primary",
+      "format": 9,
       "fixture": "alphabet-1",
       "decodedBytes": 1,
       "maxPending": 0,
-      "maxCommandCycles": 134,
+      "maxCommandCycles": 144,
       "minSP": 753,
-      "engineSha256": "5cc0b6dc32bb378dc9021807c81a947c5fbfb3ea9344309ca63b94575bc1d7c5"
+      "engineSha256": "c0ba4421e6b31c2a4a3476e91589543d9c44b98e6987e2c6aff7d984a216166a"
     },
     {
       "backend": "avr-asm",
+      "configuration": "primary",
+      "format": 9,
       "fixture": "alphabet-768",
       "decodedBytes": 768,
       "maxPending": 8,
-      "maxCommandCycles": 1375,
+      "maxCommandCycles": 865,
       "minSP": 753,
-      "engineSha256": "5cc0b6dc32bb378dc9021807c81a947c5fbfb3ea9344309ca63b94575bc1d7c5"
+      "engineSha256": "c0ba4421e6b31c2a4a3476e91589543d9c44b98e6987e2c6aff7d984a216166a"
     },
     {
       "backend": "avr-asm",
+      "configuration": "primary",
+      "format": 9,
       "fixture": "random-byte-boundaries",
       "decodedBytes": 1024,
       "maxPending": 0,
-      "maxCommandCycles": 158,
+      "maxCommandCycles": 161,
       "minSP": 753,
-      "engineSha256": "5cc0b6dc32bb378dc9021807c81a947c5fbfb3ea9344309ca63b94575bc1d7c5"
+      "engineSha256": "c0ba4421e6b31c2a4a3476e91589543d9c44b98e6987e2c6aff7d984a216166a"
     },
     {
       "backend": "avr-asm",
+      "configuration": "primary",
+      "format": 9,
       "fixture": "code-511-and-256-terminals",
-      "decodedBytes": 264,
+      "decodedBytes": 768,
       "maxPending": 1,
-      "maxCommandCycles": 325,
+      "maxCommandCycles": 274,
       "minSP": 753,
-      "engineSha256": "5cc0b6dc32bb378dc9021807c81a947c5fbfb3ea9344309ca63b94575bc1d7c5"
+      "engineSha256": "c0ba4421e6b31c2a4a3476e91589543d9c44b98e6987e2c6aff7d984a216166a"
     },
     {
       "backend": "avr-asm",
+      "configuration": "primary",
+      "format": 9,
       "fixture": "maximum-depth-12",
       "decodedBytes": 4096,
       "maxPending": 12,
-      "maxCommandCycles": 2123,
+      "maxCommandCycles": 1329,
       "minSP": 753,
-      "engineSha256": "5cc0b6dc32bb378dc9021807c81a947c5fbfb3ea9344309ca63b94575bc1d7c5"
+      "engineSha256": "c0ba4421e6b31c2a4a3476e91589543d9c44b98e6987e2c6aff7d984a216166a"
+    },
+    {
+      "backend": "avr-asm",
+      "configuration": "primary",
+      "format": 9,
+      "fixture": "rule-index-510",
+      "decodedBytes": 1023,
+      "maxPending": 1,
+      "maxCommandCycles": 262,
+      "minSP": 753,
+      "engineSha256": "c0ba4421e6b31c2a4a3476e91589543d9c44b98e6987e2c6aff7d984a216166a"
+    },
+    {
+      "backend": "c",
+      "configuration": "fast",
+      "format": 9,
+      "fixture": "alphabet-256",
+      "decodedBytes": 256,
+      "maxPending": 0,
+      "maxCommandCycles": 159,
+      "minSP": 757,
+      "engineSha256": "cb6898a19ed9b8014c1fddc293223e415bb883a969d122a541253780018a20e1"
+    },
+    {
+      "backend": "c",
+      "configuration": "fast",
+      "format": 9,
+      "fixture": "alphabet-31",
+      "decodedBytes": 31,
+      "maxPending": 3,
+      "maxCommandCycles": 483,
+      "minSP": 757,
+      "engineSha256": "cb6898a19ed9b8014c1fddc293223e415bb883a969d122a541253780018a20e1"
+    },
+    {
+      "backend": "c",
+      "configuration": "fast",
+      "format": 9,
+      "fixture": "alphabet-1",
+      "decodedBytes": 1,
+      "maxPending": 0,
+      "maxCommandCycles": 142,
+      "minSP": 757,
+      "engineSha256": "cb6898a19ed9b8014c1fddc293223e415bb883a969d122a541253780018a20e1"
+    },
+    {
+      "backend": "c",
+      "configuration": "fast",
+      "format": 9,
+      "fixture": "alphabet-768",
+      "decodedBytes": 768,
+      "maxPending": 8,
+      "maxCommandCycles": 1007,
+      "minSP": 757,
+      "engineSha256": "cb6898a19ed9b8014c1fddc293223e415bb883a969d122a541253780018a20e1"
+    },
+    {
+      "backend": "c",
+      "configuration": "fast",
+      "format": 9,
+      "fixture": "random-byte-boundaries",
+      "decodedBytes": 1024,
+      "maxPending": 0,
+      "maxCommandCycles": 159,
+      "minSP": 757,
+      "engineSha256": "cb6898a19ed9b8014c1fddc293223e415bb883a969d122a541253780018a20e1"
+    },
+    {
+      "backend": "c",
+      "configuration": "fast",
+      "format": 9,
+      "fixture": "code-511-and-256-terminals",
+      "decodedBytes": 768,
+      "maxPending": 1,
+      "maxCommandCycles": 290,
+      "minSP": 757,
+      "engineSha256": "cb6898a19ed9b8014c1fddc293223e415bb883a969d122a541253780018a20e1"
+    },
+    {
+      "backend": "c",
+      "configuration": "fast",
+      "format": 9,
+      "fixture": "maximum-depth-12",
+      "decodedBytes": 4096,
+      "maxPending": 12,
+      "maxCommandCycles": 1543,
+      "minSP": 757,
+      "engineSha256": "cb6898a19ed9b8014c1fddc293223e415bb883a969d122a541253780018a20e1"
+    },
+    {
+      "backend": "c",
+      "configuration": "fast",
+      "format": 9,
+      "fixture": "rule-index-510",
+      "decodedBytes": 1023,
+      "maxPending": 1,
+      "maxCommandCycles": 278,
+      "minSP": 757,
+      "engineSha256": "cb6898a19ed9b8014c1fddc293223e415bb883a969d122a541253780018a20e1"
+    },
+    {
+      "backend": "c",
+      "configuration": "fast",
+      "format": 0,
+      "fixture": "fast-alphabet-256",
+      "decodedBytes": 256,
+      "maxPending": 0,
+      "maxCommandCycles": 97,
+      "minSP": 759,
+      "engineSha256": "cb6898a19ed9b8014c1fddc293223e415bb883a969d122a541253780018a20e1"
+    },
+    {
+      "backend": "c",
+      "configuration": "fast",
+      "format": 0,
+      "fixture": "fast-alphabet-31",
+      "decodedBytes": 31,
+      "maxPending": 3,
+      "maxCommandCycles": 322,
+      "minSP": 757,
+      "engineSha256": "cb6898a19ed9b8014c1fddc293223e415bb883a969d122a541253780018a20e1"
+    },
+    {
+      "backend": "c",
+      "configuration": "fast",
+      "format": 0,
+      "fixture": "fast-alphabet-1",
+      "decodedBytes": 1,
+      "maxPending": 0,
+      "maxCommandCycles": 85,
+      "minSP": 759,
+      "engineSha256": "cb6898a19ed9b8014c1fddc293223e415bb883a969d122a541253780018a20e1"
+    },
+    {
+      "backend": "c",
+      "configuration": "fast",
+      "format": 0,
+      "fixture": "fast-alphabet-768",
+      "decodedBytes": 768,
+      "maxPending": 0,
+      "maxCommandCycles": 97,
+      "minSP": 759,
+      "engineSha256": "cb6898a19ed9b8014c1fddc293223e415bb883a969d122a541253780018a20e1"
+    },
+    {
+      "backend": "c",
+      "configuration": "fast",
+      "format": 0,
+      "fixture": "fast-maximum-depth-12",
+      "decodedBytes": 4096,
+      "maxPending": 12,
+      "maxCommandCycles": 997,
+      "minSP": 757,
+      "engineSha256": "cb6898a19ed9b8014c1fddc293223e415bb883a969d122a541253780018a20e1"
+    },
+    {
+      "backend": "c",
+      "configuration": "fast",
+      "format": 0,
+      "fixture": "fast-code-511-and-256-terminals",
+      "decodedBytes": 768,
+      "maxPending": 1,
+      "maxCommandCycles": 172,
+      "minSP": 757,
+      "engineSha256": "cb6898a19ed9b8014c1fddc293223e415bb883a969d122a541253780018a20e1"
+    },
+    {
+      "backend": "avr-asm",
+      "configuration": "fast",
+      "format": 9,
+      "fixture": "alphabet-256",
+      "decodedBytes": 256,
+      "maxPending": 0,
+      "maxCommandCycles": 159,
+      "minSP": 757,
+      "engineSha256": "1d6cb816d15ed5b11f3681a7376698f755a5b87368d6d64c173101d4a67f415c"
+    },
+    {
+      "backend": "avr-asm",
+      "configuration": "fast",
+      "format": 9,
+      "fixture": "alphabet-31",
+      "decodedBytes": 31,
+      "maxPending": 3,
+      "maxCommandCycles": 483,
+      "minSP": 757,
+      "engineSha256": "1d6cb816d15ed5b11f3681a7376698f755a5b87368d6d64c173101d4a67f415c"
+    },
+    {
+      "backend": "avr-asm",
+      "configuration": "fast",
+      "format": 9,
+      "fixture": "alphabet-1",
+      "decodedBytes": 1,
+      "maxPending": 0,
+      "maxCommandCycles": 142,
+      "minSP": 757,
+      "engineSha256": "1d6cb816d15ed5b11f3681a7376698f755a5b87368d6d64c173101d4a67f415c"
+    },
+    {
+      "backend": "avr-asm",
+      "configuration": "fast",
+      "format": 9,
+      "fixture": "alphabet-768",
+      "decodedBytes": 768,
+      "maxPending": 8,
+      "maxCommandCycles": 1007,
+      "minSP": 757,
+      "engineSha256": "1d6cb816d15ed5b11f3681a7376698f755a5b87368d6d64c173101d4a67f415c"
+    },
+    {
+      "backend": "avr-asm",
+      "configuration": "fast",
+      "format": 9,
+      "fixture": "random-byte-boundaries",
+      "decodedBytes": 1024,
+      "maxPending": 0,
+      "maxCommandCycles": 159,
+      "minSP": 757,
+      "engineSha256": "1d6cb816d15ed5b11f3681a7376698f755a5b87368d6d64c173101d4a67f415c"
+    },
+    {
+      "backend": "avr-asm",
+      "configuration": "fast",
+      "format": 9,
+      "fixture": "code-511-and-256-terminals",
+      "decodedBytes": 768,
+      "maxPending": 1,
+      "maxCommandCycles": 290,
+      "minSP": 757,
+      "engineSha256": "1d6cb816d15ed5b11f3681a7376698f755a5b87368d6d64c173101d4a67f415c"
+    },
+    {
+      "backend": "avr-asm",
+      "configuration": "fast",
+      "format": 9,
+      "fixture": "maximum-depth-12",
+      "decodedBytes": 4096,
+      "maxPending": 12,
+      "maxCommandCycles": 1543,
+      "minSP": 757,
+      "engineSha256": "1d6cb816d15ed5b11f3681a7376698f755a5b87368d6d64c173101d4a67f415c"
+    },
+    {
+      "backend": "avr-asm",
+      "configuration": "fast",
+      "format": 9,
+      "fixture": "rule-index-510",
+      "decodedBytes": 1023,
+      "maxPending": 1,
+      "maxCommandCycles": 278,
+      "minSP": 757,
+      "engineSha256": "1d6cb816d15ed5b11f3681a7376698f755a5b87368d6d64c173101d4a67f415c"
+    },
+    {
+      "backend": "avr-asm",
+      "configuration": "fast",
+      "format": 0,
+      "fixture": "fast-alphabet-256",
+      "decodedBytes": 256,
+      "maxPending": 0,
+      "maxCommandCycles": 97,
+      "minSP": 759,
+      "engineSha256": "1d6cb816d15ed5b11f3681a7376698f755a5b87368d6d64c173101d4a67f415c"
+    },
+    {
+      "backend": "avr-asm",
+      "configuration": "fast",
+      "format": 0,
+      "fixture": "fast-alphabet-31",
+      "decodedBytes": 31,
+      "maxPending": 3,
+      "maxCommandCycles": 322,
+      "minSP": 757,
+      "engineSha256": "1d6cb816d15ed5b11f3681a7376698f755a5b87368d6d64c173101d4a67f415c"
+    },
+    {
+      "backend": "avr-asm",
+      "configuration": "fast",
+      "format": 0,
+      "fixture": "fast-alphabet-1",
+      "decodedBytes": 1,
+      "maxPending": 0,
+      "maxCommandCycles": 85,
+      "minSP": 759,
+      "engineSha256": "1d6cb816d15ed5b11f3681a7376698f755a5b87368d6d64c173101d4a67f415c"
+    },
+    {
+      "backend": "avr-asm",
+      "configuration": "fast",
+      "format": 0,
+      "fixture": "fast-alphabet-768",
+      "decodedBytes": 768,
+      "maxPending": 0,
+      "maxCommandCycles": 97,
+      "minSP": 759,
+      "engineSha256": "1d6cb816d15ed5b11f3681a7376698f755a5b87368d6d64c173101d4a67f415c"
+    },
+    {
+      "backend": "avr-asm",
+      "configuration": "fast",
+      "format": 0,
+      "fixture": "fast-maximum-depth-12",
+      "decodedBytes": 4096,
+      "maxPending": 12,
+      "maxCommandCycles": 997,
+      "minSP": 757,
+      "engineSha256": "1d6cb816d15ed5b11f3681a7376698f755a5b87368d6d64c173101d4a67f415c"
+    },
+    {
+      "backend": "avr-asm",
+      "configuration": "fast",
+      "format": 0,
+      "fixture": "fast-code-511-and-256-terminals",
+      "decodedBytes": 768,
+      "maxPending": 1,
+      "maxCommandCycles": 172,
+      "minSP": 757,
+      "engineSha256": "1d6cb816d15ed5b11f3681a7376698f755a5b87368d6d64c173101d4a67f415c"
     }
   ]
 }

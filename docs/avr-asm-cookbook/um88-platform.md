@@ -98,7 +98,7 @@ optimization solely because a ring happens to be a power of two in one build.
 These output changes are C and do not alter the explicit C/AVR-ASM arithmetic
 backend selection. The experiment adds no handwritten assembly or new ISA assumptions.
 
-## Integrated clock and packing configuration
+## Integrated clock and packing configuration at 41e456a9
 
 The production integration combines the exact rational counters and pointer-based
 control loop from candidate `d7c003d`, a portable fallthrough nine-bit extractor,
@@ -125,3 +125,5 @@ The complete buffer test covers the former dense-eight 128/192 positive cases,
 polyphony-study profiles with the same source score and command hash. The final
 image and workload results are linked from
 [the universal engine guide](../../ATtiny88/Music/universal/README.md).
+
+The later exact size reduction is documented separately in [control decoding](um88-control-size.md), [table-free gain](um88-table-free-gain.md), and [page-local FIFO addressing](um88-page-fifo.md). The preceding byte counts remain measurements of the historical integration.
