@@ -4,6 +4,7 @@
 import {deviceProfile,DEFAULT_DEVICE} from './devices/profiles.js';
 import {clockPhase,assertAtomicPhase,emitInstructionPhases} from './avr-wasm-phases.js';
 import {annotatePhaseLocals,stripLocalEffects} from './avr-phase-locals.js';
+import {planRegions,emitRegion} from './avr-wasm-regions.js';
 const uleb = value => {
   const out = []; do { const byte = value & 127; value >>>= 7; out.push(byte | (value ? 128 : 0)); } while (value);
   return out;
@@ -125,7 +126,8 @@ const batchable=i=>pure.has(i.name)||guardedMemory.has(i.name);
 const instructionCycles=i=>i.name==='LPM'?3:['ADIW','SBIW','LD','ST'].includes(i.name)?2:1;
 const popcount=n=>{let count=0;for(;n;n&=n-1)count++;return count;};
 
-export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructions=32,device=DEFAULT_DEVICE,resumable=false,optimizePhaseLocals=false}={}) {
+export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructions=32,device=DEFAULT_DEVICE,resumable=false,optimizePhaseLocals=false,boundedRegions=false}={}) {
+  if(typeof boundedRegions!=='boolean'||boundedRegions&&!resumable)throw Error('Bounded regions require resumable execution');
   if(typeof optimizePhaseLocals!=='boolean'||optimizePhaseLocals&&!resumable)throw Error('Phase-local optimization requires resumable execution');
   const {get,set,condition,conditionValue}=optimizePhaseLocals?annotatePhaseLocals(phaseEmit):phaseEmit;
   const profile=deviceProfile(device),{flashBytes,flashWords,pcMask,ioStart,ioEnd,ramStart,ramEnd,sreg,stackPointer}=profile;
@@ -155,7 +157,14 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   let inInstruction=false;
   const putF=(name,value)=>store64(S(name),value), put=(name,value)=>resumable&&inInstruction&&name==='pc'?
     store32(constant(abi.phase.nextPc),value):putF(name,asFloat(value));
-  const reg=n=>load8(constant(abi.data+n)), writeReg=(n,value)=>store8(constant(abi.data+n),value);
+  let regionRegisters=null,regionWritten=null;
+  const cachedRegister=n=>{if(!regionRegisters.has(n))regionRegisters.set(n,16+regionRegisters.size);return regionRegisters.get(n);};
+  const reg=n=>regionRegisters&&n>=0&&n<32?get(cachedRegister(n)):load8(constant(abi.data+n));
+  const writeReg=(n,value)=>{
+    if(!regionRegisters)return store8(constant(abi.data+n),value);
+    regionWritten.add(n);return set(cachedRegister(n),and(value,constant(255)));
+  };
+  const signedReg=n=>regionRegisters?binary(0x75,shl(reg(n),24),constant(24)):load8Signed(constant(abi.data+n));
   const dataAt=address=>add(constant(abi.data),address);
   const flagsAddress=constant(abi.data+sreg), flags=()=>get(5);
   const fail=(code,result=false)=>bytes(put('error',constant(code)),result?constant(0):[],0x0f);
@@ -200,7 +209,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
       code.push(...updateFlags(mask,bit=>[subtract?lt(T,constant(0)):binary(0x4b,T,constant(65535)),eqz(V),n,overflow,xor(n,overflow)][bit]),...writeReg(d,V),...writeReg(d+1,shr(V,8)));
       return code;
     }
-    code.push(...set(0,name==='ASR'?load8Signed(constant(abi.data+d)):reg(d)));
+    code.push(...set(0,name==='ASR'?signedReg(d):reg(d)));
     if(['ADD','ADC','SUB','CP','CPI','SUBI','NEG','SBC','SBCI','CPC'].includes(name)){
       const subtract=['SUB','CP','CPI','SUBI','NEG','SBC','SBCI','CPC'].includes(name),chained=['SBC','SBCI','CPC'].includes(name);
       code.push(...set(1,['CPI','SUBI','SBCI'].includes(name)?constant(k):name==='NEG'?X:reg(s)));
@@ -432,7 +441,25 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     blockBodies[index]=code;
   });
 
-  const STEP=firstFunction+flashWords+blocks.length+1, BLOCK=STEP+1, RUN=STEP+2, NEXT=STEP+3, CAPTURE=STEP+4, UNTIL=STEP+5, PHYSICAL=STEP+6;
+  const regions=boundedRegions?planRegions(decoded,{pure,pcMask,width,cycles:instructionCycles}):[];
+  const regionBodies=regions.map(region=>{
+    regionRegisters=new Map();regionWritten=new Set();
+    const body=emitRegion(region,{abi:{...abi,sreg},pcMask,width,decoded,pure,cycles:instructionCycles,
+      emitALU:i=>remapLocals(alu(i,writes[i.name]||0),2),readRegister:n=>remapLocals(reg(n),2),
+      registers:()=>[...regionRegisters.keys()],written:()=>[...regionWritten],state,stateF,put,
+      emit:{...phaseEmit,uleb,binary,add,sub,and,shr,ge,float,asFloat,load8,store8,loadI64,storeI64,constantI64}});
+    regionRegisters=null;regionWritten=null;return body;
+  });
+  const regionByPc=new Map(regions.flatMap((region,index)=>region.nodes.map(i=>[i.pc,index])));
+  const regionFirst=firstFunction+flashWords+blocks.length;
+  const baseRegionWrappers=blocks.flatMap((block,index)=>regionByPc.has(block.start)?[{pc:block.start,block:index,region:regionByPc.get(block.start)}]:[]);
+  const regionWrapper=(index,fallback)=>bytes(set(2,call(regionFirst+index,get(0),get(1))),
+    condition(lt(get(2),constant(0)),bytes(constant(0),0x0f)),
+    fallback===undefined?get(2):bytes(condition(get(2),bytes(get(2),0x0f)),call(firstFunction+flashWords+fallback,get(0),get(1))));
+  const regionWrappers=regions.map((_,index)=>regionWrapper(index));
+  const baseRegionBodies=baseRegionWrappers.map(item=>regionWrapper(item.region,item.block));
+  const extraFunctions=regionBodies.length+regionWrappers.length+baseRegionBodies.length;
+  const STEP=firstFunction+flashWords+blocks.length+extraFunctions+1, BLOCK=STEP+1, RUN=STEP+2, NEXT=STEP+3, CAPTURE=STEP+4, UNTIL=STEP+5, PHYSICAL=STEP+6;
   const emptyBlock=bytes(constant(0));
   const phaseActive=()=>load32(constant(abi.phase.active));
   const retired=()=>load32(constant(abi.phase.retired));
@@ -529,21 +556,28 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     bytes(string('avr'),string('memory'),2,1,...uleb(abi.memoryPages||1),...uleb(abi.memoryPages||1)),
     ...imports.map(([name,type])=>bytes(string('avr'),string(name),0,uleb(type))),
   ]);
-  const functionTypes=[...Array(flashWords).fill(1),...Array(blocks.length+1).fill(3),1,3,4,5,2,...(full?[9,4]:[])];
+  const functionTypes=[...Array(flashWords).fill(1),...Array(blocks.length+extraFunctions+1).fill(3),1,3,4,5,2,...(full?[9,4]:[])];
   const table=Array.from({length:flashWords},(_,p)=>firstFunction+p);
   const blockIndex=new Map(blocks.map((b,n)=>[b.start,firstFunction+flashWords+n]));
-  for(let p=0;p<flashWords;p++)table.push(blockIndex.get(p)??firstFunction+flashWords+blocks.length);
+  for(const [pc,index]of regionByPc)blockIndex.set(pc,regionFirst+regions.length+index);
+  baseRegionWrappers.forEach((item,index)=>blockIndex.set(item.pc,regionFirst+2*regions.length+index));
+  for(let p=0;p<flashWords;p++)table.push(blockIndex.get(p)??firstFunction+flashWords+blocks.length+extraFunctions);
   const body=(code,locals)=>{const content=bytes(vector(locals),optimizePhaseLocals?stripLocalEffects(code):code,0x0b);return bytes(uleb(content.length),content);};
   const codes=[...instructionBodies.map(code=>body(code,[[9,0x7f],[1,0x7c],...(resumable?[[1,0x7f]]:[])])),
-    ...blockBodies.map(code=>body(code,[[9,0x7f]])),body(emptyBlock,[]),body(step,[]),body(block,[]),body(run,[[resumable?3:2,0x7f]]),body(resumable?fail(24,true):next,[[2,0x7c]]),body(resumable?fail(24,true):capture,[[3,0x7f],[1,0x7c]]),...(full?[body(until,[[resumable?3:2,0x7f]]),body(physical,[[1,0x7f]])]:[])];
+    ...blockBodies.map(code=>body(code,[[9,0x7f]])),...regionBodies.map(item=>body(item.code,[[item.locals,0x7f]])),
+    ...[...regionWrappers,...baseRegionBodies].map(code=>body(code,[[1,0x7f]])),
+    body(emptyBlock,[]),body(step,[]),body(block,[]),body(run,[[resumable?3:2,0x7f]]),body(resumable?fail(24,true):next,[[2,0x7c]]),body(resumable?fail(24,true):capture,[[3,0x7f],[1,0x7c]]),...(full?[body(until,[[resumable?3:2,0x7f]]),body(physical,[[1,0x7f]])]:[])];
   const exports=vector([...['controlRequest','watchdogResetCycle','debugEnabled','captureFault'].map((name,index)=>bytes(string(name),3,index)),
     ...[['step',STEP],['block',BLOCK],['run',RUN],['nextDuty',NEXT],['capturePWM',CAPTURE],...(full?[['runUntil',UNTIL],['capturePhysical',PHYSICAL]]:[])].map(([name,index])=>bytes(string(name),0,uleb(index)))]);
   const mapping=decoded.map(({pc,word,name,d,s,k,words})=>({pc,byteAddress:pc*2,word,name,d,s,k,words}));
   const stats={decodableWords:decoded.filter(i=>i.name!=='unsupported').length,unsupportedWords:decoded.filter(i=>i.name==='unsupported').length,
     blocks:blocks.length,flagBitsComputed:blocks.reduce((n,b)=>n+b.computed,0),flagBitsEliminated:blocks.reduce((n,b)=>n+b.removed,0),
-    ...(optimizePhaseLocals?{phaseLocals:phaseLocalStats}:{})};
+    ...(optimizePhaseLocals?{phaseLocals:phaseLocalStats}:{}),...(boundedRegions?{boundedRegions:{regions:regions.length,words:regionByPc.size}}:{})};
   const manifest={schema:'micromusic-avr-transpiled-v1',device:profile.name,abi,optimizeFlags,maxBlockInstructions,stats,
-    ...(resumable?{executionMode:'resumable-v1'}:{}),...(optimizePhaseLocals?{optimizePhaseLocals:true}:{}),blocks:blocks.map(({sequence,...block})=>block),mapping};
+    ...(resumable?{executionMode:'resumable-v1'}:{}),...(optimizePhaseLocals?{optimizePhaseLocals:true}:{}),
+    ...(boundedRegions?{boundedRegions:true,regions:regions.map((region,n)=>({pcs:region.nodes.map(i=>i.pc),maxCost:region.maxCost,
+      registers:regionBodies[n].registers,written:regionBodies[n].written})),regionFallbacks:baseRegionWrappers}:{}),
+    blocks:blocks.map(({sequence,...block})=>block),mapping};
   const output=Uint8Array.from(bytes([0,97,115,109,1,0,0,0],section(1,vector(types)),section(2,importSection),section(3,vector(functionTypes.map(uleb))),
     section(4,[1,0x70,1,...uleb(flashWords*2),...uleb(flashWords*2)]),section(6,vector([bytes(0x7f,1,constant(0),0x0b),bytes(0x7c,1,float(-1),0x0b),bytes(0x7f,1,constant(0),0x0b),bytes(0x7f,1,constant(0),0x0b)])),
     section(7,exports),section(9,bytes(1,0,constant(0),0x0b,vector(table.map(uleb)))),section(10,vector(codes)),

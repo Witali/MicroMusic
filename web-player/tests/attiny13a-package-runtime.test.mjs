@@ -100,7 +100,7 @@ test('package loader runs with only JavaScript loader files and no default WASM 
   const dir=await mkdtemp(join(tmpdir(),'micromusic-package-loader-'));
   t.after(()=>rm(dir,{recursive:true,force:true}));
   await mkdir(join(dir,'devices'));
-  for(const name of ['avr-profiles.js','avr-runtime.js','avr-transpiler.js','avr-wasm-phases.js','avr-phase-locals.js','avr-transpiled-runtime.js','attiny13a-runtime.js','attiny13a-package.js','attiny13a-registers.js',
+  for(const name of ['avr-profiles.js','avr-runtime.js','avr-transpiler.js','avr-wasm-phases.js','avr-phase-locals.js','avr-wasm-regions.js','avr-transpiled-runtime.js','attiny13a-runtime.js','attiny13a-package.js','attiny13a-registers.js',
     'devices/profiles.js','devices/attiny13a-profile.js','devices/attiny13a-reset-profile.js','devices/attiny13a-clki-profile.js'])
     await copyFile(new URL('../lib/'+name,import.meta.url),join(dir,name));
   await writeFile(join(dir,'package.json'),'{"type":"module"}');

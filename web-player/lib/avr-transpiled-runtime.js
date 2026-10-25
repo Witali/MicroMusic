@@ -14,7 +14,7 @@ function compileTranslation(binary,abi,options) {
   const padded=new Uint8Array(profile.flashBytes).fill(255);padded.set(binary);
   // Exact image keys avoid hash collisions. Configuration does not enter the
   // lowering: live clocks/fuses are supplied by this runtime instance's bus.
-  const key=JSON.stringify([profile.name,abiKey(abi),!!options.resumable,options.optimizeFlags??true,options.maxBlockInstructions??32,options.optimizePhaseLocals??false,Array.from(padded)]);
+  const key=JSON.stringify([profile.name,abiKey(abi),!!options.resumable,options.optimizeFlags??true,options.maxBlockInstructions??32,options.optimizePhaseLocals??false,options.boundedRegions??false,Array.from(padded)]);
   if(options.cacheTranslation!==false&&cache.has(key)) {
     const cached=cache.get(key);cache.delete(key);cache.set(key,cached);
     return {...cached,cacheHit:true};
@@ -35,6 +35,8 @@ function compileTranslation(binary,abi,options) {
 // use the existing C/WASM peripheral runtime, sharing its linear memory.
 export class AVRCore extends PeripheralRuntime {
   constructor(binary,eeprom,options={}) {
+    if(options.boundedRegions!==undefined&&(typeof options.boundedRegions!=='boolean'||options.boundedRegions&&!options.resumable))
+      throw Error('Bounded regions require resumable execution');
     if(options.optimizePhaseLocals!==undefined&&(typeof options.optimizePhaseLocals!=='boolean'||options.optimizePhaseLocals&&!options.resumable))
       throw Error('Phase-local optimization requires resumable execution');
     const profile=deviceProfile(options.device??DEFAULT_DEVICE);
