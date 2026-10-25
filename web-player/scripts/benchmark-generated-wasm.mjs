@@ -35,11 +35,20 @@ if(values['baseline-ref']){
   const paths=['web-player/lib/avr-transpiler.js','web-player/lib/avr-wasm-phases.js'];
   const originals=paths.map(p=>execFileSync('git',['show',revision+':'+p],{cwd:root,encoding:'utf8'}).replaceAll('\r\n','\n'));
   const url=source=>'data:text/javascript;base64,'+Buffer.from(source).toString('base64');
+  let phaseSource=originals[1];
+  if(originals.some(s=>s.includes("'./avr-phase-locals.js'"))){
+    const dependency='web-player/lib/avr-phase-locals.js';
+    const historical=execFileSync('git',['show',revision+':'+dependency],{cwd:root,encoding:'utf8'}).replaceAll('\r\n','\n');
+    assert.equal(historical,source(dependency),'Historical phase-local dependency must be unchanged');
+    phaseSource=phaseSource.replace("'./avr-phase-locals.js'",JSON.stringify(new URL('../lib/avr-phase-locals.js',import.meta.url).href));
+    paths.push(dependency);originals.push(historical);
+  }
   const compiler=originals[0].replace("'./devices/profiles.js'",JSON.stringify(new URL('../lib/devices/profiles.js',import.meta.url).href))
-    .replace("'./avr-wasm-phases.js'",JSON.stringify(url(originals[1])));
+    .replace("'./avr-wasm-phases.js'",JSON.stringify(url(phaseSource)))
+    .replace("'./avr-phase-locals.js'",JSON.stringify(new URL('../lib/avr-phase-locals.js',import.meta.url).href));
   previousGenerator=(await import(url(compiler))).transpileAVR;
   baseline={revision,sourceSha256:Object.fromEntries(paths.map((p,n)=>[p,sha(originals[n])])),
-    adaptation:'Only import URLs are redirected: historical phase module as data URL, unchanged current device profiles as file URL.'};
+    adaptation:'Only import URLs are redirected: historical phase module as data URL, unchanged device profiles/phase-local dependency as file URLs.'};
 }
 const catalogs=['web-player/firmware.json','web-player/hq4-firmware.json'].map(p=>JSON.parse(source(p)));
 const catalog=catalogs.flatMap(c=>c.entries),aliases=Object.assign({},...catalogs.map(c=>c.aliases));
