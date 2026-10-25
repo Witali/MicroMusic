@@ -17,16 +17,30 @@ import {controlLabels,controlSchedule,controlRatios} from './lib/runtime-control
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const {values}=parseArgs({options:{level:{type:'string',multiple:true},case:{type:'string',multiple:true},
   'validate-only':{type:'boolean'},
+  transform:{type:'string',default:'binaryen'},'baseline-ref':{type:'string'},
   trials:{type:'string',default:'8'},warmups:{type:'string',default:'4'},frames:{type:'string',default:'12000'},
   instructions:{type:'string',default:'1000000'},out:{type:'string',default:'build/benchmarks/generated-wasm.json'},'wasm-opt':{type:'string'}}});
 const integer=(s,min,max)=>{const n=Number(s);assert.ok(Number.isInteger(n)&&n>=min&&n<=max);return n;};
 const trials=integer(values.trials,8,32),schedule=controlSchedule(trials),warmups=integer(values.warmups,1,8),
   frames=integer(values.frames,1024,48000),instructions=integer(values.instructions,1000,10000000),rate=48000,block=1024;
-const levels=values.level??['O3','Oz'];assert.equal(new Set(levels).size,levels.length);
-assert.ok(levels.length&&levels.every(level=>['O2','O3','Os','Oz'].includes(level)));
+const phaseLocals=values.transform==='phase-locals';assert.ok(phaseLocals||values.transform==='binaryen');
+const levels=values.level??(phaseLocals?['live-locals']:['O3','Oz']);assert.equal(new Set(levels).size,levels.length);
+assert.ok(levels.length&&levels.every(level=>(phaseLocals?['live-locals']:['O2','O3','Os','Oz']).includes(level)));
 const sha=b=>createHash('sha256').update(b).digest('hex');
 const stringify=v=>JSON.stringify(v,(_,n)=>typeof n==='bigint'?n.toString():n,2)+'\n';
 const source=p=>readFileSync(resolve(root,p),'utf8').replaceAll('\r\n','\n');
+let previousGenerator,baseline;
+if(values['baseline-ref']){
+  const revision=execFileSync('git',['rev-parse',values['baseline-ref']+'^{commit}'],{cwd:root,encoding:'utf8'}).trim();
+  const paths=['web-player/lib/avr-transpiler.js','web-player/lib/avr-wasm-phases.js'];
+  const originals=paths.map(p=>execFileSync('git',['show',revision+':'+p],{cwd:root,encoding:'utf8'}).replaceAll('\r\n','\n'));
+  const url=source=>'data:text/javascript;base64,'+Buffer.from(source).toString('base64');
+  const compiler=originals[0].replace("'./devices/profiles.js'",JSON.stringify(new URL('../lib/devices/profiles.js',import.meta.url).href))
+    .replace("'./avr-wasm-phases.js'",JSON.stringify(url(originals[1])));
+  previousGenerator=(await import(url(compiler))).transpileAVR;
+  baseline={revision,sourceSha256:Object.fromEntries(paths.map((p,n)=>[p,sha(originals[n])])),
+    adaptation:'Only import URLs are redirected: historical phase module as data URL, unchanged current device profiles as file URL.'};
+}
 const catalogs=['web-player/firmware.json','web-player/hq4-firmware.json'].map(p=>JSON.parse(source(p)));
 const catalog=catalogs.flatMap(c=>c.entries),aliases=Object.assign({},...catalogs.map(c=>c.aliases));
 const hzTable=hz=>{const table=Array(128).fill(0);table[0]=hz;return table;};
@@ -54,8 +68,16 @@ function layout(bytes){
   return result;
 }
 function construct(item,generated){
-  const c=new ATtiny13A(item.binary,item.eeprom,{...item.options,runtimeModule,precompiled:generated});
+  // The phase-local experiment uses the normal production translation cache:
+  // identical labels must share a CPU Module, as well as the native Module.
+  const c=new ATtiny13A(item.binary,item.eeprom,{...item.options,optimizePhaseLocals:generated.manifest.optimizePhaseLocals??false,runtimeModule,
+    ...phaseLocals?{}:{precompiled:generated}});
   assert.equal(sha(c.transpiledBytes),sha(generated.bytes));
+  if(phaseLocals){
+    item.cpuModules??=new Map();const key=sha(generated.bytes);
+    if(item.cpuModules.has(key))assert.equal(c._translatedModule,item.cpuModules.get(key),'Identity labels must reuse the CPU Module');
+    else item.cpuModules.set(key,c._translatedModule);
+  }
   if(item.divisor){c.writeIO(IO.CLKPR,128);c.writeIO(IO.CLKPR,Math.log2(item.divisor));}
   if(item.adcEnabled){c.writeIO(IO.ADMUX,3);c.writeIO(IO.ADCSRA,0xe7);}
   if(item.external){const end=BigInt(item.frames)*1000000000000n/BigInt(rate);
@@ -83,24 +105,36 @@ function execute(c,item){
   return {raw,states,pins,ms,record:{rawSha256:sha(raw),stateSha256:sha(stringify(states)),pinSha256:sha(stringify(pins)),checkpoints:states.length}};
 }
 const output=resolve(root,values.out);mkdirSync(dirname(output),{recursive:true});
-const support=['web-player/lib/avr-transpiler.js','web-player/lib/avr-wasm-phases.js','web-player/lib/avr-transpiled-runtime.js','web-player/lib/attiny13a-runtime.js',
+const support=['web-player/lib/avr-transpiler.js','web-player/lib/avr-wasm-phases.js','web-player/lib/avr-phase-locals.js','web-player/lib/avr-transpiled-runtime.js','web-player/lib/attiny13a-runtime.js',
   'web-player/scripts/benchmark-generated-wasm.mjs','web-player/scripts/lib/optimize-avr-wasm.mjs','web-player/scripts/lib/runtime-control-design.mjs'];
 const report={schema:'micromusic-generated-wasm-benchmark-v1',complete:false,revision:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),
   mode:values['validate-only']?'validation':'timing',
+  transform:values.transform,...baseline?{baseline}: {},
+  cpuModulePolicy:phaseLocals?'production-translation-cache':'fresh-precompiled',
+  gcBeforeRun:typeof globalThis.gc==='function',
   node:process.version,platform:platform(),cpu:cpus()[0].model,trials,warmups,rate,frames,instructions,levels,
   sourceSha256:Object.fromEntries(support.map(p=>[p,sha(source(p))])),runtimeSha256:sha(readFileSync(new URL('../wasm/attiny13a.wasm',import.meta.url))),
-  method:'Timing mode: balanced four-label trials; oldA/oldB identical raw CPU bytes, newA/newB identical optimized bytes; one unchanged native Module. Fresh CPU Modules/instances and equal warmups; construction, optimization and snapshots excluded from execution timing. Validation mode: one raw and one optimized run; no speed inference. Exact PCM, full architectural/diagnostic state and pins checked after every audio block or direct run. Ratios above1 favor optimized CPU. Generation/optimizer-process times and validation-warmed compilation observations are separate single observations, not cold-start medians or browser guarantees.',cases:[]};
+  method:'Timing mode: balanced four-label trials; oldA/oldB identical raw CPU bytes, newA/newB identical optimized bytes; one unchanged native Module. Phase-local runs use the production translation cache and assert CPU Module sharing within identity pairs; Binaryen runs use fresh precompiled CPU Modules. Instances/memories are always fresh. Equal warmups; construction, optimization and snapshots excluded from execution timing. Validation mode: one raw and one optimized run; no speed inference. Exact PCM, full architectural/diagnostic state and pins checked after every audio block or direct run. Ratios above1 favor optimized CPU. Generation/optimizer-process and compile observations are single observations, not cold-start medians or browser guarantees.',cases:[]};
 const save=()=>writeFileSync(output,stringify(report));save();
 for(const item of selected){
   const start=performance.now(),raw=transpileAVR(item.binary,runtimeABI(new WebAssembly.Instance(runtimeModule).exports,{resumable:!!item.options.resumable}),item.options),generationMs=performance.now()-start;
+  if(previousGenerator)assert.deepEqual(raw.bytes,previousGenerator(item.binary,raw.manifest.abi,item.options).bytes,item.id+' must preserve baseline bytes');
   for(const level of levels){
-    const optimized=optimizeAVRWasm(raw,{level,wasmOpt:values['wasm-opt']}),compiled={};
+    let optimized;
+    if(phaseLocals){
+      const start=performance.now(),generated=item.options.resumable?transpileAVR(item.binary,raw.manifest.abi,{...item.options,optimizePhaseLocals:true}):raw;
+      optimized={...generated,optimization:{tool:'generation-time phase-local liveness',flags:item.options.resumable?['optimizePhaseLocals=true']:[],
+        inputSha256:sha(raw.bytes),outputSha256:sha(generated.bytes),inputBytes:raw.bytes.length,outputBytes:generated.bytes.length,elapsedMs:performance.now()-start,
+        phaseLocals:generated.manifest.stats.phaseLocals??null}};
+    }else optimized=optimizeAVRWasm(raw,{level,wasmOpt:values['wasm-opt']});
+    const compiled={};
     for(const [name,generated]of [['raw',raw],['optimized',optimized]]){const t=performance.now();new WebAssembly.Module(generated.bytes);compiled[name]=performance.now()-t;}
     const row={id:item.id,actualId:item.actualId,level,flashSha256:sha(item.binary),eepromSha256:item.eeprom?sha(item.eeprom):null,
       generationMs,compileAfterValidationMs:compiled,optimization:optimized.optimization,rawLayout:layout(raw.bytes),optimizedLayout:layout(optimized.bytes),runs:[],warmups:[]};
     const generated=variant=>variant.startsWith('old')?raw:optimized;let reference;
     const run=(variant,trial,position)=>{
-      const result=execute(construct(item,generated(variant)),item);
+      const core=construct(item,generated(variant));globalThis.gc?.();
+      const result=execute(core,item);
       if(reference){assert.ok(result.raw.equals(reference.raw));assert.deepEqual(result.states,reference.states);assert.deepEqual(result.pins,reference.pins);}else reference=result;
       return{variant,trial,position,ms:result.ms,...result.record};
     };
