@@ -140,8 +140,8 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
 
 | Build | Flash | Static SRAM | Peak stack | Free SRAM at peak |
 | --- | ---: | ---: | ---: | ---: |
-| Optimized decoder test mailbox, ASM enabled | 10,608 B | 1,119 B | 158 B | 771 B |
-| Full PWM speech demo, including 2,940 B compressed audio | 13,884 B | 1,254 B | 165 B | 629 B |
+| Optimized decoder test mailbox, ASM enabled | 10,610 B | 1,119 B | 158 B | 771 B |
+| Full PWM speech demo, including 2,940 B compressed audio | 13,886 B | 1,254 B | 165 B | 629 B |
 | C fallback decoder test mailbox | 11,870 B | 1,119 B | 166 B | 763 B |
 | Full C PWM speech demo, including 2,940 B audio | 15,088 B | 1,254 B | 173 B | 621 B |
 
@@ -150,7 +150,7 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
   lifetime cases, each backend matches 14,278 frames with one firmware image.
 - Complete player tests on all 31 streams match upstream PCM converted to u8,
   with zero ring underruns and no stack/static-memory collisions.
-- Maximum observed ASM decoder-only corpus frame cost: **122,066 cycles / 7.629 ms**;
+- Maximum observed ASM decoder-only corpus frame cost: **121,622 cycles / 7.601 ms**;
   the 20-ms budget at 16 MHz is 320,000 cycles. ISR and output costs are verified
   separately by the complete-player runs.
 - Primitive tests cover 240,000 complete LSP conversions and 3,670,016 bit fields;
@@ -244,9 +244,22 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
 - Codebooks reside in Flash, use explicit signed `pgm_read_*` accesses, and no
   malloc/calloc/realloc/free symbols are linked.
 
-Current ASM results: `reports/long40-asm-*.json`; C runtime results remain
+The latest IIR stage reuses the dead state-base register pair for a third
+coefficient after ageing completes. Fixed X/Y rewinds replace base-pointer
+reconstruction. Every matched stream minimum/mean/maximum saves 444 cycles/frame;
+the 31-stream weighted mean falls 113,708.523 -> 113,264.523 (0.3905%). Flash
+grows two bytes; SRAM, stack and all 14,278 PCM frames remain unchanged.
+The separate 4,096-frame pitch maximum is 122,126 cycles. Both 31-stream
+normal/+40% PWM matrices pass, with minimum queues 74/33 and 629 B free.
+The shared order-eight kernel also saves 118 cycles/block; the compact WB
+decoder saves 916 cycles/frame with its NB and HB filters combined. Both C
+decoder binaries are byte-identical to their preceding admitted images.
+
+Current ASM results: `reports/iir-cache3-*.json`; the audit binds 80 frozen
+NB/WB player images and byte-identical representative rebuilds. The preceding
+ASM stage remains in `reports/long40-asm-*.json`. C runtime results remain
 `reports/shared-routines-c-*.json`. Fresh portable results:
-`reports/portable-long40-library.json`. `reports/long40-admission-audit.json`
+`reports/iir-cache3-portable.json`. The preceding `reports/long40-admission-audit.json`
 pins five 92-file source copies, measured decoder/demo/unit images, full
 normal/+40% ASM PWM and fresh native PCM/two-library checks. Both C player
 scenarios were rebuilt for every stream and proved byte-identical to the
@@ -256,6 +269,21 @@ the prior 14,278-frame evidence. `long40-variant-decision.json` compares four
 full-corpus candidates; alternative patches are in the AVR cookbook.
 `reports/shared-routines-admission-audit.json` retains the preceding image,
 its four 88-file source copies and complete normal/loaded PWM evidence.
+
+Reproduce the latest corpus/player checks after preparing the retained speech
+and original host reference:
+
+```sh
+python Codecs/Speex/AVR/tests/prepare_nb.py --out Codecs/Speex/AVR/build/cache3-corpus
+python Codecs/Speex/AVR/tests/verify_nb_players.py --avr-gcc avr-gcc --node node --streams Codecs/Speex/AVR/build/cache3-corpus/streams --out Codecs/Speex/AVR/build/cache3-nb-normal
+python Codecs/Speex/AVR/tests/verify_nb_players.py --avr-gcc avr-gcc --node node --streams Codecs/Speex/AVR/build/cache3-corpus/streams --out Codecs/Speex/AVR/build/cache3-nb-load40 --frame-load-cycles 128000
+```
+
+Run the matrices sequentially in one source directory: their builder shares
+`build/profile` and `build/player`. Separate immutable source copies allow
+parallel runs. Each matrix retains its source hashes and every executed ELF,
+HEX, binary, PCM/PWM and verification report.
+
 `shared-routines-variant-decision.json`
 records the comparisons: outlining the sample finish was rejected after
 88-frame screening (+2.0863% / +3.2449% C mean time). Those prototypes have
