@@ -96,3 +96,33 @@ python tools/compact_format.py input.l4hy output-v3.l4hy --features 24 --report 
 Оба CLI могут измерять полный AVR ELF и откатывать неподходящий вариант.
 [Спецификация и команды gate](COMPACT_FORMAT.md),
 [результаты всех пяти пунктов плана](../../research/q0-lossless-2026-10-25/README.md).
+
+## Явный профиль меньшего битрейта
+
+Новый офлайн-профиль использует прежний декодер и существующие v2/compact24:
+
+```sh
+python tools/encode_lowrate.py input.wav build/lowrate --audio-kbps 16 --kind speech
+python tools/encode_lowrate.py input.wav build/lowrate-12 --audio-kbps 12 --kind speech
+python tools/encode_lowrate.py input.wav build/weighted --max-bytes 8020 --stage perceptual
+```
+
+`--audio-kbps` задаёт потолок audio-payload по точной длительности эталона;
+20-байтовый заголовок добавляется отдельно. `--max-bytes` считает полный
+файл. Выбирается ровно один способ задания бюджета. Один вход — до 64000
+отсчётов / восьми секунд; длинный вход нужно заранее разделить на независимые
+сегменты. Уровень не нормализуется, отсчёты не отбрасываются.
+
+`--stage target` выполняет поиск под бюджет с реальными direct/Rice/pitch
+стоимостями и более редкими LSF через существующий repeat tag. По умолчанию
+`joint` добавляет отложенный выбор q/scale/pitch и существующих sparse-кодов.
+`perceptual` дополнительно ищет равные по длине codewords по спектрально
+взвешенной ошибке. Этот явный режим может обменять часть SER на STOI;
+полные SER/RMSE/пики/STOI сохраняются в manifest, слуховой выигрыш не обещан.
+
+Все варианты проходят независимую native/model проверку. Исходники,
+таблицы, арифметика и память MCU не изменены; compact24 требует прежнего
+явного `-DLPX4_V3_FEATURES=24`. Другой поток может изменить такты распаковки,
+поэтому аппаратная поддержка относится только к измеренным полным ELF.
+Выход: `audio.l4hy`, `decoded.wav`, `manifest.json`. Старый WAV CLI остаётся
+доступным без смены его поведения. [План и статус тестов](../../LOWRATE_QUALITY_PLAN_RU.md).
