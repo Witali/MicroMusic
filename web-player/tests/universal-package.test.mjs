@@ -27,6 +27,7 @@ for(const [label,mutate,pattern] of [
  ['incomplete output audit',p=>p.verification.allPwmFramesMatch=false,/audit/],
  ['clipping',p=>p.verification.clippedChannelSamples=1,/clipping/],
  ['stereo input',p=>p.score.channels=2,/mono/],
+ ['unqualified overclock',p=>p.build.cpuHz=16000000,/F_CPU/],
 ])test('package rejects '+label,async()=>{
  const pkg=structuredClone(original);mutate(pkg);await assert.rejects(universalPackageEntry(pkg),pattern);
 });
@@ -94,12 +95,36 @@ test('12 MHz mono package updates clock labels without inventing board fuses',as
  assert.equal(app.get('fuse-low').textContent,'—');
  assert.match(app.get('fuse-clock-note').textContent,/конфигурацией платы/);
 });
-test('Micronucleus board keeps its separate images and blocks ISP UM88 imports',async()=>{
+test('Micronucleus board rejects an ISP UM88 package without replacing playback',async()=>{
  const app=await playerApp({speech:false,device:'attiny88',board:'mh-et-live-16mhz'}),previous=app.workers.at(-1);
- assert.equal(app.get('package-file').disabled,true);
+ assert.equal(app.get('package-file').disabled,false);
  await app.get('package-file').onchange(eventFor(text));
  assert.equal(app.workers.at(-1),previous);assert.equal(init(app).entry.cpuHz,16000000);
  assert.equal(app.get('error').hidden,false);assert.match(app.get('error').textContent,/профиль ISP/);
+});
+
+test('audited USB UM88 package imports only on the matching board and keeps loader metadata',async()=>{
+ const catalog=JSON.parse(readFileSync(new URL('../firmware-attiny88-16mhz.json',import.meta.url)));
+ const e=catalog.entries.find(e=>e.id==='greensleeves');
+ const load=p=>JSON.parse(readFileSync(new URL('../'+p,import.meta.url)));
+ const pkg={schema:'micromusic-um88-package',version:1,build:load(e.buildReport),verification:load(e.verificationSource),
+   score:load(e.source.replace(/synth\.hex$/,'score.json')),flashHex:e.flashHex};
+ const text=JSON.stringify(pkg),entry=await universalPackageEntry(text);
+ assert.equal(entry.cpuHz,16000000);assert.equal(entry.board,'mh-et-live-16mhz');
+ const app=await playerApp({speech:false,device:'attiny88',board:entry.board});
+ await app.get('package-file').onchange(eventFor(text));
+ assert.equal(init(app).entry.kind,'universal');assert.equal(app.get('error').hidden,true);
+ assert.match(app.get('tiny88-clock').textContent,/16 MHz.*MH-ET LIVE/);
+ assert.match(app.get('fuse-high-note').textContent,/сохранить фьюзы платы/);
+ assert.equal(app.get('download-eeprom').hidden,true);assert.equal(app.get('board-upload').hidden,false);
+ assert.match(app.get('upload-command').textContent,/micronucleus --run/);
+ const isp=await playerApp({speech:false,device:'attiny88'}),previous=isp.workers.at(-1);
+ await isp.get('package-file').onchange(eventFor(text));
+ assert.equal(isp.workers.at(-1),previous);assert.match(isp.get('error').textContent,/выберите Micronucleus/);
+ for(const mutate of [p=>p.build.applicationFlashLimit=8192,p=>p.build.requiredFuses={},
+   p=>p.verification.bootloaderHandoffChecked=false]){
+   const broken=structuredClone(pkg);mutate(broken);await assert.rejects(universalPackageEntry(broken),/Micronucleus/);
+ }
 });
 test('switching chips while the file is being read discards the stale import',async()=>{
  const app=await playerApp({speech:false,device:'attiny88'}),pending=deferred(),event=eventFor(text);

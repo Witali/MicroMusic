@@ -1,6 +1,6 @@
 import { parseHex } from './lib/hex.js';
 import { RealtimeMonitor } from './lib/realtime.js';
-import { universalPackageEntry } from './lib/universal-package.js?v=20261025-board-um88-pipeline';
+import { universalPackageEntry } from './lib/universal-package.js?v=20261025-um88-all-boards';
 const $ = id => document.getElementById(id);
 const formatHex = (value, length=2) => value.toString(16).toUpperCase().padStart(length,'0');
 const canvas = $('wave');
@@ -58,8 +58,8 @@ function deviceUI(device) {
   if(document.querySelector('input[name="engine"]:checked').disabled){
     for(const choice of document.querySelectorAll('input[name="engine"]'))choice.checked=choice.value==='wasm';
   }
-  $('package-file').disabled=micronucleus;
-  $('package-import-label').textContent=micronucleus?'Пакет UM88: выберите профиль ISP':tiny88?'Открыть моно-пакет UM88':'Открыть пакет ATtiny13A';
+  $('package-file').disabled=false;
+  $('package-import-label').textContent=micronucleus?'Открыть пакет UM88 для Micronucleus':tiny88?'Открыть моно-пакет UM88':'Открыть пакет ATtiny13A';
   $('engine-note').textContent='При смене — сброс на начало.';
   if(!speechCollection) {
     document.title=`MicroMusic / ${name} — плеер прошивок`;
@@ -208,7 +208,7 @@ function load(entry,{autoplay=false}={}) {
     $('fuse-clock-value').textContent=clock+' · '+(configuration.oscillatorHz/1000000).toLocaleString('ru')+' МГц';
     $('fuse-clock-note').textContent=configuration.fuseLow&16?'CKDIV8 отключён · делитель /1':'CKDIV8 включён · делитель /8';
   }
-  if(currentDevice==='attiny88'&&entry.firmwareEngine==='UM88'){
+  if(currentDevice==='attiny88'&&entry.firmwareEngine==='UM88'&&currentBoard!=='mh-et-live-16mhz'){
     $('board-isp-option').textContent='UM88 · '+(entry.cpuHz/1000000).toLocaleString('ru')+' МГц · ISP';
     $('board-note').textContent='Профиль UM88 из пакета/каталога · EEPROM не требуется';
     $('machine-details').textContent='512 Б SRAM · 64 Б EEPROM · '+(entry.cpuHz/1000000).toLocaleString('ru')+' МГц';
@@ -264,7 +264,7 @@ function load(entry,{autoplay=false}={}) {
   $('rom-name').textContent=`${prefix}-${entry.id}.hex`; $('rom-details').textContent=`${entry.flashBytes} / ${capacity} Б Flash · ${entry.eepromBytes} / 64 Б EEPROM · ${(entry.sampleHz/1000).toLocaleString('ru')} кГц ${entry.kind==='speech'?'отсчёты':'PWM'}`;
   if(micronucleus)$('rom-details').textContent=`${entry.flashBytes} / ${capacity} Б приложения · тембры во Flash · ${(entry.sampleHz/1000).toLocaleString('ru')} кГц PWM`;
   if(entry.devicePackage)$('rom-details').textContent=`${entry.flashBytes} / ${capacity} Б Flash · ${entry.eepromBytes} / 64 Б EEPROM · пакет ATtiny13A`;
-  if(entry.firmwareEngine==='UM88')$('rom-details').textContent=`${entry.flashBytes} / ${capacity} Б Flash · EEPROM не требуется · синтез ${(entry.synthesisHz/1000).toLocaleString('ru')} кГц`;
+  if(entry.firmwareEngine==='UM88')$('rom-details').textContent=`${entry.flashBytes} / ${capacity} Б ${micronucleus?'приложения · тембры во Flash':'Flash'} · EEPROM не требуется · синтез ${(entry.synthesisHz/1000).toLocaleString('ru')} кГц · ${(entry.pwmHz/1000).toLocaleString('ru')} кГц PWM`;
   $('rom-name').href=flashSource; $('rom-name').download=`${prefix}-${entry.id}.hex`;
   $('rom-hash').textContent=entry.flashSha256.slice(0,16)+'…'; $('rom-hash').title='SHA-256 Flash: '+entry.flashSha256;
   $('rom-size').textContent=entry.flashBytes+' байт';
@@ -352,10 +352,11 @@ $('package-file').onchange=async event=>{
   const file=event.target.files[0];if(!file)return;
   const attempt=++importAttempt,device=currentDevice,request=deviceRequest;
   try{
-    if(device==='attiny88'&&currentBoard!=='bare-8mhz')throw Error('Для пакета UM88 выберите профиль ISP; Micronucleus использует отдельные прошивки');
     if(file.size>16*1024*1024)throw Error('Пакет превышает 16 МБ');
     const text=await file.text();
     const entry=device==='attiny88'?await universalPackageEntry(text):await (await import('./lib/package-entry.js')).packageEntry(text,{name:file.name});
+    if(device==='attiny88'&&((entry.board==='mh-et-live-16mhz')!==(currentBoard==='mh-et-live-16mhz')))
+      throw Error('Профиль пакета не соответствует выбранной плате: выберите '+(entry.board?'Micronucleus':'профиль ISP'));
     if(attempt!==importAttempt||device!==currentDevice||request!==deviceRequest)return;
     catalog.entries=catalog.entries.filter(e=>!['package','universal'].includes(e.kind));catalog.entries.push(entry);
     $('search').value='';load(entry);

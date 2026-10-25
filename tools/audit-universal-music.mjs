@@ -20,10 +20,18 @@ export function audit(name,{directory=path.join(root,'ATtiny88/Music/universal/s
  assert.equal(sha(rom),meta.flashSha256);assert.equal(score.controlTicks,meta.controlTicks);
  const channels=meta.pwmBufferLayout==='mono'?1:2;
  const bufferFrames=meta.pwmBufferFrames||(192/channels),bufferBytes=bufferFrames*channels;
- const c=new AVRCore(rom,null,{target:'attiny88',cpuHz:meta.cpuHz}),ref=new UniversalReference(score,meta.cpuHz,{pwmChannels:channels,pwmFrames:bufferFrames});
+ const c=new AVRCore(rom,null,{target:'attiny88',cpuHz:meta.cpuHz}),ref=new UniversalReference(score,meta.cpuHz,
+  {pwmChannels:channels,pwmFrames:bufferFrames,pwmReserveFrames:meta.renderABI==='packed-stereo-u32'?4:4/channels});
+ const usb=meta.board==='mh-et-live-16mhz';
+ if(usb){
+  assert.equal(meta.cpuHz,16000000);assert.ok(rom.length<=6012);
+  assert.equal(meta.eepromRequired,false);
+  // Model application entry after a loader that used the watchdog and stack.
+  c.data[0x54]=8;c.data[0x60]=0x2b;c.data[0x64]=0xff;c.sp=0x17f;
+ }
  const at=key=>meta.labels[key]-0x800000;
  const state=at('um'),read=at('um_read'),write=at('um_write'),ring=at('um_ring');
- const mono=meta.pwmBufferLayout==='mono';
+ const mono=meta.pwmBufferLayout==='mono',packed=meta.renderABI==='packed-stereo-u32'||!mono;
  const render=meta.labels.um_render/2,irq=meta.labels['__vector_'+c.profile.timer.vector]/2;
  const tick=meta.labels.um_tick/2,tickReturns=new Set();
  const returnPCs=new Set(),retiPCs=new Set();
@@ -36,7 +44,7 @@ export function audit(name,{directory=path.join(root,'ATtiny88/Music/universal/s
  for(const p of [render,tick,irq,...tickReturns,...returnPCs,...retiPCs])c.batch[p]=0;
  let checkedPhases=0,checkedWaves=0,observedIRQs=0,checkedIRQOutputs=0,checkedGeneratedFrames=0;
  let minQueued=bufferFrames,maxRender=0,startRender=0,startIrqs=0,expectedMix=0,irqExpected;
- let lastTick=-1,lastWrite=bufferBytes-4,done=false,failure=null;
+ let lastTick=-1,lastWrite=ref.write,done=false,failure=null;
  let tickStart=null,tickIrqs=0,maxControl=0,controlCalls=0;
  const start=performance.now(),stopTicks=score.controlTicks+Math.min(2,score.controlTicks);
  try {
@@ -71,8 +79,8 @@ export function audit(name,{directory=path.join(root,'ATtiny88/Music/universal/s
     assert.equal(c.data[state+220],ref.noiseHigh,'Percussion LFSR high byte');
     lastTick=ref.totalTicks;
    }else if(!c.inIRQ&&returnPCs.has(c.pc)){
-    const actual=mono?c.r[24]|c.r[25]<<8:(c.r[22]|c.r[23]<<8|c.r[24]<<16|c.r[25]<<24)>>>0;
-    assert.equal(actual,mono?expectedMix&65535:expectedMix,name+': signed tonal mix');
+    const actual=packed?(c.r[22]|c.r[23]<<8|c.r[24]<<16|c.r[25]<<24)>>>0:c.r[24]|c.r[25]<<8;
+    assert.equal(actual,packed?expectedMix:expectedMix&65535,name+': signed tonal mix');
     for(let i=0;i<score.voices;i++){assert.equal(word(c.data,state+i*23),ref.voices[i].phase,'DDS phase after kernel');checkedPhases++;}
     maxRender=Math.max(maxRender,c.cyc-startRender-(c.irqCount-startIrqs)*c.maxIRQ);ref.finishSample();
    }else if(c.pc===irq){
@@ -91,9 +99,16 @@ export function audit(name,{directory=path.join(root,'ATtiny88/Music/universal/s
   assert.ok(done,name+': complete loop and restart');
   assert.equal(c.data[at('um_underruns')],0);assert.equal(c.lost,0);assert.equal(c.workLost,0);
   assert.ok(c.minSP>=ring+bufferBytes,'Stack remains above the FIFO');
+  if(usb){
+   assert.equal(c.data[0x54],0,'Inherited WDRF cleared');
+   assert.equal(c.data[0x60],0,'Inherited watchdog disabled');
+   assert.equal(c.data[0x64],0,'Inherited peripheral power reduction cleared');
+   assert.ok(c.eeprom.every(value=>value===255),'No EEPROM programming required');
+  }
  }catch(error){failure=error.message;}
  const passed=!failure;
  const report={variant:name,cpuHz:meta.cpuHz,backend:meta.backend,engineSha256:meta.engineSha256,
+  ...(usb?{board:meta.board,bootloaderHandoffChecked:true,erasedEepromChecked:true}:{}),
   flashSha256:meta.flashSha256,eepromSha256:meta.eepromSha256,scoreSha256:sha(JSON.stringify(score)),
   reference:'Independent uncompressed UM88 JSON, exact tonal/percussion/interpolation arithmetic',passed,
   simulatedSeconds:c.cyc/meta.cpuHz,controlFrames:meta.controlTicks,completeLoops:ref.loops,

@@ -2,26 +2,28 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
+import path from 'node:path';
 import {AVRCore} from '../web-player/lib/avr-reference.js';
-const load=name=>({meta:JSON.parse(fs.readFileSync('build/universal/engine-'+name+'.json')),
- binary:fs.readFileSync('build/universal/engine-'+name+'.bin')});
+const engineDirectory=process.argv.find(arg=>arg.startsWith('--engine-dir='))?.slice(13)||'build/universal';
+const reportFile=process.argv.find(arg=>arg.startsWith('--report='))?.slice(9)||'ATtiny88/Music/universal/backend-verification.json';
+const load=name=>({meta:JSON.parse(fs.readFileSync(path.join(engineDirectory,'engine-'+name+'.json'))),
+ binary:fs.readFileSync(path.join(engineDirectory,'engine-'+name+'.bin'))});
 const variants=[load('c'),load('avr-asm')];
 let random=0x774d31;
 const next=()=>{random=(Math.imul(random,1664525)+1013904223)>>>0;return random;};
 for(let test=0;test<512;test++){
  const count=1+next()%8,grouped=!!(test&1),states=[];
- let expectedL=0,sum=0;
+ let expectedL=0,expectedR=0,sum=0;
  for(let i=0;i<count;i++){
   const phase=next()&65535,step=next()&16383,level=next()&15;
   const wave=Array.from({length:16},()=>grouped?next()%16-8:next()%81-40);
-  const mix=grouped?(i===count-1?160|(test&2?1:0):0):128|(test&4?8:0)|(test&8?16:0);
+  const mix=grouped?(i===count-1?160|((test>>1)&3)<<3|(test&2?1:0):0):128|(test&4?8:0)|(test&8?16:0);
   const output=wave[((phase+step)&65535)>>12];sum+=output;
   if(mix&128){const q=grouped?Math.floor(Math.floor(sum*level/8)/2**(mix&1)):sum;
-   expectedL+=(mix&8)?Math.floor(q/2):q;sum=0;}
+   expectedL+=(mix&8)?Math.floor(q/2):q;expectedR+=(mix&16)?Math.floor(q/2):q;sum=0;}
   states.push({phase,step,level,wave,mix});
  }
- const expected=expectedL&65535;
- check(states,expected,test);
+ check(states,{left:expectedL,right:expectedR},test);
 }
 function check(states,expected,label){
  const count=states.length;
@@ -38,20 +40,22 @@ function check(states,expected,label){
   core.pushPC(0);core.pc=meta.labels.um_render/2;
   const start=core.cyc;
   do{core.step();assert.ok(core.cyc-start<20000);}while(core.pc!==0);
-  const result=core.r[24]|core.r[25]<<8;
-  assert.equal(result,expected,`${meta.backend}: signed mono mix case ${label}`);
+  const result=(core.r[22]|core.r[23]<<8|core.r[24]<<16|core.r[25]<<24)>>>0;
+  const packed=((expected.left&65535)|((expected.right&65535)<<16))>>>0;
+  assert.equal(result,packed,`${meta.backend}: signed stereo mix case ${label}`);
   for(const r of [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,28,29])assert.equal(core.r[r],r+37,'GCC callee-save register');
   assert.equal(core.r[1],0,'GCC zero register');assert.equal(core.sp,767);
   states.forEach((s,i)=>assert.equal(core.data[base+i*23]|core.data[base+i*23+1]<<8,(s.phase+s.step)&65535));
  }
 }
-for(let count=1;count<=8;count++)for(const value of [-128,-1,127])for(const mix of [128,136]){
+for(let count=1;count<=8;count++)for(const value of [-128,-1,127])for(const mix of [128,136,144,152]){
  const states=Array.from({length:count},()=>({phase:65535,step:1,level:15,wave:Array(16).fill(value),mix}));
- check(states,(count*((mix&8)?Math.floor(value/2):value))&65535,`limits ${count}/${value}/${mix}`);
+ check(states,{left:count*((mix&8)?Math.floor(value/2):value),right:count*((mix&16)?Math.floor(value/2):value)},`limits ${count}/${value}/${mix}`);
 }
-for(let level=0;level<16;level++)for(let q=-64;q<64;q++)for(const pan of [0,8])for(const attenuation of [0,1]){
- let value=Math.floor(Math.floor(q*level/8)/2**attenuation);if(pan)value=Math.floor(value/2);
- check([{phase:0,step:0,level,wave:Array(16).fill(q),mix:160|pan|attenuation}],value&65535,`gain ${q}/${level}/${pan}/${attenuation}`);
+for(let level=0;level<16;level++)for(let q=-64;q<64;q++)for(const pan of [0,8,16,24])for(const attenuation of [0,1]){
+ const value=Math.floor(Math.floor(q*level/8)/2**attenuation);
+ check([{phase:0,step:0,level,wave:Array(16).fill(q),mix:160|pan|attenuation}],
+  {left:pan&8?Math.floor(value/2):value,right:pan&16?Math.floor(value/2):value},`gain ${q}/${level}/${pan}/${attenuation}`);
 }
 const digest=b=>createHash("sha256").update(b).digest("hex");
 let cacheCases=0;
@@ -80,12 +84,15 @@ for(const {meta,binary} of variants){
 let irqCases=0;
 for(const {meta,binary} of variants){
  const core=new AVRCore(binary,null,{target:'attiny88',fastBlocks:false});
- const at=name=>meta.labels[name]-0x800000,size=meta.pwmBufferFrames;
+ const at=name=>meta.labels[name]-0x800000,size=meta.pwmBufferBytes??meta.pwmBufferFrames;
  assert.ok(Number.isInteger(size)&&size>=8&&size<=192);
- for(let read=0;read<size;read++)for(const empty of [false,true]){
-  const frame=(read*73+19)&255;
+ for(const channels of [1,2])for(let read=0;read<size;read+=channels)for(const empty of [false,true]){
+  const frame=(read*73+19)&255,right=(frame+37)&255;
   core.data[at('um_ring')+read]=frame;core.data[at('um_read')]=read;
-  core.data[at('um_write')]=empty?read:(read+1)%size;core.data[at('um_underruns')]=255;
+  if(channels===2)core.data[at('um_ring')+read+1]=right;
+  core.data[at('um_channels')]=channels;
+  core.data[at('um_write')]=empty?read:(read+channels)%size;core.data[at('um_underruns')]=255;
+  core.data[core.profile.timer.ocra]=91;
   core.data[core.profile.timer.ocrb]=83;
   for(let r=0;r<32;r++)core.r[r]=(r*17+read)&255;
   const saved=[...core.r],flags=(read*29)&127;core.sreg=flags;
@@ -93,11 +100,12 @@ for(const {meta,binary} of variants){
   const start=core.cyc;do{core.step();assert.ok(core.cyc-start<256);}while(core.pc!==0);
   assert.deepEqual([...core.r],saved,meta.backend+': ISR registers including nonzero r1');
   assert.equal(core.sreg,flags|128);assert.equal(core.sp,767);
-  assert.equal(core.data[at('um_read')],empty?read:(read+1)%size);
+  assert.equal(core.data[at('um_read')],empty?read:(read+channels)%size);
   assert.equal(core.data[at('um_underruns')],empty?0:255);
-  assert.equal(core.data[core.profile.timer.ocrb],empty?83:frame);irqCases++;
+  assert.equal(core.data[core.profile.timer.ocra],empty||channels===1?91:frame);
+  assert.equal(core.data[core.profile.timer.ocrb],empty?83:channels===1?frame:right);irqCases++;
  }
 }
-const report={cases:8752,exhaustiveGroupGainCases:8192,cacheCases:cacheCases/2,irqCases:irqCases/2,exactMonoIRQ:true,exactPhases:true,exactMonoMix:true,exactCachedWaves:true,abiPreserved:true,backends:variants.map(v=>({backend:v.meta.backend,bufferFrames:v.meta.pwmBufferFrames,engineSha256:digest(v.binary)}))};
-fs.writeFileSync("ATtiny88/Music/universal/backend-verification.json",JSON.stringify(report,null,2)+"\n");
-console.log("8752 C/ASM/reference mono mixes and 34816 cache cases per backend: exact phases, gain, waves and ABI");
+const report={cases:16992,exhaustiveGroupGainCases:16384,cacheCases:cacheCases/2,irqCases:irqCases/2,exactMonoIRQ:true,exactStereoIRQ:true,exactPhases:true,exactMonoMix:true,exactStereoMix:true,exactCachedWaves:true,abiPreserved:true,backends:variants.map(v=>({backend:v.meta.backend,bufferBytes:v.meta.pwmBufferBytes??v.meta.pwmBufferFrames,engineSha256:digest(v.binary)}))};
+fs.writeFileSync(reportFile,JSON.stringify(report,null,2)+"\n");
+console.log("16992 C/ASM/reference stereo mixes and 34816 cache cases per backend: exact phases, pans, gain, waves and ABI");

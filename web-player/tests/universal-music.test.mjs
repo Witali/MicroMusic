@@ -6,9 +6,8 @@ import {createRenderer} from '../lib/engines.js';
 const read=p=>readFileSync(new URL(p,import.meta.url));
 const catalog=JSON.parse(read('../firmware-attiny88.json'));
 const hash=b=>createHash('sha256').update(b).digest('hex');
-test('eight mono compositions share executable bytes; stereo remains a pinned archive',()=>{
+test('all nine current compositions, including stereo, share executable bytes',()=>{
  let code,monoCount=0;
- const archive=JSON.parse(read('../../ATtiny88/Music/universal/archive/stereo-v1/provenance.json'));
  assert.equal(catalog.entries.length,9);
  for(const entry of catalog.entries){
   assert.equal(entry.firmwareEngine,'UM88');
@@ -16,14 +15,10 @@ test('eight mono compositions share executable bytes; stereo remains a pinned ar
   const verification=JSON.parse(read('../'+entry.verificationSource));
   const binary=read('../'+entry.source.replace(/\.hex$/,'.bin'));
   const prefix=binary.subarray(0,meta.engineBytes);
-  if(entry.archivedFirmware){
-   assert.equal(meta.channels,2);assert.equal(entry.id,archive.variant);
-   assert.equal(meta.engineSha256,archive.engineSha256);assert.equal(hash(binary),archive.flashSha256);
-   assert.match(entry.sourceAssembly,/archive\/stereo-v1/);
-  }else{
-   monoCount++;assert.equal(meta.channels,1);assert.equal(meta.pwmBufferFrames,192);
-   if(code)assert.deepEqual(prefix,code);else code=prefix;
-  }
+  assert.equal(entry.archivedFirmware,false);
+  assert.equal(meta.channels,entry.audioChannels);assert.equal(meta.pwmBufferFrames,192/meta.channels);
+  if(meta.channels===1)monoCount++;
+  if(code)assert.deepEqual(prefix,code);else code=prefix;
   assert.equal(hash(prefix),meta.engineSha256);assert.equal(hash(binary),verification.flashSha256);
   assert.equal(verification.fifoUnderruns,0);assert.equal(verification.completeLoops,1);
   assert.equal(meta.cpuHz,8000000);assert.equal(meta.synthesisHz,meta.cpuHz/1024);

@@ -18,7 +18,13 @@ TIMER1_OVF_vect:
     ldi r27,0
     subi r26,lo8(-(um_ring))
     sbci r27,hi8(-(um_ring))
+    lds r16,um_channels
+    cpi r16,2
     ld r16,X+
+    brne .Lmono_frame
+    sts _SFR_MEM_ADDR(OCR1AL),r16
+    ld r16,X+
+.Lmono_frame:
     sts _SFR_MEM_ADDR(OCR1BL),r16
     subi r26,lo8(um_ring)
     cpi r26,UM_PWM_BUFFER_FRAMES

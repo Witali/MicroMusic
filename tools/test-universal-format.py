@@ -2,12 +2,14 @@
 import copy
 import importlib.util
 import json
+import random
 from pathlib import Path
 import unittest
 
 ROOT=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('um_builder',ROOT/'tools/build-universal-music.py')
 builder=importlib.util.module_from_spec(spec);spec.loader.exec_module(builder)
+codec=builder.codec
 
 class Format(unittest.TestCase):
     def setUp(self):
@@ -23,6 +25,56 @@ class Format(unittest.TestCase):
                 self.assertLessEqual(report['grammarDepth'],12)
                 self.assertEqual(report['controlTicks'],score['controlTicks'])
                 self.assertTrue(report['allControlFramesVerified'])
+
+    def test_compact_dictionary_preserves_every_retained_command_byte(self):
+        for name in builder.NAMES:
+            with self.subTest(song=name):
+                score=json.loads((ROOT/'ATtiny88/Music/universal/songs'/name/'score.json').read_text(encoding='utf-8'))
+                raw=score['commands'];packed=codec.pack_grammar(raw)
+                self.assertEqual(codec.unpack_grammar(packed),raw)
+                self.assertEqual(packed['format'],9)
+                self.assertLessEqual(packed['depth'],12)
+                self.assertLessEqual(len(packed['alphabet'])+len(packed['rules']),512)
+                self.assertEqual(packed['grammarBytes'],len(packed['alphabet'])+len(packed['ruleData'])+len(packed['streamData']))
+                if name in ('alicia','children'):
+                    self.assertLess(packed['grammarBytes'],2400)
+
+    def test_repeated_polyphonic_chord_phrases_use_shared_dictionary_calls(self):
+        # Three voices change context, pitch, level and phase together. WAITs
+        # preserve the chord rhythm; the next chord and the whole phrase repeat.
+        phrase=[64,0,65,1,66,2,72,0,73,4,74,7,143,156,172,80,81,82,12,
+                72,2,73,5,74,9,143,156,172,80,81,82,6,88,1,89,2,6]
+        raw=phrase*48+[0];packed=codec.pack_grammar(raw);count=len(packed['alphabet'])
+        self.assertTrue(packed['rules'])
+        self.assertTrue(any(symbol>=count for symbol in packed['stream']))
+        self.assertLess(packed['grammarBytes'],len(raw)//2)
+        self.assertEqual(codec.unpack_grammar(packed),raw)
+        self.assertLessEqual(packed['depth'],12)
+        expanded=[bytes([value]) for value in packed['alphabet']]
+        for a,b in packed['rules']:expanded.append(expanded[a]+expanded[b])
+        self.assertTrue(any(bytes(phrase) in value for value in expanded[count:]),
+                        'A dictionary entry must reuse a complete multi-voice phrase, not just individual notes')
+
+    def test_nine_bit_serialization_has_a_fixed_independent_vector(self):
+        self.assertEqual(codec._pack9([0,1,255,256,511]),bytes([0,2,252,3,248,31]))
+
+    def test_dense_alphabet_handles_all_bytes_and_deterministic_random_streams(self):
+        rng=random.Random(0x554d3838)
+        for raw in [list(range(256)),[0],[255]*31,[1,2,1,2]*137,
+                    [rng.randrange(256) for _ in range(2048)]]:
+            with self.subTest(length=len(raw)):
+                first=codec.pack_grammar(raw);second=codec.pack_grammar(raw)
+                self.assertEqual(first,second)
+                self.assertEqual(codec.unpack_grammar(first),raw)
+
+    def test_serialized_dictionary_rejects_forward_references_and_padding(self):
+        packed=codec.pack_grammar([1,2]*32+[0])
+        bad=copy.deepcopy(packed)
+        bad['ruleData']=codec._pack9([511,511]+[value for pair in packed['rules'][1:] for value in pair])
+        with self.assertRaisesRegex(ValueError,'earlier'):codec.unpack_grammar(bad)
+        bad=copy.deepcopy(codec.pack_grammar([0]))
+        bad['streamData']=bad['streamData'][:-1]+bytes([bad['streamData'][-1]|128])
+        with self.assertRaisesRegex(ValueError,'padding'):codec.unpack_grammar(bad)
 
     def test_frequency_retargets_only_pitch_palette(self):
         a,report=builder.encode_score(self.score,8000000)

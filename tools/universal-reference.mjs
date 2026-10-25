@@ -5,14 +5,14 @@ import assert from 'node:assert/strict';
 const word=(a,p)=>a[p]|a[p+1]<<8;
 const roundEven=x=>{const a=Math.floor(x),f=x-a;return f===.5?a+(a&1):Math.round(x);};
 export class UniversalReference {
- constructor(score,cpuHz,{pwmChannels=2,pwmFrames=192/pwmChannels}={}){
+ constructor(score,cpuHz,{pwmChannels=2,pwmFrames=192/pwmChannels,pwmReserveFrames=4/pwmChannels}={}){
   assert.equal(score.schema,'micromusic-um88-score');assert.equal(score.version,1);
-  assert.ok(score.voices>=1&&score.voices<=8);assert.ok(cpuHz>=75000&&cpuHz<=12000000);
+  assert.ok(score.voices>=1&&score.voices<=8);assert.ok(cpuHz>=75000&&cpuHz<=16000000);
   this.score=score;this.cpuHz=cpuHz;this.pwmChannels=pwmChannels;
   this.steps=score.pitches.map(n=>n===null?0:roundEven(440*2**((n-69)/12)*65536/(cpuHz/1024)));
   this.voices=Array.from({length:score.voices},()=>({phase:0,step:0,level:0,context:0}));
   this.clock=0;this.fraction=0;this.samples=0;this.totalTicks=0;this.loops=-1;
-  this.previous=[128,128];this.ring=new Uint8Array(pwmFrames*pwmChannels).fill(128);this.write=this.ring.length-4;
+  this.previous=[128,128];this.ring=new Uint8Array(pwmFrames*pwmChannels).fill(128);this.write=this.ring.length-pwmReserveFrames*pwmChannels;
   this.clippedSamples=0;this.peakMix=0;this.square=0;this.sum=0;this.commandCount=0;
   this.reset();this.events();
  }

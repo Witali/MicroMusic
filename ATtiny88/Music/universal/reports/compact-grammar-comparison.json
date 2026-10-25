@@ -1,0 +1,218 @@
+{
+  "baselineCommit": "ad018dc",
+  "method": "Read retained score JSON and pre-change reports from Git. Compare exact source objects and decoded command SHA-256; retained build reports measure new grammar and firmware sizes. This is a data/Flash-size measurement; real-time PWM/IRQ audits are separate.",
+  "codec": "dense alphabet plus 9-bit binary phrase dictionary, depth <=12",
+  "compiler": "GNU AVR GCC 7.3.0, -Os -fno-jump-tables, explicit AVR assembly arithmetic; grammar decoder in portable C",
+  "sourceCodecSha256": "1c2c1e01ce47a0da24b282d99df8c0a20b8c957584622f5b1cbe2f7da0355586",
+  "allScoreSourcesUnchanged": true,
+  "allMicronucleusImagesFit": true,
+  "entries": [
+    {
+      "variant": "alicia",
+      "sourceScoreUnchanged": true,
+      "scoreSha256": "4b41d200ea523355948d78f8fd80b9a5ede757081a9263e1e0b50c078b83eb45",
+      "decodedCommandsSha256": "7e6f8095efa4fae81b1c981539686c311b1eeb51534d2e8bb9c4a9c7d12184df",
+      "before": {
+        "grammarBytes": 3770,
+        "dataBytes": 4197,
+        "engineBytes": 2676,
+        "flashBytes": 6885
+      },
+      "after": {
+        "grammarBytes": 2222,
+        "grammarAlphabetSize": 71,
+        "grammarRules": 338,
+        "grammarDepth": 11,
+        "dataBytes": 2649,
+        "engineBytes": 3026,
+        "flashBytes": 5689
+      },
+      "micronucleusFlashBytes": 5753,
+      "micronucleusLimit": 6012
+    },
+    {
+      "variant": "cancion-del-mariachi",
+      "sourceScoreUnchanged": true,
+      "scoreSha256": "1e77a1b38f6f92f1c72661db197d621c004e9d307d0001dab1e3f19c1672f538",
+      "decodedCommandsSha256": "d04bc3cb76d1b90ce57279434eb87627592677c1c0a7db06b4c7453ad061500f",
+      "before": {
+        "grammarBytes": 1787,
+        "dataBytes": 2125,
+        "engineBytes": 2676,
+        "flashBytes": 4813
+      },
+      "after": {
+        "grammarBytes": 1091,
+        "grammarAlphabetSize": 53,
+        "grammarRules": 171,
+        "grammarDepth": 8,
+        "dataBytes": 1429,
+        "engineBytes": 3026,
+        "flashBytes": 4469
+      },
+      "micronucleusFlashBytes": 4533,
+      "micronucleusLimit": 6012
+    },
+    {
+      "variant": "cancion-del-mariachi-polyphonic",
+      "sourceScoreUnchanged": true,
+      "scoreSha256": "488869a37fe24339078566528573a334fae25b1051a15e094f0a77e9ab98643c",
+      "decodedCommandsSha256": "1ceba02787a62ad2767ba61c5bed12d7c87d5493434f22dde0388f8cbd0ec111",
+      "before": {
+        "grammarBytes": 1157,
+        "dataBytes": 1460,
+        "engineBytes": 2676,
+        "flashBytes": 4148
+      },
+      "after": {
+        "grammarBytes": 741,
+        "grammarAlphabetSize": 53,
+        "grammarRules": 112,
+        "grammarDepth": 9,
+        "dataBytes": 1044,
+        "engineBytes": 3026,
+        "flashBytes": 4084
+      },
+      "micronucleusFlashBytes": 4148,
+      "micronucleusLimit": 6012
+    },
+    {
+      "variant": "cancion-del-mariachi-sparse",
+      "sourceScoreUnchanged": true,
+      "scoreSha256": "a283b43536b391d5487f4f433a7d7e3879f326fd98e4907bfeef6396898af2c0",
+      "decodedCommandsSha256": "a71788ed1855426b0c59b66c440cafb4aece8eb45f5fbd9f0675760c2dd20a5c",
+      "before": {
+        "grammarBytes": 2122,
+        "dataBytes": 2421,
+        "engineBytes": 2676,
+        "flashBytes": 5109
+      },
+      "after": {
+        "grammarBytes": 1248,
+        "grammarAlphabetSize": 51,
+        "grammarRules": 228,
+        "grammarDepth": 12,
+        "dataBytes": 1547,
+        "engineBytes": 3026,
+        "flashBytes": 4587
+      },
+      "micronucleusFlashBytes": 4651,
+      "micronucleusLimit": 6012
+    },
+    {
+      "variant": "children",
+      "sourceScoreUnchanged": true,
+      "scoreSha256": "d6530ce2cecee57580a64b0c3a0300e665cbfacc8136cd10389951e1d751b6e3",
+      "decodedCommandsSha256": "a88b0a98f68b41c35badd4721ba25893857654c9bffd2d05b40bb5425a93d02c",
+      "before": {
+        "grammarBytes": 4183,
+        "dataBytes": 4670,
+        "engineBytes": 2676,
+        "flashBytes": 7358
+      },
+      "after": {
+        "grammarBytes": 2356,
+        "grammarAlphabetSize": 59,
+        "grammarRules": 425,
+        "grammarDepth": 11,
+        "dataBytes": 2843,
+        "engineBytes": 3026,
+        "flashBytes": 5883
+      },
+      "micronucleusFlashBytes": 5947,
+      "micronucleusLimit": 6012
+    },
+    {
+      "variant": "greensleeves",
+      "sourceScoreUnchanged": true,
+      "scoreSha256": "b55f00de5919699a357afb0474b2b3daee30840edb669c88cb35b5e77ecc6613",
+      "decodedCommandsSha256": "00c62b947aea2d86c38321a60db21b4f653e6b6f32a4cdac2fae5d2694c94c83",
+      "before": {
+        "grammarBytes": 789,
+        "dataBytes": 1227,
+        "engineBytes": 2676,
+        "flashBytes": 3915
+      },
+      "after": {
+        "grammarBytes": 535,
+        "grammarAlphabetSize": 40,
+        "grammarRules": 78,
+        "grammarDepth": 7,
+        "dataBytes": 973,
+        "engineBytes": 3026,
+        "flashBytes": 4013
+      },
+      "micronucleusFlashBytes": 4077,
+      "micronucleusLimit": 6012
+    },
+    {
+      "variant": "lumiere-stereo",
+      "sourceScoreUnchanged": true,
+      "scoreSha256": "c6cc23708869d3fa2fc7d170e693591203039382c7a9c0f7a4c8f1b241e317bc",
+      "decodedCommandsSha256": "8a05181b97b5dff23604aa404edad05dc0ee66d6b3540c85ec43e79ba9805a1e",
+      "before": {
+        "grammarBytes": 2005,
+        "dataBytes": 2463,
+        "engineBytes": 2772,
+        "flashBytes": 5247
+      },
+      "after": {
+        "grammarBytes": 1186,
+        "grammarAlphabetSize": 52,
+        "grammarRules": 208,
+        "grammarDepth": 11,
+        "dataBytes": 1644,
+        "engineBytes": 3026,
+        "flashBytes": 4684
+      },
+      "micronucleusFlashBytes": 4748,
+      "micronucleusLimit": 6012
+    },
+    {
+      "variant": "rhythmic",
+      "sourceScoreUnchanged": true,
+      "scoreSha256": "18eb90ba911c38cf1a0ae22d1ad286e8eb1ca3f722f162a1fdf4f34621722c81",
+      "decodedCommandsSha256": "737aeb555b34759e8c296a676eb2cfcc58ff599643d2ccf094386d03fba945ca",
+      "before": {
+        "grammarBytes": 2005,
+        "dataBytes": 2455,
+        "engineBytes": 2676,
+        "flashBytes": 5143
+      },
+      "after": {
+        "grammarBytes": 1186,
+        "grammarAlphabetSize": 52,
+        "grammarRules": 208,
+        "grammarDepth": 11,
+        "dataBytes": 1636,
+        "engineBytes": 3026,
+        "flashBytes": 4676
+      },
+      "micronucleusFlashBytes": 4740,
+      "micronucleusLimit": 6012
+    },
+    {
+      "variant": "turkish-march",
+      "sourceScoreUnchanged": true,
+      "scoreSha256": "90c5584583a600d7187703649d7931fc75a0f7f326317e3d2098761c41c44ded",
+      "decodedCommandsSha256": "74e7ef2e84aa3d40662bc3e859d6b7bc812990381ce1ae6d17ed25d3d2e731af",
+      "before": {
+        "grammarBytes": 1713,
+        "dataBytes": 2072,
+        "engineBytes": 2676,
+        "flashBytes": 4760
+      },
+      "after": {
+        "grammarBytes": 1028,
+        "grammarAlphabetSize": 42,
+        "grammarRules": 154,
+        "grammarDepth": 10,
+        "dataBytes": 1387,
+        "engineBytes": 3026,
+        "flashBytes": 4427
+      },
+      "micronucleusFlashBytes": 4491,
+      "micronucleusLimit": 6012
+    }
+  ]
+}

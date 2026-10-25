@@ -7,25 +7,59 @@ UMState um;
 uint16_t um_normalizer;
 int8_t um_normalizerMin;
 uint8_t um_masterShift;
+uint8_t um_channels;
 static uint16_t waveTable,contextTable,envelopeTable,ruleTable,rowTable,pitchTable;
 static uint8_t levelDirty,contextDirty;
+#ifndef UM_COMPACT_SCORE_ONLY
+#define UM_COMPACT_SCORE_ONLY 0
+#endif
+static uint16_t literalCount;
+static uint8_t streamBit;
+#if !UM_COMPACT_SCORE_ONLY
+static uint8_t packedSymbols;
+#endif
 /* Header: UM88, voices, channels, master shift, normalizer minimum;
    then pointers: waves, contexts, envelopes, rules, stream, alphabet, normalizer. */
 #define FIELD(offset) UM_READ(UM_SONG_ADDRESS+(offset))
 #define POINTER(offset) um_word(UM_SONG_ADDRESS+(offset))
 static uint16_t symbol(void) {
+#if !UM_COMPACT_SCORE_ONLY
+    if(!packedSymbols){
     uint8_t first=UM_READ(um.stream++);
     if(first<128)return first;
     return ((uint16_t)(first&127)<<8)|UM_READ(um.stream++);
+    }
+#endif
+    uint16_t code=(um_word(um.stream)>>streamBit)&511;
+    um.stream++;
+    if(++streamBit==8){streamBit=0;um.stream++;}
+    return code;
 }
 static uint8_t command(void) {
     uint16_t code=um.depth?um.pending[--um.depth]:symbol();
-    while(code>=256){
+    while(code>=literalCount){
+#if !UM_COMPACT_SCORE_ONLY
+        if(!packedSymbols){
         uint16_t at=ruleTable+((code-256)<<2);
         um.pending[um.depth++]=um_word(at+2);
         code=um_word(at);
+        }else
+#endif
+        {
+            /* Each pair occupies 18 bits. Pair starts have shifts 0,2,4,6;
+               the right symbol always starts in the following byte. */
+            uint16_t bit=(code-literalCount)*9;
+            uint16_t at=ruleTable+(bit>>2);
+            uint8_t shift=(bit&3)<<1;
+            uint8_t lo=UM_READ(at),middle=UM_READ(at+1),hi=UM_READ(at+2);
+            um.pending[um.depth++]=((middle|((uint16_t)hi<<8))>>(shift+1))&511;
+            code=((lo|((uint16_t)middle<<8))>>shift)&511;
+        }
     }
-    return (uint8_t)code;
+#if !UM_COMPACT_SCORE_ONLY
+    if(!packedSymbols)return (uint8_t)code;
+#endif
+    return UM_READ(ruleTable-literalCount+code);
 }
 #if !defined(__AVR_ATtiny88__) || !defined(UM_ENABLE_AVR_ASM) || !UM_ENABLE_AVR_ASM
 void um_scale_wave(uint16_t source,int8_t *target,uint8_t level,uint8_t gain) {
@@ -56,7 +90,7 @@ static void read_events(void) {
             for(uint8_t i=0;i<um.count;i++){
                 um.voice[i].phase=0;um.voice[i].step=0;um.voice[i].level=0;
             }
-            um.stream=POINTER(16);um.depth=0;um.ticks=0;um.tickPhase=0;
+            um.stream=POINTER(16);streamBit=0;um.depth=0;um.ticks=0;um.tickPhase=0;
             um.drumMode=0;um.drumPhase=0;um.noiseHigh=1;
             contextDirty=255;
             continue;
@@ -76,9 +110,14 @@ static void read_events(void) {
 }
 void um_init(void) {
     memset(&um,0,sizeof um);
-    um.count=FIELD(4);um.stream=POINTER(16);um.noiseHigh=1;
+    um.count=FIELD(4);um_channels=FIELD(5);um.stream=POINTER(16);um.noiseHigh=1;
     waveTable=POINTER(8);contextTable=POINTER(10);envelopeTable=POINTER(12);
     ruleTable=POINTER(14);rowTable=POINTER(18);pitchTable=POINTER(24);
+    literalCount=FIELD(23);if(!literalCount)literalCount=256;
+    streamBit=0;
+#if !UM_COMPACT_SCORE_ONLY
+    packedSymbols=FIELD(22);
+#endif
     um_normalizer=POINTER(20);um_normalizerMin=FIELD(7);um_masterShift=FIELD(6);
     read_events();
     for(uint8_t i=0;i<um.count;i++)refresh(&um.voice[i]);
@@ -104,8 +143,8 @@ void um_tick(void) {
     }
 }
 #if !defined(__AVR_ATtiny88__) || !defined(UM_ENABLE_AVR_ASM) || !UM_ENABLE_AVR_ASM
-int16_t um_render(void) {
-    int16_t l=0,group=0;
+uint32_t um_render(void) {
+    int16_t l=0,r=0,group=0;
     for(uint8_t i=0;i<um.count;i++){
         UMVoice *v=&um.voice[i];v->phase+=v->step;
         group+=v->wave[v->phase>>12];
@@ -118,10 +157,12 @@ int16_t um_render(void) {
                 value+=((uint8_t)UM_VALUE(um_amplitudes,row+(group&7)+8))>>3;
                 value>>=mix&1;
             }else value=group>>(mix&7);
-            group=0;l+=(mix&8)?value>>1:value;
+            group=0;
+            l+=(mix&8)?value>>1:value;
+            r+=(mix&16)?value>>1:value;
         }
     }
-    return l;
+    return (uint16_t)l|((uint32_t)(uint16_t)r<<16);
 }
 #endif
 uint8_t um_output(int16_t value) {

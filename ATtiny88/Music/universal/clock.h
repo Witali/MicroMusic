@@ -11,7 +11,13 @@
 #define F_CPU 8000000UL
 #endif
 #endif
-#if F_CPU < 75000UL || F_CPU > 12000000UL
+#if defined(UM_BOARD_MH_ET_LIVE_16MHZ) && UM_BOARD_MH_ET_LIVE_16MHZ
+/* This manufacturer's board uses 16 MHz, above ATtiny88's 12-MHz rating.
+ * Keep this explicit board configuration outside the ordinary device range. */
+#if F_CPU != 16000000UL
+#error "MH-ET LIVE Micronucleus board requires F_CPU=16000000 Hz"
+#endif
+#elif F_CPU < 75000UL || F_CPU > 12000000UL
 #error "ATtiny88 F_CPU must be 75000..12000000 Hz; also respect voltage/speed limits"
 #endif
 #define UM_PWM_DIVIDER 256UL
