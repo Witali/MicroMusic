@@ -1,0 +1,363 @@
+{
+  "rom_sha256": "f3a25740bd6fa29f980f5cbf9d9d8b8ebb4970d0ccfc9b12ae3e7aef64a36344",
+  "cpu_hz": 3500000,
+  "output_model": "INTE at EI/DI instruction completion; no INT/WAIT/HOLD",
+  "timing_method": "Separate fixed 8080 opcode timing table, CPU8080 used for state/control flow",
+  "period_t": 109,
+  "period_us": 31.142857142857142,
+  "carrier_hz": 32110.091743119265,
+  "pulses": 90976,
+  "intervals": {
+    "109": 90975
+  },
+  "maximum_grid_error_t": 0,
+  "maximum_width_error_t": 0,
+  "duplicate_pulse_mismatches": 0,
+  "width_step_t": 4,
+  "width_step_us": 1.1428571428571428,
+  "duty_step_percentage_points": 3.669724770642202,
+  "code_dnl_lsb": 0,
+  "code_inl_lsb": 0,
+  "levels": [
+    {
+      "level": 0,
+      "pulses": 10,
+      "min_t": 4,
+      "max_t": 4,
+      "width_us": 1.1428571428571428,
+      "duty_percent": 3.669724770642202
+    },
+    {
+      "level": 1,
+      "pulses": 152,
+      "min_t": 8,
+      "max_t": 8,
+      "width_us": 2.2857142857142856,
+      "duty_percent": 7.339449541284404
+    },
+    {
+      "level": 2,
+      "pulses": 412,
+      "min_t": 12,
+      "max_t": 12,
+      "width_us": 3.4285714285714284,
+      "duty_percent": 11.009174311926607
+    },
+    {
+      "level": 3,
+      "pulses": 1006,
+      "min_t": 16,
+      "max_t": 16,
+      "width_us": 4.571428571428571,
+      "duty_percent": 14.678899082568808
+    },
+    {
+      "level": 4,
+      "pulses": 2170,
+      "min_t": 20,
+      "max_t": 20,
+      "width_us": 5.714285714285714,
+      "duty_percent": 18.34862385321101
+    },
+    {
+      "level": 5,
+      "pulses": 4224,
+      "min_t": 24,
+      "max_t": 24,
+      "width_us": 6.857142857142857,
+      "duty_percent": 22.018348623853214
+    },
+    {
+      "level": 6,
+      "pulses": 7986,
+      "min_t": 28,
+      "max_t": 28,
+      "width_us": 8,
+      "duty_percent": 25.688073394495415
+    },
+    {
+      "level": 7,
+      "pulses": 46348,
+      "min_t": 32,
+      "max_t": 32,
+      "width_us": 9.142857142857142,
+      "duty_percent": 29.357798165137616
+    },
+    {
+      "level": 8,
+      "pulses": 15988,
+      "min_t": 36,
+      "max_t": 36,
+      "width_us": 10.285714285714286,
+      "duty_percent": 33.02752293577982
+    },
+    {
+      "level": 9,
+      "pulses": 6088,
+      "min_t": 40,
+      "max_t": 40,
+      "width_us": 11.428571428571429,
+      "duty_percent": 36.69724770642202
+    },
+    {
+      "level": 10,
+      "pulses": 3074,
+      "min_t": 44,
+      "max_t": 44,
+      "width_us": 12.571428571428571,
+      "duty_percent": 40.36697247706422
+    },
+    {
+      "level": 11,
+      "pulses": 1772,
+      "min_t": 48,
+      "max_t": 48,
+      "width_us": 13.714285714285714,
+      "duty_percent": 44.03669724770643
+    },
+    {
+      "level": 12,
+      "pulses": 968,
+      "min_t": 52,
+      "max_t": 52,
+      "width_us": 14.857142857142858,
+      "duty_percent": 47.706422018348626
+    },
+    {
+      "level": 13,
+      "pulses": 572,
+      "min_t": 56,
+      "max_t": 56,
+      "width_us": 16,
+      "duty_percent": 51.37614678899083
+    },
+    {
+      "level": 14,
+      "pulses": 174,
+      "min_t": 60,
+      "max_t": 60,
+      "width_us": 17.142857142857142,
+      "duty_percent": 55.04587155963303
+    },
+    {
+      "level": 15,
+      "pulses": 32,
+      "min_t": 64,
+      "max_t": 64,
+      "width_us": 18.285714285714285,
+      "duty_percent": 58.71559633027523
+    }
+  ],
+  "segment_boundary_count": 51,
+  "segment_boundaries": [
+    {
+      "sample": 28,
+      "period_t": 109
+    },
+    {
+      "sample": 88,
+      "period_t": 109
+    },
+    {
+      "sample": 460,
+      "period_t": 109
+    },
+    {
+      "sample": 476,
+      "period_t": 109
+    },
+    {
+      "sample": 1500,
+      "period_t": 109
+    },
+    {
+      "sample": 2524,
+      "period_t": 109
+    },
+    {
+      "sample": 3548,
+      "period_t": 109
+    },
+    {
+      "sample": 4572,
+      "period_t": 109
+    },
+    {
+      "sample": 5596,
+      "period_t": 109
+    },
+    {
+      "sample": 6620,
+      "period_t": 109
+    },
+    {
+      "sample": 7644,
+      "period_t": 109
+    },
+    {
+      "sample": 8568,
+      "period_t": 109
+    },
+    {
+      "sample": 9592,
+      "period_t": 109
+    },
+    {
+      "sample": 10616,
+      "period_t": 109
+    },
+    {
+      "sample": 11640,
+      "period_t": 109
+    },
+    {
+      "sample": 12664,
+      "period_t": 109
+    },
+    {
+      "sample": 13688,
+      "period_t": 109
+    },
+    {
+      "sample": 14688,
+      "period_t": 109
+    },
+    {
+      "sample": 15712,
+      "period_t": 109
+    },
+    {
+      "sample": 16176,
+      "period_t": 109
+    },
+    {
+      "sample": 16188,
+      "period_t": 109
+    },
+    {
+      "sample": 17212,
+      "period_t": 109
+    },
+    {
+      "sample": 18236,
+      "period_t": 109
+    },
+    {
+      "sample": 19260,
+      "period_t": 109
+    },
+    {
+      "sample": 20284,
+      "period_t": 109
+    },
+    {
+      "sample": 21308,
+      "period_t": 109
+    },
+    {
+      "sample": 22332,
+      "period_t": 109
+    },
+    {
+      "sample": 23356,
+      "period_t": 109
+    },
+    {
+      "sample": 24280,
+      "period_t": 109
+    },
+    {
+      "sample": 25304,
+      "period_t": 109
+    },
+    {
+      "sample": 26328,
+      "period_t": 109
+    },
+    {
+      "sample": 27352,
+      "period_t": 109
+    },
+    {
+      "sample": 28376,
+      "period_t": 109
+    },
+    {
+      "sample": 29400,
+      "period_t": 109
+    },
+    {
+      "sample": 30424,
+      "period_t": 109
+    },
+    {
+      "sample": 31448,
+      "period_t": 109
+    },
+    {
+      "sample": 32400,
+      "period_t": 109
+    },
+    {
+      "sample": 32412,
+      "period_t": 109
+    },
+    {
+      "sample": 33436,
+      "period_t": 109
+    },
+    {
+      "sample": 34460,
+      "period_t": 109
+    },
+    {
+      "sample": 35484,
+      "period_t": 109
+    },
+    {
+      "sample": 36508,
+      "period_t": 109
+    },
+    {
+      "sample": 37532,
+      "period_t": 109
+    },
+    {
+      "sample": 38556,
+      "period_t": 109
+    },
+    {
+      "sample": 39580,
+      "period_t": 109
+    },
+    {
+      "sample": 40508,
+      "period_t": 109
+    },
+    {
+      "sample": 40520,
+      "period_t": 109
+    },
+    {
+      "sample": 41544,
+      "period_t": 109
+    },
+    {
+      "sample": 42568,
+      "period_t": 109
+    },
+    {
+      "sample": 43592,
+      "period_t": 109
+    },
+    {
+      "sample": 44580,
+      "period_t": 109
+    }
+  ],
+  "exhaustive_level_transition_and_branch_cases": 1552,
+  "ending_silence_level": 7,
+  "ending_silence_samples": 4388,
+  "ending_silence_seconds": 0.27330971428571427,
+  "hardware_measured": false
+}

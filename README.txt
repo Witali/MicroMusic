@@ -40,6 +40,8 @@ INTEL 8080
 Схема платы BM80/BM1 Tester: i8080/Hardware/bm80-bm1-tester.jpg
 (встроена в i8080/Emulator/README.md, раздел «Схема платы BM80/BM1 Tester»).
 Исследования CRC: i8080/CRC/README.md.
+Музыка с постоянным PWM 108 T / 32,41 кГц: i8080/Music/uniform-pwm/README.md.
+В плеере выбраны голос с PWM 159 T и музыка UNIFORM26 с PWM 108 T.
 
 УСТАНОВКА ИНСТРУМЕНТОВ WINDOWS x64
 Из корня репозитория:

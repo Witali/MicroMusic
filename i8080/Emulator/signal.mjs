@@ -20,6 +20,10 @@ export class SignalFilter {
       this.gain = desired < this.gain ? desired : this.gain + this.gainRise * (desired - this.gain);
       value *= this.gain;
     }
-    return Math.max(-1, Math.min(1, value));
+    // DC removal can put an asymmetric PWM above unity even when its final
+    // volume fits the device range. Keep this stage linear; limiting before
+    // attenuation/resampling introduces audible intermodulation. The device
+    // output and PCM encoder own their final full-scale limits.
+    return value;
   }
 }
