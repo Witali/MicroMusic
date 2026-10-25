@@ -1,0 +1,374 @@
+Origin: 8000
+Size: 3020 bytes
+
+Symbols:
+FRAME_COUNT              00DA
+start                    8000
+main_loop                8010
+decode_frame             8026
+center0_ok               806E
+center1_ok               8093
+center2_ok               80B8
+getgray                  80EF
+getgray_loop             80F1
+getgray_zero             80F8
+getgray_mask_ok          80FF
+delta_standard           8117
+delta_wide               8119
+accum_delta              8121
+accum_ok                 812A
+synth_frame              812E
+synth_unvoiced           8166
+snap_harmonic            8178
+snap_loop                817A
+snap_remainder           8187
+snap_floor               8191
+snap_nonzero             8192
+snap_done                8196
+snap_saturate            8197
+set_tone_a               819A
+set_tone_b               81A9
+set_tone_c               81B8
+lookup_period            81C7
+set_voiced_volumes       81D3
+voiced_b_ready           81E3
+voiced_c_sub             81F3
+voiced_c_ready           81F5
+set_unvoiced_volumes     81FC
+unvoiced_b_sub           820F
+unvoiced_b_ready         8211
+unvoiced_c_sub           8221
+unvoiced_c_ready         8223
+silence                  822A
+ay_write                 8240
+stream_ptr               824E
+frames_left              8250
+voiced                   8252
+pitch_index              8253
+energy_index             8254
+pitch_units              8255
+base_volume              8256
+lsp_accum                8257
+pair_start               8258
+center0                  8259
+center1                  825A
+center2                  825B
+pitch_table              825C
+energy_table             82DC
+ay_period_table          82FC
+sample_data              84FC
+sample_end               8BCC
+
+Listing:
+8000  21 FC 84                        ld hl,sample_data
+8003  22 4E 82                        ld (stream_ptr),hl
+8006  21 DA 00                        ld hl,FRAME_COUNT
+8009  22 50 82                        ld (frames_left),hl
+800C  CD 2A 82                        call silence
+800F  FB                              ei
+8010  76                              halt
+8011  CD 26 80                        call decode_frame
+8014  CD 2E 81                        call synth_frame
+8017  2A 50 82                        ld hl,(frames_left)
+801A  2B                              dec hl
+801B  22 50 82                        ld (frames_left),hl
+801E  7C                              ld a,h
+801F  B5                              or l
+8020  20 EE                           jr nz,main_loop
+8022  CD 2A 82                        call silence
+8025  C9                              ret
+8026  2A 4E 82                        ld hl,(stream_ptr)
+8029  0E 80                           ld c,0x80                 ; first bit = bit 7 of first byte
+802B  06 01                           ld b,1
+802D  CD EF 80                        call getgray
+8030  06 01                           ld b,1
+8032  CD EF 80                        call getgray
+8035  32 52 82                        ld (voiced),a
+8038  06 07                           ld b,7
+803A  CD EF 80                        call getgray
+803D  32 53 82                        ld (pitch_index),a
+8040  06 05                           ld b,5
+8042  CD EF 80                        call getgray
+8045  32 54 82                        ld (energy_index),a
+8048  AF                              xor a
+8049  32 57 82                        ld (lsp_accum),a          ; cumulative LSP position in 25 Hz units
+804C  06 05                           ld b,5
+804E  CD EF 80                        call getgray
+8051  CD 17 81                        call delta_standard
+8054  CD 21 81                        call accum_delta
+8057  32 58 82                        ld (pair_start),a
+805A  06 05                           ld b,5
+805C  CD EF 80                        call getgray
+805F  CD 17 81                        call delta_standard
+8062  CD 21 81                        call accum_delta
+8065  57                              ld d,a                    ; current LSP position
+8066  3A 58 82                        ld a,(pair_start)
+8069  82                              add a,d                   ; pair centre in 12.5 Hz units
+806A  30 02                           jr nc,center0_ok
+806C  3E FF                           ld a,255
+806E  32 59 82                        ld (center0),a
+8071  06 05                           ld b,5
+8073  CD EF 80                        call getgray
+8076  CD 17 81                        call delta_standard
+8079  CD 21 81                        call accum_delta
+807C  32 58 82                        ld (pair_start),a
+807F  06 05                           ld b,5
+8081  CD EF 80                        call getgray
+8084  CD 19 81                        call delta_wide
+8087  CD 21 81                        call accum_delta
+808A  57                              ld d,a
+808B  3A 58 82                        ld a,(pair_start)
+808E  82                              add a,d
+808F  30 02                           jr nc,center1_ok
+8091  3E FF                           ld a,255
+8093  32 5A 82                        ld (center1),a
+8096  06 05                           ld b,5
+8098  CD EF 80                        call getgray
+809B  CD 19 81                        call delta_wide
+809E  CD 21 81                        call accum_delta
+80A1  32 58 82                        ld (pair_start),a
+80A4  06 05                           ld b,5
+80A6  CD EF 80                        call getgray
+80A9  CD 19 81                        call delta_wide
+80AC  CD 21 81                        call accum_delta
+80AF  57                              ld d,a
+80B0  3A 58 82                        ld a,(pair_start)
+80B3  82                              add a,d
+80B4  30 02                           jr nc,center2_ok
+80B6  3E FF                           ld a,255
+80B8  32 5B 82                        ld (center2),a
+80BB  06 05                           ld b,5
+80BD  CD EF 80                        call getgray
+80C0  06 05                           ld b,5
+80C2  CD EF 80                        call getgray
+80C5  06 05                           ld b,5
+80C7  CD EF 80                        call getgray
+80CA  06 05                           ld b,5
+80CC  CD EF 80                        call getgray
+80CF  22 4E 82                        ld (stream_ptr),hl
+80D2  3A 53 82                        ld a,(pitch_index)
+80D5  5F                              ld e,a
+80D6  16 00                           ld d,0
+80D8  21 5C 82                        ld hl,pitch_table
+80DB  19                              add hl,de
+80DC  7E                              ld a,(hl)
+80DD  32 55 82                        ld (pitch_units),a
+80E0  3A 54 82                        ld a,(energy_index)
+80E3  5F                              ld e,a
+80E4  16 00                           ld d,0
+80E6  21 DC 82                        ld hl,energy_table
+80E9  19                              add hl,de
+80EA  7E                              ld a,(hl)
+80EB  32 56 82                        ld (base_volume),a
+80EE  C9                              ret
+80EF  16 00                           ld d,0
+80F1  CB 22                           sla d
+80F3  7E                              ld a,(hl)
+80F4  A1                              and c
+80F5  28 01                           jr z,getgray_zero
+80F7  14                              inc d
+80F8  CB 39                           srl c
+80FA  20 03                           jr nz,getgray_mask_ok
+80FC  23                              inc hl
+80FD  0E 80                           ld c,0x80
+80FF  10 F0                           djnz getgray_loop
+8101  7A                              ld a,d
+8102  5F                              ld e,a
+8103  CB 3B                           srl e
+8105  AB                              xor e
+8106  5F                              ld e,a
+8107  CB 3B                           srl e
+8109  CB 3B                           srl e
+810B  AB                              xor e
+810C  5F                              ld e,a
+810D  CB 3B                           srl e
+810F  CB 3B                           srl e
+8111  CB 3B                           srl e
+8113  CB 3B                           srl e
+8115  AB                              xor e
+8116  C9                              ret
+8117  3C                              inc a
+8118  C9                              ret
+8119  FE 08                           cp 8
+811B  38 FA                           jr c,delta_standard
+811D  87                              add a,a
+811E  D6 06                           sub 6
+8120  C9                              ret
+8121  57                              ld d,a
+8122  3A 57 82                        ld a,(lsp_accum)
+8125  82                              add a,d
+8126  30 02                           jr nc,accum_ok
+8128  3E FF                           ld a,255
+812A  32 57 82                        ld (lsp_accum),a
+812D  C9                              ret
+812E  3A 52 82                        ld a,(voiced)
+8131  B7                              or a
+8132  28 32                           jr z,synth_unvoiced
+8134  1E 38                           ld e,0x38
+8136  3E 07                           ld a,7
+8138  CD 40 82                        call ay_write
+813B  3A 55 82                        ld a,(pitch_units)
+813E  57                              ld d,a
+813F  3A 59 82                        ld a,(center0)
+8142  CD 78 81                        call snap_harmonic
+8145  CD 9A 81                        call set_tone_a
+8148  3A 55 82                        ld a,(pitch_units)
+814B  57                              ld d,a
+814C  3A 5A 82                        ld a,(center1)
+814F  CD 78 81                        call snap_harmonic
+8152  CD A9 81                        call set_tone_b
+8155  3A 55 82                        ld a,(pitch_units)
+8158  57                              ld d,a
+8159  3A 5B 82                        ld a,(center2)
+815C  CD 78 81                        call snap_harmonic
+815F  CD B8 81                        call set_tone_c
+8162  CD D3 81                        call set_voiced_volumes
+8165  C9                              ret
+8166  1E 07                           ld e,0x07
+8168  3E 07                           ld a,7
+816A  CD 40 82                        call ay_write
+816D  1E 05                           ld e,5                    ; fairly bright noise period
+816F  3E 06                           ld a,6
+8171  CD 40 82                        call ay_write
+8174  CD FC 81                        call set_unvoiced_volumes
+8177  C9                              ret
+8178  1E 00                           ld e,0
+817A  BA                              cp d
+817B  38 0A                           jr c,snap_remainder
+817D  92                              sub d
+817E  47                              ld b,a
+817F  7B                              ld a,e
+8180  82                              add a,d
+8181  38 14                           jr c,snap_saturate
+8183  5F                              ld e,a
+8184  78                              ld a,b
+8185  18 F3                           jr snap_loop
+8187  87                              add a,a
+8188  BA                              cp d
+8189  38 06                           jr c,snap_floor
+818B  7B                              ld a,e
+818C  82                              add a,d
+818D  38 08                           jr c,snap_saturate
+818F  18 01                           jr snap_nonzero
+8191  7B                              ld a,e
+8192  B7                              or a
+8193  20 01                           jr nz,snap_done
+8195  7A                              ld a,d                    ; never return 0 Hz for a voiced frame
+8196  C9                              ret
+8197  3E FF                           ld a,255
+8199  C9                              ret
+819A  CD C7 81                        call lookup_period
+819D  3E 00                           ld a,0
+819F  CD 40 82                        call ay_write
+81A2  5A                              ld e,d
+81A3  3E 01                           ld a,1
+81A5  CD 40 82                        call ay_write
+81A8  C9                              ret
+81A9  CD C7 81                        call lookup_period
+81AC  3E 02                           ld a,2
+81AE  CD 40 82                        call ay_write
+81B1  5A                              ld e,d
+81B2  3E 03                           ld a,3
+81B4  CD 40 82                        call ay_write
+81B7  C9                              ret
+81B8  CD C7 81                        call lookup_period
+81BB  3E 04                           ld a,4
+81BD  CD 40 82                        call ay_write
+81C0  5A                              ld e,d
+81C1  3E 05                           ld a,5
+81C3  CD 40 82                        call ay_write
+81C6  C9                              ret
+81C7  6F                              ld l,a
+81C8  26 00                           ld h,0
+81CA  29                              add hl,hl
+81CB  11 FC 82                        ld de,ay_period_table
+81CE  19                              add hl,de
+81CF  5E                              ld e,(hl)
+81D0  23                              inc hl
+81D1  56                              ld d,(hl)
+81D2  C9                              ret
+81D3  3A 56 82                        ld a,(base_volume)
+81D6  5F                              ld e,a
+81D7  3E 08                           ld a,8
+81D9  CD 40 82                        call ay_write
+81DC  3A 56 82                        ld a,(base_volume)
+81DF  B7                              or a
+81E0  28 01                           jr z,voiced_b_ready
+81E2  3D                              dec a
+81E3  5F                              ld e,a
+81E4  3E 09                           ld a,9
+81E6  CD 40 82                        call ay_write
+81E9  3A 56 82                        ld a,(base_volume)
+81EC  FE 02                           cp 2
+81EE  30 03                           jr nc,voiced_c_sub
+81F0  AF                              xor a
+81F1  18 02                           jr voiced_c_ready
+81F3  D6 02                           sub 2
+81F5  5F                              ld e,a
+81F6  3E 0A                           ld a,10
+81F8  CD 40 82                        call ay_write
+81FB  C9                              ret
+81FC  3A 56 82                        ld a,(base_volume)
+81FF  5F                              ld e,a
+8200  3E 08                           ld a,8
+8202  CD 40 82                        call ay_write
+8205  3A 56 82                        ld a,(base_volume)
+8208  FE 02                           cp 2
+820A  30 03                           jr nc,unvoiced_b_sub
+820C  AF                              xor a
+820D  18 02                           jr unvoiced_b_ready
+820F  D6 02                           sub 2
+8211  5F                              ld e,a
+8212  3E 09                           ld a,9
+8214  CD 40 82                        call ay_write
+8217  3A 56 82                        ld a,(base_volume)
+821A  FE 04                           cp 4
+821C  30 03                           jr nc,unvoiced_c_sub
+821E  AF                              xor a
+821F  18 02                           jr unvoiced_c_ready
+8221  D6 04                           sub 4
+8223  5F                              ld e,a
+8224  3E 0A                           ld a,10
+8226  CD 40 82                        call ay_write
+8229  C9                              ret
+822A  AF                              xor a
+822B  5F                              ld e,a
+822C  3E 08                           ld a,8
+822E  CD 40 82                        call ay_write
+8231  AF                              xor a
+8232  5F                              ld e,a
+8233  3E 09                           ld a,9
+8235  CD 40 82                        call ay_write
+8238  AF                              xor a
+8239  5F                              ld e,a
+823A  3E 0A                           ld a,10
+823C  CD 40 82                        call ay_write
+823F  C9                              ret
+8240  C5                              push bc
+8241  01 FD FF                        ld bc,0xfffd
+8244  ED 79                           out (c),a
+8246  7B                              ld a,e
+8247  01 FD BF                        ld bc,0xbffd
+824A  ED 79                           out (c),a
+824C  C1                              pop bc
+824D  C9                              ret
+824E  FC 84                   stream_ptr:     dw sample_data
+8250  DA 00                   frames_left:    dw FRAME_COUNT
+8252  00                      voiced:         db 0
+8253  00                      pitch_index:    db 0
+8254  00                      energy_index:   db 0
+8255  08                      pitch_units:    db 8
+8256  00                      base_volume:    db 0
+8257  00                      lsp_accum:      db 0
+8258  00                      pair_start:     db 0
+8259  28                      center0:        db 40
+825A  64                      center1:        db 100
+825B  A0                      center2:        db 160
+825C  04 04 04 05 05 05 05 06         incbin "pitch.tbl"
+      ... 128 bytes
+82DC  00 00 00 01 01 01 01 02         incbin "energy.tbl"
+      ... 32 bytes
+82FC  FF 0F FF 0F FF 0F 8C 0B         incbin "ayperiod.tbl"
+      ... 512 bytes
+84FC  85 01 98 53 9E E6 FD A8         incbin "speech.c2zx"
+      ... 1744 bytes
