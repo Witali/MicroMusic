@@ -245,7 +245,7 @@ function load(entry,{autoplay=false}={}) {
   if(tiny88)url.searchParams.set('device','attiny88');else url.searchParams.delete('device');
   history.replaceState(null,'',url);
   renderCatalog(); transport();
-  const worker=new Worker(new URL('./worker.js?v=20261024-common-avr',import.meta.url),{type:'module'}); runtime=worker;
+  const worker=new Worker(new URL('./worker.js?v=20261025-um88',import.meta.url),{type:'module'}); runtime=worker;
   worker.onmessage=({data})=>{
     if (runtime!==worker) return;
     if (data.type==='ready') {

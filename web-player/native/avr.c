@@ -65,7 +65,7 @@ static void set_pointer(int s,int v){data[s]=v;if(C(pointerMask)>255)data[s+1]=v
 
 enum { NOP=1, CLI, SEI, RETI, RET, CALL, JUMP, BRANCH, SKIP, LDI, CPI,
  SUBI, ORI, ANDI, MOVW, ADD, ADC, SUB, AND, EOR, MOV, INC, DEC, COM,
- LSR, ASR, SWAP, IN, OUT, SBI, PUSH, POP, ST, LPM, FLAG, ROR, LDS, STS, OR, LD, CP, NEG, SBC, SBCI, ADIW, SBIW, WDR };
+ LSR, ASR, SWAP, IN, OUT, SBI, PUSH, POP, ST, LPM, FLAG, ROR, LDS, STS, OR, LD, CP, NEG, SBC, SBCI, ADIW, SBIW, WDR, CPC, CPSE };
 enum { E_PC=1, E_OPCODE, E_PUSH, E_POP, E_EXTCLK, E_WGM, E_FLASH, E_WDT,
  E_ADC, E_COMPARATOR, E_EXTIRQ, E_CLKDIV, E_COMPAREIRQ, E_EEPROM,
  E_FORCE, E_DATA, E_ST_ALIAS, E_WRITE, E_LD_ALIAS, E_READ, E_LPM_ALIAS,
@@ -156,6 +156,8 @@ static void decode(int p) {
  else if ((w&0xfc00)==0x2800) o=OR;
  else if ((w&0xfc00)==0x2c00) o=MOV;
  else if ((w&0xfc00)==0x1400) o=CP;
+ else if ((w&0xfc00)==0x0400) o=CPC;
+ else if ((w&0xfc00)==0x1000) o=CPSE;
  else if ((w&0xfe0f)==0x9401) o=NEG;
  else if ((w&0xfe0f)==0x9403) o=INC;
  else if ((w&0xfe0f)==0x940a) o=DEC;
@@ -321,7 +323,7 @@ static int execute(void) {
  case CALL:push_pc((int)S(pc));if(ERROR)return 0;S(pc)+=k;n=3;break;
  case JUMP:S(pc)+=k;n=2;break;
  case BRANCH:if(((FLAGS>>d)&1)==s){S(pc)+=k;n=2;}break;
- case SKIP:if(((data[d]>>s)&1)==k){int next=(int)S(pc),w=rom[next*2]|(rom[next*2+1]<<8);int words=(w&0xfe0f)==0x9000||(w&0xfe0f)==0x9200||(w&0xfe0e)==0x940c||(w&0xfe0e)==0x940e?2:1;S(pc)+=words;n=1+words;}break;
+ case CPSE:case SKIP:if(o==CPSE?data[d]==data[s]:((data[d]>>s)&1)==k){int next=(int)S(pc),w=rom[next*2]|(rom[next*2+1]<<8);int words=(w&0xfe0f)==0x9000||(w&0xfe0f)==0x9200||(w&0xfe0e)==0x940c||(w&0xfe0e)==0x940e?2:1;S(pc)+=words;n=1+words;}break;
  case LDI:data[d]=k;break;
  case CPI:arithmetic(data[d],k,0,1);break;
  case SUBI:data[d]=arithmetic(data[d],k,0,1);break;
@@ -336,6 +338,7 @@ static int execute(void) {
  case SUB:data[d]=arithmetic(data[d],data[s],0,1);break;
  case SBC:case SBCI:{int previous=FLAGS;data[d]=arithmetic(data[d],o==SBC?data[s]:k,previous&1,1);if(!(previous&2))FLAGS&=~2;break;}
  case CP:arithmetic(data[d],data[s],0,1);break;
+ case CPC:{int previous=FLAGS;arithmetic(data[d],data[s],previous&1,1);if(!(previous&2))FLAGS&=~2;break;}
  case NEG:data[d]=arithmetic(0,data[d],0,1);break;
  case AND:data[d]&=data[s];nzvs(data[d],0);break;
  case EOR:data[d]^=data[s];nzvs(data[d],0);break;

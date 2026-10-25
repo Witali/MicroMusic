@@ -6,7 +6,7 @@ import { createHash } from 'node:crypto';
 const player = new URL('../', import.meta.url);
 const load = path => JSON.parse(readFileSync(new URL(path, player)));
 const hash = data => createHash('sha256').update(data).digest('hex');
-const catalog = load('firmware-attiny88.json');
+const catalog = load('firmware-attiny88-legacy.json');
 const original = load('firmware.json');
 
 test('ATtiny88 offers the same nine arrangements in the same order', () => {
