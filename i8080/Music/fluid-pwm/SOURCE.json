@@ -1,0 +1,84 @@
+{
+  "soundfont_sha256": "74594e8f4250680adf590507a306655a299935343583256f3b722c48a1bc1cb0",
+  "license": "MIT",
+  "notice": "FluidR3-MIT.txt",
+  "capture_script": "../../../tools/render-fluid-violin.mjs",
+  "crop": "First 0.4 seconds, stereo 48000 Hz PCM16, unchanged source samples",
+  "sources": [
+    {
+      "id": "piano-low",
+      "program": 0,
+      "preset": "Yamaha Grand Piano",
+      "midi": 60,
+      "full_capture_file": "piano-60.wav",
+      "full_capture_sha256": "59ce0f5f907691a8cd35d0527c79a3eacf27490ed6bec01073ba457c6e50057d",
+      "file": "source-piano-low.wav",
+      "sha256": "ffdbbf66e4239903071d60be0a3f36a3ed192f691bba5d7f5a85301d8bb4381c",
+      "frames": 19200,
+      "soundfont": {
+        "name": "FluidR3 GM",
+        "version": "3.1",
+        "bytes": 148398306,
+        "sha256": "74594e8f4250680adf590507a306655a299935343583256f3b722c48a1bc1cb0",
+        "license": "MIT"
+      },
+      "renderer": {
+        "name": "SpessaSynth",
+        "sourceSha256": "d7d74edf4056b1be835cfd717c8cfb579440ee5c741d087d684b84041d861035",
+        "sampleRate": 48000,
+        "effectsEnabled": false
+      },
+      "velocity": 100
+    },
+    {
+      "id": "piano-high",
+      "program": 0,
+      "preset": "Yamaha Grand Piano",
+      "midi": 74,
+      "full_capture_file": "piano-74.wav",
+      "full_capture_sha256": "82d756c311d66653ae05bba089f1961a616196f04221890b4c51c5189bcf2bdf",
+      "file": "source-piano-high.wav",
+      "sha256": "1cec6910e2568e4e4b2a74b0ef5d5fd1e364a30ec9a5fe1bbe04e77897a6f317",
+      "frames": 19200,
+      "soundfont": {
+        "name": "FluidR3 GM",
+        "version": "3.1",
+        "bytes": 148398306,
+        "sha256": "74594e8f4250680adf590507a306655a299935343583256f3b722c48a1bc1cb0",
+        "license": "MIT"
+      },
+      "renderer": {
+        "name": "SpessaSynth",
+        "sourceSha256": "d7d74edf4056b1be835cfd717c8cfb579440ee5c741d087d684b84041d861035",
+        "sampleRate": 48000,
+        "effectsEnabled": false
+      },
+      "velocity": 100
+    },
+    {
+      "id": "guitar",
+      "program": 24,
+      "preset": "Nylon String Guitar",
+      "midi": 52,
+      "full_capture_file": "guitar-52.wav",
+      "full_capture_sha256": "a35238c787d67de3ea942a2145149c3a4671e23157507abe2f5f45667f3577d8",
+      "file": "source-guitar.wav",
+      "sha256": "81e139d3c2387f5ecd9bac4b60fedaff6980e484d24b4a6652b2247f6c3de7c2",
+      "frames": 19200,
+      "soundfont": {
+        "name": "FluidR3 GM",
+        "version": "3.1",
+        "bytes": 148398306,
+        "sha256": "74594e8f4250680adf590507a306655a299935343583256f3b722c48a1bc1cb0",
+        "license": "MIT"
+      },
+      "renderer": {
+        "name": "SpessaSynth",
+        "sourceSha256": "d7d74edf4056b1be835cfd717c8cfb579440ee5c741d087d684b84041d861035",
+        "sampleRate": 48000,
+        "effectsEnabled": false
+      },
+      "velocity": 100
+    }
+  ]
+}

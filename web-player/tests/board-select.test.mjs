@@ -33,9 +33,9 @@ test('a 16-MHz board link loads the actual USB firmware, clock, board pins and o
   assert.equal(message.entry.flashHex,expected.flashHex);
   assert.notEqual(message.entry.flashHex,eight.entries.find(e=>e.id==='children').flashHex);
   assert.equal(message.entry.eepromHex,null);
-  assert.notEqual(message.entry.firmwareEngine,'UM88');
-  assert.equal(message.entry.synthesisHz,31250);
-  assert.match(message.entry.source,/variants-micronucleus/);
+  assert.equal(message.entry.firmwareEngine,'UM88');
+  assert.equal(message.entry.synthesisHz,15625);
+  assert.match(message.entry.source,/universal\/songs-micronucleus/);
   assert.match(app.get('machine-details').textContent,/16 МГц/);
   assert.match(app.get('tiny88-clock').textContent,/16 MHz.*MH-ET LIVE/);
   assert.match(app.get('right-output-label').textContent,/PB2.*D10/);

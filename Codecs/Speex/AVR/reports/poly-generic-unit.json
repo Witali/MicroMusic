@@ -1,0 +1,22 @@
+{
+  "mcu": "ATmega328P",
+  "simulator": "avr8js 0.21.1",
+  "backend": "c",
+  "compiler": "AVR GCC 7.3.0; -Os -flto -mcall-prologues -mrelax -fwrapv; helper O3",
+  "binarySha256": "4b3a80f9bcbbec14413beaebe234320a56e830e76ce2b6ae1820b1a5d34a1d03",
+  "cases": 21056,
+  "calls": 82688,
+  "angleComparisons": 826880,
+  "codebookTransitions": 4096,
+  "resetCases": 512,
+  "fullSignedMultiples16Transitions": 16384,
+  "edgeTransitions": 64,
+  "exactAgainstUntouchedXiphOnAvr": true,
+  "rawQuarterStateExact": true,
+  "finalRawEndpointExact": true,
+  "guardsIntact": true,
+  "deltaAndEndpointsPreserved": true,
+  "zeroRegisterRestored": true,
+  "includesInterrupts": false,
+  "physicalBoardTested": false
+}

@@ -1,23 +1,26 @@
 {
-  "cases": 8752,
-  "exhaustiveGroupGainCases": 8192,
+  "cpuHz": 8000000,
+  "cases": 16992,
+  "exhaustiveGroupGainCases": 16384,
   "cacheCases": 34816,
-  "irqCases": 384,
+  "irqCases": 576,
   "exactMonoIRQ": true,
+  "exactStereoIRQ": true,
   "exactPhases": true,
   "exactMonoMix": true,
+  "exactStereoMix": true,
   "exactCachedWaves": true,
   "abiPreserved": true,
   "backends": [
     {
       "backend": "c",
-      "bufferFrames": 192,
-      "engineSha256": "8cb8ae1040f8af320ae178b03f4ce26cf87429c3006d85dc700365644cc7a7a4"
+      "bufferBytes": 192,
+      "engineSha256": "ac1ff77cba39d9fca5a184bc8f2e8eaaa6db4fa56cf554557f0cb36fbe8ccb05"
     },
     {
       "backend": "avr-asm",
-      "bufferFrames": 192,
-      "engineSha256": "cb5564dd5fcad2a8dad33bb09f2f30fe1aeb5d585c912c6acab43fa6df2240bb"
+      "bufferBytes": 192,
+      "engineSha256": "28a52650396267badd29088018c06d8dd763c0c50f075dc0d41fc9d5277635af"
     }
   ]
 }

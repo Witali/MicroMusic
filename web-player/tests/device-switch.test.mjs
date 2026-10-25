@@ -36,8 +36,9 @@ test('an ATtiny88 link loads the matching real firmware, retains WASM and change
   assert.equal(app.get('download').href,expected.source);
   assert.equal(app.get('download').download,'attiny88-children.hex');
   assert.equal(app.get('rom-name').download,'attiny88-children.hex');
-  assert.equal(app.get('download-eeprom').href,expected.eepromSource);
-  assert.equal(app.get('download-eeprom').download,'attiny88-children-eeprom.hex');
+  assert.equal(expected.eepromSource,null);
+  assert.equal(app.get('download-eeprom').href,undefined);
+  assert.equal(app.get('download-eeprom').download,undefined);
   assert.equal(app.get('download-eeprom').hidden,true);
   assert.match(app.get('rom-details').textContent,/EEPROM не требуется/);
   assert.match(app.get('rom-details').textContent,/\/ 8192 Б Flash/);

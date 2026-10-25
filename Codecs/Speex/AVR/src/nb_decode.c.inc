@@ -101,10 +101,10 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packe
          speex_nb3_short_innovation(exc,exc,(uint8_t)pitch,indices,ener,index);
       }
    }
-   /* Release the excitation indices. lsp_to_lpc consumes all ten angles
-    * before its first coefficient store, so ak/interp share the next 20 B.
-    * Raw/delta/out stay disjoint during interpolation. LPC is copied into
-    * state before WB reuses this slot for synchronous callback indices. */
+   /* Release the excitation indices. C shares the next 20 B between angles
+    * and LPC; ASM uses only three temporary center angles in that slot.
+    * Both converters consume all frequencies before coefficient stores.
+    * LPC enters state before WB reuses this slot for callback indices. */
    stack=(char *)(lsp_delta+NB_ORDER);
    ALLOC(ak,NB_ORDER,spx_coef_t);
    interp_qlsp=ak;
@@ -126,8 +126,12 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packe
        * On reset, compute it after the first synthesis step as upstream does.
        * IIR always runs, including its coefficient-age transition. */
       if (update_lpc) {
-         speex_nb3_interpolate_validated(st->old_qlsp,lsp_delta,interp_qlsp);
+#if SPEEX_NB3_USE_AVR_ASM
+         speex_nb3_interpolate_lpc(st->old_qlsp,lsp_delta,ak);
+#else
+         speex_nb3_interpolate_codebook(st->old_qlsp,lsp_delta,interp_qlsp);
          lsp_to_lpc(interp_qlsp,ak,NB_ORDER,stack);
+#endif
       }
       /* Excitation is complete and remains read-only during synthesis.
        * Filter from its delayed history directly, retaining the original
@@ -138,7 +142,7 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packe
 #if SPEEX_ENABLE_WB1
       if (!out) {
          uint16_t header;
-         /* Interpolated angles are dead after lsp_to_lpc. HB consumes the
+         /* Interpolated angles are dead once LPC is ready. HB consumes the
           * reconstructed indices synchronously, before the next quarter. */
          indices=(uint8_t *)interp_qlsp;
          header=speex_nb3_unpack_subframe(packet,(uint8_t)sub,indices);

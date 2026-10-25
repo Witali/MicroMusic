@@ -1,3 +1,4 @@
+#include "q14_macros.S"
 /* Exact generic Xiph MULT16_32_Q14 in one AVR-GCC ABI subroutine.
  * int32_t speex_avr_mul16_32_q14(int16_t a, int32_t b);
  * a r25:r24, b r23:r20, result r25:r22. No callee-saved registers, restore r1.
@@ -25,57 +26,7 @@ speex_avr_mul16_32_q14:
 .type speex_avr_lsp_mul_q14, @function
 speex_avr_lsp_mul_q14:
     movw r18, r24       /* a */
-    movw r30, r22       /* original high word of b */
-    clr r26             /* low product's temporary zero */
-    /* Signed16 a times unsigned16 low b, exact signed32 result. */
-    mulsu r19, r21
-    movw r24, r0
-    mul r18, r20
-    movw r22, r0
-    mulsu r19, r20
-    sbc r25, r26
-    add r23, r0
-    adc r24, r1
-    adc r25, r26
-    mul r18, r21
-    add r23, r0
-    adc r24, r1
-    adc r25, r26
-    mov r26, r25
-    lsl r26
-    sbc r26, r26
-    mov r27, r26
-    movw r20, r30
-    clr r30             /* high word moved; Z low is now a free zero */
-    /* Add signed16 a * signed16 high b at product bit 16. */
-    muls r19, r21
-    add r26, r0
-    adc r27, r1
-    mul r18, r20
-    add r24, r0
-    adc r25, r1
-    adc r26, r30
-    adc r27, r30
-    mulsu r19, r20
-    sbc r27, r30
-    add r25, r0
-    adc r26, r1
-    adc r27, r30
-    mulsu r21, r18
-    sbc r27, r30
-    add r25, r0
-    adc r26, r1
-    adc r27, r30
-    .rept 2
-    lsl r23
-    rol r24
-    rol r25
-    rol r26
-    rol r27
-    .endr
-    movw r22, r24
-    movw r24, r26
-    clr r1
+    SPEEX_LSP_Q14_BODY 18
     ret
 .size speex_avr_lsp_mul_q14, .-speex_avr_lsp_mul_q14
 
@@ -91,45 +42,6 @@ speex_avr_lsp_mul_q14:
 .type speex_avr_p1_mul_q14,@function
 speex_avr_p1_mul_q14:
     movw r18,r24
-    .rept 2
-    lsl r20
-    rol r21
-    rol r22
-    rol r23
-    .endr
-    mov r30,r23
-    mov r20,r21
-    mov r21,r22
-    clr r27
-    mulsu r19,r21
-    movw r24,r0
-    mul r18,r20
-    movw r22,r0
-    mulsu r19,r20
-    sbc r25,r27
-    add r23,r0
-    adc r24,r1
-    adc r25,r27
-    mul r18,r21
-    add r23,r0
-    adc r24,r1
-    adc r25,r27
-    mov r26,r25
-    lsl r26
-    sbc r26,r26
-    mov r20,r30
-    muls r19,r20
-    add r25,r0
-    adc r26,r1
-    mulsu r20,r18
-    sbc r26,r27
-    add r24,r0
-    adc r25,r1
-    adc r26,r27
-    mov r22,r23
-    mov r23,r24
-    mov r24,r25
-    mov r25,r26
-    clr r1
+    SPEEX_LSP_P1_BODY 18
     ret
 .size speex_avr_p1_mul_q14,.-speex_avr_p1_mul_q14

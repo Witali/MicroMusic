@@ -1561,6 +1561,135 @@ Native: 1 572 880 bounded calls и 720 000 overlapping LPC outputs;
 [Варианты/исходники](../../Codecs/Speex/AVR/reports/lifetime-candidates.json),
 [итоговые проверки](../../Codecs/Speex/AVR/reports/lifetime-admission.json).
 
+### Геометрия codebook и отдельная ASM-подпрограмма advance
+
+Для фиксированного NB3 сначала доказать диапазон всех входов, затем
+сокращать margin-проход. У pinned Speex 1.2.1 только позиции 3..5 могут
+требовать коррекции. Все raw-четверти кратны четырём; две центральные
+пары проверок взаимно исключаются и превращаются в два `if/else if`.
+Суммы средних не превышают 27 968/32 720: здесь один sum+shift точен.
+Для общего signed16 helper это неверно — сохранить два отдельных сдвига.
+[15 affine certificates](../../Codecs/Speex/AVR/reports/margin-proof.json)
+независимо проверены original Xiph dequantizer на всех 262 144 тройках.
+
+Оригинальная подпрограмма проекта
+[`lsp_advance.S`](../../Codecs/Speex/AVR/src/lsp_advance.S), enhanced AVR5 /
+ATmega328P / GNU ABI, обновляет 10 raw words и выдаёт только три исправленных
+угла. LPC потребляет остальные семь прямо из raw, а временные три — из
+умершего output slot. Чтения 40 Б, записи 26 Б; нет своего стека, MUL, CLI
+или аппаратных регистров. Используются caller-clobbered r0/r1,r18..27,Z;
+r2..17/Y сохраняются, r1 обнуляется на RET. В каждом ISR нужно сохранять
+все используемые регистры и SREG: r1 может временно быть ненулевым.
+Такты с RET без caller CALL: **181/179/187** для нет/первой/второй коррекции.
+Всегда доступен эквивалентный C в
+[`nb3_interpolate.h`](../../Codecs/Speex/AVR/src/nb3_interpolate.h).
+ASM выбирается только по поддерживаемой архитектуре и отдельному explicit
+enable; C можно выбрать и на AVR. Формулы/таблицы Xiph имеют сохранённую
+лицензию в vendor, новый ASM не скопирован из стороннего cookbook.
+
+AVR GCC 7.3.0 mixed Os/O2/O3+LTO / AVR8js 0.21.1, 9 100 NB-кадров:
+совместно с fused/shared LPC output mean ASM **107 616,507 → 106 896,237**
+(−0,6693%), max 115 604 → 114 786. Цена: Flash +1000 Б, stack +31 Б;
+static SRAM прежний. У `impulses` mean/max +2/+4 такта, некоторые minima
++4: это не универсальное ускорение каждого кадра. C mean −0,3262%,
+Flash +894 Б, stack +46 Б. Приоритет выбора — скорость целевого ASM.
+Counted ASM меньше на 72 Б, но медленнее на 21 такт/конверсию; его отклонили.
+56 вариантов и их исходники:
+[margin-candidates](../../Codecs/Speex/AVR/reports/margin-candidates.json).
+
+Native: 1 310 720 вызовов; каждый AVR backend: 6208 вызовов и 3072 случая
+адресов, все 256 low bytes/три класса/четыре четверти, guards/raw/ABI/r1.
+У ASM 9280 вызовов с точным контролем каждого чтения/записи. Старые
+широкие signed16 и overlap-тесты сохранены. 142 полных PWM-прогона с IRQ
+проходят без underruns и с точным PCM; NB free SRAM 661/654 Б,
+WB 452 Б. Это цифровая модель, физическая плата не измерена.
+[Admission](../../Codecs/Speex/AVR/reports/margin-admission.json).
+
+### Симметричные пары LPC и чередование банков регистров
+
+Для order-ten half-polynomials с p0=q0=2^20 пара выходов j-1 и 10-j:
+`S=p[j]+p[j-1]`, `D=q[j]-q[j-1]`, затем отдельно округлить/ограничить S+D
+и S-D. Сохранить wrapping32, +128 перед >>8 и пределы ±32767. Не округлять
+S/D до сложения; первый forward исключает p0-q0, mirror содержит 2*p0.
+
+Оригинальный [`lsp_finish.S`](../../Codecs/Speex/AVR/src/lsp_finish.S),
+enhanced AVR5 / ATmega328P / GNU ABI, чередует два банка p/q: предыдущая
+сумма больше не нужна и принимает следующий word, свежий word сохраняется.
+Известные первые константы исключают чтение p0/q0. Читается каждый байт
+p/q[1..5] один раз: 40 Б входа, 20 Б выхода. Своя подпрограмма сохраняет
+r6..17/Y (14 Б стека), остальные callee-save не меняет, r1 обнуляет на RET.
+Нет MUL, CLI, IO или отдельного RAM scratch. Макросы GAS с числовыми
+номерами регистров убирают повторение исходного ASM. Эквивалентный явно
+выбираемый C: [`nb3_lsp_finish.h`](../../Codecs/Speex/AVR/src/nb3_lsp_finish.h).
+Выбор ASM по поддерживаемой архитектуре и отдельному enable остаётся прежним.
+
+AVR GCC 7.3.0 mixed Os/O2/O3+LTO / AVR8js 0.21.1, 9 100 NB-кадров:
+ASM mean **106 896,237 → 105 109,736** (−1,6712%), max 114 786 → 112 765;
+Flash −512 Б, stack −38 Б, static SRAM прежний. Все stream min/mean/max
+лучше, включая cache hits. C mean −0,4981%, Flash −258 Б, stack −46 Б.
+Общий finish остаётся подпрограммой; отдельный вызов округления каждого
+коэффициента экономит ещё 360 Б, но медленнее. Этот вариант сохранён, а
+по приоритету скорости выбран более быстрый. Четыре формы C компилируются
+идентично; всего проверены 14 кандидатов:
+[исходники/измерения](../../Codecs/Speex/AVR/reports/pair-candidates.json).
+
+Native: 3 056 640 коэффициентов на путь; каждый AVR backend: 46 592 случая,
+465 920 коэффициентов на selected/forced-C путь, все rounding low bytes,
+обе границы saturation, signed32 wrap, все 256 low bytes указателей и
+пересечения страниц. У ASM проверены точные чтения/записи, 14 PUSH/POP и ABI;
+измерены 390..417 тактов с RET без CALL (это выборка, не общий верхний предел).
+Прежние signed16-angle/overlap/Xiph-оракулы сохранены. Полные IRQ/PWM-gates
+обязательны; физическая плата не измерена.
+[Admission](../../Codecs/Speex/AVR/reports/pair-admission.json).
+
+### Узкий signed16-сдвиг и полный полиномиальный шаг
+
+Enhanced AVR5 / ATmega328P / GNU ABI. Для signed16 f результат f*64 можно
+получить через signed24 f*256, два ASR/ROR и sign extension — **12 инструкций**,
+вместо четырёхбайтовых шести сдвигов. Например, f=r23:r22, результат r21:r18:
+
+```asm
+clr r18
+mov r19,r22
+mov r20,r23
+.rept 2
+asr r20
+ror r19
+ror r18
+.endr
+mov r21,r20
+lsl r21
+sbc r21,r21
+```
+
+f и r1 сохраняются; C-эквивалент `(int32_t)((uint32_t)(int32_t)f<<6)`
+выбирается без поддерживаемой архитектуры/отдельного ASM-enable, включая AVR.
+Unsigned shift не сдвигает отрицательное signed-значение. Запись f*64 дала
+меньше Flash, но +0,1666% полного C mean; shift восстановил старый C-бинарник.
+Изолированный ASM shift-контроль на 1058 кадрах: mean −180,319 такта,
+Flash −96 Б, stack прежний. Не приписывать ему весь выигрыш полного ядра.
+
+[`lsp_stage.S`](../../Codecs/Speex/AVR/src/lsp_stage.S) держит f и два соседних
+poly words в регистрах, читает каждый p[stage..1] один раз, пишет p[stage+1..1]
+и делит хвосты стадий. p0=2^20, p1 кратен 64, product inputs signed30;
+сохранены 12 Б r8..17/Y, остальные callee-save и r1 на RET. Нет IO/CLI/RAM
+scratch. C всегда доступен в
+[`nb3_lsp_stage.h`](../../Codecs/Speex/AVR/src/nb3_lsp_stage.h).
+Общий [`q14_macros.S`](../../Codecs/Speex/AVR/src/q14_macros.S) параметризует
+пару root-регистров для value-kernel и inline-stage. Сам factoring сохранил
+старый math-бинарник побайтно: новых тактовых выигрышей для этого шага нет.
+
+AVR GCC 7.3.0 mixed Os/O2/O3+LTO, AVR8js 0.21.1: полный NB mean
+**105 109,736 → 103 094,832** (−1,9170%), max 112 765 → 110 486,
+Flash +126 Б, stack −4 Б, static SRAM прежний. Каждое stream mean лучше;
+несколько extrema cache hits +1 такт. C NB/WB-бинарники прежние. Девять
+вариантов/исходники: [poly-candidates](../../Codecs/Speex/AVR/reports/poly-candidates.json).
+Каждый AVR backend: все 65536 roots на стадию, 256254 случая, 1025016 слов
+на путь, 2304 адресных случая, точные чтения/записи/стек/ABI. Стадии дают
+240/330/420 тактов с RET без CALL. 142 PWM-прогона с IRQ проходят без
+underruns; физическая плата не измерена.
+[Admission](../../Codecs/Speex/AVR/reports/poly-admission.json).
+
 ## Отделять незавершённую запись SP от занятой стеком памяти
 
 У classic AVR с 16-битным SP компилятор меняет его двумя OUT. Монитор
@@ -1734,7 +1863,7 @@ ATtiny88 / AVR25 без MUL, GNU AVR GCC 7.3.0, `-Os -fno-jump-tables`, GNU ABI.
 При кольце 192 состояние заканчивается на 500, кольцо на 704, минимум SP731:
 27 Б запаса, на 2 Б меньше исходного. Не заявляется уменьшение стека.
 
-[8752 микса, 34816 кешей и 384 IRQ-состояния на бэкенд](../../ATtiny88/Music/universal/backend-verification.json),
+[Текущая проверка: 16992 микса, 34816 кешей и 576 моно/стерео IRQ-состояний на бэкенд](../../ATtiny88/Music/universal/backend-verification.json),
 [до/после](../../ATtiny88/Music/universal/reports/polyphony-optimization.json),
 [полный ISR-аудит нагрузок](../../ATtiny88/Music/universal/reports/admission.json),
 [размеры кольца](../../ATtiny88/Music/universal/reports/buffer-verification.json).
@@ -1742,6 +1871,209 @@ ATtiny88 / AVR25 без MUL, GNU AVR GCC 7.3.0, `-Os -fno-jump-tables`, GNU ABI.
 и ISR с ненулевым r1. Стерео сейчас только в архивных образах. Физическая
 плата не измерялась. Табличная диспетчеризация команд этим изменением
 не вводится: грамматика и огибающие табличные, opcode-dispatch — ветвления.
+
+### UM88: плотный алфавит и 9-битный словарь фраз
+
+Применение: ATtiny88 / AVR25, GNU AVR GCC 7.3.0, `-Os -fno-jump-tables`,
+обычный GNU ABI. Это оригинальная офлайн-оптимизация данных и переносимый
+C-распаковщик, без новых ASM-инструкций. Доступ к Flash остаётся через
+`storage.h`; арифметические C/ASM-бэкенды выбираются независимо. На другом
+процессоре можно использовать тот же формат, проверив адресацию Flash,
+целочисленные типы и требуемый стек.
+
+У девяти UM88-партитур реально используются лишь небольшие подмножества
+байтов команд. Например, у Children 59 различных байтов, у Alicia 71.
+Плотный алфавит устраняет пустое пространство до кода первого правила.
+Все коды, включая пары словаря, помещаются в 9 бит при ограничении
+`число терминалов + число правил <= 512`. Пара занимает 18 бит вместо
+двух `uint16`. Уменьшается Flash; это не заявление ускорения декодера.
+
+Словарь сохраняет повторяющиеся аккорды и партии нескольких голосов:
+правило вызывает предыдущие правила либо байты CONTEXT/PITCH/LEVEL,
+PHASE_RESET/PHASE_COPY, WAIT и ударных. Пары выбираются по числу реальных
+неперекрывающихся замен и точной стоимости сериализации. Начиная с трёх
+замен два символа определения окупаются. Проверяются префиксы трёх
+детерминированных поисков. Глубина остаётся 12, pending-буфер — 13 символов.
+
+Для пары R начало в битах равно `18*R`: сдвиги первого символа только
+0/2/4/6, второго — 1/3/5/7 в следующем байте. Поэтому достаточно трёх
+последовательных чтений Flash; загрузка 32-битного окна не нужна.
+Символ потока занимает 9 бит, его байтовый указатель продвигается на один
+байт и ещё на один при переносе битовой позиции. На LOOP надо сбросить
+обе части позиции. Заголовок явно различает прежний формат 0 и новый 9.
+`UM_COMPACT_SCORE_ONLY=1` убирает прежний путь из новых одинаковых для
+всех композиций образов; общий C-декодер по умолчанию принимает оба.
+
+Сравнение с `ad018dc`, сохранённые JSON-партитуры не изменены:
+
+| Нагрузка | Грамматика до → после, Б | Все данные до → после, Б | Flash 8 МГц до → после, Б |
+| --- | ---: | ---: | ---: |
+| Alicia | 3770 → 2222 | 4197 → 2649 | 6885 → 5689 |
+| Children | 4183 → 2356 | 4670 → 2843 | 7358 → 5883 |
+
+Новый размер грамматики включает и алфавит. В образах Micronucleus 16 МГц
+получилось соответственно 5753 и 5947 Б при лимите 6012; это измерение
+указанных сборок, не обещание вместить произвольную партитуру. Новый код
+также поддерживает стерео; поэтому разница полного Flash включает рост
+общего движка, а не только уменьшение данных. C-бэкенд явно доступен,
+но размер и своевременность каждой выбранной нагрузки проверяются отдельно.
+
+[Размеры всех девяти партитур и SHA-256](../../ATtiny88/Music/universal/reports/compact-grammar-comparison.json),
+[формат и ограничения](../../ATtiny88/Music/universal/FORMAT_RU.md),
+[упаковщик](../../tools/universal-music.py),
+[проверки точного распаковывания](../../tools/test-universal-format.py).
+Тесты включают 256 терминалов, переходы между байтами, детерминизм,
+повреждённые ссылки/остаточные биты и повторяемую трёхголосную аккордовую
+фразу, вызываемую через словарь. Полный PWM/IRQ-аудит с активными
+прерываниями выполняется отдельно от этих проверок; физическая плата
+измерением размера и цифровой моделью не заменяется.
+
+Независимая проверка скомпилированного `command()` читает сериализованные
+9-битные поля в реальном AVR-коде C/ASM-сборок: все 256 терминалов,
+последний код 511, максимальная глубина 12, остаточные биты и точное
+продвижение указателя потока. Ядовитые байты сразу за pending-буфером
+не изменяются, машинный стек возвращается к RAMEND. Это 14 случаев для
+каждой частоты: [8 МГц](../../ATtiny88/Music/universal/reports/packed-decoder-8mhz.json),
+[16 МГц](../../ATtiny88/Music/universal/reports/packed-decoder-16mhz.json).
+Повторение: `node tools/test-universal-packed-decoder.mjs --engine-dir=build/backend-all-boards/8000000`.
+
+## UM88: shared platform code
+
+[Four-point interpolation and bootloader entry](um88-platform.md): portable C sharing saves Flash in the common ATtiny88 stereo producer; includes exact rounding constraints, measured size results, C fallback timing limits, and the official PRR-before-cleanup rule.
+
+### UM88: профиль всего тракта и следующие точные оптимизации
+
+Исследование готового моно-профиля `0c306b1` (код2676Б, AVR25/ATtiny88,
+GNU AVR GCC7.3 `-Os`, C11/GNU ABI, ASM включён явно). Это отдельные прототипы,
+не замена опубликованных ROM. [Стенд и границы](examples/um88-review.md),
+[полные данные](../../ATtiny88/Music/universal/reports/algorithm-review.json),
+[профилировщик](../../tools/profile-universal-music.mjs).
+
+Часть всего времени CPU при8МГц, с IRQ, полный цикл и повтор:
+
+| Участок | Восьмиголосный этюд | Плотная смена восьми голосов каждый тик |
+|---|---:|---:|
+| Микшер |33,10%|32,97%|
+| PWM IRQ, включая аппаратный вход |18,36%|18,36%|
+| Основной цикл: часы, ударные, интерполяция и FIFO |14,53%|18,81%|
+| Итоговое усиление/ограничение |2,54%|2,53%|
+| Управление, декодер, кеши и вспомогательная арифметика |3,55%|17,29%|
+| Ожидание свободного места в FIFO |27,93%|10,04%|
+
+Ожидание — занятый опрос, а не энергосберегающий сон. Текущую среднюю долю
+декодера нельзя переносить на новый compact9/stereo профиль без измерения.
+Табличный dispatch команд затронул бы только часть `read_events`; оставшиеся
+циклы относятся к распаковке, адресам, маскам и записи состояния. По disassembly
+GCC уже заменил итоговое умножение gain сдвигами: оптимизировать отсутствующий
+MUL не нужно. Однако адреса `voice[i]` действительно вызывали `__mulhi3`.
+
+Подтверждённые отдельным PWM-эталоном C-кандидаты:
+
+- Сократить дроби часов: при8МГц управляющее время3/320, остаток продвижения
+  ударных2/5; при12МГц1/160 и3/5. Выбирать8/16-битные счётчики с учётом суммы
+  до вычитания порога, прочим частотам оставить точную широкую арифметику.
+  [Header](../../ATtiny88/Music/universal/rational-clocks.h) не включён в production
+  автоматически. Clock-only экономит22,66такта/отсчёт в этюде и72Б кода.
+- Обходить голоса указателем и вычислять фазовую маску один раз за tick.
+  Вместе с часами этюд738,190→700,332 полезных такта/отсчёт, код2676→2534Б,
+  пик управления18410→16406, FIFO98→108. Плотный тест924,996→887,965,
+  управление19246→17854, FIFO94→101. Микшер339тактов остаётся прежним.
+- В отдельной копии убрать лишнее выравнивание кольца64→1. Ускорения нет,
+  но FIFOend704→692:12Б дополнительной SRAM. С pointer-tick стрессовый
+  запас над кольцом27→41Б, включая2Б экономии стека. Это неприменимо без
+  перепроверки ISR, который может специально рассчитывать на страницу/выравнивание.
+
+Прошли все12 полных экспериментальных петель/повторов (две нагрузки8МГц,
+профили12МГц и8388608Гц), каждый PWM/DDS/ударный с IRQ, без underrun/потерь.
+Два compiler-checked теста дополнительно сравнили90000 исходных/сокращённых
+шагов, включая математическую конфигурацию16МГц. Полная16МГц прошивка,
+все длинные песни и все варианты C-backend этими опытами не проверены.
+Новой ASM нет; C/ASM арифметическое ядро и переносимый интерфейс не менялись.
+
+Следующие идеи пока **не измерены**, требуют своих C/ASM/IRQ проверок:
+
+1. Выбирать простой/групповой микшер при смене контекстов. Быстрый путь сразу
+   для всего отсчёта может убрать повторный `mix==128` на каждом голосе;
+   стоимость — второй цикл обработки и Flash. Нулевые голоса можно пропускать
+   только в суммировании: фазу всё равно продвигать ради legato/PHASE_COPY.
+2. Назначать следующий точный переход огибающей по16-фазной маске и сбрасывать
+   предсказание при LEVEL/CONTEXT. Это событийное вычисление, не замедление
+   управляющей сетки. Кешировать/копировать одинаковые эффективные волны
+   можно только с ключом bank/gain/level и проверкой худшего случая8 разных волн.
+3. Уменьшать повторное умножение индекса голоса на23 в обработчиках, используя
+   короткую таблицу смещений; оценивать грамматику по байтам и времени раскрытия,
+   сохранять точную командную семантику и порядок PHASE_COPY/RESET. Слияние
+   повторных операций внутри WAIT-блока требует отдельного доказательства;
+   исходный MIDI-event JSON всегда сохраняется.
+4. В ISR исследовать доступ к курсорам через официальные GPIOR либо сокращение
+   адресной подготовки, сохраняя SREG, регистры, nonzero-r1 и переносимый C.
+   Имена GPIOR0/1/2 есть в закреплённом DFP; адреса вручную не дублировать.
+5. В разворачивании волны поднять базу amplitude-row из каждого полубайта в
+   начало функции. Это мелкая оптимизация редкого участка обычной музыки;
+   выигрыш необходимо измерять на общем тракте, не только на helper.
+
+Буфер сглаживает пики, но сам по себе не уменьшает CPU-работу. Снижение
+частоты синтеза/PWM, разрядности фаз или уровней, пропуск нот/хвостов и
+грубое прореживание огибающих не являются точными оптимизациями. Ускорение
+принимается только при неизменном конечном PWM и расписании событий.
+
+## Speex: signed17 sum from ADC S (measured 2026-10-25)
+
+Enhanced AVR5 / ATmega328P, GNU ABI, AVR GCC 7.3.0, mixed Os/O2/O3 + LTO,
+mcall-prologues/mrelax. This is an original project transformation using
+the documented flag semantics, not copied vendor code.
+
+For signed16 a+b, low ADD / high ADC produce a low16 result while S=N xor V
+still identifies the true signed17 sum sign. LDI preserves S. A balanced
+BRGE/CLR sequence can construct the complement of its sign-extension byte:
+
+```asm
+add r24,r20
+adc r25,r21
+ldi r26,0xff
+brge 1f
+clr r26
+1:
+; r26 complements the true sign byte; retain it through wide negation.
+```
+
+Both branch paths take two cycles. Negation needs signed18 at a=b=-32768;
+truncating to signed16 first is wrong. Byte-align the negated wide sum and
+shift right twice for *64. Separately retain the full signed16 product until
+adding 0x200000ff and dropping a byte: p2=2^21+ceil(a*b/256). The four-MUL
+scheduling follows the project's existing AVR201-derived recipe, with a
+caller-clobbered zero register instead of saving r2. The existing adaptation
+is [avr_multiply.h](../../Codecs/Speex/AVR/src/avr_multiply.h); the official
+[AVR201 application note](https://www.microchip.com/en-us/application-notes/an1631-1)
+and [original source archive](https://ww1.microchip.com/downloads/en/AppNotes/avr201.zip)
+retain the upstream provenance. No vendor file is modified by this stage.
+
+Reusable complete example: [lsp_first.S](../../Codecs/Speex/AVR/src/lsp_first.S),
+with [explicit C fallback/selector](../../Codecs/Speex/AVR/src/nb3_lsp_first.h).
+It touches only p1/p2, has zero input-data loads, eight stores, no own saved stack,
+no IO/CLI and restores GNU ABI r1. Architecture plus explicit ASM enable
+select it; unknown/disabled targets use C. C's exact byte-aligned expression
+also outperforms its six-shift alternative on this compiler; other targets
+require their own measurement.
+
+Direct tests cover 1,376,255 native / 1,380,351 AVR pairs per backend,
+all signed17 sums and all 131,072 high-byte/carry partitions, signed64/BigInt
+equations, all pointer low bytes, guards, exact accesses and ABI. ASM takes
+66 cycles including RET/excluding CALL for every tested sign, without IRQ.
+Full NB mean 103,094.832→102,578.762 cycles (-0.5006%), Flash 11,084→10,998 B;
+static 1,099 B/stack 103 B unchanged. C mean 217,506.241→217,244.820 (-0.1202%)
+at +28 B Flash, unchanged SRAM/stack. NB matches original Xiph PCM; WB matches
+the existing compact QMF profile. All 142 fresh active-IRQ PWM images pass,
+including +40% ASM/+10% C NB CPU and +5% WB CPU, with no underrun.
+These simulation results establish neither physical analog quality nor
+performance on another core. [Admission](../../Codecs/Speex/AVR/reports/first-admission.json)
+binds sources, binaries, output, timing and reproducibility.
+
+Primary flag definitions: [Microchip ADC SREG](https://onlinedocs.microchip.com/oxy/GUID-0B644D8F-67E7-49E6-82C9-1B2B9ABE6A0D-en-US-23/GUID-EB080A19-A788-4F24-8DC1-287A506AB186.html),
+[BRGE/LDI instruction summary](https://onlinedocs.microchip.com/oxy/GUID-0B644D8F-67E7-49E6-82C9-1B2B9ABE6A0D-en-US-23/GUID-BA59618D-4850-490B-B176-0BCC3D9438A1.html),
+[MULSU signed16 example](https://onlinedocs.microchip.com/oxy/GUID-0B644D8F-67E7-49E6-82C9-1B2B9ABE6A0D-en-US-23/GUID-FA865CD0-BF70-4D7F-9F8C-760FEF99F2D6.html).
+The signed17 extension and byte-aligned constructor are derived here from
+those semantics; the measured bounds and ABI restrictions are essential.
 
 ### LPX: scale aliases, payload size and IRQ alignment
 

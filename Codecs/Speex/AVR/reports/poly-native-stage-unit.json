@@ -1,0 +1,17 @@
+{
+  "cases": 253950,
+  "outputsPerPath": 1015800,
+  "all65536Signed16RootsPerStage": true,
+  "signed30CoefficientLimits": true,
+  "selectedAndForcedCExact": true,
+  "independentSigned64ProductOracle": true,
+  "guardsAndUntouchedWordsPreserved": true,
+  "binarySha256": "9731926a5f937428ae0a3aa261988a2e645bd482f800669eb1f6ac4ed7e008be",
+  "compiler": "Clang 24 -O2 -fwrapv -fno-strict-aliasing",
+  "sourceSha256": {
+    "src/nb3_lsp_stage.h": "0deaff89072a76d0126c6415eef800546824168059608419d966e238ec5e159a",
+    "src/nb3_c_math.h": "770bade4d78071df923167bb848b324607151879c475a802a8f96dd58290f4d7",
+    "tests/lsp_stage.c": "1cdeed7886b306bbde294180ea42f1d3ecb6e7e1580d4757e9f4c0e5cddd8ebd",
+    "tools/build_lsp_stage_test.py": "0bbb24e6daa3f03611d74d679490d4c214f3ff20e706f44ed2fd5302ac24ce8e"
+  }
+}

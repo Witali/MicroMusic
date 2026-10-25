@@ -1,14 +1,19 @@
 /* UM88 AVR25 kernel. Equivalent selectable C in engine.c, no hardware I/O. */
 #if defined(__AVR_ATtiny88__) && defined(UM_ENABLE_AVR_ASM) && UM_ENABLE_AVR_ASM
 .text
-/* Mono output: same voices/group arithmetic, one accumulator. */
+/* GNU uint32_t result: signed left in r23:r22, right in r25:r24.
+   Both pans are live even for mono so one kernel serves every composition. */
 .global um_render
 .type um_render,@function
 um_render:
     push r14
     push r15
+    push r16
+    push r17
     clr r14
     clr r15
+    clr r16
+    clr r17
     clr r20
     ldi r26,lo8(um)
     ldi r27,hi8(um)
@@ -40,12 +45,17 @@ um_render:
     com r25
     add r14,r24
     adc r15,r25
+    add r16,r24
+    adc r17,r25
 .Lmix_next:
     dec r18
     breq 9f
     rjmp 1b
 9:
-    movw r24,r14
+    movw r22,r14
+    movw r24,r16
+    pop r17
+    pop r16
     pop r15
     pop r14
     ret
@@ -90,9 +100,25 @@ um_render:
     sbrc r19,0
     asr r24
 .Lmix_pan:
-    sbrc r19,3
-    asr r24
-    rjmp .Lmix_accumulate
+    clr r25
+    sbrc r24,7
+    com r25
+    movw r22,r24
+    sbrs r19,3
+    rjmp .Lleft_ready
+    asr r23
+    ror r22
+.Lleft_ready:
+    add r14,r22
+    adc r15,r23
+    sbrs r19,4
+    rjmp .Lright_ready
+    asr r25
+    ror r24
+.Lright_ready:
+    add r16,r24
+    adc r17,r25
+    rjmp .Lmix_next
 .size um_render,.-um_render
 
 /* Cache one packed wave, preserving the C shift/rounding exactly. GNU ABI:

@@ -11,7 +11,7 @@ createServer(async(req,res)=>{
     if (!['GET','HEAD'].includes(req.method)) { res.writeHead(405); res.end(); return; }
     let path=decodeURIComponent(new URL(req.url,'http://localhost').pathname);
     if (path==='/') path='/index.html';
-    if (path!=='/index.html' && !['/site/','/web-player/','/ATtiny13A/Music/','/ATtiny88/Music/','/ATtiny13A/Sound/','/ATmega328/Sound/reference/','/build/hq4-preview/','/i8080/Emulator/','/i8080/CRC/','/i8080/Sound/'].some(prefix=>path.startsWith(prefix))) throw new Error('Not found');
+    if (path!=='/index.html' && !['/site/','/web-player/','/ATtiny13A/Music/','/ATtiny88/Music/','/ATtiny13A/Sound/','/ATmega328/Sound/reference/','/build/hq4-preview/','/i8080/Emulator/','/i8080/CRC/','/i8080/Sound/','/i8080/Music/'].some(prefix=>path.startsWith(prefix))) throw new Error('Not found');
     if (path.endsWith('/')) path+='index.html';
     const target=resolve(root,'.'+path);
     if (!target.startsWith(root+sep) || path.split('/').some(s=>s.startsWith('.'))) throw new Error('Not found');

@@ -1,0 +1,52 @@
+{
+  "baselineGitCommit": "41a89eb1",
+  "scope": "Source factoring only; no arithmetic or runtime change",
+  "beforeMathImageSha256": "8539206c082db6cecf82657a2177352a62f77253048fbb1e4087558ea0cfe59d",
+  "afterMathImageSha256": "8539206c082db6cecf82657a2177352a62f77253048fbb1e4087558ea0cfe59d",
+  "wholeMathImageByteIdentical": true,
+  "existingArithmeticRegressions": {
+    "mcu": "ATmega328P",
+    "simulator": "avr8js 0.21.1",
+    "compiler": "AVR GCC 7.3.0 -O3 -flto -fwrapv",
+    "multiplyCases": 458752,
+    "shiftCases": 655485,
+    "q14Cases": 917504,
+    "q14BoundedCases": 917504,
+    "q14CCases": 917504,
+    "exact": true,
+    "zeroRegisterRestored": true,
+    "minMailboxCycles": 80,
+    "maxMailboxCycles": 80,
+    "includesInterrupts": false,
+    "physicalBoardTested": false
+  },
+  "existingAlignedP1Regression": {
+    "mcu": "ATmega328P",
+    "compiler": "AVR GCC 7.3.0 -O3 -flto -fwrapv",
+    "simulator": "avr8js 0.21.1",
+    "cases": 655360,
+    "exact": true,
+    "r1": true,
+    "bound": "signed30 b divisible by 64",
+    "beforeMeanMailboxCycles": 109,
+    "afterMeanMailboxCycles": 102,
+    "minMailboxGain": 7,
+    "maxMailboxGain": 7,
+    "beforeMeanKernelCycles": 65,
+    "afterMeanKernelCycles": 53,
+    "kernelScope": "Entry through RET, excluding CALL/mailbox/dispatch",
+    "includesInterrupts": false,
+    "physicalBoardTested": false
+  },
+  "timingNote": "P1 timings compare the existing generic and aligned entries inside the unchanged image, not a speedup from this extraction.",
+  "hashEncoding": "UTF-8 source with LF newlines",
+  "beforeQ14SourceSha256": "03564015813c8b2825f056a82376cbf55177a0f1c17af9c7726e0d990cdb9415",
+  "sourceSha256": {
+    "src/q14.S": "8d93f106036746be2ec0400f78737c48ea3b7559428e9f1e41b1f0910333d839",
+    "src/q14_macros.S": "243cd49895b672bcc5f68bf8e877c2b04d2d3464b8209ed7d2c1d5dd689db22a",
+    "tests/avr_math.c": "6d6093973c04b320a4d5706611c30d1eefa316066408e441ba8ce5d12f8b6895",
+    "tests/verify_math.mjs": "0c5011fbd631dd7d1e300b4ac047f7c6b2b7ef7607d3c7983b1ec19e88b7a1ab",
+    "tests/verify_p1.mjs": "fb9d851429d54b299dbee2ff2c58b6989a58b64bfc7c29897d51f49d6c04b9a8",
+    "tools/build_math_test.py": "51a1d4cec4ff2724b8d381ad37323e97db34c1b25c7601128fcec3cc3c56d80a"
+  }
+}

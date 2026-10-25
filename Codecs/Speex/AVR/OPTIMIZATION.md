@@ -931,21 +931,390 @@ python Codecs/Speex/AVR/tests/verify_scratch.py
 Selected source replay from 928d18e reproduces both production binaries exactly.
 Run the previous source-bound prefix audit at 928d18e.
 
+## Codebook geometry, ASM advance and fused LPC (2026-10-25)
+
+**The primary performance target is AVR ASM on ATmega328P.** C remains an
+explicitly selectable, independently verified portability fallback. A faster
+ASM design may use a different call structure from C. Default selection
+still requires a supported architecture plus `SPEEX_NB3_ENABLE_ASM=1`;
+without that explicit opt-in, including on AVR, the library selects C.
+
+The pinned NB3 codebook gives minimum adjacent raw gaps
+`96,176,112,-512,-1184,336,576,672,512`. Only positions 3..5 (zero-based)
+can need margin repair. Every raw quarter is a convex combination of real
+endpoints, with values divisible by four. Fifteen exact affine certificates,
+independently checked against original Xiph dequantization for all 262,144
+code triples, exclude the other checks and propagation into position 6.
+The nonadjacent gap excludes simultaneous center repairs. The two surviving
+upper/lower pairs therefore become two exclusive conditions, with exact
+single-sum averages: their inputs are even and the maximum sums are
+27,968 / 32,720. This proof is specific to the pinned codebook and four
+quarter steps. General interpolation retains both original half-shifts and
+its full signed16 contract. See `tools/prove_nb3_margins.py`,
+`reports/margin-proof*.json` and `tests/margin_proof.c`.
+
+`src/lsp_advance.S` updates all ten raw words and stores only the three
+corrected center frequencies in dead LPC output storage. The fused converter
+consumes these and the other seven raw frequencies before coefficient stores.
+It shares an outlined finish routine; the C decoder instead uses the measured
+faster separate interpolation/conversion form with a common inline finish
+body. Both retain the original polynomial, rounding and saturation equations,
+coefficient age, reset/cache state and 40-byte scratch limit. Handwritten ASM
+reads exactly 40 B and writes 26 B, touches only caller-clobbered registers,
+clears r1 at RET and uses no scratch, MUL, CLI or hardware registers. On AVR5
+with GNU ABI it takes 181/179/187 cycles including RET for no/first/second
+repair, excluding caller CALL. `speex_nb3_advance_codebook_c` is always
+available, including in an ASM build; the standard selector controls its use.
+
+All 56 retained fixture variants preserve 1,058 exact/reset frames each.
+Loop-count/pointer/peeled-tail rewrites compile identically to the baseline;
+two passes lose speed and space. Fused and shared-output variants and three
+full-corpus finalists are retained in `reports/margin-candidates.json`.
+Counted ASM saves 72 B but adds 21 cycles per conversion, so it is rejected
+for the speed target. The chosen ASM improves fixture mean versus equivalent
+C control by about 128 cycles/frame and saves 78 B. The cleaned production
+realization rebuilds byte-identically to its prototype on both backends.
+
+| Full 31-stream NB corpus | Before (ab6425d) | After |
+| --- | ---: | ---: |
+| ASM weighted mean cycles | 107,616.507 | 106,896.237 (-0.6693%) |
+| ASM maximum cycles | 115,604 | 114,786 |
+| ASM Flash / static SRAM / stack | 10,470 / 1,099 / 114 B | 11,470 / 1,099 / 145 B |
+| C weighted mean cycles | 219,310.511 | 218,595.096 (-0.3262%) |
+| C maximum cycles | 231,545 | 230,736 |
+| C Flash / static SRAM / stack | 10,898 / 1,099 / 105 B | 11,792 / 1,099 / 151 B |
+
+Speed has priority over the additional Flash and NB stack. Some ASM frame
+minima increase by four cycles and the `impulses` mean/max increase by 2/4
+cycles; four cycles are 0.25 us at 16 MHz. Every other ASM stream mean
+improves. All C stream min/mean/max improve. No per-frame universal speedup
+is claimed. NB free SRAM is now 804/798 B in the bare harness and 661/654 B
+in PWM; PWM queues remain 74/34 ASM normal/+40% and 66/55 C normal/+10%.
+WB ASM mean/max are 256,760.910 / 264,375 cycles, Flash 18,010 B; its
+static SRAM/stack remain 1,279/178 B. WB C remains slower than real time.
+
+Quality admission requires exact NB s16 PCM against untouched Xiph and exact
+WB PCM against the existing compact Q7/16-tap profile. Native units execute
+1,310,720 calls (every new code triple, real previous endpoints and reset),
+including fine-step repairs. Both AVR backends execute 6,208 fused/separate/
+oracle calls and 3,072 address cases over all 256 low bytes, all repair
+classes and quarter steps. They check raw state, inputs, output guards,
+original-oracle workspace, callee-saved registers and r1 at actual RET.
+ASM additionally checks all read/write addresses on 9,280 primitive calls.
+Explicit C and selected ASM use the same independent oracle. The old
+49,680-call bounded and 12,288 overlapping-output AVR regressions and native
+720,000 overlap outputs remain; broad generic interpolation is unchanged.
+
+Final admission covers 14,278 NB frames per backend, 10,563+744 WB frames,
+both portable archives, the 40 B instrumented native scratch peak, and all
+142 frozen PWM images with active interrupts. Every PWM byte matches the
+appropriate oracle and no output queue underruns. Six representative players,
+both bare decoders and both new AVR units rebuild to the executed hashes.
+Measurements use ATmega328P / AVR GCC 7.3.0 mixed Os/O2/O3 + LTO / GNU ABI /
+AVR8js 0.21.1. Physical hardware has not been measured.
+
+Reproduce the selected source realization from ab6425d in a fresh directory:
+
+```sh
+python Codecs/Speex/AVR/tools/prepare_margin_candidate.py --candidate production --out Codecs/Speex/AVR/build/margin-replay
+python Codecs/Speex/AVR/build/margin-replay/tools/build.py --avr-gcc avr-gcc --backend asm
+python Codecs/Speex/AVR/build/margin-replay/tools/build.py --avr-gcc avr-gcc --backend c
+python Codecs/Speex/AVR/tests/audit_nb3_margins.py --rebuild --avr-gcc avr-gcc
+```
+
+The source-bound audit also requires `build/margin-*` frozen matrix outputs;
+prepare them with the standard decoder/player verifiers and matching output
+paths in `tests/audit_nb3_margins.py`. Units use
+`build_lsp_lifetime_test.py --mode margin` and `verify_nb3_margin.mjs` for
+each backend. The prior source-bound lifetime audit runs at ab6425d.
+
+## Symmetric paired LPC output in ASM (2026-10-25)
+
+For polynomial halves `p[0..5]`, `q[0..5]` with `p[0]==q[0]==2^20`, pair
+coefficient j-1 with 10-j, j=1..5:
+
+```c
+S = p[j] + p[j-1]; D = q[j] - q[j-1];
+ak[j-1] = sat32767(PSHR32(S+D,8));
+ak[10-j] = sat32767(PSHR32(S-D,8));
+```
+
+Modulo-32 sums are exact rearrangements of the original ten-output loop.
+The first forward coefficient cancels equal p0/q0; its mirror includes 2*p0.
+Round both outputs separately after combining S/D, with original wrapping
+`+128` and symmetric [-32767,32767] saturation. Rounding S/D first, using
+wide nonwrapping sums, or allowing -32768 would change PCM.
+
+`src/lsp_finish.S` is an outlined AVR5/GNU ABI routine for the primary
+ATmega328P ASM target. Alternating register banks preserve each newest p/q
+word for the next pair. The known first constants avoid reading p0/q0.
+Every byte of p/q[1..5] is read exactly once (40 B); only ten coefficients
+are written (20 B). It saves r6..17/Y, 14 stack bytes, preserves the remaining
+callee-saved registers and clears r1 at external RET. There are no hardware
+register accesses, MUL, CLI or extra RAM. The direct test observes
+390..417 cycles including RET, excluding caller CALL; these are measured
+cases, not a proved universal cycle bound.
+
+`src/nb3_lsp_finish.h` always supplies the equivalent C helper, selectable
+on AVR through the existing architecture plus explicit ASM-enable contract.
+Default/no matching backend still selects C. The generic standalone converter
+uses the C body; the fused ASM decoder uses the selected output kernel.
+The generic signed16-angle/overlap contract remains covered by original Xiph
+oracle tests. HB order-eight output and QMF are unchanged.
+
+Four paired C layouts (indexed, retained neighbors, unrolled, split stores)
+compile byte-identically with AVR GCC 7.3.0 at the production O3 callsites.
+Six ASM candidates compare SRAM reloads, alternating registers, known first
+constants, and shared rounding subroutines. All 14 pass the same 1,058 exact/
+reset fixture frames. Full-corpus shared rounding uses 10,598 B
+and mean 105,349.355 cycles, versus 10,958 B /
+105,109.736 for the selected inline rounding body. The shared subroutine
+saves 360 B but adds 239.619 mean cycles/frame. Retain
+that measured alternative; select the faster form for the speed-first goal.
+The outer finish remains a shared subroutine called once per conversion;
+source macros avoid repeating hand-maintained arithmetic text.
+
+| Full 31-stream NB corpus | Before (ace94ac6) | After |
+| --- | ---: | ---: |
+| ASM weighted mean cycles | 106,896.237 | 105,109.736 (-1.6712%) |
+| ASM maximum cycles | 114,786 | 112,765 |
+| ASM Flash / static SRAM / stack | 11,470 / 1,099 / 145 B | 10,958 / 1,099 / 107 B |
+| C weighted mean cycles | 218,595.096 | 217,506.241 (-0.4981%) |
+| C maximum cycles | 230,736 | 229,504 |
+| C Flash / static SRAM / stack | 11,792 / 1,099 / 151 B | 11,534 / 1,099 / 105 B |
+
+All ASM stream min/mean/max improve, including cached impulses; the preceding
+four-cycle cache-hit overhead is eliminated. All C means improve and min/max
+are equal or lower. Bare free SRAM is 842/844 B. Complete NB PWM normal/load
+queues are 74/35 ASM (+40% CPU) and 66/55 C (+10%); free SRAM is 699/700 B.
+
+The direct native unsigned-32 sequential oracle checks 305,664 cases /
+3,056,640 coefficients per selected/forced-C path. Both AVR builds add
+46,592 cases / 465,920 coefficients per path, including 43,520 directed
+cases with every rounding low byte and 1,024 all-low-byte address placements.
+Cases target both clipping edges, signed32 bias wrap, first/middle/last pairs,
+odd and page-crossing pointers. The ASM trace checks all 1,863,680 input reads,
+931,840 output writes, exact 14 PUSH/POP addresses and ABI at actual RET.
+Both C and selected paths preserve inputs/guards; no PCM tolerance is allowed.
+
+All earlier broad interpolation, overlapping LPC and untouched-Xiph tests
+remain: 1,310,720 native fused/separate calls, 720,000 native overlapping
+outputs, 6,208 geometry plus 49,680 bounded and 12,288 overlapping outputs
+on each AVR backend, and 82,688 general AVR interpolation calls. The complete
+admission covers 14,278 NB and 10,563+744 compact WB frames per backend,
+two portable archives, checked 40 B scratch, and 142 frozen IRQ/PWM images.
+Both bare decoder backends, four AVR units and six representative players
+rebuild to the executed binaries. Selected source replay from ace94ac6 is
+also byte-identical. Compiler/ABI/simulator remain AVR GCC 7.3.0 mixed
+Os/O2/O3+LTO, GNU ABI, AVR8js 0.21.1, ATmega328P. No physical-board timing
+or original-64-tap WB quality is claimed.
+
+See `reports/pair-*` and `tests/audit_lsp_pairs.py`. Reproduction:
+
+```sh
+python Codecs/Speex/AVR/tools/prepare_lsp_pair_candidate.py --candidate production --out Codecs/Speex/AVR/build/pair-replay
+python Codecs/Speex/AVR/build/pair-replay/tools/build.py --avr-gcc avr-gcc --backend asm
+python Codecs/Speex/AVR/build/pair-replay/tools/build.py --avr-gcc avr-gcc --backend c
+python Codecs/Speex/AVR/tests/audit_lsp_pairs.py --rebuild --avr-gcc avr-gcc
+```
+
+As before, the source-bound audit consumes its frozen `build/pair-*` matrices.
+Prepare them with the decoder/player verifiers and matching output paths in
+the audit. Geometry units use `--mode margin --out build/pair-geometry-unit-<backend>`
+and `verify_nb3_margin.mjs --firmware` at that path; direct finish units use
+`build_lsp_finish_test.py` and `verify_lsp_finish.mjs`. Run the preceding margin
+audit at ace94ac6; no old source-bound result is relabeled for the new sources.
+
+## Constant polynomial stages in ASM (2026-10-25)
+
+The primary ATmega328P ASM path now implements complete symmetric polynomial
+stages 2/3/4 in `src/lsp_stage.S`. It retains the root in r16/r17 and two
+polynomial words in r8..15. A descending window reads each required word
+once and writes p[stage+1..1], sharing the stage-three and stage-two tails.
+p0 is the known 2^20; p1 is divisible by 64. Product inputs are signed30,
+with the existing stronger real-root recurrence bounds. Stages address only
+stage+2 words (up to six for NB; stage three also serves order-eight HB).
+
+The GNU ABI entries preserve all callee-saved registers and r1 at RET,
+saving twelve bytes (r8..17/Y). They use no extra RAM, IO or interrupt
+masking. Independent tests observe constant entry-through-RET costs of
+240/330/420 cycles for stages 2/3/4, excluding caller CALL. MUL arithmetic
+and each original Q14 floor remain unchanged. The twelve-instruction
+signed16-times-64 update aligns by a byte, shifts right twice and extends
+the sign, replacing the wide six-shift sequence.
+
+`src/q14_macros.S` is an assembler include shared with the prior GNU-ABI
+value kernels in `q14.S`. Its root register pair is parameterized (16 or 18),
+so the stages need no repeated argument copy. Source arithmetic exists once;
+the selected stage body expands it inline for speed. Refactoring alone
+preserves the complete old arithmetic-test image byte-for-byte, including
+917,504 generic, bounded and C Q14 cases each, 655,360 aligned-p1 cases,
+multiply/shift regressions and r1 checks. The retained P1 before/after timing
+compares the already-existing generic and aligned entries, not a new gain
+from source factoring. See `reports/poly-q14-refactor.json`.
+
+`src/nb3_lsp_stage.h` always exposes the exact C recurrence and selects ASM
+only under the existing supported-architecture plus explicit-enable contract.
+Default/unknown/disabled configurations select C, including on AVR. Both
+paths use independent original rounding and wrapping arithmetic. Writing the
+C p1 update as f*64 saves 142 B but slows full NB mean by 0.1666%; reject it.
+The defined unsigned shift restores the previous NB and WB C binaries exactly.
+Their Flash, SRAM, stack and all frame-cycle measurements remain unchanged.
+
+Nine candidates retain the narrow shift alone, shared or inline products,
+shared entry dispatch, and C transcription alternatives. All screening rows
+pass 1,058 exact/reset frames; the rejected multiply-C realization also
+passes the full corpus. Shared custom-register products use 10,678 B
+and full-corpus mean 103,532.203, versus 11,084 B /
+103,094.832 for selected inline products. This is a speed-first choice
+at +406 B. Both final sources replay from
+41a89eb1 to the executed binaries. See `reports/poly-candidates.json` and
+`tools/prepare_lsp_stage_candidate.py`.
+
+| Full 31-stream NB corpus | Before (41a89eb1) | After |
+| --- | ---: | ---: |
+| ASM weighted mean cycles | 105,109.736 | 103,094.832 (-1.9170%) |
+| ASM maximum cycles | 112,765 | 110,486 |
+| ASM Flash / static SRAM / stack | 10,958 / 1,099 / 107 B | 11,084 / 1,099 / 103 B |
+| C weighted mean / maximum cycles | 217,506.241 / 229,504 | identical binary |
+| C Flash / static SRAM / stack | 11,534 / 1,099 / 105 B | identical binary |
+
+Every ASM stream mean improves. Some cached minima and the impulses maximum
+increase by one cycle (0.0625 us at 16 MHz); no universal per-frame speedup
+is claimed. Bare free SRAM is 846/844 B; NB PWM free SRAM is 703/700 B.
+NB normal/load queues remain 74/35 ASM (+40% CPU) and 66/55 C (+10%).
+WB ASM mean/max are 251,129.434 / 258,409 cycles, Flash 17,582 B (+82);
+its static SRAM/stack remain 1,279/178 B. WB queues improve 29/14 -> 30/15
+for normal/two +5%-load speech runs, with 452 B free SRAM unchanged.
+
+Native signed64-product equations check 253,950 cases / 1,015,800 output
+words per selected/forced-C path. Both AVR builds check 256,254 cases /
+1,025,016 words per path: every signed16 root in every stage, signed30
+coefficient limits, aligned-p1 boundaries and 2,304 all-low-byte address
+placements. Guards, p0 and unused tail words remain intact. The ASM trace
+checks 3,075,048 input reads, 4,100,064 stores, exactly twelve saved stack
+bytes and callee-saved/r1 registers at actual RET, including shared-tail exits.
+The oracle uses wide products; it does not import production Q14 arithmetic.
+
+Earlier broad interpolation and original-Xiph LPC/overlap tests remain:
+1,310,720 native fused/separate calls, 720,000 native overlapping outputs,
+6,208 geometry calls plus 49,680 bounded and 12,288 overlapping outputs per
+AVR backend, and 82,688 general AVR interpolation calls. The unchanged paired
+finish source retains its preceding independent admission. The complete new
+gate covers 14,278 NB and 10,563+744 compact WB frames per backend, two
+portable archives, the checked 40 B scratch peak and 142 fresh IRQ/PWM images.
+All PCM and PWM bytes match their appropriate untouched-NB/compact-WB oracle.
+Four bare decoders, four AVR units, the old math image and six representative
+players rebuild to the executed hashes. Compiler/ABI/simulator are AVR GCC
+7.3.0 mixed Os/O2/O3+LTO, GNU ABI, AVR8js 0.21.1, ATmega328P. No physical-board
+timing or full-64-tap WB quality is inferred from these results.
+
+Reproduce selected sources and the source-bound frozen-matrix audit:
+
+```sh
+python Codecs/Speex/AVR/tools/prepare_lsp_stage_candidate.py --candidate production --out Codecs/Speex/AVR/build/poly-replay
+python Codecs/Speex/AVR/build/poly-replay/tools/build.py --avr-gcc avr-gcc --backend asm
+python Codecs/Speex/AVR/build/poly-replay/tools/build.py --avr-gcc avr-gcc --backend c
+python Codecs/Speex/AVR/tests/audit_lsp_stages.py --rebuild --avr-gcc avr-gcc
+```
+
+The audit consumes its `build/poly2-*` decoder/player outputs. Prepare them
+with the standard verifiers and matching paths in the audit. Direct stage
+units use `build_lsp_stage_test.py --out` and `verify_lsp_stage.mjs --firmware`;
+geometry and overlap units retain their existing builders/drivers. Run the
+preceding source-bound paired-output audit at 41a89eb1.
+
+## Two-root ASM constructor (2026-10-25)
+
+The primary ATmega328P ASM path replaces the C first-stage constructor with
+`src/lsp_first.S`. It writes only p1 and p2, from full signed16 roots a/b:
+`p1=-(a+b)*64`, `p2=2^21+ceil(a*b/256)`. The root sum needs signed17 and its
+negation needs signed18 at a=b=-32768. High-byte ADC sets S=N xor V; that
+flag identifies the true signed17 sum sign even when its low16 result
+overflows. LDI preserves S; balanced BRGE/CLR paths construct the complement
+of the sign-extension byte. Keep that extra byte through negation, align by
+one byte, then shift right twice for p1. A four-MUL signed product retains
+all bits through the original 0x200000ff bias before dropping a byte for p2.
+
+This GNU-ABI AVR5 entry uses only caller-clobbered registers, no input-data loads,
+eight output stores, no own stack, IO or interrupt masking. Tests observe
+66 cycles including RET, excluding CALL, for negative/zero/positive sums.
+`nb3_lsp_first.h` always provides explicit C and selects ASM only through
+the existing real architecture plus separate enable contract. Portable C
+uses the exact byte-aligned expression; no AVR-only C type enters the export.
+
+Nine candidates retain original C, a six-shift expression, byte alignment,
+experimental AVR int24, explicit wide ASM sign extension and S-flag ASM.
+All pass 1,058 exact/reset screening frames. The wide ASM screen averages
+90,938.754 cycles versus 90,919.970 for S-flag ASM, at 11,008 versus 10,998 B.
+The chosen C byte-aligned expression averages 190,541.168 versus 190,679.980
+for original C. Both cleaned production NB images replay byte-identically
+from 00e94768. See `reports/first-candidates.json` and
+`tools/prepare_lsp_first_candidate.py`; do not infer whole-corpus timings
+from the smaller screening fixture.
+
+| Full 31-stream NB corpus | Before (00e94768) | After |
+| --- | ---: | ---: |
+| ASM weighted mean cycles | 103,094.832 | 102,578.762 (-0.5006%) |
+| ASM maximum cycles | 110,486 | 109,902 |
+| ASM Flash / static SRAM / stack | 11,084 / 1,099 / 103 B | 10,998 / 1,099 / 103 B |
+| C weighted mean cycles | 217,506.241 | 217,244.820 (-0.1202%) |
+| C maximum cycles | 229,504 | 229,208 |
+| C Flash / static SRAM / stack | 11,534 / 1,099 / 105 B | 11,562 / 1,099 / 105 B |
+
+Every ASM stream mean improves; no NB extrema increase. C stream means and
+extrema never increase (a rounded stream mean is unchanged). No universal
+per-frame improvement is claimed. Free SRAM remains 846/844 B bare and
+703/700 B in NB PWM. WB ASM mean/max fall from 251,129.434 / 258,409 to
+250,030.239 / 257,241; Flash becomes 17,496 B,
+with unchanged 1,279 B static / 178 B stack. C WB mean/max become
+648,243.502 / 658,806; it remains slower than real time.
+
+Independent native signed64 equations check 1,376,255 pairs / 2,752,510
+output words per path. Each AVR backend checks 1,380,351 pairs / 2,760,702
+words per path, including 4,096 pointer-placement cases. They cover all
+65,536 left roots at sixteen right roots, all 131,071 signed17 sums and
+all 131,072 high-byte/carry partitions, random pairs and guards. ASM traces
+check S at every branch, exactly 11,042,808 stores, no input-data loads/PUSH/POP,
+no changes outside p1/p2 and all callee-saved/r1 registers at external RET.
+SREG's address comes from pinned avr/io.h/device headers; no register address
+is duplicated. Data-access counts exclude implicit RET stack traffic. The
+previous Q14 and stage sources remain unchanged.
+
+Fresh broader original-Xiph geometry, overlapping outputs, native primitives,
+portable C archives and both complete AVR backends pass. Each NB backend
+matches 14,278 exact/reset frames; WB matches 10,563 plus 744 repeat frames
+against the compact-profile oracle. Instrumented native scratch remains
+40 B over all 9,100 frames. Quality changes are zero at s16 PCM in these
+respective reference contracts; this does not restore full-Xiph QMF to WB.
+
+All 142 freshly frozen player images pass with timers/IRQ active: four full
+31-stream NB matrices (normal and +40% ASM / +10% C CPU), sixteen natural WB
+streams, and two +5% WB speech streams. PWM u8 matches reference PCM and
+underruns remain zero. NB queues are 74/35 ASM and 66/55 C; WB 30/15.
+These are AVR8js ISA/peripheral measurements, not a physical-board test.
+GCC 7.3.0 uses mixed Os/O2/O3, LTO, mcall-prologues and mrelax on ATmega328P
+at 16 MHz. `reports/first-admission.json` binds sources, images, outputs and
+representative rebuilds. It consumes `build/first-*` outputs; use the standard
+verifiers at those paths, the new direct constructor builder/driver, then
+`tests/audit_lsp_first.py --rebuild --avr-gcc avr-gcc`. Run the preceding
+polynomial-stage source-bound audit at 00e94768.
+
 ## Next candidates (not yet measured/admitted)
 
 The previously listed C40 long-pitch entry shipped in commit 9813583 and is
 no longer an outstanding candidate.
 
-1. **Shorten the margin loop's final lookahead.** A validated endpoint removes
-   its clamp, but the loop still reloads/stores the final raw value separately.
-   Compare peeled, fixed-count and pointer-walk forms with the current inline
-   loop. Preserve both original half-shifts, raw/output separation and ABI;
-   count real decoder cycles, not only a wrapper microbenchmark.
+1. **Defer redundant r1 clears inside the private stage body.** General Q14
+   products do not need r1 zero between successive products; the final aligned
+   p1 product must clear it before adding p0 and before the external RET.
+   The later epilogue clear may also be redundant after that final clear.
+   Verify all intervening instructions, IRQ behavior and unchanged GNU-ABI
+   value kernels before measuring; the current implementation still clears it.
 
-2. **Share repeated NB LPC-copy/control work.** Inspect the four coefficient
-   updates and the synchronous WB callback for redundant address arithmetic
-   and repeated loads. Keep the one-subframe coefficient age and every IIR
-   update. No timing or memory benefit is admitted without measurement.
+2. **Inspect call/control and section layout.** Measure shared NB LPC-copy
+   work, assembler call distances and compiler-supported leaf annotations.
+   Preserve the coefficient age, exact output and portable interface.
 
 No claim of a global speed optimum has been established. Do not mark the
 ongoing optimization goal complete while useful candidates remain untested.

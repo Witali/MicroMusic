@@ -41,7 +41,7 @@
         </section>
         <section class="panel scope-panel" aria-label="Звук прошивки">
           <div class="panel-heading"><span class="eyebrow">02 / ЗВУКОВОЙ СИГНАЛ</span><span class="technical-note">96 кГц · МОНО</span></div>
-          <div class="scope-wrap"><canvas id="scope" width="1000" height="200" role="img" aria-label="Осциллограмма восстановленного звука"></canvas><span class="scope-scale">первые 50 мс</span></div>
+          <div class="scope-wrap"><canvas id="scope" width="1000" height="200" role="img" aria-label="Осциллограмма текущего звука"></canvas><span class="scope-mark">0</span><span class="scope-scale" id="scope-scale">85 мс</span></div>
           <div class="live-controls"><span id="playback-status" role="status">Звук запускается кнопкой «Эмулировать»</span><output id="elapsed">00:00.0</output></div>
           <label class="live-volume">Громкость <input id="volume" type="range" min="0" max="1" step="0.01" value="0.65"></label>
           <div class="emulator-metrics"><div><span>ФРОНТОВ ВЫХОДА</span><strong id="edges">0</strong></div><div><span>ЗАПИСЕЙ В ПАМЯТЬ</span><strong id="writes">0</strong></div><div><span>OUT / ПОРТЫ</span><strong id="io-writes">0</strong></div></div>
@@ -50,14 +50,15 @@
       <div class="emulator-sidebar">
       <aside class="panel library example-library" aria-label="Библиотека примеров">
         <div class="panel-heading"><span class="eyebrow">БИБЛИОТЕКА ПРОШИВОК</span><span class="count" id="catalog-count">…</span></div>
-        <h2>Один 8080. Разный звук.</h2><p class="library-caption">Голос с ровным PWM, исходный вариант и музыка.</p>
+        <h2>Один 8080. Разный звук.</h2><p class="library-caption">Голос и музыка с ровным PWM.</p>
         <input id="search" type="search" placeholder="Найти пример…" aria-label="Поиск примера">
         <div id="catalog" class="catalog" role="list"></div>
         <p id="catalog-status" class="setting-note" role="status">Загрузка примеров…</p>
       </aside>
       <aside class="panel settings-panel" aria-label="Настройки эмулятора">
         <div class="panel-heading"><span class="eyebrow">ПАРАМЕТРЫ МАШИНЫ</span><span class="count">8080</span></div>
-        <label for="hz">Частота процессора, Гц</label><input id="hz" data-machine type="number" min="100000" max="10000000" step="1000" value="3500000">
+          <label for="hz">Частота процессора</label><select id="hz" aria-describedby="clock-note"><option value="2000000">2 МГц</option><option value="2500000">2,5 МГц</option><option value="3500000" selected>3,5 МГц</option></select>
+          <p id="clock-note" class="setting-note">Для примеров автоматически загружается прошивка с пересчитанным звуком. Для своего ROM выберите частоту, под которую он собран.</p>
         <label for="output">Звуковой выход</label><select id="output" data-machine><option value="inte">INTE · уровень EI / DI</option><option value="wr">/WR · импульсы записи</option></select>
         <label for="memory">Карта памяти</label><select id="memory" data-machine><option value="rom">ПЗУ без ОЗУ</option><option value="ramupper">ПЗУ снизу · ОЗУ 8000–FFFF</option><option value="allram">ОЗУ 0000–FFFF</option></select>
         <p id="memory-note" class="setting-note">32-КиБ образ зеркалируется по A15. Записи дают /WR, содержимое ПЗУ сохраняется.</p>

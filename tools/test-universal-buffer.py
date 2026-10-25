@@ -54,6 +54,9 @@ class Buffer(unittest.TestCase):
                             '--score',source,'--buffer-frames',size,'--output-dir',folder)
                 result=subprocess.run(['node',str(ROOT/'tools/audit-universal-music.mjs'),'--directory='+str(folder),name],capture_output=True,text=True)
                 measured=json.loads((folder/name/'verification.json').read_text())
+                build=json.loads((folder/name/'build-report.json').read_text())
+                self.assertEqual(build['packingMode'],'compact' if size==192 else 'fast')
+                self.assertEqual(build['grammarFormat'],9 if size==192 else 0)
                 self.assertEqual(measured['fifoCapacityFrames'],size)
                 self.assertEqual(measured['passed'],passed,measured)
                 self.assertEqual(result.returncode==0,passed)
@@ -63,5 +66,23 @@ class Buffer(unittest.TestCase):
         report=ROOT/'ATtiny88/Music/universal/reports/buffer-verification.json'
         report.write_text(json.dumps(dict(schema='micromusic-um88-buffer-verification',version=1,
                              hardwareTested=False,cases=cases),indent=2)+'\n',encoding='utf-8')
+
+    def test_explicit_dictionary_layouts_preserve_the_same_score(self):
+        score=ROOT/'ATtiny88/Music/universal/examples/polyphony-study/generated/score.json'
+        with tempfile.TemporaryDirectory(dir=ROOT/'build/universal',prefix='packing-test-') as work:
+            folder=Path(work);hashes=[]
+            for packing,size,format_id in [('compact',128,9),('fast',192,0)]:
+                output=folder/packing
+                tooling.run(sys.executable,ROOT/'tools/build-universal-music.py','--backend','avr-asm',
+                            '--score',score,'--packing',packing,'--buffer-frames',size,'--output-dir',output)
+                name=json.loads(score.read_text(encoding='utf-8'))['name']
+                tooling.run('node',ROOT/'tools/audit-universal-music.mjs','--directory='+str(output),name)
+                build=json.loads((output/name/'build-report.json').read_text())
+                self.assertEqual(build['grammarFormat'],format_id)
+                self.assertEqual(build['packingMode'],packing)
+                self.assertEqual(json.loads((output/name/'score.json').read_text(encoding='utf-8')),
+                                 json.loads(score.read_text(encoding='utf-8')))
+                hashes.append(build['decodedCommandsSha256'])
+            self.assertEqual(*hashes)
 
 if __name__=='__main__':unittest.main()
