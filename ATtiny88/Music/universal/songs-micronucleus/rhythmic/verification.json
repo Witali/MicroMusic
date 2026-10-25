@@ -1,17 +1,50 @@
 {
+  "generatedPwmActual": {
+    "sha256": "a60183c61c77608b65eb237f2df8d6b867bb5cce7db9e4b9229292207cabcc1e",
+    "bytes": 13878616
+  },
+  "generatedPwmReference": {
+    "sha256": "a60183c61c77608b65eb237f2df8d6b867bb5cce7db9e4b9229292207cabcc1e",
+    "bytes": 13878616
+  },
+  "consumedPwmActual": {
+    "sha256": "2d6669eb998369657a5e6fcc82d1d9d0f119555a7e289ea936b60b3dbccc9c5d",
+    "bytes": 13878629
+  },
+  "consumedPwmReference": {
+    "sha256": "2d6669eb998369657a5e6fcc82d1d9d0f119555a7e289ea936b60b3dbccc9c5d",
+    "bytes": 13878629
+  },
+  "rawPwmStreamsEqual": true,
+  "strictMonoOCR1ANoWrites": true,
+  "monoOCR1AWriteAttempts": 0,
+  "monoObservableBoundaries": 939279025,
+  "monoPoisonedCompareA": 23131,
+  "monoPB1AndCOM1AInactive": true,
+  "irqScratch": "gpior",
+  "irqScratchSelection": "gpior",
+  "reservedIORegisters": [
+    "GPIOR0",
+    "GPIOR1",
+    "GPIOR2"
+  ],
+  "dfpRegisterSourceSha256": "63c792cc9961aca81bfb3602e0d1d3cf01a37f35a449a6b6e2e6c8b41cc1e892",
   "variant": "rhythmic",
   "cpuHz": 16000000,
   "backend": "avr-asm",
-  "engineSha256": "5cc0b6dc32bb378dc9021807c81a947c5fbfb3ea9344309ca63b94575bc1d7c5",
+  "engineSha256": "0aaeb003ec2130de9db2e982aeb1fa36ad17942acf633f58a6ef0ae2e7f6fa4d",
+  "configuredChannels": 1,
+  "renderABI": "mono-s16",
+  "inactiveCompareAPreserved": true,
   "board": "mh-et-live-16mhz",
   "bootloaderHandoffChecked": true,
   "erasedEepromChecked": true,
-  "flashSha256": "cf2e6afca2ee1c91f6f58d5423114325f14cc2f646d9a42cf7d0a5ad80d30743",
+  "flashSha256": "f3c48102e28e998802e97974c93e324176df744019219d510330de81d3f97d7b",
   "eepromSha256": null,
   "scoreSha256": "7d687310f421cb41c5c7c10c7924f6683da7af2d0a22569b7b5c01baa2efd239",
   "reference": "Independent uncompressed UM88 JSON, exact tonal/percussion/interpolation arithmetic",
   "passed": true,
-  "simulatedSeconds": 222.0589023125,
+  "simulatedSeconds": 222.0589323125,
   "controlFrames": 16262,
   "completeLoops": 1,
   "samples": 3469654,
@@ -22,18 +55,18 @@
   "checkedWaveSamples": 1301200,
   "pwmBufferLayout": "mono",
   "fifoCapacityFrames": 192,
-  "minimumQueuedFrames": 122,
-  "maxRenderActiveCycles": 240,
-  "maxControlActiveCycles": 13242,
+  "minimumQueuedFrames": 130,
+  "maxRenderActiveCycles": 219,
+  "maxControlActiveCycles": 12601,
   "controlCalls": 16264,
-  "maxISRCycles": 52,
+  "maxISRCycles": 34,
   "fifoUnderruns": 0,
   "lostInterrupts": 0,
-  "minimumStackPointer": 726,
-  "stackBytes": 41,
-  "staticStateEnd": 504,
+  "minimumStackPointer": 735,
+  "stackBytes": 32,
+  "staticStateEnd": 503,
   "fifoEnd": 704,
-  "stackMarginBytes": 22,
+  "stackMarginBytes": 31,
   "allControlFramesMatch": true,
   "allTonalMixesMatch": true,
   "allPwmFramesMatch": true,
@@ -43,5 +76,5 @@
   "monoMeanPwm": 127.35891792092238,
   "monoRmsPwm": 25.241794970597848,
   "hardwareTested": false,
-  "wallSeconds": 541.809633
+  "wallSeconds": 764.4034412999999
 }

@@ -1,0 +1,54 @@
+--- a/ATtiny88/Music/universal/engine.c
++++ b/ATtiny88/Music/universal/engine.c
+@@ -30,17 +30,8 @@
+ static UM_NOINLINE void bind_pointer(uint16_t *target,uint8_t offset) {
+     *target=POINTER(offset);
+ }
+-static uint16_t shift9(uint16_t value,uint8_t shift) {
+-    switch(shift) {
+-    case 7:value>>=1;
+-    case 6:value>>=1;
+-    case 5:value>>=1;
+-    case 4:value>>=1;
+-    case 3:value>>=1;
+-    case 2:value>>=1;
+-    case 1:value>>=1;
+-    }
+-    return value&511;
++static UM_NOINLINE uint16_t read9(uint16_t at,uint8_t shift) {
++    return (um_word(at)>>shift)&511;
+ }
+ 
+ static uint16_t symbol(void) {
+@@ -56,7 +47,7 @@
+ #endif
+     uint16_t stream=um.stream;
+     uint8_t bit=streamBit;
+-    uint16_t code=shift9(um_word(stream),bit);
++    uint16_t code=read9(stream,bit);
+     bit++;
+     um.stream=stream+1+(bit>>3);streamBit=bit&7;
+     return code;
+@@ -78,15 +69,14 @@
+             uint16_t index=code-literalCount;
+             uint16_t at=ruleTable+(index<<1)+(index>>2);
+             uint8_t shift=(index&3)<<1;
+-            uint8_t lo=UM_READ(at),middle=UM_READ(at+1),hi=UM_READ(at+2);
+-            *pending++=shift9(middle|((uint16_t)hi<<8),shift+1);
+-            code=shift9(lo|((uint16_t)middle<<8),shift);
+-        }
+-    }
+-#if !UM_COMPACT_SCORE_ONLY
+-    if(!packedSymbols){um.depth=pending-um.pending;return (uint8_t)code;}
+-#endif
++            *pending++=read9(at+1,shift+1);
++            code=read9(at,shift);
++        }
++    }
+     um.depth=pending-um.pending;
++#if !UM_COMPACT_SCORE_ONLY
++    if(!packedSymbols)return (uint8_t)code;
++#endif
+     return UM_READ(ruleTable-literalCount+code);
+ }
+ /* Pure arithmetic: signed sample times a four-bit level. The intermediate

@@ -8,7 +8,7 @@
 пропущенных/слишком коротких нот, заменённых ударных и неподдержанных событий нет.
 
 ```text
-python tools/compile-universal-music.py ATtiny88/Music/universal/examples/polyphony-study/source-events.json --arrangement ATtiny88/Music/universal/examples/polyphony-study/arrangement.json --backend avr-asm --buffer-frames 192 --output build/eight-voices --preview-seconds 5
+python tools/compile-universal-music.py ATtiny88/Music/universal/examples/polyphony-study/source-events.json --arrangement ATtiny88/Music/universal/examples/polyphony-study/arrangement.json --backend avr-asm --irq-scratch gpior --buffer-frames 192 --output build/eight-voices --preview-seconds 5
 ```
 
 - Кольцо 192: [пакет](generated/player-package.json), [HEX](generated/synth.hex),
@@ -23,8 +23,8 @@ ATtiny88 8 МГц, восемь независимых тональных гол
 
 | Кольцо, байт | `--packing auto` | Flash / общий код, Б | Макс. управление, тактов | Минимум FIFO, кадров | Запас над кольцом, Б |
 | --- | --- | ---: | ---: | ---: | ---: |
-| 192 | compact, формат 9 | 4133 / 2930 | 24424 | 66 | 22 |
-| 128 | fast, формат 0 | 4187 / 3036 | 18577 | 31 | 92 |
+| 192 | compact, формат 9 | 3319 / 2130 | 22683 | 84 | 31 |
+| 128 | fast, формат 0 | 3391 / 2244 | 18016 | 42 | 100 |
 
 Оба словаря сохраняют все байты команд, ноты, фазы, огибающие и вызовы
 повторяющихся партий/аккордов. Вариант 128 тратит больше Flash на более
@@ -33,8 +33,9 @@ ATtiny88 8 МГц, восемь независимых тональных гол
 
 Полный цикл и повтор прошли с активными IRQ: каждый тональный, ударный и
 PWM-отсчёт совпадает с независимым эталоном, underrun, потерь IRQ и клиппинга
-нет. Микшер — максимум 366 тактов, ISR — 52. Минимум SP726 при кольце 192
-и SP732 при 128. Оба WAV сохраняют прежние 169739 отсчётов при 48 кГц,
+нет. Моно-микшер — максимум 339 тактов, ISR — 34 при кольце 192 и 32 при 128.
+GPIOR0/1/2 явно зарезервированы драйвером прерывания. Минимум SP735 при кольце 192
+и SP740 при 128. Оба WAV сохраняют прежние 169739 отсчётов при 48 кГц,
 примерно 3,536 с. Проверки относятся к цифровой модели.
 
 Это пример измеренной нагрузки, не гарантия любых восьмиголосных MIDI.

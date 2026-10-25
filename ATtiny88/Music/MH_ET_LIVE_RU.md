@@ -51,9 +51,9 @@ Timer1 работает в Fast PWM mode 5 с TOP=255. На каждый син�
 ## Пересоздание и проверки
 
 ```text
-python tools/build-universal-music.py --backend avr-asm
+python tools/build-universal-music.py --backend avr-asm --irq-scratch gpior
 node tools/audit-universal-music.mjs
-python tools/build-universal-music.py --backend avr-asm --board mh-et-live-16mhz
+python tools/build-universal-music.py --backend avr-asm --irq-scratch gpior --board mh-et-live-16mhz
 node tools/audit-universal-music.mjs --directory=ATtiny88/Music/universal/songs-micronucleus
 python web-player/scripts/build_catalog.py --target attiny88
 python web-player/scripts/build_catalog.py --target attiny88 --board mh-et-live-16mhz

@@ -14,7 +14,9 @@
 #define VIRTUAL_NUMERATOR 19200000UL
 _Static_assert(sizeof(UMVoice)==23,"UM88 AVR voice layout");
 _Static_assert(offsetof(UMState,count)==216,"UM88 AVR count offset");
-volatile uint8_t um_ring[UM_PWM_BUFFER_FRAMES] __attribute__((aligned(64),section(".noinit")));
+/* A page-local FIFO lets the optional ISR use its cursor as X low directly.
+ * The builder still checks the resulting end address and stack reserve. */
+volatile uint8_t um_ring[UM_PWM_BUFFER_FRAMES] __attribute__((aligned(256),section(".noinit")));
 volatile uint8_t um_read,um_write,um_underruns;
 volatile uint16_t um_samples;
 #if defined(UM_BOARD_MH_ET_LIVE_16MHZ) && UM_BOARD_MH_ET_LIVE_16MHZ
@@ -36,8 +38,10 @@ void um_board_reset(void) {
 ISR(TIMER1_OVF_vect) {
     uint8_t at=um_read;
     if(at!=um_write){
-        if(um_channels==2){OCR1AL=um_ring[at++];OCR1BL=um_ring[at++];}
-        else OCR1BL=um_ring[at++];
+#if UM_OUTPUT_CHANNELS == 2
+        OCR1AL=um_ring[at++];
+#endif
+        OCR1BL=um_ring[at++];
         um_read=at==UM_PWM_BUFFER_FRAMES?0:at;
     }
     else um_underruns++;
@@ -64,7 +68,8 @@ static int8_t percussion(uint8_t advance) {
     if(mode&16)q=(q+4)>>3;
     return q;
 }
-/* Four exact quarter points, shared by both channels. The accumulator stays
+#if UM_OUTPUT_CHANNELS == 2
+/* Four exact quarter points, shared by the stereo channels. The accumulator stays
  * between 0 and 1020, including a decreasing ramp. These integer points equal
  * the original nested midpoint averages for every pair of 8-bit endpoints. */
 static __attribute__((noinline)) uint8_t interpolate(uint8_t at,uint8_t stride,
@@ -77,20 +82,36 @@ static __attribute__((noinline)) uint8_t interpolate(uint8_t at,uint8_t stride,
     }
     return at;
 }
+#endif
 int main(void) {
 #if !defined(UM_BOARD_MH_ET_LIVE_16MHZ) || !UM_BOARD_MH_ET_LIVE_16MHZ
     cli();MCUSR=0;wdt_disable();CLKPR=_BV(CLKPCE);CLKPR=0;
 #endif
     PRR=0;um_init();
-    const uint8_t channels=um_channels,reserve=4*channels;
+    const uint8_t reserve=4*UM_OUTPUT_CHANNELS;
     for(uint8_t i=0;i<UM_PWM_BUFFER_FRAMES;i++)um_ring[i]=128;
     um_write=UM_PWM_BUFFER_FRAMES-reserve;um_read=0;
-    TCCR1A=0;TCCR1B=0;TCNT1=0;OCR1A=128;OCR1B=128;
-    TCCR1A=_BV(COM1B1)|_BV(WGM10)|(channels==2?_BV(COM1A1):0);
-    DDRB|=_BV(PB2)|(channels==2?_BV(PB1):0);
+    TCCR1A=0;TCCR1B=0;TCNT1=0;
+#if UM_OUTPUT_CHANNELS == 2
+    OCR1A=128;
+#endif
+    OCR1B=128;
+    TCCR1A=_BV(COM1B1)|_BV(WGM10)
+#if UM_OUTPUT_CHANNELS == 2
+        |_BV(COM1A1)
+#endif
+        ;
+    DDRB|=_BV(PB2)
+#if UM_OUTPUT_CHANNELS == 2
+        |_BV(PB1)
+#endif
+        ;
     TIFR1=_BV(TOV1);TIMSK1=_BV(TOIE1);TCCR1B=_BV(WGM12)|_BV(CS10);sei();
     UMFraction fraction=0;UMMusicClock musicClock=0;
-    uint8_t previousL=128,previousR=128;
+    uint8_t previousL=128;
+#if UM_OUTPUT_CHANNELS == 2
+    uint8_t previousR=128;
+#endif
     const uint8_t maximumQueued=UM_PWM_BUFFER_FRAMES-reserve-1;
     for(;;){
         /* Snapshot each shared cursor once: IRQ can wrap um_read between loads. */
@@ -102,9 +123,9 @@ int main(void) {
         if(fraction>=UM_DRUM_FRACTION_PERIOD){fraction-=UM_DRUM_FRACTION_PERIOD;advance++;}
         musicClock+=UM_CONTROL_INCREMENT;
         if(musicClock>=UM_CONTROL_PERIOD){musicClock-=UM_CONTROL_PERIOD;um_tick();}
-        uint32_t mixed=um_render();int8_t drum=percussion(advance);
-        uint8_t targetL=um_output((int16_t)mixed+drum),targetR=targetL,at=um_write;
-        if(channels==1){
+        UMSample mixed=um_render();int8_t drum=percussion(advance);
+        uint8_t targetL=um_output((int16_t)mixed+drum),at=um_write;
+#if UM_OUTPUT_CHANNELS == 1
             /* Producer is aligned to four bytes; capacity is divisible by four.
              * The complete mono batch is contiguous, including at wrap. */
             uint8_t mid=(previousL+targetL)>>1;
@@ -112,11 +133,12 @@ int main(void) {
             output[0]=(previousL+mid)>>1;output[1]=mid;
             output[2]=(mid+targetL)>>1;output[3]=targetL;
             at+=4;if(at==UM_PWM_BUFFER_FRAMES)at=0;
-        }else{
-            targetR=um_output((int16_t)(mixed>>16)+drum);
-            uint8_t next=interpolate(at,channels,previousL,targetL);
-            interpolate(at+1,channels,previousR,targetR);at=next;
-        }
-        um_write=at;previousL=targetL;previousR=targetR;um_samples++;
+#else
+            uint8_t targetR=um_output((int16_t)(mixed>>16)+drum);
+            uint8_t next=interpolate(at,2,previousL,targetL);
+            interpolate(at+1,2,previousR,targetR);at=next;
+            previousR=targetR;
+#endif
+        um_write=at;previousL=targetL;um_samples++;
     }
 }
