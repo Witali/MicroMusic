@@ -22,6 +22,7 @@ from lpx4 import encode, decode
 from q0_model import coefficient_trace, table, clamp, decode_pcm16, filter_stability
 from wav_lpc import analyze, load_wav, pack_frames
 from tune_pcm16 import metrics
+from output_paths import protect_outputs
 
 
 @njit(cache=True)
@@ -197,6 +198,7 @@ def encode_segment(pcm, decoder, max_bytes=65535, lambdas=(0., .0002, .001, .005
 
 def run(source, output, max_bytes=65535, segment_samples=64000, kind='speech', lambdas=None):
     source, output = Path(source), Path(output)
+    protect_outputs([source], [output/'decoded.wav', output/'manifest.json'])
     if not 160 <= segment_samples <= 64000 or segment_samples % 160:
         raise ValueError('segment_samples must be a multiple of 160 in 160..64000')
     if not 32 <= max_bytes <= 65535:
@@ -225,6 +227,7 @@ def run(source, output, max_bytes=65535, segment_samples=64000, kind='speech', l
               'decoder_sha256': hashlib.sha256((Path(__file__).resolve().parents[1] / 'src/Lpx4HybridCore.cpp').read_bytes()).hexdigest(),
               'avr_real_time_verified': False}
     # No partial outputs on encoding/budget/decoder failure.
+    protect_outputs([source], [output/name for name, _ in encoded] + [output/'decoded.wav', output/'manifest.json'])
     output.mkdir(parents=True, exist_ok=True)
     for name, blob in encoded:
         (output / name).write_bytes(blob)

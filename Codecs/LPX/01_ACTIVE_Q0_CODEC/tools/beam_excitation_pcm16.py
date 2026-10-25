@@ -19,6 +19,7 @@ from refine_excitation_pcm16 import scan_tokens
 from refine_lsf_pcm16 import patch_bits
 from tune_pcm16 import read_wav16
 from wav_to_lpx4 import quality
+from output_paths import protect_outputs
 
 
 def optimize(blob, ref, decoder, beam_width=4, window=20, tail=80,
@@ -132,6 +133,8 @@ def main():
     ap.add_argument('--tokens-per-window', type=int, default=6)
     ap.add_argument('--kind', choices=('speech', 'music'), default='speech')
     a = ap.parse_args()
+    protect_outputs([a.input, a.reference_wav],
+        [a.output,a.output.with_suffix('.pcm16le'),a.output.with_suffix('.json')],replace=(a.input,a.output))
     ref = read_wav16(a.reference_wav)
     with BatchSession('batch') as decoder:
         blob, pcm, report = optimize(a.input.read_bytes(), ref, decoder, beam_width=a.beam,

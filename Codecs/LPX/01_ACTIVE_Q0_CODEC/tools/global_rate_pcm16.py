@@ -24,6 +24,7 @@ from wav_to_lpx4 import quantize_trial, quality
 from tune_pcm16 import read_wav16
 from batch_decoder import BatchSession
 from optimize_q0 import cost_probe, probe
+from output_paths import protect_outputs
 
 
 @dataclass(slots=True)
@@ -298,8 +299,10 @@ def optimize(blob, ref, decoder, rounds=2, max_states=1024, max_candidates=32,
 
 
 def run(source, reference_wav, output, **kwargs):
-    source, output = Path(source), Path(output)
-    ref = read_wav16(Path(reference_wav))
+    source, reference_wav, output = Path(source), Path(reference_wav), Path(output)
+    protect_outputs([source, reference_wav],
+        [output, output.with_suffix('.wav'), output.with_suffix('.json')], replace=(source, output))
+    ref = read_wav16(reference_wav)
     with BatchSession('batch') as decoder:
         blob, pcm, report = optimize(source.read_bytes(), ref, decoder, **kwargs)
     output.parent.mkdir(parents=True, exist_ok=True)
