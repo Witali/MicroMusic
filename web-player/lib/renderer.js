@@ -1,5 +1,5 @@
-import { AVRCore } from './avr-core.js?v=20261024-common-avr';
-import { resolveAVRProfile } from './avr-profiles.js?v=20261024-common-avr';
+import { AVRCore } from './avr-core.js?v=20261025-um88';
+import { resolveAVRProfile } from './avr-profiles.js?v=20261025-um88';
 import { parseHex } from './hex.js';
 
 export class Renderer {

@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import {Worker, MessageChannel} from 'node:worker_threads';
 import {createRenderer} from '../lib/engines.js';
 import {AVRMusicTargetCore} from '../lib/avr-attiny88.js';
-import {AVRCore as JSCore} from '../lib/avr-reference.js?v=20261024-common-avr';
+import {AVRCore as JSCore} from '../lib/avr-reference.js?v=20261025-um88';
 import {AVRMusicTargetCore as AuditCore} from '../../tools/avr-music-target-core.mjs';
 import {parseHex} from '../lib/hex.js';
 
