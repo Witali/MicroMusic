@@ -1,13 +1,13 @@
-import { AVRCore } from './avr-core.js?v=20261025-um88';
-import { resolveAVRProfile } from './avr-profiles.js?v=20261025-um88';
+import { AVRCore } from './avr-core.js?v=20261025-board-um88';
+import { resolveAVRProfile } from './avr-profiles.js?v=20261025-board-um88';
 import { parseHex } from './hex.js';
 
 export class Renderer {
   constructor(entry, sampleRate, controls = {}) {
     if (!Number.isFinite(sampleRate) || sampleRate < 8000 || sampleRate > 192000) throw new Error('Invalid audio sample rate');
-    const profile = resolveAVRProfile(entry.device);
+    const profile = resolveAVRProfile(entry.device,{cpuHz:entry.cpuHz});
     this.core = new AVRCore(parseHex(entry.flashHex, profile.flashBytes),
-      entry.eepromHex ? parseHex(entry.eepromHex, profile.eepromBytes) : null, {target:profile.id});
+      entry.eepromHex ? parseHex(entry.eepromHex, profile.eepromBytes) : null, {target:profile.id,cpuHz:profile.cpuHz});
     this.ratio = entry.pwmHz / sampleRate;
     this.sampleRate = sampleRate;
     this.frames = 0;

@@ -12,7 +12,7 @@ registerHooks({
     const loaded=nextLoad(url,context);
     if(url!==bridgeURL&&!url.startsWith(bridgeURL+'?'))return loaded;
     const source=typeof loaded.source==='string'?loaded.source:new TextDecoder().decode(loaded.source);
-    const anchor="const url = new URL('../wasm/avr.wasm?v=20261025-um88', import.meta.url);";
+    const anchor="const url = new URL('../wasm/avr.wasm?v=20261025-board-um88', import.meta.url);";
     if(source.split(anchor).length!==2)throw new Error('Native bridge changed: review candidate test loader');
     return {...loaded,source:source.replace(anchor,'const url = new URL('+JSON.stringify(wasmURL)+');')+
       '\nexport const __testWasmModuleURL = url.href;\n'};

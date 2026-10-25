@@ -1,5 +1,7 @@
 # Preserve imported archive bytes, including original line endings.
 ATtiny13A/Music/** -text
+# Firmware and packed waveform banks must retain every byte, even without NUL.
+ATtiny88/Music/**/*.bin binary
 ATtiny13A/Sound/** -text
 ATmega328/** -text
 PIC16F1503/** -text

@@ -21,7 +21,7 @@ test('test process actually loads the selected native artifact and verifies its 
   const selected=process.env.MICROMUSIC_AVR_TEST_MODULE;
   if(!selected){assert.equal('__testWasmModuleURL' in bridge,false);return;}
   assert.equal(bridge.__testWasmModuleURL,pathToFileURL(selected).href,'Candidate preload must reach each test child');
-  const versionedBridge=await import('../lib/avr-wasm.js?v=20261025-um88');
+  const versionedBridge=await import('../lib/avr-wasm.js?v=20261025-board-um88');
   assert.equal(versionedBridge.__testWasmModuleURL,pathToFileURL(selected).href,'Versioned production imports must load the candidate too');
   const manifest=JSON.parse(readFileSync(process.env.MICROMUSIC_AVR_TEST_MANIFEST));
   assert.equal(manifest.schema,'micromusic-avr-test-candidate-v1');

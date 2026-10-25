@@ -1,0 +1,55 @@
+{
+  "schema": "micromusic-attiny88-board-release-checks-v1",
+  "date": "2026-10-25",
+  "board": "mh-et-live-16mhz",
+  "fullSuite": {
+    "tests": 1677,
+    "pass": 1677,
+    "fail": 0,
+    "skipped": 0
+  },
+  "fullSongAudit": {
+    "variants": 9,
+    "firmwareExecutions": 18,
+    "allCommandsAndStatesMatch": true,
+    "fifoAndIrqLosses": 0
+  },
+  "defaultsPreserved": {
+    "attiny13aFirmwareBytes": true,
+    "attiny88EightMHzFirmwareBytes": true
+  },
+  "usbFirmware": {
+    "variants": 9,
+    "maxApplicationBytes": 6012,
+    "minImageBytes": 1280,
+    "maxImageBytes": 3584,
+    "requiresEepromUpload": false
+  },
+  "localHttp": {
+    "musicPage": true,
+    "boardCatalog": true,
+    "allNineHexDownloads": true
+  },
+  "cAndAsmReferenceReader": {
+    "compiledWith": "GNU AVR 7.3.0, -mmcu=attiny88 -nostdlib -Os",
+    "checkedBytes": 64,
+    "cModelCycles": 1357,
+    "asmModelCycles": 1357
+  },
+  "manualVisualBrowserCheck": false,
+  "physicalBoardVerified": false,
+  "hashNormalization": "UTF-8 with LF line endings",
+  "sourceHashes": {
+    "web-player/app.js": "d9b83e5e007d0c606d6071dc6e46985b1c1ef47e4e4ce4497d9146508f9d191d",
+    "web-player/index.html": "687bd00b1a6837ae72d3cbdcdc6ec5f79d9ea23751f7248afddc12f8c9d47072",
+    "web-player/styles.css": "0e5b99d437c7a1b75f7e96f89fc0f1d0993fe661bddc122ebcf3ccae64aa4913",
+    "web-player/lib/engines.js": "abd1469062a229fa44765ab53db03ce71c870aadab3f16b48add58bcb5cf7f6b",
+    "web-player/worker.js": "18113d24d2525d741a965fdd8461ee46c499853152fa1625f3d3b90af1d8f1c1",
+    "web-player/scripts/build_catalog.py": "605c4aa97e30f16c6541deffc52c4008c228a8f9a8c0c874ad0ffac718d0c6ae",
+    "web-player/firmware-attiny88-16mhz.json": "1a84dfc16048bd02da28c91a11d1a2a6a4a34b36bf723fe7194ea99a5ae5fc9c",
+    "web-player/tests/board-select.test.mjs": "3c695554e89a1e550a0a6c44998b0bd287840682c04efcaf01a8f9c08898f812",
+    "web-player/tests/attiny88-board.test.mjs": "8bf1a73003bfb599b9ebddc73695783d46ba534a0b5b5ef55dd7c37a34574c46",
+    "web-player/tests/avr-board-clock.test.mjs": "16cf214264abe7e233cea22511f467edbd925d06cf6116594d0b27078e665ebb",
+    "web-player/reports/attiny88-micronucleus-verification.json": "d0a98c9e49af40799a2d03cde3bb0be01fcd7c82bd1f05f2136f9952358afb3a"
+  }
+}

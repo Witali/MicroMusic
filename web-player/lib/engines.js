@@ -9,7 +9,7 @@ export async function createRenderer(entry, sampleRate, controls, engine = DEFAU
     const {createPackageRenderer}=await import('./renderer-package.js');
     const renderer=await createPackageRenderer(entry,sampleRate,controls);renderer.engine=engine;return renderer;
   }
-  const { Renderer } = await (engine === 'js' ? import('./renderer-js.js?v=20261025-um88') : engine === 'transpiled' ? import('./renderer-transpiled.js') : engine === 'device' ? import('./renderer-device.js') : import('./renderer.js?v=20261025-um88'));
+  const { Renderer } = await (engine === 'js' ? import('./renderer-js.js?v=20261025-board-um88') : engine === 'transpiled' ? import('./renderer-transpiled.js') : engine === 'device' ? import('./renderer-device.js') : import('./renderer.js?v=20261025-board-um88'));
   const renderer = new Renderer(entry, sampleRate, controls);
   renderer.engine = engine;
   return renderer;

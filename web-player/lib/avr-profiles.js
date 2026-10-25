@@ -47,10 +47,19 @@ export const AVR_PROFILES = freezeAVRProfile({
   },
 });
 
-export function resolveAVRProfile(target = 'attiny13a') {
+// Board clock selection reuses the chip register map. The 16-MHz profile models
+// MH-ET LIVE hardware; it does not extend the manufacturer's rated clock limit.
+const boardClockProfiles = new Map();
+export function resolveAVRProfile(target = 'attiny13a', {cpuHz} = {}) {
   const key = ({tiny13:'attiny13a',tiny13a:'attiny13a',attiny13:'attiny13a',
     tiny88:'attiny88'})[target] ?? target;
   const profile = Object.hasOwn(AVR_PROFILES,key) ? AVR_PROFILES[key] : undefined;
   if (!profile) throw new Error('Unsupported AVR target: ' + target);
-  return profile;
+  if (cpuHz === undefined || cpuHz === profile.cpuHz) return profile;
+  if (profile.id !== 'attiny88' || cpuHz !== 16000000)
+    throw new Error('Unsupported AVR clock for ' + profile.name + ': ' + String(cpuHz));
+  const clockKey = profile.id + ':' + cpuHz;
+  if (!boardClockProfiles.has(clockKey))
+    boardClockProfiles.set(clockKey,freezeAVRProfile({...profile,cpuHz}));
+  return boardClockProfiles.get(clockKey);
 }

@@ -2,7 +2,7 @@
 // Device memory, timer and peripheral registers live in avr-profiles.js.
 // ROM bytes are immutable; decode once, execute integer op IDs. Observed OCR
 // write streams preserve music timing; electrical PWM edges are not rendered.
-import {AVR_PROFILES, resolveAVRProfile} from './avr-profiles.js';
+import {AVR_PROFILES, resolveAVRProfile} from './avr-profiles.js?v=20261025-board-um88';
 export {AVR_PROFILES, resolveAVRProfile};
 const OP = { NOP:1, CLI:2, SEI:3, RETI:4, RET:5, CALL:6, JUMP:7, BRANCH:8,
   SKIP:9, LDI:10, CPI:11, SUBI:12, ORI:13, ANDI:14, MOVW:15, ADD:16,
@@ -29,8 +29,8 @@ const wordArithmetic = (flags, x, k, subtract) => {
 };
 
 export class AVRCore {
-  constructor(binary, eeprom, {target='attiny13a', fastIdle=true, fastBlocks=fastIdle}={}) {
-    this.profile=resolveAVRProfile(target);
+  constructor(binary, eeprom, {target='attiny13a', cpuHz, fastIdle=true, fastBlocks=fastIdle}={}) {
+    this.profile=resolveAVRProfile(target,{cpuHz});
     this.target=this.profile.id; this.cpuHz=this.profile.cpuHz;
     this.words=this.profile.flashBytes/2; this.pcMask=this.words-1;
     this.pointerMask=this.profile.pointerMask;
