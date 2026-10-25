@@ -1734,7 +1734,7 @@ ATtiny88 / AVR25 без MUL, GNU AVR GCC 7.3.0, `-Os -fno-jump-tables`, GNU ABI.
 При кольце 192 состояние заканчивается на 500, кольцо на 704, минимум SP731:
 27 Б запаса, на 2 Б меньше исходного. Не заявляется уменьшение стека.
 
-[8752 микса, 34816 кешей и 384 IRQ-состояния на бэкенд](../../ATtiny88/Music/universal/backend-verification.json),
+[Текущая проверка: 16992 микса, 34816 кешей и 576 моно/стерео IRQ-состояний на бэкенд](../../ATtiny88/Music/universal/backend-verification.json),
 [до/после](../../ATtiny88/Music/universal/reports/polyphony-optimization.json),
 [полный ISR-аудит нагрузок](../../ATtiny88/Music/universal/reports/admission.json),
 [размеры кольца](../../ATtiny88/Music/universal/reports/buffer-verification.json).

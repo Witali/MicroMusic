@@ -10,16 +10,17 @@ import {AVRCore} from '../web-player/lib/avr-core.js';
 import {UniversalReference} from './universal-reference.mjs';
 
 const root=fileURLToPath(new URL('../',import.meta.url));
-const absolute=p=>path.join(root,p),readJSON=p=>JSON.parse(fs.readFileSync(absolute(p)));
+const absolute=p=>path.resolve(root,p),readJSON=p=>JSON.parse(fs.readFileSync(absolute(p)));
 const sha=b=>createHash('sha256').update(b).digest('hex');
 const word=(data,at)=>data[at]|data[at+1]<<8;
-const reportPath=process.argv.find(arg=>arg.startsWith('--report='))?.slice(9)||
- 'ATtiny88/Music/universal/reports/backend-all-boards.json';
+const option=(name,fallback)=>process.argv.find(arg=>arg.startsWith('--'+name+'='))?.slice(name.length+3)||fallback;
+const reportPath=option('report','ATtiny88/Music/universal/reports/backend-all-boards.json');
+const snapshotDirectory=option('snapshot-dir','build/backend-all-boards');
 const profiles=[
- {name:'ASM8',directory:'ATtiny88/Music/universal/songs',backend:'avr-asm',cpuHz:8000000},
- {name:'C8',directory:'build/universal/c',backend:'c',cpuHz:8000000},
- {name:'ASM16',directory:'ATtiny88/Music/universal/songs-micronucleus',backend:'avr-asm',cpuHz:16000000},
- {name:'C16',directory:'build/universal/c16-check',backend:'c',cpuHz:16000000},
+ {name:'ASM8',directory:option('asm8-dir','ATtiny88/Music/universal/songs'),backend:'avr-asm',cpuHz:8000000},
+ {name:'C8',directory:option('c8-dir','build/universal/c'),backend:'c',cpuHz:8000000},
+ {name:'ASM16',directory:option('asm16-dir','ATtiny88/Music/universal/songs-micronucleus'),backend:'avr-asm',cpuHz:16000000},
+ {name:'C16',directory:option('c16-dir','build/universal/c16-check'),backend:'c',cpuHz:16000000},
 ].map(profile=>{
  const folder=profile.directory+'/lumiere-stereo',meta=readJSON(folder+'/build-report.json');
  const rom=fs.readFileSync(absolute(folder+'/synth.bin')),score=readJSON(folder+'/score.json');
@@ -27,6 +28,10 @@ const profiles=[
  assert.equal(meta.renderABI,'packed-stereo-u32');assert.equal(meta.pwmBufferBytes,192);
  assert.equal(meta.channels,2);assert.equal(sha(rom),meta.flashSha256);
  assert.equal(sha(rom.subarray(0,meta.engineBytes)),meta.engineSha256);
+ assert.ok(meta.sourceInputs,'Fresh build reports must identify their compiled sources');
+ for(const [file,hash] of Object.entries(meta.sourceInputs))
+  assert.equal(sha(fs.readFileSync(absolute(file),'utf8').replaceAll('\r\n','\n')),hash,
+   profile.name+': rebuild after source change in '+file);
  return {...profile,folder,meta,rom,score};
 });
 const input=profile=>({name:profile.name,cpuHz:profile.cpuHz,backend:profile.backend,
@@ -34,6 +39,7 @@ const input=profile=>({name:profile.name,cpuHz:profile.cpuHz,backend:profile.bac
  engineBytes:profile.meta.engineBytes,flashBytes:profile.rom.length,
  buildReportSha256:sha(fs.readFileSync(absolute(profile.folder+'/build-report.json'))),
  toolchainVersion:profile.meta.toolchainVersion,
+ compiledSourceTextLfSha256:profile.meta.sourceInputs,
  scoreSha256:sha(fs.readFileSync(absolute(profile.folder+'/score.json')))});
 
 function smoke(profile){
@@ -121,7 +127,7 @@ for(let previous=0;previous<256;previous++)for(let target=0;target<256;target++)
 const startupChecks=profiles.filter(p=>p.cpuHz===16000000).map(startup);
 const smokeChecks=profiles.map(smoke),conformance=[];
 for(const cpuHz of [8000000,16000000]){
- const directory=absolute('build/backend-all-boards/'+cpuHz);fs.mkdirSync(directory,{recursive:true});
+ const directory=absolute(path.join(snapshotDirectory,String(cpuHz)));fs.mkdirSync(directory,{recursive:true});
  for(const profile of profiles.filter(p=>p.cpuHz===cpuHz)){
   const stem=path.join(directory,'engine-'+profile.backend);
   fs.writeFileSync(stem+'.bin',profile.rom.subarray(0,profile.meta.engineBytes));
@@ -137,6 +143,7 @@ const sources=['ATtiny88/Music/universal/engine.c','ATtiny88/Music/universal/eng
  'ATtiny88/Music/universal/render-avr.S','ATtiny88/Music/universal/irq-avr.S',
  'ATtiny88/Music/universal/platform.c','ATtiny88/Music/universal/audio-buffer.h',
  'ATtiny88/Music/universal/clock.h','ATtiny88/Music/universal/storage.h',
+ 'ATtiny88/Music/universal/rational-clocks.h',
  'ATtiny88/Music/universal/gain-table.inc',
  'tools/test-universal-backends.mjs','tools/test-universal-stereo.mjs'];
 const report={schema:'micromusic-um88-backend-all-boards',version:1,

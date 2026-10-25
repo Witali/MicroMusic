@@ -4,6 +4,10 @@
 Точные ROM, общее ядро, JSON партитуры, исходники и результаты закреплены
 SHA-256 в [backend-all-boards.json](backend-all-boards.json). Это проверка
 модели инструкций и IRQ; физическая плата и электрические фронты PWM не измерялись.
+Итоговые исходники зафиксированы в `2c7af878`; базовый перенос 18 образов
+сохранён отдельно в `17dfe289`. Этот отчёт относится к стандартному кольцу
+192 байта и компактному девятибитному словарю. Проверки других размеров кольца
+и полного исполнения композиций выполняются отдельными стендами.
 
 Для каждого из профилей 8 и 16 МГц проверены оба backend на ATtiny88 / AVR25,
 AVR GCC 7.3.0, GNU ABI, `-Os`, `-DUM_COMPACT_SCORE_ONLY=1`. ASM выбирается явно
@@ -11,6 +15,8 @@ AVR GCC 7.3.0, GNU ABI, `-Os`, `-DUM_COMPACT_SCORE_ONLY=1`. ASM выбирает
 На каждом backend: 16 992 независимых тональных микса, все четыре панорамы,
 знаковые границы, 34 816 кеширований волн и 576 сценариев mono/stereo IRQ
 с wrap, пустой очередью и проверкой callee-saved/r1/SP. Результаты C/ASM точны.
+Прежний [backend-verification.json](../backend-verification.json) также обновлён
+как отдельный отчёт финального профиля 8 МГц; обе частоты включены в общий JSON.
 
 Отдельно все 65 536 пар восьмибитных концов интервала доказывают равенство
 нового поканального интерполятора прежним вложенным округлениям midpoint.
@@ -22,16 +28,25 @@ AVR GCC 7.3.0, GNU ABI, `-Os`, `-DUM_COMPACT_SCORE_ONLY=1`. ASM выбирает
 
 | Backend | Частота | Результат | Минимум очереди | Запас до стека |
 |---|---:|---|---:|---:|
-| ASM | 8 МГц | 7800 миксов, 31 199 IRQ; секунда пройдена | 23 кадра | 18 Б |
-| ASM | 16 МГц | 15 612 миксов, 62 449 IRQ; секунда пройдена | 23 кадра | 18 Б |
-| C | 8 МГц | underrun на 9,427375 мс, после 38 миксов | 1 кадр до сбоя | 33 Б |
-| C | 16 МГц | underrun на 4,7153125 мс, после 38 миксов | 1 кадр до сбоя | 33 Б |
+| ASM | 8 МГц | 7799 миксов, 31 198 IRQ; секунда пройдена | 25 кадров | 22 Б |
+| ASM | 16 МГц | 15 612 миксов, 62 447 IRQ; секунда пройдена | 25 кадров | 22 Б |
+| C | 8 МГц | underrun на 9,990750 мс, после 42 миксов | 1 кадр до сбоя | 35 Б |
+| C | 16 МГц | underrun на 4,9970625 мс, после 42 миксов | 1 кадр до сбоя | 35 Б |
 
 Таким образом, C подтверждён как точный арифметический fallback; этот стереопрофиль
 C не прошёл проверку реального времени. Повышение F_CPU здесь повышает и частоту
 синтеза, сохраняя 1024 такта на отсчёт. Проблема относится к пропускной способности,
 а не вместимости Flash или стека. Отчёт сохраняет отрицательные результаты;
 успешный exit стенда означает точную арифметику и успешные опубликованные ASM-профили.
+Стереообраз C занимает 4716 Б при 8 МГц и 4780 Б при 16 МГц; соответствующие
+ASM-образы — 4588 и 4652 Б. Префикс ядра C занимает 3068/3120 Б, ASM — 2930/2982 Б.
+
+Отдельный [`test-universal-packed-decoder.mjs`](../../../../tools/test-universal-packed-decoder.mjs)
+исполняет реальные C/ASM-функции `command()` на сериализованных данных.
+Проверяются все 512 кодов, алфавит из 256 байтов, переходы девятибитных слов
+через байтовые границы, максимальная глубина 12, позиции потока и контрольные
+байты за стеком словаря. Итоговые отчёты:
+[8 МГц](packed-decoder-8mhz.json), [16 МГц](packed-decoder-16mhz.json).
 
 ## Переход из Micronucleus
 
@@ -53,13 +68,17 @@ PRR восстанавливается **до** обращений к остан
 Из корня репозитория, после штатной сборки опубликованных ASM-профилей:
 
 ```text
-python tools/build-universal-music.py --backend c
-python tools/build-universal-music.py --backend c --board mh-et-live-16mhz --score ATtiny88/Music/universal/songs/lumiere-stereo/score.json --output-dir build/universal/c16-check
-node tools/test-universal-stereo.mjs
+python tools/build-universal-music.py --backend c --board bare-8mhz --score ATtiny88/Music/universal/songs/lumiere-stereo/score.json --output-dir build/final-backend-verification/c8
+python tools/build-universal-music.py --backend c --board mh-et-live-16mhz --score ATtiny88/Music/universal/songs/lumiere-stereo/score.json --output-dir build/final-backend-verification/c16
+node tools/test-universal-stereo.mjs --c8-dir=build/final-backend-verification/c8 --c16-dir=build/final-backend-verification/c16
+node tools/test-universal-packed-decoder.mjs --engine-dir=build/backend-all-boards/8000000 --report=ATtiny88/Music/universal/reports/packed-decoder-8mhz.json
+node tools/test-universal-packed-decoder.mjs --engine-dir=build/backend-all-boards/16000000 --report=ATtiny88/Music/universal/reports/packed-decoder-16mhz.json
 ```
 
 Стенд извлекает ядра из фактически проверяемых ROM в отдельные
 `build/backend-all-boards/<F_CPU>/`, поэтому параллельная перезапись общего
-`build/universal/engine-*` не меняет входы conformance. C-прошивка Children
-16 МГц превышает исходный лимит Micronucleus 6012 Б; этот стенд использует
-помещающийся стереопример и не объявляет весь C-каталог пригодным для USB.
+`build/universal/engine-*` не меняет входы conformance. Отдельные C-fixtures
+не изменяют опубликованный каталог. Стенд сверяет записанные при сборке хеши
+`sourceInputs` с текущими исходниками до запуска; после любого изменения
+рабочего ядра необходимо пересобрать входы. Успех этого стереопримера не является
+доказательством пригодности всего C-каталога к воспроизведению в реальном времени.
