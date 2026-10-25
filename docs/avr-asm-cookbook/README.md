@@ -1786,3 +1786,33 @@ Default mask0 reproduces all24 original v2 ELF hashes exactly. New options
 are opt-in, with a full-ELF/timing rollback tool. Scale-repeat and small LSF
 Rice have insufficient net Flash benefit on this corpus and stay experiments.
 [Measurements, source hashes, constraints and recipes](../../Codecs/LPX/research/q0-lossless-2026-10-25/README.md).
+
+### LPX: retest queue headroom on new data and longer continuous playback
+
+ATmega328P / AVR5, GNU AVR GCC 7.3.0 ABI, `-Os`, 16MHz/8kHz;
+`LPX4_ENABLE_ASM=1`, v3 mask24. The arithmetic backend, explicit C fallback
+and hardware memory access are unchanged. This is a measured validation
+technique, not a new assembly optimization or a portable speedup claim.
+
+On 27 new four-second cases, all 56 successful LPX budget points / 50 unique
+full ELF images preserve native/model PCM and exact IRQ-driven PWM with
+queue 512 / prefill 384 / unroll 9, zero underruns. Decode wall intervals consume
+58.06–95.39% of the nominal sample budget. The heaviest `en_sense_a4` stream
+has a 326681-cycle maximum over 160 samples, exceeding the nominal 320000.
+The queue absorbs that burst in this four-second test.
+
+Repeat its decoded LSF/excitation frames continuously for eight seconds,
+repack exactly and preserve state at the join. Ordinary queue 512 averages
+1909.258 cycles/sample (95.463%), minimum queue 111, zero underruns.
+Compact queue 256 / prefill 160 / unroll 3 averages 1920.403 (96.020%) but reaches
+empty and produces 431 underruns. Ordinary queue plus 50 cycles per audio
+IRQ averages 1961.283 (98.064%) and produces 1643 underruns. Producer-loop
+and queue-publication costs, IRQ phase and bursts must be measured along
+with decode time; mean decode below 100% is insufficient admission evidence.
+
+The compact profile's earlier passes remain valid for those inputs, but do
+not establish general support on this wider corpus. These instrumented
+simavr 1.6 measurements include active IRQ and diagnostic stores; they are
+not physical CPU-idle measurements or an indefinite-stream guarantee.
+[Full corpus, source hashes, compiler settings and PWM checks](../../Codecs/LPX/research/q0-standards-2026-10-25/avr.json),
+[eight-second workload and failed controls](../../Codecs/LPX/research/q0-standards-2026-10-25/headroom.json).
