@@ -97,5 +97,26 @@
   "rotation_cases": 32768,
   "pwm_test_groups": 5,
   "total_test_groups": 36,
-  "pwm_report": "../Sound/dual-crc-voice/AUDIT.json"
+  "pwm_report": "../Sound/dual-crc-voice/AUDIT.json",
+  "music_pwm108_validation": {
+    "date": "2026-10-25",
+    "engine_commit": "39c35d6",
+    "report": "../Music/uniform-pwm/AUDIT.json",
+    "node_test_groups": 40,
+    "node_passed": 40,
+    "node_failed": 0,
+    "browser": "Chromium / Codex in-app browser",
+    "builds": ["index.html", "Intel_8080_ROM_Player.html"],
+    "examples": 7,
+    "rom_hashes_match_in_both_builds": true,
+    "new_music_ids": ["uniform26-pwm108", "balanced27-pwm108"],
+    "live_audio_excerpt_seconds_per_rom_per_build": 2,
+    "live_audio_excerpts_passed": 4,
+    "live_audio_memory_writes": 0,
+    "mobile_width_px": 390,
+    "browser_suite": "ALL BROWSER SMOKE TESTS PASSED",
+    "standalone_build_check": true,
+    "hardware_tested": false,
+    "active_interrupts_supported": false
+  }
 }
