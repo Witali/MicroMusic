@@ -492,10 +492,10 @@ No new hardware checklist item closes;21/30 remain complete.
 
 | Priority | Candidate | Evidence required before keeping it |
 | --- | --- | --- |
-| 1 | Prototype bounded direct-flow regions with staged register state. Separate inter-block fusion and constant folding are rejected. | Preserve all flags initially, clock-before-commit, external entries, exact instruction budgets and event/phase guards. Prove activation and compare real firmware against the unchanged instruction path before timing. |
+| 1 | Validate the optional bounded-region path in browser audio; then evaluate adaptive instruction budgets near deadlines. Separate inter-block fusion and constant folding are rejected. | Keep full flags, clock-before-commit, external entries and original fallback. Node HQ4 gains1.448x; other firmware/event-heavy gains remain unproven. Require IRQ-active audio/underrun checks before default activation; measure budget changes separately. |
 | 2 | Use the refreshed profile to test fewer repeated event/time conversions in `next_event`, `ratio` and `duration`; equal-rate and bounded-multiply guards are rejected. Broader peripheral activity gating remains open. | Exact integer residues, clock/input/event boundaries and pin/PCM parity; enabled-ADC and CLKI controls. Use balanced identical-runtime controls and uninstrumented paired timings. Inspect the exact optimized WASM for an inlining/layout hypothesis; reduced entries alone do not prove speed. |
 | 3 | Validate optional phase-local liveness for default activation when stable performance measurements are available. | The full-context path remains an oracle. Size/parity are established; do not treat noisy median gains as speed evidence. Keep partial execution, reset/faults, SPM and IRQ effects exactly once. |
-| 4 | Generate direct WASM control flow for proven regions and loops; reconsider register locals only when these larger regions can amortize their cost. | Safe indirect/external-entry fallback, coherent register aliases and visible AVR stack state; real-firmware gains in addition to synthetic-loop results. |
+| 4 | Extend proven direct WASM regions only where measured coverage justifies it; evaluate region SREG liveness independently. | The bounded cyclic register-local path is implemented. Preserve all observable SREG exits, indirect/external-entry fallback, aliases and visible AVR stack state; require real-firmware gains for extensions. |
 | 5 | Evaluate reachable-code generation, Flash-region replacement and persistent caching separately from execution optimizations. | Correct dynamic targets and code/data handling, complete SPM dependency invalidation, exact cache identities and independent cold-start/compilation measurements. |
 
 For each candidate, retain the exact baseline and sources, a correctness oracle,
@@ -513,7 +513,18 @@ separate from speed measurements. The rejected single-service inline hint in
 `reports/runtime-controls-20261024.md` is recorded evidence, not a pending
 production change or an implemented optimization.
 
-#### Next bounded-region experiment (not implemented)
+#### Bounded-region checkpoint (optional implementation)
+
+`boundedRegions:true` now emits cyclic register-only components of at most64
+decoded words with up to32 executed instructions per admitted span. All1673
+tests and13 parity cases pass. Untimed traces prove activation with active IRQs;
+416 timed runs with identity controls/208 warmups show HQ4 physical1.448x, an event-free
+synthetic direct loop11.265x and internal audio kernel4.210x. Rhythmic/Lumière,
+CLKI and active-ADC gains are unproven. Physical CPU modules grow1.36–1.67%.
+The native runtime/default CPU output are unchanged. The option remains off by
+default; browser audio/underruns remain unverified. Exact sources, controls and
+next budget/admission experiments: [report](../reports/bounded-regions-20261025.md).
+No hardware checklist item closes:21/30 complete, nine open.
 
 Use the unchanged generated instruction path as oracle. The purpose is to
 amortize register caching and native calls across control flow, rather than add
@@ -528,8 +539,10 @@ another small peephole pass. Keep this independent of peripheral activity work.
   continuation, f64 capacity and retired-counter headroom. A zero-length result
   must return without native clock work. CLKI keeps its existing zero budget.
 - Stage dirty GPRs, full SREG, next PC and actual cycle/count totals in WASM
-  locals. Load incoming registers lazily on each entry; ASR must sign-extend
-  the current cached byte. Preserve8-bit writes and register-pair aliasing.
+  locals. The prototype preloads the statically used register union once to
+  avoid a validity branch on every read; flush only potentially written GPRs.
+  ASR must sign-extend the current cached byte. Preserve8-bit writes and
+  register-pair aliasing.
 - Advance the native clock by the actual original-cycle total, then commit
   staged state/retirement exactly once. Keep clock-before-commit. Reset/fault
   or an unexpected WAIT must discard staged writes and retain fail-closed
