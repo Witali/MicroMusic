@@ -258,6 +258,8 @@ def encode_score(score,cpu_hz):
     return data,dict(schema='UM88',version=1,variant=score['name'],source=score.get('source',{}),controlTicks=score['controlTicks'],
                      voices=score['voices'],channels=score['channels'],contexts=contexts,envelopeModels=models,
                      commands=len(raw),grammarRules=len(rules),grammarDepth=depth,dataBytes=len(data),
+                     grammarBytes=len(encoded)+len(rules)*4,rawSymbolBytes=sum(1 if x<128 else 2 for x in raw),
+                     packing='minimum byte cost across three bounded Re-Pair searches and their prefixes',
                      decodedCommandsSha256=digest(bytes(raw)),allControlFramesVerified=score.get('importedControlFramesVerified',False))
 
 def main():
