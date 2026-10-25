@@ -39,7 +39,7 @@ async function suite(target) {
     check(digest === entry.sha256, entry.id + ' ROM hash');
     check(doc.querySelector(`[data-example="${entry.id}"]`).getAttribute('aria-pressed') === 'true', 'selected example');
   }
-  for (const id of ['uniform26-pwm108']) {
+  for (const id of ['uniform26-fluid-pwm108']) {
     const entry = catalog.entries.find(entry => entry.id === id);
     doc.querySelector(`[data-example="${id}"]`).click();
     await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent === entry.title);
@@ -87,8 +87,8 @@ async function suite(target) {
   check(Number(doc.getElementById('edges').textContent.replace(/\D/g, '')) === 217072, 'Owl has only voice PWM edges');
   check(doc.getElementById('writes').textContent === '0', 'Owl ROM-only playback');
 
-  doc.querySelector('[data-example="uniform26-pwm108"]').click();
-  await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent === catalog.entries.find(entry => entry.id === 'uniform26-pwm108').title);
+  doc.querySelector('[data-example="uniform26-fluid-pwm108"]').click();
+  await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent === catalog.entries.find(entry => entry.id === 'uniform26-fluid-pwm108').title);
   check(doc.getElementById('cycles').textContent === '0' && doc.getElementById('elapsed').textContent === '00:00.0', 'example switch clears prior result/audio');
   if (target.includes('ROM_Player')) {
     const resources = frame.contentWindow.performance.getEntriesByType('resource');

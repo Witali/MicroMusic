@@ -71,3 +71,13 @@ test('Owl direct voice: full streaming Worker reaches HLT with only speech PWM a
   assert.deepEqual(joined, new Float32Array(result.audio));
   assert.equal(joined.length, Math.ceil(audit.t_states/3500000*96000));
 });
+
+test('FluidR3 music streams ordered audio from the actual sample ROM with no memory writes', async () => {
+  const rom = Uint8Array.from(readFileSync(new URL('../../Music/fluid-pwm/uniform26-fluid-pwm108.bin', import.meta.url)));
+  const { result, messages } = await run(rom, { seconds: 0.5, realtime: true });
+  assert.equal(result.kind, 'done'); assert.equal(result.stopReason, 'time_limit');
+  assert.ok(result.t >= 1750000 && result.t <= 1750018);
+  assert.equal(result.memWrites, 0); assert.ok(result.edges > 0);
+  const chunks = messages.filter(m => m.kind === 'audio').map(m => Buffer.from(m.audio));
+  assert.deepEqual(Buffer.concat(chunks), Buffer.from(result.audio));
+});

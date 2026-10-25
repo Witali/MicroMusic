@@ -30,15 +30,15 @@
       "output": "inte"
     },
     {
-      "id": "uniform26-pwm108",
-      "title": "Музыка · UNIFORM26 · ровный PWM",
-      "rom": "../Music/uniform-pwm/uniform26-pwm108.bin",
-      "description": "Постоянная несущая 32,41 кГц, 16 линейных уровней. Темп и высота нот сохранены пересчётом шагов синтеза. Все периоды, включая переходы между нотами, равны 108 T.",
-      "meta": "32 КиБ · 32,41 кГц · 16 уровней",
-      "source": "../Music/uniform-pwm/README.md",
-      "filename": "uniform26-pwm108.bin",
+      "id": "uniform26-fluid-pwm108",
+      "title": "Музыка · FluidR3 · фортепиано и гитара",
+      "rom": "../Music/fluid-pwm/uniform26-fluid-pwm108.bin",
+      "description": "Фортепиано и нейлоновая гитара FluidR3: волны по 256 точек, отдельные состояния атаки и затухания. Пиковая нормализация на диапазон 0–15. Темп и ноты сохранены, ровный PWM 108 T / 32,41 кГц.",
+      "meta": "32 КиБ · 32,41 кГц · 256 точек на волну",
+      "source": "../Music/fluid-pwm/README.md",
+      "filename": "uniform26-fluid-pwm108.bin",
       "bytes": 32768,
-      "sha256": "8a865d704a74bcd8ec0825ce52f601953a3b232e650decf642de79ad644fddc3",
+      "sha256": "ebffe882018dc7ce9d0b1b2c989557df4f2765c7644cfeeb5cf76de563619b5e",
       "hz": 3500000,
       "memory": "rom",
       "output": "inte"

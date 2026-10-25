@@ -10,7 +10,7 @@ test('Example library: only the selected voice and music ROMs are listed and emb
   execFileSync(process.execPath, [fileURLToPath(new URL('../scripts/build-examples.mjs', import.meta.url)), '--check']);
   const catalog = JSON.parse(readFileSync(new URL('../examples.json', import.meta.url)));
   assert.equal(catalog.defaultId, 'voice32');
-  assert.deepEqual(catalog.entries.map(entry => entry.id), ['voice32', 'owl32', 'uniform26-pwm108']);
+  assert.deepEqual(catalog.entries.map(entry => entry.id), ['voice32', 'owl32', 'uniform26-fluid-pwm108']);
   const html = readFileSync(new URL('../Intel_8080_ROM_Player.html', import.meta.url), 'utf8');
   assert.doesNotMatch(html, /fetch\(new URL\(entry\.rom/);
   assert.doesNotMatch(html, /fetch\(new URL\('\.\/examples\.json/);
@@ -24,7 +24,8 @@ test('Example library: only the selected voice and music ROMs are listed and emb
   }
   for (const romPath of ['./roms/diagnostic_dualcrc.bin', './roms/uniform26.bin', './roms/balanced27.bin',
     '../../Sound/dual-crc-voice/dualcrc-uniform152.bin', '../../Sound/dual-crc-voice/dualcrc-uniform159.bin',
-    '../../Music/uniform-pwm/balanced27-pwm108.bin']) {
+    '../../Music/uniform-pwm/balanced27-pwm108.bin', '../../Music/uniform-pwm/uniform26-pwm108.bin',
+    '../../Music/fluid-pwm/balanced27-fluid-pwm108.bin']) {
     const original = readFileSync(new URL(romPath, import.meta.url));
     assert.ok(!html.includes(original.toString('base64')), romPath + ' is preserved outside the standalone library');
   }

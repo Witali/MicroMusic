@@ -176,7 +176,7 @@
     "node_passed": 31,
     "node_failed": 0
   },
-  "current_validation": "voice_peak_normalization",
+  "current_validation": "fluid_music_and_normalized_voice_validation",
   "voice32_validation": {
     "date": "2026-10-25",
     "engine_commit": "66709bc",
@@ -430,5 +430,80 @@
     "node_tests_failed": 0,
     "browser_suite_run": false,
     "hardware_measured": false
+  },
+  "fluid_music_and_normalized_voice_validation": {
+    "date": "2026-10-25",
+    "selected_ids": [
+      "voice32",
+      "owl32",
+      "uniform26-fluid-pwm108"
+    ],
+    "default_id": "voice32",
+    "music_report": "../Music/fluid-pwm/AUDIT.json",
+    "bank_source": "../Music/fluid-pwm/SOURCE.json",
+    "soundfont": "FluidR3 GM 3.1",
+    "soundfont_sha256": "74594e8f4250680adf590507a306655a299935343583256f3b722c48a1bc1cb0",
+    "instruments": [
+      "GM0 Yamaha Grand Piano",
+      "GM24 Nylon String Guitar"
+    ],
+    "samples_per_wave": 256,
+    "piano_registers": 2,
+    "piano_ages": 4,
+    "guitar_ages": 2,
+    "pwm_period_t": 108,
+    "carrier_hz": 32407.40740740741,
+    "sample_rate_hz": 8101.851851851852,
+    "bank_bytes": 12288,
+    "music_roms": [
+      {
+        "name": "uniform26-fluid-pwm108",
+        "sha256": "ebffe882018dc7ce9d0b1b2c989557df4f2765c7644cfeeb5cf76de563619b5e",
+        "used_bytes": 31232,
+        "pwm_slots": 2467648,
+        "exact_c_reference": true,
+        "minimum_level": 0,
+        "maximum_level": 15
+      },
+      {
+        "name": "balanced27-fluid-pwm108",
+        "sha256": "59004fa9be7ef04739c10caa7c0f064c4777916f85b3f9c64b973b9b4032e1ee",
+        "used_bytes": 30976,
+        "pwm_slots": 2416672,
+        "exact_c_reference": true,
+        "minimum_level": 0,
+        "maximum_level": 15
+      }
+    ],
+    "full_music_pwm_slots_verified": 4884320,
+    "normalized_voice_profiles": [
+      "voice32",
+      "owl32"
+    ],
+    "voice_normalization": "Original sources -> complete 0..15 range, without source clipping or dynamic compression; voice_peak_normalization records parameters",
+    "node_test_groups": 58,
+    "node_passed": 58,
+    "node_failed": 0,
+    "browser": "Chromium / Codex in-app browser",
+    "builds": [
+      "index.html",
+      "Intel_8080_ROM_Player.html"
+    ],
+    "rom_hashes_match_in_both_builds": true,
+    "music_live_seconds_per_build": 2,
+    "normalized_voice_firmware_full_execution_in_both_builds": true,
+    "owl_firmware_full_execution_in_both_builds": true,
+    "live_scope_pause_resume_reset_passed": true,
+    "mobile_width_px": 390,
+    "browser_suite": "ALL BROWSER SMOKE TESTS PASSED",
+    "standalone_build_check": true,
+    "hardware_tested": false,
+    "active_interrupts_supported": false,
+    "listening_previews": {
+      "new": "../../build/i8080-fluid-pwm/preview-fluid.wav",
+      "previous": "../../build/i8080-fluid-pwm/preview-saw.wav",
+      "seconds": 12,
+      "source": "Actual ROM emulation, 96kHz area integration -> 48kHz device rendering, 4.5kHz / four RC poles, volume .65, normalize false, 10ms excerpt fade; ignored build artifacts"
+    }
   }
 }

@@ -8,9 +8,9 @@ const definitions = [
   { id: 'owl32', title: 'Голос · «Сова, открывай!» · без диагностики', rom: '../Sound/voice32/owl/owl-voice32.bin',
     description: '«Сова! Открывай! Медведь пришёл!» Исходник нормализован на весь диапазон 0–15 без обрезания пиков. Звук 16,06 кГц, ровный PWM 32,11 кГц. Без стартовых проверок и гудков.',
     meta: '32 КиБ · PWM 32,11 кГц · без стартовой диагностики', source: '../Sound/voice32/owl/README.md' },
-  { id: 'uniform26-pwm108', title: 'Музыка · UNIFORM26 · ровный PWM', rom: '../Music/uniform-pwm/uniform26-pwm108.bin',
-    description: 'Постоянная несущая 32,41 кГц, 16 линейных уровней. Темп и высота нот сохранены пересчётом шагов синтеза. Все периоды, включая переходы между нотами, равны 108 T.',
-    meta: '32 КиБ · 32,41 кГц · 16 уровней', source: '../Music/uniform-pwm/README.md' },
+  { id: 'uniform26-fluid-pwm108', title: 'Музыка · FluidR3 · фортепиано и гитара', rom: '../Music/fluid-pwm/uniform26-fluid-pwm108.bin',
+    description: 'Фортепиано и нейлоновая гитара FluidR3: волны по 256 точек, отдельные состояния атаки и затухания. Пиковая нормализация на диапазон 0–15. Темп и ноты сохранены, ровный PWM 108 T / 32,41 кГц.',
+    meta: '32 КиБ · 32,41 кГц · 256 точек на волну', source: '../Music/fluid-pwm/README.md' },
 ];
 const entries = [];
 for (const definition of definitions) {
