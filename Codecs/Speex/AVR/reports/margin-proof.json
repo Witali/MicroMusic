@@ -1,0 +1,294 @@
+{
+  "profile": "Pinned Xiph Speex 1.2.1 NB3; order 10; four exact quarters; margin 16",
+  "domain": "Convex combinations of codebook endpoints; quarter raw state is a multiple of four",
+  "source": "vendor/speex-1.2.1/libspeex/lsp_tables_nb.c",
+  "sourceSha256": "826b31f36f300ec40e9910409453e27c22bfa4bec3bfdaaceca5820c1e85aae7",
+  "proverSha256": "40dac04f9d912110040d38adcc545c90fd65ebd4e61c1f5e86cccd7007c84ef6",
+  "sourceHashNormalization": "LF",
+  "codebookTriples": 262144,
+  "endpointRange": [
+    96,
+    24880
+  ],
+  "survivingChecks": [
+    "upper-3",
+    "lower-4",
+    "upper-4",
+    "lower-5"
+  ],
+  "pairedRepairs": 2,
+  "mutuallyExclusiveRepairs": true,
+  "certificates": [
+    {
+      "name": "gap-0",
+      "weights": [
+        1,
+        -1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "constant": 16,
+      "maximum": -80,
+      "requiredUpperBound": 0
+    },
+    {
+      "name": "gap-1",
+      "weights": [
+        0,
+        1,
+        -1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "constant": 16,
+      "maximum": -160,
+      "requiredUpperBound": 0
+    },
+    {
+      "name": "gap-2",
+      "weights": [
+        0,
+        0,
+        1,
+        -1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "constant": 16,
+      "maximum": -96,
+      "requiredUpperBound": 0
+    },
+    {
+      "name": "gap-3",
+      "weights": [
+        0,
+        0,
+        0,
+        1,
+        -1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "constant": 16,
+      "maximum": 528,
+      "requiredUpperBound": 32767
+    },
+    {
+      "name": "gap-4",
+      "weights": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        -1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "constant": 16,
+      "maximum": 1200,
+      "requiredUpperBound": 32767
+    },
+    {
+      "name": "gap-5",
+      "weights": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        -1,
+        0,
+        0,
+        0
+      ],
+      "constant": 16,
+      "maximum": -320,
+      "requiredUpperBound": 0
+    },
+    {
+      "name": "gap-6",
+      "weights": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        -1,
+        0,
+        0
+      ],
+      "constant": 16,
+      "maximum": -560,
+      "requiredUpperBound": 0
+    },
+    {
+      "name": "gap-7",
+      "weights": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        -1,
+        0
+      ],
+      "constant": 16,
+      "maximum": -656,
+      "requiredUpperBound": 0
+    },
+    {
+      "name": "gap-8",
+      "weights": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        -1
+      ],
+      "constant": 16,
+      "maximum": -496,
+      "requiredUpperBound": 0
+    },
+    {
+      "name": "propagation-average",
+      "weights": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        -2,
+        0,
+        0,
+        0
+      ],
+      "constant": 48,
+      "maximum": -1264,
+      "requiredUpperBound": 0
+    },
+    {
+      "name": "propagation-previous",
+      "weights": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        -1,
+        0,
+        0,
+        0
+      ],
+      "constant": 48,
+      "maximum": -2736,
+      "requiredUpperBound": 0
+    },
+    {
+      "name": "repair-exclusion",
+      "weights": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        -1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "constant": 32,
+      "maximum": -368,
+      "requiredUpperBound": 0
+    },
+    {
+      "name": "first-average-sum",
+      "weights": [
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "constant": -16,
+      "maximum": 27968,
+      "requiredUpperBound": 32767
+    },
+    {
+      "name": "second-average-raw-sum",
+      "weights": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "constant": -16,
+      "maximum": 32720,
+      "requiredUpperBound": 32767
+    },
+    {
+      "name": "second-average-raised-sum",
+      "weights": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "constant": 0,
+      "maximum": 30448,
+      "requiredUpperBound": 32767
+    }
+  ],
+  "provenance": "Original bound analysis; Xiph codebook copyright/license retained in vendor/speex-1.2.1/COPYING"
+}

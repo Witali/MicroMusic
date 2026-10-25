@@ -1,0 +1,19 @@
+{
+  "codeTriples": 262144,
+  "affineCertificates": 15,
+  "affineValues": 3932160,
+  "minRaw": 96,
+  "maxRaw": 24880,
+  "endpointsMultiple16": true,
+  "exactMaximaAgainstUntouchedXiph": true,
+  "inputAndGuardsPreserved": true,
+  "binarySha256": "15607daf590fda8c48db8bc1e05880265315fbfc8fc754c42f93ae0bbcabd12c",
+  "proofSha256": "ce5aa7788ae81839900fbd4f3fc8f4d1126e4c0e4c2b2ebf2e05477c5639ec21",
+  "oracle": "Untouched Xiph quant_lsp.c, bits.c and lsp_tables_nb.c, separate non-LTO objects",
+  "compiler": "clang version 24.0.0git (https:/github.com/llvm/llvm-project 55ea1f4ebea23d0355d5cdb075f1e12f28ab82d0)",
+  "sourceSha256": {
+    "tools/prove_nb3_margins.py": "40dac04f9d912110040d38adcc545c90fd65ebd4e61c1f5e86cccd7007c84ef6",
+    "tools/build_margin_proof_test.py": "e49a364243132a259774055d69159381ad512f28d81aa51e472fe5cd130d1761",
+    "tests/margin_proof.c": "b19eaf045c8535f03de81c683b41bc9c9cda7cb55148ca8075ebf5a4103d3162"
+  }
+}
