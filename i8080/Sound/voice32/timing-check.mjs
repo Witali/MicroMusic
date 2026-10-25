@@ -4,7 +4,10 @@ import { CPU8080 } from '../../Emulator/core8080.mjs';
 const profileAt = process.argv.indexOf('--profile');
 const profile = profileAt < 0 ? 'balloon' : process.argv[profileAt+1];
 assert.ok(['balloon', 'owl'].includes(profile), 'Unknown voice profile');
-const root = new URL(profile === 'owl' ? './owl/' : './', import.meta.url);
+const clockAt = process.argv.indexOf('--cpu-hz');
+const hz = clockAt < 0 ? 3500000 : Number(process.argv[clockAt+1]);
+assert.ok([2000000,2500000,3500000].includes(hz));
+const root = new URL((profile === 'owl' ? './owl/' : './') + (hz === 3500000 ? '' : `clocks/${hz}/`), import.meta.url);
 const read = name => readFileSync(new URL(name, root));
 const name = profile === 'owl' ? 'owl-voice32' : 'dualcrc-voice32';
 const rom = read(name+'.bin'), meta = JSON.parse(read(name+'.json'));
@@ -84,18 +87,18 @@ for (let phase=0;phase<4;phase++) for(let current=0;current<16;current++) {
     }
   }
 }
-const rows=widths.map((v,q)=>({level:q,pulses:v.length,min_t:Math.min(...v),max_t:Math.max(...v),width_us:(4+4*q)/3.5,duty_percent:(4+4*q)/109*100}));
+const rows=widths.map((v,q)=>({level:q,pulses:v.length,min_t:Math.min(...v),max_t:Math.max(...v),width_us:(4+4*q)/(hz/1e6),duty_percent:(4+4*q)/109*100}));
 const silence = sourcePcm.silence_level ?? 8;
 let tail=0; for(let i=levels.length-1;i>=0&&levels[i]===silence;i--)tail++;
-const report={rom_sha256:meta.sha256,cpu_hz:3500000,output_model:'INTE at EI/DI instruction completion; no INT/WAIT/HOLD',
+const report={rom_sha256:meta.sha256,cpu_hz:hz,output_model:'INTE at EI/DI instruction completion; no INT/WAIT/HOLD',
   timing_method:'Separate fixed 8080 opcode timing table, CPU8080 used for state/control flow',
-  period_t:109,period_us:109/3.5,carrier_hz:3500000/109,pulses:pulses.length,
+  period_t:109,period_us:109/(hz/1e6),carrier_hz:hz/109,pulses:pulses.length,
   intervals:Object.fromEntries(periods),maximum_grid_error_t:maxPhase,maximum_width_error_t:maxWidth,
-  duplicate_pulse_mismatches:repeatMismatch,width_step_t:4,width_step_us:4/3.5,
+  duplicate_pulse_mismatches:repeatMismatch,width_step_t:4,width_step_us:4/(hz/1e6),
   duty_step_percentage_points:4/109*100,code_dnl_lsb:0,code_inl_lsb:0,
   levels:rows,segment_boundary_count:boundaries.length,segment_boundaries:boundaries,
   exhaustive_level_transition_and_branch_cases:exhaustive,ending_silence_level:silence,ending_silence_samples:tail,
-  ending_silence_seconds:tail*218/3500000,hardware_measured:false};
+  ending_silence_seconds:tail*218/hz,hardware_measured:false};
 if (profile === 'owl') {
   report.startup = 'direct';
   report.first_rise_t_from_reset = voiceStartT+pulses[0].rise;
