@@ -34,10 +34,20 @@ def encode_lowrate(reference,decoder,max_bytes,kind='speech',stage='joint',
     dense=(legacy or sorted(pool,key=lambda p:(p[1]['quality']['rmse'],len(p[0]))))[0][0]
     held,audit=spectrum_seeds(dense,(2,4));seeds=[dense,*held]
     seeds.extend(b for b,r in pool if r['profile']=='flat')
+    # Preserve the old public WAV encoder's feasible result, not just the
+    # high-quality oversized analysis seeds. This supplies its STOI/SSE floor
+    # to target search; no-fit of the old bounded search is not fatal here.
+    try:
+        legacy_blob,_,legacy_report=encode_segment(ref.astype(np.int16),decoder,max_bytes=int(max_bytes),kind=kind)
+    except ValueError as error:
+        if not str(error).startswith('No candidate fits the byte budget'):raise
+        legacy_blob=None;legacy_report=None
+    if legacy_blob is not None:seeds.append(legacy_blob)
     blob,pcm,target=search_budget(seeds,ref,decoder,int(max_bytes),kind,lambdas=lambdas,
                                 refinement_trials=refinement_trials)
     report={'stage':stage,'max_bytes':int(max_bytes),'samples':len(ref),'sample_rate':8000,
             'spectrum_audit':audit,'target_search':target,'decoder_modified':False,
+            'legacy_target_available':legacy_blob is not None,'legacy_target':legacy_report,
             'avr_cycles_measured':False,'status':target['status']}
     if blob is None:return None,None,report
     if stage in ('joint','perceptual'):
