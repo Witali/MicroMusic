@@ -49,8 +49,8 @@ def lpc_to_lsf(a):
     return np.sort(roots) if len(roots) == p else None
 
 
-def analyze(pcm, pre=13926, window=256):
-    if not len(pcm) or not 0 <= pre <= 16384 or window < 160:
+def analyze(pcm, pre=13926, window=256, bandwidth=1.):
+    if not len(pcm) or not 0 <= pre <= 16384 or window < 160 or not 0 < bandwidth <= 1:
         raise ValueError('Invalid LPC analysis parameters')
     x = np.asarray(pcm, dtype=np.float64) / 32768
     emphasized = x - (pre / 16384) * np.r_[0, x[:-1]]
@@ -70,7 +70,7 @@ def analyze(pcm, pre=13926, window=256):
             a[1:m] = old[1:m] + reflection * old[m - 1:0:-1]
             a[m] = reflection
             error *= max(1e-4, 1 - reflection * reflection)
-        lsf = lpc_to_lsf(a)
+        lsf = lpc_to_lsf(a * bandwidth ** np.arange(11))
         if lsf is None:
             fallbacks += 1
             lsf = np.arange(1, 11) / 11
@@ -83,7 +83,7 @@ def analyze(pcm, pre=13926, window=256):
             for i in range(8, -1, -1):
                 q[i] = min(q[i], q[i + 1] - 12)
         result.append(q.tolist())
-    return result, {'window_samples': window, 'lsf_fallback_frames': fallbacks}
+    return result, {'window_samples': window, 'bandwidth': bandwidth, 'lsf_fallback_frames': fallbacks}
 
 
 def pack_frames(vectors):

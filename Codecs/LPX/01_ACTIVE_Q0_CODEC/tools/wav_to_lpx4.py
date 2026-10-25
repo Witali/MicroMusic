@@ -122,7 +122,8 @@ def quality(ref, pcm, kind='speech'):
 
 
 def encode_segment(pcm, decoder, max_bytes=65535, lambdas=(0., .0002, .001, .005, .02),
-                   pre=13926, bright=0, kind='speech', fixed_bits=0):
+                   pre=13926, bright=0, kind='speech', fixed_bits=0,
+                   analysis_profiles=('legacy', 'regularized', 'flat'), stoi_drop=0.):
     import struct
     if not 1 <= len(pcm) <= 64000 or not 32 <= max_bytes <= 65535:
         raise ValueError('Expected 1..64000 samples and a 32..65535-byte segment budget')
@@ -132,41 +133,69 @@ def encode_segment(pcm, decoder, max_bytes=65535, lambdas=(0., .0002, .001, .005
         raise ValueError('Q14 header out of range')
     if not lambdas or any(not np.isfinite(v) or v < 0 for v in lambdas):
         raise ValueError('Provide finite nonnegative lambda values')
-    vectors, analysis = analyze(pcm, pre=pre)
-    frames = pack_frames(vectors)
-    co, steps = coefficient_trace(frames, len(pcm)), table('scale_table.inc')
-    candidates, reports, seen = [], [], set()
-    for lam in lambdas:
-        q, scales, modes = quantize(pcm.astype(np.int64), co, steps, pre, bright, lam, fixed_bits)
-        blocks = [{'bits': int(b), 'scale': int(s), 'q': q[i * 80:(i + 1) * 80].tolist()}
-                  for i, (s, b) in enumerate(zip(scales, modes))]
-        doc = {'raw': struct.pack('<4sBBHIHHHH', b'L3AV', 1, 3, 8000, len(pcm), pre, bright, 160, 80),
-               'frames': frames, 'blocks': blocks}
-        blob, stats, chunks, packed_q = encode(doc, fast=True)
-        if packed_q != q.tolist():
-            raise AssertionError('Lossless excitation packing changed quantizer codes')
-        digest = hashlib.sha256(blob).hexdigest()
-        r = {'lambda': float(lam), 'bytes': len(blob), 'sha256': digest,
-             'mode_counts': {str(i): int(np.count_nonzero(modes == i)) for i in range(2, 7)},
-             'within_budget': len(blob) <= max_bytes}
-        reports.append(r)
-        if len(blob) > max_bytes or digest in seen:
+    if not analysis_profiles or any(p not in ('legacy', 'regularized', 'flat') for p in analysis_profiles):
+        raise ValueError('Unknown or empty analysis profile set')
+    if not 0 <= stoi_drop <= .01:
+        raise ValueError('Invalid STOI tolerance')
+    candidates, reports, analyses, seen = [], [], [], set()
+    steps = table('scale_table.inc')
+    for profile in analysis_profiles:
+        local_pre = 0 if profile == 'flat' else pre
+        if profile == 'flat':
+            vectors = [[round(1023 * i / 11) for i in range(1, 11)]] * ((len(pcm) + 159) // 160)
+            analysis = {'window_samples': 0, 'lsf_fallback_frames': 0}
+        else:
+            vectors, analysis = analyze(pcm, pre=local_pre, bandwidth=.90 if profile == 'regularized' else 1.)
+        frames = pack_frames(vectors)
+        co = coefficient_trace(frames, len(pcm))
+        # Test the *quantized/interpolated* coefficients used by Q0, not only
+        # the stable floating-point analysis filter. No changes to firmware.
+        rows, counts = np.unique(co[::20], axis=0, return_counts=True)
+        radii = [float(np.max(abs(np.roots(np.r_[1., row / 4096])))) for row in rows]
+        analysis.update(profile=profile, preQ14=local_pre,
+                        max_interpolated_pole_radius=max(radii),
+                        unstable_subframes=int(sum(c for c, r in zip(counts, radii) if r >= 1.)))
+        analyses.append(analysis)
+        if analysis['unstable_subframes']:
+            analysis['rejected'] = 'Unstable quantized/interpolated LPC filter'
             continue
-        seen.add(digest)
-        native = decoder.decode_one_s16(blob, len(pcm))
-        if native is None:
-            raise RuntimeError('Unmodified Q0 decoder rejected generated stream')
-        if not np.array_equal(native, decode_pcm16(blob)):
-            raise AssertionError('Host Q0 model disagrees with C++ PCM16')
-        decode(blob)  # Independent bitstream syntax and code-range verification.
-        difference = pcm.astype(np.float64) - native
-        sse = float(np.dot(difference, difference))
-        r['quality'] = quality(pcm, native, kind)
-        candidates.append((sse, len(blob), digest, blob, native, r))
+        for lam in lambdas:
+            q, scales, modes = quantize(pcm.astype(np.int64), co, steps, local_pre, bright, lam, fixed_bits)
+            blocks = [{'bits': int(b), 'scale': int(s), 'q': q[i * 80:(i + 1) * 80].tolist()}
+                      for i, (s, b) in enumerate(zip(scales, modes))]
+            doc = {'raw': struct.pack('<4sBBHIHHHH', b'L3AV', 1, 3, 8000, len(pcm), local_pre, bright, 160, 80),
+                   'frames': frames, 'blocks': blocks}
+            blob, stats, chunks, packed_q = encode(doc, fast=True)
+            if packed_q != q.tolist():
+                raise AssertionError('Lossless excitation packing changed quantizer codes')
+            digest = hashlib.sha256(blob).hexdigest()
+            r = {'profile': profile, 'preQ14': local_pre, 'lambda': float(lam), 'bytes': len(blob), 'sha256': digest,
+                 'mode_counts': {str(i): int(np.count_nonzero(modes == i)) for i in range(2, 7)},
+                 'within_budget': len(blob) <= max_bytes}
+            reports.append(r)
+            if len(blob) > max_bytes or digest in seen:
+                continue
+            seen.add(digest)
+            native = decoder.decode_one_s16(blob, len(pcm))
+            if native is None:
+                raise RuntimeError('Unmodified Q0 decoder rejected generated stream')
+            if not np.array_equal(native, decode_pcm16(blob)):
+                raise AssertionError('Host Q0 model disagrees with C++ PCM16')
+            decode(blob)
+            difference = pcm.astype(np.float64) - native
+            sse = float(np.dot(difference, difference))
+            r['quality'] = quality(pcm, native, kind)
+            candidates.append((sse, len(blob), digest, blob, native, r))
     if not candidates:
         raise ValueError('No candidate fits the byte budget; shorten segments or increase --max-bytes')
+    legacy = [c for c in candidates if c[5]['profile'] == 'legacy']
+    baseline = min(legacy, key=lambda x: x[:3]) if legacy else None
+    if baseline and baseline[5]['quality']['stoi'] is not None:
+        floor = baseline[5]['quality']['stoi'] - stoi_drop
+        candidates = [c for c in candidates if c[5]['quality']['stoi'] >= floor - 1e-12]
     winner = min(candidates, key=lambda x: x[:3])
-    return winner[3], winner[4], {'analysis': analysis, 'selected': winner[5], 'candidates': reports}
+    return winner[3], winner[4], {'analysis': analyses, 'selected': winner[5], 'candidates': reports,
+                                'legacy_quality_floor': baseline[5]['quality'] if baseline else None}
 
 
 def run(source, output, max_bytes=65535, segment_samples=64000, kind='speech', lambdas=None):

@@ -89,6 +89,19 @@ class WavEncoderTests(unittest.TestCase):
             with self.subTest(opts=opts), self.assertRaises(ValueError):
                 encode_segment(ref, self.decoder, **opts)
 
+    def test_quantized_filter_instability_uses_a_stable_restart(self):
+        source = ROOT.parent / '05_BENCHMARKS/INDEPENDENT_SPEECH_AND_MUSIC_2026-10-24/references/synthetic_music_12s.wav'
+        from wav_lpc import load_wav
+        ref = load_wav(source)[0][:24000]
+        blob, pcm, report = encode_segment(ref, self.decoder, max_bytes=8018, kind='music',
+            lambdas=(0., .0002, .001, .005, .02, .1, .5, 10.))
+        legacy = next(a for a in report['analysis'] if a['profile'] == 'legacy')
+        self.assertGreater(legacy['unstable_subframes'], 0)
+        chosen = next(a for a in report['analysis'] if a['profile'] == report['selected']['profile'])
+        self.assertEqual(chosen['unstable_subframes'], 0)
+        self.assertGreater(report['selected']['quality']['ser_db'], 8)
+        self.assertLessEqual(len(blob), 8018)
+
 
 if __name__ == '__main__':
     unittest.main()
