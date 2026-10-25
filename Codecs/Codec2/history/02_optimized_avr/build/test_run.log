@@ -1,0 +1,10 @@
+0000 R_AVR_13_PCREL       reset                  target=0x0016 word=c00a
+0020 R_AVR_13_PCREL       codec2tiny_init        target=0x0088 word=d033
+0022 R_AVR_LO8_LDI        .text                  target=0x02c4 word=ece4
+0024 R_AVR_HI8_LDI        .text                  target=0x02c4 word=e0f2
+0034 R_AVR_13_PCREL       codec2tiny_decode_frame target=0x00ae word=d03c
+006c R_AVR_13_PCREL       codec2tiny_sample      target=0x01ec word=d0bf
+FIRMWARE BYTES 716 SHA256 b3ddea52db1afc5b5555308770697826e69c2e9f47142f607288b883f37f1cb0
+[INFO] Full AVR + audio regression: python3 tests/test_codec2tiny.py (longer, run separately)
+PASS: 2048 stress frames, maximum decode cycles: 2233
+PASS: 3650 LSP codebook entries, max error 0.0001501 Hz
