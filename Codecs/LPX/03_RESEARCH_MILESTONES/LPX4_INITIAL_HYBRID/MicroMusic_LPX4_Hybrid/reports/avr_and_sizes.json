@@ -1,0 +1,39 @@
+{
+  "input": "the original 10-bit LSF LPX3 v1 streams",
+  "note": "Both lossless C++ paths checked for exact output PCM match, but AVR real-time not established",
+  "sizes": [
+    {
+      "name": "«Чего тебе нужно?»",
+      "id": "xtuj-ntt",
+      "old_bytes": 5189,
+      "lpx4_bytes": 5021,
+      "saved_bytes": 168
+    },
+    {
+      "name": "«Что ж ты не отвечаешь?»",
+      "id": "ne-otv",
+      "old_bytes": 4415,
+      "lpx4_bytes": 4308,
+      "saved_bytes": 107
+    },
+    {
+      "name": "«Сова! Открывай! Медведь пришёл!»",
+      "id": "vinni",
+      "old_bytes": 8025,
+      "lpx4_bytes": 8248,
+      "saved_bytes": -223
+    }
+  ],
+  "text_v7": 6816,
+  "text_lpx4_exact": 7648,
+  "text_lpx4_with_sparse": 8064,
+  "progmem_v7": 1042,
+  "progmem_lpx4": 1026,
+  "avr_class_v7": 272,
+  "avr_class_exact": 532,
+  "avr_class_sparse": 564,
+  "sampling_rate_hz": 8000,
+  "cpu_hz_target": 16000000,
+  "cpu_cycles_per_sample_avg_budget": 2000,
+  "cpu_cycles_measured": null
+}

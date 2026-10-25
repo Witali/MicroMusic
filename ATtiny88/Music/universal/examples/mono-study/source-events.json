@@ -1,0 +1,637 @@
+{
+  "schema": "micromusic-midi-events",
+  "version": 1,
+  "format": 1,
+  "ppqn": 480,
+  "source": {
+    "kind": "original-synthetic-composition",
+    "license": "CC0-1.0",
+    "description": "Original technical study created for the UM88 pipeline; no imported MIDI binary"
+  },
+  "tracks": [
+    {
+      "index": 0,
+      "events": [
+        {
+          "tick": 0,
+          "type": "tempo",
+          "microsecondsPerQuarter": 500000,
+          "delta": 0
+        },
+        {
+          "tick": 0,
+          "type": "programChange",
+          "channel": 0,
+          "program": 73,
+          "delta": 0
+        },
+        {
+          "tick": 0,
+          "type": "programChange",
+          "channel": 1,
+          "program": 0,
+          "delta": 0
+        },
+        {
+          "tick": 0,
+          "type": "programChange",
+          "channel": 2,
+          "program": 35,
+          "delta": 0
+        },
+        {
+          "tick": 0,
+          "type": "text",
+          "metaType": 3,
+          "text": "Original mono study: melody, chords, bass and procedural percussion",
+          "delta": 0
+        },
+        {
+          "tick": 1920,
+          "type": "tempo",
+          "microsecondsPerQuarter": 600000,
+          "delta": 1920
+        },
+        {
+          "tick": 4320,
+          "type": "endOfTrack",
+          "delta": 2400
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "events": [
+        {
+          "tick": 480,
+          "type": "noteOn",
+          "channel": 0,
+          "note": 72,
+          "velocity": 110,
+          "delta": 480
+        },
+        {
+          "tick": 810,
+          "type": "noteOff",
+          "channel": 0,
+          "note": 72,
+          "velocity": 0,
+          "delta": 330
+        },
+        {
+          "tick": 960,
+          "type": "noteOn",
+          "channel": 0,
+          "note": 76,
+          "velocity": 110,
+          "delta": 150
+        },
+        {
+          "tick": 1290,
+          "type": "noteOff",
+          "channel": 0,
+          "note": 76,
+          "velocity": 0,
+          "delta": 330
+        },
+        {
+          "tick": 1440,
+          "type": "noteOn",
+          "channel": 0,
+          "note": 79,
+          "velocity": 110,
+          "delta": 150
+        },
+        {
+          "tick": 1770,
+          "type": "noteOff",
+          "channel": 0,
+          "note": 79,
+          "velocity": 0,
+          "delta": 330
+        },
+        {
+          "tick": 1920,
+          "type": "noteOn",
+          "channel": 0,
+          "note": 76,
+          "velocity": 110,
+          "delta": 150
+        },
+        {
+          "tick": 2250,
+          "type": "noteOff",
+          "channel": 0,
+          "note": 76,
+          "velocity": 0,
+          "delta": 330
+        },
+        {
+          "tick": 2400,
+          "type": "noteOn",
+          "channel": 0,
+          "note": 74,
+          "velocity": 110,
+          "delta": 150
+        },
+        {
+          "tick": 2640,
+          "type": "controlChange",
+          "channel": 0,
+          "controller": 11,
+          "value": 90,
+          "delta": 240
+        },
+        {
+          "tick": 2730,
+          "type": "noteOff",
+          "channel": 0,
+          "note": 74,
+          "velocity": 0,
+          "delta": 90
+        },
+        {
+          "tick": 2880,
+          "type": "noteOn",
+          "channel": 0,
+          "note": 77,
+          "velocity": 110,
+          "delta": 150
+        },
+        {
+          "tick": 2880,
+          "type": "pitchBend",
+          "channel": 0,
+          "value": 10240,
+          "delta": 0
+        },
+        {
+          "tick": 3120,
+          "type": "pitchBend",
+          "channel": 0,
+          "value": 8192,
+          "delta": 240
+        },
+        {
+          "tick": 3210,
+          "type": "noteOff",
+          "channel": 0,
+          "note": 77,
+          "velocity": 0,
+          "delta": 90
+        },
+        {
+          "tick": 3360,
+          "type": "noteOn",
+          "channel": 0,
+          "note": 81,
+          "velocity": 110,
+          "delta": 150
+        },
+        {
+          "tick": 3690,
+          "type": "noteOff",
+          "channel": 0,
+          "note": 81,
+          "velocity": 0,
+          "delta": 330
+        },
+        {
+          "tick": 3840,
+          "type": "noteOn",
+          "channel": 0,
+          "note": 77,
+          "velocity": 110,
+          "delta": 150
+        },
+        {
+          "tick": 4170,
+          "type": "noteOff",
+          "channel": 0,
+          "note": 77,
+          "velocity": 0,
+          "delta": 330
+        },
+        {
+          "tick": 4320,
+          "type": "endOfTrack",
+          "delta": 150
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "events": [
+        {
+          "tick": 480,
+          "type": "controlChange",
+          "channel": 1,
+          "controller": 64,
+          "value": 127,
+          "delta": 480
+        },
+        {
+          "tick": 480,
+          "type": "noteOn",
+          "channel": 1,
+          "note": 60,
+          "velocity": 85,
+          "delta": 0
+        },
+        {
+          "tick": 480,
+          "type": "noteOn",
+          "channel": 1,
+          "note": 64,
+          "velocity": 85,
+          "delta": 0
+        },
+        {
+          "tick": 960,
+          "type": "noteOff",
+          "channel": 1,
+          "note": 60,
+          "velocity": 0,
+          "delta": 480
+        },
+        {
+          "tick": 960,
+          "type": "noteOff",
+          "channel": 1,
+          "note": 64,
+          "velocity": 0,
+          "delta": 0
+        },
+        {
+          "tick": 1200,
+          "type": "controlChange",
+          "channel": 1,
+          "controller": 64,
+          "value": 0,
+          "delta": 240
+        },
+        {
+          "tick": 1440,
+          "type": "controlChange",
+          "channel": 1,
+          "controller": 64,
+          "value": 127,
+          "delta": 240
+        },
+        {
+          "tick": 1440,
+          "type": "noteOn",
+          "channel": 1,
+          "note": 62,
+          "velocity": 85,
+          "delta": 0
+        },
+        {
+          "tick": 1440,
+          "type": "noteOn",
+          "channel": 1,
+          "note": 65,
+          "velocity": 85,
+          "delta": 0
+        },
+        {
+          "tick": 1920,
+          "type": "noteOff",
+          "channel": 1,
+          "note": 62,
+          "velocity": 0,
+          "delta": 480
+        },
+        {
+          "tick": 1920,
+          "type": "noteOff",
+          "channel": 1,
+          "note": 65,
+          "velocity": 0,
+          "delta": 0
+        },
+        {
+          "tick": 2160,
+          "type": "controlChange",
+          "channel": 1,
+          "controller": 64,
+          "value": 0,
+          "delta": 240
+        },
+        {
+          "tick": 2400,
+          "type": "controlChange",
+          "channel": 1,
+          "controller": 64,
+          "value": 127,
+          "delta": 240
+        },
+        {
+          "tick": 2400,
+          "type": "noteOn",
+          "channel": 1,
+          "note": 60,
+          "velocity": 85,
+          "delta": 0
+        },
+        {
+          "tick": 2400,
+          "type": "noteOn",
+          "channel": 1,
+          "note": 67,
+          "velocity": 85,
+          "delta": 0
+        },
+        {
+          "tick": 2880,
+          "type": "noteOff",
+          "channel": 1,
+          "note": 60,
+          "velocity": 0,
+          "delta": 480
+        },
+        {
+          "tick": 2880,
+          "type": "noteOff",
+          "channel": 1,
+          "note": 67,
+          "velocity": 0,
+          "delta": 0
+        },
+        {
+          "tick": 3120,
+          "type": "controlChange",
+          "channel": 1,
+          "controller": 64,
+          "value": 0,
+          "delta": 240
+        },
+        {
+          "tick": 3360,
+          "type": "controlChange",
+          "channel": 1,
+          "controller": 64,
+          "value": 127,
+          "delta": 240
+        },
+        {
+          "tick": 3360,
+          "type": "noteOn",
+          "channel": 1,
+          "note": 59,
+          "velocity": 85,
+          "delta": 0
+        },
+        {
+          "tick": 3360,
+          "type": "noteOn",
+          "channel": 1,
+          "note": 65,
+          "velocity": 85,
+          "delta": 0
+        },
+        {
+          "tick": 3840,
+          "type": "noteOff",
+          "channel": 1,
+          "note": 59,
+          "velocity": 0,
+          "delta": 480
+        },
+        {
+          "tick": 3840,
+          "type": "noteOff",
+          "channel": 1,
+          "note": 65,
+          "velocity": 0,
+          "delta": 0
+        },
+        {
+          "tick": 4080,
+          "type": "controlChange",
+          "channel": 1,
+          "controller": 64,
+          "value": 0,
+          "delta": 240
+        },
+        {
+          "tick": 4320,
+          "type": "endOfTrack",
+          "delta": 240
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "events": [
+        {
+          "tick": 480,
+          "type": "noteOn",
+          "channel": 2,
+          "note": 48,
+          "velocity": 110,
+          "delta": 480
+        },
+        {
+          "tick": 1130,
+          "type": "noteOff",
+          "channel": 2,
+          "note": 48,
+          "velocity": 0,
+          "delta": 650
+        },
+        {
+          "tick": 1440,
+          "type": "noteOn",
+          "channel": 2,
+          "note": 50,
+          "velocity": 110,
+          "delta": 310
+        },
+        {
+          "tick": 2090,
+          "type": "noteOff",
+          "channel": 2,
+          "note": 50,
+          "velocity": 0,
+          "delta": 650
+        },
+        {
+          "tick": 2400,
+          "type": "noteOn",
+          "channel": 2,
+          "note": 48,
+          "velocity": 110,
+          "delta": 310
+        },
+        {
+          "tick": 3050,
+          "type": "noteOff",
+          "channel": 2,
+          "note": 48,
+          "velocity": 0,
+          "delta": 650
+        },
+        {
+          "tick": 3360,
+          "type": "noteOn",
+          "channel": 2,
+          "note": 43,
+          "velocity": 110,
+          "delta": 310
+        },
+        {
+          "tick": 4010,
+          "type": "noteOff",
+          "channel": 2,
+          "note": 43,
+          "velocity": 0,
+          "delta": 650
+        },
+        {
+          "tick": 4320,
+          "type": "endOfTrack",
+          "delta": 310
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "events": [
+        {
+          "tick": 480,
+          "type": "noteOn",
+          "channel": 9,
+          "note": 35,
+          "velocity": 90,
+          "delta": 480
+        },
+        {
+          "tick": 720,
+          "type": "noteOn",
+          "channel": 9,
+          "note": 42,
+          "velocity": 60,
+          "delta": 240
+        },
+        {
+          "tick": 960,
+          "type": "noteOn",
+          "channel": 9,
+          "note": 38,
+          "velocity": 90,
+          "delta": 240
+        },
+        {
+          "tick": 1200,
+          "type": "noteOn",
+          "channel": 9,
+          "note": 42,
+          "velocity": 60,
+          "delta": 240
+        },
+        {
+          "tick": 1440,
+          "type": "noteOn",
+          "channel": 9,
+          "note": 35,
+          "velocity": 90,
+          "delta": 240
+        },
+        {
+          "tick": 1680,
+          "type": "noteOn",
+          "channel": 9,
+          "note": 42,
+          "velocity": 60,
+          "delta": 240
+        },
+        {
+          "tick": 1920,
+          "type": "noteOn",
+          "channel": 9,
+          "note": 38,
+          "velocity": 90,
+          "delta": 240
+        },
+        {
+          "tick": 2160,
+          "type": "noteOn",
+          "channel": 9,
+          "note": 42,
+          "velocity": 60,
+          "delta": 240
+        },
+        {
+          "tick": 2400,
+          "type": "noteOn",
+          "channel": 9,
+          "note": 35,
+          "velocity": 90,
+          "delta": 240
+        },
+        {
+          "tick": 2640,
+          "type": "noteOn",
+          "channel": 9,
+          "note": 42,
+          "velocity": 60,
+          "delta": 240
+        },
+        {
+          "tick": 2880,
+          "type": "noteOn",
+          "channel": 9,
+          "note": 38,
+          "velocity": 90,
+          "delta": 240
+        },
+        {
+          "tick": 3120,
+          "type": "noteOn",
+          "channel": 9,
+          "note": 42,
+          "velocity": 60,
+          "delta": 240
+        },
+        {
+          "tick": 3360,
+          "type": "noteOn",
+          "channel": 9,
+          "note": 35,
+          "velocity": 90,
+          "delta": 240
+        },
+        {
+          "tick": 3600,
+          "type": "noteOn",
+          "channel": 9,
+          "note": 42,
+          "velocity": 60,
+          "delta": 240
+        },
+        {
+          "tick": 3840,
+          "type": "noteOn",
+          "channel": 9,
+          "note": 38,
+          "velocity": 90,
+          "delta": 240
+        },
+        {
+          "tick": 4080,
+          "type": "noteOn",
+          "channel": 9,
+          "note": 42,
+          "velocity": 60,
+          "delta": 240
+        },
+        {
+          "tick": 4320,
+          "type": "endOfTrack",
+          "delta": 240
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2333 @@
+{
+  "ffmpeg": "ffmpeg version 8.1.1-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+  "protocol": "Actual full container bytes <= LPX4 size; reported shortfall; no fitted gain/delay; trailing decoder padding removed.",
+  "lpx3_source_sha256": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+  "cases": [
+    {
+      "id": "en_simple",
+      "kind": "speech",
+      "samples": 11200,
+      "byte_cap": 4146,
+      "LPX4": {
+        "bytes": 4146,
+        "quality": {
+          "ser_db": 32.57019706949562,
+          "rmse": 0.0031214344063656497,
+          "stoi": 0.9793499085298808,
+          "spectral_rmse_db": 3.759674475777554,
+          "reference_rms": 0.13269790506406065,
+          "decoded_rms": 0.13271317270919725,
+          "clip_count": 0,
+          "pcm16_sha256": "1d623a6f4a7ce800f458b057a4c5d686b3267eef8e44cffec920441b83a4dcd9"
+        }
+      },
+      "LPX3": {
+        "codec": "LPX3 Rice v7 Q0",
+        "bytes": 4009,
+        "byte_cap": 4146,
+        "shortfall_bytes": 137,
+        "shortfall_fraction": 0.033043897732754464,
+        "sha256": "3d728b95878a8f2d84514dd4b0998b6cbd9977d0f7b858be2f2be229df1a47a2",
+        "quality": {
+          "ser_db": 32.57019706949562,
+          "rmse": 0.0031214344063656497,
+          "stoi": 0.9793499085298808,
+          "spectral_rmse_db": 3.759674475777554,
+          "reference_rms": 0.13269790506406065,
+          "decoded_rms": 0.13271317270919725,
+          "clip_count": 0,
+          "pcm16_sha256": "1d623a6f4a7ce800f458b057a4c5d686b3267eef8e44cffec920441b83a4dcd9"
+        },
+        "same_data_lpx4_pcm16_exact": true,
+        "selected": {
+          "profile": "regularized",
+          "lambda": 0.001,
+          "bytes": 4009,
+          "quality": {
+            "ser_db": 32.57019706949562,
+            "rmse": 0.0031214344063656497,
+            "stoi": 0.9793499085298808,
+            "spectral_rmse_db": 3.759674475777554,
+            "reference_rms": 0.13269790506406065,
+            "decoded_rms": 0.13271317270919725,
+            "clip_count": 0,
+            "pcm16_sha256": "1d623a6f4a7ce800f458b057a4c5d686b3267eef8e44cffec920441b83a4dcd9"
+          }
+        },
+        "candidates": [
+          {
+            "profile": "legacy",
+            "lambda": 0.0,
+            "bytes": 8099
+          },
+          {
+            "profile": "legacy",
+            "lambda": 0.0002,
+            "bytes": 4473
+          },
+          {
+            "profile": "legacy",
+            "lambda": 0.001,
+            "bytes": 4025,
+            "quality": {
+              "ser_db": 31.99290211347691,
+              "rmse": 0.0033359456079766737,
+              "stoi": 0.9709416805189781,
+              "spectral_rmse_db": 3.8254447400011413,
+              "reference_rms": 0.13269790506406065,
+              "decoded_rms": 0.1328486024787332,
+              "clip_count": 0,
+              "pcm16_sha256": "bf8653a64657cf52b597c7235066c3b082838a2ddb820d95200effdd6f52c182"
+            }
+          },
+          {
+            "profile": "legacy",
+            "lambda": 0.005,
+            "bytes": 3777,
+            "quality": {
+              "ser_db": 27.57089158827807,
+              "rmse": 0.005550338714964912,
+              "stoi": 0.943537328514955,
+              "spectral_rmse_db": 4.4560518506721545,
+              "reference_rms": 0.13269790506406065,
+              "decoded_rms": 0.1327314709970622,
+              "clip_count": 0,
+              "pcm16_sha256": "6112f70ef87bf27d411d71b1f685211cf31b9094a83d9d4644e32f5412ec412a"
+            }
+          },
+          {
+            "profile": "legacy",
+            "lambda": 0.02,
+            "bytes": 3781,
+            "quality": {
+              "ser_db": 15.679973036546759,
+              "rmse": 0.021820536018718126,
+              "stoi": 0.957029284611936,
+              "spectral_rmse_db": 4.687417588179758,
+              "reference_rms": 0.13269790506406065,
+              "decoded_rms": 0.13239119877231006,
+              "clip_count": 0,
+              "pcm16_sha256": "442e89efa8824d79535c6a741bcf1641450fdc2a9dd61d30666b6e6c30327b1c"
+            }
+          },
+          {
+            "profile": "legacy",
+            "lambda": 0.1,
+            "bytes": 3701,
+            "quality": {
+              "ser_db": 19.25854987329519,
+              "rmse": 0.014452286851543848,
+              "stoi": 0.9469908948144139,
+              "spectral_rmse_db": 4.589877326292153,
+              "reference_rms": 0.13269790506406065,
+              "decoded_rms": 0.1331526582064913,
+              "clip_count": 0,
+              "pcm16_sha256": "e9a5d26f411cdd2fd6685aa051f1e74ac1cafd82d9a043e451c559a3bc642594"
+            }
+          },
+          {
+            "profile": "legacy",
+            "lambda": 0.5,
+            "bytes": 3633,
+            "quality": {
+              "ser_db": 10.805853958230925,
+              "rmse": 0.03824470969735123,
+              "stoi": 0.9150801778416713,
+              "spectral_rmse_db": 4.8872777746396,
+              "reference_rms": 0.13269790506406065,
+              "decoded_rms": 0.13519748853556102,
+              "clip_count": 0,
+              "pcm16_sha256": "d250713cad7812b8faed3c62288500083bfd9cb105f0d99f6cb4ec1958528471"
+            }
+          },
+          {
+            "profile": "legacy",
+            "lambda": 10.0,
+            "bytes": 3633,
+            "quality": {
+              "ser_db": 10.805853958230925,
+              "rmse": 0.03824470969735123,
+              "stoi": 0.9150801778416713,
+              "spectral_rmse_db": 4.8872777746396,
+              "reference_rms": 0.13269790506406065,
+              "decoded_rms": 0.13519748853556102,
+              "clip_count": 0,
+              "pcm16_sha256": "d250713cad7812b8faed3c62288500083bfd9cb105f0d99f6cb4ec1958528471"
+            }
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.0,
+            "bytes": 8193
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.0002,
+            "bytes": 4437
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.001,
+            "bytes": 4009,
+            "quality": {
+              "ser_db": 32.57019706949562,
+              "rmse": 0.0031214344063656497,
+              "stoi": 0.9793499085298808,
+              "spectral_rmse_db": 3.759674475777554,
+              "reference_rms": 0.13269790506406065,
+              "decoded_rms": 0.13271317270919725,
+              "clip_count": 0,
+              "pcm16_sha256": "1d623a6f4a7ce800f458b057a4c5d686b3267eef8e44cffec920441b83a4dcd9"
+            }
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.005,
+            "bytes": 3722,
+            "quality": {
+              "ser_db": 27.538576495520523,
+              "rmse": 0.00557102672484161,
+              "stoi": 0.9580018632962085,
+              "spectral_rmse_db": 4.835877584823118,
+              "reference_rms": 0.13269790506406065,
+              "decoded_rms": 0.13272299553035852,
+              "clip_count": 0,
+              "pcm16_sha256": "3e17139b4531a3a60ad37bb3e1eac536b8ab4bddd35821b23ca43974a1835e1c"
+            }
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.02,
+            "bytes": 3643,
+            "quality": {
+              "ser_db": 25.441153025349834,
+              "rmse": 0.007092615475828365,
+              "stoi": 0.9345474800122342,
+              "spectral_rmse_db": 5.223668711383729,
+              "reference_rms": 0.13269790506406065,
+              "decoded_rms": 0.1324776595849555,
+              "clip_count": 0,
+              "pcm16_sha256": "3549a3f49ca55151cb43733d57f7b1e2c149d05b6104af68d855fa8853f6fa3e"
+            }
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.1,
+            "bytes": 3646,
+            "quality": {
+              "ser_db": 17.442364643111482,
+              "rmse": 0.01781335957160331,
+              "stoi": 0.9147537405883833,
+              "spectral_rmse_db": 5.559480570310617,
+              "reference_rms": 0.13269790506406065,
+              "decoded_rms": 0.1327931028276583,
+              "clip_count": 0,
+              "pcm16_sha256": "cfcdf024d527727dee3a61607e4b7007c80de911b755f94ae00f7c015ff2427a"
+            }
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.5,
+            "bytes": 3611,
+            "quality": {
+              "ser_db": 16.820340454614517,
+              "rmse": 0.01913581853309102,
+              "stoi": 0.9133578761888893,
+              "spectral_rmse_db": 5.340086411605874,
+              "reference_rms": 0.13269790506406065,
+              "decoded_rms": 0.13297106407201353,
+              "clip_count": 0,
+              "pcm16_sha256": "24e6a71f4758fa36a861cad7c615b2f7a063cefc4aa9184cf8800c0121d2a03b"
+            }
+          },
+          {
+            "profile": "regularized",
+            "lambda": 10.0,
+            "bytes": 3611,
+            "quality": {
+              "ser_db": 16.820340454614517,
+              "rmse": 0.01913581853309102,
+              "stoi": 0.9133578761888893,
+              "spectral_rmse_db": 5.340086411605874,
+              "reference_rms": 0.13269790506406065,
+              "decoded_rms": 0.13297106407201353,
+              "clip_count": 0,
+              "pcm16_sha256": "24e6a71f4758fa36a861cad7c615b2f7a063cefc4aa9184cf8800c0121d2a03b"
+            }
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.0,
+            "bytes": 8389
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.0002,
+            "bytes": 6160
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.001,
+            "bytes": 4966
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.005,
+            "bytes": 4000,
+            "quality": {
+              "ser_db": 23.512253705850643,
+              "rmse": 0.008856280868155158,
+              "stoi": 0.8944613912638618,
+              "spectral_rmse_db": 7.829707348535092,
+              "reference_rms": 0.13269790506406065,
+              "decoded_rms": 0.13234842406932043,
+              "clip_count": 0,
+              "pcm16_sha256": "314e85f83bae1b21dd549c4673d09a0c8680323bc778581a686ae247452f6aa6"
+            }
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.02,
+            "bytes": 3466,
+            "quality": {
+              "ser_db": 16.976471940042337,
+              "rmse": 0.01879491948522886,
+              "stoi": 0.847572535153515,
+              "spectral_rmse_db": 10.104345819398123,
+              "reference_rms": 0.13269790506406065,
+              "decoded_rms": 0.13203008674196204,
+              "clip_count": 0,
+              "pcm16_sha256": "fd090138d295daad0a12b2ffaee2228e1cf7bbd1929ff67fbe9e1231cc7f95e7"
+            }
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.1,
+            "bytes": 3173,
+            "quality": {
+              "ser_db": 14.360963564400093,
+              "rmse": 0.025398957324993414,
+              "stoi": 0.837808128551716,
+              "spectral_rmse_db": 10.918166785564514,
+              "reference_rms": 0.13269790506406065,
+              "decoded_rms": 0.1292732245050777,
+              "clip_count": 0,
+              "pcm16_sha256": "4a1bfd4e7ba3a4f307833dd3e398d9e90fdb8cea88106ce98ae9d27b94635e78"
+            }
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.5,
+            "bytes": 2961,
+            "quality": {
+              "ser_db": 7.100477466330406,
+              "rmse": 0.05859225237726271,
+              "stoi": 0.7882400516376493,
+              "spectral_rmse_db": 11.43476964280217,
+              "reference_rms": 0.13269790506406065,
+              "decoded_rms": 0.10592527354338314,
+              "clip_count": 0,
+              "pcm16_sha256": "edbd9e77975a9855d4b4ccc8b8fdce0997a3970c1477180216ecf8eb2d7f4129"
+            }
+          },
+          {
+            "profile": "flat",
+            "lambda": 10.0,
+            "bytes": 2961,
+            "quality": {
+              "ser_db": 7.100477466330406,
+              "rmse": 0.05859225237726271,
+              "stoi": 0.7882400516376493,
+              "spectral_rmse_db": 11.43476964280217,
+              "reference_rms": 0.13269790506406065,
+              "decoded_rms": 0.10592527354338314,
+              "clip_count": 0,
+              "pcm16_sha256": "edbd9e77975a9855d4b4ccc8b8fdce0997a3970c1477180216ecf8eb2d7f4129"
+            }
+          }
+        ]
+      },
+      "Opus": {
+        "codec": "libopus",
+        "requested_bitrate": 20036,
+        "bytes": 4140,
+        "byte_cap": 4146,
+        "shortfall_bytes": 6,
+        "shortfall_fraction": 0.001447178002894356,
+        "sha256": "5b7cb7206c4bb9b7074fa27158d42de6caee65ca6dc81ccbc9b738672e5439ec",
+        "terminal_padding_samples_trimmed": 0,
+        "quality": {
+          "ser_db": 21.682980617629863,
+          "rmse": 0.010932387973159546,
+          "stoi": 0.996084262563017,
+          "spectral_rmse_db": 2.7276483911020097,
+          "reference_rms": 0.13269790506406065,
+          "decoded_rms": 0.132767600354537,
+          "clip_count": 0,
+          "pcm16_sha256": "a77d2b749f6eabe546fd73a67fdfbb3c2a4a418244a71eff22a70712d0815660"
+        },
+        "trials": [
+          {
+            "bitrate": 48250,
+            "bytes": 9930
+          },
+          {
+            "bitrate": 24374,
+            "bytes": 5030
+          },
+          {
+            "bitrate": 12436,
+            "bytes": 2236
+          },
+          {
+            "bitrate": 18405,
+            "bytes": 3810
+          },
+          {
+            "bitrate": 21389,
+            "bytes": 4418
+          },
+          {
+            "bitrate": 19897,
+            "bytes": 4106
+          },
+          {
+            "bitrate": 20643,
+            "bytes": 4265
+          },
+          {
+            "bitrate": 20270,
+            "bytes": 4190
+          },
+          {
+            "bitrate": 20083,
+            "bytes": 4148
+          },
+          {
+            "bitrate": 19990,
+            "bytes": 4125
+          },
+          {
+            "bitrate": 20036,
+            "bytes": 4140
+          },
+          {
+            "bitrate": 20059,
+            "bytes": 4148
+          },
+          {
+            "bitrate": 20047,
+            "bytes": 4140
+          },
+          {
+            "bitrate": 20053,
+            "bytes": 4148
+          },
+          {
+            "bitrate": 20050,
+            "bytes": 4148
+          },
+          {
+            "bitrate": 20048,
+            "bytes": 4140
+          },
+          {
+            "bitrate": 20049,
+            "bytes": 4140
+          }
+        ],
+        "decoder_warnings": "",
+        "diagnostic_best_integer_lag_within_8_samples": 0,
+        "lag_diagnostic_applied_to_metrics": false,
+        "decoded_mean": -0.000248429434640067
+      },
+      "AAC_LC": {
+        "codec": "aac",
+        "requested_bitrate": 15646,
+        "bytes": 4144,
+        "byte_cap": 4146,
+        "shortfall_bytes": 2,
+        "shortfall_fraction": 0.000482392667631452,
+        "sha256": "89a003dcac61273405f6722076dfd7e3ee2c331ea273586db5f2b48420bed5b9",
+        "terminal_padding_samples_trimmed": 64,
+        "quality": {
+          "ser_db": 8.974071609382325,
+          "rmse": 0.04722375163575722,
+          "stoi": 0.9354321728168042,
+          "spectral_rmse_db": 5.4202041945279555,
+          "reference_rms": 0.13269790506406065,
+          "decoded_rms": 0.14386820412796575,
+          "clip_count": 20,
+          "pcm16_sha256": "97f36d1e27d0e8e64ede9b38ecb98238a9199cc4074f997822b3307dd7946aa6"
+        },
+        "trials": [
+          {
+            "bitrate": 48250,
+            "bytes": 7439
+          },
+          {
+            "bitrate": 24374,
+            "bytes": 6164
+          },
+          {
+            "bitrate": 12436,
+            "bytes": 3540
+          },
+          {
+            "bitrate": 18405,
+            "bytes": 4618
+          },
+          {
+            "bitrate": 15420,
+            "bytes": 4103
+          },
+          {
+            "bitrate": 16912,
+            "bytes": 4385
+          },
+          {
+            "bitrate": 16166,
+            "bytes": 4241
+          },
+          {
+            "bitrate": 15793,
+            "bytes": 4164
+          },
+          {
+            "bitrate": 15606,
+            "bytes": 4135
+          },
+          {
+            "bitrate": 15699,
+            "bytes": 4155
+          },
+          {
+            "bitrate": 15652,
+            "bytes": 4147
+          },
+          {
+            "bitrate": 15629,
+            "bytes": 4140
+          },
+          {
+            "bitrate": 15640,
+            "bytes": 4141
+          },
+          {
+            "bitrate": 15646,
+            "bytes": 4144
+          },
+          {
+            "bitrate": 15649,
+            "bytes": 4147
+          },
+          {
+            "bitrate": 15647,
+            "bytes": 4144
+          },
+          {
+            "bitrate": 15648,
+            "bytes": 4144
+          }
+        ],
+        "decoder_warnings": "",
+        "diagnostic_best_integer_lag_within_8_samples": 0,
+        "lag_diagnostic_applied_to_metrics": false,
+        "decoded_mean": 0.00017569950648716517
+      },
+      "reference_mean": -7.645198277064732e-05
+    },
+    {
+      "id": "ru_kak",
+      "kind": "speech",
+      "samples": 8000,
+      "byte_cap": 2895,
+      "LPX4": {
+        "bytes": 2895,
+        "quality": {
+          "ser_db": 25.799374785680016,
+          "rmse": 0.0033574956423404268,
+          "stoi": 0.9932622247688229,
+          "spectral_rmse_db": 4.2617027836195795,
+          "reference_rms": 0.06546123536995288,
+          "decoded_rms": 0.06556550297400428,
+          "clip_count": 0,
+          "pcm16_sha256": "dc1f4e12ca01f6e89abf60f7fda25ed57d953f7bbf75a3541509f2ab95b34d72"
+        }
+      },
+      "LPX3": {
+        "codec": "LPX3 Rice v7 Q0",
+        "bytes": 2848,
+        "byte_cap": 2895,
+        "shortfall_bytes": 47,
+        "shortfall_fraction": 0.01623488773747841,
+        "sha256": "bfb9dec8a5415f8963606fc533e1467f96b5a28b7d15dd201f9dc96be789d12f",
+        "quality": {
+          "ser_db": 24.27864490663773,
+          "rmse": 0.003999925952301431,
+          "stoi": 0.9919692141537502,
+          "spectral_rmse_db": 3.7552855092747683,
+          "reference_rms": 0.06546123536995288,
+          "decoded_rms": 0.06545278625418838,
+          "clip_count": 0,
+          "pcm16_sha256": "76d4fd7c930a18887789bc78aaaef79f33f56109a486dd03c63c0c4442b4ef36"
+        },
+        "same_data_lpx4_pcm16_exact": true,
+        "selected": {
+          "profile": "legacy",
+          "lambda": 0.005,
+          "bytes": 2848,
+          "quality": {
+            "ser_db": 24.27864490663773,
+            "rmse": 0.003999925952301431,
+            "stoi": 0.9919692141537502,
+            "spectral_rmse_db": 3.7552855092747683,
+            "reference_rms": 0.06546123536995288,
+            "decoded_rms": 0.06545278625418838,
+            "clip_count": 0,
+            "pcm16_sha256": "76d4fd7c930a18887789bc78aaaef79f33f56109a486dd03c63c0c4442b4ef36"
+          }
+        },
+        "candidates": [
+          {
+            "profile": "legacy",
+            "lambda": 0.0,
+            "bytes": 5623
+          },
+          {
+            "profile": "legacy",
+            "lambda": 0.0002,
+            "bytes": 3652
+          },
+          {
+            "profile": "legacy",
+            "lambda": 0.001,
+            "bytes": 3214
+          },
+          {
+            "profile": "legacy",
+            "lambda": 0.005,
+            "bytes": 2848,
+            "quality": {
+              "ser_db": 24.27864490663773,
+              "rmse": 0.003999925952301431,
+              "stoi": 0.9919692141537502,
+              "spectral_rmse_db": 3.7552855092747683,
+              "reference_rms": 0.06546123536995288,
+              "decoded_rms": 0.06545278625418838,
+              "clip_count": 0,
+              "pcm16_sha256": "76d4fd7c930a18887789bc78aaaef79f33f56109a486dd03c63c0c4442b4ef36"
+            }
+          },
+          {
+            "profile": "legacy",
+            "lambda": 0.02,
+            "bytes": 2686,
+            "quality": {
+              "ser_db": 18.476844635945994,
+              "rmse": 0.007800850684117685,
+              "stoi": 0.9837789330693614,
+              "spectral_rmse_db": 4.506055696906404,
+              "reference_rms": 0.06546123536995288,
+              "decoded_rms": 0.06469294265483523,
+              "clip_count": 0,
+              "pcm16_sha256": "7723fe86abb467d43f6d53e0910fcba8ec0b6bc610859937c1310eff7d0fd181"
+            }
+          },
+          {
+            "profile": "legacy",
+            "lambda": 0.1,
+            "bytes": 2614,
+            "quality": {
+              "ser_db": 12.408193759263682,
+              "rmse": 0.015688250273958232,
+              "stoi": 0.9584199323178609,
+              "spectral_rmse_db": 5.479085924022408,
+              "reference_rms": 0.06546123536995288,
+              "decoded_rms": 0.06424827949196539,
+              "clip_count": 0,
+              "pcm16_sha256": "3f0433accbd7ac015841e06f2ba8ee3eda970f1adf39d951c5a6c7f84b420123"
+            }
+          },
+          {
+            "profile": "legacy",
+            "lambda": 0.5,
+            "bytes": 2594,
+            "quality": {
+              "ser_db": 10.54280025105612,
+              "rmse": 0.01944662253121632,
+              "stoi": 0.9708225831751908,
+              "spectral_rmse_db": 5.983853456284159,
+              "reference_rms": 0.06546123536995288,
+              "decoded_rms": 0.06551169794581127,
+              "clip_count": 0,
+              "pcm16_sha256": "2cfafaa8ddda1303ed73f46f84d0aacc00cc0ad6cac32e46c4591682570131ac"
+            }
+          },
+          {
+            "profile": "legacy",
+            "lambda": 10.0,
+            "bytes": 2594,
+            "quality": {
+              "ser_db": 10.54280025105612,
+              "rmse": 0.01944662253121632,
+              "stoi": 0.9708225831751908,
+              "spectral_rmse_db": 5.983853456284159,
+              "reference_rms": 0.06546123536995288,
+              "decoded_rms": 0.06551169794581127,
+              "clip_count": 0,
+              "pcm16_sha256": "2cfafaa8ddda1303ed73f46f84d0aacc00cc0ad6cac32e46c4591682570131ac"
+            }
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.0,
+            "bytes": 5614
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.0002,
+            "bytes": 3638
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.001,
+            "bytes": 3251
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.005,
+            "bytes": 2833,
+            "quality": {
+              "ser_db": 24.166281916459674,
+              "rmse": 0.004052006199349481,
+              "stoi": 0.9923480253826058,
+              "spectral_rmse_db": 3.820082482625866,
+              "reference_rms": 0.06546123536995288,
+              "decoded_rms": 0.06527313313107894,
+              "clip_count": 0,
+              "pcm16_sha256": "caa29367fc2fe80dd6b1b2a0d8534e74a885810f3043676ec3241e571dbe03f9"
+            }
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.02,
+            "bytes": 2673,
+            "quality": {
+              "ser_db": 18.484815321517953,
+              "rmse": 0.007793695446122596,
+              "stoi": 0.987065418167968,
+              "spectral_rmse_db": 4.792599978999741,
+              "reference_rms": 0.06546123536995288,
+              "decoded_rms": 0.06543215883982431,
+              "clip_count": 0,
+              "pcm16_sha256": "382fb0c90f6014770d34548aa9fee4ced4b0c175f48a2479039c4ea3f4acb2a1"
+            }
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.1,
+            "bytes": 2606,
+            "quality": {
+              "ser_db": 12.447260692608648,
+              "rmse": 0.015617846941520635,
+              "stoi": 0.9644583937952024,
+              "spectral_rmse_db": 5.830614781695607,
+              "reference_rms": 0.06546123536995288,
+              "decoded_rms": 0.06439470932681053,
+              "clip_count": 0,
+              "pcm16_sha256": "570b9d8af158b6f7f801eaaeba619f85bafd5a5f72e9788d82f473b1888da43c"
+            }
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.5,
+            "bytes": 2591,
+            "quality": {
+              "ser_db": 10.576496259723346,
+              "rmse": 0.01937132751853512,
+              "stoi": 0.967433533476761,
+              "spectral_rmse_db": 5.937823529226135,
+              "reference_rms": 0.06546123536995288,
+              "decoded_rms": 0.0638194320160983,
+              "clip_count": 0,
+              "pcm16_sha256": "426b7e3d2f88b5d6bbc25d78810b3fb57d769e35124ca18136e840ff6972d2cb"
+            }
+          },
+          {
+            "profile": "regularized",
+            "lambda": 10.0,
+            "bytes": 2591,
+            "quality": {
+              "ser_db": 10.576496259723346,
+              "rmse": 0.01937132751853512,
+              "stoi": 0.967433533476761,
+              "spectral_rmse_db": 5.937823529226135,
+              "reference_rms": 0.06546123536995288,
+              "decoded_rms": 0.0638194320160983,
+              "clip_count": 0,
+              "pcm16_sha256": "426b7e3d2f88b5d6bbc25d78810b3fb57d769e35124ca18136e840ff6972d2cb"
+            }
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.0,
+            "bytes": 5614
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.0002,
+            "bytes": 3793
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.001,
+            "bytes": 3447
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.005,
+            "bytes": 3009
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.02,
+            "bytes": 2590,
+            "quality": {
+              "ser_db": 19.32068728738541,
+              "rmse": 0.007078640109399022,
+              "stoi": 0.9855393802352695,
+              "spectral_rmse_db": 5.824435933698911,
+              "reference_rms": 0.06546123536995288,
+              "decoded_rms": 0.06544308069851569,
+              "clip_count": 0,
+              "pcm16_sha256": "e4aeab3b076953b9f1f0d4dd76575808b155889cafd1df50109b0d6448ad69ea"
+            }
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.1,
+            "bytes": 2207,
+            "quality": {
+              "ser_db": 9.865601046465155,
+              "rmse": 0.021023457662994634,
+              "stoi": 0.9635990968242911,
+              "spectral_rmse_db": 7.617801582785534,
+              "reference_rms": 0.06546123536995288,
+              "decoded_rms": 0.05994462406011584,
+              "clip_count": 0,
+              "pcm16_sha256": "a03d091a8ded2c91edacdaa7e609433fc5cd0d2e9211586901c3f1e46f5e31a4"
+            }
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.5,
+            "bytes": 2122,
+            "quality": {
+              "ser_db": 4.622554078491928,
+              "rmse": 0.03844647196847302,
+              "stoi": 0.9139031206785447,
+              "spectral_rmse_db": 8.406901529279759,
+              "reference_rms": 0.06546123536995288,
+              "decoded_rms": 0.050890915335684066,
+              "clip_count": 0,
+              "pcm16_sha256": "8b19cad776d3a2f8e59561ad8333b4ca49844cfa0b3fcb8b42efc721cbafcd56"
+            }
+          },
+          {
+            "profile": "flat",
+            "lambda": 10.0,
+            "bytes": 2122,
+            "quality": {
+              "ser_db": 4.622554078491928,
+              "rmse": 0.03844647196847302,
+              "stoi": 0.9139031206785447,
+              "spectral_rmse_db": 8.406901529279759,
+              "reference_rms": 0.06546123536995288,
+              "decoded_rms": 0.050890915335684066,
+              "clip_count": 0,
+              "pcm16_sha256": "8b19cad776d3a2f8e59561ad8333b4ca49844cfa0b3fcb8b42efc721cbafcd56"
+            }
+          }
+        ]
+      },
+      "Opus": {
+        "codec": "libopus",
+        "requested_bitrate": 20922,
+        "bytes": 2890,
+        "byte_cap": 2895,
+        "shortfall_bytes": 5,
+        "shortfall_fraction": 0.0017271157167530224,
+        "sha256": "00df0bc89beddfe90cd200cd9e56457a3f6a63506577ec42f98c6feaaaecec41",
+        "terminal_padding_samples_trimmed": 0,
+        "quality": {
+          "ser_db": 21.98902217665465,
+          "rmse": 0.0052063467352251695,
+          "stoi": 0.9984282189610616,
+          "spectral_rmse_db": 2.2635892780482014,
+          "reference_rms": 0.06546123536995288,
+          "decoded_rms": 0.0652829714127582,
+          "clip_count": 0,
+          "pcm16_sha256": "b1055ac094e034cb3f6c8c19f704829eea24e7e54879852572749f7263f6507a"
+        },
+        "trials": [
+          {
+            "bitrate": 48250,
+            "bytes": 6579
+          },
+          {
+            "bitrate": 24374,
+            "bytes": 3354
+          },
+          {
+            "bitrate": 12436,
+            "bytes": 1643
+          },
+          {
+            "bitrate": 18405,
+            "bytes": 2557
+          },
+          {
+            "bitrate": 21389,
+            "bytes": 2952
+          },
+          {
+            "bitrate": 19897,
+            "bytes": 2752
+          },
+          {
+            "bitrate": 20643,
+            "bytes": 2850
+          },
+          {
+            "bitrate": 21016,
+            "bytes": 2906
+          },
+          {
+            "bitrate": 20829,
+            "bytes": 2879
+          },
+          {
+            "bitrate": 20922,
+            "bytes": 2890
+          },
+          {
+            "bitrate": 20969,
+            "bytes": 2897
+          },
+          {
+            "bitrate": 20945,
+            "bytes": 2890
+          },
+          {
+            "bitrate": 20957,
+            "bytes": 2897
+          },
+          {
+            "bitrate": 20951,
+            "bytes": 2897
+          },
+          {
+            "bitrate": 20948,
+            "bytes": 2890
+          },
+          {
+            "bitrate": 20949,
+            "bytes": 2890
+          },
+          {
+            "bitrate": 20950,
+            "bytes": 2897
+          }
+        ],
+        "decoder_warnings": "",
+        "diagnostic_best_integer_lag_within_8_samples": 0,
+        "lag_diagnostic_applied_to_metrics": false,
+        "decoded_mean": -3.983306884765625e-05
+      },
+      "AAC_LC": {
+        "codec": "aac",
+        "requested_bitrate": 12160,
+        "bytes": 2895,
+        "byte_cap": 2895,
+        "shortfall_bytes": 0,
+        "shortfall_fraction": 0.0,
+        "sha256": "a580169ee588acafb5df0fe4c99aad77cc9e2afb47715dc89486dc7c03ff0daf",
+        "terminal_padding_samples_trimmed": 192,
+        "quality": {
+          "ser_db": 14.983497362326135,
+          "rmse": 0.011662974574111475,
+          "stoi": 0.9535738359400961,
+          "spectral_rmse_db": 6.223804788474557,
+          "reference_rms": 0.06546123536995288,
+          "decoded_rms": 0.0658662684907025,
+          "clip_count": 0,
+          "pcm16_sha256": "30c0eb64beac3d696a5238c7b75b6e6d6b9fd511228642b22d2b684fc0545791"
+        },
+        "trials": [
+          {
+            "bitrate": 48250,
+            "bytes": 5670
+          },
+          {
+            "bitrate": 24374,
+            "bytes": 4342
+          },
+          {
+            "bitrate": 12436,
+            "bytes": 2946
+          },
+          {
+            "bitrate": 6467,
+            "bytes": 1936
+          },
+          {
+            "bitrate": 9451,
+            "bytes": 2485
+          },
+          {
+            "bitrate": 10943,
+            "bytes": 2753
+          },
+          {
+            "bitrate": 11689,
+            "bytes": 2847
+          },
+          {
+            "bitrate": 12062,
+            "bytes": 2884
+          },
+          {
+            "bitrate": 12249,
+            "bytes": 2917
+          },
+          {
+            "bitrate": 12155,
+            "bytes": 2894
+          },
+          {
+            "bitrate": 12202,
+            "bytes": 2902
+          },
+          {
+            "bitrate": 12178,
+            "bytes": 2909
+          },
+          {
+            "bitrate": 12166,
+            "bytes": 2908
+          },
+          {
+            "bitrate": 12160,
+            "bytes": 2895
+          },
+          {
+            "bitrate": 12163,
+            "bytes": 2895
+          },
+          {
+            "bitrate": 12164,
+            "bytes": 2895
+          },
+          {
+            "bitrate": 12165,
+            "bytes": 2908
+          }
+        ],
+        "decoder_warnings": "",
+        "diagnostic_best_integer_lag_within_8_samples": 0,
+        "lag_diagnostic_applied_to_metrics": false,
+        "decoded_mean": -3.0025482177734377e-05
+      },
+      "reference_mean": -3.8768768310546876e-05
+    },
+    {
+      "id": "en_intro",
+      "kind": "speech",
+      "samples": 24000,
+      "byte_cap": 8616,
+      "LPX4": {
+        "bytes": 8616,
+        "quality": {
+          "ser_db": 13.070047154855477,
+          "rmse": 0.026130549065867346,
+          "stoi": 0.9662053617948353,
+          "spectral_rmse_db": 7.272529962289372,
+          "reference_rms": 0.11766597373856098,
+          "decoded_rms": 0.11703175246455154,
+          "clip_count": 4,
+          "pcm16_sha256": "91943cdea9dcbb5c5c1718e49e923ef14960b9652c43e449c403179798c9d15b"
+        }
+      },
+      "LPX3": {
+        "codec": "LPX3 Rice v7 Q0",
+        "bytes": 8291,
+        "byte_cap": 8616,
+        "shortfall_bytes": 325,
+        "shortfall_fraction": 0.03772051996285979,
+        "sha256": "c923ea0eabfdfa472fd80a5977893f79e3725c077e61a851761bd0e87097f169",
+        "quality": {
+          "ser_db": 13.064589897623119,
+          "rmse": 0.026146971786006664,
+          "stoi": 0.9661680613819837,
+          "spectral_rmse_db": 7.276641875479544,
+          "reference_rms": 0.11766597373856098,
+          "decoded_rms": 0.11698140376352774,
+          "clip_count": 4,
+          "pcm16_sha256": "e60c947660ee22f768bb368beb40ba86673d76732c881d21ef6de1105f8537ca"
+        },
+        "same_data_lpx4_pcm16_exact": true,
+        "selected": {
+          "profile": "legacy",
+          "lambda": 0.1,
+          "bytes": 8291,
+          "quality": {
+            "ser_db": 13.064589897623119,
+            "rmse": 0.026146971786006664,
+            "stoi": 0.9661680613819837,
+            "spectral_rmse_db": 7.276641875479544,
+            "reference_rms": 0.11766597373856098,
+            "decoded_rms": 0.11698140376352774,
+            "clip_count": 4,
+            "pcm16_sha256": "e60c947660ee22f768bb368beb40ba86673d76732c881d21ef6de1105f8537ca"
+          }
+        },
+        "candidates": [
+          {
+            "profile": "legacy",
+            "lambda": 0.0,
+            "bytes": 17092
+          },
+          {
+            "profile": "legacy",
+            "lambda": 0.0002,
+            "bytes": 14500
+          },
+          {
+            "profile": "legacy",
+            "lambda": 0.001,
+            "bytes": 12397
+          },
+          {
+            "profile": "legacy",
+            "lambda": 0.005,
+            "bytes": 10537
+          },
+          {
+            "profile": "legacy",
+            "lambda": 0.02,
+            "bytes": 9354
+          },
+          {
+            "profile": "legacy",
+            "lambda": 0.1,
+            "bytes": 8291,
+            "quality": {
+              "ser_db": 13.064589897623119,
+              "rmse": 0.026146971786006664,
+              "stoi": 0.9661680613819837,
+              "spectral_rmse_db": 7.276641875479544,
+              "reference_rms": 0.11766597373856098,
+              "decoded_rms": 0.11698140376352774,
+              "clip_count": 4,
+              "pcm16_sha256": "e60c947660ee22f768bb368beb40ba86673d76732c881d21ef6de1105f8537ca"
+            }
+          },
+          {
+            "profile": "legacy",
+            "lambda": 0.5,
+            "bytes": 7871,
+            "quality": {
+              "ser_db": 9.439361314203095,
+              "rmse": 0.039690157969372954,
+              "stoi": 0.9542182965395554,
+              "spectral_rmse_db": 7.357200128659118,
+              "reference_rms": 0.11766597373856098,
+              "decoded_rms": 0.116723827610606,
+              "clip_count": 5,
+              "pcm16_sha256": "b415b44511b2f076f376d12fe7947fcb6ddd2035b11d9cab457466589c479f77"
+            }
+          },
+          {
+            "profile": "legacy",
+            "lambda": 10.0,
+            "bytes": 7774,
+            "quality": {
+              "ser_db": 8.46924944583186,
+              "rmse": 0.04438011475329067,
+              "stoi": 0.9512901389342746,
+              "spectral_rmse_db": 7.272600369510917,
+              "reference_rms": 0.11766597373856098,
+              "decoded_rms": 0.11587734733818121,
+              "clip_count": 0,
+              "pcm16_sha256": "fd0d5c135311519712eb9c28ff4571eeb21a991bff3b4c5ecfb81d45255af93f"
+            }
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.0,
+            "bytes": 17166
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.0002,
+            "bytes": 14646
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.001,
+            "bytes": 12635
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.005,
+            "bytes": 10444
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.02,
+            "bytes": 9087
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.1,
+            "bytes": 8065,
+            "quality": {
+              "ser_db": 12.200212959501327,
+              "rmse": 0.02888286332594994,
+              "stoi": 0.9646801298563867,
+              "spectral_rmse_db": 7.917972524710216,
+              "reference_rms": 0.11766597373856098,
+              "decoded_rms": 0.11681443624516748,
+              "clip_count": 4,
+              "pcm16_sha256": "6d1034839a8793fc92b1e6f5c84dd75a110397c855709fd28963c872e7da3944"
+            }
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.5,
+            "bytes": 7742,
+            "quality": {
+              "ser_db": 9.554763876605023,
+              "rmse": 0.03916631381406776,
+              "stoi": 0.9526866002732719,
+              "spectral_rmse_db": 8.188121476818296,
+              "reference_rms": 0.11766597373856098,
+              "decoded_rms": 0.11580399878405889,
+              "clip_count": 0,
+              "pcm16_sha256": "77720d312b89450ad2bf93992f6b726871947186e02ee96f3cdee7e0e0c6dcad"
+            }
+          },
+          {
+            "profile": "regularized",
+            "lambda": 10.0,
+            "bytes": 7734,
+            "quality": {
+              "ser_db": 9.468138361129517,
+              "rmse": 0.0395588788913737,
+              "stoi": 0.9524796393249099,
+              "spectral_rmse_db": 8.185306937436206,
+              "reference_rms": 0.11766597373856098,
+              "decoded_rms": 0.11591087844533313,
+              "clip_count": 1,
+              "pcm16_sha256": "e6f7df326b3ef21c47708864af68521ba25804db4d197b7bd38c92add2e58e69"
+            }
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.0,
+            "bytes": 17106
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.0002,
+            "bytes": 16477
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.001,
+            "bytes": 15540
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.005,
+            "bytes": 12567
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.02,
+            "bytes": 9557
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.1,
+            "bytes": 7245,
+            "quality": {
+              "ser_db": 11.649782255972758,
+              "rmse": 0.030772429142604512,
+              "stoi": 0.9301882422746338,
+              "spectral_rmse_db": 10.893932821948692,
+              "reference_rms": 0.11766597373856098,
+              "decoded_rms": 0.11203846243792032,
+              "clip_count": 0,
+              "pcm16_sha256": "3c0fd691081953d579b7b99363b643a4021bcfecbd10a64e0a2fae13c83a0fd3"
+            }
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.5,
+            "bytes": 6299,
+            "quality": {
+              "ser_db": 7.733186690317451,
+              "rmse": 0.048304941292443525,
+              "stoi": 0.8953346888207979,
+              "spectral_rmse_db": 11.925979877123048,
+              "reference_rms": 0.11766597373856098,
+              "decoded_rms": 0.10404682315228247,
+              "clip_count": 0,
+              "pcm16_sha256": "3743f1c3297a2823e80d2693b95105e6808ec251f09e56c4a1345db7a3231e52"
+            }
+          },
+          {
+            "profile": "flat",
+            "lambda": 10.0,
+            "bytes": 6299,
+            "quality": {
+              "ser_db": 7.733186690317451,
+              "rmse": 0.048304941292443525,
+              "stoi": 0.8953346888207979,
+              "spectral_rmse_db": 11.925979877123048,
+              "reference_rms": 0.11766597373856098,
+              "decoded_rms": 0.10404682315228247,
+              "clip_count": 0,
+              "pcm16_sha256": "3743f1c3297a2823e80d2693b95105e6808ec251f09e56c4a1345db7a3231e52"
+            }
+          }
+        ]
+      },
+      "Opus": {
+        "codec": "libopus",
+        "requested_bitrate": 19524,
+        "bytes": 8612,
+        "byte_cap": 8616,
+        "shortfall_bytes": 4,
+        "shortfall_fraction": 0.00046425255338904364,
+        "sha256": "bfb034ba3e27a02ac01151c1fce74480ce60d840423520578d9c020592104607",
+        "terminal_padding_samples_trimmed": 0,
+        "quality": {
+          "ser_db": 15.765482865576047,
+          "rmse": 0.019159172598846908,
+          "stoi": 0.9927068696947079,
+          "spectral_rmse_db": 3.871124608013189,
+          "reference_rms": 0.11766597373856098,
+          "decoded_rms": 0.11792188440622123,
+          "clip_count": 2,
+          "pcm16_sha256": "326d215fda33fff695f5945caf538866d88a383ea86a259bc3978552f45724d9"
+        },
+        "trials": [
+          {
+            "bitrate": 48250,
+            "bytes": 21378
+          },
+          {
+            "bitrate": 24374,
+            "bytes": 10773
+          },
+          {
+            "bitrate": 12436,
+            "bytes": 4955
+          },
+          {
+            "bitrate": 18405,
+            "bytes": 8130
+          },
+          {
+            "bitrate": 21389,
+            "bytes": 9436
+          },
+          {
+            "bitrate": 19897,
+            "bytes": 8777
+          },
+          {
+            "bitrate": 19151,
+            "bytes": 8456
+          },
+          {
+            "bitrate": 19524,
+            "bytes": 8612
+          },
+          {
+            "bitrate": 19710,
+            "bytes": 8696
+          },
+          {
+            "bitrate": 19617,
+            "bytes": 8657
+          },
+          {
+            "bitrate": 19570,
+            "bytes": 8636
+          },
+          {
+            "bitrate": 19547,
+            "bytes": 8612
+          },
+          {
+            "bitrate": 19558,
+            "bytes": 8636
+          },
+          {
+            "bitrate": 19552,
+            "bytes": 8636
+          },
+          {
+            "bitrate": 19549,
+            "bytes": 8612
+          },
+          {
+            "bitrate": 19550,
+            "bytes": 8636
+          }
+        ],
+        "decoder_warnings": "",
+        "diagnostic_best_integer_lag_within_8_samples": 0,
+        "lag_diagnostic_applied_to_metrics": false,
+        "decoded_mean": -9.993743896484375e-05
+      },
+      "AAC_LC": {
+        "codec": "aac",
+        "requested_bitrate": 19331,
+        "bytes": 8614,
+        "byte_cap": 8616,
+        "shortfall_bytes": 2,
+        "shortfall_fraction": 0.00023212627669452182,
+        "sha256": "05ba3c7cda403d4f99399a6965e0f7e6959e33ab65a3e691906ed15b4b8d678a",
+        "terminal_padding_samples_trimmed": 576,
+        "quality": {
+          "ser_db": 13.739492475678075,
+          "rmse": 0.02419225042123517,
+          "stoi": 0.9509766216045841,
+          "spectral_rmse_db": 6.9645506946474205,
+          "reference_rms": 0.11766597373856098,
+          "decoded_rms": 0.11541578394145438,
+          "clip_count": 0,
+          "pcm16_sha256": "b2f64e7a7f1a679038c28a1ee69013ffb5f36fd2811b6873ad349944dcf1203a"
+        },
+        "trials": [
+          {
+            "bitrate": 48250,
+            "bytes": 15885
+          },
+          {
+            "bitrate": 24374,
+            "bytes": 10746
+          },
+          {
+            "bitrate": 12436,
+            "bytes": 6027
+          },
+          {
+            "bitrate": 18405,
+            "bytes": 8275
+          },
+          {
+            "bitrate": 21389,
+            "bytes": 8982
+          },
+          {
+            "bitrate": 19897,
+            "bytes": 8825
+          },
+          {
+            "bitrate": 19151,
+            "bytes": 8541
+          },
+          {
+            "bitrate": 19524,
+            "bytes": 8697
+          },
+          {
+            "bitrate": 19337,
+            "bytes": 8624
+          },
+          {
+            "bitrate": 19244,
+            "bytes": 8584
+          },
+          {
+            "bitrate": 19290,
+            "bytes": 8601
+          },
+          {
+            "bitrate": 19313,
+            "bytes": 8609
+          },
+          {
+            "bitrate": 19325,
+            "bytes": 8612
+          },
+          {
+            "bitrate": 19331,
+            "bytes": 8614
+          },
+          {
+            "bitrate": 19334,
+            "bytes": 8614
+          },
+          {
+            "bitrate": 19335,
+            "bytes": 8614
+          },
+          {
+            "bitrate": 19336,
+            "bytes": 8624
+          }
+        ],
+        "decoder_warnings": "",
+        "diagnostic_best_integer_lag_within_8_samples": 0,
+        "lag_diagnostic_applied_to_metrics": false,
+        "decoded_mean": -7.45697021484375e-05
+      },
+      "reference_mean": -9.323755900065104e-05
+    },
+    {
+      "id": "ru_sayings",
+      "kind": "speech",
+      "samples": 24000,
+      "byte_cap": 8213,
+      "LPX4": {
+        "bytes": 8213,
+        "quality": {
+          "ser_db": 26.073049304828494,
+          "rmse": 0.001734892185867609,
+          "stoi": 0.9113927243418015,
+          "spectral_rmse_db": 3.7273726440642463,
+          "reference_rms": 0.03490799910518492,
+          "decoded_rms": 0.03492049655560199,
+          "clip_count": 0,
+          "pcm16_sha256": "e6626d31937d9f6ef742299eb129f452235f522378aefc1f18204f7a8f41098d"
+        }
+      },
+      "LPX3": {
+        "codec": "LPX3 Rice v7 Q0",
+        "bytes": 8187,
+        "byte_cap": 8213,
+        "shortfall_bytes": 26,
+        "shortfall_fraction": 0.0031657128941921346,
+        "sha256": "9e1e486c87819a75f051024cb3da2157605601118467e0630eec177975e09b6e",
+        "quality": {
+          "ser_db": 26.073049304828494,
+          "rmse": 0.001734892185867609,
+          "stoi": 0.9113927243418015,
+          "spectral_rmse_db": 3.7273726440642463,
+          "reference_rms": 0.03490799910518492,
+          "decoded_rms": 0.03492049655560199,
+          "clip_count": 0,
+          "pcm16_sha256": "e6626d31937d9f6ef742299eb129f452235f522378aefc1f18204f7a8f41098d"
+        },
+        "same_data_lpx4_pcm16_exact": true,
+        "selected": {
+          "profile": "legacy",
+          "lambda": 0.005,
+          "bytes": 8187,
+          "quality": {
+            "ser_db": 26.073049304828494,
+            "rmse": 0.001734892185867609,
+            "stoi": 0.9113927243418015,
+            "spectral_rmse_db": 3.7273726440642463,
+            "reference_rms": 0.03490799910518492,
+            "decoded_rms": 0.03492049655560199,
+            "clip_count": 0,
+            "pcm16_sha256": "e6626d31937d9f6ef742299eb129f452235f522378aefc1f18204f7a8f41098d"
+          }
+        },
+        "candidates": [
+          {
+            "profile": "legacy",
+            "lambda": 0.0,
+            "bytes": 17703
+          },
+          {
+            "profile": "legacy",
+            "lambda": 0.0002,
+            "bytes": 10817
+          },
+          {
+            "profile": "legacy",
+            "lambda": 0.001,
+            "bytes": 9203
+          },
+          {
+            "profile": "legacy",
+            "lambda": 0.005,
+            "bytes": 8187,
+            "quality": {
+              "ser_db": 26.073049304828494,
+              "rmse": 0.001734892185867609,
+              "stoi": 0.9113927243418015,
+              "spectral_rmse_db": 3.7273726440642463,
+              "reference_rms": 0.03490799910518492,
+              "decoded_rms": 0.03492049655560199,
+              "clip_count": 0,
+              "pcm16_sha256": "e6626d31937d9f6ef742299eb129f452235f522378aefc1f18204f7a8f41098d"
+            }
+          },
+          {
+            "profile": "legacy",
+            "lambda": 0.02,
+            "bytes": 7899,
+            "quality": {
+              "ser_db": 21.45149140307454,
+              "rmse": 0.002953591204135221,
+              "stoi": 0.901494816869074,
+              "spectral_rmse_db": 4.267812150643761,
+              "reference_rms": 0.03490799910518492,
+              "decoded_rms": 0.034940584372355185,
+              "clip_count": 0,
+              "pcm16_sha256": "c49a36d93094ffd3709661b0ac31bb039565b93d3167bc951ce93a98f47770fe"
+            }
+          },
+          {
+            "profile": "legacy",
+            "lambda": 0.1,
+            "bytes": 7767,
+            "quality": {
+              "ser_db": 18.065204827912954,
+              "rmse": 0.004361789621260732,
+              "stoi": 0.8998851722965129,
+              "spectral_rmse_db": 4.529058937044583,
+              "reference_rms": 0.03490799910518492,
+              "decoded_rms": 0.035083481710883824,
+              "clip_count": 0,
+              "pcm16_sha256": "56b6094f4df4e882b700579d531d199ff5726680311a181173936788fdc9545d"
+            }
+          },
+          {
+            "profile": "legacy",
+            "lambda": 0.5,
+            "bytes": 7767,
+            "quality": {
+              "ser_db": 18.065204827912954,
+              "rmse": 0.004361789621260732,
+              "stoi": 0.8998851722965129,
+              "spectral_rmse_db": 4.529058937044583,
+              "reference_rms": 0.03490799910518492,
+              "decoded_rms": 0.035083481710883824,
+              "clip_count": 0,
+              "pcm16_sha256": "56b6094f4df4e882b700579d531d199ff5726680311a181173936788fdc9545d"
+            }
+          },
+          {
+            "profile": "legacy",
+            "lambda": 10.0,
+            "bytes": 7767,
+            "quality": {
+              "ser_db": 18.065204827912954,
+              "rmse": 0.004361789621260732,
+              "stoi": 0.8998851722965129,
+              "spectral_rmse_db": 4.529058937044583,
+              "reference_rms": 0.03490799910518492,
+              "decoded_rms": 0.035083481710883824,
+              "clip_count": 0,
+              "pcm16_sha256": "56b6094f4df4e882b700579d531d199ff5726680311a181173936788fdc9545d"
+            }
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.0,
+            "bytes": 17996
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.0002,
+            "bytes": 11410
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.001,
+            "bytes": 9322
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.005,
+            "bytes": 8218
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.02,
+            "bytes": 7878,
+            "quality": {
+              "ser_db": 21.410764234454884,
+              "rmse": 0.0029674727833203804,
+              "stoi": 0.8657108758187964,
+              "spectral_rmse_db": 5.128442480630512,
+              "reference_rms": 0.03490799910518492,
+              "decoded_rms": 0.03497480597108543,
+              "clip_count": 0,
+              "pcm16_sha256": "e18fbd1ca5f7bf6bbe49fcdd6957f7cad5ff5a946371ff827ed895b5d1f5aa84"
+            }
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.1,
+            "bytes": 7727,
+            "quality": {
+              "ser_db": 18.11928519024454,
+              "rmse": 0.004334716477282638,
+              "stoi": 0.8584713310333422,
+              "spectral_rmse_db": 5.370011541030366,
+              "reference_rms": 0.03490799910518492,
+              "decoded_rms": 0.035043234061612166,
+              "clip_count": 0,
+              "pcm16_sha256": "4d1addc23535b0a6ed896a4d2b0bc06f025a48858d3aab8a663c0372d2d7868c"
+            }
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.5,
+            "bytes": 7727,
+            "quality": {
+              "ser_db": 18.11928519024454,
+              "rmse": 0.004334716477282638,
+              "stoi": 0.8584713310333422,
+              "spectral_rmse_db": 5.370011541030366,
+              "reference_rms": 0.03490799910518492,
+              "decoded_rms": 0.035043234061612166,
+              "clip_count": 0,
+              "pcm16_sha256": "4d1addc23535b0a6ed896a4d2b0bc06f025a48858d3aab8a663c0372d2d7868c"
+            }
+          },
+          {
+            "profile": "regularized",
+            "lambda": 10.0,
+            "bytes": 7727,
+            "quality": {
+              "ser_db": 18.11928519024454,
+              "rmse": 0.004334716477282638,
+              "stoi": 0.8584713310333422,
+              "spectral_rmse_db": 5.370011541030366,
+              "reference_rms": 0.03490799910518492,
+              "decoded_rms": 0.035043234061612166,
+              "clip_count": 0,
+              "pcm16_sha256": "4d1addc23535b0a6ed896a4d2b0bc06f025a48858d3aab8a663c0372d2d7868c"
+            }
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.0,
+            "bytes": 17807
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.0002,
+            "bytes": 15102
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.001,
+            "bytes": 12291
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.005,
+            "bytes": 9583
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.02,
+            "bytes": 7370,
+            "quality": {
+              "ser_db": 17.190949098232394,
+              "rmse": 0.0048236690263052575,
+              "stoi": 0.7652082194451717,
+              "spectral_rmse_db": 6.249889350722054,
+              "reference_rms": 0.03490799910518492,
+              "decoded_rms": 0.033384473262759375,
+              "clip_count": 0,
+              "pcm16_sha256": "3764abb0da8c566e965f3e7eb7fbc57cef5fa590a7ca0442dc04f0e29cf894ca"
+            }
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.1,
+            "bytes": 6415,
+            "quality": {
+              "ser_db": 12.793640244420184,
+              "rmse": 0.008002818067356832,
+              "stoi": 0.7259381143471467,
+              "spectral_rmse_db": 7.217445439994199,
+              "reference_rms": 0.03490799910518492,
+              "decoded_rms": 0.032242294613754476,
+              "clip_count": 0,
+              "pcm16_sha256": "ca4439381ff63ec2fb8d3aff259a5539555f305316068325a0b7e3e9b5c440e9"
+            }
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.5,
+            "bytes": 6298,
+            "quality": {
+              "ser_db": 11.974602270820473,
+              "rmse": 0.008794169714781185,
+              "stoi": 0.722007942094848,
+              "spectral_rmse_db": 7.363857209236277,
+              "reference_rms": 0.03490799910518492,
+              "decoded_rms": 0.032208529069894035,
+              "clip_count": 0,
+              "pcm16_sha256": "0bb4473d62c07f596aa5d56a61b785df971f818893483a96c09bf44c2198b365"
+            }
+          },
+          {
+            "profile": "flat",
+            "lambda": 10.0,
+            "bytes": 6298,
+            "quality": {
+              "ser_db": 11.974602270820473,
+              "rmse": 0.008794169714781185,
+              "stoi": 0.722007942094848,
+              "spectral_rmse_db": 7.363857209236277,
+              "reference_rms": 0.03490799910518492,
+              "decoded_rms": 0.032208529069894035,
+              "clip_count": 0,
+              "pcm16_sha256": "0bb4473d62c07f596aa5d56a61b785df971f818893483a96c09bf44c2198b365"
+            }
+          }
+        ]
+      },
+      "Opus": {
+        "codec": "libopus",
+        "requested_bitrate": 19383,
+        "bytes": 8204,
+        "byte_cap": 8213,
+        "shortfall_bytes": 9,
+        "shortfall_fraction": 0.0010958236941434312,
+        "sha256": "babc07c23c47b3d57f2c59f2abfa11128e15209fa6ce19e3a3024b577053dd41",
+        "terminal_padding_samples_trimmed": 0,
+        "quality": {
+          "ser_db": 4.49081358612961,
+          "rmse": 0.02081537679817943,
+          "stoi": 0.9567329008758084,
+          "spectral_rmse_db": 2.930349004363946,
+          "reference_rms": 0.03490799910518492,
+          "decoded_rms": 0.028087877393144292,
+          "clip_count": 0,
+          "pcm16_sha256": "51a29242c976f00b3942378a167addb3e68adfcdbc23b136585d069f4eb5c916"
+        },
+        "trials": [
+          {
+            "bitrate": 48250,
+            "bytes": 20477
+          },
+          {
+            "bitrate": 24374,
+            "bytes": 10326
+          },
+          {
+            "bitrate": 12436,
+            "bytes": 4554
+          },
+          {
+            "bitrate": 18405,
+            "bytes": 7804
+          },
+          {
+            "bitrate": 21389,
+            "bytes": 9055
+          },
+          {
+            "bitrate": 19897,
+            "bytes": 8417
+          },
+          {
+            "bitrate": 19151,
+            "bytes": 8119
+          },
+          {
+            "bitrate": 19524,
+            "bytes": 8277
+          },
+          {
+            "bitrate": 19337,
+            "bytes": 8186
+          },
+          {
+            "bitrate": 19430,
+            "bytes": 8229
+          },
+          {
+            "bitrate": 19383,
+            "bytes": 8204
+          },
+          {
+            "bitrate": 19406,
+            "bytes": 8229
+          },
+          {
+            "bitrate": 19394,
+            "bytes": 8204
+          },
+          {
+            "bitrate": 19400,
+            "bytes": 8229
+          },
+          {
+            "bitrate": 19397,
+            "bytes": 8204
+          },
+          {
+            "bitrate": 19398,
+            "bytes": 8204
+          },
+          {
+            "bitrate": 19399,
+            "bytes": 8204
+          }
+        ],
+        "decoder_warnings": "",
+        "diagnostic_best_integer_lag_within_8_samples": 0,
+        "lag_diagnostic_applied_to_metrics": false,
+        "decoded_mean": -0.00016812896728515624
+      },
+      "AAC_LC": {
+        "codec": "aac",
+        "requested_bitrate": 17652,
+        "bytes": 8205,
+        "byte_cap": 8213,
+        "shortfall_bytes": 8,
+        "shortfall_fraction": 0.0009740655059052721,
+        "sha256": "c0daa1954c671b84d79fcde125a43436f68d1dfe41f815c0673c30cb7aa4cedc",
+        "terminal_padding_samples_trimmed": 576,
+        "quality": {
+          "ser_db": 20.42325135765969,
+          "rmse": 0.0033247759797828636,
+          "stoi": 0.9703966937328128,
+          "spectral_rmse_db": 4.007496764575472,
+          "reference_rms": 0.03490799910518492,
+          "decoded_rms": 0.034785149426422114,
+          "clip_count": 0,
+          "pcm16_sha256": "073a7c76b16f7e134b5ca3ba36f15ce8ef7373b95ae4bc76cd9d8714d75b4075"
+        },
+        "trials": [
+          {
+            "bitrate": 48250,
+            "bytes": 14236
+          },
+          {
+            "bitrate": 24374,
+            "bytes": 9712
+          },
+          {
+            "bitrate": 12436,
+            "bytes": 6165
+          },
+          {
+            "bitrate": 18405,
+            "bytes": 8460
+          },
+          {
+            "bitrate": 15420,
+            "bytes": 7324
+          },
+          {
+            "bitrate": 16912,
+            "bytes": 7921
+          },
+          {
+            "bitrate": 17658,
+            "bytes": 8219
+          },
+          {
+            "bitrate": 17285,
+            "bytes": 8066
+          },
+          {
+            "bitrate": 17471,
+            "bytes": 8129
+          },
+          {
+            "bitrate": 17564,
+            "bytes": 8166
+          },
+          {
+            "bitrate": 17611,
+            "bytes": 8190
+          },
+          {
+            "bitrate": 17634,
+            "bytes": 8200
+          },
+          {
+            "bitrate": 17646,
+            "bytes": 8202
+          },
+          {
+            "bitrate": 17652,
+            "bytes": 8205
+          },
+          {
+            "bitrate": 17655,
+            "bytes": 8205
+          },
+          {
+            "bitrate": 17656,
+            "bytes": 8205
+          },
+          {
+            "bitrate": 17657,
+            "bytes": 8219
+          }
+        ],
+        "decoder_warnings": "",
+        "diagnostic_best_integer_lag_within_8_samples": 0,
+        "lag_diagnostic_applied_to_metrics": false,
+        "decoded_mean": 0.005055970509847005
+      },
+      "reference_mean": 0.00492453130086263
+    },
+    {
+      "id": "synthetic_music",
+      "kind": "music",
+      "samples": 24000,
+      "byte_cap": 6410,
+      "LPX4": {
+        "bytes": 6410,
+        "quality": {
+          "ser_db": 11.230071018700158,
+          "rmse": 0.013193414991766513,
+          "stoi": null,
+          "spectral_rmse_db": 21.31651620021561,
+          "reference_rms": 0.04806852259117447,
+          "decoded_rms": 0.04549432519179722,
+          "clip_count": 0,
+          "pcm16_sha256": "1b675f826bd8ae1fabdb7dcd4a95249615a8a3a2b170d3e2d44b165f9ebeec5a"
+        }
+      },
+      "LPX3": {
+        "codec": "LPX3 Rice v7 Q0",
+        "bytes": 6294,
+        "byte_cap": 6410,
+        "shortfall_bytes": 116,
+        "shortfall_fraction": 0.018096723868954757,
+        "sha256": "15cb398ca9b7a04798394a601a96a47432f60e070c36374e0c3f6da4704e288b",
+        "quality": {
+          "ser_db": 9.116299835729658,
+          "rmse": 0.016828514539535107,
+          "stoi": null,
+          "spectral_rmse_db": 22.822208207550357,
+          "reference_rms": 0.04806852259117447,
+          "decoded_rms": 0.044760358983283184,
+          "clip_count": 0,
+          "pcm16_sha256": "b80d9e80503625567e513a52200009a6d8adc6c0d5d9b2482d4c38304921fa15"
+        },
+        "same_data_lpx4_pcm16_exact": true,
+        "selected": {
+          "profile": "flat",
+          "lambda": 0.5,
+          "bytes": 6294,
+          "quality": {
+            "ser_db": 9.116299835729658,
+            "rmse": 0.016828514539535107,
+            "stoi": null,
+            "spectral_rmse_db": 22.822208207550357,
+            "reference_rms": 0.04806852259117447,
+            "decoded_rms": 0.044760358983283184,
+            "clip_count": 0,
+            "pcm16_sha256": "b80d9e80503625567e513a52200009a6d8adc6c0d5d9b2482d4c38304921fa15"
+          }
+        },
+        "candidates": [
+          {
+            "profile": "regularized",
+            "lambda": 0.0,
+            "bytes": 18456
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.0002,
+            "bytes": 12977
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.001,
+            "bytes": 12137
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.005,
+            "bytes": 11632
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.02,
+            "bytes": 11225
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.1,
+            "bytes": 10096
+          },
+          {
+            "profile": "regularized",
+            "lambda": 0.5,
+            "bytes": 7874
+          },
+          {
+            "profile": "regularized",
+            "lambda": 10.0,
+            "bytes": 7783
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.0,
+            "bytes": 17842
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.0002,
+            "bytes": 17821
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.001,
+            "bytes": 16654
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.005,
+            "bytes": 13053
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.02,
+            "bytes": 10263
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.1,
+            "bytes": 7343
+          },
+          {
+            "profile": "flat",
+            "lambda": 0.5,
+            "bytes": 6294,
+            "quality": {
+              "ser_db": 9.116299835729658,
+              "rmse": 0.016828514539535107,
+              "stoi": null,
+              "spectral_rmse_db": 22.822208207550357,
+              "reference_rms": 0.04806852259117447,
+              "decoded_rms": 0.044760358983283184,
+              "clip_count": 0,
+              "pcm16_sha256": "b80d9e80503625567e513a52200009a6d8adc6c0d5d9b2482d4c38304921fa15"
+            }
+          },
+          {
+            "profile": "flat",
+            "lambda": 10.0,
+            "bytes": 6294,
+            "quality": {
+              "ser_db": 9.116299835729658,
+              "rmse": 0.016828514539535107,
+              "stoi": null,
+              "spectral_rmse_db": 22.822208207550357,
+              "reference_rms": 0.04806852259117447,
+              "decoded_rms": 0.044760358983283184,
+              "clip_count": 0,
+              "pcm16_sha256": "b80d9e80503625567e513a52200009a6d8adc6c0d5d9b2482d4c38304921fa15"
+            }
+          }
+        ]
+      },
+      "Opus": {
+        "codec": "libopus",
+        "requested_bitrate": 16865,
+        "bytes": 6410,
+        "byte_cap": 6410,
+        "shortfall_bytes": 0,
+        "shortfall_fraction": 0.0,
+        "sha256": "d899c0261c6a5d2b945cb8bd91de7b62e5780071390e3212b1fc4556e0301a85",
+        "terminal_padding_samples_trimmed": 0,
+        "quality": {
+          "ser_db": 7.0593614398002655,
+          "rmse": 0.02132517982722022,
+          "stoi": null,
+          "spectral_rmse_db": 3.780225504487666,
+          "reference_rms": 0.04806852259117447,
+          "decoded_rms": 0.04756297224599365,
+          "clip_count": 0,
+          "pcm16_sha256": "a5204bea584edef77e5565089d4935c497971dae79b878fb4b5202faaba81635"
+        },
+        "trials": [
+          {
+            "bitrate": 48250,
+            "bytes": 20594
+          },
+          {
+            "bitrate": 24374,
+            "bytes": 11089
+          },
+          {
+            "bitrate": 12436,
+            "bytes": 5105
+          },
+          {
+            "bitrate": 18405,
+            "bytes": 8730
+          },
+          {
+            "bitrate": 15420,
+            "bytes": 6029
+          },
+          {
+            "bitrate": 16912,
+            "bytes": 6422
+          },
+          {
+            "bitrate": 16166,
+            "bytes": 6248
+          },
+          {
+            "bitrate": 16539,
+            "bytes": 6302
+          },
+          {
+            "bitrate": 16725,
+            "bytes": 6370
+          },
+          {
+            "bitrate": 16818,
+            "bytes": 6397
+          },
+          {
+            "bitrate": 16865,
+            "bytes": 6410
+          },
+          {
+            "bitrate": 16888,
+            "bytes": 6410
+          },
+          {
+            "bitrate": 16900,
+            "bytes": 6422
+          },
+          {
+            "bitrate": 16894,
+            "bytes": 6410
+          },
+          {
+            "bitrate": 16897,
+            "bytes": 6410
+          },
+          {
+            "bitrate": 16898,
+            "bytes": 6410
+          },
+          {
+            "bitrate": 16899,
+            "bytes": 6410
+          }
+        ],
+        "decoder_warnings": "[s16le @ <address>] Application provided invalid, non monotonically increasing dts to muxer in stream 0: 23932 >= 23932\r\n",
+        "diagnostic_best_integer_lag_within_8_samples": 1,
+        "lag_diagnostic_applied_to_metrics": false,
+        "decoded_mean": 1.8033345540364583e-05
+      },
+      "AAC_LC": {
+        "codec": "aac",
+        "requested_bitrate": 13263,
+        "bytes": 6409,
+        "byte_cap": 6410,
+        "shortfall_bytes": 1,
+        "shortfall_fraction": 0.00015600624024960998,
+        "sha256": "c4c8841279023da15a8a904b6d6bf6062faf2ef9069de47d60d071a0d1665e28",
+        "terminal_padding_samples_trimmed": 576,
+        "quality": {
+          "ser_db": 16.35782884972935,
+          "rmse": 0.007310874547506111,
+          "stoi": null,
+          "spectral_rmse_db": 3.688373361364134,
+          "reference_rms": 0.04806852259117447,
+          "decoded_rms": 0.048196785815721795,
+          "clip_count": 0,
+          "pcm16_sha256": "7651df4d95b3f96c57b80cfb1f8535321fa9fb8225f96d039b505733f0278f52"
+        },
+        "trials": [
+          {
+            "bitrate": 48250,
+            "bytes": 12815
+          },
+          {
+            "bitrate": 24374,
+            "bytes": 9866
+          },
+          {
+            "bitrate": 12436,
+            "bytes": 6134
+          },
+          {
+            "bitrate": 18405,
+            "bytes": 8481
+          },
+          {
+            "bitrate": 15420,
+            "bytes": 7220
+          },
+          {
+            "bitrate": 13928,
+            "bytes": 6662
+          },
+          {
+            "bitrate": 13182,
+            "bytes": 6390
+          },
+          {
+            "bitrate": 13555,
+            "bytes": 6528
+          },
+          {
+            "bitrate": 13368,
+            "bytes": 6445
+          },
+          {
+            "bitrate": 13275,
+            "bytes": 6415
+          },
+          {
+            "bitrate": 13228,
+            "bytes": 6398
+          },
+          {
+            "bitrate": 13251,
+            "bytes": 6407
+          },
+          {
+            "bitrate": 13263,
+            "bytes": 6409
+          },
+          {
+            "bitrate": 13269,
+            "bytes": 6412
+          },
+          {
+            "bitrate": 13266,
+            "bytes": 6412
+          },
+          {
+            "bitrate": 13264,
+            "bytes": 6409
+          },
+          {
+            "bitrate": 13265,
+            "bytes": 6409
+          }
+        ],
+        "decoder_warnings": "",
+        "diagnostic_best_integer_lag_within_8_samples": 0,
+        "lag_diagnostic_applied_to_metrics": false,
+        "decoded_mean": 0.00022319666544596355
+      },
+      "reference_mean": 0.00019867960611979167
+    }
+  ]
+}

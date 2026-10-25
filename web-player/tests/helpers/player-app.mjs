@@ -2,6 +2,7 @@ import {readFileSync} from 'node:fs';
 import {runInNewContext} from 'node:vm';
 import {parseHex} from '../../lib/hex.js';
 import {RealtimeMonitor} from '../../lib/realtime.js';
+import {universalPackageEntry} from '../../lib/universal-package.js';
 
 export function deferred(){
   let resolve,reject;
@@ -11,11 +12,12 @@ export function deferred(){
 
 // Execute the actual app handlers with a small DOM/media model. This tests
 // transport ordering and cancellation; it does not claim browser audio output.
-export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,playOnce,prefix='/MicroMusic/',firmware,device,catalogs={},fetchHook}={}){
+export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,playOnce,prefix='/MicroMusic/',firmware,device,board,catalogs={},fetchHook}={}){
   const location=new URL(`https://example.test${prefix}web-player/`);
   if(speech)location.searchParams.set('collection','hq4');
   if(firmware)location.searchParams.set('firmware',firmware);
   if(device)location.searchParams.set('device',device);
+  if(board)location.searchParams.set('board',board);
   const elements=new Map(),selectors=new Map(),workers=[],contexts=[],worklets=[],radios=[],fetches=[];
   class Element{
     constructor(tag='div',attributes=''){
@@ -83,7 +85,7 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
       if(message.type==='init'&&!holdWorker)queueMicrotask(()=>this.ready());
     }
   }
-  const initialCatalog=speech?'hq4-firmware.json':device==='attiny88'?'firmware-attiny88.json':'firmware.json';
+  const initialCatalog=speech?'hq4-firmware.json':device==='attiny88'?(board==='mh-et-live-16mhz'?'firmware-attiny88-16mhz.json':'firmware-attiny88.json'):'firmware.json';
   const catalog=structuredClone(catalogs[initialCatalog]??JSON.parse(readFileSync(new URL('../../'+initialCatalog,import.meta.url))));
   if(playOnce!==undefined){
     // Explicit fixtures use canonical lengths; the catalog suite independently
@@ -94,7 +96,7 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
     }
   }
   const window={devicePixelRatio:1,AudioContext:Context,addEventListener(){}};
-  const sandbox={document,window,location,URL,Float32Array,Uint8Array,console,parseHex,RealtimeMonitor,
+  const sandbox={document,window,location,URL,Float32Array,Uint8Array,console,parseHex,RealtimeMonitor,universalPackageEntry,
     Worker,AudioWorkletNode:Worklet,ResizeObserver:class{observe(){}},
     MessageChannel:class{constructor(){this.port1={};this.port2={};}},
     performance:{now:()=>Date.now()},setTimeout:()=>1,clearTimeout(){},
