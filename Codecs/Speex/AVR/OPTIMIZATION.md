@@ -785,22 +785,89 @@ node Codecs/Speex/AVR/tests/verify_subframe.mjs
 The selected replay reproduced both production binaries byte-identically.
 Run the previous source-bound LSP admission audit at db52a40.
 
+## Complete validated NB prefix and exact quarter dequantization (2026-10-25)
+
+The last generic cursor was needed only for three six-bit LSP codes and the
+five-bit frame gain. After public mode/length validation, extract them from
+bytes 0..3 and pass the immutable packet to the private decoder. Keep general
+SpeexBits functions untouched for other users and the independent Xiph oracle.
+The profile patch changes only its private nb_decode prototype; public APIs
+and the vendored reference remain unchanged.
+
+Original raw angles are `16*((i+1)*128+2*base+correction)`. Dequantize into
+quarters by multiplying the inner expression by four. Signed intermediates
+fit AVR's 16-bit int, including negative codebook corrections. On reset,
+multiply quarters by four into raw state and use zero delta; on change,
+subtract old raw quarters before excitation. Equal cached frames need no
+temporary copy. No angle approximation, rounding change, filter change or
+discarded coefficient step is introduced. The helper is C on both backends;
+platform Flash access stays independent of arithmetic selection.
+
+Nineteen measured variants compare original/fused/scaled loops, raw versus
+quarter output, fused delta preparation, restrict, scalar linear terms,
+O2/O3, inline/outlined and a loop-optimization experiment. On the 1,058-frame
+fixture, the selected quarter-inline mean is 93,707.196 ASM / 191,781.372 C.
+Outlined linear-O3 gives 93,708.974 / 191,815.569, with 22/64 B less Flash.
+Compact delta-O2 uses 9,930 B but takes 93,885.836 ASM cycles. Restrict gives
+identical binaries; disabling loop optimization is slower. The selected
+inline variant wins both backends under the speed priority. Full 9,100-frame
+ASM screening also retains the linear-O3 finalist. Compiler-specific
+experimental attributes remain in the retained prototype, outside production.
+
+| Full 31-stream NB corpus | Before (03fad82) | After |
+| --- | ---: | ---: |
+| ASM mean cycles | 109,035.092 | 107,802.983 (-1.1300%) |
+| ASM maximum cycles | 117,146 | 115,817 |
+| ASM Flash / peak stack | 10,544 / 149 B | 10,610 / 114 B |
+| C mean cycles | 220,828.306 | 219,567.168 (-0.5711%) |
+| C maximum cycles | 233,195 | 231,834 |
+| C Flash / peak stack | 10,956 / 139 B | 11,078 / 105 B |
+
+Every stream's min/mean/max improves; static SRAM stays 1,119 B. Preserve
+bit-exact decoded PCM as the quality gate for these optimizations. All
+8,388,608 LSP/gain combinations match untouched Xiph on the host. Another
+270,336 AVR cases cover every code triple, signed correction, all gain values,
+random trailing packet data, guards, read bounds and ABI/r1. Original oracle
+tables live separately in RAM; production tables use real Flash reads.
+Exhaustive observed raw range is 96..24,880; the production helper documents
+the wider signed-byte bounds instead of relying only on observed samples.
+
+Both backends retain 14,278 exact NB frames, reset/cache/API checks, compact
+WB exactness, portable C archives and independent normal/loaded PWM tests.
+Each NB matrix covers all 31 streams; minimum queues are ASM 74/34 and
+C 66/55 for ordinary/loaded runs, with free SRAM 671/680 B. All 16 WB speech
+players and two +5% load players retain exact PWM: queues 28/13, 432 B free.
+Admission uses ATmega328P / AVR GCC 7.3.0 / mixed Os/O2/O3 + LTO / AVR8js
+0.21.1. It does not establish physical-board or other-architecture timing.
+See `reports/prefix-*` and `tests/audit_prefix.py`. Reproduce the selected
+decoder from 03fad82 in a fresh directory:
+
+```sh
+python Codecs/Speex/AVR/tools/prepare_prefix_candidate.py --candidate quarter-inline --out Codecs/Speex/AVR/build/prefix-replay
+python Codecs/Speex/AVR/build/prefix-replay/tools/build.py --avr-gcc avr-gcc --backend asm
+python Codecs/Speex/AVR/build/prefix-replay/tools/build.py --avr-gcc avr-gcc --backend c
+python Codecs/Speex/AVR/tools/build_prefix_test.py --cc clang --avr-gcc avr-gcc
+node Codecs/Speex/AVR/tests/verify_prefix.mjs
+```
+
+Selected candidate replay reproduces both production binaries byte-identically.
+Run the preceding source-bound subframe audit at 03fad82.
+
 ## Next candidates (not yet measured/admitted)
 
 The previously listed C40 long-pitch entry shipped in commit 9813583 and is
 no longer an outstanding candidate.
 
-1. **Complete the validated NB packet map.** Directly slice the three six-bit
-   LSP codes and frame gain from bytes 0..3, retain the raw cache key, and avoid
-   the now-unused repeated-frame qlsp copy. This may remove the remaining
-   generic bit cursor and wrapper initialization. Preserve all raw LSP values,
-   full codebook coverage, invalid API rejection and cache/reset semantics.
-   No speed/memory gain is admitted until measured.
-
-2. **Share interpolated-LSP and new-LPC scratch by lifetime.** The compact
+1. **Share interpolated-LSP and new-LPC scratch by lifetime.** The compact
    converter appears to consume every angle before storing its LPC result.
    Inspect and test aliasing, polynomial scratch and WB callbacks before
    reusing the two twenty-byte arrays. No memory or timing gain is admitted.
+
+2. **Specialize endpoint margin handling for validated NB3 state.** Exhaustive
+   raw codebook angles stay in 96..24,880; convex quarter steps appear to make
+   the endpoint clamps redundant. Preserve the general helper's signed16
+   contract and test a separate bounded path, transitions/reset/cache and
+   full PCM before admitting any benefit. Interior sequential margins remain.
 
 No claim of a global speed optimum has been established. Do not mark the
 ongoing optimization goal complete while useful candidates remain untested.

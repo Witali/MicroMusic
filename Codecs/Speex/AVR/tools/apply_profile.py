@@ -73,6 +73,10 @@ def apply(source: Path):
     # Maximum backward pitch read is pitch+1 (<=145); synthesis needs 40.
     # No PLC/enhancer/vector lookahead: exactly 145 history + 160 current.
     text = replace(text, '(NB_FRAME_SIZE+NB_SUBFRAME_SIZE+6)', '(NB_PITCH_END+1)')
+    # Private profile entry consumes the already-validated packet. Public
+    # speex_nb3/speex_wb1 APIs and the untouched reference tree retain their ABI.
+    text = replace(text, 'int nb_decode(void *state, SpeexBits *bits, void *out);',
+                   'int nb_decode(void *state, const uint8_t *packet, void *out);')
     text = replace(text, '#define NB_DEC_SHIFT_COUNT (NB_DEC_EXC_OFFSET+6)',
                          '#define NB_DEC_SHIFT_COUNT NB_DEC_EXC_OFFSET')
     path.write_text(text)

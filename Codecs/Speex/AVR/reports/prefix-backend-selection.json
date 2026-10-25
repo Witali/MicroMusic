@@ -1,0 +1,126 @@
+{
+  "compilers": [
+    "C:/Work/MicroMusic/build/toolchains/emscripten-6.0.12/upstream/bin/clang.exe",
+    "C:/Work/MicroMusic/build/toolchains/avr-7.3.0/bin/avr-gcc.exe"
+  ],
+  "defaultIsC": true,
+  "unsupportedArchitectureFallsBackToC": true,
+  "platformHeaderOverrideVerified": true,
+  "cases": [
+    {
+      "case": "host-default-wb0",
+      "architecture": "GENERIC",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "host-default-wb1",
+      "architecture": "GENERIC",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "host-asm-requested-wb0",
+      "architecture": "GENERIC",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "host-asm-requested-wb1",
+      "architecture": "GENERIC",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "host-arm-wb0",
+      "architecture": "ARM",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "host-arm-wb1",
+      "architecture": "ARM",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "host-avr-without-avr-abi-wb0",
+      "architecture": "AVR",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "host-avr-without-avr-abi-wb1",
+      "architecture": "AVR",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "host-unknown-wb0",
+      "architecture": "99",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "host-unknown-wb1",
+      "architecture": "99",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "avr-default-wb0",
+      "architecture": "AVR",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "avr-default-wb1",
+      "architecture": "AVR",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "avr-enabled-wb0",
+      "architecture": "AVR",
+      "avrAsmSelected": true
+    },
+    {
+      "case": "avr-enabled-wb1",
+      "architecture": "AVR",
+      "avrAsmSelected": true
+    },
+    {
+      "case": "avr-disabled-wb0",
+      "architecture": "AVR",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "avr-disabled-wb1",
+      "architecture": "AVR",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "avr-unknown-wb0",
+      "architecture": "99",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "avr-unknown-wb1",
+      "architecture": "99",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "host-platform-header-wb0",
+      "architecture": "ARM",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "host-platform-header-wb1",
+      "architecture": "ARM",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "avr-platform-header-wb0",
+      "architecture": "ARM",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "avr-platform-header-wb1",
+      "architecture": "ARM",
+      "avrAsmSelected": false
+    },
+    {
+      "case": "attiny85-no-hardware-mul",
+      "architecture": "AVR",
+      "avrAsmSelected": false
+    }
+  ]
+}

@@ -896,6 +896,43 @@ C mean **221 193,812 → 220 828,306**; Flash −210 Б, stack +1 Б. Static SRA
 требует своих измерений. 24 варианта/исходники/воспроизведение:
 [отчёт](../../Codecs/Speex/AVR/reports/subframe-candidates.json).
 
+Следующий шаг — завершить карту пакета и удалить сам cursor. Три six-bit
+LSP-кода и five-bit frame gain целиком находятся в первых четырёх bytes:
+
+```c
+uint8_t a=((p[0]&7)<<3)|(p[1]>>5);
+uint8_t b=((p[1]&31)<<1)|(p[2]>>7);
+uint8_t c=(p[2]>>1)&63;
+uint8_t gain=((p[2]&1)<<4)|(p[3]>>4);
+```
+
+Делать это только после проверки полного NB3 packet; generic partial/overflow
+API оставить прежним. Формула raw LSP оригинала — `16*(linear+2*base+corr)`.
+Если следующая стадия требует quarter delta, сразу получить
+`4*(linear+2*base+corr)`; это точное целое, включая отрицательные corrections.
+Для reset восстановить raw state умножением на четыре и обнулить delta;
+при изменении вычесть old raw/4; при cache hit не копировать неиспользуемые
+angles. Wider signed-byte bounds: units −256..1661, quarters −1024..6644,
+raw −4096..26576; всё помещается в signed16. Не применять такое сокращение
+к другому quantizer без нового доказательства границ и округления.
+Адаптация Xiph Speex 1.2.1 `quant_lsp.c`, Jean-Marc Valin 2002,
+[BSD provenance](../../Codecs/Speex/AVR/vendor/speex-1.2.1/COPYING);
+[C-код](../../Codecs/Speex/AVR/src/nb3_lsp.h).
+
+На том же ATmega328P/GNU ABI/AVR GCC 7.3.0 mixed Os/O2/O3+LTO:
+9 100 кадров, ASM mean **109 035,092 → 107 802,983** (−1,1300%),
+C **220 828,306 → 219 567,168** (−0,5711%). Flash +66/+122 Б,
+stack −35/−34 Б, static SRAM прежняя. Из 19 измеренных вариантов inline
+одной точки вызова быстрее обеих outlined альтернатив; приоритет скорости
+оправдывает этот небольшой рост Flash. Все 8 388 608 LSP/gain combinations
+на host и 270 336 случаев AVR точны к нетронутому Xiph oracle с отдельными
+RAM tables; проверены Flash reads, guards и ABI/r1. Оба backend сохраняют
+14 278 точных NB кадров и проходят полные normal/loaded PWM матрицы с ISR.
+Нового ASM нет: helper всегда C, Flash backend независим от arithmetic
+selection. Физическая плата и другие CPU не измерены.
+[Исходники вариантов и воспроизведение](../../Codecs/Speex/AVR/reports/prefix-candidates.json),
+[привязка качества/IRQ к исходникам](../../Codecs/Speex/AVR/reports/prefix-admission.json).
+
 **Объединять служебный код на границах функций.** На classic AVR / GNU ABI
 повторяющиеся сохранения регистров и восстановление стека можно передать
 общим подпрограммам GCC. Для сборки ATmega328P проверены:

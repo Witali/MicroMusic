@@ -1,0 +1,24 @@
+{
+  "scope": "HB LPC cache: every codebook pair repeated three times with changing NB/gains",
+  "reference": "Independent Xiph NB/HB + separate compact QMF equation",
+  "codebookPairs": 4096,
+  "selectedAvrCodebookPairs": 248,
+  "nativeBinarySha256": "595a8784584004a5d03f7800be0ebd5699046ded54ec238a2d3884080cc0a9f9",
+  "referenceBinarySha256": "557c826b9856dbf220fff08abde74201eddd97e6cd24f1f547a9b0562779d722",
+  "streams": [
+    {
+      "name": "all_lsp4096",
+      "frames": 12288,
+      "inputSha256": "17d6b98bc89302149e18b7b5a3fd9a395ebb9d46a5980af751ce0f17b48454c0",
+      "pcmSha256": "1e13001a764f8a9e77b7865d6bbf27dd2d8b6e0549b11af83165f2fa7230406f",
+      "pcmExact": true
+    },
+    {
+      "name": "repeat_lsp_avr",
+      "frames": 744,
+      "inputSha256": "8a2ea3f421aafc432113aaf7356c233d0471ee122ab3a5278323dfc20fb45b40",
+      "pcmSha256": "156036bb59978f8eb2af7234d165352baba6822605e87c2793db57d67dde9648",
+      "pcmExact": true
+    }
+  ]
+}
