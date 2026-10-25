@@ -36,7 +36,7 @@ const backendIndex=process.argv.indexOf('--backend');
 if (backendIndex>=0) assert.equal(backend.backend,process.argv[backendIndex+1]);
 if (backend.backend==='c') {
   for (const kernel of ['speex_avr_iir40','speex_avr_pitch_add24','speex_avr_innovation10','speex_avr_zero_innovation10','speex_avr_zero_innovation_n','speex_avr_long_innovation10','speex_avr_long_innovation_n','speex_avr_long_innovation1','speex_avr_long_innovation40',
-                        'speex_avr_mul16_32_q14','speex_avr_lsp_mul_q14','speex_avr_p1_mul_q14'])
+                        'speex_avr_mul16_32_q14','speex_avr_lsp_mul_q14','speex_avr_p1_mul_q14','speex_avr_nb3_advance10'])
     assert.ok(!symbols.has(kernel),'C backend unexpectedly linked ASM kernel '+kernel);
 }
 assert.equal(address('scratch') & 3, 0, 'Scratch requires a four-byte-aligned base');
@@ -45,8 +45,10 @@ for (const table of ['cdbk_nb', 'cdbk_nb_low1', 'cdbk_nb_high1', 'gain_cdbk_lbr'
 }
 for (const name of ['malloc', 'calloc', 'realloc', 'free']) assert.ok(!symbols.has(name), 'Unexpected heap: ' + name);
 const profile = process.argv.includes('--profile');
-const lspEntry=[...symbols].find(([name,value])=>/^lsp_to_lpc(?:\.|$)/.test(name)&&value<32768)?.[1];
-assert.ok(lspEntry!==undefined,'Count the actual out-of-line LSP conversion entries');
+const lspFunction=[...symbols].find(([name,value])=>/^speex_nb3_interpolate_lpc(?:\.|$)/.test(name)&&value<32768) ||
+  [...symbols].find(([name,value])=>/^lsp_to_lpc(?:\.|$)/.test(name)&&value<32768);
+assert.ok(lspFunction,'Count the actual out-of-line LSP conversion entries');
+const lspEntry=lspFunction[1];
 const hits = new Map();
 let collectingProfile=false,profileFrameCycles=0;
 const functions = [...symbols].filter(([name, value]) => value < 0x800000 && name !== '__stack')
@@ -55,7 +57,7 @@ assert.ok(binary.length <= 32768);
 const limitIndex = process.argv.indexOf('--frames');
 const limit = limitIndex < 0 ? Infinity : Number(process.argv[limitIndex + 1]);
 const report = {simulator: 'avr8js 0.21.1', compiler: 'AVR GCC', mcu: 'ATmega328P',
-  backend: backend.backend, binarySha256: backend.binarySha256,
+  backend: backend.backend, binarySha256: backend.binarySha256,lspConversionEntry:lspFunction[0],
   flashBytes: binary.length, staticSramBytes: end - 0x100,
   includesInterrupts: false, frames: 0, maxCycles: 0, minStackPointer: 0x8ff, streams: []};
 

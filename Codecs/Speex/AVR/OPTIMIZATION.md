@@ -931,18 +931,119 @@ python Codecs/Speex/AVR/tests/verify_scratch.py
 Selected source replay from 928d18e reproduces both production binaries exactly.
 Run the previous source-bound prefix audit at 928d18e.
 
+## Codebook geometry, ASM advance and fused LPC (2026-10-25)
+
+**The primary performance target is AVR ASM on ATmega328P.** C remains an
+explicitly selectable, independently verified portability fallback. A faster
+ASM design may use a different call structure from C. Default selection
+still requires a supported architecture plus `SPEEX_NB3_ENABLE_ASM=1`;
+without that explicit opt-in, including on AVR, the library selects C.
+
+The pinned NB3 codebook gives minimum adjacent raw gaps
+`96,176,112,-512,-1184,336,576,672,512`. Only positions 3..5 (zero-based)
+can need margin repair. Every raw quarter is a convex combination of real
+endpoints, with values divisible by four. Fifteen exact affine certificates,
+independently checked against original Xiph dequantization for all 262,144
+code triples, exclude the other checks and propagation into position 6.
+The nonadjacent gap excludes simultaneous center repairs. The two surviving
+upper/lower pairs therefore become two exclusive conditions, with exact
+single-sum averages: their inputs are even and the maximum sums are
+27,968 / 32,720. This proof is specific to the pinned codebook and four
+quarter steps. General interpolation retains both original half-shifts and
+its full signed16 contract. See `tools/prove_nb3_margins.py`,
+`reports/margin-proof*.json` and `tests/margin_proof.c`.
+
+`src/lsp_advance.S` updates all ten raw words and stores only the three
+corrected center frequencies in dead LPC output storage. The fused converter
+consumes these and the other seven raw frequencies before coefficient stores.
+It shares an outlined finish routine; the C decoder instead uses the measured
+faster separate interpolation/conversion form with a common inline finish
+body. Both retain the original polynomial, rounding and saturation equations,
+coefficient age, reset/cache state and 40-byte scratch limit. Handwritten ASM
+reads exactly 40 B and writes 26 B, touches only caller-clobbered registers,
+clears r1 at RET and uses no scratch, MUL, CLI or hardware registers. On AVR5
+with GNU ABI it takes 181/179/187 cycles including RET for no/first/second
+repair, excluding caller CALL. `speex_nb3_advance_codebook_c` is always
+available, including in an ASM build; the standard selector controls its use.
+
+All 56 retained fixture variants preserve 1,058 exact/reset frames each.
+Loop-count/pointer/peeled-tail rewrites compile identically to the baseline;
+two passes lose speed and space. Fused and shared-output variants and three
+full-corpus finalists are retained in `reports/margin-candidates.json`.
+Counted ASM saves 72 B but adds 21 cycles per conversion, so it is rejected
+for the speed target. The chosen ASM improves fixture mean versus equivalent
+C control by about 128 cycles/frame and saves 78 B. The cleaned production
+realization rebuilds byte-identically to its prototype on both backends.
+
+| Full 31-stream NB corpus | Before (ab6425d) | After |
+| --- | ---: | ---: |
+| ASM weighted mean cycles | 107,616.507 | 106,896.237 (-0.6693%) |
+| ASM maximum cycles | 115,604 | 114,786 |
+| ASM Flash / static SRAM / stack | 10,470 / 1,099 / 114 B | 11,470 / 1,099 / 145 B |
+| C weighted mean cycles | 219,310.511 | 218,595.096 (-0.3262%) |
+| C maximum cycles | 231,545 | 230,736 |
+| C Flash / static SRAM / stack | 10,898 / 1,099 / 105 B | 11,792 / 1,099 / 151 B |
+
+Speed has priority over the additional Flash and NB stack. Some ASM frame
+minima increase by four cycles and the `impulses` mean/max increase by 2/4
+cycles; four cycles are 0.25 us at 16 MHz. Every other ASM stream mean
+improves. All C stream min/mean/max improve. No per-frame universal speedup
+is claimed. NB free SRAM is now 804/798 B in the bare harness and 661/654 B
+in PWM; PWM queues remain 74/34 ASM normal/+40% and 66/55 C normal/+10%.
+WB ASM mean/max are 256,760.910 / 264,375 cycles, Flash 18,010 B; its
+static SRAM/stack remain 1,279/178 B. WB C remains slower than real time.
+
+Quality admission requires exact NB s16 PCM against untouched Xiph and exact
+WB PCM against the existing compact Q7/16-tap profile. Native units execute
+1,310,720 calls (every new code triple, real previous endpoints and reset),
+including fine-step repairs. Both AVR backends execute 6,208 fused/separate/
+oracle calls and 3,072 address cases over all 256 low bytes, all repair
+classes and quarter steps. They check raw state, inputs, output guards,
+original-oracle workspace, callee-saved registers and r1 at actual RET.
+ASM additionally checks all read/write addresses on 9,280 primitive calls.
+Explicit C and selected ASM use the same independent oracle. The old
+49,680-call bounded and 12,288 overlapping-output AVR regressions and native
+720,000 overlap outputs remain; broad generic interpolation is unchanged.
+
+Final admission covers 14,278 NB frames per backend, 10,563+744 WB frames,
+both portable archives, the 40 B instrumented native scratch peak, and all
+142 frozen PWM images with active interrupts. Every PWM byte matches the
+appropriate oracle and no output queue underruns. Six representative players,
+both bare decoders and both new AVR units rebuild to the executed hashes.
+Measurements use ATmega328P / AVR GCC 7.3.0 mixed Os/O2/O3 + LTO / GNU ABI /
+AVR8js 0.21.1. Physical hardware has not been measured.
+
+Reproduce the selected source realization from ab6425d in a fresh directory:
+
+```sh
+python Codecs/Speex/AVR/tools/prepare_margin_candidate.py --candidate production --out Codecs/Speex/AVR/build/margin-replay
+python Codecs/Speex/AVR/build/margin-replay/tools/build.py --avr-gcc avr-gcc --backend asm
+python Codecs/Speex/AVR/build/margin-replay/tools/build.py --avr-gcc avr-gcc --backend c
+python Codecs/Speex/AVR/tests/audit_nb3_margins.py --rebuild --avr-gcc avr-gcc
+```
+
+The source-bound audit also requires `build/margin-*` frozen matrix outputs;
+prepare them with the standard decoder/player verifiers and matching output
+paths in `tests/audit_nb3_margins.py`. Units use
+`build_lsp_lifetime_test.py --mode margin` and `verify_nb3_margin.mjs` for
+each backend. The prior source-bound lifetime audit runs at ab6425d.
+
 ## Next candidates (not yet measured/admitted)
 
 The previously listed C40 long-pitch entry shipped in commit 9813583 and is
 no longer an outstanding candidate.
 
-1. **Shorten the margin loop's final lookahead.** A validated endpoint removes
-   its clamp, but the loop still reloads/stores the final raw value separately.
-   Compare peeled, fixed-count and pointer-walk forms with the current inline
-   loop. Preserve both original half-shifts, raw/output separation and ABI;
-   count real decoder cycles, not only a wrapper microbenchmark.
+1. **Pair symmetric LPC output coefficients.** Compare the ten-output loop
+   with five pairs sharing `p[j]+p[j-1]` and `q[j]-q[j-1]`. Preserve independent
+   rounding/saturation for the two coefficients and modulo-32 arithmetic.
+   Measure C forms and, if useful, a selectable ASM kernel against the same
+   independent full-signed16/overlap oracle and real decoder workload.
 
-2. **Share repeated NB LPC-copy/control work.** Inspect the four coefficient
+2. **Remove the tiny ASM cache-hit overhead.** Current cached frames can cost
+   four extra cycles after the fused-call layout change. Avoid duplicating
+   the whole IIR loop just to recover it; compare actual whole-image cycles.
+
+3. **Share repeated NB LPC-copy/control work.** Inspect the four coefficient
    updates and the synchronous WB callback for redundant address arithmetic
    and repeated loads. Keep the one-subframe coefficient age and every IIR
    update. No timing or memory benefit is admitted without measurement.

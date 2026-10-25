@@ -62,4 +62,58 @@ static SPEEX_NB3_ALWAYS_INLINE void speex_nb3_interpolate_validated(
 {
     speex_nb3_interpolate_core(raw,delta,out,1);
 }
+
+/* Private NB3 codebook domain, stronger than the bounded helper above:
+ * raw+delta is a convex quarter-step of the pinned codebook endpoints and
+ * is a multiple of four. Affine certificates in reports/margin-proof.json
+ * prove only two central repairs can occur, and they are mutually exclusive.
+ * Both average inputs are even; a+(b-16) <=27968 and b+(c-16) <=32720.
+ * A single signed16 sum/shift is therefore exact here. General callers must
+ * retain the two separately rounded halves in the helpers above. */
+static SPEEX_NB3_ALWAYS_INLINE void speex_nb3_repair_center_c(
+    int16_t a,int16_t b,int16_t c,int16_t *out)
+{
+    if(a>b-16){a=(a+(b-16))>>1;b=a+16;}
+    else if(b>c-16){b=(b+(c-16))>>1;c=b+16;}
+    out[0]=a;out[1]=b;out[2]=c;
+}
+
+/* C decoder path: raw/delta/out are distinct ten-word arrays. Values outside
+ * positions 3..5 need no margin correction in the pinned codebook domain. */
+static SPEEX_NB3_ALWAYS_INLINE void speex_nb3_interpolate_codebook(
+    int16_t *restrict raw,const int16_t *restrict delta,int16_t *restrict out)
+{
+    raw[0]+=delta[0];out[0]=raw[0];
+    raw[1]+=delta[1];out[1]=raw[1];
+    raw[2]+=delta[2];out[2]=raw[2];
+    raw[3]+=delta[3];raw[4]+=delta[4];raw[5]+=delta[5];
+    raw[6]+=delta[6];out[6]=raw[6];
+    raw[7]+=delta[7];out[7]=raw[7];
+    raw[8]+=delta[8];out[8]=raw[8];
+    raw[9]+=delta[9];out[9]=raw[9];
+    speex_nb3_repair_center_c(raw[3],raw[4],raw[5],out+3);
+}
+
+/* Ten raw updates and only three corrected center angles. The fused LPC
+ * converter temporarily stores these in its dead output slot. Keep this C
+ * implementation available on AVR too, independently of ASM selection. */
+static SPEEX_NB3_ALWAYS_INLINE void speex_nb3_advance_codebook_c(
+    int16_t *restrict raw,const int16_t *restrict delta,int16_t *restrict center)
+{
+    for(unsigned i=0;i<10;i++)raw[i]+=delta[i];
+    speex_nb3_repair_center_c(raw[3],raw[4],raw[5],center);
+}
+#if SPEEX_NB3_USE_AVR_ASM
+extern void speex_avr_nb3_advance10(int16_t *,const int16_t *,int16_t *);
+#endif
+static SPEEX_NB3_ALWAYS_INLINE void speex_nb3_advance_codebook(
+    int16_t *restrict raw,const int16_t *restrict delta,int16_t *restrict center)
+{
+#if SPEEX_NB3_USE_AVR_ASM
+    speex_avr_nb3_advance10(raw,delta,center);
+#else
+    speex_nb3_advance_codebook_c(raw,delta,center);
+#endif
+}
+void speex_nb3_interpolate_lpc(int16_t *restrict,const int16_t *restrict,int16_t *restrict);
 #endif

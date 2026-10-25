@@ -47,19 +47,12 @@ DEFINE_STAGE(3)
 DEFINE_STAGE(4)
 #undef DEFINE_STAGE
 #undef STAGE_ATTR
-void lsp_to_lpc(const spx_lsp_t *freq, spx_coef_t *ak, int lpcrdr, char *stack)
+/* A common source body supplies the standalone C converter and an outlined
+ * output stage for the ASM pipeline. No arithmetic or saturation changes. */
+static SPEEX_NB3_ALWAYS_INLINE void lsp_finish10_c(const spx_word32_t *restrict p,
+    const spx_word32_t *restrict q,spx_coef_t *restrict ak)
 {
-    spx_word32_t p[6], q[6];
-    spx_word32_t previous_p = 0, previous_q = 0;
-    int j;
-    (void)lpcrdr;
-    (void)stack;
-    p[0]=q[0]=1048576;
-    lsp_first(p,lsp_angle(freq[0]),lsp_angle(freq[2]));
-    lsp_first(q,lsp_angle(freq[1]),lsp_angle(freq[3]));
-#define STAGE(s) lsp_stage##s(p,lsp_angle(freq[2*s])); lsp_stage##s(q,lsp_angle(freq[2*s+1]))
-    STAGE(2); STAGE(3); STAGE(4);
-#undef STAGE
+    spx_word32_t previous_p=0,previous_q=0;int j;
     for (j = 1; j <= 10; ++j) {
         int index = j <= 5 ? j : 10-j;
         spx_word32_t a = PSHR32(p[index] + previous_p + q[index] - previous_q, 8);
@@ -69,6 +62,44 @@ void lsp_to_lpc(const spx_lsp_t *freq, spx_coef_t *ak, int lpcrdr, char *stack)
         if (a > 32767) a = 32767;
         ak[j-1] = (spx_coef_t)a;
     }
+}
+
+static SPEEX_NB3_STAGE void lsp_finish10(const spx_word32_t *restrict p,
+    const spx_word32_t *restrict q,spx_coef_t *restrict ak)
+{
+    lsp_finish10_c(p,q,ak);
+}
+
+SPEEX_NB3_HOT void lsp_to_lpc(const spx_lsp_t *freq, spx_coef_t *ak, int lpcrdr, char *stack)
+{
+    spx_word32_t p[6],q[6];
+    (void)lpcrdr;(void)stack;
+    p[0]=q[0]=1048576;
+    lsp_first(p,lsp_angle(freq[0]),lsp_angle(freq[2]));
+    lsp_first(q,lsp_angle(freq[1]),lsp_angle(freq[3]));
+#define STAGE(s) lsp_stage##s(p,lsp_angle(freq[2*s])); lsp_stage##s(q,lsp_angle(freq[2*s+1]))
+    STAGE(2); STAGE(3); STAGE(4);
+#undef STAGE
+    lsp_finish10_c(p,q,ak);
+}
+
+#include "nb3_interpolate.h"
+/* The output area first holds only three center frequencies. Consume all
+ * of them in the polynomial stages before lsp_finish10 writes coefficients.
+ * raw/delta/ak are disjoint. ASM requires the normal explicit target opt-in;
+ * its advance operation has the selectable C implementation in the header. */
+SPEEX_NB3_STAGE void speex_nb3_interpolate_lpc(
+    int16_t *restrict raw,const int16_t *restrict delta,int16_t *restrict ak)
+{
+    spx_word32_t p[6],q[6];
+    speex_nb3_advance_codebook(raw,delta,ak);
+    p[0]=q[0]=1048576;
+    lsp_first(p,lsp_angle(raw[0]),lsp_angle(raw[2]));
+    lsp_first(q,lsp_angle(raw[1]),lsp_angle(ak[0]));
+    lsp_stage2(p,lsp_angle(ak[1]));lsp_stage2(q,lsp_angle(ak[2]));
+    lsp_stage3(p,lsp_angle(raw[6]));lsp_stage3(q,lsp_angle(raw[7]));
+    lsp_stage4(p,lsp_angle(raw[8]));lsp_stage4(q,lsp_angle(raw[9]));
+    lsp_finish10(p,q,ak);
 }
 
 #if SPEEX_ENABLE_WB1
