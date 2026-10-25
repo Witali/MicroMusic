@@ -44,7 +44,7 @@ matching optimized kernel is provided yet.
 | Generic, bounded and aligned-p1 Q14 products | `q14.S` | exact word extraction in `nb3_c_math.h`, selected by `avr_fixed.h` |
 | NB3 quarter advance / center margin | `lsp_advance.S`, selected by `nb3_interpolate.h` | `speex_nb3_advance_codebook_c` in the same header, also callable in an ASM build |
 | Symmetric order-ten LPC output | `lsp_finish.S`, selected by `nb3_lsp_finish.h` | `speex_nb3_lsp_finish10_c` in the same header, also callable in an ASM build |
-| LSP polynomial stages | `compact_lsp.c.inc` calling Q14 ASM | same recurrence using C Q14 |
+| LSP polynomial stages 2/3/4 | `lsp_stage.S` and shared-source `q14_macros.S`, selected by `nb3_lsp_stage.h` | `speex_nb3_lsp_stage_c` in that header, also callable in an ASM build |
 | Historical pitch write/add | `pitch_add.S` | C block loop in `pitch24.h` |
 | Innovation, scaling and saturation | `innovation.S` | C branch in `innovation.h` and bounded helpers in `nb3_c_math.h` |
 | Known-zero adaptive gain | separate `speex_avr_zero_innovation10` entry | four byte products/carries in `speex_nb3_zero_shape_c` |

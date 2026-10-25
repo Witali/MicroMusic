@@ -5,32 +5,7 @@
  * symmetric endpoints and p[0]==2^20 product; constant stages remove bounds
  * branches and pointer arithmetic in exchange for additional Flash. */
 #include "speex_platform.h"
-#if SPEEX_NB3_USE_AVR_ASM
-/* Value-only ASM: no reads/writes of C-visible memory. Let GCC retain other
- * polynomial coefficients across the call, just as for a C expression. */
-extern SPEEX_NB3_CONST int32_t speex_avr_lsp_mul_q14(int16_t,int32_t);
-extern SPEEX_NB3_CONST int32_t speex_avr_p1_mul_q14(int16_t,int32_t);
-#define LSP_Q14(a,b) speex_avr_lsp_mul_q14(a,b)
-/* p1 starts at -(a+b)*64 and only subtracts f*64. For stages 2..4,
- * its input is a sum of at most four signed16 roots: |p1|<=8388608.
- * Only j==2 reads p1; other coefficients need the general bounded core. */
-#define LSP_INNER_Q14(a,b,j) ((j)==2 ? speex_avr_p1_mul_q14(a,b) : LSP_Q14(a,b))
-#else
-#define LSP_Q14(a,b) MULT16_32_Q14(a,b)
-#define LSP_INNER_Q14(a,b,j) LSP_Q14(a,b)
-#endif
-/* |f|<=32768, so |Q14(f,x)|<=2*|x|+1. Starting at 2^20/2^21,
- * the four stages bound their largest product inputs by
- * 2097152, 6291457, 20971523, 73400331, all below 2^29.
- * Thus the fast signed30 entry exactly matches the generic high-word cast. */
-static SPEEX_NB3_ALWAYS_INLINE void lsp_stage(spx_word32_t *p, spx_word16_t f, int stage)
-{
-    int j;
-    p[stage+1] = SUB32(SHL32(p[stage-1],1), LSP_Q14(f,p[stage]));
-    for (j=stage;j>=2;--j)
-        p[j] = ADD32(SUB32(p[j], LSP_INNER_Q14(f,p[j-1],j)),p[j-2]);
-    p[1] = SUB32(p[1],SHL32(EXTEND32(f),6));
-}
+#include "nb3_lsp_stage.h"
 #define STAGE_ATTR SPEEX_NB3_STAGE
 static STAGE_ATTR spx_word16_t lsp_angle(spx_lsp_t angle) {return ANGLE2X(angle);}
 /* The first two roots give p1=-(a+b)*64 and p2=2^21+ceil(a*b/256).
@@ -41,7 +16,7 @@ static STAGE_ATTR void lsp_first(spx_word32_t *p,spx_word16_t a,spx_word16_t b)
     p[1]=-ADD32(EXTEND32(a),EXTEND32(b))*64;
     p[2]=SHR32(ADD32(MULT16_16(a,b),536871167),8);
 }
-#define DEFINE_STAGE(s) static STAGE_ATTR void lsp_stage##s(spx_word32_t *p, spx_word16_t f) {lsp_stage(p,f,s);}
+#define DEFINE_STAGE(s) static STAGE_ATTR void lsp_stage##s(spx_word32_t *p, spx_word16_t f) {speex_nb3_lsp_stage##s(p,f);}
 DEFINE_STAGE(2)
 DEFINE_STAGE(3)
 DEFINE_STAGE(4)

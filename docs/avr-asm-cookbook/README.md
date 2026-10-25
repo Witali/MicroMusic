@@ -1642,6 +1642,54 @@ Native: 3 056 640 коэффициентов на путь; каждый AVR bac
 обязательны; физическая плата не измерена.
 [Admission](../../Codecs/Speex/AVR/reports/pair-admission.json).
 
+### Узкий signed16-сдвиг и полный полиномиальный шаг
+
+Enhanced AVR5 / ATmega328P / GNU ABI. Для signed16 f результат f*64 можно
+получить через signed24 f*256, два ASR/ROR и sign extension — **12 инструкций**,
+вместо четырёхбайтовых шести сдвигов. Например, f=r23:r22, результат r21:r18:
+
+```asm
+clr r18
+mov r19,r22
+mov r20,r23
+.rept 2
+asr r20
+ror r19
+ror r18
+.endr
+mov r21,r20
+lsl r21
+sbc r21,r21
+```
+
+f и r1 сохраняются; C-эквивалент `(int32_t)((uint32_t)(int32_t)f<<6)`
+выбирается без поддерживаемой архитектуры/отдельного ASM-enable, включая AVR.
+Unsigned shift не сдвигает отрицательное signed-значение. Запись f*64 дала
+меньше Flash, но +0,1666% полного C mean; shift восстановил старый C-бинарник.
+Изолированный ASM shift-контроль на 1058 кадрах: mean −180,319 такта,
+Flash −96 Б, stack прежний. Не приписывать ему весь выигрыш полного ядра.
+
+[`lsp_stage.S`](../../Codecs/Speex/AVR/src/lsp_stage.S) держит f и два соседних
+poly words в регистрах, читает каждый p[stage..1] один раз, пишет p[stage+1..1]
+и делит хвосты стадий. p0=2^20, p1 кратен 64, product inputs signed30;
+сохранены 12 Б r8..17/Y, остальные callee-save и r1 на RET. Нет IO/CLI/RAM
+scratch. C всегда доступен в
+[`nb3_lsp_stage.h`](../../Codecs/Speex/AVR/src/nb3_lsp_stage.h).
+Общий [`q14_macros.S`](../../Codecs/Speex/AVR/src/q14_macros.S) параметризует
+пару root-регистров для value-kernel и inline-stage. Сам factoring сохранил
+старый math-бинарник побайтно: новых тактовых выигрышей для этого шага нет.
+
+AVR GCC 7.3.0 mixed Os/O2/O3+LTO, AVR8js 0.21.1: полный NB mean
+**105 109,736 → 103 094,832** (−1,9170%), max 112 765 → 110 486,
+Flash +126 Б, stack −4 Б, static SRAM прежний. Каждое stream mean лучше;
+несколько extrema cache hits +1 такт. C NB/WB-бинарники прежние. Девять
+вариантов/исходники: [poly-candidates](../../Codecs/Speex/AVR/reports/poly-candidates.json).
+Каждый AVR backend: все 65536 roots на стадию, 256254 случая, 1025016 слов
+на путь, 2304 адресных случая, точные чтения/записи/стек/ABI. Стадии дают
+240/330/420 тактов с RET без CALL. 142 PWM-прогона с IRQ проходят без
+underruns; физическая плата не измерена.
+[Admission](../../Codecs/Speex/AVR/reports/poly-admission.json).
+
 ## Отделять незавершённую запись SP от занятой стеком памяти
 
 У classic AVR с 16-битным SP компилятор меняет его двумя OUT. Монитор

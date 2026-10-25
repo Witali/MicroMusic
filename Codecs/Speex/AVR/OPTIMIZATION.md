@@ -1125,21 +1125,124 @@ and `verify_nb3_margin.mjs --firmware` at that path; direct finish units use
 `build_lsp_finish_test.py` and `verify_lsp_finish.mjs`. Run the preceding margin
 audit at ace94ac6; no old source-bound result is relabeled for the new sources.
 
+## Constant polynomial stages in ASM (2026-10-25)
+
+The primary ATmega328P ASM path now implements complete symmetric polynomial
+stages 2/3/4 in `src/lsp_stage.S`. It retains the root in r16/r17 and two
+polynomial words in r8..15. A descending window reads each required word
+once and writes p[stage+1..1], sharing the stage-three and stage-two tails.
+p0 is the known 2^20; p1 is divisible by 64. Product inputs are signed30,
+with the existing stronger real-root recurrence bounds. Stages address only
+stage+2 words (up to six for NB; stage three also serves order-eight HB).
+
+The GNU ABI entries preserve all callee-saved registers and r1 at RET,
+saving twelve bytes (r8..17/Y). They use no extra RAM, IO or interrupt
+masking. Independent tests observe constant entry-through-RET costs of
+240/330/420 cycles for stages 2/3/4, excluding caller CALL. MUL arithmetic
+and each original Q14 floor remain unchanged. The twelve-instruction
+signed16-times-64 update aligns by a byte, shifts right twice and extends
+the sign, replacing the wide six-shift sequence.
+
+`src/q14_macros.S` is an assembler include shared with the prior GNU-ABI
+value kernels in `q14.S`. Its root register pair is parameterized (16 or 18),
+so the stages need no repeated argument copy. Source arithmetic exists once;
+the selected stage body expands it inline for speed. Refactoring alone
+preserves the complete old arithmetic-test image byte-for-byte, including
+917,504 generic, bounded and C Q14 cases each, 655,360 aligned-p1 cases,
+multiply/shift regressions and r1 checks. The retained P1 before/after timing
+compares the already-existing generic and aligned entries, not a new gain
+from source factoring. See `reports/poly-q14-refactor.json`.
+
+`src/nb3_lsp_stage.h` always exposes the exact C recurrence and selects ASM
+only under the existing supported-architecture plus explicit-enable contract.
+Default/unknown/disabled configurations select C, including on AVR. Both
+paths use independent original rounding and wrapping arithmetic. Writing the
+C p1 update as f*64 saves 142 B but slows full NB mean by 0.1666%; reject it.
+The defined unsigned shift restores the previous NB and WB C binaries exactly.
+Their Flash, SRAM, stack and all frame-cycle measurements remain unchanged.
+
+Nine candidates retain the narrow shift alone, shared or inline products,
+shared entry dispatch, and C transcription alternatives. All screening rows
+pass 1,058 exact/reset frames; the rejected multiply-C realization also
+passes the full corpus. Shared custom-register products use 10,678 B
+and full-corpus mean 103,532.203, versus 11,084 B /
+103,094.832 for selected inline products. This is a speed-first choice
+at +406 B. Both final sources replay from
+41a89eb1 to the executed binaries. See `reports/poly-candidates.json` and
+`tools/prepare_lsp_stage_candidate.py`.
+
+| Full 31-stream NB corpus | Before (41a89eb1) | After |
+| --- | ---: | ---: |
+| ASM weighted mean cycles | 105,109.736 | 103,094.832 (-1.9170%) |
+| ASM maximum cycles | 112,765 | 110,486 |
+| ASM Flash / static SRAM / stack | 10,958 / 1,099 / 107 B | 11,084 / 1,099 / 103 B |
+| C weighted mean / maximum cycles | 217,506.241 / 229,504 | identical binary |
+| C Flash / static SRAM / stack | 11,534 / 1,099 / 105 B | identical binary |
+
+Every ASM stream mean improves. Some cached minima and the impulses maximum
+increase by one cycle (0.0625 us at 16 MHz); no universal per-frame speedup
+is claimed. Bare free SRAM is 846/844 B; NB PWM free SRAM is 703/700 B.
+NB normal/load queues remain 74/35 ASM (+40% CPU) and 66/55 C (+10%).
+WB ASM mean/max are 251,129.434 / 258,409 cycles, Flash 17,582 B (+82);
+its static SRAM/stack remain 1,279/178 B. WB queues improve 29/14 -> 30/15
+for normal/two +5%-load speech runs, with 452 B free SRAM unchanged.
+
+Native signed64-product equations check 253,950 cases / 1,015,800 output
+words per selected/forced-C path. Both AVR builds check 256,254 cases /
+1,025,016 words per path: every signed16 root in every stage, signed30
+coefficient limits, aligned-p1 boundaries and 2,304 all-low-byte address
+placements. Guards, p0 and unused tail words remain intact. The ASM trace
+checks 3,075,048 input reads, 4,100,064 stores, exactly twelve saved stack
+bytes and callee-saved/r1 registers at actual RET, including shared-tail exits.
+The oracle uses wide products; it does not import production Q14 arithmetic.
+
+Earlier broad interpolation and original-Xiph LPC/overlap tests remain:
+1,310,720 native fused/separate calls, 720,000 native overlapping outputs,
+6,208 geometry calls plus 49,680 bounded and 12,288 overlapping outputs per
+AVR backend, and 82,688 general AVR interpolation calls. The unchanged paired
+finish source retains its preceding independent admission. The complete new
+gate covers 14,278 NB and 10,563+744 compact WB frames per backend, two
+portable archives, the checked 40 B scratch peak and 142 fresh IRQ/PWM images.
+All PCM and PWM bytes match their appropriate untouched-NB/compact-WB oracle.
+Four bare decoders, four AVR units, the old math image and six representative
+players rebuild to the executed hashes. Compiler/ABI/simulator are AVR GCC
+7.3.0 mixed Os/O2/O3+LTO, GNU ABI, AVR8js 0.21.1, ATmega328P. No physical-board
+timing or full-64-tap WB quality is inferred from these results.
+
+Reproduce selected sources and the source-bound frozen-matrix audit:
+
+```sh
+python Codecs/Speex/AVR/tools/prepare_lsp_stage_candidate.py --candidate production --out Codecs/Speex/AVR/build/poly-replay
+python Codecs/Speex/AVR/build/poly-replay/tools/build.py --avr-gcc avr-gcc --backend asm
+python Codecs/Speex/AVR/build/poly-replay/tools/build.py --avr-gcc avr-gcc --backend c
+python Codecs/Speex/AVR/tests/audit_lsp_stages.py --rebuild --avr-gcc avr-gcc
+```
+
+The audit consumes its `build/poly2-*` decoder/player outputs. Prepare them
+with the standard verifiers and matching paths in the audit. Direct stage
+units use `build_lsp_stage_test.py --out` and `verify_lsp_stage.mjs --firmware`;
+geometry and overlap units retain their existing builders/drivers. Run the
+preceding source-bound paired-output audit at 41a89eb1.
+
 ## Next candidates (not yet measured/admitted)
 
 The previously listed C40 long-pitch entry shipped in commit 9813583 and is
 no longer an outstanding candidate.
 
-1. **Fuse constant polynomial stages in ASM.** Inspect whether a complete
-   stage can keep polynomial words across bounded Q14 products and avoid
-   repeated call/control/load work. Retain each original product's rounding
-   and modulo-32 sums, an explicit C fallback, signed16-angle oracle coverage,
-   ABI tests and whole-decoder measurements. No benefit has been admitted.
+1. **Optimize the first two-root constructor in ASM.** Its signed17 root
+   sum times 64 and exact rounded product may avoid the C wide-shift/saved-
+   register overhead. Preserve the full signed16-root contract, an explicit
+   C fallback and original-Xiph overlap/quality tests. No gain is admitted.
 
-2. **Share repeated NB LPC-copy/control work.** Inspect the four coefficient
-   updates and the synchronous WB callback for redundant address arithmetic
-   and repeated loads. Keep the one-subframe coefficient age and every IIR
-   update. No timing or memory benefit is admitted without measurement.
+2. **Defer redundant r1 clears inside the private stage body.** General Q14
+   products do not need r1 zero between successive products; the final aligned
+   p1 product must clear it before adding p0 and before the external RET.
+   Verify all intervening instructions, IRQ behavior and unchanged GNU-ABI
+   value kernels before measuring; the current implementation still clears it.
+
+3. **Inspect call/control and section layout.** Measure shared NB LPC-copy
+   work, assembler call distances and compiler-supported leaf annotations.
+   Preserve the coefficient age, exact output and portable interface.
 
 No claim of a global speed optimum has been established. Do not mark the
 ongoing optimization goal complete while useful candidates remain untested.
