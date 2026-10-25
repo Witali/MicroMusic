@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { CPU8080 } from '../../Emulator/core8080.mjs';
 import { parseIntelHex } from '../../Emulator/formats.mjs';
 import { cReference } from './reference.mjs';
@@ -86,4 +88,8 @@ test('Portable C for all packed byte values; ASM availability requires both CPU 
 
 test('Full execution matches C for every source sample twice, unchanged diagnostics/ramp, all eight bank faults', async () => {
   assert.deepEqual(await auditAll(), JSON.parse(read('AUDIT.json')));
+});
+
+test('Independent opcode clock: complete pulse grid, all 16 widths, 51 ROM links and 1552 level/branch cases', () => {
+  execFileSync(process.execPath, [fileURLToPath(new URL('timing-check.mjs', import.meta.url)), '--check']);
 });
