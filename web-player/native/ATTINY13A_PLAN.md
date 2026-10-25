@@ -453,11 +453,24 @@ cold-start measurements. Next implement per-phase temporary liveness against
 the full-context oracle; automatic size optimization does not remove that work.
 The checklist remains21/30, with nine open items.
 
+Phase-local checkpoint: [generation-time temporary liveness](../reports/phase-locals-20261025.md)
+is implemented as explicit `optimizePhaseLocals:true`, with the full-context
+default retained. All1649 tests pass; all123 forms/four C/Z combinations match
+at internal/external half phases and1ps observations. Thirteen workloads retain
+exact PCM/state/pins and byte-identical default translations against `c8cf6bd`.
+Physical firmware CPU modules shrink23.8–23.9%; native80-byte context allocation
+and hardware timing are unchanged. Two controlled timing screens retain192
+timed runs,96 warmups and3456 checkpoints. Even the shared-CPU-Module/GC-outside
+screen remains too variable to prove a speedup, so default activation and the
+full performance gate stay open. Next compiler experiment: cross-block SREG
+liveness with every externally observable exit preserved. This closes no new
+hardware checklist item; the count remains21/30.
+
 | Priority | Candidate | Evidence required before keeping it |
 | --- | --- | --- |
-| 1 | Reduce continuation saves using per-phase temporary liveness. | The full-context path remains an oracle; partial execution, reset, faults and resume must not repeat bus effects or protected operations. Measure module size and warmed execution separately. |
+| 1 | Extend SREG liveness between connected blocks, then try constant and short-sequence folding as independent changes. | Exact C/chained-Z dependencies, all observable SREG values and original AVR cycle/phase boundaries; compare with full flags and the unchanged generated instruction path. |
 | 2 | Use the refreshed profile to test fewer repeated event/time conversions in `next_event`, `ratio` and `duration`; equal-rate and bounded-multiply guards are rejected. Broader peripheral activity gating remains open. | Exact integer residues, clock/input/event boundaries and pin/PCM parity; enabled-ADC and CLKI controls. Use balanced identical-runtime controls and uninstrumented paired timings. Inspect the exact optimized WASM for an inlining/layout hypothesis; reduced entries alone do not prove speed. |
-| 3 | Extend SREG liveness between connected blocks, then try constant and short-sequence folding as independent changes. | Exact C/chained-Z dependencies, all observable SREG values and original AVR cycle/phase boundaries; compare with full flags and the unchanged generated instruction path. |
+| 3 | Validate optional phase-local liveness for default activation when stable performance measurements are available. | The full-context path remains an oracle. Size/parity are established; do not treat noisy median gains as speed evidence. Keep partial execution, reset/faults, SPM and IRQ effects exactly once. |
 | 4 | Generate direct WASM control flow for proven regions and loops; reconsider register locals only when these larger regions can amortize their cost. | Safe indirect/external-entry fallback, coherent register aliases and visible AVR stack state; real-firmware gains in addition to synthetic-loop results. |
 | 5 | Evaluate reachable-code generation, Flash-region replacement and persistent caching separately from execution optimizations. | Correct dynamic targets and code/data handling, complete SPM dependency invalidation, exact cache identities and independent cold-start/compilation measurements. |
 
