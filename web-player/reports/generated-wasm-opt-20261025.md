@@ -25,9 +25,13 @@ execution. Opaque device bridges remain effect boundaries. Cross-block SREG,
 AVR constant propagation, larger direct-control regions and per-phase context
 liveness still require translator-specific correctness analysis.
 
-Native peripherals currently use direct Clang24 `-O3`; the device build script
-does not run a separate wasm-opt pass. This experiment applies only to generated
-CPU modules. Browser engine compilation remains a separate stage.
+Native peripherals invoke Clang24 `-O3`. The prepared SDK's compiler driver
+enables wasm-opt automatically: its help lists `--wasm-opt` as the default and
+`--no-wasm-opt` as the override. The device build script does not invoke a
+second separate pass. `profile-device.mjs` disables the driver's pass, then
+reproduces it explicitly with names and checks every byte against production.
+This experiment applies only to generated CPU modules. Browser engine compilation
+remains a separate stage.
 
 ## Configuration and compatibility
 

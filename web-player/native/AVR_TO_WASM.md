@@ -52,8 +52,10 @@ checks dispatch-table geometry and function/memory signatures. Do not add trap,
 fast-math, imported-zero-memory or closed-world assumptions to this path.
 Function indices can change, so raw-emitter diagnostic index maps must not be
 applied to an optimized module. The embedded mapping describes AVR addresses,
-not optimized function indices. Native peripheral builds currently use direct
-Clang `-O3`; this optional pass only handles the generated CPU binary.
+not optimized function indices. Native peripheral builds invoke Clang `-O3`;
+the prepared SDK's driver enables `wasm-opt` by default (`--no-wasm-opt` disables
+it). The profiling tool reproduces that final pass explicitly when adding names.
+The optional CLI pass described here only handles the generated CPU binary.
 
 References: [Binaryen optimizer cookbook](https://github.com/WebAssembly/binaryen/wiki/Optimizer-Cookbook),
 [Binaryen133 optimization options](https://github.com/WebAssembly/binaryen/blob/version_133/src/tools/optimization-options.h),
