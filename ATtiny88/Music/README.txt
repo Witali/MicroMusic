@@ -5,6 +5,9 @@
 выбираемый C/ASM-бэкенд и проверяемый F_CPU. Формат: universal/FORMAT_RU.md.
 PWM = F_CPU/256, синтез = F_CPU/1024; темп от F_CPU не зависит.
 Описанные ниже специализированные варианты сохранены для сравнения.
+Новая моноаранжировка из событий: tools/compile-universal-music.py.
+Руководство и пример: universal/ARRANGEMENT_RU.md,
+universal/examples/mono-study/README.md.
 
 Перенос девяти сохранённых музыкальных вариантов ATtiny13A на ATtiny88.
 ATmega88A отложен. Прошивки предназначены именно для ATtiny88 (signature

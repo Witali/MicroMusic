@@ -153,7 +153,7 @@ def build_attiny88():
         assert report['engineSha256']==verification['engineSha256']==digest(binary[:report['engineBytes']])
         common_hash=common_hash or report['engineSha256'];assert common_hash==report['engineSha256']
         relative=directory.relative_to(ROOT).as_posix()
-        entry.update(firmwareEngine='UM88',flashBytes=len(binary),flashSha256=digest(binary),eepromSha256=digest(ep),
+        entry.update(firmwareEngine='UM88',eepromRequired=False,eepromBytes=0,flashBytes=len(binary),flashSha256=digest(binary),eepromSha256=digest(ep),
                      cpuHz=report['cpuHz'],pwmHz=report['pwmHz'],sampleHz=report['pwmHz'],synthesisHz=report['synthesisHz'],
                      flashHex=flash,eepromHex=eeprom,source=f'../{relative}/synth.hex',eepromSource=f'../{relative}/eeprom.hex',
                      sourceAssembly='../ATtiny88/Music/universal/render-avr.S',buildReport=f'../{relative}/build-report.json',

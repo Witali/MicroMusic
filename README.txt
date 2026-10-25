@@ -231,6 +231,9 @@ PDF хранится в Git LFS. Скрипт: tools/build-music-format-guide.py
 Один код для девяти композиций; F_CPU берётся из конфигурации платформы.
 Сборщик: tools/build-universal-music.py --backend avr-asm.
 Данные: ATtiny88/Music/universal/songs/<имя>/score.json.
+Новые моноаранжировки: tools/compile-universal-music.py.
+Настройки инструментов, полный конвейер и импорт пакета в плеер:
+  ATtiny88/Music/universal/ARRANGEMENT_RU.md
 
 Сохранённые специализированные версии для сравнения:
 Девять адаптированных прошивок, включая Люмьер стерео и три Mariachi:

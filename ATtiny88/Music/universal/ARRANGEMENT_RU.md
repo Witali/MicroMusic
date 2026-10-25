@@ -6,6 +6,40 @@
 бинарный MIDI в репозиторий не копируется. Исходный JSON сохраняет все
 дорожки, порядок событий, метаданные и происхождение независимо от отбора.
 
+## Полный конвейер одной командой
+
+```text
+python tools/compile-universal-music.py source-events.json --arrangement arrangement.json --backend avr-asm --output build/my-song --preview-seconds 8
+```
+
+Вместо JSON можно указать внешний MIDI: импорт выполняется тем же
+`midi-events.py`, в результат попадает только структурированный источник.
+Выходной каталог должен быть новым. Он появляется после успешной сборки,
+полного PWM-аудита и проверки пакета. Ошибки времени или клиппинг оставляют
+диагностику в `build/universal/failures/`, готовый пакет при этом не создаётся.
+
+Результат: `source-events.json`, `arrangement.json`, `arrangement-report.json`,
+`score.json`, `synth.bin`/`synth.hex`, `build-report.json`, `verification.json`,
+`player-package.json`, происхождение и лицензии. Опция `--preview-seconds`
+добавляет `preview.wav` и `listening-report.json`: это исполнение настоящего HEX
+через PWM и фильтр плеера, без нормализации. Физическая запись не используется.
+
+Для частоты служат `--cpu-hz` и `--platform-header`, как в низкоуровневом сборщике.
+`F_CPU` влияет на общий код и DDS-таблицу; темп и исходный JSON сохраняются.
+Каждый профиль проходит свой аудит. По умолчанию выбран C; явный
+`--backend avr-asm` требуется для ASM. Ограничения измеренных нагрузок
+описаны в [README](README.md) и [матрице](reports/admission.json).
+
+В веб-плеере выберите ATtiny88 → «Открыть моно-пакет UM88» → `player-package.json`.
+Проверяются контрольные суммы прошивки и партитуры, параметры частоты и полный
+отчёт исполнения; неподходящий пакет не заменяет уже загруженную мелодию.
+Затем доступны прослушивание через JS/WASM и скачивание Flash HEX.
+Файл читается локально в браузере; отправки на сервер нет. EEPROM для UM88
+прошивать не требуется. Для отличного от 8 МГц профиля плеер не выдумывает фьюзы:
+источник тактов и фьюзы должны соответствовать реальной плате.
+
+## Отдельные этапы и настройки
+
 ```text
 python tools/arrange-universal-music.py source-events.json --config arrangement.json --output build/my-score
 python tools/build-universal-music.py --backend avr-asm --score build/my-score/score.json --output-dir build/my-firmware

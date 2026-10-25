@@ -1,5 +1,6 @@
 import { parseHex } from './lib/hex.js';
 import { RealtimeMonitor } from './lib/realtime.js';
+import { universalPackageEntry } from './lib/universal-package.js?v=20261025-um88-pipeline';
 const $ = id => document.getElementById(id);
 const formatHex = (value, length=2) => value.toString(16).toUpperCase().padStart(length,'0');
 const canvas = $('wave');
@@ -12,6 +13,7 @@ let lastScopeDraw=-Infinity, scopeDrawTimer;
 let originalLoading=false, originalAttempt=0;
 const speechCollection=new URL(location.href).searchParams.get('collection')==='hq4';
 let currentDevice='attiny13a', deviceRequest=0;
+let importAttempt=0;
 
 function showError(message) { $('error').textContent = message; $('error').hidden = !message; }
 function audioControls() {
@@ -27,6 +29,7 @@ function deviceUI(device) {
   $('tiny88-power').hidden=!tiny88;
   $('machine-memory').textContent=tiny88?'8':'1';
   $('machine-details').textContent=tiny88?'512 Б SRAM · 64 Б EEPROM · 8 МГц':'64 Б SRAM · 64 Б EEPROM · 9,6 МГц';
+  $('tiny88-clock').textContent='8 MHz · PDIP-28';
   $('fuses').setAttribute('aria-label','Рекомендуемые фьюзы '+name);
   $('fuse-low').textContent=tiny88?'0xEE':'0x7A';
   $('fuse-high').textContent=tiny88?'0xDF':'0xFF';
@@ -40,7 +43,8 @@ function deviceUI(device) {
   if(document.querySelector('input[name="engine"]:checked').disabled){
     for(const choice of document.querySelectorAll('input[name="engine"]'))choice.checked=choice.value==='wasm';
   }
-  $('package-file').disabled=tiny88;
+  $('package-file').disabled=false;
+  $('package-import-label').textContent=tiny88?'Открыть моно-пакет UM88':'Открыть пакет ATtiny13A';
   $('engine-note').textContent='При смене — сброс на начало.';
   if(!speechCollection) {
     document.title=`MicroMusic / ${name} — плеер прошивок`;
@@ -186,6 +190,16 @@ function load(entry,{autoplay=false}={}) {
     $('fuse-clock-value').textContent=clock+' · '+(configuration.oscillatorHz/1000000).toLocaleString('ru')+' МГц';
     $('fuse-clock-note').textContent=configuration.fuseLow&16?'CKDIV8 отключён · делитель /1':'CKDIV8 включён · делитель /8';
   }
+  if(currentDevice==='attiny88'&&entry.firmwareEngine==='UM88'){
+    $('machine-details').textContent='512 Б SRAM · 64 Б EEPROM · '+(entry.cpuHz/1000000).toLocaleString('ru')+' МГц';
+    $('tiny88-clock').textContent=(entry.cpuHz/1000000).toLocaleString('ru')+' MHz · PDIP-28';
+    if(entry.cpuHz!==8000000){
+      for(const id of ['fuse-low','fuse-high','fuse-extended-value'])$(id).textContent='—';
+      $('fuse-high-note').textContent='зависят от платы';
+      $('fuse-clock-value').textContent='F_CPU · '+(entry.cpuHz/1000000).toLocaleString('ru')+' МГц';
+      $('fuse-clock-note').textContent='Источник тактов и фьюзы задаются конфигурацией платы';
+    }
+  }
   const originalUrl=entry.kind==='speech' ? entry.originalAudioUrl : null;
   $('play-original').hidden=!originalUrl;
   // Mobile media decoders may reject the canonical recordings' 7500 Hz rate.
@@ -228,6 +242,7 @@ function load(entry,{autoplay=false}={}) {
   const capacity=tiny88?8192:1024, prefix=currentDevice;
   $('rom-name').textContent=`${prefix}-${entry.id}.hex`; $('rom-details').textContent=`${entry.flashBytes} / ${capacity} Б Flash · ${entry.eepromBytes} / 64 Б EEPROM · ${(entry.sampleHz/1000).toLocaleString('ru')} кГц ${entry.kind==='speech'?'отсчёты':'PWM'}`;
   if(entry.devicePackage)$('rom-details').textContent=`${entry.flashBytes} / ${capacity} Б Flash · ${entry.eepromBytes} / 64 Б EEPROM · пакет ATtiny13A`;
+  if(entry.firmwareEngine==='UM88')$('rom-details').textContent=`${entry.flashBytes} / ${capacity} Б Flash · EEPROM не требуется · синтез ${(entry.synthesisHz/1000).toLocaleString('ru')} кГц`;
   $('rom-name').href=flashSource; $('rom-name').download=`${prefix}-${entry.id}.hex`;
   $('rom-hash').textContent=entry.flashSha256.slice(0,16)+'…'; $('rom-hash').title='SHA-256 Flash: '+entry.flashSha256;
   $('rom-size').textContent=entry.flashBytes+' байт';
@@ -235,7 +250,7 @@ function load(entry,{autoplay=false}={}) {
   $('wav-link').hidden=!entry.preview; if (entry.preview) $('wav-link').href=entry.preview;
   const reference=originalUrl||entry.reference;
   $('reference-wav').hidden=!reference; if(reference)$('reference-wav').href=reference;
-  $('download-eeprom').hidden=!entry.eepromHex; $('reset').disabled=false;
+  $('download-eeprom').hidden=!entry.eepromHex||entry.firmwareEngine==='UM88'; $('reset').disabled=false;
   const eepromSource=entry.eepromSource||(entry.eepromHex ? 'data:text/plain;charset=utf-8,'+encodeURIComponent(entry.eepromHex) : null);
   for(const [id,source,suffix] of [['download',flashSource,''],['download-eeprom',eepromSource,'-eeprom']]){
     const link=$(id);if(source){link.href=source;link.download=`${prefix}-${entry.id}${suffix}.hex`;link.removeAttribute('aria-disabled');}
@@ -308,13 +323,15 @@ for (const choice of document.querySelectorAll('input[name="engine"]')) choice.o
 $('device-select').onchange=()=>switchDevice($('device-select').value);
 $('package-file').onchange=async event=>{
   const file=event.target.files[0];if(!file)return;
+  const attempt=++importAttempt,device=currentDevice,request=deviceRequest;
   try{
     if(file.size>16*1024*1024)throw Error('Пакет превышает 16 МБ');
-    const {packageEntry}=await import('./lib/package-entry.js');
-    const entry=await packageEntry(await file.text(),{name:file.name});
-    catalog.entries=catalog.entries.filter(e=>e.kind!=='package');catalog.entries.push(entry);
+    const text=await file.text();
+    const entry=device==='attiny88'?await universalPackageEntry(text):await (await import('./lib/package-entry.js')).packageEntry(text,{name:file.name});
+    if(attempt!==importAttempt||device!==currentDevice||request!==deviceRequest)return;
+    catalog.entries=catalog.entries.filter(e=>!['package','universal'].includes(e.kind));catalog.entries.push(entry);
     $('search').value='';load(entry);
-  }catch(error){showError('Не удалось открыть пакет: '+error.message);}
+  }catch(error){if(attempt===importAttempt&&device===currentDevice&&request===deviceRequest)showError('Не удалось открыть пакет: '+error.message);}
   finally{event.target.value='';}
 };
 document.addEventListener('keydown',event=>{ if (event.code==='Space' && !event.repeat && !/INPUT|SELECT|TEXTAREA|BUTTON|A/.test(event.target.tagName)) { event.preventDefault(); toggle(); } });
