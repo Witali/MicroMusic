@@ -12,6 +12,12 @@ test('independent oracle checks signed output, interpolation and ring wrap',()=>
  assert.equal(sample(r),0xfff1fff1);assert.deepEqual([...r.ring.slice(188)],[124,124,120,120]);
  assert.deepEqual([...r.ring.slice(0,4)],[116,116,113,113]);assert.equal(r.write,4);
 });
+test('mono PWM stores one byte per frame and preserves every interpolated value',()=>{
+ const r=new UniversalReference(score({}),8000000,{pwmChannels:1});
+ assert.equal(sample(r),0xfff1fff1);assert.deepEqual([...r.ring.slice(188)],[124,120,116,113]);
+ assert.equal(r.write,0);sample(r);assert.deepEqual([...r.ring.slice(0,4)],[113,113,113,113]);
+ assert.equal(r.write,4);
+});
 test('rational musical clock preserves duration for a one-tick loop at 8 and 12 MHz',()=>{
  for(const cpu of [8000000,12000000]){
   const r=new UniversalReference(score({commands:[143,1,0],controlTicks:1}),cpu);

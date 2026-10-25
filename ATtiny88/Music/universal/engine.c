@@ -27,6 +27,18 @@ static uint8_t command(void) {
     }
     return (uint8_t)code;
 }
+#if !defined(__AVR_ATtiny88__) || !defined(UM_ENABLE_AVR_ASM) || !UM_ENABLE_AVR_ASM
+void um_scale_wave(uint16_t source,int8_t *target,uint8_t level,uint8_t gain) {
+    for(uint8_t i=0;i<8;i++){
+        uint8_t packed=UM_READ(source++);
+        for(uint8_t half=0;half<2;half++,packed>>=4){
+            uint8_t nibble=packed&15;
+            int8_t value=(gain&32)?(int8_t)nibble-8:(int8_t)UM_VALUE(um_amplitudes,((uint16_t)level<<4)+nibble);
+            *target++=value>>(gain&7);
+        }
+    }
+}
+#endif
 static void refresh(UMVoice *v) {
     uint16_t context=contextTable+((uint16_t)v->context<<2);
     uint8_t bank=UM_READ(context+1),gain=UM_READ(context+2),level=v->level;
@@ -34,13 +46,7 @@ static void refresh(UMVoice *v) {
     if((gain&64)&&level>=14)bank|=48;
     if(gain&128)level>>=1;
     if(gain&16)level>>=1;
-    uint16_t waves=waveTable+bank;
-    for(uint8_t i=0;i<16;i++){
-        uint8_t packed=UM_READ(waves+(i>>1));
-        int8_t q=(int8_t)((i&1?packed>>4:packed)&15)-8;
-        int16_t value=(gain&32)?q:(int8_t)UM_VALUE(um_amplitudes,((uint16_t)level<<4)+(q+8));
-        v->wave[i]=(int8_t)(value>>(gain&7));
-    }
+    um_scale_wave(waveTable+bank,v->wave,level,gain);
 }
 static void read_events(void) {
     for(;;){
@@ -63,7 +69,9 @@ static void read_events(void) {
         else if(op==96)um.drumMode=command();
         else if(op==97)um.drumPhase=command();
         else if(op==98)um.noiseHigh=command();
-        else if(op>=128){index=(op>>4)&7;um.voice[index].level=op&15;levelDirty|=(uint8_t)1<<index;}
+        else if(op>=128){index=(op>>4)&7;uint8_t level=op&15;
+            if(um.voice[index].level!=level)levelDirty|=(uint8_t)1<<index;
+            um.voice[index].level=level;}
     }
 }
 void um_init(void) {
@@ -84,7 +92,9 @@ void um_tick(void) {
         uint8_t model=UM_READ(contextTable+((uint16_t)v->context<<2));
         uint8_t row=UM_READ(envelopeTable+((uint16_t)model<<4)+v->level);
         uint16_t at=rowTable+(uint16_t)row*3;
-        if(um_word(at+1)&((uint16_t)1<<um.tickPhase)){v->level=UM_READ(at);levelDirty|=bit;}
+        if(um_word(at+1)&((uint16_t)1<<um.tickPhase)){
+            uint8_t level=UM_READ(at);if(v->level!=level)levelDirty|=bit;v->level=level;
+        }
     }
     if(!--um.wait)read_events();
     bit=1;
@@ -94,8 +104,8 @@ void um_tick(void) {
     }
 }
 #if !defined(__AVR_ATtiny88__) || !defined(UM_ENABLE_AVR_ASM) || !UM_ENABLE_AVR_ASM
-uint32_t um_render(void) {
-    int16_t l=0,r=0,group=0;
+int16_t um_render(void) {
+    int16_t l=0,group=0;
     for(uint8_t i=0;i<um.count;i++){
         UMVoice *v=&um.voice[i];v->phase+=v->step;
         group+=v->wave[v->phase>>12];
@@ -108,12 +118,10 @@ uint32_t um_render(void) {
                 value+=((uint8_t)UM_VALUE(um_amplitudes,row+(group&7)+8))>>3;
                 value>>=mix&1;
             }else value=group>>(mix&7);
-            group=0;
-            l+=(mix&8)?value>>1:value;
-            r+=(mix&16)?value>>1:value;
+            group=0;l+=(mix&8)?value>>1:value;
         }
     }
-    return (uint16_t)l|((uint32_t)(uint16_t)r<<16);
+    return l;
 }
 #endif
 uint8_t um_output(int16_t value) {

@@ -264,7 +264,7 @@ def encode_score(score,cpu_hz):
 
 def main():
     global BASE
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--avr-bin');parser.add_argument('--no-import',action='store_true',help=argparse.SUPPRESS);parser.add_argument('--backend',choices=('c','avr-asm'),default='c');parser.add_argument('--cpu-hz',type=int);parser.add_argument('--platform-header',type=Path);parser.add_argument('--score',type=Path);parser.add_argument('--reimport',action='store_true');parser.add_argument('--output-dir',type=Path)
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--avr-bin');parser.add_argument('--no-import',action='store_true',help=argparse.SUPPRESS);parser.add_argument('--backend',choices=('c','avr-asm'),default='c');parser.add_argument('--cpu-hz',type=int);parser.add_argument('--buffer-frames',type=int);parser.add_argument('--platform-header',type=Path);parser.add_argument('--score',type=Path);parser.add_argument('--reimport',action='store_true');parser.add_argument('--output-dir',type=Path)
     args=parser.parse_args();tools=legacy.toolchain(args.avr_bin)
     if args.backend=='c' and args.output_dir is None:args.output_dir=ROOT/'build/universal/c'
     if args.reimport or not args.score and not (ROOT/'ATtiny88/Music/universal/songs/rhythmic/score.json').exists():
@@ -274,13 +274,16 @@ def main():
     scratch=Path(temporary.name)
     elf=scratch/'engine.elf'
     defines=['-DUM_REQUESTED_CPU_HZ='+str(args.cpu_hz)+'UL'] if args.cpu_hz is not None else []
+    if args.buffer_frames is not None:defines+=['-DUM_REQUESTED_BUFFER_FRAMES='+str(args.buffer_frames)]
     if args.platform_header:defines+=['-include',str(args.platform_header.resolve())]
     # Read the compiler's evaluated constant, including expressions and UL suffixes.
     probe=scratch/'clock-probe.c';probe_obj=scratch/'clock-probe.o';probe_bin=scratch/'clock-probe.bin'
-    legacy.save(probe,'#include <avr/io.h>\n#include <stdint.h>\n#include "clock.h"\nconst uint32_t um_clock __attribute__((section(".umclock")))=F_CPU;\n')
+    legacy.save(probe,'#include <avr/io.h>\n#include <stdint.h>\n#include "clock.h"\n#include "audio-buffer.h"\nconst uint32_t um_clock[2] __attribute__((section(".umclock")))={F_CPU,UM_PWM_BUFFER_FRAMES};\n')
     legacy.run(tools['avr-gcc'],'-mmcu=attiny88','-I'+str(source),'-I'+str(source/'vendor/ATtiny_DFP/3.4.278/include'),*defines,'-c',probe,'-o',probe_obj)
     legacy.run(tools['avr-objcopy'],'-O','binary','-j','.umclock',probe_obj,probe_bin)
-    cpu_hz=int.from_bytes(probe_bin.read_bytes(),'little');assert 75000<=cpu_hz<=12000000
+    clock_config=probe_bin.read_bytes();assert len(clock_config)==8
+    cpu_hz=int.from_bytes(clock_config[:4],'little');assert 75000<=cpu_hz<=12000000
+    buffer_frames=int.from_bytes(clock_config[4:],'little')
     defines+=['-DUM_ENABLE_AVR_ASM='+('1' if args.backend=='avr-asm' else '0')]
     for attempt in range(3):
         legacy.run(tools['avr-gcc'],'-mmcu=attiny88','-Os','-fno-jump-tables','-ffunction-sections','-fdata-sections',
@@ -294,9 +297,9 @@ def main():
     assert len(engine)<=BASE,(len(engine),BASE)
     symbols=legacy.run(tools['avr-nm'],'-n',elf)
     labels={m[3]:int(m[1],16) for m in re.finditer(r'^([0-9a-fA-F]+)\s+([tTbBdD])\s+(\S+)$',symbols,re.M)}
-    assert labels['um_ring']-0x800000+192+48<=768,'Need 48 bytes of stack above the FIFO'
+    assert labels['um_ring']-0x800000+buffer_frames+48<=768,'Need 48 bytes of stack above the FIFO'
     legacy.save(scratch/'disassembly.txt',legacy.run(tools['avr-objdump'],'-d',elf))
-    common=dict(engine='UM88',backend=args.backend,engineBytes=len(engine),songAddress=BASE,engineSha256=digest(engine),labels=labels,
+    common=dict(engine='UM88',backend=args.backend,pwmBufferLayout='mono',pwmBufferFrames=buffer_frames,engineBytes=len(engine),songAddress=BASE,engineSha256=digest(engine),labels=labels,
                 cpuHz=cpu_hz,synthesisHz=cpu_hz/1024,pwmHz=cpu_hz/256,controlHz=18750/256,
                 toolchainVersion=legacy.run(tools['avr-gcc'],'--version').splitlines()[0])
     (scratch_root/('engine-'+args.backend+'.bin')).write_bytes(engine)
@@ -305,10 +308,14 @@ def main():
     for name in names:
         score_path=args.score or source/'songs'/name/'score.json'
         if score_path.exists() and not args.reimport:
-            score=json.loads(score_path.read_text(encoding='utf-8'));data,report=encode_score(score,cpu_hz)
+            score=json.loads(score_path.read_text(encoding='utf-8'))
+            data,report=encode_score(score,cpu_hz)
         else:
             song=json.loads((scratch_root/(name+'.tape.json')).read_text(encoding='utf-8'));data,report=compile_song(song,cpu_hz)
             score=json.loads((source/'songs'/name/'score.json').read_text(encoding='utf-8'))
+        if score['channels']!=1:
+            if args.score:raise ValueError('The current PWM driver is mono; stereo firmware remains archived')
+            print(name+': archived stereo firmware retained; mono driver not applied');continue
         binary=engine+bytes([255])*(BASE-len(engine))+data
         assert len(binary)<=8192,(name,len(binary))
         folder=(args.output_dir or source/'songs')/name;folder.mkdir(parents=True,exist_ok=True)
