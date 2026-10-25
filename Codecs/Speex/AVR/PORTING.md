@@ -43,6 +43,7 @@ matching optimized kernel is provided yet.
 | Signed shifts and rounded products | `avr_shift.h`, `avr_fixed.h` | C shifts in `avr_shift.h` / upstream fixed-point macros |
 | Generic, bounded and aligned-p1 Q14 products | `q14.S` | exact word extraction in `nb3_c_math.h`, selected by `avr_fixed.h` |
 | NB3 quarter advance / center margin | `lsp_advance.S`, selected by `nb3_interpolate.h` | `speex_nb3_advance_codebook_c` in the same header, also callable in an ASM build |
+| Symmetric order-ten LPC output | `lsp_finish.S`, selected by `nb3_lsp_finish.h` | `speex_nb3_lsp_finish10_c` in the same header, also callable in an ASM build |
 | LSP polynomial stages | `compact_lsp.c.inc` calling Q14 ASM | same recurrence using C Q14 |
 | Historical pitch write/add | `pitch_add.S` | C block loop in `pitch24.h` |
 | Innovation, scaling and saturation | `innovation.S` | C branch in `innovation.h` and bounded helpers in `nb3_c_math.h` |
@@ -96,7 +97,7 @@ real-time support depends on the target and must be measured. On ATmega328P
 both C and explicitly enabled ASM pass all 31 complete PWM streams with
 interrupts. The tested additional CPU reserve is 10% for C and 40% for ASM;
 these are measured corpus/ISA results, not physical-board guarantees. The
-C corpus maximum is 230,736 cycles (231,309 with pitch coverage).
+C corpus maximum is 229,504 cycles (230,077 with pitch coverage).
 The build tool defaults to C; `--backend asm` explicitly adds the enable define.
 
 ## Export and integrate

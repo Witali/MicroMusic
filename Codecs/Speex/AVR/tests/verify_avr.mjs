@@ -36,7 +36,7 @@ const backendIndex=process.argv.indexOf('--backend');
 if (backendIndex>=0) assert.equal(backend.backend,process.argv[backendIndex+1]);
 if (backend.backend==='c') {
   for (const kernel of ['speex_avr_iir40','speex_avr_pitch_add24','speex_avr_innovation10','speex_avr_zero_innovation10','speex_avr_zero_innovation_n','speex_avr_long_innovation10','speex_avr_long_innovation_n','speex_avr_long_innovation1','speex_avr_long_innovation40',
-                        'speex_avr_mul16_32_q14','speex_avr_lsp_mul_q14','speex_avr_p1_mul_q14','speex_avr_nb3_advance10'])
+                        'speex_avr_mul16_32_q14','speex_avr_lsp_mul_q14','speex_avr_p1_mul_q14','speex_avr_nb3_advance10','speex_avr_lsp_finish10'])
     assert.ok(!symbols.has(kernel),'C backend unexpectedly linked ASM kernel '+kernel);
 }
 assert.equal(address('scratch') & 3, 0, 'Scratch requires a four-byte-aligned base');

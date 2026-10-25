@@ -3,7 +3,7 @@
 An adaptation of the **original Xiph Speex 1.2.1 fixed-point decoder** for
 ATmega328P at 16 MHz, with a linked PWM player and reproducible host/AVR tests.
 The ASM player passes ISA simulation on all 31 streams: **9,100
-frames / 1,456,000 samples, zero underruns, 661 bytes SRAM free at the observed
+frames / 1,456,000 samples, zero underruns, 699 bytes SRAM free at the observed
 peak**, including a separate 40% extra-CPU admission test. A physical board
 and its analog output have not been tested.
 
@@ -23,7 +23,7 @@ enable control selection; without a matching enabled backend it uses C.
 See [PORTING.md](PORTING.md) for C fallbacks, platform headers and an exportable
 CMake/static-library package for other microcontrollers. The C player now
 also passes all 31 streams with timers/ISR and 10% extra CPU work: zero
-underruns and 654 B free SRAM at peak. Both NB3 backends retain exact upstream s16 PCM.
+underruns and 700 B free SRAM at peak. Both NB3 backends retain exact upstream s16 PCM.
 
 ## Narrowband profile
 
@@ -130,20 +130,19 @@ Outputs are ignored under `build/`. The decoder validation firmware is
 hash. The matrix leaves `speech_ru` as the final demo. Player tests retain the
 captured unsigned PCM as `build/player/player-pwm.u8`.
 
-The current codebook-margin/LPC stage can be checked independently:
+The current paired LPC stage has direct arithmetic, memory and ABI tests:
 
 ```sh
-python Codecs/Speex/AVR/tools/prove_nb3_margins.py
-python Codecs/Speex/AVR/tools/build_lsp_lifetime_test.py --cc clang --avr-gcc avr-gcc --mode margin --backend c
-python Codecs/Speex/AVR/tools/build_lsp_lifetime_test.py --avr-gcc avr-gcc --mode margin --backend asm
-node Codecs/Speex/AVR/tests/verify_nb3_margin.mjs --backend c
-node Codecs/Speex/AVR/tests/verify_nb3_margin.mjs --backend asm
-python Codecs/Speex/AVR/tests/audit_nb3_margins.py --rebuild --avr-gcc avr-gcc
+python Codecs/Speex/AVR/tools/build_lsp_finish_test.py --cc clang --avr-gcc avr-gcc --backend c
+python Codecs/Speex/AVR/tools/build_lsp_finish_test.py --avr-gcc avr-gcc --backend asm
+node Codecs/Speex/AVR/tests/verify_lsp_finish.mjs --backend c
+node Codecs/Speex/AVR/tests/verify_lsp_finish.mjs --backend asm
+python Codecs/Speex/AVR/tests/audit_lsp_pairs.py --rebuild --avr-gcc avr-gcc
 ```
 
-The audit consumes the frozen corpus and PWM runs described in
-[OPTIMIZATION.md](OPTIMIZATION.md). Its current result is
-[margin-admission.json](reports/margin-admission.json).
+The audit consumes the frozen corpus, original-codebook proof and PWM runs
+described in [OPTIMIZATION.md](OPTIMIZATION.md). Its current result is
+[pair-admission.json](reports/pair-admission.json).
 
 ## Verified results
 
@@ -156,24 +155,22 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
 
 | Build | Flash | Static SRAM | Peak stack | Free SRAM at peak |
 | --- | ---: | ---: | ---: | ---: |
-| Optimized decoder test mailbox, ASM enabled | 11,470 B | 1,099 B | 145 B | 804 B |
-| Full PWM speech demo, including 2,940 B compressed audio | 14,490 B | 1,234 B | 153 B | 661 B |
-| C fallback decoder test mailbox | 11,792 B | 1,099 B | 151 B | 798 B |
-| Full C PWM speech demo, including 2,940 B audio | 15,102 B | 1,234 B | 160 B | 654 B |
+| Optimized decoder test mailbox, ASM enabled | 10,958 B | 1,099 B | 107 B | 842 B |
+| Full PWM speech demo, including 2,940 B compressed audio | 13,978 B | 1,234 B | 115 B | 699 B |
+| C fallback decoder test mailbox | 11,534 B | 1,099 B | 105 B | 844 B |
+| Full C PWM speech demo, including 2,940 B audio | 14,846 B | 1,234 B | 114 B | 700 B |
 
-- The codebook-aware ASM advance and fused LPC path reduce weighted NB mean
-  cycles from 107,616.507 to 106,896.237 (0.6693%) versus ab6425d. Flash grows
-  1,000 B and peak decoder stack grows 31 B; static SRAM stays unchanged.
-  A few cached frame costs increase by at most four cycles; `impulses` mean
-  increases by two cycles. All other stream means improve. The separately
-  verified C fallback improves its weighted mean by 0.3262% at +894 B Flash
-  and +46 B stack. These are speed-first choices for the primary ASM target.
+- Symmetric paired LPC output reduces weighted NB ASM mean from 106,896.237
+  to 105,109.736 cycles (1.6712%) versus ace94ac6, while saving 512 B Flash
+  and 38 B peak stack. All stream min/mean/max improve. Static SRAM is
+  unchanged. The C fallback improves mean by 0.4981%, saving 258 B Flash
+  and 46 B stack; no stream timing metric regresses. ASM is the primary target.
 - All 9,100 corpus frames and 4,096 additional pitch/gain coverage frames match
   unmodified upstream s16 PCM. Including 58 LSP/reset and 1,024 zero-gain
   lifetime cases, each backend matches 14,278 frames with one firmware image.
 - Complete player tests on all 31 streams match upstream PCM converted to u8,
   with zero ring underruns and no stack/static-memory collisions.
-- Maximum observed ASM decoder-only corpus frame cost: **114,786 cycles / 7.174 ms**;
+- Maximum observed ASM decoder-only corpus frame cost: **112,765 cycles / 7.048 ms**;
   the 20-ms budget at 16 MHz is 320,000 cycles. ISR and output costs are verified
   separately by the complete-player runs.
 - Primitive tests cover 240,000 complete LSP conversions and 3,670,016 bit fields;
@@ -189,6 +186,12 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
   checks 9,280 primitive calls, exact memory accesses and ABI at RET.
   The general signed16 and partially overlapping LPC contracts retain their
   broader tests; they are not restricted to this private domain.
+- The paired output C helper matches 3,056,640 native coefficients per path
+  against a separate sequential modulo-32 oracle. Each AVR backend checks
+  46,592 cases / 465,920 coefficients per path, all rounding low bytes,
+  signed wrap, both saturation limits and all 256 pointer low bytes.
+  ASM reads each required polynomial byte once, writes only output and saves
+  exactly 14 bytes of registers; guards, input preservation and ABI are checked.
 - The combined packet reader passes 4,227,072 native groups (every 20-bit
   index group and 13-bit header at each subframe). Both readers also pass
   115,712 AVR groups each, with independent bit-by-bit fields, exact five-byte
@@ -203,7 +206,7 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
   cases; the portable C Q14 helper independently passes another 917,504
   cases. The aligned p1 core adds 655,360 independent exact cases.
   The C fallback matches the same 14,278 AVR frames. Its corpus maximum is
-  230,736 cycles (231,309 with pitch coverage), excluding ISR. Complete C PWM playback now
+  229,504 cycles (230,077 with pitch coverage), excluding ISR. Complete C PWM playback now
   passes all 31 streams with 32,000 extra cycles/frame (10%), zero underruns
   and at least 55 queued samples. ASM retains the stronger 40% reserve gate.
 - The historical pitch ASM independently checks 1,966,080 outputs, all signed8 gains,
