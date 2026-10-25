@@ -122,6 +122,18 @@ returns to the host with saved operands; resuming skips completed bus effects.
 Reset cancels that context before it can be spilled back. PC/SREG retirement
 and a zero-length trailing phase can commit at the exact observation deadline.
 
+`optimizePhaseLocals:true` is an explicit optional resumable-emitter setting;
+the default remains the original full-context path. Generation-time read/write
+and branch annotations identify locals needed after each WAIT, including the
+clock expression evaluated again on resume. An old value is dead only when
+every continuing branch overwrites it before a read. The phase emitter spills
+that mask and restores it according to the saved stage. No emitted WASM is
+reparsed or interpreted; all annotations disappear before serialization.
+The 80-byte native context layout is unchanged, and unused temporary slots are
+unspecified scratch rather than architectural AVR state. Observable registers,
+bus effects, flags, counters and phase boundaries retain their existing contract.
+The translation cache includes the setting, and SPM recompilation preserves it.
+
 This optional path keeps SREG exact at every observable boundary. Register-only
 blocks can execute when their complete original cycle span lies strictly before
 the next device/input event and physical observation deadline. Pending IRQs,

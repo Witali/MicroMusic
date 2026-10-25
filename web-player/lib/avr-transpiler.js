@@ -3,6 +3,7 @@
 // AVR semantics: Microchip DS40002198A. Device placement comes from its profile.
 import {deviceProfile,DEFAULT_DEVICE} from './devices/profiles.js';
 import {clockPhase,assertAtomicPhase,emitInstructionPhases} from './avr-wasm-phases.js';
+import {annotatePhaseLocals,stripLocalEffects} from './avr-phase-locals.js';
 const uleb = value => {
   const out = []; do { const byte = value & 127; value >>>= 7; out.push(byte | (value ? 128 : 0)); } while (value);
   return out;
@@ -48,6 +49,7 @@ const call = (index,...args) => bytes(args,0x10,uleb(index));
 const condition = (test,yes,no=[]) => {assertAtomicPhase(test,yes,no);return bytes(test,0x04,0x40,yes,no.length ? bytes(0x05,no) : [],0x0b);};
 const conditionValue = (test,yes,no) => {assertAtomicPhase(test,yes,no);return bytes(test,0x04,0x7f,yes,0x05,no,0x0b);};
 const sign = (v,bit) => v & bit ? v - 2*bit : v;
+const phaseEmit={bytes,constant,get,set,call,condition,conditionValue,eq,eqz,lt,load32,store32,load64,store64};
 const width = w => (w&0xfe0f)===0x9000 || (w&0xfe0f)===0x9200 || (w&0xfe0e)===0x940c || (w&0xfe0e)===0x940e ? 2 : 1;
 
 // Decode independently of the interpreter. Aliases (CLR, TST, LSL, ROL, SER,
@@ -123,7 +125,9 @@ const batchable=i=>pure.has(i.name)||guardedMemory.has(i.name);
 const instructionCycles=i=>i.name==='LPM'?3:['ADIW','SBIW','LD','ST'].includes(i.name)?2:1;
 const popcount=n=>{let count=0;for(;n;n&=n-1)count++;return count;};
 
-export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructions=32,device=DEFAULT_DEVICE,resumable=false}={}) {
+export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructions=32,device=DEFAULT_DEVICE,resumable=false,optimizePhaseLocals=false}={}) {
+  if(typeof optimizePhaseLocals!=='boolean'||optimizePhaseLocals&&!resumable)throw Error('Phase-local optimization requires resumable execution');
+  const {get,set,condition,conditionValue}=optimizePhaseLocals?annotatePhaseLocals(phaseEmit):phaseEmit;
   const profile=deviceProfile(device),{flashBytes,flashWords,pcMask,ioStart,ioEnd,ramStart,ramEnd,sreg,stackPointer}=profile;
   if(profile.dataAddressBits!==8||profile.programCounterBytes!==2)throw Error('Unsupported AVR emitter memory geometry');
   // Resumable blocks initially cover register-only operations. Memory accesses
@@ -316,13 +320,17 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     }
     return fail(2);
   }
+  const phaseLocalStats={waitSites:0,fullSlots:0,liveSlots:0};
   const instructionBodies=decoded.map(i=>{
     inInstruction=true;
     const code=bytes(set(5,load8(flagsAddress)),set(7,constant(1)),put('errorPC',constant(i.pc)),
       put('pc',constant((i.pc+1)&pcMask)),effects(i),resumable?[]:store8(flagsAddress,flags()),finish());
     inInstruction=false;
     return resumable?emitInstructionPhases(code,{context:abi.phase,pc:i.pc,clockImport:PHASE_CLOCK,
-      emit:{bytes,constant,get,set,call,condition,eq,eqz,lt,load32,store32,load64,store64}}):code;
+      emit:phaseEmit,optimizeLocals:optimizePhaseLocals,onLiveness:optimizePhaseLocals?masks=>{
+        phaseLocalStats.waitSites+=masks.length;phaseLocalStats.fullSlots+=10*masks.length;
+        phaseLocalStats.liveSlots+=masks.reduce((n,mask)=>n+popcount(mask),0);
+      }:undefined}):code;
   });
 
   // SRAM/Flash accesses use guards before observable I/O, alias faults or
@@ -356,6 +364,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   // Function local remapping is performed while emitting block ALU below.
   // Separate emitters make the local types and their indices explicit.
   function remapLocals(code, shift) {
+    if(optimizePhaseLocals)code=stripLocalEffects(code);
     const out=[];
     for(let p=0;p<code.length;){
       const op=code[p++];out.push(op);
@@ -524,16 +533,17 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   const table=Array.from({length:flashWords},(_,p)=>firstFunction+p);
   const blockIndex=new Map(blocks.map((b,n)=>[b.start,firstFunction+flashWords+n]));
   for(let p=0;p<flashWords;p++)table.push(blockIndex.get(p)??firstFunction+flashWords+blocks.length);
-  const body=(code,locals)=>{const content=bytes(vector(locals),code,0x0b);return bytes(uleb(content.length),content);};
+  const body=(code,locals)=>{const content=bytes(vector(locals),optimizePhaseLocals?stripLocalEffects(code):code,0x0b);return bytes(uleb(content.length),content);};
   const codes=[...instructionBodies.map(code=>body(code,[[9,0x7f],[1,0x7c],...(resumable?[[1,0x7f]]:[])])),
     ...blockBodies.map(code=>body(code,[[9,0x7f]])),body(emptyBlock,[]),body(step,[]),body(block,[]),body(run,[[resumable?3:2,0x7f]]),body(resumable?fail(24,true):next,[[2,0x7c]]),body(resumable?fail(24,true):capture,[[3,0x7f],[1,0x7c]]),...(full?[body(until,[[resumable?3:2,0x7f]]),body(physical,[[1,0x7f]])]:[])];
   const exports=vector([...['controlRequest','watchdogResetCycle','debugEnabled','captureFault'].map((name,index)=>bytes(string(name),3,index)),
     ...[['step',STEP],['block',BLOCK],['run',RUN],['nextDuty',NEXT],['capturePWM',CAPTURE],...(full?[['runUntil',UNTIL],['capturePhysical',PHYSICAL]]:[])].map(([name,index])=>bytes(string(name),0,uleb(index)))]);
   const mapping=decoded.map(({pc,word,name,d,s,k,words})=>({pc,byteAddress:pc*2,word,name,d,s,k,words}));
   const stats={decodableWords:decoded.filter(i=>i.name!=='unsupported').length,unsupportedWords:decoded.filter(i=>i.name==='unsupported').length,
-    blocks:blocks.length,flagBitsComputed:blocks.reduce((n,b)=>n+b.computed,0),flagBitsEliminated:blocks.reduce((n,b)=>n+b.removed,0)};
+    blocks:blocks.length,flagBitsComputed:blocks.reduce((n,b)=>n+b.computed,0),flagBitsEliminated:blocks.reduce((n,b)=>n+b.removed,0),
+    ...(optimizePhaseLocals?{phaseLocals:phaseLocalStats}:{})};
   const manifest={schema:'micromusic-avr-transpiled-v1',device:profile.name,abi,optimizeFlags,maxBlockInstructions,stats,
-    ...(resumable?{executionMode:'resumable-v1'}:{}),blocks:blocks.map(({sequence,...block})=>block),mapping};
+    ...(resumable?{executionMode:'resumable-v1'}:{}),...(optimizePhaseLocals?{optimizePhaseLocals:true}:{}),blocks:blocks.map(({sequence,...block})=>block),mapping};
   const output=Uint8Array.from(bytes([0,97,115,109,1,0,0,0],section(1,vector(types)),section(2,importSection),section(3,vector(functionTypes.map(uleb))),
     section(4,[1,0x70,1,...uleb(flashWords*2),...uleb(flashWords*2)]),section(6,vector([bytes(0x7f,1,constant(0),0x0b),bytes(0x7c,1,float(-1),0x0b),bytes(0x7f,1,constant(0),0x0b),bytes(0x7f,1,constant(0),0x0b)])),
     section(7,exports),section(9,bytes(1,0,constant(0),0x0b,vector(table.map(uleb)))),section(10,vector(codes)),
