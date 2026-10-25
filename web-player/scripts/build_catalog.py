@@ -141,7 +141,7 @@ def build_attiny88_universal(usb=False):
     base=source/('songs-micronucleus' if usb else 'songs')
     cpu=16000000 if usb else 8000000
     limit=6012 if usb else 8192
-    common_hash=None
+    common_hashes={}
     for entry in catalog['entries']:
         name=Path(entry['source']).parent.name
         directory=base/name
@@ -153,8 +153,13 @@ def build_attiny88_universal(usb=False):
         assert report['engine']=='UM88' and report['backend']=='avr-asm'
         assert report['cpuHz']==cpu and report['pwmHz']==cpu/256 and report['synthesisHz']==cpu/1024
         assert report['channels']==entry['audioChannels']==score['channels']
+        assert report['configuredChannels']==report['channels']
+        selection=report.get('channelSelection','auto')
+        assert selection in ('auto','mono','stereo')
+        assert selection=='auto' or selection==('mono' if report['configuredChannels']==1 else 'stereo')
+        assert report.get('sourceChannels',score['channels'])==score['channels']
         assert report['voices']==score['voices']
-        assert report['renderABI']=='packed-stereo-u32'
+        assert report['renderABI']==('mono-s16' if report['configuredChannels']==1 else 'packed-stereo-u32')
         assert report['pwmBufferFrames']*report['channels']==192
         assert decode(flash,limit)==binary and len(binary)==report['flashBytes']<=limit
         assert report['flashSha256']==verification['flashSha256']==digest(binary)
@@ -162,8 +167,9 @@ def build_attiny88_universal(usb=False):
         assert verification['cpuHz']==cpu and verification['backend']==report['backend']
         for file,expected in report['sourceInputs'].items():
             assert digest((ROOT/file).read_text(encoding='utf-8').encode())==expected,f'Stale UM88 input: {file}'
-        common_hash=common_hash or report['engineSha256']
-        assert common_hash==report['engineSha256'],'Every arrangement must use the same executable'
+        core_profile=(report['configuredChannels'],report['cpuHz'],report['backend'],report['packingMode'],report['pwmBufferBytes'])
+        expected=common_hashes.setdefault(core_profile,report['engineSha256'])
+        assert expected==report['engineSha256'],'Arrangements in the same output/clock/backend/packing/buffer profile must share executable bytes'
         assert verification['passed'] and verification['completeLoops']>=1
         for field in ('allControlFramesMatch','allTonalMixesMatch','allPwmFramesMatch','allPercussionStatesMatch'):
             assert verification[field],f'{name}: {field}'
@@ -174,6 +180,7 @@ def build_attiny88_universal(usb=False):
         assert report['decodedCommandsSha256']==digest(bytes(score['commands']))
         relative=directory.relative_to(ROOT).as_posix()
         entry.update(firmwareEngine='UM88',eepromRequired=False,eepromBytes=0,eepromHex=None,eepromSha256=None,eepromSource=None,
+                     configuredChannels=report['configuredChannels'],renderABI=report['renderABI'],
                      flashBytes=len(binary),flashSha256=digest(binary),cpuHz=cpu,pwmHz=cpu/256,sampleHz=cpu/256,synthesisHz=cpu/1024,
                      flashHex=flash,source=f'../{relative}/synth.hex',archivedFirmware=False,
                      sourceAssembly='../ATtiny88/Music/universal/render-avr.S',buildReport=f'../{relative}/build-report.json',

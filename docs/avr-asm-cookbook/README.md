@@ -2234,3 +2234,23 @@ cycles per audio IRQ, both zero underruns. Selectable C fallback remains
 PWM-exact but costs 3175.445 cycles/sample and 40157 underruns at these clocks.
 These are measured simavr workloads, not physical-board or indefinite-stream
 claims. [Full paired matrix, corpus, unchanged-source proof and limitations](../../Codecs/LPX/research/q0-multiseed-2026-10-25/README.md).
+
+## UM88: page-local FIFO
+
+[Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.
+
+## UM88: exact table-free gain
+
+[Exact table-free gain](um88-table-free-gain.md) records the bounded C/ASM products, floor rounding, pointer-render requirement, isolated size savings, rejected C timing regressions, and independent arithmetic plus active-IRQ admission checks.
+
+## UM88: smaller control decoding
+
+[Shared voice addresses and decoder cursors](um88-control-size.md): lossless C address/stack work, exact compact-pair offsets, portable layout fallback, and measured size/timing results.
+
+## UM88: output channels selected at build time
+
+[Compile only mono or stereo](um88-configured-channels.md): conditional ABI and PWM code, tight music placement, fixed FIFO stride, and a test-only proof that mono never writes the inactive compare register.
+
+## UM88: flag-neutral PWM interrupt
+
+[Flag-neutral IRQ and explicit GPIOR backup](um88-flag-neutral-irq.md): preserve SREG without saving it on the normal path, use a balanced power-of-two wrap, and optionally reserve three GPIOR registers to replace stack backup.

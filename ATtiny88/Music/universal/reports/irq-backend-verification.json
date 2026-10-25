@@ -1,0 +1,146 @@
+{
+  "runtimeSourceCommit": "223f9cc364da895ef77d617828012b77faee1c06",
+  "profiles": [
+    {
+      "cases": 16992,
+      "exhaustiveGroupGainCases": 16384,
+      "cacheCases": 34816,
+      "irqCases": 384,
+      "configuredChannels": 1,
+      "renderABI": "mono-s16",
+      "irqChannelsTested": [
+        1
+      ],
+      "exactMonoIRQ": true,
+      "exactStereoIRQ": null,
+      "exactPhases": true,
+      "exactMonoMix": true,
+      "exactStereoMix": null,
+      "exactCachedWaves": true,
+      "abiPreserved": true,
+      "backends": [
+        {
+          "backend": "c",
+          "configuredChannels": 1,
+          "renderABI": "mono-s16",
+          "bufferBytes": 192,
+          "engineSha256": "abb0668e0fa6c069af30d17bc5ae54336e5894fc2de63a20836b071a41c82e07"
+        },
+        {
+          "backend": "avr-asm",
+          "configuredChannels": 1,
+          "renderABI": "mono-s16",
+          "bufferBytes": 192,
+          "engineSha256": "586c130b54f7fe7405d336f005478a23375fc2b1e5b4ce0eb9a462c0540e1a6b"
+        }
+      ],
+      "cpuHz": 8000000
+    },
+    {
+      "cases": 16992,
+      "exhaustiveGroupGainCases": 16384,
+      "cacheCases": 34816,
+      "irqCases": 192,
+      "configuredChannels": 2,
+      "renderABI": "packed-stereo-u32",
+      "irqChannelsTested": [
+        2
+      ],
+      "exactMonoIRQ": null,
+      "exactStereoIRQ": true,
+      "exactPhases": true,
+      "exactMonoMix": true,
+      "exactStereoMix": true,
+      "exactCachedWaves": true,
+      "abiPreserved": true,
+      "backends": [
+        {
+          "backend": "c",
+          "configuredChannels": 2,
+          "renderABI": "packed-stereo-u32",
+          "bufferBytes": 192,
+          "engineSha256": "6eeb7fa307d063de7a90a4bdf7b95a9253d45f161848cd88fc935e99d017105b"
+        },
+        {
+          "backend": "avr-asm",
+          "configuredChannels": 2,
+          "renderABI": "packed-stereo-u32",
+          "bufferBytes": 192,
+          "engineSha256": "5813a786ef43c7a11c7549f68bf3893587c09d850cb56c222ffd9d956096e607"
+        }
+      ],
+      "cpuHz": 8000000
+    },
+    {
+      "cases": 16992,
+      "exhaustiveGroupGainCases": 16384,
+      "cacheCases": 34816,
+      "irqCases": 384,
+      "configuredChannels": 1,
+      "renderABI": "mono-s16",
+      "irqChannelsTested": [
+        1
+      ],
+      "exactMonoIRQ": true,
+      "exactStereoIRQ": null,
+      "exactPhases": true,
+      "exactMonoMix": true,
+      "exactStereoMix": null,
+      "exactCachedWaves": true,
+      "abiPreserved": true,
+      "backends": [
+        {
+          "backend": "c",
+          "configuredChannels": 1,
+          "renderABI": "mono-s16",
+          "bufferBytes": 192,
+          "engineSha256": "0fd416c9c490c226bab5e2f56effb24fc2973bcc4daa6c9ed85ec547a593f942"
+        },
+        {
+          "backend": "avr-asm",
+          "configuredChannels": 1,
+          "renderABI": "mono-s16",
+          "bufferBytes": 192,
+          "engineSha256": "0aaeb003ec2130de9db2e982aeb1fa36ad17942acf633f58a6ef0ae2e7f6fa4d"
+        }
+      ],
+      "cpuHz": 16000000
+    },
+    {
+      "cases": 16992,
+      "exhaustiveGroupGainCases": 16384,
+      "cacheCases": 34816,
+      "irqCases": 192,
+      "configuredChannels": 2,
+      "renderABI": "packed-stereo-u32",
+      "irqChannelsTested": [
+        2
+      ],
+      "exactMonoIRQ": null,
+      "exactStereoIRQ": true,
+      "exactPhases": true,
+      "exactMonoMix": true,
+      "exactStereoMix": true,
+      "exactCachedWaves": true,
+      "abiPreserved": true,
+      "backends": [
+        {
+          "backend": "c",
+          "configuredChannels": 2,
+          "renderABI": "packed-stereo-u32",
+          "bufferBytes": 192,
+          "engineSha256": "fa0d5b60df07c1774216807b896599f34aed331b26dca659bdc3f3f8351608ba"
+        },
+        {
+          "backend": "avr-asm",
+          "configuredChannels": 2,
+          "renderABI": "packed-stereo-u32",
+          "bufferBytes": 192,
+          "engineSha256": "f27d090d77d5891f733a47c4e606ba59c275fc8449f86e9806e117c17fc13e6a"
+        }
+      ],
+      "cpuHz": 16000000
+    }
+  ],
+  "cFallbackByteIdenticalTo": "8a0da608"
+}
