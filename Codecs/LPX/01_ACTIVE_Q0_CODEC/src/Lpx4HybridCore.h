@@ -41,7 +41,7 @@ private:
     bool readFrame();
     bool readBlock();
     bool readSubframe();
-    int16_t pitchPredict() const;
+    __attribute__((always_inline)) inline int16_t pitchPredict() const;
     bool decodeCode(int8_t& q);
 #if !defined(__AVR__) || defined(LPX4_ENABLE_PCM16)
     bool nextCore(int16_t& postfilterQ14);
@@ -62,6 +62,7 @@ private:
     int16_t previousQuant_[10];
     int16_t prevDeemph_,prevBright_;
     uint8_t framePos_,blockPos_,subPos_,subIndex_;
+    uint8_t quantLimit_;
     uint8_t mode_,blockScale_,bitBuffer_,bitsLeft_,riceK_;
     uint8_t subType_,lag_,gain_,ringCursor_;
 #if LPX4_ALLOW_SPARSE

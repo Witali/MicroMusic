@@ -1,4 +1,5 @@
 #include "Lpx4HybridCore.h"
+#include "Lpx4Math.h"
 // Compile-time amplitude calibration: same compressed bits, same decoder path.
 #ifndef LPX4_PWM_GAIN
 #define LPX4_PWM_GAIN 130
@@ -20,18 +21,10 @@
 #define LP_READ_U8(ptr) (*(ptr))
 #define LP_PROGMEM
 #endif
-// Signed 16x16 -> 32 using four native 8x8 products.
-// Avoids repeated 32-bit software multiplier calls in the 8kHz sample loop.
-// Sum is modulo 2^32, matching two's complement signed product.
-static inline int32_t mul16x16(int16_t x,int16_t y){
-    const uint8_t xl=(uint8_t)x,yl=(uint8_t)y;
-    const int8_t xh=(int8_t)(((uint16_t)x)>>8),yh=(int8_t)(((uint16_t)y)>>8);
-    const uint16_t ll=(uint16_t)xl*yl;
-    const int16_t hl=(int16_t)xh*yl,lh=(int16_t)yh*xl;
-    const int16_t hh=(int16_t)xh*yh;
-    const uint32_t z=(uint32_t)ll+((uint32_t)(int32_t)hl<<8)+
-       ((uint32_t)(int32_t)lh<<8)+((uint32_t)(int32_t)hh<<16);
-    return (int32_t)z;
+// Preserve signed division's truncation toward zero without AVR libgcc's
+// generic 32-bit divide at -Os. All callers use constant powers of two.
+static inline __attribute__((always_inline)) int32_t truncShift(int32_t v,uint8_t bits){
+    return (v+(v<0?((1L<<bits)-1):0))>>bits;
 }
 
 static const int16_t LP_PROGMEM cosineQ13[257]={
@@ -44,7 +37,7 @@ static const uint16_t LP_PROGMEM stepQ14[256]={
 
 Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),cursor_(0),sampleCount_(0),position_(0),
  sampleRate_(0),preQ14_(0),brightQ14_(0),prevDeemph_(0),prevBright_(0),
- framePos_(0),blockPos_(0),subPos_(0),subIndex_(0),mode_(0),blockScale_(0),
+ framePos_(0),blockPos_(0),subPos_(0),subIndex_(0),quantLimit_(0),mode_(0),blockScale_(0),
  bitBuffer_(0),bitsLeft_(0),riceK_(0),subType_(0),lag_(0),gain_(0),ringCursor_(0),
 #if LPX4_ALLOW_SPARSE
  pulseCount_(0),pulseIndex_(0),
@@ -78,7 +71,7 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
  data_=input;bytes_=size;cursor_=0;error_=NONE;initializedFrame_=false;
  position_=0;framePos_=blockPos_=subPos_=subIndex_=0;
  bitBuffer_=bitsLeft_=mode_=blockScale_=riceK_=0;
- subType_=lag_=gain_=ringCursor_=0;
+ subType_=lag_=gain_=ringCursor_=quantLimit_=0;
 #if LPX4_ALLOW_SPARSE
  pulseCount_=pulseIndex_=0;
 #endif
@@ -159,6 +152,7 @@ bool Lpx4HybridCore::readFrame(){
 bool Lpx4HybridCore::readBlock(){
  mode_=readBits(3); // source bit depth, 0 or 2..6
  if(mode_!=0 && (mode_<2 || mode_>6)){error_=CORRUPT_STREAM;return false;}
+ quantLimit_=mode_?(1u<<(mode_-1)):0;
  uint8_t q=0;
  while(q<6 && !readOne()){
   if(error_){error_=CORRUPT_STREAM;return false;}++q;
@@ -209,10 +203,10 @@ bool Lpx4HybridCore::readSubframe(){
  return !error_;
 }
 int16_t Lpx4HybridCore::pitchPredict() const{
- const int16_t x=ringQ_[(uint8_t)(ringCursor_-lag_)];
- int16_t v=(int16_t)(((int16_t)gain_*x+8)>>4);
+ const int8_t x=ringQ_[(uint8_t)(ringCursor_-lag_)];
+ int16_t v=(int16_t)(((int8_t)gain_*x+8)>>4);
  if(!mode_)return 0;
- const int16_t lim=(int16_t)(1u<<(mode_-1));
+ const int16_t lim=quantLimit_;
  if(v < -lim)v=-lim;
  if(v >= lim)v=lim-1;
  return v;
@@ -236,7 +230,7 @@ bool Lpx4HybridCore::decodeCode(int8_t& q){
      }
      const uint16_t z=(uint16_t)((high<<riceK_)|readBits(riceK_));
      decoded=(z&1)?-(int16_t)((z+1)>>1):(int16_t)(z>>1);
-   }else decoded=(int16_t)readBits(mode_)-(int16_t)(1u<<(mode_-1));
+   }else decoded=(int16_t)readBits(mode_)-(int16_t)quantLimit_;
  }else{
    decoded=pitchPredict();
    int16_t d=0;
@@ -252,7 +246,7 @@ bool Lpx4HybridCore::decodeCode(int8_t& q){
      }
    }
 #if LPX4_ALLOW_SPARSE
-   else if(pulseIndex_<pulseCount_ && pulsePos_[pulseIndex_]==(blockPos_%40)){
+   else if(pulseIndex_<pulseCount_ && pulsePos_[pulseIndex_]==(blockPos_<40?blockPos_:blockPos_-40)){
        d=pulseAmp_[pulseIndex_++];
    }
 #endif
@@ -260,7 +254,7 @@ bool Lpx4HybridCore::decodeCode(int8_t& q){
    if(subType_==2){
      if(!mode_)decoded=0;
      else{
-       const int16_t lim=(int16_t)(1u<<(mode_-1));
+       const int16_t lim=quantLimit_;
        if(decoded < -lim)decoded=-lim;
        if(decoded >= lim)decoded=lim-1;
      }
@@ -268,7 +262,7 @@ bool Lpx4HybridCore::decodeCode(int8_t& q){
  }
  if(error_)return false;
  if(mode_){
-   const int16_t lim=(int16_t)(1u<<(mode_-1));
+   const int16_t lim=quantLimit_;
    if(decoded < -lim || decoded >= lim){error_=CORRUPT_STREAM;return false;}
  }else if(decoded){error_=CORRUPT_STREAM;return false;}
  q=(int8_t)decoded;
@@ -280,9 +274,9 @@ void Lpx4HybridCore::interpolate(uint8_t sub){interpolateLsf(sub);}
 // Normal spectra take the single-multiply fast path; split product only if
 // absolute polynomial coefficient would overflow signed int32 when *8192.
 static inline int32_t polyMulQ12(int32_t v,int16_t c){
-    if(v<=250000L && v>=-250000L)return (v*c)>>12;
-    const int32_t hi=v/16, rem=v-hi*16;
-    return ((hi*c)>>8)+((rem*c)>>12);
+    if(v<=250000L && v>=-250000L)return lpx4Shift12(v*c);
+    const int32_t hi=truncShift(v,4), rem=v-hi*16;
+    return ((hi*c)>>8)+lpx4Shift12(rem*c);
 }
 // LSF->LPC polynomial. Independent Q12 multiplication (no floats/trig in AVR).
 void Lpx4HybridCore::polyFactor(int32_t* p,int16_t c,uint8_t n){
@@ -329,7 +323,7 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,int16_t* out){
         polyFactor(polyQ_,cc[1],n);
         n+=2;
     }
-    for(uint8_t i=0;i<10;i++)out[i]=clamp((polyP_[i+1]+polyQ_[i+1])/2,-32767,32767);
+    for(uint8_t i=0;i<10;i++)out[i]=clamp(truncShift(polyP_[i+1]+polyQ_[i+1],1),-32767,32767);
 }
 #endif
 void Lpx4HybridCore::interpolateLsf(uint8_t sub){
@@ -355,7 +349,7 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
     const uint8_t localT=(uint8_t)(t%width);
     for(uint8_t i=0;i<10;i++){
         const int32_t d=(int32_t)curLpc_[i]-prevLpc_[i];
-        a_[i]=clamp((int32_t)prevLpc_[i]+d*localT/width,-32767,32767);
+        a_[i]=clamp((int32_t)prevLpc_[i]+truncShift(d*localT,LPX3_LPC_SEGMENTS==1?4:LPX3_LPC_SEGMENTS==2?3:2),-32767,32767);
     }
     return;
 #else
@@ -384,14 +378,13 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
         n+=2;
     }
     for(uint8_t i=0;i<10;i++){
-        a_[i]=clamp((polyP_[i+1]+polyQ_[i+1])/2,-32767,32767);
+        a_[i]=clamp(truncShift(polyP_[i+1]+polyQ_[i+1],1),-32767,32767);
     }
 #endif
 }
 
-// On a normal AVR firmware compile the existing 8-bit path exactly as before.
-// The 16-bit research path is enabled by host compilation, or optionally by
-// -DLPX4_ENABLE_PCM16 on the AVR. No extra call or helper in standard AVR mode.
+// AVR PWM firmware uses the direct sample path. The optional signed-output
+// interface shares the same arithmetic, selected independently of memory I/O.
 #if defined(__AVR__) && !defined(LPX4_ENABLE_PCM16)
 bool Lpx4HybridCore::next(uint8_t& pcm){
 #else
@@ -400,7 +393,7 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
     if(error_||position_>=sampleCount_)return false;
     if(framePos_==0&&!readFrame())return false;
     if(blockPos_==0&&!readBlock())return false;
-    if(blockPos_%40==0 && !readSubframe())return false;
+    if((blockPos_==0 || blockPos_==40) && !readSubframe())return false;
     if(subPos_==0){
         interpolate(subIndex_);
 #ifdef LPX3_BANDWIDTH_EXPAND_Q14
@@ -417,15 +410,15 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
     lastQ_=q;
 #endif
     const uint16_t step=LP_READ_U16(&stepQ14[blockScale_]);
-    int32_t excitation=(int32_t)q*step, acc=0;
-    for(uint8_t i=0;i<10;i++)acc+=(mul16x16(a_[i],hist_[i]))>>12;
+    // The retained scale table is 0..4016, hence signed 16-bit multiplication
+    // is exact here even though the Flash table's storage type is uint16_t.
+    int32_t excitation=lpx4Mul16(q,(int16_t)step), acc=lpx4DotQ12(a_,hist_);
     int16_t pred=clamp(excitation-acc,-32767,32767);
-    for(uint8_t i=9;i>0;i--)hist_[i]=hist_[i-1];
     hist_[0]=pred;
-    int16_t deemph=clamp((int32_t)pred+((mul16x16((int16_t)preQ14_,prevDeemph_))>>14),-32767,32767);
+    int16_t deemph=preQ14_?clamp((int32_t)pred+lpx4MulQ14((int16_t)preQ14_,prevDeemph_),-32767,32767):pred;
     prevDeemph_=deemph;
     int16_t clipped=clamp(deemph,-16384,16384);
-    int16_t b=clamp((int32_t)clipped-((mul16x16((int16_t)brightQ14_,prevBright_))>>14),-16384,16384);
+    int16_t b=brightQ14_?clamp((int32_t)clipped-lpx4MulQ14((int16_t)brightQ14_,prevBright_),-16384,16384):clipped;
     prevBright_=clipped;
     // Preserve the signed post-deemphasis/post-brightness output BEFORE PWM.
     // This is the exact integer sample used by both optional 16-bit output
@@ -434,7 +427,7 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
     // Original PWM transfer function for the existing ATmega328P firmware.
 #if LPX4_PWM_ROUND
     const int32_t scaled=(int32_t)b*LPX4_PWM_GAIN+8192;
-    int16_t duty=(int16_t)(128+(scaled>>14));
+    int16_t duty=(int16_t)(128+lpx4Shift14(scaled));
 #else
     int16_t duty=(int16_t)(128+((int32_t)b*LPX4_PWM_GAIN)/16384);
 #endif
@@ -456,7 +449,7 @@ bool Lpx4HybridCore::next(uint8_t& pcm){
     if(!nextCore(b))return false;
 #if LPX4_PWM_ROUND
     const int32_t scaled=(int32_t)b*LPX4_PWM_GAIN+8192;
-    const int16_t duty=(int16_t)(128+(scaled>>14));
+    const int16_t duty=(int16_t)(128+lpx4Shift14(scaled));
 #else
     const int16_t duty=(int16_t)(128+((int32_t)b*LPX4_PWM_GAIN)/16384);
 #endif

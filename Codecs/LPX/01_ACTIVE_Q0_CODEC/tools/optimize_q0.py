@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Alternating LSF/excitation/header search for existing Q0 speech streams.
 
-The frozen decoder and L4HY v2 format stay unchanged. Two to four rounds
+The Q0 waveform arithmetic and L4HY v2 format stay unchanged. Two to four rounds
 revisit coupled parameters; all accepted phases satisfy the ORIGINAL global
 SER/STOI floor and exact byte cap. A native instrumented decoder verifies
 read-bit proxies before writing output. Those counters are not CPU cycles.
@@ -29,8 +29,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def cost_probe():
-    """Compile a host-only instrumented executable, with original MCU sources."""
-    sources = [ROOT / 'src/Lpx4HybridCore.cpp', ROOT / 'src/Lpx4HybridCore.h',
+    """Compile a host-only instrumented executable from the portable C backend."""
+    sources = [ROOT / 'src/Lpx4HybridCore.cpp', ROOT / 'src/Lpx4HybridCore.h', ROOT / 'src/Lpx4Math.h',
                ROOT / 'src/cos_table.inc', ROOT / 'src/scale_table.inc', ROOT / 'tests/decode_metrics.cpp']
     compiler = shutil.which('g++')
     if compiler is None:

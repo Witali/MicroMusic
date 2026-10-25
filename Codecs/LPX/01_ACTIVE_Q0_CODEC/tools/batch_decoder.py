@@ -1,6 +1,6 @@
 """Host-only batched C++ LPX4 decoder; no changes to AVR ROM or firmware.
 
-Calls the original unmodified Lpx4HybridCore for each stream inside ONE native
+Calls the portable C Lpx4HybridCore for each stream inside ONE native
 library invocation. Keeps all PCM in RAM and eliminates fork/exec/file I/O.
 The reference subprocess decoder remains available for regression tests.
 """
@@ -120,7 +120,7 @@ class BatchDecoder:
 
 def cached_library() -> Path:
     """Content-keyed cache: compile once per C++ source revision and platform."""
-    srcs = [ROOT/'src'/'Lpx4HybridCore.cpp', ROOT/'src'/'Lpx4HybridCore.h',
+    srcs = [ROOT/'src'/'Lpx4HybridCore.cpp', ROOT/'src'/'Lpx4HybridCore.h', ROOT/'src'/'Lpx4Math.h',
             ROOT/'src'/'native_batch_decoder.cpp', ROOT/'src'/'cos_table.inc',
             ROOT/'src'/'scale_table.inc']
     h = hashlib.sha256()
