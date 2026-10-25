@@ -314,7 +314,7 @@ def main():
     assert labels['um_ring']-0x800000+buffer_bytes+48<=768,'Need 48 bytes of stack above the FIFO'
     legacy.save(scratch/'disassembly.txt',legacy.run(tools['avr-objdump'],'-d',elf))
     source_names=('engine.c','engine.h','platform.c','storage.h','clock.h','rational-clocks.h','audio-buffer.h',
-                  'render-avr.S','irq-avr.S','gain-table.inc','vendor/ATtiny_DFP/3.4.278/include/avr/iotn88.h')
+                  'render-avr.S','irq-avr.S','vendor/ATtiny_DFP/3.4.278/include/avr/iotn88.h')
     inputs=[source/name for name in source_names]+[Path(__file__),ROOT/'tools/universal-music.py']
     common=dict(engine='UM88',backend=args.backend,packingMode=packing,packingPolicy=args.packing,renderABI='packed-stereo-u32',pwmBufferBytes=buffer_bytes,
                 engineBytes=len(engine),songAddress=BASE,engineSha256=digest(engine),labels=labels,

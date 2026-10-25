@@ -14,7 +14,9 @@
 #define VIRTUAL_NUMERATOR 19200000UL
 _Static_assert(sizeof(UMVoice)==23,"UM88 AVR voice layout");
 _Static_assert(offsetof(UMState,count)==216,"UM88 AVR count offset");
-volatile uint8_t um_ring[UM_PWM_BUFFER_FRAMES] __attribute__((aligned(64),section(".noinit")));
+/* A page-local FIFO lets the optional ISR use its cursor as X low directly.
+ * The builder still checks the resulting end address and stack reserve. */
+volatile uint8_t um_ring[UM_PWM_BUFFER_FRAMES] __attribute__((aligned(256),section(".noinit")));
 volatile uint8_t um_read,um_write,um_underruns;
 volatile uint16_t um_samples;
 #if defined(UM_BOARD_MH_ET_LIVE_16MHZ) && UM_BOARD_MH_ET_LIVE_16MHZ
@@ -114,8 +116,8 @@ int main(void) {
             at+=4;if(at==UM_PWM_BUFFER_FRAMES)at=0;
         }else{
             targetR=um_output((int16_t)(mixed>>16)+drum);
-            uint8_t next=interpolate(at,channels,previousL,targetL);
-            interpolate(at+1,channels,previousR,targetR);at=next;
+            uint8_t next=interpolate(at,2,previousL,targetL);
+            interpolate(at+1,2,previousR,targetR);at=next;
         }
         um_write=at;previousL=targetL;previousR=targetR;um_samples++;
     }

@@ -69,33 +69,47 @@ um_render:
     sbrs r19,7
     rjmp .Lmix_next
     sbiw r26,3
-    ld r25,X
+    ld r21,X
     adiw r26,3
-    swap r25
-    andi r25,240
-    ldi r30,lo8(um_amplitudes)
-    ldi r31,hi8(um_amplitudes)
-    add r30,r25
-    adc r31,r1
-    movw r22,r30
     mov r24,r20
-    asr r24
-    asr r24
-    asr r24
-    subi r24,248
-    add r30,r24
-    adc r31,r1
-    lpm r24,Z
-    movw r30,r22
-    andi r20,7
-    subi r20,248
-    add r30,r20
-    adc r31,r1
-    lpm r25,Z
-    lsr r25
-    lsr r25
-    lsr r25
-    add r24,r25
+    clr r25
+    sbrc r24,7
+    com r25
+    clr r22
+    clr r23
+    sbrs r21,0
+    rjmp .Lgain_next_0
+    add r22,r24
+    adc r23,r25
+.Lgain_next_0:
+    lsl r24
+    rol r25
+    sbrs r21,1
+    rjmp .Lgain_next_1
+    add r22,r24
+    adc r23,r25
+.Lgain_next_1:
+    lsl r24
+    rol r25
+    sbrs r21,2
+    rjmp .Lgain_next_2
+    add r22,r24
+    adc r23,r25
+.Lgain_next_2:
+    lsl r24
+    rol r25
+    sbrs r21,3
+    rjmp .Lgain_next_3
+    add r22,r24
+    adc r23,r25
+.Lgain_next_3:
+    asr r23
+    ror r22
+    asr r23
+    ror r22
+    asr r23
+    ror r22
+    mov r24,r22
     clr r20
     sbrc r19,0
     asr r24
@@ -125,18 +139,22 @@ um_render:
    source r25:r24, target r23:r22, level r20, gain r18. No callee-save use. */
 .macro scale_nibble
     andi r22,15
-    sbrc r18,5
-    rjmp 1f
-    ldi r30,lo8(um_amplitudes)
-    ldi r31,hi8(um_amplitudes)
-    add r30,r20
-    adc r31,r1
-    add r30,r22
-    adc r31,r1
-    lpm r22,Z
-    rjmp 2f
-1:
     subi r22,8
+    sbrc r18,5
+    rjmp 2f
+    mov r23,r22
+    clr r22
+    sbrc r20,0
+    add r22,r23
+    lsl r23
+    sbrc r20,1
+    add r22,r23
+    lsl r23
+    sbrc r20,2
+    add r22,r23
+    lsl r23
+    sbrc r20,3
+    add r22,r23
 2:
     sbrs r18,2
     rjmp 3f
@@ -158,8 +176,6 @@ um_render:
 .type um_scale_wave,@function
 um_scale_wave:
     movw r26,r22
-    swap r20
-    andi r20,240
     ldi r19,8
 5:
     movw r30,r24

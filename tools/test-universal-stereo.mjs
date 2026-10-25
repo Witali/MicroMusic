@@ -144,7 +144,6 @@ const sources=['ATtiny88/Music/universal/engine.c','ATtiny88/Music/universal/eng
  'ATtiny88/Music/universal/platform.c','ATtiny88/Music/universal/audio-buffer.h',
  'ATtiny88/Music/universal/clock.h','ATtiny88/Music/universal/storage.h',
  'ATtiny88/Music/universal/rational-clocks.h',
- 'ATtiny88/Music/universal/gain-table.inc',
  'tools/test-universal-backends.mjs','tools/test-universal-stereo.mjs'];
 const report={schema:'micromusic-um88-backend-all-boards',version:1,
  references:{datasheet:'https://ww1.microchip.com/downloads/en/DeviceDoc/doc8008.pdf',

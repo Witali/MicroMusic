@@ -2,7 +2,11 @@
 #include "engine.h"
 #include "storage.h"
 #include <string.h>
-#include "gain-table.inc"
+#if defined(__GNUC__)
+#define UM_NOINLINE __attribute__((noinline))
+#else
+#define UM_NOINLINE
+#endif
 UMState um;
 uint16_t um_normalizer;
 int8_t um_normalizerMin;
@@ -22,6 +26,10 @@ static uint8_t packedSymbols;
    then pointers: waves, contexts, envelopes, rules, stream, alphabet, normalizer. */
 #define FIELD(offset) UM_READ(UM_SONG_ADDRESS+(offset))
 #define POINTER(offset) um_word(UM_SONG_ADDRESS+(offset))
+/* Share header binding instead of expanding a Flash word read per pointer. */
+static UM_NOINLINE void bind_pointer(uint16_t *target,uint8_t offset) {
+    *target=POINTER(offset);
+}
 static uint16_t shift9(uint16_t value,uint8_t shift) {
     switch(shift) {
     case 7:value>>=1;
@@ -38,41 +46,63 @@ static uint16_t shift9(uint16_t value,uint8_t shift) {
 static uint16_t symbol(void) {
 #if !UM_COMPACT_SCORE_ONLY
     if(!packedSymbols){
-    uint8_t first=UM_READ(um.stream++);
-    if(first<128)return first;
-    return ((uint16_t)(first&127)<<8)|UM_READ(um.stream++);
+    uint16_t stream=um.stream;
+    uint8_t first=UM_READ(stream++);
+    uint16_t value=first;
+    if(first>=128)value=((uint16_t)(first&127)<<8)|UM_READ(stream++);
+    um.stream=stream;
+    return value;
     }
 #endif
-    uint16_t code=shift9(um_word(um.stream),streamBit);
-    um.stream++;
-    if(++streamBit==8){streamBit=0;um.stream++;}
+    uint16_t stream=um.stream;
+    uint8_t bit=streamBit;
+    uint16_t code=shift9(um_word(stream),bit);
+    bit++;
+    um.stream=stream+1+(bit>>3);streamBit=bit&7;
     return code;
 }
 static uint8_t command(void) {
-    uint16_t code=um.depth?um.pending[--um.depth]:symbol();
+    uint16_t *pending=um.pending+um.depth;
+    uint16_t code=um.depth?*--pending:symbol();
     while(code>=literalCount){
 #if !UM_COMPACT_SCORE_ONLY
         if(!packedSymbols){
         uint16_t at=ruleTable+((code-256)<<2);
-        um.pending[um.depth++]=um_word(at+2);
+        *pending++=um_word(at+2);
         code=um_word(at);
         }else
 #endif
         {
             /* Each pair occupies 18 bits. Pair starts have shifts 0,2,4,6;
                the right symbol always starts in the following byte. */
-            uint16_t bit=(code-literalCount)*9;
-            uint16_t at=ruleTable+(bit>>2);
-            uint8_t shift=(bit&3)<<1;
+            uint16_t index=code-literalCount;
+            uint16_t at=ruleTable+(index<<1)+(index>>2);
+            uint8_t shift=(index&3)<<1;
             uint8_t lo=UM_READ(at),middle=UM_READ(at+1),hi=UM_READ(at+2);
-            um.pending[um.depth++]=shift9(middle|((uint16_t)hi<<8),shift+1);
+            *pending++=shift9(middle|((uint16_t)hi<<8),shift+1);
             code=shift9(lo|((uint16_t)middle<<8),shift);
         }
     }
 #if !UM_COMPACT_SCORE_ONLY
-    if(!packedSymbols)return (uint8_t)code;
+    if(!packedSymbols){um.depth=pending-um.pending;return (uint8_t)code;}
 #endif
+    um.depth=pending-um.pending;
     return UM_READ(ruleTable-literalCount+code);
+}
+/* Pure arithmetic: signed sample times a four-bit level. The intermediate
+ * fits int16_t; addition avoids undefined left shifts of negative values. */
+#if defined(__GNUC__)
+static __attribute__((always_inline)) inline
+#else
+static inline
+#endif
+int16_t um_gain_product(int8_t value,uint8_t level) {
+    int16_t term=value,product=0;
+    if(level&1)product=term;
+    term+=term;if(level&2)product+=term;
+    term+=term;if(level&4)product+=term;
+    term+=term;if(level&8)product+=term;
+    return product;
 }
 #if !defined(__AVR_ATtiny88__) || !defined(UM_ENABLE_AVR_ASM) || !UM_ENABLE_AVR_ASM
 void um_scale_wave(uint16_t source,int8_t *target,uint8_t level,uint8_t gain) {
@@ -80,7 +110,7 @@ void um_scale_wave(uint16_t source,int8_t *target,uint8_t level,uint8_t gain) {
         uint8_t packed=UM_READ(source++);
         for(uint8_t half=0;half<2;half++,packed>>=4){
             uint8_t nibble=packed&15;
-            int8_t value=(gain&32)?(int8_t)nibble-8:(int8_t)UM_VALUE(um_amplitudes,((uint16_t)level<<4)+nibble);
+            int8_t value=(gain&32)?(int8_t)nibble-8:(int8_t)(um_gain_product((int8_t)nibble-8,level));
             *target++=value>>(gain&7);
         }
     }
@@ -95,15 +125,27 @@ static void refresh(UMVoice *v) {
     if(gain&16)level>>=1;
     um_scale_wave(waveTable+bank,v->wave,level,gain);
 }
+/* Flash offsets remove repeated software multiplies on AVR25. sizeof keeps
+ * the portable layout; larger records retain ordinary pointer arithmetic. */
+static const uint8_t voice_offsets[UM_VOICES] UM_CONST={
+    (uint8_t)(0*sizeof(UMVoice)),(uint8_t)(1*sizeof(UMVoice)),
+    (uint8_t)(2*sizeof(UMVoice)),(uint8_t)(3*sizeof(UMVoice)),
+    (uint8_t)(4*sizeof(UMVoice)),(uint8_t)(5*sizeof(UMVoice)),
+    (uint8_t)(6*sizeof(UMVoice)),(uint8_t)(7*sizeof(UMVoice))};
+static UM_NOINLINE UMVoice *voice_at(uint8_t index) {
+    if((UM_VOICES-1)*sizeof(UMVoice)<=255)
+        return (UMVoice *)((uint8_t *)um.voice+UM_VALUE(voice_offsets,index));
+    return &um.voice[index];
+}
 static void read_events(void) {
     for(;;){
         uint8_t op=command(),index=op&7;
-        UMVoice *v=&um.voice[index];
+        UMVoice *v=voice_at(index);
         if(op==0){
             for(uint8_t i=0;i<um.count;i++){
                 um.voice[i].phase=0;um.voice[i].step=0;um.voice[i].level=0;
             }
-            um.stream=POINTER(16);streamBit=0;um.depth=0;um.ticks=0;um.tickPhase=0;
+            bind_pointer(&um.stream,16);streamBit=0;um.depth=0;um.ticks=0;um.tickPhase=0;
             um.drumMode=0;um.drumPhase=0;um.noiseHigh=1;
             contextDirty=255;
             continue;
@@ -112,28 +154,29 @@ static void read_events(void) {
         if(op<72){uint8_t context=command();if(v->context!=context)contextDirty|=(uint8_t)1<<index;v->context=context;}
         else if(op<80)v->step=um_word(pitchTable+((uint16_t)command()<<1));
         else if(op<88)v->phase=0;
-        else if(op<96)v->phase=um.voice[command()].phase;
+        else if(op<96)v->phase=voice_at(command())->phase;
         else if(op==96)um.drumMode=command();
         else if(op==97)um.drumPhase=command();
         else if(op==98)um.noiseHigh=command();
-        else if(op>=128){index=(op>>4)&7;uint8_t level=op&15;
-            if(um.voice[index].level!=level)levelDirty|=(uint8_t)1<<index;
-            um.voice[index].level=level;}
+        else if(op>=128){index=(op>>4)&7;v=voice_at(index);uint8_t level=op&15;
+            if(v->level!=level)levelDirty|=(uint8_t)1<<index;
+            v->level=level;}
     }
 }
 void um_init(void) {
     memset(&um,0,sizeof um);
-    um.count=FIELD(4);um_channels=FIELD(5);um.stream=POINTER(16);um.noiseHigh=1;
-    waveTable=POINTER(8);contextTable=POINTER(10);envelopeTable=POINTER(12);
-    ruleTable=POINTER(14);rowTable=POINTER(18);pitchTable=POINTER(24);
+    um.count=FIELD(4);um_channels=FIELD(5);bind_pointer(&um.stream,16);um.noiseHigh=1;
+    bind_pointer(&waveTable,8);bind_pointer(&contextTable,10);bind_pointer(&envelopeTable,12);
+    bind_pointer(&ruleTable,14);bind_pointer(&rowTable,18);bind_pointer(&pitchTable,24);
     literalCount=FIELD(23);if(!literalCount)literalCount=256;
     streamBit=0;
 #if !UM_COMPACT_SCORE_ONLY
     packedSymbols=FIELD(22);
 #endif
-    um_normalizer=POINTER(20);um_normalizerMin=FIELD(7);um_masterShift=FIELD(6);
+    bind_pointer(&um_normalizer,20);um_normalizerMin=FIELD(7);um_masterShift=FIELD(6);
     read_events();
-    for(uint8_t i=0;i<um.count;i++)refresh(&um.voice[i]);
+    UMVoice *voice=um.voice;
+    for(uint8_t left=um.count;left;left--,voice++)refresh(voice);
 }
 /* Exact pointer traversal and one transition mask per tick. Adapted from
    docs/avr-asm-cookbook/examples/um88-tick-pointer.c.inc (d7c003d).
@@ -147,7 +190,7 @@ void um_tick(void) {
     for(uint8_t remaining=um.count;remaining;remaining--,v++,bit<<=1){
         uint8_t model=UM_READ(contextTable+((uint16_t)v->context<<2));
         uint8_t row=UM_READ(envelopeTable+((uint16_t)model<<4)+v->level);
-        uint16_t at=rowTable+(uint16_t)row*3;
+        uint16_t at=rowTable+((uint16_t)row<<1)+row;
         if(um_word(at+1)&mask){
             uint8_t level=UM_READ(at);if(v->level!=level)levelDirty|=bit;v->level=level;
         }
@@ -162,16 +205,15 @@ void um_tick(void) {
 #if !defined(__AVR_ATtiny88__) || !defined(UM_ENABLE_AVR_ASM) || !UM_ENABLE_AVR_ASM
 uint32_t um_render(void) {
     int16_t l=0,r=0,group=0;
-    for(uint8_t i=0;i<um.count;i++){
-        UMVoice *v=&um.voice[i];v->phase+=v->step;
+    UMVoice *v=um.voice;
+    for(uint8_t remaining=um.count;remaining;remaining--,v++){
+        v->phase+=v->step;
         group+=v->wave[v->phase>>12];
         uint8_t mix=v->mix;
         if(mix&128){
             int16_t value;
             if(mix&32){
-                uint16_t row=(uint16_t)v->level<<4;
-                value=(int8_t)UM_VALUE(um_amplitudes,row+(group>>3)+8);
-                value+=((uint8_t)UM_VALUE(um_amplitudes,row+(group&7)+8))>>3;
+                value=um_gain_product((int8_t)group,v->level)>>3;
                 value>>=mix&1;
             }else value=group>>(mix&7);
             group=0;

@@ -1931,3 +1931,15 @@ MUL не нужно. Однако адреса `voice[i]` действитель
 частоты синтеза/PWM, разрядности фаз или уровней, пропуск нот/хвостов и
 грубое прореживание огибающих не являются точными оптимизациями. Ускорение
 принимается только при неизменном конечном PWM и расписании событий.
+
+## UM88: page-local FIFO
+
+[Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.
+
+## UM88: exact table-free gain
+
+[Exact table-free gain](um88-table-free-gain.md) records the bounded C/ASM products, floor rounding, pointer-render requirement, isolated size savings, rejected C timing regressions, and independent arithmetic plus active-IRQ admission checks.
+
+## UM88: smaller control decoding
+
+[Shared voice addresses and decoder cursors](um88-control-size.md): lossless C address/stack work, exact compact-pair offsets, portable layout fallback, and measured size/timing results.

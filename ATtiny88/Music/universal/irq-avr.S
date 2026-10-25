@@ -15,9 +15,8 @@ TIMER1_OVF_vect:
     lds r16,um_write
     cp r26,r16
     breq 1f
-    ldi r27,0
-    subi r26,lo8(-(um_ring))
-    sbci r27,hi8(-(um_ring))
+    /* platform.c guarantees a 256-byte-aligned FIFO, shorter than a page. */
+    ldi r27,hi8(um_ring)
     lds r16,um_channels
     cpi r16,2
     ld r16,X+
@@ -26,7 +25,6 @@ TIMER1_OVF_vect:
     ld r16,X+
 .Lmono_frame:
     sts _SFR_MEM_ADDR(OCR1BL),r16
-    subi r26,lo8(um_ring)
     cpi r26,UM_PWM_BUFFER_FRAMES
     brcs 3f
     ldi r26,0
