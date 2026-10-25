@@ -24,7 +24,8 @@ LAG_MIN=18; LAG_MAX=145
 def signed_from_z(z):return z>>1 if not z&1 else -((z+1)>>1)
 def clamp(x,a,b):return min(max(x,a),b)
 def calc_pred(qhistory,lag,gain,b):
-    x=int(qhistory[-lag]);y=(gain*x+8)>>4
+    # The MCU's ring is zero-initialized, including before sample 0.
+    x=int(qhistory[-lag]) if len(qhistory)>=lag else 0;y=(gain*x+8)>>4
     if b==0:return 0
     return clamp(y,-(1<<(b-1)),(1<<(b-1))-1)
 
@@ -128,6 +129,33 @@ def get_rice(r,k):
         if hi>8:raise ValueError('Rice unary overflow')
     return signed_from_z((hi<<k)|(r.get(k) if k else 0))
 
+def put_chunk(w,y,hist,b,mode):
+    """Serialize one existing v2 mode; history is decoded q, not source PCM."""
+    if mode[0]=='direct':
+        w.put(0,2);k=mode[1];w.put(k,3)
+        if k==0:
+            for x in y:
+                if b:w.put(int(x)+(1<<(b-1)),b)
+        elif k==7:
+            for x in y:
+                for bit in HUFF3[x]:w.put(int(bit),1)
+        else:put_rice(w,y,k)
+    elif mode[0]=='exact':
+        _,lag,g,k=mode
+        w.put(1,2);w.put(lag-LAG_MIN,7);w.put(g,5);w.put(k,3)
+        wh=list(hist);ds=[]
+        for x in y:
+            ds.append(int(x)-calc_pred(wh,lag,g,b));wh.append(int(x))
+        if k==7:
+            for x in ds:w.put(x&255,8)
+        else:put_rice(w,ds,k)
+    elif mode[0]=='sparse':
+        _,lag,g,pulses=mode
+        w.put(2,2);w.put(lag-LAG_MIN,7);w.put(g,5);w.put(len(pulses),4)
+        for ix,v in pulses:w.put(ix,6);w.put(mapped(v),5)
+    else:raise ValueError('Unknown chunk mode')
+
+
 def encode(doc,min_snr=float('inf'),allowed_sparse=None,fast=False,raw_slack_bits=None):
     if doc['raw'][:4]!=b'L3AV' or doc['raw'][5]!=3:raise ValueError('require 10-bit LSF LPX3 v1')
     if raw_slack_bits is not None and (raw_slack_bits<0 or int(raw_slack_bits)!=raw_slack_bits):
@@ -165,31 +193,7 @@ def encode(doc,min_snr=float('inf'),allowed_sparse=None,fast=False,raw_slack_bit
                 raw_cost=5+len(y)*b
                 if raw_slack_bits is not None and raw_cost<=numbits+raw_slack_bits:
                     numbits,mode,decoded=raw_cost,('direct',0),list(y)
-                if mode[0]=='direct':
-                    w.put(0,2);k=mode[1];w.put(k,3)
-                    if k==0:
-                        for x in y:
-                            if b:w.put(x+(1<<(b-1)),b)
-                    elif k==7:
-                        for x in y:
-                            for bit in HUFF3[x]:w.put(int(bit),1)
-                    else:put_rice(w,y,k)
-                elif mode[0]=='exact':
-                    _,lag,g,k=mode
-                    w.put(1,2);w.put(lag-LAG_MIN,7);w.put(g,5);w.put(k,3)
-                    wh=list(outQ)
-                    ds=[]
-                    for x in y:
-                        ds.append(int(x)-calc_pred(wh,lag,g,b));wh.append(int(x))
-                    if k==7:
-                        for x in ds:w.put(x&255,8)
-                    else:put_rice(w,ds,k)
-                elif mode[0]=='sparse':
-                    _,lag,g,pulses=mode
-                    w.put(2,2);w.put(lag-LAG_MIN,7);w.put(g,5);w.put(len(pulses),4)
-                    for ix,v in pulses:
-                        w.put(ix,6);w.put(mapped(v),5)
-                else:raise AssertionError(mode)
+                put_chunk(w,y,outQ,b,mode)
                 stats[mode[0]]+=1
                 original_q=np.array(y,dtype=np.int16);decoded_q=np.array(decoded,dtype=np.int16)
                 sse=int(np.sum((original_q-decoded_q)**2));power=int(np.sum(original_q**2))

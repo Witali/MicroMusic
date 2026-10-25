@@ -11,7 +11,7 @@ import json
 from pathlib import Path
 import time
 import numpy as np
-from lpx4 import BitReader, BitWriter, decode, getplane, get_rice, HUFF3_DECODE
+from lpx4 import BitReader, BitWriter, decode, getplane, get_rice, HUFF3_DECODE, put_chunk
 from rice_v4_reference import read_scale, write_scale
 from q0_model import table
 from output_paths import protect_outputs
@@ -164,15 +164,85 @@ def optimize_scales(blob, decoder=None):
         'seconds': time.perf_counter() - started}
 
 
+def optimize_excitation(blob, decoder=None, allow_sparse=True):
+    """Minimize each existing-mode subframe; retain original fields on ties."""
+    from fast_lpx4 import select_chunk_exhaustive
+    started = time.perf_counter()
+    frames, blocks, q, spans = layout(blob)
+    w = BitWriter(); history = []; cursor = 160; changes = []; counts = {}
+    before = after = 0
+    for block, span in zip(blocks, spans):
+        for start, chunk in zip(range(0,len(block['q']),40),span.chunks):
+            copy_bits(w,blob,cursor,chunk.start)
+            y = block['q'][start:start+40]
+            cost,mode,decoded = select_chunk_exhaustive(y,history,block['bits'],allow_sparse)
+            old = chunk.end-chunk.start; before += old
+            if cost < old:
+                at = w.total; put_chunk(w,y,history,block['bits'],mode)
+                if w.total-at != cost: raise AssertionError('Incorrect exact mode cost')
+                changes.append({'sample':len(history),'from':chunk.mode[0],
+                                'to':mode[0],'bits_before':old,'bits_after':cost})
+                chosen = mode[0]; after += cost
+            else:
+                copy_bits(w,blob,chunk.start,chunk.end); chosen = chunk.mode[0]; after += old
+            counts[chosen] = counts.get(chosen,0)+1
+            history.extend(y); cursor = chunk.end
+    w.aligned(); result = blob[:20]+w.get()
+    if after == before: result = blob
+    parsed_frames,parsed_blocks,parsed_q = decode(result)
+    if parsed_frames != frames or parsed_blocks != blocks or parsed_q != q:
+        raise AssertionError('Exact mode search changed parsed stream')
+    if len(result)>len(blob): raise AssertionError('Exact mode search grew stream')
+    if decoder is not None:
+        a=decoder.decode_one_s16(blob,len(q));b=decoder.decode_one_s16(result,len(q))
+        if a is None or b is None or not np.array_equal(a,b):
+            raise AssertionError('Exact mode search changed native PCM16')
+    return result, {'bytes_before':len(blob),'bytes_after':len(result),
+        'excitation_bits_before':before,'excitation_bits_after':after,
+        'mode_counts':counts,'changes':changes,'allow_new_sparse':bool(allow_sparse),
+        'input_sha256':hashlib.sha256(blob).hexdigest(),
+        'output_sha256':hashlib.sha256(result).hexdigest(),
+        'native_pcm16_verified':decoder is not None,'decoder_unchanged':True,
+        'seconds':time.perf_counter()-started}
+
+
+def optimize(blob,decoder,stage='all',allow_sparse=True,timing_gate=None):
+    """Lossless candidate sequence, with optional exact-timing rollback."""
+    if stage not in ('scale','excitation','all'): raise ValueError('Unknown lossless stage')
+    result=blob;reports=[]
+    stages = [('scale',optimize_scales)] if stage=='scale' else [('excitation',optimize_excitation)]
+    if stage=='all': stages=[('scale',optimize_scales),('excitation',optimize_excitation)]
+    for name,fn in stages:
+        candidate,report=fn(result,decoder,**({'allow_sparse':allow_sparse} if name=='excitation' else {}))
+        measured=timing_gate(candidate) if timing_gate and candidate!=result else None
+        accepted=measured is None or measured['accepted']
+        reports.append({'stage':name,'accepted':accepted,'timing':measured,**report})
+        if accepted: result=candidate
+    return result,{'bytes_before':len(blob),'bytes_after':len(result),'stages':reports,
+                  'avr_cycles_measured':bool(getattr(timing_gate,'avr_cycles_measured',False))}
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('input', type=Path); ap.add_argument('output', type=Path)
     ap.add_argument('--report', type=Path)
+    ap.add_argument('--stage',choices=('scale','excitation','all'),default='all')
+    ap.add_argument('--no-new-sparse',action='store_true')
+    ap.add_argument('--avr-bin',type=Path);ap.add_argument('--sim-runner',type=Path)
+    ap.add_argument('--sim-lib-dir',type=Path);ap.add_argument('--wsl')
+    ap.add_argument('--timing-work',type=Path)
     args = ap.parse_args()
     protect_outputs([args.input], [args.output] + ([args.report] if args.report else []))
     from batch_decoder import BatchSession
+    gate=None
+    if args.avr_bin or args.sim_runner or args.timing_work:
+        if not all((args.avr_bin,args.sim_runner,args.timing_work)):
+            ap.error('Timing gate needs --avr-bin, --sim-runner and --timing-work')
+        from avr_timing_gate import AvrTimingGate
+        gate=AvrTimingGate(args.input.read_bytes(),args.timing_work,args.avr_bin,
+                           args.sim_runner,args.sim_lib_dir,args.wsl)
     with BatchSession('batch') as decoder:
-        result, report = optimize_scales(args.input.read_bytes(), decoder)
+        result, report = optimize(args.input.read_bytes(),decoder,args.stage,not args.no_new_sparse,gate)
     args.output.parent.mkdir(parents=True, exist_ok=True); args.output.write_bytes(result)
     if args.report:
         args.report.parent.mkdir(parents=True, exist_ok=True)

@@ -9,7 +9,7 @@ import hashlib
 import json
 from pathlib import Path
 from batch_decoder import BatchSession
-from lossless_repack import optimize_scales
+from lossless_repack import optimize
 from profile_avr import run as profile
 
 
@@ -23,7 +23,7 @@ def run(inputs, output, report_path, avr_bin, runner, lib=None, wsl=None, stage=
             key = source.parent.name
             folder = output/key; folder.mkdir(exist_ok=True)
             blob = source.read_bytes()
-            candidate, search = optimize_scales(blob, decoder)
+            candidate, search = optimize(blob, decoder, stage)
             paths = [folder/'baseline.l4hy', folder/'candidate.l4hy']
             for path, data in zip(paths, (blob,candidate)): path.write_bytes(data)
             timings = []
@@ -48,5 +48,6 @@ if __name__ == '__main__':
     ap.add_argument('inputs', type=Path, nargs='+'); ap.add_argument('--output',type=Path,required=True)
     ap.add_argument('--report',type=Path,required=True); ap.add_argument('--avr-bin',type=Path,required=True)
     ap.add_argument('--sim-runner',type=Path,required=True); ap.add_argument('--sim-lib-dir',type=Path)
-    ap.add_argument('--wsl'); args=ap.parse_args()
-    run(args.inputs,args.output,args.report,args.avr_bin,args.sim_runner,args.sim_lib_dir,args.wsl)
+    ap.add_argument('--wsl');ap.add_argument('--stage',choices=('scale','excitation','all'),default='all')
+    args=ap.parse_args()
+    run(args.inputs,args.output,args.report,args.avr_bin,args.sim_runner,args.sim_lib_dir,args.wsl,args.stage)
