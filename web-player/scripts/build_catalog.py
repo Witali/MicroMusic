@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[2]
 MUSIC = ROOT / 'ATtiny13A' / 'Music'
 OUTPUT = ROOT / 'web-player' / 'firmware.json'
 TINY88_OUTPUT = ROOT / 'web-player' / 'firmware-attiny88.json'
+TINY88_BOARD_OUTPUT = ROOT / 'web-player' / 'firmware-attiny88-16mhz.json'
 SPECS = [
     ('rhythmic', '01', 'Люмьер · Экспедиция 33', 'Все 3:42 сохранённой аранжировки. Скрипка, трёхголосное пианино, отдельная гитара и ударные: пять тональных генераторов и один ударный. Добавлены внутренние тоны аккордов; F# отличается от F#m.', 'variants/rhythmic', 'release'),
     ('alicia', '02', 'Алисия · Экспедиция 33', 'Все 169 нот мелодии и 55 тактов, 2:38. Восстановлено повторное двухтоновое арпеджио пианино: 488 атак сопровождения вместе с виолончелью и внутренней скрипкой. Исходные размеры, триоли и 78/58/87 BPM сохранены; третий тон аккордов опущен. Четыре основных и два резервных голоса.', 'variants/alicia', 'release'),
@@ -208,13 +209,79 @@ def build_attiny88():
                                      hardwareReview='../ATtiny88/Music/HARDWARE_REVIEW_RU.md'))
 
 
+def build_attiny88_micronucleus():
+    """USB-only board images: all musical data and timbres reside in Flash."""
+    catalog = build_attiny88()
+    entries = []
+    for previous in catalog['entries']:
+        name = Path(previous['source']).parent.name
+        directory = ROOT / 'ATtiny88/Music/variants-micronucleus' / name
+        report = json.loads((directory / 'build-report.json').read_text(encoding='utf-8'))
+        verification = json.loads((directory / 'verification.json').read_text(encoding='utf-8'))
+        flash = (directory / 'synth.hex').read_text(encoding='utf-8')
+        binary = decode(flash, 6012)
+        bank = (directory / 'wave-bank.bin').read_bytes()
+        assert binary == (directory / 'synth.bin').read_bytes()
+        assert report['target'] == verification['target'] == 'ATtiny88'
+        assert report['board'] == verification['board'] == 'mh-et-live-16mhz'
+        assert report['sourceVariant'] == verification['variant'] == name
+        assert report['cpuHz'] == 16000000 and report['pwmHz'] == 62500 and report['synthesisHz'] == 31250
+        assert report['flashBytes'] == len(binary) <= report['applicationFlashLimit'] == 6012
+        assert report['eepromBytes'] == 0 and report['eepromSha256'] is None
+        assert report['requiredFuses'] is None
+        assert report['flashSha256'] == verification['port']['flashSha256'] == digest(binary)
+        storage = report['wavetableStorage']
+        assert storage['space'] == 'flash' and storage['bytes'] == len(bank) == 64
+        assert storage['address'] % 256 == 0
+        assert binary[storage['address']:storage['address'] + 64] == bank
+        assert storage['sha256'] == digest(bank)
+        for source_name, source_hash in report['sourceInputs'].items():
+            assert digest((ROOT / source_name).read_bytes()) == source_hash, f'Stale board input: {source_name}'
+        assert report['musicalDataVerified'] is True
+        assert verification['allMusicalStatesMatch'] and verification['allMusicalCommandsMatch']
+        assert verification['tables']['allOtherMusicTableBytesIdentical']
+        assert verification['tables']['allWavetablesIdentical']
+        for field in ('controlTicks', 'firstRestartControlTick', 'snapshotSha256', 'commandSha256'):
+            assert verification['original'][field] == verification['port'][field], f'{name}: {field}'
+        for field in ('fifoUnderruns', 'lostTimerEvents', 'lostWorkEvents'):
+            assert verification['port'][field] == 0, f'{name}: {field}'
+        assert verification['port']['eepromSha256'] is None
+        assert report['sourceFlashSha256'] == verification['original']['flashSha256']
+        assert report['sourceEepromSha256'] == verification['original']['eepromSha256']
+        relative = directory.relative_to(ROOT).as_posix()
+        outputs = [dict(channel=output['channel'], pin=output['pin'], compare=output['compare'],
+                        register=output['register'], boardPin='D9' if output['channel'] == 'L' else 'D10')
+                   for output in previous['outputs']]
+        entry = dict(previous, board='mh-et-live-16mhz', uploadProtocol='micronucleus',
+                     applicationFlashLimit=6012, cpuHz=16000000, pwmHz=62500, sampleHz=62500, synthesisHz=31250,
+                     flashBytes=len(binary), flashHex=flash, flashSha256=digest(binary),
+                     eepromBytes=0, eepromHex=None, eepromSha256=None, eepromSource=None,
+                     wavetableStorage=storage, outputs=outputs,
+                     source=f'../{relative}/synth.hex', sourceAssembly=f'../{relative}/synth.S',
+                     buildReport=f'../{relative}/build-report.json', verificationSource=f'../{relative}/verification.json',
+                     sources=[f'{relative}/{file}' for file in ('synth.hex', 'synth.bin', 'wave-bank.bin')])
+        entries.append(entry)
+    profile = dict(catalog['hardwareProfile'], name='MH-ET LIVE Tiny88', board='mh-et-live-16mhz',
+                   cpuHz=16000000, pwmHz=62500, synthesisHz=31250, applicationFlashLimit=6012,
+                   oscillator='external', bootloader='Micronucleus', uploadProtocol='micronucleus',
+                   requiredFuses=None, eepromRequired=False, readme='../ATtiny88/Music/MH_ET_LIVE_RU.md',
+                   outputs=dict(mono=dict(pin='PB2/OC1B', boardPin='D10'),
+                                stereoLeft=dict(pin='PB1/OC1A', boardPin='D9'),
+                                stereoRight=dict(pin='PB2/OC1B', boardPin='D10')))
+    return dict(catalog, board='mh-et-live-16mhz', entries=entries, hardwareProfile=profile)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--target', choices=('attiny13a', 'attiny88'), default='attiny13a')
+    parser.add_argument('--board', choices=('bare-8mhz', 'mh-et-live-16mhz'), default='bare-8mhz')
     parser.add_argument('--check', action='store_true')
     args = parser.parse_args()
-    catalog = build_attiny88() if args.target == 'attiny88' else build()
-    output = TINY88_OUTPUT if args.target == 'attiny88' else OUTPUT
+    if args.board != 'bare-8mhz' and args.target != 'attiny88':
+        parser.error('--board mh-et-live-16mhz requires --target attiny88')
+    board = args.board == 'mh-et-live-16mhz'
+    catalog = build_attiny88_micronucleus() if board else build_attiny88() if args.target == 'attiny88' else build()
+    output = TINY88_BOARD_OUTPUT if board else TINY88_OUTPUT if args.target == 'attiny88' else OUTPUT
     text = json.dumps(catalog, ensure_ascii=False, indent=2) + '\n'
     if args.check:
         assert output.read_text(encoding='utf-8') == text, f'Run build_catalog.py --target {args.target} to update catalog'
