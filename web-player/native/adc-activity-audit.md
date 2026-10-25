@@ -1,15 +1,20 @@
 # ADC recurring-service audit
 
-Next experiment after the [rejected lazy watchdog conversion](../reports/watchdog-lazy-20261025.md).
-Native production remains `953024d5087b5959814f3f577199b35c1deff20fad180e64fff56c8a81ca56c0`.
-No ADC gating implementation or performance claim yet.
+The running-idle aggregator shortcut is retained at `14da787`, following the
+[rejected lazy watchdog conversion](../reports/watchdog-lazy-20261025.md).
+Native production is `b6a678437b62fac3e6be1f90d90cc0bc76b9c71c0752c438504c2cda858643b4`.
+See [verification, timings and the synthetic regression](../reports/adc-idle-20261025.md).
+Broader ADC activity gating remains unimplemented.
 
 Separate entry traces show 4.41–4.60M `analog_adc_advance` entries per 250ms
 of the three retained physical firmware images, and 5.00–5.60M per 25ms of
 20MHz CLKI kernels. The rejected watchdog candidate leaves these counts intact.
-Counts identify recurring work; they neither establish its exclusive cost nor
-prove the ADC was disabled throughout each run. Record enabled/disabled activity
-before estimating removable work.
+The new activity split proves these entries are disabled with a running source.
+After the shortcut, music retains 37,479–37,494 module entries and the CLKI
+kernels retain 1M. A separately enabled-idle CLKI control also drops 5.60M→1M;
+the converting control retains all 5,609,415 entries. Counts do not establish
+exclusive cost or a universal gain. Clock-gated counts are zero in these
+captures; stopped-clock correctness has separate differential coverage.
 
 ## Source audit
 
@@ -42,12 +47,22 @@ as running ADC time.
 | Read/result lock | ADCL locks and ADCH unlocks result publication. Catch-up cannot publish a discarded completion or move it past a read. |
 | Reset/fault/snapshot | Reset cancels the old conversion once. Keep diagnostics and canonical observer behavior; normalize only genuinely private deferred timestamps in equivalence fixtures. |
 
-## Next safe implementation step
+## Implemented boundary and next work
 
-First add a diagnostic split for disabled/enabled-idle/converting ADC entries;
-sampled or counted code must remain separate from benchmark binaries. Then
-prototype one aggregator optimization against an unconditional reference using
-the actual ADC/comparator modules. Keep explicit first-sample27/29 profiles,
+`analog.c` now publishes only `adc.half_cycle` when the source runs, phase is
+IDLE and time is nondecreasing. It retains origin and every other field exactly.
+The original module function remains the path for converting, stopped or
+reversed-time cases; the comparator and chronological event merge remain active.
+There is no deferred timestamp, new state field or physical clock gating.
+
+The new `analog-idle-dispatch.test.mjs` compiles the actual modules with an
+unconditional reference from 238aab2 and compares all analog-state bytes, return
+values, IRQs and deadlines. All 1,693 tests and 15 integration cases pass. Longer
+music rows gain 1.028x/1.107x, while the synthetic internal 20MHz kernel is 0.942x.
+No general performance gate closes. Next profile that negative kernel and audit
+repeated publication/scanning before extending ADC dispatch reduction.
+
+For further experiments keep explicit first-sample 27/29 profiles,
 auto triggers, stopped/resumed domains, arbitrary reads/writes, reversed time,
 held source flags, ACME and equal-time sample/input ordering in the oracle.
 Prove fewer entries on real firmware and CLKI, not just in an isolated fixture.

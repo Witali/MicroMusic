@@ -492,7 +492,7 @@ No new hardware checklist item closes;21/30 remain complete.
 
 | Priority | Candidate | Evidence required before keeping it |
 | --- | --- | --- |
-| 1 | Physical ns remainder reduction is retained. Watchdog-period caching and lazy watchdog conversion are rejected. Next instrument disabled/enabled-idle/converting ADC entries and prototype one aggregator/dispatch optimization using the ADC audit; repeated event scans remain a separate candidate. Equal-rate, bounded-multiply and native-delay guards are rejected. | Preserve ADC prescaler/domain phase, comparator ACME routing, trigger/IRQ and sampled-before-input endpoints. Keep integer residues, event/pin/PCM parity, enabled-watchdog/ADC and CLKI controls. Require balanced identical-runtime timing; counts/static code alone do not prove a speedup. Repeat IRQ-active browser audio/underrun checks before default activation. |
+| 1 | Physical ns and running-idle ADC aggregator shortcuts are retained. Next profile the negative synthetic internal20MHz kernel and audit dirty register publication/repeated event scanning. Watchdog-period caching, lazy watchdog conversion, equal-rate, bounded-multiply and native-delay guards are rejected. | Preserve ADC prescaler/domain phase, canonical observer state, ACME, trigger/IRQ and sampled-before-input endpoints. Keep integer residues and event/pin/PCM parity, enabled-watchdog/ADC and CLKI controls. Require balanced identical-runtime timing; retain the documented0.942x kernel limitation and do not infer a speedup from counts. Repeat IRQ-active browser audio/underrun checks before default activation. |
 | 2 | Evaluate adaptive bounded-region instruction budgets near deadlines. Separate inter-block fusion and constant folding are rejected. | Keep full flags, clock-before-commit, external entries and original fallback. Node HQ4 gains1.448x, but browser live audio still underruns; other firmware/event-heavy gains remain unproven. Measure budget changes separately from native scheduler changes. |
 | 3 | Validate optional phase-local liveness for default activation when stable performance measurements are available. | The full-context path remains an oracle. Size/parity are established; do not treat noisy median gains as speed evidence. Keep partial execution, reset/faults, SPM and IRQ effects exactly once. |
 | 4 | Extend proven direct WASM regions only where measured coverage justifies it; evaluate region SREG liveness independently. | The bounded cyclic register-local path is implemented. Preserve all observable SREG exits, indirect/external-entry fallback, aliases and visible AVR stack state; require real-firmware gains for extensions. |
@@ -528,6 +528,25 @@ The browser gate is not rerun for this native revision; default engine stays
 [exact sources, measurements and caveats](../reports/physical-ns-remainder-20261025.md).
 The separate watchdog-period experiment below did not establish a gain.
 
+#### ADC idle dispatch checkpoint (retained with a synthetic penalty)
+
+Running, idle ADC service now publishes its timestamp directly while preserving
+origin and all other state. Converting/gated clocks retain the original path;
+comparator and physical source events are unchanged. No model state is added.
+All1693 tests and15 integrated parity cases pass; seven activity traces prove
+music ADC entries drop4.41–4.60M→about37.5K, with active conversions unchanged.
+Only analog_advance changes in optimized WASM (318→414 bytes); native grows96
+bytes to118071, with the same109 exports, no host imports and fixed two pages.
+
+The complete matrix plus longer confirmation retain672 timings/336 warmups and
+11712 exact snapshots. Longer rhythmic/HQ4 physical rows measure1.028x/1.107x;
+the synthetic internal20MHz /1 row remains0.942x, seven of eight pairs slower.
+Retain this workload-specific tradeoff explicitly; broader/default performance
+and browser underrun gates remain open. Native/tests:14da787; tools:befa0d7.
+See [exact evidence and controls](../reports/adc-idle-20261025.md) and the
+[updated ADC audit](adc-activity-audit.md). No hardware checklist item closes:
+21/30 complete, nine open.
+
 #### Watchdog clock checkpoint (period cache rejected; lazy sync audited)
 
 Exact period reduction passes1681 tests and15 parity cases, but four screened
@@ -546,9 +565,8 @@ Entry traces prove watchdog rational conversions disappear in all five measured
 physical cases, while ADC/scanner/publication work remains. The prototype is
 rejected and production restored; six new regression cases and the corrected
 alias/clock-aware tracer remain. See [exact evidence](../reports/watchdog-lazy-20261025.md).
-The [ADC recurring-service audit](adc-activity-audit.md) selects activity-split
-instrumentation before the next implementation. No hardware item closes:21/30
-complete, nine open.
+The [ADC recurring-service audit](adc-activity-audit.md) led to the retained
+shortcut above. No hardware item closes:21/30 complete, nine open.
 
 #### Native-delay checkpoint (rejected)
 
