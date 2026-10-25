@@ -513,6 +513,16 @@ separate from speed measurements. The rejected single-service inline hint in
 `reports/runtime-controls-20261024.md` is recorded evidence, not a pending
 production change or an implemented optimization.
 
+#### Native-delay checkpoint (rejected)
+
+Native-delay checkpoint: native-width phase subtraction passes1674 tests and
+the13-case parity matrix, but three paired timing rows1.004x/1.002x/0.993x do
+not establish speed gains. The header/runtime are restored and the independent
+fraction/product-boundary regression remains. See
+[clock-delay evidence](../reports/clock-delay-20261025.md). Next investigate
+lossless physical ps→ns remainder reduction separately; preserve NVM deadline
+conversion and all legacy/CLKI/ADC controls. No hardware checklist item closes.
+
 #### Bounded-region checkpoint (optional implementation)
 
 `boundedRegions:true` now emits cyclic register-only components of at most64
