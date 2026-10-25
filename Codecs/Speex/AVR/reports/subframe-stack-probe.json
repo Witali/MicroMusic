@@ -1,0 +1,60 @@
+{
+  "scope": "Supplemental sampled WB decoder-only SP diagnostic; no IRQ or physical-board claim",
+  "compiler": "avr-gcc.exe (GCC) 7.3.0",
+  "registerDefinitionHeaders": {
+    "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+    "common.h": "a5c449e9388f19e70eb261391673ac207dea51c9dde336b1253fa1ecf8519a89",
+    "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837"
+  },
+  "registerAddresses": {
+    "splIo": 61,
+    "sphIo": 62,
+    "splMem": 93,
+    "sphMem": 94
+  },
+  "observerSourceSha256": "7fa601bc3cf13bd2ecdffbe5b93a266a009ea466d0cf462290d68b820365ce31",
+  "rows": [
+    {
+      "state": "before",
+      "backend": "asm",
+      "binarySha256": "0a89f0bea5e833882734ee0cfb9e2cdca892a5b94015c9b28d4106c308576a42",
+      "frames": 136,
+      "rawPeakStack": 243,
+      "completedPairPeakStack": 243,
+      "completedSpPairs": 14508,
+      "noStackAccessBetweenByteWrites": true
+    },
+    {
+      "state": "before",
+      "backend": "c",
+      "binarySha256": "77db1043955a0ea85309461c21def7f4e1f51fdbc8c64180f9b57d8074f6a573",
+      "frames": 136,
+      "rawPeakStack": 501,
+      "completedPairPeakStack": 277,
+      "completedSpPairs": 9622,
+      "noStackAccessBetweenByteWrites": true
+    },
+    {
+      "state": "after",
+      "backend": "asm",
+      "binarySha256": "03611e31f8ad8690064e38750615a2b3cc3ba0f800c7ce10ab17864f118995bf",
+      "frames": 136,
+      "rawPeakStack": 220,
+      "completedPairPeakStack": 220,
+      "completedSpPairs": 13859,
+      "noStackAccessBetweenByteWrites": true
+    },
+    {
+      "state": "after",
+      "backend": "c",
+      "binarySha256": "ca4a08ca94d3ba1b63bb3df43a3f703a1f0ea6d52f119a3cf3ecdc9f5fd1d366",
+      "frames": 136,
+      "rawPeakStack": 246,
+      "completedPairPeakStack": 246,
+      "completedSpPairs": 8551,
+      "noStackAccessBetweenByteWrites": true
+    }
+  ],
+  "includesInterrupts": false,
+  "physicalBoardTested": false
+}

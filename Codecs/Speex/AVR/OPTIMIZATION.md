@@ -720,24 +720,84 @@ python Codecs/Speex/AVR/tools/build_interpolate_test.py --avr-gcc avr-gcc
 node Codecs/Speex/AVR/tests/verify_interpolate.mjs
 ```
 
+## Combined validated NB subframe reader (2026-10-25)
+
+Parse a complete 33-bit group in one outlined C helper: pitch(7), gain(5),
+energy(1), then four five-bit innovation indices. The four windows begin at
+byte 3+4*sub / bit 4+sub and read exactly five bytes, ending within byte 19.
+Each constant subframe case uses byte shifts/masks rather than variable
+multiword shifts. This private map requires the existing public validation
+of a complete 20-byte mode-3 packet. Generic reader APIs and their partial/
+sticky-overflow behavior remain unchanged.
+
+Excitation's four indices occupy scratch offset 20, reused later for LPCs.
+WB reconstructs them into dead interpolated-angle storage and consumes them
+synchronously. Set the final bit cursor before excitation, releasing its
+pointer from the hot loop. No extra static RAM, arithmetic changes or ASM.
+The same reader works with both backends and the exported portable C library.
+
+24 measured variants cover variable shifts, constant cases, byte formulas,
+inline/outlined calls, scratch/stack, alias qualifiers, scope, local copies,
+32-bit value arguments and cursor lifetime. Qualifiers/scope alone produced
+identical C binaries. A four-byte local copy made the C arithmetic routines
+faster; value arguments were slower despite a smaller low-first C variant.
+The selected reader is outlined O2; O3 produced identical instructions and
+inline was slower/larger. Retain C-local arrays and direct ASM scratch access.
+
+| Full 31-stream NB corpus | Before | After |
+| --- | ---: | ---: |
+| ASM mean cycles | 109,985.618 | 109,035.092 (-0.8642%) |
+| ASM maximum cycles | 117,927 | 117,146 |
+| ASM Flash / peak stack | 10,872 / 154 B | 10,544 / 149 B |
+| C mean cycles | 221,193.812 | 220,828.306 (-0.1652%) |
+| C maximum cycles | 233,722 | 233,195 |
+| C Flash / peak stack | 11,166 / 138 B | 10,956 / 139 B |
+
+Each matched stream minimum/mean/maximum improves; no constant saving for every
+frame is claimed. Static SRAM stays 1,119 B. Both backends pass 14,278 exact
+NB frames, reset/cache cases, and fresh normal/loaded 31-stream PWM: ASM +40%,
+C +10% CPU reserve; zero underruns, minimum queues 74/34 and 66/54. Each of
+two exported C archives matches 9,100 NB and 10,563 WB frames; 23 selection
+configurations pass. The new interface passes 1,966,080 independent short-pitch
+samples per backend, every pitch/gain/scale, guards, original tap rule and ABI.
+Its controller timings now exclude index parsing; do not compare those unit
+timings directly to the old parser-inclusive controller.
+
+The reader itself passes 4,227,072 native groups (all twenty-bit index values
+and thirteen-bit headers at all four subframes). AVR independently compares
+115,712 groups per implementation, every adjacent index pair, every byte value
+at every window lane, random packets, five-byte read bounds and ABI at RET.
+WB shares the exact input mapping and retains compact-profile PCM. All timing
+and memory evidence uses ATmega328P / AVR GCC 7.3.0 / mixed Os/O2/O3 + LTO /
+AVR8js 0.21.1, not physical-board or other-CPU measurements.
+
+`reports/subframe-*` and `tests/audit_subframes.py` bind images, source snapshots,
+upstream PCM and PWM. Replay the selected decoder from db52a40 in a new directory:
+
+```sh
+python Codecs/Speex/AVR/tools/prepare_subframe_candidate.py --candidate c-copy-early --out Codecs/Speex/AVR/build/reader-replay
+python Codecs/Speex/AVR/build/reader-replay/tools/build.py --avr-gcc avr-gcc --backend asm
+python Codecs/Speex/AVR/build/reader-replay/tools/build.py --avr-gcc avr-gcc --backend c
+python Codecs/Speex/AVR/tools/build_subframe_test.py --cc clang --avr-gcc avr-gcc
+node Codecs/Speex/AVR/tests/verify_subframe.mjs
+```
+
+The selected replay reproduced both production binaries byte-identically.
+Run the previous source-bound LSP admission audit at db52a40.
+
 ## Next candidates (not yet measured/admitted)
 
 The previously listed C40 long-pitch entry shipped in commit 9813583 and is
 no longer an outstanding candidate.
 
-1. **Return grouped indices as a value.** Four explicit byte lanes in a uint32
-   return could avoid the local four-byte array. Extra live registers, shifts
-   and callee saves may erase any gain; no timing or memory claim is established.
+1. **Complete the validated NB packet map.** Directly slice the three six-bit
+   LSP codes and frame gain from bytes 0..3, retain the raw cache key, and avoid
+   the now-unused repeated-frame qlsp copy. This may remove the remaining
+   generic bit cursor and wrapper initialization. Preserve all raw LSP values,
+   full codebook coverage, invalid API rejection and cache/reset semantics.
+   No speed/memory gain is admitted until measured.
 
-2. **Parse a complete 33-bit subframe group from the validated packet.** Header
-   byte/offset are 3+4*sub / 4+sub; index byte/offset are 5+4*sub / 1+sub.
-   The groups share one byte. A combined reader might avoid duplicate loads
-   and bit-cursor work. Four temporary index bytes could use scratch after
-   the live twenty-byte qlsp, before LPC/interpolated-LSP allocation; preserve
-   checked lifetime/allocation and public length/mode rejection. No speed or
-   stack benefit is established; validate raw bounds and exact packet fields.
-
-3. **Share interpolated-LSP and new-LPC scratch by lifetime.** The compact
+2. **Share interpolated-LSP and new-LPC scratch by lifetime.** The compact
    converter appears to consume every angle before storing its LPC result.
    Inspect and test aliasing, polynomial scratch and WB callbacks before
    reusing the two twenty-byte arrays. No memory or timing gain is admitted.
