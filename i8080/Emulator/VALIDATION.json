@@ -176,7 +176,7 @@
     "node_passed": 31,
     "node_failed": 0
   },
-  "current_validation": "owl_direct_voice_validation",
+  "current_validation": "voice_peak_normalization",
   "voice32_validation": {
     "date": "2026-10-25",
     "engine_commit": "66709bc",
@@ -400,5 +400,35 @@
     "http_catalog_rom_and_standalone_verified": true,
     "hardware_tested": false,
     "active_interrupts_supported": false
+  },
+  "voice_peak_normalization": {
+    "date": "2026-10-25",
+    "method": "Affine source peak normalization to 0..15, regenerated from both original recordings; no source clipping, no dynamic compression",
+    "profiles": {
+      "voice32": {
+        "sha256": "f3a25740bd6fa29f980f5cbf9d9d8b8ebb4970d0ccfc9b12ae3e7aef64a36344",
+        "original_sha256": "a47154ee2060b9166d6b44dfcc92a78466006f5e7430138407bcc24fc8859392",
+        "minimum_level": 0,
+        "maximum_level": 15,
+        "clipped_source_samples": 0,
+        "silence_level": 7,
+        "quantization_snr_db": 13.669558696883875,
+        "source": "i8080\\Sound\\voice32\\SOURCE.json"
+      },
+      "owl32": {
+        "sha256": "6355ff0b25a76f0ffc6c2bc5a3afd1ef6ecd55b42bdf31f911c5bc2a6ee9093d",
+        "original_sha256": "e0061b8416ea19fef7103bd0f2d4bc7cce2a51523ec935e544f9d5b471b0db44",
+        "minimum_level": 0,
+        "maximum_level": 15,
+        "clipped_source_samples": 0,
+        "silence_level": 7,
+        "quantization_snr_db": 14.370034263054563,
+        "source": "i8080\\Sound\\voice32\\owl\\SOURCE.json"
+      }
+    },
+    "node_tests_passed": 53,
+    "node_tests_failed": 0,
+    "browser_suite_run": false,
+    "hardware_measured": false
   }
 }

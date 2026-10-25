@@ -93,3 +93,16 @@ test('Full execution matches C for every source sample twice, unchanged diagnost
 test('Independent opcode clock: complete pulse grid, all 16 widths, 51 ROM links and 1552 level/branch cases', () => {
   execFileSync(process.execPath, [fileURLToPath(new URL('timing-check.mjs', import.meta.url)), '--check']);
 });
+
+test('Both voices normalize the original signal into all 16 levels without clipping source peaks', () => {
+  for (const prefix of ['', 'owl/']) {
+    const source = JSON.parse(read(prefix+'SOURCE.json')), pcm = JSON.parse(read(prefix+'pcm4.json'));
+    const data = Buffer.from(pcm.packed_hex, 'hex');
+    const levels = [...data].flatMap(byte => [byte & 15, byte >> 4]);
+    assert.equal(Math.min(...levels), 0); assert.equal(Math.max(...levels), 15);
+    assert.equal(source.clipped_source_samples, 0);
+    assert.ok(Math.abs(source.source_minimum*source.scale_levels_per_unit+source.zero_offset_levels) < 1e-10);
+    assert.ok(Math.abs(source.source_maximum*source.scale_levels_per_unit+source.zero_offset_levels-15) < 1e-10);
+    assert.equal(pcm.silence_level, Math.round(source.zero_offset_levels));
+  }
+});

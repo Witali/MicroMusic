@@ -8,7 +8,8 @@ const root = new URL(profile === 'owl' ? './owl/' : './', import.meta.url);
 const read = name => readFileSync(new URL(name, root));
 const name = profile === 'owl' ? 'owl-voice32' : 'dualcrc-voice32';
 const rom = read(name+'.bin'), meta = JSON.parse(read(name+'.json'));
-const pcm = Buffer.from(JSON.parse(read('pcm4.json')).packed_hex, 'hex');
+const sourcePcm = JSON.parse(read('pcm4.json'));
+const pcm = Buffer.from(sourcePcm.packed_hex, 'hex');
 const levels = Array.from({ length: pcm.length*2 }, (_, i) => (pcm[i>>1] >> (4*(i&1))) & 15);
 const target = new URL('TIMING.json', root);
 // Separate fixed instruction timing table for the emitted 8080 voice subset.
@@ -84,7 +85,8 @@ for (let phase=0;phase<4;phase++) for(let current=0;current<16;current++) {
   }
 }
 const rows=widths.map((v,q)=>({level:q,pulses:v.length,min_t:Math.min(...v),max_t:Math.max(...v),width_us:(4+4*q)/3.5,duty_percent:(4+4*q)/109*100}));
-let tail=0; for(let i=levels.length-1;i>=0&&levels[i]===8;i--)tail++;
+const silence = sourcePcm.silence_level ?? 8;
+let tail=0; for(let i=levels.length-1;i>=0&&levels[i]===silence;i--)tail++;
 const report={rom_sha256:meta.sha256,cpu_hz:3500000,output_model:'INTE at EI/DI instruction completion; no INT/WAIT/HOLD',
   timing_method:'Separate fixed 8080 opcode timing table, CPU8080 used for state/control flow',
   period_t:109,period_us:109/3.5,carrier_hz:3500000/109,pulses:pulses.length,
@@ -92,8 +94,8 @@ const report={rom_sha256:meta.sha256,cpu_hz:3500000,output_model:'INTE at EI/DI 
   duplicate_pulse_mismatches:repeatMismatch,width_step_t:4,width_step_us:4/3.5,
   duty_step_percentage_points:4/109*100,code_dnl_lsb:0,code_inl_lsb:0,
   levels:rows,segment_boundary_count:boundaries.length,segment_boundaries:boundaries,
-  exhaustive_level_transition_and_branch_cases:exhaustive,ending_level8_samples:tail,
-  ending_level8_seconds:tail*218/3500000,hardware_measured:false};
+  exhaustive_level_transition_and_branch_cases:exhaustive,ending_silence_level:silence,ending_silence_samples:tail,
+  ending_silence_seconds:tail*218/3500000,hardware_measured:false};
 if (profile === 'owl') {
   report.startup = 'direct';
   report.first_rise_t_from_reset = voiceStartT+pulses[0].rise;

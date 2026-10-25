@@ -1,5 +1,5 @@
 {
-  "rom_sha256": "570c019a7ce0fdd2897dadce67b5fa4967b339748ea39b0914648d14b4cf0d2f",
+  "rom_sha256": "f3a25740bd6fa29f980f5cbf9d9d8b8ebb4970d0ccfc9b12ae3e7aef64a36344",
   "cpu_hz": 3500000,
   "output_model": "INTE at EI/DI instruction completion; no INT/WAIT/HOLD",
   "timing_method": "Separate fixed 8080 opcode timing table, CPU8080 used for state/control flow",
@@ -21,7 +21,7 @@
   "levels": [
     {
       "level": 0,
-      "pulses": 236,
+      "pulses": 10,
       "min_t": 4,
       "max_t": 4,
       "width_us": 1.1428571428571428,
@@ -29,7 +29,7 @@
     },
     {
       "level": 1,
-      "pulses": 360,
+      "pulses": 152,
       "min_t": 8,
       "max_t": 8,
       "width_us": 2.2857142857142856,
@@ -37,7 +37,7 @@
     },
     {
       "level": 2,
-      "pulses": 706,
+      "pulses": 412,
       "min_t": 12,
       "max_t": 12,
       "width_us": 3.4285714285714284,
@@ -45,7 +45,7 @@
     },
     {
       "level": 3,
-      "pulses": 1186,
+      "pulses": 1006,
       "min_t": 16,
       "max_t": 16,
       "width_us": 4.571428571428571,
@@ -53,7 +53,7 @@
     },
     {
       "level": 4,
-      "pulses": 2168,
+      "pulses": 2170,
       "min_t": 20,
       "max_t": 20,
       "width_us": 5.714285714285714,
@@ -61,7 +61,7 @@
     },
     {
       "level": 5,
-      "pulses": 3402,
+      "pulses": 4224,
       "min_t": 24,
       "max_t": 24,
       "width_us": 6.857142857142857,
@@ -69,7 +69,7 @@
     },
     {
       "level": 6,
-      "pulses": 5142,
+      "pulses": 7986,
       "min_t": 28,
       "max_t": 28,
       "width_us": 8,
@@ -77,7 +77,7 @@
     },
     {
       "level": 7,
-      "pulses": 10682,
+      "pulses": 46348,
       "min_t": 32,
       "max_t": 32,
       "width_us": 9.142857142857142,
@@ -85,7 +85,7 @@
     },
     {
       "level": 8,
-      "pulses": 44418,
+      "pulses": 15988,
       "min_t": 36,
       "max_t": 36,
       "width_us": 10.285714285714286,
@@ -93,7 +93,7 @@
     },
     {
       "level": 9,
-      "pulses": 9910,
+      "pulses": 6088,
       "min_t": 40,
       "max_t": 40,
       "width_us": 11.428571428571429,
@@ -101,7 +101,7 @@
     },
     {
       "level": 10,
-      "pulses": 5002,
+      "pulses": 3074,
       "min_t": 44,
       "max_t": 44,
       "width_us": 12.571428571428571,
@@ -109,7 +109,7 @@
     },
     {
       "level": 11,
-      "pulses": 2872,
+      "pulses": 1772,
       "min_t": 48,
       "max_t": 48,
       "width_us": 13.714285714285714,
@@ -117,7 +117,7 @@
     },
     {
       "level": 12,
-      "pulses": 1886,
+      "pulses": 968,
       "min_t": 52,
       "max_t": 52,
       "width_us": 14.857142857142858,
@@ -125,7 +125,7 @@
     },
     {
       "level": 13,
-      "pulses": 1234,
+      "pulses": 572,
       "min_t": 56,
       "max_t": 56,
       "width_us": 16,
@@ -133,7 +133,7 @@
     },
     {
       "level": 14,
-      "pulses": 766,
+      "pulses": 174,
       "min_t": 60,
       "max_t": 60,
       "width_us": 17.142857142857142,
@@ -141,7 +141,7 @@
     },
     {
       "level": 15,
-      "pulses": 1006,
+      "pulses": 32,
       "min_t": 64,
       "max_t": 64,
       "width_us": 18.285714285714285,
@@ -356,7 +356,8 @@
     }
   ],
   "exhaustive_level_transition_and_branch_cases": 1552,
-  "ending_level8_samples": 4748,
-  "ending_level8_seconds": 0.29573257142857146,
+  "ending_silence_level": 7,
+  "ending_silence_samples": 4388,
+  "ending_silence_seconds": 0.27330971428571427,
   "hardware_measured": false
 }

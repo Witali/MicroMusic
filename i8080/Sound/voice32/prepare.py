@@ -39,9 +39,8 @@ def wav_bytes(pcm, rate):
     return out.getvalue()
 
 
-def quantize(samples, gain):
-    # Silence is exactly level 8; no random dither or DC noise in quiet tails.
-    return [max(0, min(15, math.floor(8 + value * gain * 7 + .5))) for value in samples]
+def quantize(samples, scale, offset):
+    return [max(0, min(15, math.floor(offset + value * scale + .5))) for value in samples]
 
 
 def main():
@@ -84,23 +83,23 @@ def main():
     resampler_rate = round(actual_rate)
     raw = resample(canonical, resampler_rate)
     samples = [v / 32768 for v in array.array('h', raw)]
-    # Minimize linear signal error, including both clipping and quantization.
+    # Normalize the ORIGINAL resampled signal into the entire PCM4 range.
+    # Unlike the former minimum-MSE gain search, no source peak is clipped.
     energy = sum(x*x for x in samples)
-    best = None
-    for step in range(150, 601):
-        gain = step / 100
-        levels = quantize(samples, gain)
-        error = sum((x - (q-8)/(7*gain))**2 for x, q in zip(samples, levels))
-        if best is None or error < best[0]:
-            best = (error, gain, levels)
-    error, gain, levels = best
+    minimum, maximum = min(samples), max(samples)
+    scale = 15 / (maximum-minimum)
+    offset = -minimum*scale
+    levels = quantize(samples, scale, offset)
+    assert min(levels) == 0 and max(levels) == 15
+    error = sum((x - (q-offset)/scale)**2 for x, q in zip(samples, levels))
+    silence = max(0, min(15, math.floor(offset+.5)))
     valid_samples = len(levels)
-    levels += [8] * (-len(levels) % 4)
+    levels += [silence] * (-len(levels) % 4)
     packed = bytes(levels[n] | levels[n+1] << 4 for n in range(0, len(levels), 2))
     data = {'format': 'pcm4-low-nibble-first', 'cpu_hz': CPU_HZ,
         'period_t': PERIOD_T, 'pulses_per_sample': REPEATS,
         'sample_rate_hz': actual_rate, 'valid_samples': valid_samples,
-        'sample_count': len(levels), 'packed_hex': packed.hex()}
+        'sample_count': len(levels), 'silence_level': silence, 'packed_hex': packed.hex()}
     save('pcm4.json', json.dumps(data, indent=2) + '\n')
     report = {**original, 'decoded_original_seconds': original_seconds,
         'canonical_wav': canonical.name, 'canonical_sha256': digest(canonical.read_bytes()),
@@ -109,8 +108,12 @@ def main():
         'resampler': 'libsoxr, precision=28, cheby=1, mono s16le',
         'firmware_resampler_rate_hz': resampler_rate, 'firmware_playback_rate_hz': actual_rate,
         'resampler_clock_error_ppm': (actual_rate/resampler_rate-1)*1e6,
-        'gain': gain, 'gain_search': '1.50..6.00, step 0.01, minimum unweighted squared error',
-        'quantization': 'nearest integer, silence 8, 16 linear levels, clamp 0..15',
+        'normalization': 'Affine peak normalization: source minimum -> 0, maximum -> 15; no source clipping',
+        'source_minimum': minimum, 'source_maximum': maximum,
+        'scale_levels_per_unit': scale, 'zero_offset_levels': offset,
+        'silence_level': silence, 'minimum_level': min(levels), 'maximum_level': max(levels),
+        'clipped_source_samples': 0,
+        'quantization': 'nearest integer, 16 linear levels; normalization precedes quantization',
         'quantization_snr_db': 10*math.log10(energy/error),
         'valid_samples': valid_samples, 'padding_samples': len(levels)-valid_samples,
         'packed_bytes': len(packed), 'packed_sha256': digest(packed),
@@ -119,7 +122,7 @@ def main():
         'snr_scope': 'Quantized baseband versus resampled source, excluding PWM/filter/hardware.'}
     save('SOURCE.json', json.dumps(report, ensure_ascii=False, indent=2) + '\n')
     print(f'{frames} samples at 16000 Hz; firmware {len(levels)} samples / {len(packed)} bytes; '
-          f'gain {gain:.2f}; PCM quantization SNR {report["quantization_snr_db"]:.2f} dB')
+          f'full range 0..15, no clipping; PCM quantization SNR {report["quantization_snr_db"]:.2f} dB')
 
 
 if __name__ == '__main__':
