@@ -118,5 +118,25 @@
     "standalone_build_check": true,
     "hardware_tested": false,
     "active_interrupts_supported": false
+  },
+  "selected_catalog_validation": {
+    "date": "2026-10-25",
+    "selected_ids": ["voice159", "uniform26-pwm108"],
+    "default_id": "voice159",
+    "selection": {
+      "voice": "159T retains the original tempo within +0.13% and all 16 levels with a constant speech period",
+      "music": "108T uniform PWM; UNIFORM26 has lower phase-step rounding error relative to its source than BALANCED27"
+    },
+    "node_test_groups": 31,
+    "node_passed": 31,
+    "node_failed": 0,
+    "browser": "Chromium / Codex in-app browser",
+    "builds": ["index.html", "Intel_8080_ROM_Player.html"],
+    "rom_hashes_match_in_both_builds": true,
+    "unlisted_roms_not_embedded": true,
+    "source_and_alternative_roms_retained": true,
+    "standalone_bytes": 169946,
+    "music_live_audio_excerpt_seconds_per_build": 2,
+    "browser_suite": "ALL BROWSER SMOKE TESTS PASSED"
   }
 }

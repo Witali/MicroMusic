@@ -24,7 +24,7 @@ async function suite(target) {
   await new Promise(resolve => frame.addEventListener('load', resolve, { once: true }));
   const doc = await ready(), errors = [];
     frame.contentWindow.addEventListener('error', event => errors.push(event.message));
-  await wait(() => !doc.getElementById('run').disabled && doc.querySelectorAll('[data-example]').length === 7);
+  await wait(() => !doc.getElementById('run').disabled && doc.querySelectorAll('[data-example]').length === 2);
   check(doc.getElementById('file-name').textContent.includes('159 T'), '159T tempo-preserving default');
   check(!doc.querySelector('audio'), 'no separate audio player');
   check(!doc.getElementById('download'), 'no WAV download control');
@@ -39,7 +39,7 @@ async function suite(target) {
     check(digest === entry.sha256, entry.id + ' ROM hash');
     check(doc.querySelector(`[data-example="${entry.id}"]`).getAttribute('aria-pressed') === 'true', 'selected example');
   }
-  for (const id of ['uniform26-pwm108', 'balanced27-pwm108']) {
+  for (const id of ['uniform26-pwm108']) {
     const entry = catalog.entries.find(entry => entry.id === id);
     doc.querySelector(`[data-example="${id}"]`).click();
     await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent === entry.title);
@@ -51,7 +51,7 @@ async function suite(target) {
     check(Number(doc.getElementById('edges').textContent.replace(/\D/g, '')) > 0, id + ' audible signal');
   }
   set(doc, 'seconds', '90');
-  log(`PASS ${target}: both 108T music ROMs stream two seconds through AudioWorklet with no RAM writes`);
+  log(`PASS ${target}: selected 108T music streams two seconds through AudioWorklet with no RAM writes`);
   const search = doc.getElementById('search'); search.value = '159 T'; search.dispatchEvent(new Event('input', { bubbles: true }));
   check(doc.querySelectorAll('[data-example]').length === 1, 'example search');
   doc.querySelector('[data-example="voice159"]').click();
@@ -61,14 +61,14 @@ async function suite(target) {
   check(Number(doc.getElementById('cycles').textContent.replace(/\D/g, '')) === 19814634, '159T full firmware and diagnostics');
   check(doc.getElementById('writes').textContent === '0', 'ROM-only voice');
   check(doc.getElementById('download-rom').hasAttribute('href'), 'example firmware download');
-  doc.querySelector('[data-example="voice-original"]').click();
-  await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent.includes('исходный'));
+  doc.querySelector('[data-example="uniform26-pwm108"]').click();
+  await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent === catalog.entries.find(entry => entry.id === 'uniform26-pwm108').title);
   check(doc.getElementById('cycles').textContent === '0' && doc.getElementById('elapsed').textContent === '00:00.0', 'example switch clears prior result/audio');
   if (target.includes('ROM_Player')) {
     const resources = frame.contentWindow.performance.getEntriesByType('resource');
     check(!resources.some(resource => /\.(bin|json|mjs)(\?|$)/.test(resource.name)), 'standalone examples and engines stay embedded');
   }
-  log(`PASS ${target}: seven examples and ROM hashes; 159T default → HLT; search; source switching; embedded standalone library`);
+  log(`PASS ${target}: two selected examples and ROM hashes; 159T default → HLT; search; source switching; embedded standalone library`);
   await load(doc, Uint8Array.of(0xfb, 0x00, 0xf3, 0x76), 'inte.bin'); await run(doc);
   check(!doc.querySelector('[data-example][aria-pressed="true"]'), 'upload deselects examples');
   check(doc.getElementById('cycles').textContent === '19', 'EI/NOP/DI/HLT must be 19 T');
