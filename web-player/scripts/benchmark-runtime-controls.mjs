@@ -16,6 +16,7 @@ import {controlLabels,controlSchedule,controlRatios,statistics} from './lib/runt
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const {values}=parseArgs({options:{'baseline-ref':{type:'string',default:'4f09550'},
   'change-set':{type:'string',default:'long-internal-span'},
+  'validate-only':{type:'boolean'},
   trials:{type:'string',default:'8'},warmups:{type:'string',default:'4'},
   frames:{type:'string',default:'12000'},instructions:{type:'string',default:'1000000'},
   case:{type:'string',multiple:true},out:{type:'string',default:'build/benchmarks/runtime-controls.json'}}});
@@ -39,7 +40,7 @@ for(const [kind,version] of Object.entries({old,current})){
 }
 for(const key of ['exports','flags','compilerVersion','sources'])assert.deepEqual(old.manifest[key],current.manifest[key],key);
 const changedInputs=Object.keys(current.manifest.inputs).filter(path=>old.manifest.inputs[path]!==current.manifest.inputs[path]);
-const changeSet=values['change-set'];assert.ok(['long-internal-span','service-inlining','clock-identity','clock-multiply'].includes(changeSet));
+const changeSet=values['change-set'];assert.ok(['long-internal-span','service-inlining','clock-identity','clock-multiply','clock-delay'].includes(changeSet));
 assert.deepEqual(changedInputs,changeSet==='long-internal-span'?
   ['web-player/native/peripherals/device.c','web-player/native/peripherals/device.h']:
   changeSet.startsWith('clock-')?['web-player/native/peripherals/device_clock.h']:['web-player/native/peripherals/device.c']);
@@ -115,6 +116,7 @@ const out=resolve(root,values.out);mkdirSync(dirname(out),{recursive:true});
 const support=[...hostSources,'web-player/scripts/benchmark-runtime-controls.mjs','web-player/scripts/lib/runtime-control-design.mjs',
   'web-player/tests/fixtures/attiny13a-system-firmware.mjs'];
 const report={schema:'micromusic-runtime-identical-controls-v1',createdAt:new Date().toISOString(),complete:false,
+  mode:values['validate-only']?'validation':'timing',
   git:{head:git(['rev-parse','HEAD']).toString().trim(),baseline:git(['rev-parse',baseline]).toString().trim(),status:git(['status','--short']).toString().trim()},
   host:{node:process.version,v8:process.versions.v8,flags:process.execArgv,platform:platform(),release:release(),cpu:cpus()[0]?.model},
   parameters:{trials,warmups,frames,instructions,rate,block,schedule,changeSet},
@@ -135,6 +137,13 @@ for(const item of selected){
   const row={id:item.id,options:item.options,frames:item.frames,instructions:item.instructions,channels:item.channels,
     flashSha256:sha(item.binary),translationSha256:item.translationSha256,translationBytes:item.generated.bytes.length,warmups:[],runs:[]};
   let reference;
+  if(values['validate-only']){
+    for(const [position,label]of ['oldA','newA'].entries()){
+      const result=execute(construct(item,variants.find(v=>v.id===label)),item);
+      if(reference)same(result,reference);else reference=result;
+      row.runs.push({trial:0,position,variant:label,...result.record});
+    }
+  }else{
   for(let pass=0;pass<warmups;pass++)for(const [position,label] of schedule[pass].entries()){
     const result=execute(construct(item,variants.find(v=>v.id===label)),item);
     if(reference)same(result,reference);else reference=result;
@@ -146,10 +155,11 @@ for(const item of selected){
   }
   row.summary={...Object.fromEntries(controlLabels.map(id=>[id,statistics(row.runs.filter(run=>run.variant===id).map(run=>run.ms))])),
     ratios:controlRatios(row.runs,trials)};
+  }
   row.validation={exactWarmupAndTimedState:true,exactPcmAndPins:true,sameRuntimeModuleInsidePairs:true,identicalCPUBytesAndABI:true,
     freshCPUmodulePerConstruction:true,checkpointsCompared:(row.warmups.length+row.runs.length-1)*reference.snapshots.length};
   report.results.push(row);report.complete=report.results.length===selected.length;writeFileSync(out,stringify(report));
 }
-console.table(report.results.map(row=>({case:row.id,oldIdentity:row.summary.ratios.oldIdentity.median.toFixed(3),
+if(!values['validate-only'])console.table(report.results.map(row=>({case:row.id,oldIdentity:row.summary.ratios.oldIdentity.median.toFixed(3),
   newIdentity:row.summary.ratios.newIdentity.median.toFixed(3),crossVersion:row.summary.ratios.crossVersion.median.toFixed(3)})));
 console.log('Exact controls passed: '+out);
