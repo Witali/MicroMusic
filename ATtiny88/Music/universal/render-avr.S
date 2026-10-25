@@ -1,6 +1,8 @@
 /* UM88 AVR25 kernel. Equivalent selectable C in engine.c, no hardware I/O. */
 #if defined(__AVR_ATtiny88__) && defined(UM_ENABLE_AVR_ASM) && UM_ENABLE_AVR_ASM
 .text
+/* GNU uint32_t result: signed left in r23:r22, right in r25:r24.
+   Both pans are live even for mono so one kernel serves every composition. */
 .global um_render
 .type um_render,@function
 um_render:
@@ -13,9 +15,6 @@ um_render:
     clr r16
     clr r17
     clr r20
-    clr r21
-    clr r22
-    clr r23
     ldi r26,lo8(um)
     ldi r27,hi8(um)
     lds r18,um+216
@@ -38,14 +37,37 @@ um_render:
     ld r24,Z
     adiw r26,18
     ld r19,X+
+    cpi r19,128
+    brne .Lmix_general
+.Lmix_accumulate:
+    clr r25
+    sbrc r24,7
+    com r25
+    add r14,r24
+    adc r15,r25
+    add r16,r24
+    adc r17,r25
+.Lmix_next:
+    dec r18
+    breq 9f
+    rjmp 1b
+9:
+    movw r22,r14
+    movw r24,r16
+    pop r17
+    pop r16
+    pop r15
+    pop r14
+    ret
+.Lmix_general:
     sbrs r19,7
-    rjmp 8f
+    rjmp .Lmix_group
     sbrs r19,5
-    rjmp 7f
-8:
+    rjmp .Lmix_pan
+.Lmix_group:
     add r20,r24
     sbrs r19,7
-    rjmp 4f
+    rjmp .Lmix_next
     sbiw r26,3
     ld r25,X
     adiw r26,3
@@ -77,36 +99,81 @@ um_render:
     clr r20
     sbrc r19,0
     asr r24
-7:
+.Lmix_pan:
     clr r25
     sbrc r24,7
     com r25
     movw r22,r24
     sbrs r19,3
-    rjmp 5f
+    rjmp .Lleft_ready
     asr r23
     ror r22
-5:
+.Lleft_ready:
     add r14,r22
     adc r15,r23
     sbrs r19,4
-    rjmp 6f
+    rjmp .Lright_ready
     asr r25
     ror r24
-6:
+.Lright_ready:
     add r16,r24
     adc r17,r25
-4:
-    dec r18
-    breq 9f
-    rjmp 1b
-9:
-    movw r22,r14
-    movw r24,r16
-    pop r17
-    pop r16
-    pop r15
-    pop r14
-    ret
+    rjmp .Lmix_next
 .size um_render,.-um_render
+
+/* Cache one packed wave, preserving the C shift/rounding exactly. GNU ABI:
+   source r25:r24, target r23:r22, level r20, gain r18. No callee-save use. */
+.macro scale_nibble
+    andi r22,15
+    sbrc r18,5
+    rjmp 1f
+    ldi r30,lo8(um_amplitudes)
+    ldi r31,hi8(um_amplitudes)
+    add r30,r20
+    adc r31,r1
+    add r30,r22
+    adc r31,r1
+    lpm r22,Z
+    rjmp 2f
+1:
+    subi r22,8
+2:
+    sbrs r18,2
+    rjmp 3f
+    asr r22
+    asr r22
+    asr r22
+    asr r22
+3:
+    sbrs r18,1
+    rjmp 4f
+    asr r22
+    asr r22
+4:
+    sbrc r18,0
+    asr r22
+    st X+,r22
+.endm
+.global um_scale_wave
+.type um_scale_wave,@function
+um_scale_wave:
+    movw r26,r22
+    swap r20
+    andi r20,240
+    ldi r19,8
+5:
+    movw r30,r24
+    lpm r21,Z+
+    movw r24,r30
+    mov r22,r21
+    scale_nibble
+    swap r21
+    mov r22,r21
+    scale_nibble
+    dec r19
+    breq 6f
+    rjmp 5b
+6:
+    ret
+.size um_scale_wave,.-um_scale_wave
 #endif

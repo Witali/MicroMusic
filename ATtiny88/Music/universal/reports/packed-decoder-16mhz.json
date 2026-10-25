@@ -1,0 +1,138 @@
+{
+  "method": "Actual AVR C command() routines from isolated C/ASM engine builds; serialized fields generated in Python and checked byte for byte. Clock/IRQ admission is a separate full firmware audit.",
+  "cpuHz": 16000000,
+  "sourceCodecSha256": "3e784ddd16b6a340d20674d93d930e98d5b138cd7b5cec48491ac10b2dc2ce54",
+  "exactDecodedBytes": true,
+  "all512Codes": true,
+  "all256Terminals": true,
+  "maximumGrammarDepth": 12,
+  "allStackSentinelsPreserved": true,
+  "results": [
+    {
+      "backend": "c",
+      "fixture": "alphabet-256",
+      "decodedBytes": 256,
+      "maxPending": 0,
+      "maxCommandCycles": 158,
+      "minSP": 753,
+      "engineSha256": "df349987ffba79a269bf9e35f60a36704691656d0f712b8d768eadbf414b38c3"
+    },
+    {
+      "backend": "c",
+      "fixture": "alphabet-31",
+      "decodedBytes": 31,
+      "maxPending": 3,
+      "maxCommandCycles": 586,
+      "minSP": 753,
+      "engineSha256": "df349987ffba79a269bf9e35f60a36704691656d0f712b8d768eadbf414b38c3"
+    },
+    {
+      "backend": "c",
+      "fixture": "alphabet-1",
+      "decodedBytes": 1,
+      "maxPending": 0,
+      "maxCommandCycles": 134,
+      "minSP": 753,
+      "engineSha256": "df349987ffba79a269bf9e35f60a36704691656d0f712b8d768eadbf414b38c3"
+    },
+    {
+      "backend": "c",
+      "fixture": "alphabet-768",
+      "decodedBytes": 768,
+      "maxPending": 8,
+      "maxCommandCycles": 1375,
+      "minSP": 753,
+      "engineSha256": "df349987ffba79a269bf9e35f60a36704691656d0f712b8d768eadbf414b38c3"
+    },
+    {
+      "backend": "c",
+      "fixture": "random-byte-boundaries",
+      "decodedBytes": 1024,
+      "maxPending": 0,
+      "maxCommandCycles": 158,
+      "minSP": 753,
+      "engineSha256": "df349987ffba79a269bf9e35f60a36704691656d0f712b8d768eadbf414b38c3"
+    },
+    {
+      "backend": "c",
+      "fixture": "code-511-and-256-terminals",
+      "decodedBytes": 264,
+      "maxPending": 1,
+      "maxCommandCycles": 325,
+      "minSP": 753,
+      "engineSha256": "df349987ffba79a269bf9e35f60a36704691656d0f712b8d768eadbf414b38c3"
+    },
+    {
+      "backend": "c",
+      "fixture": "maximum-depth-12",
+      "decodedBytes": 4096,
+      "maxPending": 12,
+      "maxCommandCycles": 2123,
+      "minSP": 753,
+      "engineSha256": "df349987ffba79a269bf9e35f60a36704691656d0f712b8d768eadbf414b38c3"
+    },
+    {
+      "backend": "avr-asm",
+      "fixture": "alphabet-256",
+      "decodedBytes": 256,
+      "maxPending": 0,
+      "maxCommandCycles": 158,
+      "minSP": 753,
+      "engineSha256": "5cc0b6dc32bb378dc9021807c81a947c5fbfb3ea9344309ca63b94575bc1d7c5"
+    },
+    {
+      "backend": "avr-asm",
+      "fixture": "alphabet-31",
+      "decodedBytes": 31,
+      "maxPending": 3,
+      "maxCommandCycles": 586,
+      "minSP": 753,
+      "engineSha256": "5cc0b6dc32bb378dc9021807c81a947c5fbfb3ea9344309ca63b94575bc1d7c5"
+    },
+    {
+      "backend": "avr-asm",
+      "fixture": "alphabet-1",
+      "decodedBytes": 1,
+      "maxPending": 0,
+      "maxCommandCycles": 134,
+      "minSP": 753,
+      "engineSha256": "5cc0b6dc32bb378dc9021807c81a947c5fbfb3ea9344309ca63b94575bc1d7c5"
+    },
+    {
+      "backend": "avr-asm",
+      "fixture": "alphabet-768",
+      "decodedBytes": 768,
+      "maxPending": 8,
+      "maxCommandCycles": 1375,
+      "minSP": 753,
+      "engineSha256": "5cc0b6dc32bb378dc9021807c81a947c5fbfb3ea9344309ca63b94575bc1d7c5"
+    },
+    {
+      "backend": "avr-asm",
+      "fixture": "random-byte-boundaries",
+      "decodedBytes": 1024,
+      "maxPending": 0,
+      "maxCommandCycles": 158,
+      "minSP": 753,
+      "engineSha256": "5cc0b6dc32bb378dc9021807c81a947c5fbfb3ea9344309ca63b94575bc1d7c5"
+    },
+    {
+      "backend": "avr-asm",
+      "fixture": "code-511-and-256-terminals",
+      "decodedBytes": 264,
+      "maxPending": 1,
+      "maxCommandCycles": 325,
+      "minSP": 753,
+      "engineSha256": "5cc0b6dc32bb378dc9021807c81a947c5fbfb3ea9344309ca63b94575bc1d7c5"
+    },
+    {
+      "backend": "avr-asm",
+      "fixture": "maximum-depth-12",
+      "decodedBytes": 4096,
+      "maxPending": 12,
+      "maxCommandCycles": 2123,
+      "minSP": 753,
+      "engineSha256": "5cc0b6dc32bb378dc9021807c81a947c5fbfb3ea9344309ca63b94575bc1d7c5"
+    }
+  ]
+}

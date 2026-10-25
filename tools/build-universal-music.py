@@ -40,7 +40,7 @@ def context_settings(song,k):
     elif name=='cancion-del-mariachi':gain=2 if i>=3 else 1
     return bank|(8 if high else 0),gain,mix
 
-def compile_song(song,cpu_hz=8000000):
+def compile_song(song,cpu_hz=8000000,packing='compact'):
     # Learn exactly the original per-tick envelope transition, before note events.
     observations=defaultdict(lambda:defaultdict(dict))
     frames=song['frames'][:-1]  # the last frame is the first legacy restart
@@ -167,7 +167,7 @@ def compile_song(song,cpu_hz=8000000):
                   source=song['source'],importedControlFramesVerified=True)
     destination=ROOT/'ATtiny88/Music/universal/songs'/song['name']/'score.json'
     legacy.save(destination,json.dumps(document,ensure_ascii=False,indent=2)+'\n')
-    return encode_score(document,cpu_hz)
+    return encode_score(document,cpu_hz,packing)
 
 def validate_score(score):
     if score.get('schema')!='micromusic-um88-score' or score.get('version')!=1:raise ValueError('Expected UM88 score v1')
@@ -215,22 +215,12 @@ def validate_score(score):
     if score['masterShift'] not in (0,1,2,3):raise ValueError('Invalid master gain')
     if score['normalizer'] and (len(score['normalizer'])>256 or not octets(score['normalizer'])):raise ValueError('Invalid normalizer')
 
-def encode_score(score,cpu_hz):
+def encode_score(score,cpu_hz,packing='compact'):
     validate_score(score)
+    if packing not in ('compact','fast'):raise ValueError('Expected compact or fast dictionary packing')
     raw=score['commands'];contexts=score['contexts'];models=score['envelopes'];pitches=score['pitches']
-    stream,rules,depth=codec.grammar(raw)
-    encoded=[]
-    for symbol in stream:
-        if symbol<128:encoded.append(symbol)
-        else:encoded.extend((128|(symbol>>8),symbol&255))
-    decoded=[]
-    for symbol in stream:
-        pending=[symbol]
-        while pending:
-            code=pending.pop()
-            if code<256:decoded.append(code)
-            else:a,b=rules[code-256];pending.extend((b,a))
-    if decoded!=raw:raise ValueError('Grammar changed musical commands')
+    packed=codec.pack_grammar(raw) if packing=='compact' else codec.pack_fast_grammar(raw)
+    if codec.unpack_grammar(packed)!=raw:raise ValueError('Grammar changed musical commands')
     data=bytearray(b'UM88'+bytes([score['voices'],score['channels'],score['masterShift'],score['normalizerMinimum']&255])+bytes(18))
     def add(payload):
         address=BASE+len(data);data.extend(payload);return address
@@ -244,7 +234,8 @@ def encode_score(score,cpu_hz):
             model_rows.append(rows.index(row))
     if len(rows)>256:raise ValueError('More than 256 distinct envelope transitions')
     model_ptr=add(bytes(model_rows));rows_ptr=add(bytes(x for row in rows for x in row))
-    rule_ptr=add(b''.join(u16(x) for row in rules for x in row));stream_ptr=add(bytes(encoded))
+    add(bytes(packed['alphabet']))
+    rule_ptr=add(packed['ruleData']);stream_ptr=add(packed['streamData'])
     values=[]
     for pitch in pitches:
         if pitch is None:values.append(0);continue
@@ -255,18 +246,37 @@ def encode_score(score,cpu_hz):
     norm_ptr=add(bytes(score['normalizer'])) if score['normalizer'] else 0
     for offset,pointer in zip(range(8,22,2),(wave_ptr,ctx_ptr,model_ptr,rule_ptr,stream_ptr,rows_ptr,norm_ptr)):data[offset:offset+2]=u16(pointer)
     data[24:26]=u16(pitch_ptr)
+    data[22]=packed['format'];data[23]=len(packed['alphabet'])&255
     return data,dict(schema='UM88',version=1,variant=score['name'],source=score.get('source',{}),controlTicks=score['controlTicks'],
                      voices=score['voices'],channels=score['channels'],contexts=contexts,envelopeModels=models,
-                     commands=len(raw),grammarRules=len(rules),grammarDepth=depth,dataBytes=len(data),
-                     grammarBytes=len(encoded)+len(rules)*4,rawSymbolBytes=sum(1 if x<128 else 2 for x in raw),
-                     packing='minimum byte cost across three bounded Re-Pair searches and their prefixes',
+                     commands=len(raw),grammarRules=len(packed['rules']),grammarDepth=packed['depth'],dataBytes=len(data),
+                     grammarBytes=packed['grammarBytes'],grammarFormat=packed['format'],grammarAlphabetSize=len(packed['alphabet']) if packing=='compact' else 256,rawSymbolBytes=sum(1 if x<128 else 2 for x in raw),
+                     packing='bounded Re-Pair with dense nine-bit symbols' if packing=='compact' else 'bounded Re-Pair with byte-aligned sixteen-bit rule pairs',
                      decodedCommandsSha256=digest(bytes(raw)),allControlFramesVerified=score.get('importedControlFramesVerified',False))
 
 def main():
     global BASE
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--avr-bin');parser.add_argument('--no-import',action='store_true',help=argparse.SUPPRESS);parser.add_argument('--backend',choices=('c','avr-asm'),default='c');parser.add_argument('--cpu-hz',type=int);parser.add_argument('--platform-header',type=Path);parser.add_argument('--score',type=Path);parser.add_argument('--reimport',action='store_true');parser.add_argument('--output-dir',type=Path)
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--avr-bin')
+    parser.add_argument('--no-import',action='store_true',help=argparse.SUPPRESS)
+    parser.add_argument('--backend',choices=('c','avr-asm'),default='c')
+    parser.add_argument('--board',choices=tuple(legacy.BOARDS),default='bare-8mhz')
+    parser.add_argument('--cpu-hz',type=int)
+    parser.add_argument('--buffer-frames',type=int,help='Legacy name: ring byte budget, shared by mono or stereo')
+    parser.add_argument('--packing',choices=('auto','compact','fast'),default='auto',
+                        help='Lossless dictionary layout: auto selects compact at 192 ring bytes, fast for smaller rings')
+    parser.add_argument('--platform-header',type=Path)
+    parser.add_argument('--score',type=Path)
+    parser.add_argument('--reimport',action='store_true')
+    parser.add_argument('--output-dir',type=Path)
     args=parser.parse_args();tools=legacy.toolchain(args.avr_bin)
-    if args.backend=='c' and args.output_dir is None:args.output_dir=ROOT/'build/universal/c'
+    usb=args.board=='mh-et-live-16mhz'
+    flash_limit=legacy.BOARDS[args.board]['flashLimit']
+    if usb:
+        if args.cpu_hz not in (None,16000000):parser.error('MH-ET LIVE Micronucleus requires --cpu-hz 16000000')
+        args.cpu_hz=16000000
+    if args.backend=='c' and args.output_dir is None:
+        args.output_dir=ROOT/('build/universal/c-micronucleus' if usb else 'build/universal/c')
     if args.reimport or not args.score and not (ROOT/'ATtiny88/Music/universal/songs/rhythmic/score.json').exists():
         legacy.run('node','tools/import-universal-music.mjs')
     source=ROOT/'ATtiny88/Music/universal';scratch_root=ROOT/'build/universal';scratch_root.mkdir(parents=True,exist_ok=True)
@@ -274,14 +284,21 @@ def main():
     scratch=Path(temporary.name)
     elf=scratch/'engine.elf'
     defines=['-DUM_REQUESTED_CPU_HZ='+str(args.cpu_hz)+'UL'] if args.cpu_hz is not None else []
+    if usb:defines+=['-DUM_BOARD_MH_ET_LIVE_16MHZ=1']
+    if args.buffer_frames is not None:defines+=['-DUM_REQUESTED_BUFFER_FRAMES='+str(args.buffer_frames)]
     if args.platform_header:defines+=['-include',str(args.platform_header.resolve())]
     # Read the compiler's evaluated constant, including expressions and UL suffixes.
     probe=scratch/'clock-probe.c';probe_obj=scratch/'clock-probe.o';probe_bin=scratch/'clock-probe.bin'
-    legacy.save(probe,'#include <avr/io.h>\n#include <stdint.h>\n#include "clock.h"\nconst uint32_t um_clock __attribute__((section(".umclock")))=F_CPU;\n')
+    legacy.save(probe,'#include <avr/io.h>\n#include <stdint.h>\n#include "clock.h"\n#include "audio-buffer.h"\nconst uint32_t um_clock[2] __attribute__((section(".umclock")))={F_CPU,UM_PWM_BUFFER_FRAMES};\n')
     legacy.run(tools['avr-gcc'],'-mmcu=attiny88','-I'+str(source),'-I'+str(source/'vendor/ATtiny_DFP/3.4.278/include'),*defines,'-c',probe,'-o',probe_obj)
     legacy.run(tools['avr-objcopy'],'-O','binary','-j','.umclock',probe_obj,probe_bin)
-    cpu_hz=int.from_bytes(probe_bin.read_bytes(),'little');assert 75000<=cpu_hz<=12000000
-    defines+=['-DUM_ENABLE_AVR_ASM='+('1' if args.backend=='avr-asm' else '0')]
+    clock_config=probe_bin.read_bytes();assert len(clock_config)==8
+    cpu_hz=int.from_bytes(clock_config[:4],'little')
+    assert cpu_hz==16000000 if usb else 75000<=cpu_hz<=12000000
+    buffer_bytes=int.from_bytes(clock_config[4:],'little')
+    packing=('compact' if buffer_bytes==192 else 'fast') if args.packing=='auto' else args.packing
+    defines+=['-DUM_ENABLE_AVR_ASM='+('1' if args.backend=='avr-asm' else '0'),
+              '-DUM_COMPACT_SCORE_ONLY='+('1' if packing=='compact' else '0')]
     for attempt in range(3):
         legacy.run(tools['avr-gcc'],'-mmcu=attiny88','-Os','-fno-jump-tables','-ffunction-sections','-fdata-sections',
                    '-I'+str(source/'vendor/ATtiny_DFP/3.4.278/include'),*defines,'-DUM_SONG_ADDRESS='+str(BASE),
@@ -294,31 +311,61 @@ def main():
     assert len(engine)<=BASE,(len(engine),BASE)
     symbols=legacy.run(tools['avr-nm'],'-n',elf)
     labels={m[3]:int(m[1],16) for m in re.finditer(r'^([0-9a-fA-F]+)\s+([tTbBdD])\s+(\S+)$',symbols,re.M)}
-    assert labels['um_ring']-0x800000+192+48<=768,'Need 48 bytes of stack above the FIFO'
+    assert labels['um_ring']-0x800000+buffer_bytes+48<=768,'Need 48 bytes of stack above the FIFO'
     legacy.save(scratch/'disassembly.txt',legacy.run(tools['avr-objdump'],'-d',elf))
-    common=dict(engine='UM88',backend=args.backend,engineBytes=len(engine),songAddress=BASE,engineSha256=digest(engine),labels=labels,
+    source_names=('engine.c','engine.h','platform.c','storage.h','clock.h','rational-clocks.h','audio-buffer.h',
+                  'render-avr.S','irq-avr.S','gain-table.inc','vendor/ATtiny_DFP/3.4.278/include/avr/iotn88.h')
+    inputs=[source/name for name in source_names]+[Path(__file__),ROOT/'tools/universal-music.py']
+    common=dict(engine='UM88',backend=args.backend,packingMode=packing,packingPolicy=args.packing,renderABI='packed-stereo-u32',pwmBufferBytes=buffer_bytes,
+                engineBytes=len(engine),songAddress=BASE,engineSha256=digest(engine),labels=labels,
                 cpuHz=cpu_hz,synthesisHz=cpu_hz/1024,pwmHz=cpu_hz/256,controlHz=18750/256,
+                board=args.board,applicationFlashLimit=flash_limit,eepromRequired=False,
+                sourceInputs={str(file.relative_to(ROOT)).replace('\\','/'):digest(file.read_text(encoding='utf-8').encode()) for file in inputs},
+                deviceDefinitions=dict(pack='Microchip.ATtiny_DFP',version='3.4.278',
+                    url='https://packs.download.microchip.com/Microchip.ATtiny_DFP.3.4.278.atpack',
+                    sha256='41f09d5825abaa764c9000f4488f8ba3fab152afe6229b359de4a5efe9a21eda'),
                 toolchainVersion=legacy.run(tools['avr-gcc'],'--version').splitlines()[0])
+    reset=int.from_bytes(engine[:2],'little');assert reset&0xf000==0xc000,'Expected Micronucleus-compatible RJMP reset vector'
+    displacement=reset&4095;displacement-=4096 if displacement&2048 else 0
+    common['resetVector']=dict(address=0,instruction='rjmp',target=(1+displacement)*2)
+    if usb:
+        common.update(uploadProtocol='micronucleus',requiredFuses=None,preserveFactoryFuses=True,
+                      boardClockAboveRatedMaximum=True,bootloaderEntryInitialization='um_board_reset',
+                      boardSource=dict(version='1.0.0',commit=legacy.MANUFACTURER_BOARD_COMMIT,url=legacy.MANUFACTURER_BOARD_URL))
+        assert 'um_board_reset' in labels,'Early bootloader-entry initialization linked'
+    retained_output=source/('songs-micronucleus' if usb else 'songs')
     (scratch_root/('engine-'+args.backend+'.bin')).write_bytes(engine)
     legacy.save(scratch_root/('engine-'+args.backend+'.json'),json.dumps(common,indent=2)+'\n')
     names=[json.loads(args.score.read_text(encoding='utf-8'))['name']] if args.score else NAMES
     for name in names:
         score_path=args.score or source/'songs'/name/'score.json'
         if score_path.exists() and not args.reimport:
-            score=json.loads(score_path.read_text(encoding='utf-8'));data,report=encode_score(score,cpu_hz)
+            score=json.loads(score_path.read_text(encoding='utf-8'))
+            data,report=encode_score(score,cpu_hz,packing)
         else:
-            song=json.loads((scratch_root/(name+'.tape.json')).read_text(encoding='utf-8'));data,report=compile_song(song,cpu_hz)
+            song=json.loads((scratch_root/(name+'.tape.json')).read_text(encoding='utf-8'));data,report=compile_song(song,cpu_hz,packing)
             score=json.loads((source/'songs'/name/'score.json').read_text(encoding='utf-8'))
+        if buffer_bytes<=4*score['channels']:
+            raise ValueError('Ring byte budget must leave a spare frame beyond four generated mono/stereo frames')
         binary=engine+bytes([255])*(BASE-len(engine))+data
-        assert len(binary)<=8192,(name,len(binary))
-        folder=(args.output_dir or source/'songs')/name;folder.mkdir(parents=True,exist_ok=True)
+        if len(binary)>flash_limit:
+            raise ValueError(f'{name}: application {len(binary)} bytes exceeds {args.board} limit {flash_limit}')
+        folder=(args.output_dir or retained_output)/name;folder.mkdir(parents=True,exist_ok=True)
         if score_path.resolve()!=(folder/'score.json').resolve():
             legacy.save(folder/'score.json',json.dumps(score,ensure_ascii=False,indent=2)+'\n')
         (folder/'synth.bin').write_bytes(binary);legacy.save(folder/'synth.hex',legacy.ihex(binary))
-        ep=bytes(score['waves']);(folder/'eeprom.bin').write_bytes(ep);legacy.save(folder/'eeprom.hex',legacy.ihex(ep))
-        report.update(common,flashBytes=len(binary),flashSha256=digest(binary),eepromSha256=digest(ep))
+        ep=bytes(score['waves'])
+        if not usb:
+            (folder/'eeprom.bin').write_bytes(ep);legacy.save(folder/'eeprom.hex',legacy.ihex(ep))
+        report.update(common,pwmBufferLayout='stereo-pairs' if score['channels']==2 else 'mono',
+                      pwmBufferFrames=buffer_bytes//score['channels'],
+                      flashBytes=len(binary),flashSha256=digest(binary),
+                      eepromBytes=0 if usb else len(ep),eepromSha256=None if usb else digest(ep),
+                      scoreSource=dict(path=str(score_path.relative_to(ROOT)).replace('\\','/') if score_path.is_relative_to(ROOT) else score_path.name,
+                                       sha256=digest(score_path.read_text(encoding='utf-8').encode())),
+                      wavetableStorage=dict(space='flash',address=BASE+26,bytes=len(ep),sha256=digest(ep)))
         legacy.save(folder/'build-report.json',json.dumps(report,ensure_ascii=False,indent=2)+'\n')
-        print(f'{name}: engine {len(engine)}, data {len(data)}, Flash {len(binary)}/8192; {report["controlTicks"]} control ticks; playback audit is separate')
-    legacy.save((args.output_dir or source)/'build-report.json',json.dumps(common,indent=2)+'\n')
+        print(f'{name}: engine {len(engine)}, data {len(data)}, Flash {len(binary)}/{flash_limit}; {report["controlTicks"]} control ticks; playback audit is separate')
+    legacy.save((args.output_dir or (retained_output if usb else source))/'build-report.json',json.dumps(common,indent=2)+'\n')
     temporary.cleanup()
 if __name__=='__main__':main()

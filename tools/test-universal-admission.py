@@ -1,7 +1,7 @@
 """Measured UM88 admission matrix, including deliberate real-time/output failures.
 
 Requires GNU AVR and Node. All synthetic fixtures are JSON in ignored build/.
-No assembler change is made and no MIDI binary is created.
+No MIDI binary is created. The reference checks every output with IRQs active.
 """
 from pathlib import Path
 import argparse
@@ -14,11 +14,11 @@ import sys
 ROOT=Path(__file__).resolve().parents[1]
 
 
-def fixture(name,voices,stress=False,burst=False):
+def fixture(name,voices,stress=False,burst=False,ticks=48):
     wave=[(i-8) for i in range(16)]
     packed=[(wave[i]+8)|((wave[i+1]+8)<<4) for i in range(0,16,2)]
     raw=[]
-    for tick in range(48):
+    for tick in range(ticks):
         if tick==0 or stress:
             for i in range(voices):
                 raw.extend([64+i,(i+tick)%8,72+i,1+(i+tick)%8,128+(i<<4)+(14 if tick&1 else 15),80+i])
@@ -29,7 +29,7 @@ def fixture(name,voices,stress=False,burst=False):
     return dict(schema='micromusic-um88-score',version=1,name=name,voices=voices,channels=1,
                 waves=packed*8,contexts=[[0,i*8,3,128] for i in range(8)],
                 envelopes=[[v for level in range(16) for v in (level,0,0)]],
-                pitches=[None,48,52,55,60,64,67,72,76],commands=raw,controlTicks=48,
+                pitches=[None,48,52,55,60,64,67,72,76],commands=raw,controlTicks=ticks,
                 groupGain=False,normalizer=[],normalizerMinimum=0,masterShift=0,
                 source=dict(kind='original deterministic stress fixture',license='CC0-1.0'))
 
@@ -46,21 +46,21 @@ def main():
     parser.add_argument('--report',type=Path)
     args=parser.parse_args();folder=args.output_dir.resolve();folder.mkdir(parents=True,exist_ok=True)
     cases=[]
-    configurations=[('c',8000000,n,False,False) for n in range(1,6)]+[
-        ('avr-asm',8000000,3,True,False),('avr-asm',8000000,8,True,False),
-        ('avr-asm',12000000,8,True,False),('avr-asm',8000000,1,False,True)]
-    for backend,cpu,voices,stress,burst in configurations:
-        name=f"{backend}-{cpu}-{voices}-"+('burst' if burst else 'dense' if stress else 'held')
-        source=folder/(name+'.json');save(source,fixture(name,voices,stress,burst))
+    configurations=[('c',8000000,n,False,False,48) for n in range(1,9)]+[
+        ('avr-asm',8000000,n,True,False,48) for n in (3,6,8)]+[
+        ('avr-asm',12000000,8,True,False,48),('avr-asm',8000000,8,True,False,256),
+        ('avr-asm',8000000,1,False,True,48)]
+    for backend,cpu,voices,stress,burst,ticks in configurations:
+        name=f"{backend}-{cpu}-{voices}-"+('burst' if burst else 'dense' if stress else 'held')+('-long' if ticks>48 else '')
+        source=folder/(name+'.json');save(source,fixture(name,voices,stress,burst,ticks))
         result=run([sys.executable,ROOT/'tools/build-universal-music.py','--backend',backend,'--cpu-hz',cpu,
                     '--score',source,'--output-dir',folder])
         if result.returncode:raise RuntimeError(result.stderr or result.stdout)
         audit=run(['node',ROOT/'tools/audit-universal-music.mjs','--directory='+str(folder),name])
         measured=json.loads((folder/name/'verification.json').read_text(encoding='utf-8'))
         assert measured['passed']==(audit.returncode==0)
-        if backend=='avr-asm' and voices==3:assert measured['passed'],measured
-        if backend=='c' and voices==1:assert measured['passed'],measured
-        if burst or backend=='c' and voices>=4 or backend=='avr-asm' and voices==8:
+        if backend=='avr-asm' and not burst or backend=='c' and voices<=4:assert measured['passed'],measured
+        if burst or backend=='c' and voices>=5:
             assert not measured['passed'] and measured['fifoUnderruns']>0,measured
         cases.append(dict(workload='1200 redundant CONTEXT commands every tick' if burst else
                           f'{voices} voices; every tick changes all contexts, pitches, levels, phases and percussion' if stress else

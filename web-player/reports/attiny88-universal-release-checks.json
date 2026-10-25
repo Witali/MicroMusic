@@ -1,0 +1,67 @@
+{
+  "schema": "micromusic-attiny88-universal-release-checks",
+  "version": 1,
+  "runtimeSourceCommit": "2c7af878",
+  "sourceScoresComparedWith": "ad018dc",
+  "hardwareTested": false,
+  "firmwareImages": {
+    "count": 18,
+    "allPassed": true,
+    "summary": "ATtiny88/Music/universal/reports/all-boards-verification.json"
+  },
+  "webTests": {
+    "command": "node --test --test-concurrency=4 web-player/tests/*.test.mjs tools/avr-music-target-core.test.mjs tools/music-startup.test.mjs",
+    "tests": 1727,
+    "pass": 1727,
+    "fail": 0
+  },
+  "pythonTests": [
+    {
+      "script": "tools/test-universal-codec.py",
+      "passed": 8
+    },
+    {
+      "script": "tools/test-universal-format.py",
+      "passed": 12
+    },
+    {
+      "script": "tools/test-arrange-universal-music.py",
+      "passed": 18
+    },
+    {
+      "script": "tools/test-universal-clock.py",
+      "passed": 5
+    },
+    {
+      "script": "tools/test-universal-clock-ratios.py",
+      "passed": 2
+    },
+    {
+      "script": "tools/test-universal-boards.py",
+      "passed": 3
+    },
+    {
+      "script": "tools/test-universal-buffer.py",
+      "passed": 5
+    },
+    {
+      "script": "tools/test-compile-universal-music.py",
+      "passed": 6
+    }
+  ],
+  "additionalChecks": {
+    "admission": "ATtiny88/Music/universal/reports/admission-all-boards.json",
+    "backendConformance": "ATtiny88/Music/universal/reports/backend-all-boards.json",
+    "packedDecoder": [
+      "ATtiny88/Music/universal/reports/packed-decoder-8mhz.json",
+      "ATtiny88/Music/universal/reports/packed-decoder-16mhz.json"
+    ],
+    "allFourCatalogsChecked": true
+  },
+  "catalogs": {
+    "firmware.json": "438f66502b66446021f72244a4ef000f9c4a6c8c2510537b04315cddb24dfaa1",
+    "firmware-attiny88.json": "ae65459731be7bd7eb29c080116e86923194197a6e87ee006b754348512d1e46",
+    "firmware-attiny88-16mhz.json": "5060f0825a5298f4a99de7a7150a103ff2a2ea0f9bf0ab41a67ea83383bdaf3d",
+    "firmware-attiny88-legacy.json": "024299da129fed2d6fc160937e8bd216ef0ac67b306bec273599109f384ef153"
+  }
+}

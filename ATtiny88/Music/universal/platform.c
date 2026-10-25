@@ -6,19 +6,40 @@
 #include "engine.h"
 #include "storage.h"
 #include "clock.h"
+#include "rational-clocks.h"
+#include "audio-buffer.h"
 #ifndef __AVR_ATtiny88__
 #error "This hardware driver requires ATtiny88 (-mmcu=attiny88)"
 #endif
 #define VIRTUAL_NUMERATOR 19200000UL
 _Static_assert(sizeof(UMVoice)==23,"UM88 AVR voice layout");
 _Static_assert(offsetof(UMState,count)==216,"UM88 AVR count offset");
-volatile uint8_t um_ring[192] __attribute__((aligned(64),section(".noinit")));
+volatile uint8_t um_ring[UM_PWM_BUFFER_FRAMES] __attribute__((aligned(64),section(".noinit")));
 volatile uint8_t um_read,um_write,um_underruns;
 volatile uint16_t um_samples;
+#if defined(UM_BOARD_MH_ET_LIVE_16MHZ) && UM_BOARD_MH_ET_LIVE_16MHZ
+/* Micronucleus enters the application through its reset vector, without a
+ * peripheral reset. Follow avr-libc's documented .init3 watchdog pattern:
+ * disable it before the CRT clears BSS, while r1 and SP are already valid.
+ * Register names come from the retained Microchip DFP, never local addresses. */
+void um_board_reset(void) __attribute__((naked,used,section(".init3")));
+void um_board_reset(void) {
+    cli();MCUSR=0;wdt_reset();wdt_disable();
+    CLKPR=_BV(CLKPCE);CLKPR=0;PRR=0;
+    EIMSK=0;PCICR=0;TIMSK0=0;TIMSK1=0;
+    TCCR0A=0;TCCR1B=0;TCCR1A=0;GTCCR=0;
+    ADCSRA=0;ACSR=0;SPCR=0;TWCR=0;EECR=0;SMCR=0;
+    DDRB=0;PORTB=0;
+}
+#endif
 #if !defined(UM_ENABLE_AVR_ASM) || !UM_ENABLE_AVR_ASM
 ISR(TIMER1_OVF_vect) {
     uint8_t at=um_read;
-    if(at!=um_write){OCR1AL=um_ring[at];OCR1BL=um_ring[at+1];um_read=at==190?0:at+2;}
+    if(at!=um_write){
+        if(um_channels==2){OCR1AL=um_ring[at++];OCR1BL=um_ring[at++];}
+        else OCR1BL=um_ring[at++];
+        um_read=at==UM_PWM_BUFFER_FRAMES?0:at;
+    }
     else um_underruns++;
 }
 #endif
@@ -43,36 +64,59 @@ static int8_t percussion(uint8_t advance) {
     if(mode&16)q=(q+4)>>3;
     return q;
 }
+/* Four exact quarter points, shared by both channels. The accumulator stays
+ * between 0 and 1020, including a decreasing ramp. These integer points equal
+ * the original nested midpoint averages for every pair of 8-bit endpoints. */
+static __attribute__((noinline)) uint8_t interpolate(uint8_t at,uint8_t stride,
+                                                   uint8_t previous,uint8_t target) {
+    uint16_t value=(uint16_t)previous*4;
+    int16_t change=(int16_t)target-previous;
+    for(uint8_t i=0;i<4;i++){
+        value+=change;um_ring[at]=value>>2;
+        at+=stride;if(at>=UM_PWM_BUFFER_FRAMES)at-=UM_PWM_BUFFER_FRAMES;
+    }
+    return at;
+}
 int main(void) {
+#if !defined(UM_BOARD_MH_ET_LIVE_16MHZ) || !UM_BOARD_MH_ET_LIVE_16MHZ
     cli();MCUSR=0;wdt_disable();CLKPR=_BV(CLKPCE);CLKPR=0;
+#endif
     PRR=0;um_init();
-    for(uint8_t i=0;i<192;i++)um_ring[i]=128;
-    um_write=188;um_read=0;
+    const uint8_t channels=um_channels,reserve=4*channels;
+    for(uint8_t i=0;i<UM_PWM_BUFFER_FRAMES;i++)um_ring[i]=128;
+    um_write=UM_PWM_BUFFER_FRAMES-reserve;um_read=0;
     TCCR1A=0;TCCR1B=0;TCNT1=0;OCR1A=128;OCR1B=128;
-    TCCR1A=_BV(COM1B1)|_BV(WGM10);
-    if(UM_READ(UM_SONG_ADDRESS+5)==2){TCCR1A|=_BV(COM1A1);DDRB|=_BV(PB1);}
-    DDRB|=_BV(PB2);TIFR1=_BV(TOV1);TIMSK1=_BV(TOIE1);TCCR1B=_BV(WGM12)|_BV(CS10);sei();
-    uint32_t fraction=0,musicClock=0;
+    TCCR1A=_BV(COM1B1)|_BV(WGM10)|(channels==2?_BV(COM1A1):0);
+    DDRB|=_BV(PB2)|(channels==2?_BV(PB1):0);
+    TIFR1=_BV(TOV1);TIMSK1=_BV(TOIE1);TCCR1B=_BV(WGM12)|_BV(CS10);sei();
+    UMFraction fraction=0;UMMusicClock musicClock=0;
     uint8_t previousL=128,previousR=128;
+    const uint8_t maximumQueued=UM_PWM_BUFFER_FRAMES-reserve-1;
     for(;;){
         /* Snapshot each shared cursor once: IRQ can wrap um_read between loads. */
         uint8_t consumer=um_read,producer=um_write;
-        uint8_t queued=producer>=consumer?producer-consumer:producer-consumer+192;
-        if(queued>182)continue;
+        uint8_t queued=producer>=consumer?producer-consumer:producer-consumer+UM_PWM_BUFFER_FRAMES;
+        if(queued>maximumQueued)continue;
         uint8_t advance=VIRTUAL_NUMERATOR/F_CPU;
-        fraction+=VIRTUAL_NUMERATOR%F_CPU;
-        if(fraction>=F_CPU){fraction-=F_CPU;advance++;}
-        musicClock+=75000UL;
-        if(musicClock>=F_CPU){musicClock-=F_CPU;um_tick();}
+        fraction+=UM_DRUM_FRACTION_INCREMENT;
+        if(fraction>=UM_DRUM_FRACTION_PERIOD){fraction-=UM_DRUM_FRACTION_PERIOD;advance++;}
+        musicClock+=UM_CONTROL_INCREMENT;
+        if(musicClock>=UM_CONTROL_PERIOD){musicClock-=UM_CONTROL_PERIOD;um_tick();}
         uint32_t mixed=um_render();int8_t drum=percussion(advance);
-        uint8_t targetL=um_output((int16_t)mixed+drum),targetR=um_output((int16_t)(mixed>>16)+drum),at=um_write;
-        uint8_t midL=(previousL+targetL)>>1,midR=(previousR+targetR)>>1;
-#define EMIT(l,r) do{um_ring[at]=(l);um_ring[at+1]=(r);at=at==190?0:at+2;}while(0)
-        EMIT((previousL+midL)>>1,(previousR+midR)>>1);
-        EMIT(midL,midR);
-        EMIT((midL+targetL)>>1,(midR+targetR)>>1);
-        EMIT(targetL,targetR);
-#undef EMIT
+        uint8_t targetL=um_output((int16_t)mixed+drum),targetR=targetL,at=um_write;
+        if(channels==1){
+            /* Producer is aligned to four bytes; capacity is divisible by four.
+             * The complete mono batch is contiguous, including at wrap. */
+            uint8_t mid=(previousL+targetL)>>1;
+            volatile uint8_t *output=um_ring+at;
+            output[0]=(previousL+mid)>>1;output[1]=mid;
+            output[2]=(mid+targetL)>>1;output[3]=targetL;
+            at+=4;if(at==UM_PWM_BUFFER_FRAMES)at=0;
+        }else{
+            targetR=um_output((int16_t)(mixed>>16)+drum);
+            uint8_t next=interpolate(at,channels,previousL,targetL);
+            interpolate(at+1,channels,previousR,targetR);at=next;
+        }
         um_write=at;previousL=targetL;previousR=targetR;um_samples++;
     }
 }

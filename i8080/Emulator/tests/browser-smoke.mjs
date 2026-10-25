@@ -13,55 +13,120 @@ const load = async (document, bytes, name) => {
   await wait(() => !document.getElementById('run').disabled || !document.getElementById('error').hidden);
 };
 const set = (document, id, value) => { const el = document.getElementById(id); el.value = value; el.dispatchEvent(new Event('change', { bubbles: true })); };
-const run = async document => {
-  document.getElementById('run').click();
+const finished = async document => {
   await wait(() => document.getElementById('status').textContent.includes('Завершение:') || !document.getElementById('error').hidden);
   check(document.getElementById('error').hidden, document.getElementById('error').textContent);
   await wait(() => document.getElementById('run').textContent.includes('Эмулировать'));
 };
+const run = async document => { document.getElementById('run').click(); await finished(document); };
 async function suite(target) {
   frame.src = target;
   await new Promise(resolve => frame.addEventListener('load', resolve, { once: true }));
   const doc = await ready(), errors = [];
     frame.contentWindow.addEventListener('error', event => errors.push(event.message));
-  await wait(() => !doc.getElementById('run').disabled && doc.querySelectorAll('[data-example]').length === 5);
-  check(doc.getElementById('file-name').textContent.includes('159 T'), '159T tempo-preserving default');
+  await wait(() => !doc.getElementById('run').disabled && doc.querySelectorAll('[data-example]').length === 3);
+  check(doc.getElementById('file-name').textContent.includes('32,11 кГц'), '109T / two pulses per sample tempo-preserving default');
   check(!doc.querySelector('audio'), 'no separate audio player');
   check(!doc.getElementById('download'), 'no WAV download control');
   check(doc.querySelector('.machine-spec').textContent.includes('244 инструкции'), 'instruction wording');
   check(doc.querySelector('.cpu-wire svg') && !doc.querySelector('.cpu-wire b'), 'speaker symbol');
   const catalog = await (await fetch('../examples.json')).json();
-  for (const entry of catalog.entries) {
+  check(doc.getElementById('hz').tagName === 'SELECT', 'CPU clock dropdown');
+  check([...doc.getElementById('hz').options].map(o=>o.value).join(',') === '2000000,2500000,3500000', 'three CPU frequencies');
+  for (const hz of [2000000,2500000,3500000]) for (const entry of catalog.entries) {
+    const variant=entry.variants.find(v=>v.hz===hz);
+    set(doc,'hz',String(hz));
     doc.querySelector(`[data-example="${entry.id}"]`).click();
-    await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent === entry.title);
+    await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-hash').textContent.includes(variant.sha256));
     const bytes = await (await fetch(doc.getElementById('download-rom').href)).arrayBuffer();
     const digest = [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map(n => n.toString(16).padStart(2, '0')).join('');
-    check(digest === entry.sha256, entry.id + ' ROM hash');
+    check(digest === variant.sha256, `${entry.id} / ${hz} ROM hash`);
+    check(Number(doc.getElementById('hz').value)===hz,'example preserves selected clock');
     check(doc.querySelector(`[data-example="${entry.id}"]`).getAttribute('aria-pressed') === 'true', 'selected example');
+    check(doc.querySelectorAll('[data-example]').length===3,'frequency variants stay grouped in three cards');
+    set(doc,'seconds','0.2'); await run(doc);
+    const cycles=Number(doc.getElementById('cycles').textContent.replace(/\D/g,''));
+    check(cycles>=hz*.2 && cycles<=hz*.2+18,'worker executes at selected CPU frequency');
   }
-  const search = doc.getElementById('search'); search.value = '159 T'; search.dispatchEvent(new Event('input', { bubbles: true }));
+  // A live clock switch stops both CPU and audio and loads the matching build.
+  set(doc,'seconds','90');doc.getElementById('run').click();
+  await wait(()=>doc.getElementById('run').textContent.includes('Пауза'));
+  check(!doc.getElementById('hz').disabled,'clock selector available during playback');
+  set(doc,'hz','2000000');
+  const music=catalog.entries.find(e=>e.id==='uniform26-fluid-pwm108');
+  await wait(()=>!doc.getElementById('run').disabled && doc.getElementById('file-hash').textContent.includes(music.variants[0].sha256));
+  check(doc.getElementById('elapsed').textContent==='00:00.0' && doc.getElementById('cycles').textContent==='0','clock switch resets CPU and audio');
+  // Last selection wins even with several ROM fetches in flight.
+  for (const hz of [2500000,2000000,3500000]) set(doc,'hz',String(hz));
+  await wait(()=>!doc.getElementById('run').disabled && doc.getElementById('file-hash').textContent.includes(music.sha256));
+  check(doc.getElementById('hz').value==='3500000','clock race keeps the latest selection');
+  log(`PASS ${target}: all nine clock/ROM pairs, selected-clock execution, grouped cards, live clock reset and rapid clock changes`);
+  for (const id of ['uniform26-fluid-pwm108']) {
+    const entry = catalog.entries.find(entry => entry.id === id);
+    doc.querySelector(`[data-example="${id}"]`).click();
+    await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent === entry.title);
+    const canvas = doc.getElementById('scope'), blank = canvas.toDataURL(), blankSize = `${canvas.width}x${canvas.height}`;
+    check(/^\d+ мс$/.test(doc.querySelector('.scope-scale').textContent), 'time scale matches ATtiny13A format');
+    set(doc, 'seconds', '2'); doc.getElementById('run').click();
+    await wait(() => doc.getElementById('elapsed').textContent !== '00:00.0' && canvas.toDataURL() !== blank);
+    const firstScope = canvas.toDataURL();
+    await wait(() => canvas.toDataURL() !== firstScope);
+    doc.getElementById('run').click();
+    await wait(() => doc.getElementById('run').textContent.includes('Продолжить'));
+    const pausedScope = canvas.toDataURL();
+    await new Promise(resolve => setTimeout(resolve, 150));
+    check(canvas.toDataURL() === pausedScope, 'scope freezes while paused');
+    doc.getElementById('run').click();
+    await wait(() => doc.getElementById('run').textContent.includes('Пауза'));
+    await wait(() => canvas.toDataURL() !== pausedScope);
+    await finished(doc);
+    const endedScope = canvas.toDataURL();
+    await new Promise(resolve => setTimeout(resolve, 100));
+    check(canvas.toDataURL() === endedScope, 'scope freezes at end');
+    const cycles = Number(doc.getElementById('cycles').textContent.replace(/\D/g, ''));
+    check(cycles >= 7000000 && cycles <= 7000018, id + ' two-second execution');
+    check(doc.getElementById('elapsed').textContent === '00:02.0', id + ' live audio drains');
+    check(doc.getElementById('writes').textContent === '0', id + ' ROM-only execution');
+    check(Number(doc.getElementById('edges').textContent.replace(/\D/g, '')) > 0, id + ' audible signal');
+    doc.getElementById('cancel').click();
+    check(canvas.toDataURL() === blank, `reset clears the live scope (${blankSize} → ${canvas.width}x${canvas.height})`);
+  }
+  set(doc, 'seconds', '90');
+  log(`PASS ${target}: selected 108T music streams two seconds; live scope advances, freezes on pause/end, resumes and resets; no RAM writes`);
+  const search = doc.getElementById('search'); search.value = 'Dual CRC'; search.dispatchEvent(new Event('input', { bubbles: true }));
   check(doc.querySelectorAll('[data-example]').length === 1, 'example search');
-  doc.querySelector('[data-example="voice159"]').click();
-  await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent.includes('159 T'));
+  doc.querySelector('[data-example="voice32"]').click();
+  await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent.includes('32,11 кГц'));
   search.value = ''; search.dispatchEvent(new Event('input', { bubbles: true }));
   await run(doc);
-  check(Number(doc.getElementById('cycles').textContent.replace(/\D/g, '')) === 19814634, '159T full firmware and diagnostics');
+  check(Number(doc.getElementById('cycles').textContent.replace(/\D/g, '')) === 19700539, '109T / two pulses per sample full firmware and diagnostics');
   check(doc.getElementById('writes').textContent === '0', 'ROM-only voice');
   check(doc.getElementById('download-rom').hasAttribute('href'), 'example firmware download');
-  doc.querySelector('[data-example="voice-original"]').click();
-  await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent.includes('исходный'));
+  doc.querySelector('[data-example="owl32"]').click();
+  await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent === catalog.entries.find(entry => entry.id === 'owl32').title);
+  await run(doc);
+  check(Number(doc.getElementById('cycles').textContent.replace(/\D/g, '')) === 11830515, 'Owl direct voice full execution');
+  check(Number(doc.getElementById('edges').textContent.replace(/\D/g, '')) === 217072, 'Owl has only voice PWM edges');
+  check(doc.getElementById('writes').textContent === '0', 'Owl ROM-only playback');
+
+  doc.querySelector('[data-example="uniform26-fluid-pwm108"]').click();
+  await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent === catalog.entries.find(entry => entry.id === 'uniform26-fluid-pwm108').title);
   check(doc.getElementById('cycles').textContent === '0' && doc.getElementById('elapsed').textContent === '00:00.0', 'example switch clears prior result/audio');
   if (target.includes('ROM_Player')) {
     const resources = frame.contentWindow.performance.getEntriesByType('resource');
     check(!resources.some(resource => /\.(bin|json|mjs)(\?|$)/.test(resource.name)), 'standalone examples and engines stay embedded');
   }
-  log(`PASS ${target}: five examples and ROM hashes; 159T default → HLT; search; source switching; embedded standalone library`);
+  log(`PASS ${target}: three selected examples and ROM hashes; 109T / two pulses per sample default → HLT; search; source switching; embedded standalone library`);
   await load(doc, Uint8Array.of(0xfb, 0x00, 0xf3, 0x76), 'inte.bin'); await run(doc);
   check(!doc.querySelector('[data-example][aria-pressed="true"]'), 'upload deselects examples');
   check(doc.getElementById('cycles').textContent === '19', 'EI/NOP/DI/HLT must be 19 T');
   check(doc.getElementById('edges').textContent === '2', 'two INTE edges');
   const savedFirmware = new Uint8Array(await (await fetch(doc.getElementById('download-rom').href)).arrayBuffer());
   check(savedFirmware.join(',') === '251,0,243,118', 'downloaded BIN matches the loaded image');
+  set(doc,'hz','2000000');await run(doc);
+  check(doc.getElementById('cycles').textContent==='19','uploaded ROM uses selected clock without code changes');
+  check(new Uint8Array(await (await fetch(doc.getElementById('download-rom').href)).arrayBuffer()).join(',')==='251,0,243,118','clock switch preserves user ROM bytes');
+  set(doc,'hz','3500000');await run(doc);
   set(doc, 'filter', '0-1');
   check(doc.getElementById('cycles').textContent === '19', 'filter preserves CPU result');
   log(`PASS ${target}: BIN → INTE → HLT; firmware download; filter; no WAV export`);
@@ -96,8 +161,8 @@ async function suite(target) {
   check(doc.getElementById('steps').textContent === pausedSteps, 'paused CPU');
   check(Number(doc.getElementById('cycles').textContent.replace(/\D/g, '')) / 3500000 < 3, 'bounded live lookahead');
   doc.getElementById('run').click(); await wait(() => doc.getElementById('run').textContent.includes('Пауза'));
-  doc.querySelector('[data-example="voice159"]').click();
-  await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent.includes('159 T'));
+  doc.querySelector('[data-example="voice32"]').click();
+  await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent.includes('32,11 кГц'));
   check(doc.getElementById('elapsed').textContent === '00:00.0' && doc.getElementById('cycles').textContent === '0', 'switching a live example resets CPU and audio');
   check(doc.getElementById('memory').value === 'rom' && doc.getElementById('output').value === 'inte', 'example machine configuration');
   doc.getElementById('cancel').click();

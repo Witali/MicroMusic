@@ -27,7 +27,7 @@ def run(command):
     if result.stdout:print(result.stdout.strip())
 
 
-def compile_music(source,config,output,*,backend='c',cpu_hz=None,platform_header=None,avr_bin=None,preview_seconds=None):
+def compile_music(source,config,output,*,backend='c',board='bare-8mhz',packing='auto',cpu_hz=None,buffer_frames=None,platform_header=None,avr_bin=None,preview_seconds=None):
     source=Path(source).resolve();config=Path(config).resolve();output=Path(output).resolve()
     if output.exists():raise ValueError(f'Output already exists: {output}')
     if source.suffix.lower()!='.json' and source.is_relative_to(ROOT):
@@ -39,8 +39,9 @@ def compile_music(source,config,output,*,backend='c',cpu_hz=None,platform_header
     with tempfile.TemporaryDirectory(prefix='pipeline-',dir=scratch) as work:
         trial=Path(work)
         save(trial/'score.json',score)
-        command=[sys.executable,ROOT/'tools/build-universal-music.py','--backend',backend,'--score',trial/'score.json','--output-dir',trial/'firmware']
+        command=[sys.executable,ROOT/'tools/build-universal-music.py','--backend',backend,'--board',board,'--packing',packing,'--score',trial/'score.json','--output-dir',trial/'firmware']
         if cpu_hz is not None:command+=['--cpu-hz',str(cpu_hz)]
+        if buffer_frames is not None:command+=['--buffer-frames',str(buffer_frames)]
         if platform_header:command+=['--platform-header',Path(platform_header).resolve()]
         if avr_bin:command+=['--avr-bin',avr_bin]
         run(command)
@@ -83,11 +84,13 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('input',type=Path);parser.add_argument('--arrangement',required=True,type=Path)
     parser.add_argument('--output',required=True,type=Path);parser.add_argument('--backend',choices=('c','avr-asm'),default='c')
-    parser.add_argument('--cpu-hz',type=int);parser.add_argument('--platform-header',type=Path);parser.add_argument('--avr-bin')
+    parser.add_argument('--board',choices=('bare-8mhz','mh-et-live-16mhz'),default='bare-8mhz')
+    parser.add_argument('--packing',choices=('auto','compact','fast'),default='auto')
+    parser.add_argument('--cpu-hz',type=int);parser.add_argument('--buffer-frames',type=int);parser.add_argument('--platform-header',type=Path);parser.add_argument('--avr-bin')
     parser.add_argument('--preview-seconds',type=float)
     args=parser.parse_args()
     if args.preview_seconds is not None and not .1<=args.preview_seconds<=60:parser.error('preview-seconds must be 0.1..60')
-    try:compile_music(args.input,args.arrangement,args.output,backend=args.backend,cpu_hz=args.cpu_hz,
+    try:compile_music(args.input,args.arrangement,args.output,backend=args.backend,board=args.board,packing=args.packing,cpu_hz=args.cpu_hz,buffer_frames=args.buffer_frames,
                       platform_header=args.platform_header,avr_bin=args.avr_bin,preview_seconds=args.preview_seconds)
     except (ValueError,KeyError,TypeError,OSError,RuntimeError) as error:parser.exit(1,f'Compilation failed: {error}\n')
 

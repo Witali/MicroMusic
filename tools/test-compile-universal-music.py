@@ -59,6 +59,32 @@ class Pipeline(unittest.TestCase):
             pipeline.compile_music(self.folder/'missing.json',self.config,output)
         self.assertEqual(marker.read_text(),'keep')
 
+    def test_eight_external_midi_parts_keep_tempo_pedal_volume_expression_and_bend(self):
+        tracks=[fixtures.track([(0,b'\xff\x51\x03\x07\xa1\x20'),
+                                 (240,b'\xff\x51\x03\x06\x1a\x80')],end_tick=720)]
+        for ch,note in enumerate((48,52,55,60,64,67,72,76)):
+            rows=[(0,bytes([0xc0|ch,73])),(0,bytes([0x90|ch,note,110])),
+                  (60,bytes([0xb0|ch,64,127])),(120,bytes([0xb0|ch,7,80])),
+                  (180,bytes([0xb0|ch,11,64])),(240,bytes([0xe0|ch,0,48])),
+                  (360,bytes([0x80|ch,note,0])),(480,bytes([0xb0|ch,64,0]))]
+            tracks.append(fixtures.track(rows,end_tick=720))
+        source=Path(self.external.name)/'eight-parts.mid';source.write_bytes(fixtures.smf(tracks))
+        self.config.write_text(json.dumps(dict(schema='micromusic-um88-arrangement',version=1,
+                                    name='eight-parts',voices=8,overflow='error')),encoding='utf-8')
+        with contextlib.redirect_stdout(io.StringIO()):
+            result=pipeline.compile_music(source,self.config,self.folder/'eight',backend='avr-asm',buffer_frames=128)
+        pkg=json.loads((result/'player-package.json').read_text(encoding='utf-8'))
+        report=pkg['arrangementReport'];audit=pkg['verification']
+        self.assertEqual(pkg['score']['voices'],8);self.assertEqual(pkg['build']['pwmBufferFrames'],128)
+        self.assertEqual(report['noteAttacks'],8);self.assertEqual(len(report['tempoMap']),2)
+        for key in ('voiceSteals','omittedNotes','collapsedNotes','forcedReleases'):self.assertEqual(report[key],[])
+        self.assertEqual(report['ignoredEvents'],{})
+        self.assertTrue(audit['passed']);self.assertEqual(audit['fifoUnderruns'],0)
+        self.assertEqual(audit['clippedChannelSamples'],0)
+        retained=json.loads((result/'source-events.json').read_text(encoding='utf-8'))
+        kinds={e['type'] for t in retained['tracks'] for e in t['events']}
+        self.assertTrue({'tempo','noteOn','noteOff','programChange','pitchBend','controlChange'}<=kinds)
+
     def test_unsupported_json_does_not_publish_partial_output(self):
         source=self.folder/'invalid.json';source.write_text('{}')
         with self.assertRaises(ValueError):pipeline.compile_music(source,self.config,self.folder/'result')

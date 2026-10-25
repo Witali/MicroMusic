@@ -20,9 +20,13 @@ extern UMState um;
 extern uint16_t um_normalizer;
 extern int8_t um_normalizerMin;
 extern uint8_t um_masterShift;
+extern uint8_t um_channels;
 void um_init(void);
 void um_tick(void);
-/* Signed mixes: low 16 bits = L, high 16 bits = R. Platform outputs PWM. */
+/* Two signed 16-bit mixes, left in low word and right in high word. Mono
+   compositions use identical pans; channel selection belongs to the platform. */
 uint32_t um_render(void);
+/* Flash access goes through storage.h in C; optional AVR arithmetic/cache backend. */
+void um_scale_wave(uint16_t source,int8_t *target,uint8_t level,uint8_t gain);
 uint8_t um_output(int16_t value);
 #endif
