@@ -1,9 +1,13 @@
 import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { CPU8080 } from '../../Emulator/core8080.mjs';
-const root = new URL('./', import.meta.url);
+const profileAt = process.argv.indexOf('--profile');
+const profile = profileAt < 0 ? 'balloon' : process.argv[profileAt+1];
+assert.ok(['balloon', 'owl'].includes(profile), 'Unknown voice profile');
+const root = new URL(profile === 'owl' ? './owl/' : './', import.meta.url);
 const read = name => readFileSync(new URL(name, root));
-const rom = read('dualcrc-voice32.bin'), meta = JSON.parse(read('dualcrc-voice32.json'));
+const name = profile === 'owl' ? 'owl-voice32' : 'dualcrc-voice32';
+const rom = read(name+'.bin'), meta = JSON.parse(read(name+'.json'));
 const pcm = Buffer.from(JSON.parse(read('pcm4.json')).packed_hex, 'hex');
 const levels = Array.from({ length: pcm.length*2 }, (_, i) => (pcm[i>>1] >> (4*(i&1))) & 15);
 const target = new URL('TIMING.json', root);
@@ -38,6 +42,7 @@ function traceVoice(cpu, stop) {
 const cpu = new CPU8080(new Uint8Array(rom));
 while (cpu.pc !== 0x1100 && !cpu.halted && cpu.count < 2500000) cpu.step();
 assert.equal(cpu.pc, 0x1100);
+const voiceStartT = cpu.t;
 const full = traceVoice(cpu), pulses = full.pulses;
 assert.equal(pulses.length, levels.length*2); assert.ok(cpu.halted);
 let maxPhase = 0, maxWidth = 0, repeatMismatch = 0;
@@ -89,6 +94,11 @@ const report={rom_sha256:meta.sha256,cpu_hz:3500000,output_model:'INTE at EI/DI 
   levels:rows,segment_boundary_count:boundaries.length,segment_boundaries:boundaries,
   exhaustive_level_transition_and_branch_cases:exhaustive,ending_level8_samples:tail,
   ending_level8_seconds:tail*218/3500000,hardware_measured:false};
+if (profile === 'owl') {
+  report.startup = 'direct';
+  report.first_rise_t_from_reset = voiceStartT+pulses[0].rise;
+  assert.equal(report.first_rise_t_from_reset, 95);
+}
 if (process.argv.includes('--check')) assert.deepEqual(report, JSON.parse(readFileSync(target)));
 else writeFileSync(target,JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify({pulses: report.pulses, maximum_grid_error_t: maxPhase, maximum_width_error_t: maxWidth, transition_cases: exhaustive}));

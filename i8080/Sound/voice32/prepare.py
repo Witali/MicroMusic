@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prepare the confirmed balloon quote as 16 kHz WAV and packed 4-bit PCM.
+"""Prepare confirmed speech sources as 16 kHz WAV and packed 4-bit PCM.
 
 MP3 is an external input. Rebuild the retained PCM from source-16000.wav with
 FFmpeg 8.1.1 / libsoxr; no network access is performed by this script.
@@ -47,11 +47,22 @@ def quantize(samples, gain):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', type=Path, help='External, unmodified vinn.mp3')
+    parser.add_argument('--profile', choices=['balloon', 'owl'], default='balloon')
     parser.add_argument('--check', action='store_true')
     args = parser.parse_args()
+    target_root = ROOT if args.profile == 'balloon' else ROOT / args.profile
+    original = {
+        'quote': 'С воздушным шаром можно кого хочешь утешить.',
+        'source_page': 'https://zvukipro.com/mult/2937-zvuki-iz-sovetskogo-multfilma-vinni-puh.html',
+        'download_url': 'https://zvukipro.com/index.php?do=download&id=56332',
+        'original_filename': 'vinn.mp3', 'original_bytes': 81589, 'original_sha256': SOURCE_SHA,
+        'original_sample_rate_hz': 48000, 'original_channels': 2, 'decoded_original_frames': 135995}
+    if args.profile != 'balloon':
+        original = json.loads((target_root / 'profile.json').read_text(encoding='utf-8'))['source']
+    original_seconds = original['decoded_original_frames'] / original['original_sample_rate_hz']
 
     def save(name, data):
-        path = ROOT / name
+        path = target_root / name
         data = data.encode('utf-8') if isinstance(data, str) else data
         if args.check:
             actual = path.read_bytes()
@@ -61,9 +72,9 @@ def main():
         else:
             path.write_bytes(data)
 
-    canonical = ROOT / 'source-16000.wav'
+    canonical = target_root / 'source-16000.wav'
     if args.source:
-        assert digest(args.source.read_bytes()) == SOURCE_SHA, 'Unexpected original MP3'
+        assert digest(args.source.read_bytes()) == original['original_sha256'], 'Unexpected original audio'
         save(canonical.name, wav_bytes(resample(args.source, 16000), 16000))
     assert canonical.exists(), 'First run requires --source /path/to/vinn.mp3'
     with wave.open(str(canonical), 'rb') as f:
@@ -91,12 +102,7 @@ def main():
         'sample_rate_hz': actual_rate, 'valid_samples': valid_samples,
         'sample_count': len(levels), 'packed_hex': packed.hex()}
     save('pcm4.json', json.dumps(data, indent=2) + '\n')
-    report = {'quote': 'С воздушным шаром можно кого хочешь утешить.',
-        'source_page': 'https://zvukipro.com/mult/2937-zvuki-iz-sovetskogo-multfilma-vinni-puh.html',
-        'download_url': 'https://zvukipro.com/index.php?do=download&id=56332',
-        'original_filename': 'vinn.mp3', 'original_bytes': 81589, 'original_sha256': SOURCE_SHA,
-        'original_sample_rate_hz': 48000, 'original_channels': 2,
-        'decoded_original_frames': 135995, 'decoded_original_seconds': 135995/48000,
+    report = {**original, 'decoded_original_seconds': original_seconds,
         'canonical_wav': canonical.name, 'canonical_sha256': digest(canonical.read_bytes()),
         'canonical_rate_hz': 16000, 'canonical_frames': frames,
         'ffmpeg_version': subprocess.check_output(['ffmpeg', '-version'], text=True).splitlines()[0],
@@ -109,7 +115,7 @@ def main():
         'valid_samples': valid_samples, 'padding_samples': len(levels)-valid_samples,
         'packed_bytes': len(packed), 'packed_sha256': digest(packed),
         'playback_seconds_with_padding': len(levels)/actual_rate,
-        'source_duration_error_seconds': len(levels)/actual_rate-135995/48000,
+        'source_duration_error_seconds': len(levels)/actual_rate-original_seconds,
         'snr_scope': 'Quantized baseband versus resampled source, excluding PWM/filter/hardware.'}
     save('SOURCE.json', json.dumps(report, ensure_ascii=False, indent=2) + '\n')
     print(f'{frames} samples at 16000 Hz; firmware {len(levels)} samples / {len(packed)} bytes; '
