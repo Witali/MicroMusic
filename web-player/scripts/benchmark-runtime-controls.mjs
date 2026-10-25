@@ -43,11 +43,11 @@ for(const [kind,version] of Object.entries({old,current})){
 }
 for(const key of ['exports','flags','compilerVersion','sources'])assert.deepEqual(old.manifest[key],current.manifest[key],key);
 const changedInputs=Object.keys(current.manifest.inputs).filter(path=>old.manifest.inputs[path]!==current.manifest.inputs[path]);
-const changeSet=values['change-set'];assert.ok(['long-internal-span','service-inlining','clock-identity','clock-multiply','clock-delay','ns-remainder','watchdog-period'].includes(changeSet));
+const changeSet=values['change-set'];assert.ok(['long-internal-span','service-inlining','clock-identity','clock-multiply','clock-delay','ns-remainder','watchdog-period','watchdog-lazy'].includes(changeSet));
 assert.deepEqual(changedInputs,changeSet==='long-internal-span'?
   ['web-player/native/peripherals/device.c','web-player/native/peripherals/device.h']:
   changeSet.startsWith('clock-')?['web-player/native/peripherals/device_clock.h']:
-  changeSet==='watchdog-period'?['web-player/native/peripherals/device.c','web-player/native/devices/attiny13a/clki_board.inc']:['web-player/native/peripherals/device.c']);
+  changeSet.startsWith('watchdog-')?['web-player/native/peripherals/device.c','web-player/native/devices/attiny13a/clki_board.inc']:['web-player/native/peripherals/device.c']);
 const hostSources=['web-player/lib/avr-transpiler.js','web-player/lib/avr-wasm-phases.js',
   'web-player/lib/avr-transpiled-runtime.js','web-player/lib/avr-runtime.js','web-player/lib/attiny13a-runtime.js'];
 for(const path of hostSources)assert.equal(text(path),git(['show',baseline+':'+path]).toString().replaceAll('\r\n','\n'),path+' unchanged');
