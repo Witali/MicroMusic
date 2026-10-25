@@ -17,6 +17,10 @@ interrupted instruction to finish or for interrupts to become enabled.
 
 The previous fixed mono ISR (`8a0da608`) takes 44 cycles, including entry and
 return; stereo takes 48. An earlier mono image (`41e456a9`) takes 52.
+Those 52 divide into 10 cycles for hardware entry/vector/return, 18 for
+register/SREG backup and restoration, and 24 for FIFO/PWM work. The earlier
+image spends eight extra cycles forming a full FIFO pointer, reading/testing
+the runtime channel count and converting the pointer back to a cursor.
 
 | Normal path, 192-byte ring | Previous mono | Stack mono | GPIOR mono | GPIOR stereo |
 | --- | ---: | ---: | ---: | ---: |
@@ -87,3 +91,20 @@ path removes six bytes. Static SRAM and the FIFO location do not change.
 GPIOR backup removes four stack bytes from the previous normal path.
 Detailed test reports accompany the release; each measured claim applies
 only to its recorded binaries and workloads.
+
+Runtime source commit: `223f9cc3`. The [isolated driver matrix](../../ATtiny88/Music/universal/reports/irq-driver-verification.json)
+executes 329,940 cases across 282 compiled configurations: all 47 byte
+capacities, both channel counts and C/stack/GPIOR drivers. It covers every
+8-bit register/counter value, all 128 interrupted flag combinations,
+nonzero r1, inherited GPIOR contents, exact empty/wrap behavior and strict
+mono OCR1A non-access. Stack use including the two-byte return PC is five
+bytes for stack backup and two for GPIOR on either path. Empty paths take
+37/31 cycles respectively. Tests use the actual production ISR and vendor
+definitions; no checks are added to firmware.
+
+[Release comparison](../../ATtiny88/Music/universal/reports/irq-optimization.json)
+records all 18 full loops/restarts with active interrupts, current binary
+hashes, unchanged compressed musical payload, four unchanged WAV previews
+and independent C/ASM/reference arithmetic checks. The selected 128-byte
+fast-dictionary and 192-byte compact-dictionary examples both meet their
+deadlines; smaller buffers are not thereby qualified.

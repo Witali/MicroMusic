@@ -1,17 +1,47 @@
 {
+  "generatedPwmActual": {
+    "sha256": "1de6ce892d701eb44a3c859e802d194f488e0b1724ff73c0476777a81c0737c4",
+    "bytes": 13878616
+  },
+  "generatedPwmReference": {
+    "sha256": "1de6ce892d701eb44a3c859e802d194f488e0b1724ff73c0476777a81c0737c4",
+    "bytes": 13878616
+  },
+  "consumedPwmActual": {
+    "sha256": "9214f0a4a1bae9388e5e59636fe977cdfe40e607b30dfef376e86597317d347c",
+    "bytes": 13878646
+  },
+  "consumedPwmReference": {
+    "sha256": "9214f0a4a1bae9388e5e59636fe977cdfe40e607b30dfef376e86597317d347c",
+    "bytes": 13878646
+  },
+  "rawPwmStreamsEqual": true,
+  "strictMonoOCR1ANoWrites": null,
+  "monoOCR1AWriteAttempts": null,
+  "monoObservableBoundaries": null,
+  "monoPoisonedCompareA": null,
+  "monoPB1AndCOM1AInactive": null,
+  "irqScratch": "gpior",
+  "irqScratchSelection": "gpior",
+  "reservedIORegisters": [
+    "GPIOR0",
+    "GPIOR1",
+    "GPIOR2"
+  ],
+  "dfpRegisterSourceSha256": "63c792cc9961aca81bfb3602e0d1d3cf01a37f35a449a6b6e2e6c8b41cc1e892",
   "variant": "lumiere-stereo",
   "cpuHz": 8000000,
   "backend": "avr-asm",
-  "engineSha256": "a5cebc140d8053ba46f41da5eb2024e2677efc98766edab99bb7b22a4a5ee269",
+  "engineSha256": "5813a786ef43c7a11c7549f68bf3893587c09d850cb56c222ffd9d956096e607",
   "configuredChannels": 2,
   "renderABI": "packed-stereo-u32",
   "inactiveCompareAPreserved": null,
-  "flashSha256": "8d267b81955ca7829a0173675319d9ce0217430421592ee17cda65f1457b327f",
+  "flashSha256": "27e45e6c8feb036b9da273a248f43858ae8a40badca922a4a81c17aeb8e1b2fa",
   "eepromSha256": "45ba4c476cf214ef25d91494c6fa70b2567722b44403bcd25b09326e190fee37",
   "scoreSha256": "04758f2a4611165b00bc31c07ad770ccec711dd631e166c204fe5347974e720d",
   "reference": "Independent uncompressed UM88 JSON, exact tonal/percussion/interpolation arithmetic",
   "passed": true,
-  "simulatedSeconds": 222.0600975,
+  "simulatedSeconds": 222.060074375,
   "controlFrames": 16262,
   "completeLoops": 1,
   "samples": 1734827,
@@ -22,18 +52,18 @@
   "checkedWaveSamples": 1301200,
   "pwmBufferLayout": "stereo-pairs",
   "fifoCapacityFrames": 96,
-  "minimumQueuedFrames": 29,
+  "minimumQueuedFrames": 32,
   "maxRenderActiveCycles": 272,
   "maxControlActiveCycles": 12601,
   "controlCalls": 16264,
-  "maxISRCycles": 48,
+  "maxISRCycles": 38,
   "fifoUnderruns": 0,
   "lostInterrupts": 0,
-  "minimumStackPointer": 731,
-  "stackBytes": 36,
+  "minimumStackPointer": 735,
+  "stackBytes": 32,
   "staticStateEnd": 503,
   "fifoEnd": 704,
-  "stackMarginBytes": 27,
+  "stackMarginBytes": 31,
   "allControlFramesMatch": true,
   "allTonalMixesMatch": true,
   "allPwmFramesMatch": true,
@@ -43,5 +73,5 @@
   "monoMeanPwm": 127.25462193060173,
   "monoRmsPwm": 11.574601008309635,
   "hardwareTested": false,
-  "wallSeconds": 335.8191333
+  "wallSeconds": 312.8476959
 }

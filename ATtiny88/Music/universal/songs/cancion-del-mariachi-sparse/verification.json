@@ -1,17 +1,47 @@
 {
+  "generatedPwmActual": {
+    "sha256": "dfaf7ad2a7948d86581498d5c08bb41af651ed6076e71e56c7efce06cd9928ec",
+    "bytes": 1916160
+  },
+  "generatedPwmReference": {
+    "sha256": "dfaf7ad2a7948d86581498d5c08bb41af651ed6076e71e56c7efce06cd9928ec",
+    "bytes": 1916160
+  },
+  "consumedPwmActual": {
+    "sha256": "74bfdcc1e6c402b55026507635219995bdc507bc9712ff160fcbdaaa00218b66",
+    "bytes": 1916167
+  },
+  "consumedPwmReference": {
+    "sha256": "74bfdcc1e6c402b55026507635219995bdc507bc9712ff160fcbdaaa00218b66",
+    "bytes": 1916167
+  },
+  "rawPwmStreamsEqual": true,
+  "strictMonoOCR1ANoWrites": true,
+  "monoOCR1AWriteAttempts": 0,
+  "monoObservableBoundaries": 105952462,
+  "monoPoisonedCompareA": 23131,
+  "monoPB1AndCOM1AInactive": true,
+  "irqScratch": "gpior",
+  "irqScratchSelection": "gpior",
+  "reservedIORegisters": [
+    "GPIOR0",
+    "GPIOR1",
+    "GPIOR2"
+  ],
+  "dfpRegisterSourceSha256": "63c792cc9961aca81bfb3602e0d1d3cf01a37f35a449a6b6e2e6c8b41cc1e892",
   "variant": "cancion-del-mariachi-sparse",
   "cpuHz": 8000000,
   "backend": "avr-asm",
-  "engineSha256": "0da19c4bedcbe047f5dc9119a1b120611f519069547f87089646d218a7c6551f",
+  "engineSha256": "586c130b54f7fe7405d336f005478a23375fc2b1e5b4ce0eb9a462c0540e1a6b",
   "configuredChannels": 1,
   "renderABI": "mono-s16",
   "inactiveCompareAPreserved": true,
-  "flashSha256": "e35189922c8285414d97ec232c9a2f1cad312038c6b753efdfcda8c5081b65ba",
+  "flashSha256": "8dab33a4fc1eac63550ecdc1821595ec3a66c8b1cfbd6f7bc58b7f23c5e12884",
   "eepromSha256": "2cba5723fc4c055fd8e9bf70f180ac4dee32fcf18c11b77ea587305fe8e29096",
   "scoreSha256": "35894d9b13f482a0d4f5eb70c1aa0fa276c72e27bdccca6bfcd80bb0142b466e",
   "reference": "Independent uncompressed UM88 JSON, exact tonal/percussion/interpolation arithmetic",
   "passed": true,
-  "simulatedSeconds": 61.3191175,
+  "simulatedSeconds": 61.319103875,
   "controlFrames": 4489,
   "completeLoops": 1,
   "samples": 479040,
@@ -22,18 +52,18 @@
   "checkedWaveSamples": 431232,
   "pwmBufferLayout": "mono",
   "fifoCapacityFrames": 192,
-  "minimumQueuedFrames": 121,
+  "minimumQueuedFrames": 124,
   "maxRenderActiveCycles": 413,
   "maxControlActiveCycles": 13728,
   "controlCalls": 4491,
-  "maxISRCycles": 44,
+  "maxISRCycles": 34,
   "fifoUnderruns": 0,
   "lostInterrupts": 0,
-  "minimumStackPointer": 731,
-  "stackBytes": 36,
+  "minimumStackPointer": 735,
+  "stackBytes": 32,
   "staticStateEnd": 503,
   "fifoEnd": 704,
-  "stackMarginBytes": 27,
+  "stackMarginBytes": 31,
   "allControlFramesMatch": true,
   "allTonalMixesMatch": true,
   "allPwmFramesMatch": true,
@@ -43,5 +73,5 @@
   "monoMeanPwm": 126.54082331329326,
   "monoRmsPwm": 18.734508184822673,
   "hardwareTested": false,
-  "wallSeconds": 68.1119721
+  "wallSeconds": 75.4302019
 }

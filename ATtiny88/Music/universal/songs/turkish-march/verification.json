@@ -1,17 +1,47 @@
 {
+  "generatedPwmActual": {
+    "sha256": "8a37bf296c5570b7e0b076d232a75ccc950ceece51324dfcf4ee0a9073470f9e",
+    "bytes": 1888856
+  },
+  "generatedPwmReference": {
+    "sha256": "8a37bf296c5570b7e0b076d232a75ccc950ceece51324dfcf4ee0a9073470f9e",
+    "bytes": 1888856
+  },
+  "consumedPwmActual": {
+    "sha256": "58ee46a235d22083ac450d00c957abf52d338295878a8f4c545e08d0b4b503a6",
+    "bytes": 1888857
+  },
+  "consumedPwmReference": {
+    "sha256": "58ee46a235d22083ac450d00c957abf52d338295878a8f4c545e08d0b4b503a6",
+    "bytes": 1888857
+  },
+  "rawPwmStreamsEqual": true,
+  "strictMonoOCR1ANoWrites": true,
+  "monoOCR1AWriteAttempts": 0,
+  "monoObservableBoundaries": 135511010,
+  "monoPoisonedCompareA": 23131,
+  "monoPB1AndCOM1AInactive": true,
+  "irqScratch": "gpior",
+  "irqScratchSelection": "gpior",
+  "reservedIORegisters": [
+    "GPIOR0",
+    "GPIOR1",
+    "GPIOR2"
+  ],
+  "dfpRegisterSourceSha256": "63c792cc9961aca81bfb3602e0d1d3cf01a37f35a449a6b6e2e6c8b41cc1e892",
   "variant": "turkish-march",
   "cpuHz": 8000000,
   "backend": "avr-asm",
-  "engineSha256": "0da19c4bedcbe047f5dc9119a1b120611f519069547f87089646d218a7c6551f",
+  "engineSha256": "586c130b54f7fe7405d336f005478a23375fc2b1e5b4ce0eb9a462c0540e1a6b",
   "configuredChannels": 1,
   "renderABI": "mono-s16",
   "inactiveCompareAPreserved": true,
-  "flashSha256": "99f90152eea80c93613b16ff7a91e439947b671e4c20d1658c570130325b5bcf",
+  "flashSha256": "7306a8360a437e88bcac777881ef0b685b17cd301a2a3c1f8aab2ee679ee8409",
   "eepromSha256": "de37b0a60a1a0c845d84166a6169056e364f3e88cbfc824260fafd325e5ea2b8",
   "scoreSha256": "bfc597322edc0739020a64561817b29eb6d45acc1df0f5a1504d841a71c0d2f9",
   "reference": "Independent uncompressed UM88 JSON, exact tonal/percussion/interpolation arithmetic",
   "passed": true,
-  "simulatedSeconds": 60.444721375,
+  "simulatedSeconds": 60.44472075,
   "controlFrames": 4425,
   "completeLoops": 1,
   "samples": 472214,
@@ -22,18 +52,18 @@
   "checkedWaveSamples": 212544,
   "pwmBufferLayout": "mono",
   "fifoCapacityFrames": 192,
-  "minimumQueuedFrames": 154,
+  "minimumQueuedFrames": 156,
   "maxRenderActiveCycles": 139,
   "maxControlActiveCycles": 6985,
   "controlCalls": 4427,
-  "maxISRCycles": 44,
+  "maxISRCycles": 34,
   "fifoUnderruns": 0,
   "lostInterrupts": 0,
-  "minimumStackPointer": 731,
-  "stackBytes": 36,
+  "minimumStackPointer": 735,
+  "stackBytes": 32,
   "staticStateEnd": 503,
   "fifoEnd": 704,
-  "stackMarginBytes": 27,
+  "stackMarginBytes": 31,
   "allControlFramesMatch": true,
   "allTonalMixesMatch": true,
   "allPwmFramesMatch": true,
@@ -43,5 +73,5 @@
   "monoMeanPwm": 127.81794906546608,
   "monoRmsPwm": 23.223285741858565,
   "hardwareTested": false,
-  "wallSeconds": 79.04161359999999
+  "wallSeconds": 76.7985359
 }
