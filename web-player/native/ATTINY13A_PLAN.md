@@ -466,9 +466,22 @@ full performance gate stay open. Next compiler experiment: cross-block SREG
 liveness with every externally observable exit preserved. This closes no new
 hardware checklist item; the count remains21/30.
 
+Inter-block SREG checkpoint: [guarded two-block fusion](../reports/flag-regions-20261025.md)
+passes1662 candidate checks and the13-case parity matrix. Untimed million-
+instruction traces prove1/1789/15614 accepted regions on rhythmic/Lumiere/HQ4,
+with11698 exact state/pin checkpoints and active IRQs. The two-case timing screen
+does not show a speed gain (0.993x/0.958x with noisy identity controls), while
+modules grow1.2–1.6%. The prototype is rejected and archived, not retained as
+an option. Compiler/runtime sources are restored exactly to `ae265f7`; three
+new SREG-observability regressions remain and all1652 restored tests pass.
+The historical-generator loader additionally handles its phase-local dependency.
+Next compiler experiment: constant/short-sequence folding within the existing
+guards, preserving original cycles and all observable register/SREG exits.
+Default activation, hardware evidence and the full performance gate remain open.
+
 | Priority | Candidate | Evidence required before keeping it |
 | --- | --- | --- |
-| 1 | Extend SREG liveness between connected blocks, then try constant and short-sequence folding as independent changes. | Exact C/chained-Z dependencies, all observable SREG values and original AVR cycle/phase boundaries; compare with full flags and the unchanged generated instruction path. |
+| 1 | Try constant and short-sequence folding inside existing guarded blocks. Guarded inter-block fusion is rejected; a future cross-block design needs distinct evidence. | Exact C/chained-Z dependencies, all observable register/SREG values and original AVR cycle/phase boundaries; compare with full flags and the unchanged generated instruction path. Avoid new guard/entry overhead without measured benefit. |
 | 2 | Use the refreshed profile to test fewer repeated event/time conversions in `next_event`, `ratio` and `duration`; equal-rate and bounded-multiply guards are rejected. Broader peripheral activity gating remains open. | Exact integer residues, clock/input/event boundaries and pin/PCM parity; enabled-ADC and CLKI controls. Use balanced identical-runtime controls and uninstrumented paired timings. Inspect the exact optimized WASM for an inlining/layout hypothesis; reduced entries alone do not prove speed. |
 | 3 | Validate optional phase-local liveness for default activation when stable performance measurements are available. | The full-context path remains an oracle. Size/parity are established; do not treat noisy median gains as speed evidence. Keep partial execution, reset/faults, SPM and IRQ effects exactly once. |
 | 4 | Generate direct WASM control flow for proven regions and loops; reconsider register locals only when these larger regions can amortize their cost. | Safe indirect/external-entry fallback, coherent register aliases and visible AVR stack state; real-firmware gains in addition to synthetic-loop results. |
