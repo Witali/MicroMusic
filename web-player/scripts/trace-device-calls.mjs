@@ -25,7 +25,7 @@ cpSync(resolve(root,'web-player/native'),native,{recursive:true,filter:path=>
   !/\.[^/\\]+$/.test(path)||/\.(?:c|h|inc)$/.test(path)});
 const selected={
   'peripherals/device.c':['next_event','next_event_scan','advance_to','elapse','service','service_clocks',
-    'service_async','service_end','mirror','ratio','duration','capture_pins','pin_voltages','timer_outputs',
+    'service_async','service_end','mirror','ratio','rational','duration','capture_pins','pin_voltages','timer_outputs',
     'sources','clock_domains','wake','device_pending_irqs','device_next_cpu_event','advance_half_until_ps'],
   'devices/attiny13a/clki_board.inc':['clki_service','clki_refill','clki_next_edge','clki_source_rise','clki_wake'],
   'avr-device.inc':['full_clock','full_deadline','full_audio_collect','avr_device_phase_clock',
@@ -42,6 +42,9 @@ const selected={
   'devices/attiny13a/clki_clock.c':['attiny13a_clki_clock_edge'],
   'devices/attiny13a/clki_periodic.c':['attiny13a_clki_periodic_peek','attiny13a_clki_periodic_consume'],
 };
+// Optional candidate helper: the function table records its presence explicitly.
+if(source('web-player/native/peripherals/device.c').includes('static void watchdog_sync('))
+  selected['peripherals/device.c'].push('watchdog_sync');
 const functions=[];
 for(const [file,names] of Object.entries(selected)){
   let text=readFileSync(join(native,file),'utf8');
@@ -103,16 +106,20 @@ const productionModule=new WebAssembly.Module(production);
 assert.deepEqual(WebAssembly.Module.imports(countedModule),[]);
 const program=flash({instructions:[avr.ldi(16,1),avr.ldi(17,0x55),avr.add(18,16),
   avr.eor(19,17),avr.inc(20),avr.rjmp(5,2)]});
-const catalog=['web-player/firmware.json','web-player/hq4-firmware.json'].flatMap(path=>JSON.parse(source(path)).entries);
+const catalogPaths=['web-player/firmware.json','web-player/hq4-firmware.json'];
+const catalogs=catalogPaths.map(path=>JSON.parse(source(path))),catalog=catalogs.flatMap(row=>row.entries);
+const aliases=Object.assign({},...catalogs.map(row=>row.aliases));
 const cases=['rhythmic','lumiere-stereo','hq4-chego-auto'].map(id=>{
-  const entry=catalog.find(entry=>entry.id===id);assert.ok(entry,id);
+  const entry=catalog.find(entry=>entry.id===(aliases[id]??id));assert.ok(entry,id);
+  assert.equal(sha(parseHex(entry.flashHex)),entry.flashSha256);
   const hz=entry.cpuHz||9600000,calibration=Array(128).fill(0);calibration[0]=hz;
-  return{id:id+(values['physical-firmware']?'-physical':''),binary:parseHex(entry.flashHex),
+  return{id:id+(values['physical-firmware']?'-physical':''),requestedFirmwareId:id,firmwareId:entry.id,binary:parseHex(entry.flashHex),
     eeprom:entry.eepromHex?parseHex(entry.eepromHex,64):null,
     frames:12000,channels:entry.audioChannels||1,options:{oscillatorHz:hz,fastIdle:true,
       ...values['physical-firmware']?{resumable:true,osccalHz:calibration,
         nvmClockProfile:1,nvmCalibrationReferenceHz:hz}:{}}};
 });
+assert.equal(new Set(cases.map(entry=>entry.firmwareId)).size,cases.length,'Duplicate resolved firmware');
 for(const divisor of [1,256])cases.push({id:'kernel-clki-20m-div'+divisor,binary:program,frames:1200,channels:1,divisor,
   options:{oscillatorHz:20000000,resumable:true,fastIdle:false,fuseLow:0x70,
     clkiProfile:{phasePolicy:'digital-noninverting-zero-seed-v1',initialLevel:1}}});
@@ -141,7 +148,9 @@ const report={schema:'micromusic-native-call-trace-v1',createdAt:new Date().toIS
   git:{head:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim()},
   productionRuntimeSha256:sha(production),countedRuntimeSha256:sha(countedBytes),
   sourceSha256NormalizedLF:{...Object.fromEntries(Object.keys(manifest.inputs).map(p=>[p,sha(source(p))])),
-    'web-player/scripts/trace-device-calls.mjs':sha(source('web-player/scripts/trace-device-calls.mjs'))},
+    ...Object.fromEntries([...catalogPaths,'web-player/scripts/trace-device-calls.mjs',
+      'web-player/lib/attiny13a-runtime.js','web-player/lib/avr-transpiler.js',
+      'web-player/tests/fixtures/attiny13a-system-firmware.mjs'].map(p=>[p,sha(source(p))]))},
   functions,method:'Counters and first256 chronological source-level function entries in an ignored diagnostic build. Includes entries later inlined by O3, not a WASM call count. Constructors and input submission are excluded; counters reset immediately before capture. Integer board time is ps for CLKI and oscillator half ticks for compatible firmware. No host timestamps or per-edge JS callbacks. Instrumentation changes executable code, layout and performance: its times are never used as production performance or sampling percentages. Final full public/data/Flash/EEPROM/IRQ state and raw PCM must match an uninstrumented production reference.',results:[]};
 for(const entry of cases){
   const original=make(entry,productionModule),counted=make(entry,countedModule);
@@ -154,11 +163,17 @@ for(const entry of cases){
     function:functions[view.getUint32(n*32+24,true)].name});
   assert.ok(actual.equals(expected),entry.id+' PCM');
   assert.deepEqual(counted.state(),original.state(),entry.id+' public state');
+  assert.deepEqual(counted._state,original._state,entry.id+' full diagnostics');
   for(const name of ['data','rom','eeprom'])assert.deepEqual(counted[name],original[name],entry.id+' '+name);
   assert.deepEqual(counted.irqFrames,original.irqFrames);
+  const physical=!!entry.options.resumable;
+  const expectedPins=physical?original.drainPinsPs():original.drainPins(),
+    actualPins=physical?counted.drainPinsPs():counted.drainPins();
+  assert.deepEqual(actualPins,expectedPins,entry.id+' pin history');
   const row={id:entry.id,frames:entry.frames,sampleRate:48000,channels:entry.channels,
-    timeUnits:entry.divisor?'picoseconds':'oscillator half ticks',divisor:entry.divisor??1,
-    cycles:counted.cyc,productionEquality:true,rawPcmSha256:sha(actual),counts,prefix};
+    requestedFirmwareId:entry.requestedFirmwareId,firmwareId:entry.firmwareId,flashSha256:sha(entry.binary),
+    timeUnits:physical?'picoseconds':'oscillator half ticks',divisor:entry.divisor??1,
+    cycles:counted.cyc,productionEquality:true,rawPcmSha256:sha(actual),pinSha256:sha(stringify(actualPins)),counts,prefix};
   report.results.push(row);console.log(entry.id,JSON.stringify(counts.filter(r=>[
     'clki_service','pin_voltages','analog_input','analog_adc_advance','next_event_scan','mirror'].includes(r.name))));
 }
