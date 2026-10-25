@@ -33,7 +33,8 @@ export class StreamingAudio {
       }
       if (this.previous === null || (this.next === null && !this.finished)) break;
       if (this.next === null && this.finished && this.phase >= 1) { this.ended = true; break; }
-      output[i] = (this.previous + ((this.next ?? this.previous) - this.previous) * this.phase) * this.volume;
+      const value = (this.previous + ((this.next ?? this.previous) - this.previous) * this.phase) * this.volume;
+      output[i] = Math.max(-1, Math.min(1, value));
       this.phase += this.rate / this.deviceRate;
     }
   }

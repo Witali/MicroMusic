@@ -176,7 +176,7 @@
     "node_passed": 31,
     "node_failed": 0
   },
-  "current_validation": "voice32_validation",
+  "current_validation": "unfiltered_pwm_hum_validation",
   "voice32_validation": {
     "date": "2026-10-25",
     "engine_commit": "66709bc",
@@ -217,5 +217,147 @@
     "browser_note": "Browser permission withdrawn; no browser access for this update. Earlier browser results above are historical.",
     "hardware_tested": false,
     "active_interrupts_supported": false
+  },
+  "unfiltered_pwm_hum_validation": {
+    "date": "2026-10-25",
+    "firmware_changed": false,
+    "firmware_sha256": "570c019a7ce0fdd2897dadce67b5fa4967b339748ea39b0914648d14b4cf0d2f",
+    "firmware_timing_report": "../Sound/voice32/TIMING.json",
+    "period_error_t": 0,
+    "width_error_t": 0,
+    "pulses": 90976,
+    "segment_links_checked": 51,
+    "level_and_branch_cases": 1552,
+    "cause": "SignalFilter clipped DC-removed PWM before device resampling and volume, creating nonlinear folded harmonics even with output headroom.",
+    "fix": "Keep internal SignalFilter output linear; limit device output only after resampling and volume. WAV encoder retains its final PCM limit.",
+    "node_test_groups": 48,
+    "node_passed": 48,
+    "node_failed": 0,
+    "regression_tests": [
+      "Unfiltered 109T PWM at constant level 8 does not create a 330Hz hum at normal volume",
+      "Output limiting follows volume and resampling, preserving quiet transients and bounding full-scale output"
+    ],
+    "spectral_measurement": {
+      "baseline_commit": "ff6e16ee",
+      "test_signal": "Unmodulated PWM, constant level 8, CPU 3500000 Hz, period 109T, width 36T; 96000 Hz area integration",
+      "frequency_hz": 330.27522935779416,
+      "measurement": "Hann-windowed DFT at exact folded frequency, 0.25..1.25 seconds; actual StreamingAudio pipeline",
+      "results": [
+        {
+          "device_rate_hz": 44100,
+          "filter": "none",
+          "volume": 0.65,
+          "normalize": false,
+          "before": {
+            "amplitude_330_hz": 0.021147065757898906,
+            "dbfs_330_hz": -33.49499768498247,
+            "peak_absolute": 0.6499999761581421
+          },
+          "after": {
+            "amplitude_330_hz": 2.7186671356328596e-05,
+            "dbfs_330_hz": -91.31287925396754,
+            "peak_absolute": 0.8537437319755554
+          },
+          "reduction_db": 57.817881568985065
+        },
+        {
+          "device_rate_hz": 44100,
+          "filter": "rc10k",
+          "volume": 0.65,
+          "normalize": false,
+          "before": {
+            "amplitude_330_hz": 2.7173235720851918e-05,
+            "dbfs_330_hz": -91.31717287607319,
+            "peak_absolute": 0.28850439190864563
+          },
+          "after": {
+            "amplitude_330_hz": 2.7173235720851918e-05,
+            "dbfs_330_hz": -91.31717287607319,
+            "peak_absolute": 0.28850439190864563
+          },
+          "reduction_db": 0
+        },
+        {
+          "device_rate_hz": 48000,
+          "filter": "none",
+          "volume": 0.65,
+          "normalize": false,
+          "before": {
+            "amplitude_330_hz": 0.021147913046169697,
+            "dbfs_330_hz": -33.494649679019545,
+            "peak_absolute": 0.6499999761581421
+          },
+          "after": {
+            "amplitude_330_hz": 2.719159693264168e-05,
+            "dbfs_330_hz": -91.31130572050564,
+            "peak_absolute": 0.8537437319755554
+          },
+          "reduction_db": 57.8166560414861
+        },
+        {
+          "device_rate_hz": 48000,
+          "filter": "rc10k",
+          "volume": 0.65,
+          "normalize": false,
+          "before": {
+            "amplitude_330_hz": 2.717510216020193e-05,
+            "dbfs_330_hz": -91.31657629163846,
+            "peak_absolute": 0.2887187600135803
+          },
+          "after": {
+            "amplitude_330_hz": 2.717510216020193e-05,
+            "dbfs_330_hz": -91.31657629163846,
+            "peak_absolute": 0.2887187600135803
+          },
+          "reduction_db": 0
+        },
+        {
+          "device_rate_hz": 96000,
+          "filter": "none",
+          "volume": 0.65,
+          "normalize": false,
+          "before": {
+            "amplitude_330_hz": 0.021147895770040295,
+            "dbfs_330_hz": -33.494656774689666,
+            "peak_absolute": 0.6499999761581421
+          },
+          "after": {
+            "amplitude_330_hz": 2.718934488539859e-05,
+            "dbfs_330_hz": -91.31202512819408,
+            "peak_absolute": 0.8537437319755554
+          },
+          "reduction_db": 57.81736835350441
+        },
+        {
+          "device_rate_hz": 96000,
+          "filter": "rc10k",
+          "volume": 0.65,
+          "normalize": false,
+          "before": {
+            "amplitude_330_hz": 2.7174807551621833e-05,
+            "dbfs_330_hz": -91.31667045693246,
+            "peak_absolute": 0.28882595896720886
+          },
+          "after": {
+            "amplitude_330_hz": 2.7174807551621833e-05,
+            "dbfs_330_hz": -91.31667045693246,
+            "peak_absolute": 0.28882595896720886
+          },
+          "reduction_db": 0
+        }
+      ]
+    },
+    "ending_constant_level8_seconds": 0.29573257142857146,
+    "standalone_build_check": true,
+    "browser_suite_run_for_this_update": false,
+    "browser_note": "The requested existing in-app player tab was not exposed to the browser control tool. Validation used the actual StreamingAudio code in Node and the standalone source check.",
+    "hardware_measured": false,
+    "active_interrupts_supported": false,
+    "http_served_sources_match_current_files": true,
+    "verified_http_files": [
+      "signal.mjs",
+      "stream-audio.mjs",
+      "Intel_8080_ROM_Player.html"
+    ]
   }
 }
