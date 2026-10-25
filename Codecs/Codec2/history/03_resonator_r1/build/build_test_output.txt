@@ -1,0 +1,18 @@
+0000 R_AVR_13_PCREL    target=0016 value=c00a
+001a R_AVR_13_PCREL    target=0096 value=d03d
+001c R_AVR_LO8_LDI     target=032d value=e2ed
+001e R_AVR_HI8_LDI     target=032d value=e0f3
+002e R_AVR_13_PCREL    target=00d2 value=d051
+004c R_AVR_13_PCREL    target=01e6 value=d0cc
+01d8 R_AVR_LO8_LDI     target=030e value=e0ee
+01da R_AVR_HI8_LDI     target=030e value=e0f3
+Firmware bytes: 821/1024, SRAM variables: 30 bytes (0x60..0x7d), sha256: 90983a2d32697c6f030289e11b2699bf1539783428795d7092f285ca879d7327
+CORE 279 instructions, init 33 cycles, formant LUT [0, 10, 20, 30, 40, 50, 60, 69, 79, 89, 98, 107, 116, 125, 134, 142, 150, 158, 166, 174, 181, 188, 195, 201, 207, 213, 218, 223, 228, 232, 237]
+speech.c2zx: 24 frames 3840 PCM samples, mismatches 0
+codec2_3200_8byte_frames.bin: 24 frames 3840 PCM samples, mismatches 0
+FULL 7680 PCM samples exactly match independent fixed point model.
+DECODE cycle min/mean/max: 893 / 893.0 / 893
+SAMPLE cycle min/mean/max: 909 / 927.3 / 963
+Worst demonstrable per-sample 963, worst frame upper bound 154973, 9.6MHz budget 192000
+Intrinsic call depth 2 bytes; elapsed 7.4s
+TIMER0_ISR 750 interrupts => 160 samples, min/mean/max 26 28.56 38 cycles, sample+5 ISR+20 budget= 1173 vs 1200
