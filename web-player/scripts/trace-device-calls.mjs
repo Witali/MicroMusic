@@ -193,7 +193,10 @@ for(const entry of cases){
     .map(state=>[state,entries('analog_adc_advance:'+state).toString()]));
   assert.equal(BigInt(adcActivity.disabled)+BigInt(adcActivity['enabled-idle'])+BigInt(adcActivity.converting),entries('analog_adc_advance'));
   assert.ok(BigInt(adcActivity['clock-gated'])<=entries('analog_adc_advance'));
-  if(entry.adcState==='enabled-idle'){assert.ok(BigInt(adcActivity['enabled-idle'])>0n);assert.equal(adcActivity.converting,'0');}
+  if(entry.adcState==='enabled-idle'){
+    assert.ok(entries('analog_advance')>0n);assert.equal(adcActivity.converting,'0');
+    assert.equal(counted.data[32+IO.ADCSRA]&(MASK.ADEN|MASK.ADSC),MASK.ADEN);
+  }
   if(entry.adcState==='converting'){assert.ok(BigInt(adcActivity.converting)>0n);assert.ok(counted.data[32+IO.ADCSRA]&MASK.ADIF);}
   const row={id:entry.id,frames:entry.frames,sampleRate:48000,channels:entry.channels,adcActivity,adcState:entry.adcState,
     requestedFirmwareId:entry.requestedFirmwareId,firmwareId:entry.firmwareId,flashSha256:sha(entry.binary),
