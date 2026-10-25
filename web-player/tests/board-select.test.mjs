@@ -71,7 +71,8 @@ test('changing frequency resets a playing transport, keeps its song and engine, 
   assert.equal(init(app).entry.cpuHz,8000000);assert.equal(init(app).entry.id,'alicia');
   assert.equal(init(app).entry.firmwareEngine,'UM88');
   assert.equal(app.get('download').download,'attiny88-alicia.hex');
-  assert.equal(app.get('download-eeprom').hidden,false);
+  assert.equal(app.get('download-eeprom').hidden,true);
+  assert.match(app.get('rom-details').textContent,/EEPROM не требуется/);
   assert.equal(app.get('fuse-low').textContent,'0xEE');assert.equal(app.get('board-upload').hidden,true);
   assert.equal(app.location.searchParams.has('board'),false);
 });

@@ -1,6 +1,6 @@
 // Profile-aware C/WASM loader; generated and physical paths share the bridge.
-import {AVRCore as RuntimeCore} from './avr-runtime.js?v=20261025-board-um88';
-const url = new URL('../wasm/avr.wasm?v=20261025-board-um88', import.meta.url);
+import {AVRCore as RuntimeCore} from './avr-runtime.js?v=20261025-board-um88-pipeline';
+const url = new URL('../wasm/avr.wasm?v=20261025-board-um88-pipeline', import.meta.url);
 const bytes = globalThis.process?.versions?.node
   ? await (await import('node:fs/promises')).readFile(url)
   : await (async () => { const r=await fetch(url); if(!r.ok)throw new Error('AVR WASM HTTP '+r.status); return r.arrayBuffer(); })();

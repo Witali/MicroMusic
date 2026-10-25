@@ -1,5 +1,5 @@
-import { AVRCore } from './avr-core.js?v=20261025-board-um88';
-import { resolveAVRProfile } from './avr-profiles.js?v=20261025-board-um88';
+import { AVRCore } from './avr-core.js?v=20261025-board-um88-pipeline';
+import { resolveAVRProfile } from './avr-profiles.js?v=20261025-board-um88-pipeline';
 import { parseHex } from './hex.js';
 
 export class Renderer {

@@ -1,5 +1,6 @@
 import { parseHex } from './lib/hex.js';
 import { RealtimeMonitor } from './lib/realtime.js';
+import { universalPackageEntry } from './lib/universal-package.js?v=20261025-board-um88-pipeline';
 const $ = id => document.getElementById(id);
 const formatHex = (value, length=2) => value.toString(16).toUpperCase().padStart(length,'0');
 const canvas = $('wave');
@@ -17,6 +18,7 @@ const tiny88Boards={
 };
 const boardId=value=>Object.hasOwn(tiny88Boards,value)?value:'bare-8mhz';
 let currentDevice='attiny13a', currentBoard=boardId(new URL(location.href).searchParams.get('board')), deviceRequest=0;
+let importAttempt=0;
 
 function showError(message) { $('error').textContent = message; $('error').hidden = !message; }
 function audioControls() {
@@ -33,6 +35,7 @@ function deviceUI(device) {
   $('device-control').hidden=speechCollection;
   $('board-control').hidden=!tiny88||speechCollection;
   $('board-select').value=currentBoard;
+  $('board-isp-option').textContent='ATtiny88 · 8 МГц · ISP';
   $('board-note').textContent=micronucleus?'Внешний генератор · загрузка по USB · тембры во Flash':'Внутренний RC · загрузка Flash и EEPROM через ISP';
   $('tiny88-clock').textContent=mhz+' MHz · '+(micronucleus?'MH-ET LIVE':'PDIP-28');
   $('chip-attiny13a').hidden=tiny88; $('chip-attiny88').hidden=!tiny88;
@@ -55,7 +58,8 @@ function deviceUI(device) {
   if(document.querySelector('input[name="engine"]:checked').disabled){
     for(const choice of document.querySelectorAll('input[name="engine"]'))choice.checked=choice.value==='wasm';
   }
-  $('package-file').disabled=tiny88;
+  $('package-file').disabled=micronucleus;
+  $('package-import-label').textContent=micronucleus?'Пакет UM88: выберите профиль ISP':tiny88?'Открыть моно-пакет UM88':'Открыть пакет ATtiny13A';
   $('engine-note').textContent='При смене — сброс на начало.';
   if(!speechCollection) {
     document.title=`MicroMusic / ${name} — плеер прошивок`;
@@ -204,6 +208,18 @@ function load(entry,{autoplay=false}={}) {
     $('fuse-clock-value').textContent=clock+' · '+(configuration.oscillatorHz/1000000).toLocaleString('ru')+' МГц';
     $('fuse-clock-note').textContent=configuration.fuseLow&16?'CKDIV8 отключён · делитель /1':'CKDIV8 включён · делитель /8';
   }
+  if(currentDevice==='attiny88'&&entry.firmwareEngine==='UM88'){
+    $('board-isp-option').textContent='UM88 · '+(entry.cpuHz/1000000).toLocaleString('ru')+' МГц · ISP';
+    $('board-note').textContent='Профиль UM88 из пакета/каталога · EEPROM не требуется';
+    $('machine-details').textContent='512 Б SRAM · 64 Б EEPROM · '+(entry.cpuHz/1000000).toLocaleString('ru')+' МГц';
+    $('tiny88-clock').textContent=(entry.cpuHz/1000000).toLocaleString('ru')+' MHz · PDIP-28';
+    if(entry.cpuHz!==8000000){
+      for(const id of ['fuse-low','fuse-high','fuse-extended-value'])$(id).textContent='—';
+      $('fuse-high-note').textContent='зависят от платы';
+      $('fuse-clock-value').textContent='F_CPU · '+(entry.cpuHz/1000000).toLocaleString('ru')+' МГц';
+      $('fuse-clock-note').textContent='Источник тактов и фьюзы задаются конфигурацией платы';
+    }
+  }
   const originalUrl=entry.kind==='speech' ? entry.originalAudioUrl : null;
   $('play-original').hidden=!originalUrl;
   // Mobile media decoders may reject the canonical recordings' 7500 Hz rate.
@@ -248,6 +264,7 @@ function load(entry,{autoplay=false}={}) {
   $('rom-name').textContent=`${prefix}-${entry.id}.hex`; $('rom-details').textContent=`${entry.flashBytes} / ${capacity} Б Flash · ${entry.eepromBytes} / 64 Б EEPROM · ${(entry.sampleHz/1000).toLocaleString('ru')} кГц ${entry.kind==='speech'?'отсчёты':'PWM'}`;
   if(micronucleus)$('rom-details').textContent=`${entry.flashBytes} / ${capacity} Б приложения · тембры во Flash · ${(entry.sampleHz/1000).toLocaleString('ru')} кГц PWM`;
   if(entry.devicePackage)$('rom-details').textContent=`${entry.flashBytes} / ${capacity} Б Flash · ${entry.eepromBytes} / 64 Б EEPROM · пакет ATtiny13A`;
+  if(entry.firmwareEngine==='UM88')$('rom-details').textContent=`${entry.flashBytes} / ${capacity} Б Flash · EEPROM не требуется · синтез ${(entry.synthesisHz/1000).toLocaleString('ru')} кГц`;
   $('rom-name').href=flashSource; $('rom-name').download=`${prefix}-${entry.id}.hex`;
   $('rom-hash').textContent=entry.flashSha256.slice(0,16)+'…'; $('rom-hash').title='SHA-256 Flash: '+entry.flashSha256;
   $('rom-size').textContent=entry.flashBytes+' байт';
@@ -255,7 +272,7 @@ function load(entry,{autoplay=false}={}) {
   $('wav-link').hidden=!entry.preview; if (entry.preview) $('wav-link').href=entry.preview;
   const reference=originalUrl||entry.reference;
   $('reference-wav').hidden=!reference; if(reference)$('reference-wav').href=reference;
-  $('download-eeprom').hidden=!entry.eepromHex; $('reset').disabled=false;
+  $('download-eeprom').hidden=!entry.eepromHex||entry.firmwareEngine==='UM88'; $('reset').disabled=false;
   $('board-upload').hidden=!micronucleus;
   $('upload-command').textContent=`micronucleus --run ${prefix}-${entry.id}.hex`;
   $('download').textContent=micronucleus?'↓ HEX для Micronucleus':'↓ Flash HEX';
@@ -269,7 +286,7 @@ function load(entry,{autoplay=false}={}) {
   if(micronucleus)url.searchParams.set('board',currentBoard);else url.searchParams.delete('board');
   history.replaceState(null,'',url);
   renderCatalog(); transport();
-  const worker=new Worker(new URL('./worker.js?v=20261025-board-um88',import.meta.url),{type:'module'}); runtime=worker;
+  const worker=new Worker(new URL('./worker.js?v=20261025-board-um88-pipeline',import.meta.url),{type:'module'}); runtime=worker;
   worker.onmessage=({data})=>{
     if (runtime!==worker) return;
     if (data.type==='ready') {
@@ -333,13 +350,16 @@ $('device-select').onchange=()=>switchDevice($('device-select').value);
 $('board-select').onchange=()=>switchDevice('attiny88',$('board-select').value);
 $('package-file').onchange=async event=>{
   const file=event.target.files[0];if(!file)return;
+  const attempt=++importAttempt,device=currentDevice,request=deviceRequest;
   try{
+    if(device==='attiny88'&&currentBoard!=='bare-8mhz')throw Error('Для пакета UM88 выберите профиль ISP; Micronucleus использует отдельные прошивки');
     if(file.size>16*1024*1024)throw Error('Пакет превышает 16 МБ');
-    const {packageEntry}=await import('./lib/package-entry.js');
-    const entry=await packageEntry(await file.text(),{name:file.name});
-    catalog.entries=catalog.entries.filter(e=>e.kind!=='package');catalog.entries.push(entry);
+    const text=await file.text();
+    const entry=device==='attiny88'?await universalPackageEntry(text):await (await import('./lib/package-entry.js')).packageEntry(text,{name:file.name});
+    if(attempt!==importAttempt||device!==currentDevice||request!==deviceRequest)return;
+    catalog.entries=catalog.entries.filter(e=>!['package','universal'].includes(e.kind));catalog.entries.push(entry);
     $('search').value='';load(entry);
-  }catch(error){showError('Не удалось открыть пакет: '+error.message);}
+  }catch(error){if(attempt===importAttempt&&device===currentDevice&&request===deviceRequest)showError('Не удалось открыть пакет: '+error.message);}
   finally{event.target.value='';}
 };
 document.addEventListener('keydown',event=>{ if (event.code==='Space' && !event.repeat && !/INPUT|SELECT|TEXTAREA|BUTTON|A/.test(event.target.tagName)) { event.preventDefault(); toggle(); } });

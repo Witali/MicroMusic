@@ -29,14 +29,23 @@ test('board clock profiles reuse immutable chip maps and preserve all default id
 });
 
 test('unsupported or malformed explicit clocks are rejected before execution',()=>{
- for(const target of ['attiny13a','attiny88'])for(const cpuHz of [0,-1,NaN,Infinity,null,'16000000',12000000,20000000]){
+ for(const target of ['attiny13a','attiny88'])for(const cpuHz of [0,-1,NaN,Infinity,null,'16000000',74999,12000001,75000.5,20000000]){
   assert.throws(()=>resolveAVRProfile(target,{cpuHz}),/Unsupported AVR clock/);
   for(const [,Core]of engines)assert.throws(()=>new Core(rom([0]),null,{target,cpuHz}),/Unsupported AVR clock/);
  }
  for(const [,Core]of engines){
+  assert.throws(()=>new Core(rom([0]),null,{target:'attiny13a',cpuHz:12000000}),/Unsupported AVR clock/);
   assert.throws(()=>new Core(rom([0]),null,{target:'attiny13a',cpuHz:16000000}),/Unsupported AVR clock/);
   assert.equal(new Core(rom([0])).cpuHz,9600000);
   assert.equal(make(Core).cpuHz,8000000);
+ }
+});
+test('UM88 clock profiles match the firmware F_CPU range and keep independent immutable chip maps',()=>{
+ for(const cpuHz of [75000,1000000,8388608,9600000,12000000]){
+  const profile=resolveAVRProfile('attiny88',{cpuHz});
+  assert.equal(profile.cpuHz,cpuHz);assert.equal(profile.timer,AVR_PROFILES.attiny88.timer);
+  assert.ok(Object.isFrozen(profile));
+  for(const [,Core]of engines)assert.equal(make(Core,cpuHz).cpuHz,cpuHz);
  }
 });
 
@@ -59,7 +68,7 @@ for(const [name,Core]of engines){
   assert.equal(another.r[17],0);assert.equal(eight.cyc,0);assert.equal(another.cyc,0);
  });
  test(name+': no-PWM timeout is one requested CPU second at both board clocks',()=>{
-  for(const cpuHz of [8000000,16000000]){
+  for(const cpuHz of [8000000,12000000,16000000]){
    const c=make(Core,cpuHz,[0xcfff]);
    assert.throws(()=>c.nextDuty(),/no PWM for one emulated second/);
    assert.equal(c.cyc,cpuHz+2);

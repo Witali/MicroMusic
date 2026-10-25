@@ -7,6 +7,7 @@ import importlib.util
 import json
 import math
 import re
+import tempfile
 
 ROOT=Path(__file__).resolve().parents[1]
 BASE=2560
@@ -257,6 +258,8 @@ def encode_score(score,cpu_hz):
     return data,dict(schema='UM88',version=1,variant=score['name'],source=score.get('source',{}),controlTicks=score['controlTicks'],
                      voices=score['voices'],channels=score['channels'],contexts=contexts,envelopeModels=models,
                      commands=len(raw),grammarRules=len(rules),grammarDepth=depth,dataBytes=len(data),
+                     grammarBytes=len(encoded)+len(rules)*4,rawSymbolBytes=sum(1 if x<128 else 2 for x in raw),
+                     packing='minimum byte cost across three bounded Re-Pair searches and their prefixes',
                      decodedCommandsSha256=digest(bytes(raw)),allControlFramesVerified=score.get('importedControlFramesVerified',False))
 
 def main():
@@ -266,7 +269,9 @@ def main():
     if args.backend=='c' and args.output_dir is None:args.output_dir=ROOT/'build/universal/c'
     if args.reimport or not args.score and not (ROOT/'ATtiny88/Music/universal/songs/rhythmic/score.json').exists():
         legacy.run('node','tools/import-universal-music.mjs')
-    source=ROOT/'ATtiny88/Music/universal';scratch=ROOT/'build/universal';scratch.mkdir(parents=True,exist_ok=True)
+    source=ROOT/'ATtiny88/Music/universal';scratch_root=ROOT/'build/universal';scratch_root.mkdir(parents=True,exist_ok=True)
+    temporary=tempfile.TemporaryDirectory(prefix='compile-',dir=scratch_root)
+    scratch=Path(temporary.name)
     elf=scratch/'engine.elf'
     defines=['-DUM_REQUESTED_CPU_HZ='+str(args.cpu_hz)+'UL'] if args.cpu_hz is not None else []
     if args.platform_header:defines+=['-include',str(args.platform_header.resolve())]
@@ -294,23 +299,26 @@ def main():
     common=dict(engine='UM88',backend=args.backend,engineBytes=len(engine),songAddress=BASE,engineSha256=digest(engine),labels=labels,
                 cpuHz=cpu_hz,synthesisHz=cpu_hz/1024,pwmHz=cpu_hz/256,controlHz=18750/256,
                 toolchainVersion=legacy.run(tools['avr-gcc'],'--version').splitlines()[0])
-    (scratch/('engine-'+args.backend+'.bin')).write_bytes(engine)
-    legacy.save(scratch/('engine-'+args.backend+'.json'),json.dumps(common,indent=2)+'\n')
+    (scratch_root/('engine-'+args.backend+'.bin')).write_bytes(engine)
+    legacy.save(scratch_root/('engine-'+args.backend+'.json'),json.dumps(common,indent=2)+'\n')
     names=[json.loads(args.score.read_text(encoding='utf-8'))['name']] if args.score else NAMES
     for name in names:
         score_path=args.score or source/'songs'/name/'score.json'
         if score_path.exists() and not args.reimport:
             score=json.loads(score_path.read_text(encoding='utf-8'));data,report=encode_score(score,cpu_hz)
         else:
-            song=json.loads((scratch/(name+'.tape.json')).read_text(encoding='utf-8'));data,report=compile_song(song,cpu_hz)
+            song=json.loads((scratch_root/(name+'.tape.json')).read_text(encoding='utf-8'));data,report=compile_song(song,cpu_hz)
             score=json.loads((source/'songs'/name/'score.json').read_text(encoding='utf-8'))
         binary=engine+bytes([255])*(BASE-len(engine))+data
         assert len(binary)<=8192,(name,len(binary))
         folder=(args.output_dir or source/'songs')/name;folder.mkdir(parents=True,exist_ok=True)
+        if score_path.resolve()!=(folder/'score.json').resolve():
+            legacy.save(folder/'score.json',json.dumps(score,ensure_ascii=False,indent=2)+'\n')
         (folder/'synth.bin').write_bytes(binary);legacy.save(folder/'synth.hex',legacy.ihex(binary))
         ep=bytes(score['waves']);(folder/'eeprom.bin').write_bytes(ep);legacy.save(folder/'eeprom.hex',legacy.ihex(ep))
         report.update(common,flashBytes=len(binary),flashSha256=digest(binary),eepromSha256=digest(ep))
         legacy.save(folder/'build-report.json',json.dumps(report,ensure_ascii=False,indent=2)+'\n')
-        print(f'{name}: engine {len(engine)}, data {len(data)}, Flash {len(binary)}/8192; {report["controlTicks"]} frames verified')
+        print(f'{name}: engine {len(engine)}, data {len(data)}, Flash {len(binary)}/8192; {report["controlTicks"]} control ticks; playback audit is separate')
     legacy.save((args.output_dir or source)/'build-report.json',json.dumps(common,indent=2)+'\n')
+    temporary.cleanup()
 if __name__=='__main__':main()

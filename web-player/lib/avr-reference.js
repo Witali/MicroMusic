@@ -2,7 +2,7 @@
 // Device memory, timer and peripheral registers live in avr-profiles.js.
 // ROM bytes are immutable; decode once, execute integer op IDs. Observed OCR
 // write streams preserve music timing; electrical PWM edges are not rendered.
-import {AVR_PROFILES, resolveAVRProfile} from './avr-profiles.js?v=20261025-board-um88';
+import {AVR_PROFILES, resolveAVRProfile} from './avr-profiles.js?v=20261025-board-um88-pipeline';
 export {AVR_PROFILES, resolveAVRProfile};
 const OP = { NOP:1, CLI:2, SEI:3, RETI:4, RET:5, CALL:6, JUMP:7, BRANCH:8,
   SKIP:9, LDI:10, CPI:11, SUBI:12, ORI:13, ANDI:14, MOVW:15, ADD:16,

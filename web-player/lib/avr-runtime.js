@@ -1,4 +1,4 @@
-import {resolveAVRProfile} from './avr-profiles.js?v=20261025-board-um88';
+import {resolveAVRProfile} from './avr-profiles.js?v=20261025-board-um88-pipeline';
 // Shared state/ABI wrapper. Runtime modules are supplied by the caller.
 const decoder = new TextDecoder();
 function cstring(memory,address) {

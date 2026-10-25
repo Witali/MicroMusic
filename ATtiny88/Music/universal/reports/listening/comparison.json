@@ -1,0 +1,32 @@
+{
+  "song": "greensleeves",
+  "comparison": "Same retained arrangement; actual AVR execution, mono 48 kHz PCM, 4 kHz player filter, unity volume, no normalization",
+  "hardwareTested": false,
+  "interpretation": "Numerical levels are descriptive. Different synthesis rates, phase rounding and startup queues prevent bit-identical audio; listen to attacks, balance and upper harmonics.",
+  "versions": [
+    {
+      "label": "legacy",
+      "file": "greensleeves-legacy.wav",
+      "flashSha256": "45b1561a11f150a75c4b9f6454b0e3f5bd5664090178e708ff12e83a2e52c7cf",
+      "cpuHz": 8000000,
+      "synthesisHz": 15625,
+      "seconds": 8,
+      "peak": 0.911645233631134,
+      "rms": 0.22808084653472385,
+      "mean": 0.00002788902138061481,
+      "clippedPcmSamples": 0
+    },
+    {
+      "label": "um88",
+      "file": "greensleeves-um88.wav",
+      "flashSha256": "a19a783d69ae3c2dd80704f7f6a11ab29898e3231ca89bd1d48645412c888b5c",
+      "cpuHz": 8000000,
+      "synthesisHz": 7812.5,
+      "seconds": 8,
+      "peak": 0.8750580549240112,
+      "rms": 0.2314069520975461,
+      "mean": 0.000034230025244903,
+      "clippedPcmSamples": 0
+    }
+  ]
+}
