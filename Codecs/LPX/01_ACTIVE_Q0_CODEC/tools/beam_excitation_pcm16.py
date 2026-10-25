@@ -24,7 +24,7 @@ from output_paths import protect_outputs
 
 def optimize(blob, ref, decoder, beam_width=4, window=20, tail=80,
              max_trials=2500, tokens_per_window=6, max_delta=2,
-             stoi_drop=0., kind='speech', max_windows=None):
+             stoi_drop=0., kind='speech', max_windows=None,cache_layout=True):
     if beam_width not in (1, 4, 8, 16) or window not in (20, 40) or tail < 0:
         raise ValueError('Expected beam 1/4/8/16, window 20/40 and nonnegative tail')
     if max_trials < 0 or not 1 <= tokens_per_window <= window or max_delta < 1:
@@ -53,11 +53,20 @@ def optimize(blob, ref, decoder, beam_width=4, window=20, tail=80,
     if max_windows is not None:
         starts = starts[:max_windows]
     trials = batches = visited = 0
+    token_scans=1
+    original_tokens=scan_tokens(blob)
+    by_window={}
+    for token in original_tokens:by_window.setdefault(token.sample//window,[]).append(token)
     changes = []
     for start in starts:
         if trials >= max_trials or best_error == 0:
             break
-        tokens = [t for t in scan_tokens(cur) if start <= t.sample < start + window and t.possible(max_delta)]
+        # Equal-width patches touch disjoint windows; unvisited serialized
+        # residuals retain their values even when pitch changes decoded q.
+        if cache_layout:available=by_window.get(start//window,[])
+        else:
+            available=[t for t in scan_tokens(cur) if start<=t.sample<start+window];token_scans+=1
+        tokens = [t for t in available if t.possible(max_delta)]
         # Limit branching positions, retaining temporal order within each window.
         tokens = sorted(sorted(tokens, key=lambda t: (-float((target[t.sample] - current_pcm[t.sample]) ** 2), t.sample))[:tokens_per_window], key=lambda t: t.sample)
         if not tokens:
@@ -82,7 +91,7 @@ def optimize(blob, ref, decoder, beam_width=4, window=20, tail=80,
             candidates = candidates[:max(0, max_trials - trials)]
             if not candidates:
                 break
-            pcms = decoder.decode_many_s16(candidates, len(ref))
+            pcms=decoder.decode_many_s16(candidates,len(ref))
             trials += len(candidates)
             batches += 1
             states.extend((data, pcm, full_error(pcm)) for data, pcm in zip(candidates, pcms) if pcm is not None)
@@ -100,7 +109,6 @@ def optimize(blob, ref, decoder, beam_width=4, window=20, tail=80,
             break
     # Reparse and decode independently before returning an accepted candidate.
     final_tokens = scan_tokens(cur)
-    original_tokens = scan_tokens(blob)
     signature = lambda ts: [(t.sample, t.offset, t.width, t.code_type, t.k, t.b, t.quotient) for t in ts]
     if len(cur) != len(blob) or signature(final_tokens) != signature(original_tokens):
         raise AssertionError('Equal-length excitation contract violated')
@@ -118,6 +126,7 @@ def optimize(blob, ref, decoder, beam_width=4, window=20, tail=80,
                         'input_sha256': hashlib.sha256(blob).hexdigest(),
                         'output_sha256': hashlib.sha256(cur).hexdigest(),
                         'codeword_structure_unchanged': True, 'elapsed_seconds': time.perf_counter() - t0,
+                        'token_scans':token_scans+1,'cached_token_layout':bool(cache_layout),
                         'avr_cycles_measured': False}
 
 
