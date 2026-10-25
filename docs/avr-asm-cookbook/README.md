@@ -1865,3 +1865,14 @@ compact-queue guarantees. No speedup of the unchanged arithmetic is claimed.
 The encoder implementation is original. Reference principles:
 [RFC6716 SILK delayed decisions](https://www.rfc-editor.org/rfc/rfc6716.html#section-5.2.3.8),
 [Speex CELP noise weighting](https://www.speex.org/docs/manual/speex-manual/node9.html).
+
+A listening-guided follow-up on one tuning clip exposed premature spectral
+seed pruning: the earlier 12 kbit/s winner repeated 199/200 LSF frames and
+used 11.1 kbit/s, whereas the 16 kbit/s seed retained changing spectra.
+Keeping both seeds through the existing joint search and refining the byte
+boundary 10 times gave exactly 12 kbit/s: SER 12.379 → 16.456 dB,
+STOI 0.7158 → 0.8209, peak 5004 → 3084 PCM16. This spends 8.11% more actual bits
+within the same ceiling; it is not a same-size or corpus-wide improvement.
+The unchanged AVR decoder costs 68.105 → 76.772% mean decode budget, zero
+underruns, SRAM 1102 bytes. A denser spectral model can cost more even with
+identical decoder code. [Single-clip inputs, measurements and scope](../../Codecs/LPX/research/q0-listening-2026-10-25/README.md).
