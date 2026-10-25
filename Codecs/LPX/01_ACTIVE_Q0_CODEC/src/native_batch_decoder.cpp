@@ -1,6 +1,6 @@
 /* MicroMusic: host-only LPC batch decoding entry point.
    This translation unit is NEVER included in the ATmega328P firmware.
-   The actual decoding algorithm is the UNMODIFIED Lpx4HybridCore.
+   The decoding algorithm is the same portable Lpx4HybridCore as in firmware.
    Build: g++ -O3 -fPIC -shared -std=c++11 -Isrc
           src/Lpx4HybridCore.cpp src/native_batch_decoder.cpp -o liblpx4batch.so
 */

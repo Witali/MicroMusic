@@ -40,6 +40,7 @@ class Block(Span):
 
 def layout(blob):
     """Validated bit spans, including partial final frames/blocks/subframes."""
+    if blob[:6]!=b'L4HY\x02\x03':raise ValueError('Bit-span repacking requires L4HY v2')
     frames, blocks, q = decode(blob)
     r = BitReader(blob, 20)
     here = lambda: r.o * 8 - r.n

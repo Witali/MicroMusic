@@ -4,6 +4,15 @@
 #define LPX4_ALLOW_SPARSE 1
 #endif
 #define LPX4_MAX_PULSES 10
+// Optional compact-container parser. Zero keeps the original v2-only build.
+// 4 scale repeat, 8 width repeat, 16 subheader repeat, 32 zero headers,
+// 64 small LSF Rice deltas. The stream may only use compiled feature bits.
+#ifndef LPX4_V3_FEATURES
+#define LPX4_V3_FEATURES 0
+#endif
+#if LPX4_V3_FEATURES < 0 || (LPX4_V3_FEATURES & ~124)
+#error Unsupported LPX4_V3_FEATURES
+#endif
 #ifndef LPX3_LPC_SEGMENTS
 #define LPX3_LPC_SEGMENTS 2
 #endif
@@ -65,6 +74,9 @@ private:
     uint8_t quantLimit_;
     uint8_t mode_,blockScale_,bitBuffer_,bitsLeft_,riceK_;
     uint8_t subType_,lag_,gain_,ringCursor_;
+#if LPX4_V3_FEATURES
+    uint8_t formatFeatures_;
+#endif
 #if LPX4_ALLOW_SPARSE
     uint8_t pulseCount_,pulseIndex_;
 #endif

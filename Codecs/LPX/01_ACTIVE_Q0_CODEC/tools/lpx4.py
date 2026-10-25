@@ -206,28 +206,43 @@ def encode(doc,min_snr=float('inf'),allowed_sparse=None,fast=False,raw_slack_bit
 def decode(data):
     if len(data)<20:raise ValueError('short header')
     magic,ver,fl,rate,n,pre,bright,f,b=struct.unpack_from(HEADER,data)
-    if (magic,ver,fl,rate,f,b)!=(b'L4HY',2,3,8000,160,80):raise ValueError('bad LPX4 header')
-    r=BitReader(data,20);qout=[];frames=[];blocks=[];scale=0;pos=0
+    if (magic,rate,f,b)!=(b'L4HY',8000,160,80):raise ValueError('bad LPX4 header')
+    if not ((ver==2 and fl==3) or (ver==3 and fl&3==3 and not fl&128)):
+        raise ValueError('bad LPX4 version/flags')
+    features=fl&124 if ver==3 else 0
+    r=BitReader(data,20);qout=[];frames=[];blocks=[];scale=0;pos=0;bw=0;previous_header=('direct',0)
     while pos<n:
         if r.get(1)==0:frame=b'\x00'
         elif r.get(1)==0:
             v=[r.get(8)|(r.get(2)<<8) for _ in range(10)]
             frame=b'\x05'+sum(x<<(10*i) for i,x in enumerate(v)).to_bytes(13,'little')
         else:
-            raw=r.get(1)
-            frame=b'\x06'+bytes([r.get(8) for _ in range(10)] if raw else [getplane(r) for _ in range(10)])
+            coding=r.get(2) if features&64 else r.get(1)
+            if coding<2:
+                values=[r.get(8) for _ in range(10)] if coding else [getplane(r) for _ in range(10)]
+            else:
+                from compact_format import get_lsf_rice
+                values=[get_lsf_rice(r,0 if coding==2 else 2) for _ in range(10)]
+            frame=b'\x06'+bytes(values)
         frames.append(frame)
         for sub80 in range(2):
             if pos>=n:break
-            bw=r.get(3)
+            if not features&8 or r.get(1):bw=r.get(3)
             if bw not in (0,2,3,4,5,6):raise ValueError('bad source bits')
-            scale=read_scale(r,scale)
+            zero=not bw and features&32
+            if not zero and (not features&4 or r.get(1)):scale=read_scale(r,scale)
             bl=[]
             count=min(80,n-pos)
             for partial in range(0,count,40):
-                nsamp=min(40,count-partial);typ=r.get(2);q=[]
+                nsamp=min(40,count-partial);q=[]
+                repeated=zero or (features&16 and not r.get(1))
+                if zero:previous_header=('direct',0)
+                if repeated:
+                    descriptor=previous_header;typ={'direct':0,'exact':1,'sparse':2}[descriptor[0]]
+                else:typ=r.get(2)
                 if typ==0:
-                    k=r.get(3)
+                    k=descriptor[1] if repeated else r.get(3)
+                    previous_header=('direct',k)
                     for _ in range(nsamp):
                         if k==0:val=r.get(bw)-(1<<(bw-1)) if bw else 0
                         elif k==7:
@@ -240,10 +255,13 @@ def decode(data):
                         else:val=get_rice(r,k)
                         q.append(val);qout.append(val)
                 elif typ in (1,2):
-                    lag=r.get(7)+LAG_MIN;g=r.get(5)
+                    if repeated:lag,g=descriptor[1:3]
+                    else:lag=r.get(7)+LAG_MIN;g=r.get(5)
                     if lag>LAG_MAX:raise ValueError('bad pitch lag')
-                    if typ==1:k=r.get(3)
+                    if typ==1:
+                        k=descriptor[3] if repeated else r.get(3);previous_header=('exact',lag,g,k)
                     else:
+                        previous_header=('sparse',lag,g)
                         pulses=[];pc=r.get(4)
                         for _ in range(pc):
                             ix=r.get(6);z=r.get(5)
