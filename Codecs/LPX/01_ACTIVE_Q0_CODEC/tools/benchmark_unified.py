@@ -6,10 +6,10 @@ No media are downloaded or committed. Keep output in an ignored build folder.
 """
 import argparse
 import hashlib
-import html
 import json
 from pathlib import Path
 import time
+import re
 import numpy as np
 import soundfile as sf
 from batch_decoder import BatchSession
@@ -28,6 +28,7 @@ def run(corpus,output,report_path,avr_bin,runner,lib=None,wsl=None):
     manifest=json.loads((corpus/'corpus.json').read_text(encoding='utf-8'))
     cases=[];sources=[]
     for source in manifest['sources']:
+        if not re.fullmatch(r'[a-z][a-z0-9_]*',source['id']):raise ValueError('Unsafe source id')
         original=corpus/'originals'/(source['id']+'.ogg')
         if hashlib.sha256(original.read_bytes()).hexdigest()!=source['sha256']:raise ValueError('Source hash mismatch')
         pcm,info=load_wav(original);sources.append(source)
@@ -80,6 +81,12 @@ def run(corpus,output,report_path,avr_bin,runner,lib=None,wsl=None):
             report_path.write_bytes((json.dumps(report,ensure_ascii=False,indent=2)+'\n').encode())
             print(key,len(baseline),'->',len(result),'SER',search['before']['ser_db'],'->',
                 search['after']['ser_db'] if accepted else search['before']['ser_db'],'timing accepted',accepted,flush=True)
+    write_listening(report,output)
+    return report
+
+
+def write_listening(report,output):
+    output=Path(output)
     # Listening assets deliberately keep labels and objective results out of HTML.
     keys={};rows=[]
     assets=output/'listening-assets';assets.mkdir(exist_ok=True)
@@ -92,8 +99,8 @@ def run(corpus,output,report_path,avr_bin,runner,lib=None,wsl=None):
             '<label>'+label+' <audio controls src="listening-assets/'+f'{index+1:03d}-{label}.wav'+'"></audio></label>' for label in ('A','B')))
     (output/'listening.html').write_text('<!doctype html><meta charset="utf-8"><title>LPX blinded A/B</title><h1>LPX blinded A/B</h1><p>Compare A and B at the same playback volume. Record preference before opening listening-key.json.</p>'+''.join(rows),encoding='utf-8')
     (output/'listening-key.json').write_bytes((json.dumps(keys,indent=2)+'\n').encode())
-    (output/'attribution.json').write_bytes((json.dumps(sources,ensure_ascii=False,indent=2)+'\n').encode())
-    return report
+    (output/'attribution.json').write_bytes((json.dumps(report['sources'],ensure_ascii=False,indent=2)+'\n').encode())
+    return output/'listening.html'
 
 
 if __name__=='__main__':
