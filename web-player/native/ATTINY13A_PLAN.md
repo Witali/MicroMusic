@@ -431,6 +431,15 @@ fit 32 bits, with a separate addition-overflow check for a 64-bit carry and the
 unchanged wide fallback. This is a hypothesis, not a retained optimization;
 acceptance still needs CLKI/active-ADC and balanced identity controls.
 
+Bounded-multiplier checkpoint: that [32-bit product candidate](../reports/clock-multiply-20261024.md)
+passes all 1634 checks but regresses in both screening cases (0.945x/0.947x,
+64 timed runs, 32 warmups, 1128 exact checkpoints). Production is restored;
+the remaining timing matrix was not run. Keep the independent boundary tests.
+Next inspect automatic Binaryen optimization of generated CPU modules, separately
+from the C runtime already built with optimization. Check ABI/dispatch geometry,
+embedded manifest, traps, exact state/PCM/pins and half-phase observations before
+measuring warmed execution and cold optimization/compilation costs separately.
+
 | Priority | Candidate | Evidence required before keeping it |
 | --- | --- | --- |
 | 1 | Use the refreshed profile to test fewer repeated event/time conversions in `next_event`, `ratio` and `duration`. Broader peripheral activity gating remains open. | Exact integer residues, clock/input/event boundaries and pin/PCM parity; enabled-ADC and CLKI controls. Use balanced identical-runtime controls and uninstrumented paired timings. Inspect the exact optimized WASM for an inlining/layout hypothesis; reduced entries alone do not prove speed. |

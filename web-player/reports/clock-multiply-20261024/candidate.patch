@@ -1,0 +1,18 @@
+diff --git a/web-player/native/peripherals/device_clock.h b/web-player/native/peripherals/device_clock.h
+index f0b9653..8a45089 100644
+--- a/web-player/native/peripherals/device_clock.h
++++ b/web-player/native/peripherals/device_clock.h
+@@ -8,8 +8,11 @@
+ static inline int device_clock_ratio(uint64_t a,uint64_t b,uint64_t carry,
+  uint64_t divisor,uint64_t *quotient,uint64_t *remainder) {
+  if (!divisor) return 0;
+- if (!b || a<=(UINT64_MAX-carry)/b) {
+-  uint64_t n=a*b+carry;
++ /* A32x32 product fits64 bits. Its sum wraps exactly when n<carry, so
++  * short spans need no division merely to qualify the native-width path. */
++ uint64_t n=a*b+carry;
++ int fits=(a|b)<=UINT32_MAX ? n>=carry : (!b || a<=(UINT64_MAX-carry)/b);
++ if (fits) {
+   *quotient=n/divisor; *remainder=n%divisor; return 1;
+  }
+  /* Long sample/frame counters commonly reduce to a small remainder. Avoid
