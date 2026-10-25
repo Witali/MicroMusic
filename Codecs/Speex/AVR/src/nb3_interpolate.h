@@ -14,13 +14,13 @@
 #define SPEEX_NB3_INTERPOLATE_H
 #include "speex_platform.h"
 
-static SPEEX_NB3_STAGE void speex_nb3_interpolate(
-    int16_t *restrict raw, const int16_t *restrict delta, int16_t *restrict out)
+static SPEEX_NB3_ALWAYS_INLINE void speex_nb3_interpolate_core(
+    int16_t *restrict raw, const int16_t *restrict delta, int16_t *restrict out, uint8_t bounded)
 {
     unsigned i;
     int16_t previous, current, following;
     raw[0] += delta[0];
-    previous = raw[0] < 16 ? 16 : raw[0];
+    previous = bounded ? raw[0] : (raw[0] < 16 ? 16 : raw[0]);
     out[0] = previous;
     current = raw[1] + delta[1];
     for (i = 1; i < 9; i++) {
@@ -28,7 +28,7 @@ static SPEEX_NB3_STAGE void speex_nb3_interpolate(
         raw[i] = current;
         following = raw[i+1] + delta[i+1];
         /* Upstream clamps element 9 before adjusting elements 1..8. */
-        next = (i == 8 && following > 25720) ? 25720 : following;
+        next = (!bounded && i == 8 && following > 25720) ? 25720 : following;
         if (current < previous + 16) current = previous + 16;
         /* Retain both shifts: combining them into one average can round
          * differently after an earlier margin correction made an odd angle.
@@ -39,6 +39,27 @@ static SPEEX_NB3_STAGE void speex_nb3_interpolate(
         current = following;
     }
     raw[9] = current;
-    out[9] = current > 25720 ? 25720 : current;
+    out[9] = bounded ? current : (current > 25720 ? 25720 : current);
+}
+
+/* Retain the general signed16/multiple-of-16 endpoint contract for callers
+ * and tests that deliberately exercise values outside the NB3 codebooks. */
+static SPEEX_NB3_STAGE void speex_nb3_interpolate(
+    int16_t *restrict raw, const int16_t *restrict delta, int16_t *restrict out)
+{
+    speex_nb3_interpolate_core(raw,delta,out,0);
+}
+
+/* Private fast path: updated raw[0] >= 16 and raw[9] <= 25720, with all
+ * updated values representable in signed16. Every pinned NB3 endpoint is
+ * in [96,24880]; convex quarter steps preserve that range. Reset initializes
+ * raw from a real endpoint before its zero-delta call. Endpoint clamps and
+ * the last lookahead clamp are therefore redundant; interior sequential
+ * margins, both half-shifts and the separate raw state remain unchanged.
+ * A constant flag is folded into this single-callsite C implementation. */
+static SPEEX_NB3_ALWAYS_INLINE void speex_nb3_interpolate_validated(
+    int16_t *restrict raw, const int16_t *restrict delta, int16_t *restrict out)
+{
+    speex_nb3_interpolate_core(raw,delta,out,1);
 }
 #endif

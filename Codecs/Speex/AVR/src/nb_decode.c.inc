@@ -101,11 +101,13 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packe
          speex_nb3_short_innovation(exc,exc,(uint8_t)pitch,indices,ener,index);
       }
    }
-   /* Release the excitation indices; synthesis appends distinct ak/interp
-    * arrays after lsp_delta, retaining the four original interpolation steps. */
+   /* Release the excitation indices. lsp_to_lpc consumes all ten angles
+    * before its first coefficient store, so ak/interp share the next 20 B.
+    * Raw/delta/out stay disjoint during interpolation. LPC is copied into
+    * state before WB reuses this slot for synchronous callback indices. */
    stack=(char *)(lsp_delta+NB_ORDER);
    ALLOC(ak,NB_ORDER,spx_coef_t);
-   ALLOC(interp_qlsp,NB_ORDER,spx_lsp_t);
+   interp_qlsp=ak;
    /* The delta was prepared before excitation. Cache hits do not read it;
     * changed frames advance raw state four times, with margin only on out. */
    for (sub=0;sub<NB_NB_SUBFRAMES;sub++)
@@ -124,7 +126,7 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packe
        * On reset, compute it after the first synthesis step as upstream does.
        * IIR always runs, including its coefficient-age transition. */
       if (update_lpc) {
-         speex_nb3_interpolate(st->old_qlsp,lsp_delta,interp_qlsp);
+         speex_nb3_interpolate_validated(st->old_qlsp,lsp_delta,interp_qlsp);
          lsp_to_lpc(interp_qlsp,ak,NB_ORDER,stack);
       }
       /* Excitation is complete and remains read-only during synthesis.

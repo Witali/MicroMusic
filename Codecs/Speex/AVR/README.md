@@ -3,7 +3,7 @@
 An adaptation of the **original Xiph Speex 1.2.1 fixed-point decoder** for
 ATmega328P at 16 MHz, with a linked PWM player and reproducible host/AVR tests.
 The ASM player passes ISA simulation on all 31 streams: **9,100
-frames / 1,456,000 samples, zero underruns, 671 bytes SRAM free at the observed
+frames / 1,456,000 samples, zero underruns, 691 bytes SRAM free at the observed
 peak**, including a separate 40% extra-CPU admission test. A physical board
 and its analog output have not been tested.
 
@@ -12,7 +12,7 @@ An additional [compact wideband profile](WIDEBAND.md) decodes **16 kHz /
 synthesis QMF; its PCM differs from full 64-tap Xiph synthesis. The NB3
 profile retains exact original PCM.
 The WB PWM player passes all 16 speech recordings: **6,467 frames,
-2,069,440 samples, zero underruns, 432 B free SRAM at peak** in AVR simulation
+2,069,440 samples, zero underruns, 452 B free SRAM at peak** in AVR simulation
 with timers and interrupts active. WB playback on ATmega328P requires ASM;
 the portable C fallback retains correctness but exceeds its frame deadline.
 
@@ -22,7 +22,7 @@ enable control selection; without a matching enabled backend it uses C.
 See [PORTING.md](PORTING.md) for C fallbacks, platform headers and an exportable
 CMake/static-library package for other microcontrollers. The C player now
 also passes all 31 streams with timers/ISR and 10% extra CPU work: zero
-underruns and 680 B free SRAM at peak. Both NB3 backends retain exact upstream s16 PCM.
+underruns and 700 B free SRAM at peak. Both NB3 backends retain exact upstream s16 PCM.
 
 ## Narrowband profile
 
@@ -40,7 +40,7 @@ underruns and 680 B free SRAM at peak. Both NB3 backends retain exact upstream s
 `src/speex_avr.h` exposes a static, non-reentrant decoder: reset with
 `speex_avr_init()`, then call `speex_avr_decode(packet, 20, pcm)` for each packet.
 The caller supplies space for 160 samples. No heap is used. The explicitly
-four-byte-aligned 60-byte scratch arena is checked on the host;
+four-byte-aligned 40-byte scratch arena is checked on the host;
 the 305-sample excitation history is sufficient
 for the restricted lossless profile (maximum backward pitch access: 145 samples).
 
@@ -140,17 +140,17 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
 
 | Build | Flash | Static SRAM | Peak stack | Free SRAM at peak |
 | --- | ---: | ---: | ---: | ---: |
-| Optimized decoder test mailbox, ASM enabled | 10,610 B | 1,119 B | 114 B | 815 B |
-| Full PWM speech demo, including 2,940 B compressed audio | 13,858 B | 1,254 B | 123 B | 671 B |
-| C fallback decoder test mailbox | 11,078 B | 1,119 B | 105 B | 824 B |
-| Full C PWM speech demo, including 2,940 B audio | 14,330 B | 1,254 B | 114 B | 680 B |
+| Optimized decoder test mailbox, ASM enabled | 10,470 B | 1,099 B | 114 B | 835 B |
+| Full PWM speech demo, including 2,940 B compressed audio | 13,712 B | 1,234 B | 123 B | 691 B |
+| C fallback decoder test mailbox | 10,898 B | 1,099 B | 105 B | 844 B |
+| Full C PWM speech demo, including 2,940 B audio | 14,148 B | 1,234 B | 114 B | 700 B |
 
 - All 9,100 corpus frames and 4,096 additional pitch/gain coverage frames match
   unmodified upstream s16 PCM. Including 58 LSP/reset and 1,024 zero-gain
   lifetime cases, each backend matches 14,278 frames with one firmware image.
 - Complete player tests on all 31 streams match upstream PCM converted to u8,
   with zero ring underruns and no stack/static-memory collisions.
-- Maximum observed ASM decoder-only corpus frame cost: **115,817 cycles / 7.239 ms**;
+- Maximum observed ASM decoder-only corpus frame cost: **115,604 cycles / 7.225 ms**;
   the 20-ms budget at 16 MHz is 320,000 cycles. ISR and output costs are verified
   separately by the complete-player runs.
 - Primitive tests cover 240,000 complete LSP conversions and 3,670,016 bit fields;
@@ -256,7 +256,36 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
 - Codebooks reside in Flash, use explicit signed `pgm_read_*` accesses, and no
   malloc/calloc/realloc/free symbols are linked.
 
-The current complete packet map also decodes LSP and frame gain directly
+The current LSP stage reuses one twenty-byte array for interpolated angles
+and new LPC coefficients: the converter consumes every angle before its first
+coefficient store. WB reads the copied coefficients before reusing that same
+array for synchronous indices. Scratch falls 60 -> 40 B; C and ASM preserve
+the same arithmetic and portable interface.
+
+All 262,144 NB3 code triples produce raw angles in 96..24,880. Reset initializes
+real endpoints; each exact quarter step is a convex interpolation between
+them. The endpoint clamps at 16 and 25,720 therefore cannot change a value.
+A private validated C path omits those checks, while the general signed16
+helper and all interior sequential margins remain available and tested.
+
+Against 928d18e, ASM mean falls 107,802.983 -> 107,616.507 (-0.1730%), C
+219,567.168 -> 219,310.511 (-0.1169%); every stream min/mean/max improves.
+Flash falls 140/180 B and static SRAM falls 20 B, with unchanged decoder stack.
+Additional pitch coverage reaches 116,142 ASM / 232,118 C cycles.
+Independent tests cover 1,572,880 native bounded calls and 720,000 overlapping
+LPC outputs. Each AVR backend adds 49,680 bounded calls and 12,288 overlapping
+outputs, original Xiph reference, raw state, memory guards and ABI at RET.
+The general helper still passes 82,688 AVR calls including full-signed
+multiple-of-16 endpoints. No decoded PCM sample changes.
+All four 31-stream NB PWM matrices pass, including +40% ASM / +10% C CPU
+reserve, with unchanged minimum queues 74/34 and 66/55; free SRAM 691/700 B.
+The instrumented native decoder separately checks every scratch PUSH on all
+9,100 corpus frames and reports a 40-byte peak, with exact PCM.
+`reports/lifetime-*.json` and `tests/audit_lsp_lifetime.py --rebuild --avr-gcc avr-gcc`
+bind full corpus, portable archives, IRQ/PWM images and fresh representative
+rebuilds. Candidate sources/replay are retained in OPTIMIZATION.md.
+
+The preceding complete packet map decodes LSP and frame gain directly
 from bytes 0..3. Pure C dequantizes LSP into exact quarter units, retaining
 the original rounding, all four interpolation steps and the raw cache key.
 Reset initializes raw state; changed frames subtract old quarters; repeated
@@ -350,10 +379,10 @@ and original host reference:
 
 ```sh
 python Codecs/Speex/AVR/tests/prepare_nb.py --out Codecs/Speex/AVR/build/cache3-corpus
-python Codecs/Speex/AVR/tests/verify_nb_players.py --avr-gcc avr-gcc --node node --backend asm --streams Codecs/Speex/AVR/build/cache3-corpus/streams --out Codecs/Speex/AVR/build/prefix-nb-asm-normal
-python Codecs/Speex/AVR/tests/verify_nb_players.py --avr-gcc avr-gcc --node node --backend asm --streams Codecs/Speex/AVR/build/cache3-corpus/streams --out Codecs/Speex/AVR/build/prefix-nb-asm-load40 --frame-load-cycles 128000
-python Codecs/Speex/AVR/tests/verify_nb_players.py --avr-gcc avr-gcc --node node --backend c --streams Codecs/Speex/AVR/build/cache3-corpus/streams --out Codecs/Speex/AVR/build/prefix-nb-c-normal
-python Codecs/Speex/AVR/tests/verify_nb_players.py --avr-gcc avr-gcc --node node --backend c --streams Codecs/Speex/AVR/build/cache3-corpus/streams --out Codecs/Speex/AVR/build/prefix-nb-c-load10 --frame-load-cycles 32000
+python Codecs/Speex/AVR/tests/verify_nb_players.py --avr-gcc avr-gcc --node node --backend asm --streams Codecs/Speex/AVR/build/cache3-corpus/streams --out Codecs/Speex/AVR/build/lifetime-nb-asm-normal
+python Codecs/Speex/AVR/tests/verify_nb_players.py --avr-gcc avr-gcc --node node --backend asm --streams Codecs/Speex/AVR/build/cache3-corpus/streams --out Codecs/Speex/AVR/build/lifetime-nb-asm-load40 --frame-load-cycles 128000
+python Codecs/Speex/AVR/tests/verify_nb_players.py --avr-gcc avr-gcc --node node --backend c --streams Codecs/Speex/AVR/build/cache3-corpus/streams --out Codecs/Speex/AVR/build/lifetime-nb-c-normal
+python Codecs/Speex/AVR/tests/verify_nb_players.py --avr-gcc avr-gcc --node node --backend c --streams Codecs/Speex/AVR/build/cache3-corpus/streams --out Codecs/Speex/AVR/build/lifetime-nb-c-load10 --frame-load-cycles 32000
 ```
 
 Run the matrices sequentially in one source directory: their builder shares
@@ -442,6 +471,7 @@ The Xiph NB3 adaptation has the following separately measured stages:
 | Accumulate quarter-step LSP and fuse the margin pass | 117,800 | 10,872 B | 1,119 B |
 | Combine each validated subframe packet group | 117,031 | 10,544 B | 1,119 B |
 | Decode the complete prefix in exact quarter units | 115,702 | 10,610 B | 1,119 B |
+| Reuse LSP/LPC scratch and omit redundant endpoint checks | 115,489 | 10,470 B | 1,099 B |
 
 Through the persistent-history stage, the combined corpus maximum fell from 204,770 to
 133,142 cycles: **34.98% less decoder time**. The latest p1-specific ASM core
