@@ -23,9 +23,11 @@ const {values}=parseArgs({options:{level:{type:'string',multiple:true},case:{typ
 const integer=(s,min,max)=>{const n=Number(s);assert.ok(Number.isInteger(n)&&n>=min&&n<=max);return n;};
 const trials=integer(values.trials,8,32),schedule=controlSchedule(trials),warmups=integer(values.warmups,1,8),
   frames=integer(values.frames,1024,48000),instructions=integer(values.instructions,1000,10000000),rate=48000,block=1024;
-const phaseLocals=values.transform==='phase-locals';assert.ok(phaseLocals||values.transform==='binaryen');
-const levels=values.level??(phaseLocals?['live-locals']:['O3','Oz']);assert.equal(new Set(levels).size,levels.length);
-assert.ok(levels.length&&levels.every(level=>(phaseLocals?['live-locals']:['O2','O3','Os','Oz']).includes(level)));
+const phaseLocals=values.transform==='phase-locals',bounded=values.transform==='bounded-regions',compilerTransform=phaseLocals||bounded;
+assert.ok(compilerTransform||values.transform==='binaryen');
+const allowed=phaseLocals?['live-locals']:bounded?['bounded-regions']:['O2','O3','Os','Oz'];
+const levels=values.level??(compilerTransform?allowed:['O3','Oz']);assert.equal(new Set(levels).size,levels.length);
+assert.ok(levels.length&&levels.every(level=>allowed.includes(level)));
 const sha=b=>createHash('sha256').update(b).digest('hex');
 const stringify=v=>JSON.stringify(v,(_,n)=>typeof n==='bigint'?n.toString():n,2)+'\n';
 const source=p=>readFileSync(resolve(root,p),'utf8').replaceAll('\r\n','\n');
@@ -36,16 +38,17 @@ if(values['baseline-ref']){
   const originals=paths.map(p=>execFileSync('git',['show',revision+':'+p],{cwd:root,encoding:'utf8'}).replaceAll('\r\n','\n'));
   const url=source=>'data:text/javascript;base64,'+Buffer.from(source).toString('base64');
   let phaseSource=originals[1];
-  if(originals.some(s=>s.includes("'./avr-phase-locals.js'"))){
-    const dependency='web-player/lib/avr-phase-locals.js';
+  const dependencyNames=['avr-phase-locals.js','avr-wasm-regions.js'];
+  for(const name of dependencyNames)if(originals.some(s=>s.includes("'./"+name+"'"))){
+    const dependency='web-player/lib/'+name;
     const historical=execFileSync('git',['show',revision+':'+dependency],{cwd:root,encoding:'utf8'}).replaceAll('\r\n','\n');
-    assert.equal(historical,source(dependency),'Historical phase-local dependency must be unchanged');
-    phaseSource=phaseSource.replace("'./avr-phase-locals.js'",JSON.stringify(new URL('../lib/avr-phase-locals.js',import.meta.url).href));
+    assert.equal(historical,source(dependency),'Historical compiler dependency must be unchanged');
+    phaseSource=phaseSource.replace("'./"+name+"'",JSON.stringify(new URL('../lib/'+name,import.meta.url).href));
     paths.push(dependency);originals.push(historical);
   }
-  const compiler=originals[0].replace("'./devices/profiles.js'",JSON.stringify(new URL('../lib/devices/profiles.js',import.meta.url).href))
-    .replace("'./avr-wasm-phases.js'",JSON.stringify(url(phaseSource)))
-    .replace("'./avr-phase-locals.js'",JSON.stringify(new URL('../lib/avr-phase-locals.js',import.meta.url).href));
+  let compiler=originals[0].replace("'./devices/profiles.js'",JSON.stringify(new URL('../lib/devices/profiles.js',import.meta.url).href))
+    .replace("'./avr-wasm-phases.js'",JSON.stringify(url(phaseSource)));
+  for(const name of dependencyNames)compiler=compiler.replace("'./"+name+"'",JSON.stringify(new URL('../lib/'+name,import.meta.url).href));
   previousGenerator=(await import(url(compiler))).transpileAVR;
   baseline={revision,sourceSha256:Object.fromEntries(paths.map((p,n)=>[p,sha(originals[n])])),
     adaptation:'Only import URLs are redirected: historical phase module as data URL, unchanged device profiles/phase-local dependency as file URLs.'};
@@ -79,10 +82,10 @@ function layout(bytes){
 function construct(item,generated){
   // The phase-local experiment uses the normal production translation cache:
   // identical labels must share a CPU Module, as well as the native Module.
-  const c=new ATtiny13A(item.binary,item.eeprom,{...item.options,optimizePhaseLocals:generated.manifest.optimizePhaseLocals??false,runtimeModule,
-    ...phaseLocals?{}:{precompiled:generated}});
+  const c=new ATtiny13A(item.binary,item.eeprom,{...item.options,optimizePhaseLocals:generated.manifest.optimizePhaseLocals??false,
+    boundedRegions:generated.manifest.boundedRegions??false,runtimeModule,...compilerTransform?{}:{precompiled:generated}});
   assert.equal(sha(c.transpiledBytes),sha(generated.bytes));
-  if(phaseLocals){
+  if(compilerTransform){
     item.cpuModules??=new Map();const key=sha(generated.bytes);
     if(item.cpuModules.has(key))assert.equal(c._translatedModule,item.cpuModules.get(key),'Identity labels must reuse the CPU Module');
     else item.cpuModules.set(key,c._translatedModule);
@@ -114,12 +117,12 @@ function execute(c,item){
   return {raw,states,pins,ms,record:{rawSha256:sha(raw),stateSha256:sha(stringify(states)),pinSha256:sha(stringify(pins)),checkpoints:states.length}};
 }
 const output=resolve(root,values.out);mkdirSync(dirname(output),{recursive:true});
-const support=['web-player/lib/avr-transpiler.js','web-player/lib/avr-wasm-phases.js','web-player/lib/avr-phase-locals.js','web-player/lib/avr-transpiled-runtime.js','web-player/lib/attiny13a-runtime.js',
+const support=['web-player/lib/avr-transpiler.js','web-player/lib/avr-wasm-phases.js','web-player/lib/avr-phase-locals.js','web-player/lib/avr-wasm-regions.js','web-player/lib/avr-transpiled-runtime.js','web-player/lib/attiny13a-runtime.js',
   'web-player/scripts/benchmark-generated-wasm.mjs','web-player/scripts/lib/optimize-avr-wasm.mjs','web-player/scripts/lib/runtime-control-design.mjs'];
 const report={schema:'micromusic-generated-wasm-benchmark-v1',complete:false,revision:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),
   mode:values['validate-only']?'validation':'timing',
   transform:values.transform,...baseline?{baseline}: {},
-  cpuModulePolicy:phaseLocals?'production-translation-cache':'fresh-precompiled',
+  cpuModulePolicy:compilerTransform?'production-translation-cache':'fresh-precompiled',
   gcBeforeRun:typeof globalThis.gc==='function',
   node:process.version,platform:platform(),cpu:cpus()[0].model,trials,warmups,rate,frames,instructions,levels,
   sourceSha256:Object.fromEntries(support.map(p=>[p,sha(source(p))])),runtimeSha256:sha(readFileSync(new URL('../wasm/attiny13a.wasm',import.meta.url))),
@@ -130,11 +133,12 @@ for(const item of selected){
   if(previousGenerator)assert.deepEqual(raw.bytes,previousGenerator(item.binary,raw.manifest.abi,item.options).bytes,item.id+' must preserve baseline bytes');
   for(const level of levels){
     let optimized;
-    if(phaseLocals){
-      const start=performance.now(),generated=item.options.resumable?transpileAVR(item.binary,raw.manifest.abi,{...item.options,optimizePhaseLocals:true}):raw;
-      optimized={...generated,optimization:{tool:'generation-time phase-local liveness',flags:item.options.resumable?['optimizePhaseLocals=true']:[],
+    if(compilerTransform){
+      const setting=phaseLocals?{optimizePhaseLocals:true}:{boundedRegions:true};
+      const start=performance.now(),generated=item.options.resumable?transpileAVR(item.binary,raw.manifest.abi,{...item.options,...setting}):raw;
+      optimized={...generated,optimization:{tool:'generation-time '+values.transform,flags:item.options.resumable?[Object.keys(setting)[0]+'=true']:[],
         inputSha256:sha(raw.bytes),outputSha256:sha(generated.bytes),inputBytes:raw.bytes.length,outputBytes:generated.bytes.length,elapsedMs:performance.now()-start,
-        phaseLocals:generated.manifest.stats.phaseLocals??null}};
+        phaseLocals:generated.manifest.stats.phaseLocals??null,...bounded?{regions:generated.manifest.stats.boundedRegions??null}:{}}};
     }else optimized=optimizeAVRWasm(raw,{level,wasmOpt:values['wasm-opt']});
     const compiled={};
     for(const [name,generated]of [['raw',raw],['optimized',optimized]]){const t=performance.now();new WebAssembly.Module(generated.bytes);compiled[name]=performance.now()-t;}
