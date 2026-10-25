@@ -1,0 +1,74 @@
+{
+  "verification_date": "2026-10-25",
+  "source_archive_sha256": "7319b654ffdf65f46843ed177fcedb13bce915c218cc040b580d46411731c050",
+  "branch": "codex/import-codec2-history",
+  "environment": {
+    "os": "Windows",
+    "python": "CPython 3.12.14",
+    "dependencies": "Python standard library only"
+  },
+  "archive_integrity": {
+    "command": "python Codecs/Codec2/tools/verify_import.py --git-ref HEAD",
+    "result": "PASS",
+    "stages": 6,
+    "extracted_files": 134,
+    "original_outer_zip_retained": true,
+    "committed_original_blobs_checked": 135,
+    "zip_occurrences_including_duplicates": 10,
+    "unique_zip_payloads": 6,
+    "archive_entry_occurrences": 260,
+    "r2_expanded_equals_baseline_zip": true,
+    "original_checksum_mismatches": 0,
+    "known_original_missing_files": [
+      "R1/tests/__pycache__/codec2_test_common.cpython-313.pyc",
+      "R1/tests/__pycache__/test_resonator.cpython-313.pyc"
+    ],
+    "midi_source_files": 0,
+    "original_git_metadata_present": false
+  },
+  "test_isolation": "Unmodified archived R2 was copied to an ignored build directory. Historical tests ran on that copy; no archived source, WAV, or report was overwritten.",
+  "r2_tests": [
+    {
+      "script": "AVR/Codec2_Tiny13_Quality_R2/tests/stress_r2.py",
+      "result": "PASS",
+      "software_multiply_pairs": 15360,
+      "edge_frames": 56,
+      "edge_pcm_samples": 8960,
+      "decode_max_source_interpreter_cycles": 919,
+      "sample_max_source_interpreter_cycles": 847,
+      "stdout": [
+        "AVR_MULT 15360 input pairs passed",
+        "AVR_EDGE_STRESS 56 frames 8960 PCM samples passed decode max 919 sample max 847"
+      ]
+    },
+    {
+      "script": "AVR/Codec2_Tiny13_Quality_R2/tests/verify_full_two_streams.py",
+      "result": "PASS",
+      "frames": 365,
+      "pcm_samples": 58400,
+      "mismatches": 0,
+      "streams": [
+        {
+          "file": "speech.c2zx",
+          "frames": 218,
+          "pcm_samples": 34880,
+          "sample_max_source_interpreter_cycles": 845,
+          "host_runtime_seconds": 81.9
+        },
+        {
+          "file": "codec2_3200_8byte_frames.bin",
+          "frames": 147,
+          "pcm_samples": 23520,
+          "sample_max_source_interpreter_cycles": 844,
+          "host_runtime_seconds": 61.3
+        }
+      ]
+    }
+  ],
+  "verification_limits": [
+    "R2 tests execute the archived source-level AVR interpreter against its independent integer Python model, not the assembled machine-code binary.",
+    "The import did not rebuild firmware, rerun R3 C-parser compilation/regressions, or recompute scientific audio-quality metrics. Their original files and reports remain intact.",
+    "No physical MCU, active-interrupt streaming admission, stack bound, or buffer-underrun verification was performed during this import.",
+    "Original intermediate commits, authors, or files absent from the supplied ZIP cannot be recovered. Six stage commits reconstruct the supplied snapshots."
+  ]
+}

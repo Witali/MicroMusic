@@ -1,0 +1,2638 @@
+{
+  "schema_version": 1,
+  "source_archive": "Codec2_ATTiny13_Continuation_R3_2026-10-25.zip",
+  "archive_sha256": "7319b654ffdf65f46843ed177fcedb13bce915c218cc040b580d46411731c050",
+  "import_date": "2026-10-25",
+  "history_kind": "Reconstructed stage commits from archived snapshots; no original Git objects, commit IDs, or author identities were supplied.",
+  "original_archive_path": "archives/Codec2_ATTiny13_Continuation_R3_2026-10-25.zip",
+  "stages": [
+    {
+      "id": "zx-reference",
+      "order": 0,
+      "path": "history/00_zx_reference",
+      "files": 16,
+      "source_archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/codec2zx_project.zip"
+      ],
+      "source_prefix": ""
+    },
+    {
+      "id": "initial-feasibility",
+      "order": 1,
+      "path": "history/01_initial_feasibility",
+      "files": 6,
+      "source_archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/Codec2_ATTiny13_Initial_Feasibility.zip"
+      ],
+      "source_prefix": ""
+    },
+    {
+      "id": "optimized-avr",
+      "order": 2,
+      "path": "history/02_optimized_avr",
+      "files": 26,
+      "source_archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "source_prefix": "Codec2_Tiny13_Optimized/"
+    },
+    {
+      "id": "resonator-r1",
+      "order": 3,
+      "path": "history/03_resonator_r1",
+      "files": 34,
+      "source_archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "source_prefix": "Codec2_Tiny13_Resonator_R1/"
+    },
+    {
+      "id": "quality-r2",
+      "order": 4,
+      "path": "AVR/Codec2_Tiny13_Quality_R2",
+      "files": 44,
+      "source_archive_chain": [],
+      "source_prefix": "Codec2_Tiny13_Quality_R2/"
+    },
+    {
+      "id": "continuation-r3",
+      "order": 5,
+      "path": "AVR",
+      "files": 8,
+      "source_archive_chain": [],
+      "source_prefix": ""
+    }
+  ],
+  "retained": [
+    {
+      "stage": "zx-reference",
+      "path": "history/00_zx_reference/codec2zx.asm",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/codec2zx_project.zip"
+      ],
+      "entry": "codec2zx.asm",
+      "bytes": 14418,
+      "sha256": "8cf805e32543e6234182ea4a009687e627034c356e5e2a272bbf10495f2faf4c",
+      "zip_timestamp": [
+        2026,
+        10,
+        5,
+        21,
+        37,
+        24
+      ]
+    },
+    {
+      "stage": "zx-reference",
+      "path": "history/00_zx_reference/codec2zx.bin",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/codec2zx_project.zip"
+      ],
+      "entry": "codec2zx.bin",
+      "bytes": 3020,
+      "sha256": "a9fbc8c0bcf7962492113bbe8ace6490b11e2b0344d5e4e9aa7ccc54fc40ef86",
+      "zip_timestamp": [
+        2026,
+        10,
+        5,
+        21,
+        38,
+        22
+      ]
+    },
+    {
+      "stage": "zx-reference",
+      "path": "history/00_zx_reference/codec2zx.lst",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/codec2zx_project.zip"
+      ],
+      "entry": "codec2zx.lst",
+      "bytes": 17338,
+      "sha256": "8e70a3a48ed9e60819765ff3345d83b9487871fc14aa9a6b95e914d80d6dc5f9",
+      "zip_timestamp": [
+        2026,
+        10,
+        5,
+        21,
+        38,
+        22
+      ]
+    },
+    {
+      "stage": "zx-reference",
+      "path": "history/00_zx_reference/codec2zx.trd",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/codec2zx_project.zip"
+      ],
+      "entry": "codec2zx.trd",
+      "bytes": 655360,
+      "sha256": "4aaf06c480b983560ba94f79df20da6feb632487ba87e21202b3347bf5937a2f",
+      "zip_timestamp": [
+        2026,
+        10,
+        5,
+        21,
+        40,
+        34
+      ]
+    },
+    {
+      "stage": "zx-reference",
+      "path": "history/00_zx_reference/speech.c2zx",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/codec2zx_project.zip"
+      ],
+      "entry": "speech.c2zx",
+      "bytes": 1744,
+      "sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+      "zip_timestamp": [
+        2026,
+        10,
+        5,
+        21,
+        38,
+        22
+      ]
+    },
+    {
+      "stage": "zx-reference",
+      "path": "history/00_zx_reference/speech8.wav",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/codec2zx_project.zip"
+      ],
+      "entry": "speech8.wav",
+      "bytes": 69820,
+      "sha256": "808bee666dfc9b1935010ec943c30923946fcfea4cde0bd296652b802b38dcc0",
+      "zip_timestamp": [
+        2026,
+        10,
+        5,
+        21,
+        30,
+        10
+      ]
+    },
+    {
+      "stage": "zx-reference",
+      "path": "history/00_zx_reference/reference_codec2.wav",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/codec2zx_project.zip"
+      ],
+      "entry": "reference_codec2.wav",
+      "bytes": 69804,
+      "sha256": "fd87b78647364d80bb9da3cf406eb66837a9c7eb677e1354a61f4f2bf8f754af",
+      "zip_timestamp": [
+        2026,
+        10,
+        5,
+        21,
+        41,
+        38
+      ]
+    },
+    {
+      "stage": "zx-reference",
+      "path": "history/00_zx_reference/zx_ay_preview.wav",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/codec2zx_project.zip"
+      ],
+      "entry": "zx_ay_preview.wav",
+      "bytes": 69804,
+      "sha256": "f6344948ecc4e5893d5f77c8256ac5222e919c53624898b54ff931ed8047e5ee",
+      "zip_timestamp": [
+        2026,
+        10,
+        5,
+        21,
+        41,
+        38
+      ]
+    },
+    {
+      "stage": "zx-reference",
+      "path": "history/00_zx_reference/mini_z80asm.py",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/codec2zx_project.zip"
+      ],
+      "entry": "mini_z80asm.py",
+      "bytes": 9659,
+      "sha256": "d56fbf0c579c0b424b2c51cb4c5dff65e8e1c9a7a01e7e506deffe471029df92",
+      "zip_timestamp": [
+        2026,
+        10,
+        5,
+        21,
+        37,
+        24
+      ]
+    },
+    {
+      "stage": "zx-reference",
+      "path": "history/00_zx_reference/build_tables.py",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/codec2zx_project.zip"
+      ],
+      "entry": "build_tables.py",
+      "bytes": 979,
+      "sha256": "4c6beaf8907adfa99df75bf6599fe24018fe7b84b3a293dba8f39f58debd3acd",
+      "zip_timestamp": [
+        2026,
+        10,
+        5,
+        21,
+        37,
+        24
+      ]
+    },
+    {
+      "stage": "zx-reference",
+      "path": "history/00_zx_reference/encode_reference.py",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/codec2zx_project.zip"
+      ],
+      "entry": "encode_reference.py",
+      "bytes": 1827,
+      "sha256": "cfa095a91ba0e100baf634fbf8410ee347af02c01f024c87a0fc9f0975bba121",
+      "zip_timestamp": [
+        2026,
+        10,
+        5,
+        21,
+        38,
+        22
+      ]
+    },
+    {
+      "stage": "zx-reference",
+      "path": "history/00_zx_reference/validate_z80.py",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/codec2zx_project.zip"
+      ],
+      "entry": "validate_z80.py",
+      "bytes": 5475,
+      "sha256": "7d211ce7646352f58a98bcf7a928a68a9fa02eca7d2e8b0ae237472a7f64f73f",
+      "zip_timestamp": [
+        2026,
+        10,
+        5,
+        21,
+        39,
+        54
+      ]
+    },
+    {
+      "stage": "zx-reference",
+      "path": "history/00_zx_reference/build_trd.py",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/codec2zx_project.zip"
+      ],
+      "entry": "build_trd.py",
+      "bytes": 1658,
+      "sha256": "40e0f23e13e56d8003374ba4573031cd0818790e4c75bf413bd7e52fd65f8036",
+      "zip_timestamp": [
+        2026,
+        10,
+        5,
+        21,
+        40,
+        34
+      ]
+    },
+    {
+      "stage": "zx-reference",
+      "path": "history/00_zx_reference/validate_trd.py",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/codec2zx_project.zip"
+      ],
+      "entry": "validate_trd.py",
+      "bytes": 921,
+      "sha256": "ce8b8d228d35f5db15c5e0da7756436a23a32fdb2eb33812d14cc4f3e7ec85d5",
+      "zip_timestamp": [
+        2026,
+        10,
+        5,
+        21,
+        40,
+        34
+      ]
+    },
+    {
+      "stage": "zx-reference",
+      "path": "history/00_zx_reference/make_previews.py",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/codec2zx_project.zip"
+      ],
+      "entry": "make_previews.py",
+      "bytes": 3107,
+      "sha256": "aa1f658d7834f2672256ddb5d2342968f3b708a1b1c6e7be03172536654561ef",
+      "zip_timestamp": [
+        2026,
+        10,
+        5,
+        21,
+        41,
+        38
+      ]
+    },
+    {
+      "stage": "zx-reference",
+      "path": "history/00_zx_reference/README.md",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/codec2zx_project.zip"
+      ],
+      "entry": "README.md",
+      "bytes": 4683,
+      "sha256": "061c76c8c5b62e948eaa165a1245a98f8f94b89b9ddd350b042a6c345ba0cf20",
+      "zip_timestamp": [
+        2026,
+        10,
+        5,
+        21,
+        41,
+        38
+      ]
+    },
+    {
+      "stage": "initial-feasibility",
+      "path": "history/01_initial_feasibility/README_RU.md",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/Codec2_ATTiny13_Initial_Feasibility.zip"
+      ],
+      "entry": "README_RU.md",
+      "bytes": 5771,
+      "sha256": "3cbb280bccb36ffa8dcd0848e9f2a2db636c20612b2be6d78401aa18dc5df2ca",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        22,
+        32,
+        0
+      ]
+    },
+    {
+      "stage": "initial-feasibility",
+      "path": "history/01_initial_feasibility/codec2_3200_8byte_frames.bin",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/Codec2_ATTiny13_Initial_Feasibility.zip"
+      ],
+      "entry": "codec2_3200_8byte_frames.bin",
+      "bytes": 1176,
+      "sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        22,
+        30,
+        58
+      ]
+    },
+    {
+      "stage": "initial-feasibility",
+      "path": "history/01_initial_feasibility/codec2_attiny13_lpc_experiment.py",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/Codec2_ATTiny13_Initial_Feasibility.zip"
+      ],
+      "entry": "codec2_attiny13_lpc_experiment.py",
+      "bytes": 5798,
+      "sha256": "d48a70723a258e3df3cc63b48e085fdbe83eaf2d072b721c3dbf2026193fcbc0",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        22,
+        32,
+        0
+      ]
+    },
+    {
+      "stage": "initial-feasibility",
+      "path": "history/01_initial_feasibility/experimental_lpc_synthesis.wav",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/Codec2_ATTiny13_Initial_Feasibility.zip"
+      ],
+      "entry": "experimental_lpc_synthesis.wav",
+      "bytes": 47084,
+      "sha256": "ecbf5f40a5f0b3af6979519826a800db69cf7b9115820912471eb5c76acf5a36",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        22,
+        30,
+        58
+      ]
+    },
+    {
+      "stage": "initial-feasibility",
+      "path": "history/01_initial_feasibility/experimental_lpc_volume_matched.wav",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/Codec2_ATTiny13_Initial_Feasibility.zip"
+      ],
+      "entry": "experimental_lpc_volume_matched.wav",
+      "bytes": 47084,
+      "sha256": "46daf56d386d17ef82200e4bb059384e7bdc962fcb44bb759b5a175395ef8db5",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        22,
+        31,
+        30
+      ]
+    },
+    {
+      "stage": "initial-feasibility",
+      "path": "history/01_initial_feasibility/reference_codec2_3200.wav",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/Codec2_ATTiny13_Initial_Feasibility.zip"
+      ],
+      "entry": "reference_codec2_3200.wav",
+      "bytes": 47084,
+      "sha256": "53db27152c2644a1d5e9dab3e0ed1eaba6dcb271dd80b200f41901ccc35da619",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        22,
+        30,
+        58
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/BUILD_AND_TEST.sh",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/BUILD_AND_TEST.sh",
+      "bytes": 694,
+      "sha256": "b41694f5dd1b6908eb02a2615f99d4db7e33edc4f6316038d7f4a96c65ede07d",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        28,
+        28
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/README_START_HERE_RU.md",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/README_START_HERE_RU.md",
+      "bytes": 9928,
+      "sha256": "f09b2f95acb1827df0dac8c9dbe1066f6c48d6588a2e012488582ed7c3784d48",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        29,
+        6
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/SHA256SUMS.txt",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/SHA256SUMS.txt",
+      "bytes": 2340,
+      "sha256": "d3f6af506fa3f1f2f8257b93fa347668c6c004f62c01d01516b7f82e26e2590f",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        29,
+        36
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/audio/codec2_3200_8byte_frames.bin.avr_sim.wav",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/audio/codec2_3200_8byte_frames.bin.avr_sim.wav",
+      "bytes": 47084,
+      "sha256": "bd3fb6867231aa49385ac5046061758cf5180a359705b08c8b4f72b0f1b0deba",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        25,
+        6
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/audio/speech.c2zx.avr_sim.wav",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/audio/speech.c2zx.avr_sim.wav",
+      "bytes": 69804,
+      "sha256": "00e543a3d5a6bfe376652e862e4d862de00a09e8d65bce421ebfc2c489ec43ce",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        26,
+        36
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/build/codec2tiny3200.bin",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/build/codec2tiny3200.bin",
+      "bytes": 572,
+      "sha256": "2989fe5b3aecb7c04ae8285173433c0a43ef9d535fb5802a68da53304fb7323e",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        28,
+        28
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/build/codec2tiny3200.o",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/build/codec2tiny3200.o",
+      "bytes": 1612,
+      "sha256": "d161a0c1b00a9bcdfe2e4e38a8491ec267d47f118f21b5bd773cebbfe64892ce",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        28,
+        28
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/build/test_run.log",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/build/test_run.log",
+      "bytes": 734,
+      "sha256": "df662fd85ffda9bc8d077b6b61c06d115ee06e7043b9808e7749a2db28a75dc8",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        27,
+        6
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/build/tiny13_pwm_oneframe_demo.bin",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/build/tiny13_pwm_oneframe_demo.bin",
+      "bytes": 716,
+      "sha256": "b3ddea52db1afc5b5555308770697826e69c2e9f47142f607288b883f37f1cb0",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        28,
+        28
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/build/tiny13_pwm_oneframe_demo.hex",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/build/tiny13_pwm_oneframe_demo.hex",
+      "bytes": 1984,
+      "sha256": "40b8f140e4387e58286e15f94607159c602e615cbf731bf244d0980b77540565",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        28,
+        28
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/build/tiny13_pwm_oneframe_demo.o",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/build/tiny13_pwm_oneframe_demo.o",
+      "bytes": 2136,
+      "sha256": "77524e7585d801de1381a013d5ab10bc40c13f398fc938ff70da39a569bf1a0d",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        28,
+        28
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/docs/INTEGRATION_RU.md",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/docs/INTEGRATION_RU.md",
+      "bytes": 4916,
+      "sha256": "149fe9988d25a13f2577ceba4faf38eadc9cc0f05d0634ca1d95c93afefd17c8",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        28,
+        28
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/docs/TECHNICAL_NOTES_RU.md",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/docs/TECHNICAL_NOTES_RU.md",
+      "bytes": 5999,
+      "sha256": "a4eea3496400cb036ac71b4e80c3c161eb54f4436e28e116e3077a4af2442390",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        28,
+        28
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/references/Codec2_ATTiny13_Initial_Feasibility.zip",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/references/Codec2_ATTiny13_Initial_Feasibility.zip",
+      "bytes": 107759,
+      "sha256": "c7a99b0522bcf594eb72000346af50e7346153bb5396931082964a4f71cfd8cc",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        6,
+        56
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/references/codec2zx_project.zip",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/references/codec2zx_project.zip",
+      "bytes": 136180,
+      "sha256": "4a0249aa481f4656fff2e522148f6175c5d8e03724584f007b507ebf3d8ba1f5",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        11,
+        52
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/src/codec2tiny3200.S",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/src/codec2tiny3200.S",
+      "bytes": 7052,
+      "sha256": "ea26cd0ac9cd0bc3aee727ec345f602a8941fbcdd30143cf7dfe8e6f4c4d7f48",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        26,
+        6
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/src/tiny13_pwm_oneframe_demo.S",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/src/tiny13_pwm_oneframe_demo.S",
+      "bytes": 2585,
+      "sha256": "6d3f51a03250ed75463fe47b14147c27429e4b4814bae9c0eb5cf057848f8d67",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        20,
+        32
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/tests/codec2_3200_8byte_frames.bin",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/tests/codec2_3200_8byte_frames.bin",
+      "bytes": 1176,
+      "sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        17,
+        24
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/tests/cycles.txt",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/tests/cycles.txt",
+      "bytes": 94,
+      "sha256": "72f8a4b7d508b910a965ade68041b2d1e662f88e6bef86459ef9ee5d98adb8f3",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        25,
+        6
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/tests/isr_cycles.txt",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/tests/isr_cycles.txt",
+      "bytes": 83,
+      "sha256": "a0b1c866d8e8ec64bc42741bb53d8869ffef9a3bb6211275c99ce91817b7c0da",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        28,
+        34
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/tests/resolve_avr_demo.py",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/tests/resolve_avr_demo.py",
+      "bytes": 2862,
+      "sha256": "788b5899c96c137b16aac55bd70e2638a4f733cfa8eb5ec4992643399f343ade",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        21,
+        6
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/tests/speech.c2zx",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/tests/speech.c2zx",
+      "bytes": 1744,
+      "sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        17,
+        24
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/tests/test_codec2tiny.py",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/tests/test_codec2tiny.py",
+      "bytes": 10263,
+      "sha256": "4c956ff3a78523e0f2188f5c25c90ffb0bc7f44ceb4f3dcac2091b982093db3e",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        28,
+        0
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/tests/test_lspd_reference.py",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/tests/test_lspd_reference.py",
+      "bytes": 1024,
+      "sha256": "7a853548dce5f08d42c43b4f917ad437781d0be04fcf2a138c61721ded193ae0",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        26,
+        6
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/tests/test_stress.py",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/tests/test_stress.py",
+      "bytes": 878,
+      "sha256": "6d03a0aaba311fff2fb1d51d00764054d2d731196bafe530df428a1efd7a9e3e",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        27,
+        26
+      ]
+    },
+    {
+      "stage": "optimized-avr",
+      "path": "history/02_optimized_avr/tests/test_timer_isr.py",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "entry": "Codec2_Tiny13_Optimized/tests/test_timer_isr.py",
+      "bytes": 2077,
+      "sha256": "56333fa549b4d189c33c5c5b435239845746c42491d9bc1023cc369db5aac505",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        28,
+        0
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/BUILD_AND_TEST.sh",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/BUILD_AND_TEST.sh",
+      "bytes": 312,
+      "sha256": "fc371f5ae9d92563db9b6af0447a3da0dd848a774af7c32ceb5fdbbac4aa5d01",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        37,
+        14
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/README_START_HERE_RU.md",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/README_START_HERE_RU.md",
+      "bytes": 12618,
+      "sha256": "a19f83bd2386db97587e73e242d58a4cb422e94a2f8720871d6b927853916fbd",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        48,
+        6
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/SHA256SUMS.txt",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/SHA256SUMS.txt",
+      "bytes": 3562,
+      "sha256": "915d06caa7498e2291d3834666fbef34c32095bccbd8f82819e779091529938c",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        48,
+        8
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/audio/codec2_3200_8byte_frames.bin.resonator_ac_coupled.wav",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/audio/codec2_3200_8byte_frames.bin.resonator_ac_coupled.wav",
+      "bytes": 47084,
+      "sha256": "840552af09cd8885015105f23c945991809e2098ac6bff09718c4f832713f0a3",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        47,
+        36
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/audio/codec2_3200_8byte_frames.bin.resonator_avr.wav",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/audio/codec2_3200_8byte_frames.bin.resonator_avr.wav",
+      "bytes": 7724,
+      "sha256": "b8f76fecb96f30c030328feee2b7783216bd8190d5ced641aec5d253601769e2",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        47,
+        46
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/audio/codec2_3200_8byte_frames.bin.resonator_full.wav",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/audio/codec2_3200_8byte_frames.bin.resonator_full.wav",
+      "bytes": 47084,
+      "sha256": "6a5a6d1792a0fc4645debe0411d997f2e04a28f2e653d606e30e412d26690fad",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        47,
+        42
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/audio/codec2_3200_8byte_frames.bin.resonator_python.wav",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/audio/codec2_3200_8byte_frames.bin.resonator_python.wav",
+      "bytes": 47084,
+      "sha256": "11eadd8f8bfd08846c7be6756f11aafc638658fdbad4f5d1a74f3b6bc5f9d16b",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        34,
+        34
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/audio/codec2_3200_8byte_frames.bin.resonator_ref.wav",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/audio/codec2_3200_8byte_frames.bin.resonator_ref.wav",
+      "bytes": 7724,
+      "sha256": "b8f76fecb96f30c030328feee2b7783216bd8190d5ced641aec5d253601769e2",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        47,
+        42
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/audio/codec2_3200_8byte_frames.bin.square_old.wav",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/audio/codec2_3200_8byte_frames.bin.square_old.wav",
+      "bytes": 47084,
+      "sha256": "bd3fb6867231aa49385ac5046061758cf5180a359705b08c8b4f72b0f1b0deba",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        44,
+        44
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/audio/english_codec2_reference.wav",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/audio/english_codec2_reference.wav",
+      "bytes": 69804,
+      "sha256": "fd87b78647364d80bb9da3cf406eb66837a9c7eb677e1354a61f4f2bf8f754af",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        44,
+        44
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/audio/russian_codec2_reference.wav",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/audio/russian_codec2_reference.wav",
+      "bytes": 47084,
+      "sha256": "53db27152c2644a1d5e9dab3e0ed1eaba6dcb271dd80b200f41901ccc35da619",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        44,
+        44
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/audio/speech.c2zx.resonator_ac_coupled.wav",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/audio/speech.c2zx.resonator_ac_coupled.wav",
+      "bytes": 69804,
+      "sha256": "a6ea8c99ba6025ea635a48891edf78830e5f40a7fa87991c9e976fad76fc3733",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        47,
+        36
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/audio/speech.c2zx.resonator_avr.wav",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/audio/speech.c2zx.resonator_avr.wav",
+      "bytes": 7724,
+      "sha256": "c48450432dca755b45c02c0b38a56b6e2f0205b0ccd26193bac38d8db573f49d",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        47,
+        42
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/audio/speech.c2zx.resonator_full.wav",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/audio/speech.c2zx.resonator_full.wav",
+      "bytes": 69804,
+      "sha256": "293318e8305d928e27a8e4b384107429ac51af90c059261db318a6340af0172b",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        47,
+        38
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/audio/speech.c2zx.resonator_python.wav",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/audio/speech.c2zx.resonator_python.wav",
+      "bytes": 69804,
+      "sha256": "e4f6ae229a0d286fecfc940a09fe47a9c51194b21337f533a97c43bd7bcd974b",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        34,
+        32
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/audio/speech.c2zx.resonator_ref.wav",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/audio/speech.c2zx.resonator_ref.wav",
+      "bytes": 7724,
+      "sha256": "c48450432dca755b45c02c0b38a56b6e2f0205b0ccd26193bac38d8db573f49d",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        47,
+        38
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/audio/speech.c2zx.square_old.wav",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/audio/speech.c2zx.square_old.wav",
+      "bytes": 69804,
+      "sha256": "00e543a3d5a6bfe376652e862e4d862de00a09e8d65bce421ebfc2c489ec43ce",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        44,
+        44
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/build/build_test_output.txt",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/build/build_test_output.txt",
+      "bytes": 1226,
+      "sha256": "007b7cb10c183166076f3c5f553bd85f0e0f55c6cf67b2fa96148f4a2b9e35a6",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        47,
+        46
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/build/resonator_demo.o",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/build/resonator_demo.o",
+      "bytes": 2716,
+      "sha256": "15d37f7fddf91c8694ad826f14410a562b4a183ac8f9dadc87ad787ca4e39234",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        47,
+        36
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/build/resonator_demo_unlinked.bin",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/build/resonator_demo_unlinked.bin",
+      "bytes": 821,
+      "sha256": "5f57392672dfaf9d211eec03ea25bb3f3f390cb4b7076e076c799e9486f2bf42",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        47,
+        36
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/build/tiny13_resonator_demo.bin",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/build/tiny13_resonator_demo.bin",
+      "bytes": 821,
+      "sha256": "90983a2d32697c6f030289e11b2699bf1539783428795d7092f285ca879d7327",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        47,
+        38
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/build/tiny13_resonator_demo.hex",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/build/tiny13_resonator_demo.hex",
+      "bytes": 2278,
+      "sha256": "336c9cc635f14bb88d38ecf31982c04d10b069d47e04c204c0befd2b232902a9",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        47,
+        38
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+      "bytes": 287144,
+      "sha256": "b80891546ceab4e8bca8adb7565f52557185515e58b30e04fc445baead16823f",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        44,
+        44
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/src/codec2tiny_resonator.S",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/src/codec2tiny_resonator.S",
+      "bytes": 8565,
+      "sha256": "8432c23fe568a274d38d6ba53edcf2adb44b3ced2c42e22819cf5548b9f9658c",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        47,
+        36
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/src/tiny13_pwm_resonator_demo.S",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/src/tiny13_pwm_resonator_demo.S",
+      "bytes": 2304,
+      "sha256": "6f219fd018c2d33b6f04d12149ae3d654d4e1bc7654fef817750fad8daea2ac0",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        36,
+        18
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/tests/codec2_3200_8byte_frames.bin",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/tests/codec2_3200_8byte_frames.bin",
+      "bytes": 1176,
+      "sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        34,
+        32
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/tests/codec2_test_common.py",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/tests/codec2_test_common.py",
+      "bytes": 1320,
+      "sha256": "e0dd1ef0209d7f24104084a929eebc662d7d04a50a662e5eee3d4af5f44c8dad",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        43,
+        40
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/tests/isr_cycles.txt",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/tests/isr_cycles.txt",
+      "bytes": 91,
+      "sha256": "2169af29a3a9cf070090d9b18adeb8bac692f5f4ed8e1c17567363b3bfc76256",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        47,
+        46
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/tests/link_and_hex.py",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/tests/link_and_hex.py",
+      "bytes": 2577,
+      "sha256": "03f72b8a1134856eb543d9c4cb10663f76c97669ab9d0fc3e4aada22dc047cfb",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        37,
+        22
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/tests/measured_cycles.txt",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/tests/measured_cycles.txt",
+      "bytes": 87,
+      "sha256": "805ef366f684e0c6516b31ac6b4ffda42c6c6eccb95f78e00f5bf48b6df85ca9",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        47,
+        46
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/tests/prototype.py",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/tests/prototype.py",
+      "bytes": 2328,
+      "sha256": "11ec310ba4d25d74e3af058c13503d3fd752fc3540e9abc494e2729f805bb77c",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        43,
+        34
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/tests/speech.c2zx",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/tests/speech.c2zx",
+      "bytes": 1744,
+      "sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        34,
+        32
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/tests/sweep_damping.py",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/tests/sweep_damping.py",
+      "bytes": 2176,
+      "sha256": "bd15a25ac31c3e7211b25b0fe1ffc64f448ff7e39a27d3854e954566714ad0c3",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        43,
+        34
+      ]
+    },
+    {
+      "stage": "resonator-r1",
+      "path": "history/03_resonator_r1/tests/test_resonator.py",
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "entry": "Codec2_Tiny13_Resonator_R1/tests/test_resonator.py",
+      "bytes": 12097,
+      "sha256": "4aaf9ec072a86b9792bdc2d5bc3b1c3eeec3906c02945182c93523342937c6b5",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        45,
+        42
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/SHA256SUMS.txt",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/SHA256SUMS.txt",
+      "bytes": 4173,
+      "sha256": "f69e54b9fbc4179e998ba970d9e44adb7c564041227e23465a90685922cdbeac",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        11,
+        12
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+      "bytes": 519040,
+      "sha256": "c7914c8a590a25e1f58da71293d352964c0729b5410b71cabd856be9951d3877",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        8,
+        22
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/README_START_HERE_RU.md",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/README_START_HERE_RU.md",
+      "bytes": 14087,
+      "sha256": "c99169bde99c2d0105f56ca20f47a683ae70e78bac5ef86596997eea6445ffb8",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        8,
+        46
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/BUILD_AND_TEST.sh",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/BUILD_AND_TEST.sh",
+      "bytes": 277,
+      "sha256": "148f67f595f4c873e62261e1d54fd173903b18004f96732cf129346916370d6d",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        55,
+        40
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/src/codec2tiny_resonator.S",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/src/codec2tiny_resonator.S",
+      "bytes": 10662,
+      "sha256": "114d6846ecdf115c27a9a5733ef863c336f995e50dbeb24f7300d23d1b30e21f",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        6,
+        44
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/src/tiny13_pwm_resonator_demo.S",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/src/tiny13_pwm_resonator_demo.S",
+      "bytes": 2452,
+      "sha256": "5734f1fb63c922cde6d31dacf11589eee271411767b974e2989cf3a7c50eddba",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        6,
+        44
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/build/demo.o",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/build/demo.o",
+      "bytes": 3164,
+      "sha256": "e9f486b99350839c047fccf45f737584c737de786f50a77a43ae33e8386a7d56",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        10,
+        50
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/build/tiny13_quality_r2_demo.hex",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/build/tiny13_quality_r2_demo.hex",
+      "bytes": 2650,
+      "sha256": "1f4f8f433aef57b9277d577c9235332730aef79c144d6294ce788731e78a0441",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        10,
+        52
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/build/tiny13_quality_r2_demo.bin",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/build/tiny13_quality_r2_demo.bin",
+      "bytes": 959,
+      "sha256": "0b2a6f8585667edbd3242ba5b1d9411c1f89430e5c1a49d35d7bdfc54be2de6a",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        10,
+        52
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/build/unlinked.bin",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/build/unlinked.bin",
+      "bytes": 959,
+      "sha256": "64f28e644e28ddfe1a2b61944d6bce1cdac0ff22709f868ba052624f117ca530",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        10,
+        50
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/build/build_test_output.txt",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/build/build_test_output.txt",
+      "bytes": 1387,
+      "sha256": "044f1a3230a007e716a6c8721c05fa955d690df467894ef7dc9866075e1e1bf9",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        10,
+        58
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/reports/full_asm_verification.txt",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/reports/full_asm_verification.txt",
+      "bytes": 217,
+      "sha256": "ec743a64563e67085c5b374b3e44ec317ecd26103714a7f3b6be22b36b370993",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        10,
+        30
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/reports/quality_metrics.csv",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/reports/quality_metrics.csv",
+      "bytes": 853,
+      "sha256": "ea0f719db55f17debd4b922df41275f2d8dc0501150a3833b72732297d609591",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        11,
+        12
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/reports/quality_report_stdout.txt",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/reports/quality_report_stdout.txt",
+      "bytes": 284,
+      "sha256": "1a3b2136dd3c397b22faf2669329814b747255b083ea79695dce54ac9a7d291c",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        11,
+        12
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/reports/stress_test_output.txt",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/reports/stress_test_output.txt",
+      "bytes": 114,
+      "sha256": "496e202e0d588028204d097a36319492aaf991ac68a6e834123cd53d289c0631",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        11,
+        10
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/tests/codec2_3200_8byte_frames.bin",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/tests/codec2_3200_8byte_frames.bin",
+      "bytes": 1176,
+      "sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        52,
+        42
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/tests/quality_sweep.py",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/tests/quality_sweep.py",
+      "bytes": 6044,
+      "sha256": "94fcbad2491d0f094e4dd3ca0111f198175904b80966558903e537200e6c20d5",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        57,
+        52
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/tests/link_and_hex.py",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/tests/link_and_hex.py",
+      "bytes": 2555,
+      "sha256": "fd976797d4eb081034e92637f3a6b044f45bf754f77d4cd48a99ca69e247186f",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        6,
+        44
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/tests/stress_r2.py",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/tests/stress_r2.py",
+      "bytes": 3080,
+      "sha256": "fde8539296a1ca297a8192bab8921feefa2331bdfce4f4ede73b1d572dbf2172",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        3,
+        32
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/tests/verify_full_two_streams.py",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/tests/verify_full_two_streams.py",
+      "bytes": 1434,
+      "sha256": "24904337db9a1d2a6ee51f8800f1edc84830c596a33dd2824b2b83ab811884ce",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        9,
+        30
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/tests/quality_report.py",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/tests/quality_report.py",
+      "bytes": 2221,
+      "sha256": "63842ff63cc224ff174f04d6739bc017279da79a05273043a357f684c1fdc8a0",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        7,
+        22
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/tests/prototype.py",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/tests/prototype.py",
+      "bytes": 2328,
+      "sha256": "11ec310ba4d25d74e3af058c13503d3fd752fc3540e9abc494e2729f805bb77c",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        52,
+        42
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/tests/test_resonator.py",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/tests/test_resonator.py",
+      "bytes": 13200,
+      "sha256": "dd9c1422eaff5082217f53272253a17188919b81e56f631a7e113619bde5775d",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        6,
+        44
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/tests/codec2_test_common.py",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/tests/codec2_test_common.py",
+      "bytes": 1320,
+      "sha256": "e0dd1ef0209d7f24104084a929eebc662d7d04a50a662e5eee3d4af5f44c8dad",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        52,
+        42
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/tests/sweep_damping.py",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/tests/sweep_damping.py",
+      "bytes": 2176,
+      "sha256": "bd15a25ac31c3e7211b25b0fe1ffc64f448ff7e39a27d3854e954566714ad0c3",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        52,
+        42
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/tests/isr_cycles.txt",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/tests/isr_cycles.txt",
+      "bytes": 91,
+      "sha256": "2f10b7cf11b272aaf6ded10bbf593051ba028508c383c0abcafe9cd9005feb13",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        10,
+        58
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/tests/speech.c2zx",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/tests/speech.c2zx",
+      "bytes": 1744,
+      "sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        52,
+        42
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/tests/measured_cycles.txt",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/tests/measured_cycles.txt",
+      "bytes": 87,
+      "sha256": "8959b25abf92fea982ee8048da030e5569eed07cb8906162179a9271fa84dd2f",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        10,
+        58
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/audio/speech.c2zx.resonator_avr.wav",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/audio/speech.c2zx.resonator_avr.wav",
+      "bytes": 7724,
+      "sha256": "f6335eba33b803e06d70184859fbd603180a981aa227456cc034c21aaa4d3f10",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        10,
+        56
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/audio/russian_R2_listening_AC_coupled.wav",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/audio/russian_R2_listening_AC_coupled.wav",
+      "bytes": 47084,
+      "sha256": "ea6ebb6315e3cf18480ccf8bac755bf34a7da8fdba1243c87c3f91d62d6d9955",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        11,
+        12
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/audio/russian_input_source.wav",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/audio/russian_input_source.wav",
+      "bytes": 47084,
+      "sha256": "fb9a5b08a69c78dfd27b1cbb11ac90749313bdb6e519bd7a5538153b793061e8",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        7,
+        22
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/audio/english_R2_listening_AC_coupled.wav",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/audio/english_R2_listening_AC_coupled.wav",
+      "bytes": 69804,
+      "sha256": "4be5003b5567e5dff01d7c8ba52bc46e928b5aea260646311ae3578c6c61d11f",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        11,
+        12
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/audio/english_codec2_reference.wav",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/audio/english_codec2_reference.wav",
+      "bytes": 69804,
+      "sha256": "fd87b78647364d80bb9da3cf406eb66837a9c7eb677e1354a61f4f2bf8f754af",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        52,
+        42
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/audio/speech.c2zx.resonator_ref.wav",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/audio/speech.c2zx.resonator_ref.wav",
+      "bytes": 7724,
+      "sha256": "f6335eba33b803e06d70184859fbd603180a981aa227456cc034c21aaa4d3f10",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        10,
+        52
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/audio/codec2_3200_8byte_frames.bin.resonator_avr.wav",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/audio/codec2_3200_8byte_frames.bin.resonator_avr.wav",
+      "bytes": 7724,
+      "sha256": "e72db369a0e71d658682699f800cadf16d5ae8764d9a4b1cc6f72439363d2ca6",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        10,
+        58
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/audio/english_R1_pwm_sim.wav",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/audio/english_R1_pwm_sim.wav",
+      "bytes": 69804,
+      "sha256": "293318e8305d928e27a8e4b384107429ac51af90c059261db318a6340af0172b",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        7,
+        22
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/audio/speech.c2zx.resonator_full.wav",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/audio/speech.c2zx.resonator_full.wav",
+      "bytes": 69804,
+      "sha256": "82f118e6c6ce3ddd4dcfb1bdff675202f181faa6c66c05ff07ccfa101acadb5c",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        10,
+        52
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/audio/russian_R1_pwm_sim.wav",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/audio/russian_R1_pwm_sim.wav",
+      "bytes": 47084,
+      "sha256": "6a5a6d1792a0fc4645debe0411d997f2e04a28f2e653d606e30e412d26690fad",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        7,
+        22
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/audio/russian_codec2_reference.wav",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/audio/russian_codec2_reference.wav",
+      "bytes": 47084,
+      "sha256": "53db27152c2644a1d5e9dab3e0ed1eaba6dcb271dd80b200f41901ccc35da619",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        52,
+        42
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/audio/codec2_3200_8byte_frames.bin.resonator_full.wav",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/audio/codec2_3200_8byte_frames.bin.resonator_full.wav",
+      "bytes": 47084,
+      "sha256": "89c4423dd0c5c2785a130437d9e09429d2c56caf6a8659b4b5f5ca9255d2637c",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        10,
+        56
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/audio/english_input_source.wav",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/audio/english_input_source.wav",
+      "bytes": 69820,
+      "sha256": "808bee666dfc9b1935010ec943c30923946fcfea4cde0bd296652b802b38dcc0",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        59,
+        50
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/audio/codec2_3200_8byte_frames.bin.resonator_ref.wav",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/audio/codec2_3200_8byte_frames.bin.resonator_ref.wav",
+      "bytes": 7724,
+      "sha256": "e72db369a0e71d658682699f800cadf16d5ae8764d9a4b1cc6f72439363d2ca6",
+      "zip_timestamp": [
+        2026,
+        10,
+        24,
+        0,
+        10,
+        56
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/experiments/pitchinterp_codec2_3200_8byte_frames.bin.wav",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/experiments/pitchinterp_codec2_3200_8byte_frames.bin.wav",
+      "bytes": 47084,
+      "sha256": "539fe7a908a1ecc3c593a035f4dc3b245e1beb2f9e2cfae72d940c4bdb5d4da3",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        57,
+        40
+      ]
+    },
+    {
+      "stage": "quality-r2",
+      "path": "AVR/Codec2_Tiny13_Quality_R2/experiments/pitchinterp_speech.c2zx.wav",
+      "archive_chain": [],
+      "entry": "Codec2_Tiny13_Quality_R2/experiments/pitchinterp_speech.c2zx.wav",
+      "bytes": 69804,
+      "sha256": "eecdd42ef4c40acb65a33c1d5f2dc6fdfc4fd2af074b2fabf2b58b3696171629",
+      "zip_timestamp": [
+        2026,
+        10,
+        23,
+        23,
+        57,
+        40
+      ]
+    },
+    {
+      "stage": "continuation-r3",
+      "path": "AVR/compare_resonators.py",
+      "archive_chain": [],
+      "entry": "compare_resonators.py",
+      "bytes": 1915,
+      "sha256": "2968f104637680816529d7e09ce47c7537a71a5f922d9aed7e7069511c38f34a",
+      "zip_timestamp": [
+        2026,
+        10,
+        25,
+        18,
+        52,
+        12
+      ]
+    },
+    {
+      "stage": "continuation-r3",
+      "path": "AVR/test_full_parameters.py",
+      "archive_chain": [],
+      "entry": "test_full_parameters.py",
+      "bytes": 1525,
+      "sha256": "452eddb22789c5368f926fe7157816eac5714c63b21798851216272784cf766a",
+      "zip_timestamp": [
+        2026,
+        10,
+        25,
+        18,
+        53,
+        8
+      ]
+    },
+    {
+      "stage": "continuation-r3",
+      "path": "AVR/README_RU.md",
+      "archive_chain": [],
+      "entry": "README_RU.md",
+      "bytes": 5769,
+      "sha256": "9f67e1b34917eb1cbdc77c999392d75aa03bd2cd61465220472234db6ba0c5fc",
+      "zip_timestamp": [
+        2026,
+        10,
+        25,
+        18,
+        53,
+        56
+      ]
+    },
+    {
+      "stage": "continuation-r3",
+      "path": "AVR/codec2_3200_full_parameters.c",
+      "archive_chain": [],
+      "entry": "codec2_3200_full_parameters.c",
+      "bytes": 1521,
+      "sha256": "5b1f95721e7ed873bdb2643df357edebca14692d293b5eb62c10daac5294b6cb",
+      "zip_timestamp": [
+        2026,
+        10,
+        25,
+        18,
+        53,
+        8
+      ]
+    },
+    {
+      "stage": "continuation-r3",
+      "path": "AVR/build/parameters_host.so",
+      "archive_chain": [],
+      "entry": "build/parameters_host.so",
+      "bytes": 15048,
+      "sha256": "6b03416589291ad441e545e4f4539750e479c4cdbfc084ae79116b024be33f5a",
+      "zip_timestamp": [
+        2026,
+        10,
+        25,
+        18,
+        53,
+        10
+      ]
+    },
+    {
+      "stage": "continuation-r3",
+      "path": "AVR/build/parameters_avr.o",
+      "archive_chain": [],
+      "entry": "build/parameters_avr.o",
+      "bytes": 852,
+      "sha256": "92b8119767d095d8625b3f4817a2ec7633459253ad0d1db7fe6acdb4ef6cef6a",
+      "zip_timestamp": [
+        2026,
+        10,
+        25,
+        18,
+        53,
+        12
+      ]
+    },
+    {
+      "stage": "continuation-r3",
+      "path": "AVR/results/comparison.csv",
+      "archive_chain": [],
+      "entry": "results/comparison.csv",
+      "bytes": 849,
+      "sha256": "cda25777b565f02822f5de7a33b088a77a3ed228f1e556b7d386a5ae9f37a39e",
+      "zip_timestamp": [
+        2026,
+        10,
+        25,
+        18,
+        52,
+        16
+      ]
+    },
+    {
+      "stage": "continuation-r3",
+      "path": "AVR/BASELINE_R2_UNMODIFIED.zip",
+      "archive_chain": [],
+      "entry": "BASELINE_R2_UNMODIFIED.zip",
+      "bytes": 794049,
+      "sha256": "1ccf79505731b8d7afdb756df24d49e7e7cc534bbebb049ce34bc29f899bc415",
+      "zip_timestamp": [
+        2026,
+        10,
+        25,
+        18,
+        50,
+        48
+      ]
+    }
+  ],
+  "archive_inventory": [
+    {
+      "archive_chain": [],
+      "sha256": "7319b654ffdf65f46843ed177fcedb13bce915c218cc040b580d46411731c050",
+      "entries": 52
+    },
+    {
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "sha256": "c7914c8a590a25e1f58da71293d352964c0729b5410b71cabd856be9951d3877",
+      "entries": 34
+    },
+    {
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "sha256": "b80891546ceab4e8bca8adb7565f52557185515e58b30e04fc445baead16823f",
+      "entries": 26
+    },
+    {
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/Codec2_ATTiny13_Initial_Feasibility.zip"
+      ],
+      "sha256": "c7a99b0522bcf594eb72000346af50e7346153bb5396931082964a4f71cfd8cc",
+      "entries": 6
+    },
+    {
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/codec2zx_project.zip"
+      ],
+      "sha256": "4a0249aa481f4656fff2e522148f6175c5d8e03724584f007b507ebf3d8ba1f5",
+      "entries": 16
+    },
+    {
+      "archive_chain": [
+        "BASELINE_R2_UNMODIFIED.zip"
+      ],
+      "sha256": "1ccf79505731b8d7afdb756df24d49e7e7cc534bbebb049ce34bc29f899bc415",
+      "entries": 44
+    },
+    {
+      "archive_chain": [
+        "BASELINE_R2_UNMODIFIED.zip",
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "sha256": "c7914c8a590a25e1f58da71293d352964c0729b5410b71cabd856be9951d3877",
+      "entries": 34
+    },
+    {
+      "archive_chain": [
+        "BASELINE_R2_UNMODIFIED.zip",
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "sha256": "b80891546ceab4e8bca8adb7565f52557185515e58b30e04fc445baead16823f",
+      "entries": 26
+    },
+    {
+      "archive_chain": [
+        "BASELINE_R2_UNMODIFIED.zip",
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/Codec2_ATTiny13_Initial_Feasibility.zip"
+      ],
+      "sha256": "c7a99b0522bcf594eb72000346af50e7346153bb5396931082964a4f71cfd8cc",
+      "entries": 6
+    },
+    {
+      "archive_chain": [
+        "BASELINE_R2_UNMODIFIED.zip",
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip",
+        "Codec2_Tiny13_Optimized/references/codec2zx_project.zip"
+      ],
+      "sha256": "4a0249aa481f4656fff2e522148f6175c5d8e03724584f007b507ebf3d8ba1f5",
+      "entries": 16
+    }
+  ],
+  "original_checksum_reports": [
+    {
+      "archive_chain": [],
+      "path": "Codec2_Tiny13_Quality_R2/SHA256SUMS.txt",
+      "matched": 43,
+      "missing": [],
+      "mismatched": []
+    },
+    {
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "path": "Codec2_Tiny13_Resonator_R1/SHA256SUMS.txt",
+      "matched": 33,
+      "missing": [
+        "tests/__pycache__/codec2_test_common.cpython-313.pyc",
+        "tests/__pycache__/test_resonator.cpython-313.pyc"
+      ],
+      "mismatched": []
+    },
+    {
+      "archive_chain": [
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "path": "Codec2_Tiny13_Optimized/SHA256SUMS.txt",
+      "matched": 25,
+      "missing": [],
+      "mismatched": []
+    },
+    {
+      "archive_chain": [
+        "BASELINE_R2_UNMODIFIED.zip"
+      ],
+      "path": "Codec2_Tiny13_Quality_R2/SHA256SUMS.txt",
+      "matched": 43,
+      "missing": [],
+      "mismatched": []
+    },
+    {
+      "archive_chain": [
+        "BASELINE_R2_UNMODIFIED.zip",
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip"
+      ],
+      "path": "Codec2_Tiny13_Resonator_R1/SHA256SUMS.txt",
+      "matched": 33,
+      "missing": [
+        "tests/__pycache__/codec2_test_common.cpython-313.pyc",
+        "tests/__pycache__/test_resonator.cpython-313.pyc"
+      ],
+      "mismatched": []
+    },
+    {
+      "archive_chain": [
+        "BASELINE_R2_UNMODIFIED.zip",
+        "Codec2_Tiny13_Quality_R2/previous_R1_unchanged.zip",
+        "Codec2_Tiny13_Resonator_R1/previous_version/Codec2_ATtiny13A_Optimized_3200_2026-10-24.zip"
+      ],
+      "path": "Codec2_Tiny13_Optimized/SHA256SUMS.txt",
+      "matched": 25,
+      "missing": [],
+      "mismatched": []
+    }
+  ],
+  "r2_expanded_matches_baseline_zip": true,
+  "stage_commits": [
+    {
+      "stage": "zx-reference",
+      "commit": "5b62e992f371c9ace8c95476ec935f778ccf58b3",
+      "message": "Import original Codec2 ZX reference snapshot",
+      "files": 17
+    },
+    {
+      "stage": "initial-feasibility",
+      "commit": "cbcd93f4ff4450fd8f9b6bfe343a8074f77a98b7",
+      "message": "Preserve initial Codec2 ATtiny13 feasibility experiment",
+      "files": 6
+    },
+    {
+      "stage": "optimized-avr",
+      "commit": "26b948bafde75a5e6d8696a6257465e6b0055fe9",
+      "message": "Preserve optimized Codec2 ATtiny13 AVR snapshot",
+      "files": 26
+    },
+    {
+      "stage": "resonator-r1",
+      "commit": "9df3312a6ff9bc26df123425d50d8417377bd32c",
+      "message": "Preserve Codec2 ATtiny13 resonator R1 snapshot",
+      "files": 34
+    },
+    {
+      "stage": "quality-r2",
+      "commit": "26e5f7c555fa12589a48ae08b3f3488c72e0ef71",
+      "message": "Preserve Codec2 ATtiny13 quality R2 snapshot",
+      "files": 44
+    },
+    {
+      "stage": "continuation-r3",
+      "commit": "36baf8a65e6f48f7cc44c64f6ae661173566276a",
+      "message": "Import Codec2 R3 continuation and original handoff archive",
+      "files": 9
+    }
+  ]
+}

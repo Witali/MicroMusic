@@ -2074,3 +2074,41 @@ Primary flag definitions: [Microchip ADC SREG](https://onlinedocs.microchip.com/
 [MULSU signed16 example](https://onlinedocs.microchip.com/oxy/GUID-0B644D8F-67E7-49E6-82C9-1B2B9ABE6A0D-en-US-23/GUID-FA865CD0-BF70-4D7F-9F8C-760FEF99F2D6.html).
 The signed17 extension and byte-aligned constructor are derived here from
 those semantics; the measured bounds and ABI restrictions are essential.
+
+## Archived Codec2 ATtiny13A Q5 resonators (imported research)
+
+The [Codec2 history](../../Codecs/Codec2/HISTORY_RU.md) retains a software
+multiply technique for **ATtiny13A at 9.6 MHz, without MUL**. The original
+[R2 source](../../Codecs/Codec2/AVR/Codec2_Tiny13_Quality_R2/src/codec2tiny_resonator.S)
+uses a six-iteration signed8-by-unsigned6 shift/add product and division by
+32, truncating toward zero. For negative products, add 31 before five
+arithmetic right shifts. The resonator keeps modulo-256 signed states;
+replacing wraparound with saturation changes its output. The archived
+multiply stress test covers all 256 signed inputs and coefficients 0..59,
+15,360 pairs. Its independent mathematical model is
+[reference_decoder](../../Codecs/Codec2/AVR/Codec2_Tiny13_Quality_R2/tests/test_resonator.py).
+
+The intended speed saving is reducing R1's eight partial products/Q7 shifts
+to six partial products/Q5 shifts; this changes coefficient precision and
+is not an exact replacement for R1. A separate 32-byte gain table and
+coefficient slewing trade Flash/state for smoother transitions. Original
+R1/R2 size and cycle comparisons remain archive-reported evidence, not a
+new benchmark. The import reruns R2's source-interpreter correctness tests;
+see [verification](../../Codecs/Codec2/IMPORT_VERIFICATION.json). Those tests
+do not establish interrupt-active streaming deadlines or buffer admission.
+
+**Toolchain and ABI constraints:** the supplied build uses LLVM/Clang AVR
+assembler-with-cpp with `-mmcu=attiny13`; its precise version was not supplied.
+The standalone routines use a private assembly ABI, fixed SRAM addresses,
+and an 8-bit PCM result in r16. They are not AVR-GCC C-callable functions.
+No portable C backend or explicit ASM-enable selector was supplied, so this
+is an immutable research reference, not a supported library optimization.
+A future adaptation must add the selectable equivalent C path, isolate
+hardware access, use manufacturer definitions, and validate both backends
+against the same output before enabling assembly.
+
+Provenance: the supplied R3 ZIP and all earlier snapshots are pinned by
+[IMPORT_MANIFEST.json](../../Codecs/Codec2/IMPORT_MANIFEST.json). Archive
+documents identify upstream Codec2 as LGPL-2.1 but do not supply a unified
+license for every experimental file. Keep those original notices and resolve
+licensing before reusing code; this entry adds no new assembly implementation.
