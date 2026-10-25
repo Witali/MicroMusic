@@ -1,0 +1,829 @@
+{
+  "scope": "Pinned NB3 / compact WB; ATmega328P ISA/peripheral simulation",
+  "baselineGitCommit": "41a89eb1",
+  "primaryTarget": "AVR ASM; portable C fallback verified",
+  "nbPcmBitExactToUnmodifiedXiph": true,
+  "wbPcmBitExactToExistingCompactProfile": true,
+  "measurements": {
+    "nb-asm": {
+      "frames": 14278,
+      "beforeMeanCycles": 105109.73582417582,
+      "afterMeanCycles": 103094.83197802198,
+      "meanCyclesSavedPercent": 1.9169526308431717,
+      "beforeMaxCycles": 112765,
+      "afterMaxCycles": 110486,
+      "beforeFlashBytes": 10958,
+      "flashBytes": 11084,
+      "beforeStaticSramBytes": 1099,
+      "staticSramBytes": 1099,
+      "beforePeakStack": 107,
+      "peakStack": 103,
+      "freeSram": 846
+    },
+    "wb-asm": {
+      "beforeMeanCycles": 254853.12449114834,
+      "afterMeanCycles": 251129.43368361262,
+      "beforeMaxCycles": 262360,
+      "afterMaxCycles": 258409,
+      "flashBytes": 17582,
+      "staticSramBytes": 1279,
+      "peakStackConservative": 178,
+      "freeSram": 591
+    },
+    "nb-c": {
+      "frames": 14278,
+      "beforeMeanCycles": 217506.2412087912,
+      "afterMeanCycles": 217506.2412087912,
+      "meanCyclesSavedPercent": 0.0,
+      "beforeMaxCycles": 229504,
+      "afterMaxCycles": 229504,
+      "beforeFlashBytes": 11534,
+      "flashBytes": 11534,
+      "beforeStaticSramBytes": 1099,
+      "staticSramBytes": 1099,
+      "beforePeakStack": 105,
+      "peakStack": 105,
+      "freeSram": 844
+    },
+    "wb-c": {
+      "beforeMeanCycles": 648815.686074032,
+      "afterMeanCycles": 648815.686074032,
+      "beforeMaxCycles": 659414,
+      "afterMaxCycles": 659414,
+      "flashBytes": 18712,
+      "staticSramBytes": 1279,
+      "peakStackConservative": 205,
+      "freeSram": 564
+    }
+  },
+  "stageKernelMeasurements": {
+    "asm": {
+      "2": [
+        240
+      ],
+      "3": [
+        330
+      ],
+      "4": [
+        420
+      ]
+    },
+    "c": null
+  },
+  "sharedQ14MathImageByteIdentical": true,
+  "frozenPlayerImages": [
+    {
+      "image": "build/poly2-nb-asm-normal/adversarial_24/speex-player.bin",
+      "sha256": "90a7729b285e98a078c8f8962c7ee82cb0284f26a42b92a0011009aea0d30eab"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/chirp/speex-player.bin",
+      "sha256": "72dd011a2c786aa0ee8b08f51984323bd53f0f3cc80bb299ff3da397ed5a5a8d"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/en_letter_a/speex-player.bin",
+      "sha256": "c0d145917cf8d0f632ae423d0e8de26f54832aa465e81a3443cd3e1ab88914e8"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/en_letter_b/speex-player.bin",
+      "sha256": "9fa340a0de137e74c7e657519f69247a4d05026a56227ed2db01aa42da971950"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/en_normcore_a/speex-player.bin",
+      "sha256": "610bb8210e1c437bd31ccffdc5f306b9e89a153c7e3b27fb9b9127eca8341d31"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/en_normcore_a_quiet_minus24dB/speex-player.bin",
+      "sha256": "afd0ba34ba5c2f2ab628379df452eb90a826b4203472bc915d3e664d96fe2ba7"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/en_normcore_b/speex-player.bin",
+      "sha256": "e0e0625cecfb99dd44939a855aa0c11c6efa20f5ca68d9405c6a66628482bee7"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/en_portrait_a/speex-player.bin",
+      "sha256": "475980852f45fdfc3ddc8a6ca65a49f9458bcbb315a1b372f7fceda1d11d275e"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/en_portrait_b/speex-player.bin",
+      "sha256": "0e3d7440ca468c824c3c119066d1051ca0d034682e6f24bc63d94cbeaa4912dc"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/en_sense_a/speex-player.bin",
+      "sha256": "22fb909703b384fd98f5bcb6ef67e06fb4f28cea3de40ec46a6eb271bd0fad48"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/en_sense_a_white_noise_15dB/speex-player.bin",
+      "sha256": "fb9fa74d2e90326fbe555263d64bd5ac1e110f7b8aa1b90ac5225c352a1eb0f5"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/en_sense_b/speex-player.bin",
+      "sha256": "b2bdcf172ff0fb6a11b878a452ac1238c831c8ee4e85ec4772f3f3049b4b11ed"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/hard_clipped/speex-player.bin",
+      "sha256": "6a856949b03e5ea4854f61704c2bd141f3311da790606ad3e4a8c4a6453b5908"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/impulses/speex-player.bin",
+      "sha256": "653c7881022a13df553508b5e347c94964d8554b9f55d36f60e30fd6da22aaab"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/random_40/speex-player.bin",
+      "sha256": "893294f9c92d9f94fd70baec70c6a2404d815161ddee9458a7041ce55c5bc5b8"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/ru_pushkin_a/speex-player.bin",
+      "sha256": "16095abb951f2190497300d5895903d04935ace5c95b17b3ceebb6688079ab7f"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/ru_pushkin_b/speex-player.bin",
+      "sha256": "31e2ab3799e9125e77e3231bbb9821b03f9d06f0440b5b98a0029856d68d118a"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/ru_russia_a/speex-player.bin",
+      "sha256": "59134168fd5511facc1498f565bd521ed7f1a062b5a096e812a2c833142a367e"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/ru_russia_a_white_noise_15dB/speex-player.bin",
+      "sha256": "eca49a3d2b53b6ef136409967d8f26974945c9a9ae23eed20f8810d38fe865e2"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/ru_russia_b/speex-player.bin",
+      "sha256": "deb44a87af0aa14db6c224b16e488fe96baec09b3be6a775113e6a8198e37205"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/ru_slutskaya_a/speex-player.bin",
+      "sha256": "d2cb38c65f4cbad35104495477bc08358fac2816ce814013e7cdb6d17b85e9bf"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/ru_slutskaya_b/speex-player.bin",
+      "sha256": "ff76395a69ea3b06e3b6771ddd4af5681cee868f681bcac76493f04b1f8ce1f8"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/ru_square_a/speex-player.bin",
+      "sha256": "d781ca3c3534f9d8e6a862a2a671c6b272a54fa6d946d63ff753db2f840b11df"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/ru_square_a_quiet_minus24dB/speex-player.bin",
+      "sha256": "67126de6ba79c3c6b3d9ae6f3b6146d40e0b10b317e8c810a157285d46c50eb6"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/ru_square_b/speex-player.bin",
+      "sha256": "a057059f9ca2d13e54fc54e40f9ef9f58be2ef1d4b161a7ee8db4e362e6efde7"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/sample_mode3_8kbps/speex-player.bin",
+      "sha256": "d114a4c25c45054716688b8473fab3d1f43cdaee1135246fa34aad4445a46ecf"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/silence/speex-player.bin",
+      "sha256": "7a32b10cf483baef5ed3186848beb5d518d4d23a7b6992542817f2c1e39d9376"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/speech_from_wb16_lowband/speex-player.bin",
+      "sha256": "a2c42800be6776918957592b4deeb2d903da18649a866b0c055bdef88459e497"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/speech_ru/speex-player.bin",
+      "sha256": "a9a10f2a426c4c5a8a18df20d0003817a4d2d84d131bd6815cd92e2c8928c42b"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/voicelike/speex-player.bin",
+      "sha256": "41a4aa01962f045469233b4951f17806ea3589303f9e1923fb725b2595577dac"
+    },
+    {
+      "image": "build/poly2-nb-asm-normal/white_noise/speex-player.bin",
+      "sha256": "2a2797b5034f8cf3d7ec046a5d455a61a9d279a65c4523ca0cf1c8cc49b11b84"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/adversarial_24/speex-player.bin",
+      "sha256": "9c3636a7d9d064cd9f80d68ad19320d8ac6d274b4083218371bc37b1add12339"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/chirp/speex-player.bin",
+      "sha256": "0abf82fddc25e73a3b4bf5c05f7e1f963d28648c9da3da301b3a5a4f550f233a"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/en_letter_a/speex-player.bin",
+      "sha256": "161f90a45f5b9a8571e245320ae315c3a71e5e4a5ba20fc0e642d7504c203a5a"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/en_letter_b/speex-player.bin",
+      "sha256": "d71a9a354a5e9718d1a64a49024f2ca7c886373e05db9771a4737c5345bbd809"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/en_normcore_a/speex-player.bin",
+      "sha256": "0757e46894fe263a800e08d609b2cbabffada710838e6117109e0fa120d8709a"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/en_normcore_a_quiet_minus24dB/speex-player.bin",
+      "sha256": "3f7561b8ca305d4ef9ec96e321b8d1da38aa4a2df17650b8d472b77204f20182"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/en_normcore_b/speex-player.bin",
+      "sha256": "eb861a1c969627555dc41be82956d016f9fb8ee2464e3c6f7dfd3baada382ce7"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/en_portrait_a/speex-player.bin",
+      "sha256": "343aca21400e8328991347567789536eedd0c52183ce78df0108594ef8e0ea76"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/en_portrait_b/speex-player.bin",
+      "sha256": "062f6cb060a861b4fcadc7dac4e5f998cc3a1c42c8ddd7567948895685c8af1a"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/en_sense_a/speex-player.bin",
+      "sha256": "d9f1c30735d3517c65b3f6957b3e327affa537fbd38932e0b62d4e7e15da3cac"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/en_sense_a_white_noise_15dB/speex-player.bin",
+      "sha256": "8263f0e1bfed00f7518d63d3607063cc3eab9207aac2db5956010c8c2c5d89a4"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/en_sense_b/speex-player.bin",
+      "sha256": "f617997c3977acf0f87a43edc3ba5410bf6f2b010c5b23091c7e73ee381b3696"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/hard_clipped/speex-player.bin",
+      "sha256": "5957d4146209e641a38378822d9722790dce9332759af7c965434ba89ecff190"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/impulses/speex-player.bin",
+      "sha256": "c8e699405c68442d1dd97ae507b30ffde6ff27a35e0ce02782c9828698b85211"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/random_40/speex-player.bin",
+      "sha256": "3b00d480d9a73a8dd4fa4076f29f01f6e6e1ec9c15ba6965576784c49f9c5ed1"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/ru_pushkin_a/speex-player.bin",
+      "sha256": "e5e5810b2caeb2bc7c159de37d42f3ac134496bccdfcc9a4c789cc69572eb9d8"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/ru_pushkin_b/speex-player.bin",
+      "sha256": "a4529d7e80a5fb340693902f3cd917710d4c922025771ee6fc42f90b8d1d2ec6"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/ru_russia_a/speex-player.bin",
+      "sha256": "e37d177aa6c1382517a864fbd2df3792b8602b448c64d915787628a7dfa38d0c"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/ru_russia_a_white_noise_15dB/speex-player.bin",
+      "sha256": "8b8f34cee679c2064a9c22ddff4cc5b9341da5be112092a958487196382992d4"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/ru_russia_b/speex-player.bin",
+      "sha256": "7440f16beaacb540825b06da7afeac4554e4bb700c01f070dbc45afb80f6b967"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/ru_slutskaya_a/speex-player.bin",
+      "sha256": "eac9161f82d86047265533c3b727d096eb0a1adc3751ea0429eba127cd1941d2"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/ru_slutskaya_b/speex-player.bin",
+      "sha256": "6f2c3d813cab86929d83ece4b3ae05ed11d6b5641c0ed6168002301520b4d847"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/ru_square_a/speex-player.bin",
+      "sha256": "6408dc040c6b971ce29faec8b125a297e90c4db34a242838bb93b82db48d9780"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/ru_square_a_quiet_minus24dB/speex-player.bin",
+      "sha256": "eda2d8fe07fd10db3553ed2731053c142f98649b31f311b6a3a40b41afa8c176"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/ru_square_b/speex-player.bin",
+      "sha256": "49ab35bfb75eac8ad2b5a4de5df6575988c766735be28b176c00dc29f562d567"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/sample_mode3_8kbps/speex-player.bin",
+      "sha256": "95d78519e284494969a7ce2dea96d2bbb0fb6c8d8ac279233982b15d86ba1bb8"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/silence/speex-player.bin",
+      "sha256": "036051b21c84b267a96872ee1872398bc3db3bf97564bf6a83aa644e42418ef9"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/speech_from_wb16_lowband/speex-player.bin",
+      "sha256": "3475deafc0946fb85cd1d63694fec5cd0ada045aeee2813aa3f5952e648d65c9"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/speech_ru/speex-player.bin",
+      "sha256": "837d69e9161c8828ff947ba3452138e2be0a1f80e59c5df778977e37f1fd5c5e"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/voicelike/speex-player.bin",
+      "sha256": "5b2d7fb12425060ae74a1f31b63183494ca57b3b57f79c393790786c9d32994c"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/white_noise/speex-player.bin",
+      "sha256": "aac715c4d986f261f652b81bd5f54b4f4d59b3e991db7ebca9c2df076adb769a"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/adversarial_24/speex-player.bin",
+      "sha256": "1f7e541cd0f752affeb4b5634cd33033c2dc22665124c49611d0dad6a997cf68"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/chirp/speex-player.bin",
+      "sha256": "f0d4fd0689f887cf8402aa4cb81773011a1024af86dc08a1a471e4c12cd603f2"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/en_letter_a/speex-player.bin",
+      "sha256": "9783dbc3cba815bf5b71284288428242cf5d80d8a16b8a760ea4a94475d46dec"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/en_letter_b/speex-player.bin",
+      "sha256": "f4e249d2cf982e657c7eb35bcf146ea282f0d51f33232bb6890c2072653c5419"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/en_normcore_a/speex-player.bin",
+      "sha256": "b905a01136744e40ee7a1f8ee2ac719a3c7a1fec4a2166591482aa2133087009"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/en_normcore_a_quiet_minus24dB/speex-player.bin",
+      "sha256": "23b4d33facaf7114c0a5e6093a5abc4bfb49fe2681e98327c4aff27767a0754f"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/en_normcore_b/speex-player.bin",
+      "sha256": "718c6f837db03e6830f7aae650ec1e42785b6de062d72d999fa755506ad775c3"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/en_portrait_a/speex-player.bin",
+      "sha256": "a71b5fb72333257b7b30c54c5c4606ad39631d304e5ca11481882437efe071b0"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/en_portrait_b/speex-player.bin",
+      "sha256": "14e509adde80c9cf76099320fcb9f4c76f02e6f4e39aaff510237493ef2be9b4"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/en_sense_a/speex-player.bin",
+      "sha256": "71886146f226bdb02bf1e8051725a8ada1716671d32062df9fcfba07d6143fc3"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/en_sense_a_white_noise_15dB/speex-player.bin",
+      "sha256": "380b67937cdbb9f62d3a973eadd3f2ed8fb2b56e62120e168e7aa846f03edf6b"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/en_sense_b/speex-player.bin",
+      "sha256": "23e0f698d188631b8325e8c1d3661c4acaa6362b3cd0468842fd4b1226c88890"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/hard_clipped/speex-player.bin",
+      "sha256": "c7c8539b56a340cffdf30e56b06d5c3b53936c1ecc003cc5bc555345d3e0c588"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/impulses/speex-player.bin",
+      "sha256": "50e213d7ac76f241144ead2a27f07511ba2b87894abeff3c6b510e35836a458a"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/random_40/speex-player.bin",
+      "sha256": "fa1cbcc276cef3a50e6799b0970e1f8c2162a4679a655ac5a17e2ed970df9edd"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/ru_pushkin_a/speex-player.bin",
+      "sha256": "f9fd2ac2b8b5db0b0407b06197962c01f77224cbd7958d23c7e2d820a87e418e"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/ru_pushkin_b/speex-player.bin",
+      "sha256": "f62b0fbf5235397af1d5e35764ca80e0d44711d7fb77f1f9ae4f57faeb0bddd1"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/ru_russia_a/speex-player.bin",
+      "sha256": "5e2b39358a7cb9b740febe70004ab103e5981360e817831a2813b5115359318e"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/ru_russia_a_white_noise_15dB/speex-player.bin",
+      "sha256": "3888de55cb4d6acc36dc3a514eae9af25dfd6ea3e9b5a2aabcc4d9e91d84c86d"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/ru_russia_b/speex-player.bin",
+      "sha256": "4565ea7ec61b8bd933179cc039b6b578290fe76261d2b3c03196d8194c22cb0a"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/ru_slutskaya_a/speex-player.bin",
+      "sha256": "53c335e977bf8831b1399734dc3c572164fa499e2e23ab8c27a8d47af2a99671"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/ru_slutskaya_b/speex-player.bin",
+      "sha256": "cb183d6aa59e07e2781da2937c51b0265de7ae1bef50be470b65ce5e0350d7b3"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/ru_square_a/speex-player.bin",
+      "sha256": "3d2e815fd0c540ccb9ea3bb97a2656230e82250844b2dc68bc92592d6437dbf5"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/ru_square_a_quiet_minus24dB/speex-player.bin",
+      "sha256": "85b6584ad3488e775144ae524ce21a2253d01cd920b8fd5aa98dedf493c94a75"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/ru_square_b/speex-player.bin",
+      "sha256": "be0289836ac6828d5f45bbe7d7261ff10a13cc983af9e8e3a0647704d060e637"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/sample_mode3_8kbps/speex-player.bin",
+      "sha256": "5171383f45aa7c1101b5b6621e3e747e603179a76584d0ff3c60d21538dbc6b4"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/silence/speex-player.bin",
+      "sha256": "94feb7bae6554657279d2c4c83aa1517d4a13cd4165f59f09bcc75768014e74d"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/speech_from_wb16_lowband/speex-player.bin",
+      "sha256": "91f1e02a14e5e36f821221728d13b526eb4f6ee84e77137ecb657de11901fe33"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/speech_ru/speex-player.bin",
+      "sha256": "81691b8956729c78596ec3840e7db68fbdbce35c16245687c6dc392be5b8e1f3"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/voicelike/speex-player.bin",
+      "sha256": "ea99707d4fd0dc4a120bad9d3cf4301e41a2fc90e4643a884cc95c81ffb67c48"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/white_noise/speex-player.bin",
+      "sha256": "39a003f3714d174f63764e8a1907e4602829b81f62de28655629f4f3f182be42"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/adversarial_24/speex-player.bin",
+      "sha256": "74db6ad948a65ee1bf63b844f5d34d849e9a0a588eb326dd99825f8a8d6835b0"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/chirp/speex-player.bin",
+      "sha256": "e3f5e1329c7bac25d3e98918161d36019efc5a634857a6c3fb95c5f25948f61f"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/en_letter_a/speex-player.bin",
+      "sha256": "ebe3b8e2c80f4bf4442ca635c0c0b9b982739e31b837b3dedd4bccd6a8a4efa5"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/en_letter_b/speex-player.bin",
+      "sha256": "63a7abbd49959c825d95d2a88674da08ae5a36de4645e322544dc9d4fcd57537"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/en_normcore_a/speex-player.bin",
+      "sha256": "93159029f1f01d5929b7e542a581520f0cc3349740ceafd87ce87ae156440616"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/en_normcore_a_quiet_minus24dB/speex-player.bin",
+      "sha256": "8fc02900772ffa673a58c6924ae95b56bdc6c32cd35cb08241c21bfa1859b1fe"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/en_normcore_b/speex-player.bin",
+      "sha256": "c151a2112f23c21cd2904df4bee0d03b6bb76e57fcfa7c9c43220223e4c081fb"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/en_portrait_a/speex-player.bin",
+      "sha256": "53061435ed099734315ef912d0ce583dc12a9936877f35d32ada7eae7e75f096"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/en_portrait_b/speex-player.bin",
+      "sha256": "8219dd6875904e6aa56e87a17168edd3ed2ec29c2f6b836dd04f2a6ab67d6e6a"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/en_sense_a/speex-player.bin",
+      "sha256": "43656ffb899d6455dac37a84d567cfffedb753d060559db922676edc38120cff"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/en_sense_a_white_noise_15dB/speex-player.bin",
+      "sha256": "f4590656b857020824e64249ccc6c36b1117222f57dd1433c125dbb2569b76fb"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/en_sense_b/speex-player.bin",
+      "sha256": "18fb26d182c2c2f2a80b2b80aa1024112d64beacd532dffed120c9e5d36229f2"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/hard_clipped/speex-player.bin",
+      "sha256": "346894f70fc6508df04f2cc3f1f4620380e1156058e0c234ad7494c35f3c05ce"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/impulses/speex-player.bin",
+      "sha256": "f9541bad06e7488c9746985d423f295127889d215abd95dca526680da147f6eb"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/random_40/speex-player.bin",
+      "sha256": "e2c88cf63ac0dd30967ae9a544351285788e4fbb79cd2ade578e8c4979036f53"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/ru_pushkin_a/speex-player.bin",
+      "sha256": "8bc5e3544ce35cd3704cf6c244eee6dd4315dbf1b5b2ebe513e1bae78b96676d"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/ru_pushkin_b/speex-player.bin",
+      "sha256": "b9259d9aef47878ecac9b4874ed4dad8aeb97b830d4b798872182d391bd844ce"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/ru_russia_a/speex-player.bin",
+      "sha256": "69e2e1ecebf34fada9fe5dbe3ed72ad304b6187d231371f16fef871ea2b247b1"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/ru_russia_a_white_noise_15dB/speex-player.bin",
+      "sha256": "bc4e282d5c937dbf22d3443b2f1b99819411456c1b9db259e265808905254903"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/ru_russia_b/speex-player.bin",
+      "sha256": "34edb05f91dc0a610daf2ef1b189cdd6f017e9006e1b0ed180e7007b18d63b12"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/ru_slutskaya_a/speex-player.bin",
+      "sha256": "588a8140513f854ddfc995dca009366716fa9b871aaa01a6ef7b0ec7d43ac839"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/ru_slutskaya_b/speex-player.bin",
+      "sha256": "e765b785c1d7799a6ecc0a1129b02e7b9309ffda8fa10f6871880d50d6c59c36"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/ru_square_a/speex-player.bin",
+      "sha256": "848b1113e9e93fad50069ff5fa9654bc9da63f4287c7770673cab16ab3e5485b"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/ru_square_a_quiet_minus24dB/speex-player.bin",
+      "sha256": "19a5a593d1a30dd3de40287924a1939e1f7a27e88f614153fb4116fb3b19a72a"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/ru_square_b/speex-player.bin",
+      "sha256": "01cec1893ba888a3e168e0591c25f09f3f99532d3ed1d75e8daa66d23c32ebdd"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/sample_mode3_8kbps/speex-player.bin",
+      "sha256": "456634377ca5e64cefa849f13b67e0486351ae352f41234e5689d44f863779d9"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/silence/speex-player.bin",
+      "sha256": "59fdbe48049192344efe9803b1db5b174b63cf06831d6e91ab730d1a4e441ca9"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/speech_from_wb16_lowband/speex-player.bin",
+      "sha256": "8b9b195e1305cfe6070ff6ba2e8da8d973df87386b194e6bbf38293083954e9f"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/speech_ru/speex-player.bin",
+      "sha256": "b87df2cafb0665519170669689f28cd0a2b5090bc26b9375a20d2d974282a910"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/voicelike/speex-player.bin",
+      "sha256": "617f3b93b9aea2494b8fd6d04210a2c0e531a227c18c9876bc270f0e42dcef26"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/white_noise/speex-player.bin",
+      "sha256": "6c8a368cdfe297d03feb435861dcf020a097bef7de794daf27e1fcfc1bcf5577"
+    },
+    {
+      "image": "build/poly2-wb-normal/en_letter_a/wb.bin",
+      "sha256": "9b7e259c609ef250ea8d7004b146d96e9dac04f923f52675f0d0095b70dd699e"
+    },
+    {
+      "image": "build/poly2-wb-normal/en_letter_b/wb.bin",
+      "sha256": "32e4fd813fa9677227c5d277edc3cd522c0eecd09ad43bee6d3b3b64437ef277"
+    },
+    {
+      "image": "build/poly2-wb-normal/en_normcore_a/wb.bin",
+      "sha256": "09b681fca022d3e2ae457ce69e6647fb503b38109ab673ed222c961bb1adfed5"
+    },
+    {
+      "image": "build/poly2-wb-normal/en_normcore_b/wb.bin",
+      "sha256": "7898e25f8b7039bd169b77f5d9d219224eb6c9c2bbb6f04aaa8db9b6f4d03767"
+    },
+    {
+      "image": "build/poly2-wb-normal/en_portrait_a/wb.bin",
+      "sha256": "e4bed0a343f32e98ddeea626175208ccf9a29878beaade882bffe05f03d99234"
+    },
+    {
+      "image": "build/poly2-wb-normal/en_portrait_b/wb.bin",
+      "sha256": "aa02e3f7aabb9499c41dd469001f91fa049425e8477c17411d792cfe1865b28c"
+    },
+    {
+      "image": "build/poly2-wb-normal/en_sense_a/wb.bin",
+      "sha256": "f12e8bddf9709e129c3a95f437c91bf74f3bae8b02ff89d3b0db99d21c4a17d6"
+    },
+    {
+      "image": "build/poly2-wb-normal/en_sense_b/wb.bin",
+      "sha256": "3a5f542966398067dd97328aa64caaf8621761e6051e4801592188c783da48ca"
+    },
+    {
+      "image": "build/poly2-wb-normal/ru_pushkin_a/wb.bin",
+      "sha256": "7b0d9baa354c07efeac41beab402d346df5d76b780bafb84ae4be6f794b29d0a"
+    },
+    {
+      "image": "build/poly2-wb-normal/ru_pushkin_b/wb.bin",
+      "sha256": "275d6658859c770022e44a686747bdc22d98a2a1fa4f125170db0a0d8bde47a7"
+    },
+    {
+      "image": "build/poly2-wb-normal/ru_russia_a/wb.bin",
+      "sha256": "adea8633a19b55e95ef7a26a91a2deff3021d0a79e0f96b5089e2ed50bb2d7da"
+    },
+    {
+      "image": "build/poly2-wb-normal/ru_russia_b/wb.bin",
+      "sha256": "b5a4e2af1d7afd42c791b867d9cd4d2f266fd0a9ea238c5d01a814c4d619bae3"
+    },
+    {
+      "image": "build/poly2-wb-normal/ru_slutskaya_a/wb.bin",
+      "sha256": "531c9f0851203b108f751315cc42a1311a3c8902bdf2d7db4e68aae53aa4bab3"
+    },
+    {
+      "image": "build/poly2-wb-normal/ru_slutskaya_b/wb.bin",
+      "sha256": "43fe4a886672fe0804fc32e9b7712a74bbc49eecaf59b0cfab2bc5faac24e254"
+    },
+    {
+      "image": "build/poly2-wb-normal/ru_square_a/wb.bin",
+      "sha256": "79e89c3537cf7642e3b45a9cce999650fb9f554344a596658719a79bd29d049f"
+    },
+    {
+      "image": "build/poly2-wb-normal/ru_square_b/wb.bin",
+      "sha256": "1622742819adbf6622017045b0e648f9ebfb6da80c77dbba39164ede612d3ec7"
+    },
+    {
+      "image": "build/poly2-wb-load5/en_letter_a/wb.bin",
+      "sha256": "f516c632c5d3b0ddc789de491b8b24d594e0244d6cc2957c37584c19b54d5d9e"
+    },
+    {
+      "image": "build/poly2-wb-load5/ru_pushkin_a/wb.bin",
+      "sha256": "231b7496e84ee1015808d128bb6d2f583c2266f4b9bb603b7447d050ef953c94"
+    }
+  ],
+  "representativePlayersRebuilt": [
+    {
+      "image": "build/poly2-nb-asm-normal/speech_ru/speex-player.bin",
+      "sha256": "a9a10f2a426c4c5a8a18df20d0003817a4d2d84d131bd6815cd92e2c8928c42b"
+    },
+    {
+      "image": "build/poly2-nb-asm-load40/speech_ru/speex-player.bin",
+      "sha256": "837d69e9161c8828ff947ba3452138e2be0a1f80e59c5df778977e37f1fd5c5e"
+    },
+    {
+      "image": "build/poly2-nb-c-normal/speech_ru/speex-player.bin",
+      "sha256": "81691b8956729c78596ec3840e7db68fbdbce35c16245687c6dc392be5b8e1f3"
+    },
+    {
+      "image": "build/poly2-nb-c-load10/speech_ru/speex-player.bin",
+      "sha256": "b87df2cafb0665519170669689f28cd0a2b5090bc26b9375a20d2d974282a910"
+    },
+    {
+      "image": "build/poly2-wb-normal/ru_pushkin_a/wb.bin",
+      "sha256": "7b0d9baa354c07efeac41beab402d346df5d76b780bafb84ae4be6f794b29d0a"
+    },
+    {
+      "image": "build/poly2-wb-load5/ru_pushkin_a/wb.bin",
+      "sha256": "231b7496e84ee1015808d128bb6d2f583c2266f4b9bb603b7447d050ef953c94"
+    }
+  ],
+  "bothDecoderBackendsRebuilt": true,
+  "selectedCandidateReplayedBothBackends": true,
+  "nbSourceSha256": {
+    "src/avr_fixed.h": "e168583df583c0e1da845259f8cd9ad7b2de5914cc83d9360a3b8fd2f4ee6884",
+    "src/avr_multiply.h": "c380f9e9b552856a5f49ca7317dba60d3de073911e94cef4a364e8ffebc8edac",
+    "src/avr_shift.h": "00f127c09f1a48f4c7e9d788412bd4b553897f769f3923daa8bddd6044caca73",
+    "src/avr_tables.h": "215f56cca897abbd52157be96555b9abf9e16193b82747b7c0eb622b5a5d3799",
+    "src/bits.c": "cbfa395967d45233c49354da8d4b52f5cd913cde063e4f2748974688d5ca0632",
+    "src/compact_lsp.c.inc": "85b9cda39299eae123ed024d82992173b2162373419e8f24cbee2b3b2973efec",
+    "src/compact_lsp_rates.c.inc": "79eea7833e15d67483d0ce1852fbe12803aac3961050e64df2d4836e63921d28",
+    "src/iir_direct.c.inc": "d194b30f50791e82a3bac0fe3e21e7cbc9e1c248a7d52a836ca19e24bef11537",
+    "src/iir_kernel.inc": "1f43bc42f8feb75a6290f59425c4631356138dbf3c6f6ddc6abe8d20867a7dea",
+    "src/innovation.h": "175692e085fc43a33500053462efeb5b724ca0fbc0db9ad8b541111352716fc2",
+    "src/innovation.S": "3e07c81eb74df6db009b4fa881d467ae2d78db7c0b5f77955b7cba84726e1d3b",
+    "src/innovation_core.inc": "6f8871782ee40a0f76d9d649826f91573259210da400bee619eb185a2174eb37",
+    "src/long_pitch.h": "2e0e1a24ca3ea315c84cd8a4745052b66ac256a2a0e1747573b4639cf1bc56f0",
+    "src/lpc_dot.S": "6cd683217571b06ac4542e1488c4c8e381f46cc1cfa3d8ca7e0ea10095a3e336",
+    "src/lpc_update.S": "56bbf3b46ff1a6bd0c07492dbabaf1857eda1495441e6729d7770fd587e403ac",
+    "src/lsp_advance.S": "cfddca8f933ee4d8c9f18e4d72b9e02fd64d8cce70a9e14220ea028d13122b01",
+    "src/lsp_finish.S": "51ea78f7e5a7733d000cbfca46f7981e310c0676221385249d2a4c618262690b",
+    "src/lsp_stage.S": "82fe69b3d3a855c57b6820050a47df70aee5b52d044d3897df84841551b246b3",
+    "src/nb3_c_math.h": "770bade4d78071df923167bb848b324607151879c475a802a8f96dd58290f4d7",
+    "src/nb3_header.h": "73664dfcb3dd0e317336d54dda3cbbca52f26feaaae7fecd49441e175dde6558",
+    "src/nb3_indices.h": "24f9c668d4d03fec89c0f5dc39f58f7e901c93420b5166bb9b120ea4fa64963e",
+    "src/nb3_interpolate.h": "9166e91a73584db2cd9da00f9a6f3fb35b24d255814d010fcd17d8f22fed069d",
+    "src/nb3_lsp.h": "3782d31d1c9f5b9cf84a1e7e8393c9c55d61efc7cc0adaadac2ee136668a471a",
+    "src/nb3_lsp_finish.h": "41b03398eeaeeae0d6c02da47e49ed7524b8799f25831e70d6dfe33d0ebe55c8",
+    "src/nb3_lsp_stage.h": "0deaff89072a76d0126c6415eef800546824168059608419d966e238ec5e159a",
+    "src/nb3_subframe.h": "1d50ca1ea31231914d81756e42476c0c19c699f4a8c500514ab2952c6229ea88",
+    "src/nb_decode.c.inc": "79171a246ed5bed789de215b7465dba8153603e896bc752723945b50823748ab",
+    "src/packed24.h": "81bc5fa6eb808c94bc88b9989a72712d741f0e68c694bdfaabaa3fd2e97ee30e",
+    "src/pitch24.h": "513294f121452da3747cce62ec3a481db2270a577507a4e3d3a62e4b41534d3e",
+    "src/pitch_add.S": "e6932ab48dae000ed68f9cde2eedce2b7b0fd2691915d1e37c83b5abf690f174",
+    "src/player.c": "f6258f40dc1e5db0032d54fffaa3c08058963c9c5230a95ddbc4f8284656c5a2",
+    "src/profile_mode.h": "fce0fd42ef9a64d1b8daae51b90adb1514dd6ff1672882fdfc68a93655e3efdc",
+    "src/profile_state.h": "d79dfd5b7bff405c3e2765991e88d7efb9c34b4a797368f203055ad21319f521",
+    "src/q14.S": "4a90eed42f6a8ff987cb4f8a5c1b1dcf4944bfac775af267ea20d1cc17458118",
+    "src/q14_macros.S": "44ec2be8f47d563aa4a2a7b25f590a7a9255b213f58eef0c0ecdfa9fec61f2bf",
+    "src/qmf_memory.c": "1214176743164b501dcb0a8427a836c4cf2259cbec9ff4192d6e2976e322625d",
+    "src/qmf_memory.h": "8d93278c74a7909d889c1099cbd8d47341df8dcb48e3e555b3a531ca96c88ce1",
+    "src/short_pitch.h": "5357e8f6ca01602d15db987883dbbe8a14a8fecb5ed972ea098743fe0909c4ce",
+    "src/speex_avr.c": "a0f0656e1eaa8d6c87a2dbec1863d13efaf47ff2a5170324e1ced619e0f3d5e8",
+    "src/speex_avr.h": "d798742f2b39cf1a1325f74c1eaee059348481e976f92cb36037c5bb44475a89",
+    "src/speex_nb3.h": "9bdf52f1a8bc3631ad53948c3c5b75feaf194379e2a7b5653a0098ad8d721218",
+    "src/speex_platform.h": "4d8d2c0382b9b316ca9b4fe8382d316e72a2a26ebc2da77750d2f9c89a35d88f",
+    "src/speex_wb1.c": "ceb6ff40d7d32afe9a5e645e62867ba43542dca647970c584fbeb0d6ad61a7f2",
+    "src/speex_wb1.h": "72ddf3645ae728d34b7b3333f9d7e99639500d95d8e51107838272439d9aac00",
+    "src/wb_fold.c": "8beb7a4a5eabe39502ffd0bc037bccc8c3c1c6ef23467aa3e3bc5d56ca9eef72",
+    "src/wb_fold.h": "0a2242da65264c40aaf4ff6dfcf804c0783ba09327bbb5a457b7cd38c46b7fb5",
+    "src/wb_fold.S": "47ab9a6cdfbc7444d6ab7591958da256d90ffe51678d1200def52afa9bb0a6fd",
+    "src/wb_fold_kernel.inc": "dc1e9d2f66ff8d413913e570303f7440f208d504ce1cdb05028e1fda1ba9816d",
+    "src/wb_iir.c": "e7cd0cc4ae7fa9b5e2940fd2f1b18df94f40be965023371ab048e635cfd2f093",
+    "src/wb_iir.h": "add7f3d3e4d78d7a3683deeb44bd43ae77ccbbd28a5be3e1e756b03f82b11ff2",
+    "src/wb_iir.S": "73828fe3f41ff3ee5bc81e264e88a2244f6960ff02b0b4cc8ffd3a537e60c4d0",
+    "src/wb_internal.h": "048e85f319f25d311f166fe59f25902194e4b68c7636613147a5cf1fa15f965b",
+    "src/wb_player.c": "b5420260860385ebbe9e4d711bc7adde6b0ec7c5f8707c3cf2c22511a7a7d548",
+    "src/wb_qmf.c": "a0b669839d8d6cb942f2bc8445d78b3b1a58a8839f72cfdd8f9221c6c379dd7b",
+    "src/wb_qmf.h": "e1bbfcbcd68960460bdcee9f2e33099fa0c8b5793d0d8af26f04f8d11c3ea4d9",
+    "src/wb_qmf.S": "4aaa797d96216efed1cf91f76a4d1dd0576310dc96b218a73b428de68d7c7f29",
+    "src/zero_innovation.h": "389c586eded7020b241f4133acc264cac1939feadb253afeb5df276fb4032d2b",
+    "src/zero_shape_kernel.inc": "a7ed3d54ed9ebf47bbef208f19d70854d054d9bfcf2ddc8e75766210f116375d",
+    "tests/avr_tick.mjs": "603f807d48e4d9cab2f5ae751e4da31f66d172f7578853ecd0ccfb4a13085966",
+    "tests/verify_nb_players.py": "0866dbb708c7e84cdb269fa325746064dc8a3f7789be13b7523a7e55d1026347",
+    "tests/verify_player.mjs": "9d440b92365e1aed180178d8474dc7a23996941e9a216e6c054c446eff3b1335",
+    "tools/apply_profile.py": "49d21e55105e8c14c1937c9d3d3153c5566c1a49ac61bf14cd63de5ce1465850",
+    "tools/build.py": "434752986cc9aafa90238b890f9ae7148a9bd84984da2cddaca6ab4f662bb56c"
+  },
+  "wbSourceSha256": {
+    "src/avr_fixed.h": "e168583df583c0e1da845259f8cd9ad7b2de5914cc83d9360a3b8fd2f4ee6884",
+    "src/avr_multiply.h": "c380f9e9b552856a5f49ca7317dba60d3de073911e94cef4a364e8ffebc8edac",
+    "src/avr_shift.h": "00f127c09f1a48f4c7e9d788412bd4b553897f769f3923daa8bddd6044caca73",
+    "src/avr_tables.h": "215f56cca897abbd52157be96555b9abf9e16193b82747b7c0eb622b5a5d3799",
+    "src/bits.c": "cbfa395967d45233c49354da8d4b52f5cd913cde063e4f2748974688d5ca0632",
+    "src/compact_lsp.c.inc": "85b9cda39299eae123ed024d82992173b2162373419e8f24cbee2b3b2973efec",
+    "src/compact_lsp_rates.c.inc": "79eea7833e15d67483d0ce1852fbe12803aac3961050e64df2d4836e63921d28",
+    "src/iir_direct.c.inc": "d194b30f50791e82a3bac0fe3e21e7cbc9e1c248a7d52a836ca19e24bef11537",
+    "src/iir_kernel.inc": "1f43bc42f8feb75a6290f59425c4631356138dbf3c6f6ddc6abe8d20867a7dea",
+    "src/innovation.h": "175692e085fc43a33500053462efeb5b724ca0fbc0db9ad8b541111352716fc2",
+    "src/innovation.S": "3e07c81eb74df6db009b4fa881d467ae2d78db7c0b5f77955b7cba84726e1d3b",
+    "src/innovation_core.inc": "6f8871782ee40a0f76d9d649826f91573259210da400bee619eb185a2174eb37",
+    "src/long_pitch.h": "2e0e1a24ca3ea315c84cd8a4745052b66ac256a2a0e1747573b4639cf1bc56f0",
+    "src/lpc_dot.S": "6cd683217571b06ac4542e1488c4c8e381f46cc1cfa3d8ca7e0ea10095a3e336",
+    "src/lpc_update.S": "56bbf3b46ff1a6bd0c07492dbabaf1857eda1495441e6729d7770fd587e403ac",
+    "src/lsp_advance.S": "cfddca8f933ee4d8c9f18e4d72b9e02fd64d8cce70a9e14220ea028d13122b01",
+    "src/lsp_finish.S": "51ea78f7e5a7733d000cbfca46f7981e310c0676221385249d2a4c618262690b",
+    "src/lsp_stage.S": "82fe69b3d3a855c57b6820050a47df70aee5b52d044d3897df84841551b246b3",
+    "src/nb3_c_math.h": "770bade4d78071df923167bb848b324607151879c475a802a8f96dd58290f4d7",
+    "src/nb3_header.h": "73664dfcb3dd0e317336d54dda3cbbca52f26feaaae7fecd49441e175dde6558",
+    "src/nb3_indices.h": "24f9c668d4d03fec89c0f5dc39f58f7e901c93420b5166bb9b120ea4fa64963e",
+    "src/nb3_interpolate.h": "9166e91a73584db2cd9da00f9a6f3fb35b24d255814d010fcd17d8f22fed069d",
+    "src/nb3_lsp.h": "3782d31d1c9f5b9cf84a1e7e8393c9c55d61efc7cc0adaadac2ee136668a471a",
+    "src/nb3_lsp_finish.h": "41b03398eeaeeae0d6c02da47e49ed7524b8799f25831e70d6dfe33d0ebe55c8",
+    "src/nb3_lsp_stage.h": "0deaff89072a76d0126c6415eef800546824168059608419d966e238ec5e159a",
+    "src/nb3_subframe.h": "1d50ca1ea31231914d81756e42476c0c19c699f4a8c500514ab2952c6229ea88",
+    "src/nb_decode.c.inc": "79171a246ed5bed789de215b7465dba8153603e896bc752723945b50823748ab",
+    "src/packed24.h": "81bc5fa6eb808c94bc88b9989a72712d741f0e68c694bdfaabaa3fd2e97ee30e",
+    "src/pitch24.h": "513294f121452da3747cce62ec3a481db2270a577507a4e3d3a62e4b41534d3e",
+    "src/pitch_add.S": "e6932ab48dae000ed68f9cde2eedce2b7b0fd2691915d1e37c83b5abf690f174",
+    "src/player.c": "f6258f40dc1e5db0032d54fffaa3c08058963c9c5230a95ddbc4f8284656c5a2",
+    "src/profile_mode.h": "fce0fd42ef9a64d1b8daae51b90adb1514dd6ff1672882fdfc68a93655e3efdc",
+    "src/profile_state.h": "d79dfd5b7bff405c3e2765991e88d7efb9c34b4a797368f203055ad21319f521",
+    "src/q14.S": "4a90eed42f6a8ff987cb4f8a5c1b1dcf4944bfac775af267ea20d1cc17458118",
+    "src/q14_macros.S": "44ec2be8f47d563aa4a2a7b25f590a7a9255b213f58eef0c0ecdfa9fec61f2bf",
+    "src/qmf_memory.c": "1214176743164b501dcb0a8427a836c4cf2259cbec9ff4192d6e2976e322625d",
+    "src/qmf_memory.h": "8d93278c74a7909d889c1099cbd8d47341df8dcb48e3e555b3a531ca96c88ce1",
+    "src/short_pitch.h": "5357e8f6ca01602d15db987883dbbe8a14a8fecb5ed972ea098743fe0909c4ce",
+    "src/speex_avr.c": "a0f0656e1eaa8d6c87a2dbec1863d13efaf47ff2a5170324e1ced619e0f3d5e8",
+    "src/speex_avr.h": "d798742f2b39cf1a1325f74c1eaee059348481e976f92cb36037c5bb44475a89",
+    "src/speex_nb3.h": "9bdf52f1a8bc3631ad53948c3c5b75feaf194379e2a7b5653a0098ad8d721218",
+    "src/speex_platform.h": "4d8d2c0382b9b316ca9b4fe8382d316e72a2a26ebc2da77750d2f9c89a35d88f",
+    "src/speex_wb1.c": "ceb6ff40d7d32afe9a5e645e62867ba43542dca647970c584fbeb0d6ad61a7f2",
+    "src/speex_wb1.h": "72ddf3645ae728d34b7b3333f9d7e99639500d95d8e51107838272439d9aac00",
+    "src/wb_fold.c": "8beb7a4a5eabe39502ffd0bc037bccc8c3c1c6ef23467aa3e3bc5d56ca9eef72",
+    "src/wb_fold.h": "0a2242da65264c40aaf4ff6dfcf804c0783ba09327bbb5a457b7cd38c46b7fb5",
+    "src/wb_fold.S": "47ab9a6cdfbc7444d6ab7591958da256d90ffe51678d1200def52afa9bb0a6fd",
+    "src/wb_fold_kernel.inc": "dc1e9d2f66ff8d413913e570303f7440f208d504ce1cdb05028e1fda1ba9816d",
+    "src/wb_iir.c": "e7cd0cc4ae7fa9b5e2940fd2f1b18df94f40be965023371ab048e635cfd2f093",
+    "src/wb_iir.h": "add7f3d3e4d78d7a3683deeb44bd43ae77ccbbd28a5be3e1e756b03f82b11ff2",
+    "src/wb_iir.S": "73828fe3f41ff3ee5bc81e264e88a2244f6960ff02b0b4cc8ffd3a537e60c4d0",
+    "src/wb_internal.h": "048e85f319f25d311f166fe59f25902194e4b68c7636613147a5cf1fa15f965b",
+    "src/wb_player.c": "b5420260860385ebbe9e4d711bc7adde6b0ec7c5f8707c3cf2c22511a7a7d548",
+    "src/wb_qmf.c": "a0b669839d8d6cb942f2bc8445d78b3b1a58a8839f72cfdd8f9221c6c379dd7b",
+    "src/wb_qmf.h": "e1bbfcbcd68960460bdcee9f2e33099fa0c8b5793d0d8af26f04f8d11c3ea4d9",
+    "src/wb_qmf.S": "4aaa797d96216efed1cf91f76a4d1dd0576310dc96b218a73b428de68d7c7f29",
+    "src/zero_innovation.h": "389c586eded7020b241f4133acc264cac1939feadb253afeb5df276fb4032d2b",
+    "src/zero_shape_kernel.inc": "a7ed3d54ed9ebf47bbef208f19d70854d054d9bfcf2ddc8e75766210f116375d",
+    "tests/avr_tick.mjs": "603f807d48e4d9cab2f5ae751e4da31f66d172f7578853ecd0ccfb4a13085966",
+    "tests/verify_wb_player.mjs": "7b3c6415a4e5ebf743669b466c3f5fdf2e9b9c65222c8e65e0de4ea222ca5aff",
+    "tools/apply_profile.py": "49d21e55105e8c14c1937c9d3d3153c5566c1a49ac61bf14cd63de5ce1465850",
+    "tools/build.py": "434752986cc9aafa90238b890f9ae7148a9bd84984da2cddaca6ab4f662bb56c",
+    "tools/build_wb.py": "081da112f7690b0058ea122b97db4d503bf5f2b8fd3b307f4a005816bcb51994"
+  },
+  "unitSourceSha256": {
+    "src/nb3_interpolate.h": "9166e91a73584db2cd9da00f9a6f3fb35b24d255814d010fcd17d8f22fed069d",
+    "src/compact_lsp.c.inc": "85b9cda39299eae123ed024d82992173b2162373419e8f24cbee2b3b2973efec",
+    "src/lsp_advance.S": "cfddca8f933ee4d8c9f18e4d72b9e02fd64d8cce70a9e14220ea028d13122b01",
+    "tests/nb3_margin.c": "6742b1a50a257297ec1939a1cb818e4e8355a48d6c2c962c6129db340e346e46",
+    "tests/avr_nb3_margin.c": "fc8180659ba8411dd46f154caa2d967289be8d3fe4914c72dd2a7256ee4a2567",
+    "tests/verify_nb3_margin.mjs": "63128ef441383906be246b99333a9f7dcece22ee7ca6e670dcfc6ad2528cceee",
+    "tools/build_lsp_lifetime_test.py": "9a6404e05a955f707d3bf6de35f96337f9c372a46c0bb02d966c659fe2998582",
+    "tests/verify_avr.mjs": "6047b94c0257be8891c6a1888f05dd271ecd2a45544a29c75527899c0732a7be",
+    "tests/verify_lsp_lifetime.mjs": "5cefd0b7352123c282bf6369eb90fe5b6ae347096cd2fae4d08b4a109908bc67",
+    "tests/verify_scratch.py": "a64c930a447c91586c09e7df20cdaaef06498a4a71cc7e8a314da7577697dfc9",
+    "src/nb3_lsp_finish.h": "41b03398eeaeeae0d6c02da47e49ed7524b8799f25831e70d6dfe33d0ebe55c8",
+    "src/lsp_finish.S": "51ea78f7e5a7733d000cbfca46f7981e310c0676221385249d2a4c618262690b",
+    "tests/lsp_finish.c": "21c5aa928e69f92982c51f84f167a9084ea2e8726eb0a3ea4857631a7c98333e",
+    "tests/avr_lsp_finish.c": "d5f41ba7f39cd89e91e1ef0f0a3e5218d89f1fd9a3bfac6185eff5b7eb3fac57",
+    "tools/build_lsp_finish_test.py": "bbe641a1c4cc2df0195de24e35b629658e6f1ca4d0c9e07613964ca59e96db9c",
+    "tests/verify_lsp_finish.mjs": "5f11b8cc54b34e3a18ddfb777602bfb58470aa3c325d583d60bae36cd0092e61",
+    "src/lsp_stage.S": "82fe69b3d3a855c57b6820050a47df70aee5b52d044d3897df84841551b246b3",
+    "src/nb3_lsp_stage.h": "0deaff89072a76d0126c6415eef800546824168059608419d966e238ec5e159a",
+    "src/q14_macros.S": "44ec2be8f47d563aa4a2a7b25f590a7a9255b213f58eef0c0ecdfa9fec61f2bf",
+    "src/q14.S": "4a90eed42f6a8ff987cb4f8a5c1b1dcf4944bfac775af267ea20d1cc17458118",
+    "tests/lsp_stage.c": "1cdeed7886b306bbde294180ea42f1d3ecb6e7e1580d4757e9f4c0e5cddd8ebd",
+    "tests/avr_lsp_stage.c": "f0b7145d285e2569243bef94de8314e29dd0017680fddfc99026d83bb78312d7",
+    "tests/verify_lsp_stage.mjs": "6d1126e5db91d29982962f33df941acf1606016b9e1dc088c54c3590d05d6a2d",
+    "tools/build_lsp_stage_test.py": "0bbb24e6daa3f03611d74d679490d4c214f3ff20e706f44ed2fd5302ac24ce8e"
+  },
+  "physicalBoardTested": false
+}
