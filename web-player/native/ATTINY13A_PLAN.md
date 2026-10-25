@@ -440,10 +440,23 @@ from the C runtime already built with optimization. Check ABI/dispatch geometry,
 embedded manifest, traps, exact state/PCM/pins and half-phase observations before
 measuring warmed execution and cold optimization/compilation costs separately.
 
+Automatic generated-WASM checkpoint: [Binaryen133 O3/Oz](../reports/generated-wasm-opt-20261025.md)
+passes1641/1641 tests, including all123 forms at actual CLKI half phases and
+adjacent1ps stops, public package/CLI paths and SPM invalidation during a hold.
+Oz preserves exact PCM/state/pins in all13 workloads (26 parity runs,
+168 checkpoints) and reduces physical firmware CPU modules by69–70%.
+The four-row timing screen retains128 timed runs,64 warmups and2304 checkpoints;
+physical speed gains are unproven. Retain explicit offline `--optimize` only,
+with full bridge imports and manifest preserved. Default generation and native
+runtime stay unchanged. Compilation observations are validation-warmed, not
+cold-start measurements. Next implement per-phase temporary liveness against
+the full-context oracle; automatic size optimization does not remove that work.
+The checklist remains21/30, with nine open items.
+
 | Priority | Candidate | Evidence required before keeping it |
 | --- | --- | --- |
-| 1 | Use the refreshed profile to test fewer repeated event/time conversions in `next_event`, `ratio` and `duration`. Broader peripheral activity gating remains open. | Exact integer residues, clock/input/event boundaries and pin/PCM parity; enabled-ADC and CLKI controls. Use balanced identical-runtime controls and uninstrumented paired timings. Inspect the exact optimized WASM for an inlining/layout hypothesis; reduced entries alone do not prove speed. |
-| 2 | Reduce continuation saves using per-phase temporary liveness. | The full-context path remains an oracle; partial execution, reset, faults and resume must not repeat bus effects or protected operations. Measure module size and warmed execution separately. |
+| 1 | Reduce continuation saves using per-phase temporary liveness. | The full-context path remains an oracle; partial execution, reset, faults and resume must not repeat bus effects or protected operations. Measure module size and warmed execution separately. |
+| 2 | Use the refreshed profile to test fewer repeated event/time conversions in `next_event`, `ratio` and `duration`; equal-rate and bounded-multiply guards are rejected. Broader peripheral activity gating remains open. | Exact integer residues, clock/input/event boundaries and pin/PCM parity; enabled-ADC and CLKI controls. Use balanced identical-runtime controls and uninstrumented paired timings. Inspect the exact optimized WASM for an inlining/layout hypothesis; reduced entries alone do not prove speed. |
 | 3 | Extend SREG liveness between connected blocks, then try constant and short-sequence folding as independent changes. | Exact C/chained-Z dependencies, all observable SREG values and original AVR cycle/phase boundaries; compare with full flags and the unchanged generated instruction path. |
 | 4 | Generate direct WASM control flow for proven regions and loops; reconsider register locals only when these larger regions can amortize their cost. | Safe indirect/external-entry fallback, coherent register aliases and visible AVR stack state; real-firmware gains in addition to synthetic-loop results. |
 | 5 | Evaluate reachable-code generation, Flash-region replacement and persistent caching separately from execution optimizations. | Correct dynamic targets and code/data handling, complete SPM dependency invalidation, exact cache identities and independent cold-start/compilation measurements. |
