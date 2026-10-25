@@ -2112,3 +2112,12 @@ Provenance: the supplied R3 ZIP and all earlier snapshots are pinned by
 documents identify upstream Codec2 as LGPL-2.1 but do not supply a unified
 license for every experimental file. Keep those original notices and resolve
 licensing before reusing code; this entry adds no new assembly implementation.
+
+Follow-up planning: the [Codec2 roadmap](../../Codecs/Codec2/ROADMAP_RU.md)
+records two constraints derived from the archived code. Keeping the full R3
+parameter structure beside R2's 35-byte state needs at least 69 bytes before
+stack or padding. Avoiding simultaneous expanded representations is an
+untested memory-reduction idea. The PWM accumulator's 16/75 divider produces
+four- or five-overflow sample gaps (1024/1280 cycles at timer /1), so testing
+only the 1200-cycle mean misses the shorter deadline. No active-IRQ admission
+or new speed/size improvement is established by this planning calculation.
