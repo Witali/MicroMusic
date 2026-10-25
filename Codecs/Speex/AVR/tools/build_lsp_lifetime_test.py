@@ -11,10 +11,12 @@ import build
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--cc');p.add_argument('--avr-gcc');p.add_argument('--backend',choices=['asm','c'],default='c')
+    p.add_argument('--mode',choices=['lifetime','margin'],default='lifetime')
+    p.add_argument('--out',type=Path)
     args=p.parse_args()
     if not(args.cc or args.avr_gcc):p.error('Choose --cc and/or --avr-gcc')
     build.verify_sources()
-    out=build.ROOT/('build/lifetime-unit-'+args.backend);out.mkdir(parents=True,exist_ok=True)
+    out=args.out or build.ROOT/('build/'+args.mode+'-unit-'+args.backend);out.mkdir(parents=True,exist_ok=True)
     reference=out/'reference';shutil.copytree(build.VENDOR,reference,dirs_exist_ok=True)
     (reference/'include/speex/speex_config_types.h').write_text('#include <stdint.h>\n'
         'typedef int16_t spx_int16_t;typedef uint16_t spx_uint16_t;\n'
@@ -41,8 +43,9 @@ def main():
         executable=out/('native.exe' if kind=='native' else 'lifetime.elf')
         flags=['-O2','-D_CRT_SECURE_NO_WARNINGS'] if kind=='native' else ['-Os','-flto']
         backend=args.backend if kind=='avr' else 'c'
+        main=('nb3_margin.c' if kind=='native' else 'avr_nb3_margin.c') if args.mode=='margin' else ('lsp_lifetime.c' if kind=='native' else 'avr_lsp_lifetime.c')
         build.run([compiler,*common,*flags,'-DSPEEX_NB3_ENABLE_ASM='+str(int(backend=='asm')),
-            *oracle,production,build.ROOT/'tests'/('lsp_lifetime.c' if kind=='native' else 'avr_lsp_lifetime.c'),
+            *oracle,production,build.ROOT/'tests'/main,
             *([build.ROOT/'src'/s for s in build.ASM_SOURCES] if backend=='asm' else []),
             *(['-Wl,--gc-sections'] if kind=='avr' else []),'-o',executable])
         if kind=='native':
