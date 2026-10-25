@@ -13,12 +13,12 @@ const load = async (document, bytes, name) => {
   await wait(() => !document.getElementById('run').disabled || !document.getElementById('error').hidden);
 };
 const set = (document, id, value) => { const el = document.getElementById(id); el.value = value; el.dispatchEvent(new Event('change', { bubbles: true })); };
-const run = async document => {
-  document.getElementById('run').click();
+const finished = async document => {
   await wait(() => document.getElementById('status').textContent.includes('Завершение:') || !document.getElementById('error').hidden);
   check(document.getElementById('error').hidden, document.getElementById('error').textContent);
   await wait(() => document.getElementById('run').textContent.includes('Эмулировать'));
 };
+const run = async document => { document.getElementById('run').click(); await finished(document); };
 async function suite(target) {
   frame.src = target;
   await new Promise(resolve => frame.addEventListener('load', resolve, { once: true }));
@@ -43,15 +43,34 @@ async function suite(target) {
     const entry = catalog.entries.find(entry => entry.id === id);
     doc.querySelector(`[data-example="${id}"]`).click();
     await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent === entry.title);
-    set(doc, 'seconds', '2'); await run(doc);
+    const canvas = doc.getElementById('scope'), blank = canvas.toDataURL(), blankSize = `${canvas.width}x${canvas.height}`;
+    check(/^\d+ мс$/.test(doc.querySelector('.scope-scale').textContent), 'time scale matches ATtiny13A format');
+    set(doc, 'seconds', '2'); doc.getElementById('run').click();
+    await wait(() => doc.getElementById('elapsed').textContent !== '00:00.0' && canvas.toDataURL() !== blank);
+    const firstScope = canvas.toDataURL();
+    await wait(() => canvas.toDataURL() !== firstScope);
+    doc.getElementById('run').click();
+    await wait(() => doc.getElementById('run').textContent.includes('Продолжить'));
+    const pausedScope = canvas.toDataURL();
+    await new Promise(resolve => setTimeout(resolve, 150));
+    check(canvas.toDataURL() === pausedScope, 'scope freezes while paused');
+    doc.getElementById('run').click();
+    await wait(() => doc.getElementById('run').textContent.includes('Пауза'));
+    await wait(() => canvas.toDataURL() !== pausedScope);
+    await finished(doc);
+    const endedScope = canvas.toDataURL();
+    await new Promise(resolve => setTimeout(resolve, 100));
+    check(canvas.toDataURL() === endedScope, 'scope freezes at end');
     const cycles = Number(doc.getElementById('cycles').textContent.replace(/\D/g, ''));
     check(cycles >= 7000000 && cycles <= 7000018, id + ' two-second execution');
     check(doc.getElementById('elapsed').textContent === '00:02.0', id + ' live audio drains');
     check(doc.getElementById('writes').textContent === '0', id + ' ROM-only execution');
     check(Number(doc.getElementById('edges').textContent.replace(/\D/g, '')) > 0, id + ' audible signal');
+    doc.getElementById('cancel').click();
+    check(canvas.toDataURL() === blank, `reset clears the live scope (${blankSize} → ${canvas.width}x${canvas.height})`);
   }
   set(doc, 'seconds', '90');
-  log(`PASS ${target}: selected 108T music streams two seconds through AudioWorklet with no RAM writes`);
+  log(`PASS ${target}: selected 108T music streams two seconds; live scope advances, freezes on pause/end, resumes and resets; no RAM writes`);
   const search = doc.getElementById('search'); search.value = '159 T'; search.dispatchEvent(new Event('input', { bubbles: true }));
   check(doc.querySelectorAll('[data-example]').length === 1, 'example search');
   doc.querySelector('[data-example="voice159"]').click();

@@ -138,5 +138,24 @@
     "standalone_bytes": 169946,
     "music_live_audio_excerpt_seconds_per_build": 2,
     "browser_suite": "ALL BROWSER SMOKE TESTS PASSED"
+  },
+  "live_scope_validation": {
+    "date": "2026-10-25",
+    "source": "Current AudioWorklet output through AnalyserNode, after filter and volume",
+    "window_device_frames": 4096,
+    "window_ms_at_48000_hz": 85.33333333333333,
+    "time_divisions": 12,
+    "amplitude_range": [-1, 1],
+    "maximum_draw_rate_hz": 30,
+    "reference_scale": "ATtiny13A mono player",
+    "builds": ["index.html", "Intel_8080_ROM_Player.html"],
+    "canvas_advances_during_playback": true,
+    "canvas_freezes_on_pause_and_end": true,
+    "canvas_resumes_after_pause": true,
+    "reset_restores_blank_scope": true,
+    "browser_suite": "ALL BROWSER SMOKE TESTS PASSED",
+    "node_test_groups": 31,
+    "node_passed": 31,
+    "node_failed": 0
   }
 }

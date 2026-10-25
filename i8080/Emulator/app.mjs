@@ -1,4 +1,4 @@
-import { parseIntelHex, validateBinary, processAudio } from './formats.mjs';
+import { parseIntelHex, validateBinary } from './formats.mjs';
 import { RealtimeSpeaker } from './speaker.mjs';
 
 const $ = id => document.getElementById(id), rate = 96000;
@@ -7,13 +7,12 @@ const number = n => n.toLocaleString('ru-RU');
 const machineInputs = [...document.querySelectorAll('[data-machine]')];
 let firmware = null, filename = '', loadTicket = 0, worker = null, romURL = null;
 let catalog = null, selectedExample = null;
-let raw = null;
-let starting = false, runTicket = 0, previewDrawn = false;
+let starting = false, runTicket = 0, scopeFrame = null;
 const speaker = new RealtimeSpeaker(status => {
   const seconds = status.seconds, minutes = Math.floor(seconds / 60);
   $('elapsed').textContent = `${String(minutes).padStart(2, '0')}:${(seconds % 60).toFixed(1).padStart(4, '0')}`;
   worker?.postMessage({ kind: 'played', seconds });
-  if (status.ended) { $('playback-status').textContent = 'Воспроизведение завершено'; setBusy(false); }
+  if (status.ended) { stopScope(); redrawScope(); $('playback-status').textContent = 'Воспроизведение завершено'; setBusy(false); }
 });
 const soundOptions = () => {
   const [cutoff, poles] = $('filter').value.split('-').map(Number);
@@ -73,20 +72,29 @@ function setBusy(busy) {
 }
 function stopWorker() { if (worker) { worker.terminate(); worker = null; } setBusy(false); }
 function resetPlayback() {
-  runTicket++; starting = false; speaker.reset(); stopWorker(); clearResult(); setBusy(false);
+  runTicket++; starting = false; stopScope(); speaker.reset(); stopWorker(); clearResult(); setBusy(false);
   $('playback-status').textContent = 'Звук запускается кнопкой «Эмулировать»'; $('elapsed').textContent = '00:00.0';
 }
 function drawScope(samples) {
-  const canvas = $('scope'), context = canvas.getContext('2d'), w = canvas.width, h = canvas.height;
-  context.clearRect(0, 0, w, h);
-  context.strokeStyle = '#263323'; context.lineWidth = 1;
+  const canvas = $('scope'), context = canvas.getContext('2d');
+  const ratio = window.devicePixelRatio || 1, w = canvas.clientWidth, h = canvas.clientHeight;
+  if (!w || !h) return;
+  if (canvas.width !== Math.round(w*ratio) || canvas.height !== Math.round(h*ratio)) {
+    canvas.width = Math.round(w*ratio); canvas.height = Math.round(h*ratio);
+  }
+  context.setTransform(1, 0, 0, 1, 0, 0); context.clearRect(0, 0, canvas.width, canvas.height);
+  context.setTransform(ratio, 0, 0, ratio, 0, 0);
+  context.fillStyle = '#0e140e'; context.fillRect(0, 0, w, h);
+  context.strokeStyle = '#232e21'; context.lineWidth = 1;
   context.beginPath();
-  for (let x = 0; x <= w; x += w / 10) { context.moveTo(x, 0); context.lineTo(x, h); }
-  for (let y = h / 4; y < h; y += h / 4) { context.moveTo(0, y); context.lineTo(w, y); }
+  for (let x = 0; x < w; x += w / 12) { context.moveTo(x, 0); context.lineTo(x, h); }
+  for (let y = 0; y <= h; y += h / 4) { context.moveTo(0, y); context.lineTo(w, y); }
   context.stroke();
+  context.strokeStyle = '#647b45'; context.setLineDash([4, 5]); context.beginPath();
+  context.moveTo(0, h/2); context.lineTo(w, h/2); context.stroke(); context.setLineDash([]);
   if (!samples?.length) return;
-  const limit = Math.min(samples.length, rate * 0.05);
-  context.strokeStyle = '#c9ef86'; context.lineWidth = 1.4; context.beginPath();
+  const limit = samples.length;
+  context.strokeStyle = '#c9ef86'; context.lineWidth = 1.5; context.beginPath();
   // Min/max per pixel preserves short pulses instead of skipping between samples.
   for (let x = 0; x < w; x++) {
     const begin = Math.floor(x * limit / w), end = Math.max(begin + 1, Math.floor((x + 1) * limit / w));
@@ -112,16 +120,29 @@ function updateRegisters(result) {
   $('write-note').textContent = result ? `Записей в память: ${number(result.memWrites)}; проигнорировано в ПЗУ: ${number(result.ignoredWrites)}. Начальная точка — 0000h.` : 'Регистры показаны в шестнадцатеричном виде. Начальная точка — 0000h.';
 }
 function clearResult() {
-  raw = null;
-  previewDrawn = false;
   for (const id of ['steps', 'cycles', 'edges', 'writes', 'io-writes']) $(id).textContent = '0';
   $('cpu-time').textContent = '0,000 с'; $('progress').value = 0;
-  drawScope(null); updateRegisters(null);
+  $('scope-scale').textContent = '85 мс'; drawScope(null); updateRegisters(null);
 }
 function redrawScope() {
-  if (!raw) return;
-  const [cutoff, poles] = $('filter').value.split('-').map(Number);
-  drawScope(processAudio(raw, rate, cutoff, poles, $('normalize').checked));
+  const samples = speaker.readScope();
+  $('scope-scale').textContent = `${Math.round(speaker.scopeMilliseconds)} мс`;
+  drawScope(samples);
+}
+function stopScope() {
+  if (scopeFrame !== null) cancelAnimationFrame(scopeFrame);
+  scopeFrame = null;
+}
+function startScope() {
+  stopScope();
+  let lastDraw = -Infinity;
+  const tick = now => {
+    scopeFrame = null;
+    if (!speaker.active || speaker.paused) return;
+    if (now-lastDraw >= 1000/30) { redrawScope(); lastDraw = now; }
+    scopeFrame = requestAnimationFrame(tick);
+  };
+  scopeFrame = requestAnimationFrame(tick);
 }
 async function loadFile(file, example = null) {
   if (!file) return;
@@ -164,7 +185,7 @@ async function run() {
   if (!firmware || starting) return;
   if (speaker.active) {
     const ticket = runTicket;
-    try { await speaker.togglePause(); if (ticket !== runTicket) return; worker?.postMessage({ kind: speaker.paused ? 'pause' : 'resume' }); $('playback-status').textContent = speaker.paused ? 'Пауза' : 'Звук из исполняемого ROM'; setBusy(!!worker); }
+    try { await speaker.togglePause(); if (ticket !== runTicket) return; if (speaker.paused) stopScope(); else startScope(); worker?.postMessage({ kind: speaker.paused ? 'pause' : 'resume' }); $('playback-status').textContent = speaker.paused ? 'Пауза' : 'Звук из исполняемого ROM'; setBusy(!!worker); }
     catch (error) { if (ticket !== runTicket) return; resetPlayback(); report(error.message, true); }
     return;
   }
@@ -178,13 +199,12 @@ async function run() {
   $('progress').max = seconds; starting = true; setBusy(true); report('Запуск эмуляции и звука…');
   try {
     if (!await speaker.start(soundOptions()) || ticket !== runTicket) return;
-    starting = false; setBusy(true); $('playback-status').textContent = 'Звук из исполняемого ROM';
+    starting = false; startScope(); setBusy(true); $('playback-status').textContent = 'Звук из исполняемого ROM';
     const activeWorker = worker = createWorker();
     worker.onmessage = event => {
       if (worker !== activeWorker) return;
       const message = event.data;
       if (message.kind === 'audio') {
-        if (!previewDrawn) { const o = soundOptions(); drawScope(processAudio(new Float32Array(message.audio), rate, o.cutoff, o.poles, o.normalize)); previewDrawn = true; }
         speaker.push(message.audio); return;
       }
       $('steps').textContent = number(message.steps || 0); $('cycles').textContent = number(message.t || 0);
@@ -196,7 +216,7 @@ async function run() {
       }
       stopWorker();
       if (message.kind === 'error') { speaker.reset(); setBusy(false); $('playback-status').textContent = 'Остановлено'; report(`Ошибка эмуляции: ${message.message}`, true); return; }
-      raw = new Float32Array(message.audio); redrawScope(); updateRegisters(message);
+      updateRegisters(message);
       speaker.finish();
       $('edges').textContent = number(message.edges); $('writes').textContent = number(message.memWrites); $('io-writes').textContent = number(message.ioWrites);
       const reason = message.stopReason === 'HLT' ? 'HLT' : message.stopReason === 'time_limit' ? 'лимит времени' : 'лимит команд';
@@ -213,6 +233,7 @@ $('run').addEventListener('click', run);
 $('cancel').addEventListener('click', () => { resetPlayback(); report('Сброс на начало. Нажмите «Эмулировать», чтобы запустить прошивку.'); });
 for (const id of ['filter', 'normalize']) $(id).addEventListener('change', () => { speaker.configure(soundOptions()); redrawScope(); });
 $('volume').addEventListener('input', () => speaker.volume(Number($('volume').value)));
+new ResizeObserver(redrawScope).observe($('scope'));
 function updateMachineNotes() {
   $('signal-label').textContent = $('output').value === 'inte' ? 'INTE' : '/WR';
   $('memory-note').textContent = $('memory').value === 'rom' ? '32-КиБ образ зеркалируется по A15. Записи дают /WR, содержимое ПЗУ сохраняется.' : $('memory').value === 'ramupper' ? 'Адреса 8000–FFFF доступны для записи. A15 участвует в адресации.' : 'Все 64 КиБ доступны для чтения и записи, включая загруженный код.';
@@ -228,5 +249,5 @@ $('drop-zone').addEventListener('drop', event => loadFile(event.dataTransfer.fil
 window.addEventListener('keydown', event => {
   if (event.code === 'Space' && !['INPUT', 'SELECT', 'TEXTAREA', 'BUTTON', 'A', 'SUMMARY'].includes(document.activeElement.tagName)) { event.preventDefault(); run(); }
 });
-window.addEventListener('beforeunload', () => { speaker.reset(); stopWorker(); if (romURL) URL.revokeObjectURL(romURL); });
+window.addEventListener('beforeunload', () => { stopScope(); speaker.reset(); stopWorker(); if (romURL) URL.revokeObjectURL(romURL); });
 clearResult(); setBusy(false); initializeExamples();
