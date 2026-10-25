@@ -653,30 +653,94 @@ The baseline reproduction was rebuilt byte-identically to the executed unit.
 `tests/audit_iir_cache3.py --rebuild --avr-gcc avr-gcc` binds the retained
 `build/cache3-*` qualification artifacts and rebuilds representative player
 images; it does not claim to rerun or recompile all 80 frozen player images.
+Run that historical source-bound audit at commit 0449cd9, before later stages.
+
+## Accumulate and fuse NB quarter-step LSP interpolation (2026-10-25)
+
+The pinned NB3 codebooks produce multiples of 16. With four equal quarters,
+both original Q14 products are integral before their separate rounding. Compute
+`delta=(next>>2)-(old>>2)` once, replacing the endpoint scratch with ten deltas.
+Advance the existing raw endpoint state at each quarter and apply the original
+sequential margin pass only to the output. After four advances the raw state
+equals the new endpoint exactly; the old end-of-frame copy is unnecessary.
+Reset uses zero deltas and one interpolation; cache hits retain their LPC reuse.
+Static assertions pin order 10, four quarters and margin 16.
+
+The selected outlined C helper fuses raw advancement, endpoint clamping and the
+margin pass, keeping the next raw angle in a scalar. Preserve the two separate
+right shifts when enforcing an upper margin: earlier corrections can make an
+odd angle. Retain integer promotions and narrow assignments as upstream does.
+Raw state, deltas and output are disjoint; `restrict` expresses this existing
+precondition. This C helper is shared by both arithmetic backends, with no new
+assembly or architecture requirement.
+
+26 candidates each passed 1,058 AVR fixture frames and reset. Full 9,100-frame
+comparisons of the leading variants (same AVR GCC 7.3.0 / mixed Os/O3+LTO flags):
+
+| ASM decoder candidate | Flash | Weighted mean cycles | Maximum cycles |
+| --- | ---: | ---: | ---: |
+| Original generic interpolation, third IIR cache | 10,610 B | 113,264.523 | 121,622 |
+| Four separate constant-quarter loops, O3 | 11,452 B | 110,168.254 | 118,149 |
+| Accumulate raw state, separate margin, O3/restrict | 10,852 B | 110,179.923 | 118,141 |
+| Accumulate raw state and fuse margin, O3/restrict | 10,872 B | 109,985.618 | 117,927 |
+
+The selected version is faster and 580 B smaller than the separate-quarter O3
+candidate. The C decoder falls from 11,870 to 11,166 B, mean 232,365.300 to
+221,193.812 cycles, maximum 246,334 to 233,722. Static SRAM stays 1,119 B;
+observed mailbox stacks fall 158 to 154 B (ASM) and 166 to 138 B (C).
+
+Native tests compare 1,573,120 helper calls / 589,888 cases to untouched Xiph,
+including all 262,144 code triples as changing endpoints, zero-delta reset,
+65,536 full-signed multiple-of-16 transitions and 64 edge transitions. The AVR
+mailbox separately compares 82,688 calls / 826,880 angles to the original
+compiled for AVR, including its 16-bit int promotions, unclamped quarter state,
+read-only inputs/deltas, guards and r1. Original LSP-to-LPC, bit-reader and
+two-million-sample IIR tests also pass. Decoder/PWM admission is recorded in
+`reports/lsp-quarter-*`; the previous `iir-cache3-*` evidence is historical.
+
+Both backend images each match 14,278 NB frames with reset and pitch/zero-gain
+coverage. Four fresh 31-stream PWM matrices pass: ASM normal/+40% CPU reserve,
+C normal/+10%, zero underruns, minimum queues 74/33 and 66/54, free SRAM
+633/649 B. Two exported C archives each pass 9,100 NB and 10,563 WB frames;
+23 backend-selection configurations pass. The shared NB change also reduces
+WB ASM mean/max to 261,068/268,595 cycles, stack to 243 B and player stack to
+252 B. All 16 WB PWM streams pass (minimum queue 26); both +5% streams pass
+(minimum queue 10). The audit binds 142 frozen player images and rebuilds
+representative images. Measurements are ISA/peripheral simulation, without
+a physical-board claim. The C WB decoder remains too slow for this MCU.
+
+All screened helper sources and three controller variants are retained in
+`reports/lsp-quarter-candidates.json`. Reproduce a candidate in a new directory
+from the pinned pre-change commit; the selected replay was byte-identical:
+
+```sh
+python Codecs/Speex/AVR/tools/prepare_lsp_candidate.py --candidate step-fused-o3 --out Codecs/Speex/AVR/build/lsp-replay
+python Codecs/Speex/AVR/build/lsp-replay/tools/build.py --avr-gcc avr-gcc --backend asm
+python Codecs/Speex/AVR/tools/build_interpolate_test.py --avr-gcc avr-gcc
+node Codecs/Speex/AVR/tests/verify_interpolate.mjs
+```
 
 ## Next candidates (not yet measured/admitted)
 
 The previously listed C40 long-pitch entry shipped in commit 9813583 and is
 no longer an outstanding candidate.
 
-1. **Specialize NB quarter-step LSP interpolation.** Raw NB3 angles are
-   multiples of sixteen; the same exact shifts/additions used by compact WB
-   may replace the two separately rounded Q14 products. Keep the ten-angle
-   sequential margin pass, signed widths and all four subframe results.
-   Inlining versus an outlined helper needs measurement in both backends;
-   no NB interpolation speed/size gain has yet been established.
-
-2. **Return grouped indices as a value.** Four explicit byte lanes in a uint32
+1. **Return grouped indices as a value.** Four explicit byte lanes in a uint32
    return could avoid the local four-byte array. Extra live registers, shifts
    and callee saves may erase any gain; no timing or memory claim is established.
 
-3. **Parse a complete 33-bit subframe group from the validated packet.** Header
+2. **Parse a complete 33-bit subframe group from the validated packet.** Header
    byte/offset are 3+4*sub / 4+sub; index byte/offset are 5+4*sub / 1+sub.
    The groups share one byte. A combined reader might avoid duplicate loads
    and bit-cursor work. Four temporary index bytes could use scratch after
    the live twenty-byte qlsp, before LPC/interpolated-LSP allocation; preserve
    checked lifetime/allocation and public length/mode rejection. No speed or
    stack benefit is established; validate raw bounds and exact packet fields.
+
+3. **Share interpolated-LSP and new-LPC scratch by lifetime.** The compact
+   converter appears to consume every angle before storing its LPC result.
+   Inspect and test aliasing, polynomial scratch and WB callbacks before
+   reusing the two twenty-byte arrays. No memory or timing gain is admitted.
 
 No claim of a global speed optimum has been established. Do not mark the
 ongoing optimization goal complete while useful candidates remain untested.

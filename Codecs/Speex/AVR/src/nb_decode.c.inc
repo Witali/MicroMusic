@@ -3,6 +3,7 @@
 #include "wb_internal.h"
 #endif
 #include "nb3_indices.h"
+#include "nb3_interpolate.h"
 /* Restricted NB3 body adapted from Xiph Speex 1.2.1 nb_celp.c.
  * Copyright (C) 2002-2006 Jean-Marc Valin; BSD terms in vendor/speex-1.2.1/COPYING.
  * Preserve the original excitation, interpolation, rounding and 40-sample
@@ -40,6 +41,8 @@ void speex_nb3_long_innovation(int16_t *out,
 }
 _Static_assert(NB_SUBFRAME_SIZE==40 && NB_PITCH_START==17 && NB_PITCH_END==144,
                "Packed pitch is specialized for the pinned NB3 frame/pitch bounds");
+_Static_assert(NB_ORDER==10 && NB_NB_SUBFRAMES==4 && LSP_MARGIN==16,
+               "Quarter-step LSP interpolation requires the pinned NB3 geometry");
 SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, void *vout)
 {
    DecState *st=(DecState *)state;
@@ -95,6 +98,11 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, voi
     * arrays after it, retaining the four original interpolation steps. */
    ALLOC(ak,NB_ORDER,spx_coef_t);
    ALLOC(interp_qlsp,NB_ORDER,spx_lsp_t);
+   /* Reuse the raw-endpoint scratch for a constant quarter-frame delta.
+    * On reset old_qlsp already equals qlsp, giving zero deltas. A changed
+    * frame advances old_qlsp four times; margin corrections touch only out. */
+   if (!repeat_lsp || st->first) for(i=0;i<NB_ORDER;i++)
+      qlsp[i]=(qlsp[i]>>2)-(st->old_qlsp[i]>>2);
    for (sub=0;sub<NB_NB_SUBFRAMES;sub++)
    {
       spx_word16_t *sp;
@@ -111,8 +119,7 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, voi
        * On reset, compute it after the first synthesis step as upstream does.
        * IIR always runs, including its coefficient-age transition. */
       if (update_lpc) {
-         lsp_interpolate(st->old_qlsp,qlsp,interp_qlsp,NB_ORDER,sub,
-                         NB_NB_SUBFRAMES,LSP_MARGIN);
+         speex_nb3_interpolate(st->old_qlsp,qlsp,interp_qlsp);
          lsp_to_lpc(interp_qlsp,ak,NB_ORDER,stack);
       }
       /* Excitation is complete and remains read-only during synthesis.
@@ -143,7 +150,6 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, voi
       }
 #endif
    }
-   if (!repeat_lsp) SPEEX_COPY(st->old_qlsp,qlsp,NB_ORDER);
    st->first=0;
    return 0;
 }

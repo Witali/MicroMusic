@@ -140,30 +140,34 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
 
 | Build | Flash | Static SRAM | Peak stack | Free SRAM at peak |
 | --- | ---: | ---: | ---: | ---: |
-| Optimized decoder test mailbox, ASM enabled | 10,610 B | 1,119 B | 158 B | 771 B |
-| Full PWM speech demo, including 2,940 B compressed audio | 13,886 B | 1,254 B | 165 B | 629 B |
-| C fallback decoder test mailbox | 11,870 B | 1,119 B | 166 B | 763 B |
-| Full C PWM speech demo, including 2,940 B audio | 15,088 B | 1,254 B | 173 B | 621 B |
+| Optimized decoder test mailbox, ASM enabled | 10,872 B | 1,119 B | 154 B | 775 B |
+| Full PWM speech demo, including 2,940 B compressed audio | 14,138 B | 1,254 B | 161 B | 633 B |
+| C fallback decoder test mailbox | 11,166 B | 1,119 B | 138 B | 791 B |
+| Full C PWM speech demo, including 2,940 B audio | 14,526 B | 1,254 B | 145 B | 649 B |
 
 - All 9,100 corpus frames and 4,096 additional pitch/gain coverage frames match
   unmodified upstream s16 PCM. Including 58 LSP/reset and 1,024 zero-gain
   lifetime cases, each backend matches 14,278 frames with one firmware image.
 - Complete player tests on all 31 streams match upstream PCM converted to u8,
   with zero ring underruns and no stack/static-memory collisions.
-- Maximum observed ASM decoder-only corpus frame cost: **121,622 cycles / 7.601 ms**;
+- Maximum observed ASM decoder-only corpus frame cost: **117,927 cycles / 7.370 ms**;
   the 20-ms budget at 16 MHz is 320,000 cycles. ISR and output costs are verified
   separately by the complete-player runs.
 - Primitive tests cover 240,000 complete LSP conversions and 3,670,016 bit fields;
   stream tests insert invalid API calls and verify unchanged output/state.
+- Quarter-step interpolation independently matches 1,573,120 native calls
+  against original Xiph, including every NB3 code triple and full-signed
+  multiple-of-16 transitions. Another 82,688 calls execute both implementations
+  on AVR, checking its 16-bit integer promotions, raw state, guards and inputs.
 - Another 458,752 signed multiply and 655,485 signed shift cases execute the
   actual AVR instructions and check exact results and the r1 zero-register ABI.
 - Shared generic and bounded Q14 ASM entries each pass 917,504 independent
   cases; the portable C Q14 helper independently passes another 917,504
   cases. The aligned p1 core adds 655,360 independent exact cases.
   The C fallback matches the same 14,278 AVR frames. Its corpus maximum is
-  246,334 cycles (246,901 with pitch coverage), excluding ISR. Complete C PWM playback now
+  233,722 cycles (234,293 with pitch coverage), excluding ISR. Complete C PWM playback now
   passes all 31 streams with 32,000 extra cycles/frame (10%), zero underruns
-  and at least 52 queued samples. ASM retains the stronger 40% reserve gate.
+  and at least 54 queued samples. ASM retains the stronger 40% reserve gate.
 - The historical pitch ASM independently checks 1,966,080 outputs, all signed8 gains,
   every count 0..40, write/add flags 0/1/2/255, zero gains and intact tails.
   Independent LPC tests cover 327,680 samples across in-place and separate
@@ -244,7 +248,25 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
 - Codebooks reside in Flash, use explicit signed `pgm_read_*` accesses, and no
   malloc/calloc/realloc/free symbols are linked.
 
-The latest IIR stage reuses the dead state-base register pair for a third
+The latest LSP stage computes an exact quarter-frame delta once and advances
+the existing raw LSP state in an outlined C helper. Fusing advancement and the
+sequential margin pass avoids a temporary store/reload pass and the final
+endpoint copy. It preserves the two original half-shifts, reset/cache behavior
+and all four raw/output interpolation states. Both arithmetic backends use C
+for this helper. The 31-stream weighted mean falls 113,264.523 -> 109,985.618
+(2.8949%) for ASM and 232,365.300 -> 221,193.812 (4.8077%) for C. Each stream's
+mean and maximum improve. Static SRAM is unchanged; mailbox stack peaks fall
+4 B and 28 B respectively. All four normal/loaded NB player matrices are fresh
+simulations: minimum queues ASM 74/33, C 66/54; free SRAM 633/649 B.
+The additional 4,096-frame pitch corpus reaches 118,435 ASM cycles.
+
+Current results are `reports/lsp-quarter-*.json`. The audit binds 142 frozen
+NB/WB player images, both decoder backends and representative byte-identical
+rebuilds. The candidate report retains 26 measured variants and replayable
+sources. `tests/audit_lsp_quarters.py --rebuild --avr-gcc avr-gcc` checks the
+retained artifacts; it does not claim to rerun every full corpus simulation.
+
+The preceding IIR stage reuses the dead state-base register pair for a third
 coefficient after ageing completes. Fixed X/Y rewinds replace base-pointer
 reconstruction. Every matched stream minimum/mean/maximum saves 444 cycles/frame;
 the 31-stream weighted mean falls 113,708.523 -> 113,264.523 (0.3905%). Flash
@@ -255,9 +277,9 @@ The shared order-eight kernel also saves 118 cycles/block; the compact WB
 decoder saves 916 cycles/frame with its NB and HB filters combined. Both C
 decoder binaries are byte-identical to their preceding admitted images.
 
-Current ASM results: `reports/iir-cache3-*.json`; the audit binds 80 frozen
+Previous-stage ASM results: `reports/iir-cache3-*.json`; that audit binds 80 frozen
 NB/WB player images and byte-identical representative rebuilds. The preceding
-ASM stage remains in `reports/long40-asm-*.json`. C runtime results remain
+ASM stage remains in `reports/long40-asm-*.json`. Prior C runtime results remain
 `reports/shared-routines-c-*.json`. Fresh portable results:
 `reports/iir-cache3-portable.json`. The preceding `reports/long40-admission-audit.json`
 pins five 92-file source copies, measured decoder/demo/unit images, full
@@ -275,8 +297,10 @@ and original host reference:
 
 ```sh
 python Codecs/Speex/AVR/tests/prepare_nb.py --out Codecs/Speex/AVR/build/cache3-corpus
-python Codecs/Speex/AVR/tests/verify_nb_players.py --avr-gcc avr-gcc --node node --streams Codecs/Speex/AVR/build/cache3-corpus/streams --out Codecs/Speex/AVR/build/cache3-nb-normal
-python Codecs/Speex/AVR/tests/verify_nb_players.py --avr-gcc avr-gcc --node node --streams Codecs/Speex/AVR/build/cache3-corpus/streams --out Codecs/Speex/AVR/build/cache3-nb-load40 --frame-load-cycles 128000
+python Codecs/Speex/AVR/tests/verify_nb_players.py --avr-gcc avr-gcc --node node --backend asm --streams Codecs/Speex/AVR/build/cache3-corpus/streams --out Codecs/Speex/AVR/build/lsp-quarter-nb-asm-normal
+python Codecs/Speex/AVR/tests/verify_nb_players.py --avr-gcc avr-gcc --node node --backend asm --streams Codecs/Speex/AVR/build/cache3-corpus/streams --out Codecs/Speex/AVR/build/lsp-quarter-nb-asm-load40 --frame-load-cycles 128000
+python Codecs/Speex/AVR/tests/verify_nb_players.py --avr-gcc avr-gcc --node node --backend c --streams Codecs/Speex/AVR/build/cache3-corpus/streams --out Codecs/Speex/AVR/build/lsp-quarter-nb-c-normal
+python Codecs/Speex/AVR/tests/verify_nb_players.py --avr-gcc avr-gcc --node node --backend c --streams Codecs/Speex/AVR/build/cache3-corpus/streams --out Codecs/Speex/AVR/build/lsp-quarter-nb-c-load10 --frame-load-cycles 32000
 ```
 
 Run the matrices sequentially in one source directory: their builder shares
