@@ -27,6 +27,9 @@ No subjective-quality or MOS claim follows from waveform metrics.
   validation, zero packing, scale aliases, exact existing-mode repacking
   and opt-in compact metadata. Keep all valid candidates and select within
   each actual byte cap. Record a genuine no-fit result at infeasible rates.
+  The grid is 0/.001/.003/.01/.03/.1/1/10. Exact excitation search is a final
+  pass over the selected candidate. No-fit describes this bounded encoder
+  search, not a mathematical impossibility of the LPX format at that rate.
 - Bounded unified search uses one round, LSF80/beam128/header40/global8,
   128 global states, beam4. Keep original candidates and record the budget.
 - Opus: libopus complexity10, VBR, 20-ms frames; test audio and voip modes.
@@ -65,8 +68,8 @@ No subjective-quality or MOS claim follows from waveform metrics.
 ## Status
 
 - [x] Protocol recorded before measuring the new corpus.
-- [ ] Shared metric/container tests.
-- [ ] Corpus preparation and source verification.
+- [x] Shared metric/container tests, including cache input/binary invalidation.
+- [x] Corpus preparation and source verification: 27 four-second cases.
 - [ ] Rate/quality matrix and actual-byte comparison.
 - [ ] LPX native/PWM/AVR validation.
 - [ ] Retained results, limits and listening shortlist.
