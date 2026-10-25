@@ -1,8 +1,11 @@
 # Lazy watchdog clock synchronization: implementation audit
 
-Audited against native sources at `77c354b`; no lazy implementation or speed
-claim yet. The rejected [period-cache experiment](../reports/watchdog-period-20261025.md)
-keeps the eager implementation. This follow-up would defer oscillator-coordinate
+Audited against native sources at `77c354b`. The subsequent lazy prototype
+passes1687 tests and15 parity cases, but256 timings do not establish a gain;
+it is [rejected with exact sources and activation evidence](../reports/watchdog-lazy-20261025.md).
+Production retains eager conversion. The earlier rejected
+[period-cache experiment](../reports/watchdog-period-20261025.md) is separate.
+The design below would defer oscillator-coordinate
 conversion while the watchdog counter is off, then recover the exact phase
 before a consumer needs it. It must not change observable source edges, AVR
 instruction cycles, event ordering, diagnostics or buffered output.

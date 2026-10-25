@@ -1,0 +1,2624 @@
+diff --git "a/C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\watchdog-lazy-functions\\compare-ymtL6l\\function-diffs-ZxAPkm\\full_write_io.before.wat" "b/C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\watchdog-lazy-functions\\compare-ymtL6l\\function-diffs-ZxAPkm\\full_write_io.after.wat"
+index a0aefeb..ef3f705 100644
+--- "a/C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\watchdog-lazy-functions\\compare-ymtL6l\\function-diffs-ZxAPkm\\full_write_io.before.wat"
++++ "b/C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\watchdog-lazy-functions\\compare-ymtL6l\\function-diffs-ZxAPkm\\full_write_io.after.wat"
+@@ -5,7 +5,7 @@
+   (local $6 i32)
+   (local $7 i32)
+   (local $8 i64)
+-  (local $9 i32)
++  (local $9 i64)
+   (local $10 i64)
+   (local $11 i32)
+   (local $12 i32)
+@@ -15,14 +15,15 @@
+   (local $16 i32)
+   (local $17 i32)
+   (local $18 i32)
+-  (local $19 f64)
++  (local $19 i32)
++  (local $20 f64)
+   (block $block
+    (br_if $block
+     (i32.load8_u
+      (i32.const 64779)
+     )
+    )
+-   (local.set $12
++   (local.set $17
+     (block $block3 (result i32)
+      (local.set $1
+       (i32.and
+@@ -30,7 +31,7 @@
+        (i32.const 255)
+       )
+      )
+-     (local.set $6
++     (local.set $7
+       (i32.and
+        (local.get $2)
+        (i32.const 255)
+@@ -91,10 +92,8 @@
+       )
+       (block $block4
+        (if
+-        (local.tee $9
+-         (i32.load8_u
+-          (i32.const 65853)
+-         )
++        (i32.load8_u
++         (i32.const 65853)
+         )
+         (then
+          (br_if $block2
+@@ -104,8 +103,10 @@
+          )
+          (br_if $block4
+           (i64.ge_u
+-           (i64.load
+-            (i32.const 64624)
++           (local.tee $10
++            (i64.load
++             (i32.const 64624)
++            )
+            )
+            (i64.load
+             (i32.const 74184)
+@@ -117,8 +118,10 @@
+        )
+        (br_if $block2
+         (i64.lt_u
+-         (i64.load
+-          (i32.const 64624)
++         (local.tee $10
++          (i64.load
++           (i32.const 64624)
++          )
+          )
+          (i64.load
+           (i32.const 64736)
+@@ -128,7 +131,7 @@
+       )
+       (if
+        (i32.load8_u
+-        (i32.const 64789)
++        (i32.const 64790)
+        )
+        (then
+         (br_if $block2
+@@ -141,14 +144,125 @@
+         )
+        )
+       )
++      (block $block6
++       (block $block5
++        (br_table $block5 $block6 $block6 $block6 $block6 $block6 $block6 $block6 $block6 $block6 $block6 $block6 $block6 $block6 $block6 $block6 $block6 $block6 $block6 $block5 $block6
++         (i32.sub
++          (local.get $2)
++          (i32.const 33)
++         )
++        )
++       )
++       (if
++        (i64.ne
++         (local.tee $4
++          (i64.load
++           (i32.const 109816)
++          )
++         )
++         (local.get $10)
++        )
++        (then
++         (local.set $8
++          (i64.load
++           (i32.const 64664)
++          )
++         )
++         (local.set $9
++          (i64.const -1)
++         )
++         (block $block7
++          (if
++           (i64.gt_u
++            (local.tee $4
++             (call $native.ratio
++              (i64.sub
++               (local.get $10)
++               (local.get $4)
++              )
++              (i64.load32_u
++               (i32.const 64036)
++              )
++              (i64.load
++               (i32.const 64672)
++              )
++              (select
++               (i64.const 1000000000000)
++               (i64.shl
++                (i64.load32_u
++                 (i32.const 64032)
++                )
++                (i64.const 1)
++               )
++               (i32.load8_u
++                (i32.const 64788)
++               )
++              )
++              (i32.const 64672)
++             )
++            )
++            (i64.xor
++             (local.get $8)
++             (i64.const -1)
++            )
++           )
++           (then
++            (i32.store8
++             (i32.const 64864)
++             (i32.const 0)
++            )
++            (br_if $block7
++             (i32.load
++              (i32.const 64744)
++             )
++            )
++            (i64.store
++             (i32.const 64744)
++             (i64.const 4294967298)
++            )
++            (br $block7)
++           )
++          )
++          (local.set $9
++           (i64.add
++            (local.get $4)
++            (local.get $8)
++           )
++          )
++         )
++         (i64.store
++          (i32.const 109816)
++          (local.get $10)
++         )
++         (i64.store
++          (i32.const 64664)
++          (local.get $9)
++         )
++        )
++       )
++       (br_if $block6
++        (i32.and
++         (i32.load8_u
++          (i32.const 74676)
++         )
++         (i32.const 72)
++        )
++       )
++       (i64.store
++        (i32.const 74640)
++        (i64.load
++         (i32.const 64664)
++        )
++       )
++      )
+       (local.set $11
+        (i32.or
+-        (local.tee $7
++        (local.tee $13
+          (i32.and
+-          (local.tee $15
++          (local.tee $16
+            (i32.load8_u
+             (i32.add
+-             (local.tee $14
++             (local.tee $15
+               (i32.add
+                (local.get $2)
+                (i32.const 32)
+@@ -161,7 +275,7 @@
+            )
+           )
+           (i32.xor
+-           (local.get $6)
++           (local.get $7)
+            (i32.const -1)
+           )
+          )
+@@ -169,21 +283,21 @@
+         (local.tee $3
+          (i32.and
+           (local.get $1)
+-          (local.get $6)
++          (local.get $7)
+          )
+         )
+        )
+       )
+-      (local.set $13
++      (local.set $14
+        (i32.extend8_s
+         (local.get $3)
+        )
+       )
+-      (block $block8
+-       (block $block7
+-        (block $block5
+-         (block $block6
+-          (br_table $block5 $block6 $block7
++      (block $block11
++       (block $block10
++        (block $block8
++         (block $block9
++          (br_table $block8 $block9 $block10
+            (i32.sub
+             (local.get $2)
+             (i32.const 37)
+@@ -197,17 +311,17 @@
+          )
+          (if
+           (i32.lt_s
+-           (local.get $13)
++           (local.get $14)
+            (i32.const 0)
+           )
+           (then
+-           (br_if $block8
++           (br_if $block11
+             (i32.lt_s
+              (local.get $1)
+              (i32.const 0)
+             )
+            )
+-           (br_if $block8
++           (br_if $block11
+             (i32.and
+              (local.get $11)
+              (i32.const 127)
+@@ -232,16 +346,16 @@
+              (i64.const 4)
+             )
+            )
+-           (br $block8)
++           (br $block11)
+           )
+          )
+-         (br_if $block8
++         (br_if $block11
+           (i32.ge_s
+            (local.get $1)
+            (i32.const 0)
+           )
+          )
+-         (br_if $block8
++         (br_if $block11
+           (i64.ge_u
+            (local.tee $4
+             (i64.shr_u
+@@ -267,6 +381,15 @@
+            (i32.const 9)
+           )
+           (then
++           (i32.store8
++            (i32.const 64864)
++            (i32.const 0)
++           )
++           (br_if $block11
++            (i32.load
++             (i32.const 64744)
++            )
++           )
+            (i32.store
+             (i32.const 64748)
+             (local.get $1)
+@@ -275,7 +398,7 @@
+             (i32.const 64744)
+             (i32.const 11)
+            )
+-           (br $block8)
++           (br $block11)
+           )
+          )
+          (i32.store8
+@@ -292,9 +415,11 @@
+           )
+          )
+          (if
+-          (local.get $9)
++          (i32.load8_u
++           (i32.const 65853)
++          )
+           (then
+-           (br_if $block8
++           (br_if $block11
+             (i32.lt_u
+              (i32.and
+               (i32.sub
+@@ -310,7 +435,7 @@
+              (i32.const 65280)
+             )
+            )
+-           (br_if $block8
++           (br_if $block11
+             (i32.and
+              (i32.sub
+               (local.get $2)
+@@ -319,7 +444,7 @@
+              (local.get $2)
+             )
+            )
+-           (br_if $block8
++           (br_if $block11
+             (i32.gt_u
+              (i32.load8_u
+               (i32.const 74102)
+@@ -327,7 +452,7 @@
+              (i32.const 1)
+             )
+            )
+-           (br_if $block8
++           (br_if $block11
+             (i32.gt_u
+              (i32.load8_u
+               (i32.const 74103)
+@@ -335,7 +460,7 @@
+              (i32.const 1)
+             )
+            )
+-           (br_if $block8
++           (br_if $block11
+             (i32.ge_u
+              (i32.load16_u
+               (i32.const 74100)
+@@ -353,7 +478,7 @@
+              )
+             )
+            )
+-           (block $block9
++           (block $block12
+             (if
+              (local.tee $2
+               (i32.load16_u
+@@ -361,13 +486,13 @@
+               )
+              )
+              (then
+-              (br_if $block9
++              (br_if $block12
+                (i32.gt_u
+                 (local.get $2)
+                 (i32.const 256)
+                )
+               )
+-              (br_if $block9
++              (br_if $block12
+                (i32.and
+                 (local.get $2)
+                 (i32.sub
+@@ -378,7 +503,7 @@
+               )
+              )
+             )
+-            (br_if $block8
++            (br_if $block11
+              (i32.ne
+               (i32.load8_u
+                (i32.const 74104)
+@@ -389,7 +514,7 @@
+               )
+              )
+             )
+-            (br_if $block8
++            (br_if $block11
+              (i32.lt_u
+               (i32.sub
+                (local.get $1)
+@@ -398,7 +523,7 @@
+               (i32.const -256)
+              )
+             )
+-            (br_if $block9
++            (br_if $block12
+              (i32.gt_u
+               (i32.popcnt
+                (local.get $1)
+@@ -415,13 +540,13 @@
+              (local.get $1)
+             )
+            )
+-           (br $block8)
++           (br $block11)
+           )
+          )
+-         (local.set $8
++         (local.set $10
+           (i64.const -1)
+          )
+-         (block $block10
++         (block $block13
+           (if
+            (i64.lt_s
+             (local.tee $4
+@@ -433,18 +558,23 @@
+             (i64.const 0)
+            )
+            (then
+-            (i64.store
+-             (i32.const 64744)
+-             (i64.const 8589934594)
+-            )
+             (i32.store8
+              (i32.const 64864)
+              (i32.const 0)
+             )
+-            (br $block10)
++            (br_if $block13
++             (i32.load
++              (i32.const 64744)
++             )
++            )
++            (i64.store
++             (i32.const 64744)
++             (i64.const 8589934594)
++            )
++            (br $block13)
+            )
+           )
+-          (local.set $8
++          (local.set $10
+            (i64.shl
+             (local.get $4)
+             (i64.const 1)
+@@ -453,9 +583,9 @@
+          )
+          (i64.store
+           (i32.const 64688)
+-          (local.get $8)
++          (local.get $10)
+          )
+-         (br $block8)
++         (br $block11)
+         )
+         (i32.store8
+          (i32.const 64777)
+@@ -466,8 +596,8 @@
+           )
+          )
+         )
+-        (block $block11
+-         (br_if $block11
++        (block $block14
++         (br_if $block14
+           (i32.eqz
+            (local.tee $1
+             (call $native.timer0_write
+@@ -487,7 +617,7 @@
+           (i32.const 64864)
+           (i32.const 0)
+          )
+-         (br_if $block11
++         (br_if $block14
+           (i32.load
+            (i32.const 64744)
+           )
+@@ -502,27 +632,24 @@
+          )
+         )
+         (call $native.clock_domains)
+-        (br $block8)
++        (br $block11)
+        )
+        (local.set $4
+         (i64.load
+          (i32.const 64632)
+         )
+        )
+-       (local.set $9
+-        (i32.const 0)
+-       )
+-       (block $block17
+-        (block $block21
+-         (block $block20
+-          (block $block19
+-           (block $block18
+-            (block $block16
+-             (block $block15
+-              (block $block14
+-               (block $block13
+-                (block $block12
+-                 (br_table $block12 $block13 $block14 $block15 $block16 $block17 $block17 $block17 $block17 $block17 $block17 $block17 $block17 $block17 $block17 $block17 $block17 $block17 $block17 $block17 $block17 $block17 $block17 $block17 $block17 $block17 $block17 $block17 $block17 $block17 $block17 $block17 $block17 $block18 $block17 $block17 $block17 $block17 $block19 $block20 $block17
++       (block $block20
++        (block $block24
++         (block $block23
++          (block $block22
++           (block $block21
++            (block $block19
++             (block $block18
++              (block $block17
++               (block $block16
++                (block $block15
++                 (br_table $block15 $block16 $block17 $block18 $block19 $block20 $block20 $block20 $block20 $block20 $block20 $block20 $block20 $block20 $block20 $block20 $block20 $block20 $block20 $block20 $block20 $block20 $block20 $block20 $block20 $block20 $block20 $block20 $block20 $block20 $block20 $block20 $block20 $block21 $block20 $block20 $block20 $block20 $block22 $block23 $block20
+                   (i32.sub
+                    (local.get $2)
+                    (i32.const 20)
+@@ -542,14 +669,14 @@
+                       )
+                      )
+                     )
+-                    (local.get $6)
++                    (local.get $7)
+                    )
+                    (local.get $3)
+                   )
+                   (i32.const 63)
+                  )
+                 )
+-                (br $block21)
++                (br $block24)
+                )
+                (i32.store8
+                 (i32.const 74380)
+@@ -564,14 +691,14 @@
+                      )
+                     )
+                    )
+-                   (local.get $6)
++                   (local.get $7)
+                   )
+                   (local.get $3)
+                  )
+                  (i32.const 63)
+                 )
+                )
+-               (br $block21)
++               (br $block24)
+               )
+               (i32.store8
+                (i32.const 74376)
+@@ -582,13 +709,13 @@
+                 (i32.and
+                  (i32.and
+                   (local.get $1)
+-                  (local.get $6)
++                  (local.get $7)
+                  )
+                  (i32.const 63)
+                 )
+                )
+               )
+-              (br $block21)
++              (br $block24)
+              )
+              (i32.store8
+               (i32.const 74377)
+@@ -603,14 +730,14 @@
+                    )
+                   )
+                  )
+-                 (local.get $6)
++                 (local.get $7)
+                 )
+                 (local.get $3)
+                )
+                (i32.const 63)
+               )
+              )
+-             (br $block21)
++             (br $block24)
+             )
+             (i32.store8
+              (i32.const 74376)
+@@ -625,14 +752,14 @@
+                   )
+                  )
+                 )
+-                (local.get $6)
++                (local.get $7)
+                )
+                (local.get $3)
+               )
+               (i32.const 63)
+              )
+             )
+-            (br $block21)
++            (br $block24)
+            )
+            (i32.store8
+             (i32.const 74383)
+@@ -647,14 +774,14 @@
+                  )
+                 )
+                )
+-               (local.get $6)
++               (local.get $7)
+               )
+               (local.get $3)
+              )
+              (i32.const 123)
+             )
+            )
+-           (br $block21)
++           (br $block24)
+           )
+           (i32.store8
+            (i32.const 74382)
+@@ -665,13 +792,13 @@
+             (i32.xor
+              (i32.and
+               (local.get $1)
+-              (local.get $6)
++              (local.get $7)
+              )
+              (i32.const -1)
+             )
+            )
+           )
+-          (br $block21)
++          (br $block24)
+          )
+          (i32.store8
+           (i32.const 74381)
+@@ -686,7 +813,7 @@
+                )
+               )
+              )
+-             (local.get $6)
++             (local.get $7)
+             )
+             (local.get $3)
+            )
+@@ -697,22 +824,22 @@
+         (call $native.resolve
+          (local.get $4)
+         )
+-        (local.set $9
++        (local.set $12
+          (i32.const 1)
+         )
+        )
+        (if
+-        (local.get $9)
++        (local.get $12)
+         (then
+-         (block $block22
+-          (br_if $block22
++         (block $block25
++          (br_if $block25
+            (i32.eqz
+             (i32.load8_u
+              (i32.const 65853)
+             )
+            )
+           )
+-          (br_if $block22
++          (br_if $block25
+            (i32.eqz
+             (i32.and
+              (i32.load8_u
+@@ -726,7 +853,7 @@
+            (i32.const 64864)
+            (i32.const 0)
+           )
+-          (br_if $block22
++          (br_if $block25
+            (i32.load
+             (i32.const 64744)
+            )
+@@ -738,7 +865,7 @@
+          )
+          (call $native.capture_pins)
+          (call $native.pin_voltages)
+-         (br $block8)
++         (br $block11)
+         )
+        )
+        (if
+@@ -759,22 +886,22 @@
+          )
+         )
+         (then
+-         (block $block23
+-          (br_if $block23
++         (block $block26
++          (br_if $block26
+            (i32.ne
+             (local.get $2)
+             (i32.const 28)
+            )
+           )
+-          (br_if $block23
++          (br_if $block26
+            (i32.eqz
+             (i32.and
+-             (local.get $13)
++             (local.get $14)
+              (i32.const 2)
+             )
+            )
+           )
+-          (br_if $block23
++          (br_if $block26
+            (i32.eqz
+             (i32.and
+              (i32.load8_u
+@@ -784,29 +911,29 @@
+             )
+            )
+           )
+-          (br_if $block23
++          (br_if $block26
+            (i32.load8_u
+             (i32.const 74912)
+            )
+           )
+-          (br_if $block23
++          (br_if $block26
+            (i32.load8_u
+             (i32.const 74916)
+            )
+           )
+-          (br_if $block23
++          (br_if $block26
+            (call $native.programming_clock_known)
+           )
+           (call $native.supply_guard)
+-          (br $block8)
++          (br $block11)
+          )
+-         (local.set $12
+-          (block $block29 (result i32)
+-           (local.set $7
++         (local.set $17
++          (block $block32 (result i32)
++           (local.set $13
+             (i32.const 0)
+            )
+            (call $native.nvm_advance
+-            (local.tee $10
++            (local.tee $8
+              (i64.shr_u
+               (i64.load
+                (i32.const 64632)
+@@ -814,16 +941,16 @@
+               (i64.const 1)
+              )
+             )
+-            (local.tee $8
++            (local.tee $9
+              (i64.load
+               (i32.const 64648)
+              )
+             )
+            )
+-           (block $block24
+-            (br_if $block24
++           (block $block27
++            (br_if $block27
+              (i32.and
+-              (local.tee $9
++              (local.tee $5
+                (i32.load
+                 (i32.const 74900)
+                )
+@@ -831,18 +958,18 @@
+               (i32.const 384)
+              )
+             )
+-            (block $block25
+-             (block $block28
+-              (block $block26
+-               (block $block27
+-                (br_table $block25 $block26 $block27 $block24 $block24 $block24 $block24 $block24 $block24 $block24 $block24 $block24 $block24 $block24 $block24 $block24 $block24 $block24 $block24 $block24 $block24 $block24 $block24 $block24 $block24 $block24 $block24 $block28 $block24
++            (block $block28
++             (block $block31
++              (block $block29
++               (block $block30
++                (br_table $block28 $block29 $block30 $block27 $block27 $block27 $block27 $block27 $block27 $block27 $block27 $block27 $block27 $block27 $block27 $block27 $block27 $block27 $block27 $block27 $block27 $block27 $block27 $block27 $block27 $block27 $block27 $block31 $block27
+                  (i32.sub
+                   (local.get $2)
+                   (i32.const 28)
+                  )
+                 )
+                )
+-               (br_if $block24
++               (br_if $block27
+                 (i32.load8_u
+                  (i32.const 74912)
+                 )
+@@ -852,7 +979,7 @@
+                 (i32.and
+                  (i32.xor
+                   (i32.and
+-                   (local.get $6)
++                   (local.get $7)
+                    (i32.xor
+                     (local.get $1)
+                     (local.tee $2
+@@ -867,7 +994,7 @@
+                  (i32.const 63)
+                 )
+                )
+-               (br $block29
++               (br $block32
+                 (i32.const 0)
+                )
+               )
+@@ -875,7 +1002,7 @@
+                (i32.const 74909)
+                (i32.xor
+                 (i32.and
+-                 (local.get $6)
++                 (local.get $7)
+                  (i32.xor
+                   (local.get $1)
+                   (local.tee $2
+@@ -888,16 +1015,16 @@
+                 (local.get $2)
+                )
+               )
+-              (br $block29
++              (br $block32
+                (i32.const 0)
+               )
+              )
+-             (br_if $block24
++             (br_if $block27
+               (i32.load8_u
+                (i32.const 74912)
+               )
+              )
+-             (br_if $block24
++             (br_if $block27
+               (i32.load8_u
+                (i32.const 74916)
+               )
+@@ -907,7 +1034,7 @@
+                (local.tee $1
+                 (i32.xor
+                  (i32.and
+-                  (local.get $6)
++                  (local.get $7)
+                   (i32.xor
+                    (local.get $1)
+                    (local.tee $2
+@@ -932,13 +1059,13 @@
+                (i32.const 1)
+               )
+               (then
+-               (br_if $block24
++               (br_if $block27
+                 (i32.gt_u
+                  (local.get $2)
+                  (i32.const 17)
+                 )
+                )
+-               (br_if $block24
++               (br_if $block27
+                 (i32.eqz
+                  (i32.and
+                   (i32.shl
+@@ -961,13 +1088,13 @@
+                (i64.const -1)
+                (local.tee $4
+                 (i64.add
+-                 (local.get $10)
++                 (local.get $8)
+                  (i64.const 3)
+                 )
+                )
+                (i64.lt_u
+                 (local.get $4)
+-                (local.get $10)
++                (local.get $8)
+                )
+               )
+              )
+@@ -977,17 +1104,17 @@
+                (i64.const -1)
+                (local.tee $4
+                 (i64.add
+-                 (local.get $10)
++                 (local.get $8)
+                  (i64.const 4)
+                 )
+                )
+                (i64.lt_u
+                 (local.get $4)
+-                (local.get $10)
++                (local.get $8)
+                )
+               )
+              )
+-             (br_if $block24
++             (br_if $block27
+               (i32.eqz
+                (i32.and
+                 (local.get $1)
+@@ -1004,7 +1131,7 @@
+               (i32.const 74904)
+               (i32.const 0)
+              )
+-             (br $block29
++             (br $block32
+               (i32.const 0)
+              )
+             )
+@@ -1016,20 +1143,20 @@
+                 (i32.and
+                  (local.tee $3
+                   (i32.or
+-                   (local.tee $14
++                   (local.tee $15
+                     (i32.and
+                      (local.get $1)
+-                     (local.get $6)
++                     (local.get $7)
+                     )
+                    )
+                    (i32.and
+-                    (local.tee $15
++                    (local.tee $16
+                      (i32.load8_u
+                       (i32.const 74908)
+                      )
+                     )
+                     (i32.xor
+-                     (local.get $6)
++                     (local.get $7)
+                      (i32.const -1)
+                     )
+                    )
+@@ -1038,13 +1165,13 @@
+                  (i32.const 8)
+                 )
+                 (i32.and
+-                 (local.get $15)
++                 (local.get $16)
+                  (i32.const 2)
+                 )
+                )
+                (i32.and
+                 (select
+-                 (local.get $15)
++                 (local.get $16)
+                  (local.get $3)
+                  (local.tee $2
+                   (i32.load8_u
+@@ -1057,8 +1184,8 @@
+               )
+              )
+             )
+-            (block $block30
+-             (br_if $block30
++            (block $block33
++             (br_if $block33
+               (i32.eqz
+                (i32.and
+                 (local.get $3)
+@@ -1075,10 +1202,10 @@
+                )
+               )
+              )
+-             (br_if $block30
++             (br_if $block33
+               (i32.eqz
+                (i32.and
+-                (local.get $14)
++                (local.get $15)
+                 (i32.const 4)
+                )
+               )
+@@ -1089,38 +1216,38 @@
+                (i64.const -1)
+                (local.tee $4
+                 (i64.add
+-                 (local.get $10)
++                 (local.get $8)
+                  (i64.const 4)
+                 )
+                )
+                (i64.lt_u
+                 (local.get $4)
+-                (local.get $10)
++                (local.get $8)
+                )
+               )
+              )
+             )
+-            (br_if $block24
++            (br_if $block27
+              (local.get $2)
+             )
+-            (br_if $block24
++            (br_if $block27
+              (i32.load8_u
+               (i32.const 74916)
+              )
+             )
+-            (block $block31
+-             (br_if $block31
++            (block $block34
++             (br_if $block34
+               (i32.eqz
+                (i32.and
+-                (local.get $14)
++                (local.get $15)
+                 (i32.const 2)
+                )
+               )
+              )
+-             (br_if $block31
++             (br_if $block34
+               (i32.eqz
+                (i32.and
+-                (local.get $15)
++                (local.get $16)
+                 (i32.const 4)
+                )
+               )
+@@ -1131,14 +1258,14 @@
+                (i64.const -1)
+                (local.tee $4
+                 (i64.add
+-                 (local.get $8)
++                 (local.get $9)
+                  (i64.load
+                   (i32.add
+-                   (block $block35 (result i32)
+-                    (block $block34
+-                     (block $block32
+-                      (block $block33
+-                       (br_table $block32 $block33 $block34
++                   (block $block38 (result i32)
++                    (block $block37
++                     (block $block35
++                      (block $block36
++                       (br_table $block35 $block36 $block37
+                         (i32.sub
+                          (local.tee $2
+                           (i32.shr_u
+@@ -1153,11 +1280,11 @@
+                       (i32.store
+                        (i32.const 74900)
+                        (i32.or
+-                        (local.get $9)
++                        (local.get $5)
+                         (i32.const 1)
+                        )
+                       )
+-                      (br $block29
++                      (br $block32
+                        (i32.const 0)
+                       )
+                      )
+@@ -1199,7 +1326,7 @@
+                          (i32.const 2)
+                         )
+                        )
+-                       (br $block35
++                       (br $block38
+                         (i32.const 24)
+                        )
+                       )
+@@ -1207,11 +1334,11 @@
+                      (i32.store
+                       (i32.const 74900)
+                       (i32.or
+-                       (local.get $9)
++                       (local.get $5)
+                        (i32.const 2)
+                       )
+                      )
+-                     (br $block29
++                     (br $block32
+                       (i32.const 0)
+                      )
+                     )
+@@ -1255,7 +1382,7 @@
+                )
+                (i64.lt_u
+                 (local.get $4)
+-                (local.get $8)
++                (local.get $9)
+                )
+               )
+              )
+@@ -1280,14 +1407,14 @@
+               (i32.const 74864)
+               (i64.const 0)
+              )
+-             (br $block29
++             (br $block32
+               (i32.const 2)
+              )
+             )
+-            (br_if $block24
++            (br_if $block27
+              (i32.eqz
+               (i32.and
+-               (local.get $14)
++               (local.get $15)
+                (i32.const 1)
+               )
+              )
+@@ -1305,19 +1432,19 @@
+               )
+              )
+             )
+-            (local.set $7
++            (local.set $13
+              (i32.const 4)
+             )
+            )
+-           (local.get $7)
++           (local.get $13)
+           )
+          )
+          (call $native.supply_guard)
+-         (br $block8)
++         (br $block11)
+         )
+        )
+-       (br_if $block8
+-        (block $block38 (result i32)
++       (br_if $block11
++        (block $block41 (result i32)
+          (local.set $4
+           (i64.shr_u
+            (i64.load
+@@ -1326,9 +1453,9 @@
+            (i64.const 1)
+           )
+          )
+-         (block $block37
+-          (block $block36
+-           (br_table $block36 $block37 $block37 $block37 $block37 $block37 $block37 $block37 $block37 $block37 $block37 $block37 $block37 $block37 $block37 $block37 $block37 $block37 $block37 $block36 $block37
++         (block $block40
++          (block $block39
++           (br_table $block39 $block40 $block40 $block40 $block40 $block40 $block40 $block40 $block40 $block40 $block40 $block40 $block40 $block40 $block40 $block40 $block40 $block40 $block40 $block39 $block40
+             (i32.sub
+              (local.get $2)
+              (i32.const 33)
+@@ -1336,7 +1463,7 @@
+            )
+           )
+           (drop
+-           (br_if $block38
++           (br_if $block41
+             (i32.const -1)
+             (i64.gt_u
+              (i64.load
+@@ -1350,11 +1477,11 @@
+            (i32.const 74648)
+            (local.get $4)
+           )
+-          (block $block39
+-           (br_if $block39
++          (block $block42
++           (br_if $block42
+             (i32.eqz
+              (i32.and
+-              (local.tee $5
++              (local.tee $6
+                (i32.load8_u
+                 (i32.const 74676)
+                )
+@@ -1363,7 +1490,7 @@
+              )
+             )
+            )
+-           (br_if $block39
++           (br_if $block42
+             (i64.lt_u
+              (local.get $4)
+              (i64.load
+@@ -1373,9 +1500,9 @@
+            )
+            (i32.store8
+             (i32.const 74676)
+-            (local.tee $5
++            (local.tee $6
+              (i32.and
+-              (local.get $5)
++              (local.get $6)
+               (i32.const 239)
+              )
+             )
+@@ -1398,7 +1525,7 @@
+                 (i32.or
+                  (local.get $1)
+                  (i32.xor
+-                  (local.get $6)
++                  (local.get $7)
+                   (i32.const -1)
+                  )
+                 )
+@@ -1415,19 +1542,19 @@
+              (then
+               (i32.store8
+                (i32.const 74676)
+-               (local.tee $5
++               (local.tee $6
+                 (i32.or
+-                 (local.get $5)
++                 (local.get $6)
+                  (i32.const 8)
+                 )
+                )
+               )
+              )
+             )
+-            (local.set $16
++            (local.set $5
+              (i32.const 1)
+             )
+-            (br_if $block37
++            (br_if $block40
+              (i32.eqz
+               (i32.load8_u
+                (i32.const 74678)
+@@ -1438,37 +1565,37 @@
+              (i32.const 74676)
+              (i32.or
+               (i32.and
+-               (local.get $5)
++               (local.get $6)
+                (i32.const 183)
+               )
+               (i32.const 8)
+              )
+             )
+-            (br $block38
++            (br $block41
+              (i32.const 1)
+             )
+            )
+           )
+-          (local.set $16
++          (local.set $12
+            (select
+-            (local.tee $18
++            (local.tee $19
+              (i32.or
+               (i32.and
+                (local.tee $3
+                 (i32.or
+                  (i32.and
+-                  (local.tee $9
++                  (local.tee $5
+                    (i32.or
+-                    (local.tee $17
++                    (local.tee $18
+                      (i32.and
+                       (local.get $1)
+-                      (local.get $6)
++                      (local.get $7)
+                      )
+                     )
+                     (i32.and
+-                     (local.get $5)
++                     (local.get $6)
+                      (i32.xor
+-                      (local.get $6)
++                      (local.get $7)
+                       (i32.const -1)
+                      )
+                     )
+@@ -1479,35 +1606,35 @@
+                  (i32.and
+                   (i32.xor
+                    (i32.and
+-                    (local.get $17)
++                    (local.get $18)
+                     (i32.const 128)
+                    )
+                    (i32.const 191)
+                   )
+-                  (local.get $5)
++                  (local.get $6)
+                  )
+                 )
+                )
+                (i32.const 208)
+               )
+               (i32.and
+-               (local.get $9)
++               (local.get $5)
+                (i32.const 47)
+               )
+              )
+             )
+-            (local.tee $9
++            (local.tee $5
+              (i32.or
+               (local.get $3)
+               (i32.and
+-               (local.get $9)
++               (local.get $5)
+                (i32.const 8)
+               )
+              )
+             )
+             (local.tee $3
+              (i32.and
+-              (local.get $5)
++              (local.get $6)
+               (i32.const 16)
+              )
+             )
+@@ -1515,12 +1642,12 @@
+           )
+           (i32.store8
+            (i32.const 74676)
+-           (local.tee $5
+-            (block $block40 (result i32)
++           (local.tee $6
++            (block $block43 (result i32)
+              (if
+               (i32.eq
+                (i32.and
+-                (local.get $17)
++                (local.get $18)
+                 (i32.const 24)
+                )
+                (i32.const 24)
+@@ -1533,9 +1660,9 @@
+                  (i64.const 4)
+                 )
+                )
+-               (br $block40
++               (br $block43
+                 (i32.or
+-                 (local.get $16)
++                 (local.get $12)
+                  (i32.const 16)
+                 )
+                )
+@@ -1543,16 +1670,16 @@
+              )
+              (select
+               (select
+-               (local.get $18)
++               (local.get $19)
+                (select
+                 (i32.and
+-                 (local.get $16)
++                 (local.get $12)
+                  (i32.const 239)
+                 )
+-                (local.get $18)
++                (local.get $19)
+                 (i32.shr_u
+                  (i32.and
+-                  (local.get $6)
++                  (local.get $7)
+                   (i32.const 16)
+                  )
+                  (i32.const 4)
+@@ -1563,7 +1690,7 @@
+                 (i32.const 16)
+                )
+               )
+-              (local.get $9)
++              (local.get $5)
+               (local.get $3)
+              )
+             )
+@@ -1579,9 +1706,9 @@
+            (then
+             (i32.store8
+              (i32.const 74676)
+-             (local.tee $5
++             (local.tee $6
+               (i32.or
+-               (local.get $5)
++               (local.get $6)
+                (i32.const 8)
+               )
+              )
+@@ -1595,10 +1722,10 @@
+            (then
+             (i32.store8
+              (i32.const 74676)
+-             (local.tee $5
++             (local.tee $6
+               (i32.or
+                (i32.and
+-                (local.get $5)
++                (local.get $6)
+                 (i32.const 183)
+                )
+                (i32.const 8)
+@@ -1610,7 +1737,7 @@
+           (if
+            (i32.eqz
+             (i32.and
+-             (local.get $5)
++             (local.get $6)
+              (i32.const 8)
+             )
+            )
+@@ -1621,12 +1748,12 @@
+             )
+            )
+           )
+-          (local.set $16
++          (local.set $5
+            (i32.const 1)
+           )
+-          (br_if $block37
++          (br_if $block40
+            (i32.and
+-            (local.get $5)
++            (local.get $6)
+             (i32.const 72)
+            )
+           )
+@@ -1635,11 +1762,11 @@
+            (i32.const 0)
+           )
+          )
+-         (local.get $16)
++         (local.get $5)
+         )
+        )
+-       (block $block41
+-        (br_if $block41
++       (block $block44
++        (br_if $block44
+          (i32.gt_u
+           (local.tee $1
+            (i32.sub
+@@ -1650,7 +1777,7 @@
+           (i32.const 17)
+          )
+         )
+-        (br_if $block41
++        (br_if $block44
+          (i32.eqz
+           (i32.and
+            (i32.shl
+@@ -1661,8 +1788,8 @@
+           )
+          )
+         )
+-        (block $block42
+-         (br_if $block42
++        (block $block45
++         (br_if $block45
+           (i32.eqz
+            (local.tee $1
+             (call $native.timer0_write
+@@ -1681,12 +1808,12 @@
+                  (i32.const 15)
+                 )
+                 (i32.and
+-                 (local.get $13)
++                 (local.get $14)
+                  (i32.const 192)
+                 )
+                )
+                (select
+-                (local.get $13)
++                (local.get $14)
+                 (local.get $11)
+                 (i32.eq
+                  (local.get $2)
+@@ -1708,7 +1835,7 @@
+           (i32.const 64864)
+           (i32.const 0)
+          )
+-         (br_if $block42
++         (br_if $block45
+           (i32.load
+            (i32.const 64744)
+           )
+@@ -1727,7 +1854,7 @@
+           (i32.const 74345)
+          )
+         )
+-        (block $block43
++        (block $block46
+          (if
+           (i32.eq
+            (local.tee $1
+@@ -1740,7 +1867,7 @@
+            )
+           )
+           (then
+-           (br_if $block43
++           (br_if $block46
+             (i32.eq
+              (i32.load8_u
+               (i32.const 74388)
+@@ -1760,7 +1887,7 @@
+          (call $native.capture_pins)
+          (call $native.pin_voltages)
+         )
+-        (br $block8)
++        (br $block11)
+        )
+        (if
+         (i32.le_u
+@@ -1774,14 +1901,14 @@
+          (i32.const 5)
+         )
+         (then
+-         (block $block44
+-          (br_if $block44
++         (block $block47
++          (br_if $block47
+            (i32.eq
+             (local.get $2)
+             (i32.const 8)
+            )
+           )
+-          (br_if $block44
++          (br_if $block47
+            (i32.eqz
+             (i32.and
+              (i32.load8_u
+@@ -1795,7 +1922,7 @@
+            (i32.const 64864)
+            (i32.const 0)
+           )
+-          (br_if $block8
++          (br_if $block11
+            (i32.load
+             (i32.const 64744)
+            )
+@@ -1804,22 +1931,22 @@
+            (i32.const 64744)
+            (i64.const 51539607556)
+           )
+-          (br $block8)
++          (br $block11)
+          )
+-         (br_if $block8
+-          (block $block45 (result i32)
+-           (local.set $5
++         (br_if $block11
++          (block $block48 (result i32)
++           (local.set $6
+             (i32.const 0)
+            )
+-           (local.set $9
++           (local.set $12
+             (i32.const 0)
+            )
+            (drop
+-            (br_if $block45
++            (br_if $block48
+              (i32.const 0)
+              (i32.eqz
+               (call $native.analog_advance
+-               (local.tee $10
++               (local.tee $8
+                 (i64.load
+                  (i32.const 64632)
+                 )
+@@ -1828,16 +1955,16 @@
+              )
+             )
+            )
+-           (local.set $7
++           (local.set $5
+             (i32.and
+              (select
+               (local.get $11)
+               (i32.or
+                (i32.and
+-                (local.get $7)
++                (local.get $13)
+                 (i32.const 239)
+                )
+-               (local.get $13)
++               (local.get $14)
+               )
+               (i32.ne
+                (local.get $2)
+@@ -1847,7 +1974,7 @@
+              (i32.const 255)
+             )
+            )
+-           (block $block48
++           (block $block51
+             (if
+              (i32.eq
+               (local.get $2)
+@@ -1855,19 +1982,19 @@
+              )
+              (then
+               (local.set $1
+-               (block $block46 (result i32)
++               (block $block49 (result i32)
+                 (drop
+-                 (br_if $block46
++                 (br_if $block49
+                   (i32.const 0)
+                   (i32.eqz
+                    (call $native.analog_comparator_advance
+-                    (local.get $10)
++                    (local.get $8)
+                    )
+                   )
+                  )
+                 )
+-                (block $block47
+-                 (br_if $block47
++                (block $block50
++                 (br_if $block50
+                   (i32.eqz
+                    (i32.and
+                     (i32.xor
+@@ -1876,18 +2003,18 @@
+                        (i32.const 74620)
+                       )
+                      )
+-                     (local.get $7)
++                     (local.get $5)
+                     )
+                     (i32.const 131)
+                    )
+                   )
+                  )
+-                 (br_if $block47
++                 (br_if $block50
+                   (i32.eqz
+                    (i32.and
+                     (i32.or
+                      (local.get $2)
+-                     (local.get $7)
++                     (local.get $5)
+                     )
+                     (i32.const 8)
+                    )
+@@ -1911,14 +2038,14 @@
+                     (local.get $2)
+                     (i32.xor
+                      (i32.and
+-                      (local.get $7)
++                      (local.get $5)
+                       (i32.const 16)
+                      )
+                      (i32.const 48)
+                     )
+                    )
+                    (i32.and
+-                    (local.get $7)
++                    (local.get $5)
+                     (i32.const 203)
+                    )
+                   )
+@@ -1938,7 +2065,7 @@
+                  )
+                  (then
+                   (drop
+-                   (br_if $block46
++                   (br_if $block49
+                     (i32.const 1)
+                     (i32.lt_u
+                      (local.get $1)
+@@ -1956,15 +2083,15 @@
+                 (i32.const 1)
+                )
+               )
+-              (br $block48)
++              (br $block51)
+              )
+             )
+             (if
+              (i32.eqz
+               (local.tee $1
+-               (block $block53 (result i32)
+-                (block $block49
+-                 (br_if $block49
++               (block $block56 (result i32)
++                (block $block52
++                 (br_if $block52
+                   (i32.lt_u
+                    (i32.and
+                     (i32.sub
+@@ -1976,10 +2103,10 @@
+                    (i32.const 251)
+                   )
+                  )
+-                 (br_if $block49
++                 (br_if $block52
+                   (i32.eqz
+                    (call $native.analog_adc_advance
+-                    (local.get $10)
++                    (local.get $8)
+                    )
+                   )
+                  )
+@@ -1999,7 +2126,7 @@
+                    (i32.const 5)
+                   )
+                   (then
+-                   (local.set $5
++                   (local.set $6
+                     (i32.shr_u
+                      (i32.load8_u
+                       (i32.const 74511)
+@@ -2009,13 +2136,13 @@
+                    )
+                   )
+                  )
+-                 (local.set $9
++                 (local.set $12
+                   (i32.const 1)
+                  )
+-                 (block $block51
+-                  (block $block52
+-                   (block $block50
+-                    (br_table $block50 $block49 $block49 $block51 $block52 $block49
++                 (block $block54
++                  (block $block55
++                   (block $block53
++                    (br_table $block53 $block52 $block52 $block54 $block55 $block52
+                      (i32.sub
+                       (local.get $2)
+                       (i32.const 3)
+@@ -2025,14 +2152,14 @@
+                    (i32.store8
+                     (i32.const 74509)
+                     (i32.and
+-                     (local.get $7)
++                     (local.get $5)
+                      (i32.const 71)
+                     )
+                    )
+-                   (br_if $block49
++                   (br_if $block52
+                     (i32.and
+                      (i32.or
+-                      (local.get $5)
++                      (local.get $6)
+                       (i32.eqz
+                        (i32.and
+                         (local.tee $2
+@@ -2047,12 +2174,12 @@
+                      (i32.const 1)
+                     )
+                    )
+-                   (br_if $block49
++                   (br_if $block52
+                     (i32.gt_u
+                      (i32.sub
+                       (local.tee $1
+                        (i32.and
+-                        (local.get $7)
++                        (local.get $5)
+                         (i32.const 7)
+                        )
+                       )
+@@ -2061,13 +2188,13 @@
+                      (i32.const 5)
+                     )
+                    )
+-                   (br_if $block49
++                   (br_if $block52
+                     (i32.ge_s
+                      (local.get $2)
+                      (i32.const 0)
+                     )
+                    )
+-                   (br_if $block49
++                   (br_if $block52
+                     (i32.eqz
+                      (i32.and
+                       (i32.load8_u
+@@ -2080,7 +2207,7 @@
+                      )
+                     )
+                    )
+-                   (br_if $block49
++                   (br_if $block52
+                     (i32.load8_u
+                      (i32.const 74512)
+                     )
+@@ -2105,18 +2232,18 @@
+                      (i64.const 6)
+                     )
+                    )
+-                   (br $block53
++                   (br $block56
+                     (i32.const 1)
+                    )
+                   )
+                   (i32.store8
+                    (i32.const 74510)
+                    (i32.and
+-                    (local.get $7)
++                    (local.get $5)
+                     (i32.const 99)
+                    )
+                   )
+-                  (br $block53
++                  (br $block56
+                    (i32.const 1)
+                   )
+                  )
+@@ -2132,14 +2259,14 @@
+                      )
+                      (i32.xor
+                       (i32.and
+-                       (local.get $7)
++                       (local.get $5)
+                        (i32.const 16)
+                       )
+                       (i32.const 80)
+                      )
+                     )
+                     (i32.and
+-                     (local.get $7)
++                     (local.get $5)
+                      (i32.const 175)
+                     )
+                    )
+@@ -2148,7 +2275,7 @@
+                  (if
+                   (i32.ge_s
+                    (i32.extend8_s
+-                    (local.get $7)
++                    (local.get $5)
+                    )
+                    (i32.const 0)
+                   )
+@@ -2163,7 +2290,7 @@
+                    )
+                    (i64.store
+                     (i32.const 74432)
+-                    (local.get $10)
++                    (local.get $8)
+                    )
+                    (i32.store8
+                     (i32.const 74508)
+@@ -2172,7 +2299,7 @@
+                      (i32.const 63)
+                     )
+                    )
+-                   (br $block53
++                   (br $block56
+                     (i32.const 1)
+                    )
+                   )
+@@ -2187,18 +2314,18 @@
+                   (then
+                    (i64.store
+                     (i32.const 74432)
+-                    (local.get $10)
++                    (local.get $8)
+                    )
+                   )
+                  )
+-                 (block $block54
++                 (block $block57
+                   (if
+                    (i32.and
+-                    (local.get $7)
++                    (local.get $5)
+                     (i32.const 64)
+                    )
+                    (then
+-                    (br_if $block54
++                    (br_if $block57
+                      (i32.ge_s
+                       (local.tee $1
+                        (i32.load8_s
+@@ -2208,7 +2335,7 @@
+                       (i32.const 0)
+                      )
+                     )
+-                    (br_if $block54
++                    (br_if $block57
+                      (i32.load8_u
+                       (i32.const 74512)
+                      )
+@@ -2234,7 +2361,7 @@
+                           (i64.load
+                            (i32.const 74424)
+                           )
+-                          (local.tee $8
++                          (local.tee $9
+                            (i64.load
+                             (i32.const 74432)
+                            )
+@@ -2265,20 +2392,20 @@
+                        )
+                        (local.get $4)
+                       )
+-                      (local.get $8)
++                      (local.get $9)
+                      )
+                     )
+-                    (br $block54)
++                    (br $block57)
+                    )
+                   )
+-                  (br_if $block54
++                  (br_if $block57
+                    (i32.and
+                     (local.get $3)
+                     (i32.const 32)
+                    )
+                   )
+-                  (block $block55
+-                   (br_if $block55
++                  (block $block58
++                   (br_if $block58
+                     (i32.eqz
+                      (i32.and
+                       (local.tee $1
+@@ -2290,7 +2417,7 @@
+                      )
+                     )
+                    )
+-                   (br_if $block55
++                   (br_if $block58
+                     (i32.gt_u
+                      (i32.sub
+                       (local.tee $2
+@@ -2306,7 +2433,7 @@
+                      (i32.const 5)
+                     )
+                    )
+-                   (br_if $block55
++                   (br_if $block58
+                     (i32.ge_s
+                      (local.tee $1
+                       (i32.extend8_s
+@@ -2316,7 +2443,7 @@
+                      (i32.const 0)
+                     )
+                    )
+-                   (br_if $block55
++                   (br_if $block58
+                     (i32.eqz
+                      (i32.and
+                       (i32.load8_u
+@@ -2329,7 +2456,7 @@
+                      )
+                     )
+                    )
+-                   (br_if $block55
++                   (br_if $block58
+                     (i32.load8_u
+                      (i32.const 74512)
+                     )
+@@ -2356,20 +2483,20 @@
+                    )
+                   )
+                  )
+-                 (br_if $block49
++                 (br_if $block52
+                   (i32.eqz
+                    (i32.and
+                     (i32.xor
+                      (local.get $3)
+-                     (local.get $7)
++                     (local.get $5)
+                     )
+                     (i32.const 7)
+                    )
+                   )
+                  )
+-                 (block $block57
+-                  (block $block56
+-                   (br_table $block49 $block56 $block49 $block57
++                 (block $block60
++                  (block $block59
++                   (br_table $block52 $block59 $block52 $block60
+                     (i32.load8_u
+                      (i32.const 74512)
+                     )
+@@ -2382,8 +2509,8 @@
+                      (i64.add
+                       (i64.shr_u
+                        (i64.sub
+-                        (local.get $10)
+-                        (local.tee $8
++                        (local.get $8)
++                        (local.tee $9
+                          (i64.load
+                           (i32.const 74432)
+                          )
+@@ -2416,10 +2543,10 @@
+                      )
+                      (local.get $4)
+                     )
+-                    (local.get $8)
++                    (local.get $9)
+                    )
+                   )
+-                  (br $block53
++                  (br $block56
+                    (i32.const 1)
+                   )
+                  )
+@@ -2430,8 +2557,8 @@
+                     (i64.add
+                      (i64.shr_u
+                       (i64.sub
+-                       (local.get $10)
+-                       (local.tee $8
++                       (local.get $8)
++                       (local.tee $9
+                         (i64.load
+                          (i32.const 74432)
+                         )
+@@ -2461,11 +2588,11 @@
+                     )
+                     (local.get $4)
+                    )
+-                   (local.get $8)
++                   (local.get $9)
+                   )
+                  )
+                 )
+-                (local.get $9)
++                (local.get $12)
+                )
+               )
+              )
+@@ -2473,10 +2600,10 @@
+               (local.set $1
+                (i32.const 0)
+               )
+-              (br $block48)
++              (br $block51)
+              )
+             )
+-            (local.set $7
++            (local.set $13
+              (i32.load8_u
+               (i32.const 74508)
+              )
+@@ -2491,17 +2618,17 @@
+               (i32.const 74510)
+              )
+             )
+-            (block $block58
+-             (br_if $block58
++            (block $block61
++             (br_if $block61
+               (i32.eqz
+                (call $native.analog_comparator_advance
+-                (local.get $10)
++                (local.get $8)
+                )
+               )
+              )
+              (i32.store8
+               (i32.const 74623)
+-              (local.tee $9
++              (local.tee $5
+                (i32.and
+                 (local.get $2)
+                 (i32.const 3)
+@@ -2511,7 +2638,7 @@
+              (i32.store8
+               (i32.const 74621)
+               (i32.shr_u
+-               (local.get $7)
++               (local.get $13)
+                (i32.const 7)
+               )
+              )
+@@ -2527,9 +2654,9 @@
+                (i32.const 1)
+               )
+              )
+-             (block $block60
+-              (block $block59
+-               (br_if $block59
++             (block $block63
++              (block $block62
++               (br_if $block62
+                 (i32.lt_s
+                  (local.tee $2
+                   (i32.load8_s
+@@ -2539,12 +2666,12 @@
+                  (i32.const 0)
+                 )
+                )
+-               (br_if $block59
++               (br_if $block62
+                 (i32.load8_u
+                  (i32.const 74628)
+                 )
+                )
+-               (br_if $block60
++               (br_if $block63
+                 (i64.eq
+                  (i64.load
+                   (i32.const 74552)
+@@ -2557,20 +2684,20 @@
+                (i32.const 74536)
+                (i64.const -1)
+               )
+-              (br $block58)
++              (br $block61)
+              )
+              (if
+               (i32.eq
+                (local.tee $2
+                 (i64.gt_s
+-                 (block $block61 (result i64)
++                 (block $block64 (result i64)
+                   (if
+                    (i32.ge_u
+                     (local.get $2)
+                     (i32.const 64)
+                    )
+                    (then
+-                    (br $block61
++                    (br $block64
+                      (i64.load32_u
+                       (i32.const 74592)
+                      )
+@@ -2582,19 +2709,19 @@
+                   )
+                  )
+                  (block (result i64)
+-                  (local.set $5
++                  (local.set $6
+                    (i32.const 1)
+                   )
+-                  (block $block62
+-                   (br_if $block62
++                  (block $block65
++                   (br_if $block65
+                     (i32.lt_s
+                      (i32.extend8_s
+-                      (local.get $7)
++                      (local.get $13)
+                      )
+                      (i32.const 0)
+                     )
+                    )
+-                   (br_if $block62
++                   (br_if $block65
+                     (i32.eqz
+                      (i32.and
+                       (local.get $3)
+@@ -2602,16 +2729,16 @@
+                      )
+                     )
+                    )
+-                   (local.set $5
++                   (local.set $6
+                     (i32.load8_u offset=9765
+-                     (local.get $9)
++                     (local.get $5)
+                     )
+                    )
+                   )
+                   (i64.load32_s offset=68
+                    (i32.add
+                     (i32.shl
+-                     (local.get $5)
++                     (local.get $6)
+                      (i32.const 2)
+                     )
+                     (i32.const 74528)
+@@ -2629,10 +2756,10 @@
+                 (i32.const 74536)
+                 (i64.const -1)
+                )
+-               (br $block58)
++               (br $block61)
+               )
+              )
+-             (block $block63
++             (block $block66
+               (if
+                (i64.ne
+                 (i64.load
+@@ -2641,7 +2768,7 @@
+                 (i64.const -1)
+                )
+                (then
+-                (br_if $block63
++                (br_if $block66
+                  (i32.eq
+                   (i32.load8_u
+                    (i32.const 74625)
+@@ -2694,7 +2821,7 @@
+             (then
+              (call $native.analog_adc_sources
+               (local.get $2)
+-              (local.get $10)
++              (local.get $8)
+              )
+             )
+            )
+@@ -2705,7 +2832,7 @@
+           (i32.const 64864)
+           (i32.const 0)
+          )
+-         (br_if $block8
++         (br_if $block11
+           (i32.load
+            (i32.const 64744)
+           )
+@@ -2714,7 +2841,7 @@
+           (i32.const 64744)
+           (i64.const 55834574852)
+          )
+-         (br $block8)
++         (br $block11)
+         )
+        )
+        (if
+@@ -2731,17 +2858,17 @@
+            (i32.load
+             (i32.const 64016)
+            )
+-           (local.get $14)
++           (local.get $15)
+           )
+           (local.get $11)
+          )
+-         (br $block8)
++         (br $block11)
+         )
+        )
+-       (block $block64
+-        (block $block65
+-         (block $block66
+-          (br_table $block8 $block64 $block65 $block66 $block64
++       (block $block67
++        (block $block68
++         (block $block69
++          (br_table $block11 $block67 $block68 $block69 $block67
+            (i32.sub
+             (local.get $2)
+             (i32.const 46)
+@@ -2757,7 +2884,7 @@
+             )
+            )
+            (i32.and
+-            (local.get $15)
++            (local.get $16)
+             (i32.const 127)
+            )
+           )
+@@ -2773,7 +2900,7 @@
+               )
+               (local.get $2)
+              )
+-             (br $block8)
++             (br $block11)
+             )
+            )
+            (if
+@@ -2787,7 +2914,7 @@
+               (i32.const 64864)
+               (i32.const 0)
+              )
+-             (br_if $block8
++             (br_if $block11
+               (i32.load
+                (i32.const 64744)
+               )
+@@ -2796,7 +2923,7 @@
+               (i32.const 64744)
+               (i64.const 210453397516)
+              )
+-             (br $block8)
++             (br $block11)
+             )
+            )
+            (if
+@@ -2815,7 +2942,7 @@
+               (i32.const 64864)
+               (i32.const 0)
+              )
+-             (br_if $block8
++             (br_if $block11
+               (i32.load
+                (i32.const 64744)
+               )
+@@ -2828,7 +2955,7 @@
+               (i32.const 64744)
+               (i32.const 14)
+              )
+-             (br $block8)
++             (br $block11)
+             )
+            )
+            (if
+@@ -2857,7 +2984,7 @@
+             )
+             (local.get $2)
+            )
+-           (br $block8)
++           (br $block11)
+           )
+          )
+          (i32.store8 offset=81
+@@ -2866,19 +2993,19 @@
+           )
+           (local.get $2)
+          )
+-         (br $block8)
++         (br $block11)
+         )
+-        (br_if $block8
++        (br_if $block11
+          (i32.eqz
+           (i32.and
+-           (local.get $6)
++           (local.get $7)
+            (i32.const 3)
+           )
+          )
+         )
+         (if
+          (i64.gt_u
+-          (local.tee $8
++          (local.tee $9
+            (i64.shr_u
+             (i64.load
+              (i32.const 64632)
+@@ -2915,7 +3042,7 @@
+         )
+         (if
+          (i64.gt_u
+-          (local.get $8)
++          (local.get $9)
+           (i64.sub
+            (local.tee $4
+             (i64.load
+@@ -2955,7 +3082,7 @@
+           (i32.const 3)
+          )
+         )
+-        (block $block67
++        (block $block70
+          (if
+           (i32.and
+            (local.get $1)
+@@ -2972,7 +3099,7 @@
+            (i64.store
+             (i32.const 64712)
+             (i64.add
+-             (local.get $8)
++             (local.get $9)
+              (i64.const 4)
+             )
+            )
+@@ -3008,18 +3135,18 @@
+              (i64.store
+               (i32.const 64720)
+               (i64.add
+-               (local.get $8)
++               (local.get $9)
+                (i64.const 3)
+               )
+              )
+-             (br $block67)
++             (br $block70)
+             )
+            )
+            (i64.store
+             (i32.const 64720)
+             (i64.const 0)
+            )
+-           (br $block67)
++           (br $block70)
+           )
+          )
+          (local.set $2
+@@ -3030,28 +3157,28 @@
+            (i32.const 64784)
+           )
+          )
+-         (block $block70
+-          (block $block69
+-           (block $block68
+-            (br_if $block68
++         (block $block73
++          (block $block72
++           (block $block71
++            (br_if $block71
+              (i32.eqz
+               (local.get $3)
+              )
+             )
+-            (br_if $block68
++            (br_if $block71
+              (i32.eqz
+               (i32.load8_u
+                (i32.const 64785)
+               )
+              )
+             )
+-            (br_if $block68
++            (br_if $block71
+              (i64.le_u
+               (local.get $4)
+-              (local.get $8)
++              (local.get $9)
+              )
+             )
+-            (br_if $block68
++            (br_if $block71
+              (i32.eqz
+               (i32.and
+                (local.get $1)
+@@ -3063,16 +3190,16 @@
+              (i32.const 64784)
+              (i32.const 2)
+             )
+-            (local.set $8
++            (local.set $10
+              (i64.add
+-              (local.get $8)
++              (local.get $9)
+               (i64.const 3)
+              )
+             )
+             (local.set $2
+              (i32.const 1)
+             )
+-            (br $block69)
++            (br $block72)
+            )
+            (i32.store8
+             (i32.const 64784)
+@@ -3083,10 +3210,10 @@
+              )
+             )
+            )
+-           (local.set $8
++           (local.set $10
+             (i64.const 0)
+            )
+-           (br_if $block70
++           (br_if $block73
+             (i32.gt_u
+              (local.get $1)
+              (i32.const 1)
+@@ -3099,7 +3226,7 @@
+           )
+           (i64.store
+            (i32.const 64720)
+-           (local.get $8)
++           (local.get $10)
+           )
+          )
+          (i64.store
+@@ -3111,18 +3238,18 @@
+           (i32.const 0)
+          )
+         )
+-        (br $block8)
++        (br $block11)
+        )
+-       (br_if $block8
++       (br_if $block11
+         (i32.eqz
+-         (local.get $13)
++         (local.get $14)
+         )
+        )
+        (i32.store8
+         (i32.const 64864)
+         (i32.const 0)
+        )
+-       (br_if $block8
++       (br_if $block11
+         (i32.load
+          (i32.const 64744)
+         )
+@@ -3139,7 +3266,7 @@
+       (local.set $1
+        (i32.const 0)
+       )
+-      (block $block71
++      (block $block74
+        (if
+         (i32.eqz
+          (i32.and
+@@ -3152,7 +3279,7 @@
+          )
+         )
+         (then
+-         (br_if $block71
++         (br_if $block74
+           (i32.and
+            (i32.load8_u
+             (i32.const 74383)
+@@ -3160,7 +3287,7 @@
+            (i32.const 3)
+           )
+          )
+-         (br_if $block71
++         (br_if $block74
+           (i32.and
+            (i32.load8_u
+             (i32.const 74393)
+@@ -3174,8 +3301,8 @@
+         (i32.const 4)
+        )
+       )
+-      (block $block72
+-       (br_if $block72
++      (block $block75
++       (br_if $block75
+         (call $native.analog_sources
+          (i32.or
+           (i32.or
+@@ -3227,7 +3354,7 @@
+         (i32.const 64864)
+         (i32.const 0)
+        )
+-       (br_if $block72
++       (br_if $block75
+         (i32.load
+          (i32.const 64744)
+         )
+@@ -3241,25 +3368,25 @@
+       (call $native.check_faults)
+       (call $native.mirror)
+      )
+-     (local.get $12)
++     (local.get $17)
+     )
+    )
+-   (local.set $19
++   (local.set $20
+     (f64.load
+      (i32.const 14936)
+     )
+    )
+-   (block $block74
+-    (block $block73
+-     (br_if $block73
++   (block $block77
++    (block $block76
++     (br_if $block76
+       (i32.ne
+        (local.get $0)
+        (i32.const 41)
+       )
+      )
+-     (br_if $block73
++     (br_if $block76
+       (f64.eq
+-       (local.get $19)
++       (local.get $20)
+        (f64.const 0)
+       )
+      )
+@@ -3280,17 +3407,17 @@
+        (f64.const 1)
+       )
+      )
+-     (br $block74)
++     (br $block77)
+     )
+-    (br_if $block74
++    (br_if $block77
+      (i32.ne
+       (local.get $0)
+       (i32.const 54)
+      )
+     )
+-    (br_if $block74
++    (br_if $block77
+      (f64.eq
+-      (local.get $19)
++      (local.get $20)
+       (f64.const 0)
+      )
+     )
+@@ -3367,5 +3494,5 @@
+     (i64.const 4627730092099895296)
+    )
+   )
+-  (local.get $12)
++  (local.get $17)
+  )
