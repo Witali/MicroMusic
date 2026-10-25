@@ -10,6 +10,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import uuid
 
 ROOT=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('channel_builder',ROOT/'tools/build-universal-music.py')
@@ -182,7 +183,7 @@ class CompiledChannels(unittest.TestCase):
 
     def test_explicit_default_directory_and_micronucleus_limit(self):
         with tempfile.TemporaryDirectory(dir=ROOT/'build/universal',prefix='channel-default-') as work:
-            name=Path(work).name;source=fixture(name,2);score_path=Path(work)/'source.json'
+            name='channel-default-'+uuid.uuid4().hex;source=fixture(name,2);score_path=Path(work)/'source.json'
             score_path.write_text(json.dumps(source));before=score_path.read_bytes()
             output=ROOT/'build/universal/avr-asm-mono-micronucleus'/name
             self.assertFalse(output.exists())
