@@ -106,3 +106,23 @@ def decode_pcm16(blob):
                       np.asarray([b['scale'] for b in blocks], dtype=np.int64),
                       coefficient_trace(frames, len(q)), table('scale_table.inc'),
                       int.from_bytes(blob[12:14], 'little'), int.from_bytes(blob[14:16], 'little'))
+
+
+def filter_stability(co, cache=None):
+    """Audit actual Q12 subframe filters; does not prove switched stability."""
+    cache = {} if cache is None else cache
+    rows, counts = np.unique(co[::20], axis=0, return_counts=True)
+    radii = []
+    for row in rows:
+        key = tuple(int(v) for v in row)
+        if key not in cache:
+            cache[key] = float(np.max(abs(np.roots(np.r_[1., row / 4096]))))
+        radii.append(cache[key])
+    return {'max_interpolated_pole_radius': max(radii),
+            'unstable_subframes': int(sum(c for c, r in zip(counts, radii) if r >= 1.))}
+
+
+def stream_stability(blob, cache=None):
+    from lpx4 import decode
+    frames, _, q = decode(blob)
+    return filter_stability(coefficient_trace(frames, len(q)), cache)

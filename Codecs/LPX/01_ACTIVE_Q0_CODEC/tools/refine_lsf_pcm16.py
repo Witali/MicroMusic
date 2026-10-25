@@ -9,6 +9,8 @@ Absolute LSF10 fields use 10 fixed bits. Raw 8-bit delta fields are included,
 but variable-length LPC delta fields are kept untouched to avoid bitrate growth.
 Reject any trial violating 10-bit LSF bounds or spectral ordering throughout
 its prediction chain (until the next absolute frame).
+Also reject improving trials whose actual interpolated Q12 filters have
+poles on/outside the unit circle; ordered LSFs alone are insufficient.
 """
 from __future__ import annotations
 import argparse, hashlib, json, math, sys, time
@@ -20,6 +22,7 @@ from rice_v4_reference import read_scale
 from rice_v7 import absolute_lsf10
 from batch_decoder import BatchSession
 from tune_pcm16 import read_wav16, metrics
+from q0_model import stream_stability
 
 @dataclass(frozen=True)
 class Field:
@@ -147,7 +150,10 @@ def optimize(blob:bytes,ref:np.ndarray,batch:BatchSession,step_sizes=(16,8,4,2,1
         z=ref64-pcm.astype(np.float64)
         return float(z@z)
     cur=blob;cur_pcm=out;cur_sse=sse(out)
-    stats={'trials':0,'decode_batches':0,'accepted':[],'per_step':{},'inputs':len(fields)}
+    stats={'trials':0,'decode_batches':0,'accepted':[],'per_step':{},'inputs':len(fields),
+           'unstable_rejected':0}
+    stability_cache={}
+    initial_stability=stream_stability(blob,stability_cache)
     # Use per-sample SSE for objective. STOI checked only for improving candidates.
     stop=False
     current_spectrum=timeline.copy()
@@ -189,6 +195,9 @@ def optimize(blob:bytes,ref:np.ndarray,batch:BatchSession,step_sizes=(16,8,4,2,1
                     # STOI gate: no material degradation relative to INPUT baseline.
                     trial=metrics(ref,pcm)
                     if trial['stoi_pcm16'] + 1.e-12>=orig_stoi+min_stoi_delta:
+                        if stream_stability(b,stability_cache)['unstable_subframes']:
+                            stats['unstable_rejected']+=1
+                            continue
                         cur=b;cur_pcm=pcm;cur_sse=err;improvements+=1
                         current_spectrum[f.frame:f.affected_end,f.coeff] += sgn*step
                         stats['accepted'].append({'frame':f.frame,'coeff':f.coeff,'kind':f.kind,
@@ -209,6 +218,8 @@ def optimize(blob:bytes,ref:np.ndarray,batch:BatchSession,step_sizes=(16,8,4,2,1
         'original_sha256':hashlib.sha256(blob).hexdigest(),
         'new_sha256':hashlib.sha256(cur).hexdigest(),
         'avr_decoder_unchanged':True,'format_unchanged':True,
+        'baseline_stability':initial_stability,
+        'optimized_stability':stream_stability(cur,stability_cache),
         'pcm16_changed':hashlib.sha256(out.tobytes()).digest()!=hashlib.sha256(cur_pcm.tobytes()).digest(),
         'meta':{k:v for k,v in stats.items() if k!='accepted'}, 'accepted_changes':stats['accepted'],
         'elapsed_s':round(time.perf_counter()-start,3)}

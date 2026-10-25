@@ -19,7 +19,7 @@ from numba import njit
 from scipy.signal import stft
 from batch_decoder import BatchSession
 from lpx4 import encode, decode
-from q0_model import coefficient_trace, table, clamp, decode_pcm16
+from q0_model import coefficient_trace, table, clamp, decode_pcm16, filter_stability
 from wav_lpc import analyze, load_wav, pack_frames
 from tune_pcm16 import metrics
 
@@ -150,11 +150,8 @@ def encode_segment(pcm, decoder, max_bytes=65535, lambdas=(0., .0002, .001, .005
         co = coefficient_trace(frames, len(pcm))
         # Test the *quantized/interpolated* coefficients used by Q0, not only
         # the stable floating-point analysis filter. No changes to firmware.
-        rows, counts = np.unique(co[::20], axis=0, return_counts=True)
-        radii = [float(np.max(abs(np.roots(np.r_[1., row / 4096])))) for row in rows]
         analysis.update(profile=profile, preQ14=local_pre,
-                        max_interpolated_pole_radius=max(radii),
-                        unstable_subframes=int(sum(c for c, r in zip(counts, radii) if r >= 1.)))
+                        **filter_stability(co))
         analyses.append(analysis)
         if analysis['unstable_subframes']:
             analysis['rejected'] = 'Unstable quantized/interpolated LPC filter'
