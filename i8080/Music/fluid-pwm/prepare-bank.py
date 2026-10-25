@@ -26,21 +26,28 @@ def sha(data):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--captures', type=Path)
+    parser.add_argument('--cpu-hz', type=int, choices=[2000000, 2500000, 3500000], default=3500000)
     parser.add_argument('--check', action='store_true')
     args = parser.parse_args()
+    target_root = ROOT if args.cpu_hz == 3500000 else ROOT/'clocks'/str(args.cpu_hz)
+    if not args.check:
+        target_root.mkdir(parents=True, exist_ok=True)
+    limits = {2000000: [4, 1, 5], 2500000: [5, 2, 6], 3500000: [8, 3, 8]}[args.cpu_hz]
+    specs = [(label, profile, note, limit) for (label, profile, note, _), limit in zip(SPECS, limits)]
 
     def save(name, data):
         if isinstance(data, str):
             data = data.encode('utf-8')
         if args.check:
-            actual = (ROOT/name).read_bytes()
+            actual = (target_root/name).read_bytes()
             if name.endswith('.json'):
                 actual = actual.replace(b'\r\n', b'\n')
             assert actual == data, f'Stale: {name}'
         else:
-            (ROOT/name).write_bytes(data)
+            (target_root/name).write_bytes(data)
 
     if args.captures:
+        assert args.cpu_hz == 3500000, 'Import canonical captures at the default clock first'
         sources = []
         for label, profile, note, harmonics in SPECS:
             folder = args.captures/profile
@@ -69,7 +76,7 @@ def main():
         save('SOURCE.json', json.dumps(provenance, indent=2)+'\n')
     provenance = json.loads((ROOT/'SOURCE.json').read_text())
     banks = []
-    for label, profile, note, harmonics in SPECS:
+    for label, profile, note, harmonics in specs:
         source = next(s for s in provenance['sources'] if s['id'] == label)
         data = (ROOT/source['file']).read_bytes()
         assert sha(data) == source['sha256']
@@ -120,6 +127,10 @@ def main():
             'normalization': 'One peak gain per register across all ages, preserving captured decay; zero is code 8',
             'method': 'Phase-aligned measured complex harmonics, 256 points, explicit harmonic limits then PCM4 quantization; reduced wavetable model, not full SF2 playback',
             'banks': banks}
+    if args.cpu_hz != 3500000:
+        bank['cpu_hz'] = args.cpu_hz
+        bank['synthesis_rate_hz'] = args.cpu_hz/432
+        bank['harmonic_limit_scope'] = 'Before PCM4 quantization; quantization still adds distortion. Limits respect each register maximum score pitch.'
     save('bank.json', json.dumps(bank, indent=2)+'\n')
     print('FluidR3: two piano registers, four piano ages, two guitar ages, 256 samples/wave')
 

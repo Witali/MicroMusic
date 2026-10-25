@@ -5,10 +5,12 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CPU8080 } from '../../Emulator/core8080.mjs';
 import { cReference } from './reference.mjs';
-const read = name => readFileSync(new URL(name, import.meta.url));
 const histogram = values => Object.fromEntries([...values].sort(([a], [b]) => a-b));
 
-export async function auditAll() {
+export async function auditAll(hz = 3500000) {
+  assert.ok([2000000,2500000,3500000].includes(hz));
+  const root = new URL(hz === 3500000 ? './' : `./clocks/${hz}/`, import.meta.url);
+  const read = name => readFileSync(new URL(name, root));
   const bank = JSON.parse(read('bank.json')), { api, compiler, options } = await cReference();
   for (const [id, item] of bank.banks.entries()) for (const [stage, wave] of item.waves.entries())
     for (const [i, q] of wave.entries()) api.set_wave(id, stage, i, q);
@@ -69,12 +71,13 @@ export async function auditAll() {
       exact_c_reference: true, minimum_level: 0, maximum_level: 15, writes: 0, io_writes: 0,
       halted: true, final_inte: cpu.inte, used_bytes: meta.used_bytes, soundfont_sha256: meta.soundfont_sha256 });
   }
-  return { cpu_hz: 3500000, period_t: 108, carrier_hz: 3500000/108, samples_per_wave: 256,
+  return { cpu_hz: hz, period_t: 108, carrier_hz: hz/108, samples_per_wave: 256,
     reference: { compiler: compiler.split(/[\\/]/).at(-1), options, target: 'WASM portable C99 arithmetic, not an 8080 C cross-compile' },
     reports, hardware_tested: false, active_interrupts_supported: false };
 }
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const report = await auditAll();
-  writeFileSync(new URL('AUDIT.json', import.meta.url), JSON.stringify(report, null, 2)+'\n');
+  const at = process.argv.indexOf('--cpu-hz'), hz = at < 0 ? 3500000 : Number(process.argv[at+1]);
+  const report = await auditAll(hz);
+  writeFileSync(new URL((hz === 3500000 ? './' : `./clocks/${hz}/`) + 'AUDIT.json', import.meta.url), JSON.stringify(report, null, 2)+'\n');
   console.log(JSON.stringify(report.reports.map(r => ({ name: r.name, slots: r.pwm_slots, periods: r.slot_durations_t, exact_c: r.exact_c_reference }))));
 }
