@@ -492,8 +492,8 @@ No new hardware checklist item closes;21/30 remain complete.
 
 | Priority | Candidate | Evidence required before keeping it |
 | --- | --- | --- |
-| 1 | Validate the optional bounded-region path in browser audio; then evaluate adaptive instruction budgets near deadlines. Separate inter-block fusion and constant folding are rejected. | Keep full flags, clock-before-commit, external entries and original fallback. Node HQ4 gains1.448x; other firmware/event-heavy gains remain unproven. Require IRQ-active audio/underrun checks before default activation; measure budget changes separately. |
-| 2 | Use the refreshed profile to test fewer repeated event/time conversions in `next_event`, `ratio` and `duration`; equal-rate and bounded-multiply guards are rejected. Broader peripheral activity gating remains open. | Exact integer residues, clock/input/event boundaries and pin/PCM parity; enabled-ADC and CLKI controls. Use balanced identical-runtime controls and uninstrumented paired timings. Inspect the exact optimized WASM for an inlining/layout hypothesis; reduced entries alone do not prove speed. |
+| 1 | Use the refreshed profile to test fewer repeated event/time conversions in `next_event`, `ratio` and `duration`; equal-rate and bounded-multiply guards are rejected. Broader peripheral activity gating remains open. The bounded-region browser audio gate still fails. | Exact integer residues, clock/input/event boundaries and pin/PCM parity; enabled-ADC and CLKI controls. Use balanced identical-runtime controls and uninstrumented paired timings. Inspect exact optimized WASM for an inlining/layout hypothesis; reduced entries alone do not prove speed. Repeat IRQ-active browser audio/underrun checks before default activation. |
+| 2 | Evaluate adaptive bounded-region instruction budgets near deadlines. Separate inter-block fusion and constant folding are rejected. | Keep full flags, clock-before-commit, external entries and original fallback. Node HQ4 gains1.448x, but browser live audio still underruns; other firmware/event-heavy gains remain unproven. Measure budget changes separately from native scheduler changes. |
 | 3 | Validate optional phase-local liveness for default activation when stable performance measurements are available. | The full-context path remains an oracle. Size/parity are established; do not treat noisy median gains as speed evidence. Keep partial execution, reset/faults, SPM and IRQ effects exactly once. |
 | 4 | Extend proven direct WASM regions only where measured coverage justifies it; evaluate region SREG liveness independently. | The bounded cyclic register-local path is implemented. Preserve all observable SREG exits, indirect/external-entry fallback, aliases and visible AVR stack state; require real-firmware gains for extensions. |
 | 5 | Evaluate reachable-code generation, Flash-region replacement and persistent caching separately from execution optimizations. | Correct dynamic targets and code/data handling, complete SPM dependency invalidation, exact cache identities and independent cold-start/compilation measurements. |
@@ -522,7 +522,11 @@ tests and13 parity cases pass. Untimed traces prove activation with active IRQs;
 synthetic direct loop11.265x and internal audio kernel4.210x. Rhythmic/Lumière,
 CLKI and active-ADC gains are unproven. Physical CPU modules grow1.36–1.67%.
 The native runtime/default CPU output are unchanged. The option remains off by
-default; browser audio/underruns remain unverified. Exact sources, controls and
+default. A subsequent browser screen passes12 parity checkpoints (24 more in
+Node replay), but all six10-second audio runs underrun: delivered frames are
+26–37% of the requested stream. This is a failed default-engine gate, not a
+balanced speed comparison or silicon evidence. See the
+[browser record](../reports/bounded-browser-20261025.md). Exact Node sources, controls and
 next budget/admission experiments: [report](../reports/bounded-regions-20261025.md).
 No hardware checklist item closes:21/30 complete, nine open.
 

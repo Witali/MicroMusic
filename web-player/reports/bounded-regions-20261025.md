@@ -129,6 +129,11 @@ result applies only to that event-free loop. This does not establish browser
 speed, cold-start improvement, whole-song throughput or real-time audio without
 underruns. Default engine and optional-feature defaults remain unchanged.
 
+Subsequent checkpoint: the [in-app browser screen](bounded-browser-20261025.md)
+preserves exact package parity, but all six live10-second audio runs underrun.
+The default-engine gate remains open; the present Node timings retain their
+original scope.
+
 ## Reproduce and continue
 
 Exact sources and raw outputs are in [bounded-regions-20261025/](bounded-regions-20261025/).

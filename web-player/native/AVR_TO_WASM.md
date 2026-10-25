@@ -180,8 +180,10 @@ selects a resumable ABI; its loader must configure that physical clock as well.
 
 Measured Node22/V8 results: HQ4 physical execution1.45x; a synthetic direct
 loop11.27x; no established speed gain for rhythmic/Lumière, CLKI or active ADC.
-Physical firmware CPU modules grow1.36–1.67%. Browser real-time audio and
-underruns have not been validated for this option. See the
+Physical firmware CPU modules grow1.36–1.67%. The subsequent
+[browser screen](../reports/bounded-browser-20261025.md) preserves exact parity
+but has underruns on all three physical firmware packages, including this
+option. Real-time acceptance and default activation remain open. See the
 [conditions, exact sources and evidence](../reports/bounded-regions-20261025.md).
 
 This optional path keeps SREG exact at every observable boundary. Register-only
