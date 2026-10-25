@@ -1,0 +1,245 @@
+{
+  "cpu_hz": 3500000,
+  "period_t": 109,
+  "carrier_hz": 32110.091743119265,
+  "sample_rate_hz": 16055.045871559632,
+  "samples": 45488,
+  "pulses": 90976,
+  "exact_c_reference_widths": true,
+  "width_sha256": "b62145c406c987f9c859292266d8cb8726d158ab4089af7522847b70b50225d8",
+  "reference": {
+    "compiler": "clang.exe",
+    "options": [
+      "--target=wasm32-unknown-unknown",
+      "-std=c99",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-nostdlib",
+      "-Wl,--no-entry"
+    ],
+    "target": "WASM; portable C99 arithmetic, not an 8080 cross-compile"
+  },
+  "result": {
+    "sha256": "570c019a7ce0fdd2897dadce67b5fa4967b339748ea39b0914648d14b4cf0d2f",
+    "instructions": 3763743,
+    "t_states": 19700539,
+    "pc": 7279,
+    "sp": 0,
+    "halted": true,
+    "writes": 0,
+    "xchg": 25,
+    "ramp_start_t": 8034416,
+    "voice_start_t": 9784074,
+    "ramp": {
+      "duration_t": 1749658,
+      "pulses": 10244,
+      "periods_t": {
+        "160": 10206,
+        "182": 23,
+        "199": 14
+      },
+      "stage_durations_t": [
+        109523,
+        109523,
+        109501,
+        109523,
+        108861,
+        109523,
+        108861,
+        109523,
+        109501,
+        109523,
+        108861,
+        109523,
+        108861,
+        109523,
+        109501,
+        109523
+      ]
+    },
+    "voice": {
+      "duration_t": 9916465,
+      "widths_t": {
+        "4": 236,
+        "8": 360,
+        "12": 706,
+        "16": 1186,
+        "20": 2168,
+        "24": 3402,
+        "28": 5142,
+        "32": 10682,
+        "36": 44418,
+        "40": 9910,
+        "44": 5002,
+        "48": 2872,
+        "52": 1886,
+        "56": 1234,
+        "60": 766,
+        "64": 1006
+      },
+      "periods_t": {
+        "109": 90975
+      },
+      "mean_period_t": 109,
+      "pcm_samples": 45488,
+      "pulses": 90976,
+      "exact_c_reference_widths": true
+    },
+    "tones": [
+      {
+        "count": 90,
+        "widths_t": {
+          "1586": 90
+        },
+        "periods_t": {
+          "3187": 89
+        }
+      },
+      {
+        "count": 8,
+        "widths_t": {
+          "1586": 8
+        },
+        "periods_t": {
+          "3187": 7
+        }
+      },
+      {
+        "count": 8,
+        "widths_t": {
+          "1586": 8
+        },
+        "periods_t": {
+          "3187": 7
+        }
+      },
+      {
+        "count": 8,
+        "widths_t": {
+          "1586": 8
+        },
+        "periods_t": {
+          "3187": 7
+        }
+      },
+      {
+        "count": 8,
+        "widths_t": {
+          "1586": 8
+        },
+        "periods_t": {
+          "3187": 7
+        }
+      },
+      {
+        "count": 8,
+        "widths_t": {
+          "1586": 8
+        },
+        "periods_t": {
+          "3187": 7
+        }
+      },
+      {
+        "count": 8,
+        "widths_t": {
+          "1586": 8
+        },
+        "periods_t": {
+          "3187": 7
+        }
+      },
+      {
+        "count": 8,
+        "widths_t": {
+          "1586": 8
+        },
+        "periods_t": {
+          "3187": 7
+        }
+      },
+      {
+        "count": 8,
+        "widths_t": {
+          "1586": 8
+        },
+        "periods_t": {
+          "3187": 7
+        }
+      },
+      {
+        "count": 90,
+        "widths_t": {
+          "1586": 90
+        },
+        "periods_t": {
+          "3187": 89
+        }
+      },
+      {
+        "count": 90,
+        "widths_t": {
+          "1586": 90
+        },
+        "periods_t": {
+          "3187": 89
+        }
+      },
+      {
+        "count": 90,
+        "widths_t": {
+          "1586": 90
+        },
+        "periods_t": {
+          "3187": 89
+        }
+      }
+    ]
+  },
+  "corruption_tests": [
+    {
+      "bank": 0,
+      "address": 2304,
+      "detected_before_voice": true
+    },
+    {
+      "bank": 1,
+      "address": 6400,
+      "detected_before_voice": true
+    },
+    {
+      "bank": 2,
+      "address": 10496,
+      "detected_before_voice": true
+    },
+    {
+      "bank": 3,
+      "address": 14592,
+      "detected_before_voice": true
+    },
+    {
+      "bank": 4,
+      "address": 18688,
+      "detected_before_voice": true
+    },
+    {
+      "bank": 5,
+      "address": 22784,
+      "detected_before_voice": true
+    },
+    {
+      "bank": 6,
+      "address": 26880,
+      "detected_before_voice": true
+    },
+    {
+      "bank": 7,
+      "address": 30976,
+      "detected_before_voice": true
+    }
+  ],
+  "hardware_tested": false,
+  "active_interrupts_supported": false
+}
