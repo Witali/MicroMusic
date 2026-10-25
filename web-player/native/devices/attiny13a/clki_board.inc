@@ -3,6 +3,7 @@
 static void gpio_external(void) {
  uint8_t mask=board.external_mask,levels=board.external_levels;
  if(board.clki_enabled){mask|=8;levels=(uint8_t)((levels&~8)|(attiny13a_clki_level(&board.clki_input)<<3));}
+ else board.gpio_settled=0;
  system_gpio_external(&board.gpio,mask,levels,board.half);
 }
 int device_configure_clki(uint32_t field,uint32_t value) {

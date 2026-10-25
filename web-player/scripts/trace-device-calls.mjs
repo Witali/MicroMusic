@@ -15,7 +15,7 @@ import {AT13_MASK as MASK} from '../lib/attiny13a-registers.js';
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const {values}=parseArgs({options:{'out-dir':{type:'string',default:'build/traces/current'},emsdk:{type:'string'},
   'physical-firmware':{type:'boolean',default:false},'eager-collector':{type:'boolean',default:false},
-  'full-publication':{type:'boolean',default:false}}});
+  'full-publication':{type:'boolean',default:false},'gpio-full-dispatch':{type:'boolean',default:false}}});
 const out=resolve(root,values['out-dir']),native=join(out,'native');mkdirSync(out,{recursive:true});
 const sha=b=>createHash('sha256').update(b).digest('hex');
 const source=p=>readFileSync(resolve(root,p),'utf8').replaceAll('\r\n','\n');
@@ -36,7 +36,7 @@ const selected={
   'peripherals/analog_adc.c':['analog_adc_advance','analog_adc_input','analog_adc_sources','analog_adc_next_event'],
   'peripherals/analog_comparator.c':['analog_comparator_advance','analog_comparator_input','analog_comparator_next_event'],
   'peripherals/timer0.c':['timer0_advance','timer0_next_event'],
-  'peripherals/system_gpio.c':['system_gpio_external','system_gpio_clock','system_gpio_advance','system_gpio_next_event_half'],
+  'peripherals/system_gpio.c':['system_gpio_external','system_gpio_clock','system_gpio_advance','system_gpio_settled','system_gpio_next_event_half'],
   'peripherals/system_sleep.c':['system_sleep_advance','system_sleep_clock_edge','system_sleep_domains'],
   'peripherals/nvm.c':['nvm_advance','nvm_next_event_cycle','nvm_next_event_ns'],
   'peripherals/system_watchdog.c':['system_watchdog_advance','system_watchdog_until_timeout'],
@@ -113,7 +113,8 @@ for(let parent=root;!sdk;parent=dirname(parent)){
 assert.ok(sdk,'Prepared SDK required');sdk=resolve(sdk);
 const compiler=join(sdk,'upstream/bin',process.platform==='win32'?'clang.exe':'clang');
 const target=join(out,'runtime-counted.wasm');
-const args=[...manifest.flags.map(flag=>flag.replaceAll('<emsdk>',sdk)),'-include',diagHeader,
+const args=[...manifest.flags.map(flag=>flag.replaceAll('<emsdk>',sdk)),
+  ...(values['gpio-full-dispatch']?['-DDEVICE_GPIO_IDLE_CACHE=0']:[]),'-include',diagHeader,
   '-I',resolve(root,'web-player/native'),
   ...manifest.sources.map(path=>join(native,path.replace('web-player/native/',''))),diagSource,
   '-Wl,--export=mm_trace_clear','-Wl,--export=mm_trace_count','-Wl,--export=mm_trace_buffer','-Wl,--export=mm_trace_size',
@@ -166,8 +167,8 @@ function capture(c,entry){
 }
 const stringify=v=>JSON.stringify(v,(_,v)=>typeof v==='bigint'?v.toString():v,2)+'\n';
 const report={schema:'micromusic-native-call-trace-v1',createdAt:new Date().toISOString(),
-  policy:{physicalFirmware:values['physical-firmware'],eagerCollector:values['eager-collector'],fullPublication:values['full-publication'],
-    description:'Optional eager collector forces only the copied public PCM pressure query true; ordinary scheduling/CPU semantics stay unchanged. Counters never establish production elapsed time.'},
+  policy:{physicalFirmware:values['physical-firmware'],eagerCollector:values['eager-collector'],fullPublication:values['full-publication'],gpioFullDispatch:values['gpio-full-dispatch'],
+    description:'Optional eager collection forces the copied PCM pressure query true. GPIO full dispatch defines DEVICE_GPIO_IDLE_CACHE=0 only for the counted build; production remains the correctness reference. Counters never establish production elapsed time.'},
   git:{head:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim()},
   productionRuntimeSha256:sha(production),countedRuntimeSha256:sha(countedBytes),
   sourceSha256NormalizedLF:{...Object.fromEntries(Object.keys(manifest.inputs).map(p=>[p,sha(source(p))])),

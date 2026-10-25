@@ -15,6 +15,10 @@
 #include "../devices/attiny13a/clki_periodic.h"
 #include <stddef.h>
 
+#ifndef DEVICE_GPIO_IDLE_CACHE
+#define DEVICE_GPIO_IDLE_CACHE 1
+#endif
+
 enum { PIN_CAPACITY=1024, INPUT_CAPACITY=128, CLKI_CAPACITY=512,
  CLKPR=AT13_IO_CLKPR, OSCCAL=AT13_IO_OSCCAL, BODCR=AT13_IO_BODCR };
 typedef struct {
@@ -46,6 +50,9 @@ typedef struct {
  uint8_t power_enabled, reset_preapplied, raw_other_reset;
  uint32_t power_config[10];
  int32_t vcc_uv;
+ /* A certificate for internal-clock GPIO only. Dependency writers clear it;
+  * low-level GPIO callers retain the original uncached API and state. */
+ uint8_t gpio_settled;
  uint64_t wdt_reset_end;
  struct { uint64_t base, at; uint8_t valid; } deadline;
  power_reset_t power;
@@ -349,6 +356,7 @@ static void pin_voltages(void) {
 static void timer_outputs(void) {
  if (board.gpio.override_mask!=board.timer.overrides ||
      board.gpio.override_levels!=board.timer.levels) {
+  board.gpio_settled=0;
   system_gpio_timer_outputs(&board.gpio,board.timer.overrides,board.timer.levels,board.half);
   capture_pins(); pin_voltages();
  }
@@ -395,6 +403,7 @@ static void clock_domains(void) {
  if (!analog_comparator_sleep(&board.analog.comparator,
        system_sleep_input_clamp(&board.sleep)||(board.prr&1)||resetting,
        board.half)) fail(DEVICE_FAULT_ANALOG,5);
+ board.gpio_settled=0;
  system_gpio_sleep(&board.gpio,io,system_sleep_input_clamp(&board.sleep),board.half);
  board.domains=domains;
  capture_pins(); pin_voltages();
@@ -488,7 +497,13 @@ static void service_clocks(uint64_t previous_half) {
    uint8_t edge=system_gpio_clock(&board.gpio,board.clki_edge==2,board.half);
    if(edge){t0[0]=(system_gpio_t0_event_t){board.half,edge};edges=1;}
   }
- }else edges=system_gpio_advance(&board.gpio,previous_half,board.half,t0);
+ }else if(DEVICE_GPIO_IDLE_CACHE && board.gpio_settled && board.half>=previous_half) {
+  /* The settled pipeline has no flag/T0 effects. Preserve zero-delta and
+   * gated-clock phase; otherwise publish the same final latch-clock level. */
+  if(board.gpio.io_running && board.half!=previous_half)board.gpio.clock_high=!(board.half&1);
+ }else {
+  edges=system_gpio_advance(&board.gpio,previous_half,board.half,t0);
+ }
  if (edges==255) { fail(DEVICE_FAULT_TIME,3); return; }
  if (!analog_advance(&board.analog,board.half)) fail(DEVICE_FAULT_ANALOG,9);
  int error=timer0_advance(&board.timer,cpu_cycle());
@@ -570,7 +585,14 @@ static uint64_t next_event_scan(void) {
   next=minimum(next,power_reset_next_deadline(&board.power));
   if(board.wdt_reset_end) next=minimum(next,board.wdt_reset_end);
  }
- next=minimum(next,at_half(system_gpio_next_event_half(&board.gpio,board.half)));
+ if(!DEVICE_GPIO_IDLE_CACHE || board.clki_enabled || !board.gpio_settled) {
+  uint64_t gpio_next=system_gpio_next_event_half(&board.gpio,board.half);
+  /* Reuse the query's proof instead of adding a predicate after each advance.
+   * A gated clock or exhausted time can also return NEVER without settling. */
+  if(DEVICE_GPIO_IDLE_CACHE && !board.clki_enabled && board.gpio.io_running &&
+     board.half!=UINT64_MAX && gpio_next==UINT64_MAX)board.gpio_settled=1;
+  next=minimum(next,at_half(gpio_next));
+ }
  next=minimum(next,at_half(analog_next_event(&board.analog)));
  if(nvm_running)next=minimum(next,at_cycle(nvm_next_event_cycle(&board.nvm)));
  if (board.bod_arm_until) next=minimum(next,at_cycle(board.bod_arm_until));
@@ -828,6 +850,7 @@ static void reset_state(uint8_t sources_mask) {
  board.oscillator_hz=board.physical && (source==1 || source==2) ?
   board.calibration[board.data[32+OSCCAL]] : board.config[DEVICE_CFG_OSCILLATOR_HZ];
  timer0_init(&board.timer,NULL,0,cpu_cycle());
+ board.gpio_settled=0;
  system_gpio_reset(&board.gpio,board.config[DEVICE_CFG_FUSE_HIGH]&1);
  if(board.clki_enabled)board.gpio.clock_high=board.clki_clock.output_level;
  gpio_external();
@@ -907,6 +930,7 @@ uint32_t device_write(uint8_t io, uint8_t value, uint8_t mask) {
   if (error) fail(DEVICE_FAULT_TIMER,(uint32_t)error);
   clock_domains();
  } else if (system_gpio_write_masked(&board.gpio,io,value,mask,board.half)) {
+  board.gpio_settled=0;
   if(board.clki_enabled&&(board.gpio.ddrb&8))fail(DEVICE_FAULT_CLKI,1);
   capture_pins(); pin_voltages();
  } else if (nvm_owns_io(io)) {
