@@ -1943,3 +1943,7 @@ MUL не нужно. Однако адреса `voice[i]` действитель
 ## UM88: smaller control decoding
 
 [Shared voice addresses and decoder cursors](um88-control-size.md): lossless C address/stack work, exact compact-pair offsets, portable layout fallback, and measured size/timing results.
+
+## UM88: output channels selected at build time
+
+[Compile only mono or stereo](um88-configured-channels.md): conditional ABI and PWM code, tight music placement, fixed FIFO stride, and a test-only proof that mono never writes the inactive compare register.

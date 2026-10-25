@@ -2,24 +2,33 @@
   "cases": 16992,
   "exhaustiveGroupGainCases": 16384,
   "cacheCases": 34816,
-  "irqCases": 576,
+  "irqCases": 384,
+  "configuredChannels": 1,
+  "renderABI": "mono-s16",
+  "irqChannelsTested": [
+    1
+  ],
   "exactMonoIRQ": true,
-  "exactStereoIRQ": true,
+  "exactStereoIRQ": null,
   "exactPhases": true,
   "exactMonoMix": true,
-  "exactStereoMix": true,
+  "exactStereoMix": null,
   "exactCachedWaves": true,
   "abiPreserved": true,
   "backends": [
     {
       "backend": "c",
+      "configuredChannels": 1,
+      "renderABI": "mono-s16",
       "bufferBytes": 192,
-      "engineSha256": "86932edc07ca0f6bd4ffbde5730258ce43c453fb7e1999020f8e663a0a4c85c2"
+      "engineSha256": "abb0668e0fa6c069af30d17bc5ae54336e5894fc2de63a20836b071a41c82e07"
     },
     {
       "backend": "avr-asm",
+      "configuredChannels": 1,
+      "renderABI": "mono-s16",
       "bufferBytes": 192,
-      "engineSha256": "2482aff56c8a992cca31d93f40f97e83e5039089a9423deed5bab61c598869be"
+      "engineSha256": "0da19c4bedcbe047f5dc9119a1b120611f519069547f87089646d218a7c6551f"
     }
   ]
 }
