@@ -15,6 +15,20 @@ uint64_t r(void) { return remainder; }
 `);
 const U64=(1n<<64n)-1n,unsigned=n=>BigInt.asUintN(64,n);
 
+test('clock products around32-bit bounds and64-bit addition wrap match a BigInt oracle',()=>{
+  const c=create(),U32=(1n<<32n)-1n;
+  const values=[0n,1n,U32-1n,U32,U32+1n,U64];
+  for(const a of values)for(const b of values){
+    const product=a*b,room=U64-(product&U64);
+    for(const carry of [0n,room,room<U64?room+1n:U64,U64])
+      for(const divisor of [0n,1n,2n,U32,1000000000000n,U64]){
+        const n=product+carry,q=divisor?n/divisor:U64+1n;
+        assert.equal(c.ratio(a,b,carry,divisor),Number(divisor>0n&&q<=U64));
+        if(divisor&&q<=U64){assert.equal(unsigned(c.q()),q);assert.equal(unsigned(c.r()),n%divisor);}
+      }
+  }
+});
+
 test('equal clock rates retain full-width counters, proper and improper carries, and input validation',()=>{
   const c=create();
   for(const rate of [1n,2n,19200000n,1000000000000n,U64-1n,U64])
