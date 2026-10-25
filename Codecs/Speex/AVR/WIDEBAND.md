@@ -55,8 +55,8 @@ Run from the worktree root with Python, Clang, AVR GCC and Node on PATH:
 
 ```sh
 python Codecs/Speex/AVR/tools/build_wb.py --cc clang --reference
-python Codecs/Speex/AVR/tools/build_wb.py --avr-gcc avr-gcc --backend asm --out Codecs/Speex/AVR/build/lsp-quarter-wb-asm
-python Codecs/Speex/AVR/tools/build_wb.py --avr-gcc avr-gcc --backend c --out Codecs/Speex/AVR/build/lsp-quarter-wb-c
+python Codecs/Speex/AVR/tools/build_wb.py --avr-gcc avr-gcc --backend asm --out Codecs/Speex/AVR/build/subframe-wb-asm
+python Codecs/Speex/AVR/tools/build_wb.py --avr-gcc avr-gcc --backend c --out Codecs/Speex/AVR/build/subframe-wb-c
 python Codecs/Speex/AVR/tools/build_wb.py --export-c Codecs/Speex/AVR/build/wb-library
 ```
 
@@ -72,17 +72,17 @@ on ATmega328P**. Use ASM for this MCU's WB playback. Other MCU timing requires
 its own admission test. The exported C11 manifest and CMake static library
 include both public APIs; the compatible CMake target remains `speex_nb3`.
 
-The optimized AVR ASM decoder uses 17,776 B Flash and 1,299 B static SRAM in
+The optimized AVR ASM decoder uses 17,314 B Flash and 1,299 B static SRAM in
 the mailbox harness. On the same 10,563 frames:
 
-| Decoder-only measurement | Initial WB | Fused WB/QMF | Third IIR cache | Current NB LSP |
-| --- | ---: | ---: | ---: | ---: |
-| Mean cycles/frame | 279,128 | 265,805 | 264,889 | 261,068 |
-| Maximum observed cycles/frame | 285,596 | 273,528 | 272,612 | 268,595 |
-| Maximum observed time at 16 MHz | 17.850 ms | 17.096 ms | 17.038 ms | 16.787 ms |
-| Peak stack | 401 B | 257 B | 257 B | 243 B |
-| Free SRAM at peak | 349 B | 492 B | 492 B | 506 B |
-| Flash | 17,504 B | 17,616 B | 17,620 B | 17,776 B |
+| Decoder-only measurement | Initial WB | Fused WB/QMF | Third IIR cache | NB LSP | Current packet map |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Mean cycles/frame | 279,128 | 265,805 | 264,889 | 261,068 | 259,073 |
+| Maximum observed cycles/frame | 285,596 | 273,528 | 272,612 | 268,595 | 266,781 |
+| Maximum observed time at 16 MHz | 17.850 ms | 17.096 ms | 17.038 ms | 16.787 ms | 16.674 ms |
+| Peak stack | 401 B | 257 B | 257 B | 243 B | 220 B |
+| Free SRAM at peak | 349 B | 492 B | 492 B | 506 B | 529 B |
+| Flash | 17,504 B | 17,616 B | 17,620 B | 17,776 B | 17,314 B |
 
 The shared NB/HB IIR now caches a third LPC word in a dead base-pointer pair.
 Fixed pointer rewinds save another 916 cycles/frame without changing PCM,
@@ -91,12 +91,19 @@ stage saved 1.48% mean cycles. That IIR stage left the C decoder unchanged.
 Decoder-only timing excludes output/interrupts and does not establish
 continuous playback.
 
-The current shared NB interpolation computes one quarter-frame delta and
+The preceding shared NB interpolation computes one quarter-frame delta and
 accumulates raw LSP state while enforcing the original sequential margin only
 on its output. This outlined C helper is used by both backends. The ASM WB
 mean falls another 3,820.477 cycles/frame; stack drops 14 B and Flash grows
 156 B. NB cache/reset behavior and compact WB PCM remain exact. HB interpolation
 and QMF arithmetic are unchanged. See `reports/lsp-quarter-wb-*.json`.
+
+The current packet map combines the NB header/indices into one bounded C
+reader. WB reuses dead interpolated-angle scratch for its synchronous indices
+instead of a stack-local SpeexBits cursor and four-byte array. It saves another
+1,995.048 mean cycles/frame and 23 B observed stack in ASM; Flash falls 462 B.
+Both backends preserve compact-profile PCM, and all current PWM images are
+fresh simulations. The reader uses C regardless of the arithmetic backend.
 
 The QMF computes two input pairs together, sharing seven history records among
 four accumulators. Its oldest required record is captured before insertion
@@ -118,7 +125,7 @@ still clamps to -32767. Both optimized kernels retain selectable C paths.
 
 The decoder state structures/arena total 1,268 B on AVR (716 B NB state, 60 B scratch,
 492 B WB state). The full PWM player uses 1,429 B static SRAM and reaches
-252 B stack, leaving **367 B free**. A Russian 404-frame demo uses 28,162 B
+229 B stack, leaving **390 B free**. A Russian 404-frame demo uses 27,700 B
 Flash, including 10,100 B of compressed audio.
 
 ## Reproduce validation
@@ -129,8 +136,8 @@ decoder/reference above, then run:
 
 ```sh
 python Codecs/Speex/AVR/tests/prepare_wb.py
-node Codecs/Speex/AVR/tests/verify_wb.mjs --backend asm --firmware Codecs/Speex/AVR/build/lsp-quarter-wb-asm
-node Codecs/Speex/AVR/tests/verify_wb.mjs --backend c --firmware Codecs/Speex/AVR/build/lsp-quarter-wb-c
+node Codecs/Speex/AVR/tests/verify_wb.mjs --backend asm --firmware Codecs/Speex/AVR/build/subframe-wb-asm
+node Codecs/Speex/AVR/tests/verify_wb.mjs --backend c --firmware Codecs/Speex/AVR/build/subframe-wb-c
 python Codecs/Speex/AVR/tests/verify_wb_repeats.py
 python Codecs/Speex/AVR/tools/build_wb.py --avr-gcc avr-gcc --backend asm --kernels --out Codecs/Speex/AVR/build/wb-kernels
 node Codecs/Speex/AVR/tests/verify_wb_kernels.mjs
@@ -159,10 +166,23 @@ boundaries. Fused excitation adds 5,760 blocks / 230,400 samples per backend,
 all codebook indices, 12 scale boundaries and 15 gains including signed32
 extrema. At that WB fusion stage the C image used 19,326 B Flash (previously 19,002 B),
 with mean time 699,537 -> 666,616 cycles/frame (4.71% less) and maximum
-711,178 -> 678,242. The current NB-LSP stage further reduces C Flash to
+711,178 -> 678,242. The preceding NB-LSP stage further reduces C Flash to
 18,600 B and mean/max cycles to 654,259 / 665,226, with 501 B peak stack and
-248 B free SRAM in the mailbox. It still exceeds the real-time deadline; these timings
+248 B free SRAM in the mailbox. The packet-map stage further reduces C Flash
+to 18,188 B and mean/max cycles to 652,574 / 663,347. Its conservative raw-SP
+stack bound is 246 B, leaving at least 503 B free in this harness.
+It still exceeds the real-time deadline; these timings
 do not establish performance on another architecture.
+
+Stack figures come from the lowest observed SP and can include a transient
+value between the high/low SP byte writes. A supplemental 136-frame probe
+of the preceding C binary reports raw 501 B versus 277 B after completed SP
+writes; the current binary reports 246 B by both methods. This sampled
+diagnostic does not establish a 255-byte physical stack reduction. ASM is
+243 -> 220 B by both methods on that sample. `tests/probe_wb_stack.py` derives
+SPL/SPH addresses from the configured `avr/io.h`, checks no stack instruction
+occurs between paired writes, and retains header hashes. See
+`reports/subframe-stack-probe.json`; the full IRQ admission remains separate.
 
 The complete 16-kHz PWM player is `src/wb_player.c`, using OC1A/PB1/D9 at
 62.5 kHz carrier, Timer2 CTC (`OCR2A=124`, prescaler 8), a 128-byte output
@@ -170,8 +190,8 @@ ring and 80-sample callbacks. Build a demo or run all retained speech:
 
 ```sh
 python Codecs/Speex/AVR/tools/build_wb.py --avr-gcc avr-gcc --backend asm --stream Codecs/Speex/AVR/build/wb-corpus/streams/ru_pushkin_a.spxraw --out Codecs/Speex/AVR/build/wb-demo
-python Codecs/Speex/AVR/tests/verify_wb_players.py --avr-gcc avr-gcc --node node --out Codecs/Speex/AVR/build/lsp-quarter-wb-normal
-python Codecs/Speex/AVR/tests/verify_wb_players.py --avr-gcc avr-gcc --node node --out Codecs/Speex/AVR/build/lsp-quarter-wb-load5 --filter "^(ru_pushkin_a|en_letter_a)$" --frame-load-cycles 16000
+python Codecs/Speex/AVR/tests/verify_wb_players.py --avr-gcc avr-gcc --node node --out Codecs/Speex/AVR/build/subframe-wb-normal
+python Codecs/Speex/AVR/tests/verify_wb_players.py --avr-gcc avr-gcc --node node --out Codecs/Speex/AVR/build/subframe-wb-load5 --filter "^(ru_pushkin_a|en_letter_a)$" --frame-load-cycles 16000
 ```
 
 The simulator uses `tests/avr_tick.mjs` for the AVR interrupt-enable delay and
@@ -179,19 +199,19 @@ four-cycle interrupt entry. Clock events continue while an IRQ is deferred.
 A physical ATmega328P board and analog output have not been measured.
 
 All 16 speech recordings pass the complete player: **6,467 frames /
-2,069,440 samples, zero underruns**, minimum queue 26 samples (previously 24). Two additional
+2,069,440 samples, zero underruns**, minimum queue 27 samples (previously 26). Two additional
 Russian/English runs reserve 16,000 extra CPU cycles/frame (5%): 808 frames,
-zero underruns, minimum queue 10. This extra-load result applies to those
+zero underruns, minimum queue 12. This extra-load result applies to those
 two streams, not to arbitrary application workloads. See
 `reports/wb2-{asm,c,kernels,pwm,pwm-load5,admission-audit}.json`.
-The latest evidence is `reports/lsp-quarter-wb-*.json` and
-`reports/lsp-quarter-admission.json`: all 16 ordinary WB PWM streams and both
+The latest evidence is `reports/subframe-wb-*.json` and
+`reports/subframe-admission.json`: all 16 ordinary WB PWM streams and both
 loaded streams are fresh simulations, preserving exact PWM. The C and ASM
 decoder results each cover all 10,563 corpus frames plus 744 repeat cases.
-The older `iir-cache3-*` and `wb2-*` reports retain the previous shared-IIR
+The older `lsp-quarter-*`, `iir-cache3-*` and `wb2-*` reports retain the previous NB-LSP, shared-IIR
 and fused-WB/QMF measurements.
 The earlier `wb1-*` reports retain the previous measurements. The audit
-(`tests/audit_lsp_quarters.py --rebuild --avr-gcc avr-gcc`) verifies frozen source
+(`tests/audit_subframes.py --rebuild --avr-gcc avr-gcc`) verifies frozen source
 hashes, inputs/PCM/PWM and freshly rebuilt images against the executed binaries.
 
 ## Listening comparison

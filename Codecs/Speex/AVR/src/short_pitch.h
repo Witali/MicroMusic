@@ -27,8 +27,14 @@ static SPEEX_NB3_HOT SPEEX_NB3_NOINLINE
 static SPEEX_NB3_STAGE_O2
 #endif
 void speex_nb3_short_innovation(int16_t *out,const int16_t *exc,uint8_t pitch,
-                               SpeexBits *bits,int32_t scale,unsigned index)
+                               const uint8_t *input_indices,int32_t scale,unsigned index)
 {
+#if SPEEX_NB3_USE_AVR_ASM
+    const uint8_t *indices=input_indices;
+#else
+    uint8_t indices[4];
+    for(unsigned k=0;k<4;k++)indices[k]=input_indices[k];
+#endif
     int8_t gains[3];
 #if SPEEX_NB3_USE_AVR_ASM
     int16_t edge[3];
@@ -37,8 +43,6 @@ void speex_nb3_short_innovation(int16_t *out,const int16_t *exc,uint8_t pitch,
 #endif
     const uint8_t first=pitch-1,second=2*pitch-1;
     uint8_t vector,j=0;
-    uint8_t indices[4];
-    speex_nb3_unpack_indices(bits,indices);
     gains[0]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index+2));
     gains[1]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index+1));
     gains[2]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index));
