@@ -1224,23 +1224,95 @@ units use `build_lsp_stage_test.py --out` and `verify_lsp_stage.mjs --firmware`;
 geometry and overlap units retain their existing builders/drivers. Run the
 preceding source-bound paired-output audit at 41a89eb1.
 
+## Two-root ASM constructor (2026-10-25)
+
+The primary ATmega328P ASM path replaces the C first-stage constructor with
+`src/lsp_first.S`. It writes only p1 and p2, from full signed16 roots a/b:
+`p1=-(a+b)*64`, `p2=2^21+ceil(a*b/256)`. The root sum needs signed17 and its
+negation needs signed18 at a=b=-32768. High-byte ADC sets S=N xor V; that
+flag identifies the true signed17 sum sign even when its low16 result
+overflows. LDI preserves S; balanced BRGE/CLR paths construct the complement
+of the sign-extension byte. Keep that extra byte through negation, align by
+one byte, then shift right twice for p1. A four-MUL signed product retains
+all bits through the original 0x200000ff bias before dropping a byte for p2.
+
+This GNU-ABI AVR5 entry uses only caller-clobbered registers, no input-data loads,
+eight output stores, no own stack, IO or interrupt masking. Tests observe
+66 cycles including RET, excluding CALL, for negative/zero/positive sums.
+`nb3_lsp_first.h` always provides explicit C and selects ASM only through
+the existing real architecture plus separate enable contract. Portable C
+uses the exact byte-aligned expression; no AVR-only C type enters the export.
+
+Nine candidates retain original C, a six-shift expression, byte alignment,
+experimental AVR int24, explicit wide ASM sign extension and S-flag ASM.
+All pass 1,058 exact/reset screening frames. The wide ASM screen averages
+90,938.754 cycles versus 90,919.970 for S-flag ASM, at 11,008 versus 10,998 B.
+The chosen C byte-aligned expression averages 190,541.168 versus 190,679.980
+for original C. Both cleaned production NB images replay byte-identically
+from 00e94768. See `reports/first-candidates.json` and
+`tools/prepare_lsp_first_candidate.py`; do not infer whole-corpus timings
+from the smaller screening fixture.
+
+| Full 31-stream NB corpus | Before (00e94768) | After |
+| --- | ---: | ---: |
+| ASM weighted mean cycles | 103,094.832 | 102,578.762 (-0.5006%) |
+| ASM maximum cycles | 110,486 | 109,902 |
+| ASM Flash / static SRAM / stack | 11,084 / 1,099 / 103 B | 10,998 / 1,099 / 103 B |
+| C weighted mean cycles | 217,506.241 | 217,244.820 (-0.1202%) |
+| C maximum cycles | 229,504 | 229,208 |
+| C Flash / static SRAM / stack | 11,534 / 1,099 / 105 B | 11,562 / 1,099 / 105 B |
+
+Every ASM stream mean improves; no NB extrema increase. C stream means and
+extrema never increase (a rounded stream mean is unchanged). No universal
+per-frame improvement is claimed. Free SRAM remains 846/844 B bare and
+703/700 B in NB PWM. WB ASM mean/max fall from 251,129.434 / 258,409 to
+250,030.239 / 257,241; Flash becomes 17,496 B,
+with unchanged 1,279 B static / 178 B stack. C WB mean/max become
+648,243.502 / 658,806; it remains slower than real time.
+
+Independent native signed64 equations check 1,376,255 pairs / 2,752,510
+output words per path. Each AVR backend checks 1,380,351 pairs / 2,760,702
+words per path, including 4,096 pointer-placement cases. They cover all
+65,536 left roots at sixteen right roots, all 131,071 signed17 sums and
+all 131,072 high-byte/carry partitions, random pairs and guards. ASM traces
+check S at every branch, exactly 11,042,808 stores, no input-data loads/PUSH/POP,
+no changes outside p1/p2 and all callee-saved/r1 registers at external RET.
+SREG's address comes from pinned avr/io.h/device headers; no register address
+is duplicated. Data-access counts exclude implicit RET stack traffic. The
+previous Q14 and stage sources remain unchanged.
+
+Fresh broader original-Xiph geometry, overlapping outputs, native primitives,
+portable C archives and both complete AVR backends pass. Each NB backend
+matches 14,278 exact/reset frames; WB matches 10,563 plus 744 repeat frames
+against the compact-profile oracle. Instrumented native scratch remains
+40 B over all 9,100 frames. Quality changes are zero at s16 PCM in these
+respective reference contracts; this does not restore full-Xiph QMF to WB.
+
+All 142 freshly frozen player images pass with timers/IRQ active: four full
+31-stream NB matrices (normal and +40% ASM / +10% C CPU), sixteen natural WB
+streams, and two +5% WB speech streams. PWM u8 matches reference PCM and
+underruns remain zero. NB queues are 74/35 ASM and 66/55 C; WB 30/15.
+These are AVR8js ISA/peripheral measurements, not a physical-board test.
+GCC 7.3.0 uses mixed Os/O2/O3, LTO, mcall-prologues and mrelax on ATmega328P
+at 16 MHz. `reports/first-admission.json` binds sources, images, outputs and
+representative rebuilds. It consumes `build/first-*` outputs; use the standard
+verifiers at those paths, the new direct constructor builder/driver, then
+`tests/audit_lsp_first.py --rebuild --avr-gcc avr-gcc`. Run the preceding
+polynomial-stage source-bound audit at 00e94768.
+
 ## Next candidates (not yet measured/admitted)
 
 The previously listed C40 long-pitch entry shipped in commit 9813583 and is
 no longer an outstanding candidate.
 
-1. **Optimize the first two-root constructor in ASM.** Its signed17 root
-   sum times 64 and exact rounded product may avoid the C wide-shift/saved-
-   register overhead. Preserve the full signed16-root contract, an explicit
-   C fallback and original-Xiph overlap/quality tests. No gain is admitted.
-
-2. **Defer redundant r1 clears inside the private stage body.** General Q14
+1. **Defer redundant r1 clears inside the private stage body.** General Q14
    products do not need r1 zero between successive products; the final aligned
    p1 product must clear it before adding p0 and before the external RET.
+   The later epilogue clear may also be redundant after that final clear.
    Verify all intervening instructions, IRQ behavior and unchanged GNU-ABI
    value kernels before measuring; the current implementation still clears it.
 
-3. **Inspect call/control and section layout.** Measure shared NB LPC-copy
+2. **Inspect call/control and section layout.** Measure shared NB LPC-copy
    work, assembler call distances and compiler-supported leaf annotations.
    Preserve the coefficient age, exact output and portable interface.
 

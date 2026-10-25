@@ -1,0 +1,37 @@
+{
+  "mcu": "ATmega328P",
+  "simulator": "avr8js 0.21.1",
+  "backend": "c",
+  "binarySha256": "77f1518cd34bd9a46037f5763c292937b831c945dac53378bc5637ae26ee31c1",
+  "cases": 1600,
+  "calls": 6208,
+  "repairMasks": [
+    4129,
+    1031,
+    1048,
+    0
+  ],
+  "addressCases": 3072,
+  "all256LowBytesAtEachRepairClassAndQuarter": true,
+  "oddAndPageCrossingPointers": true,
+  "selectorAndForcedCExact": true,
+  "selectedAndForcedCWrappersShareAddress": true,
+  "fusedAndSeparateExactAgainstUntouchedXiph": true,
+  "rawStateExact": true,
+  "exactAsmReadAndWriteAddresses": false,
+  "asmCalls": 0,
+  "asmReadBytes": 0,
+  "asmWrittenBytes": 0,
+  "primitiveCyclesByRepairClass": [
+    [],
+    [],
+    []
+  ],
+  "guardsAndInputsPreserved": true,
+  "originalOracleWorkspaceGuarded": true,
+  "calleeSavedRegistersAtRet": true,
+  "zeroRegisterAtRet": true,
+  "retChecks": 24768,
+  "includesInterrupts": false,
+  "physicalBoardTested": false
+}

@@ -130,19 +130,20 @@ Outputs are ignored under `build/`. The decoder validation firmware is
 hash. The matrix leaves `speech_ru` as the final demo. Player tests retain the
 captured unsigned PCM as `build/player/player-pwm.u8`.
 
-The current constant polynomial stages have direct arithmetic, memory and ABI tests:
+The current two-root constructor has independent arithmetic, flag, memory and ABI tests:
 
 ```sh
-python Codecs/Speex/AVR/tools/build_lsp_stage_test.py --cc clang --avr-gcc avr-gcc --backend c --out Codecs/Speex/AVR/build/poly2-stage-unit-c
-python Codecs/Speex/AVR/tools/build_lsp_stage_test.py --avr-gcc avr-gcc --backend asm --out Codecs/Speex/AVR/build/poly2-stage-unit-asm
-node Codecs/Speex/AVR/tests/verify_lsp_stage.mjs --backend c --firmware Codecs/Speex/AVR/build/poly2-stage-unit-c
-node Codecs/Speex/AVR/tests/verify_lsp_stage.mjs --backend asm --firmware Codecs/Speex/AVR/build/poly2-stage-unit-asm
-python Codecs/Speex/AVR/tests/audit_lsp_stages.py --rebuild --avr-gcc avr-gcc
+python Codecs/Speex/AVR/tools/build_lsp_first_test.py --cc clang --avr-gcc avr-gcc --backend c
+python Codecs/Speex/AVR/tools/build_lsp_first_test.py --avr-gcc avr-gcc --backend asm
+node Codecs/Speex/AVR/tests/verify_lsp_first.mjs --backend c
+node Codecs/Speex/AVR/tests/verify_lsp_first.mjs --backend asm
+python Codecs/Speex/AVR/tests/audit_lsp_first.py --rebuild --avr-gcc avr-gcc
 ```
 
 The audit consumes the frozen corpus and PWM runs described in
 [OPTIMIZATION.md](OPTIMIZATION.md). Its current result is
-[poly-admission.json](reports/poly-admission.json).
+[first-admission.json](reports/first-admission.json). The preceding polynomial-stage
+tests remain available; run their historical source-bound audit at 00e94768.
 
 ## Verified results
 
@@ -155,22 +156,22 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
 
 | Build | Flash | Static SRAM | Peak stack | Free SRAM at peak |
 | --- | ---: | ---: | ---: | ---: |
-| Optimized decoder test mailbox, ASM enabled | 11,084 B | 1,099 B | 103 B | 846 B |
-| Full PWM speech demo, including 2,940 B compressed audio | 14,106 B | 1,234 B | 111 B | 703 B |
-| C fallback decoder test mailbox | 11,534 B | 1,099 B | 105 B | 844 B |
-| Full C PWM speech demo, including 2,940 B audio | 14,846 B | 1,234 B | 114 B | 700 B |
+| Optimized decoder test mailbox, ASM enabled | 10,998 B | 1,099 B | 103 B | 846 B |
+| Full PWM speech demo, including 2,940 B compressed audio | 14,018 B | 1,234 B | 111 B | 703 B |
+| C fallback decoder test mailbox | 11,562 B | 1,099 B | 105 B | 844 B |
+| Full C PWM speech demo, including 2,940 B audio | 14,872 B | 1,234 B | 114 B | 700 B |
 
-- Constant ASM polynomial stages reduce weighted NB mean from 105,109.736
-  to 103,094.832 cycles (1.9170%) versus 41a89eb1. Flash grows 126 B and
-  peak stack falls 4 B; static SRAM stays unchanged. Every stream mean
-  improves. A few cached-frame extrema increase by one cycle (0.0625 us
-  at 16 MHz). The C decoder binaries and their timing stay byte-identical.
+- The two-root ASM constructor reduces weighted NB mean from 103,094.832
+  to 102,578.762 cycles (0.5006%) versus 00e94768 and saves 86 B Flash.
+  Every ASM stream mean improves; observed extrema never increase. SRAM
+  and peak stack stay unchanged. Portable byte-aligned C improves mean
+  by 0.1202% for 28 B extra Flash, with no measured stream regression.
 - All 9,100 corpus frames and 4,096 additional pitch/gain coverage frames match
   unmodified upstream s16 PCM. Including 58 LSP/reset and 1,024 zero-gain
   lifetime cases, each backend matches 14,278 frames with one firmware image.
 - Complete player tests on all 31 streams match upstream PCM converted to u8,
   with zero ring underruns and no stack/static-memory collisions.
-- Maximum observed ASM decoder-only corpus frame cost: **110,486 cycles / 6.905 ms**;
+- Maximum observed ASM decoder-only corpus frame cost: **109,902 cycles / 6.869 ms**;
   the 20-ms budget at 16 MHz is 320,000 cycles. ISR and output costs are verified
   separately by the complete-player runs.
 - Primitive tests cover 240,000 complete LSP conversions and 3,670,016 bit fields;
@@ -198,6 +199,12 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
   cases / 1,025,016 words per path, exact memory accesses, guards, all pointer
   low bytes and ABI at RET. Shared Q14 macro extraction preserves the entire
   prior arithmetic-test binary byte-for-byte.
+- The two-root constructor adds 1,376,255 native cases and 1,380,351 AVR
+  cases per backend, selected and forced-C paths against independent signed64/
+  BigInt equations. They cover all signed17 sums and all 131,072 high-byte/
+  carry inputs; AVR also checks all pointer low bytes, exact eight writes,
+  no input-data loads, guards and ABI. ASM takes 66 cycles including RET for
+  every tested root pair, with no own saved stack. Full player runs cover IRQs.
 - The combined packet reader passes 4,227,072 native groups (every 20-bit
   index group and 13-bit header at each subframe). Both readers also pass
   115,712 AVR groups each, with independent bit-by-bit fields, exact five-byte
@@ -212,7 +219,7 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
   cases; the portable C Q14 helper independently passes another 917,504
   cases. The aligned p1 core adds 655,360 independent exact cases.
   The C fallback matches the same 14,278 AVR frames. Its corpus maximum is
-  229,504 cycles (230,077 with pitch coverage), excluding ISR. Complete C PWM playback now
+  229,208 cycles (229,781 with pitch coverage), excluding ISR. Complete C PWM playback now
   passes all 31 streams with 32,000 extra cycles/frame (10%), zero underruns
   and at least 55 queued samples. ASM retains the stronger 40% reserve gate.
 - The historical pitch ASM independently checks 1,966,080 outputs, all signed8 gains,

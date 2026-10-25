@@ -6,6 +6,7 @@
  * branches and pointer arithmetic in exchange for additional Flash. */
 #include "speex_platform.h"
 #include "nb3_lsp_stage.h"
+#include "nb3_lsp_first.h"
 #define STAGE_ATTR SPEEX_NB3_STAGE
 static STAGE_ATTR spx_word16_t lsp_angle(spx_lsp_t angle) {return ANGLE2X(angle);}
 /* The first two roots give p1=-(a+b)*64 and p2=2^21+ceil(a*b/256).
@@ -13,8 +14,7 @@ static STAGE_ATTR spx_word16_t lsp_angle(spx_lsp_t angle) {return ANGLE2X(angle)
  * stays inside signed32 for all signed16 a/b, including both extrema. */
 static STAGE_ATTR void lsp_first(spx_word32_t *p,spx_word16_t a,spx_word16_t b)
 {
-    p[1]=-ADD32(EXTEND32(a),EXTEND32(b))*64;
-    p[2]=SHR32(ADD32(MULT16_16(a,b),536871167),8);
+    speex_nb3_lsp_first(p,a,b);
 }
 #define DEFINE_STAGE(s) static STAGE_ATTR void lsp_stage##s(spx_word32_t *p, spx_word16_t f) {speex_nb3_lsp_stage##s(p,f);}
 DEFINE_STAGE(2)
