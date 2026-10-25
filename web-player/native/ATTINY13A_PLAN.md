@@ -492,7 +492,7 @@ No new hardware checklist item closes;21/30 remain complete.
 
 | Priority | Candidate | Evidence required before keeping it |
 | --- | --- | --- |
-| 1 | Physical ns and running-idle ADC aggregator shortcuts are retained. Scoped I/O publication is tested and rejected; the compiler already caches the mirror pointer. Next audit repeated event/deadline scans and their invalidation owners before implementing reuse. Watchdog-period caching, lazy watchdog conversion, equal-rate, bounded-multiply and native-delay guards are also rejected. | Preserve public shadow restoration and zero-work/partial/fault/reset behavior. Cover writes, inputs, domain/source transitions, IRQ/wake, asynchronous NVM/watchdog and same-time mutations before reusing a deadline. Require complete state/pin/PCM parity, enabled-watchdog/ADC and CLKI controls and balanced identical-runtime timing. Retain the documented 0.942x ADC kernel limitation. Repeat IRQ-active browser audio/underrun checks before default activation. |
+| 1 | Physical ns and running-idle ADC aggregator shortcuts are retained. Scoped I/O publication is tested and rejected; the compiler already caches the mirror pointer. Deadline lookup inlining is retained for the measured rhythmic workload. Next audit recurring GPIO synchronizer/settled queries and their activation owners. Watchdog-period caching, lazy watchdog conversion, equal-rate, bounded-multiply and native-delay guards are also rejected. | Preserve public shadow restoration and zero-work/partial/fault/reset behavior. Retain same-base cache invalidation. Audit GPIO phase, PINB/INT0/PCINT/T0/CLKOUT consumers, sleep/PRR and reactivation before suppressing recurring service. Require complete state/pin/PCM parity, enabled-watchdog/ADC and CLKI controls and balanced identical-runtime timing. Retain the documented 0.942x ADC kernel limitation. Repeat IRQ-active browser audio/underrun checks before default activation. |
 | 2 | Evaluate adaptive bounded-region instruction budgets near deadlines. Separate inter-block fusion and constant folding are rejected. | Keep full flags, clock-before-commit, external entries and original fallback. Node HQ4 gains1.448x, but browser live audio still underruns; other firmware/event-heavy gains remain unproven. Measure budget changes separately from native scheduler changes. |
 | 3 | Validate optional phase-local liveness for default activation when stable performance measurements are available. | The full-context path remains an oracle. Size/parity are established; do not treat noisy median gains as speed evidence. Keep partial execution, reset/faults, SPM and IRQ effects exactly once. |
 | 4 | Extend proven direct WASM regions only where measured coverage justifies it; evaluate region SREG liveness independently. | The bounded cyclic register-local path is implemented. Preserve all observable SREG exits, indirect/external-entry fallback, aliases and visible AVR stack state; require real-firmware gains for extensions. |
@@ -583,6 +583,25 @@ See [sources, replay and results](../reports/io-publication-scope-20261025.md).
 Do not retry the same scope implementation as an untested pending task. Next
 audit repeated event/deadline scanning independently. The 118,071-byte runtime,
 default engine, unresolved ADC penalty and 21/30 checklist are unchanged.
+
+#### Deadline lookup placement checkpoint (retained, workload-specific evidence)
+
+The same-state cache already removes about two thirds of complete scans. The
+new placement inlines its small lookup and outlines the large scanner, retaining
+all statements, invalidation/fault behavior, CPU ABI and peripheral clocks.
+Exact rebuilt WASM confirms the transformation survives Binaryen: four callers
+change, the scanner replaces the old combined wrapper, and 198 bodies are
+identical. Native is now 118,742 bytes (+671), with no new state or host imports.
+
+All 1,704 regression checks and 15 parity cases pass. Across 384 timings and 192
+warmups, rhythmic physical measures 1.088x/1.086x in two intervals (6/8 and 7/8
+pairs faster). HQ4 and kernel gains remain unproven; small CLKI/watchdog losses
+are possible within the large controls. Keep the narrow workload evidence;
+browser IRQ/underrun/default-engine gates and the old ADC penalty remain open.
+Native/tools: `741a1301`. See the [audit](deadline-dispatch-audit.md) and
+[measurements with isolated replay](../reports/deadline-dispatch-20261025.md).
+Next audit repeated GPIO settled/synchronizer queries before activity changes,
+independently of this compiler hint. Checklist remains 21/30, nine open.
 
 #### Watchdog clock checkpoint (period cache rejected; lazy sync audited)
 
