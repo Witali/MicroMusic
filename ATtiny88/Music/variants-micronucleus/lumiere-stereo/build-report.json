@@ -6,7 +6,7 @@
   "sourceFlashSha256": "387c12bdaff34211a450cfa6ad69ff2dcd73d539b34349cb13a8c53a4706b236",
   "sourceEepromSha256": "45ba4c476cf214ef25d91494c6fa70b2567722b44403bcd25b09326e190fee37",
   "sourceInputs": {
-    "ATtiny13A/Music/variants/lumiere-stereo/build-report.json": "24641df6d4a42fd650f15f21ebd27a085a25c72810bf93ea48cc25208b41a568",
+    "ATtiny13A/Music/variants/lumiere-stereo/build-report.json": "b3b5c35a5f76e2af9e368b6f01d5caecdf4ab770d9000486b6b9af4134e3493c",
     "ATtiny13A/Music/variants/lumiere-stereo/config.inc": "ceaf23fadfbfca052d9760005840b9ecf7f41b0f696c75ebec581d480cec4ff7",
     "ATtiny13A/Music/variants/lumiere-stereo/score.inc": "35ee4ec5014a8649eaaf4c992f832fa58c2ad8c8519e70ce07fda70be5bb8850",
     "ATtiny13A/Music/variants/lumiere-stereo/score.json": "0782a3745ff0d113bb69078cac46e939849baea29cb22592450b505137e7564c",
@@ -576,6 +576,11 @@
       "address": 822
     }
   ],
+  "generator": {
+    "path": "tools/build-attiny88-music.py",
+    "sha256": "b4b593eb84d1eff853b420b7803e3918357661df4cf5bf1eba39fffbecfe50ec",
+    "sourceEncoding": "UTF-8 with LF newlines"
+  },
   "amplitudeGain": {
     "address": 1280,
     "bytes": 256,
@@ -585,10 +590,5 @@
       13
     ],
     "verifiedInputs": 256
-  },
-  "generator": {
-    "path": "tools/build-attiny88-music.py",
-    "sha256": "b4b593eb84d1eff853b420b7803e3918357661df4cf5bf1eba39fffbecfe50ec",
-    "sourceEncoding": "UTF-8 with LF newlines"
   }
 }
