@@ -2,9 +2,12 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 const root = new URL('../', import.meta.url);
 const definitions = [
-  { id: 'voice32', title: 'Голос · ровный PWM 32,11 кГц', rom: '../Sound/voice32/dualcrc-voice32.bin',
+  { id: 'voice32', title: 'Голос · «С воздушным шаром…» · 32,11 кГц', rom: '../Sound/voice32/dualcrc-voice32.bin',
     description: 'Голос из исходного MP3 пересчитан на 16,06 кГц без изменения темпа. Два импульса на отсчёт, все периоды речи — 109 T, 16 линейных уровней. Диагностика, Dual CRC и плавный старт.',
     meta: '32 КиБ · PWM 32,11 кГц · звук 16,06 кГц', source: '../Sound/voice32/README.md' },
+  { id: 'owl32', title: 'Голос · «Сова, открывай!» · без диагностики', rom: '../Sound/voice32/owl/owl-voice32.bin',
+    description: '«Сова! Открывай! Медведь пришёл!» Исходная запись пересчитана на 16,06 кГц. Ровный PWM 32,11 кГц, 16 линейных уровней. Сразу воспроизводит голос, без стартовых проверок и гудков.',
+    meta: '32 КиБ · PWM 32,11 кГц · без стартовой диагностики', source: '../Sound/voice32/owl/README.md' },
   { id: 'uniform26-pwm108', title: 'Музыка · UNIFORM26 · ровный PWM', rom: '../Music/uniform-pwm/uniform26-pwm108.bin',
     description: 'Постоянная несущая 32,41 кГц, 16 линейных уровней. Темп и высота нот сохранены пересчётом шагов синтеза. Все периоды, включая переходы между нотами, равны 108 T.',
     meta: '32 КиБ · 32,41 кГц · 16 уровней', source: '../Music/uniform-pwm/README.md' },

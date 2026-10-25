@@ -176,7 +176,7 @@
     "node_passed": 31,
     "node_failed": 0
   },
-  "current_validation": "unfiltered_pwm_hum_validation",
+  "current_validation": "owl_direct_voice_validation",
   "voice32_validation": {
     "date": "2026-10-25",
     "engine_commit": "66709bc",
@@ -359,5 +359,46 @@
       "stream-audio.mjs",
       "Intel_8080_ROM_Player.html"
     ]
+  },
+  "owl_direct_voice_validation": {
+    "date": "2026-10-25",
+    "selected_ids": [
+      "voice32",
+      "owl32",
+      "uniform26-pwm108"
+    ],
+    "default_id": "voice32",
+    "rom": "../Sound/voice32/owl/owl-voice32.bin",
+    "sha256": "751f0831767142fa09ff4eca34dcaa07797b394ee4b6b4ec5bc99a3590d51afc",
+    "source": "../Sound/voice32/owl/SOURCE.json",
+    "source_matches_publisher_download": true,
+    "audit": "../Sound/voice32/owl/AUDIT.json",
+    "timing": "../Sound/voice32/owl/TIMING.json",
+    "cpu_hz": 3500000,
+    "pwm_period_t": 109,
+    "pwm_hz": 32110.091743119265,
+    "sample_rate_hz": 16055.045871559632,
+    "sample_count": 54268,
+    "pulses": 108536,
+    "first_pwm_rise_t": 95,
+    "startup_diagnostics": false,
+    "startup_beeps": 0,
+    "startup_ramp_pulses": 0,
+    "writes": 0,
+    "full_worker_t_states": 11830515,
+    "full_worker_instructions": 2326307,
+    "live_worker_chunks_equal_complete_buffer": true,
+    "source_duration_error_seconds": 0.00012114285714304174,
+    "quantization_snr_db": 17.95587350218282,
+    "node_test_groups": 52,
+    "node_passed": 52,
+    "node_failed": 0,
+    "existing_balloon_rom_and_audio_rebuild_checks_passed": true,
+    "standalone_build_check": true,
+    "browser_suite_updated": true,
+    "browser_suite_run_for_this_update": false,
+    "http_catalog_rom_and_standalone_verified": true,
+    "hardware_tested": false,
+    "active_interrupts_supported": false
   }
 }

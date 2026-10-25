@@ -24,7 +24,7 @@ async function suite(target) {
   await new Promise(resolve => frame.addEventListener('load', resolve, { once: true }));
   const doc = await ready(), errors = [];
     frame.contentWindow.addEventListener('error', event => errors.push(event.message));
-  await wait(() => !doc.getElementById('run').disabled && doc.querySelectorAll('[data-example]').length === 2);
+  await wait(() => !doc.getElementById('run').disabled && doc.querySelectorAll('[data-example]').length === 3);
   check(doc.getElementById('file-name').textContent.includes('32,11 кГц'), '109T / two pulses per sample tempo-preserving default');
   check(!doc.querySelector('audio'), 'no separate audio player');
   check(!doc.getElementById('download'), 'no WAV download control');
@@ -71,7 +71,7 @@ async function suite(target) {
   }
   set(doc, 'seconds', '90');
   log(`PASS ${target}: selected 108T music streams two seconds; live scope advances, freezes on pause/end, resumes and resets; no RAM writes`);
-  const search = doc.getElementById('search'); search.value = '32,11 кГц'; search.dispatchEvent(new Event('input', { bubbles: true }));
+  const search = doc.getElementById('search'); search.value = 'Dual CRC'; search.dispatchEvent(new Event('input', { bubbles: true }));
   check(doc.querySelectorAll('[data-example]').length === 1, 'example search');
   doc.querySelector('[data-example="voice32"]').click();
   await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent.includes('32,11 кГц'));
@@ -80,6 +80,13 @@ async function suite(target) {
   check(Number(doc.getElementById('cycles').textContent.replace(/\D/g, '')) === 19700539, '109T / two pulses per sample full firmware and diagnostics');
   check(doc.getElementById('writes').textContent === '0', 'ROM-only voice');
   check(doc.getElementById('download-rom').hasAttribute('href'), 'example firmware download');
+  doc.querySelector('[data-example="owl32"]').click();
+  await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent === catalog.entries.find(entry => entry.id === 'owl32').title);
+  await run(doc);
+  check(Number(doc.getElementById('cycles').textContent.replace(/\D/g, '')) === 11830515, 'Owl direct voice full execution');
+  check(Number(doc.getElementById('edges').textContent.replace(/\D/g, '')) === 217072, 'Owl has only voice PWM edges');
+  check(doc.getElementById('writes').textContent === '0', 'Owl ROM-only playback');
+
   doc.querySelector('[data-example="uniform26-pwm108"]').click();
   await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent === catalog.entries.find(entry => entry.id === 'uniform26-pwm108').title);
   check(doc.getElementById('cycles').textContent === '0' && doc.getElementById('elapsed').textContent === '00:00.0', 'example switch clears prior result/audio');
@@ -87,7 +94,7 @@ async function suite(target) {
     const resources = frame.contentWindow.performance.getEntriesByType('resource');
     check(!resources.some(resource => /\.(bin|json|mjs)(\?|$)/.test(resource.name)), 'standalone examples and engines stay embedded');
   }
-  log(`PASS ${target}: two selected examples and ROM hashes; 109T / two pulses per sample default → HLT; search; source switching; embedded standalone library`);
+  log(`PASS ${target}: three selected examples and ROM hashes; 109T / two pulses per sample default → HLT; search; source switching; embedded standalone library`);
   await load(doc, Uint8Array.of(0xfb, 0x00, 0xf3, 0x76), 'inte.bin'); await run(doc);
   check(!doc.querySelector('[data-example][aria-pressed="true"]'), 'upload deselects examples');
   check(doc.getElementById('cycles').textContent === '19', 'EI/NOP/DI/HLT must be 19 T');

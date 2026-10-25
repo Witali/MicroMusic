@@ -10,7 +10,7 @@ test('Example library: only the selected voice and music ROMs are listed and emb
   execFileSync(process.execPath, [fileURLToPath(new URL('../scripts/build-examples.mjs', import.meta.url)), '--check']);
   const catalog = JSON.parse(readFileSync(new URL('../examples.json', import.meta.url)));
   assert.equal(catalog.defaultId, 'voice32');
-  assert.deepEqual(catalog.entries.map(entry => entry.id), ['voice32', 'uniform26-pwm108']);
+  assert.deepEqual(catalog.entries.map(entry => entry.id), ['voice32', 'owl32', 'uniform26-pwm108']);
   const html = readFileSync(new URL('../Intel_8080_ROM_Player.html', import.meta.url), 'utf8');
   assert.doesNotMatch(html, /fetch\(new URL\(entry\.rom/);
   assert.doesNotMatch(html, /fetch\(new URL\('\.\/examples\.json/);

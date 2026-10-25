@@ -56,3 +56,18 @@ test('Selected 32kHz voice: full live Worker audio matches the complete buffer t
   assert.deepEqual(joined, new Float32Array(result.audio));
   assert.ok(joined.every(sample => Number.isFinite(sample) && sample >= 0 && sample <= 1));
 });
+
+test('Owl direct voice: full streaming Worker reaches HLT with only speech PWM and no writes', async () => {
+  const rom = Uint8Array.from(readFileSync(new URL('../../Sound/voice32/owl/owl-voice32.bin', import.meta.url)));
+  const audit = JSON.parse(readFileSync(new URL('../../Sound/voice32/owl/AUDIT.json', import.meta.url)));
+  const { result, messages } = await run(rom, { seconds: 6, realtime: true });
+  assert.equal(result.kind, 'done'); assert.equal(result.stopReason, 'HLT');
+  assert.equal(result.t, audit.t_states); assert.equal(result.steps, audit.instructions);
+  assert.equal(result.memWrites, 0); assert.equal(result.inte, 0); assert.equal(result.edges, audit.pulses*2);
+  const chunks = messages.filter(m => m.kind === 'audio').map(m => new Float32Array(m.audio));
+  const joined = new Float32Array(chunks.reduce((n, part) => n+part.length, 0));
+  let offset = 0;
+  for (const part of chunks) { joined.set(part, offset); offset += part.length; }
+  assert.deepEqual(joined, new Float32Array(result.audio));
+  assert.equal(joined.length, Math.ceil(audit.t_states/3500000*96000));
+});
