@@ -3,11 +3,12 @@ import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {readFileSync,writeFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
-import {join} from 'node:path';
+import {join,resolve} from 'node:path';
 import {CPU,avrInstruction} from 'avr8js';
 const root=fileURLToPath(new URL('../',import.meta.url));
 const bi=process.argv.indexOf('--backend'),backend=bi<0?'c':process.argv[bi+1];assert.ok(['asm','c'].includes(backend));
-const dir=join(root,'build/lifetime-unit-'+backend);
+const fi=process.argv.indexOf('--firmware');
+const dir=fi<0?join(root,'build/lifetime-unit-'+backend):resolve(process.argv[fi+1]);
 const symbols=new Map(readFileSync(join(dir,'symbols.txt'),'utf8').split(/\r?\n/)
  .map(l=>l.match(/^([0-9a-f]+)\s+\w\s+(.+)$/)).filter(Boolean).map(m=>[m[2],parseInt(m[1],16)]));
 function address(n){assert.ok(symbols.has(n),n);return symbols.get(n)&65535;}

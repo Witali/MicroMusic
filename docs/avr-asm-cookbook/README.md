@@ -1561,6 +1561,50 @@ Native: 1 572 880 bounded calls и 720 000 overlapping LPC outputs;
 [Варианты/исходники](../../Codecs/Speex/AVR/reports/lifetime-candidates.json),
 [итоговые проверки](../../Codecs/Speex/AVR/reports/lifetime-admission.json).
 
+### Геометрия codebook и отдельная ASM-подпрограмма advance
+
+Для фиксированного NB3 сначала доказать диапазон всех входов, затем
+сокращать margin-проход. У pinned Speex 1.2.1 только позиции 3..5 могут
+требовать коррекции. Все raw-четверти кратны четырём; две центральные
+пары проверок взаимно исключаются и превращаются в два `if/else if`.
+Суммы средних не превышают 27 968/32 720: здесь один sum+shift точен.
+Для общего signed16 helper это неверно — сохранить два отдельных сдвига.
+[15 affine certificates](../../Codecs/Speex/AVR/reports/margin-proof.json)
+независимо проверены original Xiph dequantizer на всех 262 144 тройках.
+
+Оригинальная подпрограмма проекта
+[`lsp_advance.S`](../../Codecs/Speex/AVR/src/lsp_advance.S), enhanced AVR5 /
+ATmega328P / GNU ABI, обновляет 10 raw words и выдаёт только три исправленных
+угла. LPC потребляет остальные семь прямо из raw, а временные три — из
+умершего output slot. Чтения 40 Б, записи 26 Б; нет своего стека, MUL, CLI
+или аппаратных регистров. Используются caller-clobbered r0/r1,r18..27,Z;
+r2..17/Y сохраняются, r1 обнуляется на RET. В каждом ISR нужно сохранять
+все используемые регистры и SREG: r1 может временно быть ненулевым.
+Такты с RET без caller CALL: **181/179/187** для нет/первой/второй коррекции.
+Всегда доступен эквивалентный C в
+[`nb3_interpolate.h`](../../Codecs/Speex/AVR/src/nb3_interpolate.h).
+ASM выбирается только по поддерживаемой архитектуре и отдельному explicit
+enable; C можно выбрать и на AVR. Формулы/таблицы Xiph имеют сохранённую
+лицензию в vendor, новый ASM не скопирован из стороннего cookbook.
+
+AVR GCC 7.3.0 mixed Os/O2/O3+LTO / AVR8js 0.21.1, 9 100 NB-кадров:
+совместно с fused/shared LPC output mean ASM **107 616,507 → 106 896,237**
+(−0,6693%), max 115 604 → 114 786. Цена: Flash +1000 Б, stack +31 Б;
+static SRAM прежний. У `impulses` mean/max +2/+4 такта, некоторые minima
++4: это не универсальное ускорение каждого кадра. C mean −0,3262%,
+Flash +894 Б, stack +46 Б. Приоритет выбора — скорость целевого ASM.
+Counted ASM меньше на 72 Б, но медленнее на 21 такт/конверсию; его отклонили.
+56 вариантов и их исходники:
+[margin-candidates](../../Codecs/Speex/AVR/reports/margin-candidates.json).
+
+Native: 1 310 720 вызовов; каждый AVR backend: 6208 вызовов и 3072 случая
+адресов, все 256 low bytes/три класса/четыре четверти, guards/raw/ABI/r1.
+У ASM 9280 вызовов с точным контролем каждого чтения/записи. Старые
+широкие signed16 и overlap-тесты сохранены. 142 полных PWM-прогона с IRQ
+проходят без underruns и с точным PCM; NB free SRAM 661/654 Б,
+WB 452 Б. Это цифровая модель, физическая плата не измерена.
+[Admission](../../Codecs/Speex/AVR/reports/margin-admission.json).
+
 ## Отделять незавершённую запись SP от занятой стеком памяти
 
 У classic AVR с 16-битным SP компилятор меняет его двумя OUT. Монитор
