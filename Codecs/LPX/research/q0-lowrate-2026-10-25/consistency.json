@@ -1,0 +1,38 @@
+{
+  "status": "passed",
+  "counts": {
+    "cases": 27,
+    "selected_points": 190,
+    "metric_records": 380,
+    "unique_streams": 111
+  },
+  "non_admitted_points": [],
+  "decoder_source_sha256": {
+    "cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+    "Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+    "Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+    "Lpx4HybridCore.cpp": "cf4b1e663be0c503d95ca101e5f1b37fcfcf4d3b8d57250f8ec4d8dbb076f8a7",
+    "Lpx4HybridCore.h": "c5016338b4eae56af5013ce4ed8f24afe9a9e5071b226b569942431100a88558",
+    "Lpx4Math.h": "46bd8d82e7c85ccf3883916a48b194773d8505e0ffb4a9ba5aecec6ca37edd0d",
+    "native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+    "scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081"
+  },
+  "checks": [
+    "All 27 full-reference cases, both exact audio/file caps and every stage present.",
+    "Every selected stream/WAV hash, sample count and PCM16/PWM error record agrees.",
+    "Waveform rollback preserves baseline SSE/STOI; perceptual guards preserve STOI and codeword file lengths.",
+    "Every successful point maps to its full active-IRQ AVR image; source and ELF/HEX hashes agree.",
+    "Every decoder source/table is byte-identical to the preceding standard-codec experiment."
+  ],
+  "additional_delivery_checks": {
+    "full_avr_done_error_flags": true,
+    "eight_second_profile_counters_and_elf_hashes": true,
+    "c_fallback_valid_pwm_with_expected_timing_failure": true,
+    "fresh_validation_wav_cli_and_elf_verified": true,
+    "all_joint_perceptual_caps_fit": true,
+    "csv_rows": 540,
+    "plan_all_checkboxes_complete": true,
+    "local_document_links_and_table_columns_valid": true,
+    "anonymous_wav_assets": 238
+  }
+}

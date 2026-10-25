@@ -139,7 +139,8 @@ def compact_zero_blocks(blob,decoder):
 
 def encode_segment(pcm, decoder, max_bytes=65535, lambdas=(0., .0002, .001, .005, .02),
                    pre=13926, bright=0, kind='speech', fixed_bits=0,
-                   analysis_profiles=('legacy', 'regularized', 'flat'), stoi_drop=0.,canonical_zero=True):
+                   analysis_profiles=('legacy', 'regularized', 'flat'), stoi_drop=0.,canonical_zero=True,
+                   candidate_sink=None):
     import struct
     if not 1 <= len(pcm) <= 64000 or not 32 <= max_bytes <= 65535:
         raise ValueError('Expected 1..64000 samples and a 32..65535-byte segment budget')
@@ -199,6 +200,11 @@ def encode_segment(pcm, decoder, max_bytes=65535, lambdas=(0., .0002, .001, .005
             sse = float(np.dot(difference, difference))
             r['quality'] = quality(pcm, native, kind)
             candidates.append((sse, len(blob), digest, blob, native, r))
+            if candidate_sink is not None:
+                # Offline benchmarks can reuse the pool for multiple caps.
+                # Give observers independent metadata so selection is unchanged.
+                import copy
+                candidate_sink(blob,copy.deepcopy(r))
     if not candidates:
         raise ValueError('No candidate fits the byte budget; shorten segments or increase --max-bytes')
     legacy = [c for c in candidates if c[5]['profile'] == 'legacy']

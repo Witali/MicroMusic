@@ -1,0 +1,43 @@
+{
+  "status": "passed",
+  "main_parent": "d837c6c6c3d17244540a808b860b8b4665019c86",
+  "validated_lpx_parent": "c6f05d7ee9f1178ee15209b5db764bd1055412b7",
+  "complete_lpx_tree_identical_before_this_report": true,
+  "both_cookbook_append_sections_preserved": true,
+  "host": {
+    "tests": 87,
+    "seconds": 54.961,
+    "log_sha256": "1015d35d61f4498bde73548a75f7743bab8655cbb6a3fc3ab6c440f9e01e2a81"
+  },
+  "fresh_main_avr_8s": {
+    "input_sha256": "3ad7e37ddd9fbeeba31c7767fdb800e10c1dad2a6f48a64b8689fbce942f2881",
+    "pwm_sha256": "2d98ebec8fc964112d897a926e7e75757574a0e4ab912e2fbb9fe769af66d762",
+    "elf_sha256": "893dc3af29f3c5b12c7b0ddd3b84cf61b91a98c38ffc2f0e5180d14d63ba0c0e",
+    "hex_sha256": "578303fab4a897cd1c7368a24c7cc1316e5d25f6e8f8dea610636a5371b2f668",
+    "compiler": "avr-g++.exe (GCC) 7.3.0",
+    "compiler_options": [
+      "-DLPX4_PROFILE_QUEUE=512",
+      "-DLPX4_PROFILE_PREFILL=384",
+      "-DLPX4_PROFILE_IRQ_LOAD=0",
+      "-DLPX4_AVR_DOT_UNROLL=9",
+      "-DLPX4_V3_FEATURES=24",
+      "-DLPX4_ENABLE_ASM=1",
+      "-mmcu=atmega328p",
+      "-DF_CPU=16000000UL",
+      "-Os",
+      "-std=gnu++11",
+      "-fno-exceptions",
+      "-fno-rtti"
+    ],
+    "mean_decode_wall_cycles": 1569.668921875,
+    "underruns": 0,
+    "played": 64000,
+    "flash_bytes": 24486,
+    "static_sram_bytes": 1102,
+    "core_sha256": "cf4b1e663be0c503d95ca101e5f1b37fcfcf4d3b8d57250f8ec4d8dbb076f8a7",
+    "core_header_sha256": "c5016338b4eae56af5013ce4ed8f24afe9a9e5071b226b569942431100a88558",
+    "math_header_sha256": "46bd8d82e7c85ccf3883916a48b194773d8505e0ffb4a9ba5aecec6ca37edd0d"
+  },
+  "fresh_avr_matches_validated_pwm_and_cycles": true,
+  "physical_hardware_measured": false
+}

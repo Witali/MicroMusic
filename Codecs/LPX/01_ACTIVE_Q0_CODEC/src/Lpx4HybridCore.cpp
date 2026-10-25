@@ -41,6 +41,9 @@ Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),cursor_(0),sampleCount_(0),
  sampleRate_(0),preQ14_(0),brightQ14_(0),prevDeemph_(0),prevBright_(0),
  framePos_(0),blockPos_(0),subPos_(0),subIndex_(0),quantLimit_(0),mode_(0),blockScale_(0),
  bitBuffer_(0),bitsLeft_(0),riceK_(0),subType_(0),lag_(0),gain_(0),ringCursor_(0),
+#if LPX4_V3_FEATURES
+ formatFeatures_(0),
+#endif
 #if LPX4_ALLOW_SPARSE
  pulseCount_(0),pulseIndex_(0),
 #endif
@@ -74,6 +77,9 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
  position_=0;framePos_=blockPos_=subPos_=subIndex_=0;
  bitBuffer_=bitsLeft_=mode_=blockScale_=riceK_=0;
  subType_=lag_=gain_=ringCursor_=quantLimit_=0;
+#if LPX4_V3_FEATURES
+ formatFeatures_=0;
+#endif
 #if LPX4_ALLOW_SPARSE
  pulseCount_=pulseIndex_=0;
 #endif
@@ -88,7 +94,12 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
   error_=BAD_HEADER;return false;
  }
  const uint8_t version=readByte(),flags=readByte();
+#if LPX4_V3_FEATURES
+ if(version==3 && (flags&3)==3 && !(flags&~(3|LPX4_V3_FEATURES)))formatFeatures_=flags&124;
+ else if(version!=2||flags!=3){error_=UNSUPPORTED;return false;}
+#else
  if(version!=2||flags!=3){error_=UNSUPPORTED;return false;}
+#endif
  sampleRate_=read16();sampleCount_=read32();preQ14_=read16();brightQ14_=read16();
  const uint16_t frames=read16(),blocks=read16();
  if(error_||sampleRate_!=8000||!sampleCount_||frames!=160||blocks!=80||
@@ -134,10 +145,29 @@ bool Lpx4HybridCore::readFrame(){
   for(uint8_t i=0;i<10;i++)v[i]=(int16_t)(readBits(8)|((uint16_t)readBits(2)<<8));
  }else{
   if(!initializedFrame_){error_=CORRUPT_STREAM;return false;}
-  const bool raw=readOne()!=0;
+#if LPX4_V3_FEATURES & 64
+  const uint8_t coding=(formatFeatures_&64)?readBits(2):readOne();
+#else
+  // Preserve the v2 Boolean branch/code generation without optional LSF Rice.
+  const bool coding=readOne()!=0;
+#endif
   for(uint8_t i=0;i<10;i++){
    int8_t d=0;
-   if(raw)d=(int8_t)readBits(8);
+   if(coding==1)d=(int8_t)readBits(8);
+#if LPX4_V3_FEATURES & 64
+   else if(coding>=2){
+    const uint8_t k=coding==2?0:2;
+    uint8_t high=0;
+    while(high<8 && !readOne()){
+     if(error_){error_=CORRUPT_STREAM;return false;}++high;
+    }
+    if(high==8)d=(int8_t)readBits(8);
+    else{
+     const uint8_t z=(high<<k)|(k?readBits(k):0);
+     d=(z&1)?-(int8_t)((z+1)>>1):(int8_t)(z>>1);
+    }
+   }
+#endif
    else {
     uint8_t z=0;
     while(!readOne()){
@@ -161,9 +191,18 @@ bool Lpx4HybridCore::readFrame(){
  initializedFrame_=true;return true;
 }
 bool Lpx4HybridCore::readBlock(){
+#if LPX4_V3_FEATURES & 8
+ if(!(formatFeatures_&8) || readOne())
+#endif
  mode_=readBits(3); // source bit depth, 0 or 2..6
  if(mode_!=0 && (mode_<2 || mode_>6)){error_=CORRUPT_STREAM;return false;}
  quantLimit_=mode_?(1u<<(mode_-1)):0;
+#if LPX4_V3_FEATURES & 32
+ if((formatFeatures_&32) && !mode_)return !error_;
+#endif
+#if LPX4_V3_FEATURES & 4
+ if((formatFeatures_&4) && !readOne())return !error_;
+#endif
  uint8_t q=0;
  while(q<6 && !readOne()){
   if(error_){error_=CORRUPT_STREAM;return false;}++q;
@@ -179,19 +218,46 @@ bool Lpx4HybridCore::readBlock(){
  return !error_;
 }
 bool Lpx4HybridCore::readSubframe(){
+#if LPX4_V3_FEATURES & 32
+ if((formatFeatures_&32) && !mode_){
+  subType_=riceK_=0;
+#if LPX4_ALLOW_SPARSE
+  pulseIndex_=pulseCount_=0;
+#endif
+  return !error_;
+ }
+#endif
+#if LPX4_V3_FEATURES & 16
+ const bool repeated=(formatFeatures_&16) && !readOne();
+ if(!repeated)
+#endif
  subType_=readBits(2);
 #if LPX4_ALLOW_SPARSE
  pulseIndex_=pulseCount_=0;
 #endif
  if(subType_==3){error_=CORRUPT_STREAM;return false;}
  if(subType_==0){
+#if LPX4_V3_FEATURES & 16
+   if(!repeated)
+#endif
    riceK_=readBits(3);
    if(riceK_==7 && mode_!=3){error_=CORRUPT_STREAM;return false;}
  }else{
+#if LPX4_V3_FEATURES & 16
+   if(!repeated){
+#endif
    lag_=(uint8_t)(18+readBits(7));
    gain_=readBits(5);
+#if LPX4_V3_FEATURES & 16
+   }
+#endif
    if(lag_>145){error_=CORRUPT_STREAM;return false;}
-   if(subType_==1)riceK_=readBits(3);
+   if(subType_==1){
+#if LPX4_V3_FEATURES & 16
+    if(!repeated)
+#endif
+    riceK_=readBits(3);
+   }
    else{
 #if LPX4_ALLOW_SPARSE
      pulseCount_=readBits(4);
