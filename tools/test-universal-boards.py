@@ -13,7 +13,7 @@ class Boards(unittest.TestCase):
     def test_flash_only_images_reset_vectors_and_factory_fuses(self):
         folders=sorted(p for p in FOLDER.iterdir() if p.is_dir() and (p/'build-report.json').exists())
         self.assertEqual(len(folders),9)
-        engines=set()
+        engines={};counts={1:0,2:0}
         for folder in folders:
             with self.subTest(song=folder.name):
                 meta=json.loads((folder/'build-report.json').read_text(encoding='utf-8'))
@@ -32,7 +32,9 @@ class Boards(unittest.TestCase):
                 self.assertIsNone(meta['requiredFuses'])
                 self.assertTrue(meta['preserveFactoryFuses'])
                 self.assertEqual(meta['uploadProtocol'],'micronucleus')
-                self.assertEqual(meta['renderABI'],'packed-stereo-u32')
+                self.assertEqual(meta['configuredChannels'],meta['channels'])
+                self.assertEqual(meta['renderABI'],'mono-s16' if meta['configuredChannels']==1 else 'packed-stereo-u32')
+                counts[meta['configuredChannels']]+=1
                 self.assertEqual(meta['pwmBufferFrames']*meta['channels'],meta['pwmBufferBytes'])
                 self.assertEqual(meta['pwmBufferLayout'],'stereo-pairs' if meta['channels']==2 else 'mono')
                 vector=int.from_bytes(raw[:2],'little')
@@ -49,8 +51,11 @@ class Boards(unittest.TestCase):
                 bank=raw[wave['address']:wave['address']+wave['bytes']]
                 self.assertEqual(hashlib.sha256(bank).hexdigest(),wave['sha256'])
                 self.assertEqual(bank,bytes(json.loads((folder/'score.json').read_text())['waves']))
-                engines.add(hashlib.sha256(raw[:meta['engineBytes']]).hexdigest())
-        self.assertEqual(len(engines),1,'All nine USB songs use one common compiled engine')
+                profile=(meta['configuredChannels'],meta['cpuHz'],meta['backend'],meta['packingMode'],meta['pwmBufferBytes'])
+                code=hashlib.sha256(raw[:meta['engineBytes']]).hexdigest()
+                self.assertEqual(engines.setdefault(profile,code),code,'Each configured profile uses one common engine')
+        self.assertEqual(counts,{1:8,2:1})
+        self.assertEqual(len(engines),2,'Mono and stereo are separately compiled profiles')
 
     def test_conflicting_board_cpu_rejected_before_compilation(self):
         result=subprocess.run([sys.executable,str(ROOT/'tools/build-universal-music.py'),

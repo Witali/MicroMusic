@@ -6,7 +6,7 @@
 Использованы измеренные инструменты FluidR3; их MIT-уведомление включено в пакет.
 
 ```text
-python tools/compile-universal-music.py ATtiny88/Music/universal/examples/mono-study/source-events.json --arrangement ATtiny88/Music/universal/examples/mono-study/arrangement.json --backend avr-asm --output build/mono-study --preview-seconds 6
+python tools/compile-universal-music.py ATtiny88/Music/universal/examples/mono-study/source-events.json --arrangement ATtiny88/Music/universal/examples/mono-study/arrangement.json --backend avr-asm --irq-scratch gpior --output build/mono-study --preview-seconds 6
 ```
 
 Новый каталог `build/mono-study/` содержит полный результат. При необходимости
@@ -24,13 +24,14 @@ python tools/compile-universal-music.py ATtiny88/Music/universal/examples/mono-s
 
 | Профиль | Flash, Б | Общий код, Б | Минимум FIFO, кадров | Полный аудит, с |
 | --- | ---: | ---: | ---: | ---: |
-| 8 МГц, кольцо 192 | 3666 | 2930 | 121 | 5,0668985 |
-| 12 МГц, кольцо 192 | 3666 | 2918 | 120 | 5,0663378 |
+| 8 МГц, кольцо 192 | 2852 | 2130 | 129 | 5,066970 |
+| 12 МГц, кольцо 192 | 2842 | 2120 | 129 | 5,066384 |
 
-В обеих сборках максимальный ISR — 52 такта, синтез — 240, управляющий
-тик — 13461. Минимум SP726 даёт 22 Б над кольцом. Данные занимают 722 Б;
-разный размер кода скрывается выравниванием начала музыкального блока.
-Различие длительностей полных прогонов — около 0,561 мс. Это результаты
+В обеих сборках максимальный ISR — 34 такта, синтез — 219, управляющий
+тик — 12895. Минимум SP735 даёт 31 Б над кольцом. GPIOR0/1/2 явно зарезервированы
+драйвером прерывания. Данные занимают 722 Б;
+партитура расположена непосредственно после кода, без прежнего выравнивания на 32 байта.
+Различие длительностей полных прогонов — около 0,586 мс. Это результаты
 цифровой модели. Размер кольца меняется `--buffer-frames`, и каждая новая
 нагрузка проверяется отдельно.
 

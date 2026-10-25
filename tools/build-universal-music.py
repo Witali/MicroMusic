@@ -1,4 +1,4 @@
-"""Compile UM88 data and one invariant portable engine for all retained songs."""
+"""Compile UM88 scores with a shared portable engine for each mono/stereo profile."""
 from pathlib import Path
 from collections import defaultdict
 import argparse
@@ -10,7 +10,7 @@ import re
 import tempfile
 
 ROOT=Path(__file__).resolve().parents[1]
-BASE=2560
+BASE=0
 NAMES=('rhythmic','lumiere-stereo','alicia','children','turkish-march','greensleeves',
        'cancion-del-mariachi','cancion-del-mariachi-polyphonic','cancion-del-mariachi-sparse')
 def module(name,file):
@@ -254,12 +254,32 @@ def encode_score(score,cpu_hz,packing='compact'):
                      packing='bounded Re-Pair with dense nine-bit symbols' if packing=='compact' else 'bounded Re-Pair with byte-aligned sixteen-bit rule pairs',
                      decodedCommandsSha256=digest(bytes(raw)),allControlFramesVerified=score.get('importedControlFramesVerified',False))
 
+
+def channel_groups(scores,selection):
+    """Keep source scores intact; only the emitted score's channels may change."""
+    if selection not in ('auto','mono','stereo'):raise ValueError('Expected auto, mono or stereo channels')
+    groups=defaultdict(list)
+    for path,source_score in scores:
+        source_channels=source_score['channels']
+        if type(source_channels) is not int or source_channels not in (1,2):
+            raise ValueError('Source channels must be 1 or 2')
+        channels=source_channels if selection=='auto' else (1 if selection=='mono' else 2)
+        score=dict(source_score,channels=channels)
+        validate_score(score)
+        groups[channels].append(dict(path=path,score=score,sourceChannels=source_channels))
+    return groups
+
+
 def main():
     global BASE
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--avr-bin')
     parser.add_argument('--no-import',action='store_true',help=argparse.SUPPRESS)
     parser.add_argument('--backend',choices=('c','avr-asm'),default='c')
+    parser.add_argument('--channels',choices=('auto','mono','stereo'),default='auto',
+                        help='Compile only the selected output channels; auto follows each source score')
+    parser.add_argument('--irq-scratch',choices=('stack','gpior'),default='stack',
+                        help='ASM hardware driver: stack backup, or explicitly reserve GPIOR0/1/2 for faster IRQs')
     parser.add_argument('--board',choices=tuple(legacy.BOARDS),default='bare-8mhz')
     parser.add_argument('--cpu-hz',type=int)
     parser.add_argument('--buffer-frames',type=int,help='Legacy name: ring byte budget, shared by mono or stereo')
@@ -275,21 +295,22 @@ def main():
     if usb:
         if args.cpu_hz not in (None,16000000):parser.error('MH-ET LIVE Micronucleus requires --cpu-hz 16000000')
         args.cpu_hz=16000000
-    if args.backend=='c' and args.output_dir is None:
-        args.output_dir=ROOT/('build/universal/c-micronucleus' if usb else 'build/universal/c')
+    if args.output_dir is None and (args.backend=='c' or args.channels!='auto'):
+        output_name=args.backend+('' if args.channels=='auto' else '-'+args.channels)+('-micronucleus' if usb else '')
+        args.output_dir=ROOT/'build/universal'/output_name
     if args.reimport or not args.score and not (ROOT/'ATtiny88/Music/universal/songs/rhythmic/score.json').exists():
         legacy.run('node','tools/import-universal-music.mjs')
     source=ROOT/'ATtiny88/Music/universal';scratch_root=ROOT/'build/universal';scratch_root.mkdir(parents=True,exist_ok=True)
     temporary=tempfile.TemporaryDirectory(prefix='compile-',dir=scratch_root)
     scratch=Path(temporary.name)
-    elf=scratch/'engine.elf'
     defines=['-DUM_REQUESTED_CPU_HZ='+str(args.cpu_hz)+'UL'] if args.cpu_hz is not None else []
+    defines+=['-DUM_REQUESTED_IRQ_GPIOR_SCRATCH='+('1' if args.irq_scratch=='gpior' else '0')]
     if usb:defines+=['-DUM_BOARD_MH_ET_LIVE_16MHZ=1']
     if args.buffer_frames is not None:defines+=['-DUM_REQUESTED_BUFFER_FRAMES='+str(args.buffer_frames)]
     if args.platform_header:defines+=['-include',str(args.platform_header.resolve())]
     # Read the compiler's evaluated constant, including expressions and UL suffixes.
     probe=scratch/'clock-probe.c';probe_obj=scratch/'clock-probe.o';probe_bin=scratch/'clock-probe.bin'
-    legacy.save(probe,'#include <avr/io.h>\n#include <stdint.h>\n#include "clock.h"\n#include "audio-buffer.h"\nconst uint32_t um_clock[2] __attribute__((section(".umclock")))={F_CPU,UM_PWM_BUFFER_FRAMES};\n')
+    legacy.save(probe,'#include <avr/io.h>\n#include <stdint.h>\n#include "clock.h"\n#include "audio-buffer.h"\n#include "audio-channels.h"\n#include "irq-scratch.h"\nconst uint32_t um_clock[2] __attribute__((section(".umclock")))={F_CPU,UM_PWM_BUFFER_FRAMES};\n')
     legacy.run(tools['avr-gcc'],'-mmcu=attiny88','-I'+str(source),'-I'+str(source/'vendor/ATtiny_DFP/3.4.278/include'),*defines,'-c',probe,'-o',probe_obj)
     legacy.run(tools['avr-objcopy'],'-O','binary','-j','.umclock',probe_obj,probe_bin)
     clock_config=probe_bin.read_bytes();assert len(clock_config)==8
@@ -299,73 +320,117 @@ def main():
     packing=('compact' if buffer_bytes==192 else 'fast') if args.packing=='auto' else args.packing
     defines+=['-DUM_ENABLE_AVR_ASM='+('1' if args.backend=='avr-asm' else '0'),
               '-DUM_COMPACT_SCORE_ONLY='+('1' if packing=='compact' else '0')]
-    for attempt in range(3):
-        legacy.run(tools['avr-gcc'],'-mmcu=attiny88','-Os','-fno-jump-tables','-ffunction-sections','-fdata-sections',
-                   '-I'+str(source/'vendor/ATtiny_DFP/3.4.278/include'),*defines,'-DUM_SONG_ADDRESS='+str(BASE),
-                   '-Wl,--gc-sections',source/'engine.c',source/'platform.c',source/'render-avr.S',source/'irq-avr.S','-o',elf)
-        legacy.run(tools['avr-objcopy'],'-O','binary','-j','.text',elf,scratch/'engine.bin')
-        engine=(scratch/'engine.bin').read_bytes();needed=(len(engine)+31)//32*32
-        if needed<=BASE:break
-        BASE=needed
-    else:raise ValueError('Cannot place the song block after the compiled engine')
-    assert len(engine)<=BASE,(len(engine),BASE)
-    symbols=legacy.run(tools['avr-nm'],'-n',elf)
-    labels={m[3]:int(m[1],16) for m in re.finditer(r'^([0-9a-fA-F]+)\s+([tTbBdD])\s+(\S+)$',symbols,re.M)}
-    assert labels['um_ring']-0x800000+buffer_bytes+48<=768,'Need 48 bytes of stack above the FIFO'
-    legacy.save(scratch/'disassembly.txt',legacy.run(tools['avr-objdump'],'-d',elf))
-    source_names=('engine.c','engine.h','platform.c','storage.h','clock.h','rational-clocks.h','audio-buffer.h',
-                  'render-avr.S','irq-avr.S','gain-table.inc','vendor/ATtiny_DFP/3.4.278/include/avr/iotn88.h')
-    inputs=[source/name for name in source_names]+[Path(__file__),ROOT/'tools/universal-music.py']
-    common=dict(engine='UM88',backend=args.backend,packingMode=packing,packingPolicy=args.packing,renderABI='packed-stereo-u32',pwmBufferBytes=buffer_bytes,
-                engineBytes=len(engine),songAddress=BASE,engineSha256=digest(engine),labels=labels,
-                cpuHz=cpu_hz,synthesisHz=cpu_hz/1024,pwmHz=cpu_hz/256,controlHz=18750/256,
-                board=args.board,applicationFlashLimit=flash_limit,eepromRequired=False,
-                sourceInputs={str(file.relative_to(ROOT)).replace('\\','/'):digest(file.read_text(encoding='utf-8').encode()) for file in inputs},
-                deviceDefinitions=dict(pack='Microchip.ATtiny_DFP',version='3.4.278',
-                    url='https://packs.download.microchip.com/Microchip.ATtiny_DFP.3.4.278.atpack',
-                    sha256='41f09d5825abaa764c9000f4488f8ba3fab152afe6229b359de4a5efe9a21eda'),
-                toolchainVersion=legacy.run(tools['avr-gcc'],'--version').splitlines()[0])
-    reset=int.from_bytes(engine[:2],'little');assert reset&0xf000==0xc000,'Expected Micronucleus-compatible RJMP reset vector'
-    displacement=reset&4095;displacement-=4096 if displacement&2048 else 0
-    common['resetVector']=dict(address=0,instruction='rjmp',target=(1+displacement)*2)
-    if usb:
-        common.update(uploadProtocol='micronucleus',requiredFuses=None,preserveFactoryFuses=True,
-                      boardClockAboveRatedMaximum=True,bootloaderEntryInitialization='um_board_reset',
-                      boardSource=dict(version='1.0.0',commit=legacy.MANUFACTURER_BOARD_COMMIT,url=legacy.MANUFACTURER_BOARD_URL))
-        assert 'um_board_reset' in labels,'Early bootloader-entry initialization linked'
-    retained_output=source/('songs-micronucleus' if usb else 'songs')
-    (scratch_root/('engine-'+args.backend+'.bin')).write_bytes(engine)
-    legacy.save(scratch_root/('engine-'+args.backend+'.json'),json.dumps(common,indent=2)+'\n')
+    # Load and validate every score before compiling. A mixed catalog shares one
+    # core per effective channel count, rather than linking runtime dispatch.
     names=[json.loads(args.score.read_text(encoding='utf-8'))['name']] if args.score else NAMES
+    scores=[]
     for name in names:
         score_path=args.score or source/'songs'/name/'score.json'
-        if score_path.exists() and not args.reimport:
-            score=json.loads(score_path.read_text(encoding='utf-8'))
-            data,report=encode_score(score,cpu_hz,packing)
-        else:
-            song=json.loads((scratch_root/(name+'.tape.json')).read_text(encoding='utf-8'));data,report=compile_song(song,cpu_hz,packing)
-            score=json.loads((source/'songs'/name/'score.json').read_text(encoding='utf-8'))
-        if buffer_bytes<=4*score['channels']:
+        if not score_path.exists() or args.reimport:
+            song=json.loads((scratch_root/(name+'.tape.json')).read_text(encoding='utf-8'))
+            compile_song(song,cpu_hz,packing)
+        scores.append((score_path,json.loads(score_path.read_text(encoding='utf-8'))))
+    groups=channel_groups(scores,args.channels)
+    for records in groups.values():
+        for record in records:
+            record['sourceSha256']=digest(record['path'].read_text(encoding='utf-8').encode())
+    for channels in groups:
+        if buffer_bytes<=4*channels:
             raise ValueError('Ring byte budget must leave a spare frame beyond four generated mono/stereo frames')
-        binary=engine+bytes([255])*(BASE-len(engine))+data
-        if len(binary)>flash_limit:
-            raise ValueError(f'{name}: application {len(binary)} bytes exceeds {args.board} limit {flash_limit}')
-        folder=(args.output_dir or retained_output)/name;folder.mkdir(parents=True,exist_ok=True)
-        if score_path.resolve()!=(folder/'score.json').resolve():
-            legacy.save(folder/'score.json',json.dumps(score,ensure_ascii=False,indent=2)+'\n')
-        (folder/'synth.bin').write_bytes(binary);legacy.save(folder/'synth.hex',legacy.ihex(binary))
-        ep=bytes(score['waves'])
-        if not usb:
-            (folder/'eeprom.bin').write_bytes(ep);legacy.save(folder/'eeprom.hex',legacy.ihex(ep))
-        report.update(common,pwmBufferLayout='stereo-pairs' if score['channels']==2 else 'mono',
-                      pwmBufferFrames=buffer_bytes//score['channels'],
-                      flashBytes=len(binary),flashSha256=digest(binary),
-                      eepromBytes=0 if usb else len(ep),eepromSha256=None if usb else digest(ep),
-                      scoreSource=dict(path=str(score_path.relative_to(ROOT)).replace('\\','/') if score_path.is_relative_to(ROOT) else score_path.name,
-                                       sha256=digest(score_path.read_text(encoding='utf-8').encode())),
-                      wavetableStorage=dict(space='flash',address=BASE+26,bytes=len(ep),sha256=digest(ep)))
-        legacy.save(folder/'build-report.json',json.dumps(report,ensure_ascii=False,indent=2)+'\n')
-        print(f'{name}: engine {len(engine)}, data {len(data)}, Flash {len(binary)}/{flash_limit}; {report["controlTicks"]} control ticks; playback audit is separate')
-    legacy.save((args.output_dir or (retained_output if usb else source))/'build-report.json',json.dumps(common,indent=2)+'\n')
+    retained_output=source/('songs-micronucleus' if usb else 'songs')
+    for channels,records in groups.items():
+        for record in records:
+            destination=(args.output_dir or retained_output)/record['score']['name']/'score.json'
+            if record['sourceChannels']!=channels and record['path'].resolve()==destination.resolve():
+                raise ValueError('Channel conversion would overwrite its source score; choose a different --output-dir')
+    # A platform may pin the channel count. Check every selected group before
+    # the first core snapshot or song is written, so mixed auto builds fail
+    # atomically on a mono/stereo header disagreement.
+    if args.platform_header:
+        for channels in sorted(groups):
+            legacy.run(tools['avr-gcc'],'-mmcu=attiny88','-I'+str(source),
+                       '-I'+str(source/'vendor/ATtiny_DFP/3.4.278/include'),*defines,
+                       '-DUM_REQUESTED_OUTPUT_CHANNELS='+str(channels),
+                       '-c',probe,'-o',scratch/('channel-check-'+str(channels)+'.o'))
+    source_names=('engine.c','engine.h','platform.c','storage.h','clock.h','rational-clocks.h','audio-buffer.h','audio-channels.h','irq-scratch.h',
+                  'render-avr.S','irq-avr.S','vendor/ATtiny_DFP/3.4.278/include/avr/iotn88.h')
+    inputs=[source/name for name in source_names]+[Path(__file__),ROOT/'tools/universal-music.py']
+    profiles=[]
+    for channels,records in sorted(groups.items()):
+        profile_name='mono' if channels==1 else 'stereo'
+        profile_scratch=scratch/profile_name;profile_scratch.mkdir()
+        elf=profile_scratch/'engine.elf'
+        profile_defines=defines+['-DUM_REQUESTED_OUTPUT_CHANNELS='+str(channels)]
+        # Flash data is byte-addressed; keep only word alignment after the code.
+        # Start each profile independently, then converge on its own core size.
+        BASE=0
+        for attempt in range(8):
+            legacy.run(tools['avr-gcc'],'-mmcu=attiny88','-Os','-fno-jump-tables','-ffunction-sections','-fdata-sections',
+                       '-I'+str(source/'vendor/ATtiny_DFP/3.4.278/include'),*profile_defines,'-DUM_SONG_ADDRESS='+str(BASE),
+                       '-Wl,--gc-sections',source/'engine.c',source/'platform.c',source/'render-avr.S',source/'irq-avr.S','-o',elf)
+            legacy.run(tools['avr-objcopy'],'-O','binary','-j','.text',elf,profile_scratch/'engine.bin')
+            engine=(profile_scratch/'engine.bin').read_bytes();needed=(len(engine)+1)&~1
+            if needed<=BASE:break
+            BASE=needed
+        else:raise ValueError('Cannot place the song block after the compiled engine')
+        assert len(engine)<=BASE,(len(engine),BASE)
+        symbols=legacy.run(tools['avr-nm'],'-n',elf)
+        labels={m[3]:int(m[1],16) for m in re.finditer(r'^([0-9a-fA-F]+)\s+([tTbBdD])\s+(\S+)$',symbols,re.M)}
+        assert labels['um_ring']-0x800000+buffer_bytes+48<=768,'Need 48 bytes of stack above the FIFO'
+        legacy.save(profile_scratch/'disassembly.txt',legacy.run(tools['avr-objdump'],'-d',elf))
+        common=dict(engine='UM88',backend=args.backend,packingMode=packing,packingPolicy=args.packing,
+                    configuredChannels=channels,channelSelection=args.channels,
+                    irqScratch=args.irq_scratch if args.backend=='avr-asm' else 'compiler',
+                    irqScratchSelection=args.irq_scratch,
+                    reservedIORegisters=['GPIOR0','GPIOR1','GPIOR2'] if args.backend=='avr-asm' and args.irq_scratch=='gpior' else [],
+                    renderABI='mono-s16' if channels==1 else 'packed-stereo-u32',pwmBufferBytes=buffer_bytes,
+                    engineBytes=len(engine),songAddress=BASE,songPaddingBytes=BASE-len(engine),engineSha256=digest(engine),labels=labels,
+                    cpuHz=cpu_hz,synthesisHz=cpu_hz/1024,pwmHz=cpu_hz/256,controlHz=18750/256,
+                    board=args.board,applicationFlashLimit=flash_limit,eepromRequired=False,
+                    sourceInputs={str(file.relative_to(ROOT)).replace('\\','/'):digest(file.read_text(encoding='utf-8').encode()) for file in inputs},
+                    deviceDefinitions=dict(pack='Microchip.ATtiny_DFP',version='3.4.278',
+                        url='https://packs.download.microchip.com/Microchip.ATtiny_DFP.3.4.278.atpack',
+                        sha256='41f09d5825abaa764c9000f4488f8ba3fab152afe6229b359de4a5efe9a21eda'),
+                    toolchainVersion=legacy.run(tools['avr-gcc'],'--version').splitlines()[0])
+        reset=int.from_bytes(engine[:2],'little');assert reset&0xf000==0xc000,'Expected Micronucleus-compatible RJMP reset vector'
+        displacement=reset&4095;displacement-=4096 if displacement&2048 else 0
+        common['resetVector']=dict(address=0,instruction='rjmp',target=(1+displacement)*2)
+        if usb:
+            common.update(uploadProtocol='micronucleus',requiredFuses=None,preserveFactoryFuses=True,
+                          boardClockAboveRatedMaximum=True,bootloaderEntryInitialization='um_board_reset',
+                          boardSource=dict(version='1.0.0',commit=legacy.MANUFACTURER_BOARD_COMMIT,url=legacy.MANUFACTURER_BOARD_URL))
+            assert 'um_board_reset' in labels,'Early bootloader-entry initialization linked'
+        profiles.append(dict(common,songs=[record['score']['name'] for record in records]))
+        # The named snapshots prevent a mixed catalog's last core being mistaken
+        # for every song's core. Keep the old convenience paths for older tools.
+        for snapshot in (scratch_root/profile_name,scratch_root):
+            snapshot.mkdir(parents=True,exist_ok=True)
+            (snapshot/('engine-'+args.backend+'.bin')).write_bytes(engine)
+            legacy.save(snapshot/('engine-'+args.backend+'.json'),json.dumps(common,indent=2)+'\n')
+        for record in records:
+            score_path=record['path'];score=record['score'];name=score['name']
+            data,report=encode_score(score,cpu_hz,packing)
+            binary=engine+bytes([255])*(BASE-len(engine))+data
+            if len(binary)>flash_limit:
+                raise ValueError(f'{name}: application {len(binary)} bytes exceeds {args.board} limit {flash_limit}')
+            folder=(args.output_dir or retained_output)/name;folder.mkdir(parents=True,exist_ok=True)
+            if score_path.resolve()!=(folder/'score.json').resolve():
+                legacy.save(folder/'score.json',json.dumps(score,ensure_ascii=False,indent=2)+'\n')
+            (folder/'synth.bin').write_bytes(binary);legacy.save(folder/'synth.hex',legacy.ihex(binary))
+            ep=bytes(score['waves'])
+            if not usb:
+                (folder/'eeprom.bin').write_bytes(ep);legacy.save(folder/'eeprom.hex',legacy.ihex(ep))
+            report.update(common,sourceChannels=record['sourceChannels'],
+                          pwmBufferLayout='stereo-pairs' if channels==2 else 'mono',pwmBufferFrames=buffer_bytes//channels,
+                          flashBytes=len(binary),flashSha256=digest(binary),
+                          eepromBytes=0 if usb else len(ep),eepromSha256=None if usb else digest(ep),
+                          scoreSource=dict(path=str(score_path.relative_to(ROOT)).replace('\\','/') if score_path.is_relative_to(ROOT) else score_path.name,
+                                           sha256=record['sourceSha256']),
+                          wavetableStorage=dict(space='flash',address=BASE+26,bytes=len(ep),sha256=digest(ep)))
+            legacy.save(folder/'build-report.json',json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+            print(f'{name}: {profile_name}, engine {len(engine)}, data {len(data)}, Flash {len(binary)}/{flash_limit}; {report["controlTicks"]} control ticks; playback audit is separate')
+    summary=profiles[0] if len(profiles)==1 else dict(engine='UM88',backend=args.backend,channelSelection=args.channels,
+                irqScratchSelection=args.irq_scratch,cpuHz=cpu_hz,board=args.board,applicationFlashLimit=flash_limit,profiles=profiles)
+    legacy.save((args.output_dir or (retained_output if usb else source))/'build-report.json',json.dumps(summary,indent=2)+'\n')
     temporary.cleanup()
 if __name__=='__main__':main()

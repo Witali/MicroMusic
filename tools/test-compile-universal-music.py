@@ -11,6 +11,7 @@ import io
 import json
 import tempfile
 import unittest
+import wave
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -41,7 +42,7 @@ class Pipeline(unittest.TestCase):
                           fixtures.track(fixtures.note_events(60,0,240)+[(120,b'\xd0\x30')],end_tick=480)])
         source=Path(self.external.name)/'external.mid';source.write_bytes(raw)
         with contextlib.redirect_stdout(io.StringIO()):
-            result=pipeline.compile_music(source,self.config,self.folder/'result',backend='avr-asm')
+            result=pipeline.compile_music(source,self.config,self.folder/'result',backend='avr-asm',irq_scratch='gpior')
         retained=json.loads((result/'source-events.json').read_text(encoding='utf-8'))
         self.assertEqual(retained['source']['sha256'],hashlib.sha256(raw).hexdigest())
         self.assertEqual(len(retained['tracks']),2)
@@ -50,8 +51,38 @@ class Pipeline(unittest.TestCase):
         self.assertFalse(any(p.suffix.lower() in ('.mid','.midi','.smf') for p in result.rglob('*')))
         package=json.loads((result/'player-package.json').read_text(encoding='utf-8'))
         self.assertTrue(package['verification']['allPwmFramesMatch']);self.assertEqual(package['score']['channels'],1)
+        self.assertEqual(package['build']['irqScratch'],'gpior')
+        self.assertEqual(package['build']['reservedIORegisters'],['GPIOR0','GPIOR1','GPIOR2'])
+        self.assertEqual(json.loads((result/'provenance.json').read_text())['irqScratchSelection'],'gpior')
         self.assertEqual(package['arrangementReport']['ignoredEvents'],{'channelPressure':1})
         self.assertTrue((result/'FluidR3-MIT.txt').exists())
+
+    def test_stereo_build_choice_and_preview_preserve_source_events(self):
+        raw=fixtures.smf([fixtures.track(fixtures.note_events(60,0,240),end_tick=480)])
+        source=Path(self.external.name)/'stereo-choice.mid';source.write_bytes(raw)
+        self.config.write_text(json.dumps(dict(schema='micromusic-um88-arrangement',version=1,
+                                name='pipeline-stereo-choice',voices=1,instruments={'0':'flute'})),encoding='utf-8')
+        with contextlib.redirect_stdout(io.StringIO()):
+            result=pipeline.compile_music(source,self.config,self.folder/'stereo',backend='avr-asm',
+                                          channels='stereo',preview_seconds=.1)
+        package=json.loads((result/'player-package.json').read_text(encoding='utf-8'))
+        self.assertEqual(package['score']['channels'],2)
+        self.assertEqual(package['build']['configuredChannels'],2)
+        self.assertEqual(package['build']['sourceChannels'],1)
+        self.assertEqual(package['build']['channelSelection'],'stereo')
+        self.assertEqual(package['build']['renderABI'],'packed-stereo-u32')
+        self.assertEqual(package['verification']['configuredChannels'],2)
+        self.assertTrue(package['verification']['allPwmFramesMatch'])
+        self.assertEqual(package['arrangementReport']['noteAttacks'],1)
+        retained=json.loads((result/'source-events.json').read_text(encoding='utf-8'))
+        self.assertEqual(retained['source']['sha256'],hashlib.sha256(raw).hexdigest())
+        self.assertEqual(source.read_bytes(),raw)
+        with wave.open(str(result/'preview.wav'),'rb') as preview:
+            self.assertEqual(preview.getnchannels(),2)
+            self.assertEqual(preview.getframerate(),48000)
+            self.assertEqual(preview.getnframes(),4800)
+        self.assertEqual(json.loads((result/'listening-report.json').read_text())['channels'],2)
+        self.assertFalse(any(p.suffix.lower() in ('.mid','.midi','.smf') for p in result.rglob('*')))
 
     def test_existing_output_is_preserved_before_reading_inputs(self):
         output=self.folder/'existing';output.mkdir();marker=output/'keep.txt';marker.write_text('keep')
@@ -97,10 +128,15 @@ class Pipeline(unittest.TestCase):
         self.config.write_text(json.dumps(dict(schema='micromusic-um88-arrangement',version=1,name='pipeline-test-c-fail',
                                 voices=5,instruments={'0':'flute'})),encoding='utf-8')
         with contextlib.redirect_stdout(io.StringIO()),self.assertRaisesRegex(ValueError,'FIFO underrun.*diagnostic report'):
-            pipeline.compile_music(source,self.config,self.folder/'not-published',backend='c')
+            # Five held voices now meet the C deadline; an eight-byte FIFO
+            # deliberately cannot absorb this score's control burst.
+            pipeline.compile_music(source,self.config,self.folder/'not-published',backend='c',buffer_frames=8)
         self.assertFalse((self.folder/'not-published').exists())
         diagnostic=ROOT/'build/universal/failures/pipeline-test-c-fail-c-8000000.json'
-        self.assertFalse(json.loads(diagnostic.read_text(encoding='utf-8'))['passed'])
+        measured=json.loads(diagnostic.read_text(encoding='utf-8'))
+        self.assertFalse(measured['passed'])
+        self.assertEqual(measured['fifoCapacityFrames'],8)
+        self.assertGreater(measured['fifoUnderruns'],0)
 
     def test_excessive_explicit_gain_is_rejected_without_publishing(self):
         events=[]

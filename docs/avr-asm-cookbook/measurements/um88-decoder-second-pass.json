@@ -1,0 +1,827 @@
+{
+  "schema": "micromusic-um88-decoder-second-pass",
+  "version": 1,
+  "baselineCommit": "565e8958",
+  "measuredScope": "Isolated decoder-only read9 and common depth commit; before reset/cache, ASM-loop and tight-placement combination",
+  "cpu": "ATtiny88 / AVR25",
+  "toolchain": "GNU AVR GCC 7.3.0",
+  "abi": "GNU AVR",
+  "compilerOptions": "-mmcu=attiny88 -Os -fno-jump-tables -ffunction-sections -fdata-sections -Wl,--gc-sections",
+  "candidateEngineSourceSha256": "27da4e693bc1432e070b7c69ab47111bae4582e552201556e87c8b083ce8163f",
+  "reproductionPatch": "examples/um88-decoder-second-pass.patch",
+  "physicalHardwareTested": false,
+  "validRead9Shifts": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "minimumSongAddress": 2560,
+  "songAlignmentBytes": 32,
+  "profiles": [
+    {
+      "cpuHz": 8000000,
+      "backend": "avr-asm",
+      "packingMode": "compact",
+      "bufferBytes": 192,
+      "beforeBytes": 2540,
+      "afterBytes": 2458,
+      "savedBytes": 82,
+      "beforeSongAddress": 2560,
+      "afterSongAddress": 2560,
+      "engineSha256": "20c7cd83b29649477eac4dc1dffc44fd5da2438eccd25cb3a298d46efad8dc6a",
+      "commandRemainsCallable": true,
+      "functionSizes": {
+        "read9": 22,
+        "command": 210
+      }
+    },
+    {
+      "cpuHz": 8000000,
+      "backend": "c",
+      "packingMode": "compact",
+      "bufferBytes": 192,
+      "beforeBytes": 2624,
+      "afterBytes": 2540,
+      "savedBytes": 84,
+      "beforeSongAddress": 2624,
+      "afterSongAddress": 2560,
+      "engineSha256": "6182002f2a0acebaa57a748f72017b54a7a341930bf9fd413187462f458b74fc",
+      "commandRemainsCallable": true,
+      "functionSizes": {
+        "read9": 22,
+        "command": 210
+      }
+    },
+    {
+      "cpuHz": 8000000,
+      "backend": "avr-asm",
+      "packingMode": "fast",
+      "bufferBytes": 128,
+      "beforeBytes": 2642,
+      "afterBytes": 2574,
+      "savedBytes": 68,
+      "beforeSongAddress": 2656,
+      "afterSongAddress": 2592,
+      "engineSha256": "5cb4ea72df6ef3c52d3b86bb90bb375ba5edda798940740f01e5c73b4a061a13",
+      "commandRemainsCallable": true,
+      "functionSizes": {
+        "read9": 22,
+        "command": 322
+      }
+    },
+    {
+      "cpuHz": 8000000,
+      "backend": "c",
+      "packingMode": "fast",
+      "bufferBytes": 128,
+      "beforeBytes": 2724,
+      "afterBytes": 2656,
+      "savedBytes": 68,
+      "beforeSongAddress": 2752,
+      "afterSongAddress": 2656,
+      "engineSha256": "935c2ef6c6ef636fc000185d3a1e237d63ab13a11148563d75d2f0746c66c4ae",
+      "commandRemainsCallable": true,
+      "functionSizes": {
+        "read9": 22,
+        "command": 322
+      }
+    },
+    {
+      "cpuHz": 16000000,
+      "backend": "avr-asm",
+      "packingMode": "compact",
+      "bufferBytes": 192,
+      "beforeBytes": 2594,
+      "afterBytes": 2510,
+      "savedBytes": 84,
+      "beforeSongAddress": 2624,
+      "afterSongAddress": 2560,
+      "engineSha256": "9d590173bd2f3f0f31dba2e86b9a280014184561b703c1c40ddc2825619f7be9",
+      "commandRemainsCallable": true,
+      "functionSizes": {
+        "read9": 22,
+        "command": 210
+      }
+    },
+    {
+      "cpuHz": 16000000,
+      "backend": "c",
+      "packingMode": "compact",
+      "bufferBytes": 192,
+      "beforeBytes": 2676,
+      "afterBytes": 2594,
+      "savedBytes": 82,
+      "beforeSongAddress": 2688,
+      "afterSongAddress": 2624,
+      "engineSha256": "11850011d5cfde2263fc9c732081d2fbe5e9b7b0f19e9a926d8d08ccae48c2a6",
+      "commandRemainsCallable": true,
+      "functionSizes": {
+        "read9": 22,
+        "command": 210
+      }
+    },
+    {
+      "cpuHz": 16000000,
+      "backend": "avr-asm",
+      "packingMode": "fast",
+      "bufferBytes": 128,
+      "beforeBytes": 2694,
+      "afterBytes": 2626,
+      "savedBytes": 68,
+      "beforeSongAddress": 2720,
+      "afterSongAddress": 2656,
+      "engineSha256": "0c04dccb9939731ca09572f54aba7187edadc8a19f81f37101dd05c57b87c0ab",
+      "commandRemainsCallable": true,
+      "functionSizes": {
+        "read9": 22,
+        "command": 322
+      }
+    },
+    {
+      "cpuHz": 16000000,
+      "backend": "c",
+      "packingMode": "fast",
+      "bufferBytes": 128,
+      "beforeBytes": 2776,
+      "afterBytes": 2708,
+      "savedBytes": 68,
+      "beforeSongAddress": 2784,
+      "afterSongAddress": 2720,
+      "engineSha256": "9d1495a54893543ffc9a652e98bed747113ce6fa8950c6b57620226d732ec26a",
+      "commandRemainsCallable": true,
+      "functionSizes": {
+        "read9": 22,
+        "command": 322
+      }
+    }
+  ],
+  "compiledDecoder": [
+    {
+      "cpuHz": 8000000,
+      "decoderCases": 44,
+      "controlOrderingCases": 4,
+      "formatsTested": [
+        0,
+        9
+      ],
+      "all512Codes": true,
+      "pendingGuardSlotPreserved": true,
+      "allControlOrderingMatches": true
+    },
+    {
+      "cpuHz": 16000000,
+      "decoderCases": 44,
+      "controlOrderingCases": 4,
+      "formatsTested": [
+        0,
+        9
+      ],
+      "all512Codes": true,
+      "pendingGuardSlotPreserved": true,
+      "allControlOrderingMatches": true
+    }
+  ],
+  "activeInterruptAudits": [
+    {
+      "variant": "dense-eight",
+      "cpuHz": 16000000,
+      "backend": "avr-asm",
+      "engineSha256": "0c04dccb9939731ca09572f54aba7187edadc8a19f81f37101dd05c57b87c0ab",
+      "passed": true,
+      "fifoCapacityFrames": 128,
+      "minimumQueuedFrames": 43,
+      "maxControlActiveCycles": 16433,
+      "maxRenderActiveCycles": 366,
+      "maxISRCycles": 49,
+      "fifoUnderruns": 0,
+      "lostInterrupts": 0,
+      "minimumStackPointer": 730,
+      "stackMarginBytes": 90,
+      "allControlFramesMatch": true,
+      "allTonalMixesMatch": true,
+      "allPwmFramesMatch": true,
+      "allPercussionStatesMatch": true,
+      "clippedChannelSamples": 0
+    },
+    {
+      "variant": "polyphony-study",
+      "cpuHz": 16000000,
+      "backend": "avr-asm",
+      "engineSha256": "0c04dccb9939731ca09572f54aba7187edadc8a19f81f37101dd05c57b87c0ab",
+      "passed": true,
+      "fifoCapacityFrames": 128,
+      "minimumQueuedFrames": 47,
+      "maxControlActiveCycles": 15452,
+      "maxRenderActiveCycles": 366,
+      "maxISRCycles": 49,
+      "fifoUnderruns": 0,
+      "lostInterrupts": 0,
+      "minimumStackPointer": 732,
+      "stackMarginBytes": 92,
+      "allControlFramesMatch": true,
+      "allTonalMixesMatch": true,
+      "allPwmFramesMatch": true,
+      "allPercussionStatesMatch": true,
+      "clippedChannelSamples": 0
+    },
+    {
+      "variant": "dense-eight",
+      "cpuHz": 16000000,
+      "backend": "avr-asm",
+      "engineSha256": "9d590173bd2f3f0f31dba2e86b9a280014184561b703c1c40ddc2825619f7be9",
+      "passed": true,
+      "fifoCapacityFrames": 192,
+      "minimumQueuedFrames": 84,
+      "maxControlActiveCycles": 21159,
+      "maxRenderActiveCycles": 366,
+      "maxISRCycles": 49,
+      "fifoUnderruns": 0,
+      "lostInterrupts": 0,
+      "minimumStackPointer": 727,
+      "stackMarginBytes": 23,
+      "allControlFramesMatch": true,
+      "allTonalMixesMatch": true,
+      "allPwmFramesMatch": true,
+      "allPercussionStatesMatch": true,
+      "clippedChannelSamples": 0
+    },
+    {
+      "variant": "polyphony-study",
+      "cpuHz": 16000000,
+      "backend": "avr-asm",
+      "engineSha256": "9d590173bd2f3f0f31dba2e86b9a280014184561b703c1c40ddc2825619f7be9",
+      "passed": true,
+      "fifoCapacityFrames": 192,
+      "minimumQueuedFrames": 89,
+      "maxControlActiveCycles": 20118,
+      "maxRenderActiveCycles": 366,
+      "maxISRCycles": 49,
+      "fifoUnderruns": 0,
+      "lostInterrupts": 0,
+      "minimumStackPointer": 727,
+      "stackMarginBytes": 23,
+      "allControlFramesMatch": true,
+      "allTonalMixesMatch": true,
+      "allPwmFramesMatch": true,
+      "allPercussionStatesMatch": true,
+      "clippedChannelSamples": 0
+    },
+    {
+      "variant": "dense-eight",
+      "cpuHz": 8000000,
+      "backend": "avr-asm",
+      "engineSha256": "5cb4ea72df6ef3c52d3b86bb90bb375ba5edda798940740f01e5c73b4a061a13",
+      "passed": true,
+      "fifoCapacityFrames": 128,
+      "minimumQueuedFrames": 42,
+      "maxControlActiveCycles": 16433,
+      "maxRenderActiveCycles": 366,
+      "maxISRCycles": 49,
+      "fifoUnderruns": 0,
+      "lostInterrupts": 0,
+      "minimumStackPointer": 730,
+      "stackMarginBytes": 90,
+      "allControlFramesMatch": true,
+      "allTonalMixesMatch": true,
+      "allPwmFramesMatch": true,
+      "allPercussionStatesMatch": true,
+      "clippedChannelSamples": 0
+    },
+    {
+      "variant": "polyphony-study",
+      "cpuHz": 8000000,
+      "backend": "avr-asm",
+      "engineSha256": "5cb4ea72df6ef3c52d3b86bb90bb375ba5edda798940740f01e5c73b4a061a13",
+      "passed": true,
+      "fifoCapacityFrames": 128,
+      "minimumQueuedFrames": 47,
+      "maxControlActiveCycles": 15452,
+      "maxRenderActiveCycles": 366,
+      "maxISRCycles": 49,
+      "fifoUnderruns": 0,
+      "lostInterrupts": 0,
+      "minimumStackPointer": 732,
+      "stackMarginBytes": 92,
+      "allControlFramesMatch": true,
+      "allTonalMixesMatch": true,
+      "allPwmFramesMatch": true,
+      "allPercussionStatesMatch": true,
+      "clippedChannelSamples": 0
+    },
+    {
+      "variant": "dense-eight",
+      "cpuHz": 8000000,
+      "backend": "avr-asm",
+      "engineSha256": "20c7cd83b29649477eac4dc1dffc44fd5da2438eccd25cb3a298d46efad8dc6a",
+      "passed": true,
+      "fifoCapacityFrames": 192,
+      "minimumQueuedFrames": 84,
+      "maxControlActiveCycles": 21159,
+      "maxRenderActiveCycles": 366,
+      "maxISRCycles": 49,
+      "fifoUnderruns": 0,
+      "lostInterrupts": 0,
+      "minimumStackPointer": 727,
+      "stackMarginBytes": 23,
+      "allControlFramesMatch": true,
+      "allTonalMixesMatch": true,
+      "allPwmFramesMatch": true,
+      "allPercussionStatesMatch": true,
+      "clippedChannelSamples": 0
+    },
+    {
+      "variant": "polyphony-study",
+      "cpuHz": 8000000,
+      "backend": "avr-asm",
+      "engineSha256": "20c7cd83b29649477eac4dc1dffc44fd5da2438eccd25cb3a298d46efad8dc6a",
+      "passed": true,
+      "fifoCapacityFrames": 192,
+      "minimumQueuedFrames": 89,
+      "maxControlActiveCycles": 20118,
+      "maxRenderActiveCycles": 366,
+      "maxISRCycles": 49,
+      "fifoUnderruns": 0,
+      "lostInterrupts": 0,
+      "minimumStackPointer": 727,
+      "stackMarginBytes": 23,
+      "allControlFramesMatch": true,
+      "allTonalMixesMatch": true,
+      "allPwmFramesMatch": true,
+      "allPercussionStatesMatch": true,
+      "clippedChannelSamples": 0
+    },
+    {
+      "variant": "c-held-1",
+      "cpuHz": 8000000,
+      "backend": "c",
+      "engineSha256": "935c2ef6c6ef636fc000185d3a1e237d63ab13a11148563d75d2f0746c66c4ae",
+      "passed": true,
+      "fifoCapacityFrames": 128,
+      "minimumQueuedFrames": 107,
+      "maxControlActiveCycles": 2837,
+      "maxRenderActiveCycles": 104,
+      "maxISRCycles": 77,
+      "fifoUnderruns": 0,
+      "lostInterrupts": 0,
+      "minimumStackPointer": 725,
+      "stackMarginBytes": 85,
+      "allControlFramesMatch": true,
+      "allTonalMixesMatch": true,
+      "allPwmFramesMatch": true,
+      "allPercussionStatesMatch": true,
+      "clippedChannelSamples": 0
+    },
+    {
+      "variant": "c-held-4",
+      "cpuHz": 8000000,
+      "backend": "c",
+      "engineSha256": "6182002f2a0acebaa57a748f72017b54a7a341930bf9fd413187462f458b74fc",
+      "passed": true,
+      "fifoCapacityFrames": 192,
+      "minimumQueuedFrames": 125,
+      "maxControlActiveCycles": 10918,
+      "maxRenderActiveCycles": 287,
+      "maxISRCycles": 77,
+      "fifoUnderruns": 0,
+      "lostInterrupts": 0,
+      "minimumStackPointer": 722,
+      "stackMarginBytes": 18,
+      "allControlFramesMatch": true,
+      "allTonalMixesMatch": true,
+      "allPwmFramesMatch": true,
+      "allPercussionStatesMatch": true,
+      "clippedChannelSamples": 0
+    }
+  ],
+  "compactDenseTradeoff": {
+    "baselineActiveCycles": 19558,
+    "candidateActiveCycles": 21159,
+    "additionalActiveCycles": 1601,
+    "baselineMinimumFIFO": 91,
+    "candidateMinimumFIFO": 84
+  },
+  "compilerScreen": {
+    "strict-x": [
+      {
+        "cpuHz": 8000000,
+        "backend": "avr-asm",
+        "flags": [
+          "-mstrict-X"
+        ],
+        "baselineEngineBytes": 2540,
+        "engineBytes": 2540,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      },
+      {
+        "cpuHz": 8000000,
+        "backend": "c",
+        "flags": [
+          "-mstrict-X"
+        ],
+        "baselineEngineBytes": 2624,
+        "engineBytes": 2624,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      },
+      {
+        "cpuHz": 16000000,
+        "backend": "avr-asm",
+        "flags": [
+          "-mstrict-X"
+        ],
+        "baselineEngineBytes": 2594,
+        "engineBytes": 2594,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      },
+      {
+        "cpuHz": 16000000,
+        "backend": "c",
+        "flags": [
+          "-mstrict-X"
+        ],
+        "baselineEngineBytes": 2676,
+        "engineBytes": 2676,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      }
+    ],
+    "no-split": [
+      {
+        "cpuHz": 8000000,
+        "backend": "avr-asm",
+        "flags": [
+          "-fno-split-wide-types"
+        ],
+        "baselineEngineBytes": 2540,
+        "engineBytes": 2540,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      },
+      {
+        "cpuHz": 8000000,
+        "backend": "c",
+        "flags": [
+          "-fno-split-wide-types"
+        ],
+        "baselineEngineBytes": 2624,
+        "engineBytes": 2624,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      },
+      {
+        "cpuHz": 16000000,
+        "backend": "avr-asm",
+        "flags": [
+          "-fno-split-wide-types"
+        ],
+        "baselineEngineBytes": 2594,
+        "engineBytes": 2594,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      },
+      {
+        "cpuHz": 16000000,
+        "backend": "c",
+        "flags": [
+          "-fno-split-wide-types"
+        ],
+        "baselineEngineBytes": 2676,
+        "engineBytes": 2676,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      }
+    ],
+    "no-small": [
+      {
+        "cpuHz": 8000000,
+        "backend": "avr-asm",
+        "flags": [
+          "-fno-inline-small-functions"
+        ],
+        "baselineEngineBytes": 2540,
+        "engineBytes": 2540,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      },
+      {
+        "cpuHz": 8000000,
+        "backend": "c",
+        "flags": [
+          "-fno-inline-small-functions"
+        ],
+        "baselineEngineBytes": 2624,
+        "engineBytes": 2624,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      },
+      {
+        "cpuHz": 16000000,
+        "backend": "avr-asm",
+        "flags": [
+          "-fno-inline-small-functions"
+        ],
+        "baselineEngineBytes": 2594,
+        "engineBytes": 2594,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      },
+      {
+        "cpuHz": 16000000,
+        "backend": "c",
+        "flags": [
+          "-fno-inline-small-functions"
+        ],
+        "baselineEngineBytes": 2676,
+        "engineBytes": 2676,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      }
+    ],
+    "no-scev": [
+      {
+        "cpuHz": 8000000,
+        "backend": "avr-asm",
+        "flags": [
+          "-fno-tree-scev-cprop"
+        ],
+        "baselineEngineBytes": 2540,
+        "engineBytes": 2540,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      },
+      {
+        "cpuHz": 8000000,
+        "backend": "c",
+        "flags": [
+          "-fno-tree-scev-cprop"
+        ],
+        "baselineEngineBytes": 2624,
+        "engineBytes": 2658,
+        "changeBytes": 34,
+        "missingSymbols": [],
+        "indirectJumps": []
+      },
+      {
+        "cpuHz": 16000000,
+        "backend": "avr-asm",
+        "flags": [
+          "-fno-tree-scev-cprop"
+        ],
+        "baselineEngineBytes": 2594,
+        "engineBytes": 2594,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      },
+      {
+        "cpuHz": 16000000,
+        "backend": "c",
+        "flags": [
+          "-fno-tree-scev-cprop"
+        ],
+        "baselineEngineBytes": 2676,
+        "engineBytes": 2710,
+        "changeBytes": 34,
+        "missingSymbols": [],
+        "indirectJumps": []
+      }
+    ],
+    "no-caller": [
+      {
+        "cpuHz": 8000000,
+        "backend": "avr-asm",
+        "flags": [
+          "-fno-caller-saves"
+        ],
+        "baselineEngineBytes": 2540,
+        "engineBytes": 2540,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      },
+      {
+        "cpuHz": 8000000,
+        "backend": "c",
+        "flags": [
+          "-fno-caller-saves"
+        ],
+        "baselineEngineBytes": 2624,
+        "engineBytes": 2624,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      },
+      {
+        "cpuHz": 16000000,
+        "backend": "avr-asm",
+        "flags": [
+          "-fno-caller-saves"
+        ],
+        "baselineEngineBytes": 2594,
+        "engineBytes": 2594,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      },
+      {
+        "cpuHz": 16000000,
+        "backend": "c",
+        "flags": [
+          "-fno-caller-saves"
+        ],
+        "baselineEngineBytes": 2676,
+        "engineBytes": 2676,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      }
+    ],
+    "no-ter": [
+      {
+        "cpuHz": 8000000,
+        "backend": "avr-asm",
+        "flags": [
+          "-fno-tree-ter"
+        ],
+        "baselineEngineBytes": 2540,
+        "engineBytes": 2540,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      },
+      {
+        "cpuHz": 8000000,
+        "backend": "c",
+        "flags": [
+          "-fno-tree-ter"
+        ],
+        "baselineEngineBytes": 2624,
+        "engineBytes": 2624,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      },
+      {
+        "cpuHz": 16000000,
+        "backend": "avr-asm",
+        "flags": [
+          "-fno-tree-ter"
+        ],
+        "baselineEngineBytes": 2594,
+        "engineBytes": 2594,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      },
+      {
+        "cpuHz": 16000000,
+        "backend": "c",
+        "flags": [
+          "-fno-tree-ter"
+        ],
+        "baselineEngineBytes": 2676,
+        "engineBytes": 2676,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      }
+    ],
+    "call-prologues": [
+      {
+        "cpuHz": 8000000,
+        "backend": "avr-asm",
+        "flags": [
+          "-mcall-prologues"
+        ],
+        "baselineEngineBytes": 2540,
+        "engineBytes": 2608,
+        "changeBytes": 68,
+        "missingSymbols": [],
+        "indirectJumps": [
+          "ijmp"
+        ]
+      },
+      {
+        "cpuHz": 8000000,
+        "backend": "c",
+        "flags": [
+          "-mcall-prologues"
+        ],
+        "baselineEngineBytes": 2624,
+        "engineBytes": 2680,
+        "changeBytes": 56,
+        "missingSymbols": [],
+        "indirectJumps": [
+          "ijmp"
+        ]
+      },
+      {
+        "cpuHz": 16000000,
+        "backend": "avr-asm",
+        "flags": [
+          "-mcall-prologues"
+        ],
+        "baselineEngineBytes": 2594,
+        "engineBytes": 2662,
+        "changeBytes": 68,
+        "missingSymbols": [],
+        "indirectJumps": [
+          "ijmp"
+        ]
+      },
+      {
+        "cpuHz": 16000000,
+        "backend": "c",
+        "flags": [
+          "-mcall-prologues"
+        ],
+        "baselineEngineBytes": 2676,
+        "engineBytes": 2732,
+        "changeBytes": 56,
+        "missingSymbols": [],
+        "indirectJumps": [
+          "ijmp"
+        ]
+      }
+    ],
+    "lto": [
+      {
+        "cpuHz": 8000000,
+        "backend": "avr-asm",
+        "flags": [
+          "-flto"
+        ],
+        "baselineEngineBytes": 2540,
+        "engineBytes": 2540,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      },
+      {
+        "cpuHz": 8000000,
+        "backend": "c",
+        "flags": [
+          "-flto"
+        ],
+        "baselineEngineBytes": 2624,
+        "engineBytes": 2624,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      },
+      {
+        "cpuHz": 16000000,
+        "backend": "avr-asm",
+        "flags": [
+          "-flto"
+        ],
+        "baselineEngineBytes": 2594,
+        "engineBytes": 2594,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      },
+      {
+        "cpuHz": 16000000,
+        "backend": "c",
+        "flags": [
+          "-flto"
+        ],
+        "baselineEngineBytes": 2676,
+        "engineBytes": 2676,
+        "changeBytes": 0,
+        "missingSymbols": [],
+        "indirectJumps": []
+      }
+    ]
+  },
+  "compactPairPhysicalFlashByteReadsBefore": 3,
+  "compactPairPhysicalFlashByteReadsAfter": 4,
+  "compactPairPhysicalFlashReadOffsetsAfter": [
+    1,
+    2,
+    0,
+    1
+  ],
+  "fastPairPhysicalFlashByteReadsBeforeAndAfter": 4
+}

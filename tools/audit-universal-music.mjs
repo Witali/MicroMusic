@@ -19,6 +19,12 @@ export function audit(name,{directory=path.join(root,'ATtiny88/Music/universal/s
  const rom=fs.readFileSync(path.join(folder,'synth.bin'));
  assert.equal(sha(rom),meta.flashSha256);assert.equal(score.controlTicks,meta.controlTicks);
  const channels=meta.pwmBufferLayout==='mono'?1:2;
+ if(meta.configuredChannels!==undefined){
+  assert.equal(meta.configuredChannels,channels,'Compiled channel profile');
+  assert.equal(score.channels,channels,'Effective source channels');
+  assert.equal(meta.renderABI,channels===1?'mono-s16':'packed-stereo-u32','Compiled render ABI');
+  assert.ok(!Number.isInteger(meta.labels.um_channels),'No runtime channel state in fixed profiles');
+ }
  const bufferFrames=meta.pwmBufferFrames||(192/channels),bufferBytes=bufferFrames*channels;
  const c=new AVRCore(rom,null,{target:'attiny88',cpuHz:meta.cpuHz}),ref=new UniversalReference(score,meta.cpuHz,
   {pwmChannels:channels,pwmFrames:bufferFrames,pwmReserveFrames:meta.renderABI==='packed-stereo-u32'?4:4/channels});
@@ -43,7 +49,7 @@ export function audit(name,{directory=path.join(root,'ATtiny88/Music/universal/s
  assert.ok(returnPCs.size,'The auditable kernel must remain a function');
  for(const p of [render,tick,irq,...tickReturns,...returnPCs,...retiPCs])c.batch[p]=0;
  let checkedPhases=0,checkedWaves=0,observedIRQs=0,checkedIRQOutputs=0,checkedGeneratedFrames=0;
- let minQueued=bufferFrames,maxRender=0,startRender=0,startIrqs=0,expectedMix=0,irqExpected;
+ let minQueued=bufferFrames,maxRender=0,startRender=0,startIrqs=0,expectedMix=0,irqExpected,inactiveCompareA;
  let lastTick=-1,lastWrite=ref.write,done=false,failure=null;
  let tickStart=null,tickIrqs=0,maxControl=0,controlCalls=0;
  const start=performance.now(),stopTicks=score.controlTicks+Math.min(2,score.controlTicks);
@@ -84,15 +90,18 @@ export function audit(name,{directory=path.join(root,'ATtiny88/Music/universal/s
     for(let i=0;i<score.voices;i++){assert.equal(word(c.data,state+i*23),ref.voices[i].phase,'DDS phase after kernel');checkedPhases++;}
     maxRender=Math.max(maxRender,c.cyc-startRender-(c.irqCount-startIrqs)*c.maxIRQ);ref.finishSample();
    }else if(c.pc===irq){
-    observedIRQs++;
+    observedIRQs++;inactiveCompareA=word(c.data,c.profile.timer.ocra);
     const consumer=c.data[read],queued=((c.data[write]-consumer+bufferBytes)%bufferBytes)/channels;
     assert.ok(queued>0,name+': PWM FIFO underrun at '+c.cyc/meta.cpuHz+' s, tick '+ref.tick);
     minQueued=Math.min(minQueued,queued);irqExpected=[ref.ring[consumer],ref.ring[consumer+(channels===2?1:0)]];
     assert.equal(c.data[ring+consumer],irqExpected[0],'FIFO left/mono byte');
     if(channels===2)assert.equal(c.data[ring+consumer+1],irqExpected[1],'FIFO right byte');
    }else if(c.inIRQ&&retiPCs.has(c.pc)){
-    const expected=channels===1?[128,irqExpected[0]]:irqExpected;
-    assert.deepEqual([word(c.data,c.profile.timer.ocra),word(c.data,c.profile.timer.ocrb)],expected,'Timer1 compare values after IRQ');checkedIRQOutputs++;
+    if(channels===1){
+     assert.equal(word(c.data,c.profile.timer.ocrb),irqExpected[0],'Mono compare after IRQ');
+     assert.equal(word(c.data,c.profile.timer.ocra),inactiveCompareA,'Mono IRQ leaves inactive OCR1A untouched');
+    }else assert.deepEqual([word(c.data,c.profile.timer.ocra),word(c.data,c.profile.timer.ocrb)],irqExpected,'Stereo compare values after IRQ');
+    checkedIRQOutputs++;
    }
    if(!c.runBlock())c.step();
   }
@@ -108,6 +117,8 @@ export function audit(name,{directory=path.join(root,'ATtiny88/Music/universal/s
  }catch(error){failure=error.message;}
  const passed=!failure;
  const report={variant:name,cpuHz:meta.cpuHz,backend:meta.backend,engineSha256:meta.engineSha256,
+  ...(meta.configuredChannels===undefined?{}:{configuredChannels:meta.configuredChannels,renderABI:meta.renderABI}),
+  inactiveCompareAPreserved:channels===1?passed:null,
   ...(usb?{board:meta.board,bootloaderHandoffChecked:true,erasedEepromChecked:true}:{}),
   flashSha256:meta.flashSha256,eepromSha256:meta.eepromSha256,scoreSha256:sha(JSON.stringify(score)),
   reference:'Independent uncompressed UM88 JSON, exact tonal/percussion/interpolation arithmetic',passed,

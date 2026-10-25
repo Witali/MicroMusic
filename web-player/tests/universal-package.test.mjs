@@ -8,6 +8,12 @@ const text=readFileSync(new URL('../../ATtiny88/Music/universal/examples/mono-st
 const original=JSON.parse(text);
 const init=app=>app.workers.at(-1).messages.find(m=>m.type==='init');
 const eventFor=value=>({target:{files:[{name:'player-package.json',size:value.length,text:async()=>value}],value:'selected'}});
+const retainedPackage=(id,usb=false)=>{
+ const catalog=JSON.parse(readFileSync(new URL(usb?'../firmware-attiny88-16mhz.json':'../firmware-attiny88.json',import.meta.url)));
+ const entry=catalog.entries.find(e=>e.id===id),load=p=>JSON.parse(readFileSync(new URL('../'+p,import.meta.url)));
+ return {schema:'micromusic-um88-package',version:1,build:load(entry.buildReport),verification:load(entry.verificationSource),
+  score:load(entry.source.replace(/synth\.hex$/,'score.json')),flashHex:entry.flashHex};
+};
 
 test('verified mono package identifies its actual clock, image and optional EEPROM',async()=>{
  const entry=await universalPackageEntry(text);
@@ -26,10 +32,62 @@ for(const [label,mutate,pattern] of [
  ['clock mismatch',p=>p.build.cpuHz=12000000,/Clock/],
  ['incomplete output audit',p=>p.verification.allPwmFramesMatch=false,/audit/],
  ['clipping',p=>p.verification.clippedChannelSamples=1,/clipping/],
- ['stereo input',p=>p.score.channels=2,/mono/],
+ ['source/build channel mismatch',p=>p.score.channels=2,/channel/],
+ ['unsupported channel count',p=>p.score.channels=3,/channel/],
  ['unqualified overclock',p=>p.build.cpuHz=16000000,/F_CPU/],
 ])test('package rejects '+label,async()=>{
  const pkg=structuredClone(original);mutate(pkg);await assert.rejects(universalPackageEntry(pkg),pattern);
+});
+
+test('fixed mono package binds its selected ABI to the complete playback audit',async()=>{
+ assert.equal(original.build.configuredChannels,1);assert.equal(original.build.renderABI,'mono-s16');
+ const entry=await universalPackageEntry(original);
+ assert.equal(entry.configuredChannels,1);assert.equal(entry.renderABI,'mono-s16');
+ for(const [mutate,pattern]of [
+  [p=>delete p.verification.configuredChannels,/Audit\/channel/],
+  [p=>delete p.verification.renderABI,/Audit\/render ABI/],
+  [p=>p.verification.configuredChannels=2,/Audit\/channel/],
+  [p=>p.verification.renderABI='packed-stereo-u32',/Audit\/render ABI/],
+  [p=>p.build.configuredChannels=2,/channel/],
+  [p=>p.build.renderABI='packed-stereo-u32',/render ABI/],
+  [p=>delete p.build.configuredChannels,/legacy render ABI/],
+  [p=>p.build.pwmBufferLayout='stereo-pairs',/layout/],
+ ]){
+  const pkg=structuredClone(original);mutate(pkg);await assert.rejects(universalPackageEntry(pkg),pattern);
+ }
+});
+
+test('legacy runtime-channel package metadata remains importable',async()=>{
+ const pkg=structuredClone(original);
+ delete pkg.build.configuredChannels;delete pkg.build.channelSelection;delete pkg.build.sourceChannels;
+ pkg.build.renderABI='packed-stereo-u32';
+ delete pkg.verification.configuredChannels;delete pkg.verification.renderABI;
+ const entry=await universalPackageEntry(pkg);
+ assert.equal(entry.audioChannels,1);assert.equal(entry.configuredChannels,undefined);
+});
+
+test('explicit mono conversion keeps original channel provenance separate from the effective score',async()=>{
+ const pkg=structuredClone(original);pkg.build.channelSelection='mono';pkg.build.sourceChannels=2;
+ assert.equal((await universalPackageEntry(pkg)).audioChannels,1);
+ pkg.build.channelSelection='auto';await assert.rejects(universalPackageEntry(pkg),/Source channel metadata/);
+});
+
+test('selected stereo package imports and renders both PWM channels',async()=>{
+ const pkg=retainedPackage('lumiere-stereo'),entry=await universalPackageEntry(pkg);
+ assert.equal(entry.audioChannels,2);assert.equal(entry.configuredChannels,2);
+ assert.equal(entry.renderABI,'packed-stereo-u32');assert.match(entry.description,/Стерео/);
+ assert.deepEqual(entry.outputs.map(o=>[o.channel,o.pin]),[['L','PB1'],['R','PB2']]);
+ const js=await createRenderer(entry,48000,{},'js'),wasm=await createRenderer(entry,48000,{},'wasm');
+ const a=js.render(16384),b=wasm.render(16384);
+ assert.equal(a.length,32768);assert.deepEqual(a,b);assert.ok(a.some(x=>Math.abs(x)>.005));
+ const app=await playerApp({speech:false,device:'attiny88'});
+ await app.get('package-file').onchange(eventFor(JSON.stringify(pkg)));
+ assert.equal(init(app).entry.audioChannels,2);assert.equal(app.get('stereo-output').hidden,false);
+ assert.equal(app.get('error').hidden,true);
+ for(const mutate of [p=>p.build.renderABI='mono-s16',p=>p.build.configuredChannels=1,
+  p=>p.verification.configuredChannels=1]){
+  const broken=structuredClone(pkg);mutate(broken);await assert.rejects(universalPackageEntry(broken),/ABI|channel/);
+ }
 });
 test('JS and WASM execute the same imported mono package without EEPROM',async()=>{
  const entry=await universalPackageEntry(text);

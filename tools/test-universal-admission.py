@@ -59,9 +59,10 @@ def main():
         audit=run(['node',ROOT/'tools/audit-universal-music.mjs','--directory='+str(folder),name])
         measured=json.loads((folder/name/'verification.json').read_text(encoding='utf-8'))
         assert measured['passed']==(audit.returncode==0)
-        if backend=='avr-asm' and not burst or backend=='c' and voices<=4:assert measured['passed'],measured
-        if burst or backend=='c' and voices>=5:
+        if burst:
             assert not measured['passed'] and measured['fifoUnderruns']>0,measured
+        else:
+            assert measured['passed'],measured
         cases.append(dict(workload='1200 redundant CONTEXT commands every tick' if burst else
                           f'{voices} voices; every tick changes all contexts, pitches, levels, phases and percussion' if stress else
                           f'{voices} continuously held independent voices; LOOP/restart',verification=measured))

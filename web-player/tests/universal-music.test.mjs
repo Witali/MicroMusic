@@ -6,8 +6,8 @@ import {createRenderer} from '../lib/engines.js';
 const read=p=>readFileSync(new URL(p,import.meta.url));
 const catalog=JSON.parse(read('../firmware-attiny88.json'));
 const hash=b=>createHash('sha256').update(b).digest('hex');
-test('all nine current compositions, including stereo, share executable bytes',()=>{
- let code,monoCount=0;
+test('current compositions share executable bytes within each fixed output profile',()=>{
+ const code=new Map();let monoCount=0,stereoCount=0;
  assert.equal(catalog.entries.length,9);
  for(const entry of catalog.entries){
   assert.equal(entry.firmwareEngine,'UM88');
@@ -17,13 +17,18 @@ test('all nine current compositions, including stereo, share executable bytes',(
   const prefix=binary.subarray(0,meta.engineBytes);
   assert.equal(entry.archivedFirmware,false);
   assert.equal(meta.channels,entry.audioChannels);assert.equal(meta.pwmBufferFrames,192/meta.channels);
-  if(meta.channels===1)monoCount++;
-  if(code)assert.deepEqual(prefix,code);else code=prefix;
+  assert.equal(meta.configuredChannels,meta.channels);assert.equal(entry.configuredChannels,meta.channels);
+  assert.equal(meta.renderABI,meta.channels===1?'mono-s16':'packed-stereo-u32');
+  assert.equal(entry.renderABI,meta.renderABI);
+  if(meta.channels===1)monoCount++;else stereoCount++;
+  const key=JSON.stringify([meta.configuredChannels,meta.cpuHz,meta.backend,meta.packingMode,meta.pwmBufferBytes]);
+  if(code.has(key))assert.deepEqual(prefix,code.get(key));else code.set(key,prefix);
   assert.equal(hash(prefix),meta.engineSha256);assert.equal(hash(binary),verification.flashSha256);
   assert.equal(verification.fifoUnderruns,0);assert.equal(verification.completeLoops,1);
   assert.equal(meta.cpuHz,8000000);assert.equal(meta.synthesisHz,meta.cpuHz/1024);
  }
  assert.equal(monoCount,8);
+ assert.equal(stereoCount,1);assert.equal(code.size,2);
 });
 for(const engine of ['js','wasm'])for(const id of ['lumiere-stereo','cancion-del-mariachi-ensemble']){
  test(engine+' browser rendering of UM88 '+id,async()=>{

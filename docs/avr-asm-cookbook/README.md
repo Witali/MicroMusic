@@ -2074,3 +2074,23 @@ Primary flag definitions: [Microchip ADC SREG](https://onlinedocs.microchip.com/
 [MULSU signed16 example](https://onlinedocs.microchip.com/oxy/GUID-0B644D8F-67E7-49E6-82C9-1B2B9ABE6A0D-en-US-23/GUID-FA865CD0-BF70-4D7F-9F8C-760FEF99F2D6.html).
 The signed17 extension and byte-aligned constructor are derived here from
 those semantics; the measured bounds and ABI restrictions are essential.
+
+## UM88: page-local FIFO
+
+[Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.
+
+## UM88: exact table-free gain
+
+[Exact table-free gain](um88-table-free-gain.md) records the bounded C/ASM products, floor rounding, pointer-render requirement, isolated size savings, rejected C timing regressions, and independent arithmetic plus active-IRQ admission checks.
+
+## UM88: smaller control decoding
+
+[Shared voice addresses and decoder cursors](um88-control-size.md): lossless C address/stack work, exact compact-pair offsets, portable layout fallback, and measured size/timing results.
+
+## UM88: output channels selected at build time
+
+[Compile only mono or stereo](um88-configured-channels.md): conditional ABI and PWM code, tight music placement, fixed FIFO stride, and a test-only proof that mono never writes the inactive compare register.
+
+## UM88: flag-neutral PWM interrupt
+
+[Flag-neutral IRQ and explicit GPIOR backup](um88-flag-neutral-irq.md): preserve SREG without saving it on the normal path, use a balanced power-of-two wrap, and optionally reserve three GPIOR registers to replace stack backup.

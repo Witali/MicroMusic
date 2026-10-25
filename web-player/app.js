@@ -1,6 +1,6 @@
 import { parseHex } from './lib/hex.js';
 import { RealtimeMonitor } from './lib/realtime.js';
-import { universalPackageEntry } from './lib/universal-package.js?v=20261025-um88-all-boards';
+import { universalPackageEntry } from './lib/universal-package.js?v=20261025-um88-channels';
 const $ = id => document.getElementById(id);
 const formatHex = (value, length=2) => value.toString(16).toUpperCase().padStart(length,'0');
 const canvas = $('wave');
@@ -59,7 +59,7 @@ function deviceUI(device) {
     for(const choice of document.querySelectorAll('input[name="engine"]'))choice.checked=choice.value==='wasm';
   }
   $('package-file').disabled=false;
-  $('package-import-label').textContent=micronucleus?'Открыть пакет UM88 для Micronucleus':tiny88?'Открыть моно-пакет UM88':'Открыть пакет ATtiny13A';
+  $('package-import-label').textContent=micronucleus?'Открыть пакет UM88 для Micronucleus':tiny88?'Открыть пакет UM88':'Открыть пакет ATtiny13A';
   $('engine-note').textContent='При смене — сброс на начало.';
   if(!speechCollection) {
     document.title=`MicroMusic / ${name} — плеер прошивок`;

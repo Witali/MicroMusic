@@ -1,0 +1,5705 @@
+{
+  "schema": "micromusic-um88-irq-verification",
+  "version": 1,
+  "passed": true,
+  "hardwareTested": false,
+  "instructionEngine": "shared JavaScript AVR reference",
+  "cpu": "ATtiny88/AVR25",
+  "toolchainVersion": "avr-gcc.exe (GCC) 7.3.0",
+  "sourceTextLfSha256": {
+    "ATtiny88/Music/universal/irq-avr.S": "860cf883191b181cd361f983d17ebe4e4e09997c497a56b946b24b4af586cbda",
+    "ATtiny88/Music/universal/irq-scratch.h": "cc6b3a3e264df61dfdb0a09c6e0fe84e532e14a75f3b32681ca24e24892f1cb1",
+    "ATtiny88/Music/universal/audio-buffer.h": "d4d8e84ee2c8fc7cbb7256efeecee122ae07805af165e1f3f32132faeb23f976",
+    "ATtiny88/Music/universal/audio-channels.h": "82a57357f70d15b12c0577ea92066be77705e69a2335ddc2162943646ddb298a",
+    "ATtiny88/Music/universal/platform.c": "8c31b2ed4981f916ae866a0433c5283018762752c8974c79b8cd34e353c8e097",
+    "ATtiny88/Music/universal/engine.h": "c70e387f05f70edf74bf9bb9b5d0a76e50e7220dd41c9003c8e1cbbfa66892fe",
+    "ATtiny88/Music/universal/clock.h": "4626b685e27293bda6bf005dd305fb3d63380a9287fc4267ed81f1e65b5f44cf",
+    "ATtiny88/Music/universal/rational-clocks.h": "d9c15451284e16f4e91dc519eb53cf4d15614837ecd16367e207b78e23234314",
+    "ATtiny88/Music/universal/storage.h": "60497a6be96ca3a8057319cc563019fad088e178bccc4357052323e6378c2e92",
+    "ATtiny88/Music/universal/vendor/ATtiny_DFP/3.4.278/include/avr/iotn88.h": "63c792cc9961aca81bfb3602e0d1d3cf01a37f35a449a6b6e2e6c8b41cc1e892"
+  },
+  "registerDefinitions": "ATtiny88/Music/universal/vendor/ATtiny_DFP/3.4.278/atdf/ATtiny88.atdf",
+  "registerDefinitionsSha256": "b349f84f07e27ec5fb3e60e51596ebd764ad105470cb48bc3a8fb0ca3916b1f8",
+  "entryAndVectorCycles": 6,
+  "configurations": 282,
+  "cases": 329940,
+  "capacities": {
+    "minimum": 8,
+    "maximum": 192,
+    "step": 4
+  },
+  "channels": [
+    1,
+    2
+  ],
+  "allInterruptedRegistersAndSregPreserved": true,
+  "all256RegisterValuesCovered": true,
+  "all128SavedSregValuesCovered": true,
+  "allUnderrunCounterValuesCovered": true,
+  "monoOcrANeverAccessed": true,
+  "emptyAndWrapExact": true,
+  "gpiorReservation": [
+    {
+      "register": "GPIOR0",
+      "interruptedCpuRegister": 16
+    },
+    {
+      "register": "GPIOR1",
+      "interruptedCpuRegister": 26
+    },
+    {
+      "register": "GPIOR2",
+      "interruptedCpuRegister": 27
+    }
+  ],
+  "gpiorConstraint": "Exclusive driver ownership; PWM interrupt must remain non-nested",
+  "compilerAndStackPreserveGpior": true,
+  "results": [
+    {
+      "irqScratch": "stack",
+      "capacity": 8,
+      "channels": 1,
+      "irqBytes": 58,
+      "irqSha256": "ce091cb879d78e237450bb1a1ce57a33bb77ad672440d2e5b27ef561d5a83794",
+      "cases": 1036,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 8,
+      "channels": 2,
+      "irqBytes": 64,
+      "irqSha256": "67b20099284a4baa286221c25a1c5895f2938ff533349be995ef121ba7c05592",
+      "cases": 1028,
+      "nonemptyCycles": [
+        42
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 12,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "e1ee487b7e83d988a225b378683c361ce47cc287731d888d1b9aa162f2ba7620",
+      "cases": 1044,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 12,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "c9c145034674cd034900aebf207fe3c00a0133bd3ef56d5c9a7921d55e54bc7f",
+      "cases": 1032,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 16,
+      "channels": 1,
+      "irqBytes": 58,
+      "irqSha256": "7f08727aa3b10db1b8d4cc4822262468530921c380700579a2ac056075695321",
+      "cases": 1052,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 16,
+      "channels": 2,
+      "irqBytes": 64,
+      "irqSha256": "8ef4b8393011edc865306584347cee7582762422c2722811aac53f5431ee2624",
+      "cases": 1036,
+      "nonemptyCycles": [
+        42
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 20,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "ae4a4058e46a97c2dcd32bd148786c90ce80468f0515fafcd7f45e0ebe939db8",
+      "cases": 1060,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 20,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "4249b4c87be26acd1cbd9190cf6a646a9e8eca903bf6b9783c78bb7ccbefbd78",
+      "cases": 1040,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 24,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "484f16b0ea0583abe143b10a21b6f4775fada6e9abc02f82f1e9bc929f9171cc",
+      "cases": 1068,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 24,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "fb52007f7273b37895d167cd52e97365343f1bc235bfab66b17222e8beb58aa5",
+      "cases": 1044,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 28,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "1d23f6b8bdbeeff5d59413f00afb91fcb081d2f1a2ba59f7dfb153fe1cbe662e",
+      "cases": 1076,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 28,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "a2193822ce3d49c398a165ebb4ec66201228ed305bd647c9418508326f97b0ed",
+      "cases": 1048,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 32,
+      "channels": 1,
+      "irqBytes": 58,
+      "irqSha256": "979ec2eb9b6448f000ddc31fd6e3f8273348e7a942ccc92b19f699cf65d4e583",
+      "cases": 1084,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 32,
+      "channels": 2,
+      "irqBytes": 64,
+      "irqSha256": "625394a503c3390cdc60b3afc430faffde65064817420ce72e73fe4a7980470f",
+      "cases": 1052,
+      "nonemptyCycles": [
+        42
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 36,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "55f6e39f07fd9f8075823903dd4f6b21312bf1f918911b5bfcc28a86a4ddeefc",
+      "cases": 1092,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 36,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "10fae2bbd55f13db4afb537ca0515e1caf7a01df71c723acf6690ce96c514191",
+      "cases": 1056,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 40,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "a124ea4293c67e4dfdb8b72a3ee136d262ad71681aa2bb6aa8eaa9473d3bacc9",
+      "cases": 1100,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 40,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "72785e0062a0067e3cb8a589d66471fe23c103760c6d7840ab44fad5a372a709",
+      "cases": 1060,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 44,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "83a71bc1a4d5c714f1ec3192d96ed911af01ae4cf680eaace3cd6f073b566d14",
+      "cases": 1108,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 44,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "d7e3d402404669864eb8211d20d9433d2f837df13e1473e9d9405cfc5cd5da94",
+      "cases": 1064,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 48,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "d7cb01209a3c9b41353f40946e267d435e211127891279ce2d874942e1eec376",
+      "cases": 1116,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 48,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "075c47a53b8587a3a60bafae2d05164cc10953b9bbf315e727333a552155009a",
+      "cases": 1068,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 52,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "b5e20b79649355907de94b9baa3d894f8ec4a9c1d204eecafc2436ad49841cbc",
+      "cases": 1124,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 52,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "19d5cc11d075410aab6c5e78cf634d5321fb33c3da93209fde2df368fad820fa",
+      "cases": 1072,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 56,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "0734af82e3d6fa09a644dfb2665d5a99bb28b3e2a6c51d723621af9911e0c394",
+      "cases": 1132,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 56,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "42b82451c89ed4cfae0f0f2806239f47f732dc8b2a3f9af53b9b5327eed51a4a",
+      "cases": 1076,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 60,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "c41e3e74d77c70c9a5098d66dfbb20da4d6d1a9836189d50ce885ab6711065eb",
+      "cases": 1140,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 60,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "a6834ac4b5de4fc6da52942d23433897cc3158a905f117dccbf0cba63e7b72c6",
+      "cases": 1080,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 64,
+      "channels": 1,
+      "irqBytes": 58,
+      "irqSha256": "5c3e113c8c397e08a629856daaef231d1460e44185728c90fa7f364480bb275b",
+      "cases": 1148,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 64,
+      "channels": 2,
+      "irqBytes": 64,
+      "irqSha256": "fc5e0db6793c01e6d371522aceada2afcb7b45b640fce3ac0abb9e235b6a894c",
+      "cases": 1084,
+      "nonemptyCycles": [
+        42
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 68,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "e89f6bb7511a7a7a63b962ea73f7126adbc13c7e9c9803d39f8d10adac053c1d",
+      "cases": 1156,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 68,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "7034caa8051279202b88c761589809346952bf85d5d119576305291651090d97",
+      "cases": 1088,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 72,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "8b6ef75c8bad17a4b2de3ab597707007500458b21227817d2df89527bdf0a6ab",
+      "cases": 1164,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 72,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "630055024917dda3982ab95dba0a4d4f8bc612879e720e5e927ca59d50d21d1c",
+      "cases": 1092,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 76,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "7ee67c0e06b0e898a11181157dd0b8d9993319956258c8a77b517368c06501dd",
+      "cases": 1172,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 76,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "d7534c3f7d02167368e38afb69975de44ae87b43b3312dd1fdf3879515ac4511",
+      "cases": 1096,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 80,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "750943b3d47fbf12e20d3c6dab09aa396e573997c5dfac3367e2ddffc0597264",
+      "cases": 1180,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 80,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "6a0418f8f739015368a546466be9c8301ca08f1f3ce2f8be71e877baa30b351c",
+      "cases": 1100,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 84,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "2c492034227eeef6c42de9bfb7acb6c5c49251e77ece908ca40243bf77e18a51",
+      "cases": 1188,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 84,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "f6bf63ad0d4485b39c548d080776fcee9c928a6125f3b18c9631d6a435d7a0f1",
+      "cases": 1104,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 88,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "8f572ad0f30bc32af41ff9b6b2cb512119f2af43ba60ab0c0afbf4452cc0155f",
+      "cases": 1196,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 88,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "2fc47886cad994b3d3c0f2554a342d87a6b0ed2a9353dc61644fc01fdb5a47ae",
+      "cases": 1108,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 92,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "28199ed722a5d22a118522e2289baff2e245084412229d8ce0e2507cc8e7e479",
+      "cases": 1204,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 92,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "ce8c6d98221b448bd5a3e579f650173adac875de2d8889bd0134e3ac1168f5d0",
+      "cases": 1112,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 96,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "4cda94f510e277cdf16862d202a6bb023ace382a7b47c7cafef8172404ce089b",
+      "cases": 1212,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 96,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "507518076085d11a42a34ac941321f2058e8bfa6d40c615e9b39aa7beb45cdd8",
+      "cases": 1116,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 100,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "a4f6df159bdb73157e85b741e88e0c7594dc9f850bd3fc18886d66754204961c",
+      "cases": 1220,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 100,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "b71248c63465591e94e77fa478b9534039d8b569fc3736269789d2b394f90de5",
+      "cases": 1120,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 104,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "f4f281076f50b2cd6144e0923e5cd288494248838417d3cc2951b68285f159f0",
+      "cases": 1228,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 104,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "6be427cb278844c5aaea9fc932eec25ea579766669bd8e4872666278436a00fa",
+      "cases": 1124,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 108,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "f53cf760937bb2e685ac0c9b58b9396aeb98342c41afba3bf7b039047a0add29",
+      "cases": 1236,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 108,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "81c3350fb3594dda9a3a535aa5b758c95e99df5116abf208a8bc393ddd303bc7",
+      "cases": 1128,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 112,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "614c8b11e7f236bb3af211a5a4d7248ae701a3a0988128648082f959c866993c",
+      "cases": 1244,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 112,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "430006e80ea92ed7986bd32ed5101b3777affbfb5cf43263003b56707fcd7848",
+      "cases": 1132,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 116,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "1d7b21df79a2360c240a3beb2a7e65f93d7d60a8f56221172d268b612a4deb3d",
+      "cases": 1252,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 116,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "8604e5f7c81d56e565cd604f242d17dbbf0eeb0be7692fdeffc983ad76364543",
+      "cases": 1136,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 120,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "1be91c93d3c50b8a17132bfdd7b67e33cfc49b9869e9b65353ba61da903c010a",
+      "cases": 1260,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 120,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "916e0dce6dc5d2667d0819ca2fa3f1254547dd1a1738230aa743f6c28724729d",
+      "cases": 1140,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 124,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "d11f969e1558ed07ab24c0c2ea4829e7ad2d8013ceb59d218692875965adf4e8",
+      "cases": 1268,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 124,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "9ada7e6023c22f2abd0adcd83f7831301d73dfb7f598d8a1149d8714440a729d",
+      "cases": 1144,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 128,
+      "channels": 1,
+      "irqBytes": 58,
+      "irqSha256": "283bb73cfdf8fae5458cec3817b9c46590b0412fe414f8545a60a44cb718c11e",
+      "cases": 1276,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 128,
+      "channels": 2,
+      "irqBytes": 64,
+      "irqSha256": "df54bfaf43ad03479ff225d74d54d2fa42cdc11d18f5da1131eed18e3ec6dbf1",
+      "cases": 1148,
+      "nonemptyCycles": [
+        42
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 132,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "b3a76987f9037c0a05bb94a37d17a6714752fc7c43f952a2d075ff5913748e37",
+      "cases": 1284,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 132,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "d35e5c6d397e77c6e8cfd14524d35e15f65f336a70d0683d1b3b8aeca0aa5371",
+      "cases": 1152,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 136,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "e2c1ce70e3898ad27d7540ac6fdeb7a904438e66d6f65ba887f0e41f30e92da2",
+      "cases": 1292,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 136,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "fb49872caf655f410b151f7674f9d5bb74083f58b2cbd5614433b73d7b25a92f",
+      "cases": 1156,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 140,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "d80f1602bd72821399a1b510a33d25962db1584957727b0f112421837caa4b1a",
+      "cases": 1300,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 140,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "a61c02f35c32500bea08f46fd0bf28ce9731e36e7ba849b1ba505b55a6d79dab",
+      "cases": 1160,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 144,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "bdbfdb2f339fdbc642d5631131e957095fd1f7c2be3487f129baffeb49fdd93b",
+      "cases": 1308,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 144,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "552cc1c47c04d1a5c3b0473b30aadf0897bd3fb149ec2eab3bee8777c36a32a3",
+      "cases": 1164,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 148,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "5a2a8cadafd11782bb24e5e3482f591c073e548e43be4a2fc35df5680afb8665",
+      "cases": 1316,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 148,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "c95f98c63b4fae7a25e7ca6e09bf725a7f0421f5da1b3f314367cb0662f9cfc4",
+      "cases": 1168,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 152,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "3d1315ee0b595fa4b57ac8da7de6f1e16791e111c8ff107c5752da2513721ac0",
+      "cases": 1324,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 152,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "cff31b2deb0bb5fee8ea0cdbc18098ae0b3d156124ca09ec6e677847a9851a40",
+      "cases": 1172,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 156,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "84f1519047f311777d66b508988bbdebca4415ab857d067eb7bd7a567687fe41",
+      "cases": 1332,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 156,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "4f235b2a33176c5d81838ca4cb3539298177f98bc71932c73efdbca3fa9f0082",
+      "cases": 1176,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 160,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "3cefd6788a78dfe29273aa93c507eb87ccca41238b704e7ea7f21942e02a4e10",
+      "cases": 1340,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 160,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "2ea9be53e5d70e0e445280fa00469211740bcae3cd5425e2e109206503f2b296",
+      "cases": 1180,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 164,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "d121b944e3a65143038f9719f6039e9594aa0e9f3a572beb428700723e4823cb",
+      "cases": 1348,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 164,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "1e49172c62e64398709b26378906bc0419eaa21cac904d810b3d196103bb3da4",
+      "cases": 1184,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 168,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "881f88c949455d0f8ec7d62ca6032a6afbd23363124f03048880fa420e23855d",
+      "cases": 1356,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 168,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "b6d78f4485a1c5964ae1e047c00f5abcdcaede712c7be962ce48b67558c2ec1f",
+      "cases": 1188,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 172,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "898778d822965239bde5e2d7d7e041b32d16694ecaa8182c1c9d3aa6d11587ee",
+      "cases": 1364,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 172,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "80615aec9fdd491af4eaa9e98f2e22f4ef49b84c0d599196f7ae767dba272af8",
+      "cases": 1192,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 176,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "c90d65d0cfd09e4e7fa5af02536a53824fbd9e7c533d05990b18b4a6daaca91e",
+      "cases": 1372,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 176,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "f840b4bea00c3dd2b640ef2967b0488efece6a3e87e342f0d4a4b66b1ddba020",
+      "cases": 1196,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 180,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "d3ae24e922f9e218a3997a63aa3b0b6e18b640ba249916c854d85297a08774f4",
+      "cases": 1380,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 180,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "33e1611cc4c7b81bf51159f40f0ff2e05fc7bac8e516aebecb973a17e455dbfc",
+      "cases": 1200,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 184,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "b495df1e77447f4dd4ec5fa08c891d84d4cff528907bb8589a02da36fa7312c3",
+      "cases": 1388,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 184,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "daeafa8c2ebc529508148ccc873a9daf098a55ee15aabd1bf73c2588e90536e4",
+      "cases": 1204,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 188,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "85070de900ba6c19f55683eccc171dac8833bbdae862f13356e443508327ac21",
+      "cases": 1396,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 188,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "5bd1327074667d3a03234c4fbf3ee5e5a611d06d86cfd6402ad19f582f51aaa2",
+      "cases": 1208,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 192,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "371326dfb6b76ff6455345ed413dce0ce10bc664aad42c2c351c52fba0a49e04",
+      "cases": 1404,
+      "nonemptyCycles": [
+        40
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "stack",
+      "capacity": 192,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "34c820c9ed6cf5ae8344efe6e615b48b63e69d7fcb8b1d4a4c64708bf9963b95",
+      "cases": 1212,
+      "nonemptyCycles": [
+        44
+      ],
+      "emptyCycles": [
+        37
+      ],
+      "nonemptyStackBytes": [
+        5
+      ],
+      "emptyStackBytes": [
+        5
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 8,
+      "channels": 1,
+      "irqBytes": 58,
+      "irqSha256": "7653d03ddff89b590a3763bd88f6e47831326335b064c54b5369ca9e92470295",
+      "cases": 1036,
+      "nonemptyCycles": [
+        32
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 8,
+      "channels": 2,
+      "irqBytes": 64,
+      "irqSha256": "a55f0ca0dec7287158a8c2fd69526357e8ca8d7b0f7480d0fcae82f624cc2b70",
+      "cases": 1028,
+      "nonemptyCycles": [
+        36
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 12,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "cab019dd5458c34e43656a3d445e9ad2cbdc4f5d0e96006ff883ad4dcf344ea2",
+      "cases": 1044,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 12,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "1e898e69135a5d425dfde061bdaeb84cb97c8c4457ce8397a7abfdb5214a5ca4",
+      "cases": 1032,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 16,
+      "channels": 1,
+      "irqBytes": 58,
+      "irqSha256": "c1068718f9e8f37208090be7a72779a9990cb6e403ed5eb0464e6fb1667d0ba5",
+      "cases": 1052,
+      "nonemptyCycles": [
+        32
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 16,
+      "channels": 2,
+      "irqBytes": 64,
+      "irqSha256": "07a8b14144082481295f0b874e6f9c0dd494ae70966acf7e78cac3f577eee376",
+      "cases": 1036,
+      "nonemptyCycles": [
+        36
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 20,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "0e3f542b6c10a8120cfe2c9960934bd56908f24159860a02234526a041b1fd17",
+      "cases": 1060,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 20,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "68ac0d83feb4931b3a6caf11023b8bc4ba2954bc7fe13af693ee4e89d9395875",
+      "cases": 1040,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 24,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "07d0a23b7bb3d7d3d57819898a7c065845a5b06811ce94977034dc5bef6238d7",
+      "cases": 1068,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 24,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "70428e07bc0ebf82633ba8d07a3bb484e9753884a777cd02ac9c9f3a90dce56b",
+      "cases": 1044,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 28,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "db69a111fba0343b12fc879773172122254c9246dd5e4906f6c72aec39bbcaae",
+      "cases": 1076,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 28,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "1f81b5dc606378f4c4476f86ae78c851603c6d98a486f34dedfa0f6f6e616992",
+      "cases": 1048,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 32,
+      "channels": 1,
+      "irqBytes": 58,
+      "irqSha256": "fae09b316e4b3090776b97541ca2a7059c19e123b251ebc3fd024f0302540ca4",
+      "cases": 1084,
+      "nonemptyCycles": [
+        32
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 32,
+      "channels": 2,
+      "irqBytes": 64,
+      "irqSha256": "85e55b0f34d592a5a77e71027f2401a8ee79ea5d1df4e9423decf0f6b8daefd3",
+      "cases": 1052,
+      "nonemptyCycles": [
+        36
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 36,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "6dd1ee81623d7b289c04519134545f6657934c1cd472adf76f16fa5b1d168412",
+      "cases": 1092,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 36,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "01f6c9ef656b980841f682ea5e84fd60ad7c06cabfca671e111cb5b807885326",
+      "cases": 1056,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 40,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "3303d3d7ee50635c3ae488389cc31608c396a9e3301499f8afc7ec5f73ade010",
+      "cases": 1100,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 40,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "d7580a65bea0b19161c3f011b619428d299a4bbe7ce0d2fa95753e66c564ae42",
+      "cases": 1060,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 44,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "67252bdb4dfdabfcb70424f533a9c293016221d132287c1ca24bc348b3e6dca8",
+      "cases": 1108,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 44,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "6f110638cdac5064d07ebffcee7b09f554828c69de377e53ed88cc7d689fc955",
+      "cases": 1064,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 48,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "17b68ca0b9d3b9524674e74faa0707245fa347afe7b6f3c8ba2684170d2243cf",
+      "cases": 1116,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 48,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "94764e68caf88fceadb7c824ee12f4f85cfec35d89f383e6e55052c851c0315e",
+      "cases": 1068,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 52,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "4926e7227b3c63e6871a7797995a162ca4fa562b28b24437ac4b9efed5d5054f",
+      "cases": 1124,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 52,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "a9274eaf7f97c6ff3b8cd61a07078d8a34416e171594d6907d4328bd739a60b7",
+      "cases": 1072,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 56,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "7fe2b53b60138636d0b987997d98a781520db47f2fef24863e2e8100f9c1da92",
+      "cases": 1132,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 56,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "627ac3e2c4e4606604f6d49f93cc1a1e8aeb4175ddb1d32f549bd08369f7d476",
+      "cases": 1076,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 60,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "1a7aa0ef4a53843581a844ea2f4e3f71aa8bc670676bbb68b5b1700c12f5b4fa",
+      "cases": 1140,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 60,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "657b4c3f207f7d563375e0c57c96a869f00039eaa0a3d2ade26e9ac8dd93ddde",
+      "cases": 1080,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 64,
+      "channels": 1,
+      "irqBytes": 58,
+      "irqSha256": "9b3125da61836c3164c429807cf73ced497f963f9e4e89d6c6bf4c45f70a905e",
+      "cases": 1148,
+      "nonemptyCycles": [
+        32
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 64,
+      "channels": 2,
+      "irqBytes": 64,
+      "irqSha256": "c7a55264fd565927352ec708ee1fd873b634c3ca2b1b91e5a902367a83e0e9fb",
+      "cases": 1084,
+      "nonemptyCycles": [
+        36
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 68,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "56026e3a8ab9efa5ce4aad83e4457bfaf402cd26d5aeec1b040541dec1ab3d43",
+      "cases": 1156,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 68,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "f400e1ec21488ffecac942ca433e398dec549c3fabc26bded274ab3d2013bbd3",
+      "cases": 1088,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 72,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "4542b7d8300003ee9f7df2fe168595b35efb37984a205658460ff071ebe50539",
+      "cases": 1164,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 72,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "fd9d250f024324b0c1feccc312e756eef465fc8f1100cabc97815c08adde69b6",
+      "cases": 1092,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 76,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "9333b76884311089d4f39187382d4cd91fb51af7a4a0179e83b70bf5ccc71ec3",
+      "cases": 1172,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 76,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "f5ff51a86560574487f4551a0e6313a6d811423e509dcf00bf5a9e9bbd2b038b",
+      "cases": 1096,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 80,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "44a5a9a0b668c7de2853ed3e4868b9edbfaf9c3df9f78db7b619b26f2fbb9450",
+      "cases": 1180,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 80,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "7c19aa60d79fc73b1717253f9c7d27809e16c883377bcdf39e08248c310ac1f2",
+      "cases": 1100,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 84,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "6de4d5ed6b103c8cdcbe8be208e8ac65bd587cfc57ffb65d8f20144f5fa2386d",
+      "cases": 1188,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 84,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "1710b0d458e6a69b12c7bc629b82349a84c768f66d964062ee8ce3b64abdc34e",
+      "cases": 1104,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 88,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "ce1d49292370132bfe5d0c0336447f8b0797f7b4d5e203b4aad18e636becd27c",
+      "cases": 1196,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 88,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "de03d30aae6b213d2602f1e340b56556580b5bc738b40f749e761d0a63862b2a",
+      "cases": 1108,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 92,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "687b9c8dc730a5e27873e4c44cea4dc0e21a0709e14e5607d128368980988c95",
+      "cases": 1204,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 92,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "9565f03b70043872b59de9e9a2429288b54d79e97931991deebc0bef8d6d27a1",
+      "cases": 1112,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 96,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "102e11b85ddead5f6c9738c27b384493f340e2a5fe66edb53c5fba3dca58e709",
+      "cases": 1212,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 96,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "5bc38efe3115e7743b93a58a1fcd6ecd64bba0a1d31a9c5f499617705f58c746",
+      "cases": 1116,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 100,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "ab641ac945c65de383bc1bc5d54709b800ea192ea79bf7bf6ab429f8eb68e660",
+      "cases": 1220,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 100,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "1db18bf0d143836f013c8b2c9e7cc5ec604fd9b2d51e62480e65be9d087e673c",
+      "cases": 1120,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 104,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "6b058ce303dea65784b66df503fc875cda91d2fef1358a6cfd188df7f0a8e7f0",
+      "cases": 1228,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 104,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "7ae7f3f2cd858ee90b43f7a33c274818e2b5d79aacc8d9c3dd56c75dbf102836",
+      "cases": 1124,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 108,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "23a3288eab88e2efd7fb91975b877f8ec47f19d0e860891d22e43cf156e26d35",
+      "cases": 1236,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 108,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "fecae5afba222de53748d52ef2932c68359c4fb49be2715471d4f6388333e175",
+      "cases": 1128,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 112,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "2b403394fbf985b14b90b00fe683fac7c19127670c089b6fd96fa97a1b32970a",
+      "cases": 1244,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 112,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "43a5c51999ba82d68f0d528293345ad4b23b62e18abf15422064db78107fbd68",
+      "cases": 1132,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 116,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "ae24f5097de3613e2f8cec28d5e99bafc2af72a49ff00e714cd468eec526230a",
+      "cases": 1252,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 116,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "56790c4dc65e5ec4c33586d8634a0188626afe4dd00f29471792fe22cee9a6dd",
+      "cases": 1136,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 120,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "123b274cc768e70a178207d306916601da534e01d13238de39f0329c152c85fd",
+      "cases": 1260,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 120,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "8caa30b596c3aef30d738a94ab6e72eb54615b13eaec273ea3fba0f2fd7b2704",
+      "cases": 1140,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 124,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "a225e4564a8eb86963afc12237f1165cf76d45eaaf669c2be6c5ec34dc3aad2b",
+      "cases": 1268,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 124,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "ad0c3de8e9d7e0c71b1e955e23a8e8bb2265bc749ee6cc00d5e2472818b81106",
+      "cases": 1144,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 128,
+      "channels": 1,
+      "irqBytes": 58,
+      "irqSha256": "ac5f52fd5b0908bd8b639c5755c6bcfc843a519e626fc10157422d96cc0fa3e9",
+      "cases": 1276,
+      "nonemptyCycles": [
+        32
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 128,
+      "channels": 2,
+      "irqBytes": 64,
+      "irqSha256": "82e06f6ae8efd558fc3a0fbc65c31fba54ae5f8f40bcdd1b3d95757cc9f01b05",
+      "cases": 1148,
+      "nonemptyCycles": [
+        36
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 132,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "3f6bbfd9d11824308186c36d423a189d9873a30900de82deccdcb36ef80cee3b",
+      "cases": 1284,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 132,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "1e96915f2acf108eb23c2691412b78abc49be36a18a6671154ed85c97965e21f",
+      "cases": 1152,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 136,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "7d931e463b805f2b11d9d139fd84ee1c7617a08f55d544901fee9a54bf5df3fd",
+      "cases": 1292,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 136,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "c793aeac62636a9a4316e978584c950cf153160d09c3a7ba9c7fc5bde26f3a16",
+      "cases": 1156,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 140,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "2060b4442c9a2273bc9077adb0a76eb7904f9f15718f145eb0833d59891927e4",
+      "cases": 1300,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 140,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "0f53483e3fb7c1bf02b0cd77df6f3eed22e643461ade45674381b72240fc722a",
+      "cases": 1160,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 144,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "c41f96ff67c64201db689c1655570fdfd4289c977b47884e3135a84ddf8ec2a3",
+      "cases": 1308,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 144,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "7ae752f1dffcb62f59c0640a807fa84dc4c146111575250d029f5fa50db1a089",
+      "cases": 1164,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 148,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "28126f852fb97bbe9fd68d5887d5d457d6e723e1e8b4aeed6db4021a9f9d58b7",
+      "cases": 1316,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 148,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "3516e0a7f2ce491ce098bad9541765d616ce8301f9be4c182d17a4d36fb51ea7",
+      "cases": 1168,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 152,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "5817ee59c5a2016d7d93a0fd5b661045f2b29894d3c77f459256a7130a6c557e",
+      "cases": 1324,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 152,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "05d86e3b6a56d639fb7868fba710eddead4a52859e1dab44b7f97ef2c63e84c0",
+      "cases": 1172,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 156,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "4b58d8ffb5793136449800165c3a8b42943bafb5a6fa131f699e80c1ecb37254",
+      "cases": 1332,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 156,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "a2efb02776880aef7e50148a2ac9f39588c646e96049ea14356278a17549f543",
+      "cases": 1176,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 160,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "8570da5d68f21940d6d08f8eb1d9bfe330016faf4fdb0fa2455fca91c5e0ecb1",
+      "cases": 1340,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 160,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "76b3a23f10289085cbdac4413b2d46efe45a9761741c50ef1cb9f5806f0b5ef7",
+      "cases": 1180,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 164,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "9ef418bcaef34c58480912d33a1586c331a228d92a8c3d2435328b5f5875fdbe",
+      "cases": 1348,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 164,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "2184b6304c22802a21c6a9a73fd6b9a5904999380eff218f2d13ff1663411fb5",
+      "cases": 1184,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 168,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "cce2980b6770292abcbde1ee872421aa4d6c0460eb8fd983cb353a85dd21f810",
+      "cases": 1356,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 168,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "f9954ae0b54a68a0ca290941f1b7d5bd93b452e4859d3709c68022523f95bfc3",
+      "cases": 1188,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 172,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "bdc16c7a59eab50a1cc83f4fcdce5e9bae557594824cce1eb169b6bf5edf8de2",
+      "cases": 1364,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 172,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "1a133e5657fdb47e6eae126bf181f09975f468fbd1a8cf214c0cd300b9cdd928",
+      "cases": 1192,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 176,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "d7fbf39048db5aeda2ae4ad0c24bfe7770455cff7eedc4b2aacc3ced3f8b7282",
+      "cases": 1372,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 176,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "99e972cbf458234af5db8c2c3731c5eba8767da77ec8b6dbfc5741a1e2f80af5",
+      "cases": 1196,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 180,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "5b470325fd72d4f4b957586786b444d3c1f01de5cb4a87823397dc7880d9d922",
+      "cases": 1380,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 180,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "cc9d7cfddba6a892e094cb514ae1bfce21eff1dbb6ee59aecc2d5065c6be8a8e",
+      "cases": 1200,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 184,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "6a52646ff8beae94ed50b334dff9b6d435db175485975da1fb87e720d389e31a",
+      "cases": 1388,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 184,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "c59b1ce049ea06dd6cb6c5301a886fadf393d21cf4d1a78dd5144f7d9b11942b",
+      "cases": 1204,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 188,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "049abf92b26650c80f4b9865227910f8d4a7a7d5408f809436d9a30e3d1bdbff",
+      "cases": 1396,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 188,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "5602e5303829265011695e37fab9031888c1d7200bc96588e03f06f78e70fc8c",
+      "cases": 1208,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 192,
+      "channels": 1,
+      "irqBytes": 62,
+      "irqSha256": "9f63056889be96bd849bb90ffa0b29ffefcc1fe074a10c77bbb28a380810eb50",
+      "cases": 1404,
+      "nonemptyCycles": [
+        34
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "gpior",
+      "capacity": 192,
+      "channels": 2,
+      "irqBytes": 68,
+      "irqSha256": "bfa5c68167651e5f92f1ee677e389013a0858d81ed469ae2c58b9140a0f340d0",
+      "cases": 1212,
+      "nonemptyCycles": [
+        38
+      ],
+      "emptyCycles": [
+        31
+      ],
+      "nonemptyStackBytes": [
+        2
+      ],
+      "emptyStackBytes": [
+        2
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 8,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "295307650afcf38ee5d87838fc5d5f58efc8d8d04d1c0b2a4dbf2794f06884c7",
+      "cases": 1036,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 8,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "fcca1b9b612390a3adad329dd197220dd9ba086884dfa0ff77dd93eac46bdb97",
+      "cases": 1028,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 12,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "43ffbf95ea0ed2707f7a7b8ec80093a03b57845e5b931d2804c57d0c43bbce90",
+      "cases": 1044,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 12,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "4cc60a38396a72757ae0ce823c8cd0ee902ae2e7ecd9e4027246377aa49ee047",
+      "cases": 1032,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 16,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "028bc0e428063d145a6aa5904c80d3ac0adbff196e0f8cdb26f6e5a8cf2295bd",
+      "cases": 1052,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 16,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "1be14636788aad8ad8f3648009fc4ba855ec8f4e3b41b997a315f035e256e796",
+      "cases": 1036,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 20,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "583cfe2934e10cf8663bca6cdaf5a993ef849da2dacd31fcd731138fac06790f",
+      "cases": 1060,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 20,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "5954431f2bbbac0b8c0409762b70890a1985b4751f50cac10eba8a0a82969467",
+      "cases": 1040,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 24,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "ac1d8b365d46001af8369cab1d1defa3cb1110d5caf23aae770a93cc33898206",
+      "cases": 1068,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 24,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "733a0e9bef454ec69dc2696033d6ffe4616b8bad92c8b8f2559c74fd0b5bbb12",
+      "cases": 1044,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 28,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "b3c034e43398e0e1a3ec333000c44339843e0fd2fe8dfb8021b044a213ab094d",
+      "cases": 1076,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 28,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "dbfdcaf80ea20262a76ab68b0e92869c83901c7e1e492286a00d18fc45f67f17",
+      "cases": 1048,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 32,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "885624dbb397e5c33717285aae7bcddc05fd6f5c80d039b4f7d04b71e92c924f",
+      "cases": 1084,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 32,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "2f0fb6a5d6a12e668bfed82b471082725136a045eb07be08a33311e33e2f41de",
+      "cases": 1052,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 36,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "607731c9be1f1c48baeef08f60cc6df0b93abc1ae29753725b55deae8efe0a8f",
+      "cases": 1092,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 36,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "93dd975628bda252e28bd4d0f99cc812716ba1d6bcab8f8f9709a3c34afbe928",
+      "cases": 1056,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 40,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "2d35c96789dd81ab924db31eecf6768c25321b951e6e5b848ed4448f1a1fc7c7",
+      "cases": 1100,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 40,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "bc6fd8a4b34e1a60e8ee0cd353d257eccf089b21006ac5cd82542dbba319ea82",
+      "cases": 1060,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 44,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "9a34328c2b03c132fad94ab8f4002c3d0a0d70fc67f4cc09cfe4c566fa9ce0b8",
+      "cases": 1108,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 44,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "0746eb0d7461cb50c4b1a8586efb3f3dedae79777c24c80e05593a6a75c5faee",
+      "cases": 1064,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 48,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "6575248efa8eaa9be1dcebd5885ecb7f500f0094f927ec9f84893189cde89596",
+      "cases": 1116,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 48,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "8c831d5fe8ddb3add314f04fa29bbcd0e5f83a898972fa86ed7b2849072b89b3",
+      "cases": 1068,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 52,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "96ec1ab20c71795c90d33aa6f149c809902ceecaa76abaf8bb2436457a77c856",
+      "cases": 1124,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 52,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "46d31642a1169c59ffa47fb6218a4af559237cfe7633af7f3ca32a49285f81f8",
+      "cases": 1072,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 56,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "7e7642ca43117a3cbb774b06f67dc9050919f730a91626c57c9d04bf36b881fa",
+      "cases": 1132,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 56,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "1feded8c44c64389bc6715157ba1980469dc7eff0d76452578045d0decd27e3d",
+      "cases": 1076,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 60,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "3ef7e85cf759f04d688e0c86f9ef81ebbed3175a6ed4128cc9bcb24a441fe76b",
+      "cases": 1140,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 60,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "5acd01c4076a893ec28d40e7286e541ad38d049003ae5ef0fff52a9974923a04",
+      "cases": 1080,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 64,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "1ca102a2ac4438e7b70f4885099d4c9ba165f8f9b21c75e3f81aaad616fe4288",
+      "cases": 1148,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 64,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "d1007615cd961cb167cfb6858c1ef45f7bf8c648423ad61b9398424a52ab9c28",
+      "cases": 1084,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 68,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "62eb6a955b156da54f92fecfbc077b4c8530bfed30c0f32a7296fe0cade229e5",
+      "cases": 1156,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 68,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "9a1595afeb58bfd078dcc40907e2299ff841520fc6bace3db96b0fbb8b20b494",
+      "cases": 1088,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 72,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "82739c63cc0f23d30095ae90fdfd85c38518ff48941e9ab41efc840edb4d8dc9",
+      "cases": 1164,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 72,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "cd6d1c49a66bfb9b0dbb58dd5db3479e1a1a98d7bdf5cca2371b5477d8b20521",
+      "cases": 1092,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 76,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "d1ddd25fbc07b2e50c472cbfbd03d153485ec2eebeb3bc6084d5e72c1b45772a",
+      "cases": 1172,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 76,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "53d330bb5c114a2e35c954e356d43d9f920e6f0f3e75b9c82c9d88d1c96e0874",
+      "cases": 1096,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 80,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "033a163b2da111d99ddbed526c43b8e81a6026f762a5ddae7fd93c869d7943ce",
+      "cases": 1180,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 80,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "1ffbb0a5449ae49779abfce7fba4d7fd0e751f7d5b8098904f96c27ca11e9134",
+      "cases": 1100,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 84,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "ff23057efe6b5eebbda3b05146ba2e89793ab2b5f9d3ab4ab3b930c4ebfe8805",
+      "cases": 1188,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 84,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "7d3d829bc160566caaf781de764511f76de3fb1008f8a46d83a5ce9e1fedfecf",
+      "cases": 1104,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 88,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "868f7d11d438be9097801b116a79ea1804b6406524ec2919367d4ccae63e8ce8",
+      "cases": 1196,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 88,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "b86e1bf883410db5bfee6286727bc5c1bd6573cfd200149a068f1ee0486a6352",
+      "cases": 1108,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 92,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "b3c45ef0bb386aaa8db6f30e8350652c49bceafa3cf234d3568d945aa4f4e3a1",
+      "cases": 1204,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 92,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "b2e31b219187d6b548d34de6068b59767c79edc09d60bab75690a1704ed1f337",
+      "cases": 1112,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 96,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "41214052cce9243284a7fcd8769e625ac90627969885753e97363e651057e643",
+      "cases": 1212,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 96,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "bab07ea0e8c3395460ee928063d75c17c81f35d5bfc6fcaec68c4cc19e4b0d2f",
+      "cases": 1116,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 100,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "0da27ef1d17f9a0e50839ac35aa510583dcfcf65c71fbe5f919bbc3940466701",
+      "cases": 1220,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 100,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "d7bd897c7641c630b9b286422b85a8e23351d8a9d6c81c9c460bf5a68aca1df1",
+      "cases": 1120,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 104,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "1c045c5f9992ca08944cae6935427c8d1e6c14bf687b216b76416b3df4788fdb",
+      "cases": 1228,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 104,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "4a4a977992f0729a5224fb56a02b6d01db5caec445ea1be38b724dd305985160",
+      "cases": 1124,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 108,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "e9be6344ce863b3438a7b5ac75c7fa699680be5fadef02bdf8fb18dc69f5783e",
+      "cases": 1236,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 108,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "deee675af1a3d7a6cad4e112f3412c959a6c49af95efe9e9edc346e59a4971b0",
+      "cases": 1128,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 112,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "360f2f0fb1c0e8961708f5553f8ee3d11354c5b892847c896e8f5dc6bb61587e",
+      "cases": 1244,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 112,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "0e9a1533d229ece833e7df4ddd85b00f9f4c278909616b3dfe778617b7d14aca",
+      "cases": 1132,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 116,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "457b58d3c711f2fe0ee69d29ada76606117ec174012248cedc286510d20b819e",
+      "cases": 1252,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 116,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "cbec6887399c5f8589b301f65e629329aed5280ea59f3ca2423a4e1476e0439c",
+      "cases": 1136,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 120,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "7d244d3bcb535924efebaeaa8eed4f505506eb2010be1dbd500eec1d83a8a6cb",
+      "cases": 1260,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 120,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "3af6a9f906505c2b052adaf731e18e08beeab7a8fee0f075f0eff262a9224e63",
+      "cases": 1140,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 124,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "aceefe5d054d184bd8970fc88cd022e70292c2ec3ce85b23e01851036c20fc20",
+      "cases": 1268,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 124,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "df965460c936487f28b3900489ab6d29a511f5539164edd18f1b5fb406e3276b",
+      "cases": 1144,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 128,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "244df7bbe95f9d4e65bdf067cbcbc1454052ea025932e4037a1b0239da173977",
+      "cases": 1276,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 128,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "c1f3f4ed7e8df6d293aca6a4e1ba2b8df4daec5db68be4129ee5edd33d5d97ab",
+      "cases": 1148,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 132,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "2b5539f33979fb3290925c749496c5caff4f001504ade689adb3e5e79acc2c6d",
+      "cases": 1284,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 132,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "97ed67d2dba78b7f52192cf3458425365f0efd5408ef147497b657f8e333fc42",
+      "cases": 1152,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 136,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "18fb631c1b077b5a02e5ca37d3fd1e8711b1a2a0debf30aabd1ff557b2d34098",
+      "cases": 1292,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 136,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "e4ddc594fb78b5f5acabeda54ded4dd6f842ae5faaf57898df3b6701f2d3fd35",
+      "cases": 1156,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 140,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "93e047424bc37488841cfbda1a59b5e47bcb5df95f99758411c59ba8da7ec4f0",
+      "cases": 1300,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 140,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "9fdeb4caaf0a4c8de149b4ec64cc0ff4eef46ceb3fd984bbc8ed24ea17e5045c",
+      "cases": 1160,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 144,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "737e27e795ab753d7cd8a135214ab883f1fca1b862cac0a0a3fbaed5b7a48b96",
+      "cases": 1308,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 144,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "81eb72d8f2accc616198272dc32060d7e9c1bcef88eecb92c418d60dc0b7b103",
+      "cases": 1164,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 148,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "1d46f4548e6a1223e89ac22c45fa414a5734ee54e00f4774a2c87df390566119",
+      "cases": 1316,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 148,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "61b53fb2b95abb7dd8d1fc624b8d5a801e7be0913e09cf5f10b6ce4ba9508ac3",
+      "cases": 1168,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 152,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "9a4bb4892c117419aa6cc238926e05c90c815bafa289a3e8c4c499abbe043558",
+      "cases": 1324,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 152,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "86a8e0728565f95b29138f9e901def355bcd67a3eac1c6625315f2b633940d7d",
+      "cases": 1172,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 156,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "95dd2385101e841cd6b02fe0623e1330213538c4afad7e80c5d52db2dee8a486",
+      "cases": 1332,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 156,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "848eadf997518b06936e8839e566a9080fcdfdf53e092f3d7cee319d6f3d1fee",
+      "cases": 1176,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 160,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "9efa33dc79df735e3618ec3a352796e8191b7d9b9af0dba66a9d945bf55cdd03",
+      "cases": 1340,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 160,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "71882055afa1cd3e00b937c706ab591850574b1e74460f861f61ee00e5184c4d",
+      "cases": 1180,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 164,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "852325a8bb9eedcfb41d4b471112a94f45847b2079db8064ee42eed792b80fc8",
+      "cases": 1348,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 164,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "bbc4aaed78b1ffeaa6c345ddfc748061f1d05210a46c7b4c4516dd32165ea452",
+      "cases": 1184,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 168,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "23c4f93a178e72bb3cdf5164d4a5402c0e4dcbe81898db2eda7662eea78fd543",
+      "cases": 1356,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 168,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "784937b28a1570355d095955d6ad77d0843d0bea59f9a4c3482e9f918dbe45ed",
+      "cases": 1188,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 172,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "a2939b7cfd8d8e9da6668cc8ff5b87e44dde5f4b56123db057b4c5899c157476",
+      "cases": 1364,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 172,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "b2798fb83a523b5ac62e6e1960b0893d666f66407b0036b63ba5df1ad916fbbf",
+      "cases": 1192,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 176,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "001b6bdb341876dc8db43708cca6ad9c9b333fcb92fbf244af19927e0b9f914e",
+      "cases": 1372,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 176,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "b791fbffc3e43dc93dac46453e46a93398b4a2947a2383e5d4ee7435b0c388e4",
+      "cases": 1196,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 180,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "af4973facbe3bdd8ef9d74a1c2605537937c0681064c273429ab0f6c1e940252",
+      "cases": 1380,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 180,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "bdb25012d24c5d57f5f9d6f2b51b4e1b91cd8752692827eee47acd4a4f0cb25f",
+      "cases": 1200,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 184,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "b8eadf14894315aff86ce3a01a18f53426e6f1605d7ba77e9a97bd98802fc474",
+      "cases": 1388,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 184,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "c683eb67e5f226d203fe21dd84247150143aee5b3802b948184467445ed5a113",
+      "cases": 1204,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 188,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "49842497cc7ce1b4a9e5463073265818c7d5989be6dd1cc4c2d757be7b76a607",
+      "cases": 1396,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 188,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "12caad03329a12702e77577e1f017970b3aa728826066bcc8e761edebf17b60f",
+      "cases": 1208,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 192,
+      "channels": 1,
+      "irqBytes": 86,
+      "irqSha256": "11fcdb73f88fb23ec2a5633ffab62e83c3f20cad9d9e88bdae014b4ccbc4954f",
+      "cases": 1404,
+      "nonemptyCycles": [
+        61
+      ],
+      "emptyCycles": [
+        55
+      ],
+      "nonemptyStackBytes": [
+        9
+      ],
+      "emptyStackBytes": [
+        9
+      ]
+    },
+    {
+      "irqScratch": "compiler",
+      "capacity": 192,
+      "channels": 2,
+      "irqBytes": 110,
+      "irqSha256": "46427262117267c5e9f780a4e165399d6098c7dab7afdcbffbae457511b91b25",
+      "cases": 1212,
+      "nonemptyCycles": [
+        78
+      ],
+      "emptyCycles": [
+        63
+      ],
+      "nonemptyStackBytes": [
+        11
+      ],
+      "emptyStackBytes": [
+        11
+      ]
+    }
+  ],
+  "runtimeCommit": "223f9cc364da895ef77d617828012b77faee1c06",
+  "runtimeSourceCommitVerified": true,
+  "testToolsTextLfSha256": {
+    "tools/test-universal-irq.py": "144a4084f55be737be66982d7b46709fd7e1a55dbb2c7d99d4088f81a1537b32",
+    "tools/test-universal-irq.mjs": "d47a6b8e5c1bf810aabaa5d552b293a30348efaac58f9948d2c2edfa9b4b21a1"
+  }
+}
