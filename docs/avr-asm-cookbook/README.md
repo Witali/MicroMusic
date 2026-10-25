@@ -1816,3 +1816,52 @@ simavr 1.6 measurements include active IRQ and diagnostic stores; they are
 not physical CPU-idle measurements or an indefinite-stream guarantee.
 [Full corpus, source hashes, compiler settings and PWM checks](../../Codecs/LPX/research/q0-standards-2026-10-25/avr.json),
 [eight-second workload and failed controls](../../Codecs/LPX/research/q0-standards-2026-10-25/headroom.json).
+
+### LPX: spend a low-rate budget on useful spectra with the existing decoder
+
+ATmega328P / AVR5, GNU AVR GCC 7.3.0 ABI, `-Os`, 16 MHz / 8 kHz,
+explicit ASM opt-in and existing v3 mask24; queue 512 / prefill 384 / unroll 9.
+All decoder sources, tables, hardware memory access and selectable C fallback
+are byte-identical to the preceding experiment. No new assembly is added.
+
+Measured dense LSF metadata costs about 4 kbit/s on four tuning speech clips.
+At a 16 kbit/s cap the earlier search often chose a nearly flat LPC spectrum.
+Average groups of two/four 20ms LSF vectors offline, emit existing repeat-frame
+tags and requantize excitation against the actual interpolated Q12 synthesis.
+Audit quantized filters, reconstruct through the native model and account
+actual scale/Rice/pitch headers; bit depth alone is a poor rate estimate.
+This adds offline look-ahead up to 80 ms, not a new decoder syntax or state.
+
+The joint host search keeps q-state alternatives across 40 samples and uses
+the already supported pitch/sparse innovations (at most 10 pulses). Exact
+written costs and full native PCM decide feasibility. Repeated spectra and
+sparse data do not reset LPC/de-emphasis/pitch history. Encoder-only weighted
+error search is opt-in; it does not add a filter to the MCU.
+
+On the same 14 speech clips, old cap 16 vs new cap 12 kbit/s: actual audio
+14.286 → 11.675 kbit/s, energy-aggregate SER 10.592 → 15.098 dB,
+STOI 0.7861 → 0.8294, peak error 11961 → 7345 PCM16. At cap 16 kbit/s,
+new joint STOI 0.9048, SER 20.415 dB, peak 3969. This is corpus-specific
+objective quality, not listening/MOS proof.
+
+All 27 four-second cases at 12/16 kbit/s: 190 successful ablation points,
+111 unique full ELF images, exact native/model/PWM and zero underruns with
+active IRQ. Mean decode wall budget 58.06–83.13%; maximum 160-sample window
+326044 cycles can exceed the nominal 320000. Minimum queue 377; static
+SRAM 1102 bytes, maximum full Flash 16704. New variable spectra may cost more
+than an old flat spectrum even though the decoder code is unchanged.
+
+The heaviest final stream, noisy `en_sense_a4`, repeated continuously for 8 s:
+1667.092 cycles/sample (83.355%), minimum queue 377, zero underruns. With 100
+extra cycles/audio IRQ: 1766.943 (88.347%), minimum queue 375, zero underruns.
+Explicit C fallback produces exact valid PWM but 42693 underruns at 16 MHz:
+functional parity is separate from real-time admission. These are instrumented
+simavr 1.6 results, not physical idle-CPU measurements, indefinite-stream or
+compact-queue guarantees. No speedup of the unchanged arithmetic is claimed.
+
+[Encoder recipes, source hashes and paired metrics](../../Codecs/LPX/research/q0-lowrate-2026-10-25/README.md),
+[full-ELF matrix](../../Codecs/LPX/research/q0-lowrate-2026-10-25/avr.json),
+[continuous timing workload and C control](../../Codecs/LPX/research/q0-lowrate-2026-10-25/stress.json).
+The encoder implementation is original. Reference principles:
+[RFC6716 SILK delayed decisions](https://www.rfc-editor.org/rfc/rfc6716.html#section-5.2.3.8),
+[Speex CELP noise weighting](https://www.speex.org/docs/manual/speex-manual/node9.html).
