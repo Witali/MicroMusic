@@ -10,7 +10,7 @@ separate explicit ASM-enable define must both permit an optimized backend;
 otherwise use C. Hardware memory access stays independent of arithmetic.
 
 The latest implementation and measurements are described in README.md and
-`reports/angle-admission.json`. Earlier
+`reports/seed-admission.json`. Earlier
 reports are stage baselines, not current
 binary measurements. Vendor and R4 files remain unmodified.
 
@@ -29,7 +29,7 @@ retains the second pointer/root; T selects private return versus final
 epilogue. All 134 ASM PWM images pass again, while four C decoder images and
 62 C player images rebuild byte-identically. See `reports/twin-admission.json`.
 
-[The exact cosine leaf](EXACT_ANGLE.md) now saves 3.04–3.10% NB and
+The preceding [exact cosine leaf](EXACT_ANGLE.md) saves 3.04–3.10% NB and
 2.37–2.38% WB mean cycles versus that paired baseline, with 414–432 B less
 Flash and unchanged observed whole-decoder stack/static SRAM. It implements
 the original rounded fixed-point polynomial using bounded partial products
@@ -43,6 +43,14 @@ ISR/queue and the same 8% work; no input transport delay is modeled.
 The C decoder/player binaries
 remain identical. See `reports/angle-admission.json` and the reusable
 [AVR recipe](../../../docs/avr-asm-cookbook/speex-angle.md).
+
+The current [IIR first-product and word operations](IIR_SEED.md) save nine
+cycles per sample: 1,440 per NB frame, 2,880 per WB frame. Whole NB8 mean
+improves 1.4527%, WB12.8 1.1710%, with 36/72 B less Flash and unchanged
+SRAM/stack. Both production C filters match independent BigInt on 7,374 cases
+per path, including every signed16 input and all state low bytes. The new
+kernel passes 76,667 executed-boundary IRQs; 47,735 decoder/reset frames stay
+exact. Source/report/image hashes are bound in `reports/seed-admission.json`.
 
 ## Completed, measured
 

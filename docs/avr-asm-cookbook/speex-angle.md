@@ -41,7 +41,8 @@ WB mode with that load and production ISR/queue; input is assumed ready. These
 are measured corpus/ISA results, not board or arbitrary-ISR guarantees.
 [Bounds, source hashes, workloads and reproduction](../../Codecs/Speex/AVR/EXACT_ANGLE.md).
 
-Unmeasured follow-up: a two-byte negate can use `COM high; NEG low;
-SBCI high,255` instead of two COMs and ADIW. It appears to save one cycle on
-the reflected path without changing size. Assemble, prove all byte/carry
-cases and rerun IRQ/timing admission before using it.
+The shorter `COM high; NEG low; SBCI high,255` word negate is now assembled
+and measured in the [IIR kernel](speex-iir-seed.md), with its flag/carry
+constraints and explicit C comparison. Applying it to this cosine leaf's
+reflected path remains an unmeasured follow-up; this leaf is unchanged.
+Rerun its full scalar/IRQ and decoder/PWM admission before selecting that change.

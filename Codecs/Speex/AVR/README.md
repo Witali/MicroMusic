@@ -18,16 +18,17 @@ the portable C fallback retains correctness but exceeds its frame deadline.
 
 The optional **NB 11 / WB 12.8 kbit/s** extension is enabled by
 `SPEEX_ENABLE_NB4=1`; the default stays 0 for minimum Flash. The new WB ASM
-decoder uses **19,948 B Flash** and averages **76.63% CPU** on 16 natural
+decoder uses **19,876 B Flash** and averages **75.73% CPU** on 16 natural
 Russian/English clips. Its PWM player passes 48 Flash-sized chunks / 6,467
 frames with zero underruns and **430 B SRAM free**, including a separate
 8% added-CPU run over all chunks. NB11 also passes two complete clips with
 40% added work. Both new modes retain C fallbacks, reset checks and independent PCM
 oracles. See [HIGHER_BITRATES.md](HIGHER_BITRATES.md) for packet sizes, scope,
 measurements and reproducible commands. Existing minimal C/ASM decoder
-images stayed byte-identical at the initial higher-profile stage. The latest
-[exact cosine leaf](EXACT_ANGLE.md) speeds up ASM NB by about 3% and WB by
-2.4% versus the paired-stage baseline, saving 414–432 B Flash. All four C
+images stayed byte-identical at the initial higher-profile stage. After the
+[exact cosine leaf](EXACT_ANGLE.md), the latest [IIR first-product and word
+operations](IIR_SEED.md) save another 1.42–1.45% NB and 1.17–1.18% WB mean
+cycles, with 36/72 B less Flash. All four C
 decoder images and all 62 existing C PWM images remain byte-identical. Current ASM admission
 covers 198 fresh PWM images, with timers/interrupts and zero underruns.
 Two additional RAM-input test images retain full decoder history across
@@ -169,8 +170,9 @@ described in [OPTIMIZATION.md](OPTIMIZATION.md). Its stage result is
 images and 62 unchanged baseline C images. The C source dependencies and
 rebuilt C decoder binaries are identical. Run the preceding constructor
 audit at ddd4f01e and the earlier polynomial-stage audit at 00e94768.
-The current source-bound gate is `tests/audit_lsp_angle.py`; its measurements,
-full-domain cosine/IRQ checks and reproduction are in [EXACT_ANGLE.md](EXACT_ANGLE.md).
+The current source-bound gate is `tests/audit_iir_seed.py`; measurements and
+reproduction are in [IIR_SEED.md](IIR_SEED.md). [EXACT_ANGLE.md](EXACT_ANGLE.md)
+retains the preceding full-domain cosine/IRQ evidence.
 
 ## Verified results
 
@@ -183,23 +185,24 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
 
 | Build | Flash | Static SRAM | Peak stack | Free SRAM at peak |
 | --- | ---: | ---: | ---: | ---: |
-| Optimized decoder test mailbox, ASM enabled | 10,638 B | 1,099 B | 107 B | 842 B |
-| Full PWM speech demo, including 2,940 B compressed audio | 13,656 B | 1,234 B | 115 B | 699 B |
+| Optimized decoder test mailbox, ASM enabled | 10,602 B | 1,099 B | 107 B | 842 B |
+| Full PWM speech demo, including 2,940 B compressed audio | 13,620 B | 1,234 B | 115 B | 699 B |
 | C fallback decoder test mailbox | 11,562 B | 1,099 B | 105 B | 844 B |
 | Full C PWM speech demo, including 2,940 B audio | 14,872 B | 1,234 B | 114 B | 700 B |
 
 - At the historical deferred-r1 stage, removing redundant private r1 clears
   reduced weighted NB mean from
   102,578.762 to 102,515.127 cycles (0.0620%) versus ddd4f01e,
-  and saved 12 B Flash. The subsequent paired stage and exact cosine leaf
-  bring the current mean to 99,126.806 cycles over 9,100 frames. C decoder
+  and saved 12 B Flash. The later paired stage, cosine leaf and shared IIR
+  changes bring the current mean to 97,686.806
+  cycles over 9,100 frames. C decoder
   binaries remain byte-identical; explicit C fallbacks and architecture selection stay unchanged.
 - All 9,100 corpus frames and 4,096 additional pitch/gain coverage frames match
   unmodified upstream s16 PCM. Including 58 LSP/reset and 1,024 zero-gain
   lifetime cases, each backend matches 14,278 frames with one firmware image.
 - Complete player tests on all 31 streams match upstream PCM converted to u8,
   with zero ring underruns and no stack/static-memory collisions.
-- Maximum observed ASM decoder-only corpus frame cost: **105,990 cycles / 6.624 ms**;
+- Maximum observed ASM decoder-only corpus frame cost: **104,550 cycles / 6.534 ms**;
   the 20-ms budget at 16 MHz is 320,000 cycles. ISR and output costs are verified
   separately by the complete-player runs.
 - Primitive tests cover 240,000 complete LSP conversions and 3,670,016 bit fields;

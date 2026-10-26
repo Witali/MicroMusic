@@ -42,18 +42,18 @@ results, not a worst-case execution proof or a physical board measurement.
 
 | Profile, ASM | Mean CPU, natural voice | Max observed CPU, voice | Bare harness Flash | Static SRAM |
 | --- | ---: | ---: | ---: | ---: |
-| NB8 | 31.42% | 33.12% | 10,638 B | 1,099 B |
-| NB11 | 32.05% | 33.61% | 12,980 B | 1,107 B |
-| WB9.8 | 75.88% | 78.21% | 17,150 B | 1,279 B |
-| WB12.8 | 76.63% | 78.60% | 19,948 B | 1,287 B |
+| NB8 | 30.97% | 32.67% | 10,602 B | 1,099 B |
+| NB11 | 31.60% | 33.16% | 12,944 B | 1,107 B |
+| WB9.8 | 74.98% | 77.31% | 17,078 B | 1,279 B |
+| WB12.8 | 75.73% | 77.70% | 19,876 B | 1,287 B |
 
 The same 16 Russian/English voice excerpts are used. New modes and WB9.8
 include 6,467 frames; historical NB8 uses 6,434 because encoder padding differs.
 Natural-row means are frame-weighted from per-stream rounded cycle counts.
-These current figures include the [exact cosine optimization](EXACT_ANGLE.md).
-The larger adversarial corpus reaches 108,177 cycles/frame for NB11 (33.81%)
-and 251,512 for WB12.8 (78.60%). WB12.8 averages 245,938.570 cycles over all
-10,563 natural/coverage frames (76.86%). Its bare harness peaks at 190 B stack,
+These figures include the [IIR first-product and word operations](IIR_SEED.md).
+The larger adversarial corpus reaches 106,737 cycles/frame for NB11 (33.36%)
+and 248,632 for WB12.8 (77.70%). WB12.8 averages 243,058.570 cycles over all
+10,563 natural/coverage frames (75.96%). Its bare harness peaks at 190 B stack,
 leaving 571 B SRAM; caller buffers and the output ISR require their own space.
 
 C retains exact output: NB11 averages 69.10% CPU on voice; WB12.8 takes
@@ -69,13 +69,13 @@ playback on this AVR. Other architectures need their own timing test.
   and 1,024 mixed-mode frames. Invalid lengths/headers/null arguments are
   injected before every mixed frame; output/history and reset replay remain exact.
 - New WB ASM PWM runs 48 independent chunks / 6,467 frames with both timers
-  and interrupts active: zero underruns, minimum queue 30, 430 B SRAM free.
+  and interrupts active: zero underruns, minimum queue 31, 430 B SRAM free.
   Two 192-frame chunks additionally pass 16,000 extra cycles/frame (5% CPU),
-  with minimum queue 15. Both WB modes additionally pass all 6,467 speech
+  with minimum queue 16. Both WB modes additionally pass all 6,467 speech
   frames with 25,600 extra foreground cycles/frame (8% CPU), minimum queue
-  5/3 for WB9.8/WB12.8 and 452/430 B free SRAM. This is a foreground-load
+  6/4 for WB9.8/WB12.8 and 452/430 B free SRAM. This is a foreground-load
   experiment, not admission for arbitrary additional ISR work. NB11 passes two complete clips / 808 frames normally
-  and with 40% added work: queues 74/35 and 681 B free.
+  and with 40% added work: queues 74/36 and 681 B free.
 - A 304,192-case AVR test independently checks every 13-bit NB4 subframe
   header and every adjacent index pair at every boundary, random packets,
   padding, all pointer low bytes, guards, input reads and ABI preservation.
@@ -92,16 +92,16 @@ each with its own reset oracle; the bare decoder tests retain full-recording
 history. A separate RAM-input harness reuses the production timer ISR and
 queue: both WB modes pass all 17 full streams / 10,563 frames each, without
 chunk resets, with exact s16/PWM and 8% foreground work. Observed queues are
-at least 5/4 samples and free SRAM 439/431 B for WB9.8/WB12.8 in that harness.
+at least 6/5 samples and free SRAM 439/431 B for WB9.8/WB12.8 in that harness.
 Applications may supply continuous packets externally through the API; the
 test assumes ready packets and implements no serial/storage transport.
 
 The initial extension kept four minimum bare decoder images and six
 representative PWM images byte-identical. The subsequent paired stage and
-exact cosine leaf change ASM images; the latest gate freshly validates 198 PWM images. All four C decoder
+exact cosine leaf and current IIR stage change ASM images; the latest gate freshly validates 198 PWM images. All four C decoder
 images and 62 C player images remain byte-identical. Initial higher-profile
 admission is in `reports/higher-admission.json`; current measurements and
-source/report/binary hashes are in `reports/angle-admission.json`.
+source/report/binary hashes are in `reports/seed-admission.json`.
 
 ## Reproduce
 
@@ -123,7 +123,7 @@ python tests/prepare_higher_players.py
 python tests/verify_wb_players.py --avr-gcc avr-gcc --streams build/higher-player-corpus/streams --oracle build/higher-player-corpus/oracle --out build/wb128-pwm
 python tools/build_wb.py --export-c build/wb128-library --enable-nb4
 python tests/verify_portable.py --cc clang --ar llvm-ar --wb --enable-nb4 --cmake cmake --ninja ninja
-python tests/audit_lsp_angle.py --avr-gcc avr-gcc
+python tests/audit_iir_seed.py --avr-gcc avr-gcc
 ```
 
 Use `--backend c` for the same AVR correctness tests. New-width AVR builds
