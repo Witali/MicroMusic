@@ -7,6 +7,7 @@ const canvas = $('wave');
 const originalAudio = $('original-audio');
 let catalog, selected, runtime, runtimeReady=false, connectedRuntime, playing=false, busy=false;
 let audio, output, scopes=[new Float32Array(512)], headroom=0;
+let signalPoint='output', signalScopes={input:scopes,output:scopes};
 let session=0, hasPlayed=false, completed=false, realtime;
 let playAttempt=0, busyAttempt=0;
 let lastScopeDraw=-Infinity, scopeDrawTimer;
@@ -22,7 +23,21 @@ let importAttempt=0;
 
 function showError(message) { $('error').textContent = message; $('error').hidden = !message; }
 function audioControls() {
-  return {cutoff:+$('cutoff').value,volume:+$('volume').value};
+  return {cutoff:+$('cutoff').value,volume:+$('volume').value,signal:signalPoint};
+}
+function signalPointUI() {
+  const input=signalPoint==='input';
+  $('signal-point').value=signalPoint;
+  $('scope-zero').textContent=$('scope-zero-right').textContent=input?'128':'0';
+  for(const id of ['wave','wave-right']){
+    $(id).dataset.signal=signalPoint;
+    $(id).setAttribute('aria-label',input?'Значение звука в регистре OCR до фильтра':'Звуковой выход после фильтра и громкости');
+  }
+  const stereo=selected?.audioChannels===2,timer=currentDevice==='attiny88'?'1':'0';
+  const physical=!input&&(selectedEngine()==='device'||!!selected?.devicePackage);
+  $('scope-left-label').textContent=physical?(stereo?'L · PB0':'МОНО · PB1'):(stereo?`L · OCR${timer}A`:`МОНО · OCR${timer}B`);
+  $('scope-right-label').textContent=physical?'R · PB1':`R · OCR${timer}B`;
+  scopes=signalScopes[signalPoint];draw();
 }
 function selectedEngine() { return document.querySelector('input[name="engine"]:checked').value; }
 function deviceUI(device) {
@@ -231,16 +246,14 @@ function load(entry,{autoplay=false}={}) {
   const micronucleus=tiny88&&currentBoard==='mh-et-live-16mhz';
   document.body.dataset.stereo=String(stereo);
   scopes=Array.from({length:stereo?2:1},()=>new Float32Array(512));
+  signalScopes={input:scopes,output:scopes};
   $('stereo-output').hidden=!stereo;$('scope-right').hidden=!stereo;$('panorama').hidden=!stereo||!!entry.devicePackage;
   $('right-output-label').textContent=(stereo?'R · ':'')+(micronucleus?'PB2 / OC1B · D10':tiny88?'PB2 / OC1B · вывод 16':'PB1 / OC0B · вывод 6');
   $('right-output-label').title=micronucleus?'D10 на плате MH-ET LIVE':tiny88?'Вывод 16 в корпусе PDIP-28':'Вывод 6 в 8-выводных корпусах';
   $('left-output-label').textContent='L · '+(micronucleus?'PB1 / OC1A · D9':tiny88?'PB1 / OC1A · вывод 15':'PB0 / OC0A · вывод 5');
   $('left-output-label').title=micronucleus?'D9 на плате MH-ET LIVE':tiny88?'Вывод 15 в корпусе PDIP-28':'Вывод 5 в 8-выводных корпусах';
   $('audio-mode').textContent=stereo?'СТЕРЕО · 2 PWM-ВЫХОДА':'МОНО · 1 PWM-ВЫХОД';
-  const physical=selectedEngine()==='device';
-  $('scope-left-label').textContent=physical?(stereo?'L · PB0':'МОНО · PB1'):(stereo?`L · OCR${timer}A`:`МОНО · OCR${timer}B`);
-  $('scope-right-label').textContent=physical?'R · PB1':`R · OCR${timer}B`;
-  $('wave').setAttribute('aria-label',stereo?'Левый канал PWM до фильтра':'Осциллограмма PWM до фильтра');
+  signalPointUI();
   $('average-label').textContent=stereo?'СРЕДНИЙ PWM · L / R':'СРЕДНИЙ PWM';
   $(tiny88?'chip-attiny88':'chip-attiny13a').setAttribute('aria-label',tiny88
     ? micronucleus?'MH-ET LIVE Tiny88, 16 МГц: '+(stereo?'R — D10 / PB2, L — D9 / PB1':'моно — D10 / PB2'):'ATtiny88, PDIP-28, вид сверху: '+(stereo?'правый канал PB2 вывод 16, левый канал PB1 вывод 15':'выход PWM PB2 вывод 16')
@@ -286,7 +299,7 @@ function load(entry,{autoplay=false}={}) {
   if(micronucleus)url.searchParams.set('board',currentBoard);else url.searchParams.delete('board');
   history.replaceState(null,'',url);
   renderCatalog(); transport();
-  const worker=new Worker(new URL('./worker.js?v=20261026-avr-translated',import.meta.url),{type:'module'}); runtime=worker;
+  const worker=new Worker(new URL('./worker.js?v=20261026-signal-point',import.meta.url),{type:'module'}); runtime=worker;
   worker.onmessage=({data})=>{
     if (runtime!==worker) return;
     if (data.type==='ready') {
@@ -294,7 +307,9 @@ function load(entry,{autoplay=false}={}) {
       if(autoplay&&autoplayAttempt===playAttempt)toggle();
     }
     if (data.type==='state') {
-      stateUI(data.state); scopes=data.scopes; draw(); $('average').textContent=data.averages.map(x=>x.toFixed(1)).join(' / ');
+      stateUI(data.state);
+      signalScopes={input:data.inputScopes??data.scopes,output:data.outputScopes??data.scopes};
+      scopes=signalScopes[signalPoint];draw();$('average').textContent=data.averages.map(x=>x.toFixed(1)).join(' / ');
       headroom=headroom ? headroom*.8+data.headroom*.2 : data.headroom; $('headroom').textContent=headroom.toFixed(1)+'×';
     }
     if (data.type==='error') { runtimeReady=false; pause(); showError('Ошибка эмуляции: '+data.message); }
@@ -343,6 +358,10 @@ async function toggle() {
 $('play').onclick=toggle; $('play-original').onclick=toggleOriginal; $('reset').onclick=()=>load(selected); $('search').oninput=renderCatalog;
 $('volume').oninput=()=>{originalAudio.volume=+$('volume').value;runtime?.postMessage({type:'controls',controls:audioControls()});};
 $('cutoff').onchange=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
+$('signal-point').onchange=()=>{
+  signalPoint=$('signal-point').value==='input'?'input':'output';signalPointUI();
+  runtime?.postMessage({type:'controls',controls:audioControls()});
+};
 for (const choice of document.querySelectorAll('input[name="engine"]')) choice.onchange=()=>{
   if (selected) load(selected);
 };

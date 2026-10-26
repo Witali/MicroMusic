@@ -83,3 +83,4 @@ body[data-device=attiny88][data-stereo=true] .pin-bank .pwm-right{background:#86
 body[data-device=attiny88][data-stereo=true] .pin-bank .pwm-left{background:#99b96b}
 @media(max-width:460px){.device-control{gap:10px;margin-bottom:20px}.device-control>span{flex-basis:100%;font-size:10px}.chip-28{width:142px}.chip .tiny88-vcc,.chip .tiny88-gnd{font-size:8px;right:calc(100% + 14px)}body[data-device=attiny88] .board{padding-left:50px;--board-gap:20px}.hardware-note{font-size:9px}body[data-device=attiny88] .signal-path>span{font-size:7px}}
 @container chip-board (max-width:380px){body[data-device=attiny88] .signal-path>span{display:block;left:calc(16px - var(--board-gap));font-size:7px}}
+.signal-point-control{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:0 0 14px;color:var(--muted);font-size:12px}.signal-point-control select{max-width:100%;font-size:12px;padding:8px 10px}
