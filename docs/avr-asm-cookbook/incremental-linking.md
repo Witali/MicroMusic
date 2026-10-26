@@ -1,5 +1,11 @@
 # Keep the compiled AVR runner; replace changed WASM functions
 
+Entry-point correctness: time can advance outside the main runner. An SPM
+write completed by manual `clock()` must be rebound before the next single
+step or instruction-counted/block run. Keep the active-instruction/IRQ guard,
+and test the first call's effects and exact cycles, not just eventual output
+after a timed runner happens to repair the translation.
+
 Applies to full ATtiny13A AVR25 emission, the discovered native device ABI,
 ordinary/resumable/CLKI execution and WebAssembly MVP modules. Original project
 implementation; no adapted vendor assembly. Device page geometry comes from

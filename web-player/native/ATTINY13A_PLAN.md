@@ -23,6 +23,15 @@ historical checkpoints. Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Manual-clock SPM correctness checkpoint: `step`, instruction-counted `run` and
+compatible `runBlock` now refresh completed Flash changes before fetching, even
+when programming completed through public `clock()` outside the timed runner.
+Twelve new cases failed on the previous adapter; all15 now pass for both
+compilation policies, physical/compatible clocks and precompiled packages.
+All1972 default/shared-tool checks pass. This fixes a public API stall without
+changing native code, clock semantics or the23/30 hardware/software checklist
+count. See [the regression evidence](../reports/spm-entrypoints-20261026.md).
+
 ADC power-sequencing audit, `9b9015b4`: the full device now diagnoses PRADC
 requests while ADEN is set, before changing either PRR bit. It no longer treats
 the prohibited sequence as a supported paused conversion. Legal disable/gate/

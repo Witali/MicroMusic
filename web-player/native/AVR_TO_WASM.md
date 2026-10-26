@@ -479,6 +479,12 @@ affected page fragments after SPM. `incrementalCompilation:true` includes full
 dependency invalidation and deferred replacement of active instructions. The
 default ordinary path and portable complete artifact remain available.
 
+Manual `clock()` can finish an SPM operation outside the timed runner. Before
+the next `step`, instruction-counted `run` or compatible `runBlock` fetch, the
+full-device adapter refreshes/binds changed Flash too. It also checks again on
+return, retaining the existing active-instruction/IRQ guard. Callers do not
+need an extra `runUntil` call merely to unblock these CPU entry points.
+
 The CLI can save an initial device package containing both WASM modules,
 Flash/EEPROM, all configuration values and integrity metadata. The browser's
 **Открыть пакет ATtiny13A** control loads it with its embedded runtime.

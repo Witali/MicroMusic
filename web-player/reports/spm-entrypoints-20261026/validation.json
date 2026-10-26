@@ -1,0 +1,154 @@
+{
+  "schema": "micromusic-spm-entrypoints-v1",
+  "baselineCommit": "922ba5acb0f28720d848a0d4da31ea6eca4f9ddd",
+  "beforeSourceSha256": "76bdec0d5b2cbe7bf95c5f01ef401a8761e62ee30f47d25b4d48e173ee34349f",
+  "afterSourceSha256": "21e2eb8e29d22daafaad48c50d199c1f1c8262bfb360f1c281cc4f8162aaba9a",
+  "compilerIdentity": "bf2078d697e14339ace64df068c82bf5e22225550842291fece1ddc9fc63fe3c",
+  "testSourceSha256": "887528d8dd509eb56f7cec3ef515b1133bb9362c825e805a69c382d299215614",
+  "before": [
+    {
+      "name": "completed SPM refreshes before step, compatible, incrementalfalse",
+      "passed": false
+    },
+    {
+      "name": "completed SPM refreshes before run, compatible, incrementalfalse",
+      "passed": false
+    },
+    {
+      "name": "completed SPM refreshes before block, compatible, incrementalfalse",
+      "passed": false
+    },
+    {
+      "name": "completed SPM refreshes before step, physical, incrementalfalse",
+      "passed": false
+    },
+    {
+      "name": "completed SPM refreshes before run, physical, incrementalfalse",
+      "passed": false
+    },
+    {
+      "name": "completed SPM refreshes before step, compatible, incrementaltrue",
+      "passed": false
+    },
+    {
+      "name": "completed SPM refreshes before run, compatible, incrementaltrue",
+      "passed": false
+    },
+    {
+      "name": "completed SPM refreshes before block, compatible, incrementaltrue",
+      "passed": false
+    },
+    {
+      "name": "completed SPM refreshes before step, physical, incrementaltrue",
+      "passed": false
+    },
+    {
+      "name": "completed SPM refreshes before run, physical, incrementaltrue",
+      "passed": false
+    },
+    {
+      "name": "precompiled packages resume a manual-clock SPM write, incrementalfalse",
+      "passed": false
+    },
+    {
+      "name": "precompiled packages resume a manual-clock SPM write, incrementaltrue",
+      "passed": false
+    },
+    {
+      "name": "invalid instruction limits still fail before compilation or virtual clock changes",
+      "passed": true
+    },
+    {
+      "name": "instruction counts across ordinary SPM waits remain exact (compatible)",
+      "passed": true
+    },
+    {
+      "name": "instruction counts across ordinary SPM waits remain exact (physical)",
+      "passed": true
+    }
+  ],
+  "after": [
+    {
+      "name": "completed SPM refreshes before step, compatible, incrementalfalse",
+      "passed": true
+    },
+    {
+      "name": "completed SPM refreshes before run, compatible, incrementalfalse",
+      "passed": true
+    },
+    {
+      "name": "completed SPM refreshes before block, compatible, incrementalfalse",
+      "passed": true
+    },
+    {
+      "name": "completed SPM refreshes before step, physical, incrementalfalse",
+      "passed": true
+    },
+    {
+      "name": "completed SPM refreshes before run, physical, incrementalfalse",
+      "passed": true
+    },
+    {
+      "name": "completed SPM refreshes before step, compatible, incrementaltrue",
+      "passed": true
+    },
+    {
+      "name": "completed SPM refreshes before run, compatible, incrementaltrue",
+      "passed": true
+    },
+    {
+      "name": "completed SPM refreshes before block, compatible, incrementaltrue",
+      "passed": true
+    },
+    {
+      "name": "completed SPM refreshes before step, physical, incrementaltrue",
+      "passed": true
+    },
+    {
+      "name": "completed SPM refreshes before run, physical, incrementaltrue",
+      "passed": true
+    },
+    {
+      "name": "precompiled packages resume a manual-clock SPM write, incrementalfalse",
+      "passed": true
+    },
+    {
+      "name": "precompiled packages resume a manual-clock SPM write, incrementaltrue",
+      "passed": true
+    },
+    {
+      "name": "invalid instruction limits still fail before compilation or virtual clock changes",
+      "passed": true
+    },
+    {
+      "name": "timed runners retain SPM completion and physical retirement counts (compatible)",
+      "passed": true
+    },
+    {
+      "name": "timed runners retain SPM completion and physical retirement counts (physical)",
+      "passed": true
+    }
+  ],
+  "focusedIntegration": {
+    "passed": 78,
+    "failed": 0
+  },
+  "fullSuite": {
+    "passed": 1972,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 115495.9935
+  },
+  "native": {
+    "bytes": 119010,
+    "sha256": "bea029bf125c9f8f6ee3e63197e9a9e15556f35d59464ec3ccd5199c137e0715"
+  },
+  "hardwareTested": false,
+  "realtimeTested": false,
+  "artifactHashEncoding": "UTF-8 text: CRLF normalized to LF",
+  "artifacts": {
+    "before.txt": "2eb9b800009f0f43de8c8f443b06889eabada4e4de45412b93a987ae0d446087",
+    "after.txt": "20b16a3c2a08647a39394abdaaff4704e50e0ba5c2fd45b526cbb2380087f7ec",
+    "full-summary.txt": "bde28386a39c6a0aeae8103884cf90692b7ddd2c52519f3bcab464708861b5c4"
+  }
+}

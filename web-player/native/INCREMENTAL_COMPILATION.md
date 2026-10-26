@@ -54,6 +54,12 @@ retirement; the existing generation guard defers replacement across a hold.
 
 ## Cache and artifact contracts
 
+Manual `clock()` may complete SPM outside the timed/audio runner. Every public
+instruction entry (`step`, `run`, compatible `runBlock`) refreshes changed code
+before fetching and checks again on return. This applies to ordinary and
+incremental compilation, including precompiled packages. It preserves the
+active-phase guard; raw time advancement alone does not fetch an instruction.
+
 The runtime identity, exact padded image, ABI and compiler policy separate
 whole-image cache entries, including the incremental option. At most eight
 entries/16MiB of encoded artifacts/templates are retained per native module;

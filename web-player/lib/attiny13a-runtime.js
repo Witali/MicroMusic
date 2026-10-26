@@ -106,6 +106,15 @@ export class ATtiny13A extends TranslatedCore {
       throw Error('CLKI electrical validation unavailable');
     this.fastIdle=options.fastIdle??true;
   }
+  _execute(name,...args){
+    // Manual clocking can complete SPM outside the timed/audio runners. Bind
+    // the current image before their next CPU fetch too, without replacing a
+    // latched instruction or IRQ. The timed runners retain their own retry loop.
+    if(name!=='step'&&name!=='run'&&name!=='block')return super._execute(name,...args);
+    this._refreshFlash();
+    const result=super._execute(name,...args);
+    this._refreshFlash();return result;
+  }
   _refreshFlash(){
     const generation=this._exports.avr_device_generation();
     if(generation===this._generation)return false;
