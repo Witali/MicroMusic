@@ -1,0 +1,81 @@
+{
+  "cpu": "ATmega328P / AVR5",
+  "simulator": "simavr 1.6",
+  "dot_unroll": 1,
+  "compiler": "avr-g++.exe (GCC) 7.3.0",
+  "fixture_sha256": "09d4b208286955b02bb90be37a5d4286980348da6b768f7895bae5310bdd0e21",
+  "math_header_sha256": "6f579fdcfc050fc082675fab91b1ed26ffd4d110238cd8ece19b079122845494",
+  "runner_source_sha256": "1103eff398f0a37aa3e4ff86a9cb46cfdbc51f08933594d0fa7831c32c0ec0d5",
+  "variants": [
+    {
+      "done": 1,
+      "error": 0,
+      "zero_error": 0,
+      "cases": 5768584,
+      "irqs": 1041587,
+      "backend": 0,
+      "cycles": 2083176227,
+      "name": "c",
+      "compiler_options": [
+        "-mmcu=atmega328p",
+        "-DF_CPU=16000000UL",
+        "-Os",
+        "-std=gnu++11",
+        "-DLPX4_AVR_DOT_UNROLL=1",
+        "-DLPX4_ENABLE_ASM=0"
+      ],
+      "elf_sha256": "dd09b3d38110d2b5593fd9d764f769dad8b0a2fd0829aa3add5b0fb01533fba0"
+    },
+    {
+      "done": 1,
+      "error": 0,
+      "zero_error": 0,
+      "cases": 5768584,
+      "irqs": 828199,
+      "backend": 1,
+      "cycles": 1656401168,
+      "name": "avr5",
+      "compiler_options": [
+        "-mmcu=atmega328p",
+        "-DF_CPU=16000000UL",
+        "-Os",
+        "-std=gnu++11",
+        "-DLPX4_AVR_DOT_UNROLL=1",
+        "-DLPX4_ENABLE_ASM=1"
+      ],
+      "elf_sha256": "a8a9789a81101349ced0645425a2e78a6d67039afdd613b960dcf49324375d31"
+    },
+    {
+      "done": 1,
+      "error": 0,
+      "zero_error": 0,
+      "cases": 5768584,
+      "irqs": 1041587,
+      "backend": 0,
+      "cycles": 2083176227,
+      "name": "forced-generic",
+      "compiler_options": [
+        "-mmcu=atmega328p",
+        "-DF_CPU=16000000UL",
+        "-Os",
+        "-std=gnu++11",
+        "-DLPX4_AVR_DOT_UNROLL=1",
+        "-DLPX4_ENABLE_ASM=1",
+        "-DLPX4_ARCH=LPX4_ARCH_GENERIC"
+      ],
+      "elf_sha256": "dd09b3d38110d2b5593fd9d764f769dad8b0a2fd0829aa3add5b0fb01533fba0"
+    }
+  ],
+  "physical_hardware_measured": false,
+  "additional_compiler_options": [
+    "-flto",
+    "-mcall-prologues",
+    "-mrelax",
+    "-Wl,-u,math_done",
+    "-Wl,-u,math_error",
+    "-Wl,-u,math_zero_error",
+    "-Wl,-u,math_cases",
+    "-Wl,-u,math_irqs",
+    "-Wl,-u,math_backend"
+  ]
+}

@@ -18,8 +18,9 @@ import numpy as np
 ROOT = Path(__file__).resolve().parent.parent
 
 
-def build_library(output: Path, compiler: str = 'g++', v3_features=0, speech=False, speech_compact=False) -> Path:
+def build_library(output: Path, compiler: str = 'g++', v3_features=0, speech=False, speech_compact=False, compact_only=False) -> Path:
     if v3_features<0 or v3_features&~124:raise ValueError('Unknown v3 feature bits')
+    if compact_only and not (speech and speech_compact):raise ValueError('Compact-only requires speech and compact speech')
     compiler_path = shutil.which(compiler)
     if not compiler_path:
         raise FileNotFoundError(f'Native batch build requires {compiler}')
@@ -32,6 +33,7 @@ def build_library(output: Path, compiler: str = 'g++', v3_features=0, speech=Fal
     if speech_compact:
         if not speech:raise ValueError('Compact speech requires speech=True')
         cmd.insert(1,'-DLPX4_ENABLE_SPEECH_COMPACT=1')
+    if compact_only:cmd.insert(1,'-DLPX4_COMPACT_ONLY=1')
     subprocess.run(cmd, check=True, capture_output=True, text=True)
     return output
 
@@ -124,13 +126,13 @@ class BatchDecoder:
         return self.decode_many([blob], expected_samples)[0]
 
 
-def cached_library(v3_features=0, speech=False, speech_compact=False) -> Path:
+def cached_library(v3_features=0, speech=False, speech_compact=False, compact_only=False) -> Path:
     """Content-keyed cache: compile once per C++ source revision and platform."""
     srcs = [ROOT/'src'/'Lpx4HybridCore.cpp', ROOT/'src'/'Lpx4HybridCore.h', ROOT/'src'/'Lpx4Math.h',
             ROOT/'src'/'native_batch_decoder.cpp', ROOT/'src'/'cos_half_table.inc', ROOT/'src'/'cos_table.inc',
             ROOT/'src'/'scale_table.inc']
     h = hashlib.sha256()
-    h.update(repr((v3_features,bool(speech),bool(speech_compact))).encode())
+    h.update(repr((v3_features,bool(speech),bool(speech_compact),bool(compact_only))).encode())
     for item in srcs:
         h.update(item.name.encode()); h.update(item.read_bytes())
     h.update(platform.machine().encode()); h.update(platform.system().encode())
@@ -142,28 +144,30 @@ def cached_library(v3_features=0, speech=False, speech_compact=False) -> Path:
     if not target.is_file():
         cache_dir.mkdir(exist_ok=True, parents=True)
         intermediate = target.with_suffix('.building.so')
-        build_library(intermediate,v3_features=v3_features,speech=speech,speech_compact=speech_compact)
+        build_library(intermediate,v3_features=v3_features,speech=speech,speech_compact=speech_compact,compact_only=compact_only)
         intermediate.replace(target)
     return target
 
 
 class BatchSession:
     """One compiled decoder, cached by source fingerprint for future runs."""
-    def __init__(self, mode='auto', prebuilt=None, v3_features=0, speech=False, speech_compact=False):
+    def __init__(self, mode='auto', prebuilt=None, v3_features=0, speech=False, speech_compact=False, compact_only=False):
         if mode not in ('auto','batch','reference'):
             raise ValueError(mode)
+        if compact_only and not (speech and speech_compact):raise ValueError('Compact-only requires speech and compact speech')
         self.mode = mode
         self.prebuilt = prebuilt
         self.v3_features=v3_features
         self.speech=speech
         self.speech_compact=speech_compact
+        self.compact_only=compact_only
         self.decoder = None
 
     def __enter__(self):
         if self.mode == 'reference':
             return None
         try:
-            path = Path(self.prebuilt) if self.prebuilt else cached_library(self.v3_features,self.speech,self.speech_compact)
+            path = Path(self.prebuilt) if self.prebuilt else cached_library(self.v3_features,self.speech,self.speech_compact,self.compact_only)
             self.decoder = BatchDecoder(path)
             return self.decoder
         except (OSError, subprocess.CalledProcessError):
