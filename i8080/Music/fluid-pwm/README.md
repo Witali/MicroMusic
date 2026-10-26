@@ -1,8 +1,10 @@
 # Intel 8080: фортепиано и гитара FluidR3
 
-Новые варианты полной двухголосной мелодии:
+Более быстрый выбранный в плеере вариант — [PWM 99 T](../fluid-pwm99/README.md):
+несущая и дискретизация повышены на 9,09%, партитура пересчитана.
+Ниже сохранены прежние 108 T варианты для сравнения:
 
-- **[UNIFORM26 · BIN](uniform26-fluid-pwm108.bin)** / [HEX](uniform26-fluid-pwm108.hex) — выбран в плеере.
+- **[UNIFORM26 · BIN](uniform26-fluid-pwm108.bin)** / [HEX](uniform26-fluid-pwm108.hex).
 - [BALANCED27 · BIN](balanced27-fluid-pwm108.bin) / [HEX](balanced27-fluid-pwm108.hex).
 
 ПЗУ **32 КиБ**, Intel 8080 / КР580ВМ80, 3,5 МГц, без ОЗУ, выход INTE.

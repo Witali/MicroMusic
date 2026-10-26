@@ -7,8 +7,8 @@
   <title>MicroMusic / ATtiny13A — плеер прошивок</title>
   <meta name="description" content="Музыкальные прошивки ATtiny13A и ATtiny88: исполнение AVR-кода, звук PWM и осциллограмма в браузере.">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=20261025-board-um88-pipeline">
-  <script type="module" src="./app.js?v=20261026-avr-translated"></script>
+  <link rel="stylesheet" href="./styles.css?v=20261026-signal-point">
+  <script type="module" src="./app.js?v=20261026-signal-point"></script>
 </head>
 <body>
   <header class="site-header">
@@ -51,8 +51,9 @@
         </section>
         <section class="panel scope-panel" aria-label="Осциллограмма PWM">
           <div class="panel-heading"><span class="eyebrow">02 / СИГНАЛ</span><span class="technical-note" id="audio-mode">МОНО · 1 PWM-ВЫХОД</span></div>
-          <div class="scope-wrap"><span class="scope-channel" id="scope-left-label">МОНО · OCR0B</span><canvas id="wave" role="img" aria-label="Осциллограмма: значение PWM до фильтра"></canvas><span class="scope-mark">128</span><span class="scope-scale">85 мс</span></div>
-          <div class="scope-wrap right-scope" id="scope-right" hidden><span class="scope-channel" id="scope-right-label">R · OCR0B</span><canvas id="wave-right" role="img" aria-label="Правый канал PWM до фильтра"></canvas><span class="scope-mark">128</span></div>
+          <label class="signal-point-control">Сигнал и звук <select id="signal-point"><option value="input">Вход PWM · регистр OCR</option><option value="output" selected>Выход · после фильтра</option></select></label>
+          <div class="scope-wrap"><span class="scope-channel" id="scope-left-label">МОНО · OCR0B</span><canvas id="wave" role="img" aria-label="Звуковой выход после фильтра"></canvas><span class="scope-mark" id="scope-zero">0</span><span class="scope-scale">85 мс</span></div>
+          <div class="scope-wrap right-scope" id="scope-right" hidden><span class="scope-channel" id="scope-right-label">R · OCR0B</span><canvas id="wave-right" role="img" aria-label="Правый звуковой выход после фильтра"></canvas><span class="scope-mark" id="scope-zero-right">0</span></div>
           <div class="scope-metrics"><div><span id="average-label">СРЕДНИЙ PWM</span><strong id="average">128.0</strong></div><div><span>МАКС. ISR</span><strong id="isr">—</strong></div><div><span>ПОТЕРИ IRQ</span><strong id="lost">0</strong></div><div><span>ЗАПАС СКОРОСТИ</span><strong id="headroom">—</strong></div><div><span>ТЕМП</span><strong id="tempo" title="Доля звука прошивки в отсчётах звукового устройства">100.0%</strong></div><div><span>ОТСТАВАНИЕ</span><strong id="lag" title="Накопленное отставание из-за нехватки аудиоотсчётов">0.0 мс</strong></div></div>
         </section>
       </div>

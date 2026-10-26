@@ -1,7 +1,7 @@
 import { parseIntelHex, validateBinary } from './formats.mjs';
 import { RealtimeSpeaker } from './speaker.mjs';
 
-const $ = id => document.getElementById(id), rate = 96000;
+const $ = id => document.getElementById(id), rate = 192000;
 const hex = (n, width = 2) => n.toString(16).toUpperCase().padStart(width, '0');
 const number = n => n.toLocaleString('ru-RU');
 const machineInputs = [...document.querySelectorAll('[data-machine]')];

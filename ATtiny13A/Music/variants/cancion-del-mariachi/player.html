@@ -18,6 +18,7 @@ code{word-break:break-word}
 canvas{width:100%;height:180px;display:block;background:#0b1524;border-radius:10px}
 code{background:#0a1729;padding:3px 6px;border-radius:4px}
 small{color:#a9b8cb}
+select{font:inherit;max-width:100%;padding:8px;background:#101b2d;color:#e5edf9;border:1px solid #324157;border-radius:8px}.signal-control{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:16px 0}
 </style>
 </head>
 <body>
@@ -28,8 +29,9 @@ small{color:#a9b8cb}
  <div class="filegrid"><label>Заменить Flash HEX <input id="flashPick" type="file" accept=".hex,.ihx,text/plain"></label><label>Заменить EEPROM HEX <input id="eepPick" type="file" accept=".hex,.eep,text/plain"></label></div>
  <small>По умолчанию уже встроены проверенные образы Flash и EEPROM. Для других образов требуется тот же набор поддерживаемых инструкций AVR.</small>
  <div class="stats" style="margin:18px 0"><div>Время <strong id="time">0.0 с</strong></div><div>Выполнено <strong id="cycles">0 M тактов</strong></div><div>Прерывания <strong id="irqs">0</strong></div><div>Макс. ISR <strong id="maxisr">—</strong></div><div>Средний PWM <strong id="avgpwm">128</strong></div><div>Потери IRQ <strong id="lost">0</strong></div></div>
- <canvas id="wave" width="900" height="180" role="img" aria-label="Осциллограмма звукового сигнала"></canvas>
- <small>Жёлтая горизонтальная линия обозначает PWM=128. График построен по PWM duty до фильтра, а не по аналоговому напряжению на выходе.</small><div style="height:8px"></div><small id="status">Ожидает нажатия «Слушать».</small>
+ <label class="signal-control">Сигнал и звук <select id="signal-point"><option value="input">Вход PWM · регистр OCR</option><option value="output" selected>Выход · после фильтра</option></select></label>
+ <canvas id="wave" width="900" height="180" role="img" aria-label="Выход после фильтра и громкости"></canvas>
+ <small id="scope-note">Выход после фильтра и громкости. Средняя линия — 0; масштаб ±1.</small><div style="height:8px"></div><small id="status">Ожидает нажатия «Слушать».</small>
 </div>
 <div class="card"><strong>Готовый звуковой пример (без эмуляции)</strong><p>Если браузер на телефоне не успевает исполнять AVR по тактам, можно послушать заранее рассчитанный WAV из той же прошивки.</p><audio controls preload="none" src="preview.wav" style="width:100%;max-width:480px"></audio><small>Файл preview.wav должен находиться рядом с player.html (он есть в ZIP).</small></div>
 <div class="card"><strong>Воспроизводимая конфигурация</strong><p>ATtiny13A · CPU 9,6 МГц · 37,5 кГц Fast PWM · 18,75 кГц новых отсчётов · выход PB1/OC0B · ведущая и ритмическая нейлоновые гитары, бас и тихие ударные FluidR3; в паузах ведущей партии звучит перебор второй гитары. Ноты и секции воспроизводятся из прошитого кода. Браузер имитирует только инструкции, используемые этой конкретной прошивкой.</p><small>Это цифровая модель усреднённого PWM-сигнала. Реальная АЧХ зависит от RC-фильтра, усилителя и частоты RC-генератора микроконтроллера.</small></div>
@@ -796,14 +798,23 @@ const EEPROM_HEX = `:10000000B8DCAB9988873641DC8B87CB8A35438552
 `;
 let selectedEEPROMHex=EEPROM_HEX;
 let audio=null, processor=null, gainNode=null, core=null, scope=[], phase=0, v0=0, v1=0, sampleNumber=0, avgPWM=128;
+let inputGate,outputGate,analyser,signalPoint='output',outputScope=new Float32Array(4096);
 const $=id=>document.getElementById(id), canvas=$('wave'), g=canvas.getContext('2d');
+function selectSignal(){
+ signalPoint=$('signal-point').value==='input'?'input':'output';
+ if(inputGate){inputGate.gain.value=signalPoint==='input'?1:0;outputGate.gain.value=signalPoint==='output'?1:0}
+ const text=signalPoint==='input'?'Вход PWM: звук в регистре OCR0B; средняя линия — 128.':'Выход после фильтра и громкости. Средняя линия — 0; масштаб ±1.';
+ $('scope-note').textContent=text;canvas.setAttribute('aria-label',text);draw();
+}
 function draw(){
+ if(signalPoint==='output'&&audio&&analyser)analyser.getFloatTimeDomainData(outputScope);
+ const block=signalPoint==='input'?scope:outputScope;
  g.fillStyle='#0b1524';g.fillRect(0,0,canvas.width,canvas.height);
  g.strokeStyle='#263b59';g.lineWidth=1;
  for(let y=30;y<canvas.height;y+=30){g.beginPath();g.moveTo(0,y);g.lineTo(canvas.width,y);g.stroke()}
  g.strokeStyle='#d0bb77';g.lineWidth=1;g.beginPath();g.moveTo(0,canvas.height/2);g.lineTo(canvas.width,canvas.height/2);g.stroke();
- if(scope.length){g.strokeStyle='#65afff';g.lineWidth=2;g.beginPath();
-  for(let i=0;i<scope.length;i++){let x=i/(scope.length-1)*canvas.width,y=canvas.height/2-scope[i]*canvas.height*.42;
+ if(block.length){g.strokeStyle='#65afff';g.lineWidth=2;g.beginPath();
+  for(let i=0;i<500;i++){let x=i/499*canvas.width,y=canvas.height/2-block[Math.floor(i*block.length/500)]*canvas.height*.42;
    if(i===0)g.moveTo(x,y);else g.lineTo(x,y)}g.stroke()}
 }
 function ui(){
@@ -826,7 +837,11 @@ async function start(){
   const hp=audio.createBiquadFilter();hp.type='highpass';hp.frequency.value=35;
   const lp=audio.createBiquadFilter();lp.type='lowpass';lp.frequency.value=4000;lp.Q.value=.5;hp.Q.value=.5;
   gainNode=audio.createGain();gainNode.gain.value=+$('volume').value;
-  processor.connect(hp);hp.connect(lp);lp.connect(gainNode);gainNode.connect(audio.destination);
+  inputGate=audio.createGain();outputGate=audio.createGain();
+  analyser=audio.createAnalyser();analyser.fftSize=4096;analyser.smoothingTimeConstant=0;
+  processor.connect(inputGate);inputGate.connect(gainNode);
+  processor.connect(hp);hp.connect(lp);lp.connect(outputGate);outputGate.connect(gainNode);
+  gainNode.connect(analyser);analyser.connect(audio.destination);selectSignal();
   // One new duty for each Timer0 overflow; 37.5kHz -> AudioContext rate.
   phase=0;v0=core.nextDuty();v1=core.nextDuty();sampleNumber=0;avgPWM=128;
   processor.onaudioprocess=e=>{
@@ -849,7 +864,7 @@ async function start(){
   await audio.resume();
   $('start').disabled=true;$('stop').disabled=false;
   $('status').textContent='Воспроизводится настоящий HEX; отключите другие тяжёлые вкладки, если на телефоне появятся щелчки.';
-  interval=setInterval(ui,250);
+  interval=setInterval(ui,50);
  }catch(err){console.error(err);$('status').textContent='Не удалось начать: '+err.message;await stop()}
 }
 async function stop(){
@@ -861,6 +876,7 @@ async function stop(){
 }
 $('start').onclick=start;$('stop').onclick=stop;
 $('volume').oninput=()=>{if(gainNode)gainNode.gain.value=+$('volume').value};
+$('signal-point').onchange=selectSignal;
 // Explicit user action is required by browsers before audio can start.
 $('flashPick').onchange=async e=>{
  const f=e.target.files?.[0];if(!f)return;
@@ -874,6 +890,6 @@ $('eepPick').onchange=async e=>{
  $('status').textContent='EEPROM загружена: '+f.name+' (перезапустите прослушивание).';}
  catch(err){$('status').textContent='Ошибка EEPROM HEX: '+err.message}
 };
-draw();
+$('signal-point').value='output';selectSignal();
 </script>
 </body></html>
