@@ -2112,3 +2112,203 @@ Primary flag definitions: [Microchip ADC SREG](https://onlinedocs.microchip.com/
 [MULSU signed16 example](https://onlinedocs.microchip.com/oxy/GUID-0B644D8F-67E7-49E6-82C9-1B2B9ABE6A0D-en-US-23/GUID-FA865CD0-BF70-4D7F-9F8C-760FEF99F2D6.html).
 The signed17 extension and byte-aligned constructor are derived here from
 those semantics; the measured bounds and ABI restrictions are essential.
+
+### LPX: scale aliases, payload size and IRQ alignment
+
+ATmega328P / AVR5, GNU AVR GCC 7.3.0 ABI, `-Os`, explicit ASM opt-in;
+the arithmetic backend and C fallback are unchanged. An offline dynamic
+program can choose identical-valued scale-table indices using their actual
+delta-code lengths. Zero-q blocks may use any index without changing the
+pitch ring. Copy existing LSF/excitation bitfields to isolate this pass.
+
+Measured on 24 two-second streams: 120691 → 120637 payload bytes, exact
+PCM16/PWM, no underruns with active IRQ, queue512/prefill384 at 16MHz/8kHz.
+Some smaller streams nevertheless take up to 0.081625 more mean cycles per
+sample or 491 more cycles in a 160-sample window: changed bit alignment and
+IRQ phase matter. Only four size-reduced cases pass a strict no-cycle-growth
+gate. No decoder Flash/SRAM is added; this is not an assembly speedup.
+[Paired workloads, hashes and measurements](../../Codecs/LPX/research/q0-lossless-2026-10-25/scale.json).
+
+### LPX: choose metadata coding by total Flash and active-IRQ timing
+
+ATmega328P / AVR5, AVR-GCC 7.3.0 ABI, `-Os`, 16MHz/8kHz. Optional L4HY v3
+reuses width/type/k/lag/gain state; only the format mask adds one SRAM byte.
+Compile `LPX4_V3_FEATURES` consistently in every translation unit. Arithmetic
+backend selection, real device macros/Flash I/O and explicit C fallback are
+independent and unchanged. No new assembly was introduced.
+
+Measured mask24 (width/subheader repeat) on 24 two-second streams: payload
+120691 → 117245 bytes, exact native PCM16 / AVR PWM, no underruns with IRQ
+active, queue512/prefill384. Parser cost is about154 bytes; only9/24 complete
+ELFs shrink, and only4 also pass the strict no-growth mean/160-window gate.
+Static SRAM1101 →1102. The eight-second repeated English workload saves
+416 total Flash bytes and averages1737.15 →1735.25 wall cycles/sample.
+An eight-second Russian workload saves18 bytes but costs1.36 more mean cycles.
+
+Mask40 (width/implicit zero headers) reduces a two-second zero-excitation
+stream497 →71 bytes; total ELF9028 →8758, mean1166.82 →1157.61 cycles.
+Continue LPC/postfilter updates and q-ring writes: zero q is not an audio
+state reset. Compact queue256/prefill160/unroll3 passes six selected streams
+including both long repeats; SRAM845 →846. Three explicit C AVR controls
+retain valid PWM parity but underrun. Do not infer C real-time support.
+
+Default mask0 reproduces all24 original v2 ELF hashes exactly. New options
+are opt-in, with a full-ELF/timing rollback tool. Scale-repeat and small LSF
+Rice have insufficient net Flash benefit on this corpus and stay experiments.
+[Measurements, source hashes, constraints and recipes](../../Codecs/LPX/research/q0-lossless-2026-10-25/README.md).
+
+### LPX: retest queue headroom on new data and longer continuous playback
+
+ATmega328P / AVR5, GNU AVR GCC 7.3.0 ABI, `-Os`, 16MHz/8kHz;
+`LPX4_ENABLE_ASM=1`, v3 mask24. The arithmetic backend, explicit C fallback
+and hardware memory access are unchanged. This is a measured validation
+technique, not a new assembly optimization or a portable speedup claim.
+
+On 27 new four-second cases, all 56 successful LPX budget points / 50 unique
+full ELF images preserve native/model PCM and exact IRQ-driven PWM with
+queue 512 / prefill 384 / unroll 9, zero underruns. Decode wall intervals consume
+58.06–95.39% of the nominal sample budget. The heaviest `en_sense_a4` stream
+has a 326681-cycle maximum over 160 samples, exceeding the nominal 320000.
+The queue absorbs that burst in this four-second test.
+
+Repeat its decoded LSF/excitation frames continuously for eight seconds,
+repack exactly and preserve state at the join. Ordinary queue 512 averages
+1909.258 cycles/sample (95.463%), minimum queue 111, zero underruns.
+Compact queue 256 / prefill 160 / unroll 3 averages 1920.403 (96.020%) but reaches
+empty and produces 431 underruns. Ordinary queue plus 50 cycles per audio
+IRQ averages 1961.283 (98.064%) and produces 1643 underruns. Producer-loop
+and queue-publication costs, IRQ phase and bursts must be measured along
+with decode time; mean decode below 100% is insufficient admission evidence.
+
+The compact profile's earlier passes remain valid for those inputs, but do
+not establish general support on this wider corpus. These instrumented
+simavr 1.6 measurements include active IRQ and diagnostic stores; they are
+not physical CPU-idle measurements or an indefinite-stream guarantee.
+[Full corpus, source hashes, compiler settings and PWM checks](../../Codecs/LPX/research/q0-standards-2026-10-25/avr.json),
+[eight-second workload and failed controls](../../Codecs/LPX/research/q0-standards-2026-10-25/headroom.json).
+
+### LPX: spend a low-rate budget on useful spectra with the existing decoder
+
+ATmega328P / AVR5, GNU AVR GCC 7.3.0 ABI, `-Os`, 16 MHz / 8 kHz,
+explicit ASM opt-in and existing v3 mask24; queue 512 / prefill 384 / unroll 9.
+All decoder sources, tables, hardware memory access and selectable C fallback
+are byte-identical to the preceding experiment. No new assembly is added.
+
+Measured dense LSF metadata costs about 4 kbit/s on four tuning speech clips.
+At a 16 kbit/s cap the earlier search often chose a nearly flat LPC spectrum.
+Average groups of two/four 20ms LSF vectors offline, emit existing repeat-frame
+tags and requantize excitation against the actual interpolated Q12 synthesis.
+Audit quantized filters, reconstruct through the native model and account
+actual scale/Rice/pitch headers; bit depth alone is a poor rate estimate.
+This adds offline look-ahead up to 80 ms, not a new decoder syntax or state.
+
+The joint host search keeps q-state alternatives across 40 samples and uses
+the already supported pitch/sparse innovations (at most 10 pulses). Exact
+written costs and full native PCM decide feasibility. Repeated spectra and
+sparse data do not reset LPC/de-emphasis/pitch history. Encoder-only weighted
+error search is opt-in; it does not add a filter to the MCU.
+
+On the same 14 speech clips, old cap 16 vs new cap 12 kbit/s: actual audio
+14.286 → 11.675 kbit/s, energy-aggregate SER 10.592 → 15.098 dB,
+STOI 0.7861 → 0.8294, peak error 11961 → 7345 PCM16. At cap 16 kbit/s,
+new joint STOI 0.9048, SER 20.415 dB, peak 3969. This is corpus-specific
+objective quality, not listening/MOS proof.
+
+All 27 four-second cases at 12/16 kbit/s: 190 successful ablation points,
+111 unique full ELF images, exact native/model/PWM and zero underruns with
+active IRQ. Mean decode wall budget 58.06–83.13%; maximum 160-sample window
+326044 cycles can exceed the nominal 320000. Minimum queue 377; static
+SRAM 1102 bytes, maximum full Flash 16704. New variable spectra may cost more
+than an old flat spectrum even though the decoder code is unchanged.
+
+The heaviest final stream, noisy `en_sense_a4`, repeated continuously for 8 s:
+1667.092 cycles/sample (83.355%), minimum queue 377, zero underruns. With 100
+extra cycles/audio IRQ: 1766.943 (88.347%), minimum queue 375, zero underruns.
+Explicit C fallback produces exact valid PWM but 42693 underruns at 16 MHz:
+functional parity is separate from real-time admission. These are instrumented
+simavr 1.6 results, not physical idle-CPU measurements, indefinite-stream or
+compact-queue guarantees. No speedup of the unchanged arithmetic is claimed.
+
+[Encoder recipes, source hashes and paired metrics](../../Codecs/LPX/research/q0-lowrate-2026-10-25/README.md),
+[full-ELF matrix](../../Codecs/LPX/research/q0-lowrate-2026-10-25/avr.json),
+[continuous timing workload and C control](../../Codecs/LPX/research/q0-lowrate-2026-10-25/stress.json).
+The encoder implementation is original. Reference principles:
+[RFC6716 SILK delayed decisions](https://www.rfc-editor.org/rfc/rfc6716.html#section-5.2.3.8),
+[Speex CELP noise weighting](https://www.speex.org/docs/manual/speex-manual/node9.html).
+
+A listening-guided follow-up on one tuning clip exposed premature spectral
+seed pruning: the earlier 12 kbit/s winner repeated 199/200 LSF frames and
+used 11.1 kbit/s, whereas the 16 kbit/s seed retained changing spectra.
+Keeping both seeds through the existing joint search and refining the byte
+boundary 10 times gave exactly 12 kbit/s: SER 12.379 → 16.456 dB,
+STOI 0.7158 → 0.8209, peak 5004 → 3084 PCM16. This spends 8.11% more actual bits
+within the same ceiling; it is not a same-size or corpus-wide improvement.
+The unchanged AVR decoder costs 68.105 → 76.772% mean decode budget, zero
+underruns, SRAM 1102 bytes. A denser spectral model can cost more even with
+identical decoder code. [Single-clip inputs, measurements and scope](../../Codecs/LPX/research/q0-listening-2026-10-25/README.md).
+
+The frozen follow-up now covers all 27 four-second references, 12/16 kbit/s,
+with both the original payload ceiling and a cap at each original file's
+actual length. Keep both old spectral seeds through joint excitation search
+and refine the byte boundary ten times per seed (beam4, lambdas .003/.01/.03/.1).
+Retain the feasible old result and require full SSE and speech STOI no worse
+than that target baseline. This evaluates the combined seed/refinement recipe;
+it does not isolate either change. Before PWM, error decreases in 21/27 and
+16/27 cases at the original 12/16 ceilings; without larger files, 16/27 and
+13/27. Excluding the previously heard clip, 20/26 improve at cap12. Clean
+speech16 SER improves 15.201 to 16.404 dB at cap12, or 16.138 dB without
+larger files; STOI .8361 to .8568 or .8505. Cap16 gains are smaller.
+Some peak errors and post-PWM STOI values worsen despite the PCM16 guards;
+objective average gains are not a listening guarantee.
+
+With the same AVR5/GCC7.3.0 `-Os` configuration above, all 108 selected points
+map to 88 source/settings/ELF/HEX-checked full images with active IRQ and zero
+underruns. Mean decode wall budget is 58.06–78.23%; average paired increase
+.49 percentage points, largest +8.67. Maximum Flash 16706, static SRAM 1102
+bytes. No decoder source/table or assembly changed. The heaviest selected
+stream, `en_sense_a4` at cap16, repeated continuously for eight seconds:
+1569.669 cycles/sample (78.483%) normally, 1633.230 (81.662%) with 100 extra
+cycles per audio IRQ, both zero underruns. Selectable C fallback remains
+PWM-exact but costs 3175.445 cycles/sample and 40157 underruns at these clocks.
+These are measured simavr workloads, not physical-board or indefinite-stream
+claims. [Full paired matrix, corpus, unchanged-source proof and limitations](../../Codecs/LPX/research/q0-multiseed-2026-10-25/README.md).
+
+At an 8 kbit/s payload ceiling, a three-example listening trial (male/female
+speech and piano, four seconds each) retains the existing CLI8 candidate and
+searches it alongside the previous enhanced12/16 seeds. Beam4, lambdas
+.003/.01/.03/.1/.3/1/3, eight boundary refinements per seed; actual written
+sizes and full native SSE/STOI decide the result. A feasible low-rate result
+can underspend badly: the existing CLI speech examples use only 5.224/5.174
+kbit/s and STOI .0463/.4731; the trial spends 7.990/7.962 and reaches
+.6894/.8913. This is a same-ceiling comparison with extra actual bits and a
+broader search, not proof at equal actual size or unchanged 12/16 quality.
+Piano uses 7.978 kbit/s, SER 16.086 dB; its peak rises 1319 to 1346 versus CLI8.
+
+All six baseline/selected full AVR images pass native/model/PWM with active
+IRQ on the same AVR5/GCC7.3.0/16MHz/8kHz/ASM/queue512 configuration. Selected
+decode wall budgets are 65.58–71.55%; Flash 12686–12700, static SRAM 1102 B.
+The heaviest male stream repeated continuously for eight seconds uses 71.415%
+normally and 73.308% with 100 extra cycles/audio IRQ, both zero underruns.
+C fallback remains exact but 146.538% and 32390 underruns. Sources/tables and
+backend selectors are unchanged; this is not an arithmetic speedup or a
+27-case/hardware admission claim. [Three-case measurements and listening provenance](../../Codecs/LPX/research/q0-8kbps-2026-10-25/README.md).
+
+## UM88: page-local FIFO
+
+[Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.
+
+## UM88: exact table-free gain
+
+[Exact table-free gain](um88-table-free-gain.md) records the bounded C/ASM products, floor rounding, pointer-render requirement, isolated size savings, rejected C timing regressions, and independent arithmetic plus active-IRQ admission checks.
+
+## UM88: smaller control decoding
+
+[Shared voice addresses and decoder cursors](um88-control-size.md): lossless C address/stack work, exact compact-pair offsets, portable layout fallback, and measured size/timing results.
+
+## UM88: output channels selected at build time
+
+[Compile only mono or stereo](um88-configured-channels.md): conditional ABI and PWM code, tight music placement, fixed FIFO stride, and a test-only proof that mono never writes the inactive compare register.
+
+## UM88: flag-neutral PWM interrupt
+
+[Flag-neutral IRQ and explicit GPIOR backup](um88-flag-neutral-irq.md): preserve SREG without saving it on the normal path, use a balanced power-of-two wrap, and optionally reserve three GPIOR registers to replace stack backup.

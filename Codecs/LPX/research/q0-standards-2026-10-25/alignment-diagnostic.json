@@ -1,0 +1,1659 @@
+{
+  "method": "Exploratory correlation fit at 1/16 sample over +/-8 samples around integer alignment; Kaiser8.6 polyphase interpolation; 160-sample guard on each edge; no gain fit. Primary full-reference SER/max-error records are unchanged.",
+  "guard_samples_per_edge": 160,
+  "cases": [
+    {
+      "id": "en_letter_a4",
+      "codecs": {
+        "LPX": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 24.56554883440781,
+          "guarded_fractional_ser_db": 24.565522213211853,
+          "ser_change_db": -2.6621195956977317e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_audio": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 18.81462267493922,
+          "guarded_fractional_ser_db": 18.814602439324826,
+          "ser_change_db": -2.023561439301602e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_voip": {
+          "integer_delay_samples": 1,
+          "extra_shift_samples": -0.125,
+          "guarded_integer_ser_db": 10.819856148835427,
+          "guarded_fractional_ser_db": 11.305838470545794,
+          "ser_change_db": 0.4859823217103667,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "[s16le @ 0000021897bfdc80] Application provided invalid, non monotonically increasing dts to muxer in stream 0: 32572 >= 32572\r\n",
+          "timestamp_normalization_check": {
+            "raw_sha256": "548b091844359696a6aa717d0ffa49fa70ff1afac9049cdd26cfe5617a8bc8b5",
+            "monotonic_sha256": "548b091844359696a6aa717d0ffa49fa70ff1afac9049cdd26cfe5617a8bc8b5",
+            "pcm_exact": true,
+            "command": [
+              "ffmpeg",
+              "-nostdin",
+              "-v",
+              "error",
+              "-i",
+              "build\\lpx-standards\\results\\en_letter_a4\\external\\opus_voip-24237.ogg",
+              "-ac",
+              "1",
+              "-af",
+              "aresample=8000,asetpts=N/SR/TB",
+              "-ar",
+              "8000",
+              "-f",
+              "s16le",
+              "pipe:1"
+            ],
+            "monotonic_warnings": ""
+          }
+        },
+        "vorbis": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 21.743202446625567,
+          "guarded_fractional_ser_db": 21.743121364139913,
+          "ser_change_db": -8.108248565363851e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_abr": {
+          "integer_delay_samples": 80,
+          "extra_shift_samples": -0.25,
+          "guarded_integer_ser_db": 4.859033229354972,
+          "guarded_fractional_ser_db": 5.442181505464988,
+          "ser_change_db": 0.5831482761100162,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_cbr_under": {
+          "integer_delay_samples": 80,
+          "extra_shift_samples": -0.3125,
+          "guarded_integer_ser_db": 4.7381459537124195,
+          "guarded_fractional_ser_db": 5.324169063482929,
+          "ser_change_db": 0.5860231097705091,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        }
+      }
+    },
+    {
+      "id": "en_letter_b4",
+      "codecs": {
+        "LPX": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 27.3500835679261,
+          "guarded_fractional_ser_db": 27.350036799480783,
+          "ser_change_db": -4.6768445315592544e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_audio": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 20.583319912792938,
+          "guarded_fractional_ser_db": 20.583287784394237,
+          "ser_change_db": -3.21283987005927e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_voip": {
+          "integer_delay_samples": 1,
+          "extra_shift_samples": -0.1875,
+          "guarded_integer_ser_db": 11.24251860223698,
+          "guarded_fractional_ser_db": 12.097143218705808,
+          "ser_change_db": 0.8546246164688274,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "[s16le @ 00000213c2c1eb80] Application provided invalid, non monotonically increasing dts to muxer in stream 0: 32572 >= 32572\r\n",
+          "timestamp_normalization_check": {
+            "raw_sha256": "9b6dd1a2c57408241f3f686453f2de8aec9e3754c11266ecbb93d4f3d4ffc114",
+            "monotonic_sha256": "9b6dd1a2c57408241f3f686453f2de8aec9e3754c11266ecbb93d4f3d4ffc114",
+            "pcm_exact": true,
+            "command": [
+              "ffmpeg",
+              "-nostdin",
+              "-v",
+              "error",
+              "-i",
+              "build\\lpx-standards\\results\\en_letter_b4\\external\\opus_voip-24577.ogg",
+              "-ac",
+              "1",
+              "-af",
+              "aresample=8000,asetpts=N/SR/TB",
+              "-ar",
+              "8000",
+              "-f",
+              "s16le",
+              "pipe:1"
+            ],
+            "monotonic_warnings": ""
+          }
+        },
+        "vorbis": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 22.763487964266204,
+          "guarded_fractional_ser_db": 22.76336256001729,
+          "ser_change_db": -0.00012540424891582802,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_abr": {
+          "integer_delay_samples": 79,
+          "extra_shift_samples": 0.5,
+          "guarded_integer_ser_db": 5.071905845073142,
+          "guarded_fractional_ser_db": 5.779334432073745,
+          "ser_change_db": 0.707428587000603,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_cbr_under": {
+          "integer_delay_samples": 79,
+          "extra_shift_samples": 0.5,
+          "guarded_integer_ser_db": 4.955319637327361,
+          "guarded_fractional_ser_db": 5.663168321792841,
+          "ser_change_db": 0.7078486844654801,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        }
+      }
+    },
+    {
+      "id": "en_normcore_a4",
+      "codecs": {
+        "LPX": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 26.641570114001954,
+          "guarded_fractional_ser_db": 26.641561678888696,
+          "ser_change_db": -8.435113258542515e-06,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_audio": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 18.23521166635174,
+          "guarded_fractional_ser_db": 18.23517291690614,
+          "ser_change_db": -3.874944560067206e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_voip": {
+          "integer_delay_samples": 1,
+          "extra_shift_samples": -0.3125,
+          "guarded_integer_ser_db": 10.02520827592507,
+          "guarded_fractional_ser_db": 11.378006719039364,
+          "ser_change_db": 1.3527984431142936,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "[s16le @ 00000221541600c0] Application provided invalid, non monotonically increasing dts to muxer in stream 0: 32572 >= 32572\r\n",
+          "timestamp_normalization_check": {
+            "raw_sha256": "07577ac9504c65bc1c2ced73bce155fc2b64c72a20224e083d686c41d26a1501",
+            "monotonic_sha256": "07577ac9504c65bc1c2ced73bce155fc2b64c72a20224e083d686c41d26a1501",
+            "pcm_exact": true,
+            "command": [
+              "ffmpeg",
+              "-nostdin",
+              "-v",
+              "error",
+              "-i",
+              "build\\lpx-standards\\results\\en_normcore_a4\\external\\opus_voip-25483.ogg",
+              "-ac",
+              "1",
+              "-af",
+              "aresample=8000,asetpts=N/SR/TB",
+              "-ar",
+              "8000",
+              "-f",
+              "s16le",
+              "pipe:1"
+            ],
+            "monotonic_warnings": ""
+          }
+        },
+        "vorbis": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 23.703218985610587,
+          "guarded_fractional_ser_db": 23.703156379877917,
+          "ser_change_db": -6.260573266914093e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_abr": {
+          "integer_delay_samples": 79,
+          "extra_shift_samples": 0.375,
+          "guarded_integer_ser_db": 5.489506881236652,
+          "guarded_fractional_ser_db": 6.011934360488402,
+          "ser_change_db": 0.5224274792517498,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_cbr_under": {
+          "integer_delay_samples": 79,
+          "extra_shift_samples": 0.375,
+          "guarded_integer_ser_db": 5.392315533928454,
+          "guarded_fractional_ser_db": 5.8955270276272875,
+          "ser_change_db": 0.5032114936988332,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        }
+      }
+    },
+    {
+      "id": "en_normcore_b4",
+      "codecs": {
+        "LPX": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 30.976960397598337,
+          "guarded_fractional_ser_db": 30.976964341338153,
+          "ser_change_db": 3.943739816492098e-06,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_audio": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 19.58364509065702,
+          "guarded_fractional_ser_db": 19.583600207344833,
+          "ser_change_db": -4.488331218510666e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_voip": {
+          "integer_delay_samples": 1,
+          "extra_shift_samples": -0.4375,
+          "guarded_integer_ser_db": 11.075322881595042,
+          "guarded_fractional_ser_db": 13.3839745084285,
+          "ser_change_db": 2.3086516268334574,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "[s16le @ 0000025074a66800] Application provided invalid, non monotonically increasing dts to muxer in stream 0: 32572 >= 32572\r\n",
+          "timestamp_normalization_check": {
+            "raw_sha256": "4dc32b3974822d78da4273d2fed48def9694dec96e03eb931e7820f4debd44ea",
+            "monotonic_sha256": "4dc32b3974822d78da4273d2fed48def9694dec96e03eb931e7820f4debd44ea",
+            "pcm_exact": true,
+            "command": [
+              "ffmpeg",
+              "-nostdin",
+              "-v",
+              "error",
+              "-i",
+              "build\\lpx-standards\\results\\en_normcore_b4\\external\\opus_voip-27522.ogg",
+              "-ac",
+              "1",
+              "-af",
+              "aresample=8000,asetpts=N/SR/TB",
+              "-ar",
+              "8000",
+              "-f",
+              "s16le",
+              "pipe:1"
+            ],
+            "monotonic_warnings": ""
+          }
+        },
+        "vorbis": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 27.291168049146147,
+          "guarded_fractional_ser_db": 27.291080809887326,
+          "ser_change_db": -8.723925882136996e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_abr": {
+          "integer_delay_samples": 79,
+          "extra_shift_samples": 0.0625,
+          "guarded_integer_ser_db": 7.1757431060082775,
+          "guarded_fractional_ser_db": 7.200991766728407,
+          "ser_change_db": 0.025248660720129656,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_cbr_under": {
+          "integer_delay_samples": 79,
+          "extra_shift_samples": 0.0625,
+          "guarded_integer_ser_db": 7.11878189646186,
+          "guarded_fractional_ser_db": 7.145012971235195,
+          "ser_change_db": 0.026231074773335195,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        }
+      }
+    },
+    {
+      "id": "en_portrait_a4",
+      "codecs": {
+        "LPX": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 26.041688062592772,
+          "guarded_fractional_ser_db": 26.041683413568077,
+          "ser_change_db": -4.649024695879689e-06,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_audio": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 20.262487826938237,
+          "guarded_fractional_ser_db": 20.262441473568515,
+          "ser_change_db": -4.635336972214077e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_voip": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.3125,
+          "guarded_integer_ser_db": 6.152703998449481,
+          "guarded_fractional_ser_db": 6.352567784469483,
+          "ser_change_db": 0.19986378602000165,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "[s16le @ 0000015122e1cec0] Application provided invalid, non monotonically increasing dts to muxer in stream 0: 32572 >= 32572\r\n",
+          "timestamp_normalization_check": {
+            "raw_sha256": "a35bfb33af1567bc3619b1fde7648717791fc08e7df91dd5baa2d0ca2e41c485",
+            "monotonic_sha256": "a35bfb33af1567bc3619b1fde7648717791fc08e7df91dd5baa2d0ca2e41c485",
+            "pcm_exact": true,
+            "command": [
+              "ffmpeg",
+              "-nostdin",
+              "-v",
+              "error",
+              "-i",
+              "build\\lpx-standards\\results\\en_portrait_a4\\external\\opus_voip-23897.ogg",
+              "-ac",
+              "1",
+              "-af",
+              "aresample=8000,asetpts=N/SR/TB",
+              "-ar",
+              "8000",
+              "-f",
+              "s16le",
+              "pipe:1"
+            ],
+            "monotonic_warnings": ""
+          }
+        },
+        "vorbis": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 25.78495492507056,
+          "guarded_fractional_ser_db": 25.784891299336266,
+          "ser_change_db": -6.362573429541385e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_abr": {
+          "integer_delay_samples": 79,
+          "extra_shift_samples": -0.3125,
+          "guarded_integer_ser_db": 2.588652458616677,
+          "guarded_fractional_ser_db": 2.6570104838839748,
+          "ser_change_db": 0.06835802526729795,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_cbr_under": {
+          "integer_delay_samples": 79,
+          "extra_shift_samples": -0.3125,
+          "guarded_integer_ser_db": 2.5850810810436493,
+          "guarded_fractional_ser_db": 2.6572955724305167,
+          "ser_change_db": 0.07221449138686742,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        }
+      }
+    },
+    {
+      "id": "en_portrait_b4",
+      "codecs": {
+        "LPX": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 26.98801812177401,
+          "guarded_fractional_ser_db": 26.988043646901673,
+          "ser_change_db": 2.5525127661296665e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_audio": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 19.66218051308274,
+          "guarded_fractional_ser_db": 19.662125643965368,
+          "ser_change_db": -5.486911737051514e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_voip": {
+          "integer_delay_samples": 1,
+          "extra_shift_samples": -0.4375,
+          "guarded_integer_ser_db": 6.50756445144271,
+          "guarded_fractional_ser_db": 7.194741052311979,
+          "ser_change_db": 0.687176600869269,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "[s16le @ 000002171e3fe200] Application provided invalid, non monotonically increasing dts to muxer in stream 0: 32572 >= 32572\r\n",
+          "timestamp_normalization_check": {
+            "raw_sha256": "7f08875fcc4feef4b10cd078e313b7ecf3c89b1af9594f8facdf9a16aa06c8d0",
+            "monotonic_sha256": "7f08875fcc4feef4b10cd078e313b7ecf3c89b1af9594f8facdf9a16aa06c8d0",
+            "pcm_exact": true,
+            "command": [
+              "ffmpeg",
+              "-nostdin",
+              "-v",
+              "error",
+              "-i",
+              "build\\lpx-standards\\results\\en_portrait_b4\\external\\opus_voip-23783.ogg",
+              "-ac",
+              "1",
+              "-af",
+              "aresample=8000,asetpts=N/SR/TB",
+              "-ar",
+              "8000",
+              "-f",
+              "s16le",
+              "pipe:1"
+            ],
+            "monotonic_warnings": ""
+          }
+        },
+        "vorbis": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 25.103800331223688,
+          "guarded_fractional_ser_db": 25.103728689499615,
+          "ser_change_db": -7.164172407314595e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_abr": {
+          "integer_delay_samples": 79,
+          "extra_shift_samples": 0.25,
+          "guarded_integer_ser_db": 2.9575356529711057,
+          "guarded_fractional_ser_db": 3.0261963125892235,
+          "ser_change_db": 0.06866065961811785,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_cbr_under": {
+          "integer_delay_samples": 79,
+          "extra_shift_samples": 0.25,
+          "guarded_integer_ser_db": 2.924299540860656,
+          "guarded_fractional_ser_db": 2.9918154337456144,
+          "ser_change_db": 0.06751589288495863,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        }
+      }
+    },
+    {
+      "id": "en_sense_a4",
+      "codecs": {
+        "LPX": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 26.519640580380166,
+          "guarded_fractional_ser_db": 26.519666196394184,
+          "ser_change_db": 2.5616014017515454e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_audio": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 10.14560891595291,
+          "guarded_fractional_ser_db": 10.145607743718418,
+          "ser_change_db": -1.1722344908093874e-06,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_voip": {
+          "integer_delay_samples": 1,
+          "extra_shift_samples": -0.3125,
+          "guarded_integer_ser_db": 5.80534498635876,
+          "guarded_fractional_ser_db": 6.1002356688788915,
+          "ser_change_db": 0.2948906825201316,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "[s16le @ 00000240c1b53140] Application provided invalid, non monotonically increasing dts to muxer in stream 0: 32572 >= 32572\r\n",
+          "timestamp_normalization_check": {
+            "raw_sha256": "b1c2a13de0ec4d27273b2ab4991c7fa4a1470f3bd26a9d3e83f62f9381a1905e",
+            "monotonic_sha256": "b1c2a13de0ec4d27273b2ab4991c7fa4a1470f3bd26a9d3e83f62f9381a1905e",
+            "pcm_exact": true,
+            "command": [
+              "ffmpeg",
+              "-nostdin",
+              "-v",
+              "error",
+              "-i",
+              "build\\lpx-standards\\results\\en_sense_a4\\external\\opus_voip-23953.ogg",
+              "-ac",
+              "1",
+              "-af",
+              "aresample=8000,asetpts=N/SR/TB",
+              "-ar",
+              "8000",
+              "-f",
+              "s16le",
+              "pipe:1"
+            ],
+            "monotonic_warnings": ""
+          }
+        },
+        "vorbis": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 22.70780438743577,
+          "guarded_fractional_ser_db": 22.70775024790124,
+          "ser_change_db": -5.4139534526598254e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_abr": {
+          "integer_delay_samples": 77,
+          "extra_shift_samples": 0.1875,
+          "guarded_integer_ser_db": 2.2145621189234515,
+          "guarded_fractional_ser_db": 2.2477875300172205,
+          "ser_change_db": 0.033225411093769086,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_cbr_under": {
+          "integer_delay_samples": 77,
+          "extra_shift_samples": 0.25,
+          "guarded_integer_ser_db": 2.1929930232073764,
+          "guarded_fractional_ser_db": 2.232440509889789,
+          "ser_change_db": 0.0394474866824126,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        }
+      }
+    },
+    {
+      "id": "en_sense_b4",
+      "codecs": {
+        "LPX": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 21.638754047028584,
+          "guarded_fractional_ser_db": 21.638757825367424,
+          "ser_change_db": 3.7783388400214335e-06,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_audio": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 12.252337265928169,
+          "guarded_fractional_ser_db": 12.252334039698214,
+          "ser_change_db": -3.226229955188842e-06,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_voip": {
+          "integer_delay_samples": 1,
+          "extra_shift_samples": -0.1875,
+          "guarded_integer_ser_db": 7.4958918053911585,
+          "guarded_fractional_ser_db": 7.717806117319458,
+          "ser_change_db": 0.22191431192829913,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "[s16le @ 0000022e101b69c0] Application provided invalid, non monotonically increasing dts to muxer in stream 0: 32572 >= 32572\r\n",
+          "timestamp_normalization_check": {
+            "raw_sha256": "a457b154a8448d49c6e0ce71d4405fc68bad14692eb1333eced47fbf9f9b3bd9",
+            "monotonic_sha256": "a457b154a8448d49c6e0ce71d4405fc68bad14692eb1333eced47fbf9f9b3bd9",
+            "pcm_exact": true,
+            "command": [
+              "ffmpeg",
+              "-nostdin",
+              "-v",
+              "error",
+              "-i",
+              "build\\lpx-standards\\results\\en_sense_b4\\external\\opus_voip-24010.ogg",
+              "-ac",
+              "1",
+              "-af",
+              "aresample=8000,asetpts=N/SR/TB",
+              "-ar",
+              "8000",
+              "-f",
+              "s16le",
+              "pipe:1"
+            ],
+            "monotonic_warnings": ""
+          }
+        },
+        "vorbis": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 21.482919823671388,
+          "guarded_fractional_ser_db": 21.482836194789012,
+          "ser_change_db": -8.362888237556376e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_abr": {
+          "integer_delay_samples": 80,
+          "extra_shift_samples": -0.375,
+          "guarded_integer_ser_db": 2.4904798323956507,
+          "guarded_fractional_ser_db": 2.8988541110035326,
+          "ser_change_db": 0.4083742786078819,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_cbr_under": {
+          "integer_delay_samples": 80,
+          "extra_shift_samples": -0.375,
+          "guarded_integer_ser_db": 2.452390890760944,
+          "guarded_fractional_ser_db": 2.867007660908607,
+          "ser_change_db": 0.41461677014766307,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        }
+      }
+    },
+    {
+      "id": "orchestra",
+      "codecs": {
+        "LPX": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 26.29241260895247,
+          "guarded_fractional_ser_db": 26.292483627030737,
+          "ser_change_db": 7.101807826614959e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_audio": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 20.947345089349554,
+          "guarded_fractional_ser_db": 20.947299945647476,
+          "ser_change_db": -4.5143702077865555e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_voip": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.375,
+          "guarded_integer_ser_db": 10.767713351080399,
+          "guarded_fractional_ser_db": 11.708145394598917,
+          "ser_change_db": 0.9404320435185181,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "[s16le @ 00000294fd67d680] Application provided invalid, non monotonically increasing dts to muxer in stream 0: 32572 >= 32572\r\n",
+          "timestamp_normalization_check": {
+            "raw_sha256": "850cfa5e0a7923fdb1d53dfe72de9c4d056bf6c6262f2477bdda63e47d76be20",
+            "monotonic_sha256": "850cfa5e0a7923fdb1d53dfe72de9c4d056bf6c6262f2477bdda63e47d76be20",
+            "pcm_exact": true,
+            "command": [
+              "ffmpeg",
+              "-nostdin",
+              "-v",
+              "error",
+              "-i",
+              "build\\lpx-standards\\results\\orchestra\\external\\opus_voip-23953.ogg",
+              "-ac",
+              "1",
+              "-af",
+              "aresample=8000,asetpts=N/SR/TB",
+              "-ar",
+              "8000",
+              "-f",
+              "s16le",
+              "pipe:1"
+            ],
+            "monotonic_warnings": ""
+          }
+        },
+        "vorbis": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 25.064471687594597,
+          "guarded_fractional_ser_db": 25.06437787317335,
+          "ser_change_db": -9.381442124833939e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_abr": {
+          "integer_delay_samples": 79,
+          "extra_shift_samples": -0.4375,
+          "guarded_integer_ser_db": 6.297359815126362,
+          "guarded_fractional_ser_db": 6.6674944992309655,
+          "ser_change_db": 0.3701346841046034,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_cbr_under": {
+          "integer_delay_samples": 79,
+          "extra_shift_samples": -0.4375,
+          "guarded_integer_ser_db": 6.2104318743699345,
+          "guarded_fractional_ser_db": 6.591875098618125,
+          "ser_change_db": 0.38144322424819066,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        }
+      }
+    },
+    {
+      "id": "piano",
+      "codecs": {
+        "LPX": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 26.122710301171534,
+          "guarded_fractional_ser_db": 26.122702677130864,
+          "ser_change_db": -7.624040669895749e-06,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_audio": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 28.662465284046867,
+          "guarded_fractional_ser_db": 28.66233558036039,
+          "ser_change_db": -0.00012970368647557962,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_voip": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.375,
+          "guarded_integer_ser_db": 14.739394699642165,
+          "guarded_fractional_ser_db": 17.2762667402855,
+          "ser_change_db": 2.5368720406433347,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "[s16le @ 000001fc986cfc00] Application provided invalid, non monotonically increasing dts to muxer in stream 0: 32572 >= 32572\r\n",
+          "timestamp_normalization_check": {
+            "raw_sha256": "a0187106b6d88f225c4bd66a02735f46085180bc97bae46c9c58b289ea5d68fb",
+            "monotonic_sha256": "a0187106b6d88f225c4bd66a02735f46085180bc97bae46c9c58b289ea5d68fb",
+            "pcm_exact": true,
+            "command": [
+              "ffmpeg",
+              "-nostdin",
+              "-v",
+              "error",
+              "-i",
+              "build\\lpx-standards\\results\\piano\\external\\opus_voip-23670.ogg",
+              "-ac",
+              "1",
+              "-af",
+              "aresample=8000,asetpts=N/SR/TB",
+              "-ar",
+              "8000",
+              "-f",
+              "s16le",
+              "pipe:1"
+            ],
+            "monotonic_warnings": ""
+          }
+        },
+        "vorbis": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 31.850250875274554,
+          "guarded_fractional_ser_db": 31.850120896322128,
+          "ser_change_db": -0.0001299789524260575,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_abr": {
+          "integer_delay_samples": 79,
+          "extra_shift_samples": -0.25,
+          "guarded_integer_ser_db": 11.885282173342308,
+          "guarded_fractional_ser_db": 12.387862759326275,
+          "ser_change_db": 0.5025805859839672,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_cbr_under": {
+          "integer_delay_samples": 79,
+          "extra_shift_samples": -0.25,
+          "guarded_integer_ser_db": 11.794450304220764,
+          "guarded_fractional_ser_db": 12.302234929541315,
+          "ser_change_db": 0.5077846253205518,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        }
+      }
+    },
+    {
+      "id": "ru_pushkin_a4",
+      "codecs": {
+        "LPX": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0625,
+          "guarded_integer_ser_db": 23.212487015964154,
+          "guarded_fractional_ser_db": 23.314588172290748,
+          "ser_change_db": 0.10210115632659367,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_audio": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 9.402966948373383,
+          "guarded_fractional_ser_db": 9.402965398297612,
+          "ser_change_db": -1.5500757708508672e-06,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_voip": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": -1.125,
+          "guarded_integer_ser_db": 3.342739538975933,
+          "guarded_fractional_ser_db": 3.4786462451335836,
+          "ser_change_db": 0.13590670615765044,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "[s16le @ 0000024ed95a1500] Application provided invalid, non monotonically increasing dts to muxer in stream 0: 32572 >= 32572\r\n",
+          "timestamp_normalization_check": {
+            "raw_sha256": "911fea2bece709739f4fdda716f5096a2be1f29aa2b80746f06aa6d5cb680251",
+            "monotonic_sha256": "911fea2bece709739f4fdda716f5096a2be1f29aa2b80746f06aa6d5cb680251",
+            "pcm_exact": true,
+            "command": [
+              "ffmpeg",
+              "-nostdin",
+              "-v",
+              "error",
+              "-i",
+              "build\\lpx-standards\\results\\ru_pushkin_a4\\external\\opus_voip-24124.ogg",
+              "-ac",
+              "1",
+              "-af",
+              "aresample=8000,asetpts=N/SR/TB",
+              "-ar",
+              "8000",
+              "-f",
+              "s16le",
+              "pipe:1"
+            ],
+            "monotonic_warnings": ""
+          }
+        },
+        "vorbis": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 25.836680700935112,
+          "guarded_fractional_ser_db": 25.836576193642017,
+          "ser_change_db": -0.00010450729309496865,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_abr": {
+          "integer_delay_samples": 77,
+          "extra_shift_samples": -0.25,
+          "guarded_integer_ser_db": 1.1885637295979183,
+          "guarded_fractional_ser_db": 1.2028918728656872,
+          "ser_change_db": 0.014328143267768878,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_cbr_under": {
+          "integer_delay_samples": 77,
+          "extra_shift_samples": -0.25,
+          "guarded_integer_ser_db": 1.1489594558794634,
+          "guarded_fractional_ser_db": 1.1641787420882226,
+          "ser_change_db": 0.01521928620875923,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        }
+      }
+    },
+    {
+      "id": "ru_pushkin_b4",
+      "codecs": {
+        "LPX": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0625,
+          "guarded_integer_ser_db": 22.702914102878864,
+          "guarded_fractional_ser_db": 22.73945451824713,
+          "ser_change_db": 0.03654041536826469,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_audio": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 12.184089883945415,
+          "guarded_fractional_ser_db": 12.184088915227234,
+          "ser_change_db": -9.687181812267909e-07,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_voip": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.25,
+          "guarded_integer_ser_db": 5.956150881428892,
+          "guarded_fractional_ser_db": 6.0116513419311,
+          "ser_change_db": 0.05550046050220825,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "[s16le @ 0000023aa0052880] Application provided invalid, non monotonically increasing dts to muxer in stream 0: 32572 >= 32572\r\n",
+          "timestamp_normalization_check": {
+            "raw_sha256": "1080248ef70cffdeeb4ad9cee7008877a920997d1504a6dbe493d20f25f7181b",
+            "monotonic_sha256": "1080248ef70cffdeeb4ad9cee7008877a920997d1504a6dbe493d20f25f7181b",
+            "pcm_exact": true,
+            "command": [
+              "ffmpeg",
+              "-nostdin",
+              "-v",
+              "error",
+              "-i",
+              "build\\lpx-standards\\results\\ru_pushkin_b4\\external\\opus_voip-23897.ogg",
+              "-ac",
+              "1",
+              "-af",
+              "aresample=8000,asetpts=N/SR/TB",
+              "-ar",
+              "8000",
+              "-f",
+              "s16le",
+              "pipe:1"
+            ],
+            "monotonic_warnings": ""
+          }
+        },
+        "vorbis": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 26.509788548136996,
+          "guarded_fractional_ser_db": 26.509728602634553,
+          "ser_change_db": -5.994550244281527e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_abr": {
+          "integer_delay_samples": 78,
+          "extra_shift_samples": -0.1875,
+          "guarded_integer_ser_db": 3.397915559163782,
+          "guarded_fractional_ser_db": 3.4123667030008265,
+          "ser_change_db": 0.014451143837044267,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_cbr_under": {
+          "integer_delay_samples": 78,
+          "extra_shift_samples": -0.125,
+          "guarded_integer_ser_db": 3.336009185932782,
+          "guarded_fractional_ser_db": 3.3471130771123754,
+          "ser_change_db": 0.011103891179593539,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        }
+      }
+    },
+    {
+      "id": "ru_russia_a4",
+      "codecs": {
+        "LPX": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0625,
+          "guarded_integer_ser_db": 17.386125189366773,
+          "guarded_fractional_ser_db": 17.42409806092847,
+          "ser_change_db": 0.0379728715616956,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_audio": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 21.0718246104071,
+          "guarded_fractional_ser_db": 21.071753451930306,
+          "ser_change_db": -7.115847679273202e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_voip": {
+          "integer_delay_samples": 1,
+          "extra_shift_samples": -0.3125,
+          "guarded_integer_ser_db": 8.129039856968994,
+          "guarded_fractional_ser_db": 8.73543076381355,
+          "ser_change_db": 0.6063909068445561,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "[s16le @ 00000253cccedb40] Application provided invalid, non monotonically increasing dts to muxer in stream 0: 32572 >= 32572\r\n",
+          "timestamp_normalization_check": {
+            "raw_sha256": "f12ee73739686e05694f572951e898c96ae744490ab5aa0d30dbba4acbe65df8",
+            "monotonic_sha256": "f12ee73739686e05694f572951e898c96ae744490ab5aa0d30dbba4acbe65df8",
+            "pcm_exact": true,
+            "command": [
+              "ffmpeg",
+              "-nostdin",
+              "-v",
+              "error",
+              "-i",
+              "build\\lpx-standards\\results\\ru_russia_a4\\external\\opus_voip-23783.ogg",
+              "-ac",
+              "1",
+              "-af",
+              "aresample=8000,asetpts=N/SR/TB",
+              "-ar",
+              "8000",
+              "-f",
+              "s16le",
+              "pipe:1"
+            ],
+            "monotonic_warnings": ""
+          }
+        },
+        "vorbis": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 21.685809959311776,
+          "guarded_fractional_ser_db": 21.68576178721092,
+          "ser_change_db": -4.817210085406032e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_abr": {
+          "integer_delay_samples": 79,
+          "extra_shift_samples": 0.3125,
+          "guarded_integer_ser_db": 2.805717950549888,
+          "guarded_fractional_ser_db": 2.912511656247582,
+          "ser_change_db": 0.10679370569769375,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_cbr_under": {
+          "integer_delay_samples": 79,
+          "extra_shift_samples": 0.3125,
+          "guarded_integer_ser_db": 2.780055216826365,
+          "guarded_fractional_ser_db": 2.8719640810642537,
+          "ser_change_db": 0.09190886423788891,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        }
+      }
+    },
+    {
+      "id": "ru_russia_b4",
+      "codecs": {
+        "LPX": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 22.00040261668271,
+          "guarded_fractional_ser_db": 22.000375845073957,
+          "ser_change_db": -2.6771608752085285e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_audio": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 19.531214974832093,
+          "guarded_fractional_ser_db": 19.531138207660277,
+          "ser_change_db": -7.676717181581694e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_voip": {
+          "integer_delay_samples": 1,
+          "extra_shift_samples": -0.375,
+          "guarded_integer_ser_db": 9.881031366551154,
+          "guarded_fractional_ser_db": 10.998894256601343,
+          "ser_change_db": 1.1178628900501888,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "[s16le @ 0000024d7dc7ea00] Application provided invalid, non monotonically increasing dts to muxer in stream 0: 32572 >= 32572\r\n",
+          "timestamp_normalization_check": {
+            "raw_sha256": "7f93ae4f8c2fd071a52e3cb900974289249cf1b31760c4a537dcae96397118aa",
+            "monotonic_sha256": "7f93ae4f8c2fd071a52e3cb900974289249cf1b31760c4a537dcae96397118aa",
+            "pcm_exact": true,
+            "command": [
+              "ffmpeg",
+              "-nostdin",
+              "-v",
+              "error",
+              "-i",
+              "build\\lpx-standards\\results\\ru_russia_b4\\external\\opus_voip-24237.ogg",
+              "-ac",
+              "1",
+              "-af",
+              "aresample=8000,asetpts=N/SR/TB",
+              "-ar",
+              "8000",
+              "-f",
+              "s16le",
+              "pipe:1"
+            ],
+            "monotonic_warnings": ""
+          }
+        },
+        "vorbis": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 23.482818760158555,
+          "guarded_fractional_ser_db": 23.48273735810594,
+          "ser_change_db": -8.140205261497613e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_abr": {
+          "integer_delay_samples": 79,
+          "extra_shift_samples": -0.0625,
+          "guarded_integer_ser_db": 3.9196144128763417,
+          "guarded_fractional_ser_db": 3.922319568107871,
+          "ser_change_db": 0.002705155231529144,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_cbr_under": {
+          "integer_delay_samples": 79,
+          "extra_shift_samples": -0.0625,
+          "guarded_integer_ser_db": 3.8488776261046254,
+          "guarded_fractional_ser_db": 3.8554031219845397,
+          "ser_change_db": 0.006525495879914356,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        }
+      }
+    },
+    {
+      "id": "ru_slutskaya_a4",
+      "codecs": {
+        "LPX": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 26.372108305918566,
+          "guarded_fractional_ser_db": 26.37211199565146,
+          "ser_change_db": 3.6897328925533657e-06,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_audio": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 22.20381963944041,
+          "guarded_fractional_ser_db": 22.20372921094427,
+          "ser_change_db": -9.042849614004922e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_voip": {
+          "integer_delay_samples": 1,
+          "extra_shift_samples": -0.125,
+          "guarded_integer_ser_db": 10.069228897393865,
+          "guarded_fractional_ser_db": 10.50099233561416,
+          "ser_change_db": 0.4317634382202957,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "[s16le @ 0000028d68accdc0] Application provided invalid, non monotonically increasing dts to muxer in stream 0: 32572 >= 32572\r\n",
+          "timestamp_normalization_check": {
+            "raw_sha256": "f7af04281deb7840ede161a46743aaf3d1757e575a1bb1c94a355793e8c4e4a2",
+            "monotonic_sha256": "f7af04281deb7840ede161a46743aaf3d1757e575a1bb1c94a355793e8c4e4a2",
+            "pcm_exact": true,
+            "command": [
+              "ffmpeg",
+              "-nostdin",
+              "-v",
+              "error",
+              "-i",
+              "build\\lpx-standards\\results\\ru_slutskaya_a4\\external\\opus_voip-23897.ogg",
+              "-ac",
+              "1",
+              "-af",
+              "aresample=8000,asetpts=N/SR/TB",
+              "-ar",
+              "8000",
+              "-f",
+              "s16le",
+              "pipe:1"
+            ],
+            "monotonic_warnings": ""
+          }
+        },
+        "vorbis": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 22.76178947882532,
+          "guarded_fractional_ser_db": 22.761719009303576,
+          "ser_change_db": -7.04695217450535e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_abr": {
+          "integer_delay_samples": 80,
+          "extra_shift_samples": -0.375,
+          "guarded_integer_ser_db": 3.3889794167969174,
+          "guarded_fractional_ser_db": 3.929287054275872,
+          "ser_change_db": 0.5403076374789548,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_cbr_under": {
+          "integer_delay_samples": 80,
+          "extra_shift_samples": -0.375,
+          "guarded_integer_ser_db": 3.2693736724227835,
+          "guarded_fractional_ser_db": 3.8302561417120855,
+          "ser_change_db": 0.560882469289302,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        }
+      }
+    },
+    {
+      "id": "ru_slutskaya_b4",
+      "codecs": {
+        "LPX": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 20.93860953308521,
+          "guarded_fractional_ser_db": 20.938589802527694,
+          "ser_change_db": -1.97305575149187e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_audio": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 19.894957222568983,
+          "guarded_fractional_ser_db": 19.894932284082753,
+          "ser_change_db": -2.4938486230752233e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_voip": {
+          "integer_delay_samples": 1,
+          "extra_shift_samples": -0.125,
+          "guarded_integer_ser_db": 10.554938967020487,
+          "guarded_fractional_ser_db": 11.055886931216541,
+          "ser_change_db": 0.5009479641960546,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "[s16le @ 00000200cabd4c00] Application provided invalid, non monotonically increasing dts to muxer in stream 0: 32572 >= 32572\r\n",
+          "timestamp_normalization_check": {
+            "raw_sha256": "4f087488ca7250b27bebadccc13b070785503cdfef229e6e9b10c964682cc29a",
+            "monotonic_sha256": "4f087488ca7250b27bebadccc13b070785503cdfef229e6e9b10c964682cc29a",
+            "pcm_exact": true,
+            "command": [
+              "ffmpeg",
+              "-nostdin",
+              "-v",
+              "error",
+              "-i",
+              "build\\lpx-standards\\results\\ru_slutskaya_b4\\external\\opus_voip-23783.ogg",
+              "-ac",
+              "1",
+              "-af",
+              "aresample=8000,asetpts=N/SR/TB",
+              "-ar",
+              "8000",
+              "-f",
+              "s16le",
+              "pipe:1"
+            ],
+            "monotonic_warnings": ""
+          }
+        },
+        "vorbis": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 21.569952449874627,
+          "guarded_fractional_ser_db": 21.56985846420898,
+          "ser_change_db": -9.398566564655653e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_abr": {
+          "integer_delay_samples": 80,
+          "extra_shift_samples": -0.3125,
+          "guarded_integer_ser_db": 4.112656772723081,
+          "guarded_fractional_ser_db": 4.674938523229679,
+          "ser_change_db": 0.5622817505065978,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_cbr_under": {
+          "integer_delay_samples": 80,
+          "extra_shift_samples": -0.3125,
+          "guarded_integer_ser_db": 4.000080604379499,
+          "guarded_fractional_ser_db": 4.554174200202968,
+          "ser_change_db": 0.5540935958234687,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        }
+      }
+    },
+    {
+      "id": "ru_square_a4",
+      "codecs": {
+        "LPX": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 29.81437538383723,
+          "guarded_fractional_ser_db": 29.814440413433175,
+          "ser_change_db": 6.50295959445657e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_audio": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": -0.0625,
+          "guarded_integer_ser_db": 24.3807311430798,
+          "guarded_fractional_ser_db": 24.42856407877681,
+          "ser_change_db": 0.047832935697009304,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_voip": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": -0.4375,
+          "guarded_integer_ser_db": 10.565363130171088,
+          "guarded_fractional_ser_db": 11.071587448170439,
+          "ser_change_db": 0.5062243179993509,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "[s16le @ 0000013c9149e7c0] Application provided invalid, non monotonically increasing dts to muxer in stream 0: 32572 >= 32572\r\n",
+          "timestamp_normalization_check": {
+            "raw_sha256": "b8d0782a468693f1604e51966747b6c00a0e43cba87fb34ceb1928fc277452c0",
+            "monotonic_sha256": "b8d0782a468693f1604e51966747b6c00a0e43cba87fb34ceb1928fc277452c0",
+            "pcm_exact": true,
+            "command": [
+              "ffmpeg",
+              "-nostdin",
+              "-v",
+              "error",
+              "-i",
+              "build\\lpx-standards\\results\\ru_square_a4\\external\\opus_voip-23897.ogg",
+              "-ac",
+              "1",
+              "-af",
+              "aresample=8000,asetpts=N/SR/TB",
+              "-ar",
+              "8000",
+              "-f",
+              "s16le",
+              "pipe:1"
+            ],
+            "monotonic_warnings": ""
+          }
+        },
+        "vorbis": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 30.757907207441125,
+          "guarded_fractional_ser_db": 30.757812630690204,
+          "ser_change_db": -9.457675092150453e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_abr": {
+          "integer_delay_samples": 77,
+          "extra_shift_samples": -0.125,
+          "guarded_integer_ser_db": 6.23783368883696,
+          "guarded_fractional_ser_db": 6.252347377002937,
+          "ser_change_db": 0.014513688165976646,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_cbr_under": {
+          "integer_delay_samples": 77,
+          "extra_shift_samples": -0.1875,
+          "guarded_integer_ser_db": 6.154992330412413,
+          "guarded_fractional_ser_db": 6.174389042926805,
+          "ser_change_db": 0.0193967125143919,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        }
+      }
+    },
+    {
+      "id": "ru_square_b4",
+      "codecs": {
+        "LPX": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 28.518493854499148,
+          "guarded_fractional_ser_db": 28.51855473732463,
+          "ser_change_db": 6.088282548333268e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_audio": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 22.475848966026778,
+          "guarded_fractional_ser_db": 22.47576552247985,
+          "ser_change_db": -8.34435469272421e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_voip": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.1875,
+          "guarded_integer_ser_db": 9.172404718149089,
+          "guarded_fractional_ser_db": 9.289689026377449,
+          "ser_change_db": 0.11728430822835989,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "[s16le @ 000001a3e4dacec0] Application provided invalid, non monotonically increasing dts to muxer in stream 0: 32572 >= 32572\r\n",
+          "timestamp_normalization_check": {
+            "raw_sha256": "a82afc2574a389736ae4d1edbc2a38591f3e7b92ee5e6e528d2819f873b9e180",
+            "monotonic_sha256": "a82afc2574a389736ae4d1edbc2a38591f3e7b92ee5e6e528d2819f873b9e180",
+            "pcm_exact": true,
+            "command": [
+              "ffmpeg",
+              "-nostdin",
+              "-v",
+              "error",
+              "-i",
+              "build\\lpx-standards\\results\\ru_square_b4\\external\\opus_voip-23897.ogg",
+              "-ac",
+              "1",
+              "-af",
+              "aresample=8000,asetpts=N/SR/TB",
+              "-ar",
+              "8000",
+              "-f",
+              "s16le",
+              "pipe:1"
+            ],
+            "monotonic_warnings": ""
+          }
+        },
+        "vorbis": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 28.256427830872983,
+          "guarded_fractional_ser_db": 28.256303133443094,
+          "ser_change_db": -0.0001246974298894088,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_abr": {
+          "integer_delay_samples": 78,
+          "extra_shift_samples": -0.125,
+          "guarded_integer_ser_db": 4.295461300902868,
+          "guarded_fractional_ser_db": 4.302079973111573,
+          "ser_change_db": 0.006618672208704268,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_cbr_under": {
+          "integer_delay_samples": 78,
+          "extra_shift_samples": -0.125,
+          "guarded_integer_ser_db": 4.245092690559883,
+          "guarded_fractional_ser_db": 4.253090873545176,
+          "ser_change_db": 0.007998182985293312,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        }
+      }
+    },
+    {
+      "id": "violin",
+      "codecs": {
+        "LPX": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0625,
+          "guarded_integer_ser_db": 24.276805613090616,
+          "guarded_fractional_ser_db": 24.42983317557762,
+          "ser_change_db": 0.15302756248700433,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_audio": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": -0.0625,
+          "guarded_integer_ser_db": 20.24112751771068,
+          "guarded_fractional_ser_db": 20.287919851777776,
+          "ser_change_db": 0.04679233406709571,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "opus_voip": {
+          "integer_delay_samples": 111,
+          "extra_shift_samples": -0.25,
+          "guarded_integer_ser_db": 0.8276472796127354,
+          "guarded_fractional_ser_db": 0.8299179076349656,
+          "ser_change_db": 0.0022706280222302144,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "[s16le @ 00000128b6dbf380] Application provided invalid, non monotonically increasing dts to muxer in stream 0: 32572 >= 32572\r\n",
+          "timestamp_normalization_check": {
+            "raw_sha256": "e2809663de611b06fd7c4b0265e94f8f62835b75bed74710941960bcf66bf1c2",
+            "monotonic_sha256": "e2809663de611b06fd7c4b0265e94f8f62835b75bed74710941960bcf66bf1c2",
+            "pcm_exact": true,
+            "command": [
+              "ffmpeg",
+              "-nostdin",
+              "-v",
+              "error",
+              "-i",
+              "build\\lpx-standards\\results\\violin\\external\\opus_voip-23897.ogg",
+              "-ac",
+              "1",
+              "-af",
+              "aresample=8000,asetpts=N/SR/TB",
+              "-ar",
+              "8000",
+              "-f",
+              "s16le",
+              "pipe:1"
+            ],
+            "monotonic_warnings": ""
+          }
+        },
+        "vorbis": {
+          "integer_delay_samples": 0,
+          "extra_shift_samples": 0.0,
+          "guarded_integer_ser_db": 25.36685931227619,
+          "guarded_fractional_ser_db": 25.36679936143767,
+          "ser_change_db": -5.9950838519284844e-05,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_abr": {
+          "integer_delay_samples": 374,
+          "extra_shift_samples": -0.125,
+          "guarded_integer_ser_db": 1.7360321949600332,
+          "guarded_fractional_ser_db": 1.7365705107612939,
+          "ser_change_db": 0.0005383158012606248,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        },
+        "speex_cbr_under": {
+          "integer_delay_samples": 374,
+          "extra_shift_samples": -0.375,
+          "guarded_integer_ser_db": 1.6850152242603267,
+          "guarded_fractional_ser_db": 1.6888175377977612,
+          "ser_change_db": 0.003802313537434543,
+          "redecoded_aligned_pcm_exact": true,
+          "decoder_warnings": "",
+          "timestamp_normalization_check": null
+        }
+      }
+    }
+  ]
+}

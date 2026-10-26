@@ -1,0 +1,92 @@
+{
+  "recorded_utc": "2026-10-25T18:37:28.501437+00:00",
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "packages": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "numba": "0.68.0",
+    "pystoi": "0.4.1",
+    "soundfile": "0.14.0",
+    "matplotlib": "3.11.2"
+  },
+  "base_commit": "a531ec14",
+  "git_head_before_result_commit": "8bc789eefa5054eba5319b39da7bed9e4adf691e",
+  "benchmark_revision": "0907711edfd25596aa5148fc45b4894a7ad6f0792f4a2c7e33eb3465e273fdf1",
+  "config": {
+    "rates": [
+      12000,
+      16000
+    ],
+    "stage1_lambdas": [
+      0.0,
+      0.0003,
+      0.001,
+      0.003,
+      0.01,
+      0.03,
+      0.1,
+      0.3
+    ],
+    "stage2_lambdas": [
+      0.001,
+      0.003,
+      0.01,
+      0.03,
+      0.1,
+      0.3,
+      1.0
+    ],
+    "stage2_refinements": 2,
+    "spectrum_strides": [
+      2,
+      4
+    ],
+    "stage3_lambdas": [
+      0.001,
+      0.003,
+      0.01,
+      0.03,
+      0.1
+    ],
+    "stage3_refinements": 3,
+    "beam": 4,
+    "stage4_trials": 256,
+    "stage4_windows": 8,
+    "gamma1": 0.9,
+    "gamma2": 0.6,
+    "stage4_peak_growth": 0.1,
+    "stage4_max_ser_drop_db": 3.0,
+    "tuning_sources": [
+      "ru_pushkin",
+      "ru_square",
+      "en_sense",
+      "en_portrait"
+    ],
+    "compact_features": 24,
+    "protocol": "LOWRATE_QUALITY_PLAN_RU.md; fixed settings after tuning pilot; full 4s reference, no gain or delay fitting"
+  },
+  "source_sha256": {
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\rate_distortion.py": "fa9dcffaba163e96dd29e3626f6cee729ec4e4166146d3d44ceead52ea6733d8",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\budget_search.py": "3f4934d0444842de9e088b8a978a1b39251c479df1c36622777dd3adf33e8a6d",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\joint_rate.py": "9b0cdedf2d58d00536c149e73b9ac23fe7cc0a4dbaea4f07ff735473823c48bf",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\perceptual_rate.py": "af7ed7996dd9cfe6aff8c6e96f1e48d69b0282fad8dd4b0a7c5344775447659b",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\encode_lowrate.py": "adf1449ff278b5da2c6d500ddbd024c26e774bb49f9147ccab255d90b6dc251e",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\benchmark_lowrate.py": "ee65bfed8ad8bc0e63dedc319cf3df345cd49ec5f904125ad97ad0b3858198a0",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\validate_lowrate_avr.py": "8a69989718417705a8e01e61a2cabc25defe010b070c799a6f48cbd715450807",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\summarize_lowrate.py": "895fb28b80674da014f6f521580e72675a84e75cfdca53c2ff5d9f584fdf2ebb",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\plot_lowrate.py": "6b1332941dcbf0f10cf38ec22ea7a5643894231065114ae169c4c8271255e097",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\audit_lowrate.py": "11cc01789f637e3f7d76d663b6a11daf4a1d1e430d6ae09473fb4109be0c7bdd",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\stress_lowrate.py": "3a22fd7190a8eb3cfa713faf30a7ec36132ef300b9f676cc5071a0cc82a9e045",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tests\\test_rate_distortion.py": "8e72fc57c14a7a444a4c800c6d285e99db052104f1a22c66dd9a3ad0d60527bd",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tests\\test_budget_search.py": "c02ec5f8e3fdb5b825102d72371d429bfac1387422059fed714411cd87e8ed36",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tests\\test_joint_rate.py": "12e46dfe5897e04e74c5b60630eb7ba5d23051306312990fa18394f12538c205",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tests\\test_perceptual_rate.py": "96c87f7babb25e136d219600c75a9cd4cc68a34657b82b635e8b219fcb81bbd2",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tests\\test_encode_lowrate.py": "4ce6fe19260cdcdf0aa56ae349a0dc0cb6aadc91ce1d76febfd2953ab4c3ead7"
+  },
+  "baseline_measurements_sha256": "c4ed74e5a45862c6d5a1d44e73ccfd7843bdf52d7bca3742e225b1aa8753cfb2",
+  "native_build": "Existing g++ adapter: Clang24/MSVC STL, C++14; native decoder remains portable C backend. AVR GNU GCC7.3.0, simavr1.6/WSL Ubuntu; full options and source/ELF hashes in avr.json.",
+  "parallel_processes": "Initially 3, then 6 disjoint shards with verified persistent caches. Candidates retain measured seconds; resumed case wall time is not a cold-encode measurement.",
+  "physical_hardware_measured": false,
+  "human_scores_collected": false
+}

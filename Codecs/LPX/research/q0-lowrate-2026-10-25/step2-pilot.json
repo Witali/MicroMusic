@@ -1,0 +1,623 @@
+{
+  "scope": "Four tuning excerpts; preliminary. Final frozen matrix uses an additional lambda=1 fallback and independently tests validation voices.",
+  "decoder_modified": false,
+  "tests": {
+    "passed": 4,
+    "seconds": 1.066,
+    "command": "python tests/test_budget_search.py -v"
+  },
+  "spectrum_strides": [
+    2,
+    4
+  ],
+  "lambdas": [
+    0.001,
+    0.003,
+    0.01,
+    0.03,
+    0.1,
+    0.3
+  ],
+  "refinement_trials": 2,
+  "cases": [
+    {
+      "id": "ru_pushkin_a4",
+      "spectrum_audit": [
+        {
+          "stride": 2,
+          "spectrum_update_ms": 40,
+          "max_interpolated_pole_radius": 0.9866560186922926,
+          "unstable_subframes": 0,
+          "accepted": true
+        },
+        {
+          "stride": 4,
+          "spectrum_update_ms": 80,
+          "max_interpolated_pole_radius": 0.9862885216824364,
+          "unstable_subframes": 0,
+          "accepted": true
+        }
+      ],
+      "rates": [
+        {
+          "ceiling_bps": 16000,
+          "status": "ok",
+          "selected": {
+            "lambda": 0.13160740129524925,
+            "allow_zero": true,
+            "compact_features": 24,
+            "v2_payload_bits": 64073,
+            "local_cost_exact_for_selected_v2_codes": true,
+            "audio_packet_bytes": 7977,
+            "file_bytes": 7997,
+            "quality": {
+              "ser_db": 17.372839764197526,
+              "rmse": 0.009236097141899926,
+              "stoi": 0.8365315554703737,
+              "spectral_rmse_db": 9.29078619721431,
+              "reference_rms": 0.06825437280280897,
+              "decoded_rms": 0.06796140877427859,
+              "clip_count": 0,
+              "pcm16_sha256": "e1ae2f5be41d22a8c6728c9a8d3e8050c6a92d2d8123b37445b5bcf573ec9da7"
+            },
+            "native_model_pcm_exact": true,
+            "stream_sha256": "80657f4f7cfd8485680a63a3b7d34475feaa26de2cbf1f6a2e2ea0917ddba4b7",
+            "width_counts": {
+              "0": 42,
+              "2": 315,
+              "3": 41,
+              "4": 2,
+              "5": 0,
+              "6": 0
+            },
+            "seconds": 2.0750210999976844,
+            "decoder_modified": false,
+            "avr_cycles_measured": false,
+            "source": "rate-search",
+            "seed_index": 2,
+            "full_sse": 2931074332,
+            "max_abs_error_pcm16": 3430,
+            "fits_budget": true
+          },
+          "minimum_observed_bytes": 6119,
+          "trials": 38,
+          "baseline": {
+            "status": "ok",
+            "file_bytes": 6548,
+            "audio_packet_bytes": 6528,
+            "stream_sha256": "bbce6af1185dd1fbae3bd49c767ac71998a24102e2899e5c757ea5bc6bba0edc",
+            "metrics": {
+              "delay_samples": 0,
+              "delay_ms": 0.0,
+              "unaligned_pcm16": {
+                "samples": 32000,
+                "reference_energy": 160070318360.0,
+                "error_energy": 17798653588.0,
+                "ser_db": 9.53923658155405,
+                "ser_status": "finite",
+                "rmse_pcm16": 745.7934865798976,
+                "max_abs_error_pcm16": 4741,
+                "max_abs_error_percent_fs": 14.4683837890625,
+                "max_error_signed_pcm16": -4741,
+                "max_error_sample": 30699,
+                "max_error_seconds": 3.837375,
+                "stoi": 0.6662862957568731
+              },
+              "aligned_pcm16": {
+                "samples": 32000,
+                "reference_energy": 160070318360.0,
+                "error_energy": 17798653588.0,
+                "ser_db": 9.53923658155405,
+                "ser_status": "finite",
+                "rmse_pcm16": 745.7934865798976,
+                "max_abs_error_pcm16": 4741,
+                "max_abs_error_percent_fs": 14.4683837890625,
+                "max_error_signed_pcm16": -4741,
+                "max_error_sample": 30699,
+                "max_error_seconds": 3.837375,
+                "stoi": 0.6662862957568731
+              },
+              "aligned_pwm8": {
+                "samples": 32000,
+                "reference_energy": 160070318360.0,
+                "error_energy": 18288938264.0,
+                "ser_db": 9.421223147848774,
+                "ser_status": "finite",
+                "rmse_pcm16": 755.9955824937074,
+                "max_abs_error_pcm16": 4877,
+                "max_abs_error_percent_fs": 14.8834228515625,
+                "max_error_signed_pcm16": -4877,
+                "max_error_sample": 30699,
+                "max_error_seconds": 3.837375,
+                "stoi": 0.6652983061344651
+              }
+            }
+          }
+        },
+        {
+          "ceiling_bps": 12000,
+          "status": "no_fit",
+          "selected": null,
+          "minimum_observed_bytes": 6119,
+          "trials": 30,
+          "baseline": {
+            "status": "no_fit"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ru_square_a4",
+      "spectrum_audit": [
+        {
+          "stride": 2,
+          "spectrum_update_ms": 40,
+          "max_interpolated_pole_radius": 0.9899374356010414,
+          "unstable_subframes": 0,
+          "accepted": true
+        },
+        {
+          "stride": 4,
+          "spectrum_update_ms": 80,
+          "max_interpolated_pole_radius": 0.986154246645592,
+          "unstable_subframes": 0,
+          "accepted": true
+        }
+      ],
+      "rates": [
+        {
+          "ceiling_bps": 16000,
+          "status": "ok",
+          "selected": {
+            "lambda": 0.01,
+            "allow_zero": true,
+            "compact_features": 24,
+            "v2_payload_bits": 62191,
+            "local_cost_exact_for_selected_v2_codes": true,
+            "audio_packet_bytes": 7657,
+            "file_bytes": 7677,
+            "quality": {
+              "ser_db": 23.777729827741542,
+              "rmse": 0.0032138945084070987,
+              "stoi": 0.8569134784710774,
+              "spectral_rmse_db": 9.602853728983833,
+              "reference_rms": 0.04964986922659572,
+              "decoded_rms": 0.04968891552009622,
+              "clip_count": 0,
+              "pcm16_sha256": "40aff34bff61f1ba1c6895e53b5c2115c65accec5f50c40304f13199fdc3520f"
+            },
+            "native_model_pcm_exact": true,
+            "stream_sha256": "f96a0f786d44562d85d5dd140d14abaa67ac6b969f7870b86d5f3013348f59ec",
+            "width_counts": {
+              "0": 64,
+              "2": 9,
+              "3": 18,
+              "4": 90,
+              "5": 114,
+              "6": 105
+            },
+            "seconds": 2.06671769998502,
+            "decoder_modified": false,
+            "avr_cycles_measured": false,
+            "source": "rate-search",
+            "seed_index": 3,
+            "full_sse": 354905789,
+            "max_abs_error_pcm16": 711,
+            "fits_budget": true
+          },
+          "minimum_observed_bytes": 4747,
+          "trials": 40,
+          "baseline": {
+            "status": "ok",
+            "file_bytes": 7514,
+            "audio_packet_bytes": 7494,
+            "stream_sha256": "c7c14f686beb430a2fec0334dd5f4d972f2c76a71ab33193b878f7bd9a6fe3e0",
+            "metrics": {
+              "delay_samples": 0,
+              "delay_ms": 0.0,
+              "unaligned_pcm16": {
+                "samples": 32000,
+                "reference_energy": 84700517957.0,
+                "error_energy": 1893927225.0,
+                "ser_db": 16.50522779089628,
+                "ser_status": "finite",
+                "rmse_pcm16": 243.28013848493674,
+                "max_abs_error_pcm16": 1501,
+                "max_abs_error_percent_fs": 4.5806884765625,
+                "max_error_signed_pcm16": -1501,
+                "max_error_sample": 15893,
+                "max_error_seconds": 1.986625,
+                "stoi": 0.7740696954231946
+              },
+              "aligned_pcm16": {
+                "samples": 32000,
+                "reference_energy": 84700517957.0,
+                "error_energy": 1893927225.0,
+                "ser_db": 16.50522779089628,
+                "ser_status": "finite",
+                "rmse_pcm16": 243.28013848493674,
+                "max_abs_error_pcm16": 1501,
+                "max_abs_error_percent_fs": 4.5806884765625,
+                "max_error_signed_pcm16": -1501,
+                "max_error_sample": 15893,
+                "max_error_seconds": 1.986625,
+                "stoi": 0.7740696954231946
+              },
+              "aligned_pwm8": {
+                "samples": 32000,
+                "reference_energy": 84700517957.0,
+                "error_energy": 2107737669.0,
+                "ser_db": 16.04069508911065,
+                "ser_status": "finite",
+                "rmse_pcm16": 256.6452846951411,
+                "max_abs_error_pcm16": 1430,
+                "max_abs_error_percent_fs": 4.364013671875,
+                "max_error_signed_pcm16": -1430,
+                "max_error_sample": 18715,
+                "max_error_seconds": 2.339375,
+                "stoi": 0.7665664186449855
+              }
+            }
+          }
+        },
+        {
+          "ceiling_bps": 12000,
+          "status": "ok",
+          "selected": {
+            "lambda": 0.07400828044922853,
+            "allow_zero": true,
+            "compact_features": 24,
+            "v2_payload_bits": 48021,
+            "local_cost_exact_for_selected_v2_codes": true,
+            "audio_packet_bytes": 5819,
+            "file_bytes": 5839,
+            "quality": {
+              "ser_db": 17.519002998697708,
+              "rmse": 0.006606447057466495,
+              "stoi": 0.7411977923214075,
+              "spectral_rmse_db": 13.593193141513652,
+              "reference_rms": 0.04964986922659572,
+              "decoded_rms": 0.04977751412024234,
+              "clip_count": 0,
+              "pcm16_sha256": "d967d6d3a3e621016796986bd7329fc7bbfceb0af0c147567ad7b664e8eacc41"
+            },
+            "native_model_pcm_exact": true,
+            "stream_sha256": "fb6669cd2446580bb5e5d411f51c856cecfd2f6f700c967540ef6454f55aab69",
+            "width_counts": {
+              "0": 93,
+              "2": 16,
+              "3": 78,
+              "4": 109,
+              "5": 104,
+              "6": 0
+            },
+            "seconds": 2.0410215000156313,
+            "decoder_modified": false,
+            "avr_cycles_measured": false,
+            "source": "rate-search",
+            "seed_index": 4,
+            "full_sse": 1499635685,
+            "max_abs_error_pcm16": 1441,
+            "fits_budget": true
+          },
+          "minimum_observed_bytes": 4747,
+          "trials": 36,
+          "baseline": {
+            "status": "no_fit"
+          }
+        }
+      ]
+    },
+    {
+      "id": "en_sense_a4",
+      "spectrum_audit": [
+        {
+          "stride": 2,
+          "spectrum_update_ms": 40,
+          "max_interpolated_pole_radius": 0.9861486713529202,
+          "unstable_subframes": 0,
+          "accepted": true
+        },
+        {
+          "stride": 4,
+          "spectrum_update_ms": 80,
+          "max_interpolated_pole_radius": 0.9829367169020664,
+          "unstable_subframes": 0,
+          "accepted": true
+        }
+      ],
+      "rates": [
+        {
+          "ceiling_bps": 16000,
+          "status": "ok",
+          "selected": {
+            "lambda": 0.04053600464421103,
+            "allow_zero": true,
+            "compact_features": 24,
+            "v2_payload_bits": 63999,
+            "local_cost_exact_for_selected_v2_codes": true,
+            "audio_packet_bytes": 7983,
+            "file_bytes": 8003,
+            "quality": {
+              "ser_db": 20.09067704260604,
+              "rmse": 0.004444248875465348,
+              "stoi": 0.8077089960604943,
+              "spectral_rmse_db": 7.06382787044323,
+              "reference_rms": 0.04490887991422982,
+              "decoded_rms": 0.044891834535274094,
+              "clip_count": 0,
+              "pcm16_sha256": "638dd4eaed344eaba9b2ac0fc0b4f00a19645d4be174368b10d6b782f2aabca8"
+            },
+            "native_model_pcm_exact": true,
+            "stream_sha256": "2cdc241d341776cc9511d9a52b1445d153e14b3e7ffbb8e4122b2cfdb484584b",
+            "width_counts": {
+              "0": 41,
+              "2": 254,
+              "3": 97,
+              "4": 8,
+              "5": 0,
+              "6": 0
+            },
+            "seconds": 2.8569949000375345,
+            "decoder_modified": false,
+            "avr_cycles_measured": false,
+            "source": "rate-search",
+            "seed_index": 2,
+            "full_sse": 678651152,
+            "max_abs_error_pcm16": 3014,
+            "fits_budget": true
+          },
+          "minimum_observed_bytes": 4033,
+          "trials": 40,
+          "baseline": {
+            "status": "ok",
+            "file_bytes": 5750,
+            "audio_packet_bytes": 5730,
+            "stream_sha256": "45113817c828e7d196837b592e4f4987021bceeb5b1c999b61aa7ec31751ce1e",
+            "metrics": {
+              "delay_samples": 0,
+              "delay_ms": 0.0,
+              "unaligned_pcm16": {
+                "samples": 32000,
+                "reference_energy": 69296977872.0,
+                "error_energy": 1642747432.0,
+                "ser_db": 16.251434979396592,
+                "ser_status": "finite",
+                "rmse_pcm16": 226.5741760439614,
+                "max_abs_error_pcm16": 3836,
+                "max_abs_error_percent_fs": 11.70654296875,
+                "max_error_signed_pcm16": -3836,
+                "max_error_sample": 31439,
+                "max_error_seconds": 3.929875,
+                "stoi": 0.7171566835571852
+              },
+              "aligned_pcm16": {
+                "samples": 32000,
+                "reference_energy": 69296977872.0,
+                "error_energy": 1642747432.0,
+                "ser_db": 16.251434979396592,
+                "ser_status": "finite",
+                "rmse_pcm16": 226.5741760439614,
+                "max_abs_error_pcm16": 3836,
+                "max_abs_error_percent_fs": 11.70654296875,
+                "max_error_signed_pcm16": -3836,
+                "max_error_sample": 31439,
+                "max_error_seconds": 3.929875,
+                "stoi": 0.7171566835571852
+              },
+              "aligned_pwm8": {
+                "samples": 32000,
+                "reference_energy": 69296977872.0,
+                "error_energy": 1840864720.0,
+                "ser_db": 15.756924203087516,
+                "ser_status": "finite",
+                "rmse_pcm16": 239.84791535470973,
+                "max_abs_error_pcm16": 3624,
+                "max_abs_error_percent_fs": 11.0595703125,
+                "max_error_signed_pcm16": -3624,
+                "max_error_sample": 31439,
+                "max_error_seconds": 3.929875,
+                "stoi": 0.7190692672191884
+              }
+            }
+          }
+        },
+        {
+          "ceiling_bps": 12000,
+          "status": "ok",
+          "selected": {
+            "source": "seed",
+            "seed_index": 4,
+            "quality": {
+              "ser_db": 16.251434979396592,
+              "rmse": 0.006914495118529095,
+              "stoi": 0.7171566835571852,
+              "spectral_rmse_db": 8.38326717069547,
+              "reference_rms": 0.04490887991422982,
+              "decoded_rms": 0.0447878574986067,
+              "clip_count": 0,
+              "pcm16_sha256": "824862260416d2020b0207f4ac14399fed3f740448d7031b4ff27fc86b292e02"
+            },
+            "file_bytes": 5750,
+            "audio_packet_bytes": 5730,
+            "stream_sha256": "45113817c828e7d196837b592e4f4987021bceeb5b1c999b61aa7ec31751ce1e",
+            "full_sse": 1642747432,
+            "max_abs_error_pcm16": 3836,
+            "fits_budget": true
+          },
+          "minimum_observed_bytes": 4033,
+          "trials": 40,
+          "baseline": {
+            "status": "no_fit"
+          }
+        }
+      ]
+    },
+    {
+      "id": "en_portrait_a4",
+      "spectrum_audit": [
+        {
+          "stride": 2,
+          "spectrum_update_ms": 40,
+          "max_interpolated_pole_radius": 0.9808305002252897,
+          "unstable_subframes": 0,
+          "accepted": true
+        },
+        {
+          "stride": 4,
+          "spectrum_update_ms": 80,
+          "max_interpolated_pole_radius": 0.9781227450978828,
+          "unstable_subframes": 0,
+          "accepted": true
+        }
+      ],
+      "rates": [
+        {
+          "ceiling_bps": 16000,
+          "status": "ok",
+          "selected": {
+            "lambda": 0.05477225575051661,
+            "allow_zero": true,
+            "compact_features": 24,
+            "v2_payload_bits": 64023,
+            "local_cost_exact_for_selected_v2_codes": true,
+            "audio_packet_bytes": 7894,
+            "file_bytes": 7914,
+            "quality": {
+              "ser_db": 14.998001345175226,
+              "rmse": 0.002873204388658968,
+              "stoi": 0.8699626267477337,
+              "spectral_rmse_db": 6.924076134649196,
+              "reference_rms": 0.0161534982281886,
+              "decoded_rms": 0.016263646541138002,
+              "clip_count": 0,
+              "pcm16_sha256": "591fc940804f7a3d545f6c51dd8c7174249bb171c422f83524c58a28824c56ed"
+            },
+            "native_model_pcm_exact": true,
+            "stream_sha256": "933f60fa2916b279175251ce3d6c93017cf20c7b640a87370aae9733208fc0cd",
+            "width_counts": {
+              "0": 49,
+              "2": 298,
+              "3": 51,
+              "4": 2,
+              "5": 0,
+              "6": 0
+            },
+            "seconds": 2.1460095000220463,
+            "decoder_modified": false,
+            "avr_cycles_measured": false,
+            "source": "rate-search",
+            "seed_index": 2,
+            "full_sse": 283650067,
+            "max_abs_error_pcm16": 529,
+            "fits_budget": true
+          },
+          "minimum_observed_bytes": 2818,
+          "trials": 40,
+          "baseline": {
+            "status": "ok",
+            "file_bytes": 7574,
+            "audio_packet_bytes": 7554,
+            "stream_sha256": "21a61e067a485fdf69a4b640b2a1a314c9965963696497d105e7dc8ceeb90520",
+            "metrics": {
+              "delay_samples": 0,
+              "delay_ms": 0.0,
+              "unaligned_pcm16": {
+                "samples": 32000,
+                "reference_energy": 8965675683.0,
+                "error_energy": 916456259.0,
+                "ser_db": 9.904712833936262,
+                "ser_status": "finite",
+                "rmse_pcm16": 169.23137443674563,
+                "max_abs_error_pcm16": 1275,
+                "max_abs_error_percent_fs": 3.8909912109375,
+                "max_error_signed_pcm16": -1275,
+                "max_error_sample": 13011,
+                "max_error_seconds": 1.626375,
+                "stoi": 0.7745885885410089
+              },
+              "aligned_pcm16": {
+                "samples": 32000,
+                "reference_energy": 8965675683.0,
+                "error_energy": 916456259.0,
+                "ser_db": 9.904712833936262,
+                "ser_status": "finite",
+                "rmse_pcm16": 169.23137443674563,
+                "max_abs_error_pcm16": 1275,
+                "max_abs_error_percent_fs": 3.8909912109375,
+                "max_error_signed_pcm16": -1275,
+                "max_error_sample": 13011,
+                "max_error_seconds": 1.626375,
+                "stoi": 0.7745885885410089
+              },
+              "aligned_pwm8": {
+                "samples": 32000,
+                "reference_energy": 8965675683.0,
+                "error_energy": 1085562531.0,
+                "ser_db": 9.169281800888724,
+                "ser_status": "finite",
+                "rmse_pcm16": 184.18422596343586,
+                "max_abs_error_pcm16": 1361,
+                "max_abs_error_percent_fs": 4.1534423828125,
+                "max_error_signed_pcm16": -1361,
+                "max_error_sample": 13011,
+                "max_error_seconds": 1.626375,
+                "stoi": 0.7649136970553505
+              }
+            }
+          }
+        },
+        {
+          "ceiling_bps": 12000,
+          "status": "ok",
+          "selected": {
+            "lambda": 0.04053600464421103,
+            "allow_zero": true,
+            "compact_features": 24,
+            "v2_payload_bits": 47879,
+            "local_cost_exact_for_selected_v2_codes": true,
+            "audio_packet_bytes": 5850,
+            "file_bytes": 5870,
+            "quality": {
+              "ser_db": 12.145322955080813,
+              "rmse": 0.003990253072055093,
+              "stoi": 0.8132928146222513,
+              "spectral_rmse_db": 10.260247016321408,
+              "reference_rms": 0.0161534982281886,
+              "decoded_rms": 0.01597938023889744,
+              "clip_count": 0,
+              "pcm16_sha256": "1b9385f36a36908273028615a74ab4aff7fd8729ed3b8220ccf31fdc344c6d34"
+            },
+            "native_model_pcm_exact": true,
+            "stream_sha256": "aad91d3739c86b8b1a17fde8e0d738fafb0f56a90330a130762981031c2a331c",
+            "width_counts": {
+              "0": 137,
+              "2": 25,
+              "3": 74,
+              "4": 120,
+              "5": 44,
+              "6": 0
+            },
+            "seconds": 2.63711760006845,
+            "decoder_modified": false,
+            "avr_cycles_measured": false,
+            "source": "rate-search",
+            "seed_index": 4,
+            "full_sse": 547079863,
+            "max_abs_error_pcm16": 547,
+            "fits_budget": true
+          },
+          "minimum_observed_bytes": 2818,
+          "trials": 40,
+          "baseline": {
+            "status": "no_fit"
+          }
+        }
+      ]
+    }
+  ],
+  "source_sha256": {
+    "budget_search.py": "3f4934d0444842de9e088b8a978a1b39251c479df1c36622777dd3adf33e8a6d",
+    "test_budget_search.py": "c02ec5f8e3fdb5b825102d72371d429bfac1387422059fed714411cd87e8ed36"
+  }
+}

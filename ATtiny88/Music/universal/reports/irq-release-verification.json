@@ -1,0 +1,805 @@
+{
+  "observedCheckoutRevision": "223f9cc364da895ef77d617828012b77faee1c06",
+  "sourceTextLfSha256": {
+    "ATtiny88/Music/universal/engine.c": "39b2da6d59c21e544ede4c5096044b09cbc465e2febf709ea3fa45608eeaa8c6",
+    "ATtiny88/Music/universal/engine.h": "c70e387f05f70edf74bf9bb9b5d0a76e50e7220dd41c9003c8e1cbbfa66892fe",
+    "ATtiny88/Music/universal/platform.c": "8c31b2ed4981f916ae866a0433c5283018762752c8974c79b8cd34e353c8e097",
+    "ATtiny88/Music/universal/storage.h": "60497a6be96ca3a8057319cc563019fad088e178bccc4357052323e6378c2e92",
+    "ATtiny88/Music/universal/clock.h": "4626b685e27293bda6bf005dd305fb3d63380a9287fc4267ed81f1e65b5f44cf",
+    "ATtiny88/Music/universal/rational-clocks.h": "d9c15451284e16f4e91dc519eb53cf4d15614837ecd16367e207b78e23234314",
+    "ATtiny88/Music/universal/audio-buffer.h": "d4d8e84ee2c8fc7cbb7256efeecee122ae07805af165e1f3f32132faeb23f976",
+    "ATtiny88/Music/universal/audio-channels.h": "82a57357f70d15b12c0577ea92066be77705e69a2335ddc2162943646ddb298a",
+    "ATtiny88/Music/universal/irq-scratch.h": "cc6b3a3e264df61dfdb0a09c6e0fe84e532e14a75f3b32681ca24e24892f1cb1",
+    "ATtiny88/Music/universal/render-avr.S": "6d397cda5fcdca0d53c96bd5166714c7c447eb2098668f2e79b5f6ce162e9c49",
+    "ATtiny88/Music/universal/irq-avr.S": "860cf883191b181cd361f983d17ebe4e4e09997c497a56b946b24b4af586cbda",
+    "ATtiny88/Music/universal/vendor/ATtiny_DFP/3.4.278/include/avr/iotn88.h": "63c792cc9961aca81bfb3602e0d1d3cf01a37f35a449a6b6e2e6c8b41cc1e892",
+    "tools/build-universal-music.py": "e63229d9035b1c0a8249a047c1cb723ae3a9ec0d6ffe37c9028d8b89878696d5",
+    "tools/universal-music.py": "3e784ddd16b6a340d20674d93d930e98d5b138cd7b5cec48491ac10b2dc2ce54"
+  },
+  "method": "Complete loop and restart against independent JSON arithmetic; every generated and consumed PWM byte checked and hashed; mono decoded write tracing across all execution with SRAM-only bulk acceleration.",
+  "modelsOnly": true,
+  "electricalPwmEdgesMeasured": false,
+  "irqScratch": "gpior",
+  "preparedSource": {
+    "auditSourceSha256": "c8c2d120118f73d5856069020a1e0f75a4c67852375f165fee4eceeee68c2551",
+    "auditSourceTextLfSha256": "c8c2d120118f73d5856069020a1e0f75a4c67852375f165fee4eceeee68c2551",
+    "preparationSourceSha256": "e3e852e4ee401434bd67483d552536a7e6e635dc645bccd3df5dc97a1c7fad11",
+    "instrumentedAuditSha256": "e6f13453ce9a1d9a8a0c8a9de87a9d02050a055c3e13b4407e8b5573299bf890",
+    "baseline": [
+      {
+        "base": "songs",
+        "name": "alicia",
+        "cpuHz": 8000000,
+        "channels": 1,
+        "controlTicks": 11546,
+        "scoreSha256": "da0bc40f35d15e402140cdb406e8fe153c96bbdfa2bb47d1a3a9722437ce832b",
+        "priorFlashSha256": "d39ee8221d80d1969dcb1c99f32c913f95782844595a4731287a2c281943c649"
+      },
+      {
+        "base": "songs",
+        "name": "cancion-del-mariachi",
+        "cpuHz": 8000000,
+        "channels": 1,
+        "controlTicks": 2327,
+        "scoreSha256": "22de73f0d9b2daddb3a57a55feefbf7fc3134ca0c947c56038e0d5500a5731fc",
+        "priorFlashSha256": "6e04410d43013ab0bfcf187d36f233626aa3e8048ef04f27f68659db03866409"
+      },
+      {
+        "base": "songs",
+        "name": "cancion-del-mariachi-polyphonic",
+        "cpuHz": 8000000,
+        "channels": 1,
+        "controlTicks": 2280,
+        "scoreSha256": "ee76893df8e7f1611bf4d99ab7d988bb8779c1f3e70e5b5062bdbf4f08f9511b",
+        "priorFlashSha256": "c030852062512a644828993023b05f323f126be4e6ab620d29e5efac5e613e82"
+      },
+      {
+        "base": "songs",
+        "name": "cancion-del-mariachi-sparse",
+        "cpuHz": 8000000,
+        "channels": 1,
+        "controlTicks": 4489,
+        "scoreSha256": "35894d9b13f482a0d4f5eb70c1aa0fa276c72e27bdccca6bfcd80bb0142b466e",
+        "priorFlashSha256": "8dab33a4fc1eac63550ecdc1821595ec3a66c8b1cfbd6f7bc58b7f23c5e12884"
+      },
+      {
+        "base": "songs",
+        "name": "children",
+        "cpuHz": 8000000,
+        "channels": 1,
+        "controlTicks": 17706,
+        "scoreSha256": "4bbaad014f18fd995994c3e3338b62b4e9da676eccf915d124cceba675171a43",
+        "priorFlashSha256": "c988531389ca3ed971f024a84a3aa61f4166fdfae9df6a2f22ac83a7eec92cd2"
+      },
+      {
+        "base": "songs",
+        "name": "greensleeves",
+        "cpuHz": 8000000,
+        "channels": 1,
+        "controlTicks": 3535,
+        "scoreSha256": "6165bc9dc88030f8c673677bd9a1cb5be859a1de913873ff3a05b713ff5b2b5b",
+        "priorFlashSha256": "47411d3342291908ff33eba44ce47e91e7d73656dd09921e3ba96957e98626ec"
+      },
+      {
+        "base": "songs",
+        "name": "lumiere-stereo",
+        "cpuHz": 8000000,
+        "channels": 2,
+        "controlTicks": 16262,
+        "scoreSha256": "04758f2a4611165b00bc31c07ad770ccec711dd631e166c204fe5347974e720d",
+        "priorFlashSha256": "27e45e6c8feb036b9da273a248f43858ae8a40badca922a4a81c17aeb8e1b2fa"
+      },
+      {
+        "base": "songs",
+        "name": "rhythmic",
+        "cpuHz": 8000000,
+        "channels": 1,
+        "controlTicks": 16262,
+        "scoreSha256": "7d687310f421cb41c5c7c10c7924f6683da7af2d0a22569b7b5c01baa2efd239",
+        "priorFlashSha256": "72131398aad4b810f5dedd67b3375ad4f22293a4ae2d76f29bd8d59b7a5a37d6"
+      },
+      {
+        "base": "songs",
+        "name": "turkish-march",
+        "cpuHz": 8000000,
+        "channels": 1,
+        "controlTicks": 4425,
+        "scoreSha256": "bfc597322edc0739020a64561817b29eb6d45acc1df0f5a1504d841a71c0d2f9",
+        "priorFlashSha256": "7306a8360a437e88bcac777881ef0b685b17cd301a2a3c1f8aab2ee679ee8409"
+      },
+      {
+        "base": "songs-micronucleus",
+        "name": "alicia",
+        "cpuHz": 16000000,
+        "channels": 1,
+        "controlTicks": 11546,
+        "scoreSha256": "da0bc40f35d15e402140cdb406e8fe153c96bbdfa2bb47d1a3a9722437ce832b",
+        "priorFlashSha256": "4f77734df097bc824f0d89adbe2db375543bf5d2a9be598445901c1f5a4ca11d"
+      },
+      {
+        "base": "songs-micronucleus",
+        "name": "cancion-del-mariachi",
+        "cpuHz": 16000000,
+        "channels": 1,
+        "controlTicks": 2327,
+        "scoreSha256": "22de73f0d9b2daddb3a57a55feefbf7fc3134ca0c947c56038e0d5500a5731fc",
+        "priorFlashSha256": "0a6f8ff8b090a04d3c25879e4045fd5241458115d9879261e4f8db4dc2c606b7"
+      },
+      {
+        "base": "songs-micronucleus",
+        "name": "cancion-del-mariachi-polyphonic",
+        "cpuHz": 16000000,
+        "channels": 1,
+        "controlTicks": 2280,
+        "scoreSha256": "ee76893df8e7f1611bf4d99ab7d988bb8779c1f3e70e5b5062bdbf4f08f9511b",
+        "priorFlashSha256": "dcc4290911522af56b136c377cc823f3d31f68377a3d28dc1b039df3932307b2"
+      },
+      {
+        "base": "songs-micronucleus",
+        "name": "cancion-del-mariachi-sparse",
+        "cpuHz": 16000000,
+        "channels": 1,
+        "controlTicks": 4489,
+        "scoreSha256": "35894d9b13f482a0d4f5eb70c1aa0fa276c72e27bdccca6bfcd80bb0142b466e",
+        "priorFlashSha256": "9b4de6ad0fb7272f10bd9bd8148cf7d1dde47675bcacbc63ca5b50bdc9637729"
+      },
+      {
+        "base": "songs-micronucleus",
+        "name": "children",
+        "cpuHz": 16000000,
+        "channels": 1,
+        "controlTicks": 17706,
+        "scoreSha256": "4bbaad014f18fd995994c3e3338b62b4e9da676eccf915d124cceba675171a43",
+        "priorFlashSha256": "9214803951cc18f03e57a9edde9ca740017c6e034b7bcf57a21d9c8d9e4ca5e8"
+      },
+      {
+        "base": "songs-micronucleus",
+        "name": "greensleeves",
+        "cpuHz": 16000000,
+        "channels": 1,
+        "controlTicks": 3535,
+        "scoreSha256": "6165bc9dc88030f8c673677bd9a1cb5be859a1de913873ff3a05b713ff5b2b5b",
+        "priorFlashSha256": "02d40029da6f938f0ff1686543a4c859caba2c8ade5c9830d4ee430744b13441"
+      },
+      {
+        "base": "songs-micronucleus",
+        "name": "lumiere-stereo",
+        "cpuHz": 16000000,
+        "channels": 2,
+        "controlTicks": 16262,
+        "scoreSha256": "04758f2a4611165b00bc31c07ad770ccec711dd631e166c204fe5347974e720d",
+        "priorFlashSha256": "5a30abf908ccd8e1ec5930b794604a71e78b6c9c7877517d1128213f37dc8bf8"
+      },
+      {
+        "base": "songs-micronucleus",
+        "name": "rhythmic",
+        "cpuHz": 16000000,
+        "channels": 1,
+        "controlTicks": 16262,
+        "scoreSha256": "7d687310f421cb41c5c7c10c7924f6683da7af2d0a22569b7b5c01baa2efd239",
+        "priorFlashSha256": "f3c48102e28e998802e97974c93e324176df744019219d510330de81d3f97d7b"
+      },
+      {
+        "base": "songs-micronucleus",
+        "name": "turkish-march",
+        "cpuHz": 16000000,
+        "channels": 1,
+        "controlTicks": 4425,
+        "scoreSha256": "bfc597322edc0739020a64561817b29eb6d45acc1df0f5a1504d841a71c0d2f9",
+        "priorFlashSha256": "2fc88d3955362dc5d4b8c489f41711bfd634796b588fb398c4bdc875f6157747"
+      }
+    ]
+  },
+  "jobs": [
+    {
+      "name": "lumiere-stereo",
+      "cpuHz": 8000000,
+      "channels": 2,
+      "exitCode": 0,
+      "passed": true,
+      "minimumFIFO": 32,
+      "stackMargin": 31,
+      "maxISRCycles": 38,
+      "checkedIRQOutputs": 6939323,
+      "rawPwmStreamsEqual": true,
+      "strictMonoOCR1ANoWrites": null,
+      "wallSeconds": 312.8476959,
+      "reportFile": "build/irq-release-audits/images/8000000/lumiere-stereo/verification.json",
+      "baselineClippedChannelSamples": 0,
+      "clippedChannelSamples": 0,
+      "clippingBaseline": {
+        "revision": "8a0da608",
+        "file": "ATtiny88/Music/universal/songs/lumiere-stereo/verification.json",
+        "reportSha256": "92c8de172f197b4f464ae8af019fb7af0e69f993f64d2da82e555326b9c97409",
+        "flashSha256": "8d267b81955ca7829a0173675319d9ce0217430421592ee17cda65f1457b327f",
+        "clippedChannelSamples": 0
+      }
+    },
+    {
+      "name": "children",
+      "cpuHz": 8000000,
+      "channels": 1,
+      "exitCode": 0,
+      "passed": true,
+      "minimumFIFO": 123,
+      "stackMargin": 31,
+      "maxISRCycles": 34,
+      "checkedIRQOutputs": 7555426,
+      "rawPwmStreamsEqual": true,
+      "strictMonoOCR1ANoWrites": true,
+      "wallSeconds": 456.3264577,
+      "reportFile": "build/irq-release-audits/images/8000000/children/verification.json",
+      "baselineClippedChannelSamples": 0,
+      "clippedChannelSamples": 0,
+      "clippingBaseline": {
+        "revision": "8a0da608",
+        "file": "ATtiny88/Music/universal/songs/children/verification.json",
+        "reportSha256": "30fd85ecde6fa5917be2bf3427fe762df8dbf1d94a4cd04b1d28ff49f9ced294",
+        "flashSha256": "2c8baf0660c5b77c49d0543f34411ce99291b9bfefa78cca84adb43bea682cd4",
+        "clippedChannelSamples": 0
+      }
+    },
+    {
+      "name": "lumiere-stereo",
+      "cpuHz": 16000000,
+      "channels": 2,
+      "exitCode": 0,
+      "passed": true,
+      "minimumFIFO": 32,
+      "stackMargin": 31,
+      "maxISRCycles": 38,
+      "checkedIRQOutputs": 13878631,
+      "rawPwmStreamsEqual": true,
+      "strictMonoOCR1ANoWrites": null,
+      "wallSeconds": 543.5491985,
+      "reportFile": "build/irq-release-audits/images/16000000/lumiere-stereo/verification.json",
+      "baselineClippedChannelSamples": 0,
+      "clippedChannelSamples": 0,
+      "clippingBaseline": {
+        "revision": "8a0da608",
+        "file": "ATtiny88/Music/universal/songs-micronucleus/lumiere-stereo/verification.json",
+        "reportSha256": "07e0127f9c6649ebb84e71f590476559715d1148f7803ce285c2eb64c67c5580",
+        "flashSha256": "6cf977a8dffc69d631485becd06cc90666b8c8a18ee5d3fd2f06d712abf57bff",
+        "clippedChannelSamples": 0
+      }
+    },
+    {
+      "name": "alicia",
+      "cpuHz": 16000000,
+      "channels": 1,
+      "exitCode": 0,
+      "passed": true,
+      "minimumFIFO": 118,
+      "stackMargin": 31,
+      "maxISRCycles": 34,
+      "checkedIRQOutputs": 9854306,
+      "rawPwmStreamsEqual": true,
+      "strictMonoOCR1ANoWrites": true,
+      "wallSeconds": 560.4324429000001,
+      "reportFile": "build/irq-release-audits/images/16000000/alicia/verification.json",
+      "baselineClippedChannelSamples": 0,
+      "clippedChannelSamples": 0,
+      "clippingBaseline": {
+        "revision": "8a0da608",
+        "file": "ATtiny88/Music/universal/songs-micronucleus/alicia/verification.json",
+        "reportSha256": "37b9aa46516e200498aac7383dbde56932e20cc77cbc45a9fd4dfbfb72dd0031",
+        "flashSha256": "07ab89d5589681a205f65fafd385c5c9154099fa3d812fc41014022aece9696b",
+        "clippedChannelSamples": 0
+      }
+    },
+    {
+      "name": "rhythmic",
+      "cpuHz": 8000000,
+      "channels": 1,
+      "exitCode": 0,
+      "passed": true,
+      "minimumFIFO": 130,
+      "stackMargin": 31,
+      "maxISRCycles": 34,
+      "checkedIRQOutputs": 6939321,
+      "rawPwmStreamsEqual": true,
+      "strictMonoOCR1ANoWrites": true,
+      "wallSeconds": 319.8541186,
+      "reportFile": "build/irq-release-audits/images/8000000/rhythmic/verification.json",
+      "baselineClippedChannelSamples": 32,
+      "clippedChannelSamples": 32,
+      "clippingBaseline": {
+        "revision": "8a0da608",
+        "file": "ATtiny88/Music/universal/songs/rhythmic/verification.json",
+        "reportSha256": "99e3133f14f7b368c622fc54fa8d2f1545c8cacd3ab5fe04a6ccb0baf7c58bfc",
+        "flashSha256": "2814b41a78f30ea8436871ced0338eaf1304825b1cde72e20ca0cd1624270003",
+        "clippedChannelSamples": 32
+      }
+    },
+    {
+      "name": "alicia",
+      "cpuHz": 8000000,
+      "channels": 1,
+      "exitCode": 0,
+      "passed": true,
+      "minimumFIFO": 118,
+      "stackMargin": 31,
+      "maxISRCycles": 34,
+      "checkedIRQOutputs": 4927158,
+      "rawPwmStreamsEqual": true,
+      "strictMonoOCR1ANoWrites": true,
+      "wallSeconds": 201.3779031,
+      "reportFile": "build/irq-release-audits/images/8000000/alicia/verification.json",
+      "baselineClippedChannelSamples": 0,
+      "clippedChannelSamples": 0,
+      "clippingBaseline": {
+        "revision": "8a0da608",
+        "file": "ATtiny88/Music/universal/songs/alicia/verification.json",
+        "reportSha256": "3b59316c05987689a33a467dff5c870e271c89539e0d6101f2f079e88e15b80f",
+        "flashSha256": "8c88c80164c2d5c6c325103a04458de010cf073d63ec71399f9fdb9e670a39da",
+        "clippedChannelSamples": 0
+      }
+    },
+    {
+      "name": "cancion-del-mariachi-sparse",
+      "cpuHz": 16000000,
+      "channels": 1,
+      "exitCode": 0,
+      "passed": true,
+      "minimumFIFO": 124,
+      "stackMargin": 31,
+      "maxISRCycles": 34,
+      "checkedIRQOutputs": 3832327,
+      "rawPwmStreamsEqual": true,
+      "strictMonoOCR1ANoWrites": true,
+      "wallSeconds": 145.51639270000004,
+      "reportFile": "build/irq-release-audits/images/16000000/cancion-del-mariachi-sparse/verification.json",
+      "baselineClippedChannelSamples": 0,
+      "clippedChannelSamples": 0,
+      "clippingBaseline": {
+        "revision": "8a0da608",
+        "file": "ATtiny88/Music/universal/songs-micronucleus/cancion-del-mariachi-sparse/verification.json",
+        "reportSha256": "d8514a9cf27e5aee5c171ecdc80c18b0772d17802b8e768f136a4cc927f1a48a",
+        "flashSha256": "35ac1463a923185575730cfe68d77695ef43c70df2f1823b846bb268a5e93d0d",
+        "clippedChannelSamples": 0
+      }
+    },
+    {
+      "name": "cancion-del-mariachi-polyphonic",
+      "cpuHz": 16000000,
+      "channels": 1,
+      "exitCode": 0,
+      "passed": true,
+      "minimumFIFO": 136,
+      "stackMargin": 31,
+      "maxISRCycles": 34,
+      "checkedIRQOutputs": 1947312,
+      "rawPwmStreamsEqual": true,
+      "strictMonoOCR1ANoWrites": true,
+      "wallSeconds": 74.69097339999999,
+      "reportFile": "build/irq-release-audits/images/16000000/cancion-del-mariachi-polyphonic/verification.json",
+      "baselineClippedChannelSamples": 0,
+      "clippedChannelSamples": 0,
+      "clippingBaseline": {
+        "revision": "8a0da608",
+        "file": "ATtiny88/Music/universal/songs-micronucleus/cancion-del-mariachi-polyphonic/verification.json",
+        "reportSha256": "13669eac8c388f4cd11391cd50bd9af365f110878b264db9a50a52304d2baac8",
+        "flashSha256": "a1647242c2425563695d82920e3d2ab97e747b80af9f0ba6c265f9f675cc266e",
+        "clippedChannelSamples": 0
+      }
+    },
+    {
+      "name": "turkish-march",
+      "cpuHz": 16000000,
+      "channels": 1,
+      "exitCode": 0,
+      "passed": true,
+      "minimumFIFO": 156,
+      "stackMargin": 31,
+      "maxISRCycles": 34,
+      "checkedIRQOutputs": 3777709,
+      "rawPwmStreamsEqual": true,
+      "strictMonoOCR1ANoWrites": true,
+      "wallSeconds": 183.2769893,
+      "reportFile": "build/irq-release-audits/images/16000000/turkish-march/verification.json",
+      "baselineClippedChannelSamples": 0,
+      "clippedChannelSamples": 0,
+      "clippingBaseline": {
+        "revision": "8a0da608",
+        "file": "ATtiny88/Music/universal/songs-micronucleus/turkish-march/verification.json",
+        "reportSha256": "29017383abbbcceb205b2b99bcbc7561eff4f2ea63c4abf54706ef695ca53113",
+        "flashSha256": "acc73c1c2c168a43f9f45c80fb3364a5508480c913e1ef1a7e27f758d6533ce6",
+        "clippedChannelSamples": 0
+      }
+    },
+    {
+      "name": "rhythmic",
+      "cpuHz": 16000000,
+      "channels": 1,
+      "exitCode": 0,
+      "passed": true,
+      "minimumFIFO": 130,
+      "stackMargin": 31,
+      "maxISRCycles": 34,
+      "checkedIRQOutputs": 13878629,
+      "rawPwmStreamsEqual": true,
+      "strictMonoOCR1ANoWrites": true,
+      "wallSeconds": 764.4034412999999,
+      "reportFile": "build/irq-release-audits/images/16000000/rhythmic/verification.json",
+      "baselineClippedChannelSamples": 56,
+      "clippedChannelSamples": 56,
+      "clippingBaseline": {
+        "revision": "8a0da608",
+        "file": "ATtiny88/Music/universal/songs-micronucleus/rhythmic/verification.json",
+        "reportSha256": "3849322602ec1a3962abd4683cf6aad51d9fc70ce60b9a7661a977d27df5876c",
+        "flashSha256": "d9c74533956f204adaa6fb3113534735d472f6c145998453178ba8b2efd12691",
+        "clippedChannelSamples": 56
+      }
+    },
+    {
+      "name": "cancion-del-mariachi-sparse",
+      "cpuHz": 8000000,
+      "channels": 1,
+      "exitCode": 0,
+      "passed": true,
+      "minimumFIFO": 124,
+      "stackMargin": 31,
+      "maxISRCycles": 34,
+      "checkedIRQOutputs": 1916167,
+      "rawPwmStreamsEqual": true,
+      "strictMonoOCR1ANoWrites": true,
+      "wallSeconds": 75.4302019,
+      "reportFile": "build/irq-release-audits/images/8000000/cancion-del-mariachi-sparse/verification.json",
+      "baselineClippedChannelSamples": 0,
+      "clippedChannelSamples": 0,
+      "clippingBaseline": {
+        "revision": "8a0da608",
+        "file": "ATtiny88/Music/universal/songs/cancion-del-mariachi-sparse/verification.json",
+        "reportSha256": "83916218fb5e7d976b3cde27f67b818b994953e4179a3336dd07e225bae65541",
+        "flashSha256": "e35189922c8285414d97ec232c9a2f1cad312038c6b753efdfcda8c5081b65ba",
+        "clippedChannelSamples": 0
+      }
+    },
+    {
+      "name": "greensleeves",
+      "cpuHz": 16000000,
+      "channels": 1,
+      "exitCode": 0,
+      "passed": true,
+      "minimumFIFO": 144,
+      "stackMargin": 31,
+      "maxISRCycles": 34,
+      "checkedIRQOutputs": 3018257,
+      "rawPwmStreamsEqual": true,
+      "strictMonoOCR1ANoWrites": true,
+      "wallSeconds": 145.9883752,
+      "reportFile": "build/irq-release-audits/images/16000000/greensleeves/verification.json",
+      "baselineClippedChannelSamples": 0,
+      "clippedChannelSamples": 0,
+      "clippingBaseline": {
+        "revision": "8a0da608",
+        "file": "ATtiny88/Music/universal/songs-micronucleus/greensleeves/verification.json",
+        "reportSha256": "4382c23a837ce1baf9ea470ea47dc72a8a8689645a7105a4e9b987865bbc2643",
+        "flashSha256": "852f452214d4ca8a760333514bbafcc1f0eb0210f51181c35560c8c082d45ea5",
+        "clippedChannelSamples": 0
+      }
+    },
+    {
+      "name": "children",
+      "cpuHz": 16000000,
+      "channels": 1,
+      "exitCode": 0,
+      "passed": true,
+      "minimumFIFO": 123,
+      "stackMargin": 31,
+      "maxISRCycles": 34,
+      "checkedIRQOutputs": 15110838,
+      "rawPwmStreamsEqual": true,
+      "strictMonoOCR1ANoWrites": true,
+      "wallSeconds": 780.0763054,
+      "reportFile": "build/irq-release-audits/images/16000000/children/verification.json",
+      "baselineClippedChannelSamples": 0,
+      "clippedChannelSamples": 0,
+      "clippingBaseline": {
+        "revision": "8a0da608",
+        "file": "ATtiny88/Music/universal/songs-micronucleus/children/verification.json",
+        "reportSha256": "573a35126d7009b79d330d0f223aa33f8e0c35398f4e857fc1aac8686ac8b8de",
+        "flashSha256": "55e834d864f4399553011b9b26d344b196991d8ffc9c2e294532c2685383c434",
+        "clippedChannelSamples": 0
+      }
+    },
+    {
+      "name": "cancion-del-mariachi-polyphonic",
+      "cpuHz": 8000000,
+      "channels": 1,
+      "exitCode": 0,
+      "passed": true,
+      "minimumFIFO": 136,
+      "stackMargin": 31,
+      "maxISRCycles": 34,
+      "checkedIRQOutputs": 973660,
+      "rawPwmStreamsEqual": true,
+      "strictMonoOCR1ANoWrites": true,
+      "wallSeconds": 29.1295804,
+      "reportFile": "build/irq-release-audits/images/8000000/cancion-del-mariachi-polyphonic/verification.json",
+      "baselineClippedChannelSamples": 0,
+      "clippedChannelSamples": 0,
+      "clippingBaseline": {
+        "revision": "8a0da608",
+        "file": "ATtiny88/Music/universal/songs/cancion-del-mariachi-polyphonic/verification.json",
+        "reportSha256": "b2fd360fd5b696318f463c1b625c7761b6a786e16e6b6f92293f2356f94640fa",
+        "flashSha256": "eb9fafd7cea72595613984e97fd2ad939508af35a2fa26ec77cb1b1f95620b5e",
+        "clippedChannelSamples": 0
+      }
+    },
+    {
+      "name": "cancion-del-mariachi",
+      "cpuHz": 8000000,
+      "channels": 1,
+      "exitCode": 0,
+      "passed": true,
+      "minimumFIFO": 130,
+      "stackMargin": 31,
+      "maxISRCycles": 34,
+      "checkedIRQOutputs": 993721,
+      "rawPwmStreamsEqual": true,
+      "strictMonoOCR1ANoWrites": true,
+      "wallSeconds": 34.4003025,
+      "reportFile": "build/irq-release-audits/images/8000000/cancion-del-mariachi/verification.json",
+      "baselineClippedChannelSamples": 0,
+      "clippedChannelSamples": 0,
+      "clippingBaseline": {
+        "revision": "8a0da608",
+        "file": "ATtiny88/Music/universal/songs/cancion-del-mariachi/verification.json",
+        "reportSha256": "9fd4d8c88c27f95e156b6a91faffff5744f79a94075c5529514b101f041101d0",
+        "flashSha256": "00e4b7c0b9d05d13bbb16df78815ade6498be1c74712885bc83d8501418dec13",
+        "clippedChannelSamples": 0
+      }
+    },
+    {
+      "name": "cancion-del-mariachi",
+      "cpuHz": 16000000,
+      "channels": 1,
+      "exitCode": 0,
+      "passed": true,
+      "minimumFIFO": 130,
+      "stackMargin": 31,
+      "maxISRCycles": 34,
+      "checkedIRQOutputs": 1987429,
+      "rawPwmStreamsEqual": true,
+      "strictMonoOCR1ANoWrites": true,
+      "wallSeconds": 81.8276647,
+      "reportFile": "build/irq-release-audits/images/16000000/cancion-del-mariachi/verification.json",
+      "baselineClippedChannelSamples": 0,
+      "clippedChannelSamples": 0,
+      "clippingBaseline": {
+        "revision": "8a0da608",
+        "file": "ATtiny88/Music/universal/songs-micronucleus/cancion-del-mariachi/verification.json",
+        "reportSha256": "b46314f540d70b51a6b1f97d5b4ef2292fde3a0e67a3a9eaaf4a54a25cd04162",
+        "flashSha256": "f64d950ce4b143d5089d9b2f3ff0cc75152215d98df0179e334e7fff956c42f2",
+        "clippedChannelSamples": 0
+      }
+    },
+    {
+      "name": "greensleeves",
+      "cpuHz": 8000000,
+      "channels": 1,
+      "exitCode": 0,
+      "passed": true,
+      "minimumFIFO": 144,
+      "stackMargin": 31,
+      "maxISRCycles": 34,
+      "checkedIRQOutputs": 1509137,
+      "rawPwmStreamsEqual": true,
+      "strictMonoOCR1ANoWrites": true,
+      "wallSeconds": 54.2775265,
+      "reportFile": "build/irq-release-audits/images/8000000/greensleeves/verification.json",
+      "baselineClippedChannelSamples": 0,
+      "clippedChannelSamples": 0,
+      "clippingBaseline": {
+        "revision": "8a0da608",
+        "file": "ATtiny88/Music/universal/songs/greensleeves/verification.json",
+        "reportSha256": "c1657f9acd26ea62cdc6e00f8d27da54fce958219866d25c94802214cc5dd7e6",
+        "flashSha256": "f9c5baed8f9361accfe8e26723bf2c50d25646961b10823bfa73ea97fabe6deb",
+        "clippedChannelSamples": 0
+      }
+    },
+    {
+      "name": "turkish-march",
+      "cpuHz": 8000000,
+      "channels": 1,
+      "exitCode": 0,
+      "passed": true,
+      "minimumFIFO": 156,
+      "stackMargin": 31,
+      "maxISRCycles": 34,
+      "checkedIRQOutputs": 1888857,
+      "rawPwmStreamsEqual": true,
+      "strictMonoOCR1ANoWrites": true,
+      "wallSeconds": 76.7985359,
+      "reportFile": "build/irq-release-audits/images/8000000/turkish-march/verification.json",
+      "baselineClippedChannelSamples": 0,
+      "clippedChannelSamples": 0,
+      "clippingBaseline": {
+        "revision": "8a0da608",
+        "file": "ATtiny88/Music/universal/songs/turkish-march/verification.json",
+        "reportSha256": "032b7aa3751e48698c6bb48574ff0e5017c18faa28bc48310602187fba6d739b",
+        "flashSha256": "99f90152eea80c93613b16ff7a91e439947b671e4c20d1658c570130325b5bcf",
+        "clippedChannelSamples": 0
+      }
+    }
+  ],
+  "passed": true,
+  "cancelled": false,
+  "elapsedSeconds": 821.319,
+  "qualificationCorrection": {
+    "reason": "Original live aggregate incorrectly required zero clipping; qualify against unchanged score-specific clipping instead.",
+    "baselineRevision": "8a0da608",
+    "originalSummarySha256": "a849b46da71e80b0f436a7669e8818f056090e91dd1605e569fc10582e71897e",
+    "originalSummary": "summary-before-clipping-requalification.json",
+    "qualificationSourceTextLfSha256": "05018c548cdb92cf76096d950bbac16204a418edb54f4c1c79237ce246bf315b",
+    "rawReportsUnchanged": true,
+    "rawReportHashes": [
+      {
+        "file": "images/8000000/lumiere-stereo/verification.json",
+        "sha256": "2a1d5c7b91a4de6c22aa3db37eef00ad209c6a5de5731430bf46180c71717295"
+      },
+      {
+        "file": "images/8000000/children/verification.json",
+        "sha256": "0ceb66659c5bb039abea59f486050d26f407f7ab2a1544f12fa3089d915bbe83"
+      },
+      {
+        "file": "images/16000000/lumiere-stereo/verification.json",
+        "sha256": "af46967a59890a6c7b3e7a2b5a81a5edef57a8ec6c514f5a8ca3b6fae80e155f"
+      },
+      {
+        "file": "images/16000000/alicia/verification.json",
+        "sha256": "5f55134595fd2808b61df80b96e627b4c60aa7baa95afc1d82be22e45c21d059"
+      },
+      {
+        "file": "images/8000000/rhythmic/verification.json",
+        "sha256": "bbf82d30127e80a8caf75a60ac8b1af3d106a82192facdb81e22b8b7a841a4a6"
+      },
+      {
+        "file": "images/8000000/alicia/verification.json",
+        "sha256": "fbed6c19c63cb423579ec2c747e0a48845fc6fe41bcdd608df1b92e504a85a1d"
+      },
+      {
+        "file": "images/16000000/cancion-del-mariachi-sparse/verification.json",
+        "sha256": "fba4186e0ada2a32710a5ee2932af91047bfd7c30dc9de94cf757a3086b5e153"
+      },
+      {
+        "file": "images/16000000/cancion-del-mariachi-polyphonic/verification.json",
+        "sha256": "6b9b8e756c96e0c4220089d2b8018bed6d18abbcbbb601cc44fd5a86d6ec434b"
+      },
+      {
+        "file": "images/16000000/turkish-march/verification.json",
+        "sha256": "555378ce5bf636518004cd0def74af4df339eb3dd85bfa77c7cd88ae76e724b9"
+      },
+      {
+        "file": "images/16000000/rhythmic/verification.json",
+        "sha256": "04f3da9b568dc7cbd981c3f5db5af3037c2c5a629f70815c03ac6a0fe70057e9"
+      },
+      {
+        "file": "images/8000000/cancion-del-mariachi-sparse/verification.json",
+        "sha256": "6ca91d19e8a020b8b7c1c841bbd9513929476197db6534f1ab418eb17426cf6b"
+      },
+      {
+        "file": "images/16000000/greensleeves/verification.json",
+        "sha256": "0404b9e13242ff7c40d648e2717079884c9b4a38115656468c52cf55e761a929"
+      },
+      {
+        "file": "images/16000000/children/verification.json",
+        "sha256": "6dcf95b3178af0708f68807be1d53de4425edd1148d90821a2180ff6bde7e86f"
+      },
+      {
+        "file": "images/8000000/cancion-del-mariachi-polyphonic/verification.json",
+        "sha256": "b54539457d28372f36856c3e225ac613c01aa49d14b18e7453815928407d6eda"
+      },
+      {
+        "file": "images/8000000/cancion-del-mariachi/verification.json",
+        "sha256": "3e2925c552144637f7d5e9643a530e34082e96bc5c91ebc864fde4f0d2f122bd"
+      },
+      {
+        "file": "images/16000000/cancion-del-mariachi/verification.json",
+        "sha256": "1f3cdbd86b6ec4608389026f83ce5cdf0c9a30ad15d8ca5939b1b4aa04e251fd"
+      },
+      {
+        "file": "images/8000000/greensleeves/verification.json",
+        "sha256": "118ace3f828db818ae9faf6a6b4aba27d719ea2c3c8007aa7d66d0b9365b3b8d"
+      },
+      {
+        "file": "images/8000000/turkish-march/verification.json",
+        "sha256": "b7c40ac8132462728efb1cfa8ed28d177057564b4aa7feb0b6683d0e2616c102"
+      }
+    ]
+  },
+  "runtimeSourceCommit": "223f9cc364da895ef77d617828012b77faee1c06",
+  "retainedVerificationFiles": [
+    {
+      "name": "lumiere-stereo",
+      "cpuHz": 8000000,
+      "path": "songs/lumiere-stereo/verification.json"
+    },
+    {
+      "name": "children",
+      "cpuHz": 8000000,
+      "path": "songs/children/verification.json"
+    },
+    {
+      "name": "lumiere-stereo",
+      "cpuHz": 16000000,
+      "path": "songs-micronucleus/lumiere-stereo/verification.json"
+    },
+    {
+      "name": "alicia",
+      "cpuHz": 16000000,
+      "path": "songs-micronucleus/alicia/verification.json"
+    },
+    {
+      "name": "rhythmic",
+      "cpuHz": 8000000,
+      "path": "songs/rhythmic/verification.json"
+    },
+    {
+      "name": "alicia",
+      "cpuHz": 8000000,
+      "path": "songs/alicia/verification.json"
+    },
+    {
+      "name": "cancion-del-mariachi-sparse",
+      "cpuHz": 16000000,
+      "path": "songs-micronucleus/cancion-del-mariachi-sparse/verification.json"
+    },
+    {
+      "name": "cancion-del-mariachi-polyphonic",
+      "cpuHz": 16000000,
+      "path": "songs-micronucleus/cancion-del-mariachi-polyphonic/verification.json"
+    },
+    {
+      "name": "turkish-march",
+      "cpuHz": 16000000,
+      "path": "songs-micronucleus/turkish-march/verification.json"
+    },
+    {
+      "name": "rhythmic",
+      "cpuHz": 16000000,
+      "path": "songs-micronucleus/rhythmic/verification.json"
+    },
+    {
+      "name": "cancion-del-mariachi-sparse",
+      "cpuHz": 8000000,
+      "path": "songs/cancion-del-mariachi-sparse/verification.json"
+    },
+    {
+      "name": "greensleeves",
+      "cpuHz": 16000000,
+      "path": "songs-micronucleus/greensleeves/verification.json"
+    },
+    {
+      "name": "children",
+      "cpuHz": 16000000,
+      "path": "songs-micronucleus/children/verification.json"
+    },
+    {
+      "name": "cancion-del-mariachi-polyphonic",
+      "cpuHz": 8000000,
+      "path": "songs/cancion-del-mariachi-polyphonic/verification.json"
+    },
+    {
+      "name": "cancion-del-mariachi",
+      "cpuHz": 8000000,
+      "path": "songs/cancion-del-mariachi/verification.json"
+    },
+    {
+      "name": "cancion-del-mariachi",
+      "cpuHz": 16000000,
+      "path": "songs-micronucleus/cancion-del-mariachi/verification.json"
+    },
+    {
+      "name": "greensleeves",
+      "cpuHz": 8000000,
+      "path": "songs/greensleeves/verification.json"
+    },
+    {
+      "name": "turkish-march",
+      "cpuHz": 8000000,
+      "path": "songs/turkish-march/verification.json"
+    }
+  ]
+}

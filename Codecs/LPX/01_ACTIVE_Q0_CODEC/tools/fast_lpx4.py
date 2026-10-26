@@ -95,3 +95,56 @@ def select_chunk_fast(y,hist,b,min_snr=float('inf')):
     cost,lag,g,k2=_evaluate_exact(target,h,np.asarray(params,dtype=np.int32),b,direct_cost)
     if lag<0:return 5+direct_cost,('direct',k),list(y)
     return int(cost),('exact',int(lag),int(g),int(k2)),list(y)
+
+
+@njit(cache=True)
+def _exhaustive(y,h,b,initial_cost,allow_sparse):
+    """All 128 lags / 32 gains, exact Rice and exact sparse only."""
+    best=initial_cost;typ=0;best_lag=0;best_gain=0;best_k=0
+    lo=-(1<<(b-1));hi=(1<<(b-1))-1
+    for lag in range(18,146):
+        for gain in range(32):
+            if gain==0 and lag!=18:continue
+            costs=np.zeros(7,np.int32);valid=np.ones(7,np.uint8)
+            pulses=0;sparse_ok=allow_sparse
+            for j in range(len(y)):
+                x=h[145-lag+j] if j<lag else y[j-lag]
+                p=min(hi,max(lo,(gain*x+8)>>4))
+                d=int(y[j])-p;z=2*d if d>=0 else -2*d-1
+                if d:
+                    pulses+=1
+                    if d < -16 or d > 15 or pulses>10:sparse_ok=False
+                for k in range(7):
+                    quotient=z>>k
+                    if quotient>8:valid[k]=0
+                    costs[k]+=quotient+1+k
+            for k in range(7):
+                cost=17+costs[k]
+                if valid[k] and cost<best:
+                    best=cost;typ=1;best_lag=lag;best_gain=gain;best_k=k
+            # Eight-bit literal exact residuals cannot beat raw <=6-bit q.
+            cost=18+11*pulses
+            if sparse_ok and cost<best:
+                best=cost;typ=2;best_lag=lag;best_gain=gain;best_k=0
+    return best,typ,best_lag,best_gain,best_k
+
+
+def select_chunk_exhaustive(y,hist,b,allow_sparse=True):
+    """Minimum bits within existing modes; sparse is always exactly lossless.
+
+    Initial history is zero, as on the MCU. Ties retain direct first, then
+    increasing lag/gain/k. This opt-in search does not change legacy output.
+    """
+    direct,k=best_direct(y,b)
+    if not b:return 5+direct,('direct',k),list(y)
+    padded=([0]*max(0,145-len(hist))+list(hist[-145:]))
+    cost,typ,lag,gain,k2=_exhaustive(np.asarray(y,np.int32),np.asarray(padded,np.int32),b,5+direct,bool(allow_sparse))
+    if not typ:return int(cost),('direct',k),list(y)
+    if typ==1:return int(cost),('exact',int(lag),int(gain),int(k2)),list(y)
+    from lpx4 import calc_pred
+    history=list(hist);pulses=[]
+    for j,val in enumerate(y):
+        delta=int(val)-calc_pred(history,int(lag),int(gain),b)
+        if delta:pulses.append((j,delta))
+        history.append(int(val))
+    return int(cost),('sparse',int(lag),int(gain),pulses),list(y)

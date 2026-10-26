@@ -13,8 +13,8 @@ const bare=json('../firmware-attiny88.json');
 const hash=b=>createHash('sha256').update(b).digest('hex');
 const clock={target:'attiny88',cpuHz:16000000};
 
-test('all USB arrangements share one universal executable within the loader limit',()=>{
-  let code;
+test('USB arrangements share each fixed output executable within the loader limit',()=>{
+  const code=new Map(),counts=[0,0,0];
   assert.equal(catalog.entries.length,9);
   assert.deepEqual(catalog.entries.map(e=>e.id),bare.entries.map(e=>e.id));
   for(const e of catalog.entries){
@@ -25,10 +25,14 @@ test('all USB arrangements share one universal executable within the loader limi
     assert.deepEqual(score,json('../'+original.source.replace(/synth\.hex$/,'score.json')));
     assert.equal(e.firmwareEngine,'UM88');assert.equal(e.archivedFirmware,false);
     assert.equal(e.cpuHz,16000000);assert.equal(e.pwmHz,62500);assert.equal(e.synthesisHz,15625);
-    assert.equal(meta.channels,e.audioChannels);assert.equal(meta.renderABI,'packed-stereo-u32');
+    assert.equal(meta.channels,e.audioChannels);assert.equal(meta.configuredChannels,e.audioChannels);
+    assert.equal(e.configuredChannels,e.audioChannels);
+    assert.equal(meta.renderABI,e.audioChannels===1?'mono-s16':'packed-stereo-u32');
+    assert.equal(e.renderABI,meta.renderABI);counts[e.audioChannels]++;
     assert.ok(binary.length<=6012);assert.equal(binary.length,meta.flashBytes);
     const prefix=binary.subarray(0,meta.engineBytes);
-    if(code)assert.deepEqual(prefix,code);else code=prefix;
+    const key=JSON.stringify([meta.configuredChannels,meta.cpuHz,meta.backend,meta.packingMode,meta.pwmBufferBytes]);
+    if(code.has(key))assert.deepEqual(prefix,code.get(key));else code.set(key,prefix);
     assert.equal(hash(prefix),meta.engineSha256);assert.equal(hash(binary),v.flashSha256);
     assert.equal(meta.requiredFuses,null);assert.equal(meta.eepromRequired,false);
     assert.equal(e.eepromHex,null);assert.equal(e.eepromBytes,0);
@@ -38,6 +42,7 @@ test('all USB arrangements share one universal executable within the loader limi
     assert.equal(v.fifoUnderruns,0);assert.equal(v.lostInterrupts,0);
     assert.ok(v.minimumQueuedFrames>0);assert.ok(v.stackMarginBytes>=0);
   }
+  assert.deepEqual(counts,[0,8,1]);assert.equal(code.size,2);
 });
 
 for(const entry of catalog.entries){
