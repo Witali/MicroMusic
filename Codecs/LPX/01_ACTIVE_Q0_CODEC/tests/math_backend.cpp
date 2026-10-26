@@ -69,6 +69,15 @@ static void clip24(int32_t value){
     if(actual!=referenceClip15(value))math_error=16;
     ++math_cases;
 }
+__attribute__((noinline)) static int32_t unsignedProduct(int8_t x,uint16_t y){return (int32_t)x*y;}
+static void unsignedCase(int8_t x,uint16_t y){
+    const int32_t actual=lpx4Mul8xU16(x,y);checkZero(actual);
+    if(actual!=unsignedProduct(x,y))math_error=23;
+    ++math_cases;
+}
+__attribute__((noinline)) static int32_t scaledRing(int32_t excitation,const int16_t* a,int16_t*& h){
+    return lpx4SynthesisRingQ12<true>(excitation*16,a,h);
+}
 // Keep this second unrolled ASM kernel out of main: AVR-GCC underestimates
 // assembler .rept size when choosing relative branches in a giant test body.
 __attribute__((noinline)) static void ringCase(int32_t excitation,const int16_t* a,const int16_t* original,int32_t expected,uint8_t cursor){
@@ -82,6 +91,11 @@ __attribute__((noinline)) static void ringCase(int32_t excitation,const int16_t*
     const int32_t actual=lpx4SynthesisRingQ12(excitation,a,history);checkZero(actual);
     if(actual!=excitation-expected || history!=mirrored+cursor)math_error=19;
     for(uint8_t i=0;i<20;i++)if(mirrored[i]!=beforeRing[i])math_error=20;
+    ++math_cases;
+    history=mirrored+cursor+10;
+    const int32_t scaled=scaledRing(excitation,a,history);checkZero(scaled);
+    if(scaled!=excitation-expected || history!=mirrored+cursor)math_error=24;
+    for(uint8_t i=0;i<20;i++)if(mirrored[i]!=beforeRing[i])math_error=25;
     ++math_cases;
 }
 template<uint8_t bits> __attribute__((noinline)) static void lpcCase(int16_t prev,int16_t cur,uint8_t t){
@@ -164,12 +178,14 @@ int main(){
             const int32_t actual=lpx4Mul8x16(byteEdges[i],(int16_t)bits);checkZero(actual);
             if(actual!=product(byteEdges[i],(int16_t)bits))math_error=15;
             ++math_cases;
+            unsignedCase(byteEdges[i],bits);
         }while(++bits);
     }
     for(int16_t x=-128;x<128;x++)for(uint8_t i=0;i<11;i++){
         const int32_t actual=lpx4Mul8x16((int8_t)x,edges[i]);checkZero(actual);
         if(actual!=product(x,edges[i]))math_error=15;
         ++math_cases;
+        unsignedCase((int8_t)x,(uint16_t)edges[i]);
     }
     for(uint8_t i=0;i<11;i++)for(uint8_t j=0;j<11;j++)
         scalar(edges[i],edges[j],(int32_t)((uint32_t)(uint16_t)edges[i]<<16 | (uint16_t)edges[j]));

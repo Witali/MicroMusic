@@ -2845,6 +2845,16 @@ builds with5,225,096 cases pass with IRQ/r1. The native
 not AVR time; retained hashes tie the counts to the fixed input manifest.
 [Variants and full evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
 
+### LPX: cache the exact Q4 excitation scale per block
+
+AVR5/GCC7.3 -Os. Cache scale*16 once per80 samples in the existing unsigned16 field; step<=4016 gives<=64256. An exact signed8 x unsigned16 helper feeds the Q4 synthesis accumulator directly, omitting sixteen initial shift instructions. Per-product floors and final shift stay unchanged. The C template divides the exact multiple of16 before the original sum; LPX4_EXCITATION_Q4=0 selects the old input units on C/ASM. Generic synthesis defaults retain the old units, and both linear/mirrored histories work. Architecture/ASM selection and hardware Flash access remain independent.
+
+Measured round11:2736686405 ->2690423444 wall cycles over91 active-IRQ images,
+1.690474% less time,-22 B Flash/image, SRAM1102 B, minimum stack
+margin820 B. Golden PCM16/PWM and AVR PWM exact, zero underruns.
+97 host tests and nine C/ASM/generic x unroll builds with5,768,584 cases pass with IRQ/r1, including527,104 unsigned products and16,384 Q4 ring vectors. All six long IRQ controls pass. The expanded C oracle needs2,077,224,978 cycles, so the test runner cap was raised from2 to3 billion and rebuilt; coverage was retained. No new fuzz run is claimed in this arithmetic round.
+[Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
 ## UM88: page-local FIFO
 
 [Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.

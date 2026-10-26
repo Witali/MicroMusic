@@ -122,6 +122,22 @@ static inline __attribute__((always_inline)) int32_t lpx4Mul8x16(int8_t x,int16_
 #endif
 }
 
+// Exact signed8 x unsigned16; full product fits signed24 even for x=-128.
+static inline __attribute__((always_inline)) int32_t lpx4Mul8xU16(int8_t x,uint16_t y){
+#if LPX4_USE_AVR_ASM
+    int32_t result;
+    __asm__(
+        "mulsu %1,%A2\n\tmovw %A0,r0\n\t"
+        "mov %C0,r1\n\tlsl %C0\n\tsbc %C0,%C0\n\t"
+        "mulsu %1,%B2\n\tadd %B0,r0\n\tadc %C0,r1\n\t"
+        "mov %D0,%C0\n\tlsl %D0\n\tsbc %D0,%D0\n\tclr __zero_reg__\n\t"
+        : "=&r"(result) : "a"(x),"a"(y) : "r0","r1","cc");
+    return result;
+#else
+    return (int32_t)x*y;
+#endif
+}
+
 // Pitch gain0..31, history code -32..31: rounded Q4 lies in -62..60.
 // Extract product bits4..11 with two nibble swaps instead of 16-bit shifts.
 static inline __attribute__((always_inline)) int8_t lpx4PitchQ4(int8_t x,uint8_t gain){
@@ -231,13 +247,14 @@ static inline int32_t lpx4DotQ12(const int16_t* a,int16_t* h){
     "andi r23,0xf0\n\t" \
     "sub %A0,r23\n\tsbc %B0,r24\n\tsbc %C0,r25\n\tsbc %D0,r16\n\t" \
     "sbrc r25,7\n\tinc %D0\n\t"
+template<bool excitationQ4=false>
 static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16_t* h){
 #if LPX4_USE_AVR_ASM
     int32_t result=excitation;
     a+=10;h+=10;
     __asm__ (
         "clr r16\n\t"
-        ".rept 4\n\tlsl %A0\n\trol %B0\n\trol %C0\n\trol %D0\n\t.endr\n\t"
+        ".if %3\n\t.rept 4\n\tlsl %A0\n\trol %B0\n\trol %C0\n\trol %D0\n\t.endr\n\t.endif\n\t"
         "ld r19,-X\n\tld r18,-X\n\tld r21,-Z\n\tld r20,-Z\n\t"
         LPX4_SYNTH_MUL
 #if LPX4_AVR_DOT_UNROLL!=9
@@ -254,7 +271,7 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
         ".rept 4\n\tasr %D0\n\tror %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t"
         "clr __zero_reg__\n\t"
         : "+&r" (result), "+z" (h), "+x" (a)
-        :
+        : "I"(!excitationQ4)
         : "r0","r1","r16","r18","r19","r20","r21",
 #if LPX4_AVR_DOT_UNROLL!=9
           "r17",
@@ -263,7 +280,7 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
     );
     return result;
 #else
-    int32_t result=excitation;
+    int32_t result=excitationQ4?excitation/16:excitation;
     for(int8_t i=9;i>=0;i--){
         result-=((int32_t)a[i]*h[i])>>12;
         if(i<9)h[i+1]=h[i];
@@ -275,12 +292,13 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
 // samples in reverse temporal order; return it advanced back by ten words.
 // The caller then writes the new sample to h[0] and h[10]. Preconditions and
 // Q4 bounds match SynthesisQ12; this helper never shifts/stores old samples.
+template<bool excitationQ4=false>
 static inline __attribute__((always_inline)) int32_t lpx4SynthesisRingQ12(int32_t excitation,const int16_t* a,int16_t*& h){
 #if LPX4_USE_AVR_ASM
     int32_t result=excitation;
     __asm__ (
         "clr r16\n\t"
-        ".rept 4\n\tlsl %A0\n\trol %B0\n\trol %C0\n\trol %D0\n\t.endr\n\t"
+        ".if %3\n\t.rept 4\n\tlsl %A0\n\trol %B0\n\trol %C0\n\trol %D0\n\t.endr\n\t.endif\n\t"
         "ld r18,X+\n\tld r19,X+\n\tld r21,-Z\n\tld r20,-Z\n\t"
         LPX4_SYNTH_MUL
 #if LPX4_AVR_DOT_UNROLL!=9
@@ -296,7 +314,7 @@ static inline __attribute__((always_inline)) int32_t lpx4SynthesisRingQ12(int32_
         ".rept 4\n\tasr %D0\n\tror %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t"
         "clr __zero_reg__\n\t"
         : "+&r" (result), "+z" (h), "+x" (a)
-        :
+        : "I"(!excitationQ4)
         : "r0","r1","r16","r18","r19","r20","r21",
 #if LPX4_AVR_DOT_UNROLL!=9
           "r17",
@@ -305,7 +323,7 @@ static inline __attribute__((always_inline)) int32_t lpx4SynthesisRingQ12(int32_
     );
     return result;
 #else
-    int32_t result=excitation;
+    int32_t result=excitationQ4?excitation/16:excitation;
     for(uint8_t i=0;i<10;i++)result-=((int32_t)a[i]*h[-1-i])>>12;
     h-=10;
     return result;

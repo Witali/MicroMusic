@@ -276,6 +276,9 @@ bool Lpx4HybridCore::readBlock(){
   blockScale_=(uint8_t)target;
  }
  blockStep_=scaleStep(blockScale_);
+#if LPX4_EXCITATION_Q4
+ blockStep_<<=4; // 4016*16=64256 fits unsigned16.
+#endif
  return !error_;
 }
 bool Lpx4HybridCore::readSubframe(){
@@ -618,15 +621,19 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
     lastQ_=q;
 #endif
     const uint16_t step=blockStep_;
+#if LPX4_EXCITATION_Q4
+    const int32_t excitation=lpx4Mul8xU16(q,step);
+#else
     // q is signed8 and the exact reconstructed step is 0..4016.
     const int32_t excitation=lpx4Excitation(q,step);
+#endif
 #if LPX4_LPC_RING
     // subPos already repeats every20 samples; no separate ring cursor is needed.
     int16_t* history=hist_+(subPos_<10?subPos_:subPos_-10)+10;
-    int16_t pred=lpx4Clip15From24(lpx4SynthesisRingQ12(excitation,a_,history));
+    int16_t pred=lpx4Clip15From24(lpx4SynthesisRingQ12<LPX4_EXCITATION_Q4>(excitation,a_,history));
     history[0]=history[10]=pred;
 #else
-    int16_t pred=lpx4Clip15From24(lpx4SynthesisQ12(excitation,a_,hist_));
+    int16_t pred=lpx4Clip15From24(lpx4SynthesisQ12<LPX4_EXCITATION_Q4>(excitation,a_,hist_));
     hist_[0]=pred;
 #endif
     int16_t deemph=preQ14_?lpx4AddClip15(pred,lpx4AttenuateQ14(preQ14_,prevDeemph_)):pred;

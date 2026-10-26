@@ -13,6 +13,15 @@
 #error LPX4_LPC_RING must be 0 or 1
 #endif
 
+// Cache scale*16 per block and feed synthesis an exact Q4 excitation.
+// Zero retains the original unscaled input, on C and ASM alike.
+#ifndef LPX4_EXCITATION_Q4
+#define LPX4_EXCITATION_Q4 1
+#endif
+#if LPX4_EXCITATION_Q4 != 0 && LPX4_EXCITATION_Q4 != 1
+#error LPX4_EXCITATION_Q4 must be 0 or 1
+#endif
+
 // Optional compact-container parser. Zero keeps the original v2-only build.
 // 4 scale repeat, 8 width repeat, 16 subheader repeat, 32 zero headers,
 // 64 small LSF Rice deltas. The stream may only use compiled feature bits.

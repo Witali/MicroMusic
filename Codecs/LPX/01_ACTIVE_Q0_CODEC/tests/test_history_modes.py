@@ -11,11 +11,11 @@ class HistoryModeTests(unittest.TestCase):
     def test_linear_mirrored_and_c_fallback_match_model(self):
         original=source();samples=int.from_bytes(original[8:12],'little')
         expected=decode_pcm16(original)
-        for mirrored in (0,1):
-            with self.subTest(mirrored=mirrored),tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as td:
+        for mirrored,scaled in ((0,0),(0,1),(1,0),(1,1)):
+            with self.subTest(mirrored=mirrored,scaled=scaled),tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as td:
                 dll=Path(td)/'history.so'
                 subprocess.run(['g++','-O2','-shared','-fPIC','-std=c++11',
-                    f'-DLPX4_LPC_RING={mirrored}','-DLPX4_V3_FEATURES=124',
+                    f'-DLPX4_LPC_RING={mirrored}',f'-DLPX4_EXCITATION_Q4={scaled}','-DLPX4_V3_FEATURES=124',
                     '-DLPX4_ENABLE_ASM=0','-I'+str(ROOT/'src'),str(ROOT/'src/Lpx4HybridCore.cpp'),
                     str(ROOT/'src/native_batch_decoder.cpp'),'-o',str(dll)],check=True,capture_output=True)
                 decoder=BatchDecoder(dll)
