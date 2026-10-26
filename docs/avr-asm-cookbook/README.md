@@ -2535,6 +2535,55 @@ C fallback remains exact but 146.538% and 32390 underruns. Sources/tables and
 backend selectors are unchanged; this is not an arithmetic speedup or a
 27-case/hardware admission claim. [Three-case measurements and listening provenance](../../Codecs/LPX/research/q0-8kbps-2026-10-25/README.md).
 
+### LPX: exact table reduction and next decoder candidates (host proof only)
+
+The current Q0 tables admit smaller exact representations. The original
+project [standard-library checker](examples/lpx-exact-tables.py) verifies
+256 scale values, 257 cosine values and all 4096 interpolated cosine inputs.
+This is an algebraic host proof, not assembled code or a measured AVR gain.
+It applies to the pinned table hashes printed by the checker.
+
+For the scale index `i`, store sixteen unsigned16 mantissas (32 B), then
+compute `((mantissa[i & 15] >> (15 - (i >> 4))) + 1) >> 1`. The largest
+mantissa is 8032, every intermediate fits unsigned16 and shifts are 0..15.
+All 256 values exactly match the current 512 B table, including zero aliases.
+The mantissas were derived by intersecting the sixteen integer rounding
+intervals for each low nibble; no approximate exponential is required.
+For cosine, keep indices 0..128 and recover later indices by
+`cos[i] = -cos[256-i]`, including index 256. Its table falls 514 to 258 B.
+Combined raw tables fall 1026 to 290 B (736 B); helper code reduces the net
+Flash saving and must be measured. Keep real Flash reads outside arithmetic.
+
+Candidate order for AVR5/GCC7.3.0 `-Os`, explicit ASM with portable C fallback:
+
+1. Cache the scale value per 80-sample block instead of reading it every sample;
+   add 2 B state, handle repeat/implicit-zero modes and repeated `begin()`.
+   Combine with compact scale arithmetic at block boundaries, not per sample.
+2. Remove `previousQuant_[10]` only after proving its invariant with `cur_`:
+   current initialization and successful frame updates assign equal values.
+   This removes 20 B of array storage; measure final object alignment/code.
+3. Replace the excitation's generic signed16 multiply with a separate exact
+   signed8-by-positive12 helper; retain the full-range generic math interface.
+   Later consider fusing excitation-minus-LPC in a signed24 accumulator,
+   preserving each product's Q12 floor, clipping and history update order.
+4. Avoid repeated static-spectrum LPC copies. A transition from changing to
+   static spectra still needs the final anchor copied. Optional bandwidth
+   expansion modifies the coefficients, so it must not silently accumulate.
+5. Only after timing improves, retest queue 256 / unroll 3 on the new corpus;
+   smaller buffers previously failed a different longer/heavier workload.
+
+For smaller streams, extend the current multi-seed shortlist to retain a
+size/time frontier rather than only the minimum-SSE candidate. Reuse the
+existing offline timing gate, then measure full ELF and active-IRQ bursts
+for the finalists. Exact mode repacking already exists; a shorter Rice or
+sparse description can cost more CPU. Do not assume additive cycle costs
+across changed bit alignment/IRQ phases, or add a new entropy decoder first.
+
+No decoder, format or default profile changes are made by this note.
+Require full native/C/ASM PCM and active-IRQ AVR PWM equivalence, malformed
+input tests, per-stream total ELF/SRAM/stack, 160-sample windows and long
+continuous playback before claiming speed, size or real-time support.
+
 ## UM88: page-local FIFO
 
 [Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.
