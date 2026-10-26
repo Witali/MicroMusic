@@ -2501,3 +2501,45 @@ spectral magnitude reaches zero, and regularized power relative error reaches
 9.87%/6.41%. Preserve cancellation-sensitive operation boundaries and examine
 phase decisions before assuming more twiddle bits solve the problem. This
 negative result concerns numerical correctness, not a measured speed gain.
+
+### Retain cancellation with a common integer grid and original rounding
+
+The next [main-spectrum C candidate](../../Codecs/Codec2/src/faithful_analysis.c)
+uses one block exponent, signed64 containers and configurable 24..56-bit
+effective grid width. Every original scalar product/add/subtract rounds to
+24 significant bits, ties to even. Read pinned twiddles as binary32 bits,
+using their 24-bit significand and power-of-two scale; a single Q30 grid
+would discard significant bits of the tiny sin/cos residues near multiples
+of pi. Boundary conversion and L1 scale selection remain float. The
+arithmetic is integer; the remaining decoder phase/power stages still float.
+This preserves numerical behavior, not a measured speedup.
+
+An important range constraint avoids 96-bit multiplication: each grid value
+has at most 24 significant bits after explicit rounding. Remove trailing
+zeros losslessly, multiply two 24-bit significands into unsigned64 (at most
+48 bits), round, then align to the common grid. Signed addition stays below
+the 56-bit configured range with guard bits. Zero/subnormal input decoding
+and large right shifts are explicit. Negative signed shifts and CPU/memory
+macro overrides are absent. KISS BSD notices and pinned table provenance
+are retained; earlier portable C backends remain explicitly selectable.
+
+A bit-by-bit search of 24..48-bit grids finds **40 bits** as the minimum on
+the same complete native corpus/gate plus identical per-frame RNG. At 39 bits,
+SNR 57.27 dB passes but max error 421 fails; at 40 bits the entire PCM is
+byte-identical to the preceding weighting-only decoder (57.54 dB/max 237 to
+upstream). The intermediate spectrum is not byte-identical: stress SNR
+205.94 dB/max error 3.815e-6. Wider grids do not change this corpus's PCM.
+[All 25 configurations](../../Codecs/Codec2/reports/faithful-precision.json).
+
+ATmega64A AVR5/MUL, ordinary C ABI, AVR-GCC 7.3.0 `-Os`: 64 identical
+zero/basis/cancellation/random vectors at scales 2^-16..2^16 produce
+byte-identical native checked C and AVR results for all 257 complex bins.
+Standalone Flash is 20,160 B, static SRAM 2102 B, stack 1020 B; mean cost
+19,292,650 cycles. [Kernel evidence](../../Codecs/Codec2/reports/analysis-kernel.json).
+Only a **two-frame-per-stream full-algorithm smoke** has run: 43,504 B Flash,
+711 B static +3314 B stack =4025/4096 B, leaving 71 B; mean 50.53/51.26 million
+cycles EN/RU. It is slower than the preceding profile and lacks SRAM margin
+for a claimed streaming system. [Partial baseline](../../Codecs/Codec2/reports/analysis-smoke.json).
+Reduce wide temporary lifetimes/ABI spills and investigate selective faithful
+rounding, then qualify complete AVR streams. No IRQ, board, live-speech or
+real-time support is established by this candidate.
