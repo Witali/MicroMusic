@@ -227,6 +227,46 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
     return result;
 #endif
 }
+// Same exact sum, read-only mirrored history. h points just past ten old
+// samples in reverse temporal order; return it advanced back by ten words.
+// The caller then writes the new sample to h[0] and h[10]. Preconditions and
+// Q4 bounds match SynthesisQ12; this helper never shifts/stores old samples.
+static inline __attribute__((always_inline)) int32_t lpx4SynthesisRingQ12(int32_t excitation,const int16_t* a,int16_t*& h){
+#if LPX4_USE_AVR_ASM
+    int32_t result=excitation;
+    __asm__ (
+        "clr r16\n\t"
+        ".rept 4\n\tlsl %A0\n\trol %B0\n\trol %C0\n\trol %D0\n\t.endr\n\t"
+        "ld r18,X+\n\tld r19,X+\n\tld r21,-Z\n\tld r20,-Z\n\t"
+        LPX4_SYNTH_MUL
+#if LPX4_AVR_DOT_UNROLL!=9
+        "ldi r17," LPX4_STRING(9/LPX4_AVR_DOT_UNROLL) "\n\t1:\n\t"
+#endif
+        ".rept " LPX4_STRING(LPX4_AVR_DOT_UNROLL) "\n\t"
+        "ld r18,X+\n\tld r19,X+\n\tld r21,-Z\n\tld r20,-Z\n\t"
+        LPX4_SYNTH_MUL
+        ".endr\n\t"
+#if LPX4_AVR_DOT_UNROLL!=9
+        "dec r17\n\tbreq 2f\n\trjmp 1b\n\t2:\n\t"
+#endif
+        ".rept 4\n\tasr %D0\n\tror %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t"
+        "clr __zero_reg__\n\t"
+        : "+&r" (result), "+z" (h), "+x" (a)
+        :
+        : "r0","r1","r16","r18","r19","r20","r21",
+#if LPX4_AVR_DOT_UNROLL!=9
+          "r17",
+#endif
+          "r22","r23","r24","r25","cc","memory"
+    );
+    return result;
+#else
+    int32_t result=excitation;
+    for(uint8_t i=0;i<10;i++)result-=((int32_t)a[i]*h[-1-i])>>12;
+    h-=10;
+    return result;
+#endif
+}
 #undef LPX4_SYNTH_MUL
 #undef LPX4_DOT_PRODUCT
 #undef LPX4_DOT_PRODUCT_BYTES

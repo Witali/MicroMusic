@@ -4,6 +4,15 @@
 #define LPX4_ALLOW_SPARSE 1
 #endif
 #define LPX4_MAX_PULSES 10
+// Mirrored LPC history removes per-sample history shifts, spending 20 B RAM.
+// Zero retains the smaller linear history with identical output on C/ASM.
+#ifndef LPX4_LPC_RING
+#define LPX4_LPC_RING 1
+#endif
+#if LPX4_LPC_RING != 0 && LPX4_LPC_RING != 1
+#error LPX4_LPC_RING must be 0 or 1
+#endif
+
 // Optional compact-container parser. Zero keeps the original v2-only build.
 // 4 scale repeat, 8 width repeat, 16 subheader repeat, 32 zero headers,
 // 64 small LSF Rice deltas. The stream may only use compiled feature bits.
@@ -81,7 +90,7 @@ private:
     Error error_;
     bool initializedFrame_;
     bool lsfCached_,staticSpectrum_;
-    int16_t a_[10],hist_[10];
+    int16_t a_[10],hist_[LPX4_LPC_RING?20:10];
     int8_t ringQ_[256];
 #if LPX4_ALLOW_SPARSE
     uint8_t pulsePos_[LPX4_MAX_PULSES];

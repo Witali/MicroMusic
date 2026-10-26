@@ -1,0 +1,37 @@
+{
+  "scope": "Native semantic route counts; not AVR cycle estimates",
+  "points": 111,
+  "unique": 91,
+  "samples": 2912000,
+  "manifest_sha256": "4e70e5103ab14aab92312d8cc027a11899d0651650657e7c667db1036d70de89",
+  "probe_sha256": "7e69afc264e79003ef957ce6579aebbb59e79841fc10fc1c703b7a89b719317e",
+  "counts": {
+    "zero_direct": 351840,
+    "raw_direct": 138600,
+    "rice_direct": 44040,
+    "huffman": 57720,
+    "pitch_rice": 1381520,
+    "pitch_literal": 0,
+    "sparse": 938280,
+    "cached_zero_pitch_k0": 660474,
+    "sparse_exhausted_before_sample": 680145,
+    "pitch_rice_by_k": [
+      1240280,
+      125240,
+      15560,
+      440,
+      0,
+      0,
+      0
+    ],
+    "zero_delta_by_k": [
+      754796,
+      31955,
+      1959,
+      27,
+      0,
+      0,
+      0
+    ]
+  }
+}

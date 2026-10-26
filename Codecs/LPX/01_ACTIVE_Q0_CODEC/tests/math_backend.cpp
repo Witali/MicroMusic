@@ -69,6 +69,21 @@ static void clip24(int32_t value){
     if(actual!=referenceClip15(value))math_error=16;
     ++math_cases;
 }
+// Keep this second unrolled ASM kernel out of main: AVR-GCC underestimates
+// assembler .rept size when choosing relative branches in a giant test body.
+__attribute__((noinline)) static void ringCase(int32_t excitation,const int16_t* a,const int16_t* original,int32_t expected,uint8_t cursor){
+    int16_t mirrored[20],beforeRing[20];
+    for(uint8_t i=0;i<10;i++){
+        const uint8_t slot=(cursor+9-i)%10;
+        mirrored[slot]=mirrored[slot+10]=original[i];
+    }
+    for(uint8_t i=0;i<20;i++)beforeRing[i]=mirrored[i];
+    int16_t* history=mirrored+cursor+10;
+    const int32_t actual=lpx4SynthesisRingQ12(excitation,a,history);checkZero(actual);
+    if(actual!=excitation-expected || history!=mirrored+cursor)math_error=19;
+    for(uint8_t i=0;i<20;i++)if(mirrored[i]!=beforeRing[i])math_error=20;
+    ++math_cases;
+}
 int main(){
 #ifdef __AVR__
     TCCR1A=TCCR1B=0;OCR1A=1999;
@@ -155,6 +170,7 @@ int main(){
         if(h[0]!=original[0])math_error=10;
         for(uint8_t i=1;i<10;i++)if(h[i]!=original[i-1])math_error=11;
         ++math_cases;
+        ringCase(excitation,a,original,expected,n%10);
     }
 #ifdef __AVR__
     cli();TCCR1B=0;

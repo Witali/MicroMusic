@@ -2761,6 +2761,36 @@ unroll1/3/9 builds pass4,946,305 arithmetic cases each with IRQ/r1, including
 935,424 dense/edge saturation cases;95 host tests pass.
 [Contracts, real route counts and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
 
+### LPX: mirrored LPC history without per-tap stores
+
+AVR5/GCC7.3 `-Os`, existing explicit-ASM selector and equivalent C arithmetic:
+two mirrors of ten signed16 history values replace nine per-sample shifts.
+Derive cursor modulo10 from existing subPos0..19, avoiding another state byte.
+Read history backwards from hist+cursor+10 and coefficients forwards; the
+read-only sum's pointer finishes at hist+cursor, then write pred to h[0]/h[10].
+Every Q4 partial sum fits the proven signed27 bound, so changing summation
+order is exact. Clear both mirrors on constructor/begin. Keep a memory clobber
+on the ASM reads so later caller stores cannot move ahead of the sum.
+LPX4_LPC_RING=0 retains the smaller linear memory path; C can explicitly use
+either memory choice on AVR. Real Flash access remains independent of ASM.
+
+Measured round7:2969411557 ->2876590582 wall cycles over91 full IRQ images,
+3.125905% less time,+4 B Flash/image,+20 B SRAM(1102 total),minimum measured
+stack margin814 B. Golden native PCM16/PWM and AVR PWM exact, zero underruns;
+old eight-second standard+100 IRQ1422.088 ->1386.439 cycles/sample.96 host
+tests,566,610 ASan/UBSan reset/mutation cases and all nine C/ASM/generic x
+unroll1/3/9 builds with4,962,689 math cases pass. The16,384 new ring vectors
+check all cursor positions, read-only memory and the returned write pointer.
+
+AVR-GCC's size estimate for expanded .rept blocks caused relative relocation
+overflow when both large kernels were put in one test main. A separate noinline
+ring-oracle function fixes the test linkage while preserving coverage; the
+production caller has one chosen kernel and links normally.
+The [native route probe](examples/lpx-route-counts.cpp) is a diagnostic counter,
+not a timing estimate; its actual corpus counts identify62.88% simple excitation
+cases for the next measured round.
+[Bounds, RAM tradeoff, full vectors and route counts](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
 ## UM88: page-local FIFO
 
 [Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.

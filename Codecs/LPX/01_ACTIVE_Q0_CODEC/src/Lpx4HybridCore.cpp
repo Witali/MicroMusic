@@ -70,6 +70,9 @@ Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),cursor_(0),sampleCount_(0),
 #endif
  lsfCached_=false;staticSpectrum_=false;
  for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i]=a_[i]=hist_[i]=0;
+#if LPX4_LPC_RING
+ for(uint8_t i=10;i<20;i++)hist_[i]=0;
+#endif
  for(uint16_t i=0;i<256;i++)ringQ_[i]=0;
 }
 int16_t Lpx4HybridCore::clamp(int32_t n,int16_t low,int16_t high){
@@ -105,6 +108,9 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
  lsfConverts_=bitCalls_=romByteCalls_=0;
 #endif
  for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i]=a_[i]=hist_[i]=0;
+#if LPX4_LPC_RING
+ for(uint8_t i=10;i<20;i++)hist_[i]=0;
+#endif
  for(uint16_t i=0;i<256;i++)ringQ_[i]=0;
  if(!input||size<20){error_=BAD_HEADER;return false;}
  if(readByte()!='L'||readByte()!='4'||readByte()!='H'||readByte()!='Y'){
@@ -555,8 +561,15 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
     const uint16_t step=blockStep_;
     // q is signed8 and the exact reconstructed step is 0..4016.
     const int32_t excitation=lpx4Excitation(q,step);
+#if LPX4_LPC_RING
+    // subPos already repeats every20 samples; no separate ring cursor is needed.
+    int16_t* history=hist_+(subPos_<10?subPos_:subPos_-10)+10;
+    int16_t pred=lpx4Clip15From24(lpx4SynthesisRingQ12(excitation,a_,history));
+    history[0]=history[10]=pred;
+#else
     int16_t pred=lpx4Clip15From24(lpx4SynthesisQ12(excitation,a_,hist_));
     hist_[0]=pred;
+#endif
     int16_t deemph=preQ14_?lpx4AddClip15(pred,lpx4AttenuateQ14(preQ14_,prevDeemph_)):pred;
     prevDeemph_=deemph;
     int16_t clipped=lpx4ClipQ14(deemph);
