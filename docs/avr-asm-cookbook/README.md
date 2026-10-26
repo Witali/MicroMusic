@@ -2937,6 +2937,20 @@ margin823 B. Golden PCM16/PWM and AVR PWM exact, zero underruns.
 99 host tests, copy/rotate x segments1/2/4 x v2/v3, partial/restart and independent value-copy snapshots pass; default segments2 matches the independent model.566610 ASan/UBSan mutation/reset cases, all six long IRQ controls and a fresh full quality audit pass. Unchanged arithmetic bytes explicitly reuse round13 validation. Rounds17/18/19 give0/0/0.175483% selected gains: three consecutive weak rounds.
 [Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
 
+### LPX: final stopped-run validation and C timing scope
+
+The first three weak rounds are17/18/19(0/0/0.175483% accepted gains).
+The fixed91-stream aggregate is36.703963% faster than5d608739, with
+-496 B Flash/image and+18 B static SRAM. Frozen PCM16/PWM are exact.
+All six long default-ASM IRQ controls pass. Fresh complete64000-sample
+firmware checks also cover ASM linear/reference controls and explicit C.
+C produces the same useful values but has27823(default) or26877(unscaled)
+underruns on the measured heavy16 workload: correctness is not a real-time
+admission. Only the zero-underrun measured ASM configurations receive that claim.
+The fixed-override verifier records actual compiler defines and firmware hashes
+without editing production sources. No board measurements are claimed.
+[Final scope and evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/FINAL_AUDIT_RU.md).
+
 ## UM88: page-local FIFO
 
 [Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.
