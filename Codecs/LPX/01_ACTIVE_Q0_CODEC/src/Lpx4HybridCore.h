@@ -4,6 +4,28 @@
 #define LPX4_ALLOW_SPARSE 1
 #endif
 #define LPX4_MAX_PULSES 10
+// Experimental fixed-rate speech v4. Explicit opt-in; v2/v3 stay unchanged.
+// Uses the same integer synthesis and C/ASM arithmetic backends.
+#ifndef LPX4_ENABLE_SPEECH
+#define LPX4_ENABLE_SPEECH 0
+#endif
+#if LPX4_ENABLE_SPEECH != 0 && LPX4_ENABLE_SPEECH != 1
+#error LPX4_ENABLE_SPEECH must be 0 or 1
+#endif
+#if LPX4_ENABLE_SPEECH && !LPX4_ALLOW_SPARSE
+#error Speech v4 requires LPX4_ALLOW_SPARSE
+#endif
+// Compact speech v5: bounded gap/delta Rice and optional extra innovation.
+// Independent opt-in, while sharing the same arithmetic backend selection.
+#ifndef LPX4_ENABLE_SPEECH_COMPACT
+#define LPX4_ENABLE_SPEECH_COMPACT 0
+#endif
+#if LPX4_ENABLE_SPEECH_COMPACT != 0 && LPX4_ENABLE_SPEECH_COMPACT != 1
+#error LPX4_ENABLE_SPEECH_COMPACT must be 0 or 1
+#endif
+#if LPX4_ENABLE_SPEECH_COMPACT && !LPX4_ENABLE_SPEECH
+#error Compact speech requires LPX4_ENABLE_SPEECH
+#endif
 // Mirrored LPC history removes per-sample history shifts, spending 20 B RAM.
 // Zero retains the smaller linear history with identical output on C/ASM.
 #ifndef LPX4_LPC_RING
@@ -131,6 +153,9 @@ private:
     __attribute__((noinline)) LPX4_TUNE_READERS uint8_t readOne();
     __attribute__((always_inline)) inline int8_t readHuffman3();
     bool readFrame();
+#if LPX4_ENABLE_SPEECH_COMPACT
+    uint8_t readSpeechRice(uint8_t k,uint8_t width);
+#endif
     bool readBlock();
     bool readSubframe();
     __attribute__((always_inline)) inline int16_t pitchPredict() const;
@@ -161,6 +186,12 @@ private:
     uint8_t quantLimit_;
     uint8_t mode_,blockScale_,bitBuffer_,bitsLeft_,riceK_;
     uint8_t subType_,lag_,gain_,ringCursor_;
+#if LPX4_ENABLE_SPEECH
+    uint8_t speechProfile_,speechHalf_;
+#endif
+#if LPX4_ENABLE_SPEECH_COMPACT
+    uint8_t speechCompact_; // bit0 v5, bit7 optional-extra markers
+#endif
 #if LPX4_V3_FEATURES
     uint8_t formatFeatures_;
 #endif

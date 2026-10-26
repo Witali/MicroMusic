@@ -2981,6 +2981,20 @@ The fixed-override verifier records actual compiler defines and firmware hashes
 without editing production sources. No board measurements are claimed.
 [Final scope and evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/FINAL_AUDIT_RU.md).
 
+## LPX speech: measure CPU independently of bitrate
+
+[Bounded exact spectral packing](lpx-speech-compact.md) adds measured
+gap/delta Rice, bounded radix20 arithmetic and collision-safe extra pulses.
+It explicitly compares smaller files with the new parser's total Flash
+cost and records C fallback/active-IRQ limits.
+
+[Fixed-rate speech and shared integer synthesis](lpx-speech-v4.md) records
+the 4/6 kbit/s packet tradeoff, common active-IRQ conditions, full PWM checks,
+Flash/SRAM/stack observations and the C fallback's missed real-time budget.
+On the four measured clips 4k is slightly slower than 6k; do not infer CPU
+cost from compressed size. Existing v2/v3 compatibility is independently
+verified against the frozen 91-stream corpus.
+
 ## UM88: page-local FIFO
 
 [Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.
