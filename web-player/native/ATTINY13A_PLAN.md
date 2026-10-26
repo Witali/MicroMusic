@@ -79,11 +79,14 @@ is observable separately from analog supply-threshold behavior.
 
 ## 3 Timing ambiguities and hardware validation
 
-Availability checkpoint, 2026-10-26: the user confirms that hardware acquisition
-equipment is currently unavailable. Keep actual capture/calibration items open;
-software fixtures and probe decoders do not establish silicon outcomes. Continue
-independent model, correctness and simplification work. Do not request the same
-equipment availability again unless the user changes that situation.
+Availability checkpoint, 2026-10-26: the user has a MH-ET LIVE Tiny88 16 MHz
+USB/Micronucleus board. ATtiny13A and a logic analyzer/oscilloscope have not
+been reported available. A [Tiny88 common-core self-test](devices/attiny88/CORE_PROBE.md)
+is assembled and passes twelve cases in all three software engines, including
+inherited watchdog startup. It has not been uploaded or measured on hardware.
+It cannot close ATtiny13A-specific capture/calibration items. Software fixtures
+and probe decoders do not establish silicon outcomes. Continue independent
+model, correctness and simplification work; do not repeat equipment questions.
 
 - [x] Retain explicit choices for the conflicting first ADC sample timing and
   ADIF behavior under SBI/CBI until measured on ATtiny13A hardware.
