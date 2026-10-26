@@ -2601,6 +2601,28 @@ male12 trial, 5547 B takes 1476.384 cycles/sample versus the 5570 B baseline's
 1306.319; the timing gate correctly rolls back. Defaults are unchanged.
 [Full paired results, source hashes, C fallback, IRQ limits and reproduction](../../Codecs/LPX/research/q0-decoder-size-speed-2026-10-26/README.md).
 
+### LPX: defer Q12 product shifts with an exact Q4 accumulator
+
+Follow-up on AVR5 / ATmega328P, AVR-GCC7.3 `-Os`, explicit ASM and the same
+portable C fallback: after reconstructing the signed24 high product bytes,
+clear the low nibble instead of doing four three-byte right shifts per tap.
+The value is exactly `16 * floor(signed32_product / 4096)`, also for negatives.
+Seed a signed32 accumulator with `16 * excitation`, subtract all ten values,
+then arithmetic-shift the accumulator by four once. Its low nibble is always
+zero. For |excitation| <=524288 and full signed16 tap/history pairs, every
+scaled sum has magnitude <=50331648 and fits signed27. Keep clipping last.
+Sign extension of each subtracted signed24 value uses `sbc` of the top byte
+with zero, followed by conditional `inc` when the product's top bit is set.
+Do not use a C left shift of negative excitation; the scaled path is ASM.
+
+Measured round 1 on the fixed 91 streams: summed active-IRQ decode intervals
+3942532013 ->3787977431 cycles, 3.920186% less time; each full ELF saves
+102 B Flash, unchanged SRAM, zero underruns. Golden native PCM16/PWM and
+useful AVR PWM are exact. C/ASM/generic x unroll1/3/9 pass 1,097,849 math
+cases each with IRQ, history and r1 checks; 92 host tests pass. The long
+old standard +100-IRQ workload improves 1855 ->25 underruns but still fails.
+[Protocol, bounds, full measurements and continuing rounds](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
 ## UM88: page-local FIFO
 
 [Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.

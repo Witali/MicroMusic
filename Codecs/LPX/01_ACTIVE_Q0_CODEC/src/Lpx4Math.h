@@ -103,13 +103,14 @@ static inline __attribute__((always_inline)) int32_t lpx4Mul16(int16_t x,int16_t
 // Ten signed 20-bit products fit a signed 24-bit accumulator. The multiply's
 // partial-product carry pattern follows AVR201 / Speex avr_multiply.h; this
 // unrolled history traversal and per-product shift are LPX-specific.
-#define LPX4_DOT_PRODUCT \
+#define LPX4_DOT_PRODUCT_BYTES \
     "muls r19,r21\n\tmovw r24,r0\n\t" \
     "mul r18,r20\n\tmovw r22,r0\n\t" \
     "mulsu r19,r20\n\tsbc r25,r16\n\t" \
     "add r23,r0\n\tadc r24,r1\n\tadc r25,r16\n\t" \
     "mulsu r21,r18\n\tsbc r25,r16\n\t" \
-    "add r23,r0\n\tadc r24,r1\n\tadc r25,r16\n\t" \
+    "add r23,r0\n\tadc r24,r1\n\tadc r25,r16\n\t"
+#define LPX4_DOT_PRODUCT LPX4_DOT_PRODUCT_BYTES \
     ".rept 4\n\tasr r25\n\tror r24\n\tror r23\n\t.endr\n\t"
 #define LPX4_DOT_MUL LPX4_DOT_PRODUCT \
     "add %A0,r23\n\tadc %B0,r24\n\tadc %C0,r25\n\t"
@@ -157,15 +158,22 @@ static inline int32_t lpx4DotQ12(const int16_t* a,int16_t* h){
 // Exact excitation minus individually rounded Q12 products, with history shift.
 // Precondition: |excitation| <= 524288 (covers signed8 x unsigned12).
 // Ten full-range signed16 products plus excitation fit signed24, including
-// every intermediate subtraction. Clipping remains the caller's final step.
-#define LPX4_SYNTH_MUL LPX4_DOT_PRODUCT \
-    "sub %A0,r23\n\tsbc %B0,r24\n\tsbc %C0,r25\n\t"
+// every intermediate subtraction. The AVR Q4 accumulator needs signed27,
+// fits signed32, and divides by 16 once. Clipping remains the final step.
+// Clear each product's Q4 fractional nibble before subtraction. This keeps
+// every original per-product floor, but defers the accumulator's /16 until
+// after all ten products. Its low nibble remains zero throughout the sum.
+#define LPX4_SYNTH_MUL LPX4_DOT_PRODUCT_BYTES \
+    "andi r23,0xf0\n\t" \
+    "sub %A0,r23\n\tsbc %B0,r24\n\tsbc %C0,r25\n\tsbc %D0,r16\n\t" \
+    "sbrc r25,7\n\tinc %D0\n\t"
 static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16_t* h){
 #if LPX4_USE_AVR_ASM
     int32_t result=excitation;
     a+=10;h+=10;
     __asm__ (
         "clr r16\n\t"
+        ".rept 4\n\tlsl %A0\n\trol %B0\n\trol %C0\n\trol %D0\n\t.endr\n\t"
         "ld r19,-X\n\tld r18,-X\n\tld r21,-Z\n\tld r20,-Z\n\t"
         LPX4_SYNTH_MUL
 #if LPX4_AVR_DOT_UNROLL!=9
@@ -179,7 +187,7 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
 #if LPX4_AVR_DOT_UNROLL!=9
         "dec r17\n\tbreq 2f\n\trjmp 1b\n\t2:\n\t"
 #endif
-        "mov %D0,%C0\n\tlsl %D0\n\tsbc %D0,%D0\n\t"
+        ".rept 4\n\tasr %D0\n\tror %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t"
         "clr __zero_reg__\n\t"
         : "+&r" (result), "+z" (h), "+x" (a)
         :
@@ -201,6 +209,7 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
 }
 #undef LPX4_SYNTH_MUL
 #undef LPX4_DOT_PRODUCT
+#undef LPX4_DOT_PRODUCT_BYTES
 #undef LPX4_DOT_MUL
 #undef LPX4_STRING
 #undef LPX4_STRING_
