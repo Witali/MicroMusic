@@ -133,7 +133,16 @@ All 65,536 signed16 inputs and 1,533 IRQ boundaries pass. Current NB8 saves
 3.0443% mean cycles and 426 B Flash versus the paired-stage baseline; WB12.8
 saves 2.3730% and 432 B. All 198 new ASM PWM images pass active interrupts,
 including both WB modes' voice corpora with 8% extra foreground work.
-[Current source/image/corpus admission](../../Codecs/Speex/AVR/EXACT_ANGLE.md).
+[Cosine-stage source/image/corpus admission](../../Codecs/Speex/AVR/EXACT_ANGLE.md).
+
+**Initialize an IIR sum from its first product (2026-10-26).**
+[First-write MAC, MOVW and three-instruction word negation](speex-iir-seed.md)
+save nine cycles per sample in both warm and steady phases: 360 per block,
+1,440 per NB frame and 2,880 per WB frame. On the ATmega328P/GNU ABI backend,
+NB8 mean improves 1.4527% with 36 B less Flash; WB12.8 improves 1.1710% with
+72 B less Flash. Production C remains selectable and unchanged. Both orders
+pass the same C/ASM/BigInt cases and 76,667 instruction-boundary IRQs.
+[Current source/image/corpus admission](../../Codecs/Speex/AVR/IIR_SEED.md).
 
 ## Как проверять пользу для Speex
 

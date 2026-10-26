@@ -3,7 +3,7 @@
  * Exact modulo-32 arithmetic and transposed-filter coefficient transitions. */
 .text
 /* Source macros share the exact arithmetic without per-tap CALL overhead. */
-.macro IIR_MAC coefficient
+.macro IIR_MAC coefficient, first=0
     .ifc \coefficient,memory
     ld r18, X+
     ld r19, X+
@@ -12,14 +12,21 @@
     .endif
     ld r21, -Z
     ld r20, -Z
-    /* AVR201 method B: signed 16x16 plus accumulator modulo 2^32. */
+    /* Signed 16x16: initialize the accumulator on the first tap; later
+     * taps use AVR201 method B addition modulo 2^32. No zeroing pass. */
     muls r19, r21
+    .if \first
+    movw r24, r0
+    mul r18, r20
+    movw r22, r0
+    .else
     movw r4, r0
     mul r18, r20
     add r22, r0
     adc r23, r1
     adc r24, r4
     adc r25, r5
+    .endif
     mulsu r19, r20
     sbc r25, r2
     add r23, r0
@@ -47,8 +54,7 @@
     rol r22
     .endr
     mov r0, r22
-    mov r22, r24
-    mov r23, r25
+    movw r22, r24
     mov r24, r0
     /* Rounded signed32 >>13 lies in [-262144,262143]. Adding signed16
      * input lies in [-294912,294910], so signed24 is sufficient. */
@@ -90,9 +96,10 @@
     st Z+, r22
     st Z+, r23
     movw r8, r30
-    com r22
+    /* NEG sets C iff the original low byte was nonzero. The high-byte
+     * subtract therefore supplies the exact two's-complement carry. */
     com r23
-    subi r22, 255
+    neg r22
     sbci r23, 255
     /* Y advances to the next sample without a separate address calculation.
      * Mirror/age offsets compensate for the two postincrements. */
@@ -162,11 +169,8 @@ IIR_ENTRY:
     movw r26, r14
     movw r30, r28
     adiw r30, 2*IIR_ORDER
-    clr r22
-    clr r23
-    clr r24
-    clr r25
-    .rept IIR_ORDER
+    IIR_MAC memory,1
+    .rept IIR_ORDER-1
     IIR_MAC memory
     .endr
     IIR_FINISH 1
@@ -191,11 +195,7 @@ IIR_ENTRY:
     sbiw r26,2*(IIR_ORDER-3)
     movw r30, r28
     adiw r30, 2*IIR_ORDER
-    clr r22
-    clr r23
-    clr r24
-    clr r25
-    IIR_MAC r10
+    IIR_MAC r10,1
     IIR_MAC r14
     IIR_MAC r12
     .rept IIR_ORDER-3
