@@ -14,7 +14,7 @@
 - [x] Реализовать offline encoder: LPC analysis, квантование спектра,
   поиск pitch/energy и замкнутый поиск импульсов по фактической integer
   synthesis. Честно зафиксировать ухудшение качества; LPX8 — прежний encoder.
-- [ ] Проверить независимую модель, native C, truncation, malformed headers,
+- [x] Проверить независимую модель, native C, truncation, malformed headers,
   повреждённые параметры, частичные хвосты, restart и compile-time rejection.
   Прогнать существующие host-тесты и frozen 91-stream PCM16/PWM regression.
 - [ ] Сравнить одинаковые полные записи нескольких голосов: original,
@@ -47,3 +47,16 @@ staged content на секреты и личные сведения. Никак�
 2,5 ms sparse pulses, прежний integer synthesis. Общий suite: 104 tests,
 один прежний optional skip. Начальные измерения показывают различия между
 голосами; итоговые выводы будут по всему набору.
+
+Полный frozen regression заново измерен: 91 AVR image, 2912000 samples,
+2495466530 wall cycles (точно round19), PCM16/PWM прежние, underruns=0.
+Новый native speech-enabled build тоже совпал со всеми frozen PCM/PWM.
+ASan/UBSan: 579054 mutation/reset случаев на 408 входах, без ошибок.
+Независимый review: 24 дополнительных random/extreme native/model случая
+(seed43288) совпали; уточнено, что неиспользованный padding MCU не проверяет.
+
+Добавлен encoder-only поиск LPX8 из спектров/возбуждения речевого прототипа:
+побитовый transcode seed в прежний v2/v3, затем старые rate/joint search.
+Приём кандидата требует SSE и STOI не хуже исходного feasible LPX8.
+Отдельный native/model transcode тест прошёл. Ограниченный поиск — не
+доказательство оптимальности формата; провалы LPX8 будут отражены честно.
