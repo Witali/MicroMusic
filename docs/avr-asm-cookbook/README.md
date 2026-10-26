@@ -3054,3 +3054,12 @@ These are simulator measurements for the compact 16-tap QMF profile, not full
 Xiph synthesis or a board measurement. Original project optimization; Xiph
 algorithm/table provenance and BSD notices remain in the codec/vendor files.
 [Admission, bounds, workload and reproduction](../../Codecs/Speex/AVR/HIGHER_BITRATES.md).
+
+
+## Micronucleus EEPROM stream reuse
+
+[EEPROM reads through an existing CRC copier](micronucleus-eeprom-stream.md):
+bounded low-byte cursors that preserve carry, source selection from proven
+zero state, sole-caller inlining, and ACK bookkeeping outside USB bit timing.
+The measured native-read loader is 1318 bytes; no MicroMusic runtime changes
+or physical-board result are implied.
