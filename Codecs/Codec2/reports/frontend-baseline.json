@@ -1,0 +1,115 @@
+{
+  "verified_at_utc": "2026-10-26T10:09:54.545898+00:00",
+  "build": {
+    "upstream_commit": "06d4c11e699b0351765f10398abb4f663a984f36",
+    "host_compiler": "clang version 24.0.0git (https:/github.com/llvm/llvm-project 55ea1f4ebea23d0355d5cdb075f1e12f28ab82d0)",
+    "packets": 11333,
+    "inputs_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+    "expected_sha256": "a84c92490026332a3ee8e228105106ab4a86d41fa59e7afd04d60a95a9b68dac",
+    "host_result": "PASS: 11333 packets, portable C = archived R3 = pinned upstream; invalid lengths/nulls checked",
+    "source_hashes": {
+      "include/codec2_3200.h": "efd6d7d7920f1d076074880f657ec76a7b5f1a202e28836c07c2163552b5c8fb",
+      "src/parameters.c": "52f1777d7a1c2539de1889a3788d6c17a6f03121e51daf8aaff39cb30af3e6b4",
+      "tests/frontend.c": "be55c5d76b4b8e933798660c41afc13722113131d4749b018a7411a59760db97",
+      "tests/avr_frontend.c": "9000e82c9b098ed2b36532860c9417dc4a21012e39ee2d7d434f8be1b25f8269"
+    },
+    "attiny13": {
+      "binary_sha256": "ef06de345e265715fdb163187ba18d1a7e5095690de60a0e3e4b9bcfb99a83d3",
+      "size": "C:\\Work\\MicroMusic\\.worktree\\import-codec2-history\\build\\codec2\\frontend\\attiny13\\frontend.elf  :\nsection                    size      addr\n.text                       440         0\n.data                         0   8388704\n.bss                         44   8388704\n.comment                     17         0\n.note.gnu.avr.deviceinfo     60         0\n.debug_aranges               64         0\n.debug_info                1100         0\n.debug_abbrev               700         0\n.debug_line                 264         0\n.debug_str                  246         0\nTotal                      2935\n\n\n"
+    },
+    "atmega328p": {
+      "binary_sha256": "18a3d01d986364bea624828a49e2ca323fe9dfff9d747f3beebcec0f5f92894f",
+      "size": "C:\\Work\\MicroMusic\\.worktree\\import-codec2-history\\build\\codec2\\frontend\\atmega328p\\frontend.elf  :\nsection                    size      addr\n.data                         0   8388864\n.text                       546         0\n.bss                         44   8388864\n.comment                     17         0\n.note.gnu.avr.deviceinfo     64         0\n.debug_aranges               64         0\n.debug_info                1898         0\n.debug_abbrev              1482         0\n.debug_line                 258         0\n.debug_str                  520         0\nTotal                      4893\n\n\n"
+    },
+    "r2_gnu": {
+      "compiler": "avr-gcc (GCC) 7.3.0",
+      "flash_bytes": 960,
+      "binary_sha256": "7ea61b0e15ab04cee39522e83c2b089562217683d4274a22a358c128ee0f59b8",
+      "identical_to_archived_llvm_binary": false,
+      "shared_prefix_byte_differences": [
+        {
+          "offset": 33,
+          "gnu": 230,
+          "archived": 224
+        }
+      ],
+      "trailing_gnu_bytes": "00"
+    }
+  },
+  "avr_frontend": {
+    "simulator": "avr8js 0.21.1",
+    "inputsSha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+    "expectedSha256": "a84c92490026332a3ee8e228105106ab4a86d41fa59e7afd04d60a95a9b68dac",
+    "results": [
+      {
+        "mcu": "attiny13",
+        "packets": 11333,
+        "mismatches": 0,
+        "flashBytes": 440,
+        "staticSramBytes": 44,
+        "stackBytes": 20,
+        "freeSramAtPeak": 0,
+        "maximumCycles": 4144,
+        "includesInterrupts": false,
+        "binarySha256": "ef06de345e265715fdb163187ba18d1a7e5095690de60a0e3e4b9bcfb99a83d3"
+      },
+      {
+        "mcu": "atmega328p",
+        "packets": 11333,
+        "mismatches": 0,
+        "flashBytes": 546,
+        "staticSramBytes": 44,
+        "stackBytes": 20,
+        "freeSramAtPeak": 1984,
+        "maximumCycles": 4159,
+        "includesInterrupts": false,
+        "binarySha256": "18a3d01d986364bea624828a49e2ca323fe9dfff9d747f3beebcec0f5f92894f"
+      }
+    ]
+  },
+  "r2_machine_code": {
+    "simulator": "avr8js 0.21.1",
+    "binarySha256": "7ea61b0e15ab04cee39522e83c2b089562217683d4274a22a358c128ee0f59b8",
+    "archivedBinarySha256": "0b2a6f8585667edbd3242ba5b1d9411c1f89430e5c1a49d35d7bdfc54be2de6a",
+    "reset": {
+      "expectedPacket": "cdf142268194b782",
+      "gnuCopied": "cdf142268194b782",
+      "archivedCopied": "0000000000000000",
+      "archivedDefect": "LDI r26,0x00 at byte 0x20 instead of LDI r26,0x60"
+    },
+    "streams": [
+      {
+        "name": "speech.c2zx",
+        "frames": 218,
+        "samples": 34880,
+        "packetSha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+        "pcmSha256": "b19d0badcb5e4d63c3d501a759213ee6c8b8bb2d4235d80a8056196f77394a12",
+        "mismatches": 0,
+        "worstSampleCyclesIncludingRcall": 848,
+        "worstDecodeCyclesIncludingRcall": 922
+      },
+      {
+        "name": "codec2_3200_8byte_frames.bin",
+        "frames": 147,
+        "samples": 23520,
+        "packetSha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+        "pcmSha256": "035588525318683bbc7ae389e75040d0a5aa6ad7d246fdfbff85c9fccf739880",
+        "mismatches": 0,
+        "worstSampleCyclesIncludingRcall": 847,
+        "worstDecodeCyclesIncludingRcall": 922
+      }
+    ],
+    "includesInterrupts": false,
+    "scope": "Archived approximate resonator baseline; not full original Codec2 synthesis"
+  },
+  "scope": "Mode-3200 parameter front end and archived approximate R2 baseline; full spectral/phase waveform decoder and active-IRQ streaming remain incomplete.",
+  "sources": {
+    "tools/verify_frontend.py": "daafb819020e235ae023ed9194a4f440aa3a095dd02979b3ee39bd0a7f21e4d7",
+    "tests/verify_frontend_avr.mjs": "bee2e6ea805d01ae21b3cec6a4729efa456b2583396f881151c58e57e86396c7",
+    "tests/verify_r2_binary.mjs": "db4bf4f38fb7b5aae64e4c7f6ff95572d466dba7fd2b48ebc4a847fcb0a31c1b",
+    "vendor/codec2-1.2.0/UPSTREAM.json": "4120cfe95f7d131623f045cabb137a352e45c208a3181e01f265a726f94a00e0",
+    "package-lock.json": "731654000506ab4024787e3dd23b35dd208afbff2db388d71586c2b4e76d0376"
+  },
+  "generated_oracle_sha256": "da43e858e5bc70ef53a24a465efa3de2dd4e76f39bc1b8368b29a81a858f98a1",
+  "generated_codebook_sha256": "0999a140feec6ab29227e860ad330ddbb70e59b7fc6112816db6f948677baab3"
+}

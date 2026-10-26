@@ -2121,3 +2121,13 @@ untested memory-reduction idea. The PWM accumulator's 16/75 divider produces
 four- or five-overflow sample gaps (1024/1280 cycles at timer /1), so testing
 only the 1200-cycle mean misses the shorter deadline. No active-IRQ admission
 or new speed/size improvement is established by this planning calculation.
+
+The [GNU baseline verification](../../Codecs/Codec2/DEVELOPMENT_RU.md)
+now exposes a concrete reason to execute the linked binary: the archived R2
+BIN encodes `LDI r26,0` at byte PC 0x20, although its source says FRAME=0x60.
+Rebuilding the same source with AVR-GCC 7.3.0 links `LDI r26,0x60` correctly.
+The only shared-range byte difference is at 0x21; GNU adds one alignment byte.
+Reset execution verifies the SRAM copy, and direct ISA calls reproduce all
+58,400 archived resonator samples. This is correctness evidence without IRQ,
+not a new optimization or a supported streaming profile. Keep manual-relocation
+experiments separate from a normal linked build and inspect affected opcodes.
