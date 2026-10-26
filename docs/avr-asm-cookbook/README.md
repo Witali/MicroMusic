@@ -2916,6 +2916,17 @@ Separate prototype measurements document the actual experiment.
 Full narrow9 prototype:2,499,853,336 ->2,510,162,819 cycles,-0.412404% gain,+490 B Flash/image,+1 B SRAM. All91 outputs match and have zero underruns, but the aggregate slows. No fresh exhaustive math/r1/fuzz is claimed for the rejected ASM. Restore production bytes to round16 and explicitly reuse its91 measurements, six long controls and tests. A fresh selected-state native quality audit passes.
 [Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
 
+### LPX: rejected split4 byte shifts in the bit reader
+
+Screen right, left and combined byte shifts split into a constant4-bit shift plus a short remainder. AVR may use SWAP/ANDI; global options/profile remain fixed. Right/combined versions slow the two controls. Best left-only retains exact masks/refill/costs and costs12 B Flash, but full-corpus benefit is negligible. Reference expressions remain selectable in the archived prototype patch; production helpers/flags were removed.
+
+Rejected round18: keep the byte-identical previous implementation,0%
+accepted gain, unchanged Flash/RAM. Its91 retained measurements are reused
+explicitly after source-hash equality, rather than claimed as fresh runs.
+Separate prototype measurements document the actual experiment.
+Full left-only prototype:2,499,853,336 ->2,499,796,480 cycles,0.002274% gain,+12 B Flash, unchanged1101 B SRAM. All91 outputs match with zero underruns.98 host tests,4,718,592 reader cases in each of five builds,566610 ASan/UBSan cases and six long IRQ controls pass for the prototype. The selected old sources are byte-identical and explicitly reuse earlier measurements/tests. A fresh selected-state native quality audit passes.
+[Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
 ## UM88: page-local FIFO
 
 [Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.
