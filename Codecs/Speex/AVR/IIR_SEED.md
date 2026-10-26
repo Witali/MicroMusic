@@ -1,5 +1,9 @@
 # Initialize the IIR accumulator from its first product
 
+Historical stage: current sources also include [grouped IIR and phase-specific
+caches](IIR_GROUPS.md). The source-bound gate below applies to this recorded
+first-product revision; current sources use `tests/audit_iir_groups.py`.
+
 The AVR ASM order-8/order-10 filters now save **nine cycles per output sample**
 without changing fixed-point arithmetic, coefficient ages, state layout or
 the public API. Each 40-sample call saves 360 cycles: NB saves 1,440 cycles

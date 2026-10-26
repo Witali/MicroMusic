@@ -108,9 +108,10 @@ speex_avr_lsp_angle:
     mov r24,r25
     mov r25,r26
     brtc .Langle_done
-    com r24
+    /* NEG low supplies the exact high-byte carry, including low == 0. */
     com r25
-    adiw r24,1
+    neg r24
+    sbci r25,255
 .Langle_done:
     clr r1
     ret

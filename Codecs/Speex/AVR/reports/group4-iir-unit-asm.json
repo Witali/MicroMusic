@@ -1,0 +1,38 @@
+{
+  "backend": "asm",
+  "binarySha256": "db3c433f91d03795f1a97c0b298120d15b00fbddd2a339d3680e9b954b9ca007",
+  "mcu": "ATmega328P",
+  "compiler": "AVR GCC 7.3.0",
+  "simulator": "avr8js 0.21.1",
+  "ownAsmStackBytes": 20,
+  "privateAsmCalls": 25809,
+  "privateAsmReturns": 25809,
+  "privateReturnsWithNonzeroR1": 14213,
+  "cases": 7374,
+  "calls": 14748,
+  "samplesPerPath": 294960,
+  "orders": [
+    8,
+    10
+  ],
+  "selectedAndExplicitProductionCExact": true,
+  "independentBigIntOracle": true,
+  "fullSigned16InputNegationSweep": true,
+  "statePageLowBytes": 256,
+  "inPlaceAndSeparate": true,
+  "wholeWorkArenaAndGuardsExact": true,
+  "calleeSavedAndR1AtRet": 7374,
+  "peakStackBytes": 32,
+  "includesInterrupts": false,
+  "physicalBoardTested": false,
+  "primitiveCyclesIncludingRet": {
+    "8": {
+      "min": 11416,
+      "max": 11657
+    },
+    "10": {
+      "min": 13762,
+      "max": 14003
+    }
+  }
+}

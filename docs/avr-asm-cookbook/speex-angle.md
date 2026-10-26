@@ -41,8 +41,9 @@ WB mode with that load and production ISR/queue; input is assumed ready. These
 are measured corpus/ISA results, not board or arbitrary-ISR guarantees.
 [Bounds, source hashes, workloads and reproduction](../../Codecs/Speex/AVR/EXACT_ANGLE.md).
 
-The shorter `COM high; NEG low; SBCI high,255` word negate is now assembled
-and measured in the [IIR kernel](speex-iir-seed.md), with its flag/carry
-constraints and explicit C comparison. Applying it to this cosine leaf's
-reflected path remains an unmeasured follow-up; this leaf is unchanged.
-Rerun its full scalar/IRQ and decoder/PWM admission before selecting that change.
+The shorter `COM high; NEG low; SBCI high,255` word negate is now used in
+the reflected cosine path too. It saves one cycle there, retaining all 65,536
+exact signed16 results and 1,533 IRQ checks; primitive times are now 123/130
+cycles. [The combined grouped-IIR admission](../../Codecs/Speex/AVR/IIR_GROUPS.md)
+records current sources, full PCM and active-PWM evidence. The earlier
+123/131-cycle measurements above describe the preceding cosine stage.

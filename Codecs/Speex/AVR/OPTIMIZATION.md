@@ -10,7 +10,7 @@ separate explicit ASM-enable define must both permit an optimized backend;
 otherwise use C. Hardware memory access stays independent of arithmetic.
 
 The latest implementation and measurements are described in README.md and
-`reports/seed-admission.json`. Earlier
+`reports/group4-admission.json`. Earlier
 reports are stage baselines, not current
 binary measurements. Vendor and R4 files remain unmodified.
 
@@ -44,13 +44,24 @@ The C decoder/player binaries
 remain identical. See `reports/angle-admission.json` and the reusable
 [AVR recipe](../../../docs/avr-asm-cookbook/speex-angle.md).
 
-The current [IIR first-product and word operations](IIR_SEED.md) save nine
+The preceding [IIR first-product and word operations](IIR_SEED.md) save nine
 cycles per sample: 1,440 per NB frame, 2,880 per WB frame. Whole NB8 mean
 improves 1.4527%, WB12.8 1.1710%, with 36/72 B less Flash and unchanged
 SRAM/stack. Both production C filters match independent BigInt on 7,374 cases
 per path, including every signed16 input and all state low bytes. The new
 kernel passes 76,667 executed-boundary IRQs; 47,735 decoder/reset frames stay
 exact. Source/report/image hashes are bound in `reports/seed-admission.json`.
+
+The current [grouped IIR and phase-specific coefficient caches](IIR_GROUPS.md)
+save 247/order-10 and 238/order-8 cycles per 40-sample call. Groups replace
+per-sample wrap checks; immediate rounding frees the counter register, and
+r16:r17 holds the last old warm coefficient followed by the first new steady
+coefficient, directly usable by MULSU. A separate short cosine negate saves
+one cycle per reflected call. Whole NB8 improves 1.0278%, WB12.8 0.8117%;
+Flash falls 4/6 B, static SRAM stays fixed, and WB peak stack grows two bytes.
+The external ABI clears r1; private group returns may keep it dirty. Direct
+C/ASM/BigInt, transposed and instruction-boundary IRQ checks retain exact
+output; source/image/evidence bindings are in `reports/group4-admission.json`.
 
 ## Completed, measured
 
@@ -1412,10 +1423,12 @@ descending entry layout have shipped. They are no longer outstanding candidates.
    work, assembler call distances and compiler-supported leaf annotations.
    Preserve the coefficient age, exact output and portable interface.
 
-2. **Shorten reflected cosine negation.** `COM high; NEG low; SBCI high,255`
-   may replace two COMs and ADIW, saving one reflected-path cycle without
-   increasing size. This is unmeasured; prove all low-byte carry cases and
-   rerun scalar/IRQ, decoder and active-player admission before selecting it.
+2. **Reuse r12:r13 during warm-up.** A fixed Y rewind could free its base
+   pair for the second-last old coefficient. Two warm phases could share the
+   body using T, forwarding the just-written new coefficient for the final
+   output. This remains unmeasured; see the bounds/IRQ constraints in
+   `docs/avr-asm-cookbook/speex-iir-groups.md`. The reflected cosine negate
+   has now shipped and is no longer an outstanding candidate.
 
 No claim of a global speed optimum has been established. Do not mark the
 ongoing optimization goal complete while useful candidates remain untested.
