@@ -51,16 +51,16 @@ speex_avr_lsp_pair4:
     set
     rjmp .Lpair_body4
 .size speex_avr_lsp_pair4,.-speex_avr_lsp_pair4
-.Lpair_body4:
-    STAGE_START4
-    rjmp .Lpair_from3
-.Lpair_body3:
-    STAGE_START3
-.Lpair_from3:
-    STAGE_FROM3
-    rjmp .Lpair_tail2
 .Lpair_body2:
     STAGE_START2
+    rjmp .Lpair_tail2
+.Lpair_body3:
+    STAGE_START3
+    rjmp .Lpair_from3
+.Lpair_body4:
+    STAGE_START4
+.Lpair_from3:
+    STAGE_FROM3
 .Lpair_tail2:
     STAGE_TAIL2
     brts .Lpair_restore
