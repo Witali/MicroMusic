@@ -130,20 +130,27 @@ Outputs are ignored under `build/`. The decoder validation firmware is
 hash. The matrix leaves `speech_ru` as the final demo. Player tests retain the
 captured unsigned PCM as `build/player/player-pwm.u8`.
 
-The current two-root constructor has independent arithmetic, flag, memory and ABI tests:
+Direct arithmetic/ABI tests cover the two-root constructor and LSP stages.
+The IRQ test also preempts every stage instruction boundary:
 
 ```sh
 python Codecs/Speex/AVR/tools/build_lsp_first_test.py --cc clang --avr-gcc avr-gcc --backend c
 python Codecs/Speex/AVR/tools/build_lsp_first_test.py --avr-gcc avr-gcc --backend asm
 node Codecs/Speex/AVR/tests/verify_lsp_first.mjs --backend c
 node Codecs/Speex/AVR/tests/verify_lsp_first.mjs --backend asm
-python Codecs/Speex/AVR/tests/audit_lsp_first.py --rebuild --avr-gcc avr-gcc
+python Codecs/Speex/AVR/tools/build_lsp_stage_test.py --avr-gcc avr-gcc --backend asm --out Codecs/Speex/AVR/build/zero-stage-unit-asm
+node Codecs/Speex/AVR/tests/verify_lsp_stage.mjs --firmware Codecs/Speex/AVR/build/zero-stage-unit-asm
+python Codecs/Speex/AVR/tools/build_lsp_stage_irq_test.py --avr-gcc avr-gcc
+node Codecs/Speex/AVR/tests/verify_lsp_stage_irq.mjs
+python Codecs/Speex/AVR/tests/audit_lsp_zero.py --rebuild --avr-gcc avr-gcc
 ```
 
 The audit consumes the frozen corpus and PWM runs described in
 [OPTIMIZATION.md](OPTIMIZATION.md). Its current result is
-[first-admission.json](reports/first-admission.json). The preceding polynomial-stage
-tests remain available; run their historical source-bound audit at 00e94768.
+[zero-admission.json](reports/zero-admission.json). It binds 80 fresh ASM PWM
+images and 62 unchanged baseline C images. The C source dependencies and
+rebuilt C decoder binaries are identical. Run the preceding constructor
+audit at ddd4f01e and the earlier polynomial-stage audit at 00e94768.
 
 ## Verified results
 
@@ -156,22 +163,22 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
 
 | Build | Flash | Static SRAM | Peak stack | Free SRAM at peak |
 | --- | ---: | ---: | ---: | ---: |
-| Optimized decoder test mailbox, ASM enabled | 10,998 B | 1,099 B | 103 B | 846 B |
-| Full PWM speech demo, including 2,940 B compressed audio | 14,018 B | 1,234 B | 111 B | 703 B |
+| Optimized decoder test mailbox, ASM enabled | 10,986 B | 1,099 B | 103 B | 846 B |
+| Full PWM speech demo, including 2,940 B compressed audio | 14,004 B | 1,234 B | 111 B | 703 B |
 | C fallback decoder test mailbox | 11,562 B | 1,099 B | 105 B | 844 B |
 | Full C PWM speech demo, including 2,940 B audio | 14,872 B | 1,234 B | 114 B | 700 B |
 
-- The two-root ASM constructor reduces weighted NB mean from 103,094.832
-  to 102,578.762 cycles (0.5006%) versus 00e94768 and saves 86 B Flash.
-  Every ASM stream mean improves; observed extrema never increase. SRAM
-  and peak stack stay unchanged. Portable byte-aligned C improves mean
-  by 0.1202% for 28 B extra Flash, with no measured stream regression.
+- Deferring redundant private r1 clears reduces weighted NB mean from
+  102,578.762 to 102,515.127 cycles (0.0620%) versus ddd4f01e,
+  and saves 12 B Flash. Measured stream means/extrema never increase; SRAM
+  and peak stack stay unchanged. C decoder and standalone Q14 math binaries
+  remain byte-identical. Explicit C fallbacks and architecture selection stay unchanged.
 - All 9,100 corpus frames and 4,096 additional pitch/gain coverage frames match
   unmodified upstream s16 PCM. Including 58 LSP/reset and 1,024 zero-gain
   lifetime cases, each backend matches 14,278 frames with one firmware image.
 - Complete player tests on all 31 streams match upstream PCM converted to u8,
   with zero ring underruns and no stack/static-memory collisions.
-- Maximum observed ASM decoder-only corpus frame cost: **109,902 cycles / 6.869 ms**;
+- Maximum observed ASM decoder-only corpus frame cost: **109,830 cycles / 6.864 ms**;
   the 20-ms budget at 16 MHz is 320,000 cycles. ISR and output costs are verified
   separately by the complete-player runs.
 - Primitive tests cover 240,000 complete LSP conversions and 3,670,016 bit fields;
@@ -205,6 +212,13 @@ for the player, PWM ring. Stack peaks are observed during actual ISR execution.
   carry inputs; AVR also checks all pointer low bytes, exact eight writes,
   no input-data loads, guards and ABI. ASM takes 66 cycles including RET for
   every tested root pair, with no own saved stack. Full player runs cover IRQs.
+- Private-stage clear deferral passes the same 256,254 direct AVR cases
+  against forced C and independent BigInt equations, including exact memory
+  accesses and ABI. Stages 2/3/4 take 238/327/416 cycles including RET,
+  versus 240/330/420. A separate compiled MUL-using ISR preempts every entry/
+  instruction boundary over 63 vectors: 15,687 interrupts, including 3,668
+  with nonzero r1, restore all 32 registers, SREG, PC/SP and exact output.
+  This synthetic test does not model hardware entry timing; full PWM runs do.
 - The combined packet reader passes 4,227,072 native groups (every 20-bit
   index group and 13-bit header at each subframe). Both readers also pass
   115,712 AVR groups each, with independent bit-by-bit fields, exact five-byte

@@ -1,0 +1,104 @@
+{
+  "baselineGitCommit": "ddd4f01e",
+  "scope": "Private AVR5 stage r1 liveness; ATmega328P GNU ABI",
+  "beforePrimitiveCyclesIncludingRet": {
+    "2": [
+      240
+    ],
+    "3": [
+      330
+    ],
+    "4": [
+      420
+    ]
+  },
+  "afterPrimitiveCyclesIncludingRet": {
+    "2": [
+      238
+    ],
+    "3": [
+      327
+    ],
+    "4": [
+      416
+    ]
+  },
+  "defaultQ14MathImageByteIdentical": true,
+  "mathImageSha256": "8539206c082db6cecf82657a2177352a62f77253048fbb1e4087558ea0cfe59d",
+  "defaultMathEvidence": "reports/poly-q14-refactor.json retains exact arithmetic/ABI executions of this identical whole image",
+  "explicitCStageUnitByteIdentical": true,
+  "cStageUnitSha256": "ad9ccc31af8bfb938197a67c09f8b5778bd5766563e6a7d43d35128521ffa7e6",
+  "cDecoderImagesByteIdentical": {
+    "nb": "c70f893642c2413fc314532838513e3cfda4cf1564770a86218dae9c719b9efc",
+    "wb": "97b113ad6b53bb2f6cf88e59fe9483c73c97f7a0ea8eaba3817359ba7b180f7a"
+  },
+  "unchangedCCompilationSourceSha256": {
+    "src/avr_fixed.h": "e168583df583c0e1da845259f8cd9ad7b2de5914cc83d9360a3b8fd2f4ee6884",
+    "src/avr_multiply.h": "c380f9e9b552856a5f49ca7317dba60d3de073911e94cef4a364e8ffebc8edac",
+    "src/avr_shift.h": "00f127c09f1a48f4c7e9d788412bd4b553897f769f3923daa8bddd6044caca73",
+    "src/avr_tables.h": "215f56cca897abbd52157be96555b9abf9e16193b82747b7c0eb622b5a5d3799",
+    "src/bits.c": "cbfa395967d45233c49354da8d4b52f5cd913cde063e4f2748974688d5ca0632",
+    "src/compact_lsp.c.inc": "5ac951785925bb7bbe88357ced240679b19b2c925899f84ce506df52ee974ecb",
+    "src/compact_lsp_rates.c.inc": "79eea7833e15d67483d0ce1852fbe12803aac3961050e64df2d4836e63921d28",
+    "src/iir_direct.c.inc": "d194b30f50791e82a3bac0fe3e21e7cbc9e1c248a7d52a836ca19e24bef11537",
+    "src/iir_kernel.inc": "1f43bc42f8feb75a6290f59425c4631356138dbf3c6f6ddc6abe8d20867a7dea",
+    "src/innovation.h": "175692e085fc43a33500053462efeb5b724ca0fbc0db9ad8b541111352716fc2",
+    "src/innovation_core.inc": "6f8871782ee40a0f76d9d649826f91573259210da400bee619eb185a2174eb37",
+    "src/long_pitch.h": "2e0e1a24ca3ea315c84cd8a4745052b66ac256a2a0e1747573b4639cf1bc56f0",
+    "src/nb3_c_math.h": "770bade4d78071df923167bb848b324607151879c475a802a8f96dd58290f4d7",
+    "src/nb3_header.h": "73664dfcb3dd0e317336d54dda3cbbca52f26feaaae7fecd49441e175dde6558",
+    "src/nb3_indices.h": "24f9c668d4d03fec89c0f5dc39f58f7e901c93420b5166bb9b120ea4fa64963e",
+    "src/nb3_interpolate.h": "9166e91a73584db2cd9da00f9a6f3fb35b24d255814d010fcd17d8f22fed069d",
+    "src/nb3_lsp.h": "3782d31d1c9f5b9cf84a1e7e8393c9c55d61efc7cc0adaadac2ee136668a471a",
+    "src/nb3_lsp_finish.h": "41b03398eeaeeae0d6c02da47e49ed7524b8799f25831e70d6dfe33d0ebe55c8",
+    "src/nb3_lsp_first.h": "1153f8c77c5cd2df39b1eb7c44d05e5e695a155dc5bf5e95c6d1db5c2655b9b1",
+    "src/nb3_lsp_stage.h": "0deaff89072a76d0126c6415eef800546824168059608419d966e238ec5e159a",
+    "src/nb3_subframe.h": "1d50ca1ea31231914d81756e42476c0c19c699f4a8c500514ab2952c6229ea88",
+    "src/nb_decode.c.inc": "79171a246ed5bed789de215b7465dba8153603e896bc752723945b50823748ab",
+    "src/packed24.h": "81bc5fa6eb808c94bc88b9989a72712d741f0e68c694bdfaabaa3fd2e97ee30e",
+    "src/pitch24.h": "513294f121452da3747cce62ec3a481db2270a577507a4e3d3a62e4b41534d3e",
+    "src/player.c": "f6258f40dc1e5db0032d54fffaa3c08058963c9c5230a95ddbc4f8284656c5a2",
+    "src/profile_mode.h": "fce0fd42ef9a64d1b8daae51b90adb1514dd6ff1672882fdfc68a93655e3efdc",
+    "src/profile_state.h": "d79dfd5b7bff405c3e2765991e88d7efb9c34b4a797368f203055ad21319f521",
+    "src/qmf_memory.c": "1214176743164b501dcb0a8427a836c4cf2259cbec9ff4192d6e2976e322625d",
+    "src/qmf_memory.h": "8d93278c74a7909d889c1099cbd8d47341df8dcb48e3e555b3a531ca96c88ce1",
+    "src/short_pitch.h": "5357e8f6ca01602d15db987883dbbe8a14a8fecb5ed972ea098743fe0909c4ce",
+    "src/speex_avr.c": "a0f0656e1eaa8d6c87a2dbec1863d13efaf47ff2a5170324e1ced619e0f3d5e8",
+    "src/speex_avr.h": "d798742f2b39cf1a1325f74c1eaee059348481e976f92cb36037c5bb44475a89",
+    "src/speex_nb3.h": "9bdf52f1a8bc3631ad53948c3c5b75feaf194379e2a7b5653a0098ad8d721218",
+    "src/speex_platform.h": "4d8d2c0382b9b316ca9b4fe8382d316e72a2a26ebc2da77750d2f9c89a35d88f",
+    "src/speex_wb1.c": "ceb6ff40d7d32afe9a5e645e62867ba43542dca647970c584fbeb0d6ad61a7f2",
+    "src/speex_wb1.h": "72ddf3645ae728d34b7b3333f9d7e99639500d95d8e51107838272439d9aac00",
+    "src/wb_fold.c": "8beb7a4a5eabe39502ffd0bc037bccc8c3c1c6ef23467aa3e3bc5d56ca9eef72",
+    "src/wb_fold.h": "0a2242da65264c40aaf4ff6dfcf804c0783ba09327bbb5a457b7cd38c46b7fb5",
+    "src/wb_fold_kernel.inc": "dc1e9d2f66ff8d413913e570303f7440f208d504ce1cdb05028e1fda1ba9816d",
+    "src/wb_iir.c": "e7cd0cc4ae7fa9b5e2940fd2f1b18df94f40be965023371ab048e635cfd2f093",
+    "src/wb_iir.h": "add7f3d3e4d78d7a3683deeb44bd43ae77ccbbd28a5be3e1e756b03f82b11ff2",
+    "src/wb_internal.h": "048e85f319f25d311f166fe59f25902194e4b68c7636613147a5cf1fa15f965b",
+    "src/wb_player.c": "b5420260860385ebbe9e4d711bc7adde6b0ec7c5f8707c3cf2c22511a7a7d548",
+    "src/wb_qmf.c": "a0b669839d8d6cb942f2bc8445d78b3b1a58a8839f72cfdd8f9221c6c379dd7b",
+    "src/wb_qmf.h": "e1bbfcbcd68960460bdcee9f2e33099fa0c8b5793d0d8af26f04f8d11c3ea4d9",
+    "src/zero_innovation.h": "389c586eded7020b241f4133acc264cac1939feadb253afeb5df276fb4032d2b",
+    "src/zero_shape_kernel.inc": "a7ed3d54ed9ebf47bbef208f19d70854d054d9bfcf2ddc8e75766210f116375d",
+    "tests/avr_tick.mjs": "603f807d48e4d9cab2f5ae751e4da31f66d172f7578853ecd0ccfb4a13085966",
+    "tests/verify_nb_players.py": "0866dbb708c7e84cdb269fa325746064dc8a3f7789be13b7523a7e55d1026347",
+    "tests/verify_player.mjs": "9d440b92365e1aed180178d8474dc7a23996941e9a216e6c054c446eff3b1335",
+    "tools/apply_profile.py": "49d21e55105e8c14c1937c9d3d3153c5566c1a49ac61bf14cd63de5ce1465850",
+    "tools/build.py": "3c98741c626b08a9189dff8bf64a2d2d48ae09488619d5eae6479e8fedc532a2"
+  },
+  "sourceSha256": {
+    "src/q14_macros.S": "734adfcdb0cc4bbf18e0ed8f59b33822824b5ade4b402fb25d0124e89eae4cc4",
+    "src/lsp_stage.S": "1d09b00adc7f1369effe56bff10ee9f1725d71f5a2e3da2c84c789cb363ea310",
+    "src/nb3_lsp_stage.h": "0deaff89072a76d0126c6415eef800546824168059608419d966e238ec5e159a",
+    "src/nb3_c_math.h": "770bade4d78071df923167bb848b324607151879c475a802a8f96dd58290f4d7",
+    "tests/avr_lsp_stage.c": "f0b7145d285e2569243bef94de8314e29dd0017680fddfc99026d83bb78312d7",
+    "tests/verify_lsp_stage.mjs": "6d1126e5db91d29982962f33df941acf1606016b9e1dc088c54c3590d05d6a2d",
+    "tools/build_lsp_stage_test.py": "0bbb24e6daa3f03611d74d679490d4c214f3ff20e706f44ed2fd5302ac24ce8e",
+    "tests/avr_lsp_stage_irq.c": "fa3d311360a60e85ee24ed002d9aff31dcf59e6ef3131da3b769fe52591b5213",
+    "tests/verify_lsp_stage_irq.mjs": "e4dd47432c0484e9ae590125cc0e9754c195c799be1e6c9c86aa02e557417066",
+    "tools/build_lsp_stage_irq_test.py": "a1bd0e85abcb3f06e202b9f5d2395996d5eed3f087fd3fc92355c98cc680f38b"
+  },
+  "includesSyntheticInterrupts": true,
+  "syntheticIrqModelsHardwareEntryLatency": false,
+  "physicalBoardTested": false
+}

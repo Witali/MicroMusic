@@ -1300,21 +1300,84 @@ verifiers at those paths, the new direct constructor builder/driver, then
 `tests/audit_lsp_first.py --rebuild --avr-gcc avr-gcc`. Run the preceding
 polynomial-stage source-bound audit at 00e94768.
 
+## Deferred private-stage r1 clears (2026-10-26)
+
+The private general Q14 products in stages 2/3/4 no longer clear r1 after
+each MUL chain. No intervening stage instruction consumes r1 as zero or
+crosses an ABI boundary; the next product overwrites it before reading it.
+The final aligned-p1 product still clears r1 before the p0 ADC. Subsequent
+instructions preserve that zero, so the epilogue clear is redundant too.
+Six static CLR instructions disappear, saving 12 B Flash. Per invocation,
+stages 2/3/4 save 2/3/4 cycles: 240/330/420 -> 238/327/416 including RET,
+excluding CALL. Twelve saved register bytes and all memory accesses remain.
+
+`SPEEX_LSP_Q14_BODY a,clear_zero=1` keeps the safe default. Only the private
+stage opts into zero-clear deferral; GNU-ABI value kernels in `q14.S` still
+produce the entire unchanged arithmetic-test image (SHA-256 in
+`reports/zero-kernel-proof.json`). The explicit C stage and NB/WB decoder
+binaries also remain byte-identical. Every production C/header file, backend
+selection and build flag is unchanged; the portable fallback remains selectable.
+
+AVR-LibC's documented GNU convention allows temporary nonzero r1 inside ASM;
+C boundaries require zero, and standard ISR entry saves/clears/restores the
+interrupted value. This stage relies on that existing MUL/ISR contract.
+The new proof compiles an actual C ISR which performs MUL, raises its device-
+defined Timer2 COMPA flag at entry and after every non-RET stage instruction,
+and compares all 32 registers, SREG, return PC/SP, guards and BigInt outputs.
+Across 63 signed-root/coefficient vectors it injects 15,687 interrupts,
+including 3,668 with nonzero r1. All pass. Vector spacing, registers and bits
+come from pinned avr/io.h device definitions. This synthetic proof omits
+hardware entry latency; actual timer/PWM admission is separate.
+
+| Full-corpus ASM measurement | Before (ddd4f01e) | After |
+| --- | ---: | ---: |
+| NB weighted mean cycles | 102,578.762 | 102,515.127 (-0.0620%) |
+| NB maximum cycles | 109,902 | 109,830 |
+| NB Flash / static SRAM / stack | 10,998 / 1,099 / 103 B | 10,986 / 1,099 / 103 B |
+| WB mean cycles | 250,030.239 | 249,924.629 (-0.0422%) |
+| WB maximum cycles | 257,241 | 257,129 |
+| WB Flash / static SRAM / stack | 17,496 / 1,279 / 178 B | 17,484 / 1,279 / 178 B |
+
+Measured stream means and extrema never increase; some rounded NB means
+remain unchanged. NB matches 14,278 original-Xiph exact/reset frames and
+WB matches 10,563 plus 744 compact-profile frames. Direct stages cover all
+65,536 signed16 roots, signed30 limits and all pointer low bytes in 256,254
+cases / 1,025,016 output words per path. Fresh whole-LSP original-Xiph
+geometry and overlapping-output checks also pass (6,208 fused/separate,
+49,680 bounded calls and 12,288 overlapping outputs).
+
+All 80 fresh ASM PWM images pass: 31 NB normal, 31 NB +40% CPU, sixteen
+natural WB recordings and two WB +5% CPU. Output is exact u8, underruns zero,
+queues remain 74/35 NB and 30/15 WB, free SRAM remains 703/452 B. The 62
+previously executed C PWM images are reused because all C compilation
+dependencies are unchanged and rebuilt C NB/WB images are byte-identical.
+They are explicitly historical evidence, not fresh simulations. Current
+representative C players also rebuild byte-identically. The synthetic IRQ
+proof tests context restoration; it does not replace peripheral/player runs.
+
+GCC 7.3.0, enhanced AVR5 / ATmega328P, mixed Os/O2/O3, LTO,
+mcall-prologues/mrelax, 16 MHz; AVR8js 0.21.1 plus the player IRQ model.
+No physical board or other architecture timing is claimed. See
+`reports/zero-admission.json`, `reports/zero-stage-irq.json` and
+`reports/zero-kernel-proof.json`. Reproduce the direct stage and IRQ tests
+from README, the standard corpus/player verifiers under `build/zero-*`,
+then `tests/audit_lsp_zero.py --rebuild --avr-gcc avr-gcc`. Baseline C PWM
+evidence remains under `build/first-nb-c-*`; run the preceding source-bound
+constructor audit at ddd4f01e.
+
 ## Next candidates (not yet measured/admitted)
 
 The previously listed C40 long-pitch entry shipped in commit 9813583 and is
 no longer an outstanding candidate.
 
-1. **Defer redundant r1 clears inside the private stage body.** General Q14
-   products do not need r1 zero between successive products; the final aligned
-   p1 product must clear it before adding p0 and before the external RET.
-   The later epilogue clear may also be redundant after that final clear.
-   Verify all intervening instructions, IRQ behavior and unchanged GNU-ABI
-   value kernels before measuring; the current implementation still clears it.
-
-2. **Inspect call/control and section layout.** Measure shared NB LPC-copy
+1. **Inspect call/control and section layout.** Measure shared NB LPC-copy
    work, assembler call distances and compiler-supported leaf annotations.
    Preserve the coefficient age, exact output and portable interface.
+
+2. **Share prologue work across both polynomials.** A paired constant-stage
+   entry might retain the second pointer/root while reusing register saves.
+   Account for extra argument storage, code size and C fallback; no gain is
+   admitted before direct arithmetic/ABI/IRQ and complete decoder/player tests.
 
 No claim of a global speed optimum has been established. Do not mark the
 ongoing optimization goal complete while useful candidates remain untested.

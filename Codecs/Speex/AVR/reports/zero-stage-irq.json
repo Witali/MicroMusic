@@ -1,0 +1,43 @@
+{
+  "mcu": "ATmega328P",
+  "compiler": "AVR GCC 7.3.0",
+  "simulator": "avr8js 0.21.1",
+  "binarySha256": "0a619258a94bab18c88097d611eaa51afdd529f2d08aa57f6ba5ce16c95227d9",
+  "deviceHeaders": {
+    "compiler": "AVR GCC 7.3.0",
+    "target": "atmega328p",
+    "headers": {
+      "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+      "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+      "interrupt.h": "9627582846252bf42efd6eb4d1ea6d03ae125b021b6ea630a2f08ebf0a0bf041"
+    },
+    "descriptor": "SREG, TIMER2_COMPA_vect_num * (_VECTORS_SIZE / (SPM_READY_vect_num+1)) / 2, TIFR2/OCF2A, TIMSK2/OCIE2A from pinned ATmega328P avr/io.h"
+  },
+  "scope": "Synthetic Timer2 COMPA flag injected at entry and after every non-RET ASM instruction; real compiled ISR; timer-period playback tested separately",
+  "vectors": 63,
+  "calls": 15813,
+  "boundaryCounts": {
+    "2": 3717,
+    "3": 5229,
+    "4": 6741
+  },
+  "asmInstructionsIncludingRet": {
+    "2": 177,
+    "3": 249,
+    "4": 321
+  },
+  "injections": 15687,
+  "nonzeroR1Interrupts": 3668,
+  "isrMulInstructions": 15687,
+  "retChecks": 15687,
+  "everyInstructionBoundaryPreempted": true,
+  "all32RegistersAndSregRestoredAtReti": true,
+  "interruptReturnPcAndSpExact": true,
+  "selectedAndForcedCExact": true,
+  "independentBigIntProductOracle": true,
+  "guardsAndUntouchedWordsPreserved": true,
+  "externalR1Zero": true,
+  "includesInterrupts": true,
+  "modelsHardwareEntryLatency": false,
+  "physicalBoardTested": false
+}
