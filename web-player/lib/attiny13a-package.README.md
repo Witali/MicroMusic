@@ -32,7 +32,9 @@ and asset hashes. Hash input is UTF-8 JSON with recursively sorted object keys,
 preserved array order and standard JSON scalar encoding. Pretty-printing or
 object key order does not change integrity.
 
-The JavaScript loader includes `avr-profiles.js` alongside `avr-runtime.js`;
+The JavaScript loader includes `avr-profiles.js` alongside `avr-runtime.js`,
+and both registered CPU profiles with their generated register maps (including
+`devices/attiny88-profile.js` and `attiny88-registers.js`);
 this shared profile metadata does not load a default WASM artifact. Historical
 packages retain their own runtime memory layout and decode-operand width.
 

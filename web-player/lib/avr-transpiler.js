@@ -131,10 +131,11 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   if(typeof optimizePhaseLocals!=='boolean'||optimizePhaseLocals&&!resumable)throw Error('Phase-local optimization requires resumable execution');
   const {get,set,condition,conditionValue}=optimizePhaseLocals?annotatePhaseLocals(phaseEmit):phaseEmit;
   const profile=deviceProfile(device),{flashBytes,flashWords,pcMask,ioStart,ioEnd,ramStart,ramEnd,sreg,stackPointer}=profile;
-  if(profile.dataAddressBits!==8||profile.programCounterBytes!==2)throw Error('Unsupported AVR emitter memory geometry');
+  if(![8,16].includes(profile.dataAddressBits)||profile.programCounterBytes!==2)throw Error('Unsupported AVR emitter memory geometry');
   // Resumable blocks initially cover register-only operations. Memory accesses
   // retain their individual bus phases until block-wide alias guards exist.
   const full=!!abi.device,canBatch=i=>resumable?pure.has(i.name):batchable(i)&&(!full||i.name!=='LPM');
+  if(full&&device!==DEFAULT_DEVICE)throw Error('Full-device runtime supports only ATtiny13A');
   if(resumable&&(!full||!abi.phase||abi.phase.bytes!==80))throw Error('Resumable CPU requires its full-device phase ABI');
   if(resumable){
     const p=abi.phase,limit=(abi.memoryPages||1)*65536;
@@ -238,14 +239,19 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     }
     return code;
   }
+  const wide=profile.dataAddressBits===16,pointerMask=wide?65535:255;
+  const pointer=s=>wide?or(reg(s),shl(reg(s+1),8)):reg(s);
+  const writePointer=(s,value)=>bytes(writeReg(s,value),wide?writeReg(s+1,shr(value,8)):[]);
+  const sp=()=>wide?or(reg(stackPointer),shl(reg(profile.stackPointerHigh),8)):reg(stackPointer);
+  const writeSP=value=>bytes(writeReg(stackPointer,value),wide?writeReg(profile.stackPointerHigh,and(shr(value,8),constant(profile.stackPointerHighMask))):[]);
   function push(value) {
-    return bytes(set(6,reg(stackPointer)),condition(or(lt(Z,constant(ramStart)),binary(0x4b,Z,constant(ramEnd))),fail(3)),
-      store8(dataAt(Z),value),writeReg(stackPointer,sub(Z,constant(1))),
-      condition(lt(reg(stackPointer),state('minSP')),put('minSP',reg(stackPointer))));
+    return bytes(set(6,sp()),condition(or(lt(Z,constant(ramStart)),binary(0x4b,Z,constant(ramEnd))),fail(3)),
+      store8(dataAt(Z),value),writeSP(sub(Z,constant(1))),
+      condition(lt(sp(),state('minSP')),put('minSP',sp())));
   }
   function pop(local) {
-    return bytes(set(6,reg(stackPointer)),condition(or(lt(Z,constant(ramStart-1)),ge(Z,constant(ramEnd))),fail(4)),
-      set(6,add(Z,constant(1))),writeReg(stackPointer,Z),set(local,load8(dataAt(Z))));
+    return bytes(set(6,sp()),condition(or(lt(Z,constant(ramStart-1)),ge(Z,constant(ramEnd))),fail(4)),
+      set(6,add(Z,constant(1))),writeSP(Z),set(local,load8(dataAt(Z))));
   }
   function effects(i) {
     const {name,d,s,k,pc:p}=i,next=(p+1)&pcMask;
@@ -306,15 +312,15 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     }
     if(name==='LD'||name==='ST'){
       if(k<2&&(d===s||d===s+1))return fail(name==='LD'?19:17);
-      // DS40002198A 5.66-68/5.114-116: for <=256-byte data spaces only
-      // the low pointer byte participates; XH/YH/ZH remain general registers.
-      const code=bytes(set(6,and(add(reg(s),constant(k<0?-1:k>=2?k-2:0)),constant(255))),condition(ge(Z,constant(ramEnd+1)),fail(name==='LD'?20:18)),
-        !full&&k<0?writeReg(s,Z):[],set(0,reg(d)),
+      // DS40002198A 5.66-68/5.114-116: tiny13 uses the low pointer byte;
+      // tiny88 uses the complete X/Y/Z pair, including carry and borrow.
+      const code=bytes(set(6,and(add(pointer(s),constant(k<0?-1:k>=2?k-2:0)),constant(pointerMask))),condition(ge(Z,constant(ramEnd+1)),fail(name==='LD'?20:18)),
+        !full&&k<0?writePointer(s,Z):[],set(0,reg(d)),
         full&&name==='LD'?bytes(clockHalf(1.5),set(0,conditionValue(and(ge(Z,constant(ioStart)),lt(Z,constant(ioEnd))),call(READ,sub(Z,constant(ioStart))),load8(dataAt(Z)))),clockHalf(.5)):clock(constant(2)),
-        set(7,constant(0)),full&&k<0?writeReg(s,Z):[]);
+        set(7,constant(0)),full&&k<0?writePointer(s,Z):[]);
       if(name==='LD')code.push(...writeReg(d,full?X:load8(dataAt(Z))));
       else code.push(...condition(and(ge(Z,constant(ioStart)),lt(Z,constant(ioEnd))),bytes(set(7,call(IO,sub(Z,constant(ioStart)),X)),guard()),store8(dataAt(Z),X)));
-      if(k===1)code.push(...writeReg(s,and(add(Z,constant(1)),constant(255))));
+      if(k===1)code.push(...writePointer(s,and(add(Z,constant(1)),constant(pointerMask))));
       // Indirect stores can alias SREG, just like OUT or STS.
       if(name==='ST')code.push(...set(5,load8(flagsAddress)));
       return code;
@@ -427,10 +433,10 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
             writeReg(d,load8(add(constant(abi.rom),Z))),k?bytes(set(6,add(Z,constant(1))),writeReg(30,Z),writeReg(31,shr(Z,8))):[]);
         }else{
           const alias=k<2&&(d===s||d===s+1);
-          effects=bytes(set(6,and(add(reg(s),constant(k<0?-1:k>=2?k-2:0)),constant(255))),
+          effects=bytes(set(6,and(add(pointer(s),constant(k<0?-1:k>=2?k-2:0)),constant(pointerMask))),
             condition(alias?constant(1):or(lt(Z,constant(ramStart)),ge(Z,constant(ramEnd+1))),bailout),
-            k<0?writeReg(s,Z):[],name==='LD'?writeReg(d,load8(dataAt(Z))):store8(dataAt(Z),reg(d)),
-            k===1?writeReg(s,and(add(Z,constant(1)),constant(255))):[]);
+            k<0?writePointer(s,Z):[],name==='LD'?writeReg(d,load8(dataAt(Z))):store8(dataAt(Z),reg(d)),
+            k===1?writePointer(s,and(add(Z,constant(1)),constant(pointerMask))):[]);
         }
       }else effects=alu(i,block.masks[n]);
       code.push(...remapLocals(effects,2));elapsedCycles+=instructionCycles(i);

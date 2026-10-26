@@ -8,7 +8,7 @@
   <meta name="description" content="Музыкальные прошивки ATtiny13A и ATtiny88: исполнение AVR-кода, звук PWM и осциллограмма в браузере.">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css?v=20261025-board-um88-pipeline">
-  <script type="module" src="./app.js?v=20261025-um88-channels"></script>
+  <script type="module" src="./app.js?v=20261026-avr-translated"></script>
 </head>
 <body>
   <header class="site-header">
@@ -46,7 +46,7 @@
           <div class="transport"><button id="play" class="primary" disabled><span id="play-icon" aria-hidden="true">▶</span><span id="play-label">Слушать</span><kbd>Space</kbd></button><button id="play-original" class="original-play" type="button" aria-pressed="false" hidden>Прослушать оригинал</button><button id="reset" disabled>↺ Сначала</button><div class="transport-links"><a id="download" class="download-link" aria-disabled="true">↓ Flash HEX</a><a id="download-eeprom" class="download-link" hidden>↓ EEPROM</a></div></div>
           <div id="board-upload" class="board-upload" hidden><strong>Загрузка через Micronucleus</strong><p>Запустите команду и подключите плату по USB. Отдельная EEPROM не требуется.</p><code id="upload-command"></code><a href="https://github.com/Witali/MicroMusic/blob/main/ATtiny88/Music/MH_ET_LIVE_RU.md" target="_blank" rel="noopener">Подключение и загрузка ↗</a></div>
           <audio id="original-audio" preload="none" playsinline hidden></audio>
-          <div class="engine-controls"><fieldset class="engine-selector"><legend>Движок эмуляции</legend><div class="engine-options"><label><input type="radio" name="engine" value="js"><span>JS</span></label><label><input type="radio" name="engine" value="wasm" checked><span>WASM</span></label><label><input type="radio" name="engine" value="transpiled"><span>AVR → WASM</span></label><label><input type="radio" name="engine" value="device"><span>ATtiny13A</span></label></div></fieldset><p id="engine-note">При смене — сброс на начало.</p></div>
+          <div class="engine-controls"><fieldset class="engine-selector"><legend>Движок эмуляции</legend><div class="engine-options"><label><input type="radio" name="engine" value="js"><span>JS</span></label><label><input type="radio" name="engine" value="wasm" checked><span>WASM</span></label><label><input type="radio" name="engine" value="transpiled"><span>AVR → WASM</span></label></div></fieldset><p id="engine-note">При смене — сброс на начало.</p></div>
           <div class="audio-controls"><label class="volume-label">Громкость <input id="volume" type="range" min="0" max="1" step="0.01" value="0.65"></label><label>RC-фильтр <select id="cutoff" aria-label="Частота среза фильтра"><option value="4000">4 кГц</option><option value="6000">6 кГц</option><option value="9000" selected>9 кГц</option><option value="12000">12 кГц</option></select></label></div>
         </section>
         <section class="panel scope-panel" aria-label="Осциллограмма PWM">

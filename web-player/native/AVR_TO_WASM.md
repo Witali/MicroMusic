@@ -1,9 +1,17 @@
 # AVR machine code to WebAssembly
 
-The experimental translator accepts ATtiny13A Flash bytes, including decoded
+The experimental translator accepts ATtiny13A and ATtiny88 Flash bytes, including decoded
 Intel HEX. It emits a real WebAssembly binary directly, without AVR sources,
 Clang, Emscripten, WAT assembly or runtime opcode interpretation. The browser
 can translate a firmware image when it is loaded; the CLI can do it in advance.
+
+The shared music renderer supports ATtiny88 with `target:'attiny88'` and the
+catalog's `cpuHz`, including the existing 16-MHz board model. Its lowering uses
+the pinned Microchip DFP for Flash/SRAM bounds, the full X/Y/Z pointer pairs,
+SPL/SPH and SREG. Timer1 and audio retain the shared music runtime's peripheral
+contract; the full physical board/runtime and offline CLI/package format remain
+ATtiny13A-only. The player exposes JS, WASM and AVR → WASM for music and speech;
+imported ATtiny13A packages use their own physical runtime under AVR → WASM.
 
 An optional offline Binaryen pass can optimize the emitted CPU module:
 

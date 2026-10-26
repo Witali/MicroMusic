@@ -179,19 +179,20 @@ test('switching devices cancels autoplay still waiting for AudioWorklet initiali
   assert.ok(app.worklets.every(node=>node.messages.every(message=>message.type!=='playing'||message.value===false)));
 });
 
-test('switching from an ATtiny13A generated engine to ATtiny88 selects a supported engine and restores choices on return',async()=>{
-  for(const selected of ['transpiled','device']){
-    const app=await playerApp({speech:false});
-    engine(app,selected).checked=true;
-    await engine(app,selected).onchange();await flush();
-    assert.equal(init(app).engine,selected);
-    await chooseDevice(app,'attiny88');
-    assert.equal(init(app).engine,'wasm');
-    for(const value of ['transpiled','device'])assert.equal(engine(app,value).disabled,true);
+test('AVR → WASM remains selected across both devices and speech, without a chip button',async()=>{
+  for(const speech of [false,true]){
+    const app=await playerApp({speech});
+    assert.deepEqual(app.radios.map(r=>r.value),['js','wasm','transpiled']);
+    engine(app,'transpiled').checked=true;
+    await engine(app,'transpiled').onchange();await flush();
+    assert.equal(init(app).engine,'transpiled');
+    if(!speech)await chooseDevice(app,'attiny88');
+    assert.equal(init(app).engine,'transpiled');
+    assert.equal(engine(app,'transpiled').disabled,false);
     assert.equal(app.get('package-file').disabled,false);
-    assert.match(app.get('package-import-label').textContent,/UM88/);
-    await chooseDevice(app,'attiny13a');
-    for(const value of ['js','wasm','transpiled','device'])assert.equal(engine(app,value).disabled,false);
+    if(!speech)await chooseDevice(app,'attiny13a');
+    for(const value of ['js','wasm','transpiled'])assert.equal(engine(app,value).disabled,false);
+    assert.equal(init(app).engine,'transpiled');
     assert.equal(app.get('package-file').disabled,false);
   }
 });
