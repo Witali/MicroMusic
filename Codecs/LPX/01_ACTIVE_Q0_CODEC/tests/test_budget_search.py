@@ -1,6 +1,7 @@
 """A target budget is independent of seed size and its unattainable quality."""
 from pathlib import Path
 import sys,unittest
+from unittest.mock import patch
 import numpy as np
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools'))
 from batch_decoder import BatchSession
@@ -59,6 +60,34 @@ class BudgetSearchTests(unittest.TestCase):
             self.assertIsNotNone(self.decoder.decode_one_s16(b,n))
         self.assertTrue(all(a['unstable_subframes']==0 for a in audit if a['accepted']))
         with self.assertRaises(ValueError):spectrum_seeds(seed,(3,))
+
+    def test_guard_does_not_accept_a_muted_file_just_because_it_fits(self):
+        seed=raw_fixture(samples=160);ref=np.full(160,1000,np.int16)
+        def silent(seed,ref,decoder,**options):
+            from rate_distortion import encode_rate
+            return encode_rate(seed,np.zeros_like(ref),decoder,lam=1.,allow_zero=True,compact_features=24,kind='music')
+        out,pcm,report=search_budget([seed],ref,self.decoder,50,'music',lambdas=(1.,),refinement_trials=0,
+            encoder=silent,candidate_guard=lambda candidate:bool(np.any(candidate)))
+        self.assertIsNone(out);self.assertIsNone(pcm);self.assertEqual(report['status'],'no_fit')
+        self.assertTrue(any(c['fits_budget'] and not c['quality_guard_passed'] for c in report['candidates']))
+
+    def test_unvalidated_gain_proposal_does_not_block_waveform_correction(self):
+        from rate_distortion import encode_rate,serialize
+        raw=raw_fixture(samples=160);q=np.zeros(160,np.int64);q[0]=1
+        seed,_=serialize(raw,decode(raw)[0],q,np.full(2,170),np.full(2,3),24)
+        ref=np.zeros(160,np.int16)
+        # A biased proposal may score slightly better on an intelligibility
+        # metric. Only a validated waveform should establish that metric floor.
+        def exact(seed,ref,decoder,**options):
+            b,p,r=encode_rate(seed,ref,decoder,lam=1.,allow_zero=True,compact_features=24,kind='music')
+            r['quality']['stoi']=.89
+            return b,p,r
+        with patch('budget_search.quality',return_value={'stoi':.9}):
+            _,before,normal=search_budget([seed],ref,self.decoder,len(seed),'music',lambdas=(1.,),refinement_trials=0,encoder=exact)
+            _,after,proposal=search_budget([seed],ref,self.decoder,len(seed),'music',lambdas=(1.,),refinement_trials=0,encoder=exact,baseline_seed_indices=[])
+        self.assertTrue(np.any(before));np.testing.assert_array_equal(after,ref)
+        self.assertEqual(normal['feasible_seed_stoi_floor'],.9)
+        self.assertIsNone(proposal['feasible_seed_stoi_floor'])
 
 
 if __name__=='__main__':unittest.main()

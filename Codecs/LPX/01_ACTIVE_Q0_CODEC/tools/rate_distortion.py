@@ -23,6 +23,7 @@ from q0_model import coefficient_trace, table, decode_pcm16
 from wav_to_lpx4 import quantize_trial, quality
 from batch_decoder import BatchSession
 from output_paths import protect_outputs
+from level_policy import DEFAULT_LEVEL_FLOOR_DB, relative_energy_floor
 
 HUFF_LENGTHS=np.asarray([len(HUFF3[i]) for i in range(-4,4)],np.int64)
 
@@ -112,14 +113,15 @@ def alias_scale(index,previous,steps):
 
 
 @njit(cache=True)
-def quantize_rate(pcm,co,steps,pre,bright,lam,allow_zero=False):
+def quantize_rate(pcm,co,steps,pre,bright,lam,allow_zero=False,level_floor_db=DEFAULT_LEVEL_FLOOR_DB):
     history=np.zeros(10,np.int64);deemph=clipped=0;qh=np.zeros(145,np.int64)
     all_q=np.empty(len(pcm),np.int64);scales=np.empty((len(pcm)+79)//80,np.int64)
     widths=np.empty(len(scales),np.int64);rms=residual_rms(pcm,co,pre)
     previous_scale=0;total_bits=0;total_loss=0.
+    floor=relative_energy_floor(pcm,level_floor_db)
     for bi in range(len(scales)):
         start=bi*80;end=min(len(pcm),start+80);target=pcm[start:end]
-        energy=max((.025*32768)**2,np.mean(target.astype(np.float64)**2))
+        energy=max(floor,np.mean(target.astype(np.float64)**2))
         best=float('inf');best_scale=best_width=0
         first=0 if allow_zero else 2
         for bits in range(first,7):
@@ -193,7 +195,7 @@ def serialize(header,frames,q,scales,widths,compact_features=0,mode_hints=None):
     return blob,payload_bits
 
 
-def encode_rate(seed,reference,decoder,lam=0.,allow_zero=False,compact_features=0,kind='speech'):
+def encode_rate(seed,reference,decoder,lam=0.,allow_zero=False,compact_features=0,kind='speech',level_floor_db=DEFAULT_LEVEL_FLOOR_DB):
     ref=np.asarray(reference)
     if (ref.ndim!=1 or ref.dtype.kind not in 'iu' or not 1<=len(ref)<=64000 or
             np.any(ref < -32768) or np.any(ref > 32767) or not np.isfinite(lam) or lam<0 or
@@ -204,7 +206,7 @@ def encode_rate(seed,reference,decoder,lam=0.,allow_zero=False,compact_features=
     started=time.perf_counter();ref=ref.astype(np.int64)
     co=coefficient_trace(frames,len(ref));steps=table('scale_table.inc')
     pre=int.from_bytes(seed[12:14],'little');bright=int.from_bytes(seed[14:16],'little')
-    q,scales,widths,cost,loss=quantize_rate(ref,co,steps,pre,bright,float(lam),bool(allow_zero))
+    q,scales,widths,cost,loss=quantize_rate(ref,co,steps,pre,bright,float(lam),bool(allow_zero),float(level_floor_db))
     blob,payload_bits=serialize(seed[:20],frames,q,scales,widths,compact_features)
     frame_bits=sum(1 if f[0]==0 else 102 if f[0]==5 else 3+min(80,plane_cost(f[1:])) for f in frames)
     if payload_bits!=frame_bits+cost:raise AssertionError('Selected v2 costs disagree with written bits')
@@ -215,6 +217,7 @@ def encode_rate(seed,reference,decoder,lam=0.,allow_zero=False,compact_features=
     error=ref-pcm.astype(np.int64)
     if float(np.dot(error,error))!=loss:raise AssertionError('Quantizer/native state mismatch')
     return blob,pcm,{'lambda':lam,'allow_zero':bool(allow_zero),'compact_features':compact_features,
+        'level_floor_db':float(level_floor_db),'level_reference':'whole-recording RMS; soft error floor, no gate',
         'v2_payload_bits':payload_bits,'local_cost_exact_for_selected_v2_codes':True,
         'audio_packet_bytes':len(blob)-20,'file_bytes':len(blob),'quality':quality(ref,pcm,kind),
         'native_model_pcm_exact':True,'stream_sha256':hashlib.sha256(blob).hexdigest(),

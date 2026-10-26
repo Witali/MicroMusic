@@ -2992,6 +2992,10 @@ without editing production sources. No board measurements are claimed.
 
 ## LPX speech: measure CPU independently of bitrate
 
+[Host gain proposals](lpx-host-gain.md) avoid adding a gain operation to the
+AVR decoder, while requiring actual fixed-point re-decoding and original-level
+quality checks. Includes a rejected level-error case and active-IRQ scope.
+
 [Program Flash at fixed audio](lpx-program-flash.md) records the measured
 unroll/Os/LTO/prologue/relax combination and explicit v5-only specialization,
 with retained harness ABI, C fallback, full PWM and active-IRQ admission.

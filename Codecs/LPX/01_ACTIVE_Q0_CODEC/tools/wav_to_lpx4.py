@@ -23,6 +23,7 @@ from q0_model import coefficient_trace, table, clamp, decode_pcm16, filter_stabi
 from wav_lpc import analyze, load_wav, pack_frames
 from tune_pcm16 import metrics
 from output_paths import protect_outputs
+from level_policy import DEFAULT_LEVEL_FLOOR_DB, relative_energy_floor
 
 
 @njit(cache=True)
@@ -60,7 +61,7 @@ def quantize_trial(target, co, history, previous, previous_clip, pre, bright, st
 
 
 @njit(cache=True)
-def quantize(pcm, co, steps, pre, bright, lam, fixed_bits):
+def quantize(pcm, co, steps, pre, bright, lam, fixed_bits,level_floor_db=DEFAULT_LEVEL_FLOOR_DB,recording_floor=0.):
     hist = np.zeros(10, np.int64)
     previous = previous_clip = 0
     all_q = np.empty(len(pcm), np.int64)
@@ -71,6 +72,7 @@ def quantize(pcm, co, steps, pre, bright, lam, fixed_bits):
     xp = xq.copy()
     for j in range(len(xq) - 1, 0, -1):
         xp[j] -= (pre * int(np.rint(xq[j - 1]))) >> 14
+    floor=recording_floor if recording_floor>0 else relative_energy_floor(pcm,level_floor_db)
     for bi in range(len(scales)):
         start, end = bi * 80, min(len(pcm), (bi + 1) * 80)
         energy = 0.
@@ -83,7 +85,7 @@ def quantize(pcm, co, steps, pre, bright, lam, fixed_bits):
             residual_power += v * v
             energy += float(pcm[j]) ** 2
         rms = max(1., np.sqrt(residual_power / (end - start)))
-        energy = max((.025 * 32768) ** 2, energy / (end - start))
+        energy = max(floor, energy / (end - start))
         best = float('inf')
         best_scale = best_bits = 0
         for bits in range(2, 7):
@@ -140,7 +142,7 @@ def compact_zero_blocks(blob,decoder):
 def encode_segment(pcm, decoder, max_bytes=65535, lambdas=(0., .0002, .001, .005, .02),
                    pre=13926, bright=0, kind='speech', fixed_bits=0,
                    analysis_profiles=('legacy', 'regularized', 'flat'), stoi_drop=0.,canonical_zero=True,
-                   candidate_sink=None):
+                   candidate_sink=None,level_floor_db=DEFAULT_LEVEL_FLOOR_DB,recording_floor=None):
     import struct
     if not 1 <= len(pcm) <= 64000 or not 32 <= max_bytes <= 65535:
         raise ValueError('Expected 1..64000 samples and a 32..65535-byte segment budget')
@@ -154,6 +156,9 @@ def encode_segment(pcm, decoder, max_bytes=65535, lambdas=(0., .0002, .001, .005
         raise ValueError('Unknown or empty analysis profile set')
     if not 0 <= stoi_drop <= .01:
         raise ValueError('Invalid STOI tolerance')
+    floor=relative_energy_floor(pcm,float(level_floor_db))
+    if recording_floor is not None:floor=float(recording_floor)
+    if not np.isfinite(floor) or floor<1:raise ValueError('Invalid recording energy floor')
     candidates, reports, analyses, seen = [], [], [], set()
     steps = table('scale_table.inc')
     for profile in analysis_profiles:
@@ -174,7 +179,7 @@ def encode_segment(pcm, decoder, max_bytes=65535, lambdas=(0., .0002, .001, .005
             analysis['rejected'] = 'Unstable quantized/interpolated LPC filter'
             continue
         for lam in lambdas:
-            q, scales, modes = quantize(pcm.astype(np.int64), co, steps, local_pre, bright, lam, fixed_bits)
+            q, scales, modes = quantize(pcm.astype(np.int64), co, steps, local_pre, bright, lam, fixed_bits,float(level_floor_db),floor)
             blocks = [{'bits': int(b), 'scale': int(s), 'q': q[i * 80:(i + 1) * 80].tolist()}
                       for i, (s, b) in enumerate(zip(scales, modes))]
             doc = {'raw': struct.pack('<4sBBHIHHHH', b'L3AV', 1, 3, 8000, len(pcm), local_pre, bright, 160, 80),
@@ -221,6 +226,7 @@ def encode_segment(pcm, decoder, max_bytes=65535, lambdas=(0., .0002, .001, .005
         packed_blocks=decode(blob)[1]
         selected['mode_counts']={str(i):sum(b['bits']==i for b in packed_blocks) for i in (0,2,3,4,5,6)}
     return blob, winner[4], {'analysis': analyses, 'selected': selected, 'candidates': reports,
+                                'level_floor_db':float(level_floor_db),'level_reference':'whole-recording RMS; soft error floor, no gate',
                                 'legacy_quality_floor': baseline[5]['quality'] if baseline else None}
 
 
@@ -239,7 +245,7 @@ def segment_ranges(pcm,limit,search=0):
     return ranges
 
 
-def run(source, output, max_bytes=65535, segment_samples=64000, kind='speech', lambdas=None,boundary_search=0):
+def run(source, output, max_bytes=65535, segment_samples=64000, kind='speech', lambdas=None,boundary_search=0,level_floor_db=DEFAULT_LEVEL_FLOOR_DB):
     source, output = Path(source), Path(output)
     protect_outputs([source], [output/'decoded.wav', output/'manifest.json'])
     if not 160 <= segment_samples <= 64000 or segment_samples % 160:
@@ -248,13 +254,14 @@ def run(source, output, max_bytes=65535, segment_samples=64000, kind='speech', l
         raise ValueError('max_bytes must be in 32..65535')
     pcm, input_info = load_wav(source)
     ranges=segment_ranges(pcm,segment_samples,boundary_search)
+    floor=relative_energy_floor(pcm,float(level_floor_db))
     start = time.perf_counter()
     encoded, reconstructions, entries = [], [], []
     with BatchSession('batch') as decoder:
         for offset,end in ranges:
             part = pcm[offset:end]
             blob, decoded, report = encode_segment(part, decoder, max_bytes=max_bytes,
-                kind=kind, **({'lambdas': lambdas} if lambdas is not None else {}))
+                kind=kind,level_floor_db=level_floor_db,recording_floor=floor, **({'lambdas': lambdas} if lambdas is not None else {}))
             name = 'audio.l4hy' if len(pcm) <= segment_samples else f'audio-{len(entries) + 1:04d}.l4hy'
             encoded.append((name, blob));reconstructions.append(decoded)
             entries.append({'file': name, 'offset_samples': offset, 'samples': len(part),
@@ -263,6 +270,7 @@ def run(source, output, max_bytes=65535, segment_samples=64000, kind='speech', l
     report = {'source_file': source.name, 'source_sha256': hashlib.sha256(source.read_bytes()).hexdigest(),
               'input': input_info, 'sample_rate': 8000, 'samples': len(pcm),
               'duration_seconds': len(pcm) / 8000, 'kind': kind, 'max_segment_bytes': max_bytes,
+              'level_floor_db':float(level_floor_db),'level_reference':'whole-recording RMS; soft error floor, no gate',
               'codec_bytes': sum(len(b) for _, b in encoded),
               'codec_bitrate_bps': sum(len(b) for _, b in encoded) * 8 * 8000 / len(pcm),
               'quality': quality(pcm, decoded, kind), 'segments': entries,
@@ -290,9 +298,10 @@ def main():
     ap.add_argument('--boundary-search',type=int,default=0,help='Search this many samples before each limit for a quiet 160-aligned boundary')
     ap.add_argument('--kind', choices=('speech', 'music'), default='speech')
     ap.add_argument('--lambdas', default='0,.0002,.001,.005,.02')
+    ap.add_argument('--level-floor-db',type=float,default=DEFAULT_LEVEL_FLOOR_DB,help='Soft energy floor in dB relative to the complete recording RMS')
     a = ap.parse_args()
     report = run(a.input, a.output_directory, a.max_bytes, a.segment_samples, a.kind,
-                 tuple(float(v) for v in a.lambdas.split(',')),a.boundary_search)
+                 tuple(float(v) for v in a.lambdas.split(',')),a.boundary_search,a.level_floor_db)
     print(json.dumps({k: report[k] for k in ('samples', 'codec_bytes', 'codec_bitrate_bps', 'quality')}, indent=2))
 
 
