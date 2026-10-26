@@ -2485,3 +2485,19 @@ phase and other operations still use float. No active IRQ, board, live-speech
 or real-time support is claimed. [Complete qualification](../../Codecs/Codec2/reports/spectral-decoder.json).
 The slower first int64/radix smoke remains with source-revision-bound history
 in [the negative baseline](../../Codecs/Codec2/reports/weight-wide-baseline.json).
+
+### Main LPC cancellation: high FFT SNR does not establish decoder fidelity
+
+An [18-case native experiment](../../Codecs/Codec2/MAIN_SPECTRUM_RU.md) reuses
+the integer spectrum C for the main LPC denominator/phase spectrum: 16/24/32
+data bits, Q14/Q22/Q30 twiddles, separate paired/radix graphs. None meets the
+existing whole-PCM SNR>=50 dB/max<=256 gate over 11,333 packets. Native Clang
+24 uses binary32, no fast-math and checked narrowing; this is not an AVR
+speed measurement. The 24/Q22 paired case passes both short phrases but
+changes RNG at frame 3090 in the mixed corpus. For 32/Q30 the RNG stays equal,
+yet whole-PCM SNR is 19.36/20.94 dB (paired/radix) with max error 28,539/28,155,
+despite spectral SNR 138.92/142.44 dB. LPC L1 reaches 1002.49, reference
+spectral magnitude reaches zero, and regularized power relative error reaches
+9.87%/6.41%. Preserve cancellation-sensitive operation boundaries and examine
+phase decisions before assuming more twiddle bits solve the problem. This
+negative result concerns numerical correctness, not a measured speed gain.
