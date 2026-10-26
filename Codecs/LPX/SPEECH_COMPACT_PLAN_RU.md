@@ -43,3 +43,12 @@ ASan/UBSan:605670 mutation/reset случаев,456 inputs, ошибок нет.
 400 radix20 values, insertion/collision, partial tails, restart/snapshots,
 проверки feature flags и старых конфигураций memory/history. AVR matrix
 на окончательном decoder выполняется отдельно; прежний speed loop не открыт.
+
+Encoder-only refinement готов: horizon160/pass1, затем horizon320/pass2,
+full-waveform acceptance по640-sample groups. Все8 вариантов улучшили
+SSE/STOI при прежних v4 header/размере/спектре. Дополнительный v5 search
+оставляет spectrum/params/base pulses неизменными и добавляет импульсы
+только после полной SSE/STOI проверки. Ограничение128 full evaluations
+на поток достигнуто; часть битового бюджета намеренно не использована.
+Итоговые кандидаты:4k SER7,00→7,75/STOI0,751→0,783 при1850..1908B
+вместо2020B;6k SER9,24→9,92/STOI0,792→0,812 при2618..2699B вместо3020B.
