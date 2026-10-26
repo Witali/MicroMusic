@@ -1,0 +1,78 @@
+{
+  "scope": "Eight identical frozen enhanced_v5 streams; program Flash excludes audio and includes the retained playback/profiling harness, startup and helpers.",
+  "baseline_measurements": "../speech-compact-2026-10-26/avr.json, main/*-enhanced_v5",
+  "baseline_revision": "d2f79e1541878bea22c53e0ec5afb2898e6232ac",
+  "implementation_commit": "66723092",
+  "candidate": "unroll1-tune0-lto-call-relax",
+  "metrics": {
+    "baseline": {
+      "images": 8,
+      "samples": 256000,
+      "program_flash_min_bytes": 9171,
+      "program_flash_max_bytes": 9172,
+      "total_flash_min_bytes": 11022,
+      "total_flash_max_bytes": 11870,
+      "static_sram_bytes": [
+        1105
+      ],
+      "observed_stack_max_bytes_after_ready": 123,
+      "observed_stack_min_margin_bytes_after_ready": 820,
+      "mean_decode_wall_cycles": 958.490203125,
+      "first_output_from_reset_ms_range": [
+        24.688375,
+        25.101875
+      ],
+      "tick_interval_cycles_range": [
+        1991,
+        2009
+      ],
+      "underruns": 0
+    },
+    "common": {
+      "images": 8,
+      "samples": 256000,
+      "program_flash_min_bytes": 7889,
+      "program_flash_max_bytes": 8030,
+      "total_flash_min_bytes": 9880,
+      "total_flash_max_bytes": 10672,
+      "static_sram_bytes": [
+        1105
+      ],
+      "observed_stack_max_bytes_after_ready": 124,
+      "observed_stack_min_margin_bytes_after_ready": 819,
+      "mean_decode_wall_cycles": 846.64058203125,
+      "first_output_from_reset_ms_range": [
+        24.0613125,
+        24.3949375
+      ],
+      "tick_interval_cycles_range": [
+        1987,
+        2009
+      ],
+      "underruns": 0
+    },
+    "compact_only": {
+      "images": 8,
+      "samples": 256000,
+      "program_flash_min_bytes": 5909,
+      "program_flash_max_bytes": 5910,
+      "total_flash_min_bytes": 7760,
+      "total_flash_max_bytes": 8608,
+      "static_sram_bytes": [
+        1085
+      ],
+      "observed_stack_max_bytes_after_ready": 105,
+      "observed_stack_min_margin_bytes_after_ready": 858,
+      "mean_decode_wall_cycles": 785.01854296875,
+      "first_output_from_reset_ms_range": [
+        22.6163125,
+        22.7929375
+      ],
+      "tick_interval_cycles_range": [
+        1985,
+        2009
+      ],
+      "underruns": 0
+    }
+  }
+}

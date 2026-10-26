@@ -144,6 +144,15 @@ NB8 mean improves 1.4527% with 36 B less Flash; WB12.8 improves 1.1710% with
 pass the same C/ASM/BigInt cases and 76,667 instruction-boundary IRQs.
 [Current source/image/corpus admission](../../Codecs/Speex/AVR/IIR_SEED.md).
 
+**Group IIR outputs and reuse coefficient registers between phases (2026-10-26).**
+[One group per cursor pass, four steady caches and an old warm-tail cache](speex-iir-groups.md)
+remove wrap tests and repeated loads without duplicating the dot-product body.
+r16:r17 feeds MULSU directly. The final kernel saves 247/238 cycles per
+order-10/order-8 call; NB8 improves 1.0278%, WB12.8 0.8117%. Static SRAM is
+unchanged, but private RCALL raises the observed WB stack by two bytes.
+Explicit C, full-state/ABI/IRQ and source-bound admission are retained in
+[IIR_GROUPS.md](../../Codecs/Speex/AVR/IIR_GROUPS.md).
+
 ## Как проверять пользу для Speex
 
 Снять дизассемблирование `avr-objdump -d -S firmware.elf` и размеры
@@ -2982,6 +2991,10 @@ without editing production sources. No board measurements are claimed.
 [Final scope and evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/FINAL_AUDIT_RU.md).
 
 ## LPX speech: measure CPU independently of bitrate
+
+[Program Flash at fixed audio](lpx-program-flash.md) records the measured
+unroll/Os/LTO/prologue/relax combination and explicit v5-only specialization,
+with retained harness ABI, C fallback, full PWM and active-IRQ admission.
 
 [Bounded exact spectral packing](lpx-speech-compact.md) adds measured
 gap/delta Rice, bounded radix20 arithmetic and collision-safe extra pulses.

@@ -1,0 +1,225 @@
+{
+  "revision": "d2f79e1541878bea22c53e0ec5afb2898e6232ac",
+  "scope": "Read-only size audit of existing ELF files. No compiler experiments. Constructor aliases deduplicated by address/size. Program Flash includes full profiling firmware minus encoded profile_voice, not an isolated library.",
+  "baseline_settings": {
+    "compiler": "avr-g++.exe (GCC) 7.3.0",
+    "compiler_options": [
+      "-DLPX4_PROFILE_QUEUE=512",
+      "-DLPX4_PROFILE_PREFILL=384",
+      "-DLPX4_PROFILE_IRQ_LOAD=0",
+      "-DLPX4_AVR_DOT_UNROLL=9",
+      "-DLPX4_V3_FEATURES=24",
+      "-DLPX4_ENABLE_SPEECH=1",
+      "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+      "-DLPX4_ENABLE_ASM=1",
+      "-mmcu=atmega328p",
+      "-DF_CPU=16000000UL",
+      "-Os",
+      "-std=gnu++11",
+      "-fno-exceptions",
+      "-fno-rtti"
+    ],
+    "queue_bytes": 512,
+    "prefill_samples": 384,
+    "dot_unroll": 9,
+    "v3_compiled_features": 24,
+    "speech_compiled": true,
+    "speech_compact_compiled": true,
+    "core_sha256": "16bb4cb8b725bf948842b00174534f842d04d862df685f38de6d0874f684f842",
+    "core_header_sha256": "2561040b6ce64c3773b6625493621767448fcda43d1a85ba657cbbd11c3dd650",
+    "math_header_sha256": "6f579fdcfc050fc082675fab91b1ed26ffd4d110238cd8ece19b079122845494",
+    "harness_sha256": "5c0179ae73a153285826dfc1d608c4c65171f257901399efc9bb0e1488039e4a"
+  },
+  "images_audited": 32,
+  "program_flash_range": [
+    9171,
+    9172
+  ],
+  "example": {
+    "case": "case-01-4-enhanced_v5",
+    "elf_sha256": "f0af48480ab6e606677f09a0e7d6a588c99d12e2f320ecbf538e0a156c158058",
+    "text_bytes": 11014,
+    "data_bytes": 8,
+    "audio_bytes": 1850,
+    "program_flash_excluding_audio": 9172,
+    "core_function_bytes": 7728,
+    "codec_table_bytes": 299,
+    "harness_function_bytes": 778,
+    "runtime_vectors_data_padding_bytes": 367,
+    "core_functions": [
+      {
+        "address": 8986,
+        "bytes": 1532,
+        "type": "T",
+        "name": "Lpx4HybridCore::next(unsigned char&)"
+      },
+      {
+        "address": 4752,
+        "bytes": 1252,
+        "type": "T",
+        "name": "Lpx4HybridCore::readFrame()"
+      },
+      {
+        "address": 6790,
+        "bytes": 854,
+        "type": "T",
+        "name": "Lpx4HybridCore::decodeCode(signed char&)"
+      },
+      {
+        "address": 7890,
+        "bytes": 790,
+        "type": "T",
+        "name": "Lpx4HybridCore::convertLsfAt(unsigned char, int*)"
+      },
+      {
+        "address": 6028,
+        "bytes": 762,
+        "type": "T",
+        "name": "Lpx4HybridCore::readSubframe()"
+      },
+      {
+        "address": 3454,
+        "bytes": 724,
+        "type": "T",
+        "name": "Lpx4HybridCore::begin(unsigned char const*, unsigned int)"
+      },
+      {
+        "address": 8680,
+        "bytes": 302,
+        "type": "T",
+        "name": "Lpx4HybridCore::interpolateLsf(unsigned char)"
+      },
+      {
+        "address": 2790,
+        "bytes": 268,
+        "type": "t",
+        "name": "polyMulQ12(long, int)"
+      },
+      {
+        "address": 4390,
+        "bytes": 264,
+        "type": "t",
+        "name": "Lpx4HybridCore::readBlock() [clone .part.3]"
+      },
+      {
+        "address": 7644,
+        "bytes": 246,
+        "type": "T",
+        "name": "Lpx4HybridCore::polyFactor(long*, int, unsigned char)"
+      },
+      {
+        "address": 3110,
+        "bytes": 182,
+        "type": "T",
+        "name": "Lpx4HybridCore::Lpx4HybridCore()"
+      },
+      {
+        "address": 4246,
+        "bytes": 144,
+        "type": "T",
+        "name": "Lpx4HybridCore::readBits(unsigned char)"
+      },
+      {
+        "address": 4654,
+        "bytes": 98,
+        "type": "T",
+        "name": "Lpx4HybridCore::readSpeechRice(unsigned char, unsigned char)"
+      },
+      {
+        "address": 4178,
+        "bytes": 68,
+        "type": "T",
+        "name": "Lpx4HybridCore::readOne()"
+      },
+      {
+        "address": 3292,
+        "bytes": 60,
+        "type": "T",
+        "name": "Lpx4HybridCore::clamp(long, int, int)"
+      },
+      {
+        "address": 3400,
+        "bytes": 54,
+        "type": "T",
+        "name": "Lpx4HybridCore::read32()"
+      },
+      {
+        "address": 3058,
+        "bytes": 52,
+        "type": "t",
+        "name": "Lpx4HybridCore::readByte() [clone .part.2]"
+      },
+      {
+        "address": 3368,
+        "bytes": 32,
+        "type": "T",
+        "name": "Lpx4HybridCore::read16()"
+      },
+      {
+        "address": 6004,
+        "bytes": 24,
+        "type": "T",
+        "name": "Lpx4HybridCore::readBlock()"
+      },
+      {
+        "address": 3352,
+        "bytes": 16,
+        "type": "T",
+        "name": "Lpx4HybridCore::readByte()"
+      },
+      {
+        "address": 8982,
+        "bytes": 4,
+        "type": "T",
+        "name": "Lpx4HybridCore::interpolate(unsigned char)"
+      }
+    ],
+    "codec_tables": [
+      {
+        "address": 2244,
+        "bytes": 9,
+        "type": "t",
+        "name": "bitMasks"
+      },
+      {
+        "address": 1954,
+        "bytes": 32,
+        "type": "t",
+        "name": "scaleMantissa"
+      },
+      {
+        "address": 1986,
+        "bytes": 258,
+        "type": "t",
+        "name": "cosineHalfQ13"
+      }
+    ],
+    "harness_functions": [
+      {
+        "address": 10838,
+        "bytes": 8,
+        "type": "t",
+        "name": "_GLOBAL__sub_I_profile_ready"
+      },
+      {
+        "address": 2340,
+        "bytes": 144,
+        "type": "t",
+        "name": "produce()"
+      },
+      {
+        "address": 2484,
+        "bytes": 306,
+        "type": "T",
+        "name": "__vector_11"
+      },
+      {
+        "address": 10518,
+        "bytes": 320,
+        "type": "T",
+        "name": "main"
+      }
+    ]
+  },
+  "grouping": "Aliases at the same address/size counted once. Core functions + codec tables + harness functions + runtime/vectors/data/padding equal program Flash excluding audio."
+}

@@ -18,6 +18,7 @@ const entries=new Map(['speex_avr_iir40','speex_wb_iir40_avr'].filter(n=>symbols
 assert.equal(entries.size,metadata.backend==='asm'?2:0);
 const callee=[...Array.from({length:16},(_,i)=>i+2),28,29];let active=null,trace=null,lastTrace=null,irq=null,preempt=false,sreg,interrupt;
 let calls=0,cases=0,retChecks=0,injections=0,dirtyR1=0,isrMuls=0,minSP=2303,seed=0x2c713a69;
+let ownAsmStack=0,privateCalls=0,privateReturns=0,dirtyPrivateReturns=0;
 const timings={8:[],10:[]},tStates=new Set(),rows=[];
 function raise(){assert.equal(irq,null);assert.ok(cpu.interruptsEnabled);irq={regs:cpu.data.slice(0,32),sreg:cpu.data[sreg],sp:cpu.SP,pc:cpu.pc};cpu.setInterruptFlag(interrupt);}
 function until(predicate){const deadline=cpu.cycles+10000000;while(!predicate()){
@@ -27,15 +28,20 @@ function until(predicate){const deadline=cpu.cycles+10000000;while(!predicate())
   if(preempt){raise();cpu.tick();continue;}
  }
  const op=cpu.progMem[cpu.pc],inIsr=irq!==null,ret=op===0x9508,reti=op===0x9518;
+ if(trace&&!inIsr&&(op&0xf000)===0xd000)privateCalls++;
  if(trace&&!inIsr)trace.ops.push(op);if(inIsr&&(op&0xfc00)===0x9c00)isrMuls++;
  avrInstruction(cpu);minSP=Math.min(minSP,cpu.SP);assert.ok(cpu.SP>=address('__bss_end'));
+ if(active&&!inIsr)ownAsmStack=Math.max(ownAsmStack,active.sp-cpu.SP);
  if(reti){assert.ok(irq);assert.deepEqual(cpu.data.slice(0,32),irq.regs);assert.equal(cpu.data[sreg],irq.sreg);assert.equal(cpu.SP,irq.sp);assert.equal(cpu.pc,irq.pc);
   dirtyR1+=Number(irq.regs[1]!==0);injections++;irq=null;
  }
  if(active&&!inIsr&&ret&&cpu.SP===active.sp+2){
   assert.deepEqual(callee.map(r=>cpu.data[r]),active.regs);assert.equal(cpu.data[1],0);retChecks++;
   trace.elapsed=cpu.cycles-active.begin;lastTrace=trace;trace=null;active=null;
- } else if(trace&&!inIsr&&preempt)raise();
+ } else {
+  if(trace&&!inIsr&&ret){privateReturns++;dirtyPrivateReturns+=Number(cpu.data[1]!==0);}
+  if(trace&&!inIsr&&preempt)raise();
+ }
  cpu.tick();
 }}
 until(()=>cpu.data[status]===1);sreg=cpu.dataView.getUint16(config,true);
@@ -89,6 +95,7 @@ if(irqMode){
  }
 }
 const result={backend:metadata.backend,binarySha256:metadata.binarySha256,mcu:'ATmega328P',compiler:'AVR GCC 7.3.0',simulator:'avr8js 0.21.1',
+ ownAsmStackBytes:ownAsmStack,privateAsmCalls:privateCalls,privateAsmReturns:privateReturns,privateReturnsWithNonzeroR1:dirtyPrivateReturns,
  cases,calls,samplesPerPath:cases*40,orders:[8,10],selectedAndExplicitProductionCExact:true,independentBigIntOracle:true,
  fullSigned16InputNegationSweep:!irqMode,statePageLowBytes:irqMode?null:256,inPlaceAndSeparate:true,wholeWorkArenaAndGuardsExact:true,
  calleeSavedAndR1AtRet:retChecks,peakStackBytes:2303-minSP,includesInterrupts:irqMode,physicalBoardTested:false,
