@@ -67,6 +67,7 @@ Baseline before this change:`710549d0`. Final compiler graph identity:
 The native runtime remains119010bytes, SHA-256
 `bea029bf125c9f8f6ee3e63197e9a9e15556f35d59464ec3ccd5199c137e0715`.
 No vendor, firmware or native C/WASM bytes change.
+Retained text hashes normalize CRLF to LF; ZIP/native hashes cover raw bytes.
 
 - [Accepted64 observations](persistent-cache-20261026/binary-benchmark.json)
   and [verified paired summary](persistent-cache-20261026/binary-summary.json).
