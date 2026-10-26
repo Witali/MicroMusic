@@ -65,3 +65,22 @@ two workloads. This is a correctness repair with static-size observations,
 without a measured speedup. Earlier size numbers above describe the preceding
 five-operation checkpoint. The native C/WASM fallback is unchanged.
 See [the full audit and evidence](../../web-player/reports/sreg-retirement-20261026.md).
+
+## Rejected follow-up: omit no-input flag snapshots
+
+With masked retirement, an ALU temporary can contain only written bits. The
+candidate removes the old-bit preservation expression and an initial SREG read
+from no-input writers; it preserves C/Z/T/branch inputs and SET's existing
+diagnostic dependency. Apply only to individual resumable bodies: complete
+flags still matter inside blocks/regions and in the compatible emitter.
+
+On the same ATtiny13A linear-memory ABI, Node 22.22.3/V8 12.4, all 2325 candidate
+checks pass and PCM/pins remain exact with IRQs active. Nine catalog firmwares
+in four policies validate: 18 compatible artifacts are identical, while 18
+resumable artifacts shrink 0.469–3.138%. However, two balanced actual/identity
+screens on Ryzen 5 5600X establish no execution gain: all eight case medians
+are below one, with possible slowdowns and substantial variance. Production
+and its compiler identity are restored exactly to b8c34de4.
+
+This is retained experimental evidence, not an available optimization or a
+new supported performance profile. [Report, patch and isolated replay](../../web-player/reports/sreg-inputs-20261026.md).

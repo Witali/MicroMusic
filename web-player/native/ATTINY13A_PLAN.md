@@ -23,6 +23,16 @@ historical checkpoints. Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+SREG-input dependency experiment rejected: individual resumable no-input
+writers can omit one old-SREG read and preserve only written temporary bits.
+All 2325 candidate checks and IRQ-active PCM/pin comparisons pass; 18 compatible
+catalog artifacts are identical and 18 resumable artifacts shrink. Two serial,
+balanced actual/identity timing screens establish no execution gain and retain
+possible slowdowns. Production libraries, native files and compiler identity
+are restored exactly to b8c34de4. Keep the candidate only as
+[measured rejected evidence](../reports/sreg-inputs-20261026.md), not a pending
+implementation or checklist closure. The seven open items remain open.
+
 Complete instruction-family SREG audit: all 123 write masks match the detailed
 tables extracted from the pinned official Microchip PDF. Individual resumable
 instructions now merge only their written bits with current SREG, preserving

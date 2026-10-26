@@ -1,0 +1,946 @@
+{
+  "schema": "micromusic-sreg-inputs-v1",
+  "baselineCommit": "b8c34de4004d88bf0c0bbe61600959d73fed4d46",
+  "compilerIdentity": "cd215b950f2e75c0b0035c307b3ed5cbcb23bd19f699e64abddc79509b378926",
+  "productionCompilerIdentity": "88eaad819aeb1e5ef35029276a0caa4c59724f4fa29b998076e8fdccc06a43b2",
+  "sourceSha256": "b4fa2adcd153082e049bec1cea1709ee104b9be1f70897564add4800dc86817c",
+  "baselineSourceSha256": "0bcb504e8c044e37f3b12c8ef0f6232f63ad70855bf5e0f247eef426309e6afb",
+  "candidatePatchSha256": "89eb71a61f1991b6df560bae0af2516a40512fbd7ea6d15ed7af06f99fe3c734",
+  "harnessSha256": "4abc5559ba4a597b561c3513fe02fa2b2bad8c4193a4781c883d52e7f87c2a6e",
+  "regressionSha256": "f8c4161faa50f96e6796d5b31f55b1f3ab478b8c4dafec6ae58baffbe5f1ece9",
+  "catalogSha256": "84ebe8568a2e9ca714f4c413dbbf33ffa050c3ec80a4ad0abd4ab15d96a83c80",
+  "native": {
+    "bytes": 119010,
+    "sha256": "bea029bf125c9f8f6ee3e63197e9a9e15556f35d59464ec3ccd5199c137e0715"
+  },
+  "node": "v22.22.3",
+  "v8": "12.4.254.21-node.56",
+  "methodology": "Serial main-thread pairs with balanced side/control order; fresh chips, equal warmups. Capture calls timed; construction, hashes, snapshots and explicit pin drains excluded. No Workers or overlapping teardown.",
+  "hardwareTested": false,
+  "realtimeTested": false,
+  "before": [
+    {
+      "name": "compatible: SREG loads match actual inputs and retirement needs",
+      "pass": true
+    },
+    {
+      "name": "full-context: SREG loads match actual inputs and retirement needs",
+      "pass": false
+    },
+    {
+      "name": "live-locals: SREG loads match actual inputs and retirement needs",
+      "pass": false
+    }
+  ],
+  "after": [
+    {
+      "name": "compatible: SREG loads match actual inputs and retirement needs",
+      "pass": true
+    },
+    {
+      "name": "full-context: SREG loads match actual inputs and retirement needs",
+      "pass": true
+    },
+    {
+      "name": "live-locals: SREG loads match actual inputs and retirement needs",
+      "pass": true
+    }
+  ],
+  "sizes": [
+    {
+      "id": "rhythmic",
+      "mode": "legacy",
+      "before": 161289,
+      "after": 161289,
+      "saved": 0,
+      "sha256": "8e9248e183d72979c1fd8966945daf9895658d83d24bf9a4053c9e16e66e5c17"
+    },
+    {
+      "id": "rhythmic",
+      "mode": "full",
+      "before": 167750,
+      "after": 167750,
+      "saved": 0,
+      "sha256": "6dab2550e17479e2c16d063ca0c246b49f7ab985e822d2a080880819bca97aac"
+    },
+    {
+      "id": "rhythmic",
+      "mode": "resumable",
+      "before": 385994,
+      "after": 383196,
+      "saved": 2798,
+      "sha256": "2b247fdc970df606d79703d5f2fd3bed0bbb4b8ac2115bff1a16590be3eb5241"
+    },
+    {
+      "id": "rhythmic",
+      "mode": "bounded-phase-locals",
+      "before": 290760,
+      "after": 281637,
+      "saved": 9123,
+      "sha256": "552a79f5e629749f8c2e2bee59253a9e869a4249a969e4dbef94c7aabf58c035"
+    },
+    {
+      "id": "alicia",
+      "mode": "legacy",
+      "before": 172899,
+      "after": 172899,
+      "saved": 0,
+      "sha256": "36819d094e5a41d3b7baf49a06a4da6a7986b19a3ab7431f2353e9632672dd4e"
+    },
+    {
+      "id": "alicia",
+      "mode": "full",
+      "before": 180136,
+      "after": 180136,
+      "saved": 0,
+      "sha256": "58f075420ded4e015f3d3970fc80e6a5fa24ddc7171004b1eb907795ecb8c4bf"
+    },
+    {
+      "id": "alicia",
+      "mode": "resumable",
+      "before": 400512,
+      "after": 398053,
+      "saved": 2459,
+      "sha256": "6a051c0282d35a156d0ad1af29c0dcdd4a7e01174b71d9be0a6b0707e12b3716"
+    },
+    {
+      "id": "alicia",
+      "mode": "bounded-phase-locals",
+      "before": 296007,
+      "after": 287936,
+      "saved": 8071,
+      "sha256": "a6d7030867c47bfdc5de2381397ebbd6d23e434628563ebac58324ad96964494"
+    },
+    {
+      "id": "turkish-march",
+      "mode": "legacy",
+      "before": 171200,
+      "after": 171200,
+      "saved": 0,
+      "sha256": "7ca8daa5bb7233f84d2f58d51e77476ceb7ff4e13b4864afeffc70ed526ac5df"
+    },
+    {
+      "id": "turkish-march",
+      "mode": "full",
+      "before": 180296,
+      "after": 180296,
+      "saved": 0,
+      "sha256": "2ef1107ba74f99a16a3f56937ab5029693122f9646905d436be09ac86fc51b63"
+    },
+    {
+      "id": "turkish-march",
+      "mode": "resumable",
+      "before": 399759,
+      "after": 397301,
+      "saved": 2458,
+      "sha256": "3b50081d205c55be27d44a8f917a4587bf71474d60ced1bd4a9850cc35f5986e"
+    },
+    {
+      "id": "turkish-march",
+      "mode": "bounded-phase-locals",
+      "before": 295092,
+      "after": 287177,
+      "saved": 7915,
+      "sha256": "e4cb4f556b0bd0db6a5c307fe5a23dca29c8171dcded087706890ad49db0209b"
+    },
+    {
+      "id": "children",
+      "mode": "legacy",
+      "before": 169130,
+      "after": 169130,
+      "saved": 0,
+      "sha256": "63eba7c93112be7c4e6d352ad82acf8bf76a1052cf42ad8ec6c0042c32173ab8"
+    },
+    {
+      "id": "children",
+      "mode": "full",
+      "before": 176018,
+      "after": 176018,
+      "saved": 0,
+      "sha256": "da868a95c57a78d38bbfc8fc463e4cbe2ad100df68cb1cd25dcef331512b7e05"
+    },
+    {
+      "id": "children",
+      "mode": "resumable",
+      "before": 399096,
+      "after": 396684,
+      "saved": 2412,
+      "sha256": "db546de04845c51e9609a8ce0b84a58644ae98fc9fbf3b4524664f777b87c8e2"
+    },
+    {
+      "id": "children",
+      "mode": "bounded-phase-locals",
+      "before": 295202,
+      "after": 287271,
+      "saved": 7931,
+      "sha256": "78fb15047458b73bd576c5d10fe5a8cf055b66d028166f1e596da5818f907b64"
+    },
+    {
+      "id": "greensleeves",
+      "mode": "legacy",
+      "before": 157054,
+      "after": 157054,
+      "saved": 0,
+      "sha256": "29c3aace5521c1db1165f8b095d62d38e8d998b7b78dc5d7259fcf3e2db17a82"
+    },
+    {
+      "id": "greensleeves",
+      "mode": "full",
+      "before": 162676,
+      "after": 162676,
+      "saved": 0,
+      "sha256": "32bcd4803ff6870cef48bec1ffdea2394a151909cacf5d18daf09dcaa150849d"
+    },
+    {
+      "id": "greensleeves",
+      "mode": "resumable",
+      "before": 368827,
+      "after": 367097,
+      "saved": 1730,
+      "sha256": "5d1f507a80b18e40c86af2076db6b4f5566918432e4280423be4473e62fb5df8"
+    },
+    {
+      "id": "greensleeves",
+      "mode": "bounded-phase-locals",
+      "before": 270912,
+      "after": 265462,
+      "saved": 5450,
+      "sha256": "86be6978a93f17b4b31d63628b3c8d70072fb2cdf41f9299255400556ea05754"
+    },
+    {
+      "id": "lumiere-stereo",
+      "mode": "legacy",
+      "before": 163282,
+      "after": 163282,
+      "saved": 0,
+      "sha256": "8ef9cb202f2c32294940c7deafc4aad591bc299000bf8ab5c3047fbd04f973ca"
+    },
+    {
+      "id": "lumiere-stereo",
+      "mode": "full",
+      "before": 169861,
+      "after": 169861,
+      "saved": 0,
+      "sha256": "1e14624fc354347505b74bcb11b9698ec70bbb116cf29664563bc6f1db07d0cf"
+    },
+    {
+      "id": "lumiere-stereo",
+      "mode": "resumable",
+      "before": 389871,
+      "after": 387082,
+      "saved": 2789,
+      "sha256": "9b4998573090e59b76873a86aed942903e0b4e48e00e7ecee168814a28288ee2"
+    },
+    {
+      "id": "lumiere-stereo",
+      "mode": "bounded-phase-locals",
+      "before": 293878,
+      "after": 284795,
+      "saved": 9083,
+      "sha256": "06154e4d6023ad955a20c980de5b1ac98acb496d7ea61cc8de8a8af1c0ace1ea"
+    },
+    {
+      "id": "cancion-del-mariachi",
+      "mode": "legacy",
+      "before": 158009,
+      "after": 158009,
+      "saved": 0,
+      "sha256": "d244b51e2e8c76a618ecfbe1394a2d0c00dfb401bdc1cb2237c70532c7f3102b"
+    },
+    {
+      "id": "cancion-del-mariachi",
+      "mode": "full",
+      "before": 164209,
+      "after": 164209,
+      "saved": 0,
+      "sha256": "36cdd207fcbe60f34d0297d795dc631992c1b6661de8fc8a0b7e4f5cea328d92"
+    },
+    {
+      "id": "cancion-del-mariachi",
+      "mode": "resumable",
+      "before": 380821,
+      "after": 378709,
+      "saved": 2112,
+      "sha256": "0ac5712cc5c27b89fb64328adaacd00a3cfe9f93a15543814f9cc5a42a6413ec"
+    },
+    {
+      "id": "cancion-del-mariachi",
+      "mode": "bounded-phase-locals",
+      "before": 281031,
+      "after": 274393,
+      "saved": 6638,
+      "sha256": "28cd2a0daff91322e57ef4aec16c6200ead0d3c18c5dd88f88dc6e140e6f3292"
+    },
+    {
+      "id": "cancion-del-mariachi-ensemble",
+      "mode": "legacy",
+      "before": 163597,
+      "after": 163597,
+      "saved": 0,
+      "sha256": "baa7adcfd7fd6bc0c74929166b4e459df36f42722e9a2432580b91b73a9420aa"
+    },
+    {
+      "id": "cancion-del-mariachi-ensemble",
+      "mode": "full",
+      "before": 169966,
+      "after": 169966,
+      "saved": 0,
+      "sha256": "b418b8363368c9f49590d229cff2c80a42c500bc56143c0a3668d7728b407001"
+    },
+    {
+      "id": "cancion-del-mariachi-ensemble",
+      "mode": "resumable",
+      "before": 389698,
+      "after": 387128,
+      "saved": 2570,
+      "sha256": "654eed62969dd92b1bae6f4ff0164328c9afdb016f3fb7821636804b56b99d6e"
+    },
+    {
+      "id": "cancion-del-mariachi-ensemble",
+      "mode": "bounded-phase-locals",
+      "before": 287212,
+      "after": 278813,
+      "saved": 8399,
+      "sha256": "a2984978d23adcf094e2df0c96e3805d1a2ad975c033b93f339691669f8134fc"
+    },
+    {
+      "id": "cancion-del-mariachi-sparse",
+      "mode": "legacy",
+      "before": 174792,
+      "after": 174792,
+      "saved": 0,
+      "sha256": "95ecefda2613e9fbc1fc4f73c9ed1063a6b60744ffeca70cc0a23a2c3e08c690"
+    },
+    {
+      "id": "cancion-del-mariachi-sparse",
+      "mode": "full",
+      "before": 182138,
+      "after": 182138,
+      "saved": 0,
+      "sha256": "db8c98179c36e94b58595d17cb6e75eee18c4811b0969aab7a4a91c482847ce4"
+    },
+    {
+      "id": "cancion-del-mariachi-sparse",
+      "mode": "resumable",
+      "before": 408208,
+      "after": 405600,
+      "saved": 2608,
+      "sha256": "f700a82aac951b9eecc732397ea3851a647ba14ebf7dd199ab73cdf361c0dec1"
+    },
+    {
+      "id": "cancion-del-mariachi-sparse",
+      "mode": "bounded-phase-locals",
+      "before": 306744,
+      "after": 298617,
+      "saved": 8127,
+      "sha256": "3c847652bee978deafdf155156430df9cc78f7f132965b322c3ac7fd148ddd57"
+    }
+  ],
+  "results": [
+    {
+      "id": "rhythmic",
+      "policy": "verification",
+      "warmupFrames": 1024,
+      "frames": 4096,
+      "rate": 48000,
+      "paired": {
+        "median": 0.9949580125441981,
+        "min": 0.9186445818250089,
+        "max": 1.07505785462746
+      },
+      "identity": {
+        "median": 1.0405874179627954,
+        "min": 0.9976860445165426,
+        "max": 1.068221146122535
+      },
+      "runs": [
+        {
+          "trial": 0,
+          "identity": false,
+          "order": [
+            0,
+            1
+          ],
+          "beforeMs": 144.24320000000353,
+          "afterMs": 134.17250000000058,
+          "ratio": 1.07505785462746,
+          "pcmSha256": "01146999992ba0639a054f823f8de72cad8a69744394abe0c9bfa8074fb68557",
+          "pinsSha256": "e9b2f290654c7708fc6510f7b132f514643283eefc85ab89762a41c858455d12",
+          "architectureSha256": "aa57412e3e713baf16b230da890f083aa964299d8bf2232d9cf4247b66700109",
+          "pinCount": 3196,
+          "irqs": 1598
+        },
+        {
+          "trial": 0,
+          "identity": true,
+          "order": [
+            0,
+            1
+          ],
+          "beforeMs": 130.31040000000212,
+          "afterMs": 128.0635999999995,
+          "ratio": 1.017544407622483,
+          "pcmSha256": "01146999992ba0639a054f823f8de72cad8a69744394abe0c9bfa8074fb68557",
+          "pinsSha256": "e9b2f290654c7708fc6510f7b132f514643283eefc85ab89762a41c858455d12",
+          "architectureSha256": "aa57412e3e713baf16b230da890f083aa964299d8bf2232d9cf4247b66700109",
+          "pinCount": 3196,
+          "irqs": 1598
+        },
+        {
+          "trial": 1,
+          "identity": true,
+          "order": [
+            1,
+            0
+          ],
+          "beforeMs": 127.92530000000079,
+          "afterMs": 128.22200000000066,
+          "ratio": 0.9976860445165426,
+          "pcmSha256": "01146999992ba0639a054f823f8de72cad8a69744394abe0c9bfa8074fb68557",
+          "pinsSha256": "e9b2f290654c7708fc6510f7b132f514643283eefc85ab89762a41c858455d12",
+          "architectureSha256": "aa57412e3e713baf16b230da890f083aa964299d8bf2232d9cf4247b66700109",
+          "pinCount": 3196,
+          "irqs": 1598
+        },
+        {
+          "trial": 1,
+          "identity": false,
+          "order": [
+            1,
+            0
+          ],
+          "beforeMs": 127.48519999999735,
+          "afterMs": 133.26350000000457,
+          "ratio": 0.9566400402210131,
+          "pcmSha256": "01146999992ba0639a054f823f8de72cad8a69744394abe0c9bfa8074fb68557",
+          "pinsSha256": "e9b2f290654c7708fc6510f7b132f514643283eefc85ab89762a41c858455d12",
+          "architectureSha256": "aa57412e3e713baf16b230da890f083aa964299d8bf2232d9cf4247b66700109",
+          "pinCount": 3196,
+          "irqs": 1598
+        },
+        {
+          "trial": 2,
+          "identity": false,
+          "order": [
+            0,
+            1
+          ],
+          "beforeMs": 134.05019999999968,
+          "afterMs": 129.7332000000024,
+          "ratio": 1.0332759848673831,
+          "pcmSha256": "01146999992ba0639a054f823f8de72cad8a69744394abe0c9bfa8074fb68557",
+          "pinsSha256": "e9b2f290654c7708fc6510f7b132f514643283eefc85ab89762a41c858455d12",
+          "architectureSha256": "aa57412e3e713baf16b230da890f083aa964299d8bf2232d9cf4247b66700109",
+          "pinCount": 3196,
+          "irqs": 1598
+        },
+        {
+          "trial": 2,
+          "identity": true,
+          "order": [
+            0,
+            1
+          ],
+          "beforeMs": 139.63679999999658,
+          "afterMs": 130.7190000000046,
+          "ratio": 1.068221146122535,
+          "pcmSha256": "01146999992ba0639a054f823f8de72cad8a69744394abe0c9bfa8074fb68557",
+          "pinsSha256": "e9b2f290654c7708fc6510f7b132f514643283eefc85ab89762a41c858455d12",
+          "architectureSha256": "aa57412e3e713baf16b230da890f083aa964299d8bf2232d9cf4247b66700109",
+          "pinCount": 3196,
+          "irqs": 1598
+        },
+        {
+          "trial": 3,
+          "identity": true,
+          "order": [
+            1,
+            0
+          ],
+          "beforeMs": 134.89110000000437,
+          "afterMs": 126.82140000000436,
+          "ratio": 1.0636304283031077,
+          "pcmSha256": "01146999992ba0639a054f823f8de72cad8a69744394abe0c9bfa8074fb68557",
+          "pinsSha256": "e9b2f290654c7708fc6510f7b132f514643283eefc85ab89762a41c858455d12",
+          "architectureSha256": "aa57412e3e713baf16b230da890f083aa964299d8bf2232d9cf4247b66700109",
+          "pinCount": 3196,
+          "irqs": 1598
+        },
+        {
+          "trial": 3,
+          "identity": false,
+          "order": [
+            1,
+            0
+          ],
+          "beforeMs": 128.43229999999858,
+          "afterMs": 139.80629999999655,
+          "ratio": 0.9186445818250089,
+          "pcmSha256": "01146999992ba0639a054f823f8de72cad8a69744394abe0c9bfa8074fb68557",
+          "pinsSha256": "e9b2f290654c7708fc6510f7b132f514643283eefc85ab89762a41c858455d12",
+          "architectureSha256": "aa57412e3e713baf16b230da890f083aa964299d8bf2232d9cf4247b66700109",
+          "pinCount": 3196,
+          "irqs": 1598
+        }
+      ]
+    },
+    {
+      "id": "rhythmic",
+      "policy": "bounded-phase-locals",
+      "warmupFrames": 1024,
+      "frames": 4096,
+      "rate": 48000,
+      "paired": {
+        "median": 0.9897209302759293,
+        "min": 0.933916487925169,
+        "max": 1.00243671521776
+      },
+      "identity": {
+        "median": 0.9691445905669516,
+        "min": 0.9017315511004407,
+        "max": 1.00597658518143
+      },
+      "runs": [
+        {
+          "trial": 0,
+          "identity": false,
+          "order": [
+            0,
+            1
+          ],
+          "beforeMs": 116.49469999999747,
+          "afterMs": 116.45989999999983,
+          "ratio": 1.0002988153003534,
+          "pcmSha256": "01146999992ba0639a054f823f8de72cad8a69744394abe0c9bfa8074fb68557",
+          "pinsSha256": "e9b2f290654c7708fc6510f7b132f514643283eefc85ab89762a41c858455d12",
+          "architectureSha256": "aa57412e3e713baf16b230da890f083aa964299d8bf2232d9cf4247b66700109",
+          "pinCount": 3196,
+          "irqs": 1598
+        },
+        {
+          "trial": 0,
+          "identity": true,
+          "order": [
+            0,
+            1
+          ],
+          "beforeMs": 111.7474000000002,
+          "afterMs": 111.08349999999882,
+          "ratio": 1.00597658518143,
+          "pcmSha256": "01146999992ba0639a054f823f8de72cad8a69744394abe0c9bfa8074fb68557",
+          "pinsSha256": "e9b2f290654c7708fc6510f7b132f514643283eefc85ab89762a41c858455d12",
+          "architectureSha256": "aa57412e3e713baf16b230da890f083aa964299d8bf2232d9cf4247b66700109",
+          "pinCount": 3196,
+          "irqs": 1598
+        },
+        {
+          "trial": 1,
+          "identity": true,
+          "order": [
+            1,
+            0
+          ],
+          "beforeMs": 110.25120000000061,
+          "afterMs": 122.26609999999891,
+          "ratio": 0.9017315511004407,
+          "pcmSha256": "01146999992ba0639a054f823f8de72cad8a69744394abe0c9bfa8074fb68557",
+          "pinsSha256": "e9b2f290654c7708fc6510f7b132f514643283eefc85ab89762a41c858455d12",
+          "architectureSha256": "aa57412e3e713baf16b230da890f083aa964299d8bf2232d9cf4247b66700109",
+          "pinCount": 3196,
+          "irqs": 1598
+        },
+        {
+          "trial": 1,
+          "identity": false,
+          "order": [
+            1,
+            0
+          ],
+          "beforeMs": 111.28060000000005,
+          "afterMs": 111.01010000000497,
+          "ratio": 1.00243671521776,
+          "pcmSha256": "01146999992ba0639a054f823f8de72cad8a69744394abe0c9bfa8074fb68557",
+          "pinsSha256": "e9b2f290654c7708fc6510f7b132f514643283eefc85ab89762a41c858455d12",
+          "architectureSha256": "aa57412e3e713baf16b230da890f083aa964299d8bf2232d9cf4247b66700109",
+          "pinCount": 3196,
+          "irqs": 1598
+        },
+        {
+          "trial": 2,
+          "identity": false,
+          "order": [
+            0,
+            1
+          ],
+          "beforeMs": 110.7964000000029,
+          "afterMs": 113.15650000000096,
+          "ratio": 0.9791430452515053,
+          "pcmSha256": "01146999992ba0639a054f823f8de72cad8a69744394abe0c9bfa8074fb68557",
+          "pinsSha256": "e9b2f290654c7708fc6510f7b132f514643283eefc85ab89762a41c858455d12",
+          "architectureSha256": "aa57412e3e713baf16b230da890f083aa964299d8bf2232d9cf4247b66700109",
+          "pinCount": 3196,
+          "irqs": 1598
+        },
+        {
+          "trial": 2,
+          "identity": true,
+          "order": [
+            0,
+            1
+          ],
+          "beforeMs": 111.00439999999799,
+          "afterMs": 110.96049999999923,
+          "ratio": 1.000395636284973,
+          "pcmSha256": "01146999992ba0639a054f823f8de72cad8a69744394abe0c9bfa8074fb68557",
+          "pinsSha256": "e9b2f290654c7708fc6510f7b132f514643283eefc85ab89762a41c858455d12",
+          "architectureSha256": "aa57412e3e713baf16b230da890f083aa964299d8bf2232d9cf4247b66700109",
+          "pinCount": 3196,
+          "irqs": 1598
+        },
+        {
+          "trial": 3,
+          "identity": true,
+          "order": [
+            1,
+            0
+          ],
+          "beforeMs": 110.81850000000668,
+          "afterMs": 118.15680000000066,
+          "ratio": 0.9378935448489301,
+          "pcmSha256": "01146999992ba0639a054f823f8de72cad8a69744394abe0c9bfa8074fb68557",
+          "pinsSha256": "e9b2f290654c7708fc6510f7b132f514643283eefc85ab89762a41c858455d12",
+          "architectureSha256": "aa57412e3e713baf16b230da890f083aa964299d8bf2232d9cf4247b66700109",
+          "pinCount": 3196,
+          "irqs": 1598
+        },
+        {
+          "trial": 3,
+          "identity": false,
+          "order": [
+            1,
+            0
+          ],
+          "beforeMs": 110.24659999999676,
+          "afterMs": 118.0476000000017,
+          "ratio": 0.933916487925169,
+          "pcmSha256": "01146999992ba0639a054f823f8de72cad8a69744394abe0c9bfa8074fb68557",
+          "pinsSha256": "e9b2f290654c7708fc6510f7b132f514643283eefc85ab89762a41c858455d12",
+          "architectureSha256": "aa57412e3e713baf16b230da890f083aa964299d8bf2232d9cf4247b66700109",
+          "pinCount": 3196,
+          "irqs": 1598
+        }
+      ]
+    },
+    {
+      "id": "lumiere-stereo",
+      "policy": "verification",
+      "warmupFrames": 1024,
+      "frames": 4096,
+      "rate": 48000,
+      "paired": {
+        "median": 0.98908090054651,
+        "min": 0.895076064962163,
+        "max": 1.0536064498742257
+      },
+      "identity": {
+        "median": 1.010128778696585,
+        "min": 0.9996603141781578,
+        "max": 1.0252901965593886
+      },
+      "runs": [
+        {
+          "trial": 0,
+          "identity": false,
+          "order": [
+            0,
+            1
+          ],
+          "beforeMs": 136.12159999999676,
+          "afterMs": 133.35929999999826,
+          "ratio": 1.0207132161011534,
+          "pcmSha256": "7b3b5d018713edfa9e91fb0e5ade66be7bf579131ab6150a773cc3e29c5bab53",
+          "pinsSha256": "2c4b72279e04904a8cd3dc45c0f72e86c710b2d6a91e05f55054acc64c76ba93",
+          "architectureSha256": "2d1dad9d2492ca01fe9f882d8b52876703e7affc4a4672ffd5d33ab8c263c73a",
+          "pinCount": 4276,
+          "irqs": 1598
+        },
+        {
+          "trial": 0,
+          "identity": true,
+          "order": [
+            0,
+            1
+          ],
+          "beforeMs": 127.66040000000066,
+          "afterMs": 127.61439999999857,
+          "ratio": 1.0003604608884429,
+          "pcmSha256": "7b3b5d018713edfa9e91fb0e5ade66be7bf579131ab6150a773cc3e29c5bab53",
+          "pinsSha256": "2c4b72279e04904a8cd3dc45c0f72e86c710b2d6a91e05f55054acc64c76ba93",
+          "architectureSha256": "2d1dad9d2492ca01fe9f882d8b52876703e7affc4a4672ffd5d33ab8c263c73a",
+          "pinCount": 4276,
+          "irqs": 1598
+        },
+        {
+          "trial": 1,
+          "identity": true,
+          "order": [
+            1,
+            0
+          ],
+          "beforeMs": 136.2623999999978,
+          "afterMs": 132.90129999999954,
+          "ratio": 1.0252901965593886,
+          "pcmSha256": "7b3b5d018713edfa9e91fb0e5ade66be7bf579131ab6150a773cc3e29c5bab53",
+          "pinsSha256": "2c4b72279e04904a8cd3dc45c0f72e86c710b2d6a91e05f55054acc64c76ba93",
+          "architectureSha256": "2d1dad9d2492ca01fe9f882d8b52876703e7affc4a4672ffd5d33ab8c263c73a",
+          "pinCount": 4276,
+          "irqs": 1598
+        },
+        {
+          "trial": 1,
+          "identity": false,
+          "order": [
+            1,
+            0
+          ],
+          "beforeMs": 127.28579999999783,
+          "afterMs": 132.9426999999996,
+          "ratio": 0.9574485849918665,
+          "pcmSha256": "7b3b5d018713edfa9e91fb0e5ade66be7bf579131ab6150a773cc3e29c5bab53",
+          "pinsSha256": "2c4b72279e04904a8cd3dc45c0f72e86c710b2d6a91e05f55054acc64c76ba93",
+          "architectureSha256": "2d1dad9d2492ca01fe9f882d8b52876703e7affc4a4672ffd5d33ab8c263c73a",
+          "pinCount": 4276,
+          "irqs": 1598
+        },
+        {
+          "trial": 2,
+          "identity": false,
+          "order": [
+            0,
+            1
+          ],
+          "beforeMs": 138.01369999999588,
+          "afterMs": 130.99170000000595,
+          "ratio": 1.0536064498742257,
+          "pcmSha256": "7b3b5d018713edfa9e91fb0e5ade66be7bf579131ab6150a773cc3e29c5bab53",
+          "pinsSha256": "2c4b72279e04904a8cd3dc45c0f72e86c710b2d6a91e05f55054acc64c76ba93",
+          "architectureSha256": "2d1dad9d2492ca01fe9f882d8b52876703e7affc4a4672ffd5d33ab8c263c73a",
+          "pinCount": 4276,
+          "irqs": 1598
+        },
+        {
+          "trial": 2,
+          "identity": true,
+          "order": [
+            0,
+            1
+          ],
+          "beforeMs": 129.20239999999467,
+          "afterMs": 126.68180000000211,
+          "ratio": 1.019897096504727,
+          "pcmSha256": "7b3b5d018713edfa9e91fb0e5ade66be7bf579131ab6150a773cc3e29c5bab53",
+          "pinsSha256": "2c4b72279e04904a8cd3dc45c0f72e86c710b2d6a91e05f55054acc64c76ba93",
+          "architectureSha256": "2d1dad9d2492ca01fe9f882d8b52876703e7affc4a4672ffd5d33ab8c263c73a",
+          "pinCount": 4276,
+          "irqs": 1598
+        },
+        {
+          "trial": 3,
+          "identity": true,
+          "order": [
+            1,
+            0
+          ],
+          "beforeMs": 128.31029999999373,
+          "afterMs": 128.3539000000019,
+          "ratio": 0.9996603141781578,
+          "pcmSha256": "7b3b5d018713edfa9e91fb0e5ade66be7bf579131ab6150a773cc3e29c5bab53",
+          "pinsSha256": "2c4b72279e04904a8cd3dc45c0f72e86c710b2d6a91e05f55054acc64c76ba93",
+          "architectureSha256": "2d1dad9d2492ca01fe9f882d8b52876703e7affc4a4672ffd5d33ab8c263c73a",
+          "pinCount": 4276,
+          "irqs": 1598
+        },
+        {
+          "trial": 3,
+          "identity": false,
+          "order": [
+            1,
+            0
+          ],
+          "beforeMs": 135.88829999999507,
+          "afterMs": 151.81759999999485,
+          "ratio": 0.895076064962163,
+          "pcmSha256": "7b3b5d018713edfa9e91fb0e5ade66be7bf579131ab6150a773cc3e29c5bab53",
+          "pinsSha256": "2c4b72279e04904a8cd3dc45c0f72e86c710b2d6a91e05f55054acc64c76ba93",
+          "architectureSha256": "2d1dad9d2492ca01fe9f882d8b52876703e7affc4a4672ffd5d33ab8c263c73a",
+          "pinCount": 4276,
+          "irqs": 1598
+        }
+      ]
+    },
+    {
+      "id": "lumiere-stereo",
+      "policy": "bounded-phase-locals",
+      "warmupFrames": 1024,
+      "frames": 4096,
+      "rate": 48000,
+      "paired": {
+        "median": 0.9360765078310327,
+        "min": 0.7330737441794861,
+        "max": 1.1653507765340279
+      },
+      "identity": {
+        "median": 1.0530800444902182,
+        "min": 0.9787393958185997,
+        "max": 1.083545717368147
+      },
+      "runs": [
+        {
+          "trial": 0,
+          "identity": false,
+          "order": [
+            0,
+            1
+          ],
+          "beforeMs": 129.14719999999215,
+          "afterMs": 131.05650000000242,
+          "ratio": 0.9854314742114262,
+          "pcmSha256": "7b3b5d018713edfa9e91fb0e5ade66be7bf579131ab6150a773cc3e29c5bab53",
+          "pinsSha256": "2c4b72279e04904a8cd3dc45c0f72e86c710b2d6a91e05f55054acc64c76ba93",
+          "architectureSha256": "2d1dad9d2492ca01fe9f882d8b52876703e7affc4a4672ffd5d33ab8c263c73a",
+          "pinCount": 4276,
+          "irqs": 1598
+        },
+        {
+          "trial": 0,
+          "identity": true,
+          "order": [
+            0,
+            1
+          ],
+          "beforeMs": 122.06259999999747,
+          "afterMs": 115.75530000000072,
+          "ratio": 1.054488217818076,
+          "pcmSha256": "7b3b5d018713edfa9e91fb0e5ade66be7bf579131ab6150a773cc3e29c5bab53",
+          "pinsSha256": "2c4b72279e04904a8cd3dc45c0f72e86c710b2d6a91e05f55054acc64c76ba93",
+          "architectureSha256": "2d1dad9d2492ca01fe9f882d8b52876703e7affc4a4672ffd5d33ab8c263c73a",
+          "pinCount": 4276,
+          "irqs": 1598
+        },
+        {
+          "trial": 1,
+          "identity": true,
+          "order": [
+            1,
+            0
+          ],
+          "beforeMs": 119.89479999999458,
+          "afterMs": 114.00400000000081,
+          "ratio": 1.0516718711623603,
+          "pcmSha256": "7b3b5d018713edfa9e91fb0e5ade66be7bf579131ab6150a773cc3e29c5bab53",
+          "pinsSha256": "2c4b72279e04904a8cd3dc45c0f72e86c710b2d6a91e05f55054acc64c76ba93",
+          "architectureSha256": "2d1dad9d2492ca01fe9f882d8b52876703e7affc4a4672ffd5d33ab8c263c73a",
+          "pinCount": 4276,
+          "irqs": 1598
+        },
+        {
+          "trial": 1,
+          "identity": false,
+          "order": [
+            1,
+            0
+          ],
+          "beforeMs": 141.20810000000347,
+          "afterMs": 159.24739999999656,
+          "ratio": 0.8867215414506392,
+          "pcmSha256": "7b3b5d018713edfa9e91fb0e5ade66be7bf579131ab6150a773cc3e29c5bab53",
+          "pinsSha256": "2c4b72279e04904a8cd3dc45c0f72e86c710b2d6a91e05f55054acc64c76ba93",
+          "architectureSha256": "2d1dad9d2492ca01fe9f882d8b52876703e7affc4a4672ffd5d33ab8c263c73a",
+          "pinCount": 4276,
+          "irqs": 1598
+        },
+        {
+          "trial": 2,
+          "identity": false,
+          "order": [
+            0,
+            1
+          ],
+          "beforeMs": 158.14269999998942,
+          "afterMs": 215.72549999999683,
+          "ratio": 0.7330737441794861,
+          "pcmSha256": "7b3b5d018713edfa9e91fb0e5ade66be7bf579131ab6150a773cc3e29c5bab53",
+          "pinsSha256": "2c4b72279e04904a8cd3dc45c0f72e86c710b2d6a91e05f55054acc64c76ba93",
+          "architectureSha256": "2d1dad9d2492ca01fe9f882d8b52876703e7affc4a4672ffd5d33ab8c263c73a",
+          "pinCount": 4276,
+          "irqs": 1598
+        },
+        {
+          "trial": 2,
+          "identity": true,
+          "order": [
+            0,
+            1
+          ],
+          "beforeMs": 143.0210999999981,
+          "afterMs": 131.99359999999433,
+          "ratio": 1.083545717368147,
+          "pcmSha256": "7b3b5d018713edfa9e91fb0e5ade66be7bf579131ab6150a773cc3e29c5bab53",
+          "pinsSha256": "2c4b72279e04904a8cd3dc45c0f72e86c710b2d6a91e05f55054acc64c76ba93",
+          "architectureSha256": "2d1dad9d2492ca01fe9f882d8b52876703e7affc4a4672ffd5d33ab8c263c73a",
+          "pinCount": 4276,
+          "irqs": 1598
+        },
+        {
+          "trial": 3,
+          "identity": true,
+          "order": [
+            1,
+            0
+          ],
+          "beforeMs": 116.15639999999257,
+          "afterMs": 118.67959999999948,
+          "ratio": 0.9787393958185997,
+          "pcmSha256": "7b3b5d018713edfa9e91fb0e5ade66be7bf579131ab6150a773cc3e29c5bab53",
+          "pinsSha256": "2c4b72279e04904a8cd3dc45c0f72e86c710b2d6a91e05f55054acc64c76ba93",
+          "architectureSha256": "2d1dad9d2492ca01fe9f882d8b52876703e7affc4a4672ffd5d33ab8c263c73a",
+          "pinCount": 4276,
+          "irqs": 1598
+        },
+        {
+          "trial": 3,
+          "identity": false,
+          "order": [
+            1,
+            0
+          ],
+          "beforeMs": 152.8396000000066,
+          "afterMs": 131.1533000000054,
+          "ratio": 1.1653507765340279,
+          "pcmSha256": "7b3b5d018713edfa9e91fb0e5ade66be7bf579131ab6150a773cc3e29c5bab53",
+          "pinsSha256": "2c4b72279e04904a8cd3dc45c0f72e86c710b2d6a91e05f55054acc64c76ba93",
+          "architectureSha256": "2d1dad9d2492ca01fe9f882d8b52876703e7affc4a4672ffd5d33ab8c263c73a",
+          "pinCount": 4276,
+          "irqs": 1598
+        }
+      ]
+    }
+  ],
+  "host": {
+    "cpu": "AMD Ryzen 5 5600X 6-Core Processor",
+    "system": "win32",
+    "release": "10.0.26300",
+    "arch": "x64"
+  },
+  "decision": "rejected",
+  "candidateFullSuite": {
+    "tests": 2325,
+    "pass": 2325,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 107201.3712
+  },
+  "restoredCompilerIdentity": "88eaad819aeb1e5ef35029276a0caa4c59724f4fa29b998076e8fdccc06a43b2"
+}
