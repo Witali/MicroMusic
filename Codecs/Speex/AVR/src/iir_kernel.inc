@@ -165,6 +165,10 @@ IIR_ENTRY:
     add r14, r24
     adc r15, r1
     clr r2
+    /* The last old age changes only after the final warm output. Keep it
+     * in the same pair that will hold the first new steady coefficient. */
+    ldd r16,Y+(6*IIR_ORDER-2)
+    ldd r17,Y+(6*IIR_ORDER-1)
     /* Exactly order warm samples update all coefficient ages. Y wraps
      * once after the phase, so no per-sample cursor test is needed. */
     ldi r18,IIR_ORDER
@@ -174,9 +178,10 @@ IIR_ENTRY:
     movw r30, r28
     adiw r30, 2*IIR_ORDER
     IIR_MAC memory,1
-    .rept IIR_ORDER-1
+    .rept IIR_ORDER-2
     IIR_MAC memory
     .endr
+    IIR_MAC r16,0,16,17
     IIR_FINISH 1
     dec r3
     breq .Lsteady_setup
