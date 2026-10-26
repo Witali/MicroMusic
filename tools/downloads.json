@@ -86,5 +86,25 @@
       "purpose": "Byte-identical SDK documentation, license, classpath utility and Java example for host-dependency inspection; no code executed.",
       "license": "Original source notice retained as mplab-x-sdk/MPLAB_X/doc/mchp-software-license.txt."
     }
+  ],
+  "plannedAssets": [
+    {
+      "id": "mplab-x-ide-windows",
+      "version": "6.35",
+      "url": "https://ww1.microchip.com/downloads/aemDocuments/documents/DEV/ProductDocuments/SoftwareTools/MPLABX-v6.35-windows-installer.exe",
+      "publishedSha256": "64a5247d5c1e2db7c6fb3b8d2fa43d5578d7efebe2e51db44706b20d441c2061",
+      "publisherPage": "https://www.microchip.com/en-us/tools-resources/develop/mplab-x-ide",
+      "path": "build/reference-downloads/MPLABX-v6.35-windows-installer.exe",
+      "status": "not-downloaded",
+      "purpose": "Acquire the official simulator host for static format/license and workspace-local extraction research only; no installer execution, global installation, drivers or physical programming.",
+      "license": "Installer and bundled third-party terms remain uninspected because no installer bytes were obtained; no content used or executed.",
+      "acquisitionCheck": {
+        "date": "2026-10-26",
+        "httpsGet": "Access Denied response referencing Microchip /en-us/error/401.html; no complete or partial file created.",
+        "iab": "Unavailable; current browser inventory is empty.",
+        "activeDownloadHandle": false,
+        "actualBytesAndHash": "Unknown; publishedSha256 is vendor metadata, not a hash computed from a local file."
+      }
+    }
   ]
 }
