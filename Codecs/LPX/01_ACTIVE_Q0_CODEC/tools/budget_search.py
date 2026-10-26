@@ -58,7 +58,8 @@ def spectrum_seeds(seed,strides=(2,4)):
 
 
 def search_budget(seeds,reference,decoder,max_bytes,kind='speech',lambdas=LAMBDAS,
-                  refinement_trials=4,encoder=encode_rate,encoder_options=None,candidate_sink=None,candidate_guard=None):
+                  refinement_trials=4,encoder=encode_rate,encoder_options=None,candidate_sink=None,candidate_guard=None,
+                  baseline_seed_indices=None):
     ref=np.asarray(reference)
     if (not 20<=max_bytes<=65535 or int(max_bytes)!=max_bytes or ref.ndim!=1 or
             not 1<=len(ref)<=64000 or ref.dtype.kind not in 'iu' or np.any(ref < -32768) or
@@ -68,6 +69,9 @@ def search_budget(seeds,reference,decoder,max_bytes,kind='speech',lambdas=LAMBDA
         raise ValueError('Expected explicit file cap, PCM16, bounded search and valid lambdas')
     seeds=list(dict.fromkeys(bytes(seed) for seed in seeds))
     if not seeds:raise ValueError('At least one existing-format seed required')
+    baselines=set(range(len(seeds))) if baseline_seed_indices is None else set(baseline_seed_indices)
+    if any(not isinstance(i,int) or not 0<=i<len(seeds) for i in baselines):
+        raise ValueError('Quality baseline indices must identify deduplicated seeds')
     options={'allow_zero':True,'compact_features':24,**(encoder_options or {})}
     started=time.perf_counter();candidates=[];observations=[];seen=set();trials=0
     def add(blob,pcm,record):
@@ -103,7 +107,7 @@ def search_budget(seeds,reference,decoder,max_bytes,kind='speech',lambdas=LAMBDA
             if not brackets:break
             trial(min(brackets)[1])
     eligible=[p for p in candidates if p[2]['fits_budget'] and p[2]['quality_guard_passed']]
-    baseline=[p for p in eligible if p[2]['source']=='seed']
+    baseline=[p for p in eligible if p[2]['source']=='seed' and p[2]['seed_index'] in baselines]
     if baseline:
         old=min(baseline,key=lambda p:(p[2]['full_sse'],len(p[0]),p[2]['stream_sha256']))
         floor=old[2]['quality']['stoi']
@@ -117,6 +121,7 @@ def search_budget(seeds,reference,decoder,max_bytes,kind='speech',lambdas=LAMBDA
     report={'status':'ok' if best else 'no_fit','max_bytes':max_bytes,'cap_audio_bytes':max_bytes-20,
             'input_seed_bytes':[len(s) for s in seeds],'started_above_budget':all(len(s)>max_bytes for s in seeds),
             'trials':trials,'candidates':observations,'frontier':frontier,'feasible_seed_stoi_floor':floor,
+            'quality_baseline_seed_indices':sorted(baselines),
             'minimum_observed_bytes':min(len(p[0]) for p in candidates),'selected':best[2] if best else None,
             'seconds':time.perf_counter()-started,'decoder_modified':False,
             'no_fit_scope':'Finite encoder search only; no format lower bound is claimed.'}

@@ -103,7 +103,10 @@ def encode_lowrate(reference,decoder,max_bytes,kind='speech',stage='joint',
         pcm=decoder.decode_one_s16(blob,len(ref))
         if pcm is None or not np.array_equal(pcm,decode_pcm16(blob)):raise AssertionError('Gain proposal native/model mismatch')
     if stage in ('joint','perceptual'):
-        guard=lambda candidate:preserves_activity(ref,candidate,level_floor_db)
+        source_energy=float(np.dot(ref.astype(np.float64),ref.astype(np.float64)))
+        def guard(candidate):
+            error=ref.astype(np.float64)-np.asarray(candidate,dtype=np.float64)
+            return preserves_activity(ref,candidate,level_floor_db) and float(np.dot(error,error))<=source_energy
         starting=blob
         if shift:
             try:
@@ -113,17 +116,23 @@ def encode_lowrate(reference,decoder,max_bytes,kind='speech',stage='joint',
                 old=None;legacy=None
             report['legacy_target_available']=old is not None;report['legacy_target']=legacy
         else:old=None
-        candidates=[starting]+([old] if old is not None else [])
+        candidates=list(dict.fromkeys([starting]+([old] if old is not None else [])))
+        # Scale remapping is only a proposal. Its STOI can remain high despite
+        # a large fixed-point DC/level error; do not make that proposal an
+        # acceptance floor for correction at the real input level.
+        baselines=([candidates.index(old)] if old is not None else []) if shift else None
         for weighting in ('balanced','recording'):
             refined,decoded,details=search_budget(candidates,ref,decoder,int(max_bytes),kind,
                 lambdas=(.001,.003,.01,.03,.1,.3,1.),refinement_trials=3,encoder=encode_joint,
-                encoder_options={'beam':4,'level_floor_db':level_floor_db,'error_weighting':weighting},candidate_guard=guard)
+                encoder_options={'beam':4,'level_floor_db':level_floor_db,'error_weighting':weighting},candidate_guard=guard,
+                baseline_seed_indices=baselines)
             report[weighting+'_search']=details
-            if refined is not None:blob,pcm=refined,decoded;candidates=[refined]
+            if refined is not None:blob,pcm=refined,decoded;candidates=[refined];baselines=None
         if not guard(pcm):
-            report['status']='no_fit';report['no_fit_reason']='No candidate passed the sustained-mute check'
+            report['status']='no_fit';report['no_fit_reason']='No candidate passed the sustained-mute and waveform-error checks'
             return None,None,report
         report['activity_guard_db']=float(level_floor_db)
+        report['requires_error_no_worse_than_silence']=True
     report.update(status='ok',file_bytes=len(blob),audio_packet_bytes=len(blob)-20,
                   audio_kbps=(len(blob)-20)*8*8000/len(ref)/1000,
                   metrics=compare(ref,pcm,kind=='speech',known_delay=0)[0])
