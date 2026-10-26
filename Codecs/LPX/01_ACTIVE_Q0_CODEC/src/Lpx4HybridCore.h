@@ -3,7 +3,6 @@
 #ifndef LPX4_ALLOW_SPARSE
 #define LPX4_ALLOW_SPARSE 1
 #endif
-#define LPX4_MAX_PULSES 10
 // Experimental fixed-rate speech v4. Explicit opt-in; v2/v3 stay unchanged.
 // Uses the same integer synthesis and C/ASM arithmetic backends.
 #ifndef LPX4_ENABLE_SPEECH
@@ -25,6 +24,23 @@
 #endif
 #if LPX4_ENABLE_SPEECH_COMPACT && !LPX4_ENABLE_SPEECH
 #error Compact speech requires LPX4_ENABLE_SPEECH
+#endif
+// Explicit Flash-size profile: accept v5 only and omit all legacy parsers.
+// Use the same flags for the core and every consumer (class layout differs).
+// Arithmetic and hardware Flash backend selection remain independent.
+#ifndef LPX4_COMPACT_ONLY
+#define LPX4_COMPACT_ONLY 0
+#endif
+#if LPX4_COMPACT_ONLY != 0 && LPX4_COMPACT_ONLY != 1
+#error LPX4_COMPACT_ONLY must be 0 or 1
+#endif
+#if LPX4_COMPACT_ONLY && (!LPX4_ENABLE_SPEECH || !LPX4_ENABLE_SPEECH_COMPACT)
+#error LPX4_COMPACT_ONLY requires speech and compact speech
+#endif
+#if LPX4_COMPACT_ONLY
+#define LPX4_MAX_PULSES 3
+#else
+#define LPX4_MAX_PULSES 10
 #endif
 // Mirrored LPC history removes per-sample history shifts, spending 20 B RAM.
 // Zero retains the smaller linear history with identical output on C/ASM.
@@ -151,15 +167,21 @@ private:
     uint32_t read32();
     LPX4_TUNE_READERS uint8_t readBits(uint8_t n);
     __attribute__((noinline)) LPX4_TUNE_READERS uint8_t readOne();
+#if !LPX4_COMPACT_ONLY
     __attribute__((always_inline)) inline int8_t readHuffman3();
+#endif
     bool readFrame();
 #if LPX4_ENABLE_SPEECH_COMPACT
     uint8_t readSpeechRice(uint8_t k,uint8_t width);
 #endif
+#if !LPX4_COMPACT_ONLY
     bool readBlock();
+#endif
     bool readSubframe();
     __attribute__((always_inline)) inline int16_t pitchPredict() const;
+#if !LPX4_COMPACT_ONLY
     __attribute__((always_inline)) inline bool readUnary8(uint8_t& high);
+#endif
     LPX4_TUNE_CODES bool decodeCode(int8_t& q);
 #if !defined(__AVR__) || defined(LPX4_ENABLE_PCM16)
     LPX4_TUNE_SAMPLE bool nextCore(int16_t& postfilterQ14);
@@ -183,16 +205,20 @@ private:
 #if LPX4_BATCHED_REMAINING
     uint8_t subEnd_;
 #endif
+#if LPX4_COMPACT_ONLY
+    uint8_t bitBuffer_,bitsLeft_,lag_,gain_,ringCursor_;
+#else
     uint8_t quantLimit_;
     uint8_t mode_,blockScale_,bitBuffer_,bitsLeft_,riceK_;
     uint8_t subType_,lag_,gain_,ringCursor_;
+#endif
 #if LPX4_ENABLE_SPEECH
     uint8_t speechProfile_,speechHalf_;
 #endif
 #if LPX4_ENABLE_SPEECH_COMPACT
     uint8_t speechCompact_; // bit0 v5, bit7 optional-extra markers
 #endif
-#if LPX4_V3_FEATURES
+#if LPX4_V3_FEATURES && !LPX4_COMPACT_ONLY
     uint8_t formatFeatures_;
 #endif
 #if LPX4_ALLOW_SPARSE

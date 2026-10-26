@@ -2983,6 +2983,10 @@ without editing production sources. No board measurements are claimed.
 
 ## LPX speech: measure CPU independently of bitrate
 
+[Program Flash at fixed audio](lpx-program-flash.md) records the measured
+unroll/Os/LTO/prologue/relax combination and explicit v5-only specialization,
+with retained harness ABI, C fallback, full PWM and active-IRQ admission.
+
 [Bounded exact spectral packing](lpx-speech-compact.md) adds measured
 gap/delta Rice, bounded radix20 arithmetic and collision-safe extra pulses.
 It explicitly compares smaller files with the new parser's total Flash

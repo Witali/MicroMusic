@@ -69,15 +69,19 @@ Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),
 #if LPX4_BATCHED_REMAINING
  subEnd_(0),
 #endif
+#if LPX4_COMPACT_ONLY
+ bitBuffer_(0),bitsLeft_(0),lag_(0),gain_(0),ringCursor_(0),
+#else
  quantLimit_(0),mode_(0),blockScale_(0),
  bitBuffer_(0),bitsLeft_(0),riceK_(0),subType_(0),lag_(0),gain_(0),ringCursor_(0),
+#endif
 #if LPX4_ENABLE_SPEECH
  speechProfile_(0),speechHalf_(0),
 #endif
 #if LPX4_ENABLE_SPEECH_COMPACT
  speechCompact_(0),
 #endif
-#if LPX4_V3_FEATURES
+#if LPX4_V3_FEATURES && !LPX4_COMPACT_ONLY
  formatFeatures_(0),
 #endif
 #if LPX4_ALLOW_SPARSE
@@ -135,15 +139,19 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #if LPX4_BATCHED_REMAINING
  subEnd_=0;
 #endif
+#if LPX4_COMPACT_ONLY
+ bitBuffer_=bitsLeft_=lag_=gain_=ringCursor_=0;blockStep_=0;
+#else
  bitBuffer_=bitsLeft_=mode_=blockScale_=riceK_=0;blockStep_=0;
  subType_=lag_=gain_=ringCursor_=quantLimit_=0;
+#endif
 #if LPX4_ENABLE_SPEECH
  speechProfile_=speechHalf_=0;
 #endif
 #if LPX4_ENABLE_SPEECH_COMPACT
  speechCompact_=0;
 #endif
-#if LPX4_V3_FEATURES
+#if LPX4_V3_FEATURES && !LPX4_COMPACT_ONLY
  formatFeatures_=0;
 #endif
 #if LPX4_ALLOW_SPARSE
@@ -167,6 +175,10 @@ prevDeemph_=prevBright_=0;
   error_=BAD_HEADER;return false;
  }
  const uint8_t version=readByte(),flags=readByte();
+#if LPX4_COMPACT_ONLY
+ if(version!=5 || ((flags&127)!=4 && (flags&127)!=6)){error_=UNSUPPORTED;return false;}
+ speechProfile_=flags&127;speechCompact_=1|(flags&128);
+#else
 #if LPX4_ENABLE_SPEECH_COMPACT
  if(version==5 && ((flags&127)==4 || (flags&127)==6)){
   speechProfile_=flags&127;speechCompact_=1|(flags&128);
@@ -184,12 +196,20 @@ prevDeemph_=prevBright_=0;
  if(version!=2||flags!=3){error_=UNSUPPORTED;return false;}
 #endif
  }
+#endif
  sampleRate_=read16();sampleCount_=read32();preQ14_=read16();brightQ14_=read16();
  remaining_=sampleCount_;
 #if LPX4_BATCHED_REMAINING
  subEnd_=remaining_<20?(uint8_t)remaining_:20;
 #endif
  const uint16_t frames=read16(),blocks=read16();
+#if LPX4_COMPACT_ONLY
+ const bool geometry=frames==320 && blocks==160;
+ const uint16_t payload=read16();
+ if(sampleCount_>64000 || !sampleCount_ || (uint32_t)size!=22UL+payload){
+  error_=BAD_HEADER;return false;
+ }
+#else
  bool geometry=frames==160 && blocks==80;
 #if LPX4_ENABLE_SPEECH
  if(speechProfile_){
@@ -207,6 +227,7 @@ prevDeemph_=prevBright_=0;
   }
  }
 #endif
+#endif
  if(error_||sampleRate_!=8000||!sampleCount_||!geometry||
     preQ14_>16384||brightQ14_>11469){error_=BAD_HEADER;return false;}
  return true;
@@ -221,6 +242,7 @@ uint8_t Lpx4HybridCore::readOne(){
  --bitsLeft_;
  return r;
 }
+#if !LPX4_COMPACT_ONLY
 // Consume the mandatory two-bit Huffman prefix in one cached operation.
 // Zero retains the original per-bit path; instrumentation preserves its costs.
 #ifndef LPX4_FAST_HUFFMAN3
@@ -248,6 +270,7 @@ int8_t Lpx4HybridCore::readHuffman3(){
  if(!readOne())return 3;
  return readOne()?-3:-4;
 }
+#endif
 uint8_t Lpx4HybridCore::readBits(uint8_t n){
 #ifdef LPX3_COST_INSTRUMENT
  ++bitCalls_;
@@ -278,12 +301,20 @@ uint8_t Lpx4HybridCore::readSpeechRice(uint8_t k,uint8_t width){
 bool Lpx4HybridCore::readFrame(){
  for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
 #if LPX4_ENABLE_SPEECH
+#if !LPX4_COMPACT_ONLY
  if(speechProfile_){
+#else
+ {
+#endif
   staticSpectrum_=true;
   if(!speechHalf_){
    const uint8_t bits=speechProfile_==4?5:6,shift=10-bits;
 #if LPX4_ENABLE_SPEECH_COMPACT
+#if !LPX4_COMPACT_ONLY
    if(speechCompact_){
+#else
+   {
+#endif
     if(!readOne()){
      if(!initializedFrame_){error_=CORRUPT_STREAM;return false;}
     }else{
@@ -301,8 +332,12 @@ bool Lpx4HybridCore::readFrame(){
       cur_[i]=v;last=value;
      }
     }
-   }else
+   }
+#if !LPX4_COMPACT_ONLY
+   else
 #endif
+#endif
+#if !LPX4_COMPACT_ONLY
    {
    for(uint8_t i=0;i<10;i++){
     const int16_t v=((uint16_t)readBits(bits)<<shift)+(1u<<(shift-1));
@@ -312,19 +347,29 @@ bool Lpx4HybridCore::readFrame(){
    }
    if(speechProfile_==6 && readBits(6)){error_=CORRUPT_STREAM;return false;}
    }
+#endif
   }
   if(!initializedFrame_)for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
   initializedFrame_=true;speechHalf_^=1;
+#if LPX4_COMPACT_ONLY
+  const uint8_t blockScale=readBits(5)<<3;
+#else
   mode_=6;quantLimit_=32;
   blockScale_=readBits(5)<<3;
+#endif
   lag_=18+readBits(7);gain_=readBits(3)<<1;
+#if LPX4_COMPACT_ONLY
+  blockStep_=scaleStep(blockScale);
+#else
   blockStep_=scaleStep(blockScale_);
+#endif
 #if LPX4_EXCITATION_Q4
   blockStep_<<=4;
 #endif
   return !error_;
  }
 #endif
+#if !LPX4_COMPACT_ONLY
  if(!readOne()){
   if(!initializedFrame_){error_=CORRUPT_STREAM;return false;}
   staticSpectrum_=true;
@@ -380,7 +425,9 @@ bool Lpx4HybridCore::readFrame(){
  }
  if(!initializedFrame_)for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
  initializedFrame_=true;return true;
+#endif
 }
+#if !LPX4_COMPACT_ONLY
 bool Lpx4HybridCore::readBlock(){
 #if LPX4_ENABLE_SPEECH
  if(speechProfile_)return !error_;
@@ -415,14 +462,24 @@ bool Lpx4HybridCore::readBlock(){
 #endif
  return !error_;
 }
+#endif
 bool Lpx4HybridCore::readSubframe(){
 #if LPX4_ENABLE_SPEECH
+#if !LPX4_COMPACT_ONLY
  if(speechProfile_){
   subType_=2;pulseIndex_=0;pulseCount_=2;
+#else
+ {
+  pulseIndex_=0;pulseCount_=2;
+#endif
 #if LPX4_ENABLE_SPEECH_COMPACT
   uint16_t pair=0;
   uint8_t second=0;
+#if LPX4_COMPACT_ONLY
+  if(speechProfile_==6){
+#else
   if(speechCompact_ && speechProfile_==6){
+#endif
    pair=readBits(8);pair|=(uint16_t)readOne()<<8;
    if(pair>=400){error_=CORRUPT_STREAM;return false;}
    // For n=0..399: floor(n/20)=floor(floor(n/4)/5).
@@ -438,10 +495,16 @@ bool Lpx4HybridCore::readSubframe(){
     amp=readOne()?8:-8;
    }else{
 #if LPX4_ENABLE_SPEECH_COMPACT
+#if LPX4_COMPACT_ONLY
+    pos=i?second:(uint8_t)(pair-second*20);
+#else
     if(speechCompact_)pos=i?second:(uint8_t)(pair-second*20);
     else
 #endif
+#endif
+#if !LPX4_COMPACT_ONLY
     pos=readBits(5);
+#endif
     const uint8_t raw=readBits(4);
     amp=raw<8?(int8_t)raw:(int8_t)((int16_t)raw-16);
     if(pos>=20){error_=CORRUPT_STREAM;return false;}
@@ -465,6 +528,7 @@ bool Lpx4HybridCore::readSubframe(){
   return !error_;
  }
 #endif
+#if !LPX4_COMPACT_ONLY
 #if LPX4_V3_FEATURES & 32
  if((formatFeatures_&32) && !mode_){
   subType_=riceK_=0;
@@ -525,6 +589,7 @@ bool Lpx4HybridCore::readSubframe(){
    }
  }
  return !error_;
+#endif
 }
 // 0 keeps the reference predictor, bit1 narrows the proven result,
 // bit2 bypasses zero history, bit4 additionally bypasses zero gain.
@@ -536,7 +601,9 @@ bool Lpx4HybridCore::readSubframe(){
 #endif
 int16_t Lpx4HybridCore::pitchPredict() const{
 #if LPX4_FAST_PITCH
+#if !LPX4_COMPACT_ONLY
  if(!mode_)return 0;
+#endif
  const int8_t x=ringQ_[(uint8_t)(ringCursor_-lag_)];
 #if LPX4_FAST_PITCH&2
  if(!x)return 0;
@@ -545,20 +612,29 @@ int16_t Lpx4HybridCore::pitchPredict() const{
  if(!gain_)return 0;
 #endif
  int8_t v=lpx4PitchQ4(x,gain_);
+#if LPX4_COMPACT_ONLY
+ const int8_t low=-32,high=31;
+#else
  const int8_t low=-(int8_t)quantLimit_,high=(int8_t)(quantLimit_-1);
+#endif
  if(v<low)v=low;
  if(v>high)v=high;
  return v;
 #else
  const int8_t x=ringQ_[(uint8_t)(ringCursor_-lag_)];
  int16_t v=(int16_t)(((int8_t)gain_*x+8)>>4);
+#if LPX4_COMPACT_ONLY
+ const int16_t lim=32;
+#else
  if(!mode_)return 0;
  const int16_t lim=quantLimit_;
+#endif
  if(v < -lim)v=-lim;
  if(v >= lim)v=lim-1;
  return v;
 #endif
 }
+#if !LPX4_COMPACT_ONLY
 // Valid decodeCode callers have error==NONE. Nonzero cache contains a
 // terminator within bitsLeft (all unused cache bits are zero by construction).
 // Empty/all-zero caches retain the exact bounded refill/error path.
@@ -595,7 +671,19 @@ bool Lpx4HybridCore::readUnary8(uint8_t& high){
  }
  return true;
 }
+#endif
 bool Lpx4HybridCore::decodeCode(int8_t& q){
+#if LPX4_COMPACT_ONLY
+ int16_t decoded=pitchPredict();
+ if(pulseIndex_<pulseCount_ && pulsePos_[pulseIndex_]==(subPos_+((subIndex_&1)?20:0))){
+  decoded+=pulseAmp_[pulseIndex_++];
+ }
+ if(error_)return false;
+ if(decoded < -32)decoded=-32;
+ if(decoded > 31)decoded=31;
+ q=(int8_t)decoded;ringQ_[ringCursor_++]=q;
+ return true;
+#else
  int16_t decoded=0;
  if(subType_==0){
    if(!mode_)decoded=0;
@@ -642,6 +730,7 @@ bool Lpx4HybridCore::decodeCode(int8_t& q){
  q=(int8_t)decoded;
  ringQ_[ringCursor_++]=q;
  return true;
+#endif
 }
 void Lpx4HybridCore::interpolate(uint8_t sub){interpolateLsf(sub);}
 // Guard the 32x16 product on pathological/invalid LPX3 LSF vectors.
@@ -816,7 +905,9 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
     if(subPos_==0){
         // All frame/block/excitation headers coincide with a 20-sample boundary.
         if(subIndex_==0&&!readFrame())return false;
+#if !LPX4_COMPACT_ONLY
         if(!(subIndex_&3)&&!readBlock())return false;
+#endif
         if(!(subIndex_&1)&&!readSubframe())return false;
         interpolate(subIndex_);
 #ifdef LPX3_BANDWIDTH_EXPAND_Q14
@@ -829,6 +920,13 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
 #endif
     }
     int8_t q=0;
+#if LPX4_COMPACT_ONLY
+#if LPX4_FAST_EXCITATION&2
+    if(pulseIndex_>=pulseCount_){q=(int8_t)pitchPredict();ringQ_[ringCursor_++]=q;}
+    else
+#endif
+    if(!decodeCode(q))return false;
+#else
 #if LPX4_FAST_EXCITATION
     bool simple=false;
     if((LPX4_FAST_EXCITATION&1) && subType_==0 && (!mode_ || !riceK_)){
@@ -855,6 +953,7 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
     else
 #endif
     if(!decodeCode(q))return false;
+#endif
 #ifdef LPX3_Q_DIAG
     lastQ_=q;
 #endif
@@ -910,7 +1009,11 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
         // A complete final packet must consume the declared payload, with
         // only zero bits left in its final byte. Partial sample tails retain
         // the documented unconsumed-padding behavior.
+#if LPX4_COMPACT_ONLY
+        if(!remaining_ && !speechHalf_){
+#else
         if(speechCompact_ && !remaining_ && !speechHalf_){
+#endif
 #if LPX4_ROM_POINTER
             const bool trailing=bytes_!=0;
 #else
