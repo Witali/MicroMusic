@@ -28,7 +28,7 @@ def clamp(v, lo=-32767, hi=32767):
     return min(hi, max(lo, v))
 
 
-def coefficient_trace(frames, samples):
+def coefficient_trace_reference(frames, samples):
     """Exact default Q12 interpolation, including C division toward zero."""
     cosine = table('cos_table.inc')
 
@@ -76,6 +76,80 @@ def coefficient_trace(frames, samples):
             start = fi * 160 + sub * 20
             result[start:min(start + 20, samples)] = row
     return result
+
+
+@njit(cache=True)
+def _trace_poly_mul(v, c):
+    if -250000 <= v <= 250000:
+        return (v * c) >> 12
+    hi = cdiv(v, 16)
+    return ((hi * c) >> 8) + (((v - hi * 16) * c) >> 12)
+
+
+@njit(cache=True)
+def _coefficient_trace_vectors(vectors, samples, cosine):
+    """Same bounded integer operations; avoid Python/JIT calls per product."""
+    result = np.empty((samples, 10), dtype=np.int64)
+    endpoints = np.empty((3, 10), dtype=np.int64)
+    polynomials = np.empty((2, 12), dtype=np.int64)
+    for fi in range(len(vectors)):
+        prev = vectors[max(0, fi - 1)]
+        cur = vectors[fi]
+        for point in range(3):
+            t = point * 8
+            polynomials[:, :] = 0
+            polynomials[0, 0] = polynomials[0, 1] = 4096
+            polynomials[1, 0] = 4096
+            polynomials[1, 1] = -4096
+            for i in range(10):
+                norm = (prev[i] * (16 - t) + cur[i] * t) >> 2
+                idx, frac = norm >> 4, norm & 15
+                c = -(cosine[idx] + (((cosine[idx + 1] - cosine[idx]) * frac) >> 4))
+                p = polynomials[i % 2]
+                n = 2 + (i // 2) * 2
+                p[n + 1] = p[n - 1]
+                p[n] = p[n - 2] + _trace_poly_mul(p[n - 1], c)
+                for j in range(n - 1, 1, -1):
+                    p[j] = p[j - 2] + _trace_poly_mul(p[j - 1], c) + p[j]
+                p[1] = _trace_poly_mul(p[0], c) + p[1]
+            for j in range(10):
+                endpoints[point, j] = clamp(cdiv(polynomials[0, j + 1] + polynomials[1, j + 1], 2))
+        for sub in range(8):
+            local = (sub * 2 + 1) % 8
+            start = fi * 160 + sub * 20
+            stop = min(start + 20, samples)
+            for j in range(10):
+                a = endpoints[sub // 4, j]
+                b = endpoints[sub // 4 + 1, j]
+                value = clamp(a + cdiv((b - a) * local, 8))
+                for at in range(start, stop):
+                    result[at, j] = value
+    return result
+
+
+def coefficient_trace(frames, samples, reference=False):
+    """Exact default Q12 trace; explicitly selectable original Python path.
+
+    Frame validation stays in Python. Arithmetic is compiled as one kernel;
+    no float/fastmath, quantization, interpolation or decoder change occurs.
+    """
+    if reference:
+        return coefficient_trace_reference(frames, samples)
+    if samples < 1 or len(frames) != (samples + 159) // 160:
+        raise ValueError('LPC frame count does not match sample count')
+    vectors = np.empty((len(frames), 10), dtype=np.int64)
+    cur = None
+    for i, frame in enumerate(frames):
+        if frame[0] == 5:
+            cur = list(absolute_lsf10(frame[1:]))
+        elif frame[0] == 6 and cur is not None:
+            cur = [v + (d - 256 if d >= 128 else d) for v, d in zip(cur, frame[1:])]
+        elif frame[0] != 0 or cur is None:
+            raise ValueError('Invalid LSF frame sequence')
+        if len(cur) != 10 or any(v < 0 or v > 1023 for v in cur):
+            raise ValueError('LSF out of range')
+        vectors[i] = cur
+    return _coefficient_trace_vectors(vectors, samples, table('cos_table.inc'))
 
 
 @njit(cache=True)
