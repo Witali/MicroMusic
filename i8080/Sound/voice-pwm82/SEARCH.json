@@ -1,0 +1,636 @@
+{
+  "method": "All 80 level/phase handlers, fixed two-pulse grid; explicit Z liveness and 8/9-byte entry budget",
+  "smallest_complete_period_t_in_tested_templates": 82,
+  "global_optimality_proved": false,
+  "candidates": [
+    {
+      "period_t": 73,
+      "failed_handlers": [
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          3,
+          7
+        ],
+        [
+          3,
+          9
+        ],
+        [
+          3,
+          11
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          4,
+          6
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          9
+        ],
+        [
+          4,
+          11
+        ]
+      ],
+      "scheduled_code_bytes": 2751
+    },
+    {
+      "period_t": 74,
+      "failed_handlers": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          15
+        ],
+        [
+          2,
+          15
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          8
+        ],
+        [
+          3,
+          10
+        ],
+        [
+          3,
+          11
+        ],
+        [
+          3,
+          12
+        ],
+        [
+          3,
+          15
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          4,
+          8
+        ],
+        [
+          4,
+          10
+        ],
+        [
+          4,
+          11
+        ],
+        [
+          4,
+          12
+        ],
+        [
+          4,
+          15
+        ]
+      ],
+      "scheduled_code_bytes": 2820
+    },
+    {
+      "period_t": 75,
+      "failed_handlers": [
+        [
+          0,
+          14
+        ],
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          14
+        ],
+        [
+          1,
+          15
+        ],
+        [
+          2,
+          14
+        ],
+        [
+          2,
+          15
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          7
+        ],
+        [
+          3,
+          9
+        ],
+        [
+          3,
+          11
+        ],
+        [
+          3,
+          14
+        ],
+        [
+          3,
+          15
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          9
+        ],
+        [
+          4,
+          11
+        ],
+        [
+          4,
+          14
+        ],
+        [
+          4,
+          15
+        ]
+      ],
+      "scheduled_code_bytes": 2590
+    },
+    {
+      "period_t": 76,
+      "failed_handlers": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          15
+        ],
+        [
+          2,
+          13
+        ],
+        [
+          2,
+          14
+        ],
+        [
+          2,
+          15
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          8
+        ],
+        [
+          3,
+          9
+        ],
+        [
+          3,
+          13
+        ],
+        [
+          3,
+          15
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          4,
+          8
+        ],
+        [
+          4,
+          9
+        ],
+        [
+          4,
+          13
+        ],
+        [
+          4,
+          15
+        ]
+      ],
+      "scheduled_code_bytes": 2913
+    },
+    {
+      "period_t": 77,
+      "failed_handlers": [
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          7
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          4,
+          7
+        ]
+      ],
+      "scheduled_code_bytes": 3482
+    },
+    {
+      "period_t": 78,
+      "failed_handlers": [
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          11
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          4,
+          11
+        ]
+      ],
+      "scheduled_code_bytes": 3832
+    },
+    {
+      "period_t": 79,
+      "failed_handlers": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          15
+        ],
+        [
+          2,
+          15
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          15
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          4,
+          15
+        ]
+      ],
+      "scheduled_code_bytes": 3602
+    },
+    {
+      "period_t": 80,
+      "failed_handlers": [
+        [
+          2,
+          14
+        ],
+        [
+          2,
+          15
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          9
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          4,
+          9
+        ]
+      ],
+      "scheduled_code_bytes": 3762
+    },
+    {
+      "period_t": 81,
+      "failed_handlers": [
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          4,
+          4
+        ]
+      ],
+      "scheduled_code_bytes": 3891
+    },
+    {
+      "period_t": 82,
+      "failed_handlers": [],
+      "scheduled_code_bytes": 4298
+    },
+    {
+      "period_t": 83,
+      "failed_handlers": [
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ]
+      ],
+      "scheduled_code_bytes": 4159
+    },
+    {
+      "period_t": 84,
+      "failed_handlers": [
+        [
+          2,
+          15
+        ]
+      ],
+      "scheduled_code_bytes": 4267
+    },
+    {
+      "period_t": 85,
+      "failed_handlers": [
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ]
+      ],
+      "scheduled_code_bytes": 4178
+    },
+    {
+      "period_t": 86,
+      "failed_handlers": [],
+      "scheduled_code_bytes": 4409
+    },
+    {
+      "period_t": 87,
+      "failed_handlers": [],
+      "scheduled_code_bytes": 4459
+    },
+    {
+      "period_t": 88,
+      "failed_handlers": [],
+      "scheduled_code_bytes": 4439
+    },
+    {
+      "period_t": 89,
+      "failed_handlers": [],
+      "scheduled_code_bytes": 4453
+    },
+    {
+      "period_t": 90,
+      "failed_handlers": [],
+      "scheduled_code_bytes": 4565
+    },
+    {
+      "period_t": 91,
+      "failed_handlers": [],
+      "scheduled_code_bytes": 4586
+    },
+    {
+      "period_t": 92,
+      "failed_handlers": [],
+      "scheduled_code_bytes": 4586
+    },
+    {
+      "period_t": 93,
+      "failed_handlers": [],
+      "scheduled_code_bytes": 4625
+    },
+    {
+      "period_t": 94,
+      "failed_handlers": [],
+      "scheduled_code_bytes": 4695
+    },
+    {
+      "period_t": 95,
+      "failed_handlers": [],
+      "scheduled_code_bytes": 4722
+    },
+    {
+      "period_t": 96,
+      "failed_handlers": [],
+      "scheduled_code_bytes": 4749
+    },
+    {
+      "period_t": 97,
+      "failed_handlers": [],
+      "scheduled_code_bytes": 4794
+    },
+    {
+      "period_t": 98,
+      "failed_handlers": [],
+      "scheduled_code_bytes": 4863
+    },
+    {
+      "period_t": 99,
+      "failed_handlers": [],
+      "scheduled_code_bytes": 4897
+    },
+    {
+      "period_t": 100,
+      "failed_handlers": [],
+      "scheduled_code_bytes": 4936
+    },
+    {
+      "period_t": 101,
+      "failed_handlers": [],
+      "scheduled_code_bytes": 4849
+    },
+    {
+      "period_t": 102,
+      "failed_handlers": [],
+      "scheduled_code_bytes": 5028
+    },
+    {
+      "period_t": 103,
+      "failed_handlers": [],
+      "scheduled_code_bytes": 5083
+    },
+    {
+      "period_t": 104,
+      "failed_handlers": [],
+      "scheduled_code_bytes": 5110
+    },
+    {
+      "period_t": 105,
+      "failed_handlers": [],
+      "scheduled_code_bytes": 4930
+    },
+    {
+      "period_t": 106,
+      "failed_handlers": [],
+      "scheduled_code_bytes": 5075
+    },
+    {
+      "period_t": 107,
+      "failed_handlers": [],
+      "scheduled_code_bytes": 5248
+    },
+    {
+      "period_t": 108,
+      "failed_handlers": [],
+      "scheduled_code_bytes": 5149
+    },
+    {
+      "period_t": 109,
+      "failed_handlers": [],
+      "scheduled_code_bytes": 4998
+    }
+  ]
+}

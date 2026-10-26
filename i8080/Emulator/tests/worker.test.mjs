@@ -40,7 +40,7 @@ test('Live worker streams ordered audio chunks before final WAV data', async () 
   assert.equal(messages[0].kind, 'audio'); assert.equal(result.t, 19);
 });
 
-test('Selected 32kHz voice: full live Worker audio matches the complete buffer through HLT', async () => {
+test('Legacy 32kHz voice: full live Worker audio matches the complete buffer through HLT', async () => {
   const rom = Uint8Array.from(readFileSync(new URL('../../Sound/voice32/dualcrc-voice32.bin', import.meta.url)));
   const audit = JSON.parse(readFileSync(new URL('../../Sound/voice32/AUDIT.json', import.meta.url)));
   const { result, messages } = await run(rom, { seconds: 10, realtime: true });
@@ -80,4 +80,20 @@ test('FluidR3 music streams ordered audio from the actual sample ROM with no mem
   assert.equal(result.memWrites, 0); assert.ok(result.edges > 0);
   const chunks = messages.filter(m => m.kind === 'audio').map(m => Buffer.from(m.audio));
   assert.deepEqual(Buffer.concat(chunks), Buffer.from(result.audio));
+});
+
+test('82T / two-pulse voices at every CPU clock: full live audio equals ordered Worker chunks through HLT',async()=>{
+  for(const hz of [2000000,2500000,3500000])for(const profile of ['balloon','owl']){
+    const path=`../../Sound/voice-pwm82/${profile==='owl'?'owl/':''}${hz===3500000?'':`clocks/${hz}/`}`;
+    const name=(profile==='owl'?'owl':'dualcrc')+'-voice-pwm82';
+    const rom=Uint8Array.from(readFileSync(new URL(path+name+'.bin',import.meta.url)));
+    const audit=JSON.parse(readFileSync(new URL(path+'AUDIT.json',import.meta.url)));
+    const {result,messages}=await run(rom,{hz,seconds:12,realtime:true});
+    assert.equal(result.kind,'done');assert.equal(result.stopReason,'HLT');assert.equal(result.t,audit.t_states);
+    assert.equal(result.steps,audit.instructions);assert.equal(result.memWrites,0);assert.equal(result.inte,0);
+    if(profile==='owl')assert.equal(result.edges,audit.pulses*2);
+    const chunks=messages.filter(m=>m.kind==='audio').map(m=>Buffer.from(m.audio));
+    assert.deepEqual(Buffer.concat(chunks),Buffer.from(result.audio));
+    assert.equal(result.audio.byteLength/4,Math.ceil(result.t/hz*96000));
+  }
 });

@@ -1,0 +1,26 @@
+{
+  "cpu_hz": 3500000,
+  "period_t": 82,
+  "constant_pcm_level": 7,
+  "high_width_t": 32,
+  "source_rate_hz": 96000,
+  "device_rate_hz": 48000,
+  "volume": 0.65,
+  "normalize": false,
+  "measurement": "1s Hann amplitude at Fs_device-carrier after 0.25s settling; current AudioBus and StreamingAudio, no hardware",
+  "results": [
+    {
+      "cutoff_hz": 10000,
+      "rc_poles": 1,
+      "alias_hz": 5317.07317073171,
+      "alias_dbfs": -15.097138
+    },
+    {
+      "cutoff_hz": 4500,
+      "rc_poles": 4,
+      "alias_hz": 5317.07317073171,
+      "alias_dbfs": -71.49601
+    }
+  ],
+  "hardware_measured": false
+}
