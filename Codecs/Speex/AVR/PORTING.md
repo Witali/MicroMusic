@@ -1,7 +1,10 @@
-# Using NB3 on another architecture
+# Using Speex on another architecture
 
 The fixed-point C decoder and the AVR assembly backend implement the same
 restricted Speex NB3 profile: mono 8 kHz, 20-byte packets, 160 signed16 samples.
+`SPEEX_ENABLE_NB4=1` additionally accepts 28-byte NB4 packets (11 kbit/s).
+The neutral `speex_nb.h` names alias the same singleton symbols. A WB export
+also provides 16-kHz NB3+HB1 / NB4+HB1 decoding with its documented compact QMF.
 The library has no timer, PWM, GPIO, operating-system or heap dependency.
 It keeps one static, non-reentrant decoder; reset it before each stream.
 The AVR PWM demo in `src/player.c` is a separate hardware integration.
@@ -57,6 +60,9 @@ matching optimized kernel is provided yet.
 | Whole-block LPC synthesis | `lpc_dot.S` | C dot product and coefficient-age loop in `iir_direct.c.inc` |
 | Four consecutive innovation indices | bounded C group in `nb3_indices.h` | same portable C helper; partial/other-offset states use four generic reads |
 | Pitch/gain/energy header | bounded inline C group in `nb3_header.h` | same portable C helper; partial/other-offset states use ordered 7/5/1 generic reads |
+| NB4 pitch/gain/energy and five indices | seven-byte reader in `nb4_subframe.h` | same C reader on every backend |
+| NB4 short-pitch vectors | shared `short_pitch_kernel.inc`, 5 x 8 geometry, existing ASM primitives | same controller with explicit C primitives |
+| NB4 HB1 innovation + folding | `wb_excitation_kernel.inc`, selected by `wb_fold.h` | explicitly callable `speex_wb_excitation8_40_c`, including on AVR |
 
 The AVR IIR cursor compares a low address byte only because ten word positions
 span exactly 20 bytes; every state-base low byte and page crossing is tested.

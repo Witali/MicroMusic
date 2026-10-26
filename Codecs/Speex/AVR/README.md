@@ -8,7 +8,7 @@ peak**, including a separate 40% extra-CPU admission test. A physical board
 and its analog output have not been tested.
 
 An additional [compact wideband profile](WIDEBAND.md) decodes **16 kHz /
-9.8 kbit/s** (NB3 + HB1) on the same MCU. It uses a normalized 16-tap Q7
+9.8 or 12.8 kbit/s** (NB3/NB4 + HB1) on the same MCU. It uses a normalized 16-tap Q7
 synthesis QMF; its PCM differs from full 64-tap Xiph synthesis. The NB3
 profile retains exact original PCM.
 The WB PWM player passes all 16 speech recordings: **6,467 frames,
@@ -16,9 +16,20 @@ The WB PWM player passes all 16 speech recordings: **6,467 frames,
 with timers and interrupts active. WB playback on ATmega328P requires ASM;
 the portable C fallback retains correctness but exceeds its frame deadline.
 
+The optional **NB 11 / WB 12.8 kbit/s** extension is enabled by
+`SPEEX_ENABLE_NB4=1`; the default stays 0 for minimum Flash. The new WB ASM
+decoder uses **20,300 B Flash** and averages **78.61% CPU** on 16 natural
+Russian/English clips. Its PWM player passes 48 Flash-sized chunks / 6,467
+frames with zero underruns and **430 B SRAM free**; two chunks also pass with
+5% added CPU work. New NB11 also passes two complete clips with 40% added
+work. Both new modes retain C fallbacks, reset checks and independent PCM
+oracles. See [HIGHER_BITRATES.md](HIGHER_BITRATES.md) for packet sizes, scope,
+measurements and reproducible commands. Existing minimal C/ASM decoder
+images remain byte-identical; six representative legacy PWM images also match.
+
 The primary optimization target is the explicitly enabled AVR ASM backend.
 The narrowband decoder also has a selectable C backend and an architecture-neutral
-`speex_nb3.h` interface. Architecture defines and a separate explicit ASM
+`speex_nb.h` interface (with compatible `speex_nb3.h` names). Architecture defines and a separate explicit ASM
 enable control selection; without a matching enabled backend it uses C.
 See [PORTING.md](PORTING.md) for C fallbacks, platform headers and an exportable
 CMake/static-library package for other microcontrollers. The C player now
@@ -27,14 +38,14 @@ underruns and 700 B free SRAM at peak. Both NB3 backends retain exact upstream s
 
 ## Narrowband profile
 
-- Narrowband submode 3, mono 8 kHz, CBR 8 kbit/s.
-- Exactly 20 compressed bytes produce 160 signed 16-bit samples (20 ms).
+- Narrowband submode 3, mono 8 kHz, CBR 8 kbit/s; optional mode 4 at 11 kbit/s.
+- A 20-byte NB3 or 28-byte NB4 packet produces 160 signed16 samples (20 ms).
 - Enhancement and highpass are disabled; all four coefficient steps are
   retained. Identical NB3 LSP indices reuse exact interpolation/LPC results;
   filter synthesis and coefficient ageing always execute. Decoded s16 PCM
   matches unmodified upstream.
 - Input consists of raw packets, as in `reference/R4/data/*.spxraw`. Ogg/Speex
-  containers, other submodes, WB, DTX, stereo, encoder and packet loss concealment
+  containers, other NB submodes, DTX, stereo, encoder and packet loss concealment
   are outside this profile. The API rejects wrong lengths and mode headers
   before changing state.
 

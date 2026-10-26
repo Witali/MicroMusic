@@ -1,8 +1,11 @@
 # Compact wideband on ATmega328P
 
-`WB1-Q7-16` decodes mono **16 kHz / 9.8 kbit/s** Speex on ATmega328P at
-16 MHz. A frame contains NB submode 3 and HB submode 1: 196 meaningful bits,
-stored in 25 bytes, producing 320 signed16 samples in 20 ms. The high band
+`WB1-Q7-16` decodes mono **16 kHz / 9.8 or 12.8 kbit/s** Speex on ATmega328P at
+16 MHz. A frame contains NB submode 3 or 4 and HB submode 1: 196 meaningful
+bits stored in 25 bytes, or 256 bits stored in 32 bytes, respectively. Both
+produce 320 signed16 samples in 20 ms. NB4/WB12.8 requires
+`SPEEX_ENABLE_NB4=1` (default 0); see [higher-bitrate admission](HIGHER_BITRATES.md).
+The high band
 uses the original Speex folding excitation, LSP codebooks and order-eight LPC.
 See the [Xiph wideband description](https://speex.org/docs/manual/speex-manual/node11.html).
 
@@ -13,10 +16,10 @@ multiplications per tap. This retains high-band data, but reduces rejection
 around the band boundary and changes PCM relative to the full Xiph filter.
 The ordinary NB3 profile remains bit-identical to Xiph.
 
-Only this fixed NB3+HB1 packet combination is supported. Other WB bitrates,
+Only these NB3+HB1 and NB4+HB1 packet combinations are supported. Other WB bitrates,
 DTX, enhancement, highpass, packet loss concealment, stereo and UWB/32 kHz
 remain outside this AVR profile. Ogg headers/framing must be removed before
-decoding; four padding bits at the end of a packet are ignored.
+decoding; four padding bits at the end of a 25-byte packet are ignored.
 
 ## Streaming interface
 
@@ -30,9 +33,9 @@ static void output(const int16_t *pcm, uint8_t count, void *context)
 }
 
 void start_stream(void) { speex_wb1_init(); }
-int decode_packet(const uint8_t packet[25])
+int decode_packet(const uint8_t *packet, size_t bytes)
 {
-    return speex_wb1_decode(packet, 25, output, 0);
+    return speex_wb1_decode(packet, bytes, output, 0); /* 25 or 32 bytes */
 }
 ```
 
