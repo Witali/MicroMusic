@@ -23,6 +23,20 @@ historical checkpoints. Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Flag-neutral SREG checkpoint: NOP/LDI/MOV/MOVW/SWAP no longer restore an old
+SREG snapshot after a resumable clock phase. Public debugger edits, including
+I for a tied Timer0 IRQ, now survive; RESET still cancels pending register
+effects. All-neutral basic blocks omit the same unused load/store while
+retaining their IRQ guard. The 26-case regression fails 19 cases on 23c4b7b2
+and passes all 26 after the repair. All 36 generated catalog/policy artifacts
+validate and shrink 1494–8671 bytes; execution speed was not measured. This is
+partial progress on register traffic, with no new hardware-coverage claim and
+no checklist closure. All 2026 default/shared-tool tests pass. See
+[the evidence](../reports/neutral-sreg-20261026.md).
+Two catalog firmwares also retain exact PCM and physical pin timestamps with
+IRQs active in verification and optimized policies. The broader audit of
+register/flag traffic across other instruction families remains open.
+
 SPM/IRQ continuation checkpoint: if Flash completes while entering an IRQ,
 manual `step`/`run` now finish that IRQ, rebind code, then satisfy the requested
 instruction count. Zero-count, held RESET, erased IRQ vectors and C0/C2/C3

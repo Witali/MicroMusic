@@ -1,0 +1,537 @@
+{
+  "schema": "micromusic-neutral-sreg-v1",
+  "baselineCommit": "23c4b7b222544f0e749d2876bc520ba4a93156b9",
+  "compilerIdentity": "94bd856ba70ec4970543b0961eadc508dc942e360bd20cde366fef056d896c1d",
+  "sourceSha256": "658b3337ef7713164cde0daa74d6996bc6421874e0d7bb6c418116fc8eb842ab",
+  "baselineSourceSha256": "1a05ab0ba983b3af621bd8d48ce29409fa6ec73e82173197f469ad12c917d82e",
+  "harnessSha256": "83b3063d383357f5b4f751ed4fcf28a5697a0ba26b56ed342259040ec970d1ab",
+  "regressionSha256": "953e8905347d7dac5ff42efd530e363ebb75b3b8d6ad1fdc194b28738fb30b0b",
+  "catalogSha256": "84ebe8568a2e9ca714f4c413dbbf33ffa050c3ec80a4ad0abd4ab15d96a83c80",
+  "native": {
+    "bytes": 119010,
+    "sha256": "bea029bf125c9f8f6ee3e63197e9a9e15556f35d59464ec3ccd5199c137e0715"
+  },
+  "node": "v22.22.3",
+  "v8": "12.4.254.21-node.56",
+  "hardwareTested": false,
+  "realtimeTested": false,
+  "executionSpeedMeasured": false,
+  "tests": [
+    {
+      "name": "NOP preserves a debugger SREG edit during its clock phase, locals=false",
+      "before": false,
+      "after": true
+    },
+    {
+      "name": "LDI preserves a debugger SREG edit during its clock phase, locals=false",
+      "before": false,
+      "after": true
+    },
+    {
+      "name": "MOV preserves a debugger SREG edit during its clock phase, locals=false",
+      "before": false,
+      "after": true
+    },
+    {
+      "name": "MOVW preserves a debugger SREG edit during its clock phase, locals=false",
+      "before": false,
+      "after": true
+    },
+    {
+      "name": "SWAP preserves a debugger SREG edit during its clock phase, locals=false",
+      "before": false,
+      "after": true
+    },
+    {
+      "name": "NOP preserves a debugger SREG edit during its clock phase, locals=true",
+      "before": false,
+      "after": true
+    },
+    {
+      "name": "LDI preserves a debugger SREG edit during its clock phase, locals=true",
+      "before": false,
+      "after": true
+    },
+    {
+      "name": "MOV preserves a debugger SREG edit during its clock phase, locals=true",
+      "before": false,
+      "after": true
+    },
+    {
+      "name": "MOVW preserves a debugger SREG edit during its clock phase, locals=true",
+      "before": false,
+      "after": true
+    },
+    {
+      "name": "SWAP preserves a debugger SREG edit during its clock phase, locals=true",
+      "before": false,
+      "after": true
+    },
+    {
+      "name": "NOP retains edited SREG.I for a tied Timer0 IRQ",
+      "before": false,
+      "after": true
+    },
+    {
+      "name": "LDI retains edited SREG.I for a tied Timer0 IRQ",
+      "before": false,
+      "after": true
+    },
+    {
+      "name": "MOV retains edited SREG.I for a tied Timer0 IRQ",
+      "before": false,
+      "after": true
+    },
+    {
+      "name": "MOVW retains edited SREG.I for a tied Timer0 IRQ",
+      "before": false,
+      "after": true
+    },
+    {
+      "name": "SWAP retains edited SREG.I for a tied Timer0 IRQ",
+      "before": false,
+      "after": true
+    },
+    {
+      "name": "NOP still aborts on RESET after a paused SREG edit",
+      "before": true,
+      "after": true
+    },
+    {
+      "name": "LDI still aborts on RESET after a paused SREG edit",
+      "before": true,
+      "after": true
+    },
+    {
+      "name": "MOV still aborts on RESET after a paused SREG edit",
+      "before": true,
+      "after": true
+    },
+    {
+      "name": "MOVW still aborts on RESET after a paused SREG edit",
+      "before": true,
+      "after": true
+    },
+    {
+      "name": "SWAP still aborts on RESET after a paused SREG edit",
+      "before": true,
+      "after": true
+    },
+    {
+      "name": "attiny13a: all five neutral instructions retain every SREG input against native C",
+      "before": true,
+      "after": true
+    },
+    {
+      "name": "attiny88: all five neutral instructions retain every SREG input against native C",
+      "before": true,
+      "after": true
+    },
+    {
+      "name": "legacy13: neutral bodies omit SREG copies but retain block IRQ guards",
+      "before": false,
+      "after": true
+    },
+    {
+      "name": "legacy88: neutral bodies omit SREG copies but retain block IRQ guards",
+      "before": false,
+      "after": true
+    },
+    {
+      "name": "full: neutral bodies omit SREG copies but retain block IRQ guards",
+      "before": false,
+      "after": true
+    },
+    {
+      "name": "resumable: neutral bodies omit SREG copies but retain block IRQ guards",
+      "before": false,
+      "after": true
+    }
+  ],
+  "sizes": [
+    {
+      "id": "rhythmic",
+      "mode": "legacy",
+      "before": 166211,
+      "after": 164272,
+      "saved": 1939,
+      "beforeSha256": "4d138a94005839fd126fe9377fb28d285fd1c291ec981ca67c3f7970b7b0cd1b",
+      "afterSha256": "052af6fa313bd5eabbac4fb3b68046fb795ac2baee04fd2f2fc92828ef5e089e"
+    },
+    {
+      "id": "rhythmic",
+      "mode": "full",
+      "before": 172748,
+      "after": 170730,
+      "saved": 2018,
+      "beforeSha256": "29bfa8d0aab2012fe08a0e5dcfdfd92c38e9eac050e919fdb9168106f5a9d58a",
+      "afterSha256": "38fd0d010671766812757abff470f716e2bc604f19af49fd3a04b868e1aceb1b"
+    },
+    {
+      "id": "rhythmic",
+      "mode": "resumable",
+      "before": 387264,
+      "after": 385338,
+      "saved": 1926,
+      "beforeSha256": "84ce8952038f4d900e8934dc8e866aeb7dad5da5b4db4aaa666f3c5a970722ef",
+      "afterSha256": "c2141eb3c604f45f374bea00944528eb3fd849513bb8f9abb0214ef03adc85d8"
+    },
+    {
+      "id": "rhythmic",
+      "mode": "bounded-phase-locals",
+      "before": 301446,
+      "after": 294424,
+      "saved": 7022,
+      "beforeSha256": "c9664d48181be0249a6f1a1d49e8156afe76cffd9c847dbdf65813b377e4aa4c",
+      "afterSha256": "27715c8489d3d5ea9f7566a2c2b4f56ab0745e71afa0cbd3afff997c34548e33"
+    },
+    {
+      "id": "alicia",
+      "mode": "legacy",
+      "before": 178695,
+      "after": 177094,
+      "saved": 1601,
+      "beforeSha256": "08913930d42a599e4b3a94d3279c23c2f9b3e248de67d51082bdd6d39889f93a",
+      "afterSha256": "14c8ba5d675d0017c274c07d446a5ef8c3808425a3718a3ae70243f577aa2702"
+    },
+    {
+      "id": "alicia",
+      "mode": "full",
+      "before": 185980,
+      "after": 184327,
+      "saved": 1653,
+      "beforeSha256": "8f9119c295eac9c3d0fdf05fded9e6bf15cb3feeb05af3fc976a76828446f8de",
+      "afterSha256": "5f4a7fd1ba7074eb7d26016412f50dfdb9684f881d83975df50c9701bc4bc5fc"
+    },
+    {
+      "id": "alicia",
+      "mode": "resumable",
+      "before": 403156,
+      "after": 401572,
+      "saved": 1584,
+      "beforeSha256": "91c80a73f073ed518de0460a24cd3aaa36ed1f128025017d8da3ea82cfac7a0a",
+      "afterSha256": "38fec16d373c16a45ad14145e4f04c475dceafb479d9422c758b8dbc838f43f4"
+    },
+    {
+      "id": "alicia",
+      "mode": "bounded-phase-locals",
+      "before": 310228,
+      "after": 304479,
+      "saved": 5749,
+      "beforeSha256": "4619376447deb89b72efdd6dd4d41cf554cd31b67cd1937c2e593849c943f4b0",
+      "afterSha256": "5ec1973cf0f9c39c26327b066f3ef1092703081495dc5f1f98c7ad8557778875"
+    },
+    {
+      "id": "turkish-march",
+      "mode": "legacy",
+      "before": 176621,
+      "after": 175007,
+      "saved": 1614,
+      "beforeSha256": "7064a75793ee96931f6f9c8060799fdc2a8994e11bbf9f23faf8b2feb2c0a182",
+      "afterSha256": "e6a46728e8e13f62e3312033cccc05f048194e855c2cce05c60e4b554bcb6512"
+    },
+    {
+      "id": "turkish-march",
+      "mode": "full",
+      "before": 185769,
+      "after": 184101,
+      "saved": 1668,
+      "beforeSha256": "3cabcd3b3acb5c3f93d4b5db332db20e341776685051c50d74ffdb3042b965e3",
+      "afterSha256": "bf626dd127f1c567ca670dd1517c6343b068edfb7a3f59490e30585b1f540c8f"
+    },
+    {
+      "id": "turkish-march",
+      "mode": "resumable",
+      "before": 401872,
+      "after": 400270,
+      "saved": 1602,
+      "beforeSha256": "06b0face6f18cc6ec7bcbf4d6d5c1c487f9d75de7380ab12dd51c931119a1fd6",
+      "afterSha256": "e8bd69df79b10a1d4d80cbf767620ad7b53b12c7c0a93b828dab8d946120af7a"
+    },
+    {
+      "id": "turkish-march",
+      "mode": "bounded-phase-locals",
+      "before": 308509,
+      "after": 302840,
+      "saved": 5669,
+      "beforeSha256": "f94b4f79397774b6b2de644f7399053d7a48a6fbbbe300b022cda08a2b21ba85",
+      "afterSha256": "c8c61a589257f1ee105a93b83e4d6fadc98c93b61a3db248a25c5b2b10ef95f5"
+    },
+    {
+      "id": "children",
+      "mode": "legacy",
+      "before": 174923,
+      "after": 173001,
+      "saved": 1922,
+      "beforeSha256": "ec0699b38ae0c8ab44eb0c6d202c99620da853a58d46d869dd7da19656d01138",
+      "afterSha256": "b5c1db45031b8751734e567e265bc2f206790178d5838ec1b7389e6aaa707b76"
+    },
+    {
+      "id": "children",
+      "mode": "full",
+      "before": 181855,
+      "after": 179861,
+      "saved": 1994,
+      "beforeSha256": "fb8f655ee3400208e30c5ca410f778d30cf10f911a04121086a69969dd0c6047",
+      "afterSha256": "611e20e2f8c119d5b2f7e92373618bc32f971bb256462ba51cdae5634fee48e1"
+    },
+    {
+      "id": "children",
+      "mode": "resumable",
+      "before": 401800,
+      "after": 399874,
+      "saved": 1926,
+      "beforeSha256": "c07c7b22682ec6c451648efe1b8a5c10e63c595738306738fbc2d9bd1fa08df3",
+      "afterSha256": "7c10e84b2d0f571ce9238542d8d9f24fec1c1e820c71c71d1d1bd3b8d0df9585"
+    },
+    {
+      "id": "children",
+      "mode": "bounded-phase-locals",
+      "before": 309299,
+      "after": 302473,
+      "saved": 6826,
+      "beforeSha256": "24d0f14baa360a55003aa49c98aef75704ccf52b865622fbea911ac09bb77e4a",
+      "afterSha256": "70512a6d6250958477d26296a5d37440085ddb6fa6ab83371b26d6a545cd0d72"
+    },
+    {
+      "id": "greensleeves",
+      "mode": "legacy",
+      "before": 163614,
+      "after": 162112,
+      "saved": 1502,
+      "beforeSha256": "039261d5f89b47821072e97853b1d0ef6e792d2c70b4f824c54707838bc4d291",
+      "afterSha256": "2e918c8ba4e7b1d0c8865fe35cce1286c7297b21657e380c015c44ae91e6c7bc"
+    },
+    {
+      "id": "greensleeves",
+      "mode": "full",
+      "before": 169291,
+      "after": 167730,
+      "saved": 1561,
+      "beforeSha256": "b20787eb4c70e4dcf3b09ecc19414ce715dbcf6383ffb8ccadd5eeede3f6b228",
+      "afterSha256": "bf4d2fec41b0429894c3f7ecb249ef20753ec6f9779a4574ced00b68b3f8c48e"
+    },
+    {
+      "id": "greensleeves",
+      "mode": "resumable",
+      "before": 372941,
+      "after": 371447,
+      "saved": 1494,
+      "beforeSha256": "93f9149d360072c72ef9ddb45719eae29cf04760c19411a1d618e7860a825d2b",
+      "afterSha256": "5a1f2573b23c4bc3d4aaae8ec42e81b5375d01574ad23c14a420f35c1e1318fa"
+    },
+    {
+      "id": "greensleeves",
+      "mode": "bounded-phase-locals",
+      "before": 285988,
+      "after": 280770,
+      "saved": 5218,
+      "beforeSha256": "0471b9d3669dbe22b28ed2bfa4cc9810e141eab47b123359f26a66c2c44606f4",
+      "afterSha256": "048a1260ff2be697d93fa19fb08fa10a74d88795d27bb496f4d8bed24bf681ac"
+    },
+    {
+      "id": "lumiere-stereo",
+      "mode": "legacy",
+      "before": 168214,
+      "after": 166203,
+      "saved": 2011,
+      "beforeSha256": "7a3fd85ed2a9507a568fe30ea0c9f51157ca7ec7f66f8275edc2a69987004603",
+      "afterSha256": "e2c6572252a6c507c414a4c29dce61a978ea3e9e72f6b08787093552269c3980"
+    },
+    {
+      "id": "lumiere-stereo",
+      "mode": "full",
+      "before": 174873,
+      "after": 172778,
+      "saved": 2095,
+      "beforeSha256": "af4b2ad1eaf7e2d69b69123cbc73582d7c6a9484a29c47b24b1ac1439a194225",
+      "afterSha256": "4b10bbf07e904583c763854dd052be1fb008889717dd38047ed87e28beff91ea"
+    },
+    {
+      "id": "lumiere-stereo",
+      "mode": "resumable",
+      "before": 391150,
+      "after": 389152,
+      "saved": 1998,
+      "beforeSha256": "eb7ce66b587152d9945fd5c94082d8c5fc378033a5ccd35d1a88a1d8389ff5f2",
+      "afterSha256": "62b6e79da81d2cdd606917c39a9373144e2ed018eb7f36b7ae4e34cd3aef3be8"
+    },
+    {
+      "id": "lumiere-stereo",
+      "mode": "bounded-phase-locals",
+      "before": 304764,
+      "after": 297425,
+      "saved": 7339,
+      "beforeSha256": "dc3924363c5c48d0c60d6651a891ee02e4b6e495230f70aa0fdf9a4f9b5cf00d",
+      "afterSha256": "054c80745cafd5b0643d6a32f3b7d9becff847219305b3780ba56a3349b80c94"
+    },
+    {
+      "id": "cancion-del-mariachi",
+      "mode": "legacy",
+      "before": 163860,
+      "after": 161376,
+      "saved": 2484,
+      "beforeSha256": "da526ee59e9f6ae6f3590550fb62059b088833cb73b97541859fe58fc17b6917",
+      "afterSha256": "902a01f3f8af7660c507804d73e201e5336432e4b79287106219e68a178ed0d1"
+    },
+    {
+      "id": "cancion-del-mariachi",
+      "mode": "full",
+      "before": 170102,
+      "after": 167574,
+      "saved": 2528,
+      "beforeSha256": "74ef0120e3cb3015a41eeced6a26da33e15db676877d908029880394dc2504eb",
+      "afterSha256": "bd3ea2a280a6162c48ecbb79979863edecde9f7effff270c2de06e401edf77cb"
+    },
+    {
+      "id": "cancion-del-mariachi",
+      "mode": "resumable",
+      "before": 383624,
+      "after": 381176,
+      "saved": 2448,
+      "beforeSha256": "944e555f55fdfcc3f85744c08a3541d14c27cb5e2da83321d41dc646f55556cd",
+      "afterSha256": "de75e4dcf037d350c839aeb7471adafbe9fb422b521c8add309a47b548bdaf95"
+    },
+    {
+      "id": "cancion-del-mariachi",
+      "mode": "bounded-phase-locals",
+      "before": 294682,
+      "after": 286011,
+      "saved": 8671,
+      "beforeSha256": "4dfcb4b2d0732fe239d9899d91825e689931e92e558422bc7fa9ddefdf9e5ba9",
+      "afterSha256": "cbaa6484fe2bb9609298e53b963d48d4716a09b57cd3b4bed67823906baf503f"
+    },
+    {
+      "id": "cancion-del-mariachi-ensemble",
+      "mode": "legacy",
+      "before": 168950,
+      "after": 166728,
+      "saved": 2222,
+      "beforeSha256": "54b8102b67c1e2cda6bdd8aec672b66ee4f7d7cf722c76c7fa3a40ed5a7e66c1",
+      "afterSha256": "68535c710aed8d5311f69f8617bc1fbead2b364bc2be74fe89b631add6b20b82"
+    },
+    {
+      "id": "cancion-del-mariachi-ensemble",
+      "mode": "full",
+      "before": 175421,
+      "after": 173093,
+      "saved": 2328,
+      "beforeSha256": "01bc3fcbfecd10a25b5a7104d451e83c90fbcb664c4cc9ec1423ff9b0778f706",
+      "afterSha256": "e6e8c6a1656036d5d212a02ab82cb30959bc44658305616ee15f6a6fb96080a3"
+    },
+    {
+      "id": "cancion-del-mariachi-ensemble",
+      "mode": "resumable",
+      "before": 391715,
+      "after": 389501,
+      "saved": 2214,
+      "beforeSha256": "b3c725a662a775da906302540283f863c5c3dd040e057da41cc83b92899fa151",
+      "afterSha256": "6bd3b807754266e555b4730d2a9dc881457ab956b92496ed888782acbbd33091"
+    },
+    {
+      "id": "cancion-del-mariachi-ensemble",
+      "mode": "bounded-phase-locals",
+      "before": 299916,
+      "after": 291773,
+      "saved": 8143,
+      "beforeSha256": "6905af94d27953691d6c630b95cad57522742ae55ca5756dcc489d07d6ac6157",
+      "afterSha256": "a3ed70d07f06e38a053e90dc450194f1867830102f89a0df86fc436d7f97cc0a"
+    },
+    {
+      "id": "cancion-del-mariachi-sparse",
+      "mode": "legacy",
+      "before": 179768,
+      "after": 177756,
+      "saved": 2012,
+      "beforeSha256": "1a5b69e7f1e0e509f29da2e278c1ff0d6421663a3c9943da58cb07e5747ff73e",
+      "afterSha256": "c0a12aa151f4fee59bc06092a76fa71f90c8d74c0c793374cacaf951ae204593"
+    },
+    {
+      "id": "cancion-del-mariachi-sparse",
+      "mode": "full",
+      "before": 187177,
+      "after": 185091,
+      "saved": 2086,
+      "beforeSha256": "16271a4cfce2892ad7c163467695be6cc7538fc655b9d7f788fb78336aba7b3b",
+      "afterSha256": "92f5b184b1aef0a02c7376b0b9a633943c1b238818117be785f53a7a7e456202"
+    },
+    {
+      "id": "cancion-del-mariachi-sparse",
+      "mode": "resumable",
+      "before": 409358,
+      "after": 407360,
+      "saved": 1998,
+      "beforeSha256": "56959a872a70ad9a8be819a43712fceba77f786fca544b95ccd5db3617e5e422",
+      "afterSha256": "174b97831a7c451db179ce83e7705880dd05f1df71e880e6d2a7d51af25e03e3"
+    },
+    {
+      "id": "cancion-del-mariachi-sparse",
+      "mode": "bounded-phase-locals",
+      "before": 317556,
+      "after": 310511,
+      "saved": 7045,
+      "beforeSha256": "fd36b123ae313aa6b7adbb0111c238ead758f28c25b44a766025d55c4f17796d",
+      "afterSha256": "1e6caff1f9ff5cf3f20ac7194a9d0319633bff7937744bb5e43b80f33f382eac"
+    }
+  ],
+  "audio": [
+    {
+      "id": "rhythmic",
+      "policy": "verification",
+      "frames": 4096,
+      "sampleRate": 48000,
+      "pcmSha256": "fd0eac13d5e765450ee764558ed7b6580bb223b72677892ea596341bda0dd74e",
+      "pinsSha256": "481596e0beb417a35e99d6fa68f9538a69fe39f9c81b3be0e0e45323a8b12e26",
+      "pinCount": 1597,
+      "irqs": 798,
+      "retired": "147325",
+      "timePs": "85333333333"
+    },
+    {
+      "id": "rhythmic",
+      "policy": "bounded-phase-locals",
+      "frames": 4096,
+      "sampleRate": 48000,
+      "pcmSha256": "fd0eac13d5e765450ee764558ed7b6580bb223b72677892ea596341bda0dd74e",
+      "pinsSha256": "481596e0beb417a35e99d6fa68f9538a69fe39f9c81b3be0e0e45323a8b12e26",
+      "pinCount": 1597,
+      "irqs": 798,
+      "retired": "147325",
+      "timePs": "85333333333"
+    },
+    {
+      "id": "lumiere-stereo",
+      "policy": "verification",
+      "frames": 4096,
+      "sampleRate": 48000,
+      "pcmSha256": "9dc6184d625d57de8d51d5dae80b6196d7f87ce1af75f0cc62ad9382e8cd63a2",
+      "pinsSha256": "0a5d2fec9ed6a88aace170ef872d52bf688e88853afd2caef814198cdd3a71c7",
+      "pinCount": 1877,
+      "irqs": 798,
+      "retired": "146090",
+      "timePs": "85333333333"
+    },
+    {
+      "id": "lumiere-stereo",
+      "policy": "bounded-phase-locals",
+      "frames": 4096,
+      "sampleRate": 48000,
+      "pcmSha256": "9dc6184d625d57de8d51d5dae80b6196d7f87ce1af75f0cc62ad9382e8cd63a2",
+      "pinsSha256": "0a5d2fec9ed6a88aace170ef872d52bf688e88853afd2caef814198cdd3a71c7",
+      "pinCount": 1877,
+      "irqs": 798,
+      "retired": "146090",
+      "timePs": "85333333333"
+    }
+  ],
+  "fullSuite": {
+    "command": "node --test web-player/tests/*.test.mjs tools/music-startup.test.mjs tools/avr-music-target-core.test.mjs",
+    "tests": 2026,
+    "pass": 2026,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "durationMs": 134487.9333
+  }
+}

@@ -121,6 +121,9 @@ export function runtimeABI(exports,{resumable=false}={}) {
 const writes={ADD:63,ADC:63,SUB:63,CP:63,CPI:63,SUBI:63,NEG:63,SBC:63,SBCI:63,CPC:63,ADIW:31,SBIW:31,BST:64,AND:30,ANDI:30,OR:30,ORI:30,EOR:30,INC:30,DEC:30,COM:31,LSR:31,ASR:31,ROR:31};
 const reads={ADC:1,ROR:1,SBC:3,SBCI:3,CPC:3,BLD:64};
 const pure=new Set(['NOP','LDI','MOV','MOVW','SWAP','BLD',...Object.keys(writes)]);
+// These operations neither consume nor modify SREG. Do not latch and restore
+// flags across a resumable clock phase, where the debugger can edit them.
+const flagNeutralPure=new Set(['NOP','LDI','MOV','MOVW','SWAP']);
 const guardedMemory=new Set(['LD','ST','LPM']);
 const batchable=i=>pure.has(i.name)||guardedMemory.has(i.name);
 const instructionCycles=i=>i.name==='LPM'?3:['ADIW','SBIW','LD','ST'].includes(i.name)?2:1;
@@ -182,9 +185,9 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   const PHASE_CLOCK=16,PHASE_DEADLINE=17,PHASE_RETIRE=18;
   const clock=value=>resumable?bytes(clockPhase(asFloat(value))):bytes(call(CLOCK,asFloat(value)),guard());
   const clockHalf=cycles=>resumable?bytes(clockPhase(float(cycles))):bytes(call(CLOCK,float(cycles)),guard());
-  const finish=()=>resumable?bytes(guard(),clock(get(7)),
+  const finish=(commitFlags=true)=>resumable?bytes(guard(),clock(get(7)),
     putF('pc',asFloat(and(load32(constant(abi.phase.nextPc)),constant(pcMask)))),
-    store8(flagsAddress,flags()),call(PHASE_RETIRE)):
+    commitFlags?store8(flagsAddress,flags()):[],call(PHASE_RETIRE)):
     bytes(guard(),put('pc',and(state('pc'),constant(pcMask))),clock(get(7)),call(IRQ));
 
   // Locals: x,y,carry,total,value,flags,address,cycles,temp (i32); f64 temporaries.
@@ -360,8 +363,9 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     }
     const localStats={waitSites:0,fullSlots:0,liveSlots:0};
     inInstruction=true;
-    const code=bytes(set(5,load8(flagsAddress)),set(7,constant(1)),put('errorPC',constant(i.pc)),
-      put('pc',constant((i.pc+1)&pcMask)),effects(i),resumable?[]:store8(flagsAddress,flags()),finish());
+    const touchesFlags=!flagNeutralPure.has(i.name);
+    const code=bytes(touchesFlags?set(5,load8(flagsAddress)):[],set(7,constant(1)),put('errorPC',constant(i.pc)),
+      put('pc',constant((i.pc+1)&pcMask)),effects(i),resumable||!touchesFlags?[]:store8(flagsAddress,flags()),finish(touchesFlags));
     inInstruction=false;
     const phased=resumable?emitInstructionPhases(code,{context:abi.phase,pc:i.pc,clockImport:PHASE_CLOCK,
       emit:phaseEmit,optimizeLocals:optimizePhaseLocals,onLiveness:optimizePhaseLocals?masks=>{
@@ -422,6 +426,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   }
   // Rebuild block functions with remapped i32 locals (arguments precede them).
   blocks.forEach((block,index)=>{
+    const touchesFlags=block.sequence.some(i=>!flagNeutralPure.has(i.name));
     const key=emission?JSON.stringify([block.start,block.end,block.masks,block.sequence.map(i=>[i.pc,i.word,i.k])]):null;
     if(oldEmission?.blocks.has(key)){blockBodies[index]=oldEmission.blocks.get(key);emission.blocks.set(key,blockBodies[index]);return;}
     const elapsed=binary(0xa0,stateF('cyc'),float(block.cycles));
@@ -449,7 +454,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
         // clock implementation violates that proof, before register effects.
         ...condition(eqz(get(2)),fail(25,true)));
     }
-    code.push(...set(7,load8(flagsAddress)));
+    if(touchesFlags)code.push(...set(7,load8(flagsAddress)));
     let elapsedCycles=0;
     block.sequence.forEach((i,n)=>{
       let effects;
@@ -469,7 +474,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
       }else effects=alu(i,block.masks[n]);
       code.push(...remapLocals(effects,2));elapsedCycles+=instructionCycles(i);
     });
-    code.push(...store8(flagsAddress,get(7)),put('pc',constant(block.end)),put('errorPC',constant((block.end-1)&pcMask)),
+    code.push(...(touchesFlags?store8(flagsAddress,get(7)):[]),put('pc',constant(block.end)),put('errorPC',constant((block.end-1)&pcMask)),
       resumable?bytes(storeI64(constant(abi.phase.retired),binary(0x7c,loadI64(constant(abi.phase.retired)),constantI64(block.instructions-1))),call(PHASE_RETIRE)):
         call(CLOCK,float(block.cycles)),constant(block.instructions));
     blockBodies[index]=body(code,[[9,0x7f]]);
