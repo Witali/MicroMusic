@@ -1,0 +1,2202 @@
+{
+  "environment": {
+    "source_sha256": {
+      "cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+      "cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+      "Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+      "Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+      "Lpx4HybridCore.cpp": "9a000d56400422e5bc4e79347ed46f2e2c66d0221d5e7e2f3bccb5c29374cd35",
+      "Lpx4HybridCore.h": "a16a665fa2c872456eaa907cff10b91e7c6449b171243b737b38327de1e1e640",
+      "Lpx4Math.h": "6f579fdcfc050fc082675fab91b1ed26ffd4d110238cd8ece19b079122845494",
+      "native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+      "scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081"
+    },
+    "dependencies": {
+      "avr-g++.exe": "098f5708a5d70e3abb6b504145b46c9320ef4b6d43b6b8f1c09b431e611d543b",
+      "cc1plus.exe": "ff61dee5e0c6db53996e54a6b4c1b7ad66b4fd7c2f8ef695984aca90ed6f34b8",
+      "profile.cpp": "5c0179ae73a153285826dfc1d608c4c65171f257901399efc9bb0e1488039e4a",
+      "sim_profile.c": "c35b6adbb401978e96973d2a919ebca0bbd2879c5b4d47110c70233bf2516b52",
+      "benchmark_speech_flash.py": "be0f94c7376df4f12b0482970706667762a6f15223b283a9d3c40934507d0192",
+      "standard_metrics.py": "3129e3d2ea2f634e8a46a4bf7c0c1e91f3c3fb914476fd0ab8737ca96de3d807",
+      "speech_compact.py": "6f9fbce459a274531240d6a85ceadbfd2c1c106d35fd43d58567eeca0583e0d9",
+      "q0_model.py": "dedef3bc558d8dd9a4f2c8079ae7e88c418f7391c7928febd22e2a7f2bd2ed7b",
+      "avr-as.exe": "f4742917d141a23f4863086e6c0a3803b4da3c444cf1935303165b6f7e7e754e",
+      "avr-ld.exe": "b8aa2ff51061ff713976e6db14e9adb492436e5b463679a8b9e718c8ff0f2bdf",
+      "avr-objcopy.exe": "5bc07336d3dc78ef13a36db73b66ca206447fc9a40035ba8f481901084f737d5",
+      "avr-size.exe": "caf3b7005c4aee1ac99254b62fb5d4be13912c21d9a750745c859e80000a9590",
+      "avr-nm.exe": "4cf4392a0c0c44144668a1d8b70144708e32fa74b6279bab4e3041cb5345b593",
+      "avr-objdump.exe": "6379ac8e391b100febd0be4f30461e0148cbd59435aa574c1e96ece55eac3726",
+      "libgcc.a": "4753393354a98da210ac6e4746b5ea040dd5606da2590e3d6487c112bdae071d",
+      "libc.a": "18b64b8b3ef540925643bb79e15f574bb5eefcabc137e75306b0066aa89ac1c0",
+      "crtatmega328p.o": "0b539a5729bdaafb268d618235a5ec23fbbab41a3bc80f762cb46fe14035b935",
+      "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+      "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+      "pgmspace.h": "5e8af74a13ecaf167738a51d5c1179d523d35057fc13d4ac0114e07f41c50f45",
+      "interrupt.h": "9627582846252bf42efd6eb4d1ea6d03ae125b021b6ea630a2f08ebf0a0bf041",
+      "atomic.h": "7f8086185f093aaeef001a6cfca47bf229c0961a683072bd5dd82caaee8313e9"
+    },
+    "compiler": "avr-g++.exe (GCC) 7.3.0",
+    "settings": {
+      "queue": 512,
+      "prefill": 384,
+      "cpu_hz": 16000000,
+      "audio_hz": 8000,
+      "v3_features": 24,
+      "speech": true,
+      "speech_compact": true
+    },
+    "compact_only": false,
+    "required_symbols": [
+      "__bss_end",
+      "profile_decode_active",
+      "profile_done",
+      "profile_error",
+      "profile_min_occupancy",
+      "profile_occupancy",
+      "profile_output_valid",
+      "profile_played",
+      "profile_produced",
+      "profile_pwm_address",
+      "profile_ready",
+      "profile_running",
+      "profile_sph_address",
+      "profile_spl_address",
+      "profile_underruns"
+    ],
+    "retained_profile_symbols": [
+      "profile_decode_active",
+      "profile_done",
+      "profile_error",
+      "profile_min_occupancy",
+      "profile_occupancy",
+      "profile_output_valid",
+      "profile_played",
+      "profile_produced",
+      "profile_producer_done",
+      "profile_pwm_address",
+      "profile_ready",
+      "profile_running",
+      "profile_sph_address",
+      "profile_spl_address",
+      "profile_underruns"
+    ]
+  },
+  "runtime": {
+    "sim_runner_sha256": "abcf16cea82b2044b15bf2feb7c70c9324c3eee618703f167ae0829a97922b3e",
+    "wsl": "Ubuntu",
+    "libraries": {
+      "libsimavr.so": {
+        "sha256": "62eaad619b6c6ce33aca27962aefcfc85aec1314ef48be86bbe60b5c49179a03",
+        "target": "libsimavr.so.2"
+      },
+      "libsimavr.so.2": {
+        "sha256": "62eaad619b6c6ce33aca27962aefcfc85aec1314ef48be86bbe60b5c49179a03",
+        "target": "libsimavr.so.2"
+      }
+    }
+  },
+  "candidate": "unroll1-tune0-lto-call-relax",
+  "specification": {
+    "unroll": 1,
+    "tuning": 0,
+    "flags": [
+      "-flto",
+      "-mcall-prologues",
+      "-mrelax"
+    ]
+  },
+  "images": {
+    "case-01-4": {
+      "simulator": "simavr 1.6",
+      "cpu_hz": 16000000,
+      "audio_hz": 8000,
+      "done": 1,
+      "decoder_error": 0,
+      "produced": 32000,
+      "played": 32000,
+      "underruns": 0,
+      "timer_ticks": 32000,
+      "tick_interval_min_cycles": 1987,
+      "tick_interval_max_cycles": 2009,
+      "min_queue_before_producer_eos": 386,
+      "decode_calls": 32000,
+      "decode_wall_cycles_total": 27022555,
+      "decode_wall_cycles_max": 20107,
+      "decode_wall_cycles_max_40": 50934,
+      "decode_wall_cycles_max_80": 82304,
+      "decode_wall_cycles_max_160": 157851,
+      "minimum_stack_pointer": 2180,
+      "bss_end": 1361,
+      "stack_margin_bytes": 819,
+      "total_cycles": 64388334,
+      "input_bytes": 1850,
+      "input_sha256": "b6765bcf104605701d0667e3c66d184afc20aa5819c6c28205525eab4b2a2a6b",
+      "input_samples": 32000,
+      "flash_bytes": 9880,
+      "flash_excluding_stream_bytes": 8030,
+      "text_bytes": 9872,
+      "data_bytes": 8,
+      "bss_bytes": 1097,
+      "static_sram_bytes": 1105,
+      "elf_sha256": "a741e645c9f3d141d2234d670f88ea59c780b6226bdade55cabe699bbc45001e",
+      "hex_sha256": "24a050cf703fe6436c46f6f312348ce2a4b4e884afe414b0c29b5ba5bcd725ef",
+      "program_sha256": "af0242793f6fcdb63e95027d7a53c79e08fd351316bc5776d3ac07b1af638197",
+      "compiler_options": [
+        "-mmcu=atmega328p",
+        "-DF_CPU=16000000UL",
+        "-Os",
+        "-std=gnu++11",
+        "-fno-exceptions",
+        "-fno-rtti",
+        "-DLPX4_PROFILE_QUEUE=512",
+        "-DLPX4_PROFILE_PREFILL=384",
+        "-DLPX4_PROFILE_IRQ_LOAD=0",
+        "-DLPX4_AVR_DOT_UNROLL=1",
+        "-DLPX4_FUNCTION_TUNING=0",
+        "-DLPX4_V3_FEATURES=24",
+        "-DLPX4_ENABLE_SPEECH=1",
+        "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+        "-DLPX4_COMPACT_ONLY=0",
+        "-DLPX4_ENABLE_ASM=1",
+        "-flto",
+        "-mcall-prologues",
+        "-mrelax",
+        "-Wl,-u,profile_decode_active",
+        "-Wl,-u,profile_done",
+        "-Wl,-u,profile_error",
+        "-Wl,-u,profile_min_occupancy",
+        "-Wl,-u,profile_occupancy",
+        "-Wl,-u,profile_output_valid",
+        "-Wl,-u,profile_played",
+        "-Wl,-u,profile_produced",
+        "-Wl,-u,profile_producer_done",
+        "-Wl,-u,profile_pwm_address",
+        "-Wl,-u,profile_ready",
+        "-Wl,-u,profile_running",
+        "-Wl,-u,profile_sph_address",
+        "-Wl,-u,profile_spl_address",
+        "-Wl,-u,profile_underruns"
+      ],
+      "assembly_enabled": true,
+      "extra_irq_cycles": 0,
+      "profile_symbol_count": 15,
+      "profile_state": {
+        "profile_decode_active": {
+          "address": 8388883,
+          "size": 1
+        },
+        "profile_done": {
+          "address": 8388892,
+          "size": 1
+        },
+        "profile_error": {
+          "address": 8388891,
+          "size": 1
+        },
+        "profile_min_occupancy": {
+          "address": 8388870,
+          "size": 2
+        },
+        "profile_occupancy": {
+          "address": 8388881,
+          "size": 2
+        },
+        "profile_output_valid": {
+          "address": 8388880,
+          "size": 1
+        },
+        "profile_played": {
+          "address": 8388876,
+          "size": 4
+        },
+        "profile_produced": {
+          "address": 8388886,
+          "size": 4
+        },
+        "profile_producer_done": {
+          "address": 8388884,
+          "size": 1
+        },
+        "profile_pwm_address": {
+          "address": 8388864,
+          "size": 2
+        },
+        "profile_ready": {
+          "address": 8388890,
+          "size": 1
+        },
+        "profile_running": {
+          "address": 8388885,
+          "size": 1
+        },
+        "profile_sph_address": {
+          "address": 8388868,
+          "size": 2
+        },
+        "profile_spl_address": {
+          "address": 8388866,
+          "size": 2
+        },
+        "profile_underruns": {
+          "address": 8388872,
+          "size": 4
+        }
+      },
+      "hardware_address_constants": {
+        "profile_pwm_address": 180,
+        "profile_spl_address": 93,
+        "profile_sph_address": 94
+      },
+      "embedded_audio_exact": true,
+      "pwm_sha256": "9ebff0f98da5d0575a26e13a65db442db3a2cb98907a87bb96a078f59f3b05a4",
+      "pwm_saved_reference_exact": true,
+      "mean_decode_wall_cycles": 844.45484375,
+      "first_output_from_reset_ms": 24.3949375,
+      "stack_high_water_bytes_after_ready": 124
+    },
+    "case-01-6": {
+      "simulator": "simavr 1.6",
+      "cpu_hz": 16000000,
+      "audio_hz": 8000,
+      "done": 1,
+      "decoder_error": 0,
+      "produced": 32000,
+      "played": 32000,
+      "underruns": 0,
+      "timer_ticks": 32000,
+      "tick_interval_min_cycles": 1991,
+      "tick_interval_max_cycles": 2009,
+      "min_queue_before_producer_eos": 386,
+      "decode_calls": 32000,
+      "decode_wall_cycles_total": 26964961,
+      "decode_wall_cycles_max": 20598,
+      "decode_wall_cycles_max_40": 50952,
+      "decode_wall_cycles_max_80": 82073,
+      "decode_wall_cycles_max_160": 157903,
+      "minimum_stack_pointer": 2180,
+      "bss_end": 1361,
+      "stack_margin_bytes": 819,
+      "total_cycles": 64382994,
+      "input_bytes": 2632,
+      "input_sha256": "aa28e68ec92cc0da19a0db767b569380bbb4965557365755402f475f485b7023",
+      "input_samples": 32000,
+      "flash_bytes": 10662,
+      "flash_excluding_stream_bytes": 8030,
+      "text_bytes": 10654,
+      "data_bytes": 8,
+      "bss_bytes": 1097,
+      "static_sram_bytes": 1105,
+      "elf_sha256": "0410e8fdb7e266895d0339428781104c2769730ef4eb201f510afcd2f93cdb6b",
+      "hex_sha256": "e7cac5ad9eabcd87520c58b5e2e196632edb4852077e8bb3a3a3c6db447d81bc",
+      "program_sha256": "862b7dc936defd5247f025c1e6ed949fb2f1d77edc108dca4ca53c4653d0b7c2",
+      "compiler_options": [
+        "-mmcu=atmega328p",
+        "-DF_CPU=16000000UL",
+        "-Os",
+        "-std=gnu++11",
+        "-fno-exceptions",
+        "-fno-rtti",
+        "-DLPX4_PROFILE_QUEUE=512",
+        "-DLPX4_PROFILE_PREFILL=384",
+        "-DLPX4_PROFILE_IRQ_LOAD=0",
+        "-DLPX4_AVR_DOT_UNROLL=1",
+        "-DLPX4_FUNCTION_TUNING=0",
+        "-DLPX4_V3_FEATURES=24",
+        "-DLPX4_ENABLE_SPEECH=1",
+        "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+        "-DLPX4_COMPACT_ONLY=0",
+        "-DLPX4_ENABLE_ASM=1",
+        "-flto",
+        "-mcall-prologues",
+        "-mrelax",
+        "-Wl,-u,profile_decode_active",
+        "-Wl,-u,profile_done",
+        "-Wl,-u,profile_error",
+        "-Wl,-u,profile_min_occupancy",
+        "-Wl,-u,profile_occupancy",
+        "-Wl,-u,profile_output_valid",
+        "-Wl,-u,profile_played",
+        "-Wl,-u,profile_produced",
+        "-Wl,-u,profile_producer_done",
+        "-Wl,-u,profile_pwm_address",
+        "-Wl,-u,profile_ready",
+        "-Wl,-u,profile_running",
+        "-Wl,-u,profile_sph_address",
+        "-Wl,-u,profile_spl_address",
+        "-Wl,-u,profile_underruns"
+      ],
+      "assembly_enabled": true,
+      "extra_irq_cycles": 0,
+      "profile_symbol_count": 15,
+      "profile_state": {
+        "profile_decode_active": {
+          "address": 8388883,
+          "size": 1
+        },
+        "profile_done": {
+          "address": 8388892,
+          "size": 1
+        },
+        "profile_error": {
+          "address": 8388891,
+          "size": 1
+        },
+        "profile_min_occupancy": {
+          "address": 8388870,
+          "size": 2
+        },
+        "profile_occupancy": {
+          "address": 8388881,
+          "size": 2
+        },
+        "profile_output_valid": {
+          "address": 8388880,
+          "size": 1
+        },
+        "profile_played": {
+          "address": 8388876,
+          "size": 4
+        },
+        "profile_produced": {
+          "address": 8388886,
+          "size": 4
+        },
+        "profile_producer_done": {
+          "address": 8388884,
+          "size": 1
+        },
+        "profile_pwm_address": {
+          "address": 8388864,
+          "size": 2
+        },
+        "profile_ready": {
+          "address": 8388890,
+          "size": 1
+        },
+        "profile_running": {
+          "address": 8388885,
+          "size": 1
+        },
+        "profile_sph_address": {
+          "address": 8388868,
+          "size": 2
+        },
+        "profile_spl_address": {
+          "address": 8388866,
+          "size": 2
+        },
+        "profile_underruns": {
+          "address": 8388872,
+          "size": 4
+        }
+      },
+      "hardware_address_constants": {
+        "profile_pwm_address": 180,
+        "profile_spl_address": 93,
+        "profile_sph_address": 94
+      },
+      "embedded_audio_exact": true,
+      "pwm_sha256": "023c74e995a0b999ad8f3293b676d36a372aa2443f1909b636804dcb33ec7fa4",
+      "pwm_saved_reference_exact": true,
+      "mean_decode_wall_cycles": 842.65503125,
+      "first_output_from_reset_ms": 24.0613125,
+      "stack_high_water_bytes_after_ready": 124
+    },
+    "case-02-4": {
+      "simulator": "simavr 1.6",
+      "cpu_hz": 16000000,
+      "audio_hz": 8000,
+      "done": 1,
+      "decoder_error": 0,
+      "produced": 32000,
+      "played": 32000,
+      "underruns": 0,
+      "timer_ticks": 32000,
+      "tick_interval_min_cycles": 1990,
+      "tick_interval_max_cycles": 2009,
+      "min_queue_before_producer_eos": 386,
+      "decode_calls": 32000,
+      "decode_wall_cycles_total": 27059865,
+      "decode_wall_cycles_max": 20030,
+      "decode_wall_cycles_max_40": 50471,
+      "decode_wall_cycles_max_80": 81294,
+      "decode_wall_cycles_max_160": 158930,
+      "minimum_stack_pointer": 2180,
+      "bss_end": 1361,
+      "stack_margin_bytes": 819,
+      "total_cycles": 64387626,
+      "input_bytes": 1860,
+      "input_sha256": "b015f593f755f0db41ddd90d3dc4462228d928f91594ec06660c51bf14fcacb4",
+      "input_samples": 32000,
+      "flash_bytes": 9890,
+      "flash_excluding_stream_bytes": 8030,
+      "text_bytes": 9882,
+      "data_bytes": 8,
+      "bss_bytes": 1097,
+      "static_sram_bytes": 1105,
+      "elf_sha256": "1275dfca08419c9b798c08c261fe0ef9fc5792db4cb3edbd304423cee9b0ede7",
+      "hex_sha256": "ca8c955c7d33042738aa94f18a4706cca8cf8582c03c3dcf5f18514af42e0b13",
+      "program_sha256": "acfc34d7f7cc3783d31143d0fa8591f6b867043b5b218b8eae520ec9adda6db5",
+      "compiler_options": [
+        "-mmcu=atmega328p",
+        "-DF_CPU=16000000UL",
+        "-Os",
+        "-std=gnu++11",
+        "-fno-exceptions",
+        "-fno-rtti",
+        "-DLPX4_PROFILE_QUEUE=512",
+        "-DLPX4_PROFILE_PREFILL=384",
+        "-DLPX4_PROFILE_IRQ_LOAD=0",
+        "-DLPX4_AVR_DOT_UNROLL=1",
+        "-DLPX4_FUNCTION_TUNING=0",
+        "-DLPX4_V3_FEATURES=24",
+        "-DLPX4_ENABLE_SPEECH=1",
+        "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+        "-DLPX4_COMPACT_ONLY=0",
+        "-DLPX4_ENABLE_ASM=1",
+        "-flto",
+        "-mcall-prologues",
+        "-mrelax",
+        "-Wl,-u,profile_decode_active",
+        "-Wl,-u,profile_done",
+        "-Wl,-u,profile_error",
+        "-Wl,-u,profile_min_occupancy",
+        "-Wl,-u,profile_occupancy",
+        "-Wl,-u,profile_output_valid",
+        "-Wl,-u,profile_played",
+        "-Wl,-u,profile_produced",
+        "-Wl,-u,profile_producer_done",
+        "-Wl,-u,profile_pwm_address",
+        "-Wl,-u,profile_ready",
+        "-Wl,-u,profile_running",
+        "-Wl,-u,profile_sph_address",
+        "-Wl,-u,profile_spl_address",
+        "-Wl,-u,profile_underruns"
+      ],
+      "assembly_enabled": true,
+      "extra_irq_cycles": 0,
+      "profile_symbol_count": 15,
+      "profile_state": {
+        "profile_decode_active": {
+          "address": 8388883,
+          "size": 1
+        },
+        "profile_done": {
+          "address": 8388892,
+          "size": 1
+        },
+        "profile_error": {
+          "address": 8388891,
+          "size": 1
+        },
+        "profile_min_occupancy": {
+          "address": 8388870,
+          "size": 2
+        },
+        "profile_occupancy": {
+          "address": 8388881,
+          "size": 2
+        },
+        "profile_output_valid": {
+          "address": 8388880,
+          "size": 1
+        },
+        "profile_played": {
+          "address": 8388876,
+          "size": 4
+        },
+        "profile_produced": {
+          "address": 8388886,
+          "size": 4
+        },
+        "profile_producer_done": {
+          "address": 8388884,
+          "size": 1
+        },
+        "profile_pwm_address": {
+          "address": 8388864,
+          "size": 2
+        },
+        "profile_ready": {
+          "address": 8388890,
+          "size": 1
+        },
+        "profile_running": {
+          "address": 8388885,
+          "size": 1
+        },
+        "profile_sph_address": {
+          "address": 8388868,
+          "size": 2
+        },
+        "profile_spl_address": {
+          "address": 8388866,
+          "size": 2
+        },
+        "profile_underruns": {
+          "address": 8388872,
+          "size": 4
+        }
+      },
+      "hardware_address_constants": {
+        "profile_pwm_address": 180,
+        "profile_spl_address": 93,
+        "profile_sph_address": 94
+      },
+      "embedded_audio_exact": true,
+      "pwm_sha256": "2031811effa866237a4dc56f1db73d3579b6e2f755e72facffe45cb1f7b5c55b",
+      "pwm_saved_reference_exact": true,
+      "mean_decode_wall_cycles": 845.62078125,
+      "first_output_from_reset_ms": 24.3506875,
+      "stack_high_water_bytes_after_ready": 124
+    },
+    "case-02-6": {
+      "simulator": "simavr 1.6",
+      "cpu_hz": 16000000,
+      "audio_hz": 8000,
+      "done": 1,
+      "decoder_error": 0,
+      "produced": 32000,
+      "played": 32000,
+      "underruns": 0,
+      "timer_ticks": 32000,
+      "tick_interval_min_cycles": 1991,
+      "tick_interval_max_cycles": 2009,
+      "min_queue_before_producer_eos": 385,
+      "decode_calls": 32000,
+      "decode_wall_cycles_total": 27173416,
+      "decode_wall_cycles_max": 20592,
+      "decode_wall_cycles_max_40": 51008,
+      "decode_wall_cycles_max_80": 82012,
+      "decode_wall_cycles_max_160": 159277,
+      "minimum_stack_pointer": 2180,
+      "bss_end": 1361,
+      "stack_margin_bytes": 819,
+      "total_cycles": 64383843,
+      "input_bytes": 2699,
+      "input_sha256": "438f06331bec7f59efc0913a97ff773aeed454f7cf607d55a054498293adf518",
+      "input_samples": 32000,
+      "flash_bytes": 10588,
+      "flash_excluding_stream_bytes": 7889,
+      "text_bytes": 10580,
+      "data_bytes": 8,
+      "bss_bytes": 1097,
+      "static_sram_bytes": 1105,
+      "elf_sha256": "412432b2c232b5b777f6b580cf0f2f58341930bcc1e212a75d3519f3c5c6f23a",
+      "hex_sha256": "9808ba09d82aa2d4c120c1fd5ce756345846c017afbf3dec76c04e2a7f25d932",
+      "program_sha256": "0b3913b5a4d5278b15c2b7c4ec3c6aee9a74a2c6072a78b4aa4c827940b9a3b0",
+      "compiler_options": [
+        "-mmcu=atmega328p",
+        "-DF_CPU=16000000UL",
+        "-Os",
+        "-std=gnu++11",
+        "-fno-exceptions",
+        "-fno-rtti",
+        "-DLPX4_PROFILE_QUEUE=512",
+        "-DLPX4_PROFILE_PREFILL=384",
+        "-DLPX4_PROFILE_IRQ_LOAD=0",
+        "-DLPX4_AVR_DOT_UNROLL=1",
+        "-DLPX4_FUNCTION_TUNING=0",
+        "-DLPX4_V3_FEATURES=24",
+        "-DLPX4_ENABLE_SPEECH=1",
+        "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+        "-DLPX4_COMPACT_ONLY=0",
+        "-DLPX4_ENABLE_ASM=1",
+        "-flto",
+        "-mcall-prologues",
+        "-mrelax",
+        "-Wl,-u,profile_decode_active",
+        "-Wl,-u,profile_done",
+        "-Wl,-u,profile_error",
+        "-Wl,-u,profile_min_occupancy",
+        "-Wl,-u,profile_occupancy",
+        "-Wl,-u,profile_output_valid",
+        "-Wl,-u,profile_played",
+        "-Wl,-u,profile_produced",
+        "-Wl,-u,profile_producer_done",
+        "-Wl,-u,profile_pwm_address",
+        "-Wl,-u,profile_ready",
+        "-Wl,-u,profile_running",
+        "-Wl,-u,profile_sph_address",
+        "-Wl,-u,profile_spl_address",
+        "-Wl,-u,profile_underruns"
+      ],
+      "assembly_enabled": true,
+      "extra_irq_cycles": 0,
+      "profile_symbol_count": 15,
+      "profile_state": {
+        "profile_decode_active": {
+          "address": 8388883,
+          "size": 1
+        },
+        "profile_done": {
+          "address": 8388892,
+          "size": 1
+        },
+        "profile_error": {
+          "address": 8388891,
+          "size": 1
+        },
+        "profile_min_occupancy": {
+          "address": 8388870,
+          "size": 2
+        },
+        "profile_occupancy": {
+          "address": 8388881,
+          "size": 2
+        },
+        "profile_output_valid": {
+          "address": 8388880,
+          "size": 1
+        },
+        "profile_played": {
+          "address": 8388876,
+          "size": 4
+        },
+        "profile_produced": {
+          "address": 8388886,
+          "size": 4
+        },
+        "profile_producer_done": {
+          "address": 8388884,
+          "size": 1
+        },
+        "profile_pwm_address": {
+          "address": 8388864,
+          "size": 2
+        },
+        "profile_ready": {
+          "address": 8388890,
+          "size": 1
+        },
+        "profile_running": {
+          "address": 8388885,
+          "size": 1
+        },
+        "profile_sph_address": {
+          "address": 8388868,
+          "size": 2
+        },
+        "profile_spl_address": {
+          "address": 8388866,
+          "size": 2
+        },
+        "profile_underruns": {
+          "address": 8388872,
+          "size": 4
+        }
+      },
+      "hardware_address_constants": {
+        "profile_pwm_address": 180,
+        "profile_spl_address": 93,
+        "profile_sph_address": 94
+      },
+      "embedded_audio_exact": true,
+      "pwm_sha256": "d061a3fd32c87cf4274f34e343ce7b48d784ae1341fcbbb381a18933595d4128",
+      "pwm_saved_reference_exact": true,
+      "mean_decode_wall_cycles": 849.16925,
+      "first_output_from_reset_ms": 24.11425,
+      "stack_high_water_bytes_after_ready": 124
+    },
+    "case-03-4": {
+      "simulator": "simavr 1.6",
+      "cpu_hz": 16000000,
+      "audio_hz": 8000,
+      "done": 1,
+      "decoder_error": 0,
+      "produced": 32000,
+      "played": 32000,
+      "underruns": 0,
+      "timer_ticks": 32000,
+      "tick_interval_min_cycles": 1991,
+      "tick_interval_max_cycles": 2009,
+      "min_queue_before_producer_eos": 386,
+      "decode_calls": 32000,
+      "decode_wall_cycles_total": 27137306,
+      "decode_wall_cycles_max": 19987,
+      "decode_wall_cycles_max_40": 50788,
+      "decode_wall_cycles_max_80": 82454,
+      "decode_wall_cycles_max_160": 159833,
+      "minimum_stack_pointer": 2180,
+      "bss_end": 1361,
+      "stack_margin_bytes": 819,
+      "total_cycles": 64386366,
+      "input_bytes": 1908,
+      "input_sha256": "b6cc98afdb52cfb9bdda0b9ac7ed51600698fa17afef48d945be98285c7f8184",
+      "input_samples": 32000,
+      "flash_bytes": 9938,
+      "flash_excluding_stream_bytes": 8030,
+      "text_bytes": 9930,
+      "data_bytes": 8,
+      "bss_bytes": 1097,
+      "static_sram_bytes": 1105,
+      "elf_sha256": "392e8ebd07898e952d196a022106194bd0db5db2ddf8144858c60ee900606075",
+      "hex_sha256": "ec3a17c9e2500c91ad180926bc5a271e2a85bc107b6ea588ce75e0bcd8c3114a",
+      "program_sha256": "0e32c65f850b16d1f3f58226eaa7331d37068dc25bbfd337eff1f33d0301303a",
+      "compiler_options": [
+        "-mmcu=atmega328p",
+        "-DF_CPU=16000000UL",
+        "-Os",
+        "-std=gnu++11",
+        "-fno-exceptions",
+        "-fno-rtti",
+        "-DLPX4_PROFILE_QUEUE=512",
+        "-DLPX4_PROFILE_PREFILL=384",
+        "-DLPX4_PROFILE_IRQ_LOAD=0",
+        "-DLPX4_AVR_DOT_UNROLL=1",
+        "-DLPX4_FUNCTION_TUNING=0",
+        "-DLPX4_V3_FEATURES=24",
+        "-DLPX4_ENABLE_SPEECH=1",
+        "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+        "-DLPX4_COMPACT_ONLY=0",
+        "-DLPX4_ENABLE_ASM=1",
+        "-flto",
+        "-mcall-prologues",
+        "-mrelax",
+        "-Wl,-u,profile_decode_active",
+        "-Wl,-u,profile_done",
+        "-Wl,-u,profile_error",
+        "-Wl,-u,profile_min_occupancy",
+        "-Wl,-u,profile_occupancy",
+        "-Wl,-u,profile_output_valid",
+        "-Wl,-u,profile_played",
+        "-Wl,-u,profile_produced",
+        "-Wl,-u,profile_producer_done",
+        "-Wl,-u,profile_pwm_address",
+        "-Wl,-u,profile_ready",
+        "-Wl,-u,profile_running",
+        "-Wl,-u,profile_sph_address",
+        "-Wl,-u,profile_spl_address",
+        "-Wl,-u,profile_underruns"
+      ],
+      "assembly_enabled": true,
+      "extra_irq_cycles": 0,
+      "profile_symbol_count": 15,
+      "profile_state": {
+        "profile_decode_active": {
+          "address": 8388883,
+          "size": 1
+        },
+        "profile_done": {
+          "address": 8388892,
+          "size": 1
+        },
+        "profile_error": {
+          "address": 8388891,
+          "size": 1
+        },
+        "profile_min_occupancy": {
+          "address": 8388870,
+          "size": 2
+        },
+        "profile_occupancy": {
+          "address": 8388881,
+          "size": 2
+        },
+        "profile_output_valid": {
+          "address": 8388880,
+          "size": 1
+        },
+        "profile_played": {
+          "address": 8388876,
+          "size": 4
+        },
+        "profile_produced": {
+          "address": 8388886,
+          "size": 4
+        },
+        "profile_producer_done": {
+          "address": 8388884,
+          "size": 1
+        },
+        "profile_pwm_address": {
+          "address": 8388864,
+          "size": 2
+        },
+        "profile_ready": {
+          "address": 8388890,
+          "size": 1
+        },
+        "profile_running": {
+          "address": 8388885,
+          "size": 1
+        },
+        "profile_sph_address": {
+          "address": 8388868,
+          "size": 2
+        },
+        "profile_spl_address": {
+          "address": 8388866,
+          "size": 2
+        },
+        "profile_underruns": {
+          "address": 8388872,
+          "size": 4
+        }
+      },
+      "hardware_address_constants": {
+        "profile_pwm_address": 180,
+        "profile_spl_address": 93,
+        "profile_sph_address": 94
+      },
+      "embedded_audio_exact": true,
+      "pwm_sha256": "012c0437fd85a09427f12cd70d700522f6d753eda47af734a307d3daf07ebefd",
+      "pwm_saved_reference_exact": true,
+      "mean_decode_wall_cycles": 848.0408125,
+      "first_output_from_reset_ms": 24.272,
+      "stack_high_water_bytes_after_ready": 124
+    },
+    "case-03-6": {
+      "simulator": "simavr 1.6",
+      "cpu_hz": 16000000,
+      "audio_hz": 8000,
+      "done": 1,
+      "decoder_error": 0,
+      "produced": 32000,
+      "played": 32000,
+      "underruns": 0,
+      "timer_ticks": 32000,
+      "tick_interval_min_cycles": 1988,
+      "tick_interval_max_cycles": 2009,
+      "min_queue_before_producer_eos": 386,
+      "decode_calls": 32000,
+      "decode_wall_cycles_total": 27171453,
+      "decode_wall_cycles_max": 20565,
+      "decode_wall_cycles_max_40": 51131,
+      "decode_wall_cycles_max_80": 82265,
+      "decode_wall_cycles_max_160": 160461,
+      "minimum_stack_pointer": 2180,
+      "bss_end": 1361,
+      "stack_margin_bytes": 819,
+      "total_cycles": 64386953,
+      "input_bytes": 2618,
+      "input_sha256": "d9400ffc42e0bb734580bbd4e6921ada1e1c6d4fea1c6d6d777258bbfb4e35eb",
+      "input_samples": 32000,
+      "flash_bytes": 10648,
+      "flash_excluding_stream_bytes": 8030,
+      "text_bytes": 10640,
+      "data_bytes": 8,
+      "bss_bytes": 1097,
+      "static_sram_bytes": 1105,
+      "elf_sha256": "de0257f0425301829043365aedc7e610820da8464a94e78fd53c586acb4cae31",
+      "hex_sha256": "b1cd4400cceb4f6a408d1525687269b3101df064b881b197176414ae14b37e09",
+      "program_sha256": "86cc641f7c3f59958210b0fa1acc15348bb1f309379cf78d749547fee3860b60",
+      "compiler_options": [
+        "-mmcu=atmega328p",
+        "-DF_CPU=16000000UL",
+        "-Os",
+        "-std=gnu++11",
+        "-fno-exceptions",
+        "-fno-rtti",
+        "-DLPX4_PROFILE_QUEUE=512",
+        "-DLPX4_PROFILE_PREFILL=384",
+        "-DLPX4_PROFILE_IRQ_LOAD=0",
+        "-DLPX4_AVR_DOT_UNROLL=1",
+        "-DLPX4_FUNCTION_TUNING=0",
+        "-DLPX4_V3_FEATURES=24",
+        "-DLPX4_ENABLE_SPEECH=1",
+        "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+        "-DLPX4_COMPACT_ONLY=0",
+        "-DLPX4_ENABLE_ASM=1",
+        "-flto",
+        "-mcall-prologues",
+        "-mrelax",
+        "-Wl,-u,profile_decode_active",
+        "-Wl,-u,profile_done",
+        "-Wl,-u,profile_error",
+        "-Wl,-u,profile_min_occupancy",
+        "-Wl,-u,profile_occupancy",
+        "-Wl,-u,profile_output_valid",
+        "-Wl,-u,profile_played",
+        "-Wl,-u,profile_produced",
+        "-Wl,-u,profile_producer_done",
+        "-Wl,-u,profile_pwm_address",
+        "-Wl,-u,profile_ready",
+        "-Wl,-u,profile_running",
+        "-Wl,-u,profile_sph_address",
+        "-Wl,-u,profile_spl_address",
+        "-Wl,-u,profile_underruns"
+      ],
+      "assembly_enabled": true,
+      "extra_irq_cycles": 0,
+      "profile_symbol_count": 15,
+      "profile_state": {
+        "profile_decode_active": {
+          "address": 8388883,
+          "size": 1
+        },
+        "profile_done": {
+          "address": 8388892,
+          "size": 1
+        },
+        "profile_error": {
+          "address": 8388891,
+          "size": 1
+        },
+        "profile_min_occupancy": {
+          "address": 8388870,
+          "size": 2
+        },
+        "profile_occupancy": {
+          "address": 8388881,
+          "size": 2
+        },
+        "profile_output_valid": {
+          "address": 8388880,
+          "size": 1
+        },
+        "profile_played": {
+          "address": 8388876,
+          "size": 4
+        },
+        "profile_produced": {
+          "address": 8388886,
+          "size": 4
+        },
+        "profile_producer_done": {
+          "address": 8388884,
+          "size": 1
+        },
+        "profile_pwm_address": {
+          "address": 8388864,
+          "size": 2
+        },
+        "profile_ready": {
+          "address": 8388890,
+          "size": 1
+        },
+        "profile_running": {
+          "address": 8388885,
+          "size": 1
+        },
+        "profile_sph_address": {
+          "address": 8388868,
+          "size": 2
+        },
+        "profile_spl_address": {
+          "address": 8388866,
+          "size": 2
+        },
+        "profile_underruns": {
+          "address": 8388872,
+          "size": 4
+        }
+      },
+      "hardware_address_constants": {
+        "profile_pwm_address": 180,
+        "profile_spl_address": 93,
+        "profile_sph_address": 94
+      },
+      "embedded_audio_exact": true,
+      "pwm_sha256": "eddf203e17a631445a9a4a25d78ab49528d8735614a1eb137290c4e827a9b0e6",
+      "pwm_saved_reference_exact": true,
+      "mean_decode_wall_cycles": 849.10790625,
+      "first_output_from_reset_ms": 24.30875,
+      "stack_high_water_bytes_after_ready": 124
+    },
+    "case-04-4": {
+      "simulator": "simavr 1.6",
+      "cpu_hz": 16000000,
+      "audio_hz": 8000,
+      "done": 1,
+      "decoder_error": 0,
+      "produced": 32000,
+      "played": 32000,
+      "underruns": 0,
+      "timer_ticks": 32000,
+      "tick_interval_min_cycles": 1991,
+      "tick_interval_max_cycles": 2009,
+      "min_queue_before_producer_eos": 386,
+      "decode_calls": 32000,
+      "decode_wall_cycles_total": 27099042,
+      "decode_wall_cycles_max": 19915,
+      "decode_wall_cycles_max_40": 50570,
+      "decode_wall_cycles_max_80": 82074,
+      "decode_wall_cycles_max_160": 160014,
+      "minimum_stack_pointer": 2180,
+      "bss_end": 1361,
+      "stack_margin_bytes": 819,
+      "total_cycles": 64383820,
+      "input_bytes": 1876,
+      "input_sha256": "d38afac6b0c0c7cf3de538c8af43618b25500285d34429596a4c1a9f45255121",
+      "input_samples": 32000,
+      "flash_bytes": 9906,
+      "flash_excluding_stream_bytes": 8030,
+      "text_bytes": 9898,
+      "data_bytes": 8,
+      "bss_bytes": 1097,
+      "static_sram_bytes": 1105,
+      "elf_sha256": "e41a55001a454e03542a2422514cd8cc4970ea9a45e120d5b6052ac6479d5128",
+      "hex_sha256": "becbe46532bd54642705d91a3f047b256a7c98d84628849485c416baa8e3d8eb",
+      "program_sha256": "8995530d4a045e68d94b4c961391e44ddf7e766dff88d328125b12b612ce47f9",
+      "compiler_options": [
+        "-mmcu=atmega328p",
+        "-DF_CPU=16000000UL",
+        "-Os",
+        "-std=gnu++11",
+        "-fno-exceptions",
+        "-fno-rtti",
+        "-DLPX4_PROFILE_QUEUE=512",
+        "-DLPX4_PROFILE_PREFILL=384",
+        "-DLPX4_PROFILE_IRQ_LOAD=0",
+        "-DLPX4_AVR_DOT_UNROLL=1",
+        "-DLPX4_FUNCTION_TUNING=0",
+        "-DLPX4_V3_FEATURES=24",
+        "-DLPX4_ENABLE_SPEECH=1",
+        "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+        "-DLPX4_COMPACT_ONLY=0",
+        "-DLPX4_ENABLE_ASM=1",
+        "-flto",
+        "-mcall-prologues",
+        "-mrelax",
+        "-Wl,-u,profile_decode_active",
+        "-Wl,-u,profile_done",
+        "-Wl,-u,profile_error",
+        "-Wl,-u,profile_min_occupancy",
+        "-Wl,-u,profile_occupancy",
+        "-Wl,-u,profile_output_valid",
+        "-Wl,-u,profile_played",
+        "-Wl,-u,profile_produced",
+        "-Wl,-u,profile_producer_done",
+        "-Wl,-u,profile_pwm_address",
+        "-Wl,-u,profile_ready",
+        "-Wl,-u,profile_running",
+        "-Wl,-u,profile_sph_address",
+        "-Wl,-u,profile_spl_address",
+        "-Wl,-u,profile_underruns"
+      ],
+      "assembly_enabled": true,
+      "extra_irq_cycles": 0,
+      "profile_symbol_count": 15,
+      "profile_state": {
+        "profile_decode_active": {
+          "address": 8388883,
+          "size": 1
+        },
+        "profile_done": {
+          "address": 8388892,
+          "size": 1
+        },
+        "profile_error": {
+          "address": 8388891,
+          "size": 1
+        },
+        "profile_min_occupancy": {
+          "address": 8388870,
+          "size": 2
+        },
+        "profile_occupancy": {
+          "address": 8388881,
+          "size": 2
+        },
+        "profile_output_valid": {
+          "address": 8388880,
+          "size": 1
+        },
+        "profile_played": {
+          "address": 8388876,
+          "size": 4
+        },
+        "profile_produced": {
+          "address": 8388886,
+          "size": 4
+        },
+        "profile_producer_done": {
+          "address": 8388884,
+          "size": 1
+        },
+        "profile_pwm_address": {
+          "address": 8388864,
+          "size": 2
+        },
+        "profile_ready": {
+          "address": 8388890,
+          "size": 1
+        },
+        "profile_running": {
+          "address": 8388885,
+          "size": 1
+        },
+        "profile_sph_address": {
+          "address": 8388868,
+          "size": 2
+        },
+        "profile_spl_address": {
+          "address": 8388866,
+          "size": 2
+        },
+        "profile_underruns": {
+          "address": 8388872,
+          "size": 4
+        }
+      },
+      "hardware_address_constants": {
+        "profile_pwm_address": 180,
+        "profile_spl_address": 93,
+        "profile_sph_address": 94
+      },
+      "embedded_audio_exact": true,
+      "pwm_sha256": "81809c62b65ddced47ed37036532202598ad505c84050f124056e3562a3cbb29",
+      "pwm_saved_reference_exact": true,
+      "mean_decode_wall_cycles": 846.8450625,
+      "first_output_from_reset_ms": 24.1128125,
+      "stack_high_water_bytes_after_ready": 124
+    },
+    "case-04-6": {
+      "simulator": "simavr 1.6",
+      "cpu_hz": 16000000,
+      "audio_hz": 8000,
+      "done": 1,
+      "decoder_error": 0,
+      "produced": 32000,
+      "played": 32000,
+      "underruns": 0,
+      "timer_ticks": 32000,
+      "tick_interval_min_cycles": 1991,
+      "tick_interval_max_cycles": 2009,
+      "min_queue_before_producer_eos": 386,
+      "decode_calls": 32000,
+      "decode_wall_cycles_total": 27111391,
+      "decode_wall_cycles_max": 20534,
+      "decode_wall_cycles_max_40": 51493,
+      "decode_wall_cycles_max_80": 82810,
+      "decode_wall_cycles_max_160": 161318,
+      "minimum_stack_pointer": 2180,
+      "bss_end": 1361,
+      "stack_margin_bytes": 819,
+      "total_cycles": 64384410,
+      "input_bytes": 2642,
+      "input_sha256": "3422aa096b90169ce45ef51ab1082658595ce9b7360f04bfc884102bfc83b5ff",
+      "input_samples": 32000,
+      "flash_bytes": 10672,
+      "flash_excluding_stream_bytes": 8030,
+      "text_bytes": 10664,
+      "data_bytes": 8,
+      "bss_bytes": 1097,
+      "static_sram_bytes": 1105,
+      "elf_sha256": "888fc60c197e832831552c7f2bd22ad47f6ff1dbd0b58980171ba3cb2b60ff7f",
+      "hex_sha256": "dd8bacc7d265475ddf2505ff6cc1b7332997c7ec8db736860809a3d310b53a76",
+      "program_sha256": "fd3f5c49232c5dc937d2cc43213c01391c6e8e8b4ea20541c98732d4fd084464",
+      "compiler_options": [
+        "-mmcu=atmega328p",
+        "-DF_CPU=16000000UL",
+        "-Os",
+        "-std=gnu++11",
+        "-fno-exceptions",
+        "-fno-rtti",
+        "-DLPX4_PROFILE_QUEUE=512",
+        "-DLPX4_PROFILE_PREFILL=384",
+        "-DLPX4_PROFILE_IRQ_LOAD=0",
+        "-DLPX4_AVR_DOT_UNROLL=1",
+        "-DLPX4_FUNCTION_TUNING=0",
+        "-DLPX4_V3_FEATURES=24",
+        "-DLPX4_ENABLE_SPEECH=1",
+        "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+        "-DLPX4_COMPACT_ONLY=0",
+        "-DLPX4_ENABLE_ASM=1",
+        "-flto",
+        "-mcall-prologues",
+        "-mrelax",
+        "-Wl,-u,profile_decode_active",
+        "-Wl,-u,profile_done",
+        "-Wl,-u,profile_error",
+        "-Wl,-u,profile_min_occupancy",
+        "-Wl,-u,profile_occupancy",
+        "-Wl,-u,profile_output_valid",
+        "-Wl,-u,profile_played",
+        "-Wl,-u,profile_produced",
+        "-Wl,-u,profile_producer_done",
+        "-Wl,-u,profile_pwm_address",
+        "-Wl,-u,profile_ready",
+        "-Wl,-u,profile_running",
+        "-Wl,-u,profile_sph_address",
+        "-Wl,-u,profile_spl_address",
+        "-Wl,-u,profile_underruns"
+      ],
+      "assembly_enabled": true,
+      "extra_irq_cycles": 0,
+      "profile_symbol_count": 15,
+      "profile_state": {
+        "profile_decode_active": {
+          "address": 8388883,
+          "size": 1
+        },
+        "profile_done": {
+          "address": 8388892,
+          "size": 1
+        },
+        "profile_error": {
+          "address": 8388891,
+          "size": 1
+        },
+        "profile_min_occupancy": {
+          "address": 8388870,
+          "size": 2
+        },
+        "profile_occupancy": {
+          "address": 8388881,
+          "size": 2
+        },
+        "profile_output_valid": {
+          "address": 8388880,
+          "size": 1
+        },
+        "profile_played": {
+          "address": 8388876,
+          "size": 4
+        },
+        "profile_produced": {
+          "address": 8388886,
+          "size": 4
+        },
+        "profile_producer_done": {
+          "address": 8388884,
+          "size": 1
+        },
+        "profile_pwm_address": {
+          "address": 8388864,
+          "size": 2
+        },
+        "profile_ready": {
+          "address": 8388890,
+          "size": 1
+        },
+        "profile_running": {
+          "address": 8388885,
+          "size": 1
+        },
+        "profile_sph_address": {
+          "address": 8388868,
+          "size": 2
+        },
+        "profile_spl_address": {
+          "address": 8388866,
+          "size": 2
+        },
+        "profile_underruns": {
+          "address": 8388872,
+          "size": 4
+        }
+      },
+      "hardware_address_constants": {
+        "profile_pwm_address": 180,
+        "profile_spl_address": 93,
+        "profile_sph_address": 94
+      },
+      "embedded_audio_exact": true,
+      "pwm_sha256": "7dc809a32ae37c43dfe986665cb2e68db6469cce7aacbe03b4725cbb4f63a98b",
+      "pwm_saved_reference_exact": true,
+      "mean_decode_wall_cycles": 847.23096875,
+      "first_output_from_reset_ms": 24.14975,
+      "stack_high_water_bytes_after_ready": 124
+    }
+  },
+  "stress": {
+    "4": {
+      "source_id": "case-03-4",
+      "source_stream_sha256": "b6cc98afdb52cfb9bdda0b9ac7ed51600698fa17afef48d945be98285c7f8184",
+      "repeat_stream_sha256": "f5bc1bf5ecdac2c30bcc338d04fb2302c8f3edca37c27f8c2036cd6de682c61a",
+      "images": {
+        "normal": {
+          "simulator": "simavr 1.6",
+          "cpu_hz": 16000000,
+          "audio_hz": 8000,
+          "done": 1,
+          "decoder_error": 0,
+          "produced": 64000,
+          "played": 64000,
+          "underruns": 0,
+          "timer_ticks": 64000,
+          "tick_interval_min_cycles": 1991,
+          "tick_interval_max_cycles": 2009,
+          "min_queue_before_producer_eos": 386,
+          "decode_calls": 64000,
+          "decode_wall_cycles_total": 54292669,
+          "decode_wall_cycles_max": 20000,
+          "decode_wall_cycles_max_40": 50788,
+          "decode_wall_cycles_max_80": 82630,
+          "decode_wall_cycles_max_160": 159833,
+          "minimum_stack_pointer": 2180,
+          "bss_end": 1361,
+          "stack_margin_bytes": 819,
+          "total_cycles": 128386613,
+          "input_bytes": 3793,
+          "input_sha256": "f5bc1bf5ecdac2c30bcc338d04fb2302c8f3edca37c27f8c2036cd6de682c61a",
+          "input_samples": 64000,
+          "flash_bytes": 11684,
+          "flash_excluding_stream_bytes": 7891,
+          "text_bytes": 11676,
+          "data_bytes": 8,
+          "bss_bytes": 1097,
+          "static_sram_bytes": 1105,
+          "elf_sha256": "fd82f9d51a0b260f546a9446191081b15162b9f271e2cb17789dc83a5d99d76e",
+          "hex_sha256": "025817f76c11b0aaed4a560b1aef4b199d8d4f19f175d3fa583f4f49574c8f44",
+          "program_sha256": "6be2516a0b66185290654113cae87a49f8355ee0e389aaf2a2085039baaee955",
+          "compiler_options": [
+            "-mmcu=atmega328p",
+            "-DF_CPU=16000000UL",
+            "-Os",
+            "-std=gnu++11",
+            "-fno-exceptions",
+            "-fno-rtti",
+            "-DLPX4_PROFILE_QUEUE=512",
+            "-DLPX4_PROFILE_PREFILL=384",
+            "-DLPX4_PROFILE_IRQ_LOAD=0",
+            "-DLPX4_AVR_DOT_UNROLL=1",
+            "-DLPX4_FUNCTION_TUNING=0",
+            "-DLPX4_V3_FEATURES=24",
+            "-DLPX4_ENABLE_SPEECH=1",
+            "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+            "-DLPX4_COMPACT_ONLY=0",
+            "-DLPX4_ENABLE_ASM=1",
+            "-flto",
+            "-mcall-prologues",
+            "-mrelax",
+            "-Wl,-u,profile_decode_active",
+            "-Wl,-u,profile_done",
+            "-Wl,-u,profile_error",
+            "-Wl,-u,profile_min_occupancy",
+            "-Wl,-u,profile_occupancy",
+            "-Wl,-u,profile_output_valid",
+            "-Wl,-u,profile_played",
+            "-Wl,-u,profile_produced",
+            "-Wl,-u,profile_producer_done",
+            "-Wl,-u,profile_pwm_address",
+            "-Wl,-u,profile_ready",
+            "-Wl,-u,profile_running",
+            "-Wl,-u,profile_sph_address",
+            "-Wl,-u,profile_spl_address",
+            "-Wl,-u,profile_underruns"
+          ],
+          "assembly_enabled": true,
+          "extra_irq_cycles": 0,
+          "profile_symbol_count": 15,
+          "profile_state": {
+            "profile_decode_active": {
+              "address": 8388883,
+              "size": 1
+            },
+            "profile_done": {
+              "address": 8388892,
+              "size": 1
+            },
+            "profile_error": {
+              "address": 8388891,
+              "size": 1
+            },
+            "profile_min_occupancy": {
+              "address": 8388870,
+              "size": 2
+            },
+            "profile_occupancy": {
+              "address": 8388881,
+              "size": 2
+            },
+            "profile_output_valid": {
+              "address": 8388880,
+              "size": 1
+            },
+            "profile_played": {
+              "address": 8388876,
+              "size": 4
+            },
+            "profile_produced": {
+              "address": 8388886,
+              "size": 4
+            },
+            "profile_producer_done": {
+              "address": 8388884,
+              "size": 1
+            },
+            "profile_pwm_address": {
+              "address": 8388864,
+              "size": 2
+            },
+            "profile_ready": {
+              "address": 8388890,
+              "size": 1
+            },
+            "profile_running": {
+              "address": 8388885,
+              "size": 1
+            },
+            "profile_sph_address": {
+              "address": 8388868,
+              "size": 2
+            },
+            "profile_spl_address": {
+              "address": 8388866,
+              "size": 2
+            },
+            "profile_underruns": {
+              "address": 8388872,
+              "size": 4
+            }
+          },
+          "hardware_address_constants": {
+            "profile_pwm_address": 180,
+            "profile_spl_address": 93,
+            "profile_sph_address": 94
+          },
+          "embedded_audio_exact": true,
+          "pwm_sha256": "3d92dbbde45ea7115744b7b50846d6c152432be2a4e0a7235e564b969e6133df",
+          "pwm_saved_reference_exact": true,
+          "mean_decode_wall_cycles": 848.322953125,
+          "first_output_from_reset_ms": 24.2874375,
+          "stack_high_water_bytes_after_ready": 124
+        },
+        "extra_irq100": {
+          "simulator": "simavr 1.6",
+          "cpu_hz": 16000000,
+          "audio_hz": 8000,
+          "done": 1,
+          "decoder_error": 0,
+          "produced": 64000,
+          "played": 64000,
+          "underruns": 0,
+          "timer_ticks": 64000,
+          "tick_interval_min_cycles": 1990,
+          "tick_interval_max_cycles": 2009,
+          "min_queue_before_producer_eos": 385,
+          "decode_calls": 64000,
+          "decode_wall_cycles_total": 55133933,
+          "decode_wall_cycles_max": 21000,
+          "decode_wall_cycles_max_40": 52974,
+          "decode_wall_cycles_max_80": 85328,
+          "decode_wall_cycles_max_160": 164369,
+          "minimum_stack_pointer": 2180,
+          "bss_end": 1361,
+          "stack_margin_bytes": 819,
+          "total_cycles": 128386714,
+          "input_bytes": 3793,
+          "input_sha256": "f5bc1bf5ecdac2c30bcc338d04fb2302c8f3edca37c27f8c2036cd6de682c61a",
+          "input_samples": 64000,
+          "flash_bytes": 11692,
+          "flash_excluding_stream_bytes": 7899,
+          "text_bytes": 11684,
+          "data_bytes": 8,
+          "bss_bytes": 1097,
+          "static_sram_bytes": 1105,
+          "elf_sha256": "70aeb48de1f2def0b3cb46f8287abfb70f9529c17f44be51fd0947d2b0b81017",
+          "hex_sha256": "b2c575a984e413752a99b81317a9781e91564634ed13dd8369bc01dedd7fc8fd",
+          "program_sha256": "3c0512792b714d3fb2f388cba36717fcedde6890e78d4db4c394fe74a3aaf22f",
+          "compiler_options": [
+            "-mmcu=atmega328p",
+            "-DF_CPU=16000000UL",
+            "-Os",
+            "-std=gnu++11",
+            "-fno-exceptions",
+            "-fno-rtti",
+            "-DLPX4_PROFILE_QUEUE=512",
+            "-DLPX4_PROFILE_PREFILL=384",
+            "-DLPX4_PROFILE_IRQ_LOAD=100",
+            "-DLPX4_AVR_DOT_UNROLL=1",
+            "-DLPX4_FUNCTION_TUNING=0",
+            "-DLPX4_V3_FEATURES=24",
+            "-DLPX4_ENABLE_SPEECH=1",
+            "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+            "-DLPX4_COMPACT_ONLY=0",
+            "-DLPX4_ENABLE_ASM=1",
+            "-flto",
+            "-mcall-prologues",
+            "-mrelax",
+            "-Wl,-u,profile_decode_active",
+            "-Wl,-u,profile_done",
+            "-Wl,-u,profile_error",
+            "-Wl,-u,profile_min_occupancy",
+            "-Wl,-u,profile_occupancy",
+            "-Wl,-u,profile_output_valid",
+            "-Wl,-u,profile_played",
+            "-Wl,-u,profile_produced",
+            "-Wl,-u,profile_producer_done",
+            "-Wl,-u,profile_pwm_address",
+            "-Wl,-u,profile_ready",
+            "-Wl,-u,profile_running",
+            "-Wl,-u,profile_sph_address",
+            "-Wl,-u,profile_spl_address",
+            "-Wl,-u,profile_underruns"
+          ],
+          "assembly_enabled": true,
+          "extra_irq_cycles": 100,
+          "profile_symbol_count": 15,
+          "profile_state": {
+            "profile_decode_active": {
+              "address": 8388883,
+              "size": 1
+            },
+            "profile_done": {
+              "address": 8388892,
+              "size": 1
+            },
+            "profile_error": {
+              "address": 8388891,
+              "size": 1
+            },
+            "profile_min_occupancy": {
+              "address": 8388870,
+              "size": 2
+            },
+            "profile_occupancy": {
+              "address": 8388881,
+              "size": 2
+            },
+            "profile_output_valid": {
+              "address": 8388880,
+              "size": 1
+            },
+            "profile_played": {
+              "address": 8388876,
+              "size": 4
+            },
+            "profile_produced": {
+              "address": 8388886,
+              "size": 4
+            },
+            "profile_producer_done": {
+              "address": 8388884,
+              "size": 1
+            },
+            "profile_pwm_address": {
+              "address": 8388864,
+              "size": 2
+            },
+            "profile_ready": {
+              "address": 8388890,
+              "size": 1
+            },
+            "profile_running": {
+              "address": 8388885,
+              "size": 1
+            },
+            "profile_sph_address": {
+              "address": 8388868,
+              "size": 2
+            },
+            "profile_spl_address": {
+              "address": 8388866,
+              "size": 2
+            },
+            "profile_underruns": {
+              "address": 8388872,
+              "size": 4
+            }
+          },
+          "hardware_address_constants": {
+            "profile_pwm_address": 180,
+            "profile_spl_address": 93,
+            "profile_sph_address": 94
+          },
+          "embedded_audio_exact": true,
+          "pwm_sha256": "3d92dbbde45ea7115744b7b50846d6c152432be2a4e0a7235e564b969e6133df",
+          "pwm_saved_reference_exact": true,
+          "mean_decode_wall_cycles": 861.467703125,
+          "first_output_from_reset_ms": 24.2874375,
+          "stack_high_water_bytes_after_ready": 124
+        },
+        "c_fallback": {
+          "simulator": "simavr 1.6",
+          "cpu_hz": 16000000,
+          "audio_hz": 8000,
+          "done": 1,
+          "decoder_error": 0,
+          "produced": 64000,
+          "played": 64000,
+          "underruns": 43053,
+          "timer_ticks": 107053,
+          "tick_interval_min_cycles": 1976,
+          "tick_interval_max_cycles": 2024,
+          "min_queue_before_producer_eos": 0,
+          "decode_calls": 64000,
+          "decode_wall_cycles_total": 202839749,
+          "decode_wall_cycles_max": 30655,
+          "decode_wall_cycles_max_40": 151940,
+          "decode_wall_cycles_max_80": 284727,
+          "decode_wall_cycles_max_160": 565176,
+          "minimum_stack_pointer": 2180,
+          "bss_end": 1361,
+          "stack_margin_bytes": 819,
+          "total_cycles": 215262495,
+          "input_bytes": 3793,
+          "input_sha256": "f5bc1bf5ecdac2c30bcc338d04fb2302c8f3edca37c27f8c2036cd6de682c61a",
+          "input_samples": 64000,
+          "flash_bytes": 11842,
+          "flash_excluding_stream_bytes": 8049,
+          "text_bytes": 11834,
+          "data_bytes": 8,
+          "bss_bytes": 1097,
+          "static_sram_bytes": 1105,
+          "elf_sha256": "24ab343943c8a44828a33b8bee46f2c04b4acbcef3de1abcff1fde776ca9561f",
+          "hex_sha256": "7810d863ea9d762e71340a3ae65839864c37eaa42e503af539032ec69de8f490",
+          "program_sha256": "1c1263bcf22f5b486a26fca4aa6f572747e9ad68bce2ee6a54aad1993b38017f",
+          "compiler_options": [
+            "-mmcu=atmega328p",
+            "-DF_CPU=16000000UL",
+            "-Os",
+            "-std=gnu++11",
+            "-fno-exceptions",
+            "-fno-rtti",
+            "-DLPX4_PROFILE_QUEUE=512",
+            "-DLPX4_PROFILE_PREFILL=384",
+            "-DLPX4_PROFILE_IRQ_LOAD=0",
+            "-DLPX4_AVR_DOT_UNROLL=1",
+            "-DLPX4_FUNCTION_TUNING=0",
+            "-DLPX4_V3_FEATURES=24",
+            "-DLPX4_ENABLE_SPEECH=1",
+            "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+            "-DLPX4_COMPACT_ONLY=0",
+            "-DLPX4_ENABLE_ASM=0",
+            "-flto",
+            "-mcall-prologues",
+            "-mrelax",
+            "-Wl,-u,profile_decode_active",
+            "-Wl,-u,profile_done",
+            "-Wl,-u,profile_error",
+            "-Wl,-u,profile_min_occupancy",
+            "-Wl,-u,profile_occupancy",
+            "-Wl,-u,profile_output_valid",
+            "-Wl,-u,profile_played",
+            "-Wl,-u,profile_produced",
+            "-Wl,-u,profile_producer_done",
+            "-Wl,-u,profile_pwm_address",
+            "-Wl,-u,profile_ready",
+            "-Wl,-u,profile_running",
+            "-Wl,-u,profile_sph_address",
+            "-Wl,-u,profile_spl_address",
+            "-Wl,-u,profile_underruns"
+          ],
+          "assembly_enabled": false,
+          "extra_irq_cycles": 0,
+          "profile_symbol_count": 15,
+          "profile_state": {
+            "profile_decode_active": {
+              "address": 8388883,
+              "size": 1
+            },
+            "profile_done": {
+              "address": 8388892,
+              "size": 1
+            },
+            "profile_error": {
+              "address": 8388891,
+              "size": 1
+            },
+            "profile_min_occupancy": {
+              "address": 8388870,
+              "size": 2
+            },
+            "profile_occupancy": {
+              "address": 8388881,
+              "size": 2
+            },
+            "profile_output_valid": {
+              "address": 8388880,
+              "size": 1
+            },
+            "profile_played": {
+              "address": 8388876,
+              "size": 4
+            },
+            "profile_produced": {
+              "address": 8388886,
+              "size": 4
+            },
+            "profile_producer_done": {
+              "address": 8388884,
+              "size": 1
+            },
+            "profile_pwm_address": {
+              "address": 8388864,
+              "size": 2
+            },
+            "profile_ready": {
+              "address": 8388890,
+              "size": 1
+            },
+            "profile_running": {
+              "address": 8388885,
+              "size": 1
+            },
+            "profile_sph_address": {
+              "address": 8388868,
+              "size": 2
+            },
+            "profile_spl_address": {
+              "address": 8388866,
+              "size": 2
+            },
+            "profile_underruns": {
+              "address": 8388872,
+              "size": 4
+            }
+          },
+          "hardware_address_constants": {
+            "profile_pwm_address": 180,
+            "profile_spl_address": 93,
+            "profile_sph_address": 94
+          },
+          "embedded_audio_exact": true,
+          "pwm_sha256": "3d92dbbde45ea7115744b7b50846d6c152432be2a4e0a7235e564b969e6133df",
+          "pwm_saved_reference_exact": true,
+          "mean_decode_wall_cycles": 3169.371078125,
+          "first_output_from_reset_ms": 72.405,
+          "stack_high_water_bytes_after_ready": 124
+        }
+      }
+    },
+    "6": {
+      "source_id": "case-02-6",
+      "source_stream_sha256": "438f06331bec7f59efc0913a97ff773aeed454f7cf607d55a054498293adf518",
+      "repeat_stream_sha256": "ae5de89ee9888c8838f6851fe327d430e6a68e3f66c65b9c015913c3ee9e6d8d",
+      "images": {
+        "normal": {
+          "simulator": "simavr 1.6",
+          "cpu_hz": 16000000,
+          "audio_hz": 8000,
+          "done": 1,
+          "decoder_error": 0,
+          "produced": 64000,
+          "played": 64000,
+          "underruns": 0,
+          "timer_ticks": 64000,
+          "tick_interval_min_cycles": 1991,
+          "tick_interval_max_cycles": 2009,
+          "min_queue_before_producer_eos": 385,
+          "decode_calls": 64000,
+          "decode_wall_cycles_total": 54369604,
+          "decode_wall_cycles_max": 20646,
+          "decode_wall_cycles_max_40": 51031,
+          "decode_wall_cycles_max_80": 82012,
+          "decode_wall_cycles_max_160": 159609,
+          "minimum_stack_pointer": 2180,
+          "bss_end": 1361,
+          "stack_margin_bytes": 819,
+          "total_cycles": 128383844,
+          "input_bytes": 5375,
+          "input_sha256": "ae5de89ee9888c8838f6851fe327d430e6a68e3f66c65b9c015913c3ee9e6d8d",
+          "input_samples": 64000,
+          "flash_bytes": 13266,
+          "flash_excluding_stream_bytes": 7891,
+          "text_bytes": 13258,
+          "data_bytes": 8,
+          "bss_bytes": 1097,
+          "static_sram_bytes": 1105,
+          "elf_sha256": "478df212237edbb8337b15a25d2733b884f7debdfb73fbf5b0ae4151680992fa",
+          "hex_sha256": "1f6e94b8bb99407f6b3958f6ea826cdc3da6859113fff3a6e269d8d444095aed",
+          "program_sha256": "168f75478b2136058db830bcb6489fba03ebad01ba0864cc1f548d4a0e07b0e6",
+          "compiler_options": [
+            "-mmcu=atmega328p",
+            "-DF_CPU=16000000UL",
+            "-Os",
+            "-std=gnu++11",
+            "-fno-exceptions",
+            "-fno-rtti",
+            "-DLPX4_PROFILE_QUEUE=512",
+            "-DLPX4_PROFILE_PREFILL=384",
+            "-DLPX4_PROFILE_IRQ_LOAD=0",
+            "-DLPX4_AVR_DOT_UNROLL=1",
+            "-DLPX4_FUNCTION_TUNING=0",
+            "-DLPX4_V3_FEATURES=24",
+            "-DLPX4_ENABLE_SPEECH=1",
+            "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+            "-DLPX4_COMPACT_ONLY=0",
+            "-DLPX4_ENABLE_ASM=1",
+            "-flto",
+            "-mcall-prologues",
+            "-mrelax",
+            "-Wl,-u,profile_decode_active",
+            "-Wl,-u,profile_done",
+            "-Wl,-u,profile_error",
+            "-Wl,-u,profile_min_occupancy",
+            "-Wl,-u,profile_occupancy",
+            "-Wl,-u,profile_output_valid",
+            "-Wl,-u,profile_played",
+            "-Wl,-u,profile_produced",
+            "-Wl,-u,profile_producer_done",
+            "-Wl,-u,profile_pwm_address",
+            "-Wl,-u,profile_ready",
+            "-Wl,-u,profile_running",
+            "-Wl,-u,profile_sph_address",
+            "-Wl,-u,profile_spl_address",
+            "-Wl,-u,profile_underruns"
+          ],
+          "assembly_enabled": true,
+          "extra_irq_cycles": 0,
+          "profile_symbol_count": 15,
+          "profile_state": {
+            "profile_decode_active": {
+              "address": 8388883,
+              "size": 1
+            },
+            "profile_done": {
+              "address": 8388892,
+              "size": 1
+            },
+            "profile_error": {
+              "address": 8388891,
+              "size": 1
+            },
+            "profile_min_occupancy": {
+              "address": 8388870,
+              "size": 2
+            },
+            "profile_occupancy": {
+              "address": 8388881,
+              "size": 2
+            },
+            "profile_output_valid": {
+              "address": 8388880,
+              "size": 1
+            },
+            "profile_played": {
+              "address": 8388876,
+              "size": 4
+            },
+            "profile_produced": {
+              "address": 8388886,
+              "size": 4
+            },
+            "profile_producer_done": {
+              "address": 8388884,
+              "size": 1
+            },
+            "profile_pwm_address": {
+              "address": 8388864,
+              "size": 2
+            },
+            "profile_ready": {
+              "address": 8388890,
+              "size": 1
+            },
+            "profile_running": {
+              "address": 8388885,
+              "size": 1
+            },
+            "profile_sph_address": {
+              "address": 8388868,
+              "size": 2
+            },
+            "profile_spl_address": {
+              "address": 8388866,
+              "size": 2
+            },
+            "profile_underruns": {
+              "address": 8388872,
+              "size": 4
+            }
+          },
+          "hardware_address_constants": {
+            "profile_pwm_address": 180,
+            "profile_spl_address": 93,
+            "profile_sph_address": 94
+          },
+          "embedded_audio_exact": true,
+          "pwm_sha256": "044c86bbcfb9cbad338c00b567491e9758a410dfe29efe413228e92f0df2ccab",
+          "pwm_saved_reference_exact": true,
+          "mean_decode_wall_cycles": 849.5250625,
+          "first_output_from_reset_ms": 24.1143125,
+          "stack_high_water_bytes_after_ready": 124
+        },
+        "extra_irq100": {
+          "simulator": "simavr 1.6",
+          "cpu_hz": 16000000,
+          "audio_hz": 8000,
+          "done": 1,
+          "decoder_error": 0,
+          "produced": 64000,
+          "played": 64000,
+          "underruns": 0,
+          "timer_ticks": 64000,
+          "tick_interval_min_cycles": 1987,
+          "tick_interval_max_cycles": 2009,
+          "min_queue_before_producer_eos": 385,
+          "decode_calls": 64000,
+          "decode_wall_cycles_total": 55178158,
+          "decode_wall_cycles_max": 21646,
+          "decode_wall_cycles_max_40": 53178,
+          "decode_wall_cycles_max_80": 86590,
+          "decode_wall_cycles_max_160": 164380,
+          "minimum_stack_pointer": 2180,
+          "bss_end": 1361,
+          "stack_margin_bytes": 819,
+          "total_cycles": 128383944,
+          "input_bytes": 5375,
+          "input_sha256": "ae5de89ee9888c8838f6851fe327d430e6a68e3f66c65b9c015913c3ee9e6d8d",
+          "input_samples": 64000,
+          "flash_bytes": 13274,
+          "flash_excluding_stream_bytes": 7899,
+          "text_bytes": 13266,
+          "data_bytes": 8,
+          "bss_bytes": 1097,
+          "static_sram_bytes": 1105,
+          "elf_sha256": "05465a314b3db7fac5f2946a8b6822887d2b5a56c1cd29478da0ea090a0a6fc7",
+          "hex_sha256": "ef5eb872186c201643636a4df2a4fce72f1e79a81c7dad562a1b0bd626cbf098",
+          "program_sha256": "585475b55639e1c4c5656babfbafadd25ef976b651c28b3930b9eef5dd3b132f",
+          "compiler_options": [
+            "-mmcu=atmega328p",
+            "-DF_CPU=16000000UL",
+            "-Os",
+            "-std=gnu++11",
+            "-fno-exceptions",
+            "-fno-rtti",
+            "-DLPX4_PROFILE_QUEUE=512",
+            "-DLPX4_PROFILE_PREFILL=384",
+            "-DLPX4_PROFILE_IRQ_LOAD=100",
+            "-DLPX4_AVR_DOT_UNROLL=1",
+            "-DLPX4_FUNCTION_TUNING=0",
+            "-DLPX4_V3_FEATURES=24",
+            "-DLPX4_ENABLE_SPEECH=1",
+            "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+            "-DLPX4_COMPACT_ONLY=0",
+            "-DLPX4_ENABLE_ASM=1",
+            "-flto",
+            "-mcall-prologues",
+            "-mrelax",
+            "-Wl,-u,profile_decode_active",
+            "-Wl,-u,profile_done",
+            "-Wl,-u,profile_error",
+            "-Wl,-u,profile_min_occupancy",
+            "-Wl,-u,profile_occupancy",
+            "-Wl,-u,profile_output_valid",
+            "-Wl,-u,profile_played",
+            "-Wl,-u,profile_produced",
+            "-Wl,-u,profile_producer_done",
+            "-Wl,-u,profile_pwm_address",
+            "-Wl,-u,profile_ready",
+            "-Wl,-u,profile_running",
+            "-Wl,-u,profile_sph_address",
+            "-Wl,-u,profile_spl_address",
+            "-Wl,-u,profile_underruns"
+          ],
+          "assembly_enabled": true,
+          "extra_irq_cycles": 100,
+          "profile_symbol_count": 15,
+          "profile_state": {
+            "profile_decode_active": {
+              "address": 8388883,
+              "size": 1
+            },
+            "profile_done": {
+              "address": 8388892,
+              "size": 1
+            },
+            "profile_error": {
+              "address": 8388891,
+              "size": 1
+            },
+            "profile_min_occupancy": {
+              "address": 8388870,
+              "size": 2
+            },
+            "profile_occupancy": {
+              "address": 8388881,
+              "size": 2
+            },
+            "profile_output_valid": {
+              "address": 8388880,
+              "size": 1
+            },
+            "profile_played": {
+              "address": 8388876,
+              "size": 4
+            },
+            "profile_produced": {
+              "address": 8388886,
+              "size": 4
+            },
+            "profile_producer_done": {
+              "address": 8388884,
+              "size": 1
+            },
+            "profile_pwm_address": {
+              "address": 8388864,
+              "size": 2
+            },
+            "profile_ready": {
+              "address": 8388890,
+              "size": 1
+            },
+            "profile_running": {
+              "address": 8388885,
+              "size": 1
+            },
+            "profile_sph_address": {
+              "address": 8388868,
+              "size": 2
+            },
+            "profile_spl_address": {
+              "address": 8388866,
+              "size": 2
+            },
+            "profile_underruns": {
+              "address": 8388872,
+              "size": 4
+            }
+          },
+          "hardware_address_constants": {
+            "profile_pwm_address": 180,
+            "profile_spl_address": 93,
+            "profile_sph_address": 94
+          },
+          "embedded_audio_exact": true,
+          "pwm_sha256": "044c86bbcfb9cbad338c00b567491e9758a410dfe29efe413228e92f0df2ccab",
+          "pwm_saved_reference_exact": true,
+          "mean_decode_wall_cycles": 862.15871875,
+          "first_output_from_reset_ms": 24.1143125,
+          "stack_high_water_bytes_after_ready": 124
+        },
+        "c_fallback": {
+          "simulator": "simavr 1.6",
+          "cpu_hz": 16000000,
+          "audio_hz": 8000,
+          "done": 1,
+          "decoder_error": 0,
+          "produced": 64000,
+          "played": 64000,
+          "underruns": 43202,
+          "timer_ticks": 107202,
+          "tick_interval_min_cycles": 1976,
+          "tick_interval_max_cycles": 2024,
+          "min_queue_before_producer_eos": 0,
+          "decode_calls": 64000,
+          "decode_wall_cycles_total": 203137601,
+          "decode_wall_cycles_max": 31249,
+          "decode_wall_cycles_max_40": 152155,
+          "decode_wall_cycles_max_80": 284817,
+          "decode_wall_cycles_max_160": 565483,
+          "minimum_stack_pointer": 2180,
+          "bss_end": 1361,
+          "stack_margin_bytes": 819,
+          "total_cycles": 215561757,
+          "input_bytes": 5375,
+          "input_sha256": "ae5de89ee9888c8838f6851fe327d430e6a68e3f66c65b9c015913c3ee9e6d8d",
+          "input_samples": 64000,
+          "flash_bytes": 13424,
+          "flash_excluding_stream_bytes": 8049,
+          "text_bytes": 13416,
+          "data_bytes": 8,
+          "bss_bytes": 1097,
+          "static_sram_bytes": 1105,
+          "elf_sha256": "a12064b3338c1c1c6d84cf03450fe291dd37d91f193fb57887c58ca4a0baef67",
+          "hex_sha256": "81e0651100cc0b5bcf426ca3abe9593be92961717f2e6f7e3cd0235019a7efa0",
+          "program_sha256": "4b5753aac3c4bd8ef096ac25363e35a950a2f1cc70d6e1844b6b967164c42fa3",
+          "compiler_options": [
+            "-mmcu=atmega328p",
+            "-DF_CPU=16000000UL",
+            "-Os",
+            "-std=gnu++11",
+            "-fno-exceptions",
+            "-fno-rtti",
+            "-DLPX4_PROFILE_QUEUE=512",
+            "-DLPX4_PROFILE_PREFILL=384",
+            "-DLPX4_PROFILE_IRQ_LOAD=0",
+            "-DLPX4_AVR_DOT_UNROLL=1",
+            "-DLPX4_FUNCTION_TUNING=0",
+            "-DLPX4_V3_FEATURES=24",
+            "-DLPX4_ENABLE_SPEECH=1",
+            "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+            "-DLPX4_COMPACT_ONLY=0",
+            "-DLPX4_ENABLE_ASM=0",
+            "-flto",
+            "-mcall-prologues",
+            "-mrelax",
+            "-Wl,-u,profile_decode_active",
+            "-Wl,-u,profile_done",
+            "-Wl,-u,profile_error",
+            "-Wl,-u,profile_min_occupancy",
+            "-Wl,-u,profile_occupancy",
+            "-Wl,-u,profile_output_valid",
+            "-Wl,-u,profile_played",
+            "-Wl,-u,profile_produced",
+            "-Wl,-u,profile_producer_done",
+            "-Wl,-u,profile_pwm_address",
+            "-Wl,-u,profile_ready",
+            "-Wl,-u,profile_running",
+            "-Wl,-u,profile_sph_address",
+            "-Wl,-u,profile_spl_address",
+            "-Wl,-u,profile_underruns"
+          ],
+          "assembly_enabled": false,
+          "extra_irq_cycles": 0,
+          "profile_symbol_count": 15,
+          "profile_state": {
+            "profile_decode_active": {
+              "address": 8388883,
+              "size": 1
+            },
+            "profile_done": {
+              "address": 8388892,
+              "size": 1
+            },
+            "profile_error": {
+              "address": 8388891,
+              "size": 1
+            },
+            "profile_min_occupancy": {
+              "address": 8388870,
+              "size": 2
+            },
+            "profile_occupancy": {
+              "address": 8388881,
+              "size": 2
+            },
+            "profile_output_valid": {
+              "address": 8388880,
+              "size": 1
+            },
+            "profile_played": {
+              "address": 8388876,
+              "size": 4
+            },
+            "profile_produced": {
+              "address": 8388886,
+              "size": 4
+            },
+            "profile_producer_done": {
+              "address": 8388884,
+              "size": 1
+            },
+            "profile_pwm_address": {
+              "address": 8388864,
+              "size": 2
+            },
+            "profile_ready": {
+              "address": 8388890,
+              "size": 1
+            },
+            "profile_running": {
+              "address": 8388885,
+              "size": 1
+            },
+            "profile_sph_address": {
+              "address": 8388868,
+              "size": 2
+            },
+            "profile_spl_address": {
+              "address": 8388866,
+              "size": 2
+            },
+            "profile_underruns": {
+              "address": 8388872,
+              "size": 4
+            }
+          },
+          "hardware_address_constants": {
+            "profile_pwm_address": 180,
+            "profile_spl_address": 93,
+            "profile_sph_address": 94
+          },
+          "embedded_audio_exact": true,
+          "pwm_sha256": "044c86bbcfb9cbad338c00b567491e9758a410dfe29efe413228e92f0df2ccab",
+          "pwm_saved_reference_exact": true,
+          "mean_decode_wall_cycles": 3174.025015625,
+          "first_output_from_reset_ms": 72.4839375,
+          "stack_high_water_bytes_after_ready": 124
+        }
+      }
+    }
+  },
+  "reference": "Complete useful PWM from fixed saved PCM16 WAVs; no active BatchSession.",
+  "physical_hardware_measured": false,
+  "wall_scope": "Includes active IRQ and instrumentation.",
+  "stack_scope": "Observed after profile_ready, not a startup/worst-case proof."
+}

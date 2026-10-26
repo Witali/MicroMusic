@@ -19,10 +19,10 @@ Baseline: общий v2/v3/v4/v5 binary около9172 байт без encoded s
 - [x] Реализовать явно выбираемый compact-only build: только v5 speech,
   без удаления старых форматов из default build. Portable C fallback и
   аппаратное чтение Flash независимы от arithmetic selection.
-- [ ] Проверить выбранные минимальные сборки: full PWM equality на8 потоках,
+- [x] Проверить выбранные минимальные сборки: full PWM equality на8 потоках,
   native/model/C fallback, malformed/restart/partial tails, active IRQ,
   extra100 IRQ и64k-sample continuous controls. Недостаточно одного avr-size.
-- [ ] Сохранить сравнительные размеры, timing/RAM/stack, границы поддержанных
+- [x] Сохранить сравнительные размеры, timing/RAM/stack, границы поддержанных
   конфигураций, cookbook и focused commits после staged privacy inspection.
 
 Приём: меньший Flash кода с прежними отсчётами и нулём новых underrun в
@@ -48,3 +48,14 @@ normal/+100IRQ/C controls; C точен, но не realtime. Общий optimize
 прошёл91 legacy stream с полным frozen PCM/PWM и нулём underrun.
 Arithmetic unroll1 + selected global flags: C/ASM/forced-generic, каждый
 по5768584 cases с активными IRQ, error/zero_error=0.
+
+Сохранён [полный отчёт](research/speech-flash-2026-10-26/README.md) с13 JSON
+evidence files и cookbook. На8 прежних enhanced streams: common7889–8030B,
+only5909–5910B против9171–9172B; static SRAM1105/1085B. Средние wall cycles
+958.490→846.641/785.019. Полный PWM совпадает; main и normal/+100IRQ ASM
+underruns=0. Common91 legacy streams:2912000 samples,2188276589 cycles,
+underruns=0. C fallback точен по полезным значениям, но8kHz не выдерживает.
+Физическая плата не измерена; вывод ограничен16MHz/8kHz queue512/prefill384,
+LPC segments2. Default build не менялся; small-code flags и only profile
+выбираются явно. Исходники/feature implementation и evidence сохранены
+отдельными focused commits после staged privacy inspection.

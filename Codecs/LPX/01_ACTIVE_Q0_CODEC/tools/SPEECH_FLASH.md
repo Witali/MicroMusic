@@ -73,3 +73,5 @@ streams, C fallback and integer math are checked separately. The optimized
 C fallback remains numerically correct but misses the8kHz deadline on the
 measured AVR setup. See the Flash research report for exact sizes, stack,
 timing, flags, hashes and supported-workload limits.
+
+[Measured Flash results and retained verification](../../research/speech-flash-2026-10-26/README.md).
