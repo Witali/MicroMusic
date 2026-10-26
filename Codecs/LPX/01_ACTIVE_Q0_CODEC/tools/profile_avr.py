@@ -30,13 +30,15 @@ def linux_path(path):
 
 
 def run(source, output, avr_bin, sim_runner, sim_lib_dir=None, wsl=None, enable_asm=False,
-        queue=512,prefill=384,irq_load=0,dot_unroll=9,v3_features=0,speech=False):
+        queue=512,prefill=384,irq_load=0,dot_unroll=9,v3_features=0,speech=False,speech_compact=False):
     if queue not in (64,128,256,512) or not 1<=prefill<queue or not 0<=irq_load<=600 or dot_unroll not in (1,3,9):
         raise ValueError('Invalid queue, prefill, IRQ load or dot unroll')
     source, output, avr_bin = Path(source), Path(output).resolve(), Path(avr_bin)
     blob = source.read_bytes()
+    if not 20<=len(blob)<=65535:raise ValueError('Expected a complete L4HY header and bounded ROM stream')
     if v3_features<0 or v3_features&~124:raise ValueError('Unknown v3 feature bits')
-    valid_header=((speech and blob[:5]==b'L4HY\x04' and blob[5] in (4,6)) or blob[:6]==b'L4HY\x02\x03' or
+    if speech_compact and not speech:raise ValueError('Compact speech requires speech=True')
+    valid_header=((speech_compact and blob[:5]==b'L4HY\x05' and (blob[5]&127) in (4,6)) or (speech and blob[:5]==b'L4HY\x04' and blob[5] in (4,6)) or blob[:6]==b'L4HY\x02\x03' or
         (v3_features and blob[:5]==b'L4HY\x03' and len(blob)>5 and blob[5]&3==3 and not blob[5]&~(3|v3_features)))
     if not valid_header or not 20 <= len(blob) <= 65535:
         raise ValueError('Expected a supported L4HY Q0 stream; v3 features require explicit opt-in')
@@ -61,6 +63,7 @@ def run(source, output, avr_bin, sim_runner, sim_lib_dir=None, wsl=None, enable_
                  f'-DLPX4_PROFILE_IRQ_LOAD={irq_load}',f'-DLPX4_AVR_DOT_UNROLL={dot_unroll}']
     if v3_features:definitions.append(f'-DLPX4_V3_FEATURES={v3_features}')
     if speech:definitions.append('-DLPX4_ENABLE_SPEECH=1')
+    if speech_compact:definitions.append('-DLPX4_ENABLE_SPEECH_COMPACT=1')
     command[1:1]=definitions
     compiler_options=definitions+compiler_options
     subprocess.run(command, check=True, capture_output=True)
@@ -85,7 +88,7 @@ def run(source, output, avr_bin, sim_runner, sim_lib_dir=None, wsl=None, enable_
         subprocess.run([str(Path(sim_runner).resolve()), str(elf), str(valid), str(timing)],
                        check=True, env=environment, capture_output=True)
     report = json.loads(timing.read_text())
-    with BatchSession('batch',v3_features=v3_features,speech=speech) as decoder:
+    with BatchSession('batch',v3_features=v3_features,speech=speech,speech_compact=speech_compact) as decoder:
         expected = decoder.decode_one(blob, samples)
     actual = valid.read_bytes()
     if expected is None or actual != expected.tobytes() or report['played'] != samples:
@@ -107,7 +110,7 @@ def run(source, output, avr_bin, sim_runner, sim_lib_dir=None, wsl=None, enable_
                   compiler_options=compiler_options,
                   arithmetic_backend='avr5-asm' if enable_asm else 'c',
                   queue_bytes=queue,prefill_samples=prefill,extra_irq_cycles=irq_load,dot_unroll=dot_unroll,
-                  v3_compiled_features=v3_features,speech_compiled=bool(speech),
+                  v3_compiled_features=v3_features,speech_compiled=bool(speech),speech_compact_compiled=bool(speech_compact),
                   simavr_no_underrun=report['underruns'] == 0,
                   physical_hardware_measured=False,
                   instrumentation='Decode wall intervals include active IRQ and flag stores; PB0 marks OCR2B writes; queue sampled every 160 ticks.')
@@ -129,8 +132,9 @@ if __name__ == '__main__':
     ap.add_argument('--irq-load',type=int,default=0);ap.add_argument('--dot-unroll',type=int,default=9)
     ap.add_argument('--v3-features',type=int,default=0)
     ap.add_argument('--speech',action='store_true')
+    ap.add_argument('--speech-compact',action='store_true')
     a = ap.parse_args()
     r = run(a.input, a.output_directory, a.avr_bin, a.sim_runner, a.sim_lib_dir, a.wsl, a.enable_asm,
-            a.queue,a.prefill,a.irq_load,a.dot_unroll,a.v3_features,a.speech)
+            a.queue,a.prefill,a.irq_load,a.dot_unroll,a.v3_features,a.speech,a.speech_compact)
     print(json.dumps({k: r[k] for k in ('input_samples', 'underruns', 'mean_decode_wall_cycles', 'decode_wall_cycles_max',
                                        'flash_bytes', 'static_sram_bytes', 'pwm_native_exact')}, indent=2))
