@@ -1,0 +1,129 @@
+{
+  "verification": "../../reports/existing-speech.json",
+  "fixtures": "../../fixtures/existing-speech.json",
+  "source_scope": "Existing public human-performance source recordings already retained in this project; no new private voice recording and no TTS.",
+  "preprocessing": "Mono PCM16/8kHz, libsoxr precision=28 cheby=1 dither_method=none; unchanged speed/pitch/gain. Zero-pad partial final frame then append five zero frames. No automatic latency alignment or trimming.",
+  "output_scope": "Unnormalized PCM16 mono/8kHz. Original upstream on PC and exact AVR instruction simulation; no analog board recording.",
+  "files": [
+    {
+      "path": "balloon/source-8k.wav",
+      "kind": "unencoded_source_8k",
+      "wav_sha256": "87b6e50744217eeff19c6d6320a1ebea01247d827def50a7b5dc5f715c7d8bfe",
+      "pcm_sha256": "4b22d97da7c6ee6ba711922dccc26ee83838f5699c27313311940d711540dbd7"
+    },
+    {
+      "path": "balloon/upstream.wav",
+      "kind": "upstream_pf1",
+      "wav_sha256": "3717ead037ef594488c5c75b6ddf41e06418bd996e0898d1cc31ae80bfba253a",
+      "pcm_sha256": "25a3d7d03755c06da7bd93de473f71e87957cb5416139775b05fcaf6043cd327",
+      "packet_sha256": "9eaa378818acf66ba08c61d3465b0919c48c37ea5885d83d873f8e52e8e26490",
+      "decoder_image_sha256": "4ad33f07fb6d444f89d55c23499809e05ef84f6d2b9c363dc9ec31f0d99a320f"
+    },
+    {
+      "path": "balloon/avr-postfilter.wav",
+      "kind": "avr_pf1",
+      "wav_sha256": "64c87e3f7bf556e9c36665cfb48d985bc3194bd65a930f4f7fa0361738877d93",
+      "pcm_sha256": "6d86259fed4e45d1f0a9d12d12715c0fa6c14e1c17a5b0b96e61d3020d949378",
+      "packet_sha256": "9eaa378818acf66ba08c61d3465b0919c48c37ea5885d83d873f8e52e8e26490",
+      "decoder_image_sha256": "3ddc65fbfec4c37641f95c48ac3544c3abb72b94d37f7436e7e8d0fa0b4ac56b"
+    },
+    {
+      "path": "balloon/avr-nopost.wav",
+      "kind": "avr_pf0",
+      "wav_sha256": "9695a233f188ceee0e168c959a988ad396d749c871258702d4f63c1e570983a8",
+      "pcm_sha256": "f321efa71412c8ada5071139ba6c9abc5334d94056373f18b6a7242dbcfdc9b3",
+      "packet_sha256": "9eaa378818acf66ba08c61d3465b0919c48c37ea5885d83d873f8e52e8e26490",
+      "decoder_image_sha256": "01338ef42d0d494f305640f9bf7e16d8141d5c9b1b05e0889f982830c35876c5"
+    },
+    {
+      "path": "owl/source-8k.wav",
+      "kind": "unencoded_source_8k",
+      "wav_sha256": "1bd9f8f576468c7b16e70e53cabb8625a86b71d8538725a00c21e179127f49ca",
+      "pcm_sha256": "29d372324b09b27ff47e4e1ed35edd49dd6ae3a2bbb086f52ca2e5c6703df938"
+    },
+    {
+      "path": "owl/upstream.wav",
+      "kind": "upstream_pf1",
+      "wav_sha256": "854a62a6892df564208848f03399ddd8f9d9c9a6ab0a6c48fae8febdc68c8321",
+      "pcm_sha256": "248aaffddb1497295ec2275aab21ec6c7fc914b194591c620b060ffe1029a606",
+      "packet_sha256": "34226581845e39065c89637fb5cc9d388e08130c2504b6ab8ebb83fcdae808ab",
+      "decoder_image_sha256": "4ad33f07fb6d444f89d55c23499809e05ef84f6d2b9c363dc9ec31f0d99a320f"
+    },
+    {
+      "path": "owl/avr-postfilter.wav",
+      "kind": "avr_pf1",
+      "wav_sha256": "e282d079401eac24d22bfab72449c136b3154a41e54363f3b13f412dbeb79ab1",
+      "pcm_sha256": "6b46cf555641cd8ac78224d94595bbe3f0023df8fad4eea0a51bf15f99817ee2",
+      "packet_sha256": "34226581845e39065c89637fb5cc9d388e08130c2504b6ab8ebb83fcdae808ab",
+      "decoder_image_sha256": "3ddc65fbfec4c37641f95c48ac3544c3abb72b94d37f7436e7e8d0fa0b4ac56b"
+    },
+    {
+      "path": "owl/avr-nopost.wav",
+      "kind": "avr_pf0",
+      "wav_sha256": "1012abcc16468922994402aa2d89f17d3a8d08752d20bab302a4828a48892d1e",
+      "pcm_sha256": "46432a5ec3a39b2b460ad10751b864916d659110386488d81ac72669949e2f83",
+      "packet_sha256": "34226581845e39065c89637fb5cc9d388e08130c2504b6ab8ebb83fcdae808ab",
+      "decoder_image_sha256": "01338ef42d0d494f305640f9bf7e16d8141d5c9b1b05e0889f982830c35876c5"
+    },
+    {
+      "path": "chego/source-8k.wav",
+      "kind": "unencoded_source_8k",
+      "wav_sha256": "5d342326fd08ade2c394dff7e973212aaa629a62fa622a43c5c0272c8e3e86a0",
+      "pcm_sha256": "182a2b387d30a989db20acd38f709dbb694b4551e0a3be9756bc1ddcd751b697"
+    },
+    {
+      "path": "chego/upstream.wav",
+      "kind": "upstream_pf1",
+      "wav_sha256": "4205347232473e69851b9b3671556694089eafe81114287b1e91a4f8ba1f4286",
+      "pcm_sha256": "a28f6375b59df7edf28a964974b7238e7ebb9107f58a5f577878ea5a17da13b0",
+      "packet_sha256": "5cd69d632a4efbe6e02467b5412d9e578a5f1fc7688714261a98e5c6f32f3577",
+      "decoder_image_sha256": "4ad33f07fb6d444f89d55c23499809e05ef84f6d2b9c363dc9ec31f0d99a320f"
+    },
+    {
+      "path": "chego/avr-postfilter.wav",
+      "kind": "avr_pf1",
+      "wav_sha256": "32ddb6671b37ff8304419b5a9e3588bae6aa212ea22a69822a4cd867602c39bd",
+      "pcm_sha256": "61dbe0d360353532cf4fd8cc8ad32c8c2a39b6b3899f5993cf61e61a48ec6437",
+      "packet_sha256": "5cd69d632a4efbe6e02467b5412d9e578a5f1fc7688714261a98e5c6f32f3577",
+      "decoder_image_sha256": "3ddc65fbfec4c37641f95c48ac3544c3abb72b94d37f7436e7e8d0fa0b4ac56b"
+    },
+    {
+      "path": "chego/avr-nopost.wav",
+      "kind": "avr_pf0",
+      "wav_sha256": "47bde08da6b531714727d92c07ab1a6e74e405b39a53a8a163aeeb51748c457a",
+      "pcm_sha256": "2117a5bc20db49222106b030b4dbb3fa4b20b9e61c6a87f1ac75c2c4238855d3",
+      "packet_sha256": "5cd69d632a4efbe6e02467b5412d9e578a5f1fc7688714261a98e5c6f32f3577",
+      "decoder_image_sha256": "01338ef42d0d494f305640f9bf7e16d8141d5c9b1b05e0889f982830c35876c5"
+    },
+    {
+      "path": "otvechaesh/source-8k.wav",
+      "kind": "unencoded_source_8k",
+      "wav_sha256": "8b6b943617d11b0f2be99e351c5703d54b782fbb496adabae87f60523bde82a9",
+      "pcm_sha256": "efcd72c58a3aec3f81635ee0e23064090c9d1d7753e6b3bb06bddb6dc9d3eb2f"
+    },
+    {
+      "path": "otvechaesh/upstream.wav",
+      "kind": "upstream_pf1",
+      "wav_sha256": "f590bfbc2738b48ff8f7cba84eafa3e86be04509528384260914cce683831d47",
+      "pcm_sha256": "bdcaa07d8cb78ada86928d2ec1c0391355e87ed5cb19742099b52893fc713f0a",
+      "packet_sha256": "32615869b9a6324eae0bc78cab53b53d35ae848c5fc9831c75194e544ded5fb1",
+      "decoder_image_sha256": "4ad33f07fb6d444f89d55c23499809e05ef84f6d2b9c363dc9ec31f0d99a320f"
+    },
+    {
+      "path": "otvechaesh/avr-postfilter.wav",
+      "kind": "avr_pf1",
+      "wav_sha256": "e39c4dce419860fe764c3143bb2a4ebcfffb7ce62df26b06f987f61ae68e8eb0",
+      "pcm_sha256": "c9252924ffe2ed6f992225b2a56ed4ebaf9776653678bb2144f91cf342c91590",
+      "packet_sha256": "32615869b9a6324eae0bc78cab53b53d35ae848c5fc9831c75194e544ded5fb1",
+      "decoder_image_sha256": "3ddc65fbfec4c37641f95c48ac3544c3abb72b94d37f7436e7e8d0fa0b4ac56b"
+    },
+    {
+      "path": "otvechaesh/avr-nopost.wav",
+      "kind": "avr_pf0",
+      "wav_sha256": "038ae5bef807cfbd642a112e2d7c3616644c26e9a226b08ad737778b7bd5f342",
+      "pcm_sha256": "6220d5312a64a4be79df4057f75c65ce966fa8c8bc1a42484dcf3456eec17986",
+      "packet_sha256": "32615869b9a6324eae0bc78cab53b53d35ae848c5fc9831c75194e544ded5fb1",
+      "decoder_image_sha256": "01338ef42d0d494f305640f9bf7e16d8141d5c9b1b05e0889f982830c35876c5"
+    }
+  ]
+}

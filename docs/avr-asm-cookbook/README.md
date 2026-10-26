@@ -2734,3 +2734,38 @@ algorithms remain selectable; real CPU macros and ROM access are retained.
 There is no listening-panel, active-IRQ, underrun, board, Arm or real-time
 qualification. [Full measurements](../../Codecs/Codec2/reports/nopost-decoder.json),
 [precision search](../../Codecs/Codec2/reports/nopost-precision.json).
+
+### Separate decoder arithmetic validation from real-speech listening
+
+The [existing-speech fixture](../../Codecs/Codec2/LISTENING_RU.md) uses four
+human-performance source recordings already published in this repository.
+Take the original PCM, not an older vocoder/PWM reconstruction. Preserve its
+hash and provenance; resample with filtering to the actual 8-kHz codec input
+rate without changing speed, pitch or gain. Zero-pad the partial final frame
+and append five zero frames to retain speech through codec delay. Record
+that padding and avoid silently trimming or aligning the listening results.
+
+Retain standard 3200 packet bytes as JSON with hashes. The installed FFmpeg
+encoder is identified by its binary hash; its embedded libcodec2 version is
+not separately known. Decoding tests therefore bind to the actual packets,
+not an unverified claim of bit-identical encoding to pinned upstream 1.2.0.
+Use a matching pf=0/pf=1 upstream oracle to assess decoder arithmetic; use the
+unencoded source and the two algorithms to assess listening quality.
+
+Replay both previously verified ATmega64A images unchanged, checking binary
+hash, manufacturer memory bounds, stack on every instruction and absence of
+heap. Reset per clip; this is a short-phrase regression, not a long-call or
+active-interrupt test. Native/AVR byte differences and waveform SNR to the
+matching decoder oracle do not quantify intelligibility relative to the
+source. Keep synthetic vectors for numerical boundaries, but do not use
+unintelligible TTS as evidence of real-speech quality. Informal feedback from
+one short phrase is not a listening-panel score or general quality claim.
+
+All four human clips complete on both unchanged images: 446 frames each,
+892 total. Same-option upstream SNR ranges 56.65..61.28 dB for matrix and
+59.32..63.12 dB for nopost; maximum PCM error 70/26. Weighted mean cycles
+are 13,592,539 /8,570,710. New-corpus stack peaks are 2974/3045 B with
+711 B static SRAM. The older matrix conditioning sequence has a higher
+3009-B stack peak and is still required. The nopost mean at 16 MHz remains
+0.536 s per 20-ms frame; quality regression evidence does not establish
+real-time support. [Eight complete cases](../../Codecs/Codec2/reports/existing-speech.json).
