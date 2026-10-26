@@ -23,6 +23,16 @@ historical checkpoints. Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Profiling-evidence checkpoint, 2026-10-26: the diagnostic producer now validates
+profile trees/deltas and exposes mixed, support, unknown and non-work budgets.
+Offline replay preserves all prior leaf counts in nine retained captures
+(8105 samples); a fresh physical-kernel smoke capture retains production PCM/
+state and byte-identical executable sections. Irregular sample gaps and O3
+inlining still prevent precise exclusive subsystem timing. The independent
+CLKI/GPIO/sleep audit also passes 49 focused checks without a confirmed defect.
+Neither observation closes a checklist item; the count remains 23/30. See the
+[attribution evidence](../reports/profile-attribution-20261026.md).
+
 SREG-input dependency experiment rejected: individual resumable no-input
 writers can omit one old-SREG read and preserve only written temporary bits.
 All 2325 candidate checks and IRQ-active PCM/pin comparisons pass; 18 compatible

@@ -56,3 +56,32 @@ Verified example: [adaptive-region study, 2026-10-26](../../web-player/reports/b
 15 profiles / 14,031 work samples with all five production execution replays.
 It identifies remaining clock/scheduler work; it is not a speed measurement or
 a supported real-time audio claim.
+
+## Validate attribution and irregular sample intervals
+
+`scripts/lib/avr-profile-attribution.mjs` checks every tree node, parent and
+sample ID, including unsampled cycles, and validates the timestamp/delta stream.
+It partitions all observations into work ancestry and observations without that
+ancestry. Each partition retains both leaf counts and right-end delta weights.
+The weights are estimates: a sample cannot establish who owned its preceding
+interval, and the initial delay can contain profiler startup work.
+
+Keep native board/bridge/CLKI bodies in an explicit mixed bucket. O3 can inline
+peripheral and pin work there, so a containing native function is insufficient
+evidence of a separate hardware-subsystem duration. Support/unknown WASM leaves
+also keep a nearest-known-caller table, labelled as context rather than added
+cost. GC samples without a work ancestor remain visible outside that partition;
+do not silently charge them zero work overhead.
+
+The existing profiler now records this analysis beside its original count
+tables. Replay a retained capture without running the emulator:
+
+```text
+node web-player/scripts/audit-device-profile.mjs --input build/profiles/bounded-current-music
+```
+
+The replay requires the original profile hash, production-parity marker and
+exact agreement with all earlier leaf-count tables. It records source/metadata
+hashes while exporting no frame URLs or compiler object directories. New link
+maps and function catalogs retain object basenames. See the
+[nine-profile replay and limits](../../web-player/reports/profile-attribution-20261026.md).

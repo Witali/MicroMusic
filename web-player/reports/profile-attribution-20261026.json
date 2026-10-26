@@ -1,0 +1,2947 @@
+{
+  "schema": "micromusic-device-profile-audit-v1",
+  "sourceSummarySha256": "030e3b75efb49b1322ef5a9c4854e5f967be370d709e3e18689174c25b7ce94a",
+  "runtimeMetadataSha256": "1c23f1252f42e8875382665c83c69f7218fa1da3d3f2a5dad74bc6df074616a2",
+  "runtimeSha256": "9f1eefa094f9003419251408953309e3b3c4050fc217234b9b95ed0275d87778",
+  "sourceHashes": {
+    "audit-device-profile.mjs": "d1d4de0af6962479b4fbd2c4dfc53b8389eaa3b4598b6554f2f02edaea9a2b5d",
+    "lib/avr-profile-attribution.mjs": "a40a8d764e35552b6aac425ef1869737c304678c8d33d5cfb1e78e682b842589"
+  },
+  "meaning": "Offline replay of retained captures; no current-runtime performance or profiler-overhead claim.",
+  "results": [
+    {
+      "firmware": "rhythmic",
+      "repeat": 0,
+      "profileSha256": "5a16e0b883d824495697e1b8ef9640646a3c4ba1191c79f268991a0dfb0ce611",
+      "generatedMetadataSha256": "6d542ddab9d077ab977543b9f2cf87c35035b2c73ce63a9748a3ea99a18599b4",
+      "priorCountsMatch": true,
+      "attribution": {
+        "schema": "micromusic-avr-profile-attribution-v1",
+        "exclusiveSubsystemTimeAvailable": false,
+        "method": {
+          "unit": "Disjoint observed surviving-function leaf ownership.",
+          "deltaWeights": "Estimates only: each recorded delta is assigned to its right-end sample, including the first delay. A sample does not prove ownership throughout that interval.",
+          "context": "Nearest known non-support caller for support/unknown WASM leaves is a separate contextual view, not exclusive cost; do not add it to the leaf budget.",
+          "limits": "O3/V8 inlining stays in its containing body. Work ancestry excludes unrooted GC/VM samples even when they occurred during work. No confidence interval or unprofiled speed is inferred."
+        },
+        "timeline": {
+          "durationUs": 1836283,
+          "deltaSpanUs": 1836150,
+          "unrepresentedTailUs": 133,
+          "firstSampleDelayUs": 21818,
+          "deltaStreamSpanPercent": 99.99275710770073,
+          "ownershipChangeGapUs": 1147078
+        },
+        "deltas": {
+          "count": 1156,
+          "minUs": 1080,
+          "medianUs": 1562,
+          "p95Us": 1624,
+          "p99Us": 1688,
+          "maxUs": 21818,
+          "zeroCount": 0,
+          "gaps": {
+            "requestedIntervalUs": 1000,
+            "overTwiceRequested": 3,
+            "overTenTimesRequested": 1
+          }
+        },
+        "all": {
+          "samples": 1156,
+          "deltaWeightUs": 1836150,
+          "categories": [
+            {
+              "category": "native_board_body",
+              "samples": 653,
+              "deltaWeightUs": 1026822,
+              "samplePercent": 56.4878892733564,
+              "deltaWeightPercent": 55.922555346785394
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 187,
+              "deltaWeightUs": 293622,
+              "samplePercent": 16.176470588235293,
+              "deltaWeightPercent": 15.991177191405932
+            },
+            {
+              "category": "native_bridge_body",
+              "samples": 179,
+              "deltaWeightUs": 280910,
+              "samplePercent": 15.484429065743944,
+              "deltaWeightPercent": 15.29885902567873
+            },
+            {
+              "category": "native_analog_body",
+              "samples": 57,
+              "deltaWeightUs": 88772,
+              "samplePercent": 4.930795847750865,
+              "deltaWeightPercent": 4.834681262424094
+            },
+            {
+              "category": "native_timer0_body",
+              "samples": 50,
+              "deltaWeightUs": 78645,
+              "samplePercent": 4.325259515570934,
+              "deltaWeightPercent": 4.283146801731885
+            },
+            {
+              "category": "native_other_peripheral_body",
+              "samples": 17,
+              "deltaWeightUs": 26807,
+              "samplePercent": 1.4705882352941178,
+              "deltaWeightPercent": 1.4599569751926587
+            },
+            {
+              "category": "native_gpio_body",
+              "samples": 5,
+              "deltaWeightUs": 7828,
+              "samplePercent": 0.43252595155709345,
+              "deltaWeightPercent": 0.4263268251504507
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 3,
+              "deltaWeightUs": 4685,
+              "samplePercent": 0.25951557093425603,
+              "deltaWeightPercent": 0.2551534460692209
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 2,
+              "deltaWeightUs": 23380,
+              "samplePercent": 0.17301038062283736,
+              "deltaWeightPercent": 1.2733164501810854
+            },
+            {
+              "category": "javascript_bridge",
+              "samples": 1,
+              "deltaWeightUs": 1568,
+              "samplePercent": 0.08650519031141868,
+              "deltaWeightPercent": 0.08539607330555782
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 1,
+              "deltaWeightUs": 1559,
+              "samplePercent": 0.08650519031141868,
+              "deltaWeightPercent": 0.08490591727255399
+            },
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1552,
+              "samplePercent": 0.08650519031141868,
+              "deltaWeightPercent": 0.08452468480243988
+            }
+          ],
+          "groups": [
+            {
+              "category": "mixed_native_container",
+              "samples": 832,
+              "deltaWeightUs": 1307732,
+              "samplePercent": 71.97231833910034,
+              "deltaWeightPercent": 71.22141437246412
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 187,
+              "deltaWeightUs": 293622,
+              "samplePercent": 16.176470588235293,
+              "deltaWeightPercent": 15.991177191405932
+            },
+            {
+              "category": "native_peripheral_body",
+              "samples": 129,
+              "deltaWeightUs": 202052,
+              "samplePercent": 11.15916955017301,
+              "deltaWeightPercent": 11.004111864499087
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 3,
+              "deltaWeightUs": 4685,
+              "samplePercent": 0.25951557093425603,
+              "deltaWeightPercent": 0.2551534460692209
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 2,
+              "deltaWeightUs": 23380,
+              "samplePercent": 0.17301038062283736,
+              "deltaWeightPercent": 1.2733164501810854
+            },
+            {
+              "category": "javascript_bridge",
+              "samples": 1,
+              "deltaWeightUs": 1568,
+              "samplePercent": 0.08650519031141868,
+              "deltaWeightPercent": 0.08539607330555782
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 1,
+              "deltaWeightUs": 1559,
+              "samplePercent": 0.08650519031141868,
+              "deltaWeightPercent": 0.08490591727255399
+            },
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1552,
+              "samplePercent": 0.08650519031141868,
+              "deltaWeightPercent": 0.08452468480243988
+            }
+          ],
+          "ambiguousLeafCallerContext": []
+        },
+        "workAncestry": {
+          "samples": 1153,
+          "deltaWeightUs": 1811218,
+          "categories": [
+            {
+              "category": "native_board_body",
+              "samples": 653,
+              "deltaWeightUs": 1026822,
+              "samplePercent": 56.634865568083264,
+              "deltaWeightPercent": 56.69234735962209
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 187,
+              "deltaWeightUs": 293622,
+              "samplePercent": 16.21856027753686,
+              "deltaWeightPercent": 16.211300903590843
+            },
+            {
+              "category": "native_bridge_body",
+              "samples": 179,
+              "deltaWeightUs": 280910,
+              "samplePercent": 15.524718126626192,
+              "deltaWeightPercent": 15.509452754996914
+            },
+            {
+              "category": "native_analog_body",
+              "samples": 57,
+              "deltaWeightUs": 88772,
+              "samplePercent": 4.943625325238508,
+              "deltaWeightPercent": 4.901232209485551
+            },
+            {
+              "category": "native_timer0_body",
+              "samples": 50,
+              "deltaWeightUs": 78645,
+              "samplePercent": 4.336513443191674,
+              "deltaWeightPercent": 4.342105699037885
+            },
+            {
+              "category": "native_other_peripheral_body",
+              "samples": 17,
+              "deltaWeightUs": 26807,
+              "samplePercent": 1.4744145706851692,
+              "deltaWeightPercent": 1.4800537538827463
+            },
+            {
+              "category": "native_gpio_body",
+              "samples": 5,
+              "deltaWeightUs": 7828,
+              "samplePercent": 0.4336513443191674,
+              "deltaWeightPercent": 0.43219535141545634
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 3,
+              "deltaWeightUs": 4685,
+              "samplePercent": 0.26019080659150046,
+              "deltaWeightPercent": 0.25866571555715545
+            },
+            {
+              "category": "javascript_bridge",
+              "samples": 1,
+              "deltaWeightUs": 1568,
+              "samplePercent": 0.08673026886383348,
+              "deltaWeightPercent": 0.08657157780013229
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 1,
+              "deltaWeightUs": 1559,
+              "samplePercent": 0.08673026886383348,
+              "deltaWeightPercent": 0.08607467461122846
+            }
+          ],
+          "groups": [
+            {
+              "category": "mixed_native_container",
+              "samples": 832,
+              "deltaWeightUs": 1307732,
+              "samplePercent": 72.15958369470945,
+              "deltaWeightPercent": 72.201800114619
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 187,
+              "deltaWeightUs": 293622,
+              "samplePercent": 16.21856027753686,
+              "deltaWeightPercent": 16.211300903590843
+            },
+            {
+              "category": "native_peripheral_body",
+              "samples": 129,
+              "deltaWeightUs": 202052,
+              "samplePercent": 11.188204683434519,
+              "deltaWeightPercent": 11.155587013821638
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 3,
+              "deltaWeightUs": 4685,
+              "samplePercent": 0.26019080659150046,
+              "deltaWeightPercent": 0.25866571555715545
+            },
+            {
+              "category": "javascript_bridge",
+              "samples": 1,
+              "deltaWeightUs": 1568,
+              "samplePercent": 0.08673026886383348,
+              "deltaWeightPercent": 0.08657157780013229
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 1,
+              "deltaWeightUs": 1559,
+              "samplePercent": 0.08673026886383348,
+              "deltaWeightPercent": 0.08607467461122846
+            }
+          ],
+          "ambiguousLeafCallerContext": []
+        },
+        "withoutWorkAncestry": {
+          "samples": 3,
+          "deltaWeightUs": 24932,
+          "categories": [
+            {
+              "category": "profiler_harness",
+              "samples": 2,
+              "deltaWeightUs": 23380,
+              "samplePercent": 66.66666666666667,
+              "deltaWeightPercent": 93.77506818546446
+            },
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1552,
+              "samplePercent": 33.333333333333336,
+              "deltaWeightPercent": 6.224931814535537
+            }
+          ],
+          "groups": [
+            {
+              "category": "profiler_harness",
+              "samples": 2,
+              "deltaWeightUs": 23380,
+              "samplePercent": 66.66666666666667,
+              "deltaWeightPercent": 93.77506818546446
+            },
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1552,
+              "samplePercent": 33.333333333333336,
+              "deltaWeightPercent": 6.224931814535537
+            }
+          ],
+          "ambiguousLeafCallerContext": []
+        }
+      }
+    },
+    {
+      "firmware": "rhythmic",
+      "repeat": 1,
+      "profileSha256": "0a4ba5beada5b61064146cab6d98bf440ed165f7ef16e1a84a38b77db2be6d65",
+      "generatedMetadataSha256": "6d542ddab9d077ab977543b9f2cf87c35035b2c73ce63a9748a3ea99a18599b4",
+      "priorCountsMatch": true,
+      "attribution": {
+        "schema": "micromusic-avr-profile-attribution-v1",
+        "exclusiveSubsystemTimeAvailable": false,
+        "method": {
+          "unit": "Disjoint observed surviving-function leaf ownership.",
+          "deltaWeights": "Estimates only: each recorded delta is assigned to its right-end sample, including the first delay. A sample does not prove ownership throughout that interval.",
+          "context": "Nearest known non-support caller for support/unknown WASM leaves is a separate contextual view, not exclusive cost; do not add it to the leaf budget.",
+          "limits": "O3/V8 inlining stays in its containing body. Work ancestry excludes unrooted GC/VM samples even when they occurred during work. No confidence interval or unprofiled speed is inferred."
+        },
+        "timeline": {
+          "durationUs": 1680477,
+          "deltaSpanUs": 1680341,
+          "unrepresentedTailUs": 136,
+          "firstSampleDelayUs": 21785,
+          "deltaStreamSpanPercent": 99.99190705972174,
+          "ownershipChangeGapUs": 1005928
+        },
+        "deltas": {
+          "count": 1063,
+          "minUs": 1181,
+          "medianUs": 1558,
+          "p95Us": 1602,
+          "p99Us": 1631,
+          "maxUs": 21785,
+          "zeroCount": 0,
+          "gaps": {
+            "requestedIntervalUs": 1000,
+            "overTwiceRequested": 1,
+            "overTenTimesRequested": 1
+          }
+        },
+        "all": {
+          "samples": 1063,
+          "deltaWeightUs": 1680341,
+          "categories": [
+            {
+              "category": "native_board_body",
+              "samples": 624,
+              "deltaWeightUs": 973625,
+              "samplePercent": 58.701787394167454,
+              "deltaWeightPercent": 57.94210817923267
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 165,
+              "deltaWeightUs": 257511,
+              "samplePercent": 15.522107243650048,
+              "deltaWeightPercent": 15.324925119365652
+            },
+            {
+              "category": "native_bridge_body",
+              "samples": 148,
+              "deltaWeightUs": 231840,
+              "samplePercent": 13.922859830667921,
+              "deltaWeightPercent": 13.797199497006858
+            },
+            {
+              "category": "native_analog_body",
+              "samples": 57,
+              "deltaWeightUs": 89167,
+              "samplePercent": 5.362182502351835,
+              "deltaWeightPercent": 5.306482434220197
+            },
+            {
+              "category": "native_timer0_body",
+              "samples": 50,
+              "deltaWeightUs": 78224,
+              "samplePercent": 4.703668861712136,
+              "deltaWeightPercent": 4.655245572178504
+            },
+            {
+              "category": "native_other_peripheral_body",
+              "samples": 8,
+              "deltaWeightUs": 12512,
+              "samplePercent": 0.7525870178739417,
+              "deltaWeightPercent": 0.744610766505132
+            },
+            {
+              "category": "native_gpio_body",
+              "samples": 4,
+              "deltaWeightUs": 6213,
+              "samplePercent": 0.37629350893697083,
+              "deltaWeightPercent": 0.3697463788600052
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 3,
+              "deltaWeightUs": 4715,
+              "samplePercent": 0.28222013170272814,
+              "deltaWeightPercent": 0.28059780723079425
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 2,
+              "deltaWeightUs": 3165,
+              "samplePercent": 0.18814675446848542,
+              "deltaWeightPercent": 0.18835462563848648
+            },
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1584,
+              "samplePercent": 0.09407337723424271,
+              "deltaWeightPercent": 0.09426658041433257
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 21785,
+              "samplePercent": 0.09407337723424271,
+              "deltaWeightPercent": 1.2964630393473706
+            }
+          ],
+          "groups": [
+            {
+              "category": "mixed_native_container",
+              "samples": 772,
+              "deltaWeightUs": 1205465,
+              "samplePercent": 72.62464722483537,
+              "deltaWeightPercent": 71.73930767623952
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 165,
+              "deltaWeightUs": 257511,
+              "samplePercent": 15.522107243650048,
+              "deltaWeightPercent": 15.324925119365652
+            },
+            {
+              "category": "native_peripheral_body",
+              "samples": 119,
+              "deltaWeightUs": 186116,
+              "samplePercent": 11.194731890874882,
+              "deltaWeightPercent": 11.076085151763838
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 3,
+              "deltaWeightUs": 4715,
+              "samplePercent": 0.28222013170272814,
+              "deltaWeightPercent": 0.28059780723079425
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 2,
+              "deltaWeightUs": 3165,
+              "samplePercent": 0.18814675446848542,
+              "deltaWeightPercent": 0.18835462563848648
+            },
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1584,
+              "samplePercent": 0.09407337723424271,
+              "deltaWeightPercent": 0.09426658041433257
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 21785,
+              "samplePercent": 0.09407337723424271,
+              "deltaWeightPercent": 1.2964630393473706
+            }
+          ],
+          "ambiguousLeafCallerContext": []
+        },
+        "workAncestry": {
+          "samples": 1061,
+          "deltaWeightUs": 1656972,
+          "categories": [
+            {
+              "category": "native_board_body",
+              "samples": 624,
+              "deltaWeightUs": 973625,
+              "samplePercent": 58.8124410933082,
+              "deltaWeightPercent": 58.759291044145584
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 165,
+              "deltaWeightUs": 257511,
+              "samplePercent": 15.551366635249764,
+              "deltaWeightPercent": 15.541059233348541
+            },
+            {
+              "category": "native_bridge_body",
+              "samples": 148,
+              "deltaWeightUs": 231840,
+              "samplePercent": 13.949104618284638,
+              "deltaWeightPercent": 13.991787429117691
+            },
+            {
+              "category": "native_analog_body",
+              "samples": 57,
+              "deltaWeightUs": 89167,
+              "samplePercent": 5.372290292177191,
+              "deltaWeightPercent": 5.381322074241448
+            },
+            {
+              "category": "native_timer0_body",
+              "samples": 50,
+              "deltaWeightUs": 78224,
+              "samplePercent": 4.71253534401508,
+              "deltaWeightPercent": 4.720900534227495
+            },
+            {
+              "category": "native_other_peripheral_body",
+              "samples": 8,
+              "deltaWeightUs": 12512,
+              "samplePercent": 0.7540056550424128,
+              "deltaWeightPercent": 0.7551123374444468
+            },
+            {
+              "category": "native_gpio_body",
+              "samples": 4,
+              "deltaWeightUs": 6213,
+              "samplePercent": 0.3770028275212064,
+              "deltaWeightPercent": 0.37496107357275804
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 3,
+              "deltaWeightUs": 4715,
+              "samplePercent": 0.2827521206409048,
+              "deltaWeightPercent": 0.2845552006913816
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 2,
+              "deltaWeightUs": 3165,
+              "samplePercent": 0.1885014137606032,
+              "deltaWeightPercent": 0.19101107321065172
+            }
+          ],
+          "groups": [
+            {
+              "category": "mixed_native_container",
+              "samples": 772,
+              "deltaWeightUs": 1205465,
+              "samplePercent": 72.76154571159283,
+              "deltaWeightPercent": 72.75107847326328
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 165,
+              "deltaWeightUs": 257511,
+              "samplePercent": 15.551366635249764,
+              "deltaWeightPercent": 15.541059233348541
+            },
+            {
+              "category": "native_peripheral_body",
+              "samples": 119,
+              "deltaWeightUs": 186116,
+              "samplePercent": 11.215834118755891,
+              "deltaWeightPercent": 11.232296019486148
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 3,
+              "deltaWeightUs": 4715,
+              "samplePercent": 0.2827521206409048,
+              "deltaWeightPercent": 0.2845552006913816
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 2,
+              "deltaWeightUs": 3165,
+              "samplePercent": 0.1885014137606032,
+              "deltaWeightPercent": 0.19101107321065172
+            }
+          ],
+          "ambiguousLeafCallerContext": []
+        },
+        "withoutWorkAncestry": {
+          "samples": 2,
+          "deltaWeightUs": 23369,
+          "categories": [
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1584,
+              "samplePercent": 50,
+              "deltaWeightPercent": 6.77821044974111
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 21785,
+              "samplePercent": 50,
+              "deltaWeightPercent": 93.22178955025889
+            }
+          ],
+          "groups": [
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1584,
+              "samplePercent": 50,
+              "deltaWeightPercent": 6.77821044974111
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 21785,
+              "samplePercent": 50,
+              "deltaWeightPercent": 93.22178955025889
+            }
+          ],
+          "ambiguousLeafCallerContext": []
+        }
+      }
+    },
+    {
+      "firmware": "rhythmic",
+      "repeat": 2,
+      "profileSha256": "92c66b4122108a6e8b705e6a6c7b81554e479dbda72018da1e0dc6801990715a",
+      "generatedMetadataSha256": "6d542ddab9d077ab977543b9f2cf87c35035b2c73ce63a9748a3ea99a18599b4",
+      "priorCountsMatch": true,
+      "attribution": {
+        "schema": "micromusic-avr-profile-attribution-v1",
+        "exclusiveSubsystemTimeAvailable": false,
+        "method": {
+          "unit": "Disjoint observed surviving-function leaf ownership.",
+          "deltaWeights": "Estimates only: each recorded delta is assigned to its right-end sample, including the first delay. A sample does not prove ownership throughout that interval.",
+          "context": "Nearest known non-support caller for support/unknown WASM leaves is a separate contextual view, not exclusive cost; do not add it to the leaf budget.",
+          "limits": "O3/V8 inlining stays in its containing body. Work ancestry excludes unrooted GC/VM samples even when they occurred during work. No confidence interval or unprofiled speed is inferred."
+        },
+        "timeline": {
+          "durationUs": 1668660,
+          "deltaSpanUs": 1668529,
+          "unrepresentedTailUs": 131,
+          "firstSampleDelayUs": 21111,
+          "deltaStreamSpanPercent": 99.99214938933036,
+          "ownershipChangeGapUs": 1051700
+        },
+        "deltas": {
+          "count": 1055,
+          "minUs": 1509,
+          "medianUs": 1556,
+          "p95Us": 1605,
+          "p99Us": 1647,
+          "maxUs": 21111,
+          "zeroCount": 0,
+          "gaps": {
+            "requestedIntervalUs": 1000,
+            "overTwiceRequested": 1,
+            "overTenTimesRequested": 1
+          }
+        },
+        "all": {
+          "samples": 1055,
+          "deltaWeightUs": 1668529,
+          "categories": [
+            {
+              "category": "native_board_body",
+              "samples": 575,
+              "deltaWeightUs": 898584,
+              "samplePercent": 54.502369668246445,
+              "deltaWeightPercent": 53.854862576556954
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 178,
+              "deltaWeightUs": 278193,
+              "samplePercent": 16.872037914691944,
+              "deltaWeightPercent": 16.672949646065486
+            },
+            {
+              "category": "native_bridge_body",
+              "samples": 149,
+              "deltaWeightUs": 232787,
+              "samplePercent": 14.123222748815166,
+              "deltaWeightPercent": 13.951630448137252
+            },
+            {
+              "category": "native_analog_body",
+              "samples": 70,
+              "deltaWeightUs": 109600,
+              "samplePercent": 6.6350710900473935,
+              "deltaWeightPercent": 6.568660179115856
+            },
+            {
+              "category": "native_timer0_body",
+              "samples": 51,
+              "deltaWeightUs": 79681,
+              "samplePercent": 4.834123222748815,
+              "deltaWeightPercent": 4.775523829672724
+            },
+            {
+              "category": "native_other_peripheral_body",
+              "samples": 16,
+              "deltaWeightUs": 25134,
+              "samplePercent": 1.5165876777251184,
+              "deltaWeightPercent": 1.506356796915127
+            },
+            {
+              "category": "native_gpio_body",
+              "samples": 11,
+              "deltaWeightUs": 17098,
+              "samplePercent": 1.042654028436019,
+              "deltaWeightPercent": 1.024734961154406
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 3,
+              "deltaWeightUs": 4776,
+              "samplePercent": 0.2843601895734597,
+              "deltaWeightPercent": 0.28624015525052304
+            },
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1565,
+              "samplePercent": 0.0947867298578199,
+              "deltaWeightPercent": 0.09379519325106127
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 21111,
+              "samplePercent": 0.0947867298578199,
+              "deltaWeightPercent": 1.2652462138806098
+            }
+          ],
+          "groups": [
+            {
+              "category": "mixed_native_container",
+              "samples": 724,
+              "deltaWeightUs": 1131371,
+              "samplePercent": 68.62559241706161,
+              "deltaWeightPercent": 67.8064930246942
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 178,
+              "deltaWeightUs": 278193,
+              "samplePercent": 16.872037914691944,
+              "deltaWeightPercent": 16.672949646065486
+            },
+            {
+              "category": "native_peripheral_body",
+              "samples": 148,
+              "deltaWeightUs": 231513,
+              "samplePercent": 14.028436018957345,
+              "deltaWeightPercent": 13.875275766858113
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 3,
+              "deltaWeightUs": 4776,
+              "samplePercent": 0.2843601895734597,
+              "deltaWeightPercent": 0.28624015525052304
+            },
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1565,
+              "samplePercent": 0.0947867298578199,
+              "deltaWeightPercent": 0.09379519325106127
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 21111,
+              "samplePercent": 0.0947867298578199,
+              "deltaWeightPercent": 1.2652462138806098
+            }
+          ],
+          "ambiguousLeafCallerContext": []
+        },
+        "workAncestry": {
+          "samples": 1053,
+          "deltaWeightUs": 1645853,
+          "categories": [
+            {
+              "category": "native_board_body",
+              "samples": 575,
+              "deltaWeightUs": 898584,
+              "samplePercent": 54.605887939221276,
+              "deltaWeightPercent": 54.596856462879735
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 178,
+              "deltaWeightUs": 278193,
+              "samplePercent": 16.904083570750238,
+              "deltaWeightPercent": 16.90266384664973
+            },
+            {
+              "category": "native_bridge_body",
+              "samples": 149,
+              "deltaWeightUs": 232787,
+              "samplePercent": 14.150047483380817,
+              "deltaWeightPercent": 14.143851243094007
+            },
+            {
+              "category": "native_analog_body",
+              "samples": 70,
+              "deltaWeightUs": 109600,
+              "samplePercent": 6.647673314339981,
+              "deltaWeightPercent": 6.659160933570616
+            },
+            {
+              "category": "native_timer0_body",
+              "samples": 51,
+              "deltaWeightUs": 79681,
+              "samplePercent": 4.843304843304844,
+              "deltaWeightPercent": 4.841319364487594
+            },
+            {
+              "category": "native_other_peripheral_body",
+              "samples": 16,
+              "deltaWeightUs": 25134,
+              "samplePercent": 1.519468186134853,
+              "deltaWeightPercent": 1.5271108659157289
+            },
+            {
+              "category": "native_gpio_body",
+              "samples": 11,
+              "deltaWeightUs": 17098,
+              "samplePercent": 1.0446343779677112,
+              "deltaWeightPercent": 1.038853409144073
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 3,
+              "deltaWeightUs": 4776,
+              "samplePercent": 0.2849002849002849,
+              "deltaWeightPercent": 0.29018387425851516
+            }
+          ],
+          "groups": [
+            {
+              "category": "mixed_native_container",
+              "samples": 724,
+              "deltaWeightUs": 1131371,
+              "samplePercent": 68.7559354226021,
+              "deltaWeightPercent": 68.74070770597375
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 178,
+              "deltaWeightUs": 278193,
+              "samplePercent": 16.904083570750238,
+              "deltaWeightPercent": 16.90266384664973
+            },
+            {
+              "category": "native_peripheral_body",
+              "samples": 148,
+              "deltaWeightUs": 231513,
+              "samplePercent": 14.05508072174739,
+              "deltaWeightPercent": 14.066444573118012
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 3,
+              "deltaWeightUs": 4776,
+              "samplePercent": 0.2849002849002849,
+              "deltaWeightPercent": 0.29018387425851516
+            }
+          ],
+          "ambiguousLeafCallerContext": []
+        },
+        "withoutWorkAncestry": {
+          "samples": 2,
+          "deltaWeightUs": 22676,
+          "categories": [
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1565,
+              "samplePercent": 50,
+              "deltaWeightPercent": 6.901569941788675
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 21111,
+              "samplePercent": 50,
+              "deltaWeightPercent": 93.09843005821132
+            }
+          ],
+          "groups": [
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1565,
+              "samplePercent": 50,
+              "deltaWeightPercent": 6.901569941788675
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 21111,
+              "samplePercent": 50,
+              "deltaWeightPercent": 93.09843005821132
+            }
+          ],
+          "ambiguousLeafCallerContext": []
+        }
+      }
+    },
+    {
+      "firmware": "lumiere-stereo",
+      "repeat": 0,
+      "profileSha256": "bc6e2940abd6bb395a564c548770e111740e3b63b530293098808c1f7492a074",
+      "generatedMetadataSha256": "7922efbb6abf8c39b31272f07d0bb373d461fe19ee2348d1f6e6483e8f66aa97",
+      "priorCountsMatch": true,
+      "attribution": {
+        "schema": "micromusic-avr-profile-attribution-v1",
+        "exclusiveSubsystemTimeAvailable": false,
+        "method": {
+          "unit": "Disjoint observed surviving-function leaf ownership.",
+          "deltaWeights": "Estimates only: each recorded delta is assigned to its right-end sample, including the first delay. A sample does not prove ownership throughout that interval.",
+          "context": "Nearest known non-support caller for support/unknown WASM leaves is a separate contextual view, not exclusive cost; do not add it to the leaf budget.",
+          "limits": "O3/V8 inlining stays in its containing body. Work ancestry excludes unrooted GC/VM samples even when they occurred during work. No confidence interval or unprofiled speed is inferred."
+        },
+        "timeline": {
+          "durationUs": 1853293,
+          "deltaSpanUs": 1853180,
+          "unrepresentedTailUs": 113,
+          "firstSampleDelayUs": 35671,
+          "deltaStreamSpanPercent": 99.99390274500578,
+          "ownershipChangeGapUs": 1128942
+        },
+        "deltas": {
+          "count": 1161,
+          "minUs": 1162,
+          "medianUs": 1560,
+          "p95Us": 1611,
+          "p99Us": 1641,
+          "maxUs": 35671,
+          "zeroCount": 0,
+          "gaps": {
+            "requestedIntervalUs": 1000,
+            "overTwiceRequested": 1,
+            "overTenTimesRequested": 1
+          }
+        },
+        "all": {
+          "samples": 1161,
+          "deltaWeightUs": 1853180,
+          "categories": [
+            {
+              "category": "native_board_body",
+              "samples": 652,
+              "deltaWeightUs": 1021777,
+              "samplePercent": 56.15848406546081,
+              "deltaWeightPercent": 55.13641416376175
+            },
+            {
+              "category": "native_bridge_body",
+              "samples": 169,
+              "deltaWeightUs": 264571,
+              "samplePercent": 14.556416881998278,
+              "deltaWeightPercent": 14.276594826190657
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 161,
+              "deltaWeightUs": 252097,
+              "samplePercent": 13.867355727820843,
+              "deltaWeightPercent": 13.603481583008666
+            },
+            {
+              "category": "native_analog_body",
+              "samples": 91,
+              "deltaWeightUs": 142674,
+              "samplePercent": 7.838070628768303,
+              "deltaWeightPercent": 7.69887436730377
+            },
+            {
+              "category": "native_timer0_body",
+              "samples": 58,
+              "deltaWeightUs": 90852,
+              "samplePercent": 4.995693367786391,
+              "deltaWeightPercent": 4.902491932785806
+            },
+            {
+              "category": "native_other_peripheral_body",
+              "samples": 12,
+              "deltaWeightUs": 18850,
+              "samplePercent": 1.0335917312661498,
+              "deltaWeightPercent": 1.0171704853279229
+            },
+            {
+              "category": "native_gpio_body",
+              "samples": 7,
+              "deltaWeightUs": 10938,
+              "samplePercent": 0.602928509905254,
+              "deltaWeightPercent": 0.5902286879849772
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 5,
+              "deltaWeightUs": 7873,
+              "samplePercent": 0.4306632213608958,
+              "deltaWeightPercent": 0.4248373066836465
+            },
+            {
+              "category": "javascript_bridge",
+              "samples": 2,
+              "deltaWeightUs": 3156,
+              "samplePercent": 0.17226528854435832,
+              "deltaWeightPercent": 0.17030185950636204
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 2,
+              "deltaWeightUs": 3125,
+              "samplePercent": 0.17226528854435832,
+              "deltaWeightPercent": 0.168629059238714
+            },
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1596,
+              "samplePercent": 0.08613264427217916,
+              "deltaWeightPercent": 0.08612223313439601
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 35671,
+              "samplePercent": 0.08613264427217916,
+              "deltaWeightPercent": 1.9248534950733334
+            }
+          ],
+          "groups": [
+            {
+              "category": "mixed_native_container",
+              "samples": 821,
+              "deltaWeightUs": 1286348,
+              "samplePercent": 70.71490094745909,
+              "deltaWeightPercent": 69.4130089899524
+            },
+            {
+              "category": "native_peripheral_body",
+              "samples": 168,
+              "deltaWeightUs": 263314,
+              "samplePercent": 14.470284237726098,
+              "deltaWeightPercent": 14.208765473402476
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 161,
+              "deltaWeightUs": 252097,
+              "samplePercent": 13.867355727820843,
+              "deltaWeightPercent": 13.603481583008666
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 5,
+              "deltaWeightUs": 7873,
+              "samplePercent": 0.4306632213608958,
+              "deltaWeightPercent": 0.4248373066836465
+            },
+            {
+              "category": "javascript_bridge",
+              "samples": 2,
+              "deltaWeightUs": 3156,
+              "samplePercent": 0.17226528854435832,
+              "deltaWeightPercent": 0.17030185950636204
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 2,
+              "deltaWeightUs": 3125,
+              "samplePercent": 0.17226528854435832,
+              "deltaWeightPercent": 0.168629059238714
+            },
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1596,
+              "samplePercent": 0.08613264427217916,
+              "deltaWeightPercent": 0.08612223313439601
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 35671,
+              "samplePercent": 0.08613264427217916,
+              "deltaWeightPercent": 1.9248534950733334
+            }
+          ],
+          "ambiguousLeafCallerContext": []
+        },
+        "workAncestry": {
+          "samples": 1159,
+          "deltaWeightUs": 1815913,
+          "categories": [
+            {
+              "category": "native_board_body",
+              "samples": 652,
+              "deltaWeightUs": 1021777,
+              "samplePercent": 56.255392579810184,
+              "deltaWeightPercent": 56.26794896010988
+            },
+            {
+              "category": "native_bridge_body",
+              "samples": 169,
+              "deltaWeightUs": 264571,
+              "samplePercent": 14.58153580672994,
+              "deltaWeightPercent": 14.569585657462666
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 161,
+              "deltaWeightUs": 252097,
+              "samplePercent": 13.891285591026747,
+              "deltaWeightPercent": 13.8826584753785
+            },
+            {
+              "category": "native_analog_body",
+              "samples": 91,
+              "deltaWeightUs": 142674,
+              "samplePercent": 7.851596203623814,
+              "deltaWeightPercent": 7.856874200471058
+            },
+            {
+              "category": "native_timer0_body",
+              "samples": 58,
+              "deltaWeightUs": 90852,
+              "samplePercent": 5.004314063848145,
+              "deltaWeightPercent": 5.003103122231076
+            },
+            {
+              "category": "native_other_peripheral_body",
+              "samples": 12,
+              "deltaWeightUs": 18850,
+              "samplePercent": 1.0353753235547887,
+              "deltaWeightPercent": 1.0380453248586248
+            },
+            {
+              "category": "native_gpio_body",
+              "samples": 7,
+              "deltaWeightUs": 10938,
+              "samplePercent": 0.6039689387402933,
+              "deltaWeightPercent": 0.6023416320054981
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 5,
+              "deltaWeightUs": 7873,
+              "samplePercent": 0.4314063848144953,
+              "deltaWeightPercent": 0.43355601287066065
+            },
+            {
+              "category": "javascript_bridge",
+              "samples": 2,
+              "deltaWeightUs": 3156,
+              "samplePercent": 0.1725625539257981,
+              "deltaWeightPercent": 0.17379687242725836
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 2,
+              "deltaWeightUs": 3125,
+              "samplePercent": 0.1725625539257981,
+              "deltaWeightPercent": 0.1720897421847853
+            }
+          ],
+          "groups": [
+            {
+              "category": "mixed_native_container",
+              "samples": 821,
+              "deltaWeightUs": 1286348,
+              "samplePercent": 70.83692838654012,
+              "deltaWeightPercent": 70.83753461757254
+            },
+            {
+              "category": "native_peripheral_body",
+              "samples": 168,
+              "deltaWeightUs": 263314,
+              "samplePercent": 14.49525452976704,
+              "deltaWeightPercent": 14.500364279566258
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 161,
+              "deltaWeightUs": 252097,
+              "samplePercent": 13.891285591026747,
+              "deltaWeightPercent": 13.8826584753785
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 5,
+              "deltaWeightUs": 7873,
+              "samplePercent": 0.4314063848144953,
+              "deltaWeightPercent": 0.43355601287066065
+            },
+            {
+              "category": "javascript_bridge",
+              "samples": 2,
+              "deltaWeightUs": 3156,
+              "samplePercent": 0.1725625539257981,
+              "deltaWeightPercent": 0.17379687242725836
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 2,
+              "deltaWeightUs": 3125,
+              "samplePercent": 0.1725625539257981,
+              "deltaWeightPercent": 0.1720897421847853
+            }
+          ],
+          "ambiguousLeafCallerContext": []
+        },
+        "withoutWorkAncestry": {
+          "samples": 2,
+          "deltaWeightUs": 37267,
+          "categories": [
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1596,
+              "samplePercent": 50,
+              "deltaWeightPercent": 4.282609278986771
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 35671,
+              "samplePercent": 50,
+              "deltaWeightPercent": 95.71739072101323
+            }
+          ],
+          "groups": [
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1596,
+              "samplePercent": 50,
+              "deltaWeightPercent": 4.282609278986771
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 35671,
+              "samplePercent": 50,
+              "deltaWeightPercent": 95.71739072101323
+            }
+          ],
+          "ambiguousLeafCallerContext": []
+        }
+      }
+    },
+    {
+      "firmware": "lumiere-stereo",
+      "repeat": 1,
+      "profileSha256": "7472704830a34153355fa88c56814274150694944e18e38149815c5c44daf17c",
+      "generatedMetadataSha256": "7922efbb6abf8c39b31272f07d0bb373d461fe19ee2348d1f6e6483e8f66aa97",
+      "priorCountsMatch": true,
+      "attribution": {
+        "schema": "micromusic-avr-profile-attribution-v1",
+        "exclusiveSubsystemTimeAvailable": false,
+        "method": {
+          "unit": "Disjoint observed surviving-function leaf ownership.",
+          "deltaWeights": "Estimates only: each recorded delta is assigned to its right-end sample, including the first delay. A sample does not prove ownership throughout that interval.",
+          "context": "Nearest known non-support caller for support/unknown WASM leaves is a separate contextual view, not exclusive cost; do not add it to the leaf budget.",
+          "limits": "O3/V8 inlining stays in its containing body. Work ancestry excludes unrooted GC/VM samples even when they occurred during work. No confidence interval or unprofiled speed is inferred."
+        },
+        "timeline": {
+          "durationUs": 1755107,
+          "deltaSpanUs": 1754992,
+          "unrepresentedTailUs": 115,
+          "firstSampleDelayUs": 29983,
+          "deltaStreamSpanPercent": 99.99344769293268,
+          "ownershipChangeGapUs": 1073763
+        },
+        "deltas": {
+          "count": 1104,
+          "minUs": 1274,
+          "medianUs": 1557,
+          "p95Us": 1613,
+          "p99Us": 1662,
+          "maxUs": 29983,
+          "zeroCount": 0,
+          "gaps": {
+            "requestedIntervalUs": 1000,
+            "overTwiceRequested": 1,
+            "overTenTimesRequested": 1
+          }
+        },
+        "all": {
+          "samples": 1104,
+          "deltaWeightUs": 1754992,
+          "categories": [
+            {
+              "category": "native_board_body",
+              "samples": 606,
+              "deltaWeightUs": 947794,
+              "samplePercent": 54.891304347826086,
+              "deltaWeightPercent": 54.00560230473985
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 197,
+              "deltaWeightUs": 308093,
+              "samplePercent": 17.844202898550726,
+              "deltaWeightPercent": 17.55523671902778
+            },
+            {
+              "category": "native_bridge_body",
+              "samples": 162,
+              "deltaWeightUs": 253210,
+              "samplePercent": 14.673913043478262,
+              "deltaWeightPercent": 14.427985996517362
+            },
+            {
+              "category": "native_analog_body",
+              "samples": 69,
+              "deltaWeightUs": 107600,
+              "samplePercent": 6.25,
+              "deltaWeightPercent": 6.131082079006628
+            },
+            {
+              "category": "native_timer0_body",
+              "samples": 47,
+              "deltaWeightUs": 73781,
+              "samplePercent": 4.257246376811594,
+              "deltaWeightPercent": 4.2040647478734945
+            },
+            {
+              "category": "native_other_peripheral_body",
+              "samples": 9,
+              "deltaWeightUs": 14127,
+              "samplePercent": 0.8152173913043478,
+              "deltaWeightPercent": 0.8049609342948572
+            },
+            {
+              "category": "native_gpio_body",
+              "samples": 8,
+              "deltaWeightUs": 12515,
+              "samplePercent": 0.7246376811594203,
+              "deltaWeightPercent": 0.7131086637431966
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 2,
+              "deltaWeightUs": 31578,
+              "samplePercent": 0.18115942028985507,
+              "deltaWeightPercent": 1.799324441364975
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 1,
+              "deltaWeightUs": 1559,
+              "samplePercent": 0.09057971014492754,
+              "deltaWeightPercent": 0.08883231376553283
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 1,
+              "deltaWeightUs": 1628,
+              "samplePercent": 0.09057971014492754,
+              "deltaWeightPercent": 0.09276395561917092
+            },
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1558,
+              "samplePercent": 0.09057971014492754,
+              "deltaWeightPercent": 0.08877533344881344
+            },
+            {
+              "category": "unresolved_wasm",
+              "samples": 1,
+              "deltaWeightUs": 1549,
+              "samplePercent": 0.09057971014492754,
+              "deltaWeightPercent": 0.08826251059833891
+            }
+          ],
+          "groups": [
+            {
+              "category": "mixed_native_container",
+              "samples": 768,
+              "deltaWeightUs": 1201004,
+              "samplePercent": 69.56521739130434,
+              "deltaWeightPercent": 68.43358830125722
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 197,
+              "deltaWeightUs": 308093,
+              "samplePercent": 17.844202898550726,
+              "deltaWeightPercent": 17.55523671902778
+            },
+            {
+              "category": "native_peripheral_body",
+              "samples": 133,
+              "deltaWeightUs": 208023,
+              "samplePercent": 12.047101449275363,
+              "deltaWeightPercent": 11.853216424918177
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 2,
+              "deltaWeightUs": 31578,
+              "samplePercent": 0.18115942028985507,
+              "deltaWeightPercent": 1.799324441364975
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 1,
+              "deltaWeightUs": 1559,
+              "samplePercent": 0.09057971014492754,
+              "deltaWeightPercent": 0.08883231376553283
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 1,
+              "deltaWeightUs": 1628,
+              "samplePercent": 0.09057971014492754,
+              "deltaWeightPercent": 0.09276395561917092
+            },
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1558,
+              "samplePercent": 0.09057971014492754,
+              "deltaWeightPercent": 0.08877533344881344
+            },
+            {
+              "category": "unknown_wasm",
+              "samples": 1,
+              "deltaWeightUs": 1549,
+              "samplePercent": 0.09057971014492754,
+              "deltaWeightPercent": 0.08826251059833891
+            }
+          ],
+          "ambiguousLeafCallerContext": [
+            {
+              "category": "no_known_caller",
+              "samples": 1,
+              "deltaWeightUs": 1549,
+              "samplePercent": 0.09057971014492754,
+              "deltaWeightPercent": 0.08826251059833891
+            }
+          ]
+        },
+        "workAncestry": {
+          "samples": 1101,
+          "deltaWeightUs": 1721856,
+          "categories": [
+            {
+              "category": "native_board_body",
+              "samples": 606,
+              "deltaWeightUs": 947794,
+              "samplePercent": 55.0408719346049,
+              "deltaWeightPercent": 55.04490503270889
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 197,
+              "deltaWeightUs": 308093,
+              "samplePercent": 17.892824704813805,
+              "deltaWeightPercent": 17.893075843740707
+            },
+            {
+              "category": "native_bridge_body",
+              "samples": 162,
+              "deltaWeightUs": 253210,
+              "samplePercent": 14.713896457765667,
+              "deltaWeightPercent": 14.705643212905144
+            },
+            {
+              "category": "native_analog_body",
+              "samples": 69,
+              "deltaWeightUs": 107600,
+              "samplePercent": 6.267029972752043,
+              "deltaWeightPercent": 6.249070770145703
+            },
+            {
+              "category": "native_timer0_body",
+              "samples": 47,
+              "deltaWeightUs": 73781,
+              "samplePercent": 4.268846503178929,
+              "deltaWeightPercent": 4.284969242491822
+            },
+            {
+              "category": "native_other_peripheral_body",
+              "samples": 9,
+              "deltaWeightUs": 14127,
+              "samplePercent": 0.8174386920980926,
+              "deltaWeightPercent": 0.8204518844781445
+            },
+            {
+              "category": "native_gpio_body",
+              "samples": 8,
+              "deltaWeightUs": 12515,
+              "samplePercent": 0.7266121707538601,
+              "deltaWeightPercent": 0.726831976657746
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 1,
+              "deltaWeightUs": 1559,
+              "samplePercent": 0.09082652134423251,
+              "deltaWeightPercent": 0.09054183392804044
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 1,
+              "deltaWeightUs": 1628,
+              "samplePercent": 0.09082652134423251,
+              "deltaWeightPercent": 0.09454913767469521
+            },
+            {
+              "category": "unresolved_wasm",
+              "samples": 1,
+              "deltaWeightUs": 1549,
+              "samplePercent": 0.09082652134423251,
+              "deltaWeightPercent": 0.08996106526910497
+            }
+          ],
+          "groups": [
+            {
+              "category": "mixed_native_container",
+              "samples": 768,
+              "deltaWeightUs": 1201004,
+              "samplePercent": 69.75476839237058,
+              "deltaWeightPercent": 69.75054824561404
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 197,
+              "deltaWeightUs": 308093,
+              "samplePercent": 17.892824704813805,
+              "deltaWeightPercent": 17.893075843740707
+            },
+            {
+              "category": "native_peripheral_body",
+              "samples": 133,
+              "deltaWeightUs": 208023,
+              "samplePercent": 12.079927338782925,
+              "deltaWeightPercent": 12.081323873773417
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 1,
+              "deltaWeightUs": 1559,
+              "samplePercent": 0.09082652134423251,
+              "deltaWeightPercent": 0.09054183392804044
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 1,
+              "deltaWeightUs": 1628,
+              "samplePercent": 0.09082652134423251,
+              "deltaWeightPercent": 0.09454913767469521
+            },
+            {
+              "category": "unknown_wasm",
+              "samples": 1,
+              "deltaWeightUs": 1549,
+              "samplePercent": 0.09082652134423251,
+              "deltaWeightPercent": 0.08996106526910497
+            }
+          ],
+          "ambiguousLeafCallerContext": [
+            {
+              "category": "no_known_caller",
+              "samples": 1,
+              "deltaWeightUs": 1549,
+              "samplePercent": 0.09082652134423251,
+              "deltaWeightPercent": 0.08996106526910497
+            }
+          ]
+        },
+        "withoutWorkAncestry": {
+          "samples": 3,
+          "deltaWeightUs": 33136,
+          "categories": [
+            {
+              "category": "profiler_harness",
+              "samples": 2,
+              "deltaWeightUs": 31578,
+              "samplePercent": 66.66666666666667,
+              "deltaWeightPercent": 95.29816513761467
+            },
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1558,
+              "samplePercent": 33.333333333333336,
+              "deltaWeightPercent": 4.701834862385321
+            }
+          ],
+          "groups": [
+            {
+              "category": "profiler_harness",
+              "samples": 2,
+              "deltaWeightUs": 31578,
+              "samplePercent": 66.66666666666667,
+              "deltaWeightPercent": 95.29816513761467
+            },
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1558,
+              "samplePercent": 33.333333333333336,
+              "deltaWeightPercent": 4.701834862385321
+            }
+          ],
+          "ambiguousLeafCallerContext": []
+        }
+      }
+    },
+    {
+      "firmware": "lumiere-stereo",
+      "repeat": 2,
+      "profileSha256": "38ace08cf2c672df85baa7010b4dbb5b733188f1f45e5e68440aa7d53cf10606",
+      "generatedMetadataSha256": "7922efbb6abf8c39b31272f07d0bb373d461fe19ee2348d1f6e6483e8f66aa97",
+      "priorCountsMatch": true,
+      "attribution": {
+        "schema": "micromusic-avr-profile-attribution-v1",
+        "exclusiveSubsystemTimeAvailable": false,
+        "method": {
+          "unit": "Disjoint observed surviving-function leaf ownership.",
+          "deltaWeights": "Estimates only: each recorded delta is assigned to its right-end sample, including the first delay. A sample does not prove ownership throughout that interval.",
+          "context": "Nearest known non-support caller for support/unknown WASM leaves is a separate contextual view, not exclusive cost; do not add it to the leaf budget.",
+          "limits": "O3/V8 inlining stays in its containing body. Work ancestry excludes unrooted GC/VM samples even when they occurred during work. No confidence interval or unprofiled speed is inferred."
+        },
+        "timeline": {
+          "durationUs": 1744946,
+          "deltaSpanUs": 1744831,
+          "unrepresentedTailUs": 115,
+          "firstSampleDelayUs": 32720,
+          "deltaStreamSpanPercent": 99.99340953817482,
+          "ownershipChangeGapUs": 982744
+        },
+        "deltas": {
+          "count": 1096,
+          "minUs": 1161,
+          "medianUs": 1558,
+          "p95Us": 1613,
+          "p99Us": 1673,
+          "maxUs": 32720,
+          "zeroCount": 0,
+          "gaps": {
+            "requestedIntervalUs": 1000,
+            "overTwiceRequested": 1,
+            "overTenTimesRequested": 1
+          }
+        },
+        "all": {
+          "samples": 1096,
+          "deltaWeightUs": 1744831,
+          "categories": [
+            {
+              "category": "native_board_body",
+              "samples": 651,
+              "deltaWeightUs": 1016805,
+              "samplePercent": 59.3978102189781,
+              "deltaWeightPercent": 58.275271358658806
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 172,
+              "deltaWeightUs": 269033,
+              "samplePercent": 15.693430656934307,
+              "deltaWeightPercent": 15.418857184449383
+            },
+            {
+              "category": "native_bridge_body",
+              "samples": 150,
+              "deltaWeightUs": 235218,
+              "samplePercent": 13.686131386861314,
+              "deltaWeightPercent": 13.480847142216065
+            },
+            {
+              "category": "native_analog_body",
+              "samples": 53,
+              "deltaWeightUs": 83358,
+              "samplePercent": 4.835766423357664,
+              "deltaWeightPercent": 4.777425435471974
+            },
+            {
+              "category": "native_timer0_body",
+              "samples": 43,
+              "deltaWeightUs": 66873,
+              "samplePercent": 3.923357664233577,
+              "deltaWeightPercent": 3.832634793856826
+            },
+            {
+              "category": "native_other_peripheral_body",
+              "samples": 14,
+              "deltaWeightUs": 21927,
+              "samplePercent": 1.2773722627737227,
+              "deltaWeightPercent": 1.256683312022769
+            },
+            {
+              "category": "native_gpio_body",
+              "samples": 8,
+              "deltaWeightUs": 12597,
+              "samplePercent": 0.7299270072992701,
+              "deltaWeightPercent": 0.7219610380604196
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 2,
+              "deltaWeightUs": 3141,
+              "samplePercent": 0.18248175182481752,
+              "deltaWeightPercent": 0.18001743435324108
+            },
+            {
+              "category": "other_js_vm",
+              "samples": 2,
+              "deltaWeightUs": 3159,
+              "samplePercent": 0.18248175182481752,
+              "deltaWeightPercent": 0.18104905288821668
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 32720,
+              "samplePercent": 0.09124087591240876,
+              "deltaWeightPercent": 1.8752532480223012
+            }
+          ],
+          "groups": [
+            {
+              "category": "mixed_native_container",
+              "samples": 801,
+              "deltaWeightUs": 1252023,
+              "samplePercent": 73.08394160583941,
+              "deltaWeightPercent": 71.75611850087488
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 172,
+              "deltaWeightUs": 269033,
+              "samplePercent": 15.693430656934307,
+              "deltaWeightPercent": 15.418857184449383
+            },
+            {
+              "category": "native_peripheral_body",
+              "samples": 118,
+              "deltaWeightUs": 184755,
+              "samplePercent": 10.766423357664234,
+              "deltaWeightPercent": 10.588704579411989
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 2,
+              "deltaWeightUs": 3141,
+              "samplePercent": 0.18248175182481752,
+              "deltaWeightPercent": 0.18001743435324108
+            },
+            {
+              "category": "other_js_vm",
+              "samples": 2,
+              "deltaWeightUs": 3159,
+              "samplePercent": 0.18248175182481752,
+              "deltaWeightPercent": 0.18104905288821668
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 32720,
+              "samplePercent": 0.09124087591240876,
+              "deltaWeightPercent": 1.8752532480223012
+            }
+          ],
+          "ambiguousLeafCallerContext": []
+        },
+        "workAncestry": {
+          "samples": 1093,
+          "deltaWeightUs": 1708952,
+          "categories": [
+            {
+              "category": "native_board_body",
+              "samples": 651,
+              "deltaWeightUs": 1016805,
+              "samplePercent": 59.5608417200366,
+              "deltaWeightPercent": 59.49874542994771
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 172,
+              "deltaWeightUs": 269033,
+              "samplePercent": 15.736505032021958,
+              "deltaWeightPercent": 15.742572055856455
+            },
+            {
+              "category": "native_bridge_body",
+              "samples": 150,
+              "deltaWeightUs": 235218,
+              "samplePercent": 13.723696248856358,
+              "deltaWeightPercent": 13.763873999971912
+            },
+            {
+              "category": "native_analog_body",
+              "samples": 53,
+              "deltaWeightUs": 83358,
+              "samplePercent": 4.84903934126258,
+              "deltaWeightPercent": 4.877726232217172
+            },
+            {
+              "category": "native_timer0_body",
+              "samples": 43,
+              "deltaWeightUs": 66873,
+              "samplePercent": 3.9341262580054894,
+              "deltaWeightPercent": 3.9130999583370394
+            },
+            {
+              "category": "native_other_peripheral_body",
+              "samples": 14,
+              "deltaWeightUs": 21927,
+              "samplePercent": 1.280878316559927,
+              "deltaWeightPercent": 1.2830670492793244
+            },
+            {
+              "category": "native_gpio_body",
+              "samples": 8,
+              "deltaWeightUs": 12597,
+              "samplePercent": 0.7319304666056725,
+              "deltaWeightPercent": 0.7371184211142268
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 2,
+              "deltaWeightUs": 3141,
+              "samplePercent": 0.18298261665141813,
+              "deltaWeightPercent": 0.18379685327615988
+            }
+          ],
+          "groups": [
+            {
+              "category": "mixed_native_container",
+              "samples": 801,
+              "deltaWeightUs": 1252023,
+              "samplePercent": 73.28453796889295,
+              "deltaWeightPercent": 73.26261942991962
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 172,
+              "deltaWeightUs": 269033,
+              "samplePercent": 15.736505032021958,
+              "deltaWeightPercent": 15.742572055856455
+            },
+            {
+              "category": "native_peripheral_body",
+              "samples": 118,
+              "deltaWeightUs": 184755,
+              "samplePercent": 10.795974382433668,
+              "deltaWeightPercent": 10.811011660947763
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 2,
+              "deltaWeightUs": 3141,
+              "samplePercent": 0.18298261665141813,
+              "deltaWeightPercent": 0.18379685327615988
+            }
+          ],
+          "ambiguousLeafCallerContext": []
+        },
+        "withoutWorkAncestry": {
+          "samples": 3,
+          "deltaWeightUs": 35879,
+          "categories": [
+            {
+              "category": "other_js_vm",
+              "samples": 2,
+              "deltaWeightUs": 3159,
+              "samplePercent": 66.66666666666667,
+              "deltaWeightPercent": 8.804593216087405
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 32720,
+              "samplePercent": 33.333333333333336,
+              "deltaWeightPercent": 91.19540678391259
+            }
+          ],
+          "groups": [
+            {
+              "category": "other_js_vm",
+              "samples": 2,
+              "deltaWeightUs": 3159,
+              "samplePercent": 66.66666666666667,
+              "deltaWeightPercent": 8.804593216087405
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 32720,
+              "samplePercent": 33.333333333333336,
+              "deltaWeightPercent": 91.19540678391259
+            }
+          ],
+          "ambiguousLeafCallerContext": []
+        }
+      }
+    },
+    {
+      "firmware": "hq4-chego-tiny",
+      "repeat": 0,
+      "profileSha256": "7cfdfb6985c11d0dc7f25e8b10098bad4f2ce02eeec7363d74f1532d33077106",
+      "generatedMetadataSha256": "30d231d2fa54007e1a99a7bac359ad832343b403aaf3f2c8f965c5241c0f8d2a",
+      "priorCountsMatch": true,
+      "attribution": {
+        "schema": "micromusic-avr-profile-attribution-v1",
+        "exclusiveSubsystemTimeAvailable": false,
+        "method": {
+          "unit": "Disjoint observed surviving-function leaf ownership.",
+          "deltaWeights": "Estimates only: each recorded delta is assigned to its right-end sample, including the first delay. A sample does not prove ownership throughout that interval.",
+          "context": "Nearest known non-support caller for support/unknown WASM leaves is a separate contextual view, not exclusive cost; do not add it to the leaf budget.",
+          "limits": "O3/V8 inlining stays in its containing body. Work ancestry excludes unrooted GC/VM samples even when they occurred during work. No confidence interval or unprofiled speed is inferred."
+        },
+        "timeline": {
+          "durationUs": 782644,
+          "deltaSpanUs": 782514,
+          "unrepresentedTailUs": 130,
+          "firstSampleDelayUs": 27012,
+          "deltaStreamSpanPercent": 99.98338963820076,
+          "ownershipChangeGapUs": 497444
+        },
+        "deltas": {
+          "count": 484,
+          "minUs": 1261,
+          "medianUs": 1559,
+          "p95Us": 1598,
+          "p99Us": 1626,
+          "maxUs": 27012,
+          "zeroCount": 0,
+          "gaps": {
+            "requestedIntervalUs": 1000,
+            "overTwiceRequested": 1,
+            "overTenTimesRequested": 1
+          }
+        },
+        "all": {
+          "samples": 484,
+          "deltaWeightUs": 782514,
+          "categories": [
+            {
+              "category": "native_board_body",
+              "samples": 268,
+              "deltaWeightUs": 419049,
+              "samplePercent": 55.37190082644628,
+              "deltaWeightPercent": 53.551629747199414
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 94,
+              "deltaWeightUs": 147016,
+              "samplePercent": 19.421487603305785,
+              "deltaWeightPercent": 18.787651083558888
+            },
+            {
+              "category": "native_bridge_body",
+              "samples": 52,
+              "deltaWeightUs": 81352,
+              "samplePercent": 10.743801652892563,
+              "deltaWeightPercent": 10.396235722300176
+            },
+            {
+              "category": "native_analog_body",
+              "samples": 28,
+              "deltaWeightUs": 43847,
+              "samplePercent": 5.785123966942149,
+              "deltaWeightPercent": 5.603350227599762
+            },
+            {
+              "category": "native_timer0_body",
+              "samples": 24,
+              "deltaWeightUs": 37518,
+              "samplePercent": 4.958677685950414,
+              "deltaWeightPercent": 4.794546806830293
+            },
+            {
+              "category": "native_other_peripheral_body",
+              "samples": 8,
+              "deltaWeightUs": 12502,
+              "samplePercent": 1.6528925619834711,
+              "deltaWeightPercent": 1.5976710959803915
+            },
+            {
+              "category": "native_gpio_body",
+              "samples": 4,
+              "deltaWeightUs": 6305,
+              "samplePercent": 0.8264462809917356,
+              "deltaWeightPercent": 0.8057363829912308
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 3,
+              "deltaWeightUs": 4732,
+              "samplePercent": 0.6198347107438017,
+              "deltaWeightPercent": 0.6047176152758929
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 1,
+              "deltaWeightUs": 1559,
+              "samplePercent": 0.2066115702479339,
+              "deltaWeightPercent": 0.19922966234469927
+            },
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1622,
+              "samplePercent": 0.2066115702479339,
+              "deltaWeightPercent": 0.20728063651257359
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 27012,
+              "samplePercent": 0.2066115702479339,
+              "deltaWeightPercent": 3.4519510194066814
+            }
+          ],
+          "groups": [
+            {
+              "category": "mixed_native_container",
+              "samples": 320,
+              "deltaWeightUs": 500401,
+              "samplePercent": 66.11570247933884,
+              "deltaWeightPercent": 63.94786546949959
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 94,
+              "deltaWeightUs": 147016,
+              "samplePercent": 19.421487603305785,
+              "deltaWeightPercent": 18.787651083558888
+            },
+            {
+              "category": "native_peripheral_body",
+              "samples": 64,
+              "deltaWeightUs": 100172,
+              "samplePercent": 13.223140495867769,
+              "deltaWeightPercent": 12.801304513401677
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 3,
+              "deltaWeightUs": 4732,
+              "samplePercent": 0.6198347107438017,
+              "deltaWeightPercent": 0.6047176152758929
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 1,
+              "deltaWeightUs": 1559,
+              "samplePercent": 0.2066115702479339,
+              "deltaWeightPercent": 0.19922966234469927
+            },
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1622,
+              "samplePercent": 0.2066115702479339,
+              "deltaWeightPercent": 0.20728063651257359
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 27012,
+              "samplePercent": 0.2066115702479339,
+              "deltaWeightPercent": 3.4519510194066814
+            }
+          ],
+          "ambiguousLeafCallerContext": []
+        },
+        "workAncestry": {
+          "samples": 482,
+          "deltaWeightUs": 753880,
+          "categories": [
+            {
+              "category": "native_board_body",
+              "samples": 268,
+              "deltaWeightUs": 419049,
+              "samplePercent": 55.601659751037346,
+              "deltaWeightPercent": 55.585636971401286
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 94,
+              "deltaWeightUs": 147016,
+              "samplePercent": 19.502074688796682,
+              "deltaWeightPercent": 19.50124688279302
+            },
+            {
+              "category": "native_bridge_body",
+              "samples": 52,
+              "deltaWeightUs": 81352,
+              "samplePercent": 10.78838174273859,
+              "deltaWeightPercent": 10.791107338037884
+            },
+            {
+              "category": "native_analog_body",
+              "samples": 28,
+              "deltaWeightUs": 43847,
+              "samplePercent": 5.809128630705394,
+              "deltaWeightPercent": 5.816177641003874
+            },
+            {
+              "category": "native_timer0_body",
+              "samples": 24,
+              "deltaWeightUs": 37518,
+              "samplePercent": 4.979253112033195,
+              "deltaWeightPercent": 4.976654109407333
+            },
+            {
+              "category": "native_other_peripheral_body",
+              "samples": 8,
+              "deltaWeightUs": 12502,
+              "samplePercent": 1.6597510373443984,
+              "deltaWeightPercent": 1.658354114713217
+            },
+            {
+              "category": "native_gpio_body",
+              "samples": 4,
+              "deltaWeightUs": 6305,
+              "samplePercent": 0.8298755186721992,
+              "deltaWeightPercent": 0.8363400010611769
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 3,
+              "deltaWeightUs": 4732,
+              "samplePercent": 0.6224066390041494,
+              "deltaWeightPercent": 0.6276861038892131
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 1,
+              "deltaWeightUs": 1559,
+              "samplePercent": 0.2074688796680498,
+              "deltaWeightPercent": 0.20679683769300153
+            }
+          ],
+          "groups": [
+            {
+              "category": "mixed_native_container",
+              "samples": 320,
+              "deltaWeightUs": 500401,
+              "samplePercent": 66.39004149377594,
+              "deltaWeightPercent": 66.37674430943918
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 94,
+              "deltaWeightUs": 147016,
+              "samplePercent": 19.502074688796682,
+              "deltaWeightPercent": 19.50124688279302
+            },
+            {
+              "category": "native_peripheral_body",
+              "samples": 64,
+              "deltaWeightUs": 100172,
+              "samplePercent": 13.278008298755188,
+              "deltaWeightPercent": 13.2875258661856
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 3,
+              "deltaWeightUs": 4732,
+              "samplePercent": 0.6224066390041494,
+              "deltaWeightPercent": 0.6276861038892131
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 1,
+              "deltaWeightUs": 1559,
+              "samplePercent": 0.2074688796680498,
+              "deltaWeightPercent": 0.20679683769300153
+            }
+          ],
+          "ambiguousLeafCallerContext": []
+        },
+        "withoutWorkAncestry": {
+          "samples": 2,
+          "deltaWeightUs": 28634,
+          "categories": [
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1622,
+              "samplePercent": 50,
+              "deltaWeightPercent": 5.664594537961864
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 27012,
+              "samplePercent": 50,
+              "deltaWeightPercent": 94.33540546203814
+            }
+          ],
+          "groups": [
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1622,
+              "samplePercent": 50,
+              "deltaWeightPercent": 5.664594537961864
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 27012,
+              "samplePercent": 50,
+              "deltaWeightPercent": 94.33540546203814
+            }
+          ],
+          "ambiguousLeafCallerContext": []
+        }
+      }
+    },
+    {
+      "firmware": "hq4-chego-tiny",
+      "repeat": 1,
+      "profileSha256": "f5e88ab36b95a9f0a868996c58f6d254f0f80160aacc8824ba320b0e47aff555",
+      "generatedMetadataSha256": "30d231d2fa54007e1a99a7bac359ad832343b403aaf3f2c8f965c5241c0f8d2a",
+      "priorCountsMatch": true,
+      "attribution": {
+        "schema": "micromusic-avr-profile-attribution-v1",
+        "exclusiveSubsystemTimeAvailable": false,
+        "method": {
+          "unit": "Disjoint observed surviving-function leaf ownership.",
+          "deltaWeights": "Estimates only: each recorded delta is assigned to its right-end sample, including the first delay. A sample does not prove ownership throughout that interval.",
+          "context": "Nearest known non-support caller for support/unknown WASM leaves is a separate contextual view, not exclusive cost; do not add it to the leaf budget.",
+          "limits": "O3/V8 inlining stays in its containing body. Work ancestry excludes unrooted GC/VM samples even when they occurred during work. No confidence interval or unprofiled speed is inferred."
+        },
+        "timeline": {
+          "durationUs": 824572,
+          "deltaSpanUs": 824413,
+          "unrepresentedTailUs": 159,
+          "firstSampleDelayUs": 34618,
+          "deltaStreamSpanPercent": 99.9807172690802,
+          "ownershipChangeGapUs": 495693
+        },
+        "deltas": {
+          "count": 503,
+          "minUs": 1070,
+          "medianUs": 1563,
+          "p95Us": 1621,
+          "p99Us": 1811,
+          "maxUs": 34618,
+          "zeroCount": 0,
+          "gaps": {
+            "requestedIntervalUs": 1000,
+            "overTwiceRequested": 4,
+            "overTenTimesRequested": 1
+          }
+        },
+        "all": {
+          "samples": 503,
+          "deltaWeightUs": 824413,
+          "categories": [
+            {
+              "category": "native_board_body",
+              "samples": 274,
+              "deltaWeightUs": 428763,
+              "samplePercent": 54.47316103379722,
+              "deltaWeightPercent": 52.008277404650336
+            },
+            {
+              "category": "native_bridge_body",
+              "samples": 85,
+              "deltaWeightUs": 133360,
+              "samplePercent": 16.898608349900595,
+              "deltaWeightPercent": 16.17635820881039
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 79,
+              "deltaWeightUs": 123589,
+              "samplePercent": 15.705765407554672,
+              "deltaWeightPercent": 14.991151279759054
+            },
+            {
+              "category": "native_analog_body",
+              "samples": 24,
+              "deltaWeightUs": 41136,
+              "samplePercent": 4.7713717693836974,
+              "deltaWeightPercent": 4.989732088164549
+            },
+            {
+              "category": "native_timer0_body",
+              "samples": 21,
+              "deltaWeightUs": 32942,
+              "samplePercent": 4.174950298210735,
+              "deltaWeightPercent": 3.995812778304078
+            },
+            {
+              "category": "native_other_peripheral_body",
+              "samples": 9,
+              "deltaWeightUs": 14059,
+              "samplePercent": 1.7892644135188867,
+              "deltaWeightPercent": 1.7053345835157865
+            },
+            {
+              "category": "native_gpio_body",
+              "samples": 6,
+              "deltaWeightUs": 9427,
+              "samplePercent": 1.1928429423459244,
+              "deltaWeightPercent": 1.1434802702043758
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 2,
+              "deltaWeightUs": 3234,
+              "samplePercent": 0.3976143141153082,
+              "deltaWeightPercent": 0.39227911253218956
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 1,
+              "deltaWeightUs": 1665,
+              "samplePercent": 0.1988071570576541,
+              "deltaWeightPercent": 0.20196188075636848
+            },
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1620,
+              "samplePercent": 0.1988071570576541,
+              "deltaWeightPercent": 0.1965034515467369
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 34618,
+              "samplePercent": 0.1988071570576541,
+              "deltaWeightPercent": 4.199108941756134
+            }
+          ],
+          "groups": [
+            {
+              "category": "mixed_native_container",
+              "samples": 359,
+              "deltaWeightUs": 562123,
+              "samplePercent": 71.37176938369781,
+              "deltaWeightPercent": 68.18463561346073
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 79,
+              "deltaWeightUs": 123589,
+              "samplePercent": 15.705765407554672,
+              "deltaWeightPercent": 14.991151279759054
+            },
+            {
+              "category": "native_peripheral_body",
+              "samples": 60,
+              "deltaWeightUs": 97564,
+              "samplePercent": 11.928429423459244,
+              "deltaWeightPercent": 11.83435972018879
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 2,
+              "deltaWeightUs": 3234,
+              "samplePercent": 0.3976143141153082,
+              "deltaWeightPercent": 0.39227911253218956
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 1,
+              "deltaWeightUs": 1665,
+              "samplePercent": 0.1988071570576541,
+              "deltaWeightPercent": 0.20196188075636848
+            },
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1620,
+              "samplePercent": 0.1988071570576541,
+              "deltaWeightPercent": 0.1965034515467369
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 34618,
+              "samplePercent": 0.1988071570576541,
+              "deltaWeightPercent": 4.199108941756134
+            }
+          ],
+          "ambiguousLeafCallerContext": []
+        },
+        "workAncestry": {
+          "samples": 501,
+          "deltaWeightUs": 788175,
+          "categories": [
+            {
+              "category": "native_board_body",
+              "samples": 274,
+              "deltaWeightUs": 428763,
+              "samplePercent": 54.69061876247505,
+              "deltaWeightPercent": 54.39946712341802
+            },
+            {
+              "category": "native_bridge_body",
+              "samples": 85,
+              "deltaWeightUs": 133360,
+              "samplePercent": 16.96606786427146,
+              "deltaWeightPercent": 16.92010023154756
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 79,
+              "deltaWeightUs": 123589,
+              "samplePercent": 15.768463073852296,
+              "deltaWeightPercent": 15.68040092619025
+            },
+            {
+              "category": "native_analog_body",
+              "samples": 24,
+              "deltaWeightUs": 41136,
+              "samplePercent": 4.790419161676646,
+              "deltaWeightPercent": 5.2191454943381865
+            },
+            {
+              "category": "native_timer0_body",
+              "samples": 21,
+              "deltaWeightUs": 32942,
+              "samplePercent": 4.191616766467066,
+              "deltaWeightPercent": 4.179528657975704
+            },
+            {
+              "category": "native_other_peripheral_body",
+              "samples": 9,
+              "deltaWeightUs": 14059,
+              "samplePercent": 1.7964071856287425,
+              "deltaWeightPercent": 1.7837409204808576
+            },
+            {
+              "category": "native_gpio_body",
+              "samples": 6,
+              "deltaWeightUs": 9427,
+              "samplePercent": 1.1976047904191616,
+              "deltaWeightPercent": 1.1960541757858343
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 2,
+              "deltaWeightUs": 3234,
+              "samplePercent": 0.3992015968063872,
+              "deltaWeightPercent": 0.41031496812256163
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 1,
+              "deltaWeightUs": 1665,
+              "samplePercent": 0.1996007984031936,
+              "deltaWeightPercent": 0.21124750214102198
+            }
+          ],
+          "groups": [
+            {
+              "category": "mixed_native_container",
+              "samples": 359,
+              "deltaWeightUs": 562123,
+              "samplePercent": 71.6566866267465,
+              "deltaWeightPercent": 71.31956735496559
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 79,
+              "deltaWeightUs": 123589,
+              "samplePercent": 15.768463073852296,
+              "deltaWeightPercent": 15.68040092619025
+            },
+            {
+              "category": "native_peripheral_body",
+              "samples": 60,
+              "deltaWeightUs": 97564,
+              "samplePercent": 11.976047904191617,
+              "deltaWeightPercent": 12.378469248580581
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 2,
+              "deltaWeightUs": 3234,
+              "samplePercent": 0.3992015968063872,
+              "deltaWeightPercent": 0.41031496812256163
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 1,
+              "deltaWeightUs": 1665,
+              "samplePercent": 0.1996007984031936,
+              "deltaWeightPercent": 0.21124750214102198
+            }
+          ],
+          "ambiguousLeafCallerContext": []
+        },
+        "withoutWorkAncestry": {
+          "samples": 2,
+          "deltaWeightUs": 36238,
+          "categories": [
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1620,
+              "samplePercent": 50,
+              "deltaWeightPercent": 4.4704453888183675
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 34618,
+              "samplePercent": 50,
+              "deltaWeightPercent": 95.52955461118164
+            }
+          ],
+          "groups": [
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1620,
+              "samplePercent": 50,
+              "deltaWeightPercent": 4.4704453888183675
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 34618,
+              "samplePercent": 50,
+              "deltaWeightPercent": 95.52955461118164
+            }
+          ],
+          "ambiguousLeafCallerContext": []
+        }
+      }
+    },
+    {
+      "firmware": "hq4-chego-tiny",
+      "repeat": 2,
+      "profileSha256": "b297f0b61c81b3c353922d0fd53ef5d0a7d0f273fde2b536110fc0eb5bd17660",
+      "generatedMetadataSha256": "30d231d2fa54007e1a99a7bac359ad832343b403aaf3f2c8f965c5241c0f8d2a",
+      "priorCountsMatch": true,
+      "attribution": {
+        "schema": "micromusic-avr-profile-attribution-v1",
+        "exclusiveSubsystemTimeAvailable": false,
+        "method": {
+          "unit": "Disjoint observed surviving-function leaf ownership.",
+          "deltaWeights": "Estimates only: each recorded delta is assigned to its right-end sample, including the first delay. A sample does not prove ownership throughout that interval.",
+          "context": "Nearest known non-support caller for support/unknown WASM leaves is a separate contextual view, not exclusive cost; do not add it to the leaf budget.",
+          "limits": "O3/V8 inlining stays in its containing body. Work ancestry excludes unrooted GC/VM samples even when they occurred during work. No confidence interval or unprofiled speed is inferred."
+        },
+        "timeline": {
+          "durationUs": 795803,
+          "deltaSpanUs": 795688,
+          "unrepresentedTailUs": 115,
+          "firstSampleDelayUs": 39372,
+          "deltaStreamSpanPercent": 99.98554918742452,
+          "ownershipChangeGapUs": 487807
+        },
+        "deltas": {
+          "count": 483,
+          "minUs": 1419,
+          "medianUs": 1561,
+          "p95Us": 1613,
+          "p99Us": 1680,
+          "maxUs": 39372,
+          "zeroCount": 0,
+          "gaps": {
+            "requestedIntervalUs": 1000,
+            "overTwiceRequested": 2,
+            "overTenTimesRequested": 1
+          }
+        },
+        "all": {
+          "samples": 483,
+          "deltaWeightUs": 795688,
+          "categories": [
+            {
+              "category": "native_board_body",
+              "samples": 263,
+              "deltaWeightUs": 413124,
+              "samplePercent": 54.45134575569358,
+              "deltaWeightPercent": 51.92035069022029
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 73,
+              "deltaWeightUs": 114478,
+              "samplePercent": 15.113871635610765,
+              "deltaWeightPercent": 14.387297533706679
+            },
+            {
+              "category": "native_bridge_body",
+              "samples": 72,
+              "deltaWeightUs": 112911,
+              "samplePercent": 14.906832298136646,
+              "deltaWeightPercent": 14.190361046038145
+            },
+            {
+              "category": "native_timer0_body",
+              "samples": 32,
+              "deltaWeightUs": 50032,
+              "samplePercent": 6.625258799171843,
+              "deltaWeightPercent": 6.287891736459517
+            },
+            {
+              "category": "native_analog_body",
+              "samples": 27,
+              "deltaWeightUs": 42382,
+              "samplePercent": 5.590062111801243,
+              "deltaWeightPercent": 5.3264596173374485
+            },
+            {
+              "category": "native_other_peripheral_body",
+              "samples": 6,
+              "deltaWeightUs": 9388,
+              "samplePercent": 1.2422360248447204,
+              "deltaWeightPercent": 1.1798594423945064
+            },
+            {
+              "category": "native_gpio_body",
+              "samples": 3,
+              "deltaWeightUs": 4693,
+              "samplePercent": 0.6211180124223602,
+              "deltaWeightPercent": 0.5898040437960608
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 2,
+              "deltaWeightUs": 3090,
+              "samplePercent": 0.4140786749482402,
+              "deltaWeightPercent": 0.3883431696846
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 2,
+              "deltaWeightUs": 3105,
+              "samplePercent": 0.4140786749482402,
+              "deltaWeightPercent": 0.3902283307024864
+            },
+            {
+              "category": "javascript_bridge",
+              "samples": 1,
+              "deltaWeightUs": 1549,
+              "samplePercent": 0.2070393374741201,
+              "deltaWeightPercent": 0.1946742944470697
+            },
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1564,
+              "samplePercent": 0.2070393374741201,
+              "deltaWeightPercent": 0.19655945546495612
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 39372,
+              "samplePercent": 0.2070393374741201,
+              "deltaWeightPercent": 4.948170639748243
+            }
+          ],
+          "groups": [
+            {
+              "category": "mixed_native_container",
+              "samples": 335,
+              "deltaWeightUs": 526035,
+              "samplePercent": 69.35817805383023,
+              "deltaWeightPercent": 66.11071173625844
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 73,
+              "deltaWeightUs": 114478,
+              "samplePercent": 15.113871635610765,
+              "deltaWeightPercent": 14.387297533706679
+            },
+            {
+              "category": "native_peripheral_body",
+              "samples": 68,
+              "deltaWeightUs": 106495,
+              "samplePercent": 14.078674948240165,
+              "deltaWeightPercent": 13.384014839987532
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 2,
+              "deltaWeightUs": 3090,
+              "samplePercent": 0.4140786749482402,
+              "deltaWeightPercent": 0.3883431696846
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 2,
+              "deltaWeightUs": 3105,
+              "samplePercent": 0.4140786749482402,
+              "deltaWeightPercent": 0.3902283307024864
+            },
+            {
+              "category": "javascript_bridge",
+              "samples": 1,
+              "deltaWeightUs": 1549,
+              "samplePercent": 0.2070393374741201,
+              "deltaWeightPercent": 0.1946742944470697
+            },
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1564,
+              "samplePercent": 0.2070393374741201,
+              "deltaWeightPercent": 0.19655945546495612
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 39372,
+              "samplePercent": 0.2070393374741201,
+              "deltaWeightPercent": 4.948170639748243
+            }
+          ],
+          "ambiguousLeafCallerContext": []
+        },
+        "workAncestry": {
+          "samples": 481,
+          "deltaWeightUs": 754752,
+          "categories": [
+            {
+              "category": "native_board_body",
+              "samples": 263,
+              "deltaWeightUs": 413124,
+              "samplePercent": 54.67775467775468,
+              "deltaWeightPercent": 54.73639023149326
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 73,
+              "deltaWeightUs": 114478,
+              "samplePercent": 15.176715176715177,
+              "deltaWeightPercent": 15.167631221911304
+            },
+            {
+              "category": "native_bridge_body",
+              "samples": 72,
+              "deltaWeightUs": 112911,
+              "samplePercent": 14.96881496881497,
+              "deltaWeightPercent": 14.96001335538031
+            },
+            {
+              "category": "native_timer0_body",
+              "samples": 32,
+              "deltaWeightUs": 50032,
+              "samplePercent": 6.652806652806653,
+              "deltaWeightPercent": 6.628932417535826
+            },
+            {
+              "category": "native_analog_body",
+              "samples": 27,
+              "deltaWeightUs": 42382,
+              "samplePercent": 5.613305613305613,
+              "deltaWeightPercent": 5.615354447553633
+            },
+            {
+              "category": "native_other_peripheral_body",
+              "samples": 6,
+              "deltaWeightUs": 9388,
+              "samplePercent": 1.2474012474012475,
+              "deltaWeightPercent": 1.2438522852539642
+            },
+            {
+              "category": "native_gpio_body",
+              "samples": 3,
+              "deltaWeightUs": 4693,
+              "samplePercent": 0.6237006237006237,
+              "deltaWeightPercent": 0.6217936487746969
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 2,
+              "deltaWeightUs": 3090,
+              "samplePercent": 0.4158004158004158,
+              "deltaWeightPercent": 0.40940600356143475
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 2,
+              "deltaWeightUs": 3105,
+              "samplePercent": 0.4158004158004158,
+              "deltaWeightPercent": 0.41139341134571356
+            },
+            {
+              "category": "javascript_bridge",
+              "samples": 1,
+              "deltaWeightUs": 1549,
+              "samplePercent": 0.2079002079002079,
+              "deltaWeightPercent": 0.2052329771898584
+            }
+          ],
+          "groups": [
+            {
+              "category": "mixed_native_container",
+              "samples": 335,
+              "deltaWeightUs": 526035,
+              "samplePercent": 69.64656964656965,
+              "deltaWeightPercent": 69.69640358687357
+            },
+            {
+              "category": "generated_cpu_body",
+              "samples": 73,
+              "deltaWeightUs": 114478,
+              "samplePercent": 15.176715176715177,
+              "deltaWeightPercent": 15.167631221911304
+            },
+            {
+              "category": "native_peripheral_body",
+              "samples": 68,
+              "deltaWeightUs": 106495,
+              "samplePercent": 14.137214137214137,
+              "deltaWeightPercent": 14.109932799118122
+            },
+            {
+              "category": "native_audio_body",
+              "samples": 2,
+              "deltaWeightUs": 3090,
+              "samplePercent": 0.4158004158004158,
+              "deltaWeightPercent": 0.40940600356143475
+            },
+            {
+              "category": "native_pin_body",
+              "samples": 2,
+              "deltaWeightUs": 3105,
+              "samplePercent": 0.4158004158004158,
+              "deltaWeightPercent": 0.41139341134571356
+            },
+            {
+              "category": "javascript_bridge",
+              "samples": 1,
+              "deltaWeightUs": 1549,
+              "samplePercent": 0.2079002079002079,
+              "deltaWeightPercent": 0.2052329771898584
+            }
+          ],
+          "ambiguousLeafCallerContext": []
+        },
+        "withoutWorkAncestry": {
+          "samples": 2,
+          "deltaWeightUs": 40936,
+          "categories": [
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1564,
+              "samplePercent": 50,
+              "deltaWeightPercent": 3.820598006644518
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 39372,
+              "samplePercent": 50,
+              "deltaWeightPercent": 96.17940199335548
+            }
+          ],
+          "groups": [
+            {
+              "category": "other_js_vm",
+              "samples": 1,
+              "deltaWeightUs": 1564,
+              "samplePercent": 50,
+              "deltaWeightPercent": 3.820598006644518
+            },
+            {
+              "category": "profiler_harness",
+              "samples": 1,
+              "deltaWeightUs": 39372,
+              "samplePercent": 50,
+              "deltaWeightPercent": 96.17940199335548
+            }
+          ],
+          "ambiguousLeafCallerContext": []
+        }
+      }
+    }
+  ]
+}

@@ -12,6 +12,7 @@ import {ATtiny13A} from '../lib/attiny13a-runtime.js';
 import {parseHex} from '../lib/hex.js';
 import {avr,IO,flash} from '../tests/fixtures/attiny13a-system-firmware.mjs';
 import {generatedFunctions,profileObjectName,profileLinkMap} from './lib/avr-profile-functions.mjs';
+import {attributeAvrProfile} from './lib/avr-profile-attribution.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const {values}=parseArgs({options:{frames:{type:'string',default:'48000'},
@@ -184,7 +185,7 @@ assert.equal(new Set(selected.map(entry=>entry.id)).size,selected.length,'Duplic
 const sourcePaths=[...new Set([...Object.keys(manifest.inputs),
   ...git(['ls-tree','-r','--full-tree','--name-only','HEAD','web-player/lib']).split('\n').filter(Boolean),
   'web-player/tests/fixtures/attiny13a-system-firmware.mjs','web-player/scripts/profile-device.mjs',
-  'web-player/scripts/lib/avr-profile-functions.mjs',...catalogPaths])];
+  'web-player/scripts/lib/avr-profile-functions.mjs','web-player/scripts/lib/avr-profile-attribution.mjs',...catalogPaths])];
 const report={schema:'micromusic-device-sampling-profile-v1',createdAt:new Date().toISOString(),
   git:{head:git(['rev-parse','HEAD']),status:git(['status','--short'])},
   node:{version:process.version,versions:process.versions,flags:process.execArgv,executable:process.execPath},
@@ -226,6 +227,7 @@ function frameInfo(frame){
   return {key:frame.functionName+'@'+frame.url+':'+frame.lineNumber,name:frame.functionName||'(anonymous)',category,url:frame.url,line:frame.lineNumber+1};
 }
 function summarize(profile){
+  const attribution=attributeAvrProfile(profile,{functions:[...known.values()],operation,requestedIntervalUs:intervalUs});
   const nodes=new Map(profile.nodes.map(node=>[node.id,node])),parent=new Map();
   for(const node of profile.nodes)for(const child of node.children||[])parent.set(child,node.id);
   const totals={all:new Map(),capture:new Map()},categories={all:new Map(),capture:new Map()};
@@ -250,7 +252,8 @@ function summarize(profile){
   const sorted=(map,n)=>[...map.values()].map(row=>({...row,selfPercent:100*row.selfSamples/n,inclusivePercent:100*row.inclusiveSamples/n})).sort((a,b)=>b.selfSamples-a.selfSamples||b.inclusiveSamples-a.inclusiveSamples);
   const categoryRows=(map,n)=>[...map].map(([category,samples])=>({category,samples,percent:100*samples/n})).sort((a,b)=>b.samples-a.samples);
   const deltas=[...(profile.timeDeltas||[])].sort((a,b)=>a-b);
-  const result={profileDurationMs:(profile.endTime-profile.startTime)/1000,samples:count,workStackSamples:captureStackSamples,
+  assert.equal(attribution.all.samples,count);assert.equal(attribution.workAncestry.samples,captureStackSamples);
+  const result={profileDurationMs:(profile.endTime-profile.startTime)/1000,samples:count,workStackSamples:captureStackSamples,attribution,
     sampleDeltasUs:{min:deltas[0],median:deltas[Math.floor(deltas.length/2)],max:deltas.at(-1)},
     allLeafCategories:categoryRows(categories.all,count),workLeafCategories:categoryRows(categories.capture,captureStackSamples),
     allFrames:sorted(totals.all,count),workFrames:sorted(totals.capture,captureStackSamples)};
