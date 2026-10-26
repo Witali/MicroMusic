@@ -49,6 +49,7 @@ matching optimized kernel is provided yet.
 | Symmetric order-ten LPC output | `lsp_finish.S`, selected by `nb3_lsp_finish.h` | `speex_nb3_lsp_finish10_c` in the same header, also callable in an ASM build |
 | First two-root LSP constructor | `lsp_first.S`, selected by `nb3_lsp_first.h` | `speex_nb3_lsp_first_c` in that header, also callable in an ASM build |
 | LSP polynomial stages 2/3/4 | `lsp_stage.S` and shared-source `q14_macros.S`, selected by `nb3_lsp_stage.h` | `speex_nb3_lsp_stage_c` in that header, also callable in an ASM build |
+| Paired p/q polynomial stages | `lsp_pair.S` and `lsp_stage_macros.S`, selected by `nb3_lsp_pair.h` | explicitly callable `speex_nb3_lsp_pair_c`; default C calls remain unchanged |
 | Historical pitch write/add | `pitch_add.S` | C block loop in `pitch24.h` |
 | Innovation, scaling and saturation | `innovation.S` | C branch in `innovation.h` and bounded helpers in `nb3_c_math.h` |
 | Known-zero adaptive gain | separate `speex_avr_zero_innovation10` entry | four byte products/carries in `speex_nb3_zero_shape_c` |

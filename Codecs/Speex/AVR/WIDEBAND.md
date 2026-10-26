@@ -75,8 +75,10 @@ on ATmega328P**. Use ASM for this MCU's WB playback. Other MCU timing requires
 its own admission test. The exported C11 manifest and CMake static library
 include both public APIs; the compatible CMake target remains `speex_nb3`.
 
-The optimized AVR ASM decoder uses 17,484 B Flash and 1,279 B static SRAM in
-the mailbox harness. On the same 10,563 frames:
+The latest [paired LSP stages](TWIN_LSP.md) bring the WB9.8 ASM decoder to
+17,564 B Flash and 1,279 B static SRAM in the mailbox harness, averaging
+249,404.368 cycles over 10,563 frames. Stack remains 178 B. The historical
+table below ends at the preceding deferred-r1 stage:
 
 | Decoder-only measurement | Initial WB | Fused WB/QMF | Third IIR cache | NB LSP | Subframe map | Complete prefix | LSP lifetime/bounds | ASM margin/LPC | Paired LPC | ASM stages | Two-root ASM | Deferred r1 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |

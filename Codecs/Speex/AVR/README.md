@@ -3,7 +3,7 @@
 An adaptation of the **original Xiph Speex 1.2.1 fixed-point decoder** for
 ATmega328P at 16 MHz, with a linked PWM player and reproducible host/AVR tests.
 The ASM player passes ISA simulation on all 31 streams: **9,100
-frames / 1,456,000 samples, zero underruns, 703 bytes SRAM free at the observed
+frames / 1,456,000 samples, zero underruns, 699 bytes SRAM free at the observed
 peak**, including a separate 40% extra-CPU admission test. A physical board
 and its analog output have not been tested.
 
@@ -18,14 +18,18 @@ the portable C fallback retains correctness but exceeds its frame deadline.
 
 The optional **NB 11 / WB 12.8 kbit/s** extension is enabled by
 `SPEEX_ENABLE_NB4=1`; the default stays 0 for minimum Flash. The new WB ASM
-decoder uses **20,300 B Flash** and averages **78.61% CPU** on 16 natural
+decoder uses **20,380 B Flash** and averages **78.45% CPU** on 16 natural
 Russian/English clips. Its PWM player passes 48 Flash-sized chunks / 6,467
 frames with zero underruns and **430 B SRAM free**; two chunks also pass with
 5% added CPU work. New NB11 also passes two complete clips with 40% added
 work. Both new modes retain C fallbacks, reset checks and independent PCM
 oracles. See [HIGHER_BITRATES.md](HIGHER_BITRATES.md) for packet sizes, scope,
 measurements and reproducible commands. Existing minimal C/ASM decoder
-images remain byte-identical; six representative legacy PWM images also match.
+images stayed byte-identical at the initial higher-profile stage. The latest
+[paired LSP stages](TWIN_LSP.md) now speed up ASM NB by about 0.27% and WB by
+about 0.21%, with 78–80 additional Flash bytes. All four C decoder images and
+all 62 existing C PWM images remain byte-identical. Current ASM admission
+covers 134 fresh PWM images, with timers/interrupts and zero underruns.
 
 The primary optimization target is the explicitly enabled AVR ASM backend.
 The narrowband decoder also has a selectable C backend and an architecture-neutral

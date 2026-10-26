@@ -9,8 +9,8 @@ Every ASM kernel has a selectable C fallback. Architecture defines and a
 separate explicit ASM-enable define must both permit an optimized backend;
 otherwise use C. Hardware memory access stays independent of arithmetic.
 
-The latest implementation and measurements are described in README.md,
-`reports/nb-word-math-*.json` and `reports/c-word-math-*.json`. Earlier
+The latest implementation and measurements are described in README.md and
+`reports/twin-admission.json`. Earlier
 reports are stage baselines, not current
 binary measurements. Vendor and R4 files remain unmodified.
 
@@ -22,6 +22,12 @@ with HB1 folding. The fusion screening saves 3,248 cycles/frame and 16 B
 stack on two clips. Final WB12.8 voice averages 78.61% CPU; active-IRQ PWM
 passes 6,467 frames without underruns. Default minimum decoder images stay
 byte-identical, so those new-profile figures do not replace NB3 baselines.
+
+[Paired polynomial stages](TWIN_LSP.md) are the latest ASM change:
+NB8/NB11 improve about 0.27% and WB9.8/WB12.8 about 0.21%. A single prologue
+retains the second pointer/root; T selects private return versus final
+epilogue. All 134 ASM PWM images pass again, while four C decoder images and
+62 C player images rebuild byte-identically. See `reports/twin-admission.json`.
 
 ## Completed, measured
 
