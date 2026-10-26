@@ -8,6 +8,7 @@ from pathlib import Path
 import numpy as np
 import soundfile as sf
 from speech_v4 import unpack, decode_model
+from speech_compact import unpack as unpack_compact, decode_model as decode_compact_model
 from wav_lpc import pack_frames
 from lpx4 import encode
 from compact_format import pack as compact
@@ -21,21 +22,29 @@ from benchmark_standards import save, sha, lpx_revision
 def encoder_revision():
     root=Path(__file__).parent
     dependencies=b''.join((root/(name+'.py')).read_bytes() for name in
-        ('budget_search','joint_rate','rate_distortion','speech_v4','standard_metrics'))
+        ('budget_search','joint_rate','rate_distortion','speech_v4','speech_compact','standard_metrics'))
     return sha(inspect.getsource(refine).encode()+inspect.getsource(legacy_seed).encode()+
                lpx_revision().encode()+dependencies)
 
 
 def legacy_seed(blob):
-    n,pre,bright,vectors,params,pulses=unpack(blob)
+    if len(blob)>4 and blob[4]==5:
+        n,profile,spectra,params,pulses,pre,bright,extras=unpack_compact(blob)
+        shift=5 if profile==4 else 4
+        vectors=[[(v<<shift)+(1<<(shift-1)) for v in row] for row in spectra for _ in range(2)]
+    else:
+        n,pre,bright,vectors,params,pulses=unpack(blob)
+        extras=[(-1,0)]*(len(pulses)//2)
     q=[];scales=[]
     for half,(scale,lag,gain) in enumerate(params):
         scales.extend([scale*8]*2)
         for si in range(8):
             pos,amp=pulses[half*8+si]
             for j in range(20):
+                at=len(q);extra_pos,extra_amp=extras[at//40]
                 predicted=(gain*(q[-lag] if len(q)>=lag else 0)+8)>>4
-                q.append(min(31,max(-32,predicted+(amp if j==pos else 0))))
+                q.append(min(31,max(-32,predicted+(amp if j==pos else 0)+
+                                    (extra_amp if at%40==extra_pos else 0))))
     raw=bytearray(blob[:20]);raw[:6]=b'L3AV\x01\x03';raw[16:20]=b'\xa0\0\x50\0'
     doc={'raw':bytes(raw),'frames':pack_frames(vectors[:(n+159)//160]),
          'blocks':[{'bits':6,'scale':scales[i//80],'q':q[i:min(n,i+80)]} for i in range(0,n,80)]}
@@ -46,7 +55,8 @@ def legacy_seed(blob):
 def refine(reference,baseline,speech_seeds,decoder):
     seeds=[baseline,*[legacy_seed(b) for b in speech_seeds]]
     for original,seed in zip(speech_seeds,seeds[1:]):
-        np.testing.assert_array_equal(decoder.decode_one_s16(seed,len(reference)),decode_model(original))
+        model=decode_compact_model if original[4]==5 else decode_model
+        np.testing.assert_array_equal(decoder.decode_one_s16(seed,len(reference)),model(original))
     # Search the new spectra through the existing real-bit greedy encoder,
     # then refine a feasible result through its existing joint/beam search.
     blob,pcm,search=search_budget(seeds,reference,decoder,20+len(reference)//8,
