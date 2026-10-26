@@ -1,0 +1,1017 @@
+{
+  "baselineGitCommit": "05b1e70ab0c19a5bbf683c8ec2513e5a3b556ef3",
+  "implementationGitCommits": [
+    "669604cc",
+    "e955c0f7"
+  ],
+  "primaryTarget": "ATmega328P, 16 MHz / 2 KB SRAM, GNU ABI/hardware MUL, explicit ASM opt-in",
+  "textHashNormalization": "CRLF to LF; firmware images remain raw bytes",
+  "sourceSha256": {
+    "src/avr_fixed.h": "3878d9da964234419a1b246ef5dde990b199b96a88c3476f21605f71c9049b67",
+    "src/avr_multiply.h": "36de5d16f5332c4c2924d45a4bc2f6cbea78607c6f1861e24800d72a9c48e81f",
+    "src/avr_shift.h": "61eaad2aa0494f7bddb286411b53ec73c5fe936a4924860c10f50ac54da2aa38",
+    "src/avr_tables.h": "4e0e67e692b8093752cb2a02f4b359d710304341dd0d46d18e73c3b35598c3d9",
+    "src/bits.c": "745b06111e3ec46ec42be8bd598f7f730ffc87af2e13d474dcfaf125c2ca3b4a",
+    "src/compact_lsp.c.inc": "d902e393915c016f9fd0e351646d7f0bda00cd6a9b95c63c6ed7be56c7991811",
+    "src/compact_lsp_rates.c.inc": "60146af14dc2b86b253e87a9411e793406c04b0f72eaf982e61240262c085d65",
+    "src/iir_direct.c.inc": "584cc9fb7f1cf34cf51b7c1b708df5f4981fbaf2d653b73c9c6e9e4a5634acc5",
+    "src/iir_kernel.inc": "c4e03b2e8d8ed38f036eddaff6e8f520c9099ac0eb71ec8e34f1b2376b2b1c06",
+    "src/innovation.h": "b42aee7475b58fe1315b78a5ef9f346dd019b66739d1469ce19fea98933e16f8",
+    "src/innovation.S": "c25ea726032822ad4efe4b916276b7c79e642a0f6ae02eef90fa90e74f51deee",
+    "src/innovation_core.inc": "96a56a6da1e0ae6ab9ec6bdf1f4499b742615146b404f4f602d1f08878310f60",
+    "src/long_pitch.h": "d4c26763b5143b86d0edfd6d1b84e37d85af2940e77d636ac8574c478cc983bd",
+    "src/lpc_dot.S": "8e40aaef0744c8614fe06f281874ebcf2173d94f3d585b00b5703bea2f851be5",
+    "src/lpc_update.S": "00bb267faac8ed005a51893c8572e48b1fa4bfc30f3cb734ac13c0a4f3d49d20",
+    "src/lsp_advance.S": "c7c92245b4af60827a477c7ffdcaf9847befe3ef691bfdf6a5ba0ca01d47fba9",
+    "src/lsp_angle.S": "3e36107d58f9d76c9094664a3fb16b00d476fecebc6158d7cf981fa9e3869b5c",
+    "src/lsp_finish.S": "51ea78f7e5a7733d000cbfca46f7981e310c0676221385249d2a4c618262690b",
+    "src/lsp_first.S": "12d2128c01ec50b45159545eef412a17cf3a8a40d71b5c7e6e43226b7b44cca5",
+    "src/lsp_pair.S": "490863a2035ab81a1e2b28079d31c6bc84fb93c40b4268bb2192f7fbc79cdd22",
+    "src/lsp_stage.S": "eaeaf109f57853cd58bfb96a181e50941912c5f2fa4e000a327b74245d741529",
+    "src/lsp_stage_macros.S": "5c997aba9ec8a46bac795e34c59b65b22201c2b0aa8cd2037d85405e3078e7c5",
+    "src/nb3_c_math.h": "9e89d9d789d9d9b72f7c69dcf0aa3b111a75db8a2d3963426791b2e6c9932154",
+    "src/nb3_header.h": "8d973f6bf9657858b910362d6999c32db0dc1be8f7c10bcb1e3e11d513dccd02",
+    "src/nb3_indices.h": "2171ad9e73cf6adb5abe4df9d07c262a94eabbca304789830f56b8302f36a460",
+    "src/nb3_interpolate.h": "9166e91a73584db2cd9da00f9a6f3fb35b24d255814d010fcd17d8f22fed069d",
+    "src/nb3_lsp.h": "3782d31d1c9f5b9cf84a1e7e8393c9c55d61efc7cc0adaadac2ee136668a471a",
+    "src/nb3_lsp_angle.h": "1c7b6f05e01a2067e8f07c7c342fdccf8232a209861a3d28f617b9eadd75203b",
+    "src/nb3_lsp_finish.h": "41b03398eeaeeae0d6c02da47e49ed7524b8799f25831e70d6dfe33d0ebe55c8",
+    "src/nb3_lsp_first.h": "1153f8c77c5cd2df39b1eb7c44d05e5e695a155dc5bf5e95c6d1db5c2655b9b1",
+    "src/nb3_lsp_pair.h": "ed59efb79b7a8af17e1cd3f48ade514084d599ebdd136797ed7920107ad7ac3c",
+    "src/nb3_lsp_stage.h": "0deaff89072a76d0126c6415eef800546824168059608419d966e238ec5e159a",
+    "src/nb3_subframe.h": "1d50ca1ea31231914d81756e42476c0c19c699f4a8c500514ab2952c6229ea88",
+    "src/nb4_excitation.h": "684e455ae43f57b16cefa227ab04a50b5825d978d41aa2388e995d897d776f51",
+    "src/nb4_subframe.h": "eb93b29731123939f2397888bdb9671e36979029f16d9cc304ac2a0a46346dc6",
+    "src/nb_decode.c.inc": "a34655a57ca2626bb14e6f4ab4f2973ff4b52c28ef4d63dfc3c14f5f303876c3",
+    "src/packed24.h": "cd3d6cd54064fc9841aef7ff13abc801bff43cf79c3318b8175e52b9695dda73",
+    "src/pitch24.h": "530dbbd915a2f032067e756772eb81b29b5a8bdb429b92d22185701e09deff81",
+    "src/pitch_add.S": "6272ddbc09160381bb73fb86d2a8e97a60e20f37570df5d3896d28b59d5918ce",
+    "src/player.c": "93aa5e253ef197176452de0433836be36ff1d9abab659ce9493e65061e567a14",
+    "src/profile_mode.h": "0052bc51ba4013ddc6e758a59a03fd3ecd1030c5ad07540008817180caa36d5b",
+    "src/profile_state.h": "74139b93739e61b6a0b86169f3461ec27a08640e462a04d56ba0aaccf36c735b",
+    "src/q14.S": "8d93f106036746be2ec0400f78737c48ea3b7559428e9f1e41b1f0910333d839",
+    "src/q14_macros.S": "4913b0a3484ebf612750ea42f461ef8e17f4f95329be9dd44df6f1e3af0ec827",
+    "src/qmf_memory.c": "a1232858f274e30f7050334fc5b608edcd3d422fccda75de77430bc7831d08c3",
+    "src/qmf_memory.h": "ef340baf7353191f5c8294fb21b0f25bd46390186573a9ce8b3ef8033bc5f7e0",
+    "src/short_pitch.h": "f57c35e6277ee73e7e2ffdd5a1dd968a9eb9fe32162346ffd8216010f40ef9ad",
+    "src/short_pitch_kernel.inc": "0d87d7c298dc03386bb88f2dcff57b0f7b20ee9545d4b461d5c3c070ace7bcaa",
+    "src/speex_avr.c": "4024f3321280a249515b08f12efc5e1d43a59bda7152f6f2c617e82747bd7f4c",
+    "src/speex_avr.h": "9ca142747c625230c30ea1cafddbf452da80bc45b25b5ee2ddeea754719e3566",
+    "src/speex_nb.h": "70d8095ff2d24b185a8184222e64619085254aae914d86a021bc7e5e15d4eea4",
+    "src/speex_nb3.h": "b6aa205038d0e534991b7f0f684516dfbe4c7a8d30649550a52558c18b22f9d0",
+    "src/speex_platform.h": "47fe25883a02429e1da92eb7a7ee1b44877b71b9d7f553fb3a8b19b3300873bf",
+    "src/speex_wb1.c": "8dadedf830f20dfd765255c4fafdf9ef960fa9243f122c7470369ee3e8f1b339",
+    "src/speex_wb1.h": "00762c407c3d33a23b3a194f336fb14f3fe003fd64a67d73ad8b1dbd8dde332b",
+    "src/wb_excitation_kernel.inc": "33bc675a1840fac8cecb05fc7ec4786a13267db91166db9ef76f67b64e71a399",
+    "src/wb_fold.c": "22b167b935e7136cce84aa206bb9e465662d20808b34bfdeb86d391f54ec620a",
+    "src/wb_fold.h": "cf6645bdd9b57e0a377f371c03d8d6a646617287619ed7d056f71a436071afbd",
+    "src/wb_fold.S": "3b104afbe173f457aa41c5a8d2f64248ddad0a76942235985f883fc3336e157d",
+    "src/wb_fold_kernel.inc": "ff52c6443df47be168638773d984a0094bd93282cb8bff282a0bd7aedd2f1a99",
+    "src/wb_iir.c": "7ce0ddaca8da575efca564660cb79337d6747e698de709b57ab74b4c5099870c",
+    "src/wb_iir.h": "cc268430e595b5a8edd14c47155028e0357a0830cd3cb8eb864a5b463020a4c2",
+    "src/wb_iir.S": "275936662303e102239afb58cb4a6d812541cd2bec68cbab7e0c03bb0ac9cd5e",
+    "src/wb_internal.h": "a4f9522cb28a5ac1d7112f870712690262ebd89fcd57a8c036bd2d72e217af72",
+    "src/wb_player.c": "8b0172ae6eb36c82af5d2f5a61f4af719534ed25b75cafdad44f00520d30dfe1",
+    "src/wb_qmf.c": "c27ff603c22ea71ac05ddd8256f13109593822c05fb34e71a7578c17d04a12f0",
+    "src/wb_qmf.h": "8b42180325ba8c60ee398f86ae696833f6201c580a7c68e970232e74412f6b3b",
+    "src/wb_qmf.S": "c27487b38ea91bb3e64ed4528b9df0356420df16d20cce52def6730551806039",
+    "src/zero_innovation.h": "1e956c7dcb1ad6cd7c49d58be21311d98d589f90920272494bb0f34f40e920de",
+    "src/zero_shape_kernel.inc": "42c8aa44ff55935bbc27ecf5348629d3debbe28946fd72965e36f2c224736ed7",
+    "tools/build.py": "76a0fcbd56f4c359fba3fd67fc0546dbaca5043c72fab481c0dba1ec113662a5",
+    "tools/build_wb.py": "6b9432970892a797a5998b5b868812b5754049fd53c772827683b05cfb03c49f",
+    "tools/apply_profile.py": "fa6d9f4bfa860d1f7e8f5fec17e97cdbf9441cba0487c05b62ae0efec32eeb3d",
+    "tools/build_lsp_angle_test.py": "2a8fdd35dd0040bfa8a24ab99d1d2d396b922bd5eb4dd2e4d58d39215822de5e",
+    "tools/build_lsp_pair_test.py": "610a7db46276f98113bd6ff6e36edafbbc9db234ac7ea04085a57ad287a87865",
+    "tools/build_lsp_lifetime_test.py": "9a6404e05a955f707d3bf6de35f96337f9c372a46c0bb02d966c659fe2998582",
+    "tools/prepare_lsp_angle_candidate.py": "8071590a1553e5f2cf95f5117cfa8c1d724acef6314182bb9a8de30da27aa80f",
+    "tools/build_wb_stream_test.py": "dfb0ad236d82a9e8dea7b5c1998650f9b1a7a3cef4c3798d64a08b2469d1adf1",
+    "tests/audit_lsp_angle.py": "b638dabcf1ee76a64aa19b0fcc7d490c3ae01b368e35dd738e776603aced7465",
+    "tests/avr_lsp_angle.c": "5eabdb682f7b9e7c003a6285dafc69007566ba7e2d3ebb741addc239f5967e89",
+    "tests/lsp_angle.c": "240dfed9a60fbae09c5080f6a66e95ad4f621a69f42a9c4301c48b256662aca6",
+    "tests/lsp_angle_reference.c": "5da964d1251d3be4bceee1602ff7f7ec56eb160366950e04c5bb38f6acc26f87",
+    "tests/verify_lsp_angle.mjs": "45b53e7e72c660bfa77201d1d8756685e8e585f34aa7d2183e86e1853e244866",
+    "tests/avr_lsp_pair.c": "1db2a9c7fa078c3550d43e273a8682c61044bbc828c1378188977f3a7e7a2b95",
+    "tests/verify_lsp_pair.mjs": "bc4f7bc1992b0743c64ce86a137ad9bd1bf2a3c300f133aade3472ff30b33d41",
+    "tests/verify_avr.mjs": "016365b4b55147732abc52c870dbc722fd187efd4ecc707590b9ca65678af285",
+    "tests/verify_wb.mjs": "c42087475c1e8e6d153bd253fd95479a87091ccdb3175f22491005202888dcb0",
+    "tests/verify_player.mjs": "07137a3aaf1d67aab15ed2990d4b1ff30fff222e4ae344f10fc74e546b7d88c1",
+    "tests/verify_wb_player.mjs": "4bb926ca3000cbb8c59155a1530b5711c8a7bd4dcc3bd59d7480b263322c3a38",
+    "tests/avr_tick.mjs": "7fb11c61a22e00650fdc23ce4093231e574f478a9d6183423808abbfab8fda5f",
+    "tests/verify_nb_players.py": "0866dbb708c7e84cdb269fa325746064dc8a3f7789be13b7523a7e55d1026347",
+    "tests/verify_wb_players.py": "3d60890da329371bf05f184cd23b2c174c99fc3e70790cbaceb6a12d1aa1be3d",
+    "tests/verify_portable.py": "a53ab0f77ce18a33f44f498b679ea761d1cf032268a9c2bb7f51ab9f5c9b2d70",
+    "tests/decode_mixed.c": "7146e10984dbe38fd967c88c1649b57b5482a660935585a73a5eb65f57e466f2",
+    "tests/verify_lsp_lifetime.mjs": "5cefd0b7352123c282bf6369eb90fe5b6ae347096cd2fae4d08b4a109908bc67",
+    "tests/verify_nb3_margin.mjs": "63128ef441383906be246b99333a9f7dcece22ee7ca6e670dcfc6ad2528cceee",
+    "tests/avr_wb_stream.c": "80da6471f19246c9f94170c216717d69c9aca94fab3e28880e1ad0dfb8b68b7c",
+    "tests/verify_wb_stream.mjs": "31ac052a55f6eb2c9423e412e3a6710a4be14e8e959dd830f7d528d453cb933d"
+  },
+  "reportSha256": {
+    "angle-unit-asm.json": "bdd8dd661cac544766d239e574ae3a961dbbe5fa58ac954c02e61e98d9fb5477",
+    "angle-unit-c.json": "54e33fa4491ba20ea0fec08da9cd4efe89091f77e9a9b0f965d42f33de71abb0",
+    "angle-irq.json": "bee3582384c72a7f681574a6098be331a6179a7f86139d5475610d6f91772bcc",
+    "angle-pair-unit.json": "924c9c06abe0b5b6ae3f1af5ae4d8e375c8f4b505ed214aec2d90bb47cd4642e",
+    "angle-pair-irq.json": "f0354a00eb7ee7f717abb34fbc7cf56f4ab3da19b94bec36066c9a0a4ece08e9",
+    "angle-unit-bindings.json": "898468a6655e068edc6ee532939e8823d5a97063282ab8ddada2ecb964e464b1",
+    "angle-c-player-identity.json": "c317dd0c5104f064f3d07398398958d0f2f93013cc0b628f8c3eded1f30de5ba",
+    "angle-portable.json": "bad636518f96f0b17a31cf10ad556e7994d5921e969893746c6b55e5429a359b",
+    "angle-host.json": "dc392bb682949daaf2c467b25634aaf660cd77c322f7409690c7b3afc4d3923a",
+    "angle-geometry.json": "dfef1793ffd162d6ba713dbe5711f4518355dee271ffe0ff95ca879e244e2d1c",
+    "angle-legacy.json": "fa20c3ba82e374af8324aa7936135a991a4f748785af8850bc60f17cb8ad8259",
+    "angle-profile-before.json": "0bc4df165d339a10f74ee2a941cdfd1d4ed3e92a49733e69ba16c06d97060f97",
+    "angle-profile-cosine.json": "fcf2b7350be4be78cc1a485cbf4da2a04c3600e6a1ac381f0255f2786857318d",
+    "angle-replay.json": "d068f42373640e2d3ef0566caa11df891bbbb0354c7749a4fece60390ad82c9b",
+    "angle-stream-wb98.json": "a8eb2d746d234faea0856392daf592509219492b61522fb4de4a324247959f51",
+    "angle-stream-wb128.json": "b775fb9e5b7c514ae39f9a59baf550b98fa13ea90777d72255bf10a597ff3fdb",
+    "angle-nb8-asm.json": "a927e5fe2a196a4408529194075b1b9dd1fa221ce22d0ed1e80cacdd91cdbf5a",
+    "angle-nb11-asm.json": "58abea3ef5160894a63a707211bb2a52b49c68f1bb67da40607d1aad93b16d07",
+    "angle-wb98-asm.json": "229233147f3b9de23caa901dd0c53f9c508eef2e2929a8b19ae8104a85a9ef2c",
+    "angle-wb128-asm.json": "8cfbcb8fc103122f89fa241383ee51e735a498f52de7958ce4b21e713620c83e",
+    "angle-nb8-pitch-asm.json": "a74600e8aec04e73a53265c3a22e0e4d3bfe39ccad9c675a705d712e5a12cabc",
+    "angle-nb8-zero-asm.json": "27c38033161f8c1734b678f0a631aed1b96c5373dec7e386ed92a1ba51d872f1",
+    "angle-nb8-lsp-asm.json": "e919f24220a8578473129ff38074366810bdca62cca84b685e786aa11903eae5",
+    "angle-wb98-repeats-asm.json": "1b0db45f9fde88abc2602f29249d0d122615244c14267b83a09b6f7974ef64ac",
+    "angle-pwm-nb8-normal.json": "1f1e80d8ef9be78efdd7fdc5f96e05d1f882aa8cf1ec0dad5561f9a7e31a9809",
+    "angle-pwm-nb8-load40.json": "8f16c538f30e309bb376a8a06c3b78b50eed11fe554ff7aef34daabdbcc18dbc",
+    "angle-pwm-nb11-normal.json": "283fbda8eddaa1941f4d204df2df821ed833e7279d2c98b3174dd214094fd70f",
+    "angle-pwm-nb11-load40.json": "40442846fe22d6b80282892cfee5c1fae6d2c64364dbabf17bf12115aa0f03f2",
+    "angle-pwm-wb98-normal.json": "9b9639e36d04ccd932d74cd868e19c501a506d6db401097e5e1fb3789b01ee84",
+    "angle-pwm-wb98-load5.json": "32890e1e2901fb39bbb5226608fac0f8152f96fc9010fa9834b6de52f219ba1c",
+    "angle-pwm-wb128-normal.json": "2274f95e9f63cb2820dbca3ede5afc9893545fa6022040ee7f1319f4956c6a11",
+    "angle-pwm-wb128-load5.json": "8ad906c724ab07f9076ccab2171a961c65b66ea15b1eb88bfc6b55eb302b3dd6",
+    "angle-pwm-wb98-load8.json": "1f165ee397f26740b0c0277c27ccc3d294b534be22657ac56ccd951fc0ec38fc",
+    "angle-pwm-wb128-load8.json": "00c80bc4c089391af731db13eea7624a759b6fd3ccc24b0a3a5ca2ecad1be2f7",
+    "first-nb-c-normal.json": "f2645099ba31a0add40e59b53c489bbab8cb84dccaae6f3c34cde00cd5d78216",
+    "first-nb-c-load10.json": "b61dc6e902105bf7b8f872e496ac9dcdb14e9a8e55e9f84a90ff3f2ff267391c"
+  },
+  "measurements": [
+    {
+      "mode": "nb8",
+      "beforeMeanCycles": 102239.3232967033,
+      "afterMeanCycles": 99126.80604395605,
+      "meanCyclesSaved": 3112.517252747246,
+      "meanPercentSaved": 3.0443445363136603,
+      "nbMeanUsesRoundedStreamRows": true,
+      "beforeMaxCycles": 109518,
+      "maxCycles": 105990,
+      "beforeFlashBytes": 11064,
+      "flashBytes": 10638,
+      "beforeStackBytes": 107,
+      "stackBytes": 107,
+      "staticSramBytes": 1099,
+      "naturalFrames": 6434,
+      "naturalMeanCpuPercent": 31.41575890775567,
+      "naturalMaxCpuPercent": 33.121875
+    },
+    {
+      "mode": "nb11",
+      "beforeMeanCycles": 104825.94407525675,
+      "afterMeanCycles": 101574.39975834987,
+      "meanCyclesSaved": 3251.544316906875,
+      "meanPercentSaved": 3.101850735131489,
+      "nbMeanUsesRoundedStreamRows": true,
+      "beforeMaxCycles": 111705,
+      "maxCycles": 108177,
+      "beforeFlashBytes": 13408,
+      "flashBytes": 12980,
+      "beforeStackBytes": 117,
+      "stackBytes": 117,
+      "staticSramBytes": 1107,
+      "naturalFrames": 6467,
+      "naturalMeanCpuPercent": 32.05106434591001,
+      "naturalMaxCpuPercent": 33.6084375
+    },
+    {
+      "mode": "wb98",
+      "beforeMeanCycles": 249404.36826659093,
+      "afterMeanCycles": 243464.58525040234,
+      "meanCyclesSaved": 5939.783016188594,
+      "meanPercentSaved": 2.3815874026069577,
+      "nbMeanUsesRoundedStreamRows": false,
+      "beforeMaxCycles": 256577,
+      "maxCycles": 250264,
+      "beforeFlashBytes": 17564,
+      "flashBytes": 17150,
+      "beforeStackBytes": 178,
+      "stackBytes": 178,
+      "staticSramBytes": 1279,
+      "naturalFrames": 6467,
+      "naturalMeanCpuPercent": 75.88399509045925,
+      "naturalMaxCpuPercent": 78.2075
+    },
+    {
+      "mode": "wb128",
+      "beforeMeanCycles": 251916.5726592824,
+      "afterMeanCycles": 245938.57019786045,
+      "meanCyclesSaved": 5978.002461421944,
+      "meanPercentSaved": 2.3730088093518176,
+      "nbMeanUsesRoundedStreamRows": false,
+      "beforeMaxCycles": 257868,
+      "maxCycles": 251512,
+      "beforeFlashBytes": 20380,
+      "flashBytes": 19948,
+      "beforeStackBytes": 190,
+      "stackBytes": 190,
+      "staticSramBytes": 1287,
+      "naturalFrames": 6467,
+      "naturalMeanCpuPercent": 76.62922529766507,
+      "naturalMaxCpuPercent": 78.5975
+    }
+  ],
+  "screening": [
+    {
+      "candidate": "cosine",
+      "family": "nb8",
+      "frames": 1456,
+      "beforeMeanCycles": 98704.11538461539,
+      "afterMeanCycles": 96046.04395604396,
+      "cyclesSaved": 2658.071428571435,
+      "beforeFlashBytes": 11064,
+      "flashBytes": 10638,
+      "pcmExact": true,
+      "scope": "Screening only; separate from final full-corpus/PWM admission"
+    },
+    {
+      "candidate": "layout",
+      "family": "nb8",
+      "frames": 1456,
+      "beforeMeanCycles": 98704.11538461539,
+      "afterMeanCycles": 98692.0054945055,
+      "cyclesSaved": 12.10989010988851,
+      "beforeFlashBytes": 11064,
+      "flashBytes": 11064,
+      "pcmExact": true,
+      "scope": "Screening only; separate from final full-corpus/PWM admission"
+    },
+    {
+      "candidate": "cosine",
+      "family": "wb98",
+      "frames": 544,
+      "beforeMeanCycles": 246565.39889705883,
+      "afterMeanCycles": 241009.4963235294,
+      "cyclesSaved": 5555.902573529427,
+      "beforeFlashBytes": 17564,
+      "flashBytes": 17150,
+      "pcmExact": true,
+      "scope": "Screening only; separate from final full-corpus/PWM admission"
+    },
+    {
+      "candidate": "layout",
+      "family": "wb98",
+      "frames": 544,
+      "beforeMeanCycles": 246565.39889705883,
+      "afterMeanCycles": 246564.98713235295,
+      "cyclesSaved": 0.411764705873793,
+      "beforeFlashBytes": 17564,
+      "flashBytes": 17564,
+      "pcmExact": true,
+      "scope": "Screening only; separate from final full-corpus/PWM admission"
+    }
+  ],
+  "decoderImages": [
+    {
+      "mode": "nb8",
+      "backend": "asm",
+      "sha256": "e47a0c8381d00aac24f1a041dc4d2112cf420726e7be58525413cd88e0a3b336",
+      "flashBytes": 10638,
+      "cBaselineIdentical": null
+    },
+    {
+      "mode": "nb11",
+      "backend": "asm",
+      "sha256": "6a5457691f432a97beffd0abf595f73ea092fd343348340d92212cdf5c4f56c7",
+      "flashBytes": 12980,
+      "cBaselineIdentical": null
+    },
+    {
+      "mode": "wb98",
+      "backend": "asm",
+      "sha256": "f8854250a71d85a3118e6357ca08a9b81c8a08cae221d4ccf45ed575dd562498",
+      "flashBytes": 17150,
+      "cBaselineIdentical": null
+    },
+    {
+      "mode": "wb128",
+      "backend": "asm",
+      "sha256": "bed419259a48da380b3ec342e9c2b0132c7ee946524fe2d036983d0516d44980",
+      "flashBytes": 19948,
+      "cBaselineIdentical": null
+    },
+    {
+      "mode": "nb8",
+      "backend": "c",
+      "sha256": "c70f893642c2413fc314532838513e3cfda4cf1564770a86218dae9c719b9efc",
+      "flashBytes": 11562,
+      "cBaselineIdentical": true
+    },
+    {
+      "mode": "nb11",
+      "backend": "c",
+      "sha256": "36b1155a26d14b686c9c998efbf34094ba647d2b3aabf8ca8648428fe5b877e0",
+      "flashBytes": 15844,
+      "cBaselineIdentical": true
+    },
+    {
+      "mode": "wb98",
+      "backend": "c",
+      "sha256": "97b113ad6b53bb2f6cf88e59fe9483c73c97f7a0ea8eaba3817359ba7b180f7a",
+      "flashBytes": 18738,
+      "cBaselineIdentical": true
+    },
+    {
+      "mode": "wb128",
+      "backend": "c",
+      "sha256": "66c8701431d8ba766c4c8fd8fa48b0a6f38f1fdae38cbd6b36a06e0751d70f09",
+      "flashBytes": 23946,
+      "cBaselineIdentical": true
+    }
+  ],
+  "decoderCorpora": {
+    "nb8": [
+      {
+        "stream": "build/cache3-corpus/streams/adversarial_24.spxraw",
+        "oracle": "build/cache3-corpus/oracle/adversarial_24.pcm",
+        "frames": 24,
+        "inputSha256": "f4878140211042d0b2cfa66f3f53534f035c61c2d47603720ab5cbb01774983a",
+        "pcmSha256": "5d1911e876a0396ed393011699372148a3e370d6a4b319a5be4272ebbe233353"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/chirp.spxraw",
+        "oracle": "build/cache3-corpus/oracle/chirp.pcm",
+        "frames": 100,
+        "inputSha256": "84e9b19f090498f6c419a65f0ec29d998131823be72e19cf7437376432280d62",
+        "pcmSha256": "21f7e7bcabc4f19c3c07dc58daf96316143f2f42dc2f0c087824e9de3316ebe5"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/en_letter_a.spxraw",
+        "oracle": "build/cache3-corpus/oracle/en_letter_a.pcm",
+        "frames": 402,
+        "inputSha256": "3375d20d0cec46e285841352ffee9def3c582103f0c8f14b885389d29dcc9e01",
+        "pcmSha256": "55c740f044855ef586d35d32507d080df5603d096df83eb54fe0d084c08b3c7b"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/en_letter_b.spxraw",
+        "oracle": "build/cache3-corpus/oracle/en_letter_b.pcm",
+        "frames": 403,
+        "inputSha256": "f6b1404dee78b1bd23680671258014ba0643331880be749a15057bfcf9985ede",
+        "pcmSha256": "181329043580eaeb0aea0e029db086dcd7e3f711544d439cafcd52ab1541aa08"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/en_normcore_a.spxraw",
+        "oracle": "build/cache3-corpus/oracle/en_normcore_a.pcm",
+        "frames": 402,
+        "inputSha256": "a83b5c8230d31bc7cc933de29e68538c117382855052ab03ef89b15130fd8749",
+        "pcmSha256": "62dd4704a37dfd7d92a87abccbfc443a7aca27df4b778ced3aea4e649df0dbbc"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/en_normcore_a_quiet_minus24dB.spxraw",
+        "oracle": "build/cache3-corpus/oracle/en_normcore_a_quiet_minus24dB.pcm",
+        "frames": 402,
+        "inputSha256": "3532a6d99a4e694bbd3f684d9220a15fcec612bd4e3d9ec53a671d26b3f16c6a",
+        "pcmSha256": "1452185ba758cb65b0167d3ec98524edd45958e61e2183a9e3573f246c53f1d7"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/en_normcore_b.spxraw",
+        "oracle": "build/cache3-corpus/oracle/en_normcore_b.pcm",
+        "frames": 402,
+        "inputSha256": "377da501299362654bd02be0fc894a9175deb3f0bf843f7c9c4f71e7aea45098",
+        "pcmSha256": "93af97c0e5946b5c732c3bab695bfece4d5c8da4cc10f32a1493402a787ffd65"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/en_portrait_a.spxraw",
+        "oracle": "build/cache3-corpus/oracle/en_portrait_a.pcm",
+        "frames": 402,
+        "inputSha256": "7d261e2cd1b9f47ecc93faa3f7ad31cbc63a86667b267fa11d7184c8e8a5bf95",
+        "pcmSha256": "bbabbcc56e9b17aa3146b83b0d04f83a0cad6271c3090cdd36851162869e57bb"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/en_portrait_b.spxraw",
+        "oracle": "build/cache3-corpus/oracle/en_portrait_b.pcm",
+        "frames": 402,
+        "inputSha256": "d220d385a6dddad9b4e031434b1311a965267c779e3b120bc765e875515160e8",
+        "pcmSha256": "65e5adf48e0bc3252373bfeaa5f7bb3149839ff9cac2ba5febccd16393a4aa0f"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/en_sense_a.spxraw",
+        "oracle": "build/cache3-corpus/oracle/en_sense_a.pcm",
+        "frames": 402,
+        "inputSha256": "a58fa255c694afef0401415d274d9c4af9af211147dfa877af12e1ee396c8188",
+        "pcmSha256": "e785b0d757768eaf9865904dfa47f06aa90a6c3258a14b10a3c50b346c2cf575"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/en_sense_a_white_noise_15dB.spxraw",
+        "oracle": "build/cache3-corpus/oracle/en_sense_a_white_noise_15dB.pcm",
+        "frames": 402,
+        "inputSha256": "04d023677c46f72e38d982d643f1ec59b7c877fff732e91038ccd2222bf56246",
+        "pcmSha256": "35cc8d3953e9fd7b9813a87f4a7dd6beb119723ff1a23c308683647541151f4b"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/en_sense_b.spxraw",
+        "oracle": "build/cache3-corpus/oracle/en_sense_b.pcm",
+        "frames": 402,
+        "inputSha256": "87150d40a8fab68409c03ae3214cd46280fcd7f60cce389a65f1248e94156551",
+        "pcmSha256": "fd9642c0c69ccbc8e5d5c158dbad7f89c184e7fb52523ca0b008de147a34e954"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/hard_clipped.spxraw",
+        "oracle": "build/cache3-corpus/oracle/hard_clipped.pcm",
+        "frames": 100,
+        "inputSha256": "b2f89bccf39407489d7a7f05ffc23f323dabaa620085716a162c36623546832f",
+        "pcmSha256": "5db0cc8ba1b3919dc80ae3ce71dcf7760fa54f286f6e9fcf988ae4e701059c2c"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/impulses.spxraw",
+        "oracle": "build/cache3-corpus/oracle/impulses.pcm",
+        "frames": 100,
+        "inputSha256": "325df57e011369682766b7f328a0bb6e53f9e65bb43519e4090a11e9a8a6bb8f",
+        "pcmSha256": "a503788227ea76413eaaaf5cd1efb6dfc48a7acb9314b07e5f17c4f939946370"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/random_40.spxraw",
+        "oracle": "build/cache3-corpus/oracle/random_40.pcm",
+        "frames": 40,
+        "inputSha256": "f80263d0bd642df1506591eb588542d2cc776b8b737b8b8b6d315287da4c8636",
+        "pcmSha256": "91e85f542d1df62bd2bcbf43ec68db8e64e35a3747f513e8c99a5246556dd4c3"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/ru_pushkin_a.spxraw",
+        "oracle": "build/cache3-corpus/oracle/ru_pushkin_a.pcm",
+        "frames": 402,
+        "inputSha256": "fafe16aaf0b26dec2c4a18439047f40f3dfb58fa39a6ba5e31994326e0055266",
+        "pcmSha256": "fad4d8378ae704adad2f6b94d0936df39fb15a00e4d1c704ceb25ebf7a781370"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/ru_pushkin_b.spxraw",
+        "oracle": "build/cache3-corpus/oracle/ru_pushkin_b.pcm",
+        "frames": 402,
+        "inputSha256": "90a872a66eefed00058411b9ca8ee180aff1c1329e7960e7a6dce28359be80fe",
+        "pcmSha256": "3e222a656cc4c524a98f5967734e710895c80190ec35b0c7dec054b10175b7f7"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/ru_russia_a.spxraw",
+        "oracle": "build/cache3-corpus/oracle/ru_russia_a.pcm",
+        "frames": 402,
+        "inputSha256": "0872bfda65969ddc1f3e110bd22035a604fa5a7b2b68499640596005f7026ac7",
+        "pcmSha256": "bac287ed8bc2e881f922c8aa4932cc5b7744dafc641b3e1e46c79509c6672b31"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/ru_russia_a_white_noise_15dB.spxraw",
+        "oracle": "build/cache3-corpus/oracle/ru_russia_a_white_noise_15dB.pcm",
+        "frames": 402,
+        "inputSha256": "22ed54c455505e52c1d3d125d7134d2464db52e3965a493a1d0f67d92422acd2",
+        "pcmSha256": "127793443860473c8165ad098f20fe04760796d05e627cc481d0cc75d09cb85f"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/ru_russia_b.spxraw",
+        "oracle": "build/cache3-corpus/oracle/ru_russia_b.pcm",
+        "frames": 402,
+        "inputSha256": "94f1a7d058d0119d8531721c3e64ef7a4dc57c71be7b08d06cd02537c442215a",
+        "pcmSha256": "d9f43a06e89c4570c443ca61e74a139819b51aeabc858d295195b6e1ef370942"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/ru_slutskaya_a.spxraw",
+        "oracle": "build/cache3-corpus/oracle/ru_slutskaya_a.pcm",
+        "frames": 403,
+        "inputSha256": "4cf74e66ec6a25cf18de5d1a0d0ac367315f214eca0ed0033b275f8add00a1ce",
+        "pcmSha256": "f5a6e3a4cb8effe917873568f405d0deeb32ec9d7e33c1b9fdc456a1896d5e3e"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/ru_slutskaya_b.spxraw",
+        "oracle": "build/cache3-corpus/oracle/ru_slutskaya_b.pcm",
+        "frames": 402,
+        "inputSha256": "bf9c6b3df905973c4fe52d28764411c0c7cd5cf2ff07d183c49b62a3ed1cbe8f",
+        "pcmSha256": "cd7bbc59b9c0ba40ff1b9e6237096a87cfe2b15e81e1e613989f46119b364c1e"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/ru_square_a.spxraw",
+        "oracle": "build/cache3-corpus/oracle/ru_square_a.pcm",
+        "frames": 402,
+        "inputSha256": "3ffb9cf0ff75ed8a0f4d0098ca6ea16cd8555335c3337becff407d92e9142534",
+        "pcmSha256": "ebf57bad28a9496f4730e606b3eec8c10c1dd0e228b8ae2ecea612ce91f64792"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/ru_square_a_quiet_minus24dB.spxraw",
+        "oracle": "build/cache3-corpus/oracle/ru_square_a_quiet_minus24dB.pcm",
+        "frames": 402,
+        "inputSha256": "73f3eb5177de533a2a7877747648dbea5fa7739ddaddcd624593cd0034280a5b",
+        "pcmSha256": "343acb4128cdc7fe4734184140a34704e4e01b688caf10e2f400811914dc3311"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/ru_square_b.spxraw",
+        "oracle": "build/cache3-corpus/oracle/ru_square_b.pcm",
+        "frames": 402,
+        "inputSha256": "f8c422a3805c0ee1dc77bc86c303dc1d1ffcff25c6bcaabe4269c8dcf2b07b46",
+        "pcmSha256": "9369b1df831758d574c4599a73660e367e5b44eab748bc24f3464ded5c0b4478"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/sample_mode3_8kbps.spxraw",
+        "oracle": "build/cache3-corpus/oracle/sample_mode3_8kbps.pcm",
+        "frames": 100,
+        "inputSha256": "3530948e216ae0843b283582cde41e0d9ac512b21b457ecb13ce2ed25d415435",
+        "pcmSha256": "ee7ecc5a54ddcc891c6ce5cb0d19c369f7545289ff7eae13aae54235666dc626"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/silence.spxraw",
+        "oracle": "build/cache3-corpus/oracle/silence.pcm",
+        "frames": 100,
+        "inputSha256": "f24457a364eb523a9e6f7c9b6c2df1d7b78d599e122d3ef0c4a86a0bcb7007e1",
+        "pcmSha256": "0c92bddb4e96f3ea9ec9f0f64a668255a6c15527ac09f6f119cafde60c7c4a39"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/speech_from_wb16_lowband.spxraw",
+        "oracle": "build/cache3-corpus/oracle/speech_from_wb16_lowband.pcm",
+        "frames": 147,
+        "inputSha256": "cd4bb17129a65c39779c8baca4af1539872e2a45cb0cd791f0a3c6ef2546df30",
+        "pcmSha256": "87eb98e43c825054fc58fe331f2d4ed77244e2ba01ecc7708a6aa4d0cd58123e"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/speech_ru.spxraw",
+        "oracle": "build/cache3-corpus/oracle/speech_ru.pcm",
+        "frames": 147,
+        "inputSha256": "b8ae8a68d1432e3d0de1f21f381cbd9c2fd323edb6351504ef585493b4cbb565",
+        "pcmSha256": "cab13f20a364b5b82832215000ab3432b727eab9dad057d65ba685ad8402a8de"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/voicelike.spxraw",
+        "oracle": "build/cache3-corpus/oracle/voicelike.pcm",
+        "frames": 100,
+        "inputSha256": "31d468b0c179a3fabd9419dfb8cce45b0db5c4085eee1111bf35cf63013e5679",
+        "pcmSha256": "8330e85b76367c1b03d5881c399525d6bb7a22093fb27f193711b6726b4844a8"
+      },
+      {
+        "stream": "build/cache3-corpus/streams/white_noise.spxraw",
+        "oracle": "build/cache3-corpus/oracle/white_noise.pcm",
+        "frames": 100,
+        "inputSha256": "17427c241a3a253e336acef8788055d7be57829ba3f9c35ab88303fdd2d98c88",
+        "pcmSha256": "1596abce834d9402408b1d5776d3ba7a97aef6c1a07f08cb097133db373b1095"
+      }
+    ],
+    "nb8-pitch": [
+      {
+        "stream": "build/pitch-cases/streams/all_pitch_gains.spxraw",
+        "oracle": "build/pitch-cases/oracle/all_pitch_gains.pcm",
+        "frames": 4096,
+        "inputSha256": "36fe83ecfdef9f4f8216d4030e47cda6789ad67c0ff8e802d79407956c033545",
+        "pcmSha256": "ac2269a8039dc16f49a5ce1b0742cd81c240c18d98012ae5a8e4e6cfc9bfc4f3"
+      }
+    ],
+    "nb8-zero": [
+      {
+        "stream": "build/zero-pitch-cases/streams/zero_gain_transitions.spxraw",
+        "oracle": "build/zero-pitch-cases/oracle/zero_gain_transitions.pcm",
+        "frames": 1024,
+        "inputSha256": "e31dff9d4ba360d0151478020aa9e055f2d682d2912cdf92e90a8f6f352a427c",
+        "pcmSha256": "0f5720402ee65c5a6a410e5807f28684378768dc6d13503ca7dd77fe60a2a1bb"
+      }
+    ],
+    "nb8-lsp": [
+      {
+        "stream": "build/lsp-reuse/streams/repeated_lsp_0.spxraw",
+        "oracle": "build/lsp-reuse/oracle/repeated_lsp_0.pcm",
+        "frames": 29,
+        "inputSha256": "31c8bac1da4a64d09d0dc38f88db0d0dd75b807a392deaeebe23d31ed8ee689f",
+        "pcmSha256": "bfb5e4480f8d122ac81c44991399ea4bd74f8e709e1a356ad61e28fdb618f069"
+      },
+      {
+        "stream": "build/lsp-reuse/streams/repeated_lsp_1.spxraw",
+        "oracle": "build/lsp-reuse/oracle/repeated_lsp_1.pcm",
+        "frames": 29,
+        "inputSha256": "70b02794f085a610fda2352aaf44e7e85c75d109f89f53faf0d4e477931fd836",
+        "pcmSha256": "49274bd188a8c7c5c3257ad49de8b07439aa082f27c9346f72450ab0852f5982"
+      }
+    ],
+    "nb11": [
+      {
+        "stream": "build/higher-corpus/nb4/streams/en_letter_a.spxraw",
+        "oracle": "build/higher-corpus/nb4/oracle/en_letter_a.pcm",
+        "frames": 404,
+        "inputSha256": "4cbcbd1304d4580d55e5e41898f24cf5134f09c6fed42ef3702b3658b4ac4b8b",
+        "pcmSha256": "c826225b25711c657ce1a4f98342a7797244a5163c7c10f1df77484bfc00b3ca"
+      },
+      {
+        "stream": "build/higher-corpus/nb4/streams/en_letter_b.spxraw",
+        "oracle": "build/higher-corpus/nb4/oracle/en_letter_b.pcm",
+        "frames": 405,
+        "inputSha256": "1c393bc5fa1dcc5d7488b2234775568097b53acbd301877b9b20eff11ccf545f",
+        "pcmSha256": "d506f821726ea62de2196899f5b9c84113f75e26e348776b5c488108e75a7cc1"
+      },
+      {
+        "stream": "build/higher-corpus/nb4/streams/en_normcore_a.spxraw",
+        "oracle": "build/higher-corpus/nb4/oracle/en_normcore_a.pcm",
+        "frames": 404,
+        "inputSha256": "a8c8655512093ff634b284f28a3b42b74af23078991f96cf779be4cba77d5905",
+        "pcmSha256": "bbf1e64762dd76b99cee0c6c90a089001018fcc852f2497b0e2e93a2baab838a"
+      },
+      {
+        "stream": "build/higher-corpus/nb4/streams/en_normcore_b.spxraw",
+        "oracle": "build/higher-corpus/nb4/oracle/en_normcore_b.pcm",
+        "frames": 404,
+        "inputSha256": "ac229ca8bca2f7c184c7abbf75210cce06262d449d16f81a7229ab027816258a",
+        "pcmSha256": "5f485a79d7a7cead31d9638da576af33fbaf33a584cb20fe164b2cc15056793c"
+      },
+      {
+        "stream": "build/higher-corpus/nb4/streams/en_portrait_a.spxraw",
+        "oracle": "build/higher-corpus/nb4/oracle/en_portrait_a.pcm",
+        "frames": 404,
+        "inputSha256": "a0aea7d9ff0dd88fde0917a5eb03107d7c3d539e8383af25f6e50eb5edbf89bf",
+        "pcmSha256": "5ef7e4bc6c75a381bfee38445334813d8cdada432475353b46040472b6cd3f6c"
+      },
+      {
+        "stream": "build/higher-corpus/nb4/streams/en_portrait_b.spxraw",
+        "oracle": "build/higher-corpus/nb4/oracle/en_portrait_b.pcm",
+        "frames": 404,
+        "inputSha256": "1d2bdcf37c6e531ff065096f314f328e6f894dbd0b94ab269442aeb9787ec642",
+        "pcmSha256": "50aed8a296573bf5a15b489246bfa73188f0831c5249491f0796b282f4e413ca"
+      },
+      {
+        "stream": "build/higher-corpus/nb4/streams/en_sense_a.spxraw",
+        "oracle": "build/higher-corpus/nb4/oracle/en_sense_a.pcm",
+        "frames": 404,
+        "inputSha256": "bfe75275b690550d88972bb4b13341cbcd0950e670d5ffd07cc2f07a81a1a701",
+        "pcmSha256": "52e0ab91d26467ebcfaa2e1a857b1dbf203c8a1f385e03238354a2d870ef17c2"
+      },
+      {
+        "stream": "build/higher-corpus/nb4/streams/en_sense_b.spxraw",
+        "oracle": "build/higher-corpus/nb4/oracle/en_sense_b.pcm",
+        "frames": 404,
+        "inputSha256": "15e31576b18b588cec8e250c1ccdadcbd290e526648e703624d32b650df6e50e",
+        "pcmSha256": "b09ac63bcfb7b8c9e6687f78cab5bd0a96f41d8afda1e88ab6704eab1c72bb9b"
+      },
+      {
+        "stream": "build/higher-corpus/nb4/streams/pitch-all_pitch_gains.spxraw",
+        "oracle": "build/higher-corpus/nb4/oracle/pitch-all_pitch_gains.pcm",
+        "frames": 4096,
+        "inputSha256": "fe1607b8d7786e89ca25d0bf7cd31ad3df215a0e15febc2d3687e9580da861fb",
+        "pcmSha256": "331fbe9aa3bb3e94afa236ecd76ea8f72981a7079b67d0c39aa7315b97a7d2c1"
+      },
+      {
+        "stream": "build/higher-corpus/nb4/streams/ru_pushkin_a.spxraw",
+        "oracle": "build/higher-corpus/nb4/oracle/ru_pushkin_a.pcm",
+        "frames": 404,
+        "inputSha256": "a62b1cf6fb8356d905abd7379ffe773e4a66006b1afb5afa6e504adaebe73437",
+        "pcmSha256": "a121a38899ca49666b8d79046eced312929a8f2c88ca9c5c094754f387eecf8a"
+      },
+      {
+        "stream": "build/higher-corpus/nb4/streams/ru_pushkin_b.spxraw",
+        "oracle": "build/higher-corpus/nb4/oracle/ru_pushkin_b.pcm",
+        "frames": 404,
+        "inputSha256": "c332a78de97c064b38ecc7c369f13e7511783178e5682cc750ed1e0ebc521ca4",
+        "pcmSha256": "d4cee80cce64ce8b38326c91256372887d368929a950c2d8e7b09095474db3ba"
+      },
+      {
+        "stream": "build/higher-corpus/nb4/streams/ru_russia_a.spxraw",
+        "oracle": "build/higher-corpus/nb4/oracle/ru_russia_a.pcm",
+        "frames": 405,
+        "inputSha256": "83fc278cab3a61bfc1a4be7201731fe3e763b5c0f8813719ced3cf3c813c6dce",
+        "pcmSha256": "0e2ea2916aa3fac0c057388f49d6177944253017ae53192d8dc786916eb26c6f"
+      },
+      {
+        "stream": "build/higher-corpus/nb4/streams/ru_russia_b.spxraw",
+        "oracle": "build/higher-corpus/nb4/oracle/ru_russia_b.pcm",
+        "frames": 404,
+        "inputSha256": "a73a5b93484ce2a819710c2cf75992dee48dcc8ea63f846049b1b907f8c99518",
+        "pcmSha256": "107e709f6029e683a8a4f28a06b500c9c378c9290bbc6e8cb0f2fdd020a063e8"
+      },
+      {
+        "stream": "build/higher-corpus/nb4/streams/ru_slutskaya_a.spxraw",
+        "oracle": "build/higher-corpus/nb4/oracle/ru_slutskaya_a.pcm",
+        "frames": 405,
+        "inputSha256": "391afa97cb39c4f8f9dbb46969e4f00b84d2778ff42434074f8c4cf4626df590",
+        "pcmSha256": "d4cdc61485c628b8db6eecbb2dda40cff47a39a7db897dc93ef15339e0d48640"
+      },
+      {
+        "stream": "build/higher-corpus/nb4/streams/ru_slutskaya_b.spxraw",
+        "oracle": "build/higher-corpus/nb4/oracle/ru_slutskaya_b.pcm",
+        "frames": 404,
+        "inputSha256": "3da179dd48a654665333945b09ae23ec03ecf4dedc2ff211d8159942f63f0501",
+        "pcmSha256": "ad536d71d2d83206c44b576c87ad3331c12d6ade11149777b4660eb620f63536"
+      },
+      {
+        "stream": "build/higher-corpus/nb4/streams/ru_square_a.spxraw",
+        "oracle": "build/higher-corpus/nb4/oracle/ru_square_a.pcm",
+        "frames": 404,
+        "inputSha256": "06435bffc04439ed908c239d00808d0bffffcb24be740c398e79cf351e16b8f5",
+        "pcmSha256": "dcdb9406448d1c15b897e0c58c6f36edc86b6572b12c0d5e063332b28748d162"
+      },
+      {
+        "stream": "build/higher-corpus/nb4/streams/ru_square_b.spxraw",
+        "oracle": "build/higher-corpus/nb4/oracle/ru_square_b.pcm",
+        "frames": 404,
+        "inputSha256": "fe249aeaef706a0c591226e1b295dbbd984105a57dcd49b6b4df1b73ebf9877b",
+        "pcmSha256": "f6afb9cff08ce9f218541a371c3077f509ee23c21f018f072b7d3a245b3e611f"
+      },
+      {
+        "stream": "build/higher-corpus/nb4/streams/zero-zero_gain_transitions.spxraw",
+        "oracle": "build/higher-corpus/nb4/oracle/zero-zero_gain_transitions.pcm",
+        "frames": 1024,
+        "inputSha256": "895a79f252c3453c84f19ab0540a0ee80de23279cd25a701c66c02f2a193f234",
+        "pcmSha256": "b3b749ee051a38fd7452e62666c100468f61d1e7a6db7d8397ef2eae0dce3bfa"
+      }
+    ],
+    "wb98": [
+      {
+        "stream": "build/wb-corpus/streams/coverage_lsp4096.spxraw",
+        "oracle": "build/wb-corpus/oracle/coverage_lsp4096.pcm",
+        "frames": 4096,
+        "inputSha256": "79a6732ecbc29011096689ad5d216a441e92136b2243c425cf30e0f127cd7388",
+        "pcmSha256": "0868a0ed088c4779e72fdd4526eaeea1ea0c31965b5b127fa42abc9e0af4b717"
+      },
+      {
+        "stream": "build/wb-corpus/streams/en_letter_a.spxraw",
+        "oracle": "build/wb-corpus/oracle/en_letter_a.pcm",
+        "frames": 404,
+        "inputSha256": "52fbfe841295001278f04fa48f7b061e2c8f59e0611243e86b57f2f881a53b34",
+        "pcmSha256": "9b742a65b3ab2ddc842c72ac9dd9a47198683536d7a09bcbc8f86592b63fb860"
+      },
+      {
+        "stream": "build/wb-corpus/streams/en_letter_b.spxraw",
+        "oracle": "build/wb-corpus/oracle/en_letter_b.pcm",
+        "frames": 405,
+        "inputSha256": "f06da38b1d078b02b14af5a5d74cc2e50152e480e905d9db7f90a439a46f0e95",
+        "pcmSha256": "6877c726825ffb77fb61d6994f74202f11be6bee0b577c6561219143468fb912"
+      },
+      {
+        "stream": "build/wb-corpus/streams/en_normcore_a.spxraw",
+        "oracle": "build/wb-corpus/oracle/en_normcore_a.pcm",
+        "frames": 404,
+        "inputSha256": "f1ca50e8818321514b81e9ac141575178499f9c721f15080b88952b98a276eac",
+        "pcmSha256": "a691dbc195648daccab1f8a6dae54f782b373c518b3673302fd3667da0ec3711"
+      },
+      {
+        "stream": "build/wb-corpus/streams/en_normcore_b.spxraw",
+        "oracle": "build/wb-corpus/oracle/en_normcore_b.pcm",
+        "frames": 404,
+        "inputSha256": "5c15df43161a608441eb283ce24ccd21e0e325325278c7d6800357c5dbe5abc6",
+        "pcmSha256": "14a8b6f036e21ecd14a477cfcc69ccab7b2694ed5d61b10b13bb7eb7b095b69c"
+      },
+      {
+        "stream": "build/wb-corpus/streams/en_portrait_a.spxraw",
+        "oracle": "build/wb-corpus/oracle/en_portrait_a.pcm",
+        "frames": 404,
+        "inputSha256": "6fc34f95087fe286c6d5544552cbd20fc30c983596db2f8975357c61c92a22a1",
+        "pcmSha256": "67263483e368217231d27d49fc4dfa01d0223bcb939be272cbba21a3b126d62d"
+      },
+      {
+        "stream": "build/wb-corpus/streams/en_portrait_b.spxraw",
+        "oracle": "build/wb-corpus/oracle/en_portrait_b.pcm",
+        "frames": 404,
+        "inputSha256": "9744a8e37286528d9a95b52ff99b2ac555ba1eab97c3a8aec21dedac2a763ca9",
+        "pcmSha256": "6f5c047c6a34213df040f2945b71ae44d0f47ddc00cfcf8c26175980db70db19"
+      },
+      {
+        "stream": "build/wb-corpus/streams/en_sense_a.spxraw",
+        "oracle": "build/wb-corpus/oracle/en_sense_a.pcm",
+        "frames": 404,
+        "inputSha256": "6bf25a83329a5c411695fd09daab6fbe596a9aa3ee54bd28f125e96268a62f99",
+        "pcmSha256": "9887b8aaed921dc3fa8950d1f1908dce5719edb94b5d1a0e5eba21da6342b2a5"
+      },
+      {
+        "stream": "build/wb-corpus/streams/en_sense_b.spxraw",
+        "oracle": "build/wb-corpus/oracle/en_sense_b.pcm",
+        "frames": 404,
+        "inputSha256": "7a7b3cec9597d5178fcd622585a80008309be51dfef9d91d9dbccc47eb189977",
+        "pcmSha256": "10187e59416a73e9b026fc5c280a28f7296fa90e4624d91096d8c4fe4379ee38"
+      },
+      {
+        "stream": "build/wb-corpus/streams/ru_pushkin_a.spxraw",
+        "oracle": "build/wb-corpus/oracle/ru_pushkin_a.pcm",
+        "frames": 404,
+        "inputSha256": "73b32cf3b4648b69d8685465f02e2c5890b137f259db779b1f1a32044897eba5",
+        "pcmSha256": "292b12b85dd7d4d13b5f4b003008e1a251ec9653ac1b55a340eefbb35fe7c219"
+      },
+      {
+        "stream": "build/wb-corpus/streams/ru_pushkin_b.spxraw",
+        "oracle": "build/wb-corpus/oracle/ru_pushkin_b.pcm",
+        "frames": 404,
+        "inputSha256": "ba277f31a2a9cd6c2107010e1a5d92b3296711e30b1e6bd50330399533b38cd5",
+        "pcmSha256": "9c774c20bb2773ec0405484c549141ffb9ddad37fefdc84c4fc73f881a9a69d0"
+      },
+      {
+        "stream": "build/wb-corpus/streams/ru_russia_a.spxraw",
+        "oracle": "build/wb-corpus/oracle/ru_russia_a.pcm",
+        "frames": 405,
+        "inputSha256": "1ffb3e29f6278f820d571a909c624f0e9787a56d4937669177f2ed536e0840eb",
+        "pcmSha256": "bb24775cc5c4752c65befc8fb6e0391767c67e37b70a8a4f7133daa14cc74aa0"
+      },
+      {
+        "stream": "build/wb-corpus/streams/ru_russia_b.spxraw",
+        "oracle": "build/wb-corpus/oracle/ru_russia_b.pcm",
+        "frames": 404,
+        "inputSha256": "b0396d20879dbbe5a8b4439ec46a867b8da6c5ae854459de60c6bfaa1c8a774c",
+        "pcmSha256": "b0d786a67a8a86d7594dccee802750e6dd58e39fb55415b401654ab2e232471a"
+      },
+      {
+        "stream": "build/wb-corpus/streams/ru_slutskaya_a.spxraw",
+        "oracle": "build/wb-corpus/oracle/ru_slutskaya_a.pcm",
+        "frames": 405,
+        "inputSha256": "92bde81a10792aeb72b20946a79e418652d6ddcfe51474150f1b6ec070a53484",
+        "pcmSha256": "362347830893d0c3011d1c787b9dbba7a7e37e314d2dd61cdcb41ce1f73d8c61"
+      },
+      {
+        "stream": "build/wb-corpus/streams/ru_slutskaya_b.spxraw",
+        "oracle": "build/wb-corpus/oracle/ru_slutskaya_b.pcm",
+        "frames": 404,
+        "inputSha256": "0680800d4b7bfb6eeb2ae3952b89be0976bfdcb675e0d8bf7f3fb0298d187d04",
+        "pcmSha256": "e896c2ea45a4671f06467b286e33cce2ce73a7761360cbaf9cb27b6782771cdd"
+      },
+      {
+        "stream": "build/wb-corpus/streams/ru_square_a.spxraw",
+        "oracle": "build/wb-corpus/oracle/ru_square_a.pcm",
+        "frames": 404,
+        "inputSha256": "8d7b4db85a4514de35cff121fdb9ca14bbfe07864e6576bcfbacf0f30063609b",
+        "pcmSha256": "4906b3c1955eb0aef18b281972dcd44a785a1d87d3f3866fd9db698f36adbbe5"
+      },
+      {
+        "stream": "build/wb-corpus/streams/ru_square_b.spxraw",
+        "oracle": "build/wb-corpus/oracle/ru_square_b.pcm",
+        "frames": 404,
+        "inputSha256": "a7adace52fd4819fac88996f38fd20ca43434bc53707f75205229c3a68b0159e",
+        "pcmSha256": "dfabeef03da87187e1d6536d2dc571ea5263ec805f8a59cd70867b2c05bde52a"
+      }
+    ],
+    "wb98-repeats": [
+      {
+        "stream": "build/wb-speed-repeats/streams/repeat_lsp_avr.spxraw",
+        "oracle": "build/wb-speed-repeats/oracle/repeat_lsp_avr.pcm",
+        "frames": 744,
+        "inputSha256": "8a2ea3f421aafc432113aaf7356c233d0471ee122ab3a5278323dfc20fb45b40",
+        "pcmSha256": "156036bb59978f8eb2af7234d165352baba6822605e87c2793db57d67dde9648"
+      }
+    ],
+    "wb128": [
+      {
+        "stream": "build/higher-corpus/wb128/streams/coverage_lsp4096.spxraw",
+        "oracle": "build/higher-corpus/wb128/oracle/coverage_lsp4096.pcm",
+        "frames": 4096,
+        "inputSha256": "78dbf14e5be9ae58a1e0a14ce23c1d1154ac8ae2f0fc25e0062fc2c294b1754c",
+        "pcmSha256": "eb95a1315a8fb0b214dc387050045526979c6d03c81a5fc4235b140924ee4bc1"
+      },
+      {
+        "stream": "build/higher-corpus/wb128/streams/en_letter_a.spxraw",
+        "oracle": "build/higher-corpus/wb128/oracle/en_letter_a.pcm",
+        "frames": 404,
+        "inputSha256": "deda89a1a272540609091b40d35a7a16b0d643e8b655d6cc66a4de801de3f21b",
+        "pcmSha256": "befc5e13b5681c95294b90ad1da4202a50dc8733ee9748bf7b5816f32f294e57"
+      },
+      {
+        "stream": "build/higher-corpus/wb128/streams/en_letter_b.spxraw",
+        "oracle": "build/higher-corpus/wb128/oracle/en_letter_b.pcm",
+        "frames": 405,
+        "inputSha256": "e459d874e596a770b8e829d31025810943a1368cb4df266e192f977e9677e594",
+        "pcmSha256": "ddf65c5c49ffe8e51ed346b3c67483932bff9fb2459b60f5d74e844788243b69"
+      },
+      {
+        "stream": "build/higher-corpus/wb128/streams/en_normcore_a.spxraw",
+        "oracle": "build/higher-corpus/wb128/oracle/en_normcore_a.pcm",
+        "frames": 404,
+        "inputSha256": "69956619b8935db389569da0e13787a8fb42ff35d1ee702e210d5cebeca02a4e",
+        "pcmSha256": "32a835876828f4de6bf1144d81e0d54d550b5f2e3814f34b278f4a3738b7422a"
+      },
+      {
+        "stream": "build/higher-corpus/wb128/streams/en_normcore_b.spxraw",
+        "oracle": "build/higher-corpus/wb128/oracle/en_normcore_b.pcm",
+        "frames": 404,
+        "inputSha256": "5e02b54b096ff786c094b0130357ef299527f1a95878c6c9f97ebfb3492f95ef",
+        "pcmSha256": "418dcafd85eb25282b1c4bd52f9c2ce9b87a44bdfd412e5fb773b5a650516629"
+      },
+      {
+        "stream": "build/higher-corpus/wb128/streams/en_portrait_a.spxraw",
+        "oracle": "build/higher-corpus/wb128/oracle/en_portrait_a.pcm",
+        "frames": 404,
+        "inputSha256": "c3b5d7366875c9fef041f4219521340881c25a1466f0aa26b4b10fa68c50f259",
+        "pcmSha256": "3c872c105ea945dd3be0ac65c1b520c85617a4c0c8cf344f6a6cd316fc59deb4"
+      },
+      {
+        "stream": "build/higher-corpus/wb128/streams/en_portrait_b.spxraw",
+        "oracle": "build/higher-corpus/wb128/oracle/en_portrait_b.pcm",
+        "frames": 404,
+        "inputSha256": "68c3ce2e9e2fbc98bd182265ecd0bb8abbdcd44414660593d7aff4622dedba90",
+        "pcmSha256": "da3c8685d7590ee9c145e1167154f8fadc355995368832542f05a05bb03dc5a2"
+      },
+      {
+        "stream": "build/higher-corpus/wb128/streams/en_sense_a.spxraw",
+        "oracle": "build/higher-corpus/wb128/oracle/en_sense_a.pcm",
+        "frames": 404,
+        "inputSha256": "03c4859af8c4d2cd162cd892a1b0c4ac8f995ec1698866391160bd10856b5751",
+        "pcmSha256": "406392d7cdc2c015750c036a043463172f88114d6f8fdc67015dc8b7d03a518c"
+      },
+      {
+        "stream": "build/higher-corpus/wb128/streams/en_sense_b.spxraw",
+        "oracle": "build/higher-corpus/wb128/oracle/en_sense_b.pcm",
+        "frames": 404,
+        "inputSha256": "8e5fecdeadcefed25d5325c8fe615a961197066f820afa1e526918f8d210761a",
+        "pcmSha256": "d9480e585ab56e1c966aab7ae03c0af21694070de6592be3cd4816c2671366a4"
+      },
+      {
+        "stream": "build/higher-corpus/wb128/streams/ru_pushkin_a.spxraw",
+        "oracle": "build/higher-corpus/wb128/oracle/ru_pushkin_a.pcm",
+        "frames": 404,
+        "inputSha256": "f5cddfedcbd1a8a980342e106962eb492df6ba26c399217743803b5ac2c9594b",
+        "pcmSha256": "ca18a0709d0af3243a2222e711371af1425bc6614d7825fec356aa72b83bc6bc"
+      },
+      {
+        "stream": "build/higher-corpus/wb128/streams/ru_pushkin_b.spxraw",
+        "oracle": "build/higher-corpus/wb128/oracle/ru_pushkin_b.pcm",
+        "frames": 404,
+        "inputSha256": "e7ca320a021736dcbd834f4c97fe0bf0c2c98c3cbce3f9af1df844563ea4ae1d",
+        "pcmSha256": "e0f54abb907e05138eea57e028356941371d9c853e2add68279f0492c37c9139"
+      },
+      {
+        "stream": "build/higher-corpus/wb128/streams/ru_russia_a.spxraw",
+        "oracle": "build/higher-corpus/wb128/oracle/ru_russia_a.pcm",
+        "frames": 405,
+        "inputSha256": "ab60a8931108a5c9f61318293aedf183ba17d13bd80b6682889d51dddfacf0c9",
+        "pcmSha256": "4554c9f863d1a328c85306642fd36afa94e5707f4f0df5eb384c6a2dbe3f746c"
+      },
+      {
+        "stream": "build/higher-corpus/wb128/streams/ru_russia_b.spxraw",
+        "oracle": "build/higher-corpus/wb128/oracle/ru_russia_b.pcm",
+        "frames": 404,
+        "inputSha256": "d7ef968fb6f997330863fd252586057641602c2b827a8deb16820d048f350d0d",
+        "pcmSha256": "e5636aac939a7646824580a7a14246f7cf2b2ca77678cac8d1e70f454f864c23"
+      },
+      {
+        "stream": "build/higher-corpus/wb128/streams/ru_slutskaya_a.spxraw",
+        "oracle": "build/higher-corpus/wb128/oracle/ru_slutskaya_a.pcm",
+        "frames": 405,
+        "inputSha256": "7c7eb737f42f15ab7942b69818f6831f6706a62e1fa31048559047330461a7cb",
+        "pcmSha256": "0b2b25f5bee092a40d8061099844b666c705a10efa7d08baf1b27af3d8b7e222"
+      },
+      {
+        "stream": "build/higher-corpus/wb128/streams/ru_slutskaya_b.spxraw",
+        "oracle": "build/higher-corpus/wb128/oracle/ru_slutskaya_b.pcm",
+        "frames": 404,
+        "inputSha256": "a41768503b41a6b61f2824eb16275c4adfb2c1bdf73643d9ddf557e7a215650e",
+        "pcmSha256": "fc3b6b2d32d8cce356f476b7560198ddad0a33e0bf6dbc0aee84f4225a740cff"
+      },
+      {
+        "stream": "build/higher-corpus/wb128/streams/ru_square_a.spxraw",
+        "oracle": "build/higher-corpus/wb128/oracle/ru_square_a.pcm",
+        "frames": 404,
+        "inputSha256": "1735b9dc4ab810d039fd95fd12503110d678e998cb872ffc9bf249d31bc46be3",
+        "pcmSha256": "24372c3e418807534258aa22175ece036e955037e23a92269e62508ce1a139e8"
+      },
+      {
+        "stream": "build/higher-corpus/wb128/streams/ru_square_b.spxraw",
+        "oracle": "build/higher-corpus/wb128/oracle/ru_square_b.pcm",
+        "frames": 404,
+        "inputSha256": "74688167a27f5a5adeb8e5efac28a7dfc245adf15939199f315bc68dcd3bf84c",
+        "pcmSha256": "215c149a0dd8fae43d27b9a1caeae92cf56e5ea07ab6bd650ec01126e24164e9"
+      }
+    ]
+  },
+  "pwmImageCounts": {
+    "nb8-normal": 31,
+    "nb8-load40": 31,
+    "nb11-normal": 2,
+    "nb11-load40": 2,
+    "wb98-normal": 16,
+    "wb98-load5": 2,
+    "wb128-normal": 48,
+    "wb128-load5": 2,
+    "wb98-load8": 16,
+    "wb128-load8": 48
+  },
+  "freshPwmImages": 198,
+  "reusedByteIdenticalCPlayerImages": 62,
+  "scalarDomain": "All 65536 signed16 angles, including wrapping/truncation edge cases",
+  "nbPcmExactToUntouchedXiph": true,
+  "wbPcmExactToExistingCompactProfile": true,
+  "full64TapXiphQmf": false,
+  "physicalBoardTested": false,
+  "candidates": {
+    "baseline": {},
+    "layout": {
+      "src/lsp_pair.S": "490863a2035ab81a1e2b28079d31c6bc84fb93c40b4268bb2192f7fbc79cdd22"
+    },
+    "cosine": {
+      "src/compact_lsp.c.inc": "7cb6fc12826485128e51568658bab483f3ddfae1a0e65ee86ad358721b9f27f6",
+      "src/lsp_angle.S": "6db233eb83405cebddb085c02a509639c79683e0b075d12b044a888c43847b42",
+      "src/nb3_lsp_angle.h": "bfe1d1c78c3849848d03747e210f7a294b7ba5f5ce6051f557f29db08c570ed0",
+      "tools/build.py": "76a0fcbd56f4c359fba3fd67fc0546dbaca5043c72fab481c0dba1ec113662a5"
+    },
+    "production": {
+      "src/compact_lsp.c.inc": "d902e393915c016f9fd0e351646d7f0bda00cd6a9b95c63c6ed7be56c7991811",
+      "src/lsp_pair.S": "490863a2035ab81a1e2b28079d31c6bc84fb93c40b4268bb2192f7fbc79cdd22",
+      "src/lsp_angle.S": "3e36107d58f9d76c9094664a3fb16b00d476fecebc6158d7cf981fa9e3869b5c",
+      "src/nb3_lsp_angle.h": "1c7b6f05e01a2067e8f07c7c342fdccf8232a209861a3d28f617b9eadd75203b",
+      "tools/build.py": "76a0fcbd56f4c359fba3fd67fc0546dbaca5043c72fab481c0dba1ec113662a5"
+    }
+  },
+  "sourceText": {
+    "490863a2035ab81a1e2b28079d31c6bc84fb93c40b4268bb2192f7fbc79cdd22": "/* Original project paired stages, classic AVR5/hardware MUL, GNU ABI.\n * p r25:24, q r23:22, fp r21:20, fq r19:18. Save r4..17/Y once;\n * retain q/fq in r4..7 across the first polynomial. Disjoint arrays,\n * p0/q0=2^20, p1/q1 divisible by64; signed30 inputs, signed16 roots.\n * The shared math body preserves T. CLT selects private RET after p;\n * SET selects the final restore/RET after q. T is call-clobbered scratch.\n * No C call, hardware IO or interrupt masking; both passes finish with\n * r1=0. Interrupt handlers must preserve interrupted r1 and SREG incl T.\n * Explicit C equations/selection: nb3_lsp_pair.h. Own saves16 + RCALL2 B. */\n#include \"lsp_stage_macros.S\"\n.section .text.speex_avr_lsp_pairs,\"ax\",@progbits\n.macro PAIR_PROLOGUE\n.irp r,4,5,6,7,8,9,10,11,12,13,14,15,16,17,28,29\n    push \\r\n.endr\n    movw r4,r22\n    movw r6,r18\n    movw r16,r20\n    movw r28,r24\n.endm\n.global speex_avr_lsp_pair2\n.type speex_avr_lsp_pair2,@function\nspeex_avr_lsp_pair2:\n    PAIR_PROLOGUE\n    clt\n    rcall .Lpair_body2\n    movw r28,r4\n    movw r16,r6\n    set\n    rjmp .Lpair_body2\n.size speex_avr_lsp_pair2,.-speex_avr_lsp_pair2\n.global speex_avr_lsp_pair3\n.type speex_avr_lsp_pair3,@function\nspeex_avr_lsp_pair3:\n    PAIR_PROLOGUE\n    clt\n    rcall .Lpair_body3\n    movw r28,r4\n    movw r16,r6\n    set\n    rjmp .Lpair_body3\n.size speex_avr_lsp_pair3,.-speex_avr_lsp_pair3\n.global speex_avr_lsp_pair4\n.type speex_avr_lsp_pair4,@function\nspeex_avr_lsp_pair4:\n    PAIR_PROLOGUE\n    clt\n    rcall .Lpair_body4\n    movw r28,r4\n    movw r16,r6\n    set\n    rjmp .Lpair_body4\n.size speex_avr_lsp_pair4,.-speex_avr_lsp_pair4\n.Lpair_body2:\n    STAGE_START2\n    rjmp .Lpair_tail2\n.Lpair_body3:\n    STAGE_START3\n    rjmp .Lpair_from3\n.Lpair_body4:\n    STAGE_START4\n.Lpair_from3:\n    STAGE_FROM3\n.Lpair_tail2:\n    STAGE_TAIL2\n    brts .Lpair_restore\n    ret\n.Lpair_restore:\n.irp r,29,28,17,16,15,14,13,12,11,10,9,8,7,6,5,4\n    pop \\r\n.endr\n    ret\n",
+    "7cb6fc12826485128e51568658bab483f3ddfae1a0e65ee86ad358721b9f27f6": "/* Exact symmetric form of the Xiph fixed-point polynomial recurrence.\n * Each polynomial is palindromic; retain coefficients 0..5 of order 10.\n * Reversed terms use identical rounded products and modulo-32 additions.\n * All four per-frame LSP interpolations/conversions are retained. Peel the\n * symmetric endpoints and p[0]==2^20 product; constant stages remove bounds\n * branches and pointer arithmetic in exchange for additional Flash. */\n#include \"speex_platform.h\"\n#include \"nb3_lsp_stage.h\"\n#include \"nb3_lsp_first.h\"\n#include \"nb3_lsp_pair.h\"\n#define STAGE_ATTR SPEEX_NB3_STAGE\n#include \"nb3_lsp_angle.h\"\n#if SPEEX_NB3_USE_AVR_ASM\n#define lsp_angle speex_nb3_lsp_angle\n#else\nstatic STAGE_ATTR spx_word16_t lsp_angle(spx_lsp_t angle) {return ANGLE2X(angle);}\n#endif\n/* The first two roots give p1=-(a+b)*64 and p2=2^21+ceil(a*b/256).\n * Fold the constant and ceil bias before the byte-aligned >>8. The sum\n * stays inside signed32 for all signed16 a/b, including both extrema. */\nstatic STAGE_ATTR void lsp_first(spx_word32_t *p,spx_word16_t a,spx_word16_t b)\n{\n    speex_nb3_lsp_first(p,a,b);\n}\n#define DEFINE_STAGE(s) static STAGE_ATTR void lsp_stage##s(spx_word32_t *p, spx_word16_t f) {speex_nb3_lsp_stage##s(p,f);}\nDEFINE_STAGE(2)\nDEFINE_STAGE(3)\nDEFINE_STAGE(4)\n#undef DEFINE_STAGE\n#if SPEEX_NB3_USE_AVR_ASM\n#define LSP_PAIR(n,p,q,fp,fq) speex_nb3_lsp_pair##n(p,q,fp,fq)\n#else\n#define LSP_PAIR(n,p,q,fp,fq) lsp_stage##n(p,fp);lsp_stage##n(q,fq)\n#endif\n#undef STAGE_ATTR\n#include \"nb3_lsp_finish.h\"\n/* The generic converter retains the explicitly selectable C body. The fused\n * decoder uses the architecture-selected kernel through its shared stage. */\nstatic SPEEX_NB3_ALWAYS_INLINE void lsp_finish10_c(const spx_word32_t *restrict p,\n    const spx_word32_t *restrict q,spx_coef_t *restrict ak)\n{\n    speex_nb3_lsp_finish10_c(p,q,ak);\n}\n\nstatic SPEEX_NB3_STAGE void lsp_finish10(const spx_word32_t *restrict p,\n    const spx_word32_t *restrict q,spx_coef_t *restrict ak)\n{\n    speex_nb3_lsp_finish10(p,q,ak);\n}\n\nSPEEX_NB3_HOT void lsp_to_lpc(const spx_lsp_t *freq, spx_coef_t *ak, int lpcrdr, char *stack)\n{\n    spx_word32_t p[6],q[6];\n    (void)lpcrdr;(void)stack;\n    p[0]=q[0]=1048576;\n    lsp_first(p,lsp_angle(freq[0]),lsp_angle(freq[2]));\n    lsp_first(q,lsp_angle(freq[1]),lsp_angle(freq[3]));\n#define STAGE(s) LSP_PAIR(s,p,q,lsp_angle(freq[2*s]),lsp_angle(freq[2*s+1]))\n    STAGE(2); STAGE(3); STAGE(4);\n#undef STAGE\n    lsp_finish10_c(p,q,ak);\n}\n\n#include \"nb3_interpolate.h\"\n/* The output area first holds only three center frequencies. Consume all\n * of them in the polynomial stages before lsp_finish10 writes coefficients.\n * raw/delta/ak are disjoint. ASM requires the normal explicit target opt-in;\n * its advance operation has the selectable C implementation in the header. */\nSPEEX_NB3_STAGE void speex_nb3_interpolate_lpc(\n    int16_t *restrict raw,const int16_t *restrict delta,int16_t *restrict ak)\n{\n    spx_word32_t p[6],q[6];\n    speex_nb3_advance_codebook(raw,delta,ak);\n    p[0]=q[0]=1048576;\n    lsp_first(p,lsp_angle(raw[0]),lsp_angle(raw[2]));\n    lsp_first(q,lsp_angle(raw[1]),lsp_angle(ak[0]));\n    LSP_PAIR(2,p,q,lsp_angle(ak[1]),lsp_angle(ak[2]));\n    LSP_PAIR(3,p,q,lsp_angle(raw[6]),lsp_angle(raw[7]));\n    LSP_PAIR(4,p,q,lsp_angle(raw[8]),lsp_angle(raw[9]));\n    lsp_finish10(p,q,ak);\n}\n\n#if SPEEX_ENABLE_WB1\nvoid speex_wb_lsp8(const spx_lsp_t *freq,spx_coef_t *ak)\n{\n    spx_word32_t p[5],q[5],previous_p=0,previous_q=0;\n    int j;\n    p[0]=q[0]=1048576;\n    lsp_first(p,lsp_angle(freq[0]),lsp_angle(freq[2]));\n    lsp_first(q,lsp_angle(freq[1]),lsp_angle(freq[3]));\n    LSP_PAIR(2,p,q,lsp_angle(freq[4]),lsp_angle(freq[5]));\n    LSP_PAIR(3,p,q,lsp_angle(freq[6]),lsp_angle(freq[7]));\n    for(j=1;j<=8;j++) {\n        int index=j<=4?j:8-j;\n        spx_word32_t a=PSHR32(p[index]+previous_p+q[index]-previous_q,8);\n        previous_p=p[index];previous_q=q[index];\n        if(a< -32767)a=-32767;if(a>32767)a=32767;ak[j-1]=(int16_t)a;\n    }\n}\n#endif\n\n#undef LSP_PAIR\n",
+    "6db233eb83405cebddb085c02a509639c79683e0b075d12b044a888c43847b42": "/* Exact ANGLE2X leaf, classic AVR5/MUL, GNU ABI. x/result r25:24.\n * Call-clobbered registers only, own stack0, no memory or hardware IO.\n * Original P13 rounding/casts survive. r22 stays zero; MUL's r1 is\n * private until the external RET. T retains the reflected-half flag.\n * All MULSU operands stay in r16..23. Full signed16 inputs; C equations\n * and selector: nb3_lsp_angle.h. y r19:18, coefficient r21:20. */\n.macro ANGLE_WORD_BIAS bias,dest=20\n    subi r25,lo8(-((\\bias)>>8))\n    sbci r26,hi8(-((\\bias)>>8))\n    sbci r27,hlo8(-((\\bias)>>8))\n    .rept 3\n    lsl r25\n    rol r26\n    rol r27\n    .endr\n    movw \\dest,r26\n.endm\n.section .text.speex_avr_lsp_angle,\"ax\",@progbits\n.global speex_avr_lsp_angle\n.type speex_avr_lsp_angle,@function\nspeex_avr_lsp_angle:\n    cpi r24,lo8(12868)\n    ldi r18,hi8(12868)\n    cpc r25,r18\n    clt\n    brlt .Langle_folded\n    set\n    ldi r18,lo8(25736)\n    ldi r19,hi8(25736)\n    sub r18,r24\n    sbc r19,r25\n    movw r24,r18\n.Langle_folded:\n    movw r18,r24\n    clr r22\n    /* Three-MUL signed square; double the cross term in 17 bits. */\n    muls r19,r19\n    movw r26,r0\n    mul r18,r18\n    movw r24,r0\n    mulsu r19,r18\n    sbc r23,r23\n    lsl r0\n    rol r1\n    rol r23\n    add r25,r0\n    adc r26,r1\n    adc r27,r23\n    ANGLE_WORD_BIAS 4096,18\n    /* a=340+P13(-10*y), always 300..380 for signed16 y.\n     * Only product bits13..20 are needed; its result high byte is 1. */\n    ldi r20,lo8(-10)\n    mulsu r20,r18\n    movw r24,r0\n    sbc r26,r26\n    muls r20,r19\n    add r25,r0\n    adc r26,r1\n    subi r25,lo8(-(0x2a9000>>8))\n    sbci r26,hi8(-(0x2a9000>>8))\n    .rept 3\n    lsl r25\n    rol r26\n    .endr\n    mov r20,r26\n    ldi r21,1\n    /* y*(256+a_low): two MULs plus an exact signed y<<8. */\n    mul r18,r20\n    movw r24,r0\n    mulsu r19,r20\n    sbc r27,r27\n    mov r26,r1\n    add r25,r0\n    adc r26,r22\n    adc r27,r22\n    sbrc r19,7\n    dec r27\n    add r25,r18\n    adc r26,r19\n    adc r27,r22\n    ANGLE_WORD_BIAS 0xfe001000\n    /* Final full signed16 product. */\n    muls r19,r21\n    movw r26,r0\n    mul r18,r20\n    movw r24,r0\n    mulsu r19,r20\n    sbc r27,r22\n    add r25,r0\n    adc r26,r1\n    adc r27,r22\n    mulsu r21,r18\n    sbc r27,r22\n    add r25,r0\n    adc r26,r1\n    adc r27,r22\n    /* K1 enters the bias. Extract bits11..26 then clear the two bits\n     * discarded by original P13 before its final word shift by two. */\n    subi r25,lo8(-(0x04001000>>8))\n    sbci r26,hi8(-(0x04001000>>8))\n    sbci r27,hlo8(-(0x04001000>>8))\n    .rept 3\n    lsr r27\n    ror r26\n    ror r25\n    .endr\n    andi r25,252\n    mov r24,r25\n    mov r25,r26\n    brtc .Langle_done\n    com r24\n    com r25\n    adiw r24,1\n.Langle_done:\n    clr r1\n    ret\n.size speex_avr_lsp_angle,.-speex_avr_lsp_angle\n",
+    "bfe1d1c78c3849848d03747e210f7a294b7ba5f5ce6051f557f29db08c570ed0": "/* Exact Xiph 1.2.1 ANGLE2X, full signed16 input domain.\n * Polynomial/rounding adapted from math_approx.h, Jean-Marc Valin;\n * BSD terms in vendor/speex-1.2.1/COPYING. No table or hardware access. */\n#ifndef MICROMUSIC_NB3_LSP_ANGLE_H\n#define MICROMUSIC_NB3_LSP_ANGLE_H\n#include \"speex_platform.h\"\nstatic SPEEX_NB3_ALWAYS_INLINE int16_t speex_nb3_lsp_angle_c(int16_t x)\n{\n    uint8_t negative=x>=12868;\n    if(negative)x=(int16_t)(25736-(int32_t)x);\n    int16_t y=(int16_t)(((int32_t)x*x+4096)>>13);\n    int16_t a=(int16_t)(340+((4096-10*(int32_t)y)>>13));\n    int16_t b=(int16_t)(-4096+(((int32_t)y*a+4096)>>13));\n    int32_t p=((int32_t)y*b+4096)>>13;\n    int16_t c=(int16_t)(negative?-8192-p:8192+p);\n    return (int16_t)((uint16_t)c<<2);\n}\n#if SPEEX_NB3_USE_AVR_ASM\nextern SPEEX_NB3_CONST int16_t speex_avr_lsp_angle(int16_t);\n#endif\nstatic SPEEX_NB3_ALWAYS_INLINE int16_t speex_nb3_lsp_angle(int16_t x)\n{\n#if SPEEX_NB3_USE_AVR_ASM\n    return speex_avr_lsp_angle(x);\n#else\n    return speex_nb3_lsp_angle_c(x);\n#endif\n}\n#endif\n",
+    "76a0fcbd56f4c359fba3fd67fc0546dbaca5043c72fab481c0dba1ec113662a5": "#!/usr/bin/env python3\n\"\"\"Build the pinned fixed-point Xiph decoder without autotools or downloads.\"\"\"\nimport argparse\nimport hashlib\nimport json\nimport os\nfrom pathlib import Path\nimport shutil\nimport subprocess\nimport sys\nsys.path.insert(0, str(Path(__file__).resolve().parent))\nimport apply_profile\n\nROOT = Path(__file__).resolve().parents[1]\nVENDOR = ROOT / 'vendor/speex-1.2.1'\nSOURCES = '''bits cb_search exc_10_16_table exc_10_32_table exc_20_32_table\nexc_5_256_table exc_5_64_table exc_8_128_table filters gain_table gain_table_lbr\nlpc lsp lsp_tables_nb ltp modes nb_celp quant_lsp speex speex_callbacks'''.split()\nDEFINES = ['FIXED_POINT', 'DISABLE_ENCODER', 'DISABLE_WIDEBAND', 'DISABLE_VBR',\n           'DISABLE_FLOAT_API', 'DISABLE_WARNINGS', 'DISABLE_NOTIFICATIONS',\n           'RELEASE', 'EXPORT=']\n\n\ndef verify_sources():\n    for directory, filename in [(VENDOR, 'UPSTREAM.json'),\n                                (ROOT, 'handoff/import-manifest.json')]:\n        for item in json.loads((directory / filename).read_text(encoding='utf-8'))['files']:\n            data = (directory / item['path']).read_bytes()\n            if hashlib.sha256(data).hexdigest() != item['sha256']:\n                raise RuntimeError('Source hash mismatch: ' + item['path'])\n\n\ndef run(args, cwd=None):\n    subprocess.run([str(a) for a in args], check=True, cwd=cwd)\n\n\ndef prepare(variant):\n    verify_sources()\n    output = ROOT / 'build' / variant\n    source = output / 'source'\n    shutil.copytree(VENDOR, source, dirs_exist_ok=True)\n    (source / 'include/speex/speex_config_types.h').write_text(\n        '#include <stdint.h>\\n'\n        'typedef int16_t spx_int16_t;\\ntypedef uint16_t spx_uint16_t;\\n'\n        'typedef int32_t spx_int32_t;\\ntypedef uint32_t spx_uint32_t;\\n', encoding='utf-8')\n    if variant != 'reference':\n        scripts = ROOT / 'handoff/upstream/tools'\n        run([sys.executable, scripts / 'apply_upstream_port.py', source])\n        run([sys.executable, scripts / 'apply_tight_exc.py', source])\n    if variant == 'profile':\n        apply_profile.apply(source)\n    return output, source\n\n\ndef host(compiler, variant, enable_nb4=False):\n    output, source = prepare(variant)\n    definitions = DEFINES.copy()\n    if variant != 'reference':\n        definitions.append('SPEEX_AVR_COMPACT_LSP')\n    if variant in ('tight', 'profile'):\n        definitions.append('SPEEX_AVR_TIGHT_EXC')\n    if variant == 'profile':\n        definitions.append('SPEEX_AVR_PROFILE')\n        definitions.append('SPEEX_ENABLE_NB4='+str(int(enable_nb4)))\n    sources = SOURCES if variant != 'profile' else PROFILE_SOURCES\n    executable = output / ('decode.exe' if os.name == 'nt' else 'decode')\n    # Upstream ALIGN casts pointers to long only to examine low alignment bits;\n    # Windows has 32-bit long even in a 64-bit process. Keep the oracle intact.\n    run([compiler, '-O2', '-fwrapv', '-fno-strict-aliasing',\n         '-Wno-pointer-to-int-cast', '-D_CRT_SECURE_NO_WARNINGS',\n         *['-D' + d for d in definitions],\n         '-I' + str(source / 'include'), '-I' + str(source / 'libspeex'),\n         '-I' + str(ROOT / 'src'),\n         *[source / 'libspeex' / (s + '.c') for s in sources],\n         *([ROOT / 'src/speex_avr.c', ROOT / 'src/bits.c'] if variant == 'profile' else []),\n         ROOT / 'tests/decode.c', '-o', executable,\n         *([] if os.name == 'nt' else ['-lm'])])\n    return executable\n\n\nPROFILE_SOURCES = '''cb_search exc_10_32_table exc_8_128_table filters gain_table_lbr lsp\nlsp_tables_nb ltp nb_celp quant_lsp'''.split()\n\n\ndef verify_primitives(compiler):\n    output = ROOT / 'build/profile'\n    reference = ROOT / 'build/reference/source'\n    source = output / 'source'\n    flags = ['-O2', '-fwrapv', '-fno-strict-aliasing', '-Wno-pointer-to-int-cast',\n             *['-D' + d for d in DEFINES], '-I' + str(source / 'include'),\n             '-I' + str(source / 'libspeex'), '-I' + str(ROOT / 'src')]\n    obj = output / 'reference-lsp.o'\n    run([compiler, *flags, '-Dlsp_to_lpc=reference_lsp', '-Dlsp_interpolate=reference_interpolate',\n         '-c', reference / 'libspeex/lsp.c', '-o', obj])\n    executable = output / ('primitives.exe' if os.name == 'nt' else 'primitives')\n    run([compiler, *flags, '-DSPEEX_AVR_COMPACT_LSP', obj, source / 'libspeex/lsp.c',\n         source / 'libspeex/quant_lsp.c',source / 'libspeex/lsp_tables_nb.c',\n         ROOT / 'src/bits.c', ROOT / 'tests/primitives.c', '-o', executable])\n    run([executable])\n    executable = output / ('iir-direct.exe' if os.name == 'nt' else 'iir-direct')\n    run([compiler, *flags, ROOT / 'tests/iir_direct.c', '-o', executable])\n    run([executable])\n\n\nASM_SOURCES = ['lpc_dot.S', 'pitch_add.S', 'innovation.S', 'q14.S', 'lsp_advance.S', 'lsp_finish.S', 'lsp_stage.S', 'lsp_pair.S', 'lsp_angle.S', 'lsp_first.S']\n\n\ndef export_c(destination, enable_nb4=False):\n    \"\"\"Export a self-contained C library, without a test main or AVR player.\"\"\"\n    destination = destination.resolve()\n    # Never merge generated files into user source directories or an older\n    # package: every export gets a fresh reviewable directory, without deletes.\n    if destination.exists():\n        raise ValueError('Export destination must not exist: ' + str(destination))\n    _, source = prepare('profile')\n    destination.mkdir(parents=True)\n    shutil.copytree(source / 'include', destination / 'include')\n    private = destination / 'src'\n    private.mkdir()\n    for path in (source / 'libspeex').glob('*.h'):\n        shutil.copyfile(path, private / path.name)\n    for path in (ROOT / 'src').iterdir():\n        if path.suffix == '.h' or path.name.endswith('.c.inc') or path.name == 'short_pitch_kernel.inc':\n            shutil.copyfile(path, private / path.name)\n    for name in ['speex_nb.h', 'speex_nb3.h', 'speex_avr.h']:\n        shutil.copyfile(ROOT / 'src' / name, destination / 'include' / name)\n    sources = []\n    for name in PROFILE_SOURCES:\n        shutil.copyfile(source / 'libspeex' / (name + '.c'), private / (name + '.c'))\n        sources.append('src/' + name + '.c')\n    for name in ['speex_avr.c', 'bits.c']:\n        shutil.copyfile(ROOT / 'src' / name, private / name)\n        sources.append('src/' + name)\n    definitions = DEFINES + ['SPEEX_AVR_COMPACT_LSP', 'SPEEX_AVR_TIGHT_EXC',\n        'SPEEX_AVR_PROFILE', 'SPEEX_NB3_ENABLE_ASM=0', 'SPEEX_NB3_CHECK_SCRATCH=0']\n    if enable_nb4:definitions.append('SPEEX_ENABLE_NB4=1')\n    (destination / 'sources.json').write_text(json.dumps({'backend': 'c',\n        'cStandard': 'c11', 'sources': sources, 'includeDirectories': ['include', 'src'],\n        'definitions': definitions,\n        'gccClangFlags': ['-fwrapv', '-fno-strict-aliasing', '-ffunction-sections', '-fdata-sections']\n        }, indent=2) + '\\n', encoding='utf-8')\n    shutil.copyfile(ROOT / 'tools/portable-CMakeLists.txt', destination / 'CMakeLists.txt')\n    if enable_nb4:\n        with (destination/'CMakeLists.txt').open('a',encoding='utf-8') as f:f.write('\\ntarget_compile_definitions(speex_nb3 PUBLIC SPEEX_ENABLE_NB4=1)\\n')\n    shutil.copyfile(VENDOR / 'COPYING', destination / 'COPYING')\n    shutil.copyfile(ROOT / 'PORTING.md', destination / 'PORTING.md')\n    manifest = {p.relative_to(destination).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()\n                for p in sorted(destination.rglob('*')) if p.is_file()}\n    (destination / 'SHA256.json').write_text(json.dumps(manifest, indent=2) + '\\n', encoding='utf-8')\n    return destination\n\n\ndef avr(compiler, packet_file=None, frame_load_cycles=0, backend='c', packet_bytes=None, enable_nb4=None):\n    if backend not in ('asm', 'c'):\n        raise ValueError('Unknown arithmetic backend: ' + backend)\n    if packet_bytes not in (None,20,28):\n        raise ValueError('NB test packet width must be 20 or 28 bytes')\n    width=packet_bytes or 20\n    if not 0 <= frame_load_cycles <= 320000 or (frame_load_cycles and packet_file is None):\n        raise ValueError('Frame load requires a player stream and 0..320000 cycles')\n    output, source = prepare('profile')\n    definitions = DEFINES + ['SPEEX_AVR_COMPACT_LSP', 'SPEEX_AVR_TIGHT_EXC',\n                             'SPEEX_AVR_PROFILE', 'SPEEX_AVR_FAST_MUL',\n                             'SPEEX_NB3_ENABLE_ASM=' + str(int(backend == 'asm'))]\n    name = 'speex-test'\n    main = ROOT / 'tests/avr_decode.c'\n    if packet_file is not None:\n        data = packet_file.read_bytes()\n        mode=data[0]>>3 if data else -1\n        detected={3:20,4:28}.get(mode,0)\n        if not detected or (packet_bytes is not None and detected!=packet_bytes) or len(data)%detected or len(data)>32760 or any(data[i]>>3!=mode for i in range(0,len(data),detected)):\n            raise ValueError('Expected uniform raw NB3/20-byte or NB4/28-byte packets fitting AVR Flash')\n        width=detected\n        output = ROOT / 'build/player'\n        output.mkdir(parents=True, exist_ok=True)\n        rows = [','.join(str(v) for v in data[i:i+width]) for i in range(0, len(data), width)]\n        (output / 'sample.h').write_text('#define SPEEX_SAMPLE_PACKET_BYTES '+str(width)+'\\n#define SPEEX_SAMPLE_FRAMES ' + str(len(data)//width) +\n            '\\nstatic const uint8_t sample_data[] PROGMEM = {\\n' + ',\\n'.join(rows) + '\\n};\\n', encoding='utf-8')\n        (output / 'input.json').write_text(json.dumps({'file': packet_file.name,\n            'sha256': hashlib.sha256(data).hexdigest(), 'frames': len(data)//width,'packetBytes':width,\n            'frameLoadCycles': frame_load_cycles}, indent=2) + '\\n', encoding='utf-8')\n        name = 'speex-player'\n        main = ROOT / 'src/player.c'\n        definitions.append('SPEEX_AVR_OUTPUT_HOOK')\n        if frame_load_cycles:\n            definitions.append('SPEEX_AVR_FRAME_LOAD_CYCLES=' + str(frame_load_cycles))\n    enabled=width==28 if enable_nb4 is None else bool(enable_nb4)\n    if width==28 and not enabled:raise ValueError('28-byte packets require the NB4 feature')\n    definitions+=['SPEEX_TEST_PACKET_BYTES='+str(width),'SPEEX_ENABLE_NB4='+str(int(enabled))]\n    # Share repeated register saves/restores; shorten in-range calls and jumps.\n    flags = ['-std=c11', '-mmcu=atmega328p', '-mcall-prologues', '-mrelax',\n             '-Os', '-flto', '-fwrapv', '-fno-strict-aliasing',\n             '-ffunction-sections', '-fdata-sections', '-fstack-usage',\n             *['-D' + d for d in definitions],\n             '-I' + str(source / 'include'), '-I' + str(source / 'libspeex'),\n             '-I' + str(ROOT / 'src'), '-I' + str(output)]\n    executable = output / (name + '.elf')\n    run([compiler, *flags,\n         *[source / 'libspeex' / (s + '.c') for s in PROFILE_SOURCES],\n         ROOT / 'src/speex_avr.c', ROOT / 'src/bits.c',\n         *([ROOT / 'src' / s for s in ASM_SOURCES] if backend == 'asm' else []), main,\n         '-Wl,--gc-sections,-Map=' + str(output / (name + '.map')), '-o', executable], cwd=output)\n    prefix = str(Path(compiler).with_name('avr-'))\n    extension = '.exe' if str(compiler).endswith('.exe') else ''\n    run([prefix + 'objcopy' + extension, '-O', 'ihex', '-R', '.eeprom', executable, output / (name + '.hex')])\n    run([prefix + 'objcopy' + extension, '-O', 'binary', '-R', '.eeprom', executable, output / (name + '.bin')])\n    run([prefix + 'size' + extension, '-C', '--mcu=atmega328p', executable])\n    symbols = subprocess.check_output([prefix + 'nm' + extension, '-n', str(executable)], text=True)\n    (output / 'symbols.txt').write_text(symbols, encoding='utf-8')\n    (output / 'backend.json').write_text(json.dumps({'backend': backend,'packetBytes':width,'nb4Enabled':enabled,\n        'handwrittenAssembly': backend == 'asm',\n        'binarySha256': hashlib.sha256((output / (name + '.bin')).read_bytes()).hexdigest()\n        }, indent=2) + '\\n', encoding='utf-8')\n    return executable\n\n\nif __name__ == '__main__':\n    parser = argparse.ArgumentParser(description=__doc__)\n    parser.add_argument('--cc', default=os.environ.get('CC', 'clang'))\n    parser.add_argument('--variant', choices=['reference', 'compact', 'tight', 'profile'], default='reference')\n    parser.add_argument('--avr-gcc', help='Build the ATmega328P validation firmware instead of the host decoder')\n    parser.add_argument('--backend', choices=['asm', 'c'], default=None,\n                        help='AVR arithmetic backend (default c); asm explicitly enables AVR assembly')\n    parser.add_argument('--export-c', type=Path,\n                        help='Export a self-contained portable C/CMake library to a new directory')\n    parser.add_argument('--player', type=Path, help='Embed a uniform NB3/NB4 raw stream and build the PWM player (requires --avr-gcc)')\n    parser.add_argument('--packet-bytes',type=int,choices=[20,28],help='Bare AVR mailbox width; player width is inferred')\n    parser.add_argument('--enable-nb4',action='store_true',default=None,help='Enable NB 11 kbit/s (automatic for 28-byte AVR input)')\n    parser.add_argument('--frame-load-cycles', type=int, default=0,\n                        help='Inject this many extra CPU cycles per player frame to verify headroom (test only)')\n    args = parser.parse_args()\n    if args.export_c:\n        if args.avr_gcc or args.player or args.frame_load_cycles or args.backend == 'asm':\n            parser.error('--export-c creates a C library and cannot build AVR firmware')\n        print(export_c(args.export_c,bool(args.enable_nb4)))\n        sys.exit(0)\n    if args.player and not args.avr_gcc:\n        parser.error('--player requires --avr-gcc')\n    if args.frame_load_cycles and not (args.player and args.avr_gcc):\n        parser.error('--frame-load-cycles requires --player and --avr-gcc')\n    if args.backend == 'asm' and not args.avr_gcc:\n        parser.error('The asm backend requires --avr-gcc')\n    print(avr(args.avr_gcc, args.player, args.frame_load_cycles, args.backend or 'c',args.packet_bytes,args.enable_nb4)\n          if args.avr_gcc else host(args.cc, args.variant,bool(args.enable_nb4)))\n",
+    "d902e393915c016f9fd0e351646d7f0bda00cd6a9b95c63c6ed7be56c7991811": "/* Exact symmetric form of the Xiph fixed-point polynomial recurrence.\n * Each polynomial is palindromic; retain coefficients 0..5 of order 10.\n * Reversed terms use identical rounded products and modulo-32 additions.\n * All four per-frame LSP interpolations/conversions are retained. Peel the\n * symmetric endpoints and p[0]==2^20 product; constant stages remove bounds\n * branches and pointer arithmetic in exchange for additional Flash. */\n#include \"speex_platform.h\"\n#include \"nb3_lsp_stage.h\"\n#include \"nb3_lsp_first.h\"\n#include \"nb3_lsp_pair.h\"\n#define STAGE_ATTR SPEEX_NB3_STAGE\n#if SPEEX_NB3_USE_AVR_ASM\n#include \"nb3_lsp_angle.h\"\n#define lsp_angle speex_nb3_lsp_angle\n#else\nstatic STAGE_ATTR spx_word16_t lsp_angle(spx_lsp_t angle) {return ANGLE2X(angle);}\n#endif\n/* The first two roots give p1=-(a+b)*64 and p2=2^21+ceil(a*b/256).\n * Fold the constant and ceil bias before the byte-aligned >>8. The sum\n * stays inside signed32 for all signed16 a/b, including both extrema. */\nstatic STAGE_ATTR void lsp_first(spx_word32_t *p,spx_word16_t a,spx_word16_t b)\n{\n    speex_nb3_lsp_first(p,a,b);\n}\n#define DEFINE_STAGE(s) static STAGE_ATTR void lsp_stage##s(spx_word32_t *p, spx_word16_t f) {speex_nb3_lsp_stage##s(p,f);}\nDEFINE_STAGE(2)\nDEFINE_STAGE(3)\nDEFINE_STAGE(4)\n#undef DEFINE_STAGE\n#if SPEEX_NB3_USE_AVR_ASM\n#define LSP_PAIR(n,p,q,fp,fq) speex_nb3_lsp_pair##n(p,q,fp,fq)\n#else\n#define LSP_PAIR(n,p,q,fp,fq) lsp_stage##n(p,fp);lsp_stage##n(q,fq)\n#endif\n#undef STAGE_ATTR\n#include \"nb3_lsp_finish.h\"\n/* The generic converter retains the explicitly selectable C body. The fused\n * decoder uses the architecture-selected kernel through its shared stage. */\nstatic SPEEX_NB3_ALWAYS_INLINE void lsp_finish10_c(const spx_word32_t *restrict p,\n    const spx_word32_t *restrict q,spx_coef_t *restrict ak)\n{\n    speex_nb3_lsp_finish10_c(p,q,ak);\n}\n\nstatic SPEEX_NB3_STAGE void lsp_finish10(const spx_word32_t *restrict p,\n    const spx_word32_t *restrict q,spx_coef_t *restrict ak)\n{\n    speex_nb3_lsp_finish10(p,q,ak);\n}\n\nSPEEX_NB3_HOT void lsp_to_lpc(const spx_lsp_t *freq, spx_coef_t *ak, int lpcrdr, char *stack)\n{\n    spx_word32_t p[6],q[6];\n    (void)lpcrdr;(void)stack;\n    p[0]=q[0]=1048576;\n    lsp_first(p,lsp_angle(freq[0]),lsp_angle(freq[2]));\n    lsp_first(q,lsp_angle(freq[1]),lsp_angle(freq[3]));\n#define STAGE(s) LSP_PAIR(s,p,q,lsp_angle(freq[2*s]),lsp_angle(freq[2*s+1]))\n    STAGE(2); STAGE(3); STAGE(4);\n#undef STAGE\n    lsp_finish10_c(p,q,ak);\n}\n\n#include \"nb3_interpolate.h\"\n/* The output area first holds only three center frequencies. Consume all\n * of them in the polynomial stages before lsp_finish10 writes coefficients.\n * raw/delta/ak are disjoint. ASM requires the normal explicit target opt-in;\n * its advance operation has the selectable C implementation in the header. */\nSPEEX_NB3_STAGE void speex_nb3_interpolate_lpc(\n    int16_t *restrict raw,const int16_t *restrict delta,int16_t *restrict ak)\n{\n    spx_word32_t p[6],q[6];\n    speex_nb3_advance_codebook(raw,delta,ak);\n    p[0]=q[0]=1048576;\n    lsp_first(p,lsp_angle(raw[0]),lsp_angle(raw[2]));\n    lsp_first(q,lsp_angle(raw[1]),lsp_angle(ak[0]));\n    LSP_PAIR(2,p,q,lsp_angle(ak[1]),lsp_angle(ak[2]));\n    LSP_PAIR(3,p,q,lsp_angle(raw[6]),lsp_angle(raw[7]));\n    LSP_PAIR(4,p,q,lsp_angle(raw[8]),lsp_angle(raw[9]));\n    lsp_finish10(p,q,ak);\n}\n\n#if SPEEX_ENABLE_WB1\nvoid speex_wb_lsp8(const spx_lsp_t *freq,spx_coef_t *ak)\n{\n    spx_word32_t p[5],q[5],previous_p=0,previous_q=0;\n    int j;\n    p[0]=q[0]=1048576;\n    lsp_first(p,lsp_angle(freq[0]),lsp_angle(freq[2]));\n    lsp_first(q,lsp_angle(freq[1]),lsp_angle(freq[3]));\n    LSP_PAIR(2,p,q,lsp_angle(freq[4]),lsp_angle(freq[5]));\n    LSP_PAIR(3,p,q,lsp_angle(freq[6]),lsp_angle(freq[7]));\n    for(j=1;j<=8;j++) {\n        int index=j<=4?j:8-j;\n        spx_word32_t a=PSHR32(p[index]+previous_p+q[index]-previous_q,8);\n        previous_p=p[index];previous_q=q[index];\n        if(a< -32767)a=-32767;if(a>32767)a=32767;ak[j-1]=(int16_t)a;\n    }\n}\n#endif\n\n#undef LSP_PAIR\n",
+    "3e36107d58f9d76c9094664a3fb16b00d476fecebc6158d7cf981fa9e3869b5c": "/* Exact ANGLE2X leaf, classic AVR5/MUL, GNU ABI. x/result r25:24.\n * Call-clobbered registers only, own stack0, no explicit data-memory or hardware IO.\n * Original P13 rounding/casts survive. r22 stays zero; MUL's r1 is\n * private until the external RET. T retains the reflected-half flag.\n * All MULSU operands stay in r16..23. Full signed16 inputs; C equations\n * and selector: nb3_lsp_angle.h. y r19:18, coefficient r21:20. */\n.macro ANGLE_WORD_BIAS bias,dest=20\n    subi r25,lo8(-((\\bias)>>8))\n    sbci r26,hi8(-((\\bias)>>8))\n    sbci r27,hlo8(-((\\bias)>>8))\n    .rept 3\n    lsl r25\n    rol r26\n    rol r27\n    .endr\n    movw \\dest,r26\n.endm\n.section .text.speex_avr_lsp_angle,\"ax\",@progbits\n.global speex_avr_lsp_angle\n.type speex_avr_lsp_angle,@function\nspeex_avr_lsp_angle:\n    cpi r24,lo8(12868)\n    ldi r18,hi8(12868)\n    cpc r25,r18\n    clt\n    brlt .Langle_folded\n    set\n    ldi r18,lo8(25736)\n    ldi r19,hi8(25736)\n    sub r18,r24\n    sbc r19,r25\n    movw r24,r18\n.Langle_folded:\n    movw r18,r24\n    clr r22\n    /* Three-MUL signed square; double the cross term in 17 bits. */\n    muls r19,r19\n    movw r26,r0\n    mul r18,r18\n    movw r24,r0\n    mulsu r19,r18\n    sbc r23,r23\n    lsl r0\n    rol r1\n    rol r23\n    add r25,r0\n    adc r26,r1\n    adc r27,r23\n    ANGLE_WORD_BIAS 4096,18\n    /* a=340+P13(-10*y), always 300..380 for signed16 y.\n     * Only product bits13..20 are needed; its result high byte is 1. */\n    ldi r20,lo8(-10)\n    mulsu r20,r18\n    movw r24,r0\n    sbc r26,r26\n    muls r20,r19\n    add r25,r0\n    adc r26,r1\n    subi r25,lo8(-(0x2a9000>>8))\n    sbci r26,hi8(-(0x2a9000>>8))\n    .rept 3\n    lsl r25\n    rol r26\n    .endr\n    mov r20,r26\n    ldi r21,1\n    /* y*(256+a_low): two MULs plus an exact signed y<<8. */\n    mul r18,r20\n    movw r24,r0\n    mulsu r19,r20\n    sbc r27,r27\n    mov r26,r1\n    add r25,r0\n    adc r26,r22\n    adc r27,r22\n    sbrc r19,7\n    dec r27\n    add r25,r18\n    adc r26,r19\n    adc r27,r22\n    ANGLE_WORD_BIAS 0xfe001000\n    /* Final full signed16 product. */\n    muls r19,r21\n    movw r26,r0\n    mul r18,r20\n    movw r24,r0\n    mulsu r19,r20\n    sbc r27,r22\n    add r25,r0\n    adc r26,r1\n    adc r27,r22\n    mulsu r21,r18\n    sbc r27,r22\n    add r25,r0\n    adc r26,r1\n    adc r27,r22\n    /* K1 enters the bias. Extract bits11..26 then clear the two bits\n     * discarded by original P13 before its final word shift by two. */\n    subi r25,lo8(-(0x04001000>>8))\n    sbci r26,hi8(-(0x04001000>>8))\n    sbci r27,hlo8(-(0x04001000>>8))\n    .rept 3\n    lsr r27\n    ror r26\n    ror r25\n    .endr\n    andi r25,252\n    mov r24,r25\n    mov r25,r26\n    brtc .Langle_done\n    com r24\n    com r25\n    adiw r24,1\n.Langle_done:\n    clr r1\n    ret\n.size speex_avr_lsp_angle,.-speex_avr_lsp_angle\n",
+    "1c7b6f05e01a2067e8f07c7c342fdccf8232a209861a3d28f617b9eadd75203b": "/* Exact Xiph 1.2.1 ANGLE2X, full signed16 input domain.\n * Polynomial/rounding adapted from math_approx.h, Jean-Marc Valin;\n * BSD terms in vendor/speex-1.2.1/COPYING. No table or hardware access.\n * P13(a,b)=floor((a*b+4096)/8192), with signed16 operands. After the\n * square/cast, y spans signed16; a is 300..380, b lies in -5616..-2576.\n * All products and rebias constants fit signed32. ASM retains each P13\n * before the next word cast; final modulo16 shift keeps the same bits. */\n#ifndef MICROMUSIC_NB3_LSP_ANGLE_H\n#define MICROMUSIC_NB3_LSP_ANGLE_H\n#include \"speex_platform.h\"\nstatic SPEEX_NB3_ALWAYS_INLINE int16_t speex_nb3_lsp_angle_c(int16_t x)\n{\n    uint8_t negative=x>=12868;\n    if(negative)x=(int16_t)(25736-(int32_t)x);\n    int16_t y=(int16_t)(((int32_t)x*x+4096)>>13);\n    int16_t a=(int16_t)(340+((4096-10*(int32_t)y)>>13));\n    int16_t b=(int16_t)(-4096+(((int32_t)y*a+4096)>>13));\n    int32_t p=((int32_t)y*b+4096)>>13;\n    int16_t c=(int16_t)(negative?-8192-p:8192+p);\n    return (int16_t)((uint16_t)c<<2);\n}\n#if SPEEX_NB3_USE_AVR_ASM\nextern SPEEX_NB3_CONST int16_t speex_avr_lsp_angle(int16_t);\n#endif\nstatic SPEEX_NB3_ALWAYS_INLINE int16_t speex_nb3_lsp_angle(int16_t x)\n{\n#if SPEEX_NB3_USE_AVR_ASM\n    return speex_avr_lsp_angle(x);\n#else\n    return speex_nb3_lsp_angle_c(x);\n#endif\n}\n#endif\n",
+    "016365b4b55147732abc52c870dbc722fd187efd4ecc707590b9ca65678af285": "// Execute the linked AVR GCC machine code on an independent AVR8js CPU.\n// No timers/ISR in this harness: frame cycles measure the decoder and mailbox.\nimport assert from 'node:assert/strict';\nimport {createHash} from 'node:crypto';\nimport {readFileSync, readdirSync, writeFileSync, mkdirSync} from 'node:fs';\nimport {fileURLToPath} from 'node:url';\nimport {resolve, join} from 'node:path';\nimport {CPU, avrInstruction} from 'avr8js';\n\nconst root = fileURLToPath(new URL('../', import.meta.url));\nfunction option(name, fallback) {\n  const i = process.argv.indexOf(name);\n  return i < 0 ? fallback : resolve(process.argv[i+1]);\n}\nconst build = option('--firmware', join(root, 'build/profile'));\nconst streamsDirectory = option('--streams', join(root, 'reference/R4/data'));\nconst oracleDirectory = option('--oracle', join(root, 'build/reference'));\nconst outputDirectory = option('--out', build);\nconst capture = process.argv.includes('--capture');\nmkdirSync(outputDirectory, {recursive: true});\nconst symbols = new Map(readFileSync(join(build, 'symbols.txt'), 'utf8').split(/\\r?\\n/)\n  .map(line => line.match(/^([0-9a-f]+)\\s+\\w\\s+(.+)$/)).filter(Boolean)\n  .map(m => [m[2], parseInt(m[1], 16)]));\nfunction address(name) {\n  assert.ok(symbols.has(name), 'Missing symbol ' + name);\n  return symbols.get(name) & 0xffff;\n}\nconst status = address('speex_test_status'), command = address('speex_test_command');\nconst packet = address('speex_test_packet'), pcm = address('speex_test_pcm');\nconst result = address('speex_test_result'), end = address('__bss_end');\nconst binary = readFileSync(join(build, 'speex-test.bin'));\nconst backend=JSON.parse(readFileSync(join(build,'backend.json'),'utf8'));\nconst packetBytes=backend.packetBytes||20;assert.ok([20,28].includes(packetBytes));\nassert.equal(createHash('sha256').update(binary).digest('hex'),backend.binarySha256,\n  'Backend metadata must describe the executed binary');\nconst backendIndex=process.argv.indexOf('--backend');\nif (backendIndex>=0) assert.equal(backend.backend,process.argv[backendIndex+1]);\nif (backend.backend==='c') {\n  for (const kernel of ['speex_avr_iir40','speex_avr_pitch_add24','speex_avr_innovation10','speex_avr_zero_innovation10','speex_avr_zero_innovation_n','speex_avr_long_innovation10','speex_avr_long_innovation_n','speex_avr_long_innovation1','speex_avr_long_innovation40',\n                        'speex_avr_mul16_32_q14','speex_avr_lsp_mul_q14','speex_avr_p1_mul_q14','speex_avr_nb3_advance10','speex_avr_lsp_finish10',\n                        'speex_avr_lsp_stage2','speex_avr_lsp_stage3','speex_avr_lsp_stage4','speex_avr_lsp_first',\n                        'speex_avr_lsp_pair2','speex_avr_lsp_pair3','speex_avr_lsp_pair4','speex_avr_lsp_angle'])\n    assert.ok(!symbols.has(kernel),'C backend unexpectedly linked ASM kernel '+kernel);\n}\nassert.equal(address('scratch') & 3, 0, 'Scratch requires a four-byte-aligned base');\nfor (const table of ['cdbk_nb', 'cdbk_nb_low1', 'cdbk_nb_high1', 'gain_cdbk_lbr', 'exc_10_32_table', 'nb3_gain_table']) {\n  assert.ok(symbols.has(table) && symbols.get(table) < 32768, table + ' must reside in Flash');\n}\nfor (const name of ['malloc', 'calloc', 'realloc', 'free']) assert.ok(!symbols.has(name), 'Unexpected heap: ' + name);\nconst profile = process.argv.includes('--profile');\nconst lspFunction=[...symbols].find(([name,value])=>/^speex_nb3_interpolate_lpc(?:\\.|$)/.test(name)&&value<32768) ||\n  [...symbols].find(([name,value])=>/^lsp_to_lpc(?:\\.|$)/.test(name)&&value<32768);\nassert.ok(lspFunction,'Count the actual out-of-line LSP conversion entries');\nconst lspEntry=lspFunction[1];\nconst hits = new Map();\nlet collectingProfile=false,profileFrameCycles=0;\nconst functions = [...symbols].filter(([name, value]) => value < 0x800000 && name !== '__stack')\n  .sort((a,b) => a[1]-b[1]);\nassert.ok(binary.length <= 32768);\nconst limitIndex = process.argv.indexOf('--frames');\nconst limit = limitIndex < 0 ? Infinity : Number(process.argv[limitIndex + 1]);\nconst report = {simulator: 'avr8js 0.21.1', compiler: 'AVR GCC', mcu: 'ATmega328P',\n  backend: backend.backend, binarySha256: backend.binarySha256,lspConversionEntry:lspFunction[0],\n  flashBytes: binary.length, staticSramBytes: end - 0x100,\n  includesInterrupts: false, frames: 0, maxCycles: 0, minStackPointer: 0x8ff, streams: []};\n\nfor (const file of readdirSync(streamsDirectory).filter(s => s.endsWith('.spxraw')).sort()) {\n  const program = new Uint16Array(16384).fill(0xffff);\n  new Uint8Array(program.buffer).set(binary);\n  const cpu = new CPU(program, 2048);\n  let minSP = 0x8ff;\n  let lspConversions = 0;\n  function until(predicate, budget = 2000000) {\n    const deadline = cpu.cycles + budget;\n    while (!predicate()) {\n      assert.ok(cpu.cycles < deadline, 'Firmware timeout at PC ' + (cpu.pc * 2).toString(16));\n      const pc = cpu.pc * 2, before = cpu.cycles;\n      if (pc===lspEntry) lspConversions++;\n      avrInstruction(cpu);\n      cpu.tick();\n      if (profile && collectingProfile) hits.set(pc, (hits.get(pc) || 0) + cpu.cycles - before);\n      if (cpu.SP < minSP) minSP = cpu.SP;\n      assert.ok(cpu.SP >= end, 'C stack collided with static SRAM');\n    }\n  }\n  until(() => cpu.data[status] === 1);\n  const raw = readFileSync(join(streamsDirectory, file));\n  const expected = readFileSync(join(oracleDirectory, file.replace('.spxraw', '.pcm')));\n  assert.equal(raw.length%packetBytes,0);assert.equal(expected.length,raw.length/packetBytes*320);\n  const frames = Math.min(raw.length / packetBytes, limit), cycles = [];\n  const captured = [];\n  for (let frame = 0; frame < frames; frame++) {\n    cpu.data.set(raw.subarray(frame * packetBytes, (frame+1)*packetBytes), packet);\n    cpu.data[status] = 1;\n    cpu.data[command] = 1;\n    const start = cpu.cycles;\n    collectingProfile=true;\n    until(() => cpu.data[status] === 2);\n    collectingProfile=false;\n    profileFrameCycles+=cpu.cycles-start;\n    assert.equal(cpu.data[result], 0, file + ': decode result');\n    const actual = Buffer.from(cpu.data.subarray(pcm, pcm + 320));\n    const oracle = expected.subarray(frame * 320, frame * 320 + 320);\n    if (!actual.equals(oracle)) {\n      const first = [...actual].findIndex((value, i) => value !== oracle[i]);\n      throw new Error(`${file} frame ${frame}: PCM differs at sample ${first >> 1}: ` +\n        `${actual.readInt16LE(first & ~1)} != ${oracle.readInt16LE(first & ~1)}`);\n    }\n    cycles.push(cpu.cycles - start);\n    if (capture) captured.push(actual);\n  }\n  let resetVerified=false;\n  if (process.argv.includes('--verify-reset')) {\n    const before=lspConversions;\n    cpu.data[status]=0;cpu.data[command]=2;\n    until(()=>cpu.data[status]===1);\n    cpu.data.set(raw.subarray(0,packetBytes),packet);cpu.data[command]=1;\n    until(()=>cpu.data[status]===2);\n    assert.equal(cpu.data[result],0,'Decode after reset');\n    assert.ok(Buffer.from(cpu.data.subarray(pcm,pcm+320)).equals(expected.subarray(0,320)),\n      'Reset must reproduce a fresh first frame despite previously cached LPC');\n    assert.equal(lspConversions-before,1,'Reset computes the first LPC before reusing it');\n    lspConversions=before;resetVerified=true;\n  }\n  const row = {stream: file, frames, minCycles: Math.min(...cycles),\n    maxCycles: Math.max(...cycles), meanCycles: Math.round(cycles.reduce((a,b) => a+b, 0) / frames),\n    stackBytes: 0x8ff - minSP, freeSramAtPeak: minSP - end + 1,\n    lspConversions, lspCacheHits: frames*4-lspConversions, resetVerified};\n  report.frames += frames;\n  report.maxCycles = Math.max(report.maxCycles, row.maxCycles);\n  report.minStackPointer = Math.min(report.minStackPointer, minSP);\n  report.streams.push(row);\n  if (capture) writeFileSync(join(outputDirectory, file.replace('.spxraw', '.pcm')), Buffer.concat(captured));\n  console.log(file, JSON.stringify(row));\n}\nreport.freeSramAtPeak = report.minStackPointer - end + 1;\nreport.fitsDecoderBudget = report.maxCycles <= 320000;\nwriteFileSync(resolve(outputDirectory, limit === Infinity ? 'avr-verification.json' : 'avr-smoke.json'), JSON.stringify(report, null, 2) + '\\n');\nconsole.log('PASS: AVR PCM exact;', report.frames, 'frames; max', report.maxCycles,\n  'cycles;', report.freeSramAtPeak, 'bytes spare SRAM. ISR excluded.');\nif (profile) {\n  const totals = new Map();\n  for (const [pc, cycles] of hits) {\n    const fn = functions.findLast(([,address]) => address <= pc)?.[0];\n    totals.set(fn, (totals.get(fn) || 0) + cycles);\n  }\n  const rows=[...totals].sort((a,b) => b[1]-a[1]);\n  const measured=rows.reduce((sum,[,cycles])=>sum+cycles,0);\n  assert.equal(measured,profileFrameCycles,'Profile covers decoding intervals only');\n  writeFileSync(join(outputDirectory,'avr-profile.json'),JSON.stringify({\n    scope:'Measured frame-command intervals; mailbox included, startup/reset/ISR excluded.',\n    frames:report.frames,streams:report.streams.length,binarySha256:backend.binarySha256,\n    totalFrameCycles:measured,functions:rows.map(([name,cycles])=>({name,cycles,\n      cyclesPerFrame:Number((cycles/report.frames).toFixed(3)),\n      percent:Number((100*cycles/measured).toFixed(3))}))},null,2)+'\\n');\n  console.log('Cycle profile:',rows.slice(0,15));\n}\n",
+    "c42087475c1e8e6d153bd253fd95479a87091ccdb3175f22491005202888dcb0": "// Exact PCM of the compact WB profile; no timer/ISR in this decoder harness.\nimport assert from 'node:assert/strict';\nimport {createHash} from 'node:crypto';\nimport {readFileSync,writeFileSync,readdirSync} from 'node:fs';\nimport {fileURLToPath} from 'node:url';\nimport {join,resolve} from 'node:path';\nimport {CPU,avrInstruction} from 'avr8js';\nconst root=fileURLToPath(new URL('../',import.meta.url));\nfunction option(name,fallback){const i=process.argv.indexOf(name);return i<0?fallback:resolve(process.argv[i+1]);}\nconst bi=process.argv.indexOf('--backend'),backend=bi<0?'asm':process.argv[bi+1];\nassert.ok(['asm','c'].includes(backend));\nconst dir=option('--firmware',join(root,'build/wb-'+backend+'-decoder'));\nconst streams=option('--streams',join(root,'build/wb-corpus/streams'));\nconst oracle=option('--oracle',join(root,'build/wb-corpus/oracle'));\nconst fi=process.argv.indexOf('--frames'),limit=fi<0?Infinity:Number(process.argv[fi+1]);\nconst symbols=new Map(readFileSync(join(dir,'symbols.txt'),'utf8').split(/\\r?\\n/).map(l=>l.match(/^([0-9a-f]+)\\s+\\w\\s+(.+)$/)).filter(Boolean).map(m=>[m[2],parseInt(m[1],16)]));\nfunction address(n){assert.ok(symbols.has(n),n);return symbols.get(n)&65535;}\nconst names=['speex_test_packet','speex_test_status','speex_test_command','speex_test_result','speex_test_chunks','speex_test_pcm','__bss_end'];\nconst [packet,status,command,result,chunks,pcm,end]=names.map(address);\nconst binary=readFileSync(join(dir,'wb.bin')),metadata=JSON.parse(readFileSync(join(dir,'backend.json')));\nconst packetBytes=metadata.packetBytes||25;assert.ok([25,32].includes(packetBytes));\nassert.equal(metadata.backend,backend);assert.ok(binary.length<=32768);\nassert.equal(createHash('sha256').update(binary).digest('hex'),metadata.binarySha256);\nfor(const table of ['high_lsp_cdbk','high_lsp_cdbk2','nb3_gain_table'])assert.ok(symbols.get(table)<32768,table+' in Flash');\nfor(const name of ['malloc','calloc','realloc','free'])assert.ok(!symbols.has(name),'No heap');\nif(backend==='c')for(const name of ['speex_wb_iir40_avr','speex_wb_fold40_avr','speex_wb_excitation40_avr','speex_wb_excitation8_40_avr','speex_wb_qmf40_avr','speex_avr_iir40','speex_avr_long_innovation40','speex_avr_lsp_pair2','speex_avr_lsp_pair3','speex_avr_lsp_pair4','speex_avr_lsp_angle'])assert.ok(!symbols.has(name),'No ASM in C build');\nconst report={backend,binarySha256:metadata.binarySha256,includesInterrupts:false,physicalBoardTested:false,flashBytes:binary.length,staticSramBytes:end-256,frames:0,maxCycles:0,minSP:2303,streams:[]};\nlet totalCycles=0;\nfor(const name of readdirSync(streams).filter(s=>s.endsWith('.spxraw')).sort()){\n const raw=readFileSync(join(streams,name));assert.equal(raw.length%packetBytes,0);\n const expected=readFileSync(join(oracle,name.replace('.spxraw','.pcm')));assert.equal(expected.length,raw.length/packetBytes*640);\n const program=new Uint16Array(16384).fill(65535);new Uint8Array(program.buffer).set(binary);\n const cpu=new CPU(program,2048);let minSP=2303,lastChunk=0,output=[],hits=new Map();\n function until(predicate){const deadline=cpu.cycles+3000000;while(!predicate()){\n   assert.ok(cpu.cycles<deadline,'timeout '+cpu.pc.toString(16));\n   if(process.argv.includes('--profile'))hits.set(cpu.pc*2,(hits.get(cpu.pc*2)||0)+1);\n   avrInstruction(cpu);cpu.tick();minSP=Math.min(minSP,cpu.SP);assert.ok(cpu.SP>=end,'SRAM collision');\n   if(cpu.data[chunks]!==lastChunk){lastChunk=cpu.data[chunks];const ptr=cpu.dataView.getUint16(pcm,true);output.push(Buffer.from(cpu.data.subarray(ptr,ptr+160)));}\n }}\n until(()=>cpu.data[status]===1);\n const cycles=[];const frames=Math.min(raw.length/packetBytes,limit);\n for(let f=0;f<frames;f++){\n   output=[];cpu.data.set(raw.subarray(f*packetBytes,(f+1)*packetBytes),packet);cpu.data[status]=1;cpu.data[command]=1;\n   const start=cpu.cycles;until(()=>cpu.data[status]===2);cycles.push(cpu.cycles-start);\n   assert.equal(cpu.data[result],0,name+' result');assert.equal(output.length,4);\n   const actual=Buffer.concat(output),exp=expected.subarray(f*640,(f+1)*640);\n   if(!actual.equals(exp)){\n     const i=[...actual].findIndex((v,i)=>v!==exp[i])&~1;\n     throw Error(`${name} frame ${f} sample ${i/2}: ${actual.readInt16LE(i)} != ${exp.readInt16LE(i)}`);\n   }\n }\n cpu.data[command]=2;cpu.data[status]=0;until(()=>cpu.data[status]===1);\n output=[];cpu.data.set(raw.subarray(0,packetBytes),packet);cpu.data[command]=1;until(()=>cpu.data[status]===2);\n assert.ok(Buffer.concat(output).equals(expected.subarray(0,640)),'reset '+name);\n const row={name,frames,minCycles:Math.min(...cycles),maxCycles:Math.max(...cycles),meanCycles:Math.round(cycles.reduce((a,b)=>a+b,0)/frames),peakStack:2303-minSP,freeSram:minSP-end+1,reset:true,pcmExact:true};\n report.streams.push(row);report.frames+=frames;report.maxCycles=Math.max(report.maxCycles,row.maxCycles);report.minSP=Math.min(report.minSP,minSP);totalCycles+=cycles.reduce((a,b)=>a+b,0);\n console.log(JSON.stringify(row));\n if(process.argv.includes('--profile'))writeFileSync(join(dir,'profile.json'),JSON.stringify([...hits]));\n}\nreport.meanCycles=totalCycles/report.frames;report.peakStack=2303-report.minSP;report.freeSram=report.minSP-end+1;\nwriteFileSync(join(dir,'verification.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report));\n"
+  },
+  "observers": {
+    "tests/verify_avr.mjs": "016365b4b55147732abc52c870dbc722fd187efd4ecc707590b9ca65678af285",
+    "tests/verify_wb.mjs": "c42087475c1e8e6d153bd253fd95479a87091ccdb3175f22491005202888dcb0"
+  }
+}
