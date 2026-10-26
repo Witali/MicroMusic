@@ -1,0 +1,82 @@
+{
+  "results": [
+    {
+      "q": 8,
+      "table_bits": 3,
+      "table_sha256": "0ca2e45f446def3779ebc48e32d35fba71e8bc6ae573acc601ea6c9c6032d691",
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "frames": 218,
+          "first_rng_mismatch_frame": 145,
+          "frames_with_rng_mismatch": 73,
+          "reference_final_rng": 1814065989,
+          "candidate_final_rng": 3790763964
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "frames": 147,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "reference_final_rng": 690307194,
+          "candidate_final_rng": 690307194
+        },
+        {
+          "name": "all-11333",
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "frames": 11333,
+          "first_rng_mismatch_frame": 145,
+          "frames_with_rng_mismatch": 10849,
+          "reference_final_rng": 4213016682,
+          "candidate_final_rng": 1550725183
+        }
+      ]
+    },
+    {
+      "q": 11,
+      "table_bits": 6,
+      "table_sha256": "6a76d03986808661f16bee354e2c0d1c9ddf1366a37cb5cb099626254f78a91d",
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "frames": 218,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "reference_final_rng": 1814065989,
+          "candidate_final_rng": 1814065989
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "frames": 147,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "reference_final_rng": 690307194,
+          "candidate_final_rng": 690307194
+        },
+        {
+          "name": "all-11333",
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "frames": 11333,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "reference_final_rng": 4213016682,
+          "candidate_final_rng": 4213016682
+        }
+      ]
+    }
+  ],
+  "sources": {
+    "src/fixed_fifth.c": "d5ec27c13dcffc08efa37163ec4c4108279a280cefcc4a845481a62550a507e3",
+    "src/fixed_fifth.h": "10ce4d501b4eb3d49764de673d2a6f8f1290d5f46deda8e5c6e757c3e9cc9ad3",
+    "src/hybrid_postfilter.c": "eb4895c03a787b47a1ec402b3d205e56e3db261823642e3ef6af0a5632e363cf",
+    "tests/postfilter_variant.c": "ccaec58a550bab6740232463827ebf958f12612e312995d954992cfde4e17dc2",
+    "tests/postfilter_control.c": "b009118ae726bca4cfafa7b58e227247e488303d16649de5cff8290d4e57a5e3",
+    "tools/verify_postfilter_control.py": "ab8a41c5471db697f4cb2275e16183be93eb4d8497bbb9a185e86a286cd9658a",
+    "tools/generate_fifth_tables.py": "7c74b43ad4f9441b24c41e348381037ed9b09a7170f959c43f4cea6495d90171"
+  },
+  "scope": "Native frame-by-frame RNG states, low-precision counterexample and selected configuration; not an exhaustive threshold proof."
+}

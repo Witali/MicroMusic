@@ -1,0 +1,2836 @@
+{
+  "baseline_report_sha256": "f4e9606265f6b720ee6395a3125fb7299eec0edba0fc107764a55a7199900796",
+  "selection": {
+    "q": 11,
+    "table_bits": 6,
+    "table_bytes": 1290
+  },
+  "results": [
+    {
+      "q": 8,
+      "table_bits": 3,
+      "table_bytes": 170,
+      "table_sha256": "0ca2e45f446def3779ebc48e32d35fba71e8bc6ae573acc601ea6c9c6032d691",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 0.00324121203315,
+        "worst_input_bits": 1957079040
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "546e5a47529ae937418ef100d55ae366fac7c0fda88c1b4be0d28e259b1f2078",
+          "samples": 34880,
+          "different_samples": 26037,
+          "max_absolute_error": 2473,
+          "rmse": 115.13324351145454,
+          "snr_db": 27.63577915951624,
+          "passes": false
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "4d0116831687fa083c8225f66abedb41a78a2a43e22ed77d0a6ebdd37b14ef5c",
+          "samples": 23520,
+          "different_samples": 10250,
+          "max_absolute_error": 49,
+          "rmse": 2.9592326409272474,
+          "snr_db": 56.76827050794684,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "6d5944998c42e02a73a3742296699df323fa9f92f859dfe74ed0178568e3c245",
+          "samples": 1813280,
+          "different_samples": 1780656,
+          "max_absolute_error": 59772,
+          "rmse": 4727.044165738453,
+          "snr_db": 0.32963408542504896,
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "q": 8,
+      "table_bits": 4,
+      "table_bytes": 330,
+      "table_sha256": "5248bfe909d2ab3af31a685fba3c78b4a7b8b28eb5cd0b1cc360b90c159a01a9",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 0.00315893085674,
+        "worst_input_bits": 1788782592
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "d339d4e06a046964fd7b764d736edcc68374fc3ac38842d4a65c6ba32c07b631",
+          "samples": 34880,
+          "different_samples": 18584,
+          "max_absolute_error": 40,
+          "rmse": 3.973731117076958,
+          "snr_db": 56.87582440965893,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "25e2520f22d2e5f36f679c32550f3394ee127c4a35dffa269f8688109792fa2a",
+          "samples": 23520,
+          "different_samples": 16217,
+          "max_absolute_error": 7202,
+          "rmse": 332.13197626826593,
+          "snr_db": 15.765638888611592,
+          "passes": false
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "a278178f627dcd867ca6c7f990fcb88d7f1a88c74d7ac853eb3bfae8359d89a1",
+          "samples": 1813280,
+          "different_samples": 1687246,
+          "max_absolute_error": 58056,
+          "rmse": 4197.421633037902,
+          "snr_db": 1.3617753560228485,
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "q": 8,
+      "table_bits": 5,
+      "table_bytes": 650,
+      "table_sha256": "f1c69e0efa9c2b78c3d685361f4ea873b4da2843d7d82fce4b28896b6808a3cf",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 0.00315393629761,
+        "worst_input_bits": 536576
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "995c602a8ba77e2e23af3e8ef082c83d8fd21fb692fcba5494cee3e9ed95ae58",
+          "samples": 34880,
+          "different_samples": 18611,
+          "max_absolute_error": 40,
+          "rmse": 3.9760680291560737,
+          "snr_db": 56.87071782504607,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "8a2c0362b751ac776ec79445a729dca6f46f4276a9f93393879665f5cd618861",
+          "samples": 23520,
+          "different_samples": 10224,
+          "max_absolute_error": 41,
+          "rmse": 2.9000351862749274,
+          "snr_db": 56.94378733675927,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "1c729f13e61aa8acc56df934933daedbea363aed92cea44eb00f6fb28428890e",
+          "samples": 1813280,
+          "different_samples": 1613911,
+          "max_absolute_error": 59989,
+          "rmse": 3883.1321714629667,
+          "snr_db": 2.0377838254312493,
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "q": 8,
+      "table_bits": 6,
+      "table_bytes": 1290,
+      "table_sha256": "ccd59422df54f9447b773c5f0199bf6c7dfc8ced4b6413b0d00650df4bcb7659",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 0.00315393629761,
+        "worst_input_bits": 536576
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "d63d5287faf713e756d53c81b4e5eecb4d26c1f85d745652725b24e3e4fc1197",
+          "samples": 34880,
+          "different_samples": 18559,
+          "max_absolute_error": 43,
+          "rmse": 3.9733523213685404,
+          "snr_db": 56.87665243109514,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "a57bec4709d2f369206fa9b930461da4df46ad8c0188e6c1949be95e9a06aa90",
+          "samples": 23520,
+          "different_samples": 10246,
+          "max_absolute_error": 45,
+          "rmse": 2.929565742934756,
+          "snr_db": 56.85578771098231,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "032989414c74f2493b806c3f797395652b76d894d21129ef45a3da37358be824",
+          "samples": 1813280,
+          "different_samples": 1735634,
+          "max_absolute_error": 62063,
+          "rmse": 4662.432805199884,
+          "snr_db": 0.44917556936863623,
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "q": 9,
+      "table_bits": 3,
+      "table_bytes": 170,
+      "table_sha256": "ba815215a118ed28318b698231b4a5e1df308363d72f6ce2f6681620b692c642",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 0.00171935657693,
+        "worst_input_bits": 1947920384
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "d980d60ba411a0e86d61482e30aaac396ab4fd7b3a5a46fbbc6666c1af194b65",
+          "samples": 34880,
+          "different_samples": 18345,
+          "max_absolute_error": 41,
+          "rmse": 3.8884053416429505,
+          "snr_db": 57.064363332112336,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "8b6e802189c50e95d9f179c642b3986add16158847e6aca37db69d29cec71a7a",
+          "samples": 23520,
+          "different_samples": 10078,
+          "max_absolute_error": 45,
+          "rmse": 2.8689414127744004,
+          "snr_db": 57.03741909127608,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "e46df170c37c3f44b3cdcda74d4dcf1c0dcec48150ab606c41d968c50aefc264",
+          "samples": 1813280,
+          "different_samples": 1456914,
+          "max_absolute_error": 57646,
+          "rmse": 2752.507791086852,
+          "snr_db": 5.026856147222643,
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "q": 9,
+      "table_bits": 4,
+      "table_bytes": 330,
+      "table_sha256": "ad101f26275f85e349817da089bec75c3ca5e3aa0ad73e5b18d04ae56441ccf4",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 0.00168178893432,
+        "worst_input_bits": 20396032
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "cef664e905c712057c0f3bafef435969e3a51e0989e9097d0e49e387f3a565e9",
+          "samples": 34880,
+          "different_samples": 18404,
+          "max_absolute_error": 42,
+          "rmse": 3.8925726145613555,
+          "snr_db": 57.05505949490177,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "0bd0d6ff7e5d4e564488be5664b4958860b59378b56148fcc571b9a9ff946df0",
+          "samples": 23520,
+          "different_samples": 10133,
+          "max_absolute_error": 49,
+          "rmse": 2.8965804962798067,
+          "snr_db": 56.95414063986835,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "c5ffb09adc07cf3e1b4c422c92c1351052124b825c2afb47c5c1fc0657a3e904",
+          "samples": 1813280,
+          "different_samples": 1489290,
+          "max_absolute_error": 58981,
+          "rmse": 3207.642208754911,
+          "snr_db": 3.6977088930940356,
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "q": 9,
+      "table_bits": 5,
+      "table_bytes": 650,
+      "table_sha256": "8269ea245f0043538d3d980ad00b058185663bac62511e4ce1a448166be8b33b",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 0.00165791707311,
+        "worst_input_bits": 995328
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "324033383ea196295bc24f65fa90ddd1c719baa94625f2c7e268357d37c0d1b0",
+          "samples": 34880,
+          "different_samples": 18428,
+          "max_absolute_error": 41,
+          "rmse": 3.8746818454770873,
+          "snr_db": 57.09507299553429,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "7cc0de3a95859dbdcbd30532f9d7b2fb82464bd668f9a36a0a33f45ef09d5860",
+          "samples": 23520,
+          "different_samples": 10009,
+          "max_absolute_error": 45,
+          "rmse": 2.886272635752062,
+          "snr_db": 56.98510564338052,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "44df55d208e258cf49f32840bb3233a73d4200b64788c802225115ec0338ca2c",
+          "samples": 1813280,
+          "different_samples": 1606508,
+          "max_absolute_error": 57646,
+          "rmse": 3831.8970217218293,
+          "snr_db": 2.1531506989562748,
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "q": 9,
+      "table_bits": 6,
+      "table_bytes": 1290,
+      "table_sha256": "b15bf3679963fe1d3352a0c37d6bb453baea28179ad0e03c4562d78d4f7626a1",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 0.00165796214236,
+        "worst_input_bits": 897024
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "bd45b945ee62a48069368a80506cf984e7f4db6bbaa8beffad5391aff77cbca9",
+          "samples": 34880,
+          "different_samples": 18420,
+          "max_absolute_error": 41,
+          "rmse": 3.884657985016243,
+          "snr_db": 57.07273818440618,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "a9dc740a91d8d411ca42e3289c53eee9b5ed85a38faf1feb4321e113907ec85c",
+          "samples": 23520,
+          "different_samples": 10109,
+          "max_absolute_error": 45,
+          "rmse": 2.88490971810777,
+          "snr_db": 56.98920814846122,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "8e2175690b80fb415455e76cbc40aa2e6442a24da553d02d5d593e9a4dc5bf37",
+          "samples": 1813280,
+          "different_samples": 1705225,
+          "max_absolute_error": 58969,
+          "rmse": 4350.9061264488255,
+          "snr_db": 1.0498330215880474,
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "q": 10,
+      "table_bits": 3,
+      "table_bytes": 170,
+      "table_sha256": "123b82891e52cc4db674c80a2f7f1123d2ea2dab524806b4a1e10e519845d0d0",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 0.000872096504835,
+        "worst_input_bits": 1740662784
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "dedc31f79b39eb64455eed7b04eabf22035a9a77c0ce6a55e4aea6b094da327d",
+          "samples": 34880,
+          "different_samples": 18374,
+          "max_absolute_error": 43,
+          "rmse": 3.874052858500864,
+          "snr_db": 57.09648311258693,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "9c2d97020ec3a770c06004d98620c1dbdc6373f679e597d875e9419c01e2220e",
+          "samples": 23520,
+          "different_samples": 10060,
+          "max_absolute_error": 41,
+          "rmse": 2.853300988436419,
+          "snr_db": 57.08490094488235,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "a4ea6e535003a325fc981fdb7c19991af06b69e2c67282e10a937ed348954e00",
+          "samples": 1813280,
+          "different_samples": 1309009,
+          "max_absolute_error": 53545,
+          "rmse": 1349.2817631508801,
+          "snr_db": 11.219374276096381,
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "q": 10,
+      "table_bits": 4,
+      "table_bytes": 330,
+      "table_sha256": "c87f7d7f6cf7ed5a423f7c685c415ac6007b508c8171eb2c3d7bd75b323893a8",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 0.000966454648182,
+        "worst_input_bits": 2072619008
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "e3537dfb5f77b4e68d91b628dc77fd7ae177358719ef23d741ef32dd52c13fbc",
+          "samples": 34880,
+          "different_samples": 18367,
+          "max_absolute_error": 47,
+          "rmse": 3.882653731663435,
+          "snr_db": 57.077220745284535,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "56f7431a854c85ae3e530fdd87b980e8c4ea682a887d95b4dabbc4020d39ec5c",
+          "samples": 23520,
+          "different_samples": 10049,
+          "max_absolute_error": 45,
+          "rmse": 2.851512309105397,
+          "snr_db": 57.090347668890985,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "24e8bf89c0b4fedcb58ae4a00977d33f2d23bccd995872207c161f088b9a6554",
+          "samples": 1813280,
+          "different_samples": 1682621,
+          "max_absolute_error": 58957,
+          "rmse": 4200.350862636119,
+          "snr_db": 1.3557159001231707,
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "q": 10,
+      "table_bits": 5,
+      "table_bytes": 650,
+      "table_sha256": "7b0a37c62488ded4556c57073ee00db077878306341298fe001646f31525b2ee",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 0.00093370241523,
+        "worst_input_bits": 1946658816
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "bcc21bacbf6b247bc3ffb3d953a09d1254584927987758f241519db726fce243",
+          "samples": 34880,
+          "different_samples": 18299,
+          "max_absolute_error": 41,
+          "rmse": 3.8686578759910897,
+          "snr_db": 57.108587459984044,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "70f35aa866001e3796fca7cd9069caf163a7ddb2c093e18f01997aa119c58d4b",
+          "samples": 23520,
+          "different_samples": 10084,
+          "max_absolute_error": 45,
+          "rmse": 2.85737350259523,
+          "snr_db": 57.07251242069486,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "74e15c8c6f1b3f8879f87d898e9828786e72914ab6566dcb46a25611a5e041b0",
+          "samples": 1813280,
+          "different_samples": 1607209,
+          "max_absolute_error": 59996,
+          "rmse": 3956.60992621927,
+          "snr_db": 1.8749625618096377,
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "q": 10,
+      "table_bits": 6,
+      "table_bytes": 1290,
+      "table_sha256": "810313872fa6d24e1a2e60ccb411e17326545f417a74d6978a28039ac35d026f",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 0.000937375044998,
+        "worst_input_bits": 569344
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "5dbecb5abc1db57b0fcac82a3722fea0e5cf025bc0d07c5ee2000a74a2e5d20b",
+          "samples": 34880,
+          "different_samples": 18366,
+          "max_absolute_error": 43,
+          "rmse": 3.8855472026756006,
+          "snr_db": 57.07075016831122,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "5b596cd645d685e2533057139775ee23332524b6233c55a1d91ce3f94bc47af4",
+          "samples": 23520,
+          "different_samples": 10084,
+          "max_absolute_error": 45,
+          "rmse": 2.8554757040813077,
+          "snr_db": 57.07828329559712,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "87c6494ef55a46c29ac13d5141392e3dc1061dc2b6ffacdc6bfac6a990d44362",
+          "samples": 1813280,
+          "different_samples": 1280001,
+          "max_absolute_error": 48123,
+          "rmse": 513.6028338254013,
+          "snr_db": 19.608879059789846,
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "q": 11,
+      "table_bits": 3,
+      "table_bytes": 170,
+      "table_sha256": "0bba661972ca0e77f7a35fe522bcd26a637e5581274be708885f0724183f8767",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 0.000421045726714,
+        "worst_input_bits": 25704448
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "c6315464020da059100fe86f358981b35df484e0709cabc1beec3daa288b1612",
+          "samples": 34880,
+          "different_samples": 18318,
+          "max_absolute_error": 41,
+          "rmse": 3.865844466654986,
+          "snr_db": 57.11490640928298,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "8a3209726da2de0f1f6dac3bb42126e1d73a50e22e4cea1edaf5b90f52ef6f0d",
+          "samples": 23520,
+          "different_samples": 9992,
+          "max_absolute_error": 45,
+          "rmse": 2.842903505245307,
+          "snr_db": 57.1166103021968,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "d477a4f857cf947fe33900a197eed981efee271f98b2bc5b128c3fb63ad3e6de",
+          "samples": 1813280,
+          "different_samples": 1301937,
+          "max_absolute_error": 50536,
+          "rmse": 1219.244638308846,
+          "snr_db": 12.09961019719358,
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "q": 11,
+      "table_bits": 4,
+      "table_bytes": 330,
+      "table_sha256": "57d692f576746d86f9aab8f5dfcb02c55c2f3414977e4880d159f85132e4c8de",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 0.000490196356354,
+        "worst_input_bits": 1780768768
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "7514783f4da4556ee6823dffd8ff1f5e61594133c6842f814f4f61309074b6bc",
+          "samples": 34880,
+          "different_samples": 18319,
+          "max_absolute_error": 41,
+          "rmse": 3.8633778061942756,
+          "snr_db": 57.12045034126148,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "e237f7bdd00763989c23478ccc43bc3c954c06d5cbed982b035ed5c037a88fbc",
+          "samples": 23520,
+          "different_samples": 10019,
+          "max_absolute_error": 45,
+          "rmse": 2.8610538708141586,
+          "snr_db": 57.061331977365455,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "a54360c95545e16d616c27ee44a9a6c930ed4bef48bf1c46ed170d0430d8fbd3",
+          "samples": 1813280,
+          "different_samples": 1301994,
+          "max_absolute_error": 50539,
+          "rmse": 1219.2236886081732,
+          "snr_db": 12.099759443985914,
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "q": 11,
+      "table_bits": 5,
+      "table_bytes": 650,
+      "table_sha256": "d1a1c2f6bf8d38503663cf8f22aeb45e1a6279f3b7620809adad7e411284147a",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 0.000430242135106,
+        "worst_input_bits": 20172800
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "78b8a27fad30f77505a01578766591ff0cf781dbe69abaf190145cae33e72f6b",
+          "samples": 34880,
+          "different_samples": 18303,
+          "max_absolute_error": 43,
+          "rmse": 3.864950715946744,
+          "snr_db": 57.1169147460367,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "efa3f79367d4b047dc3e893c202445045e6775b772347803772e1888c922a202",
+          "samples": 23520,
+          "different_samples": 10045,
+          "max_absolute_error": 45,
+          "rmse": 2.859582291935964,
+          "snr_db": 57.065800701349296,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "81b001aa3c41388f444440ade744e9ab4ecd0bba8b9683f941133955b5c7b485",
+          "samples": 1813280,
+          "different_samples": 1302039,
+          "max_absolute_error": 50532,
+          "rmse": 1219.2193638937224,
+          "snr_db": 12.099790253803185,
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "q": 11,
+      "table_bits": 6,
+      "table_bytes": 1290,
+      "table_sha256": "6a76d03986808661f16bee354e2c0d1c9ddf1366a37cb5cb099626254f78a91d",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 0.000430242135106,
+        "worst_input_bits": 20172800
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "dcd0bcbab37c6dc7ee9f31e28f81817a66363f73deeaef411a30cf922853a166",
+          "samples": 34880,
+          "different_samples": 18283,
+          "max_absolute_error": 41,
+          "rmse": 3.8691988242121136,
+          "snr_db": 57.107373010883364,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "5de1b81d57998642cf41255983a9383ac09634955bd3263690718b6c876f32c0",
+          "samples": 23520,
+          "different_samples": 10042,
+          "max_absolute_error": 49,
+          "rmse": 2.872666163053713,
+          "snr_db": 57.02614950380715,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "26bcae0ef4d58596a47c3ffbfea6e3fd144697b1652f3ac3f2aad6d829e94f4d",
+          "samples": 1813280,
+          "different_samples": 1273364,
+          "max_absolute_error": 248,
+          "rmse": 9.112299516075012,
+          "snr_db": 54.62886755956294,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 12,
+      "table_bits": 3,
+      "table_bytes": 170,
+      "table_sha256": "53e3f73ecb64f950caafd1f30af1cba391a8a3eced11170b0df9ea2782d6ffe6",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 0.000209240494349,
+        "worst_input_bits": 17719296
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "e8c18a812536ba291d0aeada6ad51cb73af9c20a170adfdc4026a9323fd92ef1",
+          "samples": 34880,
+          "different_samples": 18321,
+          "max_absolute_error": 41,
+          "rmse": 3.853714846646811,
+          "snr_db": 57.14220243051243,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "8dced8240d613af706c4c9717fea1e1a22395a7a7d4a42a0aebfe4e8f1efd40f",
+          "samples": 23520,
+          "different_samples": 10035,
+          "max_absolute_error": 45,
+          "rmse": 2.8645439855058887,
+          "snr_db": 57.05074277583509,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "40e38d4badab16e5a931478698c82dd75111d3fa3e17cccb0efd952378dd2eab",
+          "samples": 1813280,
+          "different_samples": 1273179,
+          "max_absolute_error": 248,
+          "rmse": 9.094174652931303,
+          "snr_db": 54.64616147506986,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 12,
+      "table_bits": 4,
+      "table_bytes": 330,
+      "table_sha256": "dca52c466abe780806313cca02080fe9fdc25b76747ee45c6cb88a797d9fb88d",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 0.000201932424661,
+        "worst_input_bits": 2080931840
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "a8dfa4fcec6c2062f4fa1b27c59e5cb9b611f94ad551306e6b6dc600804c0a21",
+          "samples": 34880,
+          "different_samples": 18301,
+          "max_absolute_error": 41,
+          "rmse": 3.8450194163263474,
+          "snr_db": 57.16182320911203,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "9f7d1e298045a026a699a997cef303225f95dfdf7c090f1f01625b9989da45dd",
+          "samples": 23520,
+          "different_samples": 10010,
+          "max_absolute_error": 45,
+          "rmse": 2.8722813232690143,
+          "snr_db": 57.027313196220774,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "50837549822bf1193095492a0235ff5e4e69fbc80359c1ae117ba63e5aa54d33",
+          "samples": 1813280,
+          "different_samples": 1273390,
+          "max_absolute_error": 259,
+          "rmse": 9.09659317976577,
+          "snr_db": 54.643851835643105,
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "q": 12,
+      "table_bits": 5,
+      "table_bytes": 650,
+      "table_sha256": "347befdaf5ac2837148ef217e54e07fea43abcfcb552f4bc7aa74f3bf3b8e5e5",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 0.000202954582256,
+        "worst_input_bits": 2118596608
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "77339fc3b9ec2ea9dc33384cfab4ebba61ea950e54cfe1939a67200380e71a32",
+          "samples": 34880,
+          "different_samples": 18289,
+          "max_absolute_error": 41,
+          "rmse": 3.856804721599275,
+          "snr_db": 57.135240950412,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "239ce39f29333a586641b45d17130844977663f1a5b3c2c155544226f0d0d89c",
+          "samples": 23520,
+          "different_samples": 10010,
+          "max_absolute_error": 45,
+          "rmse": 2.8702082220799308,
+          "snr_db": 57.03358459777127,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "4387df62155f3c909d07311ce82ebab297a4d8cc2e493cc63e148b0b6e28a1b9",
+          "samples": 1813280,
+          "different_samples": 1273324,
+          "max_absolute_error": 259,
+          "rmse": 9.100627982419795,
+          "snr_db": 54.640000055107365,
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "q": 12,
+      "table_bits": 6,
+      "table_bytes": 1290,
+      "table_sha256": "50e0159faf18a99b1e24f9ea9eeb70d6f85b39e985d8918c83dd88d67dcc1009",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 0.000202954582256,
+        "worst_input_bits": 2118596608
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "fb93838e4b3c5484b334139c62177db5d3c61c5daa76a3da2eea2da9e9e0d6e9",
+          "samples": 34880,
+          "different_samples": 18323,
+          "max_absolute_error": 41,
+          "rmse": 3.8563995722111652,
+          "snr_db": 57.136153433147115,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "33fd33a6a12bc3a3fb032eaee90f381978588ebea29279c36eb57fc843cf7353",
+          "samples": 23520,
+          "different_samples": 9955,
+          "max_absolute_error": 45,
+          "rmse": 2.8556320410272567,
+          "snr_db": 57.077807757218295,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "53d78f4b0996e45aaf9af080d58349961d2b0b8a39ee4b6f431a1be48e288cd4",
+          "samples": 1813280,
+          "different_samples": 1273132,
+          "max_absolute_error": 263,
+          "rmse": 9.118209456411435,
+          "snr_db": 54.62323600079457,
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "q": 13,
+      "table_bits": 3,
+      "table_bytes": 170,
+      "table_sha256": "b6a965897dcf2527487c084474c046aedb3720969103d63896927abfe63dbda7",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 0.000101469842134,
+        "worst_input_bits": 1701902336
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "7f96f311f61e853eb1f4b0c2688a63c6cb945c6ae7b25762a70ac59d603cc22b",
+          "samples": 34880,
+          "different_samples": 18354,
+          "max_absolute_error": 43,
+          "rmse": 3.8538524750024576,
+          "snr_db": 57.1418922354383,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "b9fbd80c3821c518c53e88cd81c715ced4cdb4261168139274b6e9a287da5a1f",
+          "samples": 23520,
+          "different_samples": 10014,
+          "max_absolute_error": 45,
+          "rmse": 2.8635122456438666,
+          "snr_db": 57.05387178795089,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "5a3e768fa12b2d9fd81cbd45809dcec743df6f571560da9a33d29bfde4f5f14a",
+          "samples": 1813280,
+          "different_samples": 1307678,
+          "max_absolute_error": 53551,
+          "rmse": 1349.2689880572927,
+          "snr_db": 11.219456515092974,
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "q": 13,
+      "table_bits": 4,
+      "table_bytes": 330,
+      "table_sha256": "1f879e5c316966d4e456e6e71748da2e1294e461dca44925f706e958a694a19e",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 0.00010864894005,
+        "worst_input_bits": 1696004096
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "badc2268017cbcab988ac9fe3f03f33dd41d4667f7fce6c2a5d876cd35424d15",
+          "samples": 34880,
+          "different_samples": 18335,
+          "max_absolute_error": 43,
+          "rmse": 3.852795958423922,
+          "snr_db": 57.14427376005012,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "e6de604f2f5446a5e619237ea91b48a3581ca2e8a0daca81c71bb99389c19fdd",
+          "samples": 23520,
+          "different_samples": 10010,
+          "max_absolute_error": 45,
+          "rmse": 2.866569271403554,
+          "snr_db": 57.04460386015279,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "6332149441f3560f4245dbadd73ba6343bd24d61aea759881fc384a9a1ed141d",
+          "samples": 1813280,
+          "different_samples": 1307731,
+          "max_absolute_error": 53551,
+          "rmse": 1349.2568695893349,
+          "snr_db": 11.219534527816082,
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "q": 13,
+      "table_bits": 5,
+      "table_bytes": 650,
+      "table_sha256": "bfc36bc58559886a36a0bb352dbd24423eef5a935fc15f9631a0bb99d745d3cf",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 0.000118983115592,
+        "worst_input_bits": 1695975424
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "2f7e01271b06e3bc0eca3f692ff8d1d8de57baea877d92ca82f1cd147252fea4",
+          "samples": 34880,
+          "different_samples": 18358,
+          "max_absolute_error": 41,
+          "rmse": 3.854190945456218,
+          "snr_db": 57.14112941747046,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "5828eb9061bc24ea24a63449836acd868f736f41343f0093b73f0ebf30455dc1",
+          "samples": 23520,
+          "different_samples": 10019,
+          "max_absolute_error": 45,
+          "rmse": 2.864551406748492,
+          "snr_db": 57.05072027312225,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "b750fea5996b5da4a450d53757728876435439e09d78d02a24668ef1326825ca",
+          "samples": 1813280,
+          "different_samples": 1273129,
+          "max_absolute_error": 248,
+          "rmse": 9.098493534540562,
+          "snr_db": 54.64203746980179,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 13,
+      "table_bits": 6,
+      "table_bytes": 1290,
+      "table_sha256": "61f2a74593b57dba2e22da11c1c480b726cf5f90826c0bbe4d9017913550f4ab",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 0.000109062944883,
+        "worst_input_bits": 2073151488
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "37d60533e44769c754549590d32b6f4a6c6b830009165b3e1bcad95039688cf4",
+          "samples": 34880,
+          "different_samples": 18365,
+          "max_absolute_error": 41,
+          "rmse": 3.8557341427822167,
+          "snr_db": 57.13765233003083,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "2e96e53e2b71ffa6bc48490272900cb6066803deff12ec45a0ba31a76e43b2c1",
+          "samples": 23520,
+          "different_samples": 10007,
+          "max_absolute_error": 45,
+          "rmse": 2.864120942891589,
+          "snr_db": 57.052025623239366,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "139d229b2caf83675dc93872bfed513d7cfb9890063e1ec0c3667dfde12b3f9f",
+          "samples": 1813280,
+          "different_samples": 1307813,
+          "max_absolute_error": 53551,
+          "rmse": 1349.2696719283329,
+          "snr_db": 11.219452112689208,
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "q": 14,
+      "table_bits": 3,
+      "table_bytes": 170,
+      "table_sha256": "33340b265eafe63bbc0cd01144fd426a7f9f9897283360c4f30d5777c17d73d8",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 5.65023945949e-05,
+        "worst_input_bits": 17799168
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "9f7c26ea248174ab5697691cc2cdd94ea23d7088e241c925e179c860a79c48b2",
+          "samples": 34880,
+          "different_samples": 18343,
+          "max_absolute_error": 41,
+          "rmse": 3.8531196404086328,
+          "snr_db": 57.143544069732954,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "2d766584df98812be49f05f431c3e062d32ed0b192910e31cacc377dc50a661d",
+          "samples": 23520,
+          "different_samples": 9992,
+          "max_absolute_error": 45,
+          "rmse": 2.8652711759211598,
+          "snr_db": 57.04853806397306,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "9e2acf4904971f500572548989c9556d49585a55ed065981a555d8f94e8ee069",
+          "samples": 1813280,
+          "different_samples": 1273024,
+          "max_absolute_error": 248,
+          "rmse": 9.100010520665341,
+          "snr_db": 54.64058939758082,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 14,
+      "table_bits": 4,
+      "table_bytes": 330,
+      "table_sha256": "6fbfb0b93080a25016cadf3b9158ab5afacb4f8f879cdc525c359f678d0262ef",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 5.5723585886e-05,
+        "worst_input_bits": 17866752
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "c5516205576dc6df8dc4f5da176cec902dcd52a12ee69531ffa384bd70a57be9",
+          "samples": 34880,
+          "different_samples": 18322,
+          "max_absolute_error": 43,
+          "rmse": 3.8521671191371576,
+          "snr_db": 57.14569155494467,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "639f965a8466e80f96b9f0cef405f1864eece2199c395cf7c8ea6c8995986091",
+          "samples": 23520,
+          "different_samples": 10001,
+          "max_absolute_error": 45,
+          "rmse": 2.865619865035199,
+          "snr_db": 57.047481099132995,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "627a2c7ed793e591b51b81a32eff13965ddfb2ddb9c65315a6ddb3cfe749977d",
+          "samples": 1813280,
+          "different_samples": 1272967,
+          "max_absolute_error": 248,
+          "rmse": 9.09918164768397,
+          "snr_db": 54.641380586462006,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 14,
+      "table_bits": 5,
+      "table_bytes": 650,
+      "table_sha256": "88c17da0acc24b78d5d94bf7f29f3481d75f4cebc49925f4f83f5f4b8b95f5db",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 5.70436990186e-05,
+        "worst_input_bits": 22503424
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "2aae31d292875db64522acc657f23a92b432a8ff916d88213444d007a235890e",
+          "samples": 34880,
+          "different_samples": 18345,
+          "max_absolute_error": 41,
+          "rmse": 3.8526248052345116,
+          "snr_db": 57.14465962287585,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "2034d4b1a02105e81c1ad416503daf1c60c6071f60897cef821303404f2b3f6c",
+          "samples": 23520,
+          "different_samples": 10032,
+          "max_absolute_error": 45,
+          "rmse": 2.8657237216765314,
+          "snr_db": 57.04716630826023,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "a134d331582032e3fa1620423418b7d80c3f942b286f73a7b1545a8b0f422287",
+          "samples": 1813280,
+          "different_samples": 1272920,
+          "max_absolute_error": 248,
+          "rmse": 9.109446526281216,
+          "snr_db": 54.63158746956853,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 14,
+      "table_bits": 6,
+      "table_bytes": 1290,
+      "table_sha256": "bf7c90a8542b5b9c6dc14977404887aa2fee2a0dbb14e365c72555436782103d",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 5.53109388852e-05,
+        "worst_input_bits": 17821696
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "404a1cc2d5b9bc4ef11db4c4591efc1b07c7fee00b65988fd01143b29a3becf9",
+          "samples": 34880,
+          "different_samples": 18358,
+          "max_absolute_error": 41,
+          "rmse": 3.8548194545948498,
+          "snr_db": 57.13971311090361,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "9d1123e3ca48ddccb0e3c67fba62cc3e732139803f8b62b01c11ead87f2c165a",
+          "samples": 23520,
+          "different_samples": 9984,
+          "max_absolute_error": 45,
+          "rmse": 2.8627326272703315,
+          "snr_db": 57.05623692578361,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "eb608d7a6a95085367785079b4aada61e89a9e89195f9ae7f9350f600f2eeced",
+          "samples": 1813280,
+          "different_samples": 1273003,
+          "max_absolute_error": 248,
+          "rmse": 9.104837077891482,
+          "snr_db": 54.63598370734877,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 15,
+      "table_bits": 3,
+      "table_bytes": 170,
+      "table_sha256": "35800412a00d1194825f32e9afc0afe8cdc3580b8adbea39a30e9bcba09cb0b2",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 2.88684030991e-05,
+        "worst_input_bits": 18829312
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "a7cf266bba934f236bc5068dc4aaa28d9e09fcca7ba5b5bce0aa8d0e5b2077b1",
+          "samples": 34880,
+          "different_samples": 18359,
+          "max_absolute_error": 41,
+          "rmse": 3.8539157080044797,
+          "snr_db": 57.141749720805265,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "5eaa038f5f9f78ea78f23985638afc85c34682895ce4408c774b3926d5172b99",
+          "samples": 23520,
+          "different_samples": 10009,
+          "max_absolute_error": 45,
+          "rmse": 2.8651079451593033,
+          "snr_db": 57.04903290187242,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "168a267f2d296c43cbab4a9b4f2a6926fc58b5676a7e81fcf8ce976a2238f82d",
+          "samples": 1813280,
+          "different_samples": 1273147,
+          "max_absolute_error": 248,
+          "rmse": 9.096169396651494,
+          "snr_db": 54.644256494731714,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 15,
+      "table_bits": 4,
+      "table_bytes": 330,
+      "table_sha256": "358b7d2b286ba30b9ffa1ae1b283f95119c94d5a13a246bc675712bfb63074b0",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 2.80663708061e-05,
+        "worst_input_bits": 18835456
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "f10dc8f8c36e31a89c5f9a14416a32ed4233929d5eab86ef387df0292c861b19",
+          "samples": 34880,
+          "different_samples": 18349,
+          "max_absolute_error": 41,
+          "rmse": 3.8531531231999705,
+          "snr_db": 57.14346859152468,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "5d986a910c9257da2766a0ff7d6310a43f97bd4d4205491ddde3ef9d8bd9e530",
+          "samples": 23520,
+          "different_samples": 10006,
+          "max_absolute_error": 45,
+          "rmse": 2.8653008532424367,
+          "snr_db": 57.048448099503176,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "9c6c409979d574e5fb357875af61068abdd9f59342e140b6d56d7ce124114844",
+          "samples": 1813280,
+          "different_samples": 1273150,
+          "max_absolute_error": 248,
+          "rmse": 9.098302328885428,
+          "snr_db": 54.64222000646717,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 15,
+      "table_bits": 5,
+      "table_bytes": 650,
+      "table_sha256": "0e11826b6a1877e4630cfc1dde46636ae8ae3578dd7013021aa50f9c0c8850d5",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 2.76349063528e-05,
+        "worst_input_bits": 17561600
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "ff8db2b4b3384ffddf9d0d6230220d8d8deefbfc32339590820100fc4be632b0",
+          "samples": 34880,
+          "different_samples": 18346,
+          "max_absolute_error": 41,
+          "rmse": 3.8503358307002666,
+          "snr_db": 57.14982173695475,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "117bdeb77ce76e4257fc417f7bf1705ae194d023c26010e286c409deed35d782",
+          "samples": 23520,
+          "different_samples": 10005,
+          "max_absolute_error": 45,
+          "rmse": 2.862309316941539,
+          "snr_db": 57.05752139735293,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "6907f2379e124bcdc684b42f420aad28c54ef06ef77a0810567a9af9b000187b",
+          "samples": 1813280,
+          "different_samples": 1273104,
+          "max_absolute_error": 248,
+          "rmse": 9.099567442252788,
+          "snr_db": 54.64101232279382,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 15,
+      "table_bits": 6,
+      "table_bytes": 1290,
+      "table_sha256": "1f0841bf0327b40aecf7b3c4b3ec05b1e852383a347ba25253dbbfdabe4b66ac",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 3.06823206664e-05,
+        "worst_input_bits": 1990768640
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "effd12cb5cf241023f142f45f96958ae3316512803464829ce588032259525d5",
+          "samples": 34880,
+          "different_samples": 18346,
+          "max_absolute_error": 41,
+          "rmse": 3.8522750337663867,
+          "snr_db": 57.14544823179647,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "c64867ce74adbbc50110a50fbeaa1efa2ca824efefe7b9f8f7693325b065066c",
+          "samples": 23520,
+          "different_samples": 10010,
+          "max_absolute_error": 45,
+          "rmse": 2.864106098156386,
+          "snr_db": 57.05207064231097,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "323406484b835b5b397fe3432ece828ebd84eaa2f8392dd2c583808cdee28d2a",
+          "samples": 1813280,
+          "different_samples": 1273078,
+          "max_absolute_error": 248,
+          "rmse": 9.105287501130833,
+          "snr_db": 54.6355540203874,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 16,
+      "table_bits": 3,
+      "table_bytes": 215,
+      "table_sha256": "00169ecdac0d9dfe0c74cf9f2bfd103d4d6fad57ec8d742b0489d6a8ccb4aefd",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 1.44374880153e-05,
+        "worst_input_bits": 26071040
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "b35e260de20514a92e47c826b7b46159d1f0a659cc886bb89bac921f51c14480",
+          "samples": 34880,
+          "different_samples": 18339,
+          "max_absolute_error": 41,
+          "rmse": 3.8520703655200057,
+          "snr_db": 57.145909718323566,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "543d4d599623d6df1f6c67367eda10f868d29d400b00ee5d44a0cc82a7101f0f",
+          "samples": 23520,
+          "different_samples": 9996,
+          "max_absolute_error": 45,
+          "rmse": 2.8609869972859814,
+          "snr_db": 57.06153500146084,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "9a2706c232db76d1691e2c297e532627d6f367f9db8d28bfd195d11e200b804f",
+          "samples": 1813280,
+          "different_samples": 1273145,
+          "max_absolute_error": 248,
+          "rmse": 9.096840286529355,
+          "snr_db": 54.64361588874705,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 16,
+      "table_bits": 4,
+      "table_bytes": 415,
+      "table_sha256": "69cd6306f2484915baf21bd1a0e0f587e7b5b279262424f106eaf71105875c2e",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 1.49290944422e-05,
+        "worst_input_bits": 1820936192
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "6b89a19f62286d20c643f68c9450ffb16f3bda74e052be66889ccac1ade4d7a3",
+          "samples": 34880,
+          "different_samples": 18349,
+          "max_absolute_error": 41,
+          "rmse": 3.853945464352322,
+          "snr_db": 57.14168265671378,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "eaa98d5d06488821e061bd51f5a6b4aa0a522a2184815bf4e8ffa840233f1a9d",
+          "samples": 23520,
+          "different_samples": 10004,
+          "max_absolute_error": 45,
+          "rmse": 2.8636384496070777,
+          "snr_db": 57.05348898199559,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "2dd73fc35dbca6f214291704fd8a9a201a8ec9644c02b42459e46a449a8600e1",
+          "samples": 1813280,
+          "different_samples": 1273154,
+          "max_absolute_error": 248,
+          "rmse": 9.09828523564974,
+          "snr_db": 54.642236324906904,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 16,
+      "table_bits": 5,
+      "table_bytes": 815,
+      "table_sha256": "c820028a08f4697b5b16bc26f9a76b59a1d3fc52fb611a3ec1863adada27100c",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 1.47141413139e-05,
+        "worst_input_bits": 2114476032
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "19a83baddc8a1059052ff732b6614ac3cced30394cf018ee733345f53cf4beb3",
+          "samples": 34880,
+          "different_samples": 18345,
+          "max_absolute_error": 41,
+          "rmse": 3.8540347320173867,
+          "snr_db": 57.14148147065277,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "a9cbb1cb5539509f837db5bc388876507a38d01528340fcbc28801e17cb44141",
+          "samples": 23520,
+          "different_samples": 9992,
+          "max_absolute_error": 45,
+          "rmse": 2.8633266414753162,
+          "snr_db": 57.05443479918859,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "60058d0c6a68e6cdc73a34c07c34db14a7d2b38a5e76a94950629271488cda2e",
+          "samples": 1813280,
+          "different_samples": 1273026,
+          "max_absolute_error": 248,
+          "rmse": 9.095991844452268,
+          "snr_db": 54.64442604015154,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 16,
+      "table_bits": 6,
+      "table_bytes": 1615,
+      "table_sha256": "40daa21423a75258356765f3aac1312c7eaf6ee19f522ecff449db2247ef3b33",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 1.47141413139e-05,
+        "worst_input_bits": 2114476032
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "10ba9aa90105de1da2b28ca6412ee3d8b78e47908b6c0b4a1d044d2ece11a73b",
+          "samples": 34880,
+          "different_samples": 18348,
+          "max_absolute_error": 41,
+          "rmse": 3.8559572045476274,
+          "snr_db": 57.13714984885256,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "7a884aa16f3f78334c568358cb194d83f73064becb8ae71d1a2d642c23689411",
+          "samples": 23520,
+          "different_samples": 9987,
+          "max_absolute_error": 45,
+          "rmse": 2.8629108444730442,
+          "snr_db": 57.05569620928161,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "291a8b8cecbc8e01dfb8138681c75dee5fefc8de42a1923dca71d24316995ac2",
+          "samples": 1813280,
+          "different_samples": 1273083,
+          "max_absolute_error": 248,
+          "rmse": 9.095031662624677,
+          "snr_db": 54.645342979585024,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 17,
+      "table_bits": 3,
+      "table_bytes": 215,
+      "table_sha256": "5b386e8874bd7ac067b414f80c23a5ab69eb249bb1a6db1b55f5721acbcd8b03",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 8.80247840729e-06,
+        "worst_input_bits": 1989400576
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "45f54e66eb10f83d0b3f943d3021bc651807745b30a3f020568673d5f39cbc7b",
+          "samples": 34880,
+          "different_samples": 18346,
+          "max_absolute_error": 41,
+          "rmse": 3.8537446045455868,
+          "snr_db": 57.14213535942985,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "7e0c4c1ba2e0e948225993e86798d1345ac40144476d3eb7015497a0fbace8c5",
+          "samples": 23520,
+          "different_samples": 9992,
+          "max_absolute_error": 45,
+          "rmse": 2.8624727072934686,
+          "snr_db": 57.05702559137842,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "b435f4e973dbf8ea1484f83aa97fa90d1bccb19c7f2e7f962e4fe762ccb45c40",
+          "samples": 1813280,
+          "different_samples": 1273088,
+          "max_absolute_error": 248,
+          "rmse": 9.096625280986968,
+          "snr_db": 54.64382118381916,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 17,
+      "table_bits": 4,
+      "table_bytes": 415,
+      "table_sha256": "88e7f7b74950ca9fec118e12764de012878b5837de172685e44aac80cb501e09",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 6.740011669e-06,
+        "worst_input_bits": 1419264
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "29c644f36a303a216a44fad878f5a302816c116be8fc10aff594255a03c2256f",
+          "samples": 34880,
+          "different_samples": 18344,
+          "max_absolute_error": 41,
+          "rmse": 3.854042170896145,
+          "snr_db": 57.14146470556837,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "d7671fd25ef5d24a4903ae5c1a12cd2c5ab993de09f48a8d372811662a5d8e9a",
+          "samples": 23520,
+          "different_samples": 9999,
+          "max_absolute_error": 45,
+          "rmse": 2.8643139174481336,
+          "snr_db": 57.051440417771346,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "77bc5e33f4cd9c788573efacd57b726783e7b6cadf20b891ab23eb8f42b44000",
+          "samples": 1813280,
+          "different_samples": 1273093,
+          "max_absolute_error": 248,
+          "rmse": 9.095939157133206,
+          "snr_db": 54.644476352154,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 17,
+      "table_bits": 5,
+      "table_bytes": 815,
+      "table_sha256": "930a44ccc7b73b0037ee11d32a4c2d9ecf9ae81ba88f5153ac8b1867ce49fe01",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 6.95615367707e-06,
+        "worst_input_bits": 1827467264
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "e6c2bfd8eefa6caaaa2ff106f102d18cb8b9bce79bb609302a21921f5817177e",
+          "samples": 34880,
+          "different_samples": 18337,
+          "max_absolute_error": 41,
+          "rmse": 3.8538078393175392,
+          "snr_db": 57.14199283681857,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "35b11453537ac5c4fa56c7a6d76ac634dbcb5b17a48d8d611b39c89c1387f5fc",
+          "samples": 23520,
+          "different_samples": 9996,
+          "max_absolute_error": 45,
+          "rmse": 2.8651005253582578,
+          "snr_db": 57.04905539584392,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "21fa42de9543bf01316944b485dca804645a97ac8248a1727da6e89782233ddf",
+          "samples": 1813280,
+          "different_samples": 1273065,
+          "max_absolute_error": 248,
+          "rmse": 9.096331303532377,
+          "snr_db": 54.64410189198389,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 17,
+      "table_bits": 6,
+      "table_bytes": 1615,
+      "table_sha256": "2865d2506e3288641c139c4bdbfa1992d6f4cd0324c1d2dd3481d072561ecdc0",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 7.0919605063e-06,
+        "worst_input_bits": 2030407680
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "bc09746192099843e00348dd9d6825aa2315d7a389d32222e81dba5ed3a74d13",
+          "samples": 34880,
+          "different_samples": 18334,
+          "max_absolute_error": 41,
+          "rmse": 3.8499895746314223,
+          "snr_db": 57.150602883684066,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "046df2cfea2b5acd9cd7f2304f2ee74317625f20546b3187d0024ca1707f8e46",
+          "samples": 23520,
+          "different_samples": 9999,
+          "max_absolute_error": 45,
+          "rmse": 2.86489276312704,
+          "snr_db": 57.049685274352065,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "6487d1e2aa61bd2914f82294c4277b30428bf37a617a1b1e0089c8324c3aad39",
+          "samples": 1813280,
+          "different_samples": 1273077,
+          "max_absolute_error": 248,
+          "rmse": 9.09682082620585,
+          "snr_db": 54.64363446996842,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 18,
+      "table_bits": 3,
+      "table_bytes": 215,
+      "table_sha256": "c2906f1d97f9349c3b684bbf27654913144c56c2c4db6229876fb7a659bf643d",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 7.02112750872e-06,
+        "worst_input_bits": 17592320
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "335f89b07b2c6115a0858dab6d33998b38bbf1843bbbf89c154965b3b09140aa",
+          "samples": 34880,
+          "different_samples": 18348,
+          "max_absolute_error": 41,
+          "rmse": 3.8506187695300196,
+          "snr_db": 57.14918348479557,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "131dc7a1264cb7bda1ff82b59f42e8a7c30918728f46f65be7df9047760254e6",
+          "samples": 23520,
+          "different_samples": 9997,
+          "max_absolute_error": 45,
+          "rmse": 2.8630073741591717,
+          "snr_db": 57.055403349283075,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "8fe2950453621c6fec827772bf343aa367f86704e8b6a99322a463a46f6ec79b",
+          "samples": 1813280,
+          "different_samples": 1273037,
+          "max_absolute_error": 248,
+          "rmse": 9.093853852332625,
+          "snr_db": 54.646467878657845,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 18,
+      "table_bits": 4,
+      "table_bytes": 415,
+      "table_sha256": "eb85c9883e514acbc69a7d0485d36994af4810438ee8020502dbf1f0da977948",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 4.19893822845e-06,
+        "worst_input_bits": 17743872
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "499dd399e4dc664616ef93883c1b2b05488a74c807f7ef3c8293db3b1ed99851",
+          "samples": 34880,
+          "different_samples": 18356,
+          "max_absolute_error": 41,
+          "rmse": 3.8534842151396282,
+          "snr_db": 57.142722266526256,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "cdd89834bd5af882bbed741317c9f235111baf597ec62cddb436aa1580cf0b5b",
+          "samples": 23520,
+          "different_samples": 9995,
+          "max_absolute_error": 45,
+          "rmse": 2.862977673063935,
+          "snr_db": 57.05549345794847,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "f998a87a5dc8fe14f7269bc40ea54608cfe659c5fdfeda71e77ddeda6b75f736",
+          "samples": 1813280,
+          "different_samples": 1273084,
+          "max_absolute_error": 248,
+          "rmse": 9.095943461862323,
+          "snr_db": 54.64447224148521,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 18,
+      "table_bits": 5,
+      "table_bytes": 815,
+      "table_sha256": "40ff7818fb37e789c1ae5eae2464970451e9df8d48e1083279bed91d8a804081",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 3.79818909257e-06,
+        "worst_input_bits": 18386944
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "413d47955e04be0d2fe3e457bdbdf8ad48e4fd8c77dab56adc28a787b982fd51",
+          "samples": 34880,
+          "different_samples": 18337,
+          "max_absolute_error": 41,
+          "rmse": 3.8533763343737824,
+          "snr_db": 57.14296543698984,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "174888cf2a3116cb22bce434d936f0249d6d42f9a92e244f5acb43b99c8494d9",
+          "samples": 23520,
+          "different_samples": 10002,
+          "max_absolute_error": 45,
+          "rmse": 2.865048586212901,
+          "snr_db": 57.0492128569067,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "d632c8f4e2c281dc3449e8a379b97281899082f8352fa30a0ba673ebda43723b",
+          "samples": 1813280,
+          "different_samples": 1273071,
+          "max_absolute_error": 248,
+          "rmse": 9.095723584606908,
+          "snr_db": 54.64468220900162,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 18,
+      "table_bits": 6,
+      "table_bytes": 1615,
+      "table_sha256": "af3c59d917d2df8d78d9daa44426860fc149889ec1a373316e42d2e258c2c512",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 3.80240447928e-06,
+        "worst_input_bits": 18331648
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "86ae0da06e08644ef6909f2b7a49e08fea19ef0cdcecf925e644fa81e9a72b8f",
+          "samples": 34880,
+          "different_samples": 18335,
+          "max_absolute_error": 41,
+          "rmse": 3.853893390592823,
+          "snr_db": 57.14180001955349,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "91e64c06fe2640f451fe9d69af28ad5fbcd97537cfe0af6db691b506742f9680",
+          "samples": 23520,
+          "different_samples": 10000,
+          "max_absolute_error": 45,
+          "rmse": 2.8648037175583347,
+          "snr_db": 57.04995525025225,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "1a38446b4b29afe1e84902839c2b1329b0719f823e87b8c9bbeb07f72872df50",
+          "samples": 1813280,
+          "different_samples": 1273018,
+          "max_absolute_error": 248,
+          "rmse": 9.096078635383202,
+          "snr_db": 54.644343162674936,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 19,
+      "table_bits": 3,
+      "table_bytes": 215,
+      "table_sha256": "c8479e4b73e8cd424492c838adbcb9747e2feffd5065bada48b04204e4d4b7b9",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 5.21524995978e-06,
+        "worst_input_bits": 1988343808
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "21f14f7da4dd804056191d9bb7cfea3ddd32028c39872f0431ac21aed4e74c4f",
+          "samples": 34880,
+          "different_samples": 18346,
+          "max_absolute_error": 41,
+          "rmse": 3.8506783329503405,
+          "snr_db": 57.14904912787141,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "7668638f25f4d13ed6de3d4d0545be7ce463e7088f516c6c9646d7bb4dad9b08",
+          "samples": 23520,
+          "different_samples": 9992,
+          "max_absolute_error": 45,
+          "rmse": 2.8629628224007697,
+          "snr_db": 57.05553851298228,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "ade05ccdd07f6de37ef6f156591719710cd4e8239230fac9052f3c9d59b5b4ee",
+          "samples": 1813280,
+          "different_samples": 1273085,
+          "max_absolute_error": 248,
+          "rmse": 9.095460470672386,
+          "snr_db": 54.644933471216405,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 19,
+      "table_bits": 4,
+      "table_bytes": 415,
+      "table_sha256": "2a7253787a157a87173c7090fc30782867306f46ebb69bb007f331a56eb556eb",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 2.1249112554e-06,
+        "worst_input_bits": 17197056
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "f0aec1a0e441ccc1a37694a7c74078bdabccd827fac9601ddeeb20a0d4257a2a",
+          "samples": 34880,
+          "different_samples": 18350,
+          "max_absolute_error": 41,
+          "rmse": 3.853428415120581,
+          "snr_db": 57.14284804265232,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "8bdf1abd279b2961bda7f0714007e5ba6daaa5304aa9b4cb58744e866fd225f3",
+          "samples": 23520,
+          "different_samples": 9994,
+          "max_absolute_error": 45,
+          "rmse": 2.864751773031729,
+          "snr_db": 57.050112743944794,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "6d5a1f49b73b419906192e15ccbcab9a1f21982df1f5b17554b4652559c75392",
+          "samples": 1813280,
+          "different_samples": 1273091,
+          "max_absolute_error": 248,
+          "rmse": 9.096164091659062,
+          "snr_db": 54.64426156044566,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 19,
+      "table_bits": 5,
+      "table_bytes": 815,
+      "table_sha256": "58759cbf658a939a3e2c125327abf1f0cb0f86d052bb9555b274ece15a4cdae3",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 2.01089788354e-06,
+        "worst_input_bits": 17108992
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "668dbc4699b31b612d4c47720d32a6eb44186f060a0b6689392f0267dab6ee8b",
+          "samples": 34880,
+          "different_samples": 18346,
+          "max_absolute_error": 41,
+          "rmse": 3.853383774523564,
+          "snr_db": 57.1429486661759,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "8bdf1abd279b2961bda7f0714007e5ba6daaa5304aa9b4cb58744e866fd225f3",
+          "samples": 23520,
+          "different_samples": 9994,
+          "max_absolute_error": 45,
+          "rmse": 2.864751773031729,
+          "snr_db": 57.050112743944794,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "f67f62ef4d0151ecf6db1beb351415dc2ca2d223812a1c3027eb57d96fc6251b",
+          "samples": 1813280,
+          "different_samples": 1273091,
+          "max_absolute_error": 248,
+          "rmse": 9.095980294496474,
+          "snr_db": 54.644437069372614,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 19,
+      "table_bits": 6,
+      "table_bytes": 1615,
+      "table_sha256": "2e65a0f004d10cbaae06477daf4ad910831ffc07c5435f4b10dcb9f92133809f",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 2.10964022307e-06,
+        "worst_input_bits": 1949734912
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "f91b30c17930475743c5c1d2978c892f082db885b51802a404a1320b427b6117",
+          "samples": 34880,
+          "different_samples": 18348,
+          "max_absolute_error": 41,
+          "rmse": 3.8533800544504686,
+          "snr_db": 57.14295705157477,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "5552ee741aefd963faf27f72df7c7f7f58daba0769037134a70fcb206affad4f",
+          "samples": 23520,
+          "different_samples": 10001,
+          "max_absolute_error": 45,
+          "rmse": 2.8648111381281067,
+          "snr_db": 57.04993275161955,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "e4026478272de3d3adfb6226cd753dbacf25556ebd90b134cf1daf5d25f73c17",
+          "samples": 1813280,
+          "different_samples": 1273070,
+          "max_absolute_error": 248,
+          "rmse": 9.096520095259834,
+          "snr_db": 54.643921620725315,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 20,
+      "table_bits": 3,
+      "table_bytes": 215,
+      "table_sha256": "c10acb4a01b862a12e42851ab8ca26bc935b2e865d02e4459ad08d09ddda87f5",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 4.67526507852e-06,
+        "worst_input_bits": 1837309952
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "6fc09394a8ae6f2afea00646be5535b320c7440722da2c8f7bc49f96449342b1",
+          "samples": 34880,
+          "different_samples": 18345,
+          "max_absolute_error": 41,
+          "rmse": 3.8506857783130983,
+          "snr_db": 57.14903233354815,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "425fb9d0306fc776a8c03f8e0caea2b0153fd282185c25e3f4087fb2b467558b",
+          "samples": 23520,
+          "different_samples": 9997,
+          "max_absolute_error": 45,
+          "rmse": 2.8630073741591717,
+          "snr_db": 57.055403349283075,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "428b9665e8445be5bf8aff5a1fbaedf7cf64f38013eb41e0a1f3b5ea24c1c755",
+          "samples": 1813280,
+          "different_samples": 1273091,
+          "max_absolute_error": 248,
+          "rmse": 9.095055037792498,
+          "snr_db": 54.64532065598302,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 20,
+      "table_bits": 4,
+      "table_bytes": 415,
+      "table_sha256": "f713cfb775675f1e10aa036d7111440a92d7c7232a0f1f0972bdea02adaf94b1",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 1.4103662862e-06,
+        "worst_input_bits": 2030659584
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "822d903580017bbd2edb6d2b98dad8adbda5248c50032d310cc0b0eae3f37242",
+          "samples": 34880,
+          "different_samples": 18349,
+          "max_absolute_error": 41,
+          "rmse": 3.853383774523564,
+          "snr_db": 57.1429486661759,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "1089db3d9605fb3c7965d9dc971d3aacb9f1e445c20012967d65d31b02ad6bc2",
+          "samples": 23520,
+          "different_samples": 9997,
+          "max_absolute_error": 45,
+          "rmse": 2.864788876361127,
+          "snr_db": 57.05000024786733,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "35a480ab90c1e8c5ca994dc8753df6589d2a9082567619a2f4394b745595ed39",
+          "samples": 1813280,
+          "different_samples": 1273093,
+          "max_absolute_error": 248,
+          "rmse": 9.096477596243535,
+          "snr_db": 54.64396220136756,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 20,
+      "table_bits": 5,
+      "table_bytes": 815,
+      "table_sha256": "2629dab22bd267b61f44fda315ff6c0e4837e93d465571583555cc630752fd04",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 1.16997899424e-06,
+        "worst_input_bits": 2114752512
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "c6a24166ab2a047511184b433316a8f2c50af321cc4a5eba08ca9095cfa50710",
+          "samples": 34880,
+          "different_samples": 18341,
+          "max_absolute_error": 41,
+          "rmse": 3.8538338768632356,
+          "snr_db": 57.14193415239687,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "8bdf1abd279b2961bda7f0714007e5ba6daaa5304aa9b4cb58744e866fd225f3",
+          "samples": 23520,
+          "different_samples": 9994,
+          "max_absolute_error": 45,
+          "rmse": 2.864751773031729,
+          "snr_db": 57.050112743944794,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "09fa002e542d1c967f6f1656fcbd2aa7db997a712901c364fefca4aa29eaf9dc",
+          "samples": 1813280,
+          "different_samples": 1273063,
+          "max_absolute_error": 248,
+          "rmse": 9.096019158068907,
+          "snr_db": 54.64439995803673,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 20,
+      "table_bits": 6,
+      "table_bytes": 1615,
+      "table_sha256": "dba8451d39e3508b44c651dbd3affe0a212214b1fdedd1023f6305eff78dd39f",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 1.1883453741e-06,
+        "worst_input_bits": 16910336
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "4255cf4ac07c7ba6d79087e0b677f6780a06130d824d3f8d0c20a4b43e076c89",
+          "samples": 34880,
+          "different_samples": 18350,
+          "max_absolute_error": 41,
+          "rmse": 3.8533874945930675,
+          "snr_db": 57.142940280793226,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "8bdf1abd279b2961bda7f0714007e5ba6daaa5304aa9b4cb58744e866fd225f3",
+          "samples": 23520,
+          "different_samples": 9994,
+          "max_absolute_error": 45,
+          "rmse": 2.864751773031729,
+          "snr_db": 57.050112743944794,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "53f88df3a24910ce43aad589d9b7e093734482282a774165854f5248f7b7bd21",
+          "samples": 1813280,
+          "different_samples": 1273072,
+          "max_absolute_error": 248,
+          "rmse": 9.095703424631145,
+          "snr_db": 54.644701460633115,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 21,
+      "table_bits": 3,
+      "table_bytes": 215,
+      "table_sha256": "9de9e57fb71af7fa600fa33d72e2df0f381c48c174c5eedbe1ea4b885f69a6be",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 4.38888823651e-06,
+        "worst_input_bits": 1946368000
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "6fc09394a8ae6f2afea00646be5535b320c7440722da2c8f7bc49f96449342b1",
+          "samples": 34880,
+          "different_samples": 18345,
+          "max_absolute_error": 41,
+          "rmse": 3.8506857783130983,
+          "snr_db": 57.14903233354815,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "44af3e5de9bbfb2615c990a324e84524032c091d4da4407f28ccbd446dd05077",
+          "samples": 23520,
+          "different_samples": 9992,
+          "max_absolute_error": 45,
+          "rmse": 2.8630519252243074,
+          "snr_db": 57.055268189790375,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "1e32092a9f284bfff776872d45d771fc235b1b19f546c8c89c1bf44a2ae36032",
+          "samples": 1813280,
+          "different_samples": 1273105,
+          "max_absolute_error": 248,
+          "rmse": 9.095206232141654,
+          "snr_db": 54.6451762647166,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 21,
+      "table_bits": 4,
+      "table_bytes": 415,
+      "table_sha256": "55b020a387b71790d6f2a1ea1bde351d6211b7816d7baf2f935f81f71a8d0594",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 1.18006771221e-06,
+        "worst_input_bits": 17213440
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "8f4db9bd987d56fe3740c9fe0b30a897866fe47534d3737aec1bcd23b5fd1b3d",
+          "samples": 34880,
+          "different_samples": 18349,
+          "max_absolute_error": 41,
+          "rmse": 3.85334285352199,
+          "snr_db": 57.14304090645396,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "1089db3d9605fb3c7965d9dc971d3aacb9f1e445c20012967d65d31b02ad6bc2",
+          "samples": 23520,
+          "different_samples": 9997,
+          "max_absolute_error": 45,
+          "rmse": 2.864788876361127,
+          "snr_db": 57.05000024786733,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "32b05d1dfff2cb66a91ce0fda4f9da95eb07fd5278b34e569c87dd1425ab0d7b",
+          "samples": 1813280,
+          "different_samples": 1273092,
+          "max_absolute_error": 248,
+          "rmse": 9.09637416699479,
+          "snr_db": 54.64406096268895,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 21,
+      "table_bits": 5,
+      "table_bytes": 815,
+      "table_sha256": "eb61df2925fd8c77c49f4057a5c967520eee870fe5e46fd6d55a00139423154d",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 7.85500909983e-07,
+        "worst_input_bits": 2116890624
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "4a76698cab74f7663fc4ea494964cec98f4213f21779f931d6e374285c288b61",
+          "samples": 34880,
+          "different_samples": 18349,
+          "max_absolute_error": 41,
+          "rmse": 3.853394934721301,
+          "snr_db": 57.142923510076436,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "8bdf1abd279b2961bda7f0714007e5ba6daaa5304aa9b4cb58744e866fd225f3",
+          "samples": 23520,
+          "different_samples": 9994,
+          "max_absolute_error": 45,
+          "rmse": 2.864751773031729,
+          "snr_db": 57.050112743944794,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "b4944a07c6f2d56ad39e9bd456d574847a5d7d6f6fb6f64f11441a643bc357ce",
+          "samples": 1813280,
+          "different_samples": 1273068,
+          "max_absolute_error": 248,
+          "rmse": 9.096114376151055,
+          "snr_db": 54.64430903370929,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 21,
+      "table_bits": 6,
+      "table_bytes": 1615,
+      "table_sha256": "6045d880b1af479bf0ea001e028f1d2c81e178b6dc6c5b7aec8440b205d9c572",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 7.10732559139e-07,
+        "worst_input_bits": 2072256512
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "eebda4818be6f80508724d001f84768f40b671bd60641e9e860e5dd835b845e0",
+          "samples": 34880,
+          "different_samples": 18347,
+          "max_absolute_error": 41,
+          "rmse": 3.8533874945930675,
+          "snr_db": 57.142940280793226,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "8bdf1abd279b2961bda7f0714007e5ba6daaa5304aa9b4cb58744e866fd225f3",
+          "samples": 23520,
+          "different_samples": 9994,
+          "max_absolute_error": 45,
+          "rmse": 2.864751773031729,
+          "snr_db": 57.050112743944794,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "668b3c5d03f49972928a4ba2650ada79e831fc3d534a2448a731152622e046df",
+          "samples": 1813280,
+          "different_samples": 1273069,
+          "max_absolute_error": 248,
+          "rmse": 9.096134262386864,
+          "snr_db": 54.644290044341574,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 22,
+      "table_bits": 3,
+      "table_bytes": 215,
+      "table_sha256": "5c6254b63c266dfd4bc0072709231d600c296564324aae27253b9e7f873f7484",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 4.31378004684e-06,
+        "worst_input_bits": 2130929664
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "6fc09394a8ae6f2afea00646be5535b320c7440722da2c8f7bc49f96449342b1",
+          "samples": 34880,
+          "different_samples": 18345,
+          "max_absolute_error": 41,
+          "rmse": 3.8506857783130983,
+          "snr_db": 57.14903233354815,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "44af3e5de9bbfb2615c990a324e84524032c091d4da4407f28ccbd446dd05077",
+          "samples": 23520,
+          "different_samples": 9992,
+          "max_absolute_error": 45,
+          "rmse": 2.8630519252243074,
+          "snr_db": 57.055268189790375,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "1fe9e61c40791b41e750ef9458a2746e80b110f92bf48fe4418b96f8cb067f8c",
+          "samples": 1813280,
+          "different_samples": 1273097,
+          "max_absolute_error": 248,
+          "rmse": 9.095207475156768,
+          "snr_db": 54.64517507764167,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 22,
+      "table_bits": 4,
+      "table_bytes": 415,
+      "table_sha256": "69f7d51e38bcc41b6510d4365d826c1dda62ccf57f085affec6504ffbb1d7fd4",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 9.32005343124e-07,
+        "worst_input_bits": 2080464896
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "9bf77a630e220bdd45c57d36f7b777b3eb95f91ae74d6542ff230f07946a71d9",
+          "samples": 34880,
+          "different_samples": 18348,
+          "max_absolute_error": 41,
+          "rmse": 3.853354013838244,
+          "snr_db": 57.1430157498202,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "5552ee741aefd963faf27f72df7c7f7f58daba0769037134a70fcb206affad4f",
+          "samples": 23520,
+          "different_samples": 10001,
+          "max_absolute_error": 45,
+          "rmse": 2.8648111381281067,
+          "snr_db": 57.04993275161955,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "3a1cbd32021295a3a8dfd8bce819ffb5acde0b808295a5d75d283c0d1cd22f42",
+          "samples": 1813280,
+          "different_samples": 1273101,
+          "max_absolute_error": 248,
+          "rmse": 9.096307931644231,
+          "snr_db": 54.644124209322065,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 22,
+      "table_bits": 5,
+      "table_bytes": 815,
+      "table_sha256": "89fb80e48775575562240478740849ea4954f285b23177f8ddc141c09803e31e",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 5.12305737499e-07,
+        "worst_input_bits": 2080927744
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "eebda4818be6f80508724d001f84768f40b671bd60641e9e860e5dd835b845e0",
+          "samples": 34880,
+          "different_samples": 18347,
+          "max_absolute_error": 41,
+          "rmse": 3.8533874945930675,
+          "snr_db": 57.142940280793226,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "8bdf1abd279b2961bda7f0714007e5ba6daaa5304aa9b4cb58744e866fd225f3",
+          "samples": 23520,
+          "different_samples": 9994,
+          "max_absolute_error": 45,
+          "rmse": 2.864751773031729,
+          "snr_db": 57.050112743944794,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "ae061cb2412070cd505da8bb84fef4e31dac4bba931790653ca7021731bc1b2b",
+          "samples": 1813280,
+          "different_samples": 1273072,
+          "max_absolute_error": 248,
+          "rmse": 9.096133868300296,
+          "snr_db": 54.64429042065446,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 22,
+      "table_bits": 6,
+      "table_bytes": 1615,
+      "table_sha256": "080cf0d241fedfdfbe4a70058e801c78e57604311d8b2dd5c061c9d2e6747042",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 4.75295969249e-07,
+        "worst_input_bits": 1626112
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "4255cf4ac07c7ba6d79087e0b677f6780a06130d824d3f8d0c20a4b43e076c89",
+          "samples": 34880,
+          "different_samples": 18350,
+          "max_absolute_error": 41,
+          "rmse": 3.8533874945930675,
+          "snr_db": 57.142940280793226,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "8bdf1abd279b2961bda7f0714007e5ba6daaa5304aa9b4cb58744e866fd225f3",
+          "samples": 23520,
+          "different_samples": 9994,
+          "max_absolute_error": 45,
+          "rmse": 2.864751773031729,
+          "snr_db": 57.050112743944794,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "66b0697c8ec27143c0b35c7846a4a79d4933f43b2945d8eb2eb88fcbcaa5a73a",
+          "samples": 1813280,
+          "different_samples": 1273072,
+          "max_absolute_error": 248,
+          "rmse": 9.09613920362469,
+          "snr_db": 54.64428532595973,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 23,
+      "table_bits": 3,
+      "table_bytes": 215,
+      "table_sha256": "d0d575bad6e427d3435e312d13fe3bd74c41a385ab4eb8868d2f5d4cd5c52bdb",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 4.23440816033e-06,
+        "worst_input_bits": 2122522624
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "6fc09394a8ae6f2afea00646be5535b320c7440722da2c8f7bc49f96449342b1",
+          "samples": 34880,
+          "different_samples": 18345,
+          "max_absolute_error": 41,
+          "rmse": 3.8506857783130983,
+          "snr_db": 57.14903233354815,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "44af3e5de9bbfb2615c990a324e84524032c091d4da4407f28ccbd446dd05077",
+          "samples": 23520,
+          "different_samples": 9992,
+          "max_absolute_error": 45,
+          "rmse": 2.8630519252243074,
+          "snr_db": 57.055268189790375,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "0aebb608a6c66888d96e5a74aa95e87d791b324aa0097d2b0088e144b20a9004",
+          "samples": 1813280,
+          "different_samples": 1273093,
+          "max_absolute_error": 248,
+          "rmse": 9.09541387394435,
+          "snr_db": 54.64497796979625,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 23,
+      "table_bits": 4,
+      "table_bytes": 415,
+      "table_sha256": "edeaca09405b254e18ccd67c9fc10d1dac55ace2f302745a7aa7e70d28b19755",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 8.33086283625e-07,
+        "worst_input_bits": 2113998848
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "9bf77a630e220bdd45c57d36f7b777b3eb95f91ae74d6542ff230f07946a71d9",
+          "samples": 34880,
+          "different_samples": 18348,
+          "max_absolute_error": 41,
+          "rmse": 3.853354013838244,
+          "snr_db": 57.1430157498202,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "1089db3d9605fb3c7965d9dc971d3aacb9f1e445c20012967d65d31b02ad6bc2",
+          "samples": 23520,
+          "different_samples": 9997,
+          "max_absolute_error": 45,
+          "rmse": 2.864788876361127,
+          "snr_db": 57.05000024786733,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "2353fe3ca7d168bd68ad81df9260aa1ee09c109ea15769e14f0fa4f2f6abae8e",
+          "samples": 1813280,
+          "different_samples": 1273085,
+          "max_absolute_error": 248,
+          "rmse": 9.096336729681996,
+          "snr_db": 54.64409671067274,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 23,
+      "table_bits": 5,
+      "table_bytes": 815,
+      "table_sha256": "8ead4afa29b3b6de9f37d7e4eb56893b320222bef45b0f0d3523fce9fe5afad7",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 4.73263342404e-07,
+        "worst_input_bits": 2114250752
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "eebda4818be6f80508724d001f84768f40b671bd60641e9e860e5dd835b845e0",
+          "samples": 34880,
+          "different_samples": 18347,
+          "max_absolute_error": 41,
+          "rmse": 3.8533874945930675,
+          "snr_db": 57.142940280793226,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "1089db3d9605fb3c7965d9dc971d3aacb9f1e445c20012967d65d31b02ad6bc2",
+          "samples": 23520,
+          "different_samples": 9997,
+          "max_absolute_error": 45,
+          "rmse": 2.864788876361127,
+          "snr_db": 57.05000024786733,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "37445f601e4c879dbbce656c6629b63198d6c763bc020903564eabe838ba5349",
+          "samples": 1813280,
+          "different_samples": 1273065,
+          "max_absolute_error": 248,
+          "rmse": 9.096157725664058,
+          "snr_db": 54.644267639310215,
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "q": 23,
+      "table_bits": 6,
+      "table_bytes": 1615,
+      "table_sha256": "47ff3c59c3461c44f70b64367e847beff19d0f0058c220bc7eafcabc0d6226dd",
+      "kernel": {
+        "inputs": 1044547,
+        "maximum_relative_error": 4.32091197267e-07,
+        "worst_input_bits": 858112
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "output_sha256": "eebda4818be6f80508724d001f84768f40b671bd60641e9e860e5dd835b845e0",
+          "samples": 34880,
+          "different_samples": 18347,
+          "max_absolute_error": 41,
+          "rmse": 3.8533874945930675,
+          "snr_db": 57.142940280793226,
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "output_sha256": "8bdf1abd279b2961bda7f0714007e5ba6daaa5304aa9b4cb58744e866fd225f3",
+          "samples": 23520,
+          "different_samples": 9994,
+          "max_absolute_error": 45,
+          "rmse": 2.864751773031729,
+          "snr_db": 57.050112743944794,
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "output_sha256": "a086834591dc45aab8d8eb53d78bc08d24f265dd5dfd36b74291593e00bba2e2",
+          "samples": 1813280,
+          "different_samples": 1273070,
+          "max_absolute_error": 248,
+          "rmse": 9.095817259697581,
+          "snr_db": 54.64459275517179,
+          "passes": true
+        }
+      ],
+      "passes": true
+    }
+  ],
+  "sources": {
+    "src/fixed_fifth.c": "d5ec27c13dcffc08efa37163ec4c4108279a280cefcc4a845481a62550a507e3",
+    "src/fixed_fifth.h": "10ce4d501b4eb3d49764de673d2a6f8f1290d5f46deda8e5c6e757c3e9cc9ad3",
+    "src/hybrid_postfilter.c": "eb4895c03a787b47a1ec402b3d205e56e3db261823642e3ef6af0a5632e363cf",
+    "tests/fixed_fifth.c": "e5effdee6f87d6222a99a7d03dca3017dcf90fc1ef2b5cc2fc671971e00281dd",
+    "tools/generate_fifth_tables.py": "7c74b43ad4f9441b24c41e348381037ed9b09a7170f959c43f4cea6495d90171",
+    "tools/study_postfilter.py": "f8c7c37e708ebf117a076912fc64ed1b6b83110ea99eca25c3c92bbb10416933"
+  },
+  "compiler": "clang version 24.0.0git (https:/github.com/llvm/llvm-project 55ea1f4ebea23d0355d5cdb075f1e12f28ab82d0)",
+  "scope": "Native root precision/table-size study on 11333 packets and two reset streams; existing fixed IFFT16/Q9 unchanged. No AVR/IRQ admission."
+}

@@ -2359,3 +2359,58 @@ fall only 6.38% EN / 6.23% RU, since other stages are unchanged. Flash rises
 above 20 ms. [Complete hybrid qualification](../../Codecs/Codec2/reports/hybrid-decoder.json).
 No active IRQ, human-speech corpus, analog board or real-time admission is
 claimed. Standalone kernel savings must not be attributed to the full decoder.
+
+### Integer fifth-root postfilter: control decisions set the precision floor
+
+The [Codec2 postfilter stage](../../Codecs/Codec2/POSTFILTER_RU.md) replaces the
+single constant `powf(rw,0.2f)` with a portable integer interpolation kernel.
+The old float and fixed-IFFT-only source choices remain explicit C fallbacks.
+Other spectral/phase stages still use float. No new assembly was introduced.
+
+For binary32 x=(1+m)*2^e, split e=5*q+r and interpolate
+h_r(t)=(2^r*(1+t))^(1/5), r=0..4. With u=e+150 in [1,277], unsigned
+`(u*205)>>10` is exactly floor(u/5), using a uint16 product. Mantissa fraction
+is Q16; nodes and midpoint curvature are generated with Decimal precision 80.
+Return the result by assembling binary32 bits, without runtime log/exp or
+float arithmetic. Zero/subnormal handling is explicit. Real power 1/5 differs
+slightly from the original rounded literal 0.2f; the numerical study includes it.
+
+Linear and curvature terms share one final rounding. For the tent fraction,
+tent<=65536-f. Thus low_slope*f+curve*tent+32768 fits uint32 for uint16
+coefficients. A separately accumulated high-slope word handles wider tables,
+avoiding uint64 multiplication. The generator verifies delta>=curve; this
+preserves monotonicity under rounding. Flash access remains in the separate
+hardware header with actual AVR definitions, not forged CPU or memory macros.
+
+All 64 Q8..Q23 / 8..64-interval configurations are tested on 1,044,547 scalar
+inputs and complete PCM: 11,333 packets / 1,813,280 samples plus two reset
+streams. Under SNR>=50 dB/max error<=256, the lowest passing fractional
+precision is Q11/64, 54.63 dB/max 248 on stress. Q8..Q10 fail all studied
+sizes. Q12/8 is a separate 170-B table tradeoff. The selected general Q11 table
+uses 1290 B; all its 640 B of curvature quantize to zero. Removing those dead
+reads/products/table is an unmeasured exact specialization opportunity, not
+included in the timing below. [Precision study](../../Codecs/Codec2/reports/postfilter-precision.json).
+
+Low local root error alone is inadequate: the background postfilter compares
+amplitudes to a threshold, conditionally consuming RNG values. Native Q8/8
+first changes the RNG at zero-based frame 145 of the English stream; 10,849
+post-frame RNG states differ in the mixed corpus. Q11/64 retains every tested
+post-frame RNG state. This follows from an executed two-backend control test,
+not only an inferred numerical sensitivity. It does not prove all possible
+threshold crossings safe. [Control evidence](../../Codecs/Codec2/reports/postfilter-control.json).
+
+ATmega64A AVR5/MUL, GNU AVR-GCC 7.3.0 `-Os`, C99, ordinary ABI and physical
+link limits: 4096 identical scalar inputs give byte-identical integer native
+and AVR output. Mean scalar cycles 5113.40→936.52 (-81.69%), max 5862→1238;
+standalone Flash 2110→2108 B, static SRAM 10 B, stack 28→22 B. No pow/powf
+or __muldi3 links into the integer scalar image. These inputs span exponents,
+subnormal boundaries and special values, unlike the decoder workload.
+[Scalar qualification](../../Codecs/Codec2/reports/fifth-kernel.json).
+
+Complete decoder mean cycles drop about 13% versus the previous fixed-IFFT
+mode: 12.75/12.86 million EN/RU. Both full streams pass (365 packets / 58,400
+samples): SNR 57.05/57.08 dB, max error 42/45. Flash rises 24,634→26,276 B;
+SRAM remains 711 static +2552 observed stack =3263/4096 B, 833 B free. Worst
+frame is 14,026,572 cycles /0.877 s at 16 MHz, still above 20 ms. No active
+IRQ, board or real-time admission. Native minimum precision is corpus-specific;
+live speech remains unverified. [Whole-decoder qualification](../../Codecs/Codec2/reports/postfilter-decoder.json).

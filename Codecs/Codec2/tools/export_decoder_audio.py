@@ -14,10 +14,15 @@ def main():
     profile = parser.add_mutually_exclusive_group()
     profile.add_argument('--compact', action='store_true', help='Use the completed ATmega64A compact verification')
     profile.add_argument('--hybrid', action='store_true', help='Use the completed fixed-IFFT hybrid verification')
+    profile.add_argument('--postfilter', action='store_true', help='Use the completed integer postfilter power verification')
     args = parser.parse_args()
-    build = ROOT.parents[1] / ('build/codec2/hybrid' if args.hybrid else 'build/codec2/compact' if args.compact else 'build/codec2/decoder')
-    out = ROOT / ('validation/hybrid-3200' if args.hybrid else 'validation/compact-3200' if args.compact else 'validation/full-3200')
-    report_path = 'reports/hybrid-decoder.json' if args.hybrid else 'reports/compact-decoder.json' if args.compact else 'reports/full-decoder.json'
+    name = 'postfilter' if args.postfilter else 'hybrid' if args.hybrid else 'compact' if args.compact else 'full'
+    profiles = {'full': ('decoder', 'full-decoder'), 'compact': ('compact', 'compact-decoder'),
+                'hybrid': ('hybrid', 'hybrid-decoder'), 'postfilter': ('postfilter', 'postfilter-decoder')}
+    folder, report_name = profiles[name]
+    build = ROOT.parents[1] / ('build/codec2/' + folder)
+    out = ROOT / ('validation/' + name + '-3200')
+    report_path = 'reports/' + report_name + '.json'
     report = json.loads((ROOT / report_path).read_text(encoding='utf-8'))
     assert report['avr_execution']['complete']
     out.mkdir(parents=True, exist_ok=True)
