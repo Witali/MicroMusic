@@ -516,8 +516,8 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
 #endif
     const uint16_t step=blockStep_;
     // q is signed8 and the exact reconstructed step is 0..4016.
-    int32_t excitation=lpx4Excitation(q,step), acc=lpx4DotQ12(a_,hist_);
-    int16_t pred=clamp(excitation-acc,-32767,32767);
+    const int32_t excitation=lpx4Excitation(q,step);
+    int16_t pred=clamp(lpx4SynthesisQ12(excitation,a_,hist_),-32767,32767);
     hist_[0]=pred;
     int16_t deemph=preQ14_?clamp((int32_t)pred+lpx4MulQ14((int16_t)preQ14_,prevDeemph_),-32767,32767):pred;
     prevDeemph_=deemph;

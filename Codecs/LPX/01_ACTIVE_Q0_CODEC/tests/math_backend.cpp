@@ -73,6 +73,14 @@ int main(){
         if(h[0]!=original[0])math_error=6;
         for(uint8_t i=1;i<10;i++)if(h[i]!=original[i-1])math_error=7;
         ++math_cases;
+        for(uint8_t i=0;i<10;i++)h[i]=original[i];
+        const int32_t excitation=n%3==0 ? -524288L : n%3==1 ? 524287L :
+            (int32_t)(random32()&1048575UL)-524288L;
+        const int32_t synthesized=lpx4SynthesisQ12(excitation,a,h);checkZero(synthesized);
+        if(synthesized!=excitation-expected)math_error=9;
+        if(h[0]!=original[0])math_error=10;
+        for(uint8_t i=1;i<10;i++)if(h[i]!=original[i-1])math_error=11;
+        ++math_cases;
     }
 #ifdef __AVR__
     cli();TCCR1B=0;
