@@ -189,6 +189,7 @@ int avr_device_configure(int key,int value){return device_configure(key,value);}
 int avr_device_configure_osccal_hz(int cal,int hz){return device_configure_osccal_hz(cal,hz);}
 int avr_device_configure_power(int field,int value){return device_configure_power(field,value);}
 int avr_device_configure_reset_input(int field,int value){return device_configure_reset_input(field,value);}
+int avr_device_configure_comparator(int field,int value){return device_configure_comparator(field,value);}
 int avr_device_configure_clki(int field,int value){return device_configure_clki(field,value);}
 static attiny13a_clki_edge_t full_clki_batch[512];
 int avr_device_clki_enabled(void){return device_clki_enabled();}

@@ -156,6 +156,7 @@ static void clki_source_rise(void) {
 }
 static void clki_service(uint64_t previous_half) {
  board.clki_edge=0;
+ comparator_wall(previous_half);
  clki_reset_inputs();service_async();wake();
  int held=board.reset_held||reset_starting()||board.reset_requested;
  if(board.clki_validation_enabled){
@@ -188,16 +189,27 @@ static void clki_service(uint64_t previous_half) {
   if(edge.level)clki_source_rise();
   uint8_t sleep=system_sleep_clock_edge(&board.sleep,edge.level,0,board.base);
   if(sleep&SYSTEM_SLEEP_INVALID_TIME)fail(DEVICE_FAULT_SLEEP,sleep);
+  /* Pre-edge VCC/reset and PB3/ACME pad updates can create a new zero-delay
+   * analog completion. Settle it before delivering this source/system edge. */
+  comparator_wall(previous_half);
   uint8_t level=0;
   int result=attiny13a_clki_clock_edge(&board.clki_clock,edge.level,running,&level);
   if(result<0){fail(DEVICE_FAULT_CLKI,4);return;}
   if(result==1){
+   int first_rise=!board.clki_aligned&&level;
    if(board.clki_aligned)board.half=add(board.half,1);
    else if(level)board.clki_aligned=1;
    if(board.clki_aligned){
     board.clki_edge=level?2:1;
     if(level)board.clki_last_rise=board.base;
    }
+   /* Epoch0 can be a newly delivered first rise after an initially low hold.
+    * Mark it for analog_advance; do not invent an extra half phase or clock
+    * ACO before the ADC/trigger ordering in service_clocks. */
+   if(first_rise && board.comparator_config[DEVICE_COMPARATOR_TIMING_ENABLE] &&
+      board.analog.comparator.clock_running &&
+      !analog_comparator_arm_first_rise(&board.analog.comparator))
+    fail(DEVICE_FAULT_ANALOG,0x100u|board.analog.comparator.physical_fault);
   }
   board.divisor=board.clki_clock.divisor;
   board.pending_divisor=board.clki_clock.pending_divisor;

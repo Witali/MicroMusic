@@ -85,14 +85,14 @@ test('continuation layout and execution mode participate in translation identity
   assert.throws(()=>a.nextDuty(),/capturePhysical/);assert.throws(()=>a.capturePWM(1),/capturePhysical/);
 });
 
-test('package v5 loads the supplied resumable CPU and continues its partial instruction',async()=>{
-  const {createPackage,decodePackage}=await import('../lib/attiny13a-package.js');
+test('current package loads the supplied resumable CPU and continues its partial instruction',async()=>{
+  const {createPackage,decodePackage,PACKAGE_VERSION}=await import('../lib/attiny13a-package.js');
   const binary=sequential([avr.ldi(16,42)]),c=new ATtiny13A(binary,null,options);
   const {fastIdle,...configuration}=physical;
   const pkg=await createPackage({flash:binary,translated:c.transpiledBytes,configuration:{...configuration,resumable:true},
     runtime:new Uint8Array(readFileSync(new URL('../wasm/attiny13a.wasm',import.meta.url)))});
   const decoded=await decodePackage(pkg),loaded=await ATtiny13A.fromPackage(pkg);
-  assert.equal(pkg.version,5);assert.equal(decoded.options.resumable,true);
+  assert.equal(pkg.version,PACKAGE_VERSION);assert.equal(decoded.options.resumable,true);
   assert.equal(loaded.transpilation.executionMode,'resumable-v1');
   assert.deepEqual(loaded.transpiledBytes,c.transpiledBytes);
   assert.equal(loaded.runUntilPs(1n),0);assert.equal(loaded.r[16],0);

@@ -50,6 +50,16 @@ hardware disabled/reset ACO is unspecified, so reset initial_output is also a
 caller parameter. Register ACD remains as written while the sleep gate is active.
 The CPU/system module owns sleep selection, clocks, wakeup eligibility and SREG.I.
 
+Optional physical-time integration
+
+configure_physical selects explicit propagation/startup nanoseconds immediately
+after reset. advance_ps and next_event_ps then service only analog wall-time
+deadlines; the existing half-clock APIs still service digital synchronization.
+The full board preserves raw progress during held CLKI and CLKPR changes, and
+handles the first actual epoch-zero rising edge explicitly. Legacy half-clock
+fixtures are unchanged. See ../devices/attiny13a/comparator-timing.md for the host,
+package, ordering and validation contract. These inputs are not chip calibration.
+
 ACI is set by selected synchronized output events independently of ACIE. ACIS00
 selects toggle,10 falling,11 rising; reserved01 is inactive. ACI is W1C and ack
 clears it on vector0x0005 acceptance. ACO/reserved bits ignore writes. pending is

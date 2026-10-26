@@ -1,0 +1,94 @@
+{
+  "schema": "micromusic-comparator-physical-verification-v1",
+  "baseline": {
+    "commit": "23ef393d7041a728afd11c4e79ef2a264350b3e6",
+    "bytes": 119010,
+    "sha256": "bea029bf125c9f8f6ee3e63197e9a9e15556f35d59464ec3ccd5199c137e0715"
+  },
+  "current": {
+    "bytes": 121019,
+    "sha256": "4183c8b0d0b71e720307d7d8dc7959b4c880ea78ec8286dbcbb719f944a93000",
+    "imports": [],
+    "exports": 111
+  },
+  "sources": {
+    "web-player/scripts/verify-comparator-timing.mjs": "5eef7f0f0619dd091eb96c7429682d0cccd8cb3685edf763352bef6ae05ee789",
+    "web-player/tests/analog-comparator-physical.test.mjs": "2c57ffdd44735ef89e6e9bfc1e68072f248824222e60fb0dcad5b991a53e6544",
+    "web-player/tests/attiny13a-comparator-timing-runtime.test.mjs": "9234db8ce7cf4540221a73f6ffb2f769671454283cb92a759454124440a5af00",
+    "web-player/tests/device-comparator-profile.test.mjs": "5b92d43bb7ca8f7247b95b5434c4dcaffe759b7b63b6ce9b170d12bca63a5cfc",
+    "web-player/tests/attiny13a-comparator-irq-sleep.test.mjs": "1ff98c65c60bcbd3ccc72f2f5baab990895c77583cc86e7f97987a36c3cebe4b",
+    "web-player/tests/attiny13a-comparator-profile.test.mjs": "28d5c26e4b69cf175068a052bc19b3873faab8bf8c6e7a9876372badca3900f2",
+    "web-player/tests/attiny13a-comparator-package.test.mjs": "627e6b2a45dcb05f0c1682773fe7ee7000173198b0df9446580a9919e776568e"
+  },
+  "fullSuite": {
+    "tests": 2371,
+    "pass": 2371,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 135545.5772,
+    "tapSha256": "299b79047e705a8366f2082ea0fa194d464318515c7a0c910a211a23a0b51d2d"
+  },
+  "additionalSuite": {
+    "tests": 71,
+    "pass": 71,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 6018.4971,
+    "tapSha256": "125d01ad2888920a11038c3d769290e4bc922b88a76d5f02070d558507cfcdd6"
+  },
+  "audio": [
+    {
+      "firmware": "rhythmic",
+      "policy": "verification",
+      "frames": 4096,
+      "sampleRate": 48000,
+      "pcmSha256": "fd0eac13d5e765450ee764558ed7b6580bb223b72677892ea596341bda0dd74e",
+      "pinsSha256": "481596e0beb417a35e99d6fa68f9538a69fe39f9c81b3be0e0e45323a8b12e26",
+      "pinCount": 1597,
+      "irqs": 798,
+      "retired": "147325",
+      "timePs": "85333333333"
+    },
+    {
+      "firmware": "rhythmic",
+      "policy": "bounded-phase-locals",
+      "frames": 4096,
+      "sampleRate": 48000,
+      "pcmSha256": "fd0eac13d5e765450ee764558ed7b6580bb223b72677892ea596341bda0dd74e",
+      "pinsSha256": "481596e0beb417a35e99d6fa68f9538a69fe39f9c81b3be0e0e45323a8b12e26",
+      "pinCount": 1597,
+      "irqs": 798,
+      "retired": "147325",
+      "timePs": "85333333333"
+    },
+    {
+      "firmware": "lumiere-stereo",
+      "policy": "verification",
+      "frames": 4096,
+      "sampleRate": 48000,
+      "pcmSha256": "9dc6184d625d57de8d51d5dae80b6196d7f87ce1af75f0cc62ad9382e8cd63a2",
+      "pinsSha256": "0a5d2fec9ed6a88aace170ef872d52bf688e88853afd2caef814198cdd3a71c7",
+      "pinCount": 1877,
+      "irqs": 798,
+      "retired": "146090",
+      "timePs": "85333333333"
+    },
+    {
+      "firmware": "lumiere-stereo",
+      "policy": "bounded-phase-locals",
+      "frames": 4096,
+      "sampleRate": 48000,
+      "pcmSha256": "9dc6184d625d57de8d51d5dae80b6196d7f87ce1af75f0cc62ad9382e8cd63a2",
+      "pinsSha256": "0a5d2fec9ed6a88aace170ef872d52bf688e88853afd2caef814198cdd3a71c7",
+      "pinCount": 1877,
+      "irqs": 798,
+      "retired": "146090",
+      "timePs": "85333333333"
+    }
+  ],
+  "meaning": "Current null-profile output/state parity against retained native baseline, with active IRQs. New physical-delay tests use explicit synthetic delays; no silicon calibration, official-simulator execution, speed or real-time support claim."
+}

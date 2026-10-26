@@ -55,6 +55,14 @@ typedef device_pin_event_t device_pin_event_ps_t;
  * programmed DWEN with DEVICE_FAULT_CONFIG/detail14, regardless of lock bits
  * or RSTDISBL. The host diagnostic BREAK option does not emulate debugWIRE. */
 int device_configure(uint32_t key, uint32_t value);
+enum { DEVICE_COMPARATOR_TIMING_ENABLE=0, DEVICE_COMPARATOR_PROPAGATION_NS=1,
+ DEVICE_COMPARATOR_BANDGAP_STARTUP_NS=2 };
+/* Optional physical comparator timing. Both explicit uint32 nanosecond delays
+ * are required before enabling; zero selects an ideal analog response. This
+ * profile requires physical1ps time and zero legacy half-clock delay fields.
+ * Raw analog deadlines continue through CLKI holds; synchronization still
+ * requires actual enabled clkI/O rising edges. Configure only before init. */
+int device_configure_comparator(uint32_t field,uint32_t value);
 /* Opt-in physical1ps supply profile. field0 enables; all fields1..9 must be
  * explicitly provided before init. field0=0 clears the profile selection.
  * Thresholds are selected digital-profile microvolts, timings nanoseconds;

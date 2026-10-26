@@ -48,6 +48,11 @@ the same model; no host callback handles individual voltage transitions.
 Package v4 is the historical RESET-receiver format; v5 also records the optional
 resumable execution and CLKI profiles.
 
+The optional [physical comparator profile](comparator-timing.md) also advances
+raw analog propagation/startup during held CLKI. Its ACO/ACI synchronization and
+ADC trigger still require actual enabled rising phases. Clock-counted legacy
+fixtures retain their explicit domain; package v6 preserves the new selection.
+
 ## Debug and programming constraints
 
 The datasheet describes DWEN, open-drain PB5, BREAK and DWDR, but the retained

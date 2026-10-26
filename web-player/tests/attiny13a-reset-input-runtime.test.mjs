@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {ATtiny13A,runtimeModule} from '../lib/attiny13a.js';
-import {createPackage,decodePackage} from '../lib/attiny13a-package.js';
+import {createPackage,decodePackage,PACKAGE_VERSION} from '../lib/attiny13a-package.js';
 import {normalizeResetInputProfile} from '../lib/devices/attiny13a-reset-profile.js';
 import {runtimeABI,transpileAVR} from '../lib/avr-transpiler.js';
 import {avr,IO,sequential} from './fixtures/attiny13a-system-firmware.mjs';
@@ -149,7 +149,7 @@ test('RESET package retains the exact explicit profile and executes its supplied
   const abi=runtimeABI(new WebAssembly.Instance(runtimeModule).exports);
   const profile={...resetInputProfile},pkg=await createPackage({flash:loop,runtime,
     translated:transpileAVR(loop,abi).bytes,configuration:{...options,resetInputProfile:profile}});
-  assert.equal(pkg.version,5);profile.assertQualificationNs=999;
+  assert.equal(pkg.version,PACKAGE_VERSION);profile.assertQualificationNs=999;
   const decoded=await decodePackage(pkg);assert.deepEqual(decoded.configuration.resetInputProfile,resetInputProfile);
   decoded.options.resetInputProfile.assertQualificationNs=777;
   assert.equal(decoded.configuration.resetInputProfile.assertQualificationNs,50);

@@ -6,7 +6,7 @@ import {join} from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
-import {createPackage,decodePackage,assertPackageRuntimeABI,DEFAULT_CONFIGURATION,PACKAGE_LIMITS} from '../lib/attiny13a-package.js';
+import {createPackage,decodePackage,assertPackageRuntimeABI,DEFAULT_CONFIGURATION,PACKAGE_LIMITS,PACKAGE_VERSION} from '../lib/attiny13a-package.js';
 import {runtimeABI,transpileAVR} from '../lib/avr-transpiler.js';
 import {normalizeClkiProfile,CLKI_PHASE_POLICY} from '../lib/devices/attiny13a-clki-profile.js';
 
@@ -89,26 +89,26 @@ test('default configuration, erased EEPROM and serialization are deterministic',
 
 test('version1 preserves its original configuration contract',async()=>{
   const pkg=copy(original);pkg.version=1;
-  for(const key of ['osccalHz','nvmClockProfile','nvmCalibrationReferenceHz','powerResetProfile','resetInputProfile','resumable','clkiProfile'])delete pkg.configuration[key];
+  for(const key of ['osccalHz','nvmClockProfile','nvmCalibrationReferenceHz','powerResetProfile','resetInputProfile','resumable','clkiProfile','comparatorTimingProfile'])delete pkg.configuration[key];
   const decoded=await decodePackage(seal(pkg));assert.equal(decoded.version,1);
   assert.deepEqual(decoded.configuration,pkg.configuration);assert.equal(Object.keys(decoded.options).length,17);
 });
 
 test('version2 preserves its calibrated-clock configuration contract',async()=>{
   const pkg=copy(original);pkg.version=2;delete pkg.configuration.powerResetProfile;delete pkg.configuration.resetInputProfile;
-  delete pkg.configuration.resumable;delete pkg.configuration.clkiProfile;
+  delete pkg.configuration.resumable;delete pkg.configuration.clkiProfile;delete pkg.configuration.comparatorTimingProfile;
   const decoded=await decodePackage(seal(pkg));assert.equal(decoded.version,2);assert.deepEqual(decoded.configuration,pkg.configuration);
 });
 
 test('version3 preserves its power-profile contract without requiring the later RESET profile',async()=>{
   const pkg=copy(original);pkg.version=3;delete pkg.configuration.resetInputProfile;
-  delete pkg.configuration.resumable;delete pkg.configuration.clkiProfile;
+  delete pkg.configuration.resumable;delete pkg.configuration.clkiProfile;delete pkg.configuration.comparatorTimingProfile;
   const decoded=await decodePackage(seal(pkg));assert.equal(decoded.version,3);
   assert.deepEqual(decoded.configuration,pkg.configuration);
 });
 
 test('version4 retains its RESET contract and rejects later continuation/CLKI fields',async()=>{
-  const pkg=copy(original);pkg.version=4;delete pkg.configuration.resumable;delete pkg.configuration.clkiProfile;
+  const pkg=copy(original);pkg.version=4;delete pkg.configuration.resumable;delete pkg.configuration.clkiProfile;delete pkg.configuration.comparatorTimingProfile;
   const decoded=await decodePackage(seal(pkg));assert.deepEqual(decoded.configuration,pkg.configuration);
   assert.equal(decoded.options.resumable,undefined);assert.equal(decoded.options.clkiProfile,undefined);
   for(const [key,value] of [['resumable',false],['clkiProfile',null]]){
@@ -128,8 +128,8 @@ test('packages reject DWEN without requiring an analog RESET profile',async()=>{
 
 test('the DWEN admission boundary also covers historical package versions',async()=>{
   const introduced={osccalHz:2,nvmClockProfile:2,nvmCalibrationReferenceHz:2,
-    powerResetProfile:3,resetInputProfile:4,resumable:5,clkiProfile:5};
-  for(let version=1;version<=5;version++){
+    powerResetProfile:3,resetInputProfile:4,resumable:5,clkiProfile:5,comparatorTimingProfile:6};
+  for(let version=1;version<=PACKAGE_VERSION;version++){
     const pkg=copy(original);pkg.version=version;
     for(const [key,since] of Object.entries(introduced))if(version<since)delete pkg.configuration[key];
     // Establish that the complete historical schema itself is still accepted.
@@ -143,9 +143,18 @@ const phased=transpileAVR(flash,phaseAbi,{resumable:true});
 const phaseConfiguration={resumable:true,osccalHz:Array.from({length:128},(_,n)=>n===0?9600000:0)};
 const phaseInput={...input,translated:phased.bytes,manifest:phased.manifest,configuration:phaseConfiguration};
 
-test('v5 binds the resumable execution mode, phase layout and configuration',async()=>{
+test('version5 preserves continuation without the later physical comparator profile',async()=>{
+  const pkg=copy(await createPackage(phaseInput));pkg.version=5;
+  delete pkg.configuration.comparatorTimingProfile;
+  const decoded=await decodePackage(seal(pkg));
+  assert.equal(decoded.version,5);assert.equal(decoded.options.resumable,true);
+  assert.equal(decoded.options.comparatorTimingProfile,undefined);
+  assert.equal(decoded.manifest.executionMode,'resumable-v1');
+});
+
+test('current packages bind the resumable execution mode, phase layout and configuration',async()=>{
   const pkg=await createPackage(phaseInput),decoded=await decodePackage(pkg);
-  assert.equal(pkg.version,5);assert.equal(decoded.options.resumable,true);
+  assert.equal(pkg.version,PACKAGE_VERSION);assert.equal(decoded.options.resumable,true);
   assert.equal(decoded.options.clkiProfile,null);assert.equal(decoded.manifest.executionMode,'resumable-v1');
   assert.deepEqual(decoded.abi.layout.phase,phaseAbi.phase);assertPackageRuntimeABI(decoded,phaseAbi);
   await assert.rejects(createPackage({...phaseInput,configuration:{}}),/execution mode mismatch/);
@@ -218,14 +227,14 @@ test('v5 checks CLKI exports only for the selected source and verifies their exa
   await assert.rejects(createPackage({...clkiInput,runtime:wrong}),/runtime export mismatch: avr_device_clki_status/);
 });
 
-test('CLI generates a matching v5 continuation when configuration requests resumable execution',async t=>{
+test('CLI generates a matching continuation when configuration requests resumable execution',async t=>{
   const dir=await mkdtemp(join(tmpdir(),'micromusic-phase-package-'));t.after(()=>rm(dir,{recursive:true,force:true}));
   const source=join(dir,'firmware.bin'),config=join(dir,'config.json'),output=join(dir,'package.json');
   await writeFile(source,flash);await writeFile(config,JSON.stringify(phaseConfiguration));
   const result=spawnSync(process.execPath,[cli,'pack',source,output,'--configuration',config],{encoding:'utf8'});
   assert.equal(result.status,0,result.stderr);
   const decoded=await decodePackage(await readFile(output,'utf8'));
-  assert.equal(decoded.version,5);assert.equal(decoded.manifest.executionMode,'resumable-v1');
+  assert.equal(decoded.version,PACKAGE_VERSION);assert.equal(decoded.manifest.executionMode,'resumable-v1');
   assert.equal(decoded.configuration.resumable,true);
 });
 
@@ -233,7 +242,7 @@ test('package binds a calibrated clock table and programming profile',async()=>{
   const table=Array(128).fill(0);table[50]=9600000;table[51]=9696000;
   const configuration={factoryOsccal96:50,osccalHz:table,nvmClockProfile:1,nvmCalibrationReferenceHz:9600000};
   const pkg=await createPackage({...input,configuration}),decoded=await decodePackage(pkg);
-  assert.equal(pkg.version,5);assert.deepEqual(decoded.configuration.osccalHz,table);
+  assert.equal(pkg.version,PACKAGE_VERSION);assert.deepEqual(decoded.configuration.osccalHz,table);
   decoded.options.osccalHz[50]=1;assert.equal(decoded.configuration.osccalHz[50],9600000);
   table[50]=1;assert.equal(pkg.configuration.osccalHz[50],9600000);
   const bad=copy(pkg);bad.configuration.osccalHz[51]++;
@@ -270,7 +279,7 @@ test('v4 RESET profiles reject invalid fields and unsupported clocks/fuses in wr
   const resetInputProfile={assertThresholdPpm:400000,releaseThresholdPpm:600000,
     assertQualificationNs:50,releaseQualificationNs:30,assertPropagationNs:20,releasePropagationNs:10};
   const configuration={osccalHz,resetInputProfile},pkg=await createPackage({...input,configuration});
-  assert.equal(pkg.version,5);
+  assert.equal(pkg.version,PACKAGE_VERSION);
   const cases=[
     ['missing fields',{resetInputProfile:{}},/resetInputProfile fields/],
     ['extra field',{resetInputProfile:{...resetInputProfile,unused:1}},/resetInputProfile fields/],

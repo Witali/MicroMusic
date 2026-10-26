@@ -1,6 +1,7 @@
 import {AVRCore as TranslatedCore} from './avr-transpiled-runtime.js';
 import {resetInputProfileFields,normalizeResetInputProfile} from './devices/attiny13a-reset-profile.js';
 import {normalizeClkiProfile} from './devices/attiny13a-clki-profile.js';
+import {normalizeComparatorTimingProfile,validateComparatorTimingOptions} from './devices/attiny13a-comparator-profile.js';
 import {AT13_FUSE_MASK as FUSE,AT13_IO as IO,AT13_MASK as MASK} from './attiny13a-registers.js';
 import {executionOptions} from './emulation-configurations.js';
 const configuration={oscillatorHz:1,watchdogHz:2,vccMicrovolts:3,bandgapMicrovolts:4,
@@ -52,7 +53,11 @@ export class ATtiny13A extends TranslatedCore {
     if(clkiProfile&&(options.resumable!==true||((options.fuseLow??0x7a)&3)!==0))
       throw Error('clkiProfile requires resumable:true and CKSEL00');
     if(clkiProfile&&((options.wakeStartupHalf??0)%2))throw Error('clkiProfile requires whole source CK wake startup');
+    const comparatorTimingProfile=normalizeComparatorTimingProfile(options.comparatorTimingProfile??null);
+    validateComparatorTimingOptions(comparatorTimingProfile,{...options,clkiProfile});
     super(binary,eeprom,{...options,fastIdle:false,runtimeModule:options.runtimeModule,configureRuntime:exports=>{
+      if(comparatorTimingProfile&&typeof exports.avr_device_configure_comparator!=='function')
+        throw Error('Runtime has no comparator physical timing profile');
       if(options.resumable!==undefined&&typeof options.resumable!=='boolean')throw Error('resumable must be a boolean');
       if(options.resumable){
         if(!options.osccalHz&&!clkiProfile)throw Error('Resumable execution requires a physical OSCCAL table or clkiProfile');
@@ -94,6 +99,11 @@ export class ATtiny13A extends TranslatedCore {
           if(!exports.avr_device_configure_reset_input?.(index+1,profile[name]))throw Error('RESET input profile unavailable: '+name);
         if(!exports.avr_device_configure_reset_input(0,1))throw Error('RESET input profile unavailable');
       }
+      if(comparatorTimingProfile){
+        const configure=exports.avr_device_configure_comparator;
+        if(!configure(1,comparatorTimingProfile.propagationNs)||!configure(2,comparatorTimingProfile.bandgapStartupNs)||
+          !configure(0,1))throw Error('Comparator physical timing profile unavailable');
+      }
     }});
     this._exports.avr_device_bind_generation();
     this._generation=this._exports.avr_device_generation();
@@ -101,6 +111,7 @@ export class ATtiny13A extends TranslatedCore {
     this._physicalFrames=0n;
     this._ps=!!this._exports.avr_device_physical_mode?.();
     this._clki=!!this._exports.avr_device_clki_enabled?.();
+    if(comparatorTimingProfile&&!this._ps)throw Error('Comparator physical timing profile requires physical time');
     if(clkiProfile&&!this._clki)throw Error('CLKI profile unavailable');
     if(clkiProfile?.electricalValidation==='datasheet-ideal-v1'&&!this._exports.avr_device_clki_validation_enabled?.())
       throw Error('CLKI electrical validation unavailable');

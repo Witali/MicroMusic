@@ -3,7 +3,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {ATtiny13A,runtimeModule} from '../lib/attiny13a.js';
-import {createPackage,decodePackage} from '../lib/attiny13a-package.js';
+import {createPackage,decodePackage,PACKAGE_VERSION} from '../lib/attiny13a-package.js';
 import {CLKI_PHASE_POLICY} from '../lib/devices/attiny13a-clki-profile.js';
 import {avr,IO,sequential} from './fixtures/attiny13a-system-firmware.mjs';
 
@@ -126,12 +126,12 @@ test('explicit power/RESET profiles accept CLKI physical time without a dummy OS
   assert.equal(c.state().deviceFault,0);assert.equal(c.state().timePs,0n);
 });
 
-test('package v5 restores the digital source profile and supplied continuation, but no queued trace',async()=>{
+test('current package restores the digital source profile and supplied continuation, but no queued trace',async()=>{
   const original=make();original.injectClkiPs({edges:[{timePs:10n,level:1}],knownUntilPs:20n});
   const pkg=await createPackage({flash:binary,configuration:options,translated:original.transpiledBytes,
     runtime:new Uint8Array(readFileSync(new URL('../wasm/attiny13a.wasm',import.meta.url)))});
   const decoded=await decodePackage(pkg),loaded=await ATtiny13A.fromPackage(pkg);
-  assert.equal(pkg.version,5);assert.equal(decoded.configuration.osccalHz,null);
+  assert.equal(pkg.version,PACKAGE_VERSION);assert.equal(decoded.configuration.osccalHz,null);
   assert.deepEqual(decoded.options.clkiProfile,{...profile,electricalValidation:'none'});assert.equal(decoded.options.resumable,true);
   assert.equal(loaded.state().clki.horizonPs,0n);assert.equal(loaded.state().clki.queued,0);
   assert.deepEqual(loaded.transpiledBytes,original.transpiledBytes);

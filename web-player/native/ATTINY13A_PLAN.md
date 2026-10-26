@@ -23,6 +23,19 @@ historical checkpoints. Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Physical comparator checkpoint, 2026-10-26: an explicit ns profile separates
+analog propagation/reference startup from delivered digital clock phases. It
+settles raw state during held CLKI, retains CLKPR-independent wall deadlines,
+and preserves ACO/ACI/ADC/IRQ timing on actual rising edges, including rounded
+9 MHz edges and initial-low alignment. Package v6 and cache identity retain the
+profile; versions 1–5 and clock-counted fixtures remain supported. All 2442
+default/shared checks across the recorded suites pass; default-mode PCM, pins
+and complete public state match the retained native baseline in four active-IRQ
+music cases. These are software/profile checks, not silicon calibration or an
+official-simulator result; the checklist remains 23/30. See the
+[implementation contract](devices/attiny13a/comparator-timing.md) and
+[integration evidence](../reports/comparator-physical-20261026.md).
+
 Profiling-evidence checkpoint, 2026-10-26: the diagnostic producer now validates
 profile trees/deltas and exposes mixed, support, unknown and non-work budgets.
 Offline replay preserves all prior leaf counts in nine retained captures
@@ -220,9 +233,9 @@ Hardware-dependent checks remain open until actual measurements are available.
 Acceptance: a package reproduces the configured device without implicit host
 defaults; CLI and browser execute the same firmware and physical output.
 
-Format v5 includes per-asset and envelope SHA-256, explicit clock/supply/RESET
-configuration, optional CPU continuation/CLKI, embedded manifest and ABI validation.
-Readers retain v1/v2/v3/v4
+Format v6 includes per-asset and envelope SHA-256, explicit clock/supply/RESET
+configuration, optional CPU continuation/CLKI and physical comparator timing,
+embedded manifest and ABI validation. Readers retain v1/v2/v3/v4/v5
 support, including retained original v1/v3 runtime regressions. A standalone
 loader test runs with no default WASM files; Worker tests cover audio restart
 and SPM.

@@ -1,5 +1,5 @@
 import {ATtiny13A as DeviceRuntime} from './attiny13a-runtime.js';
-const url=new URL('../wasm/attiny13a.wasm?v=20261026-adc-power-sequence',import.meta.url);
+const url=new URL('../wasm/attiny13a.wasm?v=20261026-comparator-physical',import.meta.url);
 const bytes=globalThis.process?.versions?.node
   ? await (await import('node:fs/promises')).readFile(url)
   : await (async()=>{const r=await fetch(url);if(!r.ok)throw Error('ATtiny13A WASM HTTP '+r.status);return r.arrayBuffer();})();

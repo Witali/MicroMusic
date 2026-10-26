@@ -2,9 +2,10 @@
 // SHA-256 protects integrity; packages are executable code, not signed artifacts.
 import {normalizeResetInputProfile} from './devices/attiny13a-reset-profile.js';
 import {normalizeClkiProfile} from './devices/attiny13a-clki-profile.js';
+import {normalizeComparatorTimingProfile,validateComparatorTimingOptions} from './devices/attiny13a-comparator-profile.js';
 import {AT13_FUSE_MASK as FUSE} from './attiny13a-registers.js';
 export const PACKAGE_FORMAT='micromusic-attiny13a-package';
-export const PACKAGE_VERSION=5;
+export const PACKAGE_VERSION=6;
 export const PACKAGE_ABI='micromusic-attiny13a-device-v1';
 export const PACKAGE_LIMITS=Object.freeze({json:16*1024*1024,translated:4*1024*1024,runtime:2*1024*1024,manifest:512*1024});
 export const DEFAULT_CONFIGURATION=Object.freeze({
@@ -13,7 +14,7 @@ export const DEFAULT_CONFIGURATION=Object.freeze({
   comparatorPropagationHalf:0,bandgapStartupHalf:0,comparatorInitial:0,
   wakeStartupHalf:0,spmCommandCycles:0,flashMaximum:1,bodRecoveryNs:60000,
   factoryOsccal96:0,fuseStartupProfile:0,nvmClockProfile:0,nvmCalibrationReferenceHz:0,osccalHz:null,powerResetProfile:null,
-  resetInputProfile:null,resumable:false,clkiProfile:null,
+  resetInputProfile:null,resumable:false,clkiProfile:null,comparatorTimingProfile:null,
 });
 
 const encoder=new TextEncoder(),decoder=new TextDecoder('utf-8',{fatal:true});
@@ -51,7 +52,8 @@ async function sha256(bytes){
 function normalizeConfiguration(input={},complete=false,version=PACKAGE_VERSION){
   record(input,'configuration');
   const omitted=[...(version===1?['nvmClockProfile','nvmCalibrationReferenceHz','osccalHz','powerResetProfile']:version===2?['powerResetProfile']:[]),
-    ...(version<4?['resetInputProfile']:[]),...(version<5?['resumable','clkiProfile']:[])];
+    ...(version<4?['resetInputProfile']:[]),...(version<5?['resumable','clkiProfile']:[]),
+    ...(version<6?['comparatorTimingProfile']:[])];
   const defaults=Object.fromEntries(Object.entries(DEFAULT_CONFIGURATION).filter(([key])=>!omitted.includes(key)));
   for(const name of Object.keys(input))if(!Object.hasOwn(defaults,name))fail('unknown configuration '+name);
   if(complete)keys(input,Object.keys(defaults),'configuration');
@@ -63,6 +65,10 @@ function normalizeConfiguration(input={},complete=false,version=PACKAGE_VERSION)
   }
   for(const [name,value] of Object.entries(configuration)){
     if(name==='clkiProfile')continue;
+    if(name==='comparatorTimingProfile'){
+      try{configuration.comparatorTimingProfile=normalizeComparatorTimingProfile(value);}catch(error){fail(error.message);}
+      continue;
+    }
     if(name==='resumable'){
       if(typeof value!=='boolean')fail('invalid configuration resumable');
       continue;
@@ -111,6 +117,7 @@ function normalizeConfiguration(input={},complete=false,version=PACKAGE_VERSION)
   if(configuration.clkiProfile&&configuration.wakeStartupHalf%2)fail('configuration clkiProfile requires whole source CK wake startup');
   if(configuration.resumable&&!configuration.osccalHz&&!configuration.clkiProfile)
     fail('configuration resumable requires physical time');
+  try{validateComparatorTimingOptions(configuration.comparatorTimingProfile??null,configuration);}catch(error){fail(error.message);}
   if(configuration.fuseStartupProfile&&((configuration.fuseLow>>2)&3)===3)fail('configuration fuseStartupProfile uses reserved SUT11');
   if(configuration.osccalHz){
     const factory=configuration.osccalHz[configuration.factoryOsccal96];
@@ -318,6 +325,10 @@ async function validateCode(translated,runtime,flash,manifest,version=PACKAGE_VE
     const exported=r.exports.find(e=>e.name===name&&e.kind===0);
     if(!exported||!equal(r.signature(exported.index),type))fail('runtime export mismatch: '+name);
   }
+  if(configuration.comparatorTimingProfile){
+    const name='avr_device_configure_comparator',exported=r.exports.find(e=>e.name===name&&e.kind===0);
+    if(!exported||!equal(r.signature(exported.index),signature([i32,i32],[i32])))fail('runtime export mismatch: '+name);
+  }
   for(const [name,type] of Object.entries({step:signature(),block:signature([f64,i32],[i32]),run:signature([i32],[i32]),
     nextDuty:signature([],[i32]),capturePWM:signature([i32,i32],[i32]),runUntil:signature([f64],[i32]),capturePhysical:signature([i32],[i32])})){
     const exported=t.exports.find(e=>e.name===name&&e.kind===0);
@@ -357,7 +368,7 @@ export async function decodePackage(json){
   if(json.length>PACKAGE_LIMITS.json||encoder.encode(json).length>PACKAGE_LIMITS.json)fail('JSON size limit');
   let pkg;try{pkg=JSON.parse(json);}catch{fail('invalid JSON');}
   keys(pkg,['format','version','device','abi','configuration','manifest','assets','integrity'],'package');
-  if(pkg.format!==PACKAGE_FORMAT||![1,2,3,4,PACKAGE_VERSION].includes(pkg.version))fail('unsupported format/version');
+  if(pkg.format!==PACKAGE_FORMAT||![1,2,3,4,5,PACKAGE_VERSION].includes(pkg.version))fail('unsupported format/version');
   if(pkg.device!=='ATtiny13A')fail('unsupported device');
   keys(pkg.abi,['id','layout'],'ABI');if(pkg.abi.id!==PACKAGE_ABI)fail('unsupported ABI identity');
   const configuration=normalizeConfiguration(pkg.configuration,true,pkg.version);

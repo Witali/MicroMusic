@@ -59,6 +59,7 @@ typedef struct {
  power_reset_t power;
  attiny13a_reset_input_t reset_input;
  uint32_t reset_input_config[7];
+ uint32_t comparator_config[3];
  uint8_t reset_input_enabled;
  uint8_t clki_enabled,clki_aligned,clki_status,clki_edge;
  attiny13a_clki_input_t clki_input;
@@ -93,6 +94,8 @@ static uint32_t power_configuration[10];
 static uint16_t power_fields;
 static uint32_t reset_input_configuration[7];
 static uint8_t reset_input_fields;
+static uint32_t comparator_configuration[3];
+static uint8_t comparator_fields;
 static uint8_t clki_configuration[3],clki_initial_set;
 static void reset_state(uint8_t sources_mask);
 static void clock_domains(void);
@@ -443,6 +446,8 @@ static void mirror(void) {
 #undef AT13_IO_PUBLISH
 }
 static void check_faults(void) {
+ if(board.analog.comparator.physical_fault)
+  fail(DEVICE_FAULT_ANALOG,0x100u|board.analog.comparator.physical_fault);
  if (board.nvm.faults) fail(DEVICE_FAULT_NVM,board.nvm.faults);
  if (board.analog.adc.invalid_reference) fail(DEVICE_FAULT_ANALOG,6);
  if ((board.analog.adc.adcsrb&7)==7) fail(DEVICE_FAULT_ANALOG,7);
@@ -556,9 +561,23 @@ static void service_end(void) {
  timer_outputs(); sources();
  inputs_at_current_time(); wake(); check_faults(); mirror();
 }
+static void comparator_wall(uint64_t previous_half) {
+ if(!board.comparator_config[DEVICE_COMPARATOR_TIMING_ENABLE])return;
+ uint64_t anchor=board.half;
+ /* A physical half edge is delivered at ceil(exact time), which can leave a
+  * nonzero ratio residue. A residue below one ps of source progress identifies
+  * an edge at this integer timestamp. Leave a newly delivered rising edge for
+  * service_clocks, so a tied analog completion precedes its synchronization.
+  * Zero-delta re-service cannot replay the already delivered edge. */
+ if(!board.clki_enabled && anchor>previous_half && !(anchor&1) && board.phase<source_rate())--anchor;
+ if(!analog_comparator_advance(&board.analog.comparator,anchor) ||
+    !analog_comparator_advance_ps(&board.analog.comparator,board.base))
+  fail(DEVICE_FAULT_ANALOG,0x100u|board.analog.comparator.physical_fault);
+}
 static void service(uint64_t previous_half) {
  deadline_invalidate(DEADLINE_SERVICE);
  if(board.clki_enabled){clki_service(previous_half);return;}
+ comparator_wall(previous_half);
  service_clocks(previous_half);service_async();service_end();
 }
 /* Keep the large miss path out of the frequently reused same-state lookup. */
@@ -581,6 +600,8 @@ static uint64_t next_event_scan(void) {
   next=minimum(next,at_half(gpio_next));
  }
  next=minimum(next,at_half(analog_next_event(&board.analog)));
+ if(board.comparator_config[DEVICE_COMPARATOR_TIMING_ENABLE])
+  next=minimum(next,analog_comparator_next_event_ps(&board.analog.comparator));
  if(nvm_running)next=minimum(next,at_cycle(nvm_next_event_cycle(&board.nvm)));
  if (board.bod_arm_until) next=minimum(next,at_cycle(board.bod_arm_until));
  if (board.bod_sleep_until) next=minimum(next,at_cycle(board.bod_sleep_until));
@@ -700,6 +721,14 @@ int device_configure(uint32_t key, uint32_t value) {
  configuration[key]=value;
  return 1;
 }
+int device_configure_comparator(uint32_t field,uint32_t value) {
+ if(board.initialized || field>DEVICE_COMPARATOR_BANDGAP_STARTUP_NS)return 0;
+ if(field==DEVICE_COMPARATOR_TIMING_ENABLE){
+  if(value>1)return 0;
+  if(!value){comparator_fields=0;for(unsigned i=0;i<3;i++)comparator_configuration[i]=0;}
+ }else comparator_fields|=(uint8_t)(1u<<field);
+ comparator_configuration[field]=value;return 1;
+}
 int device_configure_power(uint32_t field,uint32_t value) {
  if(field>DEVICE_POWER_FLASH_PROGRAM_MIN_UV) return 0;
  if(field==DEVICE_POWER_ENABLE) {
@@ -748,6 +777,7 @@ int device_init(uint8_t *data, uint8_t *flash, uint8_t *eeprom) {
  board.power_enabled=(uint8_t)power_configuration[DEVICE_POWER_ENABLE];
  board.reset_input_enabled=(uint8_t)reset_input_configuration[DEVICE_RESET_INPUT_ENABLE];
  for(unsigned i=0;i<7;i++)board.reset_input_config[i]=reset_input_configuration[i];
+ for(unsigned i=0;i<3;i++)board.comparator_config[i]=comparator_configuration[i];
  for(unsigned i=0;i<10;i++)board.power_config[i]=power_configuration[i];
  board.vcc_uv=(int32_t)board.config[DEVICE_CFG_VCC_UV];
  if (!data || !flash || !eeprom) { fail(DEVICE_FAULT_CONFIG,1); return 0; }
@@ -757,6 +787,11 @@ int device_init(uint8_t *data, uint8_t *flash, uint8_t *eeprom) {
   * lock bits/RSTDISBL must not silently select an invented debug truth table. */
  if(!(board.config[DEVICE_CFG_FUSE_HIGH]&AT13_FUSE_HIGH_DWEN_MASK)){
   fail(DEVICE_FAULT_CONFIG,14);return 0;
+ }
+ if(board.comparator_config[DEVICE_COMPARATOR_TIMING_ENABLE] &&
+    (!board.physical || comparator_fields!=6 ||
+     board.config[DEVICE_CFG_COMPARATOR_PROPAGATION] || board.config[DEVICE_CFG_BANDGAP_STARTUP])){
+  fail(DEVICE_FAULT_CONFIG,16);return 0;
  }
  if(board.clki_enabled&&!clki_prepare())return 0;
  if(board.reset_input_enabled){
@@ -843,6 +878,11 @@ static void reset_state(uint8_t sources_mask) {
  gpio_external();
  analog_comparator_config_t config={board.config[9],board.config[10],0,(uint8_t)board.config[11]};
  analog_reset(&board.analog,(uint32_t)board.vcc_uv,board.config[4],(uint8_t)board.config[8],&config,board.half);
+ if(board.comparator_config[DEVICE_COMPARATOR_TIMING_ENABLE] &&
+    !analog_comparator_configure_physical(&board.analog.comparator,
+     board.comparator_config[DEVICE_COMPARATOR_PROPAGATION_NS],
+     board.comparator_config[DEVICE_COMPARATOR_BANDGAP_STARTUP_NS],board.base))
+  fail(DEVICE_FAULT_ANALOG,0x100u|board.analog.comparator.physical_fault);
  system_watchdog_reset(&board.watchdog,sources_mask,cpu_cycle(),board.wdt_ticks);
  system_sleep_reset(&board.sleep,board.base);
  nvm_reset(&board.nvm,cpu_cycle(),board.ns);
