@@ -1,7 +1,7 @@
 # Micronucleus EEPROM reads through an existing CRC copier
 
 Measured in the standalone MicroNucleus ATtiny88 loader at source commit
-`5f6c58b` on October 26, 2026. Target: ATtiny88 / AVR25, external 16 MHz
+`3a8488b` on October 26, 2026. Target: ATtiny88 / AVR25, external 16 MHz
 clock, no hardware MUL. Build: Clang 18.1.3, `-target avr -mmcu=attiny88`,
 assembler with C preprocessing, GNU AVR linker 2.26, and the pinned Microchip
 ATtiny DFP 3.4.278 headers. This is a private assembly register convention,
@@ -62,19 +62,48 @@ After reads acquire a complete-range guard, only EEPROM WRITE calls the old
 single-address checker. Inline that sole call and remove its `RCALL/RET`
 pair, saving four bytes. Do not inline a multiply-used helper on this evidence.
 
+## Share bounded guards and a callable copier
+
+EEPROM and Flash read entry points now select different limits and reuse one
+full 16-bit address guard. Subtract a validated length from the limit, then
+compare the full start address with that maximum start. The low bytes of
+both limits are at least 64, so subtracting a count of at most 64 cannot
+borrow into the high byte. EEPROM uses limit 64; the Flash layout has a
+compile-time assertion for this condition. A new layout with a smaller low
+byte needs a different guard, not the same shortcut. Combined with a shorter
+branch, this sharing saves 20 bytes relative to the intermediate.
+
+Extracting the entire existing copier/CRC into one callable routine costs
+four code bytes and seven foreground cycles per packet. It remains selectable
+by source mode for Flash, SRAM or EEPROM, preserves the live message remainder,
+and can validate received CRC through an in-place SRAM copy. Its packed count
+must remain within 0..31, with YH=1 and r1=0; it is not a direct 64-byte loop.
+Sharing a complete
+operation is smaller than duplicating a CRC loop for a second caller, but
+the call overhead must be measured. TX preparation remains at least six
+cycles faster than the deployed baseline across the 9196 checked vectors.
+
 ## Keep ACK bookkeeping outside bit timing
 
-Native multi-packet replies must retain a packet until ACK. Repeated IN after
-a lost ACK repeats the same DATA PID and payload. The loader replaces a
-two-cycle `STD` that prematurely marked TX idle with a two-cycle `STD` to a
-sent flag. A separate helper recognizes a one-byte ACK before releasing TX;
-SETUP clears the flag. This adds one SRAM byte and 24 code bytes over the
-read draft, including its SETUP flag clear.
+Native multi-packet replies must retain a packet until ACK. The loader
+replaces a two-cycle `STD` that prematurely marked TX idle with a two-cycle
+`STD` to a sent flag. A separate helper recognizes a one-byte ACK before
+releasing TX; SETUP clears the flag. This intermediate bookkeeping adds one
+SRAM byte and 24 code bytes over the read draft.
 
-The sampler and transmitter keep their instruction timing. The helper makes
-the unsupported-packet discard path longer; it is not a new timed response.
-This does not establish physical USB compliance or justify moving foreground
-CRC into a timing-critical receive path.
+Bookkeeping alone did not establish ACK acquisition. In the superseded
+1318-byte intermediate, the foreground resynchronization path could discard
+a real host ACK after DATA, although decoder-entry injection tests passed.
+The corrected path waits for the host edge immediately after the final bus
+release. It reuses the existing bounded wait-for-data loop and the proved
+post-transmit Y invariant: zero after a handshake, low-byte bit 7 set after
+DATA. This avoids another mode flag and costs eight code bytes.
+
+The wait starts after all sampled/transmitted bit timestamps. The corrected
+digital test covers the complete DATA-to-ACK event path, not just entry to
+the ACK decoder. It fails on the first case of the old intermediate.
+Unsupported-packet discard still takes a longer path; it is not a new timed
+response. None of these model checks establishes electrical USB compliance.
 
 ## Linked measurements and validation
 
@@ -82,36 +111,38 @@ CRC into a timing-critical receive path.
 | --- | ---: | --- | ---: |
 | Stable baseline | 1262 B | `0x1B00` | 6908 |
 | Native read draft before ACK tracking | 1294 B | `0x1AC0` | 6844 |
-| Native read intermediate with ACK bookkeeping | 1318 B | `0x1AC0` | 6844 |
+| Superseded intermediate with ACK bookkeeping | 1318 B | `0x1AC0` | 6844 |
+| Corrected shared guards, copier and bounded ACK acquisition | 1310 B | `0x1AC0` | 6844 |
 
-The 1318-byte result is a measured intermediate. Independent review found
-that the current tests inject ACKs at a decoder entry and do not establish
-that the polling loop acquires a real host ACK after transmitting DATA.
-Foreground resynchronization may discard a late ACK. A bounded ACK wait and
-a wire/event-level test are being added; their resulting size is not yet
-recorded here. The arithmetic, linked-size and listed test counts remain
-valid, but this intermediate is not a qualified complete USB receiver.
-
-The 56-byte total increase includes four bytes from the changed Flash-boundary
-encoding. It is not a 56-byte isolated cost for the source helper. The final
-active-high and active-low LED profiles use 1336 and 1334 bytes. All reserve
-1344 Flash bytes; crossing the former 1280-byte reservation costs one page.
-EEPROM writes remain one byte. Native block OUT writes are not measured here.
+The current 48-byte increase over baseline includes four bytes from the
+changed Flash-boundary encoding. The step from 1318 to 1310 combines 20
+bytes saved by guard/branch sharing with four bytes for the callable copier
+and eight for ACK acquisition; it is not an isolated helper-size result.
+Current active-high and active-low LED profiles use 1328 and 1326 bytes.
+All reserve 1344 Flash bytes, matching the current user ceiling; crossing
+the former 1280-byte reservation costs one page. EEPROM writes remain one
+byte. A separate staging-only OUT probe uses 1536 bytes before NVM drivers,
+so native block writes are not claimed to fit this budget.
 
 The linked-code checks cover 10,400 EEPROM payload/CRC cases; 4,194,304 EEPROM
 and 4,194,304 Flash address/length checks; 9,196 Flash/SRAM CRC vectors; 20 host
 tests; and 3,072 standard-request comparisons per tested LED profile. IN
 retries, malformed and unsolicited ACKs, memory guards, legacy Flash
-write/read/erase, startup and postscript behavior are exercised. The timing
-model compares 600 TX traces, 500 RX sync contexts, DATA/IN turnaround, reset
-polling and pending-edge latency; opcode mutation checks constrain the
-intentional changes. These are software measurements, without board testing
-or a new physical throughput claim.
+write/read/erase, startup and postscript behavior are exercised.
+
+The corrected digital event test passes 540 actual DATA-to-ACK waveforms:
+payload lengths 0..8 and host gaps 21..80 clocks, plus next-IN behavior,
+absent/corrupt ACK retention and ACK/NAK handshake return. The existing timing
+model still compares 600 TX bus-edge traces, 500 RX sync contexts, 15
+PID/handshake cases, reset polling and pending-edge latency. Opcode mutation
+checks constrain the intentional changes. These are software measurements,
+without board testing or a new physical throughput claim.
 
 Reproduce in MicroNucleus `experimental/attiny88/updater` with
 `build_optimized.py`, `test_native_reads.mjs`, `test_flash_read_bounds.mjs`,
 `test_optimized_crc.mjs`, `test_optimized.mjs`,
-`test_optimized_usb.py` and `test_optimized_timing.py`. Host fixtures are
+`test_optimized_usb.py`, `test_optimized_timing.py` and `test_in_ack_wire.py`.
+Host fixtures are
 `experimental/attiny88/tests/test_native_read_host.py` and `test_host.py`.
 Register definitions and the excerpt's provenance remain in MicroNucleus
 `experimental/attiny88/variants/strict_usb_optimized/micronucleus_t88_optimized.S`.
