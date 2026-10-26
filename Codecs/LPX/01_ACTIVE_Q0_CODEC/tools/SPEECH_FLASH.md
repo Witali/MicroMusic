@@ -75,3 +75,16 @@ measured AVR setup. See the Flash research report for exact sizes, stack,
 timing, flags, hashes and supported-workload limits.
 
 [Measured Flash results and retained verification](../../research/speech-flash-2026-10-26/README.md).
+
+## Reusing the builder for legacy profiles
+
+The Python API `environment(source, avr_bin, legacy_only=True)` explicitly
+disables the v4/v5 speech parsers while retaining the existing v2/v3 feature
+mask24. It cannot be combined with compact_only. The default environment
+and all previous common/v5-only compiler commands are unchanged.
+
+`validate_profile_smallcode.py` reuses the same compile_image/simulate,
+symbol retention, exact audio exclusion and saved-PWM checks for the
+completed8/12/16 study. It does not reinterpret a v5-only build as legacy
+compatible. Its current-source admission and continuous controls are
+separate from the earlier speech measurements.

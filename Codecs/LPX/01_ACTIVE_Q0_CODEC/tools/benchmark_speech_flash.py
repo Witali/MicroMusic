@@ -78,7 +78,8 @@ def external_symbols():
 def toolpath(avr_bin,name):return Path(avr_bin)/(name+('.exe' if os.name=='nt' else ''))
 
 
-def environment(source,avr_bin,compact_only=False):
+def environment(source,avr_bin,compact_only=False,legacy_only=False):
+    need(not (compact_only and legacy_only),'Compact-only and legacy-only environments are mutually exclusive')
     src=srcdir(source);compiler=toolpath(avr_bin,'avr-g++')
     if compact_only:
         need('LPX4_COMPACT_ONLY' in (src/'Lpx4HybridCore.h').read_text(encoding='utf-8'),
@@ -94,10 +95,14 @@ def environment(source,avr_bin,compact_only=False):
     for name in ('avr/io.h','avr/iom328p.h','avr/pgmspace.h','avr/interrupt.h','util/atomic.h'):
         if (vendor/name).is_file():files.append(vendor/name)
     required,retained=external_symbols()
-    return {'source_sha256':source_hashes(src),'dependencies':{p.name:digest(p) for p in files},
+    result={'source_sha256':source_hashes(src),'dependencies':{p.name:digest(p) for p in files},
         'compiler':subprocess.check_output([str(compiler),'--version'],text=True).splitlines()[0],
         'settings':BASE,'compact_only':bool(compact_only),'required_symbols':required,
         'retained_profile_symbols':retained}
+    if legacy_only:
+        result['settings']={**BASE,'speech':False,'speech_compact':False}
+        result['legacy_only']=True
+    return result
 
 
 def fixed_inputs(study,cases=CASES,profiles=PROFILES,model=True):
@@ -121,7 +126,8 @@ def command_flags(env,spec,assembly=True,irq=0):
     flags=['-mmcu=atmega328p','-DF_CPU=16000000UL','-Os','-std=gnu++11','-fno-exceptions','-fno-rtti',
         '-DLPX4_PROFILE_QUEUE=512','-DLPX4_PROFILE_PREFILL=384',f'-DLPX4_PROFILE_IRQ_LOAD={irq}',
         f'-DLPX4_AVR_DOT_UNROLL={spec["unroll"]}',f'-DLPX4_FUNCTION_TUNING={spec["tuning"]}',
-        '-DLPX4_V3_FEATURES=24','-DLPX4_ENABLE_SPEECH=1','-DLPX4_ENABLE_SPEECH_COMPACT=1',
+        '-DLPX4_V3_FEATURES=24',f'-DLPX4_ENABLE_SPEECH={int(env["settings"]["speech"])}',
+        f'-DLPX4_ENABLE_SPEECH_COMPACT={int(env["settings"]["speech_compact"])}',
         f'-DLPX4_COMPACT_ONLY={int(env["compact_only"])}',f'-DLPX4_ENABLE_ASM={int(assembly)}',*spec['flags']]
     # Use the same retention policy for baseline and all candidates. These
     # externally observed symbols are part of the measurement harness ABI.
