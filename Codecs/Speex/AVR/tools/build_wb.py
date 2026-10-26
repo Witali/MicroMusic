@@ -28,14 +28,14 @@ def sources(source):
     return [source/'libspeex'/(s+'.c') for s in build.PROFILE_SOURCES+['high_lsp_tables']]+[
         build.ROOT/'src'/s for s in ['speex_avr.c','bits.c']+C_SOURCES]
 
-def flags(source,backend):
+def flags(source,backend,enable_nb4=True):
     return ['-std=c11','-fwrapv','-fno-strict-aliasing',
-        *['-D'+d for d in DEFINES],'-DSPEEX_NB3_ENABLE_ASM='+str(int(backend=='asm')),
+        *['-D'+d for d in DEFINES],'-DSPEEX_NB3_ENABLE_ASM='+str(int(backend=='asm')),'-DSPEEX_ENABLE_NB4='+str(int(enable_nb4)),
         '-I'+str(source/'include'),'-I'+str(source/'libspeex'),'-I'+str(build.ROOT/'src')]
 
-def host(compiler):
+def host(compiler,enable_nb4=True):
     source=prepare();out=build.ROOT/'build/wb-native';out.mkdir(exist_ok=True)
-    build.run([compiler,*flags(source,'c'),'-O2','-Wno-pointer-to-int-cast',
+    build.run([compiler,*flags(source,'c',enable_nb4),'-O2','-Wno-pointer-to-int-cast',
         '-D_CRT_SECURE_NO_WARNINGS',*sources(source),build.ROOT/'tests/wb_decode.c',
         '-o',out/('decode.exe' if sys.platform=='win32' else 'decode')])
 
@@ -54,24 +54,31 @@ def oracle(compiler):
         *[source/'libspeex'/(s+'.c') for s in units],build.ROOT/'tests/wb_oracle_qmf.c',
         build.ROOT/'tests/decode_rates.c','-o',out/('decode.exe' if sys.platform=='win32' else 'decode')])
 
-def avr(compiler,backend,stream=None,load=0,destination=None,kernels=False):
+def avr(compiler,backend,stream=None,load=0,destination=None,kernels=False,packet_bytes=None,enable_nb4=None):
     if load<0 or load>320000 or (load and stream is None):raise ValueError('Load requires a player stream and 0..320000 cycles')
+    if packet_bytes not in (None,25,32):raise ValueError('WB mailbox width must be 25 or 32 bytes')
+    width=packet_bytes or 25
     source=prepare();out=destination or build.ROOT/'build'/('wb-'+backend+('-player' if stream else '-decoder'))
     out=out.resolve();out.mkdir(parents=True,exist_ok=True)
-    options=flags(source,backend)+['-mmcu=atmega328p','-mcall-prologues','-mrelax',
+    options=['-mmcu=atmega328p','-mcall-prologues','-mrelax',
         '-Os','-flto','-ffunction-sections','-fdata-sections','-fstack-usage','-I'+str(out)]
     main=build.ROOT/('tests/wb_kernels.c' if kernels else 'tests/wb_decode.c')
     if stream:
         data=stream.read_bytes()
-        if not data or len(data)%25 or len(data)//25>65535 or any(
-            data[i]>>3!=3 or data[i+20]>>4!=9 for i in range(0,len(data),25)):
-            raise ValueError('Expected complete 25-byte NB3+HB1 raw packets')
-        (out/'sample.h').write_text('#define SPEEX_SAMPLE_FRAMES '+str(len(data)//25)+
+        mode=data[0]>>3 if data else -1;detected={3:25,4:32}.get(mode,0)
+        if not detected or (packet_bytes is not None and detected!=packet_bytes) or len(data)%detected or len(data)//detected>65535 or any(
+            data[i]>>3!=mode or ((data[i+20]>>4)!=9 if mode==3 else (data[i+27]&15)!=9) for i in range(0,len(data),detected)):
+            raise ValueError('Expected uniform 25-byte NB3+HB1 or 32-byte NB4+HB1 packets')
+        width=detected
+        (out/'sample.h').write_text('#define SPEEX_SAMPLE_PACKET_BYTES '+str(width)+'\n#define SPEEX_SAMPLE_FRAMES '+str(len(data)//width)+
             '\nstatic const uint8_t sample_data[] PROGMEM={'+','.join(map(str,data))+'};\n')
         (out/'input.json').write_text(json.dumps(dict(file=stream.name,
-            sha256=hashlib.sha256(data).hexdigest(),frames=len(data)//25,frameLoadCycles=load),indent=2)+'\n')
+            sha256=hashlib.sha256(data).hexdigest(),frames=len(data)//width,packetBytes=width,frameLoadCycles=load),indent=2)+'\n')
         main=build.ROOT/'src/wb_player.c'
         if load:options+=['-DSPEEX_AVR_FRAME_LOAD_CYCLES='+str(load)]
+    enabled=width==32 if enable_nb4 is None else bool(enable_nb4)
+    if width==32 and not enabled:raise ValueError('32-byte packets require the NB4 feature')
+    options=flags(source,backend,enabled)+options+['-DSPEEX_TEST_PACKET_BYTES='+str(width)]
     units=sources(source)
     if backend=='asm':units +=[build.ROOT/'src'/s for s in build.ASM_SOURCES+ASM_SOURCES]
     executable=out/'wb.elf'
@@ -81,20 +88,20 @@ def avr(compiler,backend,stream=None,load=0,destination=None,kernels=False):
         build.run([prefix+'objcopy'+extension,'-O',format,'-R','.eeprom',executable,out/('wb.'+suffix)])
     (out/'symbols.txt').write_text(subprocess.check_output([prefix+'nm'+extension,'-n',executable],text=True))
     (out/'backend.json').write_text(json.dumps(dict(backend=backend,
-        handwrittenAssembly=backend=='asm',profile='WB1-Q7-16',sampleRate=16000,
+        handwrittenAssembly=backend=='asm',profile='WB1-Q7-16',sampleRate=16000,packetBytes=width,bitrate=9800 if width==25 else 12800,nb4Enabled=enabled,
         binarySha256=hashlib.sha256((out/'wb.bin').read_bytes()).hexdigest()),indent=2)+'\n')
     if (out/'wb.bin').stat().st_size>32768:raise ValueError('Firmware and stream exceed ATmega328P Flash')
     build.run([prefix+'size'+extension,'-C','--mcu=atmega328p',executable])
     return out
 
-def export_c(destination):
-    build.export_c(destination);source=prepare();private=destination/'src'
+def export_c(destination,enable_nb4=False):
+    build.export_c(destination,enable_nb4);source=prepare();private=destination/'src'
     shutil.copyfile(source/'libspeex/high_lsp_tables.c',private/'high_lsp_tables.c')
     for name in C_SOURCES:shutil.copyfile(build.ROOT/'src'/name,private/name)
     shutil.copyfile(build.ROOT/'src/speex_wb1.h',destination/'include/speex_wb1.h')
     path=destination/'sources.json';manifest=json.loads(path.read_text())
     manifest['sources']+=['src/high_lsp_tables.c']+['src/'+s for s in C_SOURCES]
-    manifest['definitions']+=['SPEEX_ENABLE_WB1=1'];manifest['profiles']=['NB3','WB1-Q7-16']
+    manifest['definitions']+=['SPEEX_ENABLE_WB1=1'];manifest['profiles']=['NB3']+(['NB4'] if enable_nb4 else [])+['WB1-Q7-16'];manifest['widebandBitrates']=[9800,12800] if enable_nb4 else [9800]
     path.write_text(json.dumps(manifest,indent=2)+'\n')
     path=destination/'CMakeLists.txt';path.write_text(path.read_text()+
         '\ntarget_sources(speex_nb3 PRIVATE src/high_lsp_tables.c '+
@@ -110,6 +117,8 @@ def main():
     parser.add_argument('--avr-gcc');parser.add_argument('--backend',choices=['asm','c'],default='c')
     parser.add_argument('--stream',type=Path);parser.add_argument('--frame-load-cycles',type=int,default=0)
     parser.add_argument('--out',type=Path);parser.add_argument('--export-c',type=Path)
+    parser.add_argument('--packet-bytes',type=int,choices=[25,32],help='Bare mailbox width; player width is inferred')
+    parser.add_argument('--enable-nb4',action='store_true',default=None,help='Enable WB 12.8/NB 11 kbit/s (automatic for 32-byte AVR input)')
     parser.add_argument('--kernels',action='store_true',help='AVR mailbox comparing C and ASM kernels')
     args=parser.parse_args()
     if args.reference and not args.cc:parser.error('--reference requires --cc')
@@ -119,7 +128,7 @@ def main():
     if args.cc:
         host(args.cc)
         if args.reference:oracle(args.cc)
-    if args.avr_gcc:avr(args.avr_gcc,args.backend,args.stream,args.frame_load_cycles,args.out,args.kernels)
-    if args.export_c:export_c(args.export_c.resolve())
+    if args.avr_gcc:avr(args.avr_gcc,args.backend,args.stream,args.frame_load_cycles,args.out,args.kernels,args.packet_bytes,args.enable_nb4)
+    if args.export_c:export_c(args.export_c.resolve(),bool(args.enable_nb4))
     if not(args.cc or args.avr_gcc or args.export_c):parser.error('Select --cc, --avr-gcc or --export-c')
 if __name__=='__main__':main()

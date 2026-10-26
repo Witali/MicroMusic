@@ -18,6 +18,12 @@
 #ifndef SPEEX_ENABLE_WB1
 #define SPEEX_ENABLE_WB1 0
 #endif
+#ifndef SPEEX_ENABLE_NB4
+#define SPEEX_ENABLE_NB4 0
+#endif
+#if SPEEX_ENABLE_NB4 != 0 && SPEEX_ENABLE_NB4 != 1
+#error SPEEX_ENABLE_NB4 must be 0 or 1
+#endif
 #if SPEEX_ENABLE_WB1 != 0 && SPEEX_ENABLE_WB1 != 1
 #error SPEEX_ENABLE_WB1 must be 0 or 1
 #endif

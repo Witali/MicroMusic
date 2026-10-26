@@ -30,6 +30,7 @@ const packet = address('speex_test_packet'), pcm = address('speex_test_pcm');
 const result = address('speex_test_result'), end = address('__bss_end');
 const binary = readFileSync(join(build, 'speex-test.bin'));
 const backend=JSON.parse(readFileSync(join(build,'backend.json'),'utf8'));
+const packetBytes=backend.packetBytes||20;assert.ok([20,28].includes(packetBytes));
 assert.equal(createHash('sha256').update(binary).digest('hex'),backend.binarySha256,
   'Backend metadata must describe the executed binary');
 const backendIndex=process.argv.indexOf('--backend');
@@ -84,10 +85,11 @@ for (const file of readdirSync(streamsDirectory).filter(s => s.endsWith('.spxraw
   until(() => cpu.data[status] === 1);
   const raw = readFileSync(join(streamsDirectory, file));
   const expected = readFileSync(join(oracleDirectory, file.replace('.spxraw', '.pcm')));
-  const frames = Math.min(raw.length / 20, limit), cycles = [];
+  assert.equal(raw.length%packetBytes,0);assert.equal(expected.length,raw.length/packetBytes*320);
+  const frames = Math.min(raw.length / packetBytes, limit), cycles = [];
   const captured = [];
   for (let frame = 0; frame < frames; frame++) {
-    cpu.data.set(raw.subarray(frame * 20, frame * 20 + 20), packet);
+    cpu.data.set(raw.subarray(frame * packetBytes, (frame+1)*packetBytes), packet);
     cpu.data[status] = 1;
     cpu.data[command] = 1;
     const start = cpu.cycles;
@@ -111,7 +113,7 @@ for (const file of readdirSync(streamsDirectory).filter(s => s.endsWith('.spxraw
     const before=lspConversions;
     cpu.data[status]=0;cpu.data[command]=2;
     until(()=>cpu.data[status]===1);
-    cpu.data.set(raw.subarray(0,20),packet);cpu.data[command]=1;
+    cpu.data.set(raw.subarray(0,packetBytes),packet);cpu.data[command]=1;
     until(()=>cpu.data[status]===2);
     assert.equal(cpu.data[result],0,'Decode after reset');
     assert.ok(Buffer.from(cpu.data.subarray(pcm,pcm+320)).equals(expected.subarray(0,320)),

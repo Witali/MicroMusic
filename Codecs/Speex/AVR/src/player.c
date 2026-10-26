@@ -14,7 +14,7 @@ volatile uint8_t speex_player_done;
 volatile uint8_t speex_player_error;
 volatile uint16_t speex_player_underruns;
 static int16_t pcm[160];
-static uint8_t packet[20];
+static uint8_t packet[SPEEX_SAMPLE_PACKET_BYTES];
 
 /* Test-only admission load: reserve this much CPU work in every audio frame.
  * Interrupts remain enabled during steady playback. Empty assembly labels
@@ -82,9 +82,9 @@ int main(void)
 #if defined(SPEEX_AVR_FRAME_LOAD_CYCLES) && SPEEX_AVR_FRAME_LOAD_CYCLES > 0
         speex_player_frame_load();
 #endif
-        for (i = 0; i < 20; ++i)
-            packet[i] = pgm_read_byte(sample_data + (uint16_t)(frame*20) + i);
-        if (speex_avr_decode(packet, 20, pcm)) {
+        for (i = 0; i < SPEEX_SAMPLE_PACKET_BYTES; ++i)
+            packet[i] = pgm_read_byte(sample_data + (uint16_t)(frame*SPEEX_SAMPLE_PACKET_BYTES) + i);
+        if (speex_avr_decode(packet, SPEEX_SAMPLE_PACKET_BYTES, pcm)) {
             speex_player_error = 1;
             break;
         }

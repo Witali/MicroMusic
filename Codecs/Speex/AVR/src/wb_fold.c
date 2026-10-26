@@ -1,6 +1,8 @@
 #include "wb_fold.h"
 #include "avr_tables.h"
 #include "nb3_c_math.h"
+#include "zero_innovation.h"
+extern const int8_t exc_8_128_table[1024];
 extern const int8_t exc_10_32_table[320];
 /* g is the original HB1 exp gain divided by the filter ratio.
  * Keep the two distinct quantization/rounding steps; combining their gains
@@ -27,4 +29,15 @@ SPEEX_NB3_HOT void speex_wb_excitation40_c(int16_t *exc,const uint8_t *indices,i
             *exc++=fold_sample(v,g,i&1);
         }
     }
+}
+
+/* Explicit C reference: separate original quantization then folding,
+ * using the existing forty-word output as the intermediate buffer. */
+SPEEX_NB3_HOT void speex_wb_excitation8_40_c(int16_t *exc,const uint8_t *indices,int32_t scale,int32_t g)
+{
+    for(unsigned vector=0;vector<5;vector++) {
+        const int8_t *shape=exc_8_128_table+8*(unsigned)indices[vector];
+        speex_nb3_zero_innovation_n_c(exc+8*vector,shape,scale,8);
+    }
+    speex_wb_fold40_c(exc,g);
 }
