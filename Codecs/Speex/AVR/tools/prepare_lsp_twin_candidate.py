@@ -14,7 +14,9 @@ def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--candidate',required=True);p.add_argument('--out',required=True,type=Path)
     args=p.parse_args();report=json.loads((ROOT/'reports/twin-candidates.json').read_text())
     rows={r['name']:r for r in report['candidates']}
-    if args.candidate=='production':p.error('Paired-stage production integration has not been admitted')
+    if args.candidate=='production':
+        report=json.loads((ROOT/'reports/twin-admission.json').read_text(encoding='utf-8'))
+        sources=report['productionSources']
     elif args.candidate in rows:sources=rows[args.candidate]['sources']
     else:p.error('Unknown candidate; choose production or '+', '.join(rows))
     if not {'src/compact_lsp.c.inc'}<=set(sources)<=ALLOWED:raise ValueError('Unexpected source files')

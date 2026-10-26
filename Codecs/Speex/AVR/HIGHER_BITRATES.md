@@ -42,17 +42,18 @@ results, not a worst-case execution proof or a physical board measurement.
 
 | Profile, ASM | Mean CPU, natural voice | Max observed CPU, voice | Bare harness Flash | Static SRAM |
 | --- | ---: | ---: | ---: | ---: |
-| NB8 | 32.54% | 34.32% | 10,986 B | 1,099 B |
-| NB11 | 33.17% | 34.80% | 13,330 B | 1,107 B |
-| WB9.8 | 77.85% | 80.35% | 17,484 B | 1,279 B |
-| WB12.8 | 78.61% | 80.76% | 20,300 B | 1,287 B |
+| NB8 | 32.45% | 34.22% | 11,064 B | 1,099 B |
+| NB11 | 33.08% | 34.71% | 13,408 B | 1,107 B |
+| WB9.8 | 77.69% | 80.18% | 17,564 B | 1,279 B |
+| WB12.8 | 78.45% | 80.58% | 20,380 B | 1,287 B |
 
 The same 16 Russian/English voice excerpts are used. New modes and WB9.8
 include 6,467 frames; historical NB8 uses 6,434 because encoder padding differs.
 Natural-row means are frame-weighted from per-stream rounded cycle counts.
-The larger adversarial corpus reaches 112,017 cycles/frame for NB11 (35.01%)
-and 258,420 for WB12.8 (80.76%). WB12.8 averages 252,436.833 cycles over all
-10,563 natural/coverage frames (78.89%). Its bare harness peaks at 190 B stack,
+These current figures include the [paired LSP optimization](TWIN_LSP.md).
+The larger adversarial corpus reaches 111,705 cycles/frame for NB11 (34.91%)
+and 257,868 for WB12.8 (80.58%). WB12.8 averages 251,916.573 cycles over all
+10,563 natural/coverage frames (78.72%). Its bare harness peaks at 190 B stack,
 leaving 571 B SRAM; caller buffers and the output ISR require their own space.
 
 C retains exact output: NB11 averages 69.10% CPU on voice; WB12.8 takes
@@ -88,11 +89,12 @@ each with its own reset oracle; the bare decoder tests retain full-recording
 history. Applications may supply continuous packets externally through the
 API; no serial/storage transport is implemented by this extension.
 
-The four minimum bare decoder images and six representative old PWM images
-are byte-identical to previously tested binaries. Other legacy PWM images
-were not rebuilt in this stage; earlier full-matrix evidence remains in
-`reports/zero-admission.json`. New measured results and source/report/binary
-hashes are retained in `reports/higher-admission.json`.
+The initial extension kept four minimum bare decoder images and six
+representative PWM images byte-identical. The subsequent paired LSP stage
+changes ASM images and freshly validates 134 PWM images; all four C decoder
+images and 62 C player images remain byte-identical. Initial higher-profile
+admission is in `reports/higher-admission.json`; current measurements and
+source/report/binary hashes are in `reports/twin-admission.json`.
 
 ## Reproduce
 
@@ -114,7 +116,7 @@ python tests/prepare_higher_players.py
 python tests/verify_wb_players.py --avr-gcc avr-gcc --streams build/higher-player-corpus/streams --oracle build/higher-player-corpus/oracle --out build/wb128-pwm
 python tools/build_wb.py --export-c build/wb128-library --enable-nb4
 python tests/verify_portable.py --cc clang --ar llvm-ar --wb --enable-nb4 --cmake cmake --ninja ninja
-python tests/audit_higher.py --avr-gcc avr-gcc
+python tests/audit_lsp_twin.py --avr-gcc avr-gcc
 ```
 
 Use `--backend c` for the same AVR correctness tests. New-width AVR builds

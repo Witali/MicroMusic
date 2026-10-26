@@ -7,6 +7,7 @@
 #include "speex_platform.h"
 #include "nb3_lsp_stage.h"
 #include "nb3_lsp_first.h"
+#include "nb3_lsp_pair.h"
 #define STAGE_ATTR SPEEX_NB3_STAGE
 static STAGE_ATTR spx_word16_t lsp_angle(spx_lsp_t angle) {return ANGLE2X(angle);}
 /* The first two roots give p1=-(a+b)*64 and p2=2^21+ceil(a*b/256).
@@ -21,6 +22,11 @@ DEFINE_STAGE(2)
 DEFINE_STAGE(3)
 DEFINE_STAGE(4)
 #undef DEFINE_STAGE
+#if SPEEX_NB3_USE_AVR_ASM
+#define LSP_PAIR(n,p,q,fp,fq) speex_nb3_lsp_pair##n(p,q,fp,fq)
+#else
+#define LSP_PAIR(n,p,q,fp,fq) lsp_stage##n(p,fp);lsp_stage##n(q,fq)
+#endif
 #undef STAGE_ATTR
 #include "nb3_lsp_finish.h"
 /* The generic converter retains the explicitly selectable C body. The fused
@@ -44,7 +50,7 @@ SPEEX_NB3_HOT void lsp_to_lpc(const spx_lsp_t *freq, spx_coef_t *ak, int lpcrdr,
     p[0]=q[0]=1048576;
     lsp_first(p,lsp_angle(freq[0]),lsp_angle(freq[2]));
     lsp_first(q,lsp_angle(freq[1]),lsp_angle(freq[3]));
-#define STAGE(s) lsp_stage##s(p,lsp_angle(freq[2*s])); lsp_stage##s(q,lsp_angle(freq[2*s+1]))
+#define STAGE(s) LSP_PAIR(s,p,q,lsp_angle(freq[2*s]),lsp_angle(freq[2*s+1]))
     STAGE(2); STAGE(3); STAGE(4);
 #undef STAGE
     lsp_finish10_c(p,q,ak);
@@ -63,9 +69,9 @@ SPEEX_NB3_STAGE void speex_nb3_interpolate_lpc(
     p[0]=q[0]=1048576;
     lsp_first(p,lsp_angle(raw[0]),lsp_angle(raw[2]));
     lsp_first(q,lsp_angle(raw[1]),lsp_angle(ak[0]));
-    lsp_stage2(p,lsp_angle(ak[1]));lsp_stage2(q,lsp_angle(ak[2]));
-    lsp_stage3(p,lsp_angle(raw[6]));lsp_stage3(q,lsp_angle(raw[7]));
-    lsp_stage4(p,lsp_angle(raw[8]));lsp_stage4(q,lsp_angle(raw[9]));
+    LSP_PAIR(2,p,q,lsp_angle(ak[1]),lsp_angle(ak[2]));
+    LSP_PAIR(3,p,q,lsp_angle(raw[6]),lsp_angle(raw[7]));
+    LSP_PAIR(4,p,q,lsp_angle(raw[8]),lsp_angle(raw[9]));
     lsp_finish10(p,q,ak);
 }
 
@@ -77,8 +83,8 @@ void speex_wb_lsp8(const spx_lsp_t *freq,spx_coef_t *ak)
     p[0]=q[0]=1048576;
     lsp_first(p,lsp_angle(freq[0]),lsp_angle(freq[2]));
     lsp_first(q,lsp_angle(freq[1]),lsp_angle(freq[3]));
-    lsp_stage2(p,lsp_angle(freq[4]));lsp_stage2(q,lsp_angle(freq[5]));
-    lsp_stage3(p,lsp_angle(freq[6]));lsp_stage3(q,lsp_angle(freq[7]));
+    LSP_PAIR(2,p,q,lsp_angle(freq[4]),lsp_angle(freq[5]));
+    LSP_PAIR(3,p,q,lsp_angle(freq[6]),lsp_angle(freq[7]));
     for(j=1;j<=8;j++) {
         int index=j<=4?j:8-j;
         spx_word32_t a=PSHR32(p[index]+previous_p+q[index]-previous_q,8);
@@ -87,3 +93,5 @@ void speex_wb_lsp8(const spx_lsp_t *freq,spx_coef_t *ak)
     }
 }
 #endif
+
+#undef LSP_PAIR

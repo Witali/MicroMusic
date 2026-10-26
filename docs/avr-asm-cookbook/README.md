@@ -114,20 +114,16 @@ ASM PWM-образов с IRQ точны и без underrun; +40% NB/+5% WB CPU 
 [Отчёт](../../Codecs/Speex/AVR/reports/zero-admission.json) фиксирует область
 доказательства; переносить цифры на другой CPU/ABI без измерений нельзя.
 
-**Парные LSP-стадии: только измеренный прототип (2026-10-26).**
-Один пролог сохраняет r4..17/Y; r4..7 удерживают второй указатель и корень.
-Общее арифметическое ядро обрабатывает полиномы последовательно. Вариант с
-T использует его как временный флаг первого/второго прохода; ни одна
-инструкция ядра не меняет T, ISR обязан восстановить SREG. Это соответствует
-[GNU AVR convention](https://avrdudes.github.io/avr-libc/avr-libc-user-manual-2.2.0/FAQ.html#faq_reg_usage),
-но отдельное доказательство нового ABI/IRQ ещё требуется.
-На 1 058 кадрах все пять вариантов дают точный Xiph PCM/reset. Прямой
-вызов T-варианта быстрее C-обёртки; общий пролог на 64 Б меньше, но медленнее
-прямого варианта. `leaf` не меняет измеренный бинарник. Эти результаты не
-являются допуском профиля: полные paired arithmetic/ABI/IRQ/corpus/PWM
-проверки не проведены. [Точные варианты](../../Codecs/Speex/AVR/reports/twin-candidates.json)
-и [восстановление](../../Codecs/Speex/AVR/tools/prepare_lsp_twin_candidate.py)
-сохраняют исходники, компилятор и измерения; production не изменён.
+**Paired LSP stages: admitted after the original screening (2026-10-26).**
+[One prologue, two polynomial passes](speex-lsp-twin.md) explains the GNU AVR
+T-bit phase contract, shared source, explicitly selectable C pair and stack
+cost. Current NB8 saves 0.2690% mean cycles for 78 extra Flash bytes and four
+peak stack bytes; WB9.8 saves 0.2082% for 80 bytes, with unchanged observed
+stack. Independent arithmetic/ABI tests, 30,870 IRQ injections and 134 fresh
+ASM PWM images now pass; 62 rebuilt C player images are byte-identical.
+The [five old prototypes](../../Codecs/Speex/AVR/reports/twin-candidates.json)
+remain historical screening evidence, separate from the full
+[current admission](../../Codecs/Speex/AVR/reports/twin-admission.json).
 
 ## Как проверять пользу для Speex
 
