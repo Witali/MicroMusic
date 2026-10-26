@@ -1,8 +1,9 @@
 # Exact AVR LSP cosine leaf
 
-Historical stage: current sources also include the [IIR first-product and
-word-operation optimization](IIR_SEED.md). Its source-bound audit is now
-`tests/audit_iir_seed.py`; the measurements below describe the cosine stage.
+Historical stage: later [IIR first-product changes](IIR_SEED.md) and
+[grouped IIR/short cosine negation](IIR_GROUPS.md) follow this revision.
+Current sources use `tests/audit_iir_groups.py`; measurements below describe
+the earlier cosine stage.
 
 The primary ASM backend now evaluates the original Xiph 1.2.1 fixed-point
 `ANGLE2X` polynomial in a leaf function with no own stack or explicit data
