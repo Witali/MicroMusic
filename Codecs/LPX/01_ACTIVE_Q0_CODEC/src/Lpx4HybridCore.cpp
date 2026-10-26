@@ -64,7 +64,7 @@ Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),cursor_(0),sampleCount_(0),
  lsfConverts_=bitCalls_=romByteCalls_=0;
 #endif
  lsfCached_=false;staticSpectrum_=false;
- for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i]=a_[i]=hist_[i]=previousQuant_[i]=0;
+ for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i]=a_[i]=hist_[i]=0;
  for(uint16_t i=0;i<256;i++)ringQ_[i]=0;
 }
 int16_t Lpx4HybridCore::clamp(int32_t n,int16_t low,int16_t high){
@@ -99,7 +99,7 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #ifdef LPX3_COST_INSTRUMENT
  lsfConverts_=bitCalls_=romByteCalls_=0;
 #endif
- for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i]=a_[i]=hist_[i]=previousQuant_[i]=0;
+ for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i]=a_[i]=hist_[i]=0;
  for(uint16_t i=0;i<256;i++)ringQ_[i]=0;
  if(!input||size<20){error_=BAD_HEADER;return false;}
  if(readByte()!='L'||readByte()!='4'||readByte()!='H'||readByte()!='Y'){
@@ -189,7 +189,7 @@ bool Lpx4HybridCore::readFrame(){
     const uint8_t lo=readOne()?readBits(5):0;
     d=(int8_t)((int16_t)hi*32+lo);
    }
-   v[i]=previousQuant_[i]+d;
+   v[i]=cur_[i]+d;
   }
  }
  if(error_)return false;
@@ -197,7 +197,7 @@ bool Lpx4HybridCore::readFrame(){
  for(uint8_t i=0;i<10;i++){
   if(v[i]<0||v[i]>1023){error_=CORRUPT_STREAM;return false;}
   if(initializedFrame_ && v[i]!=prev_[i])staticSpectrum_=false;
-  previousQuant_[i]=v[i];cur_[i]=v[i];
+  cur_[i]=v[i];
  }
  if(!initializedFrame_)for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
  initializedFrame_=true;return true;
@@ -422,7 +422,15 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
     // interpolation. The cached endpoint is valid across repeated frames.
     if(staticSpectrum_){
         if(!lsfCached_){convertLsfAt(0,curLpc_);lsfCached_=true;}
-        for(uint8_t i=0;i<10;i++)a_[i]=prevLpc_[i]=curLpc_[i];
+        // The endpoint is unchanged for the whole frame. Refresh a_ at its
+        // first subframe, because the previous dynamic frame ended at a midpoint.
+        if(sub==0)for(uint8_t i=0;i<10;i++)prevLpc_[i]=curLpc_[i];
+#ifdef LPX3_BANDWIDTH_EXPAND_Q14
+        // nextCore expands a_ after interpolation: reload before every expansion.
+        for(uint8_t i=0;i<10;i++)a_[i]=curLpc_[i];
+#else
+        if(sub==0)for(uint8_t i=0;i<10;i++)a_[i]=curLpc_[i];
+#endif
         return;
     }
     // Segment width in t=0..16; at most one polynomial conversion per

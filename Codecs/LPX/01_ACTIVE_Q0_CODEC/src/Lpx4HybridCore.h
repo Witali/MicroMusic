@@ -68,7 +68,6 @@ private:
     int16_t prevLpc_[10],curLpc_[10];
     bool lsfCached_,staticSpectrum_;
     int32_t polyP_[12],polyQ_[12];
-    int16_t previousQuant_[10];
     int16_t prevDeemph_,prevBright_;
     uint8_t framePos_,blockPos_,subPos_,subIndex_;
     uint8_t quantLimit_;
