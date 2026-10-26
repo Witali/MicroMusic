@@ -40,6 +40,15 @@ class LowrateEntryTests(unittest.TestCase):
 
 
 class JointSeedHandoffTests(unittest.TestCase):
+    def test_joint_pipeline_rejects_a_large_level_error_without_mutes(self):
+        ref=np.full(800,1000,np.int16);ref[0]=32767
+        biased=np.full(800,25000,np.int16)
+        with patch.object(entry,'_encode_core',return_value=(b'proposal',biased,{'status':'ok'})),patch.object(entry,'search_budget',return_value=(b'proposal',biased,{'status':'ok'})):
+            blob,pcm,report=entry.encode_lowrate(ref,None,100)
+        self.assertIsNone(blob);self.assertIsNone(pcm)
+        self.assertEqual(report['status'],'no_fit')
+        self.assertIn('waveform-error',report['no_fit_reason'])
+
     def test_joint_search_can_rescue_scalar_no_fit_with_bounded_diverse_seeds(self):
         # Isolate the public pipeline handoff, not bitstream arithmetic. The
         # scalar stage has no fit, while joint pitch/sparse can reach the cap.
