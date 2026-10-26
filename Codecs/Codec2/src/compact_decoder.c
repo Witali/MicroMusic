@@ -83,8 +83,24 @@ static void amplitudes(float ak[11], compact_model *model, float energy, compact
     float before = 1E-4, after = 1E-4;
     for (unsigned i = 0; i < 256; ++i) {
         float power = buffer->frequency[i].r;
-        compact_complex weight = compact_sparse_lpc_bin(ak, i);
-        float norm = weight.r * weight.r + weight.i * weight.i;
+        float norm;
+        if (i <= 128) {
+            compact_complex weight;
+            if (i == 0) weight = compact_sparse_lpc_bin(ak, 0);
+            else {
+                compact_complex negative;
+                compact_sparse_lpc_pair(ak, i, &weight, &negative);
+                if (i == 128) weight = negative; /* original aliased last write */
+                else {
+                    /* Only imag[1..80] hold phases. Cache the paired norm in
+                     * dead imag[129..255], avoiding duplicate sparse transforms.
+                     * Power/postfilter accumulation still runs in original order.
+                     */
+                    buffer->frequency[256 - i].i = negative.r * negative.r + negative.i * negative.i;
+                }
+            }
+            norm = weight.r * weight.r + weight.i * weight.i;
+        } else norm = buffer->frequency[i].i;
         float rw = sqrtf(norm * power);
         float factor = powf(rw, 0.2f);
         before += power;

@@ -1,0 +1,58 @@
+{
+  "baseline_revision": "00ae2c315f10d4ef0d006dcefb61d37ba46f86d2",
+  "baseline_report_sha256": "5aa9ed2071e33ae3123b9577da97546059697d585d0caff55e6619358e3aa63c",
+  "current_verification": "compact-decoder.json",
+  "current_report_sha256": "895a5b42fa27d85a9ac63c4c5038f66b714a264fbc8c413a1112722b8e24437b",
+  "comparison_source_sha256": "03502036e064c72d0921bad95d2df80646e4952598425baf092e1a9c9b51cfd6",
+  "streams": [
+    {
+      "name": "speech.c2zx",
+      "frames": 218,
+      "pcm_unchanged": true,
+      "before": {
+        "flashBytes": 21860,
+        "staticSramBytes": 711,
+        "stackBytes": 2808,
+        "freeSramAtPeak": 577,
+        "maximumCycles": 27486179,
+        "meanCycles": 26370545.811926607
+      },
+      "after": {
+        "flashBytes": 22516,
+        "staticSramBytes": 711,
+        "stackBytes": 2552,
+        "freeSramAtPeak": 833,
+        "maximumCycles": 16753427,
+        "meanCycles": 15709468.633027524
+      },
+      "mean_cycle_reduction_percent": 40.42797314448228,
+      "minimum_per_frame_reduction_percent": 39.012745688759495,
+      "maximum_per_frame_reduction_percent": 41.79363586637223
+    },
+    {
+      "name": "codec2_3200_8byte_frames.bin",
+      "frames": 147,
+      "pcm_unchanged": true,
+      "before": {
+        "flashBytes": 21860,
+        "staticSramBytes": 711,
+        "stackBytes": 2808,
+        "freeSramAtPeak": 577,
+        "maximumCycles": 27430305,
+        "meanCycles": 26461605.19047619
+      },
+      "after": {
+        "flashBytes": 22516,
+        "staticSramBytes": 711,
+        "stackBytes": 2552,
+        "freeSramAtPeak": 833,
+        "maximumCycles": 16706736,
+        "meanCycles": 15799367.006802721
+      },
+      "mean_cycle_reduction_percent": 40.29324036438621,
+      "minimum_per_frame_reduction_percent": 39.027053577802484,
+      "maximum_per_frame_reduction_percent": 41.77203256030341
+    }
+  ],
+  "scope": "Same ATmega64A/AVR-GCC settings, complete archived streams; identical AVR PCM. No active IRQ or real-time admission."
+}

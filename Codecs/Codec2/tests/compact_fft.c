@@ -33,6 +33,12 @@ int main(void) {
                 return 1;
             }
         }
+        for (unsigned k = 1; k <= 128; ++k) {
+            compact_complex positive, negative;
+            compact_sparse_lpc_pair(coefficients, k, &positive, &negative);
+            assert(k == 128 || (positive.r == expected[k].r && positive.i == expected[k].i));
+            assert(negative.r == expected[256 - k].r && negative.i == expected[256 - k].i);
+        }
         for (unsigned bin = 0; bin <= 256; ++bin) {
             expected[bin].r = sample(); expected[bin].i = sample();
             compact.frequency[bin].r = expected[bin].r; compact.frequency[bin].i = expected[bin].i;

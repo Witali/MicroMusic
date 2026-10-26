@@ -2250,7 +2250,7 @@ condition. Original source provenance: pinned Codec2 1.2.0 (LGPL-2.1) and KISS
 FFT (BSD); full notices remain in the separate adaptation and generated tables.
 The old complete float decoder remains a frozen independent regression path.
 
-Measured evidence: native Clang 24 matches original upstream PCM byte-for-byte
+First compact checkpoint (`00ae2c31`): native Clang 24 matches original upstream PCM byte-for-byte
 on 11,333 packets / 1,813,280 samples. AVR8js 0.21.1 executes both complete
 archived synthetic speech streams, 365 packets / 58,400 samples, reset separately.
 AVR maximum error is 7/4 s16 units, SNR 73.95/75.02 dB. The ATmega64A harness
@@ -2267,4 +2267,42 @@ universal bound for arbitrary packets or toolchains. The verifier obtains the
 actual device RAM/Flash limits from avr/io.h and enforces physical link regions,
 near-Flash addresses and stack separation at each instruction. Source, binary,
 input and output hashes, toolchain and per-frame timing are retained in
-[compact-decoder.json](../../Codecs/Codec2/reports/compact-decoder.json).
+that revision's `reports/compact-decoder.json`; the comparison below pins its hash.
+
+### Prune zero branches and cache real-FFT pairs in dead imaginary lanes
+
+Further portable-C optimization keeps the selected KISS butterfly's nonzero
+operation order but removes c/d zero products from two-input N=64 children.
+It also avoids unused N=256 sibling results and passes complex operands by
+pointer to reduce AVR argument copies. Forward LPC FFT now constructs the
+four N=64 children directly before executing its N=256 root. Inputs must be
+finite LPC coefficients; signed-zero identity is not promised by the separate
+float-value FFT tests, while complete PCM is checked byte-for-byte.
+
+Real postprocessing already produces bins k and 256-k together. Returning
+both and saving the second squared norm in imag[129..255] avoids recomputing
+the same two sparse complex transforms later. Only imag[1..80] contain phases
+for mode 3200, so the cache needs no new storage. Power/postfilter energy sums
+still execute in original bin order, and k=128 retains the original final
+negative-output write. Recheck this storage proof if the harmonic count or FFT
+dimensions change. This uses the same CPU/ABI/compiler flags as above, no new
+assembly backend and no architecture or memory-model macro substitution.
+
+Measured on the same ATmega64A with AVR-GCC 7.3.0 `-Os`, both full streams:
+mean cycles fall 40.43% EN / 40.29% RU; every one of 365 frames improves
+39.01–41.79%. Maximum frame cost drops 27,486,179→16,753,427 cycles. All
+58,400 AVR PCM samples are byte-identical to the prior compact image; native
+1,813,280 samples still match original upstream. Flash changes 21,860→22,516 B,
+static SRAM stays 711 B, observed stack falls 2808→2552 B and free SRAM rises
+577→833 B (total live memory 3263/4096 B). This is a measured speed and stack
+improvement for this workload; the 1.047-s worst frame at 16 MHz still misses
+20 ms. No active IRQ, hardware or real-time profile is admitted.
+
+[Complete comparison](../../Codecs/Codec2/reports/compact-pruning.json) pins
+the baseline Git revision and both reports. The current
+[qualification](../../Codecs/Codec2/reports/compact-decoder.json) binds modified
+sources, executable and output. Instruction/call profiling uses the unmodified
+linked image and checks its PCM and total cycles against qualification. The
+retained two-frame prefixes identify the sparse stage as 50.67–52.09% before
+and about 26–28% after; these prefixes guide optimization, not full-stream
+admission. Inclusive function costs overlap and must not be added.

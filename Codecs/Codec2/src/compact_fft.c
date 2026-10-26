@@ -58,8 +58,8 @@ static uint8_t reverse_four(uint8_t x) {
     return (uint8_t)(((x & 3) << 6) | ((x & 12) << 2) | ((x & 48) >> 2) | ((x & 192) >> 6));
 }
 
-static void fft256(compact_complex *buffer, int inverse) {
-    for (unsigned size = 4; size <= 256; size *= 4) {
+static void fft256(compact_complex *buffer, int inverse, unsigned first_size) {
+    for (unsigned size = first_size; size <= 256; size *= 4) {
         unsigned m = size / 4, step = 256 / size;
         for (unsigned base = 0; base < 256; base += size) {
             for (unsigned j = 0; j < m; ++j) {
@@ -96,14 +96,23 @@ static void real_pair(compact_complex first, compact_complex conjugate_second,
     negative->i = (product.i - sum.i) * .5;
 }
 
+static compact_complex select_two(compact_complex a, const compact_complex *b,
+                                  unsigned j, unsigned which);
+
 void compact_forward_lpc(compact_transform *buffer, const float coefficients[11]) {
-    memset(buffer, 0, sizeof(*buffer));
-    for (unsigned i = 0; i < 6; ++i) {
-        unsigned at = reverse_four((uint8_t)i);
-        buffer->frequency[at].r = coefficients[2 * i];
-        buffer->frequency[at].i = i < 5 ? coefficients[2 * i + 1] : 0;
+    compact_complex c0 = {coefficients[0], coefficients[1]}, c1 = {coefficients[2], coefficients[3]};
+    compact_complex c2 = {coefficients[4], coefficients[5]}, c3 = {coefficients[6], coefficients[7]};
+    compact_complex c4 = {coefficients[8], coefficients[9]}, c5 = {coefficients[10], 0};
+    /* Directly build the four N=64 children, pruning only zero-input work.
+     * The original N=256 root computes all four outputs in one pass.
+     */
+    for (unsigned j = 0; j < 64; ++j) {
+        buffer->frequency[j] = select_two(c0, &c4, j & 15, j >> 4);
+        buffer->frequency[j + 64] = select_two(c1, &c5, j & 15, j >> 4);
+        buffer->frequency[j + 128] = c2;
+        buffer->frequency[j + 192] = c3;
     }
-    fft256(buffer->frequency, 0);
+    fft256(buffer->frequency, 0, 256);
     compact_complex dc = buffer->frequency[0];
     buffer->frequency[0].r = dc.r + dc.i; buffer->frequency[0].i = 0;
     buffer->frequency[256].r = dc.r - dc.i; buffer->frequency[256].i = 0;
@@ -115,24 +124,43 @@ void compact_forward_lpc(compact_transform *buffer, const float coefficients[11]
 }
 
 /* Select the original radix-four output without changing its arithmetic DAG. */
-static compact_complex select_four(compact_complex a, compact_complex b,
-                                   compact_complex c, compact_complex d,
+static compact_complex select_four(compact_complex a, const compact_complex *b,
+                                   const compact_complex *c, const compact_complex *d,
                                    unsigned j, unsigned step, unsigned which) {
-    compact_complex s[6], tw, result;
-    tw = twiddle(j * step, 0); MUL(s[0], b, tw);
-    tw = twiddle(2 * j * step, 0); MUL(s[1], c, tw);
-    tw = twiddle(3 * j * step, 0); MUL(s[2], d, tw);
-    SUB(s[5], a, s[1]); a.r += s[1].r; a.i += s[1].i;
-    ADD(s[3], s[0], s[2]); SUB(s[4], s[0], s[2]);
-    if (which == 0) { ADD(result, a, s[3]); }
-    else if (which == 2) { SUB(result, a, s[3]); }
-    else if (which == 1) { result.r = s[5].r + s[4].i; result.i = s[5].i - s[4].r; }
-    else { result.r = s[5].r - s[4].i; result.i = s[5].i + s[4].r; }
+    compact_complex s[4], tw, result;
+    tw = twiddle(j * step, 0); MUL(s[0], *b, tw);
+    tw = twiddle(2 * j * step, 0); MUL(s[1], *c, tw);
+    tw = twiddle(3 * j * step, 0); MUL(s[2], *d, tw);
+    if ((which & 1) == 0) {
+        a.r += s[1].r; a.i += s[1].i;
+        ADD(s[3], s[0], s[2]);
+        if (which == 0) { ADD(result, a, s[3]); }
+        else { SUB(result, a, s[3]); }
+    } else {
+        a.r -= s[1].r; a.i -= s[1].i;
+        SUB(s[3], s[0], s[2]);
+        if (which == 1) { result.r = a.r + s[3].i; result.i = a.i - s[3].r; }
+        else { result.r = a.r - s[3].i; result.i = a.i + s[3].r; }
+    }
+    return result;
+}
+
+/* N=64 children have two nonzero inputs. Prune the zero c/d products and
+ * unused sibling outputs, keeping the selected original butterfly's order.
+ * LPC inputs are finite; signed zero is not used as a control decision.
+ */
+static compact_complex select_two(compact_complex a, const compact_complex *b,
+                                  unsigned j, unsigned which) {
+    compact_complex product, tw = twiddle(j * 4, 0), result;
+    MUL(product, *b, tw);
+    if (which == 0) { ADD(result, a, product); }
+    else if (which == 2) { SUB(result, a, product); }
+    else if (which == 1) { result.r = a.r + product.i; result.i = a.i - product.r; }
+    else { result.r = a.r - product.i; result.i = a.i + product.r; }
     return result;
 }
 
 static compact_complex sparse_complex(const float a[11], unsigned bin) {
-    compact_complex zero = {0, 0};
     compact_complex c0 = {a[0], a[1]}, c1 = {a[2], a[3]};
     compact_complex c2 = {a[4], a[5]}, c3 = {a[6], a[7]};
     compact_complex c4 = {a[8], a[9]}, c5 = {a[10], 0};
@@ -141,9 +169,17 @@ static compact_complex sparse_complex(const float a[11], unsigned bin) {
      * 0 and 1 contain two; 2 and 3 contain one. Keep the two remaining
      * N=64 butterflies and the root N=256 butterfly in original order.
      */
-    compact_complex first = select_four(c0, c4, zero, zero, low & 15, 4, low >> 4);
-    compact_complex second = select_four(c1, c5, zero, zero, low & 15, 4, low >> 4);
-    return select_four(first, second, c2, c3, bin & 63, 1, bin >> 6);
+    compact_complex first = select_two(c0, &c4, low & 15, low >> 4);
+    compact_complex second = select_two(c1, &c5, low & 15, low >> 4);
+    return select_four(first, &second, &c2, &c3, bin & 63, 1, bin >> 6);
+}
+
+void compact_sparse_lpc_pair(const float coefficients[11], unsigned k,
+                             compact_complex *positive, compact_complex *negative) {
+    compact_complex first = sparse_complex(coefficients, k);
+    compact_complex second = sparse_complex(coefficients, 256 - k);
+    second.i = -second.i;
+    real_pair(first, second, k, positive, negative);
 }
 
 compact_complex compact_sparse_lpc_bin(const float coefficients[11], unsigned bin) {
@@ -154,11 +190,8 @@ compact_complex compact_sparse_lpc_bin(const float coefficients[11], unsigned bi
         return result;
     }
     unsigned k = bin < 128 ? bin : 256 - bin;
-    compact_complex first = sparse_complex(coefficients, k);
-    compact_complex second = sparse_complex(coefficients, 256 - k);
     compact_complex positive, negative;
-    second.i = -second.i;
-    real_pair(first, second, k, &positive, &negative);
+    compact_sparse_lpc_pair(coefficients, k, &positive, &negative);
     /* k=128 aliases both outputs in original KISS; the negative write wins. */
     return bin < 128 ? positive : negative;
 }
@@ -183,7 +216,7 @@ void compact_inverse(compact_transform *buffer) {
             buffer->frequency[i] = buffer->frequency[j]; buffer->frequency[j] = temp;
         }
     }
-    fft256(buffer->frequency, 1);
+    fft256(buffer->frequency, 1, 4);
 }
 
 float compact_window_value(unsigned index) {

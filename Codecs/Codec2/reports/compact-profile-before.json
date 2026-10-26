@@ -1,0 +1,690 @@
+{
+  "simulator": "avr8js 0.21.1",
+  "mcu": "ATmega64A",
+  "results": [
+    {
+      "name": "speech.c2zx",
+      "frames": 2,
+      "samples": 320,
+      "totalCycles": 52906368,
+      "meanCycles": 26453184,
+      "stages": [
+        {
+          "name": "compact_sparse_lpc_bin",
+          "cycles": 27560694,
+          "percent": 52.093339690224056
+        },
+        {
+          "name": "other",
+          "cycles": 13369645,
+          "percent": 25.270389001187908
+        },
+        {
+          "name": "compact_forward_lpc",
+          "cycles": 5866993,
+          "percent": 11.089389088285175
+        },
+        {
+          "name": "compact_inverse",
+          "cycles": 5799954,
+          "percent": 10.962676553416028
+        },
+        {
+          "name": "lsp_to_lpc",
+          "cycles": 309082,
+          "percent": 0.5842056668868292
+        }
+      ],
+      "inclusive": [
+        {
+          "name": "main",
+          "cycles": 52906368,
+          "percent": 100
+        },
+        {
+          "name": "codec2_compact_decode",
+          "cycles": 52906298,
+          "percent": 99.99986769078535
+        },
+        {
+          "name": "compact_sparse_lpc_bin",
+          "cycles": 27560694,
+          "percent": 52.093339690224056
+        },
+        {
+          "name": "sparse_complex",
+          "cycles": 25378509,
+          "percent": 47.968722782104415
+        },
+        {
+          "name": "select_four",
+          "cycles": 23236397,
+          "percent": 43.91984911910793
+        },
+        {
+          "name": "__addsf3x",
+          "cycles": 14157892,
+          "percent": 26.76027959432029
+        },
+        {
+          "name": "__mulsf3x",
+          "cycles": 12712804,
+          "percent": 24.02887304605752
+        },
+        {
+          "name": "__mulsf3",
+          "cycles": 12711527,
+          "percent": 24.026459347955996
+        },
+        {
+          "name": "__addsf3",
+          "cycles": 8787751,
+          "percent": 16.61000619055914
+        },
+        {
+          "name": "__fp_split3",
+          "cycles": 7284231,
+          "percent": 13.768155470434108
+        },
+        {
+          "name": "__subsf3",
+          "cycles": 6644395,
+          "percent": 12.558781203805182
+        },
+        {
+          "name": "compact_forward_lpc",
+          "cycles": 5866993,
+          "percent": 11.089389088285175
+        },
+        {
+          "name": "compact_inverse",
+          "cycles": 5799954,
+          "percent": 10.962676553416028
+        },
+        {
+          "name": "__fp_powser",
+          "cycles": 5518094,
+          "percent": 10.429924049974476
+        },
+        {
+          "name": "pow",
+          "cycles": 4872769,
+          "percent": 9.210174850785448
+        },
+        {
+          "name": "fft256",
+          "cycles": 4481902,
+          "percent": 8.471384767897883
+        },
+        {
+          "name": "twiddle",
+          "cycles": 2969340,
+          "percent": 5.612443477503502
+        },
+        {
+          "name": "log",
+          "cycles": 2389080,
+          "percent": 4.515675693330527
+        },
+        {
+          "name": "__divsf3x",
+          "cycles": 1230386,
+          "percent": 2.325591505355272
+        },
+        {
+          "name": "band_boundary.constprop.1",
+          "cycles": 1134735,
+          "percent": 2.1447985240642486
+        },
+        {
+          "name": "__divsf3_pse",
+          "cycles": 1104774,
+          "percent": 2.088168290062928
+        },
+        {
+          "name": "__divsf3",
+          "cycles": 1029795,
+          "percent": 1.9464481099893305
+        },
+        {
+          "name": "cos",
+          "cycles": 873678,
+          "percent": 1.6513664290846803
+        },
+        {
+          "name": "sin",
+          "cycles": 809770,
+          "percent": 1.5305718963736086
+        },
+        {
+          "name": "atan2",
+          "cycles": 670579,
+          "percent": 1.2674825835710364
+        },
+        {
+          "name": "sqrtf",
+          "cycles": 599571,
+          "percent": 1.1332681162313014
+        },
+        {
+          "name": "__muldi3",
+          "cycles": 567336,
+          "percent": 1.0723397228855325
+        },
+        {
+          "name": "atan",
+          "cycles": 532529,
+          "percent": 1.0065499109672393
+        },
+        {
+          "name": "lsp_to_lpc",
+          "cycles": 309082,
+          "percent": 0.5842056668868292
+        },
+        {
+          "name": "__umulhisi3",
+          "cycles": 289850,
+          "percent": 0.5478546552278925
+        }
+      ],
+      "exclusive": [
+        {
+          "name": "__addsf3x",
+          "cycles": 9884153,
+          "percent": 18.682350298550073
+        },
+        {
+          "name": "__mulsf3_pse",
+          "cycles": 8195664,
+          "percent": 15.490883819505433
+        },
+        {
+          "name": "select_four",
+          "cycles": 5685084,
+          "percent": 10.745557132177359
+        },
+        {
+          "name": "__fp_splitA",
+          "cycles": 4731057,
+          "percent": 8.942320516123882
+        },
+        {
+          "name": "__fp_round",
+          "cycles": 3928202,
+          "percent": 7.424818880025936
+        },
+        {
+          "name": "twiddle",
+          "cycles": 2969340,
+          "percent": 5.612443477503502
+        },
+        {
+          "name": "__fp_split3",
+          "cycles": 2625350,
+          "percent": 4.962257095402958
+        },
+        {
+          "name": "fft256",
+          "cycles": 2243288,
+          "percent": 4.240109621586574
+        },
+        {
+          "name": "sparse_complex",
+          "cycles": 2142112,
+          "percent": 4.048873662996485
+        },
+        {
+          "name": "__addsf3",
+          "cycles": 1443177,
+          "percent": 2.7277945067028604
+        },
+        {
+          "name": "__divsf3_pse",
+          "cycles": 1261622,
+          "percent": 2.384631657194839
+        },
+        {
+          "name": "__mulsf3",
+          "cycles": 1104725,
+          "percent": 2.0880756736126735
+        },
+        {
+          "name": "__fp_powser",
+          "cycles": 927130,
+          "percent": 1.7523977453904982
+        },
+        {
+          "name": "codec2_compact_decode",
+          "cycles": 898096,
+          "percent": 1.6975196634174547
+        },
+        {
+          "name": "__mulsf3x",
+          "cycles": 751020,
+          "percent": 1.419526662650515
+        },
+        {
+          "name": "__fp_szero",
+          "cycles": 662247,
+          "percent": 1.2517340067645544
+        },
+        {
+          "name": "sqrtf",
+          "cycles": 585744,
+          "percent": 1.1071332660748892
+        },
+        {
+          "name": "compact_sparse_lpc_bin",
+          "cycles": 503060,
+          "percent": 0.9508496217317356
+        },
+        {
+          "name": "compact_inverse",
+          "cycles": 336840,
+          "percent": 0.6366719408899889
+        },
+        {
+          "name": "compact_forward_lpc",
+          "cycles": 315408,
+          "percent": 0.5961626396278044
+        },
+        {
+          "name": "__umulhisi3",
+          "cycles": 289850,
+          "percent": 0.5478546552278925
+        },
+        {
+          "name": "band_boundary.constprop.1",
+          "cycles": 245322,
+          "percent": 0.46369087365815775
+        },
+        {
+          "name": "__muldi3",
+          "cycles": 231000,
+          "percent": 0.43662040834101484
+        },
+        {
+          "name": "log",
+          "cycles": 88264,
+          "percent": 0.16683057888230013
+        },
+        {
+          "name": "__floatsisf",
+          "cycles": 83267,
+          "percent": 0.1573855910880142
+        },
+        {
+          "name": "__subsf3",
+          "cycles": 69295,
+          "percent": 0.13097667184411524
+        },
+        {
+          "name": "lsp_to_lpc",
+          "cycles": 65760,
+          "percent": 0.12429505650435123
+        },
+        {
+          "name": "exp",
+          "cycles": 65309,
+          "percent": 0.12344260713568544
+        },
+        {
+          "name": "__fixunssfsi",
+          "cycles": 56126,
+          "percent": 0.10608552830540173
+        },
+        {
+          "name": "__muldi3_6",
+          "cycles": 51744,
+          "percent": 0.09780297146838732
+        }
+      ],
+      "packetSha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+      "outputSha256": "c18eca14c10a1fa5bc5a4e9066e869acd5c5441cadb56fb7ed38f52bf51074ec",
+      "binarySha256": "2e0961238160147950b685acb12865cf89bad3eb6a7a8ac13b0ec8548f1bca7e"
+    },
+    {
+      "name": "codec2_3200_8byte_frames.bin",
+      "frames": 2,
+      "samples": 320,
+      "totalCycles": 54365131,
+      "meanCycles": 27182565.5,
+      "stages": [
+        {
+          "name": "compact_sparse_lpc_bin",
+          "cycles": 27548867,
+          "percent": 50.6737802213702
+        },
+        {
+          "name": "other",
+          "cycles": 14976065,
+          "percent": 27.5471882887581
+        },
+        {
+          "name": "compact_forward_lpc",
+          "cycles": 5895704,
+          "percent": 10.844642313103227
+        },
+        {
+          "name": "compact_inverse",
+          "cycles": 5633309,
+          "percent": 10.361989194875664
+        },
+        {
+          "name": "lsp_to_lpc",
+          "cycles": 311186,
+          "percent": 0.5723999818928055
+        }
+      ],
+      "inclusive": [
+        {
+          "name": "main",
+          "cycles": 54365131,
+          "percent": 100
+        },
+        {
+          "name": "codec2_compact_decode",
+          "cycles": 54365061,
+          "percent": 99.9998712409982
+        },
+        {
+          "name": "compact_sparse_lpc_bin",
+          "cycles": 27548867,
+          "percent": 50.6737802213702
+        },
+        {
+          "name": "sparse_complex",
+          "cycles": 25331179,
+          "percent": 46.5945331760536
+        },
+        {
+          "name": "select_four",
+          "cycles": 23189067,
+          "percent": 42.654301706731836
+        },
+        {
+          "name": "__addsf3x",
+          "cycles": 14411262,
+          "percent": 26.50828156746279
+        },
+        {
+          "name": "__mulsf3x",
+          "cycles": 13067459,
+          "percent": 24.036471097623217
+        },
+        {
+          "name": "__mulsf3",
+          "cycles": 12769432,
+          "percent": 23.48827596865351
+        },
+        {
+          "name": "__addsf3",
+          "cycles": 8840655,
+          "percent": 16.261627328737607
+        },
+        {
+          "name": "__fp_split3",
+          "cycles": 7479278,
+          "percent": 13.757490991790307
+        },
+        {
+          "name": "__subsf3",
+          "cycles": 6647691,
+          "percent": 12.227857962854904
+        },
+        {
+          "name": "__fp_powser",
+          "cycles": 6055727,
+          "percent": 11.138990909448927
+        },
+        {
+          "name": "compact_forward_lpc",
+          "cycles": 5895704,
+          "percent": 10.844642313103227
+        },
+        {
+          "name": "compact_inverse",
+          "cycles": 5633309,
+          "percent": 10.361989194875664
+        },
+        {
+          "name": "pow",
+          "cycles": 4785822,
+          "percent": 8.803109478389743
+        },
+        {
+          "name": "fft256",
+          "cycles": 4486910,
+          "percent": 8.253286467754487
+        },
+        {
+          "name": "twiddle",
+          "cycles": 2969340,
+          "percent": 5.461846491273975
+        },
+        {
+          "name": "log",
+          "cycles": 2383681,
+          "percent": 4.384576945101079
+        },
+        {
+          "name": "band_boundary.constprop.1",
+          "cycles": 1546752,
+          "percent": 2.8451177649144266
+        },
+        {
+          "name": "__divsf3x",
+          "cycles": 1256512,
+          "percent": 2.3112461551872285
+        },
+        {
+          "name": "cos",
+          "cycles": 1196446,
+          "percent": 2.2007598951614775
+        },
+        {
+          "name": "__divsf3_pse",
+          "cycles": 1161263,
+          "percent": 2.1360437814451325
+        },
+        {
+          "name": "__divsf3",
+          "cycles": 1152119,
+          "percent": 2.1192241769821174
+        },
+        {
+          "name": "sin",
+          "cycles": 1047142,
+          "percent": 1.9261279808191762
+        },
+        {
+          "name": "atan2",
+          "cycles": 915386,
+          "percent": 1.6837741088125033
+        },
+        {
+          "name": "__muldi3",
+          "cycles": 776096,
+          "percent": 1.4275620893840943
+        },
+        {
+          "name": "atan",
+          "cycles": 729732,
+          "percent": 1.3422794842525074
+        },
+        {
+          "name": "sqrtf",
+          "cycles": 638693,
+          "percent": 1.174821044761209
+        },
+        {
+          "name": "__umulhisi3",
+          "cycles": 396132,
+          "percent": 0.7286508699850277
+        },
+        {
+          "name": "lsp_to_lpc",
+          "cycles": 311186,
+          "percent": 0.5723999818928055
+        }
+      ],
+      "exclusive": [
+        {
+          "name": "__addsf3x",
+          "cycles": 10028110,
+          "percent": 18.445849049825707
+        },
+        {
+          "name": "__mulsf3_pse",
+          "cycles": 8399158,
+          "percent": 15.449531428518034
+        },
+        {
+          "name": "select_four",
+          "cycles": 5685084,
+          "percent": 10.457224870845984
+        },
+        {
+          "name": "__fp_splitA",
+          "cycles": 4874338,
+          "percent": 8.965927075573497
+        },
+        {
+          "name": "__fp_round",
+          "cycles": 3957654,
+          "percent": 7.279765406984856
+        },
+        {
+          "name": "twiddle",
+          "cycles": 2969340,
+          "percent": 5.461846491273975
+        },
+        {
+          "name": "__fp_split3",
+          "cycles": 2686321,
+          "percent": 4.941257292289059
+        },
+        {
+          "name": "fft256",
+          "cycles": 2243288,
+          "percent": 4.126336051687248
+        },
+        {
+          "name": "sparse_complex",
+          "cycles": 2142112,
+          "percent": 3.940231469321761
+        },
+        {
+          "name": "__addsf3",
+          "cycles": 1449720,
+          "percent": 2.666635715455188
+        },
+        {
+          "name": "__divsf3_pse",
+          "cycles": 1322061,
+          "percent": 2.4318179238821296
+        },
+        {
+          "name": "__mulsf3",
+          "cycles": 1128248,
+          "percent": 2.0753155179558016
+        },
+        {
+          "name": "__fp_powser",
+          "cycles": 1031000,
+          "percent": 1.8964361550053104
+        },
+        {
+          "name": "codec2_compact_decode",
+          "cycles": 1028849,
+          "percent": 1.8924795748215892
+        },
+        {
+          "name": "__mulsf3x",
+          "cycles": 774250,
+          "percent": 1.4241665305653362
+        },
+        {
+          "name": "__fp_szero",
+          "cycles": 695790,
+          "percent": 1.2798460836965517
+        },
+        {
+          "name": "sqrtf",
+          "cycles": 623931,
+          "percent": 1.147667610697011
+        },
+        {
+          "name": "compact_sparse_lpc_bin",
+          "cycles": 503060,
+          "percent": 0.9253357634694194
+        },
+        {
+          "name": "__umulhisi3",
+          "cycles": 396132,
+          "percent": 0.7286508699850277
+        },
+        {
+          "name": "compact_inverse",
+          "cycles": 336840,
+          "percent": 0.6195883166362646
+        },
+        {
+          "name": "band_boundary.constprop.1",
+          "cycles": 335592,
+          "percent": 0.6172927275756955
+        },
+        {
+          "name": "__muldi3",
+          "cycles": 316000,
+          "percent": 0.5812549223876605
+        },
+        {
+          "name": "compact_forward_lpc",
+          "cycles": 315408,
+          "percent": 0.5801659891153393
+        },
+        {
+          "name": "__floatsisf",
+          "cycles": 112168,
+          "percent": 0.20632342447588325
+        },
+        {
+          "name": "log",
+          "cycles": 88112,
+          "percent": 0.16207447380196693
+        },
+        {
+          "name": "__fp_rempio2",
+          "cycles": 85193,
+          "percent": 0.15670522342712648
+        },
+        {
+          "name": "__muldi3_6",
+          "cycles": 70784,
+          "percent": 0.13020110261483597
+        },
+        {
+          "name": "__fixunssfsi",
+          "cycles": 70304,
+          "percent": 0.12931818374538637
+        },
+        {
+          "name": "__subsf3",
+          "cycles": 69380,
+          "percent": 0.12761856492169585
+        },
+        {
+          "name": "exp",
+          "cycles": 65920,
+          "percent": 0.12125419140441325
+        }
+      ],
+      "packetSha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+      "outputSha256": "9c6591bfb6d112f4ebcfe8fd124e366cbfbd567533a7329eb7695faf0714ca87",
+      "binarySha256": "2e0961238160147950b685acb12865cf89bad3eb6a7a8ac13b0ec8548f1bca7e"
+    }
+  ],
+  "scope": "First two frames of each archived stream; original instruction/call profiling, PCM checked against complete baseline AVR output. Inclusive costs overlap. No IRQ.",
+  "baseline_revision": "00ae2c315f10d4ef0d006dcefb61d37ba46f86d2"
+}
