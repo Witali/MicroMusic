@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 import { CPU8080, AudioBus } from '../core8080.mjs';
+import { StreamingAudio } from '../stream-audio.mjs';
 
 // Execute the actual worker handler, including asynchronous chunks, without browser globals.
 const source = readFileSync(new URL('../worker.mjs', import.meta.url), 'utf8').replace(/^import .*\n/, '');
@@ -40,7 +41,7 @@ test('Live worker streams ordered audio chunks before final WAV data', async () 
   assert.equal(messages[0].kind, 'audio'); assert.equal(result.t, 19);
 });
 
-test('Selected 32kHz voice: full live Worker audio matches the complete buffer through HLT', async () => {
+test('Legacy 32kHz voice: full live Worker audio matches the complete buffer through HLT', async () => {
   const rom = Uint8Array.from(readFileSync(new URL('../../Sound/voice32/dualcrc-voice32.bin', import.meta.url)));
   const audit = JSON.parse(readFileSync(new URL('../../Sound/voice32/AUDIT.json', import.meta.url)));
   const { result, messages } = await run(rom, { seconds: 10, realtime: true });
@@ -80,4 +81,49 @@ test('FluidR3 music streams ordered audio from the actual sample ROM with no mem
   assert.equal(result.memWrites, 0); assert.ok(result.edges > 0);
   const chunks = messages.filter(m => m.kind === 'audio').map(m => Buffer.from(m.audio));
   assert.deepEqual(Buffer.concat(chunks), Buffer.from(result.audio));
+});
+
+test('82T / two-pulse voices at every CPU clock: full live audio equals ordered Worker chunks through HLT',async()=>{
+  for(const hz of [2000000,2500000,3500000])for(const profile of ['balloon','owl']){
+    const path=`../../Sound/voice-pwm82/${profile==='owl'?'owl/':''}${hz===3500000?'':`clocks/${hz}/`}`;
+    const name=(profile==='owl'?'owl':'dualcrc')+'-voice-pwm82';
+    const rom=Uint8Array.from(readFileSync(new URL(path+name+'.bin',import.meta.url)));
+    const audit=JSON.parse(readFileSync(new URL(path+'AUDIT.json',import.meta.url)));
+    const rate=192000;
+    const {result,messages}=await run(rom,{hz,rate,seconds:12,realtime:true});
+    assert.equal(result.kind,'done');assert.equal(result.stopReason,'HLT');assert.equal(result.t,audit.t_states);
+    assert.equal(result.steps,audit.instructions);assert.equal(result.memWrites,0);assert.equal(result.inte,0);
+    if(profile==='owl')assert.equal(result.edges,audit.pulses*2);
+    const chunks=messages.filter(m=>m.kind==='audio').map(m=>Buffer.from(m.audio));
+    assert.deepEqual(Buffer.concat(chunks),Buffer.from(result.audio));
+    assert.equal(result.audio.byteLength/4,Math.ceil(result.t/hz*rate));
+    const stream=new StreamingAudio(48000,{rate,cutoff:10000,poles:1,normalize:false,volume:.65});
+    let frames=0,energy=0;
+    // Feed actual asynchronous Worker chunks to the real device-rate renderer.
+    for(const chunk of chunks){
+      stream.push(new Float32Array(chunk.buffer,chunk.byteOffset,chunk.length/4));
+      for(;;){
+        const before=stream.outputFrames,block=new Float32Array(128);stream.render(block);
+        for(const value of block){assert.ok(Number.isFinite(value)&&Math.abs(value)<=1);energy+=value*value;}
+        frames+=stream.outputFrames-before;
+        if(stream.outputFrames-before<block.length)break;
+      }
+    }
+    stream.finished=true;
+    while(!stream.ended){const before=stream.outputFrames;stream.render(new Float32Array(128));frames+=stream.outputFrames-before;}
+    assert.equal(frames,Math.ceil(result.audio.byteLength/4*48000/rate));
+    assert.equal(stream.seconds,result.audio.byteLength/4/rate);assert.ok(energy>1);
+  }
+});
+
+test('Selected99T music streams at each CPU clock with192kHz audio and ordered chunks',async()=>{
+  for(const hz of [2000000,2500000,3500000]){
+    const path=`../../Music/fluid-pwm99/${hz===3500000?'':`clocks/${hz}/`}uniform26-fluid-pwm99.bin`;
+    const rom=Uint8Array.from(readFileSync(new URL(path,import.meta.url)));
+    const {result,messages}=await run(rom,{hz,rate:192000,seconds:.5,realtime:true});
+    assert.equal(result.kind,'done');assert.equal(result.stopReason,'time_limit');
+    assert.equal(result.memWrites,0);assert.equal(result.ioWrites,0);assert.ok(result.edges>0);
+    assert.deepEqual(Buffer.concat(messages.filter(m=>m.kind==='audio').map(m=>Buffer.from(m.audio))),Buffer.from(result.audio));
+    assert.equal(result.audio.byteLength/4,Math.ceil(result.t/hz*192000));
+  }
 });

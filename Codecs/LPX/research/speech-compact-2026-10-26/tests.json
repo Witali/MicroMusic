@@ -1,0 +1,31 @@
+{
+  "host_total": 119,
+  "host_passed": 118,
+  "host_skipped": 1,
+  "host_seconds": 144.975,
+  "skip_reason": "Optional hard-link alias test unavailable in filesystem/session",
+  "additional_compact_rerun_tests": 6,
+  "additional_compact_seconds": 10.784,
+  "additional_configurations": [
+    "ROM_POINTER=0",
+    "BATCHED_REMAINING=0",
+    "LPC_RING=0",
+    "EXCITATION_Q4=0",
+    "ROTATE_LPC_ANCHORS=0"
+  ],
+  "native_radix20_pairs": 400,
+  "fresh_main_avr_images": 32,
+  "continuous_stress_avr_images": 6,
+  "feature_off_control_images": 2,
+  "legacy_fresh_avr_images": 91,
+  "legacy_samples": 2912000,
+  "fuzz_cases": 605670,
+  "fuzz_inputs": 456,
+  "review_fixes": [
+    "complete-packet trailing data",
+    "short profiler header"
+  ],
+  "physical_board_measured": false,
+  "human_listening_scores_collected": false,
+  "new_assembly": false
+}

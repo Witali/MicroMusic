@@ -1,0 +1,33 @@
+"""Fast dispatch retains exact PCM and instrumented reference bit costs."""
+import json,subprocess,tempfile,unittest
+from pathlib import Path
+import numpy as np
+from batch_decoder import BatchDecoder,ROOT
+from compact_format import pack
+from q0_model import decode_pcm16
+from test_compact_format import source
+
+class ExcitationPathTests(unittest.TestCase):
+    def test_reference_and_fast_dispatch_match_pcm_and_bit_costs(self):
+        original=source();samples=int.from_bytes(original[8:12],'little');expected=decode_pcm16(original)
+        probes=[]
+        with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as td:
+            folder=Path(td)
+            for flags,pitch,rom in ((0,0,0),(7,1,1),(7,3,0),(7,3,1),(7,7,1)):
+                common=['g++','-O2','-std=c++11','-I'+str(ROOT/'src'),'-DLPX4_V3_FEATURES=124',
+                    '-DLPX4_FAST_EXCITATION='+str(flags),'-DLPX4_FAST_PITCH='+str(pitch),'-DLPX4_ROM_POINTER='+str(rom)]
+                dll=folder/f'fast{flags}-pitch{pitch}-rom{rom}.so'
+                subprocess.run([*common,'-shared','-fPIC',str(ROOT/'src/Lpx4HybridCore.cpp'),
+                    str(ROOT/'src/native_batch_decoder.cpp'),'-o',str(dll)],check=True,capture_output=True)
+                exe=folder/f'probe{flags}-pitch{pitch}-rom{rom}.exe'
+                subprocess.run([*common,'-DLPX3_COST_INSTRUMENT=1',str(ROOT/'src/Lpx4HybridCore.cpp'),
+                    str(ROOT/'tests/decode_metrics.cpp'),'-o',str(exe)],check=True,capture_output=True)
+                decoder=BatchDecoder(dll);metrics=[]
+                for mask in (0,24,32,124):
+                    blob=pack(original,mask)[0];path=folder/'input.l4hy';path.write_bytes(blob)
+                    np.testing.assert_array_equal(decoder.decode_one_s16(blob,samples),expected)
+                    metrics.append(json.loads(subprocess.check_output([str(exe),str(path)],text=True)))
+                probes.append(metrics)
+        for actual in probes[1:]:self.assertEqual(probes[0],actual)
+
+if __name__=='__main__':unittest.main()

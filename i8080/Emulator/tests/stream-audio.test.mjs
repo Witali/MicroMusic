@@ -5,6 +5,13 @@ import { processAudio } from '../formats.mjs';
 import { AudioBus } from '../core8080.mjs';
 
 const raw = Float32Array.from({ length: 9600 }, (_, i) => 0.5 + 0.25 * Math.sin(i * 2 * Math.PI * 1000 / 96000));
+
+test('Sample rates must be valid before allocating polyphase tables', () => {
+  for (const value of [0, NaN, Infinity, -1, 44100.5, 192001]) {
+    assert.throws(() => new StreamingAudio(value), /Invalid audio sample rate/);
+    assert.throws(() => new StreamingAudio(48000, {rate:value}), /Invalid audio sample rate/);
+  }
+});
 test('Live audio equals shared WAV processing at 96 kHz, including chunk boundaries', () => {
   const stream = new StreamingAudio(96000, { cutoff: 4500, poles: 4, normalize: true, volume: 1 });
   stream.push(raw.slice(0, 17)); stream.push(raw.slice(17, 1234)); stream.push(raw.slice(1234)); stream.finished = true;
@@ -62,7 +69,7 @@ test('Unfiltered 109T PWM at constant level 8 does not create a 330Hz hum at nor
   }
   const amplitude = 2*Math.hypot(re, im)/weight;
   assert.ok(amplitude < 0.001, `Unexpected ${frequency.toFixed(3)}Hz component: ${amplitude}`);
-  assert.ok(peak > 0.8 && peak < 1, 'The carrier stays linear with available output headroom');
+  assert.ok(peak < .1, 'The output-device anti-alias filter rejects the ultrasonic carrier');
 });
 
 test('Output limiting follows volume and resampling, preserving quiet transients and bounding full-scale output', () => {
@@ -75,5 +82,56 @@ test('Output limiting follows volume and resampling, preserving quiet transients
     const peak = Math.max(...output);
     if (volume === 0.25) assert.ok(peak > 0.49 && peak < 0.5, 'Attenuate the linear transient before limiting');
     else assert.equal(peak, 1);
+  }
+});
+
+function toneAmplitude(samples, rate, frequency, start = .05, duration = .1) {
+  const count = Math.round(rate * duration), offset = Math.round(rate * start);
+  let re = 0, im = 0, weight = 0;
+  for (let i = 0; i < count; i++) {
+    const window = .5 - .5 * Math.cos(2 * Math.PI * i / (count - 1));
+    const angle = 2 * Math.PI * frequency * (offset + i) / rate;
+    re += samples[offset + i] * window * Math.cos(angle);
+    im -= samples[offset + i] * window * Math.sin(angle); weight += window;
+  }
+  return 2 * Math.hypot(re, im) / weight;
+}
+
+test('Anti-alias resampling retains audible levels and rejects the 82T carrier at 44.1/48kHz', () => {
+  for (const rate of [96000, 192000]) for (const deviceRate of [44100, 48000]) {
+    const carrier = 3500000 / 82, alias = deviceRate - carrier;
+    const source = Float32Array.from({length:rate / 4}, (_, i) => .5 + .1 * Math.sin(2*Math.PI*1000*i/rate)
+      + .1 * Math.sin(2*Math.PI*10000*i/rate) + .2 * Math.sin(2*Math.PI*carrier*i/rate));
+    const stream = new StreamingAudio(deviceRate, {rate, cutoff:0, normalize:false, volume:.5});
+    stream.push(source); stream.finished = true;
+    const out = new Float32Array(deviceRate / 4 + 2); stream.render(out);
+    assert.ok(Math.abs(toneAmplitude(out,deviceRate,1000) - .1) < .0001);
+    assert.ok(Math.abs(toneAmplitude(out,deviceRate,10000) - .1) < .0001);
+    assert.ok(toneAmplitude(out,deviceRate,alias) < 1e-5, `${rate} → ${deviceRate}: reject carrier`);
+    assert.ok(stream.ended); assert.equal(stream.sourceFrames,source.length); assert.equal(stream.seconds,.25);
+  }
+});
+
+test('FIR history survives arbitrary chunk boundaries and starvation without consuming silent output time', () => {
+  for (const deviceRate of [44100,48000]) {
+    const rate=192000, source=Float32Array.from({length:15007}, (_,i)=>.5+.2*Math.sin(i*.13));
+    const options={rate,cutoff:10000,poles:1,normalize:false,volume:.65};
+    const whole=new StreamingAudio(deviceRate,options),split=new StreamingAudio(deviceRate,options);
+    whole.push(source);whole.finished=true;
+    const reference=new Float32Array(Math.ceil(source.length*deviceRate/rate)+1);whole.render(reference);
+    const actual=[];
+    let at=0;
+    for(const count of [1,17,4096,3,806,10084]) {
+      split.push(source.slice(at,at+count));at+=count;
+      for(let block=0;block<2;block++){
+        const before=split.outputFrames,out=new Float32Array(1400);split.render(out);
+        actual.push(...out.slice(0,split.outputFrames-before));
+        assert.ok(out.slice(split.outputFrames-before).every(value=>value===0));
+      }
+    }
+    split.finished=true;
+    while(!split.ended){const before=split.outputFrames,out=new Float32Array(128);split.render(out);actual.push(...out.slice(0,split.outputFrames-before));}
+    assert.deepEqual(Float32Array.from(actual),reference.slice(0,whole.outputFrames));
+    assert.equal(split.seconds,source.length/rate);
   }
 });

@@ -2574,6 +2574,436 @@ C fallback remains exact but 146.538% and 32390 underruns. Sources/tables and
 backend selectors are unchanged; this is not an arithmetic speedup or a
 27-case/hardware admission claim. [Three-case measurements and listening provenance](../../Codecs/LPX/research/q0-8kbps-2026-10-25/README.md).
 
+### LPX: exact smaller tables and measured Q0 synthesis
+
+Applicable target: ATmega328P / AVR5 hardware multiply, AVR-GCC 7.3.0,
+GNU C++11 / AVR ABI, `-Os`, 16MHz CPU / 8kHz audio. ASM still requires
+`LPX4_ENABLE_ASM=1` and the supported architecture macros; explicit C on
+the same AVR remains available. Real avr-libc Flash access is independent
+of the arithmetic selector. Original project derivations below build on
+the existing AVR201/Speex partial-product provenance retained in the source.
+
+The [standard-library checker](examples/lpx-exact-tables.py) proves the
+integer identities for the pinned original tables. For scale index `i`,
+sixteen unsigned16 mantissas reconstruct every value exactly with
+`((mantissa[i & 15] >> (15 - (i >> 4))) + 1) >> 1`. Mantissas were derived
+by intersecting sixteen integer rounding intervals for each low nibble.
+The largest is 8032; all intermediates fit unsigned16, shifts are 0..15,
+including zero aliases. Keep cosine nodes 0..128 and use
+`cos[i] = -cos[256-i]` above 128. Preserve the 16-bit endpoint index 256.
+All 256 scales, 257 nodes and 4096 interpolated inputs match exactly.
+Raw tables shrink 1026 to 290 B; the complete measured implementation
+including helper code saves 600 B Flash and adds a 2 B block-step cache.
+
+Implemented sequence in `Lpx4HybridCore.cpp` and `Lpx4Math.h`:
+
+1. Reconstruct/cache the scale only at 80-sample block boundaries. Scale
+   repeats retain the cache; implicit-zero blocks retain the scale state;
+   repeated `begin()` resets both. Never shift the mantissa per sample.
+2. Remove the duplicate 20 B `previousQuant_` array after proving equality
+   with `cur_` on initialization, successful and partial frame updates.
+3. Copy static LPC once per frame, retaining the changing-to-static endpoint
+   transition. With bandwidth expansion, reload the original coefficients
+   every 20 samples before expansion so multiplication does not accumulate.
+4. Use a separate exact signed8 x unsigned12 excitation helper: two `mulsu`
+   products, sign extension of the low product, carry into the high byte,
+   and restore `r1`. Keep generic signed16 math unchanged. Preconditions:
+   step 0..4095 (actual codec 0..4016), any signed8 input.
+5. Seed a signed24 LPC accumulator with excitation and subtract each
+   individually floor-rounded Q12 product while shifting history in reverse.
+   With |excitation| <= 524288, ten full-range signed16 pairs and every
+   partial sum fit signed24. Extend the final sign to signed32, then clip.
+   Do not replace per-product floor with a single floor after summation.
+
+Measured simavr matrix: 111 golden points / 91 unique four-second streams,
+27 cases at 12/16k plus three 8k cases. Queue512/prefill384/unroll9 saves
+670 B Flash and 18 B static SRAM on every image; decode wall time falls
+3.63--4.49% (mean paired reduction 4.00%). Mean budget range 58.06--78.23%
+becomes 55.46--75.36%, SRAM 1102 -> 1084 B, zero underruns. Native PCM16/PWM
+and all full-ELF useful PWM bytes match the original golden hashes.
+All C/ASM/generic x unroll1/3/9 pass 1,097,849 arithmetic cases each with IRQ,
+including exhaustive excitation, extreme/random LPC sums, history and r1.
+Host regression: 92 tests; ASan/UBSan: 566,610 reset/truncation/mutation cases.
+
+Queue256/prefill160/unroll3 saves another 416 B Flash and 256 B SRAM but is
+slower. It passes all 91 streams and the old heavy continuous eight-second
+standard workload, which previously had 431 underruns. That old workload
+still fails +100 extra cycles/audio IRQ on both queue profiles. C stays
+PWM-exact but does not meet 8kHz on the measured 91 streams. These results
+cover active-IRQ simulation, not physical hardware or arbitrary app load.
+
+The explicit offline candidate selector measures a bounded shortlist before
+forming a quality/file/Flash/mean-time/160-sample-burst frontier. Never drop
+a candidate using only its size/quality dominance before measuring time:
+a larger, lower-quality stream can still decode faster. In the retained
+male12 trial, 5547 B takes 1476.384 cycles/sample versus the 5570 B baseline's
+1306.319; the timing gate correctly rolls back. Defaults are unchanged.
+[Full paired results, source hashes, C fallback, IRQ limits and reproduction](../../Codecs/LPX/research/q0-decoder-size-speed-2026-10-26/README.md).
+
+### LPX: defer Q12 product shifts with an exact Q4 accumulator
+
+Follow-up on AVR5 / ATmega328P, AVR-GCC7.3 `-Os`, explicit ASM and the same
+portable C fallback: after reconstructing the signed24 high product bytes,
+clear the low nibble instead of doing four three-byte right shifts per tap.
+The value is exactly `16 * floor(signed32_product / 4096)`, also for negatives.
+Seed a signed32 accumulator with `16 * excitation`, subtract all ten values,
+then arithmetic-shift the accumulator by four once. Its low nibble is always
+zero. For |excitation| <=524288 and full signed16 tap/history pairs, every
+scaled sum has magnitude <=50331648 and fits signed27. Keep clipping last.
+Sign extension of each subtracted signed24 value uses `sbc` of the top byte
+with zero, followed by conditional `inc` when the product's top bit is set.
+Do not use a C left shift of negative excitation; the scaled path is ASM.
+
+Measured round 1 on the fixed 91 streams: summed active-IRQ decode intervals
+3942532013 ->3787977431 cycles, 3.920186% less time; each full ELF saves
+102 B Flash, unchanged SRAM, zero underruns. Golden native PCM16/PWM and
+useful AVR PWM are exact. C/ASM/generic x unroll1/3/9 pass 1,097,849 math
+cases each with IRQ, history and r1 checks; 92 host tests pass. The long
+old standard +100-IRQ workload improves 1855 ->25 underruns but still fails.
+[Protocol, bounds, full measurements and continuing rounds](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
+### LPX: bounded Q14 attenuation and two-product PWM
+
+Same AVR5/GCC7.3 `-Os`/ABI and explicit-ASM selector as above; arithmetic C
+fallback and generic full-range MulQ14 stay selectable on AVR itself.
+For coefficient 0..16384 and signed16 state, floor(product/16384) fits signed16.
+After reconstructing the full product, shift its high three bytes left twice
+and return bits 14..29. This replaces six three-byte right shifts and signed32
+sign extension. Coefficient high <=64 times an unsigned low byte is <32768,
+so that partial product needs no negative sign correction. Keep the correction
+for signed state high times coefficient low. Do not extend these bounds to
+arbitrary signed16 coefficients.
+
+Rounded PWM has a separate exact helper for any signed16 sample and gain0..255.
+Use two byte products to build floor(sample*gain/256); its signed16 value plus
+32, arithmetic >>6, plus128 and byte saturation equals the old Q14 formula
+with +8192 rounding. The omitted low byte cannot affect the quotient. The
+high-word addition is safe over the whole helper domain. Codec gain120..136
+and the separate truncating LPX4_PWM_ROUND=0 branch retain their semantics.
+
+Measured round 2, fixed 91 full ELF with active IRQ: summed wall cycles
+3787977431 ->3597011184, 5.041378% less time, Flash -78 B/image, RAM unchanged,
+zero underruns and golden native PCM16/PWM plus useful AVR PWM exact.
+The intermediate attenuation-only candidate measured 1.011924% and -34 B.
+All nine C/ASM/generic x unroll1/3/9 math builds pass 3,065,985 cases each,
+including 851,976 bounded-Q14 and 1,116,160 PWM pairs, with IRQ/r1 checks.
+The old eight-second standard +100-IRQ workload now passes: 25 ->0 underruns,
+1906.860 ->1796.874 cycles/sample relative to round 1. Physical hardware and
+arbitrary interrupt workloads remain unmeasured.
+[Derivation, per-stream evidence and continuing-round criterion](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
+### LPX: code-reader screening and a two-bit Huffman prefix
+
+AVR5/GCC7.3 `-Os`, unchanged stream/IRQ configuration: a nibble-ctz unary
+reader plus 32-byte Huffman lookahead was correct but slower/larger on the
+heavy enhanced16 screen (1376.494 ->1404.646 cycles/sample, +356 B Flash).
+Forcing both inline was worse (1442.663, +870 B). Register preservation,
+LPM and variable shifts can outweigh the saved readOne calls. These are
+screening results, not aggregate corpus speed claims; rejected code is not
+retained in the active decoder.
+
+The smaller accepted alternative consumes Huffman3's mandatory first two
+bits from the existing cache in one operation, falling back to readBits(2)
+at a short cache. Remaining decisions use readOne; no lookahead beyond EOS,
+new table or arithmetic ASM. LPX4_FAST_HUFFMAN3=0 selects the old decisions;
+instrumentation retains the old bit-call counts. Three reader builds pass
+526,843 states each against independent readOne decisions, including partial
+EOF caches, sticky error states and exact residual state/counters.
+
+Full round 3 measures 3597011184 ->3593851806 cycles over the frozen 91 ELF:
+0.087833% less time, +16 B Flash/image, unchanged RAM, exact golden outputs,
+zero underruns. The old eight-second standard improves 1692.708 ->1683.867
+cycles/sample. This is one weak round under the user's <=1% stopping rule.
+93 host tests and 566,610 ASan/UBSan mutation/reset cases pass.
+[Alternatives, fixed-corpus evidence and continuing criterion](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
+### LPX: short-displacement state and shared sample phases
+
+ATmega328P/AVR5, GCC7.3 `-Os`, AVR ABI: group frequently used scalar fields
+within the first 64 object bytes. This lets Y/Z `ldd/std` address counters,
+bit cache, mode and error flags directly. Large arrays remain pointer-addressed
+and frame-only polynomial/LSF storage follows. AVR-only offsetof assertions
+enforce the range, without replacing CPU/memory-model macros. Rebuild all users
+with the matching header: private object layout changes, public methods do not.
+
+The initial layout-only variant measured 10.319482% less time on the frozen
+91 active-IRQ images and -594 B Flash. In the same state/control round,
+remove redundant frame/block counters: all headers coincide with the existing
+20-sample phase. Read the frame at subIndex0, block at indices0/4, excitation
+header at0/2/4/6; wrap the eight 20-sample phases. Sparse pulse position is
+subPos plus20 for odd phases. A uint32 remaining count replaces position,
+with produced()=total-remaining and the previous begin/error/reset behavior.
+Do not replace the public uint32 duration with an implicit 16-bit limit.
+
+Full round 4: 3593851806 ->3099393628 summed wall cycles, 13.758446% less time,
+-638 B Flash and -2 B SRAM (1082 B) per image, golden PCM16/PWM and AVR PWM
+exact, zero underruns. The old eight-second +100-IRQ standard improves
+1785.862 ->1557.391 cycles/sample without underruns. 94 host tests and
+566,610 ASan/UBSan reset/mutation cases pass. The public counter oracle covers
+every produced()/finished() step and durations through131073 on host; the
+active-IRQ AVR controls cover64000, not an arbitrary playback duration.
+[Fixed matrix, intermediate variant and reset/phase proof](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
+### LPX: bounded LSF arithmetic and preserving split-product floors
+
+AVR5/GCC7.3 `-Os`, unchanged arithmetic selectors and real memory macros:
+validated LSF10 prev/cur0..1023, t0..16 permit signed16
+`prev*16+(cur-prev)*t` instead of two signed32 products. Every intermediate
+fits and the convex weighted sum is0..16368. Adjacent retained cosine nodes
+differ by<=101, so fraction0..15 multiplication fits signed16 (-1515..0),
+with the same negative floor shift. All17,825,792 LSF anchors and4096 cosine
+interpolations have independent host oracles;417,792 LSF edge cases run on AVR.
+
+Polynomial p[0] is always4096, so its Q12 product with c is exactly c.
+In the existing slow split-product path, derive rem from the low nibble,
+subtract16 for negative v with a nonzero nibble, instead of v-trunc(v/16)*16.
+Multiply the signed8 remainder by signed16 c with two MULSU/MULS products;
+retain both original floors, not a newly combined floor. The signed8x16
+helper also serves excitation's existing positive-step contract, with the
+same explicit-ASM selector and C fallback. First (1+/-z) factors can be
+initialized directly: multiplication by +/-4096 is exact +/-c.
+
+Round5 chooses the fastest screened variant:3099393628 ->3083330283 cycles
+over91 full active-IRQ images,0.518274% less time,+80 B Flash/image, unchanged
+SRAM1082 B, minimum measured stack margin834 ->830 B, golden outputs exact,
+zero underruns. A smaller remainder-only variant saved92 B and was about
+1.7cycles/sample slower on heavy16. Dense/new arithmetic passes4,010,881
+cases per each C/ASM/generic x unroll1/3/9 build with IRQ/r1 checks;95 host
+tests and566,610 ASan/UBSan cases pass. This is one weak round after round4.
+
+Oracle lesson: an unsigned fraction had silently converted both old C++ test
+formulas' negative product to unsigned arithmetic. Explicit signed32 in the
+reference and the actual narrowed helper now compare the correct4096 results.
+Production PCM/PWM and the independent Python integer proof were unaffected.
+[Exact bounds, variants, complete measurements and next untested candidates](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
+### LPX: bounded saturation instead of signed32 compare chains
+
+AVR5/GCC7.3 `-Os`, same explicit ASM selector, C fallback and real memory
+access: synthesis magnitude<=3145728 permits a signed24-to-S15 clamp. Compare
+byte C with sign extension of the low word, restoring the shifted byte B;
+handle exact -32768 separately because the codec's low bound is -32767.
+Keep the generic signed32 clamp outside this explicit contract.
+
+For full signed16 addition, ADD/ADC's V flag detects overflow. Positive
+overflow has a negative wrapped sum, negative overflow a nonnegative sum.
+Again map exact -32768 to -32767. These helpers do not multiply or change r1.
+The portable implementation uses a signed32 sum and the original bounds.
+Brightness coefficient<=11469 and clipped state<=16384 prove the pre-clamp
+difference is within+/-27853; its signed16 cast and Q14 clamp are safe.
+
+Measured round6:3083330283 ->2969411557 wall cycles over91 active-IRQ ELF,
+3.694665% less time,-118 B Flash/image, unchanged1082 B SRAM, golden PCM16/PWM
+and useful AVR PWM exact, zero underruns. Old eight-second standard+100 IRQ:
+1490.638 ->1422.088 cycles/sample, zero underruns. Nine C/ASM/generic x
+unroll1/3/9 builds pass4,946,305 arithmetic cases each with IRQ/r1, including
+935,424 dense/edge saturation cases;95 host tests pass.
+[Contracts, real route counts and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
+### LPX: mirrored LPC history without per-tap stores
+
+AVR5/GCC7.3 `-Os`, existing explicit-ASM selector and equivalent C arithmetic:
+two mirrors of ten signed16 history values replace nine per-sample shifts.
+Derive cursor modulo10 from existing subPos0..19, avoiding another state byte.
+Read history backwards from hist+cursor+10 and coefficients forwards; the
+read-only sum's pointer finishes at hist+cursor, then write pred to h[0]/h[10].
+Every Q4 partial sum fits the proven signed27 bound, so changing summation
+order is exact. Clear both mirrors on constructor/begin. Keep a memory clobber
+on the ASM reads so later caller stores cannot move ahead of the sum.
+LPX4_LPC_RING=0 retains the smaller linear memory path; C can explicitly use
+either memory choice on AVR. Real Flash access remains independent of ASM.
+
+Measured round7:2969411557 ->2876590582 wall cycles over91 full IRQ images,
+3.125905% less time,+4 B Flash/image,+20 B SRAM(1102 total),minimum measured
+stack margin814 B. Golden native PCM16/PWM and AVR PWM exact, zero underruns;
+old eight-second standard+100 IRQ1422.088 ->1386.439 cycles/sample.96 host
+tests,566,610 ASan/UBSan reset/mutation cases and all nine C/ASM/generic x
+unroll1/3/9 builds with4,962,689 math cases pass. The16,384 new ring vectors
+check all cursor positions, read-only memory and the returned write pointer.
+
+AVR-GCC's size estimate for expanded .rept blocks caused relative relocation
+overflow when both large kernels were put in one test main. A separate noinline
+ring-oracle function fixes the test linkage while preserving coverage; the
+production caller has one chosen kernel and links normally.
+The [native route probe](examples/lpx-route-counts.cpp) is a diagnostic counter,
+not a timing estimate; its actual corpus counts identify62.88% simple excitation
+cases for the next measured round.
+[Bounds, RAM tradeoff, full vectors and route counts](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
+### LPX: dispatch common excitation cases before the general decoder
+
+AVR5/GCC7.3 -Os, portable C dispatch with independent arithmetic selection:
+raw/zero codes are validated by the header, exhausted sparse pulses have
+delta0, and a cached unary terminator1 at Rice k0 is exactly delta0. Consume
+that one bit, retain the instrumented counter, use the already-clipped pitch
+predictor, and update the q-ring exactly once. Keep empty-cache, residual and
+remaining-pulse cases in the reference decoder. LPX4_FAST_EXCITATION=0
+explicitly selects the old path; bits1/2/4 select the three specializations.
+
+Measured round8:2876590582 ->2804033000 wall cycles across91 active-IRQ
+images,2.522347% less time,+258 B Flash/image, unchanged1102 B SRAM,
+minimum stack margin815 B. Golden PCM16/PWM and AVR PWM exact, zero underruns;
+all six long controls, including +100 IRQ cycles, pass.97 host tests and
+566610 ASan/UBSan mutation/reset cases pass. Unchanged math bytes reuse the
+explicitly hashed round7 validation; no new arithmetic benchmark is claimed.
+[Full corpus and retained evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
+### LPX: exact convex LPC interpolation with a signed17 delta
+
+AVR5/GCC7.3 -Os. Signed16 anchors and t in0..width, width4/8/16, prove
+prev+trunc((cur-prev)*t/width) stays within the anchors. No final clamp is
+required. Keep the wrapped16-bit difference plus its true signed comparison
+flag, multiply its two unsigned bytes by t, subtract t from product byte C
+when delta was negative. The signed24 product plus negative-only width-1
+bias preserves division toward zero. Shift2/3/4 and add prev. Clear r1 before
+return. The wide portable C expression stays explicitly selectable on AVR.
+
+Measured round9:2804033000 ->2783055441 cycles over91 full IRQ images,
+0.748121% less time,-96 B Flash/image, unchanged1102 B SRAM, minimum stack
+margin820 B. Static-spectrum streams rarely use this work, limiting aggregate
+gain. Golden PCM16/PWM and useful AVR PWM exact; all long IRQ controls pass.
+97 host tests and nine C/ASM/generic x unroll builds with5,223,048 cases pass,
+including260,359 new edge/dense/random interpolation vectors and r1/IRQ.
+[Full scope and retained measurements](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
+### LPX: narrow rounded pitch product and zero-history bypass
+
+AVR5/GCC7.3 -Os, gain0..31 and signed q-history-32..31 prove rounded Q4
+prediction lies in-62..60. Extract bits4..11 of the biased signed product
+with SWAP/AND/OR and clip with signed8 bounds. The equivalent C formula stays
+selectable on AVR. A zero-history input returns0 before multiply/clip; mode0
+also returns0. Keep the old predictor with LPX4_FAST_PITCH=0; default3 enables
+narrow/x0. Flag7's extra gain0 branch was larger and slower on heavy16.
+
+Measured round10:2783055441 ->2736686405 cycles over91 full IRQ images,
+1.666120% less time,+12 B Flash/image, unchanged1102 B SRAM, minimum stack
+margin820 B. Golden PCM16/PWM and AVR PWM exact; all six long IRQ controls
+pass.97 host tests, all2048 valid pitch combinations, and nine arithmetic
+builds with5,225,096 cases pass with IRQ/r1. The native
+[distribution probe](examples/lpx-pitch-distribution.cpp) measures route counts,
+not AVR time; retained hashes tie the counts to the fixed input manifest.
+[Variants and full evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
+### LPX: cache the exact Q4 excitation scale per block
+
+AVR5/GCC7.3 -Os. Cache scale*16 once per80 samples in the existing unsigned16 field; step<=4016 gives<=64256. An exact signed8 x unsigned16 helper feeds the Q4 synthesis accumulator directly, omitting sixteen initial shift instructions. Per-product floors and final shift stay unchanged. The C template divides the exact multiple of16 before the original sum; LPX4_EXCITATION_Q4=0 selects the old input units on C/ASM. Generic synthesis defaults retain the old units, and both linear/mirrored histories work. Architecture/ASM selection and hardware Flash access remain independent.
+
+Measured round11:2736686405 ->2690423444 wall cycles over91 active-IRQ images,
+1.690474% less time,-22 B Flash/image, SRAM1102 B, minimum stack
+margin820 B. Golden PCM16/PWM and AVR PWM exact, zero underruns.
+97 host tests and nine C/ASM/generic x unroll builds with5,768,584 cases pass with IRQ/r1, including527,104 unsigned products and16,384 Q4 ring vectors. All six long IRQ controls pass. The expanded C oracle needs2,077,224,978 cycles, so the test runner cap was raised from2 to3 billion and rebuilt; coverage was retained. No new fuzz run is claimed in this arithmetic round.
+[Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
+### LPX: update wide sample counters at subframe boundaries
+
+AVR5/GCC7.3 -Os, portable C state optimization. Keep remaining at the start of each20-sample subframe and subtract20 only at a complete boundary. Existing subPos gives exact produced=sampleCount-remaining+subPos. A new byte subEnd=min(20,remaining) detects end/partial tails with one byte comparison. Preserve failed begin, partial errors and restart semantics. LPX4_BATCHED_REMAINING=0 selects the old per-sample updates on C/ASM; arithmetic and hardware memory access are unchanged.
+
+Measured round12:2690423444 ->2594280361 wall cycles over91 active-IRQ images,
+3.573530% less time,+30 B Flash/image, SRAM1103 B, minimum stack
+margin819 B. Golden PCM16/PWM and AVR PWM exact, zero underruns.
+97 host tests, both counter modes through131073 samples and truncated prefixes, plus566610 ASan/UBSan mutation/reset cases pass. Identical arithmetic bytes explicitly reuse round11 math validation. All six long IRQ controls pass. A fresh reproducible quality audit verifies91 streams/2,912,000 samples against frozen PCM16/PWM and the original AVR baseline: zero decoder-output differences, zero AVR underruns. This retains existing lossy-codec distortion, rather than claiming zero source-WAV error.
+[Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
+### LPX: extract rounded PWM with two left shifts
+
+AVR5/GCC7.3 -Os. After two byte products, high16=floor(sample*gain/256). Add rounding32 and PWM offset128*64 together as8224. The unsigned wrapped word is valid exactly when <16384; otherwise saturate by the original sample sign because gain is unsigned. For full signed16 sample and gain0..255, the old high word is in-32640..32638, so a wrapped negative never aliases the valid interval. Two LSL/ROL pairs extract bits6..13 into the result byte. Keep the original wide C expression, full input contract, explicit ASM selector and round0 path.
+
+Measured round13:2594280361 ->2564893109 wall cycles over91 active-IRQ images,
+1.132771% less time,-18 B Flash/image, SRAM1103 B, minimum stack
+margin819 B. Golden PCM16/PWM and AVR PWM exact, zero underruns.
+97 host tests and nine arithmetic builds with5,768,584 cases pass with IRQ/r1. The existing PWM oracle covers all65,536 signed16 samples at control gains including0/255. All six long IRQ controls pass, and a fresh complete frozen-output quality audit is retained. No new fuzz run is claimed for this isolated arithmetic change.
+[Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
+### LPX: decode a cached unary terminator without repeated reader calls
+
+AVR5/GCC7.3 -Os, portable C. After the zero-delta shortcuts, the remaining pitch Rice calls more often consume multiple bits. A nonzero cache already contains its unary terminator because unused upper bits are zero; high<=7 and no refill/bound failure is possible there. Shift a local byte, then commit buffer/bit count once. Empty/all-zero cache keeps the original bounded8 loop and exact refill/error decisions. The private caller enters with no sticky error. A bool return preserves direct failure control flow; instrumented bitCalls adds exactly high+1. LPX4_FAST_UNARY=0 selects the reference,1 register/default,2 diagnostic nibble table. The table was slower/larger. The changed call distribution after round8 justifies retesting this area.
+
+Measured round14:2564893109 ->2537960986 wall cycles over91 active-IRQ images,
+1.050029% less time,+84 B Flash/image, SRAM1103 B, minimum stack
+margin819 B. Golden PCM16/PWM and AVR PWM exact, zero underruns.
+98 host tests,784896 valid cache/refill/EOF states in each of three instrumented builds, and566610 ASan/UBSan mutation/reset cases pass. Result, residual reader state, errors and bit/ROM counters match the original decisions. Unchanged arithmetic bytes explicitly reuse round13 validation. All six long IRQ controls and a fresh complete frozen-output quality audit pass.
+[Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
+### LPX: replace ROM base plus cursor with an advancing pointer
+
+AVR5/GCC7.3 -Os, portable C cursor representation. Keep the current data pointer and a decreasing unsigned16 remaining byte count instead of base/cursor/size. Check EOF before decrement/advance; sticky errors return0 without moving the reader, and instrumented ROM calls stay unchanged. Removing the16-bit cursor saves2 B AVR SRAM. LPX4_ROM_POINTER=0 selects the original representation independently of arithmetic selection. The contiguous input-span contract, public size API and official pgm_read_byte hardware access remain unchanged.
+
+Measured round15:2537960986 ->2535457558 wall cycles over91 active-IRQ images,
+0.098639% less time,-20 B Flash/image, SRAM1101 B, minimum stack
+margin821 B. Golden PCM16/PWM and AVR PWM exact, zero underruns.
+98 host tests,4,718,592 reader cases for each layout,784896 unary states in each of six builds,526843 Huffman/EOF states in each of three builds, and566610 ASan/UBSan mutation/reset cases pass. ROM0/1 native PCM and instrumented costs match across v2/v3. Unchanged arithmetic bytes explicitly reuse round13 math validation. All six long IRQ controls and a fresh complete frozen-output quality audit pass.
+[Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
+### LPX: tune hot AVR functions without changing global build options
+
+Keep global AVR-GCC7.3 -Os and the fixed benchmark settings. Only genuine AVR5 GCC functions next/nextCore(bit1), decodeCode(bit2), and readByte/readBits/readOne(bit4) receive optimize(O2). LPX4_FUNCTION_TUNING=7 is default;0 restores Os and1..7 select groups. Non-AVR/Clang omit the attributes. C/ASM and hardware memory selection remain independent; C fallback stays selectable on AVR. Five O2 combinations and all-group O3 were screened. O3 costs924 extra Flash bytes for about0.16% more gain on the two screening streams; choose O2.
+
+Measured round16:2535457558 ->2499853336 wall cycles over91 active-IRQ images,
+1.404252% less time,+146 B Flash/image, SRAM1101 B, minimum stack
+margin821 B. Golden PCM16/PWM and AVR PWM exact, zero underruns.
+98 host tests, all six long IRQ controls, and a fresh91-stream/2,912,000-sample frozen-output quality audit pass. Unchanged arithmetic bytes explicitly reuse round13 validation; no new fuzz is claimed. Full AVR firmware output verifies the changed caller/register allocation. The retained native coefficient probe identifies630640 all-signed8 LPC vectors, while zero taps are too rare to justify a zero branch.
+[Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
+### LPX: rejected all-signed8 adaptive LPC kernel
+
+Joint counts show630640/2912000 vectors with all ten coefficients fitting signed8. The prototype classifies once per20 samples and chooses a two-MUL signed8 x signed16 kernel or the old full kernel in one ASM block. Q4 per-product floors, a complete selectable C fallback and referenceflag0 are retained. Narrow unroll3/9 were screened. Classification, dispatch and register pressure outweigh savings on narrow vectors. The rejected prototype is archived as an experimental patch, not shipped in the decoder.
+
+Rejected round17: keep the byte-identical previous implementation,0%
+accepted gain, unchanged Flash/RAM. Its91 retained measurements are reused
+explicitly after source-hash equality, rather than claimed as fresh runs.
+Separate prototype measurements document the actual experiment.
+Full narrow9 prototype:2,499,853,336 ->2,510,162,819 cycles,-0.412404% gain,+490 B Flash/image,+1 B SRAM. All91 outputs match and have zero underruns, but the aggregate slows. No fresh exhaustive math/r1/fuzz is claimed for the rejected ASM. Restore production bytes to round16 and explicitly reuse its91 measurements, six long controls and tests. A fresh selected-state native quality audit passes.
+[Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
+### LPX: rejected split4 byte shifts in the bit reader
+
+Screen right, left and combined byte shifts split into a constant4-bit shift plus a short remainder. AVR may use SWAP/ANDI; global options/profile remain fixed. Right/combined versions slow the two controls. Best left-only retains exact masks/refill/costs and costs12 B Flash, but full-corpus benefit is negligible. Reference expressions remain selectable in the archived prototype patch; production helpers/flags were removed.
+
+Rejected round18: keep the byte-identical previous implementation,0%
+accepted gain, unchanged Flash/RAM. Its91 retained measurements are reused
+explicitly after source-hash equality, rather than claimed as fresh runs.
+Separate prototype measurements document the actual experiment.
+Full left-only prototype:2,499,853,336 ->2,499,796,480 cycles,0.002274% gain,+12 B Flash, unchanged1101 B SRAM. All91 outputs match with zero underruns.98 host tests,4,718,592 reader cases in each of five builds,566610 ASan/UBSan cases and six long IRQ controls pass for the prototype. The selected old sources are byte-identical and explicitly reuse earlier measurements/tests. A fresh selected-state native quality audit passes.
+[Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
+### LPX: rotate LPC anchor halves without self-referencing pointers
+
+AVR5/GCC7.3 -Os with retained local O2. Store two10-word LPC anchor halves in one20-word array; byte offset0/10 selects current and XOR10 selects previous. Swap local pointers/offset at each new anchor instead of copying ten words. Static spectra need no current-to-previous copy because the next dynamic anchor promotes current. Preserve uncached startup, midpoint a refresh and bandwidth expansion semantics. No pointers into the object are stored, so value copy/assignment remain independent. LPX4_ROTATE_LPC_ANCHORS=0 selects old arrays/copies on C/ASM. Arithmetic and hardware memory selectors are unchanged.
+
+Measured round19:2499853336 ->2495466530 wall cycles over91 active-IRQ images,
+0.175483% less time,-34 B Flash/image, SRAM1102 B, minimum stack
+margin823 B. Golden PCM16/PWM and AVR PWM exact, zero underruns.
+99 host tests, copy/rotate x segments1/2/4 x v2/v3, partial/restart and independent value-copy snapshots pass; default segments2 matches the independent model.566610 ASan/UBSan mutation/reset cases, all six long IRQ controls and a fresh full quality audit pass. Unchanged arithmetic bytes explicitly reuse round13 validation. Rounds17/18/19 give0/0/0.175483% selected gains: three consecutive weak rounds.
+[Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
+### LPX: final stopped-run validation and C timing scope
+
+The first three weak rounds are17/18/19(0/0/0.175483% accepted gains).
+The fixed91-stream aggregate is36.703963% faster than5d608739, with
+-496 B Flash/image and+18 B static SRAM. Frozen PCM16/PWM are exact.
+All six long default-ASM IRQ controls pass. Fresh complete64000-sample
+firmware checks also cover ASM linear/reference controls and explicit C.
+C produces the same useful values but has27823(default) or26877(unscaled)
+underruns on the measured heavy16 workload: correctness is not a real-time
+admission. Only the zero-underrun measured ASM configurations receive that claim.
+The fixed-override verifier records actual compiler defines and firmware hashes
+without editing production sources. No board measurements are claimed.
+[Final scope and evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/FINAL_AUDIT_RU.md).
+
+## LPX speech: measure CPU independently of bitrate
+
+[Bounded exact spectral packing](lpx-speech-compact.md) adds measured
+gap/delta Rice, bounded radix20 arithmetic and collision-safe extra pulses.
+It explicitly compares smaller files with the new parser's total Flash
+cost and records C fallback/active-IRQ limits.
+
+[Fixed-rate speech and shared integer synthesis](lpx-speech-v4.md) records
+the 4/6 kbit/s packet tradeoff, common active-IRQ conditions, full PWM checks,
+Flash/SRAM/stack observations and the C fallback's missed real-time budget.
+On the four measured clips 4k is slightly slower than 6k; do not infer CPU
+cost from compressed size. Existing v2/v3 compatibility is independently
+verified against the frozen 91-stream corpus.
+
 ## UM88: page-local FIFO
 
 [Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.

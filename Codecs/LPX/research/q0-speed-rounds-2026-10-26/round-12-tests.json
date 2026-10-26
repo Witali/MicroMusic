@@ -1,0 +1,52 @@
+{
+  "host_tests_passed": 97,
+  "host_seconds": 58.467,
+  "batched_remaining_flags": [
+    0,
+    1
+  ],
+  "public_counters": "Every successful sample, partial1/19/20/39/40/79/80/159/160/161 tails,65535/65536/65537/131073 durations, restart, invalid begin and32 truncated prefixes per stream.",
+  "fuzz": {
+    "cases": 566610,
+    "rejected": 136722,
+    "sample_capped": 0,
+    "reset_exact": true,
+    "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "compiler_options": [
+      "-O1",
+      "-g",
+      "-std=c++11",
+      "-fno-omit-frame-pointer",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize-recover=all",
+      "-DLPX4_V3_FEATURES=124"
+    ],
+    "seeds": [
+      20261101,
+      20261102,
+      20261103,
+      20261104,
+      20261105,
+      20261106,
+      20261107,
+      20261108,
+      20261109,
+      20261110,
+      20261111,
+      20261112
+    ],
+    "input_streams": 384,
+    "v3_features": 124,
+    "max_samples_per_decode": 4096,
+    "core_sha256": "ab0f7994379963ddd87091971b3c30ce8b770467651a6143e3ea70487ad9ac80",
+    "math_header_sha256": "03c727b785cdee594e74c2342480473af39cce1fac6f33d0f3db86a159fb2730",
+    "harness_sha256": "50b2bf5c1ac59ceffdb8dbe1ac3210a0d2aea1193234b47978153cf0c7f07449"
+  },
+  "quality_audit": "round-12-quality.json",
+  "unchanged_math_validation": {
+    "report": "round-11-tests.json",
+    "sha256": "26a8f8653a98bf612618a5c942ad8c8ea8022c0cf6c90e14d8bd996c1f946768",
+    "math_header_sha256": "03c727b785cdee594e74c2342480473af39cce1fac6f33d0f3db86a159fb2730",
+    "reason": "Round12 changes only counters, not arithmetic helpers or math fixtures; reuse nine identical math builds explicitly."
+  }
+}

@@ -11,6 +11,7 @@ import hashlib
 import io
 import json
 import math
+import os
 import subprocess
 import wave
 
@@ -48,10 +49,13 @@ def main():
     parser.add_argument('--source', type=Path, help='External, unmodified vinn.mp3')
     parser.add_argument('--profile', choices=['balloon', 'owl'], default='balloon')
     parser.add_argument('--cpu-hz', type=int, choices=[2000000, 2500000, 3500000], default=CPU_HZ)
+    parser.add_argument('--pwm-profile', choices=['legacy', 'fast82'], default='legacy')
     parser.add_argument('--check', action='store_true')
     args = parser.parse_args()
     source_root = ROOT if args.profile == 'balloon' else ROOT / args.profile
-    target_root = source_root if args.cpu_hz == CPU_HZ else source_root / 'clocks' / str(args.cpu_hz)
+    base = source_root if args.pwm_profile == 'legacy' else ROOT.parent/'voice-pwm82'/('owl' if args.profile == 'owl' else '')
+    target_root = base if args.cpu_hz == CPU_HZ else base / 'clocks' / str(args.cpu_hz)
+    period, repeats = (PERIOD_T, REPEATS) if args.pwm_profile == 'legacy' else (82, 2)
     if not args.check:
         target_root.mkdir(parents=True, exist_ok=True)
     original = {
@@ -77,6 +81,7 @@ def main():
 
     canonical = source_root / 'source-16000.wav'
     if args.source:
+        assert args.pwm_profile == 'legacy', 'Import canonical sources with the legacy preparation first'
         assert args.cpu_hz == CPU_HZ, 'Import the canonical source at the default clock first'
         assert digest(args.source.read_bytes()) == original['original_sha256'], 'Unexpected original audio'
         save(canonical.name, wav_bytes(resample(args.source, 16000), 16000))
@@ -84,7 +89,7 @@ def main():
     with wave.open(str(canonical), 'rb') as f:
         assert (f.getnchannels(), f.getsampwidth(), f.getframerate()) == (1, 2, 16000)
         frames = f.getnframes()
-    actual_rate = args.cpu_hz / (PERIOD_T * REPEATS)
+    actual_rate = args.cpu_hz / (period * repeats)
     resampler_rate = round(actual_rate)
     raw = resample(canonical, resampler_rate)
     samples = [v / 32768 for v in array.array('h', raw)]
@@ -102,12 +107,12 @@ def main():
     levels += [silence] * (-len(levels) % 4)
     packed = bytes(levels[n] | levels[n+1] << 4 for n in range(0, len(levels), 2))
     data = {'format': 'pcm4-low-nibble-first', 'cpu_hz': args.cpu_hz,
-        'period_t': PERIOD_T, 'pulses_per_sample': REPEATS,
+        'period_t': period, 'pulses_per_sample': repeats,
         'sample_rate_hz': actual_rate, 'valid_samples': valid_samples,
         'sample_count': len(levels), 'silence_level': silence, 'packed_hex': packed.hex()}
     save('pcm4.json', json.dumps(data, indent=2) + '\n')
     report = {**original, 'decoded_original_seconds': original_seconds,
-        'canonical_wav': canonical.relative_to(source_root).as_posix() if target_root == source_root else '../../'+canonical.name,
+        'canonical_wav': os.path.relpath(canonical, target_root).replace('\\', '/'),
         'canonical_sha256': digest(canonical.read_bytes()),
         'canonical_rate_hz': 16000, 'canonical_frames': frames,
         'ffmpeg_version': subprocess.check_output(['ffmpeg', '-version'], text=True).splitlines()[0],

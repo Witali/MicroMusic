@@ -13,7 +13,8 @@ from l3av_parse import unpack
 from lpx4 import encode
 
 
-def run(output,wsl=None,v3_features=0):
+def run(output,wsl=None,v3_features=0,speech=False,speech_compact=False):
+    if speech_compact and not speech:raise ValueError('Compact speech requires speech')
     output=Path(output).resolve();output.mkdir(parents=True,exist_ok=True)
     inputs=[];seeds=list(range(20261101,20261113))
     for seed in seeds:
@@ -24,6 +25,18 @@ def run(output,wsl=None,v3_features=0):
                 if mask&~v3_features:continue
                 compact=output/f'{seed}-v3-{mask}.l4hy'
                 compact.write_bytes(pack(p.read_bytes(),mask)[0]);inputs.append(compact)
+    if speech:
+        from test_speech_v4 import fixture
+        for profile in (4,6):
+            for n in (1,19,20,39,40,159,160,319,320,321,641,1024):
+                p=output/f'speech-{profile}-{n}.l4hy'
+                p.write_bytes(fixture(profile,n));inputs.append(p)
+                if speech_compact:
+                    from speech_compact import repack
+                    for enhanced in (False,True):
+                        q=output/f'compact-{profile}-{n}-{int(enhanced)}.l4hy'
+                        extras=[(i%40,-8 if i&1 else 7) for i in range(((n+319)//320)*8)] if enhanced else None
+                        q.write_bytes(repack(p.read_bytes(),extras=extras)[0]);inputs.append(q)
     def path(p):
         p=Path(p).resolve()
         return '/mnt/'+p.drive[0].lower()+'/'+'/'.join(p.parts[1:]) if wsl else str(p)
@@ -31,6 +44,8 @@ def run(output,wsl=None,v3_features=0):
     options=['-O1','-g','-std=c++11','-fno-omit-frame-pointer',
              '-fsanitize=address,undefined','-fno-sanitize-recover=all']
     if v3_features:options.append('-DLPX4_V3_FEATURES='+str(v3_features))
+    if speech:options.append('-DLPX4_ENABLE_SPEECH=1')
+    if speech_compact:options.append('-DLPX4_ENABLE_SPEECH_COMPACT=1')
     subprocess.run(prefix+['g++',*options,'-I'+path(ROOT/'src'),path(ROOT/'tests/fuzz_decoder.cpp'),
                           path(ROOT/'src/Lpx4HybridCore.cpp'),'-o',path(output/'fuzz')],check=True)
     # Bounded argv also works with Windows CreateProcess / WSL's command limit.
@@ -42,7 +57,7 @@ def run(output,wsl=None,v3_features=0):
         for key in ('cases','rejected','sample_capped'):report[key]+=part[key]
         report['reset_exact']=report['reset_exact'] and part['reset_exact']
     report.update(compiler=subprocess.check_output(prefix+['g++','--version'],text=True).splitlines()[0],
-        compiler_options=options,seeds=seeds,input_streams=len(inputs),v3_features=v3_features,max_samples_per_decode=4096,
+        compiler_options=options,seeds=seeds,input_streams=len(inputs),v3_features=v3_features,speech_enabled=bool(speech),speech_compact_enabled=bool(speech_compact),max_samples_per_decode=4096,
         core_sha256=hashlib.sha256((ROOT/'src/Lpx4HybridCore.cpp').read_bytes()).hexdigest(),
         math_header_sha256=hashlib.sha256((ROOT/'src/Lpx4Math.h').read_bytes()).hexdigest(),
         harness_sha256=hashlib.sha256((ROOT/'tests/fuzz_decoder.cpp').read_bytes()).hexdigest())
@@ -53,4 +68,6 @@ def run(output,wsl=None,v3_features=0):
 if __name__=='__main__':
     ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('output',type=Path);ap.add_argument('--wsl')
     ap.add_argument('--v3-features',type=int,default=0)
-    a=ap.parse_args();run(a.output,a.wsl,a.v3_features)
+    ap.add_argument('--speech',action='store_true')
+    ap.add_argument('--speech-compact',action='store_true')
+    a=ap.parse_args();run(a.output,a.wsl,a.v3_features,a.speech,a.speech_compact)

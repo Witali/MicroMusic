@@ -1,0 +1,32 @@
+{
+  "round": 2,
+  "decision": "accepted",
+  "fingerprint": "e17da86d4d031f7352afcb859f67c719f2de29f6ff8f7268f1bff836e43f0d65",
+  "source_sha256": {
+    "cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+    "cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+    "Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+    "Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+    "Lpx4HybridCore.cpp": "8f024513b52b71af617586dbb72fc0918a19b933516ad99eeeccaee3480e7b4e",
+    "Lpx4HybridCore.h": "d210b2f9b09b3d5d67822594538502776018281844bf5afe64fe7a25efe14891",
+    "Lpx4Math.h": "0065cc3a5ea323c1444b193db24864c106f0d0b3fcf2c6a0dab605cad5df11bd",
+    "native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+    "scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
+    "harness": "5c0179ae73a153285826dfc1d608c4c65171f257901399efc9bb0e1488039e4a",
+    "runner": "c35b6adbb401978e96973d2a919ebca0bbd2879c5b4d47110c70233bf2516b52"
+  },
+  "manifest_sha256": "4e70e5103ab14aab92312d8cc027a11899d0651650657e7c667db1036d70de89",
+  "baseline_report": "Codecs/LPX/research/q0-speed-rounds-2026-10-26/round-01.json",
+  "baseline_report_sha256": "2234369f28f093a7455b2bb5efb5293dc56d0c6b5580237d89b55e7204c35778",
+  "baseline_total_cycles": 3787977431,
+  "candidate_total_cycles": 3749645966,
+  "gain_percent": 1.0119243236853426,
+  "threshold_percent": 1,
+  "native_pcm_pwm_bit_exact": true,
+  "physical_hardware_measured": false,
+  "variant": "bounded attenuation only, before adding PWM in the same round",
+  "raw_report_sha256": "597d973f9e79d9cf258df7df29f4588e9add051f77356516fb857f774dadd289",
+  "images_measured": 91,
+  "underruns": 0,
+  "flash_saved_bytes_per_image": 34
+}

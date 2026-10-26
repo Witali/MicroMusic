@@ -1,0 +1,1624 @@
+{
+  "schema": 1,
+  "scope": "Four 4-second speech excerpts; preliminary simulator-only evidence.",
+  "sample_rate_hz": 8000,
+  "samples_per_case": 32000,
+  "case_count": 4,
+  "useful_seconds": 16,
+  "human_listening_scores_collected": false,
+  "physical_hardware_measured": false,
+  "trained_codebooks": false,
+  "case_order": [
+    "case-01",
+    "case-02",
+    "case-03",
+    "case-04"
+  ],
+  "alignment": "LPX: fixed zero sample shift. Standards: documented full-reference alignment; no gain fitting.",
+  "bitrate_denominator": "Useful reference duration; includes all encoded bytes, including the 80ms standards encoder tail.",
+  "standards_scope": "Available operating points, not exact bitrate-matched or AVR-admitted comparisons.",
+  "stack_scope": "High-water sampled after profile_ready; does not include constructor/begin startup.",
+  "cpu_scope": "Decode wall cycles include active IRQ and instrumentation; budget is 2000 cycles/sample.",
+  "settings": {
+    "queue": 512,
+    "prefill": 384,
+    "dot_unroll": 9,
+    "v3_features": 24
+  },
+  "decoder_source_fingerprint": "e2c513a55b0ea92fb6082a2dc130e6502b95f107f6a0a724edddd44a5c92318d",
+  "cases": [
+    {
+      "id": "case-01",
+      "reference_sha256": "ce6b5617bbf1c87ca3cf95b1725752dd5b5af8ddef4b0f634cf0f75e21fec36a",
+      "profiles": {
+        "4": {
+          "stream_sha256": "94d22c96dd543f135b72ba92b1deabdd568ed44791e689ea0ce09af349b993d4",
+          "pcm16_sha256": "df0463ee6d188fa9e1f164a7ebb2df3cc1a50cf091b024a1dca337f46f01334c",
+          "version": 4,
+          "file_bytes": 2020,
+          "payload_bytes": 2000,
+          "file_bps": 4040,
+          "payload_bps": 4000,
+          "quality": {
+            "ser_db": 8.968195315353837,
+            "stoi": 0.6990046950236776,
+            "rmse_pcm16": 796.4722506151736,
+            "max_abs_error_pcm16": 6025,
+            "max_abs_error_percent_fs": 18.3868408203125
+          },
+          "pwm8_quality": {
+            "ser_db": 8.90081968248755,
+            "stoi": 0.6836362171818485,
+            "rmse_pcm16": 802.6744350918373,
+            "max_abs_error_pcm16": 6114,
+            "max_abs_error_percent_fs": 18.658447265625
+          },
+          "clipped_output_samples": 0
+        },
+        "6": {
+          "stream_sha256": "a1bbf18c08c7f4ef84e618252bcc06b001181a6300d972297536ba584a912010",
+          "pcm16_sha256": "75c51c8407b3ad565448008d98416ea6fa9e7597019589ecb62e204976f540a3",
+          "version": 4,
+          "file_bytes": 3020,
+          "payload_bytes": 3000,
+          "file_bps": 6040,
+          "payload_bps": 6000,
+          "quality": {
+            "ser_db": 11.886316291481977,
+            "stoi": 0.7360320219269507,
+            "rmse_pcm16": 569.199618872852,
+            "max_abs_error_pcm16": 8240,
+            "max_abs_error_percent_fs": 25.146484375
+          },
+          "pwm8_quality": {
+            "ser_db": 11.782056169341999,
+            "stoi": 0.7168128457924912,
+            "rmse_pcm16": 576.0731140662616,
+            "max_abs_error_pcm16": 8418,
+            "max_abs_error_percent_fs": 25.689697265625
+          },
+          "clipped_output_samples": 0
+        },
+        "8": {
+          "stream_sha256": "6a4a1dbad4775cf70c82d139d3265c0f6e43804bdb2d4de79705c3a60ad765b1",
+          "pcm16_sha256": "be7504424d2511ecfe53481798fda2a2bc81a3400057dbff5076146efe3c2f56",
+          "version": 3,
+          "file_bytes": 4015,
+          "payload_bytes": 3995,
+          "file_bps": 8030,
+          "payload_bps": 7990,
+          "quality": {
+            "ser_db": 9.527992355024665,
+            "stoi": 0.6894117051844636,
+            "rmse_pcm16": 746.7595708291926,
+            "max_abs_error_pcm16": 7078,
+            "max_abs_error_percent_fs": 21.600341796875
+          },
+          "pwm8_quality": {
+            "ser_db": 9.491690140548313,
+            "stoi": 0.6780855768528484,
+            "rmse_pcm16": 749.8871440090169,
+            "max_abs_error_pcm16": 7166,
+            "max_abs_error_percent_fs": 21.868896484375
+          },
+          "clipped_output_samples": 0
+        }
+      },
+      "standards": {
+        "opus_voip-6000": {
+          "status": "ok",
+          "requested_bitrate": 6000,
+          "file_bytes": 3185,
+          "payload_bytes": 2724,
+          "file_bps": 6370,
+          "payload_bps": 5448,
+          "delay_samples": 0,
+          "quality": {
+            "ser_db": 3.1703551745101994,
+            "stoi": 0.7902260818359245,
+            "rmse_pcm16": 1552.6109918456716,
+            "max_abs_error_pcm16": 7039,
+            "max_abs_error_percent_fs": 21.4813232421875
+          }
+        },
+        "opus_voip-8000": {
+          "status": "ok",
+          "requested_bitrate": 8000,
+          "file_bytes": 4158,
+          "payload_bytes": 3697,
+          "file_bps": 8316,
+          "payload_bps": 7394,
+          "delay_samples": 0,
+          "quality": {
+            "ser_db": 3.443358674944311,
+            "stoi": 0.8657617256734389,
+            "rmse_pcm16": 1504.570288861574,
+            "max_abs_error_pcm16": 7028,
+            "max_abs_error_percent_fs": 21.44775390625
+          }
+        },
+        "speex_cbr-3950": {
+          "status": "ok",
+          "requested_bitrate": 3950,
+          "file_bytes": 2554,
+          "payload_bytes": 2040,
+          "file_bps": 5108,
+          "payload_bps": 4080,
+          "delay_samples": 77,
+          "quality": {
+            "ser_db": 1.3048523375014132,
+            "stoi": 0.735717602961817,
+            "rmse_pcm16": 1924.5881095379864,
+            "max_abs_error_pcm16": 9705,
+            "max_abs_error_percent_fs": 29.6173095703125
+          }
+        },
+        "speex_cbr-5950": {
+          "status": "ok",
+          "requested_bitrate": 5950,
+          "file_bytes": 3574,
+          "payload_bytes": 3060,
+          "file_bps": 7148,
+          "payload_bps": 6120,
+          "delay_samples": 77,
+          "quality": {
+            "ser_db": 0.9673227548772317,
+            "stoi": 0.791641221431479,
+            "rmse_pcm16": 2000.8488290441885,
+            "max_abs_error_pcm16": 8910,
+            "max_abs_error_percent_fs": 27.191162109375
+          }
+        },
+        "speex_cbr-8000": {
+          "status": "ok",
+          "requested_bitrate": 8000,
+          "file_bytes": 4594,
+          "payload_bytes": 4080,
+          "file_bps": 9188,
+          "payload_bps": 8160,
+          "delay_samples": 77,
+          "quality": {
+            "ser_db": 0.9769277068218702,
+            "stoi": 0.8268942025067747,
+            "rmse_pcm16": 1998.6374913691202,
+            "max_abs_error_pcm16": 9835,
+            "max_abs_error_percent_fs": 30.0140380859375
+          }
+        }
+      }
+    },
+    {
+      "id": "case-02",
+      "reference_sha256": "96d1cdd107ef6691a28dbe4c59fc659df9b7997be76dfab8dce394812a8e64ce",
+      "profiles": {
+        "4": {
+          "stream_sha256": "38956aeb476bc6af81dc92b6fcc32a15f1c9d40719b707174dbabce6ed33468b",
+          "pcm16_sha256": "b95cac04dab9a9f660c5eccb462e21dde26473d9f58c80dc39b84c568408a298",
+          "version": 4,
+          "file_bytes": 2020,
+          "payload_bytes": 2000,
+          "file_bps": 4040,
+          "payload_bps": 4000,
+          "quality": {
+            "ser_db": 6.354691799374974,
+            "stoi": 0.8426537727021866,
+            "rmse_pcm16": 1806.9239394617584,
+            "max_abs_error_pcm16": 22149,
+            "max_abs_error_percent_fs": 67.5933837890625
+          },
+          "pwm8_quality": {
+            "ser_db": 6.318379820777837,
+            "stoi": 0.841500832139967,
+            "rmse_pcm16": 1814.4937253267094,
+            "max_abs_error_pcm16": 22197,
+            "max_abs_error_percent_fs": 67.7398681640625
+          },
+          "clipped_output_samples": 0
+        },
+        "6": {
+          "stream_sha256": "fc09f42e9577e5ed619ed24e9d10d8fd0bfb6f544743d56fc336ab941e709dd8",
+          "pcm16_sha256": "9c5df4c8148bd011cff49274fa56d4442b30e0d03ae911b87d13ffa09e7ebe1c",
+          "version": 4,
+          "file_bytes": 3020,
+          "payload_bytes": 3000,
+          "file_bps": 6040,
+          "payload_bps": 6000,
+          "quality": {
+            "ser_db": 8.073305341677147,
+            "stoi": 0.8592297864527237,
+            "rmse_pcm16": 1482.5494726146578,
+            "max_abs_error_pcm16": 18355,
+            "max_abs_error_percent_fs": 56.0150146484375
+          },
+          "pwm8_quality": {
+            "ser_db": 8.064263260734633,
+            "stoi": 0.8566858118700329,
+            "rmse_pcm16": 1484.0936221310299,
+            "max_abs_error_pcm16": 18337,
+            "max_abs_error_percent_fs": 55.9600830078125
+          },
+          "clipped_output_samples": 0
+        },
+        "8": {
+          "stream_sha256": "a93fd9c94784cc2b093b78adaa862b6622f50fdc35eae338b99224ab50517aa0",
+          "pcm16_sha256": "2f3ed0ea48df2eca48db9d8f957e0a6bfe40fdb79a33cf07cd5f5cdecdd78a97",
+          "version": 3,
+          "file_bytes": 4001,
+          "payload_bytes": 3981,
+          "file_bps": 8002,
+          "payload_bps": 7962,
+          "quality": {
+            "ser_db": 10.02316158335491,
+            "stoi": 0.8912588052076277,
+            "rmse_pcm16": 1184.4490462869223,
+            "max_abs_error_pcm16": 11105,
+            "max_abs_error_percent_fs": 33.8897705078125
+          },
+          "pwm8_quality": {
+            "ser_db": 10.013240154832822,
+            "stoi": 0.8907873856031991,
+            "rmse_pcm16": 1185.802752252667,
+            "max_abs_error_pcm16": 11317,
+            "max_abs_error_percent_fs": 34.5367431640625
+          },
+          "clipped_output_samples": 0
+        }
+      },
+      "standards": {
+        "opus_voip-6000": {
+          "status": "ok",
+          "requested_bitrate": 6000,
+          "file_bytes": 3321,
+          "payload_bytes": 2860,
+          "file_bps": 6642,
+          "payload_bps": 5720,
+          "delay_samples": 1,
+          "quality": {
+            "ser_db": 5.95895752993909,
+            "stoi": 0.9009492511695467,
+            "rmse_pcm16": 1891.152648370168,
+            "max_abs_error_pcm16": 19346,
+            "max_abs_error_percent_fs": 59.039306640625
+          }
+        },
+        "opus_voip-8000": {
+          "status": "ok",
+          "requested_bitrate": 8000,
+          "file_bytes": 4262,
+          "payload_bytes": 3801,
+          "file_bps": 8524,
+          "payload_bps": 7602,
+          "delay_samples": 1,
+          "quality": {
+            "ser_db": 7.968920081373546,
+            "stoi": 0.9510169080077591,
+            "rmse_pcm16": 1500.473942126287,
+            "max_abs_error_pcm16": 13139,
+            "max_abs_error_percent_fs": 40.0970458984375
+          }
+        },
+        "speex_cbr-3950": {
+          "status": "ok",
+          "requested_bitrate": 3950,
+          "file_bytes": 2554,
+          "payload_bytes": 2040,
+          "file_bps": 5108,
+          "payload_bps": 4080,
+          "delay_samples": 79,
+          "quality": {
+            "ser_db": 3.428508076721438,
+            "stoi": 0.8921055449636163,
+            "rmse_pcm16": 2530.748906771472,
+            "max_abs_error_pcm16": 22085,
+            "max_abs_error_percent_fs": 67.3980712890625
+          }
+        },
+        "speex_cbr-5950": {
+          "status": "ok",
+          "requested_bitrate": 5950,
+          "file_bytes": 3574,
+          "payload_bytes": 3060,
+          "file_bps": 7148,
+          "payload_bps": 6120,
+          "delay_samples": 79,
+          "quality": {
+            "ser_db": 3.6070255222993564,
+            "stoi": 0.9157334388383493,
+            "rmse_pcm16": 2479.266348186495,
+            "max_abs_error_pcm16": 22275,
+            "max_abs_error_percent_fs": 67.9779052734375
+          }
+        },
+        "speex_cbr-8000": {
+          "status": "ok",
+          "requested_bitrate": 8000,
+          "file_bytes": 4594,
+          "payload_bytes": 4080,
+          "file_bps": 9188,
+          "payload_bps": 8160,
+          "delay_samples": 80,
+          "quality": {
+            "ser_db": 3.3598792945696188,
+            "stoi": 0.943600571792465,
+            "rmse_pcm16": 2550.8240148650984,
+            "max_abs_error_pcm16": 16460,
+            "max_abs_error_percent_fs": 50.23193359375
+          }
+        }
+      }
+    },
+    {
+      "id": "case-03",
+      "reference_sha256": "35a74caa6cfa87b717a1273f02e383cc73bd3eca6cfa1a025e182cecbef8e7d9",
+      "profiles": {
+        "4": {
+          "stream_sha256": "89fd83b9a26ad6d70524cca368a4aafc3b2fc7d8caecc58be88cbc0495bb8be3",
+          "pcm16_sha256": "ed7e6db63ec2b98657176deba2e8d1d1735cf3603dd020a7b735201b91312f42",
+          "version": 4,
+          "file_bytes": 2020,
+          "payload_bytes": 2000,
+          "file_bps": 4040,
+          "payload_bps": 4000,
+          "quality": {
+            "ser_db": 5.999719204101196,
+            "stoi": 0.6986756776097228,
+            "rmse_pcm16": 965.4665078344251,
+            "max_abs_error_pcm16": 12727,
+            "max_abs_error_percent_fs": 38.8397216796875
+          },
+          "pwm8_quality": {
+            "ser_db": 5.956178533714688,
+            "stoi": 0.6785046659219293,
+            "rmse_pcm16": 970.3183536216349,
+            "max_abs_error_pcm16": 12619,
+            "max_abs_error_percent_fs": 38.5101318359375
+          },
+          "clipped_output_samples": 0
+        },
+        "6": {
+          "stream_sha256": "a79be26049d28190bd608bdcaee2a9a8c18b7a8288a9e863cdad174e3ca707f1",
+          "pcm16_sha256": "0521b059ba4e52a79faaab0c4e825e5b2d1dfc4761c9b4b7f6c34a6d2484c4e0",
+          "version": 4,
+          "file_bytes": 3020,
+          "payload_bytes": 3000,
+          "file_bps": 6040,
+          "payload_bps": 6000,
+          "quality": {
+            "ser_db": 8.331724909520336,
+            "stoi": 0.7541665149345116,
+            "rmse_pcm16": 738.1369183627114,
+            "max_abs_error_pcm16": 10392,
+            "max_abs_error_percent_fs": 31.7138671875
+          },
+          "pwm8_quality": {
+            "ser_db": 8.264640159449893,
+            "stoi": 0.7220556833040848,
+            "rmse_pcm16": 743.8599299431312,
+            "max_abs_error_pcm16": 10480,
+            "max_abs_error_percent_fs": 31.982421875
+          },
+          "clipped_output_samples": 0
+        },
+        "8": {
+          "stream_sha256": "695914d18cc44c6c32feeef09435b2ade0817bc040201f20abb4c1413a653c20",
+          "pcm16_sha256": "323e790d34f8e913fe1340bdf27e6c905578950efa7ac966291bdc4886cfda53",
+          "version": 3,
+          "file_bytes": 3981,
+          "payload_bytes": 3961,
+          "file_bps": 7962,
+          "payload_bps": 7922,
+          "quality": {
+            "ser_db": 10.668470619053139,
+            "stoi": 0.7004062779323829,
+            "rmse_pcm16": 564.0266723524695,
+            "max_abs_error_pcm16": 7093,
+            "max_abs_error_percent_fs": 21.6461181640625
+          },
+          "pwm8_quality": {
+            "ser_db": 10.578303954897503,
+            "stoi": 0.6905991484453825,
+            "rmse_pcm16": 569.912227781612,
+            "max_abs_error_pcm16": 6975,
+            "max_abs_error_percent_fs": 21.2860107421875
+          },
+          "clipped_output_samples": 0
+        }
+      },
+      "standards": {
+        "opus_voip-6000": {
+          "status": "ok",
+          "requested_bitrate": 6000,
+          "file_bytes": 3098,
+          "payload_bytes": 2637,
+          "file_bps": 6196,
+          "payload_bps": 5274,
+          "delay_samples": 1,
+          "quality": {
+            "ser_db": 4.936990954434701,
+            "stoi": 0.8101921835905928,
+            "rmse_pcm16": 1091.1227856261182,
+            "max_abs_error_pcm16": 9580,
+            "max_abs_error_percent_fs": 29.23583984375
+          }
+        },
+        "opus_voip-8000": {
+          "status": "ok",
+          "requested_bitrate": 8000,
+          "file_bytes": 4002,
+          "payload_bytes": 3541,
+          "file_bps": 8004,
+          "payload_bps": 7082,
+          "delay_samples": 1,
+          "quality": {
+            "ser_db": 6.3154992876657605,
+            "stoi": 0.8867863309779701,
+            "rmse_pcm16": 930.9968433586389,
+            "max_abs_error_pcm16": 6155,
+            "max_abs_error_percent_fs": 18.7835693359375
+          }
+        },
+        "speex_cbr-3950": {
+          "status": "ok",
+          "requested_bitrate": 3950,
+          "file_bytes": 2554,
+          "payload_bytes": 2040,
+          "file_bps": 5108,
+          "payload_bps": 4080,
+          "delay_samples": 79,
+          "quality": {
+            "ser_db": 2.1960210436815837,
+            "stoi": 0.8031633266371755,
+            "rmse_pcm16": 1495.967369484542,
+            "max_abs_error_pcm16": 16272,
+            "max_abs_error_percent_fs": 49.658203125
+          }
+        },
+        "speex_cbr-5950": {
+          "status": "ok",
+          "requested_bitrate": 5950,
+          "file_bytes": 3574,
+          "payload_bytes": 3060,
+          "file_bps": 7148,
+          "payload_bps": 6120,
+          "delay_samples": 79,
+          "quality": {
+            "ser_db": 2.252725138496547,
+            "stoi": 0.8522178144413242,
+            "rmse_pcm16": 1486.2330542873315,
+            "max_abs_error_pcm16": 15060,
+            "max_abs_error_percent_fs": 45.95947265625
+          }
+        },
+        "speex_cbr-8000": {
+          "status": "ok",
+          "requested_bitrate": 8000,
+          "file_bytes": 4594,
+          "payload_bytes": 4080,
+          "file_bps": 9188,
+          "payload_bps": 8160,
+          "delay_samples": 79,
+          "quality": {
+            "ser_db": 2.149231921902076,
+            "stoi": 0.8825066241572733,
+            "rmse_pcm16": 1504.0475852989991,
+            "max_abs_error_pcm16": 13615,
+            "max_abs_error_percent_fs": 41.5496826171875
+          }
+        }
+      }
+    },
+    {
+      "id": "case-04",
+      "reference_sha256": "ed8ddb85ce320f9f6c29b07165e3e31fc1e97cbaff8ca3430ca91d56f1fc62a4",
+      "profiles": {
+        "4": {
+          "stream_sha256": "3555d8d256910613e7c43302cc6b9c9b801c4b63a4c790e0631d12f576631750",
+          "pcm16_sha256": "75c14a5cdb5bc3a49a837dc798b06fb940d2be6360b43b42d0ca5b7a12e22095",
+          "version": 4,
+          "file_bytes": 2020,
+          "payload_bytes": 2000,
+          "file_bps": 4040,
+          "payload_bps": 4000,
+          "quality": {
+            "ser_db": 6.658175373455105,
+            "stoi": 0.7647147380354168,
+            "rmse_pcm16": 297.85512512377557,
+            "max_abs_error_pcm16": 2818,
+            "max_abs_error_percent_fs": 8.599853515625
+          },
+          "pwm8_quality": {
+            "ser_db": 6.379415312000002,
+            "stoi": 0.7054851249358817,
+            "rmse_pcm16": 307.56936809035454,
+            "max_abs_error_pcm16": 2814,
+            "max_abs_error_percent_fs": 8.587646484375
+          },
+          "clipped_output_samples": 0
+        },
+        "6": {
+          "stream_sha256": "8006e0250ba1459d58167089d51f6fea522088319699d4e96fbc6eb89e84f3ab",
+          "pcm16_sha256": "b8be2e4789d605aacdfae53393e72c3cd12f998ba4ec45e06767a9037835899e",
+          "version": 4,
+          "file_bytes": 3020,
+          "payload_bytes": 3000,
+          "file_bps": 6040,
+          "payload_bps": 6000,
+          "quality": {
+            "ser_db": 8.673033681418055,
+            "stoi": 0.8178005276510946,
+            "rmse_pcm16": 236.19035662469372,
+            "max_abs_error_pcm16": 2437,
+            "max_abs_error_percent_fs": 7.4371337890625
+          },
+          "pwm8_quality": {
+            "ser_db": 8.24414947542911,
+            "stoi": 0.7623871781305993,
+            "rmse_pcm16": 248.1454819002353,
+            "max_abs_error_pcm16": 2459,
+            "max_abs_error_percent_fs": 7.5042724609375
+          },
+          "clipped_output_samples": 0
+        },
+        "8": {
+          "stream_sha256": "996a6de60a3a19bd0108316072f8d0244a0e730242730dbd65bc78240830f9e6",
+          "pcm16_sha256": "19fb3f9968a67daed19d004cb7ea75118e5d8e928a2226bc4e402129d18ed057",
+          "version": 3,
+          "file_bytes": 3979,
+          "payload_bytes": 3959,
+          "file_bps": 7958,
+          "payload_bps": 7918,
+          "quality": {
+            "ser_db": 10.57236997475243,
+            "stoi": 0.7623097729429131,
+            "rmse_pcm16": 189.79962378123935,
+            "max_abs_error_pcm16": 977,
+            "max_abs_error_percent_fs": 2.9815673828125
+          },
+          "pwm8_quality": {
+            "ser_db": 10.260484550628073,
+            "stoi": 0.7570284707754978,
+            "rmse_pcm16": 196.73861895291427,
+            "max_abs_error_pcm16": 1009,
+            "max_abs_error_percent_fs": 3.0792236328125
+          },
+          "clipped_output_samples": 0
+        }
+      },
+      "standards": {
+        "opus_voip-6000": {
+          "status": "ok",
+          "requested_bitrate": 6000,
+          "file_bytes": 3207,
+          "payload_bytes": 2746,
+          "file_bps": 6414,
+          "payload_bps": 5492,
+          "delay_samples": 0,
+          "quality": {
+            "ser_db": 4.359024919236052,
+            "stoi": 0.8491612297241623,
+            "rmse_pcm16": 388.11694122068417,
+            "max_abs_error_pcm16": 2693,
+            "max_abs_error_percent_fs": 8.2183837890625
+          }
+        },
+        "opus_voip-8000": {
+          "status": "ok",
+          "requested_bitrate": 8000,
+          "file_bytes": 4206,
+          "payload_bytes": 3745,
+          "file_bps": 8412,
+          "payload_bps": 7490,
+          "delay_samples": 1,
+          "quality": {
+            "ser_db": 5.7020642333517015,
+            "stoi": 0.9183666215937388,
+            "rmse_pcm16": 332.5145351616227,
+            "max_abs_error_pcm16": 1985,
+            "max_abs_error_percent_fs": 6.0577392578125
+          }
+        },
+        "speex_cbr-3950": {
+          "status": "ok",
+          "requested_bitrate": 3950,
+          "file_bytes": 2554,
+          "payload_bytes": 2040,
+          "file_bps": 5108,
+          "payload_bps": 4080,
+          "delay_samples": 79,
+          "quality": {
+            "ser_db": 3.3202646376950007,
+            "stoi": 0.8084429143832979,
+            "rmse_pcm16": 437.42199208115954,
+            "max_abs_error_pcm16": 2830,
+            "max_abs_error_percent_fs": 8.636474609375
+          }
+        },
+        "speex_cbr-5950": {
+          "status": "ok",
+          "requested_bitrate": 5950,
+          "file_bytes": 3574,
+          "payload_bytes": 3060,
+          "file_bps": 7148,
+          "payload_bps": 6120,
+          "delay_samples": 79,
+          "quality": {
+            "ser_db": 3.0084649743867486,
+            "stoi": 0.8515600273940974,
+            "rmse_pcm16": 453.40948107781117,
+            "max_abs_error_pcm16": 2540,
+            "max_abs_error_percent_fs": 7.75146484375
+          }
+        },
+        "speex_cbr-8000": {
+          "status": "ok",
+          "requested_bitrate": 8000,
+          "file_bytes": 4594,
+          "payload_bytes": 4080,
+          "file_bps": 9188,
+          "payload_bps": 8160,
+          "delay_samples": 79,
+          "quality": {
+            "ser_db": 2.9806885363912676,
+            "stoi": 0.8822919284260524,
+            "rmse_pcm16": 454.8617513184638,
+            "max_abs_error_pcm16": 2884,
+            "max_abs_error_percent_fs": 8.80126953125
+          }
+        }
+      }
+    }
+  ],
+  "profiles": {
+    "4": {
+      "quality": {
+        "ser_db": {
+          "mean": 6.995195423071278,
+          "min": 5.999719204101196,
+          "max": 8.968195315353837
+        },
+        "stoi": {
+          "mean": 0.751262220842751,
+          "min": 0.6986756776097228,
+          "max": 0.8426537727021866
+        },
+        "rmse_pcm16": {
+          "mean": 966.6794557587832,
+          "min": 297.85512512377557,
+          "max": 1806.9239394617584
+        },
+        "max_abs_error_pcm16": {
+          "mean": 10929.75,
+          "min": 2818.0,
+          "max": 22149.0
+        },
+        "max_abs_error_percent_fs": {
+          "mean": 33.354949951171875,
+          "min": 8.599853515625,
+          "max": 67.5933837890625
+        },
+        "pooled_energy_ser_db": 6.740306848811912,
+        "delay_samples": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "unaligned_ser_db": {
+          "mean": 6.995195423071278,
+          "min": 5.999719204101196,
+          "max": 8.968195315353837
+        },
+        "pwm8_ser_db": {
+          "mean": 6.888698337245019,
+          "min": 5.956178533714688,
+          "max": 8.90081968248755
+        },
+        "pwm8_stoi": {
+          "mean": 0.7272817100449066,
+          "min": 0.6785046659219293,
+          "max": 0.841500832139967
+        }
+      },
+      "file_bps": {
+        "mean": 4040.0,
+        "min": 4040.0,
+        "max": 4040.0
+      },
+      "payload_bps": {
+        "mean": 4000.0,
+        "min": 4000.0,
+        "max": 4000.0
+      },
+      "decode_wall_cycles_per_sample": 948.92140625,
+      "wall_decode_budget_percent": 47.4460703125,
+      "decode_wall_cycles_per_sample_range": {
+        "mean": 948.92140625,
+        "min": 947.57728125,
+        "max": 949.951
+      },
+      "decode_wall_cycles_max_160": {
+        "mean": 175976.5,
+        "min": 175226.0,
+        "max": 176983.0
+      },
+      "flash_bytes": {
+        "mean": 10354.0,
+        "min": 10354.0,
+        "max": 10354.0
+      },
+      "flash_excluding_stream_bytes": {
+        "mean": 8334.0,
+        "min": 8334.0,
+        "max": 8334.0
+      },
+      "static_sram_bytes": {
+        "mean": 1104.0,
+        "min": 1104.0,
+        "max": 1104.0
+      },
+      "stack_high_water_bytes_after_ready": {
+        "mean": 123.0,
+        "min": 123.0,
+        "max": 123.0
+      },
+      "stack_margin_bytes": {
+        "mean": 821.0,
+        "min": 821.0,
+        "max": 821.0
+      },
+      "first_output_from_reset_ms": {
+        "mean": 24.772312499999998,
+        "min": 24.581,
+        "max": 24.8663125
+      },
+      "tick_interval_min_cycles": {
+        "mean": 1989.5,
+        "min": 1985.0,
+        "max": 1991.0
+      },
+      "tick_interval_max_cycles": {
+        "mean": 2009.0,
+        "min": 2009.0,
+        "max": 2009.0
+      },
+      "underruns": 0,
+      "complete_avr_pwm_exact": true
+    },
+    "6": {
+      "quality": {
+        "ser_db": {
+          "mean": 9.241095056024378,
+          "min": 8.073305341677147,
+          "max": 11.886316291481977
+        },
+        "stoi": {
+          "mean": 0.7918072127413202,
+          "min": 0.7360320219269507,
+          "max": 0.8592297864527237
+        },
+        "rmse_pcm16": {
+          "mean": 756.5190916187288,
+          "min": 236.19035662469372,
+          "max": 1482.5494726146578
+        },
+        "max_abs_error_pcm16": {
+          "mean": 9856.0,
+          "min": 2437.0,
+          "max": 18355.0
+        },
+        "max_abs_error_percent_fs": {
+          "mean": 30.078125,
+          "min": 7.4371337890625,
+          "max": 56.0150146484375
+        },
+        "pooled_energy_ser_db": 8.71499535199639,
+        "delay_samples": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "unaligned_ser_db": {
+          "mean": 9.241095056024378,
+          "min": 8.073305341677147,
+          "max": 11.886316291481977
+        },
+        "pwm8_ser_db": {
+          "mean": 9.088777266238909,
+          "min": 8.064263260734633,
+          "max": 11.782056169341999
+        },
+        "pwm8_stoi": {
+          "mean": 0.7644853797743021,
+          "min": 0.7168128457924912,
+          "max": 0.8566858118700329
+        }
+      },
+      "file_bps": {
+        "mean": 6040.0,
+        "min": 6040.0,
+        "max": 6040.0
+      },
+      "payload_bps": {
+        "mean": 6000.0,
+        "min": 6000.0,
+        "max": 6000.0
+      },
+      "decode_wall_cycles_per_sample": 948.2259375,
+      "wall_decode_budget_percent": 47.411296875,
+      "decode_wall_cycles_per_sample_range": {
+        "mean": 948.2259375,
+        "min": 943.59559375,
+        "max": 951.05028125
+      },
+      "decode_wall_cycles_max_160": {
+        "mean": 176651.5,
+        "min": 175310.0,
+        "max": 177935.0
+      },
+      "flash_bytes": {
+        "mean": 11354.0,
+        "min": 11354.0,
+        "max": 11354.0
+      },
+      "flash_excluding_stream_bytes": {
+        "mean": 8334.0,
+        "min": 8334.0,
+        "max": 8334.0
+      },
+      "static_sram_bytes": {
+        "mean": 1104.0,
+        "min": 1104.0,
+        "max": 1104.0
+      },
+      "stack_high_water_bytes_after_ready": {
+        "mean": 123.0,
+        "min": 123.0,
+        "max": 123.0
+      },
+      "stack_margin_bytes": {
+        "mean": 821.0,
+        "min": 821.0,
+        "max": 821.0
+      },
+      "first_output_from_reset_ms": {
+        "mean": 24.607140625,
+        "min": 24.475625,
+        "max": 24.78925
+      },
+      "tick_interval_min_cycles": {
+        "mean": 1989.5,
+        "min": 1985.0,
+        "max": 1991.0
+      },
+      "tick_interval_max_cycles": {
+        "mean": 2009.0,
+        "min": 2009.0,
+        "max": 2009.0
+      },
+      "underruns": 0,
+      "complete_avr_pwm_exact": true
+    },
+    "8": {
+      "quality": {
+        "ser_db": {
+          "mean": 10.197998633046286,
+          "min": 9.527992355024665,
+          "max": 10.668470619053139
+        },
+        "stoi": {
+          "mean": 0.7608466403168468,
+          "min": 0.6894117051844636,
+          "max": 0.8912588052076277
+        },
+        "rmse_pcm16": {
+          "mean": 671.258728312456,
+          "min": 189.79962378123935,
+          "max": 1184.4490462869223
+        },
+        "max_abs_error_pcm16": {
+          "mean": 6563.25,
+          "min": 977.0,
+          "max": 11105.0
+        },
+        "max_abs_error_percent_fs": {
+          "mean": 20.029449462890625,
+          "min": 2.9815673828125,
+          "max": 33.8897705078125
+        },
+        "pooled_energy_ser_db": 10.01513806218628,
+        "delay_samples": {
+          "mean": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "unaligned_ser_db": {
+          "mean": 10.197998633046286,
+          "min": 9.527992355024665,
+          "max": 10.668470619053139
+        },
+        "pwm8_ser_db": {
+          "mean": 10.085929700226679,
+          "min": 9.491690140548313,
+          "max": 10.578303954897503
+        },
+        "pwm8_stoi": {
+          "mean": 0.7541251454192319,
+          "min": 0.6780855768528484,
+          "max": 0.8907873856031991
+        }
+      },
+      "file_bps": {
+        "mean": 7988.0,
+        "min": 7958.0,
+        "max": 8030.0
+      },
+      "payload_bps": {
+        "mean": 7948.0,
+        "min": 7918.0,
+        "max": 7990.0
+      },
+      "decode_wall_cycles_per_sample": 810.2493125,
+      "wall_decode_budget_percent": 40.512465625,
+      "decode_wall_cycles_per_sample_range": {
+        "mean": 810.2493125,
+        "min": 746.04496875,
+        "max": 860.6925
+      },
+      "decode_wall_cycles_max_160": {
+        "mean": 160712.25,
+        "min": 140565.0,
+        "max": 178011.0
+      },
+      "flash_bytes": {
+        "mean": 12327.0,
+        "min": 12312.0,
+        "max": 12348.0
+      },
+      "flash_excluding_stream_bytes": {
+        "mean": 8333.0,
+        "min": 8333.0,
+        "max": 8333.0
+      },
+      "static_sram_bytes": {
+        "mean": 1104.0,
+        "min": 1104.0,
+        "max": 1104.0
+      },
+      "stack_high_water_bytes_after_ready": {
+        "mean": 115.5,
+        "min": 108.0,
+        "max": 123.0
+      },
+      "stack_margin_bytes": {
+        "mean": 828.5,
+        "min": 821.0,
+        "max": 836.0
+      },
+      "first_output_from_reset_ms": {
+        "mean": 21.644265625,
+        "min": 19.825875,
+        "max": 22.9543125
+      },
+      "tick_interval_min_cycles": {
+        "mean": 1991.0,
+        "min": 1991.0,
+        "max": 1991.0
+      },
+      "tick_interval_max_cycles": {
+        "mean": 2009.0,
+        "min": 2009.0,
+        "max": 2009.0
+      },
+      "underruns": 0,
+      "complete_avr_pwm_exact": true
+    }
+  },
+  "standards": {
+    "opus_voip-6000": {
+      "cases": 4,
+      "quality": {
+        "ser_db": {
+          "mean": 4.60633214453001,
+          "min": 3.1703551745101994,
+          "max": 5.95895752993909
+        },
+        "stoi": {
+          "mean": 0.8376321865800566,
+          "min": 0.7902260818359245,
+          "max": 0.9009492511695467
+        },
+        "rmse_pcm16": {
+          "mean": 1230.7508417656604,
+          "min": 388.11694122068417,
+          "max": 1891.152648370168
+        },
+        "max_abs_error_pcm16": {
+          "mean": 9664.5,
+          "min": 2693.0,
+          "max": 19346.0
+        },
+        "max_abs_error_percent_fs": {
+          "mean": 29.49371337890625,
+          "min": 8.2183837890625,
+          "max": 59.039306640625
+        },
+        "pooled_energy_ser_db": 5.010122974180632,
+        "delay_samples": {
+          "mean": 0.5,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "unaligned_ser_db": {
+          "mean": 3.7408250536046848,
+          "min": 3.131987237580043,
+          "max": 4.359024919236052
+        },
+        "pwm8_ser_db": {
+          "mean": 4.548963654430439,
+          "min": 3.1536148248873004,
+          "max": 5.928230087665036
+        },
+        "pwm8_stoi": {
+          "mean": 0.801649161956303,
+          "min": 0.7527490161427174,
+          "max": 0.8997559960214362
+        }
+      },
+      "payload_bps": {
+        "mean": 5483.5,
+        "min": 5274.0,
+        "max": 5720.0
+      },
+      "file_bps": {
+        "mean": 6405.5,
+        "min": 6196.0,
+        "max": 6642.0
+      }
+    },
+    "opus_voip-8000": {
+      "cases": 4,
+      "quality": {
+        "ser_db": {
+          "mean": 5.8574605693338295,
+          "min": 3.443358674944311,
+          "max": 7.968920081373546
+        },
+        "stoi": {
+          "mean": 0.9054828965632267,
+          "min": 0.8657617256734389,
+          "max": 0.9510169080077591
+        },
+        "rmse_pcm16": {
+          "mean": 1067.1389023770307,
+          "min": 332.5145351616227,
+          "max": 1504.570288861574
+        },
+        "max_abs_error_pcm16": {
+          "mean": 7076.75,
+          "min": 1985.0,
+          "max": 13139.0
+        },
+        "max_abs_error_percent_fs": {
+          "mean": 21.596527099609375,
+          "min": 6.0577392578125,
+          "max": 40.0970458984375
+        },
+        "pooled_energy_ser_db": 6.262440783398738,
+        "delay_samples": {
+          "mean": 0.75,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "unaligned_ser_db": {
+          "mean": 4.362018687334818,
+          "min": 3.443358674944311,
+          "max": 5.368214930859766
+        },
+        "pwm8_ser_db": {
+          "mean": 5.783934613208542,
+          "min": 3.4166950238746874,
+          "max": 7.9280719540897095
+        },
+        "pwm8_stoi": {
+          "mean": 0.8508315453397868,
+          "min": 0.8066144531949394,
+          "max": 0.9479862813219523
+        }
+      },
+      "payload_bps": {
+        "mean": 7392.0,
+        "min": 7082.0,
+        "max": 7602.0
+      },
+      "file_bps": {
+        "mean": 8314.0,
+        "min": 8004.0,
+        "max": 8524.0
+      }
+    },
+    "speex_cbr-3950": {
+      "cases": 4,
+      "quality": {
+        "ser_db": {
+          "mean": 2.562411523899859,
+          "min": 1.3048523375014132,
+          "max": 3.428508076721438
+        },
+        "stoi": {
+          "mean": 0.8098573472364766,
+          "min": 0.735717602961817,
+          "max": 0.8921055449636163
+        },
+        "rmse_pcm16": {
+          "mean": 1597.1815944687899,
+          "min": 437.42199208115954,
+          "max": 2530.748906771472
+        },
+        "max_abs_error_pcm16": {
+          "mean": 12723.0,
+          "min": 2830.0,
+          "max": 22085.0
+        },
+        "max_abs_error_percent_fs": {
+          "mean": 38.8275146484375,
+          "min": 8.636474609375,
+          "max": 67.3980712890625
+        },
+        "pooled_energy_ser_db": 2.6778438149628263,
+        "delay_samples": {
+          "mean": 78.5,
+          "min": 77.0,
+          "max": 79.0
+        },
+        "unaligned_ser_db": {
+          "mean": -1.8379161849638606,
+          "min": -1.9933494089811759,
+          "max": -1.6656157637310585
+        },
+        "pwm8_ser_db": {
+          "mean": 2.5108802000457686,
+          "min": 1.2532404680890694,
+          "max": 3.3765910271781485
+        },
+        "pwm8_stoi": {
+          "mean": 0.7696997290025848,
+          "min": 0.7096131377615277,
+          "max": 0.8900247722032567
+        }
+      },
+      "payload_bps": {
+        "mean": 4080.0,
+        "min": 4080.0,
+        "max": 4080.0
+      },
+      "file_bps": {
+        "mean": 5108.0,
+        "min": 5108.0,
+        "max": 5108.0
+      }
+    },
+    "speex_cbr-5950": {
+      "cases": 4,
+      "quality": {
+        "ser_db": {
+          "mean": 2.458884597514971,
+          "min": 0.9673227548772317,
+          "max": 3.6070255222993564
+        },
+        "stoi": {
+          "mean": 0.8527881255263124,
+          "min": 0.791641221431479,
+          "max": 0.9157334388383493
+        },
+        "rmse_pcm16": {
+          "mean": 1604.9394281489565,
+          "min": 453.40948107781117,
+          "max": 2479.266348186495
+        },
+        "max_abs_error_pcm16": {
+          "mean": 12196.25,
+          "min": 2540.0,
+          "max": 22275.0
+        },
+        "max_abs_error_percent_fs": {
+          "mean": 37.220001220703125,
+          "min": 7.75146484375,
+          "max": 67.9779052734375
+        },
+        "pooled_energy_ser_db": 2.6686257126487294,
+        "delay_samples": {
+          "mean": 78.5,
+          "min": 77.0,
+          "max": 79.0
+        },
+        "unaligned_ser_db": {
+          "mean": -2.309910844388533,
+          "min": -2.624506240285001,
+          "max": -1.8972656013167604
+        },
+        "pwm8_ser_db": {
+          "mean": 2.3695521479923825,
+          "min": 0.9020302319828021,
+          "max": 3.5247743535309417
+        },
+        "pwm8_stoi": {
+          "mean": 0.80571581333399,
+          "min": 0.7567623202952062,
+          "max": 0.9132321037094444
+        }
+      },
+      "payload_bps": {
+        "mean": 6120.0,
+        "min": 6120.0,
+        "max": 6120.0
+      },
+      "file_bps": {
+        "mean": 7148.0,
+        "min": 7148.0,
+        "max": 7148.0
+      }
+    },
+    "speex_cbr-8000": {
+      "cases": 4,
+      "quality": {
+        "ser_db": {
+          "mean": 2.3666818649212082,
+          "min": 0.9769277068218702,
+          "max": 3.3598792945696188
+        },
+        "stoi": {
+          "mean": 0.8838233317206414,
+          "min": 0.8268942025067747,
+          "max": 0.943600571792465
+        },
+        "rmse_pcm16": {
+          "mean": 1627.0927107129205,
+          "min": 454.8617513184638,
+          "max": 2550.8240148650984
+        },
+        "max_abs_error_pcm16": {
+          "mean": 10698.5,
+          "min": 2884.0,
+          "max": 16460.0
+        },
+        "max_abs_error_percent_fs": {
+          "mean": 32.64923095703125,
+          "min": 8.80126953125,
+          "max": 50.23193359375
+        },
+        "pooled_energy_ser_db": 2.530616871830575,
+        "delay_samples": {
+          "mean": 78.75,
+          "min": 77.0,
+          "max": 80.0
+        },
+        "unaligned_ser_db": {
+          "mean": -2.3547440236719956,
+          "min": -2.617019521072428,
+          "max": -1.9551725698695437
+        },
+        "pwm8_ser_db": {
+          "mean": 2.2644774068195397,
+          "min": 0.9117226200525905,
+          "max": 3.2738608530343045
+        },
+        "pwm8_stoi": {
+          "mean": 0.8322279357383917,
+          "min": 0.7899867667913493,
+          "max": 0.9413583740086223
+        }
+      },
+      "payload_bps": {
+        "mean": 8160.0,
+        "min": 8160.0,
+        "max": 8160.0
+      },
+      "file_bps": {
+        "mean": 9188.0,
+        "min": 9188.0,
+        "max": 9188.0
+      }
+    }
+  },
+  "stress": {
+    "4": {
+      "source_case": "case-03",
+      "continuous_state_samples": 64000,
+      "normal": {
+        "input_samples": 64000,
+        "input_bytes": 4020,
+        "mean_decode_wall_cycles": 950.04084375,
+        "decode_wall_cycles_total": 60802614,
+        "decode_wall_cycles_max": 19822,
+        "decode_wall_cycles_max_160": 175973,
+        "flash_bytes": 12354,
+        "flash_excluding_stream_bytes": 8334,
+        "static_sram_bytes": 1104,
+        "stack_high_water_bytes_after_ready": 123,
+        "stack_margin_bytes": 821,
+        "first_output_from_reset_ms": 24.782,
+        "tick_interval_min_cycles": 1991,
+        "tick_interval_max_cycles": 2009,
+        "underruns": 0,
+        "pwm_native_exact": true,
+        "arithmetic_backend": "avr5-asm",
+        "extra_irq_cycles": 0,
+        "realtime_under_measured_conditions": true
+      },
+      "extra_irq100": {
+        "input_samples": 64000,
+        "input_bytes": 4020,
+        "mean_decode_wall_cycles": 965.427078125,
+        "decode_wall_cycles_total": 61787333,
+        "decode_wall_cycles_max": 20860,
+        "decode_wall_cycles_max_160": 184134,
+        "flash_bytes": 12362,
+        "flash_excluding_stream_bytes": 8342,
+        "static_sram_bytes": 1104,
+        "stack_high_water_bytes_after_ready": 123,
+        "stack_margin_bytes": 821,
+        "first_output_from_reset_ms": 24.782,
+        "tick_interval_min_cycles": 1991,
+        "tick_interval_max_cycles": 2009,
+        "underruns": 0,
+        "pwm_native_exact": true,
+        "arithmetic_backend": "avr5-asm",
+        "extra_irq_cycles": 100,
+        "realtime_under_measured_conditions": true
+      },
+      "c_fallback": {
+        "input_samples": 64000,
+        "input_bytes": 4020,
+        "mean_decode_wall_cycles": 2761.175421875,
+        "decode_wall_cycles_total": 176715227,
+        "decode_wall_cycles_max": 29995,
+        "decode_wall_cycles_max_160": 497186,
+        "flash_bytes": 12318,
+        "flash_excluding_stream_bytes": 8298,
+        "static_sram_bytes": 1104,
+        "stack_high_water_bytes_after_ready": 135,
+        "stack_margin_bytes": 809,
+        "first_output_from_reset_ms": 61.3925,
+        "tick_interval_min_cycles": 1976,
+        "tick_interval_max_cycles": 2023,
+        "underruns": 27007,
+        "pwm_native_exact": true,
+        "arithmetic_backend": "c",
+        "extra_irq_cycles": 0,
+        "realtime_under_measured_conditions": false
+      }
+    },
+    "6": {
+      "source_case": "case-03",
+      "continuous_state_samples": 64000,
+      "normal": {
+        "input_samples": 64000,
+        "input_bytes": 6020,
+        "mean_decode_wall_cycles": 951.319640625,
+        "decode_wall_cycles_total": 60884457,
+        "decode_wall_cycles_max": 20204,
+        "decode_wall_cycles_max_160": 177443,
+        "flash_bytes": 14354,
+        "flash_excluding_stream_bytes": 8334,
+        "static_sram_bytes": 1104,
+        "stack_high_water_bytes_after_ready": 123,
+        "stack_margin_bytes": 821,
+        "first_output_from_reset_ms": 24.78925,
+        "tick_interval_min_cycles": 1987,
+        "tick_interval_max_cycles": 2009,
+        "underruns": 0,
+        "pwm_native_exact": true,
+        "arithmetic_backend": "avr5-asm",
+        "extra_irq_cycles": 0,
+        "realtime_under_measured_conditions": true
+      },
+      "extra_irq100": {
+        "input_samples": 64000,
+        "input_bytes": 6020,
+        "mean_decode_wall_cycles": 967.32709375,
+        "decode_wall_cycles_total": 61908934,
+        "decode_wall_cycles_max": 21204,
+        "decode_wall_cycles_max_160": 184635,
+        "flash_bytes": 14362,
+        "flash_excluding_stream_bytes": 8342,
+        "static_sram_bytes": 1104,
+        "stack_high_water_bytes_after_ready": 123,
+        "stack_margin_bytes": 821,
+        "first_output_from_reset_ms": 24.78925,
+        "tick_interval_min_cycles": 1991,
+        "tick_interval_max_cycles": 2009,
+        "underruns": 0,
+        "pwm_native_exact": true,
+        "arithmetic_backend": "avr5-asm",
+        "extra_irq_cycles": 100,
+        "realtime_under_measured_conditions": true
+      },
+      "c_fallback": {
+        "input_samples": 64000,
+        "input_bytes": 6020,
+        "mean_decode_wall_cycles": 2765.652890625,
+        "decode_wall_cycles_total": 177001785,
+        "decode_wall_cycles_max": 30488,
+        "decode_wall_cycles_max_160": 496345,
+        "flash_bytes": 14318,
+        "flash_excluding_stream_bytes": 8298,
+        "static_sram_bytes": 1104,
+        "stack_high_water_bytes_after_ready": 135,
+        "stack_margin_bytes": 809,
+        "first_output_from_reset_ms": 61.3223125,
+        "tick_interval_min_cycles": 1976,
+        "tick_interval_max_cycles": 2023,
+        "underruns": 27145,
+        "pwm_native_exact": true,
+        "arithmetic_backend": "c",
+        "extra_irq_cycles": 0,
+        "realtime_under_measured_conditions": false
+      }
+    },
+    "8": {
+      "source_case": "case-01",
+      "continuous_state_samples": 64000,
+      "normal": {
+        "input_samples": 64000,
+        "input_bytes": 14051,
+        "mean_decode_wall_cycles": 855.534609375,
+        "decode_wall_cycles_total": 54754215,
+        "decode_wall_cycles_max": 21759,
+        "decode_wall_cycles_max_160": 180149,
+        "flash_bytes": 22384,
+        "flash_excluding_stream_bytes": 8333,
+        "static_sram_bytes": 1104,
+        "stack_high_water_bytes_after_ready": 123,
+        "stack_margin_bytes": 821,
+        "first_output_from_reset_ms": 23.1470625,
+        "tick_interval_min_cycles": 1991,
+        "tick_interval_max_cycles": 2009,
+        "underruns": 0,
+        "pwm_native_exact": true,
+        "arithmetic_backend": "avr5-asm",
+        "extra_irq_cycles": 0,
+        "realtime_under_measured_conditions": true
+      },
+      "extra_irq100": {
+        "input_samples": 64000,
+        "input_bytes": 14051,
+        "mean_decode_wall_cycles": 863.573,
+        "decode_wall_cycles_total": 55268672,
+        "decode_wall_cycles_max": 23006,
+        "decode_wall_cycles_max_160": 185031,
+        "flash_bytes": 22392,
+        "flash_excluding_stream_bytes": 8341,
+        "static_sram_bytes": 1104,
+        "stack_high_water_bytes_after_ready": 123,
+        "stack_margin_bytes": 821,
+        "first_output_from_reset_ms": 23.1470625,
+        "tick_interval_min_cycles": 1991,
+        "tick_interval_max_cycles": 2009,
+        "underruns": 0,
+        "pwm_native_exact": true,
+        "arithmetic_backend": "avr5-asm",
+        "extra_irq_cycles": 100,
+        "realtime_under_measured_conditions": true
+      },
+      "c_fallback": {
+        "input_samples": 64000,
+        "input_bytes": 14051,
+        "mean_decode_wall_cycles": 2572.88928125,
+        "decode_wall_cycles_total": 164664914,
+        "decode_wall_cycles_max": 31801,
+        "decode_wall_cycles_max_160": 500136,
+        "flash_bytes": 22348,
+        "flash_excluding_stream_bytes": 8297,
+        "static_sram_bytes": 1104,
+        "stack_high_water_bytes_after_ready": 135,
+        "stack_margin_bytes": 809,
+        "first_output_from_reset_ms": 58.0731875,
+        "tick_interval_min_cycles": 1976,
+        "tick_interval_max_cycles": 2023,
+        "underruns": 21007,
+        "pwm_native_exact": true,
+        "arithmetic_backend": "c",
+        "extra_irq_cycles": 0,
+        "realtime_under_measured_conditions": false
+      }
+    }
+  },
+  "partial_tail_checks": {
+    "4-1": {
+      "played": 1,
+      "underruns": 0,
+      "pwm_native_exact": true
+    },
+    "4-19": {
+      "played": 19,
+      "underruns": 0,
+      "pwm_native_exact": true
+    },
+    "4-161": {
+      "played": 161,
+      "underruns": 0,
+      "pwm_native_exact": true
+    },
+    "4-319": {
+      "played": 319,
+      "underruns": 0,
+      "pwm_native_exact": true
+    },
+    "4-321": {
+      "played": 321,
+      "underruns": 0,
+      "pwm_native_exact": true
+    },
+    "6-1": {
+      "played": 1,
+      "underruns": 0,
+      "pwm_native_exact": true
+    },
+    "6-19": {
+      "played": 19,
+      "underruns": 0,
+      "pwm_native_exact": true
+    },
+    "6-161": {
+      "played": 161,
+      "underruns": 0,
+      "pwm_native_exact": true
+    },
+    "6-319": {
+      "played": 319,
+      "underruns": 0,
+      "pwm_native_exact": true
+    },
+    "6-321": {
+      "played": 321,
+      "underruns": 0,
+      "pwm_native_exact": true
+    }
+  },
+  "legacy8_parser_cost": {
+    "case-01": {
+      "mean_wall_cycles_without_speech": 857.17434375,
+      "mean_wall_cycles_with_speech": 860.6925,
+      "flash_bytes_added": 808,
+      "static_sram_bytes_added": 2
+    },
+    "case-02": {
+      "mean_wall_cycles_without_speech": 786.5971875,
+      "mean_wall_cycles_with_speech": 792.0453125,
+      "flash_bytes_added": 808,
+      "static_sram_bytes_added": 2
+    },
+    "case-03": {
+      "mean_wall_cycles_without_speech": 837.24590625,
+      "mean_wall_cycles_with_speech": 842.21446875,
+      "flash_bytes_added": 808,
+      "static_sram_bytes_added": 2
+    },
+    "case-04": {
+      "mean_wall_cycles_without_speech": 739.680125,
+      "mean_wall_cycles_with_speech": 746.04496875,
+      "flash_bytes_added": 808,
+      "static_sram_bytes_added": 2
+    }
+  },
+  "legacy_regression": {
+    "streams": 91,
+    "samples": 2912000,
+    "native_pcm16_pwm_exact_speech_enabled": true,
+    "fresh_avr_runs_speech_disabled": true,
+    "avr_pwm_exact": true,
+    "underruns": 0,
+    "current_wall_cycles": 2495466530,
+    "round19_wall_cycles": 2495466530,
+    "max_sram_bytes": 1102,
+    "minimum_stack_margin_bytes": 823
+  },
+  "fuzz": {
+    "cases": 579054,
+    "rejected": 142816,
+    "sample_capped": 0,
+    "reset_exact": true,
+    "input_streams": 408,
+    "speech_enabled": true,
+    "max_samples_per_decode": 4096
+  }
+}
