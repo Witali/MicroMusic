@@ -2905,6 +2905,17 @@ margin821 B. Golden PCM16/PWM and AVR PWM exact, zero underruns.
 98 host tests, all six long IRQ controls, and a fresh91-stream/2,912,000-sample frozen-output quality audit pass. Unchanged arithmetic bytes explicitly reuse round13 validation; no new fuzz is claimed. Full AVR firmware output verifies the changed caller/register allocation. The retained native coefficient probe identifies630640 all-signed8 LPC vectors, while zero taps are too rare to justify a zero branch.
 [Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
 
+### LPX: rejected all-signed8 adaptive LPC kernel
+
+Joint counts show630640/2912000 vectors with all ten coefficients fitting signed8. The prototype classifies once per20 samples and chooses a two-MUL signed8 x signed16 kernel or the old full kernel in one ASM block. Q4 per-product floors, a complete selectable C fallback and referenceflag0 are retained. Narrow unroll3/9 were screened. Classification, dispatch and register pressure outweigh savings on narrow vectors. The rejected prototype is archived as an experimental patch, not shipped in the decoder.
+
+Rejected round17: keep the byte-identical previous implementation,0%
+accepted gain, unchanged Flash/RAM. Its91 retained measurements are reused
+explicitly after source-hash equality, rather than claimed as fresh runs.
+Separate prototype measurements document the actual experiment.
+Full narrow9 prototype:2,499,853,336 ->2,510,162,819 cycles,-0.412404% gain,+490 B Flash/image,+1 B SRAM. All91 outputs match and have zero underruns, but the aggregate slows. No fresh exhaustive math/r1/fuzz is claimed for the rejected ASM. Restore production bytes to round16 and explicitly reuse its91 measurements, six long controls and tests. A fresh selected-state native quality audit passes.
+[Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
 ## UM88: page-local FIFO
 
 [Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.

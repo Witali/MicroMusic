@@ -1,3 +1,6 @@
+Раунды1–17 завершены; слабых подряд1. Далее проверить ограниченные byte shifts в readBits: split4 вместо длинного variable loop, включая все byte/offset/width/EOF состояния. Слабых подряд1.
+См. README и round-17*.json.
+
 Раунды1–16 завершены; слабых подряд0. Далее проверить точную signed8 специализацию LPC для целиком узких vectors; сравнить classifier/branch overhead, Flash и варианты unroll, сохранив общий signed16 путь.
 См. README и round-16*.json.
 

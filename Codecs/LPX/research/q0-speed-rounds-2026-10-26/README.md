@@ -35,6 +35,8 @@ prefill384, unroll9, v3 mask24 и активные IRQ фиксированы.
 
 | 16 | локальный O2 для горячих AVR функций | 1,404252% | +146 Б Flash, RAM1101 Б | 0 |
 
+| 17 | отклонена адаптивная signed8 специализация LPC | 0,000000% | +0 Б Flash, RAM1101 Б | 1 |
+
 ## Раунд 1: точное Q4-накопление
 
 Исходный LPC сдвигал каждое signed32-произведение вправо на 12, затем
@@ -421,6 +423,17 @@ Scale step0..4016 умножается на16 один раз на80 samples и 
 
 Результаты round-16.json, round-16-controls.json, round-16-tests.json.
 Слабых подряд **0**. Далее проверить точную signed8 специализацию LPC для целиком узких vectors; сравнить classifier/branch overhead, Flash и варианты unroll, сохранив общий signed16 путь.
+
+## Раунд 17: отклонена адаптивная signed8 специализация LPC
+
+Joint native distribution показывает630640/2912000 vectors со всеми10 coefficients в signed8 (21,66%). Прототип проверяет bounds один раз на20 samples, кеширует bool и выбирает signed8×signed16 либо прежний full kernel внутри единого ASM. Узкий kernel использует два MUL и сохраняет Q4 per-product floor; C fallback остаётся полной точной суммой, referenceflag0 доступен. Измерены narrow-unroll3/9. Всеобщая стоимость классификации, переключения и register pressure перевешивает экономию на узких vectors. Prototype patch сохранён в AVR cookbook, в рабочем декодере его нет.
+
+Выбран прежний декодер: **0,000000%** принятого выигрыша, 2499853336 cycles, Flash/RAM неизменны (1101 Б SRAM). Прежние91 измерения выбранного состояния переиспользованы по точному совпадению source hashes; новый полный прогон выбранного состояния не заявляется. Полные измерения прототипа приведены отдельно.
+
+Полный narrow9 prototype:2499853336 →2510162819 cycles, **−0,412404%**, Flash +490 Б на всех91 ELF, SRAM +1 Б. Все91 PCM16/PWM/AVR PWM точны и без underrun; это не доказательство ускорения. На двух тяжёлых потоках все coefficients-wide: нужны расходы dispatch без пользы. Chirp с100% узких vectors ускоряется, но весь набор медленнее. Новый exhaustive math/r1/fuzz для отклонённого ASM не заявляется. Выбранная production версия полностью восстановлена по bytes/hash раунда16; его91 измерение,6 длинных контролей и тесты явно переиспользованы. Свежий native quality audit выбранного состояния: round-17-quality.json. Полный prototype report и variants сохранены отдельно.
+
+Результаты round-17.json, round-17-controls.json, round-17-tests.json.
+Слабых подряд **1**. Далее проверить ограниченные byte shifts в readBits: split4 вместо длинного variable loop, включая все byte/offset/width/EOF состояния. Слабых подряд1.
 
 ## Воспроизведение
 
