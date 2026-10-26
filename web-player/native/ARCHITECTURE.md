@@ -17,6 +17,7 @@ boundary rules and event/deadline work.
 | Phase temporary analysis | `lib/avr-phase-locals.js` | Optional generation-time local/branch annotations and backward liveness; strip annotations before serialization, retaining the full-context oracle |
 | Target registry | `lib/devices/profiles.js` | Select a supported device explicitly and reject unregistered targets |
 | ATtiny13A profile | `lib/devices/attiny13a-profile.js` | Flash/data geometry, PC wrapping, register placement and legacy hardware hooks |
+| ATtiny13A I/O bindings | `native/devices/attiny13a/io_registers.inc`, `io_registers.generated.h` | One project storage owner per manufacturer-defined byte; static publication and generated Timer0 routing |
 | ATtiny88 profile | `lib/devices/attiny88-profile.js` | Manufacturer-derived wide data pointers and SPL/SPH with shared music peripherals |
 | Manufacturer definitions | `vendor/microchip/ATtiny_DFP/3.4.278/` | Original register, bit, fuse, vector and memory definitions with versioned provenance |
 | Generated register views | `lib/attiny13a-registers.*`, `native/attiny13a-registers.*` | C, JS, JSON and assembly views of the same official definitions |
@@ -34,9 +35,10 @@ model. New device-owned modules, including the analog RESET receiver, live in
 A second microcontroller requires its own profile, bus/peripheral
 implementation, native bridge and validation. Device-specific addresses and
 memory sizes belong in that profile and its manufacturer definitions. The
-shared emitter consumes the normalized geometry. Its current data/PC lowering
-supports eight-bit data addressing and a two-byte program counter; extending
-that geometry requires explicit CPU lowering work and tests.
+shared emitter consumes normalized geometry. Its current data/PC lowering
+supports eight-bit ATtiny13A pointers, sixteen-bit ATtiny88 pointers/SPL/SPH and
+a two-byte program counter. Further geometries require explicit lowering work
+and tests.
 
 The generated CPU module and native runtime share one WASM memory. Instruction
 effects call native WASM bridges, which advance the selected device scheduler.

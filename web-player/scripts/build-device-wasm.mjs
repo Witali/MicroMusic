@@ -15,6 +15,10 @@ const definitionsCheck = spawnSync(process.execPath,
   {cwd: root, encoding: 'utf8'});
 if (definitionsCheck.error) throw definitionsCheck.error;
 if (definitionsCheck.status !== 0) throw new Error(definitionsCheck.stderr || 'Official register map is stale');
+const bindingsCheck=spawnSync(process.execPath,
+  [join(root,'web-player/scripts/generate-attiny13a-io-bindings.mjs'),'--check'],{cwd:root,encoding:'utf8'});
+if(bindingsCheck.error)throw bindingsCheck.error;
+if(bindingsCheck.status!==0)throw new Error(bindingsCheck.stderr||'Device I/O bindings are stale');
 const vendorRoot = 'web-player/vendor/microchip/ATtiny_DFP/3.4.278';
 function recursiveFiles(folder) {
   return readdirSync(join(root, folder), {withFileTypes: true}).sort((a,b)=>a.name.localeCompare(b.name))
@@ -46,7 +50,9 @@ const deviceFiles=['web-player/native/devices/attiny13a/reset_input.c',
   'web-player/native/devices/attiny13a/clki_clock.c','web-player/native/devices/attiny13a/clki_clock.h',
   'web-player/native/devices/attiny13a/clki_validation.c','web-player/native/devices/attiny13a/clki_validation.h',
   'web-player/native/devices/attiny13a/clki_periodic.c','web-player/native/devices/attiny13a/clki_periodic.h',
-  'web-player/native/devices/attiny13a/clki_board.inc','web-player/native/devices/attiny13a/avr-profile.inc'];
+  'web-player/native/devices/attiny13a/clki_board.inc','web-player/native/devices/attiny13a/avr-profile.inc',
+  'web-player/native/devices/attiny13a/io_registers.inc',
+  'web-player/native/devices/attiny13a/io_registers.generated.h'];
 const sources = ['web-player/native/avr.c', ...nativeFiles.filter(name => name.endsWith('.c')),
   ...deviceFiles.filter(name=>name.endsWith('.c'))];
 const runtimeSource = readFileSync(join(root, sources[0]), 'utf8');
@@ -104,7 +110,9 @@ try {
 }
 const hash = value => createHash('sha256').update(value).digest('hex');
 const inputs = [sources[0], ...nativeSupport, ...nativeFiles, ...deviceFiles, ...vendorInputs,
-  'web-player/scripts/generate-attiny13a-registers.mjs', 'web-player/scripts/build-device-wasm.mjs'];
+  'web-player/scripts/generate-attiny13a-registers.mjs', 'web-player/scripts/generate-attiny13a-io-bindings.mjs',
+  'web-player/lib/attiny13a-registers.js', 'web-player/lib/attiny13a-registers.json',
+  'web-player/scripts/build-device-wasm.mjs'];
 const normalized = path => path.replaceAll(sdk, '<emsdk>').replaceAll(sdk.replaceAll('\\', '/'), '<emsdk>');
 const manifest = {
   schema: 'micromusic-attiny13a-device-wasm-v1',

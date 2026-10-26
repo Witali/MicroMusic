@@ -88,6 +88,13 @@ that making I/O publication lazy is faster: that earlier isolated prototype was
 
 ## Incremental implementation order
 
+First implementation: `devices/attiny13a/io_registers.inc` now records the
+35 distinct device I/O byte owners using only manufacturer-derived addresses.
+Its 31 publication bindings and eight generated Timer0 routes share the same
+catalog; the compiler emits identical native WASM. The remaining bus side
+effects, controller synchronization and event ordering retain their existing
+implementations. See the [architecture note](../../docs/avr-asm-cookbook/io-ownership-registry.md).
+
 1. Inventory current clock/register/IRQ/pin ownership using the table above;
    capture disagreements between modules and the board before changing an API.
 2. Remove a demonstrated duplicate calculation under a narrow proof. The

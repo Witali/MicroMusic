@@ -1,5 +1,6 @@
 #include "device.h"
 #include "../attiny13a-registers.h"
+#include "../devices/attiny13a/io_registers.generated.h"
 #include "timer0.h"
 #include "system_gpio.h"
 #include "system_sleep.h"
@@ -435,25 +436,11 @@ static void wake(void) {
 }
 static void mirror(void) {
  if (!board.data) return;
-#define IO(a,v) (board.data[32+(a)]=(uint8_t)(v))
- IO(ANALOG_ADCSRB,board.analog.adc.adcsrb);
- IO(ANALOG_ADCL,(board.analog.adc.admux&AT13_MASK_ADLAR)?board.analog.adc.result<<6:board.analog.adc.result);
- IO(ANALOG_ADCH,(board.analog.adc.admux&AT13_MASK_ADLAR)?board.analog.adc.result>>2:board.analog.adc.result>>8);
- IO(ANALOG_ADCSRA,board.analog.adc.adcsra); IO(ANALOG_ADMUX,board.analog.adc.admux);
- IO(ANALOG_ACSR,board.analog.comparator.acsr);
- IO(SYSTEM_DIDR0,board.gpio.didr0); IO(SYSTEM_PCMSK,board.gpio.pcmsk);
- IO(SYSTEM_PINB,board.gpio.pinb); IO(SYSTEM_DDRB,board.gpio.ddrb); IO(SYSTEM_PORTB,board.gpio.portb);
- IO(SYSTEM_MCUCR,board.gpio.mcucr); IO(SYSTEM_GIFR,board.gpio.gifr); IO(SYSTEM_GIMSK,board.gpio.gimsk);
- IO(SYSTEM_WDTCR,board.watchdog.control); IO(SYSTEM_MCUSR,board.watchdog.mcusr);
- IO(NVM_EECR,board.nvm.eecr); IO(NVM_EEDR,board.nvm.eedr); IO(NVM_EEARL,board.nvm.eearl);
- IO(NVM_SPMCSR,board.nvm.spmcsr);
- IO(TIMER0_PRR,board.prr); IO(TIMER0_GTCCR,board.timer.gtccr);
- IO(TIMER0_TCCR0A,board.timer.tccra); IO(TIMER0_TCCR0B,board.timer.tccrb);
- IO(TIMER0_TCNT0,board.timer.tcnt); IO(TIMER0_OCR0A,board.timer.ocra); IO(TIMER0_OCR0B,board.timer.ocrb);
- IO(TIMER0_TIFR0,board.timer.tifr); IO(TIMER0_TIMSK0,board.timer.timsk);
- IO(CLKPR,board.clkpr);
- IO(BODCR,board.bodcr);
-#undef IO
+#define AT13_IO_PUBLISH(owner,name,value) board.data[AT13_IO_DATA_OFFSET+AT13_IO_##name]=(uint8_t)(value);
+#define AT13_IO_LOCAL(owner,name)
+#include "../devices/attiny13a/io_registers.inc"
+#undef AT13_IO_LOCAL
+#undef AT13_IO_PUBLISH
 }
 static void check_faults(void) {
  if (board.nvm.faults) fail(DEVICE_FAULT_NVM,board.nvm.faults);
@@ -872,9 +859,7 @@ void device_reset(uint8_t sources_mask) {
  if(board.power_enabled&&!board.reset_held) reset_startup(sources_mask);
 }
 static int timer_register(uint8_t io) {
- return io==TIMER0_GTCCR || io==TIMER0_TCCR0A || io==TIMER0_TCCR0B ||
-  io==TIMER0_TCNT0 || io==TIMER0_OCR0A || io==TIMER0_OCR0B ||
-  io==TIMER0_TIFR0 || io==TIMER0_TIMSK0;
+ return AT13_IO_IS_TIMER0(io);
 }
 static int programming_clock_known(void) {
  if (!board.physical || (board.config[DEVICE_CFG_NVM_CLOCK_PROFILE]==DEVICE_NVM_CLOCK_FIXED_NS &&

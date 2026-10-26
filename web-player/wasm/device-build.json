@@ -139,7 +139,7 @@
     "web-player/native/peripherals/analog_adc.h": "14f1dc000c5adcafdd8cf5e8d225f51805224a47eefae562e1957383970b2220",
     "web-player/native/peripherals/analog_comparator.c": "fbdc17028ee6998c857ef6911af5f05407cce524322697e3b9fd1da914d87a48",
     "web-player/native/peripherals/analog_comparator.h": "17a2c132554c5dfae031d9c23650c1bf3b9cb41f1c14e3d1c0cd6bdaa3b393b4",
-    "web-player/native/peripherals/device.c": "407dec8c1cbf6c98269751fa26ed1d90386e43ab5b1739bbe99c2a4b2630d22d",
+    "web-player/native/peripherals/device.c": "b03d62d2a9343351349e6a814e464a394f78eba3a2de49146df1dadc7b648881",
     "web-player/native/peripherals/device.h": "e8d46546cd4ff889f13426dc36f49c88fcd0427599fa26c24442f3844ecc3c40",
     "web-player/native/peripherals/device_clock.h": "a48e791a59639292f7ac03b0be99ad7a1d31bd976c91b7adb2a9cd0932fdce93",
     "web-player/native/peripherals/nvm.c": "51880a51fd61c009ce7d0fa47d205d9c93aa7a0ebd5fc4e0f80064927a9bd096",
@@ -166,6 +166,8 @@
     "web-player/native/devices/attiny13a/clki_periodic.h": "18c545932c33a601cc3ebbbb9beb63b17772f612cb36a15c0c2d4e85b829fcb4",
     "web-player/native/devices/attiny13a/clki_board.inc": "0a4dad0472d947bcd603320f8b5e348406cbd4077aac216c3580b8b4941e0826",
     "web-player/native/devices/attiny13a/avr-profile.inc": "ab3c5e2415124568aa17b4783d8117e0219f55fbb5b4b7198a99e0f94e9baa27",
+    "web-player/native/devices/attiny13a/io_registers.inc": "9f674ba5feeb9a56d361a5e2fad974a8d9a2e8ae60d1036c4e651913f860ccc2",
+    "web-player/native/devices/attiny13a/io_registers.generated.h": "eef88df9ce14067c2d98c8bee2d4555ade5585809b70ca33738f879400d47542",
     "web-player/vendor/microchip/ATtiny_DFP/3.4.278/atdf/ATtiny13A.atdf": "e12ee48543baf46bc5bc5bf9c6ef2e9e57e46e39c34b3c619bdc8280276e82ed",
     "web-player/vendor/microchip/ATtiny_DFP/3.4.278/atdf/ATtiny88.atdf": "b349f84f07e27ec5fb3e60e51596ebd764ad105470cb48bc3a8fb0ca3916b1f8",
     "web-player/vendor/microchip/ATtiny_DFP/3.4.278/avrasm/inc/tn13Adef.inc": "31545ecfbf2e13d4bbca2ec3f86c9001ac72d1351a3b4f90495463df73cd9362",
@@ -177,7 +179,10 @@
     "web-player/vendor/microchip/ATtiny_DFP/3.4.278/provenance.json": "762c02589e722f5169a4f86451eacd6705f4a1632a846fd94bd2239f3b2bc1c3",
     "web-player/vendor/microchip/ATtiny_DFP/3.4.278/README.md": "1e251269733806e6d08ef578e6739985d0786400b61e491f0651e8798330a7d2",
     "web-player/scripts/generate-attiny13a-registers.mjs": "162f9d0770fe5288eacbe2fabcebabd1ab578bb8db058ec4a7847d77f85d94e4",
-    "web-player/scripts/build-device-wasm.mjs": "92d8f2e01aa72c8ac98fd45b4cc5333fb31ce068c36d4137b636df27d95736eb"
+    "web-player/scripts/generate-attiny13a-io-bindings.mjs": "380a9359ee3e621653b0ac3fea52d7b2db2f016cf96363155ebb02e5706cd0bb",
+    "web-player/lib/attiny13a-registers.js": "2d4f35723abcaf81015d6cf167b1e9a88e77b032846ba18be8e8efe7685f38e4",
+    "web-player/lib/attiny13a-registers.json": "31b2f67d2e4d3a438d5313e9a6c123f9d5599b452e62b5f9edcc8d4391dbba01",
+    "web-player/scripts/build-device-wasm.mjs": "52e1bf28a3575755e6537a09ea9534939b07f0db124786cbaabae297df11f00a"
   },
   "sources": [
     "web-player/native/avr.c",
