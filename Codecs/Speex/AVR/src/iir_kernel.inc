@@ -54,8 +54,7 @@
     rol r22
     .endr
     mov r0, r22
-    mov r22, r24
-    mov r23, r25
+    movw r22, r24
     mov r24, r0
     /* Rounded signed32 >>13 lies in [-262144,262143]. Adding signed16
      * input lies in [-294912,294910], so signed24 is sufficient. */
