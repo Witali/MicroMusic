@@ -1,0 +1,39 @@
+{
+  "recorded_utc": "2026-10-25T17:33:38.004319+00:00",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "packages": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "numba": "0.68.0",
+    "pystoi": "0.4.1",
+    "soundfile": "0.14.0",
+    "matplotlib": "3.11.2"
+  },
+  "git_head": "2e01ec7abdccbf577efb4e344e638f60563b8e7a",
+  "base_commit": "f1225f13",
+  "lpx_combined_content_fingerprint": "b5bd53be01752e563f82657db41b51310699b87ff52603ccccebb033aea2a118",
+  "ffmpeg": "ffmpeg version 8.1.1-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+  "ffmpeg_sha256": "09948d4cdd0650da6ff5a87577469f2a218dc2615ae379f8f734d24c49de0f73",
+  "ffprobe": "ffprobe version 8.1.1-full_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers",
+  "ffprobe_sha256": "a6618e99bb58869ded3c6f37b53aa1a8d701c3591dbb7b5b317d47369c112be2",
+  "avr_compiler": "avr-g++.exe (GCC) 7.3.0",
+  "source_sha256": {
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\src\\Lpx4HybridCore.cpp": "cf4b1e663be0c503d95ca101e5f1b37fcfcf4d3b8d57250f8ec4d8dbb076f8a7",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\src\\Lpx4HybridCore.h": "c5016338b4eae56af5013ce4ed8f24afe9a9e5071b226b569942431100a88558",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\src\\Lpx4Math.h": "46bd8d82e7c85ccf3883916a48b194773d8505e0ffb4a9ba5aecec6ca37edd0d",
+    "Codecs\\LPX\\validation\\atmega328p\\profile.cpp": "5c0179ae73a153285826dfc1d608c4c65171f257901399efc9bb0e1488039e4a",
+    "Codecs\\LPX\\validation\\atmega328p\\sim_profile.c": "c35b6adbb401978e96973d2a919ebca0bbd2879c5b4d47110c70233bf2516b52",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\benchmark_standards.py": "01f160bbff3275feb0cb750681e6b747b7dc008f1871e5d336001af61fc2cd51",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\diagnose_standard_alignment.py": "b20edacc74d8cf76b0b766b5b9bb4bf6c6f7d63223084de0e45dd300a5601865",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\plot_standards.py": "c256b8f268fc0c90b8343e05190cec3836ad48db59153e4be2789020c6716843",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\standard_headroom.py": "e7e208290fc6849f14c4f40ac185d9883a02eab5e44007a9e4a820ac2a2ae943",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\standard_metrics.py": "3129e3d2ea2f634e8a46a4bf7c0c1e91f3c3fb914476fd0ab8737ca96de3d807",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\summarize_standards.py": "89b921b67803541810a3ec182b7fc32d559c896a30fe02145ea94bbb25e63e32",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\validate_standards_avr.py": "a8369672b461507eb4aa4dc44dd6eb782dab7c5e80e9c00e16c57b57076b3375",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tests\\test_standard_metrics.py": "60b65224a72df8b893d7ca8d92b51e2b422bd47e91f9c4bda9be9b7223a20587"
+  },
+  "native_build_note": "The existing g++ adapter invokes Clang 24 with MSVC STL and C++14 (the decoder requests only C++11). AVR is GNU AVR GCC 7.3.0, GNU ABI, -Os; full options retained in avr.json.",
+  "simulator": "simavr 1.6 in WSL Ubuntu; no physical device",
+  "reproduction_note": "Original attributed media and generated WAV/ELF/HEX files remain outside tracked results. Source URLs/hashes and deterministic recipes are in corpus.json; encoder/decoder commands are in measurements.json."
+}

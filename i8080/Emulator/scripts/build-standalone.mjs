@@ -11,7 +11,8 @@ const formats = stripExports(stripImports(await read('formats.mjs')));
 const scriptString = text => JSON.stringify(text).replace(/</g, '\\u003c');
 let app = stripImports(await read('app.mjs'));
 const catalog = JSON.parse(await read('examples.json'));
-for (const entry of catalog.entries) entry.base64 = (await readFile(new URL(entry.rom, root))).toString('base64');
+for (const entry of catalog.entries) for (const variant of entry.variants)
+  variant.base64 = (await readFile(new URL(variant.rom, root))).toString('base64');
 const embeddedCatalog = `const EXAMPLE_CATALOG = JSON.parse(${scriptString(JSON.stringify(catalog))});\n`;
 app = app.replace(/^async function getExampleCatalog\(\).*$/m, 'async function getExampleCatalog() { return EXAMPLE_CATALOG; }');
 app = app.replace(/^async function readExample\(entry\).*$/m, 'async function readExample(entry) { return Uint8Array.from(atob(entry.base64), c => c.charCodeAt(0)).buffer; }');

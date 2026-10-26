@@ -1,0 +1,24 @@
+{
+  "cases": 524288,
+  "calls": 1310720,
+  "all262144CodeTriples": true,
+  "fusedAndSeparateExactAgainstUntouchedXiph": true,
+  "rawStateExact": true,
+  "guardsAndInputsPreserved": true,
+  "repairMasks": [
+    1299952,
+    2274,
+    8494,
+    0
+  ],
+  "fineStepRepairs": 622,
+  "binarySha256": "f7d5bc3f0ff54e837bc763865c6ea25c6bdd539ef69580d956a4dacb02f0bb71",
+  "compiler": "Clang 24 -O2 -fwrapv -fno-strict-aliasing; separate non-LTO original Xiph oracle objects",
+  "sourceSha256": {
+    "src/nb3_interpolate.h": "9166e91a73584db2cd9da00f9a6f3fb35b24d255814d010fcd17d8f22fed069d",
+    "src/compact_lsp.c.inc": "85b9cda39299eae123ed024d82992173b2162373419e8f24cbee2b3b2973efec",
+    "src/nb3_lsp_finish.h": "41b03398eeaeeae0d6c02da47e49ed7524b8799f25831e70d6dfe33d0ebe55c8",
+    "tests/nb3_margin.c": "6742b1a50a257297ec1939a1cb818e4e8355a48d6c2c962c6129db340e346e46",
+    "tools/build_lsp_lifetime_test.py": "9a6404e05a955f707d3bf6de35f96337f9c372a46c0bb02d966c659fe2998582"
+  }
+}

@@ -42,7 +42,10 @@ matching optimized kernel is provided yet.
 | Signed 16x16 multiply | `avr_multiply.h` | exact-width C multiply in that header / upstream `fixed_generic.h` |
 | Signed shifts and rounded products | `avr_shift.h`, `avr_fixed.h` | C shifts in `avr_shift.h` / upstream fixed-point macros |
 | Generic, bounded and aligned-p1 Q14 products | `q14.S` | exact word extraction in `nb3_c_math.h`, selected by `avr_fixed.h` |
-| LSP polynomial stages | `compact_lsp.c.inc` calling Q14 ASM | same recurrence using C Q14 |
+| NB3 quarter advance / center margin | `lsp_advance.S`, selected by `nb3_interpolate.h` | `speex_nb3_advance_codebook_c` in the same header, also callable in an ASM build |
+| Symmetric order-ten LPC output | `lsp_finish.S`, selected by `nb3_lsp_finish.h` | `speex_nb3_lsp_finish10_c` in the same header, also callable in an ASM build |
+| First two-root LSP constructor | `lsp_first.S`, selected by `nb3_lsp_first.h` | `speex_nb3_lsp_first_c` in that header, also callable in an ASM build |
+| LSP polynomial stages 2/3/4 | `lsp_stage.S` and shared-source `q14_macros.S`, selected by `nb3_lsp_stage.h` | `speex_nb3_lsp_stage_c` in that header, also callable in an ASM build |
 | Historical pitch write/add | `pitch_add.S` | C block loop in `pitch24.h` |
 | Innovation, scaling and saturation | `innovation.S` | C branch in `innovation.h` and bounded helpers in `nb3_c_math.h` |
 | Known-zero adaptive gain | separate `speex_avr_zero_innovation10` entry | four byte products/carries in `speex_nb3_zero_shape_c` |
@@ -59,6 +62,10 @@ The AVR IIR cursor compares a low address byte only because ten word positions
 span exactly 20 bytes; every state-base low byte and page crossing is tested.
 Changing that span requires a new wrap proof. The portable C IIR retains its
 ordinary indexed ring cursor and coefficient-age loop.
+
+AVR ASM is the primary optimization target for ATmega328P; portable C remains
+explicitly selectable on that same MCU. The private codebook advance requires
+real NB3 endpoint quarters; arbitrary signed16 angles use the general helpers.
 
 The C build does not link any `.S` file. The historical, unused
 `lpc_update.S` corresponds to upstream transposed C synthesis and is not a
@@ -91,7 +98,7 @@ real-time support depends on the target and must be measured. On ATmega328P
 both C and explicitly enabled ASM pass all 31 complete PWM streams with
 interrupts. The tested additional CPU reserve is 10% for C and 40% for ASM;
 these are measured corpus/ISA results, not physical-board guarantees. The
-C corpus maximum is 251,823 cycles (252,388 with pitch coverage).
+C corpus maximum is 229,504 cycles (230,077 with pitch coverage).
 The build tool defaults to C; `--backend asm` explicitly adds the enable define.
 
 ## Export and integrate

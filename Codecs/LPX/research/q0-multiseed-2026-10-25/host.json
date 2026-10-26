@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "regression_tests": 85,
+  "seconds": 67.934,
+  "log_sha256": "01c87cfc114de3f467815a89384823bb1f3867b8ea98ed93fbd0d07422a0b926",
+  "additional_summary_test": {
+    "tests": 2,
+    "status": "passed",
+    "command": "python tests/test_multiseed_summary.py -v",
+    "log_sha256": "47606075c703875d059c8737c61510b71550b67e6353d4035657633186687481"
+  },
+  "command": "python -m unittest discover -s Codecs/LPX/01_ACTIVE_Q0_CODEC/tests -v",
+  "warnings": "pystoi fallback warnings occur in intentionally short/silent unit fixtures; no listening scores are claimed."
+}

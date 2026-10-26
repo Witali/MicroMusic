@@ -1,0 +1,151 @@
+{
+  "cpu": "Intel 8080, documented instruction timings",
+  "cpu_hz": 3500000,
+  "period_t": 108,
+  "carrier_hz": 32407.40740740741,
+  "reference": {
+    "language": "C99",
+    "target": "wasm32-unknown-unknown",
+    "options": [
+      "--target=wasm32-unknown-unknown",
+      "-std=c99",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-nostdlib",
+      "-Wl,--no-entry"
+    ]
+  },
+  "interrupt_input": "inactive; INTE is audio",
+  "wait_states": 0,
+  "hardware_tested": false,
+  "active_interrupts_supported": false,
+  "buffer": "no producer/consumer buffer; direct cycle-timed output",
+  "reports": [
+    {
+      "name": "uniform26",
+      "original": {
+        "sha256": "8085bef215f1108d9009082689554ffba36985b4717fb620791906ad49a847d0",
+        "frames": 494592,
+        "periods_t_by_phase": [
+          {
+            "132": 21760,
+            "134": 472832
+          },
+          {
+            "134": 494592
+          },
+          {
+            "132": 2304,
+            "134": 492288
+          },
+          {
+            "121": 1931,
+            "137": 492660
+          }
+        ],
+        "duration_t": 266506117,
+        "level_sha256": "1a68cc2b238d02b4ec1cfc31ef2562c6a906e9fef9fe952d83c17a60506ba78d",
+        "writes": 0
+      },
+      "optimized": {
+        "sha256": "8a865d704a74bcd8ec0825ce52f601953a3b232e650decf642de79ad644fddc3",
+        "frames": 616912,
+        "slots": 2467648,
+        "periods_t": {
+          "108": 2467647
+        },
+        "widths_t": {
+          "0": 20340,
+          "4": 55540,
+          "8": 92532,
+          "12": 130840,
+          "16": 179648,
+          "20": 214416,
+          "24": 250504,
+          "28": 288808,
+          "32": 298236,
+          "36": 251072,
+          "40": 214620,
+          "44": 176144,
+          "48": 127368,
+          "52": 92840,
+          "56": 56212,
+          "60": 18528
+        },
+        "duration_t": 266505984,
+        "instructions": 45972044,
+        "level_sha256": "fdd1c18f1f4346f486e5614835c9801d3b1e9314952f18887e0d01caf76519ff",
+        "pc": 7582,
+        "sp": 23200,
+        "writes": 0,
+        "halted": true,
+        "note_boundary_error_max_t": 208,
+        "pitch_error_max_cents": 0.7557975028458462
+      }
+    },
+    {
+      "name": "balanced27",
+      "original": {
+        "sha256": "33da178192bd2c464c30045b995e4e25cd4b14da3f7ff1107b50b0bf759a094a",
+        "frames": 499200,
+        "periods_t_by_phase": [
+          {
+            "132": 22528,
+            "134": 476672
+          },
+          {
+            "118": 499200
+          },
+          {
+            "132": 2304,
+            "134": 496896
+          },
+          {
+            "121": 1949,
+            "137": 497250
+          }
+        ],
+        "duration_t": 261000805,
+        "level_sha256": "dfcd903c8c004ef64bb041e6e23ceff56746dce77769ad906d83003090234aff",
+        "writes": 0
+      },
+      "optimized": {
+        "sha256": "8c475ba1877c40b851da5683dc46b4f3f7ba7c8e8d5dc1dbc10a6eb6be7b3f08",
+        "frames": 604168,
+        "slots": 2416672,
+        "periods_t": {
+          "108": 2416671
+        },
+        "widths_t": {
+          "0": 18560,
+          "4": 53360,
+          "8": 88804,
+          "12": 125384,
+          "16": 175544,
+          "20": 211828,
+          "24": 248712,
+          "28": 285092,
+          "32": 293224,
+          "36": 247316,
+          "40": 212168,
+          "44": 174748,
+          "48": 125328,
+          "52": 89180,
+          "56": 51952,
+          "60": 15472
+        },
+        "duration_t": 261000576,
+        "instructions": 45019752,
+        "level_sha256": "252756a634671bc4f7653610402ee16758016d3ba25da50f0d85ea7cd312b165",
+        "pc": 7609,
+        "sp": 22828,
+        "writes": 0,
+        "halted": true,
+        "note_boundary_error_max_t": 208,
+        "pitch_error_max_cents": 1.3485156336396769
+      }
+    }
+  ]
+}

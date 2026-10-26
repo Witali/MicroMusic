@@ -1,0 +1,52 @@
+{
+  "mcu": "ATmega328P",
+  "compiler": "AVR GCC 7.3.0",
+  "simulator": "avr8js 0.21.1",
+  "backend": "asm",
+  "binarySha256": "b2f81cac17671734ca1ae21a97850a74e2282d95c0464d20bfeeba8ee5a45ff0",
+  "deviceHeaders": {
+    "compiler": "AVR GCC 7.3.0",
+    "target": "atmega328p",
+    "headers": {
+      "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+      "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837"
+    },
+    "sregAddressExpression": "_SFR_MEM_ADDR(SREG), from avr/io.h"
+  },
+  "cases": 1380351,
+  "calls": 2760702,
+  "outputWordsPerPath": 2760702,
+  "allSigned16LeftRootsAt16RightRoots": true,
+  "allSigned17Sums": true,
+  "all131072HighByteCarryInputs": true,
+  "addressCases": 4096,
+  "all256PointerLowBytes": true,
+  "oddAndPageCrossingPointers": true,
+  "selectedAndForcedCExact": true,
+  "independentBigIntProductOracle": true,
+  "guardsAndP0Preserved": true,
+  "exactAsmReadAndWriteAddresses": true,
+  "asmCalls": 1380351,
+  "asmReadBytes": 0,
+  "asmWrittenBytes": 11042808,
+  "savedStackBytes": 0,
+  "flagChecks": 1380351,
+  "highByteCarryInputsChecked": 131072,
+  "signed17SumsChecked": 131071,
+  "calleeSavedRegistersAtRet": true,
+  "zeroRegisterAtRet": true,
+  "retChecks": 4141053,
+  "primitiveCyclesIncludingRet": {
+    "negative": [
+      66
+    ],
+    "zero": [
+      66
+    ],
+    "positive": [
+      66
+    ]
+  },
+  "includesInterrupts": false,
+  "physicalBoardTested": false
+}

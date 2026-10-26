@@ -1,8 +1,11 @@
 #include "nb3_header.h"
+#include "nb3_subframe.h"
+#include "nb3_lsp.h"
 #if SPEEX_ENABLE_WB1
 #include "wb_internal.h"
 #endif
 #include "nb3_indices.h"
+#include "nb3_interpolate.h"
 /* Restricted NB3 body adapted from Xiph Speex 1.2.1 nb_celp.c.
  * Copyright (C) 2002-2006 Jean-Marc Valin; BSD terms in vendor/speex-1.2.1/COPYING.
  * Preserve the original excitation, interpolation, rounding and 40-sample
@@ -18,12 +21,16 @@ static SPEEX_NB3_NOINLINE
 static SPEEX_NB3_STAGE_O2
 #endif
 void speex_nb3_long_innovation(int16_t *out,
-    const int16_t *in,SpeexBits *bits,int32_t scale,unsigned index)
+    const int16_t *in,const uint8_t *input_indices,int32_t scale,unsigned index)
 {
+#if SPEEX_NB3_USE_AVR_ASM
+    const uint8_t *indices=input_indices;
+#else
+    uint8_t indices[4];
+    for(unsigned k=0;k<4;k++)indices[k]=input_indices[k];
+#endif
     int8_t gains[3];
     uint8_t vector;
-    uint8_t indices[4];
-    speex_nb3_unpack_indices(bits,indices);
     gains[0]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index+2));
     gains[1]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index+1));
     gains[2]=(int8_t)(32+AVR_READ_I8(gain_cdbk_lbr+index));
@@ -40,7 +47,9 @@ void speex_nb3_long_innovation(int16_t *out,
 }
 _Static_assert(NB_SUBFRAME_SIZE==40 && NB_PITCH_START==17 && NB_PITCH_END==144,
                "Packed pitch is specialized for the pinned NB3 frame/pitch bounds");
-SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, void *vout)
+_Static_assert(NB_ORDER==10 && NB_NB_SUBFRAMES==4 && LSP_MARGIN==16,
+               "Quarter-step LSP interpolation requires the pinned NB3 geometry");
+SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packet, void *vout)
 {
    DecState *st=(DecState *)state;
    spx_word16_t *out=(spx_word16_t *)vout;
@@ -48,31 +57,32 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, voi
    char *stack=st->stack;
    int qe,sub,i;
    uint8_t repeat_lsp;
-   const uint8_t *packet;
-   VARDECL(spx_lsp_t *qlsp);
+   VARDECL(spx_lsp_t *lsp_delta);
    VARDECL(spx_coef_t *ak);
    VARDECL(spx_lsp_t *interp_qlsp);
-   if (!bits) return -2;
-   packet=(const uint8_t *)bits->chars;
+   VARDECL(uint8_t *indices);
+   if (!packet) return -2;
    SPEEX_MOVE(st->excBuf,st->excBuf+NB_FRAME_SIZE,NB_DEC_SHIFT_COUNT);
-   ALLOC(qlsp,NB_ORDER,spx_lsp_t);
+   ALLOC(lsp_delta,NB_ORDER,spx_lsp_t);
    repeat_lsp=st->first || (st->lsp_key[0]==(packet[0]&7) &&
                   st->lsp_key[1]==packet[1] && st->lsp_key[2]==(packet[2]&254));
-   if (!st->first && repeat_lsp) {
-      /* Validated raw NB3 packets start at bit 5. Three 6-bit LSP fields
-       * finish at bit 23. Gain bit 23 is deliberately excluded from the key. */
-      bits->charPtr=2;bits->bitPtr=7;
-      SPEEX_COPY(qlsp,st->old_qlsp,NB_ORDER);
-   } else {
-      lsp_unquant_lbr(qlsp,NB_ORDER,bits);
+   if (st->first || !repeat_lsp) {
+      /* Decode directly in quarter units. The original two P14 products
+       * are integral for NB3's multiple-of-16 endpoints. Prepare the same
+       * delta before excitation, avoiding a raw-angle temporary round trip. */
+      speex_nb3_lsp_quarters(packet,lsp_delta);
+      if(st->first) for(i=0;i<NB_ORDER;i++) {st->old_qlsp[i]=4*lsp_delta[i];lsp_delta[i]=0;}
+      else for(i=0;i<NB_ORDER;i++)lsp_delta[i]-=st->old_qlsp[i]>>2;
       st->lsp_key[0]=packet[0]&7;st->lsp_key[1]=packet[1];st->lsp_key[2]=packet[2]&254;
    }
-   if (st->first) SPEEX_COPY(st->old_qlsp,qlsp,NB_ORDER);
-   qe=speex_bits_unpack_unsigned(bits,5);
+   qe=speex_nb3_frame_gain(packet);
+   /* The validated packet map supplies the complete 33-bit group once.
+    * This four-byte slot is dead when LPC synthesis reuses offset 20. */
+   ALLOC(indices,4,uint8_t);
    for (sub=0;sub<NB_NB_SUBFRAMES;sub++)
    {
       spx_word16_t *exc=frame_exc+NB_SUBFRAME_SIZE*sub;
-      uint16_t header=speex_nb3_unpack_header(bits);
+      uint16_t header=speex_nb3_unpack_subframe(packet,(uint8_t)sub,indices);
       unsigned pitch=(header>>6)+17;
       unsigned index=((header>>1)&31)*4;
       int q_energy;
@@ -82,19 +92,24 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, voi
       q_energy=header&1;
       ener=AVR_READ_I32(&nb3_gain_table[(qe<<1)|q_energy]);
       if (!index) {
-         speex_nb3_zero_innovation(exc,bits,ener);
+         speex_nb3_zero_innovation(exc,indices,ener);
       } else if (pitch>=41) {
          /* Even the last tap reads exc[-1] or earlier. No output feeds a
           * source in this block; fuse the three sums with innovation. */
-         speex_nb3_long_innovation(exc,exc-pitch-1,bits,ener,index);
+         speex_nb3_long_innovation(exc,exc-pitch-1,indices,ener,index);
       } else {
-         speex_nb3_short_innovation(exc,exc,(uint8_t)pitch,bits,ener,index);
+         speex_nb3_short_innovation(exc,exc,(uint8_t)pitch,indices,ener,index);
       }
    }
-   /* Excitation uses no scratch beyond qlsp. Allocate distinct synthesis
-    * arrays after it, retaining the four original interpolation steps. */
+   /* Release the excitation indices. C shares the next 20 B between angles
+    * and LPC; ASM uses only three temporary center angles in that slot.
+    * Both converters consume all frequencies before coefficient stores.
+    * LPC enters state before WB reuses this slot for callback indices. */
+   stack=(char *)(lsp_delta+NB_ORDER);
    ALLOC(ak,NB_ORDER,spx_coef_t);
-   ALLOC(interp_qlsp,NB_ORDER,spx_lsp_t);
+   interp_qlsp=ak;
+   /* The delta was prepared before excitation. Cache hits do not read it;
+    * changed frames advance raw state four times, with margin only on out. */
    for (sub=0;sub<NB_NB_SUBFRAMES;sub++)
    {
       spx_word16_t *sp;
@@ -111,9 +126,12 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, voi
        * On reset, compute it after the first synthesis step as upstream does.
        * IIR always runs, including its coefficient-age transition. */
       if (update_lpc) {
-         lsp_interpolate(st->old_qlsp,qlsp,interp_qlsp,NB_ORDER,sub,
-                         NB_NB_SUBFRAMES,LSP_MARGIN);
+#if SPEEX_NB3_USE_AVR_ASM
+         speex_nb3_interpolate_lpc(st->old_qlsp,lsp_delta,ak);
+#else
+         speex_nb3_interpolate_codebook(st->old_qlsp,lsp_delta,interp_qlsp);
          lsp_to_lpc(interp_qlsp,ak,NB_ORDER,stack);
+#endif
       }
       /* Excitation is complete and remains read-only during synthesis.
        * Filter from its delayed history directly, retaining the original
@@ -123,12 +141,11 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, voi
       if (update_lpc) for (i=0;i<NB_ORDER;i++) st->interp_qlpc[i]=ak[i];
 #if SPEEX_ENABLE_WB1
       if (!out) {
-         SpeexBits cursor={0};
-         uint8_t indices[4];
          uint16_t header;
-         cursor.nbBits=160;cursor.chars=(char *)packet;cursor.charPtr=3+4*sub;cursor.bitPtr=4+sub;
-         header=speex_nb3_unpack_header(&cursor);
-         speex_nb3_unpack_indices(&cursor,indices);
+         /* Interpolated angles are dead once LPC is ready. HB consumes the
+          * reconstructed indices synchronously, before the next quarter. */
+         indices=(uint8_t *)interp_qlsp;
+         header=speex_nb3_unpack_subframe(packet,(uint8_t)sub,indices);
          speex_wb_low_ready(sp,st->interp_qlpc,indices,
              AVR_READ_I32(nb3_gain_table+(qe<<1)+(header&1)));
       }
@@ -143,7 +160,6 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, SpeexBits *bits, voi
       }
 #endif
    }
-   if (!repeat_lsp) SPEEX_COPY(st->old_qlsp,qlsp,NB_ORDER);
    st->first=0;
    return 0;
 }

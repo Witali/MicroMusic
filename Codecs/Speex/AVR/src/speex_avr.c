@@ -7,9 +7,10 @@
 #endif
 
 static DecState decoder;
-/* Excitation needs only qlsp (20 B). Synthesis appends distinct ak/interp
- * arrays at offsets 20/40. Peak = 60 B; host checks every aligned PUSH. */
-_Alignas(4) static uint32_t scratch[15];
+/* Delta occupies 20 B. Excitation indices, interpolated angles and LPC
+ * coefficients reuse offset 20 in that order. The converter consumes every
+ * angle before writing coefficients. Peak = 40 B; host checks each PUSH. */
+_Alignas(4) static uint32_t scratch[10];
 static size_t scratch_peak;
 
 #if SPEEX_NB3_CHECK_SCRATCH
@@ -37,14 +38,8 @@ void speex_avr_init(void)
 
 int speex_avr_decode(const uint8_t *packet, size_t bytes, int16_t *pcm)
 {
-    SpeexBits bits;
     if (!packet || !pcm || bytes != 20 || (packet[0] >> 3) != 3) return -1;
-    memset(&bits, 0, sizeof(bits));
-    bits.chars = (char *)packet;
-    bits.nbBits = 160;
-    bits.buf_size = 20;
-    bits.bitPtr = 5; /* already validated the wideband bit and 4-bit mode */
-    return nb_decode(&decoder, &bits, pcm);
+    return nb_decode(&decoder, packet, pcm);
 }
 
 size_t speex_avr_state_bytes(void) { return sizeof(decoder) + sizeof(scratch); }
@@ -53,8 +48,6 @@ size_t speex_avr_scratch_peak(void) { return scratch_peak; }
 #if SPEEX_ENABLE_WB1
 int speex_wb_decode_low(const uint8_t *packet)
 {
-    SpeexBits bits={0};bits.chars=(char *)packet;bits.nbBits=160;
-    bits.buf_size=20;bits.bitPtr=5;
-    return nb_decode(&decoder,&bits,0);
+    return nb_decode(&decoder,packet,0);
 }
 #endif

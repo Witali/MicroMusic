@@ -1,0 +1,170 @@
+{
+  "scope": "One tuning excerpt ru_pushkin_a4; seed is the stage2 16k pilot winner. No validation/AVR claim.",
+  "tests": {
+    "passed": 2,
+    "seconds": 15.756,
+    "command": "python tests/test_joint_rate.py -v"
+  },
+  "cases": [
+    {
+      "ceiling_bps": 16000,
+      "factor": 0.0003,
+      "lambda": 0.0003,
+      "beam": 4,
+      "allow_zero": true,
+      "compact_features": 24,
+      "audio_packet_bytes": 10928,
+      "file_bytes": 10948,
+      "v2_payload_bits": 88019,
+      "quality": {
+        "ser_db": 27.646765570620374,
+        "rmse": 0.0028300375744643906,
+        "stoi": 0.9506868242815055,
+        "spectral_rmse_db": 5.638255837985167,
+        "reference_rms": 0.06825437280280897,
+        "decoded_rms": 0.06829463042718963,
+        "clip_count": 0,
+        "pcm16_sha256": "92187f5495eb59ec55ec23c0c1becbc62dca79c337bf11bc44f9eef2b94ae232"
+      },
+      "native_model_pcm_exact": true,
+      "decoder_modified": false,
+      "stream_sha256": "9c216c9816e284d6bcc8caa1b5d09062be056387450b6e70b6edf9ec95a553ae",
+      "seconds": 3.915717399911955,
+      "mode_counts": {
+        "direct": 363,
+        "pitch": 436,
+        "sparse": 1
+      },
+      "avr_cycles_measured": false,
+      "path": "build\\lpx-lowrate\\pilot3\\ru_pushkin_a4-16000-0.0003.l4hy"
+    },
+    {
+      "ceiling_bps": 16000,
+      "factor": 0.001,
+      "lambda": 0.001,
+      "beam": 4,
+      "allow_zero": true,
+      "compact_features": 24,
+      "audio_packet_bytes": 10464,
+      "file_bytes": 10484,
+      "v2_payload_bits": 84306,
+      "quality": {
+        "ser_db": 27.418520377862162,
+        "rmse": 0.0029053901600831562,
+        "stoi": 0.9521522650888954,
+        "spectral_rmse_db": 5.546814253807192,
+        "reference_rms": 0.06825437280280897,
+        "decoded_rms": 0.06823596078508096,
+        "clip_count": 0,
+        "pcm16_sha256": "a03611c073a90ea6fe28677136c3257cdae63e7a3938bfbceea795bfbc8a29f2"
+      },
+      "native_model_pcm_exact": true,
+      "decoder_modified": false,
+      "stream_sha256": "7ffca35133f8f86e2f33c8f865d48477abbe657e6b186bef09c1ccfb30c870f7",
+      "seconds": 3.096011499990709,
+      "mode_counts": {
+        "direct": 348,
+        "pitch": 451,
+        "sparse": 1
+      },
+      "avr_cycles_measured": false,
+      "path": "build\\lpx-lowrate\\pilot3\\ru_pushkin_a4-16000-0.001.l4hy"
+    },
+    {
+      "ceiling_bps": 16000,
+      "factor": 0.003,
+      "lambda": 0.003,
+      "beam": 4,
+      "allow_zero": true,
+      "compact_features": 24,
+      "audio_packet_bytes": 9855,
+      "file_bytes": 9875,
+      "v2_payload_bits": 79220,
+      "quality": {
+        "ser_db": 26.668887168193116,
+        "rmse": 0.003167277545288791,
+        "stoi": 0.9388785383549388,
+        "spectral_rmse_db": 5.709044773436904,
+        "reference_rms": 0.06825437280280897,
+        "decoded_rms": 0.06823413524022956,
+        "clip_count": 0,
+        "pcm16_sha256": "cf7931ad8c0de8332135f40dfea9996d8ab76024f36b60ffaa31efbce84068d1"
+      },
+      "native_model_pcm_exact": true,
+      "decoder_modified": false,
+      "stream_sha256": "a5ba9b171de309b817393134463a66f9e994b67a538cdecf15cb5bce10bb1cfc",
+      "seconds": 3.3828311000252143,
+      "mode_counts": {
+        "direct": 281,
+        "pitch": 507,
+        "sparse": 12
+      },
+      "avr_cycles_measured": false,
+      "path": "build\\lpx-lowrate\\pilot3\\ru_pushkin_a4-16000-0.003.l4hy"
+    },
+    {
+      "ceiling_bps": 16000,
+      "factor": 0.01,
+      "lambda": 0.01,
+      "beam": 4,
+      "allow_zero": true,
+      "compact_features": 24,
+      "audio_packet_bytes": 8505,
+      "file_bytes": 8525,
+      "v2_payload_bits": 68105,
+      "quality": {
+        "ser_db": 23.468871561852232,
+        "rmse": 0.0045781171546590525,
+        "stoi": 0.9042381983180733,
+        "spectral_rmse_db": 6.4237128180865675,
+        "reference_rms": 0.06825437280280897,
+        "decoded_rms": 0.06820288954486055,
+        "clip_count": 0,
+        "pcm16_sha256": "cf91bdccfd2f2815de10be201115bb32f664354b9d50bce231a8845072fe1073"
+      },
+      "native_model_pcm_exact": true,
+      "decoder_modified": false,
+      "stream_sha256": "4539543a617204ea4efd6b771e5f4e76bb4a888a1b831eafd654dbfae5586089",
+      "seconds": 3.303124299971387,
+      "mode_counts": {
+        "direct": 178,
+        "pitch": 471,
+        "sparse": 151
+      },
+      "avr_cycles_measured": false,
+      "path": "build\\lpx-lowrate\\pilot3\\ru_pushkin_a4-16000-0.01.l4hy"
+    },
+    {
+      "ceiling_bps": 16000,
+      "factor": 0.03,
+      "lambda": 0.03,
+      "beam": 4,
+      "allow_zero": true,
+      "compact_features": 24,
+      "audio_packet_bytes": 6811,
+      "file_bytes": 6831,
+      "v2_payload_bits": 54848,
+      "quality": {
+        "ser_db": 18.63847600393035,
+        "rmse": 0.007983745420130736,
+        "stoi": 0.83897164193813,
+        "spectral_rmse_db": 7.316084302703878,
+        "reference_rms": 0.06825437280280897,
+        "decoded_rms": 0.06785528098863094,
+        "clip_count": 0,
+        "pcm16_sha256": "34fc5e2b5a96f8f6145ccb68ddfad08622dad00029dfeb7a94ab97bd3ae2ad6f"
+      },
+      "native_model_pcm_exact": true,
+      "decoder_modified": false,
+      "stream_sha256": "23e1b4b4f1345a8c67ebfe7002b28fa9e2498d11806fccd47bdfc83f52c89202",
+      "seconds": 3.3150757999392226,
+      "mode_counts": {
+        "direct": 101,
+        "pitch": 272,
+        "sparse": 427
+      },
+      "avr_cycles_measured": false,
+      "path": "build\\lpx-lowrate\\pilot3\\ru_pushkin_a4-16000-0.03.l4hy"
+    }
+  ]
+}

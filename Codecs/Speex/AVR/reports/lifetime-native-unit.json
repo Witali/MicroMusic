@@ -1,0 +1,23 @@
+{
+  "boundedCases": 589828,
+  "boundedCalls": 1572880,
+  "all262144CodeTriples": true,
+  "minRaw": 96,
+  "maxRaw": 24880,
+  "lpcInputs": 240000,
+  "overlappingLpcOutputs": 720000,
+  "aliasOffsets": [
+    -1,
+    0,
+    1
+  ],
+  "exactAgainstUntouchedXiph": true,
+  "compiler": "Clang 24 -std=c11 -O2 -fwrapv -fno-strict-aliasing; separate non-LTO oracle objects",
+  "binarySha256": "dc7a1adc95a6e0b6d60ed22ae08bd1833434b54469bad4dd484de79f290b2ceb",
+  "sourceSha256": {
+    "src/nb3_interpolate.h": "5c322bf72dae0615551140d607d7fa9315802799a6abf0189f37d890d63f6115",
+    "src/compact_lsp.c.inc": "f788f2ce58129a58b493d3632f9c94fb4430db9373e2b64456c2430c12646382",
+    "tests/lsp_lifetime.c": "e748274f28fba9d7920402921ea7f66054ec06286d0a8e02bf0965bb1a2a598b",
+    "tools/build_lsp_lifetime_test.py": "94405caf8d4ddcaa203265a746a6ec70d2ed7a3071490aac4cda28f2318e84c6"
+  }
+}

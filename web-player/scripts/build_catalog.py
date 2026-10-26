@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[2]
 MUSIC = ROOT / 'ATtiny13A' / 'Music'
 OUTPUT = ROOT / 'web-player' / 'firmware.json'
 TINY88_OUTPUT = ROOT / 'web-player' / 'firmware-attiny88.json'
+TINY88_BOARD_OUTPUT = ROOT / 'web-player' / 'firmware-attiny88-16mhz.json'
 SPECS = [
     ('rhythmic', '01', 'Люмьер · Экспедиция 33', 'Все 3:42 сохранённой аранжировки. Скрипка, трёхголосное пианино, отдельная гитара и ударные: пять тональных генераторов и один ударный. Добавлены внутренние тоны аккордов; F# отличается от F#m.', 'variants/rhythmic', 'release'),
     ('alicia', '02', 'Алисия · Экспедиция 33', 'Все 169 нот мелодии и 55 тактов, 2:38. Восстановлено повторное двухтоновое арпеджио пианино: 488 атак сопровождения вместе с виолончелью и внутренней скрипкой. Исходные размеры, триоли и 78/58/87 BPM сохранены; третий тон аккордов опущен. Четыре основных и два резервных голоса.', 'variants/alicia', 'release'),
@@ -121,100 +122,117 @@ def build():
                                  reason='Сохранён исходник C; готового HEX / BIN в архиве нет.')])
 
 
-def build_attiny88():
-    """Catalog the real port images; retain music metadata from their verified sources."""
-    music = ROOT / 'ATtiny88' / 'Music'
-    variant_names = {Path(spec[4]).name for spec in SPECS}
-    assert {p.name for p in (music / 'variants').iterdir() if p.is_dir()} == variant_names
-    entries = []
-    seen = set()
-    for id_, order, title, description, folder, status in SPECS:
-        directory = music / folder
-        source_directory = MUSIC / folder
-        report = json.loads((directory / 'build-report.json').read_text(encoding='utf-8'))
-        source_report = json.loads((source_directory / 'build-report.json').read_text(encoding='utf-8'))
-        verification = json.loads((directory / 'verification.json').read_text(encoding='utf-8'))
-        flash = (directory / 'synth.hex').read_text(encoding='utf-8')
-        eeprom = (directory / 'eeprom.hex').read_text(encoding='utf-8')
-        binary, ep_binary = decode(flash, 8192), decode(eeprom, 64)
-        flash_hash, ep_hash = digest(binary), digest(ep_binary)
-        assert binary == (directory / 'synth.bin').read_bytes(), f'{folder}: Flash HEX/BIN mismatch'
-        assert ep_binary == (directory / 'eeprom.bin').read_bytes(), f'{folder}: EEPROM HEX/BIN mismatch'
-        assert report['target'] == verification['target'] == 'ATtiny88'
-        assert report['sourceVariant'] == verification['variant'] == directory.name
-        assert report['sourceFolder'] == source_directory.relative_to(ROOT).as_posix()
-        assert report['flashBytes'] == len(binary) <= 8192
-        assert report['eepromBytes'] == len(ep_binary) == 64
-        assert report['flashSha256'] == verification['port']['flashSha256'] == flash_hash
-        assert report['eepromSha256'] == verification['port']['eepromSha256'] == ep_hash
-        assert report['sourceFlashSha256'] == source_report['flashSha256'] == verification['original']['flashSha256']
-        assert report['sourceEepromSha256'] == source_report['eepromSha256'] == verification['original']['eepromSha256']
-        assert digest(decode((source_directory / 'synth.hex').read_text(encoding='utf-8'))) == report['sourceFlashSha256']
-        assert digest(decode((source_directory / 'eeprom.hex').read_text(encoding='utf-8'), 64)) == report['sourceEepromSha256']
-        for source_name, source_hash in report['sourceInputs'].items():
-            assert digest((ROOT / source_name).read_bytes()) == source_hash, f'Stale port input: {source_name}'
-        assert report['musicalDataVerified'] is True
-        assert verification['allMusicalStatesMatch'] is True
-        assert verification['allMusicalCommandsMatch'] is True
-        assert verification['tables']['allOtherMusicTableBytesIdentical'] is True
-        assert verification['tables']['allWavetablesIdentical'] is True
-        for field in ('controlTicks', 'firstRestartControlTick', 'snapshotSha256', 'commandSha256'):
-            assert verification['original'][field] == verification['port'][field], f'{folder}: {field}'
-        for field in ('fifoUnderruns', 'lostTimerEvents', 'lostWorkEvents'):
-            assert verification['port'][field] == 0, f'{folder}: {field}'
-        assert report['cpuHz'] == 8000000 and report['pwmHz'] == 31250 and report['synthesisHz'] == 15625
-        assert report['memory']['flashCapacity'] == 8192 and report['memory']['eepromCapacity'] == 64
-        assert report['memory']['sramStart'] == 0x100 and report['memory']['sramEnd'] == 0x2ff
-        assert report['hardware']['timer'] == 'Timer1' and report['hardware']['mode'] == 5
-        assert report['hardware']['monoPin'] == 'PB2/OC1B'
-        assert report['hardware']['stereoLeftPin'] == 'PB1/OC1A'
-        assert report['hardware']['stereoRightPin'] == 'PB2/OC1B'
-        assert report['requiredFuses'] == dict(low='0xEE', high='0xDF', extended='0xFF')
-        assert (flash_hash, ep_hash) not in seen, f'Duplicate port image: {folder}'
-        seen.add((flash_hash, ep_hash))
-        assignments = source_report.get('instrumentAssignments', {})
-        voices = sum(p.get('instrument') != 'off' and p.get('level', 0) > 0 for p in assignments.values())
-        channels = report['audioChannels']
-        assert channels == source_report.get('audioChannels', 1) == verification['port']['channels']
-        relative = directory.relative_to(ROOT).as_posix()
-        outputs = [dict(channel='R' if channels == 2 else 'mono', pin='PB2', compare='OC1B',
-                        register='OCR1B', packagePin=16)]
-        if channels == 2:
-            outputs.insert(0, dict(channel='L', pin='PB1', compare='OC1A', register='OCR1A', packagePin=15))
-        entry = dict(id=id_, order=order, title=title, description=description, status=status,
-                     device='attiny88', voices=source_report.get('activePrimaryVoices', voices or 4),
-                     instruments=assignments,
-                     releaseTailSlots=source_report.get('releaseChannels', {}).get('tailSlots', 0),
-                     flashCapacity=8192, eepromCapacity=64, sramCapacity=512,
-                     flashBytes=len(binary), eepromBytes=len(ep_binary),
-                     cpuHz=8000000, pwmHz=31250, sampleHz=31250, synthesisHz=15625,
-                     flashSha256=flash_hash, eepromSha256=ep_hash, flashHex=flash, eepromHex=eeprom,
-                     audioChannels=channels, outputs=outputs,
-                     source=f'../{relative}/synth.hex', eepromSource=f'../{relative}/eeprom.hex',
-                     sourceAssembly=f'../{relative}/synth.S', buildReport=f'../{relative}/build-report.json',
+def build_attiny88_legacy():
+    """Keep the shipped comparison catalog pinned to its actual retained ROMs."""
+    catalog=json.loads(TINY88_OUTPUT.with_name('firmware-attiny88-legacy.json').read_text(encoding='utf-8'))
+    for entry in catalog['entries']:
+        directory=ROOT/'ATtiny88/Music/variants'/Path(entry['source']).parent.name
+        assert digest((directory/'synth.bin').read_bytes())==entry['flashSha256']
+        assert digest((directory/'eeprom.bin').read_bytes())==entry['eepromSha256']
+        assert decode(entry['flashHex'],8192)==(directory/'synth.bin').read_bytes()
+        assert decode(entry['eepromHex'],64)==(directory/'eeprom.bin').read_bytes()
+    return catalog
+
+
+def build_attiny88_universal(usb=False):
+    """Publish only complete, current UM88 executions, including stereo."""
+    catalog=build_attiny88_legacy()
+    source=ROOT/'ATtiny88/Music/universal'
+    base=source/('songs-micronucleus' if usb else 'songs')
+    cpu=16000000 if usb else 8000000
+    limit=6012 if usb else 8192
+    common_hashes={}
+    for entry in catalog['entries']:
+        name=Path(entry['source']).parent.name
+        directory=base/name
+        report=json.loads((directory/'build-report.json').read_text(encoding='utf-8'))
+        verification=json.loads((directory/'verification.json').read_text(encoding='utf-8'))
+        score=json.loads((directory/'score.json').read_text(encoding='utf-8'))
+        binary=(directory/'synth.bin').read_bytes()
+        flash=(directory/'synth.hex').read_text(encoding='utf-8')
+        assert report['engine']=='UM88' and report['backend']=='avr-asm'
+        assert report['cpuHz']==cpu and report['pwmHz']==cpu/256 and report['synthesisHz']==cpu/1024
+        assert report['channels']==entry['audioChannels']==score['channels']
+        assert report['configuredChannels']==report['channels']
+        selection=report.get('channelSelection','auto')
+        assert selection in ('auto','mono','stereo')
+        assert selection=='auto' or selection==('mono' if report['configuredChannels']==1 else 'stereo')
+        assert report.get('sourceChannels',score['channels'])==score['channels']
+        assert report['voices']==score['voices']
+        assert report['renderABI']==('mono-s16' if report['configuredChannels']==1 else 'packed-stereo-u32')
+        assert report['pwmBufferFrames']*report['channels']==192
+        assert decode(flash,limit)==binary and len(binary)==report['flashBytes']<=limit
+        assert report['flashSha256']==verification['flashSha256']==digest(binary)
+        assert report['engineSha256']==verification['engineSha256']==digest(binary[:report['engineBytes']])
+        assert verification['cpuHz']==cpu and verification['backend']==report['backend']
+        for file,expected in report['sourceInputs'].items():
+            assert digest((ROOT/file).read_text(encoding='utf-8').encode())==expected,f'Stale UM88 input: {file}'
+        core_profile=(report['configuredChannels'],report['cpuHz'],report['backend'],report['packingMode'],report['pwmBufferBytes'])
+        expected=common_hashes.setdefault(core_profile,report['engineSha256'])
+        assert expected==report['engineSha256'],'Arrangements in the same output/clock/backend/packing/buffer profile must share executable bytes'
+        assert verification['passed'] and verification['completeLoops']>=1
+        for field in ('allControlFramesMatch','allTonalMixesMatch','allPwmFramesMatch','allPercussionStatesMatch'):
+            assert verification[field],f'{name}: {field}'
+        assert verification['fifoUnderruns']==verification['lostInterrupts']==0
+        assert verification['fifoCapacityFrames']==report['pwmBufferFrames']
+        assert verification['controlFrames']==score['controlTicks']
+        assert verification['scoreSha256']==digest(json.dumps(score,ensure_ascii=False,separators=(',',':')).encode('utf-8'))
+        assert report['decodedCommandsSha256']==digest(bytes(score['commands']))
+        relative=directory.relative_to(ROOT).as_posix()
+        entry.update(firmwareEngine='UM88',eepromRequired=False,eepromBytes=0,eepromHex=None,eepromSha256=None,eepromSource=None,
+                     configuredChannels=report['configuredChannels'],renderABI=report['renderABI'],
+                     flashBytes=len(binary),flashSha256=digest(binary),cpuHz=cpu,pwmHz=cpu/256,sampleHz=cpu/256,synthesisHz=cpu/1024,
+                     flashHex=flash,source=f'../{relative}/synth.hex',archivedFirmware=False,
+                     sourceAssembly='../ATtiny88/Music/universal/render-avr.S',buildReport=f'../{relative}/build-report.json',
                      verificationSource=f'../{relative}/verification.json',
-                     sources=[f'{relative}/{name}' for name in ('synth.hex', 'synth.bin', 'eeprom.hex', 'eeprom.bin')])
-        if channels == 2:
-            entry['panorama'] = source_report['panorama']
-        entries.append(entry)
-    return dict(schema=1, device='attiny88', defaultId='lumiere-stereo', entries=entries, sourceOnly=[],
-                hardwareProfile=dict(name='ATtiny88', flashCapacity=8192, eepromCapacity=64, sramCapacity=512,
-                                     cpuHz=8000000, pwmHz=31250, synthesisHz=15625,
-                                     requiredFuses=dict(low='0xEE', high='0xDF', extended='0xFF'),
-                                     outputs=dict(mono=dict(pin='PB2/OC1B', pdip28=16),
-                                                  stereoLeft=dict(pin='PB1/OC1A', pdip28=15),
-                                                  stereoRight=dict(pin='PB2/OC1B', pdip28=16)),
-                                     readme='../ATtiny88/Music/README.txt',
-                                     hardwareReview='../ATtiny88/Music/HARDWARE_REVIEW_RU.md'))
+                     controlTicks=score['controlTicks'],durationSeconds=score['controlTicks']/(18750/256),
+                     sources=[f'{relative}/{file}' for file in ('synth.hex','synth.bin','score.json')])
+        if usb:
+            assert report['board']=='mh-et-live-16mhz' and report['applicationFlashLimit']==6012
+            assert report['eepromRequired'] is False and report['requiredFuses'] is None
+            assert verification['bootloaderHandoffChecked'] and verification['erasedEepromChecked']
+            assert score==json.loads((source/'songs'/name/'score.json').read_text(encoding='utf-8')),'USB port changed the score'
+            entry.update(board='mh-et-live-16mhz',uploadProtocol='micronucleus',applicationFlashLimit=limit)
+            entry['outputs']=[dict(channel=o['channel'],pin=o['pin'],compare=o['compare'],register=o['register'],
+                                   boardPin='D9' if o['channel']=='L' else 'D10') for o in entry['outputs']]
+    profile=catalog['hardwareProfile']
+    profile.update(firmwareEngine='UM88',cpuHz=cpu,pwmHz=cpu/256,synthesisHz=cpu/1024,eepromRequired=False,
+                   readme='../ATtiny88/Music/universal/README.md')
+    if usb:
+        catalog['board']='mh-et-live-16mhz'
+        profile.update(name='MH-ET LIVE Tiny88',board='mh-et-live-16mhz',applicationFlashLimit=6012,
+                       oscillator='external',bootloader='Micronucleus',uploadProtocol='micronucleus',requiredFuses=None,
+                       readme='../ATtiny88/Music/MH_ET_LIVE_RU.md',
+                       outputs=dict(mono=dict(pin='PB2/OC1B',boardPin='D10'),stereoLeft=dict(pin='PB1/OC1A',boardPin='D9'),
+                                    stereoRight=dict(pin='PB2/OC1B',boardPin='D10')))
+    return catalog
+
+
+def build_attiny88():
+    return build_attiny88_universal()
+
+
+def build_attiny88_micronucleus():
+    return build_attiny88_universal(usb=True)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--target', choices=('attiny13a', 'attiny88'), default='attiny13a')
+    parser.add_argument('--board', choices=('bare-8mhz', 'mh-et-live-16mhz'), default='bare-8mhz')
     parser.add_argument('--check', action='store_true')
+    parser.add_argument('--legacy', action='store_true', help='Retain the specialized ATtiny88 comparison catalog')
     args = parser.parse_args()
-    catalog = build_attiny88() if args.target == 'attiny88' else build()
-    output = TINY88_OUTPUT if args.target == 'attiny88' else OUTPUT
+    if args.board != 'bare-8mhz' and args.target != 'attiny88':
+        parser.error('--board mh-et-live-16mhz requires --target attiny88')
+    board = args.board == 'mh-et-live-16mhz'
+    if board and args.legacy:
+        parser.error('--legacy cannot be combined with the Micronucleus board')
+    if args.target == 'attiny88':
+        catalog = build_attiny88_micronucleus() if board else build_attiny88_legacy() if args.legacy else build_attiny88()
+        output = TINY88_BOARD_OUTPUT if board else TINY88_OUTPUT.with_name('firmware-attiny88-legacy.json') if args.legacy else TINY88_OUTPUT
+    else:
+        catalog, output = build(), OUTPUT
     text = json.dumps(catalog, ensure_ascii=False, indent=2) + '\n'
     if args.check:
         assert output.read_text(encoding='utf-8') == text, f'Run build_catalog.py --target {args.target} to update catalog'

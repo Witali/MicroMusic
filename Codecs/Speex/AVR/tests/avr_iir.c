@@ -7,6 +7,11 @@ extern void speex_avr_innovation10(int16_t *,const uint8_t *,const int8_t *,int3
 static const int8_t innovation_shapes[] PROGMEM={
 #include "test-shapes.h"
 };
+/* Satisfy the other entries linked from innovation.S with a complete,
+ * deterministic signed-byte codebook; this fixture is not production data. */
+const int8_t exc_10_32_table[320] PROGMEM={
+#include "test-codebook.h"
+};
 uint8_t innovation_pitch[3*10];
 volatile int32_t innovation_scale;
 volatile uint8_t innovation_index;

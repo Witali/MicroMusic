@@ -1,0 +1,32 @@
+{
+  "mcu": "ATmega328P",
+  "simulator": "avr8js 0.21.1",
+  "backend": "c",
+  "binarySha256": "43e44cd6882d4cef6727f2f2eb43a3fabbd4f5d18b7045cc5a3c6b8bd5df0e12",
+  "oracle": "Untouched Xiph lsp.c in separate non-LTO object; production compact LSP with real C/ASM math",
+  "boundedCases": 12804,
+  "boundedCalls": 49680,
+  "codebookTransitions": 4096,
+  "resetCases": 512,
+  "fullSignedInteriorTransitions": 8192,
+  "exactEndpointBoundaryCases": 4,
+  "lpcInputs": 4096,
+  "overlappingLpcOutputs": 12288,
+  "disjointLpcOutputs": 4096,
+  "aliasOffsets": [
+    -1,
+    0,
+    1
+  ],
+  "exactAgainstUntouchedXiphOnAvr": true,
+  "rawQuarterStateExact": true,
+  "deltaAndEndpointsPreserved": true,
+  "memoryOutsideLpcOutputPreserved": true,
+  "oracleArenaGuardsIntact": true,
+  "guardsIntact": true,
+  "calleeSavedRegistersAtRet": true,
+  "zeroRegisterAtRet": true,
+  "retChecks": 66064,
+  "includesInterrupts": false,
+  "physicalBoardTested": false
+}

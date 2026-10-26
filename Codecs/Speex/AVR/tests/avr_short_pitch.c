@@ -15,9 +15,12 @@ int main(void)
         while(!short_command) {}
         memset(&bits,0,sizeof(bits));
         bits.chars=(char *)(short_packet+1);bits.nbBits=20;bits.buf_size=3;
-        if(short_command==1)
+        if(short_command==1) {
+            uint8_t indices[4];
+            speex_nb3_unpack_indices(&bits,indices);
             speex_nb3_short_innovation(short_exc+42,short_exc+42,short_pitch,
-                                      &bits,short_scale,(unsigned)short_gain*4);
+                                      indices,short_scale,(unsigned)short_gain*4);
+        }
         else
             short_c_test(short_exc+42,short_exc+42,short_pitch,
                          &bits,short_scale,(unsigned)short_gain*4);

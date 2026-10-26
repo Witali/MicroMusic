@@ -1,0 +1,45 @@
+{
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "base_commit": "c6f05d7e",
+  "harness_commit": "79ad391d",
+  "tested_main_commit": "03d234ff",
+  "git_head_before_results": "dbce8eb652ff64a2c26d637d108fa84267c7a5dd",
+  "config": {
+    "audio_bps": 8000,
+    "max_file_bytes": 4020,
+    "reference_samples": 32000,
+    "seed_stages": [
+      "existing_cli_8",
+      "enhanced_12",
+      "enhanced_16"
+    ],
+    "lambdas": [
+      0.003,
+      0.01,
+      0.03,
+      0.1,
+      0.3,
+      1.0,
+      3.0
+    ],
+    "refinement_trials": 8,
+    "beam": 4,
+    "compact_features": 24,
+    "scope": "Three previously heard examples, not full-corpus admission or equal quality to 12/16.",
+    "selection": "Full SSE and speech STOI no worse than the feasible existing CLI8 result; then SSE/bytes/hash."
+  },
+  "revision": "6a53426d10f8ccda44425b59661fb87090e875f9cae8341a1a108e1a8b11b9a1",
+  "benchmark_sha256": "6c2bffbf29d374eee52e1ba7ae9231806f79d3914eca4f1d79f57be568793a9b",
+  "source_sha256": {
+    "core_sha256": "cf4b1e663be0c503d95ca101e5f1b37fcfcf4d3b8d57250f8ec4d8dbb076f8a7",
+    "core_header_sha256": "c5016338b4eae56af5013ce4ed8f24afe9a9e5071b226b569942431100a88558",
+    "math_header_sha256": "46bd8d82e7c85ccf3883916a48b194773d8505e0ffb4a9ba5aecec6ca37edd0d",
+    "harness_sha256": "5c0179ae73a153285826dfc1d608c4c65171f257901399efc9bb0e1488039e4a",
+    "runner_sha256": "c35b6adbb401978e96973d2a919ebca0bbd2879c5b4d47110c70233bf2516b52"
+  },
+  "main_integration_sha256": "1b4eec2389a8d42b2f821c825b97c636cc2b26bf60d2546a39f6b3cb8be40c0c",
+  "main_integration_host_tests": 87,
+  "new_harness_validation": "Three complete references, six full active-IRQ AVR images and an 8s continuous workload in three backends/load profiles.",
+  "physical_hardware_measured": false,
+  "human_scores_collected": false
+}

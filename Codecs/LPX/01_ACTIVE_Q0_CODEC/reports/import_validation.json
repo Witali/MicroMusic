@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-25",
+  "platform": "Windows x64",
+  "python": "3.12.14",
+  "numpy": "2.5.4",
+  "scipy": "1.18.1",
+  "numba": "0.68.0",
+  "pystoi": "0.4.1",
+  "soundfile": "0.14.0",
+  "host_compiler": "Clang 24.0.0git 55ea1f4ebea23d0355d5cdb075f1e12f28ab82d0; MSVC STL 14.51.36231",
+  "local_test_adapter": "g++ test command forwarded to clang++; C++11 requests mapped to C++14 for the installed MSVC STL; -fPIC omitted; C batch exports exposed when linking a Windows DLL.",
+  "unit_tests": {
+    "passed": 22,
+    "elapsed_seconds": 17.742
+  },
+  "archive_integrity": {
+    "crc": "PASS",
+    "archive_manifest_entries_checked": 626,
+    "retained_files_checked": 597,
+    "omitted_files_absent": 31
+  },
+  "multiply_regression": {
+    "cases": 1000100,
+    "status": "PASS"
+  },
+  "source_sha256": {
+    "01_ACTIVE_Q0_CODEC/src/cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+    "01_ACTIVE_Q0_CODEC/src/Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+    "01_ACTIVE_Q0_CODEC/src/Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+    "01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "5bdc387aaa0f83af667bfd64d34e2892ae0814268881d48ad5fc632fc291cb67",
+    "01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "60cbfa39f3fc33ce16827511ba028e2402fe72c40d4c8147552db187f999ffcd",
+    "01_ACTIVE_Q0_CODEC/src/native_batch_decoder.cpp": "386042ee60e911001692abce9ffe1d865b1738016ea73e608dc9bb60de9c0ac3",
+    "01_ACTIVE_Q0_CODEC/src/scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081"
+  },
+  "real_time_at_16MHz_proven": false,
+  "notes": [
+    "STOI reports insufficient STFT frames on the short synthetic reference; no speech-quality improvement is inferred.",
+    "Archived historical speech and device performance claims were not re-measured."
+  ]
+}

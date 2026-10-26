@@ -1,0 +1,56 @@
+{
+  "schema": "micromusic-attiny88-board-main-merge-v1",
+  "date": "2026-10-25",
+  "featureParent": "199efba67c56ddb2a5d4ed275b0bd3da47c4af0c",
+  "mainParent": "2cc26bd522a70f130cf533c22142e96a92f752a8",
+  "fullSuite": {
+    "tests": 1686,
+    "pass": 1686,
+    "fail": 0,
+    "skipped": 0
+  },
+  "additionalBoardSelectionTests": {
+    "passed": 6,
+    "failed": 0
+  },
+  "resolvedConflictFiles": 21,
+  "default8MHz": {
+    "firmwareEngine": "UM88",
+    "cpuHz": 8000000,
+    "synthesisHz": 7812.5
+  },
+  "micronucleus16MHz": {
+    "firmwareEngine": "specialized",
+    "cpuHz": 16000000,
+    "synthesisHz": 31250,
+    "eepromUploadRequired": false
+  },
+  "unchangedFeatureFirmwareBinaryFiles": 54,
+  "nativeWasmPreservedFromMain": true,
+  "codecsAndIntel8080PreservedFromMain": true,
+  "historicalFullSongAudit": {
+    "path": "web-player/reports/attiny88-micronucleus-verification.json",
+    "firmwareExecutions": 18,
+    "sha256": "d0a98c9e49af40799a2d03cde3bb0be01fcd7c82bd1f05f2136f9952358afb3a",
+    "rerunForThisMerge": false,
+    "note": "Original complete-song evidence retains its actual source hashes. Fresh merged-core coverage is the full suite above, including all nine UM88 JS/WASM comparisons, all nine Flash-only board images and CPC/CPSE."
+  },
+  "hashNormalization": "UTF-8/LF for source files; raw binary for WASM",
+  "nativeWasmSha256": "0e1d09d63f725c5b86b15a6224056f10f691624b320458695072f68648d32e46",
+  "sourceHashes": {
+    "web-player/app.js": "b7cb02bad57c4b3690be121d30f64372351ff4ec089f13d214d10488e9c1ef2e",
+    "web-player/index.html": "ad94380bf80e543b7e54cfafebb07511ecc62ac421bc3b610a6fea8c8319e17d",
+    "web-player/worker.js": "d97ccc3bac32f030f1b61e9772618fd7f665f6697f4b264cad99ee695ec2ba6b",
+    "web-player/lib/avr-profiles.js": "28be8953eebe724c6195db3f789582593d1c43a60157930e16e8bd6387e0d938",
+    "web-player/lib/avr-reference.js": "3fad7067b21bb3dc235b61fd3bfada294a00c1436991baac32f4de6e7fe359d8",
+    "web-player/lib/avr-runtime.js": "50fecee201e72465b046d311057bc447a81968c94ed3dfba41345d332dac65d0",
+    "web-player/lib/avr-wasm.js": "2772c1f4c9e9c0d4cb86b86dcfb13d9fe19e04b273c99792e530acf0a367988f",
+    "web-player/lib/engines.js": "2f4e5ef913fb3c8956a50490ad85fcff57e1e07f14ef1959511434c8e41756df",
+    "web-player/lib/renderer.js": "c71bc73042731d3cd843a31b731c9ebbbc223a193828410933d09e044afcc242",
+    "web-player/lib/renderer-js.js": "2a0c52274ea5cd743b2dcb6cdb951763ed7197629440073b65391ac616f49d8f",
+    "web-player/scripts/build_catalog.py": "da114c941aabe6f9cadf1076047e6b06922bfb446df0abcb633f37d63157ada3",
+    "web-player/firmware-attiny88.json": "a7815ae110841e841a9c42632d568e1e2326501e2830ddda3f1825129d5b1f4b",
+    "web-player/firmware-attiny88-16mhz.json": "1a84dfc16048bd02da28c91a11d1a2a6a4a34b36bf723fe7194ea99a5ae5fc9c",
+    "web-player/tests/board-select.test.mjs": "045133a627cc69ca00988e1829895866eaf1b67c1e1c118e1ed3b566497d8523"
+  }
+}

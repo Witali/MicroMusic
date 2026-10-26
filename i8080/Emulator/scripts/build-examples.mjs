@@ -2,29 +2,40 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 const root = new URL('../', import.meta.url);
 const definitions = [
-  { id: 'voice159', title: 'Голос · ровный PWM 159 T', rom: '../Sound/dual-crc-voice/dualcrc-uniform159.bin',
-    description: 'Исходный темп с отклонением всего +0,13%. Постоянный период речи, все 16 уровней и 63 085 отсчётов сохранены. Диагностика, Dual CRC и плавный старт.',
-    meta: '32 КиБ · 22,01 кГц · 16 уровней', source: '../Sound/dual-crc-voice/README.md' },
-  { id: 'voice-original', title: 'Голос · исходный вариант', rom: './tests/roms/diagnostic_dualcrc.bin',
-    description: 'Gain ×5 / Soft Start из исходного архива. Диагностика и восемь Dual CRC. Периоды речи 153–172 T, шесть переходов по 216 T.',
-    meta: '32 КиБ · около 21,98 кГц · 16 уровней', source: '../Sound/dual-crc-voice/README.md' },
-  { id: 'voice152', title: 'Голос · быстрый PWM 152 T', rom: '../Sound/dual-crc-voice/dualcrc-uniform152.bin',
-    description: 'Постоянный период речи с повышенной несущей 23,03 кГц. Все 16 уровней сохранены. Голос звучит примерно на 4,74% быстрее исходного.',
-    meta: '32 КиБ · 23,03 кГц · темп +4,74%', source: '../Sound/dual-crc-voice/README.md' },
-  { id: 'uniform26', title: 'Музыка · UNIFORM26', rom: './tests/roms/uniform26.bin',
-    description: 'Исходный музыкальный образ UNIFORM26 из архива плеера. Исполнение до HLT, звук через INTE; бинарный образ сохранён без изменений.',
-    meta: '32 КиБ · INTE · исходный образ', source: './README.md' },
-  { id: 'balanced27', title: 'Музыка · BALANCED27', rom: './tests/roms/balanced27.bin',
-    description: 'Исходный музыкальный образ BALANCED27 из архива плеера. Альтернативный вариант для сравнения на слух, без изменений машинного кода.',
-    meta: '32 КиБ · INTE · исходный образ', source: './README.md' },
+  { id: 'voice32', title: 'Голос · «С воздушным шаром…» · 32,11 кГц', rom: '../Sound/voice32/dualcrc-voice32.bin',
+    description: 'Исходный голос нормализован на весь диапазон 0–15 без обрезания пиков и пересчитан на 16,06 кГц без изменения темпа. Два импульса на отсчёт, все периоды речи — 109 T. Диагностика, Dual CRC и плавный старт.',
+    meta: '32 КиБ · PWM 32,11 кГц · звук 16,06 кГц', source: '../Sound/voice32/README.md' },
+  { id: 'owl32', title: 'Голос · «Сова, открывай!» · без диагностики', rom: '../Sound/voice32/owl/owl-voice32.bin',
+    description: '«Сова! Открывай! Медведь пришёл!» Исходник нормализован на весь диапазон 0–15 без обрезания пиков. Звук 16,06 кГц, ровный PWM 32,11 кГц. Без стартовых проверок и гудков.',
+    meta: '32 КиБ · PWM 32,11 кГц · без стартовой диагностики', source: '../Sound/voice32/owl/README.md' },
+  { id: 'uniform26-fluid-pwm108', title: 'Музыка · FluidR3 · фортепиано и гитара', rom: '../Music/fluid-pwm/uniform26-fluid-pwm108.bin',
+    description: 'Фортепиано и нейлоновая гитара FluidR3: волны по 256 точек, отдельные состояния атаки и затухания. Пиковая нормализация на диапазон 0–15. Темп и ноты сохранены, ровный PWM 108 T / 32,41 кГц.',
+    meta: '32 КиБ · 32,41 кГц · 256 точек на волну', source: '../Music/fluid-pwm/README.md' },
 ];
 const entries = [];
+const khz = hz => (hz / 1000).toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 for (const definition of definitions) {
-  const bytes = await readFile(new URL(definition.rom, root));
-  entries.push({ ...definition, filename: definition.rom.split('/').at(-1), bytes: bytes.length,
-    sha256: createHash('sha256').update(bytes).digest('hex'), hz: 3500000, memory: 'rom', output: 'inte' });
+  const variants = [];
+  for (const hz of [2000000, 2500000, 3500000]) {
+    const rom = hz === 3500000 ? definition.rom : definition.rom.replace(/\/([^/]+)$/, `/clocks/${hz}/$1`);
+    const bytes = await readFile(new URL(rom, root));
+    const music = definition.id === 'uniform26-fluid-pwm108', carrier = hz / (music ? 108 : 109), rate = carrier / (music ? 4 : 2);
+    let description = definition.description;
+    if (hz !== 3500000) {
+      description = music
+        ? `Фортепиано и нейлоновая гитара FluidR3: волны по 256 точек, атака и затухание. Темп и ноты пересчитаны для ${String(hz / 1e6).replace('.', ',')} МГц, гармоники ограничены под новую частоту отсчётов. Пиковая нормализация 0–15. Ровный PWM 108 T.`
+        : `Исходный голос нормализован на весь диапазон 0–15 без обрезания пиков и пересчитан на ${khz(rate)} кГц с сохранением темпа и высоты. Два импульса на отсчёт, все периоды речи — 109 T. ` +
+          (definition.id === 'voice32' ? 'Диагностика, Dual CRC, гудки и плавный старт подстроены под частоту процессора.' : 'Без стартовых проверок, гудков и плавного старта.');
+    }
+    variants.push({ rom, hz, filename: rom.split('/').at(-1).replace(/\.bin$/, hz === 3500000 ? '.bin' : `-${hz / 1e6}MHz.bin`),
+      bytes: bytes.length, sha256: createHash('sha256').update(bytes).digest('hex'),
+      title: definition.title.replace('32,11 кГц', `${khz(carrier)} кГц`), description,
+      meta: `${String(hz / 1e6).replace('.', ',')} МГц · PWM ${khz(carrier)} кГц · звук ${khz(rate)} кГц`,
+      carrier_hz: carrier, sample_rate_hz: rate });
+  }
+  entries.push({ ...definition, ...variants.at(-1), memory: 'rom', output: 'inte', variants });
 }
-const output = JSON.stringify({ defaultId: 'voice159', entries }, null, 2) + '\n';
+const output = JSON.stringify({ defaultId: 'voice32', entries }, null, 2) + '\n';
 const target = new URL('examples.json', root);
 if (process.argv.includes('--check')) {
   if ((await readFile(target, 'utf8')).replace(/\r\n/g, '\n') !== output) throw Error('Examples catalog is stale');

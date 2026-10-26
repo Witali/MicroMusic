@@ -1,0 +1,21 @@
+{
+  "compiler": "Clang 24; -O2 -fwrapv -fno-strict-aliasing",
+  "quarterCases": 589888,
+  "quarterCalls": 1573120,
+  "all262144CodebookTriples": true,
+  "signedRandomTransitions": 65536,
+  "edgeTransitions": 64,
+  "exactAgainstUntouchedXiph": true,
+  "primitiveBinarySha256": "fdccd6bcf97e419647d98c2ddd9dfdae44e042d3ca6ae7d7525075209ea5c070",
+  "logSha256": "81635d02766c404f2cb9c29f218388b3beaca2a8653917b5742ec338d375b9f9",
+  "sourceSha256": {
+    "src/nb3_interpolate.h": "f980c4cae388133407dc29fcd77dff38a25c45d402cec26ffe56a2867ce4d5b2",
+    "tests/primitives.c": "b9eb24445625bc348325edfae3817bb160af26f330b9bca2b354b905122d6a97"
+  },
+  "passed": [
+    "PASS: 3670016 bit fields and 240000 complete upstream LSP conversions",
+    "PASS: all 262144 NB3 LSP code triples preserve exact repeated-frame interpolation",
+    "PASS: 589888 quarter-interpolation cases / 1573120 calls; raw state, guards and original margin exact",
+    "PASS: 2000000 direct/transposed LPC samples, in-place/separate, changing coefficients and saturation"
+  ]
+}

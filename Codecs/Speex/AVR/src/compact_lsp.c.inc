@@ -5,32 +5,8 @@
  * symmetric endpoints and p[0]==2^20 product; constant stages remove bounds
  * branches and pointer arithmetic in exchange for additional Flash. */
 #include "speex_platform.h"
-#if SPEEX_NB3_USE_AVR_ASM
-/* Value-only ASM: no reads/writes of C-visible memory. Let GCC retain other
- * polynomial coefficients across the call, just as for a C expression. */
-extern SPEEX_NB3_CONST int32_t speex_avr_lsp_mul_q14(int16_t,int32_t);
-extern SPEEX_NB3_CONST int32_t speex_avr_p1_mul_q14(int16_t,int32_t);
-#define LSP_Q14(a,b) speex_avr_lsp_mul_q14(a,b)
-/* p1 starts at -(a+b)*64 and only subtracts f*64. For stages 2..4,
- * its input is a sum of at most four signed16 roots: |p1|<=8388608.
- * Only j==2 reads p1; other coefficients need the general bounded core. */
-#define LSP_INNER_Q14(a,b,j) ((j)==2 ? speex_avr_p1_mul_q14(a,b) : LSP_Q14(a,b))
-#else
-#define LSP_Q14(a,b) MULT16_32_Q14(a,b)
-#define LSP_INNER_Q14(a,b,j) LSP_Q14(a,b)
-#endif
-/* |f|<=32768, so |Q14(f,x)|<=2*|x|+1. Starting at 2^20/2^21,
- * the four stages bound their largest product inputs by
- * 2097152, 6291457, 20971523, 73400331, all below 2^29.
- * Thus the fast signed30 entry exactly matches the generic high-word cast. */
-static SPEEX_NB3_ALWAYS_INLINE void lsp_stage(spx_word32_t *p, spx_word16_t f, int stage)
-{
-    int j;
-    p[stage+1] = SUB32(SHL32(p[stage-1],1), LSP_Q14(f,p[stage]));
-    for (j=stage;j>=2;--j)
-        p[j] = ADD32(SUB32(p[j], LSP_INNER_Q14(f,p[j-1],j)),p[j-2]);
-    p[1] = SUB32(p[1],SHL32(EXTEND32(f),6));
-}
+#include "nb3_lsp_stage.h"
+#include "nb3_lsp_first.h"
 #define STAGE_ATTR SPEEX_NB3_STAGE
 static STAGE_ATTR spx_word16_t lsp_angle(spx_lsp_t angle) {return ANGLE2X(angle);}
 /* The first two roots give p1=-(a+b)*64 and p2=2^21+ceil(a*b/256).
@@ -38,37 +14,59 @@ static STAGE_ATTR spx_word16_t lsp_angle(spx_lsp_t angle) {return ANGLE2X(angle)
  * stays inside signed32 for all signed16 a/b, including both extrema. */
 static STAGE_ATTR void lsp_first(spx_word32_t *p,spx_word16_t a,spx_word16_t b)
 {
-    p[1]=-ADD32(EXTEND32(a),EXTEND32(b))*64;
-    p[2]=SHR32(ADD32(MULT16_16(a,b),536871167),8);
+    speex_nb3_lsp_first(p,a,b);
 }
-#define DEFINE_STAGE(s) static STAGE_ATTR void lsp_stage##s(spx_word32_t *p, spx_word16_t f) {lsp_stage(p,f,s);}
+#define DEFINE_STAGE(s) static STAGE_ATTR void lsp_stage##s(spx_word32_t *p, spx_word16_t f) {speex_nb3_lsp_stage##s(p,f);}
 DEFINE_STAGE(2)
 DEFINE_STAGE(3)
 DEFINE_STAGE(4)
 #undef DEFINE_STAGE
 #undef STAGE_ATTR
-void lsp_to_lpc(const spx_lsp_t *freq, spx_coef_t *ak, int lpcrdr, char *stack)
+#include "nb3_lsp_finish.h"
+/* The generic converter retains the explicitly selectable C body. The fused
+ * decoder uses the architecture-selected kernel through its shared stage. */
+static SPEEX_NB3_ALWAYS_INLINE void lsp_finish10_c(const spx_word32_t *restrict p,
+    const spx_word32_t *restrict q,spx_coef_t *restrict ak)
 {
-    spx_word32_t p[6], q[6];
-    spx_word32_t previous_p = 0, previous_q = 0;
-    int j;
-    (void)lpcrdr;
-    (void)stack;
+    speex_nb3_lsp_finish10_c(p,q,ak);
+}
+
+static SPEEX_NB3_STAGE void lsp_finish10(const spx_word32_t *restrict p,
+    const spx_word32_t *restrict q,spx_coef_t *restrict ak)
+{
+    speex_nb3_lsp_finish10(p,q,ak);
+}
+
+SPEEX_NB3_HOT void lsp_to_lpc(const spx_lsp_t *freq, spx_coef_t *ak, int lpcrdr, char *stack)
+{
+    spx_word32_t p[6],q[6];
+    (void)lpcrdr;(void)stack;
     p[0]=q[0]=1048576;
     lsp_first(p,lsp_angle(freq[0]),lsp_angle(freq[2]));
     lsp_first(q,lsp_angle(freq[1]),lsp_angle(freq[3]));
 #define STAGE(s) lsp_stage##s(p,lsp_angle(freq[2*s])); lsp_stage##s(q,lsp_angle(freq[2*s+1]))
     STAGE(2); STAGE(3); STAGE(4);
 #undef STAGE
-    for (j = 1; j <= 10; ++j) {
-        int index = j <= 5 ? j : 10-j;
-        spx_word32_t a = PSHR32(p[index] + previous_p + q[index] - previous_q, 8);
-        previous_p = p[index];
-        previous_q = q[index];
-        if (a < -32767) a = -32767;
-        if (a > 32767) a = 32767;
-        ak[j-1] = (spx_coef_t)a;
-    }
+    lsp_finish10_c(p,q,ak);
+}
+
+#include "nb3_interpolate.h"
+/* The output area first holds only three center frequencies. Consume all
+ * of them in the polynomial stages before lsp_finish10 writes coefficients.
+ * raw/delta/ak are disjoint. ASM requires the normal explicit target opt-in;
+ * its advance operation has the selectable C implementation in the header. */
+SPEEX_NB3_STAGE void speex_nb3_interpolate_lpc(
+    int16_t *restrict raw,const int16_t *restrict delta,int16_t *restrict ak)
+{
+    spx_word32_t p[6],q[6];
+    speex_nb3_advance_codebook(raw,delta,ak);
+    p[0]=q[0]=1048576;
+    lsp_first(p,lsp_angle(raw[0]),lsp_angle(raw[2]));
+    lsp_first(q,lsp_angle(raw[1]),lsp_angle(ak[0]));
+    lsp_stage2(p,lsp_angle(ak[1]));lsp_stage2(q,lsp_angle(ak[2]));
+    lsp_stage3(p,lsp_angle(raw[6]));lsp_stage3(q,lsp_angle(raw[7]));
+    lsp_stage4(p,lsp_angle(raw[8]));lsp_stage4(q,lsp_angle(raw[9]));
+    lsp_finish10(p,q,ak);
 }
 
 #if SPEEX_ENABLE_WB1

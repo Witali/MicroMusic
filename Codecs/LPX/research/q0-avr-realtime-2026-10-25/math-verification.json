@@ -1,0 +1,66 @@
+{
+  "cpu": "ATmega328P / AVR5",
+  "simulator": "simavr 1.6",
+  "compiler": "avr-g++.exe (GCC) 7.3.0",
+  "fixture_sha256": "044f60a1d7fe6bc5a3aba691dad54898cb482a13ab7d4f6c7794f25300590bd8",
+  "math_header_sha256": "462a32495076d5e027a065bcf5e2e6ce0584cac43f8cf9b5c7d3c7a12de3c22b",
+  "runner_source_sha256": "06cd94128b1db14f140ff280aecf6965e9276d10eeaf7b9a99bbf92292e1a1ba",
+  "variants": [
+    {
+      "done": 1,
+      "error": 0,
+      "zero_error": 0,
+      "cases": 32889,
+      "irqs": 100016,
+      "backend": 0,
+      "cycles": 200033427,
+      "name": "c",
+      "compiler_options": [
+        "-mmcu=atmega328p",
+        "-DF_CPU=16000000UL",
+        "-Os",
+        "-std=gnu++11",
+        "-DLPX4_ENABLE_ASM=0"
+      ],
+      "elf_sha256": "da3f518d3b5319c455e725416e4ed2042f298256052eb2b5e2dd3db324f79341"
+    },
+    {
+      "done": 1,
+      "error": 0,
+      "zero_error": 0,
+      "cases": 32889,
+      "irqs": 89815,
+      "backend": 1,
+      "cycles": 179631682,
+      "name": "avr5",
+      "compiler_options": [
+        "-mmcu=atmega328p",
+        "-DF_CPU=16000000UL",
+        "-Os",
+        "-std=gnu++11",
+        "-DLPX4_ENABLE_ASM=1"
+      ],
+      "elf_sha256": "90d72a1e9a8bbeb893b1ede0c4840c97f213157d9883498907ffc04b0f1750bb"
+    },
+    {
+      "done": 1,
+      "error": 0,
+      "zero_error": 0,
+      "cases": 32889,
+      "irqs": 100016,
+      "backend": 0,
+      "cycles": 200033427,
+      "name": "forced-generic",
+      "compiler_options": [
+        "-mmcu=atmega328p",
+        "-DF_CPU=16000000UL",
+        "-Os",
+        "-std=gnu++11",
+        "-DLPX4_ENABLE_ASM=1",
+        "-DLPX4_ARCH=LPX4_ARCH_GENERIC"
+      ],
+      "elf_sha256": "da3f518d3b5319c455e725416e4ed2042f298256052eb2b5e2dd3db324f79341"
+    }
+  ],
+  "physical_hardware_measured": false
+}

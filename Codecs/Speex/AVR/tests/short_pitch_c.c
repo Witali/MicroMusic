@@ -4,5 +4,7 @@
 void short_c_test(int16_t *out,const int16_t *exc,uint8_t pitch,SpeexBits *bits,
                   int32_t scale,unsigned gain)
 {
-    speex_nb3_short_innovation(out,exc,pitch,bits,scale,gain);
+    uint8_t indices[4];
+    speex_nb3_unpack_indices(bits,indices);
+    speex_nb3_short_innovation(out,exc,pitch,indices,scale,gain);
 }

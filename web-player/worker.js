@@ -1,4 +1,4 @@
-import { createRenderer, DEFAULT_ENGINE } from './lib/engines.js?v=20261024-common-avr';
+import { createRenderer, DEFAULT_ENGINE } from './lib/engines.js?v=20261025-board-um88-pipeline';
 let renderer, entry, port, engine = DEFAULT_ENGINE, controls = {cutoff:4000,volume:1};
 let messages = Promise.resolve();
 

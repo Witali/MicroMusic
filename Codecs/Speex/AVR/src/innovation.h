@@ -12,11 +12,15 @@ static
 static SPEEX_NB3_STAGE
 #endif
 void speex_nb3_zero_innovation(spx_word16_t *out,
-                                    SpeexBits *bits,spx_word32_t scale)
+                                    const uint8_t *input_indices,spx_word32_t scale)
 {
-    int vector, sample;
+#if SPEEX_NB3_USE_AVR_ASM
+    const uint8_t *indices=input_indices;
+#else
     uint8_t indices[4];
-    speex_nb3_unpack_indices(bits,indices);
+    for(unsigned k=0;k<4;k++)indices[k]=input_indices[k];
+#endif
+    int vector, sample;
     for (vector = 0; vector < 4; ++vector) {
         unsigned index = indices[vector];
         const signed char *shape = exc_10_32_table + 10*index;

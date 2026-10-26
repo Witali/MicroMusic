@@ -1,0 +1,102 @@
+{
+  "mcu": "ATmega328P",
+  "simulator": "avr8js 0.21.1",
+  "asmEnabled": false,
+  "compiler": "AVR GCC 7.3.0 -Os -flto -mcall-prologues -mrelax -fwrapv; reader O2",
+  "binarySha256": "64117e94147eb4ef2028040d12575638861571da212c030bb476e6eb37ac7e5f",
+  "casesPerImplementation": 115712,
+  "fieldsPerImplementation": 809984,
+  "fieldWidths": [
+    7,
+    5,
+    1,
+    5,
+    5,
+    5,
+    5
+  ],
+  "all8192HeadersAtEachSubframe": true,
+  "allAdjacentIndexPairsAtEachSubframe": true,
+  "allByteValuesAtEachWindowPosition": true,
+  "randomCases": 65536,
+  "exact": true,
+  "inputReadAddressesChecked": true,
+  "noReadsBeyond20BytePacket": true,
+  "fiveByteWindowsOnly": true,
+  "packetAndGuardsIntact": true,
+  "calleeSavedRegistersAtRet": true,
+  "zeroRegisterAtRet": true,
+  "previousGenericCursorExact": true,
+  "timing": [
+    {
+      "sub": 0,
+      "before": {
+        "min": 409,
+        "max": 409,
+        "total": 11831552,
+        "calls": 28928,
+        "mean": 409
+      },
+      "after": {
+        "min": 83,
+        "max": 83,
+        "total": 2401024,
+        "calls": 28928,
+        "mean": 83
+      }
+    },
+    {
+      "sub": 1,
+      "before": {
+        "min": 399,
+        "max": 399,
+        "total": 11542272,
+        "calls": 28928,
+        "mean": 399
+      },
+      "after": {
+        "min": 91,
+        "max": 91,
+        "total": 2632448,
+        "calls": 28928,
+        "mean": 91
+      }
+    },
+    {
+      "sub": 2,
+      "before": {
+        "min": 389,
+        "max": 389,
+        "total": 11252992,
+        "calls": 28928,
+        "mean": 389
+      },
+      "after": {
+        "min": 91,
+        "max": 91,
+        "total": 2632448,
+        "calls": 28928,
+        "mean": 91
+      }
+    },
+    {
+      "sub": 3,
+      "before": {
+        "min": 379,
+        "max": 379,
+        "total": 10963712,
+        "calls": 28928,
+        "mean": 379
+      },
+      "after": {
+        "min": 92,
+        "max": 92,
+        "total": 2661376,
+        "calls": 28928,
+        "mean": 92
+      }
+    }
+  ],
+  "includesInterrupts": false,
+  "physicalBoardTested": false
+}

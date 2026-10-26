@@ -1,0 +1,784 @@
+{
+  "scope": "Pinned NB3 / compact WB; ATmega328P ISA/peripheral simulation",
+  "baselineGitCommit": "928d18e",
+  "nbPcmBitExactToUnmodifiedXiph": true,
+  "wbPcmBitExactToExistingCompactProfile": true,
+  "measurements": {
+    "nb-asm": {
+      "frames": 14278,
+      "beforeMeanCycles": 107802.98340659341,
+      "afterMeanCycles": 107616.50681318682,
+      "meanCyclesSavedPercent": 0.17297906561942744,
+      "beforeMaxCycles": 115817,
+      "afterMaxCycles": 115604,
+      "beforeFlashBytes": 10610,
+      "flashBytes": 10470,
+      "beforeStaticSramBytes": 1119,
+      "staticSramBytes": 1099,
+      "beforePeakStack": 114,
+      "peakStack": 114,
+      "freeSram": 835
+    },
+    "wb-asm": {
+      "beforeMeanCycles": 257679.58288365047,
+      "afterMeanCycles": 257477.27757265928,
+      "beforeMaxCycles": 265344,
+      "afterMaxCycles": 265131,
+      "flashBytes": 17212,
+      "staticSramBytes": 1279,
+      "peakStackConservative": 178,
+      "freeSram": 591
+    },
+    "nb-c": {
+      "frames": 14278,
+      "beforeMeanCycles": 219567.1678021978,
+      "afterMeanCycles": 219310.5112087912,
+      "meanCyclesSavedPercent": 0.11689206358840298,
+      "beforeMaxCycles": 231834,
+      "afterMaxCycles": 231545,
+      "beforeFlashBytes": 11078,
+      "flashBytes": 10898,
+      "beforeStaticSramBytes": 1119,
+      "staticSramBytes": 1099,
+      "beforePeakStack": 105,
+      "peakStack": 105,
+      "freeSram": 844
+    },
+    "wb-c": {
+      "beforeMeanCycles": 651167.738047903,
+      "afterMeanCycles": 650839.7079428192,
+      "beforeMaxCycles": 661896,
+      "afterMaxCycles": 661550,
+      "flashBytes": 18106,
+      "staticSramBytes": 1279,
+      "peakStackConservative": 205,
+      "freeSram": 564
+    }
+  },
+  "frozenPlayerImages": [
+    {
+      "image": "build/lifetime-nb-asm-normal/adversarial_24/speex-player.bin",
+      "sha256": "979f1952597fe265a7a52ba89598a0c941e04959952af71989e64aad738d176f"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/chirp/speex-player.bin",
+      "sha256": "3b2094e247565a52ea6ade68ed8f531fe55eec36a5b67203b9d92eb94354c54a"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/en_letter_a/speex-player.bin",
+      "sha256": "662d0e2745249ff1fe87b078dd59d774eb80d39d0c9e19791e483502f831c9eb"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/en_letter_b/speex-player.bin",
+      "sha256": "169f1c0f2e5c96c106917f6b63f2a3a03633d6e31720deef1efb586f143010d9"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/en_normcore_a/speex-player.bin",
+      "sha256": "80efaff0473969fe9091531152229f03388ae40b4fe1f3da51f7d3a5df80af00"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/en_normcore_a_quiet_minus24dB/speex-player.bin",
+      "sha256": "6c6d10e5b44f7fa38326e86a386a80c7dbc9ea03e4f608441c4fda009144afbc"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/en_normcore_b/speex-player.bin",
+      "sha256": "9bac6961c71227e6f4a253635f16938f1879c47692ded28b9d3f93e2e321d675"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/en_portrait_a/speex-player.bin",
+      "sha256": "317f9904c517cb49e94f31ab298f4aeb2271ea8db9f7d709b8213b1b51756703"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/en_portrait_b/speex-player.bin",
+      "sha256": "a20a8c6fe4e836f82445c8c41b2b6160912b8e199254d23edf8f9ed296800a23"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/en_sense_a/speex-player.bin",
+      "sha256": "31fefc76ce9147c3e4bf841543a836ebd560b069535f7ce3bbd046158f762c78"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/en_sense_a_white_noise_15dB/speex-player.bin",
+      "sha256": "501e084756d5688756f501aac7635ddc38baa946d4a90bbfbfa910ab4578da92"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/en_sense_b/speex-player.bin",
+      "sha256": "7f575de017236fd040d0ce57ab7d92b2daafd768a07bf54a6d56acf0956091bd"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/hard_clipped/speex-player.bin",
+      "sha256": "a9edeac8602f3a890afdf0edf83c175d4b9db4cda3fa41afe8614641db115b71"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/impulses/speex-player.bin",
+      "sha256": "693c641db22412074260ea45ae2a68dabd2e6b979d3eff2f2522a552347fd105"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/random_40/speex-player.bin",
+      "sha256": "496cf39714aaad418de8d5f7e5d6afec979c942c82a4d1bbe940c610dd0800ba"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/ru_pushkin_a/speex-player.bin",
+      "sha256": "5cdadea66818a3de4e591f41c36d3ccdcc8ebbeadb4a144cf2e5b50641195803"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/ru_pushkin_b/speex-player.bin",
+      "sha256": "37a945edd735ffa78e6f832f1e9efb5fa27fd1b880588ebd2a4f8b6ae337e874"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/ru_russia_a/speex-player.bin",
+      "sha256": "c0d333ed5b595b47a1ddb2e3a6f6eb80987218a90cb31596e6710a8f06adcecd"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/ru_russia_a_white_noise_15dB/speex-player.bin",
+      "sha256": "b478a69531bdfbd81efa2ee98b0282d7774270121e8192c34a9d6580dc415d75"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/ru_russia_b/speex-player.bin",
+      "sha256": "47170d736c08b4758cd81abf9f1d02b3bcd12cd8864526482ff65e7d244c1f0d"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/ru_slutskaya_a/speex-player.bin",
+      "sha256": "78a77b547a7bebf992c4acf1396b9af7c71a87978bf43227fe028f1c7a18e16c"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/ru_slutskaya_b/speex-player.bin",
+      "sha256": "342625469b806b3278905cf10381675b48196a419f955013f2e389c723120d63"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/ru_square_a/speex-player.bin",
+      "sha256": "05ed2fd23ef83a03acf3d8d268ad3ec3e887bcf46cb2907ebcc942f7d2e1ae02"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/ru_square_a_quiet_minus24dB/speex-player.bin",
+      "sha256": "f1dfd17d9e44026a55ebbcfff549dc331ce511a27536d2046e4a5b0b36459eb0"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/ru_square_b/speex-player.bin",
+      "sha256": "72ccc10c256d79ad3a77325d91242b09e3b4ef0cab0fc69780ec7a6051bc2170"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/sample_mode3_8kbps/speex-player.bin",
+      "sha256": "0d76e1f1d23116a0fe7503d3d3c7910c544092089420f5fcb5f5985ef9b2763e"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/silence/speex-player.bin",
+      "sha256": "d184547082b41f8684e2b8ef7ac4b240b1cbcbc697c2ee0d440e8dc0fe3de0c6"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/speech_from_wb16_lowband/speex-player.bin",
+      "sha256": "05f9151053ab781999bccc1696cb7d0f52f302876cd142df697540c459c7bf60"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/speech_ru/speex-player.bin",
+      "sha256": "a035f244ef12b1b3451ee31dbcf8ac622da6d5ed24cb4683f453ac92050b873c"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/voicelike/speex-player.bin",
+      "sha256": "8744c849a16071d64360ea7f2c9e65ad7cf0c9c0ac78e1592b659b05a78d9010"
+    },
+    {
+      "image": "build/lifetime-nb-asm-normal/white_noise/speex-player.bin",
+      "sha256": "1b51f16a98c3729f8cd4ec16d850debecc4c12dd9d84f3e30e2f2841038fdc67"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/adversarial_24/speex-player.bin",
+      "sha256": "21a4600a3d669b7d34c7502269c7442339e9f68d67974801671f00aba324b376"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/chirp/speex-player.bin",
+      "sha256": "e2856669e4f13197ebd21a79091f254ef1988ad037ee1f06ae95bb6c27493f85"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/en_letter_a/speex-player.bin",
+      "sha256": "c7af27e7b8fe25aad530dd51a1541a4c01a46e6bcbedbdff7ee41dabb54896f6"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/en_letter_b/speex-player.bin",
+      "sha256": "5e309f3fceaccd4e2f06d39dcc9191147e35b0bc45b73a274a034841b444dea4"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/en_normcore_a/speex-player.bin",
+      "sha256": "28ffdc86ec21b0df7ddabaf013683ebfc617fa434308ab15799d7ffe02587de1"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/en_normcore_a_quiet_minus24dB/speex-player.bin",
+      "sha256": "d8cd5d1960ebbeb24a37916b8f3fccaaf80f6ec595973febe1296031119f3efd"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/en_normcore_b/speex-player.bin",
+      "sha256": "529b2f332141e3e0cf04b95cda306aa720220a1af552b6acffe119d4445d424c"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/en_portrait_a/speex-player.bin",
+      "sha256": "c502579a0a7db73cb5617f5c5def57097ac4a4ac73290e321edefeb878e15421"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/en_portrait_b/speex-player.bin",
+      "sha256": "4c9042bb47ed9f0c607c1d924bdb0a25bb7a24fc4c0c15160e8ce2cc28a89a7e"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/en_sense_a/speex-player.bin",
+      "sha256": "a690f85ca917862fbe0452c3edfe1ad0873ab7ce75744016e6555019c1afb68b"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/en_sense_a_white_noise_15dB/speex-player.bin",
+      "sha256": "728b185687b15dee2fa19b7b537ebbfb295f80df69fae605762047d133717593"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/en_sense_b/speex-player.bin",
+      "sha256": "e96e1ec1a0a69ed0dd48351fb0a4998ea423447c7db47f51f1001cf9370222ac"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/hard_clipped/speex-player.bin",
+      "sha256": "3c09e88ff438d1626b6dbf5a3b5f427d5df5094fb90680ba397022dfce4db344"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/impulses/speex-player.bin",
+      "sha256": "8e40d18bab3d07c88bf6baa728e5f119aac594aac2dad957112cf66253d10c88"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/random_40/speex-player.bin",
+      "sha256": "3a7cc0b6fabf8f4cf35b6882a26f5b114ab7c88839e11508c613776ccfbf5bd6"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/ru_pushkin_a/speex-player.bin",
+      "sha256": "a2cb1170c5cfe85b75d19d10ecace35addc37f2152e4c0c81ad2f7e9b06ee7c1"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/ru_pushkin_b/speex-player.bin",
+      "sha256": "999bc2a438cb4b5de5a0ffdf297bdf5b2cdea9ce5fa14ff30a1405f682c52d4d"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/ru_russia_a/speex-player.bin",
+      "sha256": "333480305b95d13f696300c55c265da5e586c99758f3d5620168f823c7395f94"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/ru_russia_a_white_noise_15dB/speex-player.bin",
+      "sha256": "c717386ca5143c7bfd725fb04ac85aa2ecceac605082d56acc7b0ba9cc48b55d"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/ru_russia_b/speex-player.bin",
+      "sha256": "845ca916f597d416c37f73bb244d4fc47e5f09b7c63e3eab275241ad95cd8a5e"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/ru_slutskaya_a/speex-player.bin",
+      "sha256": "a7e3aa42d5fa5ec215719c4cd576d3c38bb3e65410c62502ab5c3abb8b5164cd"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/ru_slutskaya_b/speex-player.bin",
+      "sha256": "b3b50495c35c2bd9ce43b8df00f5e70d84fc93d48c8299a7c0c2495e8ee86e0a"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/ru_square_a/speex-player.bin",
+      "sha256": "cab0862be0cf8fecadd82a014b85df5c9803454dffc9dffdb0a9ea9732c994ec"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/ru_square_a_quiet_minus24dB/speex-player.bin",
+      "sha256": "25dd89df5124fb07fffe30eaf35da67b10129b330ada57119c20bc3c98ee87be"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/ru_square_b/speex-player.bin",
+      "sha256": "cba276c15701b0e9fd1a6d75971fc68f5080b88882f9c196ec863d76b3b914fc"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/sample_mode3_8kbps/speex-player.bin",
+      "sha256": "0ba7a11ab74c24448fccd364692ada8a6e904c9c672ba33d24b2d4b0905b89d0"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/silence/speex-player.bin",
+      "sha256": "fa18fb40236385b7e6f1c1d6ab9d6e19d33dd0369ab44bac9e1200cbab1caee3"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/speech_from_wb16_lowband/speex-player.bin",
+      "sha256": "18ced2dc662e897351e964c4006b490c965a120e3f8121d02fb8c2598432d77d"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/speech_ru/speex-player.bin",
+      "sha256": "e237572a5734617efeb2234cefe7f45d8e26e51c4a44bd521eda7e38d8267f53"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/voicelike/speex-player.bin",
+      "sha256": "902ed9df678083b88a6a4948724f9ee768b51eb8071ede043e4e2ab7d41daf36"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/white_noise/speex-player.bin",
+      "sha256": "a7286a0c0e8fad0800ba841c91ae8b5c799ec2314781ae2b825978ba00443e85"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/adversarial_24/speex-player.bin",
+      "sha256": "645a65c227b3abd67a42dc41403920848ec14262fc0d6d903dc8301c656c06f1"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/chirp/speex-player.bin",
+      "sha256": "8f47855210f363c535ba0bb52426482d9ba0cdf1c5148c67449ab678e07f7015"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/en_letter_a/speex-player.bin",
+      "sha256": "365f3ae59b5cc2084c7a6e8aaf564ddbee88123f5ae41c55f56eff7c08ea2237"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/en_letter_b/speex-player.bin",
+      "sha256": "048ac407c9437d16cd8b40d8bce62bddf1c17f9a93e0972ea3afdca73d35d6b5"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/en_normcore_a/speex-player.bin",
+      "sha256": "1a3edbcba0dd380d56d5a42d408ae44af90fb8cbda3389ddf7d1661f36ccaaed"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/en_normcore_a_quiet_minus24dB/speex-player.bin",
+      "sha256": "609581e466dbfdec78776f70639ddef8d3a941ab957a83dc367805ed94be685d"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/en_normcore_b/speex-player.bin",
+      "sha256": "b51c3f1db4965c54b7ffe0c918ae3d34977236a687552d5ebd1047c172c4bcac"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/en_portrait_a/speex-player.bin",
+      "sha256": "22658262fa6953c848d0e1d050e1a9a5961c5dc4315ae5c26fe7fab2c7d22490"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/en_portrait_b/speex-player.bin",
+      "sha256": "2a4abb411bfef0b6ec3e3a4ea4740f97041cbe424ab16837b3e32885399f1005"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/en_sense_a/speex-player.bin",
+      "sha256": "aea6b8fa3a2adab54a70177c6bc60603eb95d7834bda20ef2ac00e5735b39b20"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/en_sense_a_white_noise_15dB/speex-player.bin",
+      "sha256": "b82ada5646db35fb4a6b25d8d128509061edfc1e024275d9e196f9e2fbadb6be"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/en_sense_b/speex-player.bin",
+      "sha256": "6d426808557155dc5091f33a08c8f95260973901733168f55d27d8fe93b86657"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/hard_clipped/speex-player.bin",
+      "sha256": "d4925d035fb25e50f95d05f14836f6cd3904467f1f6ba48c0e21e8313045c0ee"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/impulses/speex-player.bin",
+      "sha256": "519425ef8881a3eea4bf034bf0e769a451487ca4f52c44d1be33cb9277d67a7d"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/random_40/speex-player.bin",
+      "sha256": "7f8c4b4bb37eb552d0a795a31619525f632453b100fcf82fbbc69e81d6b6a7f4"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/ru_pushkin_a/speex-player.bin",
+      "sha256": "20570da824a7060c64b6e6e3b8cc4a773d9e0eba09a4b16450423d5bda861ff2"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/ru_pushkin_b/speex-player.bin",
+      "sha256": "715d85fd0ed95e32af94a8a3f4cf851c2f1f5e00a2bf3c88bc3f00cc42bb941b"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/ru_russia_a/speex-player.bin",
+      "sha256": "94099914a50b3417f847baf4ff9ba465593db508a69e4e52720db6995f911370"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/ru_russia_a_white_noise_15dB/speex-player.bin",
+      "sha256": "7e57658189439d9858726cc1f896ac46f9ae5b10bbaeedc75c43896b13797025"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/ru_russia_b/speex-player.bin",
+      "sha256": "5d05eacdc9fe8e878c46c6960a617a3c6d6bc957323d457c78f1dc39cdc06718"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/ru_slutskaya_a/speex-player.bin",
+      "sha256": "2bd003dcdc2fa592081d67ae2c8704452a04b78c61fe204d5b500fff4d2508ca"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/ru_slutskaya_b/speex-player.bin",
+      "sha256": "d51a20f7261552dac8e4dee9665416ea416c2189f3c2362d549e233d079785a6"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/ru_square_a/speex-player.bin",
+      "sha256": "121d5e1036bba7f9b9866ac13b54b8722d4615fbd98d2652e1a1d0d7cddf81a4"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/ru_square_a_quiet_minus24dB/speex-player.bin",
+      "sha256": "ed77c83d8926b9cf67985c437c5d15d49509bac2183e1b5b597c723e3ab633aa"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/ru_square_b/speex-player.bin",
+      "sha256": "22dd4c2d7a2da444a0c1689f63afda74280c998d1bc5d401d9c7046476f43061"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/sample_mode3_8kbps/speex-player.bin",
+      "sha256": "c251b32dd0151322aa87e185406b9ba933bbbea954f66f5754d48c49a87bc0cb"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/silence/speex-player.bin",
+      "sha256": "7d72adef4fcaf6c002d55df01d9954118d9779210688a0c7e2bc05680cb88b64"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/speech_from_wb16_lowband/speex-player.bin",
+      "sha256": "73499cfc32209c5d528286bc41c24f142dcb63905eb33bfbd220fa24d483b53b"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/speech_ru/speex-player.bin",
+      "sha256": "14f0c3035359813e10157a9975fdfbc0ada0a9bb23b0b146ea94228d8117fb75"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/voicelike/speex-player.bin",
+      "sha256": "c7591da42c4098a2ab034746fd9739094aa76103f60fbe2c01e152318aaa2a36"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/white_noise/speex-player.bin",
+      "sha256": "5a422aed773e7b256579431bff0a7fc2791797f4a6f65e0d6f98419a19c04c55"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/adversarial_24/speex-player.bin",
+      "sha256": "90fffa094273b4becec9fbb5424aa01f2aacc8d5e603a69c5f9cee8785137833"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/chirp/speex-player.bin",
+      "sha256": "f14c762e7eff4e511369433eb461b8384f624cc323bd246cbad3e93a969c8c09"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/en_letter_a/speex-player.bin",
+      "sha256": "f1edb211b9d0bf0641ba6f084f089f41acc0b78a69088fc06e457f86c03c60bc"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/en_letter_b/speex-player.bin",
+      "sha256": "b82b8990247f58e58a1fdaf7ee98067b4eab091e1999130c3f269d57c33485f6"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/en_normcore_a/speex-player.bin",
+      "sha256": "4460d7dd42e920d636b6130c82f298dd8724da0e4fb022758c8bd32fee525b12"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/en_normcore_a_quiet_minus24dB/speex-player.bin",
+      "sha256": "61691597ccff15e125e3dbce7371d93f779caf835da1510213b9abfff785c748"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/en_normcore_b/speex-player.bin",
+      "sha256": "3f75fff4c1bc0f671a3a101aff1bf4775fcf46123c40a78f1d0b6fc76861d5fe"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/en_portrait_a/speex-player.bin",
+      "sha256": "cbe2617bb1ec6d51fb486407da5fed9567a71bdcb83ed71c00379d8de2e31959"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/en_portrait_b/speex-player.bin",
+      "sha256": "fdbfe505a5feb42872331543428591602522d2d7c39108737f88bbabdf7ba543"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/en_sense_a/speex-player.bin",
+      "sha256": "6a718f04fe7fe933f98bd28ce8b06cb0b289c0cf9b9de082b69ce01c495386de"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/en_sense_a_white_noise_15dB/speex-player.bin",
+      "sha256": "daaf104dce84d2377f8beba3a7d6e186ebb9937ea617cec41f91d5232096c60a"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/en_sense_b/speex-player.bin",
+      "sha256": "6d7cd5f39e5476a264f03c8815140168e24644b29b30f4eb1421d6764802b24f"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/hard_clipped/speex-player.bin",
+      "sha256": "1de82150f60bf886d970bb9bc8f38eaae744c8c8be96693ef4636e6fc6b804d7"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/impulses/speex-player.bin",
+      "sha256": "ccff3b7d147e4756ce6240e18dcab1006250af9c4e8cbae8809b4e91354ed63f"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/random_40/speex-player.bin",
+      "sha256": "2c2fe3c88b2db87e07f6f9ced5abd43539587df4a3888f5771709a46e6d75c55"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/ru_pushkin_a/speex-player.bin",
+      "sha256": "ad2a7d646e731127aa4eeedde4d02f5f2a2a55c4677d32dbf69d56abb53f6d30"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/ru_pushkin_b/speex-player.bin",
+      "sha256": "18a4fa90fe90e8e6b362a1bc05c439314d7f94ed69623cbec7dbf73b9bec333d"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/ru_russia_a/speex-player.bin",
+      "sha256": "99c81f276945f989091265ad12759337673d7f80c46f6ecabfe9a308bbbafd80"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/ru_russia_a_white_noise_15dB/speex-player.bin",
+      "sha256": "d193fabc5d7b56e79d4fa89da1f6f2d9c380cf2fd3edf8699048816c1893c7e2"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/ru_russia_b/speex-player.bin",
+      "sha256": "becbe2442d4a69d22788cf10b4d867d276391f9e730dba86b01e420df44d31bf"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/ru_slutskaya_a/speex-player.bin",
+      "sha256": "1604fcd5dcf705133cc636f04950e7682562d74bb4671ca5aefdc7166b8cb8dc"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/ru_slutskaya_b/speex-player.bin",
+      "sha256": "012ef2e4e8978b3a18f69778237677840f388cccaa15f6c4ab57246f4101c3e5"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/ru_square_a/speex-player.bin",
+      "sha256": "c98f051ccf90b1e254d0f8efadfff665703456f270de605ead5086dc6ceeb844"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/ru_square_a_quiet_minus24dB/speex-player.bin",
+      "sha256": "65009b30b9b4e19d28e08bf6dc300b2b65902f973998f2244082ed7e2c5ac4eb"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/ru_square_b/speex-player.bin",
+      "sha256": "0c93b25c857a69f755a31251f126ea9b9ba1556928b35eaf7acecf4497d42bdd"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/sample_mode3_8kbps/speex-player.bin",
+      "sha256": "707446689c084b376a3c1de166fe35504620167325698f30ba08a65c2ab23fb3"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/silence/speex-player.bin",
+      "sha256": "51f0c82e579174dc46ed138b30de31ff0eb656d51d35436dea796d0754368b94"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/speech_from_wb16_lowband/speex-player.bin",
+      "sha256": "263ec2eab02e2191073cd840997dd75f3605abb4b38ef54f6411fe9212276ce0"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/speech_ru/speex-player.bin",
+      "sha256": "07d1959d19928d606a3716677cfbfa6d96ead710ab533fe379db879b5f5e0fa6"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/voicelike/speex-player.bin",
+      "sha256": "54b2c72b6f6e65cbe1d33cdd31b609bf4c08d1fad6c7fcbf9e63d8faef7e5a77"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/white_noise/speex-player.bin",
+      "sha256": "ab48cea5e54ca79f0dfe75ddb2ba528a74a5639bf063944d0b8f12adfb202e40"
+    },
+    {
+      "image": "build/lifetime-wb-normal/en_letter_a/wb.bin",
+      "sha256": "1781837e8d4872c53def0c4e6bb06fb5de141a71ef7f1d63e233a7f14326dfd0"
+    },
+    {
+      "image": "build/lifetime-wb-normal/en_letter_b/wb.bin",
+      "sha256": "a99c27003c12eaccf84631323b846dba6fb2d764c10c12206de3ac6889a1561a"
+    },
+    {
+      "image": "build/lifetime-wb-normal/en_normcore_a/wb.bin",
+      "sha256": "90591e40d00832547f6f6a1ea1e53abe07b6a7a32fed826ce642af72050110cb"
+    },
+    {
+      "image": "build/lifetime-wb-normal/en_normcore_b/wb.bin",
+      "sha256": "dc67ad90562c1a3740e774cc866010e7ba7bcf39e62540cb41d4347b87d730c4"
+    },
+    {
+      "image": "build/lifetime-wb-normal/en_portrait_a/wb.bin",
+      "sha256": "ec4e9d039b6e595639d5f6e88b6a0f716e9c2198795465217f2c01294fc97390"
+    },
+    {
+      "image": "build/lifetime-wb-normal/en_portrait_b/wb.bin",
+      "sha256": "76638b7ef3eb40a5cf7ba568821f170faa7d70b34bcbc049f8989524a3e58a17"
+    },
+    {
+      "image": "build/lifetime-wb-normal/en_sense_a/wb.bin",
+      "sha256": "14859287ff7b3a2c8396c55afb69b72666be493ffce067fc6c136c4d03697bfc"
+    },
+    {
+      "image": "build/lifetime-wb-normal/en_sense_b/wb.bin",
+      "sha256": "8fe63d62d0889869497183e90c87fb01312ee7428603eaf426ce4b8f6a1d58e1"
+    },
+    {
+      "image": "build/lifetime-wb-normal/ru_pushkin_a/wb.bin",
+      "sha256": "92cdf24340d389df0bb9d351dc8d11ffc1418842cc16c38ae4927b40658e2c6e"
+    },
+    {
+      "image": "build/lifetime-wb-normal/ru_pushkin_b/wb.bin",
+      "sha256": "ce235a3eac3a5807aaf49c3229765654168a11a529d560a0e9fb1e052498fd6f"
+    },
+    {
+      "image": "build/lifetime-wb-normal/ru_russia_a/wb.bin",
+      "sha256": "ed9fc98b4d27f9b239f08395eae89f7e32351bf4321f4f487fc8539974f566e2"
+    },
+    {
+      "image": "build/lifetime-wb-normal/ru_russia_b/wb.bin",
+      "sha256": "ba93d9121fd11c16322f356f3b75b8847e82b02f7061f1c77e80868ae9da533a"
+    },
+    {
+      "image": "build/lifetime-wb-normal/ru_slutskaya_a/wb.bin",
+      "sha256": "c9b64be2339d731723a325da49765c7fb760738b828c8e0adcfa15ec01ce0c2e"
+    },
+    {
+      "image": "build/lifetime-wb-normal/ru_slutskaya_b/wb.bin",
+      "sha256": "11ca90d36a1dde09089d967f2ccaaf1385a14f0944467d2eae10a2c0eb9b47c7"
+    },
+    {
+      "image": "build/lifetime-wb-normal/ru_square_a/wb.bin",
+      "sha256": "c8353e95e9dab81ba6401b8018bcfbeb699a5e60d0d3b54a53bda3a218abe022"
+    },
+    {
+      "image": "build/lifetime-wb-normal/ru_square_b/wb.bin",
+      "sha256": "3e9af69ceea1c0a31b1930e73810d28efc761437b78cb9ae8248b7b45330f2c7"
+    },
+    {
+      "image": "build/lifetime-wb-load5/en_letter_a/wb.bin",
+      "sha256": "7aa9e54694c1b3e1221797ee14ad2737e64ab5aca72fdb963b11a8842bb4a476"
+    },
+    {
+      "image": "build/lifetime-wb-load5/ru_pushkin_a/wb.bin",
+      "sha256": "242a974cc8b37f8b1fb3cde123c2e1eb3c669077a09bbc6140c4010dac5274b2"
+    }
+  ],
+  "representativePlayersRebuilt": [
+    {
+      "image": "build/lifetime-nb-asm-normal/speech_ru/speex-player.bin",
+      "sha256": "a035f244ef12b1b3451ee31dbcf8ac622da6d5ed24cb4683f453ac92050b873c"
+    },
+    {
+      "image": "build/lifetime-nb-asm-load40/speech_ru/speex-player.bin",
+      "sha256": "e237572a5734617efeb2234cefe7f45d8e26e51c4a44bd521eda7e38d8267f53"
+    },
+    {
+      "image": "build/lifetime-nb-c-normal/speech_ru/speex-player.bin",
+      "sha256": "14f0c3035359813e10157a9975fdfbc0ada0a9bb23b0b146ea94228d8117fb75"
+    },
+    {
+      "image": "build/lifetime-nb-c-load10/speech_ru/speex-player.bin",
+      "sha256": "07d1959d19928d606a3716677cfbfa6d96ead710ab533fe379db879b5f5e0fa6"
+    },
+    {
+      "image": "build/lifetime-wb-normal/ru_pushkin_a/wb.bin",
+      "sha256": "92cdf24340d389df0bb9d351dc8d11ffc1418842cc16c38ae4927b40658e2c6e"
+    },
+    {
+      "image": "build/lifetime-wb-load5/ru_pushkin_a/wb.bin",
+      "sha256": "242a974cc8b37f8b1fb3cde123c2e1eb3c669077a09bbc6140c4010dac5274b2"
+    }
+  ],
+  "bothDecoderBackendsRebuilt": true,
+  "selectedCandidateReplayedBothBackends": true,
+  "nbSourceSha256": {
+    "src/avr_fixed.h": "e168583df583c0e1da845259f8cd9ad7b2de5914cc83d9360a3b8fd2f4ee6884",
+    "src/avr_multiply.h": "c380f9e9b552856a5f49ca7317dba60d3de073911e94cef4a364e8ffebc8edac",
+    "src/avr_shift.h": "00f127c09f1a48f4c7e9d788412bd4b553897f769f3923daa8bddd6044caca73",
+    "src/avr_tables.h": "215f56cca897abbd52157be96555b9abf9e16193b82747b7c0eb622b5a5d3799",
+    "src/bits.c": "cbfa395967d45233c49354da8d4b52f5cd913cde063e4f2748974688d5ca0632",
+    "src/compact_lsp.c.inc": "f788f2ce58129a58b493d3632f9c94fb4430db9373e2b64456c2430c12646382",
+    "src/compact_lsp_rates.c.inc": "79eea7833e15d67483d0ce1852fbe12803aac3961050e64df2d4836e63921d28",
+    "src/iir_direct.c.inc": "d194b30f50791e82a3bac0fe3e21e7cbc9e1c248a7d52a836ca19e24bef11537",
+    "src/iir_kernel.inc": "1f43bc42f8feb75a6290f59425c4631356138dbf3c6f6ddc6abe8d20867a7dea",
+    "src/innovation.h": "175692e085fc43a33500053462efeb5b724ca0fbc0db9ad8b541111352716fc2",
+    "src/innovation.S": "3e07c81eb74df6db009b4fa881d467ae2d78db7c0b5f77955b7cba84726e1d3b",
+    "src/innovation_core.inc": "6f8871782ee40a0f76d9d649826f91573259210da400bee619eb185a2174eb37",
+    "src/long_pitch.h": "2e0e1a24ca3ea315c84cd8a4745052b66ac256a2a0e1747573b4639cf1bc56f0",
+    "src/lpc_dot.S": "6cd683217571b06ac4542e1488c4c8e381f46cc1cfa3d8ca7e0ea10095a3e336",
+    "src/lpc_update.S": "56bbf3b46ff1a6bd0c07492dbabaf1857eda1495441e6729d7770fd587e403ac",
+    "src/nb3_c_math.h": "770bade4d78071df923167bb848b324607151879c475a802a8f96dd58290f4d7",
+    "src/nb3_header.h": "73664dfcb3dd0e317336d54dda3cbbca52f26feaaae7fecd49441e175dde6558",
+    "src/nb3_indices.h": "24f9c668d4d03fec89c0f5dc39f58f7e901c93420b5166bb9b120ea4fa64963e",
+    "src/nb3_interpolate.h": "5c322bf72dae0615551140d607d7fa9315802799a6abf0189f37d890d63f6115",
+    "src/nb3_lsp.h": "3782d31d1c9f5b9cf84a1e7e8393c9c55d61efc7cc0adaadac2ee136668a471a",
+    "src/nb3_subframe.h": "1d50ca1ea31231914d81756e42476c0c19c699f4a8c500514ab2952c6229ea88",
+    "src/nb_decode.c.inc": "17a66d62b56e2e18ad02a2ee38ca12c467cb1df7cf4f31ae44038d9f5c9a5208",
+    "src/packed24.h": "81bc5fa6eb808c94bc88b9989a72712d741f0e68c694bdfaabaa3fd2e97ee30e",
+    "src/pitch24.h": "513294f121452da3747cce62ec3a481db2270a577507a4e3d3a62e4b41534d3e",
+    "src/pitch_add.S": "e6932ab48dae000ed68f9cde2eedce2b7b0fd2691915d1e37c83b5abf690f174",
+    "src/player.c": "f6258f40dc1e5db0032d54fffaa3c08058963c9c5230a95ddbc4f8284656c5a2",
+    "src/profile_mode.h": "fce0fd42ef9a64d1b8daae51b90adb1514dd6ff1672882fdfc68a93655e3efdc",
+    "src/profile_state.h": "d79dfd5b7bff405c3e2765991e88d7efb9c34b4a797368f203055ad21319f521",
+    "src/q14.S": "5688a0b99f570df15335227eb6c7eaded7c3ac593eeed7993dfd0bcad17df51a",
+    "src/qmf_memory.c": "1214176743164b501dcb0a8427a836c4cf2259cbec9ff4192d6e2976e322625d",
+    "src/qmf_memory.h": "8d93278c74a7909d889c1099cbd8d47341df8dcb48e3e555b3a531ca96c88ce1",
+    "src/short_pitch.h": "5357e8f6ca01602d15db987883dbbe8a14a8fecb5ed972ea098743fe0909c4ce",
+    "src/speex_avr.c": "a0f0656e1eaa8d6c87a2dbec1863d13efaf47ff2a5170324e1ced619e0f3d5e8",
+    "src/speex_avr.h": "d798742f2b39cf1a1325f74c1eaee059348481e976f92cb36037c5bb44475a89",
+    "src/speex_nb3.h": "9bdf52f1a8bc3631ad53948c3c5b75feaf194379e2a7b5653a0098ad8d721218",
+    "src/speex_platform.h": "4d8d2c0382b9b316ca9b4fe8382d316e72a2a26ebc2da77750d2f9c89a35d88f",
+    "src/speex_wb1.c": "ceb6ff40d7d32afe9a5e645e62867ba43542dca647970c584fbeb0d6ad61a7f2",
+    "src/speex_wb1.h": "72ddf3645ae728d34b7b3333f9d7e99639500d95d8e51107838272439d9aac00",
+    "src/wb_fold.c": "8beb7a4a5eabe39502ffd0bc037bccc8c3c1c6ef23467aa3e3bc5d56ca9eef72",
+    "src/wb_fold.h": "0a2242da65264c40aaf4ff6dfcf804c0783ba09327bbb5a457b7cd38c46b7fb5",
+    "src/wb_fold.S": "47ab9a6cdfbc7444d6ab7591958da256d90ffe51678d1200def52afa9bb0a6fd",
+    "src/wb_fold_kernel.inc": "dc1e9d2f66ff8d413913e570303f7440f208d504ce1cdb05028e1fda1ba9816d",
+    "src/wb_iir.c": "e7cd0cc4ae7fa9b5e2940fd2f1b18df94f40be965023371ab048e635cfd2f093",
+    "src/wb_iir.h": "add7f3d3e4d78d7a3683deeb44bd43ae77ccbbd28a5be3e1e756b03f82b11ff2",
+    "src/wb_iir.S": "73828fe3f41ff3ee5bc81e264e88a2244f6960ff02b0b4cc8ffd3a537e60c4d0",
+    "src/wb_internal.h": "048e85f319f25d311f166fe59f25902194e4b68c7636613147a5cf1fa15f965b",
+    "src/wb_player.c": "b5420260860385ebbe9e4d711bc7adde6b0ec7c5f8707c3cf2c22511a7a7d548",
+    "src/wb_qmf.c": "a0b669839d8d6cb942f2bc8445d78b3b1a58a8839f72cfdd8f9221c6c379dd7b",
+    "src/wb_qmf.h": "e1bbfcbcd68960460bdcee9f2e33099fa0c8b5793d0d8af26f04f8d11c3ea4d9",
+    "src/wb_qmf.S": "4aaa797d96216efed1cf91f76a4d1dd0576310dc96b218a73b428de68d7c7f29",
+    "src/zero_innovation.h": "389c586eded7020b241f4133acc264cac1939feadb253afeb5df276fb4032d2b",
+    "src/zero_shape_kernel.inc": "a7ed3d54ed9ebf47bbef208f19d70854d054d9bfcf2ddc8e75766210f116375d",
+    "tests/avr_tick.mjs": "603f807d48e4d9cab2f5ae751e4da31f66d172f7578853ecd0ccfb4a13085966",
+    "tests/verify_nb_players.py": "0866dbb708c7e84cdb269fa325746064dc8a3f7789be13b7523a7e55d1026347",
+    "tests/verify_player.mjs": "9d440b92365e1aed180178d8474dc7a23996941e9a216e6c054c446eff3b1335",
+    "tools/apply_profile.py": "49d21e55105e8c14c1937c9d3d3153c5566c1a49ac61bf14cd63de5ce1465850",
+    "tools/build.py": "74a705aee6844d7a9120fefaf7e17b16f213ab034cb0efff24c69947e0a4893b"
+  },
+  "wbSourceSha256": {
+    "src/avr_fixed.h": "e168583df583c0e1da845259f8cd9ad7b2de5914cc83d9360a3b8fd2f4ee6884",
+    "src/avr_multiply.h": "c380f9e9b552856a5f49ca7317dba60d3de073911e94cef4a364e8ffebc8edac",
+    "src/avr_shift.h": "00f127c09f1a48f4c7e9d788412bd4b553897f769f3923daa8bddd6044caca73",
+    "src/avr_tables.h": "215f56cca897abbd52157be96555b9abf9e16193b82747b7c0eb622b5a5d3799",
+    "src/bits.c": "cbfa395967d45233c49354da8d4b52f5cd913cde063e4f2748974688d5ca0632",
+    "src/compact_lsp.c.inc": "f788f2ce58129a58b493d3632f9c94fb4430db9373e2b64456c2430c12646382",
+    "src/compact_lsp_rates.c.inc": "79eea7833e15d67483d0ce1852fbe12803aac3961050e64df2d4836e63921d28",
+    "src/iir_direct.c.inc": "d194b30f50791e82a3bac0fe3e21e7cbc9e1c248a7d52a836ca19e24bef11537",
+    "src/iir_kernel.inc": "1f43bc42f8feb75a6290f59425c4631356138dbf3c6f6ddc6abe8d20867a7dea",
+    "src/innovation.h": "175692e085fc43a33500053462efeb5b724ca0fbc0db9ad8b541111352716fc2",
+    "src/innovation.S": "3e07c81eb74df6db009b4fa881d467ae2d78db7c0b5f77955b7cba84726e1d3b",
+    "src/innovation_core.inc": "6f8871782ee40a0f76d9d649826f91573259210da400bee619eb185a2174eb37",
+    "src/long_pitch.h": "2e0e1a24ca3ea315c84cd8a4745052b66ac256a2a0e1747573b4639cf1bc56f0",
+    "src/lpc_dot.S": "6cd683217571b06ac4542e1488c4c8e381f46cc1cfa3d8ca7e0ea10095a3e336",
+    "src/lpc_update.S": "56bbf3b46ff1a6bd0c07492dbabaf1857eda1495441e6729d7770fd587e403ac",
+    "src/nb3_c_math.h": "770bade4d78071df923167bb848b324607151879c475a802a8f96dd58290f4d7",
+    "src/nb3_header.h": "73664dfcb3dd0e317336d54dda3cbbca52f26feaaae7fecd49441e175dde6558",
+    "src/nb3_indices.h": "24f9c668d4d03fec89c0f5dc39f58f7e901c93420b5166bb9b120ea4fa64963e",
+    "src/nb3_interpolate.h": "5c322bf72dae0615551140d607d7fa9315802799a6abf0189f37d890d63f6115",
+    "src/nb3_lsp.h": "3782d31d1c9f5b9cf84a1e7e8393c9c55d61efc7cc0adaadac2ee136668a471a",
+    "src/nb3_subframe.h": "1d50ca1ea31231914d81756e42476c0c19c699f4a8c500514ab2952c6229ea88",
+    "src/nb_decode.c.inc": "17a66d62b56e2e18ad02a2ee38ca12c467cb1df7cf4f31ae44038d9f5c9a5208",
+    "src/packed24.h": "81bc5fa6eb808c94bc88b9989a72712d741f0e68c694bdfaabaa3fd2e97ee30e",
+    "src/pitch24.h": "513294f121452da3747cce62ec3a481db2270a577507a4e3d3a62e4b41534d3e",
+    "src/pitch_add.S": "e6932ab48dae000ed68f9cde2eedce2b7b0fd2691915d1e37c83b5abf690f174",
+    "src/player.c": "f6258f40dc1e5db0032d54fffaa3c08058963c9c5230a95ddbc4f8284656c5a2",
+    "src/profile_mode.h": "fce0fd42ef9a64d1b8daae51b90adb1514dd6ff1672882fdfc68a93655e3efdc",
+    "src/profile_state.h": "d79dfd5b7bff405c3e2765991e88d7efb9c34b4a797368f203055ad21319f521",
+    "src/q14.S": "5688a0b99f570df15335227eb6c7eaded7c3ac593eeed7993dfd0bcad17df51a",
+    "src/qmf_memory.c": "1214176743164b501dcb0a8427a836c4cf2259cbec9ff4192d6e2976e322625d",
+    "src/qmf_memory.h": "8d93278c74a7909d889c1099cbd8d47341df8dcb48e3e555b3a531ca96c88ce1",
+    "src/short_pitch.h": "5357e8f6ca01602d15db987883dbbe8a14a8fecb5ed972ea098743fe0909c4ce",
+    "src/speex_avr.c": "a0f0656e1eaa8d6c87a2dbec1863d13efaf47ff2a5170324e1ced619e0f3d5e8",
+    "src/speex_avr.h": "d798742f2b39cf1a1325f74c1eaee059348481e976f92cb36037c5bb44475a89",
+    "src/speex_nb3.h": "9bdf52f1a8bc3631ad53948c3c5b75feaf194379e2a7b5653a0098ad8d721218",
+    "src/speex_platform.h": "4d8d2c0382b9b316ca9b4fe8382d316e72a2a26ebc2da77750d2f9c89a35d88f",
+    "src/speex_wb1.c": "ceb6ff40d7d32afe9a5e645e62867ba43542dca647970c584fbeb0d6ad61a7f2",
+    "src/speex_wb1.h": "72ddf3645ae728d34b7b3333f9d7e99639500d95d8e51107838272439d9aac00",
+    "src/wb_fold.c": "8beb7a4a5eabe39502ffd0bc037bccc8c3c1c6ef23467aa3e3bc5d56ca9eef72",
+    "src/wb_fold.h": "0a2242da65264c40aaf4ff6dfcf804c0783ba09327bbb5a457b7cd38c46b7fb5",
+    "src/wb_fold.S": "47ab9a6cdfbc7444d6ab7591958da256d90ffe51678d1200def52afa9bb0a6fd",
+    "src/wb_fold_kernel.inc": "dc1e9d2f66ff8d413913e570303f7440f208d504ce1cdb05028e1fda1ba9816d",
+    "src/wb_iir.c": "e7cd0cc4ae7fa9b5e2940fd2f1b18df94f40be965023371ab048e635cfd2f093",
+    "src/wb_iir.h": "add7f3d3e4d78d7a3683deeb44bd43ae77ccbbd28a5be3e1e756b03f82b11ff2",
+    "src/wb_iir.S": "73828fe3f41ff3ee5bc81e264e88a2244f6960ff02b0b4cc8ffd3a537e60c4d0",
+    "src/wb_internal.h": "048e85f319f25d311f166fe59f25902194e4b68c7636613147a5cf1fa15f965b",
+    "src/wb_player.c": "b5420260860385ebbe9e4d711bc7adde6b0ec7c5f8707c3cf2c22511a7a7d548",
+    "src/wb_qmf.c": "a0b669839d8d6cb942f2bc8445d78b3b1a58a8839f72cfdd8f9221c6c379dd7b",
+    "src/wb_qmf.h": "e1bbfcbcd68960460bdcee9f2e33099fa0c8b5793d0d8af26f04f8d11c3ea4d9",
+    "src/wb_qmf.S": "4aaa797d96216efed1cf91f76a4d1dd0576310dc96b218a73b428de68d7c7f29",
+    "src/zero_innovation.h": "389c586eded7020b241f4133acc264cac1939feadb253afeb5df276fb4032d2b",
+    "src/zero_shape_kernel.inc": "a7ed3d54ed9ebf47bbef208f19d70854d054d9bfcf2ddc8e75766210f116375d",
+    "tests/avr_tick.mjs": "603f807d48e4d9cab2f5ae751e4da31f66d172f7578853ecd0ccfb4a13085966",
+    "tests/verify_wb_player.mjs": "7b3c6415a4e5ebf743669b466c3f5fdf2e9b9c65222c8e65e0de4ea222ca5aff",
+    "tools/apply_profile.py": "49d21e55105e8c14c1937c9d3d3153c5566c1a49ac61bf14cd63de5ce1465850",
+    "tools/build.py": "74a705aee6844d7a9120fefaf7e17b16f213ab034cb0efff24c69947e0a4893b",
+    "tools/build_wb.py": "081da112f7690b0058ea122b97db4d503bf5f2b8fd3b307f4a005816bcb51994"
+  },
+  "unitSourceSha256": {
+    "src/nb3_interpolate.h": "5c322bf72dae0615551140d607d7fa9315802799a6abf0189f37d890d63f6115",
+    "src/compact_lsp.c.inc": "f788f2ce58129a58b493d3632f9c94fb4430db9373e2b64456c2430c12646382",
+    "tests/lsp_lifetime.c": "e748274f28fba9d7920402921ea7f66054ec06286d0a8e02bf0965bb1a2a598b",
+    "tests/avr_lsp_lifetime.c": "bef8c0b12d6914fbc5676d257c53085ffab4b0dfe7bc43c839d07bf1ed66bb24",
+    "tests/verify_lsp_lifetime.mjs": "c667ae3eb7758d2b8c6d64c8723610eb5463fcf4813310fdc5f73f1a0ba866ad",
+    "tests/verify_scratch.py": "a64c930a447c91586c09e7df20cdaaef06498a4a71cc7e8a314da7577697dfc9",
+    "tools/build_lsp_lifetime_test.py": "94405caf8d4ddcaa203265a746a6ec70d2ed7a3071490aac4cda28f2318e84c6"
+  },
+  "physicalBoardTested": false
+}

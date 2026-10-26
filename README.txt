@@ -40,6 +40,8 @@ INTEL 8080
 Схема платы BM80/BM1 Tester: i8080/Hardware/bm80-bm1-tester.jpg
 (встроена в i8080/Emulator/README.md, раздел «Схема платы BM80/BM1 Tester»).
 Исследования CRC: i8080/CRC/README.md.
+Музыка с постоянным PWM 108 T / 32,41 кГц: i8080/Music/uniform-pwm/README.md.
+В плеере выбраны голос с PWM 159 T и музыка UNIFORM26 с PWM 108 T.
 
 УСТАНОВКА ИНСТРУМЕНТОВ WINDOWS x64
 Из корня репозитория:
@@ -225,6 +227,17 @@ PDF хранится в Git LFS. Скрипт: tools/build-music-format-guide.py
 Пересоздание и проверяемый срез: ATtiny13A/Music/docs/README.txt.
 
 МУЗЫКАЛЬНЫЕ ВАРИАНТЫ ДЛЯ ATTINY88
+Текущий общий движок UM88 и описание его формата:
+  ATtiny88/Music/universal/README.md
+  ATtiny88/Music/universal/FORMAT_RU.md
+Один код для девяти композиций; F_CPU берётся из конфигурации платформы.
+Сборщик: tools/build-universal-music.py --backend avr-asm.
+Данные: ATtiny88/Music/universal/songs/<имя>/score.json.
+Новые моноаранжировки: tools/compile-universal-music.py.
+Настройки инструментов, полный конвейер и импорт пакета в плеер:
+  ATtiny88/Music/universal/ARRANGEMENT_RU.md
+
+Сохранённые специализированные версии для сравнения:
 Девять адаптированных прошивок, включая Люмьер стерео и три Mariachi:
   ATtiny88/Music/variants/<имя>/synth.hex и eeprom.hex
 Внутренние 8 МГц; Timer1 PWM, моно PB2/OC1B, стерео также PB1/OC1A.

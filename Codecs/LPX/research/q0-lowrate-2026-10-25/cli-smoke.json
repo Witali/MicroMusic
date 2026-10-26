@@ -1,0 +1,1120 @@
+{
+  "case": "en_letter_a4",
+  "cli_command": "python tools/encode_lowrate.py reference.wav output --audio-kbps 16 --stage joint",
+  "metrics": {
+    "delay_samples": 0,
+    "delay_ms": 0.0,
+    "unaligned_pcm16": {
+      "samples": 32000,
+      "reference_energy": 8467760008.0,
+      "error_energy": 78711188.0,
+      "ser_db": 20.317320734931748,
+      "ser_status": "finite",
+      "rmse_pcm16": 49.595610944921326,
+      "max_abs_error_pcm16": 229,
+      "max_abs_error_percent_fs": 0.6988525390625,
+      "max_error_signed_pcm16": 229,
+      "max_error_sample": 16688,
+      "max_error_seconds": 2.086,
+      "stoi": 0.9095629818809071
+    },
+    "aligned_pcm16": {
+      "samples": 32000,
+      "reference_energy": 8467760008.0,
+      "error_energy": 78711188.0,
+      "ser_db": 20.317320734931748,
+      "ser_status": "finite",
+      "rmse_pcm16": 49.595610944921326,
+      "max_abs_error_pcm16": 229,
+      "max_abs_error_percent_fs": 0.6988525390625,
+      "max_error_signed_pcm16": 229,
+      "max_error_sample": 16688,
+      "max_error_seconds": 2.086,
+      "stoi": 0.9095629818809071
+    },
+    "aligned_pwm8": {
+      "samples": 32000,
+      "reference_energy": 8467760008.0,
+      "error_energy": 205266312.0,
+      "ser_db": 16.15450861353692,
+      "ser_status": "finite",
+      "rmse_pcm16": 80.09102477806113,
+      "max_abs_error_pcm16": 340,
+      "max_abs_error_percent_fs": 1.03759765625,
+      "max_error_signed_pcm16": 340,
+      "max_error_sample": 22349,
+      "max_error_seconds": 2.793625,
+      "stoi": 0.8595305608775601
+    }
+  },
+  "file_bytes": 7726,
+  "audio_packet_bytes": 7706,
+  "legacy_target_available": false,
+  "wall_seconds_including_profile": 206.5811916999519,
+  "avr": {
+    "simulator": "simavr 1.6",
+    "cpu_hz": 16000000,
+    "audio_hz": 8000,
+    "done": 1,
+    "decoder_error": 0,
+    "produced": 32000,
+    "played": 32000,
+    "underruns": 0,
+    "timer_ticks": 32000,
+    "tick_interval_min_cycles": 1991,
+    "tick_interval_max_cycles": 2009,
+    "min_queue_before_producer_eos": 385,
+    "decode_calls": 32000,
+    "decode_wall_cycles_total": 41926742,
+    "decode_wall_cycles_max": 24011,
+    "decode_wall_cycles_max_40": 73749,
+    "decode_wall_cycles_max_80": 124014,
+    "decode_wall_cycles_max_160": 239950,
+    "minimum_stack_pointer": 2185,
+    "bss_end": 1358,
+    "stack_margin_bytes": 827,
+    "total_cycles": 64561824,
+    "occupancy_trace": [
+      {
+        "cycle": 563810,
+        "queued": 385,
+        "underruns": 0
+      },
+      {
+        "cycle": 883807,
+        "queued": 439,
+        "underruns": 0
+      },
+      {
+        "cycle": 1203808,
+        "queued": 499,
+        "underruns": 0
+      },
+      {
+        "cycle": 1523807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 1843808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 2163807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 2483807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 2803808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 3123808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 3443809,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 3763808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 4083807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 4403812,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 4723807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 5043807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 5363816,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 5683808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 6003807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 6323807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 6643813,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 6963807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 7283809,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 7603807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 7923812,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 8243816,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 8563814,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 8883807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 9203807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 9523807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 9843807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 10163807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 10483807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 10803808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 11123808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 11443807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 11763807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 12083816,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 12403807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 12723807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 13043807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 13363810,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 13683815,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 14003810,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 14323808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 14643807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 14963807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 15283807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 15603807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 15923815,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 16243807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 16563810,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 16883808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 17203808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 17523807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 17843808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 18163807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 18483807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 18803807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 19123808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 19443807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 19763807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 20083807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 20403813,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 20723807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 21043807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 21363809,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 21683807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 22003811,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 22323808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 22643808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 22963808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 23283807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 23603808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 23923807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 24243807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 24563807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 24883807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 25203810,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 25523810,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 25843807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 26163808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 26483807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 26803807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 27123807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 27443807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 27763807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 28083807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 28403815,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 28723807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 29043807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 29363807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 29683807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 30003807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 30323815,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 30643808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 30963807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 31283807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 31603807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 31923807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 32243807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 32563811,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 32883814,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 33203807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 33523807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 33843816,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 34163807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 34483808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 34803808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 35123807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 35443808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 35763807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 36083807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 36403807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 36723807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 37043810,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 37363810,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 37683807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 38003808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 38323815,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 38643807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 38963811,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 39283807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 39603807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 39923807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 40243807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 40563807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 40883807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 41203808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 41523808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 41843809,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 42163808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 42483808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 42803815,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 43123808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 43443810,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 43763807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 44083815,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 44403812,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 44723807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 45043809,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 45363807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 45683808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 46003807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 46323807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 46643808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 46963807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 47283809,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 47603809,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 47923813,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 48243807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 48563807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 48883812,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 49203816,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 49523809,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 49843807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 50163808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 50483807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 50803813,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 51123808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 51443807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 51763808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 52083807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 52403808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 52723815,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 53043807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 53363808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 53683807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 54003807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 54323807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 54643807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 54963807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 55283807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 55603807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 55923808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 56243808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 56563807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 56883807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 57203807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 57523807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 57843812,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 58163808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 58483814,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 58803807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 59123807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 59443808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 59763807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 60083808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 60403807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 60723808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 61043807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 61363808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 61683807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 62003807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 62323808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 62643808,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 62963807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 63283807,
+        "queued": 511,
+        "underruns": 0
+      },
+      {
+        "cycle": 63603800,
+        "queued": 480,
+        "underruns": 0
+      },
+      {
+        "cycle": 63923800,
+        "queued": 320,
+        "underruns": 0
+      },
+      {
+        "cycle": 64243800,
+        "queued": 160,
+        "underruns": 0
+      }
+    ],
+    "input_sha256": "99368b95d2201455bc9730b3764348de81df36c6655ed4a4a02d58443cd1fb9d",
+    "input_bytes": 7726,
+    "input_samples": 32000,
+    "pwm_sha256": "229c51358c7eb89e2b244cbb71ab0b22158073d6c6a4fe951ffa28e7136a2e71",
+    "pwm_native_exact": true,
+    "core_sha256": "cf4b1e663be0c503d95ca101e5f1b37fcfcf4d3b8d57250f8ec4d8dbb076f8a7",
+    "core_header_sha256": "c5016338b4eae56af5013ce4ed8f24afe9a9e5071b226b569942431100a88558",
+    "math_header_sha256": "46bd8d82e7c85ccf3883916a48b194773d8505e0ffb4a9ba5aecec6ca37edd0d",
+    "harness_sha256": "5c0179ae73a153285826dfc1d608c4c65171f257901399efc9bb0e1488039e4a",
+    "runner_sha256": "c35b6adbb401978e96973d2a919ebca0bbd2879c5b4d47110c70233bf2516b52",
+    "elf_sha256": "9a37c3e51ee02e5cebd4e172e1917c74fb4c33ef17029d884a8f2a967632dd9f",
+    "hex_sha256": "3415a60328dc6ac5c8be580c624727069561669d4743eb232b8a97527dbebc04",
+    "flash_bytes": 16412,
+    "static_sram_bytes": 1102,
+    "compiler": "avr-g++.exe (GCC) 7.3.0",
+    "compiler_options": [
+      "-DLPX4_PROFILE_QUEUE=512",
+      "-DLPX4_PROFILE_PREFILL=384",
+      "-DLPX4_PROFILE_IRQ_LOAD=0",
+      "-DLPX4_AVR_DOT_UNROLL=9",
+      "-DLPX4_V3_FEATURES=24",
+      "-DLPX4_ENABLE_ASM=1",
+      "-mmcu=atmega328p",
+      "-DF_CPU=16000000UL",
+      "-Os",
+      "-std=gnu++11",
+      "-fno-exceptions",
+      "-fno-rtti"
+    ],
+    "arithmetic_backend": "avr5-asm",
+    "queue_bytes": 512,
+    "prefill_samples": 384,
+    "extra_irq_cycles": 0,
+    "dot_unroll": 9,
+    "v3_compiled_features": 24,
+    "simavr_no_underrun": true,
+    "physical_hardware_measured": false,
+    "instrumentation": "Decode wall intervals include active IRQ and flag stores; PB0 marks OCR2B writes; queue sampled every 160 ticks.",
+    "mean_decode_wall_cycles": 1310.2106875,
+    "mean_160_sample_max_cycles_per_sample": 1499.6875
+  }
+}

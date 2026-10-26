@@ -1,0 +1,195 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {universalPackageEntry} from '../lib/universal-package.js';
+import {createRenderer} from '../lib/engines.js';
+import {deferred,playerApp} from './helpers/player-app.mjs';
+const text=readFileSync(new URL('../../ATtiny88/Music/universal/examples/mono-study/generated/player-package.json',import.meta.url),'utf8');
+const original=JSON.parse(text);
+const init=app=>app.workers.at(-1).messages.find(m=>m.type==='init');
+const eventFor=value=>({target:{files:[{name:'player-package.json',size:value.length,text:async()=>value}],value:'selected'}});
+const retainedPackage=(id,usb=false)=>{
+ const catalog=JSON.parse(readFileSync(new URL(usb?'../firmware-attiny88-16mhz.json':'../firmware-attiny88.json',import.meta.url)));
+ const entry=catalog.entries.find(e=>e.id===id),load=p=>JSON.parse(readFileSync(new URL('../'+p,import.meta.url)));
+ return {schema:'micromusic-um88-package',version:1,build:load(entry.buildReport),verification:load(entry.verificationSource),
+  score:load(entry.source.replace(/synth\.hex$/,'score.json')),flashHex:entry.flashHex};
+};
+
+test('verified mono package identifies its actual clock, image and optional EEPROM',async()=>{
+ const entry=await universalPackageEntry(text);
+ assert.equal(entry.device,'attiny88');assert.equal(entry.voices,5);assert.equal(entry.audioChannels,1);
+ assert.equal(entry.cpuHz,8000000);assert.equal(entry.synthesisHz,7812.5);
+ assert.equal(entry.eepromBytes,0);assert.equal(entry.eepromRequired,false);assert.equal(entry.eepromHex,undefined);
+ assert.equal(entry.flashSha256,original.verification.flashSha256);
+ assert.equal(entry.verification.allPwmFramesMatch,true);assert.ok(original.notices.length>=2);
+});
+for(const [label,mutate,pattern] of [
+ ['score changed',p=>p.score.commands[0]^=1,/score SHA/],
+ ['audit missing',p=>delete p.verification,/audit/],
+ ['lost IRQ',p=>p.verification.lostInterrupts=1,/real-time/],
+ ['underrun',p=>p.verification.fifoUnderruns=1,/real-time/],
+ ['stale firmware',p=>p.build.flashSha256='0'.repeat(64),/SHA/],
+ ['clock mismatch',p=>p.build.cpuHz=12000000,/Clock/],
+ ['incomplete output audit',p=>p.verification.allPwmFramesMatch=false,/audit/],
+ ['clipping',p=>p.verification.clippedChannelSamples=1,/clipping/],
+ ['source/build channel mismatch',p=>p.score.channels=2,/channel/],
+ ['unsupported channel count',p=>p.score.channels=3,/channel/],
+ ['unqualified overclock',p=>p.build.cpuHz=16000000,/F_CPU/],
+])test('package rejects '+label,async()=>{
+ const pkg=structuredClone(original);mutate(pkg);await assert.rejects(universalPackageEntry(pkg),pattern);
+});
+
+test('fixed mono package binds its selected ABI to the complete playback audit',async()=>{
+ assert.equal(original.build.configuredChannels,1);assert.equal(original.build.renderABI,'mono-s16');
+ const entry=await universalPackageEntry(original);
+ assert.equal(entry.configuredChannels,1);assert.equal(entry.renderABI,'mono-s16');
+ for(const [mutate,pattern]of [
+  [p=>delete p.verification.configuredChannels,/Audit\/channel/],
+  [p=>delete p.verification.renderABI,/Audit\/render ABI/],
+  [p=>p.verification.configuredChannels=2,/Audit\/channel/],
+  [p=>p.verification.renderABI='packed-stereo-u32',/Audit\/render ABI/],
+  [p=>p.build.configuredChannels=2,/channel/],
+  [p=>p.build.renderABI='packed-stereo-u32',/render ABI/],
+  [p=>delete p.build.configuredChannels,/legacy render ABI/],
+  [p=>p.build.pwmBufferLayout='stereo-pairs',/layout/],
+ ]){
+  const pkg=structuredClone(original);mutate(pkg);await assert.rejects(universalPackageEntry(pkg),pattern);
+ }
+});
+
+test('legacy runtime-channel package metadata remains importable',async()=>{
+ const pkg=structuredClone(original);
+ delete pkg.build.configuredChannels;delete pkg.build.channelSelection;delete pkg.build.sourceChannels;
+ pkg.build.renderABI='packed-stereo-u32';
+ delete pkg.verification.configuredChannels;delete pkg.verification.renderABI;
+ const entry=await universalPackageEntry(pkg);
+ assert.equal(entry.audioChannels,1);assert.equal(entry.configuredChannels,undefined);
+});
+
+test('explicit mono conversion keeps original channel provenance separate from the effective score',async()=>{
+ const pkg=structuredClone(original);pkg.build.channelSelection='mono';pkg.build.sourceChannels=2;
+ assert.equal((await universalPackageEntry(pkg)).audioChannels,1);
+ pkg.build.channelSelection='auto';await assert.rejects(universalPackageEntry(pkg),/Source channel metadata/);
+});
+
+test('selected stereo package imports and renders both PWM channels',async()=>{
+ const pkg=retainedPackage('lumiere-stereo'),entry=await universalPackageEntry(pkg);
+ assert.equal(entry.audioChannels,2);assert.equal(entry.configuredChannels,2);
+ assert.equal(entry.renderABI,'packed-stereo-u32');assert.match(entry.description,/Стерео/);
+ assert.deepEqual(entry.outputs.map(o=>[o.channel,o.pin]),[['L','PB1'],['R','PB2']]);
+ const js=await createRenderer(entry,48000,{},'js'),wasm=await createRenderer(entry,48000,{},'wasm');
+ const a=js.render(16384),b=wasm.render(16384);
+ assert.equal(a.length,32768);assert.deepEqual(a,b);assert.ok(a.some(x=>Math.abs(x)>.005));
+ const app=await playerApp({speech:false,device:'attiny88'});
+ await app.get('package-file').onchange(eventFor(JSON.stringify(pkg)));
+ assert.equal(init(app).entry.audioChannels,2);assert.equal(app.get('stereo-output').hidden,false);
+ assert.equal(app.get('error').hidden,true);
+ for(const mutate of [p=>p.build.renderABI='mono-s16',p=>p.build.configuredChannels=1,
+  p=>p.verification.configuredChannels=1]){
+  const broken=structuredClone(pkg);mutate(broken);await assert.rejects(universalPackageEntry(broken),/ABI|channel/);
+ }
+});
+test('JS and WASM execute the same imported mono package without EEPROM',async()=>{
+ const entry=await universalPackageEntry(text);
+ const js=await createRenderer(entry,48000,{},'js'),wasm=await createRenderer(entry,48000,{},'wasm');
+ let energy=0;
+ for(let block=0;block<6;block++){
+  const a=js.render(8192),b=wasm.render(8192);assert.equal(a.length,8192);
+  for(let i=0;i<a.length;i++){assert.ok(Math.abs(a[i]-b[i])<1e-6);energy+=a[i]*a[i];}
+ }
+ assert.ok(energy>1);assert.equal(js.core.lost,0);assert.equal(wasm.core.lost,0);
+});
+test('eight independent voices execute identically with configurable mono rings',async()=>{
+ for(const folder of ['generated','profiles/buffer-128']){
+  const pkg=JSON.parse(readFileSync(new URL('../../ATtiny88/Music/universal/examples/polyphony-study/'+folder+'/player-package.json',import.meta.url),'utf8'));
+  const entry=await universalPackageEntry(pkg);
+  assert.equal(entry.voices,8);assert.equal(entry.audioChannels,1);
+  assert.equal(pkg.build.pwmBufferFrames,pkg.verification.fifoCapacityFrames);
+  for(const key of ['voiceSteals','omittedNotes','collapsedNotes'])assert.deepEqual(pkg.arrangementReport[key],[]);
+  const js=await createRenderer(entry,48000,{},'js'),wasm=await createRenderer(entry,48000,{},'wasm');
+  let energy=0;
+  for(let block=0;block<8;block++){
+   const a=js.render(8192),b=wasm.render(8192);
+   for(let i=0;i<a.length;i++){assert.ok(Math.abs(a[i]-b[i])<1e-6);energy+=a[i]*a[i];}
+  }
+  assert.ok(energy>1);assert.equal(js.core.lost,0);assert.equal(wasm.core.lost,0);
+ }
+});
+test('imported description exposes arrangement omissions and unsupported events',async()=>{
+ const pkg=structuredClone(original);
+ pkg.arrangementReport.ignoredEvents={CC10:2};pkg.arrangementReport.omittedNotes=[{note:60}];
+ const entry=await universalPackageEntry(pkg);
+ assert.match(entry.description,/неподдержанных событий: 2/);assert.match(entry.description,/исключено нот: 1/);
+});
+test('app imports the UM88 package, resets playback and offers its actual HEX',async()=>{
+ const app=await playerApp({speech:false,device:'attiny88'}),previous=app.workers.at(-1);
+ await app.get('package-file').onchange(eventFor(text));
+ assert.equal(previous.terminated,true);assert.equal(init(app).entry.kind,'universal');
+ assert.equal(init(app).entry.audioChannels,1);assert.equal(app.get('stereo-output').hidden,true);
+ assert.equal(app.get('download-eeprom').hidden,true);
+ assert.match(app.get('rom-details').textContent,/EEPROM не требуется/);
+ assert.match(app.get('download').href,/^data:text\/plain/);
+ assert.equal(app.get('error').hidden,true);assert.match(app.get('selected-title').textContent,/mono study/);
+});
+test('app preserves current playback after an invalid import',async()=>{
+ const app=await playerApp({speech:false,device:'attiny88'}),previous=app.workers.at(-1);
+ const broken=structuredClone(original);broken.verification.passed=false;
+ await app.get('package-file').onchange(eventFor(JSON.stringify(broken)));
+ assert.equal(previous.terminated,undefined);assert.equal(app.workers.at(-1),previous);
+ assert.equal(app.get('error').hidden,false);
+});
+test('12 MHz mono package updates clock labels without inventing board fuses',async()=>{
+ const pkg=readFileSync(new URL('../../ATtiny88/Music/universal/examples/mono-study/profiles/12mhz/player-package.json',import.meta.url),'utf8');
+ const entry=await universalPackageEntry(pkg);assert.equal(entry.cpuHz,12000000);assert.equal(entry.synthesisHz,11718.75);
+ const a=await createRenderer(entry,48000,{},'js'),b=await createRenderer(entry,48000,{},'wasm');
+ assert.equal(a.core.cpuHz,12000000);assert.equal(b.core.cpuHz,12000000);
+ const pa=a.render(8192),pb=b.render(8192);
+ for(let i=0;i<pa.length;i++)assert.ok(Math.abs(pa[i]-pb[i])<1e-6);
+ const app=await playerApp({speech:false,device:'attiny88'});
+ await app.get('package-file').onchange(eventFor(pkg));
+ assert.match(app.get('machine-details').textContent,/12 МГц/);
+ assert.match(app.get('tiny88-clock').textContent,/12 MHz/);
+ assert.match(app.get('board-isp-option').textContent,/12 МГц.*ISP/);
+ assert.equal(app.get('fuse-low').textContent,'—');
+ assert.match(app.get('fuse-clock-note').textContent,/конфигурацией платы/);
+});
+test('Micronucleus board rejects an ISP UM88 package without replacing playback',async()=>{
+ const app=await playerApp({speech:false,device:'attiny88',board:'mh-et-live-16mhz'}),previous=app.workers.at(-1);
+ assert.equal(app.get('package-file').disabled,false);
+ await app.get('package-file').onchange(eventFor(text));
+ assert.equal(app.workers.at(-1),previous);assert.equal(init(app).entry.cpuHz,16000000);
+ assert.equal(app.get('error').hidden,false);assert.match(app.get('error').textContent,/профиль ISP/);
+});
+
+test('audited USB UM88 package imports only on the matching board and keeps loader metadata',async()=>{
+ const catalog=JSON.parse(readFileSync(new URL('../firmware-attiny88-16mhz.json',import.meta.url)));
+ const e=catalog.entries.find(e=>e.id==='greensleeves');
+ const load=p=>JSON.parse(readFileSync(new URL('../'+p,import.meta.url)));
+ const pkg={schema:'micromusic-um88-package',version:1,build:load(e.buildReport),verification:load(e.verificationSource),
+   score:load(e.source.replace(/synth\.hex$/,'score.json')),flashHex:e.flashHex};
+ const text=JSON.stringify(pkg),entry=await universalPackageEntry(text);
+ assert.equal(entry.cpuHz,16000000);assert.equal(entry.board,'mh-et-live-16mhz');
+ const app=await playerApp({speech:false,device:'attiny88',board:entry.board});
+ await app.get('package-file').onchange(eventFor(text));
+ assert.equal(init(app).entry.kind,'universal');assert.equal(app.get('error').hidden,true);
+ assert.match(app.get('tiny88-clock').textContent,/16 MHz.*MH-ET LIVE/);
+ assert.match(app.get('fuse-high-note').textContent,/сохранить фьюзы платы/);
+ assert.equal(app.get('download-eeprom').hidden,true);assert.equal(app.get('board-upload').hidden,false);
+ assert.match(app.get('upload-command').textContent,/micronucleus --run/);
+ const isp=await playerApp({speech:false,device:'attiny88'}),previous=isp.workers.at(-1);
+ await isp.get('package-file').onchange(eventFor(text));
+ assert.equal(isp.workers.at(-1),previous);assert.match(isp.get('error').textContent,/выберите Micronucleus/);
+ for(const mutate of [p=>p.build.applicationFlashLimit=8192,p=>p.build.requiredFuses={},
+   p=>p.verification.bootloaderHandoffChecked=false]){
+   const broken=structuredClone(pkg);mutate(broken);await assert.rejects(universalPackageEntry(broken),/Micronucleus/);
+ }
+});
+test('switching chips while the file is being read discards the stale import',async()=>{
+ const app=await playerApp({speech:false,device:'attiny88'}),pending=deferred(),event=eventFor(text);
+ event.target.files[0].text=()=>pending.promise;
+ const importing=app.get('package-file').onchange(event);
+ app.get('device-select').value='attiny13a';await app.get('device-select').onchange();
+ pending.resolve(text);await importing;
+ assert.equal(app.get('device-select').value,'attiny13a');
+ assert.equal(init(app).entry.device??'attiny13a','attiny13a');assert.notEqual(init(app).entry.kind,'universal');
+});

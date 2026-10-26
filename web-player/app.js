@@ -1,5 +1,6 @@
 import { parseHex } from './lib/hex.js';
 import { RealtimeMonitor } from './lib/realtime.js';
+import { universalPackageEntry } from './lib/universal-package.js?v=20261025-um88-channels';
 const $ = id => document.getElementById(id);
 const formatHex = (value, length=2) => value.toString(16).toUpperCase().padStart(length,'0');
 const canvas = $('wave');
@@ -11,7 +12,13 @@ let playAttempt=0, busyAttempt=0;
 let lastScopeDraw=-Infinity, scopeDrawTimer;
 let originalLoading=false, originalAttempt=0;
 const speechCollection=new URL(location.href).searchParams.get('collection')==='hq4';
-let currentDevice='attiny13a', deviceRequest=0;
+const tiny88Boards={
+  'bare-8mhz':{cpuHz:8000000,catalog:'./firmware-attiny88.json'},
+  'mh-et-live-16mhz':{cpuHz:16000000,catalog:'./firmware-attiny88-16mhz.json'},
+};
+const boardId=value=>Object.hasOwn(tiny88Boards,value)?value:'bare-8mhz';
+let currentDevice='attiny13a', currentBoard=boardId(new URL(location.href).searchParams.get('board')), deviceRequest=0;
+let importAttempt=0;
 
 function showError(message) { $('error').textContent = message; $('error').hidden = !message; }
 function audioControls() {
@@ -20,27 +27,39 @@ function audioControls() {
 function selectedEngine() { return document.querySelector('input[name="engine"]:checked').value; }
 function deviceUI(device) {
   const tiny88=device==='attiny88', name=tiny88?'ATtiny88':'ATtiny13A';
+  const micronucleus=tiny88&&currentBoard==='mh-et-live-16mhz';
+  const mhz=tiny88?tiny88Boards[currentBoard].cpuHz/1000000:9.6;
   document.body.dataset.device=device;
+  document.body.dataset.board=tiny88?currentBoard:'';
   $('device-select').value=device;
   $('device-control').hidden=speechCollection;
+  $('board-control').hidden=!tiny88||speechCollection;
+  $('board-select').value=currentBoard;
+  $('board-isp-option').textContent='ATtiny88 · 8 МГц · ISP';
+  $('board-note').textContent=micronucleus?'Внешний генератор · загрузка по USB · тембры во Flash':'Внутренний RC · загрузка Flash и EEPROM через ISP';
+  $('tiny88-clock').textContent=mhz+' MHz · '+(micronucleus?'MH-ET LIVE':'PDIP-28');
   $('chip-attiny13a').hidden=tiny88; $('chip-attiny88').hidden=!tiny88;
   $('tiny88-power').hidden=!tiny88;
+  $('tiny88-power').textContent=micronucleus?'MH-ET LIVE: питание по USB · моно / R — D10 · L — D9.':'PDIP-28: питание VCC 7 и AVCC 20 · земля GND 8 и 22.';
+  document.querySelector('.tiny88-vcc').textContent=micronucleus?'USB 5 В':'VCC 7';
+  document.querySelector('.tiny88-gnd').textContent=micronucleus?'GND':'GND 8';
   $('machine-memory').textContent=tiny88?'8':'1';
-  $('machine-details').textContent=tiny88?'512 Б SRAM · 64 Б EEPROM · 8 МГц':'64 Б SRAM · 64 Б EEPROM · 9,6 МГц';
-  $('fuses').setAttribute('aria-label','Рекомендуемые фьюзы '+name);
-  $('fuse-low').textContent=tiny88?'0xEE':'0x7A';
-  $('fuse-high').textContent=tiny88?'0xDF':'0xFF';
-  $('fuse-high-note').textContent=tiny88?'SPI включён · RESET включён':'сохранить заводской';
-  $('fuse-extended').hidden=!tiny88; $('fuse-extended-value').textContent='0xFF';
-  $('fuse-clock-value').textContent='Внутренний RC · '+(tiny88?'8':'9,6')+' МГц';
-  $('fuse-clock-note').textContent='CKDIV8 отключён · делитель /1';
+  $('machine-details').textContent=tiny88?`512 Б SRAM · 64 Б EEPROM · ${mhz} МГц`:'64 Б SRAM · 64 Б EEPROM · 9,6 МГц';
+  $('fuses').setAttribute('aria-label',micronucleus?'Штатные настройки платы MH-ET LIVE':'Рекомендуемые фьюзы '+name);
+  $('fuse-low').textContent=micronucleus?'—':tiny88?'0xEE':'0x7A';
+  $('fuse-high').textContent=micronucleus?'—':tiny88?'0xDF':'0xFF';
+  $('fuse-high-note').textContent=micronucleus?'сохранить фьюзы платы':tiny88?'SPI включён · RESET включён':'сохранить заводской';
+  $('fuse-extended').hidden=!tiny88; $('fuse-extended-value').textContent=micronucleus?'—':'0xFF';
+  $('fuse-clock-value').textContent=micronucleus?'Внешний генератор · 16 МГц':'Внутренний RC · '+(tiny88?'8':'9,6')+' МГц';
+  $('fuse-clock-note').textContent=micronucleus?'Штатный Micronucleus · делитель /1 в прошивке':'CKDIV8 отключён · делитель /1';
   $('fuse-datasheet').href=tiny88?'https://ww1.microchip.com/downloads/en/DeviceDoc/doc8008.pdf':'https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf';
   $('fuse-datasheet').textContent='Фьюзы в datasheet, §'+(tiny88?'20.2':'17.2')+' ↗';
   for(const choice of document.querySelectorAll('input[name="engine"]'))choice.disabled=tiny88&&!['js','wasm'].includes(choice.value);
   if(document.querySelector('input[name="engine"]:checked').disabled){
     for(const choice of document.querySelectorAll('input[name="engine"]'))choice.checked=choice.value==='wasm';
   }
-  $('package-file').disabled=tiny88;
+  $('package-file').disabled=false;
+  $('package-import-label').textContent=micronucleus?'Открыть пакет UM88 для Micronucleus':tiny88?'Открыть пакет UM88':'Открыть пакет ATtiny13A';
   $('engine-note').textContent='При смене — сброс на начало.';
   if(!speechCollection) {
     document.title=`MicroMusic / ${name} — плеер прошивок`;
@@ -52,11 +71,12 @@ function deviceUI(device) {
     history.textContent=tiny88?'Подключение ATtiny88 ↗':'История разработки ↗';
   }
 }
-async function switchDevice(device) {
+async function switchDevice(device,board=currentBoard) {
   const request=++deviceRequest;
   device=device==='attiny88'&&!speechCollection?'attiny88':'attiny13a';
+  board=boardId(board);
   try {
-    const response=await fetch(device==='attiny88'?'./firmware-attiny88.json':'./firmware.json');
+    const response=await fetch(device==='attiny88'?tiny88Boards[board].catalog:'./firmware.json');
     if(!response.ok)throw new Error('HTTP '+response.status);
     const next=await response.json();
     if(request!==deviceRequest)return;
@@ -64,11 +84,13 @@ async function switchDevice(device) {
     const id=next.aliases?.[requested]??requested;
     const entry=next.entries.find(e=>e.id===id)||next.entries.find(e=>e.id===next.defaultId);
     if(!entry)throw new Error('В каталоге нет доступных прошивок.');
-    parseHex(entry.flashHex,device==='attiny88'?8192:1024);
-    catalog=next; currentDevice=device; deviceUI(device); load(entry);
+    if(entry.cpuHz!==(device==='attiny88'?tiny88Boards[board].cpuHz:9600000))throw new Error('Частота прошивки не соответствует выбранной плате.');
+    parseHex(entry.flashHex,device==='attiny88'?(board==='mh-et-live-16mhz'?6012:8192):1024);
+    catalog=next; currentDevice=device;if(device==='attiny88')currentBoard=board;deviceUI(device);load(entry);
   } catch(error) {
     if(request!==deviceRequest)return;
     $('device-select').value=currentDevice;
+    $('board-select').value=currentBoard;
     showError('Не удалось загрузить каталог прошивок. '+error.message);
   }
 }
@@ -186,6 +208,18 @@ function load(entry,{autoplay=false}={}) {
     $('fuse-clock-value').textContent=clock+' · '+(configuration.oscillatorHz/1000000).toLocaleString('ru')+' МГц';
     $('fuse-clock-note').textContent=configuration.fuseLow&16?'CKDIV8 отключён · делитель /1':'CKDIV8 включён · делитель /8';
   }
+  if(currentDevice==='attiny88'&&entry.firmwareEngine==='UM88'&&currentBoard!=='mh-et-live-16mhz'){
+    $('board-isp-option').textContent='UM88 · '+(entry.cpuHz/1000000).toLocaleString('ru')+' МГц · ISP';
+    $('board-note').textContent='Профиль UM88 из пакета/каталога · EEPROM не требуется';
+    $('machine-details').textContent='512 Б SRAM · 64 Б EEPROM · '+(entry.cpuHz/1000000).toLocaleString('ru')+' МГц';
+    $('tiny88-clock').textContent=(entry.cpuHz/1000000).toLocaleString('ru')+' MHz · PDIP-28';
+    if(entry.cpuHz!==8000000){
+      for(const id of ['fuse-low','fuse-high','fuse-extended-value'])$(id).textContent='—';
+      $('fuse-high-note').textContent='зависят от платы';
+      $('fuse-clock-value').textContent='F_CPU · '+(entry.cpuHz/1000000).toLocaleString('ru')+' МГц';
+      $('fuse-clock-note').textContent='Источник тактов и фьюзы задаются конфигурацией платы';
+    }
+  }
   const originalUrl=entry.kind==='speech' ? entry.originalAudioUrl : null;
   $('play-original').hidden=!originalUrl;
   // Mobile media decoders may reject the canonical recordings' 7500 Hz rate.
@@ -194,13 +228,14 @@ function load(entry,{autoplay=false}={}) {
   originalAudio.load(); originalAudio.volume=+$('volume').value;
   const stereo=entry.audioChannels===2;
   const tiny88=currentDevice==='attiny88', timer=tiny88?'1':'0';
+  const micronucleus=tiny88&&currentBoard==='mh-et-live-16mhz';
   document.body.dataset.stereo=String(stereo);
   scopes=Array.from({length:stereo?2:1},()=>new Float32Array(512));
   $('stereo-output').hidden=!stereo;$('scope-right').hidden=!stereo;$('panorama').hidden=!stereo||!!entry.devicePackage;
-  $('right-output-label').textContent=(stereo?'R · ':'')+(tiny88?'PB2 / OC1B · вывод 16':'PB1 / OC0B · вывод 6');
-  $('right-output-label').title=tiny88?'Вывод 16 в корпусе PDIP-28':'Вывод 6 в 8-выводных корпусах';
-  $('left-output-label').textContent='L · '+(tiny88?'PB1 / OC1A · вывод 15':'PB0 / OC0A · вывод 5');
-  $('left-output-label').title=tiny88?'Вывод 15 в корпусе PDIP-28':'Вывод 5 в 8-выводных корпусах';
+  $('right-output-label').textContent=(stereo?'R · ':'')+(micronucleus?'PB2 / OC1B · D10':tiny88?'PB2 / OC1B · вывод 16':'PB1 / OC0B · вывод 6');
+  $('right-output-label').title=micronucleus?'D10 на плате MH-ET LIVE':tiny88?'Вывод 16 в корпусе PDIP-28':'Вывод 6 в 8-выводных корпусах';
+  $('left-output-label').textContent='L · '+(micronucleus?'PB1 / OC1A · D9':tiny88?'PB1 / OC1A · вывод 15':'PB0 / OC0A · вывод 5');
+  $('left-output-label').title=micronucleus?'D9 на плате MH-ET LIVE':tiny88?'Вывод 15 в корпусе PDIP-28':'Вывод 5 в 8-выводных корпусах';
   $('audio-mode').textContent=stereo?'СТЕРЕО · 2 PWM-ВЫХОДА':'МОНО · 1 PWM-ВЫХОД';
   const physical=selectedEngine()==='device';
   $('scope-left-label').textContent=physical?(stereo?'L · PB0':'МОНО · PB1'):(stereo?`L · OCR${timer}A`:`МОНО · OCR${timer}B`);
@@ -208,7 +243,7 @@ function load(entry,{autoplay=false}={}) {
   $('wave').setAttribute('aria-label',stereo?'Левый канал PWM до фильтра':'Осциллограмма PWM до фильтра');
   $('average-label').textContent=stereo?'СРЕДНИЙ PWM · L / R':'СРЕДНИЙ PWM';
   $(tiny88?'chip-attiny88':'chip-attiny13a').setAttribute('aria-label',tiny88
-    ? 'ATtiny88, PDIP-28, вид сверху: '+(stereo?'правый канал PB2 вывод 16, левый канал PB1 вывод 15':'выход PWM PB2 вывод 16')
+    ? micronucleus?'MH-ET LIVE Tiny88, 16 МГц: '+(stereo?'R — D10 / PB2, L — D9 / PB1':'моно — D10 / PB2'):'ATtiny88, PDIP-28, вид сверху: '+(stereo?'правый канал PB2 вывод 16, левый канал PB1 вывод 15':'выход PWM PB2 вывод 16')
     : 'ATtiny13A, вид сверху: '+(stereo?'правый канал PB1 вывод 6, левый канал PB0 вывод 5':'выход PWM PB1 вывод 6'));
   draw();
   $('elapsed').textContent='00:00.0'; $('average').textContent=stereo?'128.0 / 128.0':'128.0'; $('headroom').textContent='—';
@@ -225,9 +260,11 @@ function load(entry,{autoplay=false}={}) {
       : entry.codec==='hq4-t' ? 'Исследование HQ4-T ↗' : 'Сверка HQ4 ↗';
   }
   const flashSource=entry.source||'data:text/plain;charset=utf-8,'+encodeURIComponent(entry.flashHex);
-  const capacity=tiny88?8192:1024, prefix=currentDevice;
+  const capacity=micronucleus?6012:tiny88?8192:1024, prefix=micronucleus?'attiny88-mh-et-live-16mhz':currentDevice;
   $('rom-name').textContent=`${prefix}-${entry.id}.hex`; $('rom-details').textContent=`${entry.flashBytes} / ${capacity} Б Flash · ${entry.eepromBytes} / 64 Б EEPROM · ${(entry.sampleHz/1000).toLocaleString('ru')} кГц ${entry.kind==='speech'?'отсчёты':'PWM'}`;
+  if(micronucleus)$('rom-details').textContent=`${entry.flashBytes} / ${capacity} Б приложения · тембры во Flash · ${(entry.sampleHz/1000).toLocaleString('ru')} кГц PWM`;
   if(entry.devicePackage)$('rom-details').textContent=`${entry.flashBytes} / ${capacity} Б Flash · ${entry.eepromBytes} / 64 Б EEPROM · пакет ATtiny13A`;
+  if(entry.firmwareEngine==='UM88')$('rom-details').textContent=`${entry.flashBytes} / ${capacity} Б ${micronucleus?'приложения · тембры во Flash':'Flash'} · EEPROM не требуется · синтез ${(entry.synthesisHz/1000).toLocaleString('ru')} кГц · ${(entry.pwmHz/1000).toLocaleString('ru')} кГц PWM`;
   $('rom-name').href=flashSource; $('rom-name').download=`${prefix}-${entry.id}.hex`;
   $('rom-hash').textContent=entry.flashSha256.slice(0,16)+'…'; $('rom-hash').title='SHA-256 Flash: '+entry.flashSha256;
   $('rom-size').textContent=entry.flashBytes+' байт';
@@ -235,7 +272,10 @@ function load(entry,{autoplay=false}={}) {
   $('wav-link').hidden=!entry.preview; if (entry.preview) $('wav-link').href=entry.preview;
   const reference=originalUrl||entry.reference;
   $('reference-wav').hidden=!reference; if(reference)$('reference-wav').href=reference;
-  $('download-eeprom').hidden=!entry.eepromHex; $('reset').disabled=false;
+  $('download-eeprom').hidden=!entry.eepromHex||entry.firmwareEngine==='UM88'; $('reset').disabled=false;
+  $('board-upload').hidden=!micronucleus;
+  $('upload-command').textContent=`micronucleus --run ${prefix}-${entry.id}.hex`;
+  $('download').textContent=micronucleus?'↓ HEX для Micronucleus':'↓ Flash HEX';
   const eepromSource=entry.eepromSource||(entry.eepromHex ? 'data:text/plain;charset=utf-8,'+encodeURIComponent(entry.eepromHex) : null);
   for(const [id,source,suffix] of [['download',flashSource,''],['download-eeprom',eepromSource,'-eeprom']]){
     const link=$(id);if(source){link.href=source;link.download=`${prefix}-${entry.id}${suffix}.hex`;link.removeAttribute('aria-disabled');}
@@ -243,9 +283,10 @@ function load(entry,{autoplay=false}={}) {
   const bytes=parseHex(entry.flashHex,capacity); $('memory').textContent=Array.from({length:8},(_,line)=>formatHex(line*16,4)+'  '+Array.from(bytes.subarray(line*16,line*16+16),x=>formatHex(x)).join(' ')).join('\n');
   const url=new URL(location.href); url.searchParams.set('firmware',entry.id);
   if(tiny88)url.searchParams.set('device','attiny88');else url.searchParams.delete('device');
+  if(micronucleus)url.searchParams.set('board',currentBoard);else url.searchParams.delete('board');
   history.replaceState(null,'',url);
   renderCatalog(); transport();
-  const worker=new Worker(new URL('./worker.js?v=20261024-common-avr',import.meta.url),{type:'module'}); runtime=worker;
+  const worker=new Worker(new URL('./worker.js?v=20261025-board-um88-pipeline',import.meta.url),{type:'module'}); runtime=worker;
   worker.onmessage=({data})=>{
     if (runtime!==worker) return;
     if (data.type==='ready') {
@@ -306,15 +347,20 @@ for (const choice of document.querySelectorAll('input[name="engine"]')) choice.o
   if (selected) load(selected);
 };
 $('device-select').onchange=()=>switchDevice($('device-select').value);
+$('board-select').onchange=()=>switchDevice('attiny88',$('board-select').value);
 $('package-file').onchange=async event=>{
   const file=event.target.files[0];if(!file)return;
+  const attempt=++importAttempt,device=currentDevice,request=deviceRequest;
   try{
     if(file.size>16*1024*1024)throw Error('Пакет превышает 16 МБ');
-    const {packageEntry}=await import('./lib/package-entry.js');
-    const entry=await packageEntry(await file.text(),{name:file.name});
-    catalog.entries=catalog.entries.filter(e=>e.kind!=='package');catalog.entries.push(entry);
+    const text=await file.text();
+    const entry=device==='attiny88'?await universalPackageEntry(text):await (await import('./lib/package-entry.js')).packageEntry(text,{name:file.name});
+    if(device==='attiny88'&&((entry.board==='mh-et-live-16mhz')!==(currentBoard==='mh-et-live-16mhz')))
+      throw Error('Профиль пакета не соответствует выбранной плате: выберите '+(entry.board?'Micronucleus':'профиль ISP'));
+    if(attempt!==importAttempt||device!==currentDevice||request!==deviceRequest)return;
+    catalog.entries=catalog.entries.filter(e=>!['package','universal'].includes(e.kind));catalog.entries.push(entry);
     $('search').value='';load(entry);
-  }catch(error){showError('Не удалось открыть пакет: '+error.message);}
+  }catch(error){if(attempt===importAttempt&&device===currentDevice&&request===deviceRequest)showError('Не удалось открыть пакет: '+error.message);}
   finally{event.target.value='';}
 };
 document.addEventListener('keydown',event=>{ if (event.code==='Space' && !event.repeat && !/INPUT|SELECT|TEXTAREA|BUTTON|A/.test(event.target.tagName)) { event.preventDefault(); toggle(); } });
