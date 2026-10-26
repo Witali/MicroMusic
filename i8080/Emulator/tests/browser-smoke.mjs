@@ -26,6 +26,7 @@ async function suite(target) {
     frame.contentWindow.addEventListener('error', event => errors.push(event.message));
   await wait(() => !doc.getElementById('run').disabled && doc.querySelectorAll('[data-example]').length === 3);
   check(doc.getElementById('file-name').textContent.includes('42,68 кГц'), '82T / two pulses per sample tempo-preserving default');
+  check([...doc.getElementById('registers').children].map(node=>node.dataset.register).join(',') === 'A,F,B,C,D,E,H,L', 'AF displayed before BC/DE/HL');
   check(!doc.querySelector('audio'), 'no separate audio player');
   check(!doc.getElementById('download'), 'no WAV download control');
   check(doc.querySelector('.machine-spec').textContent.includes('244 инструкции'), 'instruction wording');
@@ -143,8 +144,8 @@ async function suite(target) {
   check(doc.getElementById('writes').textContent === '2', 'PUSH must write two bytes');
   check(doc.getElementById('edges').textContent === '4', 'PUSH must generate four WR edges');
   check(doc.getElementById('cpu-status').textContent.includes('SP 3000'), 'SP restored');
-  check(doc.getElementById('registers').children[4].textContent === 'H12', 'H restored');
-  check(doc.getElementById('registers').children[5].textContent === 'L34', 'L restored');
+  check(doc.querySelector('#registers [data-register="H"]').textContent === 'H12', 'H restored');
+  check(doc.querySelector('#registers [data-register="L"]').textContent === 'L34', 'L restored');
   log(`PASS ${target}: RAM stack; /WR pulses; register inspector`);
 
   await load(doc, Uint8Array.of(0xc3, 0, 0), 'loop.bin');

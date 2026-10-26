@@ -458,10 +458,12 @@ function drawScope(samples) {
 }
 function updateRegisters(result) {
   const regs = result?.registers || Array(8).fill(0), flags = result?.flags || 2;
-  $('registers').replaceChildren(...['B', 'C', 'D', 'E', 'H', 'L', 'A', 'F'].map((name, i) => {
+  const displayed = [['A', regs[7]], ['F', flags], ['B', regs[0]], ['C', regs[1]],
+    ['D', regs[2]], ['E', regs[3]], ['H', regs[4]], ['L', regs[5]]];
+  $('registers').replaceChildren(...displayed.map(([name, byte]) => {
     const box = document.createElement('div'), label = document.createElement('span'), value = document.createElement('strong');
-    box.className = 'cpu-register'; label.textContent = name;
-    value.textContent = hex(i === 6 ? regs[7] : i === 7 ? flags : regs[i]);
+    box.className = 'cpu-register'; box.dataset.register = name; label.textContent = name;
+    value.textContent = hex(byte);
     box.append(label, value); return box;
   }));
   $('flags').replaceChildren(...[['S', 7], ['Z', 6], ['AC', 4], ['P', 2], ['CY', 0]].map(([name, bit]) => {
