@@ -2578,3 +2578,49 @@ LSP/LPC already differ before FFT. This is neither an ATmega64A fit claim
 nor a reason to weaken the numerical gate. Fix the input boundary first.
 [Negative full-decoder evidence](../../Codecs/Codec2/reports/adaptive-cold-failure.json),
 [earlier-stage trace](../../Codecs/Codec2/reports/cold-float-diagnostic.json).
+
+### Canonicalize input boundaries before qualifying cancellation-sensitive DSP
+
+The [canonical LPC profile](../../Codecs/Codec2/CANONICAL_LPC_RU.md) fixes
+the earlier LSP/LPC differences without editing pinned vendor sources.
+Pack all 393 grid angles with an integer Q54 constant for the pinned Codec2
+PI literal; store ten initial binary32 values explicitly. A portable Q60
+integer sine/x polynomial (degree18, ten coefficients) evaluates cosine on
+|angle|<8 after true-pi reduction. Split 64x64 multiplication into four
+unsigned32 products and round ties to even. Flash reads use avr-libc in a
+separate access path; CPU macros and the normal GNU C ABI are retained.
+
+The polynomial's mathematical output differs from the frozen native CRT by
+at most one ULP on the tested inputs. Fourteen optional data corrections
+preserve the existing native oracle over every reachable grid/startup/midpoint
+angle. This is explicit oracle compatibility, not greater mathematical
+accuracy. Mathematical-only mode remains selectable. Other host libm variants
+need requalification. Q60 is not claimed as a proven minimal cosine Q;
+bulk arrays retain their independently studied 16/24/32/40-bit ranges.
+
+All 158,772 reachable-angle cases match the selected native cosine; one
+million additional random angles differ by at most one ULP. All 4499 scalar
+native/ATmega64A requests match byte-for-byte. AVR-GCC 7.3.0 `-Os`, AVR5/MUL,
+ordinary ABI: standalone Flash 3776 B, static SRAM 11 B, stack 153 B; mean
+cosine/grid/init costs 39,197/1431/73 cycles. No floating arithmetic or cos
+routine links into the scalar image. Tables occupy 232 B, excluding code
+and immediate constants. [Scalar evidence](../../Codecs/Codec2/reports/lpc-math-kernel.json).
+
+The complete decoder passes 218 EN, 147 RU and an independent 24-packet
+extreme/transition sequence: SNR 60.02/59.98/57.24 dB, max PCM error 35/25/33.
+Native PCM retains the selected adaptive hashes over all 11,333 packets.
+Flash is 49,618 B; static SRAM 711 B plus peak observed stack 3009 B leaves
+376/4096 B. Ordinary phrases only reach 2756 B stack, leaving 629 B: testing
+only those would miss the colder path. Worst frame is 31,188,429 cycles,
+1.949 s at 16 MHz, not real time. No active IRQ, board or live-speech admission.
+[Complete evidence](../../Codecs/Codec2/reports/canonical-decoder.json).
+
+Instruction profiling of the same binary checks PCM and cycle totals against
+the full execution. Keep every duplicate static symbol in the PC map, rather
+than overwriting names across translation units. Inclusive costs overlap.
+On 20 EN prefix frames, main/weighted spectra consume about 27%/27%, IFFT 13%,
+LPC 6%, other 24%; the extreme sequence increases main-spectrum cost to 39%.
+Next investigate int32 additions/rounded averages where headroom proves them
+safe, preserving a wide C reference and byte equality. Do not infer a speedup
+from that idea before assembling and measuring it.
+[Verified prefix profile](../../Codecs/Codec2/reports/canonical-profile.json).

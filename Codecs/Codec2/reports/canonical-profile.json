@@ -1,0 +1,1076 @@
+{
+  "simulator": "avr8js 0.21.1",
+  "mcu": "ATmega64A",
+  "results": [
+    {
+      "name": "speech.c2zx",
+      "frames": 20,
+      "samples": 3200,
+      "totalCycles": 305155918,
+      "meanCycles": 15257795.9,
+      "stages": [
+        {
+          "name": "codec2_analysis_forward",
+          "cycles": 83200798,
+          "percent": 27.26501211095634
+        },
+        {
+          "name": "codec2_weight_pair",
+          "cycles": 81553543,
+          "percent": 26.725204457611078
+        },
+        {
+          "name": "other",
+          "cycles": 73099150,
+          "percent": 23.95468863232074
+        },
+        {
+          "name": "codec2_fixed_inverse",
+          "cycles": 39659601,
+          "percent": 12.99650397079961
+        },
+        {
+          "name": "codec2_canonical_lsp_to_lpc",
+          "cycles": 18115657,
+          "percent": 5.9365248816835985
+        },
+        {
+          "name": "codec2_fixed_fifth",
+          "cycles": 9287687,
+          "percent": 3.0435873768635218
+        },
+        {
+          "name": "codec2_weight_init",
+          "cycles": 210930,
+          "percent": 0.0691220414083531
+        },
+        {
+          "name": "codec2_weight_dc",
+          "cycles": 28552,
+          "percent": 0.009356528356759576
+        }
+      ],
+      "inclusive": [
+        {
+          "name": "main",
+          "cycles": 305155918,
+          "percent": 100
+        },
+        {
+          "name": "codec2_hybrid_decode",
+          "cycles": 305155200,
+          "percent": 99.9997647104455
+        },
+        {
+          "name": "codec2_analysis_forward",
+          "cycles": 83200798,
+          "percent": 27.26501211095634
+        },
+        {
+          "name": "codec2_analysis_fast_forward",
+          "cycles": 82415268,
+          "percent": 27.007592885680165
+        },
+        {
+          "name": "codec2_weight_pair",
+          "cycles": 81553543,
+          "percent": 26.725204457611078
+        },
+        {
+          "name": "codec2_analysis_pair",
+          "cycles": 81372195,
+          "percent": 26.665776476928755
+        },
+        {
+          "name": "__mulsidi3",
+          "cycles": 45659924,
+          "percent": 14.962817794672427
+        },
+        {
+          "name": "codec2_fixed_inverse",
+          "cycles": 39659601,
+          "percent": 12.99650397079961
+        },
+        {
+          "name": "__umulsidi3_helper",
+          "cycles": 29727351,
+          "percent": 9.741692441960113
+        },
+        {
+          "name": "__umulhisi3",
+          "cycles": 28610450,
+          "percent": 9.375682499462455
+        },
+        {
+          "name": "__mulsf3x",
+          "cycles": 20512119,
+          "percent": 6.721848664917585
+        },
+        {
+          "name": "__lshrdi3",
+          "cycles": 19267477,
+          "percent": 6.313977826902246
+        },
+        {
+          "name": "__muldi3_6",
+          "cycles": 18653317,
+          "percent": 6.112716778443733
+        },
+        {
+          "name": "codec2_canonical_lsp_to_lpc",
+          "cycles": 18115657,
+          "percent": 5.9365248816835985
+        },
+        {
+          "name": "__mulsf3",
+          "cycles": 16737899,
+          "percent": 5.485031753505105
+        },
+        {
+          "name": "__addsf3x",
+          "cycles": 16140259,
+          "percent": 5.289184331008125
+        },
+        {
+          "name": "codec2_lpc_cosf",
+          "cycles": 15714935,
+          "percent": 5.149805090786409
+        },
+        {
+          "name": "multiply@9878",
+          "cycles": 15209350,
+          "percent": 4.984124214166477
+        },
+        {
+          "name": "mul_q60",
+          "cycles": 14026491,
+          "percent": 4.596499747384876
+        },
+        {
+          "name": "__fp_powser",
+          "cycles": 12960553,
+          "percent": 4.24719044773695
+        },
+        {
+          "name": "__addsf3",
+          "cycles": 12376329,
+          "percent": 4.055739466275073
+        },
+        {
+          "name": "__muldi3",
+          "cycles": 9851941,
+          "percent": 3.2284941627774693
+        },
+        {
+          "name": "codec2_fixed_fifth",
+          "cycles": 9287687,
+          "percent": 3.0435873768635218
+        },
+        {
+          "name": "band_boundary.constprop.1",
+          "cycles": 8799013,
+          "percent": 2.8834482574249143
+        },
+        {
+          "name": "__divsf3",
+          "cycles": 8490243,
+          "percent": 2.7822639179489874
+        },
+        {
+          "name": "__divsf3x",
+          "cycles": 8118362,
+          "percent": 2.660398019873893
+        },
+        {
+          "name": "__fp_split3",
+          "cycles": 7751456,
+          "percent": 2.540162435912516
+        },
+        {
+          "name": "__divsf3_pse",
+          "cycles": 7405565,
+          "percent": 2.426813495388282
+        },
+        {
+          "name": "sin",
+          "cycles": 6271766,
+          "percent": 2.0552660558265825
+        },
+        {
+          "name": "cos",
+          "cycles": 6270204,
+          "percent": 2.0547541863500745
+        }
+      ],
+      "exclusive": [
+        {
+          "name": "codec2_weight_pair",
+          "cycles": 47759274,
+          "percent": 15.650777580528521
+        },
+        {
+          "name": "codec2_analysis_pair",
+          "cycles": 47630622,
+          "percent": 15.608618149099765
+        },
+        {
+          "name": "__umulhisi3",
+          "cycles": 28610450,
+          "percent": 9.375682499462455
+        },
+        {
+          "name": "__lshrdi3",
+          "cycles": 19267477,
+          "percent": 6.313977826902246
+        },
+        {
+          "name": "__mulsf3_pse",
+          "cycles": 15844067,
+          "percent": 5.1921218188532725
+        },
+        {
+          "name": "__umulsidi3_helper",
+          "cycles": 15214695,
+          "percent": 4.98587577777207
+        },
+        {
+          "name": "codec2_fixed_inverse",
+          "cycles": 13434605,
+          "percent": 4.402537918337209
+        },
+        {
+          "name": "__addsf3x",
+          "cycles": 12429994,
+          "percent": 4.073325558116818
+        },
+        {
+          "name": "multiply@9878",
+          "cycles": 9772448,
+          "percent": 3.2024442010002243
+        },
+        {
+          "name": "__divsf3_pse",
+          "cycles": 8437297,
+          "percent": 2.7649134433630747
+        },
+        {
+          "name": "codec2_fixed_fifth",
+          "cycles": 8028167,
+          "percent": 2.6308409984695103
+        },
+        {
+          "name": "codec2_hybrid_decode",
+          "cycles": 7734788,
+          "percent": 2.534700310154234
+        },
+        {
+          "name": "__muldi3_6",
+          "cycles": 7329125,
+          "percent": 2.401764005769667
+        },
+        {
+          "name": "__fp_splitA",
+          "cycles": 6168395,
+          "percent": 2.0213912417061497
+        },
+        {
+          "name": "sqrtf",
+          "cycles": 5612427,
+          "percent": 1.839199789007533
+        },
+        {
+          "name": "__fp_round",
+          "cycles": 4230007,
+          "percent": 1.38617891723142
+        },
+        {
+          "name": "__mulsidi3",
+          "cycles": 4190853,
+          "percent": 1.3733480993804617
+        },
+        {
+          "name": "__muldi3",
+          "cycles": 4011000,
+          "percent": 1.3144100321855794
+        },
+        {
+          "name": "mul_q60",
+          "cycles": 3691242,
+          "percent": 1.2096249105023091
+        },
+        {
+          "name": "__floatsisf",
+          "cycles": 3276468,
+          "percent": 1.0737029193056646
+        },
+        {
+          "name": "__fp_split3",
+          "cycles": 3146570,
+          "percent": 1.0311351720204882
+        },
+        {
+          "name": "__fp_powser",
+          "cycles": 2213052,
+          "percent": 0.7252200824104614
+        },
+        {
+          "name": "ldexp",
+          "cycles": 2053110,
+          "percent": 0.6728068763850747
+        },
+        {
+          "name": "band_boundary.constprop.1",
+          "cycles": 1896732,
+          "percent": 0.6215615978976361
+        },
+        {
+          "name": "sine",
+          "cycles": 1875800,
+          "percent": 0.6147021536708326
+        },
+        {
+          "name": "__adddi3",
+          "cycles": 1787520,
+          "percent": 0.5857726803122331
+        },
+        {
+          "name": "__ashldi3",
+          "cycles": 1521758,
+          "percent": 0.49868211961073616
+        },
+        {
+          "name": "__mulhisi3",
+          "cycles": 1480274,
+          "percent": 0.4850877576622977
+        },
+        {
+          "name": "__subdi3",
+          "cycles": 1356480,
+          "percent": 0.44452029929172143
+        },
+        {
+          "name": "__fp_cmp",
+          "cycles": 1326486,
+          "percent": 0.4346912256179806
+        }
+      ],
+      "packetSha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+      "outputSha256": "afc4aabb812938f056514f79b36294401b63c38527833b5a2a8cd83ee0f88cc1",
+      "binarySha256": "426b692c831a2f487f7f6d50c418ce969ac3e18725f6dee9de858817b7d999bd"
+    },
+    {
+      "name": "codec2_3200_8byte_frames.bin",
+      "frames": 20,
+      "samples": 3200,
+      "totalCycles": 311241629,
+      "meanCycles": 15562081.45,
+      "stages": [
+        {
+          "name": "codec2_analysis_forward",
+          "cycles": 83099813,
+          "percent": 26.699453176297315
+        },
+        {
+          "name": "codec2_weight_pair",
+          "cycles": 81466813,
+          "percent": 26.17478043080156
+        },
+        {
+          "name": "other",
+          "cycles": 78960793,
+          "percent": 25.369611788016957
+        },
+        {
+          "name": "codec2_fixed_inverse",
+          "cycles": 40108900,
+          "percent": 12.886740160327331
+        },
+        {
+          "name": "codec2_canonical_lsp_to_lpc",
+          "cycles": 18078318,
+          "percent": 5.808451156769906
+        },
+        {
+          "name": "codec2_fixed_fifth",
+          "cycles": 9287701,
+          "percent": 2.9840805774731374
+        },
+        {
+          "name": "codec2_weight_init",
+          "cycles": 210637,
+          "percent": 0.06767635829331815
+        },
+        {
+          "name": "codec2_weight_dc",
+          "cycles": 28654,
+          "percent": 0.009206352020474743
+        }
+      ],
+      "inclusive": [
+        {
+          "name": "main",
+          "cycles": 311241629,
+          "percent": 100
+        },
+        {
+          "name": "codec2_hybrid_decode",
+          "cycles": 311240911,
+          "percent": 99.99976931106475
+        },
+        {
+          "name": "codec2_analysis_forward",
+          "cycles": 83099813,
+          "percent": 26.699453176297315
+        },
+        {
+          "name": "codec2_analysis_fast_forward",
+          "cycles": 82313150,
+          "percent": 26.44670324611365
+        },
+        {
+          "name": "codec2_weight_pair",
+          "cycles": 81466813,
+          "percent": 26.17478043080156
+        },
+        {
+          "name": "codec2_analysis_pair",
+          "cycles": 81269039,
+          "percent": 26.11123687442209
+        },
+        {
+          "name": "__mulsidi3",
+          "cycles": 45430931,
+          "percent": 14.596675626575648
+        },
+        {
+          "name": "codec2_fixed_inverse",
+          "cycles": 40108900,
+          "percent": 12.886740160327331
+        },
+        {
+          "name": "__umulhisi3",
+          "cycles": 28958204,
+          "percent": 9.304090874039218
+        },
+        {
+          "name": "__umulsidi3_helper",
+          "cycles": 27421177,
+          "percent": 8.810253656653366
+        },
+        {
+          "name": "__mulsf3x",
+          "cycles": 22079480,
+          "percent": 7.093999626894383
+        },
+        {
+          "name": "__lshrdi3",
+          "cycles": 19258381,
+          "percent": 6.1875980606694485
+        },
+        {
+          "name": "__muldi3_6",
+          "cycles": 18805699,
+          "percent": 6.04215414898757
+        },
+        {
+          "name": "codec2_canonical_lsp_to_lpc",
+          "cycles": 18078318,
+          "percent": 5.808451156769906
+        },
+        {
+          "name": "__mulsf3",
+          "cycles": 17446773,
+          "percent": 5.605539675414049
+        },
+        {
+          "name": "__addsf3x",
+          "cycles": 17167301,
+          "percent": 5.51574705965827
+        },
+        {
+          "name": "codec2_lpc_cosf",
+          "cycles": 15672585,
+          "percent": 5.035504103469398
+        },
+        {
+          "name": "multiply@9878",
+          "cycles": 15196525,
+          "percent": 4.882548985759228
+        },
+        {
+          "name": "__fp_powser",
+          "cycles": 14889815,
+          "percent": 4.784004969977843
+        },
+        {
+          "name": "mul_q60",
+          "cycles": 13988940,
+          "percent": 4.494559434400082
+        },
+        {
+          "name": "__addsf3",
+          "cycles": 12549109,
+          "percent": 4.031950687419131
+        },
+        {
+          "name": "__muldi3",
+          "cycles": 10513862,
+          "percent": 3.3780384821209117
+        },
+        {
+          "name": "band_boundary.constprop.1",
+          "cycles": 10144482,
+          "percent": 3.259358985041169
+        },
+        {
+          "name": "codec2_fixed_fifth",
+          "cycles": 9287701,
+          "percent": 2.9840805774731374
+        },
+        {
+          "name": "__divsf3",
+          "cycles": 9079784,
+          "percent": 2.9172781382660093
+        },
+        {
+          "name": "__divsf3x",
+          "cycles": 8677755,
+          "percent": 2.78810872050795
+        },
+        {
+          "name": "__fp_split3",
+          "cycles": 8272919,
+          "percent": 2.6580374311046935
+        },
+        {
+          "name": "__divsf3_pse",
+          "cycles": 7977915,
+          "percent": 2.5632544803317425
+        },
+        {
+          "name": "cos",
+          "cycles": 7281793,
+          "percent": 2.3395948104358495
+        },
+        {
+          "name": "sin",
+          "cycles": 7205610,
+          "percent": 2.315117686265548
+        }
+      ],
+      "exclusive": [
+        {
+          "name": "codec2_weight_pair",
+          "cycles": 47759198,
+          "percent": 15.344733335783948
+        },
+        {
+          "name": "codec2_analysis_pair",
+          "cycles": 47630734,
+          "percent": 15.30345865141324
+        },
+        {
+          "name": "__umulhisi3",
+          "cycles": 28958204,
+          "percent": 9.304090874039218
+        },
+        {
+          "name": "__lshrdi3",
+          "cycles": 19258381,
+          "percent": 6.1875980606694485
+        },
+        {
+          "name": "__mulsf3_pse",
+          "cycles": 17033561,
+          "percent": 5.472777229295378
+        },
+        {
+          "name": "__umulsidi3_helper",
+          "cycles": 15228285,
+          "percent": 4.8927532762656245
+        },
+        {
+          "name": "codec2_fixed_inverse",
+          "cycles": 13846110,
+          "percent": 4.44866904356165
+        },
+        {
+          "name": "__addsf3x",
+          "cycles": 13255881,
+          "percent": 4.259032136089996
+        },
+        {
+          "name": "multiply@9878",
+          "cycles": 9761969,
+          "percent": 3.1364599367265233
+        },
+        {
+          "name": "__divsf3_pse",
+          "cycles": 9082341,
+          "percent": 2.9180996864657844
+        },
+        {
+          "name": "codec2_hybrid_decode",
+          "cycles": 8150907,
+          "percent": 2.6188357342134334
+        },
+        {
+          "name": "codec2_fixed_fifth",
+          "cycles": 8028181,
+          "percent": 2.5794046335620484
+        },
+        {
+          "name": "__muldi3_6",
+          "cycles": 7386643,
+          "percent": 2.373282463445788
+        },
+        {
+          "name": "__fp_splitA",
+          "cycles": 6497455,
+          "percent": 2.0875918882946087
+        },
+        {
+          "name": "sqrtf",
+          "cycles": 5735732,
+          "percent": 1.8428550250262312
+        },
+        {
+          "name": "__fp_round",
+          "cycles": 4412941,
+          "percent": 1.41785050225399
+        },
+        {
+          "name": "__muldi3",
+          "cycles": 4280500,
+          "percent": 1.3752980325135107
+        },
+        {
+          "name": "__mulsidi3",
+          "cycles": 3951149,
+          "percent": 1.269479604220938
+        },
+        {
+          "name": "mul_q60",
+          "cycles": 3680524,
+          "percent": 1.1825294745517476
+        },
+        {
+          "name": "__floatsisf",
+          "cycles": 3380452,
+          "percent": 1.0861182068932045
+        },
+        {
+          "name": "__fp_split3",
+          "cycles": 3364253,
+          "percent": 1.080913568923648
+        },
+        {
+          "name": "__fp_powser",
+          "cycles": 2549102,
+          "percent": 0.819010621487269
+        },
+        {
+          "name": "band_boundary.constprop.1",
+          "cycles": 2188782,
+          "percent": 0.7032420460696149
+        },
+        {
+          "name": "ldexp",
+          "cycles": 2064597,
+          "percent": 0.6633421777907479
+        },
+        {
+          "name": "sine",
+          "cycles": 1875800,
+          "percent": 0.6026828756894856
+        },
+        {
+          "name": "__adddi3",
+          "cycles": 1786476,
+          "percent": 0.5739836299340279
+        },
+        {
+          "name": "__ashldi3",
+          "cycles": 1558195,
+          "percent": 0.5006383641566148
+        },
+        {
+          "name": "__mulhisi3",
+          "cycles": 1479065,
+          "percent": 0.47521438721167986
+        },
+        {
+          "name": "__subdi3",
+          "cycles": 1356468,
+          "percent": 0.4358247334581326
+        },
+        {
+          "name": "__fp_cmp",
+          "cycles": 1332999,
+          "percent": 0.42828428969570775
+        }
+      ],
+      "packetSha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+      "outputSha256": "6c419f4e1bbb4ae7d495bd4485a84947f7fee5ed05d065cdd326d247c6e6fd6b",
+      "binarySha256": "426b692c831a2f487f7f6d50c418ce969ac3e18725f6dee9de858817b7d999bd"
+    },
+    {
+      "name": "conditioning-stress",
+      "frames": 20,
+      "samples": 3200,
+      "totalCycles": 358034907,
+      "meanCycles": 17901745.35,
+      "stages": [
+        {
+          "name": "codec2_analysis_forward",
+          "cycles": 138965781,
+          "percent": 38.8134727321434
+        },
+        {
+          "name": "codec2_weight_pair",
+          "cycles": 81258412,
+          "percent": 22.695667492555412
+        },
+        {
+          "name": "other",
+          "cycles": 71079620,
+          "percent": 19.852706708287524
+        },
+        {
+          "name": "codec2_fixed_inverse",
+          "cycles": 39165602,
+          "percent": 10.939045672437743
+        },
+        {
+          "name": "codec2_canonical_lsp_to_lpc",
+          "cycles": 18039397,
+          "percent": 5.038446432822261
+        },
+        {
+          "name": "codec2_fixed_fifth",
+          "cycles": 9287680,
+          "percent": 2.594071085923474
+        },
+        {
+          "name": "codec2_weight_init",
+          "cycles": 210152,
+          "percent": 0.058695952794345835
+        },
+        {
+          "name": "codec2_weight_dc",
+          "cycles": 28263,
+          "percent": 0.007893923035834045
+        }
+      ],
+      "inclusive": [
+        {
+          "name": "main",
+          "cycles": 358034907,
+          "percent": 100
+        },
+        {
+          "name": "codec2_hybrid_decode",
+          "cycles": 358034189,
+          "percent": 99.99979946089447
+        },
+        {
+          "name": "codec2_analysis_forward",
+          "cycles": 138965781,
+          "percent": 38.8134727321434
+        },
+        {
+          "name": "codec2_analysis_fast_forward",
+          "cycles": 82036478,
+          "percent": 22.91298317457074
+        },
+        {
+          "name": "codec2_weight_pair",
+          "cycles": 81258412,
+          "percent": 22.695667492555412
+        },
+        {
+          "name": "codec2_analysis_pair",
+          "cycles": 80994500,
+          "percent": 22.621956244059746
+        },
+        {
+          "name": "compact_spectrum",
+          "cycles": 48263418,
+          "percent": 13.480087292158919
+        },
+        {
+          "name": "__mulsidi3",
+          "cycles": 44869103,
+          "percent": 12.532047049814615
+        },
+        {
+          "name": "multiply@5510",
+          "cycles": 42502118,
+          "percent": 11.8709425167865
+        },
+        {
+          "name": "codec2_fixed_inverse",
+          "cycles": 39165602,
+          "percent": 10.939045672437743
+        },
+        {
+          "name": "product",
+          "cycles": 33431243,
+          "percent": 9.337425582360884
+        },
+        {
+          "name": "__umulhisi3",
+          "cycles": 31040196,
+          "percent": 8.669600475575976
+        },
+        {
+          "name": "__lshrdi3",
+          "cycles": 28685744,
+          "percent": 8.011996439218704
+        },
+        {
+          "name": "__umulsidi3_helper",
+          "cycles": 22938843,
+          "percent": 6.406873338749621
+        },
+        {
+          "name": "__mulsf3x",
+          "cycles": 19928451,
+          "percent": 5.566063702274706
+        },
+        {
+          "name": "__muldi3_6",
+          "cycles": 19755541,
+          "percent": 5.51776952854488
+        },
+        {
+          "name": "compact_select_two",
+          "cycles": 18891745,
+          "percent": 5.2765092538868
+        },
+        {
+          "name": "codec2_canonical_lsp_to_lpc",
+          "cycles": 18039397,
+          "percent": 5.038446432822261
+        },
+        {
+          "name": "__mulsf3",
+          "cycles": 16464261,
+          "percent": 4.598507206449566
+        },
+        {
+          "name": "precision",
+          "cycles": 16379543,
+          "percent": 4.5748452678107165
+        },
+        {
+          "name": "codec2_lpc_cosf",
+          "cycles": 15644772,
+          "percent": 4.369621982138183
+        },
+        {
+          "name": "__addsf3x",
+          "cycles": 15464895,
+          "percent": 4.319381908758969
+        },
+        {
+          "name": "multiply@9878",
+          "cycles": 15145192,
+          "percent": 4.23008810143755
+        },
+        {
+          "name": "__muldi3",
+          "cycles": 14658234,
+          "percent": 4.094079575319174
+        },
+        {
+          "name": "mul_q60",
+          "cycles": 13958681,
+          "percent": 3.8986927607033577
+        },
+        {
+          "name": "__fp_powser",
+          "cycles": 12263502,
+          "percent": 3.4252252392809286
+        },
+        {
+          "name": "__addsf3",
+          "cycles": 12031908,
+          "percent": 3.360540484953329
+        },
+        {
+          "name": "bit_length",
+          "cycles": 10551624,
+          "percent": 2.9470936474917515
+        },
+        {
+          "name": "codec2_fixed_fifth",
+          "cycles": 9287680,
+          "percent": 2.594071085923474
+        },
+        {
+          "name": "__divsf3",
+          "cycles": 8690050,
+          "percent": 2.427151607315205
+        }
+      ],
+      "exclusive": [
+        {
+          "name": "codec2_weight_pair",
+          "cycles": 47759270,
+          "percent": 13.339277558207474
+        },
+        {
+          "name": "codec2_analysis_pair",
+          "cycles": 47631844,
+          "percent": 13.303687173720187
+        },
+        {
+          "name": "__umulhisi3",
+          "cycles": 31040196,
+          "percent": 8.669600475575976
+        },
+        {
+          "name": "__lshrdi3",
+          "cycles": 28685744,
+          "percent": 8.011996439218704
+        },
+        {
+          "name": "__mulsf3_pse",
+          "cycles": 15383315,
+          "percent": 4.296596420974114
+        },
+        {
+          "name": "__umulsidi3_helper",
+          "cycles": 15140535,
+          "percent": 4.228787390275329
+        },
+        {
+          "name": "codec2_fixed_inverse",
+          "cycles": 13056907,
+          "percent": 3.6468251404324663
+        },
+        {
+          "name": "product",
+          "cycles": 11945928,
+          "percent": 3.3365260667167296
+        },
+        {
+          "name": "__addsf3x",
+          "cycles": 11829718,
+          "percent": 3.304068337671891
+        },
+        {
+          "name": "multiply@9878",
+          "cycles": 9722482,
+          "percent": 2.7155123173506657
+        },
+        {
+          "name": "__divsf3_pse",
+          "cycles": 8569855,
+          "percent": 2.393580858304411
+        },
+        {
+          "name": "codec2_fixed_fifth",
+          "cycles": 8028160,
+          "percent": 2.242284158063951
+        },
+        {
+          "name": "__ashldi3",
+          "cycles": 7853162,
+          "percent": 2.193406800974297
+        },
+        {
+          "name": "__muldi3_6",
+          "cycles": 7742485,
+          "percent": 2.162494451972528
+        },
+        {
+          "name": "codec2_hybrid_decode",
+          "cycles": 7607020,
+          "percent": 2.1246587556894276
+        },
+        {
+          "name": "bit_length",
+          "cycles": 7234376,
+          "percent": 2.020578401312138
+        },
+        {
+          "name": "precision",
+          "cycles": 7156797,
+          "percent": 1.9989104023312454
+        },
+        {
+          "name": "__fp_splitA",
+          "cycles": 6083878,
+          "percent": 1.6992415770231029
+        },
+        {
+          "name": "__muldi3",
+          "cycles": 5968000,
+          "percent": 1.666876576366896
+        },
+        {
+          "name": "sqrtf",
+          "cycles": 5559178,
+          "percent": 1.552691620652508
+        },
+        {
+          "name": "__fp_round",
+          "cycles": 4168334,
+          "percent": 1.1642255876464023
+        },
+        {
+          "name": "mul_q60",
+          "cycles": 3675203,
+          "percent": 1.0264929279647026
+        },
+        {
+          "name": "__mulsidi3",
+          "cycles": 3499101,
+          "percent": 0.9773072210526109
+        },
+        {
+          "name": "__floatsisf",
+          "cycles": 3377957,
+          "percent": 0.9434714140875655
+        },
+        {
+          "name": "__fp_split3",
+          "cycles": 3075349,
+          "percent": 0.8589522808735518
+        },
+        {
+          "name": "__adddi3",
+          "cycles": 2327700,
+          "percent": 0.6501321392106608
+        },
+        {
+          "name": "__fp_powser",
+          "cycles": 2093296,
+          "percent": 0.5846625452081967
+        },
+        {
+          "name": "ldexp",
+          "cycles": 2090216,
+          "percent": 0.5838022938919751
+        },
+        {
+          "name": "sine",
+          "cycles": 1875800,
+          "percent": 0.5239153957689382
+        },
+        {
+          "name": "band_boundary.constprop.1",
+          "cycles": 1792656,
+          "percent": 0.5006930790689635
+        }
+      ],
+      "packetSha256": "d475df5088edd2c58bd17e86a229e435994b7cf77d0fffa6ff65e176e077f094",
+      "outputSha256": "3fc8493c6475fa106247fdf36cda0166d76876a51782b89f3ee910efffdddfe0",
+      "binarySha256": "426b692c831a2f487f7f6d50c418ce969ac3e18725f6dee9de858817b7d999bd"
+    }
+  ],
+  "profilerSha256": "a373d01955e83c649f485c1353ac8ad7bbc05b6004ff2d04a55b697b3dc4a411",
+  "scope": "Prefix instruction profiling of verified binary; PCM/cycles checked against complete AVR output. Inclusive costs overlap. No IRQ."
+}

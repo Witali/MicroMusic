@@ -1,0 +1,82 @@
+{
+  "test": {
+    "reachable_cosine_differences": 383,
+    "total_differences": 1635,
+    "maximum_ulp": 1,
+    "random_inputs": 1000000,
+    "grid_angles": 393,
+    "startup_angles": 10
+  },
+  "unique_corrections": 14,
+  "pairs_hex": [
+    [
+      "3f4d672d",
+      "3f31ec81"
+    ],
+    [
+      "3f509a0c",
+      "3f2f9c33"
+    ],
+    [
+      "3f50d48a",
+      "3f2f719f"
+    ],
+    [
+      "3f54b6e2",
+      "3f2c985d"
+    ],
+    [
+      "400325b0",
+      "beebb1c7"
+    ],
+    [
+      "400f41b3",
+      "bf1e7cf4"
+    ],
+    [
+      "401332a9",
+      "bf2a8f75"
+    ],
+    [
+      "40158a30",
+      "bf316e2a"
+    ],
+    [
+      "407b8e4e",
+      "bf345f3b"
+    ],
+    [
+      "407cb2c3",
+      "bf3119c7"
+    ],
+    [
+      "40815912",
+      "bf1f069c"
+    ],
+    [
+      "40ae0b53",
+      "3f2a0c74"
+    ],
+    [
+      "40afeddf",
+      "3f3504f2"
+    ],
+    [
+      "40e55615",
+      "3f22679c"
+    ]
+  ],
+  "table_sha256": "b6caf82b98391baa7d7f199a184f48bc5703db3caee14d9fa8fd6bd0ff4f0baa",
+  "reference_binary_sha256": "480660099d6c579c892fd82e52a5dcef8cda3870c0463d813fef89df4abdd5cd",
+  "compiler": "clang version 24.0.0git (https:/github.com/llvm/llvm-project 55ea1f4ebea23d0355d5cdb075f1e12f28ab82d0)",
+  "scope": "Matches the frozen native upstream oracle cosine on all 393 grid angles, 393^2 midpoints and 10*393 startup midpoints. Optional compatibility mode, mathematical mode remains available. No AVR qualification.",
+  "sources": {
+    "src/lpc_math.c": "e89b2f02a93cb3ec29429764b5be0059312a9614528668cfa64e12840e20803b",
+    "src/lpc_math.h": "997bd140cbcd0784dbec05fcc74bfad4bf33666bd331c0475e76904dded44669",
+    "src/lpc_math_tables.inc": "bb6d761fc09e265caae2a63046615bfe258d69df4b0689374eb94c25346681dd",
+    "src/lpc_math_compat.inc": "b6caf82b98391baa7d7f199a184f48bc5703db3caee14d9fa8fd6bd0ff4f0baa",
+    "tests/lpc_math.c": "7cc6a8549c966f2f0eb4e1aa9c30b234e7ce1f116e4e636c71b4b7b4b4237fef",
+    "tools/generate_lpc_math.py": "0ec9087d69c1a934d05cf8a376c63153f002eeea6606e3d936ae978d148130f9",
+    "tools/generate_lpc_compat.py": "a28f180e8472f37fa123dddbdc96a93d3665d9c196c7226e8ce7d882efc467cf"
+  }
+}
