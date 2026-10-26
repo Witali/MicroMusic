@@ -11,6 +11,7 @@ import {parseArgs} from 'node:util';
 import {ATtiny13A} from '../lib/attiny13a-runtime.js';
 import {parseHex} from '../lib/hex.js';
 import {avr,IO,flash} from '../tests/fixtures/attiny13a-system-firmware.mjs';
+import {generatedFunctions} from './lib/avr-profile-functions.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const {values}=parseArgs({options:{frames:{type:'string',default:'48000'},
@@ -21,14 +22,17 @@ const {values}=parseArgs({options:{frames:{type:'string',default:'48000'},
   frequency:{type:'string',default:'20000000'},divisor:{type:'string',default:'1'},
   operation:{type:'string',default:'capture'},instructions:{type:'string',default:'1000000'},
   'runtime-ref':{type:'string',default:'working-tree'},'benchmark-controls':{type:'boolean'},
+  'bounded-regions':{type:'boolean'},'phase-locals':{type:'boolean'},
   help:{type:'boolean'}}});
-if(values.help){console.log('node web-player/scripts/profile-device.mjs [--frames 48000] [--rate 48000] [--repeats 3] [--interval-us 1000] [--firmware id,id] [--kernel --clock compatible|physical|clki --frequency 20000000 --divisor 1 --operation capture|direct --instructions 1000000] [--runtime-ref working-tree|git-ref] [--benchmark-controls] [--out-dir build/profiles/device] [--emsdk path]');process.exit(0);}
+if(values.help){console.log('node web-player/scripts/profile-device.mjs [--frames 48000] [--rate 48000] [--repeats 3] [--interval-us 1000] [--firmware id,id] [--kernel --clock compatible|physical|clki --frequency 20000000 --divisor 1 --operation capture|direct --instructions 1000000] [--bounded-regions] [--phase-locals] [--runtime-ref working-tree|git-ref] [--benchmark-controls] [--out-dir build/profiles/device] [--emsdk path]');process.exit(0);}
 function integer(value,name,low,high){const n=Number(value);assert.ok(Number.isInteger(n)&&n>=low&&n<=high,`${name}: integer ${low}..${high} required`);return n;}
 const frames=integer(values.frames,'frames',1,1048576),rate=integer(values.rate,'rate',8000,192000);
 const repeats=integer(values.repeats,'repeats',1,16),intervalUs=integer(values['interval-us'],'interval-us',100,100000);
 const clock=values.clock,operation=values.operation;
 assert.ok(['compatible','physical','clki'].includes(clock),'Invalid clock');
 assert.ok(['capture','direct'].includes(operation),'Invalid operation');
+const boundedRegions=!!values['bounded-regions'],optimizePhaseLocals=!!values['phase-locals'];
+assert.ok(clock!=='compatible'||(!boundedRegions&&!optimizePhaseLocals),'Region/phase options require --clock physical or clki');
 assert.ok(!values.kernel||!values.firmware,'Select kernel or firmware');
 assert.ok(clock!=='clki'||values.kernel,'CLKI profiling currently requires --kernel');
 assert.ok(operation!=='direct'||(values.kernel&&clock!=='clki'),'Direct profiling requires kernel and an internal clock');
@@ -175,16 +179,15 @@ assert.ok(ids.length,'Select at least one firmware');assert.equal(new Set(ids).s
 const selected=values.kernel?[{id:ids[0],cpuHz:frequency,audioChannels:1,binary:kernel,flashSha256:hash(kernel)}]:
   ids.map(id=>{const entry=catalog.find(item=>item.id===(aliases[id]??id));assert.ok(entry,'Unknown firmware '+id);return entry;});
 assert.equal(new Set(selected.map(entry=>entry.id)).size,selected.length,'Duplicate resolved firmware');
-const sourcePaths=[...Object.keys(manifest.inputs),'web-player/lib/avr-transpiler.js',
-  'web-player/lib/avr-transpiled-runtime.js','web-player/lib/avr-runtime.js',
-  'web-player/lib/attiny13a-runtime.js','web-player/lib/avr-wasm-phases.js',
-  'web-player/tests/fixtures/attiny13a-system-firmware.mjs','web-player/lib/hex.js','web-player/scripts/profile-device.mjs',
-  'web-player/lib/avr-profiles.js',...catalogPaths];
+const sourcePaths=[...new Set([...Object.keys(manifest.inputs),
+  ...git(['ls-tree','-r','--full-tree','--name-only','HEAD','web-player/lib']).split('\n').filter(Boolean),
+  'web-player/tests/fixtures/attiny13a-system-firmware.mjs','web-player/scripts/profile-device.mjs',
+  'web-player/scripts/lib/avr-profile-functions.mjs',...catalogPaths])];
 const report={schema:'micromusic-device-sampling-profile-v1',createdAt:new Date().toISOString(),
   git:{head:git(['rev-parse','HEAD']),status:git(['status','--short'])},
   node:{version:process.version,versions:process.versions,flags:process.execArgv,executable:process.execPath},
   host:{platform:platform(),release:release(),arch:arch(),cpu:cpus()[0]?.model,logicalCpus:cpus().length},
-  parameters:{frames,rate,repeats,intervalUs,blockFrames,fastIdle:benchmarkControls||!values.kernel,optimizeFlags:true,benchmarkControls,
+  parameters:{frames,rate,repeats,intervalUs,blockFrames,fastIdle:benchmarkControls||!values.kernel,optimizeFlags:true,benchmarkControls,boundedRegions,optimizePhaseLocals,
     requestedFirmware:ids,firmwareOrder:selected.map(entry=>entry.id),
     kernel:!!values.kernel,clock,frequency:values.kernel?frequency:null,divisor,operation,instructions},
   provenance:{runtimeRef,runtimeCommit,compileRoot,runtimeSha256:hash(production),namedRuntimeSha256:hash(namedRuntime),
@@ -192,25 +195,14 @@ const report={schema:'micromusic-device-sampling-profile-v1',createdAt:new Date(
     diagnosticCompiler:compiler,compilerVersion:manifest.compilerVersion,compileArgs,optimizer,optimizeArgs,
     sourceSha256NormalizedLF:Object.fromEntries(sourcePaths.map(path=>[path,hash(source(path))]))},
   methodology:{sampling:'Node inspector CPU profiler, no instruction/event callbacks or production instrumentation. Profiles run sequentially; construction, lowering, warmup, comparison, hashing and profile serialization are outside the capture window.',
-    naming:'Clang -O3 link followed by the same wasm-opt -O3 pass with --print-function-map gives the optimized function name/index mapping. The link map supplies source-object ownership only. The rebuilt runtime must match every production byte. Diagnostic names are attached to that production binary in a custom name section; all executable sections remain identical. Generated instruction/block/driver names follow existing manifest mapping, block order and exports.',
+    naming:'Clang -O3 link followed by the same wasm-opt -O3 pass with --print-function-map gives the optimized function name/index mapping. The link map supplies source-object ownership only. The rebuilt runtime must match every production byte. Diagnostic names are attached in a custom name section; all executable sections remain identical. Generated instruction/block/region body/entry/fallback/driver names follow the manifest and unoptimized emitter order; body count, unique names and actual export indices must agree.',
     attribution:'Self/leaf sample counts are observations, not exact exclusive times. Inclusive samples count ancestors and overlap; do not sum them. O3/V8 inlining attributes inlined work to the surviving containing frame. Body categories describe function ownership, not pure subsystem cost. Native bridge bodies may include inlined pin/audio/clock work.',
     window:'workStackSamples retain samples with public capturePhysical or run in their recorded ancestors. Capture cases retain historical capture* aliases. GC/VM samples may lack this ancestry; total-profile categories remain available. Requested interval is not guaranteed; actual deltas/gaps are retained in raw profiles.',
     limits:'Single Node host, profiler overhead and tiering, no affinity/GC/frequency control. No parallel benchmark is launched by this script. OS/other application load is uncontrolled. Sampling resolves likely hotspots, not causal speedup, exact call counts or browser AudioWorklet latency.'},results:[]};
 save('runtime-functions.json',runtimeFunctions);
-function generatedFunctions(core){
-  const layout=wasmLayout(Buffer.from(core.transpiledBytes)),first=layout.imports.length;
-  const mapping=new Map(core.transpilation.mapping.map(instruction=>[instruction.pc,instruction]));
-  const functions=layout.bodies.map(body=>{
-    const local=body.index-first;let name;
-    if(local<512){const i=mapping.get(local);name=`cpu.insn_0x${(local*2).toString(16).padStart(4,'0')}_${i?.name||'continuation'}`;}
-    else if(local<512+core.transpilation.blocks.length){const block=core.transpilation.blocks[local-512];name=`cpu.block_0x${(block.start*2).toString(16).padStart(4,'0')}`;}
-    else name='cpu.'+(layout.exports.find(exp=>exp.index===body.index)?.name||'emptyBlock');
-    return {...body,name,category:'generated_cpu_body'};
-  });
-  return {layout,functions};
-}
 function snapshot(core){
-  return {state:core.state(),diagnostics:Array.from(core._state),data:core.data.slice(),eeprom:core.eeprom.slice(),flash:core.rom.slice(),irqFrames:Array.from(core.irqFrames)};
+  return {state:core.state(),diagnostics:Array.from(core._state),data:core.data.slice(),eeprom:core.eeprom.slice(),flash:core.rom.slice(),irqFrames:Array.from(core.irqFrames),
+    tailPins:core._ps?core.drainPinsPs():core.drainPins()};
 }
 function capture(core,entry){
   if(operation==='direct'){assert.equal(core.run(instructions),instructions);return[];}
@@ -222,7 +214,7 @@ function combined(blocks){return Buffer.concat(blocks.map(bytes));}
 const known=new Map(runtimeFunctions.map(fn=>[fn.name,fn]));
 function frameInfo(frame){
   const plain=frame.functionName.replace(/^\$/,'');
-  if(known.has(plain))return {key:plain,name:plain,category:known.get(plain).category,url:frame.url};
+  if(known.has(plain))return {key:plain,name:plain,category:known.get(plain).category,...(known.get(plain).role?{role:known.get(plain).role}:{}),url:frame.url};
   if(frame.url?.startsWith('wasm:'))return {key:plain+'@'+frame.url,name:plain,category:'unresolved_wasm',url:frame.url};
   let category='other_js_vm';
   if(frame.functionName==='(garbage collector)')category='v8_gc';
@@ -268,6 +260,8 @@ for(const entry of selected){
   const binary=entry.binary??parseHex(entry.flashHex),eeprom=entry.eepromHex?parseHex(entry.eepromHex,64):null;
   assert.equal(hash(binary),entry.flashSha256);
   const hz=entry.cpuHz||9600000,options={oscillatorHz:hz,fastIdle:benchmarkControls||!values.kernel,optimizeFlags:true,runtimeModule};
+  if(boundedRegions)options.boundedRegions=true;
+  if(optimizePhaseLocals)options.optimizePhaseLocals=true;
   if(clock!=='compatible'){
     options.resumable=true;options.fuseLow=clock==='clki'?0x70:0x72;
     if(clock==='clki')options.clkiProfile={phasePolicy:'digital-noninverting-zero-seed-v1',initialLevel:1};
@@ -294,7 +288,7 @@ for(const entry of selected){
     }
     return core;
   }
-  const seed=new ATtiny13A(binary,eeprom,options),generated=generatedFunctions(seed);
+  const seed=new ATtiny13A(binary,eeprom,options),generated=generatedFunctions(seed,wasmLayout(Buffer.from(seed.transpiledBytes)));
   for(const fn of generated.functions)known.set(fn.name,fn);
   const namedCpu=named(Buffer.from(seed.transpiledBytes),`micromusic.profile.cpu.${entry.id}`,generated.functions);
   writeFileSync(join(out,entry.id+'-cpu-named.wasm'),namedCpu);save(entry.id+'-functions.json',generated);
@@ -313,12 +307,12 @@ for(const entry of selected){
       await session.post('Profiler.start');const started=performance.now();blocks=capture(core,entry);elapsed=performance.now()-started;
       ({profile}=await session.post('Profiler.stop'));
     }finally{session.disconnect();}
-    const raw=combined(blocks);assert.ok(raw.equals(expected),entry.id+' named/profiled PCM differs from production');
-    assert.deepEqual(snapshot(core),expectedState,entry.id+' named/profiled architecture differs from production');
+    const raw=combined(blocks),observedState=snapshot(core);assert.ok(raw.equals(expected),entry.id+' named/profiled PCM differs from production');
+    assert.deepEqual(observedState,expectedState,entry.id+' named/profiled architecture differs from production');
     const rawName=`${entry.id}-${repeat}.cpuprofile`;save(rawName,profile);
     result.runs.push({repeat,profile:rawName,profileSha256:hash(readFileSync(join(out,rawName))),workWallMs:elapsed,
       ...(operation==='capture'?{captureWallMs:elapsed}:{}),
-      rawPcmSha256:hash(raw),architectureSha256:hash(stringify(snapshot(core))),productionEquality:true,...summarize(profile)});
+      rawPcmSha256:hash(raw),architectureSha256:hash(stringify(observedState)),productionEquality:true,...summarize(profile)});
   }
   report.results.push(result);report.complete=report.results.length===selected.length;report.updatedAt=new Date().toISOString();save('summary.json',report);
   console.log(entry.id,JSON.stringify(result.runs.map(run=>({ms:run.workWallMs,samples:run.samples,workSamples:run.workStackSamples,top:run.workFrames.slice(0,5).map(row=>({name:row.name,self:row.selfPercent,inclusive:row.inclusivePercent}))}))));
