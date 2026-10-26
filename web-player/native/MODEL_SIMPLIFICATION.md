@@ -91,9 +91,10 @@ that making I/O publication lazy is faster: that earlier isolated prototype was
 1. Inventory current clock/register/IRQ/pin ownership using the table above;
    capture disagreements between modules and the board before changing an API.
 2. Remove a demonstrated duplicate calculation under a narrow proof. The
-   Timer0 deadline-budget experiment is one such candidate: keep the original
-   event scheduler and avoid an unnecessary inverse time conversion when the
-   earliest deadline is provably the already-known Timer0 cycle.
+   [Timer0 deadline-budget experiment](../reports/timer-deadline-budget-20261026.md)
+   proved one inverse conversion redundant, but its extra cache failed the
+   measurement gate and was removed. Keep its arithmetic/boundary evidence;
+   correct additional bookkeeping alone is not an accepted simplification.
 3. Extract repeated boundary rules into static adapters without changing event
    order or ABI. Generate device register addresses and masks from the pinned
    official manufacturer definitions; keep behavioral adaptations separate.

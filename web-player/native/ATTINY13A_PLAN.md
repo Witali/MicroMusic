@@ -671,6 +671,13 @@ optimization. The main count remains 21/30 with nine open; default stays wasm.
 
 #### Adaptive-region sampling checkpoint
 
+Follow-up: the [Timer0-derived deadline cache](../reports/timer-deadline-budget-20261026.md)
+passes 1888 regressions but fails the six-row performance screen. Real-firmware
+medians are 1.010x/1.007x/0.991x, CLKI 0.965x with all eight pairs slower.
+Production source/WASM/manifest are restored exactly; keep the 16 independent
+deadline boundary cases and arithmetic proof. Do not add this cache to the
+model-simplification work without new evidence. The hardware count stays 21/30.
+
 The [updated opt-in profile](../reports/bounded-profile-20261026.md) at `298a9b6f`
 retains 15 runs / 14,031 work samples on the merged 118,969-byte runtime.
 Region bodies/entries/fallbacks have distinct checked indices; six tests inspect
