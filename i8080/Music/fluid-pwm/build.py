@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import math
+import os
 from pathlib import Path
 import importlib.util
 ROOT=Path(__file__).resolve().parent
@@ -119,9 +120,10 @@ def level_for(total,low,high):
  return max(0,min(15,((total-low)*15+(high-low)//2)//(high-low)))
 
 
-def build(source,bank,period,check,cpu_hz=3500000):
- root=ROOT if cpu_hz==3500000 else ROOT/'clocks'/str(cpu_hz)
- plans=[program(phase,level,period) for phase in range(5) for level in range(16)]
+def build(source,bank,period,check,cpu_hz=3500000,*,kernel=None,output_root=None):
+ root=output_root or (ROOT if cpu_hz==3500000 else ROOT/'clocks'/str(cpu_hz))
+ phases=6 if kernel else 5
+ plans=[(kernel or program)(phase,level,period) for phase in range(phases) for level in range(16)]
  assert all(plans),[(i//16,i%16) for i,p in enumerate(plans) if p is None]
  chunks,notes=plan_score(source,bank,period,cpu_hz)
  low,high=mix_range(bank,chunks)
@@ -130,7 +132,7 @@ def build(source,bank,period,check,cpu_hz=3500000):
  head.word('LXI SP,SCORE',0x31,'SCORE');head.emit('POP H',0xe1);head.emit('MOV A,L',0x7d)
  target=slot_address(0,8)
  head.emit(f'LXI H,{target:05X}H',0x21,target&255,target>>8);head.emit('PCHL',0xe9)
- codes=[head];cursor=0x100+5*129
+ codes=[head];cursor=0x100+phases*129
  for index,(name,body,entry,tree) in enumerate(plans):
   phase,level=divmod(index,16);slot=m.Code(slot_address(phase,level));slot.label(name)
   m.emit_actions(slot,entry)
@@ -177,9 +179,13 @@ def build(source,bank,period,check,cpu_hz=3500000):
   'bank_bytes':12288,'used_bytes':end,'free_bytes':32768-end,'chunks':chunks,'notes':notes,
   'labels':{k:f'{v:04X}' for k,v in labels.items()},'entry_offsets':{str(l):slot_address(0,l)&255 for l in range(16)},
   'hardware_tested':False,'active_interrupts_supported':False}
+ if kernel:
+  meta['kernel']='Direct jumps, early record header, DCR A live Z across phase1/2'
+  meta['dispatch_phases']=phases
+  meta['bank_source']=str(Path(os.path.relpath(ROOT if cpu_hz==3500000 else ROOT/'clocks'/str(cpu_hz),root))/'bank.json').replace('\\','/')
  save(name+'.bin',rom,check,root);save(name+'.hex',m.voice.hex_image(rom),check,root)
  save(name+'.json',json.dumps(meta,indent=2)+'\n',check,root)
- asm=['; Intel 8080, RAM-free FluidR3 wavetable model, uniform 108T PWM.',
+ asm=[f'; Intel 8080, RAM-free FluidR3 wavetable model, uniform {period}T PWM.',
       '; Explicit ASM build; portable default arithmetic: fluid.c / fluid.h.',
       '; BC/DE=phase; A=frame counter; SP=read-only score cursor; HL=scratch/lookup.',
       '; 129-byte dispatch stages: fifteen 8-byte cells and one 9-byte cell (level 5).',
@@ -187,6 +193,7 @@ def build(source,bank,period,check,cpu_hz=3500000):
  for code in codes:asm+=['',f'    ORG {code.origin:05X}H']+code.source
  save(name+'.asm','\n'.join(asm)+'\n',check,root)
  print(f'{name}: {end}/32768 bytes, {meta["frames"]} frames, mix extrema {low}..{high} -> 0..15')
+ return meta
 
 
 def main():

@@ -53,7 +53,7 @@ async function suite(target) {
   await wait(()=>doc.getElementById('run').textContent.includes('Пауза'));
   check(!doc.getElementById('hz').disabled,'clock selector available during playback');
   set(doc,'hz','2000000');
-  const music=catalog.entries.find(e=>e.id==='uniform26-fluid-pwm108');
+  const music=catalog.entries.find(e=>e.id==='uniform26-fluid-pwm99');
   await wait(()=>!doc.getElementById('run').disabled && doc.getElementById('file-hash').textContent.includes(music.variants[0].sha256));
   check(doc.getElementById('elapsed').textContent==='00:00.0' && doc.getElementById('cycles').textContent==='0','clock switch resets CPU and audio');
   // Last selection wins even with several ROM fetches in flight.
@@ -61,7 +61,7 @@ async function suite(target) {
   await wait(()=>!doc.getElementById('run').disabled && doc.getElementById('file-hash').textContent.includes(music.sha256));
   check(doc.getElementById('hz').value==='3500000','clock race keeps the latest selection');
   log(`PASS ${target}: all nine clock/ROM pairs, selected-clock execution, grouped cards, live clock reset and rapid clock changes`);
-  for (const id of ['uniform26-fluid-pwm108']) {
+  for (const id of ['uniform26-fluid-pwm99']) {
     const entry = catalog.entries.find(entry => entry.id === id);
     doc.querySelector(`[data-example="${id}"]`).click();
     await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent === entry.title);
@@ -92,7 +92,7 @@ async function suite(target) {
     check(canvas.toDataURL() === blank, `reset clears the live scope (${blankSize} → ${canvas.width}x${canvas.height})`);
   }
   set(doc, 'seconds', '90');
-  log(`PASS ${target}: selected 108T music streams two seconds; live scope advances, freezes on pause/end, resumes and resets; no RAM writes`);
+  log(`PASS ${target}: selected 99T music streams two seconds; live scope advances, freezes on pause/end, resumes and resets; no RAM writes`);
   const search = doc.getElementById('search'); search.value = 'Dual CRC'; search.dispatchEvent(new Event('input', { bubbles: true }));
   check(doc.querySelectorAll('[data-example]').length === 1, 'example search');
   doc.querySelector('[data-example="voice32"]').click();
@@ -109,8 +109,8 @@ async function suite(target) {
   check(Number(doc.getElementById('edges').textContent.replace(/\D/g, '')) === 288544, 'Owl has only voice PWM edges');
   check(doc.getElementById('writes').textContent === '0', 'Owl ROM-only playback');
 
-  doc.querySelector('[data-example="uniform26-fluid-pwm108"]').click();
-  await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent === catalog.entries.find(entry => entry.id === 'uniform26-fluid-pwm108').title);
+  doc.querySelector('[data-example="uniform26-fluid-pwm99"]').click();
+  await wait(() => !doc.getElementById('run').disabled && doc.getElementById('file-name').textContent === catalog.entries.find(entry => entry.id === 'uniform26-fluid-pwm99').title);
   check(doc.getElementById('cycles').textContent === '0' && doc.getElementById('elapsed').textContent === '00:00.0', 'example switch clears prior result/audio');
   if (target.includes('ROM_Player')) {
     const resources = frame.contentWindow.performance.getEntriesByType('resource');

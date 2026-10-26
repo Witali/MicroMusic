@@ -115,3 +115,15 @@ test('82T / two-pulse voices at every CPU clock: full live audio equals ordered 
     assert.equal(stream.seconds,result.audio.byteLength/4/rate);assert.ok(energy>1);
   }
 });
+
+test('Selected99T music streams at each CPU clock with192kHz audio and ordered chunks',async()=>{
+  for(const hz of [2000000,2500000,3500000]){
+    const path=`../../Music/fluid-pwm99/${hz===3500000?'':`clocks/${hz}/`}uniform26-fluid-pwm99.bin`;
+    const rom=Uint8Array.from(readFileSync(new URL(path,import.meta.url)));
+    const {result,messages}=await run(rom,{hz,rate:192000,seconds:.5,realtime:true});
+    assert.equal(result.kind,'done');assert.equal(result.stopReason,'time_limit');
+    assert.equal(result.memWrites,0);assert.equal(result.ioWrites,0);assert.ok(result.edges>0);
+    assert.deepEqual(Buffer.concat(messages.filter(m=>m.kind==='audio').map(m=>Buffer.from(m.audio))),Buffer.from(result.audio));
+    assert.equal(result.audio.byteLength/4,Math.ceil(result.t/hz*192000));
+  }
+});
