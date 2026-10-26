@@ -6,6 +6,9 @@ The CPU translator, device-specific hardware and generated firmware are separate
 The virtual device runs a supplied image; external programming interfaces are
 excluded by [`EMULATION_SCOPE.md`](EMULATION_SCOPE.md).
 
+[`EMULATION_CONFIGURATIONS.md`](EMULATION_CONFIGURATIONS.md) defines the explicit
+`verification` and `site` presets independently of the CPU execution backend.
+
 The [model simplification plan](MODEL_SIMPLIFICATION.md) preserves these layers,
 all clock domains and observable device effects while reducing duplicated
 boundary rules and event/deadline work.

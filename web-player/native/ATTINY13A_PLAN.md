@@ -9,6 +9,12 @@ ISP/HVSP or a simulated programmer is outside the current scope and acceptance
 criteria, as explicitly requested by the user. See
 [`EMULATION_SCOPE.md`](EMULATION_SCOPE.md).
 
+The player now offers explicit [verification and site configurations](EMULATION_CONFIGURATIONS.md).
+Full ATtiny13A verification uses the retained physical board and resumable CPU;
+the site keeps its existing music-oriented model. Tiny88 verification is still
+limited to the common core/Timer1. This separation closes no silicon checklist
+item and does not change the default site/WASM selection.
+
 The current implementation lowers all 123 instruction-summary forms, connects
 the device bus and peripheral scheduler, retranslates modified Flash, and
 captures physical PWM output without JavaScript callbacks per instruction or

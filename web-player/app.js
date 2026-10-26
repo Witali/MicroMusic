@@ -2,6 +2,8 @@ import { parseHex } from './lib/hex.js';
 import { RealtimeMonitor } from './lib/realtime.js';
 import { universalPackageEntry } from './lib/universal-package.js?v=20261025-um88-channels';
 const $ = id => document.getElementById(id);
+let siteEngine='wasm';
+$('emulation-configuration').value=new URL(location.href).searchParams.get('emulation')==='verification'?'verification':'site';
 const formatHex = (value, length=2) => value.toString(16).toUpperCase().padStart(length,'0');
 const canvas = $('wave');
 const originalAudio = $('original-audio');
@@ -25,6 +27,17 @@ function audioControls() {
   return {cutoff:+$('cutoff').value,volume:+$('volume').value};
 }
 function selectedEngine() { return document.querySelector('input[name="engine"]:checked').value; }
+function selectedConfiguration(){return $('emulation-configuration').value;}
+function emulationUI(){
+  const verification=selectedConfiguration()==='verification',physical=verification&&currentDevice!=='attiny88';
+  const forced=physical||!!selected?.devicePackage;
+  for(const choice of document.querySelectorAll('input[name="engine"]')){
+    choice.disabled=forced&&choice.value!=='transpiled';choice.checked=choice.value===(forced?'transpiled':siteEngine);
+  }
+  $('emulation-note').textContent=verification
+    ? physical?'Фазы инструкций, физические часы, периферия и выводы. Работает медленнее.':'Проверка ядра и Timer1 без пропуска ожиданий. Полная периферия ещё не реализована.'
+    : selected?.devicePackage?'Пакет сохраняет собственную полную модель устройства.':'Быстрое воспроизведение музыки и PWM; прочая периферия ограничена.';
+}
 function deviceUI(device) {
   const tiny88=device==='attiny88', name=tiny88?'ATtiny88':'ATtiny13A';
   const micronucleus=tiny88&&currentBoard==='mh-et-live-16mhz';
@@ -54,10 +67,7 @@ function deviceUI(device) {
   $('fuse-clock-note').textContent=micronucleus?'Штатный Micronucleus · делитель /1 в прошивке':'CKDIV8 отключён · делитель /1';
   $('fuse-datasheet').href=tiny88?'https://ww1.microchip.com/downloads/en/DeviceDoc/doc8008.pdf':'https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf';
   $('fuse-datasheet').textContent='Фьюзы в datasheet, §'+(tiny88?'20.2':'17.2')+' ↗';
-  for(const choice of document.querySelectorAll('input[name="engine"]'))choice.disabled=false;
-  if(document.querySelector('input[name="engine"]:checked').disabled){
-    for(const choice of document.querySelectorAll('input[name="engine"]'))choice.checked=choice.value==='wasm';
-  }
+  emulationUI();
   $('package-file').disabled=false;
   $('package-import-label').textContent=micronucleus?'Открыть пакет UM88 для Micronucleus':tiny88?'Открыть пакет UM88':'Открыть пакет ATtiny13A';
   $('engine-note').textContent='При смене — сброс на начало.';
@@ -199,7 +209,6 @@ function load(entry,{autoplay=false}={}) {
   selected=entry; headroom=0;
   deviceUI(currentDevice);
   if(entry.devicePackage){
-    for(const choice of document.querySelectorAll('input[name="engine"]')){choice.disabled=choice.value!=='transpiled';choice.checked=choice.value==='transpiled';}
     const configuration=entry.deviceConfiguration;
     $('fuse-low').textContent='0x'+formatHex(configuration.fuseLow);
     $('fuse-high').textContent='0x'+formatHex(configuration.fuseHigh);
@@ -282,11 +291,12 @@ function load(entry,{autoplay=false}={}) {
   }
   const bytes=parseHex(entry.flashHex,capacity); $('memory').textContent=Array.from({length:8},(_,line)=>formatHex(line*16,4)+'  '+Array.from(bytes.subarray(line*16,line*16+16),x=>formatHex(x)).join(' ')).join('\n');
   const url=new URL(location.href); url.searchParams.set('firmware',entry.id);
+  if(selectedConfiguration()==='verification')url.searchParams.set('emulation','verification');else url.searchParams.delete('emulation');
   if(tiny88)url.searchParams.set('device','attiny88');else url.searchParams.delete('device');
   if(micronucleus)url.searchParams.set('board',currentBoard);else url.searchParams.delete('board');
   history.replaceState(null,'',url);
   renderCatalog(); transport();
-  const worker=new Worker(new URL('./worker.js?v=20261026-avr-translated',import.meta.url),{type:'module'}); runtime=worker;
+  const worker=new Worker(new URL('./worker.js?v=20261026-emulation-config',import.meta.url),{type:'module'}); runtime=worker;
   worker.onmessage=({data})=>{
     if (runtime!==worker) return;
     if (data.type==='ready') {
@@ -300,7 +310,7 @@ function load(entry,{autoplay=false}={}) {
     if (data.type==='error') { runtimeReady=false; pause(); showError('Ошибка эмуляции: '+data.message); }
   };
   worker.onerror=event=>{ if (runtime===worker) { runtimeReady=false; pause(); showError('Не удалось запустить AVR-эмулятор: '+event.message); } };
-  worker.postMessage({type:'init',entry,engine:selectedEngine(),sampleRate:audio?.sampleRate||48000,controls:audioControls()});
+  worker.postMessage({type:'init',entry,engine:selectedEngine(),configuration:selectedConfiguration(),sampleRate:audio?.sampleRate||48000,controls:audioControls()});
 }
 async function ensureAudio() {
   if (audio) { await audio.resume(); return; }
@@ -344,8 +354,10 @@ $('play').onclick=toggle; $('play-original').onclick=toggleOriginal; $('reset').
 $('volume').oninput=()=>{originalAudio.volume=+$('volume').value;runtime?.postMessage({type:'controls',controls:audioControls()});};
 $('cutoff').onchange=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
 for (const choice of document.querySelectorAll('input[name="engine"]')) choice.onchange=()=>{
+  siteEngine=selectedEngine();
   if (selected) load(selected);
 };
+$('emulation-configuration').onchange=()=>{emulationUI();if(selected)load(selected);};
 $('device-select').onchange=()=>switchDevice($('device-select').value);
 $('board-select').onchange=()=>switchDevice('attiny88',$('board-select').value);
 $('package-file').onchange=async event=>{

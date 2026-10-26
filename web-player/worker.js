@@ -1,5 +1,5 @@
-import { createRenderer, DEFAULT_ENGINE } from './lib/engines.js?v=20261026-avr-translated';
-let renderer, entry, port, engine = DEFAULT_ENGINE, controls = {cutoff:4000,volume:1};
+import { createRenderer, DEFAULT_ENGINE, DEFAULT_EMULATION_CONFIGURATION } from './lib/engines.js?v=20261026-emulation-config';
+let renderer, entry, port, engine = DEFAULT_ENGINE, configuration=DEFAULT_EMULATION_CONFIGURATION, controls = {cutoff:4000,volume:1};
 let messages = Promise.resolve();
 
 function publish(samples, milliseconds) {
@@ -23,13 +23,13 @@ self.onmessage = ({data}) => {
   // Preserve init/audio-port/controls order while the chosen engine imports.
   messages = messages.then(async () => {
     if (data.type === 'init') {
-      entry = data.entry; engine = data.engine ?? DEFAULT_ENGINE; controls = data.controls ?? controls;
-      renderer = await createRenderer(entry, data.sampleRate, controls, engine);
-      self.postMessage({type:'ready',engine,state:renderer.core.state()});
+      entry = data.entry; configuration=data.configuration??DEFAULT_EMULATION_CONFIGURATION; controls = data.controls ?? controls;
+      renderer = await createRenderer(entry, data.sampleRate, controls, data.engine,configuration);engine=renderer.engine;
+      self.postMessage({type:'ready',engine,configuration,emulationModel:renderer.emulationModel,state:renderer.core.state()});
     } else if (data.type === 'audio-port') {
       controls = data.controls ?? controls;
       port?.close();
-      renderer = await createRenderer(entry, data.sampleRate, controls, engine);
+      renderer = await createRenderer(entry, data.sampleRate, controls, engine,configuration);
       port = data.port;
       port.onmessage = ({data}) => {
         try {

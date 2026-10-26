@@ -1,9 +1,9 @@
-import {Renderer as AudioRenderer} from './renderer-js.js';
+import {Renderer as AudioRenderer} from './renderer-js.js?v=20261026-emulation-config';
 import {AVRCore} from './avr-transpiled.js';
 
 // Reuse resampling/DSP while feeding it only the generated AVR instruction code.
 export class Renderer extends AudioRenderer {
-  constructor(entry,sampleRate,controls={},Core=AVRCore){super(entry,sampleRate,controls,Core);}
+  constructor(entry,sampleRate,controls={},Core=AVRCore,coreOptions={}){super(entry,sampleRate,controls,Core,coreOptions);}
   render(count){
     if(!Number.isInteger(count)||count<1||count>16384)throw new Error('Invalid audio block size');
     // Forecast using the same additions/subtractions as the resampler. Capture

@@ -2,6 +2,7 @@ import {AVRCore as TranslatedCore} from './avr-transpiled-runtime.js';
 import {resetInputProfileFields,normalizeResetInputProfile} from './devices/attiny13a-reset-profile.js';
 import {normalizeClkiProfile} from './devices/attiny13a-clki-profile.js';
 import {AT13_FUSE_MASK as FUSE,AT13_IO as IO,AT13_MASK as MASK} from './attiny13a-registers.js';
+import {executionOptions} from './emulation-configurations.js';
 const configuration={oscillatorHz:1,watchdogHz:2,vccMicrovolts:3,bandgapMicrovolts:4,
   fuseLow:5,fuseHigh:6,lock:7,adcFirstSample:8,comparatorPropagationHalf:9,
   bandgapStartupHalf:10,comparatorInitial:11,wakeStartupHalf:12,spmCommandCycles:13,flashMaximum:14,bodRecoveryNs:15,factoryOsccal96:16,fuseStartupProfile:17,
@@ -17,13 +18,17 @@ const timestampPs=value=>{
   return value;
 };
 export class ATtiny13A extends TranslatedCore {
-  static async fromPackage(input,{fastIdle=true}={}){
+  static async fromPackage(input,{fastIdle=true,verification=false}={}){
     const {decodePackage,assertPackageRuntimeABI}=await import('./attiny13a-package.js');
     const decoded=await decodePackage(input);
+    if(typeof verification!=='boolean')throw Error('verification must be a boolean');
+    if(verification&&(!decoded.options.resumable||(!decoded.options.osccalHz&&!decoded.options.clkiProfile)))
+      throw Error('Verification requires a resumable package with a physical clock profile; package hardware settings are preserved');
     const core=new this(decoded.flash,decoded.eeprom,{...decoded.options,fastIdle,_packageVersion:decoded.version,
       runtimeModule:await WebAssembly.compile(decoded.runtime),
-      precompiled:{bytes:decoded.translated,manifest:decoded.manifest},
+      ...(!verification?{precompiled:{bytes:decoded.translated,manifest:decoded.manifest}}:{}),
       optimizeFlags:decoded.manifest.optimizeFlags,maxBlockInstructions:decoded.manifest.maxBlockInstructions,
+      ...(verification?executionOptions('verification'):{}),
       validateRuntimeABI:abi=>assertPackageRuntimeABI(decoded,abi),
     });
     core.packageIntegrity={...decoded.integrity};return core;

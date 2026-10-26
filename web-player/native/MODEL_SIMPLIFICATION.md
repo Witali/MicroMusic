@@ -4,6 +4,11 @@ Requested direction, 2026-10-26. Simplification means fewer duplicated rules and
 calculations while preserving the complete ATtiny13A observation contract. It
 does not reduce the hardware coverage or close a checklist item by assumption.
 
+Two explicit [execution configurations](EMULATION_CONFIGURATIONS.md) now keep
+the full available verification model separate from the site's music-oriented
+model. Continue this structural plan inside the full device model; do not use
+the site's peripheral subset as a correctness oracle for omitted hardware.
+
 ## Existing foundation
 
 The project already separates generated AVR instruction effects, the native
