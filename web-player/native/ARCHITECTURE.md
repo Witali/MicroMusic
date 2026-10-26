@@ -1,9 +1,14 @@
 # AVR translation and device boundaries
 
-The project currently registers ATtiny13A. The CPU translator, device-specific
-hardware implementation and generated firmware are separate layers.
+The CPU translator registers ATtiny13A and ATtiny88. The full physical hardware
+model currently covers ATtiny13A; ATtiny88 uses the shared music runtime.
+The CPU translator, device-specific hardware and generated firmware are separate layers.
 The virtual device runs a supplied image; external programming interfaces are
 excluded by [`EMULATION_SCOPE.md`](EMULATION_SCOPE.md).
+
+The [model simplification plan](MODEL_SIMPLIFICATION.md) preserves these layers,
+all clock domains and observable device effects while reducing duplicated
+boundary rules and event/deadline work.
 
 | Layer | Source or artifact | Responsibility |
 |---|---|---|
@@ -12,6 +17,7 @@ excluded by [`EMULATION_SCOPE.md`](EMULATION_SCOPE.md).
 | Phase temporary analysis | `lib/avr-phase-locals.js` | Optional generation-time local/branch annotations and backward liveness; strip annotations before serialization, retaining the full-context oracle |
 | Target registry | `lib/devices/profiles.js` | Select a supported device explicitly and reject unregistered targets |
 | ATtiny13A profile | `lib/devices/attiny13a-profile.js` | Flash/data geometry, PC wrapping, register placement and legacy hardware hooks |
+| ATtiny88 profile | `lib/devices/attiny88-profile.js` | Manufacturer-derived wide data pointers and SPL/SPH with shared music peripherals |
 | Manufacturer definitions | `vendor/microchip/ATtiny_DFP/3.4.278/` | Original register, bit, fuse, vector and memory definitions with versioned provenance |
 | Generated register views | `lib/attiny13a-registers.*`, `native/attiny13a-registers.*` | C, JS, JSON and assembly views of the same official definitions |
 | ATtiny13A hardware | `native/peripherals/`, `native/devices/attiny13a/`, `native/avr-device.inc` | Device bus, timers, GPIO, ADC/comparator, sleep/reset, power, NVM and physical time |

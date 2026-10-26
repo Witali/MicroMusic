@@ -132,6 +132,14 @@ verification initially measured about 0.4x audio throughput on this host.
 
 ## 5 Performance without loss of timing accuracy
 
+User-requested model simplification is saved in
+[MODEL_SIMPLIFICATION.md](MODEL_SIMPLIFICATION.md): one scheduler with independent
+clock domains, explicit controller ownership/activation and static bus adapters.
+It preserves register side effects, exact CLK/GPIO/IRQ/RESET boundaries, writable
+public-state contracts and complete requested pin traces. Reduce demonstrated
+duplicate work incrementally; the document is a design and ownership inventory,
+not a completed refactor or a reason to close remaining hardware items.
+
 - [ ] Measure CPU translation/execution, peripheral scheduling, pin collection
   and audio filtering separately on identical firmware and sample intervals.
   The reproducible benchmark now separates cold/warm construction, coupled
