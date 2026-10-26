@@ -81,3 +81,27 @@ v5-only 105, minimum observed margin 819/858; startup/worst-case не доказ
 
 [Точные flags, hashes, per-image measurements и границы](../../Codecs/LPX/research/speech-flash-2026-10-26/README.md),
 [воспроизводимый bounded screen и полная PWM-проверка](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_speech_flash.py).
+
+## Тот же рецепт для legacy v2/v3
+
+Дополнительная измеренная область применения: 27 полных четырёхсекундных
+записей, выбранные 8/12/16 кбит/с, v3 features24. Явно выключены оба speech
+parser flags, `LPX4_COMPACT_ONLY=0`; поэтому v5-only layout здесь неприменим.
+Остальные CPU/ABI/toolchain, queue512/prefill384, segments2 и ASM opt-in
+такие же. Библиотечные defaults не меняются. Использован тот же compiler
+factory; восемь прежних common speech command lists остались точными.
+
+На тех же selected streams unroll9/tuning7 → unroll1/tuning0 с
+`-Os -flto -mcall-prologues -mrelax`: средние decode wall cycles
+804,628 → 705,270 (8), 835,160 → 730,176 (12), 865,255 → 753,662 (16).
+Программа без точно проверенного audio array — 6512–6514 байт;
+static SRAM1102. В 77 уникальных полных ELF полезный PWM точен,
+underruns=0; minimum observed stack margin после ready828 байт.
+
+Дополнительно девять непрерывных 64k-sample controls: normal/+100 IRQ/C
+для каждого bitrate. Все ASM без пропусков, C точен по значениям, но
+3164–3196 cycles/sample и underruns. Это simulator admission измеренных
+потоков, не startup stack proof или гарантия другого приложения.
+Новых арифметических ASM путей нет; C fallback и аппаратный Flash access
+остаются независимыми. Полные source/toolchain/firmware hashes и memory
+accounting в [legacy profile study](../../Codecs/LPX/research/encoder-profiles-2026-10-26/README.md).

@@ -1,0 +1,36 @@
+{
+  "suite_total": 133,
+  "passed": 132,
+  "skipped": 1,
+  "skip": "Optional hard-link check",
+  "scope": "Merged functional encoder/decoder suite before adding the separately executed benchmark and summary utilities.",
+  "command": "python -m unittest discover -s Codecs/LPX/01_ACTIVE_Q0_CODEC/tests -p test_*.py",
+  "current_functional_source_sha256": {
+    "tools/joint_rate.py": "c84c61aa103fb6943f4932f21d71fe3d18bf88b2a04efcd6df4a485e648b0634",
+    "tools/q0_model.py": "734d32075474e15b353fa3891f227fec329c4fb5fc29e36b21345ddd4f45c269",
+    "tools/refine_bitrate_profile.py": "14397f89575a3d9d343ddfe6cec3f0c1d5c4e9c4358dc64de392d7a3d59e5955",
+    "tools/refine_speech8.py": "8f835b1a6b5ded621fdee332cbd2ef69b40a2e997ce7af4b0bd93d4fdc9dfed9",
+    "src/cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+    "src/cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+    "src/Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+    "src/Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+    "src/Lpx4HybridCore.cpp": "9a000d56400422e5bc4e79347ed46f2e2c66d0221d5e7e2f3bccb5c29374cd35",
+    "src/Lpx4HybridCore.h": "a16a665fa2c872456eaa907cff10b91e7c6449b171243b737b38327de1e1e640",
+    "src/Lpx4Math.h": "6f579fdcfc050fc082675fab91b1ed26ffd4d110238cd8ece19b079122845494",
+    "src/native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+    "src/scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081"
+  },
+  "final_audit": {
+    "cases": 27,
+    "rate_points": 81,
+    "full_native_model_signals": 162,
+    "default_unique_avr": 107,
+    "small_unique_avr": 77,
+    "continuous_controls": 18,
+    "exact_listening_tracks": 7
+  },
+  "separately_executed_tools": [
+    "benchmark_encoder_search_speed.py",
+    "summarize_profile_development.py"
+  ]
+}

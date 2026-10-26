@@ -1,0 +1,54 @@
+{
+  "schema": 1,
+  "scope": "Complete bounded search; WAV I/O, native compilation and JIT warmup excluded.",
+  "protocol": "Alternating paired repeats, one process, no encoded-output caches.",
+  "case": "case-08",
+  "samples": 32000,
+  "reference_sha256": "ed8ddb85ce320f9f6c29b07165e3e31fc1e97cbaff8ca3430ca91d56f1fc62a4",
+  "seed_sha256": [
+    "47664c50eb521aa40077cf920a631676f0afdabee9c154d4152c768ba1f87a91",
+    "1d34accb298bc326fd3f086f5bc72bfcc5023bb4cc4d82c503e800d88b9c3591"
+  ],
+  "cap_complete_file_bytes": 6020,
+  "kind": "speech",
+  "lambdas": [
+    0.01,
+    0.03,
+    0.1
+  ],
+  "refinement_trials_per_seed": 2,
+  "beam": 4,
+  "seconds": {
+    "before": [
+      25.50343960011378,
+      25.949643000029027
+    ],
+    "after": [
+      7.918330799788237,
+      8.693148200167343
+    ]
+  },
+  "warmup_seconds": {
+    "before": 2.7672668998129666,
+    "after": 0.7708322999533266
+  },
+  "selected_stream_sha256": "47664c50eb521aa40077cf920a631676f0afdabee9c154d4152c768ba1f87a91",
+  "selected_pcm16_sha256": "2d1c7a62312d58c1ba593440a2fb2a57bde4f5349684e214285570a4dae71437",
+  "selected_pwm_sha256": "9c84e8491669326faa1c81d5977bf0b32cbedc2354478d12233ec20872cdb6d5",
+  "proposal_signature_sha256": "6f355610fb1e07fbd94f19815c3498d4c321b4743e3b33ca92391126bcc98469",
+  "encoder_trials": 10,
+  "baseline_source_sha256": "9b0cdedf2d58d00536c149e73b9ac23fe7cc0a4dbaea4f07ff735473823c48bf",
+  "baseline_model_sha256": "dedef3bc558d8dd9a4f2c8079ae7e88c418f7391c7928febd22e2a7f2bd2ed7b",
+  "current_joint_sha256": "c84c61aa103fb6943f4932f21d71fe3d18bf88b2a04efcd6df4a485e648b0634",
+  "current_model_sha256": "734d32075474e15b353fa3891f227fec329c4fb5fc29e36b21345ddd4f45c269",
+  "search_source_sha256": "3f4934d0444842de9e088b8a978a1b39251c479df1c36622777dd3adf33e8a6d",
+  "python": "3.12.14",
+  "numpy": "2.5.4",
+  "numba": "0.68.0",
+  "threads": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "NUMBA_NUM_THREADS": "1"
+  },
+  "time_reduction_percent": 67.71528903516176
+}
