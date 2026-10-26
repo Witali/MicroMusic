@@ -1,0 +1,69 @@
+{
+  "mcu": "ATmega328P",
+  "compiler": "AVR GCC 7.3.0",
+  "simulator": "avr8js 0.21.1",
+  "backend": "asm",
+  "binarySha256": "5f31ea98e7c837f2e1d86e66ad35c688d6ba3ac5d3e31a589a6439dcedad2b84",
+  "cases": 0,
+  "calls": 30996,
+  "perStage": {
+    "2": 0,
+    "3": 0,
+    "4": 0
+  },
+  "outputsPerPath": 0,
+  "addressCases": 0,
+  "all65536Signed16RootsAtBothInputs": false,
+  "independentBigIntProductOracle": true,
+  "selectedAndForcedCExact": true,
+  "guardsAndUntouchedWordsPreserved": true,
+  "calleeSavedRegistersAndR1AtRet": true,
+  "retChecks": 61929,
+  "exactAsmReadAndWriteAddresses": true,
+  "asmCalls": 30933,
+  "readBytes": 790776,
+  "writtenBytes": 1038240,
+  "stackBytesInsideAsm": 18,
+  "initialTStates": [
+    0,
+    1
+  ],
+  "primitiveCyclesIncludingRet": {
+    "2": [
+      456
+    ],
+    "3": [
+      634
+    ],
+    "4": [
+      812
+    ]
+  },
+  "includesInterrupts": true,
+  "physicalBoardTested": false,
+  "irqVectors": 63,
+  "deviceHeaders": {
+    "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+    "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+    "interrupt.h": "9627582846252bf42efd6eb4d1ea6d03ae125b021b6ea630a2f08ebf0a0bf041"
+  },
+  "injections": 30870,
+  "nonzeroR1Interrupts": 11561,
+  "t0Interrupts": 14364,
+  "t1Interrupts": 16506,
+  "isrMulInstructions": 30870,
+  "boundaryCounts": {
+    "2": 7266,
+    "3": 10290,
+    "4": 13314
+  },
+  "instructionCounts": {
+    "2": 346,
+    "3": 490,
+    "4": 634
+  },
+  "everyInstructionBoundaryIncludingInternalRetPreempted": true,
+  "all32RegistersAndSregRestoredAtReti": true,
+  "interruptReturnPcAndSpExact": true,
+  "modelsHardwareEntryLatency": false
+}
