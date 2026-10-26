@@ -41,6 +41,12 @@ The harness reconstructs baseline JS/native inputs from Git in an ignored
 directory; it imports both variants in every fresh Worker. No full tests,
 browser execution or profiler ran alongside either timing experiment.
 
+Timed Worker work finishes before it sends its result. The parent requests
+termination before starting the next observation but does not await teardown;
+VM cleanup may overlap subsequent imports. These data are not teardown-isolated
+timings. A follow-up harness should await termination; retained host variation
+and same-version controls remain part of interpreting the current numbers.
+
 Each case has four discarded warmups and eight balanced four-position Williams
 trials, oldA/oldB/newA/newB:192 timed observations per experiment. Shared
 whole-image caches are disabled; unchanged code within the candidate's live
