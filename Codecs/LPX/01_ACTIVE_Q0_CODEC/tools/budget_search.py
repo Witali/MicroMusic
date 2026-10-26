@@ -58,12 +58,13 @@ def spectrum_seeds(seed,strides=(2,4)):
 
 
 def search_budget(seeds,reference,decoder,max_bytes,kind='speech',lambdas=LAMBDAS,
-                  refinement_trials=4,encoder=encode_rate,encoder_options=None,candidate_sink=None):
+                  refinement_trials=4,encoder=encode_rate,encoder_options=None,candidate_sink=None,candidate_guard=None):
     ref=np.asarray(reference)
     if (not 20<=max_bytes<=65535 or int(max_bytes)!=max_bytes or ref.ndim!=1 or
             not 1<=len(ref)<=64000 or ref.dtype.kind not in 'iu' or np.any(ref < -32768) or
             np.any(ref > 32767) or kind not in ('speech','music') or not lambdas or
-            any(not np.isfinite(v) or v<0 for v in lambdas) or not 0<=refinement_trials<=16):
+            any(not np.isfinite(v) or v<0 for v in lambdas) or not 0<=refinement_trials<=16 or
+            (candidate_guard is not None and not callable(candidate_guard))):
         raise ValueError('Expected explicit file cap, PCM16, bounded search and valid lambdas')
     seeds=list(dict.fromkeys(bytes(seed) for seed in seeds))
     if not seeds:raise ValueError('At least one existing-format seed required')
@@ -75,7 +76,8 @@ def search_budget(seeds,reference,decoder,max_bytes,kind='speech',lambdas=LAMBDA
         seen.add(digest);m=record['quality'];err=ref.astype(np.int64)-pcm.astype(np.int64)
         row={**record,'file_bytes':len(blob),'audio_packet_bytes':len(blob)-20,
              'stream_sha256':digest,'full_sse':int(np.dot(err,err)),
-             'max_abs_error_pcm16':int(np.max(np.abs(err))),'fits_budget':len(blob)<=max_bytes}
+             'max_abs_error_pcm16':int(np.max(np.abs(err))),'fits_budget':len(blob)<=max_bytes,
+             'quality_guard_passed':candidate_guard is None or bool(candidate_guard(pcm))}
         candidates.append((blob,pcm,row));observations.append(row)
         if candidate_sink:candidate_sink(blob,pcm,dict(row))
     for si,seed in enumerate(seeds):
@@ -100,7 +102,7 @@ def search_budget(seeds,reference,decoder,max_bytes,kind='speech',lambdas=LAMBDA
                     if middle not in tested:brackets.append((abs(sa-max_bytes)+abs(sb-max_bytes),float(middle)))
             if not brackets:break
             trial(min(brackets)[1])
-    eligible=[p for p in candidates if p[2]['fits_budget']]
+    eligible=[p for p in candidates if p[2]['fits_budget'] and p[2]['quality_guard_passed']]
     baseline=[p for p in eligible if p[2]['source']=='seed']
     if baseline:
         old=min(baseline,key=lambda p:(p[2]['full_sse'],len(p[0]),p[2]['stream_sha256']))

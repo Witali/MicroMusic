@@ -60,5 +60,15 @@ class BudgetSearchTests(unittest.TestCase):
         self.assertTrue(all(a['unstable_subframes']==0 for a in audit if a['accepted']))
         with self.assertRaises(ValueError):spectrum_seeds(seed,(3,))
 
+    def test_guard_does_not_accept_a_muted_file_just_because_it_fits(self):
+        seed=raw_fixture(samples=160);ref=np.full(160,1000,np.int16)
+        def silent(seed,ref,decoder,**options):
+            from rate_distortion import encode_rate
+            return encode_rate(seed,np.zeros_like(ref),decoder,lam=1.,allow_zero=True,compact_features=24,kind='music')
+        out,pcm,report=search_budget([seed],ref,self.decoder,50,'music',lambdas=(1.,),refinement_trials=0,
+            encoder=silent,candidate_guard=lambda candidate:bool(np.any(candidate)))
+        self.assertIsNone(out);self.assertIsNone(pcm);self.assertEqual(report['status'],'no_fit')
+        self.assertTrue(any(c['fits_budget'] and not c['quality_guard_passed'] for c in report['candidates']))
+
 
 if __name__=='__main__':unittest.main()
