@@ -86,6 +86,10 @@ Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),
  lsfConverts_=bitCalls_=romByteCalls_=0;
 #endif
  lsfCached_=false;staticSpectrum_=false;
+#if LPX4_ROTATE_LPC_ANCHORS
+ lpcAnchorOffset_=0;
+#endif
+
  for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i]=a_[i]=hist_[i]=0;
 #if LPX4_LPC_RING
  for(uint8_t i=10;i<20;i++)hist_[i]=0;
@@ -133,7 +137,11 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #if LPX4_ALLOW_SPARSE
  pulseCount_=pulseIndex_=0;
 #endif
- lsfCached_=false;staticSpectrum_=false;prevDeemph_=prevBright_=0;
+ lsfCached_=false;staticSpectrum_=false;
+#if LPX4_ROTATE_LPC_ANCHORS
+ lpcAnchorOffset_=0;
+#endif
+prevDeemph_=prevBright_=0;
 #ifdef LPX3_COST_INSTRUMENT
  lsfConverts_=bitCalls_=romByteCalls_=0;
 #endif
@@ -553,42 +561,61 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,int16_t* out){
 #endif
 void Lpx4HybridCore::interpolateLsf(uint8_t sub){
 #ifdef LPX3_FAST_LPC_INTERP
+#if LPX4_ROTATE_LPC_ANCHORS
+    int16_t* curLpc=lpcAnchors_+lpcAnchorOffset_;
+#else
+    int16_t* curLpc=curLpc_;
+    int16_t* prevLpc=prevLpc_;
+#endif
     // An unchanged LSF vector has identical polynomial anchors and no LPC
     // interpolation. The cached endpoint is valid across repeated frames.
     if(staticSpectrum_){
-        if(!lsfCached_){convertLsfAt(0,curLpc_);lsfCached_=true;}
+        if(!lsfCached_){convertLsfAt(0,curLpc);lsfCached_=true;}
         // The endpoint is unchanged for the whole frame. Refresh a_ at its
         // first subframe, because the previous dynamic frame ended at a midpoint.
-        if(sub==0)for(uint8_t i=0;i<10;i++)prevLpc_[i]=curLpc_[i];
+#if !LPX4_ROTATE_LPC_ANCHORS
+        if(sub==0)for(uint8_t i=0;i<10;i++)prevLpc[i]=curLpc[i];
+#endif
 #ifdef LPX3_BANDWIDTH_EXPAND_Q14
         // nextCore expands a_ after interpolation: reload before every expansion.
-        for(uint8_t i=0;i<10;i++)a_[i]=curLpc_[i];
+        for(uint8_t i=0;i<10;i++)a_[i]=curLpc[i];
 #else
-        if(sub==0)for(uint8_t i=0;i<10;i++)a_[i]=curLpc_[i];
+        if(sub==0)for(uint8_t i=0;i<10;i++)a_[i]=curLpc[i];
 #endif
         return;
     }
+#if LPX4_ROTATE_LPC_ANCHORS
+    int16_t* prevLpc=lpcAnchors_+(lpcAnchorOffset_^10);
+#endif
     // Segment width in t=0..16; at most one polynomial conversion per
     // 20-sample subframe after the initial frame (two at startup).
     const uint8_t width=(uint8_t)(16/LPX3_LPC_SEGMENTS);
     const uint8_t subframesPerSegment=(uint8_t)(8/LPX3_LPC_SEGMENTS);
     if(sub%subframesPerSegment==0){
+#if LPX4_ROTATE_LPC_ANCHORS
+        if(sub==0&&!lsfCached_)convertLsfAt(0,prevLpc);
+        else{
+            int16_t* scratch=prevLpc;prevLpc=curLpc;curLpc=scratch;
+            lpcAnchorOffset_^=10;
+        }
+#else
         if(sub==0){
             if(lsfCached_){
                 // Last endpoint of prior frame was this frame's old LSF.
-                for(uint8_t i=0;i<10;i++)prevLpc_[i]=curLpc_[i];
-            }else convertLsfAt(0,prevLpc_);
+                for(uint8_t i=0;i<10;i++)prevLpc[i]=curLpc[i];
+            }else convertLsfAt(0,prevLpc);
         }else{
-            for(uint8_t i=0;i<10;i++)prevLpc_[i]=curLpc_[i];
+            for(uint8_t i=0;i<10;i++)prevLpc[i]=curLpc[i];
         }
+#endif
         const uint8_t anchor=(uint8_t)(((sub/subframesPerSegment)+1)*width);
-        convertLsfAt(anchor,curLpc_);
+        convertLsfAt(anchor,curLpc);
         lsfCached_=true;
     }
     const uint8_t t=(uint8_t)(sub*2+1);
     const uint8_t localT=(uint8_t)(t%width);
     for(uint8_t i=0;i<10;i++){
-        a_[i]=lpx4LpcInterpolate(prevLpc_[i],curLpc_[i],localT,
+        a_[i]=lpx4LpcInterpolate(prevLpc[i],curLpc[i],localT,
             LPX3_LPC_SEGMENTS==1?4:LPX3_LPC_SEGMENTS==2?3:2);
     }
     return;

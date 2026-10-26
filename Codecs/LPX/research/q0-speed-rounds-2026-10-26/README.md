@@ -39,6 +39,8 @@ prefill384, unroll9, v3 mask24 и активные IRQ фиксированы.
 
 | 18 | отклонено split4 разбиение byte shifts | 0,000000% | +0 Б Flash, RAM1101 Б | 2 |
 
+| 19 | перестановка LPC anchors вместо копирования vectors | 0,175483% | -34 Б Flash, RAM1102 Б | 3 |
+
 ## Раунд 1: точное Q4-накопление
 
 Исходный LPC сдвигал каждое signed32-произведение вправо на 12, затем
@@ -447,6 +449,17 @@ Joint native distribution показывает630640/2912000 vectors со все
 
 Результаты round-18.json, round-18-controls.json, round-18-tests.json.
 Слабых подряд **2**. Слабых подряд2. Проверить замену копирования LPC anchors на перестановку двух буферов без self-referencing pointers; после третьего слабого раунда — итоговый аудит и остановка.
+
+## Раунд 19: перестановка LPC anchors вместо копирования vectors
+
+Два10-word LPC anchor буфера хранятся в общем20-word array; byte offset0/10 выбирает current, XOR10 — previous. На новом anchor меняются локальные pointers и offset вместо копирования10 words. При статическом спектре копия current→previous не нужна: следующий dynamic anchor всё равно делает прежний current своим previous. Первый uncached anchor, midpoint a refresh и bandwidth expansion сохраняют прежнюю семантику. Object не содержит pointers в собственные массивы, поэтому обычные copy/assignment остаются независимыми. LPX4_ROTATE_LPC_ANCHORS=0 возвращает исходные массивы/копии, на C и ASM; arithmetic/memory I/O selectors прежние.
+
+2499853336 →2495466530 cycles, **0,175483%**, Flash -34 Б на всех91 ELF, RAM1102 Б, stack margin≥823 Б. Все91 native PCM16/PWM и AVR PWM точны, underrun=0.
+
+99 host-тестов за94,526 с. Reference-copy/rotation ×segments1/2/4 ×v2/v3 masks0/24/32/124, partial/restart и snapshot copy/assignment после разных границ совпадают; defaultsegments2 сравниваются с независимой моделью. ASan/UBSan566610 mutation/reset случаев прошли. Все шесть длинных IRQ контролей без пропусков: standard1153,515 →1148,789, +100 IRQ1185,521 →1179,932 cycles/sample. Свежий полный quality audit: round-19-quality.json. Arithmetic bytes неизменны, девять math-сборок раунда13 переиспользованы по hash. Счётчик слабых раундов достиг3:17 — отклонённый adaptive LPC(0%),18 — отклонённые split shifts(0%),19 —0,175483%.
+
+Результаты round-19.json, round-19-controls.json, round-19-tests.json.
+Слабых подряд **3**. Условие остановки выполнено:3 слабых подряд. Новые оптимизации прекращены; завершить только итоговый C/ASM/configuration audit, историю и сводный отчёт.
 
 ## Воспроизведение
 

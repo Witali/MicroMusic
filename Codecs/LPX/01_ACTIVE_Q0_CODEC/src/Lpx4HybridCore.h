@@ -40,6 +40,15 @@
 #error LPX4_ROM_POINTER must be 0 or 1
 #endif
 
+// Rotate two LPC anchor halves by an offset0/10, avoiding vector copies.
+// No self-referencing pointers: ordinary value copies of the object stay valid.
+#ifndef LPX4_ROTATE_LPC_ANCHORS
+#define LPX4_ROTATE_LPC_ANCHORS 1
+#endif
+#if LPX4_ROTATE_LPC_ANCHORS != 0 && LPX4_ROTATE_LPC_ANCHORS != 1
+#error LPX4_ROTATE_LPC_ANCHORS must be0 or1
+#endif
+
 // Optional compact-container parser. Zero keeps the original v2-only build.
 // 4 scale repeat, 8 width repeat, 16 subheader repeat, 32 zero headers,
 // 64 small LSF Rice deltas. The stream may only use compiled feature bits.
@@ -161,6 +170,9 @@ private:
     Error error_;
     bool initializedFrame_;
     bool lsfCached_,staticSpectrum_;
+#if LPX4_ROTATE_LPC_ANCHORS
+    uint8_t lpcAnchorOffset_;
+#endif
     int16_t a_[10],hist_[LPX4_LPC_RING?20:10];
     int8_t ringQ_[256];
 #if LPX4_ALLOW_SPARSE
@@ -168,7 +180,11 @@ private:
     int8_t pulseAmp_[LPX4_MAX_PULSES];
 #endif
     int16_t prev_[10],cur_[10];
+#if LPX4_ROTATE_LPC_ANCHORS
+    int16_t lpcAnchors_[20];
+#else
     int16_t prevLpc_[10],curLpc_[10];
+#endif
     int32_t polyP_[12],polyQ_[12];
 #ifdef LPX3_Q_DIAG
     int8_t lastQ_;

@@ -2927,6 +2927,16 @@ Separate prototype measurements document the actual experiment.
 Full left-only prototype:2,499,853,336 ->2,499,796,480 cycles,0.002274% gain,+12 B Flash, unchanged1101 B SRAM. All91 outputs match with zero underruns.98 host tests,4,718,592 reader cases in each of five builds,566610 ASan/UBSan cases and six long IRQ controls pass for the prototype. The selected old sources are byte-identical and explicitly reuse earlier measurements/tests. A fresh selected-state native quality audit passes.
 [Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
 
+### LPX: rotate LPC anchor halves without self-referencing pointers
+
+AVR5/GCC7.3 -Os with retained local O2. Store two10-word LPC anchor halves in one20-word array; byte offset0/10 selects current and XOR10 selects previous. Swap local pointers/offset at each new anchor instead of copying ten words. Static spectra need no current-to-previous copy because the next dynamic anchor promotes current. Preserve uncached startup, midpoint a refresh and bandwidth expansion semantics. No pointers into the object are stored, so value copy/assignment remain independent. LPX4_ROTATE_LPC_ANCHORS=0 selects old arrays/copies on C/ASM. Arithmetic and hardware memory selectors are unchanged.
+
+Measured round19:2499853336 ->2495466530 wall cycles over91 active-IRQ images,
+0.175483% less time,-34 B Flash/image, SRAM1102 B, minimum stack
+margin823 B. Golden PCM16/PWM and AVR PWM exact, zero underruns.
+99 host tests, copy/rotate x segments1/2/4 x v2/v3, partial/restart and independent value-copy snapshots pass; default segments2 matches the independent model.566610 ASan/UBSan mutation/reset cases, all six long IRQ controls and a fresh full quality audit pass. Unchanged arithmetic bytes explicitly reuse round13 validation. Rounds17/18/19 give0/0/0.175483% selected gains: three consecutive weak rounds.
+[Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
 ## UM88: page-local FIFO
 
 [Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.
