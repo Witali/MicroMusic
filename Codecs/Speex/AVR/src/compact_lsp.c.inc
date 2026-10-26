@@ -9,7 +9,12 @@
 #include "nb3_lsp_first.h"
 #include "nb3_lsp_pair.h"
 #define STAGE_ATTR SPEEX_NB3_STAGE
+#if SPEEX_NB3_USE_AVR_ASM
+#include "nb3_lsp_angle.h"
+#define lsp_angle speex_nb3_lsp_angle
+#else
 static STAGE_ATTR spx_word16_t lsp_angle(spx_lsp_t angle) {return ANGLE2X(angle);}
+#endif
 /* The first two roots give p1=-(a+b)*64 and p2=2^21+ceil(a*b/256).
  * Fold the constant and ceil bias before the byte-aligned >>8. The sum
  * stays inside signed32 for all signed16 a/b, including both extrema. */
