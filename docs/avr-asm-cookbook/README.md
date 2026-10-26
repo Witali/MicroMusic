@@ -2865,6 +2865,16 @@ margin819 B. Golden PCM16/PWM and AVR PWM exact, zero underruns.
 97 host tests, both counter modes through131073 samples and truncated prefixes, plus566610 ASan/UBSan mutation/reset cases pass. Identical arithmetic bytes explicitly reuse round11 math validation. All six long IRQ controls pass. A fresh reproducible quality audit verifies91 streams/2,912,000 samples against frozen PCM16/PWM and the original AVR baseline: zero decoder-output differences, zero AVR underruns. This retains existing lossy-codec distortion, rather than claiming zero source-WAV error.
 [Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
 
+### LPX: extract rounded PWM with two left shifts
+
+AVR5/GCC7.3 -Os. After two byte products, high16=floor(sample*gain/256). Add rounding32 and PWM offset128*64 together as8224. The unsigned wrapped word is valid exactly when <16384; otherwise saturate by the original sample sign because gain is unsigned. For full signed16 sample and gain0..255, the old high word is in-32640..32638, so a wrapped negative never aliases the valid interval. Two LSL/ROL pairs extract bits6..13 into the result byte. Keep the original wide C expression, full input contract, explicit ASM selector and round0 path.
+
+Measured round13:2594280361 ->2564893109 wall cycles over91 active-IRQ images,
+1.132771% less time,-18 B Flash/image, SRAM1103 B, minimum stack
+margin819 B. Golden PCM16/PWM and AVR PWM exact, zero underruns.
+97 host tests and nine arithmetic builds with5,768,584 cases pass with IRQ/r1. The existing PWM oracle covers all65,536 signed16 samples at control gains including0/255. All six long IRQ controls pass, and a fresh complete frozen-output quality audit is retained. No new fuzz run is claimed for this isolated arithmetic change.
+[Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
 ## UM88: page-local FIFO
 
 [Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.

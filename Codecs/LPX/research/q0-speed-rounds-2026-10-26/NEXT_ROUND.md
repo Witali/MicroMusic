@@ -1,3 +1,6 @@
+Раунды1–13 завершены; слабых подряд0. Следующая область — оставшийся unary reader после введения zero-delta shortcuts; проверить cached terminator без повторных вызовов readOne, включая EOF/ошибки и instrumented counters.
+См. README и round-13*.json.
+
 Раунды1–12 завершены; слабых подряд0. Далее оптимизировать извлечение PWM из произведения; принимать только при прежнем полном PCM16/PWM и без новых underrun.
 См. README и round-12*.json.
 

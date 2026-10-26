@@ -390,11 +390,14 @@ static inline __attribute__((always_inline)) uint8_t lpx4PwmQ14(int16_t sample,u
         "mulsu %B2,%3\n\tmovw %A1,r0\n\t"
         "mul %A2,%3\n\tadd %A1,r1\n\tadc %B1,%0\n\t"
         // The discarded product low byte cannot affect the Q14 quotient.
-        "subi %A1,224\n\tsbci %B1,255\n\t"
-        ".rept 6\n\tasr %B1\n\tror %A1\n\t.endr\n\t"
-        "subi %A1,128\n\tsbci %B1,255\n\t"
-        "mov %0,%A1\n\ttst %B1\n\tbreq 1f\n\t"
-        "ldi %0,255\n\tsbrc %B1,7\n\tclr %0\n\t1:\n\t"
+        // Add both the rounding bias32 and PWM offset128*64 before extraction.
+        // The unsigned wrapped word is valid iff <16384; every other value
+        // clips according to the original sample sign (gain is unsigned).
+        "subi %A1,224\n\tsbci %B1,223\n\t"
+        "cpi %B1,64\n\tbrlo 1f\n\t"
+        "ldi %0,255\n\tsbrc %B2,7\n\tclr %0\n\trjmp 2f\n\t"
+        "1:\n\t.rept 2\n\tlsl %A1\n\trol %B1\n\t.endr\n\t"
+        "mov %0,%B1\n\t2:\n\t"
         "clr __zero_reg__\n\t"
         : "=&d"(result),"=&a"(high) : "a"(sample),"a"(gain) : "r0","r1","cc");
     return result;
